@@ -59,6 +59,7 @@ declare module '@biltme/backend' {
             mission_ends_at: number
             offline_seconds: number
             last_seen: number
+            deck: string[]
           }
           Insert: {
             id: string
@@ -78,6 +79,7 @@ declare module '@biltme/backend' {
             mission_ends_at?: number
             offline_seconds?: number
             last_seen?: number
+            deck?: string[]
           }
           Update: {
             id?: string
@@ -97,6 +99,7 @@ declare module '@biltme/backend' {
             mission_ends_at?: number
             offline_seconds?: number
             last_seen?: number
+            deck?: string[]
           }
           Relationships: []
         }

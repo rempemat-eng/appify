@@ -136,6 +136,7 @@ export function HomeScreen() {
           <Moon size={16} color={c.ink} />
           <PixelText>PUT YOUR PHONE DOWN.</PixelText>
         </View>
+        <PixelButton label="MY DECK" light onPress={() => useGame.setState({ deckOpen: true })} />
         <PixelButton label="SIMULATE SCREEN OFF" onPress={() => useGame.getState().sleep()} />
         <PixelButton
           label="FEED · 5 GRASS"
@@ -206,6 +207,7 @@ export function MissionsScreen() {
                   <BodyText>
                     {m.duration} MIN{locked ? ' · LV 2' : ''}
                   </BodyText>
+                  <BodyText>+1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} CARD</BodyText>
                   {m.id === 'mountain' && <BodyText>+ random unowned hat</BodyText>}
                 </View>
                 {locked && <PixelProp kind="lock" size={24} />}
@@ -223,9 +225,9 @@ export function ShopScreen() {
   if (!p) return null;
   const unlock =
     p.level === 1
-      ? 'SCREEN BREAK · 25 DAMAGE'
+      ? '4-CARD HAND'
       : p.level === 2
-        ? 'THICK SKIN · -20% DAMAGE'
+        ? 'FREE DIGITAL SUNSET CARD'
         : 'MORE HP. MORE ATK.';
   return (
     <Page>

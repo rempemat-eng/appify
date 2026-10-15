@@ -5,6 +5,7 @@ import * as Haptics from 'expo-haptics';
 import { AppState, Platform, Vibration } from 'react-native';
 import type { Database } from '@biltme/backend';
 import { bilt } from '@/lib/bilt';
+import { addCard, daveDeck, isCardId, offlineCards, startingDeck, type CardId } from '@/lib/cards';
 
 export type Player = Database['public']['Tables']['players']['Row'];
 export type Raid = Database['public']['Tables']['raids']['Row'];
@@ -80,8 +81,11 @@ type Saved = {
   staged: Incoming[];
   applied: string[];
   alerts: Incoming[];
+  collectedCards: CardId[];
+  cardReward: { cards: CardId[]; minutes: number; mission: string | null } | null;
 };
 type Game = Saved & {
+  deckOpen: boolean;
   ready: boolean;
   live: boolean;
   rivals: Player[];
@@ -105,6 +109,7 @@ type Game = Saved & {
   startBattle: (target: Player, practice?: boolean, revenge?: boolean) => Promise<void>;
   finishBattle: (won: boolean, target: Player, practice: boolean) => void;
   incomingBot: () => void;
+  dismissCards: () => void;
   dismissAlert: () => void;
   notify: (message: string, error?: boolean) => void;
 };
@@ -132,8 +137,31 @@ function isPlayer(value: unknown): value is Player {
     ].every((key) => typeof value[key] === 'number') &&
     (value.hat === null || typeof value.hat === 'string') &&
     (value.mission_id === null || typeof value.mission_id === 'string') &&
-    isStringArray(value.owned_hats)
+    isStringArray(value.owned_hats) &&
+    Array.isArray(value.deck) &&
+    value.deck.length > 0 &&
+    value.deck.length <= 20 &&
+    value.deck.every(isCardId)
   );
+}
+function migrateSaved(value: unknown) {
+  if (!isRecord(value)) return value;
+  const migratePlayer = (p: unknown) => {
+    if (isRecord(p) && p.deck === undefined)
+      p.deck =
+        typeof p.level === 'number' && p.level >= 3
+          ? [...startingDeck, 'digital_sunset']
+          : [...startingDeck];
+  };
+  migratePlayer(value.player);
+  for (const key of ['staged', 'alerts']) {
+    const list = value[key];
+    if (Array.isArray(list))
+      for (const item of list) if (isRecord(item)) migratePlayer(item.attacker);
+  }
+  if (value.collectedCards === undefined) value.collectedCards = [];
+  if (value.cardReward === undefined) value.cardReward = null;
+  return value;
 }
 function isRaid(value: unknown): value is Raid {
   if (!isRecord(value)) return false;
@@ -163,7 +191,15 @@ function isSaved(value: unknown): value is Saved {
     value.staged.every(isIncoming) &&
     isStringArray(value.applied) &&
     Array.isArray(value.alerts) &&
-    value.alerts.every(isIncoming)
+    value.alerts.every(isIncoming) &&
+    Array.isArray(value.collectedCards) &&
+    value.collectedCards.every(isCardId) &&
+    (value.cardReward === null ||
+      (isRecord(value.cardReward) &&
+        Array.isArray(value.cardReward.cards) &&
+        value.cardReward.cards.every(isCardId) &&
+        typeof value.cardReward.minutes === 'number' &&
+        (value.cardReward.mission === null || typeof value.cardReward.mission === 'string')))
   );
 }
 const KEY = 'screenagotchi-v1';
@@ -183,6 +219,8 @@ function persist() {
     staged: s.staged,
     applied: s.applied,
     alerts: s.alerts,
+    collectedCards: s.collectedCards,
+    cardReward: s.cardReward,
   };
   const value = JSON.stringify(saved);
   persistence = persistence
@@ -229,6 +267,9 @@ export const gameStore = create<Game>((set, get) => ({
   staged: [],
   applied: [],
   alerts: [],
+  collectedCards: [],
+  cardReward: null,
+  deckOpen: false,
   message: null,
   voice: null,
   battle: null,
@@ -238,7 +279,7 @@ export const gameStore = create<Game>((set, get) => ({
     if (get().ready) return;
     try {
       const raw = await AsyncStorage.getItem(KEY);
-      const parsed: unknown = raw ? JSON.parse(raw) : null;
+      const parsed: unknown = migrateSaved(raw ? JSON.parse(raw) : null);
       if (parsed !== null && !isSaved(parsed)) throw new Error('Invalid saved game');
       const saved = parsed;
       const now = Date.now();
@@ -278,6 +319,7 @@ export const gameStore = create<Game>((set, get) => ({
       mission_ends_at: 0,
       offline_seconds: 0,
       last_seen: now,
+      deck: [...startingDeck],
     };
     set({ player, tickAt: now, voice: "hi. i grow when you're not on your phone." });
     await persist();
@@ -305,8 +347,18 @@ export const gameStore = create<Game>((set, get) => ({
     if (p.mode !== 'awake') {
       const end = p.mode === 'mission' ? Math.min(now, p.mission_ends_at) : now;
       const elapsed = Math.max(0, Math.floor((end - s.tickAt) / 1000));
+      const completedMission =
+        p.mode === 'mission' && now >= p.mission_ends_at ? (p.mission_id ?? undefined) : undefined;
+      const rewardCards = offlineCards(
+        p.deck,
+        p.offline_seconds,
+        p.offline_seconds + elapsed,
+        completedMission,
+      );
+      const collectedCards = [...s.collectedCards, ...rewardCards.earned];
       let next = {
         ...p,
+        deck: rewardCards.deck,
         grass: p.grass + (p.mode === 'screen_off' ? elapsed : 0),
         mood: Math.min(100, p.mood + elapsed),
         offline_seconds: p.offline_seconds + elapsed,
@@ -337,7 +389,19 @@ export const gameStore = create<Game>((set, get) => ({
           feedback();
         }
       }
-      set({ player: next, tickAt: s.tickAt + seconds * 1000 });
+      set({
+        player: next,
+        tickAt: s.tickAt + seconds * 1000,
+        collectedCards: completedMission ? [] : collectedCards,
+        cardReward:
+          completedMission && collectedCards.length
+            ? {
+                cards: collectedCards,
+                minutes: next.offline_seconds - s.offStart,
+                mission: completedMission,
+              }
+            : s.cardReward,
+      });
       changed();
     } else {
       const ticks = Math.floor((now - s.tickAt) / 3000);
@@ -510,6 +574,10 @@ export const gameStore = create<Game>((set, get) => ({
         care_until: !failed && elapsed >= 10 ? Date.now() + 30000 : p.care_until,
       },
       tickAt: Date.now(),
+      collectedCards: [],
+      cardReward: s.collectedCards.length
+        ? { cards: s.collectedCards, minutes: elapsed, mission: null }
+        : s.cardReward,
       message: failed
         ? 'MISSION FAILED. YOU PICKED UP YOUR PHONE.'
         : `YOU WERE OFFLINE FOR ${elapsed} MIN · +${p.grass - s.offGrass} GRASS`,
@@ -527,9 +595,13 @@ export const gameStore = create<Game>((set, get) => ({
     const p = get().player;
     if (!p || p.mode !== 'awake' || p.grass < 50 * p.level) return;
     const level = p.level + 1;
-    get().change({ level, grass: p.grass - 50 * p.level });
+    get().change({
+      level,
+      grass: p.grass - 50 * p.level,
+      deck: level === 3 ? addCard(p.deck, 'digital_sunset') : p.deck,
+    });
     set({
-      flash: `${level <= 3 ? 'YOUR GRASSLING BLOOMED!' : 'LEVEL UP!'}\nLV ${level}${level === 2 ? '\nSCREEN BREAK UNLOCKED' : level === 3 ? '\nTHICK SKIN UNLOCKED' : ''}`,
+      flash: `${level <= 3 ? 'YOUR GRASSLING BLOOMED!' : 'LEVEL UP!'}\nLV ${level}${level === 2 ? '\n4-CARD HAND UNLOCKED' : level === 3 ? '\nDIGITAL SUNSET ADDED' : ''}`,
     });
     feedback();
   },
@@ -624,6 +696,10 @@ export const gameStore = create<Game>((set, get) => ({
     applyIncoming({ raid, attacker: bot(p) });
     changed();
   },
+  dismissCards: () => {
+    set({ cardReward: null, deckOpen: false });
+    void persist();
+  },
   dismissAlert: () => {
     set({ alerts: get().alerts.slice(1) });
     changed();
@@ -643,6 +719,7 @@ export function bot(p: Player): Player {
     care_until: 0,
     recovery_until: 0,
     grass: 50,
+    deck: [...daveDeck],
   };
 }
 let stop: (() => void) | null = null;

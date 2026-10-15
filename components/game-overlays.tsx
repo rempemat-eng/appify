@@ -20,6 +20,7 @@ import {
   gameStore,
   type Player,
 } from '@/lib/game';
+import { DeckPanel } from '@/components/habit-cards';
 import { BattleScreen } from '@/components/game-battle';
 import { FloatingZ, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
 import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
@@ -390,10 +391,13 @@ export function GameOverlays() {
   const alert = useGame((s) => s.alerts[0]);
   const message = useGame((s) => s.message);
   const flash = useGame((s) => s.flash);
+  const deckOpen = useGame((s) => s.deckOpen);
+  const cardReward = useGame((s) => s.cardReward);
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const isScreenOff = !!p && p.mode !== 'awake';
-  const visible = !ready || !p || isScreenOff || !!battle || !!alert || !!flash;
+  const visible =
+    !ready || !p || isScreenOff || !!battle || !!alert || !!flash || deckOpen || !!cardReward;
   useEffect(() => {
     if (!flash) return undefined;
     const timeout = setTimeout(() => useGame.setState({ flash: null }), 1600);
@@ -404,6 +408,7 @@ export function GameOverlays() {
     if (isScreenOff) gameStore.getState().wake();
     else if (battle) useGame.setState({ battle: null });
     else if (alert) gameStore.getState().dismissAlert();
+    else if (cardReward || deckOpen) gameStore.getState().dismissCards();
     else useGame.setState({ message: null, flash: null });
   }
   return (
@@ -488,6 +493,10 @@ export function GameOverlays() {
                 {flash}
               </PixelText>
             </View>
+          ) : cardReward ? (
+            <DeckPanel reward />
+          ) : deckOpen ? (
+            <DeckPanel />
           ) : null}
         </View>
       </Modal>
