@@ -1,15 +1,6 @@
 import { useEffect, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, TextInput, View } from 'react-native';
-import {
-  Users,
-  Mountain,
-  BookOpen,
-  Trees,
-  Moon,
-  ArrowUp,
-  ArrowDown,
-  Bot,
-} from 'lucide-react-native';
+import { FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
+import { Moon, ArrowUp, ArrowDown, Bot } from 'lucide-react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import {
   bot,
@@ -23,6 +14,8 @@ import {
 } from '@/lib/game';
 import { matchup } from '@/lib/battle';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
+import { PixelProp, PixelScene } from '@/components/pixel-scenes';
+import { BodyText, Dialogue } from '@/components/pixel-feedback';
 const lines = {
   grumpy: ['i hate it here. put the phone down.', 'my pixels hurt.'],
   exposed: ["we're exposed. i can hear the notifications.", 'put the phone down. trust me.'],
@@ -35,6 +28,16 @@ export function HomeScreen() {
   const voice = useGame((s) => s.voice);
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
+  const raidId = useGame((s) => s.alerts[0]?.raid.id);
+  const [raidFeedback, setRaidFeedback] = useState({ raidId, slumped: Boolean(raidId) });
+  if (raidFeedback.raidId !== raidId) {
+    setRaidFeedback({ raidId, slumped: raidId ? true : raidFeedback.slumped });
+  }
+  useEffect(() => {
+    if (!raidId) return undefined;
+    const timer = setTimeout(() => setRaidFeedback({ raidId, slumped: false }), 10000);
+    return () => clearTimeout(timer);
+  }, [raidId]);
   useEffect(() => {
     const timer = setInterval(() => {
       setLine((n) => n + 1);
@@ -68,33 +71,21 @@ export function HomeScreen() {
           <PixelText>LV {p.level}</PixelText>
         </View>
       </View>
-      <View style={{ marginTop: 4 }}>
-        <View
-          style={[
-            styles.border,
-            { padding: 16, backgroundColor: c.body, minHeight: 76, justifyContent: 'center' },
-          ]}
-        >
-          <PixelText style={{ lineHeight: 21 }}>{speech}</PixelText>
-        </View>
-        <View
-          style={{
-            height: 12,
-            width: 14,
-            borderLeftWidth: 2,
-            borderRightWidth: 2,
-            borderBottomWidth: 2,
-            borderColor: c.ink,
-            backgroundColor: c.body,
-            marginLeft: 38,
-            marginTop: -2,
-          }}
-        />
-      </View>
-      <View
-        style={{ alignItems: 'center', justifyContent: 'center', minHeight: 206, paddingTop: 18 }}
+      <Dialogue text={speech} />
+      <PixelScene
+        species={p.species}
+        level={p.level}
+        player={p}
+        height={280}
+        style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 12 }}
       >
-        <Pet species={p.species} level={p.level} hat={p.hat} grumpy={p.mood < 30} />
+        <Pet
+          species={p.species}
+          level={p.level}
+          hat={p.hat}
+          grumpy={p.mood < 30}
+          slumped={raidFeedback.slumped}
+        />
         {crumbs && (
           <Animated.View
             entering={FadeIn}
@@ -109,8 +100,10 @@ export function HomeScreen() {
             ))}
           </Animated.View>
         )}
-        <PixelText style={{ fontSize: 15, marginTop: 16 }}>{p.pet_name}</PixelText>
-      </View>
+        <PixelText style={{ fontSize: 15, marginTop: 8, backgroundColor: c.paper, padding: 6 }}>
+          {p.pet_name}
+        </PixelText>
+      </PixelScene>
       <View style={{ gap: 9 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <PixelText>MOOD{p.mood < 30 ? ' · GRUMPY' : ''}</PixelText>
@@ -150,9 +143,7 @@ export function HomeScreen() {
           }}
         />
       </View>
-      <PixelText style={{ textAlign: 'center', fontSize: 11, lineHeight: 21 }}>
-        YOUR PET&apos;S LIFE DEPENDS ON IT.
-      </PixelText>
+      <BodyText style={{ textAlign: 'center' }}>{"YOUR PET'S LIFE DEPENDS ON IT."}</BodyText>
     </Page>
   );
 }
@@ -162,40 +153,69 @@ export function MissionsScreen() {
   return (
     <Page>
       <PixelText style={styles.title}>GO TOUCH GRASS.</PixelText>
-      <View style={[styles.border, { padding: 16, backgroundColor: c.body }]}>
-        <PixelText>{'YOUR PET GOES OUT.\nYOUR PHONE STAYS OFF.'}</PixelText>
+      <Dialogue text={'your pet goes out. your phone stays off.'} />
+      <PixelScene kind="trail" height={170} />
+      <View style={[styles.border, { backgroundColor: c.body, padding: 16, gap: 0 }]}>
+        {missions.map((m, index) => {
+          const locked = p.level < m.level;
+          return (
+            <View key={m.id}>
+              {index > 0 && (
+                <View style={{ alignItems: 'center', paddingVertical: 10, gap: 6 }}>
+                  {[0, 1, 2, 3].map((n) => (
+                    <View
+                      key={n}
+                      style={{
+                        width: 4,
+                        height: 4,
+                        backgroundColor: c.ink,
+                        marginLeft: index % 2 ? 45 - n * 15 : -45 + n * 15,
+                      }}
+                    />
+                  ))}
+                </View>
+              )}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`${m.name}, ${locked ? 'locked, requires level 2' : `${m.reward} grass reward`}`}
+                accessibilityState={{ disabled: locked || p.mode !== 'awake' }}
+                disabled={locked || p.mode !== 'awake'}
+                onPress={() => {
+                  feedback('select');
+                  useGame.getState().sleep(m.id);
+                }}
+                style={{
+                  minHeight: 130,
+                  backgroundColor: c.paper,
+                  borderWidth: 2,
+                  borderColor: c.ink,
+                  padding: 14,
+                  flexDirection: 'row',
+                  gap: 12,
+                  alignItems: 'center',
+                }}
+              >
+                <PixelProp kind={(['tree', 'library', 'mountain'] as const)[index]} size={64} />
+                <View style={{ flex: 1, gap: 10 }}>
+                  <PixelText style={{ fontSize: 12 }}>{m.name}</PixelText>
+                  <PixelText>+{m.reward} GRASS</PixelText>
+                  <BodyText>
+                    {m.duration} MIN{locked ? ' · LV 2' : ''}
+                  </BodyText>
+                  {m.id === 'mountain' && <BodyText>+ random unowned hat</BodyText>}
+                </View>
+                {locked && <PixelProp kind="lock" size={24} />}
+              </Pressable>
+            </View>
+          );
+        })}
       </View>
-      {missions.map((m, index) => {
-        const Icon = [Trees, BookOpen, Mountain][index];
-        const locked = p.level < m.level;
-        return (
-          <View
-            key={m.id}
-            style={{ gap: 16, borderBottomWidth: 2, borderColor: c.shade, paddingBottom: 24 }}
-          >
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <Icon color={c.ink} size={28} strokeWidth={2.5} />
-              <PixelText style={{ flex: 1, fontSize: 13 }}>{m.name}</PixelText>
-            </View>
-            <View style={{ flexDirection: 'row', gap: 16, justifyContent: 'space-between' }}>
-              <PixelText>{m.duration} MIN</PixelText>
-              <PixelText>+{m.reward} GRASS</PixelText>
-            </View>
-            {m.id === 'mountain' && <PixelText>+ RANDOM UNOWNED HAT</PixelText>}
-            <PixelButton
-              label={locked ? 'REQUIRES LV 2' : 'START MISSION'}
-              light={index !== 0}
-              disabled={locked || p.mode !== 'awake'}
-              onPress={() => useGame.getState().sleep(m.id)}
-            />
-          </View>
-        );
-      })}
     </Page>
   );
 }
 export function ShopScreen() {
   const p = useGame((s) => s.player);
+  const [merchant, setMerchant] = useState('put the phone down. browse the hats.');
   if (!p) return null;
   const unlock =
     p.level === 1
@@ -206,6 +226,9 @@ export function ShopScreen() {
   return (
     <Page>
       <PixelText style={styles.title}>POWER UP.</PixelText>
+      <PixelScene kind="market" height={190} />
+      <PixelText style={{ fontSize: 12 }}>MOSS THE MERCHANT</PixelText>
+      <Dialogue text={merchant} />
       <View style={[styles.border, { padding: 18, gap: 20, backgroundColor: c.body }]}>
         <View
           style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
@@ -215,11 +238,18 @@ export function ShopScreen() {
           <PixelText style={{ fontSize: 16 }}>LV {p.level + 1}</PixelText>
         </View>
         <Pet species={p.species} level={p.level} size={88} bob={false} />
-        <PixelText>{unlock}</PixelText>
+        <BodyText>{unlock}</BodyText>
         <PixelButton
           label={`LEVEL UP · ${50 * p.level} GRASS`}
           disabled={p.grass < p.level * 50}
-          onPress={() => useGame.getState().levelUp()}
+          onDisabledPress={() => {
+            setMerchant("you can't afford that, doomscroller.");
+            feedback('error');
+          }}
+          onPress={() => {
+            useGame.getState().levelUp();
+            setMerchant('fine choice. very hat.');
+          }}
         />
       </View>
       <PixelText style={{ fontSize: 16, marginTop: 4 }}>HATS</PixelText>
@@ -234,7 +264,9 @@ export function ShopScreen() {
               alignItems: 'center',
               gap: 16,
               paddingVertical: 10,
-              borderBottomWidth: 2,
+              borderBottomWidth: 8,
+              backgroundColor: c.body,
+              paddingHorizontal: 10,
               borderColor: c.shade,
             }}
           >
@@ -247,7 +279,14 @@ export function ShopScreen() {
                 light={!equipped}
                 label={equipped ? 'EQUIPPED' : owned ? 'EQUIP' : 'BUY'}
                 disabled={!owned && p.grass < h.cost}
-                onPress={() => useGame.getState().hatAction(h.id)}
+                onDisabledPress={() => {
+                  setMerchant("you can't afford that, doomscroller.");
+                  feedback('error');
+                }}
+                onPress={() => {
+                  useGame.getState().hatAction(h.id);
+                  setMerchant('fine choice. very hat.');
+                }}
               />
             </View>
           </View>
@@ -285,7 +324,15 @@ function RivalRow({
     >
       <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
         <PixelText style={{ fontSize: 14 }}>#{rank}</PixelText>
-        <Pet species={p.species} level={p.level} hat={p.hat} size={96} bob={false} />
+        <PixelScene
+          species={p.species}
+          level={p.level}
+          mini
+          height={100}
+          style={{ width: 100, alignItems: 'center', justifyContent: 'flex-end' }}
+        >
+          <Pet species={p.species} level={p.level} hat={p.hat} size={96} bob={false} />
+        </PixelScene>
         <View style={{ flex: 1, gap: 4 }}>
           <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
             <PixelText numberOfLines={1} style={{ flexShrink: 1 }}>
@@ -352,6 +399,7 @@ export function ArenaScreen() {
   const header = (
     <View style={{ gap: 24 }}>
       <PixelText style={styles.title}>{'LESS SCROLL.\nMORE GLORY.'}</PixelText>
+      <PixelScene kind="town" height={160} />
       <View style={[styles.border, { padding: 16, gap: 16, backgroundColor: c.body }]}>
         <PixelText>YOUR CODE: {p.code}</PixelText>
         <PixelText>ADD RIVAL</PixelText>
@@ -377,7 +425,7 @@ export function ArenaScreen() {
         />
         {error && (
           <View style={{ gap: 8 }}>
-            <PixelText accessibilityRole="alert">{error}</PixelText>
+            <Dialogue text={error} />
             <PixelButton
               small
               light
@@ -399,10 +447,10 @@ export function ArenaScreen() {
       )}
       {!rivals.length && (
         <View style={{ alignItems: 'center', gap: 14, paddingVertical: 12 }}>
-          <Users color={c.ink} size={30} />
-          <PixelText style={{ textAlign: 'center' }}>
-            {`NO RIVALS YET.\nSHARE YOUR CODE: ${p.code}`}
-          </PixelText>
+          <Pet species={p.species} level={p.level} hat={p.hat} size={64} />
+          <BodyText
+            style={{ textAlign: 'center' }}
+          >{`it's quiet here. share my code: ${p.code}`}</BodyText>
           <PixelButton
             small
             light

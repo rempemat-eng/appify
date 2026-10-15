@@ -10,6 +10,7 @@ import {
   useFonts,
 } from '@expo-google-fonts/inter';
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import { Silkscreen_400Regular } from '@expo-google-fonts/silkscreen';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import { useEffect } from 'react';
@@ -59,6 +60,7 @@ export default function RootLayout() {
     Inter_600SemiBold,
     Inter_700Bold,
     PressStart2P_400Regular,
+    Silkscreen_400Regular,
   });
 
   // Report uncaught JS errors and unhandled promise rejections to parent (Bilt preview iframe)

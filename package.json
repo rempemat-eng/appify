@@ -17,6 +17,7 @@
     "@biltme/backend": "^0.7.0",
     "@expo-google-fonts/inter": "~0.4.2",
     "@expo-google-fonts/press-start-2p": "^0.4.1",
+    "@expo-google-fonts/silkscreen": "^0.4.2",
     "@expo/config": "~57.0.9",
     "@gorhom/bottom-sheet": "^5.2.9",
     "@hookform/resolvers": "^5.2.2",

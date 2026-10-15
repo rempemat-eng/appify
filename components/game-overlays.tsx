@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator,
+  Pressable,
   KeyboardAvoidingView,
   Modal,
   Platform,
@@ -22,6 +22,9 @@ import {
 } from '@/lib/game';
 import { BattleScreen } from '@/components/game-battle';
 import { FloatingZ, Pet, PixelButton, PixelEgg, PixelText, styles } from '@/components/game-ui';
+import { PixelScene } from '@/components/pixel-scenes';
+import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
+import Animated, { FadeIn, SlideInDown, useReducedMotion } from 'react-native-reanimated';
 function Onboarding() {
   const [step, setStep] = useState(0);
   const [species, setSpecies] = useState<Player['species']>('BLOB');
@@ -58,7 +61,22 @@ function Onboarding() {
           gap: 30,
         }}
       >
-        <PixelEgg cracking />
+        <PixelScene
+          kind="nest"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            height: '100%',
+            borderWidth: 0,
+          }}
+        />
+        <PixelEgg
+          cracking
+          color={species === 'BLOB' ? c.paper : species === 'RAT' ? c.error : c.slate}
+        />
         <PixelText style={{ fontSize: 17 }}>HATCHING...</PixelText>
       </View>
     );
@@ -91,49 +109,43 @@ function Onboarding() {
             <PixelText style={{ fontSize: 14, lineHeight: 24, marginTop: 8 }}>
               CHOOSE YOUR STARTER
             </PixelText>
-            <View style={{ gap: 14 }}>
-              {(['BLOB', 'RAT', 'CUBE'] as const).map((s, index) => (
-                <View
-                  key={s}
-                  style={{
-                    borderWidth: 2,
-                    borderColor: c.ink,
-                    backgroundColor: species === s ? c.body : c.paper,
-                  }}
-                >
-                  <PixelButton
-                    label={`${species === s ? '> ' : ''}${s}`}
-                    light={species !== s}
-                    small
+            <PixelScene
+              kind="nest"
+              height={230}
+              style={{ justifyContent: 'flex-end', paddingBottom: 32 }}
+            >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-around', gap: 4 }}>
+                {(['BLOB', 'RAT', 'CUBE'] as const).map((s, index) => (
+                  <Pressable
+                    key={s}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Hatch ${s}`}
                     onPress={() => {
                       setSpecies(s);
+                      setStep(1);
                       feedback('select');
                     }}
-                  />
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      gap: 20,
-                      paddingHorizontal: 16,
-                      paddingVertical: 9,
-                    }}
+                    style={{ alignItems: 'center', flex: 1, minHeight: 100, gap: 12 }}
                   >
-                    <Pet species={s} size={96} bob={species === s} />
-                    <PixelText style={{ flex: 1 }}>
-                      {['SQUISHY TANK', 'FAST NIBBLER', 'GLITCHY GENIUS'][index]}
+                    <PixelEgg size={64} color={[c.paper, c.error, c.slate][index]} />
+                    <PixelText style={{ fontSize: 11, backgroundColor: c.paper, padding: 4 }}>
+                      {s}
                     </PixelText>
-                  </View>
-                </View>
-              ))}
-            </View>
-            <PixelText style={{ fontSize: 11 }}>SAME STATS. DIFFERENT PIXELS.</PixelText>
+                  </Pressable>
+                ))}
+              </View>
+            </PixelScene>
+            <BodyText style={{ textAlign: 'center' }}>tap an egg. meet your tiny menace.</BodyText>
           </>
         ) : (
           <>
-            <View style={{ alignItems: 'center', paddingVertical: 6 }}>
+            <PixelScene
+              species={species}
+              height={190}
+              style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 16 }}
+            >
               <Pet species={species} size={120} />
-            </View>
+            </PixelScene>
             <View style={{ gap: 12 }}>
               <PixelText>YOUR NAME</PixelText>
               <TextInput
@@ -150,7 +162,7 @@ function Onboarding() {
                 placeholderTextColor={c.shade}
                 autoCorrect={false}
               />
-              {error && <PixelText accessibilityRole="alert">GIVE YOURSELF A NAME.</PixelText>}
+              {error && <Dialogue text="give yourself a name." />}
             </View>
             <View style={{ gap: 12 }}>
               <PixelText>PET NAME</PixelText>
@@ -205,6 +217,12 @@ function ScreenOff() {
         alignItems: 'stretch',
       }}
     >
+      <View
+        pointerEvents="none"
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+      >
+        <PixelScene kind="night" style={{ height: '100%', borderWidth: 0 }} />
+      </View>
       <View style={{ alignItems: 'center', gap: 16, paddingTop: 20 }}>
         <Shield color={c.paper} size={30} />
         <PixelText style={{ color: c.paper, textAlign: 'center', fontSize: 13, lineHeight: 24 }}>
@@ -214,15 +232,22 @@ function ScreenOff() {
       </View>
       <View style={{ alignItems: 'center', gap: 28 }}>
         {!m && <FloatingZ />}
-        <Pet
-          species={p.species}
-          level={p.level}
-          hat={p.hat}
-          sleeping={!m}
-          walking={!!m}
-          bob
-          size={160}
-        />
+        {m ? (
+          <PixelScene
+            kind={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
+            height={225}
+            style={{
+              width: '100%',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+              paddingBottom: 15,
+            }}
+          >
+            <Pet species={p.species} level={p.level} hat={p.hat} walking size={160} />
+          </PixelScene>
+        ) : (
+          <Pet species={p.species} level={p.level} hat={p.hat} sleeping size={160} />
+        )}
         {m ? (
           <>
             <PixelText style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}>
@@ -231,9 +256,11 @@ function ScreenOff() {
             <PixelText style={{ color: c.body }}>UNTIL HOME · MIN</PixelText>
           </>
         ) : (
-          <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
-            {`OFFLINE ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
-          </PixelText>
+          <Pulse active color={c.gold} style={{ padding: 12, borderWidth: 2, borderColor: c.gold }}>
+            <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
+              {`OFFLINE ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
+            </PixelText>
+          </Pulse>
         )}
       </View>
       <View style={{ gap: 18, paddingBottom: 24 }}>
@@ -248,6 +275,11 @@ function ScreenOff() {
 function DefenderAlert() {
   const item = useGame((s) => s.alerts[0]);
   const [pending, setPending] = useState(false);
+  const [slumped, setSlumped] = useState(true);
+  useEffect(() => {
+    const timer = setTimeout(() => setSlumped(false), 10000);
+    return () => clearTimeout(timer);
+  }, []);
   if (!item) return null;
   const a = item.attacker;
   const p = gameStore.getState().player!;
@@ -260,6 +292,16 @@ function DefenderAlert() {
   }
   return (
     <View style={{ flex: 1, padding: 24, backgroundColor: c.paper }}>
+      <View
+        pointerEvents="none"
+        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+      >
+        <PixelScene
+          species={p.species}
+          level={p.level}
+          style={{ height: '100%', borderWidth: 0 }}
+        />
+      </View>
       <ScrollView
         contentContainerStyle={{
           flexGrow: 1,
@@ -269,19 +311,37 @@ function DefenderAlert() {
         }}
       >
         <Swords size={42} color={c.ink} />
-        <PixelText style={{ fontSize: 17, lineHeight: 30, textAlign: 'center' }}>
+        <PixelText
+          style={{
+            fontSize: 17,
+            lineHeight: 30,
+            textAlign: 'center',
+            backgroundColor: c.paper,
+            padding: 12,
+          }}
+        >
           {`${a?.name ?? 'A RIVAL'}\nRAIDED YOU!`}
         </PixelText>
-        <Pet species={p.species} level={p.level} hat={p.hat} grumpy={p.mood < 30} size={120} />
-        <View style={[styles.border, { padding: 20, alignSelf: 'stretch' }]}>
-          <PixelText style={{ textAlign: 'center', fontSize: 14, lineHeight: 27 }}>
-            {item.raid.attacker_won
-              ? `THEY STOLE\n${item.raid.grass_amount} GRASS`
-              : 'RAID REPELLED!\n+20 GRASS'}
-          </PixelText>
-        </View>
+        <Pet
+          species={p.species}
+          level={p.level}
+          hat={p.hat}
+          grumpy={p.mood < 30}
+          slumped={slumped}
+          size={120}
+        />
+        <Dialogue
+          text={
+            item.raid.attacker_won
+              ? `they stole ${item.raid.grass_amount} grass`
+              : 'raid repelled! +20 grass'
+          }
+          style={{ alignSelf: 'stretch' }}
+        />
         <Shield size={26} color={c.ink} />
-        <PixelText style={{ textAlign: 'center' }}>RECOVERY SHIELD: 60 MIN</PixelText>
+        <PixelText style={{ textAlign: 'center', backgroundColor: c.paper, padding: 8 }}>
+          RECOVERY SHIELD: 60 MIN
+        </PixelText>
       </ScrollView>
       <View style={{ gap: 12, paddingTop: 24 }}>
         <PixelButton
@@ -302,8 +362,9 @@ export function GameOverlays() {
   const message = useGame((s) => s.message);
   const flash = useGame((s) => s.flash);
   const insets = useSafeAreaInsets();
+  const reduced = useReducedMotion();
   const isScreenOff = !!p && p.mode !== 'awake';
-  const visible = !ready || !p || isScreenOff || !!battle || !!alert || !!message || !!flash;
+  const visible = !ready || !p || isScreenOff || !!battle || !!alert || !!flash;
   useEffect(() => {
     if (!flash) return undefined;
     const timeout = setTimeout(() => useGame.setState({ flash: null }), 1600);
@@ -317,65 +378,95 @@ export function GameOverlays() {
     else useGame.setState({ message: null, flash: null });
   }
   return (
-    <Modal visible={visible} animationType="none" statusBarTranslucent onRequestClose={dismiss}>
-      <View
-        style={{
-          flex: 1,
-          paddingTop: insets.top,
-          paddingBottom: insets.bottom,
-          backgroundColor: isScreenOff ? c.night : c.paper,
-        }}
-      >
-        {!ready ? (
-          <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-            <PixelEgg />
-            <ActivityIndicator color={c.ink} />
-            <PixelText>LOADING YOUR PIXELS...</PixelText>
-          </View>
-        ) : !p ? (
-          <Onboarding />
-        ) : isScreenOff ? (
-          <ScreenOff />
-        ) : battle ? (
-          <BattleScreen key={`${battle.target.id}-${battle.practice}`} request={battle} />
-        ) : alert ? (
-          <DefenderAlert key={alert.raid.id} />
-        ) : flash ? (
-          <View
-            style={{
-              flex: 1,
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: 32,
-              padding: 24,
-              backgroundColor: c.flash,
-            }}
-          >
-            <Pet species={p.species} level={p.level} hat={p.hat} />
-            <PixelText style={{ fontSize: 18, lineHeight: 34, textAlign: 'center' }}>
-              {flash}
-            </PixelText>
-          </View>
-        ) : (
-          <View
-            style={{
-              flex: 1,
-              backgroundColor: c.paper,
-              padding: 24,
-              justifyContent: 'center',
-              gap: 28,
-            }}
-          >
-            <View style={{ alignItems: 'center' }}>
-              <Pet species={p.species} level={p.level} hat={p.hat} size={120} />
+    <>
+      <Modal visible={visible} animationType="none" statusBarTranslucent onRequestClose={dismiss}>
+        <View
+          style={{
+            flex: 1,
+            paddingTop: insets.top,
+            paddingBottom: insets.bottom,
+            backgroundColor: isScreenOff ? c.night : c.paper,
+          }}
+        >
+          {!ready ? (
+            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+              <PixelScene
+                kind="nest"
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: '100%',
+                  borderWidth: 0,
+                }}
+              />
+              <Pet species="BLOB" walking size={64} />
+              <BodyText>one moment. tiny legs.</BodyText>
             </View>
-            <PixelText style={{ textAlign: 'center', fontSize: 14, lineHeight: 28 }}>
-              {message}
-            </PixelText>
-            <PixelButton label="OK" onPress={() => useGame.setState({ message: null })} />
-          </View>
-        )}
-      </View>
-    </Modal>
+          ) : !p ? (
+            <Onboarding />
+          ) : isScreenOff ? (
+            <ScreenOff />
+          ) : battle ? (
+            <BattleScreen key={`${battle.target.id}-${battle.practice}`} request={battle} />
+          ) : alert ? (
+            <DefenderAlert key={alert.raid.id} />
+          ) : flash ? (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: 'center',
+                alignItems: 'center',
+                gap: 32,
+                padding: 24,
+                backgroundColor: c.flash,
+              }}
+            >
+              <PixelScene
+                species={p.species}
+                level={p.level}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  height: '100%',
+                  borderWidth: 0,
+                }}
+              />
+              <Pet
+                species={p.species}
+                level={p.level}
+                hat={p.hat}
+                victory={flash.includes('VICTORY')}
+              />
+              <PixelText style={{ fontSize: 18, lineHeight: 34, textAlign: 'center' }}>
+                {flash}
+              </PixelText>
+            </View>
+          ) : null}
+        </View>
+      </Modal>
+      {!visible && message && (
+        <Animated.View
+          key={message}
+          entering={reduced ? FadeIn : SlideInDown.duration(180)}
+          style={{
+            position: 'absolute',
+            top: insets.top + 12,
+            left: 16,
+            right: 16,
+            zIndex: 100,
+            gap: 8,
+          }}
+        >
+          <Dialogue text={message} />
+          <PixelButton label="OK" small light onPress={() => useGame.setState({ message: null })} />
+        </Animated.View>
+      )}
+    </>
   );
 }

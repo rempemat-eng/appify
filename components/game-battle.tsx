@@ -30,6 +30,9 @@ import {
   type Side,
 } from '@/lib/battle';
 import { EnergyPips, Meter, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
+import { PixelScene, BattlePad } from '@/components/pixel-scenes';
+import { Dialogue, BodyText, BattleIntro, Pulse } from '@/components/pixel-feedback';
+import { SlideInLeft, SlideInRight } from 'react-native-reanimated';
 
 type Phase = 'choose' | 'timing' | 'block' | 'resolve' | 'waiting' | 'skipped' | 'end';
 function Damage({ amount }: { amount: number }) {
@@ -95,6 +98,7 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
 export function BattleScreen({ request }: { request: BattleRequest }) {
   // Snapshot the player for this battle; refs below are only action/timer locks.
   const [player] = useState(() => gameStore.getState().player!);
+  const reduced = useReducedMotion();
   const target = request.target;
   const [combat, setCombat] = useState(() => createCombat(player, target));
   const combatRef = useRef(combat);
@@ -315,8 +319,24 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   );
   return (
     <View style={{ flex: 1, backgroundColor: c.paper }}>
+      <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+        <PixelScene
+          species={target.species}
+          level={target.level}
+          style={{ height: '100%', borderWidth: 0 }}
+        />
+        <Pulse
+          active={combat.d.hp < maxHp(target) * 0.25}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '50%' }}
+        />
+        <Pulse
+          active={combat.a.hp < maxHp(player) * 0.25}
+          style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%' }}
+        />
+      </View>
       <View
         style={{
+          backgroundColor: c.paper,
           paddingHorizontal: 16,
           paddingVertical: 12,
           gap: 10,
@@ -374,7 +394,10 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
       >
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <Info p={target} f={combat.d} />
-          <View style={{ width: 96 }}>
+          <Animated.View
+            entering={reduced ? FadeIn.duration(150) : SlideInRight.delay(780).duration(240)}
+            style={{ width: 96 }}
+          >
             <Pet
               species={target.species}
               level={target.level}
@@ -386,11 +409,15 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               hit={hit.d}
               attack={attack.d}
             />
+            <BattlePad species={target.species} />
             {damage?.side === 'd' && <Damage key={damage.id} amount={damage.amount} />}
-          </View>
+          </Animated.View>
         </View>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <View style={{ width: 96 }}>
+          <Animated.View
+            entering={reduced ? FadeIn.duration(150) : SlideInLeft.delay(780).duration(240)}
+            style={{ width: 96 }}
+          >
             <Pet
               species={player.species}
               level={player.level}
@@ -401,29 +428,24 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               hit={hit.a}
               attack={attack.a}
             />
+            <BattlePad species={player.species} />
             {damage?.side === 'a' && <Damage key={damage.id} amount={damage.amount} />}
-          </View>
+          </Animated.View>
           <Info p={player} f={combat.a} />
         </View>
-        <View
-          accessibilityLiveRegion="polite"
-          style={[styles.border, { padding: 12, minHeight: 84, backgroundColor: c.body }]}
-        >
-          <PixelText>{log}</PixelText>
-        </View>
+        <Dialogue text={log} />
         {history.length > 1 && (
-          <View style={{ gap: 8 }}>
+          <View style={[styles.border, { gap: 8, padding: 12, backgroundColor: c.paper }]}>
             <PixelText>BATTLE LOG</PixelText>
             {history.slice(0, -1).map((entry) => (
-              <PixelText key={entry.id} style={{ color: c.shade }}>
-                {entry.line}
-              </PixelText>
+              <BodyText key={entry.id}>{entry.line}</BodyText>
             ))}
           </View>
         )}
       </ScrollView>
       <View
         style={{
+          backgroundColor: c.paper,
           padding: 14,
           gap: 10,
           borderTopWidth: 2,
@@ -532,6 +554,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           </>
         )}
       </View>
+      <BattleIntro />
       {flash && (
         <View
           pointerEvents="none"

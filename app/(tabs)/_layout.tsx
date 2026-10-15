@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Home, Trees, Swords, ShoppingBag } from 'lucide-react-native';
+import { PixelTabIcon, PixelDissolve } from '@/components/pixel-feedback';
+import { usePathname } from 'expo-router';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GameHeader } from '@/components/game-ui';
@@ -8,6 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { feedback, palette as c, startGame } from '@/lib/game';
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const path = usePathname();
   useEffect(() => startGame(), []);
   return (
     <>
@@ -41,7 +43,9 @@ export default function TabLayout() {
           name="index"
           options={{
             title: 'HOME',
-            tabBarIcon: ({ color }) => <Home color={color} size={22} strokeWidth={2.5} />,
+            tabBarIcon: ({ color, focused }) => (
+              <PixelTabIcon kind="house" color={color} focused={focused} />
+            ),
           }}
         />
         <Tabs.Screen
@@ -49,24 +53,31 @@ export default function TabLayout() {
           options={{
             title: 'MISSIONS',
             tabBarItemStyle: { flex: 1.3 },
-            tabBarIcon: ({ color }) => <Trees color={color} size={22} strokeWidth={2.5} />,
+            tabBarIcon: ({ color, focused }) => (
+              <PixelTabIcon kind="map" color={color} focused={focused} />
+            ),
           }}
         />
         <Tabs.Screen
           name="arena"
           options={{
             title: 'ARENA',
-            tabBarIcon: ({ color }) => <Swords color={color} size={22} strokeWidth={2.5} />,
+            tabBarIcon: ({ color, focused }) => (
+              <PixelTabIcon kind="swords" color={color} focused={focused} />
+            ),
           }}
         />
         <Tabs.Screen
           name="shop"
           options={{
             title: 'SHOP',
-            tabBarIcon: ({ color }) => <ShoppingBag color={color} size={22} strokeWidth={2.5} />,
+            tabBarIcon: ({ color, focused }) => (
+              <PixelTabIcon kind="bag" color={color} focused={focused} />
+            ),
           }}
         />
       </Tabs>
+      <PixelDissolve key={path} />
       <GameOverlays />
     </>
   );

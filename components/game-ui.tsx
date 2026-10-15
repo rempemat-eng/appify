@@ -19,7 +19,10 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
-import { Shield, TriangleAlert, Moon, Sprout, Clock3 } from 'lucide-react-native';
+import { Sprout } from 'lucide-react-native';
+import { PixelProp } from '@/components/pixel-scenes';
+import { GrassRoll, Pulse } from '@/components/pixel-feedback';
+import { feedback } from '@/lib/game';
 import { palette as c, status, clock, useGame, type Player } from '@/lib/game';
 import { petPixels } from '@/lib/pet-art';
 
@@ -36,6 +39,7 @@ export function PixelButton({
   gold = false,
   energyCost,
   onLongPress,
+  onDisabledPress,
 }: {
   label: string;
   onPress: () => void;
@@ -46,6 +50,7 @@ export function PixelButton({
   gold?: boolean;
   energyCost?: number;
   onLongPress?: () => void;
+  onDisabledPress?: () => void;
 }) {
   return (
     <View style={{ paddingRight: 4, paddingBottom: 4, opacity: disabled ? 0.45 : 1 }}>
@@ -53,12 +58,20 @@ export function PixelButton({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={label}
-        disabled={disabled}
-        onPress={onPress}
+        disabled={disabled && !onDisabledPress}
+        accessibilityState={{ disabled }}
+        onPress={() => {
+          if (disabled) {
+            onDisabledPress?.();
+            return;
+          }
+          feedback('select');
+          onPress();
+        }}
         onLongPress={onLongPress}
         style={({ pressed }) => [
           {
-            minHeight: small ? 42 : 54,
+            minHeight: small ? 48 : 54,
             paddingVertical: small ? 12 : 17,
             paddingHorizontal: 12,
             borderWidth: 2,
@@ -66,7 +79,8 @@ export function PixelButton({
             backgroundColor: danger ? c.error : gold ? c.gold : light ? c.paper : c.positive,
             justifyContent: 'center',
             alignItems: 'center',
-            transform: [{ translateX: pressed ? 4 : 0 }, { translateY: pressed ? 4 : 0 }],
+            borderBottomWidth: 4,
+            transform: [{ translateY: pressed ? 2 : 0 }],
           },
         ]}
       >
@@ -125,6 +139,8 @@ export function Pet({
   bob = true,
   hit = 0,
   attack = 0,
+  victory = false,
+  slumped = false,
 }: {
   species?: Player['species'];
   size?: number;
@@ -137,11 +153,70 @@ export function Pet({
   bob?: boolean;
   hit?: number;
   attack?: number;
+  victory?: boolean;
+  slumped?: boolean;
 }) {
   const reduced = useReducedMotion();
   const y = useSharedValue(0);
   const x = useSharedValue(0);
   const [stride, setStride] = useState(false);
+  const [blink, setBlink] = useState(false);
+  const [idle, setIdle] = useState<'rest' | 'yawn' | 'look'>('rest');
+  const [heart, setHeart] = useState(false);
+  useEffect(() => {
+    let close: ReturnType<typeof setTimeout>;
+    const timer = setInterval(() => {
+      setBlink(true);
+      close = setTimeout(() => setBlink(false), 160);
+    }, 4000);
+    return () => {
+      clearInterval(timer);
+      clearTimeout(close);
+    };
+  }, []);
+  useEffect(() => {
+    if (!bob || sleeping || walking || reduced || slumped) return undefined;
+    let timer: ReturnType<typeof setTimeout>;
+    let reset: ReturnType<typeof setTimeout>;
+    function schedule() {
+      timer = setTimeout(
+        () => {
+          const choice = Math.floor(Math.random() * 3);
+          if (choice === 0)
+            y.set(
+              withSequence(withTiming(-12, { duration: 150 }), withTiming(0, { duration: 200 })),
+            );
+          else {
+            setIdle(choice === 1 ? 'yawn' : 'look');
+            reset = setTimeout(() => setIdle('rest'), 900);
+          }
+          schedule();
+        },
+        10000 + Math.random() * 5000,
+      );
+    }
+    schedule();
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(reset);
+    };
+  }, [bob, sleeping, walking, reduced, slumped, y]);
+  useEffect(() => {
+    if (victory && !reduced)
+      y.set(
+        withSequence(
+          withTiming(-18, { duration: 160 }),
+          withTiming(0, { duration: 180 }),
+          withTiming(-10, { duration: 130 }),
+          withTiming(0, { duration: 160 }),
+        ),
+      );
+  }, [victory, reduced, y]);
+  useEffect(() => {
+    if (!heart) return undefined;
+    const timer = setTimeout(() => setHeart(false), 800);
+    return () => clearTimeout(timer);
+  }, [heart]);
   const [flashState, setFlashState] = useState({ hit, flashing: false });
   // A new hit starts its flash in the same render, not a cascading effect update.
   if (flashState.hit !== hit) setFlashState({ hit, flashing: hit !== 0 });
@@ -187,30 +262,59 @@ export function Pet({
   const motion = useAnimatedStyle(() => ({
     transform: [{ translateY: Math.round(y.value) }, { translateX: Math.round(x.value) }],
   }));
-  const pixels = petPixels(species, level, hat, sleeping, grumpy);
+  const pixels = petPixels(species, level, hat, sleeping || blink || idle === 'yawn', grumpy);
   const scaledSize = Math.max(32, Math.round(size / 32) * 32);
   return (
     <Animated.View
       accessibilityLabel={`${species} stage ${Math.min(3, level)} pet${grumpy ? ', grumpy' : ''}${sleeping ? ', sleeping' : ''}${hat ? ` wearing ${hat}` : ''}`}
       style={[{ width: scaledSize, height: scaledSize }, motion]}
     >
-      <Svg
-        width={scaledSize}
-        height={scaledSize}
-        viewBox="0 0 32 32"
-        style={{ transform: [{ scaleX: facing === 'left' ? -1 : 1 }] }}
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={`Pet ${species}`}
+        onPress={() => {
+          feedback('select');
+          setHeart(true);
+          if (!reduced)
+            y.set(
+              withSequence(withTiming(-20, { duration: 140 }), withTiming(0, { duration: 200 })),
+            );
+        }}
       >
-        {pixels.map(({ x: rx, y: ry, color }) => (
-          <Rect
-            key={`${rx}-${ry}`}
-            x={rx}
-            y={walking && ry >= 26 && ry <= 28 && rx < 17 === stride ? ry - 1 : ry}
-            width={1}
-            height={1}
-            fill={flashing ? c.flash : color}
-          />
-        ))}
-      </Svg>
+        {heart && (
+          <View
+            pointerEvents="none"
+            style={{ position: 'absolute', top: -16, left: scaledSize / 2 - 16, zIndex: 4 }}
+          >
+            <PixelProp kind="heart" size={32} />
+          </View>
+        )}
+        <Svg
+          width={scaledSize}
+          height={scaledSize}
+          viewBox="0 0 32 32"
+          style={{
+            transform: [
+              { scaleX: facing === 'left' ? -1 : 1 },
+              { scaleY: slumped ? 0.82 : 1 },
+              { translateY: slumped ? 10 : 0 },
+              { translateX: idle === 'look' ? 3 : 0 },
+            ],
+          }}
+        >
+          {pixels.map(({ x: rx, y: ry, color }) => (
+            <Rect
+              key={`${rx}-${ry}`}
+              x={rx}
+              y={walking && ry >= 26 && ry <= 28 && rx < 17 === stride ? ry - 1 : ry}
+              width={1}
+              height={1}
+              fill={flashing ? c.flash : color}
+            />
+          ))}
+          {idle === 'yawn' && <Rect x={21} y={22} width={3} height={3} fill={c.ink} />}
+        </Svg>
+      </Pressable>
     </Animated.View>
   );
 }
@@ -237,7 +341,15 @@ export function FloatingZ() {
     </Animated.View>
   );
 }
-export function PixelEgg({ cracking = false }: { cracking?: boolean }) {
+export function PixelEgg({
+  cracking = false,
+  color = c.body,
+  size = 96,
+}: {
+  cracking?: boolean;
+  color?: string;
+  size?: number;
+}) {
   const value = useSharedValue(0);
   const reduced = useReducedMotion();
   useEffect(() => {
@@ -269,10 +381,10 @@ export function PixelEgg({ cracking = false }: { cracking?: boolean }) {
   ];
   return (
     <Animated.View style={animation}>
-      <Svg width={132} height={132} viewBox="0 0 12 12">
+      <Svg width={size} height={size} viewBox="0 0 12 12">
         {pixelCells(egg).map(({ id, pixel, x, y }) =>
           pixel === '.' ? null : (
-            <Rect key={id} x={x} y={y} width={1} height={1} fill={pixel === 'K' ? c.ink : c.body} />
+            <Rect key={id} x={x} y={y} width={1} height={1} fill={pixel === 'K' ? c.ink : color} />
           ),
         )}
         {cracking && (
@@ -314,22 +426,19 @@ export function Meter({
 export function StatusChip({ player, compact = false }: { player: Player; compact?: boolean }) {
   const now = useGame((s) => s.now);
   const state = status(player, now);
-  const Icon =
-    state.label === 'SCREEN OFF'
-      ? Moon
-      : state.kind === 'exposed'
-        ? TriangleAlert
-        : state.kind === 'care'
-          ? Clock3
-          : Shield;
+  const off = state.label === 'SCREEN OFF';
   return (
-    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}>
-      <Icon size={compact ? 12 : 14} color={c.ink} strokeWidth={2.5} />
+    <Pulse
+      active={state.kind === 'exposed' || off}
+      color={off ? c.night : c.error}
+      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingVertical: 4 }}
+    >
+      <PixelProp kind="shield" size={compact ? 16 : 20} />
       <PixelText numberOfLines={1} style={{ fontSize: 11, lineHeight: 17 }}>
         {state.label}
         {state.left ? ` ${clock(state.left)}` : ''}
       </PixelText>
-    </View>
+    </Pulse>
   );
 }
 export function GameHeader() {
@@ -358,17 +467,17 @@ export function GameHeader() {
         <Pressable
           accessibilityLabel="Pet protection status"
           onLongPress={() => p && useGame.getState().change({ care_until: 0, recovery_until: 0 })}
-          style={{ flex: 1 }}
+          style={{ flex: 1, minHeight: 48, justifyContent: 'center' }}
         >
           {p && <StatusChip player={p} />}
         </Pressable>
         <Pressable
           accessibilityLabel="Grass balance"
           onLongPress={() => p && useGame.getState().change({ grass: p.grass + 100 })}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 5 }}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 5, minHeight: 48 }}
         >
           <Sprout size={19} color={c.ink} strokeWidth={2.5} />
-          <PixelText style={{ fontSize: 13 }}>{p?.grass ?? 20}</PixelText>
+          <GrassRoll value={p?.grass ?? 20} />
         </Pressable>
       </View>
       <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center', marginTop: 8 }}>
