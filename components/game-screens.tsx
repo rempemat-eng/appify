@@ -1,6 +1,15 @@
 import { useEffect, useState } from 'react';
 import { FlatList, KeyboardAvoidingView, Platform, TextInput, View } from 'react-native';
-import { Users, Mountain, BookOpen, Trees, Moon, ArrowUp, Bot } from 'lucide-react-native';
+import {
+  Users,
+  Mountain,
+  BookOpen,
+  Trees,
+  Moon,
+  ArrowUp,
+  ArrowDown,
+  Bot,
+} from 'lucide-react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import {
   bot,
@@ -12,6 +21,7 @@ import {
   useGame,
   type Player,
 } from '@/lib/game';
+import { matchup } from '@/lib/battle';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 const lines = {
   grumpy: ['i hate it here. put the phone down.', 'my pixels hurt.'],
@@ -84,7 +94,7 @@ export function HomeScreen() {
       <View
         style={{ alignItems: 'center', justifyContent: 'center', minHeight: 206, paddingTop: 18 }}
       >
-        <Pet species={p.species} hat={p.hat} grumpy={p.mood < 30} />
+        <Pet species={p.species} level={p.level} hat={p.hat} grumpy={p.mood < 30} />
         {crumbs && (
           <Animated.View
             entering={FadeIn}
@@ -99,9 +109,6 @@ export function HomeScreen() {
             ))}
           </Animated.View>
         )}
-        <View
-          style={{ height: 5, width: 136, backgroundColor: c.shade, opacity: 0.4, marginTop: 5 }}
-        />
         <PixelText style={{ fontSize: 15, marginTop: 16 }}>{p.pet_name}</PixelText>
       </View>
       <View style={{ gap: 9 }}>
@@ -207,7 +214,7 @@ export function ShopScreen() {
           <ArrowUp size={24} color={c.ink} />
           <PixelText style={{ fontSize: 16 }}>LV {p.level + 1}</PixelText>
         </View>
-        <Pet species={p.species} size={88} bob={false} />
+        <Pet species={p.species} level={p.level} size={88} bob={false} />
         <PixelText>{unlock}</PixelText>
         <PixelButton
           label={`LEVEL UP · ${50 * p.level} GRASS`}
@@ -231,7 +238,7 @@ export function ShopScreen() {
               borderColor: c.shade,
             }}
           >
-            <Pet species={p.species} size={64} hat={h.id} bob={false} />
+            <Pet species={p.species} level={p.level} size={96} hat={h.id} bob={false} />
             <View style={{ flex: 1, gap: 12 }}>
               <PixelText style={{ fontSize: 12 }}>{h.id}</PixelText>
               {!owned && <PixelText>{h.cost} GRASS</PixelText>}
@@ -263,6 +270,8 @@ function RivalRow({
   onRaid: (p: Player) => void;
 }) {
   const now = useGame((s) => s.now);
+  const mySpecies = useGame((s) => s.player?.species);
+  const type = mySpecies ? matchup(mySpecies, p.species) : 1;
   const exposed = status(p, now).kind === 'exposed';
   return (
     <View
@@ -276,9 +285,19 @@ function RivalRow({
     >
       <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
         <PixelText style={{ fontSize: 14 }}>#{rank}</PixelText>
-        <Pet species={p.species} hat={p.hat} size={48} bob={false} />
+        <Pet species={p.species} level={p.level} hat={p.hat} size={96} bob={false} />
         <View style={{ flex: 1, gap: 4 }}>
-          <PixelText numberOfLines={1}>{me ? 'YOU' : p.name}</PixelText>
+          <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+            <PixelText numberOfLines={1} style={{ flexShrink: 1 }}>
+              {me ? 'YOU' : p.name}
+            </PixelText>
+            {!me && type > 1 && (
+              <ArrowUp accessibilityLabel="Strong matchup" size={14} color={c.moss} />
+            )}
+            {!me && type < 1 && (
+              <ArrowDown accessibilityLabel="Weak matchup" size={14} color={c.error} />
+            )}
+          </View>
           <PixelText>
             LV {p.level} · {p.grass} GRASS
           </PixelText>
@@ -404,7 +423,7 @@ export function ArenaScreen() {
         <PixelText style={{ fontSize: 16 }}>TRAINING</PixelText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Pet species="RAT" size={60} bob={false} />
+        <Pet species="RAT" level={p.level} size={96} bob={false} />
         <View style={{ flex: 1, gap: 4 }}>
           <PixelText>DOOMSCROLL DAVE</PixelText>
           <PixelText>LV {p.level} · MOOD 50</PixelText>

@@ -8,14 +8,21 @@ import { bilt } from '@/lib/bilt';
 
 export type Player = Database['public']['Tables']['players']['Row'];
 export type Raid = Database['public']['Tables']['raids']['Row'];
-export const ink = '#0F380F';
+export const ink = '#4A3B35';
 export const palette = {
   ink,
-  shade: '#306230',
-  body: '#8BAC0F',
-  paper: '#9BBC0F',
+  buttonInk: '#2F251F',
+  shade: '#6B5545',
+  body: '#D9B48F',
+  paper: '#F2E6C9',
+  positive: '#5FA35A',
+  moss: '#3E7D44',
+  error: '#A85A43',
+  night: '#3A3F5C',
+  slate: '#8FA3BD',
+  gold: '#C8A457',
+  stone: '#B3A57E',
   flash: '#FFFFFF',
-  error: '#8B1919',
 };
 export const hats = [
   { id: 'CAP', emoji: '🧢', cost: 30 },
@@ -520,7 +527,7 @@ export const gameStore = create<Game>((set, get) => ({
     const level = p.level + 1;
     get().change({ level, grass: p.grass - 50 * p.level });
     set({
-      flash: `LEVEL UP!\nLV ${level}${level === 2 ? '\nSCREEN BREAK UNLOCKED' : level === 3 ? '\nTHICK SKIN UNLOCKED' : ''}`,
+      flash: `${level <= 3 ? 'EVOLVED!' : 'LEVEL UP!'}\nLV ${level}${level === 2 ? '\nSCREEN BREAK UNLOCKED' : level === 3 ? '\nTHICK SKIN UNLOCKED' : ''}`,
     });
     feedback();
   },

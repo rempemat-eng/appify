@@ -42,26 +42,26 @@
 @layer theme {
   :root {
     @variant light {
-      --background: oklch(0.74 0.17 120);
-      --foreground: oklch(0.3 0.07 145);
-      --surface: oklch(0.7 0.16 120);
-      --accent: oklch(0.42 0.09 145);
-      --accent-foreground: oklch(0.74 0.17 120);
-      --border: oklch(0.3 0.07 145);
-      --muted: oklch(0.42 0.09 145);
-      --default: oklch(0.7 0.16 120);
-      --default-foreground: oklch(0.3 0.07 145);
+      --background: oklch(0.925 0.04 88);
+      --foreground: oklch(0.365 0.024 43);
+      --surface: oklch(0.795 0.065 67);
+      --accent: oklch(0.65 0.12 142);
+      --accent-foreground: oklch(0.365 0.024 43);
+      --border: oklch(0.365 0.024 43);
+      --muted: oklch(0.465 0.039 61);
+      --default: oklch(0.795 0.065 67);
+      --default-foreground: oklch(0.365 0.024 43);
     }
     @variant dark {
-      --background: oklch(0.74 0.17 120);
-      --foreground: oklch(0.3 0.07 145);
-      --surface: oklch(0.7 0.16 120);
-      --accent: oklch(0.42 0.09 145);
-      --accent-foreground: oklch(0.74 0.17 120);
-      --border: oklch(0.3 0.07 145);
-      --muted: oklch(0.42 0.09 145);
-      --default: oklch(0.7 0.16 120);
-      --default-foreground: oklch(0.3 0.07 145);
+      --background: oklch(0.925 0.04 88);
+      --foreground: oklch(0.365 0.024 43);
+      --surface: oklch(0.795 0.065 67);
+      --accent: oklch(0.65 0.12 142);
+      --accent-foreground: oklch(0.365 0.024 43);
+      --border: oklch(0.365 0.024 43);
+      --muted: oklch(0.465 0.039 61);
+      --default: oklch(0.795 0.065 67);
+      --default-foreground: oklch(0.365 0.024 43);
     }
   }
 }

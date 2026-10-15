@@ -81,7 +81,7 @@ function Onboarding() {
       >
         <View style={{ gap: 16 }}>
           <PixelText style={{ fontSize: 21, lineHeight: 33 }}>{'SCREENA\nGOTCHI'}</PixelText>
-          <View style={{ height: 4, backgroundColor: c.ink, width: 52 }} />
+          <View style={{ height: 4, backgroundColor: c.night, width: 52 }} />
           <PixelText style={{ fontSize: 11, lineHeight: 21 }}>
             {"PUT YOUR PHONE DOWN.\nYOUR PET'S LIFE DEPENDS ON IT."}
           </PixelText>
@@ -119,7 +119,7 @@ function Onboarding() {
                       paddingVertical: 9,
                     }}
                   >
-                    <Pet species={s} size={66} bob={species === s} />
+                    <Pet species={s} size={96} bob={species === s} />
                     <PixelText style={{ flex: 1 }}>
                       {['SQUISHY TANK', 'FAST NIBBLER', 'GLITCHY GENIUS'][index]}
                     </PixelText>
@@ -199,7 +199,7 @@ function ScreenOff() {
     <View
       style={{
         flex: 1,
-        backgroundColor: c.ink,
+        backgroundColor: c.night,
         padding: 24,
         justifyContent: 'space-between',
         alignItems: 'stretch',
@@ -214,7 +214,15 @@ function ScreenOff() {
       </View>
       <View style={{ alignItems: 'center', gap: 28 }}>
         {!m && <FloatingZ />}
-        <Pet species={p.species} hat={p.hat} sleeping={!m} walking={!!m} bob size={160} />
+        <Pet
+          species={p.species}
+          level={p.level}
+          hat={p.hat}
+          sleeping={!m}
+          walking={!!m}
+          bob
+          size={160}
+        />
         {m ? (
           <>
             <PixelText style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}>
@@ -264,7 +272,7 @@ function DefenderAlert() {
         <PixelText style={{ fontSize: 17, lineHeight: 30, textAlign: 'center' }}>
           {`${a?.name ?? 'A RIVAL'}\nRAIDED YOU!`}
         </PixelText>
-        <Pet species={p.species} hat={p.hat} grumpy={p.mood < 30} size={120} />
+        <Pet species={p.species} level={p.level} hat={p.hat} grumpy={p.mood < 30} size={120} />
         <View style={[styles.border, { padding: 20, alignSelf: 'stretch' }]}>
           <PixelText style={{ textAlign: 'center', fontSize: 14, lineHeight: 27 }}>
             {item.raid.attacker_won
@@ -315,7 +323,7 @@ export function GameOverlays() {
           flex: 1,
           paddingTop: insets.top,
           paddingBottom: insets.bottom,
-          backgroundColor: isScreenOff ? c.ink : c.paper,
+          backgroundColor: isScreenOff ? c.night : c.paper,
         }}
       >
         {!ready ? (
@@ -343,7 +351,7 @@ export function GameOverlays() {
               backgroundColor: c.flash,
             }}
           >
-            <Pet species={p.species} hat={p.hat} />
+            <Pet species={p.species} level={p.level} hat={p.hat} />
             <PixelText style={{ fontSize: 18, lineHeight: 34, textAlign: 'center' }}>
               {flash}
             </PixelText>
@@ -359,7 +367,7 @@ export function GameOverlays() {
             }}
           >
             <View style={{ alignItems: 'center' }}>
-              <Pet species={p.species} hat={p.hat} size={120} />
+              <Pet species={p.species} level={p.level} hat={p.hat} size={120} />
             </View>
             <PixelText style={{ textAlign: 'center', fontSize: 14, lineHeight: 28 }}>
               {message}

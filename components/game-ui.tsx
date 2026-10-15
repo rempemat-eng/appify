@@ -20,7 +20,8 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
 import { Shield, TriangleAlert, Moon, Sprout, Clock3 } from 'lucide-react-native';
-import { hats, palette as c, status, clock, useGame, type Player } from '@/lib/game';
+import { palette as c, status, clock, useGame, type Player } from '@/lib/game';
+import { petPixels } from '@/lib/pet-art';
 
 export function PixelText({ style, ...props }: TextProps) {
   return <Text {...props} style={[styles.text, style]} />;
@@ -32,6 +33,8 @@ export function PixelButton({
   light = false,
   small = false,
   danger = false,
+  gold = false,
+  energyCost,
   onLongPress,
 }: {
   label: string;
@@ -40,6 +43,8 @@ export function PixelButton({
   light?: boolean;
   small?: boolean;
   danger?: boolean;
+  gold?: boolean;
+  energyCost?: number;
   onLongPress?: () => void;
 }) {
   return (
@@ -58,7 +63,7 @@ export function PixelButton({
             paddingHorizontal: 12,
             borderWidth: 2,
             borderColor: c.ink,
-            backgroundColor: danger ? c.error : light ? c.paper : c.ink,
+            backgroundColor: danger ? c.error : gold ? c.gold : light ? c.paper : c.positive,
             justifyContent: 'center',
             alignItems: 'center',
             transform: [{ translateX: pressed ? 4 : 0 }, { translateY: pressed ? 4 : 0 }],
@@ -67,7 +72,7 @@ export function PixelButton({
       >
         <PixelText
           style={{
-            color: light && !danger ? c.ink : c.paper,
+            color: danger ? c.flash : c.buttonInk,
             fontSize: small ? 11 : 12,
             textAlign: 'center',
             lineHeight: 20,
@@ -75,54 +80,34 @@ export function PixelButton({
         >
           {label}
         </PixelText>
+        {energyCost !== undefined && (
+          <EnergyPips value={energyCost} color={danger ? c.flash : c.buttonInk} />
+        )}
       </Pressable>
     </View>
   );
 }
-const grids: Record<Player['species'], string[]> = {
-  BLOB: [
-    '....KKKK....',
-    '..KKBBBBKK..',
-    '.KBBBBBBBBK.',
-    '.KBWKBBWKBK.',
-    'KBBWKBBWKBBK',
-    'KBBBBBBBBBBK',
-    'KBBBKKKKBBBK',
-    'KBBBBBBBBBBK',
-    '.KBBBBBBBBK.',
-    '.KBBBBBBBBK.',
-    '..KKK..KKK..',
-    '............',
-  ],
-  RAT: [
-    '.KK......KK.',
-    'KBBK....KBBK',
-    'KBBKKKKKKBBK',
-    '.KBBBBBBBBK.',
-    'KBBWKBBWKBBK',
-    'KBBWKBBWKBBK',
-    'KBBBBBBBBBBK',
-    '.KBBKKKKBBK.',
-    '..KBBBBBBK..',
-    'KKKBBBBBBK..',
-    '..KKBBBBKK..',
-    '..KKK..KKK..',
-  ],
-  CUBE: [
-    '.KKKKKKKKKK.',
-    'KBBBBBBBBBBK',
-    'KBBBBBBBBBBK',
-    'KBWWKBBWWKBK',
-    'KBWWKBBWWKBK',
-    'KBBBBBBBBBBK',
-    'KBBBKKKKBBBK',
-    'KBBBBBBBBBBK',
-    'KBBBBBBBBBBK',
-    '.KKKKKKKKKK.',
-    '..KK....KK..',
-    '............',
-  ],
-};
+export function EnergyPips({ value, color = c.ink }: { value: number; color?: string }) {
+  return (
+    <View
+      accessibilityLabel={`${value} energy`}
+      style={{ flexDirection: 'row', gap: 5, marginTop: 5 }}
+    >
+      {[0, 1, 2].map((pip) => (
+        <View
+          key={pip}
+          style={{
+            width: 8,
+            height: 8,
+            borderWidth: 1,
+            borderColor: color,
+            backgroundColor: pip < value ? color : 'transparent',
+          }}
+        />
+      ))}
+    </View>
+  );
+}
 function pixelCells(rows: string[]) {
   return rows.flatMap((row, y) =>
     Array.from(row, (pixel, x) => ({ id: `${x}-${y}`, pixel, x, y })),
@@ -130,27 +115,37 @@ function pixelCells(rows: string[]) {
 }
 export function Pet({
   species = 'BLOB',
-  size = 160,
+  size = 192,
+  level = 1,
+  facing = 'right',
   hat = null,
   grumpy = false,
   sleeping = false,
   walking = false,
   bob = true,
   hit = 0,
+  attack = 0,
 }: {
   species?: Player['species'];
   size?: number;
+  level?: number;
+  facing?: 'left' | 'right';
   hat?: string | null;
   grumpy?: boolean;
   sleeping?: boolean;
   walking?: boolean;
   bob?: boolean;
   hit?: number;
+  attack?: number;
 }) {
   const reduced = useReducedMotion();
   const y = useSharedValue(0);
   const x = useSharedValue(0);
   const [stride, setStride] = useState(false);
+  const [flashState, setFlashState] = useState({ hit, flashing: false });
+  // A new hit starts its flash in the same render, not a cascading effect update.
+  if (flashState.hit !== hit) setFlashState({ hit, flashing: hit !== 0 });
+  const flashing = flashState.flashing;
   useEffect(() => {
     if (!walking || reduced) return undefined;
     const timer = setInterval(() => setStride((value) => !value), 250);
@@ -160,64 +155,62 @@ export function Pet({
     if (bob && !reduced)
       y.set(
         withRepeat(
-          withSequence(withTiming(-4, { duration: 500 }), withTiming(0, { duration: 500 })),
+          withSequence(withTiming(-3, { duration: 500 }), withTiming(0, { duration: 500 })),
           -1,
         ),
       );
     else y.set(0);
   }, [bob, reduced, y]);
   useEffect(() => {
-    if (hit && !reduced)
+    if (!hit) return undefined;
+    const timer = setTimeout(() => setFlashState({ hit, flashing: false }), 140);
+    if (!reduced)
       x.set(
         withSequence(
-          withTiming(-7, { duration: 50 }),
-          withTiming(7, { duration: 50 }),
-          withTiming(-5, { duration: 50 }),
+          withTiming(-6, { duration: 50 }),
+          withTiming(6, { duration: 50 }),
+          withTiming(-3, { duration: 50 }),
           withTiming(0, { duration: 60 }),
         ),
       );
+    return () => clearTimeout(timer);
   }, [hit, reduced, x]);
+  useEffect(() => {
+    if (attack && !reduced)
+      x.set(
+        withSequence(
+          withTiming(facing === 'right' ? 8 : -8, { duration: 100 }),
+          withTiming(0, { duration: 160 }),
+        ),
+      );
+  }, [attack, facing, reduced, x]);
   const motion = useAnimatedStyle(() => ({
-    transform: [{ translateY: y.value }, { translateX: x.value }],
+    transform: [{ translateY: Math.round(y.value) }, { translateX: Math.round(x.value) }],
   }));
-  const emoji = hats.find((h) => h.id === hat)?.emoji;
-  const unit = size / 12;
+  const pixels = petPixels(species, level, hat, sleeping, grumpy);
+  const scaledSize = Math.max(32, Math.round(size / 32) * 32);
   return (
     <Animated.View
-      accessibilityLabel={`${species} pet${grumpy ? ', grumpy' : ''}${sleeping ? ', sleeping' : ''}${hat ? ` wearing ${hat}` : ''}`}
-      style={[{ width: size, height: size, opacity: sleeping ? 0.6 : 1 }, motion]}
+      accessibilityLabel={`${species} stage ${Math.min(3, level)} pet${grumpy ? ', grumpy' : ''}${sleeping ? ', sleeping' : ''}${hat ? ` wearing ${hat}` : ''}`}
+      style={[{ width: scaledSize, height: scaledSize }, motion]}
     >
-      <Svg width={size} height={size} viewBox="0 0 12 12">
-        {pixelCells(grids[species]).map(({ id, pixel, x: rx, y: ry }) => {
-          if (pixel === '.') return null;
-          let color = pixel === 'K' ? c.ink : pixel === 'B' ? c.body : c.paper;
-          if ((grumpy || sleeping) && (ry === 3 || ry === 4) && rx >= 2 && rx <= 9)
-            color = ry === 4 && [2, 3, 7, 8].includes(rx) ? c.ink : c.body;
-          return (
-            <Rect
-              key={id}
-              x={rx}
-              y={walking && ry >= 10 && rx < 6 === stride ? ry - 1 : ry}
-              width={1}
-              height={1}
-              fill={color}
-            />
-          );
-        })}
+      <Svg
+        width={scaledSize}
+        height={scaledSize}
+        viewBox="0 0 32 32"
+        style={{ transform: [{ scaleX: facing === 'left' ? -1 : 1 }] }}
+      >
+        {pixels.map(({ x: rx, y: ry, color }) => (
+          <Rect
+            key={`${rx}-${ry}`}
+            x={rx}
+            y={walking && ry >= 26 && ry <= 28 && rx < 17 === stride ? ry - 1 : ry}
+            width={1}
+            height={1}
+            fill={flashing ? c.flash : color}
+          />
+        ))}
       </Svg>
-      {emoji && (
-        <Text
-          style={{
-            position: 'absolute',
-            top: -unit * 2.8,
-            width: size,
-            textAlign: 'center',
-            fontSize: size * 0.33,
-          }}
-        >
-          {emoji}
-        </Text>
-      )}
     </Animated.View>
   );
 }
@@ -312,7 +305,7 @@ export function Meter({
         style={{
           height: '100%',
           width: `${Math.max(0, Math.min(100, (value / max) * 100))}%`,
-          backgroundColor: c.ink,
+          backgroundColor: c.positive,
         }}
       />
     </View>
