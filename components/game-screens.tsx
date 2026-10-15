@@ -8,7 +8,9 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { useIsFocused } from 'expo-router';
+import { router, useIsFocused } from 'expo-router';
+import { collectionOf, guardianPlayer, isVisitorId, visitorInfo } from '@/lib/visitors';
+import { GardenVisitor, GuardianPicker } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { ArrowUp, ArrowDown, Bot } from 'lucide-react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
@@ -46,6 +48,7 @@ export function HomeScreen() {
   const now = useGame((s) => s.now);
   const voice = useGame((s) => s.voice);
   const firstWake = useGame((s) => s.firstWake);
+  const homeTipActive = useGame((s) => s.homeTipActive);
   const paused = usePlayPaused();
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
@@ -72,6 +75,7 @@ export function HomeScreen() {
     return () => clearTimeout(timer);
   }, [crumbs]);
   if (!p) return null;
+  const guardian = guardianPlayer(p);
   const state = status(p, now);
   const speech = paused
     ? budgetVoice
@@ -101,7 +105,8 @@ export function HomeScreen() {
         style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 12 }}
       >
         <Pet
-          species={p.species}
+          species={guardian.species}
+          visitor={guardian.guardian}
           level={p.level}
           hat={p.hat}
           grumpy={p.mood < 30}
@@ -124,9 +129,19 @@ export function HomeScreen() {
           </Animated.View>
         )}
         <PixelText style={{ fontSize: 15, marginTop: 8, backgroundColor: c.paper, padding: 6 }}>
-          {p.pet_name}
+          {guardian.pet_name}
         </PixelText>
+        <View style={{ position: 'absolute', left: 4, bottom: 4, flexDirection: 'row' }}>
+          {collectionOf(p)
+            .filter((v) => v.befriendedAt !== null && v.id !== p.guardian)
+            .slice(0, 3)
+            .map((v) => (
+              <Pet key={v.id} visitor={v.id} size={32} bob={false} />
+            ))}
+        </View>
+        <GardenVisitor />
       </PixelScene>
+      <GuardianPicker player={p} />
       <View style={{ gap: 9 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <PixelText>MOOD{p.mood < 30 ? ' · GRUMPY' : ''}</PixelText>
@@ -165,9 +180,13 @@ export function HomeScreen() {
           />
         </View>
       </View>
-      <Dialogue text={speech} />
+      <PixelButton label="FIELD JOURNAL" light small onPress={() => router.push('/journal')} />
+      {!homeTipActive && <Dialogue text={speech} />}
       <BodyText>
-        {grasslings[p.species].name} · {grasslings[p.species].habit} · {growthStage(p.level)}
+        {isVisitorId(guardian.guardian)
+          ? visitorInfo(guardian.guardian).name
+          : grasslings[p.species].name}{' '}
+        · {grasslings[guardian.species].habit} · {growthStage(p.level)}
       </BodyText>
       <GardenStreak />
       <BodyText style={{ textAlign: 'center' }}>{grasslings[p.species].line}</BodyText>
@@ -339,7 +358,7 @@ export function ShopScreen() {
   );
 }
 function RivalRow({
-  p,
+  p: account,
   me,
   rank,
   raiding,
@@ -351,10 +370,11 @@ function RivalRow({
   raiding: string | null;
   onRaid: (p: Player) => void;
 }) {
+  const p = guardianPlayer(account);
   const now = useGame((s) => s.now);
   const paused = usePlayPaused();
   const raids = useGame((s) => s.rules.days[dayKey(s.now)]?.raids ?? 0);
-  const mySpecies = useGame((s) => s.player?.species);
+  const mySpecies = useGame((s) => (s.player ? guardianPlayer(s.player).species : undefined));
   const type = mySpecies ? matchup(mySpecies, p.species) : 1;
   const exposed = status(p, now).kind === 'exposed';
   return (
@@ -376,7 +396,14 @@ function RivalRow({
           height={100}
           style={{ width: 100, alignItems: 'center', justifyContent: 'flex-end' }}
         >
-          <Pet species={p.species} level={p.level} hat={p.hat} size={96} bob={false} />
+          <Pet
+            species={p.species}
+            visitor={p.guardian}
+            level={p.level}
+            hat={p.hat}
+            size={96}
+            bob={false}
+          />
         </PixelScene>
         <View style={{ flex: 1, gap: 4 }}>
           <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
@@ -399,7 +426,8 @@ function RivalRow({
             )}
           </View>
           <BodyText>
-            {grasslings[p.species].name} · {grasslings[p.species].habit}
+            {isVisitorId(p.guardian) ? visitorInfo(p.guardian).name : grasslings[p.species].name} ·{' '}
+            {grasslings[p.species].habit}
           </BodyText>
           {!me && type !== 1 && (
             <BodyText>

@@ -20,6 +20,19 @@ import {
   type OfflineRules,
 } from '@/lib/offline-rules';
 export type TogetherSession = Tables<'touch_grass_sessions'>;
+import {
+  collectionOf,
+  consecutiveOfflineDays,
+  isVisitorId,
+  meetVisitor,
+  postcardsOf,
+  rollVisitor,
+  visitorInfo,
+  type Postcard,
+  type VisitorId,
+  type WaitingVisitor,
+  type WelcomeReward,
+} from '@/lib/visitors';
 import { bilt } from '@/lib/bilt';
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
 import {
@@ -118,9 +131,13 @@ type Saved = {
   applied: string[];
   alerts: Incoming[];
   collectedCards: CardId[];
-  cardReward: { cards: CardId[]; minutes: number; mission: string | null } | null;
+  waitingVisitor: WaitingVisitor | null;
+  cardReward: WelcomeReward | null;
 };
 type Game = Saved & {
+  befriendVisitor: () => void;
+  selectGuardian: (id: VisitorId | null) => void;
+  homeTipActive: 'phone' | 'wake' | null;
   seeTip: (id: GardenTipId) => void;
   sessions: TogetherSession[];
   togetherPending: string | null;
@@ -185,6 +202,9 @@ function isPlayer(value: unknown): value is Player {
     (value.hat === null || typeof value.hat === 'string') &&
     (value.mission_id === null || typeof value.mission_id === 'string') &&
     isStringArray(value.owned_hats) &&
+    Array.isArray(value.collection) &&
+    Array.isArray(value.postcards) &&
+    (value.guardian === null || isVisitorId(value.guardian)) &&
     Array.isArray(value.deck) &&
     value.deck.length > 0 &&
     value.deck.length <= 20 &&
@@ -194,6 +214,11 @@ function isPlayer(value: unknown): value is Player {
 function migrateSaved(value: unknown) {
   if (!isRecord(value)) return value;
   const migratePlayer = (p: unknown) => {
+    if (isRecord(p)) {
+      if (!Array.isArray(p.collection)) p.collection = [];
+      if (!Array.isArray(p.postcards)) p.postcards = [];
+      if (p.guardian === undefined) p.guardian = null;
+    }
     if (isRecord(p) && p.deck === undefined)
       p.deck =
         typeof p.level === 'number' && p.level >= 3
@@ -218,7 +243,17 @@ function migrateSaved(value: unknown) {
   if (value.togetherSettled === undefined) value.togetherSettled = [];
   if (value.seenSessions === undefined) value.seenSessions = [];
   if (value.collectedCards === undefined) value.collectedCards = [];
+  if (value.waitingVisitor === undefined) value.waitingVisitor = null;
   if (value.cardReward === undefined) value.cardReward = null;
+  if (isRecord(value.cardReward))
+    value.cardReward = {
+      grass: 0,
+      visitor: null,
+      postcard: null,
+      hat: null,
+      early: false,
+      ...value.cardReward,
+    };
   return value;
 }
 function isRaid(value: unknown): value is Raid {
@@ -268,6 +303,10 @@ function isSaved(value: unknown): value is Saved {
     value.alerts.every(isIncoming) &&
     Array.isArray(value.collectedCards) &&
     value.collectedCards.every(isCardId) &&
+    (value.waitingVisitor === null ||
+      (isRecord(value.waitingVisitor) &&
+        isVisitorId(value.waitingVisitor.id) &&
+        typeof value.waitingVisitor.expiresAt === 'number')) &&
     (value.cardReward === null ||
       (isRecord(value.cardReward) &&
         Array.isArray(value.cardReward.cards) &&
@@ -354,7 +393,11 @@ export function resolveTogetherSession(session: TogetherSession) {
         togetherBadges: s.rules.togetherBadges + 1,
       },
       togetherSettled: [...s.togetherSettled, session.id],
-      message: `TOGETHER! +${bonus} BONUS GRASS`,
+      cardReward:
+        s.cardReward?.sessionId === session.id
+          ? { ...s.cardReward, grass: s.cardReward.grass + bonus }
+          : s.cardReward,
+      message: s.cardReward?.sessionId === session.id ? null : `TOGETHER! +${bonus} BONUS GRASS`,
       voice: 'we touched grass together.',
     });
     feedback();
@@ -396,6 +439,7 @@ function persist() {
     alerts: s.alerts,
     collectedCards: s.collectedCards,
     cardReward: s.cardReward,
+    waitingVisitor: s.waitingVisitor,
   };
   const value = JSON.stringify(saved);
   persistence = persistence
@@ -572,6 +616,35 @@ export const gameStore = create<Game>((set, get) => ({
   alerts: [],
   collectedCards: [],
   cardReward: null,
+  waitingVisitor: null,
+  homeTipActive: null,
+  befriendVisitor: () => {
+    const s = get();
+    const v = s.waitingVisitor;
+    if (!s.player || !v || v.expiresAt === 0) return;
+    if (Date.now() >= v.expiresAt) {
+      get().tick();
+      return;
+    }
+    const collection = collectionOf(s.player).map((entry) =>
+      entry.id === v.id ? { ...entry, befriendedAt: entry.befriendedAt ?? Date.now() } : entry,
+    );
+    set({
+      player: { ...s.player, collection },
+      waitingVisitor: null,
+      voice: 'a new friend. all thanks to real life.',
+    });
+    changed();
+    feedback();
+  },
+  selectGuardian: (id) => {
+    const s = get();
+    if (!s.player || s.battle || s.player.mode !== 'awake') return;
+    if (id && !collectionOf(s.player).some((v) => v.id === id && v.befriendedAt !== null)) return;
+    set({ player: { ...s.player, guardian: id } });
+    changed();
+    feedback('select');
+  },
   guideOpen: false,
   deckOpen: false,
   message: null,
@@ -633,6 +706,9 @@ export const gameStore = create<Game>((set, get) => ({
       offline_seconds: 0,
       last_seen: now,
       deck: [...startingDeck],
+      collection: [],
+      guardian: null,
+      postcards: [],
     };
     set({
       player,
@@ -661,6 +737,13 @@ export const gameStore = create<Game>((set, get) => ({
     const s = get();
     const p = s.player;
     const now = Date.now();
+    if (s.waitingVisitor && s.waitingVisitor.expiresAt > 0 && now >= s.waitingVisitor.expiresAt) {
+      set({
+        waitingVisitor: null,
+        message: `${visitorInfo(s.waitingVisitor.id).name} wandered off.`,
+      });
+      void persist();
+    }
     set({ now, ...(active ? { lastActiveAt: now } : {}) });
     if (active) void persist();
     if (!p) return;
@@ -678,13 +761,14 @@ export const gameStore = create<Game>((set, get) => ({
         completedMission,
       );
       const collectedCards = [...s.collectedCards, ...rewardCards.earned];
-      let next = {
+      let next: Player = {
         ...p,
         deck: rewardCards.deck,
         grass: p.grass + (p.mode === 'screen_off' ? elapsed : 0),
         mood: Math.min(100, p.mood + elapsed),
         offline_seconds: p.offline_seconds + elapsed,
       };
+      let missionHat: string | null = null;
       if (p.mode === 'mission' && now >= p.mission_ends_at) {
         const m = missions.find((x) => x.id === p.mission_id);
         if (m) {
@@ -695,6 +779,7 @@ export const gameStore = create<Game>((set, get) => ({
             if (unowned.length) hat = unowned[Math.floor(Math.random() * unowned.length)].id;
             else reward += 50;
           }
+          missionHat = hat;
           next = {
             ...next,
             grass: next.grass + reward,
@@ -706,7 +791,7 @@ export const gameStore = create<Game>((set, get) => ({
           };
           set({
             firstWake: true,
-            message: `MISSION COMPLETE! +${reward} GRASS${hat ? ` + ${hat}` : ''}`,
+            message: null,
             voice: 'i saw a real tree. it was huge.',
           });
           feedback();
@@ -732,19 +817,39 @@ export const gameStore = create<Game>((set, get) => ({
       });
       if (next.offline_seconds - s.offStart >= 10)
         rules = { ...rules, budget: { startedAt: 0, usedMs: 0 } };
+      const minutes = next.offline_seconds - s.offStart;
+      const visitor = completedMission ? rollVisitor(minutes, consecutiveOfflineDays(rules)) : null;
+      const postcard: Postcard | null =
+        completedMission === 'park' ||
+        completedMission === 'book' ||
+        completedMission === 'mountain'
+          ? { id: Crypto.randomUUID(), mission: completedMission, at: end }
+          : null;
+      if (completedMission) {
+        next = meetVisitor(next, visitor, minutes, now);
+        if (postcard) next = { ...next, postcards: [...postcardsOf(next), postcard] };
+      }
       set({
         rules,
         player: next,
         tickAt: s.tickAt + seconds * 1000,
         collectedCards: completedMission ? [] : collectedCards,
-        cardReward:
-          completedMission && collectedCards.length
-            ? {
+        ...(completedMission
+          ? {
+              waitingVisitor: visitor ? { id: visitor, expiresAt: 0 } : get().waitingVisitor,
+              voice: visitor ? 'someone visited while you were gone!' : get().voice,
+              cardReward: {
                 cards: collectedCards,
-                minutes: next.offline_seconds - s.offStart,
+                minutes,
                 mission: completedMission,
-              }
-            : s.cardReward,
+                grass: next.grass - s.offGrass,
+                visitor,
+                postcard,
+                hat: missionHat,
+                early: false,
+              },
+            }
+          : {}),
       });
       changed();
     } else {
@@ -944,9 +1049,11 @@ export const gameStore = create<Game>((set, get) => ({
     if (!p || p.mode === 'awake') return;
     const elapsed = p.offline_seconds - s.offStart;
     const failed = p.mode === 'mission';
+    const visitor = rollVisitor(elapsed, consecutiveOfflineDays(s.rules));
+    const met = meetVisitor(p, visitor, elapsed, Date.now());
     set({
       player: {
-        ...p,
+        ...met,
         mode: 'awake',
         mission_id: null,
         mission_ends_at: 0,
@@ -955,15 +1062,20 @@ export const gameStore = create<Game>((set, get) => ({
       firstWake: true,
       tickAt: Date.now(),
       collectedCards: [],
-      cardReward: s.collectedCards.length
-        ? { cards: s.collectedCards, minutes: elapsed, mission: null }
-        : s.cardReward,
-      message:
-        togetherId && s.sessions.some((x) => x.id === togetherId && x.status === 'failed')
-          ? s.message
-          : failed
-            ? 'MISSION FAILED. YOU PICKED UP YOUR PHONE.'
-            : `YOU WERE OFFLINE FOR ${elapsed} MIN · +${p.grass - s.offGrass} GRASS`,
+      waitingVisitor: visitor ? { id: visitor, expiresAt: 0 } : s.waitingVisitor,
+      cardReward: {
+        sessionId: togetherId,
+        cards: s.collectedCards,
+        minutes: elapsed,
+        mission: failed ? p.mission_id : null,
+        grass: p.grass - s.offGrass,
+        visitor,
+        postcard: null,
+        hat: null,
+        early: failed,
+      },
+      message: null,
+      ...(visitor ? { voice: 'someone visited while you were gone!' } : {}),
     });
     changed();
     feedback(failed ? 'error' : 'success');
@@ -1145,7 +1257,14 @@ export const gameStore = create<Game>((set, get) => ({
     changed();
   },
   dismissCards: () => {
-    set({ cardReward: null, deckOpen: false });
+    const s = get();
+    set({
+      cardReward: null,
+      deckOpen: false,
+      ...(s.waitingVisitor?.expiresAt === 0
+        ? { waitingVisitor: { ...s.waitingVisitor, expiresAt: Date.now() + 10000 } }
+        : {}),
+    });
     void persist();
   },
   dismissAlert: () => {
@@ -1164,6 +1283,7 @@ export function bot(p: Player): Player {
   return {
     ...p,
     id: 'bot',
+    guardian: null,
     name: 'DOOMSCROLL DAVE',
     pet_name: 'DOOMSCROLL DAVE',
     species: 'RAT',

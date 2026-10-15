@@ -96,6 +96,9 @@ export async function runOfflineRuleChecks(
     offline_seconds: 0,
     last_seen: origin,
     deck: [...startingDeck],
+    collection: [],
+    guardian: null,
+    postcards: [],
   };
   const pb: Player = { ...pa, id: '00000000-0000-4000-8000-000000000002', name: 'ROWAN' };
   const snapshot = gameStore.getState();

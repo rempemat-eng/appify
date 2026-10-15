@@ -150,6 +150,7 @@ export default function RootLayout() {
       <HeroUINativeProvider>
         <Stack>
           <Stack.Screen name="(tabs)" options={{ title: 'SCREENAGOTCHI', headerShown: false }} />
+          <Stack.Screen name="journal" options={{ title: 'FIELD JOURNAL' }} />
         </Stack>
       </HeroUINativeProvider>
     </GestureHandlerRootView>

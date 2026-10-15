@@ -21,6 +21,7 @@ import {
   gameStore,
   type Player,
 } from '@/lib/game';
+import { WelcomeBack } from '@/components/visitors';
 import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
@@ -490,10 +491,10 @@ export function GameOverlays() {
   function dismiss() {
     if (!ready || !p) return;
     if (isScreenOff) void gameStore.getState().wake();
+    else if (cardReward || deckOpen) gameStore.getState().dismissCards();
     else if (recap) gameStore.getState().dismissRecap();
     else if (battle) useGame.setState({ battle: null });
     else if (alert) gameStore.getState().dismissAlert();
-    else if (cardReward || deckOpen) gameStore.getState().dismissCards();
     else useGame.setState({ message: null, flash: null });
   }
   return (
@@ -528,6 +529,8 @@ export function GameOverlays() {
             <Onboarding />
           ) : isScreenOff ? (
             <ScreenOff />
+          ) : cardReward ? (
+            <WelcomeBack />
           ) : recap ? (
             <GardenRecap />
           ) : battle ? (
@@ -580,8 +583,6 @@ export function GameOverlays() {
                 {flash}
               </PixelText>
             </View>
-          ) : cardReward ? (
-            <DeckPanel reward />
           ) : deckOpen ? (
             <DeckPanel />
           ) : null}

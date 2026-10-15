@@ -263,15 +263,12 @@ export function HabitCard({
     </Animated.View>
   );
 }
-function RewardCard({ id, index }: { id: CardId; index: number }) {
+export function RewardCard({ id, index }: { id: CardId; index: number }) {
   const progress = useSharedValue(0);
   const reduced = useReducedMotion();
   useEffect(() => {
     progress.set(
-      withDelay(
-        reduced ? 0 : Math.min(index, 5) * 140,
-        withTiming(1, { duration: reduced ? 120 : 380 }),
-      ),
+      withDelay(reduced ? 0 : index * 240, withTiming(1, { duration: reduced ? 120 : 380 })),
     );
   }, [index, progress, reduced]);
   const style = useAnimatedStyle(() => ({

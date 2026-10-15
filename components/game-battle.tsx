@@ -39,6 +39,7 @@ import {
 } from '@/lib/battle';
 import { EnergyPips, Meter, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
 import { PixelScene, RaidGarden } from '@/components/pixel-scenes';
+import { guardianPlayer } from '@/lib/visitors';
 import { grasslingName, grasslings } from '@/lib/grasslings';
 import { GrassFlight } from '@/components/grassling-feedback';
 import { BodyText, BattleIntro, Pulse } from '@/components/pixel-feedback';
@@ -131,7 +132,7 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
   );
 }
 export function BattleScreen({ request }: { request: BattleRequest }) {
-  const [player] = useState(() => gameStore.getState().player!);
+  const [player] = useState(() => guardianPlayer(gameStore.getState().player!));
   const { width, height } = useWindowDimensions();
   const rules = useGame((s) => s.rules);
   const [cardLesson, setCardLesson] = useState(
@@ -144,7 +145,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const [lifted, setLifted] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [stageHeight, setStageHeight] = useState(280);
-  const target = request.target;
+  const [target] = useState(() => guardianPlayer(request.target));
   const [combat, setCombat] = useState(() => createCombat(player, target));
   const combatRef = useRef(combat);
   const [phase, setPhase] = useState<Phase>('choose');
@@ -454,6 +455,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           <Animated.View entering={FadeIn.duration(150)} style={{ width: petSize }}>
             <Pet
               species={player.species}
+              visitor={player.guardian}
               level={player.level}
               hat={player.hat}
               facing="right"
@@ -470,6 +472,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           <Animated.View entering={FadeIn.duration(150)} style={{ width: petSize }}>
             <Pet
               species={target.species}
+              visitor={target.guardian}
               level={target.level}
               hat={target.hat}
               facing="left"

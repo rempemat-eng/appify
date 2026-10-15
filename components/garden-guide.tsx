@@ -31,6 +31,14 @@ export function GardenTip({
       seeTip(id);
     }
   }, [eligible, id, seeTip, seen, tip]);
+  useEffect(() => {
+    if (id !== 'phone' && id !== 'wake') return undefined;
+    if (tip.id === id && tip.visible && eligible) useGame.setState({ homeTipActive: id });
+    else if (useGame.getState().homeTipActive === id) useGame.setState({ homeTipActive: null });
+    return () => {
+      if (useGame.getState().homeTipActive === id) useGame.setState({ homeTipActive: null });
+    };
+  }, [eligible, id, tip.id, tip.visible]);
   if (tip.id !== id || !tip.visible || !eligible) return null;
   const Arrow = pointsUp ? ChevronUp : ChevronDown;
   return (

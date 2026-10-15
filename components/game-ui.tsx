@@ -27,6 +27,8 @@ import { PixelProp } from '@/components/pixel-scenes';
 import { GrassRoll, Pulse } from '@/components/pixel-feedback';
 import { feedback } from '@/lib/game';
 import { palette as c, status, clock, useGame, type Player } from '@/lib/game';
+import { visitorPixels } from '@/lib/visitor-art';
+import { isVisitorId, visitorInfo } from '@/lib/visitors';
 import { petPixels } from '@/lib/pet-art';
 import { grasslings, growthStage } from '@/lib/grasslings';
 
@@ -167,6 +169,9 @@ export function Pet({
   slumped = false,
   dave = false,
   yawning = false,
+  visitor = null,
+  onPress,
+  actionLabel,
 }: {
   species?: Player['species'];
   size?: number;
@@ -183,6 +188,9 @@ export function Pet({
   slumped?: boolean;
   dave?: boolean;
   yawning?: boolean;
+  visitor?: string | null;
+  onPress?: () => void;
+  actionLabel?: string;
 }) {
   const reduced = useReducedMotion();
   const y = useSharedValue(0);
@@ -290,24 +298,25 @@ export function Pet({
   const motion = useAnimatedStyle(() => ({
     transform: [{ translateY: Math.round(y.value) }, { translateX: Math.round(x.value) }],
   }));
-  const pixels = petPixels(
-    species,
-    level,
-    hat,
-    sleeping || blink || idle === 'yawn' || yawning,
-    grumpy,
-    dave,
-  );
+  const visitorId = isVisitorId(visitor) ? visitor : null;
+  const petLabel = visitorId ? visitorInfo(visitorId).name : grasslings[species].name;
+  const pixels = visitorId
+    ? visitorPixels(visitorId, hat, sleeping || blink)
+    : petPixels(species, level, hat, sleeping || blink || idle === 'yawn' || yawning, grumpy, dave);
   const scaledSize = Math.max(32, Math.round(size / 32) * 32);
   return (
     <Animated.View
-      accessibilityLabel={`${dave ? 'DOOMSCROLL DAVE weed creature' : `${grasslings[species].name} ${growthStage(level)} Grassling`}${slumped ? ', wilted' : ''}${grumpy ? ', grumpy' : ''}${sleeping ? ', sleeping' : ''}${hat ? ` wearing ${hat}` : ''}`}
+      accessibilityLabel={`${dave ? 'DOOMSCROLL DAVE weed creature' : `${petLabel} ${growthStage(level)} Grassling`}${slumped ? ', wilted' : ''}${grumpy ? ', grumpy' : ''}${sleeping ? ', sleeping' : ''}${hat ? ` wearing ${hat}` : ''}`}
       style={[{ width: scaledSize, height: scaledSize }, motion]}
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Greet ${dave ? 'DOOMSCROLL DAVE' : grasslings[species].name}`}
+        accessibilityLabel={actionLabel ?? `Greet ${dave ? 'DOOMSCROLL DAVE' : petLabel}`}
         onPress={() => {
+          if (onPress) {
+            onPress();
+            return;
+          }
           feedback('select');
           setHeart(true);
           if (!reduced)

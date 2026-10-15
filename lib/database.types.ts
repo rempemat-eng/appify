@@ -89,6 +89,9 @@ declare module '@biltme/backend' {
             offline_seconds: number
             last_seen: number
             deck: string[]
+            collection: Json
+            guardian: string | null
+            postcards: Json
           }
           Insert: {
             id: string
@@ -109,6 +112,9 @@ declare module '@biltme/backend' {
             offline_seconds?: number
             last_seen?: number
             deck?: string[]
+            collection?: Json
+            guardian?: string | null
+            postcards?: Json
           }
           Update: {
             id?: string
@@ -129,6 +135,9 @@ declare module '@biltme/backend' {
             offline_seconds?: number
             last_seen?: number
             deck?: string[]
+            collection?: Json
+            guardian?: string | null
+            postcards?: Json
           }
           Relationships: []
         }
