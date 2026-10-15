@@ -9,6 +9,7 @@ import {
   Inter_700Bold,
   useFonts,
 } from '@expo-google-fonts/inter';
+import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import { useEffect } from 'react';
@@ -26,7 +27,6 @@ import { patchExpoGoAssetUrls } from '@/lib/expoGoAssets';
 import { initPostHog } from '@/lib/posthog';
 import { registerServiceWorker } from '@/lib/registerServiceWorker';
 import { reportErrorToParent } from '@/lib/reportPreviewError';
-import { InstallPrompt } from '@/components/InstallPrompt';
 
 /**
  * Custom ErrorBoundary that reports React render errors to the parent window (Bilt preview iframe)
@@ -58,6 +58,7 @@ export default function RootLayout() {
     Inter_500Medium,
     Inter_600SemiBold,
     Inter_700Bold,
+    PressStart2P_400Regular,
   });
 
   // Report uncaught JS errors and unhandled promise rejections to parent (Bilt preview iframe)
@@ -146,9 +147,8 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <HeroUINativeProvider>
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ title: 'Habits', headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ title: 'SCREENAGOTCHI', headerShown: false }} />
         </Stack>
-        <InstallPrompt />
       </HeroUINativeProvider>
     </GestureHandlerRootView>
   );
