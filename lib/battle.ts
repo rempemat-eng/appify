@@ -1,4 +1,5 @@
 import type { Player } from '@/lib/game';
+import { grasslingName } from '@/lib/grasslings';
 
 export type Side = 'a' | 'd';
 export type Move = 'quick' | 'signature' | 'guard' | 'heal' | 'break';
@@ -21,7 +22,7 @@ export type Combat = {
   timedOut: boolean;
 };
 export type Impact = { side: Side; amount: number; hp: number };
-export const signature = { BLOB: 'GOO SPIT', RAT: 'PING SPAM', CUBE: 'BLUE LIGHT BEAM' };
+export const signature = { BLOB: 'MOSS MIST', RAT: 'SEED FLURRY', CUBE: 'LAMP GLARE' };
 export const costs: Record<Move, number> = { quick: 0, signature: 2, guard: 0, heal: 2, break: 3 };
 export const maxHp = (p: Player) => 60 + 10 * p.level;
 export const zen = (p: Player) => Math.min(0.3, Math.floor(p.offline_seconds / 10) * 0.01);
@@ -35,7 +36,9 @@ export function matchup(source: Player['species'], target: Player['species']) {
 }
 export function moveName(move: Move, p: Player) {
   return move === 'signature'
-    ? signature[p.species]
+    ? p.id === 'bot'
+      ? 'PING SPAM'
+      : signature[p.species]
     : { quick: 'QUICK HIT', guard: 'GUARD', heal: 'TOUCH GRASS', break: 'SCREEN BREAK' }[move];
 }
 export const damaging = (move: Move) =>
@@ -121,7 +124,7 @@ export function resolveMove(
   actor.energy -= costs[move];
   const doom = actor.doom;
   actor.doom = false;
-  let log = `${source.pet_name} USED ${moveName(move, source)}!`;
+  let log = `${grasslingName(source)}: ${moveName(move, source)}!`;
   if (move === 'guard') {
     actor.guard = true;
     actor.energy = Math.min(3, actor.energy + 1);
@@ -174,8 +177,8 @@ export function resolveMove(
   log += ` -${total}${impacts.length > 1 ? ` (${impacts.length} HITS)` : ''}`;
   if (selfHit) log = `IT'S DOOMSCROLLING... ${log} SELF HIT!`;
   else {
-    if (type > 1) log += ' STRONG MATCHUP!';
-    if (type < 1) log += ' WEAK MATCHUP...';
+    if (type > 1) log += ' HABIT ADVANTAGE!';
+    if (type < 1) log += ' HABIT DISADVANTAGE...';
     if (blocked) log += ' BLOCKED!';
     if (timing === 1.5) log += ' PERFECT!';
     if (timing === 0.6) log += ' WEAK...';
@@ -197,5 +200,7 @@ export function resolveMove(
   }
   if (next.a.hp <= 0) next.result = false;
   else if (next.d.hp <= 0) next.result = true;
+  if (next.a.hp <= 0) log += ` ${grasslingName(players.a)} WILTED!`;
+  else if (next.d.hp <= 0) log += ` ${grasslingName(players.d)} WILTED!`;
   return { state: next, impacts, log };
 }

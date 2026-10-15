@@ -65,7 +65,11 @@ export function Dialogue({ text, style }: { text: string; style?: ViewStyle }) {
         style,
       ]}
     >
-      <BodyText accessibilityElementsHidden importantForAccessibility="no">
+      <BodyText
+        accessibilityElementsHidden
+        importantForAccessibility="no"
+        style={{ fontFamily: 'PressStart2P_400Regular', fontSize: 11, lineHeight: 21 }}
+      >
         {text.slice(0, shown.count) || ' '}
       </BodyText>
       <View

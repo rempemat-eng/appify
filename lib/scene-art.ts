@@ -45,7 +45,13 @@ export type PropKind =
   | 'lock'
   | 'frog'
   | 'egg'
-  | 'nest';
+  | 'nest'
+  | 'flower'
+  | 'fence'
+  | 'hammock'
+  | 'signpost'
+  | 'stones'
+  | 'weed';
 const colors: Record<string, string> = {
   K: c.ink,
   B: c.paper,
@@ -61,6 +67,7 @@ const colors: Record<string, string> = {
   C: sceneColors.crystal,
   Y: c.gold,
   F: sceneColors.frog,
+  E: c.weed,
   P: sceneColors.pink,
 };
 function make(kind: PropKind) {
@@ -270,6 +277,56 @@ function make(kind: PropKind) {
       rect(10, 12, 3, 3, 'M');
       rect(3, 7, 2, 1, 'L');
       break;
+    case 'flower':
+      rect(7, 6, 2, 9, 'M');
+      rect(4, 10, 4, 2, 'G');
+      rect(9, 8, 4, 2, 'G');
+      rect(5, 1, 6, 7, 'P');
+      rect(3, 3, 10, 3, 'P');
+      rect(7, 3, 2, 3, 'Y');
+      break;
+    case 'fence':
+      rect(1, 5, 2, 10, 'K');
+      rect(7, 4, 2, 11, 'K');
+      rect(13, 5, 2, 10, 'K');
+      rect(0, 7, 16, 2, 'W');
+      rect(0, 11, 16, 2, 'W');
+      rect(1, 5, 1, 9, 'T');
+      rect(7, 4, 1, 10, 'T');
+      rect(13, 5, 1, 9, 'T');
+      break;
+    case 'hammock':
+      rect(1, 1, 2, 15, 'K');
+      rect(13, 1, 2, 15, 'K');
+      rect(3, 5, 10, 2, 'M');
+      rect(4, 7, 8, 2, 'G');
+      rect(5, 9, 6, 2, 'L');
+      rect(6, 11, 4, 1, 'K');
+      break;
+    case 'signpost':
+      rect(7, 3, 2, 13, 'K');
+      box(1, 2, 14, 7, 'W');
+      rect(3, 4, 8, 1, 'T');
+      rect(10, 5, 2, 1, 'K');
+      break;
+    case 'stones':
+      box(2, 11, 12, 4, 'S');
+      box(4, 7, 9, 4, 'S');
+      box(5, 3, 6, 4, 'S');
+      rect(6, 4, 3, 1, 'B');
+      rect(5, 8, 4, 1, 'B');
+      rect(3, 12, 4, 1, 'B');
+      break;
+    case 'weed':
+      rect(7, 4, 2, 12, 'N');
+      rect(3, 7, 5, 2, 'E');
+      rect(10, 9, 4, 2, 'E');
+      rect(5, 3, 2, 5, 'E');
+      rect(1, 11, 6, 1, 'E');
+      rect(10, 5, 5, 1, 'N');
+      rect(3, 8, 3, 1, 'B');
+      rect(11, 10, 4, 1, 'B');
+      break;
     case 'egg':
       rect(4, 2, 8, 12, 'K');
       rect(2, 5, 12, 6, 'K');
@@ -294,6 +351,12 @@ function make(kind: PropKind) {
   );
 }
 export const propPixels: Record<PropKind, ReturnType<typeof make>> = {
+  flower: make('flower'),
+  fence: make('fence'),
+  hammock: make('hammock'),
+  signpost: make('signpost'),
+  stones: make('stones'),
+  weed: make('weed'),
   grass: make('grass'),
   mushroom: make('mushroom'),
   root: make('root'),

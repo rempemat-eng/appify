@@ -25,6 +25,7 @@ import { GrassRoll, Pulse } from '@/components/pixel-feedback';
 import { feedback } from '@/lib/game';
 import { palette as c, status, clock, useGame, type Player } from '@/lib/game';
 import { petPixels } from '@/lib/pet-art';
+import { grasslings, growthStage } from '@/lib/grasslings';
 
 export function PixelText({ style, ...props }: TextProps) {
   return <Text {...props} style={[styles.text, style]} />;
@@ -141,6 +142,7 @@ export function Pet({
   attack = 0,
   victory = false,
   slumped = false,
+  dave = false,
 }: {
   species?: Player['species'];
   size?: number;
@@ -155,6 +157,7 @@ export function Pet({
   attack?: number;
   victory?: boolean;
   slumped?: boolean;
+  dave?: boolean;
 }) {
   const reduced = useReducedMotion();
   const y = useSharedValue(0);
@@ -262,16 +265,16 @@ export function Pet({
   const motion = useAnimatedStyle(() => ({
     transform: [{ translateY: Math.round(y.value) }, { translateX: Math.round(x.value) }],
   }));
-  const pixels = petPixels(species, level, hat, sleeping || blink || idle === 'yawn', grumpy);
+  const pixels = petPixels(species, level, hat, sleeping || blink || idle === 'yawn', grumpy, dave);
   const scaledSize = Math.max(32, Math.round(size / 32) * 32);
   return (
     <Animated.View
-      accessibilityLabel={`${species} stage ${Math.min(3, level)} pet${grumpy ? ', grumpy' : ''}${sleeping ? ', sleeping' : ''}${hat ? ` wearing ${hat}` : ''}`}
+      accessibilityLabel={`${dave ? 'DOOMSCROLL DAVE weed creature' : `${grasslings[species].name} ${growthStage(level)} Grassling`}${slumped ? ', wilted' : ''}${grumpy ? ', grumpy' : ''}${sleeping ? ', sleeping' : ''}${hat ? ` wearing ${hat}` : ''}`}
       style={[{ width: scaledSize, height: scaledSize }, motion]}
     >
       <Pressable
         accessibilityRole="button"
-        accessibilityLabel={`Pet ${species}`}
+        accessibilityLabel={`Greet ${dave ? 'DOOMSCROLL DAVE' : grasslings[species].name}`}
         onPress={() => {
           feedback('select');
           setHeart(true);
@@ -309,7 +312,15 @@ export function Pet({
               y={walking && ry >= 26 && ry <= 28 && rx < 17 === stride ? ry - 1 : ry}
               width={1}
               height={1}
-              fill={flashing ? c.flash : color}
+              fill={
+                flashing
+                  ? c.flash
+                  : slumped
+                    ? color === c.ink || color === c.night
+                      ? c.night
+                      : c.wilt
+                    : color
+              }
             />
           ))}
           {idle === 'yawn' && <Rect x={21} y={22} width={3} height={3} fill={c.ink} />}
@@ -465,7 +476,7 @@ export function GameHeader() {
         }}
       >
         <Pressable
-          accessibilityLabel="Pet protection status"
+          accessibilityLabel="Garden protection status"
           onLongPress={() => p && useGame.getState().change({ care_until: 0, recovery_until: 0 })}
           style={{ flex: 1, minHeight: 48, justifyContent: 'center' }}
         >

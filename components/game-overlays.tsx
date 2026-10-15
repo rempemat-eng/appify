@@ -21,7 +21,9 @@ import {
   type Player,
 } from '@/lib/game';
 import { BattleScreen } from '@/components/game-battle';
-import { FloatingZ, Pet, PixelButton, PixelEgg, PixelText, styles } from '@/components/game-ui';
+import { FloatingZ, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
+import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
+import { grasslings, growthStage } from '@/lib/grasslings';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import Animated, { FadeIn, SlideInDown, useReducedMotion } from 'react-native-reanimated';
@@ -73,11 +75,10 @@ function Onboarding() {
             borderWidth: 0,
           }}
         />
-        <PixelEgg
-          cracking
-          color={species === 'BLOB' ? c.paper : species === 'RAT' ? c.error : c.slate}
-        />
-        <PixelText style={{ fontSize: 17 }}>HATCHING...</PixelText>
+        <Planting>
+          <Pet species={species} size={192} bob={false} />
+        </Planting>
+        <PixelText style={{ fontSize: 17 }}>PLANTED!</PixelText>
       </View>
     );
   return (
@@ -101,13 +102,13 @@ function Onboarding() {
           <PixelText style={{ fontSize: 21, lineHeight: 33 }}>{'SCREENA\nGOTCHI'}</PixelText>
           <View style={{ height: 4, backgroundColor: c.night, width: 52 }} />
           <PixelText style={{ fontSize: 11, lineHeight: 21 }}>
-            {"PUT YOUR PHONE DOWN.\nYOUR PET'S LIFE DEPENDS ON IT."}
+            {'PUT YOUR PHONE DOWN.\nGROW A GRASSLING.'}
           </PixelText>
         </View>
         {step === 0 ? (
           <>
             <PixelText style={{ fontSize: 14, lineHeight: 24, marginTop: 8 }}>
-              CHOOSE YOUR STARTER
+              CHOOSE YOUR SEED
             </PixelText>
             <PixelScene
               kind="nest"
@@ -115,11 +116,11 @@ function Onboarding() {
               style={{ justifyContent: 'flex-end', paddingBottom: 32 }}
             >
               <View style={{ flexDirection: 'row', justifyContent: 'space-around', gap: 4 }}>
-                {(['BLOB', 'RAT', 'CUBE'] as const).map((s, index) => (
+                {(['BLOB', 'RAT', 'CUBE'] as const).map((s) => (
                   <Pressable
                     key={s}
                     accessibilityRole="button"
-                    accessibilityLabel={`Hatch ${s}`}
+                    accessibilityLabel={`Plant ${grasslings[s].name}, habit ${grasslings[s].habit}`}
                     onPress={() => {
                       setSpecies(s);
                       setStep(1);
@@ -127,15 +128,20 @@ function Onboarding() {
                     }}
                     style={{ alignItems: 'center', flex: 1, minHeight: 100, gap: 12 }}
                   >
-                    <PixelEgg size={64} color={[c.paper, c.error, c.slate][index]} />
-                    <PixelText style={{ fontSize: 11, backgroundColor: c.paper, padding: 4 }}>
-                      {s}
+                    <SeedPacket species={s} size={64} />
+                    <BodyText style={{ backgroundColor: c.paper, padding: 3 }}>
+                      {grasslings[s].name}
+                    </BodyText>
+                    <PixelText style={{ fontSize: 11, backgroundColor: c.paper, padding: 3 }}>
+                      {grasslings[s].habit}
                     </PixelText>
                   </Pressable>
                 ))}
               </View>
             </PixelScene>
-            <BodyText style={{ textAlign: 'center' }}>tap an egg. meet your tiny menace.</BodyText>
+            <BodyText style={{ textAlign: 'center' }}>
+              Plant a seed. Offline time helps it grow.
+            </BodyText>
           </>
         ) : (
           <>
@@ -144,10 +150,16 @@ function Onboarding() {
               height={190}
               style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 16 }}
             >
-              <Pet species={species} size={120} />
+              <Planting key={species}>
+                <Pet species={species} size={120} bob={false} />
+              </Planting>
             </PixelScene>
+            <PixelText>
+              {grasslings[species].name} · {grasslings[species].habit}
+            </PixelText>
+            <Dialogue text={grasslings[species].line} />
             <View style={{ gap: 12 }}>
-              <PixelText>YOUR NAME</PixelText>
+              <PixelText>GARDENER NAME</PixelText>
               <TextInput
                 accessibilityLabel="Your name"
                 value={name}
@@ -165,9 +177,9 @@ function Onboarding() {
               {error && <Dialogue text="give yourself a name." />}
             </View>
             <View style={{ gap: 12 }}>
-              <PixelText>PET NAME</PixelText>
+              <PixelText>GRASSLING NAME</PixelText>
               <TextInput
-                accessibilityLabel="Pet name"
+                accessibilityLabel="Grassling name"
                 value={petName}
                 onChangeText={setPetName}
                 style={styles.input}
@@ -191,12 +203,10 @@ function Onboarding() {
         }}
       >
         <PixelButton
-          label={step === 0 ? `CHOOSE ${species}` : 'HATCH!'}
+          label={step === 0 ? 'PLANT A SEED' : 'GROW MY GARDEN'}
           onPress={() => (step === 0 ? setStep(1) : hatch())}
         />
-        {step === 1 && (
-          <PixelButton label="CHANGE STARTER" small light onPress={() => setStep(0)} />
-        )}
+        {step === 1 && <PixelButton label="CHANGE SEED" small light onPress={() => setStep(0)} />}
       </View>
     </KeyboardAvoidingView>
   );
@@ -221,12 +231,27 @@ function ScreenOff() {
         pointerEvents="none"
         style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
       >
-        <PixelScene kind="night" style={{ height: '100%', borderWidth: 0 }} />
+        <PixelScene
+          kind="night"
+          species={p.species}
+          level={p.level}
+          player={p}
+          style={{ height: '100%', borderWidth: 0 }}
+        />
       </View>
       <View style={{ alignItems: 'center', gap: 16, paddingTop: 20 }}>
         <Shield color={c.paper} size={30} />
-        <PixelText style={{ color: c.paper, textAlign: 'center', fontSize: 13, lineHeight: 24 }}>
-          {'SCREEN OFF.\nPET SHIELDED.'}
+        <PixelText
+          style={{
+            color: c.paper,
+            textAlign: 'center',
+            fontSize: 13,
+            lineHeight: 24,
+            backgroundColor: c.night,
+            padding: 8,
+          }}
+        >
+          {'SCREEN OFF.\nGARDEN SHIELDED.'}
         </PixelText>
         {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
       </View>
@@ -234,6 +259,9 @@ function ScreenOff() {
         {!m && <FloatingZ />}
         {m ? (
           <PixelScene
+            player={p}
+            species={p.species}
+            level={p.level}
             kind={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
             height={225}
             style={{
@@ -327,13 +355,14 @@ function DefenderAlert() {
           level={p.level}
           hat={p.hat}
           grumpy={p.mood < 30}
-          slumped={slumped}
+          slumped={slumped && item.raid.attacker_won}
           size={120}
         />
+        {item.raid.attacker_won && <GrassFlight toLeft={false} />}
         <Dialogue
           text={
             item.raid.attacker_won
-              ? `they stole ${item.raid.grass_amount} grass`
+              ? `i wilted. they stole ${item.raid.grass_amount} grass`
               : 'raid repelled! +20 grass'
           }
           style={{ alignSelf: 'stretch' }}
@@ -443,7 +472,19 @@ export function GameOverlays() {
                 hat={p.hat}
                 victory={flash.includes('VICTORY')}
               />
-              <PixelText style={{ fontSize: 18, lineHeight: 34, textAlign: 'center' }}>
+              {flash.includes('BLOOMED') && <PetalFall />}
+              <BodyText style={{ backgroundColor: c.paper, padding: 6 }}>
+                {growthStage(p.level)}
+              </BodyText>
+              <PixelText
+                style={{
+                  fontSize: 16,
+                  lineHeight: 30,
+                  textAlign: 'center',
+                  backgroundColor: c.paper,
+                  padding: 12,
+                }}
+              >
                 {flash}
               </PixelText>
             </View>

@@ -23,6 +23,8 @@ export const palette = {
   gold: '#C8A457',
   stone: '#B3A57E',
   flash: '#FFFFFF',
+  weed: '#89908B',
+  wilt: '#A3A59C',
 };
 export const hats = [
   { id: 'CAP', emoji: '🧢', cost: 30 },
@@ -251,7 +253,7 @@ export const gameStore = create<Game>((set, get) => ({
       set({
         ready: true,
         identity: Crypto.randomUUID(),
-        message: 'COULD NOT LOAD YOUR PET. TRY REOPENING THE APP.',
+        message: 'COULD NOT LOAD YOUR GRASSLING. TRY REOPENING THE APP.',
       });
       feedback('error');
     }
@@ -277,7 +279,7 @@ export const gameStore = create<Game>((set, get) => ({
       offline_seconds: 0,
       last_seen: now,
     };
-    set({ player, tickAt: now, voice: "hi. i get stronger when you're NOT on your phone." });
+    set({ player, tickAt: now, voice: "hi. i grow when you're not on your phone." });
     await persist();
     feedback();
     void get().sync();
@@ -448,7 +450,7 @@ export const gameStore = create<Game>((set, get) => ({
   },
   pair: async (input) => {
     const p = get().player;
-    if (!p) return 'HATCH YOUR PET FIRST';
+    if (!p) return 'PLANT YOUR SEED FIRST';
     await get().sync();
     try {
       const found = await bilt
@@ -527,7 +529,7 @@ export const gameStore = create<Game>((set, get) => ({
     const level = p.level + 1;
     get().change({ level, grass: p.grass - 50 * p.level });
     set({
-      flash: `${level <= 3 ? 'EVOLVED!' : 'LEVEL UP!'}\nLV ${level}${level === 2 ? '\nSCREEN BREAK UNLOCKED' : level === 3 ? '\nTHICK SKIN UNLOCKED' : ''}`,
+      flash: `${level <= 3 ? 'YOUR GRASSLING BLOOMED!' : 'LEVEL UP!'}\nLV ${level}${level === 2 ? '\nSCREEN BREAK UNLOCKED' : level === 3 ? '\nTHICK SKIN UNLOCKED' : ''}`,
     });
     feedback();
   },
@@ -592,12 +594,12 @@ export const gameStore = create<Game>((set, get) => ({
       battle: null,
       message: practice
         ? won
-          ? 'PRACTICE WON! +5 GRASS'
-          : 'PRACTICE LOST. TRY AGAIN.'
+          ? 'SPARRING WON! +5 GRASS'
+          : 'SPARRING LOST. TRY AGAIN.'
         : won
           ? `VICTORY! YOU STOLE ${amount} GRASS`
           : `RAID FAILED. -${amount} GRASS`,
-      voice: won ? (Math.random() < 0.5 ? 'GG EZ' : "that's what doomscrolling gets you.") : null,
+      voice: won ? (Math.random() < 0.5 ? 'gg ez' : "that's what doomscrolling gets you.") : null,
     });
     changed();
     feedback(won ? 'success' : 'error');
@@ -606,7 +608,7 @@ export const gameStore = create<Game>((set, get) => ({
     const p = get().player;
     if (!p) return;
     if (status(p).kind !== 'exposed') {
-      get().notify('RAID BLOCKED. YOUR PET WAS SAFE.');
+      get().notify('RAID BLOCKED. YOUR GARDEN WAS SAFE.');
       return;
     }
     const won = Math.random() < 0.5;
@@ -633,7 +635,7 @@ export function bot(p: Player): Player {
     ...p,
     id: 'bot',
     name: 'DOOMSCROLL DAVE',
-    pet_name: 'NOTIFRAT',
+    pet_name: 'DOOMSCROLL DAVE',
     species: 'RAT',
     mood: 50,
     hat: null,

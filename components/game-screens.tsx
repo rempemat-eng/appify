@@ -13,13 +13,14 @@ import {
   type Player,
 } from '@/lib/game';
 import { matchup } from '@/lib/battle';
+import { grasslings, growthStage } from '@/lib/grasslings';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 const lines = {
   grumpy: ['i hate it here. put the phone down.', 'my pixels hurt.'],
   exposed: ["we're exposed. i can hear the notifications.", 'put the phone down. trust me.'],
-  care: ['quick, do your stuff.', 'the clock is ticking, human.'],
+  care: ['quick, tend the plot.', 'the clock is ticking, gardener.'],
   idle: ["touch grass? i'll wait.", 'i am small but i am mighty'],
 };
 export function HomeScreen() {
@@ -64,13 +65,16 @@ export function HomeScreen() {
   return (
     <Page style={{ gap: 22 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <PixelText style={{ fontSize: 16 }}>SCREENAGOTCHI</PixelText>
+        <PixelText style={{ fontSize: 16 }}>YOUR GARDEN</PixelText>
         <View
           style={{ borderWidth: 2, borderColor: c.ink, paddingHorizontal: 6, paddingVertical: 3 }}
         >
           <PixelText>LV {p.level}</PixelText>
         </View>
       </View>
+      <BodyText>
+        {grasslings[p.species].name} · {grasslings[p.species].habit} · {growthStage(p.level)}
+      </BodyText>
       <Dialogue text={speech} />
       <PixelScene
         species={p.species}
@@ -143,7 +147,7 @@ export function HomeScreen() {
           }}
         />
       </View>
-      <BodyText style={{ textAlign: 'center' }}>{"YOUR PET'S LIFE DEPENDS ON IT."}</BodyText>
+      <BodyText style={{ textAlign: 'center' }}>{grasslings[p.species].line}</BodyText>
     </Page>
   );
 }
@@ -153,7 +157,7 @@ export function MissionsScreen() {
   return (
     <Page>
       <PixelText style={styles.title}>GO TOUCH GRASS.</PixelText>
-      <Dialogue text={'your pet goes out. your phone stays off.'} />
+      <Dialogue text={'your grassling goes out. your phone stays off.'} />
       <PixelScene kind="trail" height={170} />
       <View style={[styles.border, { backgroundColor: c.body, padding: 16, gap: 0 }]}>
         {missions.map((m, index) => {
@@ -225,7 +229,7 @@ export function ShopScreen() {
         : 'MORE HP. MORE ATK.';
   return (
     <Page>
-      <PixelText style={styles.title}>POWER UP.</PixelText>
+      <PixelText style={styles.title}>GROW YOUR GARDEN.</PixelText>
       <PixelScene kind="market" height={190} />
       <PixelText style={{ fontSize: 12 }}>MOSS THE MERCHANT</PixelText>
       <Dialogue text={merchant} />
@@ -238,6 +242,11 @@ export function ShopScreen() {
           <PixelText style={{ fontSize: 16 }}>LV {p.level + 1}</PixelText>
         </View>
         <Pet species={p.species} level={p.level} size={88} bob={false} />
+        {p.level < 3 && (
+          <BodyText>
+            {growthStage(p.level)} → {growthStage(p.level + 1)}
+          </BodyText>
+        )}
         <BodyText>{unlock}</BodyText>
         <PixelButton
           label={`LEVEL UP · ${50 * p.level} GRASS`}
@@ -339,12 +348,30 @@ function RivalRow({
               {me ? 'YOU' : p.name}
             </PixelText>
             {!me && type > 1 && (
-              <ArrowUp accessibilityLabel="Strong matchup" size={14} color={c.moss} />
+              <ArrowUp
+                accessibilityLabel={`Habit advantage: ${mySpecies ? grasslings[mySpecies].habit : ''} beats ${grasslings[p.species].habit}`}
+                size={14}
+                color={c.moss}
+              />
             )}
             {!me && type < 1 && (
-              <ArrowDown accessibilityLabel="Weak matchup" size={14} color={c.error} />
+              <ArrowDown
+                accessibilityLabel={`Habit disadvantage against ${grasslings[p.species].habit}`}
+                size={14}
+                color={c.error}
+              />
             )}
           </View>
+          <BodyText>
+            {grasslings[p.species].name} · {grasslings[p.species].habit}
+          </BodyText>
+          {!me && type !== 1 && (
+            <BodyText>
+              {type > 1 && mySpecies
+                ? grasslings[mySpecies].advantage
+                : grasslings[p.species].advantage}
+            </BodyText>
+          )}
           <PixelText>
             LV {p.level} · {p.grass} GRASS
           </PixelText>
@@ -468,17 +495,17 @@ export function ArenaScreen() {
     <View style={{ marginTop: 28, gap: 18 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <Bot color={c.ink} size={26} />
-        <PixelText style={{ fontSize: 16 }}>TRAINING</PixelText>
+        <PixelText style={{ fontSize: 16 }}>SPARRING</PixelText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Pet species="RAT" level={p.level} size={96} bob={false} />
+        <Pet dave level={p.level} size={96} bob={false} />
         <View style={{ flex: 1, gap: 4 }}>
           <PixelText>DOOMSCROLL DAVE</PixelText>
           <PixelText>LV {p.level} · MOOD 50</PixelText>
         </View>
       </View>
       <PixelButton
-        label="PRACTICE BATTLE"
+        label="SPAR WITH DAVE"
         onPress={() => void useGame.getState().startBattle(bot(p), true)}
       />
       <PixelButton

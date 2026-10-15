@@ -83,29 +83,29 @@ export function PixelScene({
   const night = kind === 'night' || (kind === 'habitat' && (hour < 6 || hour >= 21));
   const dusk = hour >= 17 && hour < 21;
   const morning = hour >= 6 && hour < 10;
-  const burrow = kind === 'habitat' && species === 'RAT';
+  const exposed = state?.kind === 'exposed';
+  const [exposure, setExposure] = useState({ exposed, since: now });
+  if (exposure.exposed !== exposed) setExposure({ exposed, since: now });
+  const weedCount = exposed ? Math.min(9, 1 + Math.floor((now - exposure.since) / 12000)) : 0;
   const stage = Math.min(3, level);
   const sky = night
     ? [c.midnight, c.nightMid, c.nightLow]
-    : burrow
-      ? [c.ink, c.root, c.dirt]
-      : state?.kind === 'care'
-        ? [c.dawn, c.gold, c.body]
-        : dusk
-          ? [c.pink, c.orange, c.body]
-          : morning
-            ? [c.dawn, c.paper, c.skyLight]
-            : [c.sky, c.skyLight, c.paper];
+    : state?.kind === 'care'
+      ? [c.dawn, c.gold, c.body]
+      : dusk
+        ? [c.pink, c.orange, c.body]
+        : morning
+          ? [c.dawn, c.paper, c.skyLight]
+          : [c.sky, c.skyLight, c.paper];
   const moving = ['park', 'book', 'mountain'].includes(kind);
   const travel = mini ? 0 : (tick * 1.5) % 160;
-  const ground =
-    kind === 'night' ? c.night : species === 'CUBE' ? c.stone : burrow ? c.dirt : c.leafLight;
+  const ground = kind === 'night' ? c.night : species === 'CUBE' ? c.stone : c.leafLight;
   const props: PropKind[] =
     species === 'BLOB'
-      ? ['grass', 'mushroom', 'grass', 'mushroom', 'grass', 'tree']
+      ? ['mushroom', 'hammock', 'grass', 'flower', 'flower', 'fence']
       : species === 'RAT'
-        ? ['root', 'lamp', 'cable', 'root', 'cable', 'lamp']
-        : ['rock', 'crystal', 'grass', 'rock', 'crystal', 'rock'];
+        ? ['signpost', 'flower', 'grass', 'flower', 'flower', 'fence']
+        : ['lamp', 'stones', 'grass', 'flower', 'flower', 'fence'];
   return (
     <View
       style={[
@@ -124,7 +124,7 @@ export function PixelScene({
             y={91}
             width={160}
             height={29}
-            fill={kind === 'night' ? c.nightMid : burrow ? c.root : c.dirt}
+            fill={kind === 'night' ? c.nightMid : c.dirt}
           />
           <Rect
             x={0}
@@ -169,7 +169,6 @@ export function PixelScene({
                 ))}
             </>
           ) : (
-            !burrow &&
             kind !== 'book' && (
               <>
                 {[0, 1].map((layer) => (
@@ -188,8 +187,23 @@ export function PixelScene({
               </>
             )
           )}
-          {kind === 'habitat' && (
+          {(kind === 'habitat' || kind === 'night') && (
             <>
+              {species === 'BLOB' && <Pixels kind="tree" x={-16} y={-5} scale={5} />}
+              {species === 'RAT' && <Rect x={57} y={81} width={39} height={39} fill={c.body} />}
+              {stage >= 3 &&
+                [0, 1, 2, 7, 8, 9].map((i) => (
+                  <Pixels key={`fence-${i}`} kind="fence" x={i * 16} y={72} />
+                ))}
+              {Array.from({ length: stage * 3 }, (_, i) => (
+                <Pixels
+                  key={`growth-${i}`}
+                  kind={stage >= 2 && i % 2 ? 'flower' : 'grass'}
+                  x={(i * 29 + 8) % 149}
+                  y={94 + (i % 2) * 7}
+                  scale={0.7}
+                />
+              ))}
               {props.slice(0, stage * 2).map((prop, i) => (
                 <Pixels
                   key={`${prop}-${[4, 127, 29, 104, 0, 135][i]}`}
@@ -202,41 +216,15 @@ export function PixelScene({
                   scale={1.2 + (i % 2) * 0.3}
                 />
               ))}
-              {burrow && (
-                <>
-                  <Pixels kind="root" x={26} y={0} scale={2} />
-                  <Pixels kind="root" x={119} y={0} scale={1.5} />
-                </>
-              )}
-              {state?.kind === 'exposed' &&
-                !mini &&
-                [0, 1, 2].map((i) => {
-                  const y = (tick * 2 + i * 32) % 108;
-                  const pop = y > 93;
-                  return (
-                    <G key={i}>
-                      <Rect
-                        x={12 + i * 59 - (pop ? 3 : 0)}
-                        y={y}
-                        width={pop ? 20 : 14}
-                        height={pop ? 2 : 13}
-                        fill={c.red}
-                      />
-                      {!pop && (
-                        <SvgText
-                          x={19 + i * 59}
-                          y={y + 10}
-                          fontSize={10}
-                          fontWeight="bold"
-                          textAnchor="middle"
-                          fill={c.paper}
-                        >
-                          1
-                        </SvgText>
-                      )}
-                    </G>
-                  );
-                })}
+              {Array.from({ length: weedCount }, (_, i) => (
+                <Pixels
+                  key={`weed-${i}`}
+                  kind="weed"
+                  x={i % 2 ? 145 - Math.floor(i / 2) * 10 : Math.floor(i / 2) * 10}
+                  y={88 - (i % 3) * 4}
+                  scale={1 + Math.min(0.8, (now - exposure.since) / 90000)}
+                />
+              ))}
               {state?.kind === 'care' && (
                 <>
                   <Rect x={0} y={0} width={160} height={95} fill={c.gold} opacity={0.12} />
@@ -263,6 +251,18 @@ export function PixelScene({
               )}
             </>
           )}
+          {((player?.mode !== undefined && player.mode !== 'awake') || kind === 'night') &&
+            Array.from({ length: 7 }, (_, i) => (
+              <Rect
+                key={`firefly-${i}`}
+                x={12 + i * 21 + Math.round(Math.sin(tick / 14 + i) * 4)}
+                y={54 + ((i * 11) % 37)}
+                width={2}
+                height={2}
+                fill={c.gold}
+                opacity={0.5 + Math.abs(Math.sin(tick / 9 + i)) * 0.5}
+              />
+            ))}
           {moving && (
             <G transform={`translate(${-travel} 0)`}>
               {[0, 1, 2, 3].map((i) => (
@@ -343,7 +343,10 @@ export function PixelScene({
             <>
               <Pixels kind="tree" x={-8} y={22} scale={5} />
               <Pixels kind="tree" x={120} y={28} scale={4} />
-              <Pixels kind="nest" x={31} y={65} scale={6} />
+              <Rect x={16} y={82} width={128} height={26} fill={c.dirt} />
+              <Rect x={16} y={81} width={128} height={3} fill={c.ink} />
+              <Pixels kind="signpost" x={6} y={62} scale={2} />
+              <Pixels kind="grass" x={130} y={87} />
             </>
           )}
         </Svg>
@@ -352,20 +355,50 @@ export function PixelScene({
     </View>
   );
 }
-export function BattlePad({ species }: { species: Player['species'] }) {
-  const fill = species === 'BLOB' ? c.moss : species === 'RAT' ? c.dirt : c.slate;
+const signatureProp = (p: Player): PropKind =>
+  p.id === 'bot'
+    ? 'weed'
+    : p.species === 'BLOB'
+      ? 'mushroom'
+      : p.species === 'RAT'
+        ? 'signpost'
+        : 'stones';
+
+export function RaidGarden({ attacker, defender }: { attacker: Player; defender: Player }) {
   return (
-    <Svg width={96} height={20} viewBox="0 0 48 10">
-      {[0, 1, 2, 3, 4].map((i) => (
+    <View pointerEvents="none" style={StyleSheet.absoluteFill}>
+      <Svg width="100%" height="100%" viewBox="0 0 160 64" preserveAspectRatio="none">
+        <Rect x={0} y={0} width={160} height={50} fill={c.skyLight} />
         <Rect
-          key={i}
-          x={Math.abs(2 - i) * 5 + 1}
-          y={i * 2}
-          width={46 - Math.abs(2 - i) * 10}
-          height={2}
-          fill={i === 4 ? c.ink : fill}
+          x={0}
+          y={50}
+          width={80}
+          height={14}
+          fill={attacker.species === 'CUBE' ? c.stone : c.moss}
         />
-      ))}
-    </Svg>
+        <Rect
+          x={80}
+          y={50}
+          width={80}
+          height={14}
+          fill={
+            defender.id === 'bot' ? c.slate : defender.species === 'CUBE' ? c.stone : c.leafLight
+          }
+        />
+        <Rect x={0} y={57} width={160} height={7} fill={c.dirt} />
+        <Rect x={0} y={50} width={160} height={2} fill={c.ink} />
+        <Pixels kind={signatureProp(attacker)} x={1} y={34} />
+        <Pixels kind={signatureProp(defender)} x={143} y={34} />
+        <Pixels kind="grass" x={69} y={44} scale={0.6} />
+        {attacker.level >= 2 && <Pixels kind="flower" x={18} y={44} scale={0.7} />}
+        {defender.level >= 2 && defender.id !== 'bot' && (
+          <Pixels kind="flower" x={126} y={44} scale={0.7} />
+        )}
+        {attacker.level >= 3 && <Pixels kind="fence" x={0} y={22} scale={1.5} />}
+        {defender.level >= 3 && defender.id !== 'bot' && (
+          <Pixels kind="fence" x={138} y={22} scale={1.5} />
+        )}
+      </Svg>
+    </View>
   );
 }

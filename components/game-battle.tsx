@@ -30,8 +30,10 @@ import {
   type Side,
 } from '@/lib/battle';
 import { EnergyPips, Meter, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
-import { PixelScene, BattlePad } from '@/components/pixel-scenes';
-import { Dialogue, BodyText, BattleIntro, Pulse } from '@/components/pixel-feedback';
+import { PixelScene, RaidGarden } from '@/components/pixel-scenes';
+import { grasslingName, grasslings, growthStage } from '@/lib/grasslings';
+import { GrassFlight } from '@/components/grassling-feedback';
+import { BodyText, BattleIntro, Pulse } from '@/components/pixel-feedback';
 import { SlideInLeft, SlideInRight } from 'react-native-reanimated';
 
 type Phase = 'choose' | 'timing' | 'block' | 'resolve' | 'waiting' | 'skipped' | 'end';
@@ -69,28 +71,43 @@ function Damage({ amount }: { amount: number }) {
 }
 function Info({ p, f }: { p: Player; f: Fighter }) {
   return (
-    <View style={[styles.border, { padding: 10, gap: 5, flex: 1, backgroundColor: c.body }]}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 5, flexWrap: 'wrap' }}>
-        <PixelText numberOfLines={1} style={{ flexShrink: 1 }}>
-          {p.pet_name}
-        </PixelText>
-        {f.guard && <Shield accessibilityLabel="Guard" size={14} color={c.ink} />}
-        {f.slowed && <Snail accessibilityLabel="Slowed" size={14} color={c.ink} />}
-        {f.notified && <Bell accessibilityLabel="Notification" size={14} color={c.ink} />}
-        {f.doom && <Smartphone accessibilityLabel="Doomscrolling" size={14} color={c.ink} />}
+    <View style={{ flex: 1, alignItems: 'center' }}>
+      <View
+        style={{
+          width: '100%',
+          padding: 8,
+          gap: 4,
+          backgroundColor: c.body,
+          borderTopWidth: 3,
+          borderBottomWidth: 3,
+          borderColor: c.shade,
+          minHeight: 158,
+        }}
+      >
+        <BodyText numberOfLines={2} style={{ minHeight: 40 }}>
+          {grasslingName(p)}
+        </BodyText>
+        <BodyText>
+          {p.id === 'bot' ? 'WEED' : growthStage(p.level)} · LV {p.level}
+        </BodyText>
+        <BodyText>{p.id === 'bot' ? 'GLITCHY' : grasslings[p.species].habit}</BodyText>
+        <Meter value={f.hp} max={maxHp(p)} />
+        <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center', flexWrap: 'wrap' }}>
+          <PixelText>
+            {f.hp}/{maxHp(p)} HP
+          </PixelText>
+          <EnergyPips value={f.energy} />
+        </View>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, flexWrap: 'wrap' }}>
+          <Leaf size={14} color={c.ink} />
+          <PixelText>ZEN {Math.round(zen(p) * 100)}%</PixelText>
+          {f.guard && <Shield accessibilityLabel="Guard" size={14} color={c.ink} />}
+          {f.slowed && <Snail accessibilityLabel="Slowed" size={14} color={c.ink} />}
+          {f.notified && <Bell accessibilityLabel="Notification" size={14} color={c.ink} />}
+          {f.doom && <Smartphone accessibilityLabel="Doomscrolling" size={14} color={c.ink} />}
+        </View>
       </View>
-      <PixelText>
-        LV {p.level} · {p.species}
-      </PixelText>
-      <Meter value={f.hp} max={maxHp(p)} />
-      <EnergyPips value={f.energy} />
-      <PixelText>
-        {f.hp}/{maxHp(p)} HP
-      </PixelText>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
-        <Leaf size={14} color={c.ink} />
-        <PixelText>ZEN {Math.round(zen(p) * 100)}%</PixelText>
-      </View>
+      <View style={{ width: 8, height: 18, backgroundColor: c.shade }} />
     </View>
   );
 }
@@ -327,11 +344,11 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         />
         <Pulse
           active={combat.d.hp < maxHp(target) * 0.25}
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '50%' }}
+          style={{ position: 'absolute', top: 0, bottom: 0, right: 0, width: '50%' }}
         />
         <Pulse
           active={combat.a.hp < maxHp(player) * 0.25}
-          style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '50%' }}
+          style={{ position: 'absolute', top: 0, bottom: 0, left: 0, width: '50%' }}
         />
       </View>
       <View
@@ -345,7 +362,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         }}
       >
         <PixelText style={{ textAlign: 'center', fontSize: 14 }}>
-          {request.practice ? 'TRAINING BATTLE' : 'RIVAL RAID'}
+          {request.practice ? 'SPARRING' : 'GARDEN RAID'}
         </PixelText>
         <View
           style={{
@@ -359,7 +376,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           <Pressable
             accessibilityRole="switch"
             accessibilityState={{ checked: auto }}
-            accessibilityLabel="Auto battle at double speed"
+            accessibilityLabel="Auto raid at double speed"
             onPress={() => {
               const value = !autoRef.current;
               autoRef.current = value;
@@ -392,51 +409,72 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           alignSelf: 'center',
         }}
       >
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Info p={target} f={combat.d} />
-          <Animated.View
-            entering={reduced ? FadeIn.duration(150) : SlideInRight.delay(780).duration(240)}
-            style={{ width: 96 }}
+        <View>
+          <View style={{ flexDirection: 'row', gap: 16, alignItems: 'flex-start' }}>
+            <Info p={player} f={combat.a} />
+            <Info p={target} f={combat.d} />
+          </View>
+          <View
+            style={{
+              height: 128,
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              justifyContent: 'space-around',
+              paddingBottom: 12,
+            }}
           >
-            <Pet
-              species={target.species}
-              level={target.level}
-              hat={target.hat}
-              facing="left"
-              grumpy={target.mood < 30}
-              size={96}
-              bob={false}
-              hit={hit.d}
-              attack={attack.d}
-            />
-            <BattlePad species={target.species} />
-            {damage?.side === 'd' && <Damage key={damage.id} amount={damage.amount} />}
-          </Animated.View>
+            <RaidGarden attacker={player} defender={target} />
+            <Animated.View
+              entering={reduced ? FadeIn.duration(150) : SlideInLeft.delay(780).duration(240)}
+              style={{ width: 96 }}
+            >
+              <Pet
+                species={player.species}
+                level={player.level}
+                hat={player.hat}
+                facing="right"
+                grumpy={player.mood < 30}
+                size={96}
+                bob={false}
+                hit={hit.a}
+                attack={attack.a}
+                slumped={combat.a.hp <= 0 || (finished && combat.result === false)}
+                victory={finished && combat.result === true}
+              />
+              {damage?.side === 'a' && <Damage key={damage.id} amount={damage.amount} />}
+            </Animated.View>
+            <Animated.View
+              entering={reduced ? FadeIn.duration(150) : SlideInRight.delay(780).duration(240)}
+              style={{ width: 96 }}
+            >
+              <Pet
+                species={target.species}
+                level={target.level}
+                hat={target.hat}
+                facing="left"
+                dave={target.id === 'bot'}
+                grumpy={target.mood < 30}
+                size={96}
+                bob={false}
+                hit={hit.d}
+                attack={attack.d}
+                slumped={combat.d.hp <= 0 || (finished && combat.result === true)}
+                victory={finished && combat.result === false}
+              />
+              {damage?.side === 'd' && <Damage key={damage.id} amount={damage.amount} />}
+            </Animated.View>
+            {finished && combat.result && !request.practice && <GrassFlight />}
+          </View>
         </View>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Animated.View
-            entering={reduced ? FadeIn.duration(150) : SlideInLeft.delay(780).duration(240)}
-            style={{ width: 96 }}
-          >
-            <Pet
-              species={player.species}
-              level={player.level}
-              hat={player.hat}
-              grumpy={player.mood < 30}
-              size={96}
-              bob={false}
-              hit={hit.a}
-              attack={attack.a}
-            />
-            <BattlePad species={player.species} />
-            {damage?.side === 'a' && <Damage key={damage.id} amount={damage.amount} />}
-          </Animated.View>
-          <Info p={player} f={combat.a} />
+        <View
+          accessibilityLiveRegion="polite"
+          style={[styles.border, { padding: 12, backgroundColor: c.paper }]}
+        >
+          <BodyText>{log}</BodyText>
         </View>
-        <Dialogue text={log} />
         {history.length > 1 && (
           <View style={[styles.border, { gap: 8, padding: 12, backgroundColor: c.paper }]}>
-            <PixelText>BATTLE LOG</PixelText>
+            <PixelText>RAID LOG</PixelText>
             {history.slice(0, -1).map((entry) => (
               <BodyText key={entry.id}>{entry.line}</BodyText>
             ))}
@@ -524,7 +562,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                   ? auto
                     ? 'AUTO · 2X SPEED'
                     : 'CHOOSE YOUR MOVE'
-                  : 'BATTLE IN PROGRESS...'}
+                  : 'RAID IN PROGRESS...'}
               </PixelText>
             )}
             <View style={{ flexDirection: 'row', gap: 8 }}>
@@ -546,7 +584,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               />
             )}
             <PixelButton
-              label="CANCEL BATTLE"
+              label={request.practice ? 'LEAVE SPARRING' : 'CANCEL RAID'}
               small
               light
               onPress={() => gameStore.setState({ battle: null })}
