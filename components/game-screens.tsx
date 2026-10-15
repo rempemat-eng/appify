@@ -225,9 +225,9 @@ export function ShopScreen() {
   if (!p) return null;
   const unlock =
     p.level === 1
-      ? '4-CARD HAND'
+      ? 'LV 2 · 4-CARD HAND'
       : p.level === 2
-        ? 'FREE DIGITAL SUNSET CARD'
+        ? 'LV 3 · FREE DIGITAL SUNSET CARD'
         : 'MORE HP. MORE ATK.';
   return (
     <Page>

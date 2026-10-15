@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FlatList, Pressable, View } from 'react-native';
+import { FlatList, Pressable, View, useWindowDimensions } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import Animated, {
   FadeIn,
@@ -186,9 +186,13 @@ export function HabitCard({
 }) {
   const card = cards[id];
   const effect =
-    species && card.power > 0 && card.habit === species
-      ? card.effect.replace(String(card.power), String(cardPower(id, species)))
-      : card.effect;
+    compact && id === 'deep_breath'
+      ? '½HIT+1E'
+      : compact && id === 'call_a_friend'
+        ? '20+10HP'
+        : species && card.power > 0 && card.habit === species
+          ? card.effect.replace(String(card.power), String(cardPower(id, species)))
+          : card.effect;
   const face = (
     <View
       style={{
@@ -234,7 +238,7 @@ export function HabitCard({
         style={{
           fontSize: 11,
           lineHeight: 16,
-          ...(compact ? { fontFamily: 'Inter_600SemiBold' } : {}),
+          fontFamily: 'Inter_600SemiBold',
         }}
       >
         {effect}
@@ -297,26 +301,29 @@ export function DeckPanel({ reward = false }: { reward?: boolean }) {
   const earned = useGame((s) => s.cardReward);
   const ids = reward && earned ? earned.cards : cardIds.filter((id) => p.deck.includes(id));
   const mission = missions.find((m) => m.id === earned?.mission);
+  const { width } = useWindowDimensions();
+  const columns = width < 360 ? 2 : 3;
   return (
     <View style={{ flex: 1, backgroundColor: c.paper, padding: 16, gap: 16 }}>
       <PixelText style={{ fontSize: 16, lineHeight: 28 }}>
-        {reward
-          ? `+${ids.length} ${ids.length === 1 ? 'CARD' : 'CARDS'}`
+        {reward && earned
+          ? `+${ids.length} ${ids.length === 1 ? 'CARD' : 'CARDS'} FROM ${earned.minutes} MIN OFFLINE`
           : `MY DECK · ${p.deck.length}/20`}
       </PixelText>
-      <BodyText>
-        {reward && earned
-          ? `FROM ${earned.minutes} MIN OFFLINE${mission ? ` · ${mission.name}` : ''}`
-          : 'EARN CARDS BY BEING OFFLINE. 15 MIN = 1 CARD.'}
-      </BodyText>
+      {reward ? (
+        mission && <BodyText>{mission.name}</BodyText>
+      ) : (
+        <BodyText>EARN CARDS BY BEING OFFLINE. 15 MIN = 1 CARD.</BodyText>
+      )}
       <FlatList
+        key={columns}
         data={ids}
-        numColumns={3}
+        numColumns={columns}
         keyExtractor={(id, index) => `${id}-${index}`}
         columnWrapperStyle={{ gap: 8 }}
         contentContainerStyle={{ gap: 12, paddingVertical: 8 }}
         renderItem={({ item, index }) => (
-          <View style={{ flex: 1, maxWidth: '33.333%' }}>
+          <View style={{ flex: 1, maxWidth: `${100 / columns}%` }}>
             {reward ? (
               <RewardCard id={item} index={index} />
             ) : (
