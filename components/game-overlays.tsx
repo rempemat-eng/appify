@@ -7,6 +7,7 @@ import {
   ScrollView,
   TextInput,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Shield, Swords } from 'lucide-react-native';
@@ -21,6 +22,7 @@ import {
   type Player,
 } from '@/lib/game';
 import { DeckPanel } from '@/components/habit-cards';
+import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
 import { FloatingZ, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
 import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
@@ -29,6 +31,7 @@ import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import Animated, { FadeIn, SlideInDown, useReducedMotion } from 'react-native-reanimated';
 function Onboarding() {
+  const { width } = useWindowDimensions();
   const [step, setStep] = useState(0);
   const [species, setSpecies] = useState<Player['species']>('BLOB');
   const [name, setName] = useState('');
@@ -100,7 +103,14 @@ function Onboarding() {
         }}
       >
         <View style={{ gap: 16 }}>
-          <PixelText style={{ fontSize: 21, lineHeight: 33 }}>{'SCREENA\nGOTCHI'}</PixelText>
+          <PixelText
+            numberOfLines={1}
+            adjustsFontSizeToFit
+            minimumFontScale={0.45}
+            style={{ fontSize: Math.min(21, (Math.min(width, 560) - 48) / 14), lineHeight: 33 }}
+          >
+            SCREENAGOTCHI
+          </PixelText>
           <View style={{ height: 4, backgroundColor: c.night, width: 52 }} />
           <PixelText style={{ fontSize: 11, lineHeight: 21 }}>
             {'PUT YOUR PHONE DOWN.\nGROW A GRASSLING.'}
@@ -217,6 +227,17 @@ function ScreenOff() {
   const now = useGame((s) => s.now);
   const offStart = useGame((s) => s.offStart);
   const offGrass = useGame((s) => s.offGrass);
+  const togetherId = useGame((s) => s.togetherId);
+  const session = useGame((s) => s.sessions.find((x) => x.id === s.togetherId));
+  const rival = useGame((s) =>
+    s.rivals.find(
+      (x) => x.id === (session?.player_a === p.id ? session?.player_b : session?.player_a),
+    ),
+  );
+  const message = useGame((s) => s.message);
+  const sharedMinutes = session?.started_at
+    ? Math.max(0, Math.floor((now - Date.parse(session.started_at)) / 1000))
+    : 0;
   const m = missions.find((x) => x.id === p.mission_id);
   return (
     <View
@@ -258,6 +279,23 @@ function ScreenOff() {
       </View>
       <View style={{ alignItems: 'center', gap: 28 }}>
         {!m && <FloatingZ />}
+        {togetherId && (
+          <View style={{ gap: 12, alignItems: 'center' }}>
+            <PixelText style={{ color: c.paper }}>TOUCH GRASS TOGETHER</PixelText>
+            <PixelText style={{ color: c.body }}>SHARED TIMER: {sharedMinutes} MIN</PixelText>
+            <PixelText
+              style={{
+                color: session?.status === 'failed' ? c.body : c.gold,
+                textAlign: 'center',
+                lineHeight: 22,
+              }}
+            >
+              {session?.status === 'failed'
+                ? `${session.failed_by === p.id ? p.name : (rival?.name ?? 'YOUR RIVAL')} PICKED UP THEIR PHONE.`
+                : '+50% GRASS IF BOTH STAY OFF 10 MIN'}
+            </PixelText>
+          </View>
+        )}
         {m ? (
           <PixelScene
             player={p}
@@ -275,7 +313,24 @@ function ScreenOff() {
             <Pet species={p.species} level={p.level} hat={p.hat} walking size={160} />
           </PixelScene>
         ) : (
-          <Pet species={p.species} level={p.level} hat={p.hat} sleeping size={160} />
+          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
+            <Pet
+              species={p.species}
+              level={p.level}
+              hat={p.hat}
+              sleeping
+              size={togetherId ? 128 : 160}
+            />
+            {togetherId && rival && (
+              <Pet
+                species={rival.species}
+                level={rival.level}
+                hat={rival.hat}
+                sleeping
+                size={128}
+              />
+            )}
+          </View>
         )}
         {m ? (
           <>
@@ -296,7 +351,10 @@ function ScreenOff() {
         <PixelText style={{ color: c.body, textAlign: 'center' }}>
           {m ? 'WAKE EARLY = MISSION FAILED' : '+1 GRASS / MIN. KEEP IT DOWN.'}
         </PixelText>
-        <PixelButton label="WAKE UP" light onPress={() => gameStore.getState().wake()} />
+        {togetherId && message && (
+          <BodyText style={{ color: c.paper, textAlign: 'center' }}>{message}</BodyText>
+        )}
+        <PixelButton label="WAKE UP" light onPress={() => void gameStore.getState().wake()} />
       </View>
     </View>
   );
@@ -393,11 +451,20 @@ export function GameOverlays() {
   const flash = useGame((s) => s.flash);
   const deckOpen = useGame((s) => s.deckOpen);
   const cardReward = useGame((s) => s.cardReward);
+  const recap = useGame((s) => s.recap);
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const isScreenOff = !!p && p.mode !== 'awake';
   const visible =
-    !ready || !p || isScreenOff || !!battle || !!alert || !!flash || deckOpen || !!cardReward;
+    !ready ||
+    !p ||
+    isScreenOff ||
+    !!recap ||
+    !!battle ||
+    !!alert ||
+    !!flash ||
+    deckOpen ||
+    !!cardReward;
   useEffect(() => {
     if (!flash) return undefined;
     const timeout = setTimeout(() => useGame.setState({ flash: null }), 1600);
@@ -405,7 +472,8 @@ export function GameOverlays() {
   }, [flash]);
   function dismiss() {
     if (!ready || !p) return;
-    if (isScreenOff) gameStore.getState().wake();
+    if (isScreenOff) void gameStore.getState().wake();
+    else if (recap) gameStore.getState().dismissRecap();
     else if (battle) useGame.setState({ battle: null });
     else if (alert) gameStore.getState().dismissAlert();
     else if (cardReward || deckOpen) gameStore.getState().dismissCards();
@@ -443,6 +511,8 @@ export function GameOverlays() {
             <Onboarding />
           ) : isScreenOff ? (
             <ScreenOff />
+          ) : recap ? (
+            <GardenRecap />
           ) : battle ? (
             <BattleScreen key={`${battle.target.id}-${battle.practice}`} request={battle} />
           ) : alert ? (

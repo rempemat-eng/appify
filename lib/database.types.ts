@@ -7,6 +7,35 @@ declare module '@biltme/backend' {
   interface Database {
     public: {
       Tables: {
+        garden_daily: {
+          Row: {
+            player_id: string
+            day: string
+            raids: number
+            blocked: number
+          }
+          Insert: {
+            player_id: string
+            day: string
+            raids?: number
+            blocked?: number
+          }
+          Update: {
+            player_id?: string
+            day?: string
+            raids?: number
+            blocked?: number
+          }
+          Relationships: [
+            {
+              foreignKeyName: 'garden_daily_player_id_fkey'
+              columns: ['player_id']
+              isOneToOne: false
+              referencedRelation: 'players'
+              referencedColumns: ['id']
+            },
+          ]
+        }
         pairs: {
           Row: {
             id: string
@@ -148,9 +177,127 @@ declare module '@biltme/backend' {
             },
           ]
         }
+        touch_grass_sessions: {
+          Row: {
+            id: string
+            player_a: string
+            player_b: string
+            status: 'invited' | 'active' | 'done' | 'failed'
+            started_at: string | null
+            failed_by: string | null
+            woke_a_at: string | null
+            woke_b_at: string | null
+            grass_a: number
+            grass_b: number
+          }
+          Insert: {
+            id?: string
+            player_a: string
+            player_b: string
+            status?: 'invited' | 'active' | 'done' | 'failed'
+            started_at?: string | null
+            failed_by?: string | null
+            woke_a_at?: string | null
+            woke_b_at?: string | null
+            grass_a?: number
+            grass_b?: number
+          }
+          Update: {
+            id?: string
+            player_a?: string
+            player_b?: string
+            status?: 'invited' | 'active' | 'done' | 'failed'
+            started_at?: string | null
+            failed_by?: string | null
+            woke_a_at?: string | null
+            woke_b_at?: string | null
+            grass_a?: number
+            grass_b?: number
+          }
+          Relationships: [
+            {
+              foreignKeyName: 'touch_grass_sessions_failed_by_fkey'
+              columns: ['failed_by']
+              isOneToOne: false
+              referencedRelation: 'players'
+              referencedColumns: ['id']
+            },
+            {
+              foreignKeyName: 'touch_grass_sessions_player_a_fkey'
+              columns: ['player_a']
+              isOneToOne: false
+              referencedRelation: 'players'
+              referencedColumns: ['id']
+            },
+            {
+              foreignKeyName: 'touch_grass_sessions_player_b_fkey'
+              columns: ['player_b']
+              isOneToOne: false
+              referencedRelation: 'players'
+              referencedColumns: ['id']
+            },
+          ]
+        }
       }
       Views: { [_ in never]: never }
-      Functions: { [_ in never]: never }
+      Functions: {
+        accept_touch_grass: {
+          Args: {
+            sid: string
+            pid: string
+          }
+          Returns: Database['public']['Tables']['touch_grass_sessions']['Row'][]
+          SetofOptions: {
+            from: '*'
+            to: 'touch_grass_sessions'
+            isOneToOne: false
+            isSetofReturn: true
+          }
+        }
+        record_offline_block: {
+          Args: {
+            target: string
+            day_key: string
+          }
+          Returns: undefined
+        }
+        report_touch_grass_wake: {
+          Args: {
+            sid: string
+            pid: string
+            woke_at: string
+            minutes: number
+          }
+          Returns: Database['public']['Tables']['touch_grass_sessions']['Row'][]
+          SetofOptions: {
+            from: '*'
+            to: 'touch_grass_sessions'
+            isOneToOne: false
+            isSetofReturn: true
+          }
+        }
+        reserve_garden_raid: {
+          Args: {
+            pid: string
+            target: string
+            day_key: string
+          }
+          Returns: number[]
+        }
+        wake_touch_grass: {
+          Args: {
+            sid: string
+            pid: string
+          }
+          Returns: Database['public']['Tables']['touch_grass_sessions']['Row'][]
+          SetofOptions: {
+            from: '*'
+            to: 'touch_grass_sessions'
+            isOneToOne: false
+            isSetofReturn: true
+          }
+        }
+      }
       Enums: { [_ in never]: never }
       CompositeTypes: { [_ in never]: never }
     }

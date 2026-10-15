@@ -17,6 +17,13 @@ import { grasslings, growthStage } from '@/lib/grasslings';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
+import {
+  GardenStreak,
+  PlayPause,
+  TogetherInvite,
+  usePlayPaused,
+} from '@/components/offline-garden';
+import { budgetVoice, dayKey } from '@/lib/offline-rules';
 const lines = {
   grumpy: ['i hate it here. put the phone down.', 'my pixels hurt.'],
   exposed: ["we're exposed. i can hear the notifications.", 'put the phone down. trust me.'],
@@ -27,6 +34,7 @@ export function HomeScreen() {
   const p = useGame((s) => s.player);
   const now = useGame((s) => s.now);
   const voice = useGame((s) => s.voice);
+  const paused = usePlayPaused();
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
   const raidId = useGame((s) => s.alerts[0]?.raid.id);
@@ -53,15 +61,16 @@ export function HomeScreen() {
   }, [crumbs]);
   if (!p) return null;
   const state = status(p, now);
-  const speech =
-    voice ??
-    (p.mood < 30
-      ? lines.grumpy
-      : state.kind === 'exposed'
-        ? lines.exposed
-        : state.kind === 'care'
-          ? lines.care
-          : lines.idle)[line % 2];
+  const speech = paused
+    ? budgetVoice
+    : (voice ??
+      (p.mood < 30
+        ? lines.grumpy
+        : state.kind === 'exposed'
+          ? lines.exposed
+          : state.kind === 'care'
+            ? lines.care
+            : lines.idle)[line % 2]);
   return (
     <Page style={{ gap: 22 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -75,6 +84,7 @@ export function HomeScreen() {
       <BodyText>
         {grasslings[p.species].name} · {grasslings[p.species].habit} · {growthStage(p.level)}
       </BodyText>
+      <GardenStreak />
       <Dialogue text={speech} />
       <PixelScene
         species={p.species}
@@ -88,6 +98,7 @@ export function HomeScreen() {
           level={p.level}
           hat={p.hat}
           grumpy={p.mood < 30}
+          yawning={paused}
           slumped={raidFeedback.slumped}
         />
         {crumbs && (
@@ -137,11 +148,15 @@ export function HomeScreen() {
           <PixelText>PUT YOUR PHONE DOWN.</PixelText>
         </View>
         <PixelButton label="MY DECK" light onPress={() => useGame.setState({ deckOpen: true })} />
-        <PixelButton label="SIMULATE SCREEN OFF" onPress={() => useGame.getState().sleep()} />
+        <PixelButton
+          label="SIMULATE SCREEN OFF"
+          gold={paused}
+          onPress={() => useGame.getState().sleep()}
+        />
         <PixelButton
           label="FEED · 5 GRASS"
           light
-          disabled={p.mood >= 100 || p.grass < 5}
+          disabled={paused || p.mood >= 100 || p.grass < 5}
           onPress={() => {
             useGame.getState().feed();
             setCrumbs(true);
@@ -220,6 +235,7 @@ export function MissionsScreen() {
   );
 }
 export function ShopScreen() {
+  const paused = usePlayPaused();
   const p = useGame((s) => s.player);
   const [merchant, setMerchant] = useState('put the phone down. browse the hats.');
   if (!p) return null;
@@ -231,6 +247,7 @@ export function ShopScreen() {
         : 'MORE HP. MORE ATK.';
   return (
     <Page>
+      <PlayPause />
       <PixelText style={styles.title}>GROW YOUR GARDEN.</PixelText>
       <PixelScene kind="market" height={190} />
       <PixelText style={{ fontSize: 12 }}>MOSS THE MERCHANT</PixelText>
@@ -252,8 +269,12 @@ export function ShopScreen() {
         <BodyText>{unlock}</BodyText>
         <PixelButton
           label={`LEVEL UP · ${50 * p.level} GRASS`}
-          disabled={p.grass < p.level * 50}
+          disabled={paused || p.grass < p.level * 50}
           onDisabledPress={() => {
+            if (paused) {
+              feedback('error');
+              return;
+            }
             setMerchant("you can't afford that, doomscroller.");
             feedback('error');
           }}
@@ -289,8 +310,12 @@ export function ShopScreen() {
                 small
                 light={!equipped}
                 label={equipped ? 'EQUIPPED' : owned ? 'EQUIP' : 'BUY'}
-                disabled={!owned && p.grass < h.cost}
+                disabled={paused || (!owned && p.grass < h.cost)}
                 onDisabledPress={() => {
+                  if (paused) {
+                    feedback('error');
+                    return;
+                  }
                   setMerchant("you can't afford that, doomscroller.");
                   feedback('error');
                 }}
@@ -320,6 +345,8 @@ function RivalRow({
   onRaid: (p: Player) => void;
 }) {
   const now = useGame((s) => s.now);
+  const paused = usePlayPaused();
+  const raids = useGame((s) => s.rules.days[dayKey(s.now)]?.raids ?? 0);
   const mySpecies = useGame((s) => s.player?.species);
   const type = mySpecies ? matchup(mySpecies, p.species) : 1;
   const exposed = status(p, now).kind === 'exposed';
@@ -391,14 +418,18 @@ function RivalRow({
           label={raiding === p.id ? 'CHECKING...' : 'RAID'}
           danger
           small
-          disabled={!!raiding}
+          disabled={!!raiding || paused || raids >= 3}
           onPress={() => onRaid(p)}
         />
       )}
+      {!me && <TogetherInvite rival={p} />}
     </View>
   );
 }
 export function ArenaScreen() {
+  const paused = usePlayPaused();
+  const raids = useGame((s) => s.rules.days[dayKey(s.now)]?.raids ?? 0);
+  const wins = useGame((s) => s.rules.days[dayKey(s.now)]?.sparringWins ?? 0);
   const p = useGame((s) => s.player);
   const rivals = useGame((s) => s.rivals);
   const live = useGame((s) => s.live);
@@ -427,6 +458,8 @@ export function ArenaScreen() {
   }
   const header = (
     <View style={{ gap: 24 }}>
+      <PlayPause />
+      <PixelText>RAIDS LEFT TODAY: {Math.max(0, 3 - raids)}</PixelText>
       <PixelText style={styles.title}>{'LESS SCROLL.\nMORE GLORY.'}</PixelText>
       <PixelScene kind="town" height={160} />
       <View style={[styles.border, { padding: 16, gap: 16, backgroundColor: c.body }]}>
@@ -506,8 +539,12 @@ export function ArenaScreen() {
           <PixelText>LV {p.level} · MOOD 50</PixelText>
         </View>
       </View>
+      {wins >= 3 && (
+        <PixelText style={{ lineHeight: 22 }}>DAVE IS TIRED. COME BACK TOMORROW.</PixelText>
+      )}
       <PixelButton
-        label="SPAR WITH DAVE"
+        label={wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
+        disabled={paused}
         onPress={() => void useGame.getState().startBattle(bot(p), true)}
       />
       <PixelButton

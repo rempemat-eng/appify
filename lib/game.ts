@@ -3,7 +3,23 @@ import { create } from 'zustand';
 import * as Crypto from 'expo-crypto';
 import * as Haptics from 'expo-haptics';
 import { AppState, Platform, Vibration } from 'react-native';
-import type { Database } from '@biltme/backend';
+import type { Database, Tables } from '@biltme/backend';
+import {
+  advanceBudget,
+  bumpDay,
+  budgetVoice,
+  dayKey,
+  emptyDay,
+  freshRules,
+  gardenStreak,
+  isOfflineRules,
+  previousDay,
+  recordOffline,
+  remainingPlay,
+  sparringReward,
+  type OfflineRules,
+} from '@/lib/offline-rules';
+export type TogetherSession = Tables<'touch_grass_sessions'>;
 import { bilt } from '@/lib/bilt';
 import { addCard, daveDeck, isCardId, offlineCards, startingDeck, type CardId } from '@/lib/cards';
 
@@ -72,6 +88,11 @@ function code() {
 export type Incoming = { raid: Raid; attacker: Player | null };
 export type BattleRequest = { target: Player; practice: boolean };
 type Saved = {
+  rules: OfflineRules;
+  togetherId: string | null;
+  pendingTogetherWakes: { sid: string; at: string; minutes: number }[];
+  togetherSettled: string[];
+  seenSessions: string[];
   player: Player | null;
   identity: string;
   tickAt: number;
@@ -85,6 +106,15 @@ type Saved = {
   cardReward: { cards: CardId[]; minutes: number; mission: string | null } | null;
 };
 type Game = Saved & {
+  sessions: TogetherSession[];
+  togetherPending: string | null;
+  recap: string | null;
+  resetBudget: () => void;
+  openDaily: () => void;
+  dismissRecap: () => void;
+  inviteTogether: (rival: Player) => Promise<void>;
+  acceptTogether: (session: TogetherSession) => Promise<void>;
+  pollTogether: () => Promise<void>;
   deckOpen: boolean;
   ready: boolean;
   live: boolean;
@@ -102,7 +132,7 @@ type Game = Saved & {
   sync: () => Promise<void>;
   pair: (code: string) => Promise<string | null>;
   sleep: (mission?: string) => void;
-  wake: () => void;
+  wake: () => Promise<void>;
   feed: () => void;
   levelUp: () => void;
   hatAction: (hat: string) => void;
@@ -159,6 +189,11 @@ function migrateSaved(value: unknown) {
     if (Array.isArray(list))
       for (const item of list) if (isRecord(item)) migratePlayer(item.attacker);
   }
+  if (!isOfflineRules(value.rules)) value.rules = freshRules();
+  if (value.togetherId === undefined) value.togetherId = null;
+  if (!Array.isArray(value.pendingTogetherWakes)) value.pendingTogetherWakes = [];
+  if (value.togetherSettled === undefined) value.togetherSettled = [];
+  if (value.seenSessions === undefined) value.seenSessions = [];
   if (value.collectedCards === undefined) value.collectedCards = [];
   if (value.cardReward === undefined) value.cardReward = null;
   return value;
@@ -182,6 +217,18 @@ function isIncoming(value: unknown): value is Incoming {
 function isSaved(value: unknown): value is Saved {
   return (
     isRecord(value) &&
+    isOfflineRules(value.rules) &&
+    (value.togetherId === null || typeof value.togetherId === 'string') &&
+    Array.isArray(value.pendingTogetherWakes) &&
+    value.pendingTogetherWakes.every(
+      (x) =>
+        isRecord(x) &&
+        typeof x.sid === 'string' &&
+        typeof x.at === 'string' &&
+        typeof x.minutes === 'number',
+    ) &&
+    isStringArray(value.togetherSettled) &&
+    isStringArray(value.seenSessions) &&
     (value.player === null || isPlayer(value.player)) &&
     typeof value.identity === 'string' &&
     ['tickAt', 'offStart', 'offGrass'].every((key) => typeof value[key] === 'number') &&
@@ -207,9 +254,106 @@ let persistence = Promise.resolve();
 let active = true;
 let syncRequested = false;
 let battleGeneration = 0;
+let playAt = Date.now();
+let playEligible = false;
+let accounting = false;
+export function playPaused() {
+  const s = gameStore.getState();
+  return remainingPlay(s.rules.budget) === 0;
+}
+function eligiblePlay() {
+  const s = gameStore.getState();
+  return (
+    active &&
+    s.ready &&
+    s.player?.mode === 'awake' &&
+    !s.battle &&
+    !s.alerts.length &&
+    !s.flash &&
+    !s.deckOpen &&
+    !s.cardReward &&
+    !s.recap
+  );
+}
+export function accountPlay(now = Date.now()) {
+  if (accounting) return;
+  accounting = true;
+  const s = gameStore.getState();
+  const before = remainingPlay(s.rules.budget, now);
+  const budget = advanceBudget(s.rules.budget, now, playEligible ? Math.max(0, now - playAt) : 0);
+  playAt = now;
+  playEligible = eligiblePlay();
+  if (budget.startedAt !== s.rules.budget.startedAt || budget.usedMs !== s.rules.budget.usedMs) {
+    gameStore.setState({
+      rules: { ...s.rules, budget },
+      ...(before > 0 && remainingPlay(budget, now) === 0 ? { voice: budgetVoice } : {}),
+    });
+    void persist();
+  }
+  accounting = false;
+}
+function beginTogether(session: TogetherSession) {
+  const s = gameStore.getState();
+  if (!s.player || !session.started_at) return;
+  const at = Date.parse(session.started_at);
+  gameStore.setState({
+    togetherId: session.id,
+    seenSessions: [...s.seenSessions, session.id],
+    sessions: [...s.sessions.filter((x) => x.id !== session.id), session],
+    offStart: s.player.offline_seconds,
+    offGrass: s.player.grass,
+    tickAt: at,
+    battle: null,
+    recap: null,
+    message: null,
+    voice: null,
+    player: { ...s.player, mode: 'screen_off', mission_id: null, mission_ends_at: 0 },
+  });
+  gameStore.getState().tick();
+  changed();
+}
+export function resolveTogetherSession(session: TogetherSession) {
+  const s = gameStore.getState();
+  const p = s.player;
+  if (!p || (p.id !== session.player_a && p.id !== session.player_b)) return;
+  const ownWake = session.player_a === p.id ? session.woke_a_at : session.woke_b_at;
+  if (session.status === 'done' && ownWake && !s.togetherSettled.includes(session.id)) {
+    const bonus = Math.floor((session.player_a === p.id ? session.grass_a : session.grass_b) * 0.5);
+    gameStore.setState({
+      player: { ...p, grass: p.grass + bonus },
+      rules: {
+        ...bumpDay(s.rules, dayKey(Date.parse(ownWake)), { grass: bonus }),
+        togetherBadges: s.rules.togetherBadges + 1,
+      },
+      togetherSettled: [...s.togetherSettled, session.id],
+      message: `TOGETHER! +${bonus} BONUS GRASS`,
+      voice: 'we touched grass together.',
+    });
+    feedback();
+    void persist();
+  }
+  if (session.status === 'failed' && !s.seenSessions.includes(`failed:${session.id}`)) {
+    const name =
+      session.failed_by === p.id
+        ? p.name
+        : (s.rivals.find((x) => x.id === session.failed_by)?.name ?? 'YOUR RIVAL');
+    gameStore.setState({
+      seenSessions: [...s.seenSessions, `failed:${session.id}`],
+      message: `${name} PICKED UP THEIR PHONE.`,
+      voice: 'our together bonus wilted.',
+    });
+    feedback('error');
+    void persist();
+  }
+}
 function persist() {
   const s = gameStore.getState();
   const saved: Saved = {
+    rules: s.rules,
+    pendingTogetherWakes: s.pendingTogetherWakes,
+    togetherId: s.togetherId,
+    togetherSettled: s.togetherSettled,
+    seenSessions: s.seenSessions,
     player: s.player,
     identity: s.identity,
     tickAt: s.tickAt,
@@ -246,6 +390,7 @@ function applyIncoming(item: Incoming) {
       mood: lost ? Math.max(0, p.mood - 20) : p.mood,
       recovery_until: Date.now() + 60000,
     },
+    rules: bumpDay(s.rules, dayKey(), { grass: lost ? 0 : 20 }),
     applied: [...s.applied, item.raid.id],
     alerts: [...s.alerts, item],
     staged: s.staged.filter((x) => x.raid.id !== item.raid.id),
@@ -254,6 +399,125 @@ function applyIncoming(item: Incoming) {
   feedback('raid');
 }
 export const gameStore = create<Game>((set, get) => ({
+  rules: freshRules(),
+  pendingTogetherWakes: [],
+  togetherId: null,
+  togetherSettled: [],
+  seenSessions: [],
+  sessions: [],
+  togetherPending: null,
+  recap: null,
+  resetBudget: () => {
+    set({ rules: { ...get().rules, budget: { startedAt: 0, usedMs: 0 } } });
+    playAt = Date.now();
+    void persist();
+    feedback();
+  },
+  openDaily: () => {
+    const s = get();
+    if (!active || !s.player || (s.rules.recapDay === dayKey() && s.rules.checkedDay === dayKey()))
+      return;
+    const today = dayKey();
+    let rules = s.rules;
+    if (rules.checkedDay !== today && gardenStreak(rules, today).forgiven)
+      set({ message: 'YOUR GARDEN WAITED FOR YOU', voice: 'your garden waited for you.' });
+    rules = { ...rules, checkedDay: today };
+    if (rules.recapDay !== today) {
+      set({ recap: previousDay(today) });
+      rules = { ...rules, recapDay: today };
+    }
+    set({ rules });
+    void persist();
+  },
+  dismissRecap: () => {
+    set({ recap: null });
+  },
+  inviteTogether: async (rival) => {
+    const p = get().player;
+    if (!p || get().togetherPending || get().togetherId) return;
+    set({ togetherPending: rival.id });
+    try {
+      await get().sync();
+      const r = await bilt
+        .from('touch_grass_sessions')
+        .insert({ player_a: p.id, player_b: rival.id })
+        .select()
+        .single();
+      if (r.error) throw r.error;
+      set({ sessions: [...get().sessions, r.data] });
+      feedback();
+    } catch (error) {
+      get().notify(
+        error instanceof Error
+          ? error.message
+          : isRecord(error) && typeof error.message === 'string'
+            ? error.message
+            : 'COULD NOT SEND INVITE. TRY AGAIN.',
+        true,
+      );
+    } finally {
+      set({ togetherPending: null });
+    }
+  },
+  acceptTogether: async (session) => {
+    const p = get().player;
+    if (!p || p.mode !== 'awake' || get().battle || get().togetherPending || get().togetherId)
+      return;
+    set({ togetherPending: session.player_a });
+    try {
+      await get().sync();
+      const r = await bilt.rpc('accept_touch_grass', { sid: session.id, pid: p.id });
+      if (r.error) throw r.error;
+      const accepted = r.data?.[0];
+      if (!accepted) throw new Error('BOTH GARDENERS MUST BE AWAKE. TRY AGAIN.');
+      beginTogether(accepted);
+      feedback();
+    } catch (error) {
+      get().notify(
+        isRecord(error) && typeof error.message === 'string'
+          ? error.message
+          : 'COULD NOT ACCEPT. TRY AGAIN.',
+        true,
+      );
+    } finally {
+      set({ togetherPending: null });
+    }
+  },
+  pollTogether: async () => {
+    const p = get().player;
+    if (!p) return;
+    for (const wake of get().pendingTogetherWakes) {
+      const report = await bilt.rpc('report_touch_grass_wake', {
+        sid: wake.sid,
+        pid: p.id,
+        woke_at: wake.at,
+        minutes: wake.minutes,
+      });
+      if (report.error) {
+        get().notify(report.error.message, true);
+        throw report.error;
+      }
+      set({ pendingTogetherWakes: get().pendingTogetherWakes.filter((x) => x.sid !== wake.sid) });
+      await persist();
+    }
+    const r = await bilt
+      .from('touch_grass_sessions')
+      .select('*')
+      .or(`player_a.eq.${p.id},player_b.eq.${p.id}`);
+    if (r.error) throw r.error;
+    set({ sessions: r.data ?? [] });
+    for (const session of r.data ?? []) {
+      const ownWake = session.player_a === p.id ? session.woke_a_at : session.woke_b_at;
+      resolveTogetherSession(session);
+      if (
+        (session.status === 'active' || session.status === 'done') &&
+        !ownWake &&
+        !get().seenSessions.includes(session.id) &&
+        !get().togetherId
+      )
+        beginTogether(session);
+    }
+  },
   player: null,
   identity: '',
   ready: false,
@@ -287,7 +551,9 @@ export const gameStore = create<Game>((set, get) => ({
       if (get().player?.mode === 'awake') {
         set({ player: { ...get().player!, care_until: now + 30000 }, tickAt: now });
       }
+      playAt = now;
       get().tick();
+      get().openDaily();
       await persist();
       void get().sync();
     } catch {
@@ -321,7 +587,12 @@ export const gameStore = create<Game>((set, get) => ({
       last_seen: now,
       deck: [...startingDeck],
     };
-    set({ player, tickAt: now, voice: "hi. i grow when you're not on your phone." });
+    set({
+      player,
+      tickAt: now,
+      rules: { ...freshRules(now), recapDay: dayKey(now) },
+      voice: "hi. i grow when you're not on your phone.",
+    });
     await persist();
     feedback();
     void get().sync();
@@ -337,6 +608,7 @@ export const gameStore = create<Game>((set, get) => ({
     if (error) feedback('error');
   },
   tick: () => {
+    accountPlay();
     const s = get();
     const p = s.player;
     const now = Date.now();
@@ -389,7 +661,28 @@ export const gameStore = create<Game>((set, get) => ({
           feedback();
         }
       }
+      let rules = recordOffline(
+        get().rules,
+        s.tickAt,
+        elapsed,
+        p.mode === 'screen_off' ? elapsed : 0,
+      );
+      for (
+        let threshold = (Math.floor(p.offline_seconds / 15) + 1) * 15;
+        threshold <= next.offline_seconds;
+        threshold += 15
+      )
+        rules = bumpDay(rules, dayKey(s.tickAt + (threshold - p.offline_seconds) * 1000), {
+          cards: 1,
+        });
+      rules = bumpDay(rules, dayKey(end), {
+        cards: completedMission ? 1 : 0,
+        grass: completedMission ? next.grass - p.grass : 0,
+      });
+      if (next.offline_seconds - s.offStart >= 10)
+        rules = { ...rules, budget: { startedAt: 0, usedMs: 0 } };
       set({
+        rules,
         player: next,
         tickAt: s.tickAt + seconds * 1000,
         collectedCards: completedMission ? [] : collectedCards,
@@ -422,6 +715,7 @@ export const gameStore = create<Game>((set, get) => ({
       )
         set({ voice: "care window's over. we're exposed now." });
     }
+    if (active && get().rules.recapDay !== dayKey()) get().openDaily();
   },
   sync: async () => {
     if (!get().player) return;
@@ -466,6 +760,25 @@ export const gameStore = create<Game>((set, get) => ({
         if (rivals.error) throw rivals.error;
         set({ rivals: rivals.data ?? [] });
       } else set({ rivals: [] });
+      await get().pollTogether();
+      const daily = await bilt.from('garden_daily').select('*').eq('player_id', p.id);
+      if (daily.error) throw daily.error;
+      let rules = get().rules;
+      for (const d of daily.data ?? [])
+        rules = {
+          ...rules,
+          days: {
+            ...rules.days,
+            [d.day]: {
+              ...emptyDay(),
+              ...rules.days[d.day],
+              raids: d.raids,
+              blocked: Math.max(d.blocked, rules.days[d.day]?.blocked ?? 0),
+            },
+          },
+        };
+      set({ rules });
+      await persist();
       if (get().player?.mode === 'awake' && !get().battle) {
         const raids = await bilt
           .from('raids')
@@ -558,8 +871,23 @@ export const gameStore = create<Game>((set, get) => ({
     changed();
     feedback();
   },
-  wake: () => {
+  wake: async () => {
     get().tick();
+    const togetherId = get().togetherId;
+    if (togetherId && get().player) {
+      const s = get();
+      set({
+        pendingTogetherWakes: [
+          ...s.pendingTogetherWakes,
+          {
+            sid: togetherId,
+            at: new Date().toISOString(),
+            minutes: s.player!.offline_seconds - s.offStart,
+          },
+        ],
+        togetherId: null,
+      });
+    }
     const s = get();
     const p = s.player;
     if (!p || p.mode === 'awake') return;
@@ -578,22 +906,27 @@ export const gameStore = create<Game>((set, get) => ({
       cardReward: s.collectedCards.length
         ? { cards: s.collectedCards, minutes: elapsed, mission: null }
         : s.cardReward,
-      message: failed
-        ? 'MISSION FAILED. YOU PICKED UP YOUR PHONE.'
-        : `YOU WERE OFFLINE FOR ${elapsed} MIN · +${p.grass - s.offGrass} GRASS`,
+      message:
+        togetherId && s.sessions.some((x) => x.id === togetherId && x.status === 'failed')
+          ? s.message
+          : failed
+            ? 'MISSION FAILED. YOU PICKED UP YOUR PHONE.'
+            : `YOU WERE OFFLINE FOR ${elapsed} MIN · +${p.grass - s.offGrass} GRASS`,
     });
     changed();
     feedback(failed ? 'error' : 'success');
   },
   feed: () => {
+    accountPlay();
     const p = get().player;
-    if (!p || p.mode !== 'awake' || p.grass < 5 || p.mood >= 100) return;
+    if (!p || p.mode !== 'awake' || playPaused() || p.grass < 5 || p.mood >= 100) return;
     get().change({ grass: p.grass - 5, mood: Math.min(100, p.mood + 20) });
     feedback();
   },
   levelUp: () => {
+    accountPlay();
     const p = get().player;
-    if (!p || p.mode !== 'awake' || p.grass < 50 * p.level) return;
+    if (!p || p.mode !== 'awake' || playPaused() || p.grass < 50 * p.level) return;
     const level = p.level + 1;
     get().change({
       level,
@@ -606,9 +939,10 @@ export const gameStore = create<Game>((set, get) => ({
     feedback();
   },
   hatAction: (id) => {
+    accountPlay();
     const p = get().player;
     const h = hats.find((x) => x.id === id);
-    if (!p || p.mode !== 'awake' || !h) return;
+    if (!p || p.mode !== 'awake' || playPaused() || !h) return;
     if (p.owned_hats.includes(id)) get().change({ hat: p.hat === id ? null : id });
     else if (p.grass >= h.cost)
       get().change({ grass: p.grass - h.cost, owned_hats: [...p.owned_hats, id], hat: id });
@@ -616,8 +950,13 @@ export const gameStore = create<Game>((set, get) => ({
     feedback();
   },
   startBattle: async (target, practice = false, revenge = false) => {
+    accountPlay();
     const p = get().player;
-    if (!p || p.mode !== 'awake' || get().battle) return;
+    if (!p || p.mode !== 'awake' || get().battle || playPaused()) return;
+    if (!practice && (get().rules.days[dayKey()]?.raids ?? 0) >= 3) {
+      get().notify('NO RAIDS LEFT TODAY. COME BACK TOMORROW.');
+      return;
+    }
     const generation = ++battleGeneration;
     if (!practice) {
       const fresh = await bilt.from('players').select('*').eq('id', target.id).maybeSingle();
@@ -627,6 +966,16 @@ export const gameStore = create<Game>((set, get) => ({
         return;
       }
       if (status(fresh.data).kind !== 'exposed') {
+        if (fresh.data.mode !== 'awake') {
+          const blocked = await bilt.rpc('record_offline_block', {
+            target: target.id,
+            day_key: dayKey(),
+          });
+          if (blocked.error) {
+            get().notify(blocked.error.message, true);
+            return;
+          }
+        }
         get().notify(
           revenge ? "THEY'RE HIDING. TRY AGAIN LATER." : 'RAID BLOCKED. THEY PUT THEIR PHONE DOWN.',
           true,
@@ -642,11 +991,50 @@ export const gameStore = create<Game>((set, get) => ({
       get().battle
     )
       return;
+    if (playPaused()) return;
+    if (!practice) {
+      const result = await bilt.rpc('reserve_garden_raid', {
+        pid: p.id,
+        target: target.id,
+        day_key: dayKey(),
+      });
+      if (result.error) {
+        get().notify(result.error.message, true);
+        return;
+      }
+      const count = result.data?.[0];
+      if (count === undefined) {
+        get().notify('RAID UNAVAILABLE OR DAILY LIMIT REACHED.');
+        void get().sync();
+        return;
+      }
+      const rules = get().rules;
+      set({
+        rules: {
+          ...rules,
+          days: {
+            ...rules.days,
+            [dayKey()]: { ...emptyDay(), ...rules.days[dayKey()], raids: count },
+          },
+        },
+      });
+      await persist();
+      if (
+        !active ||
+        generation !== battleGeneration ||
+        get().player?.mode !== 'awake' ||
+        get().battle ||
+        playPaused()
+      )
+        return;
+    }
     set({ battle: { target, practice } });
   },
   finishBattle: (won, target, practice) => {
     const p = get().player;
     if (!p || !get().battle) return;
+    const day = get().rules.days[dayKey()] ?? emptyDay();
+    const practiceGrass = sparringReward(day, won);
     const amount = won ? Math.min(target.grass, Math.max(10, Math.floor(target.grass * 0.3))) : 10;
     const raid: Raid = {
       id: Crypto.randomUUID(),
@@ -658,15 +1046,21 @@ export const gameStore = create<Game>((set, get) => ({
       seen_by_defender: false,
     };
     set({
+      rules: bumpDay(get().rules, dayKey(), {
+        sparringWins: practice && won ? 1 : 0,
+        grass: practice ? practiceGrass : won ? amount : 0,
+      }),
       player: {
         ...p,
-        grass: practice ? p.grass + (won ? 5 : 0) : Math.max(0, p.grass + (won ? amount : -amount)),
+        grass: practice ? p.grass + practiceGrass : Math.max(0, p.grass + (won ? amount : -amount)),
       },
       outgoing: practice ? get().outgoing : [...get().outgoing, raid],
       battle: null,
       message: practice
         ? won
-          ? 'SPARRING WON! +5 GRASS'
+          ? practiceGrass > 0
+            ? 'SPARRING WON! +5 GRASS'
+            : 'DAVE IS TIRED. COME BACK TOMORROW.'
           : 'SPARRING LOST. TRY AGAIN.'
         : won
           ? `VICTORY! YOU STOLE ${amount} GRASS`
@@ -680,6 +1074,8 @@ export const gameStore = create<Game>((set, get) => ({
     const p = get().player;
     if (!p) return;
     if (status(p).kind !== 'exposed') {
+      if (p.mode !== 'awake') set({ rules: bumpDay(get().rules, dayKey(), { blocked: 1 }) });
+      changed();
       get().notify('RAID BLOCKED. YOUR GARDEN WAS SAFE.');
       return;
     }
@@ -705,6 +1101,9 @@ export const gameStore = create<Game>((set, get) => ({
     changed();
   },
 }));
+gameStore.subscribe(() => {
+  if (!accounting && eligiblePlay() !== playEligible) accountPlay();
+});
 export const useGame = gameStore;
 export function bot(p: Player): Player {
   return {
@@ -731,7 +1130,9 @@ export function startGame() {
     if (active) void gameStore.getState().sync();
   }, 3000);
   const sub = AppState.addEventListener('change', (state) => {
+    accountPlay();
     active = state === 'active';
+    accountPlay();
     if (!active) {
       battleGeneration += 1;
       gameStore.setState({ battle: null });
@@ -743,10 +1144,12 @@ export function startGame() {
         gameStore.setState({ tickAt: Date.now() });
       }
       s.tick();
+      s.openDaily();
       void s.sync();
     }
   });
   const visibility = () => {
+    accountPlay();
     if (document.hidden) {
       active = false;
       battleGeneration += 1;
@@ -759,8 +1162,10 @@ export function startGame() {
         s.change({ care_until: Date.now() + 30000 });
       }
       s.tick();
+      s.openDaily();
       void s.sync();
     }
+    accountPlay();
   };
   if (Platform.OS === 'web') document.addEventListener('visibilitychange', visibility);
   stop = () => {

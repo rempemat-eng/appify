@@ -20,6 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
 import { Sprout } from 'lucide-react-native';
+import { PlayMeter } from '@/components/offline-garden';
 import { PixelProp } from '@/components/pixel-scenes';
 import { GrassRoll, Pulse } from '@/components/pixel-feedback';
 import { feedback } from '@/lib/game';
@@ -143,6 +144,7 @@ export function Pet({
   victory = false,
   slumped = false,
   dave = false,
+  yawning = false,
 }: {
   species?: Player['species'];
   size?: number;
@@ -158,6 +160,7 @@ export function Pet({
   victory?: boolean;
   slumped?: boolean;
   dave?: boolean;
+  yawning?: boolean;
 }) {
   const reduced = useReducedMotion();
   const y = useSharedValue(0);
@@ -265,7 +268,14 @@ export function Pet({
   const motion = useAnimatedStyle(() => ({
     transform: [{ translateY: Math.round(y.value) }, { translateX: Math.round(x.value) }],
   }));
-  const pixels = petPixels(species, level, hat, sleeping || blink || idle === 'yawn', grumpy, dave);
+  const pixels = petPixels(
+    species,
+    level,
+    hat,
+    sleeping || blink || idle === 'yawn' || yawning,
+    grumpy,
+    dave,
+  );
   const scaledSize = Math.max(32, Math.round(size / 32) * 32);
   return (
     <Animated.View
@@ -323,7 +333,7 @@ export function Pet({
               }
             />
           ))}
-          {idle === 'yawn' && <Rect x={21} y={22} width={3} height={3} fill={c.ink} />}
+          {(idle === 'yawn' || yawning) && <Rect x={21} y={22} width={3} height={3} fill={c.ink} />}
         </Svg>
       </Pressable>
     </Animated.View>
@@ -491,9 +501,20 @@ export function GameHeader() {
           <GrassRoll value={p?.grass ?? 20} />
         </Pressable>
       </View>
-      <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center', marginTop: 8 }}>
-        <View style={{ width: 6, height: 6, backgroundColor: live ? c.shade : c.error }} />
-        <PixelText style={{ fontSize: 11 }}>{live ? 'LIVE' : 'OFFLINE'}</PixelText>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          gap: 8,
+          alignItems: 'center',
+          marginTop: 4,
+        }}
+      >
+        <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
+          <View style={{ width: 6, height: 6, backgroundColor: live ? c.shade : c.error }} />
+          <PixelText style={{ fontSize: 11 }}>{live ? 'LIVE' : 'OFFLINE'}</PixelText>
+        </View>
+        {p && <PlayMeter />}
       </View>
     </View>
   );
