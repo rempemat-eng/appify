@@ -136,7 +136,7 @@ export function resolveMove(
   const victim = next[dest];
   const source = players[side];
   const target = players[dest];
-  let log = `${grasslingName(source)}: ${moveName(move)}!`;
+  let log = `${grasslingName(source)} ${move === 'pass' ? 'passed' : `played ${moveName(move)}`}.`;
   if (move === 'pass') {
     actor.energy = Math.min(3, actor.energy + 1);
     return { state: next, impacts, log: `${log} +1 ENERGY.` };

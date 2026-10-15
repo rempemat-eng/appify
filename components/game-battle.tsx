@@ -4,14 +4,22 @@ import { Bell, Shield, FastForward, ChevronDown } from 'lucide-react-native';
 import Animated, {
   FadeIn,
   FadeOut,
-  SlideInLeft,
-  SlideInRight,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { feedback, palette as c, gameStore, type BattleRequest, type Player } from '@/lib/game';
+import {
+  feedback,
+  palette as c,
+  gameStore,
+  useGame,
+  raidGrass,
+  type BattleRequest,
+  type Player,
+} from '@/lib/game';
+import { dayKey, emptyDay, sparringReward } from '@/lib/offline-rules';
+import { GardenTip } from '@/components/garden-guide';
 import {
   available,
   beginTurn,
@@ -35,7 +43,7 @@ import { grasslingName, grasslings } from '@/lib/grasslings';
 import { GrassFlight } from '@/components/grassling-feedback';
 import { BodyText, BattleIntro, Pulse } from '@/components/pixel-feedback';
 import { HabitCard } from '@/components/habit-cards';
-import { cardDetails } from '@/lib/cards';
+import { cardDetails, cards } from '@/lib/cards';
 
 type Phase = 'choose' | 'timing' | 'block' | 'resolve' | 'waiting' | 'skipped' | 'end';
 function Damage({ amount }: { amount: number }) {
@@ -55,7 +63,7 @@ function Damage({ amount }: { amount: number }) {
       style={[
         {
           position: 'absolute',
-          top: 0,
+          top: 32,
           left: 12,
           zIndex: 5,
           backgroundColor: c.paper,
@@ -82,15 +90,28 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
           setExpanded(!expanded);
           feedback('select');
         }}
-        style={{ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 6 }}
+        style={{ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 6, minHeight: 48 }}
       >
-        <BodyText numberOfLines={1} style={{ width: 110, fontSize: 11 }}>
+        <BodyText style={{ width: 92, fontSize: 11, lineHeight: 16, fontFamily: 'Inter_700Bold' }}>
           {grasslingName(p)}
         </BodyText>
-        <View style={{ flex: 1 }}>
-          <Meter value={f.hp} max={maxHp(p)} height={10} />
+        <View style={{ flex: 1, gap: 2 }}>
+          <BodyText style={{ fontSize: 11, lineHeight: 14, fontFamily: 'Inter_700Bold' }}>
+            HP {f.hp}/{maxHp(p)}
+          </BodyText>
+          <Meter
+            value={f.hp}
+            max={maxHp(p)}
+            height={20}
+            color={f.hp < maxHp(p) * 0.25 ? c.danger : f.hp < maxHp(p) * 0.5 ? c.amber : c.moss}
+          />
         </View>
-        <EnergyPips value={f.energy} />
+        <View style={{ gap: 0 }}>
+          <BodyText style={{ fontSize: 11, lineHeight: 14, fontFamily: 'Inter_700Bold' }}>
+            ENERGY
+          </BodyText>
+          <EnergyPips value={f.energy} />
+        </View>
         <ChevronDown size={14} color={c.ink} />
       </Pressable>
       {expanded && (
@@ -111,8 +132,14 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
 }
 export function BattleScreen({ request }: { request: BattleRequest }) {
   const [player] = useState(() => gameStore.getState().player!);
-  const reduced = useReducedMotion();
-  const { width } = useWindowDimensions();
+  const { width, height } = useWindowDimensions();
+  const rules = useGame((s) => s.rules);
+  const [cardLesson, setCardLesson] = useState(
+    () => request.practice && !gameStore.getState().tips.includes('card'),
+  );
+  const [timingLesson, setTimingLesson] = useState(
+    () => request.practice && !gameStore.getState().tips.includes('timing'),
+  );
   const petSize = Math.min(192, Math.floor(Math.min(width, 640) / 64) * 32);
   const [lifted, setLifted] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
@@ -136,7 +163,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const [damage, setDamage] = useState<(Impact & { id: number }) | null>(null);
   const [log, setLog] = useState('YOUR TURN. LIFT A CARD, TAP AGAIN TO PLAY.');
   const [flash, setFlash] = useState(false);
-  const [history, setHistory] = useState<{ id: number; line: string }[]>([]);
+  const [history, setHistory] = useState<{ id: number; line: string; summary: string }[]>([]);
   const historyId = useRef(0);
   const committed = useRef(false);
   const active = useCallback(() => gameStore.getState().battle === request, [request]);
@@ -148,8 +175,8 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
     combatRef.current = value;
     setCombat(value);
   }, []);
-  const record = useCallback((line: string) => {
-    const entry = { id: ++historyId.current, line };
+  const record = useCallback((line: string, summary = line) => {
+    const entry = { id: ++historyId.current, line, summary };
     setLog(line);
     setHistory((old) => [...old.slice(-23), entry]);
   }, []);
@@ -175,6 +202,11 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   );
   function attackTap() {
     if (phaseRef.current !== 'timing') return;
+    if (timingLesson) {
+      setTimingLesson(false);
+      timingStart.current = Date.now();
+      return;
+    }
     timing.current = timingAt(Math.min(1, (Date.now() - timingStart.current) / 1200));
     feedback('select');
     changePhase('resolve');
@@ -222,6 +254,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   useEffect(() => {
     const phaseAuto = autoRef.current;
     if (phase === 'timing') {
+      if (timingLesson) return undefined;
       let frame = 0;
       function sweep() {
         if (phaseRef.current !== 'timing') return;
@@ -260,6 +293,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
       if (move === 'digital_sunset') timers.push(setTimeout(() => setFlash(false), 180 * speed));
       const timer = setTimeout(() => {
         if (!active()) return;
+        const beforeHp = combatRef.current[side].hp;
         const resolution = resolveMove(
           combatRef.current,
           move,
@@ -270,7 +304,10 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         combatRef.current = resolution.state;
         const impacts = resolution.impacts;
         if (!impacts.length) setCombat(resolution.state);
-        record(resolution.log);
+        const actor = side === 'a' ? player : target;
+        const heal = resolution.state[side].hp - beforeHp;
+        const summary = `${grasslingName(actor)} ${move === 'pass' ? 'passed' : `played ${cards[move].name}`}. ${timing.current === 1.5 && damaging(move) ? 'PERFECT! ' : ''}${impacts.length ? `-${impacts.reduce((sum, impact) => sum + impact.amount, 0)}${blocked.current ? ' · BLOCKED' : ''}` : move === 'deep_breath' ? 'BLOCK HALF · +1 ENERGY' : move === 'pass' ? '+1 ENERGY' : `+${Math.max(0, heal)} HP`}`;
+        record(resolution.log, summary);
         impacts.forEach((impact, i) => {
           timers.push(
             setTimeout(
@@ -307,13 +344,16 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
       };
     }
     return undefined;
-  }, [phase, player, target, active, nextTurn, record]);
+  }, [phase, player, target, active, nextTurn, record, timingLesson]);
   useEffect(() => {
     if (phase !== 'choose' || !auto) return undefined;
     const timer = setTimeout(() => select(chooseAI(combatRef.current.a, player)), 200);
     return () => clearTimeout(timer);
   }, [auto, phase, player, select]);
   const finished = phase === 'end' && combat.result !== null;
+  const reward = request.practice
+    ? sparringReward(rules.days[dayKey()] ?? emptyDay(), Boolean(combat.result))
+    : raidGrass(Boolean(combat.result), target);
   const enabled = phase === 'choose' && !auto;
   const handCounts = new Map<string, number>();
   const handCards = combat.a.hand.map((id) => {
@@ -358,7 +398,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         >
           <View style={{ flex: 1, gap: 6 }}>
             <PixelText>{request.practice ? 'SPARRING' : 'GARDEN RAID'}</PixelText>
-            <BodyText>ROUND {Math.max(combat.a.turns, combat.d.turns)}/12</BodyText>
+            <BodyText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, lineHeight: 14 }}>
+              ROUND {Math.max(combat.a.turns, combat.d.turns)}/12
+            </BodyText>
           </View>
           <Pressable
             accessibilityRole="switch"
@@ -367,11 +409,15 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             onPress={() => {
               const value = !autoRef.current;
               autoRef.current = value;
+              setCardLesson(false);
+              setTimingLesson(false);
               setAuto(value);
               setLifted(null);
               feedback('select');
             }}
             style={{
+              minHeight: 44,
+              minWidth: 44,
               flexDirection: 'row',
               alignItems: 'center',
               gap: 5,
@@ -397,7 +443,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           onLayout={(event) => setStageHeight(event.nativeEvent.layout.height)}
           style={{
             flex: 1,
-            minHeight: 280,
+            minHeight: Math.max(160, Math.min(280, height - 500)),
             flexDirection: 'row',
             alignItems: 'flex-end',
             justifyContent: 'space-around',
@@ -405,10 +451,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           }}
         >
           <RaidGarden attacker={player} defender={target} />
-          <Animated.View
-            entering={reduced ? FadeIn.duration(150) : SlideInLeft.delay(780).duration(240)}
-            style={{ width: petSize }}
-          >
+          <Animated.View entering={FadeIn.duration(150)} style={{ width: petSize }}>
             <Pet
               species={player.species}
               level={player.level}
@@ -424,10 +467,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             />
             {damage?.side === 'a' && <Damage key={damage.id} amount={damage.amount} />}
           </Animated.View>
-          <Animated.View
-            entering={reduced ? FadeIn.duration(150) : SlideInRight.delay(780).duration(240)}
-            style={{ width: petSize }}
-          >
+          <Animated.View entering={FadeIn.duration(150)} style={{ width: petSize }}>
             <Pet
               species={target.species}
               level={target.level}
@@ -446,20 +486,6 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           </Animated.View>
           {finished && combat.result && !request.practice && <GrassFlight />}
         </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Expand raid log"
-          accessibilityState={{ expanded: showHistory }}
-          onPress={() => {
-            setShowHistory(!showHistory);
-            feedback('select');
-          }}
-          style={{ backgroundColor: c.paper, paddingHorizontal: 12, paddingVertical: 6 }}
-        >
-          <BodyText accessibilityLiveRegion="polite" numberOfLines={showHistory ? undefined : 2}>
-            {log}
-          </BodyText>
-        </Pressable>
         {showHistory && history.length > 1 && (
           <View style={{ gap: 6, padding: 12, backgroundColor: c.paper }}>
             <PixelText>RAID LOG</PixelText>
@@ -471,6 +497,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
       </ScrollView>
       <View
         style={{
+          maxHeight: Math.max(250, height * 0.48),
           backgroundColor: c.paper,
           padding: 10,
           gap: 8,
@@ -481,128 +508,200 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           alignSelf: 'center',
         }}
       >
-        {finished ? (
-          <Animated.View entering={FadeIn} exiting={FadeOut} style={{ gap: 14 }}>
-            <PixelText style={{ textAlign: 'center', fontSize: 16 }}>
-              {combat.result ? 'VICTORY!' : 'RAID FAILED.'}
-            </PixelText>
-            <PixelButton
-              label="CONTINUE"
-              onPress={() => {
-                if (committed.current || !active()) return;
-                committed.current = true;
-                gameStore.getState().finishBattle(combat.result!, target, request.practice);
-              }}
-            />
-          </Animated.View>
-        ) : (
-          <>
-            {phase === 'timing' ? (
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel="Tap the action bar in the centre"
-                onPress={attackTap}
-                style={[styles.border, { padding: 10, gap: 8, backgroundColor: c.body }]}
-              >
-                <PixelText style={{ textAlign: 'center' }}>TAP IN THE CENTRE!</PixelText>
-                <View
-                  style={{
-                    height: 32,
-                    backgroundColor: c.error,
-                    borderWidth: 2,
-                    borderColor: c.ink,
-                  }}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Show full action history"
+          accessibilityState={{ expanded: showHistory }}
+          onPress={() => {
+            setShowHistory(!showHistory);
+            feedback('select');
+          }}
+          style={{
+            minHeight: 44,
+            padding: 8,
+            backgroundColor: c.body,
+            borderWidth: 2,
+            borderColor: c.ink,
+          }}
+        >
+          <View accessibilityLiveRegion="polite" style={{ gap: 4 }}>
+            {history.length ? (
+              history.slice(-2).map((entry) => (
+                <BodyText
+                  key={entry.id}
+                  style={{ fontFamily: 'Inter_600SemiBold', fontSize: 12, lineHeight: 17 }}
                 >
-                  <View
-                    style={{
-                      position: 'absolute',
-                      left: '28%',
-                      width: '44%',
-                      height: '100%',
-                      backgroundColor: c.positive,
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      left: '46%',
-                      width: '8%',
-                      height: '100%',
-                      backgroundColor: c.gold,
-                    }}
-                  />
-                  <View
-                    style={{
-                      position: 'absolute',
-                      left: `${cursor * 98}%`,
-                      width: 4,
-                      height: '100%',
-                      backgroundColor: c.ink,
-                    }}
+                  {entry.summary}
+                </BodyText>
+              ))
+            ) : (
+              <BodyText style={{ fontFamily: 'Inter_600SemiBold', fontSize: 12, lineHeight: 17 }}>
+                {log}
+              </BodyText>
+            )}
+          </View>
+        </Pressable>
+        <ScrollView style={{ flexShrink: 1 }} contentContainerStyle={{ gap: 8 }}>
+          {finished ? (
+            <Animated.View entering={FadeIn} exiting={FadeOut} style={{ gap: 14 }}>
+              <PixelText style={{ textAlign: 'center', fontSize: 16 }}>
+                {combat.result ? 'VICTORY!' : 'RAID FAILED.'}
+              </PixelText>
+              <BodyText style={{ textAlign: 'center', fontFamily: 'Inter_700Bold', fontSize: 16 }}>
+                {request.practice
+                  ? `+${reward} GRASS`
+                  : combat.result
+                    ? `YOU STOLE ${reward} GRASS`
+                    : `-${reward} GRASS`}
+              </BodyText>
+              {!request.practice && (
+                <PixelText style={{ textAlign: 'center' }}>
+                  RAIDS LEFT TODAY: {Math.max(0, 3 - (rules.days[dayKey()]?.raids ?? 0))}
+                </PixelText>
+              )}
+              <PixelButton
+                label="CONTINUE"
+                onPress={() => {
+                  if (committed.current || !active()) return;
+                  committed.current = true;
+                  gameStore.getState().finishBattle(combat.result!, target, request.practice);
+                }}
+              />
+            </Animated.View>
+          ) : (
+            <>
+              <GardenTip
+                id="card"
+                eligible={cardLesson && enabled}
+                onDismiss={() => setCardLesson(false)}
+              />
+              <View style={{ minHeight: 168, justifyContent: 'center', gap: 8 }}>
+                {phase === 'timing' ? (
+                  <View style={{ gap: 8 }}>
+                    <GardenTip
+                      id="timing"
+                      eligible={timingLesson}
+                      onDismiss={() => {
+                        setTimingLesson(false);
+                        timingStart.current = Date.now();
+                      }}
+                    />
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel="Tap the action bar in the centre"
+                      onPress={attackTap}
+                      style={[styles.border, { padding: 10, gap: 8, backgroundColor: c.body }]}
+                    >
+                      <PixelText style={{ textAlign: 'center' }}>
+                        {timingLesson ? 'TAP TO START' : 'TAP IN THE MIDDLE!'}
+                      </PixelText>
+                      <View
+                        style={{
+                          height: 32,
+                          backgroundColor: c.error,
+                          borderWidth: 2,
+                          borderColor: c.ink,
+                        }}
+                      >
+                        <View
+                          style={{
+                            position: 'absolute',
+                            left: '28%',
+                            width: '44%',
+                            height: '100%',
+                            backgroundColor: c.positive,
+                          }}
+                        />
+                        <View
+                          style={{
+                            position: 'absolute',
+                            left: '46%',
+                            width: '8%',
+                            height: '100%',
+                            backgroundColor: c.gold,
+                          }}
+                        />
+                        <View
+                          style={{
+                            position: 'absolute',
+                            left: `${cursor * 98}%`,
+                            width: 4,
+                            height: '100%',
+                            backgroundColor: c.ink,
+                          }}
+                        />
+                      </View>
+                    </Pressable>
+                  </View>
+                ) : phase === 'block' ? (
+                  <PixelButton label="BLOCK!" gold onPress={blockTap} />
+                ) : (
+                  <>
+                    <BodyText style={{ textAlign: 'center' }}>
+                      {phase === 'choose'
+                        ? auto
+                          ? 'AUTO · 2X SPEED'
+                          : lifted === null
+                            ? 'LIFT A CARD · TAP AGAIN TO PLAY'
+                            : 'TAP LIFTED CARD TO PLAY'
+                        : 'RAID IN PROGRESS...'}
+                    </BodyText>
+                    {lifted !== null && enabled && combat.a.hand[lifted] && (
+                      <BodyText style={{ fontSize: 11, lineHeight: 16 }}>
+                        {cardDetails[combat.a.hand[lifted]]}
+                      </BodyText>
+                    )}
+                    <View style={{ flexDirection: 'row', gap: 5, paddingTop: 10 }}>
+                      {handCards.map(({ id, key }, index) => (
+                        <HabitCard
+                          key={key}
+                          id={id}
+                          species={player.species}
+                          guided={
+                            cardLesson &&
+                            index === combat.a.hand.findIndex((card) => available(card, combat.a))
+                          }
+                          selected={lifted === index}
+                          disabled={!enabled || !available(id, combat.a)}
+                          onPress={() => {
+                            if (!enabled) return;
+                            if (lifted === index) select(id);
+                            else {
+                              setCardLesson(false);
+                              setLifted(index);
+                              feedback('select');
+                            }
+                          }}
+                        />
+                      ))}
+                    </View>
+                  </>
+                )}
+              </View>
+              <BodyText style={{ textAlign: 'center', fontSize: 11 }}>
+                DRAW {combat.a.draw.length} · DISCARD {combat.a.discard.length}
+              </BodyText>
+              <View style={{ flexDirection: 'row', gap: 8 }}>
+                <View style={{ flex: 1 }}>
+                  <PixelButton
+                    label="PASS +1 ⚡"
+                    small
+                    disabled={!enabled}
+                    onPress={() => select('pass')}
                   />
                 </View>
-              </Pressable>
-            ) : phase === 'block' ? (
-              <PixelButton label="BLOCK!" gold onPress={blockTap} />
-            ) : (
-              <BodyText style={{ textAlign: 'center' }}>
-                {phase === 'choose'
-                  ? auto
-                    ? 'AUTO · 2X SPEED'
-                    : lifted === null
-                      ? 'LIFT A CARD · TAP AGAIN TO PLAY'
-                      : 'TAP LIFTED CARD TO PLAY'
-                  : 'RAID IN PROGRESS...'}
-              </BodyText>
-            )}
-            {lifted !== null && enabled && combat.a.hand[lifted] && (
-              <BodyText style={{ fontSize: 11, lineHeight: 16 }}>
-                {cardDetails[combat.a.hand[lifted]]}
-              </BodyText>
-            )}
-            <View style={{ flexDirection: 'row', gap: 5, paddingTop: 10 }}>
-              {handCards.map(({ id, key }, index) => (
-                <HabitCard
-                  key={key}
-                  id={id}
-                  compact={combat.a.handLimit === 4}
-                  species={player.species}
-                  selected={lifted === index}
-                  disabled={!enabled || !available(id, combat.a)}
-                  onPress={() => {
-                    if (!enabled) return;
-                    if (lifted === index) select(id);
-                    else {
-                      setLifted(index);
-                      feedback('select');
-                    }
-                  }}
-                />
-              ))}
-            </View>
-            <BodyText style={{ textAlign: 'center', fontSize: 11 }}>
-              DRAW {combat.a.draw.length} · DISCARD {combat.a.discard.length}
-            </BodyText>
-            <View style={{ flexDirection: 'row', gap: 8 }}>
-              <View style={{ flex: 1 }}>
-                <PixelButton
-                  label="PASS · +1E"
-                  small
-                  disabled={!enabled}
-                  onPress={() => select('pass')}
-                />
+                <View style={{ flex: 1 }}>
+                  <PixelButton
+                    label={request.practice ? 'LEAVE' : 'CANCEL'}
+                    small
+                    light
+                    onPress={() => gameStore.setState({ battle: null })}
+                  />
+                </View>
               </View>
-              <View style={{ flex: 1 }}>
-                <PixelButton
-                  label={request.practice ? 'LEAVE' : 'CANCEL'}
-                  small
-                  light
-                  onPress={() => gameStore.setState({ battle: null })}
-                />
-              </View>
-            </View>
-          </>
-        )}
+            </>
+          )}
+        </ScrollView>
       </View>
       <BattleIntro />
       {flash && (

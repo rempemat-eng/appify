@@ -19,7 +19,9 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
-import { Sprout } from 'lucide-react-native';
+import { Sprout, Zap } from 'lucide-react-native';
+import { GardenTip, GardenGuide } from '@/components/garden-guide';
+import { usePlayPaused } from '@/components/offline-garden';
 import { PlayMeter } from '@/components/offline-garden';
 import { PixelProp } from '@/components/pixel-scenes';
 import { GrassRoll, Pulse } from '@/components/pixel-feedback';
@@ -40,6 +42,7 @@ export function PixelButton({
   danger = false,
   gold = false,
   energyCost,
+  supportingText,
   onLongPress,
   onDisabledPress,
 }: {
@@ -51,11 +54,12 @@ export function PixelButton({
   danger?: boolean;
   gold?: boolean;
   energyCost?: number;
+  supportingText?: string;
   onLongPress?: () => void;
   onDisabledPress?: () => void;
 }) {
   return (
-    <View style={{ paddingRight: 4, paddingBottom: 4, opacity: disabled ? 0.45 : 1 }}>
+    <View style={{ paddingRight: 4, paddingBottom: 4 }}>
       <View style={[StyleSheet.absoluteFill, { top: 4, left: 4, backgroundColor: c.ink }]} />
       <Pressable
         accessibilityRole="button"
@@ -78,7 +82,15 @@ export function PixelButton({
             paddingHorizontal: 12,
             borderWidth: 2,
             borderColor: c.ink,
-            backgroundColor: danger ? c.error : gold ? c.gold : light ? c.paper : c.positive,
+            backgroundColor: disabled
+              ? c.stone
+              : danger
+                ? c.error
+                : gold
+                  ? c.gold
+                  : light
+                    ? c.paper
+                    : c.positive,
             justifyContent: 'center',
             alignItems: 'center',
             borderBottomWidth: 4,
@@ -96,6 +108,18 @@ export function PixelButton({
         >
           {label}
         </PixelText>
+        {supportingText && (
+          <Text
+            style={{
+              fontFamily: 'Inter_600SemiBold',
+              color: c.buttonInk,
+              fontSize: 11,
+              marginTop: 4,
+            }}
+          >
+            {supportingText}
+          </Text>
+        )}
         {energyCost !== undefined && (
           <EnergyPips value={energyCost} color={danger ? c.flash : c.buttonInk} />
         )}
@@ -110,15 +134,13 @@ export function EnergyPips({ value, color = c.ink }: { value: number; color?: st
       style={{ flexDirection: 'row', gap: 5, marginTop: 5 }}
     >
       {[0, 1, 2].map((pip) => (
-        <View
+        <Zap
           key={pip}
-          style={{
-            width: 8,
-            height: 8,
-            borderWidth: 1,
-            borderColor: color,
-            backgroundColor: pip < value ? color : 'transparent',
-          }}
+          size={12}
+          strokeWidth={2.5}
+          color={color}
+          fill={pip < value ? color : 'transparent'}
+          style={{ opacity: pip < value ? 1 : 0.4 }}
         />
       ))}
     </View>
@@ -423,10 +445,12 @@ export function Meter({
   value,
   max = 100,
   height = 12,
+  color = c.positive,
 }: {
   value: number;
   max?: number;
   height?: number;
+  color?: string;
 }) {
   return (
     <View
@@ -438,7 +462,7 @@ export function Meter({
         style={{
           height: '100%',
           width: `${Math.max(0, Math.min(100, (value / max) * 100))}%`,
-          backgroundColor: c.positive,
+          backgroundColor: color,
         }}
       />
     </View>
@@ -447,75 +471,151 @@ export function Meter({
 export function StatusChip({ player, compact = false }: { player: Player; compact?: boolean }) {
   const now = useGame((s) => s.now);
   const state = status(player, now);
-  const off = state.label === 'SCREEN OFF';
+  const care = state.kind === 'care';
+  const color =
+    state.kind === 'exposed'
+      ? c.danger
+      : care
+        ? c.amber
+        : player.mode !== 'awake'
+          ? c.night
+          : c.terracotta;
+  const label = `${state.label}${care ? ` ${clock(state.left)}` : ''}`;
   return (
     <Pulse
-      active={state.kind === 'exposed' || off}
-      color={off ? c.night : c.error}
-      style={{ flexDirection: 'row', alignItems: 'center', gap: 5, paddingVertical: 4 }}
+      active={state.kind === 'exposed'}
+      color={c.paper}
+      duration={1400}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 6,
+        paddingHorizontal: compact ? 8 : 10,
+        paddingVertical: 8,
+        borderRadius: 18,
+        backgroundColor: color,
+      }}
     >
-      <PixelProp kind="shield" size={compact ? 16 : 20} />
-      <PixelText numberOfLines={1} style={{ fontSize: 11, lineHeight: 17 }}>
-        {state.label}
-        {state.left ? ` ${clock(state.left)}` : ''}
-      </PixelText>
+      <PixelProp kind="shield" size={16} />
+      <Text
+        accessibilityLabel={label}
+        style={{
+          fontFamily: 'Inter_700Bold',
+          fontSize: 11,
+          lineHeight: 17,
+          color: care ? c.buttonInk : c.paper,
+        }}
+      >
+        {label}
+      </Text>
     </Pulse>
   );
 }
+const setGuide = (guideOpen: boolean) => useGame.setState({ guideOpen });
+
 export function GameHeader() {
   const p = useGame((s) => s.player);
   const live = useGame((s) => s.live);
+  const firstWake = useGame((s) => s.firstWake);
+  const busy = useGame((s) =>
+    Boolean(
+      s.message || s.battle || s.cardReward || s.deckOpen || s.recap || s.alerts.length || s.flash,
+    ),
+  );
+  const paused = usePlayPaused();
+  const guide = useGame((s) => s.guideOpen);
   const top = useSafeAreaInsets().top;
   return (
     <View
       style={{
-        paddingTop: top + 10,
+        paddingTop: top + 4,
         paddingHorizontal: 16,
-        paddingBottom: 12,
+        paddingBottom: 4,
         backgroundColor: c.paper,
         borderBottomWidth: 2,
         borderColor: c.ink,
+        zIndex: 40,
       }}
     >
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          gap: 6,
-        }}
-      >
-        <Pressable
-          accessibilityLabel="Garden protection status"
-          onLongPress={() => p && useGame.getState().change({ care_until: 0, recovery_until: 0 })}
-          style={{ flex: 1, minHeight: 48, justifyContent: 'center' }}
-        >
-          {p && <StatusChip player={p} />}
-        </Pressable>
-        <Pressable
-          accessibilityLabel="Grass balance"
-          onLongPress={() => p && useGame.getState().change({ grass: p.grass + 100 })}
-          style={{ flexDirection: 'row', alignItems: 'center', gap: 5, minHeight: 48 }}
-        >
-          <Sprout size={19} color={c.ink} strokeWidth={2.5} />
-          <GrassRoll value={p?.grass ?? 20} />
-        </Pressable>
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          gap: 8,
-          alignItems: 'center',
-          marginTop: 4,
-        }}
-      >
-        <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-          <View style={{ width: 6, height: 6, backgroundColor: live ? c.shade : c.error }} />
-          <PixelText style={{ fontSize: 11 }}>{live ? 'LIVE' : 'OFFLINE'}</PixelText>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+        <View style={{ flex: 1, alignItems: 'flex-start' }}>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              p
+                ? `Garden status: ${status(p).label}${status(p).kind === 'care' ? `, ${status(p).left} seconds remaining` : ''}`
+                : 'Garden status'
+            }
+            accessibilityHint="Long press to end protection in the demo"
+            onLongPress={() => p && useGame.getState().change({ care_until: 0, recovery_until: 0 })}
+            style={{ minHeight: 44, justifyContent: 'center' }}
+          >
+            {p && <StatusChip player={p} />}
+          </Pressable>
         </View>
-        {p && <PlayMeter />}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open garden guide"
+          onPress={() => setGuide(true)}
+          style={{ minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
+        >
+          <PixelText style={{ fontSize: 16 }}>?</PixelText>
+        </Pressable>
       </View>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <View
+          accessible
+          accessibilityLabel={live ? 'Garden synced' : 'No signal'}
+          style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}
+        >
+          <View
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: 3,
+              backgroundColor: live ? c.moss : c.error,
+            }}
+          />
+          <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: c.ink }}>
+            {live ? 'SYNCED' : 'NO SIGNAL'}
+          </Text>
+        </View>
+        <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
+          <View>{p && <PlayMeter />}</View>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`${p?.grass ?? 20} grass`}
+            accessibilityHint="Long press to add 100 grass in the demo"
+            onLongPress={() => p && useGame.getState().change({ grass: p.grass + 100 })}
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 5,
+              minWidth: 44,
+              minHeight: 44,
+            }}
+          >
+            <Sprout size={19} color={c.ink} strokeWidth={2.5} />
+            <GrassRoll value={p?.grass ?? 20} />
+          </Pressable>
+        </View>
+      </View>
+      <View style={{ position: 'absolute', top: '100%', left: 16, right: 16 }}>
+        <GardenTip
+          id="wake"
+          eligible={firstWake && p?.mode === 'awake' && !busy && !paused}
+          pointsUp
+        />
+        <GardenTip id="budget" eligible={paused && !busy} pointsUp />
+      </View>
+      <GardenGuide open={guide} onClose={() => setGuide(false)} />
     </View>
   );
 }

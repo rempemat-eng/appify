@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, type ColorValue, type ViewStyle } from 'react-native';
-import Svg, { G, Rect, Text as SvgText } from 'react-native-svg';
+import Svg, { G, Rect } from 'react-native-svg';
 import { useReducedMotion } from 'react-native-reanimated';
 import { propPixels, sceneColors as c, type PropKind } from '@/lib/scene-art';
 import { status, useGame, type Player } from '@/lib/game';
@@ -229,9 +229,6 @@ export function PixelScene({
                 <>
                   <Rect x={0} y={0} width={160} height={95} fill={c.gold} opacity={0.12} />
                   <Pixels kind="sun" x={7} y={5} />
-                  <SvgText x={26} y={17} fill={c.ink} fontSize={8}>
-                    {state.left}
-                  </SvgText>
                 </>
               )}
               {player && player.mood < 30 && (

@@ -3,7 +3,6 @@ import { FlatList, Pressable, View, useWindowDimensions } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import Animated, {
   FadeIn,
-  FadeOut,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
@@ -174,10 +173,10 @@ export function HabitCard({
   disabled = false,
   onPress,
   species,
-  compact = false,
+  guided = false,
 }: {
   id: CardId;
-  compact?: boolean;
+  guided?: boolean;
   count?: number;
   selected?: boolean;
   disabled?: boolean;
@@ -186,20 +185,16 @@ export function HabitCard({
 }) {
   const card = cards[id];
   const effect =
-    compact && id === 'deep_breath'
-      ? '½HIT+1E'
-      : compact && id === 'call_a_friend'
-        ? '20+10HP'
-        : species && card.power > 0 && card.habit === species
-          ? card.effect.replace(String(card.power), String(cardPower(id, species)))
-          : card.effect;
+    species && card.power > 0 && card.habit === species
+      ? card.effect.replace(String(card.power), String(cardPower(id, species)))
+      : card.effect;
   const face = (
     <View
       style={{
         minHeight: 158,
         borderWidth: 2,
-        borderColor: c.ink,
-        backgroundColor: c.paper,
+        borderColor: guided || selected ? c.moss : c.ink,
+        backgroundColor: guided ? c.amber : c.paper,
         padding: 5,
         gap: 4,
         alignItems: 'center',
@@ -220,22 +215,21 @@ export function HabitCard({
       </View>
       <Illustration id={id} />
       <BodyText
-        numberOfLines={3}
         style={{
+          width: '100%',
           textAlign: 'center',
+          fontFamily: 'Inter_600SemiBold',
           fontSize: 11,
           lineHeight: 15,
           minHeight: 45,
-          ...(compact ? { fontFamily: 'Inter_600SemiBold' } : {}),
         }}
       >
         {card.name}
       </BodyText>
       <BodyText
-        numberOfLines={1}
-        adjustsFontSizeToFit
-        minimumFontScale={1}
         style={{
+          width: '100%',
+          textAlign: 'center',
           fontSize: 11,
           lineHeight: 16,
           fontFamily: 'Inter_600SemiBold',
@@ -248,10 +242,8 @@ export function HabitCard({
   return (
     <Animated.View
       entering={FadeIn.duration(150)}
-      exiting={FadeOut.duration(100)}
       style={{
         flex: 1,
-        opacity: disabled ? 0.5 : 1,
         transform: [{ translateY: selected ? -10 : 0 }],
       }}
     >

@@ -21,7 +21,16 @@ import {
 } from '@/lib/offline-rules';
 export type TogetherSession = Tables<'touch_grass_sessions'>;
 import { bilt } from '@/lib/bilt';
-import { addCard, daveDeck, isCardId, offlineCards, startingDeck, type CardId } from '@/lib/cards';
+import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
+import {
+  addCard,
+  daveDeck,
+  isCardId,
+  offlineCards,
+  startingDeck,
+  upgradeStarterDeck,
+  type CardId,
+} from '@/lib/cards';
 
 export type Player = Database['public']['Tables']['players']['Row'];
 export type Raid = Database['public']['Tables']['raids']['Row'];
@@ -35,6 +44,9 @@ export const palette = {
   positive: '#5FA35A',
   moss: '#3E7D44',
   error: '#A85A43',
+  terracotta: '#944C3A',
+  danger: '#973D35',
+  amber: '#D8AF5E',
   night: '#3A3F5C',
   slate: '#8FA3BD',
   gold: '#C8A457',
@@ -88,6 +100,9 @@ function code() {
 export type Incoming = { raid: Raid; attacker: Player | null };
 export type BattleRequest = { target: Player; practice: boolean };
 type Saved = {
+  lastActiveAt: number;
+  tips: GardenTipId[];
+  firstWake: boolean;
   rules: OfflineRules;
   togetherId: string | null;
   pendingTogetherWakes: { sid: string; at: string; minutes: number }[];
@@ -106,6 +121,7 @@ type Saved = {
   cardReward: { cards: CardId[]; minutes: number; mission: string | null } | null;
 };
 type Game = Saved & {
+  seeTip: (id: GardenTipId) => void;
   sessions: TogetherSession[];
   togetherPending: string | null;
   recap: string | null;
@@ -115,6 +131,7 @@ type Game = Saved & {
   inviteTogether: (rival: Player) => Promise<void>;
   acceptTogether: (session: TogetherSession) => Promise<void>;
   pollTogether: () => Promise<void>;
+  guideOpen: boolean;
   deckOpen: boolean;
   ready: boolean;
   live: boolean;
@@ -184,6 +201,12 @@ function migrateSaved(value: unknown) {
           : [...startingDeck];
   };
   migratePlayer(value.player);
+  if (isRecord(value.player) && isStringArray(value.player.deck))
+    value.player.deck = upgradeStarterDeck(value.player.deck);
+  if (typeof value.lastActiveAt !== 'number')
+    value.lastActiveAt = typeof value.tickAt === 'number' ? value.tickAt : 0;
+  if (!Array.isArray(value.tips)) value.tips = [];
+  if (typeof value.firstWake !== 'boolean') value.firstWake = false;
   for (const key of ['staged', 'alerts']) {
     const list = value[key];
     if (Array.isArray(list))
@@ -217,6 +240,10 @@ function isIncoming(value: unknown): value is Incoming {
 function isSaved(value: unknown): value is Saved {
   return (
     isRecord(value) &&
+    typeof value.lastActiveAt === 'number' &&
+    typeof value.firstWake === 'boolean' &&
+    Array.isArray(value.tips) &&
+    value.tips.every(isGardenTip) &&
     isOfflineRules(value.rules) &&
     (value.togetherId === null || typeof value.togetherId === 'string') &&
     Array.isArray(value.pendingTogetherWakes) &&
@@ -271,6 +298,7 @@ function eligiblePlay() {
     !s.alerts.length &&
     !s.flash &&
     !s.deckOpen &&
+    !s.guideOpen &&
     !s.cardReward &&
     !s.recap
   );
@@ -349,6 +377,9 @@ export function resolveTogetherSession(session: TogetherSession) {
 function persist() {
   const s = gameStore.getState();
   const saved: Saved = {
+    lastActiveAt: s.lastActiveAt,
+    tips: s.tips,
+    firstWake: s.firstWake,
     rules: s.rules,
     pendingTogetherWakes: s.pendingTogetherWakes,
     togetherId: s.togetherId,
@@ -399,6 +430,14 @@ function applyIncoming(item: Incoming) {
   feedback('raid');
 }
 export const gameStore = create<Game>((set, get) => ({
+  lastActiveAt: 0,
+  tips: [],
+  firstWake: false,
+  seeTip: (id) => {
+    if (get().tips.includes(id)) return;
+    set({ tips: [...get().tips, id] });
+    void persist();
+  },
   rules: freshRules(),
   pendingTogetherWakes: [],
   togetherId: null,
@@ -533,6 +572,7 @@ export const gameStore = create<Game>((set, get) => ({
   alerts: [],
   collectedCards: [],
   cardReward: null,
+  guideOpen: false,
   deckOpen: false,
   message: null,
   voice: null,
@@ -549,8 +589,15 @@ export const gameStore = create<Game>((set, get) => ({
       const now = Date.now();
       set({ ...saved, identity: saved?.identity || Crypto.randomUUID(), ready: true, now });
       if (get().player?.mode === 'awake') {
-        set({ player: { ...get().player!, care_until: now + 30000 }, tickAt: now });
+        set({
+          player: {
+            ...get().player!,
+            care_until: launchCareUntil(get().player!.care_until, get().lastActiveAt, now),
+          },
+          tickAt: now,
+        });
       }
+      set({ lastActiveAt: now });
       playAt = now;
       get().tick();
       get().openDaily();
@@ -589,6 +636,8 @@ export const gameStore = create<Game>((set, get) => ({
     };
     set({
       player,
+      now,
+      lastActiveAt: now,
       tickAt: now,
       rules: { ...freshRules(now), recapDay: dayKey(now) },
       voice: "hi. i grow when you're not on your phone.",
@@ -612,7 +661,8 @@ export const gameStore = create<Game>((set, get) => ({
     const s = get();
     const p = s.player;
     const now = Date.now();
-    set({ now });
+    set({ now, ...(active ? { lastActiveAt: now } : {}) });
+    if (active) void persist();
     if (!p) return;
     const seconds = Math.floor((now - s.tickAt) / 1000);
     if (seconds < 1) return;
@@ -655,6 +705,7 @@ export const gameStore = create<Game>((set, get) => ({
             care_until: now + 30000,
           };
           set({
+            firstWake: true,
             message: `MISSION COMPLETE! +${reward} GRASS${hat ? ` + ${hat}` : ''}`,
             voice: 'i saw a real tree. it was huge.',
           });
@@ -901,6 +952,7 @@ export const gameStore = create<Game>((set, get) => ({
         mission_ends_at: 0,
         care_until: !failed && elapsed >= 10 ? Date.now() + 30000 : p.care_until,
       },
+      firstWake: true,
       tickAt: Date.now(),
       collectedCards: [],
       cardReward: s.collectedCards.length
@@ -1035,7 +1087,7 @@ export const gameStore = create<Game>((set, get) => ({
     if (!p || !get().battle) return;
     const day = get().rules.days[dayKey()] ?? emptyDay();
     const practiceGrass = sparringReward(day, won);
-    const amount = won ? Math.min(target.grass, Math.max(10, Math.floor(target.grass * 0.3))) : 10;
+    const amount = raidGrass(won, target);
     const raid: Raid = {
       id: Crypto.randomUUID(),
       attacker_id: p.id,
@@ -1105,6 +1157,9 @@ gameStore.subscribe(() => {
   if (!accounting && eligiblePlay() !== playEligible) accountPlay();
 });
 export const useGame = gameStore;
+export function raidGrass(won: boolean, target: Player) {
+  return won ? Math.min(target.grass, Math.max(10, Math.floor(target.grass * 0.3))) : 10;
+}
 export function bot(p: Player): Player {
   return {
     ...p,
@@ -1131,16 +1186,19 @@ export function startGame() {
   }, 3000);
   const sub = AppState.addEventListener('change', (state) => {
     accountPlay();
+    const wasActive = active;
     active = state === 'active';
+    if (wasActive === active) return;
     accountPlay();
     if (!active) {
+      gameStore.setState({ lastActiveAt: Date.now() });
       battleGeneration += 1;
       gameStore.setState({ battle: null });
       void persist();
     } else {
       const s = gameStore.getState();
       if (s.player?.mode === 'awake') {
-        s.change({ care_until: Date.now() + 30000 });
+        s.change({ care_until: launchCareUntil(s.player.care_until, s.lastActiveAt, Date.now()) });
         gameStore.setState({ tickAt: Date.now() });
       }
       s.tick();
@@ -1150,16 +1208,19 @@ export function startGame() {
   });
   const visibility = () => {
     accountPlay();
+    const visible = !document.hidden;
+    if (active === visible) return;
     if (document.hidden) {
       active = false;
       battleGeneration += 1;
-      gameStore.setState({ battle: null });
+      gameStore.setState({ battle: null, lastActiveAt: Date.now() });
+      void persist();
     } else {
       active = true;
       const s = gameStore.getState();
       if (s.player?.mode === 'awake') {
         gameStore.setState({ tickAt: Date.now() });
-        s.change({ care_until: Date.now() + 30000 });
+        s.change({ care_until: launchCareUntil(s.player.care_until, s.lastActiveAt, Date.now()) });
       }
       s.tick();
       s.openDaily();

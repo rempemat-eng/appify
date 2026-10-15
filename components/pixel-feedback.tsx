@@ -208,9 +208,11 @@ export function Pulse({
   color,
   children,
   style,
+  duration = 600,
 }: {
   active: boolean;
   color?: string;
+  duration?: number;
   children?: React.ReactNode;
   style?: ViewStyle;
 }) {
@@ -222,12 +224,12 @@ export function Pulse({
         ? reduced
           ? 0.13
           : withRepeat(
-              withSequence(withTiming(0.2, { duration: 600 }), withTiming(0.04, { duration: 600 })),
+              withSequence(withTiming(0.2, { duration }), withTiming(0.04, { duration })),
               -1,
             )
         : 0,
     );
-  }, [active, reduced, opacity]);
+  }, [active, reduced, opacity, duration]);
   const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
     <View style={style}>

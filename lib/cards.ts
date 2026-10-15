@@ -8,7 +8,7 @@ export const cards = {
     cost: 0,
     power: 8,
     heal: 0,
-    effect: 'HIT 8',
+    effect: '8 DMG',
     habit: 'CUBE',
   },
   deep_breath: {
@@ -17,7 +17,7 @@ export const cards = {
     cost: 0,
     power: 0,
     heal: 0,
-    effect: 'GUARD +1E',
+    effect: 'BLOCK HALF · +1 ⚡',
     habit: 'BLOB',
   },
   glass_of_water: {
@@ -35,7 +35,7 @@ export const cards = {
     cost: 1,
     power: 12,
     heal: 0,
-    effect: 'HIT 12',
+    effect: '12 DMG',
     habit: 'RAT',
   },
   morning_walk: {
@@ -44,7 +44,7 @@ export const cards = {
     cost: 2,
     power: 16,
     heal: 0,
-    effect: '16 +1E',
+    effect: '16 DMG · +1 ⚡',
     habit: 'RAT',
   },
   read_a_chapter: {
@@ -53,7 +53,7 @@ export const cards = {
     cost: 2,
     power: 10,
     heal: 0,
-    effect: '10 SKIP?',
+    effect: '10 DMG · SKIP?',
     habit: 'CUBE',
   },
   early_night: {
@@ -71,7 +71,7 @@ export const cards = {
     cost: 3,
     power: 20,
     heal: 10,
-    effect: '20 +10HP',
+    effect: '20 DMG · +10 HP',
     habit: null,
   },
   digital_sunset: {
@@ -80,7 +80,7 @@ export const cards = {
     cost: 3,
     power: 25,
     heal: 0,
-    effect: '25 PIERCE',
+    effect: '25 DMG · NO BLOCK',
     habit: null,
   },
 } as const;
@@ -100,10 +100,16 @@ export const startingDeck: CardId[] = [
   'stretch',
   'stretch',
   'stretch',
-  'stretch',
   'deep_breath',
   'deep_breath',
+  'glass_of_water',
+  'short_walk',
 ];
+export function upgradeStarterDeck(deck: string[]): string[] {
+  return deck.length > 0 && deck.every((id) => id === 'stretch' || id === 'deep_breath')
+    ? addCard(addCard(deck, 'glass_of_water'), 'short_walk')
+    : deck;
+}
 export const daveDeck: CardId[] = [
   'stretch',
   'stretch',

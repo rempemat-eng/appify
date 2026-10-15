@@ -24,7 +24,7 @@ import {
 import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
-import { FloatingZ, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
+import { FloatingZ, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { PixelScene } from '@/components/pixel-scenes';
@@ -33,6 +33,7 @@ import Animated, { FadeIn, SlideInDown, useReducedMotion } from 'react-native-re
 function Onboarding() {
   const { width } = useWindowDimensions();
   const [step, setStep] = useState(0);
+  const [picked, setPicked] = useState(false);
   const [species, setSpecies] = useState<Player['species']>('BLOB');
   const [name, setName] = useState('');
   const [petName, setPetName] = useState('PIXEL');
@@ -88,9 +89,12 @@ function Onboarding() {
   return (
     <KeyboardAvoidingView
       style={{ flex: 1, backgroundColor: c.paper }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
+        style={{ flex: 1 }}
+        automaticallyAdjustKeyboardInsets
+        keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           flexGrow: 1,
@@ -106,7 +110,7 @@ function Onboarding() {
           <PixelText
             numberOfLines={1}
             adjustsFontSizeToFit
-            minimumFontScale={0.45}
+            minimumFontScale={1}
             style={{ fontSize: Math.min(21, (Math.min(width, 560) - 48) / 14), lineHeight: 33 }}
           >
             SCREENAGOTCHI
@@ -134,10 +138,21 @@ function Onboarding() {
                     accessibilityLabel={`Plant ${grasslings[s].name}, habit ${grasslings[s].habit}`}
                     onPress={() => {
                       setSpecies(s);
-                      setStep(1);
+                      setPicked(true);
                       feedback('select');
                     }}
-                    style={{ alignItems: 'center', flex: 1, minHeight: 100, gap: 12 }}
+                    accessibilityState={{ selected: picked && species === s }}
+                    style={{
+                      alignItems: 'center',
+                      flex: 1,
+                      minHeight: 100,
+                      gap: 12,
+                      paddingVertical: 8,
+                      borderWidth: 2,
+                      borderColor: picked && species === s ? c.moss : 'transparent',
+                      backgroundColor: picked && species === s ? c.amber : 'transparent',
+                      transform: [{ translateY: picked && species === s ? -12 : 0 }],
+                    }}
                   >
                     <SeedPacket species={s} size={64} />
                     <BodyText style={{ backgroundColor: c.paper, padding: 3 }}>
@@ -202,23 +217,18 @@ function Onboarding() {
             </View>
           </>
         )}
+        <View style={{ paddingBottom: bottom + 20, gap: 12, width: '100%' }}>
+          {step === 0 && !picked && (
+            <PixelText style={{ textAlign: 'center' }}>PICK A SEED FIRST</PixelText>
+          )}
+          <PixelButton
+            label={step === 0 ? 'PLANT A SEED' : 'GROW MY GARDEN'}
+            disabled={step === 0 && !picked}
+            onPress={() => (step === 0 ? setStep(1) : hatch())}
+          />
+          {step === 1 && <PixelButton label="CHANGE SEED" small light onPress={() => setStep(0)} />}
+        </View>
       </ScrollView>
-      <View
-        style={{
-          padding: 24,
-          paddingBottom: bottom + 20,
-          gap: 12,
-          width: '100%',
-          maxWidth: 560,
-          alignSelf: 'center',
-        }}
-      >
-        <PixelButton
-          label={step === 0 ? 'PLANT A SEED' : 'GROW MY GARDEN'}
-          onPress={() => (step === 0 ? setStep(1) : hatch())}
-        />
-        {step === 1 && <PixelButton label="CHANGE SEED" small light onPress={() => setStep(0)} />}
-      </View>
     </KeyboardAvoidingView>
   );
 }
@@ -262,6 +272,7 @@ function ScreenOff() {
         />
       </View>
       <View style={{ alignItems: 'center', gap: 16, paddingTop: 20 }}>
+        <StatusChip player={p} />
         <Shield color={c.paper} size={30} />
         <PixelText
           style={{
@@ -340,7 +351,11 @@ function ScreenOff() {
             <PixelText style={{ color: c.body }}>UNTIL HOME · MIN</PixelText>
           </>
         ) : (
-          <Pulse active color={c.gold} style={{ padding: 12, borderWidth: 2, borderColor: c.gold }}>
+          <Pulse
+            active
+            color={c.gold}
+            style={{ padding: 12, borderWidth: 2, borderColor: c.gold, backgroundColor: c.night }}
+          >
             <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
               {`OFFLINE ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
             </PixelText>
@@ -348,7 +363,9 @@ function ScreenOff() {
         )}
       </View>
       <View style={{ gap: 18, paddingBottom: 24 }}>
-        <PixelText style={{ color: c.body, textAlign: 'center' }}>
+        <PixelText
+          style={{ color: c.body, textAlign: 'center', backgroundColor: c.night, padding: 6 }}
+        >
           {m ? 'WAKE EARLY = MISSION FAILED' : '+1 GRASS / MIN. KEEP IT DOWN.'}
         </PixelText>
         {togetherId && message && (

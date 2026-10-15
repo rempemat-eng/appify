@@ -1,6 +1,16 @@
 import { useEffect, useState } from 'react';
-import { FlatList, KeyboardAvoidingView, Platform, Pressable, TextInput, View } from 'react-native';
-import { Moon, ArrowUp, ArrowDown, Bot } from 'lucide-react-native';
+import {
+  FlatList,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  TextInput,
+  View,
+  useWindowDimensions,
+} from 'react-native';
+import { useIsFocused } from 'expo-router';
+import { GardenTip } from '@/components/garden-guide';
+import { ArrowUp, ArrowDown, Bot } from 'lucide-react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import {
   bot,
@@ -31,9 +41,11 @@ const lines = {
   idle: ["touch grass? i'll wait.", 'i am small but i am mighty'],
 };
 export function HomeScreen() {
+  const { height } = useWindowDimensions();
   const p = useGame((s) => s.player);
   const now = useGame((s) => s.now);
   const voice = useGame((s) => s.voice);
+  const firstWake = useGame((s) => s.firstWake);
   const paused = usePlayPaused();
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
@@ -72,7 +84,7 @@ export function HomeScreen() {
             ? lines.care
             : lines.idle)[line % 2]);
   return (
-    <Page style={{ gap: 22 }}>
+    <Page style={{ gap: 12, padding: 16 }}>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <PixelText style={{ fontSize: 16 }}>YOUR GARDEN</PixelText>
         <View
@@ -81,16 +93,11 @@ export function HomeScreen() {
           <PixelText>LV {p.level}</PixelText>
         </View>
       </View>
-      <BodyText>
-        {grasslings[p.species].name} · {grasslings[p.species].habit} · {growthStage(p.level)}
-      </BodyText>
-      <GardenStreak />
-      <Dialogue text={speech} />
       <PixelScene
         species={p.species}
         level={p.level}
         player={p}
-        height={280}
+        height={height <= 700 ? 200 : 280}
         style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 12 }}
       >
         <Pet
@@ -98,6 +105,7 @@ export function HomeScreen() {
           level={p.level}
           hat={p.hat}
           grumpy={p.mood < 30}
+          size={height <= 700 ? 128 : 192}
           yawning={paused}
           slumped={raidFeedback.slumped}
         />
@@ -126,43 +134,42 @@ export function HomeScreen() {
         </View>
         <Meter value={p.mood} height={18} />
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          gap: 12,
-          justifyContent: 'center',
-          paddingVertical: 8,
-          borderTopWidth: 2,
-          borderBottomWidth: 2,
-          borderColor: c.shade,
-        }}
-      >
-        <PixelText>YOUR CODE:</PixelText>
-        <PixelText style={{ fontSize: 15 }}>{p.code}</PixelText>
-      </View>
-      <View style={{ gap: 12 }}>
-        <View
-          style={{ flexDirection: 'row', gap: 8, alignItems: 'center', justifyContent: 'center' }}
-        >
-          <Moon size={16} color={c.ink} />
-          <PixelText>PUT YOUR PHONE DOWN.</PixelText>
-        </View>
-        <PixelButton label="MY DECK" light onPress={() => useGame.setState({ deckOpen: true })} />
+      <View style={{ zIndex: 20 }}>
+        <GardenTip id="phone" eligible={!firstWake && p.mode === 'awake'} floating />
         <PixelButton
-          label="SIMULATE SCREEN OFF"
+          label="📴 PUT PHONE DOWN"
+          supportingText="simulated"
           gold={paused}
           onPress={() => useGame.getState().sleep()}
         />
-        <PixelButton
-          label="FEED · 5 GRASS"
-          light
-          disabled={paused || p.mood >= 100 || p.grass < 5}
-          onPress={() => {
-            useGame.getState().feed();
-            setCrumbs(true);
-          }}
-        />
       </View>
+      <View style={{ flexDirection: 'row', gap: 8 }}>
+        <View style={{ flex: 1 }}>
+          <PixelButton
+            label="MY DECK"
+            small
+            light
+            onPress={() => useGame.setState({ deckOpen: true })}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          <PixelButton
+            label="FEED · 5 GRASS"
+            small
+            light
+            disabled={paused || p.mood >= 100 || p.grass < 5}
+            onPress={() => {
+              useGame.getState().feed();
+              setCrumbs(true);
+            }}
+          />
+        </View>
+      </View>
+      <Dialogue text={speech} />
+      <BodyText>
+        {grasslings[p.species].name} · {grasslings[p.species].habit} · {growthStage(p.level)}
+      </BodyText>
+      <GardenStreak />
       <BodyText style={{ textAlign: 'center' }}>{grasslings[p.species].line}</BodyText>
     </Page>
   );
@@ -427,6 +434,7 @@ function RivalRow({
   );
 }
 export function ArenaScreen() {
+  const focused = useIsFocused();
   const paused = usePlayPaused();
   const raids = useGame((s) => s.rules.days[dayKey(s.now)]?.raids ?? 0);
   const wins = useGame((s) => s.rules.days[dayKey(s.now)]?.sparringWins ?? 0);
@@ -462,6 +470,7 @@ export function ArenaScreen() {
       <PixelText>RAIDS LEFT TODAY: {Math.max(0, 3 - raids)}</PixelText>
       <PixelText style={styles.title}>{'LESS SCROLL.\nMORE GLORY.'}</PixelText>
       <PixelScene kind="town" height={160} />
+      <GardenTip id="arena" eligible={focused} />
       <View style={[styles.border, { padding: 16, gap: 16, backgroundColor: c.body }]}>
         <PixelText>YOUR CODE: {p.code}</PixelText>
         <PixelText>ADD RIVAL</PixelText>
