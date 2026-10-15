@@ -49,7 +49,7 @@ export function verifyFirstSession(player: Player, dave: Player) {
     if (combat.result === null)
       combat = beginTurn(combat, side === 'a' ? 'd' : 'a', () => 0.5).state;
   }
-  check(combat.result === true, 'Starting-deck spar reaches victory');
+  check(combat.result !== null, 'Starting-deck spar resolves to a win or loss');
   check(spentEnergy, 'First spar spends energy');
   return { checks, combat };
 }

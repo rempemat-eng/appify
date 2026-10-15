@@ -53,7 +53,7 @@ export const cards = {
     cost: 2,
     power: 10,
     heal: 0,
-    effect: '10 DMG · SKIP?',
+    effect: '10 damage · 30% skip turn',
     habit: 'CUBE',
   },
   early_night: {
@@ -86,15 +86,16 @@ export const cards = {
 } as const;
 export type CardId = keyof typeof cards;
 export const cardDetails: Record<CardId, string> = {
-  stretch: 'POWER 8 · FOCUS +3 POWER',
-  deep_breath: 'HALVE NEXT HIT · +1 ENERGY',
-  glass_of_water: 'HEAL 10 HP',
-  short_walk: 'POWER 12 · ROAM +3 POWER',
-  morning_walk: 'POWER 16 · +1 ENERGY NEXT TURN · ROAM +3 POWER',
-  read_a_chapter: 'POWER 10 · 30% DISTRACT: SKIP NEXT TURN · FOCUS +3 POWER',
-  early_night: 'HEAL 20 HP',
-  call_a_friend: 'POWER 20 · HEAL 10 HP',
-  digital_sunset: 'POWER 25 · IGNORE GUARD',
+  stretch: 'Power 8; FOCUS guardians add 3 power.',
+  deep_breath: 'Halve the next incoming hit and gain 1 energy.',
+  glass_of_water: 'Restore 10 HP.',
+  short_walk: 'Power 12; ROAM guardians add 3 power.',
+  morning_walk: 'Power 16 and gain 1 energy next turn; ROAM adds 3 power.',
+  read_a_chapter:
+    'Power 10 with a 30% chance to make your opponent skip their next turn; FOCUS adds 3 power.',
+  early_night: 'Restore 20 HP.',
+  call_a_friend: 'Power 20 and restore 10 HP.',
+  digital_sunset: 'Power 25, ignoring the opponent’s guard.',
 };
 export const startingDeck: CardId[] = [
   'stretch',
@@ -143,6 +144,27 @@ export function addCard(deck: readonly string[], id: CardId): CardId[] {
     if (cardStrength(next[i]) < cardStrength(next[weakest])) weakest = i;
   next[weakest] = id;
   return next;
+}
+export function summarizeCardRewards(before: readonly string[], earned: readonly CardId[]) {
+  const entries = before.filter(isCardId).map((id) => ({ id, earned: false }));
+  let previousReplaced = 0;
+  for (const id of earned) {
+    if (entries.length < 20) entries.push({ id, earned: true });
+    else {
+      let weakest = 0;
+      for (let i = 1; i < entries.length; i++)
+        if (cardStrength(entries[i].id) < cardStrength(entries[weakest].id)) weakest = i;
+      if (!entries[weakest].earned) previousReplaced++;
+      entries[weakest] = { id, earned: true };
+    }
+  }
+  const kept = entries.filter((entry) => entry.earned).length;
+  return {
+    kept,
+    previousReplaced,
+    earnedReplaced: earned.length - kept,
+    deck: entries.map((entry) => entry.id),
+  };
 }
 export function randomCard(rarity: Rarity, random = Math.random): CardId {
   const pool = cardIds.filter((id) => cards[id].rarity === rarity);

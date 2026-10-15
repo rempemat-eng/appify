@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 import {
   Pressable,
@@ -10,7 +11,6 @@ import {
 } from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withTiming,
   withSequence,
@@ -38,10 +38,10 @@ export function Dialogue({ text, style }: { text: string; style?: ViewStyle }) {
   const [blink, setBlink] = useState(true);
   if (shown.text !== text) setShown({ text, count: reduced ? text.length : 0 });
   useEffect(() => {
-    if (shown.count >= text.length) return undefined;
+    if (reduced || shown.count >= text.length) return undefined;
     const timer = setTimeout(() => setShown((old) => ({ ...old, count: old.count + 1 })), 22);
     return () => clearTimeout(timer);
-  }, [shown.count, text]);
+  }, [shown.count, text, reduced]);
   useEffect(() => {
     if (reduced) return undefined;
     const timer = setInterval(() => setBlink((b) => !b), 600);
@@ -70,7 +70,7 @@ export function Dialogue({ text, style }: { text: string; style?: ViewStyle }) {
         importantForAccessibility="no"
         style={{ fontFamily: 'PressStart2P_400Regular', fontSize: 11, lineHeight: 21 }}
       >
-        {text.slice(0, shown.count) || ' '}
+        {reduced ? text : text.slice(0, shown.count) || ' '}
       </BodyText>
       <View
         pointerEvents="none"
@@ -84,6 +84,7 @@ export function Dialogue({ text, style }: { text: string; style?: ViewStyle }) {
   );
 }
 export function GrassRoll({ value }: { value: number }) {
+  const reduced = useReducedMotion();
   const [roll, setRoll] = useState({
     target: value,
     start: value,
@@ -91,35 +92,33 @@ export function GrassRoll({ value }: { value: number }) {
     delta: 0,
     id: 0,
   });
-  if (roll.target !== value)
-    setRoll({
-      target: value,
-      start: roll.display,
-      display: roll.display,
-      delta: value - roll.target,
-      id: roll.id + 1,
-    });
   useEffect(() => {
-    if (roll.display === roll.target) return undefined;
-    const timer = setTimeout(
-      () =>
-        setRoll((old) => ({
-          ...old,
-          display:
-            old.display +
-            Math.sign(old.target - old.display) *
-              Math.max(1, Math.ceil(Math.abs(old.target - old.display) / 5)),
-        })),
-      35,
-    );
-    return () => clearTimeout(timer);
-  }, [roll.display, roll.target]);
+    const timer = setInterval(() => {
+      setRoll((old) => {
+        const display = reduced
+          ? value
+          : old.display +
+            Math.sign(value - old.display) *
+              Math.max(1, Math.ceil(Math.abs(value - old.display) / 5));
+        if (display === value) clearInterval(timer);
+        if (old.target === value && old.display === display) return old;
+        return {
+          target: value,
+          start: old.target === value ? old.start : old.display,
+          display,
+          delta: old.target === value ? old.delta : value - old.target,
+          id: old.target === value ? old.id : old.id + 1,
+        };
+      });
+    }, 35);
+    return () => clearInterval(timer);
+  }, [value, reduced]);
   return (
     <View>
       <Text style={{ fontFamily: 'PressStart2P_400Regular', fontSize: 13, color: c.ink }}>
-        {roll.display}
+        {reduced ? value : roll.display}
       </Text>
-      {roll.delta !== 0 && <GrassDelta key={roll.id} amount={roll.delta} />}
+      {!reduced && roll.delta !== 0 && <GrassDelta key={roll.id} amount={roll.delta} />}
     </View>
   );
 }
@@ -258,7 +257,7 @@ export function BattleIntro() {
     }, 65);
     return () => clearInterval(timer);
   }, [reduced]);
-  if (!visible) return null;
+  if (reduced || !visible) return null;
   return (
     <View pointerEvents="none" style={[StyleSheet.absoluteFill, { zIndex: 20 }]}>
       {frame < 6 ? (

@@ -27,6 +27,9 @@ import {
 import { patchExpoGoAssetUrls } from '@/lib/expoGoAssets';
 import { initPostHog } from '@/lib/posthog';
 import { registerServiceWorker } from '@/lib/registerServiceWorker';
+import { GameOverlays } from '@/components/game-overlays';
+import { loadMotionPreference, watchSystemMotion } from '@/lib/motion';
+import { startGame } from '@/lib/game';
 import { reportErrorToParent } from '@/lib/reportPreviewError';
 
 /**
@@ -54,6 +57,15 @@ Uniwind.setTheme('light');
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  useEffect(() => {
+    const stopMotion = watchSystemMotion();
+    void loadMotionPreference();
+    const stopGame = startGame();
+    return () => {
+      stopGame();
+      stopMotion();
+    };
+  }, []);
   const [loaded, error] = useFonts({
     Inter_400Regular,
     Inter_500Medium,
@@ -152,6 +164,7 @@ export default function RootLayout() {
           <Stack.Screen name="(tabs)" options={{ title: 'SCREENAGOTCHI', headerShown: false }} />
           <Stack.Screen name="journal" options={{ title: 'FIELD JOURNAL' }} />
         </Stack>
+        <GameOverlays />
       </HeroUINativeProvider>
     </GestureHandlerRootView>
   );

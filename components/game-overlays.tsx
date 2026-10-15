@@ -21,6 +21,7 @@ import {
   gameStore,
   type Player,
 } from '@/lib/game';
+import { GardenGuide } from '@/components/garden-guide';
 import { WelcomeBack } from '@/components/visitors';
 import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
@@ -30,8 +31,10 @@ import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grass
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
-import Animated, { FadeIn, SlideInDown, useReducedMotion } from 'react-native-reanimated';
+import { useReducedMotion } from '@/lib/motion';
+import Animated, { SlideInDown } from 'react-native-reanimated';
 function Onboarding() {
+  const reduced = useReducedMotion();
   const { width } = useWindowDimensions();
   const [step, setStep] = useState(0);
   const [picked, setPicked] = useState(false);
@@ -54,9 +57,12 @@ function Onboarding() {
       return;
     }
     setStep(2);
-    timer.current = setTimeout(() => {
-      void gameStore.getState().hatch(name, petName, species);
-    }, 1400);
+    timer.current = setTimeout(
+      () => {
+        void gameStore.getState().hatch(name, petName, species);
+      },
+      reduced ? 0 : 1400,
+    );
   }
   if (step === 2)
     return (
@@ -272,102 +278,115 @@ function ScreenOff() {
           style={{ height: '100%', borderWidth: 0 }}
         />
       </View>
-      <View style={{ alignItems: 'center', gap: 16, paddingTop: 20 }}>
-        <StatusChip player={p} />
-        <Shield color={c.paper} size={30} />
-        <PixelText
-          style={{
-            color: c.paper,
-            textAlign: 'center',
-            fontSize: 13,
-            lineHeight: 24,
-            backgroundColor: c.night,
-            padding: 8,
-          }}
-        >
-          {'SCREEN OFF.\nGARDEN SHIELDED.'}
-        </PixelText>
-        {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
-      </View>
-      <View style={{ alignItems: 'center', gap: 28 }}>
-        {!m && <FloatingZ />}
-        {togetherId && (
-          <View style={{ gap: 12, alignItems: 'center' }}>
-            <PixelText style={{ color: c.paper }}>TOUCH GRASS TOGETHER</PixelText>
-            <PixelText style={{ color: c.body }}>SHARED TIMER: {sharedMinutes} MIN</PixelText>
-            <PixelText
-              style={{
-                color: session?.status === 'failed' ? c.body : c.gold,
-                textAlign: 'center',
-                lineHeight: 22,
-              }}
-            >
-              {session?.status === 'failed'
-                ? `${session.failed_by === p.id ? p.name : (rival?.name ?? 'YOUR RIVAL')} PICKED UP THEIR PHONE.`
-                : '+50% GRASS IF BOTH STAY OFF 10 MIN'}
-            </PixelText>
-          </View>
-        )}
-        {m ? (
-          <PixelScene
-            player={p}
-            species={p.species}
-            level={p.level}
-            kind={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
-            height={225}
+      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 16, paddingBottom: 16 }}>
+        <View style={{ alignItems: 'center', gap: 10, paddingTop: 8 }}>
+          <StatusChip player={p} />
+          <Shield color={c.paper} size={30} />
+          <PixelText
             style={{
-              width: '100%',
-              alignItems: 'center',
-              justifyContent: 'flex-end',
-              paddingBottom: 15,
+              color: c.paper,
+              textAlign: 'center',
+              fontSize: 13,
+              lineHeight: 24,
+              backgroundColor: c.night,
+              padding: 8,
             }}
           >
-            <Pet species={p.species} level={p.level} hat={p.hat} walking size={160} />
-          </PixelScene>
-        ) : (
-          <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
-            <Pet
+            {'SIMULATED BREAK\nGARDEN SHIELDED'}
+          </PixelText>
+          <BodyText style={{ color: c.paper, fontFamily: 'Inter_400Regular', fontSize: 12 }}>
+            DEMO x60 · 1 real second = 1 offline MIN
+          </BodyText>
+          <BodyText style={{ color: c.paper, fontFamily: 'Inter_400Regular', fontSize: 12 }}>
+            Device screen usage is not verified.
+          </BodyText>
+          {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
+        </View>
+        <View style={{ alignItems: 'center', gap: 14 }}>
+          {!m && <FloatingZ />}
+          {togetherId && (
+            <View style={{ gap: 12, alignItems: 'center' }}>
+              <PixelText style={{ color: c.paper }}>TOUCH GRASS TOGETHER</PixelText>
+              <PixelText style={{ color: c.body }}>SHARED TIMER: {sharedMinutes} MIN</PixelText>
+              <PixelText
+                style={{
+                  color: session?.status === 'failed' ? c.body : c.gold,
+                  textAlign: 'center',
+                  lineHeight: 22,
+                }}
+              >
+                {session?.status === 'failed'
+                  ? 'TOGETHER ENDED EARLY · ORDINARY REWARDS KEPT'
+                  : '+50% GRASS IF BOTH STAY OFF 10 MIN'}
+              </PixelText>
+            </View>
+          )}
+          {m ? (
+            <PixelScene
+              player={p}
               species={p.species}
               level={p.level}
-              hat={p.hat}
-              sleeping
-              size={togetherId ? 128 : 160}
-            />
-            {togetherId && rival && (
+              kind={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
+              height={140}
+              style={{
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+                paddingBottom: 15,
+              }}
+            >
+              <Pet species={p.species} level={p.level} hat={p.hat} walking size={96} />
+            </PixelScene>
+          ) : (
+            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
               <Pet
-                species={rival.species}
-                level={rival.level}
-                hat={rival.hat}
+                species={p.species}
+                level={p.level}
+                hat={p.hat}
                 sleeping
-                size={128}
+                size={togetherId ? 128 : 160}
               />
-            )}
-          </View>
-        )}
-        {m ? (
-          <>
-            <PixelText style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}>
-              {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
-            </PixelText>
-            <PixelText style={{ color: c.body }}>UNTIL HOME · MIN</PixelText>
-          </>
-        ) : (
-          <Pulse
-            active
-            color={c.gold}
-            style={{ padding: 12, borderWidth: 2, borderColor: c.gold, backgroundColor: c.night }}
-          >
-            <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
-              {`OFFLINE ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
-            </PixelText>
-          </Pulse>
-        )}
-      </View>
-      <View style={{ gap: 18, paddingBottom: 24 }}>
+              {togetherId && rival && (
+                <Pet
+                  species={rival.species}
+                  level={rival.level}
+                  hat={rival.hat}
+                  sleeping
+                  size={128}
+                />
+              )}
+            </View>
+          )}
+          {m ? (
+            <>
+              <PixelText style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}>
+                {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
+              </PixelText>
+              <BodyText style={{ color: c.paper, fontFamily: 'Inter_600SemiBold' }}>
+                REAL DEMO COUNTDOWN · UNTIL HOME
+              </BodyText>
+              <BodyText style={{ color: c.paper, fontFamily: 'Inter_400Regular' }}>
+                {m.duration} simulated offline MIN · {m.reward} GRASS on completion
+              </BodyText>
+            </>
+          ) : (
+            <Pulse
+              active
+              color={c.gold}
+              style={{ padding: 12, borderWidth: 2, borderColor: c.gold, backgroundColor: c.night }}
+            >
+              <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
+                {`OFFLINE ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
+              </PixelText>
+            </Pulse>
+          )}
+        </View>
+      </ScrollView>
+      <View style={{ gap: 12, paddingTop: 12, paddingBottom: 8 }}>
         <PixelText
           style={{ color: c.body, textAlign: 'center', backgroundColor: c.night, padding: 6 }}
         >
-          {m ? 'WAKE EARLY = MISSION FAILED' : '+1 GRASS / MIN. KEEP IT DOWN.'}
+          {m ? 'EARLY RETURN: NO COMPLETION REWARD' : '+1 GRASS / SIMULATED OFFLINE MIN'}
         </PixelText>
         {togetherId && message && (
           <BodyText style={{ color: c.paper, textAlign: 'center' }}>{message}</BodyText>
@@ -467,6 +486,7 @@ export function GameOverlays() {
   const alert = useGame((s) => s.alerts[0]);
   const message = useGame((s) => s.message);
   const flash = useGame((s) => s.flash);
+  const guideOpen = useGame((s) => s.guideOpen);
   const deckOpen = useGame((s) => s.deckOpen);
   const cardReward = useGame((s) => s.cardReward);
   const recap = useGame((s) => s.recap);
@@ -481,6 +501,7 @@ export function GameOverlays() {
     !!battle ||
     !!alert ||
     !!flash ||
+    guideOpen ||
     deckOpen ||
     !!cardReward;
   useEffect(() => {
@@ -493,7 +514,8 @@ export function GameOverlays() {
     if (isScreenOff) void gameStore.getState().wake();
     else if (cardReward || deckOpen) gameStore.getState().dismissCards();
     else if (recap) gameStore.getState().dismissRecap();
-    else if (battle) useGame.setState({ battle: null });
+    else if (battle) return;
+    else if (guideOpen) useGame.setState({ guideOpen: false });
     else if (alert) gameStore.getState().dismissAlert();
     else useGame.setState({ message: null, flash: null });
   }
@@ -583,6 +605,8 @@ export function GameOverlays() {
                 {flash}
               </PixelText>
             </View>
+          ) : guideOpen ? (
+            <GardenGuide onClose={() => useGame.setState({ guideOpen: false })} />
           ) : deckOpen ? (
             <DeckPanel />
           ) : null}
@@ -591,7 +615,7 @@ export function GameOverlays() {
       {!visible && message && (
         <Animated.View
           key={message}
-          entering={reduced ? FadeIn : SlideInDown.duration(180)}
+          entering={reduced ? undefined : SlideInDown.duration(180)}
           style={{
             position: 'absolute',
             top: insets.top + 12,

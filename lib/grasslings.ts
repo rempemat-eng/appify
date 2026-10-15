@@ -23,6 +23,15 @@ export const grasslings = {
 export function growthStage(level: number) {
   return level === 1 ? 'SPROUT' : level === 2 ? 'BUD' : 'BLOOM';
 }
+export function levelPreview(level: number) {
+  return {
+    cost: level * 50,
+    next: level + 1,
+    stage: growthStage(level + 1),
+    unlock:
+      level === 1 ? '4-card hand' : level === 2 ? 'Digital Sunset card' : 'More HP and attack',
+  };
+}
 export function grasslingName(p: Player) {
   return p.id === 'bot' ? 'DOOMSCROLL DAVE' : p.pet_name;
 }

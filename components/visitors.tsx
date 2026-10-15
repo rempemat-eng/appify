@@ -1,5 +1,8 @@
+import { useState } from 'react';
+import { useReducedMotion } from '@/lib/motion';
+import { cards, cardIds, summarizeCardRewards } from '@/lib/cards';
 import { router } from 'expo-router';
-import { FlatList, ScrollView, View } from 'react-native';
+import { ScrollView, View, useWindowDimensions } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
 import { BookOpen } from 'lucide-react-native';
@@ -10,14 +13,14 @@ import { BodyText } from '@/components/pixel-feedback';
 import { RewardCard } from '@/components/habit-cards';
 
 export function GardenVisitor() {
+  const reduced = useReducedMotion();
   const waiting = useGame((s) => s.waitingVisitor);
   const now = useGame((s) => s.now);
   if (!waiting) return null;
   const v = visitorInfo(waiting.id);
   return (
     <Animated.View
-      entering={FadeIn}
-      exiting={FadeOut}
+      entering={reduced ? undefined : FadeIn}
       style={{
         position: 'absolute',
         right: 4,
@@ -44,6 +47,7 @@ export function GardenVisitor() {
   );
 }
 export function GuardianPicker({ player }: { player: Player }) {
+  const reduced = useReducedMotion();
   const friends = collectionOf(player).filter((v) => v.befriendedAt !== null);
   if (!friends.length) return null;
   return (
@@ -57,8 +61,8 @@ export function GuardianPicker({ player }: { player: Player }) {
         {[null, ...friends.map((v) => v.id)].map((id) => (
           <Animated.View
             key={id ?? 'starter'}
-            entering={FadeIn}
-            exiting={FadeOut}
+            entering={reduced ? undefined : FadeIn}
+            exiting={reduced ? undefined : FadeOut}
             style={{
               borderWidth: 2,
               borderColor: player.guardian === id ? c.moss : c.ink,
@@ -85,15 +89,12 @@ export function GuardianPicker({ player }: { player: Player }) {
 export function PostcardArt({ postcard }: { postcard: Postcard }) {
   const place =
     postcard.mission === 'park' ? 'PARK' : postcard.mission === 'book' ? 'LIBRARY' : 'MOUNTAIN';
-  const pixels: { key: string; x: number; y: number; color: string }[] = [];
-  const layers = new Map<string, number>();
+  const pixels = new Map<string, { key: string; x: number; y: number; color: string }>();
   const rect = (x: number, y: number, w: number, h: number, color: string) => {
     for (let yy = y; yy < y + h; yy++) {
       for (let xx = x; xx < x + w; xx++) {
         const coordinate = `${xx}-${yy}`;
-        const layer = layers.get(coordinate) ?? 0;
-        layers.set(coordinate, layer + 1);
-        pixels.push({ key: `${coordinate}-${layer}`, x: xx, y: yy, color });
+        pixels.set(coordinate, { key: coordinate, x: xx, y: yy, color });
       }
     }
   };
@@ -134,7 +135,7 @@ export function PostcardArt({ postcard }: { postcard: Postcard }) {
       style={{ borderWidth: 2, borderColor: c.ink, padding: 6, backgroundColor: c.body, gap: 6 }}
     >
       <Svg width="100%" height={144} viewBox="0 0 64 36" preserveAspectRatio="xMidYMid meet">
-        {pixels.map((p) => (
+        {Array.from(pixels.values()).map((p) => (
           <Rect key={p.key} x={p.x} y={p.y} width={1} height={1} fill={p.color} />
         ))}
       </Svg>
@@ -144,10 +145,27 @@ export function PostcardArt({ postcard }: { postcard: Postcard }) {
   );
 }
 export function WelcomeBack() {
+  const togetherStatus = useGame(
+    (s) => s.sessions.find((session) => session.id === s.cardReward?.sessionId)?.status,
+  );
+  const reportPending = useGame((s) =>
+    s.pendingTogetherWakes.some((wake) => wake.sid === s.cardReward?.sessionId),
+  );
   const reward = useGame((s) => s.cardReward);
-  if (!reward) return null;
+  const waiting = useGame((s) => s.waitingVisitor);
+  const p = useGame((s) => s.player);
+  const [details, setDetails] = useState(false);
+  const { height } = useWindowDimensions();
+  if (!reward || !p) return null;
+  const groups = cardIds
+    .filter((id) => reward.cards.includes(id))
+    .map((id) => ({ id, count: reward.cards.filter((card) => card === id).length }));
+  const summary = reward.deckBefore ? summarizeCardRewards(reward.deckBefore, reward.cards) : null;
+  const friend =
+    reward.visitor &&
+    collectionOf(p).some((entry) => entry.id === reward.visitor && entry.befriendedAt !== null);
   return (
-    <View style={{ flex: 1, padding: 16, justifyContent: 'center', backgroundColor: c.body }}>
+    <View style={{ flex: 1, padding: 12, justifyContent: 'center', backgroundColor: c.body }}>
       <View
         style={{
           width: '100%',
@@ -158,59 +176,114 @@ export function WelcomeBack() {
           borderColor: c.ink,
           backgroundColor: c.paper,
           padding: 12,
-          gap: 14,
+          gap: 10,
         }}
       >
-        <FlatList
-          data={reward.cards}
-          numColumns={2}
-          keyExtractor={(id, index) => `${id}-${index}`}
-          style={{ flexGrow: 0, flexShrink: 1 }}
-          columnWrapperStyle={{ gap: 12, justifyContent: 'center' }}
-          contentContainerStyle={{ gap: 14, paddingVertical: 8 }}
-          ListHeaderComponent={
-            <View style={{ gap: 14, alignItems: 'center' }}>
-              <PixelText style={{ fontSize: 18, lineHeight: 28, textAlign: 'center' }}>
-                WELCOME BACK
-              </PixelText>
-              <BodyText style={{ textAlign: 'center' }}>{reward.minutes} MIN OFFLINE</BodyText>
-              <PixelText style={{ fontSize: 18, lineHeight: 26 }}>+{reward.grass} GRASS</PixelText>
-              {reward.hat && <BodyText>+ {reward.hat}</BodyText>}
-              {reward.early && (
-                <BodyText style={{ textAlign: 'center' }}>Mission ended early.</BodyText>
-              )}
-              {reward.cards.length > 0 && (
-                <PixelText style={{ lineHeight: 22, textAlign: 'center' }}>
-                  +{reward.cards.length} {reward.cards.length === 1 ? 'CARD' : 'CARDS'}
-                </PixelText>
+        <PixelText
+          accessibilityRole="header"
+          style={{ fontSize: 16, lineHeight: 26, textAlign: 'center' }}
+        >
+          WELCOME BACK
+        </PixelText>
+        <BodyText style={{ fontFamily: 'Inter_500Medium', textAlign: 'center' }}>
+          {reward.minutes} simulated offline MIN · +{reward.grass} GRASS
+        </BodyText>
+        {togetherStatus === 'failed' && (
+          <BodyText style={{ fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
+            Together ended early. Ordinary rewards kept.
+          </BodyText>
+        )}
+        {reportPending && (
+          <BodyText style={{ fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
+            Together report pending · ordinary rewards saved
+          </BodyText>
+        )}
+        {reward.early && (
+          <BodyText style={{ fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
+            Early return · no mission completion reward
+          </BodyText>
+        )}
+        {reward.hat && (
+          <BodyText style={{ fontFamily: 'Inter_500Medium', textAlign: 'center' }}>
+            + {reward.hat}
+          </BodyText>
+        )}
+        {reward.cards.length > 0 && (
+          <View style={{ gap: 3 }}>
+            <BodyText style={{ fontFamily: 'Inter_700Bold', textAlign: 'center' }}>
+              {reward.cards.length} {reward.cards.length === 1 ? 'card' : 'cards'} earned · deck{' '}
+              {p.deck.length}/20
+            </BodyText>
+            {summary && (
+              <BodyText
+                style={{ fontFamily: 'Inter_400Regular', fontSize: 12, textAlign: 'center' }}
+              >
+                {summary.kept} new kept
+                {summary.previousReplaced ? ` · ${summary.previousReplaced} previous replaced` : ''}
+                {summary.earnedReplaced ? ` · ${summary.earnedReplaced} earned then replaced` : ''}
+              </BodyText>
+            )}
+          </View>
+        )}
+        {reward.visitor && (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            <Pet visitor={reward.visitor} size={64} bob={false} />
+            <View style={{ flex: 1, gap: 4 }}>
+              <BodyText style={{ fontFamily: 'Inter_700Bold' }}>
+                {visitorInfo(reward.visitor).name} visited
+              </BodyText>
+              {waiting?.id === reward.visitor && !friend ? (
+                <PixelButton
+                  small
+                  label="BEFRIEND · FREE"
+                  onPress={() => useGame.getState().befriendVisitor()}
+                />
+              ) : (
+                <BodyText
+                  accessibilityLiveRegion="polite"
+                  style={{ fontFamily: 'Inter_400Regular' }}
+                >
+                  {friend ? 'Your friend is in the garden.' : 'Recorded in your Field Journal.'}
+                </BodyText>
               )}
             </View>
-          }
-          renderItem={({ item, index }) => (
-            <View style={{ flex: 1, maxWidth: 178 }}>
-              <RewardCard id={item} index={index} />
-            </View>
-          )}
-          ListFooterComponent={
-            <View style={{ gap: 16 }}>
-              {reward.visitor && (
-                <View style={{ alignItems: 'center', gap: 5 }}>
-                  <Pet visitor={reward.visitor} size={128} bob={false} />
-                  <PixelText style={{ textAlign: 'center' }}>
-                    {visitorInfo(reward.visitor).name} VISITED
-                  </PixelText>
-                  <BodyText style={{ textAlign: 'center', fontFamily: 'Inter_400Regular' }}>
-                    someone visited while you were gone!
-                  </BodyText>
-                  <BodyText style={{ textAlign: 'center' }}>
-                    Tap your visitor in the garden to befriend it.
-                  </BodyText>
-                </View>
-              )}
-              {reward.postcard && <PostcardArt postcard={reward.postcard} />}
-            </View>
-          }
-        />
+          </View>
+        )}
+        {reward.postcard && (
+          <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 13 }}>
+            New{' '}
+            {reward.postcard.mission === 'park'
+              ? 'park'
+              : reward.postcard.mission === 'book'
+                ? 'library'
+                : 'mountain'}{' '}
+            postcard · {new Date(reward.postcard.at).toLocaleDateString()}
+          </BodyText>
+        )}
+        {(groups.length > 0 || reward.postcard) && (
+          <PixelButton
+            small
+            light
+            label={details ? 'HIDE REWARD DETAILS' : 'REWARD DETAILS'}
+            onPress={() => setDetails(!details)}
+          />
+        )}
+        {details && (
+          <ScrollView
+            style={{ maxHeight: Math.max(100, height * 0.23), flexShrink: 1 }}
+            contentContainerStyle={{ gap: 10 }}
+          >
+            {groups.map((group, index) => (
+              <View key={group.id} style={{ gap: 4 }}>
+                <BodyText style={{ fontFamily: 'Inter_700Bold' }}>
+                  {cards[group.id].name} ×{group.count} · {cards[group.id].rarity}
+                </BodyText>
+                <RewardCard id={group.id} index={index} />
+              </View>
+            ))}
+            {reward.postcard && <PostcardArt postcard={reward.postcard} />}
+          </ScrollView>
+        )}
         <PixelButton
           label="BACK TO THE GARDEN"
           onPress={() => {

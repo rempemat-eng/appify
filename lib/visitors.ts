@@ -22,6 +22,7 @@ export type Encounter = {
 export type WaitingVisitor = { id: VisitorId; expiresAt: number };
 export type Postcard = { id: string; mission: 'park' | 'book' | 'mountain'; at: number };
 export type WelcomeReward = {
+  deckBefore?: import('@/lib/cards').CardId[];
   sessionId?: string | null;
   cards: import('@/lib/cards').CardId[];
   minutes: number;

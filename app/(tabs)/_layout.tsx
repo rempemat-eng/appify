@@ -1,22 +1,21 @@
-import { useEffect } from 'react';
 import { PixelTabIcon, PixelDissolve } from '@/components/pixel-feedback';
 import { usePathname } from 'expo-router';
 import { Tabs } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { GameHeader } from '@/components/game-ui';
-import { GameOverlays } from '@/components/game-overlays';
+import { View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { feedback, palette as c, startGame } from '@/lib/game';
+import { feedback, palette as c } from '@/lib/game';
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const path = usePathname();
-  useEffect(() => startGame(), []);
   return (
-    <>
+    <View style={{ flex: 1, backgroundColor: c.paper }}>
       <StatusBar {...{ style: 'dark' as const }} />
+      <GameHeader />
       <Tabs
         screenOptions={{
-          header: () => <GameHeader />,
+          headerShown: false,
           sceneStyle: { backgroundColor: c.paper },
           tabBarStyle: {
             backgroundColor: c.paper,
@@ -78,7 +77,6 @@ export default function TabLayout() {
         />
       </Tabs>
       <PixelDissolve key={path} />
-      <GameOverlays />
-    </>
+    </View>
   );
 }

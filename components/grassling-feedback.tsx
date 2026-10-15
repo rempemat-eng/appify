@@ -1,8 +1,8 @@
+import { useReducedMotion } from '@/lib/motion';
 import { useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withRepeat,
   withTiming,
@@ -81,6 +81,7 @@ export function PetalFall() {
     transform: [{ translateY: progress.value * 450 }],
     opacity: 1 - progress.value * 0.4,
   }));
+  if (reduced) return null;
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
       <Animated.View style={[{ height: 200 }, motion]}>
@@ -113,6 +114,7 @@ export function GrassFlight({ toLeft = true }: { toLeft?: boolean }) {
       { translateY: -Math.round(Math.sin(progress.value * Math.PI) * 30) },
     ],
   }));
+  if (reduced) return null;
   return (
     <Animated.View
       pointerEvents="none"

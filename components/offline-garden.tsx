@@ -1,12 +1,12 @@
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Hourglass, Users } from 'lucide-react-native';
+import { Sprout, Hourglass, Users } from 'lucide-react-native';
 import { palette as c, clock, useGame, type Player } from '@/lib/game';
 import { budgetVoice, dayKey, emptyDay, gardenStreak, remainingPlay } from '@/lib/offline-rules';
 import { Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { PixelScene } from '@/components/pixel-scenes';
-import { growthStage } from '@/lib/grasslings';
+import { growthStage, levelPreview } from '@/lib/grasslings';
 export function PlayMeter() {
   const budget = useGame((s) => s.rules.budget);
   const now = useGame((s) => s.now);
@@ -20,7 +20,9 @@ export function PlayMeter() {
     >
       <Hourglass size={17} strokeWidth={2.5} color={left ? c.ink : c.error} />
       <View style={{ gap: 5 }}>
-        <PixelText>{clock(left)}</PixelText>
+        <BodyText style={{ fontFamily: 'Inter_700Bold', fontSize: 11 }}>
+          {clock(left)} REAL
+        </BodyText>
         <View style={{ width: 46, height: 4, backgroundColor: c.stone }}>
           <View
             style={{
@@ -49,6 +51,25 @@ export function PlayPause() {
     </View>
   );
 }
+export function GardenProgress() {
+  const p = useGame((s) => s.player);
+  const offline = useGame((s) => s.rules.days[dayKey(s.now)]?.offline ?? 0);
+  if (!p) return null;
+  const next = levelPreview(p.level);
+  return (
+    <View style={{ gap: 3 }}>
+      <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
+        Today: {offline}/120 offline MIN{offline >= 120 ? ' · streak goal met' : ''}
+      </BodyText>
+      <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
+        Next common card: {15 - (p.offline_seconds % 15)} offline MIN
+      </BodyText>
+      <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
+        LV {next.next} · {next.stage} · {next.cost} GRASS · {next.unlock}
+      </BodyText>
+    </View>
+  );
+}
 export function GardenStreak() {
   const rules = useGame((s) => s.rules);
   const now = useGame((s) => s.now);
@@ -56,8 +77,10 @@ export function GardenStreak() {
   return (
     <View style={{ gap: 8 }}>
       <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-        <Text style={{ fontSize: 20 }}>🌼</Text>
-        <PixelText>{streak} DAY STREAK</PixelText>
+        <Sprout size={20} color={c.moss} />
+        <PixelText>
+          {streak} {streak === 1 ? 'DAY' : 'DAYS'} STREAK
+        </PixelText>
       </View>
       {rules.togetherBadges > 0 && (
         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { StyleSheet, View, type ColorValue, type ViewStyle } from 'react-native';
 import Svg, { G, Rect } from 'react-native-svg';
-import { useReducedMotion } from 'react-native-reanimated';
+import { useReducedMotion } from '@/lib/motion';
 import { propPixels, sceneColors as c, type PropKind } from '@/lib/scene-art';
 import { status, useGame, type Player } from '@/lib/game';
 
@@ -116,7 +116,7 @@ export function PixelScene({
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
         <Svg width="100%" height="100%" viewBox="0 0 160 120" preserveAspectRatio="none">
           {[0, 1, 2].map((i) => (
-            <Rect key={i} x={0} y={i * 27} width={160} height={30} fill={sky[i]} />
+            <Rect key={`sky-${i}`} x={0} y={i * 27} width={160} height={30} fill={sky[i]} />
           ))}
           <Rect x={0} y={81} width={160} height={39} fill={ground} />
           <Rect
@@ -138,7 +138,7 @@ export function PixelScene({
               <Pixels kind="moon" x={122} y={9} scale={1.4} />
               {Array.from({ length: 22 }, (_, i) => (
                 <Rect
-                  key={i}
+                  key={`star-${i}`}
                   x={(i * 37 + 7) % 155}
                   y={(i * 19 + 4) % 67}
                   width={i % 4 === 0 ? 2 : 1}
@@ -149,7 +149,7 @@ export function PixelScene({
               ))}
               {kind === 'night' &&
                 Array.from({ length: 5 }, (_, i) => (
-                  <G key={i}>
+                  <G key={`night-firefly-${i}`}>
                     <Rect
                       x={18 + i * 28 + Math.round(Math.sin(tick / 25 + i) * 9)}
                       y={64 + Math.round(Math.cos(tick / 30 + i) * 16)}
@@ -236,7 +236,7 @@ export function PixelScene({
                   <Pixels kind="cloud" x={64} y={12} scale={2} tint={c.rain} />
                   {[0, 1, 2, 3, 4].map((i) => (
                     <Rect
-                      key={i}
+                      key={`rain-${i}`}
                       x={67 + i * 6}
                       y={35 + ((tick * 3 + i * 6) % 24)}
                       width={1}
@@ -288,7 +288,7 @@ export function PixelScene({
             <>
               {[0, 1, 2].map((i) => (
                 <Pixels
-                  key={i}
+                  key={`landmark-${i}`}
                   kind={kind === 'town' ? 'house' : (['tree', 'library', 'mountain'] as const)[i]}
                   x={8 + i * 51}
                   y={kind === 'trail' ? 12 + (i % 2) * 32 : 29 + (i % 2) * 7}
@@ -297,7 +297,7 @@ export function PixelScene({
               ))}
               {Array.from({ length: 27 }, (_, i) => (
                 <Rect
-                  key={i}
+                  key={`path-dot-${i}`}
                   x={14 + i * 5}
                   y={kind === 'trail' ? 69 + Math.round(Math.sin(i / 5) * 12) : 89}
                   width={2}
@@ -314,7 +314,7 @@ export function PixelScene({
               <Rect x={13} y={14} width={4} height={101} fill={c.wood} />
               <Rect x={143} y={14} width={4} height={101} fill={c.wood} />
               {Array.from({ length: 10 }, (_, i) => (
-                <G key={i}>
+                <G key={`night-firefly-${i}`}>
                   <Rect
                     x={10 + i * 14}
                     y={15}

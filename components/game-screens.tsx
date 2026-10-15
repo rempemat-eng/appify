@@ -1,9 +1,9 @@
+import { useReducedMotion } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
   Platform,
-  Pressable,
   TextInput,
   View,
   useWindowDimensions,
@@ -25,11 +25,12 @@ import {
   type Player,
 } from '@/lib/game';
 import { matchup } from '@/lib/battle';
-import { grasslings, growthStage } from '@/lib/grasslings';
+import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import {
+  GardenProgress,
   GardenStreak,
   PlayPause,
   TogetherInvite,
@@ -43,6 +44,7 @@ const lines = {
   idle: ["touch grass? i'll wait.", 'i am small but i am mighty'],
 };
 export function HomeScreen() {
+  const reduced = useReducedMotion();
   const { height } = useWindowDimensions();
   const p = useGame((s) => s.player);
   const now = useGame((s) => s.now);
@@ -63,12 +65,13 @@ export function HomeScreen() {
     return () => clearTimeout(timer);
   }, [raidId]);
   useEffect(() => {
+    if (reduced) return undefined;
     const timer = setInterval(() => {
       setLine((n) => n + 1);
       useGame.setState({ voice: null });
     }, 6000);
     return () => clearInterval(timer);
-  }, []);
+  }, [reduced]);
   useEffect(() => {
     if (!crumbs) return undefined;
     const timer = setTimeout(() => setCrumbs(false), 1000);
@@ -101,7 +104,7 @@ export function HomeScreen() {
         species={p.species}
         level={p.level}
         player={p}
-        height={height <= 700 ? 200 : 280}
+        height={height <= 700 ? 176 : 260}
         style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 12 }}
       >
         <Pet
@@ -116,8 +119,8 @@ export function HomeScreen() {
         />
         {crumbs && (
           <Animated.View
-            entering={FadeIn}
-            exiting={FadeOut}
+            entering={reduced ? undefined : FadeIn}
+            exiting={reduced ? undefined : FadeOut}
             style={{ position: 'absolute', top: 100, flexDirection: 'row', gap: 25 }}
           >
             {[0, 1, 2, 3].map((n) => (
@@ -141,7 +144,6 @@ export function HomeScreen() {
         </View>
         <GardenVisitor />
       </PixelScene>
-      <GuardianPicker player={p} />
       <View style={{ gap: 9 }}>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <PixelText>MOOD{p.mood < 30 ? ' · GRUMPY' : ''}</PixelText>
@@ -152,12 +154,14 @@ export function HomeScreen() {
       <View style={{ zIndex: 20 }}>
         <GardenTip id="phone" eligible={!firstWake && p.mode === 'awake'} floating />
         <PixelButton
-          label="📴 PUT PHONE DOWN"
-          supportingText="simulated"
+          label="PUT PHONE DOWN"
+          supportingText="simulated break · 1 second = 1 offline MIN"
           gold={paused}
           onPress={() => useGame.getState().sleep()}
         />
       </View>
+      <GardenProgress />
+      <GuardianPicker player={p} />
       <View style={{ flexDirection: 'row', gap: 8 }}>
         <View style={{ flex: 1 }}>
           <PixelButton
@@ -197,66 +201,61 @@ export function MissionsScreen() {
   const p = useGame((s) => s.player);
   if (!p) return null;
   return (
-    <Page>
-      <PixelText style={styles.title}>GO TOUCH GRASS.</PixelText>
-      <Dialogue text={'your grassling goes out. your phone stays off.'} />
-      <PixelScene kind="trail" height={170} />
-      <View style={[styles.border, { backgroundColor: c.body, padding: 16, gap: 0 }]}>
-        {missions.map((m, index) => {
-          const locked = p.level < m.level;
-          return (
-            <View key={m.id}>
-              {index > 0 && (
-                <View style={{ alignItems: 'center', paddingVertical: 10, gap: 6 }}>
-                  {[0, 1, 2, 3].map((n) => (
-                    <View
-                      key={n}
-                      style={{
-                        width: 4,
-                        height: 4,
-                        backgroundColor: c.ink,
-                        marginLeft: index % 2 ? 45 - n * 15 : -45 + n * 15,
-                      }}
-                    />
-                  ))}
-                </View>
+    <Page style={{ padding: 12, gap: 8 }}>
+      <PixelText style={{ fontSize: 15 }}>GO TOUCH GRASS</PixelText>
+      <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>
+        Simulated missions · 1 second = 1 offline MIN
+      </BodyText>
+      {missions.map((m, index) => {
+        const locked = p.level < m.level;
+        return (
+          <View
+            key={m.id}
+            style={{
+              flexDirection: 'row',
+              gap: 10,
+              alignItems: 'center',
+              borderWidth: 2,
+              borderColor: c.ink,
+              backgroundColor: c.body,
+              padding: 8,
+            }}
+          >
+            <PixelProp kind={(['tree', 'library', 'mountain'] as const)[index]} size={44} />
+            <View style={{ flex: 1, gap: 2 }}>
+              <BodyText style={{ fontFamily: 'Inter_700Bold', fontSize: 13, lineHeight: 18 }}>
+                {m.name}
+              </BodyText>
+              <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 11, lineHeight: 16 }}>
+                {m.duration} MIN offline · {m.duration}s demo
+              </BodyText>
+              <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 11, lineHeight: 16 }}>
+                {m.reward} GRASS · LV {m.level}
+              </BodyText>
+              <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 11, lineHeight: 16 }}>
+                +1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} · postcard
+              </BodyText>
+              {m.id === 'mountain' && (
+                <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 11, lineHeight: 16 }}>
+                  New hat · all owned: +50 GRASS
+                </BodyText>
               )}
-              <Pressable
-                accessibilityRole="button"
-                accessibilityLabel={`${m.name}, ${locked ? 'locked, requires level 2' : `${m.reward} grass reward`}`}
-                accessibilityState={{ disabled: locked || p.mode !== 'awake' }}
-                disabled={locked || p.mode !== 'awake'}
-                onPress={() => {
-                  feedback('select');
-                  useGame.getState().sleep(m.id);
-                }}
-                style={{
-                  minHeight: 130,
-                  backgroundColor: c.paper,
-                  borderWidth: 2,
-                  borderColor: c.ink,
-                  padding: 14,
-                  flexDirection: 'row',
-                  gap: 12,
-                  alignItems: 'center',
-                }}
-              >
-                <PixelProp kind={(['tree', 'library', 'mountain'] as const)[index]} size={64} />
-                <View style={{ flex: 1, gap: 10 }}>
-                  <PixelText style={{ fontSize: 12 }}>{m.name}</PixelText>
-                  <PixelText>+{m.reward} GRASS</PixelText>
-                  <BodyText>
-                    {m.duration} MIN{locked ? ' · LV 2' : ''}
-                  </BodyText>
-                  <BodyText>+1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} CARD</BodyText>
-                  {m.id === 'mountain' && <BodyText>+ random unowned hat</BodyText>}
-                </View>
-                {locked && <PixelProp kind="lock" size={24} />}
-              </Pressable>
             </View>
-          );
-        })}
-      </View>
+            <View style={{ width: 68 }}>
+              <PixelButton
+                small
+                light
+                label={locked ? 'LV 2' : 'START'}
+                disabled={locked || p.mode !== 'awake'}
+                onPress={() => useGame.getState().sleep(m.id)}
+              />
+            </View>
+          </View>
+        );
+      })}
+      <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>
+        Common cards stack. Postcards on completion. No per-minute GRASS.
+      </BodyText>
     </Page>
   );
 }
@@ -265,20 +264,12 @@ export function ShopScreen() {
   const p = useGame((s) => s.player);
   const [merchant, setMerchant] = useState('put the phone down. browse the hats.');
   if (!p) return null;
-  const unlock =
-    p.level === 1
-      ? 'LV 2 · 4-CARD HAND'
-      : p.level === 2
-        ? 'LV 3 · FREE DIGITAL SUNSET CARD'
-        : 'MORE HP. MORE ATK.';
+  const preview = levelPreview(p.level);
   return (
-    <Page>
+    <Page style={{ padding: 12, gap: 12 }}>
       <PlayPause />
-      <PixelText style={styles.title}>GROW YOUR GARDEN.</PixelText>
-      <PixelScene kind="market" height={190} />
-      <PixelText style={{ fontSize: 12 }}>MOSS THE MERCHANT</PixelText>
-      <Dialogue text={merchant} />
-      <View style={[styles.border, { padding: 18, gap: 20, backgroundColor: c.body }]}>
+      <PixelText style={{ fontSize: 15 }}>GROW YOUR GARDEN</PixelText>
+      <View style={[styles.border, { padding: 12, gap: 10, backgroundColor: c.body }]}>
         <View
           style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
         >
@@ -286,13 +277,22 @@ export function ShopScreen() {
           <ArrowUp size={24} color={c.ink} />
           <PixelText style={{ fontSize: 16 }}>LV {p.level + 1}</PixelText>
         </View>
-        <Pet species={p.species} level={p.level} size={88} bob={false} />
-        {p.level < 3 && (
-          <BodyText>
-            {growthStage(p.level)} → {growthStage(p.level + 1)}
-          </BodyText>
-        )}
-        <BodyText>{unlock}</BodyText>
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+          <Pet species={p.species} level={p.level + 1} size={64} bob={false} />
+          <View style={{ flex: 1 }}>
+            <BodyText style={{ fontFamily: 'Inter_600SemiBold' }}>
+              {p.level < 3
+                ? `${growthStage(p.level)} → ${preview.stage}`
+                : `${preview.stage} · LV ${preview.next}`}
+            </BodyText>
+            <BodyText style={{ fontFamily: 'Inter_400Regular' }}>{preview.unlock}</BodyText>
+            <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>
+              {p.grass < preview.cost
+                ? `Need ${preview.cost - p.grass} more GRASS`
+                : 'Ready to grow'}
+            </BodyText>
+          </View>
+        </View>
         <PixelButton
           label={`LEVEL UP · ${50 * p.level} GRASS`}
           disabled={paused || p.grass < p.level * 50}
@@ -309,6 +309,13 @@ export function ShopScreen() {
             setMerchant('fine choice. very hat.');
           }}
         />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+        <PixelScene kind="market" mini height={68} style={{ width: 100 }} />
+        <View style={{ flex: 1, gap: 3 }}>
+          <BodyText style={{ fontFamily: 'Inter_700Bold' }}>Moss the merchant</BodyText>
+          <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>{merchant}</BodyText>
+        </View>
       </View>
       <PixelText style={{ fontSize: 16, marginTop: 4 }}>HATS</PixelText>
       {hats.map((h) => {
@@ -331,11 +338,19 @@ export function ShopScreen() {
             <Pet species={p.species} level={p.level} size={96} hat={h.id} bob={false} />
             <View style={{ flex: 1, gap: 12 }}>
               <PixelText style={{ fontSize: 12 }}>{h.id}</PixelText>
-              {!owned && <PixelText>{h.cost} GRASS</PixelText>}
+              <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
+                {owned
+                  ? equipped
+                    ? 'Owned · equipped'
+                    : 'Owned'
+                  : `${h.cost} GRASS${p.grass < h.cost ? ` · need ${h.cost - p.grass} more` : ''}`}
+              </BodyText>
               <PixelButton
                 small
                 light={!equipped}
-                label={equipped ? 'EQUIPPED' : owned ? 'EQUIP' : 'BUY'}
+                label={
+                  equipped ? 'REMOVE' : owned ? 'EQUIP' : p.grass < h.cost ? 'NOT ENOUGH' : 'BUY'
+                }
                 disabled={paused || (!owned && p.grass < h.cost)}
                 onDisabledPress={() => {
                   if (paused) {

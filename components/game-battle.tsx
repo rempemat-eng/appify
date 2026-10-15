@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@/lib/motion';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Bell, Shield, FastForward, ChevronDown } from 'lucide-react-native';
@@ -5,7 +6,6 @@ import Animated, {
   FadeIn,
   FadeOut,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
@@ -18,6 +18,7 @@ import {
   type BattleRequest,
   type Player,
 } from '@/lib/game';
+import { PlayMeter, usePlayPaused } from '@/components/offline-garden';
 import { dayKey, emptyDay, sparringReward } from '@/lib/offline-rules';
 import { GardenTip } from '@/components/garden-guide';
 import {
@@ -132,6 +133,8 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
   );
 }
 export function BattleScreen({ request }: { request: BattleRequest }) {
+  const paused = usePlayPaused();
+  const reduced = useReducedMotion();
   const [player] = useState(() => guardianPlayer(gameStore.getState().player!));
   const { width, height } = useWindowDimensions();
   const rules = useGame((s) => s.rules);
@@ -288,7 +291,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
       const side = combatRef.current.side;
       const move = selected.current;
       if (damaging(move)) setAttack((old) => ({ ...old, [side]: old[side] + 1 }));
-      if (move === 'digital_sunset') setFlash(true);
+      if (move === 'digital_sunset' && !reduced) setFlash(true);
       const timers: ReturnType<typeof setTimeout>[] = [];
       const speed = phaseAuto ? 0.5 : 1;
       if (move === 'digital_sunset') timers.push(setTimeout(() => setFlash(false), 180 * speed));
@@ -345,7 +348,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
       };
     }
     return undefined;
-  }, [phase, player, target, active, nextTurn, record, timingLesson]);
+  }, [phase, player, target, active, nextTurn, record, timingLesson, reduced]);
   useEffect(() => {
     if (phase !== 'choose' || !auto) return undefined;
     const timer = setTimeout(() => select(chooseAI(combatRef.current.a, player)), 200);
@@ -403,6 +406,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               ROUND {Math.max(combat.a.turns, combat.d.turns)}/12
             </BodyText>
           </View>
+          <PlayMeter />
           <Pressable
             accessibilityRole="switch"
             accessibilityState={{ checked: auto }}
@@ -452,7 +456,10 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           }}
         >
           <RaidGarden attacker={player} defender={target} />
-          <Animated.View entering={FadeIn.duration(150)} style={{ width: petSize }}>
+          <Animated.View
+            entering={reduced ? undefined : FadeIn.duration(150)}
+            style={{ width: petSize }}
+          >
             <Pet
               species={player.species}
               visitor={player.guardian}
@@ -469,7 +476,10 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             />
             {damage?.side === 'a' && <Damage key={damage.id} amount={damage.amount} />}
           </Animated.View>
-          <Animated.View entering={FadeIn.duration(150)} style={{ width: petSize }}>
+          <Animated.View
+            entering={reduced ? undefined : FadeIn.duration(150)}
+            style={{ width: petSize }}
+          >
             <Pet
               species={target.species}
               visitor={target.guardian}
@@ -546,13 +556,25 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         </Pressable>
         <ScrollView style={{ flexShrink: 1 }} contentContainerStyle={{ gap: 8 }}>
           {finished ? (
-            <Animated.View entering={FadeIn} exiting={FadeOut} style={{ gap: 14 }}>
+            <Animated.View
+              entering={reduced ? undefined : FadeIn}
+              exiting={reduced ? undefined : FadeOut}
+              style={{ gap: 14 }}
+            >
               <PixelText style={{ textAlign: 'center', fontSize: 16 }}>
-                {combat.result ? 'VICTORY!' : 'RAID FAILED.'}
+                {request.practice
+                  ? combat.result
+                    ? 'SPARRING WON'
+                    : 'SPARRING LOST'
+                  : combat.result
+                    ? 'VICTORY!'
+                    : 'RAID FAILED.'}
               </PixelText>
               <BodyText style={{ textAlign: 'center', fontFamily: 'Inter_700Bold', fontSize: 16 }}>
                 {request.practice
-                  ? `+${reward} GRASS`
+                  ? reward > 0
+                    ? `+${reward} GRASS`
+                    : 'NO GRASS EARNED'
                   : combat.result
                     ? `YOU STOLE ${reward} GRASS`
                     : `-${reward} GRASS`}
@@ -562,12 +584,18 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                   RAIDS LEFT TODAY: {Math.max(0, 3 - (rules.days[dayKey()]?.raids ?? 0))}
                 </PixelText>
               )}
+              {paused && (
+                <BodyText style={{ textAlign: 'center' }}>
+                  Play time is up. Your result is safe.
+                </BodyText>
+              )}
               <PixelButton
-                label="CONTINUE"
+                label={paused ? 'CONTINUE · PUT PHONE DOWN' : 'CONTINUE'}
                 onPress={() => {
                   if (committed.current || !active()) return;
                   committed.current = true;
                   gameStore.getState().finishBattle(combat.result!, target, request.practice);
+                  if (paused) gameStore.getState().sleep();
                 }}
               />
             </Animated.View>
@@ -707,7 +735,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         </ScrollView>
       </View>
       <BattleIntro />
-      {flash && (
+      {flash && !reduced && (
         <View
           pointerEvents="none"
           style={[StyleSheet.absoluteFill, { backgroundColor: c.flash }]}

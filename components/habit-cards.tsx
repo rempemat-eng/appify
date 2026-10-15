@@ -1,10 +1,10 @@
+import { useReducedMotion } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 import { FlatList, Pressable, View, useWindowDimensions } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
 import Animated, {
   FadeIn,
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withDelay,
   withTiming,
@@ -188,6 +188,7 @@ export function HabitCard({
     species && card.power > 0 && card.habit === species
       ? card.effect.replace(String(card.power), String(cardPower(id, species)))
       : card.effect;
+  const reduced = useReducedMotion();
   const face = (
     <View
       style={{
@@ -202,7 +203,8 @@ export function HabitCard({
     >
       <View
         style={{
-          flexDirection: 'row',
+          flexDirection: 'column',
+          gap: 4,
           width: '100%',
           justifyContent: 'space-between',
           alignItems: 'center',
@@ -210,7 +212,7 @@ export function HabitCard({
       >
         <EnergyPips value={card.cost} />
         <BodyText style={{ fontSize: 11, color: c.ink }}>
-          {count === undefined ? card.rarity[0] : `X${count}`}
+          {count === undefined ? card.rarity : `×${count} · ${card.rarity}`}
         </BodyText>
       </View>
       <Illustration id={id} />
@@ -219,29 +221,21 @@ export function HabitCard({
           width: '100%',
           textAlign: 'center',
           fontFamily: 'Inter_600SemiBold',
-          fontSize: 11,
-          lineHeight: 15,
-          minHeight: 45,
+          fontSize: 13,
+          lineHeight: 18,
+          minHeight: 40,
         }}
       >
         {card.name}
       </BodyText>
-      <BodyText
-        style={{
-          width: '100%',
-          textAlign: 'center',
-          fontSize: 11,
-          lineHeight: 16,
-          fontFamily: 'Inter_600SemiBold',
-        }}
-      >
-        {effect}
+      <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>
+        {card.cost} energy · {effect}
       </BodyText>
     </View>
   );
   return (
     <Animated.View
-      entering={FadeIn.duration(150)}
+      entering={reduced ? undefined : FadeIn.duration(150)}
       style={{
         flex: 1,
         transform: [{ translateY: selected ? -10 : 0 }],
@@ -291,7 +285,7 @@ export function DeckPanel({ reward = false }: { reward?: boolean }) {
   const ids = reward && earned ? earned.cards : cardIds.filter((id) => p.deck.includes(id));
   const mission = missions.find((m) => m.id === earned?.mission);
   const { width } = useWindowDimensions();
-  const columns = width < 360 ? 2 : 3;
+  const columns = width < 600 ? 2 : 3;
   return (
     <View style={{ flex: 1, backgroundColor: c.paper, padding: 16, gap: 16 }}>
       <PixelText style={{ fontSize: 16, lineHeight: 28 }}>
@@ -302,7 +296,9 @@ export function DeckPanel({ reward = false }: { reward?: boolean }) {
       {reward ? (
         mission && <BodyText>{mission.name}</BodyText>
       ) : (
-        <BodyText>EARN CARDS BY BEING OFFLINE. 15 MIN = 1 CARD.</BodyText>
+        <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 13 }}>
+          15 offline MIN = 1 common card. Tap a card for details.
+        </BodyText>
       )}
       <FlatList
         key={columns}
@@ -330,8 +326,12 @@ export function DeckPanel({ reward = false }: { reward?: boolean }) {
         )}
       />
       {!reward && selected && (
-        <BodyText>
-          {cards[selected].rarity} · {cardDetails[selected]}
+        <BodyText
+          accessibilityLiveRegion="polite"
+          style={{ fontFamily: 'Inter_400Regular', fontSize: 14, lineHeight: 21 }}
+        >
+          {' '}
+          · {cardDetails[selected]}
         </BodyText>
       )}
       <PixelButton

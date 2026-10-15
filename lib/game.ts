@@ -125,6 +125,7 @@ type Saved = {
   identity: string;
   tickAt: number;
   offStart: number;
+  offDeck: CardId[] | null;
   offGrass: number;
   outgoing: Raid[];
   staged: Incoming[];
@@ -244,6 +245,7 @@ function migrateSaved(value: unknown) {
   if (value.seenSessions === undefined) value.seenSessions = [];
   if (value.collectedCards === undefined) value.collectedCards = [];
   if (value.waitingVisitor === undefined) value.waitingVisitor = null;
+  if (value.offDeck === undefined) value.offDeck = null;
   if (value.cardReward === undefined) value.cardReward = null;
   if (isRecord(value.cardReward))
     value.cardReward = {
@@ -293,6 +295,7 @@ function isSaved(value: unknown): value is Saved {
     isStringArray(value.seenSessions) &&
     (value.player === null || isPlayer(value.player)) &&
     typeof value.identity === 'string' &&
+    (value.offDeck === null || (Array.isArray(value.offDeck) && value.offDeck.every(isCardId))) &&
     ['tickAt', 'offStart', 'offGrass'].every((key) => typeof value[key] === 'number') &&
     Array.isArray(value.outgoing) &&
     value.outgoing.every(isRaid) &&
@@ -329,18 +332,7 @@ export function playPaused() {
 }
 function eligiblePlay() {
   const s = gameStore.getState();
-  return (
-    active &&
-    s.ready &&
-    s.player?.mode === 'awake' &&
-    !s.battle &&
-    !s.alerts.length &&
-    !s.flash &&
-    !s.deckOpen &&
-    !s.guideOpen &&
-    !s.cardReward &&
-    !s.recap
-  );
+  return active && s.ready && s.player?.mode === 'awake';
 }
 export function accountPlay(now = Date.now()) {
   if (accounting) return;
@@ -368,6 +360,8 @@ function beginTogether(session: TogetherSession) {
     seenSessions: [...s.seenSessions, session.id],
     sessions: [...s.sessions.filter((x) => x.id !== session.id), session],
     offStart: s.player.offline_seconds,
+    offDeck: s.player.deck.filter(isCardId),
+    collectedCards: [],
     offGrass: s.player.grass,
     tickAt: at,
     battle: null,
@@ -404,14 +398,10 @@ export function resolveTogetherSession(session: TogetherSession) {
     void persist();
   }
   if (session.status === 'failed' && !s.seenSessions.includes(`failed:${session.id}`)) {
-    const name =
-      session.failed_by === p.id
-        ? p.name
-        : (s.rivals.find((x) => x.id === session.failed_by)?.name ?? 'YOUR RIVAL');
     gameStore.setState({
       seenSessions: [...s.seenSessions, `failed:${session.id}`],
-      message: `${name} PICKED UP THEIR PHONE.`,
-      voice: 'our together bonus wilted.',
+      message: s.cardReward ? null : 'TOGETHER ENDED EARLY. ORDINARY REWARDS KEPT.',
+      voice: 'we kept our ordinary rewards. another time, together.',
     });
     feedback('error');
     void persist();
@@ -432,6 +422,7 @@ function persist() {
     identity: s.identity,
     tickAt: s.tickAt,
     offStart: s.offStart,
+    offDeck: s.offDeck,
     offGrass: s.offGrass,
     outgoing: s.outgoing,
     staged: s.staged,
@@ -449,6 +440,9 @@ function persist() {
       feedback('error');
     });
   return persistence;
+}
+export async function flushGameSave() {
+  await persistence;
 }
 function changed() {
   void persist().then(() => gameStore.getState().sync());
@@ -577,7 +571,11 @@ export const gameStore = create<Game>((set, get) => ({
         minutes: wake.minutes,
       });
       if (report.error) {
-        get().notify(report.error.message, true);
+        set({ live: false });
+        get().notify(
+          `Together report pending. Your rewards are saved. ${report.error.message}`,
+          true,
+        );
         throw report.error;
       }
       set({ pendingTogetherWakes: get().pendingTogetherWakes.filter((x) => x.sid !== wake.sid) });
@@ -609,6 +607,7 @@ export const gameStore = create<Game>((set, get) => ({
   now: Date.now(),
   tickAt: Date.now(),
   offStart: 0,
+  offDeck: null,
   offGrass: 0,
   outgoing: [],
   staged: [],
@@ -621,9 +620,16 @@ export const gameStore = create<Game>((set, get) => ({
   befriendVisitor: () => {
     const s = get();
     const v = s.waitingVisitor;
-    if (!s.player || !v || v.expiresAt === 0) return;
-    if (Date.now() >= v.expiresAt) {
+    if (!s.player || !v) return;
+    if (v.expiresAt === 0 && s.cardReward?.visitor !== v.id) return;
+    if (v.expiresAt > 0 && Date.now() >= v.expiresAt) {
       get().tick();
+      return;
+    }
+    const encounter = collectionOf(s.player).find((entry) => entry.id === v.id);
+    if (!encounter || encounter.befriendedAt !== null) {
+      set({ waitingVisitor: null });
+      void persist();
       return;
     }
     const collection = collectionOf(s.player).map((entry) =>
@@ -639,7 +645,7 @@ export const gameStore = create<Game>((set, get) => ({
   },
   selectGuardian: (id) => {
     const s = get();
-    if (!s.player || s.battle || s.player.mode !== 'awake') return;
+    if (!s.player || s.battle || s.player.mode !== 'awake' || s.player.guardian === id) return;
     if (id && !collectionOf(s.player).some((v) => v.id === id && v.befriendedAt !== null)) return;
     set({ player: { ...s.player, guardian: id } });
     changed();
@@ -823,7 +829,11 @@ export const gameStore = create<Game>((set, get) => ({
         completedMission === 'park' ||
         completedMission === 'book' ||
         completedMission === 'mountain'
-          ? { id: Crypto.randomUUID(), mission: completedMission, at: end }
+          ? {
+              id: `${p.id}:${completedMission}:${p.mission_ends_at}`,
+              mission: completedMission,
+              at: p.mission_ends_at,
+            }
           : null;
       if (completedMission) {
         next = meetVisitor(next, visitor, minutes, now);
@@ -836,9 +846,14 @@ export const gameStore = create<Game>((set, get) => ({
         collectedCards: completedMission ? [] : collectedCards,
         ...(completedMission
           ? {
-              waitingVisitor: visitor ? { id: visitor, expiresAt: 0 } : get().waitingVisitor,
+              waitingVisitor:
+                visitor &&
+                !collectionOf(next).some((v) => v.id === visitor && v.befriendedAt !== null)
+                  ? { id: visitor, expiresAt: 0 }
+                  : null,
               voice: visitor ? 'someone visited while you were gone!' : get().voice,
               cardReward: {
+                deckBefore: s.offDeck ?? undefined,
                 cards: collectedCards,
                 minutes,
                 mission: completedMission,
@@ -1015,6 +1030,8 @@ export const gameStore = create<Game>((set, get) => ({
     const now = Date.now();
     set({
       offStart: p.offline_seconds,
+      offDeck: p.deck.filter(isCardId),
+      collectedCards: [],
       offGrass: p.grass,
       tickAt: now,
       player: {
@@ -1062,8 +1079,12 @@ export const gameStore = create<Game>((set, get) => ({
       firstWake: true,
       tickAt: Date.now(),
       collectedCards: [],
-      waitingVisitor: visitor ? { id: visitor, expiresAt: 0 } : s.waitingVisitor,
+      waitingVisitor:
+        visitor && !collectionOf(met).some((v) => v.id === visitor && v.befriendedAt !== null)
+          ? { id: visitor, expiresAt: 0 }
+          : null,
       cardReward: {
+        deckBefore: s.offDeck ?? undefined,
         sessionId: togetherId,
         cards: s.collectedCards,
         minutes: elapsed,
@@ -1077,7 +1098,8 @@ export const gameStore = create<Game>((set, get) => ({
       message: null,
       ...(visitor ? { voice: 'someone visited while you were gone!' } : {}),
     });
-    changed();
+    await persist();
+    void get().sync();
     feedback(failed ? 'error' : 'success');
   },
   feed: () => {
@@ -1187,8 +1209,7 @@ export const gameStore = create<Game>((set, get) => ({
         !active ||
         generation !== battleGeneration ||
         get().player?.mode !== 'awake' ||
-        get().battle ||
-        playPaused()
+        get().battle
       )
         return;
     }
@@ -1220,15 +1241,8 @@ export const gameStore = create<Game>((set, get) => ({
       },
       outgoing: practice ? get().outgoing : [...get().outgoing, raid],
       battle: null,
-      message: practice
-        ? won
-          ? practiceGrass > 0
-            ? 'SPARRING WON! +5 GRASS'
-            : 'DAVE IS TIRED. COME BACK TOMORROW.'
-          : 'SPARRING LOST. TRY AGAIN.'
-        : won
-          ? `VICTORY! YOU STOLE ${amount} GRASS`
-          : `RAID FAILED. -${amount} GRASS`,
+      // Results are presented by BattleScreen; settlement must not open a second toast.
+      message: null,
       voice: won ? (Math.random() < 0.5 ? 'gg ez' : "that's what doomscrolling gets you.") : null,
     });
     changed();
@@ -1313,7 +1327,6 @@ export function startGame() {
     if (!active) {
       gameStore.setState({ lastActiveAt: Date.now() });
       battleGeneration += 1;
-      gameStore.setState({ battle: null });
       void persist();
     } else {
       const s = gameStore.getState();
@@ -1333,7 +1346,7 @@ export function startGame() {
     if (document.hidden) {
       active = false;
       battleGeneration += 1;
-      gameStore.setState({ battle: null, lastActiveAt: Date.now() });
+      gameStore.setState({ lastActiveAt: Date.now() });
       void persist();
     } else {
       active = true;

@@ -1,3 +1,4 @@
+import { useReducedMotion } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 import {
   Pressable,
@@ -12,7 +13,6 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, {
   useAnimatedStyle,
-  useReducedMotion,
   useSharedValue,
   withRepeat,
   withSequence,
@@ -20,7 +20,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
 import { Sprout, Zap } from 'lucide-react-native';
-import { GardenTip, GardenGuide } from '@/components/garden-guide';
+import { GardenTip } from '@/components/garden-guide';
 import { usePlayPaused } from '@/components/offline-garden';
 import { PlayMeter } from '@/components/offline-garden';
 import { PixelProp } from '@/components/pixel-scenes';
@@ -200,6 +200,7 @@ export function Pet({
   const [idle, setIdle] = useState<'rest' | 'yawn' | 'look'>('rest');
   const [heart, setHeart] = useState(false);
   useEffect(() => {
+    if (reduced) return undefined;
     let close: ReturnType<typeof setTimeout>;
     const timer = setInterval(() => {
       setBlink(true);
@@ -209,7 +210,7 @@ export function Pet({
       clearInterval(timer);
       clearTimeout(close);
     };
-  }, []);
+  }, [reduced]);
   useEffect(() => {
     if (!bob || sleeping || walking || reduced || slumped) return undefined;
     let timer: ReturnType<typeof setTimeout>;
@@ -256,7 +257,7 @@ export function Pet({
   const [flashState, setFlashState] = useState({ hit, flashing: false });
   // A new hit starts its flash in the same render, not a cascading effect update.
   if (flashState.hit !== hit) setFlashState({ hit, flashing: hit !== 0 });
-  const flashing = flashState.flashing;
+  const flashing = flashState.flashing && !reduced;
   useEffect(() => {
     if (!walking || reduced) return undefined;
     const timer = setInterval(() => setStride((value) => !value), 250);
@@ -532,7 +533,6 @@ export function GameHeader() {
     ),
   );
   const paused = usePlayPaused();
-  const guide = useGame((s) => s.guideOpen);
   const top = useSafeAreaInsets().top;
   return (
     <View
@@ -593,7 +593,7 @@ export function GameHeader() {
             }}
           />
           <Text style={{ fontFamily: 'Inter_600SemiBold', fontSize: 11, color: c.ink }}>
-            {live ? 'SYNCED' : 'NO SIGNAL'}
+            {live ? 'SYNCED' : 'NO SIGNAL'} · DEMO x60
           </Text>
         </View>
         <View style={{ flexDirection: 'row', gap: 14, alignItems: 'center' }}>
@@ -624,7 +624,6 @@ export function GameHeader() {
         />
         <GardenTip id="budget" eligible={paused && !busy} pointsUp />
       </View>
-      <GardenGuide open={guide} onClose={() => setGuide(false)} />
     </View>
   );
 }

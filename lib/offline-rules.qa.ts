@@ -247,17 +247,17 @@ export async function runOfflineRuleChecks(
       woke_a_at: new Date(origin + 5000).toISOString(),
       woke_b_at: null,
     };
-    gameStore.setState({ player: pb, rules: baseline, seenSessions: [] });
+    gameStore.setState({ player: pb, rules: baseline, seenSessions: [], cardReward: null });
     resolveTogetherSession(failed);
     check(
       gameStore.getState().player!.grass === pb.grass &&
-        gameStore.getState().message === `${pa.name} PICKED UP THEIR PHONE.`,
-      'Rival sees named early-wake message and no bonus',
+        gameStore.getState().message === 'TOGETHER ENDED EARLY. ORDINARY REWARDS KEPT.',
+      'Rival sees neutral early-return message and no bonus',
     );
     gameStore.setState({ player: pa, rivals: [pb], seenSessions: [] });
     resolveTogetherSession(failed);
     check(
-      gameStore.getState().message === `${pa.name} PICKED UP THEIR PHONE.`,
+      gameStore.getState().message === 'TOGETHER ENDED EARLY. ORDINARY REWARDS KEPT.',
       'Early-waking player sees same failure message',
     );
     const active: TogetherSession = {
