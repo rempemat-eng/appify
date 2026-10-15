@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { feedback } from '@/lib/game';
-import { motionPreference, useReducedMotion } from '@/lib/motion';
+import { useMotionPreference, useReducedMotion } from '@/lib/motion';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
@@ -124,7 +124,7 @@ const sections = [
 export function GardenGuide({ onClose }: { onClose: () => void }) {
   const tips = useGame((s) => s.tips);
   const insets = useSafeAreaInsets();
-  const preference = motionPreference((s) => s.reduced);
+  const preference = useMotionPreference((s) => s.reduced);
   const reduced = useReducedMotion();
   const [saving, setSaving] = useState(false);
   return (
@@ -149,7 +149,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
           disabled={saving}
           onPress={() => {
             setSaving(true);
-            void motionPreference
+            void useMotionPreference
               .getState()
               .setReduced(!preference)
               .then(() => feedback('select'))
