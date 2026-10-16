@@ -6,11 +6,11 @@ The active companion can be the starter or a befriended visitor. Preview before 
 
 Every companion has a temperament and an optional real-world invitation. These are descriptive attributes, not hidden bonuses. The existing family rules still apply in battle:
 
-| Family | Existing gameplay | Real-world direction |
-| --- | --- | --- |
-| REST | Strong against FOCUS, weak against ROAM. No damaging habit cards currently receive its +3 power bonus. | Quiet breaks, wind-down, noticing plants and small details |
-| ROAM | Strong against REST, weak against FOCUS. Short Walk and Morning Walk gain 3 power. | Walks, accessible movement, a different view, outdoor discovery |
-| FOCUS | Strong against ROAM, weak against REST. Stretch and Read a Chapter gain 3 power. | Reading, study, writing, drawing and making things |
+| Family | Existing gameplay                                                                                      | Real-world direction                                            |
+| ------ | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| REST   | Strong against FOCUS, weak against ROAM. No damaging habit cards currently receive its +3 power bonus. | Quiet breaks, wind-down, noticing plants and small details      |
+| ROAM   | Strong against REST, weak against FOCUS. Short Walk and Morning Walk gain 3 power.                     | Walks, accessible movement, a different view, outdoor discovery |
+| FOCUS  | Strong against ROAM, weak against REST. Stretch and Read a Chapter gain 3 power.                       | Reading, study, writing, drawing and making things              |
 
 All companions have equal HP at an equal level. This does not establish full balance: REST's lack of damaging habit cards needs consideration before introducing individual mechanical traits. Rarity must not become a strength tier.
 

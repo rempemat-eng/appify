@@ -25,6 +25,9 @@ for (const [id, sprite] of Object.entries(visitorSprites)) {
   check(sprite.closed, `${id} closed`);
 }
 for (const [hat, art] of Object.entries(hatSprites)) check(art.rows, hat, 17);
-assert.ok(petPalette.every((c) => /^#[0-9A-F]{6}$/i.test(c)), 'palette is hex colours');
+assert.ok(
+  petPalette.every((c) => /^#[0-9A-F]{6}$/i.test(c)),
+  'palette is hex colours',
+);
 
 console.log('PASS: generated pet, visitor, Dave and hat sprites are well-formed.');
