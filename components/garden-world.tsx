@@ -738,7 +738,13 @@ export function GardenWorld({
     const ne = e.nativeEvent;
     const lx = ne.locationX ?? ne.offsetX;
     const ly = ne.locationY ?? ne.offsetY;
-    if (typeof lx !== 'number' || typeof ly !== 'number' || Number.isNaN(lx + ly)) return;
+    if (
+      typeof lx !== 'number' ||
+      typeof ly !== 'number' ||
+      !Number.isFinite(lx) ||
+      !Number.isFinite(ly)
+    )
+      return;
     lastTouch.current = clock();
     setTag(null);
     setFeedback(null);

@@ -30,13 +30,14 @@ This preview covers the web experience, including layout, navigation, animations
 ## Export and check
 
 ```sh
-npm run export:web
-npm run lint
-npm run check:core
-npm run check:game
+npm run verify
 ```
 
+`verify` runs all source checks and then exports the web preview. Use `npm run check` for checks without an export, or `npm run check:garden` for garden regressions alone. Both Claude and Codex should follow `AGENTS.md`, work from the latest GitHub source, preserve concurrent changes and hand off a tested PR and preview. The user merges ready changes. GitHub runs the same `npm run verify` command for pull requests and pushes to `main` via `.github/workflows/verify.yml`. Keep that check green before merging; making it a required branch-protection check is a separate repository setting.
+
 `check:game` requires Node.js 22.15 or newer and runs the actual game store with test-only native API and storage boundaries. It checks nap rewards, reloads, missions, visitors, purchases, sparring and unavailable online actions. It does not render screens or validate real multiplayer or physical-device behaviour.
+
+`check:garden` executes the garden source with substituted React, timer, native and animation boundaries. It checks movement plans, cancellation, finite effects, coordinate handling, prop geometry and hotspot reachability. It does not validate real animation scheduling, browser pointer dispatch or phone layouts; the live preview remains part of review.
 
 The exported web files are written to `dist`. Serve them over HTTP when testing; opening individual HTML files directly does not reproduce normal routing or browser storage behaviour.
 
