@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Image,
@@ -87,8 +87,23 @@ const groundFrames = [ground0, ground1, ground2, ground3];
 // ---- walk grid (4px cells, '#' = blocked) -----------------------------------
 const rows = gardenWalk.length;
 const cols = gardenWalk[0].length;
-const walkable = (cx: number, cy: number) =>
-  cy >= 0 && cy < rows && cx >= 0 && cx < cols && gardenWalk[cy][cx] === '.';
+// The map describes feet, but the guardian can be nearly 40 native pixels wide.
+// Keep its centre/head inside the scene even when wandering or following an edge tap.
+const walkable = (cx: number, cy: number) => {
+  const x = cx * GARDEN.cell + GARDEN.cell / 2;
+  const y = cy * GARDEN.cell + GARDEN.cell / 2;
+  return (
+    cy >= 0 &&
+    cy < rows &&
+    cx >= 0 &&
+    cx < cols &&
+    x >= 20 &&
+    x <= GARDEN.width - 20 &&
+    y >= 40 &&
+    y <= 158 &&
+    gardenWalk[cy][cx] === '.'
+  );
+};
 const toCell = (p: Point) => ({
   cx: Math.max(0, Math.min(cols - 1, Math.floor(p.x / GARDEN.cell))),
   cy: Math.max(0, Math.min(rows - 1, Math.floor(p.y / GARDEN.cell))),
@@ -837,47 +852,20 @@ export function GardenWorld({
           0,
           Math.min(height - targetHeight, artTop - (targetHeight - artHeight) / 2),
         );
-        return (
-          <Pressable
-            key={o.id}
-            accessibilityRole="button"
-            accessibilityLabel={
-              action === 'lantern'
-                ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
-                : gardenHotspots[action].label
-            }
-            accessibilityHint={
-              action === 'read'
-                ? 'Walk to the bench and turn a page.'
-                : action === 'water'
-                  ? 'Walk over and water the flowers.'
-                  : action === 'lantern'
-                    ? 'Walk to the post, then change its light.'
-                    : undefined
-            }
-            aria-pressed={action === 'lantern' ? lanternOn : undefined}
-            disabled={napping || !active}
-            onFocus={() => {
-              if (activeRef.current && !napping)
-                setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
-            }}
-            onPress={() => onObjectPress(action)}
-            style={{
-              position: 'absolute',
-              left: targetLeft,
-              top: targetTop,
-              width: targetWidth,
-              height: targetHeight,
-              zIndex: o.y + o.h,
-            }}
-          >
+        // These small props need a hit area above a nearby guardian, while
+        // their artwork keeps its ordinary depth and can still sit behind it.
+        const imageLeft = isNewInteraction ? artLeft : artLeft - targetLeft;
+        const imageTop = isNewInteraction ? artTop : artTop - targetTop;
+        const artwork = (
+          <>
             <Image
+              key={`${o.id}-image`}
               source={sprites[o.sprite]}
               resizeMode="stretch"
               style={{
                 position: 'absolute',
-                left: artLeft - targetLeft,
-                top: artTop - targetTop,
+                left: imageLeft,
+                top: imageTop,
                 width: artWidth,
                 height: artHeight,
               }}
@@ -887,8 +875,8 @@ export function GardenWorld({
                 pointerEvents="none"
                 style={{
                   position: 'absolute',
-                  left: artLeft - targetLeft + Math.round(7 * scale),
-                  top: artTop - targetTop + Math.round(10 * scale),
+                  left: imageLeft + Math.round(7 * scale),
+                  top: imageTop + Math.round(10 * scale),
                   width: Math.round(3 * scale),
                   height: Math.round(6 * scale),
                   backgroundColor: '#71817A',
@@ -902,8 +890,8 @@ export function GardenWorld({
                 pointerEvents="none"
                 style={{
                   position: 'absolute',
-                  left: artLeft - targetLeft + Math.round((o.w / 2 - 2) * scale),
-                  top: artTop - targetTop - Math.round(5 * scale),
+                  left: imageLeft + Math.round((o.w / 2 - 2) * scale),
+                  top: imageTop - Math.round(5 * scale),
                   width: Math.round(4 * scale),
                   height: Math.round(4 * scale),
                   backgroundColor: '#FFF3CF',
@@ -912,7 +900,55 @@ export function GardenWorld({
                 }}
               />
             )}
-          </Pressable>
+          </>
+        );
+        return (
+          <Fragment key={o.id}>
+            {isNewInteraction && (
+              <View
+                key={`${o.id}-art`}
+                pointerEvents="none"
+                style={{ position: 'absolute', left: 0, top: 0, zIndex: o.y + o.h }}
+              >
+                {artwork}
+              </View>
+            )}
+            <Pressable
+              key={o.id}
+              accessibilityRole="button"
+              accessibilityLabel={
+                action === 'lantern'
+                  ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
+                  : gardenHotspots[action].label
+              }
+              accessibilityHint={
+                action === 'read'
+                  ? 'Walk to the bench and turn a page.'
+                  : action === 'water'
+                    ? 'Walk over and water the flowers.'
+                    : action === 'lantern'
+                      ? 'Walk to the post, then change its light.'
+                      : undefined
+              }
+              aria-pressed={action === 'lantern' ? lanternOn : undefined}
+              disabled={napping || !active}
+              onFocus={() => {
+                if (activeRef.current && !napping)
+                  setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
+              }}
+              onPress={() => onObjectPress(action)}
+              style={{
+                position: 'absolute',
+                left: targetLeft,
+                top: targetTop,
+                width: targetWidth,
+                height: targetHeight,
+                zIndex: isNewInteraction ? 800 : o.y + o.h,
+              }}
+            >
+              {!isNewInteraction && artwork}
+            </Pressable>
+          </Fragment>
         );
       })}
       <Pressable
