@@ -736,7 +736,7 @@ export function GameHeader() {
               alignItems: 'center',
               minHeight: 44,
               minWidth: 56,
-              justifyContent: 'center',
+              paddingTop: 3,
             }}
           >
             <Text
@@ -749,7 +749,7 @@ export function GameHeader() {
             >
               GRASS
             </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, height: 18 }}>
               <PixelProp kind="grass" size={16} />
               {(p?.grass ?? 20) >= 10000 ? (
                 <Text style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 14, color: c.ink }}>

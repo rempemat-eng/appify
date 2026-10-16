@@ -32,7 +32,7 @@ export function PlayMeter() {
       style={{
         minHeight: 44,
         minWidth: 62,
-        justifyContent: 'center',
+        paddingTop: 3,
         alignItems: 'center',
         gap: 1,
       }}
@@ -40,7 +40,7 @@ export function PlayMeter() {
       <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 10, lineHeight: 12 }}>
         PLAY LEFT
       </BodyText>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, height: 18 }}>
         <Svg width={16} height={16} viewBox="0 0 8 8">
           <Rect x={1} y={0} width={6} height={1} fill={c.ink} />
           <Rect x={1} y={7} width={6} height={1} fill={c.ink} />
