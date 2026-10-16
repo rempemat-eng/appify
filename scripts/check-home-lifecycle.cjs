@@ -19,13 +19,14 @@ const boundary = new Proxy({}, { get: (_, name) => name });
 const jsx = (type, props) => ({ type, props: props || {} });
 const jsxRuntime = { jsx, jsxs: jsx, Fragment: 'Fragment' };
 
+const equal = (a, b) =>
+  a !== undefined && b !== undefined && a.length === b.length && a.every((v, i) => Object.is(v, b[i]));
+
 function hooks() {
   const slots = [];
   let index = 0;
   let changed = false;
   let effects = new Map();
-  const equal = (a, b) =>
-    a !== undefined && b !== undefined && a.length === b.length && a.every((v, i) => Object.is(v, b[i]));
   const react = {
     useState(initial) {
       const at = index++;
@@ -130,7 +131,7 @@ function timers() {
       clearInterval(id) { intervals.delete(id); },
     },
     flush(delay) {
-      for (const [id, timer] of [...timeouts]) {
+      for (const [id, timer] of timeouts) {
         if (timer.delay !== delay) continue;
         timeouts.delete(id);
         timer.callback();
