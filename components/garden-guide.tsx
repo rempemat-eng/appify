@@ -92,6 +92,10 @@ export function GardenTip({
 }
 const sections = [
   [
+    'A home, an outing, a story',
+    'Your companion lives in the garden and explores a little further when you take a mission. Return with cards and postcards, meet visitors and choose who comes along next. There is no need to do everything: the garden is here when a break fits your day.',
+  ],
+  [
     'Explore your garden',
     'Tap an open patch to walk there. Visit the watering can to tend the flowers, the bench to share a page, the lantern to change its glow, or the pond to meet a little neighbour. Tap your companion for a pat. These are small moments to enjoy whenever you like; they do not cost GRASS or earn rewards. The hut, mailbox, stall, signpost and gate lead to the rest of your garden life.',
   ],
@@ -101,7 +105,7 @@ const sections = [
   ],
   [
     'Garden status',
-    'NAPPING shields your garden while your Grassling grows. Naps are simulated in this demo. Awake gardens can be raided when EXPOSED. CARE WINDOW protects your garden for 30 real seconds after a qualifying return. RECOVERING shields it after a raid. Missions also shield the garden.',
+    'NAPPING shields your garden while your Grassling grows. Naps are simulated in this demo. In connected play, awake gardens can be raided when EXPOSED. CARE WINDOW protects your garden for 30 real seconds after a qualifying return. RECOVERING shields it after a raid. Missions also shield the garden.',
   ],
   [
     'Offline cards',
@@ -109,19 +113,23 @@ const sections = [
   ],
   [
     'Missions',
-    'Park: 15 MIN, 20 GRASS. Book: 30 MIN, 60 GRASS. Mountain: 60 MIN, 150 GRASS at LV 2, plus an unowned hat or 50 GRASS if you own all hats. Common offline cards stack with a rare Park/Book card or epic Mountain card. Completed missions bring postcards. No per-minute GRASS on missions; returning early keeps common cards but not completion rewards.',
+    'Park Patrol: 15 MIN, 20 GRASS. Book Club: 30 MIN, 60 GRASS. Mountain Retreat: 60 MIN, 150 GRASS at LV 2, plus an unowned hat or 50 GRASS if you own all hats. Common offline cards stack with a rare Park/Book card or epic Mountain card. Completed missions bring postcards. No per-minute GRASS on missions; returning early keeps common cards but not completion rewards.',
+  ],
+  [
+    'Real life and little keepsakes',
+    'Before a mission, optionally choose Rest, Read, Move or Create; Just a break needs no reflection. On returning, choose whether to keep a lantern, bookmark, leaf or sketch memory with the companion who began that break. Memories are self-reported, give no extra rewards and stay on this device in the Field Journal. The daily rhythm planner can also make room for rest, focus and your own time. It follows device-local time, including overnight windows; it does not block apps, measure sleep or change rewards.',
   ],
   [
     'Raids and sparring',
-    'Up to 3 raids per day. Only exposed rivals can be raided. Sparring pays 5 GRASS for each of your first 3 wins per day; losses pay nothing and never use raid allowance. If play time runs out during a fight, finish it and collect the result before taking a break.',
+    'Dave is available for local practice. Sparring pays 5 GRASS for each of your first 3 wins per day; losses pay nothing and never use raid allowance. Player raids require a connected multiplayer build: up to 3 per day, against exposed rivals only. If play time runs out during a fight, finish it and collect the result before taking a break.',
   ],
   [
     'Together',
-    'Invite a rival; both start the shared break on acceptance. Both must complete at least 10 simulated MIN for +50% GRASS and a Together badge. An early return keeps ordinary rewards, without the shared bonus. A lost connection keeps the wake report pending for retry.',
+    'Together requires a connected multiplayer build. Invite a rival; both start the shared break on acceptance. Both must complete at least 10 simulated MIN for +50% GRASS and a Together badge. An early return keeps ordinary rewards, without the shared bonus. A lost connection keeps the wake report pending for retry.',
   ],
   [
     'Visitors and guardians',
-    'Visitors arrive only after time away: your first one on any nap of 10+ simulated MIN, then by chance on longer naps (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN after you return to the garden. Pick any befriended guardian; all share your account level, hats and deck. Your original species stays saved. First meetings and dated postcards live in the Field Journal.',
+    'Visitors arrive only after time away: your first one after any nap or mission of 10+ simulated MIN, then by chance on longer breaks (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN after you return to the garden. Preview any befriended companion before choosing them; all share your account level, GRASS, hats, deck and collection. Your original name and species stay saved. First meetings, dated postcards and kept memories live in the Field Journal.',
   ],
   [
     'Streak and growth',

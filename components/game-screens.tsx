@@ -17,6 +17,7 @@ import { cozy as c } from '@/lib/cozy';
 import { backendConfigured } from '@/lib/bilt';
 import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
+import { useAppActive } from '@/lib/app-active';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
 import { matchup } from '@/lib/battle';
 import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
@@ -33,8 +34,10 @@ import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldPreview } from '@/components/world-scene';
 import { useGardenView } from '@/lib/garden-view';
-import type { BreakIntention } from '@/lib/companion-memories';
+import type { BreakIntention, CompanionMemory } from '@/lib/companion-memories';
 import { BreakIntentionPicker } from '@/components/companion-memories';
+import { GardenKeepsakeShelf, GardenKeepsakeSheet } from '@/components/garden-keepsakes';
+import { GardenJourney } from '@/components/garden-journey';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
@@ -47,15 +50,16 @@ import {
   usePlayPaused,
 } from '@/components/offline-garden';
 const lines = {
-  grumpy: ['i hate it here. put the phone down.', 'my pixels hurt.'],
+  grumpy: ['my leaves could use a breather.', 'a quiet pause would be nice. the garden can wait.'],
   exposed: ["we're exposed. i can hear the notifications.", 'put the phone down. trust me.'],
-  care: ['quick, tend the plot.', 'the clock is ticking, gardener.'],
+  care: ['a little time to settle in.', 'welcome home. have a look around.'],
   idle: ["touch grass? i'll wait.", 'i am small but i am mighty'],
 };
 export function HomeScreen() {
   const [gardenView, setGardenView] = useGardenView();
   const reduced = useReducedMotion();
   const focused = useIsFocused();
+  const appActive = useAppActive();
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const p = useGame((s) => s.player);
@@ -63,6 +67,7 @@ export function HomeScreen() {
   const voice = useGame((s) => s.voice);
   const firstWake = useGame((s) => s.firstWake);
   const tips = useGame((s) => s.tips);
+  const memories = useGame((s) => s.companionMemories);
   const paused = usePlayPaused();
   const busy = useGame((s) =>
     Boolean(
@@ -95,6 +100,20 @@ export function HomeScreen() {
   if (companionSheet.focused !== focused) setCompanionSheet({ focused, open: false });
   const companionsOpen = companionSheet.focused === focused && companionSheet.open;
   const setCompanionsOpen = (open: boolean) => setCompanionSheet({ focused, open });
+  const [keepsakeSheet, setKeepsakeSheet] = useState<{
+    focused: boolean;
+    memory: CompanionMemory | null;
+  }>({ focused, memory: null });
+  if (keepsakeSheet.focused !== focused) setKeepsakeSheet({ focused, memory: null });
+  const openMemory = keepsakeSheet.focused === focused ? keepsakeSheet.memory : null;
+  const gardenActive =
+    focused &&
+    appActive &&
+    !busy &&
+    !statsOpen &&
+    !companionsOpen &&
+    !openMemory &&
+    p?.mode === 'awake';
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
   const raidId = useGame((s) => s.alerts[0]?.raid.id);
@@ -106,12 +125,12 @@ export function HomeScreen() {
     return () => clearTimeout(timer);
   }, [raidId]);
   useEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || !gardenActive) return undefined;
     const timer = setInterval(() => {
       setLine((n) => n + 1);
     }, 6000);
     return () => clearInterval(timer);
-  }, [reduced]);
+  }, [reduced, gardenActive]);
   useEffect(() => {
     if (!voice) return undefined;
     const timer = setTimeout(() => {
@@ -208,7 +227,8 @@ export function HomeScreen() {
         }}
       >
         <GardenWorld
-          active={focused && !busy && !statsOpen && !companionsOpen && p.mode === 'awake'}
+          active={gardenActive}
+          memories={memories}
           view={gardenView}
           width={Math.min(width, gameLayout.maxWidth)}
           player={p}
@@ -223,7 +243,13 @@ export function HomeScreen() {
         {crumbs && <PixelBurst />}
       </View>
       <View
-        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+        style={{
+          flexDirection: 'row',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 8,
+        }}
       >
         <Pressable
           accessibilityRole="button"
@@ -233,11 +259,15 @@ export function HomeScreen() {
             backgroundColor: c.glass,
             paddingHorizontal: 12,
             minHeight: 44,
+            maxWidth: '100%',
             justifyContent: 'center',
             borderRadius: 999,
           }}
         >
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>
+          <BodyText
+            numberOfLines={1}
+            style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12, flexShrink: 1 }}
+          >
             {guardian.pet_name} · CHANGE
           </BodyText>
         </Pressable>
@@ -315,6 +345,11 @@ export function HomeScreen() {
           </Pressable>
         ))}
       </View>
+      <GardenKeepsakeShelf
+        memories={memories}
+        onOpen={(memory) => setKeepsakeSheet({ focused, memory })}
+        onPlan={() => router.push('/missions')}
+      />
       <GardenProgress />
       <View style={{ gap: 6 }}>
         <PixelButton label="TAKE A NAP" gold={paused} onPress={() => useGame.getState().sleep()} />
@@ -355,8 +390,28 @@ export function HomeScreen() {
           <PixelButton label="JOURNAL" small light onPress={() => router.push('/journal')} />
         </View>
       </View>
-      <GuardianPicker player={p} open={companionsOpen} onOpenChange={setCompanionsOpen} />
+      <GuardianPicker
+        player={p}
+        open={companionsOpen}
+        onOpenChange={setCompanionsOpen}
+        showCard={false}
+      />
+      <GardenJourney
+        player={p}
+        onMissions={() => router.push('/missions')}
+        onJournal={() => router.push('/journal')}
+        onCompanions={() => setCompanionsOpen(true)}
+        onSpar={() => router.push('/arena')}
+      />
       <DailyRhythmCard />
+      <GardenKeepsakeSheet
+        memory={openMemory}
+        onClose={() => setKeepsakeSheet({ focused, memory: null })}
+        onJournal={() => {
+          setKeepsakeSheet({ focused, memory: null });
+          router.push('/journal?tab=memories');
+        }}
+      />
       <Modal
         visible={statsOpen}
         transparent
@@ -431,7 +486,8 @@ export function MissionsScreen() {
     <Page>
       <PixelText style={{ fontSize: 16 }}>GO TOUCH GRASS</PixelText>
       <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-        Your companion explores while you take a break. Demo time: 1 real second = 1 simulated MIN.
+        Choose a place for your companion and an optional break idea for you. Any idea fits any
+        place. Demo time: 1 real second = 1 simulated MIN.
       </BodyText>
       <BreakIntentionPicker
         value={intention}
@@ -465,6 +521,13 @@ export function MissionsScreen() {
                 {m.duration} MIN
               </BodyText>
             </View>
+            <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+              {m.id === 'park'
+                ? 'Pond paths, curious neighbours and a little room to wander.'
+                : m.id === 'book'
+                  ? 'A library lane where your companion can linger over a story.'
+                  : 'A quiet ridge above the garden, with a cabin to return to.'}
+            </BodyText>
             <BodyText style={{ fontSize: 12, color: c.shade }}>
               About {m.duration} seconds in this demo
             </BodyText>

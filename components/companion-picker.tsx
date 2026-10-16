@@ -15,10 +15,12 @@ export function CompanionPicker({
   player,
   open,
   onOpenChange,
+  showCard = true,
 }: {
   player: Player;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  showCard?: boolean;
 }) {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
@@ -38,40 +40,42 @@ export function CompanionPicker({
   const close = () => onOpenChange(false);
   return (
     <>
-      <CozyPanel style={{ padding: 14, gap: 10 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <View
-            aria-hidden
-            accessibilityElementsHidden
-            importantForAccessibility="no-hide-descendants"
-          >
-            <Pet
-              visitor={active.id}
-              species={active.species}
-              level={player.level}
-              hat={player.hat}
-              size={64}
-              bob={false}
-              active={false}
-            />
+      {showCard && (
+        <CozyPanel style={{ padding: 14, gap: 10 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+            <View
+              aria-hidden
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+            >
+              <Pet
+                visitor={active.id}
+                species={active.species}
+                level={player.level}
+                hat={player.hat}
+                size={64}
+                bob={false}
+                active={false}
+              />
+            </View>
+            <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
+              <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+                YOUR COMPANION
+              </BodyText>
+              <BodyText numberOfLines={1} style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+                {active.name}
+              </BodyText>
+              <BodyText style={{ fontSize: 12 }}>
+                {active.habit} · {active.traits.join(' · ')}
+              </BodyText>
+            </View>
           </View>
-          <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
-            <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
-              YOUR COMPANION
-            </BodyText>
-            <BodyText numberOfLines={1} style={{ fontFamily: 'Nunito_800ExtraBold' }}>
-              {active.name}
-            </BodyText>
-            <BodyText style={{ fontSize: 12 }}>
-              {active.habit} · {active.traits.join(' · ')}
-            </BodyText>
-          </View>
-        </View>
-        <PixelButton small light label="CHANGE COMPANION" onPress={() => onOpenChange(true)} />
-        <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
-          {active.name} is your active companion.
-        </BodyText>
-      </CozyPanel>
+          <PixelButton small light label="CHANGE COMPANION" onPress={() => onOpenChange(true)} />
+          <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
+            {active.name} is your active companion.
+          </BodyText>
+        </CozyPanel>
+      )}
       <Modal visible={open} transparent animationType="none" onRequestClose={close}>
         <View
           style={{

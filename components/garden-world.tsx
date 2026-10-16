@@ -21,6 +21,8 @@ import * as Haptics from 'expo-haptics';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { useAppActive } from '@/lib/app-active';
+import type { BreakIntention, CompanionMemory } from '@/lib/companion-memories';
+import { gardenKeepsakes, gardenResponse, gardenSignature } from '@/lib/garden-life';
 import { playPaused, useGame, type Player } from '@/lib/game';
 import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
 import { GARDEN, gardenHotspots, gardenObjects } from '@/lib/garden-map';
@@ -41,6 +43,7 @@ import { GuardianPet } from '@/components/guardian-pet';
 import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { GardenReactions, type GardenReaction, type Place } from '@/components/garden-reactions';
+import { GardenKeepsakeArt } from '@/components/garden-keepsakes';
 
 import ground0 from '@/assets/garden/ground-0.png';
 import ground1 from '@/assets/garden/ground-1.png';
@@ -120,27 +123,15 @@ const companionSpots: Point[] = [
   { x: 30, y: 108 },
 ];
 
-const responses = {
-  pond: [
-    'a tiny neighbour. a very good listener.',
-    'one small splash. then quiet again.',
-    'the frog has no notifications. excellent idea.',
-  ],
-  read: [
-    'a page for us. got a real book nearby?',
-    'the bookmark can wait. take your time.',
-    'one quiet chapter, away from the screen.',
-  ],
-  water: [
-    'all watered. your turn for a little break.',
-    'the roots say thank you. no rush to grow.',
-    'a small drink for a slow afternoon.',
-  ],
-  pat: [
-    'a little company is enough.',
-    'hehe. that was a very good pat.',
-    'soft leaves. softer day.',
-  ],
+const noMemories: readonly CompanionMemory[] = [];
+const keepsakeIntentions: readonly BreakIntention[] = ['rest', 'read', 'move', 'create'];
+// Keepsakes sit on the edges of existing places, leaving the clearing and
+// existing touch targets intact. All four use a 16-pixel native art frame.
+const keepsakeLocations: Record<BreakIntention, Point> = {
+  rest: { x: 130, y: 82 },
+  read: { x: 100, y: 50 },
+  move: { x: 154, y: 118 },
+  create: { x: 44, y: 100 },
 };
 
 // ---- crisp sprite --------------------------------------------------------
@@ -340,6 +331,7 @@ export function GardenWorld({
   napping = false,
   active: screenActive = true,
   view = 'flat',
+  memories = noMemories,
 }: {
   width: number;
   player: Player;
@@ -352,6 +344,8 @@ export function GardenWorld({
   active?: boolean;
   /** 'flat' top-down, or 'tilt' 2.5D: tilted ground with upright billboard sprites. */
   view?: ViewMode;
+  /** Explicitly kept memories only; this scene never creates or settles them. */
+  memories?: readonly CompanionMemory[];
 }) {
   const reduced = useReducedMotion();
   const appActive = useAppActive();
@@ -388,7 +382,7 @@ export function GardenWorld({
   } | null>(null);
   const [lanternOverride, setLanternOverride] = useState<boolean | null>(null);
   const lanternOn = napping || (lanternOverride ?? night);
-  const responseCount = useRef({ pond: 0, read: 0, water: 0, pat: 0 });
+  const responseCount = useRef({ pond: 0, read: 0, water: 0, pat: 0, lantern: 0 });
   const reactionId = useRef(0);
   const [wasActive, setWasActive] = useState(active);
   if (wasActive !== active) {
@@ -473,12 +467,18 @@ export function GardenWorld({
     const id = ++reactionId.current;
     setTag(null);
     setFeedback({ id, kind, text, ...point });
-    setReaction({ id, kind, ...point });
+    setReaction({
+      id,
+      kind,
+      ...point,
+      actor: { ...pos.current },
+      signature: gardenSignature(player, reduced),
+    });
   }
 
-  function companionLine(kind: keyof typeof responses) {
+  function companionLine(kind: keyof typeof responseCount.current) {
     const count = responseCount.current[kind]++;
-    return responses[kind][count % responses[kind].length];
+    return gardenResponse(player, kind, count, memories);
   }
 
   function arrived(id: number, action: Action | null, point: Point) {
@@ -600,9 +600,7 @@ export function GardenWorld({
         setLanternOverride(next);
         respond(
           'lantern',
-          next
-            ? 'a little warm light. make yourself at home.'
-            : 'lights out. the stars can take over.',
+          next ? companionLine('lantern') : 'lights out. the stars can take over.',
           gardenHotspots.lantern,
         );
         if (!next) setReaction(null);
@@ -725,7 +723,7 @@ export function GardenWorld({
     stopJourney();
     setEmote('♥');
     void Haptics.selectionAsync();
-    respond('pat', grumpy ? 'hmph. ok. one very small pat.' : companionLine('pat'), pos.current);
+    respond('pat', companionLine('pat'), pos.current);
   }
 
   const guardian = guardianPlayer(player);
@@ -733,6 +731,7 @@ export function GardenWorld({
     .filter((v) => v.befriendedAt !== null && v.id !== player.guardian)
     .slice(0, 3);
   const pond = groundRect(proj, 16, 118, 52, 30);
+  const keepsakes = gardenKeepsakes(memories);
   const pondWidth = Math.max(44, pond.width);
   const pondHeight = Math.max(44, pond.height);
   return (
@@ -939,6 +938,33 @@ export function GardenWorld({
           </Fragment>
         );
       })}
+      {keepsakeIntentions
+        .filter((intention) => keepsakes[intention])
+        .map((intention) => {
+          const location = keepsakeLocations[intention];
+          const foot = project(proj, location.x + 8, location.y + 16);
+          const size = Math.max(16, Math.round(scale * foot.f) * 16);
+          return (
+            <View
+              key={`keepsake-${intention}`}
+              testID={`garden-keepsake-${intention}`}
+              pointerEvents="none"
+              aria-hidden
+              accessibilityElementsHidden
+              importantForAccessibility="no-hide-descendants"
+              style={{
+                position: 'absolute',
+                left: Math.round(foot.sx - size / 2),
+                top: Math.round(foot.sy - size),
+                width: size,
+                height: size,
+                zIndex: location.y + 17,
+              }}
+            >
+              <GardenKeepsakeArt intention={intention} size={size} />
+            </View>
+          );
+        })}
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Look into the pond"
@@ -1001,6 +1027,11 @@ export function GardenWorld({
           curled={napping}
           groundShadow={!napping}
           bob={!walking && !napping && active}
+          gardenPose={
+            active && !napping && !walking && reaction?.signature
+              ? { id: reaction.id, kind: reaction.signature.pose }
+              : undefined
+          }
           onPress={patGuardian}
         />
       </Animated.View>
@@ -1051,6 +1082,8 @@ export function GardenWorld({
           reduced={reduced}
           place={place}
           base={reactionBase(reaction)}
+          actor={reaction.actor}
+          signature={reaction.signature}
         />
       )}
       {(night || dusk || dawn) && (

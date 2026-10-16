@@ -69,3 +69,11 @@ Tap the active pet’s name under the garden or use **Change Companion** to prev
 Personality traits and real-world invitations are descriptive. Battle notes explain the existing REST/ROAM/FOCUS rules; no new combat bonuses, tracking or rewards are introduced. Rarity does not make a companion stronger. Before a mission, choose an optional Rest, Read, Move or Create idea. When you return, explicitly keep or skip a self-reported memory. Keepsakes belong to the companion who began the break, give no extra rewards and remain available in the Field Journal’s Memories tab (latest 30, with pagination). Up to five unanswered reflections remain there too. “Just a break” needs no reflection. These choices do not measure sleep, reading, movement or phone use.
 
 Design and research notes for later pet bonds and real-world connections are in `docs/companion-roadmap.md`.
+
+## A living garden
+
+Kept memories leave small reminders in the garden: a bookmark at the reading nook, a lantern beside the leaf light, a pressed leaf by the flower beds and a sketchboard beside the pond. Visiting these existing places recalls the latest matching memory; repeat visits bring out the active companion's personality. The Little Reminders shelf opens each keepsake's original companion, date and journal entry. Changing companions keeps these shared garden memories intact.
+
+REST companions nestle beside a soft glow, ROAM companions investigate with a leaf gesture and FOCUS companions pause over a little scribble. Each visitor has its own responses. These finite, optional interactions keep feet and shadows fixed, respect reduced motion and stop when Home is inactive. They create no rewards or combat bonuses.
+
+The Garden Trail connects home, mission destinations and the stories brought back. It offers one next step based on existing progress, with no daily task list. The rhythm planner remains an optional plan; it does not measure or reward sleep, work or phone use. [World design](docs/world-design.md) describes how the existing systems fit together and distinguishes later features.

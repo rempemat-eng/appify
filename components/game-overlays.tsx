@@ -23,7 +23,7 @@ import { guardianPlayer } from '@/lib/visitors';
 import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
-import { Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
+import { Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
 import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { GardenWorld } from '@/components/garden-world';
@@ -33,6 +33,7 @@ import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
 import { useGardenView } from '@/lib/garden-view';
 import { breakIntentionLabel } from '@/lib/companion-memories';
+import { topGameOverlay } from '@/lib/overlay-priority';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { gameColumn, gameSideInset } from '@/lib/layout';
 function Onboarding() {
@@ -241,6 +242,7 @@ function ScreenOff() {
   const offStart = useGame((s) => s.offStart);
   const offGrass = useGame((s) => s.offGrass);
   const breakContext = useGame((s) => s.activeBreakContext);
+  const memories = useGame((s) => s.companionMemories);
   const togetherId = useGame((s) => s.togetherId);
   const session = useGame((s) => s.sessions.find((x) => x.id === s.togetherId));
   const rival = useGame((s) =>
@@ -296,14 +298,12 @@ function ScreenOff() {
         }}
       >
         <View style={{ alignItems: 'center', gap: 10, paddingTop: 8 }}>
-          <StatusChip player={p} />
           {breakContext && (
             <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
               Your break idea: {breakIntentionLabel(breakContext.intention)} · a reflection is
               optional when you return
             </BodyText>
           )}
-          <Shield color={c.paper} size={30} />
           <PixelText
             style={{
               color: c.paper,
@@ -326,6 +326,7 @@ function ScreenOff() {
               helpOpen ? 'Close nap information' : 'About the simulated nap timer'
             }
             accessibilityState={{ expanded: helpOpen }}
+            aria-expanded={helpOpen}
             onPress={() => setHelpOpen((open) => !open)}
             style={{
               minWidth: 44,
@@ -352,7 +353,20 @@ function ScreenOff() {
               Demo timer only. Sleep and phone inactivity are not measured.
             </BodyText>
           )}
-          {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
+          {m && (
+            <View style={{ alignItems: 'center', gap: 4 }}>
+              <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>
+              <PixelText
+                accessibilityLabel={`${clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))} remaining in this demo mission`}
+                style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}
+              >
+                {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
+              </PixelText>
+              <BodyText style={{ color: c.paper, fontSize: 11 }}>
+                REAL DEMO COUNTDOWN · UNTIL HOME
+              </BodyText>
+            </View>
+          )}
         </View>
         <View style={{ alignItems: 'center', gap: 14, flex: m ? undefined : 1 }}>
           {togetherId && (
@@ -410,6 +424,7 @@ function ScreenOff() {
                   }}
                 >
                   <GardenWorld
+                    memories={memories}
                     view={gardenView}
                     width={napWidth - 4}
                     player={p}
@@ -454,12 +469,6 @@ function ScreenOff() {
           )}
           {m ? (
             <>
-              <PixelText style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}>
-                {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
-              </PixelText>
-              <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold' }}>
-                REAL DEMO COUNTDOWN · UNTIL HOME
-              </BodyText>
               <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold' }}>
                 {m.duration} simulated offline MIN · {m.reward} GRASS on completion
               </BodyText>
@@ -583,17 +592,19 @@ export function GameOverlays() {
   const recap = useGame((s) => s.recap);
   const insets = useSafeAreaInsets();
   const isScreenOff = !!p && p.mode !== 'awake';
-  const visible =
-    !ready ||
-    !p ||
-    isScreenOff ||
-    !!recap ||
-    !!battle ||
-    !!alert ||
-    !!flash ||
-    guideOpen ||
-    deckOpen ||
-    !!cardReward;
+  const overlay = topGameOverlay({
+    ready,
+    hasPlayer: Boolean(p),
+    napping: isScreenOff,
+    welcome: Boolean(cardReward),
+    recap: Boolean(recap),
+    battle: Boolean(battle),
+    alert: Boolean(alert),
+    growth: Boolean(flash),
+    guide: guideOpen,
+    deck: deckOpen,
+  });
+  const visible = overlay !== null;
   useEffect(() => {
     if (!flash) return undefined;
     const timeout = setTimeout(() => useGame.setState({ flash: null }), 1600);
@@ -601,13 +612,29 @@ export function GameOverlays() {
   }, [flash]);
   function dismiss() {
     if (!ready || !p) return;
-    if (isScreenOff) void gameStore.getState().wake();
-    else if (cardReward || deckOpen) gameStore.getState().dismissCards();
-    else if (recap) gameStore.getState().dismissRecap();
-    else if (battle) return;
-    else if (guideOpen) useGame.setState({ guideOpen: false });
-    else if (alert) gameStore.getState().dismissAlert();
-    else useGame.setState({ message: null, flash: null });
+    switch (overlay) {
+      case 'nap':
+        void gameStore.getState().wake();
+        break;
+      case 'welcome':
+      case 'deck':
+        gameStore.getState().dismissCards();
+        break;
+      case 'recap':
+        gameStore.getState().dismissRecap();
+        break;
+      case 'alert':
+        gameStore.getState().dismissAlert();
+        break;
+      case 'growth':
+        useGame.setState({ flash: null });
+        break;
+      case 'guide':
+        useGame.setState({ guideOpen: false });
+        break;
+      default:
+        break;
+    }
   }
   return (
     <>
@@ -624,7 +651,7 @@ export function GameOverlays() {
               overlays don't stretch across wide browser windows. The backdrop above
               still fills the screen. */}
           <View style={[gameColumn, { flex: 1 }]}>
-            {!ready ? (
+            {overlay === 'loading' ? (
               <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}>
                 <PixelScene
                   kind="nest"
@@ -643,17 +670,17 @@ export function GameOverlays() {
               </View>
             ) : !p ? (
               <Onboarding />
-            ) : isScreenOff ? (
+            ) : overlay === 'nap' ? (
               <ScreenOff />
-            ) : cardReward ? (
+            ) : overlay === 'welcome' ? (
               <WelcomeBack />
-            ) : recap ? (
+            ) : overlay === 'recap' ? (
               <GardenRecap />
-            ) : battle ? (
+            ) : overlay === 'battle' && battle ? (
               <BattleScreen key={`${battle.target.id}-${battle.practice}`} request={battle} />
-            ) : alert ? (
+            ) : overlay === 'alert' && alert ? (
               <DefenderAlert key={alert.raid.id} />
-            ) : flash ? (
+            ) : overlay === 'growth' && flash ? (
               <View
                 style={{
                   flex: 1,
@@ -698,9 +725,9 @@ export function GameOverlays() {
                   {flash}
                 </PixelText>
               </View>
-            ) : guideOpen ? (
+            ) : overlay === 'guide' ? (
               <GardenGuide onClose={() => useGame.setState({ guideOpen: false })} />
-            ) : deckOpen ? (
+            ) : overlay === 'deck' ? (
               <DeckPanel />
             ) : null}
           </View>

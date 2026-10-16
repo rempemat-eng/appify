@@ -3,7 +3,8 @@
  * Run: npm run check:garden
  * Direct use: node scripts/check-garden.cjs [appify-directory]
  *
- * Transpiles the actual GardenWorld, pathfinding, projection and map source. React hooks, timers,
+ * Transpiles the actual GardenWorld, pathfinding, projection, map and companion
+ * identity/life helpers. Keepsake artwork is a leaf component boundary. React hooks, timers,
  * native components, and Reanimated scheduling are boundary substitutes so the
  * assertions inspect emitted animation plans and queued arrival handlers.
  * This does not validate React scheduling, real Reanimated frames, browser
@@ -56,7 +57,29 @@ class QAClock extends Date {
   }
 }
 const game = {
-  player: { mode: 'awake', mood: 50, grass: 20, pet_name: 'Fern' },
+  player: {
+    id: 'gardener',
+    code: 'ABCD',
+    name: 'GARDENER',
+    pet_name: 'Fern',
+    species: 'BLOB',
+    level: 1,
+    mode: 'awake',
+    mood: 50,
+    grass: 20,
+    hat: null,
+    owned_hats: [],
+    care_until: 0,
+    recovery_until: 0,
+    mission_id: null,
+    mission_ends_at: 0,
+    offline_seconds: 0,
+    last_seen: fakeNow,
+    deck: ['stretch'],
+    guardian: null,
+    collection: [],
+    postcards: [],
+  },
   now: fakeNow,
   sleep() {
     sleeps++;
@@ -146,14 +169,10 @@ const deps = {
   '@/lib/motion': { useReducedMotion: () => reduced },
   '@/lib/app-active': { useAppActive: () => appActive },
   '@/lib/game': { useGame, playPaused: () => false },
-  '@/lib/visitors': {
-    collectionOf: () => [],
-    guardianPlayer: (player) => player,
-    visitorInfo: () => ({ name: 'Friend' }),
-  },
   '@/lib/garden-map': map,
   './garden-map': map,
   '@/components/guardian-pet': { GuardianPet: 'GuardianPet' },
+  '@/components/garden-keepsakes': { GardenKeepsakeArt: 'GardenKeepsakeArt' },
   '@/components/game-ui': { FloatingZ: 'FloatingZ', Pet: 'Pet' },
   '@/components/pixel-feedback': { BodyText: 'BodyText' },
 };
@@ -185,6 +204,17 @@ function evaluate(file, destination, extra = '') {
   });
 }
 const reactionsModule = { exports: {} };
+for (const name of [
+  'offline-rules',
+  'visitors',
+  'grasslings',
+  'companion-profiles',
+  'garden-life',
+]) {
+  const domainModule = { exports: {} };
+  evaluate(`lib/${name}.ts`, domainModule);
+  deps[`@/lib/${name}`] = domainModule.exports;
+}
 const pathModule = { exports: {} };
 evaluate('lib/garden-path.ts', pathModule);
 deps['@/lib/garden-path'] = pathModule.exports;
@@ -214,6 +244,7 @@ function render(napping = false, options = {}) {
       napping,
       active: options.active ?? true,
       view: options.view ?? 'flat',
+      memories: options.memories ?? [],
       onFeed: () => {
         feeds++;
       },
@@ -843,14 +874,16 @@ function resetChild() {
   intervals = new Map();
   serial = 0;
 }
-function renderReaction(reaction, reduce = false) {
+function renderReaction(reaction, reduce = false, projection = flatProjection) {
   index = 0;
   effects = [];
   const result = reactionsModule.exports.GardenReactions({
     reaction,
-    scale: 2,
+    scale: projection.scale,
     reduced: reduce,
-    place: flatPlace,
+    place: (x, y, groundY = y) => projectionModule.exports.lift(projection, x, y, groundY),
+    signature: reaction.signature,
+    actor: reaction.actor,
   });
   effects.forEach((fn) => fn());
   return result;
@@ -1132,6 +1165,278 @@ appActive = true;
 render();
 backgroundNap.fn();
 check(sleeps === 0, 'old background nap remains invalid after foregrounding');
+const backgroundChecks = count - backgroundStart;
+
+// Kept memories are view inputs, never new targets or progress transactions.
+// Identity, latest-memory selection and responses execute the actual domain helpers above.
+const lifeStart = count;
+const starterPlayer = game.player;
+const makeKeptMemory = (id, intention, completedAt, name) =>
+  Object.freeze({
+    id,
+    intention,
+    companion: Object.freeze({ key: 'starter', name, species: 'BLOB' }),
+    completedAt,
+    recordedAt: completedAt + 1,
+    minutes: 5,
+    mission: null,
+    early: false,
+    source: 'self-reported',
+  });
+const keptMemories = Object.freeze([
+  makeKeptMemory('older-read', 'read', 100, 'FERN ON AN EARLIER DAY'),
+  makeKeptMemory('rest', 'rest', 120, 'FERN AT REST'),
+  makeKeptMemory('newer-read', 'read', 200, 'FERN AT THE TIME'),
+  makeKeptMemory('move', 'move', 150, 'FERN ON A WALK'),
+  makeKeptMemory('create', 'create', 160, 'FERN SKETCHING'),
+]);
+const originalMemories = JSON.stringify(keptMemories);
+const keepsakeElements = (tree) =>
+  allElements(tree).filter((node) => node.props?.testID?.startsWith('garden-keepsake-'));
+const targetSet = (tree) =>
+  allElements(tree)
+    .filter((node) => node.type === 'Pressable')
+    .map((node) => `${node.key ?? ''}|${node.props.accessibilityLabel ?? ''}`)
+    .sort();
+const keepsakePlaces = {
+  rest: { x: 130, y: 82 },
+  read: { x: 100, y: 50 },
+  move: { x: 154, y: 118 },
+  create: { x: 44, y: 100 },
+};
+worldTree = setup();
+check(keepsakeElements(worldTree).length === 0, 'no kept memories means no world ornaments');
+for (const viewMode of ['flat', 'tilt']) {
+  for (const sceneWidth of [320, 390, 430, 640]) {
+    const options = { width: sceneWidth, view: viewMode, memories: keptMemories };
+    const emptyTargets = targetSet(setup(false, { width: sceneWidth, view: viewMode }));
+    const beforePlayer = JSON.stringify(game.player);
+    worldTree = setup(false, options);
+    const ornaments = keepsakeElements(worldTree);
+    check(
+      ornaments.length === 4 && new Set(ornaments.map((node) => node.props.testID)).size === 4,
+      `${viewMode}/${sceneWidth}: kept memories produce one ornament per intention`,
+    );
+    check(
+      same(targetSet(worldTree), emptyTargets),
+      `${viewMode}/${sceneWidth}: keepsakes do not add or replace interaction targets`,
+    );
+    const expectedProjection = projectionModule.exports.makeProjection(
+      viewMode,
+      sceneWidth,
+      map.GARDEN,
+      viewMode === 'tilt' ? Math.round(sceneWidth * 0.14) : 0,
+    );
+    for (const [intention, location] of Object.entries(keepsakePlaces)) {
+      const ornament = ornaments.find(
+        (node) => node.props.testID === `garden-keepsake-${intention}`,
+      );
+      const box = ornament.props.style;
+      const expectedFoot = projectionModule.exports.project(
+        expectedProjection,
+        location.x + 8,
+        location.y + 16,
+      );
+      check(
+        ornament.props.pointerEvents === 'none' &&
+          ornament.props['aria-hidden'] === true &&
+          ornament.props.accessibilityElementsHidden === true &&
+          !allElements(ornament).some((node) => node.type === 'Pressable'),
+        `${viewMode}/${sceneWidth}/${intention}: ornament is passive and hidden from accessibility`,
+      );
+      check(
+        Number.isInteger(box.width) &&
+          box.width >= 16 &&
+          box.width % 16 === 0 &&
+          box.height === box.width &&
+          box.left === Math.round(expectedFoot.sx - box.width / 2) &&
+          box.top === Math.round(expectedFoot.sy - box.height),
+        `${viewMode}/${sceneWidth}/${intention}: integer artwork stays anchored to its actual projected feet`,
+      );
+      check(
+        box.left >= 0 &&
+          box.top >= 0 &&
+          box.left + box.width <= sceneWidth &&
+          box.top + box.height <= worldTree.props.style.height,
+        `${viewMode}/${sceneWidth}/${intention}: ornament remains inside the scene`,
+      );
+    }
+    check(
+      noGameChange(beforePlayer) && JSON.stringify(keptMemories) === originalMemories,
+      `${viewMode}/${sceneWidth}: rendering keepsakes changes neither progress nor memory records`,
+    );
+  }
+}
+
+const selectedInkling = {
+  ...starterPlayer,
+  guardian: 'inkling',
+  collection: [{ id: 'inkling', metAt: 100, minutes: 15, befriendedAt: 101 }],
+};
+for (const identity of [starterPlayer, selectedInkling]) {
+  game.player = identity;
+  const options = { memories: keptMemories };
+  const beforePlayer = JSON.stringify(game.player);
+  worldTree = setup(false, options);
+  const effective = deps['@/lib/visitors'].guardianPlayer(identity);
+  for (const action of ['read', 'water', 'pond', 'lantern']) {
+    press(worldTree, action);
+    worldTree = render(false, options);
+    check(
+      !guardianElement(worldTree).props.gardenPose,
+      `${effective.pet_name}/${action}: walking never holds an interaction pose`,
+    );
+    finishTravel();
+    worldTree = render(false, options);
+    const response = reactionElement(worldTree);
+    const expectedSignature = deps['@/lib/garden-life'].gardenSignature(identity);
+    check(
+      same(response?.props.signature, expectedSignature) &&
+        same(response?.props.actor, { x: shared[0].value, y: shared[1].value }),
+      `${effective.pet_name}/${action}: actual identity signature and arrival feet reach the effect`,
+    );
+    check(
+      guardianElement(worldTree).props.gardenPose?.id === response.props.reaction.id &&
+        guardianElement(worldTree).props.gardenPose?.kind === expectedSignature.pose &&
+        feedbackElement(worldTree).props.children ===
+          deps['@/lib/garden-life'].gardenResponse(identity, action, 0, keptMemories),
+      `${effective.pet_name}/${action}: actual companion response and idle pose reach the world`,
+    );
+  }
+  press(worldTree, 'read');
+  finishTravel();
+  worldTree = render(false, options);
+  check(
+    feedbackElement(worldTree).props.children.startsWith(`${effective.pet_name} `),
+    `${effective.pet_name}: repeated reading reveals the current companion's own behaviour`,
+  );
+  press(worldTree, 'read');
+  finishTravel();
+  worldTree = render(false, options);
+  check(
+    feedbackElement(worldTree).props.children.includes('FERN AT THE TIME') &&
+      !feedbackElement(worldTree).props.children.includes('FERN ON AN EARLIER DAY') &&
+      (identity === starterPlayer ||
+        !feedbackElement(worldTree).props.children.includes('INKLING')),
+    `${effective.pet_name}: repeated reading recalls the latest kept memory's original companion`,
+  );
+  check(
+    noGameChange(beforePlayer),
+    `${effective.pet_name}: keepsake interactions write no progress`,
+  );
+  press(worldTree, 'water');
+  const pendingSignature = shared[1].animation;
+  worldTree = render(false, options);
+  check(
+    !reactionElement(worldTree) && !guardianElement(worldTree).props.gardenPose,
+    `${effective.pet_name}: retargeting clears the old signature and pose`,
+  );
+  render(false, { ...options, active: false });
+  end(pendingSignature)(true);
+  worldTree = render(false, { ...options, active: false });
+  check(
+    !reactionElement(worldTree) && !guardianElement(worldTree).props.gardenPose,
+    `${effective.pet_name}: blur rejects a queued signature arrival`,
+  );
+  worldTree = render(false, options);
+  end(pendingSignature)(true);
+  worldTree = render(false, options);
+  check(
+    !reactionElement(worldTree) && !guardianElement(worldTree).props.gardenPose,
+    `${effective.pet_name}: refocus cannot resurrect a canceled signature`,
+  );
+
+  worldTree = setup(false, options);
+  press(worldTree, 'read');
+  reduced = true;
+  render(false, options);
+  // Snapshot entries because arrival callbacks may replace pending timers.
+  for (const [timerId, timer] of Array.from(timers)) {
+    if (timer.ms === 0) {
+      timers.delete(timerId);
+      timer.fn();
+    }
+  }
+  worldTree = render(false, options);
+  const staticResponse = reactionElement(worldTree);
+  check(
+    staticResponse?.props.reduced === true &&
+      staticResponse?.props.signature.animated === false &&
+      guardianElement(worldTree).props.gardenPose?.kind === staticResponse.props.signature.pose,
+    `${effective.pet_name}: reduced-motion arrival carries a static identity signature`,
+  );
+  const staticResponseId = staticResponse.props.reaction.id;
+  reduced = false;
+  worldTree = render(false, options);
+  check(
+    reactionElement(worldTree)?.props.reaction.id === staticResponseId,
+    `${effective.pet_name}: motion preference changes do not create a second signature`,
+  );
+  worldTree = setup(true, options);
+  check(
+    keepsakeElements(worldTree).length === 4 &&
+      !reactionElement(worldTree) &&
+      !guardianElement(worldTree).props.gardenPose,
+    `${effective.pet_name}: the nap garden keeps passive memories without interaction poses`,
+  );
+}
+game.player = starterPlayer;
+check(
+  JSON.stringify(keptMemories) === originalMemories,
+  'all world interactions preserve memory inputs',
+);
+const lifeChecks = count - lifeStart;
+const signatureStart = count;
+for (const [identity, motifColor] of [
+  [starterPlayer, '#F7EDCB'],
+  [selectedInkling, '#D8C5E7'],
+]) {
+  for (const viewMode of ['flat', 'tilt']) {
+    const projection = projectionModule.exports.makeProjection(
+      viewMode,
+      384,
+      map.GARDEN,
+      viewMode === 'tilt' ? 54 : 0,
+    );
+    const signature = deps['@/lib/garden-life'].gardenSignature(identity);
+    const identityReaction = {
+      id: 1,
+      kind: 'read',
+      x: 84,
+      y: 70,
+      actor: { x: 86, y: 70 },
+      signature,
+    };
+    resetChild();
+    renderReaction(identityReaction, false, projection);
+    const ticks = [...intervals.values()];
+    check(
+      ticks.length === 1 && ticks[0].ms === 120,
+      `${signature.family}/${viewMode}: family motif shares the single finite reaction clock`,
+    );
+    for (let frame = 0; frame < 6; frame++) ticks[0].fn();
+    let signatureTree = renderReaction(identityReaction, false, projection);
+    check(
+      allElements(signatureTree).some((node) => node.props.style?.backgroundColor === motifColor),
+      `${signature.family}/${viewMode}: actual family motif appears during the reaction`,
+    );
+    signatureTree = renderReaction(identityReaction, true, projection);
+    check(
+      intervals.size === 0 &&
+        signatureTree.props.pointerEvents === 'none' &&
+        !allElements(signatureTree).some((node) => node.type === 'Pressable') &&
+        allElements(signatureTree).some((node) => node.props.style?.backgroundColor === motifColor),
+      `${signature.family}/${viewMode}: reduced motif remains visible and passive without a clock`,
+    );
+    const stoppedSignature = JSON.stringify(signatureTree);
+    ticks[0].fn();
+    check(
+      JSON.stringify(renderReaction(identityReaction, true, projection)) === stoppedSignature,
+      `${signature.family}/${viewMode}: a queued old frame cannot move the static motif`,
+    );
+  }
+}
+const signatureChecks = count - signatureStart;
 console.log(
-  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${count - backgroundStart} background-state (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
+  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${backgroundChecks} background-state, ${lifeChecks} keepsake/identity, ${signatureChecks} signature-motion (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
 );

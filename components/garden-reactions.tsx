@@ -2,14 +2,31 @@ import { useEffect, useRef, useState } from 'react';
 import { Image, View } from 'react-native';
 import frogImg from '@/assets/garden/frog.png';
 
+export type GardenSignature = {
+  family: 'REST' | 'ROAM' | 'FOCUS';
+  pose: 'nestle' | 'sniff' | 'ponder';
+  motif: 'glow' | 'leaf' | 'scribble';
+  animated: boolean;
+};
+
 export type GardenReaction = {
   id: number;
   kind: 'water' | 'read' | 'pond' | 'pat' | 'lantern';
   x: number;
   y: number;
+  actor?: { x: number; y: number };
+  signature?: GardenSignature;
 };
 
-type Pixel = { x: number; y: number; w?: number; h?: number; color: string; opacity?: number };
+type Pixel = {
+  x: number;
+  y: number;
+  w?: number;
+  h?: number;
+  color: string;
+  opacity?: number;
+  groundY?: number;
+};
 
 const FLOWERS = [
   { x: 130, y: 115 },
@@ -40,6 +57,8 @@ export function GardenReactions({
   reduced,
   place,
   base,
+  signature,
+  actor,
 }: {
   reaction: GardenReaction;
   scale: number;
@@ -48,6 +67,10 @@ export function GardenReactions({
   place: Place;
   /** ground line for effects that float above a prop (book, hearts, lantern) */
   base?: number;
+  /** A small family-specific flourish shares the existing finite phase clock. */
+  signature?: GardenSignature;
+  /** Companion's native garden feet position, independent of the prop anchor. */
+  actor?: { x: number; y: number };
 }) {
   const [phase, setPhase] = useState(0);
   const progress = useRef(0);
@@ -70,8 +93,8 @@ export function GardenReactions({
   }, [reduced]);
   const t = reduced ? 22 : phase;
   const pixels: Pixel[] = [];
-  const add = (x: number, y: number, color: string, w = 1, h = 1, opacity = 1) =>
-    pixels.push({ x, y, color, w, h, opacity });
+  const add = (x: number, y: number, color: string, w = 1, h = 1, opacity = 1, groundY?: number) =>
+    pixels.push({ x, y, color, w, h, opacity, groundY });
 
   const ring = (cx: number, cy: number, radius: number, opacity: number) => {
     const h = Math.max(2, Math.round(radius / 3));
@@ -186,6 +209,39 @@ export function GardenReactions({
     }
   }
 
+  if (signature && actor) {
+    // Family gestures are deliberately smaller than the prop's main action.
+    // They borrow this reaction's finite clock and project from the actor's
+    // own feet, so the motif stays attached in the angled garden view.
+    const still = reduced || !signature.animated;
+    const age = still ? 13 : t - 2;
+    if (still || (age >= 0 && age <= 25)) {
+      const opacity = still ? 0.8 : Math.min(1, (age + 1) / 4, (26 - age) / 7);
+      const drift = still ? 0 : Math.min(5, Math.floor(Math.max(0, age - 4) / 4));
+      const x = Math.round(actor.x + 13);
+      const y = Math.round(actor.y - 23 - drift);
+      if (signature.motif === 'glow') {
+        const reach = !still && age >= 5 && age < 15 ? 1 : 0;
+        add(x - 1, y + 2, '#E4D8F5', 3, 2, opacity * 0.5, actor.y);
+        add(x, y, '#F7EDCB', 1, 6, opacity * 0.75, actor.y);
+        add(x - 2 - reach, y + 2, '#EEE2F4', 5 + reach * 2, 1, opacity * 0.5, actor.y);
+      } else if (signature.motif === 'leaf') {
+        const lean = !still && age >= 8 && age < 17 ? 1 : 0;
+        add(x + lean, y, '#B4D58A', 2, 1, opacity, actor.y);
+        add(x - 1 + lean, y + 1, '#82B16F', 4, 2, opacity, actor.y);
+        add(x + lean, y + 3, '#4D8054', 2, 1, opacity, actor.y);
+        add(x + lean, y + 1, '#D9E6AE', 1, 2, opacity, actor.y);
+        add(x - 1 + lean, y + 4, '#75985B', 1, 2, opacity, actor.y);
+      } else {
+        const strokes = still ? 3 : Math.min(3, Math.max(0, Math.floor(age / 3)));
+        if (strokes >= 1) add(x - 2, y + 1, '#D8C5E7', 3, 1, opacity, actor.y);
+        if (strokes >= 2) add(x, y + 2, '#B79DCE', 3, 1, opacity, actor.y);
+        if (strokes >= 3) add(x - 1, y + 3, '#E8DCF2', 3, 1, opacity, actor.y);
+        add(x + 3, y - 1, '#C6B5DA', 1, 1, opacity * 0.7, actor.y);
+      }
+    }
+  }
+
   const frogHop = !reduced && t >= 3 && t < 8 ? [1, 3, 5, 4, 2][t - 3] : 0;
   const frogDip = !reduced && (t < 3 || (t >= 8 && t < 10)) ? 1 : 0;
 
@@ -193,6 +249,8 @@ export function GardenReactions({
     <View
       pointerEvents="none"
       accessible={false}
+      accessibilityElementsHidden
+      aria-hidden
       importantForAccessibility="no-hide-descendants"
       style={{ position: 'absolute', left: 0, top: 0, zIndex: 880 }}
     >
@@ -223,7 +281,7 @@ export function GardenReactions({
         </>
       )}
       {pixels.map((p) => {
-        const q = place(p.x, p.y, base);
+        const q = place(p.x, p.y, p.groundY ?? base);
         return (
           <View
             key={`${p.x}-${p.y}-${p.color}`}

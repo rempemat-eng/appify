@@ -169,10 +169,24 @@ export function WelcomeBack() {
   const [hearted, setHearted] = useState(false);
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const [containerHeight, setContainerHeight] = useState<number | null>(null);
   const [sceneBounds, setSceneBounds] = useState(() => ({
     width: Math.min(width, gameLayout.maxWidth),
     height: Math.max(0, height * 0.36 - insets.top - insets.bottom),
   }));
+  // The overlay already owns the top safe area. The sheet owns the bottom one.
+  // Keep the usual 64% composition when it leaves enough room to read, but let
+  // a short landscape window give its space to the scrollable reward content.
+  const availableHeight = Math.max(
+    0,
+    Math.min(height - insets.top, containerHeight ?? height - insets.top),
+  );
+  const compact = availableHeight < 480;
+  // Handle, heading, footer, padding, gaps and border. The scroll view can
+  // shrink further for larger text; this cap never forces the sheet to overflow.
+  const sheetChrome = (compact ? 152 : 198) + insets.bottom;
+  const sheetMaxHeight = Math.min(availableHeight, Math.max(height * 0.64, sheetChrome + 144));
+  const bodyMaxHeight = Math.max(0, sheetMaxHeight - sheetChrome);
   if (!reward || !p) return null;
   const scenePixel = Math.max(1, Math.floor(sceneBounds.width / 160));
   const scenePetSize = Math.max(0, Math.min(128, Math.floor((sceneBounds.height - 8) / 32) * 32));
@@ -192,6 +206,10 @@ export function WelcomeBack() {
     collectionOf(p).some((entry) => entry.id === reward.visitor && entry.befriendedAt !== null);
   return (
     <View
+      onLayout={(event) => {
+        const measuredHeight = Math.max(0, event.nativeEvent.layout.height);
+        setContainerHeight((previous) => (previous === measuredHeight ? previous : measuredHeight));
+      }}
       onStartShouldSetResponderCapture={() => {
         setSkip(true);
         return false;
@@ -209,7 +227,7 @@ export function WelcomeBack() {
               : { width: sceneWidth, height: sceneHeight },
           );
         }}
-        style={{ flex: 1, minHeight: 0 }}
+        style={{ flex: 1, minHeight: 0, overflow: 'hidden' }}
       >
         <PixelScene
           sunrise
@@ -244,23 +262,27 @@ export function WelcomeBack() {
         style={{
           width: '100%',
           maxWidth: 640,
-          maxHeight: height * 0.64,
+          maxHeight: sheetMaxHeight,
           alignSelf: 'center',
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
-          padding: 16,
-          paddingBottom: insets.bottom + 16,
-          gap: 12,
+          padding: compact ? 12 : 16,
+          paddingBottom: insets.bottom + (compact ? 12 : 16),
+          gap: compact ? 8 : 12,
         }}
       >
         <PixelText
           accessibilityRole="header"
-          style={{ fontSize: 16, lineHeight: 26, textAlign: 'center' }}
+          style={{
+            fontSize: compact ? 14 : 16,
+            lineHeight: compact ? 24 : 26,
+            textAlign: 'center',
+          }}
         >
           WELCOME BACK
         </PixelText>
         <ScrollView
-          style={{ flexShrink: 1, maxHeight: Math.max(80, height * 0.64 - 200 - insets.bottom) }}
+          style={{ flexShrink: 1, maxHeight: bodyMaxHeight }}
           contentContainerStyle={{ gap: 12, paddingBottom: 12 }}
         >
           <BodyText style={{ textAlign: 'center' }}>{reward.minutes} offline MIN</BodyText>

@@ -205,8 +205,10 @@ export function Pet({
   groundShadow = true,
   curled = false,
   active = true,
+  gardenPose,
 }: {
   active?: boolean;
+  gardenPose?: { id: number; kind: 'nestle' | 'sniff' | 'ponder' };
   curled?: boolean;
   groundShadow?: boolean;
   species?: Player['species'];
@@ -229,15 +231,20 @@ export function Pet({
   actionLabel?: string;
 }) {
   const reduced = useReducedMotion();
+  const gardenPoseId = gardenPose?.id;
+  const gardenPoseKind = gardenPose?.kind;
   const canAnimate = active && !reduced;
+  const canPose = !!gardenPose && active && !walking && !sleeping && !slumped;
   const canWalk = canAnimate && walking && !sleeping && !slumped;
-  const canIdle = canAnimate && bob && !sleeping && !walking && !slumped;
+  const canIdle = canAnimate && bob && !sleeping && !walking && !slumped && !canPose;
   const scaledSize = Math.max(32, Math.round(size / 32) * 32);
   const pixelStep = scaledSize / 32;
   const y = useSharedValue(0);
   const x = useSharedValue(0);
   const patY = useSharedValue(0);
   const walkSettle = useSharedValue(0);
+  const poseX = useSharedValue(0);
+  const poseY = useSharedValue(0);
   const [breath, setBreath] = useState(false);
   const [walkFrame, setWalkFrame] = useState(0);
   const [blink, setBlink] = useState(false);
@@ -248,6 +255,7 @@ export function Pet({
   const [motionMode, setMotionMode] = useState(motionKey);
   const seenMotion = useRef({ hit: 0, attack: 0, victory: false });
   const wasWalking = useRef(false);
+  const seenGardenPose = useRef<string | null>(null);
   if (motionMode !== motionKey) {
     setMotionMode(motionKey);
     setBreath(false);
@@ -276,6 +284,46 @@ export function Pet({
     },
     [patY],
   );
+  useEffect(() => {
+    cancelAnimation(poseX);
+    cancelAnimation(poseY);
+    poseX.set(0);
+    poseY.set(0);
+    const key =
+      gardenPoseId !== undefined && gardenPoseKind ? `${gardenPoseId}-${gardenPoseKind}` : null;
+    const unseen = seenGardenPose.current !== key;
+    seenGardenPose.current = key;
+    if (unseen && canPose && canAnimate && gardenPoseKind) {
+      // The body and its hat stay rigid. Native-pixel rounding below makes
+      // anticipation, one held action and the settle distinct little poses.
+      const direction = gardenPoseKind === 'ponder' ? -1 : 1;
+      const nestle = gardenPoseKind === 'nestle';
+      poseX.set(
+        withSequence(
+          withTiming(nestle ? 0 : -direction, { duration: 120 }),
+          withTiming(nestle ? 0 : -direction, { duration: 120 }),
+          withTiming(nestle ? 0 : direction, { duration: 240 }),
+          withTiming(nestle ? 0 : direction, { duration: 720 }),
+          withTiming(0, { duration: 240 }),
+        ),
+      );
+      poseY.set(
+        withSequence(
+          withTiming(nestle ? 0 : -1, { duration: 120 }),
+          withTiming(nestle ? 0 : -1, { duration: 120 }),
+          withTiming(gardenPoseKind === 'ponder' ? 0 : 1, { duration: 240 }),
+          withTiming(gardenPoseKind === 'ponder' ? 0 : 1, { duration: 720 }),
+          withTiming(0, { duration: 240 }),
+        ),
+      );
+    }
+    return () => {
+      cancelAnimation(poseX);
+      cancelAnimation(poseY);
+      poseX.set(0);
+      poseY.set(0);
+    };
+  }, [gardenPoseId, gardenPoseKind, canPose, canAnimate, poseX, poseY]);
   useEffect(() => {
     if (!canIdle) return undefined;
     // Slow pixel breathing, with separate phases for the garden's companions.
@@ -429,6 +477,32 @@ export function Pet({
   const headroom = pixels.every((pixel) => pixel.y > 0);
   const passing = walkFrame === 1 || walkFrame === 3;
   const bodyLift = canWalk && passing && headroom ? -1 : 0;
+  const bodyBounds = pixels.reduce(
+    (bounds, pixel) =>
+      pixel.y >= 27
+        ? bounds
+        : {
+            left: Math.min(bounds.left, pixel.x),
+            right: Math.max(bounds.right, pixel.x),
+            top: Math.min(bounds.top, pixel.y),
+          },
+    { left: 31, right: 0, top: 31 },
+  );
+  const poseMotion = useAnimatedStyle(() => {
+    const staticX = gardenPoseKind === 'nestle' ? 0 : gardenPoseKind === 'ponder' ? -1 : 1;
+    const staticY = gardenPoseKind === 'ponder' ? 0 : 1;
+    const direction = facing === 'left' ? -1 : 1;
+    const desiredX = canPose ? (reduced ? staticX : Math.round(poseX.value)) * direction : 0;
+    const desiredY = canPose ? (reduced ? staticY : Math.round(poseY.value)) : 0;
+    const minX = facing === 'left' ? -(31 - bodyBounds.right) : -bodyBounds.left;
+    const maxX = facing === 'left' ? bodyBounds.left : 31 - bodyBounds.right;
+    return {
+      transform: [
+        { translateX: Math.min(maxX, Math.max(minX, desiredX)) * pixelStep },
+        { translateY: Math.min(1, Math.max(-bodyBounds.top, desiredY)) * pixelStep },
+      ],
+    };
+  });
   return (
     <Animated.View
       accessibilityLabel={`${dave ? 'DOOMSCROLL DAVE weed creature' : `${petLabel} ${growthStage(level)} Grassling`}${slumped ? ', wilted' : ''}${sleeping ? ', sleeping' : ''}`}
@@ -469,57 +543,81 @@ export function Pet({
             <PixelProp kind="heart" size={32} />
           </View>
         )}
-        <Svg
-          width={scaledSize}
-          height={scaledSize}
-          viewBox="0 0 32 32"
-          style={{
-            backgroundColor: c.transparent,
-            transform: [
-              { scaleX: facing === 'left' ? -1 : 1 },
-              { translateY: slumped ? 8 : 0 },
-              { translateX: canIdle && idle === 'look' ? 3 : 0 },
-            ],
-          }}
-        >
-          {pixels.map(({ x: rx, y: ry, color }) => {
-            const shadow = groundShadow && ry >= 30 && color === c.stone;
-            const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
-            const leftStep = canWalk && walkFrame === 0 && rx < 17;
-            const rightStep = canWalk && walkFrame === 2 && rx >= 17;
-            const stepping = foot && (leftStep || rightStep);
-            const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
-            const drawY =
-              curled && sleeping
-                ? 7 + Math.floor((ry * 24) / 32)
-                : canWalk && !shadow
-                  ? ry + bodyLift - (stepping ? 1 : 0)
-                  : canIdle && breath && ry >= 16 && !shadow
-                    ? ry - 1
-                    : ry;
-            return (
-              <Rect
-                key={`${rx}-${ry}`}
-                x={drawX}
-                y={drawY}
-                width={1}
-                height={1}
-                fill={
-                  flashState.flashing && canAnimate
-                    ? c.flash
-                    : slumped
-                      ? color === c.ink || color === c.night
-                        ? c.night
-                        : c.wilt
-                      : color
-                }
-              />
-            );
-          })}
-          {((canIdle && idle === 'yawn') || yawning) && (
-            <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
-          )}
-        </Svg>
+        <Animated.View style={poseMotion}>
+          <Svg
+            width={scaledSize}
+            height={scaledSize}
+            viewBox="0 0 32 32"
+            style={{
+              backgroundColor: c.transparent,
+              transform: [
+                { scaleX: facing === 'left' ? -1 : 1 },
+                { translateY: slumped ? 8 : 0 },
+                { translateX: canIdle && idle === 'look' ? 3 : 0 },
+              ],
+            }}
+          >
+            {pixels
+              .filter((pixel) => !canPose || pixel.y < 27)
+              .map(({ x: rx, y: ry, color }) => {
+                const shadow = groundShadow && ry >= 30 && color === c.stone;
+                const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
+                const leftStep = canWalk && walkFrame === 0 && rx < 17;
+                const rightStep = canWalk && walkFrame === 2 && rx >= 17;
+                const stepping = foot && (leftStep || rightStep);
+                const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
+                const drawY =
+                  curled && sleeping
+                    ? 7 + Math.floor((ry * 24) / 32)
+                    : canWalk && !shadow
+                      ? ry + bodyLift - (stepping ? 1 : 0)
+                      : canIdle && breath && ry >= 16 && !shadow
+                        ? ry - 1
+                        : ry;
+                return (
+                  <Rect
+                    key={`${rx}-${ry}`}
+                    x={drawX}
+                    y={drawY}
+                    width={1}
+                    height={1}
+                    fill={
+                      flashState.flashing && canAnimate
+                        ? c.flash
+                        : slumped
+                          ? color === c.ink || color === c.night
+                            ? c.night
+                            : c.wilt
+                          : color
+                    }
+                  />
+                );
+              })}
+            {((canIdle && idle === 'yawn') || yawning) && (
+              <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
+            )}
+          </Svg>
+        </Animated.View>
+        {canPose && (
+          <Svg
+            width={scaledSize}
+            height={scaledSize}
+            viewBox="0 0 32 32"
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              transform: [{ scaleX: facing === 'left' ? -1 : 1 }],
+            }}
+          >
+            {pixels
+              .filter((pixel) => pixel.y >= 27)
+              .map(({ x: rx, y: ry, color }) => (
+                <Rect key={`${rx}-${ry}`} x={rx} y={ry} width={1} height={1} fill={color} />
+              ))}
+          </Svg>
+        )}
       </Pressable>
     </Animated.View>
   );
