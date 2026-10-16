@@ -350,7 +350,13 @@ function ScreenOff() {
               : 'Untimed nap · simulated · 1 real second = 1 simulated MIN'}
           </BodyText>
           <View
-            style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 10 }}
+            style={{
+              flexDirection: 'row',
+              flexWrap: 'wrap',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: 10,
+            }}
           >
             <Pressable
               accessibilityRole="switch"
@@ -418,7 +424,6 @@ function ScreenOff() {
                 : 'This nap has no end timer. Choose WAKE UP when you want to return.'}
             </BodyText>
           )}
-
         </View>
         <View style={{ alignItems: 'center', gap: 14, flex: m ? undefined : 1 }}>
           {togetherId && (
@@ -530,7 +535,9 @@ function ScreenOff() {
         <PixelText
           style={{ color: c.body, textAlign: 'center', backgroundColor: c.night, padding: 6 }}
         >
-          {m ? 'EARLY RETURN · EARNED CARDS STAY WITH YOU' : '+1 GRASS / SIMULATED OFFLINE MIN'}
+          {m
+            ? 'EARLY RETURN · NO COMPLETION REWARD · CARDS STAY'
+            : '+1 GRASS / SIMULATED OFFLINE MIN'}
         </PixelText>
         {togetherId && message && (
           <BodyText style={{ color: c.paper, textAlign: 'center' }}>{message}</BodyText>

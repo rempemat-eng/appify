@@ -138,12 +138,10 @@ export function BreakIntentionPicker({
             <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
               An optional idea for you
             </BodyText>
-            <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-              {chosen.invitation}
-            </BodyText>
+            <BodyText style={{ fontSize: 12, lineHeight: 18 }}>{chosen.invitation}</BodyText>
             <BodyText style={{ fontSize: 11, lineHeight: 17 }}>
-              A kept reflection leaves a {chosen.keepsake} in your garden. Memories are optional
-              and self-reported.
+              A kept reflection leaves a {chosen.keepsake} in your garden. Memories are optional and
+              self-reported.
             </BodyText>
           </View>
         </View>

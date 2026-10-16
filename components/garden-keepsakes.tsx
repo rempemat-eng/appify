@@ -163,10 +163,9 @@ export function GardenKeepsakeArt({
 export type GardenKeepsakeShelfProps = {
   memories: readonly CompanionMemory[];
   onOpen: (memory: CompanionMemory) => void;
-  onPlan: () => void;
 };
 
-export function GardenKeepsakeShelf({ memories, onOpen, onPlan }: GardenKeepsakeShelfProps) {
+export function GardenKeepsakeShelf({ memories, onOpen }: GardenKeepsakeShelfProps) {
   const latest = gardenKeepsakes(memories);
   const saved = keepsakes.filter((keepsake) => latest[keepsake.intention]);
   return (
@@ -227,24 +226,6 @@ export function GardenKeepsakeShelf({ memories, onOpen, onPlan }: GardenKeepsake
             Bring back a bookmark, leaf, lantern or sketch from a break. Keep only the moments you
             want to remember.
           </BodyText>
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel="Plan a break and choose an optional idea"
-            onPress={onPlan}
-            style={({ pressed }) => ({
-              minHeight: 44,
-              alignItems: 'center',
-              justifyContent: 'center',
-              borderRadius: 10,
-              borderWidth: 1,
-              borderColor: c.leafOutline,
-              backgroundColor: pressed ? c.sage : c.paper,
-            })}
-          >
-            <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
-              PLAN A BREAK
-            </BodyText>
-          </Pressable>
         </View>
       )}
     </CozyPanel>

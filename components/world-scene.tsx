@@ -27,11 +27,6 @@ import { GuardianPet } from '@/components/guardian-pet';
 import { Pet } from '@/components/game-ui';
 import { worldPreviewFrame } from '@/lib/world-framing';
 
-// Who you might bump into on each journey (scenery only: no rewards or rules).
-export const worldResident = Object.fromEntries(
-  worldIds.map((id) => [id, worldCatalogue[id].resident]),
-);
-
 const gridFor = (id: WorldId) =>
   makeWalkGrid(worldMaps[id].walk, {
     cell: WORLD.cell,
@@ -176,7 +171,8 @@ export function WorldScene({
     };
   });
 
-  const resident = worldResident[world];
+  // Who you might bump into on this journey (scenery only: no rewards or rules).
+  const resident = worldCatalogue[world].resident;
   const vs = project(proj, map.visitor.x, map.visitor.y);
   const groundH = Math.round(WORLD.height * scale);
   return (

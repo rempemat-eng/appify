@@ -17,20 +17,20 @@ The accelerated clock remains a demo: one elapsed second represents one simulate
 
 The workspace connection failed during implementation, so these scenarios have source/CI coverage where indicated but no new live browser or phone result. Use a disposable profile on the current PR preview and keep its origin unchanged for persistence checks.
 
-| Scenario | Expected experience |
-| --- | --- |
-| Quick Home nap | Starts directly with Just a break; no required intention or extra confirmation. |
-| Read/Move idea → header/main/bed | Each route captures the chosen idea once. Opening the idea drawer cancels any pending walk; the next break begins unplanned. |
-| Leave Home while choosing | Returning does not reopen the drawer or reuse an unfinished choice. |
-| Ordinary nap and each mission | Companion name and clock are clear. Demo duration is honest; no phone-lock or measured-inactivity claim. |
-| Quiet view on/off | Decorative worlds and effects disappear/reappear. Timer, help, shared-session information and wake remain usable, with no model or reward change. |
-| Return → garden | Settles the sheet and returns awake. No automatic next nap. |
-| Return → Start a nap | Dismisses rewards, navigates home and starts the existing untimed nap only after this explicit action. |
-| Waiting visitor | Befriend remains usable when visible; covered or stale callbacks do nothing. No hidden peek, blink or celebration continues after coverage. |
-| Starter retained / visitor selected | PLAN A BREAK remains the established player's primary invitation. Switching companions or sparring is optional inside the trail. |
-| Stats → blur → return | Stats closes and the garden reactivates. |
-| Reduced motion, 320px width, short landscape and large text | Controls stay reachable; optional sections wrap, return content scrolls and footer stays in the sheet. |
-| Lock/background → resume | Session settles once with correct original companion/intention. This needs real browser/device execution, not only the substituted harness. |
+| Scenario                                                    | Expected experience                                                                                                                               |
+| ----------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Quick Home nap                                              | Starts directly with Just a break; no required intention or extra confirmation.                                                                   |
+| Read/Move idea → header/main/bed                            | Each route captures the chosen idea once. Opening the idea drawer cancels any pending walk; the next break begins unplanned.                      |
+| Leave Home while choosing                                   | Returning does not reopen the drawer or reuse an unfinished choice.                                                                               |
+| Ordinary nap and each mission                               | Companion name and clock are clear. Demo duration is honest; no phone-lock or measured-inactivity claim.                                          |
+| Quiet view on/off                                           | Decorative worlds and effects disappear/reappear. Timer, help, shared-session information and wake remain usable, with no model or reward change. |
+| Return → garden                                             | Settles the sheet and returns awake. No automatic next nap.                                                                                       |
+| Return → Start a nap                                        | Dismisses rewards, navigates home and starts the existing untimed nap only after this explicit action.                                            |
+| Waiting visitor                                             | Befriend remains usable when visible; covered or stale callbacks do nothing. No hidden peek, blink or celebration continues after coverage.       |
+| Starter retained / visitor selected                         | PLAN A BREAK remains the established player's primary invitation. Switching companions or sparring is optional inside the trail.                  |
+| Stats → blur → return                                       | Stats closes and the garden reactivates.                                                                                                          |
+| Reduced motion, 320px width, short landscape and large text | Controls stay reachable; optional sections wrap, return content scrolls and footer stays in the sheet.                                            |
+| Lock/background → resume                                    | Session settles once with correct original companion/intention. This needs real browser/device execution, not only the substituted harness.       |
 
 Source harnesses substitute React, native UI, animation and storage boundaries. They check emitted controls, callback routing, cancellation plans and model independence; they cannot establish native frame quality, real modal stacking or reduced phone use.
 

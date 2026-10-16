@@ -375,7 +375,6 @@ export function HomeScreen() {
       <GardenKeepsakeShelf
         memories={memories}
         onOpen={(memory) => setKeepsakeSheet({ focused, memory })}
-        onPlan={() => router.push('/missions')}
       />
       <GardenProgress />
       <View style={{ gap: 8 }}>

@@ -480,8 +480,11 @@ export function GardenWorld({
   }
 
   function companionLine(kind: keyof typeof responseCount.current) {
-    const count = responseCount.current[kind]++;
-    return gardenResponse(player, kind, count, memories);
+    // Read, then write. React Compiler compiles `x = ref.current[k]++` as a
+    // pre-increment, which skipped every first (memory) line.
+    const count = responseCount.current[kind];
+    responseCount.current[kind] = count + 1;
+    return gardenResponse(player, kind, count, memories, grumpy);
   }
 
   function arrived(id: number, action: Action | null, point: Point) {

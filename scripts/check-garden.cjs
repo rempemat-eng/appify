@@ -1440,22 +1440,31 @@ for (const [identity, motifColor] of [
 const signatureChecks = count - signatureStart;
 const homeNapStart = count;
 let plannedNaps = 0;
-const plannedNap = () => { plannedNaps++; };
+const plannedNap = () => {
+  plannedNaps++;
+};
 worldTree = setup(false, { onNap: plannedNap });
 reduced = true;
 worldTree = render(false, { onNap: plannedNap });
 let timerIdsBeforeNap = new Set(timers.keys());
 press(worldTree, 'nap');
-let plannedTimer = [...timers.entries()].find(([id, timer]) => !timerIdsBeforeNap.has(id) && timer.ms === 0)?.[1];
+let plannedTimer = [...timers.entries()].find(
+  ([id, timer]) => !timerIdsBeforeNap.has(id) && timer.ms === 0,
+)?.[1];
 check(Boolean(plannedTimer), 'Home nap delegation keeps the arrival pause');
 plannedTimer.fn();
-check(plannedNaps === 1 && sleeps === 0, 'bed arrival delegates once instead of losing the Home break idea');
+check(
+  plannedNaps === 1 && sleeps === 0,
+  'bed arrival delegates once instead of losing the Home break idea',
+);
 worldTree = setup(false, { onNap: plannedNap });
 reduced = true;
 worldTree = render(false, { onNap: plannedNap });
 timerIdsBeforeNap = new Set(timers.keys());
 press(worldTree, 'nap');
-plannedTimer = [...timers.entries()].find(([id, timer]) => !timerIdsBeforeNap.has(id) && timer.ms === 0)?.[1];
+plannedTimer = [...timers.entries()].find(
+  ([id, timer]) => !timerIdsBeforeNap.has(id) && timer.ms === 0,
+)?.[1];
 check(Boolean(plannedTimer), 'covered Home fixture has a pending delegated nap');
 worldTree = render(false, { active: false, onNap: plannedNap });
 plannedTimer.fn();
@@ -1465,7 +1474,9 @@ reduced = true;
 worldTree = render();
 timerIdsBeforeNap = new Set(timers.keys());
 press(worldTree, 'nap');
-plannedTimer = [...timers.entries()].find(([id, timer]) => !timerIdsBeforeNap.has(id) && timer.ms === 0)?.[1];
+plannedTimer = [...timers.entries()].find(
+  ([id, timer]) => !timerIdsBeforeNap.has(id) && timer.ms === 0,
+)?.[1];
 check(Boolean(plannedTimer), 'unconfigured worlds retain the default nap arrival');
 plannedTimer.fn();
 check(sleeps === 1, 'unconfigured worlds still call the existing ordinary nap');

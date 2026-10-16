@@ -174,14 +174,16 @@ const visitorBehaviour = {
   },
 } as const satisfies Record<VisitorId, Record<GardenInteraction, string>>;
 
-const memoryPrefixes: Record<BreakIntention, string> = {
-  rest: 'Rest memory:',
-  read: 'Reading memory:',
-  move: 'Movement memory:',
-  create: 'Creative memory:',
+// A keepsake belongs to the companion it was kept with, so the line names
+// that companion rather than whoever is active now.
+const memoryLines: Record<BreakIntention, (name: string) => string> = {
+  rest: (name) => `The little lantern from your rest with ${name} still glows here.`,
+  read: (name) => `The bookmark from your reading break with ${name} is still here.`,
+  move: (name) => `The pressed leaf from your movement break with ${name} is still here.`,
+  create: (name) => `The sketch from your creative break with ${name} is pinned up here.`,
 };
 function memoryLine(memory: CompanionMemory): string {
-  return `${memoryPrefixes[memory.intention]} ${memory.companion.name}.`;
+  return memoryLines[memory.intention](memory.companion.name);
 }
 
 export function gardenResponse(
@@ -189,8 +191,11 @@ export function gardenResponse(
   action: GardenInteraction,
   count = 0,
   memories: readonly CompanionMemory[] = [],
+  grumpy = false,
 ): string {
   const profile = companionProfile(player);
+  // Mood still shows: a grumpy companion tolerates a pat rather than enjoying it.
+  if (grumpy && action === 'pat') return `${profile.name} allows one very small pat. hmph.`;
   const turn = Number.isFinite(count) ? Math.max(0, Math.floor(count)) : 0;
   const memory = gardenMemoryForAction(action, memories);
   if (memory && turn % 2 === 0) return memoryLine(memory);

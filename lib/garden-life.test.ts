@@ -149,7 +149,7 @@ for (const action of actions) {
 const selectedInkling = { ...player, guardian: 'inkling' as const };
 const keptReadingLine = gardenResponse(selectedInkling, 'read', 0, memories);
 assert.ok(keptReadingLine.includes(chosenRead.companion.name));
-assert.ok(keptReadingLine.startsWith('Reading memory:'));
+assert.ok(keptReadingLine.startsWith('The bookmark from your reading break'));
 assert.ok(keptReadingLine.length <= 95);
 assert.ok(
   !keptReadingLine.includes('INKLING'),
@@ -177,6 +177,11 @@ for (const action of actions) {
   assert.ok(!response.includes('completed your mission'));
   assert.ok(!response.includes('+'), 'Keepsake feedback never advertises an extra reward');
 }
+assert.ok(gardenResponse(selectedInkling, 'pat', 0, [], true).includes('hmph'));
+assert.ok(
+  !gardenResponse(selectedInkling, 'read', 0, [], true).includes('hmph'),
+  'Only a pat changes with a grumpy mood',
+);
 const invalidSelection = { ...player, guardian: 'skyfern' as const, collection: [] };
 assert.equal(gardenSignature(invalidSelection).family, 'REST');
 assert.ok(gardenResponse(invalidSelection, 'pat').startsWith('ORIGINAL '));
