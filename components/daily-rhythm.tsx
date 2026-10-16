@@ -48,11 +48,18 @@ function RhythmIcon({ period, size = 18 }: { period: RhythmPeriod; size?: number
   return <Icon size={size} color={c.ink} strokeWidth={2} />;
 }
 
-export function DailyRhythmCard() {
+export function DailyRhythmCard({
+  active,
+  open,
+  onOpenChange,
+}: {
+  active: boolean;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
   const [plan, setPlan] = useState(freshRhythm);
   const [loaded, setLoaded] = useState(false);
   const [loadError, setLoadError] = useState(false);
-  const [open, setOpen] = useState(false);
   const [now, setNow] = useState(Date.now);
   const mounted = useRef(false);
   const load = useCallback(async () => {
@@ -72,12 +79,20 @@ export function DailyRhythmCard() {
     mounted.current = true;
     // Begin hydration after mounting; all UI updates follow the storage result.
     void Promise.resolve().then(load);
-    const timer = setInterval(() => setNow(Date.now()), 30000);
     return () => {
       mounted.current = false;
-      clearInterval(timer);
     };
   }, [load]);
+  useEffect(() => {
+    if (!active || open || !loaded || !plan.enabled) return undefined;
+    // Refresh on return before resuming the visible planner's clock.
+    const refresh = setTimeout(() => setNow(Date.now()), 0);
+    const timer = setInterval(() => setNow(Date.now()), 30000);
+    return () => {
+      clearTimeout(refresh);
+      clearInterval(timer);
+    };
+  }, [active, open, loaded, plan.enabled]);
 
   const status = rhythmStatus(plan, now);
   const period = status.current ?? 'own';
@@ -106,7 +121,8 @@ export function DailyRhythmCard() {
               accessibilityLabel={
                 plan.enabled ? 'Edit your daily rhythm' : 'Set up your daily rhythm'
               }
-              onPress={() => setOpen(true)}
+              disabled={!active}
+              onPress={() => onOpenChange(true)}
               style={styles.edit}
             >
               <BodyText style={[styles.bold, { color: c.moss }]}>
@@ -145,7 +161,7 @@ export function DailyRhythmCard() {
                   light
                   onPress={() => {
                     setPlan(freshRhythm());
-                    setOpen(true);
+                    onOpenChange(true);
                   }}
                 />
               </View>
@@ -157,13 +173,13 @@ export function DailyRhythmCard() {
         <RhythmEditor
           initial={plan}
           replacing={loadError}
-          onClose={() => setOpen(false)}
+          onClose={() => onOpenChange(false)}
           onSaved={(saved) => {
             setPlan(saved);
             setLoaded(true);
             setLoadError(false);
             setNow(Date.now());
-            setOpen(false);
+            onOpenChange(false);
           }}
         />
       )}

@@ -92,9 +92,6 @@ export function HomeScreen() {
   const [lesson, setLesson] = useState({ key, id: candidate });
   if (lesson.key !== key) setLesson({ key, id: candidate });
   const coaching = busy ? null : lesson.id;
-  useEffect(() => {
-    if (coaching && p?.mode === 'awake') useGame.getState().seeTip(coaching);
-  }, [coaching, p?.mode]);
   const [statsOpen, setStatsOpen] = useState(false);
   const [companionSheet, setCompanionSheet] = useState({ focused, open: false });
   if (companionSheet.focused !== focused) setCompanionSheet({ focused, open: false });
@@ -106,6 +103,10 @@ export function HomeScreen() {
   }>({ focused, memory: null });
   if (keepsakeSheet.focused !== focused) setKeepsakeSheet({ focused, memory: null });
   const openMemory = keepsakeSheet.focused === focused ? keepsakeSheet.memory : null;
+  const [rhythmSheet, setRhythmSheet] = useState({ focused, open: false });
+  if (rhythmSheet.focused !== focused) setRhythmSheet({ focused, open: false });
+  const rhythmOpen = rhythmSheet.focused === focused && rhythmSheet.open;
+  const setRhythmOpen = (open: boolean) => setRhythmSheet({ focused, open });
   const gardenActive =
     focused &&
     appActive &&
@@ -113,7 +114,11 @@ export function HomeScreen() {
     !statsOpen &&
     !companionsOpen &&
     !openMemory &&
+    !rhythmOpen &&
     p?.mode === 'awake';
+  useEffect(() => {
+    if (coaching && gardenActive) useGame.getState().seeTip(coaching);
+  }, [coaching, gardenActive]);
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
   const raidId = useGame((s) => s.alerts[0]?.raid.id);
@@ -403,7 +408,11 @@ export function HomeScreen() {
         onCompanions={() => setCompanionsOpen(true)}
         onSpar={() => router.push('/arena')}
       />
-      <DailyRhythmCard />
+      <DailyRhythmCard
+        active={focused && appActive}
+        open={rhythmOpen}
+        onOpenChange={setRhythmOpen}
+      />
       <GardenKeepsakeSheet
         memory={openMemory}
         onClose={() => setKeepsakeSheet({ focused, memory: null })}
