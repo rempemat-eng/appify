@@ -52,6 +52,21 @@ import {
   upgradeStarterDeck,
   type CardId,
 } from '@/lib/cards';
+import {
+  breakCompanion,
+  isBreakIntention,
+  memoryLimit,
+  memoryResolutionLimit,
+  offerCompanionMemory,
+  restoreActiveBreakContext,
+  restoreCompanionMemories,
+  restoreMemoryResolutions,
+  restorePendingMemories,
+  type ActiveBreakContext,
+  type BreakIntention,
+  type CompanionMemory,
+  type CompanionMemoryOffer,
+} from '@/lib/companion-memories';
 
 export type Player = Database['public']['Tables']['players']['Row'];
 export type Raid = Database['public']['Tables']['raids']['Row'];
@@ -123,6 +138,10 @@ export type BattleRequest = { target: Player; practice: boolean };
 type Saved = {
   recentBreaks?: RecentBreak[];
   breakId?: string | null;
+  activeBreakContext: ActiveBreakContext | null;
+  pendingMemories: CompanionMemoryOffer[];
+  companionMemories: CompanionMemory[];
+  memoryResolvedIds: string[];
   lastActiveAt: number;
   tips: GardenTipId[];
   firstWake: boolean;
@@ -178,7 +197,9 @@ type Game = Saved & {
   tick: () => void;
   sync: () => Promise<void>;
   pair: (code: string) => Promise<string | null>;
-  sleep: (mission?: string) => void;
+  sleep: (mission?: string, intention?: BreakIntention | null) => void;
+  recordCompanionMemory: (settlementId: string) => void;
+  dismissCompanionMemory: (settlementId: string) => void;
   wake: () => Promise<void>;
   feed: () => void;
   levelUp: () => void;
@@ -226,7 +247,8 @@ function isPlayer(value: unknown): value is Player {
 }
 function migrateSaved(value: unknown) {
   if (!isRecord(value)) return value;
-  value.recentBreaks = restoreBreakHistory(value.recentBreaks);
+  const recentBreaks = restoreBreakHistory(value.recentBreaks);
+  value.recentBreaks = recentBreaks;
   if (typeof value.breakId !== 'string') value.breakId = null;
   const migratePlayer = (p: unknown) => {
     if (isRecord(p)) {
@@ -241,6 +263,16 @@ function migrateSaved(value: unknown) {
           : [...startingDeck];
   };
   migratePlayer(value.player);
+  const memories = restoreCompanionMemories(value.companionMemories);
+  const resolutions = restoreMemoryResolutions(value.memoryResolvedIds, memories);
+  value.companionMemories = memories;
+  value.memoryResolvedIds = resolutions;
+  value.pendingMemories = restorePendingMemories(value.pendingMemories, recentBreaks, resolutions);
+  value.activeBreakContext = restoreActiveBreakContext(
+    value.activeBreakContext,
+    value.breakId,
+    isPlayer(value.player) ? value.player : null,
+  );
   if (isRecord(value.player) && isStringArray(value.player.deck))
     value.player.deck = upgradeStarterDeck(value.player.deck);
   if (typeof value.lastActiveAt !== 'number')
@@ -293,6 +325,9 @@ function isSaved(value: unknown): value is Saved {
     isRecord(value) &&
     typeof value.lastActiveAt === 'number' &&
     typeof value.firstWake === 'boolean' &&
+    Array.isArray(value.companionMemories) &&
+    Array.isArray(value.pendingMemories) &&
+    isStringArray(value.memoryResolvedIds) &&
     Array.isArray(value.tips) &&
     value.tips.every(isGardenTip) &&
     isOfflineRules(value.rules) &&
@@ -375,6 +410,7 @@ function beginTogether(session: TogetherSession) {
     sessions: [...s.sessions.filter((x) => x.id !== session.id), session],
     offStart: s.player.offline_seconds,
     breakId: `together:${session.id}`,
+    activeBreakContext: null,
     offDeck: s.player.deck.filter(isCardId),
     collectedCards: [],
     offGrass: s.player.grass,
@@ -428,6 +464,10 @@ function persist() {
   const saved: Saved = {
     recentBreaks: s.recentBreaks,
     breakId: s.breakId,
+    activeBreakContext: s.activeBreakContext,
+    pendingMemories: s.pendingMemories,
+    companionMemories: s.companionMemories,
+    memoryResolvedIds: s.memoryResolvedIds,
     lastActiveAt: s.lastActiveAt,
     tips: s.tips,
     firstWake: s.firstWake,
@@ -488,6 +528,39 @@ function applyIncoming(item: Incoming) {
 export const gameStore = create<Game>((set, get) => ({
   recentBreaks: [],
   breakId: null,
+  activeBreakContext: null,
+  pendingMemories: [],
+  companionMemories: [],
+  memoryResolvedIds: [],
+  recordCompanionMemory: (settlementId) => {
+    const s = get();
+    const offer = s.pendingMemories.find((memory) => memory.id === settlementId);
+    if (!s.player || !offer || s.memoryResolvedIds.includes(settlementId)) return;
+    const memory: CompanionMemory = {
+      ...offer,
+      companion: { ...offer.companion },
+      recordedAt: Math.max(Date.now(), offer.completedAt),
+      source: 'self-reported',
+    };
+    set({
+      companionMemories: [
+        memory,
+        ...s.companionMemories.filter((item) => item.id !== settlementId),
+      ].slice(0, memoryLimit),
+      pendingMemories: s.pendingMemories.filter((item) => item.id !== settlementId),
+      memoryResolvedIds: [...s.memoryResolvedIds, settlementId].slice(-memoryResolutionLimit),
+    });
+    void persist();
+  },
+  dismissCompanionMemory: (settlementId) => {
+    const s = get();
+    if (!s.pendingMemories.some((memory) => memory.id === settlementId)) return;
+    set({
+      pendingMemories: s.pendingMemories.filter((item) => item.id !== settlementId),
+      memoryResolvedIds: [...s.memoryResolvedIds, settlementId].slice(-memoryResolutionLimit),
+    });
+    void persist();
+  },
   lastActiveAt: 0,
   tips: [],
   firstWake: false,
@@ -699,7 +772,16 @@ export const gameStore = create<Game>((set, get) => ({
       if (parsed !== null && !isSaved(parsed)) throw new Error('Invalid saved game');
       const saved = parsed;
       const now = Date.now();
-      set({ ...saved, identity: saved?.identity || Crypto.randomUUID(), ready: true, now });
+      set({
+        ...saved,
+        activeBreakContext: saved?.activeBreakContext ?? null,
+        pendingMemories: saved?.pendingMemories ?? [],
+        companionMemories: saved?.companionMemories ?? [],
+        memoryResolvedIds: saved?.memoryResolvedIds ?? [],
+        identity: saved?.identity || Crypto.randomUUID(),
+        ready: true,
+        now,
+      });
       if (get().player?.mode === 'awake') {
         set({
           player: {
@@ -719,6 +801,10 @@ export const gameStore = create<Game>((set, get) => ({
       set({
         ready: true,
         identity: Crypto.randomUUID(),
+        activeBreakContext: null,
+        pendingMemories: [],
+        companionMemories: [],
+        memoryResolvedIds: [],
         message: 'COULD NOT LOAD YOUR GRASSLING. TRY REOPENING THE APP.',
       });
       feedback('error');
@@ -751,6 +837,11 @@ export const gameStore = create<Game>((set, get) => ({
     };
     set({
       player,
+      breakId: null,
+      activeBreakContext: null,
+      pendingMemories: [],
+      companionMemories: [],
+      memoryResolvedIds: [],
       now,
       lastActiveAt: now,
       tickAt: now,
@@ -906,6 +997,13 @@ export const gameStore = create<Game>((set, get) => ({
                 breakReceipt(settlementId, p.mission_ends_at, reward),
               ),
               breakId: null,
+              activeBreakContext: null,
+              pendingMemories: offerCompanionMemory(
+                s.activeBreakContext,
+                breakReceipt(settlementId, p.mission_ends_at, reward),
+                s.pendingMemories,
+                s.memoryResolvedIds,
+              ),
             }
           : {}),
       });
@@ -1071,15 +1169,20 @@ export const gameStore = create<Game>((set, get) => ({
       return `Could not pair. Check your connection and try again.${reason}`;
     }
   },
-  sleep: (mission) => {
-    const p = get().player;
-    if (!p || p.mode !== 'awake' || get().battle) return;
+  sleep: (mission, intention) => {
+    const s = get();
+    const p = s.player;
+    if (!p || p.mode !== 'awake' || s.battle) return;
     const m = missions.find((x) => x.id === mission);
     if (m && p.level < m.level) return;
     const now = Date.now();
+    const breakId = m ? `${p.id}:${m.id}:${now + m.duration * 1000}` : `${p.id}:nap:${now}`;
     set({
       offStart: p.offline_seconds,
-      breakId: m ? `${p.id}:${m.id}:${now + m.duration * 1000}` : `${p.id}:nap:${now}`,
+      breakId,
+      activeBreakContext: isBreakIntention(intention)
+        ? { breakId, playerId: p.id, intention, companion: breakCompanion(p), startedAt: now }
+        : null,
       offDeck: p.deck.filter(isCardId),
       collectedCards: [],
       offGrass: p.grass,
@@ -1153,6 +1256,13 @@ export const gameStore = create<Game>((set, get) => ({
       cardReward: reward,
       recentBreaks: appendBreak(s.recentBreaks, breakReceipt(settlementId, completedAt, reward)),
       breakId: null,
+      activeBreakContext: null,
+      pendingMemories: offerCompanionMemory(
+        s.activeBreakContext,
+        breakReceipt(settlementId, completedAt, reward),
+        s.pendingMemories,
+        s.memoryResolvedIds,
+      ),
       message: null,
       ...(visitor ? { voice: 'someone visited while you were gone!' } : {}),
     });

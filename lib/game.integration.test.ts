@@ -9,7 +9,10 @@ const boundaries = new Map([
   [
     '@react-native-async-storage/async-storage',
     `
-      const values = new Map();
+      // tsx can load a boundary through both import paths. Both handles must
+      // address the same simulated device storage for save-migration checks.
+      const storageKey = Symbol.for('napattack.integration.storage');
+      const values = globalThis[storageKey] ??= new Map();
       export default {
         async getItem(key) { return values.get(key) ?? null; },
         async setItem(key, value) { values.set(key, value); },
@@ -85,7 +88,7 @@ async function main() {
     const { gameStore, flushGameSave, bot } = await import('./game');
     const { bilt, backendConfigured, backendUnavailableMessage } = await import('./bilt');
     const { collectionOf, guardianPlayer } = await import('./visitors');
-    const { runRefinementChecks } = await import('./refinement.qa');
+    const { runRefinementChecks, qaPlayer } = await import('./refinement.qa');
     const lines: string[] = [];
     const check = (ok: boolean, label: string) => {
       assert.ok(ok, label);
@@ -271,6 +274,231 @@ async function main() {
     );
     await flushGameSave();
     lines.push(...(await runRefinementChecks()));
+    const { freshRules } = await import('./offline-rules');
+    const { default: storage } = await import('@react-native-async-storage/async-storage');
+    now += 3_600_000;
+    const memoryPlayer = qaPlayer(now);
+    gameStore.setState({
+      player: {
+        ...memoryPlayer,
+        collection: [{ id: 'inkling', metAt: now, minutes: 15, befriendedAt: now }],
+      },
+      identity: memoryPlayer.id,
+      tickAt: now,
+      rules: freshRules(now),
+      battle: null,
+      togetherId: null,
+      cardReward: null,
+      waitingVisitor: null,
+      recentBreaks: [],
+      breakId: null,
+      activeBreakContext: null,
+      pendingMemories: [],
+      companionMemories: [],
+      memoryResolvedIds: [],
+    });
+    gameStore.getState().sleep(undefined, 'read');
+    const originalContext = structuredClone(gameStore.getState().activeBreakContext);
+    gameStore.getState().change({ guardian: 'inkling', pet_name: 'LATER NAME' });
+    await reload();
+    check(
+      isDeepStrictEqual(gameStore.getState().activeBreakContext, originalContext),
+      'An active intention and the original starter identity survive reload and later account edits',
+    );
+    now += 4_000;
+    gameStore.getState().tick();
+    check(
+      gameStore.getState().companionMemories.length === 0 &&
+        gameStore.getState().pendingMemories.length === 0,
+      'Elapsed time alone never records an activity or creates a pre-settlement reflection',
+    );
+    await gameStore.getState().wake();
+    const starterOffer = gameStore.getState().pendingMemories[0];
+    check(
+      starterOffer.id === gameStore.getState().cardReward!.settlementId &&
+        starterOffer.companion.key === 'starter' &&
+        starterOffer.companion.name === memoryPlayer.pet_name &&
+        starterOffer.intention === 'read' &&
+        starterOffer.minutes === 4 &&
+        !gameStore.getState().activeBreakContext,
+      'A settled break offers a reflection for the companion and intention captured at its start',
+    );
+    const progressSnapshot = () =>
+      structuredClone({
+        player: gameStore.getState().player,
+        rules: gameStore.getState().rules,
+        reward: gameStore.getState().cardReward,
+        history: gameStore.getState().recentBreaks,
+      });
+    const beforeRecording = progressSnapshot();
+    gameStore.getState().recordCompanionMemory(starterOffer.id);
+    gameStore.getState().recordCompanionMemory(starterOffer.id);
+    gameStore.getState().dismissCompanionMemory(starterOffer.id);
+    await reload();
+    await gameStore.getState().wake();
+    check(
+      gameStore.getState().companionMemories.length === 1 &&
+        gameStore.getState().companionMemories[0].source === 'self-reported' &&
+        gameStore.getState().companionMemories[0].companion.key === 'starter' &&
+        gameStore.getState().pendingMemories.length === 0,
+      'Explicit acknowledgement records once across repeated actions and reload, even after changing pets',
+    );
+    check(
+      isDeepStrictEqual(progressSnapshot(), beforeRecording),
+      'Recording a memory changes no currency, level, mood, cards, rewards, history or budget',
+    );
+    gameStore.getState().sleep('book', 'create');
+    now += 3_000;
+    await gameStore.getState().wake();
+    const earlyOffer = gameStore.getState().pendingMemories[0];
+    check(
+      earlyOffer.companion.key === 'inkling' &&
+        earlyOffer.companion.species === 'CUBE' &&
+        earlyOffer.early &&
+        earlyOffer.mission === 'book' &&
+        earlyOffer.intention === 'create' &&
+        gameStore.getState().cardReward!.early &&
+        !gameStore.getState().cardReward!.postcard,
+      'An early mission return offers an honest optional reflection without claiming mission completion',
+    );
+    const beforeSkipping = progressSnapshot();
+    gameStore.getState().dismissCompanionMemory(earlyOffer.id);
+    gameStore.getState().recordCompanionMemory(earlyOffer.id);
+    await reload();
+    check(
+      !gameStore.getState().pendingMemories.length &&
+        gameStore.getState().companionMemories.length === 1 &&
+        gameStore.getState().memoryResolvedIds.includes(earlyOffer.id) &&
+        isDeepStrictEqual(progressSnapshot(), beforeSkipping),
+      'Skipping survives reload, cannot later record the dismissed offer and affects no progress',
+    );
+    now += 1000;
+    gameStore.getState().sleep('park', 'move');
+    now += 15_000;
+    gameStore.getState().tick();
+    const missionOffer = structuredClone(gameStore.getState().pendingMemories[0]);
+    await reload();
+    await gameStore.getState().wake();
+    gameStore.getState().tick();
+    check(
+      gameStore.getState().player!.mode === 'awake' &&
+        missionOffer.mission === 'park' &&
+        !missionOffer.early &&
+        isDeepStrictEqual(gameStore.getState().pendingMemories, [missionOffer]) &&
+        !gameStore.getState().activeBreakContext &&
+        gameStore.getState().companionMemories.length === 1,
+      'Automatic mission settlement offers once; reload and wake never auto-acknowledge or duplicate it',
+    );
+    for (let i = 0; i < 6; i++) {
+      now += 1000;
+      gameStore.getState().sleep(undefined, 'rest');
+      now += 1000;
+      await gameStore.getState().wake();
+    }
+    await reload();
+    const queued = gameStore.getState().pendingMemories;
+    check(
+      queued.length === 5 && new Set(queued.map((offer) => offer.id)).size === 5,
+      'Repeated intended breaks queue separate reflections in a bounded five-offer backlog across reload',
+    );
+    const beforeUnintended = structuredClone(queued);
+    now += 1000;
+    gameStore.getState().sleep();
+    now += 2000;
+    await gameStore.getState().wake();
+    now += 1000;
+    gameStore.getState().sleep(undefined, 'rest');
+    await gameStore.getState().wake();
+    check(
+      isDeepStrictEqual(gameStore.getState().pendingMemories, beforeUnintended) &&
+        !gameStore.getState().activeBreakContext,
+      'Just-a-break and zero-length intended breaks add no offer and leave no stale intention',
+    );
+    const loadPatchedSave = async (patch: (saved: Record<string, unknown>) => void) => {
+      await flushGameSave();
+      const saved = JSON.parse((await storage.getItem('screenagotchi-v1'))!);
+      patch(saved);
+      await storage.setItem('screenagotchi-v1', JSON.stringify(saved));
+      gameStore.setState({ ready: false, player: null });
+      await gameStore.getState().init();
+      await flushGameSave();
+    };
+    await loadPatchedSave((saved) => {
+      saved.pendingMemories = [null, { id: 'forged' }, ...queued, ...queued];
+      saved.companionMemories = [null, {}, ...gameStore.getState().companionMemories];
+      saved.memoryResolvedIds = ['', null, 8, ...gameStore.getState().memoryResolvedIds];
+      saved.activeBreakContext = originalContext;
+    });
+    check(
+      gameStore.getState().player?.id === memoryPlayer.id &&
+        gameStore.getState().pendingMemories.length === 5 &&
+        gameStore.getState().companionMemories.length === 1 &&
+        !gameStore.getState().activeBreakContext &&
+        gameStore.getState().message !== 'COULD NOT LOAD YOUR GRASSLING. TRY REOPENING THE APP.',
+      'Malformed optional save fields are sanitised without losing the valid account or existing memories',
+    );
+    now += 1000;
+    gameStore.getState().sleep(undefined, 'read');
+    await loadPatchedSave((saved) => {
+      delete saved.activeBreakContext;
+      delete saved.pendingMemories;
+      delete saved.companionMemories;
+      delete saved.memoryResolvedIds;
+    });
+    now += 2000;
+    await gameStore.getState().wake();
+    check(
+      gameStore.getState().player?.id === memoryPlayer.id &&
+        !gameStore.getState().activeBreakContext &&
+        gameStore.getState().pendingMemories.length === 0 &&
+        gameStore.getState().companionMemories.length === 0,
+      'Legacy active-break saves default to no intention and do not invent an activity offer',
+    );
+    now += 1000;
+    gameStore.getState().sleep(undefined, 'rest');
+    now += 2000;
+    await gameStore.getState().wake();
+    check(
+      gameStore.getState().pendingMemories.length === 1,
+      'A new intended break still works after legacy migration',
+    );
+    const deferredOffer = structuredClone(gameStore.getState().pendingMemories[0]);
+    for (let i = 0; i < 21; i++) {
+      now += 1000;
+      gameStore.getState().sleep();
+      now += 2000;
+      await gameStore.getState().wake();
+    }
+    check(
+      gameStore.getState().recentBreaks.length === 20 &&
+        !gameStore.getState().recentBreaks.some((entry) => entry.id === deferredOffer.id),
+      'More than 20 ordinary breaks archive the deferred reflection’s original reward receipt',
+    );
+    await reload();
+    check(
+      isDeepStrictEqual(gameStore.getState().pendingMemories, [deferredOffer]),
+      'A deferred reflection survives reload after its rolling receipt has been archived',
+    );
+    const beforeDeferredRecording = progressSnapshot();
+    gameStore.getState().recordCompanionMemory(deferredOffer.id);
+    gameStore.getState().recordCompanionMemory(deferredOffer.id);
+    await reload();
+    gameStore.getState().recordCompanionMemory(deferredOffer.id);
+    check(
+      gameStore.getState().pendingMemories.length === 0 &&
+        gameStore.getState().companionMemories.filter((entry) => entry.id === deferredOffer.id)
+          .length === 1 &&
+        isDeepStrictEqual(progressSnapshot(), beforeDeferredRecording),
+      'The archived-receipt reflection can be recorded exactly once without altering any progress',
+    );
+    await gameStore.getState().hatch('NEW GARDENER', 'NEW PET', 'RAT');
+    check(
+      gameStore.getState().companionMemories.length === 0 &&
+        gameStore.getState().pendingMemories.length === 0 &&
+        gameStore.getState().memoryResolvedIds.length === 0 &&
+        !gameStore.getState().activeBreakContext,
+      'Hatching a fresh profile clears all previous companion memory state',
+    );
     await flushGameSave();
     check(requests === 0, 'All credential-free integration paths made zero network requests');
     for (const line of lines) console.log(line);

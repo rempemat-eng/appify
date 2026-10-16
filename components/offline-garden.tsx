@@ -14,10 +14,12 @@ import {
   gardenStreak,
   remainingPlay,
 } from '@/lib/offline-rules';
-import { Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
+import { PixelButton, PixelText, styles } from '@/components/game-ui';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { PixelScene } from '@/components/pixel-scenes';
 import { growthStage } from '@/lib/grasslings';
+import { GuardianPet } from '@/components/guardian-pet';
+import { guardianPlayer } from '@/lib/visitors';
 export function PlayMeter() {
   const budget = useGame((s) => s.rules.budget);
   const now = useGame((s) => s.now);
@@ -235,12 +237,12 @@ export function GardenRecap() {
       <ScrollView contentContainerStyle={{ gap: 22, paddingBottom: 12 }}>
         <PixelText style={styles.title}>YESTERDAY&apos;S GARDEN</PixelText>
         <PixelScene
-          species={p.species}
+          species={guardianPlayer(p).species}
           level={p.level}
           height={190}
           style={{ alignItems: 'center', justifyContent: 'flex-end' }}
         >
-          <Pet species={p.species} level={p.level} hat={p.hat} size={128} />
+          <GuardianPet player={p} size={128} />
         </PixelScene>
         <View style={[styles.border, { padding: 16, gap: 18, backgroundColor: c.body }]}>
           {[

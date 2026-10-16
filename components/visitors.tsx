@@ -17,7 +17,9 @@ import { useReducedMotion } from '@/lib/motion';
 import { cards, cardIds, summarizeCardRewards } from '@/lib/cards';
 import { palette, useGame } from '@/lib/game';
 import { cozy as c, panelStyle } from '@/lib/cozy';
-import { collectionOf, visitorInfo, type Postcard } from '@/lib/visitors';
+import { collectionOf, guardianPlayer, visitorInfo, type Postcard } from '@/lib/visitors';
+import { GuardianPet } from '@/components/guardian-pet';
+import { MemoryReflection } from '@/components/companion-memories';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText, GrassRoll } from '@/components/pixel-feedback';
 import { CozySheet, PaperFinish } from '@/components/cozy-ui';
@@ -158,6 +160,8 @@ export function WelcomeBack() {
     s.pendingTogetherWakes.some((wake) => wake.sid === s.cardReward?.sessionId),
   );
   const reward = useGame((s) => s.cardReward);
+  const pendingMemories = useGame((s) => s.pendingMemories);
+  const [keptMemory, setKeptMemory] = useState<string | null>(null);
   const waiting = useGame((s) => s.waitingVisitor);
   const p = useGame((s) => s.player);
   const [details, setDetails] = useState(false);
@@ -182,6 +186,7 @@ export function WelcomeBack() {
     .filter((id) => reward.cards.includes(id))
     .map((id) => ({ id, count: reward.cards.filter((card) => card === id).length }));
   const summary = reward.deckBefore ? summarizeCardRewards(reward.deckBefore, reward.cards) : null;
+  const reflection = pendingMemories.find((offer) => offer.id === reward.settlementId);
   const friend =
     reward.visitor &&
     collectionOf(p).some((entry) => entry.id === reward.visitor && entry.befriendedAt !== null);
@@ -208,7 +213,7 @@ export function WelcomeBack() {
       >
         <PixelScene
           sunrise
-          species={p.species}
+          species={guardianPlayer(p).species}
           level={p.level}
           groundInset={sceneGround}
           style={{
@@ -220,16 +225,7 @@ export function WelcomeBack() {
             paddingBottom: sceneGround,
           }}
         >
-          {scenePetSize > 0 && (
-            <Pet
-              species={p.species}
-              visitor={p.guardian}
-              level={p.level}
-              hat={p.hat}
-              size={scenePetSize}
-              bob={false}
-            />
-          )}
+          {scenePetSize > 0 && <GuardianPet player={p} size={scenePetSize} bob={false} />}
         </PixelScene>
         <LightSweep skip={skip} />
         <View
@@ -307,6 +303,24 @@ export function WelcomeBack() {
                 )}
               </View>
             </View>
+          )}
+          {reflection && (
+            <MemoryReflection
+              offer={reflection}
+              onKeep={() => {
+                useGame.getState().recordCompanionMemory(reflection.id);
+                if (
+                  useGame.getState().companionMemories.some((memory) => memory.id === reflection.id)
+                )
+                  setKeptMemory(reflection.companion.name);
+              }}
+              onSkip={() => useGame.getState().dismissCompanionMemory(reflection.id)}
+            />
+          )}
+          {keptMemory && (
+            <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
+              A memory with {keptMemory} is saved in your Field Journal.
+            </BodyText>
           )}
           {groups.length > 0 && (
             <>

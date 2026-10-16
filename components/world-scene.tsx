@@ -187,6 +187,7 @@ export function WorldScene({
   return (
     <View
       pointerEvents="none"
+      aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
       // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)

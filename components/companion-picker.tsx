@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Modal, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
+import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cozy as c, panelStyle } from '@/lib/cozy';
 import { useGame, type Player } from '@/lib/game';
@@ -8,6 +9,7 @@ import type { VisitorId } from '@/lib/visitors';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { CozyPanel, CozySheet } from '@/components/cozy-ui';
+import { CompanionMemories } from '@/components/companion-memories';
 
 export function CompanionPicker({
   player,
@@ -21,6 +23,7 @@ export function CompanionPicker({
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const inBattle = useGame((s) => Boolean(s.battle));
+  const memories = useGame((s) => s.companionMemories);
   const active = companionProfile(player);
   const options = companionOptions(player);
   const [selection, setSelection] = useState({ open, activeId: active.id, id: active.id });
@@ -194,6 +197,20 @@ export function CompanionPicker({
                   An optional idea. Choose a break that fits your day.
                 </BodyText>
               </View>
+              <CompanionMemories
+                memories={memories}
+                companionKey={preview.id ?? 'starter'}
+                companionName={preview.name}
+              />
+              <PixelButton
+                small
+                light
+                label="OPEN MEMORY JOURNAL"
+                onPress={() => {
+                  close();
+                  router.push('/journal?tab=memories');
+                }}
+              />
               <BodyText style={{ fontSize: 12 }}>
                 {options.length === 1
                   ? 'Your first friend visits after a break of 10 simulated MIN. Befriend visitors to invite them along.'

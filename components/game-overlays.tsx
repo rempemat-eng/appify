@@ -31,6 +31,8 @@ import { WorldScene } from '@/components/world-scene';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
+import { useGardenView } from '@/lib/garden-view';
+import { breakIntentionLabel } from '@/lib/companion-memories';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { gameColumn, gameSideInset } from '@/lib/layout';
 function Onboarding() {
@@ -231,12 +233,14 @@ function Onboarding() {
   );
 }
 function ScreenOff() {
+  const [gardenView] = useGardenView();
   const [skip, setSkip] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const p = useGame((s) => s.player)!;
   const now = useGame((s) => s.now);
   const offStart = useGame((s) => s.offStart);
   const offGrass = useGame((s) => s.offGrass);
+  const breakContext = useGame((s) => s.activeBreakContext);
   const togetherId = useGame((s) => s.togetherId);
   const session = useGame((s) => s.sessions.find((x) => x.id === s.togetherId));
   const rival = useGame((s) =>
@@ -293,6 +297,12 @@ function ScreenOff() {
       >
         <View style={{ alignItems: 'center', gap: 10, paddingTop: 8 }}>
           <StatusChip player={p} />
+          {breakContext && (
+            <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
+              Your break idea: {breakIntentionLabel(breakContext.intention)} · a reflection is
+              optional when you return
+            </BodyText>
+          )}
           <Shield color={c.paper} size={30} />
           <PixelText
             style={{
@@ -400,6 +410,7 @@ function ScreenOff() {
                   }}
                 >
                   <GardenWorld
+                    view={gardenView}
                     width={napWidth - 4}
                     player={p}
                     grumpy={false}

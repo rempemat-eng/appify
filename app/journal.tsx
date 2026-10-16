@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FlatList, View, useWindowDimensions } from 'react-native';
+import { FlatList, ScrollView, View, useWindowDimensions } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Tabs } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -15,6 +15,7 @@ import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { JournalEmpty, PostcardArt } from '@/components/visitors';
 import { goBackOrReplace } from '@/lib/navigation';
+import { CompanionMemories, MemoryReflection } from '@/components/companion-memories';
 
 const habitTint = {
   REST: { fill: '#EFE9F7', edge: c.nap },
@@ -25,9 +26,23 @@ const rarityDots = { COMMON: 1, UNCOMMON: 2, RARE: 3 } as const;
 
 export default function FieldJournal() {
   const params = useLocalSearchParams<{ tab?: string }>();
-  const [tab, setTab] = useState(params.tab === 'postcards' ? 'postcards' : 'visitors');
+  const requestedTab =
+    params.tab === 'postcards' ? 'postcards' : params.tab === 'memories' ? 'memories' : 'visitors';
+  const [selection, setSelection] = useState({ request: requestedTab, tab: requestedTab });
+  if (selection.request !== requestedTab)
+    setSelection({ request: requestedTab, tab: requestedTab });
+  const tab = selection.request === requestedTab ? selection.tab : requestedTab;
   const [guideOpen, setGuideOpen] = useState(false);
   const p = useGame((s) => s.player);
+  const memories = useGame((s) => s.companionMemories);
+  const pendingMemories = useGame((s) => s.pendingMemories);
+  const [keptMessage, setKeptMessage] = useState<string | null>(null);
+  const [memoryPage, setMemoryPage] = useState(0);
+  const memoryPages = Math.max(1, Math.ceil(memories.length / 5));
+  const visibleMemoryPage = Math.min(memoryPage, memoryPages - 1);
+  const pageMemories = [...memories]
+    .sort((a, b) => b.completedAt - a.completedAt || b.recordedAt - a.recordedAt)
+    .slice(visibleMemoryPage * 5, visibleMemoryPage * 5 + 5);
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   useEffect(() => {
@@ -69,37 +84,43 @@ export default function FieldJournal() {
       />
       <View style={{ gap: 8 }}>
         <PixelText style={{ fontSize: 16, lineHeight: 25 }}>
-          FRIENDS {friendCount} / {visitors.length}
+          {tab === 'memories'
+            ? `MEMORIES ${memories.length}`
+            : `FRIENDS ${friendCount} / ${visitors.length}`}
         </PixelText>
         <BodyText style={{ fontSize: 12 }}>
-          {metCount} of {visitors.length} met · befriend visitors to choose them as guardians
+          {tab === 'memories'
+            ? 'Small moments you chose to keep with your companions.'
+            : `${metCount} of ${visitors.length} met · befriend visitors to choose them as guardians`}
         </BodyText>
-        <View
-          accessibilityRole="progressbar"
-          accessibilityLabel="Befriended visitors"
-          accessibilityValue={{ min: 0, max: visitors.length, now: friendCount }}
-          style={{
-            height: 10,
-            borderRadius: 999,
-            borderWidth: 2,
-            borderColor: c.outline,
-            backgroundColor: c.body,
-            overflow: 'hidden',
-          }}
-        >
+        {tab !== 'memories' && (
           <View
+            accessibilityRole="progressbar"
+            accessibilityLabel="Befriended visitors"
+            accessibilityValue={{ min: 0, max: visitors.length, now: friendCount }}
             style={{
-              height: '100%',
-              width: `${(friendCount / visitors.length) * 100}%`,
-              backgroundColor: c.roam,
+              height: 10,
+              borderRadius: 999,
+              borderWidth: 2,
+              borderColor: c.outline,
+              backgroundColor: c.body,
+              overflow: 'hidden',
             }}
-          />
-        </View>
+          >
+            <View
+              style={{
+                height: '100%',
+                width: `${(friendCount / visitors.length) * 100}%`,
+                backgroundColor: c.roam,
+              }}
+            />
+          </View>
+        )}
       </View>
       <Tabs
         value={tab}
         onValueChange={(value) => {
-          setTab(value);
+          setSelection({ request: requestedTab, tab: value });
           feedback('select');
         }}
       >
@@ -115,6 +136,11 @@ export default function FieldJournal() {
           <Tabs.Trigger value="postcards">
             <Tabs.Label style={{ color: c.ink, fontFamily: 'Nunito_600SemiBold' }}>
               POSTCARDS
+            </Tabs.Label>
+          </Tabs.Trigger>
+          <Tabs.Trigger value="memories">
+            <Tabs.Label style={{ color: c.ink, fontFamily: 'Nunito_600SemiBold' }}>
+              MEMORIES
             </Tabs.Label>
           </Tabs.Trigger>
         </Tabs.List>
@@ -257,7 +283,7 @@ export default function FieldJournal() {
             );
           }}
         />
-      ) : (
+      ) : tab === 'postcards' ? (
         <FlatList
           key="postcards"
           data={postcards}
@@ -266,6 +292,65 @@ export default function FieldJournal() {
           renderItem={({ item }) => <PostcardArt postcard={item} />}
           ListEmptyComponent={<JournalEmpty onPress={() => router.replace('/missions')} />}
         />
+      ) : (
+        <ScrollView contentContainerStyle={{ gap: 14, paddingBottom: 12 }}>
+          {pendingMemories.map((offer) => (
+            <MemoryReflection
+              key={offer.id}
+              offer={offer}
+              onKeep={() => {
+                useGame.getState().recordCompanionMemory(offer.id);
+                if (useGame.getState().companionMemories.some((memory) => memory.id === offer.id)) {
+                  setKeptMessage(`A memory with ${offer.companion.name} is saved.`);
+                  setMemoryPage(0);
+                }
+              }}
+              onSkip={() => useGame.getState().dismissCompanionMemory(offer.id)}
+            />
+          ))}
+          {keptMessage && (
+            <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
+              {keptMessage}
+            </BodyText>
+          )}
+          <CompanionMemories memories={pageMemories} limit={5} />
+          {memoryPages > 1 && (
+            <View style={{ gap: 8 }}>
+              <BodyText
+                accessibilityLiveRegion="polite"
+                style={{ fontSize: 12, textAlign: 'center' }}
+              >
+                Page {visibleMemoryPage + 1} of {memoryPages} · {memories.length} memories
+              </BodyText>
+              <View style={{ flexDirection: 'row', gap: 10 }}>
+                <View style={{ flex: 1 }}>
+                  <PixelButton
+                    small
+                    light
+                    label="NEWER"
+                    disabled={visibleMemoryPage === 0}
+                    onPress={() => setMemoryPage(visibleMemoryPage - 1)}
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <PixelButton
+                    small
+                    light
+                    label="OLDER"
+                    disabled={visibleMemoryPage === memoryPages - 1}
+                    onPress={() => setMemoryPage(visibleMemoryPage + 1)}
+                  />
+                </View>
+              </View>
+            </View>
+          )}
+          <PixelButton
+            small
+            light
+            label="PLAN ANOTHER BREAK"
+            onPress={() => router.replace('/missions')}
+          />
+        </ScrollView>
       )}
       <PixelButton label="BACK TO THE GARDEN" light onPress={() => goBackOrReplace('/')} />
     </View>

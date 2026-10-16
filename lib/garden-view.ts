@@ -1,29 +1,44 @@
-import { useEffect, useRef, useState } from 'react';
+import { useSyncExternalStore } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import type { ViewMode } from '@/lib/garden-projection';
 
 const KEY = 'napattack-garden-view';
+let current: ViewMode = 'flat';
+let chosen = false;
+let loading: Promise<void> | null = null;
+let writes: Promise<void> = Promise.resolve();
+const listeners = new Set<() => void>();
+const snapshot = () => current;
+const serverSnapshot = (): ViewMode => 'flat';
+const emit = () => listeners.forEach((listener) => listener());
 
-// Device-local display preference for the garden (top-down or 2.5D). Not game
-// state: it never syncs and has no effect on rules or rewards.
-export function useGardenView(): [ViewMode, (v: ViewMode) => void] {
-  const [view, setView] = useState<ViewMode>('flat');
-  const chosen = useRef(false);
-  useEffect(() => {
-    let alive = true;
-    AsyncStorage.getItem(KEY)
-      .then((v) => {
-        if (alive && !chosen.current && (v === 'flat' || v === 'tilt')) setView(v);
-      })
-      .catch(() => {});
-    return () => {
-      alive = false;
-    };
-  }, []);
-  const choose = (v: ViewMode) => {
-    chosen.current = true;
-    setView(v);
-    AsyncStorage.setItem(KEY, v).catch(() => {});
-  };
-  return [view, choose];
+function hydrate() {
+  loading ??= AsyncStorage.getItem(KEY)
+    .then((value) => {
+      if (!chosen && (value === 'flat' || value === 'tilt') && value !== current) {
+        current = value;
+        emit();
+      }
+    })
+    .catch(() => {});
+}
+function subscribe(listener: () => void) {
+  listeners.add(listener);
+  hydrate();
+  return () => listeners.delete(listener);
+}
+function choose(value: ViewMode) {
+  chosen = true;
+  if (value !== current) {
+    current = value;
+    emit();
+  }
+  // Preserve the order of quick choices even on a slow storage backend.
+  writes = writes.then(() => AsyncStorage.setItem(KEY, value)).catch(() => {});
+}
+
+// Shared device-local display preference: Home and the nap scene agree
+// immediately, including while a saved preference is still loading.
+export function useGardenView(): [ViewMode, (view: ViewMode) => void] {
+  return [useSyncExternalStore(subscribe, snapshot, serverSnapshot), choose];
 }

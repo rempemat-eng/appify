@@ -33,6 +33,8 @@ import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldPreview } from '@/components/world-scene';
 import { useGardenView } from '@/lib/garden-view';
+import type { BreakIntention } from '@/lib/companion-memories';
+import { BreakIntentionPicker } from '@/components/companion-memories';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
@@ -300,7 +302,7 @@ export function HomeScreen() {
               setGardenView(mode);
             }}
             style={{
-              minHeight: 32,
+              minHeight: 44,
               paddingHorizontal: 12,
               justifyContent: 'center',
               borderRadius: 999,
@@ -420,6 +422,7 @@ export function HomeScreen() {
   );
 }
 export function MissionsScreen() {
+  const [intention, setIntention] = useState<BreakIntention | null>(null);
   const { height } = useWindowDimensions();
   const compact = height < 760;
   const p = useGame((s) => s.player);
@@ -428,8 +431,13 @@ export function MissionsScreen() {
     <Page>
       <PixelText style={{ fontSize: 16 }}>GO TOUCH GRASS</PixelText>
       <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-        Pick a place for a break. Demo time: 1 real second = 1 simulated MIN.
+        Your companion explores while you take a break. Demo time: 1 real second = 1 simulated MIN.
       </BodyText>
+      <BreakIntentionPicker
+        value={intention}
+        onChange={setIntention}
+        disabled={p.mode !== 'awake'}
+      />
       {missions.map((m, index) => {
         const locked = p.level < m.level;
         return (
@@ -475,7 +483,10 @@ export function MissionsScreen() {
                     : `START ${m.name}`
               }
               disabled={locked || p.mode !== 'awake'}
-              onPress={() => useGame.getState().sleep(m.id)}
+              onPress={() => {
+                useGame.getState().sleep(m.id, intention);
+                if (useGame.getState().player?.mode === 'mission') setIntention(null);
+              }}
             />
           </CozyPanel>
         );
