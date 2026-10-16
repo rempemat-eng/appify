@@ -159,7 +159,7 @@ function Onboarding() {
               </View>
             </PixelScene>
             <BodyText style={{ textAlign: 'center' }}>
-              Plant a seed. Your Grassling grows while you nap.
+              Plant a seed. Your Grassling naps and grows while you spend time away.
             </BodyText>
           </>
         ) : (
@@ -292,7 +292,7 @@ function ScreenOff() {
             simulated · 1 real second = 1 offline MIN
           </BodyText>
           <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold', fontSize: 12 }}>
-            Device screen usage is not verified.
+            Demo timer only. Sleep and phone inactivity are not measured.
           </BodyText>
           {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
         </View>
@@ -311,7 +311,7 @@ function ScreenOff() {
               >
                 {session?.status === 'failed'
                   ? 'TOGETHER ENDED EARLY · ORDINARY REWARDS KEPT'
-                  : '+50% GRASS IF BOTH STAY OFF 10 MIN'}
+                  : '+50% GRASS IF BOTH COMPLETE 10 SIMULATED MIN'}
               </PixelText>
             </View>
           )}
