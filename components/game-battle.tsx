@@ -149,7 +149,17 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
     () => request.practice && !gameStore.getState().tips.includes('timing'),
   );
   const stagePixel = Math.max(1, Math.floor(Math.min(width, 640) / 160));
-  const petSize = Math.min(256, Math.floor((Math.min(width, 640) - 24) / 64) * 32);
+  // Fighters fit the width AND the height left between the HP header and the card
+  // tray (~530px together), so short laptop windows don't hide them behind the tray.
+  const stageRoom = height - 530 - 39 * stagePixel;
+  const petSize = Math.max(
+    96,
+    Math.min(
+      256,
+      Math.floor((Math.min(width, 640) - 24) / 64) * 32,
+      Math.floor(stageRoom / 32) * 32,
+    ),
+  );
   const [lifted, setLifted] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [target] = useState(() => guardianPlayer(request.target));
