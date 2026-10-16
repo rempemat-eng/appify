@@ -27,6 +27,7 @@ import { Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/ga
 import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { GardenWorld } from '@/components/garden-world';
+import { WorldScene } from '@/components/world-scene';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
@@ -362,28 +363,28 @@ function ScreenOff() {
             </View>
           )}
           {m ? (
-            <PixelScene
-              player={p}
-              species={guardian.species}
-              level={p.level}
-              kind={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
-              height={140}
-              style={{
-                width: '100%',
-                alignItems: 'center',
-                justifyContent: 'flex-end',
-                paddingBottom: 15,
-              }}
+            <View
+              onLayout={(event) => setNapWidth(event.nativeEvent.layout.width)}
+              style={{ width: '100%', alignItems: 'center' }}
             >
-              <Pet
-                species={guardian.species}
-                visitor={guardian.guardian}
-                level={p.level}
-                hat={p.hat}
-                walking
-                size={96}
-              />
-            </PixelScene>
+              {napWidth > 0 && (
+                <View
+                  style={{
+                    borderRadius: 18,
+                    overflow: 'hidden',
+                    borderWidth: 2,
+                    borderColor: c.napOutline,
+                  }}
+                >
+                  {/* Your Grassling's journey: a 2.5D diorama of where it went. */}
+                  <WorldScene
+                    world={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
+                    width={napWidth - 4}
+                    player={p}
+                  />
+                </View>
+              )}
+            </View>
           ) : (
             <View
               onLayout={(event) => setNapWidth(event.nativeEvent.layout.width)}

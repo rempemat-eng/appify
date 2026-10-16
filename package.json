@@ -13,11 +13,11 @@
     "lint": "oxlint --type-aware --type-check",
     "lint:css": "node scripts/lint-css.mjs && npm run check:usefulness",
     "check:usefulness": "node --import tsx lib/usefulness.test.ts",
-    "check:core": "npm run check:usefulness && node --import tsx lib/turn-resolution.test.ts && node --import tsx lib/daily-rhythm.test.ts && node --import tsx lib/bilt.test.ts && node --import tsx lib/garden-path.test.ts && node --import tsx lib/art-sprites.test.ts && node --import tsx lib/garden-projection.test.ts",
+    "check:core": "npm run check:usefulness && node --import tsx lib/turn-resolution.test.ts && node --import tsx lib/daily-rhythm.test.ts && node --import tsx lib/bilt.test.ts && node --import tsx lib/garden-path.test.ts && node --import tsx lib/art-sprites.test.ts && node --import tsx lib/garden-projection.test.ts && node --import tsx lib/world-maps.test.ts",
     "check:game": "node --import tsx lib/game.integration.test.ts",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",
-    "art": "python3 scripts/art/garden.py && python3 scripts/art/pets.py && python3 scripts/art/battle.py && oxfmt --write lib/garden-map.ts lib/pet-sprites.ts"
+    "art": "python3 scripts/art/garden.py && python3 scripts/art/pets.py && python3 scripts/art/battle.py && python3 scripts/art/worlds.py && oxfmt --write lib/garden-map.ts lib/pet-sprites.ts lib/world-maps.ts lib/world-assets.ts"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",

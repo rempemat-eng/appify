@@ -31,6 +31,7 @@ import { GardenTip } from '@/components/garden-guide';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
+import { WorldPreview } from '@/components/world-scene';
 import { useGardenView } from '@/lib/garden-view';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
@@ -424,17 +425,11 @@ export function MissionsScreen() {
         const locked = p.level < m.level;
         return (
           <CozyPanel key={m.id} style={{ padding: 12, gap: 10, opacity: locked ? 0.85 : 1 }}>
-            <PixelScene
-              mini
-              kind={(['park', 'book', 'mountain'] as const)[index]}
-              species={p.species}
-              level={p.level}
-              height={compact ? 80 : 120}
-              groundInset={18}
-              style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 4 }}
-            >
-              <GuardianPet player={p} size={56} bob={false} />
-            </PixelScene>
+            <WorldPreview
+              world={(['park', 'book', 'mountain'] as const)[index]}
+              player={p}
+              height={compact ? 96 : 132}
+            />
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
                 {m.name}
