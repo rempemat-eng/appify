@@ -560,7 +560,7 @@ export function MissionsScreen() {
         const world = isWorldId(m.id) ? m.id : null;
         return (
           <CozyPanel key={m.id} style={{ padding: 12, gap: 10, opacity: locked ? 0.85 : 1 }}>
-            {world && <WorldPreview world={world} player={p} height={compact ? 96 : 132} />}
+            {world && <WorldPreview world={world} player={p} height={compact ? 132 : 176} />}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
                 {m.name}

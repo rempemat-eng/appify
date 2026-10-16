@@ -62,6 +62,8 @@ To add a place:
 5. Ensure every leg of the companion route, including the return to its start, is reachable. Keep the resident on reachable ground. The renderer uses the shared pathfinder and projection; do not bypass either with a screen-specific animation.
 6. Extend the existing map regression tests for any new contract. Review its static Missions preview and active departure scene, in flat and tilted presentation where those views are exposed.
 
+`worldCatalogue.previewLandmark` names an existing object whose projected silhouette frames the mission preview. `lib/world-framing.ts` centres and clamps that camera, and lets a short, wide preview grow enough to retain the landmark. Review both compact and regular heights when choosing it.
+
 For a visual-only pass on an existing place, preserve its object IDs, dimensions, water mask, route and resident point. Material reuse and a new composition are separate choices; do not rearrange a tested route to accommodate an unnecessary decorative flourish.
 
 ## Add a supporting screen vignette
@@ -119,6 +121,7 @@ Use the existing checks for meaningful coverage:
 | -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
 | `lib/art-direction.test.ts`                  | Canonical material/ramp contracts, bounded card pixels, world catalogue coverage, scene asset imports and exported PNG dimensions | Harmonious composition, sufficient detail or a pleasing animation |
 | `lib/art-sprites.test.ts`                    | Sprite rows, dimensions, palette indices and anchors are well formed                                                              | Character, colour harmony or a readable face                      |
+| `lib/world-framing.test.ts`                  | Landmark selection and preview camera bounds                                                                                      | A complete browser or phone visual review                         |
 | `lib/world-maps.test.ts`                     | World routes and residents are reachable; instance IDs are unique                                                                 | Good composition or natural-looking movement                      |
 | Garden, projection and Home lifecycle checks | Emitted geometry, callback guards and relevant source regressions                                                                 | Native scheduling, phone lock/resume or visual quality            |
 | `npm run verify`                             | Required type, lint, rule, store, regression and web-export checks                                                                | A complete device play-test                                       |

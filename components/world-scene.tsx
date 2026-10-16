@@ -25,6 +25,7 @@ import {
 } from '@/lib/garden-projection';
 import { GuardianPet } from '@/components/guardian-pet';
 import { Pet } from '@/components/game-ui';
+import { worldPreviewFrame } from '@/lib/world-framing';
 
 // Who you might bump into on each journey (scenery only: no rewards or rules).
 export const worldResident = Object.fromEntries(
@@ -304,21 +305,22 @@ export function WorldPreview({
   height: number;
 }) {
   const [width, setWidth] = useState(0);
-  const full = width ? makeProjection('tilt', width, WORLD, Math.round(width * 0.14)).height : 0;
+  const sceneWidth = Math.max(0, width - 4);
+  const frame = sceneWidth ? worldPreviewFrame(world, sceneWidth, Math.max(0, height - 4)) : null;
   return (
     <View
       onLayout={(e) => setWidth(Math.round(e.nativeEvent.layout.width))}
       style={{
-        height,
+        height: frame ? frame.height + 4 : height,
         borderRadius: 14,
         overflow: 'hidden',
         borderWidth: 2,
         borderColor: '#2A2421',
       }}
     >
-      {width > 0 && (
-        <View style={{ position: 'absolute', left: 0, top: -Math.round((full - height) * 0.42) }}>
-          <WorldScene world={world} width={width - 4} player={player} still />
+      {frame && (
+        <View style={{ position: 'absolute', left: 0, top: -frame.top }}>
+          <WorldScene world={world} width={sceneWidth} player={player} still />
         </View>
       )}
     </View>
