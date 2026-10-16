@@ -64,14 +64,14 @@ export function CozySheet({
   style?: ViewStyle;
 }) {
   const reduced = useReducedMotion();
-  const [animating, setAnimating] = useState(true);
-  const active = useRef(true);
+  const [animating, setAnimating] = useState(!reduced);
+  const active = useRef(!reduced);
   const finishAnimation = useCallback(() => {
     active.current = false;
     setAnimating(false);
   }, []);
   const y = useSharedValue(reduced ? 0 : 40);
-  const alpha = useSharedValue(0);
+  const alpha = useSharedValue(reduced ? 1 : 0);
   const skipAnimation = () => {
     if (!active.current) return;
     cancelAnimation(y);
@@ -82,18 +82,20 @@ export function CozySheet({
     onSkip?.();
   };
   useEffect(() => {
+    if (reduced || !active.current) {
+      cancelAnimation(y);
+      cancelAnimation(alpha);
+      y.set(0);
+      alpha.set(1);
+      finishAnimation();
+      return undefined;
+    }
     y.set(
-      reduced
-        ? 0
-        : withSpring(0, { damping: 22, stiffness: 240, overshootClamping: true }, (finished) => {
-            if (finished) scheduleOnRN(finishAnimation);
-          }),
-    );
-    alpha.set(
-      withTiming(1, { duration: reduced ? 100 : 180 }, (finished) => {
-        if (finished && reduced) scheduleOnRN(finishAnimation);
+      withSpring(0, { damping: 22, stiffness: 240, overshootClamping: true }, (finished) => {
+        if (finished) scheduleOnRN(finishAnimation);
       }),
     );
+    alpha.set(withTiming(1, { duration: 180 }));
     return () => {
       cancelAnimation(y);
       cancelAnimation(alpha);

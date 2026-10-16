@@ -12,7 +12,8 @@ import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { CardIllustration } from '@/components/habit-cards';
 import { PixelProp } from '@/components/pixel-scenes';
-import { PixelText, Pet } from '@/components/game-ui';
+import { PixelText } from '@/components/game-ui';
+import { GuardianPet } from '@/components/guardian-pet';
 import { cards, type CardId } from '@/lib/cards';
 import type { Player } from '@/lib/game';
 
@@ -209,10 +210,9 @@ export function GrowthFrames({ player }: { player: Player }) {
   }, []);
   return (
     <View>
-      <Pet
-        species={player.species}
+      <GuardianPet
+        player={player}
         level={reduced || frame >= 2 ? player.level : Math.max(1, player.level - 1)}
-        hat={player.hat}
         bob={false}
         sleeping={!reduced && frame === 1}
       />

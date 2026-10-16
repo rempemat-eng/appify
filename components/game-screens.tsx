@@ -14,6 +14,7 @@ import { router, useIsFocused } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowUp, ArrowDown, Bot, Heart } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
+import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
 import { matchup } from '@/lib/battle';
@@ -24,6 +25,8 @@ import { budgetVoice, dayKey } from '@/lib/offline-rules';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
 import { collectionOf, guardianPlayer, isVisitorId, visitorInfo } from '@/lib/visitors';
 import { FriendCode } from '@/components/friend-code';
+import { DailyRhythmCard } from '@/components/daily-rhythm';
+import { GuardianPet } from '@/components/guardian-pet';
 import { GardenVisitor, GuardianPicker } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
@@ -80,8 +83,7 @@ export function HomeScreen() {
   const [line, setLine] = useState(0);
   const raidId = useGame((s) => s.alerts[0]?.raid.id);
   const [raidFeedback, setRaidFeedback] = useState({ raidId, slumped: Boolean(raidId) });
-  if (raidFeedback.raidId !== raidId)
-    setRaidFeedback({ raidId, slumped: raidId ? true : raidFeedback.slumped });
+  if (raidFeedback.raidId !== raidId) setRaidFeedback({ raidId, slumped: Boolean(raidId) });
   useEffect(() => {
     if (!raidId) return undefined;
     const timer = setTimeout(() => setRaidFeedback({ raidId, slumped: false }), 10000);
@@ -91,10 +93,17 @@ export function HomeScreen() {
     if (reduced) return undefined;
     const timer = setInterval(() => {
       setLine((n) => n + 1);
-      useGame.setState({ voice: null });
     }, 6000);
     return () => clearInterval(timer);
   }, [reduced]);
+  useEffect(() => {
+    if (!voice) return undefined;
+    const timer = setTimeout(() => {
+      // A newer message must keep its own full reading time.
+      if (useGame.getState().voice === voice) useGame.setState({ voice: null });
+    }, 6000);
+    return () => clearTimeout(timer);
+  }, [voice]);
   useEffect(() => {
     if (!crumbs) return undefined;
     const timer = setTimeout(() => setCrumbs(false), 600);
@@ -150,7 +159,7 @@ export function HomeScreen() {
         level={p.level}
         player={p}
         rainCloudBottom={rainCloudBottom}
-        height={Math.max(240, Math.round(Math.min(width, 640) * 0.55))}
+        height={Math.max(240, Math.round(Math.min(width, gameLayout.maxWidth) * 0.55))}
         style={{
           marginHorizontal: -16,
           borderWidth: 0,
@@ -164,11 +173,8 @@ export function HomeScreen() {
         }}
       >
         <View onLayout={(event) => setPetTop(event.nativeEvent.layout.y)}>
-          <Pet
-            species={guardian.species}
-            visitor={guardian.guardian}
-            level={p.level}
-            hat={p.hat}
+          <GuardianPet
+            player={p}
             grumpy={p.mood < 30}
             size={128}
             yawning={paused}
@@ -274,6 +280,7 @@ export function HomeScreen() {
           <PixelButton label="JOURNAL" small light onPress={() => router.push('/journal')} />
         </View>
       </View>
+      <DailyRhythmCard />
       <GuardianPicker player={p} />
       <Modal
         visible={statsOpen}
@@ -291,7 +298,13 @@ export function HomeScreen() {
           }}
         >
           <CozySheet
-            style={{ padding: 16, gap: 12, width: '100%', maxWidth: 608, alignSelf: 'center' }}
+            style={{
+              padding: gameLayout.gutter,
+              gap: 12,
+              width: '100%',
+              maxWidth: gameLayout.maxWidth - gameLayout.gutter * 2,
+              alignSelf: 'center',
+            }}
           >
             <PixelText style={{ fontSize: 16 }}>GARDEN STATS</PixelText>
             <ScrollView
@@ -334,6 +347,8 @@ export function HomeScreen() {
   );
 }
 export function MissionsScreen() {
+  const { height } = useWindowDimensions();
+  const compact = height < 760;
   const p = useGame((s) => s.player);
   if (!p) return null;
   return (
@@ -348,11 +363,11 @@ export function MissionsScreen() {
               kind={(['park', 'book', 'mountain'] as const)[index]}
               species={p.species}
               level={p.level}
-              height={120}
+              height={compact ? 80 : 120}
               groundInset={18}
               style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 4 }}
             >
-              <Pet species={p.species} level={p.level} hat={p.hat} size={56} bob={false} />
+              <GuardianPet player={p} size={56} bob={false} />
             </PixelScene>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
@@ -406,7 +421,7 @@ export function ShopScreen() {
       <PixelText style={{ fontSize: 16 }}>GROW YOUR GARDEN</PixelText>
       <CozyPanel style={{ padding: 16, gap: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Pet species={p.species} level={p.level + 1} size={96} bob={false} />
+          <GuardianPet player={p} level={p.level + 1} size={96} bob={false} />
           <View style={{ flex: 1, gap: 4 }}>
             <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}>
               Level {p.level} → {p.level + 1}
@@ -491,8 +506,17 @@ export function ShopScreen() {
                   {equipped ? 'WEARING' : 'OWNED'}
                 </BodyText>
               )}
-              <Pet species={p.species} level={p.level} hat={h.id} size={80} bob={false} />
-              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>{h.id}</BodyText>
+              <GuardianPet player={p} hat={h.id} size={80} bob={false} />
+              <BodyText
+                style={{
+                  fontFamily: 'Nunito_800ExtraBold',
+                  minHeight: 40,
+                  textAlign: 'center',
+                  textAlignVertical: 'center',
+                }}
+              >
+                {h.id}
+              </BodyText>
               <View style={{ alignSelf: 'stretch' }}>
                 <PixelButton
                   small
@@ -779,12 +803,10 @@ export function ArenaScreen() {
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
-          padding: 16,
-          paddingBottom: 112 + insets.bottom,
+          padding: gameLayout.gutter,
+          paddingBottom: dockClearance(insets.bottom),
           gap: 12,
-          maxWidth: 640,
-          width: '100%',
-          alignSelf: 'center',
+          ...gameColumn,
         }}
         ListHeaderComponent={header}
         ListFooterComponent={footer}
