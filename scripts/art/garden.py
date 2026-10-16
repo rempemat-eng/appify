@@ -1,7 +1,7 @@
 """Draws NapAttack's top-down garden (GBA/DS-era overworld style).
 
 Run:  python3 scripts/art/garden.py
-Outputs PNGs (4x nearest-neighbour) into assets/garden/ plus lib/garden-map.ts with
+Outputs PNGs (6x nearest-neighbour) into assets/garden/ plus lib/garden-map.ts with
 object positions, hotspots and the walkable grid, all in native pixels.
 """
 from __future__ import annotations
@@ -13,6 +13,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise  # noqa: E402
+from garden_decor import reading_nook, watering_can  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'garden')
@@ -22,9 +23,9 @@ W, H = 192, 176  # native map size (12 x 11 tiles of 16px)
 SCALE = 6
 
 # ---- palette -------------------------------------------------------------
-G = ['#2E6538', '#478A44', '#62A853', '#80C266', '#A9DA86']  # grass dark -> light
-P = ['#6E4B30', '#A87C4E', '#C99D68', '#E0BE88', '#F0D9A8']  # path edge -> light
-WTR = ['#29506B', '#3A7598', '#549DC2', '#86C6E2', '#D9F1F8']  # water
+G = ['#315C3B', '#5E9256', '#73A85E', '#7CAE66', '#A9CD83']  # grass dark -> light
+P = ['#795C3D', '#B28D5F', '#C8A878', '#D4B789', '#E7D3A5']  # path edge -> light
+WTR = ['#284C5E', '#39738A', '#62A3B1', '#A1CFD0', '#E0EFDF']  # water
 SAND = ['#B89660', '#D8BC85', '#EAD5A3']
 WOOD = ['#4A3122', '#6E4A30', '#93673F', '#B98A57', '#D9AE78']
 STONE = ['#4B4E52', '#6F7478', '#959A9C', '#BFC3BF', '#E3E4DC']
@@ -51,6 +52,7 @@ def thick_path(points, radius, wobble_seed):
 PATH = thick_path([(96, 180), (96, 150), (92, 128), (96, 104), (96, 92)], 9.5, 1)
 PATH |= thick_path([(96, 96), (80, 86), (60, 80), (44, 76)], 7.5, 2)    # to the nap hut
 PATH |= thick_path([(98, 94), (118, 86), (140, 82), (152, 80)], 7.5, 3)  # to Moss's stall
+PATH |= thick_path([(98, 88), (104, 78), (106, 67)], 3.5, 4)  # a quiet reading corner
 PATH |= disc(96, 98, 13)  # little plaza at the fork
 
 POND_C = (42, 132)
@@ -69,33 +71,30 @@ FLOWER_BEDS = [(126, 112, 34, 14), (148, 140, 22, 10)]  # x, y, w, h (dark soil 
 
 def draw_terrain(frame: int) -> Canvas:
     cv = Canvas(W, H)
-    # grass base with large soft patches, tufts and flecks
+    # Broad, close-valued grass masses. Detail gathers near the garden's edges,
+    # leaving the companion's clearing quieter than the plants and buildings.
     for y in range(H):
         for x in range(W):
             n = smooth_noise(x, y, 22, 11)
-            base = G[2] if n < 0.55 else G[3]
-            if 0.53 < n < 0.57 and (x + y) % 2:
-                base = G[2]
+            base = G[2] if n < 0.62 else G[3]
             cv.set(x, y, base)
-    # tufts: little "v" shapes, swaying between frames
+    # Jittered clusters, rather than a visible lawn of repeated tile marks.
     for ty in range(0, H, 8):
         for tx in range(0, W, 8):
-            if noise2(tx, ty, 3) < 0.45:
-                x = tx + int(noise2(tx, ty, 4) * 6)
-                y = ty + int(noise2(tx, ty, 5) * 6)
+            x = tx + int(noise2(tx, ty, 4) * 8)
+            y = ty + int(noise2(tx, ty, 5) * 8)
+            clearing = ((x - 100) / 36) ** 2 + ((y - 92) / 30) ** 2 < 1
+            edge = min(x, W - x, y, H - y) < 22
+            cluster = smooth_noise(x, y, 25, 63) > 0.57
+            density = 0.06 if clearing else 0.42 if edge else 0.28 if cluster else 0.10
+            if noise2(tx, ty, 3) < density:
                 sway = 1 if (frame and noise2(tx, ty, 6) < 0.5) else 0
                 cv.set(x, y + 2, G[1]); cv.set(x + 2, y + 2, G[1])
                 cv.set(x + 1, y + 3, G[1])
                 cv.set(x + sway, y + 1, G[1]); cv.set(x + 2 + sway, y + 1, G[1])
                 cv.set(x + 1 + sway, y + 1, G[4]) if noise2(x, y, 9) < 0.4 else None
-            elif noise2(tx, ty, 7) < 0.25:
-                cv.set(tx + 3, ty + 4, G[4])
-    # tile-grid hint: very faint checker like GBA grass tiles
-    for y in range(0, H, 16):
-        for x in range(0, W, 16):
-            if (x // 16 + y // 16) % 2 == 0 and noise2(x, y, 12) < 0.5:
-                cv.set(x + 7, y + 9, G[1])
-                cv.set(x + 8, y + 9, G[1])
+            elif edge and noise2(tx, ty, 7) < 0.15:
+                cv.set(x, y, G[4])
 
     # pond bank (sand) then water
     for (x, y) in BANK:
@@ -127,13 +126,19 @@ def draw_terrain(frame: int) -> Canvas:
         cv.set(lx + 1, ly - 1, WTR[2])
         cv.set(lx, ly - 2, LEAF[4])
     cv.set(52, 136, RED[4]); cv.set(53, 136, RED[3])  # tiny water flower
+    # Reeds make the bank belong to the water; retain an open viewing edge.
+    for rx, ry in ((19, 128), (24, 120), (59, 125), (57, 146)):
+        cv.vline(rx, ry - 4, 5, LEAF[1])
+        cv.vline(rx + 2, ry - 3, 4, LEAF[2])
+        cv.set(rx - 1, ry - 4, LEAF[3])
+        cv.set(rx + 1, ry - 1, LEAF[3])
 
     # path: dirt with dark rim, grass overhang and pebbles
     for (x, y) in PATH:
         if not (0 <= x < W and 0 <= y < H):
             continue
         n = smooth_noise(x, y, 6, 40)
-        col = P[2] if n < 0.62 else P[3]
+        col = P[2] if n < 0.74 else P[3]
         cv.set(x, y, col)
     for (x, y) in PATH:
         edge_up = (x, y - 1) not in PATH
@@ -159,19 +164,23 @@ def draw_terrain(frame: int) -> Canvas:
         x = 92 + (4 if i % 2 else 0)
         cv.set(x, y, P[1]); cv.set(x + 1, y, P[1]); cv.set(x, y + 1, P[1])
 
-    # flower beds: dark soil with alternating blossoms
+    # Raised beds have a lit rim, a shaded front face and individual plants.
     for bi, (bx, by, bw, bh) in enumerate(FLOWER_BEDS):
         cv.rect(bx, by, bw, bh, WOOD[1])
         cv.rect(bx + 1, by + 1, bw - 2, bh - 2, '#5A3A26')
-        cv.hline(bx, by + bh, bw, G[1])
-        for fy in range(by + 2, by + bh - 2, 5):
-            for fx in range(bx + 3, bx + bw - 3, 5):
+        cv.hline(bx + 1, by, bw - 2, WOOD[3])
+        cv.hline(bx, by + bh - 1, bw, WOOD[0])
+        cv.hline(bx + 1, by + bh, bw - 1, G[1])
+        for fy in range(by + 3, by + bh - 2, 6):
+            for fx in range(bx + 3, bx + bw - 3, 6):
                 petals = [RED[3], '#F2D16B', CREAM[3], NAP[3]][(fx // 5 + fy // 5 + bi) % 4]
                 stem = LEAF[2]
-                cv.set(fx, fy + 2, stem); cv.set(fx + 1, fy + 3, LEAF[3])
+                cv.vline(fx, fy + 1, 3, stem)
+                cv.set(fx + 1, fy + 2, LEAF[3]); cv.set(fx - 1, fy + 3, LEAF[1])
                 for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
                     cv.set(fx + dx, fy + dy, petals)
                 cv.set(fx, fy, '#E8A33D')
+                cv.set(fx, fy - 1, CREAM[3] if petals != CREAM[3] else NAP[4])
     # wildflower clusters in the grass
     for i in range(26):
         x = int(noise2(i, 3, 60) * (W - 8)) + 4
@@ -193,7 +202,8 @@ def leaf_bundle(cv: Canvas, cx: float, cy: float, r: float, ramp, solid: set):
         dx, dy = (x + 0.5 - cx) / r, (y + 0.5 - cy) / r
         lit = -dx * 0.55 - dy * 0.85
         if lit > 0.55:
-            col = ramp[4] if (x * 3 + y) % 4 else ramp[3]
+            # Leaf-sized highlights, not a diagonal checker across every lobe.
+            col = ramp[4] if smooth_noise(x, y, 3, int(cx + cy * 7)) > 0.56 else ramp[3]
         elif lit > 0.05:
             col = ramp[3]
         elif lit > -0.45:
@@ -234,6 +244,9 @@ def tree(big: bool = True, autumn: bool = False) -> Canvas:
     for row in rows:
         for (bx, by, br) in row:
             leaf_bundle(cv, bx, by, br, ramp, solid)
+    # A branch fork connects the canopy to its trunk.
+    cv.set(tx + 1, h - 15, WOOD[1]); cv.set(tx, h - 16, WOOD[1])
+    cv.set(tx + tw - 2, h - 15, WOOD[2]); cv.set(tx + tw - 1, h - 16, WOOD[2])
     # canopy underside shadow onto trunk
     for x in range(tx, tx + tw):
         cv.set(x, h - 13, WOOD[0])
@@ -289,6 +302,11 @@ def nap_hut() -> Canvas:
         cv.hline(6, y, 38, WOOD[2])
     for x in (6, 43):
         cv.vline(x, 20, 20, WOOD[1])
+    # Narrow shaded return and grain knots give the timber wall thickness.
+    cv.rect(41, 23, 3, 16, WOOD[2])
+    cv.vline(43, 23, 16, WOOD[1])
+    for x, y in ((10, 27), (15, 35), (33, 37)):
+        cv.hline(x, y, 3, WOOD[2]); cv.set(x + 1, y - 1, WOOD[4])
     cv.hline(6, 39, 38, WOOD[1])
     # foundation stones
     for i, x in enumerate(range(5, 46, 5)):
@@ -312,14 +330,17 @@ def nap_hut() -> Canvas:
     for y in range(5, 20, 3):
         cv.set(w // 2 - 1 + (y % 2), y, NAP[3])
     cv.hline(0, 21, w, NAP[0])
+    cv.hline(2, 22, w - 4, NAP[1])  # visible thickness beneath the shingles
     # round door
     door = {(x, y) for (x, y) in disc(25, 31, 6.5) if y <= 39} | {(x, y) for x in range(19, 32) for y in range(31, 40)}
     for (x, y) in door:
-        cv.set(x, y, WOOD[1] if (x + y) % 5 else WOOD[0])
+        col = WOOD[1] if x % 4 else WOOD[0]
+        cv.set(x, y, WOOD[0] if y < 29 else col)
     for (x, y) in door:
         if any((x + dx, y + dy) not in door for dx, dy in ((1, 0), (-1, 0), (0, -1))):
             cv.set(x, y, WOOD[0])
-    cv.set(29, 34, '#F2D16B')
+    # A little leaf latch is a recurring garden-made detail.
+    cv.set(29, 34, LEAF[3]); cv.set(30, 33, LEAF[4]); cv.set(30, 34, LEAF[2])
     # crescent moon sign above door
     for (x, y) in disc(25, 15, 3):
         if (x - 26.4) ** 2 + (y - 14.2) ** 2 > 6:
@@ -337,14 +358,19 @@ def nap_hut() -> Canvas:
 
 
 def bed() -> Canvas:
-    """Round pillow bed where the Grassling naps."""
+    """Stitched pillow and a folded lavender blanket, rather than a food dish."""
     cv = Canvas(22, 12)
     rim = oval(11, 6.5, 10.5, 5.5)
     shade_blob(cv, rim, NAP[1], NAP[2], NAP[3], NAP[4])
     for (x, y) in oval(11, 7, 7.5, 3.5):
-        cv.set(x, y, CREAM[2] if (x + y) % 3 else CREAM[1])
+        cv.set(x, y, CREAM[1] if y > 8 else CREAM[2])
     for (x, y) in oval(8, 6, 3, 1.6):
         cv.set(x, y, CREAM[3])
+    cv.rect(11, 5, 7, 4, NAP[3])
+    cv.hline(11, 5, 7, NAP[4]); cv.hline(11, 8, 7, NAP[2])
+    cv.rect(13, 6, 3, 2, RED[4])  # one repaired fabric patch
+    for x, y in ((3, 5), (5, 9), (8, 10), (17, 9)):
+        cv.set(x, y, NAP[4])
     cv.outline(INK)
     return cv
 
@@ -380,6 +406,7 @@ def stall() -> Canvas:
     w, h = 46, 40
     cv = Canvas(w, h)
     cv.rect(3, 12, 2, 26, WOOD[1]); cv.rect(41, 12, 2, 26, WOOD[1])
+    cv.rect(5, 14, 36, 10, WOOD[0])  # shaded recess beneath the canopy
     # counter
     cv.rect(2, 24, 42, 13, WOOD[3])
     for x in range(2, 44, 6):
@@ -387,6 +414,7 @@ def stall() -> Canvas:
     cv.hline(2, 24, 42, WOOD[4]); cv.hline(2, 25, 42, WOOD[2]); cv.hline(2, 36, 42, WOOD[1])
     # hats on counter
     cv.rect(8, 20, 7, 4, '#4C6E9E'); cv.rect(7, 23, 10, 1, '#36507A')          # cap
+    cv.hline(9, 20, 4, '#7C9BC1')
     cv.rect(20, 17, 6, 6, '#3A3333'); cv.rect(18, 22, 10, 2, '#2A2421')       # top hat
     cv.hline(20, 21, 6, RED[2])
     for i, x in enumerate(range(31, 39)):                                     # crown
@@ -398,13 +426,17 @@ def stall() -> Canvas:
             col = '#5FA35A' if (x // 5) % 2 == 0 else CREAM[3]
             if y < 6:
                 col = '#3E7D44' if (x // 5) % 2 == 0 else CREAM[2]
+            elif x % 5 == 4:
+                col = '#4C8A50' if (x // 5) % 2 == 0 else CREAM[2]
             cv.set(x, y, col)
     for x in range(0, w):
         if x % 5 in (1, 2, 3):
             cv.set(x, 14, '#5FA35A' if (x // 5) % 2 == 0 else CREAM[3])
     cv.hline(0, 4, w, '#2E6538')
     # little sign
-    cv.rect(16, 0, 14, 5, WOOD[3]); cv.hline(18, 2, 10, WOOD[1])
+    cv.rect(16, 0, 14, 5, WOOD[3])
+    cv.hline(17, 0, 12, WOOD[4])
+    cv.rect(21, 1, 4, 2, NAP[1]); cv.hline(19, 3, 8, NAP[0])  # hat-shaped shop sign
     cv.outline(INK)
     return cv
 
@@ -415,6 +447,23 @@ def bowl() -> Canvas:
         cv.set(x, y, RED[2] if y > 3 else RED[3])
     for (x, y) in oval(6, 2.6, 4, 1.4):
         cv.set(x, y, '#E8C27A' if (x + y) % 2 else '#C9973F')  # seeds
+    cv.outline(INK)
+    return cv
+
+
+def leaf_lantern() -> Canvas:
+    """A warm seed-glass lantern hanging from a bent garden branch."""
+    cv = Canvas(12, 26)
+    cv.rect(2, 5, 3, 19, WOOD[2]); cv.vline(2, 6, 18, WOOD[1])
+    cv.set(3, 4, WOOD[3]); cv.hline(4, 3, 5, WOOD[3])
+    cv.set(8, 4, WOOD[2]); cv.vline(9, 5, 3, WOOD[1])
+    cv.rect(6, 9, 5, 8, WOOD[0])
+    cv.rect(7, 10, 3, 6, '#D6A456')
+    cv.vline(7, 10, 5, '#F4D58C'); cv.set(8, 11, CREAM[3])
+    cv.hline(6, 17, 5, WOOD[2])
+    cv.hline(5, 8, 7, LEAF[1]); cv.hline(6, 7, 5, LEAF[2])
+    cv.hline(7, 6, 3, LEAF[3]); cv.set(7, 7, LEAF[4])
+    cv.set(1, 24, WOOD[1]); cv.hline(2, 24, 5, WOOD[1])
     cv.outline(INK)
     return cv
 
@@ -443,6 +492,12 @@ def fence_h(length: int) -> Canvas:
     for x in range(1, length - 2, 6):
         cv.rect(x, 1, 4, 11, WOOD[3]); cv.vline(x, 1, 11, WOOD[4]); cv.vline(x + 3, 1, 11, WOOD[2])
         cv.hline(x, 1, 4, WOOD[4]); cv.set(x, 1, WOOD[2])
+    # Two climbing stems soften the fence without obscuring the entrance.
+    for x in (12, length - 19):
+        cv.vline(x, 5, 7, LEAF[1])
+        for dx, y in ((-1, 6), (1, 8), (-1, 10)):
+            cv.hline(x + dx, y, 2, LEAF[2]); cv.set(x + dx, y - 1, LEAF[3])
+        cv.set(x + 1, 5, NAP[4])
     cv.outline(INK)
     return cv
 
@@ -486,6 +541,9 @@ OBJECTS = [
     ('bed', 'bed', 62, 66, 'nap'),
     ('mailbox', 'mailbox', 6, 74, 'mail'),
     ('stall', 'stall', 132, 40, 'shop'),
+    ('reading-nook', 'reading_nook', 92, 40, None),
+    ('lantern', 'lantern', 118, 62, None),
+    ('watering-can', 'watering_can', 172, 100, None),
     ('signpost', 'signpost', 112, 94, 'missions'),
     ('bowl', 'bowl', 74, 92, 'feed'),
     ('bush-1', 'bush', 172, 120, None),
@@ -504,6 +562,7 @@ def main():
         'hut': nap_hut(), 'bed': bed(), 'mailbox': mailbox(), 'stall': stall(),
         'signpost': signpost(), 'bowl': bowl(), 'bush': bush(), 'rock0': rock(0), 'rock1': rock(1),
         'fence_l': fence_h(80), 'fence_r': fence_h(78), 'gate': gate(),
+        'reading_nook': reading_nook(), 'watering_can': watering_can(), 'lantern': leaf_lantern(),
     }
     for frame in (0, 1):
         terrain = draw_terrain(frame)
@@ -563,7 +622,7 @@ def main():
     prev = draw_terrain(0)
     for (_id, key, x, y, _a) in sorted(OBJECTS, key=lambda o: o[3] + sprites[o[1]].h):
         prev.paste(sprites[key], x, y)
-    prev.save(os.path.join(ROOT, '..', 'garden-preview.png') if False else '/tmp/garden-preview.png', 4)
+    prev.save('/tmp/garden-preview.png', 4)
     print('ok', W, H, len(sprites), 'sprites')
 
 

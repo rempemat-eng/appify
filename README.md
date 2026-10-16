@@ -41,3 +41,9 @@ npm run check:game
 The exported web files are written to `dist`. Serve them over HTTP when testing; opening individual HTML files directly does not reproduce normal routing or browser storage behaviour.
 
 The game currently uses accelerated demo time: one real second represents one simulated offline minute. The play allowance and its 30-minute window use real time. Phone usage and sleep are not measured. Real multiplayer and device suspension require separate testing with a configured backend and physical devices.
+
+## Garden artwork
+
+The garden is a 192 × 176 native-pixel scene, exported at 6× with nearest-neighbour scaling. Edit `scripts/art/garden.py` and `garden_decor.py`, then run `PYTHONDONTWRITEBYTECODE=1 python scripts/art/garden.py` with Pillow installed. This regenerates the PNGs and the object sizes, hotspots and walk grid in `lib/garden-map.ts`. Format the generated map with `npx oxfmt --write lib/garden-map.ts` before committing it. Companion artwork is generated separately by `scripts/art/pets.py`.
+
+Keep light coming from the upper left, use material-specific highlights and shaded faces, and concentrate texture near borders and objects. Leave the companion's clearing quiet. Lavender fabric, leaf fittings and warm timber connect the garden's objects. New object footprints must leave every hotspot reachable. Decorative pixel assets retain their art size; interactive targets are at least 44 screen pixels. Check awake and napping scenes, reduced motion and phone-sized layouts after changes.

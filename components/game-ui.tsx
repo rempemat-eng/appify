@@ -255,8 +255,19 @@ export function Pet({
   }, [reduced, x, y]);
   useEffect(() => {
     if (reduced || !bob || sleeping || walking) return undefined;
-    const timer = setInterval(() => setBreath((v) => !v), 400);
-    return () => clearInterval(timer);
+    // Slow pixel breathing, with separate phases for the garden's companions.
+    let timer: ReturnType<typeof setInterval> | undefined;
+    const start = setTimeout(
+      () => {
+        setBreath(true);
+        timer = setInterval(() => setBreath((v) => !v), 1400);
+      },
+      300 + Math.random() * 1000,
+    );
+    return () => {
+      clearTimeout(start);
+      if (timer) clearInterval(timer);
+    };
   }, [reduced, bob, sleeping, walking]);
   useEffect(() => {
     if (reduced) return undefined;
@@ -428,7 +439,7 @@ export function Pet({
                   ? 7 + Math.floor((ry * 24) / 32)
                   : walking && !reduced && ry >= 26 && ry <= 28 && rx < 17 === stride
                     ? ry - 1
-                    : bob && breath && !reduced && !sleeping && ry >= 16
+                    : bob && breath && !walking && !reduced && !sleeping && ry >= 16
                       ? ry - 1
                       : ry
               }

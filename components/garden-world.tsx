@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Image, Pressable, View, type ImageSourcePropType } from 'react-native';
+import { Image, Platform, Pressable, View, type ImageSourcePropType } from 'react-native';
 import Animated, {
   cancelAnimation,
   runOnJS,
@@ -38,6 +38,9 @@ import rock1Img from '@/assets/garden/rock1.png';
 import fenceLImg from '@/assets/garden/fence_l.png';
 import fenceRImg from '@/assets/garden/fence_r.png';
 import gateImg from '@/assets/garden/gate.png';
+import readingNookImg from '@/assets/garden/reading_nook.png';
+import wateringCanImg from '@/assets/garden/watering_can.png';
+import lanternImg from '@/assets/garden/lantern.png';
 
 const sprites: Record<string, ImageSourcePropType> = {
   tree: treeImg,
@@ -56,6 +59,9 @@ const sprites: Record<string, ImageSourcePropType> = {
   fence_l: fenceLImg,
   fence_r: fenceRImg,
   gate: gateImg,
+  reading_nook: readingNookImg,
+  watering_can: wateringCanImg,
+  lantern: lanternImg,
 };
 
 type Action = keyof typeof gardenHotspots;
@@ -335,6 +341,20 @@ export function GardenWorld({
   const [emote, setEmote] = useState<string | null>(null);
   const busy = useRef(false);
   const lastTouch = useRef(0);
+  const journeyId = useRef(0);
+  const journey = useRef<{ id: number; action: Action | null; end: Point } | null>(null);
+  const napTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      journeyId.current += 1;
+      journey.current = null;
+      cancelAnimation(px);
+      cancelAnimation(py);
+      if (napTimer.current) clearTimeout(napTimer.current);
+    },
+    [px, py],
+  );
 
   // grass sway + water shimmer: alternate the two ground frames
   useEffect(() => {
@@ -354,7 +374,9 @@ export function GardenWorld({
     return () => clearTimeout(t);
   }, [emote]);
 
-  function arrived(action: Action | null, point: Point) {
+  function arrived(id: number, action: Action | null, point: Point) {
+    if (id !== journeyId.current || journey.current?.id !== id) return;
+    journey.current = null;
     pos.current = point;
     setWalking(false);
     busy.current = false;
@@ -362,24 +384,31 @@ export function GardenWorld({
   }
 
   function walkTo(target: Point, action: Action | null = null) {
-    const path = findPath(pos.current, target);
+    if (napping) return;
+    const id = ++journeyId.current;
     cancelAnimation(px);
     cancelAnimation(py);
+    if (napTimer.current) clearTimeout(napTimer.current);
+    // Retarget from the displayed position, including a stroll interrupted mid-leg.
+    const start = { x: px.get(), y: py.get() };
+    pos.current = start;
+    const path = findPath(start, target);
+    const end = path[path.length - 1] ?? start;
+    journey.current = { id, action, end };
     if (!path.length) {
-      if (action) act(action);
+      arrived(id, action, end);
       return;
     }
-    const end = path[path.length - 1];
-    setFacing(end.x < pos.current.x ? 'left' : 'right');
+    setFacing(end.x < start.x ? 'left' : 'right');
     if (reduced) {
       px.set(end.x);
       py.set(end.y);
-      arrived(action, end);
+      arrived(id, action, end);
       return;
     }
     busy.current = true;
     setWalking(true);
-    let from = pos.current;
+    let from = start;
     const xs = [];
     const ys = [];
     for (const p of path) {
@@ -389,28 +418,25 @@ export function GardenWorld({
       ys.push(withTiming(p.y, { duration, easing: Easing.linear }));
       from = p;
     }
-    const lastX = xs.pop()!;
-    const lastY = ys.pop()!;
-    px.set(withSequence(...xs, lastX));
+    px.set(withSequence(...xs));
     py.set(
       withSequence(
         ...ys,
         withTiming(end.y, { duration: 0 }, (finished) => {
-          if (finished) runOnJS(arrived)(action, end);
+          if (finished) runOnJS(arrived)(id, action, end);
         }),
       ),
     );
-    void lastY;
   }
 
   function act(action: Action) {
     const p = useGame.getState().player;
-    if (!p) return;
+    if (!p || napping || p.mode !== 'awake') return;
     void Haptics.selectionAsync();
     switch (action) {
       case 'nap':
         setEmote('z');
-        setTimeout(() => useGame.getState().sleep(), reduced ? 0 : 500);
+        napTimer.current = setTimeout(() => useGame.getState().sleep(), reduced ? 0 : 500);
         break;
       case 'mail':
         router.push({ pathname: '/journal', params: { tab: 'postcards' } });
@@ -448,9 +474,25 @@ export function GardenWorld({
 
   // Idle life: wander, sniff the flowers, sit. Never while the player is acting.
   const walkRef = useRef(walkTo);
+  const arriveRef = useRef(arrived);
   useEffect(() => {
     walkRef.current = walkTo;
+    arriveRef.current = arrived;
   });
+  useEffect(() => {
+    if (!reduced) return undefined;
+    // An OS/app preference change also stops a stroll that was already in flight.
+    const timer = setTimeout(() => {
+      const pending = journey.current;
+      if (!pending) return;
+      cancelAnimation(px);
+      cancelAnimation(py);
+      px.set(pending.end.x);
+      py.set(pending.end.y);
+      arriveRef.current(pending.id, pending.action, pending.end);
+    }, 0);
+    return () => clearTimeout(timer);
+  }, [reduced, px, py]);
   useEffect(() => {
     if (reduced || sleepy || napping) return undefined;
     let timer: ReturnType<typeof setTimeout>;
@@ -474,7 +516,8 @@ export function GardenWorld({
       { translateX: Math.round(px.value * scale - petPx / 2) },
       { translateY: Math.round(py.value * scale - petPx * (30 / 32)) },
     ],
-    zIndex: napping ? 905 : Math.round(py.value),
+    // Rest between the hut and bedding layers, under the garden's night light.
+    zIndex: Math.round(py.value) + (napping ? 1 : 0),
   }));
 
   function onGroundPress(e: { nativeEvent: { locationX: number; locationY: number } }) {
@@ -498,6 +541,11 @@ export function GardenWorld({
       // @ts-expect-error dataSet is a react-native-web prop (sets data-pixel for crisp CSS scaling)
       dataSet={{ pixel: 'true' }}
       pointerEvents={napping ? 'none' : 'auto'}
+      // A nap garden is scenery: pointer-events alone still allows web keyboard focus.
+      {...(Platform.OS === 'web' ? { inert: napping } : {})}
+      aria-hidden={napping}
+      accessibilityElementsHidden={napping}
+      importantForAccessibility={napping ? 'no-hide-descendants' : 'auto'}
       style={{ width, height, overflow: 'hidden', backgroundColor: '#62A853', zIndex: 0 }}
     >
       <Pressable
@@ -531,25 +579,47 @@ export function GardenWorld({
             </View>
           );
         const action = o.action as Action;
+        const artLeft = Math.round(o.x * scale);
+        const artTop = Math.round(o.y * scale);
+        const artWidth = Math.round(o.w * scale);
+        const artHeight = Math.round(o.h * scale);
+        const targetWidth = Math.max(44, artWidth);
+        const targetHeight = Math.max(44, artHeight);
+        const targetLeft = Math.max(
+          0,
+          Math.min(width - targetWidth, artLeft - (targetWidth - artWidth) / 2),
+        );
+        const targetTop = Math.max(
+          0,
+          Math.min(height - targetHeight, artTop - (targetHeight - artHeight) / 2),
+        );
         return (
           <Pressable
             key={o.id}
             accessibilityRole="button"
             accessibilityLabel={gardenHotspots[action].label}
+            disabled={napping}
+            onFocus={() => setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y })}
             onPress={() => onObjectPress(action)}
             style={{
               position: 'absolute',
-              left: Math.round(o.x * scale),
-              top: Math.round(o.y * scale),
-              width: Math.round(o.w * scale),
-              height: Math.round(o.h * scale),
+              left: targetLeft,
+              top: targetTop,
+              width: targetWidth,
+              height: targetHeight,
               zIndex: o.y + o.h,
             }}
           >
             <Image
               source={sprites[o.sprite]}
               resizeMode="stretch"
-              style={{ width: '100%', height: '100%' }}
+              style={{
+                position: 'absolute',
+                left: artLeft - targetLeft,
+                top: artTop - targetTop,
+                width: artWidth,
+                height: artHeight,
+              }}
             />
           </Pressable>
         );
@@ -648,31 +718,36 @@ export function GardenWorld({
           }}
         />
       )}
-      {night && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: Math.round(48 * scale),
-            top: Math.round(54 * scale),
-            width: Math.round(8 * scale),
-            height: Math.round(8 * scale),
-            borderRadius: Math.round(4 * scale),
-            backgroundColor: 'rgba(255,214,120,0.35)',
-            zIndex: 901,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+      {night &&
+        [
+          { x: 48, y: 54, size: 8 },
+          { x: 124, y: 71, size: 7 },
+        ].map((light) => (
           <View
+            key={`${light.x}-${light.y}`}
+            pointerEvents="none"
             style={{
-              width: Math.round(4 * scale),
-              height: Math.round(4 * scale),
-              backgroundColor: '#FFE08A',
+              position: 'absolute',
+              left: Math.round(light.x * scale),
+              top: Math.round(light.y * scale),
+              width: Math.round(light.size * scale),
+              height: Math.round(light.size * scale),
+              borderRadius: Math.round(4 * scale),
+              backgroundColor: 'rgba(255,214,120,0.35)',
+              zIndex: 901,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-          />
-        </View>
-      )}
+          >
+            <View
+              style={{
+                width: Math.round(4 * scale),
+                height: Math.round(4 * scale),
+                backgroundColor: '#FFE08A',
+              }}
+            />
+          </View>
+        ))}
       <Ambient
         scale={scale}
         width={width}
