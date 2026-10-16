@@ -22,7 +22,8 @@ import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { playPaused, useGame, type Player } from '@/lib/game';
 import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
-import { GARDEN, gardenHotspots, gardenObjects, gardenWalk } from '@/lib/garden-map';
+import { GARDEN, gardenHotspots, gardenObjects } from '@/lib/garden-map';
+import { GARDEN_START, findPath, randomSpot, type Point } from '@/lib/garden-path';
 import { GuardianPet } from '@/components/guardian-pet';
 import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
@@ -75,113 +76,14 @@ const sprites: Record<string, ImageSourcePropType> = {
 };
 
 type Action = keyof typeof gardenHotspots;
-type Point = { x: number; y: number };
 
 // Wall clock for 'player touched recently' checks (only ever called from handlers).
 const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
-const START: Point = { x: 96, y: 112 };
+const START: Point = GARDEN_START;
 const BED: Point = { x: 73, y: 76 };
 const groundFrames = [ground0, ground1, ground2, ground3];
 
-// ---- walk grid (4px cells, '#' = blocked) -----------------------------------
-const rows = gardenWalk.length;
-const cols = gardenWalk[0].length;
-// The map describes feet, but the guardian can be nearly 40 native pixels wide.
-// Keep its centre/head inside the scene even when wandering or following an edge tap.
-const walkable = (cx: number, cy: number) => {
-  const x = cx * GARDEN.cell + GARDEN.cell / 2;
-  const y = cy * GARDEN.cell + GARDEN.cell / 2;
-  return (
-    cy >= 0 &&
-    cy < rows &&
-    cx >= 0 &&
-    cx < cols &&
-    x >= 20 &&
-    x <= GARDEN.width - 20 &&
-    y >= 40 &&
-    y <= 158 &&
-    gardenWalk[cy][cx] === '.'
-  );
-};
-const toCell = (p: Point) => ({
-  cx: Math.max(0, Math.min(cols - 1, Math.floor(p.x / GARDEN.cell))),
-  cy: Math.max(0, Math.min(rows - 1, Math.floor(p.y / GARDEN.cell))),
-});
-const toPoint = (cx: number, cy: number): Point => ({
-  x: cx * GARDEN.cell + GARDEN.cell / 2,
-  y: cy * GARDEN.cell + GARDEN.cell / 2,
-});
-
-// Nearest walkable cell to a point (the pet stops at the edge of the pond, etc.).
-function nearestWalkable(p: Point) {
-  const { cx, cy } = toCell(p);
-  for (let r = 0; r < 12; r++)
-    for (let dy = -r; dy <= r; dy++)
-      for (let dx = -r; dx <= r; dx++)
-        if (Math.max(Math.abs(dx), Math.abs(dy)) === r && walkable(cx + dx, cy + dy))
-          return { cx: cx + dx, cy: cy + dy };
-  return toCell(START);
-}
-
-// Breadth-first search on the walk grid (8 directions), then thin to turning points.
-function findPath(from: Point, to: Point): Point[] {
-  if (![from.x, from.y, to.x, to.y].every(Number.isFinite)) return [];
-  const a = nearestWalkable(from);
-  const b = nearestWalkable(to);
-  const key = (x: number, y: number) => y * cols + x;
-  const prev = new Map<number, number>();
-  const queue: [number, number][] = [[a.cx, a.cy]];
-  prev.set(key(a.cx, a.cy), -1);
-  while (queue.length) {
-    const [x, y] = queue.shift()!;
-    if (x === b.cx && y === b.cy) break;
-    for (const [dx, dy] of [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-      [1, 1],
-      [1, -1],
-      [-1, 1],
-      [-1, -1],
-    ]) {
-      const nx = x + dx;
-      const ny = y + dy;
-      if (!walkable(nx, ny) || prev.has(key(nx, ny))) continue;
-      if (dx && dy && (!walkable(x + dx, y) || !walkable(x, y + dy))) continue; // no corner cutting
-      prev.set(key(nx, ny), key(x, y));
-      queue.push([nx, ny]);
-    }
-  }
-  if (!prev.has(key(b.cx, b.cy))) return [];
-  const cells: [number, number][] = [];
-  for (let k = key(b.cx, b.cy); k !== -1; k = prev.get(k)!)
-    cells.unshift([k % cols, Math.floor(k / cols)]);
-  // keep only cells where the direction changes, so the stroll looks smooth
-  const out: Point[] = [];
-  for (let i = 1; i < cells.length; i++) {
-    const last = i === cells.length - 1;
-    const turn =
-      !last &&
-      (cells[i + 1][0] - cells[i][0] !== cells[i][0] - cells[i - 1][0] ||
-        cells[i + 1][1] - cells[i][1] !== cells[i][1] - cells[i - 1][1]);
-    if (last || turn) out.push(toPoint(cells[i][0], cells[i][1]));
-  }
-  return out;
-}
-
-function randomSpot(near: Point, radius: number): Point {
-  for (let i = 0; i < 30; i++) {
-    const p = {
-      x: near.x + (Math.random() * 2 - 1) * radius,
-      y: near.y + (Math.random() * 2 - 1) * radius * 0.7,
-    };
-    const { cx, cy } = toCell(p);
-    if (walkable(cx, cy)) return p;
-  }
-  return near;
-}
 
 const companionSpots: Point[] = [
   { x: 74, y: 150 },

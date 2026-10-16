@@ -13,7 +13,7 @@ export function petPixels(
   dave = false,
   groundShadow = true,
 ): ArtPixel[] {
-  const stage = Math.min(3, Math.max(1, level));
+  const stage: 1 | 2 | 3 = level >= 3 ? 3 : level >= 2 ? 2 : 1;
   const pixels = new Map<string, ArtPixel>();
   function dot(x: number, y: number, color: string) {
     if (x >= 0 && y >= 0 && x < 32 && y < 32) pixels.set(`${x},${y}`, { x, y, color });
@@ -35,7 +35,7 @@ export function petPixels(
     return [...pixels.values()];
   }
   // Redrawn Grasslings (scripts/art/pets.py): shaded 32x32 sprites per species/stage.
-  const sprite = petSprites[species][stage as 1 | 2 | 3];
+  const sprite = petSprites[species][stage];
   const state = sleeping ? (grumpy ? 'grumpy-closed' : 'closed') : grumpy ? 'grumpy' : 'open';
   sprite[state].forEach((row, y) => {
     for (let x = 0; x < row.length; x++) {

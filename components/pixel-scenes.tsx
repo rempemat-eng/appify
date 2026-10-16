@@ -55,12 +55,12 @@ export type SceneKind =
   | 'nest'
   | 'trail';
 // Blend two #RRGGBB colours (t = 0 gives a, 1 gives b).
+const channel = (hex: string, i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16);
 function mix(a: string, b: string, t: number) {
   if (!/^#[0-9a-f]{6}$/i.test(a) || !/^#[0-9a-f]{6}$/i.test(b)) return t < 0.5 ? a : b;
-  const ch = (hex: string, i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16);
   return `#${[0, 1, 2]
     .map((i) =>
-      Math.round(ch(a, i) + (ch(b, i) - ch(a, i)) * t)
+      Math.round(channel(a, i) + (channel(b, i) - channel(a, i)) * t)
         .toString(16)
         .padStart(2, '0'),
     )
@@ -90,7 +90,7 @@ function SkyBands({
 }) {
   const bands = skyBands(colors.split(','), height);
   return bands.map((band, i) => (
-    <G key={`sky-band-${i}`}>
+    <G key={`sky-band-${band.y}`}>
       <Rect x={0} y={band.y} width={columns} height={rows} fill={band.color} />
       {i > 0 &&
         Array.from({ length: Math.ceil(columns / 2) }, (_, d) => (
@@ -118,14 +118,10 @@ export function PixelScene({
   sunrise = false,
   skyOnly = false,
   groundInset,
-  hideSignposts = false,
-  rainCloudBottom,
 }: {
-  rainCloudBottom?: number;
   sunrise?: boolean;
   skyOnly?: boolean;
   groundInset?: number;
-  hideSignposts?: boolean;
   species?: Player['species'];
   level?: number;
   kind?: SceneKind;
@@ -354,22 +350,18 @@ export function PixelScene({
                       scale={0.7}
                     />
                   ))}
-                  {props
-                    .slice(0, stage * 2)
-                    .map((prop, i) =>
-                      hideSignposts && prop === 'signpost' ? null : (
-                        <Pixels
-                          key={`${prop}-${[4, 127, 29, 104, 0, 135][i]}`}
-                          kind={prop}
-                          x={
-                            [4, 127, 29, 104, 0, 135][i] +
-                            (prop === 'grass' ? Math.round(Math.sin(tick / 12 + i)) : 0)
-                          }
-                          y={prop === 'root' ? 0 : stage === 1 ? 79 : 73 - (i % 2) * 8}
-                          scale={1.2 + (i % 2) * 0.3}
-                        />
-                      ),
-                    )}
+                  {props.slice(0, stage * 2).map((prop, i) => (
+                    <Pixels
+                      key={`${prop}-${[4, 127, 29, 104, 0, 135][i]}`}
+                      kind={prop}
+                      x={
+                        [4, 127, 29, 104, 0, 135][i] +
+                        (prop === 'grass' ? Math.round(Math.sin(tick / 12 + i)) : 0)
+                      }
+                      y={prop === 'root' ? 0 : stage === 1 ? 79 : 73 - (i % 2) * 8}
+                      scale={1.2 + (i % 2) * 0.3}
+                    />
+                  ))}
                   {Array.from({ length: weedCount }, (_, i) => (
                     <Pixels
                       key={`weed-${i}`}
@@ -386,7 +378,7 @@ export function PixelScene({
                   )}
                   {player && player.mood < 30 && kind !== 'night' && (
                     <G
-                      transform={`translate(72 ${Math.max(-sceneTop, rainCloudBottom === undefined ? 100 - Math.ceil(236 / pixel) : rainCloudBottom / pixel - 18 - sceneTop)})`}
+                      transform={`translate(72 ${Math.max(-sceneTop, 100 - Math.ceil(236 / pixel))})`}
                     >
                       <Pixels kind="raincloud" />
                       {[0, 1, 2].map((i) => (
@@ -560,16 +552,17 @@ export function RaidGarden({
           height: bh,
         }}
       />
-      {[{ left: inset + petSize / 2 - pw / 2 }, { right: inset + petSize / 2 - pw / 2 }].map(
-        (side, i) => (
-          <Image
-            key={i}
-            source={battlePlatform}
-            resizeMode="stretch"
-            style={{ position: 'absolute', bottom: platformBottom, width: pw, height: ph, ...side }}
-          />
-        ),
-      )}
+      {[
+        { key: 'attacker', left: inset + petSize / 2 - pw / 2 },
+        { key: 'defender', right: inset + petSize / 2 - pw / 2 },
+      ].map(({ key, ...side }) => (
+        <Image
+          key={key}
+          source={battlePlatform}
+          resizeMode="stretch"
+          style={{ position: 'absolute', bottom: platformBottom, width: pw, height: ph, ...side }}
+        />
+      ))}
     </View>
   );
 }
