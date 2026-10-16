@@ -117,7 +117,7 @@ const sections = [
   ],
   [
     'Real life and little keepsakes',
-    'Before a mission, optionally choose Rest, Read, Move or Create; Just a break needs no reflection. On returning, choose whether to keep a lantern, bookmark, leaf or sketch memory with the companion who began that break. Memories are self-reported, give no extra rewards and stay on this device in the Field Journal. The daily rhythm planner can also make room for rest, focus and your own time. It follows device-local time, including overnight windows; it does not block apps, measure sleep or change rewards.',
+    'Before a nap or mission, optionally choose Rest, Read, Move or Create; Just a break needs no reflection. On returning, choose whether to keep a lantern, bookmark, leaf or sketch memory with the companion who began that break. Memories are self-reported, give no extra rewards and stay on this device in the Field Journal. The daily rhythm planner can also make room for rest, focus and your own time. It follows device-local time, including overnight windows; it does not block apps, measure sleep or change rewards.',
   ],
   [
     'Raids and sparring',
@@ -129,7 +129,7 @@ const sections = [
   ],
   [
     'Visitors and guardians',
-    'Visitors arrive only after time away: your first one after any nap or mission of 10+ simulated MIN, then by chance on longer breaks (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN after you return to the garden. Preview any befriended companion before choosing them; all share your account level, GRASS, hats, deck and collection. Your original name and species stay saved. First meetings, dated postcards and kept memories live in the Field Journal.',
+    'Visitors arrive only after time away: your first one after any nap or mission of 10+ simulated MIN, then by chance on longer breaks (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN (10 real seconds in this demo) after you return to the garden. Preview any befriended companion before choosing them; all share your account level, GRASS, hats, deck and collection. Your original name and species stay saved. First meetings, dated postcards and kept memories live in the Field Journal.',
   ],
   [
     'Streak and growth',
