@@ -44,7 +44,7 @@ export async function runOfflineRuleChecks(
   );
   check(
     advanceBudget(budget, origin + 181000, 0).usedMs === PLAY_LIMIT_MS,
-    'Overlays add no active time',
+    'Zero active elapsed time preserves the capped budget',
   );
   let rules = freshRules();
   rules = bumpDay(rules, '2026-10-12', { offline: 120 });

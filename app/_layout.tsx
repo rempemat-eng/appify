@@ -2,13 +2,11 @@
 import '../global.css';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import {
-  Nunito_600SemiBold,
-  Nunito_800ExtraBold,
-  Nunito_600SemiBold_Italic,
-  useFonts,
-} from '@expo-google-fonts/nunito';
-import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
+import { Nunito_600SemiBold } from '@expo-google-fonts/nunito/600SemiBold';
+import { Nunito_800ExtraBold } from '@expo-google-fonts/nunito/800ExtraBold';
+import { Nunito_600SemiBold_Italic } from '@expo-google-fonts/nunito/600SemiBold_Italic';
+import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p/400Regular';
+import { useFonts } from 'expo-font';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
 import { useEffect, useState } from 'react';
@@ -111,32 +109,6 @@ export default function RootLayout() {
       window.removeEventListener('error', handleError);
       window.removeEventListener('unhandledrejection', handleUnhandledRejection);
     };
-  }, []);
-
-  // Inject Google Fonts link tag for web to ensure fonts load through proxy
-  // Also register font family names as fallback if expo-font fails
-  useEffect(() => {
-    if (Platform.OS === 'web') {
-      // Check if link already exists
-      const existingLink = document.querySelector(
-        'link[href*="fonts.googleapis.com/css2?family=Nunito"]',
-      );
-
-      if (!existingLink) {
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href =
-          'https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap';
-        link.crossOrigin = 'anonymous';
-        document.head.appendChild(link);
-      }
-
-      // Note: The @import in global.css and the link tag above ensure Nunito font loads
-      // expo-font will register the font family names (Nunito_400Regular, etc.)
-      // If expo-font fails due to proxy issues, the fonts should still be available
-      // via the direct Google Fonts CDN link, though the specific font family names
-      // might not be registered. The app should still render with Nunito font.
-    }
   }, []);
 
   useEffect(() => {

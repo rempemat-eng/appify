@@ -24,6 +24,7 @@ import { BodyText, GrassRoll } from '@/components/pixel-feedback';
 import { CozySheet, PaperFinish } from '@/components/cozy-ui';
 import { LightSweep, PixelBurst } from '@/components/cozy-motion';
 import { RewardCard } from '@/components/habit-cards';
+import { gameLayout } from '@/lib/layout';
 export function GardenVisitor() {
   const reduced = useReducedMotion();
   const waiting = useGame((s) => s.waitingVisitor);
@@ -202,7 +203,19 @@ export function WelcomeBack() {
   const [hearted, setHearted] = useState(false);
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const [sceneBounds, setSceneBounds] = useState(() => ({
+    width: Math.min(width, gameLayout.maxWidth),
+    height: Math.max(0, height * 0.36 - insets.top - insets.bottom),
+  }));
   if (!reward || !p) return null;
+  const scenePixel = Math.max(1, Math.floor(sceneBounds.width / 160));
+  const scenePetSize = Math.max(0, Math.min(128, Math.floor((sceneBounds.height - 8) / 32) * 32));
+  // Match PixelScene's measured integer scale, leaving room for the companion
+  // above the ground even when the reward sheet takes most of a short window.
+  const sceneGround = Math.min(
+    39 * scenePixel,
+    Math.max(0, Math.floor((sceneBounds.height - scenePetSize - 8) / scenePixel) * scenePixel),
+  );
   const groups = cardIds
     .filter((id) => reward.cards.includes(id))
     .map((id) => ({ id, count: reward.cards.filter((card) => card === id).length }));
@@ -219,28 +232,42 @@ export function WelcomeBack() {
       onTouchStart={() => setSkip(true)}
       style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: c.paper }}
     >
-      <View pointerEvents="none" style={{ flex: 1, minHeight: 200 }}>
+      <View
+        pointerEvents="none"
+        onLayout={(event) => {
+          const { width: sceneWidth, height: sceneHeight } = event.nativeEvent.layout;
+          setSceneBounds((previous) =>
+            previous.width === sceneWidth && previous.height === sceneHeight
+              ? previous
+              : { width: sceneWidth, height: sceneHeight },
+          );
+        }}
+        style={{ flex: 1, minHeight: 0 }}
+      >
         <PixelScene
           sunrise
           species={p.species}
           level={p.level}
+          groundInset={sceneGround}
           style={{
             height: '100%',
             borderWidth: 0,
             borderRadius: 0,
             alignItems: 'center',
             justifyContent: 'flex-end',
-            paddingBottom: 39 * Math.max(1, Math.floor(width / 160)),
+            paddingBottom: sceneGround,
           }}
         >
-          <Pet
-            species={p.species}
-            visitor={p.guardian}
-            level={p.level}
-            hat={p.hat}
-            size={128}
-            bob={false}
-          />
+          {scenePetSize > 0 && (
+            <Pet
+              species={p.species}
+              visitor={p.guardian}
+              level={p.level}
+              hat={p.hat}
+              size={scenePetSize}
+              bob={false}
+            />
+          )}
         </PixelScene>
         <LightSweep skip={skip} />
         <View
@@ -292,6 +319,33 @@ export function WelcomeBack() {
           {reportPending && <BodyText>Together report pending · ordinary rewards saved</BodyText>}
           {reward.early && <BodyText>Early return · no mission completion reward</BodyText>}
           {reward.hat && <BodyText>+ {reward.hat}</BodyText>}
+          {reward.visitor && (
+            <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+              <View>
+                <Pet visitor={reward.visitor} size={64} bob={false} />
+                {hearted && <PixelBurst hearts skip={false} />}
+              </View>
+              <View style={{ flex: 1, gap: 8 }}>
+                <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+                  {visitorInfo(reward.visitor).name} visited
+                </BodyText>
+                {waiting?.id === reward.visitor && !friend ? (
+                  <PixelButton
+                    small
+                    label="BEFRIEND · FREE"
+                    onPress={() => {
+                      useGame.getState().befriendVisitor();
+                      setHearted(true);
+                    }}
+                  />
+                ) : (
+                  <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
+                    {friend ? 'Your friend is in the garden.' : 'Recorded in your Field Journal.'}
+                  </BodyText>
+                )}
+              </View>
+            </View>
+          )}
           {groups.length > 0 && (
             <>
               <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', textAlign: 'center' }}>
@@ -341,33 +395,6 @@ export function WelcomeBack() {
                 ))}
               </View>
             </>
-          )}
-          {reward.visitor && (
-            <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-              <View>
-                <Pet visitor={reward.visitor} size={64} bob={false} />
-                {hearted && <PixelBurst hearts skip={false} />}
-              </View>
-              <View style={{ flex: 1, gap: 8 }}>
-                <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
-                  {visitorInfo(reward.visitor).name} visited
-                </BodyText>
-                {waiting?.id === reward.visitor && !friend ? (
-                  <PixelButton
-                    small
-                    label="BEFRIEND · FREE"
-                    onPress={() => {
-                      useGame.getState().befriendVisitor();
-                      setHearted(true);
-                    }}
-                  />
-                ) : (
-                  <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
-                    {friend ? 'Your friend is in the garden.' : 'Recorded in your Field Journal.'}
-                  </BodyText>
-                )}
-              </View>
-            </View>
           )}
           {reward.postcard && <PostcardArt postcard={reward.postcard} />}
           {summary && (
