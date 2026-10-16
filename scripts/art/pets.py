@@ -328,6 +328,286 @@ def shade_cone(sp: Sprite):
     sp.put(9, 6, GOLD[5])
 
 
+
+# ---- visitors + Doomscroll Dave --------------------------------------------
+TERRA = ['#4A1E16', '#7A3420', '#A84E2E', '#CF7446', '#EAA06B', '#FBD3A6']
+CREAMR = ['#5B4630', '#8C7354', '#B89E78', '#DCC6A0', '#F1E3C4', '#FFF7E6']
+NIGHTR = ['#121427', '#1F2442', '#2F3760', '#45507F', '#6A77A6', '#A9B4D6']
+BURR = ['#3D2A12', '#6A4A1E', '#9A7230', '#C79B45', '#E6C474', '#FFF0B8']
+WEED = ['#1E2228', '#353C45', '#525B63', '#737D80', '#9AA39F', '#CDD3C8']
+
+
+def feet(sp, xs, y, ramp):
+    for x in xs:
+        shade(sp, x, y, 2.6, 1.6, ramp, 'feet', outline=False)
+
+
+def face(sp, x1, x2, y, state, mouth=True):
+    eye(sp, x1, y, state)
+    eye(sp, x2, y, state)
+    sp.put(x1 - 1, y + 4, BLUSH); sp.put(x2 + 2, y + 4, BLUSH)
+    if mouth:
+        m = (x1 + x2) // 2 + 1
+        sp.put(m, y + 4, '#3A2A2A'); sp.put(m + 1, y + 4, '#3A2A2A')
+
+
+def v_dozebud(state):
+    sp = Sprite()
+    for (lx, rot) in ((10, -0.9), (22, 0.9)):
+        shade(sp, lx, 27.5, 4.2, 1.8, LEAF, 'leaf', rot=rot * 0.3, outline=False)
+    shade(sp, 16, 21, 9, 7.6, CREAMR, 'body', flat=0.2)
+    bud = shade(sp, 16, 12.5, 6.2, 5.2, TERRA, 'bud', flat=0.1)
+    for y in range(4, 8):
+        sp.put(16, y, TERRA[3] if y > 5 else TERRA[4]); sp.put(17, y, TERRA[2])
+    for y in (9, 11, 13):  # petal seams
+        sp.put(13, y, TERRA[1]); sp.put(19, y + 1, TERRA[1])
+    occlusion(sp, bud, 'body', CREAMR[1])
+    face(sp, 12, 19, 19, 'closed' if state == 'open' else state)  # always drowsy
+    outline_all(sp)
+    return sp, (16, 7), (12, 19)
+
+
+def v_mosspuff(state):
+    sp = Sprite()
+    for (x, y, r) in ((9, 17, 5.2), (16, 11.5, 5.6), (23, 16, 5.2), (24.5, 23, 4.6), (8, 23.5, 4.6), (16, 26, 4.4)):
+        shade(sp, x, y, r, r, MOSS, 'puff')
+    body = shade(sp, 16, 20, 8.2, 6.4, LEAF, 'body', flat=0.2)
+    occlusion(sp, body, 'puff', MOSS[1])
+    for (x, y) in ((13, 10), (21, 14), (7, 16), (25, 21)):
+        sp.put(x, y, MOSS[5])
+    face(sp, 12, 19, 18, state)
+    outline_all(sp)
+    return sp, (16, 7), (12, 18)
+
+
+def v_lullapine(state):
+    sp = Sprite()
+    feet(sp, (12, 20), 28.6, CREAMR)
+    cone = set()
+    for row in range(16):
+        half = 2 + row * 0.62
+        cy = 9 + row
+        for x in range(int(16 - half), int(16 + half) + 1):
+            scale_row = (row // 3) % 2
+            t = (16 - x) / max(1, half) * 0.5 + 0.3 - row * 0.02
+            ramp = BURR if scale_row else ['#3A2414', '#5E3A1E', '#83552C', '#A8723C', '#C99257', '#E8BD86']
+            sp.put(x, cy, ramp[4] if t > 0.55 else ramp[3] if t > 0.15 else ramp[2], 'cone')
+            cone.add((x, cy))
+        if row % 3 == 2:
+            for x in range(int(16 - half), int(16 + half) + 1, 2):
+                sp.put(x, cy, '#4A2E18')
+    # night cap with pompom
+    for row in range(6):
+        for x in range(13 - row // 2, 21 + row // 3):
+            sp.put(x, 3 + row, NIGHTR[3] if x < 16 else NIGHTR[2])
+    for x in range(11, 23):
+        sp.put(x, 9, CREAMR[4] if x < 17 else CREAMR[3])
+    shade(sp, 23, 4, 2.2, 2.2, CREAMR, 'pom', outline=False)
+    face(sp, 12, 18, 16, state)
+    outline_all(sp)
+    return sp, (16, 4), (12, 16)
+
+
+def v_trailhop(state):
+    sp = Sprite()
+    shade(sp, 9, 26.5, 5, 2.8, LEAF_B, 'leg')
+    shade(sp, 24, 26.5, 5, 2.8, LEAF_B, 'leg2')
+    body = shade(sp, 16.5, 21, 10, 6.6, LEAF, 'body', flat=0.2)
+    for (ex) in (10.5, 22.5):
+        shade(sp, ex, 14.8, 3.8, 3.6, LEAF, 'eyebump')
+    # belly
+    for (x, y, u, v) in ell_pts(16.5, 23.5, 6, 3):
+        sp.put(x, y, CREAMR[4] if v < 0 else CREAMR[3])
+    for y in range(7, 13):
+        sp.put(16, y, LEAF[3]); sp.put(17, y, LEAF[2])
+    for (dx, dy, c) in ((-1, 0, LEAF[4]), (-2, 0, LEAF[3]), (-3, -1, LEAF[4]), (1, 1, LEAF[3]), (2, 1, LEAF[2]), (3, 0, LEAF[2])):
+        sp.put(16 + dx, 8 + dy, c)
+    eye(sp, 10, 14, state)
+    eye(sp, 22, 14, state)
+    for x in range(13, 21):
+        sp.put(x, 21, '#2B3B2A' if x not in (13, 20) else LEAF[1])
+    sp.put(9, 19, BLUSH); sp.put(24, 19, BLUSH)
+    outline_all(sp)
+    return sp, (16, 8), (10, 14)
+
+
+def v_burrbound(state):
+    sp = Sprite()
+    feet(sp, (11, 22), 28.5, ['#2E2214', '#4E3A22', '#6E5434', '#8E7048', '#AE8E62', '#CFB088'])
+    body = shade(sp, 16.5, 19, 10, 9.4, BURR, 'body', flat=0.1)
+    for a in range(0, 360, 30):  # spines
+        r1, r2 = 9.6, 12.4
+        for k in range(3):
+            rr = r1 + (r2 - r1) * k / 2
+            x = int(16.5 + math.cos(math.radians(a)) * rr)
+            y = int(19 + math.sin(math.radians(a)) * rr * 0.95)
+            if y < 27:
+                sp.put(x, y, BURR[1] if k == 2 else BURR[2])
+    for (x, y) in ((11, 14), (20, 12), (23, 20), (10, 22), (16, 25)):
+        sp.put(x, y, BURR[1]); sp.put(x + 1, y, BURR[4])
+    face(sp, 12, 19, 17, state)
+    outline_all(sp)
+    return sp, (16, 7), (12, 17)
+
+
+def v_skyfern(state):
+    sp = Sprite()
+    feet(sp, (13, 19), 28.8, LEAF_B)
+    for y in range(10, 27):
+        sp.put(15, y, LEAF[2]); sp.put(16, y, LEAF[3])
+    for i, y in enumerate(range(11, 22, 3)):  # fern fronds
+        for k in range(5 - i // 2):
+            sp.put(14 - k, y - k // 2, LEAF[4] if k % 2 else LEAF[3])
+            sp.put(17 + k, y - k // 2, LEAF[3] if k % 2 else LEAF[2])
+    shade(sp, 15.5, 23, 6, 5.4, LEAF, 'body', flat=0.2)
+    face(sp, 12, 17, 21, state, mouth=False)
+    sp.put(15, 25, '#3A2A2A'); sp.put(16, 25, '#3A2A2A')
+    # kite on a string
+    for y in range(6, 17):
+        sp.put(25, y, '#5A4632')
+    kite = [(26, 1), (25, 2), (26, 2), (27, 2), (24, 3), (25, 3), (26, 3), (27, 3), (28, 3), (25, 4), (26, 4), (27, 4), (26, 5)]
+    for (x, y) in kite:
+        sp.put(x, y, GOLD[4] if x <= 26 and y <= 3 else TERRA[3])
+    sp.put(26, 6, TERRA[2]); sp.put(27, 7, GOLD[3])
+    outline_all(sp)
+    return sp, (16, 11), (12, 21)
+
+
+def v_inkling(state):
+    sp = Sprite()
+    feet(sp, (12, 21), 28.6, NIGHTR)
+    pts = set()
+    for y in range(S):
+        for x in range(S):
+            dx, dy = x + 0.5 - 16, y + 0.5 - 21
+            if dy < 0:
+                ok = abs(dx) <= 8.5 * (1 + dy / 14) and dy > -14
+            else:
+                ok = dx * dx / 72 + dy * dy / 49 <= 1
+            if ok:
+                pts.add((x, y))
+                u, v = dx / 8.5, dy / 7.5
+                nz = math.sqrt(max(0.0, 1 - min(1, u * u * 0.9 + v * v * 0.6))) + 0.1
+                d = (u * LIGHT[0] + v * LIGHT[1] + nz * LIGHT[2]) / math.sqrt(u * u + v * v + nz * nz)
+                sp.put(x, y, NIGHTR[band(d, x, y)], 'body')
+    sp.put(12, 13, NIGHTR[5]); sp.put(12, 14, NIGHTR[5]); sp.put(13, 12, NIGHTR[4])
+    for y in range(4, 8):
+        sp.put(16, y, LEAF[3])
+    sp.put(17, 5, LEAF[4]); sp.put(18, 5, LEAF[3]); sp.put(19, 6, LEAF[2])
+    eye(sp, 12, 20, state)
+    eye(sp, 19, 20, state)
+    for (x, y) in ((12, 20), (13, 21), (19, 20), (20, 21)):
+        if sp.c.get((x, y)) == INK:
+            sp.put(x, y, '#F2F0E6')
+    sp.put(16, 25, '#0B0C18'); sp.put(17, 25, '#0B0C18')
+    outline_all(sp)
+    return sp, (16, 9), (12, 20)
+
+
+def v_pagemoth(state):
+    sp = Sprite()
+    for (wx, rot) in ((8, 0.25), (24, -0.25)):
+        w = shade(sp, wx, 16, 7, 9.4, CREAMR, 'wing', rot=rot, flat=0.3)
+        for y in range(10, 24, 3):  # text lines
+            for x in range(wx - 4, wx + 4):
+                if (x, y) in w and (x + y) % 5:
+                    sp.put(x, y, CREAMR[2])
+    body = shade(sp, 16, 20, 4.2, 8.6, BURR, 'body', flat=0.2)
+    for y in (16, 19, 22, 25):
+        for x in range(13, 20):
+            if (x, y) in body:
+                sp.put(x, y, BURR[2])
+    for (ax, dx) in ((13, -1), (19, 1)):
+        for i in range(6):
+            sp.put(ax + (dx * i) // 3, 11 - i, '#3A2A1E')
+        sp.put(ax + dx * 2, 5, LEAF[3]); sp.put(ax + dx * 2 + dx, 5, LEAF[4])
+    eye(sp, 14, 15, state, size=1)
+    eye(sp, 18, 15, state, size=1)
+    outline_all(sp)
+    return sp, (16, 10), (13, 15)
+
+
+def v_lanternroot(state):
+    sp = Sprite()
+    feet(sp, (10, 17), 28.8, ['#2E1E14', '#4E3424', '#6E4C34', '#8E6648', '#AE8462', '#CFA886'])
+    body = shade(sp, 13, 21.5, 7.4, 7, ['#3A2416', '#5E3C24', '#835834', '#A87648', '#C99A66', '#E8C394'], 'body', flat=0.2)
+    for (x, y) in ((9, 19), (11, 24), (15, 26), (16, 18)):
+        sp.put(x, y, '#5E3C24')
+    for (dx, dy, c) in ((0, 0, LEAF[3]), (-1, -1, LEAF[4]), (-2, -2, LEAF[4]), (1, -1, LEAF[2]), (2, -2, LEAF[3]), (0, -1, LEAF[2])):
+        sp.put(12 + dx, 14 + dy, c)
+    eye(sp, 9, 19, state)
+    eye(sp, 15, 19, state)
+    sp.put(12, 24, '#3A2A2A'); sp.put(13, 24, '#3A2A2A')
+    # arm holding a lantern on a pole
+    for x in range(19, 23):
+        sp.put(x, 22, '#835834')
+    for y in range(11, 18):
+        sp.put(25, y, '#3A3030')
+    for y in range(17, 27):
+        for x in range(22, 29):
+            edge = x in (22, 28) or y in (17, 26)
+            glow = GOLD[5] if (x, y) in ((24, 20), (25, 20), (24, 21)) else GOLD[4] if x < 25 else GOLD[3]
+            sp.put(x, y, '#3A3030' if edge else glow)
+    for x in range(21, 30):
+        sp.put(x, 16, '#5A4A44')
+    for (x, y) in ((29, 13), (20, 14), (30, 21)):
+        sp.put(x, y, GOLD[5])
+    outline_all(sp)
+    return sp, (13, 13), (9, 19)
+
+
+def v_dave(state):
+    sp = Sprite()
+    # thorny weed silhouette
+    blob = shade(sp, 16.5, 19.5, 9.4, 8.2, WEED, 'body', flat=0.15)
+    # thorny leaves radiating outward (drawn after the body so they read on top)
+    for i, a in enumerate(range(-160, 200, 26)):
+        ang = math.radians(a)
+        length = 6 + (i % 3) * 2
+        for k in range(length):
+            r = 8.2 + k
+            x = round(16.5 + math.cos(ang) * r * 1.08)
+            y = round(19.5 + math.sin(ang) * r * 0.92)
+            if y > 27:
+                break
+            width_col = WEED[3] if k < length * 0.4 else WEED[2] if k < length * 0.8 else WEED[1]
+            sp.put(x, y, width_col)
+            if k < length * 0.5:
+                sp.put(x + (1 if math.cos(ang) < 0 else -1), y, WEED[2])
+        tx = round(16.5 + math.cos(ang) * (8.2 + length) * 1.08)
+        ty = round(19.5 + math.sin(ang) * (8.2 + length) * 0.92)
+        if ty <= 27:
+            sp.put(tx, ty, '#7C3B3B')  # little red thorn tips
+    # phone-screen face
+    for y in range(13, 25):
+        for x in range(11, 23):
+            sp.put(x, y, '#141821')
+    for y in range(14, 24):
+        for x in range(12, 22):
+            sp.put(x, y, '#5FC2DA' if (x - 12) + (y - 14) < 9 else '#3FA0BC')
+    sp.put(12, 14, '#BFF1FA'); sp.put(13, 14, '#BFF1FA'); sp.put(12, 15, '#BFF1FA')
+    if state in ('closed', 'grumpy-closed'):
+        for x in (14, 15, 18, 19):
+            sp.put(x, 18, '#141821')
+    else:
+        for (x, y) in ((14, 17), (15, 17), (14, 18), (15, 18), (18, 17), (19, 17), (18, 18), (19, 18)):
+            sp.put(x, y, '#141821')
+    for x in range(15, 19):
+        sp.put(x, 20, '#141821')
+    sp.put(14, 21, '#141821'); sp.put(19, 21, '#141821')  # frown (corners down)
+    sp.put(13, 16, '#141821'); sp.put(14, 16, '#141821'); sp.put(19, 16, '#141821'); sp.put(20, 16, '#141821')  # sulky brows
+    # notification dot
+    sp.put(22, 12, '#E2574C'); sp.put(23, 12, '#E2574C'); sp.put(22, 11, '#F08A80')
+    outline_all(sp)
+    return sp, (16, 6), (14, 17)
+
+
+VISITORS = {'dozebud': v_dozebud, 'mosspuff': v_mosspuff, 'lullapine': v_lullapine,
+            'trailhop': v_trailhop, 'burrbound': v_burrbound, 'skyfern': v_skyfern,
+            'inkling': v_inkling, 'pagemoth': v_pagemoth, 'lanternroot': v_lanternroot,
+            'dave': v_dave}
+
+
 SPECIES = {'BLOB': mossling, 'RAT': roamling, 'CUBE': pebbling}
 STATES = ['open', 'closed', 'grumpy', 'grumpy-closed']
 
@@ -390,7 +670,7 @@ def encode(sp: Sprite, w, h, palette: list):
     return rows
 
 
-IDX = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&*+-/:;<=>?@^_~'
+IDX = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!$%&*+-/:;<=>?@^_~' + ''.join(chr(c) for c in range(0xC0, 0x100))
 
 
 def main():
@@ -411,6 +691,19 @@ def main():
             entry['hat'] = list(hat_anchor)
             entry['eyes'] = list(eyes)
             out[key][stage] = entry
+    vis = {}
+    vsheet = Image.new('RGBA', ((S + 1) * 10 + 1, (S + 1) * 2 + 1), (226, 234, 214, 255))
+    for vi, (key, fn) in enumerate(VISITORS.items()):
+        entry = {}
+        for si, state in enumerate(('open', 'closed')):
+            sp, hat_anchor, eyes = fn(state)
+            entry[state] = encode(sp, S, S, palette)
+            for (x, y), c in sp.c.items():
+                vsheet.putpixel((1 + vi * (S + 1) + x, 1 + si * (S + 1) + y), tuple(int(c[i:i + 2], 16) for i in (1, 3, 5)) + (255,))
+        entry['hat'] = list(hat_anchor)
+        entry['eyes'] = list(eyes)
+        vis[key] = entry
+    vsheet.resize((vsheet.width * 6, vsheet.height * 6), Image.NEAREST).save('/tmp/visitors-preview.png')
     hats = {}
     for name, fn in HATS.items():
         sp, bottom = fn()
@@ -421,15 +714,17 @@ def main():
     ts = [
         '// Generated by scripts/art/pets.py. Do not edit by hand.',
         '/* eslint-disable */',
-        f'export const PET_INDEX = {json.dumps(IDX)};',
+        f'export const PET_INDEX = {json.dumps(IDX, ensure_ascii=False)};',
         f'export const petPalette: readonly string[] = {json.dumps(palette)};',
         'export type SpriteState = "open" | "closed" | "grumpy" | "grumpy-closed";',
         'export type PetSprite = Record<SpriteState, readonly string[]> & { hat: readonly number[]; eyes: readonly number[] };',
-        f'export const petSprites: Record<"BLOB" | "RAT" | "CUBE", Record<1 | 2 | 3, PetSprite>> = {json.dumps(out)};',
-        f'export const hatSprites: Record<string, {{ rows: readonly string[]; bottom: number }}> = {json.dumps(hats)};',
+        f'export const petSprites: Record<"BLOB" | "RAT" | "CUBE", Record<1 | 2 | 3, PetSprite>> = {json.dumps(out, ensure_ascii=False)};',
+        'export type VisitorSprite = { open: readonly string[]; closed: readonly string[]; hat: readonly number[]; eyes: readonly number[] };',
+        f'export const visitorSprites: Record<string, VisitorSprite> = {json.dumps(vis, ensure_ascii=False)};',
+        f'export const hatSprites: Record<string, {{ rows: readonly string[]; bottom: number }}> = {json.dumps(hats, ensure_ascii=False)};',
         '',
     ]
-    with open(os.path.join(ROOT, 'lib', 'pet-sprites.ts'), 'w') as f:
+    with open(os.path.join(ROOT, 'lib', 'pet-sprites.ts'), 'w', encoding='utf-8') as f:
         f.write('\n'.join(ts))
     sheet.resize((sheet.width * 6, sheet.height * 6), Image.NEAREST).save('/tmp/pets-preview.png')
     print('ok palette', len(palette))
