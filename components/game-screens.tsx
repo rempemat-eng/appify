@@ -19,12 +19,10 @@ import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
 import { matchup } from '@/lib/battle';
-import { petPixels } from '@/lib/pet-art';
-import { visitorPixels } from '@/lib/visitor-art';
 import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
 import { budgetVoice, dayKey } from '@/lib/offline-rules';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
-import { collectionOf, guardianPlayer, isVisitorId, visitorInfo } from '@/lib/visitors';
+import { guardianPlayer, isVisitorId, visitorInfo } from '@/lib/visitors';
 import { FriendCode } from '@/components/friend-code';
 import { DailyRhythmCard } from '@/components/daily-rhythm';
 import { GuardianPet } from '@/components/guardian-pet';
@@ -32,6 +30,7 @@ import { GardenVisitor, GuardianPicker } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelScene } from '@/components/pixel-scenes';
+import { GardenWorld } from '@/components/garden-world';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
@@ -78,7 +77,6 @@ export function HomeScreen() {
   useEffect(() => {
     if (coaching && p?.mode === 'awake') useGame.getState().seeTip(coaching);
   }, [coaching, p?.mode]);
-  const [petTop, setPetTop] = useState(40);
   const [statsOpen, setStatsOpen] = useState(false);
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
@@ -112,10 +110,6 @@ export function HomeScreen() {
   }, [crumbs]);
   if (!p) return null;
   const guardian = guardianPlayer(p);
-  const homePixels = isVisitorId(guardian.guardian)
-    ? visitorPixels(guardian.guardian, p.hat)
-    : petPixels(guardian.species, p.level, p.hat, false, p.mood < 30);
-  const rainCloudBottom = petTop + Math.min(...homePixels.map((pixel) => pixel.y)) * 4 - 12;
   const state = status(p, now);
   const speech = paused
     ? budgetVoice
@@ -155,34 +149,30 @@ export function HomeScreen() {
           onDismiss={coaching ? () => setLesson({ key, id: null }) : undefined}
         />
       </View>
-      <PixelScene
-        species={p.species}
-        level={p.level}
-        player={p}
-        rainCloudBottom={rainCloudBottom}
-        height={Math.max(240, Math.round(Math.min(width, gameLayout.maxWidth) * 0.55))}
+      <View
         style={{
-          marginHorizontal: -16,
-          borderWidth: 0,
-          borderTopLeftRadius: 0,
-          borderTopRightRadius: 0,
+          marginHorizontal: -gameLayout.gutter,
           borderBottomLeftRadius: 24,
           borderBottomRightRadius: 24,
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          paddingBottom: 16,
+          overflow: 'hidden',
         }}
       >
-        <View onLayout={(event) => setPetTop(event.nativeEvent.layout.y)}>
-          <GuardianPet
-            player={p}
-            grumpy={p.mood < 30}
-            size={128}
-            yawning={paused}
-            slumped={raidFeedback.slumped}
-          />
-        </View>
+        <GardenWorld
+          width={Math.min(width, gameLayout.maxWidth)}
+          player={p}
+          grumpy={p.mood < 30}
+          sleepy={paused}
+          onFeed={() => {
+            useGame.getState().feed();
+            setCrumbs(true);
+          }}
+        />
+        <GardenVisitor />
         {crumbs && <PixelBurst />}
+      </View>
+      <View
+        style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
+      >
         <BodyText
           style={{
             backgroundColor: c.glass,
@@ -206,7 +196,6 @@ export function HomeScreen() {
             borderRadius: 999,
             paddingHorizontal: 10,
             paddingVertical: 4,
-            marginTop: 4,
           }}
         >
           <Heart size={14} strokeWidth={2} color={p.mood < 30 ? c.error : c.ink} />
@@ -231,16 +220,10 @@ export function HomeScreen() {
             {p.mood < 30 ? 'GRUMPY' : paused ? 'SLEEPY' : 'HAPPY'}
           </BodyText>
         </View>
-        <View style={{ position: 'absolute', left: 4, bottom: 4, flexDirection: 'row' }}>
-          {collectionOf(p)
-            .filter((v) => v.befriendedAt !== null && v.id !== p.guardian)
-            .slice(0, 3)
-            .map((v) => (
-              <Pet key={v.id} visitor={v.id} size={32} bob={false} />
-            ))}
-        </View>
-        <GardenVisitor />
-      </PixelScene>
+      </View>
+      <BodyText style={{ textAlign: 'center', fontSize: 12, marginTop: -6 }}>
+        tap the garden to walk · tap the hut, signpost, stall, mailbox or gate
+      </BodyText>
       <GardenProgress />
       <View style={{ gap: 6 }}>
         <PixelButton label="TAKE A NAP" gold={paused} onPress={() => useGame.getState().sleep()} />

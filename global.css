@@ -219,3 +219,9 @@
   inherits: true;
   initial-value: transparent;
 }
+
+/* Crisp pixel art for the garden world (data-pixel set via RN-web dataSet). */
+[data-pixel='true'],
+[data-pixel='true'] * {
+  image-rendering: pixelated;
+}
