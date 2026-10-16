@@ -8,6 +8,7 @@ Run: python3 scripts/art/vignettes.py. No animation clocks or game rules.
 from __future__ import annotations
 
 import math
+import json
 import os
 import sys
 
@@ -48,6 +49,7 @@ SCENES = {
         'pond': (176, 126, 24, 10), 'flowers': [(18, 115), (194, 110), (153, 143)],
     },
     'market': {
+        'focusY': 106,
         'ground': 'paving', 'path': [],
         'props': [('small_tree', 3, 57), ('house_red', 32, 53), ('house_blue', 151, 48),
                   ('stall', 85, 68), ('cart', 43, 100), ('lantern', 146, 95),
@@ -55,6 +57,7 @@ SCENES = {
         'flowers': [(25, 109), (181, 115)], 'detail': 'market',
     },
     'town': {
+        'focusY': 70,
         'ground': 'practice', 'path': [(107, 77), (108, 109), (110, 150)],
         'props': [('tree', -14, 38), ('house_red', 34, 46), ('house_blue', 143, 52),
                   ('small_tree', 190, 53), ('fence', 0, 99), ('fence', 179, 104),
@@ -69,6 +72,7 @@ SCENES = {
         'flowers': [(29, 133), (184, 142)], 'detail': 'nursery',
     },
     'trail': {
+        'focusY': 100,
         'ground': 'meadow', 'path': [(126, 73), (116, 91), (96, 116), (105, 150)],
         'props': [('tree', -5, 46), ('pine', 177, 45), ('small_tree', 31, 69),
                   ('sign', 46, 106), ('boulder', 165, 116), ('bush', 1, 128),
@@ -319,6 +323,8 @@ def main():
         '/* eslint-disable */', *imports,
         f'export const sceneFrame = {{ width: {W}, height: {H}, feet: {FEET}, ground: {GROUND}, window: 160 }} as const;',
         f"export const sceneImages = {{ {', '.join(names)} }} as const;",
+        'export const sceneFocus: Partial<Record<keyof typeof sceneImages, number>> = ' +
+        json.dumps({name: SCENES[name]['focusY'] for name in names if 'focusY' in SCENES[name]}) + ';',
         'export const sceneNight = night;', 'export const sceneReturn = homecoming;',
         'export const sceneSkies = { day: skyDay, night: skyNight, sunrise: skySunrise } as const;',
         f"export const sceneSkyColors = {{ day: '{DAY_SKY[0]}', night: '{NIGHT_SKY[0]}', sunrise: '{DAWN_SKY[0]}' }} as const;", '',

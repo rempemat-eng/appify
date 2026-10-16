@@ -15,6 +15,11 @@ import skyNight from '@/assets/scenes/sky-night.png';
 import skySunrise from '@/assets/scenes/sky-sunrise.png';
 export const sceneFrame = { width: 216, height: 150, feet: 111, ground: 39, window: 160 } as const;
 export const sceneImages = { habitat, market, town, nest, trail, park, book, mountain } as const;
+export const sceneFocus: Partial<Record<keyof typeof sceneImages, number>> = {
+  market: 106,
+  town: 70,
+  trail: 100,
+};
 export const sceneNight = night;
 export const sceneReturn = homecoming;
 export const sceneSkies = { day: skyDay, night: skyNight, sunrise: skySunrise } as const;

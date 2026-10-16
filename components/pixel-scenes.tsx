@@ -5,6 +5,7 @@ import { propPixels, sceneColors as c, type PropKind } from '@/lib/scene-art';
 import { status, useGame, type Player } from '@/lib/game';
 import {
   sceneFrame,
+  sceneFocus,
   sceneImages,
   sceneNight,
   sceneReturn,
@@ -52,16 +53,7 @@ export function PixelProp({
     </Svg>
   );
 }
-export type SceneKind =
-  | 'habitat'
-  | 'night'
-  | 'park'
-  | 'book'
-  | 'mountain'
-  | 'town'
-  | 'market'
-  | 'nest'
-  | 'trail';
+export type SceneKind = keyof typeof sceneImages | 'night';
 // Decorative frames use actual garden/world drawings at native resolution.
 // Keep the old 160px viewport and 39px ground contract: WelcomeBack measures
 // its companion and ground inset against this same integer pixel scale.
@@ -103,7 +95,17 @@ export function PixelScene({
   const ground = groundInset === undefined ? sceneFrame.ground * pixel : Math.max(0, groundInset);
   // An inset of zero puts the authored footline at the scene's bottom edge.
   // Short return scenes can reveal sky above the companion without lifting it.
-  const imageBottom = ground - sceneFrame.ground * pixel;
+  // Scenery-only banners frame their landmarks rather than the companion's
+  // feet. Keep the full ground contract for characters, explicit insets and
+  // the separately authored night/sunrise frames.
+  const focusY =
+    children == null && groundInset === undefined && !skyOnly && phase === 'day'
+      ? sceneFocus[kind === 'night' ? 'habitat' : kind]
+      : undefined;
+  const imageBottom =
+    focusY === undefined
+      ? ground - sceneFrame.ground * pixel
+      : Math.round(bounds.height / 2 - (sceneFrame.height - focusY) * pixel);
   const imageWidth = sceneFrame.width * pixel;
   const imageHeight = sceneFrame.height * pixel;
   // A sky-only backdrop covers a tall nap screen using an integer scale, with

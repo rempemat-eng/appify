@@ -28,6 +28,7 @@ import { NapAttackSplash } from '@/components/napattack-brand';
 import { GameOverlays } from '@/components/game-overlays';
 import { loadMotionPreference, watchSystemMotion } from '@/lib/motion';
 import { startGame } from '@/lib/game';
+import { cozy as c } from '@/lib/cozy';
 import { reportErrorToParent } from '@/lib/reportPreviewError';
 
 /**
@@ -146,7 +147,15 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }} onTouchStart={() => setSplashDone(true)}>
       <HeroUINativeProvider>
-        <Stack>
+        <Stack
+          screenOptions={{
+            headerStyle: { backgroundColor: c.paper },
+            headerTintColor: c.ink,
+            headerTitleStyle: { fontFamily: 'Nunito_800ExtraBold', fontSize: 16 },
+            headerShadowVisible: false,
+            contentStyle: { backgroundColor: c.body },
+          }}
+        >
           <Stack.Screen name="(tabs)" options={{ title: 'NapAttack', headerShown: false }} />
           <Stack.Screen name="journal" options={{ title: 'FIELD JOURNAL' }} />
         </Stack>

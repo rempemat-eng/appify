@@ -529,6 +529,131 @@ function quietNapPresentation() {
   }
 }
 
+// Exercise the real PixelScene output and generated frame metadata. These
+// checks inspect layout plans, not browser image decoding or visual quality.
+function decorativeFramePresentation() {
+  const load = (file, imports) => {
+    const filename = path.join(__dirname, '..', file);
+    const compiled = ts.transpileModule(fs.readFileSync(filename, 'utf8'), {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2022,
+        jsx: ts.JsxEmit.ReactJSX,
+        esModuleInterop: true,
+      },
+    }).outputText;
+    const module = { exports: {} };
+    vm.runInNewContext(
+      compiled,
+      {
+        module,
+        exports: module.exports,
+        require: imports,
+        setInterval() {
+          throw new Error('Decorative frames must not own clocks');
+        },
+        setTimeout() {
+          throw new Error('Decorative frames must not own clocks');
+        },
+      },
+      { filename },
+    );
+    return module.exports;
+  };
+  const art = load('lib/scene-assets.ts', (id) => {
+    assert.ok(id.startsWith('@/assets/scenes/') && id.endsWith('.png'));
+    return id;
+  });
+  let bounds;
+  const game = { now: new Date('2026-10-16T12:00:00Z').getTime() };
+  const ui = load('components/pixel-scenes.tsx', (id) => {
+    if (id === 'react')
+      return {
+        useState(initial) {
+          bounds ??= initial;
+          return [
+            bounds,
+            (next) => {
+              bounds = typeof next === 'function' ? next(bounds) : next;
+            },
+          ];
+        },
+      };
+    if (id === 'react/jsx-runtime') return { jsx, jsxs: jsx };
+    if (id === 'react-native')
+      return {
+        Image: 'Image',
+        View: 'View',
+        StyleSheet: { absoluteFill: {} },
+      };
+    if (id === 'react-native-svg') return { default: 'Svg', G: 'G', Rect: 'Rect' };
+    if (id === '@/lib/scene-art') return { propPixels: {}, sceneColors: { ink: '#2A2421' } };
+    if (id === '@/lib/scene-assets') return art;
+    if (id === '@/lib/game')
+      return {
+        useGame: (selector) => selector(game),
+        status: () => ({ kind: 'awake' }),
+      };
+    if (id.startsWith('@/assets/battle/') && id.endsWith('.png')) return id;
+    throw new Error('Unexpected decorative frame import: ' + id);
+  });
+  const render = (props, width, height) => {
+    bounds = undefined;
+    let tree = ui.PixelScene({ ...props, height });
+    tree.props.onLayout({ nativeEvent: { layout: { width, height } } });
+    tree = ui.PixelScene({ ...props, height });
+    return tree.props.children[0].props.children.props;
+  };
+  for (const [kind, width, height, landmarkTop, landmarkBottom] of [
+    ['town', 600, 160, 46, 92],
+    ['town', 320, 160, 46, 92],
+    ['market', 96, 80, 68, 108],
+    ['trail', 600, 192, 106, 130],
+    ['trail', 320, 192, 106, 130],
+  ]) {
+    const image = render({ kind }, width, height);
+    const pixel = image.style.width / art.sceneFrame.width;
+    const nativeTop = (image.style.height + image.style.bottom - height) / pixel;
+    const nativeBottom = (image.style.height + image.style.bottom) / pixel;
+    check(
+      nativeTop <= landmarkTop && nativeBottom >= landmarkBottom,
+      `${kind} ${width}x${height}: authored landmarks remain inside the scenery crop`,
+    );
+    check(
+      Number.isInteger(pixel) &&
+        image.style.height / art.sceneFrame.height === pixel &&
+        Number.isInteger(image.style.left) &&
+        Number.isInteger(image.style.bottom) &&
+        image.style.width >= width,
+      `${kind} ${width}x${height}: crop uses integer pixels and covers the banner width`,
+    );
+  }
+  const companion = render({ kind: 'town', children: 'companion' }, 600, 160);
+  check(companion.style.bottom === 0, 'companion frames retain the default ground anchor');
+  for (const inset of [0, 24, 117]) {
+    const image = render({ kind: 'town', groundInset: inset }, 600, 160);
+    check(
+      image.style.bottom === inset - 117,
+      `explicit ground inset ${inset}: foot placement overrides decorative focus`,
+    );
+  }
+  const sunrise = render({ kind: 'town', sunrise: true }, 600, 160);
+  check(
+    sunrise.source === art.sceneReturn && sunrise.style.bottom === 0,
+    'sunrise return frame keeps its authored source and ground anchor',
+  );
+  const sky = render({ kind: 'town', skyOnly: true }, 600, 192);
+  check(
+    sky.source === art.sceneSkies.day && sky.style.top === 0 && sky.style.bottom === undefined,
+    'sky-only scenery ignores landmark focus and retains its sky anchor',
+  );
+  const night = render({ kind: 'night' }, 600, 160);
+  check(
+    night.source === art.sceneNight && night.style.bottom === 0,
+    'night frame keeps its authored source and ground anchor',
+  );
+}
+
 async function main() {
   await sharedConsumers();
   await hydrationRaces();
@@ -536,8 +661,9 @@ async function main() {
   await storageFailures();
   await orderedWrites();
   quietNapPresentation();
+  decorativeFramePresentation();
   console.log(
-    `PASS: ${checks} actual garden-view shared-state, hydration, persistence-order, cleanup and quiet-nap presentation assertions.`,
+    `PASS: ${checks} actual garden-view shared-state, hydration, persistence-order, cleanup, quiet-nap and decorative-frame presentation assertions.`,
   );
 }
 main().catch((error) => {
