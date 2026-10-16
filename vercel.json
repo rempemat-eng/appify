@@ -1,0 +1,8 @@
+{
+  "buildCommand": "npm run export:web",
+  "installCommand": "npm ci",
+  "outputDirectory": "dist",
+  "framework": null,
+  "cleanUrls": true,
+  "rewrites": [{ "source": "/:path*", "destination": "/" }]
+}

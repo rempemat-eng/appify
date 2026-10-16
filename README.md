@@ -17,6 +17,16 @@ Pairing, player raids and Together naps require this project's online backend. I
 
 To enable online play, supply both variables with the existing project's genuine backend URL and public anonymous key before starting or exporting Expo. Do not invent substitute credentials. Restart Expo after changing build settings. Configured builds retain the existing online behaviour; the local preview does not simulate other players.
 
+## Shared browser play-testing
+
+The repository includes `vercel.json` for an HTTPS web preview. Import `rempemat-eng/appify` into Vercel and deploy the `codex/daily-rhythm-and-consistency` branch. If the initial import builds `main`, use **Deployments → Create Deployment** to select the review branch before testing.
+
+Use the repository root, the **Other** framework preset and Node.js 24. The configuration installs with `npm ci`, builds with `npm run export:web`, serves `dist` and sends client routes back to the app so refreshing `/journal` works. Leave both Bilt backend variables unset for local garden testing.
+
+With the GitHub integration enabled, future branch pushes create updated preview deployments. Share the preview URL for browser testing. If access protection is enabled, use Vercel's sharing or sign-in flow to grant access. Keep using the branch URL in the same browser profile when checking saved progress: each different origin or browser has a separate local save.
+
+This preview covers the web experience, including layout, navigation, animations and game interactions. It does not verify native phone behaviour, screen-time monitoring or multiplayer. The existing accelerated demo time remains in effect.
+
 ## Export and check
 
 ```sh
