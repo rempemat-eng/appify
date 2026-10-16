@@ -1,5 +1,5 @@
 import { Tabs, usePathname } from 'expo-router';
-import { View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { GameHeader } from '@/components/game-ui';
@@ -8,8 +8,11 @@ import { PixelTabIcon, PixelDissolve } from '@/components/pixel-feedback';
 import { feedback } from '@/lib/game';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
+import { gameLayout, gameSideInset } from '@/lib/layout';
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
+  const sideInset = gameSideInset(width);
   const path = usePathname();
   const reduced = useReducedMotion();
   return (
@@ -25,15 +28,15 @@ export default function TabLayout() {
           animation: reduced ? 'none' : 'fade',
           tabBarStyle: {
             position: 'absolute',
-            left: 16,
-            right: 16,
-            bottom: insets.bottom + 12,
+            left: sideInset,
+            right: sideInset,
+            bottom: insets.bottom + gameLayout.dockBottomGap,
             borderRadius: 24,
             backgroundColor: c.paper,
             borderWidth: 2,
             borderTopWidth: 2,
             borderColor: c.outline,
-            height: 84,
+            height: gameLayout.dockHeight,
             paddingTop: 8,
             paddingBottom: 8,
             boxShadow: '0 3px 0 rgba(74,59,53,.25), 0 8px 16px rgba(0,0,0,.08)',

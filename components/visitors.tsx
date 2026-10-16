@@ -295,13 +295,48 @@ export function WelcomeBack() {
           {groups.length > 0 && (
             <>
               <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', textAlign: 'center' }}>
-                {reward.cards.length} {reward.cards.length === 1 ? 'card' : 'cards'} earned · deck{' '}
-                {p.deck.length}/20
+                {reward.cards.length.toLocaleString()}{' '}
+                {reward.cards.length === 1 ? 'card' : 'cards'} earned
               </BodyText>
+              <BodyText style={{ fontSize: 12, textAlign: 'center' }}>
+                {summary ? `${summary.kept.toLocaleString()} of these kept · ` : ''}
+                {p.deck.length}/20 in your deck
+              </BodyText>
+              {summary && (summary.previousReplaced > 0 || summary.earnedReplaced > 0) && (
+                <BodyText style={{ fontSize: 12, textAlign: 'center' }}>
+                  {summary.previousReplaced > 0
+                    ? `${summary.previousReplaced.toLocaleString()} older ${summary.previousReplaced === 1 ? 'card was' : 'cards were'} replaced.`
+                    : ''}
+                  {summary.previousReplaced > 0 && summary.earnedReplaced > 0 ? ' ' : ''}
+                  {summary.earnedReplaced > 0
+                    ? `${summary.earnedReplaced.toLocaleString()} earned ${summary.earnedReplaced === 1 ? 'card was' : 'cards were'} replaced by later rewards.`
+                    : ''}
+                </BodyText>
+              )}
               <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
                 {groups.map((group, index) => (
-                  <View key={group.id} style={{ width: groups.length === 1 ? '100%' : '47%' }}>
+                  <View
+                    key={group.id}
+                    style={{ width: groups.length === 1 ? '100%' : '47%', gap: 6 }}
+                  >
                     <RewardCard id={group.id} index={index} skip={skip} />
+                    <BodyText
+                      accessibilityLabel={`${cards[group.id].name}: ${group.count} earned`}
+                      style={{
+                        alignSelf: 'center',
+                        borderRadius: 999,
+                        paddingHorizontal: 10,
+                        paddingVertical: 3,
+                        overflow: 'hidden',
+                        backgroundColor: c.sage,
+                        color: c.ink,
+                        fontFamily: 'Nunito_800ExtraBold',
+                        fontSize: 12,
+                        textAlign: 'center',
+                      }}
+                    >
+                      ×{group.count.toLocaleString()} earned
+                    </BodyText>
                   </View>
                 ))}
               </View>
@@ -345,14 +380,9 @@ export function WelcomeBack() {
               />
               {details && (
                 <BodyText style={{ fontSize: 12 }}>
-                  {summary.kept} new kept
-                  {summary.previousReplaced
-                    ? ` · ${summary.previousReplaced} previous replaced`
-                    : ''}
-                  {summary.earnedReplaced
-                    ? ` · ${summary.earnedReplaced} earned then replaced`
-                    : ''}
-                  {groups.map((g) => ` · ${cards[g.id].name} ×${g.count}`).join('')}
+                  Your deck holds up to 20 cards. Once full, each new card replaces the weakest card
+                  currently in the deck. Cards shown above are all the cards earned during this
+                  break, including any replaced by later rewards.
                 </BodyText>
               )}
             </>

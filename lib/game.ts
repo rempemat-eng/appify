@@ -33,7 +33,7 @@ import {
   type WaitingVisitor,
   type WelcomeReward,
 } from '@/lib/visitors';
-import { bilt } from '@/lib/bilt';
+import { bilt, backendUnavailableMessage } from '@/lib/bilt';
 import {
   appendBreak,
   breakReceipt,
@@ -531,6 +531,10 @@ export const gameStore = create<Game>((set, get) => ({
   inviteTogether: async (rival) => {
     const p = get().player;
     if (!p || get().togetherPending || get().togetherId) return;
+    if (!bilt) {
+      get().notify(backendUnavailableMessage, true);
+      return;
+    }
     set({ togetherPending: rival.id });
     try {
       await get().sync();
@@ -559,6 +563,10 @@ export const gameStore = create<Game>((set, get) => ({
     const p = get().player;
     if (!p || p.mode !== 'awake' || get().battle || get().togetherPending || get().togetherId)
       return;
+    if (!bilt) {
+      get().notify(backendUnavailableMessage, true);
+      return;
+    }
     set({ togetherPending: session.player_a });
     try {
       await get().sync();
@@ -582,6 +590,11 @@ export const gameStore = create<Game>((set, get) => ({
   pollTogether: async () => {
     const p = get().player;
     if (!p) return;
+    if (!bilt) {
+      set({ live: false });
+      if (get().pendingTogetherWakes.length) get().notify(backendUnavailableMessage);
+      return;
+    }
     for (const wake of get().pendingTogetherWakes) {
       const report = await bilt.rpc('report_touch_grass_wake', {
         sid: wake.sid,
@@ -919,6 +932,10 @@ export const gameStore = create<Game>((set, get) => ({
   },
   sync: async () => {
     if (!get().player) return;
+    if (!bilt) {
+      if (get().live || get().syncing) set({ live: false, syncing: false });
+      return;
+    }
     if (get().syncing) {
       syncRequested = true;
       return;
@@ -1031,6 +1048,7 @@ export const gameStore = create<Game>((set, get) => ({
     const normalized = input.trim().toUpperCase();
     if (!/^[A-Z0-9]{4}$/.test(normalized)) return 'Enter exactly 4 letters or numbers.';
     if (normalized === p.code) return 'That’s your code. Enter a friend’s code to pair.';
+    if (!bilt) return backendUnavailableMessage;
     await get().sync();
     try {
       const found = await bilt.from('players').select('*').eq('code', normalized).maybeSingle();
@@ -1178,12 +1196,16 @@ export const gameStore = create<Game>((set, get) => ({
     accountPlay();
     const p = get().player;
     if (!p || p.mode !== 'awake' || get().battle || playPaused()) return;
+    if (!practice && !bilt) {
+      get().notify(backendUnavailableMessage, true);
+      return;
+    }
     if (!practice && (get().rules.days[dayKey()]?.raids ?? 0) >= 3) {
       get().notify('NO RAIDS LEFT TODAY. COME BACK TOMORROW.');
       return;
     }
     const generation = ++battleGeneration;
-    if (!practice) {
+    if (!practice && bilt) {
       const fresh = await bilt.from('players').select('*').eq('id', target.id).maybeSingle();
       if (fresh.error || !fresh.data) {
         set({ live: false });
@@ -1217,7 +1239,7 @@ export const gameStore = create<Game>((set, get) => ({
     )
       return;
     if (playPaused()) return;
-    if (!practice) {
+    if (!practice && bilt) {
       const result = await bilt.rpc('reserve_garden_raid', {
         pid: p.id,
         target: target.id,

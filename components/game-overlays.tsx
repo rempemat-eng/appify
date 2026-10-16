@@ -12,6 +12,7 @@ import {
   ScrollView,
   TextInput,
   View,
+  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Shield, Swords } from 'lucide-react-native';
@@ -29,6 +30,7 @@ import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
 import Animated, { FadeIn } from 'react-native-reanimated';
+import { gameColumn, gameSideInset } from '@/lib/layout';
 function Onboarding() {
   const reduced = useReducedMotion();
   const [step, setStep] = useState(0);
@@ -577,6 +579,9 @@ function DefenderAlert() {
   );
 }
 export function GameOverlays() {
+  const reduced = useReducedMotion();
+  const { width } = useWindowDimensions();
+  const sideInset = gameSideInset(width);
   const ready = useGame((s) => s.ready);
   const p = useGame((s) => s.player);
   const battle = useGame((s) => s.battle);
@@ -629,98 +634,98 @@ export function GameOverlays() {
           {/* Same centred phone-width column as the tab screens (Page maxWidth), so
               overlays don't stretch across wide browser windows. The backdrop above
               still fills the screen. */}
-          <View style={{ flex: 1, width: '100%', maxWidth: 640, alignSelf: 'center' }}>
-          {!ready ? (
-            <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}>
-              <PixelScene
-                kind="nest"
+          <View style={[gameColumn, { flex: 1 }]}>
+            {!ready ? (
+              <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}>
+                <PixelScene
+                  kind="nest"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: '100%',
+                    borderWidth: 0,
+                  }}
+                />
+                <Pet species="BLOB" walking size={64} />
+                <BodyText>one moment. tiny legs.</BodyText>
+              </View>
+            ) : !p ? (
+              <Onboarding />
+            ) : isScreenOff ? (
+              <ScreenOff />
+            ) : cardReward ? (
+              <WelcomeBack />
+            ) : recap ? (
+              <GardenRecap />
+            ) : battle ? (
+              <BattleScreen key={`${battle.target.id}-${battle.practice}`} request={battle} />
+            ) : alert ? (
+              <DefenderAlert key={alert.raid.id} />
+            ) : flash ? (
+              <View
                 style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: '100%',
-                  borderWidth: 0,
-                }}
-              />
-              <Pet species="BLOB" walking size={64} />
-              <BodyText>one moment. tiny legs.</BodyText>
-            </View>
-          ) : !p ? (
-            <Onboarding />
-          ) : isScreenOff ? (
-            <ScreenOff />
-          ) : cardReward ? (
-            <WelcomeBack />
-          ) : recap ? (
-            <GardenRecap />
-          ) : battle ? (
-            <BattleScreen key={`${battle.target.id}-${battle.practice}`} request={battle} />
-          ) : alert ? (
-            <DefenderAlert key={alert.raid.id} />
-          ) : flash ? (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: 'center',
-                alignItems: 'center',
-                gap: 32,
-                padding: 24,
-                backgroundColor: c.flash,
-              }}
-            >
-              <PixelScene
-                species={p.species}
-                level={p.level}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  right: 0,
-                  bottom: 0,
-                  height: '100%',
-                  borderWidth: 0,
-                }}
-              />
-              <GrowthFrames player={p} />
-              <PixelButton
-                label="BACK TO THE GARDEN"
-                onPress={() => useGame.setState({ flash: null })}
-              />
-              {flash.includes('BLOOMED') && <PetalFall />}
-              <BodyText style={{ backgroundColor: c.paper, padding: 6 }}>
-                {growthStage(p.level)}
-              </BodyText>
-              <PixelText
-                style={{
-                  fontSize: 16,
-                  lineHeight: 30,
-                  textAlign: 'center',
-                  backgroundColor: c.paper,
-                  padding: 12,
+                  flex: 1,
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  gap: 32,
+                  padding: 24,
+                  backgroundColor: c.flash,
                 }}
               >
-                {flash}
-              </PixelText>
-            </View>
-          ) : guideOpen ? (
-            <GardenGuide onClose={() => useGame.setState({ guideOpen: false })} />
-          ) : deckOpen ? (
-            <DeckPanel />
-          ) : null}
+                <PixelScene
+                  species={p.species}
+                  level={p.level}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    height: '100%',
+                    borderWidth: 0,
+                  }}
+                />
+                <GrowthFrames player={p} />
+                <PixelButton
+                  label="BACK TO THE GARDEN"
+                  onPress={() => useGame.setState({ flash: null })}
+                />
+                {flash.includes('BLOOMED') && <PetalFall />}
+                <BodyText style={{ backgroundColor: c.paper, padding: 6 }}>
+                  {growthStage(p.level)}
+                </BodyText>
+                <PixelText
+                  style={{
+                    fontSize: 16,
+                    lineHeight: 30,
+                    textAlign: 'center',
+                    backgroundColor: c.paper,
+                    padding: 12,
+                  }}
+                >
+                  {flash}
+                </PixelText>
+              </View>
+            ) : guideOpen ? (
+              <GardenGuide onClose={() => useGame.setState({ guideOpen: false })} />
+            ) : deckOpen ? (
+              <DeckPanel />
+            ) : null}
           </View>
         </View>
       </Modal>
       {!visible && message && (
         <Animated.View
           key={message}
-          entering={FadeIn.duration(100)}
+          entering={reduced ? undefined : FadeIn.duration(100)}
           style={{
             position: 'absolute',
             top: insets.top + 12,
-            left: 16,
-            right: 16,
+            left: sideInset,
+            right: sideInset,
             zIndex: 100,
             gap: 8,
           }}

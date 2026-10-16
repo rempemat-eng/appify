@@ -1,5 +1,5 @@
 import { createClient } from '@biltme/backend';
-import { bilt } from '@/lib/bilt';
+import { bilt, backendUnavailableMessage } from '@/lib/bilt';
 import {
   accountPlay,
   bot,
@@ -66,7 +66,7 @@ export async function runRefinementChecks(): Promise<string[]> {
   const realNow = Date.now;
   let time = realNow();
   const player = qaPlayer(time);
-  const originalRpc = bilt.rpc.bind(bilt);
+  const originalRpc = bilt?.rpc.bind(bilt);
   const base = gameStore.getState();
   const reset = (patch: Partial<Player> = {}) => {
     gameStore.setState({
@@ -350,17 +350,19 @@ export async function runRefinementChecks(): Promise<string[]> {
       cardReward: null,
       pendingTogetherWakes: [{ sid: session.id, at: new Date(time).toISOString(), minutes: 5 }],
     });
-    const failingClient = createClient('https://refinement-qa.invalid', 'qa-only', {
-      auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
-      global: {
-        fetch: async () =>
-          new Response(JSON.stringify({ message: 'Connection unavailable' }), {
-            status: 503,
-            headers: { 'Content-Type': 'application/json' },
-          }),
-      },
-    });
-    bilt.rpc = failingClient.rpc.bind(failingClient);
+    if (bilt) {
+      const failingClient = createClient('https://refinement-qa.invalid', 'qa-only', {
+        auth: { persistSession: false, autoRefreshToken: false, detectSessionInUrl: false },
+        global: {
+          fetch: async () =>
+            new Response(JSON.stringify({ message: 'Connection unavailable' }), {
+              status: 503,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+        },
+      });
+      bilt.rpc = failingClient.rpc.bind(failingClient);
+    }
     try {
       await gameStore.getState().pollTogether();
     } catch {
@@ -368,16 +370,18 @@ export async function runRefinementChecks(): Promise<string[]> {
     }
     check(
       gameStore.getState().pendingTogetherWakes.length === 1 &&
-        gameStore.getState().message?.startsWith('Together report pending.') === true &&
+        (bilt
+          ? gameStore.getState().message?.startsWith('Together report pending.') === true
+          : gameStore.getState().message === backendUnavailableMessage) &&
         !gameStore.getState().message?.includes('PICKED UP') &&
         gameStore.getState().player!.grass === 25,
-      'Connection failure retains wake for retry and rewards; never accuses rival',
+      'Unavailable online play retains wake for retry and rewards; never accuses rival',
     );
     check(cardIds.length === 9, 'No new cards or progression systems');
     await flushGameSave();
     return lines;
   } finally {
     Date.now = realNow;
-    bilt.rpc = originalRpc;
+    if (bilt && originalRpc) bilt.rpc = originalRpc;
   }
 }

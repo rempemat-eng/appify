@@ -48,6 +48,7 @@ import { GrassFlight } from '@/components/grassling-feedback';
 import { BodyText, BattleIntro, Pulse } from '@/components/pixel-feedback';
 import { HabitCard } from '@/components/habit-cards';
 import { cardDetails, cards } from '@/lib/cards';
+import { combatTurnId, createTurnResolutionGate } from '@/lib/turn-resolution';
 
 type Phase = 'choose' | 'timing' | 'block' | 'resolve' | 'waiting' | 'skipped' | 'end';
 function Damage({ amount, skip }: { amount: number; skip: boolean }) {
@@ -165,6 +166,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const [target] = useState(() => guardianPlayer(request.target));
   const [combat, setCombat] = useState(() => createCombat(player, target));
   const combatRef = useRef(combat);
+  const [turnResolution] = useState(() =>
+    createTurnResolutionGate<ReturnType<typeof resolveMove>>(),
+  );
   const [phase, setPhase] = useState<Phase>('choose');
   const phaseRef = useRef<Phase>('choose');
   const [auto, setAuto] = useState(false);
@@ -182,7 +186,11 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const [damage, setDamage] = useState<(Impact & { id: number; perfect: boolean }) | null>(null);
   const [skip, setSkip] = useState(false);
   const [log, setLog] = useState('YOUR TURN. LIFT A CARD, TAP AGAIN TO PLAY.');
-  const [flash, setFlash] = useState(false);
+  const [flashEndedTurn, setFlashEndedTurn] = useState<string | null>(null);
+  const flash =
+    phase === 'resolve' &&
+    playedMove === 'digital_sunset' &&
+    flashEndedTurn !== combatTurnId(combat);
   const [history, setHistory] = useState<{ id: number; line: string; summary: string }[]>([]);
   const historyId = useRef(0);
   const committed = useRef(false);
@@ -275,24 +283,31 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
     }
   }, [active, changePhase, publish, record, target]);
   useEffect(() => {
-    const phaseAuto = autoRef.current;
-    if (phase === 'timing') {
-      if (timingLesson) return undefined;
-      let frame = 0;
-      function sweep() {
-        if (phaseRef.current !== 'timing') return;
-        const progress = Math.min(1, (Date.now() - timingStart.current) / 1200);
-        setCursor(progress);
-        if (progress < 1) frame = requestAnimationFrame(sweep);
-        else {
-          timing.current = 0.6;
-          phaseRef.current = 'resolve';
-          setPhase('resolve');
-        }
+    if (phase !== 'timing' || timingLesson) return undefined;
+    let frame = 0;
+    function sweep() {
+      if (phaseRef.current !== 'timing') return;
+      const progress = Math.min(1, (Date.now() - timingStart.current) / 1200);
+      setCursor(progress);
+      if (progress < 1) frame = requestAnimationFrame(sweep);
+      else {
+        timing.current = 0.6;
+        changePhase('resolve');
       }
-      frame = requestAnimationFrame(sweep);
-      return () => cancelAnimationFrame(frame);
     }
+    frame = requestAnimationFrame(sweep);
+    return () => cancelAnimationFrame(frame);
+  }, [phase, timingLesson, changePhase]);
+  // Motion preferences only control presentation. They must not restart a turn's
+  // gameplay timers after its card and damage have already been committed.
+  useEffect(() => {
+    if (phase !== 'resolve' || playedMove !== 'digital_sunset') return undefined;
+    const turnId = combatTurnId(combatRef.current);
+    const timer = setTimeout(() => setFlashEndedTurn(turnId), 180 * (autoRef.current ? 0.5 : 1));
+    return () => clearTimeout(timer);
+  }, [phase, playedMove]);
+  useEffect(() => {
+    const phaseAuto = autoRef.current;
     if (phase === 'block') {
       const timer = setTimeout(() => {
         if (phaseRef.current !== 'block') return;
@@ -308,21 +323,27 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
     }
     if (phase === 'resolve') {
       const side = combatRef.current.side;
+      const turnId = combatTurnId(combatRef.current);
       const move = selected.current;
       if (damaging(move)) setAttack((old) => ({ ...old, [side]: old[side] + 1 }));
-      if (move === 'digital_sunset' && !reduced) setFlash(true);
       const timers: ReturnType<typeof setTimeout>[] = [];
       const speed = phaseAuto ? 0.5 : 1;
-      if (move === 'digital_sunset') timers.push(setTimeout(() => setFlash(false), 180 * speed));
       const timer = setTimeout(() => {
-        if (!active()) return;
+        if (
+          !active() ||
+          phaseRef.current !== 'resolve' ||
+          combatTurnId(combatRef.current) !== turnId
+        )
+          return;
         const beforeHp = combatRef.current[side].hp;
-        const resolution = resolveMove(
-          combatRef.current,
-          move,
-          { a: player, d: target },
-          timing.current,
-          blocked.current,
+        const { value: resolution, first } = turnResolution.resolve(turnId, () =>
+          resolveMove(
+            combatRef.current,
+            move,
+            { a: player, d: target },
+            timing.current,
+            blocked.current,
+          ),
         );
         combatRef.current = resolution.state;
         const impacts = resolution.impacts;
@@ -330,7 +351,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         const actor = side === 'a' ? player : target;
         const heal = resolution.state[side].hp - beforeHp;
         const summary = `${grasslingName(actor)} ${move === 'pass' ? 'passed' : `played ${cards[move].name}`}. ${timing.current === 1.5 && damaging(move) ? 'PERFECT! ' : ''}${impacts.length ? `-${impacts.reduce((sum, impact) => sum + impact.amount, 0)}${blocked.current ? ' · BLOCKED' : ''}` : move === 'deep_breath' ? 'BLOCK HALF · +1 ENERGY' : move === 'pass' ? '+1 ENERGY' : `+${Math.max(0, heal)} HP`}`;
-        record(resolution.log, summary);
+        if (first) record(resolution.log, summary);
         impacts.forEach((impact, i) => {
           timers.push(
             setTimeout(
@@ -356,7 +377,6 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         timers.push(
           setTimeout(
             () => {
-              setFlash(false);
               setCombat(resolution.state);
               phaseRef.current = resolution.state.result === null ? 'waiting' : 'end';
               setPhase(phaseRef.current);
@@ -368,11 +388,10 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
       timers.push(timer);
       return () => {
         timers.forEach(clearTimeout);
-        setFlash(false);
       };
     }
     return undefined;
-  }, [phase, player, target, active, nextTurn, record, timingLesson, reduced]);
+  }, [phase, player, target, active, nextTurn, record, turnResolution]);
   useEffect(() => {
     if (phase !== 'choose' || !auto) return undefined;
     const timer = setTimeout(() => select(chooseAI(combatRef.current.a, player)), 200);

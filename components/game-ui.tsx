@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
   ScrollView,
@@ -27,6 +27,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c, panelStyle } from '@/lib/cozy';
+import { backendConfigured } from '@/lib/bilt';
 import { CozyBackground } from '@/components/cozy-ui';
 import { PlayMeter } from '@/components/offline-garden';
 import { PixelProp } from '@/components/pixel-scenes';
@@ -36,6 +37,7 @@ import { visitorPixels } from '@/lib/visitor-art';
 import { isVisitorId, visitorInfo } from '@/lib/visitors';
 import { petPixels } from '@/lib/pet-art';
 import { grasslings, growthStage } from '@/lib/grasslings';
+import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
 
 export function PixelText({ style, ...props }: TextProps) {
   const display = (StyleSheet.flatten(style)?.fontSize ?? 15) >= 16;
@@ -233,7 +235,24 @@ export function Pet({
   const [idle, setIdle] = useState<'rest' | 'yawn' | 'look'>('rest');
   const [heart, setHeart] = useState(false);
   const [flashState, setFlashState] = useState({ hit, flashing: false });
-  if (flashState.hit !== hit) setFlashState({ hit, flashing: hit !== 0 });
+  const [motionMode, setMotionMode] = useState(reduced);
+  const seenMotion = useRef({ hit: 0, attack: 0, victory: false });
+  if (motionMode !== reduced) {
+    setMotionMode(reduced);
+    setBreath(false);
+    setStride(false);
+    setBlink(false);
+    setIdle('rest');
+    setFlashState({ hit, flashing: false });
+  }
+  if (flashState.hit !== hit) setFlashState({ hit, flashing: hit !== 0 && !reduced });
+  useEffect(() => {
+    if (!reduced) return;
+    cancelAnimation(x);
+    cancelAnimation(y);
+    x.set(0);
+    y.set(0);
+  }, [reduced, x, y]);
   useEffect(() => {
     if (reduced || !bob || sleeping || walking) return undefined;
     const timer = setInterval(() => setBreath((v) => !v), 400);
@@ -280,9 +299,14 @@ export function Pet({
     };
   }, [bob, sleeping, walking, reduced, slumped]);
   useEffect(() => {
-    if (victory && !reduced)
+    const changed = seenMotion.current.victory !== victory;
+    seenMotion.current.victory = victory;
+    if (changed && victory && !reduced)
       y.set(withSequence(withTiming(-12, { duration: 160 }), withTiming(0, { duration: 180 })));
-    return () => cancelAnimation(y);
+    return () => {
+      cancelAnimation(y);
+      y.set(0);
+    };
   }, [victory, reduced, y]);
   useEffect(() => {
     if (!heart) return undefined;
@@ -295,7 +319,9 @@ export function Pet({
     return () => clearInterval(timer);
   }, [walking, reduced]);
   useEffect(() => {
-    if (!hit) return undefined;
+    const changed = seenMotion.current.hit !== hit;
+    seenMotion.current.hit = hit;
+    if (!changed || !hit) return undefined;
     const timer = setTimeout(() => setFlashState({ hit, flashing: false }), 34);
     x.set(
       reduced
@@ -308,29 +334,39 @@ export function Pet({
     return () => {
       clearTimeout(timer);
       cancelAnimation(x);
+      x.set(0);
     };
   }, [hit, reduced, x, facing]);
   useEffect(() => {
-    if (attack && !reduced)
+    const changed = seenMotion.current.attack !== attack;
+    seenMotion.current.attack = attack;
+    if (changed && attack && !reduced)
       x.set(
         withSequence(
           withTiming(facing === 'right' ? 8 : -8, { duration: 100 }),
           withTiming(0, { duration: 160 }),
         ),
       );
+    return () => {
+      cancelAnimation(x);
+      x.set(0);
+    };
   }, [attack, facing, reduced, x]);
   const motion = useAnimatedStyle(() => ({
-    transform: [{ translateY: Math.round(y.value) }, { translateX: Math.round(x.value) }],
+    transform: [
+      { translateY: reduced ? 0 : Math.round(y.value) },
+      { translateX: reduced ? 0 : Math.round(x.value) },
+    ],
   }));
   const visitorId = isVisitorId(visitor) ? visitor : null;
   const petLabel = visitorId ? visitorInfo(visitorId).name : grasslings[species].name;
   const pixels = visitorId
-    ? visitorPixels(visitorId, hat, sleeping || blink, groundShadow)
+    ? visitorPixels(visitorId, hat, sleeping || (!reduced && blink), groundShadow)
     : petPixels(
         species,
         level,
         hat,
-        sleeping || blink || idle === 'yawn' || yawning,
+        sleeping || (!reduced && (blink || idle === 'yawn')) || yawning,
         grumpy,
         dave,
         groundShadow,
@@ -379,7 +415,7 @@ export function Pet({
             transform: [
               { scaleX: facing === 'left' ? -1 : 1 },
               { translateY: slumped ? 8 : 0 },
-              { translateX: idle === 'look' ? 3 : 0 },
+              { translateX: !reduced && idle === 'look' ? 3 : 0 },
             ],
           }}
         >
@@ -390,7 +426,7 @@ export function Pet({
               y={
                 curled && sleeping
                   ? 7 + Math.floor((ry * 24) / 32)
-                  : walking && ry >= 26 && ry <= 28 && rx < 17 === stride
+                  : walking && !reduced && ry >= 26 && ry <= 28 && rx < 17 === stride
                     ? ry - 1
                     : bob && breath && !reduced && !sleeping && ry >= 16
                       ? ry - 1
@@ -409,7 +445,9 @@ export function Pet({
               }
             />
           ))}
-          {(idle === 'yawn' || yawning) && <Rect x={21} y={22} width={3} height={3} fill={c.ink} />}
+          {((!reduced && idle === 'yawn') || yawning) && (
+            <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
+          )}
         </Svg>
       </Pressable>
     </Animated.View>
@@ -582,10 +620,20 @@ export function GameHeader() {
   const live = useGame((s) => s.live);
   const top = useSafeAreaInsets().top;
   return (
-    <View style={{ paddingTop: top + 8, paddingHorizontal: 16, paddingBottom: 8, zIndex: 40 }}>
+    <View style={{ paddingTop: top + 8, paddingBottom: 8, zIndex: 40 }}>
       <BlurView tint="light" intensity={35} style={StyleSheet.absoluteFill} />
       <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.glass }]} />
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+      <View
+        style={[
+          gameColumn,
+          {
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 4,
+            paddingHorizontal: gameLayout.gutter,
+          },
+        ]}
+      >
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={p ? `Garden status: ${status(p).label}` : 'Garden status'}
@@ -595,10 +643,10 @@ export function GameHeader() {
         >
           {p && <StatusChip player={p} compact />}
         </Pressable>
-        <Pressable
-          accessibilityRole="button"
+        <View
+          accessible
+          accessibilityRole="text"
           accessibilityLabel={`${p?.grass ?? 20} grass`}
-          onLongPress={() => p && useGame.getState().change({ grass: p.grass + 100 })}
           style={{
             flexDirection: 'row',
             gap: 4,
@@ -613,11 +661,11 @@ export function GameHeader() {
         >
           <PixelProp kind="grass" size={16} />
           <GrassRoll value={p?.grass ?? 20} />
-        </Pressable>
+        </View>
         {p && <PlayMeter />}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Open garden guide. ${live ? 'Garden synced' : 'No signal'}`}
+          accessibilityLabel={`Open garden guide. ${live ? 'Garden synced' : backendConfigured ? 'No signal' : 'Local garden, saved on this device'}`}
           onPress={() => useGame.setState({ guideOpen: true })}
           style={{
             width: 44,
@@ -638,7 +686,7 @@ export function GameHeader() {
               width: 4,
               height: 4,
               borderRadius: 2,
-              backgroundColor: live ? c.moss : c.error,
+              backgroundColor: live || !backendConfigured ? c.moss : c.error,
             }}
           />
         </Pressable>
@@ -654,12 +702,10 @@ export function Page({ children, style }: { children: React.ReactNode; style?: V
       <ScrollView
         contentContainerStyle={[
           {
-            padding: 16,
-            paddingBottom: 112 + insets.bottom,
+            ...gameColumn,
+            padding: gameLayout.gutter,
+            paddingBottom: dockClearance(insets.bottom),
             gap: 12,
-            width: '100%',
-            maxWidth: 640,
-            alignSelf: 'center',
           },
           style,
         ]}
