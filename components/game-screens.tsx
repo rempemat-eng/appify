@@ -23,6 +23,7 @@ import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
 import { budgetVoice, dayKey } from '@/lib/offline-rules';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
 import { collectionOf, guardianPlayer, isVisitorId, visitorInfo } from '@/lib/visitors';
+import { FriendCode } from '@/components/friend-code';
 import { GardenVisitor, GuardianPicker } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
@@ -33,6 +34,7 @@ import { PixelBurst } from '@/components/cozy-motion';
 import {
   GardenProgress,
   GardenStreak,
+  RecentBreaks,
   PlayPause,
   TogetherInvite,
   usePlayPaused,
@@ -290,7 +292,19 @@ export function HomeScreen() {
         >
           <CozySheet style={{ padding: 16, gap: 12 }}>
             <PixelText style={{ fontSize: 16 }}>GARDEN STATS</PixelText>
-            <ScrollView style={{ maxHeight: height * 0.5 }} contentContainerStyle={{ gap: 12 }}>
+            <ScrollView
+              style={{ maxHeight: height * 0.5 }}
+              contentContainerStyle={{ gap: 12, paddingBottom: 16 }}
+            >
+              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+                Today ·{' '}
+                {new Date(now).toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}
+              </BodyText>
+              <GardenProgress />
               <BodyText>
                 {isVisitorId(guardian.guardian)
                   ? visitorInfo(guardian.guardian).name
@@ -302,12 +316,13 @@ export function HomeScreen() {
               </BodyText>
               <BodyText>Mood {p.mood} / 100</BodyText>
               <Meter value={p.mood} />
-              <BodyText>Next common card in {15 - (p.offline_seconds % 15)} offline MIN</BodyText>
+              <BodyText>Next common card in {15 - (p.offline_seconds % 15)} simulated MIN</BodyText>
               <BodyText>
                 Level {levelPreview(p.level).next} · {levelPreview(p.level).cost} GRASS ·{' '}
                 {levelPreview(p.level).unlock}
               </BodyText>
               <GardenStreak />
+              <RecentBreaks />
             </ScrollView>
             <PixelButton label="DONE" onPress={() => setStatsOpen(false)} />
           </CozySheet>
@@ -553,6 +568,7 @@ function RivalRow({
   );
 }
 export function ArenaScreen() {
+  const insets = useSafeAreaInsets();
   const focused = useIsFocused();
   const paused = usePlayPaused();
   const raids = useGame((s) => s.rules.days[dayKey(s.now)]?.raids ?? 0);
@@ -565,10 +581,14 @@ export function ArenaScreen() {
   const [pending, setPending] = useState(false);
   const [raiding, setRaiding] = useState<string | null>(null);
   if (!p) return null;
+  const ownCode = code.trim().toUpperCase() === p.code;
+  const validCode = /^[A-Z0-9]{4}$/.test(code.trim().toUpperCase());
+  const canPair = validCode && !ownCode && !pending;
   const ranked = [p, ...rivals].sort(
     (a, b) => b.offline_seconds - a.offline_seconds || a.name.localeCompare(b.name),
   );
   async function pair() {
+    if (!canPair) return;
     setPending(true);
     setError(null);
     const result = await useGame.getState().pair(code);
@@ -591,13 +611,21 @@ export function ArenaScreen() {
       <PixelScene kind="town" height={160} />
       <GardenTip id="arena" eligible={focused} />
       <CozyPanel style={{ padding: 16, gap: 12 }}>
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>Your code: {p.code}</BodyText>
+        <FriendCode code={p.code} />
         <BodyText>Add rival</BodyText>
         <TextInput
           accessibilityLabel="Rival code"
           style={styles.input}
           value={code}
-          onChangeText={(text) => setCode(text.toUpperCase().replace(/[^A-Z0-9]/g, ''))}
+          onChangeText={(text) => {
+            setCode(
+              text
+                .trim()
+                .toUpperCase()
+                .replace(/[^A-Z0-9]/g, ''),
+            );
+            setError(null);
+          }}
           autoCapitalize="characters"
           autoCorrect={false}
           maxLength={4}
@@ -605,14 +633,19 @@ export function ArenaScreen() {
           placeholderTextColor={c.shade}
           returnKeyType="done"
           onSubmitEditing={() => {
-            if (code.length === 4 && !pending) void pair();
+            if (canPair) void pair();
           }}
         />
         <PixelButton
-          label={pending ? 'PAIRING…' : code.length !== 4 ? 'ENTER A 4-CHARACTER CODE' : 'PAIR'}
-          disabled={pending || code.length !== 4}
+          label={pending ? 'PAIRING…' : !validCode ? 'ENTER A 4-CHARACTER CODE' : 'PAIR'}
+          disabled={!canPair}
           onPress={() => void pair()}
         />
+        {ownCode && (
+          <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
+            That’s your code. Enter a friend’s code to pair.
+          </BodyText>
+        )}
         {error && (
           <View style={{ gap: 8 }}>
             <Dialogue text={error} />
@@ -620,7 +653,7 @@ export function ArenaScreen() {
               small
               light
               label="TRY AGAIN"
-              disabled={pending}
+              disabled={!canPair}
               onPress={() => void pair()}
             />
           </View>
@@ -641,7 +674,8 @@ export function ArenaScreen() {
         <View style={{ alignItems: 'center', gap: 12, paddingVertical: 12 }}>
           <Pet species={p.species} level={p.level} hat={p.hat} size={64} />
           <BodyText style={{ textAlign: 'center' }}>
-            it&apos;s quiet here. share my NapAttack code: {p.code}
+            Swap codes with a friend and add their code above. Once paired, use their invite button
+            to start a Together nap.
           </BodyText>
           <PixelButton
             small
@@ -694,7 +728,7 @@ export function ArenaScreen() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           padding: 16,
-          paddingBottom: 112,
+          paddingBottom: 112 + insets.bottom,
           gap: 12,
           maxWidth: 640,
           width: '100%',

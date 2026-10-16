@@ -29,6 +29,14 @@ export function dayKey(at = Date.now()) {
   const d = new Date(at);
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
+export function dailyProgress(total: number) {
+  return {
+    value: Math.max(0, Math.min(120, total)),
+    percent: Math.max(0, Math.min(100, (total / 120) * 100)),
+    complete: total >= 120,
+    total: total.toLocaleString(),
+  };
+}
 export function previousDay(key: string) {
   const d = new Date(`${key}T12:00:00`);
   d.setDate(d.getDate() - 1);

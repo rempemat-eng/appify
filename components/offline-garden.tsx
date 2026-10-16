@@ -1,11 +1,19 @@
 import { Fragment } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
+import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
-import { Sprout, Users } from 'lucide-react-native';
+import { Sprout, Users, Moon } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
-import { clock, useGame, type Player } from '@/lib/game';
+import { clock, missions, useGame, type Player } from '@/lib/game';
 import Svg, { Rect } from 'react-native-svg';
-import { budgetVoice, dayKey, emptyDay, gardenStreak, remainingPlay } from '@/lib/offline-rules';
+import {
+  budgetVoice,
+  dailyProgress,
+  dayKey,
+  emptyDay,
+  gardenStreak,
+  remainingPlay,
+} from '@/lib/offline-rules';
 import { Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { PixelScene } from '@/components/pixel-scenes';
@@ -84,25 +92,72 @@ export function PlayPause() {
 }
 export function GardenProgress() {
   const offline = useGame((s) => s.rules.days[dayKey(s.now)]?.offline ?? 0);
+  const progress = dailyProgress(offline);
   return (
     <View style={{ gap: 6 }}>
       <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
-        TODAY {offline} / 120 MIN
+        {progress.complete ? 'Daily goal complete' : `${progress.total} / 120 simulated MIN today`}
       </BodyText>
       <View
         accessibilityRole="progressbar"
-        accessibilityValue={{ min: 0, max: 120, now: Math.min(120, offline) }}
+        accessibilityLabel={`Daily goal ${progress.complete ? 'complete' : 'progress'}: ${progress.total} simulated MIN today; goal 120 simulated MIN`}
+        accessibilityValue={{ min: 0, max: 120, now: progress.value }}
         style={{ height: 6, borderRadius: 3, backgroundColor: c.faded }}
       >
         <View
           style={{
             height: 6,
             borderRadius: 3,
-            width: `${Math.min(100, (offline / 120) * 100)}%`,
+            width: `${progress.percent}%`,
             backgroundColor: c.positive,
           }}
         />
       </View>
+      {progress.complete && (
+        <BodyText style={{ fontSize: 12 }}>{progress.total} simulated MIN today</BodyText>
+      )}
+    </View>
+  );
+}
+export function RecentBreaks() {
+  const history = useGame((s) => s.recentBreaks);
+  return (
+    <View style={{ gap: 12, paddingTop: 12 }}>
+      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}>Recent breaks</BodyText>
+      {!history.length && (
+        <View style={{ gap: 8 }}>
+          <Moon color={c.ink} size={20} strokeWidth={2} />
+          <BodyText>Your next completed nap or mission will appear here.</BodyText>
+        </View>
+      )}
+      {history.slice(0, 5).map((entry) => (
+        <Animated.View
+          entering={FadeIn}
+          exiting={FadeOut}
+          key={entry.id}
+          style={{ gap: 4, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: c.outline }}
+        >
+          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+            {entry.mission
+              ? (missions.find((m) => m.id === entry.mission)?.name ?? 'Mission')
+              : 'Nap'}
+            {entry.early ? ' · returned early' : ''}
+          </BodyText>
+          <BodyText style={{ fontSize: 12 }}>
+            {new Date(entry.completedAt).toLocaleString(undefined, {
+              month: 'short',
+              day: 'numeric',
+              year: 'numeric',
+              hour: 'numeric',
+              minute: '2-digit',
+            })}
+          </BodyText>
+          <BodyText style={{ fontSize: 12 }}>
+            {entry.minutes.toLocaleString()} simulated MIN · {entry.grass.toLocaleString()} GRASS ·{' '}
+            {entry.cards} {entry.cards === 1 ? 'card' : 'cards'}
+          </BodyText>
+        </Animated.View>
+      ))}
     </View>
   );
 }

@@ -647,6 +647,7 @@ export function GameHeader() {
   );
 }
 export function Page({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
+  const insets = useSafeAreaInsets();
   return (
     <View style={{ flex: 1 }}>
       <CozyBackground />
@@ -654,7 +655,7 @@ export function Page({ children, style }: { children: React.ReactNode; style?: V
         contentContainerStyle={[
           {
             padding: 16,
-            paddingBottom: 112,
+            paddingBottom: 112 + insets.bottom,
             gap: 12,
             width: '100%',
             maxWidth: 640,

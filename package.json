@@ -9,7 +9,8 @@
     "export:web": "expo export -p web",
     "build:pwa": "expo export -p web && workbox generateSW workbox-config.js",
     "lint": "oxlint --type-aware --type-check",
-    "lint:css": "node scripts/lint-css.mjs",
+    "lint:css": "node scripts/lint-css.mjs && npm run check:usefulness",
+    "check:usefulness": "tsx lib/usefulness.test.ts",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check ."
   },
@@ -31,6 +32,7 @@
     "clsx": "~2.1.1",
     "expo": "~57.0.30",
     "expo-blur": "~57.0.3",
+    "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.17",
     "expo-crypto": "~57.0.4",
     "expo-dev-client": "~57.0.20",

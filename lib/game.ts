@@ -34,6 +34,13 @@ import {
   type WelcomeReward,
 } from '@/lib/visitors';
 import { bilt } from '@/lib/bilt';
+import {
+  appendBreak,
+  breakReceipt,
+  addTogetherReceiptBonus,
+  restoreBreakHistory,
+  type RecentBreak,
+} from '@/lib/break-history';
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
 import {
   addCard,
@@ -113,6 +120,8 @@ function code() {
 export type Incoming = { raid: Raid; attacker: Player | null };
 export type BattleRequest = { target: Player; practice: boolean };
 type Saved = {
+  recentBreaks?: RecentBreak[];
+  breakId?: string | null;
   lastActiveAt: number;
   tips: GardenTipId[];
   firstWake: boolean;
@@ -136,6 +145,8 @@ type Saved = {
   cardReward: WelcomeReward | null;
 };
 type Game = Saved & {
+  recentBreaks: RecentBreak[];
+  breakId: string | null;
   befriendVisitor: () => void;
   selectGuardian: (id: VisitorId | null) => void;
   homeTipActive: 'phone' | 'wake' | null;
@@ -214,6 +225,8 @@ function isPlayer(value: unknown): value is Player {
 }
 function migrateSaved(value: unknown) {
   if (!isRecord(value)) return value;
+  value.recentBreaks = restoreBreakHistory(value.recentBreaks);
+  if (typeof value.breakId !== 'string') value.breakId = null;
   const migratePlayer = (p: unknown) => {
     if (isRecord(p)) {
       if (!Array.isArray(p.collection)) p.collection = [];
@@ -360,6 +373,7 @@ function beginTogether(session: TogetherSession) {
     seenSessions: [...s.seenSessions, session.id],
     sessions: [...s.sessions.filter((x) => x.id !== session.id), session],
     offStart: s.player.offline_seconds,
+    breakId: `together:${session.id}`,
     offDeck: s.player.deck.filter(isCardId),
     collectedCards: [],
     offGrass: s.player.grass,
@@ -387,6 +401,7 @@ export function resolveTogetherSession(session: TogetherSession) {
         togetherBadges: s.rules.togetherBadges + 1,
       },
       togetherSettled: [...s.togetherSettled, session.id],
+      recentBreaks: addTogetherReceiptBonus(s.recentBreaks, session.id, bonus),
       cardReward:
         s.cardReward?.sessionId === session.id
           ? { ...s.cardReward, grass: s.cardReward.grass + bonus }
@@ -410,6 +425,8 @@ export function resolveTogetherSession(session: TogetherSession) {
 function persist() {
   const s = gameStore.getState();
   const saved: Saved = {
+    recentBreaks: s.recentBreaks,
+    breakId: s.breakId,
     lastActiveAt: s.lastActiveAt,
     tips: s.tips,
     firstWake: s.firstWake,
@@ -468,6 +485,8 @@ function applyIncoming(item: Incoming) {
   feedback('raid');
 }
 export const gameStore = create<Game>((set, get) => ({
+  recentBreaks: [],
+  breakId: null,
   lastActiveAt: 0,
   tips: [],
   firstWake: false,
@@ -839,6 +858,19 @@ export const gameStore = create<Game>((set, get) => ({
         next = meetVisitor(next, visitor, minutes, now);
         if (postcard) next = { ...next, postcards: [...postcardsOf(next), postcard] };
       }
+      const settlementId = s.breakId ?? `${p.id}:${completedMission}:${p.mission_ends_at}`;
+      const reward: WelcomeReward = {
+        settlementId,
+        deckBefore: s.offDeck ?? undefined,
+        cards: collectedCards,
+        minutes,
+        mission: completedMission ?? null,
+        grass: next.grass - s.offGrass,
+        visitor,
+        postcard,
+        hat: missionHat,
+        early: false,
+      };
       set({
         rules,
         player: next,
@@ -852,17 +884,12 @@ export const gameStore = create<Game>((set, get) => ({
                   ? { id: visitor, expiresAt: 0 }
                   : null,
               voice: visitor ? 'someone visited while you were gone!' : get().voice,
-              cardReward: {
-                deckBefore: s.offDeck ?? undefined,
-                cards: collectedCards,
-                minutes,
-                mission: completedMission,
-                grass: next.grass - s.offGrass,
-                visitor,
-                postcard,
-                hat: missionHat,
-                early: false,
-              },
+              cardReward: reward,
+              recentBreaks: appendBreak(
+                s.recentBreaks,
+                breakReceipt(settlementId, p.mission_ends_at, reward),
+              ),
+              breakId: null,
             }
           : {}),
       });
@@ -999,16 +1026,15 @@ export const gameStore = create<Game>((set, get) => ({
   pair: async (input) => {
     const p = get().player;
     if (!p) return 'PLANT YOUR SEED FIRST';
+    const normalized = input.trim().toUpperCase();
+    if (!/^[A-Z0-9]{4}$/.test(normalized)) return 'Enter exactly 4 letters or numbers.';
+    if (normalized === p.code) return 'That’s your code. Enter a friend’s code to pair.';
     await get().sync();
     try {
-      const found = await bilt
-        .from('players')
-        .select('*')
-        .eq('code', input.trim().toUpperCase())
-        .maybeSingle();
+      const found = await bilt.from('players').select('*').eq('code', normalized).maybeSingle();
       if (found.error) throw found.error;
       const rival = found.data;
-      if (!rival) return 'NO PLAYER WITH THAT CODE';
+      if (!rival) return 'No garden has that code. Check it with your friend and try again.';
       if (rival.id === p.id) return "THAT'S YOU";
       const [a, b] = [p.id, rival.id].sort();
       const result = await bilt.from('pairs').insert({ player_a: a, player_b: b });
@@ -1017,9 +1043,11 @@ export const gameStore = create<Game>((set, get) => ({
       feedback();
       await get().sync();
       return null;
-    } catch {
+    } catch (error) {
       set({ live: false });
-      return 'COULD NOT PAIR. TRY AGAIN.';
+      const reason =
+        isRecord(error) && typeof error.message === 'string' ? ` ${error.message}` : '';
+      return `Could not pair. Check your connection and try again.${reason}`;
     }
   },
   sleep: (mission) => {
@@ -1030,6 +1058,7 @@ export const gameStore = create<Game>((set, get) => ({
     const now = Date.now();
     set({
       offStart: p.offline_seconds,
+      breakId: m ? `${p.id}:${m.id}:${now + m.duration * 1000}` : `${p.id}:nap:${now}`,
       offDeck: p.deck.filter(isCardId),
       collectedCards: [],
       offGrass: p.grass,
@@ -1067,7 +1096,24 @@ export const gameStore = create<Game>((set, get) => ({
     const elapsed = p.offline_seconds - s.offStart;
     const failed = p.mode === 'mission';
     const visitor = rollVisitor(elapsed, consecutiveOfflineDays(s.rules));
-    const met = meetVisitor(p, visitor, elapsed, Date.now());
+    const completedAt = Date.now();
+    const met = meetVisitor(p, visitor, elapsed, completedAt);
+    const settlementId =
+      s.breakId ??
+      `${p.id}:${p.mode}:${s.offStart}:${p.mission_ends_at || s.tickAt - elapsed * 1000}`;
+    const reward: WelcomeReward = {
+      settlementId,
+      deckBefore: s.offDeck ?? undefined,
+      sessionId: togetherId,
+      cards: s.collectedCards,
+      minutes: elapsed,
+      mission: failed ? p.mission_id : null,
+      grass: p.grass - s.offGrass,
+      visitor,
+      postcard: null,
+      hat: null,
+      early: failed,
+    };
     set({
       player: {
         ...met,
@@ -1083,18 +1129,9 @@ export const gameStore = create<Game>((set, get) => ({
         visitor && !collectionOf(met).some((v) => v.id === visitor && v.befriendedAt !== null)
           ? { id: visitor, expiresAt: 0 }
           : null,
-      cardReward: {
-        deckBefore: s.offDeck ?? undefined,
-        sessionId: togetherId,
-        cards: s.collectedCards,
-        minutes: elapsed,
-        mission: failed ? p.mission_id : null,
-        grass: p.grass - s.offGrass,
-        visitor,
-        postcard: null,
-        hat: null,
-        early: failed,
-      },
+      cardReward: reward,
+      recentBreaks: appendBreak(s.recentBreaks, breakReceipt(settlementId, completedAt, reward)),
+      breakId: null,
       message: null,
       ...(visitor ? { voice: 'someone visited while you were gone!' } : {}),
     });
