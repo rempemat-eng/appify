@@ -91,6 +91,7 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
         accessibilityRole="button"
         accessibilityLabel={`${grasslingName(p)}, ${f.hp} of ${maxHp(p)} HP, ${f.energy} energy. Show details`}
         accessibilityState={{ expanded }}
+        aria-expanded={expanded}
         onPress={() => {
           setExpanded(!expanded);
           feedback('select');
@@ -465,6 +466,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             <Pressable
               accessibilityRole="switch"
               accessibilityState={{ checked: auto }}
+              aria-checked={auto}
               accessibilityLabel={
                 request.practice ? 'Auto sparring at double speed' : 'Auto raid at double speed'
               }
@@ -623,6 +625,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               accessibilityRole="button"
               accessibilityLabel="Show full action history"
               accessibilityState={{ expanded: showHistory }}
+              aria-expanded={showHistory}
               onPress={() => {
                 setShowHistory(!showHistory);
                 feedback('select');

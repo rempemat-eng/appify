@@ -276,6 +276,7 @@ function RhythmEditor({
                   key={key}
                   accessibilityRole="tab"
                   accessibilityState={{ selected: group === key }}
+                  aria-selected={group === key}
                   disabled={saving}
                   onPress={() => setGroup(key)}
                   style={[
