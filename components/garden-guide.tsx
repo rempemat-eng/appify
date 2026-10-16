@@ -92,6 +92,10 @@ export function GardenTip({
 }
 const sections = [
   [
+    'Explore your garden',
+    'Tap an open patch to walk there. Visit the watering can to tend the flowers, the bench to share a page, the lantern to change its glow, or the pond to meet a little neighbour. Tap your companion for a pat. These are small moments to enjoy whenever you like; they do not cost GRASS or earn rewards. The hut, mailbox, stall, signpost and gate lead to the rest of your garden life.',
+  ],
+  [
     'Demo clock',
     'Demo timer only. Sleep and phone inactivity are not measured. DEMO x60: 1 real second = 1 simulated offline minute. Breaks are simulated; device screen usage is not verified. The 3-minute play allowance and 30-minute reset use REAL time, including battles and ordinary dialogs. A 10-MIN simulated break resets the allowance.',
   ],

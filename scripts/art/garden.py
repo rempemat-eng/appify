@@ -13,7 +13,7 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise  # noqa: E402
-from garden_decor import reading_nook, watering_can  # noqa: E402
+from garden_decor import reading_nook, watering_can, frog  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'garden')
@@ -119,12 +119,15 @@ def draw_terrain(frame: int) -> Canvas:
             cv.hline(rx + (frame if i % 3 else 0), ry, 3, WTR[3])
             if i % 4 == 0:
                 cv.set(rx + 1, ry, WTR[4])
-    # lily pads
-    for (lx, ly) in ((30, 128), (52, 138), (46, 124)):
+    # Lily pads have a cut edge, a central vein and different sizes. The larger
+    # low pad leaves a clear perch for the pond's shy resident.
+    for (lx, ly) in ((30, 128), (52, 138), (46, 124), (34, 132)):
         for (x, y) in oval(lx, ly, 3.5, 2.5):
             cv.set(x, y, LEAF[3] if y < ly else LEAF[2])
         cv.set(lx + 1, ly - 1, WTR[2])
         cv.set(lx, ly - 2, LEAF[4])
+        cv.hline(lx - 2, ly, 3, LEAF[1])
+        cv.set(lx - 1, ly - 1, LEAF[4])
     cv.set(52, 136, RED[4]); cv.set(53, 136, RED[3])  # tiny water flower
     # Reeds make the bank belong to the water; retain an open viewing edge.
     for rx, ry in ((19, 128), (24, 120), (59, 125), (57, 146)):
@@ -132,6 +135,16 @@ def draw_terrain(frame: int) -> Canvas:
         cv.vline(rx + 2, ry - 3, 4, LEAF[2])
         cv.set(rx - 1, ry - 4, LEAF[3])
         cv.set(rx + 1, ry - 1, LEAF[3])
+    # Cattails and a few visible flat bank stones distinguish the wet margin
+    # from the trimmed flower garden. These are low ground details, not walls.
+    for rx, ry in ((19, 125), (60, 123), (58, 145)):
+        cv.vline(rx, ry - 5, 6, LEAF[1])
+        cv.vline(rx, ry - 7, 3, WOOD[1])
+        cv.set(rx - 1, ry - 7, WOOD[3])
+    for sx, sy in ((15, 136), (28, 149), (57, 115)):
+        cv.hline(sx, sy, 5, STONE[1])
+        cv.hline(sx + 1, sy - 1, 3, STONE[3])
+        cv.set(sx + 1, sy - 2, STONE[4])
 
     # path: dirt with dark rim, grass overhang and pebbles
     for (x, y) in PATH:
@@ -171,16 +184,34 @@ def draw_terrain(frame: int) -> Canvas:
         cv.hline(bx + 1, by, bw - 2, WOOD[3])
         cv.hline(bx, by + bh - 1, bw, WOOD[0])
         cv.hline(bx + 1, by + bh, bw - 1, G[1])
+        for sx in range(bx + 3, bx + bw - 2, 7):
+            cv.set(sx, by + bh - 2, WOOD[3])  # cut ends / worn planter lip
+            cv.set(sx + 1, by + 2, '#75492D')
         for fy in range(by + 3, by + bh - 2, 6):
             for fx in range(bx + 3, bx + bw - 3, 6):
-                petals = [RED[3], '#F2D16B', CREAM[3], NAP[3]][(fx // 5 + fy // 5 + bi) % 4]
+                kind = ((fx - bx - 3) // 6 + (fy - by - 3) // 6 + bi) % 3
+                petals = [RED[3], CREAM[3], NAP[3]][kind]
                 stem = LEAF[2]
                 cv.vline(fx, fy + 1, 3, stem)
                 cv.set(fx + 1, fy + 2, LEAF[3]); cv.set(fx - 1, fy + 3, LEAF[1])
-                for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
-                    cv.set(fx + dx, fy + dy, petals)
-                cv.set(fx, fy, '#E8A33D')
-                cv.set(fx, fy - 1, CREAM[3] if petals != CREAM[3] else NAP[4])
+                if kind == 0:  # a cupped coral tulip, with a darker petal fold
+                    cv.hline(fx - 1, fy, 3, petals)
+                    cv.set(fx - 1, fy - 1, RED[4]); cv.set(fx + 1, fy - 1, RED[3])
+                    cv.set(fx, fy + 1, RED[2]); cv.set(fx - 1, fy + 2, LEAF[3])
+                elif kind == 1:  # chamomile has a warm centre and four cream rays
+                    for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+                        cv.set(fx + dx, fy + dy, petals)
+                    cv.set(fx, fy, '#E8A33D')
+                else:  # a small lavender spike, shorter petals at the crown
+                    cv.vline(fx, fy - 2, 4, NAP[2])
+                    cv.set(fx, fy - 2, NAP[4])
+                    cv.hline(fx - 1, fy, 3, NAP[3]); cv.set(fx - 1, fy - 1, NAP[4])
+    # A pair of hand-painted crop markers gives the beds a cared-for history.
+    for mx, my, petal in ((157, 112, RED[3]), (166, 140, NAP[3])):
+        cv.vline(mx, my - 3, 5, WOOD[1])
+        cv.rect(mx - 2, my - 5, 5, 3, CREAM[2])
+        cv.hline(mx - 2, my - 5, 5, CREAM[3])
+        cv.set(mx, my - 4, petal)
     # wildflower clusters in the grass
     for i in range(26):
         x = int(noise2(i, 3, 60) * (W - 8)) + 4
@@ -190,6 +221,23 @@ def draw_terrain(frame: int) -> Canvas:
         col = [CREAM[3], '#F2D16B', NAP[4], RED[4]][i % 4]
         cv.set(x, y, col); cv.set(x + 2, y + 1, col); cv.set(x + 1, y + 2, col)
         cv.set(x + 1, y + 1, '#E8A33D' if col != '#F2D16B' else RED[2])
+    # The perimeter is richer than the clearing: ferns under the trees, a few
+    # fallen leaves and tiny mushroom families. All stay low to the ground.
+    for fx, fy in ((5, 36), (76, 30), (181, 70), (179, 151), (11, 154), (61, 155)):
+        cv.vline(fx, fy - 4, 6, LEAF[1])
+        for dx, dy in ((-3, -2), (-2, -4), (-1, -5), (1, -4), (2, -2), (3, 0)):
+            cv.hline(fx + dx, fy + dy, 2, LEAF[2])
+            cv.set(fx + dx, fy + dy - 1, LEAF[3])
+        cv.set(fx, fy - 5, LEAF[4])
+    for mx, my in ((20, 106), (177, 91), (122, 153)):
+        for dx, dy, size in ((0, 0, 3), (4, 2, 2)):
+            cv.vline(mx + dx, my + dy - 2, 3, CREAM[2])
+            cv.hline(mx + dx - 1, my + dy - 3, size, RED[2])
+            cv.hline(mx + dx - 1, my + dy - 4, size, RED[3])
+            cv.set(mx + dx - 1, my + dy - 4, CREAM[3])
+    for lx, ly in ((14, 145), (68, 34), (181, 111), (136, 154), (9, 60)):
+        cv.hline(lx, ly, 3, WOOD[2]); cv.set(lx + 1, ly - 1, WOOD[3])
+        cv.set(lx + 3, ly + 1, WOOD[1])
     return cv
 
 
@@ -253,6 +301,18 @@ def tree(big: bool = True, autumn: bool = False) -> Canvas:
     if not autumn and big:
         for (fx, fy) in ((cx - 7, top + 4), (cx + 6, top + 9), (cx - 2, top + 13)):
             cv.set(int(fx), int(fy), RED[2]); cv.set(int(fx) + 1, int(fy), RED[3]); cv.set(int(fx), int(fy) - 1, RED[4])
+    if autumn:
+        # A single weathered birdhouse belongs to the copper tree, rather than
+        # repeating on every canopy. Its tiny entry faces the garden clearing.
+        cv.vline(25, 20, 9, WOOD[0])
+        cv.rect(21, 24, 9, 9, WOOD[2])
+        cv.rect(21, 24, 7, 8, WOOD[3])
+        cv.hline(21, 24, 7, WOOD[4])
+        for x, y in ((20, 24), (21, 23), (22, 22), (23, 21), (24, 20), (25, 21), (26, 22), (27, 23), (28, 24)):
+            cv.hline(x, y, 2, NAP[1])
+            cv.set(x, y - 1, NAP[3])
+        cv.rect(24, 26, 3, 3, WOOD[0]); cv.set(24, 26, INK)
+        cv.hline(23, 30, 6, WOOD[1]); cv.set(23, 29, WOOD[4])
     cv.outline(ramp[0])
     return cv
 
@@ -273,7 +333,7 @@ def pine() -> Canvas:
                     col = ramp[3] if side < -0.25 else ramp[2] if side < 0.45 else ramp[1]
                     if y == ty + 9 or (y == ty + 8 and x % 3 == 0):
                         col = ramp[1]
-                    if side < -0.55 and (x + y) % 3 == 0:
+                    if side < -0.55 and smooth_noise(x, y, 3, tier + 81) > 0.5:
                         col = ramp[4]
                     cv.set(x, y, col)
                     solid.add((x, y))
@@ -284,10 +344,13 @@ def pine() -> Canvas:
 
 def bush() -> Canvas:
     cv = Canvas(18, 14)
-    pts = disc(6, 8, 5.5) | disc(11, 7, 6) | disc(9, 10, 4.5)
-    pts = {(x, y) for (x, y) in pts if 0 <= x < 18 and 0 <= y < 14}
-    shade_blob(cv, pts, LEAF[1], LEAF[2], LEAF[3], LEAF[4])
-    cv.set(6, 6, '#F2D16B'); cv.set(12, 5, CREAM[3]); cv.set(10, 9, '#F2D16B')
+    solid = set()
+    for x, y, r in ((6, 8, 5.5), (11, 6, 5.5), (10, 10, 4.5)):
+        leaf_bundle(cv, x, y, r, LEAF, solid)
+    # Little berry florets sit on the leaf masses rather than speckling them.
+    for x, y in ((6, 6), (12, 5), (10, 9)):
+        cv.set(x, y, '#F2D16B'); cv.set(x - 1, y - 1, CREAM[3])
+        cv.set(x + 1, y, CREAM[2])
     cv.outline(LEAF[0])
     return cv
 
@@ -317,10 +380,16 @@ def nap_hut() -> Canvas:
         span = int((y - 4) * 1.45) + 8
         x0 = w // 2 - span
         for x in range(x0, w // 2 + span):
-            row = (y - 4) // 3
-            col = NAP[2] if (x + row * 2) % 6 else NAP[1]
-            if y % 3 == 0:
+            row = (y - 4) // 4
+            tile = (x + (row % 2) * 4) % 8
+            col = NAP[2] if x < 31 else NAP[1]
+            # Rounded overlapping shingles read as little material planes.
+            if (y - 4) % 4 == 3:
+                col = NAP[1] if x < 31 else NAP[0]
+            elif tile == 0:
                 col = NAP[1]
+            elif (y - 4) % 4 == 0 and tile in (2, 3, 4, 5):
+                col = NAP[3] if x < 31 else NAP[2]
             if x < w // 2 - span + 2:
                 col = NAP[0]
             cv.set(x, y, col)
@@ -331,6 +400,15 @@ def nap_hut() -> Canvas:
         cv.set(w // 2 - 1 + (y % 2), y, NAP[3])
     cv.hline(0, 21, w, NAP[0])
     cv.hline(2, 22, w - 4, NAP[1])  # visible thickness beneath the shingles
+    # A squat brick chimney and a tiny repaired shingle tell the hut's story.
+    cv.rect(36, 2, 6, 10, STONE[1])
+    cv.rect(36, 2, 4, 9, STONE[2])
+    cv.hline(35, 1, 8, STONE[3]); cv.hline(36, 2, 6, STONE[4])
+    cv.hline(37, 3, 4, STONE[0])
+    cv.hline(36, 6, 5, STONE[1]); cv.set(38, 5, STONE[3])
+    cv.set(40, 8, STONE[0])
+    cv.hline(10, 16, 5, NAP[4]); cv.hline(11, 17, 4, NAP[3])
+    cv.set(12, 16, CREAM[2])
     # round door
     door = {(x, y) for (x, y) in disc(25, 31, 6.5) if y <= 39} | {(x, y) for x in range(19, 32) for y in range(31, 40)}
     for (x, y) in door:
@@ -353,6 +431,15 @@ def nap_hut() -> Canvas:
     # little window
     cv.rect(35, 25, 6, 6, WOOD[0]); cv.rect(36, 26, 4, 4, '#9AD3EA'); cv.set(36, 26, '#E4F5FA')
     cv.vline(38, 26, 4, WOOD[0])
+    cv.hline(35, 30, 7, WOOD[4])
+    # Worn threshold, lavender doormat, and climbing ivy at the shaded corner.
+    cv.hline(19, 39, 13, STONE[3]); cv.hline(19, 40, 13, STONE[1])
+    cv.rect(22, 41, 10, 2, NAP[1]); cv.hline(23, 41, 8, NAP[3])
+    for ix, iy in ((8, 26), (9, 29), (8, 32), (9, 35), (8, 38)):
+        cv.vline(ix, iy, 3, LEAF[1])
+        cv.hline(ix - 1, iy, 2, LEAF[3]); cv.set(ix - 1, iy - 1, LEAF[4])
+        cv.set(ix + 1, iy + 2, LEAF[2])
+    cv.set(8, 24, NAP[3]); cv.set(7, 25, NAP[4])
     cv.outline(INK)
     return cv
 
@@ -381,6 +468,10 @@ def mailbox() -> Canvas:
     body = {(x, y) for x in range(1, 11) for y in range(3, 11)} | {(x, y) for x in range(2, 10) for y in range(1, 3)}
     shade_blob(cv, body, RED[1], RED[2], RED[3], RED[4])
     cv.rect(3, 6, 6, 1, RED[0])
+    cv.hline(3, 3, 5, RED[4]); cv.set(3, 4, RED[3])
+    cv.rect(3, 8, 5, 2, CREAM[2]); cv.hline(4, 8, 3, CREAM[3])
+    cv.set(5, 9, RED[1])  # a postcard peeking through the open lip
+    cv.set(6, 15, WOOD[3]); cv.set(6, 18, WOOD[0])
     cv.rect(10, 2, 1, 5, '#F2D16B'); cv.rect(10, 2, 2, 2, '#F2D16B')  # flag up
     cv.outline(INK)
     return cv
@@ -412,6 +503,10 @@ def stall() -> Canvas:
     for x in range(2, 44, 6):
         cv.vline(x, 26, 11, WOOD[2])
     cv.hline(2, 24, 42, WOOD[4]); cv.hline(2, 25, 42, WOOD[2]); cv.hline(2, 36, 42, WOOD[1])
+    for x, y in ((6, 31), (30, 29), (37, 34)):
+        cv.hline(x, y, 3, WOOD[1]); cv.set(x + 1, y - 1, WOOD[4])
+    for x in (4, 41):
+        cv.set(x, 26, CREAM[1]); cv.set(x, 35, WOOD[0])
     # hats on counter
     cv.rect(8, 20, 7, 4, '#4C6E9E'); cv.rect(7, 23, 10, 1, '#36507A')          # cap
     cv.hline(9, 20, 4, '#7C9BC1')
@@ -420,6 +515,14 @@ def stall() -> Canvas:
     for i, x in enumerate(range(31, 39)):                                     # crown
         cv.rect(x, 20, 1, 4 if i % 3 else 3, '#E8C24A')
     cv.hline(31, 23, 8, '#C99A2E')
+    # Hanging seed packets, a shopkeeper's ledger and two rolled fabric bolts.
+    for x, y, flower in ((7, 16, RED[3]), (35, 16, NAP[3])):
+        cv.vline(x + 1, 14, 3, WOOD[3])
+        cv.rect(x, y, 4, 4, CREAM[2]); cv.hline(x, y, 4, CREAM[3])
+        cv.set(x + 1, y + 1, flower); cv.set(x + 2, y + 2, LEAF[2])
+    cv.rect(28, 24, 7, 2, NAP[0]); cv.hline(29, 24, 5, CREAM[2])
+    cv.hline(6, 37, 8, NAP[1]); cv.hline(7, 36, 6, NAP[3])
+    cv.hline(31, 37, 9, '#39738A'); cv.hline(32, 36, 7, '#A1CFD0')
     # awning: green/cream stripes with scalloped edge
     for y in range(4, 14):
         for x in range(0, w):
@@ -428,10 +531,13 @@ def stall() -> Canvas:
                 col = '#3E7D44' if (x // 5) % 2 == 0 else CREAM[2]
             elif x % 5 == 4:
                 col = '#4C8A50' if (x // 5) % 2 == 0 else CREAM[2]
+            elif y in (7, 8) and x % 5 == 0:
+                col = '#80BC6C' if (x // 5) % 2 == 0 else '#FFF9E8'
             cv.set(x, y, col)
     for x in range(0, w):
         if x % 5 in (1, 2, 3):
             cv.set(x, 14, '#5FA35A' if (x // 5) % 2 == 0 else CREAM[3])
+            cv.set(x, 15, '#3E7D44' if (x // 5) % 2 == 0 else CREAM[1])
     cv.hline(0, 4, w, '#2E6538')
     # little sign
     cv.rect(16, 0, 14, 5, WOOD[3])
@@ -464,6 +570,13 @@ def leaf_lantern() -> Canvas:
     cv.hline(5, 8, 7, LEAF[1]); cv.hline(6, 7, 5, LEAF[2])
     cv.hline(7, 6, 3, LEAF[3]); cv.set(7, 7, LEAF[4])
     cv.set(1, 24, WOOD[1]); cv.hline(2, 24, 5, WOOD[1])
+    cv.set(3, 12, WOOD[4]); cv.set(3, 13, WOOD[1])
+    cv.set(4, 19, WOOD[0]); cv.set(3, 20, WOOD[3])
+    cv.hline(7, 16, 3, '#99713E')
+    cv.set(9, 12, '#B7833D'); cv.set(8, 14, '#F4D58C')
+    # A living branch sprouts below the hand-made glass housing.
+    cv.set(1, 20, LEAF[2]); cv.set(0, 19, LEAF[3])
+    cv.set(1, 18, LEAF[4]); cv.set(4, 22, LEAF[2]); cv.set(5, 21, LEAF[3])
     cv.outline(INK)
     return cv
 
@@ -506,8 +619,13 @@ def rock(n: int) -> Canvas:
     cv = Canvas(12, 9)
     pts = oval(6, 5, 5.5, 3.8) | oval(4, 5.5, 3.5, 3)
     shade_blob(cv, {(x, y) for (x, y) in pts if 0 <= x < 12 and 0 <= y < 9}, STONE[1], STONE[2], STONE[3], STONE[4])
+    # Angular planes and a short seam, rather than mottled all-over texture.
+    cv.hline(3, 3, 4, STONE[4]); cv.hline(2, 4, 3, STONE[3])
+    cv.set(7, 4, STONE[1]); cv.set(8, 5, STONE[1])
+    cv.hline(4, 7, 5, STONE[1]); cv.set(4, 6, STONE[2])
     if n:
-        cv.set(7, 6, LEAF[3]); cv.set(8, 6, LEAF[2])
+        cv.hline(6, 5, 3, LEAF[2]); cv.set(6, 4, LEAF[3])
+        cv.set(7, 5, LEAF[4]); cv.set(9, 6, LEAF[1])
     cv.outline(INK)
     return cv
 
@@ -541,9 +659,9 @@ OBJECTS = [
     ('bed', 'bed', 62, 66, 'nap'),
     ('mailbox', 'mailbox', 6, 74, 'mail'),
     ('stall', 'stall', 132, 40, 'shop'),
-    ('reading-nook', 'reading_nook', 92, 40, None),
-    ('lantern', 'lantern', 118, 62, None),
-    ('watering-can', 'watering_can', 172, 100, None),
+    ('reading-nook', 'reading_nook', 92, 40, 'read'),
+    ('lantern', 'lantern', 118, 62, 'lantern'),
+    ('watering-can', 'watering_can', 172, 100, 'water'),
     ('signpost', 'signpost', 112, 94, 'missions'),
     ('bowl', 'bowl', 74, 92, 'feed'),
     ('bush-1', 'bush', 172, 120, None),
@@ -563,6 +681,7 @@ def main():
         'signpost': signpost(), 'bowl': bowl(), 'bush': bush(), 'rock0': rock(0), 'rock1': rock(1),
         'fence_l': fence_h(80), 'fence_r': fence_h(78), 'gate': gate(),
         'reading_nook': reading_nook(), 'watering_can': watering_can(), 'lantern': leaf_lantern(),
+        'frog': frog(),
     }
     for frame in (0, 1):
         terrain = draw_terrain(frame)
@@ -604,6 +723,9 @@ def main():
         'feed': {'x': 92, 'y': 102, 'label': 'fill the food bowl'},
         'arena': {'x': 96, 'y': 140, 'label': 'head out the gate to the arena'},
         'pond': {'x': 72, 'y': 126, 'label': 'look into the pond'},
+        'read': {'x': 84, 'y': 70, 'label': 'settle into the reading nook'},
+        'water': {'x': 166, 'y': 114, 'label': 'water the flower beds'},
+        'lantern': {'x': 130, 'y': 88, 'label': 'tend the leaf lantern'},
     }
     sizes = {k: [v.w, v.h] for k, v in sprites.items()}
     ts = [

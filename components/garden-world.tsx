@@ -1,5 +1,12 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Image, Platform, Pressable, View, type ImageSourcePropType } from 'react-native';
+import {
+  AccessibilityInfo,
+  Image,
+  Platform,
+  Pressable,
+  View,
+  type ImageSourcePropType,
+} from 'react-native';
 import Animated, {
   cancelAnimation,
   runOnJS,
@@ -19,6 +26,7 @@ import { GARDEN, gardenHotspots, gardenObjects, gardenWalk } from '@/lib/garden-
 import { GuardianPet } from '@/components/guardian-pet';
 import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
+import { GardenReactions, type GardenReaction } from '@/components/garden-reactions';
 
 import ground0 from '@/assets/garden/ground-0.png';
 import ground1 from '@/assets/garden/ground-1.png';
@@ -162,8 +170,27 @@ const companionSpots: Point[] = [
   { x: 30, y: 108 },
 ];
 
-const lines: Partial<Record<Action, string>> = {
-  pond: 'a frog said hi. we are friends now.',
+const responses = {
+  pond: [
+    'a tiny neighbour. a very good listener.',
+    'one small splash. then quiet again.',
+    'the frog has no notifications. excellent idea.',
+  ],
+  read: [
+    'a page for us. got a real book nearby?',
+    'the bookmark can wait. take your time.',
+    'one quiet chapter, away from the screen.',
+  ],
+  water: [
+    'all watered. your turn for a little break.',
+    'the roots say thank you. no rush to grow.',
+    'a small drink for a slow afternoon.',
+  ],
+  pat: [
+    'a little company is enough.',
+    'hehe. that was a very good pat.',
+    'soft leaves. softer day.',
+  ],
 };
 
 // ---- crisp sprite --------------------------------------------------------
@@ -344,6 +371,19 @@ export function GardenWorld({
   const [frame, setFrame] = useState(0);
   const [tag, setTag] = useState<{ text: string; x: number; y: number } | null>(null);
   const [emote, setEmote] = useState<string | null>(null);
+  const [destination, setDestination] = useState<Point | null>(null);
+  const [reaction, setReaction] = useState<GardenReaction | null>(null);
+  const [feedback, setFeedback] = useState<{
+    id: number;
+    kind: GardenReaction['kind'];
+    text: string;
+    x: number;
+    y: number;
+  } | null>(null);
+  const [lanternOverride, setLanternOverride] = useState<boolean | null>(null);
+  const lanternOn = napping || (lanternOverride ?? night);
+  const responseCount = useRef({ pond: 0, read: 0, water: 0, pat: 0 });
+  const reactionId = useRef(0);
   const [wasActive, setWasActive] = useState(active);
   if (wasActive !== active) {
     setWasActive(active);
@@ -351,6 +391,9 @@ export function GardenWorld({
       setWalking(false);
       setTag(null);
       setEmote(null);
+      setDestination(null);
+      setReaction(null);
+      setFeedback(null);
     }
   }
   const busy = useRef(false);
@@ -402,12 +445,42 @@ export function GardenWorld({
     const t = setTimeout(() => setEmote(null), 1400);
     return () => clearTimeout(t);
   }, [emote, active]);
+  useEffect(() => {
+    if (!reaction || !active) return undefined;
+    const timer = setTimeout(
+      () => setReaction((current) => (current?.id === reaction.id ? null : current)),
+      4600,
+    );
+    return () => clearTimeout(timer);
+  }, [reaction, active]);
+  useEffect(() => {
+    if (!feedback || !active) return undefined;
+    if (Platform.OS !== 'web') AccessibilityInfo.announceForAccessibility(feedback.text);
+    const timer = setTimeout(
+      () => setFeedback((current) => (current?.id === feedback.id ? null : current)),
+      6500,
+    );
+    return () => clearTimeout(timer);
+  }, [feedback, active]);
+
+  function respond(kind: GardenReaction['kind'], text: string, point: Point) {
+    const id = ++reactionId.current;
+    setTag(null);
+    setFeedback({ id, kind, text, ...point });
+    setReaction({ id, kind, ...point });
+  }
+
+  function companionLine(kind: keyof typeof responses) {
+    const count = responseCount.current[kind]++;
+    return responses[kind][count % responses[kind].length];
+  }
 
   function arrived(id: number, action: Action | null, point: Point) {
     if (!activeRef.current || id !== journeyId.current || journey.current?.id !== id) return;
     journey.current = null;
     pos.current = point;
     setWalking(false);
+    setDestination(null);
     busy.current = false;
     if (action) act(action);
   }
@@ -423,6 +496,7 @@ export function GardenWorld({
     pos.current = start;
     const path = findPath(start, target);
     const end = path[path.length - 1] ?? start;
+    setDestination(action ? end : null);
     journey.current = { id, action, end };
     if (!path.length) {
       arrived(id, action, end);
@@ -504,9 +578,30 @@ export function GardenWorld({
         }
         break;
       case 'pond':
-        useGame.setState({ voice: lines.pond ?? null });
-        setEmote('!');
+        respond('pond', companionLine('pond'), gardenHotspots.pond);
+        setEmote('♪');
         break;
+      case 'read':
+        respond('read', companionLine('read'), gardenHotspots.read);
+        setEmote('…');
+        break;
+      case 'water':
+        respond('water', companionLine('water'), gardenHotspots.water);
+        setEmote('♪');
+        break;
+      case 'lantern': {
+        const next = !lanternOn;
+        setLanternOverride(next);
+        respond(
+          'lantern',
+          next
+            ? 'a little warm light. make yourself at home.'
+            : 'lights out. the stars can take over.',
+          gardenHotspots.lantern,
+        );
+        if (!next) setReaction(null);
+        break;
+      }
     }
   }
 
@@ -543,7 +638,7 @@ export function GardenWorld({
         else if (roll < 0.7) {
           walkRef.current({ x: 142, y: 130 });
           emoteTimer = setTimeout(() => {
-            if (activeRef.current) setEmote('♪');
+            if (activeRef.current && clock() - lastTouch.current > 6000) setEmote('♪');
           }, 2500);
         } else if (roll < 0.8) setEmote(grumpy ? '…' : '♪');
       }
@@ -568,15 +663,43 @@ export function GardenWorld({
   function onGroundPress(e: { nativeEvent: { locationX: number; locationY: number } }) {
     if (napping || !activeRef.current) return;
     lastTouch.current = clock();
+    setTag(null);
+    setFeedback(null);
+    setReaction(null);
     walkTo({ x: e.nativeEvent.locationX / scale, y: e.nativeEvent.locationY / scale });
   }
 
   function onObjectPress(action: Action) {
     if (napping || !activeRef.current) return;
     lastTouch.current = clock();
+    setFeedback(null);
+    setReaction(null);
     const spot = gardenHotspots[action];
     setTag({ text: spot.label, x: spot.x, y: spot.y });
     walkTo({ x: spot.x, y: spot.y }, action);
+  }
+
+  function stopJourney() {
+    journeyId.current += 1;
+    journey.current = null;
+    cancelAnimation(px);
+    cancelAnimation(py);
+    if (napTimer.current) clearTimeout(napTimer.current);
+    napTimer.current = null;
+    pos.current = { x: px.get(), y: py.get() };
+    busy.current = false;
+    setWalking(false);
+    setDestination(null);
+  }
+
+  function patGuardian() {
+    if (napping || !activeRef.current) return;
+    lastTouch.current = clock();
+    // A pat is a new intent. It must not leave a pending shop visit or nap behind.
+    stopJourney();
+    setEmote('♥');
+    void Haptics.selectionAsync();
+    respond('pat', grumpy ? 'hmph. ok. one very small pat.' : companionLine('pat'), pos.current);
   }
 
   const guardian = guardianPlayer(player);
@@ -603,6 +726,22 @@ export function GardenWorld({
       >
         <Image source={frame ? ground1 : ground0} resizeMode="stretch" style={{ width, height }} />
       </Pressable>
+      {destination && !napping && active && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.round((destination.x - 3) * scale),
+            top: Math.round((destination.y - 2) * scale),
+            width: Math.round(6 * scale),
+            height: Math.round(4 * scale),
+            borderWidth: Math.max(1, Math.round(scale)),
+            borderColor: '#FFF0B7',
+            backgroundColor: 'rgba(81,107,55,0.3)',
+            zIndex: 2,
+          }}
+        />
+      )}
       {gardenObjects.map((o) => {
         const sprite = (
           <Sprite
@@ -627,6 +766,7 @@ export function GardenWorld({
             </View>
           );
         const action = o.action as Action;
+        const isNewInteraction = action === 'read' || action === 'water' || action === 'lantern';
         const artLeft = Math.round(o.x * scale);
         const artTop = Math.round(o.y * scale);
         const artWidth = Math.round(o.w * scale);
@@ -645,7 +785,21 @@ export function GardenWorld({
           <Pressable
             key={o.id}
             accessibilityRole="button"
-            accessibilityLabel={gardenHotspots[action].label}
+            accessibilityLabel={
+              action === 'lantern'
+                ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
+                : gardenHotspots[action].label
+            }
+            accessibilityHint={
+              action === 'read'
+                ? 'Walk to the bench and turn a page.'
+                : action === 'water'
+                  ? 'Walk over and water the flowers.'
+                  : action === 'lantern'
+                    ? 'Walk to the post, then change its light.'
+                    : undefined
+            }
+            aria-pressed={action === 'lantern' ? lanternOn : undefined}
             disabled={napping || !active}
             onFocus={() => {
               if (activeRef.current && !napping)
@@ -672,6 +826,36 @@ export function GardenWorld({
                 height: artHeight,
               }}
             />
+            {action === 'lantern' && !lanternOn && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: artLeft - targetLeft + Math.round(7 * scale),
+                  top: artTop - targetTop + Math.round(10 * scale),
+                  width: Math.round(3 * scale),
+                  height: Math.round(6 * scale),
+                  backgroundColor: '#71817A',
+                  borderLeftWidth: Math.max(1, Math.round(scale)),
+                  borderLeftColor: '#A6B69E',
+                }}
+              />
+            )}
+            {isNewInteraction && !napping && active && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: artLeft - targetLeft + Math.round((o.w / 2 - 2) * scale),
+                  top: artTop - targetTop - Math.round(5 * scale),
+                  width: Math.round(4 * scale),
+                  height: Math.round(4 * scale),
+                  backgroundColor: '#FFF3CF',
+                  borderWidth: Math.max(1, Math.round(scale)),
+                  borderColor: '#647E46',
+                }}
+              />
+            )}
           </Pressable>
         );
       })}
@@ -722,11 +906,7 @@ export function GardenWorld({
           curled={napping}
           groundShadow={!napping}
           bob={!walking && !napping && active}
-          onPress={() => {
-            if (napping || !activeRef.current) return;
-            lastTouch.current = clock();
-            useGame.setState({ voice: grumpy ? 'hmph. ok. one pat.' : 'hehe. again.' });
-          }}
+          onPress={patGuardian}
         />
       </Animated.View>
       {companions.map((v, i) => (
@@ -747,6 +927,11 @@ export function GardenWorld({
             bob={!napping && active}
             onPress={() => {
               if (napping || !activeRef.current) return;
+              lastTouch.current = clock();
+              stopJourney();
+              setTag(null);
+              setFeedback(null);
+              setReaction(null);
               useGame.setState({
                 voice: `${visitorInfo(v.id).name.toLowerCase()} waves a leaf at you.`,
               });
@@ -754,6 +939,9 @@ export function GardenWorld({
           />
         </View>
       ))}
+      {reaction && !napping && active && (
+        <GardenReactions key={reaction.id} reaction={reaction} scale={scale} reduced={reduced} />
+      )}
       {(night || dusk || dawn) && (
         <View
           pointerEvents="none"
@@ -772,36 +960,35 @@ export function GardenWorld({
           }}
         />
       )}
-      {night &&
-        [
-          { x: 48, y: 54, size: 8 },
-          { x: 124, y: 71, size: 7 },
-        ].map((light) => (
+      {[
+        ...(night ? [{ x: 48, y: 54, size: 8 }] : []),
+        ...(lanternOn ? [{ x: 123, y: 71, size: 7 }] : []),
+      ].map((light) => (
+        <View
+          key={`${light.x}-${light.y}`}
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.round(light.x * scale),
+            top: Math.round(light.y * scale),
+            width: Math.round(light.size * scale),
+            height: Math.round(light.size * scale),
+            borderRadius: Math.round(4 * scale),
+            backgroundColor: 'rgba(255,214,120,0.35)',
+            zIndex: 901,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <View
-            key={`${light.x}-${light.y}`}
-            pointerEvents="none"
             style={{
-              position: 'absolute',
-              left: Math.round(light.x * scale),
-              top: Math.round(light.y * scale),
-              width: Math.round(light.size * scale),
-              height: Math.round(light.size * scale),
-              borderRadius: Math.round(4 * scale),
-              backgroundColor: 'rgba(255,214,120,0.35)',
-              zIndex: 901,
-              alignItems: 'center',
-              justifyContent: 'center',
+              width: Math.round(4 * scale),
+              height: Math.round(4 * scale),
+              backgroundColor: '#FFE08A',
             }}
-          >
-            <View
-              style={{
-                width: Math.round(4 * scale),
-                height: Math.round(4 * scale),
-                backgroundColor: '#FFE08A',
-              }}
-            />
-          </View>
-        ))}
+          />
+        </View>
+      ))}
       <Ambient
         scale={scale}
         width={width}
@@ -849,6 +1036,42 @@ export function GardenWorld({
             }}
           >
             {tag.text}
+          </BodyText>
+        </View>
+      )}
+      {feedback && !napping && active && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.max(8, Math.min(width - 224, feedback.x * scale - 108)),
+            top: Math.max(
+              8,
+              Math.min(
+                height - 94,
+                feedback.kind === 'pat' || feedback.y < 90
+                  ? feedback.y * scale + 12
+                  : feedback.y * scale - 86,
+              ),
+            ),
+            width: Math.min(width - 16, 216),
+            zIndex: 999,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            borderWidth: 2,
+            borderColor: c.outline,
+            borderRadius: 12,
+            backgroundColor: c.paper,
+            boxShadow: '0 3px 0 rgba(74,59,53,0.22)',
+          }}
+        >
+          <BodyText
+            role="status"
+            aria-live="polite"
+            accessibilityLiveRegion="polite"
+            style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13, lineHeight: 18 }}
+          >
+            {feedback.text}
           </BodyText>
         </View>
       )}

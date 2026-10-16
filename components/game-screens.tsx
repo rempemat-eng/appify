@@ -231,7 +231,7 @@ export function HomeScreen() {
         </View>
       </View>
       <BodyText style={{ textAlign: 'center', fontSize: 12, marginTop: -6 }}>
-        tap the garden to walk · tap the hut, signpost, stall, mailbox or gate
+        tap to wander · water the flowers, visit the reading nook or say hello at the pond
       </BodyText>
       <GardenProgress />
       <View style={{ gap: 6 }}>
