@@ -172,12 +172,14 @@ export default function FieldJournal() {
               {guideOpen && (
                 <>
                   <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-                    Your first visitor is guaranteed after a 10-MIN break. Later visits are a
-                    chance, not a guarantee. Rarity: 1 dot common · 2 uncommon · 3 rare.
+                    Your first visitor is guaranteed after 10 simulated MIN (10 seconds in this
+                    demo). Later visits are a chance, not a guarantee. Rarity: 1 dot common · 2
+                    uncommon · 3 rare.
                   </BodyText>
                   <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-                    Demo time: 1 real second = 1 simulated MIN. Garden visitors stay for 10 MIN
-                    after you close the recap. Phone use and sleep are not measured.
+                    Demo time: 1 real second = 1 simulated MIN. Garden visitors stay for 10
+                    simulated MIN (10 real seconds) after you close the recap. Phone use and sleep
+                    are not measured.
                   </BodyText>
                 </>
               )}

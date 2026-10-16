@@ -248,7 +248,7 @@ export function GardenRecap() {
         </PixelScene>
         <View style={[styles.border, { padding: 16, gap: 18, backgroundColor: c.body }]}>
           {[
-            [`${day.offline} MIN`, 'OFFLINE'],
+            [`${day.offline} simulated MIN`, 'OFFLINE'],
             [String(day.cards), 'CARDS EARNED'],
             [String(Math.floor(day.grass)), 'GRASS EARNED'],
             [String(day.blocked), 'RAIDS BLOCKED OFFLINE'],
@@ -261,7 +261,7 @@ export function GardenRecap() {
           <View style={{ gap: 7 }}>
             <PixelText>GARDEN GROWTH</PixelText>
             <BodyText>
-              {day.offline} MIN OF GROWTH · {growthStage(p.level)}
+              {day.offline} simulated MIN of growth · {growthStage(p.level)}
             </BodyText>
           </View>
         </View>
@@ -275,14 +275,19 @@ export function GardenRecap() {
           }
         />
       </ScrollView>
-      <PixelButton
-        label="BACK TO REAL LIFE"
-        onPress={() => {
-          useGame.getState().dismissRecap();
-          router.replace('/');
-          useGame.getState().sleep();
-        }}
-      />
+      <View style={{ gap: 6 }}>
+        <PixelButton
+          label="START A NAP"
+          onPress={() => {
+            useGame.getState().dismissRecap();
+            router.replace('/');
+            useGame.getState().sleep();
+          }}
+        />
+        <BodyText style={{ textAlign: 'center', fontSize: 12 }}>
+          Untimed demo nap · wake when you like.
+        </BodyText>
+      </View>
       <Pressable
         accessibilityRole="link"
         onPress={() => {
