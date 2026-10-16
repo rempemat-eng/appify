@@ -198,11 +198,14 @@ function make(kind: PropKind) {
       }
       break;
     case 'moon':
-      rect(5, 1, 6, 14, 'B');
-      rect(2, 4, 10, 8, 'B');
-      rect(3, 3, 9, 10, 'B');
-      rect(8, 1, 6, 9, '.');
-      rect(11, 8, 4, 5, '.');
+      // Crescent: a disc (r 6.6 at 7.5,7.5) minus an offset disc (r 5.6 at 10.6,5.6).
+      // Pixels near the inner edge get the cream shade for a softer curve.
+      for (let y = 0; y < 16; y++)
+        for (let x = 0; x < 16; x++) {
+          const outer = Math.hypot(x + 0.5 - 7.5, y + 0.5 - 7.5);
+          const inner = Math.hypot(x + 0.5 - 10.6, y + 0.5 - 5.6);
+          if (outer <= 6.6 && inner > 5.6) rect(x, y, 1, 1, inner < 6.6 ? 'T' : 'B');
+        }
       break;
     case 'sun':
       rect(4, 4, 8, 8, 'Y');

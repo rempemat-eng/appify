@@ -626,6 +626,10 @@ export function GameOverlays() {
             backgroundColor: isScreenOff ? c.night : c.paper,
           }}
         >
+          {/* Same centred phone-width column as the tab screens (Page maxWidth), so
+              overlays don't stretch across wide browser windows. The backdrop above
+              still fills the screen. */}
+          <View style={{ flex: 1, width: '100%', maxWidth: 640, alignSelf: 'center' }}>
           {!ready ? (
             <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 20 }}>
               <PixelScene
@@ -705,6 +709,7 @@ export function GameOverlays() {
           ) : deckOpen ? (
             <DeckPanel />
           ) : null}
+          </View>
         </View>
       </Modal>
       {!visible && message && (

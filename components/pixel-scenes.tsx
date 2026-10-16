@@ -194,17 +194,35 @@ export function PixelScene({
                 <>
                   <G transform={`translate(${-Math.floor((columns - 160) / 2)} ${-sceneTop})`}>
                     <Pixels kind="moon" x={columns - 28} y={8} scale={1.4} />
-                    {Array.from({ length: 32 }, (_, i) => (
-                      <Rect
-                        key={`star-${i}`}
-                        x={(i * 37 + 7) % Math.max(1, columns - 4)}
-                        y={4 + ((i * 19) % Math.max(1, rows - groundRows - 12))}
-                        width={i % 4 === 0 ? 2 : 1}
-                        height={i % 4 === 0 ? 2 : 1}
-                        fill={c.paper}
-                        opacity={mini ? 1 : 0.45 + 0.55 * Math.abs(Math.sin(tick / 8 + i))}
-                      />
-                    ))}
+                    {Array.from(
+                      // Density scales with sky area so wide scenes don't look sparse.
+                      { length: Math.min(70, Math.round((columns * (rows - groundRows)) / 260)) },
+                      (_, i) => {
+                        // Deterministic scatter (hash per star), so stars don't line up
+                        // into rows on wide screens and stay put between renders.
+                        const hx = Math.abs(Math.sin(i * 12.9898 + 78.233) * 43758.5453) % 1;
+                        const hy = Math.abs(Math.sin(i * 39.3468 + 11.135) * 24634.6345) % 1;
+                        const size = i % 9 === 0 ? 2 : 1;
+                        const twinkle = i % 3 === 0 && !mini;
+                        return (
+                          <Rect
+                            key={`star-${i}`}
+                            x={Math.floor(hx * Math.max(1, columns - 30))}
+                            y={3 + Math.floor(hy * Math.max(1, rows - groundRows - 14))}
+                            width={size}
+                            height={size}
+                            fill={i % 5 === 0 ? c.dawn : c.paper}
+                            opacity={
+                              twinkle
+                                ? 0.35 + 0.65 * Math.abs(Math.sin(tick / 9 + i))
+                                : size === 2
+                                  ? 0.95
+                                  : 0.55 + (i % 4) * 0.12
+                            }
+                          />
+                        );
+                      },
+                    )}
                   </G>
                   {kind === 'night' &&
                     Array.from({ length: 5 }, (_, i) => (
@@ -462,7 +480,9 @@ export function RaidGarden({ attacker, defender }: { attacker: Player; defender:
       <PixelScene
         species={defender.species}
         level={defender.level}
-        player={defender}
+        // Weeds show an exposed rival's garden in real raids; Dave's practice garden
+        // is always "exposed", so skip them there to keep the fighters readable.
+        player={defender.id === 'bot' ? undefined : defender}
         hideSignposts
         style={{
           ...StyleSheet.absoluteFill,

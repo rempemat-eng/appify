@@ -27,7 +27,7 @@ import { FriendCode } from '@/components/friend-code';
 import { GardenVisitor, GuardianPicker } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
-import { PixelProp, PixelScene } from '@/components/pixel-scenes';
+import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
@@ -290,7 +290,9 @@ export function HomeScreen() {
             backgroundColor: c.shadow,
           }}
         >
-          <CozySheet style={{ padding: 16, gap: 12 }}>
+          <CozySheet
+            style={{ padding: 16, gap: 12, width: '100%', maxWidth: 608, alignSelf: 'center' }}
+          >
             <PixelText style={{ fontSize: 16 }}>GARDEN STATS</PixelText>
             <ScrollView
               style={{ maxHeight: height * 0.5 }}
@@ -340,25 +342,40 @@ export function MissionsScreen() {
       {missions.map((m, index) => {
         const locked = p.level < m.level;
         return (
-          <CozyPanel key={m.id} style={{ padding: 12, gap: 12 }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <PixelProp kind={(['tree', 'library', 'mountain'] as const)[index]} size={48} />
-              <View style={{ flex: 1, gap: 4 }}>
-                <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}>
-                  {m.name}
-                </BodyText>
-                <BodyText style={{ fontSize: 12 }}>
-                  {m.duration} MIN offline · {m.reward} GRASS
-                </BodyText>
-                <BodyText style={{ fontSize: 12 }}>
-                  +1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} · postcard
-                  {m.id === 'mountain' ? ' · new hat' : ''}
-                </BodyText>
-                {m.id === 'mountain' && (
-                  <BodyText style={{ fontSize: 12 }}>All hats owned: +50 GRASS</BodyText>
-                )}
-              </View>
+          <CozyPanel key={m.id} style={{ padding: 12, gap: 10, opacity: locked ? 0.85 : 1 }}>
+            <PixelScene
+              mini
+              kind={(['park', 'book', 'mountain'] as const)[index]}
+              species={p.species}
+              level={p.level}
+              height={120}
+              groundInset={18}
+              style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 4 }}
+            >
+              <Pet species={p.species} level={p.level} hat={p.hat} size={56} bob={false} />
+            </PixelScene>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
+                {m.name}
+              </BodyText>
+              <BodyText
+                style={{
+                  fontFamily: 'Nunito_800ExtraBold',
+                  fontSize: 12,
+                  paddingHorizontal: 8,
+                  paddingVertical: 2,
+                  borderRadius: 999,
+                  overflow: 'hidden',
+                  backgroundColor: c.rest,
+                }}
+              >
+                {m.duration} MIN
+              </BodyText>
             </View>
+            <BodyText style={{ fontSize: 12 }}>
+              {m.reward} GRASS · +1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} card · postcard
+              {m.id === 'mountain' ? ' · new hat (or +50 GRASS if you own them all)' : ''}
+            </BodyText>
             <PixelButton
               small
               light
@@ -371,8 +388,8 @@ export function MissionsScreen() {
           </CozyPanel>
         );
       })}
-      <BodyText style={{ fontSize: 12 }}>
-        Common cards stack. No per-minute GRASS on missions.
+      <BodyText style={{ fontSize: 12, textAlign: 'center' }}>
+        start a mission, put your phone down, and your Grassling comes back with rewards.
       </BodyText>
     </Page>
   );
@@ -380,7 +397,7 @@ export function MissionsScreen() {
 export function ShopScreen() {
   const paused = usePlayPaused();
   const p = useGame((s) => s.player);
-  const [merchant, setMerchant] = useState('put the phone down. browse the hats.');
+  const [merchant, setMerchant] = useState('fresh hats for well-rested heads.');
   if (!p) return null;
   const preview = levelPreview(p.level);
   return (
@@ -432,51 +449,86 @@ export function ShopScreen() {
           <BodyText style={{ fontSize: 12 }}>{merchant}</BodyText>
         </View>
       </View>
-      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, marginTop: 12 }}>
-        Hats
-      </BodyText>
-      {hats.map((h) => {
-        const owned = p.owned_hats.includes(h.id);
-        const equipped = p.hat === h.id;
-        return (
-          <CozyPanel
-            key={h.id}
-            style={{ padding: 12, flexDirection: 'row', gap: 12, alignItems: 'center' }}
-          >
-            <Pet species={p.species} level={p.level} hat={h.id} size={96} bob={false} />
-            <View style={{ flex: 1, gap: 8 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 12 }}>
+        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
+          Hats
+        </BodyText>
+        <BodyText style={{ fontSize: 12 }}>
+          {p.owned_hats.length} / {hats.length} owned
+        </BodyText>
+      </View>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+        {hats.map((h) => {
+          const owned = p.owned_hats.includes(h.id);
+          const equipped = p.hat === h.id;
+          const short = h.cost - p.grass;
+          return (
+            <CozyPanel
+              key={h.id}
+              style={{
+                padding: 10,
+                gap: 8,
+                alignItems: 'center',
+                flexGrow: 1,
+                flexBasis: '40%',
+                borderColor: equipped ? c.moss : undefined,
+              }}
+            >
+              {owned && (
+                <BodyText
+                  style={{
+                    position: 'absolute',
+                    top: 8,
+                    right: 8,
+                    fontSize: 10,
+                    paddingHorizontal: 6,
+                    borderRadius: 999,
+                    overflow: 'hidden',
+                    backgroundColor: equipped ? c.moss : c.body,
+                    color: equipped ? c.paper : c.ink,
+                  }}
+                >
+                  {equipped ? 'WEARING' : 'OWNED'}
+                </BodyText>
+              )}
+              <Pet species={p.species} level={p.level} hat={h.id} size={80} bob={false} />
               <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>{h.id}</BodyText>
-              <BodyText style={{ fontSize: 12 }}>
-                {owned ? (equipped ? 'Owned · equipped' : 'Owned') : `${h.cost} GRASS`}
-              </BodyText>
-              <PixelButton
-                small
-                light={!equipped}
-                label={
-                  paused
-                    ? 'TAKE A BREAK'
-                    : equipped
-                      ? 'REMOVE'
-                      : owned
-                        ? 'EQUIP'
-                        : p.grass < h.cost
-                          ? `NEED ${h.cost - p.grass} MORE`
-                          : 'BUY'
-                }
-                disabled={paused || (!owned && p.grass < h.cost)}
-                onDisabledPress={() => {
-                  if (!paused) setMerchant("you can't afford that, doomscroller.");
-                  feedback('error');
-                }}
-                onPress={() => {
-                  useGame.getState().hatAction(h.id);
-                  setMerchant('fine choice. very hat.');
-                }}
-              />
-            </View>
-          </CozyPanel>
-        );
-      })}
+              <View style={{ alignSelf: 'stretch' }}>
+                <PixelButton
+                  small
+                  light={!equipped && (owned || short > 0)}
+                  label={
+                    paused
+                      ? 'TAKE A BREAK'
+                      : equipped
+                        ? 'TAKE OFF'
+                        : owned
+                          ? 'WEAR'
+                          : short > 0
+                            ? `NEED ${short} MORE`
+                            : `${h.cost} GRASS`
+                  }
+                  disabled={paused || (!owned && short > 0)}
+                  onDisabledPress={() => {
+                    if (!paused) setMerchant("you can't afford that, doomscroller.");
+                    feedback('error');
+                  }}
+                  onPress={() => {
+                    useGame.getState().hatAction(h.id);
+                    setMerchant(
+                      equipped
+                        ? 'bare-headed. bold.'
+                        : owned
+                          ? 'back in style.'
+                          : 'fine choice. very hat.',
+                    );
+                  }}
+                />
+              </View>
+            </CozyPanel>
+          );
+        })}
+      </View>
     </Page>
   );
 }
