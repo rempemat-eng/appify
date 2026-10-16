@@ -100,6 +100,7 @@ function nearestWalkable(p: Point) {
 
 // Breadth-first search on the walk grid (8 directions), then thin to turning points.
 function findPath(from: Point, to: Point): Point[] {
+  if (![from.x, from.y, to.x, to.y].every(Number.isFinite)) return [];
   const a = nearestWalkable(from);
   const b = nearestWalkable(to);
   const key = (x: number, y: number) => y * cols + x;
@@ -565,10 +566,18 @@ export function GardenWorld({
     zIndex: Math.round(py.value) + (napping ? 1 : 0),
   }));
 
-  function onGroundPress(e: { nativeEvent: { locationX: number; locationY: number } }) {
+  function onGroundPress(e: {
+    nativeEvent: { locationX?: number; locationY?: number; offsetX?: number; offsetY?: number };
+  }) {
     if (napping || !activeRef.current) return;
+    // Native gives locationX/Y; react-native-web click events only carry the DOM
+    // offsetX/Y (relative to the full-size ground image), so fall back to those.
+    const ne = e.nativeEvent;
+    const lx = ne.locationX ?? ne.offsetX;
+    const ly = ne.locationY ?? ne.offsetY;
+    if (typeof lx !== 'number' || typeof ly !== 'number' || Number.isNaN(lx + ly)) return;
     lastTouch.current = clock();
-    walkTo({ x: e.nativeEvent.locationX / scale, y: e.nativeEvent.locationY / scale });
+    walkTo({ x: lx / scale, y: ly / scale });
   }
 
   function onObjectPress(action: Action) {
