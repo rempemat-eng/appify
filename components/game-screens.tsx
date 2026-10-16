@@ -50,6 +50,7 @@ const lines = {
 };
 export function HomeScreen() {
   const reduced = useReducedMotion();
+  const focused = useIsFocused();
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const p = useGame((s) => s.player);
@@ -60,7 +61,14 @@ export function HomeScreen() {
   const paused = usePlayPaused();
   const busy = useGame((s) =>
     Boolean(
-      s.message || s.battle || s.cardReward || s.deckOpen || s.recap || s.alerts.length || s.flash,
+      s.message ||
+      s.battle ||
+      s.cardReward ||
+      s.deckOpen ||
+      s.recap ||
+      s.alerts.length ||
+      s.flash ||
+      s.guideOpen,
     ),
   );
   const key = `${p?.id ?? ''}-${firstWake}-${paused}`;
@@ -158,6 +166,7 @@ export function HomeScreen() {
         }}
       >
         <GardenWorld
+          active={focused && !busy && !statsOpen && p.mode === 'awake'}
           width={Math.min(width, gameLayout.maxWidth)}
           player={p}
           grumpy={p.mood < 30}

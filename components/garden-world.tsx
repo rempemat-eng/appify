@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Image, Platform, Pressable, View, type ImageSourcePropType } from 'react-native';
 import Animated, {
   cancelAnimation,
@@ -209,6 +209,7 @@ function Ambient({
   night,
   day,
   reduced,
+  active,
 }: {
   scale: number;
   width: number;
@@ -217,13 +218,14 @@ function Ambient({
   night: boolean;
   day: boolean;
   reduced: boolean;
+  active: boolean;
 }) {
   const [t, setT] = useState(0);
   useEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || !active) return undefined;
     const timer = setInterval(() => setT((v) => v + 1), 110);
     return () => clearInterval(timer);
-  }, [reduced]);
+  }, [reduced, active]);
   const u = Math.max(1, Math.round(scale)); // one art pixel on screen
   const drops = rain
     ? Array.from({ length: 34 }, (_, i) => {
@@ -313,6 +315,7 @@ export function GardenWorld({
   sleepy,
   onFeed,
   napping = false,
+  active = true,
 }: {
   width: number;
   player: Player;
@@ -321,6 +324,8 @@ export function GardenWorld({
   onFeed?: () => void;
   /** Night garden for the nap screen: pet asleep in its bed, no interaction. */
   napping?: boolean;
+  /** Tab screens stay mounted; pause the world and cancel its actions on blur. */
+  active?: boolean;
 }) {
   const reduced = useReducedMotion();
   const scale = width / GARDEN.width;
@@ -339,14 +344,38 @@ export function GardenWorld({
   const [frame, setFrame] = useState(0);
   const [tag, setTag] = useState<{ text: string; x: number; y: number } | null>(null);
   const [emote, setEmote] = useState<string | null>(null);
+  const [wasActive, setWasActive] = useState(active);
+  if (wasActive !== active) {
+    setWasActive(active);
+    if (!active) {
+      setWalking(false);
+      setTag(null);
+      setEmote(null);
+    }
+  }
   const busy = useRef(false);
+  const activeRef = useRef(active);
   const lastTouch = useRef(0);
   const journeyId = useRef(0);
   const journey = useRef<{ id: number; action: Action | null; end: Point } | null>(null);
   const napTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  useLayoutEffect(() => {
+    activeRef.current = active;
+    if (active) return;
+    journeyId.current += 1;
+    journey.current = null;
+    cancelAnimation(px);
+    cancelAnimation(py);
+    pos.current = { x: px.get(), y: py.get() };
+    busy.current = false;
+    if (napTimer.current) clearTimeout(napTimer.current);
+    napTimer.current = null;
+  }, [active, px, py]);
+
   useEffect(
     () => () => {
+      activeRef.current = false;
       journeyId.current += 1;
       journey.current = null;
       cancelAnimation(px);
@@ -358,24 +387,24 @@ export function GardenWorld({
 
   // grass sway + water shimmer: alternate the two ground frames
   useEffect(() => {
-    if (reduced) return undefined;
+    if (reduced || !active) return undefined;
     const t = setInterval(() => setFrame((f) => 1 - f), 750);
     return () => clearInterval(t);
-  }, [reduced]);
+  }, [reduced, active]);
 
   useEffect(() => {
-    if (!tag) return undefined;
+    if (!tag || !active) return undefined;
     const t = setTimeout(() => setTag(null), 1800);
     return () => clearTimeout(t);
-  }, [tag]);
+  }, [tag, active]);
   useEffect(() => {
-    if (!emote) return undefined;
+    if (!emote || !active) return undefined;
     const t = setTimeout(() => setEmote(null), 1400);
     return () => clearTimeout(t);
-  }, [emote]);
+  }, [emote, active]);
 
   function arrived(id: number, action: Action | null, point: Point) {
-    if (id !== journeyId.current || journey.current?.id !== id) return;
+    if (!activeRef.current || id !== journeyId.current || journey.current?.id !== id) return;
     journey.current = null;
     pos.current = point;
     setWalking(false);
@@ -384,7 +413,7 @@ export function GardenWorld({
   }
 
   function walkTo(target: Point, action: Action | null = null) {
-    if (napping) return;
+    if (napping || !activeRef.current) return;
     const id = ++journeyId.current;
     cancelAnimation(px);
     cancelAnimation(py);
@@ -431,13 +460,22 @@ export function GardenWorld({
 
   function act(action: Action) {
     const p = useGame.getState().player;
-    if (!p || napping || p.mode !== 'awake') return;
+    if (!p || napping || !activeRef.current || p.mode !== 'awake') return;
     void Haptics.selectionAsync();
     switch (action) {
-      case 'nap':
+      case 'nap': {
+        const id = journeyId.current;
         setEmote('z');
-        napTimer.current = setTimeout(() => useGame.getState().sleep(), reduced ? 0 : 500);
+        napTimer.current = setTimeout(
+          () => {
+            if (!activeRef.current || id !== journeyId.current) return;
+            napTimer.current = null;
+            useGame.getState().sleep();
+          },
+          reduced ? 0 : 500,
+        );
         break;
+      }
       case 'mail':
         router.push({ pathname: '/journal', params: { tab: 'postcards' } });
         break;
@@ -480,11 +518,11 @@ export function GardenWorld({
     arriveRef.current = arrived;
   });
   useEffect(() => {
-    if (!reduced) return undefined;
+    if (!reduced || !active) return undefined;
     // An OS/app preference change also stops a stroll that was already in flight.
     const timer = setTimeout(() => {
       const pending = journey.current;
-      if (!pending) return;
+      if (!pending || !activeRef.current) return;
       cancelAnimation(px);
       cancelAnimation(py);
       px.set(pending.end.x);
@@ -492,24 +530,31 @@ export function GardenWorld({
       arriveRef.current(pending.id, pending.action, pending.end);
     }, 0);
     return () => clearTimeout(timer);
-  }, [reduced, px, py]);
+  }, [reduced, active, px, py]);
   useEffect(() => {
-    if (reduced || sleepy || napping) return undefined;
+    if (reduced || sleepy || napping || !active) return undefined;
     let timer: ReturnType<typeof setTimeout>;
+    let emoteTimer: ReturnType<typeof setTimeout>;
     const tick = () => {
+      if (!activeRef.current) return;
       if (!busy.current && clock() - lastTouch.current > 6000) {
         const roll = Math.random();
         if (roll < 0.5) walkRef.current(randomSpot(pos.current, 40));
         else if (roll < 0.7) {
           walkRef.current({ x: 142, y: 130 });
-          setTimeout(() => setEmote('♪'), 2500);
+          emoteTimer = setTimeout(() => {
+            if (activeRef.current) setEmote('♪');
+          }, 2500);
         } else if (roll < 0.8) setEmote(grumpy ? '…' : '♪');
       }
       timer = setTimeout(tick, 4000 + Math.random() * 4000);
     };
     timer = setTimeout(tick, 2500);
-    return () => clearTimeout(timer);
-  }, [reduced, sleepy, grumpy, napping]);
+    return () => {
+      clearTimeout(timer);
+      clearTimeout(emoteTimer);
+    };
+  }, [reduced, sleepy, grumpy, napping, active]);
 
   const petStyle = useAnimatedStyle(() => ({
     transform: [
@@ -521,11 +566,13 @@ export function GardenWorld({
   }));
 
   function onGroundPress(e: { nativeEvent: { locationX: number; locationY: number } }) {
+    if (napping || !activeRef.current) return;
     lastTouch.current = clock();
     walkTo({ x: e.nativeEvent.locationX / scale, y: e.nativeEvent.locationY / scale });
   }
 
   function onObjectPress(action: Action) {
+    if (napping || !activeRef.current) return;
     lastTouch.current = clock();
     const spot = gardenHotspots[action];
     setTag({ text: spot.label, x: spot.x, y: spot.y });
@@ -540,16 +587,17 @@ export function GardenWorld({
     <View
       // @ts-expect-error dataSet is a react-native-web prop (sets data-pixel for crisp CSS scaling)
       dataSet={{ pixel: 'true' }}
-      pointerEvents={napping ? 'none' : 'auto'}
+      pointerEvents={napping || !active ? 'none' : 'auto'}
       // A nap garden is scenery: pointer-events alone still allows web keyboard focus.
-      {...(Platform.OS === 'web' ? { inert: napping } : {})}
-      aria-hidden={napping}
-      accessibilityElementsHidden={napping}
-      importantForAccessibility={napping ? 'no-hide-descendants' : 'auto'}
+      {...(Platform.OS === 'web' ? { inert: napping || !active } : {})}
+      aria-hidden={napping || !active}
+      accessibilityElementsHidden={napping || !active}
+      importantForAccessibility={napping || !active ? 'no-hide-descendants' : 'auto'}
       style={{ width, height, overflow: 'hidden', backgroundColor: '#62A853', zIndex: 0 }}
     >
       <Pressable
         accessibilityLabel={`Your garden. Tap to walk ${guardian.pet_name} around.`}
+        disabled={napping || !active}
         onPress={onGroundPress}
         style={{ position: 'absolute', left: 0, top: 0, width, height }}
       >
@@ -598,8 +646,11 @@ export function GardenWorld({
             key={o.id}
             accessibilityRole="button"
             accessibilityLabel={gardenHotspots[action].label}
-            disabled={napping}
-            onFocus={() => setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y })}
+            disabled={napping || !active}
+            onFocus={() => {
+              if (activeRef.current && !napping)
+                setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
+            }}
             onPress={() => onObjectPress(action)}
             style={{
               position: 'absolute',
@@ -627,6 +678,7 @@ export function GardenWorld({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel="Look into the pond"
+        disabled={napping || !active}
         onPress={() => onObjectPress('pond')}
         style={{
           position: 'absolute',
@@ -663,14 +715,15 @@ export function GardenWorld({
           player={player}
           size={petPx}
           facing={facing}
-          walking={walking && !napping}
+          walking={walking && !napping && active}
           grumpy={grumpy && !napping}
           yawning={sleepy}
           sleeping={napping}
           curled={napping}
           groundShadow={!napping}
-          bob={!walking && !napping}
+          bob={!walking && !napping && active}
           onPress={() => {
+            if (napping || !activeRef.current) return;
             lastTouch.current = clock();
             useGame.setState({ voice: grumpy ? 'hmph. ok. one pat.' : 'hehe. again.' });
           }}
@@ -691,12 +744,13 @@ export function GardenWorld({
             size={Math.max(32, petPx / 2)}
             sleeping={napping}
             facing={i % 2 ? 'left' : 'right'}
-            bob={!napping}
-            onPress={() =>
+            bob={!napping && active}
+            onPress={() => {
+              if (napping || !activeRef.current) return;
               useGame.setState({
                 voice: `${visitorInfo(v.id).name.toLowerCase()} waves a leaf at you.`,
-              })
-            }
+              });
+            }}
           />
         </View>
       ))}
@@ -756,6 +810,7 @@ export function GardenWorld({
         night={night}
         day={!night && !grumpy}
         reduced={reduced}
+        active={active}
       />
       {napping && (
         <View
