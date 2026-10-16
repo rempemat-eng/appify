@@ -233,7 +233,8 @@ async function main() {
     }, { ...clock.globals, Date: ClockDate }).DailyRhythmCard;
     const render = () => runtime.render(Card, props);
     render();
-    for (let i = 0; i < 4; i++) await Promise.resolve();
+    // Let both VM and host promise queues settle after the storage result.
+    await new Promise((resolve) => setImmediate(resolve));
     return { runtime, clock, props, changes, render };
   }
   const planner = await plannerFixture(JSON.stringify(plan));
