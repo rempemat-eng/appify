@@ -50,6 +50,9 @@ function hooks() {
         slots[at] = { dependencies, callback };
       return slots[at].callback;
     },
+    useLayoutEffect(effect, dependencies) {
+      react.useEffect(effect, dependencies);
+    },
     useEffect(effect, dependencies) {
       const at = index++;
       if (!slots[at]) slots[at] = {};
@@ -208,7 +211,7 @@ function visitorPresentationFixture(welcome = false) {
     if (id === 'react') return runtime.react;
     if (id === 'react/jsx-runtime') return jsxRuntime;
     if (id === 'react-native') return { View: 'View', ScrollView: 'ScrollView', useWindowDimensions: () => ({ height: control.height, width: control.width }) };
-    if (id === 'expo-router') return { router: { navigate: (path) => calls.push('navigate:' + path), replace: (path) => calls.push('replace:' + path) } };
+    if (id === 'expo-router') return { router: { navigate: (destination) => calls.push('navigate:' + destination), replace: (destination) => calls.push('replace:' + destination) } };
     if (id === 'react-native-safe-area-context') return { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) };
     if (id === 'react-native-svg') return { __esModule: true, default: 'Svg', Rect: 'Rect' };
     if (id === 'react-native-reanimated') return {
@@ -234,7 +237,7 @@ function visitorPresentationFixture(welcome = false) {
     if (id === '@/lib/game') return { useGame, palette: {} };
     if (id === '@/lib/cozy') return { cozy: {}, panelStyle: {} };
     if (id === '@/lib/motion') return { useReducedMotion: () => control.reduced };
-    if (id === '@/lib/visitors') return { collectionOf: (player) => player.collection, guardianPlayer: (player) => player, visitorInfo: (id) => ({ id, name: id.toUpperCase() }) };
+    if (id === '@/lib/visitors') return { collectionOf: (player) => player.collection, guardianPlayer: (player) => player, visitorInfo: (visitorId) => ({ id: visitorId, name: visitorId.toUpperCase() }) };
     if (id === '@/lib/cards') return { cards: {}, cardIds: [] };
     if (id === '@/lib/layout') return { gameLayout: { maxWidth: 640, gutter: 16 } };
     if (id.startsWith('@/components/') || id === 'lucide-react-native') return boundary;

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -28,7 +28,12 @@ import { RewardCard } from '@/components/habit-cards';
 import { gameLayout } from '@/lib/layout';
 export function GardenVisitor({ active = true }: { active?: boolean }) {
   const activeRef = useRef(active);
-  activeRef.current = active;
+  useLayoutEffect(() => {
+    activeRef.current = active;
+    return () => {
+      activeRef.current = false;
+    };
+  }, [active]);
   const reduced = useReducedMotion();
   const waiting = useGame((s) => s.waitingVisitor);
   const now = useGame((s) => s.now);
