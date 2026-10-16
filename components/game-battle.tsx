@@ -149,7 +149,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
     () => request.practice && !gameStore.getState().tips.includes('timing'),
   );
   const stagePixel = Math.max(1, Math.floor(Math.min(width, 640) / 160));
-  const petSize = Math.min(256, Math.max(192, Math.floor(width / 56) * 32));
+  const petSize = Math.min(256, Math.floor((Math.min(width, 640) - 24) / 64) * 32);
   const [lifted, setLifted] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [target] = useState(() => guardianPlayer(request.target));
@@ -488,9 +488,8 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               entering={reduced ? undefined : FadeIn.duration(150)}
               style={{
                 position: 'absolute',
-                left: '22%',
+                left: 12,
                 bottom: 24 * stagePixel - (petSize * 3) / 32,
-                marginLeft: -petSize / 2,
                 width: petSize,
                 alignItems: 'center',
               }}
@@ -518,9 +517,8 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               entering={reduced ? undefined : FadeIn.duration(150)}
               style={{
                 position: 'absolute',
-                right: '22%',
+                right: 12,
                 bottom: 24 * stagePixel - (petSize * 3) / 32,
-                marginRight: -petSize / 2,
                 width: petSize,
                 alignItems: 'center',
               }}

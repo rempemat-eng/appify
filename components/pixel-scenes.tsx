@@ -64,7 +64,9 @@ export function PixelScene({
   skyOnly = false,
   groundInset,
   hideSignposts = false,
+  rainCloudBottom,
 }: {
+  rainCloudBottom?: number;
   sunrise?: boolean;
   skyOnly?: boolean;
   groundInset?: number;
@@ -142,7 +144,7 @@ export function PixelScene({
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
         <Svg width={columns * pixel} height={rows * pixel} viewBox={`0 0 ${columns} ${rows}`}>
           <Rect x={0} y={0} width={columns} height={rows} fill={sky[0]} />
-          {(sunrise || skyOnly) &&
+          {(night || sunrise || skyOnly) &&
             [1, 2].map((i) => (
               <Rect
                 key={`sky-band-${i}`}
@@ -156,6 +158,7 @@ export function PixelScene({
           {!skyOnly && (
             <G transform={`translate(${Math.floor((columns - 160) / 2)} ${sceneTop})`}>
               {!sunrise &&
+                !night &&
                 [0, 1, 2].map((i) => (
                   <Rect
                     key={`sky-${i}`}
@@ -189,18 +192,20 @@ export function PixelScene({
               )}
               {night ? (
                 <>
-                  <Pixels kind="moon" x={122} y={9} scale={1.4} />
-                  {Array.from({ length: 22 }, (_, i) => (
-                    <Rect
-                      key={`star-${i}`}
-                      x={(i * 37 + 7) % 155}
-                      y={(i * 19 + 4) % 67}
-                      width={i % 4 === 0 ? 2 : 1}
-                      height={i % 4 === 0 ? 2 : 1}
-                      fill={c.paper}
-                      opacity={mini ? 1 : 0.45 + 0.55 * Math.abs(Math.sin(tick / 8 + i))}
-                    />
-                  ))}
+                  <G transform={`translate(${-Math.floor((columns - 160) / 2)} ${-sceneTop})`}>
+                    <Pixels kind="moon" x={columns - 28} y={8} scale={1.4} />
+                    {Array.from({ length: 32 }, (_, i) => (
+                      <Rect
+                        key={`star-${i}`}
+                        x={(i * 37 + 7) % Math.max(1, columns - 4)}
+                        y={4 + ((i * 19) % Math.max(1, rows - groundRows - 12))}
+                        width={i % 4 === 0 ? 2 : 1}
+                        height={i % 4 === 0 ? 2 : 1}
+                        fill={c.paper}
+                        opacity={mini ? 1 : 0.45 + 0.55 * Math.abs(Math.sin(tick / 8 + i))}
+                      />
+                    ))}
+                  </G>
                   {kind === 'night' &&
                     Array.from({ length: 5 }, (_, i) => (
                       <G key={`night-firefly-${i}`}>
@@ -304,23 +309,23 @@ export function PixelScene({
                       scale={1 + Math.min(0.8, (now - exposure.since) / 90000)}
                     />
                   ))}
-                  {(sunrise || state?.kind === 'care') && (
+                  {(sunrise || (!night && state?.kind === 'care')) && (
                     <>
                       <Pixels kind="sun" x={112} y={Math.max(4 - sceneTop, 61)} />
                     </>
                   )}
                   {player && player.mood < 30 && kind !== 'night' && (
                     <G
-                      transform={`translate(72 ${Math.max(4 - sceneTop, 120 - Math.ceil(236 / pixel))})`}
+                      transform={`translate(72 ${Math.max(-sceneTop, rainCloudBottom === undefined ? 100 - Math.ceil(236 / pixel) : rainCloudBottom / pixel - 18 - sceneTop)})`}
                     >
                       <Pixels kind="raincloud" />
                       {[0, 1, 2].map((i) => (
                         <Rect
                           key={`rain-${i}`}
                           x={4 + i * 4}
-                          y={13 + ((tick + i * 3) % 7)}
+                          y={13 + ((tick + i) % 3)}
                           width={1}
-                          height={4}
+                          height={3}
                           fill={c.rain}
                         />
                       ))}
@@ -466,8 +471,8 @@ export function RaidGarden({ attacker, defender }: { attacker: Player; defender:
           borderRadius: 0,
         }}
       />
-      <View style={{ position: 'absolute', left: 4, bottom: 39 * pixel }}>
-        <PixelProp kind={signatureProp(attacker)} size={16 * pixel} />
+      <View style={{ position: 'absolute', left: 0, bottom: 41 * pixel }}>
+        <PixelProp kind={signatureProp(attacker)} size={12 * pixel} />
       </View>
       {(signatureProp(attacker) !== 'signpost' || signatureProp(defender) !== 'signpost') && (
         <View style={{ position: 'absolute', right: 4, bottom: 39 * pixel }}>

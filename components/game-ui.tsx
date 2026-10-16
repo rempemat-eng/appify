@@ -389,7 +389,7 @@ export function Pet({
               x={rx}
               y={
                 curled && sleeping
-                  ? 15 + Math.floor((ry * 14) / 32)
+                  ? 7 + Math.floor((ry * 24) / 32)
                   : walking && ry >= 26 && ry <= 28 && rx < 17 === stride
                     ? ry - 1
                     : bob && breath && !reduced && !sleeping && ry >= 16

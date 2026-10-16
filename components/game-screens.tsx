@@ -17,6 +17,8 @@ import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
 import { matchup } from '@/lib/battle';
+import { petPixels } from '@/lib/pet-art';
+import { visitorPixels } from '@/lib/visitor-art';
 import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
 import { budgetVoice, dayKey } from '@/lib/offline-rules';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
@@ -70,6 +72,7 @@ export function HomeScreen() {
   useEffect(() => {
     if (coaching && p?.mode === 'awake') useGame.getState().seeTip(coaching);
   }, [coaching, p?.mode]);
+  const [petTop, setPetTop] = useState(40);
   const [statsOpen, setStatsOpen] = useState(false);
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
@@ -97,6 +100,10 @@ export function HomeScreen() {
   }, [crumbs]);
   if (!p) return null;
   const guardian = guardianPlayer(p);
+  const homePixels = isVisitorId(guardian.guardian)
+    ? visitorPixels(guardian.guardian, p.hat)
+    : petPixels(guardian.species, p.level, p.hat, false, p.mood < 30);
+  const rainCloudBottom = petTop + Math.min(...homePixels.map((pixel) => pixel.y)) * 4 - 12;
   const state = status(p, now);
   const speech = paused
     ? budgetVoice
@@ -140,6 +147,7 @@ export function HomeScreen() {
         species={p.species}
         level={p.level}
         player={p}
+        rainCloudBottom={rainCloudBottom}
         height={Math.max(240, Math.round(Math.min(width, 640) * 0.55))}
         style={{
           marginHorizontal: -16,
@@ -153,16 +161,18 @@ export function HomeScreen() {
           paddingBottom: 16,
         }}
       >
-        <Pet
-          species={guardian.species}
-          visitor={guardian.guardian}
-          level={p.level}
-          hat={p.hat}
-          grumpy={p.mood < 30}
-          size={128}
-          yawning={paused}
-          slumped={raidFeedback.slumped}
-        />
+        <View onLayout={(event) => setPetTop(event.nativeEvent.layout.y)}>
+          <Pet
+            species={guardian.species}
+            visitor={guardian.guardian}
+            level={p.level}
+            hat={p.hat}
+            grumpy={p.mood < 30}
+            size={128}
+            yawning={paused}
+            slumped={raidFeedback.slumped}
+          />
+        </View>
         {crumbs && <PixelBurst />}
         <BodyText
           style={{

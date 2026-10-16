@@ -205,8 +205,7 @@ function make(kind: PropKind) {
       rect(11, 8, 4, 5, '.');
       break;
     case 'sun':
-      box(4, 4, 8, 8, 'Y');
-      rect(6, 5, 4, 6, 'B');
+      rect(4, 4, 8, 8, 'Y');
       rect(7, 0, 2, 3, 'Y');
       rect(7, 13, 2, 3, 'Y');
       rect(0, 7, 3, 2, 'Y');
