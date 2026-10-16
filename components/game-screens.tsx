@@ -31,6 +31,7 @@ import { GardenTip } from '@/components/garden-guide';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
+import { useGardenView } from '@/lib/garden-view';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
@@ -49,6 +50,7 @@ const lines = {
   idle: ["touch grass? i'll wait.", 'i am small but i am mighty'],
 };
 export function HomeScreen() {
+  const [gardenView, setGardenView] = useGardenView();
   const reduced = useReducedMotion();
   const focused = useIsFocused();
   const { height, width } = useWindowDimensions();
@@ -200,6 +202,7 @@ export function HomeScreen() {
       >
         <GardenWorld
           active={focused && !busy && !statsOpen && p.mode === 'awake'}
+          view={gardenView}
           width={Math.min(width, gameLayout.maxWidth)}
           player={p}
           grumpy={p.mood < 30}
@@ -266,6 +269,40 @@ export function HomeScreen() {
       <BodyText style={{ textAlign: 'center', fontSize: 12, marginTop: -6 }}>
         tap to wander · water the flowers, visit the reading nook or say hello at the pond
       </BodyText>
+      <View
+        accessibilityRole="radiogroup"
+        accessibilityLabel="Garden view"
+        style={{ flexDirection: 'row', alignSelf: 'center', gap: 6 }}
+      >
+        {(
+          [
+            ['flat', 'TOP-DOWN'],
+            ['tilt', '2.5D · BETA'],
+          ] as const
+        ).map(([mode, label]) => (
+          <Pressable
+            key={mode}
+            accessibilityRole="radio"
+            accessibilityState={{ checked: gardenView === mode }}
+            aria-checked={gardenView === mode}
+            onPress={() => {
+              feedback('select');
+              setGardenView(mode);
+            }}
+            style={{
+              minHeight: 32,
+              paddingHorizontal: 12,
+              justifyContent: 'center',
+              borderRadius: 999,
+              borderWidth: 1,
+              borderColor: c.outline,
+              backgroundColor: gardenView === mode ? c.rest : c.paper,
+            }}
+          >
+            <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>{label}</BodyText>
+          </Pressable>
+        ))}
+      </View>
       <GardenProgress />
       <View style={{ gap: 6 }}>
         <PixelButton label="TAKE A NAP" gold={paused} onPress={() => useGame.getState().sleep()} />

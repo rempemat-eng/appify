@@ -24,10 +24,22 @@ import { playPaused, useGame, type Player } from '@/lib/game';
 import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
 import { GARDEN, gardenHotspots, gardenObjects } from '@/lib/garden-map';
 import { GARDEN_START, findPath, randomSpot, type Point } from '@/lib/garden-path';
+import {
+  TILT_DEG,
+  billboard,
+  groundRect,
+  lift,
+  makeProjection,
+  project,
+  unproject,
+  type ViewMode,
+} from '@/lib/garden-projection';
+import battleDay from '@/assets/battle/backdrop-day.png';
+import battleNight from '@/assets/battle/backdrop-night.png';
 import { GuardianPet } from '@/components/guardian-pet';
 import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
-import { GardenReactions, type GardenReaction } from '@/components/garden-reactions';
+import { GardenReactions, type GardenReaction, type Place } from '@/components/garden-reactions';
 
 import ground0 from '@/assets/garden/ground-0.png';
 import ground1 from '@/assets/garden/ground-1.png';
@@ -84,6 +96,22 @@ const START: Point = GARDEN_START;
 const BED: Point = { x: 73, y: 76 };
 const groundFrames = [ground0, ground1, ground2, ground3];
 
+// Ground line (feet) of a generated object, for effects that float above it.
+function footOf(id: string, fallback: number) {
+  const o = gardenObjects.find((g) => g.id === id);
+  return o ? o.y + o.h : fallback;
+}
+const HUT_FOOT = footOf('hut', 76);
+const NOOK_FOOT = footOf('reading-nook', 64);
+const LANTERN_FOOT = footOf('lantern', 88);
+
+// Ground line for reaction effects that float above a prop (pixels in sprite space).
+function reactionBase(r: GardenReaction): number | undefined {
+  if (r.kind === 'read') return NOOK_FOOT;
+  if (r.kind === 'lantern') return LANTERN_FOOT;
+  if (r.kind === 'pat') return r.y; // the companion's feet
+  return undefined; // water drops and pond ripples sit on the ground
+}
 
 const companionSpots: Point[] = [
   { x: 74, y: 150 },
@@ -117,19 +145,11 @@ const responses = {
 // ---- crisp sprite --------------------------------------------------------
 function Sprite({
   source,
-  x,
-  y,
-  w,
-  h,
-  scale,
+  rect,
   z,
 }: {
   source: ImageSourcePropType;
-  x: number;
-  y: number;
-  w: number;
-  h: number;
-  scale: number;
+  rect: { left: number; top: number; width: number; height: number };
   z: number;
 }) {
   return (
@@ -138,10 +158,10 @@ function Sprite({
       resizeMode="stretch"
       style={{
         position: 'absolute',
-        left: Math.round(x * scale),
-        top: Math.round(y * scale),
-        width: Math.round(w * scale),
-        height: Math.round(h * scale),
+        left: Math.round(rect.left),
+        top: Math.round(rect.top),
+        width: Math.round(rect.width),
+        height: Math.round(rect.height),
         zIndex: z,
       }}
     />
@@ -151,6 +171,7 @@ function Sprite({
 // ---- ambient life (own clock, so only this layer re-renders) --------------
 function Ambient({
   scale,
+  place,
   width,
   height,
   rain,
@@ -160,6 +181,7 @@ function Ambient({
   active,
 }: {
   scale: number;
+  place: Place;
   width: number;
   height: number;
   rain: boolean;
@@ -221,26 +243,29 @@ function Ambient({
       pointerEvents="none"
       style={{ position: 'absolute', left: 0, top: 0, width, height, zIndex: 950 }}
     >
-      {drops.map((d) => (
-        <View
-          key={d.i}
-          style={{
-            position: 'absolute',
-            left: Math.round(d.x * scale),
-            top: Math.round(d.y * scale),
-            width: u,
-            height: u * 4,
-            backgroundColor: 'rgba(214,232,244,0.75)',
-          }}
-        />
-      ))}
+      {drops.map((d) => {
+        const q = place(d.x, d.y);
+        return (
+          <View
+            key={d.i}
+            style={{
+              position: 'absolute',
+              left: Math.round(q.sx),
+              top: Math.round(q.sy),
+              width: u,
+              height: Math.round(u * 4 * q.f),
+              backgroundColor: 'rgba(214,232,244,0.75)',
+            }}
+          />
+        );
+      })}
       {flies.map((f) => (
         <View
           key={f.id}
           style={{
             position: 'absolute',
-            left: Math.round(f.x * scale) - u,
-            top: Math.round(f.y * scale) - u,
+            left: Math.round(place(f.x, f.y, f.y + 8).sx) - u,
+            top: Math.round(place(f.x, f.y, f.y + 8).sy) - u,
             width: u * 3,
             height: u * 3,
             backgroundColor: 'rgba(246,231,140,0.28)',
@@ -257,8 +282,8 @@ function Ambient({
           key={b.color}
           style={{
             position: 'absolute',
-            left: Math.round(b.x * scale),
-            top: Math.round(b.y * scale),
+            left: Math.round(place(b.x, b.y, b.y + 6).sx),
+            top: Math.round(place(b.x, b.y, b.y + 6).sy),
             flexDirection: 'row',
             alignItems: 'center',
           }}
@@ -273,8 +298,8 @@ function Ambient({
           key={puff.id}
           style={{
             position: 'absolute',
-            left: Math.round(puff.x * scale),
-            top: Math.round(puff.y * scale),
+            left: Math.round(place(puff.x, puff.y, HUT_FOOT).sx),
+            top: Math.round(place(puff.x, puff.y, HUT_FOOT).sy),
             width: Math.round(4 * scale),
             height: Math.round(3 * scale),
             opacity: puff.opacity,
@@ -313,6 +338,7 @@ export function GardenWorld({
   onFeed,
   napping = false,
   active = true,
+  view = 'flat',
 }: {
   width: number;
   player: Player;
@@ -323,10 +349,16 @@ export function GardenWorld({
   napping?: boolean;
   /** Tab screens stay mounted; pause the world and cancel its actions on blur. */
   active?: boolean;
+  /** 'flat' top-down, or 'tilt' 2.5D: tilted ground with upright billboard sprites. */
+  view?: ViewMode;
 }) {
   const reduced = useReducedMotion();
   const scale = width / GARDEN.width;
-  const height = Math.round(GARDEN.height * scale);
+  // All placement goes through one projection (identity in flat view).
+  const tilt = view === 'tilt';
+  const proj = makeProjection(view, width, GARDEN, tilt ? Math.round(width * 0.14) : 0);
+  const height = proj.height;
+  const place: Place = (x, y, groundY = y) => lift(proj, x, y, groundY);
   const petPx = Math.max(32, Math.round((32 * scale) / 32) * 32); // matches Pet's snapping
   const home = napping ? BED : START;
   const px = useSharedValue(home.x);
@@ -621,14 +653,18 @@ export function GardenWorld({
     };
   }, [reduced, sleepy, grumpy, napping, active]);
 
-  const petStyle = useAnimatedStyle(() => ({
-    transform: [
-      { translateX: Math.round(px.value * scale - petPx / 2) },
-      { translateY: Math.round(py.value * scale - petPx * (30 / 32)) },
-    ],
-    // Rest between the hut and bedding layers, under the garden's night light.
-    zIndex: Math.round(py.value) + (napping ? 1 : 0),
-  }));
+  const petStyle = useAnimatedStyle(() => {
+    const s = project(proj, px.value, py.value);
+    return {
+      transform: [
+        { translateX: Math.round(s.sx - petPx / 2) },
+        { translateY: Math.round(s.sy - petPx * (30 / 32)) },
+        { scale: s.f },
+      ],
+      // Rest between the hut and bedding layers, under the garden's night light.
+      zIndex: Math.round(py.value) + (napping ? 1 : 0),
+    };
+  });
 
   function onGroundPress(e: {
     nativeEvent: { locationX?: number; locationY?: number; offsetX?: number; offsetY?: number };
@@ -645,7 +681,8 @@ export function GardenWorld({
     setTag(null);
     setFeedback(null);
     setReaction(null);
-    walkTo({ x: lx / scale, y: ly / scale });
+    // the tap surface starts at the horizon in 2.5D view
+    walkTo(unproject(proj, lx, ly + (tilt ? proj.horizon : 0)));
   }
 
   function onObjectPress(action: Action) {
@@ -697,47 +734,73 @@ export function GardenWorld({
       importantForAccessibility={napping || !active ? 'no-hide-descendants' : 'auto'}
       style={{ width, height, overflow: 'hidden', backgroundColor: '#62A853', zIndex: 0 }}
     >
-      <Pressable
-        accessibilityLabel={`Your garden. Tap to walk ${guardian.pet_name} around.`}
-        disabled={napping || !active}
-        onPress={onGroundPress}
-        style={{ position: 'absolute', left: 0, top: 0, width, height }}
+      {tilt && (
+        <Image
+          source={night ? battleNight : battleDay}
+          resizeMode="stretch"
+          style={{
+            position: 'absolute',
+            left: 0,
+            // battle backdrop's horizon (native y 78 of 150) sits on the garden's far edge
+            top: Math.round(proj.horizon - 80 * (width / 216)),
+            width,
+            height: Math.round(150 * (width / 216)),
+          }}
+        />
+      )}
+      <View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: proj.bottom - Math.round(GARDEN.height * scale),
+            width,
+            height: Math.round(GARDEN.height * scale),
+          },
+          tilt && {
+            transform: [{ perspective: proj.persp }, { rotateX: `${TILT_DEG}deg` }],
+            transformOrigin: '50% 100%',
+          },
+        ]}
       >
         <Image
           source={groundFrames[reduced ? 0 : frame]}
           resizeMode="stretch"
-          style={{ width, height }}
+          style={{ width, height: Math.round(GARDEN.height * scale) }}
         />
-      </Pressable>
-      {destination && !napping && active && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: Math.round((destination.x - 3) * scale),
-            top: Math.round((destination.y - 2) * scale),
-            width: Math.round(6 * scale),
-            height: Math.round(4 * scale),
-            borderWidth: Math.max(1, Math.round(scale)),
-            borderColor: '#FFF0B7',
-            backgroundColor: 'rgba(81,107,55,0.3)',
-            zIndex: 2,
-          }}
-        />
-      )}
-      {gardenObjects.map((o) => {
-        const sprite = (
-          <Sprite
-            key={o.id}
-            source={sprites[o.sprite]}
-            x={o.x}
-            y={o.y}
-            w={o.w}
-            h={o.h}
-            scale={scale}
-            z={o.y + o.h}
+        {destination && !napping && active && (
+          <View
+            style={{
+              position: 'absolute',
+              left: Math.round((destination.x - 3) * scale),
+              top: Math.round((destination.y - 2) * scale),
+              width: Math.round(6 * scale),
+              height: Math.round(4 * scale),
+              borderWidth: Math.max(1, Math.round(scale)),
+              borderColor: '#FFF0B7',
+              backgroundColor: 'rgba(81,107,55,0.3)',
+            }}
           />
-        );
+        )}
+      </View>
+      <Pressable
+        accessibilityLabel={`Your garden. Tap to walk ${guardian.pet_name} around.`}
+        disabled={napping || !active}
+        onPress={onGroundPress}
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: tilt ? proj.horizon : 0,
+          width,
+          height: tilt ? height - proj.horizon : height,
+        }}
+      />
+      {gardenObjects.map((o) => {
+        // Upright billboard standing on its footprint (identity in flat view).
+        const art = billboard(proj, o.x, o.y, o.w, o.h);
+        const px1 = scale * art.f; // one art pixel on screen at this depth
+        const sprite = <Sprite key={o.id} source={sprites[o.sprite]} rect={art} z={o.y + o.h} />;
         if (!o.action)
           return (
             <View
@@ -750,10 +813,10 @@ export function GardenWorld({
           );
         const action = o.action as Action;
         const isNewInteraction = action === 'read' || action === 'water' || action === 'lantern';
-        const artLeft = Math.round(o.x * scale);
-        const artTop = Math.round(o.y * scale);
-        const artWidth = Math.round(o.w * scale);
-        const artHeight = Math.round(o.h * scale);
+        const artLeft = Math.round(art.left);
+        const artTop = Math.round(art.top);
+        const artWidth = Math.round(art.width);
+        const artHeight = Math.round(art.height);
         const targetWidth = Math.max(44, artWidth);
         const targetHeight = Math.max(44, artHeight);
         const targetLeft = Math.max(
@@ -787,12 +850,12 @@ export function GardenWorld({
                 pointerEvents="none"
                 style={{
                   position: 'absolute',
-                  left: imageLeft + Math.round(7 * scale),
-                  top: imageTop + Math.round(10 * scale),
-                  width: Math.round(3 * scale),
-                  height: Math.round(6 * scale),
+                  left: imageLeft + Math.round(7 * px1),
+                  top: imageTop + Math.round(10 * px1),
+                  width: Math.round(3 * px1),
+                  height: Math.round(6 * px1),
                   backgroundColor: '#71817A',
-                  borderLeftWidth: Math.max(1, Math.round(scale)),
+                  borderLeftWidth: Math.max(1, Math.round(px1)),
                   borderLeftColor: '#A6B69E',
                 }}
               />
@@ -802,12 +865,12 @@ export function GardenWorld({
                 pointerEvents="none"
                 style={{
                   position: 'absolute',
-                  left: imageLeft + Math.round((o.w / 2 - 2) * scale),
-                  top: imageTop - Math.round(5 * scale),
-                  width: Math.round(4 * scale),
-                  height: Math.round(4 * scale),
+                  left: imageLeft + Math.round((o.w / 2 - 2) * px1),
+                  top: imageTop - Math.round(5 * px1),
+                  width: Math.round(4 * px1),
+                  height: Math.round(4 * px1),
                   backgroundColor: '#FFF3CF',
-                  borderWidth: Math.max(1, Math.round(scale)),
+                  borderWidth: Math.max(1, Math.round(px1)),
                   borderColor: '#647E46',
                 }}
               />
@@ -868,14 +931,7 @@ export function GardenWorld({
         accessibilityLabel="Look into the pond"
         disabled={napping || !active}
         onPress={() => onObjectPress('pond')}
-        style={{
-          position: 'absolute',
-          left: Math.round(16 * scale),
-          top: Math.round(118 * scale),
-          width: Math.round(52 * scale),
-          height: Math.round(30 * scale),
-          zIndex: 1,
-        }}
+        style={{ position: 'absolute', ...groundRect(proj, 16, 118, 52, 30), zIndex: 1 }}
       />
       <Animated.View
         style={[{ position: 'absolute', left: 0, top: 0, width: petPx, height: petPx }, petStyle]}
@@ -919,8 +975,11 @@ export function GardenWorld({
           key={v.id}
           style={{
             position: 'absolute',
-            left: Math.round(companionSpots[i].x * scale - petPx / 4),
-            top: Math.round(companionSpots[i].y * scale - petPx / 2),
+            left: Math.round(
+              project(proj, companionSpots[i].x, companionSpots[i].y).sx - petPx / 4,
+            ),
+            top: Math.round(project(proj, companionSpots[i].x, companionSpots[i].y).sy - petPx / 2),
+            transform: [{ scale: project(proj, companionSpots[i].x, companionSpots[i].y).f }],
             zIndex: companionSpots[i].y,
           }}
         >
@@ -946,7 +1005,14 @@ export function GardenWorld({
         </View>
       ))}
       {reaction && !napping && active && (
-        <GardenReactions key={reaction.id} reaction={reaction} scale={scale} reduced={reduced} />
+        <GardenReactions
+          key={reaction.id}
+          reaction={reaction}
+          scale={scale}
+          reduced={reduced}
+          place={place}
+          base={reactionBase(reaction)}
+        />
       )}
       {(night || dusk || dawn) && (
         <View
@@ -967,16 +1033,16 @@ export function GardenWorld({
         />
       )}
       {[
-        ...(night ? [{ x: 48, y: 54, size: 8 }] : []),
-        ...(lanternOn ? [{ x: 123, y: 71, size: 7 }] : []),
+        ...(night ? [{ x: 48, y: 54, size: 8, ground: HUT_FOOT }] : []),
+        ...(lanternOn ? [{ x: 123, y: 71, size: 7, ground: LANTERN_FOOT }] : []),
       ].map((light) => (
         <View
           key={`${light.x}-${light.y}`}
           pointerEvents="none"
           style={{
             position: 'absolute',
-            left: Math.round(light.x * scale),
-            top: Math.round(light.y * scale),
+            left: Math.round(place(light.x, light.y, light.ground).sx),
+            top: Math.round(place(light.x, light.y, light.ground).sy),
             width: Math.round(light.size * scale),
             height: Math.round(light.size * scale),
             borderRadius: Math.round(4 * scale),
@@ -997,6 +1063,7 @@ export function GardenWorld({
       ))}
       <Ambient
         scale={scale}
+        place={place}
         width={width}
         height={height}
         rain={grumpy && !napping}
@@ -1010,8 +1077,8 @@ export function GardenWorld({
           pointerEvents="none"
           style={{
             position: 'absolute',
-            left: Math.round(BED.x * scale),
-            top: Math.round(BED.y * scale - petPx * 1.1),
+            left: Math.round(project(proj, BED.x, BED.y).sx),
+            top: Math.round(project(proj, BED.x, BED.y).sy - petPx * 1.1),
             zIndex: 990,
           }}
         >
@@ -1023,8 +1090,8 @@ export function GardenWorld({
           pointerEvents="none"
           style={{
             position: 'absolute',
-            left: Math.max(4, Math.min(width - 160, tag.x * scale - 80)),
-            top: Math.max(4, tag.y * scale - 70),
+            left: Math.max(4, Math.min(width - 160, project(proj, tag.x, tag.y).sx - 80)),
+            top: Math.max(4, project(proj, tag.x, tag.y).sy - 70),
             width: 160,
             alignItems: 'center',
             zIndex: 999,
@@ -1050,14 +1117,17 @@ export function GardenWorld({
           pointerEvents="none"
           style={{
             position: 'absolute',
-            left: Math.max(8, Math.min(width - 224, feedback.x * scale - 108)),
+            left: Math.max(
+              8,
+              Math.min(width - 224, project(proj, feedback.x, feedback.y).sx - 108),
+            ),
             top: Math.max(
               8,
               Math.min(
                 height - 94,
                 feedback.kind === 'pat' || feedback.y < 90
-                  ? feedback.y * scale + 12
-                  : feedback.y * scale - 86,
+                  ? project(proj, feedback.x, feedback.y).sy + 12
+                  : project(proj, feedback.x, feedback.y).sy - 86,
               ),
             ),
             width: Math.min(width - 16, 216),

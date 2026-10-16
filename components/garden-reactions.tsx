@@ -28,14 +28,26 @@ const FLOWERS = [
 // Eight stepped frames per second preserve the pixel silhouettes. Each reaction
 // has a short lead-in, one action, then a quiet settle instead of a looping burst.
 // The finite clock exists only while this keyed reaction is mounted.
+export type Place = (
+  x: number,
+  y: number,
+  groundY?: number,
+) => { sx: number; sy: number; f: number };
+
 export function GardenReactions({
   reaction,
   scale,
   reduced,
+  place,
+  base,
 }: {
   reaction: GardenReaction;
   scale: number;
   reduced: boolean;
+  /** maps native garden coordinates to the screen (flat or 2.5D) */
+  place: Place;
+  /** ground line for effects that float above a prop (book, hearts, lantern) */
+  base?: number;
 }) {
   const [phase, setPhase] = useState(0);
   const progress = useRef(0);
@@ -189,10 +201,10 @@ export function GardenReactions({
           <View
             style={{
               position: 'absolute',
-              left: Math.round(30 * scale),
-              top: Math.round(132 * scale),
-              width: Math.round(8 * scale),
-              height: Math.round(scale),
+              left: Math.round(place(30, 132).sx),
+              top: Math.round(place(30, 132).sy),
+              width: Math.round(8 * scale * place(30, 132).f),
+              height: Math.max(1, Math.round(scale * place(30, 132).f)),
               backgroundColor: '#284C5E',
               opacity: frogHop ? 0.25 : 0.45,
             }}
@@ -202,28 +214,31 @@ export function GardenReactions({
             resizeMode="stretch"
             style={{
               position: 'absolute',
-              left: Math.round(28 * scale),
-              top: Math.round((124 + frogDip - frogHop) * scale),
-              width: Math.round(12 * scale),
-              height: Math.round(10 * scale),
+              left: Math.round(place(28, 124 + frogDip - frogHop, 134).sx),
+              top: Math.round(place(28, 124 + frogDip - frogHop, 134).sy),
+              width: Math.round(12 * scale * place(28, 134).f),
+              height: Math.round(10 * scale * place(28, 134).f),
             }}
           />
         </>
       )}
-      {pixels.map((p) => (
-        <View
-          key={`${p.x}-${p.y}-${p.color}`}
-          style={{
-            position: 'absolute',
-            left: Math.round(p.x * scale),
-            top: Math.round(p.y * scale),
-            width: Math.max(1, Math.round((p.w ?? 1) * scale)),
-            height: Math.max(1, Math.round((p.h ?? 1) * scale)),
-            backgroundColor: p.color,
-            opacity: p.opacity ?? 1,
-          }}
-        />
-      ))}
+      {pixels.map((p) => {
+        const q = place(p.x, p.y, base);
+        return (
+          <View
+            key={`${p.x}-${p.y}-${p.color}`}
+            style={{
+              position: 'absolute',
+              left: Math.round(q.sx),
+              top: Math.round(q.sy),
+              width: Math.max(1, Math.round((p.w ?? 1) * scale * q.f)),
+              height: Math.max(1, Math.round((p.h ?? 1) * scale * q.f)),
+              backgroundColor: p.color,
+              opacity: p.opacity ?? 1,
+            }}
+          />
+        );
+      })}
     </View>
   );
 }
