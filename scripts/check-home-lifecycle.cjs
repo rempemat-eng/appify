@@ -89,6 +89,7 @@ function load(file, imports, globals = {}) {
   const source = ts.transpileModule(fs.readFileSync(sourcePath, 'utf8'), {
     compilerOptions: {
       module: ts.ModuleKind.CommonJS,
+      esModuleInterop: true,
       jsx: ts.JsxEmit.ReactJSX,
       target: ts.ScriptTarget.ES2022,
     },
@@ -223,7 +224,7 @@ async function main() {
       if (id === 'react') return runtime.react;
       if (id === 'react/jsx-runtime') return jsxRuntime;
       if (id === 'react-native') return { StyleSheet: { create: (styles) => styles }, Platform: { OS: 'web' }, ...Object.fromEntries(['View', 'Pressable'].map((name) => [name, name])) };
-      if (id === '@react-native-async-storage/async-storage') return { default: { getItem: async () => raw } };
+      if (id === '@react-native-async-storage/async-storage') return { __esModule: true, default: { getItem: async () => raw } };
       if (id === '@/lib/daily-rhythm') return rules;
       if (id === '@/lib/cozy') return { cozy: {} };
       if (id === '@/lib/layout') return { gameLayout: { gutter: 16, maxWidth: 640 } };
@@ -239,7 +240,7 @@ async function main() {
   tree = planner.render();
   planner.clock.flush(0);
   tree = planner.render();
-  check(text(tree).includes('Focus now'), 'loaded planner shows the current focus window');
+  check(text(tree).includes('Focus now'), 'loaded planner shows the current focus window: ' + text(tree));
   check(planner.clock.intervals.size === 1, 'visible enabled planner owns one clock');
   find(tree, (node) => node.props.accessibilityLabel === 'Edit your daily rhythm').props.onPress();
   tree = planner.render();
