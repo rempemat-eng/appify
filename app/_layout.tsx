@@ -3,17 +3,15 @@ import '../global.css';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import {
-  Inter_400Regular,
-  Inter_500Medium,
-  Inter_600SemiBold,
-  Inter_700Bold,
+  Nunito_600SemiBold,
+  Nunito_800ExtraBold,
+  Nunito_600SemiBold_Italic,
   useFonts,
-} from '@expo-google-fonts/inter';
+} from '@expo-google-fonts/nunito';
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p';
-import { Silkscreen_400Regular } from '@expo-google-fonts/silkscreen';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
 import { Platform } from 'react-native';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import * as DevClient from 'expo-dev-client';
 import { HeroUINativeProvider } from 'heroui-native';
 import { Uniwind } from 'uniwind';
@@ -22,11 +20,13 @@ import {
   type ErrorBoundaryProps,
   SplashScreen,
   Stack,
+  usePathname,
 } from 'expo-router';
 
 import { patchExpoGoAssetUrls } from '@/lib/expoGoAssets';
 import { initPostHog } from '@/lib/posthog';
 import { registerServiceWorker } from '@/lib/registerServiceWorker';
+import { NapAttackSplash } from '@/components/napattack-brand';
 import { GameOverlays } from '@/components/game-overlays';
 import { loadMotionPreference, watchSystemMotion } from '@/lib/motion';
 import { startGame } from '@/lib/game';
@@ -57,6 +57,22 @@ Uniwind.setTheme('light');
 void SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
+  const pathname = usePathname();
+  const [splashDone, setSplashDone] = useState(false);
+  useEffect(() => {
+    if (Platform.OS !== 'web') return;
+    const page =
+      pathname === '/missions'
+        ? 'Missions'
+        : pathname === '/arena'
+          ? 'Arena'
+          : pathname === '/shop'
+            ? 'Shop'
+            : pathname === '/journal'
+              ? 'Field Journal'
+              : 'Home';
+    document.title = `${page} · NapAttack`;
+  }, [pathname]);
   useEffect(() => {
     const stopMotion = watchSystemMotion();
     void loadMotionPreference();
@@ -67,12 +83,10 @@ export default function RootLayout() {
     };
   }, []);
   const [loaded, error] = useFonts({
-    Inter_400Regular,
-    Inter_500Medium,
-    Inter_600SemiBold,
-    Inter_700Bold,
+    Nunito_600SemiBold,
+    Nunito_800ExtraBold,
+    Nunito_600SemiBold_Italic,
     PressStart2P_400Regular,
-    Silkscreen_400Regular,
   });
 
   // Report uncaught JS errors and unhandled promise rejections to parent (Bilt preview iframe)
@@ -105,23 +119,23 @@ export default function RootLayout() {
     if (Platform.OS === 'web') {
       // Check if link already exists
       const existingLink = document.querySelector(
-        'link[href*="fonts.googleapis.com/css2?family=Inter"]',
+        'link[href*="fonts.googleapis.com/css2?family=Nunito"]',
       );
 
       if (!existingLink) {
         const link = document.createElement('link');
         link.rel = 'stylesheet';
         link.href =
-          'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap';
+          'https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700&display=swap';
         link.crossOrigin = 'anonymous';
         document.head.appendChild(link);
       }
 
-      // Note: The @import in global.css and the link tag above ensure Inter font loads
-      // expo-font will register the font family names (Inter_400Regular, etc.)
+      // Note: The @import in global.css and the link tag above ensure Nunito font loads
+      // expo-font will register the font family names (Nunito_400Regular, etc.)
       // If expo-font fails due to proxy issues, the fonts should still be available
       // via the direct Google Fonts CDN link, though the specific font family names
-      // might not be registered. The app should still render with Inter font.
+      // might not be registered. The app should still render with Nunito font.
     }
   }, []);
 
@@ -158,13 +172,14 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView style={{ flex: 1 }}>
+    <GestureHandlerRootView style={{ flex: 1 }} onTouchStart={() => setSplashDone(true)}>
       <HeroUINativeProvider>
         <Stack>
-          <Stack.Screen name="(tabs)" options={{ title: 'SCREENAGOTCHI', headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ title: 'NapAttack', headerShown: false }} />
           <Stack.Screen name="journal" options={{ title: 'FIELD JOURNAL' }} />
         </Stack>
-        <GameOverlays />
+        {splashDone && <GameOverlays />}
+        {!splashDone && <NapAttackSplash onFinish={setSplashDone} />}
       </HeroUINativeProvider>
     </GestureHandlerRootView>
   );

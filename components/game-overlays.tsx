@@ -1,3 +1,8 @@
+import { cozy as c } from '@/lib/cozy';
+import { NapAttackWordmark } from '@/components/napattack-brand';
+import { CozyBackground } from '@/components/cozy-ui';
+import { LightSweep, GrowthFrames } from '@/components/cozy-motion';
+import * as Haptics from 'expo-haptics';
 import { useEffect, useRef, useState } from 'react';
 import {
   Pressable,
@@ -7,20 +12,10 @@ import {
   ScrollView,
   TextInput,
   View,
-  useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Shield, Swords } from 'lucide-react-native';
-import {
-  bot,
-  clock,
-  feedback,
-  missions,
-  palette as c,
-  useGame,
-  gameStore,
-  type Player,
-} from '@/lib/game';
+import { bot, clock, feedback, missions, useGame, gameStore, type Player } from '@/lib/game';
 import { GardenGuide } from '@/components/garden-guide';
 import { WelcomeBack } from '@/components/visitors';
 import { DeckPanel } from '@/components/habit-cards';
@@ -32,10 +27,9 @@ import { grasslings, growthStage } from '@/lib/grasslings';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
-import Animated, { SlideInDown } from 'react-native-reanimated';
+import Animated, { FadeIn } from 'react-native-reanimated';
 function Onboarding() {
   const reduced = useReducedMotion();
-  const { width } = useWindowDimensions();
   const [step, setStep] = useState(0);
   const [picked, setPicked] = useState(false);
   const [species, setSpecies] = useState<Player['species']>('BLOB');
@@ -98,6 +92,7 @@ function Onboarding() {
       style={{ flex: 1, backgroundColor: c.paper }}
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
+      <CozyBackground />
       <ScrollView
         style={{ flex: 1 }}
         automaticallyAdjustKeyboardInsets
@@ -114,18 +109,8 @@ function Onboarding() {
         }}
       >
         <View style={{ gap: 16 }}>
-          <PixelText
-            numberOfLines={1}
-            adjustsFontSizeToFit
-            minimumFontScale={1}
-            style={{ fontSize: Math.min(21, (Math.min(width, 560) - 48) / 14), lineHeight: 33 }}
-          >
-            SCREENAGOTCHI
-          </PixelText>
-          <View style={{ height: 4, backgroundColor: c.night, width: 52 }} />
-          <PixelText style={{ fontSize: 11, lineHeight: 21 }}>
-            {'PUT YOUR PHONE DOWN.\nGROW A GRASSLING.'}
-          </PixelText>
+          <NapAttackWordmark />
+          <BodyText style={{ fontSize: 15 }}>nap to grow. wake to raid.</BodyText>
         </View>
         {step === 0 ? (
           <>
@@ -150,6 +135,7 @@ function Onboarding() {
                     }}
                     accessibilityState={{ selected: picked && species === s }}
                     style={{
+                      borderRadius: 14,
                       alignItems: 'center',
                       flex: 1,
                       minHeight: 100,
@@ -173,7 +159,7 @@ function Onboarding() {
               </View>
             </PixelScene>
             <BodyText style={{ textAlign: 'center' }}>
-              Plant a seed. Offline time helps it grow.
+              Plant a seed. Your Grassling grows while you nap.
             </BodyText>
           </>
         ) : (
@@ -229,7 +215,7 @@ function Onboarding() {
             <PixelText style={{ textAlign: 'center' }}>PICK A SEED FIRST</PixelText>
           )}
           <PixelButton
-            label={step === 0 ? 'PLANT A SEED' : 'GROW MY GARDEN'}
+            label={step === 0 ? (picked ? 'PLANT A SEED' : 'PICK A SEED FIRST') : 'GROW MY GARDEN'}
             disabled={step === 0 && !picked}
             onPress={() => (step === 0 ? setStep(1) : hatch())}
           />
@@ -240,6 +226,7 @@ function Onboarding() {
   );
 }
 function ScreenOff() {
+  const [skip, setSkip] = useState(false);
   const p = useGame((s) => s.player)!;
   const now = useGame((s) => s.now);
   const offStart = useGame((s) => s.offStart);
@@ -258,6 +245,11 @@ function ScreenOff() {
   const m = missions.find((x) => x.id === p.mission_id);
   return (
     <View
+      onStartShouldSetResponderCapture={() => {
+        setSkip(true);
+        return false;
+      }}
+      onTouchStart={() => setSkip(true)}
       style={{
         flex: 1,
         backgroundColor: c.night,
@@ -277,6 +269,7 @@ function ScreenOff() {
           player={p}
           style={{ height: '100%', borderWidth: 0 }}
         />
+        <LightSweep night skip={skip} />
       </View>
       <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 16, paddingBottom: 16 }}>
         <View style={{ alignItems: 'center', gap: 10, paddingTop: 8 }}>
@@ -289,15 +282,16 @@ function ScreenOff() {
               fontSize: 13,
               lineHeight: 24,
               backgroundColor: c.night,
+              borderRadius: 14,
               padding: 8,
             }}
           >
-            {'SIMULATED BREAK\nGARDEN SHIELDED'}
+            {'NAPPING · GARDEN SHIELDED'}
           </PixelText>
-          <BodyText style={{ color: c.paper, fontFamily: 'Inter_400Regular', fontSize: 12 }}>
-            DEMO x60 · 1 real second = 1 offline MIN
+          <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold', fontSize: 12 }}>
+            simulated · 1 real second = 1 offline MIN
           </BodyText>
-          <BodyText style={{ color: c.paper, fontFamily: 'Inter_400Regular', fontSize: 12 }}>
+          <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold', fontSize: 12 }}>
             Device screen usage is not verified.
           </BodyText>
           {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
@@ -362,10 +356,10 @@ function ScreenOff() {
               <PixelText style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}>
                 {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
               </PixelText>
-              <BodyText style={{ color: c.paper, fontFamily: 'Inter_600SemiBold' }}>
+              <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold' }}>
                 REAL DEMO COUNTDOWN · UNTIL HOME
               </BodyText>
-              <BodyText style={{ color: c.paper, fontFamily: 'Inter_400Regular' }}>
+              <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold' }}>
                 {m.duration} simulated offline MIN · {m.reward} GRASS on completion
               </BodyText>
             </>
@@ -373,10 +367,16 @@ function ScreenOff() {
             <Pulse
               active
               color={c.gold}
-              style={{ padding: 12, borderWidth: 2, borderColor: c.gold, backgroundColor: c.night }}
+              style={{
+                padding: 12,
+                borderRadius: 14,
+                borderWidth: 2,
+                borderColor: c.gold,
+                backgroundColor: c.night,
+              }}
             >
               <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
-                {`OFFLINE ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
+                {`NAPPED ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
               </PixelText>
             </Pulse>
           )}
@@ -397,6 +397,9 @@ function ScreenOff() {
   );
 }
 function DefenderAlert() {
+  useEffect(() => {
+    void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Warning);
+  }, []);
   const item = useGame((s) => s.alerts[0]);
   const [pending, setPending] = useState(false);
   const [slumped, setSlumped] = useState(true);
@@ -491,7 +494,6 @@ export function GameOverlays() {
   const cardReward = useGame((s) => s.cardReward);
   const recap = useGame((s) => s.recap);
   const insets = useSafeAreaInsets();
-  const reduced = useReducedMotion();
   const isScreenOff = !!p && p.mode !== 'awake';
   const visible =
     !ready ||
@@ -583,11 +585,10 @@ export function GameOverlays() {
                   borderWidth: 0,
                 }}
               />
-              <Pet
-                species={p.species}
-                level={p.level}
-                hat={p.hat}
-                victory={flash.includes('VICTORY')}
+              <GrowthFrames player={p} />
+              <PixelButton
+                label="BACK TO THE GARDEN"
+                onPress={() => useGame.setState({ flash: null })}
               />
               {flash.includes('BLOOMED') && <PetalFall />}
               <BodyText style={{ backgroundColor: c.paper, padding: 6 }}>
@@ -615,7 +616,7 @@ export function GameOverlays() {
       {!visible && message && (
         <Animated.View
           key={message}
-          entering={reduced ? undefined : SlideInDown.duration(180)}
+          entering={FadeIn.duration(100)}
           style={{
             position: 'absolute',
             top: insets.top + 12,

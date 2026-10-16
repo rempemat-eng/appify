@@ -4,7 +4,9 @@ import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Tabs } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect } from 'react-native-svg';
-import { palette as c, feedback, startGame, useGame } from '@/lib/game';
+import { cozy as c, panelStyle } from '@/lib/cozy';
+import { CozyBackground } from '@/components/cozy-ui';
+import { feedback, startGame, useGame } from '@/lib/game';
 import { collectionOf, postcardsOf, visitors } from '@/lib/visitors';
 import { visitorPixels } from '@/lib/visitor-art';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
@@ -34,12 +36,13 @@ export default function FieldJournal() {
         gap: 16,
       }}
     >
+      <CozyBackground />
       <Stack.Screen
         options={{
           title: 'FIELD JOURNAL',
           headerStyle: { backgroundColor: c.paper },
           headerTintColor: c.ink,
-          headerTitleStyle: { fontFamily: 'Silkscreen_400Regular' },
+          headerTitleStyle: { fontFamily: 'Nunito_600SemiBold' },
           contentStyle: { backgroundColor: c.paper },
         }}
       />
@@ -52,16 +55,16 @@ export default function FieldJournal() {
         }}
       >
         <Tabs.List
-          style={{ backgroundColor: c.body, borderRadius: 0, borderWidth: 2, borderColor: c.ink }}
+          style={{ backgroundColor: c.body, borderRadius: 14, borderWidth: 2, borderColor: c.ink }}
         >
-          <Tabs.Indicator style={{ borderRadius: 0, backgroundColor: c.paper }} />
+          <Tabs.Indicator style={{ borderRadius: 14, backgroundColor: c.paper }} />
           <Tabs.Trigger value="visitors">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'Silkscreen_400Regular' }}>
+            <Tabs.Label style={{ color: c.ink, fontFamily: 'Nunito_600SemiBold' }}>
               VISITORS
             </Tabs.Label>
           </Tabs.Trigger>
           <Tabs.Trigger value="postcards">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'Silkscreen_400Regular' }}>
+            <Tabs.Label style={{ color: c.ink, fontFamily: 'Nunito_600SemiBold' }}>
               POSTCARDS
             </Tabs.Label>
           </Tabs.Trigger>
@@ -81,10 +84,9 @@ export default function FieldJournal() {
               <View
                 accessibilityLabel={`${item.name}, ${item.habit}, ${item.rarity}, ${met ? `first met after ${met.minutes} offline minutes` : 'not met yet'}`}
                 style={{
+                  ...panelStyle,
                   flex: 1,
                   alignItems: 'center',
-                  borderWidth: 2,
-                  borderColor: c.ink,
                   paddingVertical: 10,
                   paddingHorizontal: 2,
                   gap: 4,
@@ -106,7 +108,10 @@ export default function FieldJournal() {
                     ))}
                   </Svg>
                 )}
-                <BodyText numberOfLines={1} style={{ fontFamily: 'Inter_700Bold', fontSize: 11 }}>
+                <BodyText
+                  numberOfLines={1}
+                  style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 11 }}
+                >
                   {item.name}
                 </BodyText>
                 <BodyText style={{ fontSize: 11 }}>{item.habit}</BodyText>

@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,600;0,800;1,600&display=swap');
 
 @import 'tailwindcss';
 @import 'uniwind';
@@ -42,25 +42,25 @@
 @layer theme {
   :root {
     @variant light {
-      --background: oklch(0.925 0.04 88);
+      --background: oklch(0.968 0.025 87);
       --foreground: oklch(0.365 0.024 43);
-      --surface: oklch(0.795 0.065 67);
+      --surface: oklch(0.968 0.025 87);
       --accent: oklch(0.65 0.12 142);
       --accent-foreground: oklch(0.365 0.024 43);
       --border: oklch(0.365 0.024 43);
       --muted: oklch(0.465 0.039 61);
-      --default: oklch(0.795 0.065 67);
+      --default: oklch(0.968 0.025 87);
       --default-foreground: oklch(0.365 0.024 43);
     }
     @variant dark {
-      --background: oklch(0.925 0.04 88);
+      --background: oklch(0.968 0.025 87);
       --foreground: oklch(0.365 0.024 43);
-      --surface: oklch(0.795 0.065 67);
+      --surface: oklch(0.968 0.025 87);
       --accent: oklch(0.65 0.12 142);
       --accent-foreground: oklch(0.365 0.024 43);
       --border: oklch(0.365 0.024 43);
       --muted: oklch(0.465 0.039 61);
-      --default: oklch(0.795 0.065 67);
+      --default: oklch(0.968 0.025 87);
       --default-foreground: oklch(0.365 0.024 43);
     }
   }

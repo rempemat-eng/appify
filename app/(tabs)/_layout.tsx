@@ -1,36 +1,51 @@
-import { PixelTabIcon, PixelDissolve } from '@/components/pixel-feedback';
-import { usePathname } from 'expo-router';
-import { Tabs } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
-import { GameHeader } from '@/components/game-ui';
+import { Tabs, usePathname } from 'expo-router';
 import { View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { feedback, palette as c } from '@/lib/game';
+import { GameHeader } from '@/components/game-ui';
+import { CozyBackground } from '@/components/cozy-ui';
+import { PixelTabIcon, PixelDissolve } from '@/components/pixel-feedback';
+import { feedback } from '@/lib/game';
+import { cozy as c } from '@/lib/cozy';
+import { useReducedMotion } from '@/lib/motion';
 export default function TabLayout() {
   const insets = useSafeAreaInsets();
   const path = usePathname();
+  const reduced = useReducedMotion();
   return (
-    <View style={{ flex: 1, backgroundColor: c.paper }}>
-      <StatusBar {...{ style: 'dark' as const }} />
+    <View style={{ flex: 1 }}>
+      <CozyBackground />
+      {/* eslint-disable-next-line react/style-prop-object -- Expo StatusBar uses a string style enum, not a ViewStyle. */}
+      <StatusBar style="dark" />
       <GameHeader />
       <Tabs
         screenOptions={{
           headerShown: false,
-          sceneStyle: { backgroundColor: c.paper },
+          sceneStyle: { backgroundColor: c.transparent },
+          animation: reduced ? 'none' : 'fade',
           tabBarStyle: {
+            position: 'absolute',
+            left: 16,
+            right: 16,
+            bottom: insets.bottom + 12,
+            borderRadius: 24,
             backgroundColor: c.paper,
-            borderTopColor: c.ink,
+            borderWidth: 2,
             borderTopWidth: 2,
-            elevation: 0,
-            shadowOpacity: 0,
-            height: 68 + Math.max(insets.bottom, 10),
+            borderColor: c.outline,
+            height: 84,
             paddingTop: 8,
-            paddingBottom: Math.max(insets.bottom, 10),
+            paddingBottom: 8,
+            boxShadow: '0 3px 0 rgba(74,59,53,.25), 0 8px 16px rgba(0,0,0,.08)',
           },
           tabBarActiveTintColor: c.ink,
           tabBarInactiveTintColor: c.shade,
-          tabBarLabelStyle: { fontFamily: 'PressStart2P_400Regular', fontSize: 11, marginTop: 5 },
-          tabBarItemStyle: { paddingHorizontal: 0, flex: 0.9 },
+          tabBarLabelStyle: {
+            fontFamily: 'Nunito_800ExtraBold',
+            fontSize: 12,
+            lineHeight: 16,
+            marginTop: 0,
+          },
         }}
         screenListeners={({ navigation }) => ({
           tabPress: () => {
@@ -51,7 +66,6 @@ export default function TabLayout() {
           name="missions"
           options={{
             title: 'MISSIONS',
-            tabBarItemStyle: { flex: 1.3 },
             tabBarIcon: ({ color, focused }) => (
               <PixelTabIcon kind="map" color={color} focused={focused} />
             ),

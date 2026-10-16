@@ -1,12 +1,14 @@
 import { Pressable, ScrollView, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Sprout, Hourglass, Users } from 'lucide-react-native';
-import { palette as c, clock, useGame, type Player } from '@/lib/game';
+import { Sprout, Users } from 'lucide-react-native';
+import { cozy as c } from '@/lib/cozy';
+import { clock, useGame, type Player } from '@/lib/game';
+import Svg, { Rect } from 'react-native-svg';
 import { budgetVoice, dayKey, emptyDay, gardenStreak, remainingPlay } from '@/lib/offline-rules';
 import { Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { PixelScene } from '@/components/pixel-scenes';
-import { growthStage, levelPreview } from '@/lib/grasslings';
+import { growthStage } from '@/lib/grasslings';
 export function PlayMeter() {
   const budget = useGame((s) => s.rules.budget);
   const now = useGame((s) => s.now);
@@ -16,12 +18,35 @@ export function PlayMeter() {
       accessibilityRole="button"
       accessibilityLabel={`${left} seconds of play left. Long press to reset demo play budget.`}
       onLongPress={() => useGame.getState().resetBudget()}
-      style={{ minHeight: 44, flexDirection: 'row', alignItems: 'center', gap: 6 }}
+      style={{
+        minHeight: 44,
+        paddingHorizontal: 6,
+        borderRadius: 999,
+        backgroundColor: c.paper,
+        borderWidth: 1,
+        borderColor: c.outline,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 4,
+      }}
     >
-      <Hourglass size={17} strokeWidth={2.5} color={left ? c.ink : c.error} />
+      <Svg width={16} height={16} viewBox="0 0 8 8">
+        <Rect x={1} y={0} width={6} height={1} fill={c.ink} />
+        <Rect x={1} y={7} width={6} height={1} fill={c.ink} />
+        {[1, 2, 3, 4, 5, 6].map((y) => (
+          <Rect
+            key={y}
+            x={y < 4 ? y : 7 - y}
+            y={y}
+            width={y === 3 || y === 4 ? 2 : 1}
+            height={1}
+            fill={left ? c.ink : c.error}
+          />
+        ))}
+      </Svg>
       <View style={{ gap: 5 }}>
-        <BodyText style={{ fontFamily: 'Inter_700Bold', fontSize: 11 }}>
-          {clock(left)} REAL
+        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 11 }}>
+          {clock(left)}
         </BodyText>
         <View style={{ width: 46, height: 4, backgroundColor: c.stone }}>
           <View
@@ -47,26 +72,34 @@ export function PlayPause() {
   return (
     <View style={{ gap: 12 }}>
       <Dialogue text={budgetVoice} />
-      <PixelButton label="SIMULATE SCREEN OFF" gold onPress={() => useGame.getState().sleep()} />
+      <PixelButton label="TAKE A NAP" gold onPress={() => useGame.getState().sleep()} />
+      <BodyText style={{ textAlign: 'center', fontSize: 12 }}>
+        put your phone down · simulated
+      </BodyText>
     </View>
   );
 }
 export function GardenProgress() {
-  const p = useGame((s) => s.player);
   const offline = useGame((s) => s.rules.days[dayKey(s.now)]?.offline ?? 0);
-  if (!p) return null;
-  const next = levelPreview(p.level);
   return (
-    <View style={{ gap: 3 }}>
-      <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
-        Today: {offline}/120 offline MIN{offline >= 120 ? ' · streak goal met' : ''}
+    <View style={{ gap: 6 }}>
+      <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
+        TODAY {offline} / 120 MIN
       </BodyText>
-      <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
-        Next common card: {15 - (p.offline_seconds % 15)} offline MIN
-      </BodyText>
-      <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
-        LV {next.next} · {next.stage} · {next.cost} GRASS · {next.unlock}
-      </BodyText>
+      <View
+        accessibilityRole="progressbar"
+        accessibilityValue={{ min: 0, max: 120, now: Math.min(120, offline) }}
+        style={{ height: 6, borderRadius: 3, backgroundColor: c.faded }}
+      >
+        <View
+          style={{
+            height: 6,
+            borderRadius: 3,
+            width: `${Math.min(100, (offline / 120) * 100)}%`,
+            backgroundColor: c.positive,
+          }}
+        />
+      </View>
     </View>
   );
 }

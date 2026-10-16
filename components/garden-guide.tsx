@@ -5,7 +5,9 @@ import { useMotionPreference, useReducedMotion } from '@/lib/motion';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
-import { palette as c, useGame } from '@/lib/game';
+import { CozyBackground, CozySheet } from '@/components/cozy-ui';
+import { cozy as c } from '@/lib/cozy';
+import { useGame } from '@/lib/game';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelButton, PixelText } from '@/components/game-ui';
 
@@ -47,9 +49,10 @@ export function GardenTip({
     <View
       style={[
         {
+          borderRadius: 14,
           backgroundColor: c.paper,
           borderWidth: 2,
-          borderColor: c.ink,
+          borderColor: c.outline,
           paddingLeft: 12,
           zIndex: 30,
         },
@@ -67,7 +70,7 @@ export function GardenTip({
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <BodyText
           accessibilityLiveRegion="polite"
-          style={{ flex: 1, fontFamily: 'Inter_600SemiBold', fontSize: 12, lineHeight: 18 }}
+          style={{ flex: 1, fontFamily: 'Nunito_600SemiBold', fontSize: 12, lineHeight: 18 }}
         >
           {gardenTips[id].text}
         </BodyText>
@@ -94,7 +97,7 @@ const sections = [
   ],
   [
     'Garden status',
-    'CARE WINDOW protects your garden for 30 real seconds after a qualifying return. RECOVERING shields it after a raid. EXPOSED means rivals can raid. A simulated break or mission shields the garden.',
+    'NAPPING shields your garden while your Grassling grows. Naps are simulated in this demo. Awake gardens can be raided when EXPOSED. CARE WINDOW protects your garden for 30 real seconds after a qualifying return. RECOVERING shields it after a raid. Missions also shield the garden.',
   ],
   [
     'Offline cards',
@@ -138,65 +141,75 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
         gap: 12,
       }}
     >
-      <PixelText accessibilityRole="header" style={{ fontSize: 16 }}>
-        GARDEN GUIDE
-      </PixelText>
-      <ScrollView contentContainerStyle={{ gap: 20, paddingBottom: 16 }}>
-        <Pressable
-          accessibilityRole="switch"
-          accessibilityLabel="Reduce decorative motion"
-          accessibilityState={{ checked: preference, disabled: saving }}
-          disabled={saving}
-          onPress={() => {
-            setSaving(true);
-            void useMotionPreference
-              .getState()
-              .setReduced(!preference)
-              .then(() => feedback('select'))
-              .catch(() =>
-                useGame.getState().notify('Could not save motion preference. Try again.', true),
-              )
-              .finally(() => setSaving(false));
-          }}
-          style={{ minHeight: 48, borderWidth: 2, borderColor: c.ink, padding: 12, gap: 6 }}
-        >
-          <BodyText style={{ fontFamily: 'Inter_700Bold' }}>
-            Reduce motion · {preference ? 'ON' : 'OFF'}
-          </BodyText>
-          <BodyText style={{ fontFamily: 'Inter_400Regular' }}>
-            {reduced
-              ? 'Motion reduced. Your device setting is also respected.'
-              : 'Keep action feedback without decorative motion or text delays.'}
-          </BodyText>
-        </Pressable>
-        {sections.map(([heading, text]) => (
-          <View key={heading} style={{ gap: 6 }}>
+      <CozyBackground />
+      <CozySheet style={{ flex: 1, padding: 16, gap: 12 }}>
+        <PixelText accessibilityRole="header" style={{ fontSize: 16 }}>
+          GARDEN GUIDE
+        </PixelText>
+        <ScrollView contentContainerStyle={{ gap: 20, paddingBottom: 16 }}>
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityLabel="Reduce decorative motion"
+            accessibilityState={{ checked: preference, disabled: saving }}
+            disabled={saving}
+            onPress={() => {
+              setSaving(true);
+              void useMotionPreference
+                .getState()
+                .setReduced(!preference)
+                .then(() => feedback('select'))
+                .catch(() =>
+                  useGame.getState().notify('Could not save motion preference. Try again.', true),
+                )
+                .finally(() => setSaving(false));
+            }}
+            style={{
+              minHeight: 52,
+              borderRadius: 14,
+              borderWidth: 2,
+              borderColor: c.outline,
+              padding: 12,
+              gap: 6,
+            }}
+          >
+            <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+              Reduce motion · {preference ? 'ON' : 'OFF'}
+            </BodyText>
+            <BodyText style={{ fontFamily: 'Nunito_600SemiBold' }}>
+              {reduced
+                ? 'Motion reduced. Your device setting is also respected.'
+                : 'Keep action feedback without decorative motion or text delays.'}
+            </BodyText>
+          </Pressable>
+          {sections.map(([heading, text]) => (
+            <View key={heading} style={{ gap: 6 }}>
+              <BodyText
+                accessibilityRole="header"
+                style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}
+              >
+                {heading}
+              </BodyText>
+              <BodyText style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 14, lineHeight: 21 }}>
+                {text}
+              </BodyText>
+            </View>
+          ))}
+          {tips.length > 0 && (
             <BodyText
               accessibilityRole="header"
-              style={{ fontFamily: 'Inter_700Bold', fontSize: 16 }}
+              style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}
             >
-              {heading}
+              Your garden tips
             </BodyText>
-            <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 14, lineHeight: 21 }}>
-              {text}
+          )}
+          {Array.from(new Set(tips)).map((id) => (
+            <BodyText key={id} style={{ fontFamily: 'Nunito_600SemiBold' }}>
+              {gardenTips[id].text}
             </BodyText>
-          </View>
-        ))}
-        {tips.length > 0 && (
-          <BodyText
-            accessibilityRole="header"
-            style={{ fontFamily: 'Inter_700Bold', fontSize: 16 }}
-          >
-            Your garden tips
-          </BodyText>
-        )}
-        {Array.from(new Set(tips)).map((id) => (
-          <BodyText key={id} style={{ fontFamily: 'Inter_400Regular' }}>
-            {gardenTips[id].text}
-          </BodyText>
-        ))}
-      </ScrollView>
-      <PixelButton label="DONE" onPress={onClose} />
+          ))}
+        </ScrollView>
+        <PixelButton label="DONE" onPress={onClose} />
+      </CozySheet>
     </View>
   );
 }

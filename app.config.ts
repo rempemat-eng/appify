@@ -10,7 +10,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
 
   return {
     ...config,
-    name: 'SCREENAGOTCHI',
+    name: 'NapAttack',
+    description: 'nap to grow. wake to raid.',
+    icon: './public/icons/napattack.png',
     slug: 'screenagotchi',
     version: process.env.BILT_APP_VERSION ?? '1.0.0',
     orientation: 'portrait',
@@ -24,6 +26,7 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       deploymentTarget: '16.4',
       infoPlist: {
         ITSAppUsesNonExemptEncryption: false,
+        CFBundleDisplayName: 'NapAttack',
       },
       supportsTablet: true,
       bundleIdentifier: process.env.BILT_IOS_BUNDLE_ID ?? 'me.bilt.appify',
@@ -36,12 +39,20 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       // 'single' = SPA export: one index.html + client routing, so edge serving
       // needs only a single 404→index.html fallback rule.
       output: 'single',
-      favicon: './public/icons/icon-192.png',
+      favicon: './public/icons/napattack.png',
     },
     extra: {
       appStoreAppId: process.env.BILT_APP_STORE_APP_ID,
     },
-    plugins: ['expo-router', 'expo-font', 'expo-splash-screen', ...nativePlugins],
+    plugins: [
+      'expo-router',
+      'expo-font',
+      [
+        'expo-splash-screen',
+        { image: './public/icons/napattack.png', imageWidth: 200, backgroundColor: '#FBF4E4' },
+      ],
+      ...nativePlugins,
+    ],
     experiments: {
       typedRoutes: true,
       reactCompiler: true,

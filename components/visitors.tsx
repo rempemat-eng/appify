@@ -1,37 +1,79 @@
-import { useState } from 'react';
-import { useReducedMotion } from '@/lib/motion';
-import { cards, cardIds, summarizeCardRewards } from '@/lib/cards';
-import { router } from 'expo-router';
+import { useEffect, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import { router } from 'expo-router';
+import Animated, {
+  cancelAnimation,
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withDelay,
+  withTiming,
+} from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
 import { BookOpen } from 'lucide-react-native';
-import { palette as c, useGame, type Player } from '@/lib/game';
+import { useReducedMotion } from '@/lib/motion';
+import { cards, cardIds, summarizeCardRewards } from '@/lib/cards';
+import { palette, useGame, type Player } from '@/lib/game';
+import { cozy as c, panelStyle } from '@/lib/cozy';
 import { collectionOf, visitorInfo, type Postcard } from '@/lib/visitors';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
-import { BodyText } from '@/components/pixel-feedback';
+import { BodyText, GrassRoll } from '@/components/pixel-feedback';
+import { CozyBackground, CozySheet, PaperFinish } from '@/components/cozy-ui';
+import { LightSweep, PixelBurst } from '@/components/cozy-motion';
 import { RewardCard } from '@/components/habit-cards';
-
 export function GardenVisitor() {
   const reduced = useReducedMotion();
   const waiting = useGame((s) => s.waitingVisitor);
   const now = useGame((s) => s.now);
-  if (!waiting) return null;
+  const friends = useGame((s) =>
+    s.player ? collectionOf(s.player).filter((v) => v.befriendedAt !== null).length : 0,
+  );
+  const [celebration, setCelebration] = useState({ friends, show: false });
+  if (friends !== celebration.friends)
+    setCelebration({ friends, show: friends > celebration.friends });
+  useEffect(() => {
+    if (!celebration.show) return undefined;
+    const timer = setTimeout(() => setCelebration({ friends, show: false }), 600);
+    return () => clearTimeout(timer);
+  }, [celebration.show, friends]);
+  const peek = useSharedValue(12);
+  useEffect(() => {
+    if (!waiting?.id) return undefined;
+    peek.set(reduced ? 0 : withDelay(120, withTiming(0, { duration: 180 })));
+    return () => cancelAnimation(peek);
+  }, [peek, reduced, waiting?.id]);
+  const motion = useAnimatedStyle(() => ({ transform: [{ translateY: Math.round(peek.value) }] }));
+  if (!waiting)
+    return celebration.show ? (
+      <View
+        pointerEvents="none"
+        style={{ position: 'absolute', right: 40, bottom: 60, width: 64, height: 64 }}
+      >
+        <PixelBurst hearts />
+      </View>
+    ) : null;
   const v = visitorInfo(waiting.id);
   return (
     <Animated.View
-      entering={reduced ? undefined : FadeIn}
-      style={{
-        position: 'absolute',
-        right: 4,
-        bottom: 52,
-        alignItems: 'center',
-        backgroundColor: c.paper,
-        borderWidth: 2,
-        borderColor: c.ink,
-        padding: 3,
+      entering={FadeIn.duration(100)}
+      onTouchStart={() => {
+        cancelAnimation(peek);
+        peek.set(0);
       }}
+      style={[
+        {
+          ...panelStyle,
+          position: 'absolute',
+          right: 8,
+          bottom: 16,
+          alignItems: 'center',
+          padding: 4,
+        },
+        motion,
+      ]}
     >
+      <PaperFinish />
       <Pet
         visitor={v.id}
         size={64}
@@ -39,7 +81,7 @@ export function GardenVisitor() {
         onPress={() => useGame.getState().befriendVisitor()}
         actionLabel={`Befriend ${v.name}, free`}
       />
-      <PixelText style={{ fontSize: 11 }}>BEFRIEND</PixelText>
+      <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>BEFRIEND</BodyText>
       <BodyText style={{ fontSize: 11 }}>
         {waiting.expiresAt ? Math.max(0, Math.ceil((waiting.expiresAt - now) / 1000)) : 10} MIN
       </BodyText>
@@ -47,26 +89,24 @@ export function GardenVisitor() {
   );
 }
 export function GuardianPicker({ player }: { player: Player }) {
-  const reduced = useReducedMotion();
   const friends = collectionOf(player).filter((v) => v.befriendedAt !== null);
   if (!friends.length) return null;
   return (
     <View style={{ gap: 4 }}>
-      <PixelText>GUARDIAN</PixelText>
+      <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>GUARDIAN</BodyText>
       <ScrollView
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 8, paddingVertical: 4 }}
+        contentContainerStyle={{ gap: 12, paddingVertical: 4 }}
       >
         {[null, ...friends.map((v) => v.id)].map((id) => (
           <Animated.View
             key={id ?? 'starter'}
-            entering={reduced ? undefined : FadeIn}
-            exiting={reduced ? undefined : FadeOut}
+            entering={FadeIn.duration(100)}
+            exiting={FadeOut.duration(100)}
             style={{
-              borderWidth: 2,
-              borderColor: player.guardian === id ? c.moss : c.ink,
-              backgroundColor: player.guardian === id ? c.amber : c.paper,
+              ...panelStyle,
+              borderColor: player.guardian === id ? c.moss : c.outline,
               padding: 2,
             }}
           >
@@ -87,59 +127,60 @@ export function GuardianPicker({ player }: { player: Player }) {
   );
 }
 export function PostcardArt({ postcard }: { postcard: Postcard }) {
+  const a = palette;
   const place =
     postcard.mission === 'park' ? 'PARK' : postcard.mission === 'book' ? 'LIBRARY' : 'MOUNTAIN';
   const pixels = new Map<string, { key: string; x: number; y: number; color: string }>();
   const rect = (x: number, y: number, w: number, h: number, color: string) => {
-    for (let yy = y; yy < y + h; yy++) {
+    for (let yy = y; yy < y + h; yy++)
       for (let xx = x; xx < x + w; xx++) {
-        const coordinate = `${xx}-${yy}`;
-        pixels.set(coordinate, { key: coordinate, x: xx, y: yy, color });
+        const key = `${xx}-${yy}`;
+        pixels.set(key, { key, x: xx, y: yy, color });
       }
-    }
   };
-  rect(0, 0, 64, 36, c.slate);
-  rect(0, 28, 64, 8, c.moss);
+  rect(0, 0, 64, 36, a.slate);
+  rect(0, 28, 64, 8, a.moss);
   if (postcard.mission === 'park') {
     for (const x of [8, 27, 49]) {
-      rect(x, 16, 3, 16, c.shade);
-      rect(x - 6, 10, 15, 13, c.positive);
-      rect(x - 3, 7, 9, 4, c.positive);
+      rect(x, 16, 3, 16, a.shade);
+      rect(x - 6, 10, 15, 13, a.positive);
+      rect(x - 3, 7, 9, 4, a.positive);
     }
-    rect(17, 27, 25, 2, c.body);
-    rect(20, 29, 2, 5, c.shade);
-    rect(37, 29, 2, 5, c.shade);
-    rect(19, 23, 21, 3, c.body);
+    rect(17, 27, 25, 2, a.body);
+    rect(20, 29, 2, 5, a.shade);
+    rect(37, 29, 2, 5, a.shade);
+    rect(19, 23, 21, 3, a.body);
   } else if (postcard.mission === 'book') {
-    rect(8, 6, 48, 24, c.shade);
-    rect(11, 9, 42, 18, c.body);
+    rect(8, 6, 48, 24, a.shade);
+    rect(11, 9, 42, 18, a.body);
     for (const y of [11, 19]) {
-      for (let x = 13; x < 50; x += 5) rect(x, y, 3, 6, x % 2 ? c.terracotta : c.moss);
-      rect(11, y + 6, 42, 1, c.ink);
+      for (let x = 13; x < 50; x += 5) rect(x, y, 3, 6, x % 2 ? a.terracotta : a.moss);
+      rect(11, y + 6, 42, 1, a.ink);
     }
-    rect(23, 27, 19, 2, c.paper);
-    rect(31, 24, 2, 4, c.ink);
+    rect(23, 27, 19, 2, a.paper);
+    rect(31, 24, 2, 4, a.ink);
   } else {
     for (let y = 3; y < 32; y++) {
       const w = Math.min(27, y - 2);
-      rect(32 - w, y, w * 2 + 1, 1, y < 10 ? c.paper : c.shade);
+      rect(32 - w, y, w * 2 + 1, 1, y < 10 ? a.paper : a.shade);
     }
     for (let y = 13; y < 32; y++) {
       const w = y - 12;
-      rect(12 - Math.floor(w / 2), y, w + 1, 1, c.stone);
+      rect(12 - Math.floor(w / 2), y, w + 1, 1, a.stone);
     }
-    rect(48, 5, 6, 6, c.gold);
+    rect(48, 5, 6, 6, a.gold);
   }
   return (
-    <View
-      style={{ borderWidth: 2, borderColor: c.ink, padding: 6, backgroundColor: c.body, gap: 6 }}
-    >
-      <Svg width="100%" height={144} viewBox="0 0 64 36" preserveAspectRatio="xMidYMid meet">
-        {Array.from(pixels.values()).map((p) => (
-          <Rect key={p.key} x={p.x} y={p.y} width={1} height={1} fill={p.color} />
-        ))}
-      </Svg>
-      <PixelText>{place} POSTCARD</PixelText>
+    <View style={{ ...panelStyle, padding: 12, gap: 8 }}>
+      <PaperFinish />
+      <View style={{ alignItems: 'center' }}>
+        <Svg width={256} height={144} viewBox="0 0 64 36">
+          {Array.from(pixels.values()).map((p) => (
+            <Rect key={p.key} x={p.x} y={p.y} width={1} height={1} fill={p.color} />
+          ))}
+        </Svg>
+      </View>
+      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>{place} POSTCARD</BodyText>
       <BodyText>{new Date(postcard.at).toLocaleDateString()}</BodyText>
     </View>
   );
@@ -155,6 +196,8 @@ export function WelcomeBack() {
   const waiting = useGame((s) => s.waitingVisitor);
   const p = useGame((s) => s.player);
   const [details, setDetails] = useState(false);
+  const [skip, setSkip] = useState(false);
+  const [hearted, setHearted] = useState(false);
   const { height } = useWindowDimensions();
   if (!reward || !p) return null;
   const groups = cardIds
@@ -165,18 +208,25 @@ export function WelcomeBack() {
     reward.visitor &&
     collectionOf(p).some((entry) => entry.id === reward.visitor && entry.befriendedAt !== null);
   return (
-    <View style={{ flex: 1, padding: 12, justifyContent: 'center', backgroundColor: c.body }}>
-      <View
+    <View
+      onStartShouldSetResponderCapture={() => {
+        setSkip(true);
+        return false;
+      }}
+      onTouchStart={() => setSkip(true)}
+      style={{ flex: 1, padding: 16, justifyContent: 'flex-end' }}
+    >
+      <CozyBackground />
+      <LightSweep skip={skip} />
+      <CozySheet
+        onSkip={() => setSkip(true)}
         style={{
           width: '100%',
           maxWidth: 440,
           maxHeight: '100%',
           alignSelf: 'center',
-          borderWidth: 3,
-          borderColor: c.ink,
-          backgroundColor: c.paper,
-          padding: 12,
-          gap: 10,
+          padding: 16,
+          gap: 12,
         }}
       >
         <PixelText
@@ -185,105 +235,90 @@ export function WelcomeBack() {
         >
           WELCOME BACK
         </PixelText>
-        <BodyText style={{ fontFamily: 'Inter_500Medium', textAlign: 'center' }}>
-          {reward.minutes} simulated offline MIN · +{reward.grass} GRASS
-        </BodyText>
-        {togetherStatus === 'failed' && (
-          <BodyText style={{ fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
-            Together ended early. Ordinary rewards kept.
-          </BodyText>
-        )}
-        {reportPending && (
-          <BodyText style={{ fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
-            Together report pending · ordinary rewards saved
-          </BodyText>
-        )}
-        {reward.early && (
-          <BodyText style={{ fontFamily: 'Inter_400Regular', textAlign: 'center' }}>
-            Early return · no mission completion reward
-          </BodyText>
-        )}
-        {reward.hat && (
-          <BodyText style={{ fontFamily: 'Inter_500Medium', textAlign: 'center' }}>
-            + {reward.hat}
-          </BodyText>
-        )}
-        {reward.cards.length > 0 && (
-          <View style={{ gap: 3 }}>
-            <BodyText style={{ fontFamily: 'Inter_700Bold', textAlign: 'center' }}>
-              {reward.cards.length} {reward.cards.length === 1 ? 'card' : 'cards'} earned · deck{' '}
-              {p.deck.length}/20
-            </BodyText>
-            {summary && (
-              <BodyText
-                style={{ fontFamily: 'Inter_400Regular', fontSize: 12, textAlign: 'center' }}
-              >
-                {summary.kept} new kept
-                {summary.previousReplaced ? ` · ${summary.previousReplaced} previous replaced` : ''}
-                {summary.earnedReplaced ? ` · ${summary.earnedReplaced} earned then replaced` : ''}
-              </BodyText>
-            )}
+        <ScrollView
+          style={{ flexShrink: 1, maxHeight: height - 200 }}
+          contentContainerStyle={{ gap: 12, paddingBottom: 12 }}
+        >
+          <BodyText style={{ textAlign: 'center' }}>{reward.minutes} offline MIN</BodyText>
+          <View
+            style={{ flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center' }}
+          >
+            <BodyText>+</BodyText>
+            <GrassRoll value={reward.grass} from={0} size={20} skip={skip} />
+            <BodyText>GRASS</BodyText>
           </View>
-        )}
-        {reward.visitor && (
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-            <Pet visitor={reward.visitor} size={64} bob={false} />
-            <View style={{ flex: 1, gap: 4 }}>
-              <BodyText style={{ fontFamily: 'Inter_700Bold' }}>
-                {visitorInfo(reward.visitor).name} visited
+          {togetherStatus === 'failed' && (
+            <BodyText>Together ended early. Ordinary rewards kept.</BodyText>
+          )}
+          {reportPending && <BodyText>Together report pending · ordinary rewards saved</BodyText>}
+          {reward.early && <BodyText>Early return · no mission completion reward</BodyText>}
+          {reward.hat && <BodyText>+ {reward.hat}</BodyText>}
+          {groups.length > 0 && (
+            <>
+              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', textAlign: 'center' }}>
+                {reward.cards.length} {reward.cards.length === 1 ? 'card' : 'cards'} earned · deck{' '}
+                {p.deck.length}/20
               </BodyText>
-              {waiting?.id === reward.visitor && !friend ? (
-                <PixelButton
-                  small
-                  label="BEFRIEND · FREE"
-                  onPress={() => useGame.getState().befriendVisitor()}
-                />
-              ) : (
-                <BodyText
-                  accessibilityLiveRegion="polite"
-                  style={{ fontFamily: 'Inter_400Regular' }}
-                >
-                  {friend ? 'Your friend is in the garden.' : 'Recorded in your Field Journal.'}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 12 }}>
+                {groups.map((group, index) => (
+                  <View key={group.id} style={{ width: groups.length === 1 ? '100%' : '47%' }}>
+                    <RewardCard id={group.id} index={index} skip={skip} />
+                  </View>
+                ))}
+              </View>
+            </>
+          )}
+          {reward.visitor && (
+            <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
+              <View>
+                <Pet visitor={reward.visitor} size={64} bob={false} />
+                {hearted && <PixelBurst hearts skip={false} />}
+              </View>
+              <View style={{ flex: 1, gap: 8 }}>
+                <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+                  {visitorInfo(reward.visitor).name} visited
+                </BodyText>
+                {waiting?.id === reward.visitor && !friend ? (
+                  <PixelButton
+                    small
+                    label="BEFRIEND · FREE"
+                    onPress={() => {
+                      useGame.getState().befriendVisitor();
+                      setHearted(true);
+                    }}
+                  />
+                ) : (
+                  <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
+                    {friend ? 'Your friend is in the garden.' : 'Recorded in your Field Journal.'}
+                  </BodyText>
+                )}
+              </View>
+            </View>
+          )}
+          {reward.postcard && <PostcardArt postcard={reward.postcard} />}
+          {summary && (
+            <>
+              <PixelButton
+                small
+                light
+                label={details ? 'HIDE DETAILS' : 'REWARD DETAILS'}
+                onPress={() => setDetails(!details)}
+              />
+              {details && (
+                <BodyText style={{ fontSize: 12 }}>
+                  {summary.kept} new kept
+                  {summary.previousReplaced
+                    ? ` · ${summary.previousReplaced} previous replaced`
+                    : ''}
+                  {summary.earnedReplaced
+                    ? ` · ${summary.earnedReplaced} earned then replaced`
+                    : ''}
+                  {groups.map((g) => ` · ${cards[g.id].name} ×${g.count}`).join('')}
                 </BodyText>
               )}
-            </View>
-          </View>
-        )}
-        {reward.postcard && (
-          <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 13 }}>
-            New{' '}
-            {reward.postcard.mission === 'park'
-              ? 'park'
-              : reward.postcard.mission === 'book'
-                ? 'library'
-                : 'mountain'}{' '}
-            postcard · {new Date(reward.postcard.at).toLocaleDateString()}
-          </BodyText>
-        )}
-        {(groups.length > 0 || reward.postcard) && (
-          <PixelButton
-            small
-            light
-            label={details ? 'HIDE REWARD DETAILS' : 'REWARD DETAILS'}
-            onPress={() => setDetails(!details)}
-          />
-        )}
-        {details && (
-          <ScrollView
-            style={{ maxHeight: Math.max(100, height * 0.23), flexShrink: 1 }}
-            contentContainerStyle={{ gap: 10 }}
-          >
-            {groups.map((group, index) => (
-              <View key={group.id} style={{ gap: 4 }}>
-                <BodyText style={{ fontFamily: 'Inter_700Bold' }}>
-                  {cards[group.id].name} ×{group.count} · {cards[group.id].rarity}
-                </BodyText>
-                <RewardCard id={group.id} index={index} />
-              </View>
-            ))}
-            {reward.postcard && <PostcardArt postcard={reward.postcard} />}
-          </ScrollView>
-        )}
+            </>
+          )}
+        </ScrollView>
         <PixelButton
           label="BACK TO THE GARDEN"
           onPress={() => {
@@ -291,7 +326,7 @@ export function WelcomeBack() {
             router.navigate('/');
           }}
         />
-      </View>
+      </CozySheet>
     </View>
   );
 }

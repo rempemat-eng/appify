@@ -1,4 +1,3 @@
-import { useReducedMotion } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 import {
   Pressable,
@@ -10,115 +9,157 @@ import {
   type ViewStyle,
 } from 'react-native';
 import Animated, {
+  cancelAnimation,
   useAnimatedStyle,
   useSharedValue,
   withTiming,
   withSequence,
   withRepeat,
+  withSpring,
 } from 'react-native-reanimated';
-import Svg, { Polygon, Rect } from 'react-native-svg';
-import { palette as c } from '@/lib/game';
+import { useReducedMotion } from '@/lib/motion';
+import { cozy as c } from '@/lib/cozy';
 import { PixelProp } from '@/components/pixel-scenes';
 import type { PropKind } from '@/lib/scene-art';
-
 export function BodyText({ style, ...props }: TextProps) {
   return (
     <Text
       {...props}
       style={[
-        { fontFamily: 'Silkscreen_400Regular', fontSize: 14, lineHeight: 21, color: c.ink },
+        { fontFamily: 'Nunito_600SemiBold', fontSize: 15, lineHeight: 22, color: c.ink },
         style,
       ]}
     />
   );
 }
-export function Dialogue({ text, style }: { text: string; style?: ViewStyle }) {
+export function Dialogue({
+  text,
+  style,
+  speech = false,
+  onDismiss,
+}: {
+  text: string;
+  style?: ViewStyle;
+  speech?: boolean;
+  onDismiss?: () => void;
+}) {
   const reduced = useReducedMotion();
   const [shown, setShown] = useState({ text, count: reduced ? text.length : 0 });
-  const [blink, setBlink] = useState(true);
   if (shown.text !== text) setShown({ text, count: reduced ? text.length : 0 });
   useEffect(() => {
     if (reduced || shown.count >= text.length) return undefined;
     const timer = setTimeout(() => setShown((old) => ({ ...old, count: old.count + 1 })), 22);
     return () => clearTimeout(timer);
   }, [shown.count, text, reduced]);
-  useEffect(() => {
-    if (reduced) return undefined;
-    const timer = setInterval(() => setBlink((b) => !b), 600);
-    return () => clearInterval(timer);
-  }, [reduced]);
+  const copy = speech ? text.toLowerCase() : text;
   return (
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={text}
-      accessibilityHint="Tap to reveal the full message"
-      onPress={() => setShown({ text, count: text.length })}
+      accessibilityHint={
+        onDismiss ? 'Tap to reveal, then dismiss the tip' : 'Tap to reveal the full message'
+      }
+      onPress={() => {
+        if (shown.count < text.length && !reduced) setShown({ text, count: text.length });
+        else onDismiss?.();
+      }}
       style={[
         {
-          minHeight: 64,
-          padding: 14,
-          paddingBottom: 21,
+          minHeight: 56,
+          padding: 12,
+          paddingBottom: onDismiss ? 24 : 12,
+          borderRadius: 14,
           backgroundColor: c.paper,
           borderWidth: 2,
-          borderColor: c.ink,
+          borderColor: c.outline,
+          boxShadow: '0 3px 0 rgba(74,59,53,.25), 0 8px 16px rgba(0,0,0,.08)',
         },
         style,
       ]}
     >
       <BodyText
-        accessibilityElementsHidden
-        importantForAccessibility="no"
-        style={{ fontFamily: 'PressStart2P_400Regular', fontSize: 11, lineHeight: 21 }}
+        style={{
+          fontFamily: speech ? 'Nunito_600SemiBold_Italic' : 'Nunito_600SemiBold',
+          fontSize: 15,
+          lineHeight: 21,
+        }}
       >
-        {reduced ? text : text.slice(0, shown.count) || ' '}
+        {reduced ? copy : copy.slice(0, shown.count) || ' '}
       </BodyText>
-      <View
-        pointerEvents="none"
-        style={{ position: 'absolute', right: 8, bottom: 6, opacity: blink ? 1 : 0 }}
-      >
-        <Svg width={10} height={6} viewBox="0 0 10 6">
-          <Polygon points="0,0 10,0 5,6" fill={c.ink} />
-        </Svg>
-      </View>
+      {speech && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            bottom: -10,
+            left: '50%',
+            width: 18,
+            height: 18,
+            backgroundColor: c.paper,
+            borderRightWidth: 2,
+            borderBottomWidth: 2,
+            borderColor: c.outline,
+            transform: [{ rotate: '45deg' }],
+          }}
+        />
+      )}
+      {onDismiss && (
+        <BodyText style={{ position: 'absolute', right: 12, bottom: 4, fontSize: 11 }}>
+          tap to dismiss
+        </BodyText>
+      )}
     </Pressable>
   );
 }
-export function GrassRoll({ value }: { value: number }) {
+export function GrassRoll({
+  value,
+  from = value,
+  skip = false,
+  size = 15,
+}: {
+  value: number;
+  from?: number;
+  skip?: boolean;
+  size?: number;
+}) {
   const reduced = useReducedMotion();
-  const [roll, setRoll] = useState({
-    target: value,
-    start: value,
-    display: value,
-    delta: 0,
-    id: 0,
-  });
+  const [roll, setRoll] = useState({ target: value, start: value, display: from, delta: 0, id: 0 });
   useEffect(() => {
-    const timer = setInterval(() => {
-      setRoll((old) => {
-        const display = reduced
-          ? value
-          : old.display +
-            Math.sign(value - old.display) *
-              Math.max(1, Math.ceil(Math.abs(value - old.display) / 5));
-        if (display === value) clearInterval(timer);
-        if (old.target === value && old.display === display) return old;
-        return {
-          target: value,
-          start: old.target === value ? old.start : old.display,
-          display,
-          delta: old.target === value ? old.delta : value - old.target,
-          id: old.target === value ? old.id : old.id + 1,
-        };
-      });
-    }, 35);
+    const timer = setInterval(
+      () =>
+        setRoll((old) => {
+          const display =
+            reduced || skip
+              ? value
+              : old.display +
+                Math.sign(value - old.display) *
+                  Math.max(1, Math.ceil(Math.abs(value - old.display) / 5));
+          if (display === value) clearInterval(timer);
+          if (old.target === value && old.display === display) return old;
+          return {
+            target: value,
+            start: old.target === value ? old.start : old.display,
+            display,
+            delta: old.target === value ? old.delta : value - old.target,
+            id: old.target === value ? old.id : old.id + 1,
+          };
+        }),
+      35,
+    );
     return () => clearInterval(timer);
-  }, [value, reduced]);
+  }, [value, reduced, skip]);
   return (
     <View>
-      <Text style={{ fontFamily: 'PressStart2P_400Regular', fontSize: 13, color: c.ink }}>
-        {reduced ? value : roll.display}
+      <Text
+        style={{
+          fontFamily: size >= 20 ? 'PressStart2P_400Regular' : 'Nunito_800ExtraBold',
+          fontSize: size,
+          color: c.ink,
+        }}
+      >
+        {reduced || skip ? value : roll.display}
       </Text>
-      {!reduced && roll.delta !== 0 && <GrassDelta key={roll.id} amount={roll.delta} />}
+      {!reduced && !skip && roll.delta !== 0 && <GrassDelta key={roll.id} amount={roll.delta} />}
     </View>
   );
 }
@@ -127,8 +168,8 @@ function GrassDelta({ amount }: { amount: number }) {
   const y = useSharedValue(8);
   const opacity = useSharedValue(1);
   useEffect(() => {
-    y.set(withTiming(reduced ? 0 : -22, { duration: 1100 }));
-    opacity.set(withTiming(0, { duration: 1600 }));
+    y.set(withTiming(reduced ? 0 : -22, { duration: 600 }));
+    opacity.set(withTiming(0, { duration: 600 }));
   }, [y, opacity, reduced]);
   const motion = useAnimatedStyle(() => ({
     opacity: opacity.value,
@@ -143,8 +184,8 @@ function GrassDelta({ amount }: { amount: number }) {
           right: 0,
           top: 0,
           flexDirection: 'row',
-          alignItems: 'center',
           backgroundColor: c.paper,
+          borderRadius: 12,
           padding: 3,
           zIndex: 10,
         },
@@ -162,7 +203,6 @@ function GrassDelta({ amount }: { amount: number }) {
 export function PixelTabIcon({
   kind,
   focused,
-  color,
 }: {
   kind: PropKind;
   focused: boolean;
@@ -171,35 +211,42 @@ export function PixelTabIcon({
   const reduced = useReducedMotion();
   const y = useSharedValue(0);
   useEffect(() => {
-    if (focused && !reduced)
-      y.set(withSequence(withTiming(-5, { duration: 100 }), withTiming(0, { duration: 150 })));
+    y.set(focused && !reduced ? withSpring(-3, { damping: 18, stiffness: 350 }) : 0);
   }, [focused, reduced, y]);
   const motion = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
   return (
-    <Animated.View style={motion}>
-      <PixelProp kind={kind} size={24} tint={color} />
+    <Animated.View
+      style={[
+        {
+          width: 40,
+          height: 34,
+          borderRadius: 17,
+          alignItems: 'center',
+          justifyContent: 'center',
+          backgroundColor: focused ? c.positive : c.transparent,
+          boxShadow: focused ? '0 3px 0 rgba(74,59,53,.25)' : undefined,
+        },
+        motion,
+      ]}
+    >
+      <PixelProp kind={kind} size={32} />
     </Animated.View>
   );
 }
-// The tab layout keys this overlay by route to replay the dissolve on navigation.
 export function PixelDissolve() {
-  const opacity = useSharedValue(0);
   const reduced = useReducedMotion();
+  const opacity = useSharedValue(0);
   useEffect(() => {
-    if (!reduced) {
-      opacity.set(0.75);
-      opacity.set(withTiming(0, { duration: 180 }));
-    }
+    opacity.set(reduced ? 0.1 : 0.25);
+    opacity.set(withTiming(0, { duration: reduced ? 100 : 150 }));
+    return () => cancelAnimation(opacity);
   }, [opacity, reduced]);
   const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
-    <Animated.View pointerEvents="none" style={[StyleSheet.absoluteFill, motion]}>
-      <Svg width="100%" height="100%" viewBox="0 0 160 240" preserveAspectRatio="none">
-        {Array.from({ length: 150 }, (_, i) => (
-          <Rect key={i} x={(i * 43) % 160} y={(i * 71) % 240} width={8} height={8} fill={c.paper} />
-        ))}
-      </Svg>
-    </Animated.View>
+    <Animated.View
+      pointerEvents="none"
+      style={[StyleSheet.absoluteFill, { backgroundColor: c.paper }, motion]}
+    />
   );
 }
 export function Pulse({
@@ -228,56 +275,34 @@ export function Pulse({
             )
         : 0,
     );
+    return () => cancelAnimation(opacity);
   }, [active, reduced, opacity, duration]);
   const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
     <View style={style}>
       <Animated.View
         pointerEvents="none"
-        style={[StyleSheet.absoluteFill, { backgroundColor: color ?? c.error }, motion]}
+        style={[
+          StyleSheet.absoluteFill,
+          { borderRadius: style?.borderRadius ?? 14, backgroundColor: color ?? c.error },
+          motion,
+        ]}
       />
       {children}
     </View>
   );
 }
-export function BattleIntro() {
+export function BattleIntro({ skip = false }: { skip?: boolean }) {
   const reduced = useReducedMotion();
-  const [visible, setVisible] = useState(!reduced);
-  const [frame, setFrame] = useState(0);
+  const opacity = useSharedValue(0.2);
   useEffect(() => {
-    if (reduced) return undefined;
-    let n = 0;
-    const timer = setInterval(() => {
-      n++;
-      setFrame(n);
-      if (n >= 12) {
-        clearInterval(timer);
-        setVisible(false);
-      }
-    }, 65);
-    return () => clearInterval(timer);
-  }, [reduced]);
-  if (reduced || !visible) return null;
+    opacity.set(skip ? 0 : withTiming(0, { duration: reduced ? 100 : 150 }));
+  }, [opacity, reduced, skip]);
+  const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
-    <View pointerEvents="none" style={[StyleSheet.absoluteFill, { zIndex: 20 }]}>
-      {frame < 6 ? (
-        <View
-          style={[
-            StyleSheet.absoluteFill,
-            { backgroundColor: frame % 2 === 0 ? c.flash : 'transparent' },
-          ]}
-        />
-      ) : (
-        <Svg width="100%" height="100%" viewBox="0 0 160 240" preserveAspectRatio="none">
-          {Array.from({ length: 12 }, (_, i) => (
-            <Polygon
-              key={i}
-              points={`${(frame - 6) * 55 - 330},${i * 24} ${(frame - 6) * 55 - 145},${i * 24} ${(frame - 6) * 55 - 265},${i * 24 + 20} ${(frame - 6) * 55 - 450},${i * 24 + 20}`}
-              fill={c.ink}
-            />
-          ))}
-        </Svg>
-      )}
-    </View>
+    <Animated.View
+      pointerEvents="none"
+      style={[StyleSheet.absoluteFill, { backgroundColor: c.paper }, motion]}
+    />
   );
 }

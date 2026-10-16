@@ -80,7 +80,7 @@ export const missions = [
   { id: 'mountain', name: 'MOUNTAIN RETREAT', duration: 60, reward: 150, level: 2 },
 ];
 export function status(p: Player, now = Date.now()) {
-  if (p.mode !== 'awake') return { label: 'SCREEN OFF', left: 0, kind: 'safe' };
+  if (p.mode !== 'awake') return { label: 'NAPPING', left: 0, kind: 'safe' };
   if (p.recovery_until > now)
     return { label: 'RECOVERING', left: Math.ceil((p.recovery_until - now) / 1000), kind: 'safe' };
   if (p.care_until > now)

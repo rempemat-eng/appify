@@ -1,8 +1,8 @@
 export const gardenTips = {
-  phone: { control: 'Put phone down', text: "put the phone down and i'll grow. try it for a bit." },
+  phone: { control: 'Take a nap', text: "take a nap. put your phone down and i'll grow." },
   wake: {
     control: 'Garden status',
-    text: "while your phone was down, nobody could touch us. now it's up, raiders can come.",
+    text: "while we napped, nobody could touch our garden. now we're awake, raiders can come.",
   },
   arena: {
     control: 'Pair and spar',
@@ -12,7 +12,7 @@ export const gardenTips = {
   timing: { control: 'Timing bar', text: 'tap in the middle' },
   budget: {
     control: 'Play budget',
-    text: "i want you out in the world, not grinding here. offline time is how i grow. put the phone down and i'll guard the garden.",
+    text: "i want you out in the world, not grinding here. take a nap and i'll grow and guard the garden.",
   },
 } as const;
 export type GardenTipId = keyof typeof gardenTips;

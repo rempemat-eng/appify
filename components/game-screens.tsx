@@ -1,34 +1,33 @@
-import { useReducedMotion } from '@/lib/motion';
 import { useEffect, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
+  Modal,
   Platform,
+  Pressable,
+  ScrollView,
   TextInput,
   View,
   useWindowDimensions,
 } from 'react-native';
 import { router, useIsFocused } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { ArrowUp, ArrowDown, Bot } from 'lucide-react-native';
+import { cozy as c } from '@/lib/cozy';
+import { useReducedMotion } from '@/lib/motion';
+import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
+import { matchup } from '@/lib/battle';
+import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
+import { budgetVoice, dayKey } from '@/lib/offline-rules';
+import { gardenTips, type GardenTipId } from '@/lib/first-session';
 import { collectionOf, guardianPlayer, isVisitorId, visitorInfo } from '@/lib/visitors';
 import { GardenVisitor, GuardianPicker } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
-import { ArrowUp, ArrowDown, Bot } from 'lucide-react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
-import {
-  bot,
-  feedback,
-  hats,
-  missions,
-  palette as c,
-  status,
-  useGame,
-  type Player,
-} from '@/lib/game';
-import { matchup } from '@/lib/battle';
-import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
+import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
+import { PixelBurst } from '@/components/cozy-motion';
 import {
   GardenProgress,
   GardenStreak,
@@ -36,7 +35,6 @@ import {
   TogetherInvite,
   usePlayPaused,
 } from '@/components/offline-garden';
-import { budgetVoice, dayKey } from '@/lib/offline-rules';
 const lines = {
   grumpy: ['i hate it here. put the phone down.', 'my pixels hurt.'],
   exposed: ["we're exposed. i can hear the notifications.", 'put the phone down. trust me.'],
@@ -45,20 +43,40 @@ const lines = {
 };
 export function HomeScreen() {
   const reduced = useReducedMotion();
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   const p = useGame((s) => s.player);
   const now = useGame((s) => s.now);
   const voice = useGame((s) => s.voice);
   const firstWake = useGame((s) => s.firstWake);
-  const homeTipActive = useGame((s) => s.homeTipActive);
+  const tips = useGame((s) => s.tips);
   const paused = usePlayPaused();
+  const busy = useGame((s) =>
+    Boolean(
+      s.message || s.battle || s.cardReward || s.deckOpen || s.recap || s.alerts.length || s.flash,
+    ),
+  );
+  const key = `${p?.id ?? ''}-${firstWake}-${paused}`;
+  const candidate: GardenTipId | null = paused
+    ? 'budget'
+    : firstWake && !tips.includes('wake')
+      ? 'wake'
+      : !firstWake && !tips.includes('phone')
+        ? 'phone'
+        : null;
+  const [lesson, setLesson] = useState({ key, id: candidate });
+  if (lesson.key !== key) setLesson({ key, id: candidate });
+  const coaching = busy ? null : lesson.id;
+  useEffect(() => {
+    if (coaching && p?.mode === 'awake') useGame.getState().seeTip(coaching);
+  }, [coaching, p?.mode]);
+  const [statsOpen, setStatsOpen] = useState(false);
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
   const raidId = useGame((s) => s.alerts[0]?.raid.id);
   const [raidFeedback, setRaidFeedback] = useState({ raidId, slumped: Boolean(raidId) });
-  if (raidFeedback.raidId !== raidId) {
+  if (raidFeedback.raidId !== raidId)
     setRaidFeedback({ raidId, slumped: raidId ? true : raidFeedback.slumped });
-  }
   useEffect(() => {
     if (!raidId) return undefined;
     const timer = setTimeout(() => setRaidFeedback({ raidId, slumped: false }), 10000);
@@ -74,7 +92,7 @@ export function HomeScreen() {
   }, [reduced]);
   useEffect(() => {
     if (!crumbs) return undefined;
-    const timer = setTimeout(() => setCrumbs(false), 1000);
+    const timer = setTimeout(() => setCrumbs(false), 600);
     return () => clearTimeout(timer);
   }, [crumbs]);
   if (!p) return null;
@@ -91,49 +109,80 @@ export function HomeScreen() {
             ? lines.care
             : lines.idle)[line % 2]);
   return (
-    <Page style={{ gap: 12, padding: 16 }}>
+    <Page>
       <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
         <PixelText style={{ fontSize: 16 }}>YOUR GARDEN</PixelText>
-        <View
-          style={{ borderWidth: 2, borderColor: c.ink, paddingHorizontal: 6, paddingVertical: 3 }}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Open garden stats"
+          onPress={() => setStatsOpen(true)}
+          style={{
+            minHeight: 44,
+            paddingHorizontal: 12,
+            justifyContent: 'center',
+            borderRadius: 999,
+            borderWidth: 1,
+            borderColor: c.outline,
+            backgroundColor: c.paper,
+          }}
         >
-          <PixelText>LV {p.level}</PixelText>
-        </View>
+          <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>STATS</BodyText>
+        </Pressable>
       </View>
       <PixelScene
         species={p.species}
         level={p.level}
         player={p}
-        height={height <= 700 ? 176 : 260}
-        style={{ alignItems: 'center', justifyContent: 'flex-end', paddingBottom: 12 }}
+        height={Math.max(
+          height <= 700 ? 264 : 296,
+          232 +
+            Math.ceil(
+              (coaching ? gardenTips[coaching].text : speech).length /
+                Math.max(1, Math.floor((Math.min(width, 640) - 72) / 7.5)),
+            ) *
+              21,
+        )}
+        style={{
+          marginHorizontal: -16,
+          borderWidth: 0,
+          borderTopLeftRadius: 0,
+          borderTopRightRadius: 0,
+          borderBottomLeftRadius: 24,
+          borderBottomRightRadius: 24,
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          paddingBottom: 16,
+        }}
       >
+        <View style={{ width: '100%', paddingHorizontal: 24, marginBottom: 12 }}>
+          <Dialogue
+            text={coaching ? gardenTips[coaching].text : speech}
+            speech
+            onDismiss={coaching ? () => setLesson({ key, id: null }) : undefined}
+          />
+        </View>
         <Pet
           species={guardian.species}
           visitor={guardian.guardian}
           level={p.level}
           hat={p.hat}
           grumpy={p.mood < 30}
-          size={height <= 700 ? 128 : 192}
+          size={128}
           yawning={paused}
           slumped={raidFeedback.slumped}
         />
-        {crumbs && (
-          <Animated.View
-            entering={reduced ? undefined : FadeIn}
-            exiting={reduced ? undefined : FadeOut}
-            style={{ position: 'absolute', top: 100, flexDirection: 'row', gap: 25 }}
-          >
-            {[0, 1, 2, 3].map((n) => (
-              <View
-                key={n}
-                style={{ width: 7, height: 7, backgroundColor: c.ink, marginTop: (n % 2) * 15 }}
-              />
-            ))}
-          </Animated.View>
-        )}
-        <PixelText style={{ fontSize: 15, marginTop: 8, backgroundColor: c.paper, padding: 6 }}>
+        {crumbs && <PixelBurst />}
+        <BodyText
+          style={{
+            backgroundColor: c.glass,
+            paddingHorizontal: 12,
+            paddingVertical: 4,
+            borderRadius: 999,
+            fontFamily: 'Nunito_800ExtraBold',
+          }}
+        >
           {guardian.pet_name}
-        </PixelText>
+        </BodyText>
         <View style={{ position: 'absolute', left: 4, bottom: 4, flexDirection: 'row' }}>
           {collectionOf(p)
             .filter((v) => v.befriendedAt !== null && v.id !== p.guardian)
@@ -144,25 +193,14 @@ export function HomeScreen() {
         </View>
         <GardenVisitor />
       </PixelScene>
-      <View style={{ gap: 9 }}>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <PixelText>MOOD{p.mood < 30 ? ' · GRUMPY' : ''}</PixelText>
-          <PixelText>{p.mood}/100</PixelText>
-        </View>
-        <Meter value={p.mood} height={18} />
-      </View>
-      <View style={{ zIndex: 20 }}>
-        <GardenTip id="phone" eligible={!firstWake && p.mode === 'awake'} floating />
-        <PixelButton
-          label="PUT PHONE DOWN"
-          supportingText="simulated break · 1 second = 1 offline MIN"
-          gold={paused}
-          onPress={() => useGame.getState().sleep()}
-        />
-      </View>
       <GardenProgress />
-      <GuardianPicker player={p} />
-      <View style={{ flexDirection: 'row', gap: 8 }}>
+      <View style={{ gap: 6 }}>
+        <PixelButton label="TAKE A NAP" gold={paused} onPress={() => useGame.getState().sleep()} />
+        <BodyText style={{ textAlign: 'center', fontSize: 12 }}>
+          put your phone down · simulated
+        </BodyText>
+      </View>
+      <View style={{ flexDirection: 'row', gap: 12 }}>
         <View style={{ flex: 1 }}>
           <PixelButton
             label="MY DECK"
@@ -173,7 +211,15 @@ export function HomeScreen() {
         </View>
         <View style={{ flex: 1 }}>
           <PixelButton
-            label="FEED · 5 GRASS"
+            label={
+              paused
+                ? 'TAKE A BREAK'
+                : p.mood >= 100
+                  ? 'FULL'
+                  : p.grass < 5
+                    ? 'NEED 5 GRASS'
+                    : 'FEED · 5'
+            }
             small
             light
             disabled={paused || p.mood >= 100 || p.grass < 5}
@@ -183,17 +229,51 @@ export function HomeScreen() {
             }}
           />
         </View>
+        <View style={{ flex: 1 }}>
+          <PixelButton label="JOURNAL" small light onPress={() => router.push('/journal')} />
+        </View>
       </View>
-      <PixelButton label="FIELD JOURNAL" light small onPress={() => router.push('/journal')} />
-      {!homeTipActive && <Dialogue text={speech} />}
-      <BodyText>
-        {isVisitorId(guardian.guardian)
-          ? visitorInfo(guardian.guardian).name
-          : grasslings[p.species].name}{' '}
-        · {grasslings[guardian.species].habit} · {growthStage(p.level)}
-      </BodyText>
-      <GardenStreak />
-      <BodyText style={{ textAlign: 'center' }}>{grasslings[p.species].line}</BodyText>
+      <GuardianPicker player={p} />
+      <Modal
+        visible={statsOpen}
+        transparent
+        animationType="none"
+        onRequestClose={() => setStatsOpen(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            justifyContent: 'flex-end',
+            padding: 16,
+            paddingBottom: insets.bottom + 16,
+            backgroundColor: c.shadow,
+          }}
+        >
+          <CozySheet style={{ padding: 16, gap: 12 }}>
+            <PixelText style={{ fontSize: 16 }}>GARDEN STATS</PixelText>
+            <ScrollView style={{ maxHeight: height * 0.5 }} contentContainerStyle={{ gap: 12 }}>
+              <BodyText>
+                {isVisitorId(guardian.guardian)
+                  ? visitorInfo(guardian.guardian).name
+                  : grasslings[p.species].name}{' '}
+                · {grasslings[guardian.species].habit}
+              </BodyText>
+              <BodyText>
+                Level {p.level} · {growthStage(p.level)}
+              </BodyText>
+              <BodyText>Mood {p.mood} / 100</BodyText>
+              <Meter value={p.mood} />
+              <BodyText>Next common card in {15 - (p.offline_seconds % 15)} offline MIN</BodyText>
+              <BodyText>
+                Level {levelPreview(p.level).next} · {levelPreview(p.level).cost} GRASS ·{' '}
+                {levelPreview(p.level).unlock}
+              </BodyText>
+              <GardenStreak />
+            </ScrollView>
+            <PixelButton label="DONE" onPress={() => setStatsOpen(false)} />
+          </CozySheet>
+        </View>
+      </Modal>
     </Page>
   );
 }
@@ -201,60 +281,44 @@ export function MissionsScreen() {
   const p = useGame((s) => s.player);
   if (!p) return null;
   return (
-    <Page style={{ padding: 12, gap: 8 }}>
-      <PixelText style={{ fontSize: 15 }}>GO TOUCH GRASS</PixelText>
-      <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>
-        Simulated missions · 1 second = 1 offline MIN
-      </BodyText>
+    <Page>
+      <PixelText style={{ fontSize: 16 }}>GO TOUCH GRASS</PixelText>
       {missions.map((m, index) => {
         const locked = p.level < m.level;
         return (
-          <View
-            key={m.id}
-            style={{
-              flexDirection: 'row',
-              gap: 10,
-              alignItems: 'center',
-              borderWidth: 2,
-              borderColor: c.ink,
-              backgroundColor: c.body,
-              padding: 8,
-            }}
-          >
-            <PixelProp kind={(['tree', 'library', 'mountain'] as const)[index]} size={44} />
-            <View style={{ flex: 1, gap: 2 }}>
-              <BodyText style={{ fontFamily: 'Inter_700Bold', fontSize: 13, lineHeight: 18 }}>
-                {m.name}
-              </BodyText>
-              <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 11, lineHeight: 16 }}>
-                {m.duration} MIN offline · {m.duration}s demo
-              </BodyText>
-              <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 11, lineHeight: 16 }}>
-                {m.reward} GRASS · LV {m.level}
-              </BodyText>
-              <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 11, lineHeight: 16 }}>
-                +1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} · postcard
-              </BodyText>
-              {m.id === 'mountain' && (
-                <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 11, lineHeight: 16 }}>
-                  New hat · all owned: +50 GRASS
+          <CozyPanel key={m.id} style={{ padding: 12, gap: 12 }}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <PixelProp kind={(['tree', 'library', 'mountain'] as const)[index]} size={48} />
+              <View style={{ flex: 1, gap: 4 }}>
+                <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}>
+                  {m.name}
                 </BodyText>
-              )}
+                <BodyText style={{ fontSize: 12 }}>
+                  {m.duration} MIN offline · {m.reward} GRASS
+                </BodyText>
+                <BodyText style={{ fontSize: 12 }}>
+                  +1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} · postcard
+                  {m.id === 'mountain' ? ' · new hat' : ''}
+                </BodyText>
+                {m.id === 'mountain' && (
+                  <BodyText style={{ fontSize: 12 }}>All hats owned: +50 GRASS</BodyText>
+                )}
+              </View>
             </View>
-            <View style={{ width: 68 }}>
-              <PixelButton
-                small
-                light
-                label={locked ? 'LV 2' : 'START'}
-                disabled={locked || p.mode !== 'awake'}
-                onPress={() => useGame.getState().sleep(m.id)}
-              />
-            </View>
-          </View>
+            <PixelButton
+              small
+              light
+              label={
+                locked ? `LEVEL ${m.level} NEEDED` : p.mode !== 'awake' ? 'ON A BREAK' : 'START'
+              }
+              disabled={locked || p.mode !== 'awake'}
+              onPress={() => useGame.getState().sleep(m.id)}
+            />
+          </CozyPanel>
         );
       })}
-      <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>
-        Common cards stack. Postcards on completion. No per-minute GRASS.
+      <BodyText style={{ fontSize: 12 }}>
+        Common cards stack. No per-minute GRASS on missions.
       </BodyText>
     </Page>
   );
@@ -266,35 +330,32 @@ export function ShopScreen() {
   if (!p) return null;
   const preview = levelPreview(p.level);
   return (
-    <Page style={{ padding: 12, gap: 12 }}>
+    <Page>
       <PlayPause />
-      <PixelText style={{ fontSize: 15 }}>GROW YOUR GARDEN</PixelText>
-      <View style={[styles.border, { padding: 12, gap: 10, backgroundColor: c.body }]}>
-        <View
-          style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}
-        >
-          <PixelText style={{ fontSize: 16 }}>LV {p.level}</PixelText>
-          <ArrowUp size={24} color={c.ink} />
-          <PixelText style={{ fontSize: 16 }}>LV {p.level + 1}</PixelText>
-        </View>
+      <PixelText style={{ fontSize: 16 }}>GROW YOUR GARDEN</PixelText>
+      <CozyPanel style={{ padding: 16, gap: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <Pet species={p.species} level={p.level + 1} size={64} bob={false} />
-          <View style={{ flex: 1 }}>
-            <BodyText style={{ fontFamily: 'Inter_600SemiBold' }}>
+          <Pet species={p.species} level={p.level + 1} size={96} bob={false} />
+          <View style={{ flex: 1, gap: 4 }}>
+            <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}>
+              Level {p.level} → {p.level + 1}
+            </BodyText>
+            <BodyText>
               {p.level < 3
                 ? `${growthStage(p.level)} → ${preview.stage}`
                 : `${preview.stage} · LV ${preview.next}`}
             </BodyText>
-            <BodyText style={{ fontFamily: 'Inter_400Regular' }}>{preview.unlock}</BodyText>
-            <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>
-              {p.grass < preview.cost
-                ? `Need ${preview.cost - p.grass} more GRASS`
-                : 'Ready to grow'}
-            </BodyText>
+            <BodyText style={{ fontSize: 12 }}>{preview.unlock}</BodyText>
           </View>
         </View>
         <PixelButton
-          label={`LEVEL UP · ${50 * p.level} GRASS`}
+          label={
+            paused
+              ? 'TAKE A BREAK'
+              : p.grass < preview.cost
+                ? `NEED ${preview.cost - p.grass} MORE GRASS`
+                : `LEVEL UP · ${50 * p.level} GRASS`
+          }
           disabled={paused || p.grass < p.level * 50}
           onDisabledPress={() => {
             if (paused) {
@@ -309,55 +370,48 @@ export function ShopScreen() {
             setMerchant('fine choice. very hat.');
           }}
         />
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
-        <PixelScene kind="market" mini height={68} style={{ width: 100 }} />
-        <View style={{ flex: 1, gap: 3 }}>
-          <BodyText style={{ fontFamily: 'Inter_700Bold' }}>Moss the merchant</BodyText>
-          <BodyText style={{ fontFamily: 'Inter_400Regular', fontSize: 12 }}>{merchant}</BodyText>
+      </CozyPanel>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <PixelScene kind="market" mini height={80} style={{ width: 96 }} />
+        <View style={{ flex: 1 }}>
+          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>Moss the merchant</BodyText>
+          <BodyText style={{ fontSize: 12 }}>{merchant}</BodyText>
         </View>
       </View>
-      <PixelText style={{ fontSize: 16, marginTop: 4 }}>HATS</PixelText>
+      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, marginTop: 12 }}>
+        Hats
+      </BodyText>
       {hats.map((h) => {
         const owned = p.owned_hats.includes(h.id);
         const equipped = p.hat === h.id;
         return (
-          <View
+          <CozyPanel
             key={h.id}
-            style={{
-              flexDirection: 'row',
-              alignItems: 'center',
-              gap: 16,
-              paddingVertical: 10,
-              borderBottomWidth: 8,
-              backgroundColor: c.body,
-              paddingHorizontal: 10,
-              borderColor: c.shade,
-            }}
+            style={{ padding: 12, flexDirection: 'row', gap: 12, alignItems: 'center' }}
           >
-            <Pet species={p.species} level={p.level} size={96} hat={h.id} bob={false} />
-            <View style={{ flex: 1, gap: 12 }}>
-              <PixelText style={{ fontSize: 12 }}>{h.id}</PixelText>
-              <BodyText style={{ fontFamily: 'Inter_500Medium', fontSize: 12 }}>
-                {owned
-                  ? equipped
-                    ? 'Owned · equipped'
-                    : 'Owned'
-                  : `${h.cost} GRASS${p.grass < h.cost ? ` · need ${h.cost - p.grass} more` : ''}`}
+            <Pet species={p.species} level={p.level} hat={h.id} size={96} bob={false} />
+            <View style={{ flex: 1, gap: 8 }}>
+              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>{h.id}</BodyText>
+              <BodyText style={{ fontSize: 12 }}>
+                {owned ? (equipped ? 'Owned · equipped' : 'Owned') : `${h.cost} GRASS`}
               </BodyText>
               <PixelButton
                 small
                 light={!equipped}
                 label={
-                  equipped ? 'REMOVE' : owned ? 'EQUIP' : p.grass < h.cost ? 'NOT ENOUGH' : 'BUY'
+                  paused
+                    ? 'TAKE A BREAK'
+                    : equipped
+                      ? 'REMOVE'
+                      : owned
+                        ? 'EQUIP'
+                        : p.grass < h.cost
+                          ? `NEED ${h.cost - p.grass} MORE`
+                          : 'BUY'
                 }
                 disabled={paused || (!owned && p.grass < h.cost)}
                 onDisabledPress={() => {
-                  if (paused) {
-                    feedback('error');
-                    return;
-                  }
-                  setMerchant("you can't afford that, doomscroller.");
+                  if (!paused) setMerchant("you can't afford that, doomscroller.");
                   feedback('error');
                 }}
                 onPress={() => {
@@ -366,7 +420,7 @@ export function ShopScreen() {
                 }}
               />
             </View>
-          </View>
+          </CozyPanel>
         );
       })}
     </Page>
@@ -393,87 +447,70 @@ function RivalRow({
   const type = mySpecies ? matchup(mySpecies, p.species) : 1;
   const exposed = status(p, now).kind === 'exposed';
   return (
-    <View
-      style={{
-        padding: 14,
-        gap: 12,
-        backgroundColor: me ? c.body : c.paper,
-        borderWidth: 2,
-        borderColor: c.ink,
-      }}
-    >
-      <View style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
-        <PixelText style={{ fontSize: 14 }}>#{rank}</PixelText>
-        <PixelScene
+    <CozyPanel style={{ padding: 16, gap: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>#{rank}</BodyText>
+        <Pet
           species={p.species}
+          visitor={p.guardian}
           level={p.level}
-          mini
-          height={100}
-          style={{ width: 100, alignItems: 'center', justifyContent: 'flex-end' }}
-        >
-          <Pet
-            species={p.species}
-            visitor={p.guardian}
-            level={p.level}
-            hat={p.hat}
-            size={96}
-            bob={false}
-          />
-        </PixelScene>
+          hat={p.hat}
+          size={64}
+          bob={false}
+        />
         <View style={{ flex: 1, gap: 4 }}>
-          <View style={{ flexDirection: 'row', gap: 5, alignItems: 'center' }}>
-            <PixelText numberOfLines={1} style={{ flexShrink: 1 }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+            <BodyText
+              numberOfLines={1}
+              style={{ flexShrink: 1, fontFamily: 'Nunito_800ExtraBold' }}
+            >
               {me ? 'YOU' : p.name}
-            </PixelText>
-            {!me && type > 1 && (
-              <ArrowUp
-                accessibilityLabel={`Habit advantage: ${mySpecies ? grasslings[mySpecies].habit : ''} beats ${grasslings[p.species].habit}`}
-                size={14}
-                color={c.moss}
-              />
-            )}
-            {!me && type < 1 && (
-              <ArrowDown
-                accessibilityLabel={`Habit disadvantage against ${grasslings[p.species].habit}`}
-                size={14}
-                color={c.error}
-              />
-            )}
+            </BodyText>
+            {!me && type > 1 && <ArrowUp size={14} color={c.moss} />}
+            {!me && type < 1 && <ArrowDown size={14} color={c.error} />}
           </View>
-          <BodyText>
+          <BodyText style={{ fontSize: 12 }}>
             {isVisitorId(p.guardian) ? visitorInfo(p.guardian).name : grasslings[p.species].name} ·{' '}
             {grasslings[p.species].habit}
           </BodyText>
-          {!me && type !== 1 && (
-            <BodyText>
-              {type > 1 && mySpecies
-                ? grasslings[mySpecies].advantage
-                : grasslings[p.species].advantage}
-            </BodyText>
-          )}
-          <PixelText>
+          <BodyText style={{ fontSize: 12 }}>
             LV {p.level} · {p.grass} GRASS
-          </PixelText>
+          </BodyText>
         </View>
       </View>
-      <View style={{ gap: 8 }}>
-        <StatusChip player={p} compact />
-        <PixelText>{p.offline_seconds} OFFLINE MIN</PixelText>
-        {!me && now - p.last_seen > 10000 && (
-          <PixelText>LAST SEEN {Math.floor((now - p.last_seen) / 1000)} MIN AGO</PixelText>
-        )}
-      </View>
+      <StatusChip player={p} compact />
+      <BodyText style={{ fontSize: 12 }}>
+        {p.offline_seconds} OFFLINE MIN
+        {!me && now - p.last_seen > 10000
+          ? ` · seen ${Math.floor((now - p.last_seen) / 1000)} MIN ago`
+          : ''}
+      </BodyText>
+      {!me && type !== 1 && (
+        <BodyText style={{ fontSize: 12 }}>
+          {type > 1 && mySpecies
+            ? grasslings[mySpecies].advantage
+            : grasslings[p.species].advantage}
+        </BodyText>
+      )}
       {!me && exposed && (
         <PixelButton
-          label={raiding === p.id ? 'CHECKING...' : 'RAID'}
-          danger
+          label={
+            raiding === p.id
+              ? 'CHECKING…'
+              : paused
+                ? 'TAKE A BREAK'
+                : raids >= 3
+                  ? 'NO RAIDS LEFT'
+                  : 'RAID'
+          }
           small
+          danger
           disabled={!!raiding || paused || raids >= 3}
           onPress={() => onRaid(p)}
         />
       )}
       {!me && <TogetherInvite rival={p} />}
-    </View>
+    </CozyPanel>
   );
 }
 export function ArenaScreen() {
@@ -508,15 +545,15 @@ export function ArenaScreen() {
     setRaiding(null);
   }
   const header = (
-    <View style={{ gap: 24 }}>
+    <View style={{ gap: 12 }}>
       <PlayPause />
-      <PixelText>RAIDS LEFT TODAY: {Math.max(0, 3 - raids)}</PixelText>
-      <PixelText style={styles.title}>{'LESS SCROLL.\nMORE GLORY.'}</PixelText>
+      <PixelText style={{ fontSize: 20 }}>{'LESS SCROLL.\nMORE GLORY.'}</PixelText>
+      <BodyText style={{ fontSize: 12 }}>RAIDS LEFT TODAY: {Math.max(0, 3 - raids)}</BodyText>
       <PixelScene kind="town" height={160} />
       <GardenTip id="arena" eligible={focused} />
-      <View style={[styles.border, { padding: 16, gap: 16, backgroundColor: c.body }]}>
-        <PixelText>YOUR CODE: {p.code}</PixelText>
-        <PixelText>ADD RIVAL</PixelText>
+      <CozyPanel style={{ padding: 16, gap: 12 }}>
+        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>Your code: {p.code}</BodyText>
+        <BodyText>Add rival</BodyText>
         <TextInput
           accessibilityLabel="Rival code"
           style={styles.input}
@@ -533,7 +570,7 @@ export function ArenaScreen() {
           }}
         />
         <PixelButton
-          label={pending ? 'PAIRING...' : 'PAIR'}
+          label={pending ? 'PAIRING…' : code.length !== 4 ? 'ENTER A 4-CHARACTER CODE' : 'PAIR'}
           disabled={pending || code.length !== 4}
           onPress={() => void pair()}
         />
@@ -549,22 +586,24 @@ export function ArenaScreen() {
             />
           </View>
         )}
-      </View>
-      <PixelText style={{ fontSize: 16 }}>OFFLINE LEAGUE</PixelText>
+      </CozyPanel>
+      <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold', marginTop: 12 }}>
+        Offline league
+      </BodyText>
       {!live && (
         <PixelButton
-          label="RETRY CONNECTION"
           small
           light
+          label="RETRY CONNECTION"
           onPress={() => void useGame.getState().sync()}
         />
       )}
       {!rivals.length && (
-        <View style={{ alignItems: 'center', gap: 14, paddingVertical: 12 }}>
+        <View style={{ alignItems: 'center', gap: 12, paddingVertical: 12 }}>
           <Pet species={p.species} level={p.level} hat={p.hat} size={64} />
-          <BodyText
-            style={{ textAlign: 'center' }}
-          >{`it's quiet here. share my code: ${p.code}`}</BodyText>
+          <BodyText style={{ textAlign: 'center' }}>
+            it&apos;s quiet here. share my NapAttack code: {p.code}
+          </BodyText>
           <PixelButton
             small
             light
@@ -579,23 +618,21 @@ export function ArenaScreen() {
     </View>
   );
   const footer = (
-    <View style={{ marginTop: 28, gap: 18 }}>
+    <View style={{ marginTop: 24, gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Bot color={c.ink} size={26} />
-        <PixelText style={{ fontSize: 16 }}>SPARRING</PixelText>
+        <Bot color={c.ink} size={24} />
+        <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold' }}>Sparring</BodyText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <Pet dave level={p.level} size={96} bob={false} />
-        <View style={{ flex: 1, gap: 4 }}>
-          <PixelText>DOOMSCROLL DAVE</PixelText>
-          <PixelText>LV {p.level} · MOOD 50</PixelText>
+        <View style={{ flex: 1 }}>
+          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>DOOMSCROLL DAVE</BodyText>
+          <BodyText>LV {p.level} · MOOD 50</BodyText>
         </View>
       </View>
-      {wins >= 3 && (
-        <PixelText style={{ lineHeight: 22 }}>DAVE IS TIRED. COME BACK TOMORROW.</PixelText>
-      )}
+      {wins >= 3 && <BodyText>Dave is tired. Come back tomorrow.</BodyText>}
       <PixelButton
-        label={wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
+        label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
         disabled={paused}
         onPress={() => void useGame.getState().startBattle(bot(p), true)}
       />
@@ -608,17 +645,18 @@ export function ArenaScreen() {
   );
   return (
     <KeyboardAvoidingView
-      style={{ flex: 1, backgroundColor: c.paper }}
+      style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
     >
+      <CozyBackground />
       <FlatList
         data={ranked}
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
-          padding: 20,
-          paddingBottom: 36,
-          gap: 16,
+          padding: 16,
+          paddingBottom: 112,
+          gap: 12,
           maxWidth: 640,
           width: '100%',
           alignSelf: 'center',
