@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, View } from 'react-native';
+import { Pressable, ScrollView, Switch, View } from 'react-native';
 import { feedback } from '@/lib/game';
 import { useMotionPreference, useReducedMotion } from '@/lib/motion';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
@@ -147,22 +147,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
           GARDEN GUIDE
         </PixelText>
         <ScrollView contentContainerStyle={{ gap: 20, paddingBottom: 16 }}>
-          <Pressable
-            accessibilityRole="switch"
-            accessibilityLabel="Reduce decorative motion"
-            accessibilityState={{ checked: preference, disabled: saving }}
-            disabled={saving}
-            onPress={() => {
-              setSaving(true);
-              void useMotionPreference
-                .getState()
-                .setReduced(!preference)
-                .then(() => feedback('select'))
-                .catch(() =>
-                  useGame.getState().notify('Could not save motion preference. Try again.', true),
-                )
-                .finally(() => setSaving(false));
-            }}
+          <View
             style={{
               minHeight: 52,
               borderRadius: 14,
@@ -172,15 +157,38 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
               gap: 6,
             }}
           >
-            <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
-              Reduce motion · {preference ? 'ON' : 'OFF'}
-            </BodyText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <BodyText style={{ flex: 1, fontFamily: 'Nunito_800ExtraBold' }}>
+                Reduce motion · {preference ? 'ON' : 'OFF'}
+              </BodyText>
+              <Switch
+                accessibilityLabel="Reduce decorative motion"
+                accessibilityState={{ checked: preference, disabled: saving }}
+                value={preference}
+                disabled={saving}
+                trackColor={{ false: c.shade, true: c.moss }}
+                thumbColor={c.paper}
+                onValueChange={(value) => {
+                  setSaving(true);
+                  void useMotionPreference
+                    .getState()
+                    .setReduced(value)
+                    .then(() => feedback('select'))
+                    .catch(() =>
+                      useGame
+                        .getState()
+                        .notify('Could not save motion preference. Try again.', true),
+                    )
+                    .finally(() => setSaving(false));
+                }}
+              />
+            </View>
             <BodyText style={{ fontFamily: 'Nunito_600SemiBold' }}>
               {reduced
                 ? 'Motion reduced. Your device setting is also respected.'
-                : 'Keep action feedback without decorative motion or text delays.'}
+                : 'Normal decorative motion and text delays are on.'}
             </BodyText>
-          </Pressable>
+          </View>
           {sections.map(([heading, text]) => (
             <View key={heading} style={{ gap: 6 }}>
               <BodyText

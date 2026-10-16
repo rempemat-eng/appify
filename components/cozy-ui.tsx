@@ -1,5 +1,6 @@
-import { type ReactNode, useEffect } from 'react';
-import { Pressable, StyleSheet, View, type ViewStyle } from 'react-native';
+import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react';
+import { Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
+import { scheduleOnRN } from 'react-native-worklets';
 import { LinearGradient } from 'expo-linear-gradient';
 import Svg, { Circle } from 'react-native-svg';
 import Animated, {
@@ -63,16 +64,41 @@ export function CozySheet({
   style?: ViewStyle;
 }) {
   const reduced = useReducedMotion();
+  const [animating, setAnimating] = useState(true);
+  const active = useRef(true);
+  const finishAnimation = useCallback(() => {
+    active.current = false;
+    setAnimating(false);
+  }, []);
   const y = useSharedValue(reduced ? 0 : 40);
   const alpha = useSharedValue(0);
+  const skipAnimation = () => {
+    if (!active.current) return;
+    cancelAnimation(y);
+    cancelAnimation(alpha);
+    y.set(0);
+    alpha.set(1);
+    finishAnimation();
+    onSkip?.();
+  };
   useEffect(() => {
-    y.set(reduced ? 0 : withSpring(0, { damping: 22, stiffness: 240, overshootClamping: true }));
-    alpha.set(withTiming(1, { duration: reduced ? 100 : 180 }));
+    y.set(
+      reduced
+        ? 0
+        : withSpring(0, { damping: 22, stiffness: 240, overshootClamping: true }, (finished) => {
+            if (finished) scheduleOnRN(finishAnimation);
+          }),
+    );
+    alpha.set(
+      withTiming(1, { duration: reduced ? 100 : 180 }, (finished) => {
+        if (finished && reduced) scheduleOnRN(finishAnimation);
+      }),
+    );
     return () => {
       cancelAnimation(y);
       cancelAnimation(alpha);
     };
-  }, [y, alpha, reduced]);
+  }, [y, alpha, reduced, finishAnimation]);
   const motion = useAnimatedStyle(() => ({
     opacity: alpha.value,
     transform: [{ translateY: y.value }],
@@ -80,38 +106,36 @@ export function CozySheet({
   return (
     <Animated.View
       onStartShouldSetResponderCapture={() => {
-        cancelAnimation(y);
-        cancelAnimation(alpha);
-        y.set(0);
-        alpha.set(1);
-        onSkip?.();
+        skipAnimation();
         return false;
       }}
-      onTouchStart={() => {
-        cancelAnimation(y);
-        cancelAnimation(alpha);
-        y.set(0);
-        alpha.set(1);
-        onSkip?.();
-      }}
+      onTouchStart={skipAnimation}
       style={[panelStyle, style, motion]}
     >
       <PaperFinish />
       <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Skip sheet animation"
-        onPress={() => {
-          cancelAnimation(y);
-          cancelAnimation(alpha);
-          y.set(0);
-          alpha.set(1);
-          onSkip?.();
+        accessible={animating}
+        accessibilityRole={animating ? 'button' : undefined}
+        accessibilityLabel={animating ? 'Skip sheet animation' : undefined}
+        focusable={animating}
+        tabIndex={animating ? 0 : -1}
+        onPress={animating ? skipAnimation : undefined}
+        style={{
+          minHeight: 44,
+          width: 80,
+          alignSelf: 'center',
+          borderRadius: 12,
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 4,
         }}
-        style={{ height: 24, alignItems: 'center', justifyContent: 'center' }}
       >
         <View
           style={{ height: 4, width: 36, borderRadius: 2, backgroundColor: c.shade, opacity: 0.4 }}
         />
+        {animating && (
+          <Text style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 11, color: c.ink }}>Skip</Text>
+        )}
       </Pressable>
       {children}
     </Animated.View>

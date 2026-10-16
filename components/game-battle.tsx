@@ -435,7 +435,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             <Pressable
               accessibilityRole="switch"
               accessibilityState={{ checked: auto }}
-              accessibilityLabel="Auto raid at double speed"
+              accessibilityLabel={
+                request.practice ? 'Auto sparring at double speed' : 'Auto raid at double speed'
+              }
               onPress={() => {
                 const value = !autoRef.current;
                 autoRef.current = value;
@@ -710,7 +712,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                             : lifted !== null && combat.a.hand[lifted]
                               ? cardDetails[combat.a.hand[lifted]]
                               : 'LIFT A CARD · TAP AGAIN TO PLAY'
-                          : 'RAID IN PROGRESS…'}
+                          : request.practice
+                            ? 'SPARRING IN PROGRESS…'
+                            : 'RAID IN PROGRESS…'}
                       </BodyText>
                       <ScrollView
                         horizontal

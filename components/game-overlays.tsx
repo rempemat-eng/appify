@@ -18,6 +18,7 @@ import { Shield, Swords } from 'lucide-react-native';
 import { bot, clock, feedback, missions, useGame, gameStore, type Player } from '@/lib/game';
 import { GardenGuide } from '@/components/garden-guide';
 import { WelcomeBack } from '@/components/visitors';
+import { guardianPlayer } from '@/lib/visitors';
 import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
@@ -243,6 +244,7 @@ function ScreenOff() {
     ? Math.max(0, Math.floor((now - Date.parse(session.started_at)) / 1000))
     : 0;
   const m = missions.find((x) => x.id === p.mission_id);
+  const guardian = guardianPlayer(p);
   return (
     <View
       onStartShouldSetResponderCapture={() => {
@@ -264,7 +266,7 @@ function ScreenOff() {
       >
         <PixelScene
           kind="night"
-          species={p.species}
+          species={guardian.species}
           level={p.level}
           player={p}
           style={{ height: '100%', borderWidth: 0 }}
@@ -318,7 +320,7 @@ function ScreenOff() {
           {m ? (
             <PixelScene
               player={p}
-              species={p.species}
+              species={guardian.species}
               level={p.level}
               kind={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
               height={140}
@@ -329,12 +331,20 @@ function ScreenOff() {
                 paddingBottom: 15,
               }}
             >
-              <Pet species={p.species} level={p.level} hat={p.hat} walking size={96} />
+              <Pet
+                species={guardian.species}
+                visitor={guardian.guardian}
+                level={p.level}
+                hat={p.hat}
+                walking
+                size={96}
+              />
             </PixelScene>
           ) : (
             <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
               <Pet
-                species={p.species}
+                species={guardian.species}
+                visitor={guardian.guardian}
                 level={p.level}
                 hat={p.hat}
                 sleeping
@@ -342,7 +352,8 @@ function ScreenOff() {
               />
               {togetherId && rival && (
                 <Pet
-                  species={rival.species}
+                  species={guardianPlayer(rival).species}
+                  visitor={guardianPlayer(rival).guardian}
                   level={rival.level}
                   hat={rival.hat}
                   sleeping
