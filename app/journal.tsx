@@ -7,12 +7,19 @@ import Svg, { Rect } from 'react-native-svg';
 import { cozy as c, panelStyle } from '@/lib/cozy';
 import { CozyBackground } from '@/components/cozy-ui';
 import { feedback, startGame, useGame } from '@/lib/game';
-import { collectionOf, postcardsOf, visitors } from '@/lib/visitors';
+import { collectionOf, postcardsOf, visitorHint, visitors } from '@/lib/visitors';
 import { visitorPixels } from '@/lib/visitor-art';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { JournalEmpty, PostcardArt } from '@/components/visitors';
 import { goBackOrReplace } from '@/lib/navigation';
+
+const habitTint = {
+  REST: { fill: '#EFE9F7', edge: c.nap },
+  ROAM: { fill: '#E6F1E1', edge: c.leafOutline },
+  FOCUS: { fill: '#F8EEDA', edge: c.goldFrame },
+} as const;
+const rarityDots = { COMMON: 1, UNCOMMON: 2, RARE: 3 } as const;
 
 export default function FieldJournal() {
   const params = useLocalSearchParams<{ tab?: string }>();
@@ -34,6 +41,9 @@ export default function FieldJournal() {
         padding: 12,
         paddingBottom: Math.max(12, insets.bottom),
         gap: 16,
+        width: '100%',
+        maxWidth: 640,
+        alignSelf: 'center',
       }}
     >
       <CozyBackground />
@@ -46,7 +56,31 @@ export default function FieldJournal() {
           contentStyle: { backgroundColor: c.paper },
         }}
       />
-      <PixelText style={{ fontSize: 18 }}>MET {collection.length} / 9</PixelText>
+      <View style={{ gap: 8 }}>
+        <PixelText style={{ fontSize: 18 }}>
+          MET {collection.length} / {visitors.length}
+        </PixelText>
+        <View
+          accessibilityRole="progressbar"
+          accessibilityValue={{ min: 0, max: visitors.length, now: collection.length }}
+          style={{
+            height: 10,
+            borderRadius: 999,
+            borderWidth: 2,
+            borderColor: c.outline,
+            backgroundColor: c.body,
+            overflow: 'hidden',
+          }}
+        >
+          <View
+            style={{
+              height: '100%',
+              width: `${(collection.length / visitors.length) * 100}%`,
+              backgroundColor: c.roam,
+            }}
+          />
+        </View>
+      </View>
       <Tabs
         value={tab}
         onValueChange={(value) => {
@@ -80,22 +114,39 @@ export default function FieldJournal() {
           contentContainerStyle={{ gap: 10 }}
           renderItem={({ item }) => {
             const met = collection.find((entry) => entry.id === item.id);
+            const tint = habitTint[item.habit];
+            const dots = rarityDots[item.rarity];
             return (
               <View
-                accessibilityLabel={`${item.name}, ${item.habit}, ${item.rarity}, ${met ? `first met after ${met.minutes} offline minutes` : 'not met yet'}`}
+                accessibilityLabel={`${item.name}, ${item.habit}, ${item.rarity}, ${met ? `first met after ${met.minutes} offline minutes` : `not met yet, appears on ${visitorHint(item.rarity)}`}`}
                 style={{
                   ...panelStyle,
                   flex: 1,
                   alignItems: 'center',
                   paddingVertical: 10,
-                  paddingHorizontal: 2,
+                  paddingHorizontal: 4,
                   gap: 4,
+                  backgroundColor: met ? tint.fill : c.paper,
+                  borderColor: met ? tint.edge : c.outline,
                 }}
               >
+                <View style={{ flexDirection: 'row', gap: 3, alignSelf: 'flex-end' }}>
+                  {[0, 1, 2].map((i) => (
+                    <View
+                      key={i}
+                      style={{
+                        width: 6,
+                        height: 6,
+                        borderRadius: 3,
+                        backgroundColor: i < dots ? tint.edge : c.faded,
+                      }}
+                    />
+                  ))}
+                </View>
                 {met ? (
                   <Pet visitor={item.id} size={64} bob={false} />
                 ) : (
-                  <Svg width={64} height={64} viewBox="0 0 32 32">
+                  <Svg width={64} height={64} viewBox="0 0 32 32" opacity={0.35}>
                     {visitorPixels(item.id).map((pixel) => (
                       <Rect
                         key={`${pixel.x}-${pixel.y}`}
@@ -103,7 +154,7 @@ export default function FieldJournal() {
                         y={pixel.y}
                         width={1}
                         height={1}
-                        fill={c.ink}
+                        fill={tint.edge}
                       />
                     ))}
                   </Svg>
@@ -114,10 +165,11 @@ export default function FieldJournal() {
                 >
                   {item.name}
                 </BodyText>
-                <BodyText style={{ fontSize: 11 }}>{item.habit}</BodyText>
-                <BodyText style={{ fontSize: 11 }}>{item.rarity}</BodyText>
-                <BodyText style={{ fontSize: 11 }}>
-                  {met ? `${met.minutes} MIN OFF` : 'NOT MET'}
+                <BodyText style={{ fontSize: 10, color: tint.edge, fontFamily: 'Nunito_800ExtraBold' }}>
+                  {item.habit}
+                </BodyText>
+                <BodyText numberOfLines={2} style={{ fontSize: 10, textAlign: 'center' }}>
+                  {met ? `met after ${met.minutes} MIN` : visitorHint(item.rarity)}
                 </BodyText>
               </View>
             );

@@ -91,6 +91,33 @@ export function rollVisitor(minutes: number, days: number, random = Math.random)
   );
   return pool[Math.min(pool.length - 1, Math.floor(random() * pool.length))].id;
 }
+// Minimum break length for the guaranteed first visitor, so the Field Journal
+// shows up within a single short demo nap.
+export const FIRST_VISITOR_MIN = 10;
+// The first visitor is guaranteed: the common visitor that shares the
+// Grassling's habit, on the first nap or mission of FIRST_VISITOR_MIN or more.
+// After that, rollVisitor's normal odds apply.
+export function visitorForBreak(
+  p: Player,
+  minutes: number,
+  days: number,
+  random = Math.random,
+): VisitorId | null {
+  if (collectionOf(p).length === 0) {
+    if (minutes < FIRST_VISITOR_MIN) return null;
+    const habit = { BLOB: 'REST', RAT: 'ROAM', CUBE: 'FOCUS' }[p.species];
+    return visitors.find((v) => v.rarity === 'COMMON' && v.habit === habit)?.id ?? 'dozebud';
+  }
+  return rollVisitor(minutes, days, random);
+}
+// One-line hint for how to meet a visitor of this rarity (mirrors rollVisitor).
+export function visitorHint(rarity: (typeof visitors)[number]['rarity']) {
+  return rarity === 'COMMON'
+    ? 'naps of 15+ MIN'
+    : rarity === 'UNCOMMON'
+      ? 'naps of 60+ MIN'
+      : '2 h naps or 3 calm days';
+}
 export function meetVisitor(p: Player, id: VisitorId | null, minutes: number, at: number): Player {
   if (!id || collectionOf(p).some((v) => v.id === id)) return p;
   return { ...p, collection: [...collectionOf(p), { id, minutes, metAt: at, befriendedAt: null }] };

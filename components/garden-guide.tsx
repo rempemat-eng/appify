@@ -117,7 +117,7 @@ const sections = [
   ],
   [
     'Visitors and guardians',
-    'Visitors arrive only after time away. Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN after you return to the garden. Pick any befriended guardian; all share your account level, hats and deck. Your original species stays saved. First meetings and dated postcards live in the Field Journal.',
+    'Visitors arrive only after time away: your first one on any nap of 10+ simulated MIN, then by chance on longer naps (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN after you return to the garden. Pick any befriended guardian; all share your account level, hats and deck. Your original species stays saved. First meetings and dated postcards live in the Field Journal.',
   ],
   [
     'Streak and growth',

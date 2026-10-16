@@ -7,6 +7,7 @@ import {
   guardianPlayer,
   meetVisitor,
   rollVisitor,
+  visitorForBreak,
   visitors,
 } from '@/lib/visitors';
 import { visitorPixels } from '@/lib/visitor-art';
@@ -43,7 +44,17 @@ export function verifyVisitors(player: Player, dave: Player) {
   check(consecutiveOfflineDays(rules) === 3, 'Consecutive offline days calculated');
   rules.days[previousDay(dayKey())].offline = 119;
   check(consecutiveOfflineDays(rules) === 1, 'Grace day does not unlock rare visitor');
+  const fresh: Player = { ...player, species: 'RAT', collection: [] };
+  check(visitorForBreak(fresh, 9, 0, () => 0) === null, 'First visitor needs 10 MIN');
+  check(
+    visitorForBreak(fresh, 10, 0, () => 0.99) === 'trailhop',
+    'First 10 MIN break guarantees the habit-matched common visitor',
+  );
   const met = meetVisitor(player, 'dozebud', 15, 1000);
+  check(
+    visitorForBreak(met, 15, 0, () => 0.99) === null,
+    'After the first visitor, normal odds apply',
+  );
   const repeat = meetVisitor(met, 'dozebud', 60, 2000);
   check(
     collectionOf(repeat).length === 1 && collectionOf(repeat)[0].minutes === 15,

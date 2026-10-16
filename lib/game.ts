@@ -26,7 +26,7 @@ import {
   isVisitorId,
   meetVisitor,
   postcardsOf,
-  rollVisitor,
+  visitorForBreak,
   visitorInfo,
   type Postcard,
   type VisitorId,
@@ -843,7 +843,9 @@ export const gameStore = create<Game>((set, get) => ({
       if (next.offline_seconds - s.offStart >= 10)
         rules = { ...rules, budget: { startedAt: 0, usedMs: 0 } };
       const minutes = next.offline_seconds - s.offStart;
-      const visitor = completedMission ? rollVisitor(minutes, consecutiveOfflineDays(rules)) : null;
+      const visitor = completedMission
+        ? visitorForBreak(p, minutes, consecutiveOfflineDays(rules))
+        : null;
       const postcard: Postcard | null =
         completedMission === 'park' ||
         completedMission === 'book' ||
@@ -1095,7 +1097,7 @@ export const gameStore = create<Game>((set, get) => ({
     if (!p || p.mode === 'awake') return;
     const elapsed = p.offline_seconds - s.offStart;
     const failed = p.mode === 'mission';
-    const visitor = rollVisitor(elapsed, consecutiveOfflineDays(s.rules));
+    const visitor = visitorForBreak(p, elapsed, consecutiveOfflineDays(s.rules));
     const completedAt = Date.now();
     const met = meetVisitor(p, visitor, elapsed, completedAt);
     const settlementId =
