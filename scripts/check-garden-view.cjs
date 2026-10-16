@@ -461,15 +461,13 @@ function quietNapPresentation() {
       if (mission)
         check(
           visibleText(tree).includes(mission.duration + ' simulated MIN · ' + mission.duration + '-second demo') &&
-            visibleText(tree).includes('returns home automatically') &&
-            visibleText(tree).includes('Shielding ends with the mission.'),
+            visibleText(tree).includes('SHIELDED UNTIL RETURN'),
           label + ': real demo duration and automatic return limits are explicit',
         );
       else
         check(
           visibleText(tree).includes('Untimed nap') &&
-            visibleText(tree).includes('1 real second = 1 simulated MIN') &&
-            visibleText(tree).includes('This nap has no end timer.'),
+            visibleText(tree).includes('1 real second = 1 simulated MIN'),
           label + ': ordinary nap remains untimed with the accelerated clock explained',
         );
       quiet.props.onPress();
@@ -497,6 +495,7 @@ function quietNapPresentation() {
       tree = render();
       check(
         visibleText(tree).includes('Sleep and phone inactivity are not measured.') &&
+          visibleText(tree).includes(mission ? 'returns home automatically' : 'This nap has no end timer.') &&
           findNode(tree, (node) => node.props?.accessibilityLabel === 'Close nap information')
             .props['aria-expanded'] === true,
         label + ': help remains accessible and honest in quiet view',

@@ -1,5 +1,5 @@
 /**
- * Exercises the actual Home and rhythm card with React, native UI, storage and
+ * Exercises Home, rhythm, visitors, returns and journey with React, native UI, storage and
  * timers replaced at their boundaries. Checks emitted props, state transitions
  * and cleanup, not real React scheduling, modal stacking or native lifecycle.
  */
@@ -285,6 +285,14 @@ function visitorAndReturnChecks() {
   garden.control.width = 320;
   tree = garden.render();
   check(byType(tree, 'CozySheet').props.style.maxHeight <= 320 && byType(tree, 'ScrollView').props.style.maxHeight >= 0, 'short return window emits bounded sheet and scroll caps');
+  const originalBodyCap = byType(tree, 'ScrollView').props.style.maxHeight;
+  find(tree, (node) => node.props.accessibilityRole === 'header').props.onLayout({ nativeEvent: { layout: { height: 48 } } });
+  find(tree, (node) => {
+    const children = Array.isArray(node.props.children) ? node.props.children : [node.props.children];
+    return typeof node.props.onLayout === 'function' && children.some((child) => child?.type === 'PixelButton' && child.props.label === 'START A NAP');
+  }).props.onLayout({ nativeEvent: { layout: { height: 160 } } });
+  tree = garden.render();
+  check(byType(tree, 'ScrollView').props.style.maxHeight < originalBodyCap && byType(tree, 'CozySheet').props.style.maxHeight <= 320, 'larger measured heading and footer reduce body space within the short window');
   find(tree, (node) => node.type === 'PixelButton' && node.props.label === 'BACK TO THE GARDEN').props.onPress();
   check(garden.calls.join('|') === 'dismiss|navigate:/' && garden.state.player.mode === 'awake', 'garden route remains an independent explicit choice');
   garden.runtime.unmount();
@@ -307,12 +315,12 @@ function journeyChecks() {
     const props = { player, onMissions: () => calls.push('missions'), onJournal: () => calls.push('journal'), onCompanions: () => calls.push('companions'), onSpar: () => calls.push('spar') };
     let tree = runtime.render(Journey, props);
     check(byType(tree, 'PixelButton').props.label === 'PLAN A BREAK', 'established companion choice keeps an offline outing as the primary invitation');
-    check(!text(tree).includes('VISIT DAVE') && !text(tree).includes('MEET YOUR COMPANIONS'), 'practice and pet switching remain secondary trail details');
+    check(!nodes(tree).some((node) => node?.type === 'PixelButton' && ['VISIT DAVE', 'MEET YOUR COMPANIONS'].includes(node.props.label)), 'practice and pet switching remain secondary trail details');
     byType(tree, 'PixelButton').props.onPress();
     check(calls.join('|') === 'missions', 'the primary invitation goes to break planning');
     find(tree, (node) => node.props.accessibilityLabel === 'Explore the garden trail').props.onPress();
     tree = runtime.render(Journey, props);
-    check(text(tree).includes(guardian ? 'VISIT DAVE' : 'MEET YOUR COMPANIONS'), 'the expanded trail preserves optional garden discoveries');
+    check(nodes(tree).some((node) => node?.type === 'PixelButton' && node.props.label === (guardian ? 'VISIT DAVE' : 'MEET YOUR COMPANIONS')), 'the expanded trail preserves optional garden discoveries');
     runtime.unmount();
   }
 }
@@ -384,12 +392,16 @@ async function main() {
   check(byType(tree, 'BreakIntentionPicker').props.value === null, 'the next break begins with Just a break');
   byType(tree, 'BreakIntentionPicker').props.onChange('move');
   tree = departure.render();
+  find(tree, (node) => node.props.accessibilityLabel === 'Close break ideas').props.onPress();
+  tree = departure.render();
   byType(tree, 'GardenWorld').props.onNap();
   check(departure.naps[1].intention === 'move', 'the garden bed delegates the same selected idea');
+  departure.render();
   departure.state.player = { ...departure.state.player, mode: 'awake' };
   tree = departure.render();
   find(tree, (node) => node.type === 'PixelButton' && node.props.label === 'TAKE A NAP').props.onPress();
   check(departure.naps[2].intention === null, 'the primary quick nap preserves no-intention default');
+  departure.render();
   departure.state.player = { ...departure.state.player, mode: 'awake' };
   tree = departure.render();
   find(tree, (node) => node.props.accessibilityLabel === 'Choose a break idea').props.onPress();

@@ -311,6 +311,20 @@ function ScreenOff() {
             {guardian.pet_name} is settling in. Put your phone down and make a little room for
             yourself.
           </BodyText>
+          {m && (
+            <View style={{ alignItems: 'center', gap: 4 }}>
+              <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>
+              <PixelText
+                accessibilityLabel={`${clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))} remaining in this demo mission`}
+                style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}
+              >
+                {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
+              </PixelText>
+              <BodyText style={{ color: c.paper, fontSize: 11 }}>
+                REAL DEMO COUNTDOWN · UNTIL HOME
+              </BodyText>
+            </View>
+          )}
           {breakContext && (
             <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
               Your break idea: {breakIntentionLabel(breakContext.intention)} · a reflection is
@@ -335,59 +349,58 @@ function ScreenOff() {
               ? `${m.duration} simulated MIN · ${m.duration}-second demo`
               : 'Untimed nap · simulated · 1 real second = 1 simulated MIN'}
           </BodyText>
-          <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
-            {m
-              ? 'This demo mission returns home automatically when its timer ends. Shielding ends with the mission.'
-              : 'This nap has no end timer. Choose WAKE UP when you want to return.'}
-          </BodyText>
-          <Pressable
-            accessibilityRole="switch"
-            accessibilityLabel="Quiet view"
-            accessibilityHint="Hides the decorative scenery. Your demo timer and wake controls stay available."
-            accessibilityState={{ checked: quiet }}
-            aria-checked={quiet}
-            onPress={() => setQuiet((value) => !value)}
-            style={{
-              minWidth: 44,
-              minHeight: 44,
-              paddingHorizontal: 16,
-              paddingVertical: 10,
-              borderRadius: 22,
-              borderWidth: 1,
-              borderColor: c.napOutline,
-              backgroundColor: c.night,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
+          <View
+            style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'center', gap: 10 }}
           >
-            <BodyText style={{ color: c.paper, fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>
-              QUIET VIEW · {quiet ? 'ON' : 'OFF'}
-            </BodyText>
-          </Pressable>
+            <Pressable
+              accessibilityRole="switch"
+              accessibilityLabel="Quiet view"
+              accessibilityHint="Hides the decorative scenery. Your demo timer and wake controls stay available."
+              accessibilityState={{ checked: quiet }}
+              aria-checked={quiet}
+              onPress={() => setQuiet((value) => !value)}
+              style={{
+                minWidth: 44,
+                minHeight: 44,
+                paddingHorizontal: 16,
+                paddingVertical: 10,
+                borderRadius: 22,
+                borderWidth: 1,
+                borderColor: c.napOutline,
+                backgroundColor: c.night,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <BodyText style={{ color: c.paper, fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>
+                QUIET VIEW · {quiet ? 'ON' : 'OFF'}
+              </BodyText>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                helpOpen ? 'Close nap information' : 'About the simulated nap timer'
+              }
+              accessibilityState={{ expanded: helpOpen }}
+              aria-expanded={helpOpen}
+              onPress={() => setHelpOpen((open) => !open)}
+              style={{
+                minWidth: 44,
+                minHeight: 44,
+                borderRadius: 22,
+                backgroundColor: c.night,
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <PixelText style={{ color: c.paper }}>?</PixelText>
+            </Pressable>
+          </View>
           {quiet && (
             <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
               Scenery is hidden. There is nothing here you need to watch.
             </BodyText>
           )}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={
-              helpOpen ? 'Close nap information' : 'About the simulated nap timer'
-            }
-            accessibilityState={{ expanded: helpOpen }}
-            aria-expanded={helpOpen}
-            onPress={() => setHelpOpen((open) => !open)}
-            style={{
-              minWidth: 44,
-              minHeight: 44,
-              borderRadius: 22,
-              backgroundColor: c.night,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <PixelText style={{ color: c.paper }}>?</PixelText>
-          </Pressable>
           {helpOpen && (
             <BodyText
               style={{
@@ -399,23 +412,13 @@ function ScreenOff() {
                 textAlign: 'center',
               }}
             >
-              Demo timer only. Sleep and phone inactivity are not measured.
+              Demo timer only. Sleep and phone inactivity are not measured.{' '}
+              {m
+                ? 'This demo mission returns home automatically when its timer ends.'
+                : 'This nap has no end timer. Choose WAKE UP when you want to return.'}
             </BodyText>
           )}
-          {m && (
-            <View style={{ alignItems: 'center', gap: 4 }}>
-              <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>
-              <PixelText
-                accessibilityLabel={`${clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))} remaining in this demo mission`}
-                style={{ color: c.paper, fontSize: 26, lineHeight: 40 }}
-              >
-                {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
-              </PixelText>
-              <BodyText style={{ color: c.paper, fontSize: 11 }}>
-                REAL DEMO COUNTDOWN · UNTIL HOME
-              </BodyText>
-            </View>
-          )}
+
         </View>
         <View style={{ alignItems: 'center', gap: 14, flex: m ? undefined : 1 }}>
           {togetherId && (
