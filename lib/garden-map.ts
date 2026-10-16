@@ -234,7 +234,7 @@ export const gardenObjects = [
     y: 40,
     w: 28,
     h: 24,
-    action: null,
+    action: 'read',
   },
   {
     id: 'lantern',
@@ -243,7 +243,7 @@ export const gardenObjects = [
     y: 62,
     w: 12,
     h: 26,
-    action: null,
+    action: 'lantern',
   },
   {
     id: 'watering-can',
@@ -252,7 +252,7 @@ export const gardenObjects = [
     y: 100,
     w: 14,
     h: 12,
-    action: null,
+    action: 'water',
   },
   {
     id: 'signpost',
@@ -371,6 +371,21 @@ export const gardenHotspots = {
     x: 72,
     y: 126,
     label: 'look into the pond',
+  },
+  read: {
+    x: 84,
+    y: 70,
+    label: 'settle into the reading nook',
+  },
+  water: {
+    x: 166,
+    y: 114,
+    label: 'water the flower beds',
+  },
+  lantern: {
+    x: 130,
+    y: 88,
+    label: 'tend the leaf lantern',
   },
 } as const;
 export const gardenWalk: readonly string[] = [

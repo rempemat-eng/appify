@@ -204,7 +204,9 @@ export function Pet({
   actionLabel,
   groundShadow = true,
   curled = false,
+  active = true,
 }: {
+  active?: boolean;
   curled?: boolean;
   groundShadow?: boolean;
   species?: Player['species'];
@@ -227,34 +229,55 @@ export function Pet({
   actionLabel?: string;
 }) {
   const reduced = useReducedMotion();
+  const canAnimate = active && !reduced;
+  const canWalk = canAnimate && walking && !sleeping && !slumped;
+  const canIdle = canAnimate && bob && !sleeping && !walking && !slumped;
+  const scaledSize = Math.max(32, Math.round(size / 32) * 32);
+  const pixelStep = scaledSize / 32;
   const y = useSharedValue(0);
   const x = useSharedValue(0);
+  const patY = useSharedValue(0);
+  const walkSettle = useSharedValue(0);
   const [breath, setBreath] = useState(false);
-  const [stride, setStride] = useState(false);
+  const [walkFrame, setWalkFrame] = useState(0);
   const [blink, setBlink] = useState(false);
   const [idle, setIdle] = useState<'rest' | 'yawn' | 'look'>('rest');
-  const [heart, setHeart] = useState(false);
+  const [heart, setHeart] = useState(0);
   const [flashState, setFlashState] = useState({ hit, flashing: false });
-  const [motionMode, setMotionMode] = useState(reduced);
+  const motionKey = `${canAnimate}-${walking}-${sleeping}-${slumped}-${bob}`;
+  const [motionMode, setMotionMode] = useState(motionKey);
   const seenMotion = useRef({ hit: 0, attack: 0, victory: false });
-  if (motionMode !== reduced) {
-    setMotionMode(reduced);
+  const wasWalking = useRef(false);
+  if (motionMode !== motionKey) {
+    setMotionMode(motionKey);
     setBreath(false);
-    setStride(false);
+    setWalkFrame(0);
     setBlink(false);
     setIdle('rest');
     setFlashState({ hit, flashing: false });
+    if (!active) setHeart(0);
   }
-  if (flashState.hit !== hit) setFlashState({ hit, flashing: hit !== 0 && !reduced });
+  if (flashState.hit !== hit) setFlashState({ hit, flashing: hit !== 0 && canAnimate });
   useEffect(() => {
-    if (!reduced) return;
+    if (canAnimate) return;
     cancelAnimation(x);
     cancelAnimation(y);
+    cancelAnimation(patY);
+    cancelAnimation(walkSettle);
     x.set(0);
     y.set(0);
-  }, [reduced, x, y]);
+    patY.set(0);
+    walkSettle.set(0);
+  }, [canAnimate, x, y, patY, walkSettle]);
+  useEffect(
+    () => () => {
+      cancelAnimation(patY);
+      patY.set(0);
+    },
+    [patY],
+  );
   useEffect(() => {
-    if (reduced || !bob || sleeping || walking) return undefined;
+    if (!canIdle) return undefined;
     // Slow pixel breathing, with separate phases for the garden's companions.
     let timer: ReturnType<typeof setInterval> | undefined;
     const start = setTimeout(
@@ -268,9 +291,9 @@ export function Pet({
       clearTimeout(start);
       if (timer) clearInterval(timer);
     };
-  }, [reduced, bob, sleeping, walking]);
+  }, [canIdle]);
   useEffect(() => {
-    if (reduced) return undefined;
+    if (!canAnimate || sleeping) return undefined;
     let timer: ReturnType<typeof setTimeout>;
     let close: ReturnType<typeof setTimeout>;
     function schedule() {
@@ -288,9 +311,9 @@ export function Pet({
       clearTimeout(timer);
       clearTimeout(close);
     };
-  }, [reduced]);
+  }, [canAnimate, sleeping]);
   useEffect(() => {
-    if (!bob || sleeping || walking || reduced || slumped) return undefined;
+    if (!canIdle) return undefined;
     let timer: ReturnType<typeof setTimeout>;
     let reset: ReturnType<typeof setTimeout>;
     function schedule() {
@@ -308,50 +331,65 @@ export function Pet({
       clearTimeout(timer);
       clearTimeout(reset);
     };
-  }, [bob, sleeping, walking, reduced, slumped]);
+  }, [canIdle]);
   useEffect(() => {
     const changed = seenMotion.current.victory !== victory;
     seenMotion.current.victory = victory;
-    if (changed && victory && !reduced)
+    if (changed && victory && canAnimate)
       y.set(withSequence(withTiming(-12, { duration: 160 }), withTiming(0, { duration: 180 })));
     return () => {
       cancelAnimation(y);
       y.set(0);
     };
-  }, [victory, reduced, y]);
+  }, [victory, canAnimate, y]);
   useEffect(() => {
-    if (!heart) return undefined;
-    const timer = setTimeout(() => setHeart(false), 600);
+    if (!heart || !active) return undefined;
+    const timer = setTimeout(() => setHeart(0), 600);
     return () => clearTimeout(timer);
-  }, [heart]);
+  }, [heart, active]);
   useEffect(() => {
-    if (!walking || reduced) return undefined;
-    const timer = setInterval(() => setStride((v) => !v), 250);
-    return () => clearInterval(timer);
-  }, [walking, reduced]);
+    const stopping = wasWalking.current && !canWalk;
+    wasWalking.current = canWalk;
+    cancelAnimation(walkSettle);
+    walkSettle.set(0);
+    if (!canWalk) {
+      if (stopping && canAnimate && !sleeping && !slumped)
+        walkSettle.set(
+          withSequence(withTiming(1, { duration: 0 }), withTiming(0, { duration: 120 })),
+        );
+      return () => {
+        cancelAnimation(walkSettle);
+        walkSettle.set(0);
+      };
+    }
+    const timer = setInterval(() => setWalkFrame((frame) => (frame + 1) % 4), 120);
+    return () => {
+      clearInterval(timer);
+      cancelAnimation(walkSettle);
+      walkSettle.set(0);
+    };
+  }, [canWalk, canAnimate, sleeping, slumped, walkSettle]);
   useEffect(() => {
     const changed = seenMotion.current.hit !== hit;
     seenMotion.current.hit = hit;
-    if (!changed || !hit) return undefined;
+    if (!changed || !hit || !canAnimate) return undefined;
     const timer = setTimeout(() => setFlashState({ hit, flashing: false }), 34);
     x.set(
-      reduced
-        ? 0
-        : withSequence(
-            withTiming(facing === 'right' ? -4 : 4, { duration: 50 }),
-            withTiming(0, { duration: 100 }),
-          ),
+      withSequence(
+        withTiming(facing === 'right' ? -4 : 4, { duration: 50 }),
+        withTiming(0, { duration: 100 }),
+      ),
     );
     return () => {
       clearTimeout(timer);
       cancelAnimation(x);
       x.set(0);
     };
-  }, [hit, reduced, x, facing]);
+  }, [hit, canAnimate, x, facing]);
   useEffect(() => {
     const changed = seenMotion.current.attack !== attack;
     seenMotion.current.attack = attack;
-    if (changed && attack && !reduced)
+    if (changed && attack && canAnimate)
       x.set(
         withSequence(
           withTiming(facing === 'right' ? 8 : -8, { duration: 100 }),
@@ -362,27 +400,35 @@ export function Pet({
       cancelAnimation(x);
       x.set(0);
     };
-  }, [attack, facing, reduced, x]);
+  }, [attack, facing, canAnimate, x]);
   const motion = useAnimatedStyle(() => ({
     transform: [
-      { translateY: reduced ? 0 : Math.round(y.value) },
-      { translateX: reduced ? 0 : Math.round(x.value) },
+      {
+        translateY: canAnimate
+          ? Math.round(y.value) + Math.round(patY.value + walkSettle.value) * pixelStep
+          : 0,
+      },
+      { translateX: canAnimate ? Math.round(x.value) : 0 },
     ],
   }));
   const visitorId = isVisitorId(visitor) ? visitor : null;
   const petLabel = visitorId ? visitorInfo(visitorId).name : grasslings[species].name;
   const pixels = visitorId
-    ? visitorPixels(visitorId, hat, sleeping || (!reduced && blink), groundShadow)
+    ? visitorPixels(visitorId, hat, sleeping || (canAnimate && blink), groundShadow)
     : petPixels(
         species,
         level,
         hat,
-        sleeping || (!reduced && (blink || idle === 'yawn')) || yawning,
+        sleeping || (canAnimate && (blink || (canIdle && idle === 'yawn'))) || yawning,
         grumpy,
         dave,
         groundShadow,
       );
-  const scaledSize = Math.max(32, Math.round(size / 32) * 32);
+  // Hats and head foliage move with the body. Avoid lifting a sprite whose art
+  // already touches the top of its 32px frame; its silhouette must stay intact.
+  const headroom = pixels.every((pixel) => pixel.y > 0);
+  const passing = walkFrame === 1 || walkFrame === 3;
+  const bodyLift = canWalk && passing && headroom ? -1 : 0;
   return (
     <Animated.View
       accessibilityLabel={`${dave ? 'DOOMSCROLL DAVE weed creature' : `${petLabel} ${growthStage(level)} Grassling`}${slumped ? ', wilted' : ''}${sleeping ? ', sleeping' : ''}`}
@@ -391,25 +437,31 @@ export function Pet({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={actionLabel ?? `Greet ${petLabel}`}
+        accessibilityState={{ disabled: !active }}
+        disabled={!active}
         style={{ backgroundColor: c.transparent }}
         onPress={() => {
-          cancelAnimation(y);
-          cancelAnimation(x);
-          y.set(0);
-          x.set(0);
-          setHeart(true);
+          if (!active) return;
+          cancelAnimation(patY);
+          patY.set(0);
+          setHeart((count) => count + 1);
+          if (canAnimate)
+            patY.set(
+              withSequence(
+                withTiming(1, { duration: 70 }),
+                withTiming(-3, { duration: 110 }),
+                withTiming(1, { duration: 110 }),
+                withTiming(0, { duration: 90 }),
+              ),
+            );
           if (onPress) {
             onPress();
             return;
           }
           void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-          if (!reduced)
-            y.set(
-              withSequence(withTiming(-12, { duration: 140 }), withTiming(0, { duration: 200 })),
-            );
         }}
       >
-        {heart && (
+        {heart > 0 && (
           <View
             pointerEvents="none"
             style={{ position: 'absolute', top: -16, left: scaledSize / 2 - 16, zIndex: 4 }}
@@ -426,37 +478,45 @@ export function Pet({
             transform: [
               { scaleX: facing === 'left' ? -1 : 1 },
               { translateY: slumped ? 8 : 0 },
-              { translateX: !reduced && idle === 'look' ? 3 : 0 },
+              { translateX: canIdle && idle === 'look' ? 3 : 0 },
             ],
           }}
         >
-          {pixels.map(({ x: rx, y: ry, color }) => (
-            <Rect
-              key={`${rx}-${ry}`}
-              x={rx}
-              y={
-                curled && sleeping
-                  ? 7 + Math.floor((ry * 24) / 32)
-                  : walking && !reduced && ry >= 26 && ry <= 28 && rx < 17 === stride
+          {pixels.map(({ x: rx, y: ry, color }) => {
+            const shadow = groundShadow && ry >= 30 && color === c.stone;
+            const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
+            const leftStep = canWalk && walkFrame === 0 && rx < 17;
+            const rightStep = canWalk && walkFrame === 2 && rx >= 17;
+            const stepping = foot && (leftStep || rightStep);
+            const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
+            const drawY =
+              curled && sleeping
+                ? 7 + Math.floor((ry * 24) / 32)
+                : canWalk && !shadow
+                  ? ry + bodyLift - (stepping ? 1 : 0)
+                  : canIdle && breath && ry >= 16 && !shadow
                     ? ry - 1
-                    : bob && breath && !walking && !reduced && !sleeping && ry >= 16
-                      ? ry - 1
-                      : ry
-              }
-              width={1}
-              height={1}
-              fill={
-                flashState.flashing && !reduced
-                  ? c.flash
-                  : slumped
-                    ? color === c.ink || color === c.night
-                      ? c.night
-                      : c.wilt
-                    : color
-              }
-            />
-          ))}
-          {((!reduced && idle === 'yawn') || yawning) && (
+                    : ry;
+            return (
+              <Rect
+                key={`${rx}-${ry}`}
+                x={drawX}
+                y={drawY}
+                width={1}
+                height={1}
+                fill={
+                  flashState.flashing && canAnimate
+                    ? c.flash
+                    : slumped
+                      ? color === c.ink || color === c.night
+                        ? c.night
+                        : c.wilt
+                      : color
+                }
+              />
+            );
+          })}
+          {((canIdle && idle === 'yawn') || yawning) && (
             <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
           )}
         </Svg>
@@ -606,7 +666,9 @@ export function StatusChip({ player, compact = false }: { player: Player; compac
         alignItems: 'center',
         gap: 4,
         paddingHorizontal: compact ? 6 : 10,
-        paddingVertical: 8,
+        paddingVertical: compact ? 6 : 8,
+        minHeight: compact ? 44 : undefined,
+        maxWidth: '100%',
         borderRadius: 999,
         backgroundColor: color,
       }}
@@ -618,6 +680,7 @@ export function StatusChip({ player, compact = false }: { player: Player; compac
           fontFamily: 'Nunito_800ExtraBold',
           fontSize: 11,
           lineHeight: 17,
+          flexShrink: 1,
           color: care ? c.buttonInk : c.paper,
         }}
       >
@@ -634,73 +697,99 @@ export function GameHeader() {
     <View style={{ paddingTop: top + 8, paddingBottom: 8, zIndex: 40 }}>
       <BlurView tint="light" intensity={35} style={StyleSheet.absoluteFill} />
       <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.glass }]} />
-      <View
-        style={[
-          gameColumn,
-          {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 4,
-            paddingHorizontal: gameLayout.gutter,
-          },
-        ]}
-      >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={p ? `Garden status: ${status(p).label}` : 'Garden status'}
-          accessibilityHint="Long press to end protection in the demo"
-          onLongPress={() => p && useGame.getState().change({ care_until: 0, recovery_until: 0 })}
-          style={{ flex: 1, minHeight: 44, justifyContent: 'center', alignItems: 'flex-start' }}
-        >
-          {p && <StatusChip player={p} compact />}
-        </Pressable>
+      <View style={[gameColumn, { paddingHorizontal: gameLayout.gutter }]}>
         <View
-          accessible
-          accessibilityRole="text"
-          accessibilityLabel={`${p?.grass ?? 20} grass`}
           style={{
             flexDirection: 'row',
-            gap: 4,
             alignItems: 'center',
-            minHeight: 44,
-            paddingHorizontal: 6,
-            borderRadius: 999,
-            backgroundColor: c.paper,
+            gap: 6,
+            padding: 6,
+            borderRadius: 18,
             borderWidth: 1,
             borderColor: c.outline,
-          }}
-        >
-          <PixelProp kind="grass" size={16} />
-          <GrassRoll value={p?.grass ?? 20} />
-        </View>
-        {p && <PlayMeter />}
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Open garden guide. ${live ? 'Garden synced' : backendConfigured ? 'No signal' : 'Local garden, saved on this device'}`}
-          onPress={() => useGame.setState({ guideOpen: true })}
-          style={{
-            width: 44,
-            height: 44,
-            borderRadius: 22,
             backgroundColor: c.paper,
-            alignItems: 'center',
-            justifyContent: 'center',
-            borderWidth: 1,
-            borderColor: c.outline,
+            boxShadow: '0 3px 0 rgba(74,59,53,0.12)',
           }}
         >
-          <Text style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 20, color: c.ink }}>?</Text>
-          <View
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={p ? `Garden status: ${status(p).label}` : 'Garden status'}
+            accessibilityHint="Opens the garden guide. Long press to end protection in the demo."
+            onPress={() => useGame.setState({ guideOpen: true })}
+            onLongPress={() => p && useGame.getState().change({ care_until: 0, recovery_until: 0 })}
             style={{
-              position: 'absolute',
-              bottom: 4,
-              width: 4,
-              height: 4,
-              borderRadius: 2,
-              backgroundColor: live || !backendConfigured ? c.moss : c.error,
+              flex: 1,
+              minWidth: 0,
+              minHeight: 44,
+              justifyContent: 'center',
+              alignItems: 'flex-start',
             }}
-          />
-        </Pressable>
+          >
+            {p && <StatusChip player={p} compact />}
+          </Pressable>
+          <View
+            accessible
+            accessibilityRole="text"
+            accessibilityLabel={`${p?.grass ?? 20} grass`}
+            style={{
+              gap: 1,
+              alignItems: 'center',
+              minHeight: 44,
+              minWidth: 56,
+              paddingTop: 3,
+            }}
+          >
+            <Text
+              style={{
+                fontFamily: 'Nunito_800ExtraBold',
+                fontSize: 10,
+                lineHeight: 12,
+                color: c.ink,
+              }}
+            >
+              GRASS
+            </Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, height: 18 }}>
+              <PixelProp kind="grass" size={16} />
+              {(p?.grass ?? 20) >= 10000 ? (
+                <Text style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 14, color: c.ink }}>
+                  {new Intl.NumberFormat('en-GB', {
+                    notation: 'compact',
+                    maximumFractionDigits: 1,
+                  }).format(p?.grass ?? 20)}
+                </Text>
+              ) : (
+                <GrassRoll value={p?.grass ?? 20} size={14} />
+              )}
+            </View>
+          </View>
+          {p && <PlayMeter />}
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={`Open garden guide. ${live ? 'Garden synced' : backendConfigured ? 'No signal' : 'Local garden, saved on this device'}`}
+            onPress={() => useGame.setState({ guideOpen: true })}
+            style={{
+              width: 44,
+              height: 44,
+              borderRadius: 12,
+              backgroundColor: c.sage,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <Text style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 20, color: c.ink }}>?</Text>
+            <View
+              style={{
+                position: 'absolute',
+                bottom: 4,
+                width: 4,
+                height: 4,
+                borderRadius: 2,
+                backgroundColor: live || !backendConfigured ? c.moss : c.error,
+              }}
+            />
+          </Pressable>
+        </View>
       </View>
     </View>
   );

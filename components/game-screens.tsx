@@ -29,7 +29,7 @@ import { GuardianPet } from '@/components/guardian-pet';
 import { GardenVisitor, GuardianPicker } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
-import { PixelScene } from '@/components/pixel-scenes';
+import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
@@ -118,6 +118,7 @@ export function HomeScreen() {
   }, [crumbs]);
   if (!p) return null;
   const guardian = guardianPlayer(p);
+  const narrowControls = Math.min(width, gameLayout.maxWidth) < 380;
   const state = status(p, now);
   const speech = paused
     ? budgetVoice
@@ -131,8 +132,40 @@ export function HomeScreen() {
             : lines.idle)[line % 2]);
   return (
     <Page>
-      <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-        <PixelText style={{ fontSize: 16 }}>YOUR GARDEN</PixelText>
+      <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
+        <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
+          <BodyText
+            numberOfLines={1}
+            style={{ fontSize: 11, lineHeight: 15, fontFamily: 'Nunito_800ExtraBold' }}
+          >
+            {guardian.pet_name}&apos;s little corner
+          </BodyText>
+          <PixelText style={{ fontSize: 16, lineHeight: 22 }}>GARDEN</PixelText>
+        </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Take a nap"
+          onPress={() => {
+            feedback('select');
+            useGame.getState().sleep();
+          }}
+          style={({ pressed }) => ({
+            minHeight: 44,
+            paddingHorizontal: 12,
+            gap: 6,
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderRadius: 14,
+            borderWidth: 2,
+            borderColor: c.napOutline,
+            backgroundColor: c.rest,
+            transform: [{ translateY: pressed && !reduced ? 2 : 0 }],
+            boxShadow: pressed ? undefined : '0 2px 0 rgba(92,78,131,0.3)',
+          })}
+        >
+          <PixelProp kind="moon" size={16} tint={c.napOutline} />
+          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>NAP</BodyText>
+        </Pressable>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel="Open garden stats"
@@ -141,7 +174,7 @@ export function HomeScreen() {
             minHeight: 44,
             paddingHorizontal: 12,
             justifyContent: 'center',
-            borderRadius: 999,
+            borderRadius: 14,
             borderWidth: 1,
             borderColor: c.outline,
             backgroundColor: c.paper,
@@ -231,7 +264,7 @@ export function HomeScreen() {
         </View>
       </View>
       <BodyText style={{ textAlign: 'center', fontSize: 12, marginTop: -6 }}>
-        tap the garden to walk · tap the hut, signpost, stall, mailbox or gate
+        tap to wander · water the flowers, visit the reading nook or say hello at the pond
       </BodyText>
       <GardenProgress />
       <View style={{ gap: 6 }}>
@@ -240,8 +273,8 @@ export function HomeScreen() {
           put your phone down · simulated
         </BodyText>
       </View>
-      <View style={{ flexDirection: 'row', gap: 12 }}>
-        <View style={{ flex: 1 }}>
+      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+        <View style={narrowControls ? { flexGrow: 1, flexBasis: '46%' } : { flex: 1 }}>
           <PixelButton
             label="MY DECK"
             small
@@ -249,7 +282,7 @@ export function HomeScreen() {
             onPress={() => useGame.setState({ deckOpen: true })}
           />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={narrowControls ? { flexGrow: 1, flexBasis: '46%' } : { flex: 1 }}>
           <PixelButton
             label={
               paused
@@ -269,7 +302,7 @@ export function HomeScreen() {
             }}
           />
         </View>
-        <View style={{ flex: 1 }}>
+        <View style={narrowControls ? { flexGrow: 1, flexBasis: '100%' } : { flex: 1 }}>
           <PixelButton label="JOURNAL" small light onPress={() => router.push('/journal')} />
         </View>
       </View>

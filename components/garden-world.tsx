@@ -1,5 +1,12 @@
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Image, Platform, Pressable, View, type ImageSourcePropType } from 'react-native';
+import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import {
+  AccessibilityInfo,
+  Image,
+  Platform,
+  Pressable,
+  View,
+  type ImageSourcePropType,
+} from 'react-native';
 import Animated, {
   cancelAnimation,
   runOnJS,
@@ -19,9 +26,12 @@ import { GARDEN, gardenHotspots, gardenObjects, gardenWalk } from '@/lib/garden-
 import { GuardianPet } from '@/components/guardian-pet';
 import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
+import { GardenReactions, type GardenReaction } from '@/components/garden-reactions';
 
 import ground0 from '@/assets/garden/ground-0.png';
 import ground1 from '@/assets/garden/ground-1.png';
+import ground2 from '@/assets/garden/ground-2.png';
+import ground3 from '@/assets/garden/ground-3.png';
 import treeImg from '@/assets/garden/tree.png';
 import treeSmallImg from '@/assets/garden/tree_small.png';
 import treeAutumnImg from '@/assets/garden/tree_autumn.png';
@@ -72,12 +82,28 @@ const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
 const START: Point = { x: 96, y: 112 };
 const BED: Point = { x: 73, y: 76 };
+const groundFrames = [ground0, ground1, ground2, ground3];
 
 // ---- walk grid (4px cells, '#' = blocked) -----------------------------------
 const rows = gardenWalk.length;
 const cols = gardenWalk[0].length;
-const walkable = (cx: number, cy: number) =>
-  cy >= 0 && cy < rows && cx >= 0 && cx < cols && gardenWalk[cy][cx] === '.';
+// The map describes feet, but the guardian can be nearly 40 native pixels wide.
+// Keep its centre/head inside the scene even when wandering or following an edge tap.
+const walkable = (cx: number, cy: number) => {
+  const x = cx * GARDEN.cell + GARDEN.cell / 2;
+  const y = cy * GARDEN.cell + GARDEN.cell / 2;
+  return (
+    cy >= 0 &&
+    cy < rows &&
+    cx >= 0 &&
+    cx < cols &&
+    x >= 20 &&
+    x <= GARDEN.width - 20 &&
+    y >= 40 &&
+    y <= 158 &&
+    gardenWalk[cy][cx] === '.'
+  );
+};
 const toCell = (p: Point) => ({
   cx: Math.max(0, Math.min(cols - 1, Math.floor(p.x / GARDEN.cell))),
   cy: Math.max(0, Math.min(rows - 1, Math.floor(p.y / GARDEN.cell))),
@@ -163,8 +189,27 @@ const companionSpots: Point[] = [
   { x: 30, y: 108 },
 ];
 
-const lines: Partial<Record<Action, string>> = {
-  pond: 'a frog said hi. we are friends now.',
+const responses = {
+  pond: [
+    'a tiny neighbour. a very good listener.',
+    'one small splash. then quiet again.',
+    'the frog has no notifications. excellent idea.',
+  ],
+  read: [
+    'a page for us. got a real book nearby?',
+    'the bookmark can wait. take your time.',
+    'one quiet chapter, away from the screen.',
+  ],
+  water: [
+    'all watered. your turn for a little break.',
+    'the roots say thank you. no rush to grow.',
+    'a small drink for a slow afternoon.',
+  ],
+  pat: [
+    'a little company is enough.',
+    'hehe. that was a very good pat.',
+    'soft leaves. softer day.',
+  ],
 };
 
 // ---- crisp sprite --------------------------------------------------------
@@ -237,19 +282,38 @@ function Ambient({
     : [];
   const flies = night
     ? Array.from({ length: 7 }, (_, i) => ({
+        id: `firefly-${i}`,
         x: 30 + ((i * 47) % 140) + Math.sin(t / 14 + i) * 8,
         y: 70 + ((i * 29) % 80) + Math.cos(t / 17 + i * 2) * 6,
-        on: (t + i * 5) % 22 < 14,
+        // A slow glow has no abrupt on/off frame or rapid flashing.
+        opacity: 0.2 + ((Math.sin((t + i * 7) / 6) + 1) / 2) * 0.7,
       }))
     : [];
   const butterflies = day
     ? [0, 1].map((i) => ({
         x: 142 + Math.cos(t / 18 + i * 3) * (16 + i * 6),
         y: 112 + Math.sin(t / 11 + i * 2) * 9 - 6,
-        flap: (t + i) % 4 < 2,
+        flap: (t + i * 2) % 6 < 3,
         color: i ? '#F2D16B' : '#CFC4EC',
       }))
     : [];
+  // Two small puffs share this layer's clock, rise once and dissolve. A long
+  // quiet gap keeps the chimney from becoming a constant stream of particles.
+  const smoke =
+    !reduced && active
+      ? [0, 10]
+          .map((delay) => {
+            const age = (t + 72 - delay) % 72;
+            return {
+              id: `smoke-${delay}`,
+              age,
+              x: 52 + Math.floor(age / 6),
+              y: 29 - Math.floor(age / 2),
+              opacity: Math.min(0.25, age / 12, Math.max(0, (22 - age) / 32)),
+            };
+          })
+          .filter((puff) => puff.age < 22)
+      : [];
   return (
     <View
       pointerEvents="none"
@@ -268,29 +332,27 @@ function Ambient({
           }}
         />
       ))}
-      {flies.map((f, i) =>
-        f.on ? (
-          <View
-            key={i}
-            style={{
-              position: 'absolute',
-              left: Math.round(f.x * scale) - u,
-              top: Math.round(f.y * scale) - u,
-              width: u * 3,
-              height: u * 3,
-              borderRadius: u * 2,
-              backgroundColor: 'rgba(246,231,140,0.35)',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <View style={{ width: u, height: u, backgroundColor: '#FFF4B0' }} />
-          </View>
-        ) : null,
-      )}
-      {butterflies.map((b, i) => (
+      {flies.map((f) => (
         <View
-          key={i}
+          key={f.id}
+          style={{
+            position: 'absolute',
+            left: Math.round(f.x * scale) - u,
+            top: Math.round(f.y * scale) - u,
+            width: u * 3,
+            height: u * 3,
+            backgroundColor: 'rgba(246,231,140,0.28)',
+            opacity: f.opacity,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <View style={{ width: u, height: u, backgroundColor: '#FFF4B0' }} />
+        </View>
+      ))}
+      {butterflies.map((b) => (
+        <View
+          key={b.color}
           style={{
             position: 'absolute',
             left: Math.round(b.x * scale),
@@ -302,6 +364,38 @@ function Ambient({
           <View style={{ width: u * 2, height: b.flap ? u * 3 : u, backgroundColor: b.color }} />
           <View style={{ width: u, height: u * 2, backgroundColor: '#2A2421' }} />
           <View style={{ width: u * 2, height: b.flap ? u * 3 : u, backgroundColor: b.color }} />
+        </View>
+      ))}
+      {smoke.map((puff) => (
+        <View
+          key={puff.id}
+          style={{
+            position: 'absolute',
+            left: Math.round(puff.x * scale),
+            top: Math.round(puff.y * scale),
+            width: Math.round(4 * scale),
+            height: Math.round(3 * scale),
+            opacity: puff.opacity,
+          }}
+        >
+          <View
+            style={{
+              position: 'absolute',
+              left: Math.round(scale),
+              width: Math.round(2 * scale),
+              height: Math.round(3 * scale),
+              backgroundColor: '#D3D8C9',
+            }}
+          />
+          <View
+            style={{
+              position: 'absolute',
+              top: Math.round(scale),
+              width: Math.round(4 * scale),
+              height: Math.round(scale),
+              backgroundColor: '#D3D8C9',
+            }}
+          />
         </View>
       ))}
     </View>
@@ -345,6 +439,19 @@ export function GardenWorld({
   const [frame, setFrame] = useState(0);
   const [tag, setTag] = useState<{ text: string; x: number; y: number } | null>(null);
   const [emote, setEmote] = useState<string | null>(null);
+  const [destination, setDestination] = useState<Point | null>(null);
+  const [reaction, setReaction] = useState<GardenReaction | null>(null);
+  const [feedback, setFeedback] = useState<{
+    id: number;
+    kind: GardenReaction['kind'];
+    text: string;
+    x: number;
+    y: number;
+  } | null>(null);
+  const [lanternOverride, setLanternOverride] = useState<boolean | null>(null);
+  const lanternOn = napping || (lanternOverride ?? night);
+  const responseCount = useRef({ pond: 0, read: 0, water: 0, pat: 0 });
+  const reactionId = useRef(0);
   const [wasActive, setWasActive] = useState(active);
   if (wasActive !== active) {
     setWasActive(active);
@@ -352,6 +459,9 @@ export function GardenWorld({
       setWalking(false);
       setTag(null);
       setEmote(null);
+      setDestination(null);
+      setReaction(null);
+      setFeedback(null);
     }
   }
   const busy = useRef(false);
@@ -386,10 +496,10 @@ export function GardenWorld({
     [px, py],
   );
 
-  // grass sway + water shimmer: alternate the two ground frames
+  // Water has four calm phases; the grass artwork holds each pose for two.
   useEffect(() => {
     if (reduced || !active) return undefined;
-    const t = setInterval(() => setFrame((f) => 1 - f), 750);
+    const t = setInterval(() => setFrame((f) => (f + 1) % groundFrames.length), 400);
     return () => clearInterval(t);
   }, [reduced, active]);
 
@@ -403,12 +513,42 @@ export function GardenWorld({
     const t = setTimeout(() => setEmote(null), 1400);
     return () => clearTimeout(t);
   }, [emote, active]);
+  useEffect(() => {
+    if (!reaction || !active) return undefined;
+    const timer = setTimeout(
+      () => setReaction((current) => (current?.id === reaction.id ? null : current)),
+      4600,
+    );
+    return () => clearTimeout(timer);
+  }, [reaction, active]);
+  useEffect(() => {
+    if (!feedback || !active) return undefined;
+    if (Platform.OS !== 'web') AccessibilityInfo.announceForAccessibility(feedback.text);
+    const timer = setTimeout(
+      () => setFeedback((current) => (current?.id === feedback.id ? null : current)),
+      6500,
+    );
+    return () => clearTimeout(timer);
+  }, [feedback, active]);
+
+  function respond(kind: GardenReaction['kind'], text: string, point: Point) {
+    const id = ++reactionId.current;
+    setTag(null);
+    setFeedback({ id, kind, text, ...point });
+    setReaction({ id, kind, ...point });
+  }
+
+  function companionLine(kind: keyof typeof responses) {
+    const count = responseCount.current[kind]++;
+    return responses[kind][count % responses[kind].length];
+  }
 
   function arrived(id: number, action: Action | null, point: Point) {
     if (!activeRef.current || id !== journeyId.current || journey.current?.id !== id) return;
     journey.current = null;
     pos.current = point;
     setWalking(false);
+    setDestination(null);
     busy.current = false;
     if (action) act(action);
   }
@@ -424,6 +564,7 @@ export function GardenWorld({
     pos.current = start;
     const path = findPath(start, target);
     const end = path[path.length - 1] ?? start;
+    setDestination(action ? end : null);
     journey.current = { id, action, end };
     if (!path.length) {
       arrived(id, action, end);
@@ -505,9 +646,30 @@ export function GardenWorld({
         }
         break;
       case 'pond':
-        useGame.setState({ voice: lines.pond ?? null });
-        setEmote('!');
+        respond('pond', companionLine('pond'), gardenHotspots.pond);
+        setEmote('♪');
         break;
+      case 'read':
+        respond('read', companionLine('read'), gardenHotspots.read);
+        setEmote('…');
+        break;
+      case 'water':
+        respond('water', companionLine('water'), gardenHotspots.water);
+        setEmote('♪');
+        break;
+      case 'lantern': {
+        const next = !lanternOn;
+        setLanternOverride(next);
+        respond(
+          'lantern',
+          next
+            ? 'a little warm light. make yourself at home.'
+            : 'lights out. the stars can take over.',
+          gardenHotspots.lantern,
+        );
+        if (!next) setReaction(null);
+        break;
+      }
     }
   }
 
@@ -544,7 +706,7 @@ export function GardenWorld({
         else if (roll < 0.7) {
           walkRef.current({ x: 142, y: 130 });
           emoteTimer = setTimeout(() => {
-            if (activeRef.current) setEmote('♪');
+            if (activeRef.current && clock() - lastTouch.current > 6000) setEmote('♪');
           }, 2500);
         } else if (roll < 0.8) setEmote(grumpy ? '…' : '♪');
       }
@@ -572,20 +734,49 @@ export function GardenWorld({
     if (napping || !activeRef.current) return;
     // Native gives locationX/Y; react-native-web click events only carry the DOM
     // offsetX/Y (relative to the full-size ground image), so fall back to those.
+    // Keep this fallback: without it tapping the garden does nothing on web.
     const ne = e.nativeEvent;
     const lx = ne.locationX ?? ne.offsetX;
     const ly = ne.locationY ?? ne.offsetY;
     if (typeof lx !== 'number' || typeof ly !== 'number' || Number.isNaN(lx + ly)) return;
     lastTouch.current = clock();
+    setTag(null);
+    setFeedback(null);
+    setReaction(null);
     walkTo({ x: lx / scale, y: ly / scale });
   }
 
   function onObjectPress(action: Action) {
     if (napping || !activeRef.current) return;
     lastTouch.current = clock();
+    setFeedback(null);
+    setReaction(null);
     const spot = gardenHotspots[action];
     setTag({ text: spot.label, x: spot.x, y: spot.y });
     walkTo({ x: spot.x, y: spot.y }, action);
+  }
+
+  function stopJourney() {
+    journeyId.current += 1;
+    journey.current = null;
+    cancelAnimation(px);
+    cancelAnimation(py);
+    if (napTimer.current) clearTimeout(napTimer.current);
+    napTimer.current = null;
+    pos.current = { x: px.get(), y: py.get() };
+    busy.current = false;
+    setWalking(false);
+    setDestination(null);
+  }
+
+  function patGuardian() {
+    if (napping || !activeRef.current) return;
+    lastTouch.current = clock();
+    // A pat is a new intent. It must not leave a pending shop visit or nap behind.
+    stopJourney();
+    setEmote('♥');
+    void Haptics.selectionAsync();
+    respond('pat', grumpy ? 'hmph. ok. one very small pat.' : companionLine('pat'), pos.current);
   }
 
   const guardian = guardianPlayer(player);
@@ -610,8 +801,28 @@ export function GardenWorld({
         onPress={onGroundPress}
         style={{ position: 'absolute', left: 0, top: 0, width, height }}
       >
-        <Image source={frame ? ground1 : ground0} resizeMode="stretch" style={{ width, height }} />
+        <Image
+          source={groundFrames[reduced ? 0 : frame]}
+          resizeMode="stretch"
+          style={{ width, height }}
+        />
       </Pressable>
+      {destination && !napping && active && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.round((destination.x - 3) * scale),
+            top: Math.round((destination.y - 2) * scale),
+            width: Math.round(6 * scale),
+            height: Math.round(4 * scale),
+            borderWidth: Math.max(1, Math.round(scale)),
+            borderColor: '#FFF0B7',
+            backgroundColor: 'rgba(81,107,55,0.3)',
+            zIndex: 2,
+          }}
+        />
+      )}
       {gardenObjects.map((o) => {
         const sprite = (
           <Sprite
@@ -636,6 +847,7 @@ export function GardenWorld({
             </View>
           );
         const action = o.action as Action;
+        const isNewInteraction = action === 'read' || action === 'water' || action === 'lantern';
         const artLeft = Math.round(o.x * scale);
         const artTop = Math.round(o.y * scale);
         const artWidth = Math.round(o.w * scale);
@@ -650,38 +862,103 @@ export function GardenWorld({
           0,
           Math.min(height - targetHeight, artTop - (targetHeight - artHeight) / 2),
         );
-        return (
-          <Pressable
-            key={o.id}
-            accessibilityRole="button"
-            accessibilityLabel={gardenHotspots[action].label}
-            disabled={napping || !active}
-            onFocus={() => {
-              if (activeRef.current && !napping)
-                setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
-            }}
-            onPress={() => onObjectPress(action)}
-            style={{
-              position: 'absolute',
-              left: targetLeft,
-              top: targetTop,
-              width: targetWidth,
-              height: targetHeight,
-              zIndex: o.y + o.h,
-            }}
-          >
+        // These small props need a hit area above a nearby guardian, while
+        // their artwork keeps its ordinary depth and can still sit behind it.
+        const imageLeft = isNewInteraction ? artLeft : artLeft - targetLeft;
+        const imageTop = isNewInteraction ? artTop : artTop - targetTop;
+        const artwork = (
+          <>
             <Image
+              key={`${o.id}-image`}
               source={sprites[o.sprite]}
               resizeMode="stretch"
               style={{
                 position: 'absolute',
-                left: artLeft - targetLeft,
-                top: artTop - targetTop,
+                left: imageLeft,
+                top: imageTop,
                 width: artWidth,
                 height: artHeight,
               }}
             />
-          </Pressable>
+            {action === 'lantern' && !lanternOn && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: imageLeft + Math.round(7 * scale),
+                  top: imageTop + Math.round(10 * scale),
+                  width: Math.round(3 * scale),
+                  height: Math.round(6 * scale),
+                  backgroundColor: '#71817A',
+                  borderLeftWidth: Math.max(1, Math.round(scale)),
+                  borderLeftColor: '#A6B69E',
+                }}
+              />
+            )}
+            {isNewInteraction && !napping && active && (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: imageLeft + Math.round((o.w / 2 - 2) * scale),
+                  top: imageTop - Math.round(5 * scale),
+                  width: Math.round(4 * scale),
+                  height: Math.round(4 * scale),
+                  backgroundColor: '#FFF3CF',
+                  borderWidth: Math.max(1, Math.round(scale)),
+                  borderColor: '#647E46',
+                }}
+              />
+            )}
+          </>
+        );
+        return (
+          <Fragment key={o.id}>
+            {isNewInteraction && (
+              <View
+                key={`${o.id}-art`}
+                pointerEvents="none"
+                style={{ position: 'absolute', left: 0, top: 0, zIndex: o.y + o.h }}
+              >
+                {artwork}
+              </View>
+            )}
+            <Pressable
+              key={o.id}
+              accessibilityRole="button"
+              accessibilityLabel={
+                action === 'lantern'
+                  ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
+                  : gardenHotspots[action].label
+              }
+              accessibilityHint={
+                action === 'read'
+                  ? 'Walk to the bench and turn a page.'
+                  : action === 'water'
+                    ? 'Walk over and water the flowers.'
+                    : action === 'lantern'
+                      ? 'Walk to the post, then change its light.'
+                      : undefined
+              }
+              aria-pressed={action === 'lantern' ? lanternOn : undefined}
+              disabled={napping || !active}
+              onFocus={() => {
+                if (activeRef.current && !napping)
+                  setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
+              }}
+              onPress={() => onObjectPress(action)}
+              style={{
+                position: 'absolute',
+                left: targetLeft,
+                top: targetTop,
+                width: targetWidth,
+                height: targetHeight,
+                zIndex: isNewInteraction ? 800 : o.y + o.h,
+              }}
+            >
+              {!isNewInteraction && artwork}
+            </Pressable>
+          </Fragment>
         );
       })}
       <Pressable
@@ -721,6 +998,7 @@ export function GardenWorld({
           </View>
         )}
         <GuardianPet
+          active={active}
           player={player}
           size={petPx}
           facing={facing}
@@ -731,11 +1009,7 @@ export function GardenWorld({
           curled={napping}
           groundShadow={!napping}
           bob={!walking && !napping && active}
-          onPress={() => {
-            if (napping || !activeRef.current) return;
-            lastTouch.current = clock();
-            useGame.setState({ voice: grumpy ? 'hmph. ok. one pat.' : 'hehe. again.' });
-          }}
+          onPress={patGuardian}
         />
       </Animated.View>
       {companions.map((v, i) => (
@@ -749,6 +1023,7 @@ export function GardenWorld({
           }}
         >
           <Pet
+            active={active}
             visitor={v.id}
             size={Math.max(32, petPx / 2)}
             sleeping={napping}
@@ -756,6 +1031,11 @@ export function GardenWorld({
             bob={!napping && active}
             onPress={() => {
               if (napping || !activeRef.current) return;
+              lastTouch.current = clock();
+              stopJourney();
+              setTag(null);
+              setFeedback(null);
+              setReaction(null);
               useGame.setState({
                 voice: `${visitorInfo(v.id).name.toLowerCase()} waves a leaf at you.`,
               });
@@ -763,6 +1043,9 @@ export function GardenWorld({
           />
         </View>
       ))}
+      {reaction && !napping && active && (
+        <GardenReactions key={reaction.id} reaction={reaction} scale={scale} reduced={reduced} />
+      )}
       {(night || dusk || dawn) && (
         <View
           pointerEvents="none"
@@ -781,36 +1064,35 @@ export function GardenWorld({
           }}
         />
       )}
-      {night &&
-        [
-          { x: 48, y: 54, size: 8 },
-          { x: 124, y: 71, size: 7 },
-        ].map((light) => (
+      {[
+        ...(night ? [{ x: 48, y: 54, size: 8 }] : []),
+        ...(lanternOn ? [{ x: 123, y: 71, size: 7 }] : []),
+      ].map((light) => (
+        <View
+          key={`${light.x}-${light.y}`}
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.round(light.x * scale),
+            top: Math.round(light.y * scale),
+            width: Math.round(light.size * scale),
+            height: Math.round(light.size * scale),
+            borderRadius: Math.round(4 * scale),
+            backgroundColor: 'rgba(255,214,120,0.35)',
+            zIndex: 901,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
           <View
-            key={`${light.x}-${light.y}`}
-            pointerEvents="none"
             style={{
-              position: 'absolute',
-              left: Math.round(light.x * scale),
-              top: Math.round(light.y * scale),
-              width: Math.round(light.size * scale),
-              height: Math.round(light.size * scale),
-              borderRadius: Math.round(4 * scale),
-              backgroundColor: 'rgba(255,214,120,0.35)',
-              zIndex: 901,
-              alignItems: 'center',
-              justifyContent: 'center',
+              width: Math.round(4 * scale),
+              height: Math.round(4 * scale),
+              backgroundColor: '#FFE08A',
             }}
-          >
-            <View
-              style={{
-                width: Math.round(4 * scale),
-                height: Math.round(4 * scale),
-                backgroundColor: '#FFE08A',
-              }}
-            />
-          </View>
-        ))}
+          />
+        </View>
+      ))}
       <Ambient
         scale={scale}
         width={width}
@@ -858,6 +1140,42 @@ export function GardenWorld({
             }}
           >
             {tag.text}
+          </BodyText>
+        </View>
+      )}
+      {feedback && !napping && active && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.max(8, Math.min(width - 224, feedback.x * scale - 108)),
+            top: Math.max(
+              8,
+              Math.min(
+                height - 94,
+                feedback.kind === 'pat' || feedback.y < 90
+                  ? feedback.y * scale + 12
+                  : feedback.y * scale - 86,
+              ),
+            ),
+            width: Math.min(width - 16, 216),
+            zIndex: 999,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            borderWidth: 2,
+            borderColor: c.outline,
+            borderRadius: 12,
+            backgroundColor: c.paper,
+            boxShadow: '0 3px 0 rgba(74,59,53,0.22)',
+          }}
+        >
+          <BodyText
+            role="status"
+            aria-live="polite"
+            accessibilityLiveRegion="polite"
+            style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13, lineHeight: 18 }}
+          >
+            {feedback.text}
           </BodyText>
         </View>
       )}

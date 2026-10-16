@@ -32,6 +32,10 @@ def reading_nook() -> Canvas:
     cv.hline(5, 19, 15, WOOD[2])
     cv.set(5, 20, WOOD[0])
     cv.set(19, 20, WOOD[0])
+    # A rail knot and small brass screws make the bench built, rather than flat.
+    cv.set(5, 10, CREAM[1])
+    cv.set(20, 10, CREAM[1])
+    cv.hline(15, 11, 3, WOOD[1])
     cv.rect(3, 15, 19, 3, WOOD[2])
     cv.hline(3, 15, 19, WOOD[4])
     cv.hline(3, 17, 19, WOOD[1])
@@ -46,6 +50,8 @@ def reading_nook() -> Canvas:
     cv.vline(11, 12, 2, NAP[4])
     cv.set(6, 13, CREAM[2])
     cv.set(9, 13, NAP[4])
+    cv.set(7, 12, NAP[2])
+    cv.set(8, 12, CREAM[2])  # embroidered little leaf on the cushion
 
     # Open book in shallow perspective; separate page planes meet at a dark crease.
     cv.hline(15, 10, 5, WOOD[0])
@@ -78,6 +84,13 @@ def reading_nook() -> Canvas:
     for x, y in ((24, 4), (23, 5), (25, 5), (24, 6)):
         cv.set(x, y, NAP[3] if x > 24 else NAP[4])
     cv.set(24, 5, '#F2D16B')
+
+    # A mug on a tiny shelf, with its loop handle open to the background.
+    cv.hline(2, 7, 5, WOOD[2])
+    cv.rect(3, 4, 3, 3, TEAL[2])
+    cv.hline(3, 4, 3, TEAL[4])
+    cv.set(6, 5, TEAL[1]); cv.set(6, 6, TEAL[1])
+    cv.set(3, 6, TEAL[1])
 
     cv.outline(INK)
     cv.shadow(13, 22, 10, 1, alpha=55)
@@ -117,6 +130,33 @@ def watering_can() -> Canvas:
     cv.set(5, 6, TEAL[4])
     cv.vline(5, 7, 2, TEAL[3])
     cv.set(9, 8, CREAM[1])  # one small brass rivet
+    cv.set(7, 6, TEAL[3])
+    cv.set(7, 7, TEAL[1]); cv.set(8, 6, TEAL[1])  # stamped leaf emblem
     cv.hline(5, 10, 5, TEAL[0])
     cv.shadow(8, 11, 4, 1, alpha=60)
+    return cv
+
+
+def frog() -> Canvas:
+    """A tiny pond keeper: bright brow, gold eyes and broad webbed feet.
+
+    The app places this sprite over a lily pad after an ordinary pond visit.
+    Twelve native pixels wide keeps its detail in scale with the garden props.
+    """
+    cv = Canvas(12, 10)
+    # Broad feet establish a stable silhouette on the pad.
+    cv.hline(1, 8, 4, LEAF[1]); cv.hline(8, 8, 3, LEAF[0])
+    cv.set(1, 7, LEAF[3]); cv.set(10, 7, LEAF[2])
+    cv.rect(3, 4, 6, 4, LEAF[2])
+    cv.hline(3, 4, 6, LEAF[3]); cv.hline(4, 7, 4, LEAF[1])
+    cv.rect(3, 2, 7, 4, LEAF[3])
+    cv.hline(4, 1, 5, LEAF[3]); cv.hline(3, 3, 5, LEAF[4])
+    # Separate raised eyes, with the left brow catching the upper-left light.
+    cv.rect(3, 1, 2, 3, LEAF[4]); cv.rect(8, 1, 2, 3, LEAF[3])
+    cv.set(3, 2, '#E9D58B'); cv.set(8, 2, '#D1B866')
+    cv.set(4, 2, INK); cv.set(9, 2, INK)
+    cv.hline(5, 5, 3, LEAF[1]); cv.set(8, 4, LEAF[1])
+    cv.hline(5, 6, 3, CREAM[2])
+    cv.set(4, 4, RED[4]); cv.set(9, 4, RED[3])
+    cv.outline(LEAF[0])
     return cv

@@ -37,17 +37,20 @@ export default function TabLayout() {
             borderTopWidth: 2,
             borderColor: c.outline,
             height: gameLayout.dockHeight,
-            paddingTop: 8,
-            paddingBottom: 8,
+            paddingTop: 6,
+            paddingBottom: 6,
             boxShadow: '0 3px 0 rgba(74,59,53,.25), 0 8px 16px rgba(0,0,0,.08)',
           },
           tabBarActiveTintColor: c.ink,
           tabBarInactiveTintColor: c.shade,
+          tabBarLabelPosition: 'below-icon',
+          tabBarHideOnKeyboard: true,
+          tabBarItemStyle: { minHeight: 44, borderRadius: 16, marginHorizontal: 2 },
           tabBarLabelStyle: {
             fontFamily: 'Nunito_800ExtraBold',
             fontSize: 12,
             lineHeight: 16,
-            marginTop: 0,
+            marginTop: 3,
           },
         }}
         screenListeners={({ navigation }) => ({

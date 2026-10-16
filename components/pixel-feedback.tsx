@@ -216,10 +216,15 @@ export function PixelTabIcon({
   const motion = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
   return (
     <Animated.View
+      accessible={false}
+      aria-hidden
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
       style={[
         {
           width: 40,
           height: 34,
+          opacity: focused ? 1 : 0.65,
           borderRadius: 17,
           alignItems: 'center',
           justifyContent: 'center',
