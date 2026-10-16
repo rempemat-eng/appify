@@ -23,9 +23,10 @@ import { guardianPlayer } from '@/lib/visitors';
 import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
-import { FloatingZ, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
+import { Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
 import { grasslings, growthStage } from '@/lib/grasslings';
+import { GardenWorld } from '@/components/garden-world';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
@@ -248,9 +249,7 @@ function ScreenOff() {
     : 0;
   const m = missions.find((x) => x.id === p.mission_id);
   const guardian = guardianPlayer(p);
-  const napPetSize = 128;
-  const [napSceneHeight, setNapSceneHeight] = useState(360);
-  const napPetTop = napSceneHeight * 0.74 - (napPetSize * 29) / 32;
+  const [napWidth, setNapWidth] = useState(0);
   return (
     <View
       onStartShouldSetResponderCapture={() => {
@@ -387,80 +386,58 @@ function ScreenOff() {
             </PixelScene>
           ) : (
             <View
-              onLayout={(event) => setNapSceneHeight(event.nativeEvent.layout.height)}
-              style={{ width: '100%', flex: 1, minHeight: 360 }}
+              onLayout={(event) => setNapWidth(event.nativeEvent.layout.width)}
+              style={{ width: '100%', alignItems: 'center', gap: 12 }}
             >
-              <PixelScene
-                kind="night"
-                species={guardian.species}
-                level={p.level}
-                height={napSceneHeight}
-                groundInset={napSceneHeight * 0.4}
-                style={{ width: '100%', flex: 1, borderWidth: 0, borderRadius: 0 }}
-              >
+              {napWidth > 0 && (
                 <View
                   style={{
-                    position: 'absolute',
-                    top: napPetTop - 8,
-                    alignSelf: 'center',
+                    borderRadius: 18,
+                    overflow: 'hidden',
+                    borderWidth: 2,
+                    borderColor: c.napOutline,
                   }}
                 >
-                  <FloatingZ />
+                  <GardenWorld
+                    width={napWidth - 4}
+                    player={p}
+                    grumpy={false}
+                    sleepy={false}
+                    napping
+                  />
                 </View>
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: napPetTop,
-                    alignSelf: 'center',
-                    flexDirection: 'row',
-                    justifyContent: 'center',
-                    gap: 8,
-                  }}
-                >
+              )}
+              {togetherId && rival && (
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <Pet
-                    species={guardian.species}
-                    visitor={guardian.guardian}
-                    level={p.level}
-                    hat={p.hat}
+                    species={guardianPlayer(rival).species}
+                    visitor={guardianPlayer(rival).guardian}
+                    level={rival.level}
+                    hat={rival.hat}
                     sleeping
                     curled
                     bob={false}
                     groundShadow={false}
-                    size={napPetSize}
+                    size={64}
                   />
-                  {togetherId && rival && (
-                    <Pet
-                      species={guardianPlayer(rival).species}
-                      visitor={guardianPlayer(rival).guardian}
-                      level={rival.level}
-                      hat={rival.hat}
-                      sleeping
-                      curled
-                      bob={false}
-                      groundShadow={false}
-                      size={128}
-                    />
-                  )}
+                  <BodyText style={{ color: c.paper }}>{rival.pet_name} is napping too</BodyText>
                 </View>
-                <Pulse
-                  active
-                  color={c.gold}
-                  style={{
-                    position: 'absolute',
-                    bottom: 8,
-                    alignSelf: 'center',
-                    padding: 8,
-                    borderRadius: 14,
-                    borderWidth: 2,
-                    borderColor: c.gold,
-                    backgroundColor: c.night,
-                  }}
-                >
-                  <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 22 }}>
-                    {`NAPPED ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
-                  </PixelText>
-                </Pulse>
-              </PixelScene>
+              )}
+              <Pulse
+                active
+                color={c.gold}
+                style={{
+                  padding: 8,
+                  borderRadius: 14,
+                  borderWidth: 2,
+                  borderColor: c.gold,
+                  backgroundColor: c.night,
+                }}
+              >
+                <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 22 }}>
+                  {`NAPPED ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
+                </PixelText>
+              </Pulse>
             </View>
           )}
           {m ? (

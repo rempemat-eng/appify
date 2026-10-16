@@ -14,9 +14,10 @@ import * as Haptics from 'expo-haptics';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { playPaused, useGame, type Player } from '@/lib/game';
-import { guardianPlayer } from '@/lib/visitors';
+import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
 import { GARDEN, gardenHotspots, gardenObjects, gardenWalk } from '@/lib/garden-map';
 import { GuardianPet } from '@/components/guardian-pet';
+import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 
 import ground0 from '@/assets/garden/ground-0.png';
@@ -64,6 +65,7 @@ type Point = { x: number; y: number };
 const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
 const START: Point = { x: 96, y: 112 };
+const BED: Point = { x: 73, y: 76 };
 
 // ---- walk grid (4px cells, '#' = blocked) -----------------------------------
 const rows = gardenWalk.length;
@@ -148,6 +150,12 @@ function randomSpot(near: Point, radius: number): Point {
   return near;
 }
 
+const companionSpots: Point[] = [
+  { x: 74, y: 150 },
+  { x: 160, y: 104 },
+  { x: 30, y: 108 },
+];
+
 const lines: Partial<Record<Action, string>> = {
   pond: 'a frog said hi. we are friends now.',
 };
@@ -186,6 +194,111 @@ function Sprite({
   );
 }
 
+// ---- ambient life (own clock, so only this layer re-renders) --------------
+function Ambient({
+  scale,
+  width,
+  height,
+  rain,
+  night,
+  day,
+  reduced,
+}: {
+  scale: number;
+  width: number;
+  height: number;
+  rain: boolean;
+  night: boolean;
+  day: boolean;
+  reduced: boolean;
+}) {
+  const [t, setT] = useState(0);
+  useEffect(() => {
+    if (reduced) return undefined;
+    const timer = setInterval(() => setT((v) => v + 1), 110);
+    return () => clearInterval(timer);
+  }, [reduced]);
+  const u = Math.max(1, Math.round(scale)); // one art pixel on screen
+  const drops = rain
+    ? Array.from({ length: 34 }, (_, i) => {
+        const x = (i * 53 + Math.floor(i / 3) * 17) % GARDEN.width;
+        const y = ((i * 41 + t * 7) % (GARDEN.height + 20)) - 10;
+        return { x, y, i };
+      })
+    : [];
+  const flies = night
+    ? Array.from({ length: 7 }, (_, i) => ({
+        x: 30 + ((i * 47) % 140) + Math.sin(t / 14 + i) * 8,
+        y: 70 + ((i * 29) % 80) + Math.cos(t / 17 + i * 2) * 6,
+        on: (t + i * 5) % 22 < 14,
+      }))
+    : [];
+  const butterflies = day
+    ? [0, 1].map((i) => ({
+        x: 142 + Math.cos(t / 18 + i * 3) * (16 + i * 6),
+        y: 112 + Math.sin(t / 11 + i * 2) * 9 - 6,
+        flap: (t + i) % 4 < 2,
+        color: i ? '#F2D16B' : '#CFC4EC',
+      }))
+    : [];
+  return (
+    <View
+      pointerEvents="none"
+      style={{ position: 'absolute', left: 0, top: 0, width, height, zIndex: 950 }}
+    >
+      {drops.map((d) => (
+        <View
+          key={d.i}
+          style={{
+            position: 'absolute',
+            left: Math.round(d.x * scale),
+            top: Math.round(d.y * scale),
+            width: u,
+            height: u * 4,
+            backgroundColor: 'rgba(214,232,244,0.75)',
+          }}
+        />
+      ))}
+      {flies.map((f, i) =>
+        f.on ? (
+          <View
+            key={i}
+            style={{
+              position: 'absolute',
+              left: Math.round(f.x * scale) - u,
+              top: Math.round(f.y * scale) - u,
+              width: u * 3,
+              height: u * 3,
+              borderRadius: u * 2,
+              backgroundColor: 'rgba(246,231,140,0.35)',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <View style={{ width: u, height: u, backgroundColor: '#FFF4B0' }} />
+          </View>
+        ) : null,
+      )}
+      {butterflies.map((b, i) => (
+        <View
+          key={i}
+          style={{
+            position: 'absolute',
+            left: Math.round(b.x * scale),
+            top: Math.round(b.y * scale),
+            flexDirection: 'row',
+            alignItems: 'center',
+          }}
+        >
+          <View style={{ width: u * 2, height: b.flap ? u * 3 : u, backgroundColor: b.color }} />
+          <View style={{ width: u, height: u * 2, backgroundColor: '#2A2421' }} />
+          <View style={{ width: u * 2, height: b.flap ? u * 3 : u, backgroundColor: b.color }} />
+        </View>
+      ))}
+    </View>
+  );
+}
+
 // ---- the world -----------------------------------------------------------
 export function GardenWorld({
   width,
@@ -193,20 +306,28 @@ export function GardenWorld({
   grumpy,
   sleepy,
   onFeed,
+  napping = false,
 }: {
   width: number;
   player: Player;
   grumpy: boolean;
   sleepy: boolean;
-  onFeed: () => void;
+  onFeed?: () => void;
+  /** Night garden for the nap screen: pet asleep in its bed, no interaction. */
+  napping?: boolean;
 }) {
   const reduced = useReducedMotion();
   const scale = width / GARDEN.width;
   const height = Math.round(GARDEN.height * scale);
   const petPx = Math.max(32, Math.round((32 * scale) / 32) * 32); // matches Pet's snapping
-  const px = useSharedValue(START.x);
-  const py = useSharedValue(START.y);
-  const pos = useRef<Point>({ ...START });
+  const home = napping ? BED : START;
+  const px = useSharedValue(home.x);
+  const py = useSharedValue(home.y);
+  const pos = useRef<Point>({ ...home });
+  const hour = new Date(useGame((s) => s.now)).getHours();
+  const night = napping || hour < 6 || hour >= 21;
+  const dusk = !night && hour >= 17;
+  const dawn = !night && hour < 9;
   const [walking, setWalking] = useState(false);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
   const [frame, setFrame] = useState(0);
@@ -314,7 +435,7 @@ export function GardenWorld({
           });
           setEmote('…');
         } else {
-          onFeed();
+          onFeed?.();
           setEmote('♥');
         }
         break;
@@ -331,7 +452,7 @@ export function GardenWorld({
     walkRef.current = walkTo;
   });
   useEffect(() => {
-    if (reduced || sleepy) return undefined;
+    if (reduced || sleepy || napping) return undefined;
     let timer: ReturnType<typeof setTimeout>;
     const tick = () => {
       if (!busy.current && clock() - lastTouch.current > 6000) {
@@ -346,14 +467,14 @@ export function GardenWorld({
     };
     timer = setTimeout(tick, 2500);
     return () => clearTimeout(timer);
-  }, [reduced, sleepy, grumpy]);
+  }, [reduced, sleepy, grumpy, napping]);
 
   const petStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: Math.round(px.value * scale - petPx / 2) },
       { translateY: Math.round(py.value * scale - petPx * (30 / 32)) },
     ],
-    zIndex: Math.round(py.value),
+    zIndex: napping ? 905 : Math.round(py.value),
   }));
 
   function onGroundPress(e: { nativeEvent: { locationX: number; locationY: number } }) {
@@ -369,11 +490,15 @@ export function GardenWorld({
   }
 
   const guardian = guardianPlayer(player);
+  const companions = collectionOf(player)
+    .filter((v) => v.befriendedAt !== null && v.id !== player.guardian)
+    .slice(0, 3);
   return (
     <View
       // @ts-expect-error dataSet is a react-native-web prop (sets data-pixel for crisp CSS scaling)
       dataSet={{ pixel: 'true' }}
-      style={{ width, height, overflow: 'hidden', backgroundColor: '#62A853' }}
+      pointerEvents={napping ? 'none' : 'auto'}
+      style={{ width, height, overflow: 'hidden', backgroundColor: '#62A853', zIndex: 0 }}
     >
       <Pressable
         accessibilityLabel={`Your garden. Tap to walk ${guardian.pet_name} around.`}
@@ -468,16 +593,108 @@ export function GardenWorld({
           player={player}
           size={petPx}
           facing={facing}
-          walking={walking}
-          grumpy={grumpy}
+          walking={walking && !napping}
+          grumpy={grumpy && !napping}
           yawning={sleepy}
-          bob={!walking}
+          sleeping={napping}
+          curled={napping}
+          groundShadow={!napping}
+          bob={!walking && !napping}
           onPress={() => {
             lastTouch.current = clock();
             useGame.setState({ voice: grumpy ? 'hmph. ok. one pat.' : 'hehe. again.' });
           }}
         />
       </Animated.View>
+      {companions.map((v, i) => (
+        <View
+          key={v.id}
+          style={{
+            position: 'absolute',
+            left: Math.round(companionSpots[i].x * scale - petPx / 4),
+            top: Math.round(companionSpots[i].y * scale - petPx / 2),
+            zIndex: companionSpots[i].y,
+          }}
+        >
+          <Pet
+            visitor={v.id}
+            size={Math.max(32, petPx / 2)}
+            sleeping={napping}
+            facing={i % 2 ? 'left' : 'right'}
+            bob={!napping}
+            onPress={() =>
+              useGame.setState({
+                voice: `${visitorInfo(v.id).name.toLowerCase()} waves a leaf at you.`,
+              })
+            }
+          />
+        </View>
+      ))}
+      {(night || dusk || dawn) && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width,
+            height,
+            zIndex: 900,
+            backgroundColor: night
+              ? 'rgba(22,28,66,0.42)'
+              : dusk
+                ? 'rgba(240,128,70,0.16)'
+                : 'rgba(255,200,150,0.12)',
+          }}
+        />
+      )}
+      {night && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.round(48 * scale),
+            top: Math.round(54 * scale),
+            width: Math.round(8 * scale),
+            height: Math.round(8 * scale),
+            borderRadius: Math.round(4 * scale),
+            backgroundColor: 'rgba(255,214,120,0.35)',
+            zIndex: 901,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <View
+            style={{
+              width: Math.round(4 * scale),
+              height: Math.round(4 * scale),
+              backgroundColor: '#FFE08A',
+            }}
+          />
+        </View>
+      )}
+      <Ambient
+        scale={scale}
+        width={width}
+        height={height}
+        rain={grumpy && !napping}
+        night={night}
+        day={!night && !grumpy}
+        reduced={reduced}
+      />
+      {napping && (
+        <View
+          pointerEvents="none"
+          style={{
+            position: 'absolute',
+            left: Math.round(BED.x * scale),
+            top: Math.round(BED.y * scale - petPx * 1.1),
+            zIndex: 990,
+          }}
+        >
+          <FloatingZ />
+        </View>
+      )}
       {tag && (
         <View
           pointerEvents="none"
