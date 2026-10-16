@@ -14,7 +14,7 @@ import { router, useIsFocused } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowUp, ArrowDown, Bot, Heart } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
-import { backendConfigured, backendUnavailableMessage } from '@/lib/bilt';
+import { backendConfigured } from '@/lib/bilt';
 import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
@@ -696,6 +696,32 @@ export function ArenaScreen() {
     await useGame.getState().startBattle(target);
     setRaiding(null);
   }
+  const practicePanel = (
+    <View style={{ marginTop: backendConfigured ? 24 : 0, gap: 12 }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Bot color={c.ink} size={24} />
+        <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold' }}>Sparring</BodyText>
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <Pet dave level={p.level} size={96} bob={false} />
+        <View style={{ flex: 1 }}>
+          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>DOOMSCROLL DAVE</BodyText>
+          <BodyText>LV {p.level} · MOOD 50</BodyText>
+        </View>
+      </View>
+      {wins >= 3 && <BodyText>Dave is tired. Come back tomorrow.</BodyText>}
+      <PixelButton
+        label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
+        disabled={paused}
+        onPress={() => void useGame.getState().startBattle(bot(p), true)}
+      />
+      <PixelButton
+        label="SIMULATE INCOMING RAID"
+        light
+        onPress={() => useGame.getState().incomingBot()}
+      />
+    </View>
+  );
   const header = (
     <View style={{ gap: 12 }}>
       <PlayPause />
@@ -704,13 +730,14 @@ export function ArenaScreen() {
         {backendConfigured ? `RAIDS LEFT TODAY: ${Math.max(0, 3 - raids)}` : 'PRACTICE ARENA'}
       </BodyText>
       <PixelScene kind="town" height={160} />
-      <GardenTip id="arena" eligible={focused} />
+      {backendConfigured && <GardenTip id="arena" eligible={focused} />}
       {!backendConfigured && (
-        <CozyPanel style={{ padding: 16, gap: 8 }}>
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>Your local garden</BodyText>
-          <BodyText>{backendUnavailableMessage}</BodyText>
-        </CozyPanel>
+        <BodyText style={{ fontSize: 12 }}>
+          Practice with Dave here. Pairing, player raids and Together naps are unavailable in this
+          local build.
+        </BodyText>
       )}
+      {!backendConfigured && practicePanel}
       {backendConfigured && (
         <CozyPanel style={{ padding: 16, gap: 12 }}>
           <FriendCode code={p.code} />
@@ -774,13 +801,12 @@ export function ArenaScreen() {
           onPress={() => void useGame.getState().sync()}
         />
       )}
-      {!rivals.length && (
+      {backendConfigured && !rivals.length && (
         <View style={{ alignItems: 'center', gap: 12, paddingVertical: 12 }}>
           <GuardianPet player={p} size={64} />
           <BodyText style={{ textAlign: 'center' }}>
-            {backendConfigured
-              ? 'Swap codes with a friend and add their code above. Once paired, use their invite button to start a Together nap.'
-              : 'Try a practice battle with Dave below. Your garden progress stays on this device.'}
+            Swap codes with a friend and add their code above. Once paired, use their invite button
+            to start a Together nap.
           </BodyText>
           {backendConfigured && (
             <PixelButton
@@ -796,32 +822,6 @@ export function ArenaScreen() {
           )}
         </View>
       )}
-    </View>
-  );
-  const footer = (
-    <View style={{ marginTop: 24, gap: 12 }}>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Bot color={c.ink} size={24} />
-        <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold' }}>Sparring</BodyText>
-      </View>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Pet dave level={p.level} size={96} bob={false} />
-        <View style={{ flex: 1 }}>
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>DOOMSCROLL DAVE</BodyText>
-          <BodyText>LV {p.level} · MOOD 50</BodyText>
-        </View>
-      </View>
-      {wins >= 3 && <BodyText>Dave is tired. Come back tomorrow.</BodyText>}
-      <PixelButton
-        label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
-        disabled={paused}
-        onPress={() => void useGame.getState().startBattle(bot(p), true)}
-      />
-      <PixelButton
-        label="SIMULATE INCOMING RAID"
-        light
-        onPress={() => useGame.getState().incomingBot()}
-      />
     </View>
   );
   return (
@@ -842,7 +842,7 @@ export function ArenaScreen() {
           ...gameColumn,
         }}
         ListHeaderComponent={header}
-        ListFooterComponent={footer}
+        ListFooterComponent={backendConfigured ? practicePanel : null}
         renderItem={({ item, index }) => (
           <RivalRow
             p={item}

@@ -258,7 +258,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
     const next = beginTurn(current, side);
     publish(next.state);
     if (next.state.timedOut) {
-      record('RAID TIMED OUT');
+      record(request.practice ? 'SPARRING REACHED THE ROUND LIMIT' : 'RAID TIMED OUT');
       changePhase('end');
       return;
     }
@@ -281,7 +281,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         changePhase('block');
       } else changePhase('resolve');
     }
-  }, [active, changePhase, publish, record, target]);
+  }, [active, changePhase, publish, record, request.practice, target]);
   useEffect(() => {
     if (phase !== 'timing' || timingLesson) return undefined;
     let frame = 0;

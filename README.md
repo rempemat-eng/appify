@@ -19,7 +19,7 @@ To enable online play, supply both variables with the existing project's genuine
 
 ## Shared browser play-testing
 
-The repository includes `vercel.json` for an HTTPS web preview. Import `rempemat-eng/appify` into Vercel and deploy the `codex/daily-rhythm-and-consistency` branch. If the initial import builds `main`, use **Deployments → Create Deployment** to select the review branch before testing.
+The repository includes `vercel.json` for an HTTPS web preview. Connect Vercel to `rempemat-eng/appify`. Deploy `main` for the latest merged app, or choose the active pull request's head branch under **Deployments → Create Deployment** to test proposed changes. The branch must exist in the repository connected to that Vercel project.
 
 Use the repository root, the **Other** framework preset and Node.js 24. The configuration installs with `npm ci`, builds with `npm run export:web`, serves `dist` and sends client routes back to the app so refreshing `/journal` works. Leave both Bilt backend variables unset for local garden testing.
 
