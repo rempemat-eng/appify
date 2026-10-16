@@ -71,6 +71,7 @@ FLOWER_BEDS = [(126, 112, 34, 14), (148, 140, 22, 10)]  # x, y, w, h (dark soil 
 
 def draw_terrain(frame: int) -> Canvas:
     cv = Canvas(W, H)
+    phase = frame % 4
     # Broad, close-valued grass masses. Detail gathers near the garden's edges,
     # leaving the companion's clearing quieter than the plants and buildings.
     for y in range(H):
@@ -88,7 +89,10 @@ def draw_terrain(frame: int) -> Canvas:
             cluster = smooth_noise(x, y, 25, 63) > 0.57
             density = 0.06 if clearing else 0.42 if edge else 0.28 if cluster else 0.10
             if noise2(tx, ty, 3) < density:
-                sway = 1 if (frame and noise2(tx, ty, 6) < 0.5) else 0
+                # A gentle two-pose sway held for two water frames. Adjacent
+                # tufts start on different halves of the cycle, not one twitch.
+                grass_phase = (phase // 2 + int(noise2(tx, ty, 64) * 2)) % 2
+                sway = 1 if (grass_phase and noise2(tx, ty, 6) < 0.22) else 0
                 cv.set(x, y + 2, G[1]); cv.set(x + 2, y + 2, G[1])
                 cv.set(x + 1, y + 3, G[1])
                 cv.set(x + sway, y + 1, G[1]); cv.set(x + 2 + sway, y + 1, G[1])
@@ -111,14 +115,21 @@ def draw_terrain(frame: int) -> Canvas:
         elif (x, y - 2) not in POND:
             col = WTR[1]
         cv.set(x, y, col)
-    # water ripples (animated)
+    # Four-frame, one-pixel ripple loops. Each little arc advances on its own
+    # phase, so the pond breathes without the banks or lily pads sliding about.
+    # Color and arc length ease around the cycle instead of blinking on/off.
     for i in range(14):
         rx = POND_C[0] - 20 + int(noise2(i, 1, 30) * 40)
-        ry = POND_C[1] - 8 + int(noise2(i, 2, 30) * 16) + (1 if frame and i % 2 else 0)
-        if (rx, ry) in POND and (rx + 3, ry) in POND:
-            cv.hline(rx + (frame if i % 3 else 0), ry, 3, WTR[3])
-            if i % 4 == 0:
-                cv.set(rx + 1, ry, WTR[4])
+        ry = POND_C[1] - 8 + int(noise2(i, 2, 30) * 16)
+        ripple_phase = (phase + i) % 4
+        dx, dy = ((0, 0), (1, 0), (1, 1), (0, 1))[ripple_phase]
+        length = (3, 4, 3, 2)[ripple_phase]
+        col = WTR[3] if ripple_phase in (0, 1, 2) else '#85BABF'
+        for step in range(length):
+            if (rx + dx + step, ry + dy) in POND:
+                cv.set(rx + dx + step, ry + dy, col)
+        if i % 4 == 0 and ripple_phase in (1, 2) and (rx + dx + 1, ry + dy) in POND:
+            cv.set(rx + dx + 1, ry + dy, WTR[4])
     # Lily pads have a cut edge, a central vein and different sizes. The larger
     # low pad leaves a clear perch for the pond's shy resident.
     for (lx, ly) in ((30, 128), (52, 138), (46, 124), (34, 132)):
@@ -683,7 +694,7 @@ def main():
         'reading_nook': reading_nook(), 'watering_can': watering_can(), 'lantern': leaf_lantern(),
         'frog': frog(),
     }
-    for frame in (0, 1):
+    for frame in range(4):
         terrain = draw_terrain(frame)
         # bake soft shadows for every object into the terrain
         for (_id, key, x, y, _a) in OBJECTS:

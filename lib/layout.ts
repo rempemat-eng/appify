@@ -3,7 +3,7 @@ import type { ViewStyle } from 'react-native';
 export const gameLayout = {
   maxWidth: 640,
   gutter: 16,
-  dockHeight: 84,
+  dockHeight: 76,
   dockBottomGap: 12,
 } as const;
 

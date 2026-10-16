@@ -30,6 +30,8 @@ import { GardenReactions, type GardenReaction } from '@/components/garden-reacti
 
 import ground0 from '@/assets/garden/ground-0.png';
 import ground1 from '@/assets/garden/ground-1.png';
+import ground2 from '@/assets/garden/ground-2.png';
+import ground3 from '@/assets/garden/ground-3.png';
 import treeImg from '@/assets/garden/tree.png';
 import treeSmallImg from '@/assets/garden/tree_small.png';
 import treeAutumnImg from '@/assets/garden/tree_autumn.png';
@@ -80,6 +82,7 @@ const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
 const START: Point = { x: 96, y: 112 };
 const BED: Point = { x: 73, y: 76 };
+const groundFrames = [ground0, ground1, ground2, ground3];
 
 // ---- walk grid (4px cells, '#' = blocked) -----------------------------------
 const rows = gardenWalk.length;
@@ -263,19 +266,38 @@ function Ambient({
     : [];
   const flies = night
     ? Array.from({ length: 7 }, (_, i) => ({
+        id: `firefly-${i}`,
         x: 30 + ((i * 47) % 140) + Math.sin(t / 14 + i) * 8,
         y: 70 + ((i * 29) % 80) + Math.cos(t / 17 + i * 2) * 6,
-        on: (t + i * 5) % 22 < 14,
+        // A slow glow has no abrupt on/off frame or rapid flashing.
+        opacity: 0.2 + ((Math.sin((t + i * 7) / 6) + 1) / 2) * 0.7,
       }))
     : [];
   const butterflies = day
     ? [0, 1].map((i) => ({
         x: 142 + Math.cos(t / 18 + i * 3) * (16 + i * 6),
         y: 112 + Math.sin(t / 11 + i * 2) * 9 - 6,
-        flap: (t + i) % 4 < 2,
+        flap: (t + i * 2) % 6 < 3,
         color: i ? '#F2D16B' : '#CFC4EC',
       }))
     : [];
+  // Two small puffs share this layer's clock, rise once and dissolve. A long
+  // quiet gap keeps the chimney from becoming a constant stream of particles.
+  const smoke =
+    !reduced && active
+      ? [0, 10]
+          .map((delay) => {
+            const age = (t + 72 - delay) % 72;
+            return {
+              id: `smoke-${delay}`,
+              age,
+              x: 52 + Math.floor(age / 6),
+              y: 29 - Math.floor(age / 2),
+              opacity: Math.min(0.25, age / 12, Math.max(0, (22 - age) / 32)),
+            };
+          })
+          .filter((puff) => puff.age < 22)
+      : [];
   return (
     <View
       pointerEvents="none"
@@ -294,29 +316,27 @@ function Ambient({
           }}
         />
       ))}
-      {flies.map((f, i) =>
-        f.on ? (
-          <View
-            key={i}
-            style={{
-              position: 'absolute',
-              left: Math.round(f.x * scale) - u,
-              top: Math.round(f.y * scale) - u,
-              width: u * 3,
-              height: u * 3,
-              borderRadius: u * 2,
-              backgroundColor: 'rgba(246,231,140,0.35)',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <View style={{ width: u, height: u, backgroundColor: '#FFF4B0' }} />
-          </View>
-        ) : null,
-      )}
-      {butterflies.map((b, i) => (
+      {flies.map((f) => (
         <View
-          key={i}
+          key={f.id}
+          style={{
+            position: 'absolute',
+            left: Math.round(f.x * scale) - u,
+            top: Math.round(f.y * scale) - u,
+            width: u * 3,
+            height: u * 3,
+            backgroundColor: 'rgba(246,231,140,0.28)',
+            opacity: f.opacity,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <View style={{ width: u, height: u, backgroundColor: '#FFF4B0' }} />
+        </View>
+      ))}
+      {butterflies.map((b) => (
+        <View
+          key={b.color}
           style={{
             position: 'absolute',
             left: Math.round(b.x * scale),
@@ -328,6 +348,38 @@ function Ambient({
           <View style={{ width: u * 2, height: b.flap ? u * 3 : u, backgroundColor: b.color }} />
           <View style={{ width: u, height: u * 2, backgroundColor: '#2A2421' }} />
           <View style={{ width: u * 2, height: b.flap ? u * 3 : u, backgroundColor: b.color }} />
+        </View>
+      ))}
+      {smoke.map((puff) => (
+        <View
+          key={puff.id}
+          style={{
+            position: 'absolute',
+            left: Math.round(puff.x * scale),
+            top: Math.round(puff.y * scale),
+            width: Math.round(4 * scale),
+            height: Math.round(3 * scale),
+            opacity: puff.opacity,
+          }}
+        >
+          <View
+            style={{
+              position: 'absolute',
+              left: Math.round(scale),
+              width: Math.round(2 * scale),
+              height: Math.round(3 * scale),
+              backgroundColor: '#D3D8C9',
+            }}
+          />
+          <View
+            style={{
+              position: 'absolute',
+              top: Math.round(scale),
+              width: Math.round(4 * scale),
+              height: Math.round(scale),
+              backgroundColor: '#D3D8C9',
+            }}
+          />
         </View>
       ))}
     </View>
@@ -428,10 +480,10 @@ export function GardenWorld({
     [px, py],
   );
 
-  // grass sway + water shimmer: alternate the two ground frames
+  // Water has four calm phases; the grass artwork holds each pose for two.
   useEffect(() => {
     if (reduced || !active) return undefined;
-    const t = setInterval(() => setFrame((f) => 1 - f), 750);
+    const t = setInterval(() => setFrame((f) => (f + 1) % groundFrames.length), 400);
     return () => clearInterval(t);
   }, [reduced, active]);
 
@@ -724,7 +776,11 @@ export function GardenWorld({
         onPress={onGroundPress}
         style={{ position: 'absolute', left: 0, top: 0, width, height }}
       >
-        <Image source={frame ? ground1 : ground0} resizeMode="stretch" style={{ width, height }} />
+        <Image
+          source={groundFrames[reduced ? 0 : frame]}
+          resizeMode="stretch"
+          style={{ width, height }}
+        />
       </Pressable>
       {destination && !napping && active && (
         <View
@@ -896,6 +952,7 @@ export function GardenWorld({
           </View>
         )}
         <GuardianPet
+          active={active}
           player={player}
           size={petPx}
           facing={facing}
@@ -920,6 +977,7 @@ export function GardenWorld({
           }}
         >
           <Pet
+            active={active}
             visitor={v.id}
             size={Math.max(32, petPx / 2)}
             sleeping={napping}

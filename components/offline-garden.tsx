@@ -26,48 +26,57 @@ export function PlayMeter() {
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={`${left} seconds of play left. Long press to reset demo play budget.`}
+      accessibilityHint="Opens the guide to the real-time play allowance and simulated break clock."
+      onPress={() => useGame.setState({ guideOpen: true })}
       onLongPress={() => useGame.getState().resetBudget()}
       style={{
         minHeight: 44,
-        paddingHorizontal: 6,
-        borderRadius: 999,
-        backgroundColor: c.paper,
-        borderWidth: 1,
-        borderColor: c.outline,
-        flexDirection: 'row',
+        minWidth: 62,
+        justifyContent: 'center',
         alignItems: 'center',
-        gap: 4,
+        gap: 1,
       }}
     >
-      <Svg width={16} height={16} viewBox="0 0 8 8">
-        <Rect x={1} y={0} width={6} height={1} fill={c.ink} />
-        <Rect x={1} y={7} width={6} height={1} fill={c.ink} />
-        {[1, 2, 3, 4, 5, 6].map((y) => {
-          const x = y < 4 ? y : 7 - y;
-          return (
-            <Fragment key={y}>
-              <Rect x={x} y={y} width={1} height={1} fill={c.ink} />
-              <Rect x={7 - x} y={y} width={1} height={1} fill={c.ink} />
-            </Fragment>
-          );
-        })}
-        <Rect x={2} y={2} width={4} height={1} fill={left ? c.focus : c.error} />
-        <Rect x={3} y={3} width={2} height={2} fill={left ? c.focus : c.error} />
-        <Rect x={2} y={6} width={4} height={1} fill={left ? c.focus : c.error} />
-      </Svg>
-      <View style={{ gap: 5 }}>
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 11 }}>
+      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 10, lineHeight: 12 }}>
+        PLAY LEFT
+      </BodyText>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+        <Svg width={16} height={16} viewBox="0 0 8 8">
+          <Rect x={1} y={0} width={6} height={1} fill={c.ink} />
+          <Rect x={1} y={7} width={6} height={1} fill={c.ink} />
+          {[1, 2, 3, 4, 5, 6].map((y) => {
+            const x = y < 4 ? y : 7 - y;
+            return (
+              <Fragment key={y}>
+                <Rect x={x} y={y} width={1} height={1} fill={c.ink} />
+                <Rect x={7 - x} y={y} width={1} height={1} fill={c.ink} />
+              </Fragment>
+            );
+          })}
+          <Rect x={2} y={2} width={4} height={1} fill={left ? c.focus : c.error} />
+          <Rect x={3} y={3} width={2} height={2} fill={left ? c.focus : c.error} />
+          <Rect x={2} y={6} width={4} height={1} fill={left ? c.focus : c.error} />
+        </Svg>
+        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 14, lineHeight: 18 }}>
           {clock(left)}
         </BodyText>
-        <View style={{ width: 46, height: 4, backgroundColor: c.stone }}>
-          <View
-            style={{
-              width: (46 * left) / 180,
-              height: 4,
-              backgroundColor: left ? c.moss : c.error,
-            }}
-          />
-        </View>
+      </View>
+      <View
+        style={{
+          width: 52,
+          height: 3,
+          borderRadius: 2,
+          overflow: 'hidden',
+          backgroundColor: c.faded,
+        }}
+      >
+        <View
+          style={{
+            width: (52 * left) / 180,
+            height: 3,
+            backgroundColor: left > 30 ? c.moss : left ? c.focus : c.error,
+          }}
+        />
       </View>
     </Pressable>
   );
