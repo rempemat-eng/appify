@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, View, type ColorValue, type ViewStyle } from 'react-native';
+import { Image, StyleSheet, View, type ColorValue, type ViewStyle } from 'react-native';
 import Svg, { G, Rect } from 'react-native-svg';
 import { useReducedMotion } from '@/lib/motion';
 import { propPixels, sceneColors as c, type PropKind } from '@/lib/scene-art';
 import { status, useGame, type Player } from '@/lib/game';
+import battleDay from '@/assets/battle/backdrop-day.png';
+import battleNight from '@/assets/battle/backdrop-night.png';
+import battlePlatform from '@/assets/battle/platform.png';
 
 function Pixels({
   kind,
@@ -56,7 +59,11 @@ function mix(a: string, b: string, t: number) {
   if (!/^#[0-9a-f]{6}$/i.test(a) || !/^#[0-9a-f]{6}$/i.test(b)) return t < 0.5 ? a : b;
   const ch = (hex: string, i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16);
   return `#${[0, 1, 2]
-    .map((i) => Math.round(ch(a, i) + (ch(b, i) - ch(a, i)) * t).toString(16).padStart(2, '0'))
+    .map((i) =>
+      Math.round(ch(a, i) + (ch(b, i) - ch(a, i)) * t)
+        .toString(16)
+        .padStart(2, '0'),
+    )
     .join('')}`;
 }
 // Six stepped bands from sky[0] (top) through sky[1] to sky[2] (horizon).
@@ -504,45 +511,64 @@ export function PixelScene({
     </View>
   );
 }
-const signatureProp = (p: Player): PropKind =>
-  p.id === 'bot'
-    ? 'weed'
-    : p.species === 'BLOB'
-      ? 'mushroom'
-      : p.species === 'RAT'
-        ? 'signpost'
-        : 'stones';
-
-export function RaidGarden({ attacker, defender }: { attacker: Player; defender: Player }) {
-  const [width, setWidth] = useState(375);
-  const pixel = Math.max(1, Math.floor(width / 160));
+// DS-style battle field (scripts/art/battle.py): backdrop anchored to the stage's
+// bottom edge at an integer pixel scale, plus a grassy platform under each fighter.
+const BATTLE = { width: 216, height: 150, feet: 24, platformW: 64, platformH: 20 };
+export function RaidGarden({
+  pixel,
+  petSize,
+  inset = 12,
+}: {
+  attacker?: Player;
+  defender?: Player;
+  pixel: number;
+  petSize: number;
+  inset?: number;
+}) {
+  const hour = new Date(useGame((s) => s.now)).getHours();
+  const night = hour < 6 || hour >= 21;
+  const [stageHeight, setStageHeight] = useState(0);
+  // Backdrop pixels: as big as the layout's pixel size, but small enough that the
+  // horizon stays visible on short (laptop) stages.
+  const bgPixel = Math.max(1, Math.min(pixel, Math.floor((stageHeight || 9999) / 100)));
+  const bw = BATTLE.width * bgPixel;
+  const bh = BATTLE.height * bgPixel;
+  // Platforms follow the fighters' size and sit centred on their feet line.
+  const pw = Math.round(petSize * 0.8);
+  const ph = Math.round((pw * BATTLE.platformH) / BATTLE.platformW);
+  const platformBottom = BATTLE.feet * pixel - ph * 0.62;
   return (
     <View
-      onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
       pointerEvents="none"
-      style={StyleSheet.absoluteFill}
+      onLayout={(e) => setStageHeight(e.nativeEvent.layout.height)}
+      // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
+      dataSet={{ pixel: 'true' }}
+      style={[
+        StyleSheet.absoluteFill,
+        { backgroundColor: night ? '#1A2142' : '#A9D3E6', overflow: 'hidden' },
+      ]}
     >
-      <PixelScene
-        species={defender.species}
-        level={defender.level}
-        // Weeds show an exposed rival's garden in real raids; Dave's practice garden
-        // is always "exposed", so skip them there to keep the fighters readable.
-        player={defender.id === 'bot' ? undefined : defender}
-        hideSignposts
+      <Image
+        source={night ? battleNight : battleDay}
+        resizeMode="stretch"
         style={{
-          ...StyleSheet.absoluteFill,
-          height: '100%',
-          borderWidth: 0,
-          borderRadius: 0,
+          position: 'absolute',
+          bottom: 0,
+          left: '50%',
+          marginLeft: -bw / 2,
+          width: bw,
+          height: bh,
         }}
       />
-      <View style={{ position: 'absolute', left: 0, bottom: 41 * pixel }}>
-        <PixelProp kind={signatureProp(attacker)} size={12 * pixel} />
-      </View>
-      {(signatureProp(attacker) !== 'signpost' || signatureProp(defender) !== 'signpost') && (
-        <View style={{ position: 'absolute', right: 4, bottom: 39 * pixel }}>
-          <PixelProp kind={signatureProp(defender)} size={16 * pixel} />
-        </View>
+      {[{ left: inset + petSize / 2 - pw / 2 }, { right: inset + petSize / 2 - pw / 2 }].map(
+        (side, i) => (
+          <Image
+            key={i}
+            source={battlePlatform}
+            resizeMode="stretch"
+            style={{ position: 'absolute', bottom: platformBottom, width: pw, height: ph, ...side }}
+          />
+        ),
       )}
     </View>
   );

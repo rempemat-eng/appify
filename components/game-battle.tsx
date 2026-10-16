@@ -514,7 +514,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               paddingBottom: 24 * stagePixel - (petSize * 3) / 32,
             }}
           >
-            <RaidGarden attacker={player} defender={request.target} />
+            <RaidGarden pixel={stagePixel} petSize={petSize} />
             <Animated.View
               entering={reduced ? undefined : FadeIn.duration(150)}
               style={{
