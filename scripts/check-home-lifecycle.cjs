@@ -240,6 +240,11 @@ function visitorPresentationFixture(welcome = false) {
     if (id === '@/lib/visitors') return { collectionOf: (player) => player.collection, guardianPlayer: (player) => player, visitorInfo: (visitorId) => ({ id: visitorId, name: visitorId.toUpperCase() }) };
     if (id === '@/lib/cards') return { cards: {}, cardIds: [] };
     if (id === '@/lib/layout') return { gameLayout: { maxWidth: 640, gutter: 16 } };
+    if (id === '@/lib/world-catalogue') return load('lib/world-catalogue.ts', (dependency) => { throw new Error('Unexpected catalogue import: ' + dependency); });
+    if (id === '@/lib/scene-assets') return load('lib/scene-assets.ts', (asset) => {
+      if (asset.endsWith('.png')) return asset;
+      throw new Error('Unexpected scene asset import: ' + asset);
+    });
     if (id.startsWith('@/components/') || id === 'lucide-react-native') return boundary;
     throw new Error('Unexpected visitor presentation import: ' + id);
   }, clock.globals);

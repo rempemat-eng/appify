@@ -52,6 +52,8 @@ const paletteDeclaration = gameSource.match(/export const palette = \{[\s\S]*?\n
 assert(inkDeclaration && paletteDeclaration, 'game presentation palette declarations exist');
 const palette = evaluate(`${inkDeclaration}\n${paletteDeclaration}`).palette;
 modules['@/lib/game'] = { palette };
+modules['../art/materials.json'] = JSON.parse(read('art/materials.json'));
+modules['@/lib/art-direction'] = evaluate(read('lib/art-direction.ts'));
 const cozy = evaluate(read('lib/cozy.ts')).cozy;
 modules['@/lib/pet-sprites'] = evaluate(read('lib/pet-sprites.ts'));
 const { petPixels } = evaluate(read('lib/pet-art.ts'));

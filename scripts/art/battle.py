@@ -1,7 +1,8 @@
 """DS-style battle backdrop and fighter platforms for NapAttack.
 
 Run: python3 scripts/art/battle.py
-Writes assets/battle/{backdrop-day,backdrop-night,platform}.png (6x nearest).
+Writes assets/battle/{backdrop-day,backdrop-night,platform,platform-night}.png
+(6x nearest).
 The backdrop is anchored to the stage's bottom edge; fighters' feet stand
 FEET native pixels above it, which is where the platforms are centred.
 """
@@ -132,32 +133,39 @@ def backdrop(pal, night=False) -> Canvas:
     return cv
 
 
-def platform() -> Canvas:
-    """Oval grassy mound under each fighter: bright top, 3px dirt side, soft shadow."""
+def platform(pal=DAY, night=False) -> Canvas:
+    """The same mound in local light: grass rim, dirt side and a ground shadow.
+
+    The night soil shares the backdrop path's cool stone ramp. Keeping the
+    silhouette and texture fixed lets daylight and moonlight read as one place.
+    """
     w, h = 64, 20
     cv = Canvas(w, h)
     cx = w / 2
+    grass = pal['grass']
+    soil = ['#303442', '#4E4A5A'] if night else garden.P
+    shadow = (16, 28, 45, 80) if night else (40, 52, 36, 80)
     for (x, y) in oval(cx, 13, 32, 6):
-        cv.set(x, y, (40, 52, 36, 80))
+        cv.set(x, y, shadow)
     side = oval(cx, 10, 30, 7)
     for (x, y) in side:
-        cv.set(x, y, garden.P[0] if y > 12 else garden.P[1])
+        cv.set(x, y, soil[0] if y > 12 else soil[1])
     top = oval(cx, 7.5, 29.5, 6)
     for (x, y) in top:
         u, v = (x + 0.5 - cx) / 29.5, (y + 0.5 - 7.5) / 6
         r = u * u + v * v
-        col = garden.G[3]
+        col = grass[3]
         if r > 0.82:
-            col = garden.G[2] if v > 0 else garden.G[4]  # rim: lit back edge, shaded front edge
+            col = grass[2] if v > 0 else grass[4]  # rim: lit back edge, shaded front edge
         elif -u * 0.4 - v * 0.9 > 0.45:
-            col = garden.G[4]
+            col = grass[4]
         cv.set(x, y, col)
     for i in range(16):
         x = int(cx - 24 + noise2(i, 1, 77) * 48)
         y = int(4 + noise2(i, 2, 77) * 7)
         if (x, y) in top and (x + 2, y) in top:
-            cv.set(x, y, garden.G[2]); cv.set(x + 2, y, garden.G[2]); cv.set(x + 1, y + 1, garden.G[2])
-    cv.outline('#3E5A2E')
+            cv.set(x, y, grass[2]); cv.set(x + 2, y, grass[2]); cv.set(x + 1, y + 1, grass[2])
+    cv.outline('#1A302C' if night else '#3E5A2E')
     return cv
 
 
@@ -165,6 +173,7 @@ def main():
     backdrop(DAY).save(os.path.join(OUT, 'backdrop-day.png'), SCALE)
     backdrop(NIGHT, night=True).save(os.path.join(OUT, 'backdrop-night.png'), SCALE)
     platform().save(os.path.join(OUT, 'platform.png'), SCALE)
+    platform(NIGHT, night=True).save(os.path.join(OUT, 'platform-night.png'), SCALE)
     prev = backdrop(DAY)
     p = platform()
     prev.paste(p, 46 - 32, H - FEET - 8)

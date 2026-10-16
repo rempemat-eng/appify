@@ -1,12 +1,12 @@
 import { palette } from '@/lib/game';
+import { artGeometry, artSurface } from '@/lib/art-direction';
 
-// Presentation-only colors. The original sprite and scene palettes remain untouched.
+// Field-journal surfaces share their materials with the world art.
 export const cozy = {
   ...palette,
-  paper: '#FBF4E4',
-  body: '#F7EDD9',
+  ...artSurface,
   error: '#C0634A',
-  outline: 'rgba(74,59,53,0.7)',
+  outline: artSurface.edge,
   shadow: 'rgba(74,59,53,0.25)',
   ambient: 'rgba(0,0,0,0.08)',
   sage: '#E4EBD9',
@@ -24,9 +24,9 @@ export const cozy = {
   transparent: 'transparent',
 };
 export const panelStyle = {
-  borderRadius: 14,
-  borderWidth: 2,
+  borderRadius: artGeometry.panelRadius,
+  borderWidth: artGeometry.border,
   borderColor: cozy.outline,
   backgroundColor: cozy.paper,
-  boxShadow: '0 3px 0 rgba(74,59,53,.25), 0 8px 16px rgba(0,0,0,.08)',
+  boxShadow: `0 ${artGeometry.depth}px 0 ${artSurface.depth}`,
 } as const;

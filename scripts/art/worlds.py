@@ -44,16 +44,24 @@ def grass(cv: Canvas, frame=0, tone=None):
     for y in range(H):
         for x in range(W):
             n = smooth_noise(x, y, 22, 11)
-            cv.set(x, y, G[2] if n < 0.55 else G[3])
+            cv.set(x, y, G[2] if n < 0.62 else G[3])
     for ty in range(0, H, 8):
         for tx in range(0, W, 8):
-            if noise2(tx, ty, 3) < 0.45:
-                x, y = tx + int(noise2(tx, ty, 4) * 6), ty + int(noise2(tx, ty, 5) * 6)
-                sway = 1 if (frame and noise2(tx, ty, 6) < 0.5) else 0
+            x, y = tx + int(noise2(tx, ty, 4) * 8), ty + int(noise2(tx, ty, 5) * 8)
+            edge = min(x, W - x, y, H - y) < 24
+            clearing = ((x - 96) / 44) ** 2 + ((y - 108) / 38) ** 2 < 1
+            cluster = smooth_noise(x, y, 25, 63) > 0.57
+            density = 0.06 if clearing else 0.38 if edge else 0.26 if cluster else 0.10
+            if noise2(tx, ty, 3) < density:
+                # A few edge tufts stir; landmarks and the walking route stay
+                # quieter. The two frames share exactly the same root pixels.
+                sway = 1 if (frame and noise2(tx, ty, 6) < 0.22) else 0
                 cv.set(x, y + 2, G[1]); cv.set(x + 2, y + 2, G[1]); cv.set(x + 1, y + 3, G[1])
                 cv.set(x + sway, y + 1, G[1]); cv.set(x + 2 + sway, y + 1, G[1])
-            elif noise2(tx, ty, 7) < 0.2:
-                cv.set(tx + 3, ty + 4, G[4])
+                if noise2(x, y, 9) < 0.4:
+                    cv.set(x + 1 + sway, y + 1, G[4])
+            elif edge and noise2(tx, ty, 7) < 0.15:
+                cv.set(x, y, G[4])
 
 
 def edge(mask, x, y):
@@ -113,28 +121,77 @@ def paint_water(cv, mask, frame=0, center=None):
     for (x, y) in bank:
         cv.set(x, y, g.SAND[1] if noise2(x, y, 21) < 0.8 else g.SAND[2])
     for (x, y) in mask:
-        col = g.WTR[2]
+        col = g.WTR[1] if all((x + dx, y + dy) in mask for dx, dy in ((-4, 0), (4, 0), (0, -3), (0, 3))) else g.WTR[2]
         if (x, y - 1) not in mask:
             col = g.WTR[0]
         elif (x, y - 2) not in mask:
             col = g.WTR[1]
         cv.set(x, y, col)
-    pts = sorted(mask)
-    for i in range(0, len(pts), 37):
-        x, y = pts[i]
-        if (x + 3, y) in mask and (x, y - 2) in mask:
-            cv.hline(x + (frame if i % 2 else 0), y, 3, g.WTR[3])
+    # Jittered little arcs share stable roots between poses. Keep the bank
+    # still, instead of making the whole stream appear to slide sideways.
+    for ty in range(0, H, 6):
+        for tx in range(0, W, 7):
+            if noise2(tx, ty, 37) > 0.48:
+                continue
+            x = tx + int(noise2(tx, ty, 38) * 5)
+            y = ty + int(noise2(tx, ty, 39) * 4)
+            shift = frame if noise2(tx, ty, 40) < 0.4 else 0
+            if all((x + dx, y) in mask for dx in (-1, 0, 1, 2, 3, 4)) and (x, y - 2) in mask:
+                cv.hline(x + shift, y, 3, g.WTR[3])
+                if noise2(tx, ty, 41) < 0.22:
+                    cv.set(x + shift, y - 1, g.WTR[4])
     return bank
 
 
 def flowerbed(cv, x, y, w, h, seed=0):
     cv.rect(x, y, w, h, g.WOOD[1]); cv.rect(x + 1, y + 1, w - 2, h - 2, '#5A3A26')
+    cv.hline(x, y, w, g.WOOD[4]); cv.vline(x, y + 1, h - 2, g.WOOD[3])
+    cv.set(x + w - 2, y, g.CREAM[1]); cv.set(x + 1, y + h - 1, g.WOOD[0])
     for fy in range(y + 2, y + h - 2, 4):
         for fx in range(x + 2, x + w - 2, 4):
-            c = [g.RED[3], '#F2D16B', g.CREAM[3], g.NAP[3]][(fx // 4 + fy // 4 + seed) % 4]
+            # Each planter has a flower family rather than the same striped
+            # rainbow; leaves and the occasional bud break up the neat rows.
+            family = [g.RED, g.NAP, g.CREAM, g.LEAF][seed % 4]
+            c = family[-1] if (fx + fy) % 3 else family[-2]
+            if noise2(fx, fy, seed + 83) < 0.18:
+                cv.set(fx, fy, g.LEAF[3]); cv.set(fx + 1, fy - 1, g.LEAF[4])
+                continue
+            cv.set(fx - 1, fy + 1, g.LEAF[2]); cv.set(fx + 1, fy + 1, g.LEAF[3])
             for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
                 cv.set(fx + dx, fy + dy, c)
             cv.set(fx, fy, '#E8A33D')
+
+
+def roof_tiles(cv, mask, ramp, row_height=3):
+    """Overlapping clay/slate courses, always lit from the upper left.
+
+    Reuse material construction, not the same roof silhouette. The supplied
+    mask remains the owner of the building's shape and size.
+    """
+    for x, y in mask:
+        seam = (x + (y // row_height % 2) * 3) % 7 == 0
+        col = ramp[1] if seam else ramp[3] if y % row_height == 0 else ramp[2]
+        if (x - 1, y) not in mask:
+            col = ramp[0]
+        elif (x + 1, y) not in mask:
+            col = ramp[1]
+        elif (x, y - 1) not in mask:
+            col = ramp[4]
+        cv.set(x, y, col)
+
+
+def window(cv, x, y, w, h, warm=False):
+    """Recessed glazing: one highlight, a timber sill and a darker right edge."""
+    cv.rect(x, y, w, h, g.WOOD[0])
+    cv.rect(x + 1, y + 1, w - 2, h - 2, '#D8B86F' if warm else '#6E8FA4')
+    cv.vline(x + 1, y + 1, h - 2, '#F7E6AE' if warm else '#BCD6DA')
+    cv.hline(x + 1, y + 1, w - 2, '#FFF0C8' if warm else '#DCEBE6')
+    if w >= 7:
+        cv.vline(x + w // 2, y + 1, h - 2, g.WOOD[2])
+    if h >= 10:
+        cv.hline(x + 1, y + h // 2, w - 2, g.WOOD[2])
+    cv.hline(x - 1, y + h, w + 2, g.WOOD[3])
+    cv.hline(x, y + h + 1, w + 1, g.WOOD[1])
 
 
 # ---- props ------------------------------------------------------------------
@@ -142,15 +199,22 @@ def fountain() -> Canvas:
     cv = Canvas(40, 34)
     basin = oval(20, 24, 18, 8)
     shade_blob(cv, basin, g.STONE[1], g.STONE[2], g.STONE[3], g.STONE[4])
+    # A carved rim and a few worn joints make this the park's stone landmark.
+    for x, y in ((5, 24), (11, 29), (23, 30), (33, 25)):
+        cv.vline(x, y, 2, g.STONE[1]); cv.set(x - 1, y, g.STONE[4])
     for (x, y) in oval(20, 23, 14.5, 5.5):
         cv.set(x, y, g.WTR[2] if y > 21 else g.WTR[3])
+    cv.hline(8, 23, 5, g.WTR[4]); cv.hline(26, 25, 5, g.WTR[3])
     cv.rect(18, 8, 5, 15, g.STONE[3]); cv.vline(18, 8, 15, g.STONE[4]); cv.vline(22, 8, 15, g.STONE[2])
+    cv.hline(18, 18, 5, g.STONE[2]); cv.set(19, 19, g.STONE[4])
     for (x, y) in oval(20.5, 9, 6, 2.5):
         cv.set(x, y, g.STONE[3] if y < 9 else g.STONE[2])
     for i, (x, y) in enumerate(((20, 1), (20, 3), (19, 5), (21, 5), (16, 7), (25, 7), (14, 11), (27, 11), (13, 15), (28, 15))):
         cv.set(x, y, '#E0EFDF' if i % 2 else '#A1CFD0')
     for x in (12, 16, 24, 28):
         cv.set(x, 21, '#E0EFDF')
+    cv.set(11, 25, g.RED[4]); cv.set(12, 25, g.RED[3])  # a fallen petal, not a reward
+    cv.set(7, 29, g.LEAF[2]); cv.set(8, 29, g.LEAF[3])
     cv.outline(INK)
     return cv
 
@@ -161,6 +225,11 @@ def bench() -> Canvas:
     for y, c in ((2, g.WOOD[4]), (4, g.WOOD[3]), (8, g.WOOD[4]), (10, g.WOOD[3])):
         cv.hline(1, y, 24, c); cv.hline(1, y + 1, 24, g.WOOD[2])
     cv.rect(1, 1, 2, 9, '#3A3F4E'); cv.rect(23, 1, 2, 9, '#3A3F4E')
+    cv.set(1, 2, SLATE[3]); cv.set(23, 2, SLATE[2])
+    for x, y in ((4, 2), (21, 2), (4, 8), (21, 8)):
+        cv.set(x, y, g.CREAM[1])
+    cv.hline(8, 4, 3, g.WOOD[1]); cv.set(11, 4, g.WOOD[4])
+    cv.hline(15, 10, 3, g.WOOD[2]); cv.set(7, 8, g.WOOD[3])
     cv.outline(INK)
     return cv
 
@@ -171,6 +240,9 @@ def lamp() -> Canvas:
     cv.rect(2, 31, 6, 2, '#2E323E')
     cv.rect(2, 2, 6, 6, '#3A3F4E'); cv.rect(3, 3, 4, 4, '#FFE58A'); cv.set(3, 3, '#FFF7D6')
     cv.hline(1, 1, 8, '#2E323E'); cv.set(4, 0, '#2E323E'); cv.set(5, 0, '#2E323E')
+    cv.vline(6, 3, 4, '#D8B86F'); cv.set(4, 4, '#FFF7D6')
+    cv.hline(3, 8, 4, g.CREAM[0]); cv.set(3, 7, g.CREAM[1])
+    cv.hline(3, 31, 4, SLATE[2])
     cv.outline(INK)
     return cv
 
@@ -194,29 +266,45 @@ def library() -> Canvas:
     """Grand little library: columns, steps, an open-book sign."""
     w, h = 72, 54
     cv = Canvas(w, h)
-    cv.rect(4, 20, 64, 28, '#E2D6BC')
-    for x in range(4, 68):
-        cv.set(x, 20, '#F1E8D2')
+    cv.rect(4, 20, 64, 28, g.CREAM[2])
+    cv.rect(62, 21, 6, 27, g.CREAM[1])
+    cv.hline(4, 21, 64, g.CREAM[0])  # roof's cast shadow
+    cv.hline(5, 23, 57, g.CREAM[3])
+    cv.hline(4, 44, 64, g.CREAM[1]); cv.hline(4, 47, 64, g.CREAM[0])
+    # A few plaster blocks near the corners; leave the facade's broad planes.
+    for x, y, length in ((5, 28, 4), (5, 35, 3), (59, 39, 7), (44, 26, 3)):
+        cv.hline(x, y, length, g.CREAM[1]); cv.set(x, y - 1, g.CREAM[3])
     for x in (10, 22, 46, 58):  # columns
-        cv.rect(x, 22, 5, 24, '#F4ECD8'); cv.vline(x, 22, 24, '#FFFFFF'); cv.vline(x + 4, 22, 24, '#C9BC9E')
+        cv.rect(x, 22, 5, 24, g.CREAM[2]); cv.vline(x, 23, 21, g.CREAM[3]); cv.vline(x + 4, 23, 21, g.CREAM[1])
+        cv.hline(x - 1, 23, 7, g.CREAM[3]); cv.hline(x - 1, 24, 7, g.CREAM[1])
+        cv.hline(x - 1, 43, 7, g.CREAM[3]); cv.hline(x - 1, 45, 7, g.CREAM[0])
     for x in (16, 52):  # tall windows
-        cv.rect(x - 2, 25, 5, 14, '#3A4A66'); cv.rect(x - 1, 26, 3, 12, '#6E8CB0'); cv.set(x - 1, 26, '#B8D2EA')
+        window(cv, x - 2, 26, 5, 13)
     cv.rect(30, 30, 12, 16, '#5A3A26'); cv.rect(31, 31, 10, 15, '#7A5232'); cv.vline(36, 31, 15, '#5A3A26')
+    cv.rect(32, 32, 3, 5, g.WOOD[1]); cv.rect(37, 32, 3, 5, g.WOOD[1])
+    cv.rect(32, 40, 3, 4, g.WOOD[1]); cv.rect(37, 40, 3, 4, g.WOOD[1])
+    cv.vline(31, 31, 14, g.WOOD[3]); cv.hline(30, 29, 12, g.WOOD[0])
     cv.set(34, 38, '#F2D16B'); cv.set(38, 38, '#F2D16B')
     # pediment roof
+    roof = set()
     for y in range(4, 20):
         span = int((y - 4) * 2.3) + 3
         for x in range(w // 2 - span, w // 2 + span):
-            cv.set(x, y, ROOF[2] if (x + y) % 5 else ROOF[1])
-        cv.set(w // 2 - span, y, ROOF[0]); cv.set(w // 2 + span - 1, y, ROOF[0])
-    cv.hline(0, 19, w, '#C9BC9E'); cv.hline(0, 20, w, '#B3A584')
+            roof.add((x, y))
+    roof_tiles(cv, roof, ROOF)
+    cv.hline(32, 4, 7, ROOF[4]); cv.hline(2, 19, w - 4, ROOF[0])
+    cv.hline(0, 20, w, g.CREAM[1]); cv.hline(1, 19, w - 2, g.CREAM[3])
     # open-book sign in the gable
+    cv.rect(30, 9, 12, 8, g.WOOD[0]); cv.hline(31, 9, 10, g.CREAM[1])
     for (x, y) in ((32, 12), (33, 11), (34, 11), (35, 12), (36, 12), (37, 11), (38, 11), (39, 12)):
         cv.set(x, y, '#FBF4E4')
     cv.hline(32, 13, 8, '#FBF4E4'); cv.hline(32, 14, 8, '#C9B48E'); cv.vline(36, 11, 4, '#8C7A5E')
+    cv.set(37, 15, g.NAP[2]); cv.set(37, 16, g.NAP[3])  # signature lilac bookmark
     # steps
     for i, y in enumerate((46, 48, 50)):
         cv.rect(26 - i * 2, y, 20 + i * 4, 2, '#CFC5AE' if i % 2 else '#E2D9C2')
+        cv.hline(27 - i * 2, y, 18 + i * 4, g.CREAM[3])
+    cv.set(24, 51, g.LEAF[2]); cv.set(23, 51, g.LEAF[3])
     cv.outline(INK)
     return cv
 
@@ -226,20 +314,37 @@ def house(roof=None, sign=None) -> Canvas:
     w, h = 40, 40
     cv = Canvas(w, h)
     cv.rect(4, 18, 32, 20, g.CREAM[2])
-    for y in range(20, 38, 4):
-        cv.hline(4, y, 32, g.CREAM[1])
+    cv.rect(31, 19, 5, 18, g.CREAM[1]); cv.hline(4, 19, 32, g.CREAM[0])
+    cv.hline(5, 21, 26, g.CREAM[3]); cv.hline(4, 37, 32, g.STONE[1])
+    cv.hline(5, 36, 26, g.STONE[3])
+    for x, y, length in ((5, 32, 3), (10, 22, 4), (29, 34, 6)):
+        cv.hline(x, y, length, g.CREAM[1]); cv.set(x, y - 1, g.CREAM[3])
     cv.rect(16, 26, 8, 12, g.WOOD[1]); cv.rect(17, 27, 6, 11, g.WOOD[2]); cv.set(22, 32, '#F2D16B')
+    cv.vline(17, 27, 10, g.WOOD[3]); cv.vline(20, 28, 9, g.WOOD[1])
+    cv.hline(18, 30, 4, g.WOOD[1]); cv.hline(18, 35, 4, g.WOOD[1])
+    cv.hline(16, 37, 8, g.STONE[4])
     for x in (7, 27):
-        cv.rect(x, 23, 6, 6, g.WOOD[0]); cv.rect(x + 1, 24, 4, 4, '#9AD3EA'); cv.set(x + 1, 24, '#E4F5FA')
-        cv.rect(x, 29, 6, 2, g.WOOD[1]); cv.set(x + 1, 28, g.RED[3]); cv.set(x + 3, 28, '#F2D16B'); cv.set(x + 4, 28, g.RED[3])
+        window(cv, x, 23, 6, 6, warm=bool(sign))
+        cv.rect(x, 30, 6, 2, g.WOOD[1]); cv.hline(x, 30, 6, g.WOOD[3])
+        cv.set(x + 1, 29, g.LEAF[2]); cv.set(x + 4, 29, g.LEAF[3])
+        flower = g.NAP if sign else g.RED
+        cv.set(x + 1, 28, flower[3]); cv.set(x + 3, 28, '#F2D16B'); cv.set(x + 4, 28, flower[4])
+    mask = set()
     for y in range(3, 19):
         span = int((y - 3) * 1.3) + 5
         for x in range(w // 2 - span, w // 2 + span):
-            cv.set(x, y, roof[2] if (x + (y // 3) * 2) % 6 else roof[1])
-        cv.set(w // 2 - span, y, roof[0]); cv.set(w // 2 + span - 1, y, roof[0])
+            mask.add((x, y))
+    roof_tiles(cv, mask, roof)
+    cv.hline(16, 3, 8, roof[4])
     cv.hline(0, 18, w, roof[0])
     if sign:
-        cv.rect(12, 14, 16, 5, g.WOOD[3]); cv.hline(14, 16, 12, g.WOOD[1])
+        # The blue-roofed house is the little bindery: a tiny book plaque.
+        cv.rect(14, 13, 12, 6, g.WOOD[1]); cv.hline(14, 13, 12, g.WOOD[4])
+        cv.rect(17, 14, 6, 3, g.CREAM[2]); cv.vline(20, 14, 3, g.CREAM[0])
+        cv.set(22, 17, g.NAP[3]); cv.set(15, 15, g.CREAM[1])
+    else:
+        # A folded curtain distinguishes the lived-in red-roofed house.
+        cv.vline(8, 24, 3, g.RED[3]); cv.set(9, 26, g.RED[4])
     cv.outline(INK)
     return cv
 
@@ -249,12 +354,23 @@ def cafe_table() -> Canvas:
     for y in range(2, 10):  # umbrella
         span = (y - 1) * 1.4 + 2
         for x in range(int(12 - span), int(12 + span)):
-            cv.set(x, y, '#5FA35A' if (x // 3) % 2 else g.CREAM[3])
+            stripe = (x // 3) % 2
+            cv.set(x, y, g.LEAF[2] if stripe and y > 7 else g.LEAF[3] if stripe else g.CREAM[1] if y > 7 else g.CREAM[3])
+    cv.set(11, 1, g.WOOD[4]); cv.set(12, 1, g.WOOD[1])
+    cv.hline(3, 9, 18, g.WOOD[1])
+    for x in (4, 10, 16):
+        cv.hline(x, 9, 3, g.CREAM[2]); cv.set(x + 1, 10, g.CREAM[1])
     cv.vline(12, 10, 12, g.STONE[1])
+    cv.vline(11, 11, 9, g.STONE[3])
     for (x, y) in oval(12, 21, 7, 2.6):
         cv.set(x, y, g.CREAM[2] if y < 21 else g.CREAM[1])
     cv.rect(3, 20, 3, 7, g.WOOD[2]); cv.rect(18, 20, 3, 7, g.WOOD[2])
-    cv.set(10, 20, '#FFF7E6'); cv.set(14, 20, g.RED[3])
+    cv.hline(3, 20, 3, g.WOOD[4]); cv.hline(18, 20, 3, g.WOOD[4])
+    cv.vline(5, 22, 5, g.WOOD[1]); cv.vline(20, 22, 5, g.WOOD[1])
+    cv.hline(8, 21, 8, g.WOOD[0]); cv.hline(8, 22, 8, g.WOOD[3])
+    cv.rect(8, 18, 3, 3, g.CREAM[3]); cv.hline(8, 18, 3, g.CREAM[0])
+    cv.set(11, 19, g.CREAM[1]); cv.set(11, 20, g.CREAM[1])
+    cv.rect(14, 19, 3, 2, g.RED[2]); cv.set(14, 18, g.RED[4])
     cv.outline(INK)
     return cv
 
@@ -262,13 +378,18 @@ def cafe_table() -> Canvas:
 def book_cart() -> Canvas:
     cv = Canvas(26, 20)
     cv.rect(1, 6, 24, 9, g.WOOD[2]); cv.hline(1, 6, 24, g.WOOD[4]); cv.hline(1, 14, 24, g.WOOD[1])
+    cv.vline(1, 7, 7, g.WOOD[3]); cv.vline(24, 7, 7, g.WOOD[0])
+    cv.hline(5, 12, 5, g.WOOD[1]); cv.set(10, 12, g.WOOD[3])
+    cv.set(3, 7, g.CREAM[1]); cv.set(22, 7, g.CREAM[1])
     for i, x in enumerate(range(3, 23, 3)):
         hgt = 5 + (i % 3)
         col = [g.RED[2], '#4C6E9E', '#5FA35A', '#D8AF5E', g.NAP[2]][i % 5]
         cv.rect(x, 6 - hgt + 5, 2, hgt, col); cv.set(x, 6 - hgt + 5, '#FBF4E4')
+        cv.set(x, 8, g.CREAM[1] if i % 2 else g.CREAM[2])
     for cx in (6, 20):
         for (x, y) in oval(cx, 16.5, 3, 3):
             cv.set(x, y, g.STONE[1] if (x - cx) ** 2 + (y - 16.5) ** 2 > 3 else g.STONE[3])
+        cv.set(cx, 16, g.WOOD[1])
     cv.outline(INK)
     return cv
 
@@ -279,15 +400,21 @@ def cabin() -> Canvas:
     for i, y in enumerate(range(18, 39, 3)):  # log walls
         cv.rect(4, y, 42, 3, g.WOOD[3] if i % 2 else g.WOOD[2]); cv.hline(4, y + 2, 42, g.WOOD[1])
         cv.set(3, y + 1, g.WOOD[4]); cv.set(46, y + 1, g.WOOD[4])
+        cv.set(4, y + 1, g.WOOD[1]); cv.set(45, y + 1, g.WOOD[1])
+    cv.hline(6, 23, 5, g.WOOD[1]); cv.set(11, 23, g.WOOD[4])
+    cv.hline(32, 35, 5, g.WOOD[1]); cv.set(31, 35, g.WOOD[3])
     cv.rect(21, 27, 9, 12, g.WOOD[0]); cv.rect(22, 28, 7, 11, g.WOOD[1]); cv.set(27, 33, '#F2D16B')
-    cv.rect(8, 24, 7, 6, g.WOOD[0]); cv.rect(9, 25, 5, 4, '#FFE58A'); cv.set(9, 25, '#FFF7D6')
-    cv.rect(35, 24, 7, 6, g.WOOD[0]); cv.rect(36, 25, 5, 4, '#FFE58A')
+    cv.vline(22, 28, 10, g.WOOD[3]); cv.vline(25, 29, 9, g.WOOD[0])
+    window(cv, 8, 24, 7, 6, warm=True); window(cv, 35, 24, 7, 6, warm=True)
     for y in range(4, 19):  # snowy roof
         span = int((y - 4) * 1.7) + 4
         for x in range(w // 2 - span, w // 2 + span):
-            cv.set(x, y, SNOW[3] if y < 8 or (x + y) % 9 == 0 else ('#6E4A30' if (x + y) % 4 else '#5A3A26'))
+            snowline = 8 + (x // 5 % 3) + (2 if 29 < x < 37 else 0)
+            cv.set(x, y, SNOW[3] if y < snowline else SNOW[1] if y == snowline else g.WOOD[3] if y % 3 == 0 else g.WOOD[1])
         cv.set(w // 2 - span, y, SNOW[1]); cv.set(w // 2 + span - 1, y, '#4A3122')
     cv.rect(34, 2, 5, 9, g.STONE[2]); cv.hline(34, 2, 5, g.STONE[4])  # chimney
+    cv.vline(38, 3, 8, g.STONE[1]); cv.hline(34, 6, 5, g.STONE[1])
+    cv.hline(3, 38, 44, SNOW[1]); cv.hline(5, 37, 13, SNOW[3])
     cv.outline(INK)
     return cv
 
@@ -334,8 +461,14 @@ def cairn() -> Canvas:
 def bridge() -> Canvas:
     cv = Canvas(30, 22)
     for i, x in enumerate(range(2, 28, 4)):
-        cv.rect(x, 4, 4, 16, g.WOOD[3] if i % 2 else g.WOOD[4]); cv.vline(x + 3, 4, 16, g.WOOD[2])
-    cv.rect(0, 2, 30, 2, g.WOOD[1]); cv.rect(0, 19, 30, 2, g.WOOD[1])
+        cv.rect(x, 4, 4, 16, g.WOOD[2] if i % 2 else g.WOOD[3]); cv.vline(x, 4, 15, g.WOOD[4]); cv.vline(x + 3, 4, 16, g.WOOD[1])
+        cv.set(x + 1, 5, g.STONE[1]); cv.set(x + 1, 18, g.STONE[1])
+        if i in (1, 4):
+            cv.vline(x + 1, 10 + i % 3, 3, g.WOOD[1]); cv.set(x + 2, 11 + i % 3, g.WOOD[2])
+    cv.rect(0, 2, 30, 2, g.WOOD[1]); cv.hline(1, 2, 28, g.WOOD[4])
+    cv.rect(0, 19, 30, 2, g.WOOD[1]); cv.hline(1, 19, 28, g.WOOD[3])
+    for x in (1, 27):
+        cv.set(x, 2, g.CREAM[1]); cv.set(x, 19, g.CREAM[1])
     cv.outline(INK)
     return cv
 
@@ -372,6 +505,17 @@ def world_park(frame):
     pond = {(x, y) for (x, y) in oval(158, 148, 24, 13)}
     water = pond
     paint_water(cv, water, frame)
+    # The garden's pond language returns here at park scale: reeds, a lily
+    # pair and a few washed stones, with an open near bank for the companion.
+    for lx, ly in ((148, 146), (168, 150)):
+        for x, y in oval(lx, ly, 3, 2):
+            cv.set(x, y, g.LEAF[3] if y < ly else g.LEAF[2])
+        cv.set(lx + 1, ly - 1, g.WTR[2]); cv.hline(lx - 1, ly, 2, g.LEAF[1])
+    cv.set(168, 149, g.NAP[4])
+    for x, y in ((139, 140), (174, 141), (177, 153)):
+        cv.vline(x, y - 4, 5, g.LEAF[1]); cv.set(x + 1, y - 2, g.LEAF[3])
+    for x, y in ((141, 159), (162, 163)):
+        cv.hline(x, y, 4, g.STONE[1]); cv.hline(x, y - 1, 3, g.STONE[3]); cv.set(x, y - 2, g.STONE[4])
     for fb in ((20, 120, 30, 12, 0), (20, 66, 30, 12, 1), (140, 60, 32, 12, 2)):
         flowerbed(cv, *fb)
     objects = [
@@ -395,6 +539,12 @@ def world_town(frame):
     paint_cobbles(cv, street | lane)
     # pavements in front of the buildings
     paint_paving(cv, {(x, y) for x in range(W) for y in range(70, 84)}, seed=2)
+    # Small weeds belong to paving seams at the edges, away from the main
+    # street. The town is cared for, without every surface being factory-new.
+    for x, y in ((6, 81), (182, 81), (24, 114), (172, 113), (79, 155)):
+        cv.set(x, y, g.LEAF[2]); cv.set(x + 1, y - 1, g.LEAF[3]); cv.set(x + 2, y, g.LEAF[2])
+    for x, y in ((39, 80), (144, 80)):
+        cv.hline(x, y, 4, g.CREAM[0]); cv.set(x + 3, y - 1, g.CREAM[2])
     planters = [(10, 128, 22, 10, 1), (160, 128, 22, 10, 3)]
     for fb in planters:
         flowerbed(cv, *fb)
@@ -419,10 +569,17 @@ def world_mountain(frame):
         for x in range(W):
             if y < 34 + int(10 * math.sin(x / 19) + 4 * math.sin(x / 7)):
                 cv.set(x, y, SNOW[2] if smooth_noise(x, y, 9, 5) < 0.6 else SNOW[3])
+                # A blue underside gives the scalloped snow shelf thickness.
+                if y >= 32 + int(10 * math.sin(x / 19) + 4 * math.sin(x / 7)):
+                    cv.set(x, y, SNOW[1] if y % 2 else SNOW[0])
+    for x, y in ((53, 47), (118, 34), (151, 41)):
+        cv.hline(x, y, 6, SNOW[1]); cv.hline(x + 1, y - 1, 4, SNOW[3])
     trail = thick([(70, 180), (74, 150), (110, 124), (100, 96), (66, 80), (86, 52)], 6, seed=3)
     paint_dirt(cv, trail)
     stream = thick([(200, 70), (170, 84), (150, 110), (156, 140), (140, 180)], 5, seed=4)
     paint_water(cv, stream, frame)
+    for x, y in ((158, 98), (164, 135), (135, 166)):
+        cv.hline(x, y, 5, MOSSROCK[0]); cv.hline(x, y - 1, 4, MOSSROCK[2]); cv.set(x + 1, y - 2, MOSSROCK[4])
     objects = [
         *[(f'pine-{i}', 'pine', x, 22 + (i % 3) * 6) for i, x in enumerate(range(-6, 60, 12))],
         *[(f'pine-r{i}', 'pine', x, 120 + (i % 2) * 8) for i, x in enumerate(range(160, 200, 13))],
@@ -443,34 +600,75 @@ def sky(cv, horizon, bands):
     for y in range(horizon):
         i = min(len(bands) - 1, int(y / horizon * len(bands)))
         cv.hline(0, y, cv.w, bands[i])
+        if i and y == int(i * horizon / len(bands)):
+            for x in range(y % 2, cv.w, 2):
+                cv.set(x, y, bands[i - 1])
+
+
+def distant_cloud(cv, cx, cy, scale=1.0):
+    cloud = set()
+    for dx, dy, rx, ry in ((-9, 2, 8, 3), (-2, -1, 9, 5), (7, 0, 8, 4), (14, 3, 6, 2)):
+        cloud |= oval(cx + dx * scale, cy + dy * scale, rx * scale, ry * scale)
+    for x, y in cloud:
+        cv.set(x, y, '#C9DCE3' if (x, y + 1) not in cloud else '#EEF2E7' if (x, y - 2) in cloud else '#FBF4E4')
 
 
 def backdrop(kind) -> Canvas:
     bw, bh, horizon = 216, 150, 80
     cv = Canvas(bw, bh)
     sky(cv, horizon, ['#A9D3E6', '#C3E0EA', '#DCEBE6', '#EEF2DF'])
+    for cx, cy, scale in ((26, 17, 0.8), (108, 9, 0.65), (179, 23, 0.9)):
+        distant_cloud(cv, cx, cy, scale)
     if kind == 'mountain':
         for (px, ph, sw) in ((40, 62, 48), (120, 70, 60), (190, 56, 44)):
             for x in range(bw):
                 top = horizon - ph + abs(x - px) * ph / sw
                 for y in range(int(top), horizon + 2):
-                    snow = y < horizon - ph * 0.55 + (x % 5)
+                    # Snow follows broken shelves rather than a checkerboard.
+                    snowline = horizon - ph * 0.55 + int(3 * math.sin(x / 6 + px))
+                    snow = y < snowline
                     lit = x < px
-                    cv.set(x, y, (SNOW[3] if lit else SNOW[1]) if snow else ('#7D8BA0' if lit else '#5E6B82'))
+                    ridge = abs(x - px + (y - horizon + ph) * 0.25) < 1.5
+                    cv.set(x, y, (SNOW[3] if lit else SNOW[1]) if snow else SLATE[3] if lit and ridge else '#7D8BA0' if lit else '#5E6B82')
     elif kind == 'book':
-        for i, x in enumerate(range(-4, bw, 18)):
-            hgt = 18 + (i * 7) % 16
+        # A distant neighbourhood of gables, not repeated modern tower blocks.
+        # Low-contrast silhouettes keep the nearby library the clear landmark.
+        for i, x in enumerate(range(-5, bw, 24)):
+            hgt = 15 + (i * 7) % 13
+            roof_y = horizon - hgt
             for y in range(horizon - hgt, horizon + 2):
-                for xx in range(x, x + 16):
-                    cv.set(xx, y, '#9FA9B8' if xx < x + 9 else '#8792A4')
-            for wy in range(horizon - hgt + 4, horizon - 2, 5):
-                for wx in range(x + 3, x + 14, 5):
-                    cv.set(wx, wy, '#E9EEF2'); cv.set(wx + 1, wy, '#E9EEF2')
+                for xx in range(x + 2, x + 21):
+                    cv.set(xx, y, '#A2B2AF' if xx < x + 15 else '#8A9CA2')
+            for y in range(roof_y - 8, roof_y + 1):
+                half = 2 + (y - roof_y + 8) * 1.2
+                for xx in range(int(x + 11 - half), int(x + 11 + half)):
+                    cv.set(xx, y, '#7B8C9E' if xx < x + 11 else '#6C8091')
+            for wy in range(roof_y + 4, horizon - 2, 6):
+                for wx in (x + 6, x + 15):
+                    cv.rect(wx, wy, 2, 3, '#D6DECF'); cv.set(wx + 1, wy + 2, '#8A9CA2')
             if i % 3 == 0:
-                cv.rect(x + 6, horizon - hgt - 6, 4, 6, '#8792A4')
-    for x in range(bw):  # soft hills/treeline join for every world
-        h2 = horizon - 4 - int(3 * math.sin(x / 13) + 2 * math.sin(x / 5))
-        for y in range(h2, bh):
+                cv.rect(x + 16, roof_y - 7, 3, 7, '#8792A4')
+    # Layers share the battle meadow's atmospheric palette. Native clustered
+    # canopies soften the world edge without importing foreground tree detail.
+    for x in range(bw):
+        far = horizon - 12 - int(4 * math.sin(x / 23) + 2 * math.sin(x / 9 + 1))
+        for y in range(far, bh):
+            cv.set(x, y, '#97BBA6' if y == far else '#A7C7B4')
+    for i, x in enumerate(range(-3, bw + 8, 9)):
+        base = horizon - 1 + i % 3
+        if kind != 'mountain' and i % 3 == 1:
+            for px, py in oval(x, base - 8, 5.5, 5.5):
+                cv.set(px, py, '#6E9F78' if px < x else '#5B8D6B')
+            cv.vline(x, base - 3, 4, '#64765C')
+        else:
+            hgt = 12 + i * 5 % 8
+            for y in range(hgt):
+                half = int(y * 0.36) + 1
+                for px in range(x - half, x + half + 1):
+                    cv.set(px, base - hgt + y, '#547E65' if px < x else '#416C59')
+    for x in range(bw):
+        near = horizon - 3 - int(2 * math.sin(x / 13) + 2 * math.sin(x / 5))
+        for y in range(near, bh):
             cv.set(x, y, '#6E9F6B' if y < horizon + 4 else '#7CAE66')
     return cv
 
@@ -549,7 +747,9 @@ def main():
         '// Generated by scripts/art/worlds.py. Do not edit by hand.',
         '/* eslint-disable */',
         f'export const WORLD = {{ width: {W}, height: {H}, scale: {SCALE}, cell: {CELL} }} as const;',
-        'export type WorldId = "park" | "book" | "mountain";',
+        f'export const worldIds = {json.dumps(list(WORLDS))} as const;',
+        'export type WorldId = (typeof worldIds)[number];',
+        'export const isWorldId = (value: string): value is WorldId => worldIds.some((id) => id === value);',
         'export type WorldMap = { objects: readonly { id: string; sprite: string; x: number; y: number; w: number; h: number }[]; walk: readonly string[]; route: readonly { x: number; y: number }[]; visitor: { x: number; y: number } };',
         f'export const worldMaps: Record<WorldId, WorldMap> = {json.dumps(worlds)};',
         '',

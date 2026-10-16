@@ -2,7 +2,7 @@ import { type ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import { Pressable, StyleSheet, Text, View, type ViewStyle } from 'react-native';
 import { scheduleOnRN } from 'react-native-worklets';
 import { LinearGradient } from 'expo-linear-gradient';
-import Svg, { Circle } from 'react-native-svg';
+import Svg, { Rect } from 'react-native-svg';
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -11,6 +11,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { cozy as c, panelStyle } from '@/lib/cozy';
+import { artGeometry } from '@/lib/art-direction';
 import { useReducedMotion } from '@/lib/motion';
 
 export function CozyBackground() {
@@ -26,20 +27,43 @@ export function PaperFinish() {
   return (
     <View
       pointerEvents="none"
-      style={[StyleSheet.absoluteFill, { borderRadius: 12, overflow: 'hidden' }]}
+      accessible={false}
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={[
+        StyleSheet.absoluteFill,
+        { borderRadius: artGeometry.panelRadius - 2, overflow: 'hidden' },
+      ]}
     >
-      <LinearGradient
-        colors={[c.highlight, c.paper]}
-        style={[StyleSheet.absoluteFill, { opacity: 0.45 }]}
+      <View
+        style={{
+          position: 'absolute',
+          top: 1,
+          left: 8,
+          right: 8,
+          height: 2,
+          backgroundColor: c.highlight,
+        }}
       />
-      <Svg width="100%" height="100%" opacity={0.065}>
-        {Array.from({ length: 150 }, (_, i) => (
-          <Circle
+      <View
+        style={{
+          position: 'absolute',
+          bottom: 1,
+          left: 8,
+          right: 8,
+          height: 1,
+          backgroundColor: c.inset,
+        }}
+      />
+      <Svg width="100%" height="100%" opacity={0.1}>
+        {Array.from({ length: 24 }, (_, i) => (
+          <Rect
             key={i}
-            cx={`${(i * 37) % 100}%`}
-            cy={`${(i * 61) % 100}%`}
-            r={i % 3 === 0 ? 0.7 : 0.4}
-            fill={c.ink}
+            x={`${(i * 37 + 7) % 100}%`}
+            y={`${(i * 61 + 11) % 100}%`}
+            width={i % 3 === 0 ? 3 : 1}
+            height={1}
+            fill={c.depth}
           />
         ))}
       </Svg>
@@ -132,9 +156,7 @@ export function CozySheet({
           gap: 4,
         }}
       >
-        <View
-          style={{ height: 4, width: 36, borderRadius: 2, backgroundColor: c.shade, opacity: 0.4 }}
-        />
+        <View style={{ height: 3, width: 32, borderRadius: 0, backgroundColor: c.depth }} />
         {animating && (
           <Text style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 11, color: c.ink }}>Skip</Text>
         )}

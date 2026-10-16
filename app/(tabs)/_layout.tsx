@@ -6,7 +6,8 @@ import { GameHeader } from '@/components/game-ui';
 import { CozyBackground } from '@/components/cozy-ui';
 import { PixelTabIcon, PixelDissolve } from '@/components/pixel-feedback';
 import { feedback } from '@/lib/game';
-import { cozy as c } from '@/lib/cozy';
+import { cozy as c, panelStyle } from '@/lib/cozy';
+import { artGeometry } from '@/lib/art-direction';
 import { useReducedMotion } from '@/lib/motion';
 import { gameLayout, gameSideInset } from '@/lib/layout';
 export default function TabLayout() {
@@ -27,11 +28,11 @@ export default function TabLayout() {
           sceneStyle: { backgroundColor: c.transparent },
           animation: reduced ? 'none' : 'fade',
           tabBarStyle: {
+            ...panelStyle,
             position: 'absolute',
             left: sideInset,
             right: sideInset,
             bottom: insets.bottom + gameLayout.dockBottomGap,
-            borderRadius: 24,
             backgroundColor: c.paper,
             borderWidth: 2,
             borderTopWidth: 2,
@@ -39,13 +40,16 @@ export default function TabLayout() {
             height: gameLayout.dockHeight,
             paddingTop: 6,
             paddingBottom: 6,
-            boxShadow: '0 3px 0 rgba(74,59,53,.25), 0 8px 16px rgba(0,0,0,.08)',
           },
           tabBarActiveTintColor: c.ink,
           tabBarInactiveTintColor: c.shade,
           tabBarLabelPosition: 'below-icon',
           tabBarHideOnKeyboard: true,
-          tabBarItemStyle: { minHeight: 44, borderRadius: 16, marginHorizontal: 2 },
+          tabBarItemStyle: {
+            minHeight: 44,
+            borderRadius: artGeometry.controlRadius,
+            marginHorizontal: 2,
+          },
           tabBarLabelStyle: {
             fontFamily: 'Nunito_800ExtraBold',
             fontSize: 12,

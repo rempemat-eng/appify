@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "outline": "#2A2421",
+  "materials": {
+    "grass": ["#315C3B", "#5E9256", "#73A85E", "#7CAE66", "#A9CD83"],
+    "path": ["#795C3D", "#B28D5F", "#C8A878", "#D4B789", "#E7D3A5"],
+    "water": ["#284C5E", "#39738A", "#62A3B1", "#A1CFD0", "#E0EFDF"],
+    "sand": ["#B89660", "#D8BC85", "#EAD5A3"],
+    "wood": ["#4A3122", "#6E4A30", "#93673F", "#B98A57", "#D9AE78"],
+    "stone": ["#4B4E52", "#6F7478", "#959A9C", "#BFC3BF", "#E3E4DC"],
+    "leaf": ["#1F4B2E", "#2F6A3A", "#47894A", "#66A85A", "#93C978"],
+    "nap": ["#3E3466", "#5C4E8F", "#7D6BB5", "#A797D6", "#CFC4EC"],
+    "red": ["#5E2A22", "#8E3F31", "#B95A45", "#DB8366", "#F2B79B"],
+    "cream": ["#8C7A5E", "#C9B48E", "#E9DCBC", "#FBF4E4"]
+  },
+  "surfaces": {
+    "ink": "#4A3B35",
+    "paper": "#FBF4E4",
+    "body": "#F7EDD9",
+    "highlight": "#FFFDF5",
+    "edge": "#796650",
+    "inset": "#E1D2B6",
+    "depth": "#B8A586",
+    "sage": "#E4EBD9"
+  },
+  "geometry": { "panelRadius": 12, "controlRadius": 8, "tagRadius": 6, "border": 2, "depth": 3 },
+  "grid": {
+    "icon": 16,
+    "companion": 32,
+    "worldWidth": 192,
+    "worldHeight": 176,
+    "sceneWidth": 216,
+    "sceneHeight": 150
+  }
+}

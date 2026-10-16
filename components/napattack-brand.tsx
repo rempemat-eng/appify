@@ -49,7 +49,7 @@ function Lettering({
             color,
             textShadowColor: c.shadow,
             textShadowOffset: { width: 0, height: 3 },
-            textShadowRadius: 3,
+            textShadowRadius: 0,
           },
         ]}
       >

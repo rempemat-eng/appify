@@ -1,4 +1,5 @@
 import { palette as c } from '@/lib/game';
+import { artMaterials as m, artOutline } from '@/lib/art-direction';
 
 export const sceneColors = {
   ...c,
@@ -60,21 +61,23 @@ export type PropKind =
   | 'hammock'
   | 'signpost'
   | 'stones'
-  | 'weed';
+  | 'weed'
+  | 'energy'
+  | 'book';
 const colors: Record<string, string> = {
-  K: c.ink,
-  B: c.paper,
-  T: c.body,
-  G: c.positive,
-  M: c.moss,
-  L: sceneColors.leafLight,
-  R: c.error,
-  N: c.night,
-  S: c.slate,
-  D: sceneColors.dirt,
-  W: sceneColors.wood,
-  C: sceneColors.crystal,
-  Y: c.gold,
+  K: artOutline,
+  B: m.cream[3],
+  T: m.cream[2],
+  G: m.leaf[3],
+  M: m.leaf[1],
+  L: m.leaf[4],
+  R: m.red[3],
+  N: m.nap[1],
+  S: m.stone[2],
+  D: m.path[2],
+  W: m.wood[3],
+  C: m.water[3],
+  Y: m.sand[1],
   F: sceneColors.frog,
   E: c.weed,
   P: sceneColors.pink,
@@ -93,6 +96,27 @@ function make(kind: PropKind) {
     rect(x + 1, y + 1, w - 2, h - 2, color);
   };
   switch (kind) {
+    case 'energy':
+      for (let y = 1; y < 15; y++) {
+        const x = y < 8 ? 9 - Math.floor(y / 3) : 7 - Math.floor((y - 8) / 3);
+        rect(x, y, y < 8 ? 4 : 3, 1, 'K');
+        rect(x + 1, y, y < 8 ? 2 : 1, 1, 'Y');
+      }
+      rect(5, 7, 8, 2, 'K');
+      rect(6, 7, 6, 1, 'Y');
+      rect(9, 2, 1, 3, 'B');
+      break;
+    case 'book':
+      box(1, 3, 14, 11, 'W');
+      rect(2, 4, 5, 8, 'B');
+      rect(8, 4, 5, 8, 'T');
+      rect(7, 3, 1, 10, 'D');
+      rect(3, 6, 3, 1, 'W');
+      rect(3, 8, 3, 1, 'W');
+      rect(9, 6, 3, 1, 'W');
+      rect(9, 8, 2, 1, 'W');
+      rect(10, 10, 1, 5, 'R');
+      break;
     case 'grass':
       rect(3, 10, 1, 4, 'K');
       rect(4, 7, 2, 7, 'M');
@@ -375,6 +399,8 @@ function make(kind: PropKind) {
   );
 }
 export const propPixels: Record<PropKind, ReturnType<typeof make>> = {
+  energy: make('energy'),
+  book: make('book'),
   flower: make('flower'),
   fence: make('fence'),
   hammock: make('hammock'),

@@ -6,8 +6,6 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withDelay,
-  withRepeat,
-  withSequence,
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
@@ -15,159 +13,23 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Zap } from 'lucide-react-native';
 import { useReducedMotion } from '@/lib/motion';
 import { cards, cardIds, cardPower, cardDetails, type CardId } from '@/lib/cards';
-import { feedback, useGame, missions, palette, type Player } from '@/lib/game';
+import { feedback, useGame, missions, type Player } from '@/lib/game';
 import { cozy as c, panelStyle } from '@/lib/cozy';
 import { CozyBackground, PaperFinish } from '@/components/cozy-ui';
 import { PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
-const art: Record<CardId, string[]> = {
-  stretch: [
-    '............',
-    '.....ii.....',
-    '....ipii....',
-    '.....ii.....',
-    '..iiiigiii..',
-    '.....ig.....',
-    '.....ig.....',
-    '....i..i....',
-    '...i....i...',
-    '..ii....ii..',
-    '............',
-    '............',
-  ],
-  deep_breath: [
-    '............',
-    '...iii......',
-    '..ipppi.....',
-    '...iii......',
-    '....i.......',
-    '..iigii..s..',
-    '..igggi.ss..',
-    '..igggi..s..',
-    '...iii......',
-    '..ii.ii.....',
-    '............',
-    '............',
-  ],
-  glass_of_water: [
-    '............',
-    '............',
-    '..iiiiiiii..',
-    '..ippppppi..',
-    '..ipsspspi..',
-    '..issssssi..',
-    '..issssssi..',
-    '...issssi...',
-    '...issssi...',
-    '...iiiiii...',
-    '............',
-    '............',
-  ],
-  short_walk: [
-    '............',
-    '............',
-    '.....ii.....',
-    '....ippi....',
-    '...ippii....',
-    '...ippii....',
-    '..ipppppi...',
-    '.ipppppppi..',
-    '.iiiiiiiii..',
-    '............',
-    '..g..g..g...',
-    '............',
-  ],
-  morning_walk: [
-    '....g.......',
-    '..g.g.g.....',
-    '...ggg......',
-    '..ggggg.....',
-    '...ggg......',
-    '............',
-    '.....ii.....',
-    '....ippi....',
-    '...ipppppi..',
-    '..ipppppppi.',
-    '..iiiiiiiii.',
-    '............',
-  ],
-  read_a_chapter: [
-    '............',
-    '............',
-    '.iiii..iiii.',
-    '.ipppiipppi.',
-    '.ipppiipppi.',
-    '.ipppiipppi.',
-    '.ipppiipppi.',
-    '.ipppiipppi.',
-    '.iiiiiiiiii.',
-    '.....ii.....',
-    '............',
-    '............',
-  ],
-  early_night: [
-    '.......ss...',
-    '......ss....',
-    '.....ss.....',
-    '.....sss....',
-    '......sss...',
-    '..iiii......',
-    '..ippi......',
-    '..iiiiiiii..',
-    '.ippppppppi.',
-    '.iiiiiiiiii.',
-    '.i........i.',
-    '............',
-  ],
-  call_a_friend: [
-    '............',
-    '..iii..iii..',
-    '.ipppiipppi.',
-    '.ipppiipppi.',
-    '..iii..iii..',
-    '...i....i...',
-    '.iigiiiigii.',
-    '.igggiigggi.',
-    '..igi..igi..',
-    '..i.i..i.i..',
-    '............',
-    '............',
-  ],
-  digital_sunset: [
-    '............',
-    '............',
-    '....gggg....',
-    '...gggggg...',
-    '..gggggggg..',
-    '..gggggggg..',
-    'iiiiiiiiiiii',
-    '....ssss....',
-    '..ssssssss..',
-    'ssssssssssss',
-    '............',
-    '............',
-  ],
-};
+import { cardIllustrations } from '@/lib/card-art';
 export function CardIllustration({ id }: { id: CardId }) {
-  const colors: Record<string, string> = {
-    i: palette.ink,
-    p: palette.body,
-    g: palette.positive,
-    s: palette.slate,
-  };
-  const pixels = art[id].flatMap((row, y) =>
-    Array.from(row, (p, x) => ({ x, y, p })).filter((pixel) => pixel.p !== '.'),
-  );
   return (
-    <Svg width={36} height={36} viewBox="0 0 12 12">
-      {pixels.map((pixel) => (
+    <Svg width={48} height={48} viewBox="0 0 16 16">
+      {cardIllustrations[id].map((pixel) => (
         <Rect
           key={`${pixel.x}-${pixel.y}`}
           x={pixel.x}
           y={pixel.y}
           width={1}
           height={1}
-          fill={colors[pixel.p]}
+          fill={pixel.color}
         />
       ))}
     </Svg>
@@ -280,10 +142,12 @@ export function HabitCard({
       <View style={{ alignItems: 'center', padding: 6, gap: 4 }}>
         <View
           style={{
-            width: 48,
-            height: 48,
-            borderRadius: 24,
-            backgroundColor: color,
+            width: 56,
+            height: 56,
+            borderRadius: 8,
+            borderWidth: 2,
+            borderColor: c.outline,
+            backgroundColor: c.body,
             alignItems: 'center',
             justifyContent: 'center',
           }}
@@ -333,17 +197,8 @@ function CardShine({ gold }: { gold: boolean }) {
   const reduced = useReducedMotion();
   const x = useSharedValue(-100);
   useEffect(() => {
-    x.set(
-      reduced
-        ? -100
-        : withRepeat(
-            withSequence(
-              withDelay(3000, withTiming(240, { duration: 700 })),
-              withTiming(-100, { duration: 0 }),
-            ),
-            -1,
-          ),
-    );
+    // One arrival glint, then settle. A rare card does not need watching.
+    x.set(reduced ? -100 : withDelay(1200, withTiming(240, { duration: 700 })));
     return () => cancelAnimation(x);
   }, [x, reduced]);
   const motion = useAnimatedStyle(() => ({

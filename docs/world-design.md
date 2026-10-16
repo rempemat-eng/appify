@@ -2,6 +2,8 @@
 
 The garden is a companion's home. Missions give that companion places to explore while the player takes a break. Returning brings a small story: an earned card, a dated postcard, a visitor or an optional memory of something the player chose to do. The point is to make time away feel connected to the garden, without requiring a chore before leaving or a task when returning.
 
+For the shared visual language, use [Art direction](art-direction.md). For source files, reusable drawing tools and steps to add a prop, place or companion, use [Content authoring](content-authoring.md).
+
 ## Places that exist
 
 Use the current names consistently. The garden and mission worlds are separate scenes; they are not a continuous map that the player can walk between.

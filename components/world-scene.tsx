@@ -12,9 +12,10 @@ import Animated, {
 import { useReducedMotion } from '@/lib/motion';
 import { useAppActive } from '@/lib/app-active';
 import { useGame, type Player } from '@/lib/game';
-import { WORLD, worldMaps, type WorldId } from '@/lib/world-maps';
+import { WORLD, worldIds, worldMaps, type WorldId } from '@/lib/world-maps';
+import { worldCatalogue } from '@/lib/world-catalogue';
 import { worldImages, worldProps } from '@/lib/world-assets';
-import { makeWalkGrid, type Point, type WalkGrid } from '@/lib/garden-path';
+import { makeWalkGrid, type Point } from '@/lib/garden-path';
 import {
   TILT_DEG,
   billboard,
@@ -22,16 +23,13 @@ import {
   project,
   type ViewMode,
 } from '@/lib/garden-projection';
-import type { VisitorId } from '@/lib/visitors';
 import { GuardianPet } from '@/components/guardian-pet';
 import { Pet } from '@/components/game-ui';
 
 // Who you might bump into on each journey (scenery only: no rewards or rules).
-export const worldResident: Record<WorldId, VisitorId> = {
-  park: 'trailhop',
-  book: 'pagemoth',
-  mountain: 'lullapine',
-};
+export const worldResident = Object.fromEntries(
+  worldIds.map((id) => [id, worldCatalogue[id].resident]),
+);
 
 const gridFor = (id: WorldId) =>
   makeWalkGrid(worldMaps[id].walk, {
@@ -39,11 +37,7 @@ const gridFor = (id: WorldId) =>
     width: WORLD.width,
     start: worldMaps[id].route[0],
   });
-const grids: Record<WorldId, WalkGrid> = {
-  park: gridFor('park'),
-  book: gridFor('book'),
-  mountain: gridFor('mountain'),
-};
+const grids = new Map(worldIds.map((id) => [id, gridFor(id)] as const));
 
 const SPEED = 26; // a mission stroll is slower than a garden dash
 
@@ -72,7 +66,7 @@ export function WorldScene({
   const appActive = useAppActive();
   const active = screenActive && appActive;
   const map = worldMaps[world];
-  const grid = grids[world];
+  const grid = grids.get(world) ?? gridFor(world);
   const tilt = view === 'tilt';
   const proj = makeProjection(view, width, WORLD, tilt ? Math.round(width * 0.14) : 0);
   const scale = proj.scale;

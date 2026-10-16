@@ -1,8 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { ScrollView, View, useWindowDimensions } from 'react-native';
+import { Image, ScrollView, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PixelScene } from '@/components/pixel-scenes';
+import { PixelProp, PixelScene } from '@/components/pixel-scenes';
+import { sceneImages } from '@/lib/scene-assets';
+import { worldCatalogue } from '@/lib/world-catalogue';
 import Animated, {
   cancelAnimation,
   FadeIn,
@@ -11,11 +13,9 @@ import Animated, {
   withDelay,
   withTiming,
 } from 'react-native-reanimated';
-import Svg, { Rect } from 'react-native-svg';
-import { BookOpen } from 'lucide-react-native';
 import { useReducedMotion } from '@/lib/motion';
 import { cards, cardIds, summarizeCardRewards } from '@/lib/cards';
-import { palette, useGame } from '@/lib/game';
+import { useGame } from '@/lib/game';
 import { cozy as c, panelStyle } from '@/lib/cozy';
 import { collectionOf, guardianPlayer, visitorInfo, type Postcard } from '@/lib/visitors';
 import { GuardianPet } from '@/components/guardian-pet';
@@ -116,58 +116,31 @@ export function GardenVisitor({ active = true }: { active?: boolean }) {
 }
 export { CompanionPicker as GuardianPicker } from '@/components/companion-picker';
 export function PostcardArt({ postcard }: { postcard: Postcard }) {
-  const a = palette;
-  const place =
-    postcard.mission === 'park' ? 'PARK' : postcard.mission === 'book' ? 'LIBRARY' : 'MOUNTAIN';
-  const pixels = new Map<string, { key: string; x: number; y: number; color: string }>();
-  const rect = (x: number, y: number, w: number, h: number, color: string) => {
-    for (let yy = y; yy < y + h; yy++)
-      for (let xx = x; xx < x + w; xx++) {
-        const key = `${xx}-${yy}`;
-        pixels.set(key, { key, x: xx, y: yy, color });
-      }
-  };
-  rect(0, 0, 64, 36, a.slate);
-  rect(0, 28, 64, 8, a.moss);
-  if (postcard.mission === 'park') {
-    for (const x of [8, 27, 49]) {
-      rect(x, 16, 3, 16, a.shade);
-      rect(x - 6, 10, 15, 13, a.positive);
-      rect(x - 3, 7, 9, 4, a.positive);
-    }
-    rect(17, 27, 25, 2, a.body);
-    rect(20, 29, 2, 5, a.shade);
-    rect(37, 29, 2, 5, a.shade);
-    rect(19, 23, 21, 3, a.body);
-  } else if (postcard.mission === 'book') {
-    rect(8, 6, 48, 24, a.shade);
-    rect(11, 9, 42, 18, a.body);
-    for (const y of [11, 19]) {
-      for (let x = 13; x < 50; x += 5) rect(x, y, 3, 6, x % 2 ? a.terracotta : a.moss);
-      rect(11, y + 6, 42, 1, a.ink);
-    }
-    rect(23, 27, 19, 2, a.paper);
-    rect(31, 24, 2, 4, a.ink);
-  } else {
-    for (let y = 3; y < 32; y++) {
-      const w = Math.min(27, y - 2);
-      rect(32 - w, y, w * 2 + 1, 1, y < 10 ? a.paper : a.shade);
-    }
-    for (let y = 13; y < 32; y++) {
-      const w = y - 12;
-      rect(12 - Math.floor(w / 2), y, w + 1, 1, a.stone);
-    }
-    rect(48, 5, 6, 6, a.gold);
-  }
+  const place = worldCatalogue[postcard.mission].postcardTitle;
   return (
     <View style={{ ...panelStyle, padding: 12, gap: 8 }}>
       <PaperFinish />
-      <View style={{ alignItems: 'center' }}>
-        <Svg width={256} height={144} viewBox="0 0 64 36">
-          {Array.from(pixels.values()).map((p) => (
-            <Rect key={p.key} x={p.x} y={p.y} width={1} height={1} fill={p.color} />
-          ))}
-        </Svg>
+      <View
+        pointerEvents="none"
+        aria-hidden
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+        // @ts-expect-error dataSet is a react-native-web prop (nearest-neighbour pixels).
+        dataSet={{ pixel: 'true' }}
+        style={{
+          alignItems: 'center',
+          backgroundColor: c.body,
+          padding: 6,
+          borderWidth: 1,
+          borderColor: c.inset,
+          borderRadius: 6,
+        }}
+      >
+        <Image
+          source={sceneImages[postcard.mission]}
+          resizeMode="contain"
+          style={{ width: 216, height: 150 }}
+        />
       </View>
       <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>{place} POSTCARD</BodyText>
       <BodyText>{new Date(postcard.at).toLocaleDateString()}</BodyText>
@@ -303,7 +276,9 @@ export function WelcomeBack() {
           accessibilityRole="header"
           onLayout={(event) => {
             const measuredHeight = Math.max(0, event.nativeEvent.layout.height);
-            setHeadingHeight((previous) => (previous === measuredHeight ? previous : measuredHeight));
+            setHeadingHeight((previous) =>
+              previous === measuredHeight ? previous : measuredHeight,
+            );
           }}
           style={{
             fontSize: compact ? 14 : 16,
@@ -362,7 +337,8 @@ export function WelcomeBack() {
           )}
           {reflection && (
             <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-              Recent reflections are also in your Field Journal, so you can leave this one for later.
+              Recent reflections are also in your Field Journal, so you can leave this one for
+              later.
             </BodyText>
           )}
           {reflection && (
@@ -463,7 +439,9 @@ export function WelcomeBack() {
         <View
           onLayout={(event) => {
             const measuredHeight = Math.max(0, event.nativeEvent.layout.height);
-            setFooterHeight((previous) => (previous === measuredHeight ? previous : measuredHeight));
+            setFooterHeight((previous) =>
+              previous === measuredHeight ? previous : measuredHeight,
+            );
           }}
           style={{ gap: compact ? 8 : 12 }}
         >
@@ -492,7 +470,7 @@ export function WelcomeBack() {
 export function JournalEmpty({ onPress }: { onPress: () => void }) {
   return (
     <View style={{ padding: 20, alignItems: 'center', gap: 16 }}>
-      <BookOpen size={32} color={c.ink} />
+      <PixelProp kind="book" size={32} />
       <BodyText style={{ textAlign: 'center' }}>
         Bring back your first postcard from a mission.
       </BodyText>

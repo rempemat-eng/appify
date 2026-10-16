@@ -20,13 +20,11 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
-import { Zap } from 'lucide-react-native';
 import { Button } from 'heroui-native';
-import { BlurView } from 'expo-blur';
-import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c, panelStyle } from '@/lib/cozy';
+import { artGeometry } from '@/lib/art-direction';
 import { backendConfigured } from '@/lib/bilt';
 import { CozyBackground } from '@/components/cozy-ui';
 import { PlayMeter } from '@/components/offline-garden';
@@ -95,7 +93,7 @@ export function PixelButton({
     <View
       style={{
         paddingBottom: 4,
-        borderRadius: 999,
+        borderRadius: artGeometry.controlRadius,
         backgroundColor: danger ? c.terracotta : light ? c.stone : c.moss,
       }}
     >
@@ -118,7 +116,7 @@ export function PixelButton({
           onLongPress={onLongPress}
           style={{
             minHeight: 52,
-            borderRadius: 999,
+            borderRadius: artGeometry.controlRadius,
             borderWidth: 2,
             borderColor: c.outline,
             backgroundColor: fill,
@@ -129,10 +127,17 @@ export function PixelButton({
             gap: 0,
           }}
         >
-          <LinearGradient
+          <View
             pointerEvents="none"
-            colors={[c.highlight, c.transparent]}
-            style={[StyleSheet.absoluteFill, { borderRadius: 999, opacity: 0.18 }]}
+            style={{
+              position: 'absolute',
+              top: 1,
+              left: 7,
+              right: 7,
+              height: 2,
+              backgroundColor: c.highlight,
+              opacity: disabled ? 0.25 : 0.45,
+            }}
           />
           <Button.Label
             numberOfLines={2}
@@ -171,14 +176,7 @@ export function EnergyPips({ value, color = c.ink }: { value: number; color?: st
       style={{ flexDirection: 'row', gap: 5, marginTop: 5 }}
     >
       {[0, 1, 2].map((pip) => (
-        <Zap
-          key={pip}
-          size={12}
-          strokeWidth={2.5}
-          color={color}
-          fill={pip < value ? color : c.transparent}
-          style={{ opacity: pip < value ? 1 : 0.4 }}
-        />
+        <PixelProp key={pip} kind="energy" size={16} tint={pip < value ? color : c.depth} />
       ))}
     </View>
   );
@@ -723,7 +721,7 @@ export function Meter({
       accessibilityValue={{ min: 0, max, now: value }}
       style={{
         height,
-        borderRadius: 999,
+        borderRadius: artGeometry.tagRadius,
         borderWidth: 1,
         borderColor: c.outline,
         backgroundColor: c.body,
@@ -733,7 +731,7 @@ export function Meter({
       <View
         style={{
           height: '100%',
-          borderRadius: 999,
+          borderRadius: 3,
           width: `${Math.max(0, Math.min(100, (value / max) * 100))}%`,
           backgroundColor: color,
         }}
@@ -767,7 +765,7 @@ export function StatusChip({ player, compact = false }: { player: Player; compac
         paddingVertical: compact ? 6 : 8,
         minHeight: compact ? 44 : undefined,
         maxWidth: '100%',
-        borderRadius: 999,
+        borderRadius: artGeometry.tagRadius,
         backgroundColor: color,
       }}
     >
@@ -793,20 +791,15 @@ export function GameHeader() {
   const top = useSafeAreaInsets().top;
   return (
     <View style={{ paddingTop: top + 8, paddingBottom: 8, zIndex: 40 }}>
-      <BlurView tint="light" intensity={35} style={StyleSheet.absoluteFill} />
-      <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.glass }]} />
+      <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.body }]} />
       <View style={[gameColumn, { paddingHorizontal: gameLayout.gutter }]}>
         <View
           style={{
+            ...panelStyle,
             flexDirection: 'row',
             alignItems: 'center',
             gap: 6,
             padding: 6,
-            borderRadius: 18,
-            borderWidth: 1,
-            borderColor: c.outline,
-            backgroundColor: c.paper,
-            boxShadow: '0 3px 0 rgba(74,59,53,0.12)',
           }}
         >
           <Pressable
@@ -869,7 +862,7 @@ export function GameHeader() {
             style={{
               width: 44,
               height: 44,
-              borderRadius: 12,
+              borderRadius: artGeometry.controlRadius,
               backgroundColor: c.sage,
               alignItems: 'center',
               justifyContent: 'center',
@@ -926,7 +919,7 @@ export const styles = {
     padding: 16,
     fontSize: 15,
     minHeight: 52,
-    borderRadius: 14,
+    borderRadius: artGeometry.controlRadius,
   },
   section: { gap: 12 },
 } satisfies Record<string, TextStyle | ViewStyle>;

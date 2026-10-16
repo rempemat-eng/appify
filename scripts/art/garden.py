@@ -23,17 +23,7 @@ W, H = 192, 176  # native map size (12 x 11 tiles of 16px)
 SCALE = 6
 
 # ---- palette -------------------------------------------------------------
-G = ['#315C3B', '#5E9256', '#73A85E', '#7CAE66', '#A9CD83']  # grass dark -> light
-P = ['#795C3D', '#B28D5F', '#C8A878', '#D4B789', '#E7D3A5']  # path edge -> light
-WTR = ['#284C5E', '#39738A', '#62A3B1', '#A1CFD0', '#E0EFDF']  # water
-SAND = ['#B89660', '#D8BC85', '#EAD5A3']
-WOOD = ['#4A3122', '#6E4A30', '#93673F', '#B98A57', '#D9AE78']
-STONE = ['#4B4E52', '#6F7478', '#959A9C', '#BFC3BF', '#E3E4DC']
-LEAF = ['#1F4B2E', '#2F6A3A', '#47894A', '#66A85A', '#93C978']
-NAP = ['#3E3466', '#5C4E8F', '#7D6BB5', '#A797D6', '#CFC4EC']  # brand lavender
-RED = ['#5E2A22', '#8E3F31', '#B95A45', '#DB8366', '#F2B79B']
-CREAM = ['#8C7A5E', '#C9B48E', '#E9DCBC', '#FBF4E4']
-INK = '#2A2421'
+from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, INK  # noqa: E402
 
 
 # ---- terrain masks (native pixels) ----------------------------------------

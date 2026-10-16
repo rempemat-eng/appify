@@ -12,8 +12,9 @@ import {
 } from 'react-native';
 import { router, useIsFocused } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowUp, ArrowDown, Bot, Heart } from 'lucide-react-native';
+import { ArrowUp, ArrowDown } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
+import { artGeometry } from '@/lib/art-direction';
 import { backendConfigured } from '@/lib/bilt';
 import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
@@ -33,6 +34,8 @@ import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldPreview } from '@/components/world-scene';
+import { isWorldId } from '@/lib/world-maps';
+import { worldCatalogue } from '@/lib/world-catalogue';
 import { useGardenView } from '@/lib/garden-view';
 import {
   breakIntentionLabel,
@@ -120,8 +123,7 @@ export function HomeScreen() {
     open: boolean;
     intention: BreakIntention | null;
   }>({ key: napPlanKey, open: false, intention: null });
-  if (napPlan.key !== napPlanKey)
-    setNapPlan({ key: napPlanKey, open: false, intention: null });
+  if (napPlan.key !== napPlanKey) setNapPlan({ key: napPlanKey, open: false, intention: null });
   const breakIdeaOpen = napPlan.key === napPlanKey && napPlan.open;
   const napIntention = napPlan.key === napPlanKey ? napPlan.intention : null;
   const startNap = () => useGame.getState().sleep(undefined, napIntention);
@@ -207,7 +209,7 @@ export function HomeScreen() {
             gap: 6,
             flexDirection: 'row',
             alignItems: 'center',
-            borderRadius: 14,
+            borderRadius: artGeometry.controlRadius,
             borderWidth: 2,
             borderColor: c.napOutline,
             backgroundColor: c.rest,
@@ -226,7 +228,7 @@ export function HomeScreen() {
             minHeight: 44,
             paddingHorizontal: 12,
             justifyContent: 'center',
-            borderRadius: 14,
+            borderRadius: artGeometry.controlRadius,
             borderWidth: 1,
             borderColor: c.outline,
             backgroundColor: c.paper,
@@ -286,7 +288,7 @@ export function HomeScreen() {
             minHeight: 44,
             maxWidth: '100%',
             justifyContent: 'center',
-            borderRadius: 999,
+            borderRadius: artGeometry.tagRadius,
           }}
         >
           <BodyText
@@ -305,12 +307,12 @@ export function HomeScreen() {
             alignItems: 'center',
             gap: 6,
             backgroundColor: c.glass,
-            borderRadius: 999,
+            borderRadius: artGeometry.tagRadius,
             paddingHorizontal: 10,
             paddingVertical: 4,
           }}
         >
-          <Heart size={14} strokeWidth={2} color={p.mood < 30 ? c.error : c.ink} />
+          <PixelProp kind="heart" size={16} tint={p.mood < 30 ? c.error : c.ink} />
           <View
             style={{
               width: 48,
@@ -360,7 +362,7 @@ export function HomeScreen() {
               minHeight: 44,
               paddingHorizontal: 12,
               justifyContent: 'center',
-              borderRadius: 999,
+              borderRadius: artGeometry.tagRadius,
               borderWidth: 1,
               borderColor: c.outline,
               backgroundColor: gardenView === mode ? c.rest : c.paper,
@@ -397,7 +399,9 @@ export function HomeScreen() {
           }}
         >
           <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold', flexShrink: 1 }}>
-            {napIntention ? `Your break idea: ${breakIntentionLabel(napIntention)}` : 'A break idea, if you like'}
+            {napIntention
+              ? `Your break idea: ${breakIntentionLabel(napIntention)}`
+              : 'A break idea, if you like'}
           </BodyText>
           <BodyText style={{ fontSize: 11, color: c.moss }}>
             {breakIdeaOpen ? 'Hide' : napIntention ? 'Change' : 'Choose'}
@@ -460,11 +464,7 @@ export function HomeScreen() {
         onCompanions={() => setCompanionsOpen(true)}
         onSpar={() => router.push('/arena')}
       />
-      <DailyRhythmCard
-        active={gardenActive}
-        open={rhythmOpen}
-        onOpenChange={setRhythmOpen}
-      />
+      <DailyRhythmCard active={gardenActive} open={rhythmOpen} onOpenChange={setRhythmOpen} />
       <GardenKeepsakeSheet
         memory={openMemory}
         onClose={() => setKeepsakeSheet({ focused, memory: null })}
@@ -555,15 +555,12 @@ export function MissionsScreen() {
         onChange={setIntention}
         disabled={p.mode !== 'awake'}
       />
-      {missions.map((m, index) => {
+      {missions.map((m) => {
         const locked = p.level < m.level;
+        const world = isWorldId(m.id) ? m.id : null;
         return (
           <CozyPanel key={m.id} style={{ padding: 12, gap: 10, opacity: locked ? 0.85 : 1 }}>
-            <WorldPreview
-              world={(['park', 'book', 'mountain'] as const)[index]}
-              player={p}
-              height={compact ? 96 : 132}
-            />
+            {world && <WorldPreview world={world} player={p} height={compact ? 96 : 132} />}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
               <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
                 {m.name}
@@ -574,7 +571,7 @@ export function MissionsScreen() {
                   fontSize: 12,
                   paddingHorizontal: 8,
                   paddingVertical: 2,
-                  borderRadius: 999,
+                  borderRadius: artGeometry.tagRadius,
                   overflow: 'hidden',
                   backgroundColor: c.rest,
                 }}
@@ -583,11 +580,7 @@ export function MissionsScreen() {
               </BodyText>
             </View>
             <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-              {m.id === 'park'
-                ? 'Pond paths, curious neighbours and a little room to wander.'
-                : m.id === 'book'
-                  ? 'A library lane where your companion can linger over a story.'
-                  : 'A quiet ridge above the garden, with a cabin to return to.'}
+              {world ? worldCatalogue[world].description : 'A little room for time away.'}
             </BodyText>
             <BodyText style={{ fontSize: 12, color: c.shade }}>
               About {m.duration} seconds in this demo
@@ -661,7 +654,7 @@ export function ShopScreen() {
               feedback('error');
               return;
             }
-            setMerchant("a few more GRASS for this one.");
+            setMerchant('a few more GRASS for this one.');
             feedback('error');
           }}
           onPress={() => {
@@ -710,7 +703,7 @@ export function ShopScreen() {
                     right: 8,
                     fontSize: 10,
                     paddingHorizontal: 6,
-                    borderRadius: 999,
+                    borderRadius: artGeometry.tagRadius,
                     overflow: 'hidden',
                     backgroundColor: equipped ? c.moss : c.body,
                     color: equipped ? c.paper : c.ink,
@@ -747,7 +740,7 @@ export function ShopScreen() {
                   }
                   disabled={paused || (!owned && short > 0)}
                   onDisabledPress={() => {
-                    if (!paused) setMerchant("a few more GRASS for this one.");
+                    if (!paused) setMerchant('a few more GRASS for this one.');
                     feedback('error');
                   }}
                   onPress={() => {
@@ -900,7 +893,7 @@ export function ArenaScreen() {
   const practicePanel = (
     <View style={{ marginTop: backendConfigured ? 24 : 0, gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Bot color={c.ink} size={24} />
+        <PixelProp kind="swords" size={32} />
         <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold' }}>Sparring</BodyText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>

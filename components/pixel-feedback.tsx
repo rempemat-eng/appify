@@ -18,7 +18,8 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
-import { cozy as c } from '@/lib/cozy';
+import { cozy as c, panelStyle } from '@/lib/cozy';
+import { artGeometry } from '@/lib/art-direction';
 import { PixelProp } from '@/components/pixel-scenes';
 import type { PropKind } from '@/lib/scene-art';
 export function BodyText({ style, ...props }: TextProps) {
@@ -65,14 +66,10 @@ export function Dialogue({
       }}
       style={[
         {
+          ...panelStyle,
           minHeight: 56,
           padding: 12,
           paddingBottom: onDismiss ? 24 : 12,
-          borderRadius: 14,
-          backgroundColor: c.paper,
-          borderWidth: 2,
-          borderColor: c.outline,
-          boxShadow: '0 3px 0 rgba(74,59,53,.25), 0 8px 16px rgba(0,0,0,.08)',
         },
         style,
       ]}
@@ -225,11 +222,11 @@ export function PixelTabIcon({
           width: 40,
           height: 34,
           opacity: focused ? 1 : 0.65,
-          borderRadius: 17,
+          borderRadius: artGeometry.controlRadius,
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: focused ? c.positive : c.transparent,
-          boxShadow: focused ? '0 3px 0 rgba(74,59,53,.25)' : undefined,
+          boxShadow: focused ? `0 3px 0 ${c.depth}` : undefined,
         },
         motion,
       ]}
