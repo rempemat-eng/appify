@@ -1,10 +1,7 @@
 import { palette as c, type Player } from '@/lib/game';
+import { PET_INDEX, hatSprites, petPalette, petSprites } from '@/lib/pet-sprites';
 
 type Material = { outline: string; shadow: string; base: string; light: string };
-const leaf: Material = { outline: '#315F39', shadow: c.moss, base: c.positive, light: '#94BD70' };
-const rock: Material = { outline: c.ink, shadow: '#7D8077', base: '#A9AD98', light: '#D7DAC3' };
-const wood: Material = { outline: c.ink, shadow: '#795548', base: c.body, light: c.paper };
-const flower: Material = { outline: c.error, shadow: '#BD7564', base: '#D8A29A', light: c.paper };
 export type ArtPixel = { x: number; y: number; color: string };
 
 // Original integer-grid plant-animal silhouettes; species codes remain save-compatible.
@@ -92,164 +89,33 @@ export function petPixels(
     rect(26, 23, 4, 1, c.night);
     return [...pixels.values()];
   }
-  if (species === 'BLOB') {
-    shape(
-      [
-        [5, 20],
-        [7, 15],
-        [11, 12],
-        [21, 11],
-        [26, 15],
-        [28, 21],
-        [26, 26],
-        [20, 28],
-        [10, 27],
-        [5, 24],
-      ],
-      leaf,
-    );
-    rect(9, 27, 4, 2, leaf.shadow);
-    rect(22, 27, 4, 2, leaf.shadow);
-    rect(8, 20, 3, 2, leaf.shadow);
-    rect(11, 14, 4, 1, leaf.light);
-    rect(12, 8, 3, 5, c.paper);
-    rect(9, 7, 9, 3, c.ink);
-    rect(10, 5, 7, 4, c.error);
-    rect(12, 6, 2, 1, c.paper);
-    rect(16, 8, 1, 1, c.paper);
-  } else if (species === 'RAT') {
-    // Long stem legs, a curled vine tail and two pointed leaf ears.
-    rect(10, 21, 2, 8, leaf.outline);
-    rect(12, 28, 3, 1, leaf.shadow);
-    rect(22, 21, 2, 8, leaf.outline);
-    rect(24, 28, 3, 1, leaf.shadow);
-    rect(3, 18, 2, 7, leaf.outline);
-    rect(4, 24, 6, 2, leaf.outline);
-    rect(7, 21, 2, 4, leaf.outline);
-    rect(4, 20, 4, 2, leaf.outline);
-    rect(4, 19, 1, 4, leaf.light);
-    shape(
-      [
-        [10, 15],
-        [6, 9],
-        [6, 4],
-        [11, 6],
-        [15, 12],
-      ],
-      leaf,
-    );
-    shape(
-      [
-        [20, 12],
-        [22, 5],
-        [28, 3],
-        [27, 10],
-        [24, 15],
-      ],
-      leaf,
-    );
-    shape(
-      [
-        [9, 16],
-        [13, 12],
-        [21, 12],
-        [26, 16],
-        [27, 20],
-        [24, 24],
-        [14, 24],
-        [9, 21],
-      ],
-      leaf,
-    );
-    rect(13, 16, 3, 1, leaf.light);
-  } else {
-    shape(
-      [
-        [7, 18],
-        [10, 13],
-        [16, 11],
-        [23, 12],
-        [27, 17],
-        [28, 23],
-        [24, 27],
-        [12, 28],
-        [7, 24],
-      ],
-      rock,
-    );
-    rect(11, 27, 3, 2, rock.shadow);
-    rect(22, 27, 3, 2, rock.shadow);
-    // Reading lamp grows from the back, leaving the crown free for hats.
-    rect(5, 11, 2, 14, leaf.outline);
-    rect(6, 9, 5, 2, leaf.outline);
-    rect(8, 7, 7, 2, c.ink);
-    rect(7, 9, 9, 3, c.gold);
-    rect(9, 10, 5, 1, c.paper);
-    rect(10, 17, 5, 1, c.ink);
-    rect(9, 18, 1, 3, c.ink);
-    rect(15, 18, 1, 3, c.ink);
-    rect(10, 21, 5, 1, c.ink);
-    rect(20, 17, 5, 1, c.ink);
-    rect(19, 18, 1, 3, c.ink);
-    rect(25, 18, 1, 3, c.ink);
-    rect(20, 21, 5, 1, c.ink);
-    rect(16, 19, 3, 1, c.ink);
-  }
-  // Every Grassling starts leafy, buds at level 2 and flowers at level 3.
-  rect(4, 23, 4, 2, leaf.shadow);
-  rect(5, 21, 3, 2, leaf.base);
-  if (stage >= 2) {
-    rect(4, 12, 1, 10, leaf.outline);
-    rect(2, 15, 3, 2, leaf.base);
-    if (stage === 2) {
-      rect(3, 8, 3, 5, leaf.outline);
-      rect(4, 9, 1, 3, flower.base);
-    } else {
-      rect(2, 5, 5, 8, flower.shadow);
-      rect(0, 7, 9, 4, flower.base);
-      rect(3, 7, 3, 3, c.gold);
-      dot(2, 6, flower.light);
-      dot(1, 8, flower.light);
+  // Redrawn Grasslings (scripts/art/pets.py): shaded 32x32 sprites per species/stage.
+  const sprite = petSprites[species][stage as 1 | 2 | 3];
+  const state = sleeping ? (grumpy ? 'grumpy-closed' : 'closed') : grumpy ? 'grumpy' : 'open';
+  sprite[state].forEach((row, y) => {
+    for (let x = 0; x < row.length; x++) {
+      const ch = row[x];
+      if (ch !== '.') dot(x, y, petPalette[PET_INDEX.indexOf(ch)]);
     }
-  }
-  const eyeY = species === 'RAT' ? 17 : 18;
-  if (sleeping || species === 'BLOB') {
-    rect(16, eyeY, 3, 1, c.ink);
-    rect(23, eyeY, 3, 1, c.ink);
-  } else {
-    rect(species === 'CUBE' ? 12 : 17, eyeY, 1, 2, c.ink);
-    rect(23, eyeY, 1, 2, c.ink);
-  }
-  if (grumpy) {
-    rect(16, eyeY - 1, 3, 1, c.ink);
-    rect(23, eyeY - 1, 3, 1, c.ink);
-  }
-  rect(19, 23, 4, 1, c.ink);
-  const top = 11;
-  if (hat === 'CAP') {
-    rect(12, top - 2, 12, 3, c.night);
-    rect(13, top - 3, 9, 3, c.slate);
-    rect(20, top, 8, 1, c.paper);
-  }
-  if (hat === 'TOP HAT') {
-    rect(12, top - 1, 15, 2, c.ink);
-    rect(15, top - 6, 8, 5, c.ink);
-    rect(16, top - 5, 2, 3, wood.shadow);
-    rect(15, top - 2, 8, 1, c.error);
-  }
-  if (hat === 'CROWN') {
-    rect(13, top - 2, 11, 3, c.gold);
-    rect(13, top - 5, 2, 4, c.gold);
-    rect(18, top - 6, 2, 5, c.gold);
-    rect(22, top - 5, 2, 4, c.gold);
-    dot(18, top - 1, c.error);
+  });
+  const hatArt = hat ? hatSprites[hat] : undefined;
+  if (hatArt) {
+    const left = sprite.hat[0] - 8;
+    const top = sprite.hat[1] - hatArt.bottom;
+    hatArt.rows.forEach((row, y) => {
+      for (let x = 0; x < row.length; x++) {
+        const ch = row[x];
+        if (ch !== '.') dot(left + x, top + y, petPalette[PET_INDEX.indexOf(ch)]);
+      }
+    });
   }
   if (hat === 'SHADES') {
-    rect(15, eyeY - 1, 11, 1, c.night);
-    rect(16, eyeY, 4, 3, c.night);
-    rect(22, eyeY, 4, 3, c.night);
-    dot(17, eyeY, c.slate);
-    dot(23, eyeY, c.slate);
+    const [ex, ey] = sprite.eyes;
+    rect(ex - 2, ey - 1, 12, 1, c.night);
+    rect(ex - 1, ey, 4, 3, c.night);
+    rect(ex + 5, ey, 4, 3, c.night);
+    dot(ex, ey, c.slate);
+    dot(ex + 6, ey, c.slate);
   }
   return [...pixels.values()];
 }
