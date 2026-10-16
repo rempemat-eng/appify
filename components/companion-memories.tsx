@@ -13,10 +13,34 @@ import { BodyText } from '@/components/pixel-feedback';
 import { MemoryStamp } from '@/components/memory-stamp';
 
 const intentions = [
-  { id: 'rest', label: 'Rest', keepsake: 'lantern', title: 'A quiet moment' },
-  { id: 'read', label: 'Read', keepsake: 'bookmark', title: 'A few pages' },
-  { id: 'move', label: 'Move', keepsake: 'leaf', title: 'A little movement' },
-  { id: 'create', label: 'Create', keepsake: 'sketch', title: 'Something you made' },
+  {
+    id: 'rest',
+    label: 'Rest',
+    keepsake: 'lantern',
+    title: 'A quiet moment',
+    invitation: 'Settle somewhere comfortable and let your shoulders rest.',
+  },
+  {
+    id: 'read',
+    label: 'Read',
+    keepsake: 'bookmark',
+    title: 'A few pages',
+    invitation: 'Read a few pages of something you enjoy.',
+  },
+  {
+    id: 'move',
+    label: 'Move',
+    keepsake: 'leaf',
+    title: 'A little movement',
+    invitation: 'Try a comfortable stretch or a short wander.',
+  },
+  {
+    id: 'create',
+    label: 'Create',
+    keepsake: 'sketch',
+    title: 'Something you made',
+    invitation: 'Make a small sketch or jot down an idea.',
+  },
 ] as const;
 
 export type BreakIntentionPickerProps = {
@@ -30,6 +54,7 @@ export function BreakIntentionPicker({
   onChange,
   disabled = false,
 }: BreakIntentionPickerProps) {
+  const chosen = intentions.find((intention) => intention.id === value);
   const choiceStyle = (selected: boolean, pressed: boolean) => ({
     minHeight: 44,
     borderRadius: 10,
@@ -90,6 +115,39 @@ export function BreakIntentionPicker({
           </Pressable>
         ))}
       </View>
+      {chosen && (
+        <View
+          accessibilityLiveRegion="polite"
+          style={{
+            flexDirection: 'row',
+            alignItems: 'flex-start',
+            gap: 10,
+            paddingTop: 10,
+            borderTopWidth: 1,
+            borderTopColor: c.faded,
+          }}
+        >
+          <View
+            aria-hidden
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
+            <MemoryStamp intention={chosen.id} size={28} />
+          </View>
+          <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
+            <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
+              An optional idea for you
+            </BodyText>
+            <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+              {chosen.invitation}
+            </BodyText>
+            <BodyText style={{ fontSize: 11, lineHeight: 17 }}>
+              A kept reflection leaves a {chosen.keepsake} in your garden. Memories are optional
+              and self-reported.
+            </BodyText>
+          </View>
+        </View>
+      )}
     </CozyPanel>
   );
 }

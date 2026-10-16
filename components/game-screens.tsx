@@ -34,7 +34,11 @@ import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldPreview } from '@/components/world-scene';
 import { useGardenView } from '@/lib/garden-view';
-import type { BreakIntention, CompanionMemory } from '@/lib/companion-memories';
+import {
+  breakIntentionLabel,
+  type BreakIntention,
+  type CompanionMemory,
+} from '@/lib/companion-memories';
 import { BreakIntentionPicker } from '@/components/companion-memories';
 import { GardenKeepsakeShelf, GardenKeepsakeSheet } from '@/components/garden-keepsakes';
 import { GardenJourney } from '@/components/garden-journey';
@@ -92,7 +96,10 @@ export function HomeScreen() {
   const [lesson, setLesson] = useState({ key, id: candidate });
   if (lesson.key !== key) setLesson({ key, id: candidate });
   const coaching = busy ? null : lesson.id;
-  const [statsOpen, setStatsOpen] = useState(false);
+  const [statsSheet, setStatsSheet] = useState({ focused, open: false });
+  if (statsSheet.focused !== focused) setStatsSheet({ focused, open: false });
+  const statsOpen = statsSheet.focused === focused && statsSheet.open;
+  const setStatsOpen = (open: boolean) => setStatsSheet({ focused, open });
   const [companionSheet, setCompanionSheet] = useState({ focused, open: false });
   if (companionSheet.focused !== focused) setCompanionSheet({ focused, open: false });
   const companionsOpen = companionSheet.focused === focused && companionSheet.open;
@@ -107,6 +114,17 @@ export function HomeScreen() {
   if (rhythmSheet.focused !== focused) setRhythmSheet({ focused, open: false });
   const rhythmOpen = rhythmSheet.focused === focused && rhythmSheet.open;
   const setRhythmOpen = (open: boolean) => setRhythmSheet({ focused, open });
+  const napPlanKey = `${focused}-${p?.mode ?? ''}`;
+  const [napPlan, setNapPlan] = useState<{
+    key: string;
+    open: boolean;
+    intention: BreakIntention | null;
+  }>({ key: napPlanKey, open: false, intention: null });
+  if (napPlan.key !== napPlanKey)
+    setNapPlan({ key: napPlanKey, open: false, intention: null });
+  const breakIdeaOpen = napPlan.key === napPlanKey && napPlan.open;
+  const napIntention = napPlan.key === napPlanKey ? napPlan.intention : null;
+  const startNap = () => useGame.getState().sleep(undefined, napIntention);
   const gardenActive =
     focused &&
     appActive &&
@@ -115,6 +133,7 @@ export function HomeScreen() {
     !companionsOpen &&
     !openMemory &&
     !rhythmOpen &&
+    !breakIdeaOpen &&
     p?.mode === 'awake';
   useEffect(() => {
     if (coaching && gardenActive) useGame.getState().seeTip(coaching);
@@ -180,7 +199,7 @@ export function HomeScreen() {
           accessibilityLabel="Take a nap"
           onPress={() => {
             feedback('select');
-            useGame.getState().sleep();
+            startNap();
           }}
           style={({ pressed }) => ({
             minHeight: 44,
@@ -239,12 +258,13 @@ export function HomeScreen() {
           player={p}
           grumpy={p.mood < 30}
           sleepy={paused}
+          onNap={startNap}
           onFeed={() => {
             useGame.getState().feed();
             setCrumbs(true);
           }}
         />
-        <GardenVisitor />
+        <GardenVisitor active={gardenActive} />
         {crumbs && <PixelBurst />}
       </View>
       <View
@@ -356,8 +376,40 @@ export function HomeScreen() {
         onPlan={() => router.push('/missions')}
       />
       <GardenProgress />
-      <View style={{ gap: 6 }}>
-        <PixelButton label="TAKE A NAP" gold={paused} onPress={() => useGame.getState().sleep()} />
+      <View style={{ gap: 8 }}>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={breakIdeaOpen ? 'Close break ideas' : 'Choose a break idea'}
+          accessibilityState={{ expanded: breakIdeaOpen }}
+          aria-expanded={breakIdeaOpen}
+          onPress={() => setNapPlan((plan) => ({ ...plan, open: !plan.open }))}
+          style={{
+            minHeight: 44,
+            flexDirection: 'row',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 8,
+            borderRadius: 12,
+            paddingHorizontal: 12,
+            paddingVertical: 8,
+            backgroundColor: c.glass,
+          }}
+        >
+          <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold', flexShrink: 1 }}>
+            {napIntention ? `Your break idea: ${breakIntentionLabel(napIntention)}` : 'A break idea, if you like'}
+          </BodyText>
+          <BodyText style={{ fontSize: 11, color: c.moss }}>
+            {breakIdeaOpen ? 'Hide' : napIntention ? 'Change' : 'Choose'}
+          </BodyText>
+        </Pressable>
+        {breakIdeaOpen && (
+          <BreakIntentionPicker
+            value={napIntention}
+            onChange={(intention) => setNapPlan((plan) => ({ ...plan, intention }))}
+          />
+        )}
+        <PixelButton label="TAKE A NAP" gold={paused} onPress={startNap} />
         <BodyText style={{ textAlign: 'center', fontSize: 12 }}>
           put your phone down · simulated
         </BodyText>
@@ -609,7 +661,7 @@ export function ShopScreen() {
               feedback('error');
               return;
             }
-            setMerchant("you can't afford that, doomscroller.");
+            setMerchant("a few more GRASS for this one.");
             feedback('error');
           }}
           onPress={() => {
@@ -695,7 +747,7 @@ export function ShopScreen() {
                   }
                   disabled={paused || (!owned && short > 0)}
                   onDisabledPress={() => {
-                    if (!paused) setMerchant("you can't afford that, doomscroller.");
+                    if (!paused) setMerchant("a few more GRASS for this one.");
                     feedback('error');
                   }}
                   onPress={() => {

@@ -299,14 +299,246 @@ async function orderedWrites() {
   stop();
 }
 
+
+const allNodes = (tree) => {
+  if (tree === null || tree === undefined || typeof tree === 'boolean') return [];
+  if (Array.isArray(tree)) return tree.flatMap(allNodes);
+  if (typeof tree !== 'object') return [tree];
+  return [tree, ...allNodes(tree.props?.children)];
+};
+const findNode = (tree, predicate) => {
+  const found = allNodes(tree).find((node) => typeof node === 'object' && predicate(node));
+  assert.ok(found, 'expected nap presentation node');
+  return found;
+};
+const hasType = (tree, type) =>
+  allNodes(tree).some((node) => typeof node === 'object' && node.type === type);
+const visibleText = (tree) =>
+  allNodes(tree).filter((node) => typeof node === 'string' || typeof node === 'number')
+    .join(' ').replace(/\s+/g, ' ').trim();
+const jsx = (type, props) => ({ type, props: props || {} });
+
+// Execute ScreenOff itself with React and native components replaced only at
+// their boundaries. Scene absence proves unmount intent, not real timer cleanup,
+// React scheduling, native lifecycle or screen-lock/phone-usage behaviour.
+function quietNapPresentation() {
+  const overlayPath = path.join(__dirname, '..', 'components', 'game-overlays.tsx');
+  const overlaySource = ts.transpileModule(
+    fs.readFileSync(overlayPath, 'utf8') + '\nexports.TestScreenOff = ScreenOff;\n',
+    {
+      compilerOptions: {
+        module: ts.ModuleKind.CommonJS,
+        target: ts.ScriptTarget.ES2022,
+        jsx: ts.JsxEmit.ReactJSX,
+        esModuleInterop: true,
+      },
+    },
+  ).outputText;
+  const boundary = new Proxy({}, { get: (_, name) => name });
+  const missionFixtures = [
+    { id: 'park', name: 'PARK PATROL', duration: 15, reward: 20 },
+    { id: 'book', name: 'BOOK CLUB', duration: 30, reward: 60 },
+    { id: 'mountain', name: 'MOUNTAIN RETREAT', duration: 60, reward: 150 },
+  ];
+  for (const mission of [null, ...missionFixtures]) {
+    for (const together of [false, true]) {
+      const label = (mission?.id ?? 'untimed') + (together ? '/together' : '/solo');
+      let hookIndex = 0;
+      const slots = [];
+      let wakes = 0;
+      let writes = 0;
+      const player = {
+        id: 'garden-test',
+        pet_name: 'MOSS',
+        species: 'BLOB',
+        guardian: 'inkling',
+        level: 2,
+        mode: mission ? 'mission' : 'screen_off',
+        mission_id: mission?.id ?? null,
+        mission_ends_at: 1000 + (mission?.duration ?? 0) * 1000,
+        offline_seconds: 35,
+        grass: 140,
+      };
+      const keptMemory = Object.freeze({ id: 'read-memory', intention: 'read' });
+      const state = {
+        player,
+        now: 1000,
+        offStart: 30,
+        offGrass: 135,
+        activeBreakContext: { intention: 'read' },
+        companionMemories: Object.freeze([keptMemory]),
+        togetherId: together ? 'shared-nap' : null,
+        sessions: together
+          ? [{ id: 'shared-nap', player_a: player.id, player_b: 'friend', status: 'active', started_at: new Date(0).toISOString() }]
+          : [],
+        rivals: together
+          ? [{ ...player, id: 'friend', pet_name: 'BUD', guardian: null }]
+          : [],
+        message: null,
+      };
+      const useGame = (selector) => selector(state);
+      useGame.getState = () => state;
+      useGame.setState = () => { writes++; };
+      const gameStore = { getState: () => ({ ...state, wake: () => { wakes++; } }) };
+      const moduleFixture = { exports: {} };
+      vm.runInNewContext(overlaySource, {
+        module: moduleFixture,
+        exports: moduleFixture.exports,
+        require(id) {
+          if (id === 'react')
+            return {
+              useState(initial) {
+                const at = hookIndex++;
+                if (!slots[at])
+                  slots[at] = { value: typeof initial === 'function' ? initial() : initial };
+                return [
+                  slots[at].value,
+                  (update) => {
+                    slots[at].value = typeof update === 'function' ? update(slots[at].value) : update;
+                  },
+                ];
+              },
+              useEffect() { throw new Error('ScreenOff must not own effect clocks'); },
+              useRef(initial) { return { current: initial }; },
+            };
+          if (id === 'react/jsx-runtime') return { jsx, jsxs: jsx, Fragment: 'Fragment' };
+          if (id === 'react-native') return boundary;
+          if (id === 'react-native-reanimated')
+            return { __esModule: true, default: boundary, FadeIn: boundary };
+          if (id === '@/lib/cozy') return { cozy: {} };
+          if (id === '@/lib/game')
+            return {
+              useGame,
+              gameStore,
+              missions: missionFixtures,
+              clock: (seconds) => Math.floor(seconds / 60) + ':' + String(seconds % 60).padStart(2, '0'),
+            };
+          if (id === '@/lib/visitors')
+            return { guardianPlayer: (value) => value.guardian === 'inkling' ? { ...value, pet_name: 'INKLING', species: 'CUBE' } : value };
+          if (id === '@/lib/garden-view') return { useGardenView: () => ['tilt', () => { writes++; }] };
+          if (id === '@/lib/companion-memories')
+            return { breakIntentionLabel: () => 'A few pages' };
+          if (id.startsWith('@/components/') || id.startsWith('@/lib/') ||
+              id === 'lucide-react-native' || id === 'expo-haptics' ||
+              id === 'react-native-safe-area-context') return boundary;
+          throw new Error('Unexpected nap presentation import: ' + id);
+        },
+      }, { filename: overlayPath });
+      const render = () => {
+        hookIndex = 0;
+        return moduleFixture.exports.TestScreenOff();
+      };
+      const modelBefore = JSON.stringify(state);
+      let tree = render();
+      const measure = findNode(tree, (node) => typeof node.props?.onLayout === 'function');
+      measure.props.onLayout({ nativeEvent: { layout: { width: 390 } } });
+      tree = render();
+      let quiet = findNode(tree, (node) => node.props?.accessibilityLabel === 'Quiet view');
+      check(
+        quiet.props.accessibilityRole === 'switch' &&
+          quiet.props.accessibilityState.checked === false &&
+          quiet.props['aria-checked'] === false &&
+          quiet.props.style.minHeight >= 44 && quiet.props.style.minWidth >= 44,
+        label + ': quiet view begins off with switch semantics and a usable target',
+      );
+      check(
+        hasType(tree, mission ? 'WorldScene' : 'GardenWorld') && hasType(tree, 'LightSweep'),
+        label + ': the existing scenery remains visible by default',
+      );
+      if (!mission) {
+        const garden = findNode(tree, (node) => node.type === 'GardenWorld');
+        check(
+          garden.props.napping === true && garden.props.view === 'tilt' &&
+            garden.props.memories === state.companionMemories,
+          label + ': ordinary nap preserves the passive garden preference and saved memories',
+        );
+      }
+      check(
+        visibleText(tree).includes('INKLING is settling in. Put your phone down'),
+        label + ': invitation uses the current companion',
+      );
+      check(!hasType(tree, 'Pulse'), label + ': earnings do not mount a pulsing effect');
+      if (mission)
+        check(
+          visibleText(tree).includes(mission.duration + ' simulated MIN · ' + mission.duration + '-second demo') &&
+            visibleText(tree).includes('returns home automatically') &&
+            visibleText(tree).includes('Shielding ends with the mission.'),
+          label + ': real demo duration and automatic return limits are explicit',
+        );
+      else
+        check(
+          visibleText(tree).includes('Untimed nap') &&
+            visibleText(tree).includes('1 real second = 1 simulated MIN') &&
+            visibleText(tree).includes('This nap has no end timer.'),
+          label + ': ordinary nap remains untimed with the accelerated clock explained',
+        );
+      quiet.props.onPress();
+      tree = render();
+      quiet = findNode(tree, (node) => node.props?.accessibilityLabel === 'Quiet view');
+      check(
+        quiet.props.accessibilityState.checked === true && quiet.props['aria-checked'] === true,
+        label + ': enabling quiet view updates both checked states',
+      );
+      check(
+        ['GardenWorld', 'WorldScene', 'PixelScene', 'LightSweep', 'Pet', 'Pulse']
+          .every((type) => !hasType(tree, type)),
+        label + ': quiet view unmounts all decorative worlds, light effects and pets',
+      );
+      check(
+        visibleText(tree).includes(mission ? 'SHIELDED UNTIL RETURN' : 'NAPPING · GARDEN SHIELDED') &&
+          (mission
+            ? allNodes(tree).some((node) => typeof node === 'object' &&
+                node.props?.accessibilityLabel?.includes('remaining in this demo mission'))
+            : visibleText(tree).includes('NAPPED 5 SIMULATED MIN')),
+        label + ': quiet view retains status and countdown or elapsed progress',
+      );
+      const info = findNode(tree, (node) => node.props?.accessibilityLabel === 'About the simulated nap timer');
+      info.props.onPress();
+      tree = render();
+      check(
+        visibleText(tree).includes('Sleep and phone inactivity are not measured.') &&
+          findNode(tree, (node) => node.props?.accessibilityLabel === 'Close nap information')
+            .props['aria-expanded'] === true,
+        label + ': help remains accessible and honest in quiet view',
+      );
+      if (together)
+        check(
+          visibleText(tree).includes('TOUCH GRASS TOGETHER') &&
+            visibleText(tree).includes('SHARED TIMER:'),
+          label + ': quiet view retains shared session status',
+        );
+      check(
+        writes === 0 && wakes === 0 && JSON.stringify(state) === modelBefore,
+        label + ': changing presentation and help changes no game or memory state',
+      );
+      quiet = findNode(tree, (node) => node.props?.accessibilityLabel === 'Quiet view');
+      quiet.props.onPress();
+      tree = render();
+      check(
+        hasType(tree, mission ? 'WorldScene' : 'GardenWorld') &&
+          findNode(tree, (node) => node.props?.accessibilityLabel === 'Close nap information')
+            .props['aria-expanded'] === true,
+        label + ': restoring scenery retains the help state and current session',
+      );
+      findNode(tree, (node) => node.type === 'PixelButton' && node.props.label === 'WAKE UP')
+        .props.onPress();
+      check(
+        wakes === 1 && writes === 0 && JSON.stringify(state) === modelBefore,
+        label + ': the existing wake action is still available once',
+      );
+    }
+  }
+}
+
 async function main() {
   await sharedConsumers();
   await hydrationRaces();
   await unknownStoredValues();
   await storageFailures();
   await orderedWrites();
+  quietNapPresentation();
   console.log(
-    `PASS: ${checks} actual garden-view shared-state, hydration, persistence-order and cleanup assertions.`,
+    `PASS: ${checks} actual garden-view shared-state, hydration, persistence-order, cleanup and quiet-nap presentation assertions.`,
   );
 }
 main().catch((error) => {

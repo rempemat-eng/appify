@@ -328,6 +328,7 @@ export function GardenWorld({
   grumpy,
   sleepy,
   onFeed,
+  onNap,
   napping = false,
   active: screenActive = true,
   view = 'flat',
@@ -338,6 +339,8 @@ export function GardenWorld({
   grumpy: boolean;
   sleepy: boolean;
   onFeed?: () => void;
+  /** Home can attach its optional break idea to the existing nap action. */
+  onNap?: () => void;
   /** Night garden for the nap screen: pet asleep in its bed, no interaction. */
   napping?: boolean;
   /** Tab screens stay mounted; pause the world and cancel its actions on blur. */
@@ -550,7 +553,8 @@ export function GardenWorld({
           () => {
             if (!activeRef.current || id !== journeyId.current) return;
             napTimer.current = null;
-            useGame.getState().sleep();
+            if (onNap) onNap();
+            else useGame.getState().sleep();
           },
           reduced ? 0 : 500,
         );

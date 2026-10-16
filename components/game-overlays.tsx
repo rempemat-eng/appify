@@ -29,7 +29,7 @@ import { grasslings, growthStage } from '@/lib/grasslings';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldScene } from '@/components/world-scene';
 import { PixelScene } from '@/components/pixel-scenes';
-import { BodyText, Dialogue, Pulse } from '@/components/pixel-feedback';
+import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
 import { useGardenView } from '@/lib/garden-view';
 import { breakIntentionLabel } from '@/lib/companion-memories';
@@ -237,6 +237,7 @@ function ScreenOff() {
   const [gardenView] = useGardenView();
   const [skip, setSkip] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
+  const [quiet, setQuiet] = useState(false);
   const p = useGame((s) => s.player)!;
   const now = useGame((s) => s.now);
   const offStart = useGame((s) => s.offStart);
@@ -272,22 +273,24 @@ function ScreenOff() {
         alignItems: 'stretch',
       }}
     >
-      <View
-        pointerEvents="none"
-        style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
-      >
-        {m && (
-          <PixelScene
-            kind="night"
-            skyOnly
-            species={guardian.species}
-            level={p.level}
-            player={p}
-            style={{ height: '100%', borderWidth: 0 }}
-          />
-        )}
-        <LightSweep night skip={skip} />
-      </View>
+      {!quiet && (
+        <View
+          pointerEvents="none"
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
+        >
+          {m && (
+            <PixelScene
+              kind="night"
+              skyOnly
+              species={guardian.species}
+              level={p.level}
+              player={p}
+              style={{ height: '100%', borderWidth: 0 }}
+            />
+          )}
+          <LightSweep night skip={skip} />
+        </View>
+      )}
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{
@@ -298,6 +301,16 @@ function ScreenOff() {
         }}
       >
         <View style={{ alignItems: 'center', gap: 10, paddingTop: 8 }}>
+          <PixelText
+            accessibilityRole="header"
+            style={{ color: c.paper, textAlign: 'center', fontSize: 14, lineHeight: 25 }}
+          >
+            A LITTLE TIME FOR YOU
+          </PixelText>
+          <BodyText style={{ color: c.paper, textAlign: 'center', lineHeight: 22 }}>
+            {guardian.pet_name} is settling in. Put your phone down and make a little room for
+            yourself.
+          </BodyText>
           {breakContext && (
             <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
               Your break idea: {breakIntentionLabel(breakContext.intention)} · a reflection is
@@ -315,11 +328,47 @@ function ScreenOff() {
               padding: 8,
             }}
           >
-            {'NAPPING · GARDEN SHIELDED'}
+            {m ? 'EXPLORING · SHIELDED UNTIL RETURN' : 'NAPPING · GARDEN SHIELDED'}
           </PixelText>
-          <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold', fontSize: 12 }}>
-            simulated · 1 real second = 1 offline MIN
+          <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
+            {m
+              ? `${m.duration} simulated MIN · ${m.duration}-second demo`
+              : 'Untimed nap · simulated · 1 real second = 1 simulated MIN'}
           </BodyText>
+          <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
+            {m
+              ? 'This demo mission returns home automatically when its timer ends. Shielding ends with the mission.'
+              : 'This nap has no end timer. Choose WAKE UP when you want to return.'}
+          </BodyText>
+          <Pressable
+            accessibilityRole="switch"
+            accessibilityLabel="Quiet view"
+            accessibilityHint="Hides the decorative scenery. Your demo timer and wake controls stay available."
+            accessibilityState={{ checked: quiet }}
+            aria-checked={quiet}
+            onPress={() => setQuiet((value) => !value)}
+            style={{
+              minWidth: 44,
+              minHeight: 44,
+              paddingHorizontal: 16,
+              paddingVertical: 10,
+              borderRadius: 22,
+              borderWidth: 1,
+              borderColor: c.napOutline,
+              backgroundColor: c.night,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <BodyText style={{ color: c.paper, fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>
+              QUIET VIEW · {quiet ? 'ON' : 'OFF'}
+            </BodyText>
+          </Pressable>
+          {quiet && (
+            <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 12 }}>
+              Scenery is hidden. There is nothing here you need to watch.
+            </BodyText>
+          )}
           <Pressable
             accessibilityRole="button"
             accessibilityLabel={
@@ -391,7 +440,7 @@ function ScreenOff() {
               onLayout={(event) => setNapWidth(event.nativeEvent.layout.width)}
               style={{ width: '100%', alignItems: 'center' }}
             >
-              {napWidth > 0 && (
+              {!quiet && napWidth > 0 && (
                 <View
                   style={{
                     borderRadius: 18,
@@ -414,7 +463,7 @@ function ScreenOff() {
               onLayout={(event) => setNapWidth(event.nativeEvent.layout.width)}
               style={{ width: '100%', alignItems: 'center', gap: 12 }}
             >
-              {napWidth > 0 && (
+              {!quiet && napWidth > 0 && (
                 <View
                   style={{
                     borderRadius: 18,
@@ -434,7 +483,7 @@ function ScreenOff() {
                   />
                 </View>
               )}
-              {togetherId && rival && (
+              {!quiet && togetherId && rival && (
                 <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
                   <Pet
                     species={guardianPlayer(rival).species}
@@ -450,9 +499,7 @@ function ScreenOff() {
                   <BodyText style={{ color: c.paper }}>{rival.pet_name} is napping too</BodyText>
                 </View>
               )}
-              <Pulse
-                active
-                color={c.gold}
+              <View
                 style={{
                   padding: 8,
                   borderRadius: 14,
@@ -462,9 +509,9 @@ function ScreenOff() {
                 }}
               >
                 <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 22 }}>
-                  {`NAPPED ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
+                  {`NAPPED ${p.offline_seconds - offStart} SIMULATED MIN\n+${p.grass - offGrass} GRASS`}
                 </PixelText>
-              </Pulse>
+              </View>
             </View>
           )}
           {m ? (
@@ -480,7 +527,7 @@ function ScreenOff() {
         <PixelText
           style={{ color: c.body, textAlign: 'center', backgroundColor: c.night, padding: 6 }}
         >
-          {m ? 'EARLY RETURN: NO COMPLETION REWARD' : '+1 GRASS / SIMULATED OFFLINE MIN'}
+          {m ? 'EARLY RETURN · EARNED CARDS STAY WITH YOU' : '+1 GRASS / SIMULATED OFFLINE MIN'}
         </PixelText>
         {togetherId && message && (
           <BodyText style={{ color: c.paper, textAlign: 'center' }}>{message}</BodyText>

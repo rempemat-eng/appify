@@ -248,6 +248,7 @@ function render(napping = false, options = {}) {
       onFeed: () => {
         feeds++;
       },
+      onNap: options.onNap,
     });
     if (!dirty) effects.forEach((fn) => fn());
     if (++attempts > 5) throw new Error('Source render did not settle');
@@ -1437,6 +1438,35 @@ for (const [identity, motifColor] of [
   }
 }
 const signatureChecks = count - signatureStart;
+const homeNapStart = count;
+let plannedNaps = 0;
+const plannedNap = () => { plannedNaps++; };
+worldTree = setup(false, { onNap: plannedNap });
+reduced = true;
+worldTree = render(false, { onNap: plannedNap });
+press(worldTree, 'nap');
+let plannedTimer = [...timers.values()].find((timer) => timer.ms === 0);
+check(Boolean(plannedTimer), 'Home nap delegation keeps the arrival pause');
+plannedTimer.fn();
+check(plannedNaps === 1 && sleeps === 0, 'bed arrival delegates once instead of losing the Home break idea');
+worldTree = setup(false, { onNap: plannedNap });
+reduced = true;
+worldTree = render(false, { onNap: plannedNap });
+press(worldTree, 'nap');
+plannedTimer = [...timers.values()].find((timer) => timer.ms === 0);
+check(Boolean(plannedTimer), 'covered Home fixture has a pending delegated nap');
+worldTree = render(false, { active: false, onNap: plannedNap });
+plannedTimer.fn();
+check(plannedNaps === 1 && sleeps === 0, 'coverage invalidates a retained delegated nap callback');
+worldTree = setup();
+reduced = true;
+worldTree = render();
+press(worldTree, 'nap');
+plannedTimer = [...timers.values()].find((timer) => timer.ms === 0);
+check(Boolean(plannedTimer), 'unconfigured worlds retain the default nap arrival');
+plannedTimer.fn();
+check(sleeps === 1, 'unconfigured worlds still call the existing ordinary nap');
+const homeNapChecks = count - homeNapStart;
 console.log(
-  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${backgroundChecks} background-state, ${lifeChecks} keepsake/identity, ${signatureChecks} signature-motion (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
+  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${backgroundChecks} background-state, ${lifeChecks} keepsake/identity, ${signatureChecks} signature-motion, ${homeNapChecks} Home-nap delegation (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
 );

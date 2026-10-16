@@ -146,10 +146,15 @@ function homeFixture() {
   const clock = timers();
   const control = { focused: false, foreground: true };
   const seen = [];
+  const naps = [];
   const state = {
     player: { id: 'test', pet_name: 'MOSS', species: 'BLOB', mode: 'awake', mood: 50, grass: 30, level: 1, offline_seconds: 0 },
     now: 0, voice: null, firstWake: false, tips: [], companionMemories: [],
     alerts: [], seeTip: (tip) => seen.push(tip),
+    sleep(mission, intention) {
+      naps.push({ mission, intention });
+      state.player = { ...state.player, mode: 'screen_off' };
+    },
   };
   const useGame = (selector) => selector(state);
   useGame.getState = () => state;
@@ -159,7 +164,7 @@ function homeFixture() {
     if (id === 'react-native') return { ...Object.fromEntries(['FlatList', 'KeyboardAvoidingView', 'Modal', 'Pressable', 'ScrollView', 'TextInput', 'View'].map((name) => [name, name])), Platform: { OS: 'web' }, useWindowDimensions: () => ({ height: 800, width: 390 }) };
     if (id === 'expo-router') return { useIsFocused: () => control.focused, router: {} };
     if (id === 'react-native-safe-area-context') return { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) };
-    if (id === '@/lib/game') return { useGame, status: () => ({ kind: 'care' }) };
+    if (id === '@/lib/game') return { useGame, status: () => ({ kind: 'care' }), feedback: () => {} };
     if (id === '@/lib/cozy') return { cozy: {} };
     if (id === '@/lib/layout') return { gameLayout: { gutter: 16, maxWidth: 640 }, dockClearance: () => 90 };
     if (id === '@/lib/motion') return { useReducedMotion: () => false };
@@ -167,19 +172,158 @@ function homeFixture() {
     if (id === '@/lib/garden-view') return { useGardenView: () => ['flat', () => {}] };
     if (id === '@/lib/visitors') return { guardianPlayer: (player) => player, isVisitorId: () => false };
     if (id === '@/lib/grasslings') return { grasslings: { BLOB: { name: 'Mossling', habit: 'Rest' } }, growthStage: () => 'Sprout', levelPreview: () => ({ next: 2, cost: 20, unlock: 'A new outing' }) };
+    if (id === '@/lib/companion-memories') return { breakIntentionLabel: (value) => ({ rest: 'Rest', read: 'Read', move: 'Move', create: 'Create' })[value] };
     if (id === '@/lib/first-session') return { gardenTips: { phone: { text: 'phone' }, wake: { text: 'wake' }, budget: { text: 'budget' } } };
     if (id === '@/components/offline-garden') return { usePlayPaused: () => false, ...Object.fromEntries(['GardenProgress', 'GardenStreak', 'RecentBreaks', 'PlayPause', 'TogetherInvite'].map((name) => [name, name])) };
     if (id === '@/components/game-ui') return { Page: 'Page', PixelButton: 'PixelButton', PixelText: 'PixelText', styles: {} };
     if (id.startsWith('@/components/') || id.startsWith('@/lib/') || id === 'lucide-react-native') return boundary;
     throw new Error('Unexpected Home import: ' + id);
   }, clock.globals).HomeScreen;
-  return { control, state, seen, clock, runtime, render: () => runtime.render(Home) };
+  return { control, state, seen, naps, clock, runtime, render: () => runtime.render(Home) };
+}
+
+function visitorPresentationFixture(welcome = false) {
+  const runtime = hooks();
+  const clock = timers();
+  const control = { reduced: false, height: 844, width: 390 };
+  const calls = [];
+  const shared = [];
+  const reward = { settlementId: 'break', cards: [], minutes: 15, grass: 20, visitor: null, postcard: null, hat: null, early: false };
+  const state = {
+    player: { id: 'test', species: 'BLOB', pet_name: 'MOSS', mode: 'awake', level: 1, collection: [] },
+    waitingVisitor: welcome ? null : { id: 'dozebud', expiresAt: 0 },
+    now: 0, cardReward: welcome ? reward : null, pendingMemories: [],
+    sessions: [], pendingTogetherWakes: [],
+    befriendVisitor() {
+      calls.push('befriend');
+      state.player.collection = [{ id: state.waitingVisitor.id, befriendedAt: 1 }];
+      state.waitingVisitor = null;
+    },
+    dismissCards() { calls.push('dismiss'); state.cardReward = null; },
+    sleep() { calls.push('sleep'); state.player.mode = 'screen_off'; },
+  };
+  const useGame = (selector) => selector(state);
+  useGame.getState = () => state;
+  const components = load('components/visitors.tsx', (id) => {
+    if (id === 'react') return runtime.react;
+    if (id === 'react/jsx-runtime') return jsxRuntime;
+    if (id === 'react-native') return { View: 'View', ScrollView: 'ScrollView', useWindowDimensions: () => ({ height: control.height, width: control.width }) };
+    if (id === 'expo-router') return { router: { navigate: (path) => calls.push('navigate:' + path), replace: (path) => calls.push('replace:' + path) } };
+    if (id === 'react-native-safe-area-context') return { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) };
+    if (id === 'react-native-svg') return { __esModule: true, default: 'Svg', Rect: 'Rect' };
+    if (id === 'react-native-reanimated') return {
+      __esModule: true,
+      default: { View: 'AnimatedView' },
+      FadeIn: { duration: (duration) => ({ duration }) },
+      cancelAnimation: (value) => { value.plan = null; },
+      useAnimatedStyle: (getStyle) => getStyle(),
+      useSharedValue(initial) {
+        const ref = runtime.react.useRef(null);
+        if (!ref.current) {
+          ref.current = { value: initial, plan: null, set(value) {
+            this.plan = typeof value === 'object' ? value : null;
+            this.value = typeof value === 'object' ? value.to : value;
+          } };
+          shared.push(ref.current);
+        }
+        return ref.current;
+      },
+      withTiming: (to, options) => ({ to, options }),
+      withDelay: (delay, animation) => ({ ...animation, delay }),
+    };
+    if (id === '@/lib/game') return { useGame, palette: {} };
+    if (id === '@/lib/cozy') return { cozy: {}, panelStyle: {} };
+    if (id === '@/lib/motion') return { useReducedMotion: () => control.reduced };
+    if (id === '@/lib/visitors') return { collectionOf: (player) => player.collection, guardianPlayer: (player) => player, visitorInfo: (id) => ({ id, name: id.toUpperCase() }) };
+    if (id === '@/lib/cards') return { cards: {}, cardIds: [] };
+    if (id === '@/lib/layout') return { gameLayout: { maxWidth: 640, gutter: 16 } };
+    if (id.startsWith('@/components/') || id === 'lucide-react-native') return boundary;
+    throw new Error('Unexpected visitor presentation import: ' + id);
+  }, clock.globals);
+  return { runtime, clock, control, calls, shared, state, render: (active = true) => runtime.render(welcome ? components.WelcomeBack : components.GardenVisitor, { active }) };
+}
+
+function visitorAndReturnChecks() {
+  const visitor = visitorPresentationFixture();
+  let tree = visitor.render();
+  const oldPress = byType(tree, 'Pet').props.onPress;
+  check(byType(tree, 'Pet').props.active && visitor.shared[0].plan !== null, 'visible visitor owns its finite peek and active pet');
+  tree = visitor.render(false);
+  check(tree === null && visitor.shared[0].plan === null && visitor.clock.timeouts.size === 0, 'hidden visitor removes its target and decorative work');
+  oldPress();
+  check(visitor.calls.length === 0, 'a retained visitor callback cannot befriend while covered');
+  tree = visitor.render(true);
+  const firstVisitorPress = byType(tree, 'Pet').props.onPress;
+  visitor.state.waitingVisitor = { id: 'trailhop', expiresAt: 0 };
+  tree = visitor.render(true);
+  firstVisitorPress();
+  check(visitor.calls.length === 0, 'a retained callback cannot befriend a different arriving visitor');
+  byType(tree, 'Pet').props.onPress();
+  tree = visitor.render(true);
+  check(visitor.calls[0] === 'befriend' && byType(tree, 'PixelBurst'), 'current visitor can befriend and celebrate');
+  check(visitor.clock.timeouts.size === 1, 'celebration owns one finite timer');
+  tree = visitor.render(false);
+  check(tree === null && visitor.clock.timeouts.size === 0, 'coverage cancels a pending celebration');
+  tree = visitor.render(true);
+  check(tree === null, 'resuming does not replay a hidden celebration');
+  visitor.state.waitingVisitor = { id: 'dozebud', expiresAt: 0 };
+  visitor.control.reduced = true;
+  tree = visitor.render(true);
+  check(byType(tree, 'AnimatedView').props.entering === undefined && visitor.shared[0].plan === null, 'reduced motion keeps a static visitor without a peek or fade');
+  visitor.runtime.unmount();
+  check(visitor.clock.timeouts.size === 0, 'visitor unmount clears presentation timers');
+
+  const rest = visitorPresentationFixture(true);
+  tree = rest.render();
+  check(rest.calls.length === 0, 'rendering rewards never starts another break automatically');
+  check(text(tree).includes('simulated offline MIN'), 'return labels the accelerated break clock');
+  find(tree, (node) => node.type === 'PixelButton' && node.props.label === 'START A NAP').props.onPress();
+  check(rest.calls.join('|') === 'dismiss|replace:/|sleep' && rest.state.player.mode === 'screen_off', 'explicit departure settles the sheet then starts the existing untimed nap');
+  rest.runtime.unmount();
+  const garden = visitorPresentationFixture(true);
+  garden.control.height = 320;
+  garden.control.width = 320;
+  tree = garden.render();
+  check(byType(tree, 'CozySheet').props.style.maxHeight <= 320 && byType(tree, 'ScrollView').props.style.maxHeight >= 0, 'short return window emits bounded sheet and scroll caps');
+  find(tree, (node) => node.type === 'PixelButton' && node.props.label === 'BACK TO THE GARDEN').props.onPress();
+  check(garden.calls.join('|') === 'dismiss|navigate:/' && garden.state.player.mode === 'awake', 'garden route remains an independent explicit choice');
+  garden.runtime.unmount();
+}
+
+function journeyChecks() {
+  for (const guardian of [null, 'inkling']) {
+    const runtime = hooks();
+    const calls = [];
+    const player = { guardian, collection: [{ id: 'dozebud', befriendedAt: 1 }], postcards: [{ mission: 'park' }, { mission: 'book' }] };
+    const Journey = load('components/garden-journey.tsx', (id) => {
+      if (id === 'react') return runtime.react;
+      if (id === 'react/jsx-runtime') return jsxRuntime;
+      if (id === 'react-native' || id === 'lucide-react-native' || id.startsWith('@/components/')) return boundary;
+      if (id === '@/lib/cozy') return { cozy: {} };
+      if (id === '@/lib/companion-profiles') return { companionProfile: (value) => ({ id: value.guardian, name: value.guardian ? 'INKLING' : 'MOSS', invitation: { title: 'A little idea', body: 'A little time away.' } }) };
+      if (id === '@/lib/visitors') return { collectionOf: (value) => value.collection, befriendedVisitorIds: (value) => value.collection.map((entry) => entry.id), postcardsOf: (value) => value.postcards };
+      throw new Error('Unexpected journey import: ' + id);
+    }).GardenJourney;
+    const props = { player, onMissions: () => calls.push('missions'), onJournal: () => calls.push('journal'), onCompanions: () => calls.push('companions'), onSpar: () => calls.push('spar') };
+    let tree = runtime.render(Journey, props);
+    check(byType(tree, 'PixelButton').props.label === 'PLAN A BREAK', 'established companion choice keeps an offline outing as the primary invitation');
+    check(!text(tree).includes('VISIT DAVE') && !text(tree).includes('MEET YOUR COMPANIONS'), 'practice and pet switching remain secondary trail details');
+    byType(tree, 'PixelButton').props.onPress();
+    check(calls.join('|') === 'missions', 'the primary invitation goes to break planning');
+    find(tree, (node) => node.props.accessibilityLabel === 'Explore the garden trail').props.onPress();
+    tree = runtime.render(Journey, props);
+    check(text(tree).includes(guardian ? 'VISIT DAVE' : 'MEET YOUR COMPANIONS'), 'the expanded trail preserves optional garden discoveries');
+    runtime.unmount();
+  }
 }
 
 async function main() {
+  visitorAndReturnChecks();
+  journeyChecks();
   const home = homeFixture();
   let tree = home.render();
   check(!byType(tree, 'GardenWorld').props.active, 'unfocused Home is inactive');
+  check(!byType(tree, 'GardenVisitor').props.active, 'unfocused Home pauses the visiting companion');
   check(home.seen.length === 0, 'unfocused Home does not consume guidance');
   home.state.firstWake = true;
   tree = home.render();
@@ -191,6 +335,7 @@ async function main() {
   home.control.foreground = true;
   tree = home.render();
   check(byType(tree, 'GardenWorld').props.active, 'visible uncovered Home activates the garden');
+  check(byType(tree, 'GardenVisitor').props.active, 'visible uncovered Home activates its visitor');
   check(home.seen.length === 1 && home.seen[0] === 'wake', 'wake guidance is consumed only when visible');
   byType(tree, 'DailyRhythmCard').props.onOpenChange(true);
   tree = home.render();
@@ -198,6 +343,7 @@ async function main() {
   check(!byType(tree, 'GardenWorld').props.active, 'opening the planner deactivates in-flight garden work');
   check(!byType(tree, 'DailyRhythmCard').props.active, 'the planner clock shares the covered Home activity gate');
   check(home.clock.intervals.size === 0, 'planner coverage pauses dialogue rotation');
+  check(!byType(tree, 'GardenVisitor').props.active, 'planner coverage pauses the visiting companion');
   home.control.focused = false;
   tree = home.render();
   check(!byType(tree, 'DailyRhythmCard').props.open, 'tab blur closes the controlled planner');
@@ -205,8 +351,56 @@ async function main() {
   tree = home.render();
   check(!byType(tree, 'DailyRhythmCard').props.open, 'returning Home does not reopen a stale planner');
   check(byType(tree, 'GardenWorld').props.active, 'returning Home reactivates its quiet garden');
+  find(tree, (node) => node.props.accessibilityLabel === 'Open garden stats').props.onPress();
+  tree = home.render();
+  check(byType(tree, 'Modal').props.visible && !byType(tree, 'GardenWorld').props.active, 'Stats covers and pauses the garden');
+  home.control.focused = false;
+  tree = home.render();
+  check(!byType(tree, 'Modal').props.visible, 'tab blur closes Stats');
+  home.control.focused = true;
+  tree = home.render();
+  check(!byType(tree, 'Modal').props.visible && byType(tree, 'GardenWorld').props.active, 'returning Home does not reopen stale Stats');
   home.runtime.unmount();
   check(home.clock.intervals.size === 0 && home.clock.timeouts.size === 0, 'Home timers clean up');
+
+  const departure = homeFixture();
+  departure.control.focused = true;
+  tree = departure.render();
+  check(!nodes(tree).some((node) => node?.type === 'BreakIntentionPicker'), 'a quick Home nap requires no intention decision');
+  find(tree, (node) => node.props.accessibilityLabel === 'Choose a break idea').props.onPress();
+  tree = departure.render();
+  check(!byType(tree, 'GardenWorld').props.active, 'choosing an intention cancels garden work');
+  byType(tree, 'BreakIntentionPicker').props.onChange('read');
+  tree = departure.render();
+  check(byType(tree, 'BreakIntentionPicker').props.value === 'read', 'Home holds its optional reading idea');
+  find(tree, (node) => node.props.accessibilityLabel === 'Take a nap').props.onPress();
+  check(departure.naps.length === 1 && departure.naps[0].mission === undefined && departure.naps[0].intention === 'read', 'header nap forwards the chosen idea to the existing ordinary nap');
+  tree = departure.render();
+  check(!nodes(tree).some((node) => node?.type === 'BreakIntentionPicker'), 'starting a nap closes the break preparation');
+  departure.state.player = { ...departure.state.player, mode: 'awake' };
+  tree = departure.render();
+  find(tree, (node) => node.props.accessibilityLabel === 'Choose a break idea').props.onPress();
+  tree = departure.render();
+  check(byType(tree, 'BreakIntentionPicker').props.value === null, 'the next break begins with Just a break');
+  byType(tree, 'BreakIntentionPicker').props.onChange('move');
+  tree = departure.render();
+  byType(tree, 'GardenWorld').props.onNap();
+  check(departure.naps[1].intention === 'move', 'the garden bed delegates the same selected idea');
+  departure.state.player = { ...departure.state.player, mode: 'awake' };
+  tree = departure.render();
+  find(tree, (node) => node.type === 'PixelButton' && node.props.label === 'TAKE A NAP').props.onPress();
+  check(departure.naps[2].intention === null, 'the primary quick nap preserves no-intention default');
+  departure.state.player = { ...departure.state.player, mode: 'awake' };
+  tree = departure.render();
+  find(tree, (node) => node.props.accessibilityLabel === 'Choose a break idea').props.onPress();
+  tree = departure.render();
+  byType(tree, 'BreakIntentionPicker').props.onChange('create');
+  departure.control.focused = false;
+  departure.render();
+  departure.control.focused = true;
+  tree = departure.render();
+  check(!nodes(tree).some((node) => node?.type === 'BreakIntentionPicker') && text(tree).includes('A break idea, if you like'), 'leaving Home clears the unfinished break choice');
+  departure.runtime.unmount();
 
   let instant = new Date(2026, 9, 16, 16, 59).getTime();
   class ClockDate extends Date {
@@ -274,7 +468,7 @@ async function main() {
   check(broken.changes.at(-1) === false && !broken.props.open, 'save closes the parent-controlled planner');
   check(broken.clock.intervals.size === 0, 'disabled saved plan schedules no clock');
   broken.runtime.unmount();
-  console.log('PASS: ' + checks + ' actual Home/planner coverage, hidden guidance, recovery and clock lifecycle assertions.');
+  console.log('PASS: ' + checks + ' actual Home, break preparation, visitor, return, journey and planner lifecycle assertions.');
 }
 main().catch((error) => {
   console.error(error);

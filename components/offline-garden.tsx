@@ -2,6 +2,7 @@ import { Fragment } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
+import { useReducedMotion } from '@/lib/motion';
 import { Sprout, Users, Moon } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
 import { clock, missions, useGame, type Player } from '@/lib/game';
@@ -131,6 +132,7 @@ export function GardenProgress() {
   );
 }
 export function RecentBreaks() {
+  const reduced = useReducedMotion();
   const history = useGame((s) => s.recentBreaks);
   return (
     <View style={{ gap: 12, paddingTop: 12 }}>
@@ -143,8 +145,8 @@ export function RecentBreaks() {
       )}
       {history.slice(0, 5).map((entry) => (
         <Animated.View
-          entering={FadeIn}
-          exiting={FadeOut}
+          entering={reduced ? undefined : FadeIn}
+          exiting={reduced ? undefined : FadeOut}
           key={entry.id}
           style={{ gap: 4, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: c.outline }}
         >

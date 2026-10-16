@@ -77,6 +77,8 @@ export function GardenJourney({
 }) {
   const [expanded, setExpanded] = useState(false);
   const next = nextGardenStep(player);
+  const companion = companionProfile(player);
+  const outingStep = next.action === 'missions';
   const actions: Record<JourneyAction, () => void> = {
     missions: onMissions,
     journal: onJournal,
@@ -99,18 +101,25 @@ export function GardenJourney({
           <BodyText
             style={{ fontSize: 10, fontFamily: 'Nunito_800ExtraBold', color: c.leafOutline }}
           >
-            AROUND THE GARDEN
+            {outingStep ? 'AROUND THE GARDEN' : `AN IDEA FROM ${companion.name.toUpperCase()}`}
           </BodyText>
           <BodyText
             accessibilityRole="header"
             style={{ fontSize: 14, fontFamily: 'Nunito_800ExtraBold' }}
           >
-            {next.heading}
+            {outingStep ? next.heading : companion.invitation.title}
           </BodyText>
         </View>
       </View>
-      <BodyText style={{ fontSize: 12, lineHeight: 18 }}>{next.body}</BodyText>
-      <PixelButton small light label={next.label} onPress={actions[next.action]} />
+      <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+        {outingStep ? next.body : companion.invitation.body}
+      </BodyText>
+      <PixelButton
+        small
+        light
+        label={outingStep ? next.label : 'PLAN A BREAK'}
+        onPress={onMissions}
+      />
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={expanded ? 'Close garden trail' : 'Explore the garden trail'}
@@ -136,6 +145,15 @@ export function GardenJourney({
       </Pressable>
       {expanded && (
         <View style={{ gap: 10, paddingHorizontal: 2 }}>
+          {!outingStep && (
+            <View style={{ gap: 6 }}>
+              <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
+                {next.heading}
+              </BodyText>
+              <BodyText style={{ fontSize: 12, lineHeight: 18 }}>{next.body}</BodyText>
+              <PixelButton small light label={next.label} onPress={actions[next.action]} />
+            </View>
+          )}
           {[
             [
               'A home to return to',

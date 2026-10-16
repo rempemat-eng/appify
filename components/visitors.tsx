@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -26,7 +26,9 @@ import { CozySheet, PaperFinish } from '@/components/cozy-ui';
 import { LightSweep, PixelBurst } from '@/components/cozy-motion';
 import { RewardCard } from '@/components/habit-cards';
 import { gameLayout } from '@/lib/layout';
-export function GardenVisitor() {
+export function GardenVisitor({ active = true }: { active?: boolean }) {
+  const activeRef = useRef(active);
+  activeRef.current = active;
   const reduced = useReducedMotion();
   const waiting = useGame((s) => s.waitingVisitor);
   const now = useGame((s) => s.now);
@@ -34,20 +36,30 @@ export function GardenVisitor() {
     s.player ? collectionOf(s.player).filter((v) => v.befriendedAt !== null).length : 0,
   );
   const [celebration, setCelebration] = useState({ friends, show: false });
-  if (friends !== celebration.friends)
-    setCelebration({ friends, show: friends > celebration.friends });
+  if (friends !== celebration.friends || ((!active || reduced) && celebration.show))
+    setCelebration({
+      friends,
+      show: active && !reduced && friends > celebration.friends,
+    });
   useEffect(() => {
-    if (!celebration.show) return undefined;
+    if (!active || !celebration.show) return undefined;
     const timer = setTimeout(() => setCelebration({ friends, show: false }), 600);
     return () => clearTimeout(timer);
-  }, [celebration.show, friends]);
-  const peek = useSharedValue(12);
+  }, [active, celebration.show, friends]);
+  const peek = useSharedValue(0);
   useEffect(() => {
-    if (!waiting?.id) return undefined;
-    peek.set(reduced ? 0 : withDelay(120, withTiming(0, { duration: 180 })));
-    return () => cancelAnimation(peek);
-  }, [peek, reduced, waiting?.id]);
+    cancelAnimation(peek);
+    peek.set(0);
+    if (!active || !waiting?.id || reduced) return undefined;
+    peek.set(12);
+    peek.set(withDelay(120, withTiming(0, { duration: 180 })));
+    return () => {
+      cancelAnimation(peek);
+      peek.set(0);
+    };
+  }, [active, peek, reduced, waiting?.id]);
   const motion = useAnimatedStyle(() => ({ transform: [{ translateY: Math.round(peek.value) }] }));
+  if (!active) return null;
   if (!waiting)
     return celebration.show ? (
       <View
@@ -60,8 +72,9 @@ export function GardenVisitor() {
   const v = visitorInfo(waiting.id);
   return (
     <Animated.View
-      entering={FadeIn.duration(100)}
+      entering={reduced ? undefined : FadeIn.duration(100)}
       onTouchStart={() => {
+        if (!activeRef.current) return;
         cancelAnimation(peek);
         peek.set(0);
       }}
@@ -79,10 +92,14 @@ export function GardenVisitor() {
     >
       <PaperFinish />
       <Pet
+        active={active}
         visitor={v.id}
         size={64}
         bob={false}
-        onPress={() => useGame.getState().befriendVisitor()}
+        onPress={() => {
+          if (activeRef.current && useGame.getState().waitingVisitor?.id === v.id)
+            useGame.getState().befriendVisitor();
+        }}
         actionLabel={`Befriend ${v.name}, free`}
       />
       <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>BEFRIEND</BodyText>
@@ -170,6 +187,8 @@ export function WelcomeBack() {
   const { height, width } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [containerHeight, setContainerHeight] = useState<number | null>(null);
+  const [headingHeight, setHeadingHeight] = useState(26);
+  const [footerHeight, setFooterHeight] = useState(124);
   const [sceneBounds, setSceneBounds] = useState(() => ({
     width: Math.min(width, gameLayout.maxWidth),
     height: Math.max(0, height * 0.36 - insets.top - insets.bottom),
@@ -182,9 +201,13 @@ export function WelcomeBack() {
     Math.min(height - insets.top, containerHeight ?? height - insets.top),
   );
   const compact = availableHeight < 480;
-  // Handle, heading, footer, padding, gaps and border. The scroll view can
-  // shrink further for larger text; this cap never forces the sheet to overflow.
-  const sheetChrome = (compact ? 152 : 198) + insets.bottom;
+  // Include the measured heading and both footer buttons so larger text leaves
+  // its remaining space to the scrollable reward content.
+  const sheetChrome =
+    (compact ? 152 : 198) +
+    insets.bottom +
+    Math.max(0, headingHeight - (compact ? 24 : 26)) +
+    Math.max(0, footerHeight - 56);
   const sheetMaxHeight = Math.min(availableHeight, Math.max(height * 0.64, sheetChrome + 144));
   const bodyMaxHeight = Math.max(0, sheetMaxHeight - sheetChrome);
   if (!reward || !p) return null;
@@ -273,6 +296,10 @@ export function WelcomeBack() {
       >
         <PixelText
           accessibilityRole="header"
+          onLayout={(event) => {
+            const measuredHeight = Math.max(0, event.nativeEvent.layout.height);
+            setHeadingHeight((previous) => (previous === measuredHeight ? previous : measuredHeight));
+          }}
           style={{
             fontSize: compact ? 14 : 16,
             lineHeight: compact ? 24 : 26,
@@ -285,7 +312,9 @@ export function WelcomeBack() {
           style={{ flexShrink: 1, maxHeight: bodyMaxHeight }}
           contentContainerStyle={{ gap: 12, paddingBottom: 12 }}
         >
-          <BodyText style={{ textAlign: 'center' }}>{reward.minutes} offline MIN</BodyText>
+          <BodyText style={{ textAlign: 'center' }}>
+            {reward.minutes} simulated offline MIN
+          </BodyText>
           <View
             style={{ flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center' }}
           >
@@ -325,6 +354,11 @@ export function WelcomeBack() {
                 )}
               </View>
             </View>
+          )}
+          {reflection && (
+            <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+              Recent reflections are also in your Field Journal, so you can leave this one for later.
+            </BodyText>
           )}
           {reflection && (
             <MemoryReflection
@@ -412,14 +446,40 @@ export function WelcomeBack() {
               )}
             </>
           )}
+          <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+            Ready to put your phone down? Start an untimed demo nap.
+          </BodyText>
+          {waiting && waiting.id === reward.visitor && !friend && (
+            <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+              To invite this visitor along, use BEFRIEND above before starting a nap.
+            </BodyText>
+          )}
         </ScrollView>
-        <PixelButton
-          label="BACK TO THE GARDEN"
-          onPress={() => {
-            useGame.getState().dismissCards();
-            router.navigate('/');
+        <View
+          onLayout={(event) => {
+            const measuredHeight = Math.max(0, event.nativeEvent.layout.height);
+            setFooterHeight((previous) => (previous === measuredHeight ? previous : measuredHeight));
           }}
-        />
+          style={{ gap: compact ? 8 : 12 }}
+        >
+          <PixelButton
+            label="BACK TO THE GARDEN"
+            onPress={() => {
+              useGame.getState().dismissCards();
+              router.navigate('/');
+            }}
+          />
+          <PixelButton
+            label="START A NAP"
+            small
+            light
+            onPress={() => {
+              useGame.getState().dismissCards();
+              router.replace('/');
+              useGame.getState().sleep();
+            }}
+          />
+        </View>
       </CozySheet>
     </View>
   );

@@ -1,6 +1,7 @@
 export const PLAY_LIMIT_MS = 3 * 60 * 1000;
 export const PLAY_WINDOW_MS = 30 * 60 * 1000;
-export const budgetVoice = "that's enough phone for now. go touch grass. i'll guard the garden.";
+export const budgetVoice =
+  'a good place to pause. take a little time for you. the garden can wait.';
 export type GardenDay = {
   offline: number;
   cards: number;
