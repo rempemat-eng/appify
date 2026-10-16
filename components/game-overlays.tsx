@@ -246,6 +246,7 @@ function ScreenOff() {
     : 0;
   const m = missions.find((x) => x.id === p.mission_id);
   const guardian = guardianPlayer(p);
+  const napPetSize = togetherId ? 128 : 160;
   return (
     <View
       onStartShouldSetResponderCapture={() => {
@@ -267,6 +268,7 @@ function ScreenOff() {
       >
         <PixelScene
           kind="night"
+          skyOnly
           species={guardian.species}
           level={p.level}
           player={p}
@@ -274,7 +276,15 @@ function ScreenOff() {
         />
         <LightSweep night skip={skip} />
       </View>
-      <ScrollView style={{ flex: 1 }} contentContainerStyle={{ gap: 16, paddingBottom: 16 }}>
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'space-between',
+          gap: 16,
+          paddingBottom: 16,
+        }}
+      >
         <View style={{ alignItems: 'center', gap: 10, paddingTop: 8 }}>
           <StatusChip player={p} />
           <Shield color={c.paper} size={30} />
@@ -329,7 +339,6 @@ function ScreenOff() {
           {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
         </View>
         <View style={{ alignItems: 'center', gap: 14 }}>
-          {!m && <FloatingZ />}
           {togetherId && (
             <View style={{ gap: 12, alignItems: 'center' }}>
               <PixelText style={{ color: c.paper }}>TOUCH GRASS TOGETHER</PixelText>
@@ -371,28 +380,71 @@ function ScreenOff() {
               />
             </PixelScene>
           ) : (
-            <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 8 }}>
-              <Pet
-                species={guardian.species}
-                visitor={guardian.guardian}
-                level={p.level}
-                hat={p.hat}
-                sleeping
-                groundShadow={false}
-                size={togetherId ? 128 : 160}
-              />
-              {togetherId && rival && (
+            <PixelScene
+              kind="night"
+              species={guardian.species}
+              level={p.level}
+              height={300}
+              groundInset={112}
+              style={{ width: '100%', borderWidth: 0, borderRadius: 0 }}
+            >
+              <View style={{ position: 'absolute', bottom: 165, alignSelf: 'center' }}>
+                <FloatingZ />
+              </View>
+              <View
+                style={{
+                  position: 'absolute',
+                  bottom: 82 - (napPetSize * 5) / 32,
+                  alignSelf: 'center',
+                  flexDirection: 'row',
+                  justifyContent: 'center',
+                  gap: 8,
+                }}
+              >
                 <Pet
-                  species={guardianPlayer(rival).species}
-                  visitor={guardianPlayer(rival).guardian}
-                  level={rival.level}
-                  hat={rival.hat}
+                  species={guardian.species}
+                  visitor={guardian.guardian}
+                  level={p.level}
+                  hat={p.hat}
                   sleeping
+                  curled
+                  bob={false}
                   groundShadow={false}
-                  size={128}
+                  size={napPetSize}
                 />
-              )}
-            </View>
+                {togetherId && rival && (
+                  <Pet
+                    species={guardianPlayer(rival).species}
+                    visitor={guardianPlayer(rival).guardian}
+                    level={rival.level}
+                    hat={rival.hat}
+                    sleeping
+                    curled
+                    bob={false}
+                    groundShadow={false}
+                    size={128}
+                  />
+                )}
+              </View>
+              <Pulse
+                active
+                color={c.gold}
+                style={{
+                  position: 'absolute',
+                  bottom: 8,
+                  alignSelf: 'center',
+                  padding: 12,
+                  borderRadius: 14,
+                  borderWidth: 2,
+                  borderColor: c.gold,
+                  backgroundColor: c.night,
+                }}
+              >
+                <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
+                  {`NAPPED ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
+                </PixelText>
+              </Pulse>
+            </PixelScene>
           )}
           {m ? (
             <>
@@ -406,23 +458,7 @@ function ScreenOff() {
                 {m.duration} simulated offline MIN · {m.reward} GRASS on completion
               </BodyText>
             </>
-          ) : (
-            <Pulse
-              active
-              color={c.gold}
-              style={{
-                padding: 12,
-                borderRadius: 14,
-                borderWidth: 2,
-                borderColor: c.gold,
-                backgroundColor: c.night,
-              }}
-            >
-              <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 26 }}>
-                {`NAPPED ${p.offline_seconds - offStart} MIN\n+${p.grass - offGrass} GRASS`}
-              </PixelText>
-            </Pulse>
-          )}
+          ) : null}
         </View>
       </ScrollView>
       <View style={{ gap: 12, paddingTop: 12, paddingBottom: 8 }}>

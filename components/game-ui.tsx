@@ -201,7 +201,9 @@ export function Pet({
   onPress,
   actionLabel,
   groundShadow = true,
+  curled = false,
 }: {
+  curled?: boolean;
   groundShadow?: boolean;
   species?: Player['species'];
   size?: number;
@@ -386,11 +388,13 @@ export function Pet({
               key={`${rx}-${ry}`}
               x={rx}
               y={
-                walking && ry >= 26 && ry <= 28 && rx < 17 === stride
-                  ? ry - 1
-                  : bob && breath && !reduced && !sleeping && ry >= 16
+                curled && sleeping
+                  ? 15 + Math.floor((ry * 14) / 32)
+                  : walking && ry >= 26 && ry <= 28 && rx < 17 === stride
                     ? ry - 1
-                    : ry
+                    : bob && breath && !reduced && !sleeping && ry >= 16
+                      ? ry - 1
+                      : ry
               }
               width={1}
               height={1}

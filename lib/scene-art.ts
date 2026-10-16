@@ -19,6 +19,14 @@ export const sceneColors = {
   crystal: '#B5D2CE',
   red: '#BD594A',
   frog: '#79965A',
+  rainLight: '#D2D6D3',
+  rainMid: '#B8C0C0',
+  rainShade: '#929FA5',
+  sunrisePeach: '#EDBFA7',
+  sunriseYellow: '#F4E6B6',
+  nightGrass: '#414C54',
+  nightPath: '#66616B',
+  nightEdge: '#393C50',
 };
 export type PropKind =
   | 'grass'
@@ -36,6 +44,7 @@ export type PropKind =
   | 'moon'
   | 'sun'
   | 'cloud'
+  | 'raincloud'
   | 'heart'
   | 'shield'
   | 'house'
@@ -69,6 +78,9 @@ const colors: Record<string, string> = {
   F: sceneColors.frog,
   E: c.weed,
   P: sceneColors.pink,
+  H: sceneColors.rainLight,
+  A: sceneColors.rainMid,
+  V: sceneColors.rainShade,
 };
 function make(kind: PropKind) {
   const grid = Array.from({ length: 16 }, () => Array<string>(16).fill('.'));
@@ -189,8 +201,8 @@ function make(kind: PropKind) {
       rect(5, 1, 6, 14, 'B');
       rect(2, 4, 10, 8, 'B');
       rect(3, 3, 9, 10, 'B');
-      rect(8, 1, 6, 9, 'N');
-      rect(11, 8, 4, 5, 'N');
+      rect(8, 1, 6, 9, '.');
+      rect(11, 8, 4, 5, '.');
       break;
     case 'sun':
       box(4, 4, 8, 8, 'Y');
@@ -206,6 +218,16 @@ function make(kind: PropKind) {
       rect(1, 7, 14, 5, 'B');
       rect(3, 4, 10, 7, 'B');
       rect(5, 2, 6, 9, 'B');
+      break;
+    case 'raincloud':
+      rect(2, 7, 12, 5, 'V');
+      rect(1, 7, 14, 3, 'A');
+      rect(3, 4, 5, 6, 'A');
+      rect(8, 3, 4, 7, 'A');
+      rect(12, 5, 2, 5, 'A');
+      rect(4, 4, 3, 3, 'H');
+      rect(9, 3, 2, 3, 'H');
+      rect(2, 7, 2, 2, 'H');
       break;
     case 'heart':
       rect(2, 3, 5, 7, 'K');
@@ -372,6 +394,7 @@ export const propPixels: Record<PropKind, ReturnType<typeof make>> = {
   moon: make('moon'),
   sun: make('sun'),
   cloud: make('cloud'),
+  raincloud: make('raincloud'),
   heart: make('heart'),
   shield: make('shield'),
   house: make('house'),

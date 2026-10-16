@@ -480,13 +480,20 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               flexDirection: 'row',
               alignItems: 'flex-end',
               justifyContent: 'center',
-              paddingBottom: 39 * stagePixel,
+              paddingBottom: 24 * stagePixel - (petSize * 3) / 32,
             }}
           >
             <RaidGarden attacker={player} defender={request.target} />
             <Animated.View
               entering={reduced ? undefined : FadeIn.duration(150)}
-              style={{ flex: 1, maxWidth: petSize * 0.72, alignItems: 'center' }}
+              style={{
+                position: 'absolute',
+                left: '22%',
+                bottom: 24 * stagePixel - (petSize * 3) / 32,
+                marginLeft: -petSize / 2,
+                width: petSize,
+                alignItems: 'center',
+              }}
             >
               <Pet
                 species={player.species}
@@ -497,6 +504,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                 grumpy={player.mood < 30}
                 size={petSize}
                 bob={false}
+                groundShadow={false}
                 hit={hit.a}
                 attack={attack.a}
                 slumped={combat.a.hp <= 0 || (finished && combat.result === false)}
@@ -508,7 +516,14 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             </Animated.View>
             <Animated.View
               entering={reduced ? undefined : FadeIn.duration(150)}
-              style={{ flex: 1, maxWidth: petSize * 0.72, alignItems: 'center' }}
+              style={{
+                position: 'absolute',
+                right: '22%',
+                bottom: 24 * stagePixel - (petSize * 3) / 32,
+                marginRight: -petSize / 2,
+                width: petSize,
+                alignItems: 'center',
+              }}
             >
               <Pet
                 species={target.species}
@@ -520,6 +535,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                 grumpy={target.mood < 30}
                 size={petSize}
                 bob={false}
+                groundShadow={false}
                 hit={hit.d}
                 attack={attack.d}
                 slumped={combat.d.hp <= 0 || (finished && combat.result === true)}

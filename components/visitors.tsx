@@ -219,7 +219,7 @@ export function WelcomeBack() {
       onTouchStart={() => setSkip(true)}
       style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: c.paper }}
     >
-      <View pointerEvents="none" style={{ flex: 1, minHeight: 120 }}>
+      <View pointerEvents="none" style={{ flex: 1, minHeight: 200 }}>
         <PixelScene
           sunrise
           species={p.species}
