@@ -93,7 +93,7 @@ export function GardenTip({
 const sections = [
   [
     'Demo clock',
-    'DEMO x60: 1 real second = 1 simulated offline minute. Breaks are simulated; device screen usage is not verified. The 3-minute play allowance and 30-minute reset use REAL time, including battles and ordinary dialogs. A 10-MIN simulated break resets the allowance.',
+    'Demo timer only. Sleep and phone inactivity are not measured. DEMO x60: 1 real second = 1 simulated offline minute. Breaks are simulated; device screen usage is not verified. The 3-minute play allowance and 30-minute reset use REAL time, including battles and ordinary dialogs. A 10-MIN simulated break resets the allowance.',
   ],
   [
     'Garden status',

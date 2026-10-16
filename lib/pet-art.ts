@@ -15,6 +15,7 @@ export function petPixels(
   sleeping: boolean,
   grumpy: boolean,
   dave = false,
+  groundShadow = true,
 ): ArtPixel[] {
   const stage = Math.min(3, Math.max(1, level));
   const pixels = new Map<string, ArtPixel>();
@@ -55,8 +56,10 @@ export function petPixels(
       );
     });
   }
-  rect(8, 30, 20, 1, c.stone);
-  rect(11, 31, 14, 1, c.stone);
+  if (groundShadow) {
+    rect(8, 30, 20, 1, c.stone);
+    rect(11, 31, 14, 1, c.stone);
+  }
   if (dave) {
     const weed: Material = { outline: c.night, shadow: '#606873', base: c.weed, light: '#B5BAB0' };
     shape(

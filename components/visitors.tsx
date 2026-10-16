@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { PixelScene } from '@/components/pixel-scenes';
 import Animated, {
   cancelAnimation,
   FadeIn,
@@ -19,7 +21,7 @@ import { cozy as c, panelStyle } from '@/lib/cozy';
 import { collectionOf, visitorInfo, type Postcard } from '@/lib/visitors';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText, GrassRoll } from '@/components/pixel-feedback';
-import { CozyBackground, CozySheet, PaperFinish } from '@/components/cozy-ui';
+import { CozySheet, PaperFinish } from '@/components/cozy-ui';
 import { LightSweep, PixelBurst } from '@/components/cozy-motion';
 import { RewardCard } from '@/components/habit-cards';
 export function GardenVisitor() {
@@ -198,7 +200,8 @@ export function WelcomeBack() {
   const [details, setDetails] = useState(false);
   const [skip, setSkip] = useState(false);
   const [hearted, setHearted] = useState(false);
-  const { height } = useWindowDimensions();
+  const { height, width } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
   if (!reward || !p) return null;
   const groups = cardIds
     .filter((id) => reward.cards.includes(id))
@@ -214,18 +217,54 @@ export function WelcomeBack() {
         return false;
       }}
       onTouchStart={() => setSkip(true)}
-      style={{ flex: 1, padding: 16, justifyContent: 'flex-end' }}
+      style={{ flex: 1, justifyContent: 'flex-end', backgroundColor: c.paper }}
     >
-      <CozyBackground />
-      <LightSweep skip={skip} />
+      <View pointerEvents="none" style={{ flex: 1, minHeight: 120 }}>
+        <PixelScene
+          sunrise
+          species={p.species}
+          level={p.level}
+          style={{
+            height: '100%',
+            borderWidth: 0,
+            borderRadius: 0,
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+            paddingBottom: 39 * Math.max(1, Math.floor(width / 160)),
+          }}
+        >
+          <Pet
+            species={p.species}
+            visitor={p.guardian}
+            level={p.level}
+            hat={p.hat}
+            size={128}
+            bob={false}
+          />
+        </PixelScene>
+        <LightSweep skip={skip} />
+        <View
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: c.shadow,
+          }}
+        />
+      </View>
       <CozySheet
         onSkip={() => setSkip(true)}
         style={{
           width: '100%',
-          maxWidth: 440,
-          maxHeight: '100%',
+          maxWidth: 640,
+          maxHeight: height * 0.64,
           alignSelf: 'center',
+          borderBottomLeftRadius: 0,
+          borderBottomRightRadius: 0,
           padding: 16,
+          paddingBottom: insets.bottom + 16,
           gap: 12,
         }}
       >
@@ -236,7 +275,7 @@ export function WelcomeBack() {
           WELCOME BACK
         </PixelText>
         <ScrollView
-          style={{ flexShrink: 1, maxHeight: height - 200 }}
+          style={{ flexShrink: 1, maxHeight: Math.max(80, height * 0.64 - 200 - insets.bottom) }}
           contentContainerStyle={{ gap: 12, paddingBottom: 12 }}
         >
           <BodyText style={{ textAlign: 'center' }}>{reward.minutes} offline MIN</BodyText>

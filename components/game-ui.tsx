@@ -200,7 +200,9 @@ export function Pet({
   visitor = null,
   onPress,
   actionLabel,
+  groundShadow = true,
 }: {
+  groundShadow?: boolean;
   species?: Player['species'];
   size?: number;
   level?: number;
@@ -321,8 +323,16 @@ export function Pet({
   const visitorId = isVisitorId(visitor) ? visitor : null;
   const petLabel = visitorId ? visitorInfo(visitorId).name : grasslings[species].name;
   const pixels = visitorId
-    ? visitorPixels(visitorId, hat, sleeping || blink)
-    : petPixels(species, level, hat, sleeping || blink || idle === 'yawn' || yawning, grumpy, dave);
+    ? visitorPixels(visitorId, hat, sleeping || blink, groundShadow)
+    : petPixels(
+        species,
+        level,
+        hat,
+        sleeping || blink || idle === 'yawn' || yawning,
+        grumpy,
+        dave,
+        groundShadow,
+      );
   const scaledSize = Math.max(32, Math.round(size / 32) * 32);
   return (
     <Animated.View
@@ -332,6 +342,7 @@ export function Pet({
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={actionLabel ?? `Greet ${petLabel}`}
+        style={{ backgroundColor: c.transparent }}
         onPress={() => {
           cancelAnimation(y);
           cancelAnimation(x);
@@ -362,6 +373,7 @@ export function Pet({
           height={scaledSize}
           viewBox="0 0 32 32"
           style={{
+            backgroundColor: c.transparent,
             transform: [
               { scaleX: facing === 'left' ? -1 : 1 },
               { translateY: slumped ? 8 : 0 },

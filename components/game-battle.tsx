@@ -148,7 +148,8 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const [timingLesson, setTimingLesson] = useState(
     () => request.practice && !gameStore.getState().tips.includes('timing'),
   );
-  const petSize = 96;
+  const stagePixel = Math.max(1, Math.floor(Math.min(width, 640) / 160));
+  const petSize = Math.min(256, Math.max(192, Math.floor(width / 56) * 32));
   const [lifted, setLifted] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [target] = useState(() => guardianPlayer(request.target));
@@ -475,17 +476,17 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           <View
             style={{
               flex: 1,
-              minHeight: Math.max(160, Math.min(280, height - 500)),
+              minHeight: Math.max(petSize + 39 * stagePixel, Math.min(360, height - 420)),
               flexDirection: 'row',
               alignItems: 'flex-end',
-              justifyContent: 'space-around',
-              paddingBottom: 42,
+              justifyContent: 'center',
+              paddingBottom: 39 * stagePixel,
             }}
           >
-            <RaidGarden attacker={player} defender={target} />
+            <RaidGarden attacker={player} defender={request.target} />
             <Animated.View
               entering={reduced ? undefined : FadeIn.duration(150)}
-              style={{ width: petSize }}
+              style={{ flex: 1, maxWidth: petSize * 0.72, alignItems: 'center' }}
             >
               <Pet
                 species={player.species}
@@ -507,7 +508,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             </Animated.View>
             <Animated.View
               entering={reduced ? undefined : FadeIn.duration(150)}
-              style={{ width: petSize }}
+              style={{ flex: 1, maxWidth: petSize * 0.72, alignItems: 'center' }}
             >
               <Pet
                 species={target.species}

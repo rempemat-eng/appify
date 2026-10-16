@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Sprout, Users } from 'lucide-react-native';
@@ -33,16 +34,18 @@ export function PlayMeter() {
       <Svg width={16} height={16} viewBox="0 0 8 8">
         <Rect x={1} y={0} width={6} height={1} fill={c.ink} />
         <Rect x={1} y={7} width={6} height={1} fill={c.ink} />
-        {[1, 2, 3, 4, 5, 6].map((y) => (
-          <Rect
-            key={y}
-            x={y < 4 ? y : 7 - y}
-            y={y}
-            width={y === 3 || y === 4 ? 2 : 1}
-            height={1}
-            fill={left ? c.ink : c.error}
-          />
-        ))}
+        {[1, 2, 3, 4, 5, 6].map((y) => {
+          const x = y < 4 ? y : 7 - y;
+          return (
+            <Fragment key={y}>
+              <Rect x={x} y={y} width={1} height={1} fill={c.ink} />
+              <Rect x={7 - x} y={y} width={1} height={1} fill={c.ink} />
+            </Fragment>
+          );
+        })}
+        <Rect x={2} y={2} width={4} height={1} fill={left ? c.focus : c.error} />
+        <Rect x={3} y={3} width={2} height={2} fill={left ? c.focus : c.error} />
+        <Rect x={2} y={6} width={4} height={1} fill={left ? c.focus : c.error} />
       </Svg>
       <View style={{ gap: 5 }}>
         <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 11 }}>

@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { router, useIsFocused } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowUp, ArrowDown, Bot } from 'lucide-react-native';
+import { ArrowUp, ArrowDown, Bot, Heart } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
@@ -129,19 +129,18 @@ export function HomeScreen() {
           <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>STATS</BodyText>
         </Pressable>
       </View>
+      <View style={{ paddingHorizontal: 8, marginBottom: -8, zIndex: 1 }}>
+        <Dialogue
+          text={coaching ? gardenTips[coaching].text : speech}
+          speech
+          onDismiss={coaching ? () => setLesson({ key, id: null }) : undefined}
+        />
+      </View>
       <PixelScene
         species={p.species}
         level={p.level}
         player={p}
-        height={Math.max(
-          height <= 700 ? 264 : 296,
-          232 +
-            Math.ceil(
-              (coaching ? gardenTips[coaching].text : speech).length /
-                Math.max(1, Math.floor((Math.min(width, 640) - 72) / 7.5)),
-            ) *
-              21,
-        )}
+        height={Math.max(240, Math.round(Math.min(width, 640) * 0.55))}
         style={{
           marginHorizontal: -16,
           borderWidth: 0,
@@ -154,13 +153,6 @@ export function HomeScreen() {
           paddingBottom: 16,
         }}
       >
-        <View style={{ width: '100%', paddingHorizontal: 24, marginBottom: 12 }}>
-          <Dialogue
-            text={coaching ? gardenTips[coaching].text : speech}
-            speech
-            onDismiss={coaching ? () => setLesson({ key, id: null }) : undefined}
-          />
-        </View>
         <Pet
           species={guardian.species}
           visitor={guardian.guardian}
@@ -183,6 +175,43 @@ export function HomeScreen() {
         >
           {guardian.pet_name}
         </BodyText>
+        <View
+          accessibilityRole="progressbar"
+          accessibilityLabel={`Mood: ${p.mood < 30 ? 'grumpy' : paused ? 'sleepy' : 'happy'}`}
+          accessibilityValue={{ min: 0, max: 100, now: p.mood }}
+          style={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 6,
+            backgroundColor: c.glass,
+            borderRadius: 999,
+            paddingHorizontal: 10,
+            paddingVertical: 4,
+            marginTop: 4,
+          }}
+        >
+          <Heart size={14} strokeWidth={2} color={p.mood < 30 ? c.error : c.ink} />
+          <View
+            style={{
+              width: 48,
+              height: 6,
+              borderRadius: 3,
+              backgroundColor: c.faded,
+              overflow: 'hidden',
+            }}
+          >
+            <View
+              style={{
+                width: `${Math.max(0, Math.min(100, p.mood))}%`,
+                height: '100%',
+                backgroundColor: p.mood < 30 ? c.error : c.moss,
+              }}
+            />
+          </View>
+          <BodyText numberOfLines={1} style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+            {p.mood < 30 ? 'GRUMPY' : paused ? 'SLEEPY' : 'HAPPY'}
+          </BodyText>
+        </View>
         <View style={{ position: 'absolute', left: 4, bottom: 4, flexDirection: 'row' }}>
           {collectionOf(p)
             .filter((v) => v.befriendedAt !== null && v.id !== p.guardian)

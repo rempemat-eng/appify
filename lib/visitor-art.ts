@@ -7,6 +7,7 @@ export function visitorPixels(
   id: VisitorId,
   hat: string | null = null,
   sleeping = false,
+  groundShadow = true,
 ): ArtPixel[] {
   const pixels = new Map<string, ArtPixel>();
   const dot = (x: number, y: number, color: string) => {
@@ -41,7 +42,7 @@ export function visitorPixels(
       dot(20, y, c.paper);
     }
   };
-  rect(9, 30, 16, 1, c.stone);
+  if (groundShadow) rect(9, 30, 16, 1, c.stone);
   switch (id) {
     case 'dozebud':
       rect(14, 23, 4, 6, c.moss);

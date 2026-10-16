@@ -60,7 +60,9 @@ export function PixelScene({
   mini = false,
   player,
   style,
+  sunrise = false,
 }: {
+  sunrise?: boolean;
   species?: Player['species'];
   level?: number;
   kind?: SceneKind;
@@ -84,7 +86,7 @@ export function PixelScene({
   const now = useGame((s) => s.now);
   const state = player ? status(player, now) : null;
   const hour = new Date(now).getHours();
-  const night = kind === 'night' || (kind === 'habitat' && (hour < 6 || hour >= 21));
+  const night = !sunrise && (kind === 'night' || (kind === 'habitat' && (hour < 6 || hour >= 21)));
   const dusk = hour >= 17 && hour < 21;
   const morning = hour >= 6 && hour < 10;
   const exposed = state?.kind === 'exposed';
@@ -94,7 +96,7 @@ export function PixelScene({
   const stage = Math.min(3, level);
   const sky = night
     ? [c.midnight, c.nightMid, c.nightLow]
-    : state?.kind === 'care'
+    : sunrise || state?.kind === 'care'
       ? [c.dawn, c.gold, c.body]
       : dusk
         ? [c.pink, c.orange, c.body]
@@ -248,7 +250,7 @@ export function PixelScene({
                     scale={1 + Math.min(0.8, (now - exposure.since) / 90000)}
                   />
                 ))}
-                {state?.kind === 'care' && (
+                {(sunrise || state?.kind === 'care') && (
                   <>
                     <Rect x={0} y={0} width={160} height={95} fill={c.gold} opacity={0.12} />
                     <Pixels kind="sun" x={7} y={5} />
@@ -386,52 +388,31 @@ const signatureProp = (p: Player): PropKind =>
         : 'stones';
 
 export function RaidGarden({ attacker, defender }: { attacker: Player; defender: Player }) {
-  const [bounds, setBounds] = useState({ width: 375, height: 192 });
-  const cols = Math.ceil(bounds.width / 3);
-  const rows = Math.ceil(bounds.height / 3);
-  const half = Math.floor(cols / 2);
+  const [width, setWidth] = useState(375);
+  const pixel = Math.max(1, Math.floor(width / 160));
   return (
     <View
-      onLayout={(e) =>
-        setBounds({ width: e.nativeEvent.layout.width, height: e.nativeEvent.layout.height })
-      }
+      onLayout={(e) => setWidth(e.nativeEvent.layout.width)}
       pointerEvents="none"
       style={StyleSheet.absoluteFill}
     >
-      <Svg width={cols * 3} height={rows * 3} viewBox={`0 0 ${cols} ${rows}`}>
-        <Rect x={0} y={0} width={cols} height={rows} fill={c.skyLight} />
-        <G transform={`translate(0 ${rows - 64})`}>
-          <Rect
-            x={0}
-            y={50}
-            width={half}
-            height={14}
-            fill={attacker.species === 'CUBE' ? c.stone : c.moss}
-          />
-          <Rect
-            x={half}
-            y={50}
-            width={cols - half}
-            height={14}
-            fill={
-              defender.id === 'bot' ? c.slate : defender.species === 'CUBE' ? c.stone : c.leafLight
-            }
-          />
-          <Rect x={0} y={57} width={cols} height={7} fill={c.dirt} />
-          <Rect x={0} y={50} width={cols} height={2} fill={c.ink} />
-          <Pixels kind={signatureProp(attacker)} x={1} y={34} />
-          <Pixels kind={signatureProp(defender)} x={cols - 17} y={34} />
-          <Pixels kind="grass" x={69} y={44} scale={0.6} />
-          {attacker.level >= 2 && <Pixels kind="flower" x={18} y={44} scale={0.7} />}
-          {defender.level >= 2 && defender.id !== 'bot' && (
-            <Pixels kind="flower" x={126} y={44} scale={0.7} />
-          )}
-          {attacker.level >= 3 && <Pixels kind="fence" x={0} y={22} scale={1.5} />}
-          {defender.level >= 3 && defender.id !== 'bot' && (
-            <Pixels kind="fence" x={cols - 22} y={22} scale={1.5} />
-          )}
-        </G>
-      </Svg>
+      <PixelScene
+        species={defender.species}
+        level={defender.level}
+        player={defender}
+        style={{
+          ...StyleSheet.absoluteFill,
+          height: '100%',
+          borderWidth: 0,
+          borderRadius: 0,
+        }}
+      />
+      <View style={{ position: 'absolute', left: 4, bottom: 39 * pixel }}>
+        <PixelProp kind={signatureProp(attacker)} size={16 * pixel} />
+      </View>
+      <View style={{ position: 'absolute', right: 4, bottom: 39 * pixel }}>
+        <PixelProp kind={signatureProp(defender)} size={16 * pixel} />
+      </View>
     </View>
   );
 }

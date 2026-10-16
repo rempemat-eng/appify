@@ -228,6 +228,7 @@ function Onboarding() {
 }
 function ScreenOff() {
   const [skip, setSkip] = useState(false);
+  const [helpOpen, setHelpOpen] = useState(false);
   const p = useGame((s) => s.player)!;
   const now = useGame((s) => s.now);
   const offStart = useGame((s) => s.offStart);
@@ -293,9 +294,38 @@ function ScreenOff() {
           <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold', fontSize: 12 }}>
             simulated · 1 real second = 1 offline MIN
           </BodyText>
-          <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold', fontSize: 12 }}>
-            Demo timer only. Sleep and phone inactivity are not measured.
-          </BodyText>
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel={
+              helpOpen ? 'Close nap information' : 'About the simulated nap timer'
+            }
+            accessibilityState={{ expanded: helpOpen }}
+            onPress={() => setHelpOpen((open) => !open)}
+            style={{
+              minWidth: 44,
+              minHeight: 44,
+              borderRadius: 22,
+              backgroundColor: c.night,
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <PixelText style={{ color: c.paper }}>?</PixelText>
+          </Pressable>
+          {helpOpen && (
+            <BodyText
+              style={{
+                color: c.paper,
+                backgroundColor: c.night,
+                borderRadius: 14,
+                padding: 12,
+                fontSize: 12,
+                textAlign: 'center',
+              }}
+            >
+              Demo timer only. Sleep and phone inactivity are not measured.
+            </BodyText>
+          )}
           {m && <PixelText style={{ color: c.paper, textAlign: 'center' }}>{m.name}</PixelText>}
         </View>
         <View style={{ alignItems: 'center', gap: 14 }}>
@@ -348,6 +378,7 @@ function ScreenOff() {
                 level={p.level}
                 hat={p.hat}
                 sleeping
+                groundShadow={false}
                 size={togetherId ? 128 : 160}
               />
               {togetherId && rival && (
@@ -357,6 +388,7 @@ function ScreenOff() {
                   level={rival.level}
                   hat={rival.hat}
                   sleeping
+                  groundShadow={false}
                   size={128}
                 />
               )}
@@ -539,7 +571,7 @@ export function GameOverlays() {
           style={{
             flex: 1,
             paddingTop: insets.top,
-            paddingBottom: insets.bottom,
+            paddingBottom: !isScreenOff && cardReward ? 0 : insets.bottom,
             backgroundColor: isScreenOff ? c.night : c.paper,
           }}
         >
