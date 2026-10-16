@@ -51,6 +51,54 @@ export type SceneKind =
   | 'market'
   | 'nest'
   | 'trail';
+// Blend two #RRGGBB colours (t = 0 gives a, 1 gives b).
+function mix(a: string, b: string, t: number) {
+  if (!/^#[0-9a-f]{6}$/i.test(a) || !/^#[0-9a-f]{6}$/i.test(b)) return t < 0.5 ? a : b;
+  const ch = (hex: string, i: number) => parseInt(hex.slice(1 + i * 2, 3 + i * 2), 16);
+  return `#${[0, 1, 2]
+    .map((i) => Math.round(ch(a, i) + (ch(b, i) - ch(a, i)) * t).toString(16).padStart(2, '0'))
+    .join('')}`;
+}
+// Six stepped bands from sky[0] (top) through sky[1] to sky[2] (horizon).
+function skyBands(sky: string[], height: number) {
+  const steps = 6;
+  return Array.from({ length: steps }, (_, i) => {
+    const t = i / (steps - 1);
+    const color = t < 0.5 ? mix(sky[0], sky[1], t * 2) : mix(sky[1], sky[2], (t - 0.5) * 2);
+    return { y: Math.round((height * i) / steps), color };
+  });
+}
+// Stepped sky gradient with one dithered row per step. Primitive props let the
+// React Compiler skip it on animation ticks, when the sky hasn't changed.
+function SkyBands({
+  colors,
+  columns,
+  rows,
+  height,
+}: {
+  colors: string;
+  columns: number;
+  rows: number;
+  height: number;
+}) {
+  const bands = skyBands(colors.split(','), height);
+  return bands.map((band, i) => (
+    <G key={`sky-band-${i}`}>
+      <Rect x={0} y={band.y} width={columns} height={rows} fill={band.color} />
+      {i > 0 &&
+        Array.from({ length: Math.ceil(columns / 2) }, (_, d) => (
+          <Rect
+            key={d}
+            x={d * 2 + (i % 2)}
+            y={band.y}
+            width={1}
+            height={1}
+            fill={bands[i - 1].color}
+          />
+        ))}
+    </G>
+  ));
+}
 export function PixelScene({
   species = 'BLOB',
   level = 1,
@@ -144,17 +192,14 @@ export function PixelScene({
       <View pointerEvents="none" style={StyleSheet.absoluteFill}>
         <Svg width={columns * pixel} height={rows * pixel} viewBox={`0 0 ${columns} ${rows}`}>
           <Rect x={0} y={0} width={columns} height={rows} fill={sky[0]} />
-          {(night || sunrise || skyOnly) &&
-            [1, 2].map((i) => (
-              <Rect
-                key={`sky-band-${i}`}
-                x={0}
-                y={Math.round((Math.max(0, rows - groundRows) * i) / 3)}
-                width={columns}
-                height={rows}
-                fill={sky[i]}
-              />
-            ))}
+          {(night || sunrise || skyOnly) && (
+            <SkyBands
+              colors={sky.join(',')}
+              columns={columns}
+              rows={rows}
+              height={Math.max(0, rows - groundRows)}
+            />
+          )}
           {!skyOnly && (
             <G transform={`translate(${Math.floor((columns - 160) / 2)} ${sceneTop})`}>
               {!sunrise &&
