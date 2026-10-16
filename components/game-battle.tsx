@@ -624,8 +624,8 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             <Pressable
               accessibilityRole="button"
               accessibilityLabel="Show full action history"
-              accessibilityState={{ expanded: showHistory }}
-              aria-expanded={showHistory}
+              accessibilityState={{ expanded: showHistory && history.length > 1 }}
+              aria-expanded={showHistory && history.length > 1}
               onPress={() => {
                 setShowHistory(!showHistory);
                 feedback('select');
