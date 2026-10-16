@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -14,6 +14,7 @@ import { router, useIsFocused } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowUp, ArrowDown, Bot, Heart } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
+import { backendConfigured, backendUnavailableMessage } from '@/lib/bilt';
 import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
@@ -354,6 +355,9 @@ export function MissionsScreen() {
   return (
     <Page>
       <PixelText style={{ fontSize: 16 }}>GO TOUCH GRASS</PixelText>
+      <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+        Pick a place for a break. Demo time: 1 real second = 1 simulated MIN.
+      </BodyText>
       {missions.map((m, index) => {
         const locked = p.level < m.level;
         return (
@@ -387,6 +391,9 @@ export function MissionsScreen() {
                 {m.duration} MIN
               </BodyText>
             </View>
+            <BodyText style={{ fontSize: 12, color: c.shade }}>
+              About {m.duration} seconds in this demo
+            </BodyText>
             <BodyText style={{ fontSize: 12 }}>
               {m.reward} GRASS · +1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} card · postcard
               {m.id === 'mountain' ? ' · new hat (or +50 GRASS if you own them all)' : ''}
@@ -395,7 +402,11 @@ export function MissionsScreen() {
               small
               light
               label={
-                locked ? `LEVEL ${m.level} NEEDED` : p.mode !== 'awake' ? 'ON A BREAK' : 'START'
+                locked
+                  ? `LEVEL ${m.level} NEEDED`
+                  : p.mode !== 'awake'
+                    ? 'ON A BREAK'
+                    : `START ${m.name}`
               }
               disabled={locked || p.mode !== 'awake'}
               onPress={() => useGame.getState().sleep(m.id)}
@@ -404,7 +415,8 @@ export function MissionsScreen() {
         );
       })}
       <BodyText style={{ fontSize: 12, textAlign: 'center' }}>
-        start a mission, put your phone down, and your Grassling comes back with rewards.
+        Finish for the mission rewards shown above. Returning early keeps any common-card earnings,
+        but gives no mission completion reward.
       </BodyText>
     </Page>
   );
@@ -627,24 +639,29 @@ function RivalRow({
           label={
             raiding === p.id
               ? 'CHECKING…'
-              : paused
-                ? 'TAKE A BREAK'
-                : raids >= 3
-                  ? 'NO RAIDS LEFT'
-                  : 'RAID'
+              : !backendConfigured
+                ? 'ONLINE PLAY UNAVAILABLE'
+                : paused
+                  ? 'TAKE A BREAK'
+                  : raids >= 3
+                    ? 'NO RAIDS LEFT'
+                    : 'RAID'
           }
           small
           danger
-          disabled={!!raiding || paused || raids >= 3}
+          disabled={!backendConfigured || !!raiding || paused || raids >= 3}
           onPress={() => onRaid(p)}
         />
       )}
-      {!me && <TogetherInvite rival={p} />}
+      {!me && backendConfigured && <TogetherInvite rival={p} />}
     </CozyPanel>
   );
 }
 export function ArenaScreen() {
   const insets = useSafeAreaInsets();
+  const reduced = useReducedMotion();
+  const listRef = useRef<FlatList<Player>>(null);
+  const rivalCodeRef = useRef<TextInput>(null);
   const focused = useIsFocused();
   const paused = usePlayPaused();
   const raids = useGame((s) => s.rules.days[dayKey(s.now)]?.raids ?? 0);
@@ -659,7 +676,7 @@ export function ArenaScreen() {
   if (!p) return null;
   const ownCode = code.trim().toUpperCase() === p.code;
   const validCode = /^[A-Z0-9]{4}$/.test(code.trim().toUpperCase());
-  const canPair = validCode && !ownCode && !pending;
+  const canPair = backendConfigured && validCode && !ownCode && !pending;
   const ranked = [p, ...rivals].sort(
     (a, b) => b.offline_seconds - a.offline_seconds || a.name.localeCompare(b.name),
   );
@@ -683,62 +700,73 @@ export function ArenaScreen() {
     <View style={{ gap: 12 }}>
       <PlayPause />
       <PixelText style={{ fontSize: 20 }}>{'LESS SCROLL.\nMORE GLORY.'}</PixelText>
-      <BodyText style={{ fontSize: 12 }}>RAIDS LEFT TODAY: {Math.max(0, 3 - raids)}</BodyText>
+      <BodyText style={{ fontSize: 12 }}>
+        {backendConfigured ? `RAIDS LEFT TODAY: ${Math.max(0, 3 - raids)}` : 'PRACTICE ARENA'}
+      </BodyText>
       <PixelScene kind="town" height={160} />
       <GardenTip id="arena" eligible={focused} />
-      <CozyPanel style={{ padding: 16, gap: 12 }}>
-        <FriendCode code={p.code} />
-        <BodyText>Add rival</BodyText>
-        <TextInput
-          accessibilityLabel="Rival code"
-          style={styles.input}
-          value={code}
-          onChangeText={(text) => {
-            setCode(
-              text
-                .trim()
-                .toUpperCase()
-                .replace(/[^A-Z0-9]/g, ''),
-            );
-            setError(null);
-          }}
-          autoCapitalize="characters"
-          autoCorrect={false}
-          maxLength={4}
-          placeholder="ABCD"
-          placeholderTextColor={c.shade}
-          returnKeyType="done"
-          onSubmitEditing={() => {
-            if (canPair) void pair();
-          }}
-        />
-        <PixelButton
-          label={pending ? 'PAIRING…' : !validCode ? 'ENTER A 4-CHARACTER CODE' : 'PAIR'}
-          disabled={!canPair}
-          onPress={() => void pair()}
-        />
-        {ownCode && (
-          <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
-            That’s your code. Enter a friend’s code to pair.
-          </BodyText>
-        )}
-        {error && (
-          <View style={{ gap: 8 }}>
-            <Dialogue text={error} />
-            <PixelButton
-              small
-              light
-              label="TRY AGAIN"
-              disabled={!canPair}
-              onPress={() => void pair()}
-            />
-          </View>
-        )}
-      </CozyPanel>
+      {!backendConfigured && (
+        <CozyPanel style={{ padding: 16, gap: 8 }}>
+          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>Your local garden</BodyText>
+          <BodyText>{backendUnavailableMessage}</BodyText>
+        </CozyPanel>
+      )}
+      {backendConfigured && (
+        <CozyPanel style={{ padding: 16, gap: 12 }}>
+          <FriendCode code={p.code} />
+          <BodyText>Add rival</BodyText>
+          <TextInput
+            ref={rivalCodeRef}
+            accessibilityLabel="Rival code"
+            style={styles.input}
+            value={code}
+            onChangeText={(text) => {
+              setCode(
+                text
+                  .trim()
+                  .toUpperCase()
+                  .replace(/[^A-Z0-9]/g, ''),
+              );
+              setError(null);
+            }}
+            autoCapitalize="characters"
+            autoCorrect={false}
+            maxLength={4}
+            placeholder="ABCD"
+            placeholderTextColor={c.shade}
+            returnKeyType="done"
+            onSubmitEditing={() => {
+              if (canPair) void pair();
+            }}
+          />
+          <PixelButton
+            label={pending ? 'PAIRING…' : !validCode ? 'ENTER A 4-CHARACTER CODE' : 'PAIR'}
+            disabled={!canPair}
+            onPress={() => void pair()}
+          />
+          {ownCode && (
+            <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 12 }}>
+              That’s your code. Enter a friend’s code to pair.
+            </BodyText>
+          )}
+          {error && (
+            <View style={{ gap: 8 }}>
+              <Dialogue text={error} />
+              <PixelButton
+                small
+                light
+                label="TRY AGAIN"
+                disabled={!canPair}
+                onPress={() => void pair()}
+              />
+            </View>
+          )}
+        </CozyPanel>
+      )}
       <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold', marginTop: 12 }}>
-        Offline league
+        {backendConfigured ? 'Offline league' : 'Your garden'}
       </BodyText>
-      {!live && (
+      {backendConfigured && !live && (
         <PixelButton
           small
           light
@@ -748,20 +776,24 @@ export function ArenaScreen() {
       )}
       {!rivals.length && (
         <View style={{ alignItems: 'center', gap: 12, paddingVertical: 12 }}>
-          <Pet species={p.species} level={p.level} hat={p.hat} size={64} />
+          <GuardianPet player={p} size={64} />
           <BodyText style={{ textAlign: 'center' }}>
-            Swap codes with a friend and add their code above. Once paired, use their invite button
-            to start a Together nap.
+            {backendConfigured
+              ? 'Swap codes with a friend and add their code above. Once paired, use their invite button to start a Together nap.'
+              : 'Try a practice battle with Dave below. Your garden progress stays on this device.'}
           </BodyText>
-          <PixelButton
-            small
-            light
-            label="ADD A RIVAL"
-            onPress={() => {
-              setCode('');
-              setError('ENTER THEIR CODE ABOVE.');
-            }}
-          />
+          {backendConfigured && (
+            <PixelButton
+              small
+              light
+              label="ADD A RIVAL"
+              onPress={() => {
+                setError(null);
+                listRef.current?.scrollToOffset({ offset: 0, animated: !reduced });
+                requestAnimationFrame(() => rivalCodeRef.current?.focus());
+              }}
+            />
+          )}
         </View>
       )}
     </View>
@@ -799,6 +831,7 @@ export function ArenaScreen() {
     >
       <CozyBackground />
       <FlatList
+        ref={listRef}
         data={ranked}
         keyExtractor={(item) => item.id}
         keyboardShouldPersistTaps="handled"

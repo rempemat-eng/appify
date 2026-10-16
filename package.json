@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "expo-router/entry",
   "scripts": {
+    "start": "expo start",
+    "dev": "expo start --web",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "expo-check": "expo install --check --npm",
@@ -10,7 +12,9 @@
     "build:pwa": "expo export -p web && workbox generateSW workbox-config.js",
     "lint": "oxlint --type-aware --type-check",
     "lint:css": "node scripts/lint-css.mjs && npm run check:usefulness",
-    "check:usefulness": "tsx lib/usefulness.test.ts",
+    "check:usefulness": "node --import tsx lib/usefulness.test.ts",
+    "check:core": "npm run check:usefulness && node --import tsx lib/turn-resolution.test.ts && node --import tsx lib/daily-rhythm.test.ts && node --import tsx lib/bilt.test.ts",
+    "check:game": "node --import tsx lib/game.integration.test.ts",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check ."
   },

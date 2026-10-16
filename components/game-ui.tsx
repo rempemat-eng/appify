@@ -27,6 +27,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c, panelStyle } from '@/lib/cozy';
+import { backendConfigured } from '@/lib/bilt';
 import { CozyBackground } from '@/components/cozy-ui';
 import { PlayMeter } from '@/components/offline-garden';
 import { PixelProp } from '@/components/pixel-scenes';
@@ -664,7 +665,7 @@ export function GameHeader() {
         {p && <PlayMeter />}
         <Pressable
           accessibilityRole="button"
-          accessibilityLabel={`Open garden guide. ${live ? 'Garden synced' : 'No signal'}`}
+          accessibilityLabel={`Open garden guide. ${live ? 'Garden synced' : backendConfigured ? 'No signal' : 'Local garden, saved on this device'}`}
           onPress={() => useGame.setState({ guideOpen: true })}
           style={{
             width: 44,
@@ -685,7 +686,7 @@ export function GameHeader() {
               width: 4,
               height: 4,
               borderRadius: 2,
-              backgroundColor: live ? c.moss : c.error,
+              backgroundColor: live || !backendConfigured ? c.moss : c.error,
             }}
           />
         </Pressable>

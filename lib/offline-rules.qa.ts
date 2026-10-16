@@ -22,6 +22,7 @@ import {
   PLAY_WINDOW_MS,
 } from '@/lib/offline-rules';
 import { startingDeck } from '@/lib/cards';
+import { backendConfigured, backendUnavailableMessage } from '@/lib/bilt';
 export async function runOfflineRuleChecks(
   onProgress?: (lines: string[]) => void,
 ): Promise<string[]> {
@@ -198,8 +199,13 @@ export async function runOfflineRuleChecks(
     });
     await gameStore.getState().startBattle(pb);
     check(
-      !gameStore.getState().battle && gameStore.getState().message?.includes('NO RAIDS') === true,
-      'Store blocks fourth raid',
+      !gameStore.getState().battle &&
+        (backendConfigured
+          ? gameStore.getState().message?.includes('NO RAIDS') === true
+          : gameStore.getState().message === backendUnavailableMessage),
+      backendConfigured
+        ? 'Store blocks fourth raid'
+        : 'Local mode blocks player raids without a backend',
     );
     const done: TogetherSession = {
       id: 'qa-done',

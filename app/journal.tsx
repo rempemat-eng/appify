@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList, View, useWindowDimensions } from 'react-native';
 import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Tabs } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect } from 'react-native-svg';
+import { Check, Eye } from 'lucide-react-native';
 import { cozy as c, panelStyle } from '@/lib/cozy';
-import { CozyBackground } from '@/components/cozy-ui';
+import { gameLayout } from '@/lib/layout';
+import { CozyBackground, CozyPanel } from '@/components/cozy-ui';
 import { feedback, startGame, useGame } from '@/lib/game';
 import { collectionOf, postcardsOf, visitorHint, visitors } from '@/lib/visitors';
 import { visitorPixels } from '@/lib/visitor-art';
@@ -24,12 +26,21 @@ const rarityDots = { COMMON: 1, UNCOMMON: 2, RARE: 3 } as const;
 export default function FieldJournal() {
   const params = useLocalSearchParams<{ tab?: string }>();
   const [tab, setTab] = useState(params.tab === 'postcards' ? 'postcards' : 'visitors');
+  const [guideOpen, setGuideOpen] = useState(false);
   const p = useGame((s) => s.player);
   const insets = useSafeAreaInsets();
+  const { width } = useWindowDimensions();
   useEffect(() => {
     startGame();
   }, []);
   const collection = p ? collectionOf(p) : [];
+  const metCount = visitors.filter((visitor) =>
+    collection.some((entry) => entry.id === visitor.id),
+  ).length;
+  const friendCount = visitors.filter((visitor) =>
+    collection.some((entry) => entry.id === visitor.id && entry.befriendedAt !== null),
+  ).length;
+  const columns = width < 440 ? 2 : 3;
   const postcards = p
     ? postcardsOf(p).map((_, index, cards) => cards[cards.length - 1 - index])
     : [];
@@ -38,11 +49,11 @@ export default function FieldJournal() {
       style={{
         flex: 1,
         backgroundColor: c.paper,
-        padding: 12,
-        paddingBottom: Math.max(12, insets.bottom),
-        gap: 16,
+        padding: gameLayout.gutter,
+        paddingBottom: Math.max(gameLayout.gutter, insets.bottom),
+        gap: 12,
         width: '100%',
-        maxWidth: 640,
+        maxWidth: gameLayout.maxWidth,
         alignSelf: 'center',
       }}
     >
@@ -57,12 +68,16 @@ export default function FieldJournal() {
         }}
       />
       <View style={{ gap: 8 }}>
-        <PixelText style={{ fontSize: 18 }}>
-          MET {collection.length} / {visitors.length}
+        <PixelText style={{ fontSize: 16, lineHeight: 25 }}>
+          FRIENDS {friendCount} / {visitors.length}
         </PixelText>
+        <BodyText style={{ fontSize: 12 }}>
+          {metCount} of {visitors.length} met · befriend visitors to choose them as guardians
+        </BodyText>
         <View
           accessibilityRole="progressbar"
-          accessibilityValue={{ min: 0, max: visitors.length, now: collection.length }}
+          accessibilityLabel="Befriended visitors"
+          accessibilityValue={{ min: 0, max: visitors.length, now: friendCount }}
           style={{
             height: 10,
             borderRadius: 999,
@@ -75,7 +90,7 @@ export default function FieldJournal() {
           <View
             style={{
               height: '100%',
-              width: `${(collection.length / visitors.length) * 100}%`,
+              width: `${(friendCount / visitors.length) * 100}%`,
               backgroundColor: c.roam,
             }}
           />
@@ -107,30 +122,68 @@ export default function FieldJournal() {
       {tab === 'visitors' ? (
         <FlatList
           data={visitors}
-          numColumns={3}
-          key="visitors"
+          numColumns={columns}
+          key={`visitors-${columns}`}
           keyExtractor={(v) => v.id}
-          columnWrapperStyle={{ gap: 6 }}
-          contentContainerStyle={{ gap: 10 }}
+          columnWrapperStyle={{ gap: 10 }}
+          contentContainerStyle={{ gap: 10, paddingBottom: 6 }}
+          ListFooterComponent={
+            <CozyPanel style={{ padding: 12, gap: 7, marginTop: 2 }}>
+              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+                From visitor to friend
+              </BodyText>
+              <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+                Tap BEFRIEND in the welcome-back recap, or tap the visitor in your garden before
+                they leave. It is free. Meeting a visitor records them here; befriending lets you
+                choose them as your guardian in the garden.
+              </BodyText>
+              <PixelButton
+                small
+                light
+                label={guideOpen ? 'HIDE VISITOR GUIDE' : 'HOW VISITORS WORK'}
+                onPress={() => setGuideOpen((value) => !value)}
+              />
+              {guideOpen && (
+                <>
+                  <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+                    Your first visitor is guaranteed after a 10-MIN break. Later visits are a
+                    chance, not a guarantee. Rarity: 1 dot common · 2 uncommon · 3 rare.
+                  </BodyText>
+                  <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
+                    Demo time: 1 real second = 1 simulated MIN. Garden visitors stay for 10 MIN
+                    after you close the recap. Phone use and sleep are not measured.
+                  </BodyText>
+                </>
+              )}
+            </CozyPanel>
+          }
           renderItem={({ item }) => {
             const met = collection.find((entry) => entry.id === item.id);
+            const friend = collection.some(
+              (entry) => entry.id === item.id && entry.befriendedAt !== null,
+            );
+            const state = friend ? 'FRIEND' : met ? 'MET' : 'UNSEEN';
             const tint = habitTint[item.habit];
             const dots = rarityDots[item.rarity];
             return (
               <View
-                accessibilityLabel={`${item.name}, ${item.habit}, ${item.rarity}, ${met ? `first met after ${met.minutes} offline minutes` : `not met yet, appears on ${visitorHint(item.rarity)}`}`}
+                accessible
+                accessibilityLabel={`${item.name}, ${item.habit}, ${item.rarity}. ${friend ? 'Befriended; available as a guardian in your garden.' : met ? 'Met, not befriended. Befriend this visitor while they are visiting your garden.' : `Unseen; may appear on ${visitorHint(item.rarity)}.`}${met ? ` First met after ${met.minutes} simulated offline minutes.` : ''}`}
                 style={{
                   ...panelStyle,
                   flex: 1,
                   alignItems: 'center',
-                  paddingVertical: 10,
-                  paddingHorizontal: 4,
-                  gap: 4,
+                  padding: 10,
+                  gap: 7,
                   backgroundColor: met ? tint.fill : c.paper,
                   borderColor: met ? tint.edge : c.outline,
                 }}
               >
-                <View style={{ flexDirection: 'row', gap: 3, alignSelf: 'flex-end' }}>
+                <View
+                  accessibilityElementsHidden
+                  importantForAccessibility="no-hide-descendants"
+                  style={{ flexDirection: 'row', gap: 3, alignSelf: 'flex-end' }}
+                >
                   {[0, 1, 2].map((i) => (
                     <View
                       key={i}
@@ -160,16 +213,45 @@ export default function FieldJournal() {
                   </Svg>
                 )}
                 <BodyText
-                  numberOfLines={1}
-                  style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 11 }}
+                  style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12, textAlign: 'center' }}
                 >
                   {item.name}
                 </BodyText>
-                <BodyText style={{ fontSize: 10, color: tint.edge, fontFamily: 'Nunito_800ExtraBold' }}>
+                <BodyText
+                  style={{ fontSize: 11, color: tint.edge, fontFamily: 'Nunito_800ExtraBold' }}
+                >
                   {item.habit}
                 </BodyText>
-                <BodyText numberOfLines={2} style={{ fontSize: 10, textAlign: 'center' }}>
-                  {met ? `met after ${met.minutes} MIN` : visitorHint(item.rarity)}
+                <View
+                  style={{
+                    minHeight: 25,
+                    borderRadius: 999,
+                    paddingHorizontal: 8,
+                    paddingVertical: 3,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: 4,
+                    backgroundColor: friend ? c.sage : met ? '#F4E5C8' : c.body,
+                  }}
+                >
+                  {friend ? (
+                    <Check size={12} color={c.ink} />
+                  ) : met ? (
+                    <Eye size={12} color={c.ink} />
+                  ) : null}
+                  <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+                    {state}
+                  </BodyText>
+                </View>
+                <BodyText
+                  style={{ fontSize: 11, lineHeight: 16, textAlign: 'center', minHeight: 32 }}
+                >
+                  {friend
+                    ? 'Ready to guard'
+                    : met
+                      ? 'Befriend on a visit'
+                      : visitorHint(item.rarity)}
                 </BodyText>
               </View>
             );
