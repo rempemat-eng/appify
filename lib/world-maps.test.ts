@@ -5,7 +5,11 @@ import { makeWalkGrid } from './garden-path';
 // Every mission world is a sound map: the companion can stroll its whole route
 // (each leg has a path) and the resident visitor stands on reachable ground.
 for (const [id, map] of Object.entries(worldMaps)) {
-  const grid = makeWalkGrid(map.walk, { cell: WORLD.cell, width: WORLD.width, start: map.route[0] });
+  const grid = makeWalkGrid(map.walk, {
+    cell: WORLD.cell,
+    width: WORLD.width,
+    start: map.route[0],
+  });
   assert.equal(map.walk.length, WORLD.height / WORLD.cell, `${id} grid rows`);
   assert.ok(map.route.length >= 4, `${id} has a real route`);
   const { cx, cy } = grid.toCell(map.route[0]);
@@ -20,4 +24,6 @@ for (const [id, map] of Object.entries(worldMaps)) {
   const ids = new Set(map.objects.map((o) => o.id));
   assert.equal(ids.size, map.objects.length, `${id} object ids unique`);
 }
-console.log('PASS: mission worlds (park, book town, mountain) have walkable routes and reachable visitors.');
+console.log(
+  'PASS: mission worlds (park, book town, mountain) have walkable routes and reachable visitors.',
+);
