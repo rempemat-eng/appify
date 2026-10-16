@@ -62,14 +62,26 @@ export function postcardsOf(p: Player): Postcard[] {
   });
 }
 export function guardianPlayer(p: Player): Player {
-  if (
-    p.id === 'bot' ||
-    !isVisitorId(p.guardian) ||
-    !collectionOf(p).some((v) => v.id === p.guardian && v.befriendedAt !== null)
-  )
-    return p;
-  const v = visitorInfo(p.guardian);
+  const id = effectiveGuardianId(p);
+  // The stored name and species always belong to the starter. Clear a stale
+  // selection in this view too: the sprite renderer also reads guardian.
+  if (!id) return p.guardian === null ? p : { ...p, guardian: null };
+  const v = visitorInfo(id);
   return { ...p, species: v.species, pet_name: v.name };
+}
+export function befriendedVisitorIds(p: Player): VisitorId[] {
+  if (p.id === 'bot') return [];
+  const owned = new Set(
+    collectionOf(p)
+      .filter((v) => v.befriendedAt !== null && Number.isFinite(v.befriendedAt))
+      .map((v) => v.id),
+  );
+  return visitors.filter((v) => owned.has(v.id)).map((v) => v.id);
+}
+export function effectiveGuardianId(p: Player): VisitorId | null {
+  return isVisitorId(p.guardian) && befriendedVisitorIds(p).includes(p.guardian)
+    ? p.guardian
+    : null;
 }
 export function consecutiveOfflineDays(rules: OfflineRules, today = dayKey()) {
   let key = (rules.days[today]?.offline ?? 0) >= 120 ? today : previousDay(today);

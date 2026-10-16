@@ -22,6 +22,7 @@ import {
 export type TogetherSession = Tables<'touch_grass_sessions'>;
 import {
   collectionOf,
+  befriendedVisitorIds,
   consecutiveOfflineDays,
   isVisitorId,
   meetVisitor,
@@ -678,7 +679,7 @@ export const gameStore = create<Game>((set, get) => ({
   selectGuardian: (id) => {
     const s = get();
     if (!s.player || s.battle || s.player.mode !== 'awake' || s.player.guardian === id) return;
-    if (id && !collectionOf(s.player).some((v) => v.id === id && v.befriendedAt !== null)) return;
+    if (id && !befriendedVisitorIds(s.player).includes(id)) return;
     set({ player: { ...s.player, guardian: id } });
     changed();
     feedback('select');

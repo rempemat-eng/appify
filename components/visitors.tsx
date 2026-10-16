@@ -6,7 +6,6 @@ import { PixelScene } from '@/components/pixel-scenes';
 import Animated, {
   cancelAnimation,
   FadeIn,
-  FadeOut,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -16,7 +15,7 @@ import Svg, { Rect } from 'react-native-svg';
 import { BookOpen } from 'lucide-react-native';
 import { useReducedMotion } from '@/lib/motion';
 import { cards, cardIds, summarizeCardRewards } from '@/lib/cards';
-import { palette, useGame, type Player } from '@/lib/game';
+import { palette, useGame } from '@/lib/game';
 import { cozy as c, panelStyle } from '@/lib/cozy';
 import { collectionOf, visitorInfo, type Postcard } from '@/lib/visitors';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
@@ -91,44 +90,7 @@ export function GardenVisitor() {
     </Animated.View>
   );
 }
-export function GuardianPicker({ player }: { player: Player }) {
-  const friends = collectionOf(player).filter((v) => v.befriendedAt !== null);
-  if (!friends.length) return null;
-  return (
-    <View style={{ gap: 4 }}>
-      <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>GUARDIAN</BodyText>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={{ gap: 12, paddingVertical: 4 }}
-      >
-        {[null, ...friends.map((v) => v.id)].map((id) => (
-          <Animated.View
-            key={id ?? 'starter'}
-            entering={FadeIn.duration(100)}
-            exiting={FadeOut.duration(100)}
-            style={{
-              ...panelStyle,
-              borderColor: player.guardian === id ? c.moss : c.outline,
-              padding: 2,
-            }}
-          >
-            <Pet
-              visitor={id}
-              species={player.species}
-              level={player.level}
-              hat={player.hat}
-              size={64}
-              bob={false}
-              onPress={() => useGame.getState().selectGuardian(id)}
-              actionLabel={`Select ${id ? visitorInfo(id).name : player.pet_name} as guardian${player.guardian === id ? ', selected' : ''}`}
-            />
-          </Animated.View>
-        ))}
-      </ScrollView>
-    </View>
-  );
-}
+export { CompanionPicker as GuardianPicker } from '@/components/companion-picker';
 export function PostcardArt({ postcard }: { postcard: Postcard }) {
   const a = palette;
   const place =

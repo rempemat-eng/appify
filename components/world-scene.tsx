@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Image, View } from 'react-native';
 import Animated, {
   cancelAnimation,
@@ -10,6 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
+import { useAppActive } from '@/lib/app-active';
 import { useGame, type Player } from '@/lib/game';
 import { WORLD, worldMaps, type WorldId } from '@/lib/world-maps';
 import { worldImages, worldProps } from '@/lib/world-assets';
@@ -56,7 +57,7 @@ export function WorldScene({
   width,
   player,
   view = 'tilt',
-  active = true,
+  active: screenActive = true,
   still = false,
 }: {
   world: WorldId;
@@ -68,12 +69,15 @@ export function WorldScene({
   still?: boolean;
 }) {
   const reduced = useReducedMotion();
+  const appActive = useAppActive();
+  const active = screenActive && appActive;
   const map = worldMaps[world];
   const grid = grids[world];
   const tilt = view === 'tilt';
   const proj = makeProjection(view, width, WORLD, tilt ? Math.round(width * 0.14) : 0);
   const scale = proj.scale;
   const petPx = Math.max(32, Math.round(scale) * 32);
+  const residentPx = Math.max(32, Math.round(petPx / 2 / 32) * 32);
   const hour = new Date(useGame((s) => s.now)).getHours();
   const night = hour < 6 || hour >= 21;
   const dusk = !night && hour >= 17;
@@ -87,6 +91,24 @@ export function WorldScene({
   const [walking, setWalking] = useState(false);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
   const [frame, setFrame] = useState(0);
+  const [sceneWorld, setSceneWorld] = useState(world);
+  if (sceneWorld !== world) {
+    setSceneWorld(world);
+    setWalking(false);
+    setFacing('right');
+  }
+
+  // A mounted scene can be reused for another journey. It must start on that
+  // world's route rather than drawing or pathfinding from the previous map.
+  useLayoutEffect(() => {
+    cancelAnimation(px);
+    cancelAnimation(py);
+    const origin = map.route[0];
+    pos.current = { ...origin };
+    leg.current = 0;
+    px.set(origin.x);
+    py.set(origin.y);
+  }, [map, px, py]);
 
   useEffect(() => {
     if (!moving) return undefined;
@@ -95,7 +117,7 @@ export function WorldScene({
   }, [moving]);
 
   // Stroll the route: walk a leg, pause to look around, then the next leg.
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!moving) return undefined;
     let alive = true;
     let pause: ReturnType<typeof setTimeout>;
@@ -226,16 +248,29 @@ export function WorldScene({
       <View
         style={{
           position: 'absolute',
-          left: Math.round(vs.sx - petPx / 4),
-          top: Math.round(vs.sy - petPx / 2),
+          left: Math.round(vs.sx - residentPx / 2),
+          top: Math.round(vs.sy - residentPx * (30 / 32)),
+          width: residentPx,
+          height: residentPx,
           transform: [{ scale: vs.f }],
+          transformOrigin: '50% 93.75%',
           zIndex: map.visitor.y,
         }}
       >
-        <Pet visitor={resident} size={Math.max(32, petPx / 2)} bob={moving} active={moving} />
+        <Pet visitor={resident} size={residentPx} bob={moving} active={moving} />
       </View>
       <Animated.View
-        style={[{ position: 'absolute', left: 0, top: 0, width: petPx, height: petPx }, petStyle]}
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: petPx,
+            height: petPx,
+            transformOrigin: '50% 93.75%',
+          },
+          petStyle,
+        ]}
       >
         <GuardianPet
           player={player}

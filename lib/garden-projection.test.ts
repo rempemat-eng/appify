@@ -17,6 +17,23 @@ for (const [x, y] of [
   assert.ok(near(s.sx, x * 2) && near(s.sy, y * 2) && s.f === 1, 'flat identity');
 }
 
+// Fractional layout heights must not displace top-down art or taps. In
+// particular width 320 gives a 293.333...px plane in a rounded 293px container.
+for (const width of [320, 390, 430, 640]) {
+  const p = makeProjection('flat', width, native);
+  for (const [x, y] of [
+    [14, 40],
+    [96, 112],
+    [170, 150],
+  ]) {
+    const s = project(p, x, y);
+    assert.equal(s.sx, x * p.scale, `flat x identity at ${width}`);
+    assert.equal(s.sy, y * p.scale, `flat y identity at ${width}`);
+    const back = unproject(p, s.sx, s.sy);
+    assert.ok(near(back.x, x) && near(back.y, y), `flat tap round trip at ${width}`);
+  }
+}
+
 // Tilted view: near edge keeps full scale, the far edge shrinks and rises.
 const tilt = makeProjection('tilt', 402, native, 60);
 const bottom = project(tilt, 96, 176);

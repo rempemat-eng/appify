@@ -77,6 +77,10 @@ export function makeProjection(
 /** Screen position (sx, sy) and depth scale f of a native ground point. */
 export function project(p: Projection, x: number, y: number) {
   'worklet';
+  // Keep top-down placement exactly on its original pixel grid. The container
+  // height is rounded for layout, but must not shift every sprite at widths
+  // whose scale gives the ground a fractional height.
+  if (p.mode === 'flat') return { sx: x * p.scale, sy: y * p.scale, f: 1 };
   const d = (p.h - y) * p.scale; // distance from the near edge, on the plane
   const f = p.persp / (p.persp + d * p.sin);
   const cx = p.width / 2;
@@ -85,6 +89,7 @@ export function project(p: Projection, x: number, y: number) {
 
 /** Inverse of project for a tap on the ground (screen -> native point). */
 export function unproject(p: Projection, sx: number, sy: number) {
+  if (p.mode === 'flat') return { x: sx / p.scale, y: sy / p.scale };
   const Y = p.bottom - sy;
   const d = (Y * p.persp) / (p.persp * p.cos - Y * p.sin);
   const f = p.persp / (p.persp + d * p.sin);

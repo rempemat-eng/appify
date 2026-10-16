@@ -20,6 +20,7 @@ import { router } from 'expo-router';
 import * as Haptics from 'expo-haptics';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
+import { useAppActive } from '@/lib/app-active';
 import { playPaused, useGame, type Player } from '@/lib/game';
 import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
 import { GARDEN, gardenHotspots, gardenObjects } from '@/lib/garden-map';
@@ -337,7 +338,7 @@ export function GardenWorld({
   sleepy,
   onFeed,
   napping = false,
-  active = true,
+  active: screenActive = true,
   view = 'flat',
 }: {
   width: number;
@@ -353,6 +354,8 @@ export function GardenWorld({
   view?: ViewMode;
 }) {
   const reduced = useReducedMotion();
+  const appActive = useAppActive();
+  const active = screenActive && appActive;
   const scale = width / GARDEN.width;
   // All placement goes through one projection (identity in flat view).
   const tilt = view === 'tilt';
@@ -360,6 +363,7 @@ export function GardenWorld({
   const height = proj.height;
   const place: Place = (x, y, groundY = y) => lift(proj, x, y, groundY);
   const petPx = Math.max(32, Math.round((32 * scale) / 32) * 32); // matches Pet's snapping
+  const companionPx = Math.max(32, Math.round(petPx / 2 / 32) * 32);
   const home = napping ? BED : START;
   const px = useSharedValue(home.x);
   const py = useSharedValue(home.y);
@@ -676,7 +680,13 @@ export function GardenWorld({
     const ne = e.nativeEvent;
     const lx = ne.locationX ?? ne.offsetX;
     const ly = ne.locationY ?? ne.offsetY;
-    if (typeof lx !== 'number' || typeof ly !== 'number' || Number.isNaN(lx + ly)) return;
+    if (
+      typeof lx !== 'number' ||
+      typeof ly !== 'number' ||
+      !Number.isFinite(lx) ||
+      !Number.isFinite(ly)
+    )
+      return;
     lastTouch.current = clock();
     setTag(null);
     setFeedback(null);
@@ -722,6 +732,9 @@ export function GardenWorld({
   const companions = collectionOf(player)
     .filter((v) => v.befriendedAt !== null && v.id !== player.guardian)
     .slice(0, 3);
+  const pond = groundRect(proj, 16, 118, 52, 30);
+  const pondWidth = Math.max(44, pond.width);
+  const pondHeight = Math.max(44, pond.height);
   return (
     <View
       // @ts-expect-error dataSet is a react-native-web prop (sets data-pixel for crisp CSS scaling)
@@ -931,10 +944,31 @@ export function GardenWorld({
         accessibilityLabel="Look into the pond"
         disabled={napping || !active}
         onPress={() => onObjectPress('pond')}
-        style={{ position: 'absolute', ...groundRect(proj, 16, 118, 52, 30), zIndex: 1 }}
+        style={{
+          position: 'absolute',
+          left: Math.max(0, Math.min(width - pondWidth, pond.left - (pondWidth - pond.width) / 2)),
+          top: Math.max(
+            0,
+            Math.min(height - pondHeight, pond.top - (pondHeight - pond.height) / 2),
+          ),
+          width: pondWidth,
+          height: pondHeight,
+          zIndex: 1,
+        }}
       />
       <Animated.View
-        style={[{ position: 'absolute', left: 0, top: 0, width: petPx, height: petPx }, petStyle]}
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: petPx,
+            height: petPx,
+            // Depth scaling must keep the sprite's feet on its projected path.
+            transformOrigin: '50% 93.75%',
+          },
+          petStyle,
+        ]}
       >
         {emote && (
           <View
@@ -976,17 +1010,22 @@ export function GardenWorld({
           style={{
             position: 'absolute',
             left: Math.round(
-              project(proj, companionSpots[i].x, companionSpots[i].y).sx - petPx / 4,
+              project(proj, companionSpots[i].x, companionSpots[i].y).sx - companionPx / 2,
             ),
-            top: Math.round(project(proj, companionSpots[i].x, companionSpots[i].y).sy - petPx / 2),
+            top: Math.round(
+              project(proj, companionSpots[i].x, companionSpots[i].y).sy - companionPx * (30 / 32),
+            ),
+            width: companionPx,
+            height: companionPx,
             transform: [{ scale: project(proj, companionSpots[i].x, companionSpots[i].y).f }],
+            transformOrigin: '50% 93.75%',
             zIndex: companionSpots[i].y,
           }}
         >
           <Pet
             active={active}
             visitor={v.id}
-            size={Math.max(32, petPx / 2)}
+            size={companionPx}
             sleeping={napping}
             facing={i % 2 ? 'left' : 'right'}
             bob={!napping && active}
@@ -1072,7 +1111,7 @@ export function GardenWorld({
         reduced={reduced}
         active={active}
       />
-      {napping && (
+      {napping && active && (
         <View
           pointerEvents="none"
           style={{

@@ -84,7 +84,7 @@ async function main() {
   try {
     const { gameStore, flushGameSave, bot } = await import('./game');
     const { bilt, backendConfigured, backendUnavailableMessage } = await import('./bilt');
-    const { collectionOf } = await import('./visitors');
+    const { collectionOf, guardianPlayer } = await import('./visitors');
     const { runRefinementChecks } = await import('./refinement.qa');
     const lines: string[] = [];
     const check = (ok: boolean, label: string) => {
@@ -155,6 +155,65 @@ async function main() {
         !gameStore.getState().waitingVisitor,
       'Actual first visitor can be befriended once and selected across reload',
     );
+    const beforeSwitching = structuredClone(gameStore.getState().player!);
+    gameStore.getState().selectGuardian('skyfern');
+    check(
+      isDeepStrictEqual(gameStore.getState().player, beforeSwitching),
+      'An unbefriended companion cannot be selected',
+    );
+    const roster = [
+      ...collectionOf(beforeSwitching),
+      { id: 'trailhop' as const, metAt: now, minutes: 15, befriendedAt: 0 },
+      { id: 'inkling' as const, metAt: now, minutes: 15, befriendedAt: now },
+    ];
+    gameStore.getState().change({ collection: roster });
+    for (const [id, species] of [
+      ['trailhop', 'RAT'],
+      ['inkling', 'CUBE'],
+    ] as const) {
+      const before = structuredClone(gameStore.getState().player!);
+      gameStore.getState().selectGuardian(id);
+      await reload();
+      const after = gameStore.getState().player!;
+      check(
+        after.guardian === id && guardianPlayer(after).species === species,
+        `Switching to ${id} persists the effective battle and mission family`,
+      );
+      check(
+        isDeepStrictEqual({ ...after, guardian: before.guardian }, before),
+        `Switching to ${id} preserves all account progress and costs no GRASS`,
+      );
+    }
+    gameStore.getState().change({ mode: 'mission' });
+    gameStore.getState().selectGuardian('trailhop');
+    check(
+      gameStore.getState().player!.guardian === 'inkling',
+      'Companions cannot change during a mission',
+    );
+    gameStore.getState().change({ mode: 'screen_off' });
+    gameStore.getState().selectGuardian('trailhop');
+    check(
+      gameStore.getState().player!.guardian === 'inkling',
+      'Companions cannot change during a nap',
+    );
+    gameStore.getState().change({ mode: 'awake' });
+    gameStore.setState({ battle: { target: bot(beforeSwitching), practice: true } });
+    gameStore.getState().selectGuardian('trailhop');
+    check(
+      gameStore.getState().player!.guardian === 'inkling',
+      'Companions cannot change during a battle',
+    );
+    gameStore.setState({ battle: null });
+    gameStore.getState().selectGuardian(null);
+    await reload();
+    check(
+      gameStore.getState().player!.guardian === null &&
+        guardianPlayer(gameStore.getState().player!).pet_name === beforeSwitching.pet_name &&
+        guardianPlayer(gameStore.getState().player!).species === beforeSwitching.species,
+      'Returning to the starter restores the original name and family across reload',
+    );
+    gameStore.getState().change(beforeSwitching);
+    await reload();
     gameStore.getState().hatAction('CAP');
     await reload();
     check(

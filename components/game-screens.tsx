@@ -89,6 +89,10 @@ export function HomeScreen() {
     if (coaching && p?.mode === 'awake') useGame.getState().seeTip(coaching);
   }, [coaching, p?.mode]);
   const [statsOpen, setStatsOpen] = useState(false);
+  const [companionSheet, setCompanionSheet] = useState({ focused, open: false });
+  if (companionSheet.focused !== focused) setCompanionSheet({ focused, open: false });
+  const companionsOpen = companionSheet.focused === focused && companionSheet.open;
+  const setCompanionsOpen = (open: boolean) => setCompanionSheet({ focused, open });
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
   const raidId = useGame((s) => s.alerts[0]?.raid.id);
@@ -202,7 +206,7 @@ export function HomeScreen() {
         }}
       >
         <GardenWorld
-          active={focused && !busy && !statsOpen && p.mode === 'awake'}
+          active={focused && !busy && !statsOpen && !companionsOpen && p.mode === 'awake'}
           view={gardenView}
           width={Math.min(width, gameLayout.maxWidth)}
           player={p}
@@ -219,17 +223,22 @@ export function HomeScreen() {
       <View
         style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: 8 }}
       >
-        <BodyText
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Change companion, ${guardian.pet_name} is active`}
+          onPress={() => setCompanionsOpen(true)}
           style={{
             backgroundColor: c.glass,
             paddingHorizontal: 12,
-            paddingVertical: 4,
+            minHeight: 44,
+            justifyContent: 'center',
             borderRadius: 999,
-            fontFamily: 'Nunito_800ExtraBold',
           }}
         >
-          {guardian.pet_name}
-        </BodyText>
+          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>
+            {guardian.pet_name} · CHANGE
+          </BodyText>
+        </Pressable>
         <View
           accessibilityRole="progressbar"
           accessibilityLabel={`Mood: ${p.mood < 30 ? 'grumpy' : paused ? 'sleepy' : 'happy'}`}
@@ -344,8 +353,8 @@ export function HomeScreen() {
           <PixelButton label="JOURNAL" small light onPress={() => router.push('/journal')} />
         </View>
       </View>
+      <GuardianPicker player={p} open={companionsOpen} onOpenChange={setCompanionsOpen} />
       <DailyRhythmCard />
-      <GuardianPicker player={p} />
       <Modal
         visible={statsOpen}
         transparent

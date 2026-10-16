@@ -96,6 +96,8 @@ const rule = {
     return {
       CallExpression(node) {
         if (node.callee.type !== 'Identifier') return;
+        // React's external-store hook takes a subscription, not a Zustand selector.
+        if (node.callee.name === 'useSyncExternalStore') return;
         if (!/^use[A-Z][A-Za-z0-9]*Store$/.test(node.callee.name)) return;
         if (node.arguments.length === 0) return;
 
