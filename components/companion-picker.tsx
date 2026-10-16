@@ -37,7 +37,11 @@ export function CompanionPicker({
     <>
       <CozyPanel style={{ padding: 14, gap: 10 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants">
+          <View
+            aria-hidden
+            accessibilityElementsHidden
+            importantForAccessibility="no-hide-descendants"
+          >
             <Pet
               visitor={active.id}
               species={active.species}
@@ -103,28 +107,23 @@ export function CompanionPicker({
                 contentContainerStyle={{ gap: 10, paddingBottom: 8 }}
               >
                 {options.map((option) => (
-                  <Pressable
+                  <View
                     key={option.id ?? 'starter'}
-                    accessibilityRole="button"
-                    accessibilityLabel={`Preview ${option.name}, ${option.habit} companion${option.id === active.id ? ', active' : ''}`}
-                    accessibilityState={{ selected: option.id === preview.id }}
-                    onPress={() => setPreviewId(option.id)}
-                    style={({ pressed }) => ({
+                    style={{
                       ...panelStyle,
                       width: 116,
                       minHeight: 118,
                       padding: 8,
-                      gap: 4,
-                      alignItems: 'center',
                       borderColor: option.id === preview.id ? c.leafOutline : c.outline,
                       backgroundColor: option.id === preview.id ? c.sage : c.paper,
-                      opacity: pressed ? 0.75 : 1,
-                    })}
+                    }}
                   >
                     <View
+                      aria-hidden
                       pointerEvents="none"
                       accessibilityElementsHidden
                       importantForAccessibility="no-hide-descendants"
+                      style={{ alignItems: 'center', gap: 4 }}
                     >
                       <Pet
                         visitor={option.id}
@@ -135,18 +134,35 @@ export function CompanionPicker({
                         bob={false}
                         active={false}
                       />
+                      <BodyText
+                        numberOfLines={1}
+                        style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}
+                      >
+                        {option.name}
+                      </BodyText>
+                      <BodyText style={{ fontSize: 10 }}>
+                        {option.habit}
+                        {option.id === active.id ? ' · ACTIVE' : ''}
+                      </BodyText>
                     </View>
-                    <BodyText
-                      numberOfLines={1}
-                      style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}
-                    >
-                      {option.name}
-                    </BodyText>
-                    <BodyText style={{ fontSize: 10 }}>
-                      {option.habit}
-                      {option.id === active.id ? ' · ACTIVE' : ''}
-                    </BodyText>
-                  </Pressable>
+                    <Pressable
+                      accessibilityRole="button"
+                      accessibilityLabel={`Preview ${option.name}, ${option.habit} companion${option.id === active.id ? ', active' : ''}`}
+                      accessibilityState={{ selected: option.id === preview.id }}
+                      onPress={() => setPreviewId(option.id)}
+                      style={({ pressed }) => ({
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        zIndex: 1,
+                        borderRadius: 12,
+                        borderWidth: 2,
+                        borderColor: pressed ? c.leafOutline : c.transparent,
+                      })}
+                    />
+                  </View>
                 ))}
               </ScrollView>
               <View style={{ ...panelStyle, padding: 14, gap: 12, backgroundColor: tint }}>
