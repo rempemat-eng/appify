@@ -145,7 +145,7 @@ function homeFixture() {
   const control = { focused: false, foreground: true };
   const seen = [];
   const state = {
-    player: { id: 'test', pet_name: 'MOSS', species: 'BLOB', mode: 'awake', mood: 50, grass: 30, level: 1 },
+    player: { id: 'test', pet_name: 'MOSS', species: 'BLOB', mode: 'awake', mood: 50, grass: 30, level: 1, offline_seconds: 0 },
     now: 0, voice: null, firstWake: false, tips: [], companionMemories: [],
     alerts: [], seeTip: (tip) => seen.push(tip),
   };
@@ -154,7 +154,7 @@ function homeFixture() {
   const Home = load('components/game-screens.tsx', (id) => {
     if (id === 'react') return runtime.react;
     if (id === 'react/jsx-runtime') return jsxRuntime;
-    if (id === 'react-native') return { ...boundary, useWindowDimensions: () => ({ height: 800, width: 390 }) };
+    if (id === 'react-native') return { ...Object.fromEntries(['FlatList', 'KeyboardAvoidingView', 'Modal', 'Pressable', 'ScrollView', 'TextInput', 'View'].map((name) => [name, name])), Platform: { OS: 'web' }, useWindowDimensions: () => ({ height: 800, width: 390 }) };
     if (id === 'expo-router') return { useIsFocused: () => control.focused, router: {} };
     if (id === 'react-native-safe-area-context') return { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) };
     if (id === '@/lib/game') return { useGame, status: () => ({ kind: 'care' }) };
@@ -163,7 +163,8 @@ function homeFixture() {
     if (id === '@/lib/motion') return { useReducedMotion: () => false };
     if (id === '@/lib/app-active') return { useAppActive: () => control.foreground };
     if (id === '@/lib/garden-view') return { useGardenView: () => ['flat', () => {}] };
-    if (id === '@/lib/visitors') return { guardianPlayer: (player) => player };
+    if (id === '@/lib/visitors') return { guardianPlayer: (player) => player, isVisitorId: () => false };
+    if (id === '@/lib/grasslings') return { grasslings: { BLOB: { name: 'Mossling', habit: 'Rest' } }, growthStage: () => 'Sprout', levelPreview: () => ({ next: 2, cost: 20, unlock: 'A new outing' }) };
     if (id === '@/lib/first-session') return { gardenTips: { phone: { text: 'phone' }, wake: { text: 'wake' }, budget: { text: 'budget' } } };
     if (id === '@/components/offline-garden') return { usePlayPaused: () => false, ...Object.fromEntries(['GardenProgress', 'GardenStreak', 'RecentBreaks', 'PlayPause', 'TogetherInvite'].map((name) => [name, name])) };
     if (id === '@/components/game-ui') return { Page: 'Page', PixelButton: 'PixelButton', PixelText: 'PixelText', styles: {} };
@@ -193,6 +194,7 @@ async function main() {
   tree = home.render();
   check(byType(tree, 'DailyRhythmCard').props.open, 'Home controls the planner sheet');
   check(!byType(tree, 'GardenWorld').props.active, 'opening the planner deactivates in-flight garden work');
+  check(!byType(tree, 'DailyRhythmCard').props.active, 'the planner clock shares the covered Home activity gate');
   check(home.clock.intervals.size === 0, 'planner coverage pauses dialogue rotation');
   home.control.focused = false;
   tree = home.render();

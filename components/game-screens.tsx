@@ -409,7 +409,7 @@ export function HomeScreen() {
         onSpar={() => router.push('/arena')}
       />
       <DailyRhythmCard
-        active={focused && appActive}
+        active={gardenActive}
         open={rhythmOpen}
         onOpenChange={setRhythmOpen}
       />
