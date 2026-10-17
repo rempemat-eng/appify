@@ -51,9 +51,10 @@ npx playwright install chromium
 npm run screens
 ```
 
-`screens` builds a fresh local web export and captures 144 images: onboarding,
+`screens` builds a fresh local web export and captures 192 images: onboarding,
 garden, hotbar, menu, companions, nap sheet, welcome back, missions, shop, arena,
-battle and journal, each at 320 × 640, 402 × 874 and 768 × 1024, in normal and
+battle, journal, and unreadable-save, confirmation, newer-save and storage-error
+recovery, each at 320 × 640, 402 × 874 and 768 × 1024, in normal and
 reduced motion, by day and by night. For a smaller local run, pass Playwright
 filters, for example `npm run screens -- --project=402-day-normal`.
 For local diagnostics with an existing Chromium executable, set
@@ -78,7 +79,7 @@ captured when those checks fail. Open
 fixtures, routes and diagnostics, or `report/index.html` for the full test report
 and failure traces. These outputs are ignored by Git.
 Each run replaces the generated screenshot directory. A healthy full run holds
-all 144 images; CI stops after six failures and retains the completed captures
+all 192 images; CI stops after six failures and retains the completed captures
 and diagnostics so a broken startup cannot consume the whole job timeout.
 
 The **Screenshots** workflow runs on every PR and attaches that directory even
