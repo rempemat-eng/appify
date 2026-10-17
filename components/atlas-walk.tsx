@@ -102,6 +102,7 @@ export const zoneNames: Record<TileId, string> = {
   garden: 'HOME GARDEN',
   ridge: 'THE SNOWY RIDGE',
   halt: 'VALLEY HALT',
+  oasis: 'THE DESERT OASIS',
   woodland: 'THE WOODLAND',
   riverside: 'THE RIVERSIDE',
   town: 'CROSSROADS TOWN',

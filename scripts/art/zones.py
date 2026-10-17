@@ -259,7 +259,7 @@ def sprites() -> dict[str, Canvas]:
 
 
 # Props with a way through them: (from, to) in sprite pixels.
-OPENINGS = {'gatehouse': (50, 72)}
+OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44)}
 
 
 def walk_grid(objects, sprite_map) -> list[str]:
@@ -296,14 +296,29 @@ def reachable(walk: list[str], start) -> set:
     return seen
 
 
-def paint_rails(cv: Canvas, y0: int):
+def thick_from(points, radius, seed, dx, dy=0):
+    """worlds.thick drawn in a neighbour's coordinates and shifted into this zone by
+    (dx, dy): a road or bed that crosses a border continues pixel for pixel."""
+    pts = set()
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        steps = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
+        for i in range(steps + 1):
+            t = i / steps
+            cx, cy = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+            r = radius + (smooth_noise(cx, cy, 9, seed) - 0.5) * (2.4 if seed else 0)
+            pts |= disc(cx, cy, r)
+    return {(x + dx, y + dy) for (x, y) in pts if 0 <= x + dx < W and 0 <= y + dy < H}
+
+
+def paint_rails(cv: Canvas, y0: int, x_off: int = 0):
     """A railway across the zone: ballast, wooden sleepers lit on top, and two iron
-    rails with a bright running edge."""
+    rails with a bright running edge. x_off is the zone's x in its neighbour's
+    coordinates, so the sleepers keep their spacing across a border."""
     for y in range(y0 - 3, y0 + 16):
         for x in range(W):
-            n = noise2(x, y, 141)
+            n = noise2(x + x_off, y, 141)
             cv.set(x, y, STONE[2] if n > 0.55 else STONE[1] if n > 0.15 else STONE[3])
-    for x in range(1, W, 7):
+    for x in range(1 + (-x_off) % 7 if x_off else 1, W, 7):
         for y in range(y0, y0 + 13):
             cv.set(x, y, WOOD[3] if y == y0 else WOOD[2]); cv.set(x + 1, y, WOOD[2]); cv.set(x + 2, y, WOOD[1])
             cv.set(x + 3, y, WOOD[1] if y > y0 else WOOD[2])
@@ -573,12 +588,31 @@ def mesa_face(cv: Canvas, edge, top_ramp, face_ramp, face_h: int = 22):
                 style.darken(cv, x, y + face_h // 2)
 
 
+GULCH_STREET = [(130, 78), (128, 200), (136, 300), (130, 420), (110, 500), (60, 540), (-40, 552)]
+GULCH_CREEK = [(-14, 342), (40, 336), (96, 326), (120, 320), (176, 312), (230, 336), (246, 360)]
+
+
+def wagon_ruts(cv: Canvas, road: set, xs, ramp):
+    """Two wheel ruts along a road that runs east to west, following its centre in each
+    column (so they continue across a border where the road does)."""
+    for x in xs:
+        ys = [y for y in range(H) if (x, y) in road and y > 440]
+        if not ys:
+            continue
+        mid = (min(ys) + max(ys)) // 2
+        for ry in (mid - 6, mid + 6):
+            if noise2(x // 3, ry, 229) > 0.15:
+                cv.set(x, ry, ramp[1])
+        if x % 7 == 0:
+            cv.set(x, mid + (2 if (x // 7) % 2 else -2), ramp[0])  # hoof prints
+
+
 def gulch(frame: int = 0):
     """Dust Gulch, its own place: a town strung along one street that runs down from the
     railway's end, under a sandstone mesa on the east with the old mine cut into its
     foot. A dry creek bed of cracked mud winds across (the reason the well ran dry),
     crossed by a plank bridge; the water tower and windpump stand by it, still hoping.
-    The corral sits under the cliff, and the wagon track leaves south-west to the oasis."""
+    The corral sits under the cliff, and the wagon track leaves west for the oasis, along the creek's old line."""
     DESERT, ADOBE = MATERIALS['desert'], MATERIALS['adobe']
     BLEACHED = wsp.BLEACHED
     cv = Canvas(W, H)
@@ -601,7 +635,7 @@ def gulch(frame: int = 0):
             if smooth_noise(x, y, 18, 223) > 0.74:
                 cv.set(x, y, DESERT[1] if cracked(x, y, 8, 1) else DESERT[4] if (x + y) % 5 else DESERT[3])
     # the dry creek: a winding bed of cracked mud with rounded stones and pale banks
-    creek = worlds.thick([(-4, 300), (60, 296), (120, 320), (176, 312), (230, 336), (246, 360)], 9, seed=12)
+    creek = worlds.thick(GULCH_CREEK, 9, seed=12)
     for (x, y) in creek:
         cv.set(x, y, ADOBE[0] if cracked(x, y, 6, 2) else ADOBE[2] if (x + y) % 3 else ADOBE[3])
     for (x, y) in creek:
@@ -628,7 +662,7 @@ def gulch(frame: int = 0):
                 cv.set(x, y, BLEACHED[0])  # nail heads
     cv.hline(20, 58, 210, BLEACHED[5]); cv.hline(20, 78, 210, BLEACHED[0])
     # the street: packed earth with wheel ruts and hoof prints, down from the platform
-    street = worlds.thick([(130, 78), (128, 200), (136, 300), (130, 420), (110, 500), (60, 560), (-6, 590)], 17, seed=13)
+    street = worlds.thick(GULCH_STREET, 17, seed=13)  # out of the west edge to the oasis
     for (x, y) in street:
         n = smooth_noise(x, y, 10, 213)
         c = DESERT[2] if n > 0.3 or (x + y) % 2 else DESERT[1]
@@ -636,7 +670,8 @@ def gulch(frame: int = 0):
     for (x, y) in street:
         if (x - 7, y) not in street and (x - 6, y) in street:
             pass
-    for y in range(80, H, 1):  # two wheel ruts following the street's centre line
+    wagon_ruts(cv, street, range(0, 72), DESERT)
+    for y in range(80, 506):  # two wheel ruts following the street's centre line
         cx = None
         for (xx, yy) in ((x2, y) for x2 in range(W)):
             if (xx, yy) in street:
@@ -711,18 +746,227 @@ def gulch(frame: int = 0):
         ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 118, 178), ('poster', 'poster_board', 184, 150),
         ('store', 'store', 6, 210), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
         ('tower', 'water_tower', 168, 200), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 176, 300),
-        ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 96, 518), ('hay-2', 'hay_bale', 84, 530),
+        ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
         ('mine', 'mine_portal', 248, 170), ('dyn-1', 'dynamite_crate', 228, 214), ('dyn-2', 'dynamite_crate', 300, 222),
         ('corral-n', 'corral_rail', ccx - 46, ccy - 36), ('corral-s', 'corral_rail', ccx - 46, ccy + 22),
         ('corral-w', 'corral_side', ccx - 52, ccy - 22),
         ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
         ('cactus-4', 'saguaro_small', 286, 540), ('cactus-5', 'saguaro', 280, 60), ('cactus-6', 'saguaro_small', 4, 2),
-        ('cactus-7', 'saguaro', 290, 300), ('weed-1', 'tumbleweed', 170, 380), ('weed-2', 'tumbleweed', 30, 540),
+        ('cactus-7', 'saguaro', 290, 300), ('weed-1', 'tumbleweed', 170, 380), ('weed-2', 'tumbleweed', 96, 562),
         ('skull', 'cow_skull', 250, 520), ('barrel-p', 'keg', 40, 62), ('sack-p', 'hay_bale', 196, 56),
     ]
     stands = {'platform': (128, 70), 'saloon': (58, 200), 'street': (132, 260), 'corral': (190, 470),
-              'oasis': (30, 540), 'mine': (284, 236), 'well': (75, 404)}
+              'oasis': (12, 548), 'mine': (284, 236), 'well': (75, 404)}
     return cv, objects, stands
+
+
+def oasis(frame: int = 0):
+    """The Desert Oasis, west of Dust Gulch. Not the gulch's flat cracked hardpan but a
+    sea of sculpted dunes: long windward faces lit from the west with ripples across
+    them, a sharp crest line, and a steep slip face in shade on the lee. In a hollow
+    between them a spring fills a clear pool, shallow over pale sand at its rim and deep
+    blue where the water wells up, with old stone steps down to it, papyrus at its edge,
+    a shaduf for lifting water and palms all round. It is why there was ever a town: the
+    gulch's creek was its overflow, until a dune crept over the outlet (the drift still
+    lies across the dry bed). The wagon track from the gulch ends at a caravan camp (a
+    tent, a resting camel, a fire with tea on it), the railway runs on west along the top
+    with a water crane fed from the spring, and the ruins of an older town stand
+    half-buried in the south-west."""
+    DESERT, ADOBE, WTRm, GRASS = MATERIALS['desert'], MATERIALS['adobe'], MATERIALS['water'], MATERIALS['grass']
+    cv = Canvas(W, H)
+    PCX, PCY = 116, 300  # the pool
+
+    def pool_r(a):
+        return 1 + math.sin(a * 3 + 0.6) * 0.08 + math.sin(a * 5) * 0.05
+    pool = set()
+    for y in range(PCY - 50, PCY + 50):
+        for x in range(PCX - 80, PCX + 80):
+            a = math.atan2(y - PCY, x - PCX)
+            if math.hypot((x - PCX) / 62, (y - PCY) / 34) < pool_r(a):
+                pool.add((x, y))
+    pool_d = lambda x, y: math.hypot((x - PCX) / 62, (y - PCY) / 34)  # noqa: E731
+    # the street from the gulch, continued pixel for pixel, then the track to the camp
+    street = thick_from(GULCH_STREET, 17, 13, W)
+    track = street | worlds.thick([(W - 24, 552), (284, 546), (252, 520)], 15, seed=32)
+    path = worlds.thick([(252, 520), (226, 470), (196, 410), (170, 352)], 7, seed=33)  # trodden on foot
+    creek = thick_from(GULCH_CREEK, 9, 12, W) | worlds.thick([(W - 4, 342), (276, 334), (236, 312), (200, 300), (174, 296)], 8, seed=34)
+
+    def dune(x, y):
+        """Phase across the dune lines (0 at a trough, rising to the crest at 0.78, then
+        the slip face), and how strongly dunes form here (none in the hollow round the
+        pool, along the track or by the gulch)."""
+        u = x * 0.86 + y * 0.32 + math.sin(y / 57) * 22 + math.sin(y / 23 + x / 90) * 6 + smooth_noise(x, y, 30, 471) * 18
+        p = (u / 74) % 1
+        hollow = max(0.0, 1.0 - max(0.0, pool_d(x, y) - 1.15) / 0.9)
+        k = min(1.0, max(0.0, (W - 24 - x) / 60))  # flatten into the gulch's ground at the east edge
+        return p, max(0.0, 1.0 - hollow) * k
+    for y in range(H):
+        for x in range(W):
+            p, amp = dune(x, y)
+            # the flat sand of the hollows and the gulch: the gulch's own mottled ground
+            n = smooth_noise(x - W, y, 26, 211)  # in the gulch's coordinates, so it runs on across the border
+            flat = DESERT[3]
+            if n < 0.3 or (n < 0.36 and (x + y) % 2):
+                flat = DESERT[2]
+            elif n > 0.68 or (n > 0.63 and (x + y) % 2):
+                flat = DESERT[4]
+            if p < 0.78:
+                t = p / 0.78
+                c = DESERT[3] if t < 0.3 else DESERT[4]
+                if t > 0.9:
+                    c = DESERT[5]
+                rip = x * 0.86 + y * 0.32 + math.sin(x / 7) * 1.5
+                if 0.15 < t < 0.8 and rip % 6 < 1 and noise2(int(rip // 6), y // 5, 480) < 0.6:
+                    c = DESERT[3] if c == DESERT[4] else DESERT[2]  # ripples across the windward face
+            else:
+                t = (p - 0.78) / 0.22
+                c = DESERT[1] if t < 0.45 else DESERT[2]  # the slip face, darkest just under the crest
+                if t < 0.06:
+                    c = DESERT[0]
+            # blend: dunes where they form, flat ground elsewhere, dithered between
+            gate = amp * 1.4 - 0.2
+            if gate > 0.5 or (gate > 0.3 and (x + y) % 2):
+                cv.set(x, y, c)
+            elif x > W - 90 and smooth_noise(x - W, y, 18, 223) > 0.74 + max(0, W - 40 - x) / 200:
+                # the gulch's cracked hardpan, thinning out westward
+                cv.set(x, y, DESERT[1] if cracked(x - W, y, 8, 1) else DESERT[4] if (x + y) % 5 else DESERT[3])
+            else:
+                cv.set(x, y, flat)
+    # the damp hollow round the pool: darker sand, then grass and rushes at the rim
+    for y in range(PCY - 70, PCY + 70):
+        for x in range(max(0, PCX - 110), min(W, PCX + 110)):
+            d = pool_d(x, y)
+            if 1.0 <= d < 1.5:
+                n = smooth_noise(x, y, 7, 472)
+                if d < 1.22 + n * 0.18:
+                    c = GRASS[3] if n > 0.55 else GRASS[2] if n > 0.32 else GRASS[1]
+                elif d < 1.35 + n * 0.1 or (d < 1.45 and (x + y) % 2):
+                    c = DESERT[2]
+                else:
+                    continue
+                cv.set(x, y, c)
+    for i in range(70):  # grass tufts in the green ring
+        a = noise2(i, 0, 473) * 2 * math.pi
+        r = 1.05 + noise2(i, 1, 473) * 0.25
+        x, y = int(PCX + math.cos(a) * 62 * r), int(PCY + math.sin(a) * 34 * r)
+        detail.grass_tuft(cv, x, y, i % 6, GRASS, 2)
+    # the water: pale sand showing through the shallows, deep blue where the spring wells
+    for (x, y) in pool:
+        d = pool_d(x, y)
+        c = WTRm[3] if d > 0.86 else WTRm[2] if d > 0.55 else WTRm[1]
+        if d > 0.94 and (x + y) % 2:
+            c = '#B8C6B0'  # sand through the shallows
+        if (x, y - 1) not in pool or (x, y - 2) not in pool:
+            c = DESERT[1]  # the bank's shadow on the water (light from the upper left)
+        cv.set(x, y, c)
+    for k in range(5):  # rings where the spring wells up
+        r = 3 + k * 4 + frame
+        for j in range(40):
+            a = 2 * math.pi * j / 40
+            x, y = int(PCX + 8 + math.cos(a) * r), int(PCY + 4 + math.sin(a) * r * 0.55)
+            if (x, y) in pool and pool_d(x, y) < 0.5 and (j + k) % 3:
+                cv.set(x, y, WTRm[2] if k % 2 else WTRm[3])
+    for ty in range(PCY - 30, PCY + 30, 5):  # glints
+        for tx in range(PCX - 56, PCX + 56, 11):
+            x, y = tx + int(noise2(tx, ty, 474) * 6), ty + int(noise2(tx, ty, 475) * 3)
+            if (x, y) in pool and pool_d(x, y) < 0.8 and noise2(tx, ty, 476) < 0.5:
+                cv.hline(x, y, 3, WTRm[4])
+    # stone steps down into the water on the south shore
+    for k in range(5):
+        y = PCY + 26 + k * 3
+        for x in range(PCX - 18 + k, PCX + 18 - k):
+            if pool_d(x, y) < 1.4:
+                cv.set(x, y, STONE[3] if x < PCX - 16 + k + 2 else STONE[2])
+                cv.set(x, y + 1, STONE[2]); cv.set(x, y + 2, STONE[1])
+    # the dry creek: the old overflow, its mouth choked by a dune tongue
+    for (x, y) in creek:
+        cv.set(x, y, ADOBE[0] if cracked(x - W, y, 6, 2) else ADOBE[2] if (x + y) % 3 else ADOBE[3])
+    for (x, y) in creek:
+        if (x, y - 1) not in creek:
+            cv.set(x, y, ADOBE[0]); cv.set(x, y - 1, DESERT[4])
+        elif (x, y + 1) not in creek:
+            cv.set(x, y, ADOBE[4])
+    drift = {(x, y) for (x, y) in oval(206, 300, 26, 16)} | {(x, y) for (x, y) in oval(180, 298, 14, 10)}
+    for (x, y) in drift:
+        if pool_d(x, y) < 1.05:
+            continue
+        d = math.hypot((x - 206) / 26, (y - 300) / 16)
+        cv.set(x, y, DESERT[5] if d < 0.3 and x < 206 else DESERT[4] if x < 210 else DESERT[2] if d < 0.85 else DESERT[1])
+    for i in range(30):  # stones in the dry bed
+        x, y = 220 + int(noise2(i, 0, 477) * 100), 280 + int(noise2(i, 1, 477) * 40)
+        if (x, y) in creek and (x + 2, y) in creek and (x, y) not in drift:
+            detail.pebble(cv, x, y, ADOBE, big=i % 3 == 0)
+    # the track: the gulch's street and its ruts carry on to the camp, where wagons stop
+    for (x, y) in track:
+        n = smooth_noise(x, y, 10, 213)
+        cv.set(x, y, DESERT[2] if n > 0.3 or (x + y) % 2 else DESERT[1])
+    wagon_ruts(cv, track, range(262, W), DESERT)
+    for (x, y) in path:  # then a path trodden in the sand down to the water, with footprints
+        if pool_d(x, y) >= 1.0 and (x, y) not in creek:
+            cv.set(x, y, DESERT[2] if (x + y) % 3 else DESERT[3])
+    for t in range(0, 40):
+        x = int(252 + (170 - 252) * t / 40 + math.sin(t) * 2)
+        y = int(520 + (352 - 520) * t / 40)
+        if t % 2:
+            cv.set(x - 2, y, DESERT[1])
+        else:
+            cv.set(x + 2, y, DESERT[1])
+    for t in range(60):  # a line of footprints over a dune to the north, someone's walk at dawn
+        x, y = int(150 + t * 1.6), int(250 - t * 3.2)
+        cv.set(x + (2 if t % 2 else -1), y, DESERT[1] if dune(x, y)[0] < 0.78 else DESERT[0])
+    # the railway west along the top, drifted with sand, and the pipe from the spring
+    paint_rails(cv, 40, x_off=-W)
+    for x in range(W):
+        if smooth_noise(x, 0, 18, 478) > 0.55:  # sand blown over the ballast's edges
+            depth = int((smooth_noise(x, 0, 18, 478) - 0.55) * 30)
+            for y in range(37, 37 + min(depth, 4)):
+                cv.set(x, y, DESERT[4] if (x + y) % 2 else DESERT[3])
+            for y in range(55 - min(depth, 3), 56):
+                cv.set(x, y, DESERT[3])
+    for y in range(56, PCY - 36):  # the buried pipe shows as a ridge of disturbed sand
+        if y % 3:
+            cv.set(96, y, DESERT[2]); cv.set(97, y, DESERT[4])
+    # the ruins of the older town in the south-west: wall stubs and a paved court
+    court = {(x, y) for y in range(440, 520) for x in range(10, 110)
+             if smooth_noise(x, y, 12, 479) > 0.42 and (x - 60) ** 2 / 2500 + (y - 480) ** 2 / 1600 < 1}
+    for (x, y) in court:
+        if (x // 8 + y // 6) % 2 == 0 and (x % 8 == 0 or y % 6 == 0):
+            cv.set(x, y, ADOBE[1])
+        else:
+            cv.set(x, y, ADOBE[3] if (x // 8 + y // 6) % 3 else ADOBE[2])
+    for (x0, y0, w0, h0) in ((14, 536, 46, 6), (114, 470, 6, 40), (2, 420, 6, 34)):  # wall stubs, worn to knee height
+        for y in range(y0, y0 + h0 + 4):
+            for x in range(x0, x0 + w0):
+                top = y < y0 + h0
+                c = (ADOBE[4] if x == x0 or y == y0 else ADOBE[3]) if top else ADOBE[2] if x < x0 + w0 - 1 else ADOBE[1]
+                if not top and (x + y) % 5 == 0:
+                    c = ADOBE[1]  # courses in the face
+                if top and noise2(x, y, 481) > 0.85:
+                    c = ADOBE[2]  # gaps where bricks fell
+                cv.set(x, y, c)
+        cv.hline(x0 + 1, y0 + h0 + 4, w0, DESERT[1])
+    objects = [
+        # the pool's grove
+        ('palm-1', 'palm', 8, 196), ('palm-2', 'palm', 120, 186), ('palm-3', 'palm_small', 20, 300),
+        ('palm-4', 'palm', 168, 226), ('palm-5', 'palm_small', 70, 330), ('palm-6', 'palm', 150, 334),
+        ('palm-7', 'palm_small', 196, 260), ('papyrus-1', 'papyrus', 52, 266), ('papyrus-2', 'papyrus', 160, 288),
+        ('papyrus-3', 'papyrus', 98, 316), ('shaduf', 'shaduf', 158, 256), ('jar-1', 'water_jar', 140, 344),
+        ('jar-2', 'water_jar', 152, 350),
+        # the railway's water crane, fed from the spring
+        ('crane', 'water_crane', 84, 52),
+        # the caravan camp where the track ends
+        ('tent', 'tent', 238, 420), ('camel-1', 'camel', 214, 482), ('camel-2', 'camel', 274, 486),
+        ('fire', 'fire_pit', 260, 460), ('awning', 'awning', 240, 360), ('jar-3', 'water_jar', 228, 386),
+        # the older town
+        ('arch', 'sandstone_arch', 26, 450), ('col-1', 'column_stump', 92, 470), ('col-2', 'column_stump_b', 92, 500),
+        ('col-3', 'column_stump_b', 10, 500),
+        # out in the dunes
+        ('cactus-1', 'saguaro_small', 286, 118), ('skull', 'cow_skull', 180, 540), ('weed', 'tumbleweed', 40, 150),
+        ('weed-2', 'tumbleweed', 250, 220),
+    ]
+    stands = {'gulch': (312, 548), 'pool': (130, 352), 'camp': (250, 500), 'arch': (58, 500),
+              'crane': (110, 76), 'dunes': (200, 140)}
+    return cv, objects, stands, pool
 
 
 def caldera(frame: int = 0):
@@ -1593,7 +1837,7 @@ def woodland(frame: int = 0):
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
                 'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
@@ -1642,7 +1886,7 @@ def build(name: str, fn, start: str):
 LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'castle': (1, 2), 'halt': (-1, 1)},
-    'steam': {'junction': (0, 0)}, 'west': {'gulch': (0, 0)}, 'lava': {'caldera': (0, 0)},
+    'steam': {'junction': (0, 0)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, 0)},
     'neon': {'neon': (0, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
 }
 
@@ -1736,6 +1980,7 @@ def main():
     built['junction'] = build('junction', junction, 'platform')
     built['neon'] = build('neon', neon_city, 'crossing')
     built['gulch'] = build('gulch', gulch, 'platform')
+    built['oasis'] = build('oasis', oasis, 'gulch')
     built['caldera'] = build('caldera', caldera, 'tunnel')
     built['harbour'] = build('harbour', harbour, 'town')
     built['castle'] = build('castle', castle, 'harbour')
