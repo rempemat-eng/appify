@@ -362,7 +362,7 @@ def flower_points():
 ANCHORS = {
     'start': {'x': meadow.PATH_X, 'y': 196},
     'bed': {'x': 143, 'y': 110},
-    'chimney': {'x': 16 + 77, 'y': 28},
+    'chimney': {'x': 16 + 75, 'y': 28 + 13},  # the top-down hut's chimney cap
     'book': {'x': 150 + 32, 'y': 46 + 11},
     'frogPad': {'x': FROG_PAD[0], 'y': FROG_PAD[1]},
     'pondRipple': {'x': POND_C[0] - 26, 'y': POND_C[1] + 2},
