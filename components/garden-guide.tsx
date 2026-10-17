@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { feedback } from '@/lib/game';
 import { useMotionPreference, useReducedMotion } from '@/lib/motion';
-import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
 import { CozyBackground, CozySheet } from '@/components/cozy-ui';
@@ -46,7 +46,7 @@ export function GardenTip({
     };
   }, [eligible, id, tip.id, tip.visible]);
   if (tip.id !== id || !tip.visible || !eligible) return null;
-  const Arrow = pointsUp ? ChevronUp : ChevronDown;
+  const arrow = pointsUp ? ('chevronUp' as const) : ('chevronDown' as const);
   return (
     <View
       style={[
@@ -66,7 +66,7 @@ export function GardenTip({
       ]}
     >
       <FrameFill depth={1} />
-      {pointsUp && <Arrow size={18} color={c.ink} />}
+      {pointsUp && <PixelIcon name={arrow} size={16} />}
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <BodyText
           accessibilityLiveRegion="polite"
@@ -83,10 +83,10 @@ export function GardenTip({
           }}
           style={{ minWidth: 44, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
         >
-          <X size={18} color={c.ink} />
+          <PixelIcon name="close" size={16} />
         </Pressable>
       </View>
-      {!pointsUp && <Arrow size={18} color={c.ink} />}
+      {!pointsUp && <PixelIcon name={arrow} size={16} />}
     </View>
   );
 }

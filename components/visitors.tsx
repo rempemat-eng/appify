@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { Image, ScrollView, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { PixelProp, PixelScene } from '@/components/pixel-scenes';
+import { PixelScene } from '@/components/pixel-scenes';
 import { sceneImages } from '@/lib/scene-assets';
 import { worldCatalogue } from '@/lib/world-catalogue';
 import Animated, {
@@ -27,6 +27,7 @@ import { FrameFill } from '@/components/pixel-frame';
 import { LightSweep, PixelBurst } from '@/components/cozy-motion';
 import { RewardCard } from '@/components/habit-cards';
 import { gameLayout } from '@/lib/layout';
+import { PixelIcon } from '@/components/pixel-icon';
 export function GardenVisitor({ active = true }: { active?: boolean }) {
   const activeRef = useRef(active);
   useLayoutEffect(() => {
@@ -470,7 +471,7 @@ export function WelcomeBack() {
 export function JournalEmpty({ onPress }: { onPress: () => void }) {
   return (
     <View style={{ padding: 20, alignItems: 'center', gap: 16 }}>
-      <PixelProp kind="book" size={32} />
+      <PixelIcon name="journal" size={32} />
       <BodyText style={{ textAlign: 'center' }}>
         Bring back your first postcard from a mission.
       </BodyText>

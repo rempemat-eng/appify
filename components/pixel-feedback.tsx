@@ -1,13 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  type ColorValue,
-  type TextProps,
-  type ViewStyle,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View, type TextProps, type ViewStyle } from 'react-native';
 import Animated, {
   cancelAnimation,
   useAnimatedStyle,
@@ -15,14 +7,12 @@ import Animated, {
   withTiming,
   withSequence,
   withRepeat,
-  withSpring,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c } from '@/lib/cozy';
-import { PixelProp } from '@/components/pixel-scenes';
 import { FrameShape, PixelTail, frameTones, usePixelUnit } from '@/components/pixel-frame';
 import { contentInset, type } from '@/lib/ui-tokens';
-import type { PropKind } from '@/lib/scene-art';
+import { PixelIcon } from '@/components/pixel-icon';
 export function BodyText({ style, ...props }: TextProps) {
   return (
     <Text
@@ -177,45 +167,7 @@ function GrassDelta({ amount }: { amount: number }) {
         {amount > 0 ? '+' : ''}
         {amount}
       </BodyText>
-      <PixelProp kind="grass" size={16} />
-    </Animated.View>
-  );
-}
-export function PixelTabIcon({
-  kind,
-  focused,
-}: {
-  kind: PropKind;
-  focused: boolean;
-  color: ColorValue;
-}) {
-  const reduced = useReducedMotion();
-  const y = useSharedValue(0);
-  useEffect(() => {
-    y.set(focused && !reduced ? withSpring(-3, { damping: 18, stiffness: 350 }) : 0);
-  }, [focused, reduced, y]);
-  const motion = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
-  return (
-    <Animated.View
-      accessible={false}
-      aria-hidden
-      accessibilityElementsHidden
-      importantForAccessibility="no-hide-descendants"
-      style={[
-        {
-          width: 40,
-          height: 34,
-          opacity: focused ? 1 : 0.65,
-          borderRadius: 0,
-          alignItems: 'center',
-          justifyContent: 'center',
-          backgroundColor: focused ? c.positive : c.transparent,
-          boxShadow: focused ? `0 3px 0 ${c.depth}` : undefined,
-        },
-        motion,
-      ]}
-    >
-      <PixelProp kind={kind} size={32} />
+      <PixelIcon name="grass" size={16} />
     </Animated.View>
   );
 }

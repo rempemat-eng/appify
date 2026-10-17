@@ -4,7 +4,7 @@ import { Stack, router, useLocalSearchParams } from 'expo-router';
 import { Tabs } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect } from 'react-native-svg';
-import { Check, Eye } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import { cozy as c } from '@/lib/cozy';
 import { gameLayout } from '@/lib/layout';
 import { CozyBackground, CozyPanel } from '@/components/cozy-ui';
@@ -271,9 +271,9 @@ export default function FieldJournal() {
                   }}
                 >
                   {friend ? (
-                    <Check size={12} color={c.ink} />
+                    <PixelIcon name="check" size={16} />
                   ) : met ? (
-                    <Eye size={12} color={c.ink} />
+                    <PixelIcon name="eye" size={16} />
                   ) : null}
                   <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
                     {state}

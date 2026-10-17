@@ -16,11 +16,18 @@ import {
   frameTones,
   usePixelUnit,
 } from '@/components/pixel-frame';
-import { barControl, contentInset, hotbarSlot, layers, siblingGap, type } from '@/lib/ui-tokens';
-import { PixelProp } from '@/components/pixel-scenes';
+import {
+  barControl,
+  contentInset,
+  hotbarSlot,
+  iconSize,
+  layers,
+  siblingGap,
+  type,
+} from '@/lib/ui-tokens';
+import { PixelIcon, type IconName } from '@/components/pixel-icon';
 import { GuardianPet } from '@/components/guardian-pet';
 import { GrassRoll } from '@/components/pixel-feedback';
-import type { PropKind } from '@/lib/scene-art';
 
 type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -61,27 +68,18 @@ export function PixelBar({
   );
 }
 
-function MenuGlyph({ unit: u, color }: { unit: number; color: string }) {
-  return (
-    <View style={{ gap: u }}>
-      {[0, 1, 2].map((i) => (
-        <View key={i} style={{ width: 7 * u, height: u, backgroundColor: color }} />
-      ))}
-    </View>
-  );
-}
-
 /** A HUD stat: one inset well holding an icon and its value, the same height as the portrait. */
 function StatChip({
   unit: u,
   icon,
-  tint,
+  muted = false,
   children,
   ...press
 }: {
   unit: number;
-  icon: PropKind;
-  tint?: string;
+  icon: IconName;
+  /** greys the icon for an inactive state (an open garden shield) */
+  muted?: boolean;
   children: ReactNode;
 } & Pick<
   ComponentProps<typeof Pressable>,
@@ -90,7 +88,7 @@ function StatChip({
   const body = (
     <>
       <FrameFill fill={layers.well} outline={c.outline} inset />
-      <PixelProp kind={icon} size={8 * u} tint={tint} />
+      <PixelIcon name={icon} size={iconSize.small(u)} muted={muted} />
       {children}
     </>
   );
@@ -138,7 +136,6 @@ export function GameHud() {
   const state = status(p, now);
   const left = remainingPlay(budget, now);
   const mood = p.mood < 30 ? 'GRUMPY' : 'HAPPY';
-  const shieldTone = state.kind === 'exposed' ? c.error : state.kind === 'care' ? c.amber : c.nap;
   const shieldText =
     state.kind === 'care' ? clock(state.left) : state.kind === 'exposed' ? 'OPEN' : 'SAFE';
   const side = gameSideInset(width) - 8;
@@ -204,7 +201,7 @@ export function GameHud() {
               {guardian.pet_name}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: u }}>
-              <PixelProp kind="heart" size={6 * u} tint={p.mood < 30 ? c.error : '#C8574A'} />
+              <PixelIcon name="heart" size={iconSize.small(u)} />
               <View style={{ flex: 1, maxWidth: 24 * u }}>
                 <PixelBar value={p.mood} color={p.mood < 30 ? c.error : c.positive} unit={u} />
               </View>
@@ -214,7 +211,7 @@ export function GameHud() {
         <StatChip
           unit={u}
           icon="shield"
-          tint={shieldTone}
+          muted={state.kind === 'exposed'}
           accessibilityLabel={`Garden shield: ${state.label}${state.kind === 'care' ? `, ${state.left} seconds left` : ''}. Opens the garden guide`}
           onPress={() => useGame.setState({ guideOpen: true })}
           onLongPress={() => useGame.getState().change({ care_until: 0, recovery_until: 0 })}
@@ -237,7 +234,7 @@ export function GameHud() {
         </StatChip>
         <StatChip
           unit={u}
-          icon="hourglass"
+          icon="time"
           accessibilityLabel={`${left} seconds of play left. Long press to reset demo play budget.`}
           accessibilityHint="Opens the guide to the real-time play allowance and simulated break clock."
           onPress={() => useGame.setState({ guideOpen: true })}
@@ -261,7 +258,7 @@ export function GameHud() {
           }}
         >
           <FrameShape tone={frameTones.parchment} unit={u} />
-          <MenuGlyph unit={u} color={c.ink} />
+          <PixelIcon name="menu" size={iconSize.small(u)} />
           <View
             style={{
               position: 'absolute',
@@ -278,11 +275,11 @@ export function GameHud() {
   );
 }
 
-const tabs: Record<string, { label: string; icon: PropKind }> = {
-  index: { label: 'HOME', icon: 'house' },
-  missions: { label: 'MISSIONS', icon: 'map' },
-  arena: { label: 'ARENA', icon: 'swords' },
-  shop: { label: 'SHOP', icon: 'bag' },
+const tabs: Record<string, { label: string; icon: IconName }> = {
+  index: { label: 'HOME', icon: 'home' },
+  missions: { label: 'MISSIONS', icon: 'missions' },
+  arena: { label: 'ARENA', icon: 'arena' },
+  shop: { label: 'SHOP', icon: 'shop' },
 };
 
 /**
@@ -300,7 +297,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   const slot = (index: number) => {
     const route = state.routes[index];
     if (!route) return null;
-    const meta = tabs[route.name] ?? { label: route.name.toUpperCase(), icon: 'house' as const };
+    const meta = tabs[route.name] ?? { label: route.name.toUpperCase(), icon: 'home' as const };
     const focused = state.index === index;
     return (
       <Pressable
@@ -333,7 +330,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
         ) : (
           <FrameFill fill={layers.well} outline={c.outline} inset />
         )}
-        <PixelProp kind={meta.icon} size={12 * u} />
+        <PixelIcon name={meta.icon} size={iconSize.medium(u)} />
         <Text
           numberOfLines={1}
           style={[
@@ -408,7 +405,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
           bevel={false}
         />
         <FrameShape tone={frameTones.nap} unit={u} />
-        <PixelProp kind="moon" size={16 * u} tint="#FFF3CF" />
+        <PixelIcon name="nap" size={iconSize.large(u)} />
         <Text style={[type.label, { fontSize: 13, lineHeight: 16, color: '#FFF7E2' }]}>NAP</Text>
       </Pressable>
     </View>

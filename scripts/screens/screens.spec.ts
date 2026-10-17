@@ -83,8 +83,8 @@ async function prepare(page: Page, screen: Screen) {
   }
 }
 
-async function overflow(page: Page) {
-  return page.evaluate(() => {
+async function overflow(page: Page, screen: Screen) {
+  return page.evaluate((screen) => {
     const problems: string[] = [];
     if (
       document.documentElement.scrollWidth > innerWidth + 1 ||
@@ -110,17 +110,28 @@ async function overflow(page: Page) {
       if (
         ['auto', 'scroll'].includes(style.overflowX) &&
         element.scrollWidth > element.clientWidth + 1
-      )
+      ) {
+        // These two existing controls intentionally scroll sideways. Keep the
+        // exception tied to their contents and horizontal-only scrolling, so a
+        // wider page or overflowing vertical sheet still fails.
+        const intentionalRail =
+          style.overflowY === 'hidden' &&
+          ((screen === 'companions' &&
+            element.querySelectorAll('[role="button"][aria-label^="Preview "]').length > 1) ||
+            (screen === 'battle' &&
+              element.querySelectorAll('[role="button"][aria-label$="tap to select"]').length > 0));
+        if (intentionalRail) continue;
         problems.push(
           `${element.getAttribute('aria-label') ?? element.getAttribute('role') ?? element.tagName}: horizontal scroll ${element.scrollWidth} > ${element.clientWidth}`,
         );
+      }
     }
     return problems;
-  });
+  }, screen);
 }
 
 for (const screen of screens) {
-  test(screen, async ({ page }, testInfo) => {
+  test(screen, async ({ page, browser }, testInfo) => {
     const diagnostics: string[] = [];
     const night = testInfo.project.metadata.timeOfDay === 'night';
     const now = Date.parse(`2026-10-17T${night ? '22' : '14'}:00:00Z`);
@@ -166,11 +177,42 @@ for (const screen of screens) {
     await mkdir('artifacts/screens/images', { recursive: true });
     try {
       await page.goto('/', { waitUntil: 'networkidle' });
-      // Advance the paused splash/font retry timers before awaiting the app UI.
-      await page.clock.runFor(1500);
-      await page.evaluate(() => document.fonts.ready);
+      await expect(page.locator('#expo-generated-fonts')).toBeAttached();
+      await page.evaluate(async () => {
+        // CSS fonts are lazy: an unused registered face need not be loaded yet.
+        // Explicitly preload the app's registered faces before timed capture.
+        for (const family of [
+          'PixelifySans_400Regular',
+          'PixelifySans_500Medium',
+          'PixelifySans_700Bold',
+          'PressStart2P_400Regular',
+        ]) {
+          const loaded = await document.fonts.load(`14px "${family}"`);
+          if (loaded.length === 0 || !document.fonts.check(`14px "${family}"`))
+            throw new Error(`Font unavailable: ${family}`);
+        }
+      });
+      await expect(
+        page.getByRole('img', { name: 'A sleeping Grassling on a pillow', exact: true }),
+      ).toBeVisible();
+      // Font/store promises can mount the splash after an earlier clock step.
+      // Advance its real timer until the existing splash actually unmounts.
+      for (let step = 0; step < 8; step++) {
+        await page.clock.runFor(250);
+        if (
+          (await page
+            .getByRole('img', { name: 'A sleeping Grassling on a pillow', exact: true })
+            .count()) === 0
+        )
+          break;
+      }
+      await expect(
+        page.getByRole('img', { name: 'A sleeping Grassling on a pillow', exact: true }),
+      ).toHaveCount(0);
       await prepare(page, screen);
-      await page.clock.runFor(300);
+      const elapsed = (await page.evaluate(() => Date.now())) - now;
+      expect(elapsed, 'Scenario must settle before its fixed capture phase').toBeLessThan(5000);
+      await page.clock.runFor(5000 - elapsed);
       await page.evaluate(async () => {
         await document.fonts.ready;
         for (const family of [
@@ -179,11 +221,7 @@ for (const screen of screens) {
           'PixelifySans_700Bold',
           'PressStart2P_400Regular',
         ]) {
-          if (
-            !Array.from(document.fonts).some(
-              (face) => face.family.replace(/["']/g, '') === family && face.status === 'loaded',
-            )
-          )
+          if (!document.fonts.check(`14px "${family}"`))
             throw new Error(`Font not loaded: ${family}`);
         }
         await Promise.all(
@@ -201,7 +239,7 @@ for (const screen of screens) {
           }),
         );
       });
-      diagnostics.push(...(await overflow(page)));
+      diagnostics.push(...(await overflow(page, screen)));
       let clip: { x: number; y: number; width: number; height: number } | undefined;
       if (screen === 'hotbar') {
         const controls = [
@@ -250,6 +288,7 @@ for (const screen of screens) {
           viewport: page.viewportSize(),
           fixtureTime: new Date(now).toISOString(),
           captureTime: await page.evaluate(() => new Date().toISOString()).catch(() => null),
+          browserVersion: browser.version(),
           motion: reduced ? 'reduced' : 'normal',
           timeOfDay: night ? 'night' : 'day',
           route: page.url(),

@@ -10,7 +10,7 @@ import Animated, {
 import Svg, { Rect } from 'react-native-svg';
 import { palette as c, type Player } from '@/lib/game';
 import { petPixels } from '@/lib/pet-art';
-import { PixelProp } from '@/components/pixel-scenes';
+import { PixelIcon } from '@/components/pixel-icon';
 
 export function SeedPacket({ species, size = 64 }: { species: Player['species']; size?: number }) {
   const pixels = petPixels(species, 1, null, false, false);
@@ -129,9 +129,9 @@ export function GrassFlight({ toLeft = true }: { toLeft?: boolean }) {
         motion,
       ]}
     >
-      <PixelProp kind="grass" size={16} />
-      <PixelProp kind="grass" size={24} />
-      <PixelProp kind="grass" size={16} />
+      <PixelIcon name="grass" size={16} />
+      <PixelIcon name="grass" size={24} />
+      <PixelIcon name="grass" size={16} />
     </Animated.View>
   );
 }

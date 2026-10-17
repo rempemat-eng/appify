@@ -3,7 +3,7 @@ import { Pressable, ScrollView, View } from 'react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { useReducedMotion } from '@/lib/motion';
-import { Sprout, Users, Moon } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import { cozy as c } from '@/lib/cozy';
 import { clock, missions, useGame, type Player } from '@/lib/game';
 import Svg, { Rect } from 'react-native-svg';
@@ -142,7 +142,7 @@ export function RecentBreaks() {
       </BodyText>
       {!history.length && (
         <View style={{ gap: 8 }}>
-          <Moon color={c.ink} size={20} strokeWidth={2} />
+          <PixelIcon name="moon" size={24} />
           <BodyText>Your next completed nap or mission will appear here.</BodyText>
         </View>
       )}
@@ -184,14 +184,14 @@ export function GardenStreak() {
   return (
     <View style={{ gap: 8 }}>
       <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-        <Sprout size={20} color={c.moss} />
+        <PixelIcon name="sprout" size={24} />
         <PixelText>
           {streak} {streak === 1 ? 'DAY' : 'DAYS'} STREAK
         </PixelText>
       </View>
       {rules.togetherBadges > 0 && (
         <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-          <Users size={18} color={c.moss} />
+          <PixelIcon name="friends" size={16} />
           <PixelText>TOGETHER</PixelText>
         </View>
       )}

@@ -13,7 +13,6 @@ import { gameLayout } from '@/lib/layout';
 import { CozySheet } from '@/components/cozy-ui';
 import { PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
-import { PixelProp } from '@/components/pixel-scenes';
 import { FrameShape, frameTones, usePixelUnit } from '@/components/pixel-frame';
 import { BreakIntentionPicker } from '@/components/companion-memories';
 import { GardenJourney } from '@/components/garden-journey';
@@ -25,7 +24,7 @@ import {
 } from '@/components/offline-garden';
 import { DailyRhythmCard } from '@/components/daily-rhythm';
 import { GuardianPicker } from '@/components/visitors';
-import type { PropKind } from '@/lib/scene-art';
+import { PixelIcon, type IconName } from '@/components/pixel-icon';
 
 // Close the sheet, then leave for another screen.
 function go(path: '/journal' | '/missions' | '/arena') {
@@ -152,7 +151,7 @@ function MenuTile({
   onPress,
   disabled = false,
 }: {
-  icon: PropKind;
+  icon: IconName;
   label: string;
   detail?: string;
   onPress: () => void;
@@ -185,7 +184,7 @@ function MenuTile({
       }}
     >
       <FrameShape tone={pressed ? frameTones.parchment : frameTones.paper} unit={u} />
-      <PixelProp kind={icon} size={24} />
+      <PixelIcon name={icon} size={24} />
       <View style={{ flex: 1, minWidth: 0 }}>
         <Text
           style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14, lineHeight: 17, color: c.ink }}
@@ -227,7 +226,7 @@ function MenuSheet() {
     <GameSheet visible={open} title="GARDEN MENU" onClose={closeSheet}>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
         <MenuTile
-          icon="heart"
+          icon="companion"
           label="Companions"
           detail="Who comes along"
           onPress={() => openSheet('companions')}
@@ -242,13 +241,13 @@ function MenuSheet() {
           }}
         />
         <MenuTile
-          icon="book"
+          icon="journal"
           label="Journal"
           detail="Visitors, postcards, memories"
           onPress={() => go('/journal')}
         />
         <MenuTile
-          icon="flower"
+          icon="bowl"
           label="Feed"
           detail={feedLabel}
           disabled={paused || p.mood >= 100 || p.grass < 5}
@@ -258,13 +257,13 @@ function MenuSheet() {
           }}
         />
         <MenuTile
-          icon="sun"
+          icon="rhythm"
           label="Your rhythm"
           detail="Rest, focus, own time"
           onPress={() => openSheet('rhythm')}
         />
         <MenuTile
-          icon="tree"
+          icon="garden"
           label="Garden"
           detail={`${meadow.planted} of 9 meadow spots growing`}
           onPress={() => openSheet('stats')}

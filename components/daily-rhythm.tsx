@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Moon, Sun, Sprout } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import { CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelButton } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
@@ -42,9 +42,13 @@ import {
 
 const periodColors: Record<RhythmPeriod, string> = { rest: c.rest, focus: c.focus, own: c.sage };
 
-function RhythmIcon({ period, size = 18 }: { period: RhythmPeriod; size?: number }) {
-  const Icon = period === 'rest' ? Moon : period === 'focus' ? Sun : Sprout;
-  return <Icon size={size} color={c.ink} strokeWidth={2} />;
+function RhythmIcon({ period, size = 24 }: { period: RhythmPeriod; size?: number }) {
+  return (
+    <PixelIcon
+      name={period === 'rest' ? 'moon' : period === 'focus' ? 'sun' : 'sprout'}
+      size={size}
+    />
+  );
 }
 
 export function DailyRhythmCard({

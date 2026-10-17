@@ -25,6 +25,9 @@ export default defineConfig({
   ],
   use: {
     browserName: 'chromium',
+    launchOptions: process.env.SCREENS_BROWSER_PATH
+      ? { executablePath: process.env.SCREENS_BROWSER_PATH }
+      : undefined,
     baseURL: 'http://127.0.0.1:4178',
     locale: 'en-GB',
     timezoneId: 'UTC',

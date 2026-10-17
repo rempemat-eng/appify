@@ -11,3 +11,4 @@ INK = ART['outline']
 G, P, WTR = (MATERIALS[key] for key in ('grass', 'path', 'water'))
 SAND, WOOD, STONE = (MATERIALS[key] for key in ('sand', 'wood', 'stone'))
 LEAF, NAP, RED, CREAM = (MATERIALS[key] for key in ('leaf', 'nap', 'red', 'cream'))
+GOLD = MATERIALS["gold"]

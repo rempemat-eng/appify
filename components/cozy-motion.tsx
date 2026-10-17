@@ -11,10 +11,10 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { CardIllustration } from '@/components/habit-cards';
-import { PixelProp } from '@/components/pixel-scenes';
 import { PixelText } from '@/components/game-ui';
 import { GuardianPet } from '@/components/guardian-pet';
 import { cards, type CardId } from '@/lib/cards';
+import { PixelIcon } from '@/components/pixel-icon';
 import type { Player } from '@/lib/game';
 
 // Effects never own game transitions. A skip only completes presentation.
@@ -80,7 +80,7 @@ function BurstParticle({
   }));
   return (
     <Animated.View style={[{ position: 'absolute', left: '50%', top: '50%' }, motion]}>
-      <PixelProp kind={hearts ? 'heart' : 'grass'} size={16} />
+      <PixelIcon name={hearts ? 'heart' : 'grass'} size={16} />
     </Animated.View>
   );
 }

@@ -32,6 +32,13 @@ export const barControl = (u: number) => 18 * u;
 /** Hotbar slot height (icon plus label, at least a 44 px target on phones). */
 export const hotbarSlot = (u: number) => 24 * u;
 
+/** Icon sizes on the 16x16 icon grid: chips and inline, tabs and slots, feature buttons. */
+export const iconSize = {
+  small: (u: number) => 8 * u,
+  medium: (u: number) => 12 * u,
+  large: (u: number) => 16 * u,
+} as const;
+
 /** HUD bar outer height, including its one-unit raised base. */
 export const hudBarHeight = (u: number) => barControl(u) + 2 * contentInset(u) + u;
 /** Hotbar outer height, including its one-unit raised base. */

@@ -24,7 +24,6 @@ import { useReducedMotion } from '@/lib/motion';
 import { cozy as c } from '@/lib/cozy';
 import { CozyBackground } from '@/components/cozy-ui';
 import { FrameShape, frameTones, mixColor, usePixelUnit } from '@/components/pixel-frame';
-import { PixelProp } from '@/components/pixel-scenes';
 import { Pulse } from '@/components/pixel-feedback';
 import { playSound } from '@/lib/sound';
 import { status, clock, useGame, type Player } from '@/lib/game';
@@ -33,6 +32,7 @@ import { isVisitorId, visitorInfo } from '@/lib/visitors';
 import { petPixels } from '@/lib/pet-art';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
+import { PixelIcon } from '@/components/pixel-icon';
 
 export function PixelText({ style, ...props }: TextProps) {
   const display = (StyleSheet.flatten(style)?.fontSize ?? 15) >= 16;
@@ -150,19 +150,20 @@ export function PixelButton({
             {supportingText}
           </Text>
         )}
-        {energyCost !== undefined && <EnergyPips value={energyCost} color={c.buttonInk} />}
+        {energyCost !== undefined && <EnergyPips value={energyCost} />}
       </View>
     </Pressable>
   );
 }
-export function EnergyPips({ value, color = c.ink }: { value: number; color?: string }) {
+/** Energy as three bolts from the icon set; spent ones are greyed. */
+export function EnergyPips({ value }: { value: number }) {
   return (
     <View
       accessibilityLabel={`${value} energy`}
       style={{ flexDirection: 'row', gap: 5, marginTop: 5 }}
     >
       {[0, 1, 2].map((pip) => (
-        <PixelProp key={pip} kind="energy" size={16} tint={pip < value ? color : c.depth} />
+        <PixelIcon key={pip} name="energy" size={16} muted={pip >= value} />
       ))}
     </View>
   );
@@ -502,7 +503,7 @@ export function Pet({
               pointerEvents="none"
               style={{ position: 'absolute', top: -16, left: scaledSize / 2 - 16, zIndex: 4 }}
             >
-              <PixelProp kind="heart" size={32} />
+              <PixelIcon name="heart" size={32} />
             </View>
           )}
           <Animated.View style={poseMotion}>
@@ -614,7 +615,7 @@ export function Pet({
               pointerEvents="none"
               style={{ position: 'absolute', top: -16, left: scaledSize / 2 - 16, zIndex: 4 }}
             >
-              <PixelProp kind="heart" size={32} />
+              <PixelIcon name="heart" size={32} />
             </View>
           )}
           <Animated.View style={poseMotion}>
@@ -840,7 +841,7 @@ export function StatusChip({ player, compact = false }: { player: Player; compac
         backgroundColor: color,
       }}
     >
-      <PixelProp kind="shield" size={16} />
+      <PixelIcon name="shield" size={16} />
       <Text
         numberOfLines={1}
         style={{

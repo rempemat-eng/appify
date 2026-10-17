@@ -56,6 +56,9 @@ garden, hotbar, menu, companions, nap sheet, welcome back, missions, shop, arena
 battle and journal, each at 320 × 640, 402 × 874 and 768 × 1024, in normal and
 reduced motion, by day and by night. For a smaller local run, pass Playwright
 filters, for example `npm run screens -- --project=402-day-normal`.
+For local diagnostics with an existing Chromium executable, set
+`SCREENS_BROWSER_PATH` to its absolute path. The manifest records its version;
+CI always uses the browser bundled with the pinned Playwright release.
 
 Each capture has a disposable browser context with synthetic saved progress,
 UTC day/night time, seeded ambient choices and a controlled browser clock.
@@ -66,7 +69,9 @@ new export without a cached build. No sign-in or personal save is used.
 
 The command fails on browser console errors, unhandled page errors, failed HTTP
 responses, unexpected external requests or horizontal page/scroll-container
-overflow. Images are still captured when those checks fail. Open
+overflow. The existing sideways companion and battle-card rails are allowed;
+their surrounding page and vertical sheets must still fit. Images are still
+captured when those checks fail. Open
 `artifacts/screens/index.html` for the gallery, `manifest.json` for dimensions,
 fixtures, routes and diagnostics, or `report/index.html` for the full test report
 and failure traces. These outputs are ignored by Git.
