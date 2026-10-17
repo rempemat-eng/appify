@@ -314,12 +314,72 @@ def frozen_tarn() -> Canvas:
     return cv
 
 
+def station_house() -> Canvas:
+    """The valley's railway halt, 104 x 84: a stone building with a slate roof seen from
+    above, a deep canopy over the platform side held on cast brackets, a round clock
+    under the gable, a ticket window lit warm and a painted name board (no letters)."""
+    w, h = 104, 84
+    cv = Canvas(w, h, pad=PAD)
+    ridge, apex_y, eave_y, wall_top, wall_bottom = (w - 1) / 2, 16, 38, 38, 76
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, seed=91, moss=LEAF)
+    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7, w - 8,
+                     apex_y, wall_top, PLASTER, boards=False)
+    for (x, y) in disc(ridge, 29, 5):  # the clock
+        cv.set(x, y, '#F7EEDC' if (x - ridge) + (y - 29) < 3 else '#E3D3B4')
+    for (x, y) in disc(ridge, 29, 5):
+        if (x - ridge) ** 2 + (y - 29) ** 2 > 16:
+            cv.set(x, y, WOOD[1])
+    cv.vline(int(ridge), 25, 4, '#2A2D36'); cv.hline(int(ridge), 29, 3, '#2A2D36')
+    detail.stones(cv, 7, wall_top, w - 14, wall_bottom - wall_top, STONE, seed=33, course=5, moss=LEAF)
+    for (x, y) in rect_set(18, wall_top + 6, w - 36, 6):  # the name board
+        cv.set(x, y, '#3E6A4A' if y > wall_top + 6 else '#5E8A62')
+    for k in range(9):
+        cv.hline(24 + k * 7, wall_top + 8, 4, '#F4E6C8')
+    gp.window(cv, 14, wall_top + 16, 14, 12, shutters=None, sill=True, warm=True)
+    for (x, y) in rect_set(int(ridge) - 9, wall_bottom - 24, 18, 24):  # the door
+        cv.set(x, y, '#3E6A4A' if (x - int(ridge)) % 6 else '#2E5038')
+    for (x, y) in rect_set(w - 32, wall_top + 16, 16, 12):  # the ticket window
+        cv.set(x, y, '#FFE7A6' if y < wall_top + 20 else '#F0B85A')
+    cv.hline(w - 33, wall_top + 28, 18, WOOD[4])
+    # the platform canopy along the front, on brackets
+    for y in range(wall_top + 2, wall_top + 6):
+        for x in range(0, w):
+            cv.set(x, y, '#3E6A4A' if y < wall_top + 4 else '#2E5038')
+    for x in range(0, w, 6):
+        cv.set(x, wall_top + 6, '#3E6A4A')  # a fretted valance
+    for bx in (4, w - 6):
+        cv.vline(bx, wall_top + 6, 34, '#2A2D36')
+    detail.overhang_shadow(cv, 7, w - 7, wall_top + 7, lambda x: 3, k=2, cap=1)
+    return cv
+
+
+def semaphore() -> Canvas:
+    """A railway semaphore signal, 26 x 60: a lattice post, a red arm with a white band
+    raised to clear, a lamp, a little ladder."""
+    cv = Canvas(26, 60, pad=PAD)
+    for y in range(8, 58):
+        cv.set(8, y, '#3C404C'); cv.set(9, y, '#727A8A')
+        if y % 6 == 0:
+            cv.hline(7, y, 4, '#545A68')
+    for t in range(12):  # the arm, raised
+        x, y = 10 + t, 12 - t // 3
+        cv.set(x, y, RED[3]); cv.set(x, y + 1, RED[2])
+        if t in (8, 9):
+            cv.set(x, y, '#F4F0E6'); cv.set(x, y + 1, '#D8D4C8')
+    for (x, y) in disc(9, 6, 2.2):
+        cv.set(x, y, '#3C404C')
+    cv.set(9, 6, GOLD[4])
+    cv.rect(5, 56, 9, 4, STONE[2])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(), 'heron': heron(), 'lily_pads': lily_pads(),
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
-        'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(),
+        'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(), 'station_house': station_house(),
+        'semaphore': semaphore(),
     }
 
 

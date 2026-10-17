@@ -116,7 +116,7 @@ def paint_road(cv: Canvas, mask):
     so the border gets no turf edge and the two zones meet without a seam."""
     for (x, y) in mask:
         cv.set(x, y, P[4] if smooth_noise(x, y, 7, 40) > 0.7 else P[3])
-    detail.grass_edge(cv, {(x, y) for (x, y) in mask if 0 <= x < W}, G, P, seed=11)
+    detail.grass_edge(cv, set(mask), G, P, seed=11)  # pixels past any edge count as road too
     for (x, y) in mask:
         if (x, y + 1) not in mask and 0 <= y + 1 < H:
             cv.set(x, y + 1, G[3])
@@ -131,6 +131,9 @@ def town(frame: int = 0):
     paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
     square = {(x, y) for (x, y) in oval(SQUARE[0], SQUARE[1], 118, 62)}
     east = worlds.thick([(250, 300), (W + 4, 300)], 13)
+    # the lane west to the Valley Halt, at the same height and width as the halt's lane
+    west = worlds.thick([(-12, 300), (12, 300)], 11) | worlds.thick([(10, 300), (76, 296)], 11, seed=8)
+    paint_road(cv, west | {(x, y) for (x0, y) in west if x0 == 0 for x in range(-12, 0)})
     # the road south to Driftwood Harbour, the same width and x as the harbour's road
     south = worlds.thick([(160, 340), (156, 470), (160, 560)], 15, seed=6) | worlds.thick([(160, 552), (160, H + 4)], 18)
     south |= worlds.thick([(150, 400), (110, 452)], 9, seed=7)  # a side path to the ring
@@ -183,14 +186,14 @@ def town(frame: int = 0):
         ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 130, 440),
         # hedges either side of the road south, and framing trees
         ('hedge-s1', 'hedge', 0, 548), ('hedge-s3', 'hedge', 192, 548),
-        ('tree-w1', 'tree', -26, 230), ('tree-e1', 'tree', 252, 470),
+        ('tree-w1', 'tree', 2, 196), ('tree-e1', 'tree', 252, 470),
         ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 250, 400),
         ('bunting', 'bunting', 60, 238), ('cat', 'cat', 182, 352),
     ]
     ring_fence(objects, rcx, rcy, 58, 28)
     stands = {
         'garden': (160, 18), 'library': (70, 238), 'well': (160, 316), 'stall': (60, 424),
-        'ring': (76, 486), 'park': (306, 300), 'harbour': (160, 540),
+        'ring': (76, 486), 'park': (306, 300), 'harbour': (160, 540), 'halt': (8, 300),
     }
     return cv, objects, stands
 
@@ -1415,6 +1418,74 @@ def ridge(frame: int = 0):
     return cv, objects, stands, (face - steps) | peaks_block
 
 
+def halt(frame: int = 0):
+    """The Valley Halt, west of Crossroads Town and south of the Woodland: the lane from
+    the town comes in at the east edge and opens on the platform, where the little stone
+    station faces the line under its canopy; the rails run west out of the valley (the
+    train to Cogsworth) and stop at a buffer before the town. South of the line lie
+    fields in rows behind a fence; to the north the woodland's floor reaches down."""
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    # the woodland's forest floor reaches down along the top edge
+    for y in range(0, 60):
+        for x in range(W):
+            if noise2(x, y, 451) < 1 - y / 60:
+                cv.set(x, y, FOREST_FLOOR[2] if (x + y) % 3 else FOREST_FLOOR[1])
+    lane = worlds.thick([(W + 12, 300), (W - 12, 300)], 11) | worlds.thick([(W - 10, 300), (230, 296), (190, 290)], 11, seed=31)
+    paint_road(cv, lane | {(x, y) for (x0, y) in lane if x0 == W - 1 for x in range(W, W + 12)})
+    # the platform: dressed slabs with a white edge over the line
+    plat = {(x, y) for x in range(0, 236) for y in range(282, 318)}
+    worlds.paint_paving(cv, plat, seed=13)
+    cv.hline(0, 316, 236, '#F4F0E6'); cv.hline(0, 317, 236, STONE[1])
+    paint_rails(cv, 322)
+    for y in range(316, 344):  # the line ends at a buffer before the town
+        for x in range(246, W):
+            cv.set(x, y, G[2] if (x + y) % 3 else G[3])
+    for x in range(232, 244):
+        cv.vline(x, 320, 18, WOOD[2] if x % 2 else WOOD[1])
+    cv.hline(232, 320, 12, RED[3])
+    # fields south of the line, behind a fence: furrows of soil, cabbages in rows on
+    # the first, ripening wheat swaying in the second
+    SOILm = MATERIALS['soil']
+    for y in range(380, 540):
+        for x in range(20, 300):
+            row = (y - 380) % 10
+            wheat = 460 <= y < 540 and x > 160
+            if wheat:
+                stalk = (x + (y // 3) % 2) % 3
+                c = '#E2BC5E' if stalk == 0 else '#C99A3C' if stalk == 1 else '#F2D27A'
+                if row == 9:
+                    c = '#A87E2C'
+            else:
+                c = SOILm[3] if row < 3 else SOILm[2] if row < 8 else SOILm[1]
+                if row == 0:
+                    c = SOILm[4]
+            cv.set(x, y, c)
+    for y in range(383, 540, 10):  # cabbages along the furrows
+        for x in range(24, 296, 7):
+            if 460 <= y < 540 and x > 160:
+                continue
+            cx = x + int(noise2(x, y, 452) * 2)
+            for (px, py) in disc(cx, y + 2, 2.4):
+                cv.set(px, py, MATERIALS['leaf'][3] if (px - cx) + (py - y - 2) < 0 else MATERIALS['leaf'][2])
+            cv.set(cx - 1, y + 1, MATERIALS['leaf'][4])
+    for x in range(161, 300, 2):  # the wheat's lit heads along its top edge
+        cv.set(x, 460, '#F8E6A0'); cv.set(x + 1, 461, '#F2D27A')
+    objects = [
+        ('station', 'station_house', 66, 204), ('signal', 'semaphore', 20, 262), ('bench-p', 'bench', 190, 280),
+        ('lamp-p1', 'lamp', 40, 268), ('lamp-p2', 'lamp', 220, 268), ('sack-p', 'sack', 178, 300), ('crate-p', 'crate', 160, 298),
+        ('pine-n1', 'pine', 10, 20), ('tree-n2', 'tree', 90, 30), ('pine-n3', 'pine', 200, 14), ('tree-n4', 'tree_small', 260, 40),
+        ('bush-1', 'bush', 250, 220), ('bush-2', 'bush', 6, 200),
+        ('fence-1', 'fence_c', 18, 362), ('fence-2', 'fence_c', 78, 362), ('fence-3', 'fence_c', 138, 362),
+        ('fence-4', 'fence_c', 198, 362), ('fence-5', 'fence_c', 258, 362),
+        ('tree-s1', 'tree', 4, 500), ('tree-s2', 'tree_autumn', 250, 520), ('sack-f', 'sack', 120, 548),
+    ]
+    rails = {(x, y) for x in range(0, 246) for y in range(319, 338)}
+    fields = {(x, y) for x in range(20, 300) for y in range(370, 540)}
+    stands = {'town': (312, 300), 'platform': (130, 300), 'station': (118, 292)}
+    return cv, objects, stands, rails | fields
+
+
 FOREST_FLOOR = ['#24382A', '#40603A', '#577A44', '#668A4E', '#8EAE68']
 DARK_FLOOR = [tuple(int(c[k:k + 2], 16) for k in (1, 3, 5)) for c in FOREST_FLOOR]
 
@@ -1502,8 +1573,8 @@ def woodland(frame: int = 0):
         # old trees closing in round the edges (none crosses the east border into the garden)
         ('tree-1', 'tree', -20, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
         ('tree-3', 'tree', -24, 200), ('pine-3', 'pine', -10, 330), ('tree-4', 'tree', 230, 160),
-        ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 500),
-        ('pine-5', 'pine', 150, 500), ('tree-7', 'tree_small', 250, 520),
+        ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 480),
+        ('pine-5', 'pine', 150, 490), ('tree-7', 'tree_small', 250, 504),
         ('oak', 'hollow_tree', 70, 30), ('ring', 'mushroom_ring', 128, 150), ('log-1', 'mossy_log', 200, 230),
         ('log-2', 'mossy_log', 40, 420), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
         ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 90, 380), ('bench', 'forest_bench', 150, 170),
@@ -1570,7 +1641,7 @@ def build(name: str, fn, start: str):
 # garden is the valley's (0, 0); it is drawn by garden.py and joins here by position.
 LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
-               'harbour': (0, 2), 'castle': (1, 2)},
+               'harbour': (0, 2), 'castle': (1, 2), 'halt': (-1, 1)},
     'steam': {'junction': (0, 0)}, 'west': {'gulch': (0, 0)}, 'lava': {'caldera': (0, 0)},
     'neon': {'neon': (0, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
 }
@@ -1661,6 +1732,7 @@ def main():
     built['woodland'] = build('woodland', woodland, 'garden')
     built['park'] = build('park', park, 'town')
     built['ridge'] = build('ridge', ridge, 'garden')
+    built['halt'] = build('halt', halt, 'town')
     built['junction'] = build('junction', junction, 'platform')
     built['neon'] = build('neon', neon_city, 'crossing')
     built['gulch'] = build('gulch', gulch, 'platform')

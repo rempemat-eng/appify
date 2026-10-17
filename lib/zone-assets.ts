@@ -42,6 +42,7 @@ import propDryWell from '@/assets/zones/props/dry_well.png';
 import propDuck from '@/assets/zones/props/duck.png';
 import propDynamiteCrate from '@/assets/zones/props/dynamite_crate.png';
 import propEmberShrine from '@/assets/zones/props/ember_shrine.png';
+import propFenceC from '@/assets/zones/props/fence_c.png';
 import propFern from '@/assets/zones/props/fern.png';
 import propFerry from '@/assets/zones/props/ferry.png';
 import propFishStall from '@/assets/zones/props/fish_stall.png';
@@ -94,12 +95,14 @@ import propSack from '@/assets/zones/props/sack.png';
 import propSaguaro from '@/assets/zones/props/saguaro.png';
 import propSaguaroSmall from '@/assets/zones/props/saguaro_small.png';
 import propSaloon from '@/assets/zones/props/saloon.png';
+import propSemaphore from '@/assets/zones/props/semaphore.png';
 import propShelter from '@/assets/zones/props/shelter.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propStall from '@/assets/zones/props/stall.png';
+import propStationHouse from '@/assets/zones/props/station_house.png';
 import propSteamPuff from '@/assets/zones/props/steam_puff.png';
 import propSteamerTrunk from '@/assets/zones/props/steamer_trunk.png';
 import propStone from '@/assets/zones/props/stone.png';
@@ -134,6 +137,7 @@ import groundRiverside from '@/assets/zones/riverside/ground.png';
 import groundWoodland from '@/assets/zones/woodland/ground.png';
 import groundPark from '@/assets/zones/park/ground.png';
 import groundRidge from '@/assets/zones/ridge/ground.png';
+import groundHalt from '@/assets/zones/halt/ground.png';
 import groundJunction from '@/assets/zones/junction/ground.png';
 import groundNeon from '@/assets/zones/neon/ground.png';
 import groundGulch from '@/assets/zones/gulch/ground.png';
@@ -148,6 +152,7 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   woodland: groundWoodland,
   park: groundPark,
   ridge: groundRidge,
+  halt: groundHalt,
   junction: groundJunction,
   neon: groundNeon,
   gulch: groundGulch,
@@ -198,6 +203,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   duck: propDuck,
   dynamite_crate: propDynamiteCrate,
   ember_shrine: propEmberShrine,
+  fence_c: propFenceC,
   fern: propFern,
   ferry: propFerry,
   fish_stall: propFishStall,
@@ -250,12 +256,14 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   saguaro: propSaguaro,
   saguaro_small: propSaguaroSmall,
   saloon: propSaloon,
+  semaphore: propSemaphore,
   shelter: propShelter,
   shuttle: propShuttle,
   signpost: propSignpost,
   sleep_pod: propSleepPod,
   snowy_pine: propSnowyPine,
   stall: propStall,
+  station_house: propStationHouse,
   steam_puff: propSteamPuff,
   steamer_trunk: propSteamerTrunk,
   stone: propStone,

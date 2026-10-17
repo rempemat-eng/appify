@@ -101,6 +101,7 @@ const gardenSprites: Record<string, ImageSourcePropType> = {
 export const zoneNames: Record<TileId, string> = {
   garden: 'HOME GARDEN',
   ridge: 'THE SNOWY RIDGE',
+  halt: 'VALLEY HALT',
   woodland: 'THE WOODLAND',
   riverside: 'THE RIVERSIDE',
   town: 'CROSSROADS TOWN',
