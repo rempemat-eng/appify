@@ -38,7 +38,7 @@ async function prepare(page: Page, screen: Screen) {
       break;
     case 'menu':
       await click(page, page.getByRole('button', { name: /^Open the menu\./ }));
-      await expect(page.getByRole('heading', { name: 'GARDEN MENU', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'COMPANION', exact: true })).toBeVisible();
       break;
     case 'companions':
       await click(page, page.getByRole('button', { name: /Change companion$/ }));
@@ -77,7 +77,8 @@ async function prepare(page: Page, screen: Screen) {
       break;
     case 'journal':
       await click(page, page.getByRole('button', { name: /^Open the menu\./ }));
-      await click(page, page.getByRole('button', { name: /^Journal\./ }));
+      await click(page, page.getByRole('tab', { name: 'Journal', exact: true }));
+      await click(page, page.getByRole('button', { name: 'OPEN THE FIELD JOURNAL', exact: true }));
       await expect(page.getByText('FIELD JOURNAL', { exact: true })).toBeVisible();
       break;
   }

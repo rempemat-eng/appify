@@ -20,9 +20,9 @@ import { FrameFill, usePixelUnit } from '@/components/pixel-frame';
 import { PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { cardIllustrations } from '@/lib/card-art';
-export function CardIllustration({ id }: { id: CardId }) {
+export function CardIllustration({ id, size = 48 }: { id: CardId; size?: number }) {
   return (
-    <Svg width={48} height={48} viewBox="0 0 16 16">
+    <Svg width={size} height={size} viewBox="0 0 16 16">
       {cardIllustrations[id].map((pixel) => (
         <Rect
           key={`${pixel.x}-${pixel.y}`}
