@@ -296,8 +296,10 @@ def draw(spec, phase='day'):
         pond(cv, *spec['pond'])
     # Shared shadows and one-pixel outlines are part of each original prop.
     sprites = [(PROPS[name](), x, y) for name, x, y in spec['props']]
+    import style  # noqa: E402  (hard cast shadows, docs/vision/art-style.md)
     for sprite, x, y in sprites:
-        cv.shadow(x + sprite.w / 2 + 2, y + sprite.h - 1, sprite.w * 0.39, max(2, sprite.h * 0.07), 48)
+        style.cast_shadow(cv, x + sprite.w / 2 + 2.5, y + sprite.h - 1, max(3.5, sprite.w * 0.48),
+                          max(2.2, min(4.5, sprite.h * 0.1)))
     for sprite, x, y in sorted(sprites, key=lambda item: item[2] + item[0].h):
         cv.paste(sprite, x, y)
     details(cv, spec.get('detail'))

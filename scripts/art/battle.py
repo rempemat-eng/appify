@@ -115,10 +115,24 @@ def backdrop(pal, night=False) -> Canvas:
         y = horizon + 6 + int(noise2(i, 6, 31) * (H - horizon - 8))
         big = y > H - 40
         cv.set(x, y, g[1]); cv.set(x + 2, y, g[1]); cv.set(x + 1, y + 1, g[1])
+        cv.set(x, y - 1, g[4] if not night else g[3]); cv.set(x + 2, y - 1, g[4] if not night else g[3])
         if big:
-            cv.set(x, y - 1, g[1]); cv.set(x + 2, y - 1, g[4] if not night else g[3])
+            cv.set(x + 1, y - 1, g[1]); cv.set(x + 1, y - 2, g[4] if not night else g[3])
         if i % 9 == 0 and not night:
             cv.set(x + 4, y - 1, ['#F2D16B', '#FBF4E4', '#CFC4EC'][i % 3])
+    # mid-ground trees frame the arena's edges in the shared garden style
+    # (outlined, clump-shaded), with hard shadows on the meadow
+    import style  # noqa: E402
+    for (tx, ty, key) in ((-10, horizon - 30, 'tree'), (194, horizon - 24, 'tree_small'), (182, horizon - 34, 'pine'), (14, horizon - 26, 'pine')):
+        sprite = {'tree': garden.tree(True), 'tree_small': garden.tree(False), 'pine': garden.pine()}[key]
+        if night:  # moonlight: the same shapes, cooled and darkened
+            for yy in range(sprite.h):
+                for xx in range(sprite.w):
+                    r_, g_, b_, a_ = sprite.get(xx, yy)
+                    if a_:
+                        sprite.px[xx, yy] = (int(r_ * 0.42), int(g_ * 0.5), int(b_ * 0.72), a_)
+        style.cast_shadow(cv, tx + sprite.w / 2 + 3, ty + sprite.h - 1, sprite.w * 0.45, 3.5)
+        cv.paste(sprite, tx, ty)
     # a worn path receding into the distance between the fighters
     for y in range(horizon + 4, H):
         t = (y - horizon) / (H - horizon)
