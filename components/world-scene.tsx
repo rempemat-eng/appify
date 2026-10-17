@@ -1,5 +1,5 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { Image, View } from 'react-native';
+import { Image, PixelRatio, View, useWindowDimensions } from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -16,16 +16,10 @@ import { WORLD, worldIds, worldMaps, type WorldId } from '@/lib/world-maps';
 import { worldCatalogue } from '@/lib/world-catalogue';
 import { worldImages, worldProps } from '@/lib/world-assets';
 import { makeWalkGrid, type Point } from '@/lib/garden-path';
-import {
-  TILT_DEG,
-  billboard,
-  makeProjection,
-  project,
-  type ViewMode,
-} from '@/lib/garden-projection';
 import { GuardianPet } from '@/components/guardian-pet';
 import { Pet } from '@/components/game-ui';
-import { worldPreviewFrame } from '@/lib/world-framing';
+import { windowStart, worldPreviewFrame } from '@/lib/world-framing';
+import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
 
 const gridFor = (id: WorldId) =>
   makeWalkGrid(worldMaps[id].walk, {
@@ -38,36 +32,44 @@ const grids = new Map(worldIds.map((id) => [id, gridFor(id)] as const));
 const SPEED = 26; // a mission stroll is slower than a garden dash
 
 /**
- * A mission world as a living 2.5D diorama: the companion strolls its route,
- * pausing to look around, while the player is away. Purely scenery, so it has
- * no touch targets and is hidden from assistive tech (the mission text says it).
+ * A mission world as a living diorama in the flat 3/4 view, on the game's shared pixel
+ * grid (coherence plan, step 7): the companion strolls its route, pausing to look
+ * around, while the player is away, and the camera follows it. Purely scenery, so it
+ * has no touch targets and is hidden from assistive tech (the mission text says it).
  */
 export function WorldScene({
   world,
   width,
   player,
-  view = 'tilt',
   active: screenActive = true,
   still = false,
+  viewportHeight,
+  focus,
 }: {
   world: WorldId;
   width: number;
   player: Player;
-  view?: ViewMode;
   active?: boolean;
   /** static preview (Missions tab): no walking, no animation */
   still?: boolean;
+  /** the window's height; the whole world's height when left out */
+  viewportHeight?: number;
+  /** a still window's top-left in world pixels (previews frame their landmark) */
+  focus?: { left: number; top: number };
 }) {
   const reduced = useReducedMotion();
   const appActive = useAppActive();
   const active = screenActive && appActive;
   const map = worldMaps[world];
   const grid = grids.get(world) ?? gridFor(world);
-  const tilt = view === 'tilt';
-  const proj = makeProjection(view, width, WORLD, tilt ? Math.round(width * 0.14) : 0);
-  const scale = proj.scale;
-  const petPx = Math.max(32, Math.round(scale) * 32);
-  const residentPx = Math.max(32, Math.round(petPx / 2 / 32) * 32);
+  const screen = useWindowDimensions();
+  const dpr = PixelRatio.get();
+  const scale = pixelScale(screen.width, dpr);
+  const snap = (value: number) => snapToDevice(value, dpr);
+  const worldWidth = Math.round(WORLD.width * scale);
+  const worldHeight = Math.round(WORLD.height * scale);
+  const viewHeight = Math.min(worldHeight, viewportHeight ?? worldHeight);
+  const petPx = 32 * scale;
   const hour = new Date(useGame((s) => s.now)).getHours();
   const night = hour < 6 || hour >= 21;
   const dusk = !night && hour >= 17;
@@ -159,22 +161,26 @@ export function WorldScene({
     };
   }, [moving, map, grid, px, py]);
 
-  const petStyle = useAnimatedStyle(() => {
-    const s = project(proj, px.value, py.value);
-    return {
-      transform: [
-        { translateX: Math.round(s.sx - petPx / 2) },
-        { translateY: Math.round(s.sy - petPx * (30 / 32)) },
-        { scale: s.f },
-      ],
-      zIndex: Math.round(py.value),
-    };
+  const petStyle = useAnimatedStyle(() => ({
+    transform: [
+      { translateX: Math.round(px.value * scale - petPx / 2) },
+      { translateY: Math.round(py.value * scale - petPx * (30 / 32)) },
+    ],
+    zIndex: Math.round(py.value),
+  }));
+  // The camera holds a preview's framing, or keeps the companion a little above
+  // centre and across, clamped to the world.
+  const cameraStyle = useAnimatedStyle(() => {
+    const x = focus ? focus.left : windowStart(px.value * scale, width, worldWidth);
+    const y = focus
+      ? focus.top
+      : Math.max(0, Math.min(worldHeight - viewHeight, py.value * scale - viewHeight * 0.55));
+    return { transform: [{ translateX: -Math.round(x) }, { translateY: -Math.round(y) }] };
   });
 
   // Who you might bump into on this journey (scenery only: no rewards or rules).
   const resident = worldCatalogue[world].resident;
-  const vs = project(proj, map.visitor.x, map.visitor.y);
-  const groundH = Math.round(WORLD.height * scale);
+  const images = worldImages[world];
   return (
     <View
       pointerEvents="none"
@@ -185,112 +191,94 @@ export function WorldScene({
       dataSet={{ pixel: 'true' }}
       style={{
         width,
-        height: proj.height,
+        height: viewHeight,
         overflow: 'hidden',
-        // ground colour fills the slivers beside the tilted plane's far corners
         backgroundColor: world === 'mountain' ? '#6A9468' : '#73A85E',
       }}
     >
-      {tilt && (
-        <Image
-          source={worldImages[world].sky}
-          resizeMode="stretch"
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: Math.round(proj.horizon - 80 * (width / 216)),
-            width,
-            height: Math.round(150 * (width / 216)),
-          }}
-        />
-      )}
-      <View
+      <Animated.View
         style={[
-          { position: 'absolute', left: 0, top: proj.bottom - groundH, width, height: groundH },
-          tilt && {
-            transform: [{ perspective: proj.persp }, { rotateX: `${TILT_DEG}deg` }],
-            transformOrigin: '50% 100%',
-          },
+          { position: 'absolute', left: 0, top: 0, width: worldWidth, height: worldHeight },
+          cameraStyle,
         ]}
       >
         <Image
-          source={worldImages[world].ground[moving ? frame : 0]}
+          source={images.ground}
           resizeMode="stretch"
-          style={{ width, height: groundH }}
+          style={{ position: 'absolute', left: 0, top: 0, width: worldWidth, height: worldHeight }}
         />
-      </View>
-      {map.objects.map((o) => {
-        const r = billboard(proj, o.x, o.y, o.w, o.h);
-        return (
+        {map.water.map((water) => (
+          <Image
+            key={`water-${water.x}-${water.y}`}
+            source={images.water[moving ? frame : 0]}
+            resizeMode="stretch"
+            style={{
+              position: 'absolute',
+              left: snap(water.x * scale),
+              top: snap(water.y * scale),
+              width: snap(water.w * scale),
+              height: snap(water.h * scale),
+            }}
+          />
+        ))}
+        {map.objects.map((o) => (
           <Image
             key={o.id}
             source={worldProps[o.sprite]}
             resizeMode="stretch"
             style={{
               position: 'absolute',
-              left: Math.round(r.left),
-              top: Math.round(r.top),
-              width: Math.round(r.width),
-              height: Math.round(r.height),
+              left: snap(o.x * scale),
+              top: snap(o.y * scale),
+              width: snap(o.w * scale),
+              height: snap(o.h * scale),
               zIndex: o.y + o.h,
             }}
           />
-        );
-      })}
-      <View
-        style={{
-          position: 'absolute',
-          left: Math.round(vs.sx - residentPx / 2),
-          top: Math.round(vs.sy - residentPx * (30 / 32)),
-          width: residentPx,
-          height: residentPx,
-          transform: [{ scale: vs.f }],
-          transformOrigin: '50% 93.75%',
-          zIndex: map.visitor.y,
-        }}
-      >
-        <Pet visitor={resident} size={residentPx} bob={moving} active={moving} />
-      </View>
-      <Animated.View
-        style={[
-          {
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            width: petPx,
-            height: petPx,
-            transformOrigin: '50% 93.75%',
-          },
-          petStyle,
-        ]}
-      >
-        <GuardianPet
-          player={player}
-          size={petPx}
-          facing={facing}
-          walking={walking && moving}
-          bob={!walking && moving}
-          active={moving}
-        />
-      </Animated.View>
-      {(night || dusk) && (
+        ))}
         <View
           style={{
             position: 'absolute',
-            left: 0,
-            top: 0,
-            width,
-            height: proj.height,
-            zIndex: 900,
-            backgroundColor: night ? 'rgba(22,28,66,0.42)' : 'rgba(240,128,70,0.14)',
+            left: Math.round(map.visitor.x * scale - petPx / 2),
+            top: Math.round(map.visitor.y * scale - petPx * (30 / 32)),
+            width: petPx,
+            height: petPx,
+            zIndex: map.visitor.y,
           }}
-        />
-      )}
+        >
+          <Pet visitor={resident} size={petPx} bob={moving} active={moving} />
+        </View>
+        <Animated.View
+          style={[{ position: 'absolute', left: 0, top: 0, width: petPx, height: petPx }, petStyle]}
+        >
+          <GuardianPet
+            player={player}
+            size={petPx}
+            facing={facing}
+            walking={walking && moving}
+            bob={!walking && moving}
+            active={moving}
+          />
+        </Animated.View>
+        {(night || dusk) && (
+          <View
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: worldWidth,
+              height: worldHeight,
+              zIndex: 900,
+              backgroundColor: night ? 'rgba(22,28,66,0.42)' : 'rgba(240,128,70,0.14)',
+            }}
+          />
+        )}
+      </Animated.View>
     </View>
   );
 }
 
-/** A cropped window onto a world, for mission cards (static, no walking). */
+/** A window onto a world framed on its landmark, for mission cards (static, no walking). */
 export function WorldPreview({
   world,
   player,
@@ -301,8 +289,12 @@ export function WorldPreview({
   height: number;
 }) {
   const [width, setWidth] = useState(0);
+  const screen = useWindowDimensions();
+  const scale = pixelScale(screen.width, PixelRatio.get());
   const sceneWidth = Math.max(0, width - 4);
-  const frame = sceneWidth ? worldPreviewFrame(world, sceneWidth, Math.max(0, height - 4)) : null;
+  const frame = sceneWidth
+    ? worldPreviewFrame(world, sceneWidth, Math.max(0, height - 4), scale)
+    : null;
   return (
     <View
       onLayout={(e) => setWidth(Math.round(e.nativeEvent.layout.width))}
@@ -315,9 +307,14 @@ export function WorldPreview({
       }}
     >
       {frame && (
-        <View style={{ position: 'absolute', left: 0, top: -frame.top }}>
-          <WorldScene world={world} width={sceneWidth} player={player} still />
-        </View>
+        <WorldScene
+          world={world}
+          width={sceneWidth}
+          player={player}
+          still
+          viewportHeight={frame.height}
+          focus={{ left: frame.left, top: frame.top }}
+        />
       )}
     </View>
   );
