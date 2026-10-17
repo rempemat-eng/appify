@@ -5,7 +5,7 @@
 1. **Art pass on the rest of the world, using the art-style.md rules.**
    - Done (17 Oct): garden, hut, stall, signpost, trees, pines, bushes, rocks, ground, shadows, mission worlds.
    - Also done: battle backdrops (framed by shared-style trees), scene vignettes (hard shadows).
-   - Left: a check of companions and visitors against the new outlines and shading.
+   - Checked: companions and visitors already use a near-black outline and five-tone shading, so they fit.
 2. **Missions, Arena and Shop as places, not pages.**
    - Shop becomes the inside of Moss's stall.
    - Missions becomes a world map past the gate.
