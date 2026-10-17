@@ -104,6 +104,7 @@ export const zoneNames: Record<TileId, string> = {
   halt: 'VALLEY HALT',
   oasis: 'THE DESERT OASIS',
   skyport: 'THE SKYPORT',
+  canal: 'COGSWORTH CANAL',
   woodland: 'THE WOODLAND',
   riverside: 'THE RIVERSIDE',
   town: 'CROSSROADS TOWN',

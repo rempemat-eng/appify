@@ -53,6 +53,12 @@ const SOURCES: Record<string, { kind: Kind; dx: number; dy: number }[]> = {
   cottage: [{ kind: 'puff', dx: 16, dy: 2 }],
   cottage_b: [{ kind: 'puff', dx: 16, dy: 2 }],
   water_mill: [{ kind: 'puff', dx: 92, dy: 60 }],
+  narrowboat: [{ kind: 'puff', dx: 48, dy: 0 }],
+  foundry: [
+    { kind: 'puff', dx: 27, dy: 0 },
+    { kind: 'puff', dx: 123, dy: 6 },
+    { kind: 'ember', dx: 72, dy: 62 },
+  ],
 };
 
 function rainOver(drops: number): Emitter[] {

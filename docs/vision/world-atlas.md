@@ -58,6 +58,7 @@ All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNG
 | Snowy Ridge        | Valley       | south: the garden (the ridge trail through the treeline)                                             |
 | Valley Halt        | Valley       | east: Crossroads Town (west lane); the train to Cogsworth leaves here                                |
 | Cogsworth Junction | Steam        | by train from Crossroads Town                                                                        |
+| Cogsworth Canal    | Steam        | north: Cogsworth Junction (the lane through the pipe wall); atmospheric line to Neon's Skyport       |
 | Dust Gulch         | Western      | by train from Cogsworth; west: the oasis (street, dry creek, railway); mine cart to the caldera      |
 | Desert Oasis       | Western      | east: Dust Gulch (street, dry creek, railway and ground continue across)                             |
 | Ember Caldera      | Lava         | mine cart tunnel from Dust Gulch                                                                     |
@@ -66,7 +67,9 @@ All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNG
 | Halcyon Station    | Space        | space elevator from Neon Harbour; shuttle hatch to Lumen                                             |
 | Lumen              | Space        | shuttle from Halcyon                                                                                 |
 
-Still to draw: the maglev stop in Cogsworth Junction (the Skyport has the other end).
+Every journey now leaves from a drawn stop: the valley train from Valley Halt, the Cogsworth train at the junction platform, the maglev between the Skyport and the atmospheric terminus on Cogsworth Canal, the mine cart in Dust Gulch, the elevator from the Skyport's anchor.
+
+**Cogsworth Canal is the working side of the steam town, not the square again.** The junction is a cobbled square of workshops and a clock tower; the canal has water and industry: a towpath of setts, an iron bridge, a steam narrowboat by a jib crane, a lock with black-and-white balance beams, the foundry under its sawtooth roof with the pour glowing through its door, and the brass-and-glass terminus where the maglev from Neon arrives as an atmospheric railway (the two cities meeting in each other's style). At the bottom, allotments warmed by the foundry's waste steam, tended by a clockwork gardener. Its own props: narrowboat, canal crane, foundry, tube station, atmospheric car, automaton, cloches.
 
 **The Skyport is where the city's noise stops.** Neon Harbour's wet street runs in and ends at a quiet drop-off loop round a tree; the dark tiles give way (an ordered dither over the first 56 pixels) to pale polished slabs. The maglev waits on a white guideway along the north; a concourse with departure pylons, ticket gates you walk through, benches and living trees leads to a pier and the anchor out in the harbour, where the elevator's ribbon climbs out of sight. Brighter and calmer than the street: the way up and out, in keeping with the journey from screens back to rest. Its own props: maglev, tether, ticket gates, departure pylons, pod trees, sky benches, luggage bots.
 

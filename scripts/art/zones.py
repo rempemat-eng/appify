@@ -392,6 +392,11 @@ def junction(frame: int = 0):
             cv.set(x, y, STONE[3]); cv.set(x, y + 1, STONE[1])
     for (gx, gy) in ((70, 190), (238, 196), (110, 360), (214, 372)):
         grate(cv, gx, gy)
+    # the lane on south through the gap in the pipe wall, down to the canal
+    south = {(x, y) for x in range(144, 176) for y in range(500, H + 4)}
+    worlds.paint_cobbles(cv, south)
+    for y in range(500, H):
+        cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1]); cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
     gear_ring(cv, 160, 492, 56, 24)
     objects = [
         # the far side of the line: chimneys and pipes over the wall
@@ -417,8 +422,154 @@ def junction(frame: int = 0):
         ('wall-s1', 'pipe_run', 0, 556), ('wall-s2', 'pipe_run', 64, 556), ('wall-s3', 'pipe_run', 192, 556),
         ('wall-s4', 'pipe_run', 256, 556),
     ]
-    stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (160, 492), 'workshop': (52, 248)}
+    stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (160, 492), 'workshop': (52, 248),
+              'canal': (160, 568)}
     return cv, objects, stands
+
+
+def canal(frame: int = 0):
+    """Cogsworth Canal, south of the junction: the working side of the town. The lane
+    comes down through the gap in the pipe wall between two warehouses to a towpath of
+    setts, crosses the canal on an iron bridge, and runs on between the foundry (its
+    sawtooth roof glowing, its great door open on the pour) and the terminus of the
+    atmospheric railway, Cogsworth's brass-and-glass end of the maglev from Neon
+    Harbour. A steam narrowboat is moored by a jib crane; a lock with black-and-white
+    balance beams steps the water up to the east. At the bottom the tinkerers keep
+    allotments warmed by the foundry's waste steam, tended by a clockwork gardener."""
+    ASHLAR = MATERIALS['ashlar']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame, ['#2B3B2E', '#46583F', '#5C6E4C', '#6B7C55', '#8E9C6E'])  # the junction's sooty grass
+    blocked = set()
+    CY0, CY1 = 176, 244  # the canal's water, between its embankments
+    # towpaths of setts either side of the canal, and the lane
+    towpath = {(x, y) for x in range(W) for y in range(126, CY0)} | {(x, y) for x in range(W) for y in range(CY1, 292)}
+    lane = {(x, y) for x in range(144, 176) for y in range(-4, 430)}
+    worlds.paint_cobbles(cv, (towpath | lane) - {(x, y) for x in range(W) for y in range(CY0, CY1)})
+    for y in range(0, 126):  # the lane's kerbs, as in the junction
+        cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1]); cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
+    for y in range(292, 430):
+        cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1]); cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
+    for x in range(W):  # dressed kerbs where the setts meet the grass
+        cv.set(x, 125, STONE[3]); cv.set(x, 292, STONE[3]); cv.set(x, 293, STONE[1])
+    # the canal: embankment faces in ashlar, murky green water, lamps doubled in it
+    for x in range(W):
+        for y in range(CY0, CY1):
+            k = y - CY0
+            if k < 6:
+                c = ASHLAR[1] if (x // 7 + k // 3) % 2 else ASHLAR[2]  # the north wall's face, in shade
+                if k == 0:
+                    c = ASHLAR[4]
+            else:
+                n = smooth_noise(x, y, 8, 494)
+                c = '#2C4A44' if n > 0.6 else '#22403A' if n > 0.3 else '#1A3430'
+                if k < 9:
+                    c = '#14281F'  # the wall's shadow on the water
+                if (y - CY0) % 6 == 2 and noise2(x // 7, y, 495) > 0.62:
+                    c = '#3E6A5E'
+            cv.set(x, y, c)
+            blocked.add((x, y))
+        cv.set(x, CY1, ASHLAR[5]); cv.set(x, CY1 + 1, ASHLAR[3])  # the south coping, lit
+        cv.set(x, CY0 - 1, ASHLAR[3])
+    for lx in (40, 120, 200, 280):  # lamplight on the water
+        for y in range(CY0 + 10, CY1 - 2, 2):
+            if noise2(lx, y // 2, 496) > 0.35:
+                cv.hline(lx - 2 + int((noise2(y, lx, 497) - 0.5) * 4), y, 4, '#C99A3C' if y % 4 else '#9E6C26')
+    # the lock: the chamber's water stands higher (lighter) between two pairs of mitre gates
+    for x in range(236, 296):
+        for y in range(CY0 + 6, CY1):
+            c = cv.get(x, y)
+            cv.set(x, y, tuple(min(255, v + 14) for v in c[:3]) + (255,))
+    for gx in (234, 296):
+        for t in range(CY1 - CY0 - 6):  # gates meeting in a V that points upstream (east)
+            y = CY0 + 6 + t
+            off = int(abs(t - (CY1 - CY0 - 6) / 2) * 0.35)
+            for d in range(4):
+                cv.set(gx + off + d, y, WOOD[3] if d < 2 else WOOD[1])
+        cv.hline(gx, CY0 + 6, 4, WOOD[4])
+        for (by, side) in ((CY0 - 30, -1), (CY1 + 6, 1)):  # balance beams on the towpaths, black and white
+            for x in range(gx - 26, gx + 4):
+                for y in range(by + (0 if side < 0 else 0), by + 5):
+                    c = '#F2F0EA' if ((x - gx) // 6) % 2 else '#1E1C22'
+                    if y == by:
+                        c = '#FFFFFF' if c == '#F2F0EA' else '#3A3840'
+                    cv.set(x, y, c)
+                    blocked.add((x, y))
+    # the iron bridge carrying the lane over the water
+    for y in range(CY0 - 2, CY1 + 2):
+        for x in range(138, 182):
+            if x < 142 or x >= 178:
+                c = IRON[3] if x in (138, 178) else IRON[1]  # the girders
+                if (y - CY0) % 8 == 0:
+                    c = BRASS[3]  # rivet plates
+            else:
+                c = WOOD[3] if (y // 3) % 2 else WOOD[2]
+                if (x - 142) % 12 == 0:
+                    c = WOOD[1]
+            cv.set(x, y, c)
+            blocked.discard((x, y))
+    # the atmospheric railway's brass tube, east from the terminus on iron trestles
+    for x in range(272, W):
+        for y in range(340, 356):
+            k = (y - 340) / 16
+            c = BRASS[4] if k < 0.2 else BRASS[3] if k < 0.5 else BRASS[2] if k < 0.85 else BRASS[1]
+            if (x - 38 - 196) % 10 == 0:
+                c = IRON[1]
+            cv.set(x, y, c)
+            blocked.add((x, y))
+        if x % 24 == 8:
+            for y in range(356, 372):
+                cv.set(x, y, IRON[3]); cv.set(x + 1, y, IRON[1])
+                blocked.add((x, y))
+        cv.set(x, 372, '#2B3B2E')
+    # the forecourt before the foundry's door: setts black with spilt slag, lit orange
+    fore = {(x, y) for x in range(24, 144) for y in range(404, 430)}
+    worlds.paint_cobbles(cv, fore)
+    for (x, y) in fore:
+        if noise2(x // 4, y // 3, 498) > 0.72:
+            cv.set(x, y, IRON[1])  # spilt slag
+        if y == 429:
+            cv.set(x, y, STONE[1])
+    light_pool(cv, 72, 412, 52, 18, '#FFB648')
+    # the allotments: raised beds of dark earth in rows, sprouts, gravel paths between
+    beds = [(16, 452, 56, 26), (16, 500, 56, 26), (88, 452, 48, 26), (88, 500, 48, 26),
+            (190, 452, 52, 26), (190, 500, 52, 26), (256, 452, 50, 26), (256, 500, 50, 26)]
+    for y in range(436, 548):
+        for x in range(8, 314):
+            n = noise2(x // 2, y // 2, 499)
+            cv.set(x, y, '#8C8576' if n > 0.6 else '#76705F' if n > 0.25 else '#9C9584')
+    for (bx, by, bw, bh) in beds:
+        for y in range(by, by + bh):
+            for x in range(bx, bx + bw):
+                c = '#3A2A22' if (y - by) % 6 else '#2A1E18'
+                if (y - by) % 6 == 3 and (x * 7 + y) % 9 < 3:
+                    c = '#62995E' if (x + y) % 2 else '#447A50'  # sprouts
+                cv.set(x, y, c)
+        for x in range(bx - 1, bx + bw + 1):  # timber edging, lit on top
+            cv.set(x, by - 1, WOOD[4]); cv.set(x, by + bh, WOOD[1])
+        for y in range(by, by + bh):
+            cv.set(bx - 1, y, WOOD[3]); cv.set(bx + bw, y, WOOD[1])
+    objects = [
+        # warehouses either side of the lane at the top
+        ('wh-1', 'workshop_round', 20, 22), ('wh-2', 'workshop', 204, 18),
+        ('lamp-1', 'gas_lamp', 124, 96), ('lamp-2', 'gas_lamp', 184, 96),
+        # the north towpath: the crane and the moored boat
+        ('crane', 'canal_crane', 70, 112), ('boat', 'narrowboat', 8, 186), ('trunk-1', 'steamer_trunk', 30, 150),
+        ('coal-1', 'coal_cart', 112, 140), ('lamp-3', 'gas_lamp', 290, 130),
+        # the south towpath
+        ('bench-t', 'iron_bench', 60, 262), ('lamp-4', 'gas_lamp', 124, 252), ('gears-t', 'gear_pile', 290, 256),
+        # the foundry and the terminus
+        ('foundry', 'foundry', 0, 296), ('puff-f1', 'steam_puff', 16, 278), ('puff-f2', 'steam_puff', 112, 284),
+        ('station', 'tube_station', 196, 300), ('car', 'atmos_car', 252, 318),
+        # the allotments
+        ('pipe-a1', 'pipe_run', 8, 548), ('pipe-a2', 'pipe_run', 72, 548), ('pipe-a3', 'pipe_run', 184, 548),
+        ('pipe-a4', 'pipe_run', 248, 548),
+        ('gardener', 'automaton', 140, 476), ('cloche-1', 'cloche', 30, 460), ('cloche-2', 'cloche', 48, 508),
+        ('cloche-3', 'cloche', 100, 462), ('cloche-4', 'cloche', 270, 510), ('cloche-5', 'cloche', 206, 458),
+        ('bench-a', 'iron_bench', 186, 418), ('lamp-5', 'gas_lamp', 248, 410), ('kiosk-a', 'tea_kiosk', 270, 396),
+    ]
+    stands = {'junction': (160, 6), 'bridge': (160, 210), 'boat': (60, 166), 'lock': (264, 150),
+              'foundry': (72, 418), 'terminus': (236, 384), 'allotments': (162, 520)}
+    return cv, objects, stands, blocked
 
 
 def neon_city(frame: int = 0):
@@ -2005,7 +2156,7 @@ def woodland(frame: int = 0):
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'skyport': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
+REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'neon': cp.props, 'skyport': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
                 'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
@@ -2054,7 +2205,7 @@ def build(name: str, fn, start: str):
 LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'castle': (1, 2), 'halt': (-1, 1)},
-    'steam': {'junction': (0, 0)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, 0)},
+    'steam': {'junction': (0, 0), 'canal': (0, 1)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, 0)},
     'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
 }
 
@@ -2146,6 +2297,7 @@ def main():
     built['ridge'] = build('ridge', ridge, 'garden')
     built['halt'] = build('halt', halt, 'town')
     built['junction'] = build('junction', junction, 'platform')
+    built['canal'] = build('canal', canal, 'junction')
     built['neon'] = build('neon', neon_city, 'crossing')
     built['skyport'] = build('skyport', skyport, 'neon')
     built['gulch'] = build('gulch', gulch, 'platform')
