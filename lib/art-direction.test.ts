@@ -133,9 +133,16 @@ for (const asset of importedPngs) {
 }
 assert.deepEqual(
   pngSize(resolve(root, 'assets/battle/platform-night.png')),
-  [384, 120],
-  'night battle platform preserves its 64×20 native grid at 6×',
+  [192, 72],
+  'night battle platform keeps its 48×18 native grid at 4× (step 7b close-up)',
 );
+for (const layer of ['sky', 'far', 'near'])
+  for (const time of ['day', 'night'])
+    assert.deepEqual(
+      pngSize(resolve(root, `assets/battle/${layer}-${time}.png`)),
+      [864, 600],
+      `battle ${layer} layer (${time}) keeps the 216×150 field at 4×`,
+    );
 
 console.log(
   `PASS: art contracts (${Object.keys(artMaterials).length} material ramps, ${cardIds.length} card illustrations / ${pixelCount} pixels, ${mapIds.length} world identities, ${sceneFiles.length} scenes / ${importedPngs.length} asset imports, night battle platform).`,
