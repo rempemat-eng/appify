@@ -191,6 +191,7 @@ function homeFixture() {
       offline_seconds: 0,
     },
     now: 0,
+    missionReturnPending: false,
     voice: null,
     firstWake: false,
     tips: [],
@@ -367,6 +368,7 @@ function visitorPresentationFixture(welcome = false) {
     },
     waitingVisitor: welcome ? null : { id: 'dozebud', expiresAt: 0 },
     now: 0,
+    missionReturnPending: false,
     cardReward: welcome ? reward : null,
     pendingMemories: [],
     sessions: [],
@@ -379,6 +381,8 @@ function visitorPresentationFixture(welcome = false) {
     dismissCards() {
       calls.push('dismiss');
       state.cardReward = null;
+      state.missionReturnPending = false;
+      state.player.mode = 'awake';
     },
     sleep() {
       calls.push('sleep');
@@ -570,6 +574,156 @@ function visitorAndReturnChecks() {
     'garden route remains an independent explicit choice',
   );
   garden.runtime.unmount();
+
+  const completed = visitorPresentationFixture(true);
+  completed.state.player.mode = 'mission';
+  completed.state.missionReturnPending = true;
+  tree = completed.render();
+  check(
+    text(tree).includes('your garden is still shielded') &&
+      text(tree).includes('play time begin when you choose BACK TO THE GARDEN') &&
+      completed.calls.length === 0 &&
+      completed.state.player.mode === 'mission',
+    'completed mission welcome explains pending protection without returning during render',
+  );
+  find(
+    tree,
+    (node) => node.type === 'PixelButton' && node.props.label === 'BACK TO THE GARDEN',
+  ).props.onPress();
+  check(
+    completed.calls.join('|') === 'dismiss|navigate:/' &&
+      !completed.state.missionReturnPending &&
+      completed.state.player.mode === 'awake',
+    'completed mission returns through the same explicit garden action',
+  );
+  completed.runtime.unmount();
+}
+
+function napReturnControls() {
+  const runtime = hooks();
+  const clock = timers();
+  const calls = [];
+  const state = {
+    ready: true,
+    player: { mode: 'mission', mission_id: 'book', mission_ends_at: 30000 },
+    missionReturnPending: false,
+    battle: null,
+    alerts: [],
+    message: null,
+    flash: null,
+    guideOpen: false,
+    deckOpen: false,
+    cardReward: null,
+    recap: null,
+    wake() {
+      calls.push('wake');
+    },
+    dismissCards() {
+      calls.push('dismiss');
+    },
+  };
+  const useGame = (selector) => selector(state);
+  useGame.getState = () => state;
+  useGame.setState = (patch) => Object.assign(state, patch);
+  const { GameOverlays } = load(
+    'components/game-overlays.tsx',
+    (id) => {
+      if (id === 'react') return runtime.react;
+      if (id === 'react/jsx-runtime') return jsxRuntime;
+      if (id === 'react-native')
+        return {
+          ...boundary,
+          View: 'View',
+          Modal: 'Modal',
+          useWindowDimensions: () => ({ width: 390, height: 844 }),
+        };
+      if (id === 'react-native-reanimated')
+        return {
+          __esModule: true,
+          default: boundary,
+          FadeIn: boundary,
+        };
+      if (id === 'react-native-safe-area-context')
+        return {
+          useSafeAreaInsets: () => ({ top: 20, bottom: 16 }),
+        };
+      if (id === '@/lib/game') return { useGame, gameStore: useGame };
+      if (id === '@/lib/cozy') return { cozy: { paper: 'paper', night: 'night' } };
+      if (id === '@/lib/layout') return { gameSideInset: () => 16, gameColumn: {} };
+      if (id === '@/lib/motion') return { useReducedMotion: () => false };
+      if (id === '@/lib/overlay-priority') return load('lib/overlay-priority.ts', () => {});
+      if (id.startsWith('@/') || id === 'lucide-react-native' || id === 'expo-haptics')
+        return boundary;
+      throw new Error('Unexpected overlay control import: ' + id);
+    },
+    clock.globals,
+  );
+  const render = () => runtime.render(GameOverlays);
+  const nap = (tree) =>
+    find(tree, (node) => typeof node.type === 'function' && node.type.name === 'ScreenOff');
+  let tree = render();
+  check(!nap(tree).props.confirmEarlyReturn, 'timed mission starts without a return prompt');
+  byType(tree, 'Modal').props.onRequestClose();
+  tree = render();
+  check(
+    nap(tree).props.confirmEarlyReturn && calls.length === 0,
+    'Escape or native Back requests confirmation instead of forfeiting a timed mission',
+  );
+  byType(tree, 'Modal').props.onRequestClose();
+  tree = render();
+  check(
+    !nap(tree).props.confirmEarlyReturn && calls.length === 0,
+    'Back on the confirmation keeps exploring without waking',
+  );
+  nap(tree).props.onRequestReturn();
+  tree = render();
+  check(
+    nap(tree).props.confirmEarlyReturn && calls.length === 0,
+    'explicit wake uses the same timed-mission confirmation',
+  );
+  nap(tree).props.onKeepExploring();
+  tree = render();
+  check(
+    !nap(tree).props.confirmEarlyReturn && calls.length === 0,
+    'Keep Exploring cancels without a store action',
+  );
+  nap(tree).props.onRequestReturn();
+  tree = render();
+  nap(tree).props.onReturnEarly();
+  check(calls.join('|') === 'wake', 'only explicit Return Early invokes wake');
+  calls.length = 0;
+  nap(render()).props.onRequestReturn();
+  state.missionReturnPending = true;
+  state.cardReward = { mission: 'book' };
+  tree = render();
+  check(
+    nodes(tree).some((node) => node?.type === 'WelcomeBack') &&
+      !nodes(tree).some(
+        (node) => typeof node?.type === 'function' && node.type.name === 'ScreenOff',
+      ),
+    'mission completing during confirmation replaces the nap with its saved welcome',
+  );
+  const backdrop = byType(tree, 'Modal').props.children;
+  check(
+    backdrop.props.style.backgroundColor === 'paper' && backdrop.props.style.paddingBottom === 0,
+    'pending mission welcome uses reward-sheet backdrop and inset despite non-awake shield mode',
+  );
+  state.missionReturnPending = false;
+  state.cardReward = null;
+  state.player = { mode: 'mission', mission_id: 'book', mission_ends_at: 60000 };
+  tree = render();
+  check(
+    !nap(tree).props.confirmEarlyReturn,
+    'a later mission never inherits an earlier confirmation',
+  );
+  state.player = { mode: 'screen_off', mission_id: null, mission_ends_at: 0 };
+  tree = render();
+  byType(tree, 'Modal').props.onRequestClose();
+  check(calls.length === 0, 'Back leaves an untimed nap running');
+  nap(render()).props.onRequestReturn();
+  check(calls.join('|') === 'wake', 'an untimed nap still wakes through its explicit button');
+  runtime.unmount();
+  check(clock.timeouts.size === 0, 'return controls add no lingering timers');
 }
 
 function journeyChecks() {
@@ -644,6 +798,7 @@ function journeyChecks() {
 
 async function main() {
   visitorAndReturnChecks();
+  napReturnControls();
   journeyChecks();
   const home = homeFixture();
   let tree = home.render();

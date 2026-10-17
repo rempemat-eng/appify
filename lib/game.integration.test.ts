@@ -85,7 +85,7 @@ async function main() {
     throw new Error('Unexpected network request in source integration check');
   };
   try {
-    const { gameStore, flushGameSave, bot } = await import('./game');
+    const { gameStore, flushGameSave, bot, accountPlay, status } = await import('./game');
     const { bilt, backendConfigured, backendUnavailableMessage } = await import('./bilt');
     const { collectionOf, guardianPlayer } = await import('./visitors');
     const { runRefinementChecks, qaPlayer } = await import('./refinement.qa');
@@ -377,6 +377,70 @@ async function main() {
     now += 15_000;
     gameStore.getState().tick();
     const missionOffer = structuredClone(gameStore.getState().pendingMemories[0]);
+    const pendingMission = structuredClone({
+      player: gameStore.getState().player,
+      reward: gameStore.getState().cardReward,
+      history: gameStore.getState().recentBreaks,
+      budget: gameStore.getState().rules.budget,
+    });
+    check(
+      gameStore.getState().missionReturnPending &&
+        status(gameStore.getState().player!, now).kind === 'safe',
+      'Completed Park stays in its shielded mission until an explicit return',
+    );
+    gameStore.getState().setQuietView(true);
+    now += 90_000;
+    gameStore.getState().tick();
+    accountPlay(now);
+    await reload();
+    check(
+      gameStore.getState().missionReturnPending &&
+        gameStore.getState().quietView &&
+        isDeepStrictEqual(
+          {
+            player: gameStore.getState().player,
+            reward: gameStore.getState().cardReward,
+            history: gameStore.getState().recentBreaks,
+            budget: gameStore.getState().rules.budget,
+          },
+          pendingMission,
+        ),
+      'Waiting 90 seconds and reloading spends no play time, changes no mood and repeats no settlement',
+    );
+    const returnAt = now;
+    gameStore.getState().dismissCards();
+    const returned = gameStore.getState();
+    check(
+      !returned.missionReturnPending &&
+        returned.player!.mode === 'awake' &&
+        returned.player!.care_until === returnAt + 30_000 &&
+        returned.player!.mission_id === null &&
+        returned.player!.mission_ends_at === 0 &&
+        !returned.cardReward &&
+        isDeepStrictEqual(returned.recentBreaks, pendingMission.history),
+      'Returning to the garden starts a full care window without adding rewards or history',
+    );
+    now += 3_000;
+    gameStore.getState().tick();
+    gameStore.getState().dismissCards();
+    check(
+      gameStore.getState().rules.budget.usedMs === 3_000 &&
+        gameStore.getState().player!.mood === pendingMission.player!.mood - 1 &&
+        gameStore.getState().player!.care_until === returnAt + 30_000,
+      'Play time and mood resume after return; repeated dismissal does not renew the care window',
+    );
+    gameStore.getState().sleep('park');
+    check(gameStore.getState().quietView, 'Quiet view remains selected for the next break');
+    now += 15_000;
+    // A direct wake at the deadline must complete, never forfeit the mission.
+    await gameStore.getState().wake();
+    check(
+      !gameStore.getState().missionReturnPending &&
+        gameStore.getState().player!.mode === 'awake' &&
+        gameStore.getState().cardReward?.early === false &&
+        gameStore.getState().cardReward?.grass === 20,
+      'Wake at the exact mission deadline preserves successful completion',
+    );
     await reload();
     await gameStore.getState().wake();
     gameStore.getState().tick();
@@ -428,12 +492,16 @@ async function main() {
       saved.companionMemories = [null, {}, ...gameStore.getState().companionMemories];
       saved.memoryResolvedIds = ['', null, 8, ...gameStore.getState().memoryResolvedIds];
       saved.activeBreakContext = originalContext;
+      saved.missionReturnPending = true;
+      saved.quietView = 'not a preference';
     });
     check(
       gameStore.getState().player?.id === memoryPlayer.id &&
         gameStore.getState().pendingMemories.length === 5 &&
         gameStore.getState().companionMemories.length === 1 &&
         !gameStore.getState().activeBreakContext &&
+        !gameStore.getState().missionReturnPending &&
+        !gameStore.getState().quietView &&
         gameStore.getState().message !== 'COULD NOT LOAD YOUR GRASSLING. TRY REOPENING THE APP.',
       'Malformed optional save fields are sanitised without losing the valid account or existing memories',
     );
@@ -444,6 +512,8 @@ async function main() {
       delete saved.pendingMemories;
       delete saved.companionMemories;
       delete saved.memoryResolvedIds;
+      delete saved.missionReturnPending;
+      delete saved.quietView;
     });
     now += 2000;
     await gameStore.getState().wake();
@@ -453,6 +523,10 @@ async function main() {
         gameStore.getState().pendingMemories.length === 0 &&
         gameStore.getState().companionMemories.length === 0,
       'Legacy active-break saves default to no intention and do not invent an activity offer',
+    );
+    check(
+      !gameStore.getState().missionReturnPending && !gameStore.getState().quietView,
+      'Legacy saves preserve the account with safe defaults for return protection and Quiet view',
     );
     now += 1000;
     gameStore.getState().sleep(undefined, 'rest');

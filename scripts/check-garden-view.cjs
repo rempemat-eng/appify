@@ -349,6 +349,8 @@ function quietNapPresentation() {
       const slots = [];
       let wakes = 0;
       let writes = 0;
+      let quietWrites = 0;
+      let confirmEarlyReturn = false;
       const player = {
         id: 'garden-test',
         pet_name: 'MOSS',
@@ -364,6 +366,7 @@ function quietNapPresentation() {
       const keptMemory = Object.freeze({ id: 'read-memory', intention: 'read' });
       const state = {
         player,
+        quietView: false,
         now: 1000,
         offStart: 30,
         offGrass: 135,
@@ -394,6 +397,10 @@ function quietNapPresentation() {
           ...state,
           wake: () => {
             wakes++;
+          },
+          setQuietView: (value) => {
+            quietWrites++;
+            state.quietView = value;
           },
         }),
       };
@@ -471,9 +478,23 @@ function quietNapPresentation() {
       );
       const render = () => {
         hookIndex = 0;
-        return moduleFixture.exports.TestScreenOff();
+        return moduleFixture.exports.TestScreenOff({
+          confirmEarlyReturn,
+          onRequestReturn: () => {
+            if (mission) confirmEarlyReturn = true;
+            else wakes++;
+          },
+          onKeepExploring: () => {
+            confirmEarlyReturn = false;
+          },
+          onReturnEarly: () => {
+            wakes++;
+            confirmEarlyReturn = false;
+          },
+        });
       };
-      const modelBefore = JSON.stringify(state);
+      const model = () => JSON.stringify({ ...state, quietView: undefined });
+      const modelBefore = model();
       let tree = render();
       const measure = findNode(tree, (node) => typeof node.props?.onLayout === 'function');
       measure.props.onLayout({ nativeEvent: { layout: { width: 390 } } });
@@ -535,6 +556,18 @@ function quietNapPresentation() {
         ),
         label + ': quiet view unmounts all decorative worlds, light effects and pets',
       );
+      slots.length = 0;
+      tree = render();
+      findNode(tree, (node) => typeof node.props?.onLayout === 'function').props.onLayout({
+        nativeEvent: { layout: { width: 390 } },
+      });
+      tree = render();
+      check(
+        findNode(tree, (node) => node.props?.accessibilityLabel === 'Quiet view').props
+          .accessibilityState.checked === true &&
+          !hasType(tree, mission ? 'WorldScene' : 'GardenWorld'),
+        label + ': a new nap presentation reads the saved quiet preference instead of resetting it',
+      );
       check(
         visibleText(tree).includes(
           mission ? 'SHIELDED UNTIL RETURN' : 'NAPPING · GARDEN SHIELDED',
@@ -557,7 +590,7 @@ function quietNapPresentation() {
       check(
         visibleText(tree).includes('Sleep and phone inactivity are not measured.') &&
           visibleText(tree).includes(
-            mission ? 'returns home automatically' : 'This nap has no end timer.',
+            mission ? 'stays shielded until you return' : 'This nap has no end timer.',
           ) &&
           findNode(tree, (node) => node.props?.accessibilityLabel === 'Close nap information')
             .props['aria-expanded'] === true,
@@ -570,8 +603,9 @@ function quietNapPresentation() {
           label + ': quiet view retains shared session status',
         );
       check(
-        writes === 0 && wakes === 0 && JSON.stringify(state) === modelBefore,
-        label + ': changing presentation and help changes no game or memory state',
+        quietWrites === 1 && writes === 0 && wakes === 0 && model() === modelBefore,
+        label +
+          ': presentation writes only the quiet preference, leaving game and memories unchanged',
       );
       quiet = findNode(tree, (node) => node.props?.accessibilityLabel === 'Quiet view');
       quiet.props.onPress();
@@ -586,9 +620,39 @@ function quietNapPresentation() {
         tree,
         (node) => node.type === 'PixelButton' && node.props.label === 'WAKE UP',
       ).props.onPress();
+      if (mission) {
+        tree = render();
+        check(
+          wakes === 0 &&
+            visibleText(tree).includes('RETURN EARLY?') &&
+            visibleText(tree).includes('Cards already earned stay yours.') &&
+            visibleText(tree).includes(mission.reward + ' GRASS'),
+          label +
+            ': wake first explains the completion rewards forfeited and preserves earned cards',
+        );
+        findNode(
+          tree,
+          (node) => node.type === 'PixelButton' && node.props.label === 'KEEP EXPLORING',
+        ).props.onPress();
+        tree = render();
+        check(
+          wakes === 0 && !visibleText(tree).includes('RETURN EARLY?'),
+          label + ': keeping the mission cancels without waking',
+        );
+        findNode(
+          tree,
+          (node) => node.type === 'PixelButton' && node.props.label === 'WAKE UP',
+        ).props.onPress();
+        tree = render();
+        findNode(
+          tree,
+          (node) => node.type === 'PixelButton' && node.props.label === 'RETURN EARLY',
+        ).props.onPress();
+      }
       check(
-        wakes === 1 && writes === 0 && JSON.stringify(state) === modelBefore,
-        label + ': the existing wake action is still available once',
+        wakes === 1 && writes === 0 && quietWrites === 2 && model() === modelBefore,
+        label +
+          ': deliberate return remains available once without changing progress in presentation',
       );
     }
   }
