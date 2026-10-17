@@ -42,6 +42,20 @@ Matt: "create a sort of small open world … with small biomes where you reach t
 - **Gates are soft and use rules that exist** (the mountain's level 2 gate). Any new kind of gate waits for Matt.
 - **Pokémon-like pieces, in NapAttack's terms:** residents to befriend in each zone (the visitor system), one sparring ring per biome with a resident rival and its own backdrop, keepsakes from each zone as decor at home, the region map with fast travel.
 
+**The region, laid out so it makes sense** (height runs north, water runs south and east, and every exit matches the garden as it is drawn today):
+
+```
+                 [Snowy Ridge]            north: up the trail through the garden's treeline (the mountain's level 2 gate)
+                       |
+ [Woodland] ---- [Garden + house] ---- [Riverside]   west and east: along the garden's stream, which flows east
+                       |                              south: out of the garden gate in the bottom fence
+                [Crossroads Town] ---- [Town Park]    the library street, Moss's stall, the sparring ring; the fountain park to the east
+                       |
+                    [Cove]               later: the coast is the lowest ground, so it lies south
+```
+
+The existing mission worlds become zones: the library street joins Crossroads Town, the fountain park becomes the Town Park, and the mountain world becomes the Snowy Ridge. The worlds already have a ground, objects, a walk grid and a following camera (`scripts/art/worlds.py`, `components/world-scene.tsx`), so the zone engine extends them rather than starting again. The current missions map, which shows the land beyond the gate with the mountain at its top, is a stop-gap: in W2 it becomes the region map above, with the ridge north of the garden instead of beyond the gate.
+
 | Step | What                                                                                                                                                                                     | Codex                                                                                                                             | Claude                                                                                 | Status         |
 | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- | -------------- |
 | W1   | Zone engine: edge exits on the walk grid, spawn points, a slide between zones that respects reduced motion and never fires a stale walk, only the current zone and its neighbours loaded | **C19** zone graph and save: current zone, visited zones, migration, tests that every exit has a matching entry on the other side | The garden's north exit, the transition, the zone renderer generalised from the garden | next (with L2) |
