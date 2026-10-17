@@ -2,9 +2,11 @@ import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Image,
+  PixelRatio,
   Platform,
   Pressable,
   View,
+  useWindowDimensions,
   type ImageSourcePropType,
 } from 'react-native';
 import Animated, {
@@ -28,7 +30,9 @@ import { playPaused, useGame, type Player } from '@/lib/game';
 import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
 import {
   GARDEN,
+  gardenAnchors,
   gardenHotspots,
+  gardenWater,
   gardenObjects,
   gardenOrchard,
   gardenPlots,
@@ -56,11 +60,17 @@ import { GardenReactions, type GardenReaction, type Place } from '@/components/g
 import { GardenKeepsakeArt } from '@/components/garden-keepsakes';
 import { FrameShape, PixelTail, frameTones } from '@/components/pixel-frame';
 import { contentInset, type } from '@/lib/ui-tokens';
+import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
 
-import ground0 from '@/assets/garden/ground-0.png';
-import ground1 from '@/assets/garden/ground-1.png';
-import ground2 from '@/assets/garden/ground-2.png';
-import ground3 from '@/assets/garden/ground-3.png';
+import groundImg from '@/assets/garden/ground.png';
+import stream0 from '@/assets/garden/water-stream-0.png';
+import stream1 from '@/assets/garden/water-stream-1.png';
+import stream2 from '@/assets/garden/water-stream-2.png';
+import stream3 from '@/assets/garden/water-stream-3.png';
+import pond0 from '@/assets/garden/water-pond-0.png';
+import pond1 from '@/assets/garden/water-pond-1.png';
+import pond2 from '@/assets/garden/water-pond-2.png';
+import pond3 from '@/assets/garden/water-pond-3.png';
 import treeImg from '@/assets/garden/tree.png';
 import treeSmallImg from '@/assets/garden/tree_small.png';
 import treeAutumnImg from '@/assets/garden/tree_autumn.png';
@@ -114,8 +124,15 @@ type Action = keyof typeof gardenHotspots;
 const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
 const START: Point = GARDEN_START;
-const BED: Point = { x: 73, y: 76 };
-const groundFrames = [ground0, ground1, ground2, ground3];
+const BED: Point = gardenAnchors.bed;
+// One still ground image; only the water moves, as small four-frame overlays.
+const waterFrames: Record<(typeof gardenWater)[number]['id'], ImageSourcePropType[]> = {
+  stream: [stream0, stream1, stream2, stream3],
+  pond: [pond0, pond1, pond2, pond3],
+};
+const WATER_FRAMES = 4;
+// Near the top of the clearing a speech bubble opens below the companion instead.
+const TOP_FLIP = 80;
 
 // Ground line (feet) of a generated object, for effects that float above it.
 function footOf(id: string, fallback: number) {
@@ -134,22 +151,13 @@ function reactionBase(r: GardenReaction): number | undefined {
   return undefined; // water drops and pond ripples sit on the ground
 }
 
-const companionSpots: Point[] = [
-  { x: 74, y: 150 },
-  { x: 160, y: 104 },
-  { x: 30, y: 108 },
-];
+const companionSpots: readonly Point[] = gardenAnchors.companionSpots;
 
 const noMemories: readonly CompanionMemory[] = [];
 const keepsakeIntentions: readonly BreakIntention[] = ['rest', 'read', 'move', 'create'];
 // Keepsakes sit on the edges of existing places, leaving the clearing and
 // existing touch targets intact. All four use a 16-pixel native art frame.
-const keepsakeLocations: Record<BreakIntention, Point> = {
-  rest: { x: 130, y: 82 },
-  read: { x: 100, y: 50 },
-  move: { x: 154, y: 118 },
-  create: { x: 44, y: 100 },
-};
+const keepsakeLocations: Record<BreakIntention, Point> = gardenAnchors.keepsakes;
 
 // ---- crisp sprite --------------------------------------------------------
 function Sprite({
@@ -167,10 +175,10 @@ function Sprite({
       resizeMode="stretch"
       style={{
         position: 'absolute',
-        left: Math.round(rect.left),
-        top: Math.round(rect.top),
-        width: Math.round(rect.width),
-        height: Math.round(rect.height),
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
         zIndex: z,
       }}
     />
@@ -216,16 +224,22 @@ function Ambient({
   const flies = night
     ? Array.from({ length: 7 }, (_, i) => ({
         id: `firefly-${i}`,
-        x: 30 + ((i * 47) % 140) + Math.sin(t / 14 + i) * 8,
-        y: 70 + ((i * 29) % 80) + Math.cos(t / 17 + i * 2) * 6,
+        x:
+          gardenAnchors.fireflies.x +
+          ((i * 47) % gardenAnchors.fireflies.w) +
+          Math.sin(t / 14 + i) * 8,
+        y:
+          gardenAnchors.fireflies.y +
+          ((i * 29) % gardenAnchors.fireflies.h) +
+          Math.cos(t / 17 + i * 2) * 6,
         // A slow glow has no abrupt on/off frame or rapid flashing.
         opacity: 0.2 + ((Math.sin((t + i * 7) / 6) + 1) / 2) * 0.7,
       }))
     : [];
   const butterflies = day
     ? [0, 1].map((i) => ({
-        x: 142 + Math.cos(t / 18 + i * 3) * (16 + i * 6),
-        y: 112 + Math.sin(t / 11 + i * 2) * 9 - 6,
+        x: gardenAnchors.butterflies.x + Math.cos(t / 18 + i * 3) * (16 + i * 6),
+        y: gardenAnchors.butterflies.y + Math.sin(t / 11 + i * 2) * 9 - 6,
         flap: (t + i * 2) % 6 < 3,
         color: i ? '#F2D16B' : '#CFC4EC',
       }))
@@ -240,8 +254,8 @@ function Ambient({
             return {
               id: `smoke-${delay}`,
               age,
-              x: 52 + Math.floor(age / 6),
-              y: 29 - Math.floor(age / 2),
+              x: gardenAnchors.chimney.x + Math.floor(age / 6),
+              y: gardenAnchors.chimney.y - Math.floor(age / 2),
               opacity: Math.min(0.25, age / 12, Math.max(0, (22 - age) / 32)),
             };
           })
@@ -425,10 +439,30 @@ export function GardenWorld({
   const reduced = useReducedMotion();
   const appActive = useAppActive();
   const active = screenActive && appActive;
-  const scale = width / GARDEN.width;
+  // One art pixel is the game's shared pixel (coherence plan, step 6): the map is
+  // wider than a phone and the camera follows the companion across it.
+  const screen = useWindowDimensions();
+  const dpr = PixelRatio.get();
+  const scale = pixelScale(screen.width, dpr);
+  // Art is placed on whole device pixels, so every art pixel stays crisp.
+  const snap = (value: number) => snapToDevice(value, dpr);
+  const snapRect = (r: { left: number; top: number; width: number; height: number }) => ({
+    left: snap(r.left),
+    top: snap(r.top),
+    width: snap(r.width),
+    height: snap(r.height),
+  });
+  const worldWidth = Math.round(GARDEN.width * scale);
   // All placement goes through one projection (identity in flat view).
   const tilt = view === 'tilt';
-  const proj = makeProjection(view, width, GARDEN, tilt ? Math.round(width * 0.14) : 0);
+  const proj = makeProjection(view, worldWidth, GARDEN, tilt ? Math.round(worldWidth * 0.14) : 0);
+  // How far the map overhangs the window; negative centres a narrower map.
+  const spare = worldWidth - width;
+  /** The window's left edge in world pixels when it follows a point at screen x. */
+  const windowLeft = (sx: number) => {
+    'worklet';
+    return spare > 0 ? Math.min(spare, Math.max(0, sx - width / 2)) : spare / 2;
+  };
   const height = proj.height;
   const place: Place = (x, y, groundY = y) => lift(proj, x, y, groundY);
   const camera = !tilt && viewportHeight !== undefined;
@@ -437,8 +471,9 @@ export function GardenWorld({
   const cameraMin = camera ? -topBand : 0;
   const cameraMax = camera ? Math.max(cameraMin, height - viewHeight) : 0;
   const lifetimeMinutes = player.offline_seconds;
-  const petPx = Math.max(32, Math.round((32 * scale) / 32) * 32); // matches Pet's snapping
-  const companionPx = Math.max(32, Math.round(petPx / 2 / 32) * 32);
+  // Characters are drawn on the same grid as the world: 32 art pixels.
+  const petPx = 32 * scale;
+  const companionPx = 32 * scale;
   const home = napping ? BED : START;
   const px = useSharedValue(home.x);
   const py = useSharedValue(home.y);
@@ -509,10 +544,10 @@ export function GardenWorld({
     [px, py],
   );
 
-  // Water has four calm phases; the grass artwork holds each pose for two.
+  // Water has four calm phases; the grass is still.
   useEffect(() => {
     if (reduced || !active) return undefined;
-    const t = setInterval(() => setFrame((f) => (f + 1) % groundFrames.length), 400);
+    const t = setInterval(() => setFrame((f) => (f + 1) % WATER_FRAMES), 400);
     return () => clearInterval(t);
   }, [reduced, active]);
 
@@ -766,34 +801,44 @@ export function GardenWorld({
   // Speech follows the companion; it flips below when the pet is near the top.
   // One speech style (coherence plan, step 3): a paper frame on the interface grid with
   // a tail pointing at whoever speaks, and one bubble at a time.
-  const ui = Math.max(2, Math.round(scale));
+  const ui = scale;
   const [bubbleHeight, setBubbleHeight] = useState(0);
   const bubbleWidth = Math.min(width - 16, 232);
   const bubbleStyle = useAnimatedStyle(() => {
     const s = project(proj, px.value, py.value);
-    const left = Math.min(width - bubbleWidth - 8, Math.max(8, s.sx - bubbleWidth / 2));
+    const view0 = windowLeft(s.sx);
+    const left = Math.min(
+      view0 + width - bubbleWidth - 8,
+      Math.max(view0 + 8, s.sx - bubbleWidth / 2),
+    );
     const above = s.sy - petPx * 0.95 - bubbleHeight - 3 * ui;
-    const top = py.value < 70 ? s.sy + 3 * ui : above;
+    const top = py.value < TOP_FLIP ? s.sy + 3 * ui : above;
     return { transform: [{ translateX: Math.round(left) }, { translateY: Math.round(top) }] };
   });
   // The tail slides to stay over the companion when the bubble is held at the edge.
   const tailStyle = useAnimatedStyle(() => {
     const s = project(proj, px.value, py.value);
-    const left = Math.min(width - bubbleWidth - 8, Math.max(8, s.sx - bubbleWidth / 2));
+    const view0 = windowLeft(s.sx);
+    const left = Math.min(
+      view0 + width - bubbleWidth - 8,
+      Math.max(view0 + 8, s.sx - bubbleWidth / 2),
+    );
     const reach = bubbleWidth / 2 - 6 * ui;
     const dx = Math.max(-reach, Math.min(reach, s.sx - left - bubbleWidth / 2));
     return { transform: [{ translateX: Math.round(dx / ui) * ui }] };
   });
-  const tailDown = useAnimatedStyle(() => ({ opacity: py.value < 70 ? 0 : 1 }));
-  const tailUp = useAnimatedStyle(() => ({ opacity: py.value < 70 ? 1 : 0 }));
+  const tailDown = useAnimatedStyle(() => ({ opacity: py.value < TOP_FLIP ? 0 : 1 }));
+  const tailUp = useAnimatedStyle(() => ({ opacity: py.value < TOP_FLIP ? 1 : 0 }));
   const [tagWidth, setTagWidth] = useState<{ text: string; width: number } | null>(null);
 
-  // The camera keeps the companion a little above centre, clamped to the map.
+  // The camera keeps the companion a little above centre and, when the map is wider
+  // than the window, centred across it; both clamped to the map.
   const cameraStyle = useAnimatedStyle(() => {
-    if (!camera) return { transform: [{ translateY: 0 }] };
+    const x = windowLeft(project(proj, px.value, py.value).sx);
+    if (!camera) return { transform: [{ translateX: -Math.round(x) }, { translateY: 0 }] };
     const target = py.value * scale - viewHeight * 0.55;
     const y = Math.min(cameraMax, Math.max(cameraMin, target));
-    return { transform: [{ translateY: -Math.round(y) }] };
+    return { transform: [{ translateX: -Math.round(x) }, { translateY: -Math.round(y) }] };
   });
 
   function onGroundPress(e: {
@@ -861,7 +906,13 @@ export function GardenWorld({
   const companions = collectionOf(player)
     .filter((v) => v.befriendedAt !== null && v.id !== player.guardian)
     .slice(0, 3);
-  const pond = groundRect(proj, 16, 118, 52, 30);
+  const pond = groundRect(
+    proj,
+    gardenAnchors.pond.x,
+    gardenAnchors.pond.y,
+    gardenAnchors.pond.w,
+    gardenAnchors.pond.h,
+  );
   const keepsakes = gardenKeepsakes(memories);
   const pondWidth = Math.max(44, pond.width);
   const pondHeight = Math.max(44, pond.height);
@@ -884,13 +935,19 @@ export function GardenWorld({
       }}
     >
       <Animated.View
-        style={[{ position: 'absolute', left: 0, top: 0, width, height }, cameraStyle]}
+        style={[{ position: 'absolute', left: 0, top: 0, width: worldWidth, height }, cameraStyle]}
       >
         {camera && (
           <Image
             source={groundTop}
             resizeMode="stretch"
-            style={{ position: 'absolute', left: 0, top: -topBand, width, height: topBand }}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: -topBand,
+              width: worldWidth,
+              height: topBand,
+            }}
           />
         )}
         {tilt && (
@@ -901,9 +958,9 @@ export function GardenWorld({
               position: 'absolute',
               left: 0,
               // battle backdrop's horizon (native y 78 of 150) sits on the garden's far edge
-              top: Math.round(proj.horizon - 80 * (width / 216)),
-              width,
-              height: Math.round(150 * (width / 216)),
+              top: Math.round(proj.horizon - 80 * (worldWidth / 216)),
+              width: worldWidth,
+              height: Math.round(150 * (worldWidth / 216)),
             }}
           />
         )}
@@ -914,7 +971,7 @@ export function GardenWorld({
               position: 'absolute',
               left: 0,
               top: proj.bottom - Math.round(GARDEN.height * scale),
-              width,
+              width: worldWidth,
               height: Math.round(GARDEN.height * scale),
             },
             tilt && {
@@ -924,10 +981,32 @@ export function GardenWorld({
           ]}
         >
           <Image
-            source={groundFrames[reduced ? 0 : frame]}
+            source={groundImg}
             resizeMode="stretch"
-            style={{ width, height: Math.round(GARDEN.height * scale) }}
+            style={{ width: worldWidth, height: Math.round(GARDEN.height * scale) }}
           />
+          {gardenWater.map((water) => {
+            const r = snapRect({
+              left: water.x * scale,
+              top: water.y * scale,
+              width: water.w * scale,
+              height: water.h * scale,
+            });
+            return (
+              <Image
+                key={water.id}
+                source={waterFrames[water.id][reduced ? 0 : frame]}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: r.left,
+                  top: r.top,
+                  width: r.width,
+                  height: r.height,
+                }}
+              />
+            );
+          })}
           {destination && !napping && active && (
             <View
               style={{
@@ -951,7 +1030,7 @@ export function GardenWorld({
             position: 'absolute',
             left: 0,
             top: tilt ? proj.horizon : 0,
-            width,
+            width: worldWidth,
             height: tilt ? height - proj.horizon : height,
           }}
         />
@@ -959,7 +1038,9 @@ export function GardenWorld({
           // Upright billboard standing on its footprint (identity in flat view).
           const art = billboard(proj, o.x, o.y, o.w, o.h);
           const px1 = scale * art.f; // one art pixel on screen at this depth
-          const sprite = <Sprite key={o.id} source={sprites[o.sprite]} rect={art} z={o.y + o.h} />;
+          const sprite = (
+            <Sprite key={o.id} source={sprites[o.sprite]} rect={snapRect(art)} z={o.y + o.h} />
+          );
           if (!o.action)
             return (
               <View
@@ -972,19 +1053,17 @@ export function GardenWorld({
             );
           const action = o.action as Action;
           const isNewInteraction = action === 'read' || action === 'water' || action === 'lantern';
-          const artLeft = Math.round(art.left);
-          const artTop = Math.round(art.top);
-          const artWidth = Math.round(art.width);
-          const artHeight = Math.round(art.height);
+          const artLeft = snap(art.left);
+          const artTop = snap(art.top);
+          const artWidth = snap(art.width);
+          const artHeight = snap(art.height);
           const targetWidth = Math.max(44, artWidth);
           const targetHeight = Math.max(44, artHeight);
-          const targetLeft = Math.max(
-            0,
-            Math.min(width - targetWidth, artLeft - (targetWidth - artWidth) / 2),
+          const targetLeft = snap(
+            Math.max(0, Math.min(worldWidth - targetWidth, artLeft - (targetWidth - artWidth) / 2)),
           );
-          const targetTop = Math.max(
-            0,
-            Math.min(height - targetHeight, artTop - (targetHeight - artHeight) / 2),
+          const targetTop = snap(
+            Math.max(0, Math.min(height - targetHeight, artTop - (targetHeight - artHeight) / 2)),
           );
           // These small props need a hit area above a nearby guardian, while
           // their artwork keeps its ordinary depth and can still sit behind it.
@@ -1009,10 +1088,10 @@ export function GardenWorld({
                   pointerEvents="none"
                   style={{
                     position: 'absolute',
-                    left: imageLeft + Math.round(7 * px1),
-                    top: imageTop + Math.round(10 * px1),
-                    width: Math.round(3 * px1),
-                    height: Math.round(6 * px1),
+                    left: imageLeft + snap(7 * px1),
+                    top: imageTop + snap(11 * px1),
+                    width: snap(5 * px1),
+                    height: snap(10 * px1),
                     backgroundColor: '#71817A',
                     borderLeftWidth: Math.max(1, Math.round(px1)),
                     borderLeftColor: '#A6B69E',
@@ -1100,12 +1179,12 @@ export function GardenWorld({
               {stage >= 0 && (
                 <Sprite
                   source={growthImages[key]}
-                  rect={{
+                  rect={snapRect({
                     left: plot.x * scale,
                     top: (plot.y - (sh - plot.h)) * scale,
                     width: sw * scale,
                     height: sh * scale,
-                  }}
+                  })}
                   z={plot.y + plot.h}
                 />
               )}
@@ -1151,7 +1230,7 @@ export function GardenWorld({
               <Image
                 source={growthImages[key]}
                 resizeMode="stretch"
-                style={{ width: Math.round(sw * scale), height: Math.round(sh * scale) }}
+                style={{ width: snap(sw * scale), height: snap(sh * scale) }}
               />
             </Pressable>
           );
@@ -1164,12 +1243,12 @@ export function GardenWorld({
           .map((intention) => {
             const location = keepsakeLocations[intention];
             const foot = project(proj, location.x + 8, location.y + 16);
-            const size = Math.max(16, Math.round(scale * foot.f) * 16);
+            const size = snap(16 * scale * foot.f);
             const memory = keepsakes[intention];
             const box = {
               position: 'absolute' as const,
-              left: Math.round(foot.sx - size / 2),
-              top: Math.round(foot.sy - size),
+              left: snap(foot.sx - size / 2),
+              top: snap(foot.sy - size),
               width: size,
               height: size,
             };
@@ -1215,7 +1294,7 @@ export function GardenWorld({
             position: 'absolute',
             left: Math.max(
               0,
-              Math.min(width - pondWidth, pond.left - (pondWidth - pond.width) / 2),
+              Math.min(worldWidth - pondWidth, pond.left - (pondWidth - pond.width) / 2),
             ),
             top: Math.max(
               0,
@@ -1338,7 +1417,7 @@ export function GardenWorld({
               position: 'absolute',
               left: 0,
               top: camera ? -topBand : 0,
-              width,
+              width: worldWidth,
               height: height + (camera ? topBand : 0),
               zIndex: 900,
               backgroundColor: night
@@ -1381,7 +1460,7 @@ export function GardenWorld({
         <Ambient
           scale={scale}
           place={place}
-          width={width}
+          width={worldWidth}
           height={height}
           rain={grumpy && !napping}
           night={night}
@@ -1407,7 +1486,11 @@ export function GardenWorld({
           (() => {
             const at = project(proj, tag.x, tag.y);
             const measured = tagWidth?.text === tag.text ? tagWidth.width : 0;
-            const left = Math.max(4, Math.min(width - measured - 4, at.sx - measured / 2));
+            const view0 = windowLeft(at.sx);
+            const left = Math.max(
+              view0 + 4,
+              Math.min(view0 + width - measured - 4, at.sx - measured / 2),
+            );
             const reach = Math.max(0, measured / 2 - 5 * ui);
             const tail = Math.max(-reach, Math.min(reach, at.sx - left - measured / 2));
             const tagHeight = type.label.lineHeight + 2 * contentInset(ui);
@@ -1484,7 +1567,8 @@ export function GardenWorld({
           (() => {
             const at = project(proj, feedback.x, feedback.y);
             const w = Math.min(width - 16, 216);
-            const left = Math.max(8, Math.min(width - w - 8, at.sx - w / 2));
+            const view0 = windowLeft(at.sx);
+            const left = Math.max(view0 + 8, Math.min(view0 + width - w - 8, at.sx - w / 2));
             const below = feedback.kind === 'pat' || feedback.y < 90;
             const reach = w / 2 - 6 * ui;
             const tail = Math.max(-reach, Math.min(reach, at.sx - left - w / 2));

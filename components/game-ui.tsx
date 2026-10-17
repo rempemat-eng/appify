@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
+  PixelRatio,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -117,8 +118,8 @@ export function PixelButton({
       <View
         style={{
           minHeight: small ? 44 : 52,
-          paddingHorizontal: small ? 3 * u : 6 * u,
-          paddingVertical: 3 * u,
+          paddingHorizontal: small ? 4 * u : 9 * u,
+          paddingVertical: 4 * u,
           alignItems: 'center',
           justifyContent: 'center',
           transform: [{ translateY: pressed && !disabled ? depth : 0 }],
@@ -225,8 +226,11 @@ export function Pet({
   const canPose = !!gardenPose && active && !walking && !sleeping && !slumped;
   const canWalk = canAnimate && walking && !sleeping && !slumped;
   const canIdle = canAnimate && bob && !sleeping && !walking && !slumped && !canPose;
-  const scaledSize = Math.max(32, Math.round(size / 32) * 32);
-  const pixelStep = scaledSize / 32;
+  // One art pixel is a whole number of device pixels (coherence plan, step 6), so a
+  // garden companion sits on the same grid as the world around it.
+  const dpr = PixelRatio.get();
+  const pixelStep = Math.max(1, Math.round((size / 32) * dpr)) / dpr;
+  const scaledSize = pixelStep * 32;
   const y = useSharedValue(0);
   const x = useSharedValue(0);
   const patY = useSharedValue(0);

@@ -87,7 +87,7 @@ export function HabitCard({
       : card.effect
   ).replace('⚡', 'energy');
   const face = (
-    <View style={{ minHeight: 168, padding: 2 * u, marginBottom: u }}>
+    <View style={{ minHeight: 168, padding: 3 * u, marginBottom: u }}>
       <FrameFill
         depth={1}
         outline={

@@ -16,19 +16,30 @@ import {
   type,
 } from './ui-tokens';
 
-for (const u of [2, 3, 4]) {
+// the units pixelScale produces: 1x desktop and 2x phones up to 3x phones and retina desktops
+for (const u of [1, 4 / 3, 1.5, 1.6, 2]) {
+  const whole = (value: number) => Math.abs(value / u - Math.round(value / u)) < 1e-9;
   // a bar's controls sit as far from its top and bottom as from its sides
-  assert.equal((hudBarHeight(u) - u - barControl(u)) / 2, contentInset(u), `HUD inset at ${u}`);
-  assert.equal((hotbarHeight(u) - u - hotbarSlot(u)) / 2, contentInset(u), `hotbar inset at ${u}`);
+  assert.ok(
+    Math.abs((hudBarHeight(u) - u - barControl(u)) / 2 - contentInset(u)) < 1e-9,
+    `HUD inset at ${u}`,
+  );
+  assert.ok(
+    Math.abs((hotbarHeight(u) - u - hotbarSlot(u)) / 2 - contentInset(u)) < 1e-9,
+    `hotbar inset at ${u}`,
+  );
   // siblings sit one inset apart, inside a frame's own edge
-  assert.equal(siblingGap(u), space.inset * u);
-  assert.equal(contentInset(u) - siblingGap(u), space.border * u, 'content clears the frame edge');
+  assert.ok(Math.abs(siblingGap(u) - space.inset * u) < 1e-9);
+  assert.ok(
+    Math.abs(contentInset(u) - siblingGap(u) - space.border * u) < 1e-9,
+    'content clears the frame edge',
+  );
   // sheets are roomier than bars, and every inset lands on the pixel grid
   assert.ok(panelInset(u) > contentInset(u));
-  for (const value of [contentInset(u), panelInset(u), siblingGap(u)])
-    assert.equal(value % u, 0, 'insets are whole pixels');
+  for (const value of [contentInset(u), panelInset(u), siblingGap(u), barControl(u), hotbarSlot(u)])
+    assert.ok(whole(value), 'insets and controls are whole art pixels');
   // hotbar slots are full touch targets on their own
-  assert.ok(hotbarSlot(u) >= 44, `hotbar slot at ${u} is a 44 px target`);
+  assert.ok(hotbarSlot(u) >= 44 - 1e-9, `hotbar slot at ${u} is a 44 px target`);
 }
 const sizes = Object.values(type).map((style) => style.fontSize);
 assert.deepEqual(
@@ -39,5 +50,5 @@ assert.deepEqual(
 for (const [name, style] of Object.entries(type))
   assert.equal(style.lineHeight % 4, 0, `${name} line height is a multiple of 4`);
 console.log(
-  'PASS: interface tokens keep equal insets on every side of bars and sheets at units 2-4, whole-pixel spacing, 44 px hotbar slots and a descending type scale.',
+  'PASS: interface tokens keep equal insets on every side of bars and sheets at every shared-grid unit, whole art-pixel spacing, 44 px hotbar slots and a descending type scale.',
 );

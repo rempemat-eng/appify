@@ -149,6 +149,7 @@ vm.runInNewContext(compile(petFunction.getText(uiTree)), {
   Rect: 'Rect',
   Pressable: 'Pressable',
   View: 'View',
+  PixelRatio: { get: () => 1 },
   PixelProp: 'PixelProp',
   useReducedMotion: () => reduced,
   c: cozy,

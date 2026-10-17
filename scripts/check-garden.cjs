@@ -12,6 +12,8 @@
  * No app files, saved state, package files, or network services are changed.
  */
 const fs = require('node:fs');
+// The window the garden is rendered into (width in CSS px and device pixel ratio).
+const screen = { width: 384, dpr: 2 };
 const path = require('node:path');
 const vm = require('node:vm');
 const assert = require('node:assert/strict');
@@ -197,6 +199,9 @@ const deps = {
   'react-native': {
     Image: 'Image',
     Platform: { OS: 'web' },
+    // The garden reads the window width and density for the shared pixel scale.
+    PixelRatio: { get: () => screen.dpr },
+    useWindowDimensions: () => ({ width: screen.width, height: 800 }),
     Pressable: 'Pressable',
     View: 'View',
     AccessibilityInfo: { announceForAccessibility: (text) => announcements.push(text) },
@@ -268,6 +273,16 @@ for (const name of [
   evaluate(`lib/${name}.ts`, domainModule);
   deps[`@/lib/${name}`] = domainModule.exports;
 }
+deps['@/lib/layout'] = { gameLayout: { maxWidth: 640 } };
+const scaleModule = { exports: {} };
+evaluate('lib/pixel-scale.ts', scaleModule);
+deps['@/lib/pixel-scale'] = scaleModule.exports;
+const { pixelScale, snapToDevice } = scaleModule.exports;
+const snap = (value) => snapToDevice(value, screen.dpr);
+// The garden's world width at a window width (the map is wider than a phone).
+const worldWidthAt = (width) => Math.round(map.GARDEN.width * pixelScale(width, screen.dpr));
+const START = map.gardenAnchors.start;
+const EDGE = { min: 16, max: map.GARDEN.width - 16 };
 const pathModule = { exports: {} };
 evaluate('lib/garden-path.ts', pathModule);
 deps['@/lib/garden-path'] = pathModule.exports;
@@ -289,6 +304,7 @@ function render(napping = false, options = {}) {
     dirty = false;
     index = 0;
     effects = [];
+    screen.width = options.width ?? 384;
     tree = mod.exports.GardenWorld({
       width: options.width ?? 384,
       player: game.player,
@@ -359,11 +375,11 @@ const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 // Expected arrival points come from the generated map, not fixed coordinates.
 const arrival = (action) => {
-  const route = pathModule.exports.findPath({ x: 96, y: 112 }, map.gardenHotspots[action]);
+  const route = pathModule.exports.findPath(START, map.gardenHotspots[action]);
   const last = route[route.length - 1];
   return [last.x, last.y];
 };
-const safeY = { min: 40, max: map.GARDEN.fenceY - 4 };
+const safeY = { min: 48, max: map.GARDEN.fenceY - 4 };
 let worldTree = setup();
 press(worldTree, 'arena');
 let horizontalSequence = shared[0].animation;
@@ -555,12 +571,13 @@ for (const viewMode of ['flat', 'tilt']) {
       worldTree = setup(false, { width, view: viewMode });
       const elements = allElements(worldTree);
       const height = worldTree.props.style.height;
-      const scale = width / map.GARDEN.width;
+      const scale = pixelScale(width, screen.dpr);
+      const worldWidth = worldWidthAt(width);
       const expectedProjection = projectionModule.exports.makeProjection(
         viewMode,
-        width,
+        worldWidth,
         map.GARDEN,
-        viewMode === 'tilt' ? Math.round(width * 0.14) : 0,
+        viewMode === 'tilt' ? Math.round(worldWidth * 0.14) : 0,
       );
       for (const object of map.gardenObjects.filter((gardenObject) => gardenObject.action)) {
         const target = elements.find(
@@ -586,17 +603,21 @@ for (const viewMode of ['flat', 'tilt']) {
         check(
           box.left >= 0 &&
             box.top >= 0 &&
-            box.left + box.width <= width &&
+            box.left + box.width <= worldWidth &&
             box.top + box.height <= height,
           `${platform}/${width}/${object.id}: target stays in scene`,
         );
         check(
-          (split ? art.left : box.left + art.left) ===
-            Math.round(viewMode === 'flat' ? object.x * scale : expectedArt.left) &&
-            (split ? art.top : box.top + art.top) ===
-              Math.round(viewMode === 'flat' ? object.y * scale : expectedArt.top) &&
-            art.width === Math.round(viewMode === 'flat' ? object.w * scale : expectedArt.width) &&
-            art.height === Math.round(viewMode === 'flat' ? object.h * scale : expectedArt.height),
+          Math.abs(
+            (split ? art.left : box.left + art.left) -
+              snap(viewMode === 'flat' ? object.x * scale : expectedArt.left),
+          ) < 1e-9 &&
+            Math.abs(
+              (split ? art.top : box.top + art.top) -
+                snap(viewMode === 'flat' ? object.y * scale : expectedArt.top),
+            ) < 1e-9 &&
+            art.width === snap(viewMode === 'flat' ? object.w * scale : expectedArt.width) &&
+            art.height === snap(viewMode === 'flat' ? object.h * scale : expectedArt.height),
           `${viewMode}/${platform}/${width}/${object.id}: art follows its actual projection, preserving flat identity`,
         );
         if (split)
@@ -613,7 +634,7 @@ for (const viewMode of ['flat', 'tilt']) {
           pond.height >= 44 &&
           pond.left >= 0 &&
           pond.top >= 0 &&
-          pond.left + pond.width <= width &&
+          pond.left + pond.width <= worldWidth &&
           pond.top + pond.height <= height,
         `${viewMode}/${platform}/${width}/pond: target meets size and bounds`,
       );
@@ -630,13 +651,13 @@ const walkable = (x, y) =>
   y < rows &&
   x >= 0 &&
   x < cols &&
-  x * 4 + 2 >= 20 &&
-  x * 4 + 2 <= 172 &&
-  y * 4 + 2 >= 40 &&
+  x * 4 + 2 >= EDGE.min &&
+  x * 4 + 2 <= EDGE.max &&
+  y * 4 + 2 >= 48 &&
   y * 4 + 2 <= map.GARDEN.fenceY - 4 &&
   map.gardenWalk[y][x] === '.';
 const cellKey = (x, y) => `${x},${y}`;
-const queue = [[24, 28]]; // START(96,112) / 4px cells
+const queue = [[Math.floor(START.x / 4), Math.floor(START.y / 4)]]; // START in 4px cells
 const reached = new Set([cellKey(...queue[0])]);
 for (let cursor = 0; cursor < queue.length; cursor++) {
   const [x, y] = queue[cursor];
@@ -676,26 +697,34 @@ for (const [action, spot] of Object.entries(map.gardenHotspots)) {
     ),
     `${action}: actual hotspot remains reachable`,
   );
-  const route = mod.exports.findPath({ x: 96, y: 112 }, spot);
+  const route = mod.exports.findPath(START, spot);
   check(
     route.length > 0 &&
       route.every(
-        (point) => point.x >= 20 && point.x <= 172 && point.y >= safeY.min && point.y <= safeY.max,
+        (point) =>
+          point.x >= EDGE.min &&
+          point.x <= EDGE.max &&
+          point.y >= safeY.min &&
+          point.y <= safeY.max,
       ),
     `${action}: actual path uses safe actor cells`,
   );
 }
 for (const edge of [
   { x: 0, y: 0 },
-  { x: 192, y: 0 },
+  { x: map.GARDEN.width, y: 0 },
   { x: 0, y: map.GARDEN.height },
-  { x: 192, y: map.GARDEN.height },
+  { x: map.GARDEN.width, y: map.GARDEN.height },
 ]) {
-  const route = mod.exports.findPath({ x: 96, y: 112 }, edge);
+  const route = mod.exports.findPath(START, edge);
   check(
     route.length > 0 &&
       route.every(
-        (point) => point.x >= 20 && point.x <= 172 && point.y >= safeY.min && point.y <= safeY.max,
+        (point) =>
+          point.x >= EDGE.min &&
+          point.x <= EDGE.max &&
+          point.y >= safeY.min &&
+          point.y <= safeY.max,
       ),
     'edge click resolves to reachable safe actor endpoints',
   );
@@ -984,7 +1013,7 @@ function renderReaction(reaction, reduce = false, projection = flatProjection) {
   return result;
 }
 for (const kind of ['read', 'water', 'pond', 'pat', 'lantern']) {
-  const reaction = { kind, id: 1, x: 96, y: 112 };
+  const reaction = { kind, id: 1, x: START.x, y: START.y };
   resetChild();
   let child = renderReaction(reaction);
   check(
@@ -1036,10 +1065,17 @@ const groundAsset = (tree) =>
   allElements(tree).find(
     (element) =>
       element.type === 'Image' &&
-      element.props.source?.asset?.startsWith('@/assets/garden/ground-'),
+      element.props.source?.asset?.startsWith('@/assets/garden/water-stream-'),
   ).props.source.asset;
 const groundClock = [...intervals.values()].find((timer) => timer.ms === 400);
-check(Boolean(groundClock), 'ground uses its single400msclock');
+check(Boolean(groundClock), 'water uses its single 400 ms clock');
+check(
+  allElements(worldTree).some(
+    (element) =>
+      element.type === 'Image' && element.props.source?.asset === '@/assets/garden/ground.png',
+  ),
+  'the ground is one still image under the water overlays',
+);
 const frames = [groundAsset(worldTree)];
 for (let i = 0; i < 4; i++) {
   groundClock.fn();
@@ -1048,7 +1084,7 @@ for (let i = 0; i < 4; i++) {
 }
 check(
   new Set(frames.slice(0, 4)).size === 4 && frames[4] === frames[0],
-  'ground cycles allfouractualassets thenreturns to first',
+  'water cycles all four actual frames, then returns to the first',
 );
 groundClock.fn();
 render();
@@ -1057,15 +1093,19 @@ worldTree = render();
 check(
   groundAsset(worldTree) === frames[0] &&
     ![...intervals.values()].some((timer) => timer.ms === 400),
-  'reduced motion immediately shows ground0 and clears ground clock',
+  'reduced motion immediately shows the first water frame and clears the clock',
 );
 const groundChecks = count - groundStart;
 const coordinateStart = count;
 const groundElement = (tree) =>
   find(tree, `Your garden. Tap to walk ${game.player.pet_name} around.`);
 worldTree = setup();
-groundElement(worldTree).props.onPress({ nativeEvent: { offsetX: 240, offsetY: 264 } });
-const domExpected = mod.exports.findPath({ x: 96, y: 112 }, { x: 120, y: 132 });
+const TAP = { x: 160, y: 236 }; // on the main path, south of the plaza
+const tapScale = pixelScale(384, screen.dpr);
+groundElement(worldTree).props.onPress({
+  nativeEvent: { offsetX: TAP.x * tapScale, offsetY: TAP.y * tapScale },
+});
+const domExpected = mod.exports.findPath(START, TAP);
 check(
   same(
     shared[0].animation.steps.map((step) => step.to),
@@ -1087,9 +1127,9 @@ check(
 );
 worldTree = setup();
 groundElement(worldTree).props.onPress({
-  nativeEvent: { locationX: 0, locationY: 0, offsetX: 240, offsetY: 264 },
+  nativeEvent: { locationX: 0, locationY: 0, offsetX: TAP.x * tapScale, offsetY: TAP.y * tapScale },
 });
-const nativeExpected = mod.exports.findPath({ x: 96, y: 112 }, { x: 0, y: 0 });
+const nativeExpected = mod.exports.findPath(START, { x: 0, y: 0 });
 check(
   same(
     shared[0].animation.steps.map((step) => step.to),
@@ -1141,14 +1181,8 @@ check(
   'missing ground coordinates do not clear existing reaction or feedback',
 );
 for (const [from, to] of [
-  [
-    { x: NaN, y: 112 },
-    { x: 120, y: 132 },
-  ],
-  [
-    { x: 96, y: 112 },
-    { x: Infinity, y: 132 },
-  ],
+  [{ x: NaN, y: START.y }, TAP],
+  [START, { x: Infinity, y: TAP.y }],
   [
     { x: 96, y: -Infinity },
     { x: 120, y: 132 },
@@ -1162,14 +1196,14 @@ for (const [from, to] of [
 for (const viewportWidth of [320, 390, 430, 640]) {
   const tiltProjection = projectionModule.exports.makeProjection(
     'tilt',
-    viewportWidth,
+    worldWidthAt(viewportWidth),
     map.GARDEN,
-    Math.round(viewportWidth * 0.14),
+    Math.round(worldWidthAt(viewportWidth) * 0.14),
   );
   for (const coordinateKind of ['offset', 'location']) {
     // Use a cell centre: an exact grid boundary is ambiguous after floating-point
     // project/unproject round trips and can select either neighbouring cell.
-    const nativePoint = { x: 122, y: 134 };
+    const nativePoint = { x: 162, y: 238 };
     const projectedPoint = projectionModule.exports.project(
       tiltProjection,
       nativePoint.x,
@@ -1293,12 +1327,7 @@ const targetSet = (tree) =>
     .filter((node) => node.type === 'Pressable')
     .map((node) => `${node.key ?? ''}|${node.props.accessibilityLabel ?? ''}`)
     .sort();
-const keepsakePlaces = {
-  rest: { x: 130, y: 82 },
-  read: { x: 100, y: 50 },
-  move: { x: 154, y: 118 },
-  create: { x: 44, y: 100 },
-};
+const keepsakePlaces = map.gardenAnchors.keepsakes;
 worldTree = setup();
 check(keepsakeElements(worldTree).length === 0, 'no kept memories means no world ornaments');
 for (const viewMode of ['flat', 'tilt']) {
@@ -1318,9 +1347,9 @@ for (const viewMode of ['flat', 'tilt']) {
     );
     const expectedProjection = projectionModule.exports.makeProjection(
       viewMode,
-      sceneWidth,
+      worldWidthAt(sceneWidth),
       map.GARDEN,
-      viewMode === 'tilt' ? Math.round(sceneWidth * 0.14) : 0,
+      viewMode === 'tilt' ? Math.round(worldWidthAt(sceneWidth) * 0.14) : 0,
     );
     for (const [intention, location] of Object.entries(keepsakePlaces)) {
       const ornament = ornaments.find(
@@ -1340,13 +1369,11 @@ for (const viewMode of ['flat', 'tilt']) {
         `${viewMode}/${sceneWidth}/${intention}: ornament is passive and hidden from accessibility`,
       );
       check(
-        Number.isInteger(box.width) &&
-          box.width >= 16 &&
-          box.width % 16 === 0 &&
+        box.width === snap(16 * pixelScale(sceneWidth, screen.dpr) * expectedFoot.f) &&
           box.height === box.width &&
-          box.left === Math.round(expectedFoot.sx - box.width / 2) &&
-          box.top === Math.round(expectedFoot.sy - box.height),
-        `${viewMode}/${sceneWidth}/${intention}: integer artwork stays anchored to its actual projected feet`,
+          box.left === snap(expectedFoot.sx - box.width / 2) &&
+          box.top === snap(expectedFoot.sy - box.height),
+        `${viewMode}/${sceneWidth}/${intention}: 16-pixel artwork on the shared grid stays anchored to its actual projected feet`,
       );
       check(
         box.left >= 0 &&
@@ -1497,9 +1524,9 @@ for (const [identity, motifColor] of [
     const identityReaction = {
       id: 1,
       kind: 'read',
-      x: 84,
-      y: 70,
-      actor: { x: 86, y: 70 },
+      x: map.gardenHotspots.read.x,
+      y: map.gardenHotspots.read.y,
+      actor: { x: map.gardenHotspots.read.x + 2, y: map.gardenHotspots.read.y },
       signature,
     };
     resetChild();

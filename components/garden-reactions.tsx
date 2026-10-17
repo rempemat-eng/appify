@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Image, View } from 'react-native';
 import frogImg from '@/assets/garden/frog.png';
+import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
 
 export type GardenSignature = {
   family: 'REST' | 'ROAM' | 'FOCUS';
@@ -28,19 +29,13 @@ type Pixel = {
   groundY?: number;
 };
 
-const FLOWERS = [
-  { x: 130, y: 115 },
-  { x: 136, y: 115 },
-  { x: 142, y: 115 },
-  { x: 148, y: 115 },
-  { x: 154, y: 115 },
-  { x: 130, y: 121 },
-  { x: 142, y: 121 },
-  { x: 154, y: 121 },
-  { x: 152, y: 143 },
-  { x: 158, y: 143 },
-  { x: 164, y: 143 },
-];
+// Every effect is placed from the generated map, so a re-laid garden carries it along.
+const FLOWERS = gardenAnchors.flowers;
+const BOOK = gardenAnchors.book;
+const RIPPLE = gardenAnchors.pondRipple;
+const PAD = gardenAnchors.frogPad;
+const can = gardenObjects.find((o) => o.id === 'watering-can');
+const SPOUT = can ? { x: can.x + can.w - 2, y: can.y + 3 } : { x: 0, y: 0 };
 
 // Eight stepped frames per second preserve the pixel silhouettes. Each reaction
 // has a short lead-in, one action, then a quiet settle instead of a looping burst.
@@ -112,8 +107,8 @@ export function GardenReactions({
   if (reaction.kind === 'water') {
     // A tiny reflection tips the eye toward the can before the shower begins.
     if (!reduced && t < 3) {
-      add(184, 101, '#D7F1D9', 1, 2);
-      add(183, 102, '#B6DACC', 3);
+      add(SPOUT.x, SPOUT.y, '#D7F1D9', 1, 2);
+      add(SPOUT.x - 1, SPOUT.y + 1, '#B6DACC', 3);
     }
     FLOWERS.forEach(({ x, y }, i) => {
       const age = t - 3 - (i % 4) * 2;
@@ -145,31 +140,32 @@ export function GardenReactions({
     // The right page lifts, crosses its crease edge-on, then lies on the left.
     const turn = Math.max(0, Math.min(8, t - 3));
     const page = reduced || t > 11 ? 3 : [3, 3, 2, 1, 1, 1, 2, 3, 3][turn];
-    const left = reduced || t > 7 ? 109 - page : 110;
+    const { x: bx, y: by } = BOOK; // the book's spine on the bench
+    const left = reduced || t > 7 ? bx - page : bx + 1;
     const lifted = !reduced && t >= 3 && t <= 10;
-    add(left, lifted ? 49 : 51, '#FFF8DC', page, lifted ? 4 : 3);
-    add(left, lifted ? 48 : 50, '#D6B98A', page);
-    if (lifted && page > 1) add(left + page - 1, 50, '#D9C797', 1, 3);
-    add(109, 51, '#8A7652', 1, 4);
-    if (!lifted || turn > 6) add(106, 52, '#C3AD82', 2);
+    add(left, by + (lifted ? -2 : 0), '#FFF8DC', page, lifted ? 4 : 3);
+    add(left, by + (lifted ? -3 : -1), '#D6B98A', page);
+    if (lifted && page > 1) add(left + page - 1, by - 1, '#D9C797', 1, 3);
+    add(bx, by, '#8A7652', 1, 4);
+    if (!lifted || turn > 6) add(bx - 3, by + 1, '#C3AD82', 2);
     const ribbon = !reduced && t >= 11 && t < 15 ? 1 : 0;
-    add(110 + ribbon, 55, '#9B79B0', 1, 3);
-    add(111 + ribbon, 57, '#D5BCE5');
+    add(bx + 1 + ribbon, by + 4, '#9B79B0', 1, 3);
+    add(bx + 2 + ribbon, by + 6, '#D5BCE5');
   }
 
   if (reaction.kind === 'pond') {
     // One landing sends out two rings. Both expand and fade without resetting.
-    if (reduced) ring(34, 133, 7, 0.8);
+    if (reduced) ring(RIPPLE.x, RIPPLE.y, 7, 0.8);
     else {
       for (const delay of [8, 13]) {
         const age = t - delay;
         if (age >= 0 && age <= 16)
-          ring(34, 133, 3 + Math.floor(age * 0.65), Math.max(0, 0.85 - age / 20));
+          ring(RIPPLE.x, RIPPLE.y, 3 + Math.floor(age * 0.65), Math.max(0, 0.85 - age / 20));
       }
       if (t >= 8 && t < 11) {
         const reach = t - 7;
-        add(28 - reach, 131 - reach, '#C4E4DC', 1, 2);
-        add(40 + reach, 132 - reach, '#C4E4DC', 1, 2);
+        add(RIPPLE.x - 6 - reach, RIPPLE.y - 2 - reach, '#C4E4DC', 1, 2);
+        add(RIPPLE.x + 6 + reach, RIPPLE.y - 1 - reach, '#C4E4DC', 1, 2);
       }
     }
   }
@@ -259,10 +255,10 @@ export function GardenReactions({
           <View
             style={{
               position: 'absolute',
-              left: Math.round(place(30, 132).sx),
-              top: Math.round(place(30, 132).sy),
-              width: Math.round(8 * scale * place(30, 132).f),
-              height: Math.max(1, Math.round(scale * place(30, 132).f)),
+              left: Math.round(place(PAD.x - 4, PAD.y + 2).sx),
+              top: Math.round(place(PAD.x - 4, PAD.y + 2).sy),
+              width: Math.round(8 * scale * place(PAD.x - 4, PAD.y + 2).f),
+              height: Math.max(1, Math.round(scale * place(PAD.x - 4, PAD.y + 2).f)),
               backgroundColor: '#284C5E',
               opacity: frogHop ? 0.25 : 0.45,
             }}
@@ -272,10 +268,10 @@ export function GardenReactions({
             resizeMode="stretch"
             style={{
               position: 'absolute',
-              left: Math.round(place(28, 124 + frogDip - frogHop, 134).sx),
-              top: Math.round(place(28, 124 + frogDip - frogHop, 134).sy),
-              width: Math.round(12 * scale * place(28, 134).f),
-              height: Math.round(10 * scale * place(28, 134).f),
+              left: Math.round(place(PAD.x - 6, PAD.y - 7 + frogDip - frogHop, PAD.y + 4).sx),
+              top: Math.round(place(PAD.x - 6, PAD.y - 7 + frogDip - frogHop, PAD.y + 4).sy),
+              width: Math.round(12 * scale * place(PAD.x - 6, PAD.y + 4).f),
+              height: Math.round(9 * scale * place(PAD.x - 6, PAD.y + 4).f),
             }}
           />
         </>

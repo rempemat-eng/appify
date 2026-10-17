@@ -3,8 +3,8 @@ import type { TextStyle } from 'react-native';
 /**
  * Interface tokens (docs/vision/coherence-plan.md, step 3).
  *
- * Spacing is in pixel units (one garden pixel on screen, `usePixelUnit()`), so a
- * density change carries every bar, panel and button along with the world.
+ * Spacing is in art pixels (the game's one pixel grid, `usePixelUnit()`, about 1.33 CSS
+ * px on a 3x phone), so every bar, panel and button sits on the same grid as the world.
  *
  * The symmetry rule: every bar, panel and slot has ONE inset, used on all four
  * sides and between its children. Nothing touches a frame's edge.
@@ -13,9 +13,9 @@ export const space = {
   /** a frame's own edge: the outline plus the bevel */
   border: 2,
   /** the one inset inside every bar, panel and slot, and the gap between siblings */
-  inset: 2,
+  inset: 3,
   /** the roomier inset inside sheets and panels that hold reading text */
-  panel: 4,
+  panel: 6,
 } as const;
 
 /** Where content starts inside a frame, measured from its outer edge. */
@@ -28,15 +28,16 @@ export const panelGap = (u: number) => space.panel * u;
 export const siblingGap = (u: number) => space.inset * u;
 
 /** One square control size shared by bars: portrait, menu button, stat chips. */
-export const barControl = (u: number) => 18 * u;
-/** Hotbar slot height (icon plus label, at least a 44 px target on phones). */
-export const hotbarSlot = (u: number) => 24 * u;
+export const barControl = (u: number) => 27 * u;
+/** Hotbar slot height (icon plus label): 36 art pixels, and never under a 44 px target. */
+export const hotbarSlot = (u: number) => Math.max(36, Math.ceil(44 / u)) * u;
 
-/** Icon sizes on the 16x16 icon grid: chips and inline, tabs and slots, feature buttons. */
+/** Icons are drawn on a 16x16 grid and shown at 1x on the shared grid (2x for a feature
+ * button), so an icon's pixels are the world's pixels. */
 export const iconSize = {
-  small: (u: number) => 8 * u,
-  medium: (u: number) => 12 * u,
-  large: (u: number) => 16 * u,
+  small: (u: number) => 16 * u,
+  medium: (u: number) => 16 * u,
+  large: (u: number) => 32 * u,
 } as const;
 
 /** HUD bar outer height, including its one-unit raised base. */

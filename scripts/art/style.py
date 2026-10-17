@@ -387,3 +387,53 @@ def close_outline(cv: Canvas, ink=INK, dark_below: float = 70.0) -> Canvas:
     for (x, y), col in retint.items():
         cv.px[x, y] = col
     return cv
+
+
+def finalize(cv: Canvas, ink=INK, keep_size: bool = False, name: str = 'sprite') -> Canvas:
+    """The sprite contract (docs/vision/art-pipeline.md): nothing is ever cut off.
+
+    1. Art may stray past its nominal canvas into the padding; if it reaches the
+       padding's own edge, drawing really was cut off and this raises.
+    2. The art is copied onto a canvas with one free pixel on every side, so the
+       outline always has room, and given its complete tinted outline.
+    3. It is trimmed to the outlined art. ox, oy say where the trimmed top-left sits
+       relative to the nominal origin; placement adds them.
+    keep_size keeps the nominal canvas (growth stages and decals anchored to a fixed
+    box): the art must then fit inside it with room for its outline, except along
+    the bottom row, where things stand on the ground.
+    """
+    p = cv.pad
+    full_w, full_h = cv.w + 2 * p, cv.h + 2 * p
+    solid = [(x - p, y - p) for y in range(full_h) for x in range(full_w) if cv.get(x - p, y - p)[3]]
+    if not solid:
+        raise ValueError(f'{name}: empty sprite')
+    xs = [x for x, _ in solid]
+    ys = [y for _, y in solid]
+    x0, x1, y0, y1 = min(xs), max(xs), min(ys), max(ys)
+    if p and (x0 <= -p or y0 <= -p or x1 >= cv.w + p - 1 or y1 >= cv.h + p - 1):
+        raise ValueError(f'{name}: art reaches the edge of its padding and was cut off')
+    if keep_size:
+        if x0 < 1 or y0 < 1 or x1 > cv.w - 2 or y1 > cv.h - 1:
+            raise ValueError(f'{name}: art leaves no room for its outline in a fixed {cv.w}x{cv.h} box '
+                             f'(art spans x {x0}..{x1}, y {y0}..{y1})')
+        out = Canvas(cv.w, cv.h)
+        for (x, y) in solid:
+            out.px[x, y] = cv.get(x, y)
+        close_outline(out, ink)
+        return out
+    out = Canvas(x1 - x0 + 3, y1 - y0 + 3)
+    for (x, y) in solid:
+        out.px[x - x0 + 1, y - y0 + 1] = cv.get(x, y)
+    close_outline(out, ink)
+    # trim to the outlined art
+    opaque = [(x, y) for y in range(out.h) for x in range(out.w) if out.px[x, y][3]]
+    tx0 = min(x for x, _ in opaque)
+    ty0 = min(y for _, y in opaque)
+    tx1 = max(x for x, _ in opaque)
+    ty1 = max(y for _, y in opaque)
+    final = Canvas(tx1 - tx0 + 1, ty1 - ty0 + 1)
+    for (x, y) in opaque:
+        final.px[x - tx0, y - ty0] = out.px[x, y]
+    final.ox = x0 - 1 + tx0
+    final.oy = y0 - 1 + ty0
+    return final

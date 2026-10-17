@@ -155,7 +155,7 @@ export function CozySheet({
         return false;
       }}
       onTouchStart={skipAnimation}
-      style={[{ padding: 3 * u }, outer, motion]}
+      style={[{ padding: 4 * u }, outer, motion]}
     >
       <FrameShape tone={frameTones.wood} unit={u} />
       <View

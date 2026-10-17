@@ -164,10 +164,10 @@ export function CompanionPicker({
                         onPress={() => setPreviewId(option.id)}
                         style={({ pressed }) => ({
                           position: 'absolute',
-                          top: 2 * u,
-                          left: 2 * u,
-                          right: 2 * u,
-                          bottom: 2 * u,
+                          top: 3 * u,
+                          left: 3 * u,
+                          right: 3 * u,
+                          bottom: 3 * u,
                           zIndex: 1,
                           backgroundColor: pressed ? 'rgba(56,99,52,0.14)' : c.transparent,
                         })}

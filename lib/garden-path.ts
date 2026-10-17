@@ -1,4 +1,4 @@
-import { GARDEN, gardenWalk } from './garden-map';
+import { GARDEN, gardenAnchors, gardenWalk } from './garden-map';
 
 // Pure pathfinding on a walk grid ('#' = blocked, '.' = walkable), no React, so
 // it can be unit tested. One instance per map: the home garden and each world.
@@ -117,13 +117,13 @@ export function makeWalkGrid(
 }
 
 // ---- the home garden -------------------------------------------------------
-export const GARDEN_START: Point = { x: 96, y: 112 };
-// The map describes feet, but the guardian can be nearly 40 native pixels wide.
-// Keep its centre/head inside the scene even when wandering or following an edge tap.
+export const GARDEN_START: Point = gardenAnchors.start;
+// The map describes feet, but the companion is 32 art pixels wide. Keep its
+// centre and head inside the scene even when wandering or following an edge tap.
 const garden = makeWalkGrid(gardenWalk, {
   cell: GARDEN.cell,
   width: GARDEN.width,
   start: GARDEN_START,
-  bounds: { minX: 20, maxX: GARDEN.width - 20, minY: 40, maxY: GARDEN.fenceY - 4 },
+  bounds: { minX: 16, maxX: GARDEN.width - 16, minY: 48, maxY: GARDEN.fenceY - 4 },
 });
 export const { walkable, toCell, toPoint, nearestWalkable, findPath, randomSpot } = garden;

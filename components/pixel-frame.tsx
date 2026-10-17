@@ -1,5 +1,6 @@
 import { useState, type ReactNode, type Ref } from 'react';
 import {
+  PixelRatio,
   Pressable,
   TextInput,
   View,
@@ -11,7 +12,7 @@ import {
 } from 'react-native';
 import { cozy as c } from '@/lib/cozy';
 import { artOutline } from '@/lib/art-direction';
-import { gameLayout } from '@/lib/layout';
+import { pixelScale } from '@/lib/pixel-scale';
 import { switchKeys } from '@/lib/switch-keys';
 
 /**
@@ -139,9 +140,10 @@ const resolveTone = (tone: FrameToneName | FrameTone) =>
   typeof tone === 'string' ? frameTones[tone] : tone;
 
 /** One garden pixel on screen: 2 on phones, 3 in the wider column. */
+/** One art pixel in CSS pixels: the game's shared grid (lib/pixel-scale.ts). */
 export function usePixelUnit() {
   const { width } = useWindowDimensions();
-  return Math.max(2, Math.round(Math.min(width, gameLayout.maxWidth) / 192));
+  return pixelScale(width, PixelRatio.get());
 }
 
 const abs = (style: ViewStyle): ViewStyle => ({ position: 'absolute', ...style });
@@ -272,7 +274,7 @@ export function PixelFrame({
   const u = unit ?? fallback;
   const t = resolveTone(tone);
   return (
-    <View style={[{ marginBottom: depth * u, padding: 3 * u }, style]}>
+    <View style={[{ marginBottom: depth * u, padding: 4 * u }, style]}>
       {depth > 0 && (
         <FrameShape
           tone={{ ...t, fill: t.base, light: t.base, dark: t.base }}
@@ -399,9 +401,9 @@ export function PixelSwitch({
   accessibilityHint?: string;
 }) {
   const u = usePixelUnit();
-  const width = 20 * u;
-  const height = 11 * u;
-  const knob = 7 * u;
+  const width = 30 * u;
+  const height = 16 * u;
+  const knob = 10 * u;
   return (
     <Pressable
       {...switchKeys(() => onValueChange(!value), disabled)}
@@ -425,8 +427,8 @@ export function PixelSwitch({
         <View
           style={{
             position: 'absolute',
-            top: 2 * u,
-            left: value ? width - knob - 2 * u : 2 * u,
+            top: 3 * u,
+            left: value ? width - knob - 3 * u : 3 * u,
             width: knob,
             height: knob,
           }}

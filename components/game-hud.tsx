@@ -56,7 +56,7 @@ export function PixelBar({
       style={{
         width,
         alignSelf: width === undefined ? 'stretch' : undefined,
-        height: 3 * unit,
+        height: 4 * unit,
         backgroundColor: '#3B2F2A',
         padding: unit,
         flexDirection: 'row',
@@ -202,7 +202,7 @@ export function GameHud() {
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: u }}>
               <PixelIcon name="heart" size={iconSize.small(u)} />
-              <View style={{ flex: 1, maxWidth: 24 * u }}>
+              <View style={{ flex: 1, maxWidth: 36 * u }}>
                 <PixelBar value={p.mood} color={p.mood < 30 ? c.error : c.positive} unit={u} />
               </View>
             </View>
@@ -262,8 +262,8 @@ export function GameHud() {
           <View
             style={{
               position: 'absolute',
-              right: 3 * u,
-              top: 3 * u,
+              right: 4 * u,
+              top: 4 * u,
               width: u,
               height: u,
               backgroundColor: live || !backendConfigured ? c.moss : c.error,
@@ -293,7 +293,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   const awake = useGame((s) => s.player?.mode === 'awake');
   const side = gameSideInset(width) - 8;
   const slotHeight = hotbarSlot(u);
-  const napWidth = 30 * u;
+  const napWidth = 45 * u;
   const slot = (index: number) => {
     const route = state.routes[index];
     if (!route) return null;
@@ -385,7 +385,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
           // its bottom lines up with the slots' bottom edge; it rises above the bar
           bottom: u + contentInset(u),
           width: napWidth,
-          height: slotHeight + 12 * u,
+          height: slotHeight + 18 * u,
           alignItems: 'center',
           justifyContent: 'center',
           gap: u,

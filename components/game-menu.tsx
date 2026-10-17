@@ -73,7 +73,7 @@ export function GameMenu() {
   const insets = useSafeAreaInsets();
   if (!p) return null;
   const page = tabs.find((t) => t.id === tab) ?? tabs[0];
-  const rim = 3 * u;
+  const rim = 4 * u;
   return (
     <Modal visible={open} transparent animationType="none" onRequestClose={closeSheet}>
       <View style={{ flex: 1 }}>
@@ -167,8 +167,9 @@ function MenuTabButton({
   onPress: () => void;
 }) {
   // the active tab reaches down over the wooden rim and the page's top edge
-  const reach = 5 * u;
-  const height = 20 * u;
+  // the active tab reaches down over the wooden rim (4) and the page's top edge (2)
+  const reach = 6 * u;
+  const height = 30 * u;
   return (
     <Pressable
       accessibilityRole="tab"
@@ -177,9 +178,9 @@ function MenuTabButton({
       onPress={onPress}
       style={{
         flex: 1,
-        maxWidth: 28 * u,
+        maxWidth: 42 * u,
         minWidth: 44,
-        height: active ? height + 2 * u + reach : height,
+        height: active ? height + 3 * u + reach : height,
         marginBottom: active ? -reach : 0,
         paddingBottom: active ? reach : 0,
         alignItems: 'center',
@@ -217,7 +218,7 @@ function CornerButton({
   icon: IconName;
   onPress: () => void;
 }) {
-  const size = 18 * u;
+  const size = 27 * u;
   return (
     <Pressable
       accessibilityRole="button"
@@ -286,7 +287,7 @@ function SegmentBar({
   return (
     <View
       style={{
-        height: 6 * u,
+        height: 8 * u,
         padding: u,
         flexDirection: 'row',
         gap: u,
@@ -354,7 +355,7 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
   const total = PLAY_LIMIT_MS / 1000;
   const meadow = meadowSummary(p.offline_seconds);
   const canFeed = !paused && p.mood < 100 && p.grass >= 5;
-  const portrait = 36 * u;
+  const portrait = 54 * u;
   return (
     <>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: panelGap(u) * 2 }}>
@@ -362,15 +363,15 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
           aria-hidden
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
-          style={{ width: portrait, height: portrait, padding: 2 * u, overflow: 'hidden' }}
+          style={{ width: portrait, height: portrait, padding: 3 * u, overflow: 'hidden' }}
         >
           <FrameFill fill={artGrass} outline={c.outline} inset />
           <View
             style={{
               position: 'absolute',
-              left: 2 * u,
-              right: 2 * u,
-              top: 2 * u,
+              left: 3 * u,
+              right: 3 * u,
+              top: 3 * u,
               height: Math.round(portrait * 0.48),
               backgroundColor: artSky,
             }}
@@ -474,8 +475,8 @@ function BagPage({ player: p, unit: u }: { player: Player; unit: number }) {
   // as many equal slots as fit across the well, at least 26 units each
   const gap = panelGap(u);
   const inner =
-    Math.min(width, gameLayout.maxWidth) - 24 - 6 * u - 2 * panelInset(u) - 2 * contentInset(u);
-  const columns = Math.max(3, Math.floor((inner + gap) / (26 * u + gap)));
+    Math.min(width, gameLayout.maxWidth) - 24 - 8 * u - 2 * panelInset(u) - 2 * contentInset(u);
+  const columns = Math.max(3, Math.floor((inner + gap) / (39 * u + gap)));
   const slot = Math.floor((inner - gap * (columns - 1)) / columns);
   return (
     <>
@@ -510,12 +511,12 @@ function BagPage({ player: p, unit: u }: { player: Player; unit: number }) {
               style={{ width: slot, height: slot, alignItems: 'center', justifyContent: 'center' }}
             >
               <FrameShape tone={focused ? frameTones.leaf : frameTones.paper} unit={u} />
-              {count > 0 && <CardIllustration id={id} size={16 * u} />}
+              {count > 0 && <CardIllustration id={id} size={32 * u} />}
               {count > 1 && (
                 <Text
                   style={[
                     type.caption,
-                    { position: 'absolute', right: 2 * u, bottom: u, color: c.ink },
+                    { position: 'absolute', right: 3 * u, bottom: u, color: c.ink },
                   ]}
                 >
                   ×{count}

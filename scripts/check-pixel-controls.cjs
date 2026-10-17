@@ -41,6 +41,21 @@ vm.runInNewContext(
     },
   },
 );
+// The real shared pixel grid (a pure module), so control sizes use the actual unit.
+const pixelScaleModule = { exports: {} };
+vm.runInNewContext(
+  ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', 'lib', 'pixel-scale.ts'), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText,
+  {
+    module: pixelScaleModule,
+    exports: pixelScaleModule.exports,
+    require: (id) => {
+      assert.equal(id, '@/lib/layout', `Unexpected pixel-scale boundary: ${id}`);
+      return { gameLayout: { maxWidth: 576 } };
+    },
+  },
+);
 const destination = { exports: {} };
 const boundaries = {
   react: { useState: (value) => [value, () => {}] },
@@ -50,12 +65,14 @@ const boundaries = {
     Pressable: 'Pressable',
     TextInput: 'TextInput',
     View: 'View',
+    PixelRatio: { get: () => 3 },
     useWindowDimensions: () => ({ width: 402, height: 874 }),
   },
   '@/lib/cozy': { cozy: {} },
   '@/lib/art-direction': { artOutline: '#1E1917' },
   '@/lib/layout': { gameLayout: { maxWidth: 576 } },
   '@/lib/switch-keys': switchKeysModule.exports,
+  '@/lib/pixel-scale': pixelScaleModule.exports,
 };
 vm.runInNewContext(source, {
   module: destination,

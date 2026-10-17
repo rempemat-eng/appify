@@ -16,23 +16,37 @@ def hex_rgba(value: str, alpha: int = 255) -> tuple[int, int, int, int]:
 
 
 class Canvas:
-    def __init__(self, w: int, h: int):
+    """An RGBA drawing surface in art pixels.
+
+    `pad` adds invisible room on every side, so drawing that strays past the nominal
+    w x h is kept rather than silently cut off. A padded canvas is only a working
+    surface: style.finalize() trims it to its art and records the offset (ox, oy) of
+    the trimmed top-left from the nominal origin, which placement code adds.
+    """
+
+    def __init__(self, w: int, h: int, pad: int = 0):
         self.w, self.h = w, h
-        self.img = Image.new('RGBA', (w, h), (0, 0, 0, 0))
-        self.px = self.img.load()
+        self.pad = pad
+        self.ox, self.oy = 0, 0
+        self.img = Image.new('RGBA', (w + 2 * pad, h + 2 * pad), (0, 0, 0, 0))
+        self._px = self.img.load()
+        # unpadded canvases expose raw pixel access, as before
+        self.px = self._px if pad == 0 else None
 
     # --- primitives -------------------------------------------------------
     def set(self, x: int, y: int, color, alpha: int | None = None):
-        if 0 <= x < self.w and 0 <= y < self.h:
+        p = self.pad
+        if -p <= x < self.w + p and -p <= y < self.h + p:
+            x, y = x + p, y + p
             c = hex_rgba(color) if isinstance(color, str) else color
             if alpha is not None:
                 c = (c[0], c[1], c[2], alpha)
-            if c[3] == 255 or self.px[x, y][3] == 0:
-                self.px[x, y] = c
+            if c[3] == 255 or self._px[x, y][3] == 0:
+                self._px[x, y] = c
             else:  # alpha blend onto what is there
-                bx = self.px[x, y]
+                bx = self._px[x, y]
                 a = c[3] / 255
-                self.px[x, y] = (
+                self._px[x, y] = (
                     round(c[0] * a + bx[0] * (1 - a)),
                     round(c[1] * a + bx[1] * (1 - a)),
                     round(c[2] * a + bx[2] * (1 - a)),
@@ -40,8 +54,9 @@ class Canvas:
                 )
 
     def get(self, x: int, y: int):
-        if 0 <= x < self.w and 0 <= y < self.h:
-            return self.px[x, y]
+        p = self.pad
+        if -p <= x < self.w + p and -p <= y < self.h + p:
+            return self._px[x + p, y + p]
         return (0, 0, 0, 0)
 
     def rect(self, x: int, y: int, w: int, h: int, color, alpha: int | None = None):
@@ -67,7 +82,7 @@ class Canvas:
     def paste(self, other: 'Canvas', x: int, y: int):
         for yy in range(other.h):
             for xx in range(other.w):
-                c = other.px[xx, yy]
+                c = other.get(xx, yy)
                 if c[3]:
                     self.set(x + xx, y + yy, c)
 
@@ -84,6 +99,7 @@ class Canvas:
             self.set(x, y, color)
 
     def save(self, path: str, scale: int = 4):
+        assert self.pad == 0, 'finalize a padded canvas before saving it'
         self.img.resize((self.w * scale, self.h * scale), Image.NEAREST).save(path, optimize=True)
 
 

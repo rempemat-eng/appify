@@ -15,12 +15,13 @@ const path = require('node:path');
 const { PNG } = require('pngjs');
 
 const root = path.join(__dirname, '..');
-const SCALE = 6;
+// Export scale per folder: the garden is exported at 4x since step 6, the rest at 6x.
+const SCALE_OF = { 'assets/garden': 4, 'assets/garden/growth': 4 };
 const MIN_COVERAGE = 0.95;
 const folders = ['assets/garden', 'assets/garden/growth', 'assets/worlds/props', 'art/icons'];
-const skip = /^(ground|sky|backdrop|platform)/;
+const skip = /^(ground|water|sky|backdrop|platform)/;
 
-function nativePixels(file) {
+function nativePixels(file, SCALE) {
   const png = PNG.sync.read(fs.readFileSync(file));
   const w = png.width / SCALE;
   const h = png.height / SCALE;
@@ -84,7 +85,7 @@ let sprites = 0;
 for (const folder of folders)
   for (const name of fs.readdirSync(path.join(root, folder)).sort()) {
     if (!name.endsWith('.png') || skip.test(name)) continue;
-    const sides = coverage(nativePixels(path.join(root, folder, name)));
+    const sides = coverage(nativePixels(path.join(root, folder, name), SCALE_OF[folder] ?? 6));
     for (const [side, share] of Object.entries(sides))
       assert.ok(
         share >= MIN_COVERAGE,
