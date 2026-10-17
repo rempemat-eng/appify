@@ -19,7 +19,7 @@ from materials import MATERIALS, WOOD, STONE, GOLD, NAP, RED, SNOW  # noqa: E402
 
 BRASS, COPPER, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'copper', 'iron', 'brick'))
 PAD = 4
-WARM = ['#5A3A1E', '#B8782E', '#F0B85A', '#FFE7A6']
+WARM = MATERIALS['lamplight']
 
 
 def rect_set(x, y, w, h):

@@ -18,7 +18,7 @@ from materials import MATERIALS, WOOD, STONE, RED, WTR, GOLD  # noqa: E402
 
 DESERT, CACTUS, ADOBE = (MATERIALS[k] for k in ('desert', 'cactus', 'adobe'))
 IRON = MATERIALS['iron']
-BLEACHED = ['#4A3328', '#6E5040', '#93725A', '#B39277', '#CDB096', '#E4CCB2']  # sun-bleached boards
+BLEACHED = MATERIALS['bleached']  # sun-bleached boards
 PAD = 4
 
 

@@ -31,6 +31,7 @@ import steampunk_props as sp  # noqa: E402
 import cyber_props as cp  # noqa: E402
 import western_props as wsp  # noqa: E402
 import caldera_props as cdp  # noqa: E402
+import harbour_props as hbp  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 
@@ -205,6 +206,7 @@ def sprites() -> dict[str, Canvas]:
     items.update(cp.props())
     items.update(wsp.props())
     items.update(cdp.props())
+    items.update(hbp.props())
     items['fence_c'] = gp.fence_h(60)
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
 
@@ -812,10 +814,109 @@ def cp_hex(cv: Canvas, cx: int, cy: int, r: int):
     cpz.hex_top(cv, cx, cy, r)
 
 
+def harbour(frame: int = 0):
+    """Driftwood Harbour: the road from Crossroads Town comes down between whitewashed
+    cottages to a stone quay and the fish market; wooden jetties run out into a basin
+    sheltered by a curving breakwater with the lighthouse on its tip; a sandy beach
+    with rock pools and drying nets lies to the west; the cliff path climbs away east
+    toward Hearthold Castle. The open sea lies beyond the breakwater."""
+    SAND, WTRm = MATERIALS['sand'], MATERIALS['water']
+    BLEACHED = MATERIALS['bleached']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    # the water: the basin and the sea, deeper away from the shore
+    shore_y = lambda x: 300 + int(math.sin(x / 40) * 4)  # noqa: E731  (the quay line)
+    beach = {(x, y) for x in range(0, 130) for y in range(240, H) if x < 124 - (y - 240) * 0.38 + int(noise2(y // 9, 0, 291) * 6)}
+    water = {(x, y) for y in range(H) for x in range(W) if y > shore_y(x) + 6 and (x, y) not in beach}
+    for (x, y) in beach:
+        n = smooth_noise(x, y, 6, 292)
+        cv.set(x, y, SAND[2] if n > 0.35 or (n > 0.3 and (x + y) % 2) else SAND[1])
+        if noise2(x, y, 299) > 0.97:
+            cv.set(x, y, MATERIALS['stone'][3])  # a shell or a pebble
+    for (x, y) in water:
+        depth = (y - shore_y(x)) / 230 + smooth_noise(x, y, 40, 300) * 0.35
+        n = smooth_noise(x, y, 12, 293 + frame)
+        band = 2 if depth < 0.42 else 1 if depth < 0.8 else 0
+        if (0.38 < depth < 0.46 or 0.76 < depth < 0.84) and (x + y) % 2:
+            band = max(0, band - 1) if depth < 0.5 else band
+        c = WTRm[band]
+        if n > 0.72:
+            c = WTRm[band + 1]
+        cv.set(x, y, c)
+    for (x, y) in water:  # foam along the beach
+        if any((x + dx, y + dy) in beach for dx, dy in ((-1, 0), (0, -1), (-2, 0), (0, -2))):
+            cv.set(x, y, WTRm[4] if (x + y + frame) % 3 else WTRm[3])
+    for ty in range(300, H, 6):  # ripples
+        for tx in range(0, W, 8):
+            x, y = tx + int(noise2(tx, ty, 294) * 6), ty + int(noise2(tx, ty, 295) * 4)
+            if (x, y) in water and (x + 4, y) in water and noise2(tx, ty, 296) < 0.45:
+                cv.hline(x + (frame if noise2(tx, ty, 297) < 0.4 else 0), y, 3, WTRm[3])
+    # rock pools on the beach
+    for (px, py) in ((30, 320), (52, 352), (20, 400)):
+        for (x, y) in oval(px, py, 8, 4):
+            cv.set(x, y, WTRm[2] if (x, y - 1) in oval(px, py, 8, 4) else MATERIALS['stone'][3])
+        for k in range(6):
+            detail.pebble(cv, px - 9 + int(noise2(k, px, 298) * 18), py - 5 + int(noise2(k, py, 298) * 10), MATERIALS['stone'], big=k % 2 == 0)
+    # the quay: dressed stone with a lit edge and a face down to the water
+    quay = {(x, y) for x in range(100, W) for y in range(232, shore_y(x) + 6)}
+    worlds.paint_paving(cv, quay, seed=9)
+    for x in range(100, W):
+        y = shore_y(x) + 6
+        for k in range(8):
+            c = STONE[3] if k == 0 else STONE[2] if (x + (k // 3) * 4) % 8 else STONE[0]
+            if k > 5:
+                c = MATERIALS['leaf'][1] if (x + k) % 3 else STONE[1]  # weed at the waterline
+            cv.set(x, y + k, c)
+    # the breakwater: big blocks curving round the basin to the lighthouse
+    bw = worlds.thick([(W + 6, 410), (260, 452), (200, 500), (130, 526), (92, 528)], 12, seed=15)
+    bw |= {(x, y) for (x, y) in disc(90, 530, 22)}  # the round platform under the lighthouse
+    for (x, y) in bw:
+        blk = ((x + (y // 7) % 2 * 5) // 10 + y // 7) % 3
+        c = STONE[3] if blk == 0 else STONE[2] if blk == 1 else STONE[4]
+        if (x + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
+            c = STONE[1]
+        if (x, y - 2) not in bw:
+            c = STONE[4]
+        cv.set(x, y, c)
+    for (x, y) in bw:
+        if (x, y + 1) not in bw and (x, y + 1) in water:
+            cv.set(x, y + 1, WTRm[4]); cv.set(x, y + 2, WTRm[3])
+    # wooden jetties out over the basin (walkable planks)
+    jetties = []
+    for (jx, jy0, jy1) in ((150, 296, 392), (236, 296, 372)):
+        deck = {(x, y) for x in range(jx, jx + 14) for y in range(jy0, jy1)}
+        for (x, y) in deck:
+            cv.set(x, y, BLEACHED[4] if (y % 4 == 0) else BLEACHED[3] if (x - jx) % 7 else BLEACHED[1])
+        for (x, y) in ((jx - 1, yy) for yy in range(jy0, jy1, 12)):
+            cv.set(x, y, WOOD[1]); cv.set(jx + 14, y, WOOD[1])
+        for y in range(jy0, jy1):  # the deck's shadow on the water
+            cv.set(jx + 14, y, WTRm[0]); cv.set(jx + 15, y, WTRm[1])
+        jetties.append(deck)
+    # the road down from the town and the lanes between the cottages
+    road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (150, 120), (170, 232)], 14, seed=16)
+    road |= worlds.thick([(160, 120), (60, 140), (20, 200)], 9, seed=17)
+    paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
+    cliff = worlds.thick([(W + 4, 110), (270, 130), (230, 180), (220, 232)], 9, seed=18)  # to the castle
+    paint_road(cv, cliff)
+    objects = [
+        ('cottage-1', 'cottage', 10, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 40, 150),
+        ('cottage-4', 'cottage_b', 236, 140), ('market', 'fish_stall', 108, 226), ('pots-1', 'lobster_pots', 196, 240),
+        ('nets-1', 'net_rack', 6, 236), ('nets-2', 'net_rack', 4, 300), ('anchor', 'anchor', 286, 240),
+        ('lighthouse', 'lighthouse', 68, 396), ('boat-1', 'boat_blue', 168, 330), ('boat-2', 'boat_red', 254, 340),
+        ('boat-3', 'boat_blue', 186, 420), ('bollard-1', 'bollard', 140, 290), ('bollard-2', 'bollard', 226, 290),
+        ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 270, 196),
+        ('upturned', 'upturned_boat', 8, 400), ('washing', 'washing_line', 110, 90), ('buoy-1', 'buoy', 120, 450),
+        ('buoy-2', 'buoy', 300, 380),
+    ]
+    blocked = water - set().union(*jetties)
+    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (157, 384), 'beach': (34, 380), 'castle': (300, 116)}
+    return cv, objects, stands, blocked
+
+
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props}
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 
 
@@ -861,6 +962,7 @@ def main():
     build('neon', neon_city, 'crossing')
     build('gulch', gulch, 'platform')
     build('caldera', caldera, 'tunnel')
+    build('harbour', harbour, 'town')
 
 
 if __name__ == '__main__':
