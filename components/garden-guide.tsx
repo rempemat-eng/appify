@@ -139,9 +139,6 @@ const sections = [
 export function GardenGuide({ onClose }: { onClose: () => void }) {
   const tips = useGame((s) => s.tips);
   const insets = useSafeAreaInsets();
-  const preference = useMotionPreference((s) => s.reduced);
-  const reduced = useReducedMotion();
-  const [saving, setSaving] = useState(false);
   return (
     <View
       style={{
@@ -159,37 +156,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
           GARDEN GUIDE
         </PixelText>
         <ScrollView contentContainerStyle={{ gap: 20, paddingBottom: 16 }}>
-          <View style={{ minHeight: 52, padding: 12, gap: 6 }}>
-            <FrameFill fill={c.paper} outline={c.outline} />
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
-                Reduce motion · {preference ? 'ON' : 'OFF'}
-              </BodyText>
-              <PixelSwitch
-                accessibilityLabel="Reduce decorative motion"
-                value={preference}
-                disabled={saving}
-                onValueChange={(value) => {
-                  setSaving(true);
-                  void useMotionPreference
-                    .getState()
-                    .setReduced(value)
-                    .then(() => feedback('select'))
-                    .catch(() =>
-                      useGame
-                        .getState()
-                        .notify('Could not save motion preference. Try again.', true),
-                    )
-                    .finally(() => setSaving(false));
-                }}
-              />
-            </View>
-            <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
-              {reduced
-                ? 'Motion reduced. Your device setting is also respected.'
-                : 'Normal decorative motion and text delays are on.'}
-            </BodyText>
-          </View>
+          <MotionSetting />
           <SoundSettings />
           {sections.map(([heading, text]) => (
             <View key={heading} style={{ gap: 6 }}>
@@ -226,8 +193,46 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** The reduce-motion switch, shared by the guide and the menu's Settings page. */
+export function MotionSetting() {
+  const preference = useMotionPreference((s) => s.reduced);
+  const reduced = useReducedMotion();
+  const [saving, setSaving] = useState(false);
+  return (
+    <View style={{ minHeight: 52, padding: 12, gap: 6 }}>
+      <FrameFill fill={c.paper} outline={c.outline} />
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
+          Reduce motion · {preference ? 'ON' : 'OFF'}
+        </BodyText>
+        <PixelSwitch
+          accessibilityLabel="Reduce decorative motion"
+          value={preference}
+          disabled={saving}
+          onValueChange={(value) => {
+            setSaving(true);
+            void useMotionPreference
+              .getState()
+              .setReduced(value)
+              .then(() => feedback('select'))
+              .catch(() =>
+                useGame.getState().notify('Could not save motion preference. Try again.', true),
+              )
+              .finally(() => setSaving(false));
+          }}
+        />
+      </View>
+      <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
+        {reduced
+          ? 'Motion reduced. Your device setting is also respected.'
+          : 'Normal decorative motion and text delays are on.'}
+      </BodyText>
+    </View>
+  );
+}
+
 /** Effects and ambience switches. Sound is decoration and never changes a rule. */
-function SoundSettings() {
+export function SoundSettings() {
   const effects = useSoundPreference((s) => s.effects);
   const ambience = useSoundPreference((s) => s.ambience);
   const [saving, setSaving] = useState(false);
