@@ -47,25 +47,28 @@ Matt: "make sure different worlds are as detailed as i instructed you to be and 
 
 All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNGs in `assets/zones/<id>/`, each checked for reachability on foot, blocked water, lava and walls, and (outside the valley) region-only props. Walkable as a preview at `/atlas` (W1 prototype); not yet linked from the game.
 
-| Zone               | Region       | Joins                                                                                           |
-| ------------------ | ------------ | ----------------------------------------------------------------------------------------------- |
-| Woodland           | Valley       | east: the garden (orchard walk, stream, bluff)                                                  |
-| Riverside          | Valley       | west: the garden (stream, bluff)                                                                |
-| Crossroads Town    | Valley       | north: the garden gate road; east: Town Park; south: Driftwood Harbour                          |
-| Town Park          | Valley       | west: Crossroads Town street                                                                    |
-| Driftwood Harbour  | Valley coast | north: Crossroads Town road; east: Hearthold Castle (cliff path, water, breakwater)             |
-| Hearthold Castle   | Valley coast | west: Driftwood Harbour                                                                         |
-| Snowy Ridge        | Valley       | south: the garden (the ridge trail through the treeline)                                        |
-| Valley Halt        | Valley       | east: Crossroads Town (west lane); the train to Cogsworth leaves here                           |
-| Cogsworth Junction | Steam        | by train from Crossroads Town                                                                   |
-| Dust Gulch         | Western      | by train from Cogsworth; west: the oasis (street, dry creek, railway); mine cart to the caldera |
-| Desert Oasis       | Western      | east: Dust Gulch (street, dry creek, railway and ground continue across)                        |
-| Ember Caldera      | Lava         | mine cart tunnel from Dust Gulch                                                                |
-| Neon Harbour       | Cyberpunk    | maglev from Cogsworth                                                                           |
-| Halcyon Station    | Space        | space elevator from Neon Harbour; shuttle hatch to Lumen                                        |
-| Lumen              | Space        | shuttle from Halcyon                                                                            |
+| Zone               | Region       | Joins                                                                                                |
+| ------------------ | ------------ | ---------------------------------------------------------------------------------------------------- |
+| Woodland           | Valley       | east: the garden (orchard walk, stream, bluff)                                                       |
+| Riverside          | Valley       | west: the garden (stream, bluff)                                                                     |
+| Crossroads Town    | Valley       | north: the garden gate road; east: Town Park; south: Driftwood Harbour                               |
+| Town Park          | Valley       | west: Crossroads Town street                                                                         |
+| Driftwood Harbour  | Valley coast | north: Crossroads Town road; east: Hearthold Castle (cliff path, water, breakwater)                  |
+| Hearthold Castle   | Valley coast | west: Driftwood Harbour                                                                              |
+| Snowy Ridge        | Valley       | south: the garden (the ridge trail through the treeline)                                             |
+| Valley Halt        | Valley       | east: Crossroads Town (west lane); the train to Cogsworth leaves here                                |
+| Cogsworth Junction | Steam        | by train from Crossroads Town                                                                        |
+| Dust Gulch         | Western      | by train from Cogsworth; west: the oasis (street, dry creek, railway); mine cart to the caldera      |
+| Desert Oasis       | Western      | east: Dust Gulch (street, dry creek, railway and ground continue across)                             |
+| Ember Caldera      | Lava         | mine cart tunnel from Dust Gulch                                                                     |
+| Neon Harbour       | Cyberpunk    | maglev from Cogsworth                                                                                |
+| Skyport            | Cyberpunk    | west: Neon Harbour (street, quay, water and rain continue); maglev to Cogsworth; elevator to Halcyon |
+| Halcyon Station    | Space        | space elevator from Neon Harbour; shuttle hatch to Lumen                                             |
+| Lumen              | Space        | shuttle from Halcyon                                                                                 |
 
-Still to draw: the station stops for the maglev and the elevator in the zones they leave from.
+Still to draw: the maglev stop in Cogsworth Junction (the Skyport has the other end).
+
+**The Skyport is where the city's noise stops.** Neon Harbour's wet street runs in and ends at a quiet drop-off loop round a tree; the dark tiles give way (an ordered dither over the first 56 pixels) to pale polished slabs. The maglev waits on a white guideway along the north; a concourse with departure pylons, ticket gates you walk through, benches and living trees leads to a pier and the anchor out in the harbour, where the elevator's ribbon climbs out of sight. Brighter and calmer than the street: the way up and out, in keeping with the journey from screens back to rest. Its own props: maglev, tether, ticket gates, departure pylons, pod trees, sky benches, luggage bots.
 
 **The Desert Oasis is its own place, not the gulch again.** The gulch is a flat town on cracked hardpan; the oasis is a sea of sculpted dunes (lit windward faces with ripples, a sharp crest, a shaded slip face) round a hollow where a spring fills a clear pool, with stone steps, papyrus, a shaduf and palms. It explains the gulch: the gulch's dry creek was the pool's overflow until a dune crept over the outlet, and the drift still lies across the bed. The gulch's wagon track ends at a caravan camp (tent, resting camels, a fire with tea), the railway runs on west past a water crane piped from the spring, and an older town lies half-buried in the south-west (you walk through its arch). Its own props: palms, papyrus, shaduf, tent, camel, fire pit, water crane, column stumps, awning, jars.
 

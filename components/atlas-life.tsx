@@ -15,7 +15,7 @@ import { zoneMaps, type ZoneId } from '@/lib/zone-maps';
  * Small things that move by themselves in a zone (world-atlas.md, "A world that
  * feels alive"): steam from chimneys, vents and the engine, embers over the forge
  * and the shrine, spores drifting off Lumen's shrubs, gulls over the harbour,
- * butterflies in the valley, rain in Neon Harbour. Presentation only. Everything
+ * butterflies in the valley, rain over Neon Harbour and the Skyport. Presentation only. Everything
  * runs from one clock per zone, stops when the screen is inactive and is absent
  * with reduced motion. Where things appear follows the zone's own props, so the
  * life always belongs to what is drawn. (Codex's C21 schedule will later decide
@@ -55,6 +55,15 @@ const SOURCES: Record<string, { kind: Kind; dx: number; dy: number }[]> = {
   water_mill: [{ kind: 'puff', dx: 92, dy: 60 }],
 };
 
+function rainOver(drops: number): Emitter[] {
+  return Array.from({ length: drops }, (_, i) => ({
+    kind: 'rain' as const,
+    x: (i * 89 + (i >> 3) * 13) % 320,
+    y: (i * 157) % 576,
+    seed: i,
+  }));
+}
+
 const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
   harbour: [
     { kind: 'gull', x: 120, y: 360, seed: 1 },
@@ -75,12 +84,9 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'butterfly', x: 150, y: 170, seed: 10 },
   ],
   riverside: [{ kind: 'butterfly', x: 120, y: 420, seed: 11 }],
-  neon: Array.from({ length: 90 }, (_, i) => ({
-    kind: 'rain' as const,
-    x: (i * 89 + (i >> 3) * 13) % 320,
-    y: (i * 157) % 576,
-    seed: i,
-  })),
+  neon: rainOver(90),
+  // the same rain carries on over the Skyport (the weather does not stop at a border)
+  skyport: rainOver(70),
 };
 
 export function zoneEmitters(zone: ZoneId): Emitter[] {

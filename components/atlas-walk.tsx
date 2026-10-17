@@ -103,6 +103,7 @@ export const zoneNames: Record<TileId, string> = {
   ridge: 'THE SNOWY RIDGE',
   halt: 'VALLEY HALT',
   oasis: 'THE DESERT OASIS',
+  skyport: 'THE SKYPORT',
   woodland: 'THE WOODLAND',
   riverside: 'THE RIVERSIDE',
   town: 'CROSSROADS TOWN',
@@ -119,7 +120,7 @@ export const zoneNames: Record<TileId, string> = {
 
 const SPEED = 40; // art pixels per second, a brisk walk
 // Zones that keep their own light at every hour (no night tint).
-const OWN_LIGHT: TileId[] = ['neon', 'station', 'lumen', 'caldera'];
+const OWN_LIGHT: TileId[] = ['neon', 'skyport', 'station', 'lumen', 'caldera'];
 // Where a lamp's light sits on its sprite (x, y from its top-left, in art pixels).
 const LAMPS: Record<string, readonly [number, number]> = {
   lamp: [7, 8],

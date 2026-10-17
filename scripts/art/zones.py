@@ -259,7 +259,7 @@ def sprites() -> dict[str, Canvas]:
 
 
 # Props with a way through them: (from, to) in sprite pixels.
-OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44)}
+OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44), 'ticket_gates': (4, 80)}
 
 
 def walk_grid(objects, sprite_map) -> list[str]:
@@ -510,6 +510,174 @@ def neon_city(frame: int = 0):
     ]
     stands = {'crossing': (160, 192), 'stalls': (60, 300), 'court': (160, 382), 'quay': (160, 452)}
     return cv, objects, stands
+
+
+def skyport(frame: int = 0):
+    """The Skyport, east of Neon Harbour: where the city's noise stops. Neon Harbour's
+    wet street runs in from the west and ends at a quiet drop-off loop round a tree;
+    the dark tiles give way to pale polished slabs that hold the lights like still
+    water. Along the north the maglev to Cogsworth waits at its platform on a white
+    guideway (stairs down to the street); in the south a concourse with departure
+    pylons, benches, a living tree or two and a row of ticket gates leads to the quay,
+    and a pier runs out to the anchor in the harbour, where the space elevator's ribbon
+    climbs out of sight toward Halcyon. Calmer and brighter than the street: the way
+    up and out."""
+    NIGHT, PINK, CYAN, AMBER = (MATERIALS[k] for k in ('night', 'neon_pink', 'neon_cyan', 'neon_amber'))
+    PORC = cp.PORCELAIN
+    cv = Canvas(W, H)
+    blocked = set()
+    # the floor: Neon's dark tiles at the west edge, giving way to pale polished slabs
+    for y in range(H):
+        for x in range(W):
+            tx, ty = (x + W) % 10, y % 10
+            n = noise2((x + W) // 10, y // 10, 181)
+            dark = NIGHT[3] if n > 0.5 else NIGHT[2]
+            if tx == 0 or ty == 0:
+                dark = NIGHT[1]
+            elif ty == 1:
+                dark = NIGHT[4] if n > 0.5 else NIGHT[3]
+            sx, sy = x % 24, y % 16
+            m = noise2(x // 24, y // 16, 492)
+            pale = PORC[2] if m > 0.45 else PORC[1]
+            if sx == 0 or sy == 0:
+                pale = PORC[0]
+            elif sy == 1:
+                pale = PORC[3] if m > 0.45 else PORC[2]
+            if (x // 24 + y // 16) % 5 == 0 and sy == 8:
+                pale = CYAN[1]  # a cyan inlay line now and then
+            k = (x - 8) / 48  # the change over the first 56 pixels, in an ordered dither by whole tiles
+            bayer = (0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5)[((y // 16) % 4) * 4 + (x // 12) % 4] / 16
+            cv.set(x, y, dark if k < 0 or (k < 1 and bayer >= k) else pale)
+    # Neon Harbour's street, continued, ending at a drop-off loop
+    LX, LY = 238, 192
+    loop = {(x, y) for (x, y) in oval(LX, LY, 66, 44)}
+    island = {(x, y) for (x, y) in oval(LX, LY, 32, 18)}
+    street = {(x, y) for y in range(156, 228) for x in range(0, LX)} | loop
+    for (x, y) in street:
+        if (x, y) in island:
+            continue
+        n = noise2((x + W) // 2, y // 2, 182)
+        cv.set(x, y, NIGHT[1] if n > 0.3 else NIGHT[0])
+    for x in range(0, LX - 60, 16):
+        cv.hline(x, 191, 9, AMBER[2])
+    for (x, y) in street:  # kerbs
+        if (x, y) in island:
+            continue
+        if (x, y - 1) not in street:
+            cv.set(x, y - 1, NIGHT[4]); cv.set(x, y - 2, NIGHT[5])
+        if (x, y + 1) not in street:
+            cv.set(x, y + 1, NIGHT[4])
+    for (x, y) in island:  # the island: a ring of moss round the tree
+        d = math.hypot((x - LX) / 32, (y - LY) / 18)
+        cv.set(x, y, PORC[4] if d > 0.88 else '#2E5A40' if (x + y) % 3 else '#447A50')
+    for (sx, ramp) in ((60, CYAN), (150, AMBER)):  # the lights in the wet road
+        for y in range(160, 226):
+            if noise2(sx, y // 3, 183) > 0.4:
+                cv.hline(sx - 1 + int((noise2(y, sx, 184) - 0.5) * 2), y, 3, ramp[1])
+    # the terminal's glass roof along the top
+    for y in range(0, 34):
+        for x in range(W):
+            c = NIGHT[2] if (x // 20 + y // 12) % 2 else NIGHT[1]
+            if x % 20 == 0 or y % 12 == 0:
+                c = PORC[2]
+            if y == 33:
+                c = PORC[4]
+            cv.set(x, y, c)
+    # the guideway: a white deck with a cyan strip, its face in shade
+    for y in range(34, 66):
+        for x in range(W):
+            if y < 58:
+                c = PORC[3] if y < 40 else PORC[2]
+                if 45 <= y <= 46:
+                    c = CYAN[2]
+            else:
+                c = PORC[1] if y < 64 else PORC[0]
+            cv.set(x, y, c)
+            blocked.add((x, y))
+    for x in range(0, 6):  # the buffer and the glass wall at the platform's west end
+        for y in range(34, 100):
+            cv.set(x, y, PORC[4] if x < 2 else CYAN[0])
+            blocked.add((x, y))
+    # the platform: pale slabs, a yellow edge strip, its front face, stairs down
+    PLAT = 212
+    for y in range(66, 100):
+        for x in range(6, PLAT):
+            c = PORC[3] if (x // 16 + y // 12) % 2 else PORC[4]
+            if y in (68, 69):
+                c = AMBER[3] if x % 3 else AMBER[2]
+            if y >= 96:
+                c = PORC[1] if y < 99 else PORC[0]
+                if not 92 <= x < 124:
+                    blocked.add((x, y))
+            cv.set(x, y, c)
+    for y in range(96, 152):  # the stairs
+        for x in range(92, 124):
+            c = PORC[4] if (y - 96) % 5 < 2 else PORC[2]
+            if x in (92, 123):
+                c = PORC[1]
+            cv.set(x, y, c)
+    for x in range(PLAT, W):  # under the guideway east of the platform: shade, and piers
+        for y in range(66, 152):
+            if (x + y) % 2 and y < 80:
+                style.darken(cv, x, y)
+    for px0 in (232, 288):
+        for y in range(66, 152):
+            for x in range(px0, px0 + 12):
+                cv.set(x, y, PORC[3] if x < px0 + 3 else PORC[2] if x < px0 + 9 else PORC[1])
+                if y > 140:
+                    blocked.add((x, y))
+    # the harbour: Neon's water continues, the anchor's light in it
+    water = set()
+    for y in range(470, H):
+        for x in range(W):
+            n = smooth_noise(x + W, y, 9, 185)
+            c = '#0E1626' if n > 0.55 else '#121C30' if n > 0.3 else '#0B1220'
+            if (y - 470) % 7 == 3 and noise2((x + W) // 9, y, 186) > 0.6:
+                c = '#22304C'
+            cv.set(x, y, c)
+            water.add((x, y))
+    for x in range(W):
+        cv.set(x, 466, NIGHT[4]); cv.set(x, 467, NIGHT[3]); cv.set(x, 468, NIGHT[1]); cv.set(x, 469, '#070B14')
+    AX, AY = 248, 528
+    pier = {(x, y) for y in range(462, 506) for x in range(230, 268)}
+    ring = {(x, y) for (x, y) in oval(AX, AY, 58, 28)}
+    for y in range(470, H, 2):  # the ribbon's glow doubled in the water
+        for x in range(AX - 8, AX + 9):
+            if (x, y) not in ring and noise2(x // 2, y, 493) > 0.45:
+                cv.set(x, y, CYAN[1] if abs(x - AX) < 4 else '#16324A')
+    for (x, y) in pier:
+        c = PORC[3] if (y // 8) % 2 else PORC[2]
+        if x in (230, 231, 266, 267):
+            c = PORC[5] if x in (230, 231) else PORC[1]  # rails
+        cv.set(x, y, c)
+    for (x, y) in ring:
+        d = math.hypot((x - AX) / 58, (y - AY) / 28)
+        c = PORC[4] if d < 0.3 else PORC[2] if d < 0.62 else PORC[3] if d < 0.9 else PORC[1]
+        if 0.64 < d < 0.7 or 0.32 < d < 0.36:
+            c = CYAN[3] if (x + y) % 2 else CYAN[2]
+        if d > 0.94 and y > AY:
+            c = PORC[0]  # the platform's side above the water
+        cv.set(x, y, c)
+    for bx in (46, 90, 134, 178, 310):  # bollards, on Neon's spacing
+        for (x, y) in disc(bx, 460, 3):
+            cv.set(x, y, NIGHT[4] if x < bx else NIGHT[2])
+        cv.hline(bx - 2, 460, 5, AMBER[3])
+    for (lx, ly, rx, ry, col) in ((AX, AY, 70, 34, CYAN[2]), (60, 84, 50, 14, AMBER[4]), (160, 84, 50, 14, AMBER[4]),
+                                  (140, 300, 60, 22, CYAN[4]), (40, 410, 34, 12, AMBER[3]), (150, 420, 34, 12, AMBER[3]),
+                                  (LX, LY, 40, 24, AMBER[3]), (AX, 400, 30, 60, CYAN[3])):
+        light_pool(cv, lx, ly, rx, ry, col, skip=frozenset(water - ring - pier))
+    blocked |= water - ring - pier
+    objects = [
+        ('maglev', 'maglev', 26, 26), ('pylon-p', 'departure_pylon', 160, 40), ('light-p', 'street_light', 30, 40),
+        ('tree-loop', 'pod_tree', LX - 18, LY - 40), ('tree-1', 'pod_tree', 280, 236), ('tree-2', 'pod_tree', 4, 236),
+        ('pylon-1', 'departure_pylon', 60, 240), ('pylon-2', 'departure_pylon', 180, 240),
+        ('gates', 'ticket_gates', 64, 316), ('bench-1', 'sky_bench', 14, 400), ('bench-2', 'sky_bench', 124, 400),
+        ('tree-3', 'pod_tree', 176, 372), ('tree-4', 'pod_tree', 284, 380), ('bot-1', 'luggage_bot', 150, 440),
+        ('bot-2', 'luggage_bot', 200, 300), ('tether', 'tether', AX - 20, AY - 254),
+        ('drone-1', 'drone', 120, 140), ('drone-2', 'drone', 290, 300),
+    ]
+    stands = {'neon': (10, 192), 'platform': (70, 84), 'gates': (104, 360), 'anchor': (AX, AY + 14)}
+    return cv, objects, stands, blocked
 
 
 def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str, skip=frozenset()):
@@ -1837,7 +2005,7 @@ def woodland(frame: int = 0):
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'skyport': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
                 'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
@@ -1887,7 +2055,7 @@ LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'castle': (1, 2), 'halt': (-1, 1)},
     'steam': {'junction': (0, 0)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, 0)},
-    'neon': {'neon': (0, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
+    'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
 }
 
 
@@ -1979,6 +2147,7 @@ def main():
     built['halt'] = build('halt', halt, 'town')
     built['junction'] = build('junction', junction, 'platform')
     built['neon'] = build('neon', neon_city, 'crossing')
+    built['skyport'] = build('skyport', skyport, 'neon')
     built['gulch'] = build('gulch', gulch, 'platform')
     built['oasis'] = build('oasis', oasis, 'gulch')
     built['caldera'] = build('caldera', caldera, 'tunnel')

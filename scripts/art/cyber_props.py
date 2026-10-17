@@ -330,6 +330,172 @@ def ferry() -> Canvas:
     return cv
 
 
+PORCELAIN = ['#3A4258', '#5C6680', '#8A94AC', '#B8C0D2', '#DCE2EC', '#F4F7FB']  # the skyport's clean white
+
+
+def maglev() -> Canvas:
+    """A maglev train on its guideway, 132 x 34, side on: a long pale body with a
+    tapered nose at the east end, a band of lit windows with passengers' shapes, a
+    cyan strip along the skirt and the faint blue of the levitation gap beneath."""
+    w, h = 132, 34
+    cv = Canvas(w, h, pad=PAD)
+    for x in range(2, w - 2):
+        nose = max(0, x - (w - 30))
+        top = 6 + nose * nose // 60
+        for y in range(top, 26):
+            c = PORCELAIN[5] if y < top + 2 else PORCELAIN[4] if y < 15 else PORCELAIN[3] if y < 22 else PORCELAIN[2]
+            if x < 4:
+                c = PORCELAIN[2]
+            cv.set(x, y, c)
+        if top < 11:
+            for y in range(11, 16):  # the window band
+                win = (x - 6) % 14 < 11 and x < w - 30
+                c = NIGHT[1] if not win else AMBER[3] if y < 13 else AMBER[2]
+                if win and (x - 6) % 14 in (4, 5) and y >= 13 and (x // 14) % 2:
+                    c = NIGHT[2]  # someone reading by the window
+                cv.set(x, y, c)
+        if x > w - 30 and 11 <= top + 6 < 20:
+            cv.set(x, top + 5, NIGHT[1])  # the cab's windscreen line
+        cv.set(x, 22, CYAN[3]); cv.set(x, 23, CYAN[2])
+        if x % 22 == 0:
+            cv.vline(x, 8, 18, PORCELAIN[2])  # doors
+    for x in range(4, w - 6):  # the levitation gap and the guideway's top
+        cv.set(x, 27, CYAN[1] if x % 3 else CYAN[2])
+        cv.set(x, 28, PORCELAIN[1])
+    return cv
+
+
+def tether() -> Canvas:
+    """The space elevator's ribbon, 40 x 260, rising from its anchor out of sight: two
+    pale strands with a cyan guide light between and a soft glow round them, a climber
+    car a third of the way up with its windows lit, the whole thing thinning and fading
+    into dots as it climbs."""
+    w, h = 40, 260
+    cv = Canvas(w, h, pad=PAD)
+    cx = w // 2
+    for y in range(0, h - 2):
+        t = y / h  # 0 at the top, far up
+        if t > 0.3:  # the glow, strongest near the ground
+            for dx in (-7, -6, 6, 7) if t > 0.6 else (-6, 6):
+                if (y + dx) % 2:
+                    cv.set(cx + dx, y, CYAN[1] if abs(dx) == 6 else CYAN[0])
+        for dx, c in ((-4, PORCELAIN[5]), (-3, PORCELAIN[3]), (3, PORCELAIN[2]), (4, PORCELAIN[1])):
+            if t > 0.35 or (y + dx) % max(2, int(7 - t * 14)) == 0:
+                cv.set(cx + dx, y, c)
+        if t > 0.2 or y % 3 == 0:
+            for dx in (-1, 0, 1):
+                cv.set(cx + dx, y, CYAN[4] if dx == 0 else CYAN[3] if (y // 4) % 2 else CYAN[2])
+        if y % 14 == 0 and t > 0.3:
+            cv.hline(cx - 5, y, 11, PORCELAIN[5])  # spacer clamps
+    cy = int(h * 0.38)  # the climber
+    for y in range(cy, cy + 32):
+        for x in range(cx - 15, cx + 16):
+            r = abs(x - cx) / 15
+            if r > 1 - (abs(y - cy - 16) / 16) ** 4 * 0.45:
+                continue
+            c = PORCELAIN[5] if x < cx - 7 else PORCELAIN[4] if x < cx + 4 else PORCELAIN[2]
+            if 9 <= y - cy <= 15 and abs(x - cx) < 12:
+                c = AMBER[3] if (x - cx) % 4 else NIGHT[1]
+            cv.set(x, y, c)
+    cv.hline(cx - 12, cy + 24, 25, CYAN[3])
+    for y in range(h - 16, h - 2):  # its foot: a clamp collar
+        cv.hline(cx - 8, y, 17, PORCELAIN[3] if y % 4 else PORCELAIN[1])
+        cv.set(cx - 8, y, PORCELAIN[5])
+    return cv
+
+
+def ticket_gates() -> Canvas:
+    """A row of five quiet ticket gates, 82 x 24: white pods with cyan-lit readers and
+    glass paddles open, seen from above at the angle of the rest."""
+    w, h = 82, 24
+    cv = Canvas(w, h, pad=PAD)
+    for k in range(6):
+        x0 = 2 + k * 15
+        for y in range(4, 20):
+            for x in range(x0, x0 + 6):
+                c = PORCELAIN[5] if y < 7 else PORCELAIN[4] if x < x0 + 2 else PORCELAIN[3] if x < x0 + 5 else PORCELAIN[1]
+                cv.set(x, y, c)
+        cv.hline(x0 + 1, 8, 4, CYAN[3]); cv.hline(x0 + 1, 9, 4, CYAN[1])
+        if k < 5:
+            for y in range(10, 16):  # the glass paddles, open
+                cv.set(x0 + 7, y, CYAN[1]); cv.set(x0 + 13, y, CYAN[1])
+    return cv
+
+
+def departure_pylon() -> Canvas:
+    """A departures pylon, 26 x 56: a tall slim board listing the climbers in amber
+    glyph rows (no real words), the next one blinking cyan."""
+    w, h = 26, 56
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(2, h - 2):
+        for x in range(3, w - 3):
+            c = NIGHT[1]
+            if x in (3, 4) or y in (2, 3):
+                c = PORCELAIN[4]
+            elif x >= w - 5 or y >= h - 6:
+                c = PORCELAIN[2]
+            cv.set(x, y, c)
+    for row in range(8):
+        y = 7 + row * 5
+        for x in range(7, w - 7):
+            if noise2(x // 2, row, 490) > 0.3 or x < 10:
+                cv.set(x, y, CYAN[3] if row == 0 else AMBER[3] if x < 10 else AMBER[2])
+    return cv
+
+
+def luggage_bot() -> Canvas:
+    """A little luggage robot, 16 x 18: a white rounded body with a suitcase on its back
+    and one soft blue eye."""
+    cv = Canvas(16, 18, pad=PAD)
+    for (x, y) in oval(8, 11, 6, 5):
+        cv.set(x, y, PORCELAIN[5] if x + y < 16 else PORCELAIN[3] if x < 11 else PORCELAIN[2])
+    for y in range(1, 8):
+        for x in range(3, 12):
+            cv.set(x, y, AMBER[2] if x > 4 else AMBER[3])
+    cv.hline(6, 0, 3, AMBER[1])
+    cv.set(11, 11, CYAN[3]); cv.set(12, 11, CYAN[4])
+    for x in (4, 12):
+        cv.set(x, 16, NIGHT[1])
+    return cv
+
+
+def pod_tree() -> Canvas:
+    """A calm little tree in a white pod planter, 36 x 46: a rounded crown of soft green
+    leaves lit on the upper left, the only living green in the city."""
+    w, h = 36, 46
+    cv = Canvas(w, h, pad=PAD)
+    G = ['#1E3A2E', '#2E5A40', '#447A50', '#62995E', '#8CBB76']
+    for y in range(20, 34):
+        cv.set(17, y, WOOD[2]); cv.set(18, y, WOOD[1])
+    crown = oval(18, 16, 14, 12)
+    for (x, y) in crown:
+        k = (x - 4) / 28 + (y - 4) / 24
+        n = noise2(x // 2, y // 2, 491)
+        c = G[4] if k < 0.5 else G[3] if k < 0.9 else G[2] if k < 1.3 else G[1]
+        if n > 0.8:
+            c = G[max(0, G.index(c) - 1)]
+        cv.set(x, y, c)
+    for y in range(32, 44):
+        for x in range(6, 30):
+            r = abs(x - 18) / 12
+            if r > 1 - max(0, y - 40) * 0.12:
+                continue
+            cv.set(x, y, PORCELAIN[5] if y < 34 else PORCELAIN[4] if x < 14 else PORCELAIN[3] if x < 25 else PORCELAIN[1])
+    cv.hline(8, 33, 20, '#3A2A22')
+    return cv
+
+
+def sky_bench() -> Canvas:
+    """A curved white bench, 44 x 14, with a soft cyan light under its seat."""
+    w, h = 44, 14
+    cv = Canvas(w, h, pad=PAD)
+    for x in range(2, w - 2):
+        sag = int(((x - w / 2) / (w / 2)) ** 2 * 3)
+        for y in range(3 + sag, 9 + sag):
+            cv.set(x, y, PORCELAIN[5] if y < 5 + sag else PORCELAIN[4] if y < 7 + sag else PORCELAIN[2])
+        cv.set(x, 10 + sag, CYAN[2] if x % 2 else CYAN[1])
+    return cv
+
 def props() -> dict[str, Canvas]:
     return {
         'tower_pink': tower(112, 150, 0, PINK), 'tower_cyan': tower(96, 136, 1, CYAN),
@@ -337,6 +503,8 @@ def props() -> dict[str, Canvas]:
         'vending_machine': vending_machine(), 'street_light': street_light(), 'holo_board': holo_board(),
         'drone': drone(), 'cable_pole': cable_pole(), 'shelter': shelter(), 'uv_planter': uv_planter(),
         'containers': containers(), 'ferry': ferry(),
+        'maglev': maglev(), 'tether': tether(), 'ticket_gates': ticket_gates(), 'departure_pylon': departure_pylon(),
+        'luggage_bot': luggage_bot(), 'pod_tree': pod_tree(), 'sky_bench': sky_bench(),
     }
 
 

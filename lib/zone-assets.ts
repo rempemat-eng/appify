@@ -40,6 +40,7 @@ import propCottage from '@/assets/zones/props/cottage.png';
 import propCottageB from '@/assets/zones/props/cottage_b.png';
 import propCowSkull from '@/assets/zones/props/cow_skull.png';
 import propCrate from '@/assets/zones/props/crate.png';
+import propDeparturePylon from '@/assets/zones/props/departure_pylon.png';
 import propDreamPool from '@/assets/zones/props/dream_pool.png';
 import propDrone from '@/assets/zones/props/drone.png';
 import propDryWell from '@/assets/zones/props/dry_well.png';
@@ -78,6 +79,8 @@ import propLighthouse from '@/assets/zones/props/lighthouse.png';
 import propLilyPads from '@/assets/zones/props/lily_pads.png';
 import propLobsterPots from '@/assets/zones/props/lobster_pots.png';
 import propLocomotive from '@/assets/zones/props/locomotive.png';
+import propLuggageBot from '@/assets/zones/props/luggage_bot.png';
+import propMaglev from '@/assets/zones/props/maglev.png';
 import propMinePortal from '@/assets/zones/props/mine_portal.png';
 import propMoonCrystal from '@/assets/zones/props/moon_crystal.png';
 import propMoonShrub from '@/assets/zones/props/moon_shrub.png';
@@ -94,6 +97,7 @@ import propPapyrus from '@/assets/zones/props/papyrus.png';
 import propPennant from '@/assets/zones/props/pennant.png';
 import propPine from '@/assets/zones/props/pine.png';
 import propPipeRun from '@/assets/zones/props/pipe_run.png';
+import propPodTree from '@/assets/zones/props/pod_tree.png';
 import propPosterBoard from '@/assets/zones/props/poster_board.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
 import propReeds from '@/assets/zones/props/reeds.png';
@@ -109,6 +113,7 @@ import propShaduf from '@/assets/zones/props/shaduf.png';
 import propShelter from '@/assets/zones/props/shelter.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
+import propSkyBench from '@/assets/zones/props/sky_bench.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propStall from '@/assets/zones/props/stall.png';
@@ -120,6 +125,8 @@ import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
 import propTeaKiosk from '@/assets/zones/props/tea_kiosk.png';
 import propTent from '@/assets/zones/props/tent.png';
+import propTether from '@/assets/zones/props/tether.png';
+import propTicketGates from '@/assets/zones/props/ticket_gates.png';
 import propTowerAmber from '@/assets/zones/props/tower_amber.png';
 import propTowerCyan from '@/assets/zones/props/tower_cyan.png';
 import propTowerPink from '@/assets/zones/props/tower_pink.png';
@@ -153,6 +160,7 @@ import groundRidge from '@/assets/zones/ridge/ground.png';
 import groundHalt from '@/assets/zones/halt/ground.png';
 import groundJunction from '@/assets/zones/junction/ground.png';
 import groundNeon from '@/assets/zones/neon/ground.png';
+import groundSkyport from '@/assets/zones/skyport/ground.png';
 import groundGulch from '@/assets/zones/gulch/ground.png';
 import groundOasis from '@/assets/zones/oasis/ground.png';
 import groundCaldera from '@/assets/zones/caldera/ground.png';
@@ -169,6 +177,7 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   halt: groundHalt,
   junction: groundJunction,
   neon: groundNeon,
+  skyport: groundSkyport,
   gulch: groundGulch,
   oasis: groundOasis,
   caldera: groundCaldera,
@@ -216,6 +225,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   cottage_b: propCottageB,
   cow_skull: propCowSkull,
   crate: propCrate,
+  departure_pylon: propDeparturePylon,
   dream_pool: propDreamPool,
   drone: propDrone,
   dry_well: propDryWell,
@@ -254,6 +264,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lily_pads: propLilyPads,
   lobster_pots: propLobsterPots,
   locomotive: propLocomotive,
+  luggage_bot: propLuggageBot,
+  maglev: propMaglev,
   mine_portal: propMinePortal,
   moon_crystal: propMoonCrystal,
   moon_shrub: propMoonShrub,
@@ -270,6 +282,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   pennant: propPennant,
   pine: propPine,
   pipe_run: propPipeRun,
+  pod_tree: propPodTree,
   poster_board: propPosterBoard,
   potted_plant: propPottedPlant,
   reeds: propReeds,
@@ -285,6 +298,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   shelter: propShelter,
   shuttle: propShuttle,
   signpost: propSignpost,
+  sky_bench: propSkyBench,
   sleep_pod: propSleepPod,
   snowy_pine: propSnowyPine,
   stall: propStall,
@@ -296,6 +310,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   street_light: propStreetLight,
   tea_kiosk: propTeaKiosk,
   tent: propTent,
+  tether: propTether,
+  ticket_gates: propTicketGates,
   tower_amber: propTowerAmber,
   tower_cyan: propTowerCyan,
   tower_pink: propTowerPink,
