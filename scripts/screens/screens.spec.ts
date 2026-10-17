@@ -168,13 +168,14 @@ async function overflow(page: Page, screen: Screen) {
 
 // Exercise the real store through the rendered confirmation, after its capture.
 // Same-origin reload must keep the backup and empty garden, not re-seed a fixture.
+const saveBackups = (saved: Record<string, string>) =>
+  Object.entries(saved).filter(([key]) => key.startsWith('screenagotchi-v1:backup:'));
+
 async function confirmRecovery(page: Page) {
   const disk = () => page.evaluate(() => Object.fromEntries(Object.entries(localStorage)));
   const before = await disk();
   const raw = before['screenagotchi-v1'];
-  const backups = (saved: Record<string, string>) =>
-    Object.entries(saved).filter(([key]) => key.startsWith('screenagotchi-v1:backup:'));
-  expect(backups(before)).toEqual([]);
+  expect(saveBackups(before)).toEqual([]);
   await click(page, page.getByRole('button', { name: 'CANCEL', exact: true }));
   expect((await disk())['screenagotchi-v1']).toBe(raw);
   await click(page, page.getByRole('button', { name: 'START FRESH', exact: true }));
@@ -182,15 +183,15 @@ async function confirmRecovery(page: Page) {
   await page.clock.runFor(100);
   await expect(page.getByRole('button', { name: 'YES, START FRESH', exact: true })).toHaveCount(0);
   expect((await disk())['screenagotchi-v1']).toBe(raw);
-  expect(backups(await disk())).toEqual([]);
+  expect(saveBackups(await disk())).toEqual([]);
   await click(page, page.getByRole('button', { name: 'START FRESH', exact: true }));
   expect((await disk())['screenagotchi-v1']).toBe(raw);
   await click(page, page.getByRole('button', { name: 'YES, START FRESH', exact: true }));
   const plant = page.getByRole('button', { name: 'Plant MOSSLING, habit REST', exact: true });
   await expect(plant).toBeVisible();
   const recovered = await disk();
-  expect(backups(recovered)).toHaveLength(1);
-  expect(backups(recovered)[0][1]).toBe(raw);
+  expect(saveBackups(recovered)).toHaveLength(1);
+  expect(saveBackups(recovered)[0][1]).toBe(raw);
   expect(JSON.parse(recovered['screenagotchi-v1']).player).toBeNull();
   await page.reload({ waitUntil: 'networkidle' });
   await page.clock.runFor(3000);
@@ -200,7 +201,7 @@ async function confirmRecovery(page: Page) {
   // Normal initialization records the visit time; all game data must survive.
   expect(reloaded.lastActiveAt).toBeGreaterThanOrEqual(original.lastActiveAt);
   expect({ ...reloaded, lastActiveAt: original.lastActiveAt }).toEqual(original);
-  expect(backups(await disk())).toEqual(backups(recovered));
+  expect(saveBackups(await disk())).toEqual(saveBackups(recovered));
 }
 
 for (const screen of screens) {
@@ -251,10 +252,10 @@ for (const screen of screens) {
       if (recovery === 'recovery-newer')
         localStorage.setItem('screenagotchi-v1', JSON.stringify({ saveVersion: futureVersion }));
       if (recovery === 'recovery-storage') {
-        const read = Object.getOwnPropertyDescriptor(Storage.prototype, 'getItem')!.value as (
-          this: Storage,
-          key: string,
-        ) => string | null;
+        const read: Storage['getItem'] = Object.getOwnPropertyDescriptor(
+          Storage.prototype,
+          'getItem',
+        )!.value;
         Storage.prototype.getItem = function (key) {
           if (this === localStorage && key === 'screenagotchi-v1')
             throw new Error('Synthetic screenshot save read failure');
