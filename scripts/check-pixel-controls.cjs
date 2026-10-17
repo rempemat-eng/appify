@@ -60,10 +60,10 @@ function fixture(value = false, disabled = false) {
   });
   return { props, changes };
 }
-function key(fixture, overrides = {}) {
+function key(subject, overrides = {}) {
   const target = {};
   let prevented = 0;
-  fixture.props.onKeyDown({
+  subject.props.onKeyDown({
     key: ' ',
     target,
     currentTarget: target,
