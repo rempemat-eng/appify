@@ -155,24 +155,6 @@ export const gardenObjects = [
     action: null,
   },
   {
-    id: 'pine-7',
-    sprite: 'pine',
-    x: 168,
-    y: -55,
-    w: 36,
-    h: 78,
-    action: null,
-  },
-  {
-    id: 'pine-8',
-    sprite: 'pine',
-    x: 194,
-    y: -61,
-    w: 36,
-    h: 78,
-    action: null,
-  },
-  {
     id: 'pine-9',
     sprite: 'pine',
     x: 220,
@@ -238,7 +220,7 @@ export const gardenObjects = [
   {
     id: 'tree-3',
     sprite: 'tree_small',
-    x: 198,
+    x: 230,
     y: -48,
     w: 43,
     h: 69,

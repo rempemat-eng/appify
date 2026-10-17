@@ -13,6 +13,7 @@ draws the art and checks its own logic (every exit and stand reachable on foot).
 """
 from __future__ import annotations
 
+import json
 import math
 import os
 import sys
@@ -27,10 +28,17 @@ import style  # noqa: E402
 import world_props as wp  # noqa: E402
 import worlds  # noqa: E402
 from materials import G, P, STONE, WOOD, SLATE, RED, MATERIALS  # noqa: E402
+import valley_props as vp  # noqa: E402
 import steampunk_props as sp  # noqa: E402
 import cyber_props as cp  # noqa: E402
+import western_props as wsp  # noqa: E402
+import caldera_props as cdp  # noqa: E402
+import harbour_props as hbp  # noqa: E402
+import castle_props as csp  # noqa: E402
+import space_props as spp  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
+IRONm, LEAFm = MATERIALS['iron'], MATERIALS['leaf']
 
 W, H, CELL = 320, 576, 4
 worlds.W, worlds.H = W, H  # the world painters read the canvas size from the module
@@ -104,11 +112,11 @@ def ring_post() -> Canvas:
 
 def paint_road(cv: Canvas, mask):
     """Sandy earth with the ragged turf edge, like worlds.paint_dirt, except that pixels
-    beyond the top edge count as road: the road runs on into the garden, so the border
-    gets no turf edge and the two zones meet without a seam."""
+    beyond the top or bottom edge count as road: the road runs on into the next zone,
+    so the border gets no turf edge and the two zones meet without a seam."""
     for (x, y) in mask:
         cv.set(x, y, P[4] if smooth_noise(x, y, 7, 40) > 0.7 else P[3])
-    detail.grass_edge(cv, {(x, y) for (x, y) in mask if 0 <= x < W and y < H}, G, P, seed=11)
+    detail.grass_edge(cv, {(x, y) for (x, y) in mask if 0 <= x < W}, G, P, seed=11)
     for (x, y) in mask:
         if (x, y + 1) not in mask and 0 <= y + 1 < H:
             cv.set(x, y + 1, G[3])
@@ -123,8 +131,10 @@ def town(frame: int = 0):
     paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
     square = {(x, y) for (x, y) in oval(SQUARE[0], SQUARE[1], 118, 62)}
     east = worlds.thick([(250, 300), (W + 4, 300)], 13)
-    south = worlds.thick([(150, 340), (176, 400), (196, 432)], 12, seed=6)
-    worlds.paint_dirt(cv, south)
+    # the road south to Driftwood Harbour, the same width and x as the harbour's road
+    south = worlds.thick([(160, 340), (156, 470), (160, 560)], 15, seed=6) | worlds.thick([(160, 552), (160, H + 4)], 18)
+    south |= worlds.thick([(150, 400), (110, 452)], 9, seed=7)  # a side path to the ring
+    paint_road(cv, south | {(x, y) for (x, y0) in south if y0 == H - 1 for y in range(H, H + 12)})
     worlds.paint_paving(cv, square | east, seed=3)
     # a ring of darker setts around the well, and a kerb where the square meets the lawn
     for (x, y) in square:
@@ -140,7 +150,7 @@ def town(frame: int = 0):
         elif (x, y - 1) not in square and (x, y - 1) not in east:
             cv.set(x, y, STONE[3])
     # the sparring ring: trodden earth edged with stones
-    rcx, rcy = 200, 470
+    rcx, rcy = 76, 486
     ring = oval(rcx, rcy, 52, 24)
     for (x, y) in ring:
         cv.set(x, y, P[3] if smooth_noise(x, y, 6, 9) > 0.55 else P[2])
@@ -148,7 +158,7 @@ def town(frame: int = 0):
     for k in range(26):
         a = 2 * math.pi * k / 26
         detail.pebble(cv, int(rcx + 54 * math.cos(a)), int(rcy + 26 * math.sin(a)), STONE, big=k % 2 == 0)
-    for fb in ((258, 196, 40, 16, 2), (40, 452, 40, 16, 1)):
+    for fb in ((258, 196, 40, 16, 2), (200, 452, 40, 16, 1), (200, 500, 40, 16, 3)):
         meadow.flower_planter(cv, *fb)
     objects = [
         # the treeline either side of the road from the garden
@@ -170,19 +180,52 @@ def town(frame: int = 0):
         # the second street of houses, east
         ('house-blue', 'house_blue', 236, 344), ('pot-hb', 'potted_plant', 238, 418),
         # the ring and its spectators
-        ('bench-r1', 'bench', 96, 462), ('pole', 'pennant', 256, 420),
-        # the south hedge (the Cove comes later) and framing trees
-        ('hedge-s1', 'hedge', 0, 548), ('hedge-s2', 'hedge', 96, 548), ('hedge-s3', 'hedge', 192, 548),
-        ('hedge-s4', 'hedge', 288, 548),
-        ('tree-w1', 'tree', -26, 230), ('tree-w2', 'tree_small', -12, 470), ('tree-e1', 'tree', 286, 470),
-        ('bush-e2', 'bush', 292, 228), ('bush-w3', 'bush', 54, 520), ('bush-w4', 'bush', 250, 520),
+        ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 130, 440),
+        # hedges either side of the road south, and framing trees
+        ('hedge-s1', 'hedge', 0, 548), ('hedge-s3', 'hedge', 192, 548),
+        ('tree-w1', 'tree', -26, 230), ('tree-e1', 'tree', 252, 470),
+        ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 250, 400),
+        ('bunting', 'bunting', 60, 238), ('cat', 'cat', 182, 352),
     ]
     ring_fence(objects, rcx, rcy, 58, 28)
     stands = {
         'garden': (160, 18), 'library': (70, 238), 'well': (160, 316), 'stall': (60, 424),
-        'ring': (200, 470), 'park': (306, 300),
+        'ring': (76, 486), 'park': (306, 300), 'harbour': (160, 540),
     }
     return cv, objects, stands
+
+
+def bunting() -> Canvas:
+    """Bunting strung across the square for market day, 200 x 20: a sagging cord with
+    little pennants in the town's colours, each lit on its left half."""
+    w, h = 200, 20
+    cv = Canvas(w, h, pad=2)
+    cols = (RED, MATERIALS['gold'], MATERIALS['water'], MATERIALS['leaf'], MATERIALS['nap'])
+    for x in range(w):
+        y = 2 + int(math.sin(x / (w - 1) * math.pi) * 7)
+        cv.set(x, y, WOOD[1])
+        if x % 9 == 3 and 4 < x < w - 6:
+            c = cols[(x // 9) % len(cols)]
+            for t in range(6):
+                for dx in range(-(3 - t // 2), 4 - t // 2):
+                    cv.set(x + dx, y + 1 + t, c[3] if dx < 0 else c[2])
+    return cv
+
+
+def cat() -> Canvas:
+    """The town cat asleep in the sun, 16 x 10, curled with its tail round its nose."""
+    cv = Canvas(16, 10, pad=2)
+    for (x, y) in oval(8, 6, 6.5, 3.6):
+        cv.set(x, y, '#E8A04A' if (x - 8) + (y - 6) < -1 else '#C47A30' if x < 11 else '#9A5A22')
+    for (x, y) in disc(4, 4, 2.4):
+        cv.set(x, y, '#E8A04A' if x < 4 else '#C47A30')
+    cv.set(3, 1, '#C47A30'); cv.set(5, 1, '#C47A30')
+    cv.set(3, 4, '#5A3A1E'); cv.set(5, 4, '#5A3A1E')  # closed eyes
+    for t in range(6):
+        cv.set(9 + t, 9 - t // 3, '#9A5A22')
+    for k in range(4):
+        cv.set(6 + k * 2, 5, '#9A5A22')  # tabby stripes
+    return cv
 
 
 def pennant() -> Canvas:
@@ -198,10 +241,22 @@ def pennant() -> Canvas:
 def sprites() -> dict[str, Canvas]:
     items = wp.props()
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
-                  'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant()})
+                  'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant(),
+                  'bunting': bunting(), 'cat': cat()})
+    items.update(vp.props())
     items.update(sp.props())
     items.update(cp.props())
+    items.update(wsp.props())
+    items.update(cdp.props())
+    items.update(hbp.props())
+    items.update(csp.props())
+    items.update(spp.props())
+    items['fence_c'] = gp.fence_h(60)
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
+
+
+# Props with a way through them: (from, to) in sprite pixels.
+OPENINGS = {'gatehouse': (50, 72)}
 
 
 def walk_grid(objects, sprite_map) -> list[str]:
@@ -209,15 +264,18 @@ def walk_grid(objects, sprite_map) -> list[str]:
     for (_id, key, x, y) in objects:
         sp = sprite_map[key]
         foot = 20 if sp.w > 60 else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 6
+        gap = OPENINGS.get(key)
         for yy in range(y + sp.h - foot, y + sp.h):
             for xx in range(x + 3, x + sp.w - 3):
+                if gap and x + gap[0] <= xx < x + gap[1]:
+                    continue  # a gateway you walk through
                 blocked.add((xx // CELL, yy // CELL))
     rows = []
     for r in range(H // CELL):
         row = ''
         for c in range(W // CELL):
             cx, cy = c * CELL + 2, r * CELL + 2
-            row += '.' if (c, r) not in blocked and 0 <= cx < W and 6 <= cy <= H - 30 else '#'
+            row += '.' if (c, r) not in blocked else '#'  # borders stay open: neighbours join here
         rows.append(row)
     return rows
 
@@ -324,20 +382,20 @@ def junction(frame: int = 0):
         # the train at the platform, steam from its stack
         ('engine', 'locomotive', 96, 50), ('puff-engine', 'steam_puff', 112, 34),
         # the platform
-        ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'bench', 208, 104),
-        ('crate-p', 'crate', 20, 116), ('sack-p', 'sack', 36, 122), ('barrel-p', 'barrel', 290, 112),
+        ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'iron_bench', 208, 104),
+        ('trunk-p1', 'steamer_trunk', 14, 112), ('trunk-p2', 'steamer_trunk', 30, 118), ('coal-p', 'coal_cart', 284, 110),
         # the square
         ('ws-left', 'workshop', 4, 150), ('ws-right', 'workshop', 220, 150),
         ('tower', 'clock_tower', 136, 176),
         ('lamp-s1', 'gas_lamp', 112, 280), ('lamp-s2', 'gas_lamp', 196, 280),
         ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 236, 252),
         ('puff-c1', 'steam_puff', 66, 132), ('puff-c2', 'steam_puff', 282, 132),
-        ('ws-low', 'workshop_round', 6, 320), ('barrel-1', 'barrel', 92, 386),
-        ('crate-2', 'crate', 280, 392), ('pipes-2', 'pipe_run', 240, 410),
-        ('puff-v3', 'steam_puff', 206, 352), ('cafe-j', 'cafe', 250, 330),
+        ('ws-low', 'workshop_round', 6, 320), ('coal-1', 'coal_cart', 90, 384),
+        ('trunk-2', 'steamer_trunk', 280, 396), ('pipes-2', 'pipe_run', 240, 410),
+        ('puff-v3', 'steam_puff', 206, 352), ('kiosk', 'tea_kiosk', 250, 300),
         # round the ring
-        ('lamp-r1', 'gas_lamp', 92, 470), ('lamp-r2', 'gas_lamp', 216, 470), ('bench-r', 'bench', 22, 486),
-        ('gears-2', 'gear_pile', 270, 500),
+        ('lamp-r1', 'gas_lamp', 92, 470), ('lamp-r2', 'gas_lamp', 216, 470), ('bench-r', 'iron_bench', 22, 486),
+        ('mast', 'airship_mast', 214, 412),
         ('wall-s1', 'pipe_run', 0, 556), ('wall-s2', 'pipe_run', 64, 556), ('wall-s3', 'pipe_run', 192, 556),
         ('wall-s4', 'pipe_run', 256, 556),
     ]
@@ -429,15 +487,14 @@ def neon_city(frame: int = 0):
         ('light-3', 'street_light', 40, 300), ('light-4', 'street_light', 270, 304), ('pole-1', 'cable_pole', 150, 236),
         ('vend-3', 'vending_machine', 22, 392), ('holo-2', 'holo_board', 266, 360),
         ('drone-1', 'drone', 92, 140), ('drone-2', 'drone', 230, 330), ('drone-3', 'drone', 120, 440),
-        ('crate-q', 'crate', 290, 432), ('barrel-q', 'barrel', 30, 440),
-        ('bench-q1', 'bench', 84, 420), ('bench-q2', 'bench', 192, 420), ('pot-q1', 'potted_plant', 136, 428),
-        ('pot-q2', 'potted_plant', 174, 428),
+        ('boxes-q', 'containers', 252, 404), ('shelter-q', 'shelter', 70, 412), ('plant-q1', 'uv_planter', 4, 300),
+        ('plant-q2', 'uv_planter', 290, 260), ('ferry', 'ferry', 120, 490),
     ]
     stands = {'crossing': (160, 192), 'stalls': (60, 300), 'court': (160, 382), 'quay': (160, 452)}
     return cv, objects, stands
 
 
-def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str):
+def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str, skip=frozenset()):
     """Light thrown on the ground: three stepped rings blending toward the light's
     colour, dithered at their edges (pixel art, no smooth gradient)."""
     rgb = tuple(int(colour[k:k + 2], 16) for k in (1, 3, 5))
@@ -450,7 +507,7 @@ def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str):
             if 0.25 < d < 0.35 or 0.57 < d < 0.67 or d > 0.92:
                 if (x + y) % 2:
                     amt = {0.42: 0.26, 0.26: 0.13, 0.13: 0.0}[amt]
-            if amt <= 0:
+            if amt <= 0 or (x, y) in skip:
                 continue
             c = cv.get(x, y)
             if c[3]:
@@ -467,17 +524,1029 @@ def rain(prev: Canvas, seed: int = 0):
                 prev.set(x - t // 2, y + t, tuple(min(255, v + 40) for v in c[:3]) + (255,))
 
 
+def cracked(x: int, y: int, cell: int = 9, seed: int = 0) -> bool:
+    """True on the cracks of dried mud: the edges of jittered cells (a Voronoi
+    pattern), so the plates are irregular polygons rather than a grid."""
+    best, second = 1e9, 1e9
+    gx, gy = x // cell, y // cell
+    for j in (-1, 0, 1):
+        for i in (-1, 0, 1):
+            cx = (gx + i) * cell + noise2(gx + i, gy + j, 240 + seed) * cell
+            cy = (gy + j) * cell + noise2(gx + i, gy + j, 241 + seed) * cell
+            d = (x - cx) ** 2 + (y - cy) ** 2
+            if d < best:
+                best, second = d, best
+            elif d < second:
+                second = d
+    return math.sqrt(second) - math.sqrt(best) < 1.1
+
+
+def mesa_face(cv: Canvas, edge, top_ramp, face_ramp, face_h: int = 22):
+    """A sandstone cliff: for each row the cliff's western edge x = edge(y); the mesa
+    top lies east of it (lit, with scrub), the face runs down-left as banded strata,
+    each band lit on its upper edge, with a shadow on the ground at its foot."""
+    for y in range(H):
+        ex = edge(y)
+        if ex is None:
+            continue
+        for x in range(ex, W):
+            n = smooth_noise(x, y, 9, 221)
+            cv.set(x, y, top_ramp[4] if n > 0.62 else top_ramp[3])
+        for k in range(face_h):  # the face is drawn below and left of the rim
+            x = ex - 1 - k // 4
+            yy = y + k
+            if not (0 <= yy < H) or x < 0:
+                continue
+            band = (k + int(noise2(y // 7, 3, 222) * 3)) // 4
+            c = face_ramp[3] if band % 2 else face_ramp[2]
+            if (k + int(noise2(y // 7, 3, 222) * 3)) % 4 == 0:
+                c = face_ramp[4]
+            if k > face_h - 4:
+                c = face_ramp[1]
+            cv.set(x, yy, c)
+        for d in range(1, 4):  # shadow at the foot, down and to the right of the face
+            x = ex - 1 - (face_h // 4) - d
+            if 0 <= x < W:
+                style.darken(cv, x, y + face_h // 2)
+
+
+def gulch(frame: int = 0):
+    """Dust Gulch, its own place: a town strung along one street that runs down from the
+    railway's end, under a sandstone mesa on the east with the old mine cut into its
+    foot. A dry creek bed of cracked mud winds across (the reason the well ran dry),
+    crossed by a plank bridge; the water tower and windpump stand by it, still hoping.
+    The corral sits under the cliff, and the wagon track leaves south-west to the oasis."""
+    DESERT, ADOBE = MATERIALS['desert'], MATERIALS['adobe']
+    BLEACHED = wsp.BLEACHED
+    cv = Canvas(W, H)
+    for y in range(H):  # sand with wind ripples, darker drifts dithered in
+        for x in range(W):
+            n = smooth_noise(x, y, 26, 211)
+            c = DESERT[3]
+            if n < 0.3 or (n < 0.36 and (x + y) % 2):
+                c = DESERT[2]
+            elif n > 0.68 or (n > 0.63 and (x + y) % 2):
+                c = DESERT[4]
+            ripple = (y + int(math.sin(x / 9 + y / 40) * 3)) % 9
+            if ripple == 0 and 0.36 < n < 0.63:
+                c = DESERT[4]
+            elif ripple == 1 and 0.36 < n < 0.63:
+                c = DESERT[2]
+            cv.set(x, y, c)
+    for y in range(H):  # hardpan: flat cracked patches
+        for x in range(W):
+            if smooth_noise(x, y, 18, 223) > 0.74:
+                cv.set(x, y, DESERT[1] if cracked(x, y, 8, 1) else DESERT[4] if (x + y) % 5 else DESERT[3])
+    # the dry creek: a winding bed of cracked mud with rounded stones and pale banks
+    creek = worlds.thick([(-4, 300), (60, 296), (120, 320), (176, 312), (230, 336), (246, 360)], 9, seed=12)
+    for (x, y) in creek:
+        cv.set(x, y, ADOBE[0] if cracked(x, y, 6, 2) else ADOBE[2] if (x + y) % 3 else ADOBE[3])
+    for (x, y) in creek:
+        if (x, y - 1) not in creek:
+            cv.set(x, y, ADOBE[0]); cv.set(x, y - 1, DESERT[4])
+        elif (x, y + 1) not in creek:
+            cv.set(x, y, ADOBE[4])
+    for i in range(40):
+        x, y = int(noise2(i, 0, 228) * W), int(noise2(i, 1, 228) * H)
+        if (x, y) in creek and (x + 2, y) in creek:
+            detail.pebble(cv, x, y, ADOBE, big=i % 3 == 0)
+    # the railway's end and the plank platform at the top
+    paint_rails(cv, 40)
+    for y in range(36, 60):  # the line ends at the mesa: clear the rails beyond the buffer
+        for x in range(226, W):
+            cv.set(x, y, DESERT[3])
+    for x in range(212, 224):  # buffer stop
+        cv.vline(x, 38, 16, BLEACHED[2] if x % 2 else BLEACHED[1])
+    cv.hline(212, 38, 12, RED[3])
+    for y in range(58, 78):
+        for x in range(20, 230):
+            cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
+            if (x % 6) == 3 and y % 10 == 2:
+                cv.set(x, y, BLEACHED[0])  # nail heads
+    cv.hline(20, 58, 210, BLEACHED[5]); cv.hline(20, 78, 210, BLEACHED[0])
+    # the street: packed earth with wheel ruts and hoof prints, down from the platform
+    street = worlds.thick([(130, 78), (128, 200), (136, 300), (130, 420), (110, 500), (60, 560), (-6, 590)], 17, seed=13)
+    for (x, y) in street:
+        n = smooth_noise(x, y, 10, 213)
+        c = DESERT[2] if n > 0.3 or (x + y) % 2 else DESERT[1]
+        cv.set(x, y, c)
+    for (x, y) in street:
+        if (x - 7, y) not in street and (x - 6, y) in street:
+            pass
+    for y in range(80, H, 1):  # two wheel ruts following the street's centre line
+        cx = None
+        for (xx, yy) in ((x2, y) for x2 in range(W)):
+            if (xx, yy) in street:
+                cx = xx if cx is None else cx
+        if cx is None:
+            continue
+        right = max(x2 for x2 in range(cx, min(W, cx + 40)) if (x2, y) in street)
+        mid = (cx + right) // 2
+        for rx in (mid - 6, mid + 6):
+            if noise2(rx, y // 3, 229) > 0.15:
+                cv.set(rx, y, DESERT[1])
+        if y % 7 == 0:
+            cv.set(mid + (2 if (y // 7) % 2 else -2), y, DESERT[0])  # hoof prints
+    # boardwalks in front of the buildings, out to the street
+    for (x0, y0, w0) in ((6, 186, 108), (6, 300, 92)):
+        for y in range(y0, y0 + 8):
+            for x in range(x0, x0 + w0):
+                cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
+        cv.hline(x0, y0, w0, BLEACHED[5]); cv.hline(x0, y0 + 8, w0, BLEACHED[0])
+    # the plank bridge where the street crosses the dry bed
+    for y in range(296, 334):
+        for x in range(116, 152):
+            if (x, y) in creek or (x, y - 3) in creek:
+                cv.set(x, y, BLEACHED[3] if (y // 4) % 2 else BLEACHED[2])
+                if (y % 4) == 0:
+                    cv.set(x, y, BLEACHED[1])
+    # the mesa in the north-east: red rock plateau, its south face in strata, the mine
+    # cut into the face. The rail line stops short of it at the buffer.
+    def rim(x):
+        if x < 232:
+            return None
+        return 196 + int(math.sin(x / 23) * 6 + noise2(x // 6, 0, 230) * 5) - max(0, (250 - x) * 4)
+    FACE_H = 26
+    for x in range(232, W):
+        top = rim(x)
+        for y in range(0, top):
+            n = smooth_noise(x, y, 24, 221)
+            c = ADOBE[3] if n > 0.35 or (n > 0.3 and (x + y) % 2) else ADOBE[2]
+            if n > 0.75 or (n > 0.7 and (x + y) % 2):
+                c = ADOBE[4]
+            if top - y < 3:
+                c = DESERT[5] if top - y == 1 else ADOBE[4]  # the sunlit rim
+            cv.set(x, y, c)
+        for k in range(FACE_H):
+            y = top + k
+            band = (k + int(noise2(x // 9, 3, 222) * 3)) // 5
+            c = ADOBE[2] if band % 2 else ADOBE[1]
+            if (k + int(noise2(x // 9, 3, 222) * 3)) % 5 == 0:
+                c = ADOBE[3]
+            if k == 0:
+                c = ADOBE[0]
+            if k > FACE_H - 4:
+                c = ADOBE[1]
+            if x == 232 or (rim(x - 1) is not None and rim(x - 1) > top + 2):
+                c = ADOBE[1]
+            cv.set(x, y, c)
+        for d in range(3):  # its shadow on the sand below
+            if (x + d) % 2 or d == 0:
+                style.darken(cv, x, top + FACE_H + d)
+    for x in range(226, 233):  # the western end of the mesa, in shade
+        for y in range(0, rim(232) + FACE_H):
+            cv.set(x, y, ADOBE[1] if x > 229 else ADOBE[0] if x == 229 else cv.get(x, y))
+    for i in range(36):  # scrub on the mesa top
+        x, y = 240 + int(noise2(i, 0, 231) * 78), int(noise2(i, 1, 231) * 180)
+        detail.grass_tuft(cv, x, y, i % 6, ['#5A4A2A', '#7A6436', '#9A8044', '#B89A58', '#D2B672'], 2)
+    # the corral: hoof-churned ground under the cliff
+    ccx, ccy = 190, 470
+    for (x, y) in oval(ccx, ccy, 44, 26):
+        n = smooth_noise(x, y, 5, 216)
+        cv.set(x, y, DESERT[1] if n > 0.6 else DESERT[2] if n > 0.25 else ADOBE[2])
+    objects = [
+        ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 118, 178), ('poster', 'poster_board', 184, 150),
+        ('store', 'store', 6, 210), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
+        ('tower', 'water_tower', 168, 200), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 176, 300),
+        ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 96, 518), ('hay-2', 'hay_bale', 84, 530),
+        ('mine', 'mine_portal', 248, 170), ('dyn-1', 'dynamite_crate', 228, 214), ('dyn-2', 'dynamite_crate', 300, 222),
+        ('corral-n', 'corral_rail', ccx - 46, ccy - 36), ('corral-s', 'corral_rail', ccx - 46, ccy + 22),
+        ('corral-w', 'corral_side', ccx - 52, ccy - 22),
+        ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
+        ('cactus-4', 'saguaro_small', 286, 540), ('cactus-5', 'saguaro', 280, 60), ('cactus-6', 'saguaro_small', 4, 2),
+        ('cactus-7', 'saguaro', 290, 300), ('weed-1', 'tumbleweed', 170, 380), ('weed-2', 'tumbleweed', 30, 540),
+        ('skull', 'cow_skull', 250, 520), ('barrel-p', 'keg', 40, 62), ('sack-p', 'hay_bale', 196, 56),
+    ]
+    stands = {'platform': (128, 70), 'saloon': (58, 200), 'street': (132, 260), 'corral': (190, 470),
+              'oasis': (30, 540), 'mine': (284, 236), 'well': (75, 404)}
+    return cv, objects, stands
+
+
+def caldera(frame: int = 0):
+    """The Ember Caldera: the crater rim at the top with the lava lake glowing beyond,
+    a lava river running downhill out of it and away to the south-east under a basalt
+    bridge, plates of cooling crust with glowing seams along its banks, the forge
+    settlement on the cooled ground, basalt column cliffs, obsidian, and a ring of
+    columns where the forge keeper spars. The mine cart line from Dust Gulch comes out
+    of a tunnel in the west wall."""
+    LAVA, BASALT, ASH = MATERIALS['lava'], MATERIALS['basalt'], MATERIALS['ash']
+    cv = Canvas(W, H)
+    for y in range(H):  # ash ground with cinders, gently darker in hollows
+        for x in range(W):
+            n = smooth_noise(x, y, 30, 261)
+            c = ASH[2] if n > 0.3 or (n > 0.26 and (x + y) % 2) else ASH[1]
+            g = noise2(x, y, 270)
+            if g > 0.93:
+                c = BASALT[2]  # a cinder
+            elif g > 0.9:
+                c = ASH[3]
+            cv.set(x, y, c)
+    for i in range(200):
+        x, y = int(noise2(i, 0, 262) * W), int(noise2(i, 1, 262) * H)
+        detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
+    # the crater: a lava lake at the top behind a ragged basalt rim
+    def rim(x):
+        return 62 + int(math.sin(x / 19) * 7 + noise2(x // 5, 0, 263) * 6)
+    for x in range(W):
+        r = rim(x)
+        for y in range(0, r):
+            n = smooth_noise(x, y, 8, 264 + frame)
+            c = LAVA[3] if n > 0.5 else LAVA[2]
+            if n > 0.78:
+                c = LAVA[4]
+            if cracked(x, y, 11, 3) and n < 0.6:
+                c = LAVA[1]  # crust floating on the lake
+            cv.set(x, y, c)
+        for k in range(14):  # the rim's inner face, lit by the lake, then its lip
+            y = r + k
+            c = LAVA[1] if k < 2 else BASALT[3] if k < 5 else BASALT[2] if k < 10 else BASALT[1]
+            if k == 5:
+                c = BASALT[4]
+            cv.set(x, y, c)
+    # the lava river: out of the lake, downhill to the south-east
+    river = worlds.thick([(170, 60), (178, 140), (160, 230), (200, 320), (250, 400), (300, 470), (W + 6, 520)], 13, seed=14)
+    for (x, y) in river:
+        n = smooth_noise(x, y + frame * 3, 7, 265)
+        c = LAVA[3] if n > 0.45 else LAVA[2]
+        if n > 0.75:
+            c = LAVA[5] if n > 0.88 else LAVA[4]
+        cv.set(x, y, c)
+    # crust plates along the banks, their seams still glowing
+    for (x, y) in list(river):
+        for (dx, dy) in ((10, 0), (-10, 0), (0, 10), (7, 7), (-7, 7)):
+            q = (x + dx, y + dy)
+            if q in river or not (0 <= q[0] < W and 0 <= q[1] < H):
+                continue
+            if cracked(q[0], q[1], 7, 4):
+                cv.set(*q, LAVA[2] if noise2(q[0], q[1], 267) > 0.4 else LAVA[1])
+            elif noise2(q[0] // 3, q[1] // 3, 268) > 0.3:
+                cv.set(*q, BASALT[2] if (q[0] + q[1]) % 3 else BASALT[3])
+    for (x, y) in river:  # the river's lip
+        if (x, y - 1) not in river:
+            cv.set(x, y, LAVA[5])
+        if (x, y + 1) not in river and 0 <= y + 1 < H:
+            cv.set(x, y + 1, BASALT[0])
+    # the lava lights the ground round it (stepped pools, see light_pool)
+    # (applied once per spot, never over the lava itself)
+    glow_skip = set(river) | {(x, y) for x in range(W) for y in range(0, rim(x) + 2)}
+    spots = sorted({(x // 26 * 26 + 13, y // 26 * 26 + 13) for (x, y) in river})
+    for (x, y) in spots:
+        light_pool(cv, x, y, 22, 14, LAVA[1], glow_skip)
+    for x in range(0, W, 48):
+        light_pool(cv, x + 24, rim(x) + 18, 30, 10, LAVA[1], glow_skip)
+    # the mine cart line out of a timbered tunnel in the west wall
+    wall = {(x, y) for y in range(236, 320) for x in range(0, 34 - abs(y - 278) // 4)}
+    for (x, y) in wall:
+        band = (y + int(noise2(x // 6, 0, 271) * 3)) // 6
+        cv.set(x, y, BASALT[3] if band % 2 else BASALT[2])
+        if (x + 1, y) not in wall:
+            cv.set(x, y, BASALT[4])
+    tunnel = {(x, y) for (x, y) in disc(16, 278, 11) if y < 278} | rect_set_z(5, 278, 23, 22)
+    for (x, y) in tunnel:
+        cv.set(x, y, '#120C10' if x < 24 else '#22161C')
+    for px in (3, 27):
+        for y in range(272, 300):
+            cv.set(px, y, MATERIALS['wood'][3]); cv.set(px + 1, y, MATERIALS['wood'][1])
+    cv.hline(3, 270, 26, MATERIALS['wood'][4]); cv.hline(3, 271, 26, MATERIALS['wood'][2])
+    for x in range(10, 150, 5):
+        cv.vline(x, 284, 12, MATERIALS['wood'][2])
+    for ry in (286, 293):
+        cv.hline(6, ry, 144, MATERIALS['iron'][3])
+    cv.vline(150, 282, 14, MATERIALS['wood'][3])  # the line's buffer
+    # the forge yard: flagstones of basalt
+    yard = worlds.thick([(40, 400), (110, 400)], 30)
+    for (x, y) in yard:
+        if (x, y) in river:
+            continue
+        sx = (x + (y // 8) % 2 * 5) // 10
+        c = BASALT[3] if noise2(sx, y // 8, 269) > 0.4 else BASALT[2]
+        if (x + (y // 8) % 2 * 5) % 10 == 0 or y % 8 == 0:
+            c = BASALT[0]
+        cv.set(x, y, c)
+    # the sparring ring: crust floor in a circle of short columns
+    ccx, ccy = 120, 500
+    for (x, y) in oval(ccx, ccy, 46, 22):
+        cv.set(x, y, ASH[1] if not cracked(x, y, 9, 5) else LAVA[1])
+    for k in range(14):
+        a = 2 * math.pi * k / 14
+        hex_px = (int(ccx + 52 * math.cos(a)), int(ccy + 26 * math.sin(a)))
+        cp_hex(cv, hex_px[0], hex_px[1], 5)
+    objects = [
+        ('forge', 'forge', 20, 320), ('shrine', 'ember_shrine', 150, 360), ('vent-1', 'cooling_vent', 40, 460),
+        ('cols-1', 'basalt_columns', 4, 96), ('cols-2', 'basalt_columns_low', 70, 120), ('cols-3', 'basalt_columns', 250, 120),
+        ('cols-4', 'basalt_columns_low', 262, 220), ('cols-5', 'basalt_columns', 0, 520),
+        ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 230, 300), ('obs-3', 'obsidian', 262, 556 - 26),
+        ('obs-4', 'obsidian_small', 60, 230), ('vent-2', 'cooling_vent', 214, 196), ('vent-3', 'cooling_vent', 280, 360),
+    ]
+    # the bridge is part of the ground (walkable), drawn across the river
+    deck = style.finalize(cdp.basalt_bridge(), name='basalt_bridge')
+    bx, by = 168, 290
+    cv.paste(deck, bx, by)
+    span = {(x, y) for x in range(bx, bx + deck.w) for y in range(by + 4, by + 20)}
+    lake = {(x, y) for x in range(W) for y in range(0, rim(x) + 14)}
+    blocked = (river | lake) - span
+    stands = {'tunnel': (44, 300), 'forge': (68, 404), 'bridge': (200, 302), 'ring': (120, 500), 'rim': (100, 96),
+              'east': (290, 300)}
+    return cv, objects, stands, blocked
+
+
+def rect_set_z(x, y, w, h):
+    return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
+
+
+def cp_hex(cv: Canvas, cx: int, cy: int, r: int):
+    """A short basalt column drawn straight into the ground: a lit hexagonal top and a
+    stub of shaded face below it."""
+    import caldera_props as cpz
+    BASALT = MATERIALS['basalt']
+    for y in range(cy, cy + 6):
+        for x in range(cx - r + 1, cx + r):
+            cv.set(x, y, BASALT[2] if x < cx else BASALT[1])
+    cpz.hex_top(cv, cx, cy, r)
+
+
+def harbour(frame: int = 0):
+    """Driftwood Harbour: the road from Crossroads Town comes down between whitewashed
+    cottages to a stone quay and the fish market; wooden jetties run out into a basin
+    sheltered by a curving breakwater with the lighthouse on its tip; a sandy beach
+    with rock pools and drying nets lies to the west; the cliff path climbs away east
+    toward Hearthold Castle. The open sea lies beyond the breakwater."""
+    SAND, WTRm = MATERIALS['sand'], MATERIALS['water']
+    BLEACHED = MATERIALS['bleached']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    # the water: the basin and the sea, deeper away from the shore
+    shore_y = lambda x: 300 + int(math.sin(x / 40) * 4)  # noqa: E731  (the quay line)
+    beach = {(x, y) for x in range(0, 130) for y in range(240, H) if x < 124 - (y - 240) * 0.38 + int(noise2(y // 9, 0, 291) * 6)}
+    water = {(x, y) for y in range(H) for x in range(W) if y > shore_y(x) + 6 and (x, y) not in beach}
+    for (x, y) in beach:
+        n = smooth_noise(x, y, 6, 292)
+        cv.set(x, y, SAND[2] if n > 0.35 or (n > 0.3 and (x + y) % 2) else SAND[1])
+        if noise2(x, y, 299) > 0.97:
+            cv.set(x, y, MATERIALS['stone'][3])  # a shell or a pebble
+    for (x, y) in water:
+        depth = (y - shore_y(x)) / 230 + smooth_noise(x, y, 40, 300) * 0.35
+        n = smooth_noise(x, y, 12, 293 + frame)
+        band = 2 if depth < 0.42 else 1 if depth < 0.8 else 0
+        if (0.38 < depth < 0.46 or 0.76 < depth < 0.84) and (x + y) % 2:
+            band = max(0, band - 1) if depth < 0.5 else band
+        c = WTRm[band]
+        if n > 0.72:
+            c = WTRm[band + 1]
+        cv.set(x, y, c)
+    for (x, y) in water:  # foam along the beach
+        if any((x + dx, y + dy) in beach for dx, dy in ((-1, 0), (0, -1), (-2, 0), (0, -2))):
+            cv.set(x, y, WTRm[4] if (x + y + frame) % 3 else WTRm[3])
+    for ty in range(300, H, 6):  # ripples
+        for tx in range(0, W, 8):
+            x, y = tx + int(noise2(tx, ty, 294) * 6), ty + int(noise2(tx, ty, 295) * 4)
+            if (x, y) in water and (x + 4, y) in water and noise2(tx, ty, 296) < 0.45:
+                cv.hline(x + (frame if noise2(tx, ty, 297) < 0.4 else 0), y, 3, WTRm[3])
+    # rock pools on the beach
+    for (px, py) in ((30, 320), (52, 352), (20, 400)):
+        for (x, y) in oval(px, py, 8, 4):
+            cv.set(x, y, WTRm[2] if (x, y - 1) in oval(px, py, 8, 4) else MATERIALS['stone'][3])
+        for k in range(6):
+            detail.pebble(cv, px - 9 + int(noise2(k, px, 298) * 18), py - 5 + int(noise2(k, py, 298) * 10), MATERIALS['stone'], big=k % 2 == 0)
+    # the quay: dressed stone with a lit edge and a face down to the water
+    quay = {(x, y) for x in range(100, 296) for y in range(232, shore_y(x) + 6)}
+    worlds.paint_paving(cv, quay, seed=9)
+    for x in range(100, W):
+        y = shore_y(x) + 6
+        for k in range(8):
+            if x < 296:  # the quay's dressed face
+                c = STONE[3] if k == 0 else STONE[2] if (x + (k // 3) * 4) % 8 else STONE[0]
+                if k > 5:
+                    c = MATERIALS['leaf'][1] if (x + k) % 3 else STONE[1]  # weed at the waterline
+            else:  # past the quay, a rough rocky bank that runs on below the headland
+                c = STONE[3] if (x // 4 + k // 3) % 2 else STONE[2]
+                if k < 2:
+                    c = G[1]
+            cv.set(x, y + k, c)
+    # the breakwater: big blocks curving round the basin to the lighthouse
+    bw = worlds.thick([(W + 6, 410), (260, 452), (200, 500), (130, 526), (92, 528)], 12, seed=15)
+    bw |= {(x, y) for (x, y) in disc(90, 530, 22)}  # the round platform under the lighthouse
+    for (x, y) in bw:
+        blk = ((x + (y // 7) % 2 * 5) // 10 + y // 7) % 3
+        c = STONE[3] if blk == 0 else STONE[2] if blk == 1 else STONE[4]
+        if (x + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
+            c = STONE[1]
+        if (x, y - 2) not in bw:
+            c = STONE[4]
+        cv.set(x, y, c)
+    for (x, y) in bw:
+        if (x, y + 1) not in bw and (x, y + 1) in water:
+            cv.set(x, y + 1, WTRm[4]); cv.set(x, y + 2, WTRm[3])
+    # wooden jetties out over the basin (walkable planks)
+    jetties = []
+    for (jx, jy0, jy1) in ((150, 296, 392), (236, 296, 372)):
+        deck = {(x, y) for x in range(jx, jx + 14) for y in range(jy0, jy1)}
+        for (x, y) in deck:
+            cv.set(x, y, BLEACHED[4] if (y % 4 == 0) else BLEACHED[3] if (x - jx) % 7 else BLEACHED[1])
+        for (x, y) in ((jx - 1, yy) for yy in range(jy0, jy1, 12)):
+            cv.set(x, y, WOOD[1]); cv.set(jx + 14, y, WOOD[1])
+        for y in range(jy0, jy1):  # the deck's shadow on the water
+            cv.set(jx + 14, y, WTRm[0]); cv.set(jx + 15, y, WTRm[1])
+        jetties.append(deck)
+    # the road down from the town and the lanes between the cottages
+    road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (150, 120), (170, 232)], 14, seed=16)
+    road |= worlds.thick([(160, 120), (60, 140), (20, 200)], 9, seed=17)
+    paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
+    cliff = worlds.thick([(W + 6, 110), (W - 12, 112)], 9) | worlds.thick([(W - 10, 112), (270, 130), (230, 180), (220, 232)], 9, seed=18)  # to the castle
+    paint_road(cv, cliff | {(x, y) for (x0, y) in cliff if x0 == W - 1 for x in range(W, W + 12)})
+    objects = [
+        ('cottage-1', 'cottage', 10, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 40, 150),
+        ('cottage-4', 'cottage_b', 236, 140), ('market', 'fish_stall', 108, 226), ('pots-1', 'lobster_pots', 196, 240),
+        ('nets-1', 'net_rack', 6, 236), ('nets-2', 'net_rack', 4, 300), ('anchor', 'anchor', 286, 240),
+        ('lighthouse', 'lighthouse', 68, 396), ('boat-1', 'boat_blue', 168, 330), ('boat-2', 'boat_red', 254, 340),
+        ('boat-3', 'boat_blue', 186, 420), ('bollard-1', 'bollard', 140, 290), ('bollard-2', 'bollard', 226, 290),
+        ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 270, 196),
+        ('upturned', 'upturned_boat', 8, 400), ('washing', 'washing_line', 110, 90), ('buoy-1', 'buoy', 120, 450),
+        ('buoy-2', 'buoy', 300, 380),
+    ]
+    blocked = water - set().union(*jetties)
+    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (157, 384), 'beach': (34, 380), 'castle': (300, 116)}
+    return cv, objects, stands, blocked
+
+
+def castle(frame: int = 0):
+    """Hearthold Castle on the headland: the cliff path from the harbour arrives at the
+    west edge and runs along the outer meadow to a drawbridge over the dry ditch; the
+    gatehouse in the south wall opens on a courtyard with the keep to the north, the
+    bedtime bell tower in the north-east corner, the walled herb garden and the
+    training yard where the steward spars. Sea cliffs drop away to the east and south."""
+    ASHLAR, WTRm, STONEm = MATERIALS['ashlar'], MATERIALS['water'], MATERIALS['stone']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    # the sea cliffs: the headland's edge to the south and east, a face and the sea
+    def edge_y(x):
+        # the harbour's water meets the headland's west edge below y = 306 (seamless rule)
+        e = 470 + int(math.sin(x / 31) * 10 + noise2(x // 7, 0, 321) * 8) - max(0, (x - 260) * 2)
+        return min(e, 306 + int(x * 2.7)) if x < 60 else e
+    sea = set()
+    for x in range(W):
+        e = edge_y(x)
+        for y in range(e, H):
+            k = y - e
+            if k < 3:
+                c = MATERIALS['grass'][4] if k == 0 else MATERIALS['grass'][1]
+            elif k < 26:
+                band = (k + int(noise2(x // 6, 2, 322) * 3)) // 5
+                c = STONEm[3] if band % 2 else STONEm[2]
+                if (k + int(noise2(x // 6, 2, 322) * 3)) % 5 == 0:
+                    c = STONEm[4]
+                if k > 22:
+                    c = STONEm[1]
+            else:
+                n = smooth_noise(x, y, 10, 323 + frame)
+                c = WTRm[1] if n > 0.4 else WTRm[0]
+                if k < 30:
+                    c = WTRm[4] if (x + frame) % 3 else WTRm[3]
+                sea.add((x, y))
+            cv.set(x, y, c)
+            if k < 26:
+                sea.add((x, y)) if k > 2 else None
+    # the harbour's breakwater runs on to its root against the headland's foot
+    root = worlds.thick([(-8, 410), (22, 404)], 12)
+    for (x, y) in root:
+        blk = ((x + 8 + (y // 7) % 2 * 5) // 10 + y // 7) % 3
+        c = STONEm[3] if blk == 0 else STONEm[2] if blk == 1 else STONEm[4]
+        if (x + 8 + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
+            c = STONEm[1]
+        cv.set(x, y, c)
+    # the path from the harbour along the outer meadow to the drawbridge
+    path = worlds.thick([(-6, 110), (12, 112)], 9) | worlds.thick([(10, 112), (30, 150), (40, 300), (74, 404), (140, 420), (182, 404), (182, 384)], 10, seed=19)
+    paint_road(cv, path | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)})
+    # the dry ditch below the south wall, crossed by the drawbridge
+    ditch = {(x, y) for x in range(60, 300) for y in range(352, 380)}
+    for (x, y) in ditch:
+        k = y - 352
+        cv.set(x, y, STONEm[3] if k < 2 else STONEm[1] if k < 6 else MATERIALS['grass'][1] if k > 22 else MATERIALS['soil'][2] if (x + y) % 3 else MATERIALS['soil'][1])
+    for y in range(350, 384):  # the drawbridge planks
+        for x in range(168, 196):
+            cv.set(x, y, MATERIALS['wood'][3] if y % 4 else MATERIALS['wood'][1])
+        cv.set(167, y, IRONm[1]); cv.set(196, y, IRONm[1])
+    # the castle walls seen from above: a lit wall walk between merlons
+    def wall_v(x0, y0, y1):
+        for y in range(y0, y1):
+            for x in range(x0, x0 + 12):
+                k = x - x0
+                c = ASHLAR[4] if 2 <= k < 4 else ASHLAR[3] if 4 <= k < 9 else ASHLAR[1]
+                if k < 2 or k >= 10:
+                    c = ASHLAR[5] if (y // 4) % 2 == 0 and k < 2 else ASHLAR[2] if (y // 4) % 2 == 0 else ASHLAR[1]
+                cv.set(x, y, c)
+    wall_v(70, 40, 350)
+    wall_v(282, 40, 350)
+    # the courtyard: worn flagstones, grass in the joints
+    yard = {(x, y) for x in range(82, 282) for y in range(190, 350)}
+    worlds.paint_paving(cv, yard, seed=21)
+    garden_plot = {(x, y) for x in range(86, 150) for y in range(250, 330)}
+    for (x, y) in garden_plot:
+        cv.set(x, y, MATERIALS['grass'][3] if (x + y) % 5 else MATERIALS['grass'][2])
+    for x in range(86, 150):  # a low hedge round the herb garden
+        for y in (250, 251, 252):
+            cv.set(x, y, LEAFm[2] if y == 250 else LEAFm[1])
+    objects = [
+        ('wall-n1', 'wall_run', 70, 0), ('wall-n2', 'wall_run', 166, 0), ('wall-n3', 'wall_run', 198, 0),
+        ('tower-nw', 'round_tower', 52, -40), ('keep', 'keep', 112, 76), ('bell', 'bell_tower', 244, 40),
+        ('herbs-1', 'herb_bed', 92, 262), ('herbs-2', 'herb_bed', 92, 286), ('herbs-3', 'herb_bed', 92, 310),
+        ('dummy-1', 'training_dummy', 214, 220), ('dummy-2', 'training_dummy', 246, 236),
+        ('wall-s1', 'wall_run', 70, 306), ('gate', 'gatehouse', 122, 262), ('wall-s2', 'wall_run', 200, 306),
+        ('tower-sw', 'round_tower', 52, 262), ('tower-se', 'round_tower', 268, 262),
+        ('tower-ne', 'round_tower', 268, -40),
+    ]
+    blocked = sea | ditch - {(x, y) for x in range(168, 196) for y in range(350, 384)}
+    blocked |= {(x, y) for x in range(70, 82) for y in range(40, 350)} | {(x, y) for x in range(282, 294) for y in range(40, 350)}
+    stands = {'harbour': (14, 112), 'bridge': (182, 396), 'gate': (182, 344), 'courtyard': (190, 230),
+              'keep': (176, 206), 'herbs': (160, 290), 'meadow': (220, 430)}
+    return cv, objects, stands, blocked
+
+
+def station(frame: int = 0):
+    """Halcyon Station: the space elevator arrives through the airlock at the bottom; a
+    corridor of deck plates with light strips leads up to the atrium of garden pods and
+    on to the long viewport where the planet turns below; the crew's sleep pods line
+    the west bay, the navigation consoles the east; a low-gravity ring is marked out on
+    the atrium floor; the shuttle hatch to Lumen is in the east wall."""
+    HULL, VOID = MATERIALS['hull'], MATERIALS['void']
+    CYAN = MATERIALS['neon_cyan']
+    cv = Canvas(W, H)
+    for y in range(H):  # deck plates, each lit along its top and left edge
+        for x in range(W):
+            px, py = x % 32, y % 24
+            n = noise2(x // 32, y // 24, 351)
+            c = HULL[2] if n > 0.18 else HULL[1]
+            if px == 0 or py == 0:
+                c = HULL[0]
+            elif px == 1 or py == 1:
+                c = HULL[3]
+            elif (px, py) in ((4, 4), (27, 4), (4, 19), (27, 19)):
+                c = HULL[4]  # bolts
+            cv.set(x, y, c)
+    for x in range(W):  # the hull walls on both sides, with pipes and a light strip
+        pass
+    for (x0, x1) in ((0, 18), (W - 18, W)):
+        for y in range(H):
+            for x in range(x0, x1):
+                k = (x - x0) / 18
+                c = HULL[3] if (x0 == 0 and k > 0.8) or (x0 > 0 and k < 0.2) else HULL[1]
+                if (x - x0) in (6, 7, 12):
+                    c = HULL[2]
+                cv.set(x, y, c)
+            cv.set(x1 - 1 if x0 == 0 else x0, y, CYAN[2] if (y // 6) % 2 else CYAN[1])
+    # a soft violet runner down the corridor (the station keeps quiet hours)
+    for y in range(300, H - 40):
+        for x in range(146, 174):
+            cv.set(x, y, MATERIALS['nap'][1] if (x in (146, 173)) else MATERIALS['nap'][2] if (y // 2 + x // 2) % 2 else MATERIALS['nap'][1])
+    # the corridor's floor light strips
+    for y in range(300, H - 40):
+        for x in (140, 179):
+            cv.set(x, y, CYAN[3] if (y // 3 + frame) % 4 else CYAN[2])
+    # the low-gravity ring on the atrium floor
+    ccx, ccy = 160, 250
+    for k in range(260):
+        a = 2 * math.pi * k / 260
+        for (rx, ry) in ((64, 30), (50, 23)):
+            x, y = int(ccx + rx * math.cos(a)), int(ccy + ry * math.sin(a))
+            cv.set(x, y, CYAN[3]); cv.set(x, y + 1, CYAN[1])
+    for (x, y) in oval(ccx, ccy, 10, 5):
+        cv.set(x, y, CYAN[2] if (x + y) % 2 else CYAN[1])
+    objects = [
+        ('view-1', 'viewport', 20, 8), ('view-2', 'viewport', 140, 8), ('view-3', 'viewport', 200, 8),
+        ('pod-1', 'garden_pod', 30, 120), ('pod-2', 'garden_pod', 226, 120), ('pod-3', 'garden_pod', 30, 330),
+        ('sleep-1', 'sleep_pod', 22, 210), ('sleep-2', 'sleep_pod', 22, 270), ('sleep-3', 'sleep_pod', 60, 404),
+        ('console-1', 'console', 258, 330), ('console-2', 'console', 258, 372), ('lock-lift', 'airlock', 132, 516),
+        ('lock-shuttle', 'airlock', 258, 214),
+    ]
+    stands = {'lift': (160, 512), 'atrium': (160, 250), 'viewport': (160, 96), 'sleep': (70, 250),
+              'shuttle': (286, 280)}
+    return cv, objects, stands
+
+
+def lumen(frame: int = 0):
+    """Lumen, the quiet moon: pale regolith pocked with craters lit on their far rims,
+    the shuttle landed at the top, a trail of footprints, glowing shrubs and moon
+    crystals, dream pools holding the stars, and a wide crater for gentle sparring."""
+    R, GLOWm, VOID = MATERIALS['regolith'], MATERIALS['glowflora'], MATERIALS['void']
+    cv = Canvas(W, H)
+    for y in range(H):
+        for x in range(W):
+            n = smooth_noise(x, y, 28, 361)
+            c = R[3] if n > 0.26 or (n > 0.21 and (x + y) % 2) else R[2]
+            if noise2(x, y, 362) > 0.96:
+                c = R[4]
+            cv.set(x, y, c)
+    # the horizon: the moon's edge against the void, the planet rising beyond it
+    def horizon(x):
+        return 64 + int(math.sin(x / 23) * 4 + noise2(x // 6, 0, 363) * 5)
+    for x in range(W):
+        hz = horizon(x)
+        for y in range(0, hz):
+            c = VOID[0] if noise2(x, y, 364) > 0.015 else '#FFFFFF'
+            d = math.hypot(x - 230, y - 150)
+            if d < 120:
+                band = int((y + math.sin(x / 11) * 3) / 5) % 3
+                c = ('#3E6AA8', '#5A8AC4', '#E6EEF6')[band] if d < 117 else '#9AD2FF'
+            cv.set(x, y, c)
+        cv.set(x, hz, R[5]); cv.set(x, hz + 1, R[4])
+        for k in range(2, 6):
+            cv.set(x, hz + k, R[2] if k < 4 else R[3])
+    craters = [(60, 120, 22), (250, 80, 14), (220, 300, 30), (70, 380, 12), (150, 470, 40), (280, 460, 10),
+               (40, 250, 9), (120, 200, 8)]
+    for (cx, cy, r) in craters:
+        for (x, y) in oval(cx, cy, r, r * 0.6):
+            dx, dy = (x - cx) / r, (y - cy) / (r * 0.6)
+            d = math.hypot(dx, dy)
+            t = dx * 0.7 + dy * 0.7  # toward the lower right
+            if d < 0.8:  # the bowl: its far wall in shade, its near wall catching the light
+                v = 1.6 + t * 1.8 + (0.3 if (x + y) % 2 else 0)
+            else:  # the raised rim: lit on its upper-left outside, shaded lower right
+                v = 3.4 - t * 2.2 + (0.3 if (x + y) % 2 else 0)
+            cv.set(x, y, R[max(0, min(5, int(v)))])
+    for i, y in enumerate(range(140, 460, 7)):  # footprints from the shuttle
+        x = 160 + int(math.sin(y / 40) * 30) + (3 if i % 2 else -3)
+        cv.set(x, y, R[1]); cv.set(x + 1, y, R[1]); cv.set(x, y + 1, R[2])
+    objects = [
+        ('shuttle', 'shuttle', 118, 72), ('shrub-1', 'moon_shrub', 20, 180), ('shrub-2', 'moon_shrub', 270, 160),
+        ('shrub-3', 'moon_shrub', 30, 470), ('shrub-4', 'moon_shrub', 280, 360), ('shrub-5', 'moon_shrub', 196, 380),
+        ('crystal-1', 'moon_crystal', 96, 290), ('crystal-2', 'moon_crystal', 290, 250), ('crystal-3', 'moon_crystal', 6, 320),
+        ('crystal-4', 'moon_crystal', 250, 530), ('pool-1', 'dream_pool', 70, 240), ('pool-2', 'dream_pool', 200, 210),
+        ('pool-3', 'dream_pool', 40, 540), ('shrub-6', 'moon_shrub', 120, 330), ('shrub-7', 'moon_shrub', 150, 256),
+        ('crystal-5', 'moon_crystal', 214, 120), ('crystal-6', 'moon_crystal', 230, 128), ('shrub-8', 'moon_shrub', 290, 520),
+    ]
+    for (_i, key, x, y) in objects:  # the flora's glow on the dust
+        if key == 'moon_shrub':
+            light_pool(cv, x + 17, y + 32, 26, 12, GLOWm[1])
+    stands = {'shuttle': (160, 142), 'pool': (100, 274), 'crater': (150, 470), 'east': (290, 300)}
+    return cv, objects, stands
+
+
+def riverside(frame: int = 0):
+    """The Riverside, east of the garden: the garden's stream comes in at the west edge
+    exactly where it leaves the garden (same line, width and bluff), and widens as it
+    runs east into a slow river. The watermill stands on the north bank with its wheel
+    in the race, willows lean over the south bank, reeds and lily pads fill the
+    shallows, a heron fishes, and stepping stones cross where it is still narrow."""
+    WTRm, SAND = MATERIALS['water'], MATERIALS['sand']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    OFF = meadow.W  # this zone continues the garden's x axis
+
+    def centre(x):
+        return meadow.stream_centre(x + OFF) + x * 0.06
+
+    def half(x):
+        return 9 + (smooth_noise(x + OFF, 0, 13, 91) - 0.5) * 2.4 + (x / W) ** 1.4 * 18
+
+    river = {(x, y) for x in range(W) for y in range(int(centre(x) - half(x)), int(centre(x) + half(x)) + 1)}
+    top = {x: min(y for (xx, y) in river if xx == x) for x in range(W)}
+    bluff = {(x, y) for x in range(W) for y in range(top[x] - (7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)), top[x])}
+    for (x, y) in river:  # the south bank: a sandy lip
+        pass
+    for x in range(W):
+        bot = max(y for (xx, y) in river if xx == x)
+        for k in range(1, 3 + int(x / 80)):
+            cv.set(x, bot + k, SAND[1] if noise2(x, k, 411) < 0.8 else SAND[2])
+        cv.set(x, bot + 1, SAND[0])
+    for x in range(W):  # the north bank's bluff, as in the garden
+        h = top[x] - min(y for (xx, y) in bluff if xx == x)
+        col = (x + OFF + int(noise2((x + OFF) // 6, 1, 95) * 6)) % 6
+        si = (x + OFF + int(noise2((x + OFF) // 6, 1, 95) * 6)) // 6
+        for k in range(h):
+            y = top[x] - h + k
+            if k == 0:
+                c = G[3]
+            elif k == 1:
+                c = G[2] if (x // 2) % 3 else G[1]
+            else:
+                row, r = (k - 2 + (si % 2) * 2) // 4, (k - 2 + (si % 2) * 2) % 4
+                base = 3 if noise2(si, row, 97) > 0.45 else 2
+                c = STONE[0] if col == 5 or r == 3 else STONE[base + 1] if col == 0 or r == 0 else STONE[base - 1] if col == 4 else STONE[base]
+                if k == h - 1:
+                    c = STONE[1] if col != 5 else STONE[0]
+            cv.set(x, y, c)
+    for (x, y) in river:
+        d = abs(y - centre(x)) / max(1, half(x))
+        c = WTRm[2] if d < 0.3 else WTRm[1]
+        if half(x) > 16 and d < 0.15:
+            c = WTRm[1] if (x + y) % 2 else WTRm[2]  # the deeper channel
+        k = y - top[x]
+        if k < 2:
+            c = WTRm[0]  # the bluff's shadow
+        elif k == 2 and (x // 2 + int(noise2(x // 4, 7, 98) * 3)) % 3:
+            c = WTRm[4] if x % 5 else WTRm[3]
+        cv.set(x, y, c)
+    for i in range(46):  # flowing highlights
+        x = int(noise2(i, 4, 412) * W)
+        y = int(centre(x) + (noise2(i, 5, 412) - 0.5) * half(x) * 1.2)
+        for t in range(5):
+            if (x + t, y) in river and (x + t, y - 1) in river:
+                cv.set(x + t, y, WTRm[3] if t < 4 else WTRm[2])
+    # stepping stones where it is still narrow
+    for k, sy in enumerate(range(int(centre(46) - half(46)) + 2, int(centre(46) + half(46)), 6)):
+        sx = 44 + (3 if k % 2 else -2)
+        for (x, y) in oval(sx, sy, 4, 2.5):
+            cv.set(x, y, STONE[4] if (x - sx) + (y - sy) < 0 else STONE[2])
+        for x in range(sx - 4, sx + 5):
+            cv.set(x, sy + 3, WTRm[4])
+    # the race beside the mill: a stone channel taking water to the wheel
+    for y in range(top[220] - 30, top[220] + 2):
+        for x in range(214, 236):
+            cv.set(x, y, WTRm[2] if 216 <= x < 234 else STONE[3] if x < 216 else STONE[1])
+    path = worlds.thick([(24, 222), (60, 214), (130, 236), (200, 230)], 9, seed=21)  # a lane to the mill (the garden has no path at this edge)
+    path |= worlds.thick([(30, 404), (70, 390), (160, 420), (W - 20, 430)], 9, seed=22)  # the south bank walk
+    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff})
+    objects = [
+        ('mill', 'water_mill', 140, top[220] - 96 + 6), ('willow-1', 'willow', 70, 330), ('willow-2', 'willow', 230, 360),
+        ('reeds-1', 'reeds', 110, int(centre(120) + half(120)) - 24), ('reeds-2', 'reeds', 280, int(centre(290) + half(290)) - 26),
+        ('reeds-3', 'reeds', 160, int(centre(170) - half(170)) + 2), ('heron', 'heron', 196, int(centre(206)) - 6),
+        ('lilies-1', 'lily_pads', 250, int(centre(265)) - 6), ('lilies-2', 'lily_pads', 120, int(centre(135)) + 2),
+        ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 260, 110), ('bush-1', 'bush', 40, 470),
+        ('bush-2', 'bush', 200, 500), ('tree-3', 'tree_autumn', 120, 470), ('bench', 'bench', 170, 440),
+        ('sack-1', 'sack', 120, 220), ('sack-2', 'sack', 108, 224), ('cart', 'cart', 80, 200),
+    ]
+    stones = {(x, y) for x in range(38, 52) for y in range(int(centre(46) - half(46)) - 2, int(centre(46) + half(46)) + 3)}
+    steps = {(x, y) for (x, y) in bluff if 38 <= x < 52}  # steps cut down the bluff to the stones
+    for (x, y) in steps:
+        cv.set(x, y, STONE[4] if (y - top[x]) % 3 == 0 else STONE[2] if x < 50 else STONE[1])
+    stones |= steps
+    blocked = (river | bluff) - stones
+    stands = {'garden-north': (8, 220), 'garden-south': (8, 400), 'mill': (190, 232), 'stones': (46, int(centre(46))),
+              'willows': (120, 430)}
+    return cv, objects, stands, blocked
+
+
+def park(frame: int = 0):
+    """The Town Park, east of Crossroads Town: the town's paved street comes in at the
+    west edge at the same height and width and opens on a ring of paths round the
+    bandstand; the fountain plaza lies south, then a duck pond with a little island
+    and a willow; flower beds, clipped hedges, benches, lamps and the ice cream cart."""
+    WTRm = MATERIALS['water']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    paths = worlds.thick([(-8, 300), (60, 300)], 13)  # the town's street, unchanged
+    paths |= {(x, y) for (x, y) in oval(160, 190, 92, 52)} - {(x, y) for (x, y) in oval(160, 190, 74, 38)}
+    paths |= worlds.thick([(60, 300), (160, 300), (160, 240)], 11, seed=27)
+    paths |= {(x, y) for (x, y) in oval(160, 330, 44, 26)}  # the fountain plaza
+    paths |= worlds.thick([(160, 356), (150, 420), (100, 460)], 9, seed=28)
+    worlds.paint_paving(cv, paths | {(x, y) for (x0, y) in paths if x0 == 0 for x in range(-12, 0)}, seed=11)
+    pond = {(x, y) for (x, y) in oval(200, 470, 84, 46)}
+    island = {(x, y) for (x, y) in oval(232, 462, 20, 10)}
+    water = pond - island
+    for (x, y) in water:
+        d = math.hypot((x - 200) / 84, (y - 470) / 46)
+        c = WTRm[2] if d > 0.7 else WTRm[1]
+        if (x, y - 1) not in pond or (x, y - 2) not in pond:
+            c = WTRm[0]
+        cv.set(x, y, c)
+    for (x, y) in pond:
+        if (x, y + 1) not in pond:
+            cv.set(x, y + 1, MATERIALS['sand'][1])
+    for ty in range(430, 516, 6):
+        for tx in range(120, 290, 9):
+            x, y = tx + int(noise2(tx, ty, 431) * 5), ty + int(noise2(tx, ty, 432) * 3)
+            if (x, y) in water and (x + 3, y) in water and (x, y - 2) in water:
+                cv.hline(x, y, 3, WTRm[3])
+    for (x, y) in island:
+        cv.set(x, y, G[3] if (x - 232) + (y - 462) < 0 else G[2])
+    for fb in ((40, 120, 40, 16, 1), (240, 120, 40, 16, 2), (30, 380, 40, 16, 3), (250, 380, 40, 16, 0)):
+        meadow.flower_planter(cv, *fb)
+    objects = [
+        ('bandstand', 'bandstand', 118, 140), ('fountain', 'fountain', 132, 300),
+        ('willow', 'willow', 196, 400), ('lilies', 'lily_pads', 140, 476), ('duck-1', 'duck', 170, 500),
+        ('duck-2', 'duck', 262, 488), ('heron', 'heron', 290, 440),
+        ('hedge-n1', 'hedge', 0, 30), ('hedge-n2', 'hedge', 224, 30), ('tree-1', 'tree', 110, -24),
+        ('tree-2', 'tree_autumn', 284, 140), ('tree-3', 'tree', 4, 150), ('tree-4', 'tree_small', 20, 470),
+        ('bench-1', 'bench', 60, 196), ('bench-2', 'bench', 216, 196), ('bench-3', 'bench', 96, 360),
+        ('lamp-1', 'lamp', 66, 260), ('lamp-2', 'lamp', 246, 260), ('lamp-3', 'lamp', 108, 410),
+        ('icecream', 'ice_cream_cart', 220, 296), ('bush-1', 'bush', 0, 250), ('bush-2', 'bush', 290, 250),
+        ('bush-3', 'bush', 40, 540), ('bush-4', 'bush', 280, 540),
+    ]
+    stands = {'town': (8, 300), 'bandstand': (160, 240), 'fountain': (160, 360), 'pond': (100, 456)}
+    return cv, objects, stands, water
+
+
+def ridge(frame: int = 0):
+    """The Snowy Ridge, north of the garden: the trail comes up out of the garden's
+    treeline at the bottom (the same x, through the same dark forest floor), climbs
+    through thinning pines onto an alpine meadow with a frozen tarn and cairns, then
+    by steps up a stone face to the terrace where the cabin stands under the peaks.
+    Snow lies only above the face (world logic); below it only a dusting on the pines."""
+    SNOWm, STONEm = MATERIALS['snow'], MATERIALS['stone']
+    cv = Canvas(W, H)
+    alpine = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
+    worlds.grass(cv, frame, alpine)
+    # the forest floor at the bottom, matching the garden's treeline band
+    for y in range(H - 80, H):
+        for x in range(W):
+            t = (y - (H - 80)) / 80
+            if noise2(x, y, 441) < t:
+                cv.set(x, y, G[1])
+    style.dither_dark(cv, 0, H - 40, W, 40, 1.0)
+    style.dither_dark(cv, 0, H - 60, W, 20, 0.5)
+    # the terrace: everything above the face is high ground under snow
+    def rim(x):
+        return 210 + int(math.sin(x / 27) * 8 + noise2(x // 6, 0, 442) * 6)
+    FACE_H = 24
+    for x in range(W):
+        r = rim(x)
+        for y in range(0, r):
+            n = smooth_noise(x, y, 18, 443)
+            c = SNOWm[3] if n > 0.35 else SNOWm[2]
+            if smooth_noise(x, y, 7, 444) > 0.8:
+                c = STONEm[3] if smooth_noise(x, y - 1, 7, 444) > 0.8 else STONEm[4]  # rock showing through
+            cv.set(x, y, c)
+        for k in range(FACE_H):
+            y = r + k
+            band = (k + int(noise2(x // 7, 3, 445) * 3)) // 5
+            c = STONEm[3] if band % 2 else STONEm[2]
+            if (k + int(noise2(x // 7, 3, 445) * 3)) % 5 == 0:
+                c = STONEm[4]
+            if k < 2:
+                c = SNOWm[3] if k == 0 else SNOWm[1]
+            if k > FACE_H - 4:
+                c = STONEm[1]
+            cv.set(x, y, c)
+        for d in range(3):
+            if (x + d) % 2 or d == 0:
+                style.darken(cv, x, r + FACE_H + d)
+    # peaks along the top
+    peak_pts = {}
+    for (ax, ay, half, base) in ((70, -14, 70, 70), (230, -24, 80, 80), (310, -6, 40, 50)):
+        for y in range(max(0, ay), base):
+            spread = (y - ay) / (base - ay) * half
+            for x in range(int(ax - spread), int(ax + spread * 0.9) + 1):
+                if 0 <= x < W:
+                    lit = x < ax + (y - ay) * 0.15
+                    hem = ay + 26 + abs((x + ax) % 8 - 4) + int(noise2(x // 8, ax, 446) * 5)
+                    c = (SNOWm[3] if lit else SNOWm[1]) if y < hem else (STONEm[3] if lit else STONEm[1])
+                    if y >= hem and (y - ay + (x if lit else -x) // 4) % 9 == 0:
+                        c = STONEm[2] if lit else STONEm[0]
+                    peak_pts[(x, y)] = c
+    for (x, y), c in peak_pts.items():
+        if (x - 1, y) not in peak_pts or (x + 1, y) not in peak_pts or (y > 0 and (x, y - 1) not in peak_pts):
+            c = STONEm[0]
+        cv.set(x, y, c)
+    # the trail: up from the garden, round the tarn, steps up the face, to the cabin
+    trail = worlds.thick([(206, H + 12), (206, H - 40), (190, 470), (150, 400), (130, 330), (150, 270), (150, 220)], 9.5, seed=29)
+    trail |= worlds.thick([(150, 220), (150, 170), (120, 140)], 8, seed=30)
+    on_terrace = {(x, y) for (x, y) in trail if y < rim(x)}
+    paint_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)})
+    for (x, y) in on_terrace:  # a trodden line in the snow
+        cv.set(x, y, SNOWm[1] if (x + y) % 3 else SNOWm[2])
+    steps = set()
+    for (x, y) in trail:
+        if rim(x) <= y < rim(x) + FACE_H:
+            steps.add((x, y))
+            cv.set(x, y, STONEm[4] if (y - rim(x)) % 4 == 0 else STONEm[2] if (y - rim(x)) % 4 < 3 else STONEm[1])
+    objects = [
+        # the garden's treeline continues at the bottom, clear of the trail
+        ('pine-b1', 'pine', 4, H - 100), ('pine-b2', 'pine', 50, H - 92), ('pine-b3', 'pine', 96, H - 102),
+        ('pine-b4', 'pine', 240, H - 98), ('pine-b5', 'pine', 280, H - 104), ('pine-b6', 'pine', 140, H - 150),
+        ('pine-m1', 'snowy_pine', 20, 330), ('pine-m2', 'snowy_pine', 262, 420), ('pine-m3', 'snowy_pine', 270, 250),
+        ('pine-m4', 'snowy_pine', 60, 250), ('tarn', 'frozen_tarn', 196, 380), ('cairn-1', 'cairn', 100, 360),
+        ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
+        ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
+        ('pine-t2', 'snowy_pine', 270, 120), ('pine-t3', 'snowy_pine', 40, 150),
+    ]
+    face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
+    peaks_block = set(peak_pts)
+    stands = {'garden': (206, H - 8), 'tarn': (170, 420), 'cabin': (200, 176), 'campfire': (146, 204)}
+    return cv, objects, stands, (face - steps) | peaks_block
+
+
+FOREST_FLOOR = ['#24382A', '#40603A', '#577A44', '#668A4E', '#8EAE68']
+DARK_FLOOR = [tuple(int(c[k:k + 2], 16) for k in (1, 3, 5)) for c in FOREST_FLOOR]
+
+
+def woodland(frame: int = 0):
+    """The Woodland, west of the garden: the garden's stream is born here. It leaves the
+    east edge exactly where it enters the garden, and upstream it narrows to a spring
+    that falls from a mossy rock into a pool. Old trees close in at the edges, light
+    comes through in dappled pools, a path winds to a clearing with the hollow oak,
+    a fairy ring, ferns, fallen logs and a hidden bench."""
+    WTRm, GOLDm = MATERIALS['water'], MATERIALS['gold']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame, FOREST_FLOOR)  # shaded forest floor
+    for i in range(260):  # leaf litter
+        x, y = int(noise2(i, 0, 421) * W), int(noise2(i, 1, 421) * H)
+        cv.set(x, y, ('#8A6A3E', '#B8945A', '#6E8A3E')[i % 3])
+    OFF = -meadow.W
+
+    def centre(x):
+        return meadow.stream_centre(x + OFF)
+
+    def half(x):
+        full = 9 + (smooth_noise(x + OFF, 0, 13, 91) - 0.5) * 2.4
+        return full * min(1.0, max(0.0, (x - 96) / 120)) + 3 * (x >= 96)
+
+    spring_x = 96
+    river = {(x, y) for x in range(spring_x, W) for y in range(int(centre(x) - half(x)), int(centre(x) + half(x)) + 1)}
+    pool = {(x, y) for (x, y) in oval(spring_x - 6, centre(spring_x) + 2, 20, 11)}
+    water = river | pool
+    for (x, y) in water:
+        c = WTRm[2] if (x, y) in river and abs(y - centre(x)) < 2 else WTRm[1]
+        if (x, y - 1) not in water:
+            c = WTRm[0]
+        cv.set(x, y, c)
+    for (x, y) in water:  # a stony, mossy rim
+        for dx, dy in ((0, 1), (0, 2), (1, 0), (-1, 0)):
+            q = (x + dx, y + dy)
+            if q not in water and 0 <= q[0] < W:
+                cv.set(*q, STONE[3] if noise2(q[0], q[1], 422) > 0.5 else MATERIALS['leaf'][2])
+    # the spring: a mossy rock face with the water falling from a cleft into the pool
+    rock = {(x, y) for (x, y) in oval(spring_x - 22, centre(spring_x) - 22, 34, 18)}
+    for (x, y) in rock:
+        band = (y + int(noise2(x // 5, 0, 423) * 3)) // 4
+        c = STONE[3] if band % 2 else STONE[2]
+        if (x, y - 1) not in rock or noise2(x // 3, y // 3, 424) > 0.7:
+            c = MATERIALS['leaf'][3] if (x, y - 1) not in rock else MATERIALS['leaf'][2]
+        cv.set(x, y, c)
+    fx = spring_x - 14
+    for y in range(int(centre(spring_x) - 26), int(centre(spring_x) - 2)):
+        for x in range(fx - 3, fx + 4):
+            cv.set(x, y, WTRm[4] if (x + y + frame) % 3 == 0 else WTRm[3] if x < fx + 1 else WTRm[2])
+    for k in range(10):  # foam where it lands
+        cv.set(fx - 5 + k, int(centre(spring_x)) - 1 + (k % 2), WTRm[4])
+    # the path from the garden's west side into the trees and the clearing
+    # (the garden's orchard walk runs on across the border at the same height and width)
+    path = worlds.thick([(W + 12, meadow.ORCHARD_WALK_Y), (250, meadow.ORCHARD_WALK_Y)], 8.5) | worlds.thick([(254, meadow.ORCHARD_WALK_Y), (190, 420), (150, 380), (130, 330)], 9, seed=25)
+    path |= worlds.thick([(130, 270), (150, 200), (120, 140)], 9, seed=26)
+    clearing = {(x, y) for (x, y) in oval(110, 140, 52, 34)}
+    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in water} | {(x, y) for (x0, y) in path if x0 == W - 1 for x in range(W, W + 12)})
+    for (x, y) in clearing:  # the clearing is sunlit grass
+        n = smooth_noise(x, y, 14, 425)
+        cv.set(x, y, G[3] if n > 0.45 else G[2])
+    # the garden's bluff on the north bank runs on and sinks into the ground upstream
+    for x in range(150, W):
+        bh = int((7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)) * min(1.0, (x - 150) / 150))
+        top = int(centre(x) - half(x))
+        for k in range(bh):
+            y = top - bh + k
+            c = G[3] if k == 0 else STONE[3] if (x // 6 + k // 4) % 2 else STONE[2]
+            if k == bh - 1:
+                c = STONE[1]
+            cv.set(x, y, c)
+    # near the garden the forest floor brightens into the garden's own grass
+    for y in range(H):
+        for x in range(W - 56, W):
+            t = (x - (W - 56)) / 56
+            if noise2(x, y, 427) < t and cv.get(x, y)[:3] in DARK_FLOOR:
+                cv.set(x, y, G[DARK_FLOOR.index(cv.get(x, y)[:3])])
+    # dappled light through the canopy
+    for i in range(14):
+        lx, ly = int(noise2(i, 0, 426) * W), int(noise2(i, 1, 426) * H)
+        light_pool(cv, lx, ly, 12 + i % 3 * 4, 6 + i % 2 * 3, GOLDm[2], water)
+    light_pool(cv, 110, 140, 44, 26, G[4], water)
+    objects = [
+        # old trees closing in round the edges (none crosses the east border into the garden)
+        ('tree-1', 'tree', -20, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
+        ('tree-3', 'tree', -24, 200), ('pine-3', 'pine', -10, 330), ('tree-4', 'tree', 230, 160),
+        ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 500),
+        ('pine-5', 'pine', 150, 500), ('tree-7', 'tree_small', 250, 520),
+        ('oak', 'hollow_tree', 70, 30), ('ring', 'mushroom_ring', 128, 150), ('log-1', 'mossy_log', 200, 230),
+        ('log-2', 'mossy_log', 40, 420), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
+        ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 90, 380), ('bench', 'forest_bench', 150, 170),
+        ('willow', 'willow', 220, 340), ('bush-1', 'bush', 286, 380),
+    ]
+    # a split-log footbridge where the path crosses the young stream
+    plank = {(x, y) for x in range(122, 140) for y in range(int(centre(130) - half(130)) - 3, int(centre(130) + half(130)) + 4)}
+    for (x, y) in plank:
+        cv.set(x, y, WOOD[4] if x in (122, 131) else WOOD[3] if x < 131 else WOOD[2])
+    for y in range(min(yy for _, yy in plank), max(yy for _, yy in plank) + 1):
+        cv.set(140, y, WTRm[0])
+    stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18)}
+    return cv, objects, stands, (water | rock) - plank
+
+
+# Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
+# zone outside the valley draws only its own region's props, plus the few shared
+# things below that would really be found anywhere.
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
+                'station': spp.props_station, 'lumen': spp.props_lumen}
+SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
+# Things above head height: they cast no ground shadow, never block a walk, draw on top.
+OVERHEAD = {'steam_puff', 'drone', 'bunting'}
+
+
 def build(name: str, fn, start: str):
     sprite_map = sprites()
-    cv, objects, stands = fn()
+    cv, objects, stands, *rest = fn()
+    blocked_ground = rest[0] if rest else set()
+    if name in REGION_PROPS:
+        own = set(REGION_PROPS[name]()) | SHARED_PROPS
+        foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
+        assert not foreign, f'{name} borrows props from another region: {foreign}'
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
     shade = set()
     for (_id, key, x, y) in objects:
-        if key not in ('steam_puff', 'drone'):
+        if key not in OVERHEAD:
             shade |= detail.silhouette_shadow(sprite_map[key], x, y)
     for (sx, sy) in shade:
         style.darken(cv, sx, sy)
-    walk = walk_grid([o for o in objects if o[1] not in ('steam_puff', 'drone')], sprite_map)
+    walk = walk_grid([o for o in objects if o[1] not in OVERHEAD], sprite_map)
+    cells = {(x // CELL, y // CELL) for (x, y) in blocked_ground}
+    walk = [''.join('#' if (c, r) in cells else ch for c, ch in enumerate(row)) for r, row in enumerate(walk)]
     seen = reachable(walk, stands[start])
     lost = [k for k, (x, y) in stands.items() if (y // CELL, x // CELL) not in seen]
     assert not lost, f'{name}: not reachable on foot from {start}: {lost}'
@@ -488,18 +1557,119 @@ def build(name: str, fn, start: str):
     if preview:
         prev = Canvas(W, H)
         prev.paste(cv, 0, 0)
-        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] in ('steam_puff', 'drone') else 0)):
+        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] in OVERHEAD else 0)):
             prev.paste(sprite_map[key], x, y)
         if name == 'neon':
             rain(prev)
         prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
     print('ok zone', name, W, H)
+    return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map}
+
+
+# Where each zone sits on its region's grid (column, row), in zone-sized steps. The
+# garden is the valley's (0, 0); it is drawn by garden.py and joins here by position.
+LAYOUT = {
+    'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
+               'harbour': (0, 2), 'castle': (1, 2)},
+    'steam': {'junction': (0, 0)}, 'west': {'gulch': (0, 0)}, 'lava': {'caldera': (0, 0)},
+    'neon': {'neon': (0, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
+}
+
+
+def rle(row: str) -> str:
+    out, i = [], 0
+    while i < len(row):
+        j = i
+        while j < len(row) and row[j] == row[i]:
+            j += 1
+        out.append(f'{j - i}{row[i]}')
+        i = j
+    return ''.join(out)
+
+
+def export(built: dict):
+    """Write the props every zone uses and lib/zone-maps.ts (objects, walk grids,
+    stands, the region layout and static image imports)."""
+    props_dir = os.path.join(worlds.ROOT, 'assets', 'zones', 'props')
+    os.makedirs(props_dir, exist_ok=True)
+    for old in os.listdir(props_dir):
+        os.remove(os.path.join(props_dir, old))
+    used = {}
+    for z in built.values():
+        for (_i, k, _x, _y) in z['objects']:
+            used[k] = z['sprites'][k]
+    for key, sp in sorted(used.items()):
+        sp.save(os.path.join(props_dir, f'{key}.png'), worlds.SCALE)
+    ident = lambda k: ''.join(p.capitalize() for p in k.split('_'))  # noqa: E731
+    lines = [
+        '// Generated by scripts/art/zones.py. Do not edit by hand.',
+        '/* eslint-disable */',
+        f'export const ZONE = {{ width: {W}, height: {H}, cell: {CELL}, scale: {worlds.SCALE} }} as const;',
+        f'export const zoneIds = {json.dumps(list(built))} as const;',
+        'export type ZoneId = (typeof zoneIds)[number];',
+        '/** [id, sprite, x, y, w, h] in zone pixels; drawn in order of their feet (y + h). */',
+        'export type ZoneObject = readonly [string, string, number, number, number, number];',
+        'export type ZoneMap = { objects: readonly ZoneObject[]; walk: readonly string[]; stands: Readonly<Record<string, readonly [number, number]>> };',
+        '/** Things above head height: no ground shadow, never block a walk, drawn on top. */',
+        f'export const zoneOverhead: readonly string[] = {json.dumps(sorted(OVERHEAD))};',
+        '/** Walk rows are run-length encoded (\'12.3#\' = twelve open cells, three blocked). */',
+        'const unrle = (row: string) => row.replace(/(\\d+)([.#])/g, (_m, n: string, c: string) => c.repeat(Number(n)));',
+        'export const zoneMaps: Record<ZoneId, ZoneMap> = {',
+    ]
+    for zid, z in built.items():
+        objs = ', '.join(json.dumps([i, k, x, y, z['sprites'][k].w, z['sprites'][k].h]) for (i, k, x, y) in z['objects'])
+        lines.append(f'  {zid}: {{')
+        lines.append(f'    objects: [{objs}],')
+        lines.append(f"    walk: {json.dumps([rle(r) for r in z['walk']])}.map(unrle),")
+        lines.append(f"    stands: {json.dumps({k: list(v) for k, v in z['stands'].items()})},")
+        lines.append('  },')
+    lines += [
+        '};',
+        '/** Each region\'s zones on a grid of zone-sized steps; the garden is the valley\'s (0, 0). */',
+        f'export const regionLayout = {json.dumps({r: {z: list(p) for z, p in zs.items()} for r, zs in LAYOUT.items()})} as const;',
+        '',
+    ]
+    assets = [
+        '// Generated by scripts/art/zones.py. Do not edit by hand.',
+        '/* eslint-disable */',
+        "import type { ImageSourcePropType } from 'react-native';",
+        "import type { ZoneId } from './zone-maps';",
+        *[f"import prop{ident(k)} from '@/assets/zones/props/{k}.png';" for k in sorted(used)],
+        *[f"import ground{ident(z)} from '@/assets/zones/{z}/ground.png';" for z in built],
+        'export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {',
+        *[f'  {z}: ground{ident(z)},' for z in built],
+        '};',
+        'export const zoneProps: Record<string, ImageSourcePropType> = {',
+        *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
+        '};',
+        '',
+    ]
+    with open(os.path.join(worlds.ROOT, 'lib', 'zone-assets.ts'), 'w') as f:
+        f.write('\n'.join(assets))
+    target = os.path.join(worlds.ROOT, 'lib', 'zone-maps.ts')
+    with open(target, 'w') as f:
+        f.write('\n'.join(lines))
+    import subprocess  # format it the way the repository's formatter does, so reruns never drift
+    subprocess.run(['npx', 'oxfmt', '--write', target, os.path.join(worlds.ROOT, 'lib', 'zone-assets.ts')],
+                   cwd=worlds.ROOT, check=False, capture_output=True)
 
 
 def main():
-    build('town', town, 'garden')
-    build('junction', junction, 'platform')
-    build('neon', neon_city, 'crossing')
+    built = {}
+    built['town'] = build('town', town, 'garden')
+    built['riverside'] = build('riverside', riverside, 'garden-north')
+    built['woodland'] = build('woodland', woodland, 'garden')
+    built['park'] = build('park', park, 'town')
+    built['ridge'] = build('ridge', ridge, 'garden')
+    built['junction'] = build('junction', junction, 'platform')
+    built['neon'] = build('neon', neon_city, 'crossing')
+    built['gulch'] = build('gulch', gulch, 'platform')
+    built['caldera'] = build('caldera', caldera, 'tunnel')
+    built['harbour'] = build('harbour', harbour, 'town')
+    built['castle'] = build('castle', castle, 'harbour')
+    built['station'] = build('station', station, 'lift')
+    built['lumen'] = build('lumen', lumen, 'shuttle')
+    export(built)
 
 
 if __name__ == '__main__':

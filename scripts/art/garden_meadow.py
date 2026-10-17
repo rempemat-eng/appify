@@ -68,7 +68,7 @@ def meadow_path(thick_path):
     pts = thick_path([(PATH_X, 280), (PATH_X - 1, 330), (PATH_X + 1, 400), (PATH_X, 470),
                       (PATH_X, 530), (PATH_X, H + 12)], 18.5, 7)
     pts |= thick_path([(PATH_X + 10, 432), (YARD[0] + 4, 432)], 9.5, 8)   # into the kitchen garden
-    pts |= thick_path([(PATH_X - 10, ORCHARD_WALK_Y), (20, ORCHARD_WALK_Y)], 8.5, 9)  # along the orchard
+    pts |= thick_path([(PATH_X - 10, ORCHARD_WALK_Y), (-12, ORCHARD_WALK_Y)], 8.5, 9)  # along the orchard, on into the Woodland
     yx, yy, yw, yh = YARD
     r = 10
     for y in range(yy, yy + yh):
@@ -302,6 +302,13 @@ def draw_top_band(phase: int = 0) -> Canvas:
     dither_dark(cv, 0, TOP - 10, W, 3, 0.75, FOREST_DARK)
     dither_dark(cv, 0, TOP - 7, W, 4, 0.5, FOREST_DARK)
     dither_dark(cv, 0, TOP - 3, W, 3, 0.25, FOREST_DARK)
+    # the ridge trail runs up through the forest floor, half in shade
+    for y in range(TOP):
+        for x in range(196, 217):
+            if abs(x - 206) <= 9 - (1 if (y // 5) % 2 else 0):
+                cv.set(x, y, P[2] if y < TOP - 20 else P[3])
+            elif abs(x - 206) == 10:
+                cv.set(x, y, G[1])
     return cv
 
 

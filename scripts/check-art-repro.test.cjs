@@ -27,6 +27,10 @@ try {
   fs.mkdirSync(root);
   write('.gitignore', 'node_modules/\n');
   write('assets/example.png', Buffer.from([0, 1, 2, 255]));
+  write('node_modules/.bin/oxfmt', '# installed formatter fixture\n');
+  const atlasModules = ['lib/zone-maps.ts', 'lib/zone-assets.ts', 'lib/journey-assets.ts'];
+  for (const file of atlasModules) write(file, 'atlas fixture\n');
+  write('assets/journeys/example.png', Buffer.from([6, 7, 8, 255]));
   for (const name of generators) write(`scripts/art/${name}.py`, '# generator fixture\n');
   write('lib/mission-map.ts', 'mission map fixture\n');
   write('assets/zones/town/ground.png', Buffer.from([3, 4, 5, 255]));
@@ -39,8 +43,10 @@ try {
     'icons',
     'mission_map',
     'zones',
+    'journey',
   ]);
   checks++;
+  for (const file of atlasModules) check(generatedTypescript.includes(file), 'formats ' + file);
   check(generatedTypescript.includes('lib/mission-map.ts'), 'formats the destination map module');
   write('lib/garden-map.ts', 'tracked, then deliberately unstaged\n');
   for (const args of [
@@ -61,6 +67,8 @@ try {
     ],
     ['lib/garden-map.ts', fs.readFileSync(path.join(root, 'lib/garden-map.ts'))],
   ]);
+  for (const file of [...atlasModules, 'assets/journeys/example.png'])
+    originals.set(file, fs.readFileSync(path.join(root, file)));
   const originalIndex = spawnSync('git', ['write-tree'], { cwd: root, encoding: 'utf8' }).stdout;
   function scenario(mode) {
     const calls = [];
@@ -84,6 +92,18 @@ try {
         );
         const previewRoot = path.join(path.dirname(snapshot), 'previews');
         check(
+          options.env.npm_config_offline === 'true',
+          mode + ': generator npm subprocesses stay offline',
+        );
+        const dependencyLink = path.join(snapshot, 'node_modules');
+        if (mode !== 'replaced-dependencies' || args[0] !== 'scripts/check-sprites.cjs')
+          check(
+            fs.lstatSync(dependencyLink).isSymbolicLink() &&
+              fs.readlinkSync(dependencyLink) === path.join(root, 'node_modules'),
+            mode + ': installed toolchain is available before generators',
+          );
+        check(options.env.JOURNEY_PREVIEW === previewRoot, mode + ': journey preview stays owned');
+        check(
           options.env.MAP_PREVIEW === path.join(previewRoot, 'mission-map.png'),
           mode + ': map preview stays owned',
         );
@@ -100,6 +120,10 @@ try {
             path.join(options.env.ZONE_PREVIEW, 'zone-town.png'),
             'zone preview fixture',
           );
+          if (mode === 'changed-zone-map')
+            fs.writeFileSync(path.join(snapshot, 'lib/zone-maps.ts'), 'drift');
+          if (mode === 'changed-zone-assets')
+            fs.writeFileSync(path.join(snapshot, 'lib/zone-assets.ts'), 'drift');
           if (mode === 'changed-zone')
             fs.writeFileSync(path.join(snapshot, 'assets/zones/town/ground.png'), 'drift');
           if (mode === 'new-zone')
@@ -107,7 +131,27 @@ try {
           if (mode === 'failed-zone')
             return { status: 1, stdout: '', stderr: 'synthetic zone failure' };
         }
+        if (args[0] === 'scripts/art/journey.py') {
+          fs.writeFileSync(
+            path.join(options.env.JOURNEY_PREVIEW, 'journeys.png'),
+            'journey preview fixture',
+          );
+          if (mode === 'changed-journey')
+            fs.writeFileSync(path.join(snapshot, 'lib/journey-assets.ts'), 'drift');
+          if (mode === 'changed-journey-png')
+            fs.writeFileSync(path.join(snapshot, 'assets/journeys/example.png'), 'drift');
+          if (mode === 'new-journey')
+            fs.writeFileSync(path.join(snapshot, 'assets/journeys/uncommitted.png'), 'new');
+          if (mode === 'failed-journey')
+            return { status: 1, stdout: '', stderr: 'synthetic journey failure' };
+        }
+        if (mode === 'replaced-dependencies' && args[0] === '--write') {
+          fs.unlinkSync(dependencyLink);
+          fs.writeFileSync(dependencyLink, 'unexpected replacement');
+        }
         if (args[0] === 'scripts/art/garden.py') {
+          if (mode === 'dependency-prefix-file')
+            fs.writeFileSync(path.join(snapshot, 'node_modules-unexpected'), 'new');
           if (mode === 'changed')
             fs.writeFileSync(path.join(snapshot, 'assets/example.png'), Buffer.from([9, 8, 7]));
           if (mode === 'deleted') fs.unlinkSync(path.join(snapshot, 'assets/example.png'));
@@ -161,13 +205,19 @@ try {
   const priorPreviews = {
     MAP_PREVIEW: process.env.MAP_PREVIEW,
     ZONE_PREVIEW: process.env.ZONE_PREVIEW,
+    JOURNEY_PREVIEW: process.env.JOURNEY_PREVIEW,
   };
   try {
     process.env.MAP_PREVIEW = path.join(root, 'caller-map.png');
     process.env.ZONE_PREVIEW = path.join(root, 'caller-zones');
+    process.env.JOURNEY_PREVIEW = path.join(root, 'caller-journeys');
     check(scenario('inherited-previews').ok, 'foreign preview overrides cannot cause drift');
     check(!fs.existsSync(process.env.MAP_PREVIEW), 'never writes caller map preview');
     check(!fs.existsSync(process.env.ZONE_PREVIEW), 'never creates caller zone preview directory');
+    check(
+      !fs.existsSync(process.env.JOURNEY_PREVIEW),
+      'never creates caller journey preview directory',
+    );
   } finally {
     for (const [key, value] of Object.entries(priorPreviews)) {
       if (value === undefined) delete process.env[key];
@@ -186,6 +236,14 @@ try {
     'new-zone',
     'failed-mission-map',
     'failed-zone',
+    'changed-zone-map',
+    'changed-zone-assets',
+    'changed-journey',
+    'changed-journey-png',
+    'new-journey',
+    'failed-journey',
+    'replaced-dependencies',
+    'dependency-prefix-file',
   ]) {
     const result = scenario(mode);
     check(!result.ok, mode + ': cannot silently pass');
@@ -196,6 +254,14 @@ try {
       'new-zone': 'Uncommitted generated files: assets/zones/uncommitted.png',
       'failed-mission-map': 'mission_map.py: exit 1',
       'failed-zone': 'zones.py: exit 1',
+      'changed-zone-map': 'Tracked output drift: lib/zone-maps.ts',
+      'changed-zone-assets': 'Tracked output drift: lib/zone-assets.ts',
+      'changed-journey': 'Tracked output drift: lib/journey-assets.ts',
+      'changed-journey-png': 'Tracked output drift: assets/journeys/example.png',
+      'new-journey': 'Uncommitted generated files: assets/journeys/uncommitted.png',
+      'failed-journey': 'journey.py: exit 1',
+      'replaced-dependencies': 'Installed toolchain link was replaced or removed',
+      'dependency-prefix-file': 'Uncommitted generated files: node_modules-unexpected',
     }[mode];
     if (expected) check(result.failures.includes(expected), mode + ': identifies exact failure');
   }

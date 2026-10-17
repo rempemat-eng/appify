@@ -19,6 +19,16 @@ NapAttack is about resting instead of scrolling, so the world is laid out as a j
 
 Later regions from the earlier list (tundra, sky islands, coral reef, glowshroom forest, dreamscape) fold into these where they fit: the glowshroom forest and dreamscape become Lumen's flora, the sky islands sit on the airship route from Cogsworth, the coral reef lies off Driftwood Harbour.
 
+## Every region is its own place (Matt, 17 Oct 20:52)
+
+Matt: "make sure different worlds are as detailed as i instructed you to be and they are not just reskins of other worlds but are their own". So each region is designed from its own idea, not from a template:
+
+- **Its own layout.** No shared plan of "buildings in a row, a square, a ring at the bottom". Crossroads Town is a square round a well; Cogsworth Junction is a railway platform above a cobbled square ruled by a clock tower, with an airship mast in the meadow; Dust Gulch is one street strung down from the railway's end, under a mesa, across a dry creek; Neon Harbour is a wet street between tower blocks and the quay.
+- **Its own props.** A zone outside the valley draws only its own region's props (`REGION_PROPS` in `scripts/art/zones.py` fails the build otherwise); the only shared pieces are things found anywhere (steam, a drone, a fence post). A bench in Cogsworth is cast iron, in Neon Harbour it is a tram shelter, in Dust Gulch there is a hitching rail.
+- **Its own ground.** Every region paints its own surfaces with the toolkit: cobbles and soot in Cogsworth, wind ripples, cracked hardpan and a mesa's strata in Dust Gulch, wet asphalt, puddles and neon reflections in Neon Harbour.
+- **Its own story in the scene.** The details explain the place: the well in Dust Gulch is dry and the windpump still stands over it, the creek bed is cracked mud, the line stops at a buffer by the mesa; the train in Cogsworth is still steaming; the signs in Neon Harbour double in every puddle.
+- **The valley's detail level.** Each prop gets the house's treatment: material ramps, light from the upper left, recesses, cast shadows, small story details. Concepts are reviewed side by side before any zone is wired.
+
 ## World logic for the atlas
 
 - Walking zones join only where the ground could really meet: the valley, the harbour and the castle are one walkable region.
@@ -32,6 +42,29 @@ Later regions from the earlier list (tundra, sky islands, coral reef, glowshroom
 - **Borders are painted together.** The generators draw each shared border from the same seed, so the road leaving the garden's south gate is the very road entering Crossroads Town, and the grass, treeline and fences run straight across. A check compares the border strips of neighbouring zones (paths line up, terrain matches or blends).
 - **Between regions, the journey is the transition.** A two to four second vehicle scene: the train pulls out, the landscape scrolls past in parallax layers as it changes from meadow to brass, the train pulls in. It can be skipped, plays once, and with reduced motion it is a still frame and a short cross-fade.
 - **Interrupting is always safe.** Turning back mid-walk or leaving the app mid-journey never triggers a stale arrival, a nap or a navigation (AGENTS.md).
+
+## Zones drawn so far (17 Oct)
+
+All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNGs in `assets/zones/<id>/`, each checked for reachability on foot, blocked water, lava and walls, and (outside the valley) region-only props. Not yet walkable in the app: that comes with the zone engine (W1).
+
+| Zone               | Region       | Joins                                                                               |
+| ------------------ | ------------ | ----------------------------------------------------------------------------------- |
+| Woodland           | Valley       | east: the garden (orchard walk, stream, bluff)                                      |
+| Riverside          | Valley       | west: the garden (stream, bluff)                                                    |
+| Crossroads Town    | Valley       | north: the garden gate road; east: Town Park; south: Driftwood Harbour              |
+| Town Park          | Valley       | west: Crossroads Town street                                                        |
+| Driftwood Harbour  | Valley coast | north: Crossroads Town road; east: Hearthold Castle (cliff path, water, breakwater) |
+| Hearthold Castle   | Valley coast | west: Driftwood Harbour                                                             |
+| Cogsworth Junction | Steam        | by train from Crossroads Town                                                       |
+| Dust Gulch         | Western      | by train from Cogsworth; south-west track to the oasis; mine cart to the caldera    |
+| Ember Caldera      | Lava         | mine cart tunnel from Dust Gulch                                                    |
+| Neon Harbour       | Cyberpunk    | maglev from Cogsworth                                                               |
+| Halcyon Station    | Space        | space elevator from Neon Harbour; shuttle hatch to Lumen                            |
+| Lumen              | Space        | shuttle from Halcyon                                                                |
+
+Still to draw: the Snowy Ridge north of the garden (it needs a trail through the garden's treeline, done with W3), the Desert Oasis, and the station stops for the train, maglev and elevator in the zones they leave from.
+
+**How borders meet.** No prop crosses a border with a neighbour. A road that crosses a border keeps its x (or y) and width and is painted on past the edge, so neither side draws a turf edge there (`paint_road` and the garden's path painter both treat pixels beyond the edge as road). Water, banks and bluffs continue on the same line (the Riverside and the Woodland reuse the garden's stream function with an x offset). Where the ground differs, the side that changes dithers into its neighbour's ground over the last 56 pixels (the Woodland's forest floor into the garden's grass).
 
 ## A world that feels alive
 

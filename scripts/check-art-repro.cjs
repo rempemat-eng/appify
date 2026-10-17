@@ -13,6 +13,7 @@ const generators = [
   'icons',
   'mission_map',
   'zones',
+  'journey',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -23,6 +24,9 @@ const generatedTypescript = [
   'lib/scene-assets.ts',
   'lib/icon-art.ts',
   'lib/mission-map.ts',
+  'lib/zone-maps.ts',
+  'lib/zone-assets.ts',
+  'lib/journey-assets.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
@@ -31,6 +35,7 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
   const owned = fs.mkdtempSync(path.join(os.tmpdir(), 'napattack-art-repro-'));
   const snapshot = path.join(owned, 'repo');
   const previews = path.join(owned, 'previews');
+  const dependencies = path.join(snapshot, 'node_modules');
   const gitEnv = { ...process.env };
   // Inherited Git context must not redirect the temporary add/diff operations
   // into a caller's index or object database.
@@ -46,11 +51,13 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
   const env = {
     ...gitEnv,
     PYTHONDONTWRITEBYTECODE: '1',
+    npm_config_offline: 'true',
     GARDEN_PREVIEW: path.join(previews, 'garden.png'),
     BATTLE_PREVIEW: path.join(previews, 'battle.png'),
     WORLD_PREVIEW: previews,
     MAP_PREVIEW: path.join(previews, 'mission-map.png'),
     ZONE_PREVIEW: previews,
+    JOURNEY_PREVIEW: previews,
   };
   function command(executable, args, cwd, label) {
     const result = run(executable, args, {
@@ -92,6 +99,9 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
     // Snapshot current tracked bytes, including legitimate unstaged local work.
     // Do this before linking dependencies: never add node_modules to the index.
     git(['add', '--all', '--force'], snapshot);
+    // Atlas generators invoke npx oxfmt themselves. Use the already-installed
+    // toolchain, offline, without staging dependencies or downloading packages.
+    fs.symlinkSync(path.join(root, 'node_modules'), dependencies, 'dir');
     for (const name of generators) {
       log(`[art-repro] ${name}.py`);
       command(process.env.PYTHON || 'python3', [`scripts/art/${name}.py`], snapshot, `${name}.py`);
@@ -104,14 +114,17 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
       'generated TypeScript formatting',
     );
     const changed = splitPaths(git(['diff', '--name-only', '-z'], snapshot));
+    const intactDependencies =
+      fs.lstatSync(dependencies, { throwIfNoEntry: false })?.isSymbolicLink() &&
+      fs.readlinkSync(dependencies) === path.join(root, 'node_modules');
+    if (!intactDependencies) failures.push('Installed toolchain link was replaced or removed');
     const untracked = splitPaths(
       git(['ls-files', '--others', '--exclude-standard', '-z'], snapshot),
-    );
+    ).filter((file) => file !== 'node_modules' || !intactDependencies);
     if (changed.length) failures.push(`Tracked output drift: ${changed.join(', ')}`);
     if (untracked.length) failures.push(`Uncommitted generated files: ${untracked.join(', ')}`);
-    // Link only after inspecting generated files: Git treats a directory symlink
-    // as an untracked file even when node_modules/ is ignored.
-    fs.symlinkSync(path.join(root, 'node_modules'), path.join(snapshot, 'node_modules'), 'dir');
+    // Ignore only our intact dependency symlink above, never generated outputs
+    // with a similar name or a replacement at that path.
     log('[art-repro] check regenerated sprite outlines');
     command(process.execPath, ['scripts/check-sprites.cjs'], snapshot, 'check:sprites');
     for (const failure of failures) log(`FAIL: ${failure}`);
