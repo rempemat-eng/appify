@@ -204,17 +204,27 @@ def hut() -> Canvas:
     cv.rect(74, 1, 6, 1, NAP[0])
     detail.overhang_shadow(cv, 72, 82, 3, 1)
 
-    # roof: two shingled planes; the lit left plane is a step lighter. The front gable
-    # and the chimney cast shadows to their right onto the right-hand plane.
+    # roof: a hipped roof seen from above and in front. Each plane has its own value:
+    # the left hip end faces the light (brightest), the front slope is mid, the right
+    # hip end faces away (darkest). Hip lines separate them, lit on the left and dark
+    # on the right. The front gable and the chimney cast shadows onto the front slope.
+    ridge_l, ridge_r = 27, w - 28
+
+    def hip_l(y):
+        return ridge_l - (y - 4) * ridge_l / (eave - 4)
+
+    def hip_r(y):
+        return ridge_r + (y - 4) * (w - 1 - ridge_r) / (eave - 4)
+
     def roof_shadow(x, y):
         right_edge = apex_x + (half(y) if y >= apex_y else 2.5)
         if 0 <= x - right_edge < (6 if y >= apex_y else 4):
             return -1
-        if 82 <= x <= 85 and y < 22:
+        if 82 <= x <= 86 and y < 23:
             return -1
         return 0
 
-    left, right = set(), set()
+    left, front, right = set(), set(), set()
     for y in range(5, eave):
         inset = 12 - (y - 4) * 12 / (eave - 4)
         for x in range(w):
@@ -222,18 +232,30 @@ def hut() -> Canvas:
                 continue
             if 71 <= x <= 82 and y < 20 and x > apex_x:
                 continue  # the chimney stands in front of this patch
-            (left if x < apex_x else right).add((x, y))
-    detail.shingles(cv, left, NAP, 3, 5, seed=1)
-    detail.shingles(cv, right, NAP, 2, 5, seed=2, offset=roof_shadow)
-    # verges: the roof's thickness along its sloping ends, lit on the left
+            if x < hip_l(y):
+                left.add((x, y))
+            elif x > hip_r(y):
+                right.add((x, y))
+            else:
+                front.add((x, y))
+    detail.shingles(cv, left, NAP, 4, 5, seed=1)
+    detail.shingles(cv, front, NAP, 3, 5, seed=2, offset=roof_shadow)
+    detail.shingles(cv, right, NAP, 1, 5, seed=3)
+    for y in range(5, eave):  # hip lines
+        xl, xr = int(hip_l(y)), int(round(hip_r(y)))
+        if (xl, y) in left | front:
+            cv.set(xl, y, NAP[4]); cv.set(xl + 1, y, NAP[2])
+        if (xr, y) in right | front:
+            cv.set(xr, y, NAP[0]); cv.set(xr - 1, y, NAP[1])
+    # the eaves' edge along the hip ends shows the roof's thickness
     for (x, y) in left:
         if (x - 1, y) not in left:
-            cv.set(x, y, NAP[4]); cv.set(x + 1, y, NAP[3])
+            cv.set(x, y, NAP[4])
     for (x, y) in right:
-        if (x + 1, y) not in right and x > 82:
-            cv.set(x, y, NAP[0]); cv.set(x - 1, y, NAP[1])
-    # ridge caps: the main ridge along the top, the gable's ridge running back to it
-    for x in range(12, w - 12):
+        if (x + 1, y) not in right:
+            cv.set(x, y, NAP[0])
+    # the ridge: a lit cap along the top, and the gable's ridge running back to it
+    for x in range(ridge_l, ridge_r + 1):
         if 71 <= x <= 82:
             continue
         cv.set(x, 4, NAP[4] if x < apex_x else NAP[3]); cv.set(x, 3, NAP[2])
@@ -273,7 +295,7 @@ def hut() -> Canvas:
     # falls across the top, deeper to the right; the foot darkens where it meets stone.
     wall_top, wall_bottom = eave + 1, 82
     detail.boards(cv, rect_set(8, wall_top, 82, wall_bottom - wall_top), PLASTER, 4, wall_top, seed=4, joints=False)
-    detail.boards(cv, rect_set(90, wall_top, 6, wall_bottom - wall_top), PLASTER, 3, wall_top, seed=5, joints=False)
+    detail.boards(cv, rect_set(90, wall_top, 6, wall_bottom - wall_top), PLASTER, 2, wall_top, seed=5, joints=False)
     posts = set()
     for x0 in (8, 87):  # round timber corner posts: a lit stripe, a dark far side
         for y in range(wall_top, wall_bottom):
@@ -326,7 +348,11 @@ def hut() -> Canvas:
     for x in (70, 76, 83):  # trailing leaves over the box front
         cv.set(x, 72, LEAF[3]); cv.set(x, 73, LEAF[2]); cv.set(x + 1, 74, LEAF[2])
 
+    # ambient occlusion: the siding darkens into the inside corners beside the posts
+    for y in range(wall_top, wall_bottom):
+        detail.shade(cv, 11, y, 1); detail.shade(cv, 86, y, 1)
     # whatever stands proud of the siding casts a shadow on it, down and to the right
+
     proud = posts | arch
     for wx in (18, 70):
         proud |= rect_set(wx - 4, 57, 4, 14) | rect_set(wx + 16, 57, 4, 14)  # shutters
@@ -594,6 +620,7 @@ def lantern() -> Canvas:
     cv = Canvas(w, h, pad=PAD)
     post(cv, 2, 6, 39)
     cv.hline(1, 39, 5, WOOD[1])
+    detail.base_tufts(cv, (1, 5), 39, G)
     cv.hline(3, 5, 7, WOOD[4]); cv.hline(3, 6, 7, WOOD[2]); cv.hline(3, 7, 7, WOOD[1]); cv.vline(9, 7, 3, WOOD[2])
     # glass housing with a warm glow: brightest at the flame, darker toward the frame
     cv.rect(6, 10, 7, 12, WOOD[1]); cv.vline(6, 10, 12, WOOD[2])
@@ -615,6 +642,7 @@ def mailbox() -> Canvas:
     cv = Canvas(w, h, pad=PAD)
     post(cv, 7, 15, 31, w=4)
     cv.hline(5, 31, 8, WOOD[1])
+    detail.base_tufts(cv, (5, 9, 12), 31, G)
     body = rect_set(1, 4, 15, 12) | rect_set(2, 2, 13, 2) | rect_set(3, 1, 11, 1)
     for (x, y) in body:
         t = 4 if x in (2, 3) else 3 if x < 9 else 2 if x < 14 else 1
@@ -656,6 +684,7 @@ def signpost() -> Canvas:
     cv = Canvas(w, h, pad=PAD)
     post(cv, 12, 6, 35, w=4)
     cv.hline(10, 35, 8, WOOD[1])
+    detail.base_tufts(cv, (10, 15, 18), 35, G)
     for (y, left) in ((2, False), (14, True)):
         arrow_board(cv, y, left)
         cv.hline(12, y + 8, 4, WOOD[0]); cv.hline(13, y + 9, 3, WOOD[1])  # its shadow on the post
@@ -678,16 +707,25 @@ def watering_can() -> Canvas:
 
 
 def bowl() -> Canvas:
-    """The food bowl, 18 x 10, heaped with seeds."""
+    """The food bowl, 18 x 10, seen from above and in front: a lit rim around a heap of
+    seeds, the inside of the far wall in shadow, and the outer wall turning darker below."""
     w, h = 18, 10
     cv = Canvas(w, h, pad=PAD)
-    for (x, y) in oval(9, 5.5, 8.5, 4.4):
-        cv.set(x, y, RED[3] if y < 6 else RED[2])
-    for x in range(2, 16):
-        cv.set(x, 9, RED[1])
-    for (x, y) in oval(9, 4, 6.4, 2.2):
-        cv.set(x, y, GOLD[3] if (x * 3 + y) % 4 else GOLD[2])
-    cv.set(6, 3, GOLD[4]); cv.set(10, 2, GOLD[4])
+    outer = oval(9, 5.5, 8.5, 4.4)
+    for (x, y) in outer:  # the outer wall: lit on the left, darker toward the bottom right
+        t = 3 if x < 6 else 2 if x < 13 else 1
+        if y >= 8:
+            t -= 1
+        cv.set(x, y, RED[max(0, t)])
+    rim = oval(9, 4.2, 8.2, 3.2)
+    for (x, y) in rim:
+        cv.set(x, y, RED[4] if x < 9 else RED[3])
+    inner = oval(9, 4.4, 6.6, 2.3)
+    for (x, y) in inner:
+        cv.set(x, y, RED[1] if (x, y - 1) not in inner else GOLD[2])
+    for (x, y) in oval(9, 4.8, 5.4, 1.8):  # the heap of seeds, lit on its upper left
+        cv.set(x, y, GOLD[4] if x < 8 and y < 5 else GOLD[3] if (x * 3 + y) % 4 else GOLD[2])
+    cv.set(6, 4, GOLD[4]); cv.set(10, 4, GOLD[4]); cv.set(12, 5, GOLD[1])
     return cv
 
 
@@ -717,6 +755,7 @@ def meadow_sign() -> Canvas:
     cv = Canvas(w, h, pad=PAD)
     post(cv, 9, 12, 27, w=4)
     cv.hline(7, 27, 8, WOOD[1])
+    detail.base_tufts(cv, (7, 12, 15), 27, G)
     board = rect_set(1, 2, 20, 11)
     detail.boards(cv, board, WOOD, 3, 2, board=4, seed=5, joints=False, grain=0.06)
     cv.hline(1, 2, 20, WOOD[4]); cv.vline(1, 2, 11, WOOD[4]); cv.hline(1, 12, 20, WOOD[1]); cv.vline(20, 3, 10, WOOD[2])

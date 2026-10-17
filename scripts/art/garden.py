@@ -113,9 +113,16 @@ def draw_terrain(frame: int) -> Canvas:
     for (x, y) in POND:
         depth = ((x + 0.5 - POND_C[0]) / POND_R[0]) ** 2 + ((y + 0.5 - POND_C[1]) / POND_R[1]) ** 2
         col = WTR[1] if depth < 0.35 else WTR[2]
-        if (x, y - 1) not in POND:
-            col = WTR[0]  # dark lip under the far bank
-        elif (x, y - 2) not in POND:
+        # Looking down into the pond, the far bank shows its earth face above the
+        # water, and the water under it lies in its shadow (coherence plan, 6c).
+        k = next((i for i in range(5) if (x, y - i - 1) not in POND), 5)
+        if k == 0:
+            col = P[1]
+        elif k in (1, 2):
+            col = P[0] if (x // 3 + k) % 4 else P[1]
+        elif k == 3:
+            col = WTR[0]
+        elif k == 4:
             col = WTR[1]
         cv.set(x, y, col)
     # Four-frame, one-pixel ripple loops. Each little arc advances on its own
@@ -374,37 +381,26 @@ ANCHORS = {
 
 
 def bake_shadows(terrain: Canvas, sprites: dict):
-    """Flat cast shadows down and to the right (light from the upper left), plus forest
-    shade along the treeline. Shadows multiply the ground so they work on any surface."""
+    """Cast shadows (coherence plan, 6c): every standing object throws its own silhouette
+    down and to the right (light from the upper left), so height reads from the ground.
+    All shadows are one tone, merged so they never stack; then contact shade where each
+    object meets the ground, and forest shade along the treeline."""
+    import detail
+    shade = set()
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
-        foot = y + s.h
-        if key in ('tree', 'tree_small', 'tree_autumn'):
-            style.cast_shadow(terrain, x + s.w / 2 + 5, foot - 2, s.w * 0.46, 6)
-        elif key == 'pine':
-            style.cast_shadow(terrain, x + s.w / 2 + 3, foot - 1, s.w * 0.42, 4.5)
-        elif key == 'bush':
-            style.cast_shadow(terrain, x + s.w / 2 + 3, foot - 1, s.w * 0.5, 4)
-        elif key.startswith('fence'):
-            for xx in range(x + 2, x + s.w + 1):
-                for dy in (0, 1, 2):
-                    style.darken(terrain, xx, foot + dy)
-        elif key in ('hut', 'stall'):
-            # a building's shadow: a band along its foot that leans to the right
-            for yy in range(foot - 4, foot + 4):
-                for xx in range(x + 4 + (yy - foot + 4), x + s.w + 4):
-                    style.darken(terrain, xx, yy)
-        else:
-            style.cast_shadow(terrain, x + s.w / 2 + 3, foot, max(4.5, s.w * 0.48), max(2.6, s.h * 0.1))
-    # Contact shade: where an object meets the ground, the ground darkens along its base,
-    # so props sit in the grass rather than on it (light from the upper left).
+        shade |= detail.silhouette_shadow(s, x + s.ox, y + s.oy)
+    for (sx, sy) in shade:
+        style.darken(terrain, sx, sy)
+    # Contact shade: the ground darkens along each base, two pixels deep under the
+    # lit side, so props sit in the grass rather than on it.
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
-        foot = y + s.h
+        foot = y + s.oy + s.h
         for xx in range(s.w):
             if s.get(xx, s.h - 1)[3]:
-                style.darken(terrain, x + xx, foot)
-                style.darken(terrain, x + xx + 1, foot + 1)
+                style.darken(terrain, x + s.ox + xx, foot)
+                style.darken(terrain, x + s.ox + xx + 1, foot + 1)
     for row, strength in ((0, 1.0), (1, 0.75), (2, 0.75), (3, 0.5), (4, 0.5), (5, 0.25), (6, 0.25)):
 
         style.dither_dark(terrain, 0, row, W, 1, strength, style.FOREST_DARK)

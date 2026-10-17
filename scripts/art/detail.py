@@ -247,3 +247,37 @@ def cast(cv: Canvas, pts, dx: int = 1, dy: int = 1, k: int = 1, on=None, reach: 
                 continue
             done.add(p)
             shade(cv, p[0], p[1], k)
+
+
+# Light comes from the upper left and a little behind, so a shadow is the object's own
+# silhouette thrown down and to the right along the ground: each pixel's height above
+# the object's foot moves it SHADOW_RUN to the right and SHADOW_DROP down per pixel.
+SHADOW_RUN, SHADOW_DROP = 0.45, 0.07
+
+
+def silhouette_shadow(sprite: Canvas, x0: int, y0: int, foot: int | None = None) -> set:
+    """The ground pixels a sprite standing at (x0, y0) shades: its silhouette thrown down
+    and to the right from its foot (its bottom row unless `foot` is given). A tall house
+    throws a long, roof-shaped shadow, a post a thin line, a tree a canopy-shaped pool
+    beside its trunk, which is what makes things stand up off the ground."""
+    base = y0 + sprite.h - 1 if foot is None else foot
+    pts = set()
+    for sy in range(sprite.h):
+        for sx in range(sprite.w):
+            if not sprite.get(sx, sy)[3]:
+                continue
+            hgt = base - (y0 + sy)
+            if hgt < 0:
+                continue
+            gx = x0 + sx + hgt * SHADOW_RUN
+            gy = base + hgt * SHADOW_DROP
+            pts.add((int(round(gx)), int(round(gy))))
+            pts.add((int(round(gx)) + 1, int(round(gy))))
+    return pts
+
+
+def base_tufts(cv: Canvas, xs, y: int, ramp, ground: int = 3):
+    """Grass growing in front of a base: small tufts with their roots on the sprite's
+    bottom row, so posts and walls sit in the grass instead of ending on a hard line."""
+    for i, x in enumerate(xs):
+        grass_tuft(cv, x, y, (0, 3, 5)[i % 3], ramp, ground)

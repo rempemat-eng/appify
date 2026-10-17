@@ -168,11 +168,13 @@ def near() -> Canvas:
             detail.grass_tuft(cv, x, y, near_kinds[int(noise2(tx, ty, 8) * 3)], G, ground)
             if noise2(tx, ty, 9) < 0.08:
                 cv.set(x + 3, y - 1, ['#F2D16B', '#FBF4E4', '#CFC4EC'][int(noise2(tx, ty, 10) * 3)])
-    # trees framing the field, with hard shadows down and to the right
+    # trees framing the field, with silhouette shadows down and to the right
     for (tx, ty, sprite) in ((-10, HORIZON - 30, gp.tree(True)), (194, HORIZON - 24, gp.tree(False)),
                              (182, HORIZON - 34, gp.pine()), (14, HORIZON - 26, gp.pine())):
         s = style.finalize(sprite, name='battle-tree')
-        style.cast_shadow(cv, tx + s.w / 2 + 3, ty + s.h - 1, s.w * 0.45, 3.5)
+        for (sx, sy) in detail.silhouette_shadow(s, tx + s.ox, ty + s.oy):
+            if sy > HORIZON + 4:
+                style.darken(cv, sx, sy)
         cv.paste(s, tx + s.ox, ty + s.oy)
     # transparent above the meadow and the trees
     return cv

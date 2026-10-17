@@ -423,26 +423,21 @@ def main():
         for cv in frames:
             for (decal, fx, fy) in flat:
                 cv.paste(decal, fx, fy)
-            for (_id, key, x, y) in objects:  # flat cast shadows and contact shade, as in the garden
+            # silhouette shadows and contact shade, as in the garden (scripts/art/detail.py)
+            import detail
+            shade = set()
+            for (_id, key, x, y) in objects:
+                sp = sprites[key]
+                shade |= detail.silhouette_shadow(sp, x, y)
+            for (sx, sy) in shade:
+                style.darken(cv, sx, sy)
+            for (_id, key, x, y) in objects:
                 sp = sprites[key]
                 foot = y + sp.h
-                if key in ('tree', 'tree_small', 'tree_autumn'):
-                    style.cast_shadow(cv, x + sp.w / 2 + 5, foot - 2, sp.w * 0.46, 6)
-                elif key == 'pine':
-                    style.cast_shadow(cv, x + sp.w / 2 + 3, foot - 1, sp.w * 0.42, 4.5)
-                elif key == 'hedge':
-                    for xx in range(x + 2, x + sp.w + 2):
-                        for dy in (0, 1, 2):
-                            style.darken(cv, xx, foot + dy)
-                elif sp.w > 60:  # buildings
-                    for yy in range(foot - 4, foot + 4):
-                        for xx in range(x + 4 + (yy - foot + 4), x + sp.w + 4):
-                            style.darken(cv, xx, yy)
-                else:
-                    style.cast_shadow(cv, x + sp.w / 2 + 3, foot, max(4.5, sp.w * 0.48), max(2.6, sp.h * 0.1))
                 for xx in range(sp.w):
                     if sp.get(xx, sp.h - 1)[3]:
                         style.darken(cv, x + xx, foot)
+                        style.darken(cv, x + xx + 1, foot + 1)
         frames[0].save(os.path.join(OUT, wid, 'ground.png'), SCALE)
         overlays = []
         if water:
