@@ -22,7 +22,8 @@
   - **Deck, journal, feed, rhythm, stats, garden trail, how it works:** the ☰ menu.
   - **Keepsakes:** tap them in the garden.
   - **Guidance:** a "!" marker over the next place (`gardenMarker()`), and the companion's speech bubble.
-- Other tabs (Missions, Arena, Shop) are still scrolling `Page`s. Pages pad themselves with `hudClearance()` and `hotbarClearance()` from `lib/layout.ts`. Turning them into places in the world is on the roadmap.
+- Missions uses one static destination map and one selected departure panel (`components/mission-departure.tsx`), reusing existing landmark sprites and shared material ramps. START and the optional BREAK IDEA control stay above the hotbar. Short screens can scroll the single map/detail surface; they never stack three full mission cards. Leaving the tab discards unfinished choices. The store remains authoritative for launch and settlement; no new map progression or rewards exist.
+- Arena and Shop are still scrolling `Page`s. Pages and the departure screen use `hudClearance()` and `hotbarClearance()` from `lib/layout.ts`. Turning the other tabs into places remains on the roadmap.
 - Sheets: `lib/ui.ts` holds which sheet is open (`nap | menu | companions | rhythm | stats | trail`). `components/game-menus.tsx` renders them all once, beside the tabs. Any open sheet pauses the garden.
 - Shared game sheets keep a visible CLOSE button beside the title, above the scrolling content. It uses the same pixel button and 44 px target as the other controls. Backdrop and Escape/Back dismissal stay available; closing the nap sheet discards its unfinished break idea.
 - Forms and pickers (the companions picker, the rhythm editor) instead pin their DONE or CANCEL/SAVE actions below the scrolling content. Do not add a second header CLOSE to them; the rule is one visible way out that never scrolls away.

@@ -15,7 +15,7 @@ import { backendConfigured } from '@/lib/bilt';
 import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
 import { useAppActive } from '@/lib/app-active';
-import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
+import { bot, feedback, hats, status, useGame, type Player } from '@/lib/game';
 import { matchup } from '@/lib/battle';
 import { grasslings, growthStage, levelPreview } from '@/lib/grasslings';
 import { budgetVoice, dayKey } from '@/lib/offline-rules';
@@ -28,13 +28,10 @@ import { GardenTip } from '@/components/garden-guide';
 import { Page, Pet, PixelButton, PixelText, StatusChip } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
-import { WorldPreview } from '@/components/world-scene';
-import { isWorldId } from '@/lib/world-maps';
-import { worldCatalogue } from '@/lib/world-catalogue';
+import { MissionDeparture } from '@/components/mission-departure';
 import { openSheet, useUi } from '@/lib/ui';
 import { useAmbience } from '@/lib/sound';
-import { type BreakIntention, type CompanionMemory } from '@/lib/companion-memories';
-import { BreakIntentionPicker } from '@/components/companion-memories';
+import { type CompanionMemory } from '@/lib/companion-memories';
 import { GardenKeepsakeSheet } from '@/components/garden-keepsakes';
 import { gardenMarker } from '@/components/garden-journey';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
@@ -200,82 +197,8 @@ export function HomeScreen() {
   );
 }
 export function MissionsScreen() {
-  const [intention, setIntention] = useState<BreakIntention | null>(null);
-  const { height } = useWindowDimensions();
-  const compact = height < 760;
-  const p = useGame((s) => s.player);
-  if (!p) return null;
-  return (
-    <Page>
-      <PixelText style={{ fontSize: 16 }}>GO TOUCH GRASS</PixelText>
-      <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-        Choose a place for your companion and an optional break idea for you. Any idea fits any
-        place. Demo time: 1 real second = 1 simulated MIN.
-      </BodyText>
-      <BreakIntentionPicker
-        value={intention}
-        onChange={setIntention}
-        disabled={p.mode !== 'awake'}
-      />
-      {missions.map((m) => {
-        const locked = p.level < m.level;
-        const world = isWorldId(m.id) ? m.id : null;
-        return (
-          <CozyPanel key={m.id} style={{ padding: 12, gap: 10, opacity: locked ? 0.85 : 1 }}>
-            {world && <WorldPreview world={world} player={p} height={compact ? 132 : 176} />}
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16, flex: 1 }}>
-                {m.name}
-              </BodyText>
-              <BodyText
-                style={{
-                  fontFamily: 'PixelifySans_700Bold',
-                  fontSize: 12,
-                  paddingHorizontal: 8,
-                  paddingVertical: 2,
-                  borderRadius: 0,
-                  overflow: 'hidden',
-                  backgroundColor: c.rest,
-                }}
-              >
-                {m.duration} MIN
-              </BodyText>
-            </View>
-            <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
-              {world ? worldCatalogue[world].description : 'A little room for time away.'}
-            </BodyText>
-            <BodyText style={{ fontSize: 12, color: c.shade }}>
-              About {m.duration} seconds in this demo
-            </BodyText>
-            <BodyText style={{ fontSize: 12 }}>
-              {m.reward} GRASS · +1 {m.id === 'mountain' ? 'EPIC' : 'RARE'} card · postcard
-              {m.id === 'mountain' ? ' · new hat (or +50 GRASS if you own them all)' : ''}
-            </BodyText>
-            <PixelButton
-              small
-              light
-              label={
-                locked
-                  ? `LEVEL ${m.level} NEEDED`
-                  : p.mode !== 'awake'
-                    ? 'ON A BREAK'
-                    : `START ${m.name}`
-              }
-              disabled={locked || p.mode !== 'awake'}
-              onPress={() => {
-                useGame.getState().sleep(m.id, intention);
-                if (useGame.getState().player?.mode === 'mission') setIntention(null);
-              }}
-            />
-          </CozyPanel>
-        );
-      })}
-      <BodyText style={{ fontSize: 12, textAlign: 'center' }}>
-        Finish for the mission rewards shown above. Returning early keeps any common-card earnings,
-        but gives no mission completion reward.
-      </BodyText>
-    </Page>
-  );
+  const focused = useIsFocused();
+  return focused ? <MissionDeparture /> : null;
 }
 export function ShopScreen() {
   const paused = usePlayPaused();

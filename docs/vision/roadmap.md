@@ -8,7 +8,7 @@
    - Checked: companions and visitors already use a near-black outline and five-tone shading, so they fit.
 2. **Missions, Arena and Shop as places, not pages.**
    - Shop becomes the inside of Moss's stall.
-   - Missions becomes a world map past the gate.
+   - Missions: first departure-map pass (17 Oct), with three reused landmarks, one selected outing and pinned launch controls. Phone/landscape/increased-text visual checks remain pending; this is not a walking overworld.
    - Arena becomes a clearing beyond the fence.
 
    Same HUD and hotbar, no long scrolling lists.
