@@ -1,8 +1,10 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { View, useWindowDimensions } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AtlasWalk } from '@/components/atlas-walk';
+import { Journey } from '@/components/journey';
+import { usePixelUnit } from '@/components/pixel-frame';
 import { PixelButton } from '@/components/game-ui';
 import type { RegionId } from '@/lib/region-walk';
 
@@ -25,11 +27,29 @@ export default function Atlas() {
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const [region, setRegion] = useState<RegionId>('valley');
+  const [trip, setTrip] = useState<RegionId | null>(null);
+  const u = usePixelUnit();
+  const arrive = useCallback(() => {
+    if (trip) setRegion(trip);
+    setTrip(null);
+  }, [trip]);
   const bar = 56 + insets.bottom;
   return (
     <View style={{ flex: 1, backgroundColor: '#1E1917' }}>
       <Stack.Screen options={{ headerShown: false }} />
-      <AtlasWalk key={region} region={region} width={width} height={height - bar} />
+      <View style={{ width, height: height - bar }}>
+        <AtlasWalk key={region} region={region} width={width} height={height - bar} />
+        {trip && (
+          <Journey
+            to={trip}
+            label={regionNames[trip]}
+            width={width}
+            height={height - bar}
+            u={u}
+            onArrive={arrive}
+          />
+        )}
+      </View>
       <View
         style={{
           height: bar,
@@ -49,7 +69,8 @@ export default function Atlas() {
               small
               light={r !== region}
               label={regionNames[r]}
-              onPress={() => setRegion(r)}
+              disabled={!!trip}
+              onPress={() => r !== region && setTrip(r)}
             />
           </View>
         ))}
