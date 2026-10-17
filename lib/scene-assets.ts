@@ -13,12 +13,12 @@ import homecoming from '@/assets/scenes/return.png';
 import skyDay from '@/assets/scenes/sky-day.png';
 import skyNight from '@/assets/scenes/sky-night.png';
 import skySunrise from '@/assets/scenes/sky-sunrise.png';
-export const sceneFrame = { width: 216, height: 150, feet: 111, ground: 39, window: 160 } as const;
+export const sceneFrame = { width: 432, height: 300, feet: 222, ground: 78, window: 320 } as const;
 export const sceneImages = { habitat, market, town, nest, trail, park, book, mountain } as const;
 export const sceneFocus: Partial<Record<keyof typeof sceneImages, number>> = {
-  market: 106,
-  town: 70,
-  trail: 100,
+  market: 180,
+  town: 134,
+  trail: 236,
 };
 export const sceneNight = night;
 export const sceneReturn = homecoming;

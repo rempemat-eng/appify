@@ -3,6 +3,7 @@ import { Image, ScrollView, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PixelScene } from '@/components/pixel-scenes';
+import { sceneFrame } from '@/lib/scene-assets';
 import { sceneImages } from '@/lib/scene-assets';
 import { worldCatalogue } from '@/lib/world-catalogue';
 import Animated, {
@@ -185,12 +186,16 @@ export function WelcomeBack() {
   const sheetMaxHeight = Math.min(availableHeight, Math.max(height * 0.64, sheetChrome + 144));
   const bodyMaxHeight = Math.max(0, sheetMaxHeight - sheetChrome);
   if (!reward || !p) return null;
-  const scenePixel = Math.max(1, Math.floor(sceneBounds.width / 160));
+  const scenePixel = Math.max(
+    1,
+    Math.floor(sceneBounds.width / sceneFrame.window),
+    Math.ceil(sceneBounds.width / sceneFrame.width),
+  );
   const scenePetSize = Math.max(0, Math.min(128, Math.floor((sceneBounds.height - 8) / 32) * 32));
   // Match PixelScene's measured integer scale, leaving room for the companion
   // above the ground even when the reward sheet takes most of a short window.
   const sceneGround = Math.min(
-    39 * scenePixel,
+    sceneFrame.ground * scenePixel,
     Math.max(0, Math.floor((sceneBounds.height - scenePetSize - 8) / scenePixel) * scenePixel),
   );
   const groups = cardIds
