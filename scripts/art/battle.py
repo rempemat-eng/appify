@@ -147,10 +147,8 @@ def near() -> Canvas:
             path.add((x, y))
     for (x, y) in path:
         n = smooth_noise(x, y, 5, 3)
-        cv.set(x, y, P[3] if n > 0.62 else P[2])
-    for (x, y) in path:
-        if (x - 1, y) not in path or (x + 1, y) not in path:
-            cv.set(x, y, P[1])
+        cv.set(x, y, P[4] if n > 0.62 else P[3])
+    detail.grass_edge(cv, path, G, P, seed=21)
     for i in range(14):
         y = top + 8 + int(noise2(i, 3, 12) * (H - top - 10))
         x = int(W / 2 + (noise2(i, 4, 12) - 0.5) * (2 + (y - top) / (H - top) * 12))
