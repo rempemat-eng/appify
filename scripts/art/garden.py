@@ -190,7 +190,9 @@ def draw_terrain(frame: int) -> Canvas:
     # Ragged turf breaks onto the path in lit teeth with shade beneath (detail.py).
     import detail as _edge
     bridge = {(x, y) for (x, y) in dirt if BX0 <= x < BX1 and BY0 <= y < BY1} if 'BX0' in globals() else set()
-    _edge.grass_edge(cv, {(x, y) for (x, y) in dirt if 0 <= x < W and 0 <= y < H}, G, P, keep=bridge, seed=7)
+    # The main path runs on past the bottom edge into Crossroads Town (world-atlas.md,
+    # seamless travel), so the border itself gets no turf edge: rows below the map count.
+    _edge.grass_edge(cv, {(x, y) for (x, y) in dirt if 0 <= x < W and 0 <= y}, G, P, keep=bridge, seed=7)
     for (x, y) in dirt:
         if (x, y + 1) not in PATH and (x, y + 1) not in meadow.STREAM and 0 <= y + 1 < H:
             cv.set(x, y + 1, G[3])  # the lit edge of the turf below the path

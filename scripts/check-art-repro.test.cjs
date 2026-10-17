@@ -27,7 +27,21 @@ try {
   fs.mkdirSync(root);
   write('.gitignore', 'node_modules/\n');
   write('assets/example.png', Buffer.from([0, 1, 2, 255]));
-  write('scripts/art/garden.py', '# generator fixture\n');
+  for (const name of generators) write(`scripts/art/${name}.py`, '# generator fixture\n');
+  write('lib/mission-map.ts', 'mission map fixture\n');
+  write('assets/zones/town/ground.png', Buffer.from([3, 4, 5, 255]));
+  assert.deepEqual(generators, [
+    'garden',
+    'pets',
+    'battle',
+    'worlds',
+    'vignettes',
+    'icons',
+    'mission_map',
+    'zones',
+  ]);
+  checks++;
+  check(generatedTypescript.includes('lib/mission-map.ts'), 'formats the destination map module');
   write('lib/garden-map.ts', 'tracked, then deliberately unstaged\n');
   for (const args of [
     ['init', '-q'],
@@ -40,6 +54,11 @@ try {
   write('untracked-note.txt', 'not part of the snapshot\n');
   const originals = new Map([
     ['assets/example.png', fs.readFileSync(path.join(root, 'assets/example.png'))],
+    ['lib/mission-map.ts', fs.readFileSync(path.join(root, 'lib/mission-map.ts'))],
+    [
+      'assets/zones/town/ground.png',
+      fs.readFileSync(path.join(root, 'assets/zones/town/ground.png')),
+    ],
     ['lib/garden-map.ts', fs.readFileSync(path.join(root, 'lib/garden-map.ts'))],
   ]);
   const originalIndex = spawnSync('git', ['write-tree'], { cwd: root, encoding: 'utf8' }).stdout;
@@ -63,6 +82,31 @@ try {
             'current uncommitted work must survive\n',
           mode + ': uses current tracked bytes, not HEAD',
         );
+        const previewRoot = path.join(path.dirname(snapshot), 'previews');
+        check(
+          options.env.MAP_PREVIEW === path.join(previewRoot, 'mission-map.png'),
+          mode + ': map preview stays owned',
+        );
+        check(options.env.ZONE_PREVIEW === previewRoot, mode + ': zone previews stay owned');
+        if (args[0] === 'scripts/art/mission_map.py') {
+          fs.writeFileSync(options.env.MAP_PREVIEW, 'map preview fixture');
+          if (mode === 'changed-mission-map')
+            fs.writeFileSync(path.join(snapshot, 'lib/mission-map.ts'), 'drift');
+          if (mode === 'failed-mission-map')
+            return { status: 1, stdout: '', stderr: 'synthetic map failure' };
+        }
+        if (args[0] === 'scripts/art/zones.py') {
+          fs.writeFileSync(
+            path.join(options.env.ZONE_PREVIEW, 'zone-town.png'),
+            'zone preview fixture',
+          );
+          if (mode === 'changed-zone')
+            fs.writeFileSync(path.join(snapshot, 'assets/zones/town/ground.png'), 'drift');
+          if (mode === 'new-zone')
+            fs.writeFileSync(path.join(snapshot, 'assets/zones/uncommitted.png'), 'new');
+          if (mode === 'failed-zone')
+            return { status: 1, stdout: '', stderr: 'synthetic zone failure' };
+        }
         if (args[0] === 'scripts/art/garden.py') {
           if (mode === 'changed')
             fs.writeFileSync(path.join(snapshot, 'assets/example.png'), Buffer.from([9, 8, 7]));
@@ -86,7 +130,7 @@ try {
         .filter((c) => c.args[0].startsWith('scripts/art/'))
         .map((c) => c.args[0])
         .join('|') === generators.map((name) => `scripts/art/${name}.py`).join('|'),
-      mode + ': runs all six production entry points',
+      mode + ': runs every production entry point',
     );
     const format = calls.find((c) => c.args[0] === '--write');
     assert.deepEqual(format.args.slice(1), generatedTypescript);
@@ -114,6 +158,22 @@ try {
     if (priorIndex === undefined) delete process.env.GIT_INDEX_FILE;
     else process.env.GIT_INDEX_FILE = priorIndex;
   }
+  const priorPreviews = {
+    MAP_PREVIEW: process.env.MAP_PREVIEW,
+    ZONE_PREVIEW: process.env.ZONE_PREVIEW,
+  };
+  try {
+    process.env.MAP_PREVIEW = path.join(root, 'caller-map.png');
+    process.env.ZONE_PREVIEW = path.join(root, 'caller-zones');
+    check(scenario('inherited-previews').ok, 'foreign preview overrides cannot cause drift');
+    check(!fs.existsSync(process.env.MAP_PREVIEW), 'never writes caller map preview');
+    check(!fs.existsSync(process.env.ZONE_PREVIEW), 'never creates caller zone preview directory');
+  } finally {
+    for (const [key, value] of Object.entries(priorPreviews)) {
+      if (value === undefined) delete process.env[key];
+      else process.env[key] = value;
+    }
+  }
   for (const mode of [
     'changed',
     'deleted',
@@ -121,10 +181,23 @@ try {
     'failed-generator',
     'failed-format',
     'failed-sprites',
+    'changed-mission-map',
+    'changed-zone',
+    'new-zone',
+    'failed-mission-map',
+    'failed-zone',
   ]) {
     const result = scenario(mode);
     check(!result.ok, mode + ': cannot silently pass');
     check(result.failures.length > 0, mode + ': emits actionable failure');
+    const expected = {
+      'changed-mission-map': 'Tracked output drift: lib/mission-map.ts',
+      'changed-zone': 'Tracked output drift: assets/zones/town/ground.png',
+      'new-zone': 'Uncommitted generated files: assets/zones/uncommitted.png',
+      'failed-mission-map': 'mission_map.py: exit 1',
+      'failed-zone': 'zones.py: exit 1',
+    }[mode];
+    if (expected) check(result.failures.includes(expected), mode + ': identifies exact failure');
   }
   assert.throws(() => scenario('exception'), /synthetic unexpected exception/);
   checks++;

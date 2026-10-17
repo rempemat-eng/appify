@@ -23,6 +23,8 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 - **Content after polish.** Once the look and feel are right, add more places, visitors and things to do.
 - **A living world (17 Oct).** Matt approved the merged plan and Codex's living-world ideas: a safe currency earned away from the phone, gentle reversible decay, seasons and weather as scenery, people with routines, decorating and interiors, lasting story changes and new biomes. Order and rules: [living-world-plan.md](living-world-plan.md).
 
+**World atlas** (Matt, 17 Oct): the regions beyond the valley (Driftwood Harbour, Hearthold Castle, steampunk Cogsworth Junction, the western Dust Gulch, the Ember Caldera, cyberpunk Neon Harbour, Halcyon Station and the moon Lumen), the theme that ties them together (a journey from rest to screens and back to sleep), seamless travel and a world that feels alive: [world-atlas.md](world-atlas.md).
+
 ## Working agreements
 
 - Edit the generators in `scripts/art/` and rerun `npm run art`; never hand-edit generated PNGs or `lib/garden-map.ts`.

@@ -4,7 +4,16 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync } = require('node:child_process');
 
-const generators = ['garden', 'pets', 'battle', 'worlds', 'vignettes', 'icons'];
+const generators = [
+  'garden',
+  'pets',
+  'battle',
+  'worlds',
+  'vignettes',
+  'icons',
+  'mission_map',
+  'zones',
+];
 const generatedTypescript = [
   'lib/garden-map.ts',
   'lib/garden-growth-assets.ts',
@@ -13,6 +22,7 @@ const generatedTypescript = [
   'lib/world-assets.ts',
   'lib/scene-assets.ts',
   'lib/icon-art.ts',
+  'lib/mission-map.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
@@ -39,6 +49,8 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
     GARDEN_PREVIEW: path.join(previews, 'garden.png'),
     BATTLE_PREVIEW: path.join(previews, 'battle.png'),
     WORLD_PREVIEW: previews,
+    MAP_PREVIEW: path.join(previews, 'mission-map.png'),
+    ZONE_PREVIEW: previews,
   };
   function command(executable, args, cwd, label) {
     const result = run(executable, args, {
@@ -84,7 +96,7 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
       log(`[art-repro] ${name}.py`);
       command(process.env.PYTHON || 'python3', [`scripts/art/${name}.py`], snapshot, `${name}.py`);
     }
-    log('[art-repro] format all seven generated TypeScript modules');
+    log(`[art-repro] format all ${generatedTypescript.length} generated TypeScript modules`);
     command(
       path.join(root, 'node_modules', '.bin', 'oxfmt'),
       ['--write', ...generatedTypescript],
@@ -104,7 +116,9 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
     command(process.execPath, ['scripts/check-sprites.cjs'], snapshot, 'check:sprites');
     for (const failure of failures) log(`FAIL: ${failure}`);
     if (!failures.length)
-      log('PASS: all six art generators reproduce committed bytes; sprite checks pass.');
+      log(
+        `PASS: all ${generators.length} art generators reproduce committed bytes; sprite checks pass.`,
+      );
     return { ok: failures.length === 0, failures, changed, untracked };
   } finally {
     // Only the fresh directory owned by this invocation; no user checkout edits.

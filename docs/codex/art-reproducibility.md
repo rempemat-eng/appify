@@ -7,53 +7,54 @@ select another Python executable. CI pins Pillow and the action revisions.
 The check copies the current tracked source into a private temporary Git index.
 It does not change the caller's working files, staging area, artwork or saves,
 including when the caller has uncommitted work. The temporary copy is removed
-after success or failure. Existing generators may also write their usual
-diagnostic previews under `/tmp`; supported preview overrides are redirected
-inside the disposable workspace.
+after success or failure. Supported diagnostic preview overrides are redirected
+inside that owned workspace, outside the snapshot being compared. In particular,
+inherited `MAP_PREVIEW` and `ZONE_PREVIEW` cannot write to caller destinations.
 
-It runs all six production entry points: garden, pets, battle, worlds,
-vignettes and icons. The other Python modules supply their shared drawing
-functions; the standalone prop contact sheets are not production generators.
-It formats all seven generated TypeScript modules with the installed oxfmt,
-rejects any changed/deleted tracked bytes or new uncommitted generated files,
-then checks the regenerated sprite outlines. A failed generator never skips
-the remaining generators, formatting or the sprite diagnostics, and cannot
-produce a passing result.
+It runs eight production entry points: garden, pets, battle, worlds,
+vignettes, icons, mission_map and zones. The other Python modules supply shared
+drawing functions. Standalone prop contact sheets, including cyber_props and
+steampunk_props, are helpers, not additional production generators; zones imports
+them in its own process. Each entry point gets a separate Python process.
+
+It formats eight generated TypeScript modules, including `lib/mission-map.ts`,
+with the installed oxfmt, rejects changed/deleted tracked bytes and new
+uncommitted generated files, then checks regenerated sprite outlines.
+The destination map composite and town, junction and neon zone grounds are
+covered by the whole-tree byte comparison, not inappropriate per-sprite outline
+tests. Zones currently generates PNGs only, not another TypeScript module.
+A failed generator never skips the remaining generators, formatting or sprite
+diagnostics, and cannot produce a passing result.
 
 `npm run check:art-repro-test` tests isolation and failure detection with real
 Git/filesystem boundaries and substituted generator processes. It requires no
-Python and also runs in `npm run verify`. It does not prove artwork quality.
+Python and also runs in `npm run verify`. It covers mission-map TypeScript drift,
+zone PNG drift, unexpected zone output, failures of both new entry points and
+preview overrides that actually write into the owned temporary directory.
+These checks do not prove artwork quality.
+
 The **Art reproducibility** workflow runs the actual Python pipeline on PRs,
 main pushes and manual dispatch. Main is not changed by the workflow.
-
-## Resolved feedback: vignette regeneration
-
-Claude repaired `scripts/art/vignettes.py` on main
-`e2f4057b48724f070f4645bc5eb260b4f34d13a7` (17 October 2026), using the
-current `garden_props` and `world_props` APIs. C6 integrates that source and
-all merged C5/C7 work unchanged; it does not modify a generator, an asset or
-a visual component. It also includes main
-`7f6c1d73a7f0f2a1b2d1cb55f6021d0024b61485`, preserving the newer material
-detail, clutter props and removal of both retired battle backdrop images.
-The check needs no exceptions for those changes: only current tracked files
-enter its disposable snapshot, and the six generators remain unchanged.
-
-On the integrated source, Python 3.12.14 and Pillow 12.3.0 regenerate all six
-production entry points without tracked drift or new generated files.
-Formatting all seven generated TypeScript modules preserves their bytes,
-and all 110 regenerated sprite outline checks pass. The repaired vignettes
-use a 432 by 300 art frame exported at 2x; checking reproducibility is not
-visual approval or a phone-memory measurement.
-
-The original report on `abc09449132f27348129dbdc5ac75561933a5808` caught an
-`AttributeError` from the retired `garden.pine` API. That was a real failure,
-not a guard exception to waive. Its repair is now checked by the same guard;
-no baselines or failure handling were relaxed. The existing `npm run art`
-still omits icons; this dedicated guard explicitly covers them.
-
+The existing `npm run art` omits icons, mission_map and zones; this dedicated
+guard explicitly covers all three as well as the older entry points.
 C7's image report and regression checks remain intact in `package.json`.
-`npm run verify` runs both the image-report tests and the 267 guard boundary
-assertions; the separate Art reproducibility CI job runs the real Python
-pipeline. Matching CI and screenshot evidence is recorded on PR #16.
-Regeneration proves source/output agreement, not native performance, device
-behaviour, animation scheduling or visual polish.
+
+## Integrated source and evidence
+
+Claude repaired the vignette prop API on main
+`e2f4057b48724f070f4645bc5eb260b4f34d13a7` (17 October 2026).
+The original `AttributeError` from the retired `garden.pine` API was a real
+failure, not an exception to waive. No generator, asset or visual component is
+authored in C6, and no baselines or failure handling are relaxed.
+
+This follow-up incorporates main
+`7d60250be5e2ccf36326f03f6e7cbf81d9918b61`, including L1's destination map,
+its terrain grid, the seamless garden border and the three zone concepts.
+The guard's explicit entry-point list must grow when another production
+generator or generated TypeScript module is introduced.
+
+Exact-source local checks, matching CI, screenshot artifacts and preview links
+are recorded on PR #16. Regeneration proves source/output agreement, not native
+performance, resident memory, device behaviour, animation scheduling or visual
+polish. Screenshot and native-generation jobs do not establish physical-device
+or multiplayer testing.
