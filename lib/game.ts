@@ -35,6 +35,7 @@ import {
   type WelcomeReward,
 } from '@/lib/visitors';
 import { bilt, backendUnavailableMessage } from '@/lib/bilt';
+import { FutureSaveError, GAME_SAVE_KEY, readSave, writeSave } from '@/lib/save-data';
 import {
   appendBreak,
   breakReceipt,
@@ -155,7 +156,7 @@ function code() {
 }
 export type Incoming = { raid: Raid; attacker: Player | null };
 export type BattleRequest = { target: Player; practice: boolean };
-type Saved = {
+export type Saved = {
   missionReturnPending: boolean;
   quietView: boolean;
   recentBreaks?: RecentBreak[];
@@ -404,8 +405,9 @@ function isSaved(value: unknown): value is Saved {
         (value.cardReward.mission === null || typeof value.cardReward.mission === 'string')))
   );
 }
-const KEY = 'screenagotchi-v1';
 let persistence = Promise.resolve();
+let saveSource: unknown = null;
+let saveWritable = false;
 let active = true;
 let syncRequested = false;
 let battleGeneration = 0;
@@ -499,6 +501,9 @@ export function resolveTogetherSession(session: TogetherSession) {
   }
 }
 function persist() {
+  // A failed/newer save stays byte-for-byte intact, including if onboarding or
+  // a preference action is triggered before the load problem is resolved.
+  if (!saveWritable) return persistence;
   const s = gameStore.getState();
   const saved: Saved = {
     missionReturnPending: s.missionReturnPending,
@@ -531,9 +536,10 @@ function persist() {
     cardReward: s.cardReward,
     waitingVisitor: s.waitingVisitor,
   };
-  const value = JSON.stringify(saved);
+  const encoded = writeSave(saved, saveSource);
+  saveSource = encoded.source;
   persistence = persistence
-    .then(() => AsyncStorage.setItem(KEY, value))
+    .then(() => AsyncStorage.setItem(GAME_SAVE_KEY, encoded.raw))
     .catch(() => {
       gameStore.setState({ message: 'COULD NOT SAVE. KEEP THE APP OPEN.' });
       feedback('error');
@@ -813,11 +819,16 @@ export const gameStore = create<Game>((set, get) => ({
   syncing: false,
   init: async () => {
     if (get().ready) return;
+    saveWritable = false;
     try {
-      const raw = await AsyncStorage.getItem(KEY);
-      const parsed: unknown = migrateSaved(raw ? JSON.parse(raw) : null);
+      await persistence;
+      const raw = await AsyncStorage.getItem(GAME_SAVE_KEY);
+      const decoded = readSave(raw, migrateSaved);
+      const parsed: unknown = decoded.data;
       if (parsed !== null && !isSaved(parsed)) throw new Error('Invalid saved game');
       const saved = parsed;
+      saveSource = decoded.source;
+      saveWritable = true;
       const now = Date.now();
       set({
         ...saved,
@@ -844,7 +855,8 @@ export const gameStore = create<Game>((set, get) => ({
       get().openDaily();
       await persist();
       void get().sync();
-    } catch {
+    } catch (error) {
+      saveWritable = false;
       set({
         ready: true,
         identity: Crypto.randomUUID(),
@@ -852,12 +864,16 @@ export const gameStore = create<Game>((set, get) => ({
         pendingMemories: [],
         companionMemories: [],
         memoryResolvedIds: [],
-        message: 'COULD NOT LOAD YOUR GRASSLING. TRY REOPENING THE APP.',
+        message:
+          error instanceof FutureSaveError
+            ? 'THIS SAVE NEEDS A NEWER APP VERSION. UPDATE THE APP TO CONTINUE.'
+            : 'COULD NOT LOAD YOUR GRASSLING. TRY REOPENING THE APP.',
       });
       feedback('error');
     }
   },
   hatch: async (name, pet, species) => {
+    if (!saveWritable) return;
     const now = Date.now();
     const player: Player = {
       id: get().identity,
