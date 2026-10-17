@@ -544,56 +544,75 @@ def signpost() -> Canvas:
 
 
 def stall() -> Canvas:
-    """Moss the merchant's hat stall: striped awning, counter, hats on display."""
+    """Moss's hat stall: a folded striped awning over a shaded counter of hats."""
     w, h = 46, 40
     cv = Canvas(w, h)
-    cv.rect(3, 12, 2, 26, WOOD[1]); cv.rect(41, 12, 2, 26, WOOD[1])
-    cv.rect(5, 14, 36, 10, WOOD[0])  # shaded recess beneath the canopy
-    # counter
-    cv.rect(2, 24, 42, 13, WOOD[3])
-    for x in range(2, 44, 6):
-        cv.vline(x, 26, 11, WOOD[2])
-    cv.hline(2, 24, 42, WOOD[4]); cv.hline(2, 25, 42, WOOD[2]); cv.hline(2, 36, 42, WOOD[1])
-    for x, y in ((6, 31), (30, 29), (37, 34)):
-        cv.hline(x, y, 3, WOOD[1]); cv.set(x + 1, y - 1, WOOD[4])
-    for x in (4, 41):
-        cv.set(x, 26, CREAM[1]); cv.set(x, 35, WOOD[0])
-    # hats on counter
-    cv.rect(8, 20, 7, 4, '#4C6E9E'); cv.rect(7, 23, 10, 1, '#36507A')          # cap
-    cv.hline(9, 20, 4, '#7C9BC1')
-    cv.rect(20, 17, 6, 6, '#3A3333'); cv.rect(18, 22, 10, 2, '#2A2421')       # top hat
-    cv.hline(20, 21, 6, RED[2])
-    for i, x in enumerate(range(31, 39)):                                     # crown
-        cv.rect(x, 20, 1, 4 if i % 3 else 3, '#E8C24A')
-    cv.hline(31, 23, 8, '#C99A2E')
-    # Hanging seed packets, a shopkeeper's ledger and two rolled fabric bolts.
-    for x, y, flower in ((7, 16, RED[3]), (35, 16, NAP[3])):
-        cv.vline(x + 1, 14, 3, WOOD[3])
-        cv.rect(x, y, 4, 4, CREAM[2]); cv.hline(x, y, 4, CREAM[3])
-        cv.set(x + 1, y + 1, flower); cv.set(x + 2, y + 2, LEAF[2])
-    cv.rect(28, 24, 7, 2, NAP[0]); cv.hline(29, 24, 5, CREAM[2])
-    cv.hline(6, 37, 8, NAP[1]); cv.hline(7, 36, 6, NAP[3])
-    cv.hline(31, 37, 9, '#39738A'); cv.hline(32, 36, 7, '#A1CFD0')
-    # awning: green/cream stripes with scalloped edge
-    for y in range(4, 14):
-        for x in range(0, w):
-            col = '#5FA35A' if (x // 5) % 2 == 0 else CREAM[3]
-            if y < 6:
-                col = '#3E7D44' if (x // 5) % 2 == 0 else CREAM[2]
-            elif x % 5 == 4:
-                col = '#4C8A50' if (x // 5) % 2 == 0 else CREAM[2]
-            elif y in (7, 8) and x % 5 == 0:
-                col = '#80BC6C' if (x // 5) % 2 == 0 else '#FFF9E8'
+    # posts (cylinders lit from the left) and the shaded recess under the canopy
+    for x in (3, 41):
+        cv.rect(x, 12, 3, 26, WOOD[2]); cv.vline(x, 12, 26, WOOD[3]); cv.vline(x + 2, 12, 26, WOOD[1])
+    for y in range(14, 25):
+        cv.hline(6, y, 35, WOOD[0] if y < 18 else '#4A2F25')
+    cv.hline(6, 24, 35, WOOD[1])
+    # wares on the back shelf: a cap, a top hat and a little crown, each shaded
+    cv.rect(8, 19, 8, 4, '#4C6E9E'); cv.hline(8, 19, 6, '#7C9BC1'); cv.vline(15, 19, 4, '#36507A')
+    cv.hline(7, 23, 10, '#36507A'); cv.set(7, 22, '#4C6E9E')
+    cv.rect(20, 16, 6, 7, '#3A3438'); cv.vline(20, 16, 7, '#5A5258'); cv.vline(25, 16, 7, '#2A2426')
+    cv.hline(20, 21, 6, RED[2]); cv.hline(18, 23, 10, '#2A2426'); cv.hline(18, 22, 3, '#4A4246')
+    for i, x in enumerate(range(31, 39)):
+        top = 19 if i % 3 == 0 else 20
+        cv.vline(x, top, 23 - top + 1, '#E2BC4E' if x < 35 else '#C49A36')
+    cv.hline(31, 23, 8, '#A87E2A'); cv.set(31, 19, '#FFF0A8'); cv.set(34, 21, RED[3])
+    # hanging seed packets
+    for x, y, flower in ((7, 15, RED[3]), (36, 15, NAP[3])):
+        cv.vline(x + 1, 13, 2, WOOD[3])
+        cv.rect(x, y, 4, 4, CREAM[2]); cv.hline(x, y, 4, CREAM[3]); cv.vline(x + 3, y, 4, CREAM[1])
+        cv.set(x + 1, y + 1, flower); cv.set(x + 1, y + 2, LEAF[2])
+    # counter: lit top surface, planked front face, dark base and right end
+    cv.rect(2, 25, 42, 2, WOOD[4]); cv.hline(2, 26, 42, WOOD[3])
+    for y in range(27, 37):
+        for x in range(2, 44):
+            plank = (x - 2) % 7
+            col = WOOD[3] if plank == 0 else WOOD[2]
+            if plank == 6:
+                col = WOOD[1]
+            if x >= 39:
+                col = WOOD[1] if plank != 6 else WOOD[0]
+            if y >= 35:
+                col = WOOD[1]
             cv.set(x, y, col)
+    cv.hline(2, 37, 42, WOOD[0])
+    for x, y in ((6, 31), (23, 29), (33, 33)):
+        cv.set(x, y, WOOD[1]); cv.set(x + 1, y, WOOD[1]); cv.set(x, y - 1, WOOD[4])  # knots
+    cv.rect(27, 24, 7, 2, NAP[1]); cv.hline(28, 24, 5, CREAM[3])  # ledger on the counter
+    cv.hline(6, 38, 8, NAP[1]); cv.hline(7, 37, 6, NAP[3])  # bolts of fabric by the base
+    cv.hline(31, 38, 9, WTR[1]); cv.hline(32, 37, 7, WTR[3])
+    # awning: a sloped top (lit) and a front valance of folded stripes with a
+    # scalloped hem; each stripe is lit on its left and creased on its right
+    green, cream = LEAF, CREAM
+    for y in range(3, 14):
+        for x in range(0, w):
+            stripe = (x // 5) % 2 == 0
+            fold = x % 5
+            if y < 7:  # top surface, sloping away: lighter, flatter
+                col = (green[3] if fold < 4 else green[2]) if stripe else (cream[3] if fold < 4 else cream[2])
+            else:  # front valance
+                if stripe:
+                    col = green[3] if fold == 0 else green[1] if fold == 4 else green[2]
+                else:
+                    col = cream[3] if fold == 0 else cream[1] if fold == 4 else cream[2]
+            cv.set(x, y, col)
+    cv.hline(0, 7, w, green[0])  # crease where the top meets the valance
     for x in range(0, w):
-        if x % 5 in (1, 2, 3):
-            cv.set(x, 14, '#5FA35A' if (x // 5) % 2 == 0 else CREAM[3])
-            cv.set(x, 15, '#3E7D44' if (x // 5) % 2 == 0 else CREAM[1])
-    cv.hline(0, 4, w, '#2E6538')
-    # little sign
-    cv.rect(16, 0, 14, 5, WOOD[3])
-    cv.hline(17, 0, 12, WOOD[4])
-    cv.rect(21, 1, 4, 2, NAP[1]); cv.hline(19, 3, 8, NAP[0])  # hat-shaped shop sign
+        stripe = (x // 5) % 2 == 0
+        fold = x % 5
+        if fold in (1, 2, 3):
+            cv.set(x, 14, green[2] if stripe else cream[2])
+            if fold == 2:
+                cv.set(x, 15, green[1] if stripe else cream[1])
+    cv.hline(0, 3, w, green[1])
+    # hanging sign with a little hat
+    cv.rect(16, 0, 14, 4, WOOD[3]); cv.hline(16, 0, 14, WOOD[4]); cv.hline(16, 3, 14, WOOD[1])
+    cv.rect(21, 1, 4, 2, NAP[2]); cv.hline(19, 2, 8, NAP[1]); cv.set(21, 1, NAP[3])
     cv.outline(INK)
     return cv
 

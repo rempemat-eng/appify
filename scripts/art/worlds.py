@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise  # noqa: E402
 import garden as g  # noqa: E402  (shared palette and trees keep one art style)
+import style  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'worlds')
@@ -69,15 +70,23 @@ def edge(mask, x, y):
 
 
 def paint_dirt(cv, mask):
+    """Dirt sits below the turf: a dark lip and shadow line along its top edge."""
     for (x, y) in mask:
-        cv.set(x, y, g.P[2] if smooth_noise(x, y, 6, 40) < 0.62 else g.P[3])
+        cv.set(x, y, g.P[3] if smooth_noise(x, y, 7, 40) > 0.7 else g.P[2])
+    for i in range(120):
+        x, y = int(noise2(i, 0, 51) * W), int(noise2(i, 1, 51) * H)
+        if (x, y) in mask and (x + 1, y) in mask and (x, y + 1) in mask:
+            cv.set(x, y, g.P[1])
     for (x, y) in mask:
         if (x, y - 1) not in mask:
-            cv.set(x, y, g.P[0]); cv.set(x, y + 1, g.P[1])
+            cv.set(x, y, g.P[0])
+            if (x, y + 1) in mask:
+                cv.set(x, y + 1, g.P[1])
+            cv.set(x, y - 1, g.G[1])
         elif edge(mask, x, y):
             cv.set(x, y, g.P[1])
-        if edge(mask, x, y) and noise2(x, y, 44) < 0.3:
-            cv.set(x, y, g.G[3])
+        if (x, y + 1) not in mask:
+            cv.set(x, y + 1, g.G[3])
 
 
 def paint_paving(cv, mask, seed=0):
@@ -433,15 +442,12 @@ def campfire() -> Canvas:
 
 
 def boulder(big=True) -> Canvas:
+    """A chunky moss-capped boulder: lit top, shaded flank, cracks."""
     w, h = (26, 18) if big else (14, 10)
     cv = Canvas(w, h)
     pts = oval(w / 2, h / 2 + 1, w / 2 - 1, h / 2 - 1.2) | oval(w / 2 - 3, h / 2 + 2, w / 3, h / 2.6)
     pts = {(x, y) for (x, y) in pts if 0 <= x < w and 0 <= y < h}
-    shade_blob(cv, pts, MOSSROCK[1], MOSSROCK[2], MOSSROCK[3], MOSSROCK[4])
-    for i in range(w // 3):
-        x, y = int(noise2(i, 1, w) * w), int(noise2(i, 2, w) * h / 2)
-        if (x, y) in pts:
-            cv.set(x, y, g.LEAF[3])
+    style.facet_stone(cv, pts, g.STONE, moss=g.LEAF, seed=w, outline=None)
     cv.outline(INK)
     return cv
 
@@ -684,10 +690,23 @@ def main():
         for (_id, key, x, y) in objects:
             sprites.setdefault(key, SPRITES[key]())
         for frame, cv in ((0, cv0), (1, cv1)):
+            # hard cast shadows, as in the garden (docs/vision/art-style.md)
             for (_id, key, x, y) in objects:
                 s = sprites[key]
-                if key not in ('pine', 'hedge'):
-                    cv.shadow(x + s.w / 2 + 2, y + s.h - 1, s.w * 0.42, max(2.0, s.h * 0.09))
+                foot = y + s.h
+                if key in ('tree', 'tree_small', 'tree_autumn'):
+                    style.cast_shadow(cv, x + s.w / 2 + 3, foot - 1, s.w * 0.5, 4.5)
+                elif key == 'pine':
+                    style.cast_shadow(cv, x + s.w / 2 + 2, foot, s.w * 0.45, 3.2)
+                elif key == 'hedge':
+                    for xx in range(x + 1, x + s.w + 1):
+                        style.darken(cv, xx, foot); style.darken(cv, xx, foot + 1)
+                elif s.w > 40:  # buildings
+                    for yy in range(foot - 3, foot + 3):
+                        for xx in range(x + 3, x + s.w + 2):
+                            style.darken(cv, xx, yy)
+                elif key != 'bridge':
+                    style.cast_shadow(cv, x + s.w / 2 + 2.5, foot, max(3.5, s.w * 0.5), max(2.2, s.h * 0.12))
             cv.save(os.path.join(OUT, wid, f'ground-{frame}.png'), SCALE)
         for key, s in sprites.items():
             all_props[key] = s
