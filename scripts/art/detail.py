@@ -311,3 +311,49 @@ def slate_plane(cv: Canvas, pts, ramp, base: int, ridge: float, outward: int, co
         cv.set(x, y, tone(ramp, t))
         if moss and r in (2, 3) and j == tile - 2 and noise2(ci, ti, seed + 5) < 0.1:
             cv.set(x, y, moss[2] if noise2(x, y, seed + 6) < 0.6 else moss[3])
+
+
+def grass_edge(cv: Canvas, region, ramp, path_ramp, keep=frozenset(), seed: int = 0):
+    """Ragged turf along a path (Matt's references, 17 Oct): the grass breaks onto the
+    packed earth in small irregular teeth, each lit at its tip, with a band of shade on
+    the path just under the turf, so the path sits lower than the lawn. `region` is the
+    path's set of pixels; `keep` are pixels that must stay path (bridges, water)."""
+    from collections import deque
+    region = set(region)
+    depth, orient = {}, {}
+    q = deque()
+    for (x, y) in region:
+        for dx, dy in ((0, -1), (0, 1), (-1, 0), (1, 0)):
+            if (x + dx, y + dy) not in region:
+                if (x, y) not in depth:
+                    depth[(x, y)] = 1
+                    orient[(x, y)] = (dx, dy)
+                    q.append((x, y))
+                break
+    while q:
+        x, y = q.popleft()
+        if depth[(x, y)] >= 4:
+            continue
+        for dx, dy in ((0, -1), (0, 1), (-1, 0), (1, 0)):
+            n = (x + dx, y + dy)
+            if n in region and n not in depth:
+                depth[n] = depth[(x, y)] + 1
+                orient[n] = orient[(x, y)]
+                q.append(n)
+    for (x, y), d in depth.items():
+        if (x, y) in keep:
+            continue
+        dx, dy = orient[(x, y)]
+        along = x if dy else y
+        period = 6
+        ph = int(noise2(along // period, (y if dy else x) // 11, seed) * period)
+        k = (along + ph) % period
+        big = noise2((along + ph) // period, 3, seed + 1)
+        tooth = ((1, 2, 4, 3, 2, 1) if big > 0.55 else (1, 2, 3, 2, 1, 1) if big > 0.2 else (1, 1, 2, 1, 1, 0))[k]
+        if d <= tooth:
+            t = 4 if d == tooth and k in (2, 3) and tooth > 2 else 3 if d == tooth else 2
+            cv.set(x, y, tone(ramp, t))
+        elif d == tooth + 1:
+            cv.set(x, y, tone(path_ramp, 0 if dy != 1 else 1))  # the turf's dark lip on the path
+        elif d == tooth + 2 and dy != 1:
+            cv.set(x, y, tone(path_ramp, 1))  # shade under the turf

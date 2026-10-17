@@ -2,14 +2,15 @@
 
 This folder is the shared brief for anyone building NapAttack: Matt, Claude and Codex. Read it before any design, art or interface work, and update it when the direction changes. When this folder and an older doc disagree, this folder wins.
 
-| File                                   | What it covers                                                                                      |
-| -------------------------------------- | --------------------------------------------------------------------------------------------------- |
-| [art-style.md](art-style.md)           | How the world art should look, the techniques the generators use, references and a review checklist |
-| [interface.md](interface.md)           | The full-screen game layout: HUD, hotbar, sheets, pixel frames and the pixel font                   |
-| [garden-growth.md](garden-growth.md)   | How the meadow grows from time away, and its limits                                                 |
-| [sound.md](sound.md)                   | The generated sound palette, where each cue plays, and the rules for new sounds                     |
-| [coherence-plan.md](coherence-plan.md) | **The current plan:** Matt's 17 Oct review, the audit, targets and the ordered steps                |
-| [roadmap.md](roadmap.md)               | What comes next, open questions and ideas we have not built                                         |
+| File                                         | What it covers                                                                                                                             |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| [art-style.md](art-style.md)                 | How the world art should look, the techniques the generators use, references and a review checklist                                        |
+| [interface.md](interface.md)                 | The full-screen game layout: HUD, hotbar, sheets, pixel frames and the pixel font                                                          |
+| [garden-growth.md](garden-growth.md)         | How the meadow grows from time away, and its limits                                                                                        |
+| [sound.md](sound.md)                         | The generated sound palette, where each cue plays, and the rules for new sounds                                                            |
+| [coherence-plan.md](coherence-plan.md)       | **The current plan:** Matt's 17 Oct review, the audit, targets and the ordered steps                                                       |
+| [living-world-plan.md](living-world-plan.md) | **The approved new work (17 Oct):** currency and care, decay, atmosphere, menus, people, decorating, world memory, biomes, and their order |
+| [roadmap.md](roadmap.md)                     | What comes next, open questions and ideas we have not built                                                                                |
 
 ## Matt's direction (October 2026)
 
@@ -20,6 +21,7 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 - **The garden grows.** Time away visibly changes the world.
 - **Intuitive and immersive.** Show, do not explain. Guidance appears in the world (a "!" over the next place, the companion speaking) rather than as cards of text.
 - **Content after polish.** Once the look and feel are right, add more places, visitors and things to do.
+- **A living world (17 Oct).** Matt approved the merged plan and Codex's living-world ideas: a safe currency earned away from the phone, gentle reversible decay, seasons and weather as scenery, people with routines, decorating and interiors, lasting story changes and new biomes. Order and rules: [living-world-plan.md](living-world-plan.md).
 
 ## Working agreements
 

@@ -470,35 +470,43 @@ def stall() -> Canvas:
         cv.hline(bx, 70, 14, ramp[1]); cv.vline(bx, 67, 4, ramp[1]); cv.set(bx, 68, ramp[2])
     # awning: a lit top slope, then a valance of rounded folds (each stripe lit on its
     # left, shaded on its right) with a scalloped hem, casting a deep shadow below
-    for y in range(8, 29):
+    # In the steep top-down view the awning's canvas top is seen from above: a big
+    # sloped plane (rows 2 to 18) whose stripes run down the slope, each stripe
+    # sagging between the ribs (lit on its left, shaded on its right), lit along the
+    # back edge; then the valance of rounded folds and its scalloped hem.
+    for y in range(2, 29):
         for x in range(0, w):
             stripe = (x // 8) % 2 == 0
             f = x % 8
             ramp = LEAF if stripe else PLASTER
             top = len(ramp) - 1
-            if y < 15:
-                t = top if f in (1, 2) and y < 11 else top - 1 if f < 6 else top - 2
+            if y < 19:
+                t = top if f in (1, 2) else top - 1 if f < 6 else top - 2
+                if y > 12:
+                    t -= 1  # the slope turns slightly from the light toward its front
+                if f == 7:
+                    t = top - 3  # the rib between two stripes
             else:
                 t = top - 1 if f in (1, 2) else top - 2 if f in (0, 3, 4) else top - 3
                 if y > 25:
                     t -= 1
             cv.set(x, y, ramp[max(0, t)])
-    cv.hline(0, 8, w, LEAF[1]); cv.hline(0, 15, w, LEAF[1])
+    cv.hline(0, 2, w, LEAF[2]); cv.hline(0, 19, w, LEAF[1])
     for x in range(0, w):
-        cv.set(x, 9, LEAF[4] if (x // 8) % 2 == 0 else PLASTER[5])
-    for x in range(0, w):
+        cv.set(x, 3, LEAF[4] if (x // 8) % 2 == 0 else PLASTER[5])
+        cv.set(x, 18, LEAF[2] if (x // 8) % 2 == 0 else PLASTER[2])  # the eave's rolled edge
+    for x in range(0, w):  # the valance's scalloped hem
         f = x % 8
-        stripe = (x // 8) % 2 == 0
-        ramp = LEAF if stripe else PLASTER
+        ramp = LEAF if (x // 8) % 2 == 0 else PLASTER
         top = len(ramp) - 1
         if 1 <= f <= 6:
             cv.set(x, 29, ramp[top - 2] if f < 4 else ramp[top - 3])
         if 2 <= f <= 5:
             cv.set(x, 30, ramp[top - 3])
     # hanging sign with a little hat
-    cv.rect(30, 0, 28, 8, WOOD[3]); cv.hline(30, 0, 28, WOOD[4]); cv.hline(30, 7, 28, WOOD[1])
-    cv.vline(30, 0, 8, WOOD[4]); cv.vline(57, 1, 6, WOOD[2])
-    cv.rect(39, 2, 10, 3, NAP[3]); cv.hline(37, 5, 14, NAP[1]); cv.hline(39, 2, 10, NAP[4])
+    cv.rect(30, -6, 28, 8, WOOD[3]); cv.hline(30, -6, 28, WOOD[4]); cv.hline(30, 1, 28, WOOD[1])
+    cv.vline(30, -6, 8, WOOD[4]); cv.vline(57, -5, 6, WOOD[2])
+    cv.rect(39, -4, 10, 3, NAP[3]); cv.hline(37, -1, 14, NAP[1]); cv.hline(39, -4, 10, NAP[4])
     return cv
 
 
@@ -899,8 +907,74 @@ def bridge(w: int, h: int) -> Canvas:
     return cv
 
 
+# ---- clutter: small things that sit against walls (Matt's references) -------
+def crate() -> Canvas:
+    """A wooden crate, 16 x 16, seen steeply from above: a lit lid of boards over a
+    darker front face braced with an X."""
+    cv = Canvas(16, 16, pad=PAD)
+    for y in range(0, 6):  # the lid, seen from above
+        for x in range(16):
+            cv.set(x, y, WOOD[4] if y in (0, 3) else WOOD[3] if y not in (2, 5) else WOOD[2])
+    for y in range(6, 16):  # the front face
+        for x in range(16):
+            cv.set(x, y, WOOD[2])
+    cv.rect(0, 6, 16, 2, WOOD[1]); cv.rect(0, 14, 16, 2, WOOD[1])
+    cv.vline(0, 6, 10, WOOD[3]); cv.vline(15, 6, 10, WOOD[1])
+    for i in range(6):  # the X brace, lit on its upper edges
+        cv.set(2 + i * 2, 8 + i, WOOD[3]); cv.set(3 + i * 2, 8 + i, WOOD[3])
+        cv.set(13 - i * 2, 8 + i, WOOD[3]); cv.set(12 - i * 2, 8 + i, WOOD[3])
+    return cv
+
+
+def barrel() -> Canvas:
+    """A barrel, 14 x 18: a lid seen from above, rounded staves lit on the left, two
+    iron hoops."""
+    cv = Canvas(14, 18, pad=PAD)
+    body = {(x, y) for y in range(3, 18) for x in range(14)
+            if abs(x + 0.5 - 7) <= 6 + (0.6 if 6 <= y <= 13 else 0)}
+    for (x, y) in body:
+        t = 3 if x < 4 else 4 if x == 4 else 2 if x < 10 else 1
+        if x % 3 == 0:
+            t -= 1  # the joints between staves
+        cv.set(x, y, WOOD[max(0, t)])
+    for hy in (6, 13):
+        for x in range(14):
+            if (x, hy) in body:
+                cv.set(x, hy, SLATE[3] if x < 5 else SLATE[2] if x < 10 else SLATE[1])
+    for (x, y) in oval(7, 3.5, 6.5, 3):
+        cv.set(x, y, WOOD[3] if (x + y) % 3 else WOOD[4])
+    for (x, y) in oval(7, 3.5, 4.5, 2):
+        cv.set(x, y, WOOD[2] if y > 3 else WOOD[3])
+    return cv
+
+
+def potted_plant() -> Canvas:
+    """A clay pot, 14 x 18, with a leafy plant and two blooms."""
+    cv = Canvas(14, 18, pad=PAD)
+    for y in range(10, 18):
+        half = 5 - (y - 10) * 0.3
+        for x in range(14):
+            if abs(x + 0.5 - 7) <= half:
+                cv.set(x, y, RED[3] if x < 6 else RED[2] if x < 10 else RED[1])
+    cv.rect(1, 9, 12, 2, RED[4]); cv.hline(1, 10, 12, RED[2])
+    canopy(cv, [(5, 6, 3.4), (9, 5, 3.2), (7, 3, 3.0)], LEAF, seed=77)
+    cv.set(4, 3, RED[4]); cv.set(5, 3, RED[3]); cv.set(10, 2, GOLD[4]); cv.set(10, 3, GOLD[3])
+    return cv
+
+
+def sack() -> Canvas:
+    """A sack of seed, 12 x 12, tied at the top, lit on its left."""
+    cv = Canvas(12, 12, pad=PAD)
+    for (x, y) in oval(6, 7.5, 5.5, 4.5):
+        cv.set(x, y, SAND[2] if x < 5 and y < 8 else SAND[1] if x < 9 else SAND[0])
+    cv.rect(4, 1, 4, 3, SAND[1]); cv.hline(4, 1, 4, SAND[2]); cv.hline(3, 3, 6, WOOD[1])
+    cv.set(6, 7, SAND[0]); cv.set(7, 8, SAND[0])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
+        'crate': crate(), 'barrel': barrel(), 'potted_plant': potted_plant(), 'sack': sack(),
         'tree': tree(True), 'tree_small': tree(False), 'tree_autumn': tree(True, True),
         'pine': pine(), 'hut': hut(), 'bed': bed(), 'mailbox': mailbox(), 'stall': stall(),
         'signpost': signpost(), 'bowl': bowl(), 'bush': bush(), 'rock0': rock(0), 'rock1': rock(1),

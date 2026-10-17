@@ -119,11 +119,17 @@ def lamp() -> Canvas:
 
 
 def hedge(w: int) -> Canvas:
-    """A clipped hedge, w x 22: a row of leaf masses on a flat shaded body."""
+    """A clipped hedge, w x 22, as a box of leaves seen steeply from above: a top face of
+    round leaf clumps lit from the upper left, a front face of darker clumps in rows,
+    and a dark foot where it stands in the grass."""
     cv = Canvas(w, 22, pad=PAD)
-    plane(cv, rect_set(0, 9, w, 12), LEAF, 2)
-    canopy(cv, [(x, 9, 7.6) for x in range(5, w - 3, 9)], LEAF, seed=w)
-    cv.hline(0, 20, w, LEAF[1])
+    front = canopy(cv, [(x, 15.5, 5.2) for x in range(4, w - 2, 7)], LEAF, seed=w + 1)
+    for (x, y) in front:  # the front face turns from the light
+        detail.shade(cv, x, y, 2)
+    for x in range(1, w - 1):
+        cv.set(x, 20, LEAF[0]); cv.set(x, 19, LEAF[0] if x % 3 else LEAF[1])
+    canopy(cv, [(x, 6, 6.2) for x in range(5, w - 3, 8)], LEAF, seed=w)
+    cv.hline(0, 21, w, LEAF[0])
     return cv
 
 
@@ -395,6 +401,7 @@ def props() -> dict[str, Canvas]:
         'house_blue': house(BLUE_ROOF, sign=True), 'cafe': cafe_table(), 'cart': book_cart(),
         'cabin': cabin(), 'campfire': campfire(), 'boulder': boulder(True), 'stone': boulder(False),
         'cairn': cairn(), 'duck': duck(),
+        'crate': gp.crate(), 'barrel': gp.barrel(), 'potted_plant': gp.potted_plant(), 'sack': gp.sack(),
     }
 
 

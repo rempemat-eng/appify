@@ -81,32 +81,41 @@ def meadow_path(thick_path):
 
 
 def draw_bluff(cv: Canvas):
-    """The north bank's earth face: a lit grass lip with hanging tufts, a face of
-    layered earth one step darker than the path (it faces away from the light), the
-    occasional root, and a wet dark foot where it meets the water."""
-    for (x, y) in BLUFF:
-        if not (0 <= x < W):
+    """The north bank's face (Matt's references, 17 Oct): a lit grass lip with turf
+    hanging over the edge, then a face of stacked stones, each lit on its left and top
+    and dark on its right, in dark joints, wet and darkest at the foot, with foam where
+    it meets the water."""
+    for x in range(-2, W + 2):
+        if x not in STREAM_TOP:
             continue
         h = BLUFF_H[x]
-        k = y - (STREAM_TOP[x] - h)  # 0 at the top of the bluff
-        if k == 0:
-            col = G[3]
-        elif k == 1:
-            col = G[2] if (x // 3 + int(noise2(x // 3, 1, 93) * 2)) % 3 == 0 else G[1]
-        elif k == h - 1:
-            col = P[0]
-        elif k == 2:
-            col = P[2] if (x + 1) % 5 else P[1]
-        else:
-            col = P[0] if (k + x // 9) % 3 == 0 else P[1]
-        cv.set(x, y, col)
-    for i in range(18):
-        x = int(noise2(i, 2, 94) * W)
-        if x in STREAM_TOP:
-            top = STREAM_TOP[x] - BLUFF_H[x]
-            length = 2 + int(noise2(i, 3, 94) * 3)
-            cv.vline(x, top + 2, length, WOOD[1])
-            cv.set(x + 1, top + 2 + length - 1, WOOD[0])
+        top = STREAM_TOP[x] - h
+        col = (x + int(noise2(x // 6, 1, 95) * 6)) % 6  # the stone's column within its run
+        sw = 6
+        si = (x + int(noise2(x // 6, 1, 95) * 6)) // sw
+        for k in range(h):
+            y = top + k
+            if not (0 <= x < W):
+                continue
+            if k == 0:
+                c = G[3]
+            elif k == 1:
+                c = G[2] if (x // 2 + int(noise2(x // 3, 2, 96) * 2)) % 3 else G[1]
+            else:
+                row = (k - 2 + (si % 2) * 2) // 4  # courses of stone, staggered per column
+                r = (k - 2 + (si % 2) * 2) % 4
+                base = 3 if noise2(si, row, 97) > 0.45 else 2
+                if col == sw - 1 or r == 3:
+                    c = STONE[0]  # the joint
+                elif col == 0 or r == 0:
+                    c = STONE[base + 1]
+                elif col == sw - 2:
+                    c = STONE[base - 1]
+                else:
+                    c = STONE[base]
+                if k == h - 1:
+                    c = STONE[1] if col != sw - 1 else STONE[0]  # wet at the foot
+            cv.set(x, y, c)
 
 
 def draw_stream(cv: Canvas, phase: int):
@@ -127,6 +136,9 @@ def draw_stream(cv: Canvas, phase: int):
         elif (x, y - 3) not in STREAM:
             col = WTR[1]
         cv.set(x, y, col)
+    for x in range(0, W):  # foam where the water meets the stone face
+        if x in STREAM_TOP and (x // 2 + int(noise2(x // 4, 7, 98) * 3)) % 3 and (x, STREAM_TOP[x]) in STREAM:
+            cv.set(x, STREAM_TOP[x], WTR[4] if x % 5 else WTR[3])
     # Flowing highlights drift two pixels east per frame along the current.
     for i in range(30):
         bx = int(noise2(i, 4, 77) * W)

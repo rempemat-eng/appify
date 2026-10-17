@@ -51,8 +51,6 @@ import {
   unproject,
   type ViewMode,
 } from '@/lib/garden-projection';
-import battleDay from '@/assets/battle/backdrop-day.png';
-import battleNight from '@/assets/battle/backdrop-night.png';
 import { GuardianPet } from '@/components/guardian-pet';
 import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
@@ -969,16 +967,17 @@ export function GardenWorld({
           />
         )}
         {tilt && (
-          <Image
-            source={night ? battleNight : battleDay}
-            resizeMode="stretch"
+          // the retired tilt view's far edge: a plain sky band (the battle backdrop
+          // images are no longer loaded by the garden, which saves phone memory)
+          <View
+            pointerEvents="none"
             style={{
               position: 'absolute',
               left: 0,
-              // battle backdrop's horizon (native y 78 of 150) sits on the garden's far edge
-              top: Math.round(proj.horizon - 80 * (worldWidth / 216)),
+              top: 0,
               width: worldWidth,
-              height: Math.round(150 * (worldWidth / 216)),
+              height: Math.max(0, Math.round(proj.horizon)),
+              backgroundColor: night ? '#1A2142' : '#A9D3E6',
             }}
           />
         )}

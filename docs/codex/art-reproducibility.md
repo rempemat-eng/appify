@@ -32,12 +32,16 @@ Claude repaired `scripts/art/vignettes.py` on main
 `e2f4057b48724f070f4645bc5eb260b4f34d13a7` (17 October 2026), using the
 current `garden_props` and `world_props` APIs. C6 integrates that source and
 all merged C5/C7 work unchanged; it does not modify a generator, an asset or
-a visual component.
+a visual component. It also includes main
+`7f6c1d73a7f0f2a1b2d1cb55f6021d0024b61485`, preserving the newer material
+detail, clutter props and removal of both retired battle backdrop images.
+The check needs no exceptions for those changes: only current tracked files
+enter its disposable snapshot, and the six generators remain unchanged.
 
 On the integrated source, Python 3.12.14 and Pillow 12.3.0 regenerate all six
 production entry points without tracked drift or new generated files.
 Formatting all seven generated TypeScript modules preserves their bytes,
-and all 102 regenerated sprite outline checks pass. The repaired vignettes
+and all 110 regenerated sprite outline checks pass. The repaired vignettes
 use a 432 by 300 art frame exported at 2x; checking reproducibility is not
 visual approval or a phone-memory measurement.
 
