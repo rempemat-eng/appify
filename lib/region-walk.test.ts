@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import { makeWalkGrid } from './garden-path';
+import { gardenAnchors } from './garden-map';
+import { regionBounds, regionTiles, regionWalk, tileAt, tileOrigin, TILE } from './region-walk';
+import { zoneMaps } from './zone-maps';
+
+// The valley is walkable as one place: from the garden's start the companion can
+// reach a stand in every zone of the region without any cut between zones.
+const region = 'valley';
+const rows = regionWalk(region);
+const b = regionBounds(region);
+assert.equal(rows.length * TILE.cell, b.height, 'one walk row per cell down the region');
+assert.equal(rows[0].length * TILE.cell, b.width, 'one walk column per cell across the region');
+const garden = regionTiles(region).find((t) => t.id === 'garden');
+assert.ok(garden, 'the garden is part of the valley');
+const g0 = tileOrigin(region, garden);
+const start = { x: g0.x + gardenAnchors.start.x, y: g0.y + gardenAnchors.start.y };
+const grid = makeWalkGrid(rows, { cell: TILE.cell, width: b.width, start });
+let checks = 0;
+for (const tile of regionTiles(region)) {
+  if (tile.id === 'garden') continue;
+  const o = tileOrigin(region, tile);
+  for (const [name, [x, y]] of Object.entries(zoneMaps[tile.id].stands)) {
+    const target = { x: o.x + x, y: o.y + y };
+    const path = grid.findPath(start, target);
+    assert.ok(path.length > 0, `${tile.id}/${name} is reachable on foot from the garden`);
+    const end = path[path.length - 1];
+    assert.ok(
+      Math.hypot(end.x - target.x, end.y - target.y) < 12,
+      `${tile.id}/${name}: the walk ends there`,
+    );
+    assert.equal(
+      tileAt(region, target.x, target.y)?.id,
+      tile.id,
+      `${tile.id}/${name} lies in its own zone`,
+    );
+    checks++;
+  }
+}
+console.log(`Region walk: ${checks} stands reachable from the garden across zone borders.`);
