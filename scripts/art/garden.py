@@ -246,21 +246,7 @@ def draw_terrain(frame: int) -> Canvas:
     # The flower planters by the lantern: the same raised timber beds as the meadow's,
     # planted with tulips, chamomile and lavender in rows.
     for bi, (bx, by, bw, bh) in enumerate(FLOWER_BEDS):
-        meadow.planter(cv, bx, by, bw, bh)
-        for row, fy in enumerate((by + 6, by + 11)):
-            for k, fx in enumerate(range(bx + 5 + 3 * row, bx + bw - 4, 6)):
-                kind = (k + row + bi) % 3
-                cv.vline(fx, fy - 2, 3, LEAF[2]); cv.set(fx - 1, fy, LEAF[3]); cv.set(fx + 1, fy - 1, LEAF[1])
-                if kind == 0:  # a cupped coral tulip, lit on its upper left
-                    cv.hline(fx - 1, fy - 4, 3, RED[3]); cv.hline(fx - 1, fy - 3, 3, RED[2])
-                    cv.set(fx - 1, fy - 5, RED[4]); cv.set(fx + 1, fy - 5, RED[3]); cv.set(fx - 1, fy - 4, RED[4])
-                elif kind == 1:  # chamomile: cream rays around a warm centre
-                    for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
-                        cv.set(fx + dx, fy - 4 + dy, PLASTER[5] if dy < 0 or dx < 0 else PLASTER[3])
-                    cv.set(fx, fy - 4, GOLD[3])
-                else:  # a lavender spike, paler at the crown
-                    cv.vline(fx, fy - 6, 4, NAP[2]); cv.set(fx, fy - 6, NAP[4]); cv.set(fx - 1, fy - 5, NAP[3])
-                    cv.set(fx + 1, fy - 4, NAP[2]); cv.set(fx - 1, fy - 3, NAP[3])
+        meadow.flower_planter(cv, bx, by, bw, bh, seed=bi)
     # A pair of hand-painted crop markers gives the beds a cared-for history.
     for mx, my, petal in ((FLOWER_BEDS[0][0] + FLOWER_BEDS[0][2] - 9, FLOWER_BEDS[0][1] + 4, RED[3]), (FLOWER_BEDS[1][0] + FLOWER_BEDS[1][2] - 9, FLOWER_BEDS[1][1] + 4, NAP[3])):
         cv.vline(mx, my - 3, 5, WOOD[1])

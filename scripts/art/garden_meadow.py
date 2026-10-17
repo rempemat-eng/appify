@@ -202,6 +202,27 @@ def planter(cv: Canvas, bx: int, by: int, w: int = PLOT_W, h: int = PLOT_H):
         cv.set(x, y, WOOD[0])
 
 
+def flower_planter(cv: Canvas, bx: int, by: int, bw: int, bh: int, seed: int = 0):
+    """A raised planter (see `planter`) planted in two rows of tulips, chamomile and
+    lavender, each flower lit on its upper left."""
+    from materials import PLASTER
+    planter(cv, bx, by, bw, bh)
+    for row, fy in enumerate((by + 6, by + bh - 7)):
+        for k, fx in enumerate(range(bx + 5 + 3 * row, bx + bw - 4, 6)):
+            kind = (k + row + seed) % 3
+            cv.vline(fx, fy - 2, 3, LEAF[2]); cv.set(fx - 1, fy, LEAF[3]); cv.set(fx + 1, fy - 1, LEAF[1])
+            if kind == 0:  # a cupped coral tulip
+                cv.hline(fx - 1, fy - 4, 3, RED[3]); cv.hline(fx - 1, fy - 3, 3, RED[2])
+                cv.set(fx - 1, fy - 5, RED[4]); cv.set(fx + 1, fy - 5, RED[3]); cv.set(fx - 1, fy - 4, RED[4])
+            elif kind == 1:  # chamomile: cream rays around a warm centre
+                for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+                    cv.set(fx + dx, fy - 4 + dy, PLASTER[5] if dy < 0 or dx < 0 else PLASTER[3])
+                cv.set(fx, fy - 4, GOLD[3])
+            else:  # a lavender spike, paler at the crown
+                cv.vline(fx, fy - 6, 4, NAP[2]); cv.set(fx, fy - 6, NAP[4]); cv.set(fx - 1, fy - 5, NAP[3])
+                cv.set(fx + 1, fy - 4, NAP[2]); cv.set(fx - 1, fy - 3, NAP[3])
+
+
 def planting_circle(cv: Canvas, ox: int, oy: int):
     """Where an orchard tree is planted: a domed mound of mulched soil, lit on its upper
     left, inside a ring of small stones with their own highlights and shadows."""

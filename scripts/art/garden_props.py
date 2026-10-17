@@ -130,7 +130,7 @@ def stone_blocks(cv: Canvas, x0, y0, w, h, block=8):
 
 # ---- the nap hut -----------------------------------------------------------
 def window(cv: Canvas, x: int, y: int, w: int = 16, h: int = 14, shutters=NAP, curtain=PLASTER,
-           sill: bool = True):
+           sill: bool = True, warm: bool = False):
     """A deep window: a trim lit on its top and left, glass that reflects the sky at the
     top and darkens toward the room, a curtain valance and tied-back curtains, glazing
     bars, a glint, painted slatted shutters and a sill that casts its shadow."""
@@ -143,7 +143,10 @@ def window(cv: Canvas, x: int, y: int, w: int = 16, h: int = 14, shutters=NAP, c
     glass = rect_set(gx, gy, gw, gh)
     for (xx, yy) in glass:
         k = yy - gy
-        cv.set(xx, yy, WTR[2] if k < 2 else WTR[1] if k < gh - 3 else WTR[0])
+        if warm:  # lamplight inside: brightest low in the room, the frame's shadow above
+            cv.set(xx, yy, GOLD[3] if k < 2 else GOLD[4] if k < gh - 2 else GOLD[3])
+        else:
+            cv.set(xx, yy, WTR[2] if k < 2 else WTR[1] if k < gh - 3 else WTR[0])
     # a scalloped valance and curtains tied back two thirds of the way down
     for xx in range(gx, gx + gw):
         cv.set(xx, gy, curtain[4] if (xx - gx) % 2 == 0 else curtain[3])
@@ -160,7 +163,8 @@ def window(cv: Canvas, x: int, y: int, w: int = 16, h: int = 14, shutters=NAP, c
     cv.set(mx, my, WOOD[3])
     # glints: a short diagonal in each upper pane
     for px in (gx + 4, mx + 3):
-        cv.set(px, gy + 2, WTR[4]); cv.set(px - 1, gy + 3, WTR[3])
+        if not warm:
+            cv.set(px, gy + 2, WTR[4]); cv.set(px - 1, gy + 3, WTR[3])
     detail.recess(cv, glass, depth=1, k=1)
     if shutters:
         for sx, lit in ((x - 4, True), (x + w, False)):

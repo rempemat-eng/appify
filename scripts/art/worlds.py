@@ -46,21 +46,18 @@ def grass(cv: Canvas, frame=0, tone=None):
         for x in range(W):
             n = smooth_noise(x, y, 22, 11)
             cv.set(x, y, G[2] if n < 0.62 else G[3])
-    for ty in range(0, H, 8):
-        for tx in range(0, W, 8):
-            x, y = tx + int(noise2(tx, ty, 4) * 8), ty + int(noise2(tx, ty, 5) * 8)
+    for ty in range(0, H, 6):
+        for tx in range(0, W, 6):
+            x, y = tx + int(noise2(tx, ty, 4) * 6), ty + int(noise2(tx, ty, 5) * 6)
             edge = min(x, W - x, y, H - y) < 24
             clearing = ((x - 160) / 73) ** 2 + ((y - 180) / 63) ** 2 < 1
             cluster = smooth_noise(x, y, 25, 63) > 0.57
-            density = 0.06 if clearing else 0.38 if edge else 0.26 if cluster else 0.10
+            density = 0.06 if clearing else 0.5 if edge else 0.36 if cluster else 0.14
             if noise2(tx, ty, 3) < density:
-                # A few edge tufts stir; landmarks and the walking route stay
-                # quieter. The two frames share exactly the same root pixels.
-                sway = 0  # the ground is still; only water animates
-                cv.set(x, y + 2, G[1]); cv.set(x + 2, y + 2, G[1]); cv.set(x + 1, y + 3, G[1])
-                cv.set(x + sway, y + 1, G[1]); cv.set(x + 2 + sway, y + 1, G[1])
-                if noise2(x, y, 9) < 0.4:
-                    cv.set(x + 1 + sway, y + 1, G[4])
+                # tufts in the garden's shapes (scripts/art/detail.py); the ground is still
+                import detail
+                ground = 3 if cv.get(x, y)[:3] == tuple(int(G[3][k:k + 2], 16) for k in (1, 3, 5)) else 2
+                detail.grass_tuft(cv, x, y + 2, int(noise2(tx, ty, 8) * 6) if not clearing else 3, G, ground)
             elif edge and noise2(tx, ty, 7) < 0.15:
                 cv.set(x, y, G[4])
 
@@ -153,22 +150,9 @@ def paint_water(cv, mask, frame=0, center=None):
 
 
 def flowerbed(cv, x, y, w, h, seed=0):
-    cv.rect(x, y, w, h, g.WOOD[1]); cv.rect(x + 1, y + 1, w - 2, h - 2, '#5A3A26')
-    cv.hline(x, y, w, g.WOOD[4]); cv.vline(x, y + 1, h - 2, g.WOOD[3])
-    cv.set(x + w - 2, y, g.CREAM[1]); cv.set(x + 1, y + h - 1, g.WOOD[0])
-    for fy in range(y + 4, y + h - 3, 6):
-        for fx in range(x + 4, x + w - 3, 6):
-            # Each planter has a flower family rather than the same striped
-            # rainbow; leaves and the occasional bud break up the neat rows.
-            family = [g.RED, g.NAP, g.CREAM, g.LEAF][seed % 4]
-            c = family[-1] if (fx + fy) % 3 else family[-2]
-            if noise2(fx, fy, seed + 83) < 0.18:
-                cv.set(fx, fy, g.LEAF[3]); cv.set(fx + 1, fy - 1, g.LEAF[4])
-                continue
-            cv.set(fx - 1, fy + 1, g.LEAF[2]); cv.set(fx + 1, fy + 1, g.LEAF[3])
-            for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
-                cv.set(fx + dx, fy + dy, c)
-            cv.set(fx, fy, '#E8A33D')
+    """The garden's raised flower planters (garden_meadow.flower_planter)."""
+    import garden_meadow
+    garden_meadow.flower_planter(cv, x, y, w, max(h, 18), seed=seed)
 
 
 def roof_tiles(cv, mask, ramp, row_height=3):
