@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Pressable, View } from 'react-native';
-import { ChevronDown, ChevronUp } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import type { Player } from '@/lib/game';
 import { companionProfile } from '@/lib/companion-profiles';
 import { befriendedVisitorIds, collectionOf, postcardsOf } from '@/lib/visitors';
@@ -8,7 +8,6 @@ import { cozy as c } from '@/lib/cozy';
 import { CozyPanel } from '@/components/cozy-ui';
 import { PixelButton } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
-import { PixelProp } from '@/components/pixel-scenes';
 
 type JourneyAction = 'missions' | 'journal' | 'companions' | 'spar';
 type JourneyStep = { heading: string; body: string; label: string; action: JourneyAction };
@@ -85,7 +84,7 @@ export function GardenJourney({
     companions: onCompanions,
     spar: onSpar,
   };
-  const Chevron = expanded ? ChevronUp : ChevronDown;
+  const chevron = expanded ? ('chevronUp' as const) : ('chevronDown' as const);
   return (
     <CozyPanel style={{ padding: 14, gap: 10 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
@@ -95,7 +94,7 @@ export function GardenJourney({
           importantForAccessibility="no-hide-descendants"
           style={{ padding: 6, borderRadius: 0, backgroundColor: c.sage }}
         >
-          <PixelProp kind="tree" size={32} />
+          <PixelIcon name="tree" size={32} />
         </View>
         <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
           <BodyText
@@ -141,7 +140,7 @@ export function GardenJourney({
         <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
           GARDEN TRAIL
         </BodyText>
-        <Chevron size={16} color={c.ink} />
+        <PixelIcon name={chevron} size={16} />
       </Pressable>
       {expanded && (
         <View style={{ gap: 10, paddingHorizontal: 2 }}>

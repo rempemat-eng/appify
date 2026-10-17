@@ -17,7 +17,7 @@ const { PNG } = require('pngjs');
 const root = path.join(__dirname, '..');
 const SCALE = 6;
 const MIN_COVERAGE = 0.95;
-const folders = ['assets/garden', 'assets/garden/growth', 'assets/worlds/props'];
+const folders = ['assets/garden', 'assets/garden/growth', 'assets/worlds/props', 'art/icons'];
 const skip = /^(ground|sky|backdrop|platform)/;
 
 function nativePixels(file) {
@@ -92,7 +92,7 @@ for (const folder of folders)
       );
     sprites++;
   }
-assert.ok(sprites >= 60, `expected the full sprite set, measured ${sprites}`);
+assert.ok(sprites >= 90, `expected the full sprite set, measured ${sprites}`);
 console.log(
   `Sprites: ${sprites} sprites outlined on every side (≥ ${MIN_COVERAGE * 100}% of each silhouette edge; files only, not on-device appearance).`,
 );

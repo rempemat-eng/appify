@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import { router, useIsFocused } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { ArrowUp, ArrowDown } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import { cozy as c } from '@/lib/cozy';
 import { backendConfigured } from '@/lib/bilt';
 import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
@@ -26,7 +26,7 @@ import { GuardianPet } from '@/components/guardian-pet';
 import { GardenVisitor } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { Page, Pet, PixelButton, PixelText, StatusChip } from '@/components/game-ui';
-import { PixelProp, PixelScene } from '@/components/pixel-scenes';
+import { PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { MissionDeparture } from '@/components/mission-departure';
 import { openSheet, useUi } from '@/lib/ui';
@@ -387,8 +387,8 @@ function RivalRow({
             >
               {me ? 'YOU' : p.name}
             </BodyText>
-            {!me && type > 1 && <ArrowUp size={14} color={c.moss} />}
-            {!me && type < 1 && <ArrowDown size={14} color={c.error} />}
+            {!me && type > 1 && <PixelIcon name="arrowUp" size={16} />}
+            {!me && type < 1 && <PixelIcon name="arrowDown" size={16} />}
           </View>
           <BodyText style={{ fontSize: 12 }}>
             {isVisitorId(p.guardian) ? visitorInfo(p.guardian).name : grasslings[p.species].name} ·{' '}
@@ -478,7 +478,7 @@ export function ArenaScreen() {
   const practicePanel = (
     <View style={{ marginTop: backendConfigured ? 24 : 0, gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <PixelProp kind="swords" size={32} />
+        <PixelIcon name="arena" size={32} />
         <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>Sparring</BodyText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>

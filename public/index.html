@@ -66,6 +66,11 @@
       textarea {
         position: relative;
       }
+      /* Every SVG in the game is pixel art on a grid (icons, card art, props):
+         snap its pixels to the screen instead of blurring their edges. */
+      svg {
+        shape-rendering: crispEdges;
+      }
     </style>
   </head>
 

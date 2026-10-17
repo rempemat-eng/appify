@@ -10,7 +10,7 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import { LinearGradient } from 'expo-linear-gradient';
-import { Zap } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import { useReducedMotion } from '@/lib/motion';
 import { cards, cardIds, cardPower, cardDetails, type CardId } from '@/lib/cards';
 import { feedback, useGame, missions, type Player } from '@/lib/game';
@@ -130,7 +130,7 @@ export function HabitCard({
         }}
       >
         <FrameFill />
-        <Zap size={11} color={c.ink} fill={c.ink} />
+        <PixelIcon name="energy" size={16} />
         <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
           {card.cost}
         </BodyText>

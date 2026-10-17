@@ -14,7 +14,7 @@ import {
   useWindowDimensions,
   Platform,
 } from 'react-native';
-import { Bell, Shield, FastForward, ChevronDown } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import Animated, {
   FadeIn,
   FadeOut,
@@ -128,7 +128,7 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
           </BodyText>
           <EnergyPips value={f.energy} />
         </View>
-        <ChevronDown size={14} color={c.ink} />
+        <PixelIcon name="chevronDown" size={16} />
       </Pressable>
       {expanded && (
         <View style={{ padding: 8, flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
@@ -136,10 +136,8 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
             LV {p.level} · {p.id === 'bot' ? 'WEED' : grasslings[p.species].habit} · ZEN{' '}
             {Math.round(zen(p) * 100)}% · {f.hp}/{maxHp(p)} HP
           </BodyText>
-          {f.guard && <Shield accessibilityLabel="Guarded" size={14} color={c.ink} />}
-          {f.notified && (
-            <Bell accessibilityLabel="Distracted, next turn skipped" size={14} color={c.ink} />
-          )}
+          {f.guard && <PixelIcon name="shield" label="Guarded" size={16} />}
+          {f.notified && <PixelIcon name="bell" label="Distracted, next turn skipped" size={16} />}
           {f.nextEnergy > 0 && <BodyText>+1 ENERGY NEXT TURN</BodyText>}
         </View>
       )}
@@ -509,7 +507,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             >
               <FrameFill tone={auto ? 'gold' : 'paper'} depth={1} />
               <PixelText>AUTO</PixelText>
-              <FastForward size={16} color={c.ink} />
+              <PixelIcon name="fast" size={16} />
               <BodyText>{auto ? 'ON' : 'OFF'}</BodyText>
             </Pressable>
           </View>

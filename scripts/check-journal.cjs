@@ -90,7 +90,7 @@ function fixture(request = 'visitors') {
     'heroui-native': { Tabs },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 24, bottom: 12 }) },
     'react-native-svg': { __esModule: true, default: 'Svg', Rect: 'Rect' },
-    'lucide-react-native': { Check: 'Check', Eye: 'Eye' },
+    '@/components/pixel-icon': { PixelIcon: 'PixelIcon' },
     '@/lib/cozy': { cozy: {} },
     '@/lib/layout': { gameLayout: { gutter: 16, maxWidth: 640 } },
     '@/lib/game': {

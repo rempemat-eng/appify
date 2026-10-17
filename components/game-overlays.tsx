@@ -14,7 +14,7 @@ import {
   useWindowDimensions,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { Shield, Swords } from 'lucide-react-native';
+import { PixelIcon } from '@/components/pixel-icon';
 import { bot, clock, feedback, missions, useGame, gameStore, type Player } from '@/lib/game';
 import { GardenGuide } from '@/components/garden-guide';
 import { WelcomeBack } from '@/components/visitors';
@@ -599,7 +599,7 @@ function DefenderAlert() {
           gap: 24,
         }}
       >
-        <Swords size={42} color={c.ink} />
+        <PixelIcon name="arena" size={48} />
         <PixelText
           style={{
             fontSize: 17,
@@ -628,7 +628,7 @@ function DefenderAlert() {
           }
           style={{ alignSelf: 'stretch' }}
         />
-        <Shield size={26} color={c.ink} />
+        <PixelIcon name="shield" size={32} />
         <PixelText style={{ textAlign: 'center', backgroundColor: c.paper, padding: 8 }}>
           RECOVERY SHIELD: 60 MIN
         </PixelText>
