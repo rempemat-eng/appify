@@ -1,5 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Image, StyleSheet, View, type ColorValue, type ViewStyle } from 'react-native';
+import Animated, {
+  Easing,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
+} from 'react-native-reanimated';
+import { useReducedMotion } from '@/lib/motion';
 import Svg, { G, Rect } from 'react-native-svg';
 import { propPixels, sceneColors as c, type PropKind } from '@/lib/scene-art';
 import { status, useGame, type Player } from '@/lib/game';
@@ -12,8 +19,12 @@ import {
   sceneSkies,
   sceneSkyColors,
 } from '@/lib/scene-assets';
-import battleDay from '@/assets/battle/backdrop-day.png';
-import battleNight from '@/assets/battle/backdrop-night.png';
+import battleSkyDay from '@/assets/battle/sky-day.png';
+import battleSkyNight from '@/assets/battle/sky-night.png';
+import battleFarDay from '@/assets/battle/far-day.png';
+import battleFarNight from '@/assets/battle/far-night.png';
+import battleNearDay from '@/assets/battle/near-day.png';
+import battleNearNight from '@/assets/battle/near-night.png';
 import battlePlatform from '@/assets/battle/platform.png';
 import battlePlatformNight from '@/assets/battle/platform-night.png';
 
@@ -164,9 +175,13 @@ export function PixelScene({
     </View>
   );
 }
-// DS-style battle field (scripts/art/battle.py): backdrop anchored to the stage's
-// bottom edge at an integer pixel scale, plus a grassy platform under each fighter.
-const BATTLE = { width: 216, height: 150, feet: 24, platformW: 64, platformH: 20 };
+// The battle field (scripts/art/battle.py): a close-up of the world in three layers,
+// the sky, the far hills and treeline, and the near meadow, anchored to the stage's
+// bottom edge at the battle's art pixel, plus a raised mound under each fighter. On
+// entry the far and near layers settle into place at different speeds (a short,
+// finite parallax in whole art pixels; none with reduced motion).
+const BATTLE = { width: 216, height: 150, feet: 24, platformW: 48, platformH: 18 };
+const ENTRANCE = { far: 6, near: 16, ms: 560 };
 export function RaidGarden({
   pixel,
   petSize,
@@ -180,20 +195,38 @@ export function RaidGarden({
 }) {
   const hour = new Date(useGame((s) => s.now)).getHours();
   const night = hour < 6 || hour >= 21;
-  const [stageHeight, setStageHeight] = useState(0);
-  // Backdrop pixels: as big as the layout's pixel size, but small enough that the
-  // horizon stays visible on short (laptop) stages.
-  const bgPixel = Math.max(1, Math.min(pixel, Math.floor((stageHeight || 9999) / 100)));
-  const bw = BATTLE.width * bgPixel;
-  const bh = BATTLE.height * bgPixel;
-  // Platforms follow the fighters' size and sit centred on their feet line.
-  const pw = Math.round(petSize * 0.8);
-  const ph = Math.round((pw * BATTLE.platformH) / BATTLE.platformW);
-  const platformBottom = BATTLE.feet * pixel - ph * 0.62;
+  const reduced = useReducedMotion();
+  const enter = useSharedValue(reduced ? 0 : 1);
+  useEffect(() => {
+    if (reduced) {
+      enter.set(0);
+      return;
+    }
+    enter.set(withTiming(0, { duration: ENTRANCE.ms, easing: Easing.out(Easing.cubic) }));
+  }, [enter, reduced]);
+  const farStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: Math.round(enter.value * ENTRANCE.far) * pixel }],
+  }));
+  const nearStyle = useAnimatedStyle(() => ({
+    transform: [{ translateX: Math.round(enter.value * ENTRANCE.near) * pixel }],
+  }));
+  const bw = BATTLE.width * pixel;
+  const bh = BATTLE.height * pixel;
+  const layer = {
+    position: 'absolute' as const,
+    bottom: 0,
+    left: '50%' as const,
+    marginLeft: -bw / 2,
+    width: bw,
+    height: bh,
+  };
+  // Mounds share the art pixel and sit centred under each fighter's feet.
+  const pw = BATTLE.platformW * pixel;
+  const ph = BATTLE.platformH * pixel;
+  const platformBottom = BATTLE.feet * pixel - 9 * pixel;
   return (
     <View
       pointerEvents="none"
-      onLayout={(e) => setStageHeight(e.nativeEvent.layout.height)}
       // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
       dataSet={{ pixel: 'true' }}
       style={[
@@ -202,28 +235,35 @@ export function RaidGarden({
       ]}
     >
       <Image
-        source={night ? battleNight : battleDay}
+        source={night ? battleSkyNight : battleSkyDay}
         resizeMode="stretch"
-        style={{
-          position: 'absolute',
-          bottom: 0,
-          left: '50%',
-          marginLeft: -bw / 2,
-          width: bw,
-          height: bh,
-        }}
+        style={{ ...layer, width: bw, height: bh }}
       />
-      {[
-        { key: 'attacker', left: inset + petSize / 2 - pw / 2 },
-        { key: 'defender', right: inset + petSize / 2 - pw / 2 },
-      ].map(({ key, ...side }) => (
+      <Animated.View style={[layer, farStyle]}>
         <Image
-          key={key}
-          source={night ? battlePlatformNight : battlePlatform}
+          source={night ? battleFarNight : battleFarDay}
           resizeMode="stretch"
-          style={{ position: 'absolute', bottom: platformBottom, width: pw, height: ph, ...side }}
+          style={{ width: bw, height: bh }}
         />
-      ))}
+      </Animated.View>
+      <Animated.View style={[StyleSheet.absoluteFill, nearStyle]}>
+        <Image
+          source={night ? battleNearNight : battleNearDay}
+          resizeMode="stretch"
+          style={{ ...layer, width: bw, height: bh }}
+        />
+        {[
+          { key: 'attacker', left: inset + petSize / 2 - pw / 2 },
+          { key: 'defender', right: inset + petSize / 2 - pw / 2 },
+        ].map(({ key, ...side }) => (
+          <Image
+            key={key}
+            source={night ? battlePlatformNight : battlePlatform}
+            resizeMode="stretch"
+            style={{ position: 'absolute', bottom: platformBottom, width: pw, height: ph, ...side }}
+          />
+        ))}
+      </Animated.View>
     </View>
   );
 }

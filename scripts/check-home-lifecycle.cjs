@@ -803,9 +803,211 @@ function journeyChecks() {
   }
 }
 
+const unreadableSaveProblem = () => ({
+  kind: 'unreadable',
+  confirmationId: null,
+  busy: false,
+  error: null,
+});
+
+function saveRecoveryControls() {
+  const runtime = hooks();
+  const recoveryRuntime = hooks();
+  const clock = timers();
+  const calls = [];
+  const state = {
+    ready: true,
+    player: null,
+    saveLoadProblem: unreadableSaveProblem(),
+    alerts: [],
+    message: 'load failure',
+    flash: null,
+    guideOpen: false,
+    deckOpen: false,
+    cardReward: null,
+    recap: null,
+    battle: null,
+    missionReturnPending: false,
+    requestSaveRecovery() {
+      calls.push('request');
+      state.saveLoadProblem = { ...state.saveLoadProblem, confirmationId: 'current' };
+      return 'current';
+    },
+    cancelSaveRecovery() {
+      calls.push('cancel');
+      state.saveLoadProblem = { ...state.saveLoadProblem, confirmationId: null };
+    },
+    confirmSaveRecovery(token) {
+      calls.push('confirm:' + token);
+      return Promise.resolve(true);
+    },
+    retrySaveLoad() {
+      calls.push('retry');
+      return Promise.resolve();
+    },
+  };
+  const useGame = (select) => select(state);
+  useGame.getState = () => state;
+  useGame.setState = (patch) => Object.assign(state, patch);
+  const recovery = load('components/save-recovery.tsx', (id) => {
+    if (id === 'react') return recoveryRuntime.react;
+    if (id === 'react/jsx-runtime') return jsxRuntime;
+    if (id === 'react-native')
+      return { View: 'View', Text: 'Text', ScrollView: 'ScrollView', Platform: { OS: 'web' } };
+    if (id === '@/lib/game') return { gameStore: useGame };
+    if (id === '@/lib/cozy') return { cozy: {} };
+    if (id === '@/lib/ui-tokens')
+      return {
+        barControl: () => 44,
+        panelGap: () => 8,
+        contentInset: () => 8,
+        iconSize: { medium: () => 16 },
+        type: {},
+      };
+    if (id === '@/components/pixel-frame') return { FrameFill: 'FrameFill', usePixelUnit: () => 1 };
+    if (id.startsWith('@/components/')) return boundary;
+    throw new Error('Unexpected recovery import: ' + id);
+  });
+  const { GameOverlays } = load(
+    'components/game-overlays.tsx',
+    (id) => {
+      if (id === 'react') return runtime.react;
+      if (id === 'react/jsx-runtime') return jsxRuntime;
+      if (id === 'react-native')
+        return {
+          View: 'View',
+          Modal: 'Modal',
+          useWindowDimensions: () => ({ width: 320, height: 640 }),
+        };
+      if (id === 'react-native-reanimated')
+        return { __esModule: true, default: boundary, FadeIn: boundary };
+      if (id === 'react-native-safe-area-context')
+        return { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) };
+      if (id === '@/lib/game') return { useGame, gameStore: useGame };
+      if (id === '@/lib/cozy') return { cozy: {} };
+      if (id === '@/lib/layout') return { gameSideInset: () => 8, gameColumn: {} };
+      if (id === '@/lib/motion') return { useReducedMotion: () => false };
+      if (id === '@/lib/overlay-priority') return load('lib/overlay-priority.ts', () => {});
+      if (id === '@/components/save-recovery') return recovery;
+      if (id.startsWith('@/') || id === 'expo-haptics') return boundary;
+      throw new Error('Unexpected recovery-overlay import: ' + id);
+    },
+    clock.globals,
+  );
+  const render = () => runtime.render(GameOverlays);
+  const controls = () =>
+    recoveryRuntime.render(recovery.SaveRecovery, { problem: state.saveLoadProblem });
+  const has = (tree, label) => nodes(tree).some((node) => node?.props?.label === label);
+  const button = (tree, label) =>
+    find(tree, (node) => node.type === 'PixelButton' && node.props.label === label);
+  const back = () => byType(render(), 'Modal').props.onRequestClose();
+  for (const kind of ['unreadable', 'newer', 'storage']) {
+    state.saveLoadProblem = kind === 'unreadable' ? unreadableSaveProblem() : { kind };
+    const tree = render();
+    check(
+      byType(tree, 'Modal').props.visible,
+      kind + ': recovery keeps the blocking modal visible',
+    );
+    check(
+      nodes(tree).some((node) => node.type === recovery.SaveRecovery),
+      kind + ': real recovery precedes onboarding',
+    );
+    check(
+      !nodes(tree).some(
+        (node) => typeof node.type === 'function' && node.type.name === 'Onboarding',
+      ),
+      kind + ': onboarding cannot hatch behind a failed save',
+    );
+    check(!text(tree).includes('load failure'), kind + ': no competing failure toast');
+    const ui = controls();
+    check(
+      has(ui, 'START FRESH') === (kind === 'unreadable'),
+      kind + ': only unreadable data can request recovery',
+    );
+    check(has(ui, 'TRY LOADING AGAIN'), kind + ': retry remains available');
+    button(ui, 'TRY LOADING AGAIN').props.onPress();
+    check(calls.pop() === 'retry', kind + ': retry delegates without confirming');
+    back();
+    check(calls.length === 0, kind + ': Back cannot leave recovery or start fresh');
+  }
+  state.saveLoadProblem = unreadableSaveProblem();
+  button(controls(), 'START FRESH').props.onPress();
+  check(calls.join('|') === 'request', 'start fresh only requests a confirmation');
+  let ui = controls();
+  check(
+    text(ui).includes('Your old save will be kept on this device. Start a new garden?'),
+    'confirmation explains that the original is kept',
+  );
+  check(
+    has(ui, 'YES, START FRESH') && has(ui, 'CANCEL') && !has(ui, 'START FRESH'),
+    'explicit confirmation replaces the initial action',
+  );
+  button(ui, 'CANCEL').props.onPress();
+  check(
+    calls.at(-1) === 'cancel' && has(controls(), 'START FRESH'),
+    'Cancel restores recovery without confirming',
+  );
+  state.saveLoadProblem = { ...unreadableSaveProblem(), confirmationId: 'new' };
+  ui = controls();
+  state.saveLoadProblem = { ...state.saveLoadProblem, confirmationId: 'latest' };
+  button(ui, 'YES, START FRESH').props.onPress();
+  check(
+    calls.at(-1) === 'confirm:latest',
+    'a stale rendered confirmation reads the live store token',
+  );
+  state.saveLoadProblem = { ...state.saveLoadProblem, busy: true, confirmationId: null };
+  ui = controls();
+  check(
+    has(ui, 'STARTING FRESH...') && !has(ui, 'START FRESH'),
+    'pending backup keeps the confirmation visible',
+  );
+  check(
+    button(ui, 'STARTING FRESH...').props.disabled && button(ui, 'CANCEL').props.disabled,
+    'pending backup disables both confirmation controls',
+  );
+  const count = calls.length;
+  button(ui, 'STARTING FRESH...').props.onPress();
+  button(ui, 'CANCEL').props.onPress();
+  back();
+  check(calls.length === count, 'even stale handlers cannot cancel or resubmit a busy recovery');
+  state.saveLoadProblem = { ...unreadableSaveProblem(), error: 'Backup write failed' };
+  ui = controls();
+  check(text(byType(ui, 'View')).includes('Backup write failed'), 'backup failure remains visible');
+  check(
+    nodes(ui).some((node) => node.props?.accessibilityRole === 'alert'),
+    'backup failure is announced as an alert',
+  );
+  calls.length = 0;
+  state.saveLoadProblem = { ...unreadableSaveProblem(), confirmationId: 'escape' };
+  back();
+  check(
+    calls.join('|') === 'cancel' && state.saveLoadProblem.confirmationId === null,
+    'Back only cancels the explicit confirmation',
+  );
+  for (const layer of [
+    { player: { mode: 'mission', mission_id: 'book', mission_ends_at: 30000 } },
+    { player: { mode: 'awake' }, cardReward: { mission: 'book' } },
+    { player: { mode: 'awake' }, battle: { target: { id: 'test' } } },
+  ]) {
+    Object.assign(state, { player: null, cardReward: null, battle: null }, layer);
+    check(
+      nodes(render()).some((node) => node.type === recovery.SaveRecovery),
+      'a save problem overrides other game layers',
+    );
+  }
+  state.ready = false;
+  check(
+    !nodes(render()).some((node) => node.type === recovery.SaveRecovery),
+    'initial loading retains priority over a not-yet-ready recovery',
+  );
+  runtime.unmount();
+  recoveryRuntime.unmount();
+}
+
 async function main() {
   visitorAndReturnChecks();
   napReturnControls();
+  saveRecoveryControls();
   journeyChecks();
   const home = homeFixture();
   let tree = home.render();

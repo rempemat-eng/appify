@@ -28,7 +28,7 @@ TOP = meadow.TOP  # forest band above y = 0
 SCALE = 4
 
 # ---- palette -------------------------------------------------------------
-from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK  # noqa: E402
+from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK, PLASTER  # noqa: E402
 
 
 # ---- terrain masks (native pixels) ----------------------------------------
@@ -66,7 +66,7 @@ for (x, y) in POND:
                 BANK.add((x + dx, y + dy))
 
 # Raised flower planters beside the stall path (decorative, watered by the can).
-FLOWER_BEDS = [(226, 136, 52, 20), (244, 170, 40, 16)]  # x, y, w, h
+FLOWER_BEDS = [(222, 142, 46, 18), (222, 168, 46, 18)]  # x, y, w, h: a matched pair by the lantern
 LILY_PADS = [(44, 208), (82, 224), (64, 200), (52, 220)]
 FROG_PAD = LILY_PADS[0]
 
@@ -74,32 +74,32 @@ FROG_PAD = LILY_PADS[0]
 def draw_terrain(frame: int) -> Canvas:
     cv = Canvas(W, H)
     phase = frame % 4
-    # Broad, close-valued grass masses with clean edges (no speckle), so the
-    # tufts and props carry the texture, as in the references.
+    # Broad, close-valued grass masses with soft, dithered edges, then many small
+    # tufts of blades (dark roots, lit tips) in a few shapes, denser toward the edges
+    # and around props, sparse in the trodden clearing (coherence plan, 6c).
+    import detail
     for y in range(H):
         for x in range(W):
             n = smooth_noise(x, y, 30, 11)
-            cv.set(x, y, G[3] if n > 0.66 else G[2])
-    # Tufts: dark roots and light tips, clustered toward the edges and props.
-    for ty in range(0, H, 8):
-        for tx in range(0, W, 8):
-            x = tx + int(noise2(tx, ty, 4) * 8)
-            y = ty + int(noise2(tx, ty, 5) * 8)
+            light = n > 0.66 or (n > 0.62 and (x + y) % 2 == 0) or (n > 0.6 and (x + 2 * y) % 4 == 0)
+            cv.set(x, y, G[3] if light else G[2])
+    for ty in range(0, H, 6):
+        for tx in range(0, W, 6):
+            x = tx + int(noise2(tx, ty, 4) * 6)
+            y = ty + int(noise2(tx, ty, 5) * 6)
             clearing = ((x - PLAZA[0]) / 70) ** 2 + ((y - PLAZA[1] + 40) / 70) ** 2 < 1
             edge = min(x, W - x, y, H - y) < 26
-            cluster = smooth_noise(x, y, 34, 63) > 0.6
-            density = 0.04 if clearing else 0.42 if edge else 0.26 if cluster else 0.08
+            cluster = smooth_noise(x, y, 34, 63) > 0.58
+            density = 0.05 if clearing else 0.5 if edge else 0.36 if cluster else 0.14
             if noise2(tx, ty, 3) < density:
-                # The ground is one still image: only the water is animated (as small
-                # overlays), which keeps the garden light on phones.
-                sway = 0
-                tall = 3 if noise2(tx, ty, 8) < 0.35 else 2
-                style.tuft(cv, x, y + 2, G[1], G[4], tall)
-                if sway:
-                    cv.set(x + 1, y + 1 - (tall > 2), G[4])
-            elif noise2(tx, ty, 7) < 0.1:
+                ground = 3 if cv.get(x, y)[:3] == tuple(int(G[3][k:k + 2], 16) for k in (1, 3, 5)) else 2
+                kind = int(noise2(tx, ty, 8) * 6) if not clearing else 3
+                detail.grass_tuft(cv, x, y, kind, G, ground)
+            elif noise2(tx, ty, 7) < 0.07:
                 cv.set(x, y, '#E9E4CF')  # a tiny white flower
                 cv.set(x, y + 1, G[1])
+            elif noise2(tx, ty, 9) < 0.05:  # clover: three leaves, lit on the left
+                cv.set(x, y, G[4]); cv.set(x + 1, y, G[3]); cv.set(x, y + 1, G[3]); cv.set(x + 1, y + 1, G[1])
 
     # pond bank (sand) then water
     for (x, y) in BANK:
@@ -113,9 +113,16 @@ def draw_terrain(frame: int) -> Canvas:
     for (x, y) in POND:
         depth = ((x + 0.5 - POND_C[0]) / POND_R[0]) ** 2 + ((y + 0.5 - POND_C[1]) / POND_R[1]) ** 2
         col = WTR[1] if depth < 0.35 else WTR[2]
-        if (x, y - 1) not in POND:
-            col = WTR[0]  # dark lip under the far bank
-        elif (x, y - 2) not in POND:
+        # Looking down into the pond, the far bank shows its earth face above the
+        # water, and the water under it lies in its shadow (coherence plan, 6c).
+        k = next((i for i in range(5) if (x, y - i - 1) not in POND), 5)
+        if k == 0:
+            col = P[1]
+        elif k in (1, 2):
+            col = P[0] if (x // 3 + k) % 4 else P[1]
+        elif k == 3:
+            col = WTR[0]
+        elif k == 4:
             col = WTR[1]
         cv.set(x, y, col)
     # Four-frame, one-pixel ripple loops. Each little arc advances on its own
@@ -214,6 +221,27 @@ def draw_terrain(frame: int) -> Canvas:
             if (x, y + 2) not in PATH and y + 2 < H:
                 cv.set(x, y + 2, G[3] if (x + y) % 3 else G[2])
 
+    # Pebbles bedded in the packed earth, lit on top with a dark underside.
+    import detail as _detail
+    for i in range(170):
+        x = int(noise2(i, 6, 51) * W)
+        y = int(noise2(i, 7, 51) * H)
+        if all((x + dx, y + dy) in dirt for dx in (-2, 0, 3) for dy in (-2, 0, 3)):
+            _detail.pebble(cv, x, y, STONE, big=i % 4 == 0)
+
+    # The kitchen garden's yard is raked gravel rather than packed earth, so the
+    # timber beds and dark soil stand out from it; its turf edges stay as drawn.
+    yx, yy, yw, yh = meadow.YARD
+    to_gravel = {P[1]: SAND[0], P[2]: SAND[1], P[3]: SAND[2]}
+    for y in range(yy, yy + yh):
+        for x in range(yx, yx + yw):
+            if (x, y) in dirt:
+                c = '#%02X%02X%02X' % cv.get(x, y)[:3]
+                if c in to_gravel:
+                    cv.set(x, y, to_gravel[c])
+                    if noise2(x, y, 88) < 0.025 and smooth_noise(x, y, 9, 87) > 0.45:
+                        cv.set(x, y, STONE[3] if noise2(x, y, 89) < 0.5 else STONE[2])
+
     # footprints of a small creature along the main path
     for i, y in enumerate(range(212, 280, 10)):
         x = PX - 4 + (6 if i % 2 else 0)
@@ -222,37 +250,12 @@ def draw_terrain(frame: int) -> Canvas:
     meadow.draw_beds(cv)
     meadow.draw_lower_details(cv, PATH)
 
-    # Raised beds have a lit rim, a shaded front face and individual plants.
+    # The flower planters by the lantern: the same raised timber beds as the meadow's,
+    # planted with tulips, chamomile and lavender in rows.
     for bi, (bx, by, bw, bh) in enumerate(FLOWER_BEDS):
-        cv.rect(bx, by, bw, bh, WOOD[1])
-        cv.rect(bx + 1, by + 1, bw - 2, bh - 2, '#5A3A26')
-        cv.hline(bx + 1, by, bw - 2, WOOD[3])
-        cv.hline(bx, by + bh - 1, bw, WOOD[0])
-        cv.hline(bx + 1, by + bh, bw - 1, G[1])
-        for sx in range(bx + 3, bx + bw - 2, 7):
-            cv.set(sx, by + bh - 2, WOOD[3])  # cut ends / worn planter lip
-            cv.set(sx + 1, by + 2, '#75492D')
-        for fy in range(by + 3, by + bh - 2, 6):
-            for fx in range(bx + 3, bx + bw - 3, 6):
-                kind = ((fx - bx - 3) // 6 + (fy - by - 3) // 6 + bi) % 3
-                petals = [RED[3], CREAM[3], NAP[3]][kind]
-                stem = LEAF[2]
-                cv.vline(fx, fy + 1, 3, stem)
-                cv.set(fx + 1, fy + 2, LEAF[3]); cv.set(fx - 1, fy + 3, LEAF[1])
-                if kind == 0:  # a cupped coral tulip, with a darker petal fold
-                    cv.hline(fx - 1, fy, 3, petals)
-                    cv.set(fx - 1, fy - 1, RED[4]); cv.set(fx + 1, fy - 1, RED[3])
-                    cv.set(fx, fy + 1, RED[2]); cv.set(fx - 1, fy + 2, LEAF[3])
-                elif kind == 1:  # chamomile has a warm centre and four cream rays
-                    for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
-                        cv.set(fx + dx, fy + dy, petals)
-                    cv.set(fx, fy, '#E8A33D')
-                else:  # a small lavender spike, shorter petals at the crown
-                    cv.vline(fx, fy - 2, 4, NAP[2])
-                    cv.set(fx, fy - 2, NAP[4])
-                    cv.hline(fx - 1, fy, 3, NAP[3]); cv.set(fx - 1, fy - 1, NAP[4])
+        meadow.flower_planter(cv, bx, by, bw, bh, seed=bi)
     # A pair of hand-painted crop markers gives the beds a cared-for history.
-    for mx, my, petal in ((FLOWER_BEDS[0][0] + FLOWER_BEDS[0][2] - 4, FLOWER_BEDS[0][1], RED[3]), (FLOWER_BEDS[1][0] + FLOWER_BEDS[1][2] - 4, FLOWER_BEDS[1][1], NAP[3])):
+    for mx, my, petal in ((FLOWER_BEDS[0][0] + FLOWER_BEDS[0][2] - 9, FLOWER_BEDS[0][1] + 4, RED[3]), (FLOWER_BEDS[1][0] + FLOWER_BEDS[1][2] - 9, FLOWER_BEDS[1][1] + 4, NAP[3])):
         cv.vline(mx, my - 3, 5, WOOD[1])
         cv.rect(mx - 2, my - 5, 5, 3, CREAM[2])
         cv.hline(mx - 2, my - 5, 5, CREAM[3])
@@ -317,7 +320,7 @@ OBJECTS = [
     ('rock-2', 'rock1', 210, 246, None),
     # the meadow below the stream
     ('meadow-sign', 'meadow_sign', 178, 334, 'meadow'),
-    ('rock-3', 'rock0', 116, 372, None),
+    ('rock-3', 'rock0', 98, 488, None),
     ('rock-4', 'rock1', 296, 496, None),
     ('bush-4', 'bush', 6, 476, None),
     ('bush-5', 'bush', 232, 488, None),
@@ -366,7 +369,7 @@ ANCHORS = {
     'pond': {'x': POND_C[0] - POND_R[0], 'y': POND_C[1] - POND_R[1], 'w': 2 * POND_R[0], 'h': 2 * POND_R[1]},
     'butterflies': {'x': 252, 'y': 150},
     'fireflies': {'x': 30, 'y': 60, 'w': 240, 'h': 200},
-    'companionSpots': [{'x': 120, 'y': 276}, {'x': 250, 'y': 214}, {'x': 40, 'y': 262}],
+    'companionSpots': [{'x': 120, 'y': 258}, {'x': 250, 'y': 214}, {'x': 40, 'y': 256}],
     'keepsakes': {
         'rest': {'x': 166, 'y': 112},
         'read': {'x': 200, 'y': 68},
@@ -378,37 +381,26 @@ ANCHORS = {
 
 
 def bake_shadows(terrain: Canvas, sprites: dict):
-    """Flat cast shadows down and to the right (light from the upper left), plus forest
-    shade along the treeline. Shadows multiply the ground so they work on any surface."""
+    """Cast shadows (coherence plan, 6c): every standing object throws its own silhouette
+    down and to the right (light from the upper left), so height reads from the ground.
+    All shadows are one tone, merged so they never stack; then contact shade where each
+    object meets the ground, and forest shade along the treeline."""
+    import detail
+    shade = set()
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
-        foot = y + s.h
-        if key in ('tree', 'tree_small', 'tree_autumn'):
-            style.cast_shadow(terrain, x + s.w / 2 + 5, foot - 2, s.w * 0.46, 6)
-        elif key == 'pine':
-            style.cast_shadow(terrain, x + s.w / 2 + 3, foot - 1, s.w * 0.42, 4.5)
-        elif key == 'bush':
-            style.cast_shadow(terrain, x + s.w / 2 + 3, foot - 1, s.w * 0.5, 4)
-        elif key.startswith('fence'):
-            for xx in range(x + 2, x + s.w + 1):
-                for dy in (0, 1, 2):
-                    style.darken(terrain, xx, foot + dy)
-        elif key in ('hut', 'stall'):
-            # a building's shadow: a band along its foot that leans to the right
-            for yy in range(foot - 4, foot + 4):
-                for xx in range(x + 4 + (yy - foot + 4), x + s.w + 4):
-                    style.darken(terrain, xx, yy)
-        else:
-            style.cast_shadow(terrain, x + s.w / 2 + 3, foot, max(4.5, s.w * 0.48), max(2.6, s.h * 0.1))
-    # Contact shade: where an object meets the ground, the ground darkens along its base,
-    # so props sit in the grass rather than on it (light from the upper left).
+        shade |= detail.silhouette_shadow(s, x + s.ox, y + s.oy)
+    for (sx, sy) in shade:
+        style.darken(terrain, sx, sy)
+    # Contact shade: the ground darkens along each base, two pixels deep under the
+    # lit side, so props sit in the grass rather than on it.
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
-        foot = y + s.h
+        foot = y + s.oy + s.h
         for xx in range(s.w):
             if s.get(xx, s.h - 1)[3]:
-                style.darken(terrain, x + xx, foot)
-                style.darken(terrain, x + xx + 1, foot + 1)
+                style.darken(terrain, x + s.ox + xx, foot)
+                style.darken(terrain, x + s.ox + xx + 1, foot + 1)
     for row, strength in ((0, 1.0), (1, 0.75), (2, 0.75), (3, 0.5), (4, 0.5), (5, 0.25), (6, 0.25)):
 
         style.dither_dark(terrain, 0, row, W, 1, strength, style.FOREST_DARK)
@@ -481,7 +473,7 @@ def main():
     blocked = set()
     for (x, y) in POND:
         blocked.add((x // cell, y // cell))
-    for (x, y) in meadow.STREAM | meadow.STREAM_BANK:
+    for (x, y) in meadow.STREAM | meadow.STREAM_BANK | meadow.BLUFF:
         if not (bx + 6 <= x < bx + bw - 6):  # only the bridge deck crosses the water
             blocked.add((x // cell, y // cell))
     for (px, py) in meadow.PLOTS:
@@ -528,7 +520,8 @@ def main():
             queue.append(n)
     walk = [''.join('.' if (ch == '.' and (not ok(c, r) or (c, r) in reached)) else '#'
                     for c, ch in enumerate(line)) for r, line in enumerate(walk)]
-    for name, spot in list(HOTSPOTS.items()) + [('start', ANCHORS['start'])]:
+    for name, spot in list(HOTSPOTS.items()) + [('start', ANCHORS['start'])] + [
+            (f'companion spot {i}', p) for i, p in enumerate(ANCHORS['companionSpots'])]:
         c, r = int(spot['x']) // cell, int(spot['y']) // cell
         assert walk[r][c] == '.', f'{name} hotspot is not walkable'
 
@@ -575,14 +568,18 @@ def main():
         ground.paste(decal, fx, fy)
     bake_shadows(ground, sprites)
     prev.paste(ground, 0, TOP)
+    # GARDEN_PREVIEW_STAGE=empty shows a new player's meadow; otherwise it is in bloom
+    grown = os.environ.get('GARDEN_PREVIEW_STAGE') != 'empty'
     for (x, y), k in zip(meadow.PLOTS, meadow.PLOT_KINDS):
-        g = growth[f'plot_{k}_4']
-        prev.paste(g, x, y - (g.h - meadow.PLOT_H) + TOP)
+        if grown:
+            g = growth[f'plot_{k}_4']
+            prev.paste(g, x, y - (g.h - meadow.PLOT_H) + TOP)
     for i, (x, y) in enumerate(meadow.ORCHARD):
-        t = growth[f'orchard_{[4, 2, 1][i]}']
-        prev.paste(t, x - t.w // 2, y - t.h + TOP)
+        if grown:
+            t = growth[f'orchard_{[4, 2, 1][i]}']
+            prev.paste(t, x - t.w // 2, y - t.h + TOP)
     for (_id, key, x, y, _a) in sorted(OBJECTS, key=lambda o: o[3] + sprites[o[1]].h):
-        prev.paste(sprites[key], x, y + TOP)
+        prev.paste(sprites[key], x + sprites[key].ox, y + sprites[key].oy + TOP)
     prev.save(os.environ.get('GARDEN_PREVIEW', '/tmp/garden-preview.png'), 2)
     print('ok', W, H, len(sprites), 'sprites')
 

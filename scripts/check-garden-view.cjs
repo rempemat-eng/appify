@@ -746,6 +746,7 @@ function decorativeFramePresentation() {
   const ui = load('components/pixel-scenes.tsx', (id) => {
     if (id === 'react')
       return {
+        useEffect() {},
         useState(initial) {
           bounds ??= initial;
           return [
@@ -764,6 +765,16 @@ function decorativeFramePresentation() {
         StyleSheet: { absoluteFill: {} },
       };
     if (id === 'react-native-svg') return { default: 'Svg', G: 'G', Rect: 'Rect' };
+    // the battle field's entrance parallax (not rendered by these frame checks)
+    if (id === 'react-native-reanimated')
+      return {
+        default: { View: 'Animated.View' },
+        Easing: { out: (f) => f, cubic: (t) => t },
+        useAnimatedStyle: (f) => f,
+        useSharedValue: (value) => ({ value, set() {} }),
+        withTiming: (value) => value,
+      };
+    if (id === '@/lib/motion') return { useReducedMotion: () => false };
     if (id === '@/lib/scene-art') return { propPixels: {}, sceneColors: { ink: '#2A2421' } };
     if (id === '@/lib/scene-assets') return art;
     if (id === '@/lib/game')

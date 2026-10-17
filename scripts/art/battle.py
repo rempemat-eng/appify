@@ -1,10 +1,17 @@
-"""DS-style battle backdrop and fighter platforms for NapAttack.
+"""The battle field as a close-up of the world (coherence plan, step 7b).
 
 Run: python3 scripts/art/battle.py
-Writes assets/battle/{backdrop-day,backdrop-night,platform,platform-night}.png
-(6x nearest).
-The backdrop is anchored to the stage's bottom edge; fighters' feet stand
-FEET native pixels above it, which is where the platforms are centred.
+Writes assets/battle/:
+  sky-{day,night}.png    the sky with clouds and the sun or moon (still)
+  far-{day,night}.png    hills and the distant treeline (a parallax layer)
+  near-{day,night}.png   the meadow, the framing trees and the worn path (front layer)
+  platform{,-night}.png  the raised mound each fighter stands on
+  backdrop-{day,night}.png  all three layers flattened (the garden's tilt view)
+
+Everything is drawn with the garden's material detail rules (scripts/art/detail.py)
+and lit from the upper left. The app shows the field at a whole-number zoom of the
+shared pixel grid, so the fighters, the field and the platforms share one pixel size.
+Layers are exported at 4x; the night versions are the day art in moonlight.
 """
 from __future__ import annotations
 
@@ -14,185 +21,235 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, noise2, oval, smooth_noise  # noqa: E402
-import garden  # noqa: E402  (reuse the garden's trees so both worlds match)
+import detail  # noqa: E402
+import garden_props as gp  # noqa: E402
+import style  # noqa: E402
+from materials import G, LEAF, P, SOIL, STONE, WOOD  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'battle')
 os.makedirs(OUT, exist_ok=True)
 W, H = 216, 150
-FEET = 24
-SCALE = 6
+HORIZON = 78
+FEET = 24  # the fighters' feet stand this many native pixels above the bottom edge
+SCALE = 4
+PLATFORM_W, PLATFORM_H = 48, 18
 
-DAY = {
-    'sky': ['#A9D3E6', '#C3E0EA', '#DCEBE6', '#EEF2DF'],
-    'cloud': ['#FFFFFF', '#E9F1F2', '#C9DCE3'],
-    'hill_far': ['#A7C7B4', '#97BBA6'],
-    'hill_near': ['#7FB07A', '#6E9F6B'],
-    'grass': garden.G,
-    'sun': '#FFF3C4',
-}
-NIGHT = {
-    'sky': ['#1A2142', '#252E55', '#323C66', '#434C74'],
-    'cloud': ['#5A6390', '#4A5280', '#3A4270'],
-    'hill_far': ['#2E3D58', '#283650'],
-    'hill_near': ['#2D4A45', '#27413D'],
-    'grass': ['#1D3A33', '#27493C', '#2F5845', '#3A6650', '#4F7B5E'],
-    'sun': '#F6E7A8',
-}
+SKY_DAY = ['#A9D3E6', '#C3E0EA', '#DCEBE6', '#EEF2DF']
+SKY_NIGHT = ['#1A2142', '#252E55', '#323C66', '#434C74']
+CLOUD_DAY = ['#FFFFFF', '#E9F1F2', '#C9DCE3']
+CLOUD_NIGHT = ['#5A6390', '#4A5280', '#3A4270']
+HILL_FAR = ['#97BBA6', '#A7C7B4', '#B9D3C2']
+HILL_NEAR = ['#6E9F6B', '#7FB07A', '#93BF88']
+TREELINE = ['#2F5A40', '#3E6E4E', '#4E7F5A']
 
 
-def backdrop(pal, night=False) -> Canvas:
+def moonlight(cv: Canvas) -> Canvas:
+    """The same art under the moon: darker, cooler, blue-shifted (alpha kept)."""
+    out = Canvas(cv.w, cv.h)
+    for y in range(cv.h):
+        for x in range(cv.w):
+            r, g, b, a = cv.get(x, y)
+            if a:
+                out.px[x, y] = (int(r * 0.4), int(g * 0.48), int(b * 0.7 + 14), a)
+    return out
+
+
+def sky(night: bool) -> Canvas:
     cv = Canvas(W, H)
-    horizon = 78
-    # sky: stepped gradient with a dithered row between steps
-    bands = pal['sky']
-    for y in range(horizon):
-        i = min(len(bands) - 1, int(y / horizon * len(bands)))
+    bands = SKY_NIGHT if night else SKY_DAY
+    for y in range(H):
+        i = min(len(bands) - 1, int(min(y, HORIZON) / HORIZON * len(bands)))
         cv.hline(0, y, W, bands[i])
-        if i and y == int(i * horizon / len(bands)):
+        if i and y == int(i * HORIZON / len(bands)):
             for x in range(0, W, 2):
                 cv.set(x + (y % 2), y, bands[i - 1])
-    # sun or moon
     if night:
         for (x, y) in oval(170, 20, 7, 7):
             if (x - 173) ** 2 + (y - 18) ** 2 > 30:
-                cv.set(x, y, pal['sun'])
-        for i in range(40):
+                cv.set(x, y, '#F6E7A8')
+        for i in range(44):
             x, y = int(noise2(i, 1, 90) * W), int(noise2(i, 2, 90) * 60)
             cv.set(x, y, '#E8E6F2' if i % 4 else '#FFF6C8')
     else:
-        for (x, y) in oval(172, 22, 9, 9):
-            cv.set(x, y, pal['sun'])
         for (x, y) in oval(172, 22, 12, 12):
-            if cv.get(x, y)[:3] != (255, 243, 196):
-                cv.set(x, y, (255, 250, 230, 90))
-    # clouds: puffy pixel clusters with a shaded underside
-    for (cx, cy, s) in ((30, 22, 1.0), (92, 14, 0.8), (140, 34, 0.7), (205, 12, 0.6)):
+            cv.set(x, y, (255, 250, 230, 90))
+        for (x, y) in oval(172, 22, 9, 9):
+            cv.set(x, y, '#FFF3C4')
+        for (x, y) in oval(169.5, 19.5, 4, 4):
+            cv.set(x, y, '#FFFBE6')
+    cloud = CLOUD_NIGHT if night else CLOUD_DAY
+    for (cx, cy, s) in ((30, 22, 1.0), (92, 14, 0.8), (140, 36, 0.7), (205, 12, 0.6)):
         blob = set()
         for (dx, dy, r) in ((0, 0, 7), (8, -3, 6), (15, 0, 6), (-7, 1, 5), (22, 2, 4)):
             blob |= {(x, y) for (x, y) in oval(cx + dx * s, cy + dy * s, r * s * 1.4, r * s)}
         for (x, y) in blob:
             under = (x, y + 2) not in blob
-            cv.set(x, y, pal['cloud'][2] if under else pal['cloud'][1] if (x, y - 2) in blob else pal['cloud'][0])
-    # far hills, near hills
+            cv.set(x, y, cloud[2] if under else cloud[1] if (x, y - 2) in blob else cloud[0])
+    return cv
+
+
+def far() -> Canvas:
+    """Rolling hills lit on their left slopes, and a distant treeline of small pines and
+    round trees set back behind the nearer hill."""
+    cv = Canvas(W, H)
     for x in range(W):
-        h1 = horizon - 14 - int(8 * math.sin(x / 23) + 5 * math.sin(x / 9 + 1))
-        h2 = horizon - 6 - int(6 * math.sin(x / 17 + 2) + 3 * math.sin(x / 7))
-        for y in range(h1, horizon):
-            cv.set(x, y, pal['hill_far'][0] if y > h1 + 1 else pal['hill_far'][1])
-        for y in range(h2, horizon + 2):
-            cv.set(x, y, pal['hill_near'][0] if y > h2 + 1 else pal['hill_near'][1])
-    # distant tree line: small pines and round trees, set back behind the near hills
-    far = ['#4E7F5A', '#3E6E4E', '#2F5A40'] if not night else ['#24413A', '#1E3832', '#182E2A']
+        h1 = HORIZON - 16 - int(8 * math.sin(x / 23) + 5 * math.sin(x / 9 + 1))
+        slope = math.cos(x / 23) * 8 / 23 + math.cos(x / 9 + 1) * 5 / 9
+        for y in range(h1, HORIZON + 4):
+            t = 2 if y == h1 else 1 if slope > 0 else 0
+            cv.set(x, y, HILL_FAR[t])
     for i, x in enumerate(range(-4, W + 6, 7)):
-        base = horizon - 4 + (i % 3)
-        if i % 4 == 1:  # round tree
+        base = HORIZON - 4 + (i % 3)
+        if i % 4 == 1:
             for (px, py) in oval(x, base - 7, 4.5, 4.5):
-                lit = (px - x) + (py - (base - 7)) < 0
-                cv.set(px, py, far[0] if lit else far[1])
-            cv.vline(x, base - 3, 3, '#5A4632' if not night else '#2A2420')
-        else:  # pine
+                lit = (px - x) + (py - (base - 7)) < -1
+                cv.set(px, py, TREELINE[2] if lit else TREELINE[1] if px <= x + 1 else TREELINE[0])
+            cv.vline(x, base - 3, 3, WOOD[1])
+        else:
             hgt = 12 + (i * 5) % 6
             for k in range(hgt):
                 half = int(k * 0.42) + 1
                 for px in range(x - half, x + half + 1):
-                    cv.set(px, base - hgt + k, far[0] if px < x else far[1] if px > x else far[2] if k % 4 == 3 else far[1])
-    # near hills overlap the tree bases for depth
+                    t = 2 if px < x else 0 if px > x else 1
+                    if k % 4 == 3:
+                        t = max(0, t - 1)
+                    cv.set(px, base - hgt + k, TREELINE[t])
     for x in range(W):
-        h3 = horizon - 2 - int(3 * math.sin(x / 13 + 4) + 2 * math.sin(x / 5))
-        for y in range(h3, horizon + 5):
-            cv.set(x, y, pal['hill_near'][0] if y > h3 + 1 else pal['hill_near'][1])
-    # meadow: textured grass, darker toward the viewer for depth
-    g = pal['grass']
-    for y in range(horizon + 4, H):
-        depth = (y - horizon) / (H - horizon)
+        h2 = HORIZON - 4 - int(3 * math.sin(x / 13 + 4) + 2 * math.sin(x / 5))
+        slope = math.cos(x / 13 + 4) * 3 / 13 + math.cos(x / 5) * 2 / 5
+        for y in range(h2, HORIZON + 6):
+            t = 2 if y == h2 else 1 if slope > 0 else 0
+            cv.set(x, y, HILL_NEAR[t])
+    return cv
+
+
+def near() -> Canvas:
+    """The meadow the fighters stand in: grass masses, tufts larger toward the viewer,
+    a worn path receding between them, and trees framing both edges with shadows."""
+    cv = Canvas(W, H)
+    top = HORIZON + 4
+    for y in range(top, H):
+        depth = (y - top) / (H - top)
         for x in range(W):
             n = smooth_noise(x, y, 14, 7)
-            base = g[3] if n < 0.55 - depth * 0.25 else g[2]
-            cv.set(x, y, base)
-    for i in range(160):  # tufts, bigger near the bottom
-        x = int(noise2(i, 5, 31) * W)
-        y = horizon + 6 + int(noise2(i, 6, 31) * (H - horizon - 8))
-        big = y > H - 40
-        cv.set(x, y, g[1]); cv.set(x + 2, y, g[1]); cv.set(x + 1, y + 1, g[1])
-        cv.set(x, y - 1, g[4] if not night else g[3]); cv.set(x + 2, y - 1, g[4] if not night else g[3])
-        if big:
-            cv.set(x + 1, y - 1, g[1]); cv.set(x + 1, y - 2, g[4] if not night else g[3])
-        if i % 9 == 0 and not night:
-            cv.set(x + 4, y - 1, ['#F2D16B', '#FBF4E4', '#CFC4EC'][i % 3])
-    # mid-ground trees frame the arena's edges in the shared garden style
-    # (outlined, clump-shaded), with hard shadows on the meadow
-    import style  # noqa: E402
-    for (tx, ty, key) in ((-10, horizon - 30, 'tree'), (194, horizon - 24, 'tree_small'), (182, horizon - 34, 'pine'), (14, horizon - 26, 'pine')):
-        sprite = {'tree': garden.tree(True), 'tree_small': garden.tree(False), 'pine': garden.pine()}[key]
-        if night:  # moonlight: the same shapes, cooled and darkened
-            for yy in range(sprite.h):
-                for xx in range(sprite.w):
-                    r_, g_, b_, a_ = sprite.get(xx, yy)
-                    if a_:
-                        sprite.px[xx, yy] = (int(r_ * 0.42), int(g_ * 0.5), int(b_ * 0.72), a_)
-        style.cast_shadow(cv, tx + sprite.w / 2 + 3, ty + sprite.h - 1, sprite.w * 0.45, 3.5)
-        cv.paste(sprite, tx, ty)
-    # a worn path receding into the distance between the fighters
-    for y in range(horizon + 4, H):
-        t = (y - horizon) / (H - horizon)
-        half = 1.5 + t * 8
+            light = n < 0.55 - depth * 0.25 or (n < 0.58 - depth * 0.25 and (x + y) % 2 == 0)
+            cv.set(x, y, G[3] if light else G[2])
+    for x in range(W):  # the meadow's far edge meets the hills with a darker lip
+        cv.set(x, top, G[1])
+    # the worn path, packed earth with pebbles and a darker rim
+    path = set()
+    for y in range(top + 1, H):
+        t = (y - top) / (H - top)
+        half = 1.5 + t * 9
         cx = W / 2 + math.sin(y / 11) * 2
         for x in range(int(cx - half), int(cx + half) + 1):
-            edge = abs(x - cx) > half - 1.2
-            col = garden.P[1] if edge else garden.P[3] if smooth_noise(x, y, 5, 3) > 0.6 else garden.P[2]
-            if night:
-                col = '#4E4A5A' if edge else '#5E5A6A'
-            cv.set(x, y, col)
+            path.add((x, y))
+    for (x, y) in path:
+        n = smooth_noise(x, y, 5, 3)
+        cv.set(x, y, P[3] if n > 0.62 else P[2])
+    for (x, y) in path:
+        if (x - 1, y) not in path or (x + 1, y) not in path:
+            cv.set(x, y, P[1])
+    for i in range(14):
+        y = top + 8 + int(noise2(i, 3, 12) * (H - top - 10))
+        x = int(W / 2 + (noise2(i, 4, 12) - 0.5) * (2 + (y - top) / (H - top) * 12))
+        if (x - 1, y) in path and (x + 2, y + 1) in path:
+            detail.pebble(cv, x, y, STONE, big=y > H - 30)
+    # tufts, larger toward the viewer
+    for ty in range(top + 4, H, 5):
+        for tx in range(0, W, 6):
+            x = tx + int(noise2(tx, ty, 4) * 6)
+            y = ty + int(noise2(tx, ty, 5) * 5)
+            if (x, y) in path or noise2(tx, ty, 3) > 0.42:
+                continue
+            ground = 3 if cv.get(x, y)[:3] == tuple(int(G[3][k:k + 2], 16) for k in (1, 3, 5)) else 2
+            near_kinds = (1, 2, 4) if y > H - 40 else (0, 3, 5)
+            detail.grass_tuft(cv, x, y, near_kinds[int(noise2(tx, ty, 8) * 3)], G, ground)
+            if noise2(tx, ty, 9) < 0.08:
+                cv.set(x + 3, y - 1, ['#F2D16B', '#FBF4E4', '#CFC4EC'][int(noise2(tx, ty, 10) * 3)])
+    # trees framing the field, with silhouette shadows down and to the right
+    for (tx, ty, sprite) in ((-10, HORIZON - 30, gp.tree(True)), (194, HORIZON - 24, gp.tree(False)),
+                             (182, HORIZON - 34, gp.pine()), (14, HORIZON - 26, gp.pine())):
+        s = style.finalize(sprite, name='battle-tree')
+        for (sx, sy) in detail.silhouette_shadow(s, tx + s.ox, ty + s.oy):
+            if sy > HORIZON + 4:
+                style.darken(cv, sx, sy)
+        cv.paste(s, tx + s.ox, ty + s.oy)
+    # transparent above the meadow and the trees
     return cv
 
 
-def platform(pal=DAY, night=False) -> Canvas:
-    """The same mound in local light: grass rim, dirt side and a ground shadow.
-
-    The night soil shares the backdrop path's cool stone ramp. Keeping the
-    silhouette and texture fixed lets daylight and moonlight read as one place.
-    """
-    w, h = 64, 20
+def platform() -> Canvas:
+    """A raised mound of turf: a lit grass top with tufts and a lit back rim, an earth
+    face in layers with bedded stones that turns darker to the right, and roots."""
+    w, h = PLATFORM_W, PLATFORM_H
     cv = Canvas(w, h)
     cx = w / 2
-    grass = pal['grass']
-    soil = ['#303442', '#4E4A5A'] if night else garden.P
-    shadow = (16, 28, 45, 80) if night else (40, 52, 36, 80)
-    for (x, y) in oval(cx, 13, 32, 6):
-        cv.set(x, y, shadow)
-    side = oval(cx, 10, 30, 7)
-    for (x, y) in side:
-        cv.set(x, y, soil[0] if y > 12 else soil[1])
-    top = oval(cx, 7.5, 29.5, 6)
+    face = oval(cx, 9.5, 23, 7.5)
+    for (x, y) in face:
+        u = (x + 0.5 - cx) / 23
+        k = (y - 3) // 3
+        t = 3 if u < -0.45 else 2 if u < 0.35 else 1
+        if k % 2:
+            t -= 1
+        cv.set(x, y, SOIL[max(0, t)])
+    for (sx, sy) in ((10, 12), (30, 13), (38, 10), (19, 14)):
+        if (sx, sy) in face and (sx + 2, sy + 1) in face:
+            detail.pebble(cv, sx, sy, STONE)
+    for (rx, ry) in ((14, 11), (33, 12)):
+        cv.set(rx, ry, WOOD[1]); cv.set(rx + 1, ry + 1, WOOD[1]); cv.set(rx + 1, ry + 2, WOOD[0])
+    top = oval(cx, 6.5, 22.5, 5.2)
     for (x, y) in top:
-        u, v = (x + 0.5 - cx) / 29.5, (y + 0.5 - 7.5) / 6
+        u, v = (x + 0.5 - cx) / 22.5, (y + 0.5 - 6.5) / 5.2
         r = u * u + v * v
-        col = grass[3]
-        if r > 0.82:
-            col = grass[2] if v > 0 else grass[4]  # rim: lit back edge, shaded front edge
-        elif -u * 0.4 - v * 0.9 > 0.45:
-            col = grass[4]
-        cv.set(x, y, col)
-    for i in range(16):
-        x = int(cx - 24 + noise2(i, 1, 77) * 48)
-        y = int(4 + noise2(i, 2, 77) * 7)
+        t = 3
+        if r > 0.8:
+            t = 4 if v < 0 and u < 0.3 else 2  # the lit back rim, the shaded front lip
+        elif -u * 0.5 - v * 0.8 > 0.45:
+            t = 4
+        cv.set(x, y, G[t])
+    for (x, y) in top:  # turf hangs over the face at the front
+        if (x, y + 1) not in top and (x + y) % 3 == 0:
+            cv.set(x, y + 1, G[1])
+    for i in range(10):
+        x = int(cx - 18 + noise2(i, 1, 77) * 36)
+        y = int(4 + noise2(i, 2, 77) * 6)
         if (x, y) in top and (x + 2, y) in top:
-            cv.set(x, y, grass[2]); cv.set(x + 2, y, grass[2]); cv.set(x + 1, y + 1, grass[2])
-    cv.outline('#1A302C' if night else '#3E5A2E')
-    return cv
+            detail.grass_tuft(cv, x + 1, y, (0, 3, 5)[i % 3], G, 3)
+    out = Canvas(w, h)
+    for (x, y) in oval(cx + 2, 13.5, 24, 4):  # its shadow on the meadow
+        out.set(x, y, (40, 52, 36, 90))
+    out.paste(cv, 0, 0)
+    style.close_outline(out)
+    return out
+
+
+def flatten(*layers: Canvas) -> Canvas:
+    out = Canvas(W, H)
+    for layer in layers:
+        out.paste(layer, 0, 0)
+    return out
 
 
 def main():
-    backdrop(DAY).save(os.path.join(OUT, 'backdrop-day.png'), SCALE)
-    backdrop(NIGHT, night=True).save(os.path.join(OUT, 'backdrop-night.png'), SCALE)
-    platform().save(os.path.join(OUT, 'platform.png'), SCALE)
-    platform(NIGHT, night=True).save(os.path.join(OUT, 'platform-night.png'), SCALE)
-    prev = backdrop(DAY)
-    p = platform()
-    prev.paste(p, 46 - 32, H - FEET - 8)
-    prev.paste(p, W - 46 - 32, H - FEET - 8)
-    prev.save('/tmp/battle-preview.png', 4)
+    f, n = far(), near()
+    layers = {
+        'sky-day': sky(False), 'sky-night': sky(True),
+        'far-day': f, 'far-night': moonlight(f),
+        'near-day': n, 'near-night': moonlight(n),
+        'platform': platform(), 'platform-night': moonlight(platform()),
+    }
+    for key, cv in layers.items():
+        cv.save(os.path.join(OUT, f'{key}.png'), SCALE)
+    flatten(layers['sky-day'], f, n).save(os.path.join(OUT, 'backdrop-day.png'), SCALE)
+    flatten(layers['sky-night'], layers['far-night'], layers['near-night']).save(
+        os.path.join(OUT, 'backdrop-night.png'), SCALE)
+    prev = flatten(layers['sky-day'], f, n)
+    p = layers['platform']
+    prev.paste(p, 46 - PLATFORM_W // 2, H - FEET - 8)
+    prev.paste(p, W - 46 - PLATFORM_W // 2, H - FEET - 8)
+    prev.save(os.environ.get('BATTLE_PREVIEW', '/tmp/battle-preview.png'), 4)
     print('ok', W, H)
 
 

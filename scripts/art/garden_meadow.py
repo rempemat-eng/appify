@@ -11,7 +11,7 @@ from __future__ import annotations
 import math
 
 from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise
-from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK
+from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK, SOIL
 
 W = 320
 H = 576  # full walkable map height (native px)
@@ -37,6 +37,14 @@ for (_x, _y) in STREAM:
         if (_x, _y + _dy) not in STREAM:
             STREAM_BANK.add((_x, _y + _dy))
 
+# The stream has cut into the land: its north bank is a small bluff, a raised tier
+# with a shaded earth face (coherence plan, step 6b: depth without tilting the view).
+STREAM_TOP = {}
+for (_x, _y) in STREAM:
+    STREAM_TOP[_x] = min(STREAM_TOP.get(_x, _y), _y)
+BLUFF_H = {_x: 7 + int(smooth_noise(_x, 3, 9, 92) * 3) for _x in STREAM_TOP}
+BLUFF = {(_x, _y) for _x, _top in STREAM_TOP.items() for _y in range(_top - BLUFF_H[_x], _top)}
+
 # The bridge deck is 44 wide between its rails (the path fits with room either side).
 BRIDGE = (PATH_X - 27, int(STREAM_Y - 20), 54, 40)  # x, y, w, h of the flat bridge decal
 
@@ -44,8 +52,12 @@ BRIDGE = (PATH_X - 27, int(STREAM_Y - 20), 54, 40)  # x, y, w, h of the flat bri
 PLOT_W, PLOT_H = 44, 20
 PLOTS = [(200, 368), (256, 368), (200, 408), (256, 408), (200, 448), (256, 448)]
 PLOT_KINDS = ['tulip', 'chamomile', 'lavender', 'chamomile', 'lavender', 'tulip']
-# Orchard pits west of the path: (x, y) is the tree's base (feet) point.
-ORCHARD = [(52, 410), (108, 440), (54, 488)]
+# The beds stand in one kitchen garden: a yard of packed earth that the paths run into.
+YARD = (190, 358, 118, 120)  # x, y, w, h
+# The orchard: three planting circles in a row west of the path, with a walk along
+# their feet. (x, y) is each tree's base (feet) point.
+ORCHARD = [(30, 438), (78, 438), (126, 438)]
+ORCHARD_WALK_Y = 456
 
 FENCE_Y = 528  # top of the lower fence
 GATE_W, GATE_H = 48, 44
@@ -55,26 +67,64 @@ GATE_X, GATE_Y = PATH_X - GATE_W // 2, FENCE_Y - 16
 def meadow_path(thick_path):
     pts = thick_path([(PATH_X, 280), (PATH_X - 1, 330), (PATH_X + 1, 400), (PATH_X, 470),
                       (PATH_X, 530), (PATH_X, H + 12)], 18.5, 7)
-    pts |= thick_path([(PATH_X + 10, 432), (196, 432)], 9.5, 8)   # to the beds
-    pts |= thick_path([(PATH_X - 10, 446), (126, 446)], 9.5, 9)   # to the orchard
+    pts |= thick_path([(PATH_X + 10, 432), (YARD[0] + 4, 432)], 9.5, 8)   # into the kitchen garden
+    pts |= thick_path([(PATH_X - 10, ORCHARD_WALK_Y), (20, ORCHARD_WALK_Y)], 8.5, 9)  # along the orchard
+    yx, yy, yw, yh = YARD
+    r = 10
+    for y in range(yy, yy + yh):
+        for x in range(yx, yx + yw):
+            cx = min(max(x, yx + r), yx + yw - 1 - r)
+            cy = min(max(y, yy + r), yy + yh - 1 - r)
+            if (x - cx) ** 2 + (y - cy) ** 2 <= r * r:
+                pts.add((x, y))
     return pts
+
+
+def draw_bluff(cv: Canvas):
+    """The north bank's earth face: a lit grass lip with hanging tufts, a face of
+    layered earth one step darker than the path (it faces away from the light), the
+    occasional root, and a wet dark foot where it meets the water."""
+    for (x, y) in BLUFF:
+        if not (0 <= x < W):
+            continue
+        h = BLUFF_H[x]
+        k = y - (STREAM_TOP[x] - h)  # 0 at the top of the bluff
+        if k == 0:
+            col = G[3]
+        elif k == 1:
+            col = G[2] if (x // 3 + int(noise2(x // 3, 1, 93) * 2)) % 3 == 0 else G[1]
+        elif k == h - 1:
+            col = P[0]
+        elif k == 2:
+            col = P[2] if (x + 1) % 5 else P[1]
+        else:
+            col = P[0] if (k + x // 9) % 3 == 0 else P[1]
+        cv.set(x, y, col)
+    for i in range(18):
+        x = int(noise2(i, 2, 94) * W)
+        if x in STREAM_TOP:
+            top = STREAM_TOP[x] - BLUFF_H[x]
+            length = 2 + int(noise2(i, 3, 94) * 3)
+            cv.vline(x, top + 2, length, WOOD[1])
+            cv.set(x + 1, top + 2 + length - 1, WOOD[0])
 
 
 def draw_stream(cv: Canvas, phase: int):
     for (x, y) in STREAM_BANK:
-        if 0 <= x < W:
+        if 0 <= x < W and (x, y) not in BLUFF:
             cv.set(x, y, SAND[1] if noise2(x, y, 23) < 0.82 else SAND[2])
     for (x, y) in STREAM_BANK:
         if (x, y - 1) in STREAM and (x, y + 1) not in STREAM:
             cv.set(x, y, SAND[0])  # wet lower lip
+    draw_bluff(cv)
     for (x, y) in STREAM:
         if not (0 <= x < W):
             continue
         c = stream_centre(x)
         col = WTR[2] if abs(y - c) < 3 else WTR[1]
-        if (x, y - 1) not in STREAM:
-            col = WTR[0]
-        elif (x, y - 2) not in STREAM:
+        if (x, y - 1) not in STREAM or (x, y - 2) not in STREAM:
+            col = WTR[0]  # the bluff's shadow on the water
+        elif (x, y - 3) not in STREAM:
             col = WTR[1]
         cv.set(x, y, col)
     # Flowing highlights drift two pixels east per frame along the current.
@@ -93,32 +143,118 @@ def draw_stream(cv: Canvas, phase: int):
         y = int(stream_centre(sx)) + 9
         cv.hline(sx, y, 4, STONE[1]); cv.hline(sx + 1, y - 1, 3, STONE[3]); cv.set(sx + 1, y - 2, STONE[4])
     for rx in (8, 40, 86, 120, 204, 246, 292, 312):
-        y = int(stream_centre(rx)) - 10
+        y = int(stream_centre(rx)) + 16
         cv.vline(rx, y - 4, 5, LEAF[1]); cv.vline(rx + 2, y - 3, 4, LEAF[2])
         cv.set(rx - 1, y - 4, LEAF[3]); cv.set(rx + 1, y - 1, LEAF[3])
 
 
+def planter(cv: Canvas, bx: int, by: int, w: int = PLOT_W, h: int = PLOT_H):
+    """A raised timber bed seen from above and in front: a lit rim around dark tilled
+    soil (furrows with lit ridges, shaded under the back and left rims), capped corner
+    posts, a front face of planks turned away from the light, a dark outline, and its
+    shadow on the ground below and to the right."""
+    from detail import boards, shade
+    import style
+    rim, front = 2, 5
+    soil_top, soil_bottom = by + rim, by + h - front - rim  # soil rows [soil_top, soil_bottom)
+    box = {(x, y) for y in range(by - 1, by + h) for x in range(bx, bx + w)}
+    # its shadow first, on whatever ground it stands on
+    for (x, y) in {(x + 2, y + 2) for (x, y) in box} - box:
+        style.darken(cv, x, y)
+    for y in range(soil_top, soil_bottom):
+        k = (y - soil_top) % 3
+        for x in range(bx + rim, bx + w - rim):
+            t = 3 if k == 0 else 2 if k == 1 else 0
+            if k == 1 and noise2(x, y, 61) < 0.14:
+                t = 3
+            elif k == 2 and noise2(x, y, 62) < 0.2:
+                t = 1
+            cv.set(x, y, SOIL[t])
+    for x in range(bx + rim, bx + w - rim):  # the back rim's shadow on the soil
+        shade(cv, x, soil_top, 2); shade(cv, x, soil_top + 1, 1)
+    for y in range(soil_top, soil_bottom):  # the left rim's shadow
+        shade(cv, bx + rim, y, 1)
+    # rims seen from above: lit on the left and back, the right a step darker
+    for x in range(bx, bx + w):
+        cv.set(x, by, WOOD[4] if x < bx + w - rim else WOOD[3]); cv.set(x, by + 1, WOOD[3])
+    for y in range(by, soil_bottom):
+        cv.set(bx, y, WOOD[4]); cv.set(bx + 1, y, WOOD[3])
+        cv.set(bx + w - 2, y, WOOD[2]); cv.set(bx + w - 1, y, WOOD[2])
+    for x in range(bx, bx + w):
+        cv.set(x, soil_bottom, WOOD[4] if x < bx + w - rim else WOOD[3])
+        cv.set(x, soil_bottom + 1, WOOD[3])
+    # the front face: planks turned away from the light
+    boards(cv, {(x, y) for y in range(soil_bottom + 2, by + h) for x in range(bx, bx + w)},
+           WOOD, 1, soil_bottom + 2, board=3, seed=bx + by, grain=0.05)
+    for x in range(bx, bx + w):
+        cv.set(x, soil_bottom + 2, WOOD[2])
+        cv.set(x, by + h - 1, WOOD[0])
+    # corner posts, a pixel taller than the rim, capped, rounded by a lit stripe
+    for px in (bx, bx + w - 3):
+        lit = px == bx
+        for y in range(by - 1, by + h):
+            cv.set(px, y, WOOD[3] if lit else WOOD[2]); cv.set(px + 1, y, WOOD[4] if lit else WOOD[3])
+            cv.set(px + 2, y, WOOD[2] if lit else WOOD[1])
+        cv.hline(px, by - 1, 3, WOOD[4] if lit else WOOD[3])
+        cv.set(px + 1, by + h - 1, WOOD[1]); cv.set(px + 2, by + h - 1, WOOD[0])
+    # a dark outline closes the box against the ground
+    for (x, y) in {(x + dx, y + dy) for (x, y) in box for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))} - box:
+        cv.set(x, y, WOOD[0])
+
+
+def flower_planter(cv: Canvas, bx: int, by: int, bw: int, bh: int, seed: int = 0):
+    """A raised planter (see `planter`) planted in two rows of tulips, chamomile and
+    lavender, each flower lit on its upper left."""
+    from materials import PLASTER
+    planter(cv, bx, by, bw, bh)
+    for row, fy in enumerate((by + 6, by + bh - 7)):
+        for k, fx in enumerate(range(bx + 5 + 3 * row, bx + bw - 4, 6)):
+            kind = (k + row + seed) % 3
+            cv.vline(fx, fy - 2, 3, LEAF[2]); cv.set(fx - 1, fy, LEAF[3]); cv.set(fx + 1, fy - 1, LEAF[1])
+            if kind == 0:  # a cupped coral tulip
+                cv.hline(fx - 1, fy - 4, 3, RED[3]); cv.hline(fx - 1, fy - 3, 3, RED[2])
+                cv.set(fx - 1, fy - 5, RED[4]); cv.set(fx + 1, fy - 5, RED[3]); cv.set(fx - 1, fy - 4, RED[4])
+            elif kind == 1:  # chamomile: cream rays around a warm centre
+                for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+                    cv.set(fx + dx, fy - 4 + dy, PLASTER[5] if dy < 0 or dx < 0 else PLASTER[3])
+                cv.set(fx, fy - 4, GOLD[3])
+            else:  # a lavender spike, paler at the crown
+                cv.vline(fx, fy - 6, 4, NAP[2]); cv.set(fx, fy - 6, NAP[4]); cv.set(fx - 1, fy - 5, NAP[3])
+                cv.set(fx + 1, fy - 4, NAP[2]); cv.set(fx - 1, fy - 3, NAP[3])
+
+
+def planting_circle(cv: Canvas, ox: int, oy: int):
+    """Where an orchard tree is planted: a domed mound of mulched soil, lit on its upper
+    left, inside a ring of small stones with their own highlights and shadows."""
+    cx, cy = ox + 0.5, oy - 2.5
+    mound = oval(cx, cy, 8.5, 4.2)
+    for (x, y) in mound:
+        nx, ny = (x + 0.5 - cx) / 8.5, (y + 0.5 - cy) / 4.2
+        lit = -0.55 * nx - 0.8 * ny
+        t = 4 if lit > 0.45 else 3 if lit > -0.2 else 2 if lit > -0.6 else 1
+        if noise2(x, y, 71) < 0.1:
+            t = min(5, t + 1)
+        elif noise2(x, y, 72) < 0.08:
+            t = max(0, t - 1)
+        cv.set(x, y, SOIL[t])
+    n = 13
+    for k in range(n):
+        a = 2 * math.pi * (k + 0.3) / n
+        sx = int(round(cx + 11.2 * math.cos(a) - 1))
+        sy = int(round(cy + 5.6 * math.sin(a)))
+        big = k % 3 == 0
+        cv.hline(sx, sy, 3, STONE[3]); cv.set(sx, sy, STONE[4])
+        cv.hline(sx, sy + 1, 3, STONE[1]); cv.set(sx + 2, sy, STONE[2])
+        if big:
+            cv.set(sx + 3, sy, STONE[2]); cv.set(sx + 3, sy + 1, STONE[1])
+
+
 def draw_beds(cv: Canvas):
-    """Raised timber beds with tilled rows, and mulched pits for the orchard."""
+    """The kitchen garden's raised beds and the orchard's planting circles."""
     for (bx, by) in PLOTS:
-        cv.rect(bx, by, PLOT_W, PLOT_H, WOOD[1])
-        cv.rect(bx + 1, by + 1, PLOT_W - 2, PLOT_H - 2, '#5A3A26')
-        for ry in range(by + 4, by + PLOT_H - 2, 4):
-            cv.hline(bx + 2, ry, PLOT_W - 4, '#4A2E1E')
-            cv.hline(bx + 2, ry - 1, PLOT_W - 4, '#6E4A30')
-        cv.hline(bx + 1, by, PLOT_W - 2, WOOD[3])
-        cv.hline(bx, by + PLOT_H - 1, PLOT_W, WOOD[0])
-        cv.hline(bx + 1, by + PLOT_H, PLOT_W - 1, G[1])
-        for sx in range(bx + 4, bx + PLOT_W - 2, 8):
-            cv.set(sx, by + PLOT_H - 2, WOOD[3])
+        planter(cv, bx, by)
     for (ox, oy) in ORCHARD:
-        pit = oval(ox, oy - 3, 13, 6)
-        for (x, y) in pit:
-            cv.set(x, y, '#6E4A30' if y > oy - 4 else '#5A3A26')
-        for (x, y) in pit:
-            if (x, y - 1) not in pit:
-                cv.set(x, y, '#4A2E1E')
-        cv.hline(ox - 7, oy - 6, 4, WOOD[3]); cv.hline(ox + 4, oy - 2, 3, WOOD[3])
+        planting_circle(cv, ox, oy)
 
 
 def draw_lower_details(cv: Canvas, path: set):
@@ -127,6 +263,8 @@ def draw_lower_details(cv: Canvas, path: set):
         x = int(noise2(i, 9, 81) * (W - 8)) + 4
         y = STREAM_Y + 24 + int(noise2(i, 10, 81) * (FENCE_Y - STREAM_Y - 30))
         if (x, y) in path or any(bx - 2 <= x <= bx + PLOT_W + 2 and by - 2 <= y <= by + PLOT_H + 2 for bx, by in PLOTS):
+            continue
+        if any(abs(x - ox) < 14 and -10 < y - oy < 6 for ox, oy in ORCHARD):
             continue
         col = [CREAM[3], '#F2D16B', NAP[4], RED[4], '#FFFFFF'][i % 5]
         cv.set(x, y, col); cv.set(x + 2, y + 1, col); cv.set(x + 1, y + 2, col)
@@ -205,7 +343,7 @@ def plot_plants(kind: str, stage: int) -> Canvas:
     """A whole bed's planting at one stage; anchored to the bed's top-left."""
     lift = 14
     cv = Canvas(PLOT_W, PLOT_H + lift)
-    for row, ry in enumerate((lift + 7, lift + 15)):
+    for row, ry in enumerate((lift + 6, lift + 11)):
         for col in range(5):
             x = 5 + col * 8 + (3 if row else 0)
             if x > PLOT_W - 7:

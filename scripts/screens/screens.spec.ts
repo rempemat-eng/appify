@@ -1,6 +1,7 @@
 import { mkdir } from 'node:fs/promises';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { makeSavedGame } from './fixtures';
+import { SAVE_VERSION } from '../../lib/save-data';
 
 const screens = [
   'onboarding',
@@ -15,6 +16,10 @@ const screens = [
   'arena',
   'battle',
   'journal',
+  'recovery-unreadable',
+  'recovery-confirmation',
+  'recovery-newer',
+  'recovery-storage',
 ] as const;
 type Screen = (typeof screens)[number];
 
@@ -25,6 +30,36 @@ async function click(page: Page, target: Locator) {
 
 async function prepare(page: Page, screen: Screen) {
   switch (screen) {
+    case 'recovery-unreadable':
+    case 'recovery-confirmation':
+    case 'recovery-newer':
+    case 'recovery-storage': {
+      const title =
+        screen === 'recovery-newer'
+          ? 'UPDATE THE APP'
+          : screen === 'recovery-storage'
+            ? 'COULD NOT READ YOUR SAVE'
+            : 'YOUR SAVE WOULD NOT OPEN';
+      await expect(page.getByRole('heading', { name: title, exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: /^Plant / })).toHaveCount(0);
+      await expect(
+        page.getByRole('button', { name: 'TRY LOADING AGAIN', exact: true }),
+      ).toBeVisible();
+      if (screen === 'recovery-confirmation') {
+        // CozySheet deliberately consumes a press during its entrance to skip
+        // motion. Settle it before testing the actual recovery action.
+        await page.clock.runFor(700);
+        await click(page, page.getByRole('button', { name: 'START FRESH', exact: true }));
+        await expect(
+          page.getByRole('button', { name: 'YES, START FRESH', exact: true }),
+        ).toBeVisible();
+      } else if (screen === 'recovery-unreadable') {
+        await expect(page.getByRole('button', { name: 'START FRESH', exact: true })).toBeVisible();
+      } else {
+        await expect(page.getByRole('button', { name: /START FRESH/ })).toHaveCount(0);
+      }
+      break;
+    }
     case 'onboarding':
       await expect(
         page.getByRole('button', { name: 'Plant MOSSLING, habit REST', exact: true }),
@@ -131,6 +166,43 @@ async function overflow(page: Page, screen: Screen) {
   }, screen);
 }
 
+// Exercise the real store through the rendered confirmation, after its capture.
+// Same-origin reload must keep the backup and empty garden, not re-seed a fixture.
+async function confirmRecovery(page: Page) {
+  const disk = () => page.evaluate(() => Object.fromEntries(Object.entries(localStorage)));
+  const before = await disk();
+  const raw = before['screenagotchi-v1'];
+  const backups = (saved: Record<string, string>) =>
+    Object.entries(saved).filter(([key]) => key.startsWith('screenagotchi-v1:backup:'));
+  expect(backups(before)).toEqual([]);
+  await click(page, page.getByRole('button', { name: 'CANCEL', exact: true }));
+  expect((await disk())['screenagotchi-v1']).toBe(raw);
+  await click(page, page.getByRole('button', { name: 'START FRESH', exact: true }));
+  await page.keyboard.press('Escape');
+  await page.clock.runFor(100);
+  await expect(page.getByRole('button', { name: 'YES, START FRESH', exact: true })).toHaveCount(0);
+  expect((await disk())['screenagotchi-v1']).toBe(raw);
+  expect(backups(await disk())).toEqual([]);
+  await click(page, page.getByRole('button', { name: 'START FRESH', exact: true }));
+  expect((await disk())['screenagotchi-v1']).toBe(raw);
+  await click(page, page.getByRole('button', { name: 'YES, START FRESH', exact: true }));
+  const plant = page.getByRole('button', { name: 'Plant MOSSLING, habit REST', exact: true });
+  await expect(plant).toBeVisible();
+  const recovered = await disk();
+  expect(backups(recovered)).toHaveLength(1);
+  expect(backups(recovered)[0][1]).toBe(raw);
+  expect(JSON.parse(recovered['screenagotchi-v1']).player).toBeNull();
+  await page.reload({ waitUntil: 'networkidle' });
+  await page.clock.runFor(3000);
+  await expect(plant).toBeVisible();
+  const original = JSON.parse(recovered['screenagotchi-v1']);
+  const reloaded = JSON.parse((await disk())['screenagotchi-v1']);
+  // Normal initialization records the visit time; all game data must survive.
+  expect(reloaded.lastActiveAt).toBeGreaterThanOrEqual(original.lastActiveAt);
+  expect({ ...reloaded, lastActiveAt: original.lastActiveAt }).toEqual(original);
+  expect(backups(await disk())).toEqual(backups(recovered));
+}
+
 for (const screen of screens) {
   test(screen, async ({ page, browser }, testInfo) => {
     const diagnostics: string[] = [];
@@ -158,13 +230,37 @@ for (const screen of screens) {
     // Pause before application timers exist, with enough margin for scheduler ticks.
     await page.clock.install({ time: new Date(now - 60_000) });
     await page.clock.pauseAt(new Date(now));
-    const startup: { saved: unknown; motion: boolean } = {
+    const startup: {
+      saved: unknown;
+      motion: boolean;
+      recovery: string | null;
+      futureVersion: number;
+    } = {
       saved: screen === 'onboarding' ? null : makeSavedGame(now, screen === 'welcome-back'),
       motion: reduced,
+      recovery: screen.startsWith('recovery-') ? screen : null,
+      futureVersion: SAVE_VERSION + 1,
     };
-    await page.addInitScript(({ saved, motion }: { saved: unknown; motion: boolean }) => {
+    await page.addInitScript(({ saved, motion, recovery, futureVersion }) => {
+      if (sessionStorage.getItem('napattack-screenshot-seeded')) return;
+      sessionStorage.setItem('napattack-screenshot-seeded', 'true');
       localStorage.clear();
       if (saved) localStorage.setItem('screenagotchi-v1', JSON.stringify(saved));
+      if (recovery === 'recovery-unreadable' || recovery === 'recovery-confirmation')
+        localStorage.setItem('screenagotchi-v1', '{unreadable screenshot fixture');
+      if (recovery === 'recovery-newer')
+        localStorage.setItem('screenagotchi-v1', JSON.stringify({ saveVersion: futureVersion }));
+      if (recovery === 'recovery-storage') {
+        const read = Object.getOwnPropertyDescriptor(Storage.prototype, 'getItem')!.value as (
+          this: Storage,
+          key: string,
+        ) => string | null;
+        Storage.prototype.getItem = function (key) {
+          if (this === localStorage && key === 'screenagotchi-v1')
+            throw new Error('Synthetic screenshot save read failure');
+          return read.call(this, key);
+        };
+      }
       localStorage.setItem('screenagotchi-reduced-motion', JSON.stringify(motion));
       // Seed ambient choices only in this disposable test page.
       let seed = 7351;
@@ -175,6 +271,7 @@ for (const screen of screens) {
     }, startup);
     const image = `images/${testInfo.project.name}-${screen}.png`;
     let captured = false;
+    let captureTime: string | null = null;
     await mkdir('artifacts/screens/images', { recursive: true });
     try {
       await page.goto('/', { waitUntil: 'networkidle' });
@@ -262,6 +359,7 @@ for (const screen of screens) {
         );
         clip = { x: left, y: top, width: right - left, height: bottom - top };
       }
+      captureTime = await page.evaluate(() => new Date().toISOString());
       await page.screenshot({
         path: `artifacts/screens/${image}`,
         clip,
@@ -274,9 +372,14 @@ for (const screen of screens) {
         contentType: 'image/png',
       });
       expect(diagnostics, 'Console errors, failed requests or horizontal overflow').toEqual([]);
+      if (screen === 'recovery-confirmation') {
+        await confirmRecovery(page);
+        expect(diagnostics, 'Recovery flow has no browser errors').toEqual([]);
+      }
     } finally {
       if (!captured && !page.isClosed()) {
         try {
+          captureTime = await page.evaluate(() => new Date().toISOString());
           await page.screenshot({ path: `artifacts/screens/${image}`, timeout: 3000 });
           captured = true;
         } catch {
@@ -288,13 +391,14 @@ for (const screen of screens) {
           image: captured ? image : null,
           viewport: page.viewportSize(),
           fixtureTime: new Date(now).toISOString(),
-          captureTime: await page.evaluate(() => new Date().toISOString()).catch(() => null),
+          captureTime,
           browserVersion: browser.version(),
           motion: reduced ? 'reduced' : 'normal',
           timeOfDay: night ? 'night' : 'day',
           route: page.url(),
-          fixture:
-            screen === 'onboarding'
+          fixture: screen.startsWith('recovery-')
+            ? screen
+            : screen === 'onboarding'
               ? 'fresh'
               : screen === 'welcome-back'
                 ? 'settled-mission'

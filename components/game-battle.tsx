@@ -7,6 +7,7 @@ import { useReducedMotion } from '@/lib/motion';
 import { onSwitchKey } from '@/lib/switch-keys';
 import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import {
+  PixelRatio,
   Pressable,
   ScrollView,
   StyleSheet,
@@ -14,6 +15,7 @@ import {
   useWindowDimensions,
   Platform,
 } from 'react-native';
+import { pixelScale } from '@/lib/pixel-scale';
 import { PixelIcon } from '@/components/pixel-icon';
 import Animated, {
   FadeIn,
@@ -156,18 +158,15 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const [timingLesson, setTimingLesson] = useState(
     () => request.practice && !gameStore.getState().tips.includes('timing'),
   );
-  const stagePixel = Math.max(1, Math.floor(Math.min(width, 640) / 160));
-  // Fighters fit the width AND the height left between the HP header and the card
-  // tray (~530px together), so short laptop windows don't hide them behind the tray.
-  const stageRoom = height - 530 - 39 * stagePixel;
-  const petSize = Math.max(
-    96,
-    Math.min(
-      256,
-      Math.floor((Math.min(width, 640) - 24) / 64) * 32,
-      Math.floor(stageRoom / 32) * 32,
-    ),
-  );
+  // The battle is a close-up of the world (coherence plan, step 7b): one art pixel is
+  // a whole number of the shared grid's pixels, and the fighters, the field and the
+  // platforms all use it. The zoom is as large as fits two fighters across and at least
+  // 64 art pixels of field in the height left between the HP header and the card tray.
+  const unit = pixelScale(width, PixelRatio.get());
+  const stageHeight = Math.min(360, height - 420);
+  const artFit = Math.min((Math.min(width, 640) - 24) / 80, stageHeight / 64, 8);
+  const art = Math.max(2, Math.floor(artFit / unit)) * unit;
+  const petSize = 32 * art;
   const [lifted, setLifted] = useState<number | null>(null);
   const [showHistory, setShowHistory] = useState(false);
   const [target] = useState(() => guardianPlayer(request.target));
@@ -521,20 +520,20 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           <View
             style={{
               flex: 1,
-              minHeight: Math.max(petSize + 39 * stagePixel, Math.min(360, height - 420)),
+              minHeight: Math.max(petSize + 39 * art, stageHeight),
               flexDirection: 'row',
               alignItems: 'flex-end',
               justifyContent: 'center',
-              paddingBottom: 24 * stagePixel - (petSize * 3) / 32,
+              paddingBottom: 24 * art - 3 * art,
             }}
           >
-            <RaidGarden pixel={stagePixel} petSize={petSize} />
+            <RaidGarden pixel={art} petSize={petSize} />
             <Animated.View
               entering={reduced ? undefined : FadeIn.duration(150)}
               style={{
                 position: 'absolute',
                 left: 12,
-                bottom: 24 * stagePixel - (petSize * 3) / 32,
+                bottom: 24 * art - 3 * art,
                 width: petSize,
                 alignItems: 'center',
               }}
@@ -563,7 +562,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               style={{
                 position: 'absolute',
                 right: 12,
-                bottom: 24 * stagePixel - (petSize * 3) / 32,
+                bottom: 24 * art - 3 * art,
                 width: petSize,
                 alignItems: 'center',
               }}
