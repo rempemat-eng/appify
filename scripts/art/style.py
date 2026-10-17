@@ -286,3 +286,104 @@ def trunk(cv: Canvas, x: int, top: int, bottom: int, width: int, ramp, canopy: s
                     if y + 1 < bottom:
                         cv.set(xx, y + 1, ramp[1])
                     break
+
+
+# Outlines take the darkest tone of the material they enclose (deep brown on wood,
+# dark olive on leaves, slate on stone), as in Matt's shading references, rather
+# than one near-black for everything. They still close every silhouette.
+OUTLINE_DEEP = (36, 23, 15)
+
+
+OUTLINE_MAX_LUM = 58  # an outline is never lighter than this, even around cream or white
+
+
+def outline_tone(c, amount: float = 0.74):
+    """The outline colour for a material: its own colour pulled most of the way to a
+    warm near-black, so it reads as an outline but keeps the material's hue."""
+    while True:
+        t = (
+            round(c[0] + (OUTLINE_DEEP[0] - c[0]) * amount),
+            round(c[1] + (OUTLINE_DEEP[1] - c[1]) * amount),
+            round(c[2] + (OUTLINE_DEEP[2] - c[2]) * amount),
+            255,
+        )
+        if _lum(t) <= OUTLINE_MAX_LUM or amount >= 1:
+            return t
+        amount = min(1.0, amount + 0.04)
+
+
+def specks(solid: set, largest: int = 3) -> set:
+    """Pixels in tiny detached clusters (spray, petals, sparkles): left unoutlined.
+    Diagonal contact counts as attached, so leaf tips still get outlined."""
+    seen, out = set(), set()
+    for p in solid:
+        if p in seen:
+            continue
+        group, stack = {p}, [p]
+        seen.add(p)
+        while stack:
+            x, y = stack.pop()
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+                n = (x + dx, y + dy)
+                if n in solid and n not in seen:
+                    seen.add(n)
+                    group.add(n)
+                    stack.append(n)
+        if len(group) <= largest:
+            out |= group
+    return out
+
+
+def _lum(c):
+    return 0.299 * c[0] + 0.587 * c[1] + 0.114 * c[2]
+
+
+def close_outline(cv: Canvas, ink=INK, dark_below: float = 70.0) -> Canvas:
+    """Give a sprite a complete, material-tinted 1 px outline (coherence plan, step 2).
+
+    1. Every solid pixel on the silhouette edge must be dark. Where an edge pixel is
+       still a light or mid tone, an outline pixel is added just outside it; where
+       the sprite touches its own canvas border, the edge pixel itself is darkened.
+       No sprite changes size or position, and outlines never double up.
+    2. Silhouette outline pixels drawn in the shared ink are re-tinted to the
+       material they enclose. Interior ink (eyes, window panes) is left alone.
+    """
+    ink_rgba = hex_rgba(ink) if isinstance(ink, str) else ink
+    solid = {(x, y) for y in range(cv.h) for x in range(cv.w) if cv.px[x, y][3] == 255}
+    tiny = specks(solid)
+    added = {}
+    for (x, y) in solid:
+        c = cv.px[x, y]
+        if _lum(c) < dark_below or (x, y) in tiny:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, y + dy)
+            if n in solid:
+                continue
+            if 0 <= n[0] < cv.w and 0 <= n[1] < cv.h:
+                added.setdefault(n, outline_tone(c))
+            else:
+                added[(x, y)] = outline_tone(c)
+    for (x, y), col in added.items():
+        cv.px[x, y] = col
+    solid |= set(added)
+
+    def edge(x, y):
+        return any((x + dx, y + dy) not in solid for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+
+    retint = {}
+    for (x, y) in solid:
+        if cv.px[x, y][:3] != ink_rgba[:3] or not edge(x, y):
+            continue
+        # the material this outline encloses: the nearest solid, non-ink, non-outline pixel
+        for r in (1, 2, 3):
+            near = [cv.px[x + dx, y + dy] for dx in range(-r, r + 1) for dy in range(-r, r + 1)
+                    if (x + dx, y + dy) in solid and (x + dx, y + dy) not in added
+                    and cv.px[x + dx, y + dy][:3] != ink_rgba[:3] and _lum(cv.px[x + dx, y + dy]) >= dark_below]
+            if near:
+                near.sort(key=_lum)
+                retint[(x, y)] = outline_tone(near[len(near) // 2])
+                break
+    for (x, y), col in retint.items():
+        cv.px[x, y] = col
+    return cv

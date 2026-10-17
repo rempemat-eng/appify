@@ -3,7 +3,6 @@
 import type { ImageSourcePropType } from 'react-native';
 import propBench from '@/assets/worlds/props/bench.png';
 import propBoulder from '@/assets/worlds/props/boulder.png';
-import propBridge from '@/assets/worlds/props/bridge.png';
 import propBush from '@/assets/worlds/props/bush.png';
 import propCabin from '@/assets/worlds/props/cabin.png';
 import propCafe from '@/assets/worlds/props/cafe.png';
@@ -34,7 +33,6 @@ import mountainSky from '@/assets/worlds/mountain/sky.png';
 export const worldProps: Record<string, ImageSourcePropType> = {
   bench: propBench,
   boulder: propBoulder,
-  bridge: propBridge,
   bush: propBush,
   cabin: propCabin,
   cafe: propCafe,

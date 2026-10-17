@@ -804,8 +804,10 @@ def main():
     }
     # Flat, walkable things (the bridge deck) are part of the ground, not objects:
     # baked into every ground frame, characters always draw on top of them.
-    flat = [(meadow.bridge(), meadow.BRIDGE[0], meadow.BRIDGE[1])]
-    growth = meadow.growth_sprites()
+    flat = [(style.close_outline(meadow.bridge()), meadow.BRIDGE[0], meadow.BRIDGE[1])]
+    # Every sprite gets a complete outline (coherence plan, step 2).
+    sprites = {key: style.close_outline(s) for key, s in sprites.items()}
+    growth = {key: style.close_outline(g) for key, g in meadow.growth_sprites().items()}
     growth_dir = os.path.join(OUT, 'growth')
     os.makedirs(growth_dir, exist_ok=True)
     for key, g in growth.items():

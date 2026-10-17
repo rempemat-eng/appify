@@ -679,6 +679,9 @@ def backdrop(kind) -> Canvas:
     return cv
 
 
+FLAT = {'bridge'}  # drawn into the ground, never layered over characters
+
+
 def main():
     worlds = {}
     all_props = {}
@@ -688,8 +691,14 @@ def main():
         cv1, *_ = fn(1)
         sprites = {}
         for (_id, key, x, y) in objects:
-            sprites.setdefault(key, SPRITES[key]())
+            sprites.setdefault(key, style.close_outline(SPRITES[key]()))
+        # Flat, walkable decals (bridges) belong to the ground layer, so a companion
+        # on or beside them is never drawn behind them (coherence plan, step 1).
+        flat = [(sprites[key], x, y) for (_id, key, x, y) in objects if key in FLAT]
+        objects = [o for o in objects if o[1] not in FLAT]
         for frame, cv in ((0, cv0), (1, cv1)):
+            for (decal, fx, fy) in flat:
+                cv.paste(decal, fx, fy)
             # hard cast shadows, as in the garden (docs/vision/art-style.md)
             for (_id, key, x, y) in objects:
                 s = sprites[key]
@@ -705,11 +714,12 @@ def main():
                     for yy in range(foot - 3, foot + 3):
                         for xx in range(x + 3, x + s.w + 2):
                             style.darken(cv, xx, yy)
-                elif key != 'bridge':
+                else:
                     style.cast_shadow(cv, x + s.w / 2 + 2.5, foot, max(3.5, s.w * 0.5), max(2.2, s.h * 0.12))
             cv.save(os.path.join(OUT, wid, f'ground-{frame}.png'), SCALE)
         for key, s in sprites.items():
-            all_props[key] = s
+            if key not in FLAT:
+                all_props[key] = s
         backdrop(wid).save(os.path.join(OUT, wid, 'sky.png'), SCALE)
         # walk grid: not water, not object footprints, inside the scene margins
         blocked = {(x // CELL, y // CELL) for (x, y) in water}
