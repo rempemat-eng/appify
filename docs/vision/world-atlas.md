@@ -19,6 +19,16 @@ NapAttack is about resting instead of scrolling, so the world is laid out as a j
 
 Later regions from the earlier list (tundra, sky islands, coral reef, glowshroom forest, dreamscape) fold into these where they fit: the glowshroom forest and dreamscape become Lumen's flora, the sky islands sit on the airship route from Cogsworth, the coral reef lies off Driftwood Harbour.
 
+## Every region is its own place (Matt, 17 Oct 20:52)
+
+Matt: "make sure different worlds are as detailed as i instructed you to be and they are not just reskins of other worlds but are their own". So each region is designed from its own idea, not from a template:
+
+- **Its own layout.** No shared plan of "buildings in a row, a square, a ring at the bottom". Crossroads Town is a square round a well; Cogsworth Junction is a railway platform above a cobbled square ruled by a clock tower, with an airship mast in the meadow; Dust Gulch is one street strung down from the railway's end, under a mesa, across a dry creek; Neon Harbour is a wet street between tower blocks and the quay.
+- **Its own props.** A zone outside the valley draws only its own region's props (`REGION_PROPS` in `scripts/art/zones.py` fails the build otherwise); the only shared pieces are things found anywhere (steam, a drone, a fence post). A bench in Cogsworth is cast iron, in Neon Harbour it is a tram shelter, in Dust Gulch there is a hitching rail.
+- **Its own ground.** Every region paints its own surfaces with the toolkit: cobbles and soot in Cogsworth, wind ripples, cracked hardpan and a mesa's strata in Dust Gulch, wet asphalt, puddles and neon reflections in Neon Harbour.
+- **Its own story in the scene.** The details explain the place: the well in Dust Gulch is dry and the windpump still stands over it, the creek bed is cracked mud, the line stops at a buffer by the mesa; the train in Cogsworth is still steaming; the signs in Neon Harbour double in every puddle.
+- **The valley's detail level.** Each prop gets the house's treatment: material ramps, light from the upper left, recesses, cast shadows, small story details. Concepts are reviewed side by side before any zone is wired.
+
 ## World logic for the atlas
 
 - Walking zones join only where the ground could really meet: the valley, the harbour and the castle are one walkable region.

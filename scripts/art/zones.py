@@ -29,6 +29,7 @@ import worlds  # noqa: E402
 from materials import G, P, STONE, WOOD, SLATE, RED, MATERIALS  # noqa: E402
 import steampunk_props as sp  # noqa: E402
 import cyber_props as cp  # noqa: E402
+import western_props as wsp  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 
@@ -201,6 +202,8 @@ def sprites() -> dict[str, Canvas]:
                   'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant()})
     items.update(sp.props())
     items.update(cp.props())
+    items.update(wsp.props())
+    items['fence_c'] = gp.fence_h(60)
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
 
 
@@ -324,20 +327,20 @@ def junction(frame: int = 0):
         # the train at the platform, steam from its stack
         ('engine', 'locomotive', 96, 50), ('puff-engine', 'steam_puff', 112, 34),
         # the platform
-        ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'bench', 208, 104),
-        ('crate-p', 'crate', 20, 116), ('sack-p', 'sack', 36, 122), ('barrel-p', 'barrel', 290, 112),
+        ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'iron_bench', 208, 104),
+        ('trunk-p1', 'steamer_trunk', 14, 112), ('trunk-p2', 'steamer_trunk', 30, 118), ('coal-p', 'coal_cart', 284, 110),
         # the square
         ('ws-left', 'workshop', 4, 150), ('ws-right', 'workshop', 220, 150),
         ('tower', 'clock_tower', 136, 176),
         ('lamp-s1', 'gas_lamp', 112, 280), ('lamp-s2', 'gas_lamp', 196, 280),
         ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 236, 252),
         ('puff-c1', 'steam_puff', 66, 132), ('puff-c2', 'steam_puff', 282, 132),
-        ('ws-low', 'workshop_round', 6, 320), ('barrel-1', 'barrel', 92, 386),
-        ('crate-2', 'crate', 280, 392), ('pipes-2', 'pipe_run', 240, 410),
-        ('puff-v3', 'steam_puff', 206, 352), ('cafe-j', 'cafe', 250, 330),
+        ('ws-low', 'workshop_round', 6, 320), ('coal-1', 'coal_cart', 90, 384),
+        ('trunk-2', 'steamer_trunk', 280, 396), ('pipes-2', 'pipe_run', 240, 410),
+        ('puff-v3', 'steam_puff', 206, 352), ('kiosk', 'tea_kiosk', 250, 300),
         # round the ring
-        ('lamp-r1', 'gas_lamp', 92, 470), ('lamp-r2', 'gas_lamp', 216, 470), ('bench-r', 'bench', 22, 486),
-        ('gears-2', 'gear_pile', 270, 500),
+        ('lamp-r1', 'gas_lamp', 92, 470), ('lamp-r2', 'gas_lamp', 216, 470), ('bench-r', 'iron_bench', 22, 486),
+        ('mast', 'airship_mast', 214, 412),
         ('wall-s1', 'pipe_run', 0, 556), ('wall-s2', 'pipe_run', 64, 556), ('wall-s3', 'pipe_run', 192, 556),
         ('wall-s4', 'pipe_run', 256, 556),
     ]
@@ -429,9 +432,8 @@ def neon_city(frame: int = 0):
         ('light-3', 'street_light', 40, 300), ('light-4', 'street_light', 270, 304), ('pole-1', 'cable_pole', 150, 236),
         ('vend-3', 'vending_machine', 22, 392), ('holo-2', 'holo_board', 266, 360),
         ('drone-1', 'drone', 92, 140), ('drone-2', 'drone', 230, 330), ('drone-3', 'drone', 120, 440),
-        ('crate-q', 'crate', 290, 432), ('barrel-q', 'barrel', 30, 440),
-        ('bench-q1', 'bench', 84, 420), ('bench-q2', 'bench', 192, 420), ('pot-q1', 'potted_plant', 136, 428),
-        ('pot-q2', 'potted_plant', 174, 428),
+        ('boxes-q', 'containers', 252, 404), ('shelter-q', 'shelter', 70, 412), ('plant-q1', 'uv_planter', 4, 300),
+        ('plant-q2', 'uv_planter', 290, 260), ('ferry', 'ferry', 120, 490),
     ]
     stands = {'crossing': (160, 192), 'stalls': (60, 300), 'court': (160, 382), 'quay': (160, 452)}
     return cv, objects, stands
@@ -467,9 +469,218 @@ def rain(prev: Canvas, seed: int = 0):
                 prev.set(x - t // 2, y + t, tuple(min(255, v + 40) for v in c[:3]) + (255,))
 
 
+def cracked(x: int, y: int, cell: int = 9, seed: int = 0) -> bool:
+    """True on the cracks of dried mud: the edges of jittered cells (a Voronoi
+    pattern), so the plates are irregular polygons rather than a grid."""
+    best, second = 1e9, 1e9
+    gx, gy = x // cell, y // cell
+    for j in (-1, 0, 1):
+        for i in (-1, 0, 1):
+            cx = (gx + i) * cell + noise2(gx + i, gy + j, 240 + seed) * cell
+            cy = (gy + j) * cell + noise2(gx + i, gy + j, 241 + seed) * cell
+            d = (x - cx) ** 2 + (y - cy) ** 2
+            if d < best:
+                best, second = d, best
+            elif d < second:
+                second = d
+    return math.sqrt(second) - math.sqrt(best) < 1.1
+
+
+def mesa_face(cv: Canvas, edge, top_ramp, face_ramp, face_h: int = 22):
+    """A sandstone cliff: for each row the cliff's western edge x = edge(y); the mesa
+    top lies east of it (lit, with scrub), the face runs down-left as banded strata,
+    each band lit on its upper edge, with a shadow on the ground at its foot."""
+    for y in range(H):
+        ex = edge(y)
+        if ex is None:
+            continue
+        for x in range(ex, W):
+            n = smooth_noise(x, y, 9, 221)
+            cv.set(x, y, top_ramp[4] if n > 0.62 else top_ramp[3])
+        for k in range(face_h):  # the face is drawn below and left of the rim
+            x = ex - 1 - k // 4
+            yy = y + k
+            if not (0 <= yy < H) or x < 0:
+                continue
+            band = (k + int(noise2(y // 7, 3, 222) * 3)) // 4
+            c = face_ramp[3] if band % 2 else face_ramp[2]
+            if (k + int(noise2(y // 7, 3, 222) * 3)) % 4 == 0:
+                c = face_ramp[4]
+            if k > face_h - 4:
+                c = face_ramp[1]
+            cv.set(x, yy, c)
+        for d in range(1, 4):  # shadow at the foot, down and to the right of the face
+            x = ex - 1 - (face_h // 4) - d
+            if 0 <= x < W:
+                style.darken(cv, x, y + face_h // 2)
+
+
+def gulch(frame: int = 0):
+    """Dust Gulch, its own place: a town strung along one street that runs down from the
+    railway's end, under a sandstone mesa on the east with the old mine cut into its
+    foot. A dry creek bed of cracked mud winds across (the reason the well ran dry),
+    crossed by a plank bridge; the water tower and windpump stand by it, still hoping.
+    The corral sits under the cliff, and the wagon track leaves south-west to the oasis."""
+    DESERT, ADOBE = MATERIALS['desert'], MATERIALS['adobe']
+    BLEACHED = wsp.BLEACHED
+    cv = Canvas(W, H)
+    for y in range(H):  # sand with wind ripples, darker drifts dithered in
+        for x in range(W):
+            n = smooth_noise(x, y, 26, 211)
+            c = DESERT[3]
+            if n < 0.3 or (n < 0.36 and (x + y) % 2):
+                c = DESERT[2]
+            elif n > 0.68 or (n > 0.63 and (x + y) % 2):
+                c = DESERT[4]
+            ripple = (y + int(math.sin(x / 9 + y / 40) * 3)) % 9
+            if ripple == 0 and 0.36 < n < 0.63:
+                c = DESERT[4]
+            elif ripple == 1 and 0.36 < n < 0.63:
+                c = DESERT[2]
+            cv.set(x, y, c)
+    for y in range(H):  # hardpan: flat cracked patches
+        for x in range(W):
+            if smooth_noise(x, y, 18, 223) > 0.74:
+                cv.set(x, y, DESERT[1] if cracked(x, y, 8, 1) else DESERT[4] if (x + y) % 5 else DESERT[3])
+    # the dry creek: a winding bed of cracked mud with rounded stones and pale banks
+    creek = worlds.thick([(-4, 300), (60, 296), (120, 320), (176, 312), (230, 336), (246, 360)], 9, seed=12)
+    for (x, y) in creek:
+        cv.set(x, y, ADOBE[0] if cracked(x, y, 6, 2) else ADOBE[2] if (x + y) % 3 else ADOBE[3])
+    for (x, y) in creek:
+        if (x, y - 1) not in creek:
+            cv.set(x, y, ADOBE[0]); cv.set(x, y - 1, DESERT[4])
+        elif (x, y + 1) not in creek:
+            cv.set(x, y, ADOBE[4])
+    for i in range(40):
+        x, y = int(noise2(i, 0, 228) * W), int(noise2(i, 1, 228) * H)
+        if (x, y) in creek and (x + 2, y) in creek:
+            detail.pebble(cv, x, y, ADOBE, big=i % 3 == 0)
+    # the railway's end and the plank platform at the top
+    paint_rails(cv, 40)
+    for y in range(36, 60):  # the line ends at the mesa: clear the rails beyond the buffer
+        for x in range(226, W):
+            cv.set(x, y, DESERT[3])
+    for x in range(212, 224):  # buffer stop
+        cv.vline(x, 38, 16, BLEACHED[2] if x % 2 else BLEACHED[1])
+    cv.hline(212, 38, 12, RED[3])
+    for y in range(58, 78):
+        for x in range(20, 230):
+            cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
+            if (x % 6) == 3 and y % 10 == 2:
+                cv.set(x, y, BLEACHED[0])  # nail heads
+    cv.hline(20, 58, 210, BLEACHED[5]); cv.hline(20, 78, 210, BLEACHED[0])
+    # the street: packed earth with wheel ruts and hoof prints, down from the platform
+    street = worlds.thick([(130, 78), (128, 200), (136, 300), (130, 420), (110, 500), (60, 560), (-6, 590)], 17, seed=13)
+    for (x, y) in street:
+        n = smooth_noise(x, y, 10, 213)
+        c = DESERT[2] if n > 0.3 or (x + y) % 2 else DESERT[1]
+        cv.set(x, y, c)
+    for (x, y) in street:
+        if (x - 7, y) not in street and (x - 6, y) in street:
+            pass
+    for y in range(80, H, 1):  # two wheel ruts following the street's centre line
+        cx = None
+        for (xx, yy) in ((x2, y) for x2 in range(W)):
+            if (xx, yy) in street:
+                cx = xx if cx is None else cx
+        if cx is None:
+            continue
+        right = max(x2 for x2 in range(cx, min(W, cx + 40)) if (x2, y) in street)
+        mid = (cx + right) // 2
+        for rx in (mid - 6, mid + 6):
+            if noise2(rx, y // 3, 229) > 0.15:
+                cv.set(rx, y, DESERT[1])
+        if y % 7 == 0:
+            cv.set(mid + (2 if (y // 7) % 2 else -2), y, DESERT[0])  # hoof prints
+    # boardwalks in front of the buildings, out to the street
+    for (x0, y0, w0) in ((6, 186, 108), (6, 300, 92)):
+        for y in range(y0, y0 + 8):
+            for x in range(x0, x0 + w0):
+                cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
+        cv.hline(x0, y0, w0, BLEACHED[5]); cv.hline(x0, y0 + 8, w0, BLEACHED[0])
+    # the plank bridge where the street crosses the dry bed
+    for y in range(296, 334):
+        for x in range(116, 152):
+            if (x, y) in creek or (x, y - 3) in creek:
+                cv.set(x, y, BLEACHED[3] if (y // 4) % 2 else BLEACHED[2])
+                if (y % 4) == 0:
+                    cv.set(x, y, BLEACHED[1])
+    # the mesa in the north-east: red rock plateau, its south face in strata, the mine
+    # cut into the face. The rail line stops short of it at the buffer.
+    def rim(x):
+        if x < 232:
+            return None
+        return 196 + int(math.sin(x / 23) * 6 + noise2(x // 6, 0, 230) * 5) - max(0, (250 - x) * 4)
+    FACE_H = 26
+    for x in range(232, W):
+        top = rim(x)
+        for y in range(0, top):
+            n = smooth_noise(x, y, 24, 221)
+            c = ADOBE[3] if n > 0.35 or (n > 0.3 and (x + y) % 2) else ADOBE[2]
+            if n > 0.75 or (n > 0.7 and (x + y) % 2):
+                c = ADOBE[4]
+            if top - y < 3:
+                c = DESERT[5] if top - y == 1 else ADOBE[4]  # the sunlit rim
+            cv.set(x, y, c)
+        for k in range(FACE_H):
+            y = top + k
+            band = (k + int(noise2(x // 9, 3, 222) * 3)) // 5
+            c = ADOBE[2] if band % 2 else ADOBE[1]
+            if (k + int(noise2(x // 9, 3, 222) * 3)) % 5 == 0:
+                c = ADOBE[3]
+            if k == 0:
+                c = ADOBE[0]
+            if k > FACE_H - 4:
+                c = ADOBE[1]
+            if x == 232 or (rim(x - 1) is not None and rim(x - 1) > top + 2):
+                c = ADOBE[1]
+            cv.set(x, y, c)
+        for d in range(3):  # its shadow on the sand below
+            if (x + d) % 2 or d == 0:
+                style.darken(cv, x, top + FACE_H + d)
+    for x in range(226, 233):  # the western end of the mesa, in shade
+        for y in range(0, rim(232) + FACE_H):
+            cv.set(x, y, ADOBE[1] if x > 229 else ADOBE[0] if x == 229 else cv.get(x, y))
+    for i in range(36):  # scrub on the mesa top
+        x, y = 240 + int(noise2(i, 0, 231) * 78), int(noise2(i, 1, 231) * 180)
+        detail.grass_tuft(cv, x, y, i % 6, ['#5A4A2A', '#7A6436', '#9A8044', '#B89A58', '#D2B672'], 2)
+    # the corral: hoof-churned ground under the cliff
+    ccx, ccy = 190, 470
+    for (x, y) in oval(ccx, ccy, 44, 26):
+        n = smooth_noise(x, y, 5, 216)
+        cv.set(x, y, DESERT[1] if n > 0.6 else DESERT[2] if n > 0.25 else ADOBE[2])
+    objects = [
+        ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 118, 178), ('poster', 'poster_board', 184, 150),
+        ('store', 'store', 6, 210), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
+        ('tower', 'water_tower', 168, 200), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 176, 300),
+        ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 96, 518), ('hay-2', 'hay_bale', 84, 530),
+        ('mine', 'mine_portal', 248, 170), ('dyn-1', 'dynamite_crate', 228, 214), ('dyn-2', 'dynamite_crate', 300, 222),
+        ('corral-n', 'corral_rail', ccx - 46, ccy - 36), ('corral-s', 'corral_rail', ccx - 46, ccy + 22),
+        ('corral-w', 'corral_side', ccx - 52, ccy - 22),
+        ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
+        ('cactus-4', 'saguaro_small', 286, 540), ('cactus-5', 'saguaro', 280, 60), ('cactus-6', 'saguaro_small', 4, 2),
+        ('cactus-7', 'saguaro', 290, 300), ('weed-1', 'tumbleweed', 170, 380), ('weed-2', 'tumbleweed', 30, 540),
+        ('skull', 'cow_skull', 250, 520), ('barrel-p', 'keg', 40, 62), ('sack-p', 'hay_bale', 196, 56),
+    ]
+    stands = {'platform': (128, 70), 'saloon': (58, 200), 'street': (132, 260), 'corral': (190, 470),
+              'oasis': (30, 540), 'mine': (284, 236), 'well': (75, 404)}
+    return cv, objects, stands
+
+
+# Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
+# zone outside the valley draws only its own region's props, plus the few shared
+# things below that would really be found anywhere.
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props}
+SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
+
+
 def build(name: str, fn, start: str):
     sprite_map = sprites()
     cv, objects, stands = fn()
+    if name in REGION_PROPS:
+        own = set(REGION_PROPS[name]()) | SHARED_PROPS
+        foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
+        assert not foreign, f'{name} borrows props from another region: {foreign}'
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
     shade = set()
     for (_id, key, x, y) in objects:
@@ -500,6 +711,7 @@ def main():
     build('town', town, 'garden')
     build('junction', junction, 'platform')
     build('neon', neon_city, 'crossing')
+    build('gulch', gulch, 'platform')
 
 
 if __name__ == '__main__':

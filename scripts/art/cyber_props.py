@@ -242,12 +242,101 @@ def cable_pole() -> Canvas:
     return cv
 
 
+def shelter() -> Canvas:
+    """A tram shelter, 56 x 44: a glass roof seen from above with rain beading on it,
+    a lit ad panel at one end, a slim bench and a neon route stripe."""
+    w, h = 56, 44
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(4, 16):  # the glass roof
+        for x in range(2, w - 2):
+            cv.set(x, y, '#3A4A6A' if (x + y) % 7 else '#5A6E92')
+    cv.hline(2, 4, w - 4, '#8FA6CC'); cv.hline(2, 16, w - 4, NIGHT[1])
+    for k in range(14):
+        cv.set(4 + int(noise2(k, 0, 175) * (w - 8)), 6 + int(noise2(k, 1, 175) * 8), '#C9DAF2')
+    for px in (4, w - 7):
+        for y in range(16, h - 2):
+            cv.set(px, y, IRON[3]); cv.set(px + 1, y, IRON[2]); cv.set(px + 2, y, IRON[1])
+    for (x, y) in rect_set(w - 20, 18, 12, 20):
+        cv.set(x, y, PINK[2] if y < 26 else CYAN[2])
+    glow(cv, rect_set(w - 20, 18, 12, 20), PINK, r=1)
+    cv.hline(8, 32, w - 30, WOOD[3]); cv.hline(8, 33, w - 30, WOOD[1])
+    cv.hline(2, 17, w - 4, CYAN[3])
+    return cv
+
+
+def uv_planter() -> Canvas:
+    """A concrete planter with a bonsai-like shrub under a violet grow light, 26 x 30."""
+    cv = Canvas(26, 30, pad=PAD)
+    for (x, y) in rect_set(2, 20, 22, 9):
+        cv.set(x, y, NIGHT[4] if y == 20 else NIGHT[3] if x < 6 else NIGHT[2])
+    for (x, y) in oval(13, 13, 9, 6):
+        n = noise2(x, y, 176)
+        cv.set(x, y, '#3E7A5A' if (x - 13) + (y - 13) < -2 else '#2A5A44' if n > 0.3 else '#1E4434')
+    cv.vline(13, 17, 4, WOOD[1])
+    cv.hline(6, 3, 14, IRON[3]); cv.hline(7, 4, 12, '#B07CF0')
+    for (x, y) in oval(13, 12, 10, 6):
+        c = cv.get(x, y)
+        if c[3] and (x + y) % 2:
+            cv.set(x, y, tuple(min(255, (c[i] + (0x9A, 0x6A, 0xE0)[i]) // 2) for i in range(3)) + (255,))
+    return cv
+
+
+def containers() -> Canvas:
+    """Two stacked shipping containers, 64 x 50, corrugated, one rust red, one teal,
+    with stencilled marks and a lit top."""
+    w, h = 64, 50
+    cv = Canvas(w, h, pad=PAD)
+    for (y0, ramp) in ((22, ['#3A1A16', '#5E2A22', '#80402E', '#A05A3E', '#C27A56']),
+                       (2, ['#0E3036', '#16525A', '#21757C', '#3A9AA0', '#6CC2C4'])):
+        for y in range(y0, y0 + 24):
+            for x in range(2, w - 2):
+                c = ramp[2] if (x // 3) % 2 else ramp[1]
+                if y == y0:
+                    c = ramp[4]
+                elif y < y0 + 3:
+                    c = ramp[3]
+                elif y == y0 + 23:
+                    c = ramp[0]
+                cv.set(x, y, c)
+        cv.vline(2, y0, 24, ramp[3]); cv.vline(w - 3, y0, 24, ramp[0])
+        cv.rect(10, y0 + 9, 14, 4, '#E8E2D0')
+    return cv
+
+
+def ferry() -> Canvas:
+    """A small harbour ferry moored at the quay, 112 x 46: a dark hull, a cabin with a
+    strip of screen-blue windows, a neon line along its rail and a red mast light."""
+    w, h = 112, 46
+    cv = Canvas(w, h, pad=PAD)
+    hull = oval(56, 30, 52, 13)
+    for (x, y) in hull:
+        cv.set(x, y, NIGHT[3] if y < 24 else NIGHT[2] if y < 34 else NIGHT[1])
+    for (x, y) in hull:
+        if (x, y - 1) not in hull:
+            cv.set(x, y, NIGHT[5])
+    for x in range(10, w - 10):
+        if (x, 25) in hull:
+            cv.set(x, 25, CYAN[3])
+    for (x, y) in rect_set(30, 8, 46, 16):
+        cv.set(x, y, NIGHT[4] if y < 11 else NIGHT[3])
+    cv.hline(30, 8, 46, NIGHT[5])
+    for x in range(34, 72, 6):
+        for (px, py) in rect_set(x, 14, 4, 5):
+            cv.set(px, py, CYAN[3] if py < 16 else CYAN[2])
+    for y in range(0, 9):
+        cv.set(70, y, IRON[3])
+    cv.set(70, 0, PINK[4]); cv.set(69, 1, PINK[2]); cv.set(71, 1, PINK[2])
+    glow(cv, {(x, 25) for x in range(10, w - 10) if (x, 25) in hull}, CYAN, r=1)
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'tower_pink': tower(112, 150, 0, PINK), 'tower_cyan': tower(96, 136, 1, CYAN),
         'tower_amber': tower(104, 142, 2, AMBER), 'noodle_stall': noodle_stall(),
         'vending_machine': vending_machine(), 'street_light': street_light(), 'holo_board': holo_board(),
-        'drone': drone(), 'cable_pole': cable_pole(),
+        'drone': drone(), 'cable_pole': cable_pole(), 'shelter': shelter(), 'uv_planter': uv_planter(),
+        'containers': containers(), 'ferry': ferry(),
     }
 
 

@@ -12,7 +12,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, oval  # noqa: E402
+from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
 import garden_props as gp  # noqa: E402
 from materials import MATERIALS, WOOD, STONE, GOLD, NAP, RED, SNOW  # noqa: E402
@@ -310,11 +310,133 @@ def gear_pile() -> Canvas:
     return cv
 
 
+def iron_bench() -> Canvas:
+    """A cast-iron station bench, 44 x 26: scrolled iron ends, wooden slats lit on top."""
+    cv = Canvas(44, 26, pad=PAD)
+    for ex in (3, 38):
+        for y in range(4, 26):
+            cv.set(ex, y, IRON[3]); cv.set(ex + 1, y, IRON[2]); cv.set(ex + 2, y, IRON[1])
+        for (x, y) in disc(ex + 1, 5, 2.2):
+            cv.set(x, y, IRON[3] if x <= ex + 1 else IRON[1])
+        for (x, y) in disc(ex + 1, 23, 2):
+            cv.set(x, y, IRON[2])
+    for sy in (6, 9, 12):  # the back
+        cv.hline(5, sy, 33, WOOD[4] if sy == 6 else WOOD[3]); cv.hline(5, sy + 1, 33, WOOD[1])
+    for sy in (15, 18):  # the seat
+        cv.hline(2, sy, 40, WOOD[4]); cv.hline(2, sy + 1, 40, WOOD[2])
+    return cv
+
+
+def steamer_trunk() -> Canvas:
+    """A travelling trunk, 26 x 18: leather over wood, brass corners, two straps."""
+    cv = Canvas(26, 18, pad=PAD)
+    for y in range(3, 18):
+        for x in range(1, 25):
+            cv.set(x, y, '#7A3E2A' if y > 6 else '#9A5236')
+    cv.hline(1, 3, 24, '#B8693F'); cv.hline(1, 7, 24, '#4A2618')
+    for sx in (7, 18):
+        cv.vline(sx, 3, 15, '#3A2A1E'); cv.set(sx, 9, BRASS[4])
+    for (cx, cy) in ((1, 3), (24, 3), (1, 17), (24, 17)):
+        cv.set(cx, cy, BRASS[4])
+    cv.rect(11, 8, 4, 3, BRASS[3])
+    return cv
+
+
+def coal_cart() -> Canvas:
+    """A little coal tub on rail wheels, 28 x 20, heaped with lit lumps."""
+    cv = Canvas(28, 20, pad=PAD)
+    for y in range(6, 16):
+        inset = (y - 6) // 4
+        for x in range(2 + inset, 26 - inset):
+            cv.set(x, y, IRON[3] if x < 6 else IRON[2] if x < 22 else IRON[1])
+    cv.hline(2, 6, 24, IRON[4])
+    for k in range(18):
+        x, y = 4 + int(noise2(k, 0, 161) * 20), 2 + int(noise2(k, 1, 161) * 5)
+        cv.set(x, y, '#3A3A44'); cv.set(x + 1, y, '#1E1E26'); cv.set(x, y - 1, '#6A6A78')
+    for wx in (7, 21):
+        for (x, y) in disc(wx, 17, 2.6):
+            cv.set(x, y, RED[2] if x < wx else RED[1])
+        cv.set(wx, 17, BRASS[4])
+    return cv
+
+
+def airship_mast() -> Canvas:
+    """The airship mast, 96 x 128: an iron lattice tower with a lit lamp, and a small
+    airship moored to it, its envelope a lit ochre cigar with panel seams, a gondola
+    with warm windows and a turning propeller."""
+    w, h = 104, 132
+    cv = Canvas(w, h, pad=PAD)
+    # the envelope, seen from above and a little from the side
+    env = oval(46, 30, 42, 17)
+    for (x, y) in env:
+        k = ((x - 46) / 42) * 0.6 + ((y - 30) / 17) * 0.8
+        c = '#F2D27A' if k < -0.55 else '#D9B25A' if k < -0.1 else '#B88E3E' if k < 0.45 else '#8E6A2C'
+        if (x - 4) % 12 == 0:
+            c = '#7A5A22'
+        cv.set(x, y, c)
+    for (x, y) in env:
+        if (x, y + 1) not in env:
+            cv.set(x, y, '#5E4318')
+    for fx, fy in ((86, 22), (86, 38)):  # tail fins
+        for t in range(6):
+            cv.hline(fx, fy - t // 2 + (t if fy > 30 else 0) // 3, 8 - t, RED[3] if t < 3 else RED[2])
+    # the gondola under it
+    for (x, y) in rect_set(30, 48, 28, 10):
+        cv.set(x, y, WOOD[3] if y < 51 else WOOD[2])
+    cv.hline(30, 48, 28, WOOD[4])
+    for gx in (34, 42, 50):
+        porthole(cv, gx, 53, 2.6)
+    for t in range(4):
+        cv.set(34 + t * 7, 47 - t % 2, IRON[2])
+    for (x, y) in rect_set(58, 50, 2, 6):
+        cv.set(x, y, IRON[2])
+    cv.vline(61, 47, 12, '#D8D4C8')  # the propeller, caught mid-turn
+    # the mast: a tapering lattice tower on the right with a lamp on top
+    mx = 76
+    for y in range(40, h - 2):
+        t = (y - 40) / (h - 42)
+        lx, rx = int(mx - 2 - t * 8), int(mx + 2 + t * 8)
+        cv.set(lx, y, IRON[3]); cv.set(rx, y, IRON[1])
+        if (y - 40) % 12 == 0 and y < h - 14:
+            cv.hline(lx, y, rx - lx + 1, IRON[2])
+            for k in range(rx - lx):
+                cv.set(lx + k, y + min(11, k * 12 // max(1, rx - lx)), IRON[2])
+    for (x, y) in disc(mx, 38, 3):
+        cv.set(x, y, '#FFE7A6' if x < mx else '#F0B85A')
+    cv.hline(60, 40, mx - 60, IRON[2])  # the mooring line
+    cv.rect(mx - 12, h - 4, 25, 4, STONE[3]); cv.hline(mx - 12, h - 4, 25, STONE[4])
+    return cv
+
+
+def tea_kiosk() -> Canvas:
+    """A brass tea kiosk, 40 x 46: an onion dome of copper seen from above, a round
+    brass body with a warm hatch, a kettle steaming on the counter."""
+    cv = Canvas(40, 46, pad=PAD)
+    for y in range(2, 18):
+        half = min(17, 3 + (y - 2) * 2) if y < 10 else 17 - (y - 10) // 3
+        for x in range(20 - half, 20 + half + 1):
+            cv.set(x, y, COPPER[3] if x < 18 else COPPER[1] if x > 25 else COPPER[2])
+    cv.vline(20, 0, 3, BRASS[4])
+    for y in range(18, 44):
+        for x in range(4, 36):
+            k = (x - 4) / 32
+            cv.set(x, y, BRASS[4] if k < 0.15 else BRASS[3] if k < 0.5 else BRASS[2] if k < 0.85 else BRASS[1])
+    cv.hline(3, 18, 34, BRASS[5]); cv.hline(3, 19, 34, IRON[1])
+    for (x, y) in rect_set(10, 23, 20, 10):
+        cv.set(x, y, WARM[3] if y < 26 else WARM[2])
+    cv.hline(8, 33, 24, WOOD[4]); cv.hline(8, 34, 24, WOOD[2])
+    for (x, y) in oval(25, 31, 3, 2.2):
+        cv.set(x, y, IRON[3] if x < 25 else IRON[1])
+    cv.set(22, 28, SNOW[2]); cv.set(23, 27, SNOW[3]); cv.set(22, 26, SNOW[2])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'workshop': workshop(), 'workshop_round': workshop(80, sign='round'), 'clock_tower': clock_tower(),
         'locomotive': locomotive(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
-        'gear_pile': gear_pile(),
+        'gear_pile': gear_pile(), 'iron_bench': iron_bench(), 'steamer_trunk': steamer_trunk(),
+        'coal_cart': coal_cart(), 'airship_mast': airship_mast(), 'tea_kiosk': tea_kiosk(),
     }
 
 
