@@ -28,6 +28,7 @@ import world_props as wp  # noqa: E402
 import worlds  # noqa: E402
 from materials import G, P, STONE, WOOD, SLATE, RED, MATERIALS  # noqa: E402
 import steampunk_props as sp  # noqa: E402
+import cyber_props as cp  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 
@@ -199,6 +200,7 @@ def sprites() -> dict[str, Canvas]:
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
                   'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant()})
     items.update(sp.props())
+    items.update(cp.props())
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
 
 
@@ -343,17 +345,139 @@ def junction(frame: int = 0):
     return cv, objects, stands
 
 
+def neon_city(frame: int = 0):
+    """Neon Harbour at its permanent dusk: tower blocks with neon signs along the north
+    side of a wet street, a crossing, food stalls and vending machines on the south
+    pavement, a neon-lined court for sparring, and the quay where the city meets the
+    dark harbour water, every light doubled in puddles and in the water."""
+    NIGHT, PINK, CYAN, AMBER = (MATERIALS[k] for k in ('night', 'neon_pink', 'neon_cyan', 'neon_amber'))
+    cv = Canvas(W, H)
+    # pavements: square tiles, lit on top
+    for y in range(H):
+        for x in range(W):
+            tx, ty = x % 10, y % 10
+            n = noise2(x // 10, y // 10, 181)
+            c = NIGHT[3] if n > 0.5 else NIGHT[2]
+            if tx == 0 or ty == 0:
+                c = NIGHT[1]
+            elif ty == 1:
+                c = NIGHT[4] if n > 0.5 else NIGHT[3]
+            cv.set(x, y, c)
+    # the street: wet asphalt with a lane line and a crossing
+    for y in range(156, 228):
+        for x in range(W):
+            n = noise2(x // 2, y // 2, 182)
+            cv.set(x, y, NIGHT[1] if n > 0.3 else NIGHT[0])
+    for x in range(0, W, 16):
+        cv.hline(x, 191, 9, AMBER[2])
+    for x in range(140, 184, 8):
+        for y in range(160, 224):
+            cv.hline(x, y, 5, '#C9C6D8' if y % 2 else '#B3AFC6')
+    for x in range(W):  # kerbs
+        cv.set(x, 155, NIGHT[4]); cv.set(x, 154, NIGHT[5]); cv.set(x, 228, NIGHT[4])
+    # reflections of the signs and windows in the wet street (vertical streaks)
+    for (sx, ramp) in ((103, PINK), (205, CYAN), (303, AMBER)):
+        for y in range(160, 226):
+            if noise2(sx, y // 3, 183) > 0.35:
+                for dx in range(-2, 3):
+                    if abs(dx) < 2 or y % 2:
+                        cv.set(sx + dx + int((noise2(y, sx, 184) - 0.5) * 2), y, ramp[1] if abs(dx) else ramp[2])
+    for (px, py, r) in ((40, 200, 10), (250, 176, 8), (90, 300, 9), (226, 316, 7)):  # puddles
+        for (x, y) in oval(px, py, r, r * 0.45):
+            cv.set(x, y, NIGHT[0] if (x + y) % 5 else CYAN[1])
+        cv.hline(px - r // 2, py - 1, r // 2, PINK[2])
+    # the sparring court: a neon ring painted on the ground
+    ccx, ccy = 160, 382
+    for (x, y) in oval(ccx, ccy, 62, 28):
+        cv.set(x, y, NIGHT[2] if (x // 6 + y // 6) % 2 else NIGHT[3])
+    for k in range(240):
+        a = 2 * math.pi * k / 240
+        for (rx, ry, ramp) in ((62, 28, CYAN), (40, 18, PINK)):
+            x, y = int(ccx + rx * math.cos(a)), int(ccy + ry * math.sin(a))
+            cv.set(x, y, ramp[3]); cv.set(x, y + 1, ramp[1])
+    cv.hline(ccx - 2, ccy - 18, 5, PINK[3]); cv.vline(ccx, ccy - 18, 37, PINK[2])
+    # the quay and the harbour water
+    for y in range(470, H):
+        for x in range(W):
+            n = smooth_noise(x, y, 9, 185)
+            c = '#0E1626' if n > 0.55 else '#121C30' if n > 0.3 else '#0B1220'
+            if (y - 470) % 7 == 3 and noise2(x // 9, y, 186) > 0.6:
+                c = '#22304C'
+            cv.set(x, y, c)
+    for (sx, ramp) in ((60, PINK), (150, AMBER), (262, CYAN)):
+        for y in range(474, H, 2):
+            wob = int((noise2(y, sx, 187) - 0.5) * 6)
+            cv.hline(sx + wob - 3, y, 6 + wob % 3, ramp[2] if y % 4 else ramp[1])
+    for x in range(W):
+        cv.set(x, 466, NIGHT[4]); cv.set(x, 467, NIGHT[3]); cv.set(x, 468, NIGHT[1]); cv.set(x, 469, '#070B14')
+    for bx in range(14, W, 44):  # bollards with a yellow band
+        for (x, y) in disc(bx, 460, 3):
+            cv.set(x, y, NIGHT[4] if x < bx else NIGHT[2])
+        cv.hline(bx - 2, 460, 5, AMBER[3])
+    for (lx, ly, rx, ry, col) in ((60, 150, 30, 12, CYAN[2]), (268, 152, 30, 12, CYAN[2]),
+                                  (46, 352, 28, 12, CYAN[2]), (276, 356, 28, 12, CYAN[2]),
+                                  (44, 290, 40, 14, AMBER[2]), (280, 290, 40, 14, AMBER[2]),
+                                  (112, 290, 26, 10, CYAN[1]), (60, 150, 46, 8, PINK[1]),
+                                  (164, 152, 46, 8, CYAN[1]), (264, 152, 46, 8, AMBER[1]),
+                                  (160, 382, 70, 32, PINK[0]), (218, 290, 24, 10, CYAN[1])):
+        light_pool(cv, lx, ly, rx, ry, col)
+    objects = [
+        ('tower-1', 'tower_pink', 0, 6), ('tower-2', 'tower_cyan', 116, 20), ('tower-3', 'tower_amber', 214, 14),
+        ('light-1', 'street_light', 54, 100), ('light-2', 'street_light', 262, 102),
+        ('stall-1', 'noodle_stall', 8, 236), ('vend-1', 'vending_machine', 90, 252), ('vend-2', 'vending_machine', 116, 252),
+        ('holo-1', 'holo_board', 196, 238), ('stall-2', 'noodle_stall', 244, 236),
+        ('light-3', 'street_light', 40, 300), ('light-4', 'street_light', 270, 304), ('pole-1', 'cable_pole', 150, 236),
+        ('vend-3', 'vending_machine', 22, 392), ('holo-2', 'holo_board', 266, 360),
+        ('drone-1', 'drone', 92, 140), ('drone-2', 'drone', 230, 330), ('drone-3', 'drone', 120, 440),
+        ('crate-q', 'crate', 290, 432), ('barrel-q', 'barrel', 30, 440),
+        ('bench-q1', 'bench', 84, 420), ('bench-q2', 'bench', 192, 420), ('pot-q1', 'potted_plant', 136, 428),
+        ('pot-q2', 'potted_plant', 174, 428),
+    ]
+    stands = {'crossing': (160, 192), 'stalls': (60, 300), 'court': (160, 382), 'quay': (160, 452)}
+    return cv, objects, stands
+
+
+def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str):
+    """Light thrown on the ground: three stepped rings blending toward the light's
+    colour, dithered at their edges (pixel art, no smooth gradient)."""
+    rgb = tuple(int(colour[k:k + 2], 16) for k in (1, 3, 5))
+    for y in range(cy - ry - 1, cy + ry + 2):
+        for x in range(cx - rx - 1, cx + rx + 2):
+            d = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2
+            if d >= 1:
+                continue
+            amt = 0.42 if d < 0.3 else 0.26 if d < 0.62 else 0.13
+            if 0.25 < d < 0.35 or 0.57 < d < 0.67 or d > 0.92:
+                if (x + y) % 2:
+                    amt = {0.42: 0.26, 0.26: 0.13, 0.13: 0.0}[amt]
+            if amt <= 0:
+                continue
+            c = cv.get(x, y)
+            if c[3]:
+                cv.set(x, y, tuple(int(c[i] + (rgb[i] - c[i]) * amt) for i in range(3)) + (255,))
+
+
+def rain(prev: Canvas, seed: int = 0):
+    """Rain over a preview: short slanted streaks, lighter toward the top."""
+    for i in range(900):
+        x, y = int(noise2(i, 0, 191 + seed) * W), int(noise2(i, 1, 191 + seed) * H)
+        for t in range(4):
+            c = prev.get(x - t // 2, y + t)
+            if c[3]:
+                prev.set(x - t // 2, y + t, tuple(min(255, v + 40) for v in c[:3]) + (255,))
+
+
 def build(name: str, fn, start: str):
     sprite_map = sprites()
     cv, objects, stands = fn()
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
     shade = set()
     for (_id, key, x, y) in objects:
-        if key != 'steam_puff':
+        if key not in ('steam_puff', 'drone'):
             shade |= detail.silhouette_shadow(sprite_map[key], x, y)
     for (sx, sy) in shade:
         style.darken(cv, sx, sy)
-    walk = walk_grid([o for o in objects if o[1] != 'steam_puff'], sprite_map)
+    walk = walk_grid([o for o in objects if o[1] not in ('steam_puff', 'drone')], sprite_map)
     seen = reachable(walk, stands[start])
     lost = [k for k, (x, y) in stands.items() if (y // CELL, x // CELL) not in seen]
     assert not lost, f'{name}: not reachable on foot from {start}: {lost}'
@@ -364,8 +488,10 @@ def build(name: str, fn, start: str):
     if preview:
         prev = Canvas(W, H)
         prev.paste(cv, 0, 0)
-        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] == 'steam_puff' else 0)):
+        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] in ('steam_puff', 'drone') else 0)):
             prev.paste(sprite_map[key], x, y)
+        if name == 'neon':
+            rain(prev)
         prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
     print('ok zone', name, W, H)
 
@@ -373,6 +499,7 @@ def build(name: str, fn, start: str):
 def main():
     build('town', town, 'garden')
     build('junction', junction, 'platform')
+    build('neon', neon_city, 'crossing')
 
 
 if __name__ == '__main__':
