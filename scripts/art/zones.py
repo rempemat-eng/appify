@@ -30,6 +30,7 @@ from materials import G, P, STONE, WOOD, SLATE, RED, MATERIALS  # noqa: E402
 import steampunk_props as sp  # noqa: E402
 import cyber_props as cp  # noqa: E402
 import western_props as wsp  # noqa: E402
+import caldera_props as cdp  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 
@@ -203,6 +204,7 @@ def sprites() -> dict[str, Canvas]:
     items.update(sp.props())
     items.update(cp.props())
     items.update(wsp.props())
+    items.update(cdp.props())
     items['fence_c'] = gp.fence_h(60)
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
 
@@ -439,7 +441,7 @@ def neon_city(frame: int = 0):
     return cv, objects, stands
 
 
-def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str):
+def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str, skip=frozenset()):
     """Light thrown on the ground: three stepped rings blending toward the light's
     colour, dithered at their edges (pixel art, no smooth gradient)."""
     rgb = tuple(int(colour[k:k + 2], 16) for k in (1, 3, 5))
@@ -452,7 +454,7 @@ def light_pool(cv: Canvas, cx: int, cy: int, rx: int, ry: int, colour: str):
             if 0.25 < d < 0.35 or 0.57 < d < 0.67 or d > 0.92:
                 if (x + y) % 2:
                     amt = {0.42: 0.26, 0.26: 0.13, 0.13: 0.0}[amt]
-            if amt <= 0:
+            if amt <= 0 or (x, y) in skip:
                 continue
             c = cv.get(x, y)
             if c[3]:
@@ -667,16 +669,160 @@ def gulch(frame: int = 0):
     return cv, objects, stands
 
 
+def caldera(frame: int = 0):
+    """The Ember Caldera: the crater rim at the top with the lava lake glowing beyond,
+    a lava river running downhill out of it and away to the south-east under a basalt
+    bridge, plates of cooling crust with glowing seams along its banks, the forge
+    settlement on the cooled ground, basalt column cliffs, obsidian, and a ring of
+    columns where the forge keeper spars. The mine cart line from Dust Gulch comes out
+    of a tunnel in the west wall."""
+    LAVA, BASALT, ASH = MATERIALS['lava'], MATERIALS['basalt'], MATERIALS['ash']
+    cv = Canvas(W, H)
+    for y in range(H):  # ash ground with cinders, gently darker in hollows
+        for x in range(W):
+            n = smooth_noise(x, y, 30, 261)
+            c = ASH[2] if n > 0.3 or (n > 0.26 and (x + y) % 2) else ASH[1]
+            g = noise2(x, y, 270)
+            if g > 0.93:
+                c = BASALT[2]  # a cinder
+            elif g > 0.9:
+                c = ASH[3]
+            cv.set(x, y, c)
+    for i in range(200):
+        x, y = int(noise2(i, 0, 262) * W), int(noise2(i, 1, 262) * H)
+        detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
+    # the crater: a lava lake at the top behind a ragged basalt rim
+    def rim(x):
+        return 62 + int(math.sin(x / 19) * 7 + noise2(x // 5, 0, 263) * 6)
+    for x in range(W):
+        r = rim(x)
+        for y in range(0, r):
+            n = smooth_noise(x, y, 8, 264 + frame)
+            c = LAVA[3] if n > 0.5 else LAVA[2]
+            if n > 0.78:
+                c = LAVA[4]
+            if cracked(x, y, 11, 3) and n < 0.6:
+                c = LAVA[1]  # crust floating on the lake
+            cv.set(x, y, c)
+        for k in range(14):  # the rim's inner face, lit by the lake, then its lip
+            y = r + k
+            c = LAVA[1] if k < 2 else BASALT[3] if k < 5 else BASALT[2] if k < 10 else BASALT[1]
+            if k == 5:
+                c = BASALT[4]
+            cv.set(x, y, c)
+    # the lava river: out of the lake, downhill to the south-east
+    river = worlds.thick([(170, 60), (178, 140), (160, 230), (200, 320), (250, 400), (300, 470), (W + 6, 520)], 13, seed=14)
+    for (x, y) in river:
+        n = smooth_noise(x, y + frame * 3, 7, 265)
+        c = LAVA[3] if n > 0.45 else LAVA[2]
+        if n > 0.75:
+            c = LAVA[5] if n > 0.88 else LAVA[4]
+        cv.set(x, y, c)
+    # crust plates along the banks, their seams still glowing
+    for (x, y) in list(river):
+        for (dx, dy) in ((10, 0), (-10, 0), (0, 10), (7, 7), (-7, 7)):
+            q = (x + dx, y + dy)
+            if q in river or not (0 <= q[0] < W and 0 <= q[1] < H):
+                continue
+            if cracked(q[0], q[1], 7, 4):
+                cv.set(*q, LAVA[2] if noise2(q[0], q[1], 267) > 0.4 else LAVA[1])
+            elif noise2(q[0] // 3, q[1] // 3, 268) > 0.3:
+                cv.set(*q, BASALT[2] if (q[0] + q[1]) % 3 else BASALT[3])
+    for (x, y) in river:  # the river's lip
+        if (x, y - 1) not in river:
+            cv.set(x, y, LAVA[5])
+        if (x, y + 1) not in river and 0 <= y + 1 < H:
+            cv.set(x, y + 1, BASALT[0])
+    # the lava lights the ground round it (stepped pools, see light_pool)
+    # (applied once per spot, never over the lava itself)
+    glow_skip = set(river) | {(x, y) for x in range(W) for y in range(0, rim(x) + 2)}
+    spots = sorted({(x // 26 * 26 + 13, y // 26 * 26 + 13) for (x, y) in river})
+    for (x, y) in spots:
+        light_pool(cv, x, y, 22, 14, LAVA[1], glow_skip)
+    for x in range(0, W, 48):
+        light_pool(cv, x + 24, rim(x) + 18, 30, 10, LAVA[1], glow_skip)
+    # the mine cart line out of a timbered tunnel in the west wall
+    wall = {(x, y) for y in range(236, 320) for x in range(0, 34 - abs(y - 278) // 4)}
+    for (x, y) in wall:
+        band = (y + int(noise2(x // 6, 0, 271) * 3)) // 6
+        cv.set(x, y, BASALT[3] if band % 2 else BASALT[2])
+        if (x + 1, y) not in wall:
+            cv.set(x, y, BASALT[4])
+    tunnel = {(x, y) for (x, y) in disc(16, 278, 11) if y < 278} | rect_set_z(5, 278, 23, 22)
+    for (x, y) in tunnel:
+        cv.set(x, y, '#120C10' if x < 24 else '#22161C')
+    for px in (3, 27):
+        for y in range(272, 300):
+            cv.set(px, y, MATERIALS['wood'][3]); cv.set(px + 1, y, MATERIALS['wood'][1])
+    cv.hline(3, 270, 26, MATERIALS['wood'][4]); cv.hline(3, 271, 26, MATERIALS['wood'][2])
+    for x in range(10, 150, 5):
+        cv.vline(x, 284, 12, MATERIALS['wood'][2])
+    for ry in (286, 293):
+        cv.hline(6, ry, 144, MATERIALS['iron'][3])
+    cv.vline(150, 282, 14, MATERIALS['wood'][3])  # the line's buffer
+    # the forge yard: flagstones of basalt
+    yard = worlds.thick([(40, 400), (110, 400)], 30)
+    for (x, y) in yard:
+        if (x, y) in river:
+            continue
+        sx = (x + (y // 8) % 2 * 5) // 10
+        c = BASALT[3] if noise2(sx, y // 8, 269) > 0.4 else BASALT[2]
+        if (x + (y // 8) % 2 * 5) % 10 == 0 or y % 8 == 0:
+            c = BASALT[0]
+        cv.set(x, y, c)
+    # the sparring ring: crust floor in a circle of short columns
+    ccx, ccy = 120, 500
+    for (x, y) in oval(ccx, ccy, 46, 22):
+        cv.set(x, y, ASH[1] if not cracked(x, y, 9, 5) else LAVA[1])
+    for k in range(14):
+        a = 2 * math.pi * k / 14
+        hex_px = (int(ccx + 52 * math.cos(a)), int(ccy + 26 * math.sin(a)))
+        cp_hex(cv, hex_px[0], hex_px[1], 5)
+    objects = [
+        ('forge', 'forge', 20, 320), ('shrine', 'ember_shrine', 150, 360), ('vent-1', 'cooling_vent', 40, 460),
+        ('cols-1', 'basalt_columns', 4, 96), ('cols-2', 'basalt_columns_low', 70, 120), ('cols-3', 'basalt_columns', 250, 120),
+        ('cols-4', 'basalt_columns_low', 262, 220), ('cols-5', 'basalt_columns', 0, 520),
+        ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 230, 300), ('obs-3', 'obsidian', 262, 556 - 26),
+        ('obs-4', 'obsidian_small', 60, 230), ('vent-2', 'cooling_vent', 214, 196), ('vent-3', 'cooling_vent', 280, 360),
+    ]
+    # the bridge is part of the ground (walkable), drawn across the river
+    deck = style.finalize(cdp.basalt_bridge(), name='basalt_bridge')
+    bx, by = 168, 290
+    cv.paste(deck, bx, by)
+    span = {(x, y) for x in range(bx, bx + deck.w) for y in range(by + 4, by + 20)}
+    lake = {(x, y) for x in range(W) for y in range(0, rim(x) + 14)}
+    blocked = (river | lake) - span
+    stands = {'tunnel': (44, 300), 'forge': (68, 404), 'bridge': (200, 302), 'ring': (120, 500), 'rim': (100, 96),
+              'east': (290, 300)}
+    return cv, objects, stands, blocked
+
+
+def rect_set_z(x, y, w, h):
+    return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
+
+
+def cp_hex(cv: Canvas, cx: int, cy: int, r: int):
+    """A short basalt column drawn straight into the ground: a lit hexagonal top and a
+    stub of shaded face below it."""
+    import caldera_props as cpz
+    BASALT = MATERIALS['basalt']
+    for y in range(cy, cy + 6):
+        for x in range(cx - r + 1, cx + r):
+            cv.set(x, y, BASALT[2] if x < cx else BASALT[1])
+    cpz.hex_top(cv, cx, cy, r)
+
+
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props}
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 
 
 def build(name: str, fn, start: str):
     sprite_map = sprites()
-    cv, objects, stands = fn()
+    cv, objects, stands, *rest = fn()
+    blocked_ground = rest[0] if rest else set()
     if name in REGION_PROPS:
         own = set(REGION_PROPS[name]()) | SHARED_PROPS
         foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
@@ -689,6 +835,8 @@ def build(name: str, fn, start: str):
     for (sx, sy) in shade:
         style.darken(cv, sx, sy)
     walk = walk_grid([o for o in objects if o[1] not in ('steam_puff', 'drone')], sprite_map)
+    cells = {(x // CELL, y // CELL) for (x, y) in blocked_ground}
+    walk = [''.join('#' if (c, r) in cells else ch for c, ch in enumerate(row)) for r, row in enumerate(walk)]
     seen = reachable(walk, stands[start])
     lost = [k for k, (x, y) in stands.items() if (y // CELL, x // CELL) not in seen]
     assert not lost, f'{name}: not reachable on foot from {start}: {lost}'
@@ -712,6 +860,7 @@ def main():
     build('junction', junction, 'platform')
     build('neon', neon_city, 'crossing')
     build('gulch', gulch, 'platform')
+    build('caldera', caldera, 'tunnel')
 
 
 if __name__ == '__main__':
