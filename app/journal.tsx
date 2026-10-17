@@ -68,6 +68,7 @@ export default function FieldJournal() {
         flex: 1,
         backgroundColor: c.paper,
         padding: gameLayout.gutter,
+        paddingTop: insets.top + gameLayout.gutter,
         paddingBottom: Math.max(gameLayout.gutter, insets.bottom),
         gap: 12,
         width: '100%',
@@ -76,16 +77,21 @@ export default function FieldJournal() {
       }}
     >
       <CozyBackground />
+      {/* The journal is a game page: no native header, a pixel title instead. */}
       <Stack.Screen
         options={{
           title: 'FIELD JOURNAL',
-          headerStyle: { backgroundColor: c.paper },
-          headerTintColor: c.ink,
-          headerTitleStyle: { fontFamily: 'PixelifySans_500Medium' },
+          headerShown: false,
           contentStyle: { backgroundColor: c.paper },
         }}
       />
       <View style={{ gap: 8 }}>
+        <BodyText
+          accessibilityRole="header"
+          style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13, letterSpacing: 1 }}
+        >
+          FIELD JOURNAL
+        </BodyText>
         <PixelText style={{ fontSize: 16, lineHeight: 25 }}>
           {tab === 'memories'
             ? `MEMORIES ${memories.length}`

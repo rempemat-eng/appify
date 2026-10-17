@@ -160,7 +160,7 @@ export default function RootLayout() {
           }}
         >
           <Stack.Screen name="(tabs)" options={{ title: 'NapAttack', headerShown: false }} />
-          <Stack.Screen name="journal" options={{ title: 'FIELD JOURNAL' }} />
+          <Stack.Screen name="journal" options={{ title: 'FIELD JOURNAL', headerShown: false }} />
         </Stack>
         {splashDone && <GameOverlays />}
         {!splashDone && <NapAttackSplash onFinish={setSplashDone} />}
