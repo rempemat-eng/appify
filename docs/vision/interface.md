@@ -24,6 +24,7 @@
   - **Guidance:** a "!" marker over the next place (`gardenMarker()`), and the companion's speech bubble.
 - Other tabs (Missions, Arena, Shop) are still scrolling `Page`s. Pages pad themselves with `hudClearance()` and `hotbarClearance()` from `lib/layout.ts`. Turning them into places in the world is on the roadmap.
 - Sheets: `lib/ui.ts` holds which sheet is open (`nap | menu | companions | rhythm | stats | trail`). `components/game-menus.tsx` renders them all once, beside the tabs. Any open sheet pauses the garden.
+- Shared game sheets keep a visible CLOSE button beside the title, above the scrolling content. It uses the same pixel button and 44 px target as the other controls. Backdrop and Escape/Back dismissal stay available; closing the nap sheet discards its unfinished break idea.
 
 ## Pixel frames
 

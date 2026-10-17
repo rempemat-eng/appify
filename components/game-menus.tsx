@@ -73,9 +73,15 @@ export function GameSheet({
           }}
         >
           <CozySheet style={{ gap: 12, maxHeight: height * 0.86 }}>
-            <PixelText accessibilityRole="header" style={{ fontSize: 16, lineHeight: 24 }}>
-              {title}
-            </PixelText>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              <PixelText
+                accessibilityRole="header"
+                style={{ flex: 1, minWidth: 0, fontSize: 16, lineHeight: 24 }}
+              >
+                {title}
+              </PixelText>
+              <PixelButton label="CLOSE" small light onPress={onClose} />
+            </View>
             <ScrollView contentContainerStyle={{ gap: 12, paddingBottom: 4 }}>
               {children}
             </ScrollView>
