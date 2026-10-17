@@ -62,5 +62,5 @@
 
 - Touch targets of at least 44 px, even where the drawn frame is smaller (use `hitSlop` or padding).
 - Every control has a role and a label. Decorative art is hidden from assistive tech.
-- Pixel switches keep switch semantics and work with pointer, Enter and Space on web. Space must not scroll the sheet or toggle repeatedly while held; native presses stay with Pressable. `npm run check:pixel-controls` covers the emitted web handler, not browser or device event dispatch.
+- Every `accessibilityRole="switch"` control (pixel switches, Quiet view, battle AUTO) works with pointer, Enter and Space on web. React Native Web only maps Space for buttons, so switches spread `switchKeys(toggle, disabled)` from `lib/switch-keys.ts` (or call `onSwitchKey` inline where the toggle touches a ref). Space must not scroll the sheet or toggle repeatedly while held; native presses stay with Pressable. `check:pixel-controls` and `check:garden-view` cover the emitted handlers, not browser or device event dispatch.
 - Reduced motion: no bobbing, no idle chatter rotation, instant walking.

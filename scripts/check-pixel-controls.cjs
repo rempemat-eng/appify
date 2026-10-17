@@ -26,6 +26,21 @@ const source = ts.transpileModule(
     },
   },
 ).outputText;
+// The real shared Space handler, reading the same mutable platform object.
+const switchKeysModule = { exports: {} };
+vm.runInNewContext(
+  ts.transpileModule(fs.readFileSync(path.join(__dirname, '..', 'lib', 'switch-keys.ts'), 'utf8'), {
+    compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 },
+  }).outputText,
+  {
+    module: switchKeysModule,
+    exports: switchKeysModule.exports,
+    require: (id) => {
+      assert.equal(id, 'react-native', `Unexpected switch-keys boundary: ${id}`);
+      return { Platform: platform };
+    },
+  },
+);
 const destination = { exports: {} };
 const boundaries = {
   react: { useState: (value) => [value, () => {}] },
@@ -40,6 +55,7 @@ const boundaries = {
   '@/lib/cozy': { cozy: {} },
   '@/lib/art-direction': { artOutline: '#1E1917' },
   '@/lib/layout': { gameLayout: { maxWidth: 576 } },
+  '@/lib/switch-keys': switchKeysModule.exports,
 };
 vm.runInNewContext(source, {
   module: destination,

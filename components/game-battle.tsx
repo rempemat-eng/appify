@@ -4,8 +4,16 @@ import { CozyBackground } from '@/components/cozy-ui';
 import { PlayedCard, PixelBurst, PerfectImpact } from '@/components/cozy-motion';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '@/lib/motion';
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Pressable, ScrollView, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { onSwitchKey } from '@/lib/switch-keys';
+import { useCallback, useEffect, useRef, useState, type KeyboardEvent } from 'react';
+import {
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  View,
+  useWindowDimensions,
+  Platform,
+} from 'react-native';
 import { Bell, Shield, FastForward, ChevronDown } from 'lucide-react-native';
 import Animated, {
   FadeIn,
@@ -174,6 +182,15 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const phaseRef = useRef<Phase>('choose');
   const [auto, setAuto] = useState(false);
   const autoRef = useRef(false);
+  const toggleAuto = () => {
+    const value = !autoRef.current;
+    autoRef.current = value;
+    setCardLesson(false);
+    setTimingLesson(false);
+    setAuto(value);
+    setLifted(null);
+    feedback('select');
+  };
   const [cursor, setCursor] = useState(0);
   const timingStart = useRef(0);
   const selected = useRef<Move>('stretch');
@@ -472,15 +489,14 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               accessibilityLabel={
                 request.practice ? 'Auto sparring at double speed' : 'Auto raid at double speed'
               }
-              onPress={() => {
-                const value = !autoRef.current;
-                autoRef.current = value;
-                setCardLesson(false);
-                setTimingLesson(false);
-                setAuto(value);
-                setLifted(null);
-                feedback('select');
-              }}
+              // Pressable's types omit web key events; RN Web passes them through.
+              {...(Platform.OS === 'web'
+                ? {
+                    onKeyDown: (event: KeyboardEvent<HTMLElement>) =>
+                      onSwitchKey(event, toggleAuto),
+                  }
+                : {})}
+              onPress={toggleAuto}
               style={{
                 borderRadius: 0,
                 minHeight: 44,

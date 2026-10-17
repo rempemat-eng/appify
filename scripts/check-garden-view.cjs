@@ -337,6 +337,19 @@ function quietNapPresentation() {
     },
   ).outputText;
   const boundary = new Proxy({}, { get: (_, name) => name });
+  // The real shared Space handler for role="switch" controls, on the web.
+  const switchKeysModule = { exports: {} };
+  vm.runInNewContext(
+    ts.transpileModule(
+      fs.readFileSync(path.join(__dirname, '..', 'lib', 'switch-keys.ts'), 'utf8'),
+      { compilerOptions: { module: ts.ModuleKind.CommonJS, target: ts.ScriptTarget.ES2022 } },
+    ).outputText,
+    {
+      module: switchKeysModule,
+      exports: switchKeysModule.exports,
+      require: () => ({ Platform: { OS: 'web' } }),
+    },
+  );
   const missionFixtures = [
     { id: 'park', name: 'PARK PATROL', duration: 15, reward: 20 },
     { id: 'book', name: 'BOOK CLUB', duration: 30, reward: 60 },
@@ -463,6 +476,7 @@ function quietNapPresentation() {
               };
             if (id === '@/lib/companion-memories')
               return { breakIntentionLabel: () => 'A few pages' };
+            if (id === '@/lib/switch-keys') return switchKeysModule.exports;
             if (
               id.startsWith('@/components/') ||
               id.startsWith('@/lib/') ||
@@ -653,6 +667,40 @@ function quietNapPresentation() {
         wakes === 1 && writes === 0 && quietWrites === 2 && model() === modelBefore,
         label +
           ': deliberate return remains available once without changing progress in presentation',
+      );
+      // Keyboard: Space toggles the Quiet view switch once, without scrolling.
+      tree = render();
+      quiet = findNode(tree, (node) => node.props?.accessibilityLabel === 'Quiet view');
+      const keyTarget = {};
+      let prevented = 0;
+      const space = (overrides = {}) =>
+        quiet.props.onKeyDown({
+          key: ' ',
+          target: keyTarget,
+          currentTarget: keyTarget,
+          repeat: false,
+          preventDefault: () => prevented++,
+          ...overrides,
+        });
+      space();
+      space({ repeat: true });
+      space({ ctrlKey: true });
+      check(
+        quietWrites === 3 && prevented === 2 && state.quietView,
+        label + ': Space toggles Quiet view once; held keys and shortcuts do nothing more',
+      );
+      tree = render();
+      quiet = findNode(tree, (node) => node.props?.accessibilityLabel === 'Quiet view');
+      quiet.props.onKeyDown({
+        key: ' ',
+        target: keyTarget,
+        currentTarget: keyTarget,
+        repeat: false,
+        preventDefault: () => prevented++,
+      });
+      check(
+        quietWrites === 4 && !state.quietView && writes === 0,
+        label + ': Space restores the scenery and touches no game state',
       );
     }
   }

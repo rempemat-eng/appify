@@ -1,6 +1,5 @@
-import { useState, type KeyboardEvent, type ReactNode, type Ref } from 'react';
+import { useState, type ReactNode, type Ref } from 'react';
 import {
-  Platform,
   Pressable,
   TextInput,
   View,
@@ -13,6 +12,7 @@ import {
 import { cozy as c } from '@/lib/cozy';
 import { artOutline } from '@/lib/art-direction';
 import { gameLayout } from '@/lib/layout';
+import { switchKeys } from '@/lib/switch-keys';
 
 /**
  * Pixel-art frames for every surface: notched corners, a one-pixel outline, a
@@ -386,28 +386,9 @@ export function PixelSwitch({
   const width = 20 * u;
   const height = 11 * u;
   const knob = 7 * u;
-  // RN Web's Pressable handles Enter for a switch, but only handles Space for
-  // button/menuitem roles. Keep the switch semantics and fill that web-only gap.
-  const webKeys =
-    Platform.OS === 'web'
-      ? {
-          onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
-            if (
-              (event.key !== ' ' && event.key !== 'Spacebar') ||
-              event.target !== event.currentTarget ||
-              event.altKey ||
-              event.ctrlKey ||
-              event.metaKey
-            )
-              return;
-            event.preventDefault();
-            if (!disabled && !event.repeat) onValueChange(!value);
-          },
-        }
-      : {};
   return (
     <Pressable
-      {...webKeys}
+      {...switchKeys(() => onValueChange(!value), disabled)}
       accessibilityRole="switch"
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}

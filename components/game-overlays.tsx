@@ -35,6 +35,7 @@ import { breakIntentionLabel } from '@/lib/companion-memories';
 import { topGameOverlay } from '@/lib/overlay-priority';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { gameColumn, gameSideInset } from '@/lib/layout';
+import { switchKeys } from '@/lib/switch-keys';
 function Onboarding() {
   const reduced = useReducedMotion();
   const [step, setStep] = useState(0);
@@ -368,6 +369,7 @@ function ScreenOff({
               accessibilityHint="Hides the decorative scenery. Your demo timer and wake controls stay available."
               accessibilityState={{ checked: quiet }}
               aria-checked={quiet}
+              {...switchKeys(() => gameStore.getState().setQuietView(!quiet))}
               onPress={() => gameStore.getState().setQuietView(!quiet)}
               style={{
                 minWidth: 44,
