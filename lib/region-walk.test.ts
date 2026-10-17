@@ -38,3 +38,36 @@ for (const tile of regionTiles(region)) {
   }
 }
 console.log(`Region walk: ${checks} stands reachable from the garden across zone borders.`);
+
+// Every other region is one walkable place too: from where its journey arrives (the
+// first stand of its first zone, as the atlas places the companion) every stand in
+// every zone is reachable without a cut, including across the new borders (the
+// oasis, the canal, the springs, the Skyport).
+let others = 0;
+for (const r of ['steam', 'west', 'lava', 'neon', 'space'] as const) {
+  const tiles = regionTiles(r);
+  const bb = regionBounds(r);
+  const first = tiles[0];
+  assert.ok(first && first.id !== 'garden', `${r} starts in a drawn zone`);
+  const fo = tileOrigin(r, first);
+  const [sx, sy] = Object.values(zoneMaps[first.id].stands)[0];
+  const from = { x: fo.x + sx, y: fo.y + sy };
+  const g = makeWalkGrid(regionWalk(r), { cell: TILE.cell, width: bb.width, start: from });
+  for (const tile of tiles) {
+    if (tile.id === 'garden') continue;
+    const o = tileOrigin(r, tile);
+    for (const [name, [x, y]] of Object.entries(zoneMaps[tile.id].stands)) {
+      const target = { x: o.x + x, y: o.y + y };
+      if (Math.hypot(target.x - from.x, target.y - from.y) < TILE.cell) continue; // where it starts
+      const path = g.findPath(from, target);
+      assert.ok(path.length > 0, `${r}: ${tile.id}/${name} is reachable on foot`);
+      const end = path[path.length - 1];
+      assert.ok(
+        Math.hypot(end.x - target.x, end.y - target.y) < 12,
+        `${r}: ${tile.id}/${name}: the walk ends there`,
+      );
+      others++;
+    }
+  }
+}
+console.log(`Region walk: ${others} stands reachable across the other regions.`);
