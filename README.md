@@ -66,6 +66,8 @@ The fixtures exercise existing save loading; they do not add app hooks or
 change game rules. The export disables backend configuration and the server
 binds only to localhost. Service workers are blocked so every run reviews the
 new export without a cached build. No sign-in or personal save is used.
+The screenshot server uses `.expo/screens-export`, keeping its build separate
+from the normal `dist` export used by verification and deployment.
 
 The command fails on browser console errors, unhandled page errors, failed HTTP
 responses, unexpected external requests or horizontal page/scroll-container

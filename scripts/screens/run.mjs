@@ -29,7 +29,15 @@ const run = (args) =>
 // This directory contains generated review output only; never mix old captures.
 await rm('artifacts/screens', { recursive: true, force: true });
 await mkdir('artifacts/screens', { recursive: true });
-const build = await run(['node_modules/expo/bin/cli', 'export', '-p', 'web', '--clear']);
+const build = await run([
+  'node_modules/expo/bin/cli',
+  'export',
+  '-p',
+  'web',
+  '--clear',
+  '--output-dir',
+  '.expo/screens-export',
+]);
 process.exitCode =
   build ||
   (await run([
