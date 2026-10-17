@@ -36,6 +36,7 @@ import {
 } from '@/lib/visitors';
 import { bilt, backendUnavailableMessage } from '@/lib/bilt';
 import { FutureSaveError, GAME_SAVE_KEY, readSave, writeSave } from '@/lib/save-data';
+import { backupBeforeFreshStart, SaveRecoveryChangedError } from '@/lib/save-recovery';
 import {
   appendBreak,
   breakReceipt,
@@ -187,7 +188,15 @@ export type Saved = {
   waitingVisitor: WaitingVisitor | null;
   cardReward: WelcomeReward | null;
 };
+export type SaveLoadProblem =
+  | { kind: 'unreadable'; confirmationId: string | null; busy: boolean; error: string | null }
+  | { kind: 'newer' | 'storage' };
 type Game = Saved & {
+  saveLoadProblem: SaveLoadProblem | null;
+  requestSaveRecovery: () => string | null;
+  cancelSaveRecovery: () => void;
+  confirmSaveRecovery: (confirmationId: string) => Promise<boolean>;
+  retrySaveLoad: () => Promise<void>;
   setQuietView: (value: boolean) => void;
   recentBreaks: RecentBreak[];
   breakId: string | null;
@@ -408,12 +417,67 @@ function isSaved(value: unknown): value is Saved {
 let persistence = Promise.resolve();
 let saveSource: unknown = null;
 let saveWritable = false;
+let loadGeneration = 0;
+let loadInFlight: Promise<void> | null = null;
+let unreadableSave: { raw: string; generation: number } | null = null;
 let active = true;
 let syncRequested = false;
 let battleGeneration = 0;
 let playAt = Date.now();
 let playEligible = false;
 let accounting = false;
+// Recovery starts at the existing empty-garden defaults. It never repairs or
+// partially reuses a rejected save; the original bytes live only in its backup.
+function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakId: null } {
+  return {
+    missionReturnPending: false,
+    quietView: false,
+    recentBreaks: [],
+    breakId: null,
+    activeBreakContext: null,
+    pendingMemories: [],
+    companionMemories: [],
+    memoryResolvedIds: [],
+    lastActiveAt: now,
+    tips: [],
+    firstWake: false,
+    rules: freshRules(now),
+    togetherId: null,
+    pendingTogetherWakes: [],
+    togetherSettled: [],
+    seenSessions: [],
+    player: null,
+    identity: Crypto.randomUUID(),
+    tickAt: now,
+    offStart: 0,
+    offDeck: null,
+    offGrass: 0,
+    outgoing: [],
+    staged: [],
+    applied: [],
+    alerts: [],
+    collectedCards: [],
+    waitingVisitor: null,
+    cardReward: null,
+  };
+}
+function emptySession() {
+  return {
+    live: false,
+    rivals: [],
+    sessions: [],
+    togetherPending: null,
+    recap: null,
+    homeTipActive: null,
+    guideOpen: false,
+    deckOpen: false,
+    message: null,
+    voice: null,
+    battle: null,
+    flash: null,
+    syncing: false,
+  };
+}
 export function playPaused() {
   const s = gameStore.getState();
   return remainingPlay(s.rules.budget) === 0;
@@ -817,29 +881,159 @@ export const gameStore = create<Game>((set, get) => ({
   battle: null,
   flash: null,
   syncing: false,
-  init: async () => {
-    if (get().ready) return;
+  saveLoadProblem: null,
+  requestSaveRecovery: () => {
+    const problem = get().saveLoadProblem;
+    if (problem?.kind !== 'unreadable' || problem.busy || !unreadableSave) return null;
+    const confirmationId = Crypto.randomUUID();
+    set({ saveLoadProblem: { ...problem, confirmationId, error: null } });
+    return confirmationId;
+  },
+  cancelSaveRecovery: () => {
+    const problem = get().saveLoadProblem;
+    if (problem?.kind !== 'unreadable' || problem.busy) return;
+    set({ saveLoadProblem: { ...problem, confirmationId: null } });
+  },
+  confirmSaveRecovery: (confirmationId) => {
+    const problem = get().saveLoadProblem;
+    const rejected = unreadableSave;
+    if (
+      problem?.kind !== 'unreadable' ||
+      problem.busy ||
+      !confirmationId ||
+      problem.confirmationId !== confirmationId ||
+      !rejected ||
+      rejected.generation !== loadGeneration
+    )
+      return Promise.resolve(false);
+    // Consume confirmation before the first await: double taps cannot queue a
+    // second replacement, and Cancel never silently becomes a destructive step.
+    set({ saveLoadProblem: { ...problem, confirmationId: null, busy: true, error: null } });
+    const previousPersistence = persistence;
+    const operation = (async () => {
+      try {
+        await previousPersistence;
+        const now = Date.now();
+        const fresh = emptyGarden(now);
+        const encoded = writeSave(fresh, null);
+        await backupBeforeFreshStart(AsyncStorage, {
+          expectedRaw: rejected.raw,
+          backupId: Crypto.randomUUID(),
+          freshRaw: encoded.raw,
+          isCurrent: () => unreadableSave === rejected && loadGeneration === rejected.generation,
+        });
+        unreadableSave = null;
+        saveSource = encoded.source;
+        battleGeneration++;
+        playAt = now;
+        playEligible = false;
+        set({ ...fresh, ...emptySession(), ready: true, now, saveLoadProblem: null });
+        // Keep ordinary persistence blocked until replacement and state agree.
+        saveWritable = true;
+        return true;
+      } catch (error) {
+        saveWritable = false;
+        if (error instanceof SaveRecoveryChangedError) {
+          unreadableSave = null;
+          set({
+            saveLoadProblem: { kind: 'storage' },
+            message: 'THE SAVE CHANGED. TRY LOADING AGAIN.',
+          });
+        } else {
+          set({
+            saveLoadProblem: {
+              kind: 'unreadable',
+              confirmationId: null,
+              busy: false,
+              error: 'COULD NOT START FRESH SAFELY. TRY AGAIN OR RELOAD YOUR SAVE.',
+            },
+          });
+        }
+        feedback('error');
+        return false;
+      }
+    })();
+    persistence = operation.then(() => {});
+    return operation;
+  },
+  retrySaveLoad: async () => {
+    const problem = get().saveLoadProblem;
+    if (!problem || (problem.kind === 'unreadable' && problem.busy)) return;
+    // A subscriber can request retry while the failing load is still settling.
+    // Finish that load before starting a new one instead of reusing its result.
+    if (loadInFlight) await loadInFlight;
+    const current = get().saveLoadProblem;
+    if (!current || (current.kind === 'unreadable' && current.busy)) return;
+    set({ ready: false });
+    await get().init();
+  },
+  init: () => {
+    if (loadInFlight) return loadInFlight;
+    if (get().ready) return Promise.resolve();
+    const generation = ++loadGeneration;
     saveWritable = false;
-    try {
+    unreadableSave = null;
+    set({ saveLoadProblem: null });
+    const load = async () => {
       await persistence;
-      const raw = await AsyncStorage.getItem(GAME_SAVE_KEY);
-      const decoded = readSave(raw, migrateSaved);
-      const parsed: unknown = decoded.data;
-      if (parsed !== null && !isSaved(parsed)) throw new Error('Invalid saved game');
-      const saved = parsed;
-      saveSource = decoded.source;
-      saveWritable = true;
+      let raw: string | null;
+      const failed = (saveLoadProblem: SaveLoadProblem, message: string) => {
+        set({
+          ...emptyGarden(Date.now()),
+          ...emptySession(),
+          ready: true,
+          saveLoadProblem,
+          message,
+        });
+        feedback('error');
+      };
+      try {
+        raw = await AsyncStorage.getItem(GAME_SAVE_KEY);
+      } catch {
+        // No bytes were read, so no safe backup/replacement can be offered.
+        failed({ kind: 'storage' }, 'COULD NOT READ YOUR SAVE. TRY LOADING AGAIN.');
+        return;
+      }
+      let saved: Saved | null;
+      let source: unknown;
+      try {
+        const decoded = readSave(raw, migrateSaved);
+        const parsed: unknown = decoded.data;
+        if (parsed !== null && !isSaved(parsed)) throw new Error('Invalid saved game');
+        saved = parsed;
+        source = decoded.source;
+      } catch (error) {
+        if (error instanceof FutureSaveError) {
+          failed(
+            { kind: 'newer' },
+            'THIS SAVE NEEDS A NEWER APP VERSION. UPDATE THE APP TO CONTINUE.',
+          );
+        } else {
+          // readSave(null) is valid. Only a successfully read, rejected value
+          // qualifies; storage failure and newer schemas never reach recovery.
+          if (raw !== null) unreadableSave = { raw, generation };
+          failed(
+            { kind: 'unreadable', confirmationId: null, busy: false, error: null },
+            'COULD NOT LOAD YOUR GRASSLING. YOUR SAVE HAS BEEN KEPT.',
+          );
+        }
+        return;
+      }
+      saveSource = source;
       const now = Date.now();
       set({
-        ...saved,
+        ...(saved ?? emptyGarden(now)),
         activeBreakContext: saved?.activeBreakContext ?? null,
         pendingMemories: saved?.pendingMemories ?? [],
         companionMemories: saved?.companionMemories ?? [],
         memoryResolvedIds: saved?.memoryResolvedIds ?? [],
         identity: saved?.identity || Crypto.randomUUID(),
         ready: true,
+        saveLoadProblem: null,
+        message: null,
         now,
       });
+      saveWritable = true;
       if (get().player?.mode === 'awake') {
         set({
           player: {
@@ -855,22 +1049,11 @@ export const gameStore = create<Game>((set, get) => ({
       get().openDaily();
       await persist();
       void get().sync();
-    } catch (error) {
-      saveWritable = false;
-      set({
-        ready: true,
-        identity: Crypto.randomUUID(),
-        activeBreakContext: null,
-        pendingMemories: [],
-        companionMemories: [],
-        memoryResolvedIds: [],
-        message:
-          error instanceof FutureSaveError
-            ? 'THIS SAVE NEEDS A NEWER APP VERSION. UPDATE THE APP TO CONTINUE.'
-            : 'COULD NOT LOAD YOUR GRASSLING. TRY REOPENING THE APP.',
-      });
-      feedback('error');
-    }
+    };
+    loadInFlight = load().finally(() => {
+      loadInFlight = null;
+    });
+    return loadInFlight;
   },
   hatch: async (name, pet, species) => {
     if (!saveWritable) return;

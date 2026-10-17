@@ -4,19 +4,32 @@ import { fixtureNow, saveFixtures, currentSaveFixture } from './fixtures/save-fi
 import { FutureSaveError, GAME_SAVE_KEY, readSave, SAVE_VERSION, writeSave } from './save-data';
 import { meadowSummary } from './garden-growth';
 import { startingDeck } from './cards';
+import {
+  SAVE_BACKUP_PREFIX,
+  backupBeforeFreshStart,
+  SaveRecoveryChangedError,
+} from './save-recovery';
 
 // Same native boundaries as check:game; the store, migrations and rules are real.
 const values = new Map<string, string>();
 let failReads = false;
 let failWrites = false;
 let writes = 0;
+let failWriteKey: ((key: string) => boolean) | null = null;
+let beforeWrite: ((key: string) => Promise<void>) | null = null;
+let beforeRead: (() => Promise<void>) | null = null;
+const operations: { kind: 'read' | 'write'; key: string; value?: string }[] = [];
 const storage = {
   async getItem(key: string) {
+    operations.push({ kind: 'read', key });
+    await beforeRead?.();
     if (failReads) throw new Error('Test storage read failed');
     return values.get(key) ?? null;
   },
   async setItem(key: string, value: string) {
-    if (failWrites) throw new Error('Test storage write failed');
+    operations.push({ kind: 'write', key, value });
+    await beforeWrite?.(key);
+    if (failWrites || failWriteKey?.(key)) throw new Error('Test storage write failed');
     writes++;
     values.set(key, value);
   },
@@ -78,6 +91,13 @@ function record(value: unknown): Record<string, unknown> {
 function records(value: unknown): Record<string, unknown>[] {
   assert.ok(Array.isArray(value), 'Expected saved records');
   return value.map(record);
+}
+function deferred() {
+  let resolve!: () => void;
+  const promise = new Promise<void>((done) => {
+    resolve = done;
+  });
+  return { promise, resolve };
 }
 
 async function main() {
@@ -424,6 +444,282 @@ async function main() {
     console.log(
       'PASS: genuinely empty storage still creates the original starter without another account’s extensions',
     );
+
+    const backupValues = () =>
+      new Map([...values].filter(([key]) => key.startsWith(SAVE_BACKUP_PREFIX)));
+    const request = () => {
+      const token = gameStore.getState().requestSaveRecovery();
+      assert.ok(token, 'Unreadable save must expose deliberate recovery');
+      return token;
+    };
+    const rejected = ` \n${JSON.stringify({ ...extra, player: { ...p, grass: 'unreadable' } })}\n `;
+    await load(rejected);
+    const oldIdentity = gameStore.getState().identity;
+    const untouched = new Map(values);
+    const beforeRecovery = operations.length;
+    assert.equal(await gameStore.getState().confirmSaveRecovery('unrequested'), false);
+    const cancelled = request();
+    gameStore.getState().cancelSaveRecovery();
+    assert.equal(await gameStore.getState().confirmSaveRecovery(cancelled), false);
+    const superseded = request();
+    const current = request();
+    assert.notEqual(current, superseded);
+    assert.equal(await gameStore.getState().confirmSaveRecovery(superseded), false);
+    await gameStore.getState().retrySaveLoad();
+    assert.equal(await gameStore.getState().confirmSaveRecovery(current), false);
+    assert.deepEqual(values, untouched, 'Request/cancel/reload/stale confirmations write nothing');
+    assert.equal(
+      operations.slice(beforeRecovery).some((op) => op.kind === 'write'),
+      false,
+    );
+    console.log(
+      'PASS: recovery requires the current explicit confirmation; cancel and reload invalidate it',
+    );
+
+    const start = operations.length;
+    assert.equal(await gameStore.getState().confirmSaveRecovery(request()), true);
+    const recoveryOps = operations.slice(start);
+    const recoveryWrites = recoveryOps.filter((op) => op.kind === 'write');
+    assert.equal(recoveryWrites.length, 2);
+    assert.ok(recoveryWrites[0].key.startsWith(SAVE_BACKUP_PREFIX));
+    assert.equal(recoveryWrites[0].value, rejected, 'Keep exact bytes, including whitespace');
+    assert.equal(recoveryWrites[1].key, GAME_SAVE_KEY);
+    const backupKey = recoveryWrites[0].key;
+    assert.equal(values.get(backupKey), rejected);
+    assert.equal(gameStore.getState().saveLoadProblem, null);
+    assert.equal(gameStore.getState().player, null, 'Successful recovery returns to onboarding');
+    assert.notEqual(gameStore.getState().identity, oldIdentity);
+    assert.equal(disk().player, null);
+    assert.equal(Object.hasOwn(disk(), 'futureWorld'), false);
+    for (const field of [
+      'recentBreaks',
+      'tips',
+      'pendingMemories',
+      'companionMemories',
+      'outgoing',
+      'staged',
+      'applied',
+      'alerts',
+      'collectedCards',
+      'pendingTogetherWakes',
+      'togetherSettled',
+      'seenSessions',
+    ])
+      assert.deepEqual(disk()[field], [], `Fresh garden clears ${field}`);
+    for (const field of [
+      'breakId',
+      'activeBreakContext',
+      'offDeck',
+      'waitingVisitor',
+      'cardReward',
+      'togetherId',
+    ])
+      assert.equal(disk()[field], null, `Fresh garden clears ${field}`);
+    assert.equal(disk().missionReturnPending, false);
+    assert.equal(disk().quietView, false);
+    await gameStore.getState().hatch('RECOVERED', 'SPROUT', 'BLOB');
+    await reload();
+    assert.equal(gameStore.getState().player?.grass, 20);
+    assert.deepEqual(gameStore.getState().player?.deck, startingDeck);
+    assert.equal(Object.hasOwn(disk(), 'futureWorld'), false);
+    assert.equal(values.get(backupKey), rejected);
+    console.log(
+      'PASS: raw backup precedes fresh save; onboarding/reload keeps starter rules and never carries rejected extensions',
+    );
+
+    await load('{double tap');
+    const entered = deferred();
+    const release = deferred();
+    beforeWrite = async (key) => {
+      if (key.startsWith(SAVE_BACKUP_PREFIX)) {
+        entered.resolve();
+        await release.promise;
+      }
+    };
+    const busyToken = request();
+    const completion = gameStore.getState().confirmSaveRecovery(busyToken);
+    await entered.promise;
+    assert.equal(gameStore.getState().requestSaveRecovery(), null);
+    assert.equal(await gameStore.getState().confirmSaveRecovery(busyToken), false);
+    gameStore.getState().cancelSaveRecovery();
+    await gameStore.getState().retrySaveLoad();
+    const busyProblem = gameStore.getState().saveLoadProblem;
+    assert.equal(busyProblem?.kind === 'unreadable' && busyProblem.busy, true);
+    await gameStore.getState().hatch('TOO EARLY', 'WAIT', 'BLOB');
+    gameStore.getState().setQuietView(true);
+    assert.equal(values.get(GAME_SAVE_KEY), '{double tap');
+    assert.equal(gameStore.getState().player, null);
+    let flushed = false;
+    const flush = flushGameSave().then(() => {
+      flushed = true;
+    });
+    await Promise.resolve();
+    assert.equal(flushed, false, 'Flush must wait for the recovery transaction');
+    release.resolve();
+    assert.equal(await completion, true);
+    await flush;
+    beforeWrite = null;
+    assert.equal(flushed, true);
+    assert.equal(gameStore.getState().quietView, false);
+    console.log(
+      'PASS: double taps, hatch, cancel and retry cannot interrupt an in-flight backup; flush waits',
+    );
+
+    for (const failAt of ['backup', 'primary', 'read'] as const) {
+      const raw = `{failed ${failAt}`;
+      await load(raw);
+      const before = backupValues();
+      failWriteKey = (key) =>
+        failAt === 'backup'
+          ? key.startsWith(SAVE_BACKUP_PREFIX)
+          : failAt === 'primary' && key === GAME_SAVE_KEY;
+      failReads = failAt === 'read';
+      assert.equal(await gameStore.getState().confirmSaveRecovery(request()), false);
+      failReads = false;
+      failWriteKey = null;
+      assert.equal(values.get(GAME_SAVE_KEY), raw);
+      const problem = gameStore.getState().saveLoadProblem;
+      assert.equal(problem?.kind, 'unreadable');
+      assert.equal(problem?.kind === 'unreadable' && problem.busy, false);
+      assert.equal(problem?.kind === 'unreadable' && problem.confirmationId, null);
+      for (const [key, value] of before) assert.equal(values.get(key), value);
+      assert.equal(backupValues().size - before.size, failAt === 'primary' ? 1 : 0);
+      const retained = backupValues();
+      assert.equal(await gameStore.getState().confirmSaveRecovery(request()), true);
+      for (const [key, value] of retained) assert.equal(values.get(key), value);
+      assert.equal(backupValues().size, retained.size + 1, 'A retry uses a new backup key');
+    }
+    console.log(
+      'PASS: backup/read/replacement failures keep primary bytes and all earlier backups; retries use unique keys',
+    );
+
+    for (const duringBackup of [false, true]) {
+      const raw = '{changed in another tab';
+      await load(raw);
+      const token = request();
+      const before = backupValues();
+      if (duringBackup)
+        beforeWrite = async (key) => {
+          if (key.startsWith(SAVE_BACKUP_PREFIX)) values.set(GAME_SAVE_KEY, protectedBytes);
+        };
+      else values.set(GAME_SAVE_KEY, protectedBytes);
+      assert.equal(await gameStore.getState().confirmSaveRecovery(token), false);
+      beforeWrite = null;
+      assert.equal(values.get(GAME_SAVE_KEY), protectedBytes);
+      assert.equal(gameStore.getState().saveLoadProblem?.kind, 'storage');
+      assert.equal(gameStore.getState().requestSaveRecovery(), null);
+      assert.equal(backupValues().size - before.size, duringBackup ? 1 : 0);
+      await gameStore.getState().retrySaveLoad();
+      assert.equal(gameStore.getState().player?.id, record(extra.player).id);
+      assert.equal(gameStore.getState().saveLoadProblem, null);
+      assert.equal(await gameStore.getState().confirmSaveRecovery(token), false);
+    }
+    console.log(
+      'PASS: a changed primary save aborts recovery before replacement and can be loaded normally',
+    );
+
+    const keysBefore = new Map(values);
+    for (const newer of [true, false]) {
+      if (newer) await load(JSON.stringify({ ...extra, saveVersion: SAVE_VERSION + 1 }));
+      else {
+        failReads = true;
+        await load(protectedBytes);
+        failReads = false;
+      }
+      assert.equal(gameStore.getState().saveLoadProblem?.kind, newer ? 'newer' : 'storage');
+      assert.equal(gameStore.getState().requestSaveRecovery(), null);
+      const writesBefore = writes;
+      assert.equal(await gameStore.getState().confirmSaveRecovery('never'), false);
+      assert.equal(writes, writesBefore);
+      if (newer) assert.match(gameStore.getState().message!, /UPDATE THE APP/);
+    }
+    for (const [key, value] of keysBefore)
+      if (key !== GAME_SAVE_KEY) assert.equal(values.get(key), value);
+    assert.equal(
+      operations.some((op) => op.kind === 'read' && op.key.startsWith(SAVE_BACKUP_PREFIX)),
+      false,
+      'Backups must never be read by the app',
+    );
+    console.log(
+      'PASS: future versions and storage failures expose no fresh-start action; backups are never read or removed',
+    );
+
+    const readEntered = deferred();
+    const readRelease = deferred();
+    let loadReads = 0;
+    beforeRead = async () => {
+      loadReads++;
+      readEntered.resolve();
+      await readRelease.promise;
+    };
+    values.set(GAME_SAVE_KEY, protectedBytes);
+    gameStore.setState({ ready: false });
+    const firstLoad = gameStore.getState().init();
+    const secondLoad = gameStore.getState().init();
+    await readEntered.promise;
+    assert.equal(loadReads, 1);
+    readRelease.resolve();
+    await Promise.all([firstLoad, secondLoad]);
+    beforeRead = null;
+    await flushGameSave();
+    assert.equal(gameStore.getState().player?.id, record(extra.player).id);
+    assert.deepEqual(disk().futureWorld, extra.futureWorld);
+    console.log('PASS: concurrent initialization shares one read and preserves valid progress');
+
+    values.set(GAME_SAVE_KEY, '{retry from a subscriber');
+    gameStore.setState({ ready: false });
+    let retry = Promise.resolve();
+    let retried = false;
+    const unsubscribe = gameStore.subscribe((state) => {
+      if (!state.saveLoadProblem || retried) return;
+      retried = true;
+      values.set(GAME_SAVE_KEY, protectedBytes);
+      retry = state.retrySaveLoad();
+    });
+    await gameStore.getState().init();
+    await retry;
+    unsubscribe();
+    await flushGameSave();
+    assert.equal(retried, true);
+    assert.equal(gameStore.getState().ready, true);
+    assert.equal(gameStore.getState().saveLoadProblem, null);
+    assert.equal(gameStore.getState().player?.id, record(extra.player).id);
+    console.log(
+      'PASS: a retry requested during a failing load performs a new read after it settles',
+    );
+
+    let live = true;
+    const raw = '{stale generation';
+    const simulated = new Map([[GAME_SAVE_KEY, raw]]);
+    const calls: string[] = [];
+    await assert.rejects(
+      backupBeforeFreshStart(
+        {
+          async getItem(key) {
+            return simulated.get(key) ?? null;
+          },
+          async setItem(key, value) {
+            calls.push(key);
+            simulated.set(key, value);
+            live = false;
+          },
+        },
+        { expectedRaw: raw, freshRaw: '{}', backupId: 'test-generation', isCurrent: () => live },
+      ),
+      SaveRecoveryChangedError,
+    );
+    assert.deepEqual(calls, [SAVE_BACKUP_PREFIX + 'test-generation']);
+    assert.equal(simulated.get(GAME_SAVE_KEY), raw);
+    await assert.rejects(
+      backupBeforeFreshStart(storage, {
+        expectedRaw: raw,
+        freshRaw: '{}',
+        backupId: ' ',
+        isCurrent: () => true,
+      }),
+      /backup ID/,
+    );
+    console.log('PASS: a stale generation after backup cannot replace primary data');
   } finally {
     Date.now = realNow;
     globalThis.fetch = realFetch;
