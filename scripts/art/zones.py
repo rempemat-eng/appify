@@ -26,7 +26,10 @@ import garden_props as gp  # noqa: E402
 import style  # noqa: E402
 import world_props as wp  # noqa: E402
 import worlds  # noqa: E402
-from materials import G, P, STONE, WOOD, SLATE, RED  # noqa: E402
+from materials import G, P, STONE, WOOD, SLATE, RED, MATERIALS  # noqa: E402
+import steampunk_props as sp  # noqa: E402
+
+BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 
 W, H, CELL = 320, 576, 4
 worlds.W, worlds.H = W, H  # the world painters read the canvas size from the module
@@ -195,6 +198,7 @@ def sprites() -> dict[str, Canvas]:
     items = wp.props()
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
                   'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant()})
+    items.update(sp.props())
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
 
 
@@ -229,30 +233,146 @@ def reachable(walk: list[str], start) -> set:
     return seen
 
 
-def main():
+def paint_rails(cv: Canvas, y0: int):
+    """A railway across the zone: ballast, wooden sleepers lit on top, and two iron
+    rails with a bright running edge."""
+    for y in range(y0 - 3, y0 + 16):
+        for x in range(W):
+            n = noise2(x, y, 141)
+            cv.set(x, y, STONE[2] if n > 0.55 else STONE[1] if n > 0.15 else STONE[3])
+    for x in range(1, W, 7):
+        for y in range(y0, y0 + 13):
+            cv.set(x, y, WOOD[3] if y == y0 else WOOD[2]); cv.set(x + 1, y, WOOD[2]); cv.set(x + 2, y, WOOD[1])
+            cv.set(x + 3, y, WOOD[1] if y > y0 else WOOD[2])
+    for ry in (y0 + 2, y0 + 9):
+        cv.hline(0, ry, W, IRON[4]); cv.hline(0, ry + 1, W, IRON[2]); cv.hline(0, ry + 2, W, IRON[0])
+
+
+def grate(cv: Canvas, x0: int, y0: int, w: int = 12, h: int = 8):
+    """An iron grate over a steam vent: a lit frame and dark slots."""
+    for y in range(y0, y0 + h):
+        for x in range(x0, x0 + w):
+            edge = x in (x0, x0 + w - 1) or y in (y0, y0 + h - 1)
+            cv.set(x, y, (IRON[3] if (x == x0 or y == y0) else IRON[1]) if edge else (IRON[0] if (x - x0) % 2 else IRON[2]))
+
+
+def gear_ring(cv: Canvas, cx: int, cy: int, rx: int, ry: int):
+    """The junction's sparring ring: an iron floor plate with a toothed brass rim."""
+    plate = oval(cx, cy, rx, ry)
+    for (x, y) in plate:
+        k = ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2
+        a = math.atan2((y - cy) / ry, (x - cx) / rx)
+        spoke = int((a + math.pi) / (2 * math.pi) * 12) % 2
+        c = IRON[4] if k < 0.12 else (IRON[3] if spoke else IRON[2])
+        if 0.55 < k < 0.68:
+            c = BRASS[2]
+        if (x - cx) + (y - cy) * 2 < -rx * 0.9 and k > 0.7:
+            c = IRON[4]
+        cv.set(x, y, c)
+    for k in range(40):
+        a = 2 * math.pi * k / 40
+        for t in range(4):
+            x = int(cx + (rx + 1 + t) * math.cos(a))
+            y = int(cy + (ry + 1 + t * 0.5) * math.sin(a))
+            if k % 2 == 0:
+                cv.set(x, y, BRASS[4] if math.sin(a) < 0 else BRASS[2])
+    for (x, y) in plate:
+        if (x, y + 1) not in plate:
+            cv.set(x, y + 1, BRASS[1])
+    for (x, y) in disc(cx, cy, 5):
+        cv.set(x, y, BRASS[3] if x < cx else BRASS[2])
+
+
+def junction(frame: int = 0):
+    """Cogsworth Junction: the train from the valley stands at the platform, the
+    square below has the clock tower and the tinkerers' workshops, pipes and steam
+    vents, and the gear ring at the bottom. The rails run on east toward Dust Gulch."""
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame, ['#2B3B2E', '#46583F', '#5C6E4C', '#6B7C55', '#8E9C6E'])  # sooty grass
+    # north of the line: a soot-dark yard behind a wall
+    for y in range(0, 76):
+        for x in range(W):
+            n = noise2(x, y, 151)
+            cv.set(x, y, IRON[1] if n > 0.6 else IRON[2] if n > 0.2 else STONE[1])
+    detail.bricks(cv, 0, 62, W, 14, BRICK, seed=9, base=3)
+    cv.hline(0, 62, W, BRICK[4])
+    paint_rails(cv, 82)
+    # the platform: stone slabs with a painted edge
+    plat = {(x, y) for x in range(W) for y in range(100, 134)}
+    worlds.paint_paving(cv, plat, seed=7)
+    cv.hline(0, 100, W, '#E8C860'); cv.hline(0, 101, W, '#B8962E')
+    for x in range(0, W):
+        cv.set(x, 134, STONE[1]); cv.set(x, 135, STONE[2])
+    # the cobbled square and lanes
+    # cobbled streets fill the town; the meadow only returns round the ring
+    square = {(x, y) for x in range(W) for y in range(136, 436)
+              if y < 420 + int(noise2(x // 8, 1, 152) * 16) - (12 if x < 30 or x > 290 else 0)}
+    lane = worlds.thick([(160, 430), (160, 468)], 16)
+    worlds.paint_cobbles(cv, square | lane)
+    for (x, y) in square | lane:  # a kerb of dressed stone where the cobbles meet the grass
+        if (x, y + 1) not in square and (x, y + 1) not in lane and y + 1 < H:
+            cv.set(x, y, STONE[3]); cv.set(x, y + 1, STONE[1])
+    for (gx, gy) in ((70, 190), (238, 196), (110, 360), (214, 372)):
+        grate(cv, gx, gy)
+    gear_ring(cv, 160, 492, 56, 24)
+    objects = [
+        # the far side of the line: chimneys and pipes over the wall
+        ('ws-far-1', 'workshop_round', 10, -26), ('ws-far-2', 'workshop', 200, -24),
+        ('pipes-far', 'pipe_run', 104, 48),
+        # the train at the platform, steam from its stack
+        ('engine', 'locomotive', 96, 50), ('puff-engine', 'steam_puff', 112, 34),
+        # the platform
+        ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'bench', 208, 104),
+        ('crate-p', 'crate', 20, 116), ('sack-p', 'sack', 36, 122), ('barrel-p', 'barrel', 290, 112),
+        # the square
+        ('ws-left', 'workshop', 4, 150), ('ws-right', 'workshop', 220, 150),
+        ('tower', 'clock_tower', 136, 176),
+        ('lamp-s1', 'gas_lamp', 112, 280), ('lamp-s2', 'gas_lamp', 196, 280),
+        ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 236, 252),
+        ('puff-c1', 'steam_puff', 66, 132), ('puff-c2', 'steam_puff', 282, 132),
+        ('ws-low', 'workshop_round', 6, 320), ('barrel-1', 'barrel', 92, 386),
+        ('crate-2', 'crate', 280, 392), ('pipes-2', 'pipe_run', 240, 410),
+        ('puff-v3', 'steam_puff', 206, 352), ('cafe-j', 'cafe', 250, 330),
+        # round the ring
+        ('lamp-r1', 'gas_lamp', 92, 470), ('lamp-r2', 'gas_lamp', 216, 470), ('bench-r', 'bench', 22, 486),
+        ('gears-2', 'gear_pile', 270, 500),
+        ('wall-s1', 'pipe_run', 0, 556), ('wall-s2', 'pipe_run', 64, 556), ('wall-s3', 'pipe_run', 192, 556),
+        ('wall-s4', 'pipe_run', 256, 556),
+    ]
+    stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (160, 492), 'workshop': (52, 248)}
+    return cv, objects, stands
+
+
+def build(name: str, fn, start: str):
     sprite_map = sprites()
-    cv, objects, stands = town()
+    cv, objects, stands = fn()
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
     shade = set()
     for (_id, key, x, y) in objects:
-        shade |= detail.silhouette_shadow(sprite_map[key], x, y)
+        if key != 'steam_puff':
+            shade |= detail.silhouette_shadow(sprite_map[key], x, y)
     for (sx, sy) in shade:
         style.darken(cv, sx, sy)
-    walk = walk_grid(objects, sprite_map)
-    seen = reachable(walk, stands['garden'])
+    walk = walk_grid([o for o in objects if o[1] != 'steam_puff'], sprite_map)
+    seen = reachable(walk, stands[start])
     lost = [k for k, (x, y) in stands.items() if (y // CELL, x // CELL) not in seen]
-    assert not lost, f'town: not reachable on foot from the garden road: {lost}'
-    out = os.path.join(worlds.ROOT, 'assets', 'zones', 'town')
+    assert not lost, f'{name}: not reachable on foot from {start}: {lost}'
+    out = os.path.join(worlds.ROOT, 'assets', 'zones', name)
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
     preview = os.environ.get('ZONE_PREVIEW')
     if preview:
         prev = Canvas(W, H)
         prev.paste(cv, 0, 0)
-        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h):
+        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] == 'steam_puff' else 0)):
             prev.paste(sprite_map[key], x, y)
-        prev.save(os.path.join(preview, 'zone-town.png'), 2)
-    print('ok zone town', W, H)
+        prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
+    print('ok zone', name, W, H)
+
+
+def main():
+    build('town', town, 'garden')
+    build('junction', junction, 'platform')
 
 
 if __name__ == '__main__':
