@@ -529,16 +529,26 @@ def mailbox() -> Canvas:
 
 
 def signpost() -> Canvas:
-    cv = Canvas(20, 24)
-    cv.rect(9, 8, 3, 15, WOOD[2]); cv.vline(9, 8, 15, WOOD[1]); cv.vline(11, 8, 15, WOOD[3])
-    # two arrow boards
-    for (y, flip) in ((3, False), (10, True)):
-        board = {(x, y + dy) for x in range(2, 18) for dy in range(4)}
-        tip = [(18, y + 1), (18, y + 2), (19, y + 1)] if not flip else [(1, y + 1), (1, y + 2), (0, y + 2)]
+    """Two arrow boards on a post: lit top edges, shaded undersides, carved text."""
+    cv = Canvas(20, 25)
+    cv.rect(9, 7, 3, 17, WOOD[2]); cv.vline(9, 7, 17, WOOD[3]); cv.vline(11, 7, 17, WOOD[1])
+    cv.hline(8, 24, 5, WOOD[1])
+    for (y, flip) in ((2, False), (10, True)):
+        board = {(x, y + dy) for x in range(2, 18) for dy in range(5)}
+        tip = ([(18, y + 1), (18, y + 2), (18, y + 3), (19, y + 2)] if not flip
+               else [(1, y + 1), (1, y + 2), (1, y + 3), (0, y + 2)])
         board |= set(tip)
         for (x, yy) in board:
-            cv.set(x, yy, WOOD[4] if yy == y else WOOD[3])
-        cv.hline(4, y + 2, 9, WOOD[1])
+            dy = yy - y
+            col = WOOD[4] if dy == 0 else WOOD[3] if dy < 3 else WOOD[2]
+            if dy == 4 or (x, yy + 1) not in board:
+                col = WOOD[1]
+            cv.set(x, yy, col)
+        # carved lettering and a nail
+        cv.hline(5, y + 2, 4, WOOD[1]); cv.hline(10, y + 2, 3, WOOD[1])
+        cv.set(4 if not flip else 15, y + 1, STONE[3])
+    # the post's shadow under the top board
+    cv.hline(9, 7, 3, WOOD[0]); cv.hline(9, 15, 3, WOOD[0])
     cv.outline(INK)
     return cv
 

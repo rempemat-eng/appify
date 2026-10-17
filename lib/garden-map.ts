@@ -349,7 +349,7 @@ export const gardenObjects = [
     x: 112,
     y: 94,
     w: 20,
-    h: 24,
+    h: 25,
     action: 'missions',
   },
   {
