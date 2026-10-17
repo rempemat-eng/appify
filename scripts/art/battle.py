@@ -6,7 +6,6 @@ Writes assets/battle/:
   far-{day,night}.png    hills and the distant treeline (a parallax layer)
   near-{day,night}.png   the meadow, the framing trees and the worn path (front layer)
   platform{,-night}.png  the raised mound each fighter stands on
-  backdrop-{day,night}.png  all three layers flattened (the garden's tilt view)
 
 Everything is drawn with the garden's material detail rules (scripts/art/detail.py)
 and lit from the upper left. The app shows the field at a whole-number zoom of the
@@ -240,9 +239,6 @@ def main():
     }
     for key, cv in layers.items():
         cv.save(os.path.join(OUT, f'{key}.png'), SCALE)
-    flatten(layers['sky-day'], f, n).save(os.path.join(OUT, 'backdrop-day.png'), SCALE)
-    flatten(layers['sky-night'], layers['far-night'], layers['near-night']).save(
-        os.path.join(OUT, 'backdrop-night.png'), SCALE)
     prev = flatten(layers['sky-day'], f, n)
     p = layers['platform']
     prev.paste(p, 46 - PLATFORM_W // 2, H - FEET - 8)
