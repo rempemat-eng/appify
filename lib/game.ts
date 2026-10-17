@@ -136,6 +136,8 @@ function code() {
 export type Incoming = { raid: Raid; attacker: Player | null };
 export type BattleRequest = { target: Player; practice: boolean };
 type Saved = {
+  missionReturnPending: boolean;
+  quietView: boolean;
   recentBreaks?: RecentBreak[];
   breakId?: string | null;
   activeBreakContext: ActiveBreakContext | null;
@@ -165,6 +167,7 @@ type Saved = {
   cardReward: WelcomeReward | null;
 };
 type Game = Saved & {
+  setQuietView: (value: boolean) => void;
   recentBreaks: RecentBreak[];
   breakId: string | null;
   befriendVisitor: () => void;
@@ -302,6 +305,18 @@ function migrateSaved(value: unknown) {
       early: false,
       ...value.cardReward,
     };
+  value.quietView = value.quietView === true;
+  const savedMissionId = isRecord(value.player) ? value.player.mission_id : null;
+  // Older saves already returned awake. Only retain a new pending return when
+  // its settled reward and still-shielded mission agree.
+  value.missionReturnPending =
+    value.missionReturnPending === true &&
+    isRecord(value.player) &&
+    value.player.mode === 'mission' &&
+    missions.some((mission) => mission.id === savedMissionId) &&
+    isRecord(value.cardReward) &&
+    value.cardReward.mission === value.player.mission_id &&
+    value.cardReward.early === false;
   return value;
 }
 function isRaid(value: unknown): value is Raid {
@@ -323,6 +338,8 @@ function isIncoming(value: unknown): value is Incoming {
 function isSaved(value: unknown): value is Saved {
   return (
     isRecord(value) &&
+    typeof value.missionReturnPending === 'boolean' &&
+    typeof value.quietView === 'boolean' &&
     typeof value.lastActiveAt === 'number' &&
     typeof value.firstWake === 'boolean' &&
     Array.isArray(value.companionMemories) &&
@@ -417,6 +434,8 @@ function beginTogether(session: TogetherSession) {
     tickAt: at,
     battle: null,
     recap: null,
+    missionReturnPending: false,
+    cardReward: null,
     message: null,
     voice: null,
     player: { ...s.player, mode: 'screen_off', mission_id: null, mission_ends_at: 0 },
@@ -462,6 +481,8 @@ export function resolveTogetherSession(session: TogetherSession) {
 function persist() {
   const s = gameStore.getState();
   const saved: Saved = {
+    missionReturnPending: s.missionReturnPending,
+    quietView: s.quietView,
     recentBreaks: s.recentBreaks,
     breakId: s.breakId,
     activeBreakContext: s.activeBreakContext,
@@ -526,6 +547,12 @@ function applyIncoming(item: Incoming) {
   feedback('raid');
 }
 export const gameStore = create<Game>((set, get) => ({
+  missionReturnPending: false,
+  quietView: false,
+  setQuietView: (quietView) => {
+    set({ quietView });
+    void persist();
+  },
   recentBreaks: [],
   breakId: null,
   activeBreakContext: null,
@@ -837,6 +864,8 @@ export const gameStore = create<Game>((set, get) => ({
     };
     set({
       player,
+      missionReturnPending: false,
+      cardReward: null,
       breakId: null,
       activeBreakContext: null,
       pendingMemories: [],
@@ -877,6 +906,12 @@ export const gameStore = create<Game>((set, get) => ({
     set({ now, ...(active ? { lastActiveAt: now } : {}) });
     if (active) void persist();
     if (!p) return;
+    // Completion has already settled. Keep the mission shield and freeze its
+    // clock until an explicit return; a long absence must never settle twice.
+    if (s.missionReturnPending) {
+      set({ tickAt: now });
+      return;
+    }
     const seconds = Math.floor((now - s.tickAt) / 1000);
     if (seconds < 1) return;
     if (p.mode !== 'awake') {
@@ -914,10 +949,6 @@ export const gameStore = create<Game>((set, get) => ({
             ...next,
             grass: next.grass + reward,
             owned_hats: hat ? [...p.owned_hats, hat] : p.owned_hats,
-            mode: 'awake',
-            mission_id: null,
-            mission_ends_at: 0,
-            care_until: now + 30000,
           };
           set({
             firstWake: true,
@@ -992,6 +1023,7 @@ export const gameStore = create<Game>((set, get) => ({
                   : null,
               voice: visitor ? 'someone visited while you were gone!' : get().voice,
               cardReward: reward,
+              missionReturnPending: true,
               recentBreaks: appendBreak(
                 s.recentBreaks,
                 breakReceipt(settlementId, p.mission_ends_at, reward),
@@ -1179,6 +1211,8 @@ export const gameStore = create<Game>((set, get) => ({
     const breakId = m ? `${p.id}:${m.id}:${now + m.duration * 1000}` : `${p.id}:nap:${now}`;
     set({
       offStart: p.offline_seconds,
+      missionReturnPending: false,
+      cardReward: null,
       breakId,
       activeBreakContext: isBreakIntention(intention)
         ? { breakId, playerId: p.id, intention, companion: breakCompanion(p), startedAt: now }
@@ -1199,6 +1233,27 @@ export const gameStore = create<Game>((set, get) => ({
   },
   wake: async () => {
     get().tick();
+    // A wake at the deadline follows the successful path after tick settles it.
+    // The existing receipt/rewards stay available; returning never rolls again.
+    if (get().missionReturnPending) {
+      const p = get().player;
+      if (!p) return;
+      const now = Date.now();
+      set({
+        missionReturnPending: false,
+        player: {
+          ...p,
+          mode: 'awake',
+          mission_id: null,
+          mission_ends_at: 0,
+          care_until: now + 30000,
+        },
+        tickAt: now,
+      });
+      await persist();
+      void get().sync();
+      return;
+    }
     const togetherId = get().togetherId;
     if (togetherId && get().player) {
       const s = get();
@@ -1444,14 +1499,28 @@ export const gameStore = create<Game>((set, get) => ({
   },
   dismissCards: () => {
     const s = get();
+    const now = Date.now();
     set({
       cardReward: null,
       deckOpen: false,
+      ...(s.missionReturnPending && s.player
+        ? {
+            missionReturnPending: false,
+            player: {
+              ...s.player,
+              mode: 'awake' as const,
+              mission_id: null,
+              mission_ends_at: 0,
+              care_until: now + 30000,
+            },
+            tickAt: now,
+          }
+        : {}),
       ...(s.waitingVisitor?.expiresAt === 0
         ? { waitingVisitor: { ...s.waitingVisitor, expiresAt: Date.now() + 10000 } }
         : {}),
     });
-    void persist();
+    changed();
   },
   dismissAlert: () => {
     set({ alerts: get().alerts.slice(1) });

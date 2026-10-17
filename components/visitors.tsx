@@ -155,6 +155,7 @@ export function WelcomeBack() {
     s.pendingTogetherWakes.some((wake) => wake.sid === s.cardReward?.sessionId),
   );
   const reward = useGame((s) => s.cardReward);
+  const missionReturnPending = useGame((s) => s.missionReturnPending);
   const pendingMemories = useGame((s) => s.pendingMemories);
   const [keptMemory, setKeptMemory] = useState<string | null>(null);
   const waiting = useGame((s) => s.waitingVisitor);
@@ -295,6 +296,12 @@ export function WelcomeBack() {
           <BodyText style={{ textAlign: 'center' }}>
             {reward.minutes} simulated offline MIN
           </BodyText>
+          {missionReturnPending && (
+            <BodyText style={{ textAlign: 'center', fontSize: 12, lineHeight: 18 }}>
+              Mission complete. Your rewards are saved and your garden is still shielded. Your care
+              window and play time begin when you choose BACK TO THE GARDEN.
+            </BodyText>
+          )}
           <View
             style={{ flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center' }}
           >

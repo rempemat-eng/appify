@@ -233,11 +233,21 @@ function Onboarding() {
     </KeyboardAvoidingView>
   );
 }
-function ScreenOff() {
+function ScreenOff({
+  confirmEarlyReturn,
+  onRequestReturn,
+  onKeepExploring,
+  onReturnEarly,
+}: {
+  confirmEarlyReturn: boolean;
+  onRequestReturn: () => void;
+  onKeepExploring: () => void;
+  onReturnEarly: () => void;
+}) {
   const [gardenView] = useGardenView();
   const [skip, setSkip] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
-  const [quiet, setQuiet] = useState(false);
+  const quiet = useGame((s) => s.quietView);
   const p = useGame((s) => s.player)!;
   const now = useGame((s) => s.now);
   const offStart = useGame((s) => s.offStart);
@@ -321,7 +331,7 @@ function ScreenOff() {
                 {clock(Math.max(0, Math.ceil((p.mission_ends_at - now) / 1000)))}
               </PixelText>
               <BodyText style={{ color: c.paper, fontSize: 11 }}>
-                REAL DEMO COUNTDOWN · UNTIL HOME
+                REAL DEMO COUNTDOWN · UNTIL COMPLETE
               </BodyText>
             </View>
           )}
@@ -364,7 +374,7 @@ function ScreenOff() {
               accessibilityHint="Hides the decorative scenery. Your demo timer and wake controls stay available."
               accessibilityState={{ checked: quiet }}
               aria-checked={quiet}
-              onPress={() => setQuiet((value) => !value)}
+              onPress={() => gameStore.getState().setQuietView(!quiet)}
               style={{
                 minWidth: 44,
                 minHeight: 44,
@@ -420,7 +430,7 @@ function ScreenOff() {
             >
               Demo timer only. Sleep and phone inactivity are not measured.{' '}
               {m
-                ? 'This demo mission returns home automatically when its timer ends.'
+                ? 'This demo mission finishes automatically. Its rewards are saved, and your garden stays shielded until you return.'
                 : 'This nap has no end timer. Choose WAKE UP when you want to return.'}
             </BodyText>
           )}
@@ -542,7 +552,29 @@ function ScreenOff() {
         {togetherId && message && (
           <BodyText style={{ color: c.paper, textAlign: 'center' }}>{message}</BodyText>
         )}
-        <PixelButton label="WAKE UP" light onPress={() => void gameStore.getState().wake()} />
+        {confirmEarlyReturn && m ? (
+          <View
+            accessibilityLiveRegion="polite"
+            style={{
+              gap: 12,
+              padding: 16,
+              borderWidth: 2,
+              borderColor: c.gold,
+              borderRadius: 14,
+              backgroundColor: c.night,
+            }}
+          >
+            <PixelText style={{ color: c.paper, textAlign: 'center' }}>RETURN EARLY?</PixelText>
+            <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 13 }}>
+              No mission completion rewards, including the {m.reward} GRASS bonus. Cards already
+              earned stay yours.
+            </BodyText>
+            <PixelButton label="KEEP EXPLORING" onPress={onKeepExploring} />
+            <PixelButton label="RETURN EARLY" small light onPress={onReturnEarly} />
+          </View>
+        ) : (
+          <PixelButton label="WAKE UP" light onPress={onRequestReturn} />
+        )}
       </View>
     </View>
   );
@@ -646,13 +678,15 @@ export function GameOverlays() {
   const guideOpen = useGame((s) => s.guideOpen);
   const deckOpen = useGame((s) => s.deckOpen);
   const cardReward = useGame((s) => s.cardReward);
+  const missionReturnPending = useGame((s) => s.missionReturnPending);
   const recap = useGame((s) => s.recap);
+  const [returnPrompt, setReturnPrompt] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
   const isScreenOff = !!p && p.mode !== 'awake';
   const overlay = topGameOverlay({
     ready,
     hasPlayer: Boolean(p),
-    napping: isScreenOff,
+    napping: isScreenOff && !missionReturnPending,
     welcome: Boolean(cardReward),
     recap: Boolean(recap),
     battle: Boolean(battle),
@@ -661,6 +695,13 @@ export function GameOverlays() {
     guide: guideOpen,
     deck: deckOpen,
   });
+  const earlyReturnKey = p?.mode === 'mission' ? `${p.mission_id}:${p.mission_ends_at}` : null;
+  const confirmEarlyReturn =
+    overlay === 'nap' && earlyReturnKey !== null && returnPrompt === earlyReturnKey;
+  function requestReturn() {
+    if (earlyReturnKey !== null) setReturnPrompt(earlyReturnKey);
+    else void gameStore.getState().wake();
+  }
   const visible = overlay !== null;
   useEffect(() => {
     if (!flash) return undefined;
@@ -671,7 +712,7 @@ export function GameOverlays() {
     if (!ready || !p) return;
     switch (overlay) {
       case 'nap':
-        void gameStore.getState().wake();
+        if (earlyReturnKey !== null) setReturnPrompt(confirmEarlyReturn ? null : earlyReturnKey);
         break;
       case 'welcome':
       case 'deck':
@@ -700,8 +741,8 @@ export function GameOverlays() {
           style={{
             flex: 1,
             paddingTop: insets.top,
-            paddingBottom: !isScreenOff && cardReward ? 0 : insets.bottom,
-            backgroundColor: isScreenOff ? c.night : c.paper,
+            paddingBottom: overlay === 'welcome' ? 0 : insets.bottom,
+            backgroundColor: overlay === 'nap' ? c.night : c.paper,
           }}
         >
           {/* Same centred phone-width column as the tab screens (Page maxWidth), so
@@ -728,7 +769,15 @@ export function GameOverlays() {
             ) : !p ? (
               <Onboarding />
             ) : overlay === 'nap' ? (
-              <ScreenOff />
+              <ScreenOff
+                confirmEarlyReturn={confirmEarlyReturn}
+                onRequestReturn={requestReturn}
+                onKeepExploring={() => setReturnPrompt(null)}
+                onReturnEarly={() => {
+                  setReturnPrompt(null);
+                  void gameStore.getState().wake();
+                }}
+              />
             ) : overlay === 'welcome' ? (
               <WelcomeBack />
             ) : overlay === 'recap' ? (

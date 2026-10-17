@@ -80,6 +80,7 @@ export async function runRefinementChecks(): Promise<string[]> {
       offDeck: null,
       rules: { ...freshRules(time), recapDay: dayKey(time) },
       cardReward: null,
+      missionReturnPending: false,
       collectedCards: [],
       battle: null,
       alerts: [],
@@ -148,12 +149,13 @@ export async function runRefinementChecks(): Promise<string[]> {
     time += 16_000;
     await reload();
     check(
-      gameStore.getState().player!.mode === 'awake' &&
+      gameStore.getState().player!.mode === 'mission' &&
+        gameStore.getState().missionReturnPending &&
         gameStore.getState().player!.grass === 40 &&
         gameStore.getState().cardReward?.minutes === 15 &&
         gameStore.getState().cardReward?.cards.length === 2 &&
         postcardsOf(gameStore.getState().player!).length === 1,
-      'Cold mission restore settles Park once with 20 GRASS, 2 cards and 1 postcard',
+      'Cold mission restore settles Park once and keeps it shielded until return',
     );
     reset();
     gameStore.getState().sleep('park');
