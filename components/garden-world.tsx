@@ -21,6 +21,7 @@ import * as Haptics from 'expo-haptics';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
 import { useAppActive } from '@/lib/app-active';
+import { playSound } from '@/lib/sound';
 import type { BreakIntention, CompanionMemory } from '@/lib/companion-memories';
 import { gardenKeepsakes, gardenResponse, gardenSignature } from '@/lib/garden-life';
 import { playPaused, useGame, type Player } from '@/lib/game';
@@ -665,28 +666,34 @@ export function GardenWorld({
           setEmote('…');
         } else {
           onFeed?.();
+          playSound('munch');
           setEmote('♥');
         }
         break;
       case 'pond':
+        playSound('splash');
         respond('pond', companionLine('pond'), gardenHotspots.pond);
         setEmote('♪');
         break;
       case 'read':
+        playSound('page');
         respond('read', companionLine('read'), gardenHotspots.read);
         setEmote('…');
         break;
       case 'water':
+        playSound('water');
         respond('water', companionLine('water'), gardenHotspots.water);
         setEmote('♪');
         break;
       case 'meadow':
+        playSound('rustle');
         respond('meadow', meadowLine(lifetimeMinutes), gardenHotspots.meadow);
         setEmote('✿');
         break;
       case 'lantern': {
         const next = !lanternOn;
         setLanternOverride(next);
+        playSound('lantern');
         respond(
           'lantern',
           next ? companionLine('lantern') : 'lights out. the stars can take over.',
@@ -798,6 +805,7 @@ export function GardenWorld({
     setFeedback(null);
     setReaction(null);
     // the tap surface starts at the horizon in 2.5D view
+    playSound('steps');
     walkTo(unproject(proj, lx, ly + (tilt ? proj.horizon : 0)));
   }
 
@@ -808,6 +816,7 @@ export function GardenWorld({
     setReaction(null);
     const spot = gardenHotspots[action];
     setTag({ text: spot.label, x: spot.x, y: spot.y });
+    playSound('steps');
     walkTo({ x: spot.x, y: spot.y }, action);
   }
 
@@ -831,6 +840,7 @@ export function GardenWorld({
     stopJourney();
     setEmote('♥');
     void Haptics.selectionAsync();
+    playSound('boop');
     respond('pat', companionLine('pat'), pos.current);
   }
 

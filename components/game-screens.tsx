@@ -32,6 +32,7 @@ import { WorldPreview } from '@/components/world-scene';
 import { isWorldId } from '@/lib/world-maps';
 import { worldCatalogue } from '@/lib/world-catalogue';
 import { openSheet, useUi } from '@/lib/ui';
+import { useAmbience } from '@/lib/sound';
 import { type BreakIntention, type CompanionMemory } from '@/lib/companion-memories';
 import { BreakIntentionPicker } from '@/components/companion-memories';
 import { GardenKeepsakeSheet } from '@/components/garden-keepsakes';
@@ -100,6 +101,9 @@ export function HomeScreen() {
   const openMemory = keepsakeSheet.focused === focused ? keepsakeSheet.memory : null;
   const gardenActive =
     focused && appActive && !busy && sheet === null && !openMemory && p?.mode === 'awake';
+  // Day or night birdsong, only while the garden is the thing on screen.
+  const hour = new Date(now).getHours();
+  useAmbience(gardenActive ? (hour < 6 || hour >= 21 ? 'night' : 'day') : null);
   useEffect(() => {
     if (coaching && gardenActive) useGame.getState().seeTip(coaching);
   }, [coaching, gardenActive]);

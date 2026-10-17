@@ -48,6 +48,7 @@ let hooks,
   feeds,
   gameWrites,
   announcements,
+  sounds,
   appActive,
   dirty;
 let fakeNow = Date.UTC(2026, 9, 16, 14);
@@ -168,6 +169,7 @@ const deps = {
   '@/lib/cozy': { cozy: {} },
   '@/lib/motion': { useReducedMotion: () => reduced },
   '@/lib/app-active': { useAppActive: () => appActive },
+  '@/lib/sound': { playSound: (id) => sounds.push(id) },
   '@/lib/game': { useGame, playPaused: () => false },
   '@/lib/garden-map': map,
   './garden-map': map,
@@ -271,6 +273,7 @@ function setup(napping = false, options = {}) {
   feeds = 0;
   gameWrites = [];
   announcements = [];
+  sounds = [];
   reduced = false;
   appActive = true;
   return render(napping, options);
@@ -684,6 +687,7 @@ function noGameChange(before) {
     gameWrites.length === 0
   );
 }
+const arrivalSound = { read: 'page', water: 'water', pond: 'splash', lantern: 'lantern' };
 for (const action of ['read', 'water', 'pond', 'lantern']) {
   worldTree = setup();
   const before = JSON.stringify(game.player);
@@ -693,8 +697,13 @@ for (const action of ['read', 'water', 'pond', 'lantern']) {
     !reactionElement(worldTree) && !feedbackElement(worldTree),
     `${action}: effect waits for visual arrival`,
   );
+  check(sounds.join() === 'steps', `${action}: the tap plays footsteps; its sound waits too`);
   const completed = finishTravel();
   worldTree = render();
+  check(
+    sounds.join() === `steps,${arrivalSound[action]}`,
+    `${action}: arrival plays its own sound once (${sounds.join()})`,
+  );
   const reaction = reactionElement(worldTree);
   const feedback = feedbackElement(worldTree);
   check(
@@ -712,6 +721,7 @@ for (const action of ['read', 'water', 'pond', 'lantern']) {
     reactionElement(worldTree)?.props.reaction.id === id,
     `${action}: duplicate arrival cannot restart its effect`,
   );
+  check(sounds.length === 2, `${action}: duplicate arrival cannot replay its sound`);
   check(noGameChange(before), `${action}: no resource writes, routes, sleep or feed calls`);
   check(
     announcements.length === 0,
@@ -784,6 +794,26 @@ currentFeedbackExpiry.fn();
 worldTree = render();
 check(!feedbackElement(worldTree), 'current readable status expires normally');
 
+{
+  // Idle life is ambient: the companion may stroll, but only the player's taps make sound.
+  worldTree = setup();
+  const realRandom = Math.random;
+  const realNow = fakeNow;
+  fakeNow += 10000;
+  Math.random = () => 0.1;
+  const idleTick = [...timers.entries()].find(([, timer]) => timer.ms === 2500);
+  timers.delete(idleTick[0]);
+  idleTick[1].fn();
+  Math.random = realRandom;
+  worldTree = render();
+  check(
+    shared.some((value) => value.animation !== null) &&
+      [...timers.values()].some((timer) => timer.ms >= 4000) &&
+      sounds.length === 0,
+    'idle wandering walks silently and schedules the next idle beat',
+  );
+  fakeNow = realNow;
+}
 worldTree = setup();
 press(worldTree, 'shop');
 const canceledShop = shared[1].animation;
@@ -794,6 +824,7 @@ check(
   reactionElement(worldTree)?.props.reaction.kind === 'pat' && routes.length === 0,
   'pat cancels a pending shop trip and responds immediately',
 );
+check(sounds.join() === 'steps,boop', 'pat boops at once; the canceled shop trip stays silent');
 check(
   shared.every((value) => value.animation === null),
   'pat stops both movement axes',
@@ -825,6 +856,7 @@ for (const action of ['read', 'water', 'pond', 'lantern']) {
   worldTree = render();
   end(canceled)(true);
   worldTree = render();
+  check(!sounds.includes(arrivalSound[action]), `${action}: a canceled arrival plays no sound`);
   check(
     !reactionElement(worldTree) && !feedbackElement(worldTree),
     `${action}: refocus cannot resurrect canceled effect`,

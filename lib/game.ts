@@ -113,7 +113,27 @@ export function status(p: Player, now = Date.now()) {
 export function clock(seconds: number) {
   return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, '0')}`;
 }
-export function feedback(kind: 'success' | 'error' | 'hit' | 'raid' | 'select' = 'success') {
+export type FeedbackKind =
+  | 'success'
+  | 'error'
+  | 'hit'
+  | 'raid'
+  | 'select'
+  | 'nap'
+  | 'wake'
+  | 'friend'
+  | 'levelup'
+  | 'reward';
+const feedbackListeners = new Set<(kind: FeedbackKind) => void>();
+/** Presentation hook (sound): listeners hear every feedback cue. Returns an unsubscribe. */
+export function onFeedback(listener: (kind: FeedbackKind) => void) {
+  feedbackListeners.add(listener);
+  return () => {
+    feedbackListeners.delete(listener);
+  };
+}
+export function feedback(kind: FeedbackKind = 'success') {
+  for (const listener of feedbackListeners) listener(kind);
   if (Platform.OS === 'web') return;
   if (kind === 'hit' || kind === 'raid') {
     if (kind === 'raid') Vibration.vibrate([0, 180, 80, 220]);
@@ -123,9 +143,9 @@ export function feedback(kind: 'success' | 'error' | 'hit' | 'raid' | 'select' =
     void Haptics.selectionAsync().catch(() => {});
   } else {
     void Haptics.notificationAsync(
-      kind === 'success'
-        ? Haptics.NotificationFeedbackType.Success
-        : Haptics.NotificationFeedbackType.Error,
+      kind === 'error'
+        ? Haptics.NotificationFeedbackType.Error
+        : Haptics.NotificationFeedbackType.Success,
     ).catch(() => {});
   }
 }
@@ -774,7 +794,7 @@ export const gameStore = create<Game>((set, get) => ({
       voice: 'a new friend. all thanks to real life.',
     });
     changed();
-    feedback();
+    feedback('friend');
   },
   selectGuardian: (id) => {
     const s = get();
@@ -955,7 +975,7 @@ export const gameStore = create<Game>((set, get) => ({
             message: null,
             voice: 'i saw a real tree. it was huge.',
           });
-          feedback();
+          feedback('reward');
         }
       }
       let rules = recordOffline(
@@ -1229,7 +1249,7 @@ export const gameStore = create<Game>((set, get) => ({
       },
     });
     changed();
-    feedback();
+    feedback('nap');
   },
   wake: async () => {
     get().tick();
@@ -1323,7 +1343,7 @@ export const gameStore = create<Game>((set, get) => ({
     });
     await persist();
     void get().sync();
-    feedback(failed ? 'error' : 'success');
+    feedback(failed ? 'error' : 'wake');
   },
   feed: () => {
     accountPlay();
@@ -1345,7 +1365,7 @@ export const gameStore = create<Game>((set, get) => ({
     set({
       flash: `${level <= 3 ? 'YOUR GRASSLING BLOOMED!' : 'LEVEL UP!'}\nLV ${level}${level === 2 ? '\n4-CARD HAND UNLOCKED' : level === 3 ? '\nDIGITAL SUNSET ADDED' : ''}`,
     });
-    feedback();
+    feedback('levelup');
   },
   hatAction: (id) => {
     accountPlay();

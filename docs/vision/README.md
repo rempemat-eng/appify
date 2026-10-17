@@ -7,6 +7,7 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 | [art-style.md](art-style.md)         | How the world art should look, the techniques the generators use, references and a review checklist |
 | [interface.md](interface.md)         | The full-screen game layout: HUD, hotbar, sheets, pixel frames and the pixel font                   |
 | [garden-growth.md](garden-growth.md) | How the meadow grows from time away, and its limits                                                 |
+| [sound.md](sound.md)                 | The generated sound palette, where each cue plays, and the rules for new sounds                     |
 | [roadmap.md](roadmap.md)             | What comes next, open questions and ideas we have not built                                         |
 
 ## Matt's direction (October 2026)

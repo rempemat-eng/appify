@@ -175,7 +175,7 @@ function timers() {
 function homeFixture() {
   const runtime = hooks();
   const clock = timers();
-  const control = { focused: false, foreground: true };
+  const control = { focused: false, foreground: true, ambience: undefined };
   const ui = { sheet: null };
   const seen = [];
   const naps = [];
@@ -190,7 +190,8 @@ function homeFixture() {
       level: 1,
       offline_seconds: 0,
     },
-    now: 0,
+    // Local noon: the garden's daytime ambience.
+    now: new Date(2026, 9, 16, 12).getTime(),
     missionReturnPending: false,
     voice: null,
     firstWake: false,
@@ -251,6 +252,12 @@ function homeFixture() {
       if (id === '@/components/garden-journey') return { gardenMarker: () => 'missions' };
       if (id === '@/lib/motion') return { useReducedMotion: () => false };
       if (id === '@/lib/app-active') return { useAppActive: () => control.foreground };
+      if (id === '@/lib/sound')
+        return {
+          useAmbience(kind) {
+            control.ambience = kind;
+          },
+        };
       if (id === '@/lib/garden-view') return { useGardenView: () => ['flat', () => {}] };
       if (id === '@/lib/visitors')
         return { guardianPlayer: (player) => player, isVisitorId: () => false };
@@ -803,6 +810,7 @@ async function main() {
   const home = homeFixture();
   let tree = home.render();
   check(!byType(tree, 'GardenWorld').props.active, 'unfocused Home is inactive');
+  check(home.control.ambience === null, 'unfocused Home asks for no ambience');
   check(
     !byType(tree, 'GardenVisitor').props.active,
     'unfocused Home pauses the visiting companion',
@@ -815,9 +823,11 @@ async function main() {
   home.control.foreground = false;
   tree = home.render();
   check(home.seen.length === 0, 'background Home does not consume guidance');
+  check(home.control.ambience === null, 'a backgrounded app stops the garden ambience');
   home.control.foreground = true;
   tree = home.render();
   check(byType(tree, 'GardenWorld').props.active, 'visible uncovered Home activates the garden');
+  check(home.control.ambience === 'day', 'the visible garden plays daytime ambience at noon');
   check(byType(tree, 'GardenVisitor').props.active, 'visible uncovered Home activates its visitor');
   check(
     home.seen.length === 1 && home.seen[0] === 'wake',
@@ -830,6 +840,7 @@ async function main() {
     check(!byType(tree, 'GardenWorld').props.active, `the ${sheet} sheet pauses garden work`);
     check(!byType(tree, 'GardenVisitor').props.active, `the ${sheet} sheet pauses the visitor`);
     check(home.clock.intervals.size === 0, `the ${sheet} sheet pauses idle chatter`);
+    check(home.control.ambience === null, `the ${sheet} sheet quiets the garden ambience`);
     home.ui.sheet = null;
     tree = home.render();
     check(
@@ -848,9 +859,19 @@ async function main() {
   home.control.focused = false;
   tree = home.render();
   check(!byType(tree, 'GardenWorld').props.active, 'tab blur pauses the garden');
+  check(home.control.ambience === null, 'tab blur stops the garden ambience');
   home.control.focused = true;
   tree = home.render();
   check(byType(tree, 'GardenWorld').props.active, 'returning Home reactivates its quiet garden');
+  check(home.control.ambience === 'day', 'returning Home resumes the ambience');
+  home.state.now = new Date(2026, 9, 16, 22).getTime();
+  tree = home.render();
+  check(
+    home.control.ambience === 'night',
+    'after nine in the evening the garden plays night sounds',
+  );
+  home.state.now = new Date(2026, 9, 16, 12).getTime();
+  tree = home.render();
   home.runtime.unmount();
   check(home.clock.intervals.size === 0 && home.clock.timeouts.size === 0, 'Home timers clean up');
 

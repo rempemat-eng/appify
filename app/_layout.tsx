@@ -27,6 +27,7 @@ import { registerServiceWorker } from '@/lib/registerServiceWorker';
 import { NapAttackSplash } from '@/components/napattack-brand';
 import { GameOverlays } from '@/components/game-overlays';
 import { loadMotionPreference, watchSystemMotion } from '@/lib/motion';
+import { startSound } from '@/lib/sound';
 import { startGame } from '@/lib/game';
 import { cozy as c } from '@/lib/cozy';
 import { reportErrorToParent } from '@/lib/reportPreviewError';
@@ -76,7 +77,9 @@ export default function RootLayout() {
     const stopMotion = watchSystemMotion();
     void loadMotionPreference();
     const stopGame = startGame();
+    const stopSound = startSound();
     return () => {
+      stopSound();
       stopGame();
       stopMotion();
     };

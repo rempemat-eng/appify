@@ -14,7 +14,7 @@
    Same HUD and hotbar, no long scrolling lists.
 
 3. **Pixel frames on every remaining surface.** Done (17 Oct): journal, welcome back, battle HUD and cards, onboarding, guide, rhythm editor, companion picker and nap screen now use `FrameFill`, `PixelSwitch` and `PixelInput`.
-4. **Sound:** soft ambience and small effects (footsteps, splash, page turn).
+4. **Sound.** First pass done (17 Oct): a generated palette of soft effects plus day and night garden ambience, with two switches in the guide (see sound.md). Next: tune by ear on a phone.
 5. **Real phone testing.** Everything so far is tested in a desktop browser at phone size.
 
 ## Next: content

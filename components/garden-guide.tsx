@@ -11,6 +11,7 @@ import { useGame } from '@/lib/game';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelButton, PixelText } from '@/components/game-ui';
 import { FrameFill, PixelSwitch } from '@/components/pixel-frame';
+import { useSoundPreference } from '@/lib/sound';
 
 export function GardenTip({
   id,
@@ -189,6 +190,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
                 : 'Normal decorative motion and text delays are on.'}
             </BodyText>
           </View>
+          <SoundSettings />
           {sections.map(([heading, text]) => (
             <View key={heading} style={{ gap: 6 }}>
               <BodyText
@@ -220,6 +222,51 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
         </ScrollView>
         <PixelButton label="DONE" onPress={onClose} />
       </CozySheet>
+    </View>
+  );
+}
+
+/** Effects and ambience switches. Sound is decoration and never changes a rule. */
+function SoundSettings() {
+  const effects = useSoundPreference((s) => s.effects);
+  const ambience = useSoundPreference((s) => s.ambience);
+  const [saving, setSaving] = useState(false);
+  const save = (write: Promise<void>) => {
+    setSaving(true);
+    void write
+      .then(() => feedback('select'))
+      .catch(() => useGame.getState().notify('Could not save sound setting. Try again.', true))
+      .finally(() => setSaving(false));
+  };
+  return (
+    <View style={{ padding: 12, gap: 6 }}>
+      <FrameFill fill={c.paper} outline={c.outline} />
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
+          Sound effects · {effects ? 'ON' : 'OFF'}
+        </BodyText>
+        <PixelSwitch
+          accessibilityLabel="Sound effects"
+          value={effects}
+          disabled={saving}
+          onValueChange={(value) => save(useSoundPreference.getState().setEffects(value))}
+        />
+      </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
+          Garden ambience · {ambience ? 'ON' : 'OFF'}
+        </BodyText>
+        <PixelSwitch
+          accessibilityLabel="Garden ambience"
+          value={ambience}
+          disabled={saving}
+          onValueChange={(value) => save(useSoundPreference.getState().setAmbience(value))}
+        />
+      </View>
+      <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
+        Soft taps, chimes and birdsong in the garden. Sounds play alongside your own music, and on
+        iPhone the silent switch mutes them.
+      </BodyText>
     </View>
   );
 }

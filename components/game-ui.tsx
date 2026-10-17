@@ -26,6 +26,7 @@ import { CozyBackground } from '@/components/cozy-ui';
 import { FrameShape, frameTones, mixColor, usePixelUnit } from '@/components/pixel-frame';
 import { PixelProp } from '@/components/pixel-scenes';
 import { Pulse } from '@/components/pixel-feedback';
+import { playSound } from '@/lib/sound';
 import { status, clock, useGame, type Player } from '@/lib/game';
 import { visitorPixels } from '@/lib/visitor-art';
 import { isVisitorId, visitorInfo } from '@/lib/visitors';
@@ -94,7 +95,10 @@ export function PixelButton({
           onDisabledPress?.();
           return;
         }
-        if (haptic) void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        if (haptic) {
+          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          playSound('tap');
+        }
         onPress();
       }}
       onLongPress={onLongPress}

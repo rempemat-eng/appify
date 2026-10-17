@@ -19,7 +19,7 @@
     "format:check": "oxfmt --check .",
     "art": "python3 scripts/art/garden.py && python3 scripts/art/pets.py && python3 scripts/art/battle.py && python3 scripts/art/worlds.py && python3 scripts/art/vignettes.py && oxfmt --write lib/garden-map.ts lib/garden-growth-assets.ts lib/pet-sprites.ts lib/world-maps.ts lib/world-assets.ts lib/scene-assets.ts",
     "check:garden": "node scripts/check-garden.cjs",
-    "check": "tsc --noEmit && npm run lint && npm run check:core && npm run check:art && npm run check:game && npm run check:garden && npm run check:app-active && npm run check:garden-view && npm run check:pet-pose && npm run check:home-lifecycle && npm run check:selectors && npm run check:ref-rule && npm run check:pixel-controls",
+    "check": "tsc --noEmit && npm run lint && npm run check:core && npm run check:art && npm run check:game && npm run check:garden && npm run check:app-active && npm run check:garden-view && npm run check:pet-pose && npm run check:home-lifecycle && npm run check:selectors && npm run check:ref-rule && npm run check:pixel-controls && npm run check:sound",
     "verify": "npm run check && npm run export:web",
     "check:app-active": "node scripts/check-app-active.cjs",
     "check:selectors": "node scripts/check-selector-rule.cjs",
@@ -28,7 +28,9 @@
     "check:pet-pose": "node scripts/check-pet-pose.cjs",
     "check:home-lifecycle": "node scripts/check-home-lifecycle.cjs",
     "check:art": "node --import tsx lib/art-direction.test.ts",
-    "check:pixel-controls": "node scripts/check-pixel-controls.cjs"
+    "check:pixel-controls": "node scripts/check-pixel-controls.cjs",
+    "check:sound": "node scripts/check-sound.cjs",
+    "sound": "python3 scripts/audio/sounds.py && oxfmt --write lib/sound-assets.ts"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",
@@ -48,6 +50,7 @@
     "class-variance-authority": "~0.7.1",
     "clsx": "~2.1.1",
     "expo": "~57.0.30",
+    "expo-audio": "~57.0.5",
     "expo-blur": "~57.0.3",
     "expo-clipboard": "~57.0.2",
     "expo-constants": "~57.0.17",
