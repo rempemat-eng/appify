@@ -85,7 +85,7 @@ async function prepare(page: Page, screen: Screen) {
 }
 
 async function overflow(page: Page, screen: Screen) {
-  return page.evaluate((screen) => {
+  return page.evaluate((current) => {
     const problems: string[] = [];
     if (
       document.documentElement.scrollWidth > innerWidth + 1 ||
@@ -117,9 +117,9 @@ async function overflow(page: Page, screen: Screen) {
         // wider page or overflowing vertical sheet still fails.
         const intentionalRail =
           style.overflowY === 'hidden' &&
-          ((screen === 'companions' &&
+          ((current === 'companions' &&
             element.querySelectorAll('[role="button"][aria-label^="Preview "]').length > 1) ||
-            (screen === 'battle' &&
+            (current === 'battle' &&
               element.querySelectorAll('[role="button"][aria-label$="tap to select"]').length > 0));
         if (intentionalRail) continue;
         problems.push(
