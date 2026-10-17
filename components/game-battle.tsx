@@ -1,4 +1,5 @@
-import { cozy as c, panelStyle } from '@/lib/cozy';
+import { cozy as c } from '@/lib/cozy';
+import { FrameFill } from '@/components/pixel-frame';
 import { CozyBackground } from '@/components/cozy-ui';
 import { PlayedCard, PixelBurst, PerfectImpact } from '@/components/cozy-motion';
 import * as Haptics from 'expo-haptics';
@@ -40,7 +41,7 @@ import {
   type Move,
   type Side,
 } from '@/lib/battle';
-import { EnergyPips, Meter, Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
+import { EnergyPips, Meter, Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { RaidGarden } from '@/components/pixel-scenes';
 import { guardianPlayer } from '@/lib/visitors';
 import { grasslingName, grasslings } from '@/lib/grasslings';
@@ -71,14 +72,12 @@ function Damage({ amount, skip }: { amount: number; skip: boolean }) {
           top: 32,
           left: 12,
           zIndex: 5,
-          backgroundColor: c.paper,
-          padding: 8,
-          borderWidth: 2,
-          borderColor: c.ink,
+          padding: 10,
         },
         animated,
       ]}
     >
+      <FrameFill depth={1} />
       <PixelText style={{ fontSize: 16 }}>-{amount}</PixelText>
     </Animated.View>
   );
@@ -86,7 +85,8 @@ function Damage({ amount, skip }: { amount: number; skip: boolean }) {
 function Info({ p, f }: { p: Player; f: Fighter }) {
   const [expanded, setExpanded] = useState(false);
   return (
-    <View style={panelStyle}>
+    <View>
+      <FrameFill depth={1} />
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${grasslingName(p)}, ${f.hp} of ${maxHp(p)} HP, ${f.energy} energy. Show details`}
@@ -488,12 +488,10 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                 flexDirection: 'row',
                 alignItems: 'center',
                 gap: 5,
-                padding: 8,
-                borderWidth: 2,
-                borderColor: c.ink,
-                backgroundColor: auto ? c.gold : c.body,
+                padding: 10,
               }}
             >
+              <FrameFill tone={auto ? 'gold' : 'paper'} depth={1} />
               <PixelText>AUTO</PixelText>
               <FastForward size={16} color={c.ink} />
               <BodyText>{auto ? 'ON' : 'OFF'}</BodyText>
@@ -613,7 +611,6 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
         </ScrollView>
         <View
           style={{
-            ...panelStyle,
             maxHeight: Math.max(250, height * 0.48),
             padding: 16,
             gap: 12,
@@ -622,6 +619,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
             alignSelf: 'center',
           }}
         >
+          <FrameFill />
           {!(phase === 'choose' || phase === 'timing' || phase === 'block') && (
             <Pressable
               accessibilityRole="button"
@@ -632,14 +630,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                 setShowHistory(!showHistory);
                 feedback('select');
               }}
-              style={{
-                minHeight: 44,
-                padding: 8,
-                backgroundColor: c.body,
-                borderWidth: 2,
-                borderColor: c.ink,
-              }}
+              style={{ minHeight: 44, padding: 10 }}
             >
+              <FrameFill fill={c.body} inset />
               <View accessibilityLiveRegion="polite" style={{ gap: 4 }}>
                 {history.length ? (
                   history.slice(-1).map((entry) => (
@@ -707,8 +700,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                         accessibilityRole="button"
                         accessibilityLabel="Tap the action bar in the centre"
                         onPress={attackTap}
-                        style={[styles.border, { padding: 10, gap: 8, backgroundColor: c.body }]}
+                        style={{ padding: 10, gap: 8 }}
                       >
+                        <FrameFill fill={c.body} depth={1} />
                         <PixelText style={{ textAlign: 'center' }}>
                           {timingLesson ? 'TAP TO START' : 'TAP IN THE MIDDLE!'}
                         </PixelText>

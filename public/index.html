@@ -56,6 +56,16 @@
         height: 100%;
         flex: 1;
       }
+      /* Pixel frames (components/pixel-frame.tsx) are absolutely positioned
+         first children. On the web an absolute box paints above unpositioned
+         siblings, so icons and text fields would hide behind the frame. Making
+         them positioned keeps DOM order, as on native. Any explicit position
+         from a component's own style still wins over this type selector. */
+      svg,
+      input,
+      textarea {
+        position: relative;
+      }
     </style>
   </head>
 

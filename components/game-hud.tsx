@@ -29,15 +29,21 @@ export function PixelBar({
 }: {
   value: number;
   max?: number;
-  width: number;
+  /** a fixed width snaps the fill to whole pixels; leave it out to stretch */
+  width?: number;
   color: string;
   unit: number;
 }) {
-  const filled = Math.round((Math.max(0, Math.min(max, value)) / max) * (width - 2 * unit));
+  const share = max > 0 ? Math.max(0, Math.min(max, value)) / max : 0;
+  const filled =
+    width === undefined
+      ? (`${Math.round(share * 100)}%` as const)
+      : Math.round(share * (width - 2 * unit));
   return (
     <View
       style={{
         width,
+        alignSelf: width === undefined ? 'stretch' : undefined,
         height: 3 * unit,
         backgroundColor: '#3B2F2A',
         padding: unit,

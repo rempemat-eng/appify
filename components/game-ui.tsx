@@ -21,13 +21,11 @@ import Animated, {
 import Svg, { Rect } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '@/lib/motion';
-import { cozy as c, panelStyle } from '@/lib/cozy';
-import { backendConfigured } from '@/lib/bilt';
+import { cozy as c } from '@/lib/cozy';
 import { CozyBackground } from '@/components/cozy-ui';
-import { FrameShape, frameTones, usePixelUnit } from '@/components/pixel-frame';
-import { PlayMeter } from '@/components/offline-garden';
+import { FrameShape, frameTones, mixColor, usePixelUnit } from '@/components/pixel-frame';
 import { PixelProp } from '@/components/pixel-scenes';
-import { GrassRoll, Pulse } from '@/components/pixel-feedback';
+import { Pulse } from '@/components/pixel-feedback';
 import { status, clock, useGame, type Player } from '@/lib/game';
 import { visitorPixels } from '@/lib/visitor-art';
 import { isVisitorId, visitorInfo } from '@/lib/visitors';
@@ -792,27 +790,19 @@ export function Meter({
   height?: number;
   color?: string;
 }) {
+  const u = usePixelUnit();
+  const share = max > 0 ? Math.max(0, Math.min(1, value / max)) : 0;
+  // A dark pixel track with a lit top row on the fill, like the HUD's bars.
   return (
     <View
       accessibilityRole="progressbar"
       accessibilityValue={{ min: 0, max, now: value }}
-      style={{
-        height,
-        borderRadius: 0,
-        borderWidth: 1,
-        borderColor: c.outline,
-        backgroundColor: c.body,
-        padding: 2,
-      }}
+      style={{ height, padding: u, flexDirection: 'row', backgroundColor: '#3B2F2A' }}
     >
-      <View
-        style={{
-          height: '100%',
-          borderRadius: 0,
-          width: `${Math.max(0, Math.min(100, (value / max) * 100))}%`,
-          backgroundColor: color,
-        }}
-      />
+      <View style={{ width: `${Math.round(share * 100)}%`, backgroundColor: color }}>
+        <View style={{ height: u, backgroundColor: mixColor(color, c.highlight, 0.4) }} />
+      </View>
+      <View style={{ flex: 1, backgroundColor: '#8C7A64' }} />
     </View>
   );
 }
@@ -862,108 +852,6 @@ export function StatusChip({ player, compact = false }: { player: Player; compac
     </Pulse>
   );
 }
-export function GameHeader() {
-  const p = useGame((s) => s.player);
-  const live = useGame((s) => s.live);
-  const top = useSafeAreaInsets().top;
-  return (
-    <View style={{ paddingTop: top + 8, paddingBottom: 8, zIndex: 40 }}>
-      <View pointerEvents="none" style={[StyleSheet.absoluteFill, { backgroundColor: c.body }]} />
-      <View style={[gameColumn, { paddingHorizontal: gameLayout.gutter }]}>
-        <View
-          style={{
-            ...panelStyle,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 6,
-            padding: 6,
-          }}
-        >
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={p ? `Garden status: ${status(p).label}` : 'Garden status'}
-            accessibilityHint="Opens the garden guide. Long press to end protection in the demo."
-            onPress={() => useGame.setState({ guideOpen: true })}
-            onLongPress={() => p && useGame.getState().change({ care_until: 0, recovery_until: 0 })}
-            style={{
-              flex: 1,
-              minWidth: 0,
-              minHeight: 44,
-              justifyContent: 'center',
-              alignItems: 'flex-start',
-            }}
-          >
-            {p && <StatusChip player={p} compact />}
-          </Pressable>
-          <View
-            accessible
-            accessibilityRole="text"
-            accessibilityLabel={`${p?.grass ?? 20} grass`}
-            style={{
-              gap: 1,
-              alignItems: 'center',
-              minHeight: 44,
-              minWidth: 56,
-              paddingTop: 3,
-            }}
-          >
-            <Text
-              style={{
-                fontFamily: 'PixelifySans_700Bold',
-                fontSize: 10,
-                lineHeight: 12,
-                color: c.ink,
-              }}
-            >
-              GRASS
-            </Text>
-            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, height: 18 }}>
-              <PixelProp kind="grass" size={16} />
-              {(p?.grass ?? 20) >= 10000 ? (
-                <Text style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14, color: c.ink }}>
-                  {new Intl.NumberFormat('en-GB', {
-                    notation: 'compact',
-                    maximumFractionDigits: 1,
-                  }).format(p?.grass ?? 20)}
-                </Text>
-              ) : (
-                <GrassRoll value={p?.grass ?? 20} size={14} />
-              )}
-            </View>
-          </View>
-          {p && <PlayMeter />}
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`Open garden guide. ${live ? 'Garden synced' : backendConfigured ? 'No signal' : 'Local garden, saved on this device'}`}
-            onPress={() => useGame.setState({ guideOpen: true })}
-            style={{
-              width: 44,
-              height: 44,
-              borderRadius: 0,
-              backgroundColor: c.sage,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <Text style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 20, color: c.ink }}>
-              ?
-            </Text>
-            <View
-              style={{
-                position: 'absolute',
-                bottom: 4,
-                width: 4,
-                height: 4,
-                borderRadius: 0,
-                backgroundColor: live || !backendConfigured ? c.moss : c.error,
-              }}
-            />
-          </Pressable>
-        </View>
-      </View>
-    </View>
-  );
-}
 export function Page({ children, style }: { children: React.ReactNode; style?: ViewStyle }) {
   const insets = useSafeAreaInsets();
   return (
@@ -989,17 +877,5 @@ export function Page({ children, style }: { children: React.ReactNode; style?: V
 export const styles = {
   text: { fontFamily: 'PixelifySans_700Bold', color: c.ink, fontSize: 15, lineHeight: 22 },
   title: { fontSize: 20, lineHeight: 32 },
-  border: panelStyle,
-  input: {
-    fontFamily: 'PixelifySans_500Medium',
-    color: c.ink,
-    borderWidth: 2,
-    borderColor: c.outline,
-    backgroundColor: c.paper,
-    padding: 16,
-    fontSize: 15,
-    minHeight: 52,
-    borderRadius: 0,
-  },
   section: { gap: 12 },
 } satisfies Record<string, TextStyle | ViewStyle>;

@@ -1,5 +1,5 @@
 import { palette } from '@/lib/game';
-import { artGeometry, artSurface } from '@/lib/art-direction';
+import { artSurface } from '@/lib/art-direction';
 
 // Field-journal surfaces share their materials with the world art.
 export const cozy = {
@@ -23,10 +23,3 @@ export const cozy = {
   glass: 'rgba(251,244,228,0.86)',
   transparent: 'transparent',
 };
-export const panelStyle = {
-  borderRadius: artGeometry.panelRadius,
-  borderWidth: artGeometry.border,
-  borderColor: cozy.outline,
-  backgroundColor: cozy.paper,
-  boxShadow: `0 ${artGeometry.depth}px 0 ${artSurface.depth}`,
-} as const;

@@ -16,13 +16,14 @@ import Animated, {
 import { useReducedMotion } from '@/lib/motion';
 import { cards, cardIds, summarizeCardRewards } from '@/lib/cards';
 import { useGame } from '@/lib/game';
-import { cozy as c, panelStyle } from '@/lib/cozy';
+import { cozy as c } from '@/lib/cozy';
 import { collectionOf, guardianPlayer, visitorInfo, type Postcard } from '@/lib/visitors';
 import { GuardianPet } from '@/components/guardian-pet';
 import { MemoryReflection } from '@/components/companion-memories';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText, GrassRoll } from '@/components/pixel-feedback';
-import { CozySheet, PaperFinish } from '@/components/cozy-ui';
+import { CozySheet } from '@/components/cozy-ui';
+import { FrameFill } from '@/components/pixel-frame';
 import { LightSweep, PixelBurst } from '@/components/cozy-motion';
 import { RewardCard } from '@/components/habit-cards';
 import { gameLayout } from '@/lib/layout';
@@ -85,17 +86,16 @@ export function GardenVisitor({ active = true }: { active?: boolean }) {
       }}
       style={[
         {
-          ...panelStyle,
           position: 'absolute',
           right: 8,
           bottom: 16,
           alignItems: 'center',
-          padding: 4,
+          padding: 8,
         },
         motion,
       ]}
     >
-      <PaperFinish />
+      <FrameFill depth={1} />
       <Pet
         active={active}
         visitor={v.id}
@@ -118,8 +118,8 @@ export { CompanionPicker as GuardianPicker } from '@/components/companion-picker
 export function PostcardArt({ postcard }: { postcard: Postcard }) {
   const place = worldCatalogue[postcard.mission].postcardTitle;
   return (
-    <View style={{ ...panelStyle, padding: 12, gap: 8 }}>
-      <PaperFinish />
+    <View style={{ padding: 12, gap: 8 }}>
+      <FrameFill depth={1} />
       <View
         pointerEvents="none"
         aria-hidden
@@ -127,15 +127,9 @@ export function PostcardArt({ postcard }: { postcard: Postcard }) {
         importantForAccessibility="no-hide-descendants"
         // @ts-expect-error dataSet is a react-native-web prop (nearest-neighbour pixels).
         dataSet={{ pixel: 'true' }}
-        style={{
-          alignItems: 'center',
-          backgroundColor: c.body,
-          padding: 6,
-          borderWidth: 1,
-          borderColor: c.inset,
-          borderRadius: 0,
-        }}
+        style={{ alignItems: 'center', padding: 6 }}
       >
+        <FrameFill fill={c.body} inset />
         <Image
           source={sceneImages[postcard.mission]}
           resizeMode="contain"

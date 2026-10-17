@@ -32,8 +32,15 @@
 - `components/pixel-frame.tsx`:
   - `PixelFrame` is a framed surface.
   - `FrameShape` is just the shape, for custom controls.
-  - `frameTones` are the colourways: paper, parchment, leaf, gold, nap, danger, night, glass, disabled.
+  - `FrameFill` draws the frame behind an existing View, Pressable or Animated.View. Put it first among the children and remove the parent's border and background. `fill` and `outline` derive a tone for one-off colours (`toneFrom()`), `inset` gives a recessed well (art wells, tracks, tab bars), and `depth` adds the raised base.
+  - `PixelSwitch` replaces React Native's `Switch` and `PixelInput` replaces a bare `TextInput` (a recessed well with a gold focus ring). Do not use the native switch or a bordered text box.
+  - `PixelTail` is the stepped speech-bubble tail.
+  - `frameTones` are the colourways: paper, parchment, leaf, gold, nap, danger, night, glass, disabled, field and fieldFocus (inputs), and lantern (night panels with a gold rim).
   - `usePixelUnit()` gives the size of one garden pixel on screen (2 on phones, 3 in the wide column), so frames share the world's pixel grid.
+- Every surface uses these frames: sheets, panels, cards, chips, toggles, inputs, the journal, the battle HUD, onboarding and the nap screen. The old `panelStyle` (a border with a soft shadow) is gone. Straight one-colour borders remain only around scene art and in-world details.
+- Inner tiles (choices, tabs, rhythm windows) use the softer `c.outline` brown; outer panels and buttons use the near-black outline. This keeps the hierarchy readable.
+- On the web, an absolutely positioned frame paints above unpositioned siblings. `public/index.html` therefore gives `svg`, `input` and `textarea` `position: relative`. Keep that rule, and wrap any other unpositioned content in a View.
+- In source-level harnesses, `@/components/*` imports are placeholders. Inside a component that a harness renders (ScreenOff, Home, the visitor and rhythm cards), use `<FrameFill />` as an element rather than calling `usePixelUnit()` directly.
 - A frame has:
   - notched corners;
   - a 1-unit outline in the shared outline colour;

@@ -6,8 +6,6 @@ import {
   Pressable,
   ScrollView,
   StyleSheet,
-  Switch,
-  TextInput,
   View,
   useWindowDimensions,
 } from 'react-native';
@@ -17,6 +15,7 @@ import { Moon, Sun, Sprout } from 'lucide-react-native';
 import { CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelButton } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
+import { FrameFill, PixelInput, PixelSwitch } from '@/components/pixel-frame';
 import { cozy as c } from '@/lib/cozy';
 import { gameLayout } from '@/lib/layout';
 import {
@@ -267,13 +266,11 @@ function RhythmEditor({
               </BodyText>
               <BodyText style={styles.caption}>Make room for the life outside your phone.</BodyText>
             </View>
-            <Switch
+            <PixelSwitch
               value={draft.enabled}
               disabled={saving}
               accessibilityLabel="Enable daily rhythm planning"
               onValueChange={(enabled) => setDraft((value) => ({ ...value, enabled }))}
-              trackColor={{ false: c.faded, true: c.positive }}
-              thumbColor={c.highlight}
             />
           </View>
           <ScrollView
@@ -300,11 +297,12 @@ function RhythmEditor({
                   aria-selected={group === key}
                   disabled={saving}
                   onPress={() => setGroup(key)}
-                  style={[
-                    styles.segment,
-                    group === key && { backgroundColor: c.sage, borderColor: c.moss },
-                  ]}
+                  style={styles.segment}
                 >
+                  <FrameFill
+                    fill={group === key ? c.sage : c.paper}
+                    outline={group === key ? c.moss : c.stone}
+                  />
                   <BodyText style={styles.bold}>{groupLabels[key]}</BodyText>
                 </Pressable>
               ))}
@@ -316,13 +314,8 @@ function RhythmEditor({
             {rhythmPeriods.map((period) => {
               const window = draft[group][period];
               return (
-                <View
-                  key={period}
-                  style={[
-                    styles.window,
-                    { backgroundColor: period === 'rest' ? '#F0EAF7' : '#FBF0D8' },
-                  ]}
-                >
+                <View key={period} style={styles.window}>
+                  <FrameFill fill={period === 'rest' ? '#F0EAF7' : '#FBF0D8'} outline={c.stone} />
                   <View style={styles.cardRow}>
                     <RhythmIcon period={period} />
                     <View style={{ flex: 1, gap: 2 }}>
@@ -333,13 +326,11 @@ function RhythmEditor({
                           : 'For work, study or whatever needs your attention.'}
                       </BodyText>
                     </View>
-                    <Switch
+                    <PixelSwitch
                       value={window.enabled}
                       disabled={saving}
                       accessibilityLabel={`${groupLabels[group]} ${periodLabels[period]} window`}
                       onValueChange={(enabled) => update(period, { enabled })}
-                      trackColor={{ false: c.faded, true: c.positive }}
-                      thumbColor={c.highlight}
                     />
                   </View>
                   {window.enabled ? (
@@ -350,7 +341,7 @@ function RhythmEditor({
                             <BodyText style={styles.caption}>
                               {field === 'start' ? 'From' : 'Until'}
                             </BodyText>
-                            <TextInput
+                            <PixelInput
                               value={window[field]}
                               editable={!saving}
                               onChangeText={(value) => update(period, { [field]: value })}
@@ -379,7 +370,8 @@ function RhythmEditor({
                 </View>
               );
             })}
-            <View style={[styles.window, { backgroundColor: c.sage }]}>
+            <View style={styles.window}>
+              <FrameFill fill={c.sage} outline={c.stone} />
               <View style={styles.cardRow}>
                 <RhythmIcon period="own" />
                 <BodyText style={[styles.bold, { flex: 1 }]}>Own time</BodyText>
@@ -444,27 +436,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   segments: { flexDirection: 'row', gap: 8 },
-  segment: {
-    flex: 1,
-    minHeight: 44,
-    borderRadius: 0,
-    borderWidth: 1,
-    borderColor: c.stone,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: c.paper,
-  },
-  window: { padding: 12, gap: 10, borderRadius: 0, borderWidth: 1, borderColor: c.stone },
+  segment: { flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center' },
+  window: { padding: 12, gap: 10 },
   times: { flexDirection: 'row', gap: 12 },
   input: {
     minHeight: 48,
     paddingHorizontal: 12,
     paddingVertical: 10,
-    borderRadius: 0,
-    borderWidth: 1,
-    borderColor: c.outline,
-    backgroundColor: c.highlight,
-    color: c.ink,
     fontFamily: 'PixelifySans_700Bold',
     fontSize: 18,
   },

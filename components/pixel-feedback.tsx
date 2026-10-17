@@ -18,8 +18,9 @@ import Animated, {
   withSpring,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
-import { cozy as c, panelStyle } from '@/lib/cozy';
+import { cozy as c } from '@/lib/cozy';
 import { PixelProp } from '@/components/pixel-scenes';
+import { FrameFill, PixelTail } from '@/components/pixel-frame';
 import type { PropKind } from '@/lib/scene-art';
 export function BodyText({ style, ...props }: TextProps) {
   return (
@@ -65,7 +66,6 @@ export function Dialogue({
       }}
       style={[
         {
-          ...panelStyle,
           minHeight: 56,
           padding: 12,
           paddingBottom: onDismiss ? 24 : 12,
@@ -73,6 +73,7 @@ export function Dialogue({
         style,
       ]}
     >
+      <FrameFill depth={1} />
       <BodyText
         style={{
           fontFamily: speech ? 'PixelifySans_400Regular' : 'PixelifySans_500Medium',
@@ -82,23 +83,7 @@ export function Dialogue({
       >
         {reduced ? copy : copy.slice(0, shown.count) || ' '}
       </BodyText>
-      {speech && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            bottom: -10,
-            left: '50%',
-            width: 18,
-            height: 18,
-            backgroundColor: c.paper,
-            borderRightWidth: 2,
-            borderBottomWidth: 2,
-            borderColor: c.outline,
-            transform: [{ rotate: '45deg' }],
-          }}
-        />
-      )}
+      {speech && <PixelTail />}
       {onDismiss && (
         <BodyText style={{ position: 'absolute', right: 12, bottom: 4, fontSize: 11 }}>
           tap to dismiss

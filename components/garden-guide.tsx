@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Pressable, ScrollView, Switch, View } from 'react-native';
+import { Pressable, ScrollView, View } from 'react-native';
 import { feedback } from '@/lib/game';
 import { useMotionPreference, useReducedMotion } from '@/lib/motion';
 import { ChevronDown, ChevronUp, X } from 'lucide-react-native';
@@ -10,6 +10,7 @@ import { cozy as c } from '@/lib/cozy';
 import { useGame } from '@/lib/game';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelButton, PixelText } from '@/components/game-ui';
+import { FrameFill, PixelSwitch } from '@/components/pixel-frame';
 
 export function GardenTip({
   id,
@@ -49,11 +50,8 @@ export function GardenTip({
     <View
       style={[
         {
-          borderRadius: 0,
-          backgroundColor: c.paper,
-          borderWidth: 2,
-          borderColor: c.outline,
           paddingLeft: 12,
+          paddingVertical: 2,
           zIndex: 30,
         },
         floating
@@ -66,6 +64,7 @@ export function GardenTip({
           : {},
       ]}
     >
+      <FrameFill depth={1} />
       {pointsUp && <Arrow size={18} color={c.ink} />}
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <BodyText
@@ -159,27 +158,16 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
           GARDEN GUIDE
         </PixelText>
         <ScrollView contentContainerStyle={{ gap: 20, paddingBottom: 16 }}>
-          <View
-            style={{
-              minHeight: 52,
-              borderRadius: 0,
-              borderWidth: 2,
-              borderColor: c.outline,
-              padding: 12,
-              gap: 6,
-            }}
-          >
+          <View style={{ minHeight: 52, padding: 12, gap: 6 }}>
+            <FrameFill fill={c.paper} outline={c.outline} />
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
               <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
                 Reduce motion · {preference ? 'ON' : 'OFF'}
               </BodyText>
-              <Switch
+              <PixelSwitch
                 accessibilityLabel="Reduce decorative motion"
-                accessibilityState={{ checked: preference, disabled: saving }}
                 value={preference}
                 disabled={saving}
-                trackColor={{ false: c.shade, true: c.moss }}
-                thumbColor={c.paper}
                 onValueChange={(value) => {
                   setSaving(true);
                   void useMotionPreference

@@ -10,7 +10,6 @@ import {
   Modal,
   Platform,
   ScrollView,
-  TextInput,
   View,
   useWindowDimensions,
 } from 'react-native';
@@ -23,13 +22,14 @@ import { guardianPlayer } from '@/lib/visitors';
 import { DeckPanel } from '@/components/habit-cards';
 import { GardenRecap } from '@/components/offline-garden';
 import { BattleScreen } from '@/components/game-battle';
-import { Pet, PixelButton, PixelText, styles } from '@/components/game-ui';
+import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { SeedPacket, Planting, PetalFall, GrassFlight } from '@/components/grassling-feedback';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldScene } from '@/components/world-scene';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
+import { FrameFill, PixelInput } from '@/components/pixel-frame';
 import { useReducedMotion } from '@/lib/motion';
 import { breakIntentionLabel } from '@/lib/companion-memories';
 import { topGameOverlay } from '@/lib/overlay-priority';
@@ -142,25 +142,26 @@ function Onboarding() {
                     }}
                     accessibilityState={{ selected: picked && species === s }}
                     style={{
-                      borderRadius: 0,
                       alignItems: 'center',
                       flex: 1,
                       minHeight: 100,
-                      gap: 12,
-                      paddingVertical: 8,
-                      borderWidth: 2,
-                      borderColor: picked && species === s ? c.moss : 'transparent',
-                      backgroundColor: picked && species === s ? c.amber : 'transparent',
+                      gap: 8,
+                      paddingVertical: 10,
                       transform: [{ translateY: picked && species === s ? -12 : 0 }],
                     }}
                   >
+                    {picked && species === s && <FrameFill tone="gold" depth={1} />}
                     <SeedPacket species={s} size={64} />
-                    <BodyText style={{ backgroundColor: c.paper, padding: 3 }}>
-                      {grasslings[s].name}
-                    </BodyText>
-                    <PixelText style={{ fontSize: 11, backgroundColor: c.paper, padding: 3 }}>
-                      {grasslings[s].habit}
-                    </PixelText>
+                    <View style={{ paddingHorizontal: 8, paddingVertical: 5 }}>
+                      <FrameFill />
+                      <BodyText style={{ fontSize: 13, lineHeight: 18 }}>
+                        {grasslings[s].name}
+                      </BodyText>
+                    </View>
+                    <View style={{ paddingHorizontal: 7, paddingVertical: 4 }}>
+                      <FrameFill tone="parchment" />
+                      <PixelText style={{ fontSize: 10 }}>{grasslings[s].habit}</PixelText>
+                    </View>
                   </Pressable>
                 ))}
               </View>
@@ -186,14 +187,13 @@ function Onboarding() {
             <Dialogue text={grasslings[species].line} />
             <View style={{ gap: 12 }}>
               <PixelText>GARDENER NAME</PixelText>
-              <TextInput
+              <PixelInput
                 accessibilityLabel="Your name"
                 value={name}
                 onChangeText={(value) => {
                   setName(value);
                   setError(false);
                 }}
-                style={styles.input}
                 autoCapitalize="characters"
                 maxLength={10}
                 placeholder="HUMAN"
@@ -204,11 +204,10 @@ function Onboarding() {
             </View>
             <View style={{ gap: 12 }}>
               <PixelText>GRASSLING NAME</PixelText>
-              <TextInput
+              <PixelInput
                 accessibilityLabel="Grassling name"
                 value={petName}
                 onChangeText={setPetName}
-                style={styles.input}
                 autoCapitalize="characters"
                 maxLength={10}
                 autoCorrect={false}
@@ -218,9 +217,6 @@ function Onboarding() {
           </>
         )}
         <View style={{ paddingBottom: bottom + 20, gap: 12, width: '100%' }}>
-          {step === 0 && !picked && (
-            <PixelText style={{ textAlign: 'center' }}>PICK A SEED FIRST</PixelText>
-          )}
           <PixelButton
             label={step === 0 ? (picked ? 'PLANT A SEED' : 'PICK A SEED FIRST') : 'GROW MY GARDEN'}
             disabled={step === 0 && !picked}
@@ -378,14 +374,11 @@ function ScreenOff({
                 minHeight: 44,
                 paddingHorizontal: 16,
                 paddingVertical: 10,
-                borderRadius: 0,
-                borderWidth: 1,
-                borderColor: c.napOutline,
-                backgroundColor: c.night,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
+              <FrameFill tone={quiet ? 'nap' : 'night'} outline={c.nap} />
               <BodyText
                 style={{ color: c.paper, fontFamily: 'PixelifySans_700Bold', fontSize: 12 }}
               >
@@ -403,12 +396,11 @@ function ScreenOff({
               style={{
                 minWidth: 44,
                 minHeight: 44,
-                borderRadius: 0,
-                backgroundColor: c.night,
                 alignItems: 'center',
                 justifyContent: 'center',
               }}
             >
+              <FrameFill tone={helpOpen ? 'nap' : 'night'} outline={c.nap} />
               <PixelText style={{ color: c.paper }}>?</PixelText>
             </Pressable>
           </View>
@@ -518,15 +510,8 @@ function ScreenOff({
                   <BodyText style={{ color: c.paper }}>{rival.pet_name} is napping too</BodyText>
                 </View>
               )}
-              <View
-                style={{
-                  padding: 8,
-                  borderRadius: 0,
-                  borderWidth: 2,
-                  borderColor: c.gold,
-                  backgroundColor: c.night,
-                }}
-              >
+              <View style={{ paddingVertical: 10, paddingHorizontal: 14 }}>
+                <FrameFill tone="lantern" depth={1} />
                 <PixelText style={{ color: c.paper, textAlign: 'center', lineHeight: 22 }}>
                   {`NAPPED ${p.offline_seconds - offStart} SIMULATED MIN\n+${p.grass - offGrass} GRASS`}
                 </PixelText>
@@ -554,17 +539,8 @@ function ScreenOff({
           <BodyText style={{ color: c.paper, textAlign: 'center' }}>{message}</BodyText>
         )}
         {confirmEarlyReturn && m ? (
-          <View
-            accessibilityLiveRegion="polite"
-            style={{
-              gap: 12,
-              padding: 16,
-              borderWidth: 2,
-              borderColor: c.gold,
-              borderRadius: 0,
-              backgroundColor: c.night,
-            }}
-          >
+          <View accessibilityLiveRegion="polite" style={{ gap: 12, padding: 16 }}>
+            <FrameFill tone="lantern" depth={1} />
             <PixelText style={{ color: c.paper, textAlign: 'center' }}>RETURN EARLY?</PixelText>
             <BodyText style={{ color: c.paper, textAlign: 'center', fontSize: 13 }}>
               No mission completion rewards, including the {m.reward} GRASS bonus. Cards already

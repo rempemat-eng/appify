@@ -17,6 +17,7 @@ import {
 } from '@/lib/offline-rules';
 import { PixelButton, PixelText, styles } from '@/components/game-ui';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
+import { FrameFill } from '@/components/pixel-frame';
 import { PixelScene } from '@/components/pixel-scenes';
 import { growthStage } from '@/lib/grasslings';
 import { GuardianPet } from '@/components/guardian-pet';
@@ -248,7 +249,8 @@ export function GardenRecap() {
         >
           <GuardianPet player={p} size={128} />
         </PixelScene>
-        <View style={[styles.border, { padding: 16, gap: 18, backgroundColor: c.body }]}>
+        <View style={{ padding: 16, gap: 18 }}>
+          <FrameFill fill={c.body} depth={1} />
           {[
             [`${day.offline} simulated MIN`, 'OFFLINE'],
             [String(day.cards), 'CARDS EARNED'],

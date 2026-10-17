@@ -1,5 +1,14 @@
-import type { ReactNode } from 'react';
-import { View, useWindowDimensions, type StyleProp, type ViewStyle } from 'react-native';
+import { useState, type ReactNode, type Ref } from 'react';
+import {
+  Pressable,
+  TextInput,
+  View,
+  useWindowDimensions,
+  type StyleProp,
+  type TextInputProps,
+  type TextStyle,
+  type ViewStyle,
+} from 'react-native';
 import { cozy as c } from '@/lib/cozy';
 import { artOutline } from '@/lib/art-direction';
 import { gameLayout } from '@/lib/layout';
@@ -57,8 +66,68 @@ export const frameTones = {
     base: '#9C927C',
     outline: '#5E544A',
   },
+  /** a recessed well: the rim shades the top and left, light catches the bottom */
+  field: {
+    fill: '#FFFBF0',
+    light: '#E1D2B6',
+    dark: c.highlight,
+    base: c.depth,
+    outline: artOutline,
+  },
+  /** the same well with a gold inner ring, so keyboard focus is always visible */
+  fieldFocus: {
+    fill: '#FFFBF0',
+    light: '#E6BC5C',
+    dark: '#E6BC5C',
+    base: c.depth,
+    outline: artOutline,
+  },
+  /** night panels on the nap screen, with a lantern-gold rim */
+  lantern: {
+    fill: '#3C4168',
+    light: '#5A608F',
+    dark: '#2B2F50',
+    base: '#191B30',
+    outline: '#C9A24F',
+  },
 } satisfies Record<string, FrameTone>;
 export type FrameToneName = keyof typeof frameTones;
+
+const hex = (color: string) => {
+  const match = /^#([0-9a-f]{6})$/i.exec(color);
+  return match ? [0, 2, 4].map((i) => parseInt(match[1].slice(i, i + 2), 16)) : null;
+};
+
+/** Mixes two #RRGGBB colours; anything else is returned unchanged. */
+export function mixColor(a: string, b: string, amount: number) {
+  const from = hex(a);
+  const to = hex(b);
+  if (!from || !to) return a;
+  return (
+    '#' +
+    from
+      .map((value, i) =>
+        Math.round(value + (to[i] - value) * amount)
+          .toString(16)
+          .padStart(2, '0'),
+      )
+      .join('')
+  );
+}
+
+/** A frame tone for any fill: lit top edge, shaded bottom edge, darker base. */
+export function toneFrom(fill: string, outline: string = artOutline): FrameTone {
+  return {
+    fill,
+    light: mixColor(fill, c.highlight, 0.55),
+    dark: mixColor(fill, '#4A3B35', 0.16),
+    base: mixColor(fill, artOutline, 0.45),
+    outline,
+  };
+}
+
+const resolveTone = (tone: FrameToneName | FrameTone) =>
+  typeof tone === 'string' ? frameTones[tone] : tone;
 
 /** One garden pixel on screen: 2 on phones, 3 in the wider column. */
 export function usePixelUnit() {
@@ -192,7 +261,7 @@ export function PixelFrame({
 }) {
   const fallback = usePixelUnit();
   const u = unit ?? fallback;
-  const t = typeof tone === 'string' ? frameTones[tone] : tone;
+  const t = resolveTone(tone);
   return (
     <View style={[{ marginBottom: depth * u, padding: 3 * u }, style]}>
       {depth > 0 && (
@@ -205,6 +274,197 @@ export function PixelFrame({
       )}
       <FrameShape tone={t} unit={u} />
       {children}
+    </View>
+  );
+}
+
+/**
+ * The frame alone, drawn behind the content of an existing View, Pressable or
+ * Animated.View. Put it first among the children and drop the parent's border
+ * and background. `fill` and `outline` derive a tone for one-off colours.
+ */
+export function FrameFill({
+  tone = 'paper',
+  fill,
+  outline,
+  depth = 0,
+  inset = false,
+}: {
+  tone?: FrameToneName | FrameTone;
+  fill?: string;
+  outline?: string;
+  /** a raised base below the frame, in pixel units (it does not take layout space) */
+  depth?: number;
+  /** recessed: swap the lit and shaded edges */
+  inset?: boolean;
+}) {
+  const u = usePixelUnit();
+  const picked = fill ? toneFrom(fill, outline) : resolveTone(tone);
+  const outlined = outline && !fill ? { ...picked, outline } : picked;
+  const t = inset ? { ...outlined, light: outlined.dark, dark: outlined.light } : outlined;
+  return (
+    <>
+      {depth > 0 && (
+        <FrameShape
+          tone={{ ...t, fill: t.base, light: t.base, dark: t.base }}
+          unit={u}
+          offset={depth * u}
+          bevel={false}
+        />
+      )}
+      <FrameShape tone={t} unit={u} />
+    </>
+  );
+}
+
+/** A stepped speech-bubble tail that opens into the bottom edge of its parent frame. */
+export function PixelTail({
+  fill = c.paper,
+  outline = artOutline,
+}: {
+  fill?: string;
+  outline?: string;
+}) {
+  const u = usePixelUnit();
+  return (
+    <View
+      pointerEvents="none"
+      aria-hidden
+      style={{
+        position: 'absolute',
+        bottom: -2 * u,
+        left: '50%',
+        marginLeft: -3 * u,
+        width: 6 * u,
+        height: 3 * u,
+      }}
+    >
+      {[0, 1, 2].map((row) => (
+        <View
+          key={row}
+          style={abs({
+            top: row * u,
+            left: row * u,
+            right: row * u,
+            height: u,
+            backgroundColor: outline,
+          })}
+        >
+          {row < 2 && (
+            <View
+              style={abs({
+                top: 0,
+                bottom: 0,
+                left: u,
+                right: u,
+                backgroundColor: fill,
+              })}
+            />
+          )}
+        </View>
+      ))}
+    </View>
+  );
+}
+
+/** An on/off toggle drawn on the pixel grid; a 52 by 44 target around a small track. */
+export function PixelSwitch({
+  value,
+  onValueChange,
+  disabled = false,
+  accessibilityLabel,
+  accessibilityHint,
+}: {
+  value: boolean;
+  onValueChange: (value: boolean) => void;
+  disabled?: boolean;
+  accessibilityLabel: string;
+  accessibilityHint?: string;
+}) {
+  const u = usePixelUnit();
+  const width = 20 * u;
+  const height = 11 * u;
+  const knob = 7 * u;
+  return (
+    <Pressable
+      accessibilityRole="switch"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{ checked: value, disabled }}
+      aria-checked={value}
+      disabled={disabled}
+      onPress={() => onValueChange(!value)}
+      style={{
+        minWidth: 52,
+        minHeight: 44,
+        alignItems: 'center',
+        justifyContent: 'center',
+        opacity: disabled ? 0.55 : 1,
+      }}
+    >
+      <View style={{ width, height }}>
+        <FrameShape tone={value ? frameTones.leaf : frameTones.disabled} unit={u} />
+        <View
+          style={{
+            position: 'absolute',
+            top: 2 * u,
+            left: value ? width - knob - 2 * u : 2 * u,
+            width: knob,
+            height: knob,
+          }}
+        >
+          <FrameShape tone={frameTones.paper} unit={u} />
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+const inputText: TextStyle = {
+  fontFamily: 'PixelifySans_500Medium',
+  color: c.ink,
+  fontSize: 15,
+  minHeight: 52,
+  paddingHorizontal: 16,
+  paddingVertical: 12,
+  backgroundColor: c.transparent,
+  borderWidth: 0,
+  // the browser ring is replaced by the frame's gold focus ring
+  outlineWidth: 0,
+};
+
+/** A text field in a recessed pixel well. Focus swaps in a gold inner ring. */
+export function PixelInput({
+  ref,
+  style,
+  onFocus,
+  onBlur,
+  ...props
+}: TextInputProps & { ref?: Ref<TextInput> }) {
+  const u = usePixelUnit();
+  const [focused, setFocused] = useState(false);
+  return (
+    <View
+      style={{
+        minHeight: 52,
+        justifyContent: 'center',
+        opacity: props.editable === false ? 0.6 : 1,
+      }}
+    >
+      <FrameShape tone={focused ? frameTones.fieldFocus : frameTones.field} unit={u} />
+      <TextInput
+        ref={ref}
+        {...props}
+        onFocus={(event) => {
+          setFocused(true);
+          onFocus?.(event);
+        }}
+        onBlur={(event) => {
+          setFocused(false);
+          onBlur?.(event);
+        }}
+        style={[inputText, style]}
+      />
     </View>
   );
 }

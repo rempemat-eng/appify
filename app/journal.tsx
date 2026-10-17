@@ -5,7 +5,7 @@ import { Tabs } from 'heroui-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Rect } from 'react-native-svg';
 import { Check, Eye } from 'lucide-react-native';
-import { cozy as c, panelStyle } from '@/lib/cozy';
+import { cozy as c } from '@/lib/cozy';
 import { gameLayout } from '@/lib/layout';
 import { CozyBackground, CozyPanel } from '@/components/cozy-ui';
 import { feedback, startGame, useGame } from '@/lib/game';
@@ -13,6 +13,8 @@ import { collectionOf, postcardsOf, visitorHint, visitors } from '@/lib/visitors
 import { visitorPixels } from '@/lib/visitor-art';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
+import { FrameFill, usePixelUnit } from '@/components/pixel-frame';
+import { PixelBar } from '@/components/game-hud';
 import { JournalEmpty, PostcardArt } from '@/components/visitors';
 import { goBackOrReplace } from '@/lib/navigation';
 import { CompanionMemories, MemoryReflection } from '@/components/companion-memories';
@@ -34,6 +36,7 @@ export default function FieldJournal() {
   const tab = selection.request === requestedTab ? selection.tab : requestedTab;
   const [guideOpen, setGuideOpen] = useState(false);
   const p = useGame((s) => s.player);
+  const u = usePixelUnit();
   const memories = useGame((s) => s.companionMemories);
   const pendingMemories = useGame((s) => s.pendingMemories);
   const [keptMessage, setKeptMessage] = useState<string | null>(null);
@@ -98,22 +101,8 @@ export default function FieldJournal() {
             accessibilityRole="progressbar"
             accessibilityLabel="Befriended visitors"
             accessibilityValue={{ min: 0, max: visitors.length, now: friendCount }}
-            style={{
-              height: 10,
-              borderRadius: 0,
-              borderWidth: 2,
-              borderColor: c.outline,
-              backgroundColor: c.body,
-              overflow: 'hidden',
-            }}
           >
-            <View
-              style={{
-                height: '100%',
-                width: `${(friendCount / visitors.length) * 100}%`,
-                backgroundColor: c.roam,
-              }}
-            />
+            <PixelBar value={friendCount} max={visitors.length} color={c.roam} unit={u} />
           </View>
         )}
       </View>
@@ -124,9 +113,8 @@ export default function FieldJournal() {
           feedback('select');
         }}
       >
-        <Tabs.List
-          style={{ backgroundColor: c.body, borderRadius: 0, borderWidth: 2, borderColor: c.ink }}
-        >
+        <Tabs.List style={{ backgroundColor: c.transparent, padding: 2 * u }}>
+          <FrameFill fill={c.body} inset />
           <Tabs.Indicator style={{ borderRadius: 0, backgroundColor: c.paper }} />
           <Tabs.Trigger value="visitors">
             <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
@@ -198,15 +186,18 @@ export default function FieldJournal() {
                 accessible
                 accessibilityLabel={`${item.name}, ${item.habit}, ${item.rarity}. ${friend ? 'Befriended; available as a guardian in your garden.' : met ? 'Met, not befriended. Befriend this visitor while they are visiting your garden.' : `Unseen; may appear on ${visitorHint(item.rarity)}.`}${met ? ` First met after ${met.minutes} simulated offline minutes.` : ''}`}
                 style={{
-                  ...panelStyle,
                   flex: 1,
                   alignItems: 'center',
                   padding: 10,
                   gap: 7,
-                  backgroundColor: met ? tint.fill : c.paper,
-                  borderColor: met ? tint.edge : c.outline,
+                  marginBottom: u,
                 }}
               >
+                <FrameFill
+                  depth={1}
+                  fill={met ? tint.fill : c.paper}
+                  outline={met ? tint.edge : c.outline}
+                />
                 <View
                   accessibilityElementsHidden
                   importantForAccessibility="no-hide-descendants"

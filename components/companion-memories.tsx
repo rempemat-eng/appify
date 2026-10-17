@@ -10,6 +10,7 @@ import type {
 import { CozyPanel } from '@/components/cozy-ui';
 import { PixelButton } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
+import { FrameFill } from '@/components/pixel-frame';
 import { MemoryStamp } from '@/components/memory-stamp';
 
 const intentions = [
@@ -49,18 +50,20 @@ export type BreakIntentionPickerProps = {
   disabled?: boolean;
 };
 
+function ChoiceFrame({ selected }: { selected: boolean }) {
+  return (
+    <FrameFill fill={selected ? c.sage : c.paper} outline={selected ? c.leafOutline : c.outline} />
+  );
+}
+
 export function BreakIntentionPicker({
   value,
   onChange,
   disabled = false,
 }: BreakIntentionPickerProps) {
   const chosen = intentions.find((intention) => intention.id === value);
-  const choiceStyle = (selected: boolean, pressed: boolean) => ({
+  const choiceStyle = (pressed: boolean) => ({
     minHeight: 44,
-    borderRadius: 0,
-    borderWidth: 2,
-    borderColor: selected ? c.leafOutline : c.outline,
-    backgroundColor: selected ? c.sage : c.paper,
     opacity: disabled ? 0.55 : pressed ? 0.75 : 1,
     paddingHorizontal: 10,
     paddingVertical: 7,
@@ -81,11 +84,12 @@ export function BreakIntentionPicker({
         disabled={disabled}
         onPress={() => onChange(null)}
         style={({ pressed }) => ({
-          ...choiceStyle(value === null, pressed),
+          ...choiceStyle(pressed),
           alignItems: 'center',
           justifyContent: 'center',
         })}
       >
+        <ChoiceFrame selected={value === null} />
         <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
           Just a break
         </BodyText>
@@ -100,7 +104,7 @@ export function BreakIntentionPicker({
             disabled={disabled}
             onPress={() => onChange(intention.id)}
             style={({ pressed }) => ({
-              ...choiceStyle(value === intention.id, pressed),
+              ...choiceStyle(pressed),
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'center',
@@ -108,6 +112,7 @@ export function BreakIntentionPicker({
               flexBasis: '45%',
             })}
           >
+            <ChoiceFrame selected={value === intention.id} />
             <MemoryStamp intention={intention.id} size={24} />
             <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
               {intention.label}
@@ -167,18 +172,8 @@ export function MemoryReflection({
   return (
     <CozyPanel style={{ padding: 14, gap: 10 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <View
-          style={{
-            width: 48,
-            height: 48,
-            borderWidth: 1,
-            borderColor: c.outline,
-            borderRadius: 0,
-            alignItems: 'center',
-            justifyContent: 'center',
-            backgroundColor: c.sage,
-          }}
-        >
+        <View style={{ width: 48, height: 48, alignItems: 'center', justifyContent: 'center' }}>
+          <FrameFill fill={c.sage} outline={c.outline} inset />
           <MemoryStamp intention={offer.intention} />
         </View>
         <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
@@ -208,13 +203,10 @@ export function MemoryReflection({
           minHeight: 44,
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 0,
-          borderWidth: 1,
-          borderColor: c.outline,
-          backgroundColor: c.paper,
           opacity: disabled ? 0.55 : pressed ? 0.75 : 1,
         })}
       >
+        <FrameFill fill={c.paper} outline={c.outline} />
         <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 12 }}>SKIP</BodyText>
       </Pressable>
     </CozyPanel>
@@ -267,17 +259,9 @@ export function CompanionMemories({
             return (
               <View key={memory.id} style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
                 <View
-                  style={{
-                    width: 44,
-                    height: 48,
-                    borderRadius: 0,
-                    borderWidth: 1,
-                    borderColor: c.outline,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    backgroundColor: c.body,
-                  }}
+                  style={{ width: 44, height: 48, alignItems: 'center', justifyContent: 'center' }}
                 >
+                  <FrameFill fill={c.body} outline={c.outline} inset />
                   <MemoryStamp intention={memory.intention} />
                 </View>
                 <View style={{ flex: 1, minWidth: 0, gap: 2 }}>

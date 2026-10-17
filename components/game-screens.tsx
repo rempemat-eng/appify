@@ -25,7 +25,7 @@ import { FriendCode } from '@/components/friend-code';
 import { GuardianPet } from '@/components/guardian-pet';
 import { GardenVisitor } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
-import { Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
+import { Page, Pet, PixelButton, PixelText, StatusChip } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldPreview } from '@/components/world-scene';
@@ -37,6 +37,7 @@ import { BreakIntentionPicker } from '@/components/companion-memories';
 import { GardenKeepsakeSheet } from '@/components/garden-keepsakes';
 import { gardenMarker } from '@/components/garden-journey';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
+import { PixelInput } from '@/components/pixel-frame';
 import { CozyBackground, CozyPanel } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
 import { PlayPause, TogetherInvite, usePlayPaused } from '@/components/offline-garden';
@@ -593,10 +594,9 @@ export function ArenaScreen() {
         <CozyPanel style={{ padding: 16, gap: 12 }}>
           <FriendCode code={p.code} />
           <BodyText>Add rival</BodyText>
-          <TextInput
+          <PixelInput
             ref={rivalCodeRef}
             accessibilityLabel="Rival code"
-            style={styles.input}
             value={code}
             onChangeText={(text) => {
               setCode(

@@ -14,8 +14,9 @@ import { Zap } from 'lucide-react-native';
 import { useReducedMotion } from '@/lib/motion';
 import { cards, cardIds, cardPower, cardDetails, type CardId } from '@/lib/cards';
 import { feedback, useGame, missions, type Player } from '@/lib/game';
-import { cozy as c, panelStyle } from '@/lib/cozy';
-import { CozyBackground, PaperFinish } from '@/components/cozy-ui';
+import { cozy as c } from '@/lib/cozy';
+import { CozyBackground } from '@/components/cozy-ui';
+import { FrameFill, usePixelUnit } from '@/components/pixel-frame';
 import { PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { cardIllustrations } from '@/lib/card-art';
@@ -54,6 +55,7 @@ export function HabitCard({
 }) {
   const card = cards[id];
   const reduced = useReducedMotion();
+  const u = usePixelUnit();
   const lift = useSharedValue(0);
   const press = useSharedValue(1);
   useEffect(() => {
@@ -85,26 +87,21 @@ export function HabitCard({
       : card.effect
   ).replace('⚡', 'energy');
   const face = (
-    <View
-      style={{
-        ...panelStyle,
-        borderRadius: 0,
-        minHeight: 168,
-        borderColor:
+    <View style={{ minHeight: 168, padding: 2 * u, marginBottom: u }}>
+      <FrameFill
+        depth={1}
+        outline={
           guided || selected
             ? c.moss
             : card.rarity === 'EPIC'
               ? c.goldFrame
               : card.rarity === 'RARE'
                 ? c.silver
-                : c.outline,
-      }}
-    >
-      <PaperFinish />
+                : c.outline
+        }
+      />
       <View
         style={{
-          borderTopLeftRadius: 10,
-          borderTopRightRadius: 10,
           backgroundColor: color,
           padding: 8,
           paddingRight: 30,
@@ -122,38 +119,25 @@ export function HabitCard({
       <View
         style={{
           position: 'absolute',
-          right: 4,
-          top: 4,
+          right: 2 * u + 2,
+          top: 2 * u + 2,
           width: 28,
           height: 28,
-          borderRadius: 0,
-          backgroundColor: c.paper,
-          borderWidth: 1,
-          borderColor: c.outline,
           flexDirection: 'row',
           alignItems: 'center',
           justifyContent: 'center',
           gap: 1,
         }}
       >
+        <FrameFill />
         <Zap size={11} color={c.ink} fill={c.ink} />
         <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
           {card.cost}
         </BodyText>
       </View>
       <View style={{ alignItems: 'center', padding: 6, gap: 4 }}>
-        <View
-          style={{
-            width: 56,
-            height: 56,
-            borderRadius: 0,
-            borderWidth: 2,
-            borderColor: c.outline,
-            backgroundColor: c.body,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        <View style={{ width: 56, height: 56, alignItems: 'center', justifyContent: 'center' }}>
+          <FrameFill fill={c.body} inset />
           <CardIllustration id={id} />
         </View>
         <BodyText
@@ -172,7 +156,7 @@ export function HabitCard({
           {effect}
         </BodyText>
       </View>
-      {card.rarity !== 'COMMON' && <CardShine gold={card.rarity === 'EPIC'} />}
+      {card.rarity !== 'COMMON' && <CardShine gold={card.rarity === 'EPIC'} inset={2 * u} />}
     </View>
   );
   return (
@@ -195,7 +179,7 @@ export function HabitCard({
     </Animated.View>
   );
 }
-function CardShine({ gold }: { gold: boolean }) {
+function CardShine({ gold, inset }: { gold: boolean; inset: number }) {
   const reduced = useReducedMotion();
   const x = useSharedValue(-100);
   useEffect(() => {
@@ -207,10 +191,7 @@ function CardShine({ gold }: { gold: boolean }) {
     transform: [{ translateX: x.value }, { rotate: '20deg' }],
   }));
   return (
-    <View
-      pointerEvents="none"
-      style={{ position: 'absolute', inset: 0, borderRadius: 0, overflow: 'hidden' }}
-    >
+    <View pointerEvents="none" style={{ position: 'absolute', inset, overflow: 'hidden' }}>
       <Animated.View style={[{ width: 36, height: '140%', top: -20 }, motion]}>
         <LinearGradient
           colors={[c.transparent, gold ? c.amber : c.highlight, c.transparent]}

@@ -2,13 +2,14 @@ import { useState } from 'react';
 import { Modal, Pressable, ScrollView, View, useWindowDimensions } from 'react-native';
 import { router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { cozy as c, panelStyle } from '@/lib/cozy';
+import { cozy as c } from '@/lib/cozy';
 import { useGame, type Player } from '@/lib/game';
 import { companionOptions, companionProfile } from '@/lib/companion-profiles';
 import type { VisitorId } from '@/lib/visitors';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { CozyPanel, CozySheet } from '@/components/cozy-ui';
+import { FrameFill, usePixelUnit } from '@/components/pixel-frame';
 import { CompanionMemories } from '@/components/companion-memories';
 
 export function CompanionPicker({
@@ -24,6 +25,7 @@ export function CompanionPicker({
 }) {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
+  const u = usePixelUnit();
   const inBattle = useGame((s) => Boolean(s.battle));
   const memories = useGame((s) => s.companionMemories);
   const active = companionProfile(player);
@@ -116,15 +118,13 @@ export function CompanionPicker({
                 {options.map((option) => (
                   <View
                     key={option.id ?? 'starter'}
-                    style={{
-                      ...panelStyle,
-                      width: 116,
-                      minHeight: 118,
-                      padding: 8,
-                      borderColor: option.id === preview.id ? c.leafOutline : c.outline,
-                      backgroundColor: option.id === preview.id ? c.sage : c.paper,
-                    }}
+                    style={{ width: 116, minHeight: 118, padding: 8, marginBottom: u }}
                   >
+                    <FrameFill
+                      depth={1}
+                      fill={option.id === preview.id ? c.sage : c.paper}
+                      outline={option.id === preview.id ? c.leafOutline : c.outline}
+                    />
                     <View
                       aria-hidden
                       pointerEvents="none"
@@ -159,20 +159,19 @@ export function CompanionPicker({
                       onPress={() => setPreviewId(option.id)}
                       style={({ pressed }) => ({
                         position: 'absolute',
-                        top: 0,
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
+                        top: 2 * u,
+                        left: 2 * u,
+                        right: 2 * u,
+                        bottom: 2 * u,
                         zIndex: 1,
-                        borderRadius: 0,
-                        borderWidth: 2,
-                        borderColor: pressed ? c.leafOutline : c.transparent,
+                        backgroundColor: pressed ? 'rgba(56,99,52,0.14)' : c.transparent,
                       })}
                     />
                   </View>
                 ))}
               </ScrollView>
-              <View style={{ ...panelStyle, padding: 14, gap: 12, backgroundColor: tint }}>
+              <View style={{ padding: 14, gap: 12, marginBottom: u }}>
+                <FrameFill depth={1} fill={tint} outline={c.outline} />
                 <View style={{ gap: 4 }}>
                   <BodyText style={{ fontSize: 18, fontFamily: 'PixelifySans_700Bold' }}>
                     {preview.name}

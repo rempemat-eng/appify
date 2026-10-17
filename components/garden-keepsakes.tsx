@@ -8,6 +8,7 @@ import { CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { PixelButton } from '@/components/game-ui';
 import { MemoryStamp } from '@/components/memory-stamp';
 import { BodyText } from '@/components/pixel-feedback';
+import { FrameFill } from '@/components/pixel-frame';
 
 const keepsakes = [
   { intention: 'rest', name: 'Lantern', title: 'A quiet moment', tint: c.rest },
@@ -198,23 +199,25 @@ export function GardenKeepsakeShelf({ memories, onOpen }: GardenKeepsakeShelfPro
                     alignItems: 'center',
                     gap: 7,
                     padding: 8,
-                    backgroundColor: pressed ? c.sage : c.paper,
-                    borderColor: c.outline,
-                    borderWidth: 1,
-                    borderRadius: 0,
+                    opacity: pressed ? 0.8 : 1,
                   })}
                 >
-                  <MemoryStamp intention={keepsake.intention} size={24} />
-                  <BodyText
-                    style={{
-                      fontSize: 12,
-                      fontFamily: 'PixelifySans_700Bold',
-                      flexShrink: 1,
-                      textAlign: 'center',
-                    }}
-                  >
-                    {keepsake.name}
-                  </BodyText>
+                  {({ pressed }) => (
+                    <>
+                      <FrameFill fill={pressed ? c.sage : c.paper} outline={c.outline} />
+                      <MemoryStamp intention={keepsake.intention} size={24} />
+                      <BodyText
+                        style={{
+                          fontSize: 12,
+                          fontFamily: 'PixelifySans_700Bold',
+                          flexShrink: 1,
+                          textAlign: 'center',
+                        }}
+                      >
+                        {keepsake.name}
+                      </BodyText>
+                    </>
+                  )}
                 </Pressable>
               );
             })}
@@ -290,12 +293,9 @@ export function GardenKeepsakeSheet({ memory, onClose, onJournal }: GardenKeepsa
                     height: 112,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    borderRadius: 0,
-                    borderWidth: 2,
-                    borderColor: c.outline,
-                    backgroundColor: keepsake.tint,
                   }}
                 >
+                  <FrameFill fill={keepsake.tint} outline={c.outline} inset />
                   <GardenKeepsakeArt intention={memory.intention} size={80} />
                 </View>
                 <BodyText
