@@ -104,7 +104,7 @@ function create(init) {
   return hook;
 }
 
-function load({ os = 'web', saved = {}, activated = false } = {}) {
+function load({ os = 'web', saved = {}, activated = false, deferredSeeks = false } = {}) {
   const world = {
     now: 1000,
     storage: new Map(Object.entries(saved)),
@@ -115,6 +115,7 @@ function load({ os = 'web', saved = {}, activated = false } = {}) {
     feedback: null,
     effects: [],
     handlers: new Map(),
+    seeks: [],
   };
   const player = (source) => {
     const fake = {
@@ -130,6 +131,7 @@ function load({ os = 'web', saved = {}, activated = false } = {}) {
       },
       seekTo(seconds) {
         fake.currentTime = seconds;
+        if (deferredSeeks) return new Promise((resolve) => world.seeks.push(resolve));
         return Promise.resolve();
       },
     };
@@ -290,6 +292,43 @@ async function main() {
     world.effects.at(-1)();
     check(world.pauses.at(-1) === ambienceLoops.day, 'unmounting the garden stops its loop');
     check(typeof cleanup === 'function', 'the ambience hook always returns a cleanup');
+  }
+
+  // A deferred rewind must not outlive mute, cleanup, or a newer cue.
+  for (const os of ['web', 'ios']) {
+    for (const interruption of ['mute', 'stop', 'mute then unmute']) {
+      const { sound, world } = load({ os, activated: true, deferredSeeks: true });
+      const stop = sound.startSound();
+      await settle();
+      sound.playSound('tap');
+      world.now += 1000;
+      sound.playSound('tap');
+      check(world.seeks.length === 1, `${os}: replay waits for rewind`);
+      if (interruption === 'stop') stop();
+      else {
+        await sound.useSoundPreference.getState().setEffects(false);
+        if (interruption === 'mute then unmute')
+          await sound.useSoundPreference.getState().setEffects(true);
+      }
+      world.seeks[0]();
+      await settle();
+      check(world.plays.length === 1, `${os}: ${interruption} cancels deferred replay`);
+      check(world.pauses.includes(soundEffects.tap), `${os}: ${interruption} stops active effects`);
+      stop();
+    }
+    const { sound, world } = load({ os, activated: true, deferredSeeks: true });
+    const stop = sound.startSound();
+    await settle();
+    sound.playSound('tap');
+    world.now += 1000;
+    sound.playSound('tap');
+    world.now += 1000;
+    sound.playSound('tap');
+    check(world.plays.length === 2, `${os}: newer cue can play after the pending rewind`);
+    world.seeks[0]();
+    await settle();
+    check(world.plays.length === 2, `${os}: older rewind cannot replay over the newer cue`);
+    stop();
   }
 
   // Native: no gesture gate, and a polite audio session.

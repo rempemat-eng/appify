@@ -27,6 +27,7 @@ Sound is part of "one game, not an app with a game in it", but it stays decorati
 ## The engine (`lib/sound.ts`)
 
 - `playSound(id)` plays an effect. It is a no-op until preferences have loaded, when effects are off, and on the web before the page's first tap or key (browsers refuse earlier audio, and expo-audio's web `play()` does not catch the refusal). The same cue within `REPEAT_MS` is one sound, so a button and its store cue do not double up.
+- A replay may need an asynchronous rewind. Muting effects or stopping the sound system cancels pending replays and pauses active effects; turning sound back on does not revive old cues. A newer request for the same cue supersedes an older rewind. This lifecycle is covered by deferred boundary tests, not a claim about physical-device audio output.
 - `useAmbience(id | null)` is the only way to start a loop. Home passes `'day'`, `'night'` (21:00 to 06:00) or `null` from the same `gardenActive` flag that pauses the garden. Any sheet, a tab change, the app going to the background or a nap stops it.
 - The store stays free of audio. `lib/game.ts` exposes `onFeedback()` and more specific `feedback()` kinds (`nap`, `wake`, `friend`, `levelup`, `reward`). `startSound()` (called once in `app/_layout.tsx`) maps every kind to a cue in `feedbackSounds`.
 - On iOS and Android the audio session mixes with the player's own music, follows the silent switch and stops in the background (`setAudioModeAsync` in `startSound()`).

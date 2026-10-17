@@ -26,6 +26,7 @@ export const useSoundPreference = create<{
   loaded: false,
   setEffects: async (effects) => {
     await AsyncStorage.setItem(keys.effects, JSON.stringify(effects));
+    if (!effects) stopEffects();
     set({ effects });
   },
   setAmbience: async (ambience) => {
@@ -66,6 +67,21 @@ function userActive() {
 
 const effectPlayers = new Map<SoundId, AudioPlayer>();
 const lastPlayed = new Map<SoundId, number>();
+const effectRequests = new Map<SoundId, number>();
+let effectEpoch = 0;
+
+/** Mute and root cleanup invalidate rewinds as well as currently playing cues. */
+function stopEffects() {
+  effectEpoch++;
+  for (const player of effectPlayers.values()) {
+    try {
+      player.pause();
+    } catch {
+      // Audio cleanup must never interrupt a setting change or app teardown.
+    }
+  }
+}
+
 function effectPlayer(id: SoundId) {
   let player = effectPlayers.get(id);
   if (!player) {
@@ -81,12 +97,25 @@ export function playSound(id: SoundId) {
   const now = Date.now();
   if (now - (lastPlayed.get(id) ?? Number.NEGATIVE_INFINITY) < REPEAT_MS) return;
   lastPlayed.set(id, now);
+  const epoch = effectEpoch;
+  const request = (effectRequests.get(id) ?? 0) + 1;
+  effectRequests.set(id, request);
   try {
     const player = effectPlayer(id);
     if (player.currentTime > 0) {
       void player
         .seekTo(0)
-        .then(() => player.play())
+        .then(() => {
+          const latest = useSoundPreference.getState();
+          if (
+            effectEpoch === epoch &&
+            effectRequests.get(id) === request &&
+            latest.loaded &&
+            latest.effects &&
+            userActive()
+          )
+            player.play();
+        })
         .catch(() => {});
     } else player.play();
   } catch {
@@ -174,6 +203,7 @@ export function startSound() {
   return () => {
     stopFeedback();
     stopPreference();
+    stopEffects();
     if (web) {
       window.removeEventListener('pointerdown', markActive, { capture: true });
       window.removeEventListener('keydown', markActive, { capture: true });
