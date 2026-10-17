@@ -36,6 +36,13 @@ import {
 } from '@/lib/visitors';
 import { bilt, backendUnavailableMessage } from '@/lib/bilt';
 import { FutureSaveError, GAME_SAVE_KEY, readSave, writeSave } from '@/lib/save-data';
+import {
+  attackingRaidReward,
+  RAID_TRANSFER_GRASS,
+  safeRaidTransport,
+  settleAttackingRaid,
+  settleDefendingRaid,
+} from '@/lib/economy';
 import { backupBeforeFreshStart, SaveRecoveryChangedError } from '@/lib/save-recovery';
 import {
   appendBreak,
@@ -621,14 +628,15 @@ function applyIncoming(item: Incoming) {
   const p = s.player;
   if (!p || s.applied.includes(item.raid.id)) return;
   const lost = item.raid.attacker_won;
+  const currency = settleDefendingRaid(p.grass, lost);
   gameStore.setState({
     player: {
       ...p,
-      grass: lost ? Math.max(0, p.grass - item.raid.grass_amount) : p.grass + 20,
+      grass: currency.balance,
       mood: lost ? Math.max(0, p.mood - 20) : p.mood,
       recovery_until: Date.now() + 60000,
     },
-    rules: bumpDay(s.rules, dayKey(), { grass: lost ? 0 : 20 }),
+    rules: bumpDay(s.rules, dayKey(), { grass: currency.earned }),
     applied: [...s.applied, item.raid.id],
     alerts: [...s.alerts, item],
     staged: s.staged.filter((x) => x.raid.id !== item.raid.id),
@@ -1310,7 +1318,7 @@ export const gameStore = create<Game>((set, get) => ({
       for (const raid of get().outgoing) {
         const r = await bilt
           .from('raids')
-          .upsert(raid, { onConflict: 'id', ignoreDuplicates: true });
+          .upsert(safeRaidTransport(raid), { onConflict: 'id', ignoreDuplicates: true });
         if (r.error) throw r.error;
         set({ outgoing: get().outgoing.filter((x) => x.id !== raid.id) });
         await persist();
@@ -1666,24 +1674,24 @@ export const gameStore = create<Game>((set, get) => ({
     if (!p || !get().battle) return;
     const day = get().rules.days[dayKey()] ?? emptyDay();
     const practiceGrass = sparringReward(day, won);
-    const amount = raidGrass(won, target);
+    const currency = settleAttackingRaid(p.grass, won, target.grass);
     const raid: Raid = {
       id: Crypto.randomUUID(),
       attacker_id: p.id,
       defender_id: target.id,
       attacker_won: won,
-      grass_amount: amount,
+      grass_amount: currency.transferred,
       created_at: new Date().toISOString(),
       seen_by_defender: false,
     };
     set({
       rules: bumpDay(get().rules, dayKey(), {
         sparringWins: practice && won ? 1 : 0,
-        grass: practice ? practiceGrass : won ? amount : 0,
+        grass: practice ? practiceGrass : currency.earned,
       }),
       player: {
         ...p,
-        grass: practice ? p.grass + practiceGrass : Math.max(0, p.grass + (won ? amount : -amount)),
+        grass: practice ? p.grass + practiceGrass : currency.balance,
       },
       outgoing: practice ? get().outgoing : [...get().outgoing, raid],
       battle: null,
@@ -1713,7 +1721,7 @@ export const gameStore = create<Game>((set, get) => ({
       attacker_id: 'bot',
       defender_id: p.id,
       attacker_won: won,
-      grass_amount: won ? Math.min(p.grass, Math.max(10, Math.floor(p.grass * 0.3))) : 0,
+      grass_amount: RAID_TRANSFER_GRASS,
       created_at: new Date().toISOString(),
       seen_by_defender: true,
     };
@@ -1755,7 +1763,7 @@ gameStore.subscribe(() => {
 });
 export const useGame = gameStore;
 export function raidGrass(won: boolean, target: Player) {
-  return won ? Math.min(target.grass, Math.max(10, Math.floor(target.grass * 0.3))) : 10;
+  return attackingRaidReward(won, target.grass);
 }
 export function bot(p: Player): Player {
   return {
