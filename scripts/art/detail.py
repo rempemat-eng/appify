@@ -281,3 +281,33 @@ def base_tufts(cv: Canvas, xs, y: int, ramp, ground: int = 3):
     bottom row, so posts and walls sit in the grass instead of ending on a hard line."""
     for i, x in enumerate(xs):
         grass_tuft(cv, x, y, (0, 3, 5)[i % 3], ramp, ground)
+
+
+def slate_plane(cv: Canvas, pts, ramp, base: int, ridge: float, outward: int, course: int = 6,
+                tile: int = 5, seed: int = 0, offset=None, moss=None, skew: float = 0.0):
+    """A roof plane seen from above in the steep top-down view (Matt's references, 17
+    Oct): rows of individual slates. Each slate has its own tone, a lit top edge and a
+    lit upper corner, a dark lower edge where the next slate overlaps it, and a dark
+    seam on its ridge side; rows are staggered, and the odd slate carries moss.
+    `outward` is -1 for a plane falling to the left of the ridge and +1 to the right;
+    `skew` slants the rows to follow a plane seen at an angle."""
+    for (x, y) in pts:
+        u = (x - ridge) * outward  # distance downslope from the ridge
+        ci, r = divmod(int(u), course)
+        shift = (tile // 2) if ci % 2 else 0
+        ti, j = divmod(int(y - u * skew) + shift, tile)
+        n = noise2(ci, ti, seed)
+        t = base + (1 if n > 0.78 else -1 if n < 0.2 else 0)
+        if r == 0:
+            t -= 2  # the seam on the slate's ridge side
+        elif j == tile - 1:
+            t -= 1 if outward < 0 else 2  # its lower edge, under the next slate
+        elif j == 0:
+            t += 1  # the top edge catches the light
+        elif r == 1 and j == 1:
+            t += 1
+        if offset:
+            t += offset(x, y)
+        cv.set(x, y, tone(ramp, t))
+        if moss and r in (2, 3) and j == tile - 2 and noise2(ci, ti, seed + 5) < 0.1:
+            cv.set(x, y, moss[2] if noise2(x, y, seed + 6) < 0.6 else moss[3])

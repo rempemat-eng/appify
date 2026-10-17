@@ -70,8 +70,9 @@ export function PixelProp({
 }
 export type SceneKind = keyof typeof sceneImages | 'night';
 // Decorative frames use actual garden/world drawings at native resolution.
-// Keep the old 160px viewport and 39px ground contract: WelcomeBack measures
-// its companion and ground inset against this same integer pixel scale.
+// The frames are drawn at the garden's density (step 7c) with a 320 px viewport and
+// a 78 px ground contract (lib/scene-assets.ts): WelcomeBack and the visitor sheet
+// measure the companion and ground inset against this same integer pixel scale.
 export function PixelScene({
   kind = 'habitat',
   height = 240,
@@ -95,7 +96,12 @@ export function PixelScene({
   style?: ViewStyle;
 }) {
   const [bounds, setBounds] = useState({ width: 320, height });
-  const pixel = Math.max(1, Math.floor(bounds.width / sceneFrame.window));
+  // The integer scale that shows the viewport and always covers the frame's width.
+  const pixel = Math.max(
+    1,
+    Math.floor(bounds.width / sceneFrame.window),
+    Math.ceil(bounds.width / sceneFrame.width),
+  );
   const now = useGame((s) => s.now);
   const hour = new Date(now).getHours();
   const night = !sunrise && (kind === 'night' || (kind === 'habitat' && (hour < 6 || hour >= 21)));

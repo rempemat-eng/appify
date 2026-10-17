@@ -183,127 +183,70 @@ def window(cv: Canvas, x: int, y: int, w: int = 16, h: int = 14, shutters=NAP, c
         detail.overhang_shadow(cv, x, x + w + 2, y + h + 2, lambda xx: 1 if xx < x + 4 else 2, k=2)
 
 
-def hut() -> Canvas:
-    """The nap hut, 104 x 92: a shingled lavender roof with a timber gable, painted
-    siding under the eave's shadow, deep windows with shutters, a recessed round-topped
-    door (16 x 28) and a stone foundation (coherence plan, 6c: material detail)."""
-    w, h = 104, 92
-    cv = Canvas(w, h, pad=PAD)
-    apex_x, apex_y, eave = 51.5, 18, 46
+def topdown_roof(cv: Canvas, ridge: float, apex_y: int, eave_y: int, left_x: int, right_x: int,
+                 ramp, hole=frozenset(), offset=None, seed: int = 31, moss=LEAF, lit_base: int = 3,
+                 shade_base: int = 2, barge=WOOD):
+    """A gable roof seen steeply from above (the hut's rule, shared by every building):
+    two slate planes falling left and right of a ridge that runs back from the front
+    gable's apex, the far edge peaking at the ridge, rounded ridge caps, eaves that show
+    their thickness and thick bargeboards along the gable. Returns the planes and the
+    bargeboard line, so callers can lay the gable and the front wall under it."""
+    slope = (eave_y - apex_y) / (ridge - left_x)
 
-    def half(y):
-        return (y - apex_y) * (32 / (eave - apex_y))
+    def edge_y(x):
+        return apex_y + abs(x + 0.5 - ridge) * slope
 
-    def gable(x, y):
-        return apex_y <= y <= eave and abs(x + 0.5 - apex_x) <= half(y)
+    def back_y(x):
+        return 1 + abs(x + 0.5 - ridge) * slope
 
-    # chimney behind the right slope: fieldstone with a slab cap
-    detail.bricks(cv, 72, 3, 10, 18, MATERIALS['roof'], seed=7)
-    cv.vline(72, 3, 18, MATERIALS['roof'][3]); cv.vline(81, 3, 18, MATERIALS['roof'][1])
-    cv.rect(70, 0, 14, 3, STONE[3]); cv.hline(70, 0, 14, STONE[4]); cv.hline(70, 2, 14, STONE[1])
-    cv.rect(74, 1, 6, 1, NAP[0])
-    detail.overhang_shadow(cv, 72, 82, 3, 1)
+    left = {(x, y) for x in range(left_x, int(ridge) + 1) for y in range(0, eave_y + 1)
+            if back_y(x) <= y <= edge_y(x)} - set(hole)
+    right = {(x, y) for x in range(int(ridge) + 1, right_x + 1) for y in range(0, eave_y + 1)
+             if back_y(x) <= y <= edge_y(x)} - set(hole)
+    detail.slate_plane(cv, left, ramp, lit_base, ridge, -1, seed=seed, moss=moss, skew=slope, offset=offset)
+    detail.slate_plane(cv, right, ramp, shade_base, ridge, 1, seed=seed + 1, moss=moss, skew=slope, offset=offset)
+    rx = int(ridge) - 2
+    for y in range(0, apex_y + 2):
+        k = y % 4
+        cv.set(rx, y, ramp[1]); cv.set(rx + 1, y, ramp[4] if k else ramp[3])
+        cv.set(rx + 2, y, ramp[3] if k else ramp[2]); cv.set(rx + 3, y, ramp[2] if k else ramp[1]); cv.set(rx + 4, y, ramp[0])
+    for x in range(left_x, right_x + 1):
+        by = int(back_y(x))
+        if (x, by) in left:
+            cv.set(x, by, ramp[4])
+        elif (x, by) in right:
+            cv.set(x, by, ramp[3])
+    for y in range(0, eave_y + 1):
+        if (left_x, y) in left:
+            cv.set(left_x, y, ramp[4])
+        if (right_x, y) in right:
+            cv.set(right_x, y, ramp[1])
+    for x in range(left_x - 1, right_x + 2):
+        ey = int(edge_y(x))
+        lit = x < ridge
+        cv.set(x, ey, barge[4] if lit else barge[3]); cv.set(x, ey + 1, barge[3] if lit else barge[2])
+        cv.set(x, ey + 2, barge[1])
+    return left, right, edge_y
 
-    # roof: a hipped roof seen from above and in front. Each plane has its own value:
-    # the left hip end faces the light (brightest), the front slope is mid, the right
-    # hip end faces away (darkest). Hip lines separate them, lit on the left and dark
-    # on the right. The front gable and the chimney cast shadows onto the front slope.
-    ridge_l, ridge_r = 27, w - 28
 
-    def hip_l(y):
-        return ridge_l - (y - 4) * ridge_l / (eave - 4)
+def topdown_gable(cv: Canvas, edge_y, x0: int, x1: int, apex_y: int, wall_top: int, ramp=WOOD,
+                  boards: bool = True) -> set:
+    """The gable under a top-down roof: boards (or plaster), shaded under the bargeboards."""
+    gable = {(x, y) for x in range(x0, x1 + 1) for y in range(apex_y, wall_top) if y > edge_y(x) + 2}
+    if boards:
+        detail.boards(cv, gable, ramp, 2, apex_y, board=5, vertical=True, x0=x0, joints=False, grain=0.05)
+    else:
+        for (x, y) in gable:
+            cv.set(x, y, ramp[4] if x < (x0 + x1) / 2 else ramp[3])
+    for (x, y) in gable:
+        if (x, y - 1) not in gable or (x, y - 2) not in gable:
+            detail.shade(cv, x, y, 2 if (x, y - 1) not in gable else 1)
+    return gable
 
-    def hip_r(y):
-        return ridge_r + (y - 4) * (w - 1 - ridge_r) / (eave - 4)
 
-    def roof_shadow(x, y):
-        right_edge = apex_x + (half(y) if y >= apex_y else 2.5)
-        if 0 <= x - right_edge < (6 if y >= apex_y else 4):
-            return -1
-        if 82 <= x <= 86 and y < 23:
-            return -1
-        return 0
-
-    left, front, right = set(), set(), set()
-    for y in range(5, eave):
-        inset = 12 - (y - 4) * 12 / (eave - 4)
-        for x in range(w):
-            if x < inset or x > w - 1 - inset or gable(x, y):
-                continue
-            if 71 <= x <= 82 and y < 20 and x > apex_x:
-                continue  # the chimney stands in front of this patch
-            if x < hip_l(y):
-                left.add((x, y))
-            elif x > hip_r(y):
-                right.add((x, y))
-            else:
-                front.add((x, y))
-    detail.shingles(cv, left, NAP, 4, 5, seed=1)
-    detail.shingles(cv, front, NAP, 3, 5, seed=2, offset=roof_shadow)
-    detail.shingles(cv, right, NAP, 1, 5, seed=3)
-    for y in range(5, eave):  # hip lines
-        xl, xr = int(hip_l(y)), int(round(hip_r(y)))
-        if (xl, y) in left | front:
-            cv.set(xl, y, NAP[4]); cv.set(xl + 1, y, NAP[2])
-        if (xr, y) in right | front:
-            cv.set(xr, y, NAP[0]); cv.set(xr - 1, y, NAP[1])
-    # the eaves' edge along the hip ends shows the roof's thickness
-    for (x, y) in left:
-        if (x - 1, y) not in left:
-            cv.set(x, y, NAP[4])
-    for (x, y) in right:
-        if (x + 1, y) not in right:
-            cv.set(x, y, NAP[0])
-    # the ridge: a lit cap along the top, and the gable's ridge running back to it
-    for x in range(ridge_l, ridge_r + 1):
-        if 71 <= x <= 82:
-            continue
-        cv.set(x, 4, NAP[4] if x < apex_x else NAP[3]); cv.set(x, 3, NAP[2])
-    for y in range(3, apex_y + 1):
-        cv.set(49, y, WOOD[4]); cv.set(50, y, WOOD[3]); cv.set(51, y, WOOD[3])
-        cv.set(52, y, WOOD[2]); cv.set(53, y, WOOD[1])
-    cv.hline(49, 3, 5, WOOD[4])
-
-    # gable end: vertical boards, shaded under the bargeboards
-    gpts = {(x, y) for y in range(apex_y, eave) for x in range(w) if gable(x, y)}
-    detail.boards(cv, gpts, WOOD, 2, apex_y, board=5, seed=3, vertical=True, x0=20, joints=False, grain=0.04)
-    for (x, y) in gpts:
-        if (x, y - 1) not in gpts or (x, y - 2) not in gpts or (x - 1, y - 2) not in gpts:
-            detail.shade(cv, x, y, 1)
-    # a round vent with the crescent sign, set into a lit frame
-    for (x, y) in disc(apex_x, 32, 5.4):
-        cv.set(x, y, WOOD[4] if x + y < apex_x + 32 - 1 else WOOD[1])
-    for (x, y) in disc(apex_x, 32, 4.2):
-        cv.set(x, y, NAP[0])
-    for (x, y) in disc(apex_x - 0.6, 31.6, 2.7) - disc(apex_x + 0.9, 30.8, 2.3):
-        cv.set(x, y, GOLD[3] if y < 32 else GOLD[2])
-    cv.set(int(apex_x) - 2, 31, GOLD[4])
-    # bargeboards along the gable, lit on the left, with a finial at the apex
-    for y in range(apex_y - 1, eave + 1):
-        hh = max(0.0, half(y))
-        lx, rx = int(apex_x - hh) - 1, int(apex_x + hh) + 1
-        cv.set(lx, y, WOOD[3]); cv.set(lx - 1, y, WOOD[4]); cv.set(lx - 2, y, WOOD[3])
-        cv.set(rx, y, WOOD[2]); cv.set(rx + 1, y, WOOD[2]); cv.set(rx + 2, y, WOOD[1])
-    cv.vline(51, apex_y - 5, 4, WOOD[3]); cv.set(52, apex_y - 5, WOOD[2]); cv.set(51, apex_y - 6, WOOD[4])
-    # the eave: a fascia board under the shingle tips
-    for x in range(0, w):
-        if cv.get(x, eave - 1)[3]:
-            cv.set(x, eave, WOOD[1])
-            cv.set(x, eave - 1, WOOD[3] if x < apex_x else WOOD[2])
-
-    # walls: painted siding; the receding side wall a step darker; the eave's shadow
-    # falls across the top, deeper to the right; the foot darkens where it meets stone.
-    wall_top, wall_bottom = eave + 1, 82
-    detail.boards(cv, rect_set(8, wall_top, 82, wall_bottom - wall_top), PLASTER, 4, wall_top, seed=4, joints=False)
-    detail.boards(cv, rect_set(90, wall_top, 6, wall_bottom - wall_top), PLASTER, 2, wall_top, seed=5, joints=False)
-    posts = set()
-    for x0 in (8, 87):  # round timber corner posts: a lit stripe, a dark far side
-        for y in range(wall_top, wall_bottom):
-            cv.set(x0, y, WOOD[3]); cv.set(x0 + 1, y, WOOD[4]); cv.set(x0 + 2, y, WOOD[2] if x0 == 8 else WOOD[1])
-            posts |= {(x0, y), (x0 + 1, y), (x0 + 2, y)}
-
-    # door: 16 x 28, round top, set in a stone arch; the arch shades its top and left
-    dx0, dy0, dw, dh = 44, 54, 16, 28
+def arched_door(cv: Canvas, dx0: int, dy0: int, dw: int = 16, dh: int = 28, porthole: bool = True) -> set:
+    """A round-topped plank door recessed in a stone arch, with iron straps; returns the
+    arch's pixels (it stands proud of the wall)."""
     door = {(x, y) for (x, y) in disc(dx0 + dw / 2, dy0 + dw / 2, dw / 2) if y < dy0 + dh}
     door |= rect_set(dx0, dy0 + dw // 2, dw, dh - dw // 2)
     arch = set()
@@ -311,69 +254,159 @@ def hut() -> Canvas:
         for ax, ay in ((-1, 0), (1, 0), (0, -1), (-1, -1), (1, -1), (-2, 0), (2, 0), (0, -2), (-2, -1), (2, -1)):
             if (x + ax, y + ay) not in door and y + ay < dy0 + dh:
                 arch.add((x + ax, y + ay))
-    for (x, y) in arch:  # voussoirs: alternate tones, lit toward the upper left
+    for (x, y) in arch:
         k = int(((x - dx0 - dw / 2) * 0.9 + (y - dy0) * 0.6) // 3)
-        base = 3 if k % 2 else 2
-        if x > dx0 + dw / 2 + 1:
-            base -= 1
+        cv.set(x, y, STONE[(3 if k % 2 else 2) - (1 if x > dx0 + dw / 2 + 1 else 0)])
+    for (x, y) in arch:
+        if (x - 1, y) not in arch and (x, y - 1) not in arch:
+            cv.set(x, y, STONE[4])
+    detail.boards(cv, door, WOOD, 3, dy0, board=4, vertical=True, x0=dx0, joints=False, grain=0.06)
+    for sy in (dy0 + dh // 2 - 1, dy0 + dh - 5):
+        cv.hline(dx0 + 1, sy, dw - 7, SLATE[1]); cv.hline(dx0 + 1, sy - 1, dw - 7, SLATE[2])
+        cv.set(dx0 + 3, sy - 1, SLATE[4])
+    if porthole:
+        for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 2.8):
+            cv.set(x, y, WOOD[1])
+        for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 1.9):
+            cv.set(x, y, WTR[2])
+    detail.recess(cv, door, depth=2, k=1)
+    cv.set(dx0 + dw - 4, dy0 + dh * 2 // 3, GOLD[4]); cv.set(dx0 + dw - 4, dy0 + dh * 2 // 3 + 1, GOLD[2])
+    return arch
+
+
+def hut() -> Canvas:
+    """The nap hut in the steep top-down view (Matt's references, 17 Oct), 104 x 92: a
+    big slate roof seen from above whose ridge runs back from a timber front gable, the
+    lit left plane and the shaded right plane, a stone chimney showing its cap, a short
+    painted front with a recessed round-topped door (16 x 28), shuttered windows and a
+    fieldstone footing."""
+    w, h = 104, 92
+    cv = Canvas(w, h, pad=PAD)
+    ridge = 51.5
+    apex_y, eave_y = 30, 60  # the front gable's apex, and the eaves at the roof's front corners
+    left_x, right_x = 5, 98  # the roof's side eaves (it overhangs the walls)
+    wall_l, wall_r, wall_top, wall_bottom = 12, 91, 60, 84
+    slope = (eave_y - apex_y) / (ridge - left_x)
+
+    def edge_y(x):  # the bargeboards' line at column x
+        return apex_y + abs(x + 0.5 - ridge) * slope
+
+    def back_y(x):  # the roof's far edge: the ridge is highest, the back eaves lower
+        return 1 + abs(x + 0.5 - ridge) * slope
+
+    # the gable and the front wall first; the roof overhangs them
+    gable = {(x, y) for x in range(wall_l, wall_r + 1) for y in range(apex_y, wall_top)
+             if y > edge_y(x) + 2}
+    detail.boards(cv, gable, WOOD, 2, apex_y, board=5, vertical=True, x0=12, joints=False, grain=0.05)
+    for (x, y) in gable:  # shaded under the bargeboards
+        if (x, y - 1) not in gable or (x, y - 2) not in gable:
+            detail.shade(cv, x, y, 2 if (x, y - 1) not in gable else 1)
+    for (x, y) in oval(ridge, 44, 5.5, 4.4):  # an oval vent in a lit frame, the crescent sign
+        cv.set(x, y, WOOD[4] if x + 0.4 * y < ridge + 17.5 else WOOD[1])
+    for (x, y) in oval(ridge, 44, 4.2, 3.2):
+        cv.set(x, y, NAP[0])
+    for (x, y) in disc(ridge - 0.7, 43.6, 2.2) - disc(ridge + 0.6, 43.0, 1.8):
+        cv.set(x, y, GOLD[3])
+    detail.boards(cv, rect_set(wall_l, wall_top, wall_r - wall_l + 1, wall_bottom - wall_top), PLASTER, 4,
+                  wall_top, seed=4, joints=False)
+    posts = set()
+    for x0 in (wall_l, wall_r - 2):
+        for y in range(apex_y + 10, wall_bottom):
+            if (x0, y) in gable or y >= wall_top:
+                cv.set(x0, y, WOOD[3]); cv.set(x0 + 1, y, WOOD[4]); cv.set(x0 + 2, y, WOOD[2] if x0 == wall_l else WOOD[1])
+                posts |= {(x0, y), (x0 + 1, y), (x0 + 2, y)}
+    # door: 16 x 28, round top, recessed in a stone arch; it rises into the gable
+    dx0, dy0, dw, dh = 44, 56, 16, 28
+    door = {(x, y) for (x, y) in disc(dx0 + dw / 2, dy0 + dw / 2, dw / 2) if y < dy0 + dh}
+    door |= rect_set(dx0, dy0 + dw // 2, dw, dh - dw // 2)
+    arch = set()
+    for (x, y) in door:
+        for ax, ay in ((-1, 0), (1, 0), (0, -1), (-1, -1), (1, -1), (-2, 0), (2, 0), (0, -2), (-2, -1), (2, -1)):
+            if (x + ax, y + ay) not in door and y + ay < dy0 + dh:
+                arch.add((x + ax, y + ay))
+    for (x, y) in arch:
+        k = int(((x - dx0 - dw / 2) * 0.9 + (y - dy0) * 0.6) // 3)
+        base = (3 if k % 2 else 2) - (1 if x > dx0 + dw / 2 + 1 else 0)
         cv.set(x, y, STONE[base])
     for (x, y) in arch:
         if (x - 1, y) not in arch and (x, y - 1) not in arch:
             cv.set(x, y, STONE[4])
-    detail.boards(cv, door, WOOD, 3, dy0, board=4, seed=6, vertical=True, x0=dx0, joints=False, grain=0.06)
-    for sy in (dy0 + 13, dy0 + 23):  # iron straps with rivets
+    detail.boards(cv, door, WOOD, 3, dy0, board=4, vertical=True, x0=dx0, joints=False, grain=0.06)
+    for sy in (dy0 + 13, dy0 + 23):
         cv.hline(dx0 + 1, sy, 9, SLATE[1]); cv.hline(dx0 + 1, sy - 1, 9, SLATE[2])
         cv.set(dx0 + 3, sy - 1, SLATE[4]); cv.set(dx0 + 7, sy - 1, SLATE[4])
-    for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 2.8):  # a little round light
+    for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 2.8):
         cv.set(x, y, WOOD[1])
     for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 1.9):
         cv.set(x, y, WTR[2])
     cv.set(dx0 + 7, dy0 + 6, WTR[4])
     detail.recess(cv, door, depth=2, k=1)
     cv.set(dx0 + 12, dy0 + 17, GOLD[4]); cv.set(dx0 + 12, dy0 + 18, GOLD[2]); cv.set(dx0 + 13, dy0 + 18, GOLD[1])
-
-    # windows with shutters; a flower box under the right one
-    window(cv, 18, 57)
-    window(cv, 70, 57, sill=False)
-    detail.boards(cv, rect_set(68, 71, 20, 5), WOOD, 2, 71, board=5, seed=8)
-    cv.hline(68, 71, 20, WOOD[4]); cv.hline(68, 75, 20, WOOD[1])
-    detail.overhang_shadow(cv, 69, 89, 76, lambda xx: 1 if xx < 73 else 2)
+    window(cv, 20, 66, 14, 11, sill=True)
+    window(cv, 70, 66, 14, 11, sill=False)
+    detail.boards(cv, rect_set(68, 77, 18, 4), WOOD, 2, 77, board=4, seed=8)
+    cv.hline(68, 77, 18, WOOD[4]); cv.hline(68, 80, 18, WOOD[1])
     blooms = (RED[3], GOLD[3], NAP[4], RED[4], PLASTER[5], NAP[3])
-    for i, x in enumerate(range(69, 87, 3)):
-        cv.set(x, 70, LEAF[2]); cv.set(x + 1, 70, LEAF[3]); cv.set(x + 2, 70, LEAF[1])
-        cv.set(x + 1, 69, LEAF[4])
+    for i, x in enumerate(range(69, 85, 3)):
+        cv.set(x, 76, LEAF[2]); cv.set(x + 1, 76, LEAF[3]); cv.set(x + 1, 75, LEAF[4])
         petal = blooms[i % len(blooms)]
-        cv.set(x, 68, petal); cv.set(x + 1, 68, petal); cv.set(x, 67, petal)
-        cv.set(x + 1, 67, PLASTER[5] if petal != PLASTER[5] else GOLD[3])
-    for x in (70, 76, 83):  # trailing leaves over the box front
-        cv.set(x, 72, LEAF[3]); cv.set(x, 73, LEAF[2]); cv.set(x + 1, 74, LEAF[2])
-
-    # ambient occlusion: the siding darkens into the inside corners beside the posts
-    for y in range(wall_top, wall_bottom):
-        detail.shade(cv, 11, y, 1); detail.shade(cv, 86, y, 1)
-    # whatever stands proud of the siding casts a shadow on it, down and to the right
-
-    proud = posts | arch
-    for wx in (18, 70):
-        proud |= rect_set(wx - 4, 57, 4, 14) | rect_set(wx + 16, 57, 4, 14)  # shutters
-    proud |= rect_set(17, 71, 18, 2) | rect_set(68, 71, 20, 5)  # sill, flower box
+        cv.set(x, 74, petal); cv.set(x + 1, 74, petal); cv.set(x, 73, petal)
+    proud = posts | arch | rect_set(16, 66, 4, 11) | rect_set(34, 66, 4, 11) | rect_set(66, 66, 4, 11)
+    proud |= rect_set(84, 66, 4, 11) | rect_set(19, 77, 16, 2) | rect_set(68, 77, 18, 4)
     detail.cast(cv, proud, 1, 1, k=2, on=PLASTER, reach=2)
-
-    # the eave's shadow on the siding (after the windows, so it falls across them too)
-    detail.overhang_shadow(cv, 8, 96, wall_top, lambda x: 4 + (x - 8) // 22, k=2, cap=1)
-    for x in range(8, 96):
+    for y in range(wall_top, wall_bottom):
+        detail.shade(cv, wall_l + 3, y, 1); detail.shade(cv, wall_r - 3, y, 1)
+    for x in range(wall_l, wall_r + 1):
         detail.shade(cv, x, wall_bottom - 1, 1)
+    # the roof: two slate planes seen from above, the right one turned from the light;
+    # the chimney's shadow falls on the right plane
+    chim = rect_set(70, 14, 10, 16)
 
-    # ivy climbing the lit corner
-    for (ix, iy) in ((10, 50), (12, 54), (10, 58), (12, 62), (10, 66), (12, 70), (11, 75)):
+    def roof_shadow(x, y):
+        return -1 if 80 <= x <= 84 and 16 <= y <= 34 else 0
+
+    left = {(x, y) for x in range(left_x, int(ridge) + 1) for y in range(0, eave_y + 1)
+            if back_y(x) <= y <= edge_y(x)}
+    right = {(x, y) for x in range(int(ridge) + 1, right_x + 1) for y in range(0, eave_y + 1)
+             if back_y(x) <= y <= edge_y(x)}
+    detail.slate_plane(cv, left, NAP, 3, ridge, -1, seed=31, moss=LEAF, skew=slope)
+    detail.slate_plane(cv, right - chim, NAP, 2, ridge, 1, seed=32, offset=roof_shadow, moss=LEAF, skew=slope)
+    for y in range(0, apex_y + 2):  # the ridge cap: rounded capping tiles, lit on the left
+        k = y % 4
+        cv.set(49, y, NAP[1]); cv.set(50, y, NAP[4] if k else NAP[3]); cv.set(51, y, NAP[3] if k else NAP[2])
+        cv.set(52, y, NAP[2] if k else NAP[1]); cv.set(53, y, NAP[0])
+    for x in range(left_x, right_x + 1):  # the far edge shows the roof's thickness
+        by = int(back_y(x))
+        if (x, by) in left:
+            cv.set(x, by, NAP[4])
+        elif (x, by) in right:
+            cv.set(x, by, NAP[3])
+    for y in range(0, eave_y + 1):  # the side eaves
+        if (left_x, y) in left:
+            cv.set(left_x, y, NAP[4])
+        if (right_x, y) in right:
+            cv.set(right_x, y, NAP[1])
+    # bargeboards: thick boards along the gable, a lit upper face over a dark underside
+    for x in range(left_x - 1, right_x + 2):
+        ey = int(edge_y(x))
+        lit = x < ridge
+        cv.set(x, ey, WOOD[4] if lit else WOOD[3]); cv.set(x, ey + 1, WOOD[3] if lit else WOOD[2])
+        cv.set(x, ey + 2, WOOD[1])
+    cv.vline(51, apex_y - 4, 4, WOOD[3]); cv.set(52, apex_y - 4, WOOD[2]); cv.set(51, apex_y - 5, WOOD[4])
+    # the chimney: a cap seen from above, its stone face, standing on the right plane
+    detail.stones(cv, 70, 18, 10, 12, STONE, seed=33, course=4)
+    cv.vline(70, 18, 12, STONE[3]); cv.vline(79, 18, 12, STONE[1])
+    cv.rect(69, 13, 12, 5, STONE[3]); cv.hline(69, 13, 12, STONE[4]); cv.vline(69, 13, 5, STONE[4])
+    cv.rect(72, 14, 6, 3, NAP[0]); cv.hline(69, 17, 12, STONE[1])
+    # eave shadows on the front: under the side eaves at the wall's top corners
+    detail.overhang_shadow(cv, wall_l, wall_r + 1, wall_top,
+                           lambda x: (4 if x < wall_l + 6 or x > wall_r - 6 else 2) + (x - wall_l) // 40, k=2, cap=1)
+    # ivy on the lit corner, and the footing with a step and a mat
+    for (ix, iy) in ((13, 62), (15, 66), (13, 70), (15, 74), (14, 78)):
         cv.vline(ix + 1, iy, 4, LEAF[1])
-        cv.set(ix, iy, LEAF[4]); cv.set(ix + 1, iy, LEAF[3]); cv.set(ix, iy + 1, LEAF[3])
-        cv.set(ix + 2, iy + 2, LEAF[2]); cv.set(ix + 2, iy + 1, LEAF[3])
-
-    # foundation of fieldstones, a step at the door and a mat
-    detail.stones(cv, 6, wall_bottom, 92, 7, STONE, seed=9, course=4, moss=LEAF)
-    cv.rect(41, wall_bottom, 22, 3, STONE[3]); cv.hline(41, wall_bottom, 22, STONE[4])
-    cv.hline(41, wall_bottom + 2, 22, STONE[1])
+        cv.set(ix, iy, LEAF[4]); cv.set(ix + 1, iy, LEAF[3]); cv.set(ix, iy + 1, LEAF[3]); cv.set(ix + 2, iy + 2, LEAF[2])
+    detail.stones(cv, 10, wall_bottom, 84, 6, STONE, seed=9, course=3, moss=LEAF)
+    cv.rect(41, wall_bottom, 22, 3, STONE[3]); cv.hline(41, wall_bottom, 22, STONE[4]); cv.hline(41, wall_bottom + 2, 22, STONE[1])
     cv.rect(43, 89, 18, 3, NAP[2]); cv.hline(43, 89, 18, NAP[3]); cv.hline(43, 91, 18, NAP[1])
     for x in range(44, 60, 2):
         cv.set(x, 90, NAP[4])

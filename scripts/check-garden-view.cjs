@@ -793,11 +793,12 @@ function decorativeFramePresentation() {
     return tree.props.children[0].props.children.props;
   };
   for (const [kind, width, height, landmarkTop, landmarkBottom] of [
-    ['town', 600, 160, 46, 92],
-    ['town', 320, 160, 46, 92],
-    ['market', 96, 80, 68, 108],
-    ['trail', 600, 192, 106, 130],
-    ['trail', 320, 192, 106, 130],
+    // native rows in the 2x frame (step 7c): the same landmarks as before
+    ['town', 600, 160, 96, 172],
+    ['town', 320, 160, 96, 172],
+    ['market', 96, 80, 144, 216],
+    ['trail', 600, 192, 212, 260],
+    ['trail', 320, 192, 212, 260],
   ]) {
     const image = render({ kind }, width, height);
     const pixel = image.style.width / art.sceneFrame.width;
@@ -818,10 +819,12 @@ function decorativeFramePresentation() {
   }
   const companion = render({ kind: 'town', children: 'companion' }, 600, 160);
   check(companion.style.bottom === 0, 'companion frames retain the default ground anchor');
-  for (const inset of [0, 24, 117]) {
+  // a 600 px banner shows the 432 px frame at 2x (it must cover the width)
+  const groundAt600 = art.sceneFrame.ground * 2;
+  for (const inset of [0, 24, groundAt600]) {
     const image = render({ kind: 'town', groundInset: inset }, 600, 160);
     check(
-      image.style.bottom === inset - 117,
+      image.style.bottom === inset - groundAt600,
       `explicit ground inset ${inset}: foot placement overrides decorative focus`,
     );
   }
