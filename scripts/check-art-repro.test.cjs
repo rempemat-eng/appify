@@ -13,6 +13,7 @@ const {
 const owned = fs.mkdtempSync(path.join(os.tmpdir(), 'napattack-art-repro-test-'));
 const root = path.join(owned, 'repo');
 let checks = 0;
+let exceptionalSnapshot;
 function check(value, message) {
   assert.ok(value, message);
   checks++;
@@ -50,6 +51,7 @@ try {
       log() {},
       run(command, args, options) {
         snapshot = options.cwd;
+        if (mode === 'exception') exceptionalSnapshot = snapshot;
         calls.push({ command, args });
         check(snapshot !== root, mode + ': generators never execute in the caller checkout');
         check(
@@ -104,6 +106,14 @@ try {
     return result;
   }
   check(scenario('clean').ok, 'matching bytes pass');
+  const priorIndex = process.env.GIT_INDEX_FILE;
+  try {
+    process.env.GIT_INDEX_FILE = path.join(root, '.git', 'index');
+    check(scenario('clean').ok, 'an inherited Git index cannot redirect snapshot writes');
+  } finally {
+    if (priorIndex === undefined) delete process.env.GIT_INDEX_FILE;
+    else process.env.GIT_INDEX_FILE = priorIndex;
+  }
   for (const mode of [
     'changed',
     'deleted',
@@ -118,6 +128,10 @@ try {
   }
   assert.throws(() => scenario('exception'), /synthetic unexpected exception/);
   checks++;
+  check(
+    !fs.existsSync(exceptionalSnapshot),
+    'unexpected exceptions also clean the disposable copy',
+  );
   console.log(
     `PASS: ${checks} art-repro isolation, byte drift, failure propagation and cleanup assertions.`,
   );

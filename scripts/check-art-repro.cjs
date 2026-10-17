@@ -21,10 +21,20 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
   const owned = fs.mkdtempSync(path.join(os.tmpdir(), 'napattack-art-repro-'));
   const snapshot = path.join(owned, 'repo');
   const previews = path.join(owned, 'previews');
-  fs.mkdirSync(snapshot);
-  fs.mkdirSync(previews);
+  const gitEnv = { ...process.env };
+  // Inherited Git context must not redirect the temporary add/diff operations
+  // into a caller's index or object database.
+  for (const key of [
+    'GIT_DIR',
+    'GIT_WORK_TREE',
+    'GIT_INDEX_FILE',
+    'GIT_OBJECT_DIRECTORY',
+    'GIT_ALTERNATE_OBJECT_DIRECTORIES',
+    'GIT_COMMON_DIR',
+  ])
+    delete gitEnv[key];
   const env = {
-    ...process.env,
+    ...gitEnv,
     PYTHONDONTWRITEBYTECODE: '1',
     GARDEN_PREVIEW: path.join(previews, 'garden.png'),
     BATTLE_PREVIEW: path.join(previews, 'battle.png'),
@@ -48,12 +58,14 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
   }
   function git(args, cwd) {
     // Git setup/inspection is real even in the generator-boundary tests.
-    const result = spawnSync('git', args, { cwd, encoding: 'utf8' });
+    const result = spawnSync('git', args, { cwd, env: gitEnv, encoding: 'utf8' });
     if (result.error || result.status !== 0)
       throw new Error(`git ${args[0]} failed: ${result.error?.message ?? result.stderr}`);
     return result.stdout;
   }
   try {
+    fs.mkdirSync(snapshot);
+    fs.mkdirSync(previews);
     const tracked = splitPaths(git(['ls-files', '-z'], root));
     if (!tracked.length)
       throw new Error('No tracked source files; run inside the project checkout.');
