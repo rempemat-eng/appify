@@ -68,7 +68,7 @@ def meadow_path(thick_path):
     pts = thick_path([(PATH_X, 280), (PATH_X - 1, 330), (PATH_X + 1, 400), (PATH_X, 470),
                       (PATH_X, 530), (PATH_X, H + 12)], 18.5, 7)
     pts |= thick_path([(PATH_X + 10, 432), (YARD[0] + 4, 432)], 9.5, 8)   # into the kitchen garden
-    pts |= thick_path([(PATH_X - 10, ORCHARD_WALK_Y), (20, ORCHARD_WALK_Y)], 8.5, 9)  # along the orchard
+    pts |= thick_path([(PATH_X - 10, ORCHARD_WALK_Y), (-12, ORCHARD_WALK_Y)], 8.5, 9)  # along the orchard, on into the Woodland
     yx, yy, yw, yh = YARD
     r = 10
     for y in range(yy, yy + yh):

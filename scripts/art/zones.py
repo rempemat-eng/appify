@@ -1260,6 +1260,110 @@ def riverside(frame: int = 0):
     return cv, objects, stands, blocked
 
 
+FOREST_FLOOR = ['#24382A', '#40603A', '#577A44', '#668A4E', '#8EAE68']
+DARK_FLOOR = [tuple(int(c[k:k + 2], 16) for k in (1, 3, 5)) for c in FOREST_FLOOR]
+
+
+def woodland(frame: int = 0):
+    """The Woodland, west of the garden: the garden's stream is born here. It leaves the
+    east edge exactly where it enters the garden, and upstream it narrows to a spring
+    that falls from a mossy rock into a pool. Old trees close in at the edges, light
+    comes through in dappled pools, a path winds to a clearing with the hollow oak,
+    a fairy ring, ferns, fallen logs and a hidden bench."""
+    WTRm, GOLDm = MATERIALS['water'], MATERIALS['gold']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame, FOREST_FLOOR)  # shaded forest floor
+    for i in range(260):  # leaf litter
+        x, y = int(noise2(i, 0, 421) * W), int(noise2(i, 1, 421) * H)
+        cv.set(x, y, ('#8A6A3E', '#B8945A', '#6E8A3E')[i % 3])
+    OFF = -meadow.W
+
+    def centre(x):
+        return meadow.stream_centre(x + OFF)
+
+    def half(x):
+        full = 9 + (smooth_noise(x + OFF, 0, 13, 91) - 0.5) * 2.4
+        return full * min(1.0, max(0.0, (x - 96) / 120)) + 3 * (x >= 96)
+
+    spring_x = 96
+    river = {(x, y) for x in range(spring_x, W) for y in range(int(centre(x) - half(x)), int(centre(x) + half(x)) + 1)}
+    pool = {(x, y) for (x, y) in oval(spring_x - 6, centre(spring_x) + 2, 20, 11)}
+    water = river | pool
+    for (x, y) in water:
+        c = WTRm[2] if (x, y) in river and abs(y - centre(x)) < 2 else WTRm[1]
+        if (x, y - 1) not in water:
+            c = WTRm[0]
+        cv.set(x, y, c)
+    for (x, y) in water:  # a stony, mossy rim
+        for dx, dy in ((0, 1), (0, 2), (1, 0), (-1, 0)):
+            q = (x + dx, y + dy)
+            if q not in water and 0 <= q[0] < W:
+                cv.set(*q, STONE[3] if noise2(q[0], q[1], 422) > 0.5 else MATERIALS['leaf'][2])
+    # the spring: a mossy rock face with the water falling from a cleft into the pool
+    rock = {(x, y) for (x, y) in oval(spring_x - 22, centre(spring_x) - 22, 34, 18)}
+    for (x, y) in rock:
+        band = (y + int(noise2(x // 5, 0, 423) * 3)) // 4
+        c = STONE[3] if band % 2 else STONE[2]
+        if (x, y - 1) not in rock or noise2(x // 3, y // 3, 424) > 0.7:
+            c = MATERIALS['leaf'][3] if (x, y - 1) not in rock else MATERIALS['leaf'][2]
+        cv.set(x, y, c)
+    fx = spring_x - 14
+    for y in range(int(centre(spring_x) - 26), int(centre(spring_x) - 2)):
+        for x in range(fx - 3, fx + 4):
+            cv.set(x, y, WTRm[4] if (x + y + frame) % 3 == 0 else WTRm[3] if x < fx + 1 else WTRm[2])
+    for k in range(10):  # foam where it lands
+        cv.set(fx - 5 + k, int(centre(spring_x)) - 1 + (k % 2), WTRm[4])
+    # the path from the garden's west side into the trees and the clearing
+    # (the garden's orchard walk runs on across the border at the same height and width)
+    path = worlds.thick([(W + 12, meadow.ORCHARD_WALK_Y), (250, meadow.ORCHARD_WALK_Y)], 8.5) | worlds.thick([(254, meadow.ORCHARD_WALK_Y), (190, 420), (150, 380), (130, 330)], 9, seed=25)
+    path |= worlds.thick([(130, 270), (150, 200), (120, 140)], 9, seed=26)
+    clearing = {(x, y) for (x, y) in oval(110, 140, 52, 34)}
+    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in water} | {(x, y) for (x0, y) in path if x0 == W - 1 for x in range(W, W + 12)})
+    for (x, y) in clearing:  # the clearing is sunlit grass
+        n = smooth_noise(x, y, 14, 425)
+        cv.set(x, y, G[3] if n > 0.45 else G[2])
+    # the garden's bluff on the north bank runs on and sinks into the ground upstream
+    for x in range(150, W):
+        bh = int((7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)) * min(1.0, (x - 150) / 150))
+        top = int(centre(x) - half(x))
+        for k in range(bh):
+            y = top - bh + k
+            c = G[3] if k == 0 else STONE[3] if (x // 6 + k // 4) % 2 else STONE[2]
+            if k == bh - 1:
+                c = STONE[1]
+            cv.set(x, y, c)
+    # near the garden the forest floor brightens into the garden's own grass
+    for y in range(H):
+        for x in range(W - 56, W):
+            t = (x - (W - 56)) / 56
+            if noise2(x, y, 427) < t and cv.get(x, y)[:3] in DARK_FLOOR:
+                cv.set(x, y, G[DARK_FLOOR.index(cv.get(x, y)[:3])])
+    # dappled light through the canopy
+    for i in range(14):
+        lx, ly = int(noise2(i, 0, 426) * W), int(noise2(i, 1, 426) * H)
+        light_pool(cv, lx, ly, 12 + i % 3 * 4, 6 + i % 2 * 3, GOLDm[2], water)
+    light_pool(cv, 110, 140, 44, 26, G[4], water)
+    objects = [
+        # old trees closing in round the edges (none crosses the east border into the garden)
+        ('tree-1', 'tree', -20, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
+        ('tree-3', 'tree', -24, 200), ('pine-3', 'pine', -10, 330), ('tree-4', 'tree', 230, 160),
+        ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 500),
+        ('pine-5', 'pine', 150, 500), ('tree-7', 'tree_small', 250, 520),
+        ('oak', 'hollow_tree', 70, 30), ('ring', 'mushroom_ring', 128, 150), ('log-1', 'mossy_log', 200, 230),
+        ('log-2', 'mossy_log', 40, 420), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
+        ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 90, 380), ('bench', 'forest_bench', 150, 170),
+        ('willow', 'willow', 220, 340), ('bush-1', 'bush', 286, 380),
+    ]
+    # a split-log footbridge where the path crosses the young stream
+    plank = {(x, y) for x in range(122, 140) for y in range(int(centre(130) - half(130)) - 3, int(centre(130) + half(130)) + 4)}
+    for (x, y) in plank:
+        cv.set(x, y, WOOD[4] if x in (122, 131) else WOOD[3] if x < 131 else WOOD[2])
+    for y in range(min(yy for _, yy in plank), max(yy for _, yy in plank) + 1):
+        cv.set(140, y, WTRm[0])
+    stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18)}
+    return cv, objects, stands, (water | rock) - plank
+
+
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
@@ -1309,6 +1413,7 @@ def build(name: str, fn, start: str):
 def main():
     build('town', town, 'garden')
     build('riverside', riverside, 'garden-north')
+    build('woodland', woodland, 'garden')
     build('junction', junction, 'platform')
     build('neon', neon_city, 'crossing')
     build('gulch', gulch, 'platform')
