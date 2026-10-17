@@ -1,23 +1,28 @@
 import { Pressable, Text, View, useWindowDimensions } from 'react-native';
-import type { ComponentProps } from 'react';
+import type { ComponentProps, ReactNode } from 'react';
 import type { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { cozy as c } from '@/lib/cozy';
 import { backendConfigured } from '@/lib/bilt';
 import { clock, feedback, status, useGame } from '@/lib/game';
-import { remainingPlay, PLAY_LIMIT_MS } from '@/lib/offline-rules';
+import { remainingPlay } from '@/lib/offline-rules';
 import { guardianPlayer } from '@/lib/visitors';
 import { gameSideInset, hudLayout } from '@/lib/layout';
 import { openSheet } from '@/lib/ui';
-import { FrameShape, PixelFrame, frameTones, usePixelUnit } from '@/components/pixel-frame';
+import {
+  FrameFill,
+  FrameShape,
+  PixelFrame,
+  frameTones,
+  usePixelUnit,
+} from '@/components/pixel-frame';
+import { barControl, contentInset, hotbarSlot, layers, siblingGap, type } from '@/lib/ui-tokens';
 import { PixelProp } from '@/components/pixel-scenes';
 import { GuardianPet } from '@/components/guardian-pet';
 import { GrassRoll } from '@/components/pixel-feedback';
 import type { PropKind } from '@/lib/scene-art';
 
 type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
-
-const label = { fontFamily: 'PixelifySans_700Bold', color: c.ink } as const;
 
 /** A square pixel meter: dark well, flat fill, no rounded ends. */
 export function PixelBar({
@@ -66,9 +71,59 @@ function MenuGlyph({ unit: u, color }: { unit: number; color: string }) {
   );
 }
 
+/** A HUD stat: one inset well holding an icon and its value, the same height as the portrait. */
+function StatChip({
+  unit: u,
+  icon,
+  tint,
+  children,
+  ...press
+}: {
+  unit: number;
+  icon: PropKind;
+  tint?: string;
+  children: ReactNode;
+} & Pick<
+  ComponentProps<typeof Pressable>,
+  'accessibilityLabel' | 'accessibilityHint' | 'onPress' | 'onLongPress' | 'accessibilityRole'
+>) {
+  const body = (
+    <>
+      <FrameFill fill={layers.well} outline={c.outline} inset />
+      <PixelProp kind={icon} size={8 * u} tint={tint} />
+      {children}
+    </>
+  );
+  const style = {
+    height: barControl(u),
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: siblingGap(u),
+    paddingHorizontal: contentInset(u) - u,
+  } as const;
+  // A 44 px target even though the drawn well is 36 px tall on phones.
+  const hitSlop = Math.max(0, Math.ceil((44 - barControl(u)) / 2));
+  return press.onPress ? (
+    <Pressable accessibilityRole="button" hitSlop={hitSlop} {...press} style={style}>
+      {body}
+    </Pressable>
+  ) : (
+    <View
+      accessible
+      accessibilityRole="text"
+      accessibilityLabel={press.accessibilityLabel}
+      style={style}
+    >
+      {body}
+    </View>
+  );
+}
+
 /**
  * The floating heads-up display shared by every tab: who is with you, how the
  * garden's shield is doing, GRASS, the real-time play allowance and the menu.
+ * Symmetric: one inset on all four sides and between every control (coherence
+ * plan, step 3), and every control is the same height.
  */
 export function GameHud() {
   const p = useGame((s) => s.player);
@@ -87,6 +142,7 @@ export function GameHud() {
   const shieldText =
     state.kind === 'care' ? clock(state.left) : state.kind === 'exposed' ? 'OPEN' : 'SAFE';
   const side = gameSideInset(width) - 8;
+  const control = barControl(u);
   return (
     <View
       pointerEvents="box-none"
@@ -102,12 +158,10 @@ export function GameHud() {
         tone="glass"
         depth={1}
         style={{
-          minHeight: hudLayout.height - u,
           flexDirection: 'row',
           alignItems: 'center',
-          gap: 2 * u,
-          paddingVertical: u,
-          paddingHorizontal: 2 * u,
+          gap: siblingGap(u),
+          padding: contentInset(u),
         }}
       >
         <Pressable
@@ -123,13 +177,13 @@ export function GameHud() {
             minHeight: 44,
             flexDirection: 'row',
             alignItems: 'center',
-            gap: 2 * u,
+            gap: siblingGap(u),
           }}
         >
           <View
             style={{
-              width: 18 * u,
-              height: 18 * u,
+              width: control,
+              height: control,
               alignItems: 'center',
               justifyContent: 'center',
             }}
@@ -146,58 +200,32 @@ export function GameHud() {
             />
           </View>
           <View style={{ flex: 1, minWidth: 0, gap: u }}>
-            <Text numberOfLines={1} style={[label, { fontSize: 13, lineHeight: 15 }]}>
+            <Text numberOfLines={1} style={[type.label, { color: c.ink }]}>
               {guardian.pet_name}
             </Text>
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: u }}>
-              <PixelProp kind="heart" size={12} tint={p.mood < 30 ? c.error : '#C8574A'} />
-              <PixelBar
-                value={p.mood}
-                width={22 * u}
-                color={p.mood < 30 ? c.error : c.positive}
-                unit={u}
-              />
+              <PixelProp kind="heart" size={6 * u} tint={p.mood < 30 ? c.error : '#C8574A'} />
+              <View style={{ flex: 1, maxWidth: 24 * u }}>
+                <PixelBar value={p.mood} color={p.mood < 30 ? c.error : c.positive} unit={u} />
+              </View>
             </View>
           </View>
         </Pressable>
-        <Pressable
-          accessibilityRole="button"
+        <StatChip
+          unit={u}
+          icon="shield"
+          tint={shieldTone}
           accessibilityLabel={`Garden shield: ${state.label}${state.kind === 'care' ? `, ${state.left} seconds left` : ''}. Opens the garden guide`}
           onPress={() => useGame.setState({ guideOpen: true })}
           onLongPress={() => useGame.getState().change({ care_until: 0, recovery_until: 0 })}
-          style={{
-            minHeight: 44,
-            minWidth: 44,
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: u / 2,
-          }}
         >
-          <PixelProp kind="shield" size={16} tint={shieldTone} />
-          <Text
-            style={[
-              label,
-              { fontSize: 11, lineHeight: 13, color: state.kind === 'exposed' ? c.error : c.ink },
-            ]}
-          >
+          <Text style={[type.label, { color: state.kind === 'exposed' ? c.error : c.ink }]}>
             {shieldText}
           </Text>
-        </Pressable>
-        <View
-          accessible
-          accessibilityRole="text"
-          accessibilityLabel={`${p.grass} grass`}
-          style={{
-            minHeight: 44,
-            minWidth: 44,
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: u / 2,
-          }}
-        >
-          <PixelProp kind="grass" size={16} />
+        </StatChip>
+        <StatChip unit={u} icon="grass" accessibilityLabel={`${p.grass} grass`}>
           {p.grass >= 10000 ? (
-            <Text style={[label, { fontSize: 12, lineHeight: 14 }]}>
+            <Text style={[type.label, { color: c.ink }]}>
               {new Intl.NumberFormat('en-GB', {
                 notation: 'compact',
                 maximumFractionDigits: 1,
@@ -206,40 +234,31 @@ export function GameHud() {
           ) : (
             <GrassRoll value={p.grass} size={12} />
           )}
-        </View>
-        <Pressable
-          accessibilityRole="button"
+        </StatChip>
+        <StatChip
+          unit={u}
+          icon="hourglass"
           accessibilityLabel={`${left} seconds of play left. Long press to reset demo play budget.`}
           accessibilityHint="Opens the guide to the real-time play allowance and simulated break clock."
           onPress={() => useGame.setState({ guideOpen: true })}
           onLongPress={() => useGame.getState().resetBudget()}
-          style={{
-            minHeight: 44,
-            minWidth: 48,
-            alignItems: 'center',
-            justifyContent: 'center',
-            gap: u,
-          }}
         >
-          <Text style={[label, { fontSize: 12, lineHeight: 14, color: left ? c.ink : c.error }]}>
-            {clock(left)}
-          </Text>
-          <PixelBar
-            value={left * 1000}
-            max={PLAY_LIMIT_MS}
-            width={20 * u}
-            color={left ? c.focus : c.error}
-            unit={u}
-          />
-        </Pressable>
+          <Text style={[type.label, { color: left ? c.ink : c.error }]}>{clock(left)}</Text>
+        </StatChip>
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Open the menu. ${live ? 'Garden synced' : backendConfigured ? 'No signal' : 'Local garden, saved on this device'}`}
+          hitSlop={Math.max(0, Math.ceil((44 - control) / 2))}
           onPress={() => {
             feedback('select');
             openSheet('menu');
           }}
-          style={{ width: 44, height: 44, alignItems: 'center', justifyContent: 'center' }}
+          style={{
+            width: control,
+            height: control,
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         >
           <FrameShape tone={frameTones.parchment} unit={u} />
           <MenuGlyph unit={u} color={c.ink} />
@@ -266,13 +285,18 @@ const tabs: Record<string, { label: string; icon: PropKind }> = {
   shop: { label: 'SHOP', icon: 'bag' },
 };
 
-/** The pixel hotbar: four places and a raised NAP button in the middle. */
+/**
+ * The pixel hotbar: four places and a raised NAP button in the middle. Every slot
+ * is an inset well with the same gap to the bar's edges as to its neighbours.
+ */
 export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   const insets = useSafeAreaInsets();
   const { width } = useWindowDimensions();
   const u = usePixelUnit();
   const awake = useGame((s) => s.player?.mode === 'awake');
   const side = gameSideInset(width) - 8;
+  const slotHeight = hotbarSlot(u);
+  const napWidth = 30 * u;
   const slot = (index: number) => {
     const route = state.routes[index];
     if (!route) return null;
@@ -298,16 +322,24 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
         }}
         style={{
           flex: 1,
-          minHeight: 44,
+          height: slotHeight,
           alignItems: 'center',
           justifyContent: 'center',
-          gap: u / 2,
+          gap: u,
         }}
       >
-        {focused && <FrameShape tone={frameTones.leaf} unit={u} />}
-        <PixelProp kind={meta.icon} size={24} />
+        {focused ? (
+          <FrameShape tone={frameTones.leaf} unit={u} />
+        ) : (
+          <FrameFill fill={layers.well} outline={c.outline} inset />
+        )}
+        <PixelProp kind={meta.icon} size={12 * u} />
         <Text
-          style={[label, { fontSize: 10, lineHeight: 12, color: focused ? c.buttonInk : c.ink }]}
+          numberOfLines={1}
+          style={[
+            type.label,
+            { fontSize: 10, lineHeight: 12, color: focused ? c.buttonInk : c.ink },
+          ]}
         >
           {meta.label}
         </Text>
@@ -328,16 +360,15 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
         tone="paper"
         depth={1}
         style={{
-          height: hudLayout.hotbar - u,
           flexDirection: 'row',
-          alignItems: 'stretch',
-          gap: u,
-          padding: 2 * u,
+          alignItems: 'center',
+          gap: siblingGap(u),
+          padding: contentInset(u),
         }}
       >
         {slot(0)}
         {slot(1)}
-        <View style={{ width: 30 * u }} />
+        <View style={{ width: napWidth }} />
         {slot(2)}
         {slot(3)}
       </PixelFrame>
@@ -353,10 +384,11 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
         style={({ pressed }) => ({
           position: 'absolute',
           left: '50%',
-          marginLeft: -15 * u,
-          bottom: 3 * u,
-          width: 30 * u,
-          height: hudLayout.hotbar + 6 * u,
+          marginLeft: -napWidth / 2,
+          // its bottom lines up with the slots' bottom edge; it rises above the bar
+          bottom: u + contentInset(u),
+          width: napWidth,
+          height: slotHeight + 12 * u,
           alignItems: 'center',
           justifyContent: 'center',
           gap: u,
@@ -376,8 +408,8 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
           bevel={false}
         />
         <FrameShape tone={frameTones.nap} unit={u} />
-        <PixelProp kind="moon" size={32} tint="#FFF3CF" />
-        <Text style={[label, { fontSize: 13, lineHeight: 15, color: '#FFF7E2' }]}>NAP</Text>
+        <PixelProp kind="moon" size={16 * u} tint="#FFF3CF" />
+        <Text style={[type.label, { fontSize: 13, lineHeight: 16, color: '#FFF7E2' }]}>NAP</Text>
       </Pressable>
     </View>
   );

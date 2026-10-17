@@ -63,7 +63,8 @@ export type PropKind =
   | 'stones'
   | 'weed'
   | 'energy'
-  | 'book';
+  | 'book'
+  | 'hourglass';
 const colors: Record<string, string> = {
   K: artOutline,
   B: m.cream[3],
@@ -278,6 +279,32 @@ function make(kind: PropKind) {
       rect(7, 5, 2, 5, 'B');
       rect(5, 7, 6, 2, 'B');
       break;
+    case 'hourglass': {
+      // wooden caps, a glass waist and falling sand (coherence plan step 3; refined in step 4)
+      box(3, 1, 10, 3, 'W');
+      box(3, 12, 10, 3, 'W');
+      const glass: [number, number][] = [
+        [5, 10],
+        [5, 10],
+        [6, 9],
+        [7, 8],
+        [7, 8],
+        [6, 9],
+        [5, 10],
+        [5, 10],
+      ];
+      glass.forEach(([x0, x1], i) => {
+        rect(x0 - 1, 4 + i, 1, 1, 'K');
+        rect(x1 + 1, 4 + i, 1, 1, 'K');
+        rect(x0, 4 + i, x1 - x0 + 1, 1, i < 4 ? 'B' : 'B');
+      });
+      rect(6, 5, 4, 1, 'Y');
+      rect(7, 6, 2, 1, 'Y');
+      rect(7, 8, 2, 1, 'Y');
+      rect(6, 10, 4, 1, 'Y');
+      rect(5, 11, 6, 1, 'Y');
+      break;
+    }
     case 'house':
       rect(2, 7, 12, 8, 'K');
       for (let y = 1; y < 8; y++) rect(8 - y, y, y * 2, 1, 'K');
@@ -425,6 +452,7 @@ export const propPixels: Record<PropKind, ReturnType<typeof make>> = {
   raincloud: make('raincloud'),
   heart: make('heart'),
   shield: make('shield'),
+  hourglass: make('hourglass'),
   house: make('house'),
   map: make('map'),
   swords: make('swords'),

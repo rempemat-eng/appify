@@ -1,3 +1,4 @@
+import { hotbarHeight, hudBarHeight } from '@/lib/ui-tokens';
 import type { ViewStyle } from 'react-native';
 
 export const gameLayout = {
@@ -22,12 +23,13 @@ export function dockClearance(bottomInset: number) {
   return gameLayout.dockHeight + gameLayout.dockBottomGap + gameLayout.gutter + bottomInset;
 }
 
-/** The floating HUD at the top of every tab: inset, frame and a small gap. */
-export const hudLayout = { gap: 6, height: 56, hotbar: 68 } as const;
-export function hudClearance(topInset: number) {
-  return topInset + hudLayout.gap + hudLayout.height + gameLayout.gutter / 2;
+/** The floating HUD and hotbar: their gap from the screen edge (heights come from ui-tokens). */
+export const hudLayout = { gap: 6 } as const;
+/** Space the HUD takes at the top of every tab. `u` is the pixel unit (2 on phones). */
+export function hudClearance(topInset: number, u = 2) {
+  return topInset + hudLayout.gap + hudBarHeight(u) + gameLayout.gutter / 2;
 }
-/** Space the pixel hotbar takes at the bottom of every tab. */
-export function hotbarClearance(bottomInset: number) {
-  return bottomInset + hudLayout.gap + hudLayout.hotbar + gameLayout.gutter;
+/** Space the pixel hotbar takes at the bottom of every tab. `u` is the pixel unit (2 on phones). */
+export function hotbarClearance(bottomInset: number, u = 2) {
+  return bottomInset + hudLayout.gap + hotbarHeight(u) + gameLayout.gutter;
 }
