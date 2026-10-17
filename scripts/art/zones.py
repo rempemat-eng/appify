@@ -908,14 +908,19 @@ def harbour(frame: int = 0):
         for k in range(6):
             detail.pebble(cv, px - 9 + int(noise2(k, px, 298) * 18), py - 5 + int(noise2(k, py, 298) * 10), MATERIALS['stone'], big=k % 2 == 0)
     # the quay: dressed stone with a lit edge and a face down to the water
-    quay = {(x, y) for x in range(100, W) for y in range(232, shore_y(x) + 6)}
+    quay = {(x, y) for x in range(100, 296) for y in range(232, shore_y(x) + 6)}
     worlds.paint_paving(cv, quay, seed=9)
     for x in range(100, W):
         y = shore_y(x) + 6
         for k in range(8):
-            c = STONE[3] if k == 0 else STONE[2] if (x + (k // 3) * 4) % 8 else STONE[0]
-            if k > 5:
-                c = MATERIALS['leaf'][1] if (x + k) % 3 else STONE[1]  # weed at the waterline
+            if x < 296:  # the quay's dressed face
+                c = STONE[3] if k == 0 else STONE[2] if (x + (k // 3) * 4) % 8 else STONE[0]
+                if k > 5:
+                    c = MATERIALS['leaf'][1] if (x + k) % 3 else STONE[1]  # weed at the waterline
+            else:  # past the quay, a rough rocky bank that runs on below the headland
+                c = STONE[3] if (x // 4 + k // 3) % 2 else STONE[2]
+                if k < 2:
+                    c = G[1]
             cv.set(x, y + k, c)
     # the breakwater: big blocks curving round the basin to the lighthouse
     bw = worlds.thick([(W + 6, 410), (260, 452), (200, 500), (130, 526), (92, 528)], 12, seed=15)
@@ -946,8 +951,8 @@ def harbour(frame: int = 0):
     road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (150, 120), (170, 232)], 14, seed=16)
     road |= worlds.thick([(160, 120), (60, 140), (20, 200)], 9, seed=17)
     paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
-    cliff = worlds.thick([(W + 4, 110), (270, 130), (230, 180), (220, 232)], 9, seed=18)  # to the castle
-    paint_road(cv, cliff)
+    cliff = worlds.thick([(W + 6, 110), (W - 12, 112)], 9) | worlds.thick([(W - 10, 112), (270, 130), (230, 180), (220, 232)], 9, seed=18)  # to the castle
+    paint_road(cv, cliff | {(x, y) for (x0, y) in cliff if x0 == W - 1 for x in range(W, W + 12)})
     objects = [
         ('cottage-1', 'cottage', 10, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 40, 150),
         ('cottage-4', 'cottage_b', 236, 140), ('market', 'fish_stall', 108, 226), ('pots-1', 'lobster_pots', 196, 240),
@@ -974,7 +979,9 @@ def castle(frame: int = 0):
     worlds.grass(cv, frame)
     # the sea cliffs: the headland's edge to the south and east, a face and the sea
     def edge_y(x):
-        return 470 + int(math.sin(x / 31) * 10 + noise2(x // 7, 0, 321) * 8) - max(0, (x - 260) * 2)
+        # the harbour's water meets the headland's west edge below y = 306 (seamless rule)
+        e = 470 + int(math.sin(x / 31) * 10 + noise2(x // 7, 0, 321) * 8) - max(0, (x - 260) * 2)
+        return min(e, 306 + int(x * 2.7)) if x < 60 else e
     sea = set()
     for x in range(W):
         e = edge_y(x)
@@ -998,9 +1005,17 @@ def castle(frame: int = 0):
             cv.set(x, y, c)
             if k < 26:
                 sea.add((x, y)) if k > 2 else None
+    # the harbour's breakwater runs on to its root against the headland's foot
+    root = worlds.thick([(-8, 410), (22, 404)], 12)
+    for (x, y) in root:
+        blk = ((x + 8 + (y // 7) % 2 * 5) // 10 + y // 7) % 3
+        c = STONEm[3] if blk == 0 else STONEm[2] if blk == 1 else STONEm[4]
+        if (x + 8 + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
+            c = STONEm[1]
+        cv.set(x, y, c)
     # the path from the harbour along the outer meadow to the drawbridge
-    path = worlds.thick([(-4, 116), (30, 150), (34, 400), (120, 420), (182, 404), (182, 384)], 11, seed=19)
-    paint_road(cv, path)
+    path = worlds.thick([(-6, 110), (12, 112)], 9) | worlds.thick([(10, 112), (30, 150), (40, 300), (74, 404), (140, 420), (182, 404), (182, 384)], 10, seed=19)
+    paint_road(cv, path | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)})
     # the dry ditch below the south wall, crossed by the drawbridge
     ditch = {(x, y) for x in range(60, 300) for y in range(352, 380)}
     for (x, y) in ditch:
@@ -1041,7 +1056,7 @@ def castle(frame: int = 0):
     ]
     blocked = sea | ditch - {(x, y) for x in range(168, 196) for y in range(350, 384)}
     blocked |= {(x, y) for x in range(70, 82) for y in range(40, 350)} | {(x, y) for x in range(282, 294) for y in range(40, 350)}
-    stands = {'harbour': (14, 118), 'bridge': (182, 396), 'gate': (182, 344), 'courtyard': (190, 230),
+    stands = {'harbour': (14, 112), 'bridge': (182, 396), 'gate': (182, 344), 'courtyard': (190, 230),
               'keep': (176, 206), 'herbs': (160, 290), 'meadow': (220, 430)}
     return cv, objects, stands, blocked
 
