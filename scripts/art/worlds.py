@@ -2,8 +2,9 @@
 
 Run: python3 scripts/art/worlds.py   (or `npm run art`)
 Writes assets/worlds/<id>/*.png and lib/world-maps.ts (objects, walk grid,
-exploration route, visitor spot) in native pixels, in the same 192 x 176
-format as the home garden so the 2.5D projection works unchanged.
+exploration route, visitor spot, water overlays) in art pixels. Step 7 of the
+coherence plan re-laid the worlds at the shared density (320 x 296), drew their
+props in world_props.py and moved them to the flat 3/4 view with a camera.
 """
 from __future__ import annotations
 
@@ -14,16 +15,15 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise  # noqa: E402
-import garden as g  # noqa: E402  (shared palette and trees keep one art style)
+import garden as g  # noqa: E402  (shared palette keeps one art style)
 import style  # noqa: E402
+import world_props as wp  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'worlds')
-W, H, SCALE, CELL = 192, 176, 6, 4
+W, H, SCALE, CELL = 320, 296, 4, 4
 INK = g.INK
-SLATE = ['#3A3F4E', '#565D70', '#767E90', '#9AA2B0', '#C4CAD2']
-ROOF = ['#4E2420', '#7A3428', '#A34A36', '#C96A4E', '#E6957A']
-SNOW = ['#9FB0C4', '#C2CFDC', '#E2E9F0', '#F7FAFC']
+from materials import SLATE, ROOF, SNOW  # noqa: E402
 MOSSROCK = ['#4B5548', '#646F5E', '#808C78', '#A2AD97', '#C8D0BC']
 
 
@@ -50,13 +50,13 @@ def grass(cv: Canvas, frame=0, tone=None):
         for tx in range(0, W, 8):
             x, y = tx + int(noise2(tx, ty, 4) * 8), ty + int(noise2(tx, ty, 5) * 8)
             edge = min(x, W - x, y, H - y) < 24
-            clearing = ((x - 96) / 44) ** 2 + ((y - 108) / 38) ** 2 < 1
+            clearing = ((x - 160) / 73) ** 2 + ((y - 180) / 63) ** 2 < 1
             cluster = smooth_noise(x, y, 25, 63) > 0.57
             density = 0.06 if clearing else 0.38 if edge else 0.26 if cluster else 0.10
             if noise2(tx, ty, 3) < density:
                 # A few edge tufts stir; landmarks and the walking route stay
                 # quieter. The two frames share exactly the same root pixels.
-                sway = 1 if (frame and noise2(tx, ty, 6) < 0.22) else 0
+                sway = 0  # the ground is still; only water animates
                 cv.set(x, y + 2, G[1]); cv.set(x + 2, y + 2, G[1]); cv.set(x + 1, y + 3, G[1])
                 cv.set(x + sway, y + 1, G[1]); cv.set(x + 2 + sway, y + 1, G[1])
                 if noise2(x, y, 9) < 0.4:
@@ -92,10 +92,10 @@ def paint_dirt(cv, mask):
 def paint_paving(cv, mask, seed=0):
     """Light square paving stones with mortar lines and the odd darker slab."""
     for (x, y) in mask:
-        mortar = x % 8 == 0 or y % 6 == 0 or (y // 6) % 2 and (x + 4) % 8 == 0
-        slab = (x // 8 + y // 6 + seed) % 7 == 0
+        mortar = x % 12 == 0 or y % 9 == 0 or (y // 9) % 2 and (x + 6) % 12 == 0
+        slab = (x // 12 + y // 9 + seed) % 7 == 0
         col = '#A9A28F' if mortar else ('#C9C1AA' if slab else '#DCD4BC')
-        if not mortar and (x % 8 == 1 or y % 6 == 1):
+        if not mortar and (x % 12 == 1 or y % 9 == 1):
             col = '#E8E1CB'
         cv.set(x, y, col)
     for (x, y) in mask:
@@ -108,11 +108,11 @@ def paint_paving(cv, mask, seed=0):
 def paint_cobbles(cv, mask):
     """Rounded cobbles: each cell gets a lit top-left and a dark gap."""
     for (x, y) in mask:
-        cx, cy = x % 7, (y + (x // 7) % 2 * 3) % 6
+        cx, cy = x % 10, (y + (x // 10) % 2 * 4) % 8
         gap = cx == 0 or cy == 0
-        n = noise2(x // 7, (y + (x // 7) % 2 * 3) // 6, 81)
+        n = noise2(x // 10, (y + (x // 10) % 2 * 4) // 8, 81)
         base = SLATE[3] if n < 0.5 else '#A7A291'
-        col = SLATE[1] if gap else (SLATE[4] if (cx <= 2 and cy <= 2) else base)
+        col = SLATE[1] if gap else (SLATE[4] if (cx <= 2 and cy <= 2) else SLATE[2] if (cx >= 8 or cy >= 6) else base)
         cv.set(x, y, col)
     for (x, y) in mask:
         if (x, y - 1) not in mask:
@@ -122,8 +122,8 @@ def paint_cobbles(cv, mask):
 def paint_water(cv, mask, frame=0, center=None):
     bank = set()
     for (x, y) in mask:
-        for dx in range(-2, 3):
-            for dy in range(-2, 3):
+        for dx in range(-3, 4):
+            for dy in range(-3, 4):
                 n = (x + dx, y + dy)
                 if n not in mask and 0 <= n[0] < W and 0 <= n[1] < H:
                     bank.add(n)
@@ -156,8 +156,8 @@ def flowerbed(cv, x, y, w, h, seed=0):
     cv.rect(x, y, w, h, g.WOOD[1]); cv.rect(x + 1, y + 1, w - 2, h - 2, '#5A3A26')
     cv.hline(x, y, w, g.WOOD[4]); cv.vline(x, y + 1, h - 2, g.WOOD[3])
     cv.set(x + w - 2, y, g.CREAM[1]); cv.set(x + 1, y + h - 1, g.WOOD[0])
-    for fy in range(y + 2, y + h - 2, 4):
-        for fx in range(x + 2, x + w - 2, 4):
+    for fy in range(y + 4, y + h - 3, 6):
+        for fx in range(x + 4, x + w - 3, 6):
             # Each planter has a flower family rather than the same striped
             # rainbow; leaves and the occasional bud break up the neat rows.
             family = [g.RED, g.NAP, g.CREAM, g.LEAF][seed % 4]
@@ -204,398 +204,98 @@ def window(cv, x, y, w, h, warm=False):
 
 
 # ---- props ------------------------------------------------------------------
-def fountain() -> Canvas:
-    cv = Canvas(40, 34)
-    basin = oval(20, 24, 18, 8)
-    shade_blob(cv, basin, g.STONE[1], g.STONE[2], g.STONE[3], g.STONE[4])
-    # A carved rim and a few worn joints make this the park's stone landmark.
-    for x, y in ((5, 24), (11, 29), (23, 30), (33, 25)):
-        cv.vline(x, y, 2, g.STONE[1]); cv.set(x - 1, y, g.STONE[4])
-    for (x, y) in oval(20, 23, 14.5, 5.5):
-        cv.set(x, y, g.WTR[2] if y > 21 else g.WTR[3])
-    cv.hline(8, 23, 5, g.WTR[4]); cv.hline(26, 25, 5, g.WTR[3])
-    cv.rect(18, 8, 5, 15, g.STONE[3]); cv.vline(18, 8, 15, g.STONE[4]); cv.vline(22, 8, 15, g.STONE[2])
-    cv.hline(18, 18, 5, g.STONE[2]); cv.set(19, 19, g.STONE[4])
-    for (x, y) in oval(20.5, 9, 6, 2.5):
-        cv.set(x, y, g.STONE[3] if y < 9 else g.STONE[2])
-    for i, (x, y) in enumerate(((20, 1), (20, 3), (19, 5), (21, 5), (16, 7), (25, 7), (14, 11), (27, 11), (13, 15), (28, 15))):
-        cv.set(x, y, '#E0EFDF' if i % 2 else '#A1CFD0')
-    for x in (12, 16, 24, 28):
-        cv.set(x, 21, '#E0EFDF')
-    cv.set(11, 25, g.RED[4]); cv.set(12, 25, g.RED[3])  # a fallen petal, not a reward
-    cv.set(7, 29, g.LEAF[2]); cv.set(8, 29, g.LEAF[3])
-    cv.outline(INK)
-    return cv
-
-
-def bench() -> Canvas:
-    cv = Canvas(26, 16)
-    cv.rect(2, 8, 2, 7, g.WOOD[1]); cv.rect(22, 8, 2, 7, g.WOOD[1])
-    for y, c in ((2, g.WOOD[4]), (4, g.WOOD[3]), (8, g.WOOD[4]), (10, g.WOOD[3])):
-        cv.hline(1, y, 24, c); cv.hline(1, y + 1, 24, g.WOOD[2])
-    cv.rect(1, 1, 2, 9, '#3A3F4E'); cv.rect(23, 1, 2, 9, '#3A3F4E')
-    cv.set(1, 2, SLATE[3]); cv.set(23, 2, SLATE[2])
-    for x, y in ((4, 2), (21, 2), (4, 8), (21, 8)):
-        cv.set(x, y, g.CREAM[1])
-    cv.hline(8, 4, 3, g.WOOD[1]); cv.set(11, 4, g.WOOD[4])
-    cv.hline(15, 10, 3, g.WOOD[2]); cv.set(7, 8, g.WOOD[3])
-    cv.outline(INK)
-    return cv
-
-
-def lamp() -> Canvas:
-    cv = Canvas(10, 34)
-    cv.rect(4, 8, 2, 24, '#3A3F4E'); cv.vline(4, 8, 24, '#565D70')
-    cv.rect(2, 31, 6, 2, '#2E323E')
-    cv.rect(2, 2, 6, 6, '#3A3F4E'); cv.rect(3, 3, 4, 4, '#FFE58A'); cv.set(3, 3, '#FFF7D6')
-    cv.hline(1, 1, 8, '#2E323E'); cv.set(4, 0, '#2E323E'); cv.set(5, 0, '#2E323E')
-    cv.vline(6, 3, 4, '#D8B86F'); cv.set(4, 4, '#FFF7D6')
-    cv.hline(3, 8, 4, g.CREAM[0]); cv.set(3, 7, g.CREAM[1])
-    cv.hline(3, 31, 4, SLATE[2])
-    cv.outline(INK)
-    return cv
-
-
-def hedge(w: int) -> Canvas:
-    cv = Canvas(w, 14)
-    pts = set()
-    for x in range(0, w, 6):
-        pts |= {(px, py) for (px, py) in disc(x + 3, 6, 4.6) if 0 <= px < w}
-    pts |= {(x, y) for x in range(w) for y in range(6, 13)}
-    shade_blob(cv, pts, g.LEAF[1], g.LEAF[2], g.LEAF[3], g.LEAF[4])
-    for i in range(w // 4):
-        x, y = int(noise2(i, 1, w) * (w - 2)), int(2 + noise2(i, 2, w) * 8)
-        if (x, y) in pts:
-            cv.set(x, y, g.LEAF[1])
-    cv.outline(g.LEAF[0])
-    return cv
-
-
-def library() -> Canvas:
-    """Grand little library: columns, steps, an open-book sign."""
-    w, h = 72, 54
-    cv = Canvas(w, h)
-    cv.rect(4, 20, 64, 28, g.CREAM[2])
-    cv.rect(62, 21, 6, 27, g.CREAM[1])
-    cv.hline(4, 21, 64, g.CREAM[0])  # roof's cast shadow
-    cv.hline(5, 23, 57, g.CREAM[3])
-    cv.hline(4, 44, 64, g.CREAM[1]); cv.hline(4, 47, 64, g.CREAM[0])
-    # A few plaster blocks near the corners; leave the facade's broad planes.
-    for x, y, length in ((5, 28, 4), (5, 35, 3), (59, 39, 7), (44, 26, 3)):
-        cv.hline(x, y, length, g.CREAM[1]); cv.set(x, y - 1, g.CREAM[3])
-    for x in (10, 22, 46, 58):  # columns
-        cv.rect(x, 22, 5, 24, g.CREAM[2]); cv.vline(x, 23, 21, g.CREAM[3]); cv.vline(x + 4, 23, 21, g.CREAM[1])
-        cv.hline(x - 1, 23, 7, g.CREAM[3]); cv.hline(x - 1, 24, 7, g.CREAM[1])
-        cv.hline(x - 1, 43, 7, g.CREAM[3]); cv.hline(x - 1, 45, 7, g.CREAM[0])
-    for x in (16, 52):  # tall windows
-        window(cv, x - 2, 26, 5, 13)
-    cv.rect(30, 30, 12, 16, '#5A3A26'); cv.rect(31, 31, 10, 15, '#7A5232'); cv.vline(36, 31, 15, '#5A3A26')
-    cv.rect(32, 32, 3, 5, g.WOOD[1]); cv.rect(37, 32, 3, 5, g.WOOD[1])
-    cv.rect(32, 40, 3, 4, g.WOOD[1]); cv.rect(37, 40, 3, 4, g.WOOD[1])
-    cv.vline(31, 31, 14, g.WOOD[3]); cv.hline(30, 29, 12, g.WOOD[0])
-    cv.set(34, 38, '#F2D16B'); cv.set(38, 38, '#F2D16B')
-    # pediment roof
-    roof = set()
-    for y in range(4, 20):
-        span = int((y - 4) * 2.3) + 3
-        for x in range(w // 2 - span, w // 2 + span):
-            roof.add((x, y))
-    roof_tiles(cv, roof, ROOF)
-    cv.hline(32, 4, 7, ROOF[4]); cv.hline(2, 19, w - 4, ROOF[0])
-    cv.hline(0, 20, w, g.CREAM[1]); cv.hline(1, 19, w - 2, g.CREAM[3])
-    # open-book sign in the gable
-    cv.rect(30, 9, 12, 8, g.WOOD[0]); cv.hline(31, 9, 10, g.CREAM[1])
-    for (x, y) in ((32, 12), (33, 11), (34, 11), (35, 12), (36, 12), (37, 11), (38, 11), (39, 12)):
-        cv.set(x, y, '#FBF4E4')
-    cv.hline(32, 13, 8, '#FBF4E4'); cv.hline(32, 14, 8, '#C9B48E'); cv.vline(36, 11, 4, '#8C7A5E')
-    cv.set(37, 15, g.NAP[2]); cv.set(37, 16, g.NAP[3])  # signature lilac bookmark
-    # steps
-    for i, y in enumerate((46, 48, 50)):
-        cv.rect(26 - i * 2, y, 20 + i * 4, 2, '#CFC5AE' if i % 2 else '#E2D9C2')
-        cv.hline(27 - i * 2, y, 18 + i * 4, g.CREAM[3])
-    cv.set(24, 51, g.LEAF[2]); cv.set(23, 51, g.LEAF[3])
-    cv.outline(INK)
-    return cv
-
-
-def house(roof=None, sign=None) -> Canvas:
-    roof = roof or ROOF
-    w, h = 40, 40
-    cv = Canvas(w, h)
-    cv.rect(4, 18, 32, 20, g.CREAM[2])
-    cv.rect(31, 19, 5, 18, g.CREAM[1]); cv.hline(4, 19, 32, g.CREAM[0])
-    cv.hline(5, 21, 26, g.CREAM[3]); cv.hline(4, 37, 32, g.STONE[1])
-    cv.hline(5, 36, 26, g.STONE[3])
-    for x, y, length in ((5, 32, 3), (10, 22, 4), (29, 34, 6)):
-        cv.hline(x, y, length, g.CREAM[1]); cv.set(x, y - 1, g.CREAM[3])
-    cv.rect(16, 26, 8, 12, g.WOOD[1]); cv.rect(17, 27, 6, 11, g.WOOD[2]); cv.set(22, 32, '#F2D16B')
-    cv.vline(17, 27, 10, g.WOOD[3]); cv.vline(20, 28, 9, g.WOOD[1])
-    cv.hline(18, 30, 4, g.WOOD[1]); cv.hline(18, 35, 4, g.WOOD[1])
-    cv.hline(16, 37, 8, g.STONE[4])
-    for x in (7, 27):
-        window(cv, x, 23, 6, 6, warm=bool(sign))
-        cv.rect(x, 30, 6, 2, g.WOOD[1]); cv.hline(x, 30, 6, g.WOOD[3])
-        cv.set(x + 1, 29, g.LEAF[2]); cv.set(x + 4, 29, g.LEAF[3])
-        flower = g.NAP if sign else g.RED
-        cv.set(x + 1, 28, flower[3]); cv.set(x + 3, 28, '#F2D16B'); cv.set(x + 4, 28, flower[4])
-    mask = set()
-    for y in range(3, 19):
-        span = int((y - 3) * 1.3) + 5
-        for x in range(w // 2 - span, w // 2 + span):
-            mask.add((x, y))
-    roof_tiles(cv, mask, roof)
-    cv.hline(16, 3, 8, roof[4])
-    cv.hline(0, 18, w, roof[0])
-    if sign:
-        # The blue-roofed house is the little bindery: a tiny book plaque.
-        cv.rect(14, 13, 12, 6, g.WOOD[1]); cv.hline(14, 13, 12, g.WOOD[4])
-        cv.rect(17, 14, 6, 3, g.CREAM[2]); cv.vline(20, 14, 3, g.CREAM[0])
-        cv.set(22, 17, g.NAP[3]); cv.set(15, 15, g.CREAM[1])
-    else:
-        # A folded curtain distinguishes the lived-in red-roofed house.
-        cv.vline(8, 24, 3, g.RED[3]); cv.set(9, 26, g.RED[4])
-    cv.outline(INK)
-    return cv
-
-
-def cafe_table() -> Canvas:
-    cv = Canvas(24, 28)
-    for y in range(2, 10):  # umbrella
-        span = (y - 1) * 1.4 + 2
-        for x in range(int(12 - span), int(12 + span)):
-            stripe = (x // 3) % 2
-            cv.set(x, y, g.LEAF[2] if stripe and y > 7 else g.LEAF[3] if stripe else g.CREAM[1] if y > 7 else g.CREAM[3])
-    cv.set(11, 1, g.WOOD[4]); cv.set(12, 1, g.WOOD[1])
-    cv.hline(3, 9, 18, g.WOOD[1])
-    for x in (4, 10, 16):
-        cv.hline(x, 9, 3, g.CREAM[2]); cv.set(x + 1, 10, g.CREAM[1])
-    cv.vline(12, 10, 12, g.STONE[1])
-    cv.vline(11, 11, 9, g.STONE[3])
-    for (x, y) in oval(12, 21, 7, 2.6):
-        cv.set(x, y, g.CREAM[2] if y < 21 else g.CREAM[1])
-    cv.rect(3, 20, 3, 7, g.WOOD[2]); cv.rect(18, 20, 3, 7, g.WOOD[2])
-    cv.hline(3, 20, 3, g.WOOD[4]); cv.hline(18, 20, 3, g.WOOD[4])
-    cv.vline(5, 22, 5, g.WOOD[1]); cv.vline(20, 22, 5, g.WOOD[1])
-    cv.hline(8, 21, 8, g.WOOD[0]); cv.hline(8, 22, 8, g.WOOD[3])
-    cv.rect(8, 18, 3, 3, g.CREAM[3]); cv.hline(8, 18, 3, g.CREAM[0])
-    cv.set(11, 19, g.CREAM[1]); cv.set(11, 20, g.CREAM[1])
-    cv.rect(14, 19, 3, 2, g.RED[2]); cv.set(14, 18, g.RED[4])
-    cv.outline(INK)
-    return cv
-
-
-def book_cart() -> Canvas:
-    cv = Canvas(26, 20)
-    cv.rect(1, 6, 24, 9, g.WOOD[2]); cv.hline(1, 6, 24, g.WOOD[4]); cv.hline(1, 14, 24, g.WOOD[1])
-    cv.vline(1, 7, 7, g.WOOD[3]); cv.vline(24, 7, 7, g.WOOD[0])
-    cv.hline(5, 12, 5, g.WOOD[1]); cv.set(10, 12, g.WOOD[3])
-    cv.set(3, 7, g.CREAM[1]); cv.set(22, 7, g.CREAM[1])
-    for i, x in enumerate(range(3, 23, 3)):
-        hgt = 5 + (i % 3)
-        col = [g.RED[2], '#4C6E9E', '#5FA35A', '#D8AF5E', g.NAP[2]][i % 5]
-        cv.rect(x, 6 - hgt + 5, 2, hgt, col); cv.set(x, 6 - hgt + 5, '#FBF4E4')
-        cv.set(x, 8, g.CREAM[1] if i % 2 else g.CREAM[2])
-    for cx in (6, 20):
-        for (x, y) in oval(cx, 16.5, 3, 3):
-            cv.set(x, y, g.STONE[1] if (x - cx) ** 2 + (y - 16.5) ** 2 > 3 else g.STONE[3])
-        cv.set(cx, 16, g.WOOD[1])
-    cv.outline(INK)
-    return cv
-
-
-def cabin() -> Canvas:
-    w, h = 50, 42
-    cv = Canvas(w, h)
-    for i, y in enumerate(range(18, 39, 3)):  # log walls
-        cv.rect(4, y, 42, 3, g.WOOD[3] if i % 2 else g.WOOD[2]); cv.hline(4, y + 2, 42, g.WOOD[1])
-        cv.set(3, y + 1, g.WOOD[4]); cv.set(46, y + 1, g.WOOD[4])
-        cv.set(4, y + 1, g.WOOD[1]); cv.set(45, y + 1, g.WOOD[1])
-    cv.hline(6, 23, 5, g.WOOD[1]); cv.set(11, 23, g.WOOD[4])
-    cv.hline(32, 35, 5, g.WOOD[1]); cv.set(31, 35, g.WOOD[3])
-    cv.rect(21, 27, 9, 12, g.WOOD[0]); cv.rect(22, 28, 7, 11, g.WOOD[1]); cv.set(27, 33, '#F2D16B')
-    cv.vline(22, 28, 10, g.WOOD[3]); cv.vline(25, 29, 9, g.WOOD[0])
-    window(cv, 8, 24, 7, 6, warm=True); window(cv, 35, 24, 7, 6, warm=True)
-    for y in range(4, 19):  # snowy roof
-        span = int((y - 4) * 1.7) + 4
-        for x in range(w // 2 - span, w // 2 + span):
-            snowline = 8 + (x // 5 % 3) + (2 if 29 < x < 37 else 0)
-            cv.set(x, y, SNOW[3] if y < snowline else SNOW[1] if y == snowline else g.WOOD[3] if y % 3 == 0 else g.WOOD[1])
-        cv.set(w // 2 - span, y, SNOW[1]); cv.set(w // 2 + span - 1, y, '#4A3122')
-    cv.rect(34, 2, 5, 9, g.STONE[2]); cv.hline(34, 2, 5, g.STONE[4])  # chimney
-    cv.vline(38, 3, 8, g.STONE[1]); cv.hline(34, 6, 5, g.STONE[1])
-    cv.hline(3, 38, 44, SNOW[1]); cv.hline(5, 37, 13, SNOW[3])
-    cv.outline(INK)
-    return cv
-
-
-def campfire() -> Canvas:
-    cv = Canvas(18, 16)
-    for (x, y) in oval(9, 12.5, 8, 3):
-        cv.set(x, y, g.STONE[2] if (x + y) % 3 else g.STONE[1])
-    cv.rect(3, 11, 12, 2, g.WOOD[2]); cv.rect(5, 10, 8, 2, g.WOOD[1])
-    flame = [(9, 2), (8, 4), (9, 4), (10, 4), (7, 6), (8, 6), (9, 6), (10, 6), (11, 6), (6, 8), (7, 8), (8, 8), (9, 8), (10, 8), (11, 8), (12, 8),
-             (8, 3), (10, 5), (7, 7), (11, 7), (8, 5), (9, 5), (9, 7), (10, 7), (8, 7), (7, 9), (8, 9), (9, 9), (10, 9), (11, 9)]
-    for (x, y) in flame:
-        cv.set(x, y, '#FFF3BF' if y >= 7 and 8 <= x <= 10 else '#F5B94A' if y >= 5 else '#E5733A')
-    cv.outline(INK)
-    return cv
-
-
-def boulder(big=True) -> Canvas:
-    """A chunky moss-capped boulder: lit top, shaded flank, cracks."""
-    w, h = (26, 18) if big else (14, 10)
-    cv = Canvas(w, h)
-    pts = oval(w / 2, h / 2 + 1, w / 2 - 1, h / 2 - 1.2) | oval(w / 2 - 3, h / 2 + 2, w / 3, h / 2.6)
-    pts = {(x, y) for (x, y) in pts if 0 <= x < w and 0 <= y < h}
-    style.facet_stone(cv, pts, g.STONE, moss=g.LEAF, seed=w, outline=None)
-    cv.outline(INK)
-    return cv
-
-
-def cairn() -> Canvas:
-    cv = Canvas(16, 26)
-    y = 24
-    for i, (rw, rh) in enumerate(((14, 5), (11, 4), (9, 4), (7, 3), (5, 3))):
-        pts = oval(8, y - rh / 2, rw / 2, rh / 2)
-        shade_blob(cv, pts, g.STONE[1], g.STONE[2], g.STONE[3], g.STONE[4])
-        y -= rh - 1
-    cv.vline(8, 1, 6, g.WOOD[1]); cv.rect(9, 1, 5, 3, g.NAP[3]); cv.set(9, 1, g.NAP[4])  # little flag
-    cv.outline(INK)
-    return cv
-
-
-def bridge() -> Canvas:
-    cv = Canvas(30, 22)
-    for i, x in enumerate(range(2, 28, 4)):
-        cv.rect(x, 4, 4, 16, g.WOOD[2] if i % 2 else g.WOOD[3]); cv.vline(x, 4, 15, g.WOOD[4]); cv.vline(x + 3, 4, 16, g.WOOD[1])
-        cv.set(x + 1, 5, g.STONE[1]); cv.set(x + 1, 18, g.STONE[1])
-        if i in (1, 4):
-            cv.vline(x + 1, 10 + i % 3, 3, g.WOOD[1]); cv.set(x + 2, 11 + i % 3, g.WOOD[2])
-    cv.rect(0, 2, 30, 2, g.WOOD[1]); cv.hline(1, 2, 28, g.WOOD[4])
-    cv.rect(0, 19, 30, 2, g.WOOD[1]); cv.hline(1, 19, 28, g.WOOD[3])
-    for x in (1, 27):
-        cv.set(x, 2, g.CREAM[1]); cv.set(x, 19, g.CREAM[1])
-    cv.outline(INK)
-    return cv
-
-
-def duck() -> Canvas:
-    cv = Canvas(10, 8)
-    for (x, y) in oval(5, 5, 4, 2.4):
-        cv.set(x, y, '#FBF4E4' if y < 5 else '#D9CFB8')
-    for (x, y) in oval(7.5, 2.5, 1.8, 1.8):
-        cv.set(x, y, '#3E7D44')
-    cv.set(9, 3, '#E8A33D'); cv.set(8, 2, INK)
-    cv.outline('#3A4A52')
-    return cv
-
-
-SPRITES = {
-    'tree': lambda: g.tree(True), 'tree_small': lambda: g.tree(False), 'tree_autumn': lambda: g.tree(True, True),
-    'pine': g.pine, 'bush': g.bush, 'fountain': fountain, 'bench': bench, 'lamp': lamp,
-    'hedge': lambda: hedge(60), 'library': library, 'house_red': lambda: house(ROOF),
-    'house_blue': lambda: house(['#1E2A44', '#2E3F66', '#45598A', '#6A7FAE', '#9DB0D6'], sign=True),
-    'cafe': cafe_table, 'cart': book_cart, 'cabin': cabin, 'campfire': campfire,
-    'boulder': lambda: boulder(True), 'stone': lambda: boulder(False), 'cairn': cairn,
-    'bridge': bridge, 'duck': duck,
-}
+# Drawn in world_props.py at the shared density; trees come from the garden.
+SPRITES = wp.props()
 
 
 # ---- worlds -------------------------------------------------------------------
 def world_park(frame):
     cv = Canvas(W, H)
     grass(cv, frame)
-    plaza = disc(96, 100, 28)
-    paths = thick([(96, 180), (96, 100)], 8) | thick([(-4, 100), (200, 100)], 7) | thick([(96, 100), (96, 30)], 6)
-    paint_paving(cv, (plaza | paths) & {(x, y) for x in range(W) for y in range(24, H)})
-    pond = {(x, y) for (x, y) in oval(158, 148, 24, 13)}
-    water = pond
+    plaza = disc(160, 167, 46)
+    paths = thick([(160, 300), (160, 167)], 13) | thick([(-6, 167), (333, 167)], 12) | thick([(160, 167), (160, 50)], 10)
+    paint_paving(cv, (plaza | paths) & {(x, y) for x in range(W) for y in range(40, H)})
+    water = {(x, y) for (x, y) in oval(263, 248, 40, 21)}
     paint_water(cv, water, frame)
-    # The garden's pond language returns here at park scale: reeds, a lily
-    # pair and a few washed stones, with an open near bank for the companion.
-    for lx, ly in ((148, 146), (168, 150)):
-        for x, y in oval(lx, ly, 3, 2):
+    for lx, ly in ((247, 244), (280, 251)):
+        for x, y in oval(lx, ly, 4.5, 3):
             cv.set(x, y, g.LEAF[3] if y < ly else g.LEAF[2])
-        cv.set(lx + 1, ly - 1, g.WTR[2]); cv.hline(lx - 1, ly, 2, g.LEAF[1])
-    cv.set(168, 149, g.NAP[4])
-    for x, y in ((139, 140), (174, 141), (177, 153)):
-        cv.vline(x, y - 4, 5, g.LEAF[1]); cv.set(x + 1, y - 2, g.LEAF[3])
-    for x, y in ((141, 159), (162, 163)):
-        cv.hline(x, y, 4, g.STONE[1]); cv.hline(x, y - 1, 3, g.STONE[3]); cv.set(x, y - 2, g.STONE[4])
-    for fb in ((20, 120, 30, 12, 0), (20, 66, 30, 12, 1), (140, 60, 32, 12, 2)):
+        cv.set(lx + 1, ly - 2, g.WTR[2]); cv.hline(lx - 2, ly, 3, g.LEAF[1])
+    cv.set(280, 249, g.NAP[4])
+    for x, y in ((231, 236), (290, 236), (295, 256)):
+        cv.vline(x, y - 6, 7, g.LEAF[1]); cv.set(x + 1, y - 3, g.LEAF[3]); cv.vline(x + 2, y - 4, 5, g.LEAF[2])
+    for x, y in ((235, 265), (270, 271)):
+        cv.hline(x, y, 6, g.STONE[1]); cv.hline(x + 1, y - 1, 4, g.STONE[3]); cv.set(x + 1, y - 2, g.STONE[4])
+    for fb in ((30, 200, 50, 20, 0), (30, 108, 50, 20, 1), (236, 98, 52, 20, 2)):
         flowerbed(cv, *fb)
     objects = [
-        *[(f'pine-{i}', 'pine', x, -20 + (i % 2) * 4) for i, x in enumerate(range(-8, 196, 15))],
-        ('tree-0', 'tree', -12, -16), ('tree-1', 'tree_autumn', 150, -18), ('tree-2', 'tree', 168, 20),
-        ('tree-3', 'tree', -10, 140), ('tree-4', 'tree_small', 54, 132),
-        ('hedge-l', 'hedge', 6, 30), ('hedge-r', 'hedge', 126, 30),
-        ('fountain', 'fountain', 76, 72), ('bench-1', 'bench', 40, 88), ('bench-2', 'bench', 126, 88),
-        ('lamp-1', 'lamp', 66, 62), ('lamp-2', 'lamp', 118, 62), ('lamp-3', 'lamp', 66, 118), ('lamp-4', 'lamp', 118, 118),
-        ('bush-1', 'bush', 30, 152), ('bush-2', 'bush', 120, 150), ('duck', 'duck', 150, 142),
+        *[(f'pine-{i}', 'pine', x, -34 + (i % 2) * 6) for i, x in enumerate(range(-14, 330, 25))],
+        ('tree-0', 'tree', -20, -27), ('tree-1', 'tree_autumn', 250, -30), ('tree-2', 'tree', 284, 34),
+        ('tree-3', 'tree', -20, 230), ('tree-4', 'tree_small', 92, 222),
+        ('hedge-l', 'hedge', 10, 50), ('hedge-r', 'hedge', 214, 50),
+        ('fountain', 'fountain', 132, 127), ('bench-1', 'bench', 60, 124), ('bench-2', 'bench', 216, 124),
+        ('lamp-1', 'lamp', 108, 104), ('lamp-2', 'lamp', 198, 104), ('lamp-3', 'lamp', 108, 196), ('lamp-4', 'lamp', 198, 196),
+        ('bush-1', 'bush', 46, 254), ('bush-2', 'bush', 196, 252), ('duck', 'duck', 250, 238),
     ]
-    route = [(96, 160), (96, 128), (60, 104), (40, 112), (70, 140), (130, 132), (150, 112), (132, 104), (96, 134)]
-    return cv, objects, water, route, (150, 128)
+    route = [(160, 268), (160, 212), (100, 176), (66, 186), (130, 236), (214, 220), (240, 186), (214, 172), (160, 222)]
+    return cv, objects, water, route, (226, 214)
 
 
 def world_town(frame):
     cv = Canvas(W, H)
     grass(cv, frame)
-    street = {(x, y) for x in range(W) for y in range(84, 116)}
-    lane = thick([(96, 116), (96, 180)], 9)
+    street = {(x, y) for x in range(W) for y in range(140, 194)}
+    lane = thick([(160, 193), (160, 300)], 15)
     paint_cobbles(cv, street | lane)
-    # pavements in front of the buildings
-    paint_paving(cv, {(x, y) for x in range(W) for y in range(70, 84)}, seed=2)
-    # Small weeds belong to paving seams at the edges, away from the main
-    # street. The town is cared for, without every surface being factory-new.
-    for x, y in ((6, 81), (182, 81), (24, 114), (172, 113), (79, 155)):
+    paint_paving(cv, {(x, y) for x in range(W) for y in range(117, 140)}, seed=2)
+    for x, y in ((10, 135), (303, 135), (40, 190), (287, 188), (132, 258)):
         cv.set(x, y, g.LEAF[2]); cv.set(x + 1, y - 1, g.LEAF[3]); cv.set(x + 2, y, g.LEAF[2])
-    for x, y in ((39, 80), (144, 80)):
-        cv.hline(x, y, 4, g.CREAM[0]); cv.set(x + 3, y - 1, g.CREAM[2])
-    planters = [(10, 128, 22, 10, 1), (160, 128, 22, 10, 3)]
-    for fb in planters:
+    for fb in ((17, 214, 37, 17, 1), (266, 214, 37, 17, 3)):
         flowerbed(cv, *fb)
     objects = [
-        *[(f'pine-{i}', 'pine', x, -14 + (i % 2) * 4) for i, x in enumerate(range(-8, 196, 15))],
-        ('tree-b0', 'tree', 40, -10), ('tree-b1', 'tree_small', 120, -4),
-        ('house-l', 'house_red', 2, 32), ('library', 'library', 60, 18), ('house-r', 'house_blue', 150, 32),
-        ('lamp-1', 'lamp', 44, 52), ('lamp-2', 'lamp', 140, 52), ('lamp-3', 'lamp', 30, 116), ('lamp-4', 'lamp', 152, 116),
-        ('cafe-1', 'cafe', 112, 118), ('cafe-2', 'cafe', 136, 140), ('cart', 'cart', 54, 120),
-        ('tree-0', 'tree', -10, 132), ('tree-1', 'tree_small', 64, 142), ('tree-2', 'tree', 168, 140),
-        ('bush-1', 'bush', 36, 64), ('bush-2', 'bush', 138, 64),
+        *[(f'pine-{i}', 'pine', x, -24 + (i % 2) * 6) for i, x in enumerate(range(-14, 330, 25))],
+        ('tree-b0', 'tree', 60, -24), ('tree-b1', 'tree_small', 206, -10),
+        ('house-l', 'house_red', 0, 44), ('library', 'library', 96, 20), ('house-r', 'house_blue', 240, 44),
+        ('lamp-1', 'lamp', 82, 98), ('lamp-2', 'lamp', 225, 98), ('lamp-3', 'lamp', 50, 206), ('lamp-4', 'lamp', 256, 206),
+        ('cafe-1', 'cafe', 190, 204), ('cafe-2', 'cafe', 230, 242), ('cart', 'cart', 94, 206),
+        ('tree-0', 'tree', -20, 220), ('tree-1', 'tree_small', 104, 228), ('tree-2', 'tree', 276, 232),
+        ('bush-1', 'bush', 20, 113), ('bush-2', 'bush', 272, 113),
     ]
-    route = [(96, 160), (96, 104), (60, 96), (40, 100), (96, 92), (150, 100), (120, 108), (96, 128)]
-    return cv, objects, set(), route, (70, 108)
+    route = [(160, 266), (160, 174), (100, 160), (66, 168), (160, 152), (250, 168), (200, 180), (160, 214)]
+    return cv, objects, set(), route, (118, 180)
 
 
 def world_mountain(frame):
     cv = Canvas(W, H)
     alpine = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
     grass(cv, frame, alpine)
-    for y in range(0, 60):  # snowfield at the top
+    for y in range(0, 100):  # snowfield at the top
         for x in range(W):
-            if y < 34 + int(10 * math.sin(x / 19) + 4 * math.sin(x / 7)):
-                cv.set(x, y, SNOW[2] if smooth_noise(x, y, 9, 5) < 0.6 else SNOW[3])
-                # A blue underside gives the scalloped snow shelf thickness.
-                if y >= 32 + int(10 * math.sin(x / 19) + 4 * math.sin(x / 7)):
-                    cv.set(x, y, SNOW[1] if y % 2 else SNOW[0])
-    for x, y in ((53, 47), (118, 34), (151, 41)):
-        cv.hline(x, y, 6, SNOW[1]); cv.hline(x + 1, y - 1, 4, SNOW[3])
-    trail = thick([(70, 180), (74, 150), (110, 124), (100, 96), (66, 80), (86, 52)], 6, seed=3)
+            edge_y = 57 + int(17 * math.sin(x / 32) + 7 * math.sin(x / 12))
+            if y < edge_y:
+                # calm snow: one bright plane with a few broad, soft drifts
+                cv.set(x, y, SNOW[2] if smooth_noise(x, y, 40, 5) < 0.3 else SNOW[3])
+                # a blue underside gives the scalloped snow shelf thickness
+                if y >= edge_y - 3:
+                    cv.set(x, y, SNOW[1] if y < edge_y - 1 else SNOW[0])
+    for x, y in ((88, 78), (197, 57), (252, 68)):
+        cv.hline(x, y, 10, SNOW[1]); cv.hline(x + 1, y - 1, 8, SNOW[3])
+    trail = thick([(117, 300), (123, 250), (183, 207), (167, 160), (110, 133), (143, 87)], 10, seed=3)
     paint_dirt(cv, trail)
-    stream = thick([(200, 70), (170, 84), (150, 110), (156, 140), (140, 180)], 5, seed=4)
+    stream = thick([(333, 117), (283, 140), (250, 183), (260, 233), (233, 300)], 8, seed=4)
     paint_water(cv, stream, frame)
-    for x, y in ((158, 98), (164, 135), (135, 166)):
-        cv.hline(x, y, 5, MOSSROCK[0]); cv.hline(x, y - 1, 4, MOSSROCK[2]); cv.set(x + 1, y - 2, MOSSROCK[4])
+    for x, y in ((263, 163), (276, 226), (222, 277)):
+        cv.hline(x, y, 8, MOSSROCK[0]); cv.hline(x, y - 1, 7, MOSSROCK[2]); cv.set(x + 1, y - 2, MOSSROCK[4])
     objects = [
-        *[(f'pine-{i}', 'pine', x, 22 + (i % 3) * 6) for i, x in enumerate(range(-6, 60, 12))],
-        *[(f'pine-r{i}', 'pine', x, 120 + (i % 2) * 8) for i, x in enumerate(range(160, 200, 13))],
-        ('cabin', 'cabin', 6, 74), ('campfire', 'campfire', 58, 104), ('cairn', 'cairn', 92, 26),
-        ('boulder-1', 'boulder', 116, 60), ('boulder-2', 'boulder', 20, 140), ('stone-1', 'stone', 128, 150),
-        ('stone-2', 'stone', 40, 128), ('bridge', 'bridge', 140, 98),
-        ('pine-a', 'pine', 110, 140), ('pine-b', 'pine', 86, 146),
+        *[(f'pine-{i}', 'pine', x, 30 + (i % 3) * 10) for i, x in enumerate(range(-10, 100, 22))],
+        *[(f'pine-r{i}', 'pine', x, 196 + (i % 2) * 14) for i, x in enumerate(range(276, 340, 24))],
+        ('cabin', 'cabin', 10, 104), ('campfire', 'campfire', 104, 180), ('cairn', 'cairn', 157, 53),
+        ('boulder-1', 'boulder', 196, 104), ('boulder-2', 'boulder', 36, 238), ('stone-1', 'stone', 206, 254),
+        ('stone-2', 'stone', 70, 216), ('bridge', 'bridge', 228, 166),
+        ('pine-a', 'pine', 172, 214), ('pine-b', 'pine', 134, 226),
     ]
-    route = [(74, 164), (90, 136), (110, 122), (100, 98), (70, 112), (66, 84), (86, 60), (96, 54), (80, 76), (100, 104)]
-    return cv, objects, stream, route, (98, 60)
+    route = [(123, 272), (150, 228), (184, 204), (167, 164), (124, 184), (112, 140), (143, 100), (160, 104), (133, 128), (167, 172)]
+    return cv, objects, stream, route, (172, 112)
 
 
 WORLDS = {'park': world_park, 'book': world_town, 'mountain': world_mountain}
@@ -680,83 +380,149 @@ def backdrop(kind) -> Canvas:
 
 
 FLAT = {'bridge'}  # drawn into the ground, never layered over characters
+SPRITES['bridge'] = wp.bridge(46, 32)
+
+
+TOPW = 48  # a forest band above each world, so its treeline is drawn whole
+WALK_TOP = 72 + TOPW  # the companion's feet stay below the treeline
+
+
+def forest_band(cv: Canvas, wid: str = ''):
+    """Forest floor under the treeline (or snowy rock above the mountain's snowfield):
+    deep shade dithering into the ground below."""
+    if wid == 'mountain':
+        for y in range(TOPW):
+            for x in range(W):
+                cv.set(x, y, SLATE[1] if y < TOPW - 10 else SNOW[1] if y < TOPW - 4 else SNOW[2])
+        style.dither_dark(cv, 0, 0, W, TOPW - 16, 1.0, SLATE[0])
+        style.dither_dark(cv, 0, TOPW - 16, W, 6, 0.5, SLATE[0])
+        return
+    for y in range(TOPW):
+        for x in range(W):
+            cv.set(x, y, g.G[1] if y < TOPW - 4 else g.G[2])
+    style.dither_dark(cv, 0, 0, W, TOPW - 12, 1.0, style.FOREST_DARK)
+    style.dither_dark(cv, 0, TOPW - 12, W, 4, 0.75, style.FOREST_DARK)
+    style.dither_dark(cv, 0, TOPW - 8, W, 4, 0.5, style.FOREST_DARK)
+    style.dither_dark(cv, 0, TOPW - 4, W, 4, 0.25, style.FOREST_DARK)
+
+
+def shifted(cv: Canvas, wid: str) -> Canvas:
+    out = Canvas(W, H + TOPW)
+    forest_band(out, wid)
+    out.paste(cv, 0, TOPW)
+    return out
 
 
 def main():
     worlds = {}
     all_props = {}
+    sprites = {key: style.finalize(sp, name=key) for key, sp in SPRITES.items()}
+    water_files = {}
     for wid, fn in WORLDS.items():
         os.makedirs(os.path.join(OUT, wid), exist_ok=True)
-        cv0, objects, water, route, visitor = fn(0)
-        cv1, *_ = fn(1)
-        sprites = {}
-        for (_id, key, x, y) in objects:
-            sprites.setdefault(key, style.close_outline(SPRITES[key]()))
-        # Flat, walkable decals (bridges) belong to the ground layer, so a companion
-        # on or beside them is never drawn behind them (coherence plan, step 1).
-        flat = [(sprites[key], x, y) for (_id, key, x, y) in objects if key in FLAT]
+        for old in os.listdir(os.path.join(OUT, wid)):
+            os.remove(os.path.join(OUT, wid, old))
+        frames, (objects, water, route, visitor) = [], (None, None, None, None)
+        for frame in (0, 1):
+            cv, objects, water, route, visitor = fn(frame)
+            frames.append(shifted(cv, wid))
+        # nominal boxes in the shifted map, then each trimmed sprite placed by its offset
+        objects = [(i, k, x + sprites[k].ox, y + TOPW + sprites[k].oy) for (i, k, x, y) in objects]
+        for (i, k, x, y) in objects:
+            assert y >= 0, f'{wid}/{i} reaches {-y} px above the world'
+        route = [(x, y + TOPW) for (x, y) in route]
+        visitor = (visitor[0], visitor[1] + TOPW)
+        water = {(x, y + TOPW) for (x, y) in water}
+        # flat, walkable decals (bridges) belong to the ground layer (coherence plan, step 1)
+        flat = [(sprites[k], x, y) for (_i, k, x, y) in objects if k in FLAT]
         objects = [o for o in objects if o[1] not in FLAT]
-        for frame, cv in ((0, cv0), (1, cv1)):
+        for cv in frames:
             for (decal, fx, fy) in flat:
                 cv.paste(decal, fx, fy)
-            # hard cast shadows, as in the garden (docs/vision/art-style.md)
-            for (_id, key, x, y) in objects:
-                s = sprites[key]
-                foot = y + s.h
+            for (_id, key, x, y) in objects:  # flat cast shadows and contact shade, as in the garden
+                sp = sprites[key]
+                foot = y + sp.h
                 if key in ('tree', 'tree_small', 'tree_autumn'):
-                    style.cast_shadow(cv, x + s.w / 2 + 3, foot - 1, s.w * 0.5, 4.5)
+                    style.cast_shadow(cv, x + sp.w / 2 + 5, foot - 2, sp.w * 0.46, 6)
                 elif key == 'pine':
-                    style.cast_shadow(cv, x + s.w / 2 + 2, foot, s.w * 0.45, 3.2)
+                    style.cast_shadow(cv, x + sp.w / 2 + 3, foot - 1, sp.w * 0.42, 4.5)
                 elif key == 'hedge':
-                    for xx in range(x + 1, x + s.w + 1):
-                        style.darken(cv, xx, foot); style.darken(cv, xx, foot + 1)
-                elif s.w > 40:  # buildings
-                    for yy in range(foot - 3, foot + 3):
-                        for xx in range(x + 3, x + s.w + 2):
+                    for xx in range(x + 2, x + sp.w + 2):
+                        for dy in (0, 1, 2):
+                            style.darken(cv, xx, foot + dy)
+                elif sp.w > 60:  # buildings
+                    for yy in range(foot - 4, foot + 4):
+                        for xx in range(x + 4 + (yy - foot + 4), x + sp.w + 4):
                             style.darken(cv, xx, yy)
                 else:
-                    style.cast_shadow(cv, x + s.w / 2 + 2.5, foot, max(3.5, s.w * 0.5), max(2.2, s.h * 0.12))
-            cv.save(os.path.join(OUT, wid, f'ground-{frame}.png'), SCALE)
-        for key, s in sprites.items():
-            if key not in FLAT:
-                all_props[key] = s
-        backdrop(wid).save(os.path.join(OUT, wid, 'sky.png'), SCALE)
+                    style.cast_shadow(cv, x + sp.w / 2 + 3, foot, max(4.5, sp.w * 0.48), max(2.6, sp.h * 0.1))
+                for xx in range(sp.w):
+                    if sp.get(xx, sp.h - 1)[3]:
+                        style.darken(cv, x + xx, foot)
+        frames[0].save(os.path.join(OUT, wid, 'ground.png'), SCALE)
+        overlays = []
+        if water:
+            xs = [x for x, _ in water]
+            ys = [y for _, y in water]
+            rx, ry = max(0, min(xs) - 4), max(0, min(ys) - 4)
+            rw, rh = min(W, max(xs) + 5) - rx, min(H + TOPW, max(ys) + 5) - ry
+            for y in range(H + TOPW):
+                for x in range(W):
+                    if frames[1].get(x, y) != frames[0].get(x, y):
+                        assert rx <= x < rx + rw and ry <= y < ry + rh, f'{wid} animates outside its water at {x},{y}'
+            for i, fcv in enumerate(frames):
+                crop = Canvas(rw, rh)
+                for y in range(rh):
+                    for x in range(rw):
+                        crop.px[x, y] = fcv.get(rx + x, ry + y)
+                crop.save(os.path.join(OUT, wid, f'water-{i}.png'), SCALE)
+            overlays = [{'x': rx, 'y': ry, 'w': rw, 'h': rh}]
+        water_files[wid] = bool(water)
+        for (_id, key, x, y) in objects:
+            all_props[key] = sprites[key]
         # walk grid: not water, not object footprints, inside the scene margins
         blocked = {(x // CELL, y // CELL) for (x, y) in water}
         for (_id, key, x, y) in objects:
-            s = sprites[key]
-            foot = 12 if s.w > 40 else 5
-            for yy in range(y + s.h - foot, y + s.h):
-                for xx in range(x + 2, x + s.w - 2):
+            sp = sprites[key]
+            foot = 20 if sp.w > 60 else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 7
+            for yy in range(y + sp.h - foot, y + sp.h):
+                for xx in range(x + 3, x + sp.w - 3):
                     blocked.add((xx // CELL, yy // CELL))
         walk = []
-        for r in range(H // CELL):
+        for r in range((H + TOPW) // CELL):
             row = ''
             for c in range(W // CELL):
                 cx, cy = c * CELL + 2, r * CELL + 2
-                ok = (c, r) not in blocked and 20 <= cx <= W - 20 and 44 <= cy <= 166
+                ok = (c, r) not in blocked and 16 <= cx <= W - 16 and WALK_TOP <= cy <= H + TOPW - 16
                 row += '.' if ok else '#'
             walk.append(row)
+        bad = [(x, y - TOPW) for (x, y) in route + [visitor] if walk[y // CELL][x // CELL] != '.']
+        assert not bad, f'{wid}: route or visitor points not walkable (layout coordinates): {bad}'
         worlds[wid] = {
             'objects': [{'id': i, 'sprite': k, 'x': x, 'y': y, 'w': sprites[k].w, 'h': sprites[k].h} for (i, k, x, y) in objects],
             'walk': walk,
             'route': [{'x': x, 'y': y} for (x, y) in route],
             'visitor': {'x': visitor[0], 'y': visitor[1]},
+            'water': overlays,
         }
-        prev = Canvas(W, H)
-        prev.paste(cv0, 0, 0)
+        prev = Canvas(W, H + TOPW)
+        prev.paste(frames[0], 0, 0)
         for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprites[o[1]].h):
             prev.paste(sprites[key], x, y)
-        prev.save(f'/tmp/world-{wid}.png', 3)
-    os.makedirs(os.path.join(OUT, 'props'), exist_ok=True)
-    for key, s in sorted(all_props.items()):
-        s.save(os.path.join(OUT, 'props', f'{key}.png'), SCALE)
+        prev.save(os.path.join(os.environ.get('WORLD_PREVIEW', '/tmp'), f'world-{wid}.png'), 2)
+    props_dir = os.path.join(OUT, 'props')
+    os.makedirs(props_dir, exist_ok=True)
+    for old in os.listdir(props_dir):
+        os.remove(os.path.join(props_dir, old))
+    for key, sp in sorted(all_props.items()):
+        sp.save(os.path.join(props_dir, f'{key}.png'), SCALE)
     # Static image imports (React Native needs literal paths), generated so they never drift.
-    ident = lambda k: ''.join(p.capitalize() for p in k.split('_'))
+    ident = lambda k: ''.join(p.capitalize() for p in k.split('_'))  # noqa: E731
     imp = [f"import prop{ident(k)} from '@/assets/worlds/props/{k}.png';" for k in sorted(all_props)]
     for wid in WORLDS:
-        for name in ('ground-0', 'ground-1', 'sky'):
-            imp.append(f"import {wid}{ident(name.replace('-', '_'))} from '@/assets/worlds/{wid}/{name}.png';")
+        imp.append(f"import {wid}Ground from '@/assets/worlds/{wid}/ground.png';")
+        if water_files[wid]:
+            imp += [f"import {wid}Water{i} from '@/assets/worlds/{wid}/water-{i}.png';" for i in (0, 1)]
     assets = [
         '// Generated by scripts/art/worlds.py. Do not edit by hand.',
         '/* eslint-disable */',
@@ -765,9 +531,10 @@ def main():
         'export const worldProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(all_props)],
         '};',
-        'export const worldImages = {',
-        *[f'  {wid}: {{ ground: [{wid}Ground0, {wid}Ground1], sky: {wid}Sky }},' for wid in WORLDS],
-        '} as const;',
+        '/** One still ground per world; water animates as two-frame overlays. */',
+        'export const worldImages: Record<string, { ground: ImageSourcePropType; water: ImageSourcePropType[] }> = {',
+        *[f'  {wid}: {{ ground: {wid}Ground, water: [{f"{wid}Water0, {wid}Water1" if water_files[wid] else ""}] }},' for wid in WORLDS],
+        '};',
         '',
     ]
     with open(os.path.join(ROOT, 'lib', 'world-assets.ts'), 'w') as f:
@@ -775,11 +542,11 @@ def main():
     ts = [
         '// Generated by scripts/art/worlds.py. Do not edit by hand.',
         '/* eslint-disable */',
-        f'export const WORLD = {{ width: {W}, height: {H}, scale: {SCALE}, cell: {CELL} }} as const;',
+        f'export const WORLD = {{ width: {W}, height: {H + TOPW}, top: {TOPW}, scale: {SCALE}, cell: {CELL} }} as const;',
         f'export const worldIds = {json.dumps(list(WORLDS))} as const;',
         'export type WorldId = (typeof worldIds)[number];',
         'export const isWorldId = (value: string): value is WorldId => worldIds.some((id) => id === value);',
-        'export type WorldMap = { objects: readonly { id: string; sprite: string; x: number; y: number; w: number; h: number }[]; walk: readonly string[]; route: readonly { x: number; y: number }[]; visitor: { x: number; y: number } };',
+        'export type WorldMap = { objects: readonly { id: string; sprite: string; x: number; y: number; w: number; h: number }[]; walk: readonly string[]; route: readonly { x: number; y: number }[]; visitor: { x: number; y: number }; water: readonly { x: number; y: number; w: number; h: number }[] };',
         f'export const worldMaps: Record<WorldId, WorldMap> = {json.dumps(worlds)};',
         '',
     ]

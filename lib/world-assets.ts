@@ -21,15 +21,13 @@ import propStone from '@/assets/worlds/props/stone.png';
 import propTree from '@/assets/worlds/props/tree.png';
 import propTreeAutumn from '@/assets/worlds/props/tree_autumn.png';
 import propTreeSmall from '@/assets/worlds/props/tree_small.png';
-import parkGround0 from '@/assets/worlds/park/ground-0.png';
-import parkGround1 from '@/assets/worlds/park/ground-1.png';
-import parkSky from '@/assets/worlds/park/sky.png';
-import bookGround0 from '@/assets/worlds/book/ground-0.png';
-import bookGround1 from '@/assets/worlds/book/ground-1.png';
-import bookSky from '@/assets/worlds/book/sky.png';
-import mountainGround0 from '@/assets/worlds/mountain/ground-0.png';
-import mountainGround1 from '@/assets/worlds/mountain/ground-1.png';
-import mountainSky from '@/assets/worlds/mountain/sky.png';
+import parkGround from '@/assets/worlds/park/ground.png';
+import parkWater0 from '@/assets/worlds/park/water-0.png';
+import parkWater1 from '@/assets/worlds/park/water-1.png';
+import bookGround from '@/assets/worlds/book/ground.png';
+import mountainGround from '@/assets/worlds/mountain/ground.png';
+import mountainWater0 from '@/assets/worlds/mountain/water-0.png';
+import mountainWater1 from '@/assets/worlds/mountain/water-1.png';
 export const worldProps: Record<string, ImageSourcePropType> = {
   bench: propBench,
   boulder: propBoulder,
@@ -52,8 +50,9 @@ export const worldProps: Record<string, ImageSourcePropType> = {
   tree_autumn: propTreeAutumn,
   tree_small: propTreeSmall,
 };
-export const worldImages = {
-  park: { ground: [parkGround0, parkGround1], sky: parkSky },
-  book: { ground: [bookGround0, bookGround1], sky: bookSky },
-  mountain: { ground: [mountainGround0, mountainGround1], sky: mountainSky },
-} as const;
+/** One still ground per world; water animates as two-frame overlays. */
+export const worldImages: Record<string, { ground: ImageSourcePropType; water: ImageSourcePropType[] }> = {
+  park: { ground: parkGround, water: [parkWater0, parkWater1] },
+  book: { ground: bookGround, water: [] },
+  mountain: { ground: mountainGround, water: [mountainWater0, mountainWater1] },
+};

@@ -16,7 +16,7 @@ const { PNG } = require('pngjs');
 
 const root = path.join(__dirname, '..');
 // Export scale per folder: the garden is exported at 4x since step 6, the rest at 6x.
-const SCALE_OF = { 'assets/garden': 4, 'assets/garden/growth': 4 };
+const SCALE_OF = { 'assets/garden': 4, 'assets/garden/growth': 4, 'assets/worlds/props': 4 };
 const MIN_COVERAGE = 0.95;
 const folders = ['assets/garden', 'assets/garden/growth', 'assets/worlds/props', 'art/icons'];
 const skip = /^(ground|water|sky|backdrop|platform)/;

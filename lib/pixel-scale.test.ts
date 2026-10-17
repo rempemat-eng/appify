@@ -25,6 +25,16 @@ for (const [name, width, dpr] of devices) {
   assert.ok(across > ART_ACROSS * 0.75 && across < ART_ACROSS * 1.25, `${name}: ${across} across`);
 }
 assert.equal(pixelScale(402, 3), 4 / 3, 'a 3x phone uses 4 device pixels (1.33 CSS px)');
+// A narrow window on a 1x screen keeps one device pixel per art pixel, so the
+// interface designed for about 300 across still fits instead of overflowing.
+for (const width of [320, 360, 402]) {
+  const css = pixelScale(width, 1);
+  assert.equal(css, 1, `a ${width} px window at 1x uses one device pixel`);
+  assert.ok(
+    width / css >= ART_ACROSS,
+    `a ${width} px window at 1x shows at least ${ART_ACROSS} across`,
+  );
+}
 console.log(
   'PASS: pixel scale keeps whole device pixels and about 300 art pixels across on phones and desktop.',
 );

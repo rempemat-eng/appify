@@ -465,6 +465,8 @@ function ScreenOff({
                   <WorldScene
                     world={m.id === 'book' ? 'book' : m.id === 'mountain' ? 'mountain' : 'park'}
                     width={napWidth - 4}
+                    // a window that follows the companion, as the nap garden does
+                    viewportHeight={Math.round((napWidth - 4) * 0.62)}
                     player={p}
                   />
                 </View>
