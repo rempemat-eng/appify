@@ -130,6 +130,10 @@ const LAMPS: Record<string, readonly [number, number]> = {
   street_light: [12, 8],
   lantern: [7, 10],
   lighthouse: [22, 20],
+  fire_pit: [10, 8],
+  stone_lantern: [8, 10],
+  foundry: [72, 84],
+  tube_station: [38, 30],
 };
 const NAME_MS = 2200; // how long a zone's name stays up after crossing into it
 
