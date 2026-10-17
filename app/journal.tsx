@@ -25,6 +25,7 @@ const habitTint = {
   FOCUS: { fill: '#F8EEDA', edge: c.goldFrame },
 } as const;
 const rarityDots = { COMMON: 1, UNCOMMON: 2, RARE: 3 } as const;
+const journalTabStyle = { minHeight: 44, minWidth: 44, flex: 1, paddingHorizontal: 6 } as const;
 
 export default function FieldJournal() {
   const params = useLocalSearchParams<{ tab?: string }>();
@@ -92,17 +93,21 @@ export default function FieldJournal() {
         >
           FIELD JOURNAL
         </BodyText>
-        <PixelText style={{ fontSize: 16, lineHeight: 25 }}>
+        <PixelText accessibilityRole="header" style={{ fontSize: 16, lineHeight: 25 }}>
           {tab === 'memories'
             ? `MEMORIES ${memories.length}`
-            : `FRIENDS ${friendCount} / ${visitors.length}`}
+            : tab === 'postcards'
+              ? `POSTCARDS ${postcards.length}`
+              : `FRIENDS ${friendCount} / ${visitors.length}`}
         </PixelText>
         <BodyText style={{ fontSize: 12 }}>
           {tab === 'memories'
             ? 'Small moments you chose to keep with your companions.'
-            : `${metCount} of ${visitors.length} met · befriend visitors to choose them as guardians`}
+            : tab === 'postcards'
+              ? 'Places your companion visited while you took a break.'
+              : `${metCount} of ${visitors.length} met · befriend visitors to choose them as guardians`}
         </BodyText>
-        {tab !== 'memories' && (
+        {tab === 'visitors' && (
           <View
             accessibilityRole="progressbar"
             accessibilityLabel="Befriended visitors"
@@ -122,18 +127,24 @@ export default function FieldJournal() {
         <Tabs.List style={{ backgroundColor: c.transparent, padding: 2 * u }}>
           <FrameFill fill={c.body} inset />
           <Tabs.Indicator style={{ borderRadius: 0, backgroundColor: c.paper }} />
-          <Tabs.Trigger value="visitors">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
+          <Tabs.Trigger value="visitors" style={journalTabStyle}>
+            <Tabs.Label
+              style={{ color: c.ink, fontSize: 13, fontFamily: 'PixelifySans_500Medium' }}
+            >
               VISITORS
             </Tabs.Label>
           </Tabs.Trigger>
-          <Tabs.Trigger value="postcards">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
+          <Tabs.Trigger value="postcards" style={journalTabStyle}>
+            <Tabs.Label
+              style={{ color: c.ink, fontSize: 13, fontFamily: 'PixelifySans_500Medium' }}
+            >
               POSTCARDS
             </Tabs.Label>
           </Tabs.Trigger>
-          <Tabs.Trigger value="memories">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
+          <Tabs.Trigger value="memories" style={journalTabStyle}>
+            <Tabs.Label
+              style={{ color: c.ink, fontSize: 13, fontFamily: 'PixelifySans_500Medium' }}
+            >
               MEMORIES
             </Tabs.Label>
           </Tabs.Trigger>

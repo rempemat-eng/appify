@@ -27,6 +27,7 @@
 - Sheets: `lib/ui.ts` holds which sheet is open (`nap | menu | companions | rhythm | stats | trail`). `components/game-menus.tsx` renders them all once, beside the tabs. Any open sheet pauses the garden.
 - Shared game sheets keep a visible CLOSE button beside the title, above the scrolling content. It uses the same pixel button and 44 px target as the other controls. Backdrop and Escape/Back dismissal stay available; closing the nap sheet discards its unfinished break idea.
 - Forms and pickers (the companions picker, the rhythm editor) instead pin their DONE or CANCEL/SAVE actions below the scrolling content. Do not add a second header CLOSE to them; the rule is one visible way out that never scrolls away.
+- The field journal keeps its pixel title and a pinned BACK TO THE GARDEN outside collection scrolling. Each tab describes its own collection: Visitors shows friendship progress, Postcards counts saved outing postcards, and Memories counts kept memories. Tab targets are at least 44 px high and share the available row width; labels use the shared pixel font.
 
 ## Pixel frames
 
