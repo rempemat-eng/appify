@@ -377,7 +377,33 @@ ANCHORS = {
         'create': {'x': 40, 'y': 140},
     },
     'flowers': flower_points(),
+    # Night light (coherence plan, 6c): warm pools on the ground and glows on glass,
+    # drawn by light_pool() and shown after dark (the lantern only while it is lit).
+    'lights': [
+        {'id': 'lantern-pool', 'kind': 'lantern', 'x': 183, 'y': 124, 'w': 44, 'h': 22},
+        {'id': 'lantern-halo', 'kind': 'lantern', 'x': 199, 'y': 102, 'w': 18, 'h': 18},
+        {'id': 'hut-pool', 'kind': 'night', 'x': 30, 'y': 112, 'w': 76, 'h': 18},
+        {'id': 'hut-window-l', 'kind': 'night', 'x': 36, 'y': 92, 'w': 14, 'h': 11},
+        {'id': 'hut-window-r', 'kind': 'night', 'x': 86, 'y': 92, 'w': 14, 'h': 11},
+        {'id': 'stall-glow', 'kind': 'night', 'x': 224, 'y': 56, 'w': 76, 'h': 22},
+        {'id': 'stall-pool', 'kind': 'night', 'x': 218, 'y': 98, 'w': 88, 'h': 16},
+    ],
 }
+
+
+def light_pool(w: int, h: int) -> Canvas:
+    """A warm pool of light as three crisp, stepped bands (no smooth gradient, so it
+    stays on the pixel grid): brightest at the centre, fading to the edge."""
+    cv = Canvas(w, h)
+    for y in range(h):
+        for x in range(w):
+            d = ((x + 0.5 - w / 2) / (w / 2)) ** 2 + ((y + 0.5 - h / 2) / (h / 2)) ** 2
+            if d <= 1:
+                a = 150 if d < 0.25 else 100 if d < 0.6 else 55
+                if 0.55 < d < 0.62 and (x + y) % 2:
+                    a = 55
+                cv.set(x, y, (255, 214, 122, a))
+    return cv
 
 
 def bake_shadows(terrain: Canvas, sprites: dict):
@@ -466,6 +492,8 @@ def main():
             crop.save(os.path.join(OUT, f'water-{name}-{i}.png'), SCALE)
     for key, s in sprites.items():
         s.save(os.path.join(OUT, f'{key}.png'), SCALE)
+    for light in ANCHORS['lights']:
+        light_pool(light['w'], light['h']).save(os.path.join(OUT, f"light-{light['id']}.png"), SCALE)
 
     # walkable grid at 4px cells: grass/path, not water, not under object footprints
     cell = 4

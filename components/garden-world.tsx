@@ -76,6 +76,13 @@ import treeSmallImg from '@/assets/garden/tree_small.png';
 import treeAutumnImg from '@/assets/garden/tree_autumn.png';
 import pineImg from '@/assets/garden/pine.png';
 import hutImg from '@/assets/garden/hut.png';
+import lightLanternPool from '@/assets/garden/light-lantern-pool.png';
+import lightLanternHalo from '@/assets/garden/light-lantern-halo.png';
+import lightHutPool from '@/assets/garden/light-hut-pool.png';
+import lightHutWindowL from '@/assets/garden/light-hut-window-l.png';
+import lightHutWindowR from '@/assets/garden/light-hut-window-r.png';
+import lightStallGlow from '@/assets/garden/light-stall-glow.png';
+import lightStallPool from '@/assets/garden/light-stall-pool.png';
 import bedImg from '@/assets/garden/bed.png';
 import mailboxImg from '@/assets/garden/mailbox.png';
 import stallImg from '@/assets/garden/stall.png';
@@ -129,6 +136,17 @@ const BED: Point = gardenAnchors.bed;
 const waterFrames: Record<(typeof gardenWater)[number]['id'], ImageSourcePropType[]> = {
   stream: [stream0, stream1, stream2, stream3],
   pond: [pond0, pond1, pond2, pond3],
+};
+// Night light (coherence plan, 6c): warm pools from the lantern, the hut's windows and
+// the stall, in stepped pixel bands, laid over the night tint (scripts/art/garden.py).
+const lightImages: Record<string, ImageSourcePropType> = {
+  'lantern-pool': lightLanternPool,
+  'lantern-halo': lightLanternHalo,
+  'hut-pool': lightHutPool,
+  'hut-window-l': lightHutWindowL,
+  'hut-window-r': lightHutWindowR,
+  'stall-glow': lightStallGlow,
+  'stall-pool': lightStallPool,
 };
 const WATER_FRAMES = 4;
 // Near the top of the clearing a speech bubble opens below the companion instead.
@@ -1428,35 +1446,24 @@ export function GardenWorld({
             }}
           />
         )}
-        {[
-          ...(night ? [{ x: 48, y: 54, size: 8, ground: HUT_FOOT }] : []),
-          ...(lanternOn ? [{ x: 123, y: 71, size: 7, ground: LANTERN_FOOT }] : []),
-        ].map((light) => (
-          <View
-            key={`${light.x}-${light.y}`}
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              left: Math.round(place(light.x, light.y, light.ground).sx),
-              top: Math.round(place(light.x, light.y, light.ground).sy),
-              width: Math.round(light.size * scale),
-              height: Math.round(light.size * scale),
-              borderRadius: 0,
-              backgroundColor: 'rgba(255,214,120,0.35)',
-              zIndex: 901,
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <View
-              style={{
-                width: Math.round(4 * scale),
-                height: Math.round(4 * scale),
-                backgroundColor: '#FFE08A',
-              }}
-            />
-          </View>
-        ))}
+        <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, zIndex: 901 }}>
+          {gardenAnchors.lights
+            .filter((light) => (light.kind === 'lantern' ? lanternOn : night))
+            .map((light) => (
+              <Image
+                key={light.id}
+                source={lightImages[light.id]}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: snap(light.x * scale),
+                  top: snap(light.y * scale),
+                  width: snap(light.w * scale),
+                  height: snap(light.h * scale),
+                }}
+              />
+            ))}
+        </View>
         <Ambient
           scale={scale}
           place={place}
