@@ -33,6 +33,7 @@ import western_props as wsp  # noqa: E402
 import caldera_props as cdp  # noqa: E402
 import harbour_props as hbp  # noqa: E402
 import castle_props as csp  # noqa: E402
+import space_props as spp  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 IRONm, LEAFm = MATERIALS['iron'], MATERIALS['leaf']
@@ -210,6 +211,7 @@ def sprites() -> dict[str, Canvas]:
     items.update(cdp.props())
     items.update(hbp.props())
     items.update(csp.props())
+    items.update(spp.props())
     items['fence_c'] = gp.fence_h(60)
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
 
@@ -1006,10 +1008,130 @@ def castle(frame: int = 0):
     return cv, objects, stands, blocked
 
 
+def station(frame: int = 0):
+    """Halcyon Station: the space elevator arrives through the airlock at the bottom; a
+    corridor of deck plates with light strips leads up to the atrium of garden pods and
+    on to the long viewport where the planet turns below; the crew's sleep pods line
+    the west bay, the navigation consoles the east; a low-gravity ring is marked out on
+    the atrium floor; the shuttle hatch to Lumen is in the east wall."""
+    HULL, VOID = MATERIALS['hull'], MATERIALS['void']
+    CYAN = MATERIALS['neon_cyan']
+    cv = Canvas(W, H)
+    for y in range(H):  # deck plates, each lit along its top and left edge
+        for x in range(W):
+            px, py = x % 32, y % 24
+            n = noise2(x // 32, y // 24, 351)
+            c = HULL[2] if n > 0.18 else HULL[1]
+            if px == 0 or py == 0:
+                c = HULL[0]
+            elif px == 1 or py == 1:
+                c = HULL[3]
+            elif (px, py) in ((4, 4), (27, 4), (4, 19), (27, 19)):
+                c = HULL[4]  # bolts
+            cv.set(x, y, c)
+    for x in range(W):  # the hull walls on both sides, with pipes and a light strip
+        pass
+    for (x0, x1) in ((0, 18), (W - 18, W)):
+        for y in range(H):
+            for x in range(x0, x1):
+                k = (x - x0) / 18
+                c = HULL[3] if (x0 == 0 and k > 0.8) or (x0 > 0 and k < 0.2) else HULL[1]
+                if (x - x0) in (6, 7, 12):
+                    c = HULL[2]
+                cv.set(x, y, c)
+            cv.set(x1 - 1 if x0 == 0 else x0, y, CYAN[2] if (y // 6) % 2 else CYAN[1])
+    # a soft violet runner down the corridor (the station keeps quiet hours)
+    for y in range(300, H - 40):
+        for x in range(146, 174):
+            cv.set(x, y, MATERIALS['nap'][1] if (x in (146, 173)) else MATERIALS['nap'][2] if (y // 2 + x // 2) % 2 else MATERIALS['nap'][1])
+    # the corridor's floor light strips
+    for y in range(300, H - 40):
+        for x in (140, 179):
+            cv.set(x, y, CYAN[3] if (y // 3 + frame) % 4 else CYAN[2])
+    # the low-gravity ring on the atrium floor
+    ccx, ccy = 160, 250
+    for k in range(260):
+        a = 2 * math.pi * k / 260
+        for (rx, ry) in ((64, 30), (50, 23)):
+            x, y = int(ccx + rx * math.cos(a)), int(ccy + ry * math.sin(a))
+            cv.set(x, y, CYAN[3]); cv.set(x, y + 1, CYAN[1])
+    for (x, y) in oval(ccx, ccy, 10, 5):
+        cv.set(x, y, CYAN[2] if (x + y) % 2 else CYAN[1])
+    objects = [
+        ('view-1', 'viewport', 20, 8), ('view-2', 'viewport', 140, 8), ('view-3', 'viewport', 200, 8),
+        ('pod-1', 'garden_pod', 30, 120), ('pod-2', 'garden_pod', 226, 120), ('pod-3', 'garden_pod', 30, 330),
+        ('sleep-1', 'sleep_pod', 22, 210), ('sleep-2', 'sleep_pod', 22, 270), ('sleep-3', 'sleep_pod', 60, 404),
+        ('console-1', 'console', 258, 330), ('console-2', 'console', 258, 372), ('lock-lift', 'airlock', 132, 516),
+        ('lock-shuttle', 'airlock', 258, 214),
+    ]
+    stands = {'lift': (160, 512), 'atrium': (160, 250), 'viewport': (160, 96), 'sleep': (70, 250),
+              'shuttle': (286, 280)}
+    return cv, objects, stands
+
+
+def lumen(frame: int = 0):
+    """Lumen, the quiet moon: pale regolith pocked with craters lit on their far rims,
+    the shuttle landed at the top, a trail of footprints, glowing shrubs and moon
+    crystals, dream pools holding the stars, and a wide crater for gentle sparring."""
+    R, GLOWm, VOID = MATERIALS['regolith'], MATERIALS['glowflora'], MATERIALS['void']
+    cv = Canvas(W, H)
+    for y in range(H):
+        for x in range(W):
+            n = smooth_noise(x, y, 28, 361)
+            c = R[3] if n > 0.26 or (n > 0.21 and (x + y) % 2) else R[2]
+            if noise2(x, y, 362) > 0.96:
+                c = R[4]
+            cv.set(x, y, c)
+    # the horizon: the moon's edge against the void, the planet rising beyond it
+    def horizon(x):
+        return 64 + int(math.sin(x / 23) * 4 + noise2(x // 6, 0, 363) * 5)
+    for x in range(W):
+        hz = horizon(x)
+        for y in range(0, hz):
+            c = VOID[0] if noise2(x, y, 364) > 0.015 else '#FFFFFF'
+            d = math.hypot(x - 230, y - 150)
+            if d < 120:
+                band = int((y + math.sin(x / 11) * 3) / 5) % 3
+                c = ('#3E6AA8', '#5A8AC4', '#E6EEF6')[band] if d < 117 else '#9AD2FF'
+            cv.set(x, y, c)
+        cv.set(x, hz, R[5]); cv.set(x, hz + 1, R[4])
+        for k in range(2, 6):
+            cv.set(x, hz + k, R[2] if k < 4 else R[3])
+    craters = [(60, 120, 22), (250, 80, 14), (220, 300, 30), (70, 380, 12), (150, 470, 40), (280, 460, 10),
+               (40, 250, 9), (120, 200, 8)]
+    for (cx, cy, r) in craters:
+        for (x, y) in oval(cx, cy, r, r * 0.6):
+            dx, dy = (x - cx) / r, (y - cy) / (r * 0.6)
+            d = math.hypot(dx, dy)
+            t = dx * 0.7 + dy * 0.7  # toward the lower right
+            if d < 0.8:  # the bowl: its far wall in shade, its near wall catching the light
+                v = 1.6 + t * 1.8 + (0.3 if (x + y) % 2 else 0)
+            else:  # the raised rim: lit on its upper-left outside, shaded lower right
+                v = 3.4 - t * 2.2 + (0.3 if (x + y) % 2 else 0)
+            cv.set(x, y, R[max(0, min(5, int(v)))])
+    for i, y in enumerate(range(140, 460, 7)):  # footprints from the shuttle
+        x = 160 + int(math.sin(y / 40) * 30) + (3 if i % 2 else -3)
+        cv.set(x, y, R[1]); cv.set(x + 1, y, R[1]); cv.set(x, y + 1, R[2])
+    objects = [
+        ('shuttle', 'shuttle', 118, 72), ('shrub-1', 'moon_shrub', 20, 180), ('shrub-2', 'moon_shrub', 270, 160),
+        ('shrub-3', 'moon_shrub', 30, 470), ('shrub-4', 'moon_shrub', 280, 360), ('shrub-5', 'moon_shrub', 196, 380),
+        ('crystal-1', 'moon_crystal', 96, 290), ('crystal-2', 'moon_crystal', 290, 250), ('crystal-3', 'moon_crystal', 6, 320),
+        ('crystal-4', 'moon_crystal', 250, 530), ('pool-1', 'dream_pool', 70, 240), ('pool-2', 'dream_pool', 200, 210),
+        ('pool-3', 'dream_pool', 40, 540), ('shrub-6', 'moon_shrub', 120, 330), ('shrub-7', 'moon_shrub', 150, 256),
+        ('crystal-5', 'moon_crystal', 214, 120), ('crystal-6', 'moon_crystal', 230, 128), ('shrub-8', 'moon_shrub', 290, 520),
+    ]
+    for (_i, key, x, y) in objects:  # the flora's glow on the dust
+        if key == 'moon_shrub':
+            light_pool(cv, x + 17, y + 32, 26, 12, GLOWm[1])
+    stands = {'shuttle': (160, 142), 'pool': (100, 274), 'crater': (150, 470), 'east': (290, 300)}
+    return cv, objects, stands
+
+
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props}
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
+                'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 
 
@@ -1057,6 +1179,8 @@ def main():
     build('caldera', caldera, 'tunnel')
     build('harbour', harbour, 'town')
     build('castle', castle, 'harbour')
+    build('station', station, 'lift')
+    build('lumen', lumen, 'shuttle')
 
 
 if __name__ == '__main__':
