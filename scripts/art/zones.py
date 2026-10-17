@@ -1275,6 +1275,56 @@ def riverside(frame: int = 0):
     return cv, objects, stands, blocked
 
 
+def park(frame: int = 0):
+    """The Town Park, east of Crossroads Town: the town's paved street comes in at the
+    west edge at the same height and width and opens on a ring of paths round the
+    bandstand; the fountain plaza lies south, then a duck pond with a little island
+    and a willow; flower beds, clipped hedges, benches, lamps and the ice cream cart."""
+    WTRm = MATERIALS['water']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    paths = worlds.thick([(-8, 300), (60, 300)], 13)  # the town's street, unchanged
+    paths |= {(x, y) for (x, y) in oval(160, 190, 92, 52)} - {(x, y) for (x, y) in oval(160, 190, 74, 38)}
+    paths |= worlds.thick([(60, 300), (160, 300), (160, 240)], 11, seed=27)
+    paths |= {(x, y) for (x, y) in oval(160, 330, 44, 26)}  # the fountain plaza
+    paths |= worlds.thick([(160, 356), (150, 420), (100, 460)], 9, seed=28)
+    worlds.paint_paving(cv, paths | {(x, y) for (x0, y) in paths if x0 == 0 for x in range(-12, 0)}, seed=11)
+    pond = {(x, y) for (x, y) in oval(200, 470, 84, 46)}
+    island = {(x, y) for (x, y) in oval(232, 462, 20, 10)}
+    water = pond - island
+    for (x, y) in water:
+        d = math.hypot((x - 200) / 84, (y - 470) / 46)
+        c = WTRm[2] if d > 0.7 else WTRm[1]
+        if (x, y - 1) not in pond or (x, y - 2) not in pond:
+            c = WTRm[0]
+        cv.set(x, y, c)
+    for (x, y) in pond:
+        if (x, y + 1) not in pond:
+            cv.set(x, y + 1, MATERIALS['sand'][1])
+    for ty in range(430, 516, 6):
+        for tx in range(120, 290, 9):
+            x, y = tx + int(noise2(tx, ty, 431) * 5), ty + int(noise2(tx, ty, 432) * 3)
+            if (x, y) in water and (x + 3, y) in water and (x, y - 2) in water:
+                cv.hline(x, y, 3, WTRm[3])
+    for (x, y) in island:
+        cv.set(x, y, G[3] if (x - 232) + (y - 462) < 0 else G[2])
+    for fb in ((40, 120, 40, 16, 1), (240, 120, 40, 16, 2), (30, 380, 40, 16, 3), (250, 380, 40, 16, 0)):
+        meadow.flower_planter(cv, *fb)
+    objects = [
+        ('bandstand', 'bandstand', 118, 140), ('fountain', 'fountain', 132, 300),
+        ('willow', 'willow', 196, 400), ('lilies', 'lily_pads', 140, 476), ('duck-1', 'duck', 170, 500),
+        ('duck-2', 'duck', 262, 488), ('heron', 'heron', 290, 440),
+        ('hedge-n1', 'hedge', 0, 30), ('hedge-n2', 'hedge', 224, 30), ('tree-1', 'tree', 110, -24),
+        ('tree-2', 'tree_autumn', 284, 140), ('tree-3', 'tree', 4, 150), ('tree-4', 'tree_small', 20, 470),
+        ('bench-1', 'bench', 60, 196), ('bench-2', 'bench', 216, 196), ('bench-3', 'bench', 96, 360),
+        ('lamp-1', 'lamp', 66, 260), ('lamp-2', 'lamp', 246, 260), ('lamp-3', 'lamp', 108, 410),
+        ('icecream', 'ice_cream_cart', 220, 296), ('bush-1', 'bush', 0, 250), ('bush-2', 'bush', 290, 250),
+        ('bush-3', 'bush', 40, 540), ('bush-4', 'bush', 280, 540),
+    ]
+    stands = {'town': (8, 300), 'bandstand': (160, 240), 'fountain': (160, 360), 'pond': (100, 456)}
+    return cv, objects, stands, water
+
+
 FOREST_FLOOR = ['#24382A', '#40603A', '#577A44', '#668A4E', '#8EAE68']
 DARK_FLOOR = [tuple(int(c[k:k + 2], 16) for k in (1, 3, 5)) for c in FOREST_FLOOR]
 
@@ -1429,6 +1479,7 @@ def main():
     build('town', town, 'garden')
     build('riverside', riverside, 'garden-north')
     build('woodland', woodland, 'garden')
+    build('park', park, 'town')
     build('junction', junction, 'platform')
     build('neon', neon_city, 'crossing')
     build('gulch', gulch, 'platform')

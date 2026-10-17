@@ -220,11 +220,67 @@ def forest_bench() -> Canvas:
     return cv
 
 
+def bandstand() -> Canvas:
+    """The park's bandstand, 84 x 80: an octagonal roof seen from above in alternating
+    red and cream panels with a gilded finial, slender iron columns, a railing, and a
+    stone plinth with steps."""
+    w, h = 84, 80
+    cv = Canvas(w, h, pad=PAD)
+    cx, cy = 42, 22
+    for y in range(2, 40):
+        for x in range(4, w - 4):
+            dx, dy = x - cx, (y - cy) * 1.9
+            r = math.hypot(dx, dy)
+            if r > 38:
+                continue
+            a = math.atan2(dy, dx)
+            seg = int((a + math.pi) / (2 * math.pi) * 8) % 2
+            lit = dx + dy < 0
+            c = (RED[3] if lit else RED[2]) if seg else (PLASTER[5] if lit else PLASTER[3])
+            if r > 35:
+                c = GOLD[3] if lit else GOLD[1]
+            cv.set(x, y, c)
+    for (x, y) in disc(cx, cy - 1, 2.4):
+        cv.set(x, y, GOLD[4])
+    cv.vline(cx, cy - 8, 6, GOLD[3])
+    for k, colx in enumerate((10, 26, 42, 58, 74)):  # columns
+        for y in range(38, 64):
+            cv.set(colx, y, '#3C404C'); cv.set(colx + 1, y, '#727A8A' if k < 2 else '#545A68')
+    for y in (50, 52):  # the railing
+        cv.hline(8, y, w - 16, '#545A68')
+    for x in range(10, w - 10, 4):
+        cv.vline(x, 50, 10, '#3C404C')
+    detail.stones(cv, 4, 62, w - 8, 12, STONE, seed=61, course=4)
+    for k, (x0, wd) in enumerate(((30, 24), (26, 32))):
+        y = 74 + k * 3
+        cv.hline(x0, y, wd, STONE[4]); cv.hline(x0, y + 1, wd, STONE[3]); cv.hline(x0, y + 2, wd, STONE[1])
+    return cv
+
+
+def ice_cream_cart() -> Canvas:
+    """An ice cream cart, 44 x 40: a striped parasol from above, a pastel box on two
+    wheels with tubs showing through the glass lid."""
+    cv = Canvas(44, 40, pad=PAD)
+    for (x, y) in oval(22, 10, 18, 9):
+        a = math.atan2(y - 10, x - 22)
+        seg = int((a + math.pi) / (2 * math.pi) * 10) % 2
+        cv.set(x, y, ('#F6C6D8' if seg else '#FFFFFF') if (x - 22) + (y - 10) < 4 else ('#D89AB0' if seg else '#E6E2DC'))
+    cv.vline(22, 18, 6, '#545A68')
+    for (x, y) in rect_set(6, 22, 32, 12):
+        cv.set(x, y, '#BFE3E0' if y < 25 else '#94C8C4')
+    for k, c in enumerate(('#F6E2A0', '#F6C6D8', '#8A5A3A', '#C6E6B0')):
+        cv.rect(9 + k * 7, 23, 5, 2, c)
+    for wx in (12, 32):
+        for (x, y) in disc(wx, 36, 3):
+            cv.set(x, y, '#3C404C' if x < wx else '#2A2D36')
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(), 'heron': heron(), 'lily_pads': lily_pads(),
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
-        'forest_bench': forest_bench(),
+        'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
     }
 
 
