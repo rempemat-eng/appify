@@ -258,6 +258,55 @@ for (const [i, [a, ta]] of rects.entries())
     );
 for (const mission of missions) check(mission.id in places, `${mission.id} has a place on the map`);
 
+// Map logic (Matt, 17 Oct: "make sure the logic is right"): every place is reachable on
+// foot from the gate, the stone face is only climbed by its steps, and snow lies only up
+// on the mountain terrace, never in the meadow.
+const terrain = missionMap.missionMapTerrain;
+const cellOf = (p) => [Math.floor(p.y / terrain.cell), Math.floor(p.x / terrain.cell)];
+const walk = (blocked) => {
+  const start = cellOf(places.garden.stand);
+  const seen = new Set([start.join()]);
+  const queue = [start];
+  while (queue.length) {
+    const [r, c] = queue.shift();
+    for (const [dr, dc] of [
+      [1, 0],
+      [-1, 0],
+      [0, 1],
+      [0, -1],
+    ]) {
+      const next = [r + dr, c + dc];
+      const t = terrain.rows[next[0]]?.[next[1]];
+      if (t && !blocked.includes(t) && !seen.has(next.join())) {
+        seen.add(next.join());
+        queue.push(next);
+      }
+    }
+  }
+  return seen;
+};
+const onFoot = walk(['f', 'p']);
+for (const [id, place] of Object.entries(places))
+  check(onFoot.has(cellOf(place.stand).join()), `${id} is reachable on foot from the gate`);
+const belowFace = walk(['f', 'p', 's']);
+check(
+  [...belowFace].every((key) => {
+    const [r, c] = key.split(',').map(Number);
+    return !'an'.includes(terrain.rows[r][c]);
+  }),
+  'the mountain terrace is reached only by its steps',
+);
+check(
+  !belowFace.has(cellOf(places.mountain.stand).join()),
+  'the cabin stands up on the terrace, not in the meadow',
+);
+check(
+  terrain.rows.every((row, r) =>
+    [...row].every((t, c) => t !== 'n' || !belowFace.has(`${r},${c}`)),
+  ),
+  'snow lies only above the stone face',
+);
+
 // Map pixel size per phone: [shared unit, dpr, map window width, tallest window, expected unit].
 for (const [shared, dpr, view, tall, unit] of [
   [4 / 3, 3, 370 - 32 / 3, 380, 4 / 3],
@@ -269,8 +318,7 @@ for (const [shared, dpr, view, tall, unit] of [
   check(Math.abs(u - unit) < 1e-9, `map unit ${unit} for a ${view}px window at ${dpr}x`);
   check(Number.isInteger(Math.round(u * dpr * 1e6) / 1e6), 'map pixels are whole device pixels');
   check(
-    missionMap.missionMap.width * u <= view * 1.2 &&
-      missionMap.missionMap.height * u <= tall * 1.2,
+    missionMap.missionMap.width * u <= view * 1.2 && missionMap.missionMap.height * u <= tall * 1.2,
     'most of the map stays in its window',
   );
 }

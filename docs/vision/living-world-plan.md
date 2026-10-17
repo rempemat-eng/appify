@@ -30,6 +30,43 @@ Claude draws, lays out and wires the screens. Codex builds the rules, stores, sa
 | L8    | **Biomes, starting with the Desert Oasis.** The decay system becomes data-driven per biome (the meadow: weeds and wilting; the oasis: dunes creeping in, water drying up). The oasis unlocks through GRASS or missions and is the template for the others (tundra, lava fields, cyberpunk city, steampunk workshop, sky islands, dreamscape, glowshroom forest, coral reef), which follow one at a time.                              | **C14** biome data model: decay themes, unlock rules, migration, tests.                                                                                                 | The oasis drawn with the toolkit (palm canopies, sandstone, a well, dune edges, dried and full water states).                                                                                             | after L7 |
 | L9    | **Exploration and visits.** A shared town hub and mission areas reached on foot or by a travel point; then friend visits (view-only, leave a gift or a note), which need the multiplayer backend and come last.                                                                                                                                                                                                                       | Backend design for visits (later).                                                                                                                                      | The hub as a place; visit views.                                                                                                                                                                          | later    |
 
+## World logic (Matt, 17 Oct: "make sure the logic is right")
+
+Every map has to make sense as a place before it looks good. These hold for the garden, the land beyond the gate, the mission worlds and every new biome:
+
+- **Height runs up the map.** Higher ground sits toward the top (north) and is reached by steps, a ramp or a switchback road, never by walking off a meadow onto it. A drop is drawn as a stone or earth face with a lit lip and its shadow on the ground below.
+- **Climate follows height and water.** Snow lies only on high ground (above a face or on peaks), sand only beside water or in a desert biome, reeds and mud only at water's edge. A building belongs to its ground: the cabin on the mountain terrace, the stall at the crossroads, the library by the road into town.
+- **Water runs downhill** and roads cross it by bridges or stepping stones.
+- **Every place is reachable on foot** from the entrance, and every road leads somewhere.
+- **Generators export the terrain** (`missionMapTerrain` in `lib/mission-map.ts`: one letter per 4 x 4 cell) so these rules are checked by scripts, not only by eye. `check:mission-departure` already checks the land beyond the gate (reachability, steps as the only way up, snow only above the face); C15 generalises it.
+
+## Varied terrain, customisation and battles (proposed 17 Oct, after Matt's ask)
+
+Matt asked for more varied terrain and for the customisation and battles that come with it. The terrain and art below are approved direction; anything that touches rewards or battle rules is marked **proposal (waiting for Matt)** and is built only after he says so.
+
+**Terrain families**, each a set of ground, edge and prop rules in the toolkit, reused by every place that has that ground:
+
+| Terrain               | Ground and edges                                                       | Props that belong                        | First place it appears                 |
+| --------------------- | ---------------------------------------------------------------------- | ---------------------------------------- | -------------------------------------- |
+| Meadow (home)         | grass, sandy paths with ragged turf                                    | planters, fences, fruit trees            | the garden, the gate land              |
+| Alpine terrace        | rock and short grass, snow above the tree line, stone faces with steps | pines, cairns, log piles, a cabin        | the mountain (now)                     |
+| Riverside and wetland | mud, reeds, boardwalks, stepping stones                                | a jetty, a heron, lily pads              | the park's pond, a later river mission |
+| Woodland              | leaf litter, roots, mossy logs, dappled light                          | mushrooms, a hollow tree, a hidden bench | a forest walk mission                  |
+| Coast and cove        | sand, tide pools, rock shelves, foam                                   | a lighthouse, nets, shells               | a later seaside mission                |
+| Desert oasis (L8)     | dunes, sandstone, a well, dried and full water                         | palms, awnings, pots                     | the first new biome                    |
+
+**Customisation that comes with terrain:**
+
+- Keepsakes from each place become decor in the garden (a cairn stone from the ridge, a lantern from the library lane, shells from the cove), placed with the C12 decorating model. Proposal (waiting for Matt): which missions grant which keepsake.
+- Garden ground styles: paths in sand, gravel or stepping stones; fence styles (picket, wattle, stone wall); hut paint and roof tiles. Presentation only, bought with GRASS at prices Matt sets.
+- Companion outfits by terrain (a scarf for the ridge, wellies for the riverside, a sun hat for the oasis) in the existing hat system.
+
+**Battles that come with terrain:**
+
+- The battle backdrop and platform follow where the fight happens: the meadow ring, a snowy ridge clearing, a riverside jetty, an oasis courtyard. Presentation only, drawn with the battle layers (sky, far, near, platform).
+- Proposal (waiting for Matt): one gentle terrain condition per field that changes how a card plays (snow slows the first move, rain soaks fire-flavoured cards, sand hides one card), balanced against the existing battle simulator before anything ships. No condition may make raids harsher or cost GRASS.
+- Proposal (waiting for Matt): visiting rivals bring their home terrain to raids, so a raid from the ridge arrives in the snow.
+
 Characters (coherence step 8) are already drawn with sphere shading and outlines; they get a readability check against the new world rather than a redraw, and the welcome-back scene's companion size is matched to the scene's pixel size during L1.
 
 ## How Codex keeps ideating

@@ -65,9 +65,11 @@ FACE = 12
 
 def terrace_edge(x: int) -> int | None:
     """The terrace's lip (the top of its stone face) at column x, or None off the terrace."""
-    if x < 178:
+    if x < 162:
         return None
     wobble = int((noise2(x // 5, 3, 83) - 0.5) * 3)
+    if x < 178:  # the west side runs up and off the top of the map
+        return 64 - (178 - x) * 4 + wobble
     if x < 206:
         return 120 - int((206 - x) * 2.0) + wobble
     return 120 + wobble
@@ -76,6 +78,10 @@ def terrace_edge(x: int) -> int | None:
 def on_terrace(x: int, y: int) -> bool:
     edge = terrace_edge(x)
     return edge is not None and y < edge
+
+
+PEAKS: set = set()
+RING: set = set()
 
 
 def peaks(cv: Canvas):
@@ -100,6 +106,7 @@ def peaks(cv: Canvas):
                 elif y == hem:
                     c = SNOW[1] if lit else SNOW[0]
                 mask[(x, y)] = c
+    PEAKS.update(mask)
     for (x, y), c in mask.items():
         if (x - 1, y) not in mask or (x + 1, y) not in mask or (y > 0 and (x, y - 1) not in mask):
             c = STONE[0]
@@ -136,7 +143,7 @@ def mountain_terrace(cv: Canvas, roads: set):
             cv.set(x, y, STONE[3] if smooth_noise(x, y, 5, 91) > 0.55 else STONE[2])
     peaks(cv)
     # the face: stacked stones under a lit lip, steps where the road climbs it
-    for x in range(178, W):
+    for x in range(162, W):
         top = terrace_edge(x)
         col = (x + int(noise2(x // 6, 1, 92) * 6)) % 6
         si = (x + int(noise2(x // 6, 1, 92) * 6)) // 6
@@ -206,6 +213,7 @@ def ground() -> tuple[Canvas, set]:
     # the sparring ring: a trodden circle edged with stones, two turf mounds
     ax, ay = PLACES['arena']['cx'], PLACES['arena']['foot'] - 10
     ring = oval(ax, ay, 34, 14)
+    RING.update(ring)
     for (x, y) in ring:
         cv.set(x, y, P[3] if smooth_noise(x, y, 6, 9) > 0.55 else P[2])
     detail.grass_edge(cv, ring, G, P, seed=33)
@@ -214,6 +222,52 @@ def ground() -> tuple[Canvas, set]:
         sx, sy = int(ax + 36 * math.cos(a)), int(ay + 15.5 * math.sin(a))
         detail.pebble(cv, sx, sy, STONE, big=k % 2 == 0)
     return cv, roads
+
+
+# The terrain under each cell of the map, for logic checks (snow only up high, every
+# place reachable from the gate on foot). One letter per 4 x 4 cell, by majority, except
+# that a stone face or steps claim any cell they cross by a quarter of a row or more.
+TERRAIN_CELL = 4
+TERRAIN_LEGEND = {
+    'm': 'meadow', 'r': 'road', 'd': 'trodden ring', 'a': 'alpine terrace', 'n': 'snow',
+    'f': 'stone face (a drop, not walkable)', 's': 'steps up the face', 'p': 'mountain peak',
+}
+
+
+def terrain_at(x: int, y: int, roads: set) -> str:
+    if (x, y) in PEAKS:
+        return 'p'
+    edge = terrace_edge(x)
+    if edge is not None and edge <= y < edge + FACE:
+        return 's' if (x, y) in roads else 'f'
+    if on_terrace(x, y):
+        if (x, y) in roads:
+            return 'r'
+        return 'n' if smooth_noise(x, y, 11, 82) > 0.3 + y / 120 * 0.4 else 'a'
+    if (x, y) in roads:
+        return 'r'
+    return 'd' if (x, y) in RING else 'm'
+
+
+def terrain_rows(roads: set) -> list[str]:
+    rows = []
+    for cy in range(0, H, TERRAIN_CELL):
+        row = ''
+        for cx in range(0, W, TERRAIN_CELL):
+            votes: dict[str, int] = {}
+            for y in range(cy, min(H, cy + TERRAIN_CELL)):
+                for x in range(cx, min(W, cx + TERRAIN_CELL)):
+                    t = terrain_at(x, y, roads)
+                    votes[t] = votes.get(t, 0) + 1
+            # A wall blocks its cell even where it only crosses a corner, unless steps do.
+            if 's' in votes:
+                row += 's'
+            elif votes.get('f', 0) >= TERRAIN_CELL:
+                row += 'f'
+            else:
+                row += max(sorted(votes), key=lambda t: votes[t])
+        rows.append(row)
+    return rows
 
 
 def ts_object(value, depth=0) -> str:
@@ -283,6 +337,16 @@ def main():
             f'export const missionMapCross = {{ x: {CROSS[0]}, y: {CROSS[1]} }} as const;',
             'export const missionMapImage: ImageSourcePropType = mapImage;',
             f'export const missionMapPlaces = {ts_object(places)} as const;',
+            '/** Terrain per 4 x 4 cell (one letter each), for logic checks. */',
+            'export const missionMapTerrain = {',
+            f'  cell: {TERRAIN_CELL},',
+            '  legend: {',
+            *[f"    {k}: '{v}'," for k, v in TERRAIN_LEGEND.items()],
+            '  },',
+            '  rows: [',
+            *[f"    '{r}'," for r in terrain_rows(roads)],
+            '  ],',
+            '} as const;',
             '',
         ]))
     preview = os.environ.get('MAP_PREVIEW')
