@@ -2,7 +2,7 @@
 
 ## Now: make it feel like one finished game
 
-The work in progress follows [coherence-plan.md](coherence-plan.md) (Matt's review of 17 Oct): layering and outline fixes, type and alignment, proportions, visual separation, characters, a Stardew-style game menu and the mission map as a place.
+The work in progress follows [coherence-plan.md](coherence-plan.md) (Matt's review of 17 Oct): layering and outline fixes (done), an interface system with symmetric insets and a type hierarchy, a detailed pixel icon set, a Stardew-style tabbed game menu, a denser pixel grid with the garden and worlds redrawn at proper proportions and cleaner shading, readable characters, and the mission map as a place.
 
 1. **Art pass on the rest of the world, using the art-style.md rules.**
    - Done (17 Oct): garden, hut, stall, signpost, trees, pines, bushes, rocks, ground, shadows, mission worlds.
