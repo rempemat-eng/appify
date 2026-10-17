@@ -54,7 +54,8 @@ import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { GardenReactions, type GardenReaction, type Place } from '@/components/garden-reactions';
 import { GardenKeepsakeArt } from '@/components/garden-keepsakes';
-import { FrameShape, frameTones } from '@/components/pixel-frame';
+import { FrameShape, PixelTail, frameTones } from '@/components/pixel-frame';
+import { contentInset, type } from '@/lib/ui-tokens';
 
 import ground0 from '@/assets/garden/ground-0.png';
 import ground1 from '@/assets/garden/ground-1.png';
@@ -763,15 +764,29 @@ export function GardenWorld({
   });
 
   // Speech follows the companion; it flips below when the pet is near the top.
+  // One speech style (coherence plan, step 3): a paper frame on the interface grid with
+  // a tail pointing at whoever speaks, and one bubble at a time.
+  const ui = Math.max(2, Math.round(scale));
   const [bubbleHeight, setBubbleHeight] = useState(0);
   const bubbleWidth = Math.min(width - 16, 232);
   const bubbleStyle = useAnimatedStyle(() => {
     const s = project(proj, px.value, py.value);
     const left = Math.min(width - bubbleWidth - 8, Math.max(8, s.sx - bubbleWidth / 2));
-    const above = s.sy - petPx * 0.95 - bubbleHeight - 4;
-    const top = py.value < 70 ? s.sy + 6 : above;
+    const above = s.sy - petPx * 0.95 - bubbleHeight - 3 * ui;
+    const top = py.value < 70 ? s.sy + 3 * ui : above;
     return { transform: [{ translateX: Math.round(left) }, { translateY: Math.round(top) }] };
   });
+  // The tail slides to stay over the companion when the bubble is held at the edge.
+  const tailStyle = useAnimatedStyle(() => {
+    const s = project(proj, px.value, py.value);
+    const left = Math.min(width - bubbleWidth - 8, Math.max(8, s.sx - bubbleWidth / 2));
+    const reach = bubbleWidth / 2 - 6 * ui;
+    const dx = Math.max(-reach, Math.min(reach, s.sx - left - bubbleWidth / 2));
+    return { transform: [{ translateX: Math.round(dx / ui) * ui }] };
+  });
+  const tailDown = useAnimatedStyle(() => ({ opacity: py.value < 70 ? 0 : 1 }));
+  const tailUp = useAnimatedStyle(() => ({ opacity: py.value < 70 ? 1 : 0 }));
+  const [tagWidth, setTagWidth] = useState<{ text: string; width: number } | null>(null);
 
   // The camera keeps the companion a little above centre, clamped to the map.
   const cameraStyle = useAnimatedStyle(() => {
@@ -1387,34 +1402,37 @@ export function GardenWorld({
             <FloatingZ />
           </View>
         )}
-        {tag && (
-          <View
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              left: Math.max(4, Math.min(width - 160, project(proj, tag.x, tag.y).sx - 80)),
-              top: Math.max(4, project(proj, tag.x, tag.y).sy - 70),
-              width: 160,
-              alignItems: 'center',
-              zIndex: 999,
-            }}
-          >
-            <BodyText
-              style={{
-                fontSize: 12,
-                fontFamily: 'PixelifySans_700Bold',
-                paddingHorizontal: 10,
-                paddingVertical: 3,
-                borderRadius: 0,
-                overflow: 'hidden',
-                backgroundColor: c.glass,
-              }}
-            >
-              {tag.text}
-            </BodyText>
-          </View>
-        )}
-        {say && !feedback && !napping && active && (
+        {tag &&
+          !feedback &&
+          (() => {
+            const at = project(proj, tag.x, tag.y);
+            const measured = tagWidth?.text === tag.text ? tagWidth.width : 0;
+            const left = Math.max(4, Math.min(width - measured - 4, at.sx - measured / 2));
+            const reach = Math.max(0, measured / 2 - 5 * ui);
+            const tail = Math.max(-reach, Math.min(reach, at.sx - left - measured / 2));
+            const tagHeight = type.label.lineHeight + 2 * contentInset(ui);
+            return (
+              <View
+                pointerEvents="none"
+                onLayout={(e) =>
+                  setTagWidth({ text: tag.text, width: Math.round(e.nativeEvent.layout.width) })
+                }
+                style={{
+                  position: 'absolute',
+                  left: Math.round(left),
+                  top: Math.max(4, Math.round(at.sy - tagHeight - 3 * ui)),
+                  padding: contentInset(ui),
+                  opacity: measured ? 1 : 0,
+                  zIndex: 999,
+                }}
+              >
+                <FrameShape tone={frameTones.paper} unit={ui} />
+                <BodyText style={[type.label, { color: c.ink }]}>{tag.text.toUpperCase()}</BodyText>
+                <PixelTail offset={tail} />
+              </View>
+            );
+          })()}
+        {say && !feedback && !tag && !napping && active && (
           <Animated.View
             onLayout={(e) => setBubbleHeight(Math.round(e.nativeEvent.layout.height))}
             style={[
@@ -1428,64 +1446,76 @@ export function GardenWorld({
               accessibilityHint={say.hint}
               disabled={!say.onPress}
               onPress={say.onPress}
-              style={{ padding: 4 * Math.max(2, Math.round(scale)) }}
+              style={{ padding: contentInset(ui) }}
             >
-              <FrameShape tone={frameTones.paper} unit={Math.max(2, Math.round(scale))} />
+              <FrameShape tone={frameTones.paper} unit={ui} />
               <BodyText
                 role="status"
                 aria-live="polite"
                 accessibilityLiveRegion="polite"
-                style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 14, lineHeight: 18 }}
+                style={type.body}
               >
                 {say.text.toLowerCase()}
               </BodyText>
               {say.hint && (
-                <BodyText style={{ fontSize: 11, lineHeight: 13, color: c.shade, marginTop: 2 }}>
-                  {say.hint}
-                </BodyText>
+                <BodyText style={[type.caption, { color: c.shade }]}>{say.hint}</BodyText>
               )}
+              <Animated.View
+                pointerEvents="none"
+                style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailStyle]}
+              >
+                <Animated.View
+                  style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailDown]}
+                >
+                  <PixelTail />
+                </Animated.View>
+                <Animated.View
+                  style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailUp]}
+                >
+                  <PixelTail side="top" />
+                </Animated.View>
+              </Animated.View>
             </Pressable>
           </Animated.View>
         )}
-        {feedback && !napping && active && (
-          <View
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              left: Math.max(
-                8,
-                Math.min(width - 224, project(proj, feedback.x, feedback.y).sx - 108),
-              ),
-              top: Math.max(
-                8,
-                Math.min(
-                  height - 94,
-                  feedback.kind === 'pat' || feedback.y < 90
-                    ? project(proj, feedback.x, feedback.y).sy + 12
-                    : project(proj, feedback.x, feedback.y).sy - 86,
-                ),
-              ),
-              width: Math.min(width - 16, 216),
-              zIndex: 999,
-              paddingHorizontal: 12,
-              paddingVertical: 8,
-              borderWidth: 2,
-              borderColor: c.outline,
-              borderRadius: 0,
-              backgroundColor: c.paper,
-              boxShadow: '0 3px 0 rgba(74,59,53,0.22)',
-            }}
-          >
-            <BodyText
-              role="status"
-              aria-live="polite"
-              accessibilityLiveRegion="polite"
-              style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13, lineHeight: 18 }}
-            >
-              {feedback.text}
-            </BodyText>
-          </View>
-        )}
+        {feedback &&
+          !napping &&
+          active &&
+          (() => {
+            const at = project(proj, feedback.x, feedback.y);
+            const w = Math.min(width - 16, 216);
+            const left = Math.max(8, Math.min(width - w - 8, at.sx - w / 2));
+            const below = feedback.kind === 'pat' || feedback.y < 90;
+            const reach = w / 2 - 6 * ui;
+            const tail = Math.max(-reach, Math.min(reach, at.sx - left - w / 2));
+            return (
+              <View
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: Math.round(left),
+                  width: w,
+                  padding: contentInset(ui),
+                  zIndex: 999,
+                  // anchored by the edge nearest the target, so the tail always reaches it
+                  ...(below
+                    ? { top: Math.round(Math.min(height - 94, at.sy + 12)) }
+                    : { bottom: Math.round(Math.min(height - 8, height - at.sy + 24)) }),
+                }}
+              >
+                <FrameShape tone={frameTones.paper} unit={ui} />
+                <BodyText
+                  role="status"
+                  aria-live="polite"
+                  accessibilityLiveRegion="polite"
+                  style={type.body}
+                >
+                  {feedback.text}
+                </BodyText>
+                <PixelTail side={below ? 'top' : 'bottom'} offset={tail} />
+              </View>
+            );
+          })()}
       </Animated.View>
     </View>
   );

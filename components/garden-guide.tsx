@@ -154,7 +154,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
       }}
     >
       <CozyBackground />
-      <CozySheet style={{ flex: 1, padding: 16, gap: 12 }}>
+      <CozySheet style={{ flex: 1, gap: 12 }}>
         <PixelText accessibilityRole="header" style={{ fontSize: 16 }}>
           GARDEN GUIDE
         </PixelText>

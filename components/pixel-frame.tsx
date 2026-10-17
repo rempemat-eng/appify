@@ -83,6 +83,14 @@ export const frameTones = {
     base: c.depth,
     outline: artOutline,
   },
+  /** the wooden rim of sheets and menus (coherence plan, step 3: layers) */
+  wood: {
+    fill: '#B98552',
+    light: '#DDAA72',
+    dark: '#8E5E36',
+    base: '#5A3820',
+    outline: '#2C1A10',
+  },
   /** night panels on the nap screen, with a lantern-gold rim */
   lantern: {
     fill: '#3C4168',
@@ -318,13 +326,21 @@ export function FrameFill({
   );
 }
 
-/** A stepped speech-bubble tail that opens into the bottom edge of its parent frame. */
+/**
+ * A stepped speech-bubble tail that opens into the bottom (or top) edge of its parent
+ * frame. `offset` moves it sideways from the centre, in screen pixels, so it can point
+ * at a speaker when the bubble is clamped to the screen edge.
+ */
 export function PixelTail({
-  fill = c.paper,
-  outline = artOutline,
+  fill = frameTones.paper.fill,
+  outline = frameTones.paper.outline,
+  side = 'bottom',
+  offset = 0,
 }: {
   fill?: string;
   outline?: string;
+  side?: 'bottom' | 'top';
+  offset?: number;
 }) {
   const u = usePixelUnit();
   return (
@@ -333,9 +349,9 @@ export function PixelTail({
       aria-hidden
       style={{
         position: 'absolute',
-        bottom: -2 * u,
+        [side]: -2 * u,
         left: '50%',
-        marginLeft: -3 * u,
+        marginLeft: Math.round(offset / u) * u - 3 * u,
         width: 6 * u,
         height: 3 * u,
       }}
@@ -344,7 +360,7 @@ export function PixelTail({
         <View
           key={row}
           style={abs({
-            top: row * u,
+            top: (side === 'bottom' ? row : 2 - row) * u,
             left: row * u,
             right: row * u,
             height: u,

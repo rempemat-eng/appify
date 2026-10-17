@@ -13,7 +13,7 @@
     "lint": "oxlint --type-aware --type-check",
     "lint:css": "node scripts/lint-css.mjs && npm run check:usefulness",
     "check:usefulness": "node --import tsx lib/usefulness.test.ts",
-    "check:core": "npm run check:usefulness && node --import tsx lib/turn-resolution.test.ts && node --import tsx lib/daily-rhythm.test.ts && node --import tsx lib/bilt.test.ts && node --import tsx lib/garden-path.test.ts && node --import tsx lib/garden-growth.test.ts && node --import tsx lib/art-sprites.test.ts && node --import tsx lib/garden-projection.test.ts && node --import tsx lib/world-maps.test.ts && node --import tsx lib/world-framing.test.ts && node --import tsx lib/companion-profiles.test.ts && node --import tsx lib/companion-memories.test.ts && node --import tsx lib/garden-life.test.ts && node --import tsx lib/overlay-priority.test.ts",
+    "check:core": "npm run check:usefulness && node --import tsx lib/turn-resolution.test.ts && node --import tsx lib/daily-rhythm.test.ts && node --import tsx lib/bilt.test.ts && node --import tsx lib/garden-path.test.ts && node --import tsx lib/garden-growth.test.ts && node --import tsx lib/art-sprites.test.ts && node --import tsx lib/garden-projection.test.ts && node --import tsx lib/world-maps.test.ts && node --import tsx lib/world-framing.test.ts && node --import tsx lib/companion-profiles.test.ts && node --import tsx lib/companion-memories.test.ts && node --import tsx lib/garden-life.test.ts && node --import tsx lib/overlay-priority.test.ts && node --import tsx lib/ui-tokens.test.ts",
     "check:game": "node --import tsx lib/game.integration.test.ts",
     "format": "oxfmt --write .",
     "format:check": "oxfmt --check .",

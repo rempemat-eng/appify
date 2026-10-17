@@ -254,6 +254,7 @@ export function WelcomeBack() {
         />
       </View>
       <CozySheet
+        safeBottom={insets.bottom}
         onSkip={() => setSkip(true)}
         style={{
           width: '100%',
@@ -262,8 +263,6 @@ export function WelcomeBack() {
           alignSelf: 'center',
           borderBottomLeftRadius: 0,
           borderBottomRightRadius: 0,
-          padding: compact ? 12 : 16,
-          paddingBottom: insets.bottom + (compact ? 12 : 16),
           gap: compact ? 8 : 12,
         }}
       >

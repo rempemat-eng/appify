@@ -10,6 +10,7 @@ import { Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { CozyPanel, CozySheet } from '@/components/cozy-ui';
 import { FrameFill, usePixelUnit } from '@/components/pixel-frame';
+import { contentInset, layers, siblingGap, type } from '@/lib/ui-tokens';
 import { CompanionMemories } from '@/components/companion-memories';
 
 export function CompanionPicker({
@@ -95,108 +96,109 @@ export function CompanionPicker({
               maxWidth: 608,
               maxHeight: Math.max(180, height - insets.top - insets.bottom - 32),
               alignSelf: 'center',
-              padding: 16,
               gap: 14,
             }}
           >
-            <PixelText accessibilityRole="header" style={{ fontSize: 14, lineHeight: 24 }}>
+            <PixelText accessibilityRole="header" style={type.title}>
               COMPANIONS
             </PixelText>
             <ScrollView
               style={{ flexShrink: 1 }}
               contentContainerStyle={{ gap: 16, paddingBottom: 4 }}
             >
-              <BodyText style={{ fontSize: 12 }}>
+              <BodyText style={type.body}>
                 Preview a friend, then choose who comes along. Your level, hats, cards and progress
                 stay with you.
               </BodyText>
-              <ScrollView
-                horizontal
-                showsHorizontalScrollIndicator
-                contentContainerStyle={{ gap: 10, paddingBottom: 8 }}
-              >
-                {options.map((option) => (
-                  <View
-                    key={option.id ?? 'starter'}
-                    style={{ width: 116, minHeight: 118, padding: 8, marginBottom: u }}
-                  >
-                    <FrameFill
-                      depth={1}
-                      fill={option.id === preview.id ? c.sage : c.paper}
-                      outline={option.id === preview.id ? c.leafOutline : c.outline}
-                    />
+              {/* the friends sit in a well, so the cards stand out from the sheet */}
+              <View style={{ padding: contentInset(u) }}>
+                <FrameFill fill={layers.well} outline={c.outline} inset />
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator
+                  contentContainerStyle={{ gap: siblingGap(u) * 2, paddingBottom: u }}
+                >
+                  {options.map((option) => (
                     <View
-                      aria-hidden
-                      pointerEvents="none"
-                      accessibilityElementsHidden
-                      importantForAccessibility="no-hide-descendants"
-                      style={{ alignItems: 'center', gap: 4 }}
+                      key={option.id ?? 'starter'}
+                      style={{
+                        width: 116,
+                        minHeight: 118,
+                        padding: contentInset(u),
+                        marginBottom: u,
+                      }}
                     >
-                      <Pet
-                        visitor={option.id}
-                        species={option.species}
-                        level={player.level}
-                        hat={player.hat}
-                        size={64}
-                        bob={false}
-                        active={false}
+                      <FrameFill
+                        depth={1}
+                        fill={option.id === preview.id ? c.sage : c.paper}
+                        outline={option.id === preview.id ? c.leafOutline : c.outline}
                       />
-                      <BodyText
-                        numberOfLines={1}
-                        style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}
+                      <View
+                        aria-hidden
+                        pointerEvents="none"
+                        accessibilityElementsHidden
+                        importantForAccessibility="no-hide-descendants"
+                        style={{ alignItems: 'center', gap: 4 }}
                       >
-                        {option.name}
-                      </BodyText>
-                      <BodyText style={{ fontSize: 10 }}>
-                        {option.habit}
-                        {option.id === active.id ? ' · ACTIVE' : ''}
-                      </BodyText>
+                        <Pet
+                          visitor={option.id}
+                          species={option.species}
+                          level={player.level}
+                          hat={player.hat}
+                          size={64}
+                          bob={false}
+                          active={false}
+                        />
+                        <BodyText numberOfLines={1} style={type.label}>
+                          {option.name}
+                        </BodyText>
+                        <BodyText style={type.caption}>
+                          {option.habit}
+                          {option.id === active.id ? ' · ACTIVE' : ''}
+                        </BodyText>
+                      </View>
+                      <Pressable
+                        accessibilityRole="button"
+                        accessibilityLabel={`Preview ${option.name}, ${option.habit} companion${option.id === active.id ? ', active' : ''}`}
+                        accessibilityState={{ selected: option.id === preview.id }}
+                        onPress={() => setPreviewId(option.id)}
+                        style={({ pressed }) => ({
+                          position: 'absolute',
+                          top: 2 * u,
+                          left: 2 * u,
+                          right: 2 * u,
+                          bottom: 2 * u,
+                          zIndex: 1,
+                          backgroundColor: pressed ? 'rgba(56,99,52,0.14)' : c.transparent,
+                        })}
+                      />
                     </View>
-                    <Pressable
-                      accessibilityRole="button"
-                      accessibilityLabel={`Preview ${option.name}, ${option.habit} companion${option.id === active.id ? ', active' : ''}`}
-                      accessibilityState={{ selected: option.id === preview.id }}
-                      onPress={() => setPreviewId(option.id)}
-                      style={({ pressed }) => ({
-                        position: 'absolute',
-                        top: 2 * u,
-                        left: 2 * u,
-                        right: 2 * u,
-                        bottom: 2 * u,
-                        zIndex: 1,
-                        backgroundColor: pressed ? 'rgba(56,99,52,0.14)' : c.transparent,
-                      })}
-                    />
-                  </View>
-                ))}
-              </ScrollView>
-              <View style={{ padding: 14, gap: 12, marginBottom: u }}>
+                  ))}
+                </ScrollView>
+              </View>
+              <View
+                style={{ padding: contentInset(u) + u, gap: siblingGap(u) * 3, marginBottom: u }}
+              >
                 <FrameFill depth={1} fill={tint} outline={c.outline} />
                 <View style={{ gap: 4 }}>
-                  <BodyText style={{ fontSize: 18, fontFamily: 'PixelifySans_700Bold' }}>
+                  <BodyText accessibilityRole="header" style={type.heading}>
                     {preview.name}
                   </BodyText>
-                  <BodyText style={{ fontSize: 12 }}>
-                    {preview.habit} FAMILY · {preview.traits.join(' · ')}
+                  <BodyText style={type.label}>
+                    {preview.habit} FAMILY · {preview.traits.join(' · ').toUpperCase()}
                   </BodyText>
                 </View>
-                <BodyText>{preview.description}</BodyText>
+                <BodyText style={type.body}>{preview.description}</BodyText>
                 <View style={{ gap: 4 }}>
-                  <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
-                    IN BATTLE
-                  </BodyText>
-                  <BodyText style={{ fontSize: 12 }}>{preview.battleNote}</BodyText>
+                  <BodyText style={type.label}>IN BATTLE</BodyText>
+                  <BodyText style={type.body}>{preview.battleNote}</BodyText>
                 </View>
               </View>
               <View style={{ gap: 6, paddingHorizontal: 2 }}>
-                <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
-                  A LITTLE REAL-WORLD ADVENTURE
-                </BodyText>
-                <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>
-                  {preview.invitation.title}
-                </BodyText>
-                <BodyText style={{ fontSize: 12 }}>{preview.invitation.body}</BodyText>
-                <BodyText style={{ fontSize: 11 }}>
+                <BodyText style={type.label}>A LITTLE REAL-WORLD ADVENTURE</BodyText>
+                <BodyText style={type.heading}>{preview.invitation.title}</BodyText>
+                <BodyText style={type.body}>{preview.invitation.body}</BodyText>
+                <BodyText style={type.caption}>
                   An optional idea. Choose a break that fits your day.
                 </BodyText>
               </View>
@@ -214,13 +216,13 @@ export function CompanionPicker({
                   router.push('/journal?tab=memories');
                 }}
               />
-              <BodyText style={{ fontSize: 12 }}>
+              <BodyText style={type.caption}>
                 {options.length === 1
                   ? 'Your first friend visits after a break of 10 simulated MIN. Befriend visitors to invite them along.'
                   : 'Befriend more garden visitors to meet new companions. Rarity describes discovery, not extra strength.'}
               </BodyText>
               {locked && (
-                <BodyText style={{ fontSize: 12 }}>
+                <BodyText style={type.caption}>
                   Finish your nap or battle before changing companions.
                 </BodyText>
               )}

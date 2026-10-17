@@ -14,10 +14,16 @@ export const space = {
   border: 2,
   /** the one inset inside every bar, panel and slot, and the gap between siblings */
   inset: 2,
+  /** the roomier inset inside sheets and panels that hold reading text */
+  panel: 4,
 } as const;
 
 /** Where content starts inside a frame, measured from its outer edge. */
 export const contentInset = (u: number) => (space.border + space.inset) * u;
+/** Where content starts inside a sheet's paper panel: the same on all four sides. */
+export const panelInset = (u: number) => (space.border + space.panel) * u;
+/** The gap between sections in a sheet (equal to the panel inset's spacing). */
+export const panelGap = (u: number) => space.panel * u;
 /** The gap between siblings in a bar or panel (equal to the inset). */
 export const siblingGap = (u: number) => space.inset * u;
 
@@ -32,13 +38,13 @@ export const hudBarHeight = (u: number) => barControl(u) + 2 * contentInset(u) +
 export const hotbarHeight = (u: number) => hotbarSlot(u) + 2 * contentInset(u) + u;
 
 /**
- * The type hierarchy. Pixelify Sans everywhere; Press Start 2P (PixelText) only for
+ * The type hierarchy. Pixelify Sans everywhere; Press Start 2P only for sheet titles and
  * big numbers. Line heights are multiples of 4, so single-line labels centre cleanly.
  * Colour comes from the text component (ink by default).
  */
 export const type = {
-  /** sheet and page titles */
-  title: { fontFamily: 'PixelifySans_700Bold', fontSize: 20, lineHeight: 28 },
+  /** sheet and page titles: the chunky display face, one size everywhere */
+  title: { fontFamily: 'PressStart2P_400Regular', fontSize: 16, lineHeight: 24 },
   /** panel headings, the selected item's name */
   heading: { fontFamily: 'PixelifySans_700Bold', fontSize: 16, lineHeight: 24 },
   /** descriptions */

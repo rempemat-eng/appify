@@ -255,7 +255,6 @@ function RhythmEditor({
             width: '100%',
             maxWidth: gameLayout.maxWidth - gameLayout.gutter * 2,
             maxHeight: height - insets.top - insets.bottom - gameLayout.gutter * 2,
-            padding: gameLayout.gutter,
             gap: 12,
           }}
         >

@@ -215,7 +215,15 @@ const deps = {
   '@/components/garden-keepsakes': { GardenKeepsakeArt: 'GardenKeepsakeArt' },
   '@/components/game-ui': { FloatingZ: 'FloatingZ', Pet: 'Pet' },
   '@/components/pixel-feedback': { BodyText: 'BodyText' },
-  '@/components/pixel-frame': { FrameShape: 'FrameShape', frameTones: { gold: {}, paper: {} } },
+  '@/components/pixel-frame': {
+    FrameShape: 'FrameShape',
+    PixelTail: 'PixelTail',
+    frameTones: { gold: {}, paper: {} },
+  },
+  '@/lib/ui-tokens': {
+    contentInset: (u) => 4 * u,
+    type: { body: {}, label: { lineHeight: 16 }, caption: {} },
+  },
   '@/lib/garden-growth-assets': {
     growthImages: new Proxy({}, { get: (_, key) => ({ asset: key }) }),
   },

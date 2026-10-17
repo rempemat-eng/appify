@@ -20,7 +20,8 @@ import Animated, {
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c } from '@/lib/cozy';
 import { PixelProp } from '@/components/pixel-scenes';
-import { FrameFill, PixelTail } from '@/components/pixel-frame';
+import { FrameShape, PixelTail, frameTones, usePixelUnit } from '@/components/pixel-frame';
+import { contentInset, type } from '@/lib/ui-tokens';
 import type { PropKind } from '@/lib/scene-art';
 export function BodyText({ style, ...props }: TextProps) {
   return (
@@ -45,6 +46,7 @@ export function Dialogue({
   onDismiss?: () => void;
 }) {
   const reduced = useReducedMotion();
+  const u = usePixelUnit();
   const [shown, setShown] = useState({ text, count: reduced ? text.length : 0 });
   if (shown.text !== text) setShown({ text, count: reduced ? text.length : 0 });
   useEffect(() => {
@@ -66,26 +68,24 @@ export function Dialogue({
       }}
       style={[
         {
-          minHeight: 56,
-          padding: 12,
-          paddingBottom: onDismiss ? 24 : 12,
+          minHeight: 44,
+          padding: contentInset(u),
+          paddingBottom: contentInset(u) + (onDismiss ? type.caption.lineHeight : 0),
         },
         style,
       ]}
     >
-      <FrameFill depth={1} />
-      <BodyText
-        style={{
-          fontFamily: speech ? 'PixelifySans_400Regular' : 'PixelifySans_500Medium',
-          fontSize: 15,
-          lineHeight: 21,
-        }}
-      >
-        {reduced ? copy : copy.slice(0, shown.count) || ' '}
-      </BodyText>
+      {/* the one speech style (coherence plan, step 3), shared with the garden's bubbles */}
+      <FrameShape tone={frameTones.paper} unit={u} />
+      <BodyText style={type.body}>{reduced ? copy : copy.slice(0, shown.count) || ' '}</BodyText>
       {speech && <PixelTail />}
       {onDismiss && (
-        <BodyText style={{ position: 'absolute', right: 12, bottom: 4, fontSize: 11 }}>
+        <BodyText
+          style={[
+            type.caption,
+            { position: 'absolute', right: contentInset(u), bottom: contentInset(u) - u },
+          ]}
+        >
           tap to dismiss
         </BodyText>
       )}

@@ -263,7 +263,6 @@ export function MissionDeparture() {
                 maxWidth: gameLayout.maxWidth - 32,
                 alignSelf: 'center',
                 maxHeight: height - insets.top - insets.bottom - 32,
-                padding: 16,
                 gap: 12,
               }}
             >

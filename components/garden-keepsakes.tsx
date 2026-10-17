@@ -277,7 +277,6 @@ export function GardenKeepsakeSheet({ memory, onClose, onJournal }: GardenKeepsa
             width: '100%',
             maxWidth: 608,
             maxHeight: Math.max(180, height - insets.top - insets.bottom - 32),
-            padding: 16,
             gap: 12,
           }}
         >
