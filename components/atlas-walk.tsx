@@ -115,10 +115,21 @@ export const zoneNames: Record<TileId, string> = {
 };
 
 const SPEED = 40; // art pixels per second, a brisk walk
+// Zones that keep their own light at every hour (no night tint).
+const OWN_LIGHT: TileId[] = ['neon', 'station', 'lumen', 'caldera'];
+// Where a lamp's light sits on its sprite (x, y from its top-left, in art pixels).
+const LAMPS: Record<string, readonly [number, number]> = {
+  lamp: [7, 8],
+  gas_lamp: [8, 9],
+  street_light: [12, 8],
+  lantern: [7, 10],
+  lighthouse: [22, 20],
+};
 const NAME_MS = 2200; // how long a zone's name stays up after crossing into it
 
 type Drawable = {
   key: string;
+  sprite: string;
   src: ImageSourcePropType;
   x: number;
   y: number;
@@ -134,6 +145,7 @@ function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
       .filter((g) => gardenSprites[g.sprite])
       .map((g) => ({
         key: `garden-${g.id}`,
+        sprite: g.sprite,
         src: gardenSprites[g.sprite],
         x: o.x + g.x,
         y: o.y + g.y,
@@ -144,6 +156,7 @@ function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
   }
   return zoneMaps[tile.id].objects.map(([id, sprite, x, y, w, h]) => ({
     key: `${tile.id}-${id}`,
+    sprite,
     src: zoneProps[sprite],
     x: o.x + x,
     y: o.y + y,
@@ -172,6 +185,8 @@ export function AtlasWalk({
   const reduced = useReducedMotion();
   const active = useAppActive();
   const player = useGame((s) => s.player);
+  const hour = new Date(useGame((s) => s.now)).getHours();
+  const night = hour < 6 || hour >= 21;
   const screen = useWindowDimensions();
   const dpr = PixelRatio.get();
   const u = pixelScale(screen.width, dpr);
@@ -394,6 +409,73 @@ export function AtlasWalk({
               />
             ),
           )}
+          {night &&
+            near
+              .filter((t) => !OWN_LIGHT.includes(t.id))
+              .map((t) => (
+                <View
+                  key={`night-${t.id}`}
+                  style={{
+                    position: 'absolute',
+                    left: snap(tileOrigin(region, t).x * u),
+                    top: snap(tileOrigin(region, t).y * u),
+                    width: snap(TILE.width * u),
+                    height: snap(TILE.height * u),
+                    backgroundColor: 'rgba(22,28,66,0.42)',
+                    zIndex: 150000,
+                  }}
+                />
+              ))}
+          {night &&
+            drawables
+              .filter((d) => LAMPS[d.sprite])
+              .map((d) => {
+                const [lx, ly] = LAMPS[d.sprite];
+                const cx = (d.x + lx) * u;
+                const cy = (d.y + ly) * u;
+                const foot = (d.y + d.h) * u;
+                return (
+                  <View
+                    key={`light-${d.key}`}
+                    pointerEvents="none"
+                    style={{ position: 'absolute', zIndex: 150001 }}
+                  >
+                    <View
+                      style={{
+                        position: 'absolute',
+                        left: cx - 14 * u,
+                        top: foot - 6 * u,
+                        width: 28 * u,
+                        height: 12 * u,
+                        borderRadius: 14 * u,
+                        backgroundColor: 'rgba(255,214,122,0.22)',
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        left: cx - 8 * u,
+                        top: cy - 8 * u,
+                        width: 16 * u,
+                        height: 16 * u,
+                        borderRadius: 8 * u,
+                        backgroundColor: 'rgba(255,214,122,0.35)',
+                      }}
+                    />
+                    <View
+                      style={{
+                        position: 'absolute',
+                        left: cx - 3 * u,
+                        top: cy - 3 * u,
+                        width: 6 * u,
+                        height: 6 * u,
+                        borderRadius: 3 * u,
+                        backgroundColor: 'rgba(255,240,200,0.8)',
+                      }}
+                    />
+                  </View>
+                );
+              })}
           <Animated.View
             pointerEvents="none"
             style={[
