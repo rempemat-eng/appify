@@ -191,11 +191,117 @@ def ember_shrine() -> Canvas:
     return cv
 
 
+CHAR = ['#1A1412', '#2A201C', '#3E302A', '#58443A', '#76604E']  # charred cedar
+LANTERN = ['#7A3A12', '#C2621E', '#F2A048', '#FFE0A0']
+
+
+def bathhouse() -> Canvas:
+    """The bathhouse, 108 x 86: a low hall of charred cedar boards (dark, burnt to keep
+    them sound) under a broad roof of basalt slates seen from above, a wide eave with
+    lanterns hanging warm, sliding screens glowing, a deck of boards out front with
+    buckets and a stack of folded towels. The calm end of the fire country."""
+    w, h = 108, 86
+    cv = Canvas(w, h, pad=PAD)
+    ridge = (w - 1) / 2
+    for y in range(4, 40):  # the slate roof: a hipped slope, lit on the upper left
+        inset = max(0, 18 - y) * 2
+        for x in range(2 + inset, w - 2 - inset):
+            left = x < ridge
+            row = (y - 4) // 4
+            c = BASALT[3] if left else BASALT[2]
+            if y < 12:
+                c = BASALT[4] if left else BASALT[3]
+            if (x + row * 3) % 7 == 0 or (y - 4) % 4 == 0:
+                c = BASALT[1]
+            cv.set(x, y, c)
+    cv.hline(2, 40, w - 4, BASALT[4]); cv.hline(2, 41, w - 4, BASALT[0])
+    for y in range(42, 72):  # the charred board wall
+        for x in range(8, w - 8):
+            c = CHAR[2] if (x // 5) % 2 else CHAR[1]
+            if x % 5 == 0:
+                c = CHAR[0]
+            if (x * 3 + y) % 23 == 0:
+                c = CHAR[3]  # the char's silvery sheen
+            cv.set(x, y, c)
+    for y in range(42, 46):  # the eave's shadow
+        for x in range(8, w - 8):
+            if (x + y) % 2 or y < 44:
+                cv.set(x, y, CHAR[0])
+    for sx in (16, 40, 68, 90):  # sliding screens, warm behind a lattice
+        if sx == 40:
+            continue
+        for y in range(48, 68):
+            for x in range(sx, sx + 14 if sx != 68 else sx + 16):
+                lat = (x - sx) % 5 == 0 or (y - 48) % 5 == 0
+                cv.set(x, y, CHAR[3] if lat else LANTERN[3] if y < 56 else LANTERN[2])
+    for y in range(48, 72):  # the open door, steam within
+        for x in range(42, 62):
+            cv.set(x, y, '#2E2624' if (x + y) % 3 else '#4A403C')
+    for (lx) in (12, 34, 74, 96):  # lanterns on the eave
+        for (x, y) in oval(lx, 47, 3, 4):
+            cv.set(x, y, LANTERN[3] if x < lx else LANTERN[2] if y < 49 else LANTERN[1])
+        cv.set(lx, 42, CHAR[0]); cv.set(lx, 51, LANTERN[0])
+    for y in range(72, 84):  # the deck
+        for x in range(4, w - 4):
+            c = WOOD[3] if (y - 72) % 4 else WOOD[1]
+            if y == 72:
+                c = WOOD[4]
+            cv.set(x, y, c)
+    for (bx) in (14, 22):  # buckets
+        for (x, y) in oval(bx, 76, 3, 2.5):
+            cv.set(x, y, WOOD[4] if x < bx else WOOD[2])
+        cv.hline(bx - 3, 75, 7, IRON[3])
+    for k in range(4):  # folded towels
+        cv.hline(84, 80 - k * 2, 12, '#F2EEE6' if k % 2 else '#D8D2C6')
+        cv.hline(84, 79 - k * 2, 12, '#C8A0A0' if k == 3 else '#F2EEE6')
+    return cv
+
+
+def fireweed(tall: bool = True) -> Canvas:
+    """Fireweed, 20 x 30 (or 16 x 22): the first plant back on burnt ground, tall stems
+    of pink-magenta flower spikes over narrow leaves."""
+    w, h = (20, 30) if tall else (16, 22)
+    cv = Canvas(w, h, pad=PAD)
+    PINKS = ['#7A2A5A', '#B0407E', '#D86AA2', '#F2A0C8']
+    for k in range(4 if tall else 3):
+        bx = 3 + k * 4
+        top = 2 + (k * 7) % 6
+        for y in range(top, h - 1):
+            cv.set(bx + (1 if y > h - 8 and k % 2 else 0), y, '#447A50' if y > top + 8 else '#62995E')
+        for y in range(top, top + 9):
+            if (y + k) % 2 == 0:
+                cv.set(bx - 1, y, PINKS[3] if y < top + 3 else PINKS[2])
+                cv.set(bx + 1, y, PINKS[1])
+            else:
+                cv.set(bx, y, PINKS[2])
+        for y in range(top + 11, h - 2, 4):  # narrow leaves
+            cv.set(bx - 1, y, '#2E5A40'); cv.set(bx + 1, y + 1, '#447A50')
+    return cv
+
+
+def stone_lantern() -> Canvas:
+    """A basalt lantern, 16 x 26: a hexagonal cap, a lit window, a column and a foot."""
+    cv = Canvas(16, 26, pad=PAD)
+    hex_top(cv, 8, 4, 6, lit=3)
+    for y in range(7, 14):
+        for x in range(3, 13):
+            cv.set(x, y, BASALT[3] if x < 6 else BASALT[2] if x < 11 else BASALT[1])
+    for (x, y) in rect_set(5, 8, 6, 4):
+        cv.set(x, y, LANTERN[3] if y < 10 else LANTERN[2])
+    for y in range(14, 22):
+        for x in range(6, 10):
+            cv.set(x, y, BASALT[3] if x < 7 else BASALT[2])
+    for y in range(22, 25):
+        cv.hline(3, y, 10, BASALT[3] if y == 22 else BASALT[1])
+    return cv
+
 def props() -> dict[str, Canvas]:
     return {
         'basalt_columns': basalt_columns(5, 0), 'basalt_columns_low': basalt_columns(3, 7), 'forge': forge(),
         'obsidian': obsidian_rock(True), 'obsidian_small': obsidian_rock(False), 'cooling_vent': cooling_vent(),
         'basalt_bridge': basalt_bridge(), 'ember_shrine': ember_shrine(),
+        'bathhouse': bathhouse(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
+        'stone_lantern': stone_lantern(),
     }
 
 

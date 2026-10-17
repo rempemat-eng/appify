@@ -1288,6 +1288,15 @@ def oasis(frame: int = 0):
     return cv, objects, stands, pool
 
 
+SPRINGS_PATH = [(-6, 300), (40, 316), (52, 380), (48, 440), (130, 470), (190, 486), (250, 488)]
+CALDERA_RIVER = [(170, 60), (178, 140), (160, 230), (200, 320), (250, 400), (300, 470), (W + 6, 520)]
+
+
+def caldera_rim(x):
+    """The crater rim's line (x in the caldera's coordinates)."""
+    return 62 + int(math.sin(x / 19) * 7 + noise2(x // 5, 0, 263) * 6)
+
+
 def caldera(frame: int = 0):
     """The Ember Caldera: the crater rim at the top with the lava lake glowing beyond,
     a lava river running downhill out of it and away to the south-east under a basalt
@@ -1311,8 +1320,7 @@ def caldera(frame: int = 0):
         x, y = int(noise2(i, 0, 262) * W), int(noise2(i, 1, 262) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
     # the crater: a lava lake at the top behind a ragged basalt rim
-    def rim(x):
-        return 62 + int(math.sin(x / 19) * 7 + noise2(x // 5, 0, 263) * 6)
+    rim = caldera_rim
     for x in range(W):
         r = rim(x)
         for y in range(0, r):
@@ -1330,7 +1338,7 @@ def caldera(frame: int = 0):
                 c = BASALT[4]
             cv.set(x, y, c)
     # the lava river: out of the lake, downhill to the south-east
-    river = worlds.thick([(170, 60), (178, 140), (160, 230), (200, 320), (250, 400), (300, 470), (W + 6, 520)], 13, seed=14)
+    river = worlds.thick(CALDERA_RIVER, 13, seed=14)
     for (x, y) in river:
         n = smooth_noise(x, y + frame * 3, 7, 265)
         c = LAVA[3] if n > 0.45 else LAVA[2]
@@ -1389,6 +1397,16 @@ def caldera(frame: int = 0):
         if (x + (y // 8) % 2 * 5) % 10 == 0 or y % 8 == 0:
             c = BASALT[0]
         cv.set(x, y, c)
+    # flagstones on from the bridge's east end to Cinder Springs
+    east_path = worlds.thick([(232, 300), (W - 2, 300)], 8) | thick_from(SPRINGS_PATH, 8, 43, W)
+    for (x, y) in east_path:
+        if (x, y) in river:
+            continue
+        sx = (x + (y // 7) % 2 * 5) // 10
+        c = BASALT[3] if noise2(sx, y // 7, 505) > 0.4 else BASALT[2]
+        if (x + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
+            c = BASALT[0]
+        cv.set(x, y, c)
     # the sparring ring: crust floor in a circle of short columns
     ccx, ccy = 120, 500
     for (x, y) in oval(ccx, ccy, 46, 22):
@@ -1401,7 +1419,7 @@ def caldera(frame: int = 0):
         ('forge', 'forge', 20, 320), ('shrine', 'ember_shrine', 150, 360), ('vent-1', 'cooling_vent', 40, 460),
         ('cols-1', 'basalt_columns', 4, 96), ('cols-2', 'basalt_columns_low', 70, 120), ('cols-3', 'basalt_columns', 250, 120),
         ('cols-4', 'basalt_columns_low', 262, 220), ('cols-5', 'basalt_columns', 0, 520),
-        ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 230, 300), ('obs-3', 'obsidian', 262, 556 - 26),
+        ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 238, 326), ('obs-3', 'obsidian', 262, 556 - 26),
         ('obs-4', 'obsidian_small', 60, 230), ('vent-2', 'cooling_vent', 214, 196), ('vent-3', 'cooling_vent', 280, 360),
     ]
     # the bridge is part of the ground (walkable), drawn across the river
@@ -1412,8 +1430,201 @@ def caldera(frame: int = 0):
     lake = {(x, y) for x in range(W) for y in range(0, rim(x) + 14)}
     blocked = (river | lake) - span
     stands = {'tunnel': (44, 300), 'forge': (68, 404), 'bridge': (200, 302), 'ring': (120, 500), 'rim': (100, 96),
-              'east': (290, 300)}
+              'east': (290, 300), 'springs': (312, 300)}
     return cv, objects, stands, blocked
+
+
+def springs(frame: int = 0):
+    """Cinder Springs, east of the caldera: where the fire country rests. The crater's
+    lava lake ends against its rim in the north-west; the caldera's lava river runs in
+    from the west and dies here in a delta of black crust, hissing where a hot stream
+    meets it. The stream comes down a staircase of hot-spring terraces: pools of milky
+    turquoise held by cream travertine lips, the highest ringed with orange mats where
+    it is hottest, each spilling over a frozen-waterfall face into the next. Fireweed,
+    the first thing to grow back on burnt ground, flowers on the ash; a flagstone path
+    lit by stone lanterns leads to a bathhouse of charred cedar."""
+    LAVA, BASALT, ASH = MATERIALS['lava'], MATERIALS['basalt'], MATERIALS['ash']
+    TRAV = ['#8A6A4A', '#B89A74', '#D8C4A0', '#EEE2C8', '#FAF4E6']  # travertine
+    SPRING = ['#0E4A54', '#1A7A84', '#2FA8B0', '#6CCFCC', '#B4ECE6']
+    cv = Canvas(W, H)
+    blocked = set()
+    for y in range(H):  # the caldera's ash ground, continued
+        for x in range(W):
+            n = smooth_noise(x + W, y, 30, 261)
+            c = ASH[2] if n > 0.3 or (n > 0.26 and (x + y) % 2) else ASH[1]
+            g = noise2(x + W, y, 270)
+            if g > 0.93:
+                c = BASALT[2]
+            elif g > 0.9:
+                c = ASH[3]
+            cv.set(x, y, c)
+    for i in range(140):
+        x, y = int(noise2(i, 0, 500) * W), int(noise2(i, 1, 500) * H)
+        detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
+    # the end of the crater lake, closed by its rim
+    def rim(x):
+        return caldera_rim(x + W) - max(0, x - 16) * 0.9
+    lake = set()
+    for x in range(W):
+        r = int(rim(x))
+        for y in range(0, r):
+            n = smooth_noise(x + W, y, 8, 264 + frame)
+            c = LAVA[3] if n > 0.5 else LAVA[2]
+            if n > 0.78:
+                c = LAVA[4]
+            if cracked(x + W, y, 11, 3) and n < 0.6:
+                c = LAVA[1]
+            cv.set(x, y, c)
+            lake.add((x, y))
+        for k in range(14):
+            y = max(r, 0) + k
+            if r < -14:
+                break
+            c = LAVA[1] if k < 2 else BASALT[3] if k < 5 else BASALT[2] if k < 10 else BASALT[1]
+            if k == 5:
+                c = BASALT[4]
+            if y >= 0 and r > -2:
+                cv.set(x, y, c)
+                lake.add((x, y))
+    # the terraces: pools held by scalloped travertine lips, each spilling into the next
+    pools = [(236, 150, 50, 24), (192, 228, 56, 24), (148, 306, 54, 24), (104, 382, 46, 20)]
+
+    def pool_d(i, x, y):
+        cx, cy, rx, ry = pools[i]
+        a = math.atan2(y - cy, x - cx)
+        wob = 1 + 0.08 * math.sin(5 * a + i * 1.7) + 0.05 * math.sin(9 * a + i * 2.3)
+        return math.hypot((x - cx) / rx, (y - cy) / ry) / wob
+    pool_sets = [{(x, y) for y in range(cy - ry - 6, cy + ry + 6) for x in range(cx - rx - 8, cx + rx + 8)
+                  if pool_d(i, x, y) < 1} for i, (cx, cy, rx, ry) in enumerate(pools)]
+    sinter = set()
+    for i, (cx, cy, rx, ry) in enumerate(pools):  # one mineral slope under them all
+        sinter |= {(x, y) for y in range(cy - ry - 20, cy + ry + 26) for x in range(cx - rx - 22, cx + rx + 22)
+                   if pool_d(i, x, y - 6) < 1.45 + smooth_noise(x, y, 9, 506) * 0.25}
+        if i + 1 < len(pools):
+            sinter |= worlds.thick([(cx, cy), (pools[i + 1][0], pools[i + 1][1])], 30, seed=44)
+    for (x, y) in sinter:
+        n = smooth_noise(x, y, 6, 501)
+        c = TRAV[3] if n > 0.55 else TRAV[2] if n > 0.25 else TRAV[1]
+        if (x * 5 + y * 3) % 17 == 0:
+            c = TRAV[4]
+        cv.set(x, y, c)
+    for (x, y) in sinter:  # its edge on the ash, a soft stained margin
+        if any((x + dx, y + dy) not in sinter for (dx, dy) in ((0, 3), (3, 0), (-3, 0), (0, -3))):
+            cv.set(x, y, '#9A7A52' if (x + y) % 2 else TRAV[1])
+    for i in range(len(pools) - 1):  # the spill from each pool to the next, down the slope
+        (cx, cy, rx, ry), (nx, ny, _, _) = pools[i], pools[i + 1]
+        sx, sy = cx - rx // 2, cy + ry // 2
+        for t in range(0, 41):
+            x = int(sx + (nx + 10 - sx) * t / 40)
+            y = int(sy + (ny - 6 - sy) * t / 40)
+            if any((x, y) in ps for ps in pool_sets):
+                continue
+            for dx in range(-2, 3):
+                cv.set(x + dx, y, SPRING[3] if abs(dx) < 2 else TRAV[4])
+                blocked.add((x + dx, y))
+    for (i, (cx, cy, rx, ry)) in enumerate(pools):
+        pool = pool_sets[i]
+        for x in range(cx - rx - 8, cx + rx + 8):  # the frozen-waterfall face under the lip
+            ys = [y for (xx, y) in pool if xx == x]
+            if not ys:
+                continue
+            yb = max(ys)
+            drop = 5 + int(noise2(x // 3, i, 507) * 6)
+            for k in range(drop):
+                streak = (x * 3 + int(noise2(x, 0, 502 + i) * 4)) % 5
+                c = TRAV[4] if k < 2 else TRAV[3] if streak < 2 else TRAV[2] if streak < 4 else '#C8803A'
+                if k == drop - 1:
+                    c = TRAV[1]
+                cv.set(x, yb + 1 + k, c)
+        for (x, y) in pool:
+            d = pool_d(i, x, y)
+            c = SPRING[1] if d < 0.45 and i == 0 else SPRING[2] if d < 0.7 else SPRING[3]
+            if d > 0.86:
+                c = '#C8803A' if i == 0 and (x + y) % 3 else SPRING[4] if (x + y) % 2 else TRAV[4]  # mats at the hottest, else the lip
+            if (x, y - 1) not in pool or (x, y - 2) not in pool:
+                c = TRAV[1]  # the lip's shadow on the water
+            cv.set(x, y, c)
+            blocked.add((x, y))
+        for k in range(6):  # still glints
+            gx, gy = cx - rx // 2 + int(noise2(k, i, 503) * rx), cy - ry // 2 + int(noise2(k, i, 504) * ry)
+            if (gx, gy) in pool and (gx + 3, gy) in pool:
+                cv.hline(gx, gy, 3, SPRING[4])
+    # sulphur crusts round the fumaroles on the upper slope
+    for (vx, vy) in ((162, 80), (312, 140)):
+        for (x, y) in oval(vx, vy, 18, 9):
+            if noise2(x // 2, y // 2, 508) > 0.45:
+                cv.set(x, y, '#E8D24A' if (x + y) % 3 else '#B8A030')
+    # the hot stream from the lowest pool down to the lava, and stepping stones over it
+    stream = worlds.thick([(96, 400), (88, 440), (98, 480), (90, 516), (92, 534)], 4, seed=41)
+    for (x, y) in stream:
+        cv.set(x, y, SPRING[2] if (x + y) % 3 else SPRING[3])
+        blocked.add((x, y))
+    for (x, y) in stream:
+        if (x - 1, y) not in stream:
+            cv.set(x - 1, y, TRAV[2])
+    stones = [(92, 462), (95, 470)]
+    # the caldera's lava river, continued, dying in a delta of crust
+    river = thick_from(CALDERA_RIVER, 13, 14, -W) | worlds.thick([(0, 520), (34, 534), (66, 544)], 11, seed=40)
+    tongue = worlds.thick([(60, 544), (84, 548)], 7, seed=42)
+    for (x, y) in river | tongue:
+        n = smooth_noise(x + W, y + frame * 3, 7, 265)
+        c = LAVA[3] if n > 0.45 else LAVA[2]
+        if n > 0.75:
+            c = LAVA[5] if n > 0.88 else LAVA[4]
+        if (x, y) in tongue and (x, y) not in river:
+            c = LAVA[1] if cracked(x, y, 5, 6) else BASALT[1]  # crusting over
+        if x > 40 and cracked(x, y, 6, 7) and (x, y) not in tongue:
+            c = LAVA[1]
+        cv.set(x, y, c)
+        blocked.add((x, y))
+    for (x, y) in list(river):
+        for (dx, dy) in ((10, 0), (0, 10), (7, 7), (-7, 7), (0, -9)):
+            q = (x + dx, y + dy)
+            if q in river or q in tongue or not (0 <= q[0] < W and 0 <= q[1] < H):
+                continue
+            if cracked(q[0] + W, q[1], 7, 4):
+                cv.set(*q, LAVA[2] if noise2(q[0] + W, q[1], 267) > 0.4 else LAVA[1])
+            elif noise2((q[0] + W) // 3, q[1] // 3, 268) > 0.3:
+                cv.set(*q, BASALT[2] if (q[0] + q[1]) % 3 else BASALT[3])
+    for (x, y) in river:
+        if (x, y - 1) not in river:
+            cv.set(x, y, LAVA[5])
+        if (x, y + 1) not in river and 0 <= y + 1 < H:
+            cv.set(x, y + 1, BASALT[0])
+    glow_skip = river | lake | tongue
+    for (x, y) in sorted({(x // 26 * 26 + 13, y // 26 * 26 + 13) for (x, y) in river}):
+        light_pool(cv, x, y, 22, 14, LAVA[1], glow_skip)
+    # the flagstone path from the caldera to the bathhouse, lantern-lit
+    path = worlds.thick(SPRINGS_PATH, 8, seed=43)
+    for (x, y) in path:
+        if (x, y) in blocked:
+            continue
+        sx = (x + (y // 7) % 2 * 5) // 10
+        c = BASALT[3] if noise2(sx, y // 7, 505) > 0.4 else BASALT[2]
+        if (x + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
+            c = BASALT[0]
+        cv.set(x, y, c)
+    for (sx, sy) in stones + [(132, 468)]:
+        cp_hex(cv, sx, sy, 4)
+    for (x, y) in stream:  # the path crosses the stream on stepping stones
+        if (x, y) in path:
+            blocked.discard((x, y))
+    for (lx, ly) in ((52, 330), (60, 420), (150, 466), (214, 478)):
+        light_pool(cv, lx, ly + 22, 18, 8, '#F2A048', glow_skip)
+    objects = [
+        ('bath', 'bathhouse', 196, 404), ('lantern-1', 'stone_lantern', 44, 306), ('lantern-2', 'stone_lantern', 52, 398),
+        ('lantern-3', 'stone_lantern', 142, 444), ('lantern-4', 'stone_lantern', 206, 456),
+        ('weed-1', 'fireweed', 20, 360), ('weed-2', 'fireweed_small', 8, 410), ('weed-3', 'fireweed', 150, 520),
+        ('weed-4', 'fireweed_small', 176, 540), ('weed-5', 'fireweed', 290, 330), ('weed-6', 'fireweed_small', 300, 250),
+        ('weed-7', 'fireweed', 130, 120), ('weed-8', 'fireweed_small', 20, 240), ('weed-9', 'fireweed', 264, 300),
+        ('weed-10', 'fireweed_small', 280, 340), ('weed-11', 'fireweed', 300, 470), ('weed-12', 'fireweed_small', 60, 180),
+        ('cols-4', 'basalt_columns', 250, 236),
+        ('cols-1', 'basalt_columns', 262, 520), ('cols-2', 'basalt_columns_low', 286, 40), ('cols-3', 'basalt_columns_low', 210, 540),
+        ('vent-1', 'cooling_vent', 150, 60), ('vent-2', 'cooling_vent', 300, 120), ('vent-3', 'cooling_vent', 110, 556 - 20),
+        ('obs-1', 'obsidian_small', 20, 470), ('obs-2', 'obsidian', 286, 400),
+    ]
+    stands = {'caldera': (8, 300), 'pools': (100, 250), 'bath': (250, 494), 'delta': (130, 540), 'slope': (220, 70)}
+    return cv, objects, stands, blocked | lake
 
 
 def rect_set_z(x, y, w, h):
@@ -2156,7 +2367,7 @@ def woodland(frame: int = 0):
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'neon': cp.props, 'skyport': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
+REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'springs': cdp.props, 'neon': cp.props, 'skyport': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
                 'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
@@ -2205,7 +2416,7 @@ def build(name: str, fn, start: str):
 LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'castle': (1, 2), 'halt': (-1, 1)},
-    'steam': {'junction': (0, 0), 'canal': (0, 1)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, 0)},
+    'steam': {'junction': (0, 0), 'canal': (0, 1)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, 0), 'springs': (1, 0)},
     'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
 }
 
@@ -2303,6 +2514,7 @@ def main():
     built['gulch'] = build('gulch', gulch, 'platform')
     built['oasis'] = build('oasis', oasis, 'gulch')
     built['caldera'] = build('caldera', caldera, 'tunnel')
+    built['springs'] = build('springs', springs, 'caldera')
     built['harbour'] = build('harbour', harbour, 'town')
     built['castle'] = build('castle', castle, 'harbour')
     built['station'] = build('station', station, 'lift')

@@ -90,6 +90,18 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'butterfly', x: 150, y: 170, seed: 10 },
   ],
   riverside: [{ kind: 'butterfly', x: 120, y: 420, seed: 11 }],
+  // steam off the hot pools, and where the hot stream meets the dying lava
+  springs: [
+    { kind: 'puff', x: 236, y: 150, seed: 20 },
+    { kind: 'puff', x: 220, y: 156, seed: 21 },
+    { kind: 'puff', x: 192, y: 228, seed: 22 },
+    { kind: 'puff', x: 148, y: 306, seed: 23 },
+    { kind: 'puff', x: 104, y: 382, seed: 24 },
+    { kind: 'puff', x: 90, y: 536, seed: 25 },
+    { kind: 'puff', x: 84, y: 540, seed: 26 },
+    { kind: 'ember', x: 40, y: 534, seed: 27 },
+    { kind: 'ember', x: 66, y: 544, seed: 28 },
+  ],
   neon: rainOver(90),
   // the same rain carries on over the Skyport (the weather does not stop at a border)
   skyport: rainOver(70),

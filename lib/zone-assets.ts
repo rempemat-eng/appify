@@ -12,6 +12,7 @@ import propBandstand from '@/assets/zones/props/bandstand.png';
 import propBarrel from '@/assets/zones/props/barrel.png';
 import propBasaltColumns from '@/assets/zones/props/basalt_columns.png';
 import propBasaltColumnsLow from '@/assets/zones/props/basalt_columns_low.png';
+import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
 import propBoatBlue from '@/assets/zones/props/boat_blue.png';
@@ -55,6 +56,8 @@ import propFenceC from '@/assets/zones/props/fence_c.png';
 import propFern from '@/assets/zones/props/fern.png';
 import propFerry from '@/assets/zones/props/ferry.png';
 import propFirePit from '@/assets/zones/props/fire_pit.png';
+import propFireweed from '@/assets/zones/props/fireweed.png';
+import propFireweedSmall from '@/assets/zones/props/fireweed_small.png';
 import propFishStall from '@/assets/zones/props/fish_stall.png';
 import propForestBench from '@/assets/zones/props/forest_bench.png';
 import propForge from '@/assets/zones/props/forge.png';
@@ -127,6 +130,7 @@ import propStationHouse from '@/assets/zones/props/station_house.png';
 import propSteamPuff from '@/assets/zones/props/steam_puff.png';
 import propSteamerTrunk from '@/assets/zones/props/steamer_trunk.png';
 import propStone from '@/assets/zones/props/stone.png';
+import propStoneLantern from '@/assets/zones/props/stone_lantern.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
 import propTeaKiosk from '@/assets/zones/props/tea_kiosk.png';
@@ -172,6 +176,7 @@ import groundSkyport from '@/assets/zones/skyport/ground.png';
 import groundGulch from '@/assets/zones/gulch/ground.png';
 import groundOasis from '@/assets/zones/oasis/ground.png';
 import groundCaldera from '@/assets/zones/caldera/ground.png';
+import groundSprings from '@/assets/zones/springs/ground.png';
 import groundHarbour from '@/assets/zones/harbour/ground.png';
 import groundCastle from '@/assets/zones/castle/ground.png';
 import groundStation from '@/assets/zones/station/ground.png';
@@ -190,6 +195,7 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   gulch: groundGulch,
   oasis: groundOasis,
   caldera: groundCaldera,
+  springs: groundSprings,
   harbour: groundHarbour,
   castle: groundCastle,
   station: groundStation,
@@ -206,6 +212,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   barrel: propBarrel,
   basalt_columns: propBasaltColumns,
   basalt_columns_low: propBasaltColumnsLow,
+  bathhouse: propBathhouse,
   bell_tower: propBellTower,
   bench: propBench,
   boat_blue: propBoatBlue,
@@ -249,6 +256,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   fern: propFern,
   ferry: propFerry,
   fire_pit: propFirePit,
+  fireweed: propFireweed,
+  fireweed_small: propFireweedSmall,
   fish_stall: propFishStall,
   forest_bench: propForestBench,
   forge: propForge,
@@ -321,6 +330,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   steam_puff: propSteamPuff,
   steamer_trunk: propSteamerTrunk,
   stone: propStone,
+  stone_lantern: propStoneLantern,
   store: propStore,
   street_light: propStreetLight,
   tea_kiosk: propTeaKiosk,
