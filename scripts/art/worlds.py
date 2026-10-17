@@ -67,39 +67,46 @@ def edge(mask, x, y):
 
 
 def paint_dirt(cv, mask):
-    """Dirt sits below the turf: a dark lip and shadow line along its top edge."""
+    """Sandy packed earth sitting below the turf, with the garden's ragged grass edge
+    (lit teeth, a dark lip and shade under the turf) and a few bedded pebbles."""
+    import detail
     for (x, y) in mask:
-        cv.set(x, y, g.P[3] if smooth_noise(x, y, 7, 40) > 0.7 else g.P[2])
-    for i in range(120):
+        cv.set(x, y, g.P[4] if smooth_noise(x, y, 7, 40) > 0.7 else g.P[3])
+    for i in range(90):
         x, y = int(noise2(i, 0, 51) * W), int(noise2(i, 1, 51) * H)
-        if (x, y) in mask and (x + 1, y) in mask and (x, y + 1) in mask:
-            cv.set(x, y, g.P[1])
+        if all((x + dx, y + dy) in mask for dx in (-2, 0, 3) for dy in (-2, 0, 3)):
+            detail.pebble(cv, x, y, g.STONE, big=i % 4 == 0)
+    detail.grass_edge(cv, {(x, y) for (x, y) in mask if 0 <= x < W and 0 <= y < H}, g.G, g.P, seed=11)
     for (x, y) in mask:
-        if (x, y - 1) not in mask:
-            cv.set(x, y, g.P[0])
-            if (x, y + 1) in mask:
-                cv.set(x, y + 1, g.P[1])
-            cv.set(x, y - 1, g.G[1])
-        elif edge(mask, x, y):
-            cv.set(x, y, g.P[1])
-        if (x, y + 1) not in mask:
+        if (x, y + 1) not in mask and 0 <= y + 1 < H:
             cv.set(x, y + 1, g.G[3])
 
 
 def paint_paving(cv, mask, seed=0):
-    """Light square paving stones with mortar lines and the odd darker slab."""
+    """Square paving slabs (Matt's references): each slab its own tone, lit along its
+    top and left edges and dark along its bottom and right, chipped corners, moss in
+    the odd joint, and the lawn's ragged edge creeping over the border."""
+    import detail
+    SL = ['#8C8574', '#A9A28F', '#C2B9A2', '#D4CBB3', '#E6DEC8']
     for (x, y) in mask:
-        mortar = x % 12 == 0 or y % 9 == 0 or (y // 9) % 2 and (x + 6) % 12 == 0
-        slab = (x // 12 + y // 9 + seed) % 7 == 0
-        col = '#A9A28F' if mortar else ('#C9C1AA' if slab else '#DCD4BC')
-        if not mortar and (x % 12 == 1 or y % 9 == 1):
-            col = '#E8E1CB'
-        cv.set(x, y, col)
-    for (x, y) in mask:
-        if (x, y - 1) not in mask:
-            cv.set(x, y, '#8C8574')
-        elif edge(mask, x, y):
-            cv.set(x, y, '#B3AB94')
+        row = y // 9
+        sx = (x + (row % 2) * 6) // 12
+        cx, cy = (x + (row % 2) * 6) % 12, y % 9
+        n = noise2(sx, row, 61 + seed)
+        t = 3 if n > 0.35 else 2 if n > 0.1 else 4
+        if cx == 11 or cy == 8:
+            c = SL[0] if noise2(x, y, 62) > 0.12 else g.G[2]  # the joint, sometimes mossy
+        elif (cx, cy) in ((0, 0), (10, 7)):
+            c = SL[1]  # a chipped corner
+        elif cx == 0 or cy == 0:
+            c = SL[min(4, t + 1)]
+        elif cx == 10 or cy == 7:
+            c = SL[t - 1]
+        else:
+            c = SL[t]
+        cv.set(x, y, c)
+    edge = {(x, y) for (x, y) in mask if 0 <= x < W and 0 <= y < H}
+    detail.grass_edge(cv, edge, g.G, SL, seed=13 + seed)
 
 
 def paint_cobbles(cv, mask):
@@ -128,9 +135,15 @@ def paint_water(cv, mask, frame=0, center=None):
         cv.set(x, y, g.SAND[1] if noise2(x, y, 21) < 0.8 else g.SAND[2])
     for (x, y) in mask:
         col = g.WTR[1] if all((x + dx, y + dy) in mask for dx, dy in ((-4, 0), (4, 0), (0, -3), (0, 3))) else g.WTR[2]
-        if (x, y - 1) not in mask:
-            col = g.WTR[0]
-        elif (x, y - 2) not in mask:
+        # the far bank's stone face above the water, the water in its shadow
+        k = next((i for i in range(5) if (x, y - i - 1) not in mask), 5)
+        if k == 0:
+            col = g.STONE[3]
+        elif k in (1, 2):
+            col = g.STONE[0] if (x + k * 3) % 6 == 0 else g.STONE[2] if k == 1 else g.STONE[1]
+        elif k == 3:
+            col = g.WTR[0] if (x // 2) % 3 else g.WTR[4]  # foam at the foot
+        elif k == 4:
             col = g.WTR[1]
         cv.set(x, y, col)
     # Jittered little arcs share stable roots between poses. Keep the bank
@@ -244,6 +257,9 @@ def world_town(frame):
         ('cafe-1', 'cafe', 190, 204), ('cafe-2', 'cafe', 230, 242), ('cart', 'cart', 94, 206),
         ('tree-0', 'tree', -20, 220), ('tree-1', 'tree_small', 104, 228), ('tree-2', 'tree', 276, 232),
         ('bush-1', 'bush', 20, 113), ('bush-2', 'bush', 272, 113),
+        ('pot-l', 'potted_plant', 30, 104), ('barrel-l', 'barrel', 62, 100),
+        ('pot-lib-1', 'potted_plant', 132, 106), ('pot-lib-2', 'potted_plant', 176, 106),
+        ('crate-r', 'crate', 226, 104), ('sack-r', 'sack', 244, 110), ('pot-r', 'potted_plant', 302, 104),
     ]
     route = [(160, 266), (160, 174), (100, 160), (66, 168), (160, 152), (250, 168), (200, 180), (160, 214)]
     return cv, objects, set(), route, (118, 180)

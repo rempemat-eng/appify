@@ -395,6 +395,7 @@ def props() -> dict[str, Canvas]:
         'house_blue': house(BLUE_ROOF, sign=True), 'cafe': cafe_table(), 'cart': book_cart(),
         'cabin': cabin(), 'campfire': campfire(), 'boulder': boulder(True), 'stone': boulder(False),
         'cairn': cairn(), 'duck': duck(),
+        'crate': gp.crate(), 'barrel': gp.barrel(), 'potted_plant': gp.potted_plant(), 'sack': gp.sack(),
     }
 
 

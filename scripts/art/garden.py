@@ -177,7 +177,7 @@ def draw_terrain(frame: int) -> Canvas:
         if not (0 <= x < W and 0 <= y < H):
             continue
         n = smooth_noise(x, y, 7, 40)
-        cv.set(x, y, P[3] if n > 0.7 else P[2])
+        cv.set(x, y, P[4] if n > 0.7 else P[3])  # sandy packed earth, paler where worn
     for i in range(260):
         x = int(noise2(i, 0, 50) * W)
         y = int(noise2(i, 1, 50) * H)
@@ -187,60 +187,13 @@ def draw_terrain(frame: int) -> Canvas:
                 cv.set(x + 1, y, P[1])
             if i % 5 == 0:
                 cv.set(x, y - 1, P[4])
+    # Ragged turf breaks onto the path in lit teeth with shade beneath (detail.py).
+    import detail as _edge
+    bridge = {(x, y) for (x, y) in dirt if BX0 <= x < BX1 and BY0 <= y < BY1} if 'BX0' in globals() else set()
+    _edge.grass_edge(cv, {(x, y) for (x, y) in dirt if 0 <= x < W and 0 <= y < H}, G, P, keep=bridge, seed=7)
     for (x, y) in dirt:
-        if not (0 <= x < W and 0 <= y < H):
-            continue
-        above = (x, y - 1) not in PATH
-        if above:
-            # scalloped turf: every few pixels the lip hangs one pixel lower
-            hang = (x // 3 + int(noise2(x // 3, y, 45) * 2)) % 3 == 0
-            if hang and (x, y + 1) in dirt:
-                cv.set(x, y, G[1])
-                cv.set(x, y + 1, P[0])
-                if (x, y + 2) in dirt:
-                    cv.set(x, y + 2, P[1])
-            else:
-                cv.set(x, y, P[0])
-                if (x, y + 1) in dirt:
-                    cv.set(x, y + 1, P[1])
-        elif (x - 1, y) not in PATH or (x + 1, y) not in PATH:
-            side = -1 if (x - 1, y) not in PATH else 1
-            if (y // 3 + int(noise2(x, y // 3, 46) * 2)) % 3 == 0:
-                cv.set(x, y, G[2])  # a turf bump reaching onto the path
-                if (x - side, y) in dirt:
-                    cv.set(x - side, y, P[1])
-            else:
-                cv.set(x, y, P[1])
-        elif (x, y + 1) not in PATH:
-            cv.set(x, y, P[1])
-    for (x, y) in dirt:
-        if (x, y - 1) not in PATH and 0 <= y - 1 < H:
-            cv.set(x, y - 1, G[1])  # the turf's dark lip
-        if (x, y + 1) not in PATH and (x, y + 1) not in meadow.STREAM and y + 1 < H:
-            cv.set(x, y + 1, G[3])  # the lit edge of the turf below
-            if (x, y + 2) not in PATH and y + 2 < H:
-                cv.set(x, y + 2, G[3] if (x + y) % 3 else G[2])
-
-    # Pebbles bedded in the packed earth, lit on top with a dark underside.
-    import detail as _detail
-    for i in range(170):
-        x = int(noise2(i, 6, 51) * W)
-        y = int(noise2(i, 7, 51) * H)
-        if all((x + dx, y + dy) in dirt for dx in (-2, 0, 3) for dy in (-2, 0, 3)):
-            _detail.pebble(cv, x, y, STONE, big=i % 4 == 0)
-
-    # The kitchen garden's yard is raked gravel rather than packed earth, so the
-    # timber beds and dark soil stand out from it; its turf edges stay as drawn.
-    yx, yy, yw, yh = meadow.YARD
-    to_gravel = {P[1]: SAND[0], P[2]: SAND[1], P[3]: SAND[2]}
-    for y in range(yy, yy + yh):
-        for x in range(yx, yx + yw):
-            if (x, y) in dirt:
-                c = '#%02X%02X%02X' % cv.get(x, y)[:3]
-                if c in to_gravel:
-                    cv.set(x, y, to_gravel[c])
-                    if noise2(x, y, 88) < 0.025 and smooth_noise(x, y, 9, 87) > 0.45:
-                        cv.set(x, y, STONE[3] if noise2(x, y, 89) < 0.5 else STONE[2])
+        if (x, y + 1) not in PATH and (x, y + 1) not in meadow.STREAM and 0 <= y + 1 < H:
+            cv.set(x, y + 1, G[3])  # the lit edge of the turf below the path
 
     # footprints of a small creature along the main path
     for i, y in enumerate(range(212, 280, 10)):
@@ -310,6 +263,13 @@ OBJECTS = [
     ('lantern', 'lantern', 198, 96, 'lantern'),
     ('signpost', 'signpost', 182, 150, 'missions'),
     ('bowl', 'bowl', 100, 128, 'feed'),
+    # clutter against the hut and the stall (Matt's references)
+    ('pot-1', 'potted_plant', 44, 106, None),
+    ('pot-2', 'potted_plant', 82, 107, None),
+    ('barrel-1', 'barrel', 118, 102, None),
+    ('crate-1', 'crate', 202, 86, None),
+    ('sack-1', 'sack', 206, 76, None),
+    ('barrel-2', 'barrel', 304, 84, None),
     ('watering-can', 'watering_can', 290, 188, 'water'),
     ('tree-6', 'tree_small', 284, 108, None),
     ('tree-7', 'tree', -30, 186, None),
