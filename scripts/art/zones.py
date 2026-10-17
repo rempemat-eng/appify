@@ -32,8 +32,10 @@ import cyber_props as cp  # noqa: E402
 import western_props as wsp  # noqa: E402
 import caldera_props as cdp  # noqa: E402
 import harbour_props as hbp  # noqa: E402
+import castle_props as csp  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
+IRONm, LEAFm = MATERIALS['iron'], MATERIALS['leaf']
 
 W, H, CELL = 320, 576, 4
 worlds.W, worlds.H = W, H  # the world painters read the canvas size from the module
@@ -207,8 +209,13 @@ def sprites() -> dict[str, Canvas]:
     items.update(wsp.props())
     items.update(cdp.props())
     items.update(hbp.props())
+    items.update(csp.props())
     items['fence_c'] = gp.fence_h(60)
     return {key: style.finalize(sp, name=key) for key, sp in items.items()}
+
+
+# Props with a way through them: (from, to) in sprite pixels.
+OPENINGS = {'gatehouse': (50, 72)}
 
 
 def walk_grid(objects, sprite_map) -> list[str]:
@@ -216,8 +223,11 @@ def walk_grid(objects, sprite_map) -> list[str]:
     for (_id, key, x, y) in objects:
         sp = sprite_map[key]
         foot = 20 if sp.w > 60 else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 6
+        gap = OPENINGS.get(key)
         for yy in range(y + sp.h - foot, y + sp.h):
             for xx in range(x + 3, x + sp.w - 3):
+                if gap and x + gap[0] <= xx < x + gap[1]:
+                    continue  # a gateway you walk through
                 blocked.add((xx // CELL, yy // CELL))
     rows = []
     for r in range(H // CELL):
@@ -913,10 +923,93 @@ def harbour(frame: int = 0):
     return cv, objects, stands, blocked
 
 
+def castle(frame: int = 0):
+    """Hearthold Castle on the headland: the cliff path from the harbour arrives at the
+    west edge and runs along the outer meadow to a drawbridge over the dry ditch; the
+    gatehouse in the south wall opens on a courtyard with the keep to the north, the
+    bedtime bell tower in the north-east corner, the walled herb garden and the
+    training yard where the steward spars. Sea cliffs drop away to the east and south."""
+    ASHLAR, WTRm, STONEm = MATERIALS['ashlar'], MATERIALS['water'], MATERIALS['stone']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    # the sea cliffs: the headland's edge to the south and east, a face and the sea
+    def edge_y(x):
+        return 470 + int(math.sin(x / 31) * 10 + noise2(x // 7, 0, 321) * 8) - max(0, (x - 260) * 2)
+    sea = set()
+    for x in range(W):
+        e = edge_y(x)
+        for y in range(e, H):
+            k = y - e
+            if k < 3:
+                c = MATERIALS['grass'][4] if k == 0 else MATERIALS['grass'][1]
+            elif k < 26:
+                band = (k + int(noise2(x // 6, 2, 322) * 3)) // 5
+                c = STONEm[3] if band % 2 else STONEm[2]
+                if (k + int(noise2(x // 6, 2, 322) * 3)) % 5 == 0:
+                    c = STONEm[4]
+                if k > 22:
+                    c = STONEm[1]
+            else:
+                n = smooth_noise(x, y, 10, 323 + frame)
+                c = WTRm[1] if n > 0.4 else WTRm[0]
+                if k < 30:
+                    c = WTRm[4] if (x + frame) % 3 else WTRm[3]
+                sea.add((x, y))
+            cv.set(x, y, c)
+            if k < 26:
+                sea.add((x, y)) if k > 2 else None
+    # the path from the harbour along the outer meadow to the drawbridge
+    path = worlds.thick([(-4, 116), (30, 150), (34, 400), (120, 420), (182, 404), (182, 384)], 11, seed=19)
+    paint_road(cv, path)
+    # the dry ditch below the south wall, crossed by the drawbridge
+    ditch = {(x, y) for x in range(60, 300) for y in range(352, 380)}
+    for (x, y) in ditch:
+        k = y - 352
+        cv.set(x, y, STONEm[3] if k < 2 else STONEm[1] if k < 6 else MATERIALS['grass'][1] if k > 22 else MATERIALS['soil'][2] if (x + y) % 3 else MATERIALS['soil'][1])
+    for y in range(350, 384):  # the drawbridge planks
+        for x in range(168, 196):
+            cv.set(x, y, MATERIALS['wood'][3] if y % 4 else MATERIALS['wood'][1])
+        cv.set(167, y, IRONm[1]); cv.set(196, y, IRONm[1])
+    # the castle walls seen from above: a lit wall walk between merlons
+    def wall_v(x0, y0, y1):
+        for y in range(y0, y1):
+            for x in range(x0, x0 + 12):
+                k = x - x0
+                c = ASHLAR[4] if 2 <= k < 4 else ASHLAR[3] if 4 <= k < 9 else ASHLAR[1]
+                if k < 2 or k >= 10:
+                    c = ASHLAR[5] if (y // 4) % 2 == 0 and k < 2 else ASHLAR[2] if (y // 4) % 2 == 0 else ASHLAR[1]
+                cv.set(x, y, c)
+    wall_v(70, 40, 350)
+    wall_v(282, 40, 350)
+    # the courtyard: worn flagstones, grass in the joints
+    yard = {(x, y) for x in range(82, 282) for y in range(190, 350)}
+    worlds.paint_paving(cv, yard, seed=21)
+    garden_plot = {(x, y) for x in range(86, 150) for y in range(250, 330)}
+    for (x, y) in garden_plot:
+        cv.set(x, y, MATERIALS['grass'][3] if (x + y) % 5 else MATERIALS['grass'][2])
+    for x in range(86, 150):  # a low hedge round the herb garden
+        for y in (250, 251, 252):
+            cv.set(x, y, LEAFm[2] if y == 250 else LEAFm[1])
+    objects = [
+        ('wall-n1', 'wall_run', 70, 0), ('wall-n2', 'wall_run', 166, 0), ('wall-n3', 'wall_run', 198, 0),
+        ('tower-nw', 'round_tower', 52, -40), ('keep', 'keep', 112, 76), ('bell', 'bell_tower', 244, 40),
+        ('herbs-1', 'herb_bed', 92, 262), ('herbs-2', 'herb_bed', 92, 286), ('herbs-3', 'herb_bed', 92, 310),
+        ('dummy-1', 'training_dummy', 214, 220), ('dummy-2', 'training_dummy', 246, 236),
+        ('wall-s1', 'wall_run', 70, 306), ('gate', 'gatehouse', 122, 262), ('wall-s2', 'wall_run', 200, 306),
+        ('tower-sw', 'round_tower', 52, 262), ('tower-se', 'round_tower', 268, 262),
+        ('tower-ne', 'round_tower', 268, -40),
+    ]
+    blocked = sea | ditch - {(x, y) for x in range(168, 196) for y in range(350, 384)}
+    blocked |= {(x, y) for x in range(70, 82) for y in range(40, 350)} | {(x, y) for x in range(282, 294) for y in range(40, 350)}
+    stands = {'harbour': (14, 118), 'bridge': (182, 396), 'gate': (182, 344), 'courtyard': (190, 230),
+              'keep': (176, 206), 'herbs': (160, 290), 'meadow': (220, 430)}
+    return cv, objects, stands, blocked
+
+
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props}
+REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 
 
@@ -963,6 +1056,7 @@ def main():
     build('gulch', gulch, 'platform')
     build('caldera', caldera, 'tunnel')
     build('harbour', harbour, 'town')
+    build('castle', castle, 'harbour')
 
 
 if __name__ == '__main__':

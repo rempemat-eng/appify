@@ -36,7 +36,8 @@
     "tar": ["#1A1C22", "#2A2D36", "#3C404C", "#545A68", "#727A8A"],
     "sailcloth": ["#8A7A5E", "#B8A884", "#D8CCAA", "#EEE6CC", "#FBF6E6"],
     "rope": ["#5A4428", "#8A6A3E", "#B8945A", "#D8B87C"],
-    "lamplight": ["#5A3A1E", "#B8782E", "#F0B85A", "#FFE7A6"]
+    "lamplight": ["#5A3A1E", "#B8782E", "#F0B85A", "#FFE7A6"],
+    "ashlar": ["#3E3A38", "#5E5853", "#807870", "#A39A8E", "#C6BDAE", "#E2DACB"]
   },
   "surfaces": {
     "ink": "#4A3B35",
