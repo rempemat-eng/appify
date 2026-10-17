@@ -98,12 +98,25 @@ def ring_post() -> Canvas:
     return cv
 
 
+def paint_road(cv: Canvas, mask):
+    """Sandy earth with the ragged turf edge, like worlds.paint_dirt, except that pixels
+    beyond the top edge count as road: the road runs on into the garden, so the border
+    gets no turf edge and the two zones meet without a seam."""
+    for (x, y) in mask:
+        cv.set(x, y, P[4] if smooth_noise(x, y, 7, 40) > 0.7 else P[3])
+    detail.grass_edge(cv, {(x, y) for (x, y) in mask if 0 <= x < W and y < H}, G, P, seed=11)
+    for (x, y) in mask:
+        if (x, y + 1) not in mask and 0 <= y + 1 < H:
+            cv.set(x, y + 1, G[3])
+
+
 def town(frame: int = 0):
     cv = Canvas(W, H)
     worlds.grass(cv, frame)
     # the road from the garden gate, then cobbled streets and the paved square
-    road = worlds.thick([(160, -4), (158, 60), (164, 130), (160, 240)], 15, seed=5)
-    worlds.paint_dirt(cv, road)
+    # the garden's main path (36 px wide, centred on x = 160) crosses the border unchanged
+    road = worlds.thick([(160, -4), (160, 24)], 18, seed=0) | worlds.thick([(160, 20), (158, 60), (164, 130), (160, 240)], 15, seed=5)
+    paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
     square = {(x, y) for (x, y) in oval(SQUARE[0], SQUARE[1], 118, 62)}
     east = worlds.thick([(250, 300), (W + 4, 300)], 13)
     south = worlds.thick([(150, 340), (176, 400), (196, 432)], 12, seed=6)
@@ -135,9 +148,10 @@ def town(frame: int = 0):
         meadow.flower_planter(cv, *fb)
     objects = [
         # the treeline either side of the road from the garden
-        ('pine-n0', 'pine', 4, -40), ('tree-n1', 'tree', 40, -30), ('pine-n2', 'pine', 96, -34),
-        ('pine-n3', 'pine', 196, -38), ('tree-n4', 'tree_autumn', 226, -28), ('pine-n5', 'pine', 286, -36),
-        ('tree-n6', 'tree_small', 100, 70), ('bush-n7', 'bush', 196, 104), ('signpost', 'signpost', 192, 150),
+        # (no prop crosses a border: the garden's meadow runs on above these)
+        ('pine-n0', 'pine', 4, 6), ('tree-n1', 'tree', 40, 14), ('pine-n2', 'pine', 92, 4),
+        ('pine-n3', 'pine', 200, 2), ('tree-n4', 'tree_autumn', 228, 12), ('pine-n5', 'pine', 288, 8),
+        ('tree-n6', 'tree_small', 100, 96), ('bush-n7', 'bush', 196, 112), ('signpost', 'signpost', 192, 150),
         ('lamp-r1', 'lamp', 132, 168), ('lamp-r2', 'lamp', 178, 168),
         # buildings on the square's north side, facing south
         ('library', 'library', 6, 130), ('house-red', 'house_red', 214, 124),
