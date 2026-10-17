@@ -1575,6 +1575,86 @@ check(Boolean(plannedTimer), 'unconfigured worlds retain the default nap arrival
 plannedTimer.fn();
 check(sleeps === 1, 'unconfigured worlds still call the existing ordinary nap');
 const homeNapChecks = count - homeNapStart;
+
+// Exercise the actual world's route actions, not a second model of travel. Every
+// map exit must reject callbacks retained across interruption and still work on
+// a fresh trip. These are source-boundary checks, not real browser scheduling.
+const placeNavigationStart = count;
+const placeRoutes = [
+  ['missions', '/missions'],
+  ['shop', '/shop'],
+  ['arena', '/arena'],
+];
+for (const [routeIndex, [action, expectedRoute]] of placeRoutes.entries()) {
+  const [replacement, replacementRoute] = placeRoutes[(routeIndex + 1) % placeRoutes.length];
+  worldTree = setup();
+  press(worldTree, action);
+  const replacedArrival = end(shared[1].animation);
+  press(worldTree, replacement);
+  replacedArrival(true);
+  check(routes.length === 0, `${action}: retargeted arrival cannot navigate`);
+  finishTravel();
+  replacedArrival(true);
+  check(
+    same(routes, [replacementRoute]) && sleeps === 0,
+    `${action}: only the replacement trip opens its screen, without starting a nap`,
+  );
+
+  worldTree = setup();
+  press(worldTree, action);
+  const blurredArrival = end(shared[1].animation);
+  render(false, { active: false });
+  blurredArrival(true);
+  check(routes.length === 0, `${action}: arrival after blur cannot navigate`);
+  worldTree = render();
+  blurredArrival(true);
+  check(routes.length === 0, `${action}: refocus cannot revive the interrupted trip`);
+  press(worldTree, action);
+  finishTravel();
+  check(
+    same(routes, [expectedRoute]),
+    `${action}: a fresh trip after blur still reaches its screen`,
+  );
+
+  worldTree = setup();
+  press(worldTree, action);
+  const unmountedArrival = end(shared[1].animation);
+  hooks.forEach((hook) => hook?.cleanup?.());
+  unmountedArrival(true);
+  check(routes.length === 0, `${action}: arrival after unmount cannot navigate`);
+
+  worldTree = setup();
+  press(worldTree, action);
+  const backgroundedArrival = end(shared[1].animation);
+  appActive = false;
+  render();
+  backgroundedArrival(true);
+  check(routes.length === 0, `${action}: background arrival cannot navigate`);
+  appActive = true;
+  worldTree = render();
+  backgroundedArrival(true);
+  check(routes.length === 0, `${action}: foreground cannot revive the interrupted trip`);
+  press(worldTree, action);
+  finishTravel();
+  check(same(routes, [expectedRoute]), `${action}: a fresh foreground trip reaches its screen`);
+
+  worldTree = setup();
+  press(worldTree, action);
+  const animatedArrival = end(shared[1].animation);
+  reduced = true;
+  render();
+  for (const [timerId, timer] of timers)
+    if (timer.ms === 0) {
+      timers.delete(timerId);
+      timer.fn();
+    }
+  animatedArrival(true);
+  check(
+    same(routes, [expectedRoute]) && sleeps === 0,
+    `${action}: switching to reduced motion reaches its screen exactly once`,
+  );
+}
+const placeNavigationChecks = count - placeNavigationStart;
 console.log(
-  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${backgroundChecks} background-state, ${lifeChecks} keepsake/identity, ${signatureChecks} signature-motion, ${homeNapChecks} Home-nap delegation (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
+  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${backgroundChecks} background-state, ${lifeChecks} keepsake/identity, ${signatureChecks} signature-motion, ${homeNapChecks} Home-nap delegation, ${placeNavigationChecks} place-navigation (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
 );
