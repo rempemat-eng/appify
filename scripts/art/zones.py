@@ -110,11 +110,11 @@ def ring_post() -> Canvas:
 
 def paint_road(cv: Canvas, mask):
     """Sandy earth with the ragged turf edge, like worlds.paint_dirt, except that pixels
-    beyond the top edge count as road: the road runs on into the garden, so the border
-    gets no turf edge and the two zones meet without a seam."""
+    beyond the top or bottom edge count as road: the road runs on into the next zone,
+    so the border gets no turf edge and the two zones meet without a seam."""
     for (x, y) in mask:
         cv.set(x, y, P[4] if smooth_noise(x, y, 7, 40) > 0.7 else P[3])
-    detail.grass_edge(cv, {(x, y) for (x, y) in mask if 0 <= x < W and y < H}, G, P, seed=11)
+    detail.grass_edge(cv, {(x, y) for (x, y) in mask if 0 <= x < W}, G, P, seed=11)
     for (x, y) in mask:
         if (x, y + 1) not in mask and 0 <= y + 1 < H:
             cv.set(x, y + 1, G[3])
@@ -129,8 +129,10 @@ def town(frame: int = 0):
     paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
     square = {(x, y) for (x, y) in oval(SQUARE[0], SQUARE[1], 118, 62)}
     east = worlds.thick([(250, 300), (W + 4, 300)], 13)
-    south = worlds.thick([(150, 340), (176, 400), (196, 432)], 12, seed=6)
-    worlds.paint_dirt(cv, south)
+    # the road south to Driftwood Harbour, the same width and x as the harbour's road
+    south = worlds.thick([(160, 340), (156, 470), (160, 560)], 15, seed=6) | worlds.thick([(160, 552), (160, H + 4)], 18)
+    south |= worlds.thick([(150, 400), (110, 452)], 9, seed=7)  # a side path to the ring
+    paint_road(cv, south | {(x, y) for (x, y0) in south if y0 == H - 1 for y in range(H, H + 12)})
     worlds.paint_paving(cv, square | east, seed=3)
     # a ring of darker setts around the well, and a kerb where the square meets the lawn
     for (x, y) in square:
@@ -146,7 +148,7 @@ def town(frame: int = 0):
         elif (x, y - 1) not in square and (x, y - 1) not in east:
             cv.set(x, y, STONE[3])
     # the sparring ring: trodden earth edged with stones
-    rcx, rcy = 200, 470
+    rcx, rcy = 76, 486
     ring = oval(rcx, rcy, 52, 24)
     for (x, y) in ring:
         cv.set(x, y, P[3] if smooth_noise(x, y, 6, 9) > 0.55 else P[2])
@@ -154,7 +156,7 @@ def town(frame: int = 0):
     for k in range(26):
         a = 2 * math.pi * k / 26
         detail.pebble(cv, int(rcx + 54 * math.cos(a)), int(rcy + 26 * math.sin(a)), STONE, big=k % 2 == 0)
-    for fb in ((258, 196, 40, 16, 2), (40, 452, 40, 16, 1)):
+    for fb in ((258, 196, 40, 16, 2), (200, 452, 40, 16, 1), (200, 500, 40, 16, 3)):
         meadow.flower_planter(cv, *fb)
     objects = [
         # the treeline either side of the road from the garden
@@ -176,19 +178,52 @@ def town(frame: int = 0):
         # the second street of houses, east
         ('house-blue', 'house_blue', 236, 344), ('pot-hb', 'potted_plant', 238, 418),
         # the ring and its spectators
-        ('bench-r1', 'bench', 96, 462), ('pole', 'pennant', 256, 420),
-        # the south hedge (the Cove comes later) and framing trees
-        ('hedge-s1', 'hedge', 0, 548), ('hedge-s2', 'hedge', 96, 548), ('hedge-s3', 'hedge', 192, 548),
-        ('hedge-s4', 'hedge', 288, 548),
-        ('tree-w1', 'tree', -26, 230), ('tree-w2', 'tree_small', -12, 470), ('tree-e1', 'tree', 286, 470),
-        ('bush-e2', 'bush', 292, 228), ('bush-w3', 'bush', 54, 520), ('bush-w4', 'bush', 250, 520),
+        ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 130, 440),
+        # hedges either side of the road south, and framing trees
+        ('hedge-s1', 'hedge', 0, 548), ('hedge-s3', 'hedge', 192, 548),
+        ('tree-w1', 'tree', -26, 230), ('tree-e1', 'tree', 252, 470),
+        ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 250, 400),
+        ('bunting', 'bunting', 60, 238), ('cat', 'cat', 182, 352),
     ]
     ring_fence(objects, rcx, rcy, 58, 28)
     stands = {
         'garden': (160, 18), 'library': (70, 238), 'well': (160, 316), 'stall': (60, 424),
-        'ring': (200, 470), 'park': (306, 300),
+        'ring': (76, 486), 'park': (306, 300), 'harbour': (160, 540),
     }
     return cv, objects, stands
+
+
+def bunting() -> Canvas:
+    """Bunting strung across the square for market day, 200 x 20: a sagging cord with
+    little pennants in the town's colours, each lit on its left half."""
+    w, h = 200, 20
+    cv = Canvas(w, h, pad=2)
+    cols = (RED, MATERIALS['gold'], MATERIALS['water'], MATERIALS['leaf'], MATERIALS['nap'])
+    for x in range(w):
+        y = 2 + int(math.sin(x / (w - 1) * math.pi) * 7)
+        cv.set(x, y, WOOD[1])
+        if x % 9 == 3 and 4 < x < w - 6:
+            c = cols[(x // 9) % len(cols)]
+            for t in range(6):
+                for dx in range(-(3 - t // 2), 4 - t // 2):
+                    cv.set(x + dx, y + 1 + t, c[3] if dx < 0 else c[2])
+    return cv
+
+
+def cat() -> Canvas:
+    """The town cat asleep in the sun, 16 x 10, curled with its tail round its nose."""
+    cv = Canvas(16, 10, pad=2)
+    for (x, y) in oval(8, 6, 6.5, 3.6):
+        cv.set(x, y, '#E8A04A' if (x - 8) + (y - 6) < -1 else '#C47A30' if x < 11 else '#9A5A22')
+    for (x, y) in disc(4, 4, 2.4):
+        cv.set(x, y, '#E8A04A' if x < 4 else '#C47A30')
+    cv.set(3, 1, '#C47A30'); cv.set(5, 1, '#C47A30')
+    cv.set(3, 4, '#5A3A1E'); cv.set(5, 4, '#5A3A1E')  # closed eyes
+    for t in range(6):
+        cv.set(9 + t, 9 - t // 3, '#9A5A22')
+    for k in range(4):
+        cv.set(6 + k * 2, 5, '#9A5A22')  # tabby stripes
+    return cv
 
 
 def pennant() -> Canvas:
@@ -204,7 +239,8 @@ def pennant() -> Canvas:
 def sprites() -> dict[str, Canvas]:
     items = wp.props()
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
-                  'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant()})
+                  'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant(),
+                  'bunting': bunting(), 'cat': cat()})
     items.update(sp.props())
     items.update(cp.props())
     items.update(wsp.props())
@@ -1133,6 +1169,8 @@ def lumen(frame: int = 0):
 REGION_PROPS = {'junction': sp.props, 'neon': cp.props, 'gulch': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': csp.props,
                 'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
+# Things above head height: they cast no ground shadow, never block a walk, draw on top.
+OVERHEAD = {'steam_puff', 'drone', 'bunting'}
 
 
 def build(name: str, fn, start: str):
@@ -1146,11 +1184,11 @@ def build(name: str, fn, start: str):
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
     shade = set()
     for (_id, key, x, y) in objects:
-        if key not in ('steam_puff', 'drone'):
+        if key not in OVERHEAD:
             shade |= detail.silhouette_shadow(sprite_map[key], x, y)
     for (sx, sy) in shade:
         style.darken(cv, sx, sy)
-    walk = walk_grid([o for o in objects if o[1] not in ('steam_puff', 'drone')], sprite_map)
+    walk = walk_grid([o for o in objects if o[1] not in OVERHEAD], sprite_map)
     cells = {(x // CELL, y // CELL) for (x, y) in blocked_ground}
     walk = [''.join('#' if (c, r) in cells else ch for c, ch in enumerate(row)) for r, row in enumerate(walk)]
     seen = reachable(walk, stands[start])
@@ -1163,7 +1201,7 @@ def build(name: str, fn, start: str):
     if preview:
         prev = Canvas(W, H)
         prev.paste(cv, 0, 0)
-        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] in ('steam_puff', 'drone') else 0)):
+        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] in OVERHEAD else 0)):
             prev.paste(sprite_map[key], x, y)
         if name == 'neon':
             rain(prev)
