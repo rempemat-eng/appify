@@ -27,6 +27,7 @@ import style  # noqa: E402
 import world_props as wp  # noqa: E402
 import worlds  # noqa: E402
 from materials import G, P, STONE, WOOD, SLATE, RED, MATERIALS  # noqa: E402
+import valley_props as vp  # noqa: E402
 import steampunk_props as sp  # noqa: E402
 import cyber_props as cp  # noqa: E402
 import western_props as wsp  # noqa: E402
@@ -241,6 +242,7 @@ def sprites() -> dict[str, Canvas]:
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
                   'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant(),
                   'bunting': bunting(), 'cat': cat()})
+    items.update(vp.props())
     items.update(sp.props())
     items.update(cp.props())
     items.update(wsp.props())
@@ -1163,6 +1165,101 @@ def lumen(frame: int = 0):
     return cv, objects, stands
 
 
+def riverside(frame: int = 0):
+    """The Riverside, east of the garden: the garden's stream comes in at the west edge
+    exactly where it leaves the garden (same line, width and bluff), and widens as it
+    runs east into a slow river. The watermill stands on the north bank with its wheel
+    in the race, willows lean over the south bank, reeds and lily pads fill the
+    shallows, a heron fishes, and stepping stones cross where it is still narrow."""
+    WTRm, SAND = MATERIALS['water'], MATERIALS['sand']
+    cv = Canvas(W, H)
+    worlds.grass(cv, frame)
+    OFF = meadow.W  # this zone continues the garden's x axis
+
+    def centre(x):
+        return meadow.stream_centre(x + OFF) + x * 0.06
+
+    def half(x):
+        return 9 + (smooth_noise(x + OFF, 0, 13, 91) - 0.5) * 2.4 + (x / W) ** 1.4 * 18
+
+    river = {(x, y) for x in range(W) for y in range(int(centre(x) - half(x)), int(centre(x) + half(x)) + 1)}
+    top = {x: min(y for (xx, y) in river if xx == x) for x in range(W)}
+    bluff = {(x, y) for x in range(W) for y in range(top[x] - (7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)), top[x])}
+    for (x, y) in river:  # the south bank: a sandy lip
+        pass
+    for x in range(W):
+        bot = max(y for (xx, y) in river if xx == x)
+        for k in range(1, 3 + int(x / 80)):
+            cv.set(x, bot + k, SAND[1] if noise2(x, k, 411) < 0.8 else SAND[2])
+        cv.set(x, bot + 1, SAND[0])
+    for x in range(W):  # the north bank's bluff, as in the garden
+        h = top[x] - min(y for (xx, y) in bluff if xx == x)
+        col = (x + OFF + int(noise2((x + OFF) // 6, 1, 95) * 6)) % 6
+        si = (x + OFF + int(noise2((x + OFF) // 6, 1, 95) * 6)) // 6
+        for k in range(h):
+            y = top[x] - h + k
+            if k == 0:
+                c = G[3]
+            elif k == 1:
+                c = G[2] if (x // 2) % 3 else G[1]
+            else:
+                row, r = (k - 2 + (si % 2) * 2) // 4, (k - 2 + (si % 2) * 2) % 4
+                base = 3 if noise2(si, row, 97) > 0.45 else 2
+                c = STONE[0] if col == 5 or r == 3 else STONE[base + 1] if col == 0 or r == 0 else STONE[base - 1] if col == 4 else STONE[base]
+                if k == h - 1:
+                    c = STONE[1] if col != 5 else STONE[0]
+            cv.set(x, y, c)
+    for (x, y) in river:
+        d = abs(y - centre(x)) / max(1, half(x))
+        c = WTRm[2] if d < 0.3 else WTRm[1]
+        if half(x) > 16 and d < 0.15:
+            c = WTRm[1] if (x + y) % 2 else WTRm[2]  # the deeper channel
+        k = y - top[x]
+        if k < 2:
+            c = WTRm[0]  # the bluff's shadow
+        elif k == 2 and (x // 2 + int(noise2(x // 4, 7, 98) * 3)) % 3:
+            c = WTRm[4] if x % 5 else WTRm[3]
+        cv.set(x, y, c)
+    for i in range(46):  # flowing highlights
+        x = int(noise2(i, 4, 412) * W)
+        y = int(centre(x) + (noise2(i, 5, 412) - 0.5) * half(x) * 1.2)
+        for t in range(5):
+            if (x + t, y) in river and (x + t, y - 1) in river:
+                cv.set(x + t, y, WTRm[3] if t < 4 else WTRm[2])
+    # stepping stones where it is still narrow
+    for k, sy in enumerate(range(int(centre(46) - half(46)) + 2, int(centre(46) + half(46)), 6)):
+        sx = 44 + (3 if k % 2 else -2)
+        for (x, y) in oval(sx, sy, 4, 2.5):
+            cv.set(x, y, STONE[4] if (x - sx) + (y - sy) < 0 else STONE[2])
+        for x in range(sx - 4, sx + 5):
+            cv.set(x, sy + 3, WTRm[4])
+    # the race beside the mill: a stone channel taking water to the wheel
+    for y in range(top[220] - 30, top[220] + 2):
+        for x in range(214, 236):
+            cv.set(x, y, WTRm[2] if 216 <= x < 234 else STONE[3] if x < 216 else STONE[1])
+    path = worlds.thick([(24, 222), (60, 214), (130, 236), (200, 230)], 9, seed=21)  # a lane to the mill (the garden has no path at this edge)
+    path |= worlds.thick([(30, 404), (70, 390), (160, 420), (W - 20, 430)], 9, seed=22)  # the south bank walk
+    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff})
+    objects = [
+        ('mill', 'water_mill', 140, top[220] - 96 + 6), ('willow-1', 'willow', 70, 330), ('willow-2', 'willow', 230, 360),
+        ('reeds-1', 'reeds', 110, int(centre(120) + half(120)) - 24), ('reeds-2', 'reeds', 280, int(centre(290) + half(290)) - 26),
+        ('reeds-3', 'reeds', 160, int(centre(170) - half(170)) + 2), ('heron', 'heron', 196, int(centre(206)) - 6),
+        ('lilies-1', 'lily_pads', 250, int(centre(265)) - 6), ('lilies-2', 'lily_pads', 120, int(centre(135)) + 2),
+        ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 260, 110), ('bush-1', 'bush', 40, 470),
+        ('bush-2', 'bush', 200, 500), ('tree-3', 'tree_autumn', 120, 470), ('bench', 'bench', 170, 440),
+        ('sack-1', 'sack', 120, 220), ('sack-2', 'sack', 108, 224), ('cart', 'cart', 80, 200),
+    ]
+    stones = {(x, y) for x in range(38, 52) for y in range(int(centre(46) - half(46)) - 2, int(centre(46) + half(46)) + 3)}
+    steps = {(x, y) for (x, y) in bluff if 38 <= x < 52}  # steps cut down the bluff to the stones
+    for (x, y) in steps:
+        cv.set(x, y, STONE[4] if (y - top[x]) % 3 == 0 else STONE[2] if x < 50 else STONE[1])
+    stones |= steps
+    blocked = (river | bluff) - stones
+    stands = {'garden-north': (8, 220), 'garden-south': (8, 400), 'mill': (190, 232), 'stones': (46, int(centre(46))),
+              'willows': (120, 430)}
+    return cv, objects, stands, blocked
+
+
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
@@ -1211,6 +1308,7 @@ def build(name: str, fn, start: str):
 
 def main():
     build('town', town, 'garden')
+    build('riverside', riverside, 'garden-north')
     build('junction', junction, 'platform')
     build('neon', neon_city, 'crossing')
     build('gulch', gulch, 'platform')
