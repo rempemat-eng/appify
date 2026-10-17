@@ -13,6 +13,7 @@ The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its 
 - Do not overwrite concurrent changes. If `main` advances, inspect its changes and incorporate them before marking your work ready. Preserve the other agent's fixes and verify the resulting source.
 - Never force-push shared work. Push with an expected-head check when using the GitHub connector. Do not push locally reconstructed Git history over the repository's real history.
 - The user merges pull requests. Do not merge, change branch protection or enable auto-merge unless asked.
+- Continuous work: Codex takes tasks from the Codex queue in `docs/vision/coherence-plan.md` and answers the Feedback written there; Claude keeps that queue stocked and, as Matt asked, verifies and merges quiet Codex PRs.
 
 ## Keep the design coherent
 
