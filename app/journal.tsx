@@ -16,7 +16,6 @@ import { BodyText } from '@/components/pixel-feedback';
 import { FrameFill, usePixelUnit } from '@/components/pixel-frame';
 import { PixelBar } from '@/components/game-hud';
 import { JournalEmpty, PostcardArt } from '@/components/visitors';
-import { goBackOrReplace } from '@/lib/navigation';
 import { CompanionMemories, MemoryReflection } from '@/components/companion-memories';
 
 const habitTint = {
@@ -300,7 +299,7 @@ export default function FieldJournal() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={{ gap: 16, flexGrow: 1 }}
           renderItem={({ item }) => <PostcardArt postcard={item} />}
-          ListEmptyComponent={<JournalEmpty onPress={() => router.replace('/missions')} />}
+          ListEmptyComponent={<JournalEmpty onPress={() => router.dismissTo('/missions')} />}
         />
       ) : (
         <ScrollView contentContainerStyle={{ gap: 14, paddingBottom: 12 }}>
@@ -358,11 +357,11 @@ export default function FieldJournal() {
             small
             light
             label="PLAN ANOTHER BREAK"
-            onPress={() => router.replace('/missions')}
+            onPress={() => router.dismissTo('/missions')}
           />
         </ScrollView>
       )}
-      <PixelButton label="BACK TO THE GARDEN" light onPress={() => goBackOrReplace('/')} />
+      <PixelButton label="BACK TO THE GARDEN" light onPress={() => router.dismissTo('/')} />
     </View>
   );
 }

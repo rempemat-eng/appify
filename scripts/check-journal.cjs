@@ -84,7 +84,7 @@ function fixture(request = 'visitors') {
     },
     'expo-router': {
       Stack: { Screen: 'StackScreen' },
-      router: { replace: (route) => control.routes.push(route) },
+      router: { dismissTo: (route) => control.routes.push(route) },
       useLocalSearchParams: () => control.params,
     },
     'heroui-native': { Tabs },
@@ -102,7 +102,6 @@ function fixture(request = 'visitors') {
     },
     '@/lib/visitors': catalogue,
     '@/lib/visitor-art': { visitorPixels: () => [] },
-    '@/lib/navigation': { goBackOrReplace: (route) => control.routes.push(route) },
     '@/components/cozy-ui': { CozyBackground: 'CozyBackground', CozyPanel: 'CozyPanel' },
     '@/components/game-ui': { Pet: 'Pet', PixelButton: 'PixelButton', PixelText: 'PixelText' },
     '@/components/pixel-feedback': { BodyText: 'BodyText' },
@@ -165,7 +164,24 @@ for (const request of ['postcards', 'visitors', 'memories', 'invalid']) {
   );
   check(!!back, 'Back stays outside scrolling collection content');
   back.props.onPress();
-  check(f.control.routes[0] === '/', 'Back preserves existing navigation helper');
+  check(f.control.routes[0] === '/', 'Back dismisses to the existing garden navigator');
+  if (tab === 'postcards') {
+    const empty = nodes(tree).find((node) => node.type === 'FlatList').props.ListEmptyComponent;
+    empty.props.onPress();
+    check(
+      f.control.routes.at(-1) === '/missions',
+      'empty postcards dismisses to Missions without pushing a second tab navigator',
+    );
+  }
+  if (tab === 'memories') {
+    nodes(tree)
+      .find((node) => node.props?.label === 'PLAN ANOTHER BREAK')
+      .props.onPress();
+    check(
+      f.control.routes.at(-1) === '/missions',
+      'memory break action uses the same dismiss-to route',
+    );
+  }
   f.state.player = {
     collection: [{ id: catalogue.visitors[0].id, metAt: 1, minutes: 15, befriendedAt: 2 }],
     postcards: [
