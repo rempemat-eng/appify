@@ -121,7 +121,7 @@ Split by lane, not by step. Claude draws and lays out; Codex builds the engineer
 
 **Claude's lane (do not edit):** `scripts/art/**`, `assets/**`, `docs/vision/**`, `lib/ui-tokens.ts`, `lib/layout.ts`, `lib/scene-art.ts`, `lib/pixel-scale.ts` (coming), and the visual components `pixel-frame`, `cozy-ui`, `game-hud`, `game-menus`, `game-ui`, `garden-world`, `world-scene`, `mission-departure`, `companion-picker` and `guardian-pet`. If a Codex task needs a change there, describe it in the PR and Claude makes it.
 
-**Codex's lane:** tests, CI, save data, store logic (`lib/game.ts` and its tests) and new non-visual modules.
+**Codex's lane:** tests, CI, save data, store logic (`lib/game.ts` and its tests), new non-visual modules, and `docs/codex/**`: play-test reports (`docs/codex/playtests/`) and idea proposals (`docs/codex/ideas/`). Ideas are proposals only: nothing in them is built until Matt approves it and Claude moves it into this plan.
 
 **How work moves:**
 
@@ -135,6 +135,7 @@ Split by lane, not by step. Claude draws and lays out; Codex builds the engineer
 - Codex runs on a schedule. Each run: answer feedback on its open PRs first (feedback is written in the PR or under "Feedback" below), otherwise take the next unclaimed task here, otherwise improve tests, performance or accessibility in its own lane.
 - Claude keeps at least three tasks queued, merges quiet Codex PRs after verifying them, and writes any requested changes under "Feedback" so the next Codex run sees them.
 - Tasks marked "waiting for Matt" are not started until this file says they are approved.
+- When there is no task to take, Codex play-tests the latest main (`npm run screens` plus a scripted walk through onboarding, garden, nap, menu, mission, battle and shop) and writes a dated report in `docs/codex/playtests/`: bugs it can fix in its own lane become PRs; visual and art findings go under "Feedback for Claude" in the report. Otherwise it fleshes out one idea in `docs/codex/ideas/<topic>.md` (problem, proposal, which existing system it extends, art it would need, risks, effort, open questions for Matt).
 
 **Done:** C1 screenshot harness (#11), C2 save migrations (#12), C3 mission places (#13), C4 native readiness (#14).
 
