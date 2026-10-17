@@ -57,7 +57,7 @@ export function BreakIntentionPicker({
   const chosen = intentions.find((intention) => intention.id === value);
   const choiceStyle = (selected: boolean, pressed: boolean) => ({
     minHeight: 44,
-    borderRadius: 10,
+    borderRadius: 0,
     borderWidth: 2,
     borderColor: selected ? c.leafOutline : c.outline,
     backgroundColor: selected ? c.sage : c.paper,
@@ -173,7 +173,7 @@ export function MemoryReflection({
             height: 48,
             borderWidth: 1,
             borderColor: c.outline,
-            borderRadius: 10,
+            borderRadius: 0,
             alignItems: 'center',
             justifyContent: 'center',
             backgroundColor: c.sage,
@@ -208,7 +208,7 @@ export function MemoryReflection({
           minHeight: 44,
           alignItems: 'center',
           justifyContent: 'center',
-          borderRadius: 10,
+          borderRadius: 0,
           borderWidth: 1,
           borderColor: c.outline,
           backgroundColor: c.paper,
@@ -270,7 +270,7 @@ export function CompanionMemories({
                   style={{
                     width: 44,
                     height: 48,
-                    borderRadius: 8,
+                    borderRadius: 0,
                     borderWidth: 1,
                     borderColor: c.outline,
                     alignItems: 'center',

@@ -22,7 +22,6 @@ import Svg, { Rect } from 'react-native-svg';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c, panelStyle } from '@/lib/cozy';
-import { artGeometry } from '@/lib/art-direction';
 import { backendConfigured } from '@/lib/bilt';
 import { CozyBackground } from '@/components/cozy-ui';
 import { FrameShape, frameTones, usePixelUnit } from '@/components/pixel-frame';
@@ -799,7 +798,7 @@ export function Meter({
       accessibilityValue={{ min: 0, max, now: value }}
       style={{
         height,
-        borderRadius: artGeometry.tagRadius,
+        borderRadius: 0,
         borderWidth: 1,
         borderColor: c.outline,
         backgroundColor: c.body,
@@ -809,7 +808,7 @@ export function Meter({
       <View
         style={{
           height: '100%',
-          borderRadius: 3,
+          borderRadius: 0,
           width: `${Math.max(0, Math.min(100, (value / max) * 100))}%`,
           backgroundColor: color,
         }}
@@ -843,7 +842,7 @@ export function StatusChip({ player, compact = false }: { player: Player; compac
         paddingVertical: compact ? 6 : 8,
         minHeight: compact ? 44 : undefined,
         maxWidth: '100%',
-        borderRadius: artGeometry.tagRadius,
+        borderRadius: 0,
         backgroundColor: color,
       }}
     >
@@ -940,7 +939,7 @@ export function GameHeader() {
             style={{
               width: 44,
               height: 44,
-              borderRadius: artGeometry.controlRadius,
+              borderRadius: 0,
               backgroundColor: c.sage,
               alignItems: 'center',
               justifyContent: 'center',
@@ -955,7 +954,7 @@ export function GameHeader() {
                 bottom: 4,
                 width: 4,
                 height: 4,
-                borderRadius: 2,
+                borderRadius: 0,
                 backgroundColor: live || !backendConfigured ? c.moss : c.error,
               }}
             />
@@ -1000,7 +999,7 @@ export const styles = {
     padding: 16,
     fontSize: 15,
     minHeight: 52,
-    borderRadius: artGeometry.controlRadius,
+    borderRadius: 0,
   },
   section: { gap: 12 },
 } satisfies Record<string, TextStyle | ViewStyle>;

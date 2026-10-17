@@ -11,7 +11,6 @@ import { router, useIsFocused } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ArrowUp, ArrowDown } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
-import { artGeometry } from '@/lib/art-direction';
 import { backendConfigured } from '@/lib/bilt';
 import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
@@ -229,7 +228,7 @@ export function MissionsScreen() {
                   fontSize: 12,
                   paddingHorizontal: 8,
                   paddingVertical: 2,
-                  borderRadius: artGeometry.tagRadius,
+                  borderRadius: 0,
                   overflow: 'hidden',
                   backgroundColor: c.rest,
                 }}
@@ -361,7 +360,7 @@ export function ShopScreen() {
                     right: 8,
                     fontSize: 10,
                     paddingHorizontal: 6,
-                    borderRadius: artGeometry.tagRadius,
+                    borderRadius: 0,
                     overflow: 'hidden',
                     backgroundColor: equipped ? c.moss : c.body,
                     color: equipped ? c.paper : c.ink,
@@ -577,7 +576,7 @@ export function ArenaScreen() {
   const header = (
     <View style={{ gap: 12 }}>
       <PlayPause />
-      <PixelText style={{ fontSize: 20 }}>{'LESS SCROLL.\nMORE GLORY.'}</PixelText>
+      <PixelText style={{ fontSize: 20 }}>{'A FRIENDLY\nSPAR.'}</PixelText>
       <BodyText style={{ fontSize: 12 }}>
         {backendConfigured ? `RAIDS LEFT TODAY: ${Math.max(0, 3 - raids)}` : 'PRACTICE ARENA'}
       </BodyText>

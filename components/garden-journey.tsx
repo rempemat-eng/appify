@@ -93,7 +93,7 @@ export function GardenJourney({
           aria-hidden
           accessibilityElementsHidden
           importantForAccessibility="no-hide-descendants"
-          style={{ padding: 6, borderRadius: 10, backgroundColor: c.sage }}
+          style={{ padding: 6, borderRadius: 0, backgroundColor: c.sage }}
         >
           <PixelProp kind="tree" size={32} />
         </View>

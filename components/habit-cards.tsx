@@ -88,7 +88,7 @@ export function HabitCard({
     <View
       style={{
         ...panelStyle,
-        borderRadius: 12,
+        borderRadius: 0,
         minHeight: 168,
         borderColor:
           guided || selected
@@ -126,7 +126,7 @@ export function HabitCard({
           top: 4,
           width: 28,
           height: 28,
-          borderRadius: 14,
+          borderRadius: 0,
           backgroundColor: c.paper,
           borderWidth: 1,
           borderColor: c.outline,
@@ -146,7 +146,7 @@ export function HabitCard({
           style={{
             width: 56,
             height: 56,
-            borderRadius: 8,
+            borderRadius: 0,
             borderWidth: 2,
             borderColor: c.outline,
             backgroundColor: c.body,
@@ -209,7 +209,7 @@ function CardShine({ gold }: { gold: boolean }) {
   return (
     <View
       pointerEvents="none"
-      style={{ position: 'absolute', inset: 0, borderRadius: 12, overflow: 'hidden' }}
+      style={{ position: 'absolute', inset: 0, borderRadius: 0, overflow: 'hidden' }}
     >
       <Animated.View style={[{ width: 36, height: '140%', top: -20 }, motion]}>
         <LinearGradient

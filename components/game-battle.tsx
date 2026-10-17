@@ -482,7 +482,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                 feedback('select');
               }}
               style={{
-                borderRadius: 14,
+                borderRadius: 0,
                 minHeight: 44,
                 minWidth: 44,
                 flexDirection: 'row',

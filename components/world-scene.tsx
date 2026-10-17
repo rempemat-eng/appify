@@ -308,7 +308,7 @@ export function WorldPreview({
       onLayout={(e) => setWidth(Math.round(e.nativeEvent.layout.width))}
       style={{
         height: frame ? frame.height + 4 : height,
-        borderRadius: 14,
+        borderRadius: 0,
         overflow: 'hidden',
         borderWidth: 2,
         borderColor: '#2A2421',

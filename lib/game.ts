@@ -1470,7 +1470,11 @@ export const gameStore = create<Game>((set, get) => ({
       battle: null,
       // Results are presented by BattleScreen; settlement must not open a second toast.
       message: null,
-      voice: won ? (Math.random() < 0.5 ? 'gg ez' : "that's what doomscrolling gets you.") : null,
+      voice: won
+        ? Math.random() < 0.5
+          ? 'good match! dave says thanks for the practice.'
+          : 'nicely played. even dave had fun.'
+        : null,
     });
     changed();
     feedback(won ? 'success' : 'error');

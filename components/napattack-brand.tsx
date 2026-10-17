@@ -155,7 +155,7 @@ export function NapAttackSplash({ onFinish }: { onFinish: (done: boolean) => voi
       <NapAttackWordmark />
       <SleepingGrassling />
       <Text style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 15, color: c.ink }}>
-        nap to grow. wake to raid.
+        nap to grow. wake to play.
       </Text>
     </Animated.View>
   );

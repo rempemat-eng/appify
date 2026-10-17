@@ -19,7 +19,6 @@ import Animated, {
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c, panelStyle } from '@/lib/cozy';
-import { artGeometry } from '@/lib/art-direction';
 import { PixelProp } from '@/components/pixel-scenes';
 import type { PropKind } from '@/lib/scene-art';
 export function BodyText({ style, ...props }: TextProps) {
@@ -182,7 +181,7 @@ function GrassDelta({ amount }: { amount: number }) {
           top: 0,
           flexDirection: 'row',
           backgroundColor: c.paper,
-          borderRadius: 12,
+          borderRadius: 0,
           padding: 3,
           zIndex: 10,
         },
@@ -222,7 +221,7 @@ export function PixelTabIcon({
           width: 40,
           height: 34,
           opacity: focused ? 1 : 0.65,
-          borderRadius: artGeometry.controlRadius,
+          borderRadius: 0,
           alignItems: 'center',
           justifyContent: 'center',
           backgroundColor: focused ? c.positive : c.transparent,

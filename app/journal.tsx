@@ -100,7 +100,7 @@ export default function FieldJournal() {
             accessibilityValue={{ min: 0, max: visitors.length, now: friendCount }}
             style={{
               height: 10,
-              borderRadius: 999,
+              borderRadius: 0,
               borderWidth: 2,
               borderColor: c.outline,
               backgroundColor: c.body,
@@ -125,9 +125,9 @@ export default function FieldJournal() {
         }}
       >
         <Tabs.List
-          style={{ backgroundColor: c.body, borderRadius: 14, borderWidth: 2, borderColor: c.ink }}
+          style={{ backgroundColor: c.body, borderRadius: 0, borderWidth: 2, borderColor: c.ink }}
         >
-          <Tabs.Indicator style={{ borderRadius: 14, backgroundColor: c.paper }} />
+          <Tabs.Indicator style={{ borderRadius: 0, backgroundColor: c.paper }} />
           <Tabs.Trigger value="visitors">
             <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
               VISITORS
@@ -218,7 +218,7 @@ export default function FieldJournal() {
                       style={{
                         width: 6,
                         height: 6,
-                        borderRadius: 3,
+                        borderRadius: 0,
                         backgroundColor: i < dots ? tint.edge : c.faded,
                       }}
                     />
@@ -253,7 +253,7 @@ export default function FieldJournal() {
                 <View
                   style={{
                     minHeight: 25,
-                    borderRadius: 999,
+                    borderRadius: 0,
                     paddingHorizontal: 8,
                     paddingVertical: 3,
                     flexDirection: 'row',

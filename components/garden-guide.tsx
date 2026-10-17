@@ -49,7 +49,7 @@ export function GardenTip({
     <View
       style={[
         {
-          borderRadius: 14,
+          borderRadius: 0,
           backgroundColor: c.paper,
           borderWidth: 2,
           borderColor: c.outline,
@@ -162,7 +162,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
           <View
             style={{
               minHeight: 52,
-              borderRadius: 14,
+              borderRadius: 0,
               borderWidth: 2,
               borderColor: c.outline,
               padding: 12,

@@ -18,7 +18,6 @@ import {
   usePixelUnit,
   type FrameToneName,
 } from '@/components/pixel-frame';
-import { artGeometry } from '@/lib/art-direction';
 import { useReducedMotion } from '@/lib/motion';
 
 export function CozyBackground() {
@@ -37,10 +36,7 @@ export function PaperFinish() {
       accessible={false}
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      style={[
-        StyleSheet.absoluteFill,
-        { borderRadius: artGeometry.panelRadius - 2, overflow: 'hidden' },
-      ]}
+      style={[StyleSheet.absoluteFill, { borderRadius: 0 - 2, overflow: 'hidden' }]}
     >
       <View
         style={{
@@ -165,7 +161,7 @@ export function CozySheet({
           minHeight: 44,
           width: 80,
           alignSelf: 'center',
-          borderRadius: 12,
+          borderRadius: 0,
           alignItems: 'center',
           justifyContent: 'center',
           gap: 4,

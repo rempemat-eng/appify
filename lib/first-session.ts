@@ -2,7 +2,7 @@ export const gardenTips = {
   phone: { control: 'Take a nap', text: "take a nap. put your phone down and i'll grow." },
   wake: {
     control: 'Garden status',
-    text: "while we napped, nobody could touch our garden. now we're awake, raiders can come.",
+    text: 'welcome back! the garden stayed safe while we napped. it is open to visitors again now.',
   },
   arena: {
     control: 'Pair and spar',

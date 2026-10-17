@@ -133,7 +133,7 @@ export function PostcardArt({ postcard }: { postcard: Postcard }) {
           padding: 6,
           borderWidth: 1,
           borderColor: c.inset,
-          borderRadius: 6,
+          borderRadius: 0,
         }}
       >
         <Image
@@ -398,7 +398,7 @@ export function WelcomeBack() {
                       accessibilityLabel={`${cards[group.id].name}: ${group.count} earned`}
                       style={{
                         alignSelf: 'center',
-                        borderRadius: 999,
+                        borderRadius: 0,
                         paddingHorizontal: 10,
                         paddingVertical: 3,
                         overflow: 'hidden',

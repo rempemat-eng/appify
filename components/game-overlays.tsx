@@ -117,7 +117,7 @@ function Onboarding() {
       >
         <View style={{ gap: 16 }}>
           <NapAttackWordmark />
-          <BodyText style={{ fontSize: 15 }}>nap to grow. wake to raid.</BodyText>
+          <BodyText style={{ fontSize: 15 }}>nap to grow. wake to play.</BodyText>
         </View>
         {step === 0 ? (
           <>
@@ -142,7 +142,7 @@ function Onboarding() {
                     }}
                     accessibilityState={{ selected: picked && species === s }}
                     style={{
-                      borderRadius: 14,
+                      borderRadius: 0,
                       alignItems: 'center',
                       flex: 1,
                       minHeight: 100,
@@ -346,7 +346,7 @@ function ScreenOff({
               fontSize: 13,
               lineHeight: 24,
               backgroundColor: c.night,
-              borderRadius: 14,
+              borderRadius: 0,
               padding: 8,
             }}
           >
@@ -378,7 +378,7 @@ function ScreenOff({
                 minHeight: 44,
                 paddingHorizontal: 16,
                 paddingVertical: 10,
-                borderRadius: 22,
+                borderRadius: 0,
                 borderWidth: 1,
                 borderColor: c.napOutline,
                 backgroundColor: c.night,
@@ -403,7 +403,7 @@ function ScreenOff({
               style={{
                 minWidth: 44,
                 minHeight: 44,
-                borderRadius: 22,
+                borderRadius: 0,
                 backgroundColor: c.night,
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -422,7 +422,7 @@ function ScreenOff({
               style={{
                 color: c.paper,
                 backgroundColor: c.night,
-                borderRadius: 14,
+                borderRadius: 0,
                 padding: 12,
                 fontSize: 12,
                 textAlign: 'center',
@@ -461,7 +461,7 @@ function ScreenOff({
               {!quiet && napWidth > 0 && (
                 <View
                   style={{
-                    borderRadius: 18,
+                    borderRadius: 0,
                     overflow: 'hidden',
                     borderWidth: 2,
                     borderColor: c.napOutline,
@@ -484,7 +484,7 @@ function ScreenOff({
               {!quiet && napWidth > 0 && (
                 <View
                   style={{
-                    borderRadius: 18,
+                    borderRadius: 0,
                     overflow: 'hidden',
                     borderWidth: 2,
                     borderColor: c.napOutline,
@@ -521,7 +521,7 @@ function ScreenOff({
               <View
                 style={{
                   padding: 8,
-                  borderRadius: 14,
+                  borderRadius: 0,
                   borderWidth: 2,
                   borderColor: c.gold,
                   backgroundColor: c.night,
@@ -561,7 +561,7 @@ function ScreenOff({
               padding: 16,
               borderWidth: 2,
               borderColor: c.gold,
-              borderRadius: 14,
+              borderRadius: 0,
               backgroundColor: c.night,
             }}
           >

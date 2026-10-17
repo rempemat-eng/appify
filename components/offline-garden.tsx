@@ -68,7 +68,7 @@ export function PlayMeter() {
         style={{
           width: 52,
           height: 3,
-          borderRadius: 2,
+          borderRadius: 0,
           overflow: 'hidden',
           backgroundColor: c.faded,
         }}
@@ -114,12 +114,12 @@ export function GardenProgress() {
         accessibilityRole="progressbar"
         accessibilityLabel={`Daily goal ${progress.complete ? 'complete' : 'progress'}: ${progress.total} simulated MIN today; goal 120 simulated MIN`}
         accessibilityValue={{ min: 0, max: 120, now: progress.value }}
-        style={{ height: 6, borderRadius: 3, backgroundColor: c.faded }}
+        style={{ height: 6, borderRadius: 0, backgroundColor: c.faded }}
       >
         <View
           style={{
             height: 6,
-            borderRadius: 3,
+            borderRadius: 0,
             width: `${progress.percent}%`,
             backgroundColor: c.positive,
           }}

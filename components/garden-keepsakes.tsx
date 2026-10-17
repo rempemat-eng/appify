@@ -201,7 +201,7 @@ export function GardenKeepsakeShelf({ memories, onOpen }: GardenKeepsakeShelfPro
                     backgroundColor: pressed ? c.sage : c.paper,
                     borderColor: c.outline,
                     borderWidth: 1,
-                    borderRadius: 10,
+                    borderRadius: 0,
                   })}
                 >
                   <MemoryStamp intention={keepsake.intention} size={24} />
@@ -290,7 +290,7 @@ export function GardenKeepsakeSheet({ memory, onClose, onJournal }: GardenKeepsa
                     height: 112,
                     alignItems: 'center',
                     justifyContent: 'center',
-                    borderRadius: 18,
+                    borderRadius: 0,
                     borderWidth: 2,
                     borderColor: c.outline,
                     backgroundColor: keepsake.tint,
@@ -321,7 +321,7 @@ export function GardenKeepsakeSheet({ memory, onClose, onJournal }: GardenKeepsa
                     padding: 12,
                     gap: 5,
                     backgroundColor: c.sage,
-                    borderRadius: 10,
+                    borderRadius: 0,
                   }}
                 >
                   <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>

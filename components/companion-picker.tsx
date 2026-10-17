@@ -164,7 +164,7 @@ export function CompanionPicker({
                         right: 0,
                         bottom: 0,
                         zIndex: 1,
-                        borderRadius: 12,
+                        borderRadius: 0,
                         borderWidth: 2,
                         borderColor: pressed ? c.leafOutline : c.transparent,
                       })}

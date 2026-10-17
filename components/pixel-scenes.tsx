@@ -131,7 +131,7 @@ export function PixelScene({
         {
           height,
           overflow: 'hidden',
-          borderRadius: 12,
+          borderRadius: 0,
           borderWidth: 2,
           borderColor: c.ink,
           backgroundColor: sceneSkyColors[phase],
