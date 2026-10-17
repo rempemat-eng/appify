@@ -53,7 +53,7 @@ export function FriendCode({ code }: { code: string }) {
       <BodyText
         selectable
         accessibilityLabel={`Your friend code: ${code}`}
-        style={{ fontSize: 28, fontFamily: 'Nunito_800ExtraBold', color: c.ink }}
+        style={{ fontSize: 28, fontFamily: 'PixelifySans_700Bold', color: c.ink }}
       >
         {code}
       </BodyText>

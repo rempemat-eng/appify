@@ -70,7 +70,7 @@ export function GardenTip({
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         <BodyText
           accessibilityLiveRegion="polite"
-          style={{ flex: 1, fontFamily: 'Nunito_600SemiBold', fontSize: 12, lineHeight: 18 }}
+          style={{ flex: 1, fontFamily: 'PixelifySans_500Medium', fontSize: 12, lineHeight: 18 }}
         >
           {gardenTips[id].text}
         </BodyText>
@@ -170,7 +170,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
             }}
           >
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-              <BodyText style={{ flex: 1, fontFamily: 'Nunito_800ExtraBold' }}>
+              <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
                 Reduce motion · {preference ? 'ON' : 'OFF'}
               </BodyText>
               <Switch
@@ -195,7 +195,7 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
                 }}
               />
             </View>
-            <BodyText style={{ fontFamily: 'Nunito_600SemiBold' }}>
+            <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
               {reduced
                 ? 'Motion reduced. Your device setting is also respected.'
                 : 'Normal decorative motion and text delays are on.'}
@@ -205,11 +205,11 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
             <View key={heading} style={{ gap: 6 }}>
               <BodyText
                 accessibilityRole="header"
-                style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}
+                style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}
               >
                 {heading}
               </BodyText>
-              <BodyText style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 14, lineHeight: 21 }}>
+              <BodyText style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 14, lineHeight: 21 }}>
                 {text}
               </BodyText>
             </View>
@@ -217,13 +217,13 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
           {tips.length > 0 && (
             <BodyText
               accessibilityRole="header"
-              style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}
+              style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}
             >
               Your garden tips
             </BodyText>
           )}
           {Array.from(new Set(tips)).map((id) => (
-            <BodyText key={id} style={{ fontFamily: 'Nunito_600SemiBold' }}>
+            <BodyText key={id} style={{ fontFamily: 'PixelifySans_500Medium' }}>
               {gardenTips[id].text}
             </BodyText>
           ))}

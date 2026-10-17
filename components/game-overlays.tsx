@@ -31,7 +31,6 @@ import { WorldScene } from '@/components/world-scene';
 import { PixelScene } from '@/components/pixel-scenes';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { useReducedMotion } from '@/lib/motion';
-import { useGardenView } from '@/lib/garden-view';
 import { breakIntentionLabel } from '@/lib/companion-memories';
 import { topGameOverlay } from '@/lib/overlay-priority';
 import Animated, { FadeIn } from 'react-native-reanimated';
@@ -234,7 +233,6 @@ function Onboarding() {
   );
 }
 function ScreenOff() {
-  const [gardenView] = useGardenView();
   const [skip, setSkip] = useState(false);
   const [helpOpen, setHelpOpen] = useState(false);
   const [quiet, setQuiet] = useState(false);
@@ -378,7 +376,7 @@ function ScreenOff() {
                 justifyContent: 'center',
               }}
             >
-              <BodyText style={{ color: c.paper, fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>
+              <BodyText style={{ color: c.paper, fontFamily: 'PixelifySans_700Bold', fontSize: 12 }}>
                 QUIET VIEW · {quiet ? 'ON' : 'OFF'}
               </BodyText>
             </Pressable>
@@ -482,8 +480,9 @@ function ScreenOff() {
                 >
                   <GardenWorld
                     memories={memories}
-                    view={gardenView}
                     width={napWidth - 4}
+                    // a window onto the hut and bed, not the whole tall garden
+                    viewportHeight={Math.round((napWidth - 4) * 0.62)}
                     player={p}
                     grumpy={false}
                     sleepy={false}
@@ -524,7 +523,7 @@ function ScreenOff() {
           )}
           {m ? (
             <>
-              <BodyText style={{ color: c.paper, fontFamily: 'Nunito_600SemiBold' }}>
+              <BodyText style={{ color: c.paper, fontFamily: 'PixelifySans_500Medium' }}>
                 {m.duration} simulated offline MIN · {m.reward} GRASS on completion
               </BodyText>
             </>

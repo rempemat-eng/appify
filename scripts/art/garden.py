@@ -14,12 +14,14 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise  # noqa: E402
 from garden_decor import reading_nook, watering_can, frog  # noqa: E402
+import garden_meadow as meadow  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'garden')
 os.makedirs(OUT, exist_ok=True)
 
-W, H = 192, 176  # native map size (12 x 11 tiles of 16px)
+W, H = meadow.W, meadow.H  # native map: the clearing (y 0-176) plus the meadow below
+TOP = meadow.TOP  # forest band above y = 0
 SCALE = 6
 
 # ---- palette -------------------------------------------------------------
@@ -44,6 +46,7 @@ PATH |= thick_path([(96, 96), (80, 86), (60, 80), (44, 76)], 7.5, 2)    # to the
 PATH |= thick_path([(98, 94), (118, 86), (140, 82), (152, 80)], 7.5, 3)  # to Moss's stall
 PATH |= thick_path([(98, 88), (104, 78), (106, 67)], 3.5, 4)  # a quiet reading corner
 PATH |= disc(96, 98, 13)  # little plaza at the fork
+PATH |= meadow.meadow_path(thick_path)  # down across the bridge, through the meadow
 
 POND_C = (42, 132)
 POND = {(x, y) for (x, y) in oval(POND_C[0], POND_C[1], 27, 16)
@@ -147,14 +150,16 @@ def draw_terrain(frame: int) -> Canvas:
         cv.hline(sx + 1, sy - 1, 3, STONE[3])
         cv.set(sx + 1, sy - 2, STONE[4])
 
+    meadow.draw_stream(cv, phase)
+
     # path: dirt with dark rim, grass overhang and pebbles
     for (x, y) in PATH:
-        if not (0 <= x < W and 0 <= y < H):
+        if not (0 <= x < W and 0 <= y < H) or (x, y) in meadow.STREAM:
             continue
         n = smooth_noise(x, y, 6, 40)
         col = P[2] if n < 0.74 else P[3]
         cv.set(x, y, col)
-    for (x, y) in PATH:
+    for (x, y) in PATH - meadow.STREAM:
         edge_up = (x, y - 1) not in PATH
         edge = any((x + dx, y + dy) not in PATH for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
         if edge_up:
@@ -163,7 +168,7 @@ def draw_terrain(frame: int) -> Canvas:
         elif edge:
             cv.set(x, y, P[1])
     # grass overhang: little blades poking into the dirt along the edges
-    for (x, y) in PATH:
+    for (x, y) in PATH - meadow.STREAM:
         for dx, dy in ((0, -1), (1, 0), (-1, 0)):
             if (x + dx, y + dy) not in PATH and noise2(x, y, 44) < 0.33:
                 cv.set(x, y, G[3]); cv.set(x, y + 1, G[2]) if (x, y + 1) in PATH and dy == -1 else None
@@ -177,6 +182,9 @@ def draw_terrain(frame: int) -> Canvas:
     for i, y in enumerate(range(116, 168, 9)):
         x = 92 + (4 if i % 2 else 0)
         cv.set(x, y, P[1]); cv.set(x + 1, y, P[1]); cv.set(x, y + 1, P[1])
+
+    meadow.draw_beds(cv)
+    meadow.draw_lower_details(cv, PATH)
 
     # Raised beds have a lit rim, a shaded front face and individual plants.
     for bi, (bx, by, bw, bh) in enumerate(FLOWER_BEDS):
@@ -669,9 +677,27 @@ OBJECTS = [
     ('bush-2', 'bush', 4, 96, None),
     ('rock-1', 'rock0', 126, 150, None),
     ('rock-2', 'rock1', 70, 140, None),
-    ('fence-l', 'fence_l', 0, 162, None),
-    ('fence-r', 'fence_r', 114, 162, None),
-    ('gate', 'gate', 78, 147, 'arena'),
+    # the forest behind the HUD: a back row of pines
+    *[(f'pine-back-{i}', 'pine', -14 + i * 15, -44 + (i % 2) * 6, None) for i in range(15)],
+    # the lower garden: stream, bridge, meadow, orchard edge and the gate out
+    ('bridge', 'bridge', meadow.BRIDGE[0], meadow.BRIDGE[1], None),
+    ('meadow-sign', 'meadow_sign', 104, 230, 'meadow'),
+    ('tree-7', 'tree', -14, 168, None),
+    ('tree-8', 'tree_small', 172, 160, None),
+    ('bush-3', 'bush', 2, 226, None),
+    ('bush-4', 'bush', 174, 222, None),
+    ('tree-9', 'tree_autumn', 162, 300, None),
+    ('rock-3', 'rock0', 84, 236, None),
+    ('rock-4', 'rock1', 4, 322, None),
+    ('bush-5', 'bush', 46, 322, None),
+    ('bush-6', 'bush', 128, 322, None),
+    ('fence-l', 'fence_l', 0, meadow.FENCE_Y, None),
+    ('fence-r', 'fence_r', 114, meadow.FENCE_Y, None),
+    ('gate', 'gate', meadow.GATE_X, meadow.GATE_Y, 'arena'),
+    ('tree-10', 'tree', -10, 344, None),
+    ('tree-11', 'tree', 166, 346, None),
+    ('pine-low-0', 'pine', 30, 352, None),
+    ('pine-low-1', 'pine', 136, 354, None),
 ]
 
 
@@ -683,13 +709,20 @@ def main():
         'fence_l': fence_h(80), 'fence_r': fence_h(78), 'gate': gate(),
         'reading_nook': reading_nook(), 'watering_can': watering_can(), 'lantern': leaf_lantern(),
         'frog': frog(),
+        'bridge': meadow.bridge(), 'meadow_sign': meadow.meadow_sign(),
     }
+    growth = meadow.growth_sprites()
+    growth_dir = os.path.join(OUT, 'growth')
+    os.makedirs(growth_dir, exist_ok=True)
+    for key, g in growth.items():
+        g.save(os.path.join(growth_dir, f'{key}.png'), SCALE)
+    meadow.draw_top_band().save(os.path.join(OUT, 'ground-top.png'), SCALE)
     for frame in range(4):
         terrain = draw_terrain(frame)
         # bake soft shadows for every object into the terrain
         for (_id, key, x, y, _a) in OBJECTS:
             s = sprites[key]
-            if key.startswith('fence') or key == 'pine':
+            if key.startswith('fence') or key in ('pine', 'bridge'):
                 continue
             terrain.shadow(x + s.w / 2 + 2, y + s.h - 1, s.w * 0.42, max(2.0, s.h * 0.09))
         terrain.save(os.path.join(OUT, f'ground-{frame}.png'), SCALE)
@@ -702,8 +735,18 @@ def main():
     blocked = set()
     for (x, y) in POND:
         blocked.add((x // cell, y // cell))
+    bx, by, bw, bh = meadow.BRIDGE
+    for (x, y) in meadow.STREAM | meadow.STREAM_BANK:
+        if not (bx + 5 <= x < bx + bw - 5):  # only the bridge deck crosses the water
+            blocked.add((x // cell, y // cell))
+    for (px, py) in meadow.PLOTS:
+        for yy in range(py, py + meadow.PLOT_H):
+            for xx in range(px, px + meadow.PLOT_W):
+                blocked.add((xx // cell, yy // cell))
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
+        if key == 'bridge' or y + s.h <= 0:
+            continue
         foot_h = 6 if key not in ('hut', 'stall') else 14
         for yy in range(y + s.h - foot_h, y + s.h):
             for xx in range(x + 2, x + s.w - 2):
@@ -712,7 +755,8 @@ def main():
     for r in range(rows):
         row = ''
         for c in range(cols):
-            edge = r < 7 or r >= rows - 4  # keep off the top tree line and bottom fence
+            # keep off the top tree line and out of the lower fence
+            edge = r < 7 or r * cell >= meadow.FENCE_Y - 2
             row += '.' if ((c, r) not in blocked and not edge) else '#'
         walk.append(row)
 
@@ -722,7 +766,8 @@ def main():
         'shop': {'x': 154, 'y': 86, 'label': "visit Moss's hat stall"},
         'missions': {'x': 112, 'y': 122, 'label': 'read the signpost to missions'},
         'feed': {'x': 92, 'y': 102, 'label': 'fill the food bowl'},
-        'arena': {'x': 96, 'y': 140, 'label': 'head out the gate to the arena'},
+        'arena': {'x': 96, 'y': meadow.FENCE_Y - 6, 'label': 'head out the gate to the arena'},
+        'meadow': {'x': 100, 'y': 258, 'label': 'see what is growing in the meadow'},
         'pond': {'x': 72, 'y': 126, 'label': 'look into the pond'},
         'read': {'x': 84, 'y': 70, 'label': 'settle into the reading nook'},
         'water': {'x': 166, 'y': 114, 'label': 'water the flower beds'},
@@ -732,7 +777,10 @@ def main():
     ts = [
         '// Generated by scripts/art/garden.py. Do not edit by hand.',
         '/* eslint-disable */',
-        f'export const GARDEN = {{ width: {W}, height: {H}, scale: {SCALE}, cell: {cell} }} as const;',
+        f'export const GARDEN = {{ width: {W}, height: {H}, top: {TOP}, scale: {SCALE}, cell: {cell}, fenceY: {meadow.FENCE_Y} }} as const;',
+        f'export const gardenPlots = {json.dumps([{"id": f"plot-{i}", "x": x, "y": y, "w": meadow.PLOT_W, "h": meadow.PLOT_H, "kind": k} for i, ((x, y), k) in enumerate(zip(meadow.PLOTS, meadow.PLOT_KINDS))], indent=2)} as const;',
+        f'export const gardenOrchard = {json.dumps([{"id": f"orchard-{i}", "x": x, "y": y} for i, (x, y) in enumerate(meadow.ORCHARD)], indent=2)} as const;',
+        f'export const growthSpriteSizes = {json.dumps({k: [v.w, v.h] for k, v in growth.items()}, indent=2)} as const;',
         f'export const gardenObjects = {json.dumps([{"id": i, "sprite": k, "x": x, "y": y, "w": sizes[k][0], "h": sizes[k][1], "action": a} for (i, k, x, y, a) in OBJECTS], indent=2)} as const;',
         f'export const gardenHotspots = {json.dumps(hotspots, indent=2)} as const;',
         f'export const gardenWalk: readonly string[] = {json.dumps(walk, indent=2)};',
@@ -741,11 +789,32 @@ def main():
     with open(os.path.join(ROOT, 'lib', 'garden-map.ts'), 'w') as f:
         f.write('\n'.join(ts))
 
+    # Static imports for the meadow's growth stages (bundlers need literal paths).
+    names = sorted(growth)
+    camel = lambda k: ''.join(part.capitalize() if i else part for i, part in enumerate(k.split('_')))  # noqa: E731
+    lines = ['// Generated by scripts/art/garden.py. Do not edit by hand.', '/* eslint-disable */',
+             "import type { ImageSourcePropType } from 'react-native';"]
+    lines += [f"import {camel(k)} from '@/assets/garden/growth/{k}.png';" for k in names]
+    lines.append('export const growthImages: Record<string, ImageSourcePropType> = {')
+    lines += [f'  {k}: {camel(k)},' for k in names]
+    lines.append('};')
+    lines.append('')
+    with open(os.path.join(ROOT, 'lib', 'garden-growth-assets.ts'), 'w') as f:
+        f.write('\n'.join(lines))
+
     # preview composite for review
-    prev = draw_terrain(0)
+    prev = Canvas(W, H + TOP)
+    prev.paste(meadow.draw_top_band(), 0, 0)
+    prev.paste(draw_terrain(0), 0, TOP)
     for (_id, key, x, y, _a) in sorted(OBJECTS, key=lambda o: o[3] + sprites[o[1]].h):
-        prev.paste(sprites[key], x, y)
-    prev.save('/tmp/garden-preview.png', 4)
+        prev.paste(sprites[key], x, y + TOP)
+    # preview the meadow fully grown
+    for (x, y), k in zip(meadow.PLOTS, meadow.PLOT_KINDS):
+        prev.paste(growth[f'plot_{k}_4'], x, y - 10 + TOP)
+    for i, (x, y) in enumerate(meadow.ORCHARD):
+        t = growth[f'orchard_{[4, 2, 1][i]}']
+        prev.paste(t, x - t.w // 2, y - t.h + TOP)
+    prev.save('/tmp/garden-preview.png', 3)
     print('ok', W, H, len(sprites), 'sprites')
 
 

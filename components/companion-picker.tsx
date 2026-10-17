@@ -59,10 +59,10 @@ export function CompanionPicker({
               />
             </View>
             <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
-              <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+              <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
                 YOUR COMPANION
               </BodyText>
-              <BodyText numberOfLines={1} style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+              <BodyText numberOfLines={1} style={{ fontFamily: 'PixelifySans_700Bold' }}>
                 {active.name}
               </BodyText>
               <BodyText style={{ fontSize: 12 }}>
@@ -143,7 +143,7 @@ export function CompanionPicker({
                       />
                       <BodyText
                         numberOfLines={1}
-                        style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}
+                        style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}
                       >
                         {option.name}
                       </BodyText>
@@ -174,7 +174,7 @@ export function CompanionPicker({
               </ScrollView>
               <View style={{ ...panelStyle, padding: 14, gap: 12, backgroundColor: tint }}>
                 <View style={{ gap: 4 }}>
-                  <BodyText style={{ fontSize: 18, fontFamily: 'Nunito_800ExtraBold' }}>
+                  <BodyText style={{ fontSize: 18, fontFamily: 'PixelifySans_700Bold' }}>
                     {preview.name}
                   </BodyText>
                   <BodyText style={{ fontSize: 12 }}>
@@ -183,17 +183,17 @@ export function CompanionPicker({
                 </View>
                 <BodyText>{preview.description}</BodyText>
                 <View style={{ gap: 4 }}>
-                  <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+                  <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
                     IN BATTLE
                   </BodyText>
                   <BodyText style={{ fontSize: 12 }}>{preview.battleNote}</BodyText>
                 </View>
               </View>
               <View style={{ gap: 6, paddingHorizontal: 2 }}>
-                <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+                <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
                   A LITTLE REAL-WORLD ADVENTURE
                 </BodyText>
-                <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+                <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>
                   {preview.invitation.title}
                 </BodyText>
                 <BodyText style={{ fontSize: 12 }}>{preview.invitation.body}</BodyText>

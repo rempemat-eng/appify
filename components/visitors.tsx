@@ -107,7 +107,7 @@ export function GardenVisitor({ active = true }: { active?: boolean }) {
         }}
         actionLabel={`Befriend ${v.name}, free`}
       />
-      <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>BEFRIEND</BodyText>
+      <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>BEFRIEND</BodyText>
       <BodyText style={{ fontSize: 11 }}>
         {waiting.expiresAt ? Math.max(0, Math.ceil((waiting.expiresAt - now) / 1000)) : 10} MIN
       </BodyText>
@@ -142,7 +142,7 @@ export function PostcardArt({ postcard }: { postcard: Postcard }) {
           style={{ width: 216, height: 150 }}
         />
       </View>
-      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>{place} POSTCARD</BodyText>
+      <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>{place} POSTCARD</BodyText>
       <BodyText>{new Date(postcard.at).toLocaleDateString()}</BodyText>
     </View>
   );
@@ -315,7 +315,7 @@ export function WelcomeBack() {
                 {hearted && <PixelBurst hearts skip={false} />}
               </View>
               <View style={{ flex: 1, gap: 8 }}>
-                <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+                <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>
                   {visitorInfo(reward.visitor).name} visited
                 </BodyText>
                 {waiting?.id === reward.visitor && !friend ? (
@@ -361,7 +361,7 @@ export function WelcomeBack() {
           )}
           {groups.length > 0 && (
             <>
-              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', textAlign: 'center' }}>
+              <BodyText style={{ fontFamily: 'PixelifySans_700Bold', textAlign: 'center' }}>
                 {reward.cards.length.toLocaleString()}{' '}
                 {reward.cards.length === 1 ? 'card' : 'cards'} earned
               </BodyText>
@@ -397,7 +397,7 @@ export function WelcomeBack() {
                         overflow: 'hidden',
                         backgroundColor: c.sage,
                         color: c.ink,
-                        fontFamily: 'Nunito_800ExtraBold',
+                        fontFamily: 'PixelifySans_700Bold',
                         fontSize: 12,
                         textAlign: 'center',
                       }}

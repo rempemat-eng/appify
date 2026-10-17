@@ -13,7 +13,7 @@ import { PixelProp } from '@/components/pixel-scenes';
 type JourneyAction = 'missions' | 'journal' | 'companions' | 'spar';
 type JourneyStep = { heading: string; body: string; label: string; action: JourneyAction };
 
-function nextGardenStep(player: Player): JourneyStep {
+export function nextGardenStep(player: Player): JourneyStep {
   const companion = companionProfile(player);
   const met = collectionOf(player).length;
   const friends = befriendedVisitorIds(player).length;
@@ -99,13 +99,13 @@ export function GardenJourney({
         </View>
         <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
           <BodyText
-            style={{ fontSize: 10, fontFamily: 'Nunito_800ExtraBold', color: c.leafOutline }}
+            style={{ fontSize: 10, fontFamily: 'PixelifySans_700Bold', color: c.leafOutline }}
           >
             {outingStep ? 'AROUND THE GARDEN' : `AN IDEA FROM ${companion.name.toUpperCase()}`}
           </BodyText>
           <BodyText
             accessibilityRole="header"
-            style={{ fontSize: 14, fontFamily: 'Nunito_800ExtraBold' }}
+            style={{ fontSize: 14, fontFamily: 'PixelifySans_700Bold' }}
           >
             {outingStep ? next.heading : companion.invitation.title}
           </BodyText>
@@ -138,7 +138,7 @@ export function GardenJourney({
           opacity: pressed ? 0.7 : 1,
         })}
       >
-        <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+        <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
           GARDEN TRAIL
         </BodyText>
         <Chevron size={16} color={c.ink} />
@@ -147,7 +147,7 @@ export function GardenJourney({
         <View style={{ gap: 10, paddingHorizontal: 2 }}>
           {!outingStep && (
             <View style={{ gap: 6 }}>
-              <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
+              <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
                 {next.heading}
               </BodyText>
               <BodyText style={{ fontSize: 12, lineHeight: 18 }}>{next.body}</BodyText>
@@ -169,7 +169,7 @@ export function GardenJourney({
             ],
           ].map(([title, body]) => (
             <View key={title} style={{ gap: 3 }}>
-              <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
+              <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
                 {title}
               </BodyText>
               <BodyText style={{ fontSize: 12, lineHeight: 18 }}>{body}</BodyText>
@@ -179,4 +179,17 @@ export function GardenJourney({
       )}
     </CozyPanel>
   );
+}
+
+/**
+ * The garden object that wears a "!" marker: only the first few steps point at
+ * a place in the world. Later invitations live in the menu's garden trail.
+ */
+export function gardenMarker(player: Player): 'missions' | 'mail' | null {
+  const met = collectionOf(player).length;
+  const friends = befriendedVisitorIds(player).length;
+  if (met === 0) return 'missions';
+  if (friends === 0) return 'mail';
+  if (postcardsOf(player).length === 0) return 'missions';
+  return null;
 }

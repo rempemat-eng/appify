@@ -40,7 +40,7 @@ export function PlayMeter() {
         gap: 1,
       }}
     >
-      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 10, lineHeight: 12 }}>
+      <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 10, lineHeight: 12 }}>
         PLAY LEFT
       </BodyText>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4, height: 18 }}>
@@ -60,7 +60,7 @@ export function PlayMeter() {
           <Rect x={3} y={3} width={2} height={2} fill={left ? c.focus : c.error} />
           <Rect x={2} y={6} width={4} height={1} fill={left ? c.focus : c.error} />
         </Svg>
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 14, lineHeight: 18 }}>
+        <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14, lineHeight: 18 }}>
           {clock(left)}
         </BodyText>
       </View>
@@ -107,7 +107,7 @@ export function GardenProgress() {
   const progress = dailyProgress(offline);
   return (
     <View style={{ gap: 6 }}>
-      <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
+      <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
         {progress.complete ? 'Daily goal complete' : `${progress.total} / 120 simulated MIN today`}
       </BodyText>
       <View
@@ -136,7 +136,7 @@ export function RecentBreaks() {
   const history = useGame((s) => s.recentBreaks);
   return (
     <View style={{ gap: 12, paddingTop: 12 }}>
-      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}>Recent breaks</BodyText>
+      <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}>Recent breaks</BodyText>
       {!history.length && (
         <View style={{ gap: 8 }}>
           <Moon color={c.ink} size={20} strokeWidth={2} />
@@ -150,7 +150,7 @@ export function RecentBreaks() {
           key={entry.id}
           style={{ gap: 4, paddingBottom: 12, borderBottomWidth: 1, borderBottomColor: c.outline }}
         >
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+          <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>
             {entry.mission
               ? (missions.find((m) => m.id === entry.mission)?.name ?? 'Mission')
               : 'Nap'}

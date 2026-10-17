@@ -52,10 +52,13 @@ export function DailyRhythmCard({
   active,
   open,
   onOpenChange,
+  showCard = true,
 }: {
   active: boolean;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  /** The game menu opens the planner without showing the summary card. */
+  showCard?: boolean;
 }) {
   const [plan, setPlan] = useState(freshRhythm);
   const [loaded, setLoaded] = useState(false);
@@ -98,6 +101,7 @@ export function DailyRhythmCard({
   const period = status.current ?? 'own';
   return (
     <>
+      {showCard && (
       <CozyPanel style={{ padding: 12, gap: 7 }}>
         <View style={styles.cardRow}>
           <View style={[styles.icon, { backgroundColor: periodColors[period] }]}>
@@ -169,6 +173,7 @@ export function DailyRhythmCard({
           </>
         )}
       </CozyPanel>
+      )}
       {open && (
         <RhythmEditor
           initial={plan}
@@ -424,7 +429,7 @@ function RhythmEditor({
 }
 
 const styles = StyleSheet.create({
-  bold: { fontFamily: 'Nunito_800ExtraBold' },
+  bold: { fontFamily: 'PixelifySans_700Bold' },
   caption: { fontSize: 12, lineHeight: 17 },
   cardRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   icon: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center', borderRadius: 12 },
@@ -460,7 +465,7 @@ const styles = StyleSheet.create({
     borderColor: c.outline,
     backgroundColor: c.highlight,
     color: c.ink,
-    fontFamily: 'Nunito_800ExtraBold',
+    fontFamily: 'PixelifySans_700Bold',
     fontSize: 18,
   },
 });

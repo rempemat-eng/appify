@@ -2,10 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
-  Modal,
   Platform,
-  Pressable,
-  ScrollView,
   TextInput,
   View,
   useWindowDimensions,
@@ -16,7 +13,7 @@ import { ArrowUp, ArrowDown } from 'lucide-react-native';
 import { cozy as c } from '@/lib/cozy';
 import { artGeometry } from '@/lib/art-direction';
 import { backendConfigured } from '@/lib/bilt';
-import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
+import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
 import { useReducedMotion } from '@/lib/motion';
 import { useAppActive } from '@/lib/app-active';
 import { bot, feedback, hats, missions, status, useGame, type Player } from '@/lib/game';
@@ -26,44 +23,43 @@ import { budgetVoice, dayKey } from '@/lib/offline-rules';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
 import { guardianPlayer, isVisitorId, visitorInfo } from '@/lib/visitors';
 import { FriendCode } from '@/components/friend-code';
-import { DailyRhythmCard } from '@/components/daily-rhythm';
 import { GuardianPet } from '@/components/guardian-pet';
-import { GardenVisitor, GuardianPicker } from '@/components/visitors';
+import { GardenVisitor } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
-import { Meter, Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
+import { Page, Pet, PixelButton, PixelText, StatusChip, styles } from '@/components/game-ui';
 import { PixelProp, PixelScene } from '@/components/pixel-scenes';
 import { GardenWorld } from '@/components/garden-world';
 import { WorldPreview } from '@/components/world-scene';
 import { isWorldId } from '@/lib/world-maps';
 import { worldCatalogue } from '@/lib/world-catalogue';
-import { useGardenView } from '@/lib/garden-view';
+import { openSheet, useUi } from '@/lib/ui';
 import {
-  breakIntentionLabel,
   type BreakIntention,
   type CompanionMemory,
 } from '@/lib/companion-memories';
 import { BreakIntentionPicker } from '@/components/companion-memories';
-import { GardenKeepsakeShelf, GardenKeepsakeSheet } from '@/components/garden-keepsakes';
-import { GardenJourney } from '@/components/garden-journey';
+import { GardenKeepsakeSheet } from '@/components/garden-keepsakes';
+import { gardenMarker } from '@/components/garden-journey';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
-import { CozyBackground, CozyPanel, CozySheet } from '@/components/cozy-ui';
+import { CozyBackground, CozyPanel } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
 import {
-  GardenProgress,
-  GardenStreak,
-  RecentBreaks,
   PlayPause,
   TogetherInvite,
   usePlayPaused,
 } from '@/components/offline-garden';
 const lines = {
   grumpy: ['my leaves could use a breather.', 'a quiet pause would be nice. the garden can wait.'],
-  exposed: ["we're exposed. i can hear the notifications.", 'put the phone down. trust me.'],
+  exposed: [
+    'the garden feels a little open. a nap would put the shield back up.',
+    'shall we rest for a bit? i will keep watch.',
+  ],
   care: ['a little time to settle in.', 'welcome home. have a look around.'],
-  idle: ["touch grass? i'll wait.", 'i am small but i am mighty'],
+  idle: ['the grass is lovely today. you could go and touch some.', 'i am small, but i am very good company.'],
 };
+// Idle chatter shows for one tick in four, so the garden is mostly quiet.
+const CHAT_TICK_MS = 6000;
 export function HomeScreen() {
-  const [gardenView, setGardenView] = useGardenView();
   const reduced = useReducedMotion();
   const focused = useIsFocused();
   const appActive = useAppActive();
@@ -75,6 +71,7 @@ export function HomeScreen() {
   const firstWake = useGame((s) => s.firstWake);
   const tips = useGame((s) => s.tips);
   const memories = useGame((s) => s.companionMemories);
+  const sheet = useUi((s) => s.sheet);
   const paused = usePlayPaused();
   const busy = useGame((s) =>
     Boolean(
@@ -99,62 +96,24 @@ export function HomeScreen() {
   const [lesson, setLesson] = useState({ key, id: candidate });
   if (lesson.key !== key) setLesson({ key, id: candidate });
   const coaching = busy ? null : lesson.id;
-  const [statsSheet, setStatsSheet] = useState({ focused, open: false });
-  if (statsSheet.focused !== focused) setStatsSheet({ focused, open: false });
-  const statsOpen = statsSheet.focused === focused && statsSheet.open;
-  const setStatsOpen = (open: boolean) => setStatsSheet({ focused, open });
-  const [companionSheet, setCompanionSheet] = useState({ focused, open: false });
-  if (companionSheet.focused !== focused) setCompanionSheet({ focused, open: false });
-  const companionsOpen = companionSheet.focused === focused && companionSheet.open;
-  const setCompanionsOpen = (open: boolean) => setCompanionSheet({ focused, open });
   const [keepsakeSheet, setKeepsakeSheet] = useState<{
     focused: boolean;
     memory: CompanionMemory | null;
   }>({ focused, memory: null });
   if (keepsakeSheet.focused !== focused) setKeepsakeSheet({ focused, memory: null });
   const openMemory = keepsakeSheet.focused === focused ? keepsakeSheet.memory : null;
-  const [rhythmSheet, setRhythmSheet] = useState({ focused, open: false });
-  if (rhythmSheet.focused !== focused) setRhythmSheet({ focused, open: false });
-  const rhythmOpen = rhythmSheet.focused === focused && rhythmSheet.open;
-  const setRhythmOpen = (open: boolean) => setRhythmSheet({ focused, open });
-  const napPlanKey = `${focused}-${p?.mode ?? ''}`;
-  const [napPlan, setNapPlan] = useState<{
-    key: string;
-    open: boolean;
-    intention: BreakIntention | null;
-  }>({ key: napPlanKey, open: false, intention: null });
-  if (napPlan.key !== napPlanKey) setNapPlan({ key: napPlanKey, open: false, intention: null });
-  const breakIdeaOpen = napPlan.key === napPlanKey && napPlan.open;
-  const napIntention = napPlan.key === napPlanKey ? napPlan.intention : null;
-  const startNap = () => useGame.getState().sleep(undefined, napIntention);
   const gardenActive =
-    focused &&
-    appActive &&
-    !busy &&
-    !statsOpen &&
-    !companionsOpen &&
-    !openMemory &&
-    !rhythmOpen &&
-    !breakIdeaOpen &&
-    p?.mode === 'awake';
+    focused && appActive && !busy && sheet === null && !openMemory && p?.mode === 'awake';
   useEffect(() => {
     if (coaching && gardenActive) useGame.getState().seeTip(coaching);
   }, [coaching, gardenActive]);
   const [crumbs, setCrumbs] = useState(false);
   const [line, setLine] = useState(0);
-  const raidId = useGame((s) => s.alerts[0]?.raid.id);
-  const [raidFeedback, setRaidFeedback] = useState({ raidId, slumped: Boolean(raidId) });
-  if (raidFeedback.raidId !== raidId) setRaidFeedback({ raidId, slumped: Boolean(raidId) });
-  useEffect(() => {
-    if (!raidId) return undefined;
-    const timer = setTimeout(() => setRaidFeedback({ raidId, slumped: false }), 10000);
-    return () => clearTimeout(timer);
-  }, [raidId]);
   useEffect(() => {
     if (reduced || !gardenActive) return undefined;
     const timer = setInterval(() => {
       setLine((n) => n + 1);
-    }, 6000);
+    }, CHAT_TICK_MS);
     return () => clearInterval(timer);
   }, [reduced, gardenActive]);
   useEffect(() => {
@@ -171,299 +130,64 @@ export function HomeScreen() {
     return () => clearTimeout(timer);
   }, [crumbs]);
   if (!p) return null;
-  const guardian = guardianPlayer(p);
-  const narrowControls = Math.min(width, gameLayout.maxWidth) < 380;
   const state = status(p, now);
-  const speech = paused
-    ? budgetVoice
-    : (voice ??
-      (p.mood < 30
-        ? lines.grumpy
-        : state.kind === 'exposed'
-          ? lines.exposed
-          : state.kind === 'care'
-            ? lines.care
-            : lines.idle)[line % 2]);
+  const chatter = (
+    p.mood < 30
+      ? lines.grumpy
+      : state.kind === 'exposed'
+        ? lines.exposed
+        : state.kind === 'care'
+          ? lines.care
+          : lines.idle
+  )[Math.floor(line / 4) % 2];
+  const say = coaching
+    ? {
+        text: gardenTips[coaching].text,
+        hint: 'tap to dismiss',
+        onPress: () => setLesson({ key, id: null }),
+      }
+    : voice
+      ? { text: voice, onPress: () => useGame.setState({ voice: null }) }
+      : paused
+        ? { text: budgetVoice }
+        : line % 4 === 1 || reduced
+          ? { text: chatter }
+          : null;
+  const worldWidth = Math.min(width, gameLayout.maxWidth);
   return (
-    <Page>
-      <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-        <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
-          <BodyText
-            numberOfLines={1}
-            style={{ fontSize: 11, lineHeight: 15, fontFamily: 'Nunito_800ExtraBold' }}
-          >
-            {guardian.pet_name}&apos;s little corner
-          </BodyText>
-          <PixelText style={{ fontSize: 16, lineHeight: 22 }}>GARDEN</PixelText>
-        </View>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Take a nap"
-          onPress={() => {
-            feedback('select');
-            startNap();
-          }}
-          style={({ pressed }) => ({
-            minHeight: 44,
-            paddingHorizontal: 12,
-            gap: 6,
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderRadius: artGeometry.controlRadius,
-            borderWidth: 2,
-            borderColor: c.napOutline,
-            backgroundColor: c.rest,
-            transform: [{ translateY: pressed && !reduced ? 2 : 0 }],
-            boxShadow: pressed ? undefined : '0 2px 0 rgba(92,78,131,0.3)',
-          })}
-        >
-          <PixelProp kind="moon" size={16} tint={c.napOutline} />
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>NAP</BodyText>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Open garden stats"
-          onPress={() => setStatsOpen(true)}
-          style={{
-            minHeight: 44,
-            paddingHorizontal: 12,
-            justifyContent: 'center',
-            borderRadius: artGeometry.controlRadius,
-            borderWidth: 1,
-            borderColor: c.outline,
-            backgroundColor: c.paper,
-          }}
-        >
-          <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>STATS</BodyText>
-        </Pressable>
-      </View>
-      <View style={{ paddingHorizontal: 8, marginBottom: -8, zIndex: 1 }}>
-        <Dialogue
-          text={coaching ? gardenTips[coaching].text : speech}
-          speech
-          onDismiss={coaching ? () => setLesson({ key, id: null }) : undefined}
-        />
-      </View>
-      <View
-        style={{
-          marginHorizontal: -gameLayout.gutter,
-          borderBottomLeftRadius: 24,
-          borderBottomRightRadius: 24,
-          overflow: 'hidden',
-        }}
-      >
+    <View style={{ flex: 1, backgroundColor: '#315C3B', alignItems: 'center' }}>
+      <View style={{ width: worldWidth, height }}>
         <GardenWorld
           active={gardenActive}
           memories={memories}
-          view={gardenView}
-          width={Math.min(width, gameLayout.maxWidth)}
+          width={worldWidth}
+          viewportHeight={height}
           player={p}
           grumpy={p.mood < 30}
           sleepy={paused}
-          onNap={startNap}
+          say={gardenActive ? say : null}
+          marker={gardenMarker(p)}
+          onKeepsakePress={(memory) => setKeepsakeSheet({ focused, memory })}
+          onNap={() => openSheet('nap')}
           onFeed={() => {
             useGame.getState().feed();
             setCrumbs(true);
           }}
         />
-        <GardenVisitor active={gardenActive} />
-        {crumbs && <PixelBurst />}
-      </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: 8,
-        }}
-      >
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={`Change companion, ${guardian.pet_name} is active`}
-          onPress={() => setCompanionsOpen(true)}
-          style={{
-            backgroundColor: c.glass,
-            paddingHorizontal: 12,
-            minHeight: 44,
-            maxWidth: '100%',
-            justifyContent: 'center',
-            borderRadius: artGeometry.tagRadius,
-          }}
-        >
-          <BodyText
-            numberOfLines={1}
-            style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12, flexShrink: 1 }}
-          >
-            {guardian.pet_name} · CHANGE
-          </BodyText>
-        </Pressable>
         <View
-          accessibilityRole="progressbar"
-          accessibilityLabel={`Mood: ${p.mood < 30 ? 'grumpy' : paused ? 'sleepy' : 'happy'}`}
-          accessibilityValue={{ min: 0, max: 100, now: p.mood }}
+          pointerEvents="box-none"
           style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 6,
-            backgroundColor: c.glass,
-            borderRadius: artGeometry.tagRadius,
-            paddingHorizontal: 10,
-            paddingVertical: 4,
+            position: 'absolute',
+            left: 0,
+            right: 0,
+            bottom: hotbarClearance(insets.bottom),
+            height: 140,
           }}
         >
-          <PixelProp kind="heart" size={16} tint={p.mood < 30 ? c.error : c.ink} />
-          <View
-            style={{
-              width: 48,
-              height: 6,
-              borderRadius: 3,
-              backgroundColor: c.faded,
-              overflow: 'hidden',
-            }}
-          >
-            <View
-              style={{
-                width: `${Math.max(0, Math.min(100, p.mood))}%`,
-                height: '100%',
-                backgroundColor: p.mood < 30 ? c.error : c.moss,
-              }}
-            />
-          </View>
-          <BodyText numberOfLines={1} style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
-            {p.mood < 30 ? 'GRUMPY' : paused ? 'SLEEPY' : 'HAPPY'}
-          </BodyText>
+          <GardenVisitor active={gardenActive} />
+          {crumbs && <PixelBurst />}
         </View>
       </View>
-      <BodyText style={{ textAlign: 'center', fontSize: 12, marginTop: -6 }}>
-        tap to wander · water the flowers, visit the reading nook or say hello at the pond
-      </BodyText>
-      <View
-        accessibilityRole="radiogroup"
-        accessibilityLabel="Garden view"
-        style={{ flexDirection: 'row', alignSelf: 'center', gap: 6 }}
-      >
-        {(
-          [
-            ['flat', 'TOP-DOWN'],
-            ['tilt', '2.5D · BETA'],
-          ] as const
-        ).map(([mode, label]) => (
-          <Pressable
-            key={mode}
-            accessibilityRole="radio"
-            accessibilityState={{ checked: gardenView === mode }}
-            aria-checked={gardenView === mode}
-            onPress={() => {
-              feedback('select');
-              setGardenView(mode);
-            }}
-            style={{
-              minHeight: 44,
-              paddingHorizontal: 12,
-              justifyContent: 'center',
-              borderRadius: artGeometry.tagRadius,
-              borderWidth: 1,
-              borderColor: c.outline,
-              backgroundColor: gardenView === mode ? c.rest : c.paper,
-            }}
-          >
-            <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>{label}</BodyText>
-          </Pressable>
-        ))}
-      </View>
-      <GardenKeepsakeShelf
-        memories={memories}
-        onOpen={(memory) => setKeepsakeSheet({ focused, memory })}
-      />
-      <GardenProgress />
-      <View style={{ gap: 8 }}>
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel={breakIdeaOpen ? 'Close break ideas' : 'Choose a break idea'}
-          accessibilityState={{ expanded: breakIdeaOpen }}
-          aria-expanded={breakIdeaOpen}
-          onPress={() => setNapPlan((plan) => ({ ...plan, open: !plan.open }))}
-          style={{
-            minHeight: 44,
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            gap: 8,
-            borderRadius: 12,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            backgroundColor: c.glass,
-          }}
-        >
-          <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold', flexShrink: 1 }}>
-            {napIntention
-              ? `Your break idea: ${breakIntentionLabel(napIntention)}`
-              : 'A break idea, if you like'}
-          </BodyText>
-          <BodyText style={{ fontSize: 11, color: c.moss }}>
-            {breakIdeaOpen ? 'Hide' : napIntention ? 'Change' : 'Choose'}
-          </BodyText>
-        </Pressable>
-        {breakIdeaOpen && (
-          <BreakIntentionPicker
-            value={napIntention}
-            onChange={(intention) => setNapPlan((plan) => ({ ...plan, intention }))}
-          />
-        )}
-        <PixelButton label="TAKE A NAP" gold={paused} onPress={startNap} />
-        <BodyText style={{ textAlign: 'center', fontSize: 12 }}>
-          put your phone down · simulated
-        </BodyText>
-      </View>
-      <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-        <View style={narrowControls ? { flexGrow: 1, flexBasis: '46%' } : { flex: 1 }}>
-          <PixelButton
-            label="MY DECK"
-            small
-            light
-            onPress={() => useGame.setState({ deckOpen: true })}
-          />
-        </View>
-        <View style={narrowControls ? { flexGrow: 1, flexBasis: '46%' } : { flex: 1 }}>
-          <PixelButton
-            label={
-              paused
-                ? 'TAKE A BREAK'
-                : p.mood >= 100
-                  ? 'FULL'
-                  : p.grass < 5
-                    ? 'NEED 5 GRASS'
-                    : 'FEED · 5'
-            }
-            small
-            light
-            disabled={paused || p.mood >= 100 || p.grass < 5}
-            onPress={() => {
-              useGame.getState().feed();
-              setCrumbs(true);
-            }}
-          />
-        </View>
-        <View style={narrowControls ? { flexGrow: 1, flexBasis: '100%' } : { flex: 1 }}>
-          <PixelButton label="JOURNAL" small light onPress={() => router.push('/journal')} />
-        </View>
-      </View>
-      <GuardianPicker
-        player={p}
-        open={companionsOpen}
-        onOpenChange={setCompanionsOpen}
-        showCard={false}
-      />
-      <GardenJourney
-        player={p}
-        onMissions={() => router.push('/missions')}
-        onJournal={() => router.push('/journal')}
-        onCompanions={() => setCompanionsOpen(true)}
-        onSpar={() => router.push('/arena')}
-      />
-      <DailyRhythmCard active={gardenActive} open={rhythmOpen} onOpenChange={setRhythmOpen} />
       <GardenKeepsakeSheet
         memory={openMemory}
         onClose={() => setKeepsakeSheet({ focused, memory: null })}
@@ -472,68 +196,7 @@ export function HomeScreen() {
           router.push('/journal?tab=memories');
         }}
       />
-      <Modal
-        visible={statsOpen}
-        transparent
-        animationType="none"
-        onRequestClose={() => setStatsOpen(false)}
-      >
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'flex-end',
-            padding: 16,
-            paddingBottom: insets.bottom + 16,
-            backgroundColor: c.shadow,
-          }}
-        >
-          <CozySheet
-            style={{
-              padding: gameLayout.gutter,
-              gap: 12,
-              width: '100%',
-              maxWidth: gameLayout.maxWidth - gameLayout.gutter * 2,
-              alignSelf: 'center',
-            }}
-          >
-            <PixelText style={{ fontSize: 16 }}>GARDEN STATS</PixelText>
-            <ScrollView
-              style={{ maxHeight: height * 0.5 }}
-              contentContainerStyle={{ gap: 12, paddingBottom: 16 }}
-            >
-              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
-                Today ·{' '}
-                {new Date(now).toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}
-              </BodyText>
-              <GardenProgress />
-              <BodyText>
-                {isVisitorId(guardian.guardian)
-                  ? visitorInfo(guardian.guardian).name
-                  : grasslings[p.species].name}{' '}
-                · {grasslings[guardian.species].habit}
-              </BodyText>
-              <BodyText>
-                Level {p.level} · {growthStage(p.level)}
-              </BodyText>
-              <BodyText>Mood {p.mood} / 100</BodyText>
-              <Meter value={p.mood} />
-              <BodyText>Next common card in {15 - (p.offline_seconds % 15)} simulated MIN</BodyText>
-              <BodyText>
-                Level {levelPreview(p.level).next} · {levelPreview(p.level).cost} GRASS ·{' '}
-                {levelPreview(p.level).unlock}
-              </BodyText>
-              <GardenStreak />
-              <RecentBreaks />
-            </ScrollView>
-            <PixelButton label="DONE" onPress={() => setStatsOpen(false)} />
-          </CozySheet>
-        </View>
-      </Modal>
-    </Page>
+    </View>
   );
 }
 export function MissionsScreen() {
@@ -561,12 +224,12 @@ export function MissionsScreen() {
           <CozyPanel key={m.id} style={{ padding: 12, gap: 10, opacity: locked ? 0.85 : 1 }}>
             {world && <WorldPreview world={world} player={p} height={compact ? 132 : 176} />}
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
-              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
+              <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16, flex: 1 }}>
                 {m.name}
               </BodyText>
               <BodyText
                 style={{
-                  fontFamily: 'Nunito_800ExtraBold',
+                  fontFamily: 'PixelifySans_700Bold',
                   fontSize: 12,
                   paddingHorizontal: 8,
                   paddingVertical: 2,
@@ -628,7 +291,7 @@ export function ShopScreen() {
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
           <GuardianPet player={p} level={p.level + 1} size={96} bob={false} />
           <View style={{ flex: 1, gap: 4 }}>
-            <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}>
+            <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}>
               Level {p.level} → {p.level + 1}
             </BodyText>
             <BodyText>
@@ -665,12 +328,12 @@ export function ShopScreen() {
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <PixelScene kind="market" mini height={80} style={{ width: 96 }} />
         <View style={{ flex: 1 }}>
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>Moss the merchant</BodyText>
+          <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>Moss the merchant</BodyText>
           <BodyText style={{ fontSize: 12 }}>{merchant}</BodyText>
         </View>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 12 }}>
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 16, flex: 1 }}>
+        <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16, flex: 1 }}>
           Hats
         </BodyText>
         <BodyText style={{ fontSize: 12 }}>
@@ -714,7 +377,7 @@ export function ShopScreen() {
               <GuardianPet player={p} hat={h.id} size={80} bob={false} />
               <BodyText
                 style={{
-                  fontFamily: 'Nunito_800ExtraBold',
+                  fontFamily: 'PixelifySans_700Bold',
                   minHeight: 40,
                   textAlign: 'center',
                   textAlignVertical: 'center',
@@ -784,7 +447,7 @@ function RivalRow({
   return (
     <CozyPanel style={{ padding: 16, gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>#{rank}</BodyText>
+        <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>#{rank}</BodyText>
         <Pet
           species={p.species}
           visitor={p.guardian}
@@ -797,7 +460,7 @@ function RivalRow({
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <BodyText
               numberOfLines={1}
-              style={{ flexShrink: 1, fontFamily: 'Nunito_800ExtraBold' }}
+              style={{ flexShrink: 1, fontFamily: 'PixelifySans_700Bold' }}
             >
               {me ? 'YOU' : p.name}
             </BodyText>
@@ -893,12 +556,12 @@ export function ArenaScreen() {
     <View style={{ marginTop: backendConfigured ? 24 : 0, gap: 12 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <PixelProp kind="swords" size={32} />
-        <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold' }}>Sparring</BodyText>
+        <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>Sparring</BodyText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
         <Pet dave level={p.level} size={96} bob={false} />
         <View style={{ flex: 1 }}>
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>DOOMSCROLL DAVE</BodyText>
+          <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>DOOMSCROLL DAVE</BodyText>
           <BodyText>LV {p.level} · MOOD 50</BodyText>
         </View>
       </View>
@@ -983,7 +646,7 @@ export function ArenaScreen() {
           )}
         </CozyPanel>
       )}
-      <BodyText style={{ fontSize: 16, fontFamily: 'Nunito_800ExtraBold', marginTop: 12 }}>
+      <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold', marginTop: 12 }}>
         {backendConfigured ? 'Offline league' : 'Your garden'}
       </BodyText>
       {backendConfigured && !live && (
@@ -1030,7 +693,8 @@ export function ArenaScreen() {
         keyboardShouldPersistTaps="handled"
         contentContainerStyle={{
           padding: gameLayout.gutter,
-          paddingBottom: dockClearance(insets.bottom),
+          paddingTop: hudClearance(insets.top),
+          paddingBottom: hotbarClearance(insets.bottom),
           gap: 12,
           ...gameColumn,
         }}

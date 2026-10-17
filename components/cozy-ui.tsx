@@ -10,7 +10,14 @@ import Animated, {
   withSpring,
   withTiming,
 } from 'react-native-reanimated';
-import { cozy as c, panelStyle } from '@/lib/cozy';
+import { cozy as c } from '@/lib/cozy';
+import {
+  FrameShape,
+  PixelFrame,
+  frameTones,
+  usePixelUnit,
+  type FrameToneName,
+} from '@/components/pixel-frame';
 import { artGeometry } from '@/lib/art-direction';
 import { useReducedMotion } from '@/lib/motion';
 
@@ -70,12 +77,19 @@ export function PaperFinish() {
     </View>
   );
 }
-export function CozyPanel({ children, style }: { children: ReactNode; style?: ViewStyle }) {
+export function CozyPanel({
+  children,
+  style,
+  tone = 'paper',
+}: {
+  children: ReactNode;
+  style?: ViewStyle;
+  tone?: FrameToneName;
+}) {
   return (
-    <View style={[panelStyle, style]}>
-      <PaperFinish />
+    <PixelFrame tone={tone} depth={1} style={style}>
       {children}
-    </View>
+    </PixelFrame>
   );
 }
 export function CozySheet({
@@ -88,6 +102,7 @@ export function CozySheet({
   style?: ViewStyle;
 }) {
   const reduced = useReducedMotion();
+  const u = usePixelUnit();
   const [animating, setAnimating] = useState(!reduced);
   const active = useRef(!reduced);
   const finishAnimation = useCallback(() => {
@@ -136,9 +151,9 @@ export function CozySheet({
         return false;
       }}
       onTouchStart={skipAnimation}
-      style={[panelStyle, style, motion]}
+      style={[{ padding: 3 * u }, style, motion]}
     >
-      <PaperFinish />
+      <FrameShape tone={frameTones.paper} unit={u} />
       <Pressable
         accessible={animating}
         accessibilityRole={animating ? 'button' : undefined}
@@ -158,7 +173,7 @@ export function CozySheet({
       >
         <View style={{ height: 3, width: 32, borderRadius: 0, backgroundColor: c.depth }} />
         {animating && (
-          <Text style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 11, color: c.ink }}>Skip</Text>
+          <Text style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 12, color: c.ink }}>Skip</Text>
         )}
       </Pressable>
       {children}

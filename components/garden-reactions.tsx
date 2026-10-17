@@ -11,7 +11,7 @@ export type GardenSignature = {
 
 export type GardenReaction = {
   id: number;
-  kind: 'water' | 'read' | 'pond' | 'pat' | 'lantern';
+  kind: 'water' | 'read' | 'pond' | 'pat' | 'lantern' | 'meadow';
   x: number;
   y: number;
   actor?: { x: number; y: number };

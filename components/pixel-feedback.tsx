@@ -27,7 +27,7 @@ export function BodyText({ style, ...props }: TextProps) {
     <Text
       {...props}
       style={[
-        { fontFamily: 'Nunito_600SemiBold', fontSize: 15, lineHeight: 22, color: c.ink },
+        { fontFamily: 'PixelifySans_500Medium', fontSize: 15, lineHeight: 22, color: c.ink },
         style,
       ]}
     />
@@ -76,7 +76,7 @@ export function Dialogue({
     >
       <BodyText
         style={{
-          fontFamily: speech ? 'Nunito_600SemiBold_Italic' : 'Nunito_600SemiBold',
+          fontFamily: speech ? 'PixelifySans_400Regular' : 'PixelifySans_500Medium',
           fontSize: 15,
           lineHeight: 21,
         }}
@@ -149,7 +149,7 @@ export function GrassRoll({
     <View>
       <Text
         style={{
-          fontFamily: size >= 20 ? 'PressStart2P_400Regular' : 'Nunito_800ExtraBold',
+          fontFamily: size >= 20 ? 'PressStart2P_400Regular' : 'PixelifySans_700Bold',
           fontSize: size,
           color: c.ink,
         }}

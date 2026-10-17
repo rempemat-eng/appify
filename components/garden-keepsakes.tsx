@@ -170,7 +170,7 @@ export function GardenKeepsakeShelf({ memories, onOpen }: GardenKeepsakeShelfPro
   const saved = keepsakes.filter((keepsake) => latest[keepsake.intention]);
   return (
     <CozyPanel style={{ padding: 12, gap: 8 }}>
-      <BodyText style={{ fontSize: 13, fontFamily: 'Nunito_800ExtraBold' }}>
+      <BodyText style={{ fontSize: 13, fontFamily: 'PixelifySans_700Bold' }}>
         Little reminders
       </BodyText>
       {saved.length ? (
@@ -208,7 +208,7 @@ export function GardenKeepsakeShelf({ memories, onOpen }: GardenKeepsakeShelfPro
                   <BodyText
                     style={{
                       fontSize: 12,
-                      fontFamily: 'Nunito_800ExtraBold',
+                      fontFamily: 'PixelifySans_700Bold',
                       flexShrink: 1,
                       textAlign: 'center',
                     }}
@@ -303,7 +303,7 @@ export function GardenKeepsakeSheet({ memory, onClose, onJournal }: GardenKeepsa
                   style={{
                     fontSize: 20,
                     lineHeight: 27,
-                    fontFamily: 'Nunito_800ExtraBold',
+                    fontFamily: 'PixelifySans_700Bold',
                     textAlign: 'center',
                   }}
                 >
@@ -324,10 +324,10 @@ export function GardenKeepsakeSheet({ memory, onClose, onJournal }: GardenKeepsa
                     borderRadius: 10,
                   }}
                 >
-                  <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+                  <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
                     IN YOUR GARDEN
                   </BodyText>
-                  <BodyText style={{ fontSize: 13, fontFamily: 'Nunito_800ExtraBold' }}>
+                  <BodyText style={{ fontSize: 13, fontFamily: 'PixelifySans_700Bold' }}>
                     {memoryPlace(memory.intention).label}
                   </BodyText>
                   <BodyText style={{ fontSize: 12, lineHeight: 18 }}>

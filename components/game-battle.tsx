@@ -99,12 +99,12 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
         style={{ flexDirection: 'row', alignItems: 'center', gap: 8, padding: 6, minHeight: 48 }}
       >
         <BodyText
-          style={{ width: 92, fontSize: 11, lineHeight: 16, fontFamily: 'Nunito_800ExtraBold' }}
+          style={{ width: 92, fontSize: 11, lineHeight: 16, fontFamily: 'PixelifySans_700Bold' }}
         >
           {grasslingName(p)}
         </BodyText>
         <View style={{ flex: 1, gap: 2 }}>
-          <BodyText style={{ fontSize: 11, lineHeight: 14, fontFamily: 'Nunito_800ExtraBold' }}>
+          <BodyText style={{ fontSize: 11, lineHeight: 14, fontFamily: 'PixelifySans_700Bold' }}>
             HP {f.hp}/{maxHp(p)}
           </BodyText>
           <Meter
@@ -115,7 +115,7 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
           />
         </View>
         <View style={{ gap: 0 }}>
-          <BodyText style={{ fontSize: 11, lineHeight: 14, fontFamily: 'Nunito_800ExtraBold' }}>
+          <BodyText style={{ fontSize: 11, lineHeight: 14, fontFamily: 'PixelifySans_700Bold' }}>
             ENERGY
           </BodyText>
           <EnergyPips value={f.energy} />
@@ -458,7 +458,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           >
             <View style={{ flex: 1, gap: 6 }}>
               <PixelText>{request.practice ? 'SPARRING' : 'GARDEN RAID'}</PixelText>
-              <BodyText style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 11, lineHeight: 14 }}>
+              <BodyText style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 11, lineHeight: 14 }}>
                 ROUND {Math.max(combat.a.turns, combat.d.turns)}/12
               </BodyText>
             </View>
@@ -643,14 +643,14 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                   history.slice(-1).map((entry) => (
                     <BodyText
                       key={entry.id}
-                      style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 12, lineHeight: 17 }}
+                      style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 12, lineHeight: 17 }}
                     >
                       {entry.summary}
                     </BodyText>
                   ))
                 ) : (
                   <BodyText
-                    style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 12, lineHeight: 17 }}
+                    style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 12, lineHeight: 17 }}
                   >
                     {log}
                   </BodyText>
@@ -675,7 +675,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                       : 'RAID FAILED.'}
                 </PixelText>
                 <BodyText
-                  style={{ textAlign: 'center', fontFamily: 'Nunito_800ExtraBold', fontSize: 16 }}
+                  style={{ textAlign: 'center', fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}
                 >
                   {request.practice
                     ? reward > 0

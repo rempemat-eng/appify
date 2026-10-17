@@ -78,7 +78,7 @@ export default function FieldJournal() {
           title: 'FIELD JOURNAL',
           headerStyle: { backgroundColor: c.paper },
           headerTintColor: c.ink,
-          headerTitleStyle: { fontFamily: 'Nunito_600SemiBold' },
+          headerTitleStyle: { fontFamily: 'PixelifySans_500Medium' },
           contentStyle: { backgroundColor: c.paper },
         }}
       />
@@ -129,17 +129,17 @@ export default function FieldJournal() {
         >
           <Tabs.Indicator style={{ borderRadius: 14, backgroundColor: c.paper }} />
           <Tabs.Trigger value="visitors">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'Nunito_600SemiBold' }}>
+            <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
               VISITORS
             </Tabs.Label>
           </Tabs.Trigger>
           <Tabs.Trigger value="postcards">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'Nunito_600SemiBold' }}>
+            <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
               POSTCARDS
             </Tabs.Label>
           </Tabs.Trigger>
           <Tabs.Trigger value="memories">
-            <Tabs.Label style={{ color: c.ink, fontFamily: 'Nunito_600SemiBold' }}>
+            <Tabs.Label style={{ color: c.ink, fontFamily: 'PixelifySans_500Medium' }}>
               MEMORIES
             </Tabs.Label>
           </Tabs.Trigger>
@@ -155,7 +155,7 @@ export default function FieldJournal() {
           contentContainerStyle={{ gap: 10, paddingBottom: 6 }}
           ListFooterComponent={
             <CozyPanel style={{ padding: 12, gap: 7, marginTop: 2 }}>
-              <BodyText style={{ fontFamily: 'Nunito_800ExtraBold' }}>
+              <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>
                 From visitor to friend
               </BodyText>
               <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
@@ -241,12 +241,12 @@ export default function FieldJournal() {
                   </Svg>
                 )}
                 <BodyText
-                  style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12, textAlign: 'center' }}
+                  style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 12, textAlign: 'center' }}
                 >
                   {item.name}
                 </BodyText>
                 <BodyText
-                  style={{ fontSize: 11, color: tint.edge, fontFamily: 'Nunito_800ExtraBold' }}
+                  style={{ fontSize: 11, color: tint.edge, fontFamily: 'PixelifySans_700Bold' }}
                 >
                   {item.habit}
                 </BodyText>
@@ -268,7 +268,7 @@ export default function FieldJournal() {
                   ) : met ? (
                     <Eye size={12} color={c.ink} />
                   ) : null}
-                  <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+                  <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
                     {state}
                   </BodyText>
                 </View>

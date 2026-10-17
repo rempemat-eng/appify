@@ -68,7 +68,7 @@ export function BreakIntentionPicker({
   });
   return (
     <CozyPanel style={{ padding: 12, gap: 10 }}>
-      <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13 }}>
+      <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
         A little break idea
       </BodyText>
       <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
@@ -86,7 +86,7 @@ export function BreakIntentionPicker({
           justifyContent: 'center',
         })}
       >
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13 }}>
+        <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
           Just a break
         </BodyText>
       </Pressable>
@@ -109,7 +109,7 @@ export function BreakIntentionPicker({
             })}
           >
             <MemoryStamp intention={intention.id} size={24} />
-            <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13 }}>
+            <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
               {intention.label}
             </BodyText>
           </Pressable>
@@ -135,7 +135,7 @@ export function BreakIntentionPicker({
             <MemoryStamp intention={chosen.id} size={28} />
           </View>
           <View style={{ flex: 1, minWidth: 0, gap: 4 }}>
-            <BodyText style={{ fontSize: 12, fontFamily: 'Nunito_800ExtraBold' }}>
+            <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
               An optional idea for you
             </BodyText>
             <BodyText style={{ fontSize: 12, lineHeight: 18 }}>{chosen.invitation}</BodyText>
@@ -182,10 +182,10 @@ export function MemoryReflection({
           <MemoryStamp intention={offer.intention} />
         </View>
         <View style={{ flex: 1, minWidth: 0, gap: 3 }}>
-          <BodyText style={{ fontSize: 11, fontFamily: 'Nunito_800ExtraBold' }}>
+          <BodyText style={{ fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
             A MEMORY TO KEEP?
           </BodyText>
-          <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 14 }}>
+          <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14 }}>
             Did you make time to {intention.id}?
           </BodyText>
         </View>
@@ -215,7 +215,7 @@ export function MemoryReflection({
           opacity: disabled ? 0.55 : pressed ? 0.75 : 1,
         })}
       >
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 12 }}>SKIP</BodyText>
+        <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 12 }}>SKIP</BodyText>
       </Pressable>
     </CozyPanel>
   );
@@ -249,7 +249,7 @@ export function CompanionMemories({
   return (
     <CozyPanel style={{ padding: 14, gap: 12 }}>
       <View style={{ gap: 3 }}>
-        <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13 }}>
+        <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
           {companionName ? `${companionName}'s memory album` : 'Your memory album'}
         </BodyText>
         <BodyText style={{ fontSize: 12, lineHeight: 18 }}>
@@ -281,7 +281,7 @@ export function CompanionMemories({
                   <MemoryStamp intention={memory.intention} />
                 </View>
                 <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-                  <BodyText style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13 }}>
+                  <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
                     {intention.title}
                   </BodyText>
                   <BodyText style={{ fontSize: 12, lineHeight: 18 }}>

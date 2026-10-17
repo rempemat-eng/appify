@@ -23,7 +23,7 @@
     "depth": "#B8A586",
     "sage": "#E4EBD9"
   },
-  "geometry": { "panelRadius": 12, "controlRadius": 8, "tagRadius": 6, "border": 2, "depth": 3 },
+  "geometry": { "panelRadius": 0, "controlRadius": 0, "tagRadius": 0, "border": 2, "depth": 3 },
   "grid": {
     "icon": 16,
     "companion": 32,

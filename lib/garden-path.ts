@@ -124,6 +124,6 @@ const garden = makeWalkGrid(gardenWalk, {
   cell: GARDEN.cell,
   width: GARDEN.width,
   start: GARDEN_START,
-  bounds: { minX: 20, maxX: GARDEN.width - 20, minY: 40, maxY: 158 },
+  bounds: { minX: 20, maxX: GARDEN.width - 20, minY: 40, maxY: GARDEN.fenceY - 4 },
 });
 export const { walkable, toCell, toPoint, nearestWalkable, findPath, randomSpot } = garden;

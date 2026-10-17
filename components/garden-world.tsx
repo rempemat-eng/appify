@@ -25,7 +25,16 @@ import type { BreakIntention, CompanionMemory } from '@/lib/companion-memories';
 import { gardenKeepsakes, gardenResponse, gardenSignature } from '@/lib/garden-life';
 import { playPaused, useGame, type Player } from '@/lib/game';
 import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
-import { GARDEN, gardenHotspots, gardenObjects } from '@/lib/garden-map';
+import {
+  GARDEN,
+  gardenHotspots,
+  gardenObjects,
+  gardenOrchard,
+  gardenPlots,
+  growthSpriteSizes,
+} from '@/lib/garden-map';
+import { growthImages } from '@/lib/garden-growth-assets';
+import { meadowLine, orchardStage, plotStage } from '@/lib/garden-growth';
 import { GARDEN_START, findPath, randomSpot, type Point } from '@/lib/garden-path';
 import {
   TILT_DEG,
@@ -44,6 +53,7 @@ import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { GardenReactions, type GardenReaction, type Place } from '@/components/garden-reactions';
 import { GardenKeepsakeArt } from '@/components/garden-keepsakes';
+import { FrameShape, frameTones } from '@/components/pixel-frame';
 
 import ground0 from '@/assets/garden/ground-0.png';
 import ground1 from '@/assets/garden/ground-1.png';
@@ -68,6 +78,9 @@ import gateImg from '@/assets/garden/gate.png';
 import readingNookImg from '@/assets/garden/reading_nook.png';
 import wateringCanImg from '@/assets/garden/watering_can.png';
 import lanternImg from '@/assets/garden/lantern.png';
+import bridgeImg from '@/assets/garden/bridge.png';
+import meadowSignImg from '@/assets/garden/meadow_sign.png';
+import groundTop from '@/assets/garden/ground-top.png';
 
 const sprites: Record<string, ImageSourcePropType> = {
   tree: treeImg,
@@ -89,7 +102,11 @@ const sprites: Record<string, ImageSourcePropType> = {
   reading_nook: readingNookImg,
   watering_can: wateringCanImg,
   lantern: lanternImg,
+  bridge: bridgeImg,
+  meadow_sign: meadowSignImg,
 };
+const growthSize = (key: string): readonly [number, number] =>
+  (growthSpriteSizes as Record<string, readonly [number, number]>)[key] ?? [16, 16];
 
 type Action = keyof typeof gardenHotspots;
 
@@ -321,6 +338,45 @@ function Ambient({
   );
 }
 
+// ---- guidance marker -------------------------------------------------------
+// A small "!" sign above the place the garden suggests next. It never blocks
+// taps: the object underneath stays the thing to press.
+function GardenMarker({ action, scale, bob }: { action: Action; scale: number; bob: boolean }) {
+  const o = gardenObjects.find((g) => g.action === action);
+  const spot = o ? { x: o.x + o.w / 2, y: o.y } : gardenHotspots[action];
+  const u = Math.max(2, Math.round(scale));
+  const w = 7 * u;
+  return (
+    <View
+      pointerEvents="none"
+      aria-hidden
+      accessibilityElementsHidden
+      importantForAccessibility="no-hide-descendants"
+      style={{
+        position: 'absolute',
+        left: Math.round(spot.x * scale - w / 2),
+        top: Math.round(spot.y * scale - 11 * u - (bob ? u : 0)),
+        width: w,
+        height: 9 * u,
+        zIndex: 960,
+        alignItems: 'center',
+      }}
+    >
+      <FrameShape tone={frameTones.gold} unit={u} />
+      <BodyText
+        style={{
+          fontFamily: 'PixelifySans_700Bold',
+          fontSize: 6 * u,
+          lineHeight: 9 * u,
+          color: '#3B2A14',
+        }}
+      >
+        !
+      </BodyText>
+    </View>
+  );
+}
+
 // ---- the world -----------------------------------------------------------
 export function GardenWorld({
   width,
@@ -333,6 +389,10 @@ export function GardenWorld({
   active: screenActive = true,
   view = 'flat',
   memories = noMemories,
+  viewportHeight,
+  marker = null,
+  onKeepsakePress,
+  say = null,
 }: {
   width: number;
   player: Player;
@@ -349,6 +409,18 @@ export function GardenWorld({
   view?: ViewMode;
   /** Explicitly kept memories only; this scene never creates or settles them. */
   memories?: readonly CompanionMemory[];
+  /**
+   * Show the world through a window of this height. A camera follows the
+   * companion and reveals the forest above the clearing; without it the whole
+   * map is laid out at its natural height.
+   */
+  viewportHeight?: number;
+  /** A gentle "!" above the place the garden suggests visiting next. */
+  marker?: Action | null;
+  /** Kept keepsakes become tappable when the screen can open them. */
+  onKeepsakePress?: (memory: CompanionMemory) => void;
+  /** Something the companion says, shown in a bubble that follows it. */
+  say?: { text: string; onPress?: () => void; hint?: string } | null;
 }) {
   const reduced = useReducedMotion();
   const appActive = useAppActive();
@@ -359,6 +431,12 @@ export function GardenWorld({
   const proj = makeProjection(view, width, GARDEN, tilt ? Math.round(width * 0.14) : 0);
   const height = proj.height;
   const place: Place = (x, y, groundY = y) => lift(proj, x, y, groundY);
+  const camera = !tilt && viewportHeight !== undefined;
+  const topBand = Math.round(GARDEN.top * scale);
+  const viewHeight = camera ? viewportHeight : height;
+  const cameraMin = camera ? -topBand : 0;
+  const cameraMax = camera ? Math.max(cameraMin, height - viewHeight) : 0;
+  const lifetimeMinutes = player.offline_seconds;
   const petPx = Math.max(32, Math.round((32 * scale) / 32) * 32); // matches Pet's snapping
   const companionPx = Math.max(32, Math.round(petPx / 2 / 32) * 32);
   const home = napping ? BED : START;
@@ -602,6 +680,10 @@ export function GardenWorld({
         respond('water', companionLine('water'), gardenHotspots.water);
         setEmote('♪');
         break;
+      case 'meadow':
+        respond('meadow', meadowLine(lifetimeMinutes), gardenHotspots.meadow);
+        setEmote('✿');
+        break;
       case 'lantern': {
         const next = !lanternOn;
         setLanternOverride(next);
@@ -673,6 +755,25 @@ export function GardenWorld({
       // Rest between the hut and bedding layers, under the garden's night light.
       zIndex: Math.round(py.value) + (napping ? 1 : 0),
     };
+  });
+
+  // Speech follows the companion; it flips below when the pet is near the top.
+  const [bubbleHeight, setBubbleHeight] = useState(0);
+  const bubbleWidth = Math.min(width - 16, 232);
+  const bubbleStyle = useAnimatedStyle(() => {
+    const s = project(proj, px.value, py.value);
+    const left = Math.min(width - bubbleWidth - 8, Math.max(8, s.sx - bubbleWidth / 2));
+    const above = s.sy - petPx * 0.95 - bubbleHeight - 4;
+    const top = py.value < 70 ? s.sy + 6 : above;
+    return { transform: [{ translateX: Math.round(left) }, { translateY: Math.round(top) }] };
+  });
+
+  // The camera keeps the companion a little above centre, clamped to the map.
+  const cameraStyle = useAnimatedStyle(() => {
+    if (!camera) return { transform: [{ translateY: 0 }] };
+    const target = py.value * scale - viewHeight * 0.55;
+    const y = Math.min(cameraMax, Math.max(cameraMin, target));
+    return { transform: [{ translateY: -Math.round(y) }] };
   });
 
   function onGroundPress(e: {
@@ -751,8 +852,24 @@ export function GardenWorld({
       aria-hidden={napping || !active}
       accessibilityElementsHidden={napping || !active}
       importantForAccessibility={napping || !active ? 'no-hide-descendants' : 'auto'}
-      style={{ width, height, overflow: 'hidden', backgroundColor: '#62A853', zIndex: 0 }}
+      style={{
+        width,
+        height: viewHeight,
+        overflow: 'hidden',
+        backgroundColor: '#315C3B',
+        zIndex: 0,
+      }}
     >
+      <Animated.View
+        style={[{ position: 'absolute', left: 0, top: 0, width, height }, cameraStyle]}
+      >
+      {camera && (
+        <Image
+          source={groundTop}
+          resizeMode="stretch"
+          style={{ position: 'absolute', left: 0, top: -topBand, width, height: topBand }}
+        />
+      )}
       {tilt && (
         <Image
           source={night ? battleNight : battleDay}
@@ -945,12 +1062,113 @@ export function GardenWorld({
           </Fragment>
         );
       })}
+      {gardenPlots.map((plot, i) => {
+        const stage = plotStage(lifetimeMinutes, i);
+        const key = `plot_${plot.kind}_${stage}`;
+        const [sw, sh] = growthSize(key);
+        const hit = {
+          left: Math.round(plot.x * scale),
+          top: Math.round((plot.y - 6) * scale),
+          width: Math.max(44, Math.round(plot.w * scale)),
+          height: Math.max(44, Math.round((plot.h + 6) * scale)),
+        };
+        return (
+          <Fragment key={plot.id}>
+            {stage >= 0 && (
+              <Sprite
+                source={growthImages[key]}
+                rect={{
+                  left: plot.x * scale,
+                  top: (plot.y - (sh - plot.h)) * scale,
+                  width: sw * scale,
+                  height: sh * scale,
+                }}
+                z={plot.y + plot.h}
+              />
+            )}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={
+                stage < 0
+                  ? 'An empty meadow bed, waiting for seeds'
+                  : stage === 4
+                    ? `A ${plot.kind} bed in bloom`
+                    : `A ${plot.kind} bed, still growing`
+              }
+              disabled={napping || !active}
+              onPress={() => onObjectPress('meadow')}
+              style={{ position: 'absolute', ...hit, zIndex: plot.y + plot.h }}
+            />
+          </Fragment>
+        );
+      })}
+      {gardenOrchard.map((pit, i) => {
+        const stage = orchardStage(lifetimeMinutes, i);
+        if (stage < 0) return null;
+        const key = `orchard_${stage}`;
+        const [sw, sh] = growthSize(key);
+        return (
+          <Pressable
+            key={pit.id}
+            accessibilityRole="button"
+            accessibilityLabel={
+              stage === 4 ? 'A fruit tree in the orchard' : 'A young tree in the orchard'
+            }
+            disabled={napping || !active}
+            onPress={() => onObjectPress('meadow')}
+            style={{
+              position: 'absolute',
+              left: Math.round((pit.x - sw / 2) * scale),
+              top: Math.round((pit.y - sh) * scale),
+              width: Math.max(44, Math.round(sw * scale)),
+              height: Math.max(44, Math.round(sh * scale)),
+              zIndex: pit.y,
+            }}
+          >
+            <Image
+              source={growthImages[key]}
+              resizeMode="stretch"
+              style={{ width: Math.round(sw * scale), height: Math.round(sh * scale) }}
+            />
+          </Pressable>
+        );
+      })}
+      {marker && !napping && active && (
+        <GardenMarker action={marker} scale={scale} bob={!reduced && frame % 2 === 1} />
+      )}
       {keepsakeIntentions
         .filter((intention) => keepsakes[intention])
         .map((intention) => {
           const location = keepsakeLocations[intention];
           const foot = project(proj, location.x + 8, location.y + 16);
           const size = Math.max(16, Math.round(scale * foot.f) * 16);
+          const memory = keepsakes[intention];
+          const box = {
+            position: 'absolute' as const,
+            left: Math.round(foot.sx - size / 2),
+            top: Math.round(foot.sy - size),
+            width: size,
+            height: size,
+          };
+          if (onKeepsakePress && memory && !napping)
+            return (
+              <Pressable
+                key={`keepsake-${intention}`}
+                testID={`garden-keepsake-${intention}`}
+                accessibilityRole="button"
+                accessibilityLabel={`Open the ${intention} keepsake from your break with ${memory.companion.name}`}
+                disabled={!active}
+                hitSlop={Math.max(0, Math.ceil((44 - size) / 2))}
+                onPress={() => {
+                  if (!activeRef.current) return;
+                  lastTouch.current = clock();
+                  onKeepsakePress(memory);
+                }}
+                style={{ ...box, zIndex: 801 }}
+              >
+                <GardenKeepsakeArt intention={intention} size={size} />
+              </Pressable>
+            );
           return (
             <View
               key={`keepsake-${intention}`}
@@ -959,14 +1177,7 @@ export function GardenWorld({
               aria-hidden
               accessibilityElementsHidden
               importantForAccessibility="no-hide-descendants"
-              style={{
-                position: 'absolute',
-                left: Math.round(foot.sx - size / 2),
-                top: Math.round(foot.sy - size),
-                width: size,
-                height: size,
-                zIndex: location.y + 17,
-              }}
+              style={{ ...box, zIndex: location.y + 17 }}
             >
               <GardenKeepsakeArt intention={intention} size={size} />
             </View>
@@ -1099,9 +1310,9 @@ export function GardenWorld({
           style={{
             position: 'absolute',
             left: 0,
-            top: 0,
+            top: camera ? -topBand : 0,
             width,
-            height,
+            height: height + (camera ? topBand : 0),
             zIndex: 900,
             backgroundColor: night
               ? 'rgba(22,28,66,0.42)'
@@ -1179,7 +1390,7 @@ export function GardenWorld({
           <BodyText
             style={{
               fontSize: 12,
-              fontFamily: 'Nunito_800ExtraBold',
+              fontFamily: 'PixelifySans_700Bold',
               paddingHorizontal: 10,
               paddingVertical: 3,
               borderRadius: 999,
@@ -1190,6 +1401,39 @@ export function GardenWorld({
             {tag.text}
           </BodyText>
         </View>
+      )}
+      {say && !feedback && !napping && active && (
+        <Animated.View
+          onLayout={(e) => setBubbleHeight(Math.round(e.nativeEvent.layout.height))}
+          style={[
+            { position: 'absolute', left: 0, top: 0, width: bubbleWidth, zIndex: 998 },
+            bubbleStyle,
+          ]}
+        >
+          <Pressable
+            accessibilityRole={say.onPress ? 'button' : 'text'}
+            accessibilityLabel={say.text}
+            accessibilityHint={say.hint}
+            disabled={!say.onPress}
+            onPress={say.onPress}
+            style={{ padding: 4 * Math.max(2, Math.round(scale)) }}
+          >
+            <FrameShape tone={frameTones.paper} unit={Math.max(2, Math.round(scale))} />
+            <BodyText
+              role="status"
+              aria-live="polite"
+              accessibilityLiveRegion="polite"
+              style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 14, lineHeight: 18 }}
+            >
+              {say.text.toLowerCase()}
+            </BodyText>
+            {say.hint && (
+              <BodyText style={{ fontSize: 11, lineHeight: 13, color: c.shade, marginTop: 2 }}>
+                {say.hint}
+              </BodyText>
+            )}
+          </Pressable>
+        </Animated.View>
       )}
       {feedback && !napping && active && (
         <View
@@ -1224,12 +1468,13 @@ export function GardenWorld({
             role="status"
             aria-live="polite"
             accessibilityLiveRegion="polite"
-            style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 13, lineHeight: 18 }}
+            style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13, lineHeight: 18 }}
           >
             {feedback.text}
           </BodyText>
         </View>
       )}
+      </Animated.View>
     </View>
   );
 }

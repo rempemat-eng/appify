@@ -154,7 +154,7 @@ export function NapAttackSplash({ onFinish }: { onFinish: (done: boolean) => voi
       <CozyBackground />
       <NapAttackWordmark />
       <SleepingGrassling />
-      <Text style={{ fontFamily: 'Nunito_600SemiBold', fontSize: 15, color: c.ink }}>
+      <Text style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 15, color: c.ink }}>
         nap to grow. wake to raid.
       </Text>
     </Animated.View>

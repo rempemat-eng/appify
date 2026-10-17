@@ -2,9 +2,9 @@
 import '../global.css';
 
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
-import { Nunito_600SemiBold } from '@expo-google-fonts/nunito/600SemiBold';
-import { Nunito_800ExtraBold } from '@expo-google-fonts/nunito/800ExtraBold';
-import { Nunito_600SemiBold_Italic } from '@expo-google-fonts/nunito/600SemiBold_Italic';
+import { PixelifySans_400Regular } from '@expo-google-fonts/pixelify-sans/400Regular';
+import { PixelifySans_500Medium } from '@expo-google-fonts/pixelify-sans/500Medium';
+import { PixelifySans_700Bold } from '@expo-google-fonts/pixelify-sans/700Bold';
 import { PressStart2P_400Regular } from '@expo-google-fonts/press-start-2p/400Regular';
 import { useFonts } from 'expo-font';
 import Constants, { ExecutionEnvironment } from 'expo-constants';
@@ -82,9 +82,9 @@ export default function RootLayout() {
     };
   }, []);
   const [loaded, error] = useFonts({
-    Nunito_600SemiBold,
-    Nunito_800ExtraBold,
-    Nunito_600SemiBold_Italic,
+    PixelifySans_400Regular,
+    PixelifySans_500Medium,
+    PixelifySans_700Bold,
     PressStart2P_400Regular,
   });
 
@@ -151,7 +151,7 @@ export default function RootLayout() {
           screenOptions={{
             headerStyle: { backgroundColor: c.paper },
             headerTintColor: c.ink,
-            headerTitleStyle: { fontFamily: 'Nunito_800ExtraBold', fontSize: 16 },
+            headerTitleStyle: { fontFamily: 'PixelifySans_700Bold', fontSize: 16 },
             headerShadowVisible: false,
             contentStyle: { backgroundColor: c.body },
           }}

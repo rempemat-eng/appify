@@ -21,3 +21,13 @@ export function gameSideInset(viewportWidth: number) {
 export function dockClearance(bottomInset: number) {
   return gameLayout.dockHeight + gameLayout.dockBottomGap + gameLayout.gutter + bottomInset;
 }
+
+/** The floating HUD at the top of every tab: inset, frame and a small gap. */
+export const hudLayout = { gap: 6, height: 56, hotbar: 68 } as const;
+export function hudClearance(topInset: number) {
+  return topInset + hudLayout.gap + hudLayout.height + gameLayout.gutter / 2;
+}
+/** Space the pixel hotbar takes at the bottom of every tab. */
+export function hotbarClearance(bottomInset: number) {
+  return bottomInset + hudLayout.gap + hudLayout.hotbar + gameLayout.gutter;
+}

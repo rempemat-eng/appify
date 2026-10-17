@@ -16,17 +16,16 @@ import Animated, {
   useSharedValue,
   withRepeat,
   withSequence,
-  withSpring,
   withTiming,
 } from 'react-native-reanimated';
 import Svg, { Rect } from 'react-native-svg';
-import { Button } from 'heroui-native';
 import * as Haptics from 'expo-haptics';
 import { useReducedMotion } from '@/lib/motion';
 import { cozy as c, panelStyle } from '@/lib/cozy';
 import { artGeometry } from '@/lib/art-direction';
 import { backendConfigured } from '@/lib/bilt';
 import { CozyBackground } from '@/components/cozy-ui';
+import { FrameShape, frameTones, usePixelUnit } from '@/components/pixel-frame';
 import { PlayMeter } from '@/components/offline-garden';
 import { PixelProp } from '@/components/pixel-scenes';
 import { GrassRoll, Pulse } from '@/components/pixel-feedback';
@@ -35,7 +34,7 @@ import { visitorPixels } from '@/lib/visitor-art';
 import { isVisitorId, visitorInfo } from '@/lib/visitors';
 import { petPixels } from '@/lib/pet-art';
 import { grasslings, growthStage } from '@/lib/grasslings';
-import { dockClearance, gameColumn, gameLayout } from '@/lib/layout';
+import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
 
 export function PixelText({ style, ...props }: TextProps) {
   const display = (StyleSheet.flatten(style)?.fontSize ?? 15) >= 16;
@@ -45,7 +44,7 @@ export function PixelText({ style, ...props }: TextProps) {
       style={[
         styles.text,
         style,
-        { fontFamily: display ? 'PressStart2P_400Regular' : 'Nunito_800ExtraBold' },
+        { fontFamily: display ? 'PressStart2P_400Regular' : 'PixelifySans_700Bold' },
       ]}
     />
   );
@@ -77,96 +76,82 @@ export function PixelButton({
   onDisabledPress?: () => void;
   haptic?: boolean;
 }) {
-  const reduced = useReducedMotion();
-  const depth = useSharedValue(0);
-  const motion = useAnimatedStyle(() => ({ transform: [{ translateY: depth.value }] }));
-  const fill = disabled
-    ? c.faded
-    : danger
-      ? c.error
-      : gold
-        ? c.amber
-        : light
-          ? c.paper
-          : c.positive;
+  const u = usePixelUnit();
+  const [pressed, setPressed] = useState(false);
+  const tone =
+    frameTones[
+      disabled ? 'disabled' : danger ? 'danger' : gold ? 'gold' : light ? 'paper' : 'leaf'
+    ];
+  const depth = 2 * u;
   return (
-    <View
-      style={{
-        paddingBottom: 4,
-        borderRadius: artGeometry.controlRadius,
-        backgroundColor: danger ? c.terracotta : light ? c.stone : c.moss,
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={label}
+      accessibilityState={{ disabled }}
+      aria-disabled={disabled}
+      disabled={disabled && !onDisabledPress}
+      onPressIn={() => setPressed(true)}
+      onPressOut={() => setPressed(false)}
+      onPress={() => {
+        if (disabled) {
+          onDisabledPress?.();
+          return;
+        }
+        if (haptic) void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+        onPress();
       }}
+      onLongPress={onLongPress}
+      style={{ paddingBottom: depth }}
     >
-      <Animated.View style={motion}>
-        <Button
-          animation={false}
-          isDisabled={disabled && !onDisabledPress}
-          accessibilityLabel={label}
-          accessibilityState={{ disabled }}
-          onPressIn={() => depth.set(withTiming(reduced ? 0 : 3, { duration: 80 }))}
-          onPressOut={() => depth.set(reduced ? 0 : withSpring(0, { damping: 15, stiffness: 450 }))}
-          onPress={() => {
-            if (disabled) {
-              onDisabledPress?.();
-              return;
-            }
-            if (haptic) void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-            onPress();
-          }}
-          onLongPress={onLongPress}
+      <View
+        pointerEvents="none"
+        style={{ position: 'absolute', left: 0, right: 0, top: depth, bottom: 0 }}
+      >
+        <FrameShape
+          tone={{ ...tone, fill: tone.base, light: tone.base, dark: tone.base }}
+          unit={u}
+          bevel={false}
+        />
+      </View>
+      <View
+        style={{
+          minHeight: small ? 44 : 52,
+          paddingHorizontal: small ? 3 * u : 6 * u,
+          paddingVertical: 3 * u,
+          alignItems: 'center',
+          justifyContent: 'center',
+          transform: [{ translateY: pressed && !disabled ? depth : 0 }],
+        }}
+      >
+        <FrameShape tone={tone} unit={u} />
+        <Text
+          numberOfLines={2}
           style={{
-            minHeight: 52,
-            borderRadius: artGeometry.controlRadius,
-            borderWidth: 2,
-            borderColor: c.outline,
-            backgroundColor: fill,
-            paddingHorizontal: small ? 8 : 16,
-            paddingVertical: 10,
-            height: 'auto',
-            flexDirection: 'column',
-            gap: 0,
+            fontFamily: 'PixelifySans_700Bold',
+            color: disabled ? '#6E6457' : c.buttonInk,
+            fontSize: small ? 13 : 16,
+            lineHeight: small ? 16 : 20,
+            textAlign: 'center',
+            letterSpacing: 0.5,
           }}
         >
-          <View
-            pointerEvents="none"
+          {label}
+        </Text>
+        {supportingText && (
+          <Text
             style={{
-              position: 'absolute',
-              top: 1,
-              left: 7,
-              right: 7,
-              height: 2,
-              backgroundColor: c.highlight,
-              opacity: disabled ? 0.25 : 0.45,
-            }}
-          />
-          <Button.Label
-            numberOfLines={2}
-            style={{
-              fontFamily: 'Nunito_800ExtraBold',
+              fontFamily: 'PixelifySans_500Medium',
               color: c.buttonInk,
-              fontSize: small ? 12 : 15,
-              lineHeight: 19,
+              fontSize: 12,
               textAlign: 'center',
             }}
           >
-            {label}
-          </Button.Label>
-          {supportingText && (
-            <Text
-              style={{
-                fontFamily: 'Nunito_600SemiBold',
-                color: c.buttonInk,
-                fontSize: 12,
-                textAlign: 'center',
-              }}
-            >
-              {supportingText}
-            </Text>
-          )}
-          {energyCost !== undefined && <EnergyPips value={energyCost} color={c.buttonInk} />}
-        </Button>
-      </Animated.View>
-    </View>
+            {supportingText}
+          </Text>
+        )}
+        {energyCost !== undefined && <EnergyPips value={energyCost} color={c.buttonInk} />}
+      </View>
+    </Pressable>
   );
 }
 export function EnergyPips({ value, color = c.ink }: { value: number; color?: string }) {
@@ -204,7 +189,10 @@ export function Pet({
   curled = false,
   active = true,
   gardenPose,
+  decorative = false,
 }: {
+  /** a picture only (HUD portraits): no button, no greeting */
+  decorative?: boolean;
   active?: boolean;
   gardenPose?: { id: number; kind: 'nestle' | 'sniff' | 'ponder' };
   curled?: boolean;
@@ -506,117 +494,205 @@ export function Pet({
       accessibilityLabel={`${dave ? 'DOOMSCROLL DAVE weed creature' : `${petLabel} ${growthStage(level)} Grassling`}${slumped ? ', wilted' : ''}${sleeping ? ', sleeping' : ''}`}
       style={[{ width: scaledSize, height: scaledSize }, motion]}
     >
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={actionLabel ?? `Greet ${petLabel}`}
-        accessibilityState={{ disabled: !active }}
-        disabled={!active}
-        style={{ backgroundColor: c.transparent }}
-        onPress={() => {
-          if (!active) return;
-          cancelAnimation(patY);
-          patY.set(0);
-          setHeart((count) => count + 1);
-          if (canAnimate)
-            patY.set(
-              withSequence(
-                withTiming(1, { duration: 70 }),
-                withTiming(-3, { duration: 110 }),
-                withTiming(1, { duration: 110 }),
-                withTiming(0, { duration: 90 }),
-              ),
-            );
-          if (onPress) {
-            onPress();
-            return;
-          }
-          void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-        }}
-      >
-        {heart > 0 && (
-          <View
-            pointerEvents="none"
-            style={{ position: 'absolute', top: -16, left: scaledSize / 2 - 16, zIndex: 4 }}
-          >
-            <PixelProp kind="heart" size={32} />
-          </View>
-        )}
-        <Animated.View style={poseMotion}>
-          <Svg
-            width={scaledSize}
-            height={scaledSize}
-            viewBox="0 0 32 32"
-            style={{
-              backgroundColor: c.transparent,
-              transform: [
-                { scaleX: facing === 'left' ? -1 : 1 },
-                { translateY: slumped ? 8 : 0 },
-                { translateX: canIdle && idle === 'look' ? 3 : 0 },
-              ],
-            }}
-          >
-            {pixels
-              .filter((pixel) => !canPose || pixel.y < 27)
-              .map(({ x: rx, y: ry, color }) => {
-                const shadow = groundShadow && ry >= 30 && color === c.stone;
-                const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
-                const leftStep = canWalk && walkFrame === 0 && rx < 17;
-                const rightStep = canWalk && walkFrame === 2 && rx >= 17;
-                const stepping = foot && (leftStep || rightStep);
-                const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
-                const drawY =
-                  curled && sleeping
-                    ? 7 + Math.floor((ry * 24) / 32)
-                    : canWalk && !shadow
-                      ? ry + bodyLift - (stepping ? 1 : 0)
-                      : canIdle && breath && ry >= 16 && !shadow
-                        ? ry - 1
-                        : ry;
-                return (
-                  <Rect
-                    key={`${rx}-${ry}`}
-                    x={drawX}
-                    y={drawY}
-                    width={1}
-                    height={1}
-                    fill={
-                      flashState.flashing && canAnimate
-                        ? c.flash
-                        : slumped
-                          ? color === c.ink || color === c.night
-                            ? c.night
-                            : c.wilt
-                          : color
-                    }
-                  />
-                );
-              })}
-            {((canIdle && idle === 'yawn') || yawning) && (
-              <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
-            )}
-          </Svg>
-        </Animated.View>
-        {canPose && (
-          <Svg
-            width={scaledSize}
-            height={scaledSize}
-            viewBox="0 0 32 32"
-            pointerEvents="none"
-            style={{
-              position: 'absolute',
-              left: 0,
-              top: 0,
-              transform: [{ scaleX: facing === 'left' ? -1 : 1 }],
-            }}
-          >
-            {pixels
-              .filter((pixel) => pixel.y >= 27)
-              .map(({ x: rx, y: ry, color }) => (
-                <Rect key={`${rx}-${ry}`} x={rx} y={ry} width={1} height={1} fill={color} />
-              ))}
-          </Svg>
-        )}
-      </Pressable>
+      {decorative ? (
+        <View style={{ backgroundColor: c.transparent }}>
+          {heart > 0 && (
+            <View
+              pointerEvents="none"
+              style={{ position: 'absolute', top: -16, left: scaledSize / 2 - 16, zIndex: 4 }}
+            >
+              <PixelProp kind="heart" size={32} />
+            </View>
+          )}
+          <Animated.View style={poseMotion}>
+            <Svg
+              width={scaledSize}
+              height={scaledSize}
+              viewBox="0 0 32 32"
+              style={{
+                backgroundColor: c.transparent,
+                transform: [
+                  { scaleX: facing === 'left' ? -1 : 1 },
+                  { translateY: slumped ? 8 : 0 },
+                  { translateX: canIdle && idle === 'look' ? 3 : 0 },
+                ],
+              }}
+            >
+              {pixels
+                .filter((pixel) => !canPose || pixel.y < 27)
+                .map(({ x: rx, y: ry, color }) => {
+                  const shadow = groundShadow && ry >= 30 && color === c.stone;
+                  const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
+                  const leftStep = canWalk && walkFrame === 0 && rx < 17;
+                  const rightStep = canWalk && walkFrame === 2 && rx >= 17;
+                  const stepping = foot && (leftStep || rightStep);
+                  const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
+                  const drawY =
+                    curled && sleeping
+                      ? 7 + Math.floor((ry * 24) / 32)
+                      : canWalk && !shadow
+                        ? ry + bodyLift - (stepping ? 1 : 0)
+                        : canIdle && breath && ry >= 16 && !shadow
+                          ? ry - 1
+                          : ry;
+                  return (
+                    <Rect
+                      key={`${rx}-${ry}`}
+                      x={drawX}
+                      y={drawY}
+                      width={1}
+                      height={1}
+                      fill={
+                        flashState.flashing && canAnimate
+                          ? c.flash
+                          : slumped
+                            ? color === c.ink || color === c.night
+                              ? c.night
+                              : c.wilt
+                            : color
+                      }
+                    />
+                  );
+                })}
+              {((canIdle && idle === 'yawn') || yawning) && (
+                <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
+              )}
+            </Svg>
+          </Animated.View>
+          {canPose && (
+            <Svg
+              width={scaledSize}
+              height={scaledSize}
+              viewBox="0 0 32 32"
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                transform: [{ scaleX: facing === 'left' ? -1 : 1 }],
+              }}
+            >
+              {pixels
+                .filter((pixel) => pixel.y >= 27)
+                .map(({ x: rx, y: ry, color }) => (
+                  <Rect key={`${rx}-${ry}`} x={rx} y={ry} width={1} height={1} fill={color} />
+                ))}
+            </Svg>
+          )}
+        </View>
+      ) : (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={actionLabel ?? `Greet ${petLabel}`}
+          accessibilityState={{ disabled: !active }}
+          disabled={!active}
+          style={{ backgroundColor: c.transparent }}
+          onPress={() => {
+            if (!active) return;
+            cancelAnimation(patY);
+            patY.set(0);
+            setHeart((count) => count + 1);
+            if (canAnimate)
+              patY.set(
+                withSequence(
+                  withTiming(1, { duration: 70 }),
+                  withTiming(-3, { duration: 110 }),
+                  withTiming(1, { duration: 110 }),
+                  withTiming(0, { duration: 90 }),
+                ),
+              );
+            if (onPress) {
+              onPress();
+              return;
+            }
+            void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+          }}
+        >
+          {heart > 0 && (
+            <View
+              pointerEvents="none"
+              style={{ position: 'absolute', top: -16, left: scaledSize / 2 - 16, zIndex: 4 }}
+            >
+              <PixelProp kind="heart" size={32} />
+            </View>
+          )}
+          <Animated.View style={poseMotion}>
+            <Svg
+              width={scaledSize}
+              height={scaledSize}
+              viewBox="0 0 32 32"
+              style={{
+                backgroundColor: c.transparent,
+                transform: [
+                  { scaleX: facing === 'left' ? -1 : 1 },
+                  { translateY: slumped ? 8 : 0 },
+                  { translateX: canIdle && idle === 'look' ? 3 : 0 },
+                ],
+              }}
+            >
+              {pixels
+                .filter((pixel) => !canPose || pixel.y < 27)
+                .map(({ x: rx, y: ry, color }) => {
+                  const shadow = groundShadow && ry >= 30 && color === c.stone;
+                  const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
+                  const leftStep = canWalk && walkFrame === 0 && rx < 17;
+                  const rightStep = canWalk && walkFrame === 2 && rx >= 17;
+                  const stepping = foot && (leftStep || rightStep);
+                  const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
+                  const drawY =
+                    curled && sleeping
+                      ? 7 + Math.floor((ry * 24) / 32)
+                      : canWalk && !shadow
+                        ? ry + bodyLift - (stepping ? 1 : 0)
+                        : canIdle && breath && ry >= 16 && !shadow
+                          ? ry - 1
+                          : ry;
+                  return (
+                    <Rect
+                      key={`${rx}-${ry}`}
+                      x={drawX}
+                      y={drawY}
+                      width={1}
+                      height={1}
+                      fill={
+                        flashState.flashing && canAnimate
+                          ? c.flash
+                          : slumped
+                            ? color === c.ink || color === c.night
+                              ? c.night
+                              : c.wilt
+                            : color
+                      }
+                    />
+                  );
+                })}
+              {((canIdle && idle === 'yawn') || yawning) && (
+                <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
+              )}
+            </Svg>
+          </Animated.View>
+          {canPose && (
+            <Svg
+              width={scaledSize}
+              height={scaledSize}
+              viewBox="0 0 32 32"
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                transform: [{ scaleX: facing === 'left' ? -1 : 1 }],
+              }}
+            >
+              {pixels
+                .filter((pixel) => pixel.y >= 27)
+                .map(({ x: rx, y: ry, color }) => (
+                  <Rect key={`${rx}-${ry}`} x={rx} y={ry} width={1} height={1} fill={color} />
+                ))}
+            </Svg>
+          )}
+        </Pressable>
+      )}
     </Animated.View>
   );
 }
@@ -640,7 +716,9 @@ export function FloatingZ() {
   }));
   return (
     <Animated.View pointerEvents="none" style={motion}>
-      <Text style={{ fontFamily: 'Nunito_800ExtraBold', color: c.paper, fontSize: 20 }}>z z z</Text>
+      <Text style={{ fontFamily: 'PixelifySans_700Bold', color: c.paper, fontSize: 20 }}>
+        z z z
+      </Text>
     </Animated.View>
   );
 }
@@ -773,7 +851,7 @@ export function StatusChip({ player, compact = false }: { player: Player; compac
       <Text
         numberOfLines={1}
         style={{
-          fontFamily: 'Nunito_800ExtraBold',
+          fontFamily: 'PixelifySans_700Bold',
           fontSize: 11,
           lineHeight: 17,
           flexShrink: 1,
@@ -832,7 +910,7 @@ export function GameHeader() {
           >
             <Text
               style={{
-                fontFamily: 'Nunito_800ExtraBold',
+                fontFamily: 'PixelifySans_700Bold',
                 fontSize: 10,
                 lineHeight: 12,
                 color: c.ink,
@@ -843,7 +921,7 @@ export function GameHeader() {
             <View style={{ flexDirection: 'row', alignItems: 'center', gap: 3, height: 18 }}>
               <PixelProp kind="grass" size={16} />
               {(p?.grass ?? 20) >= 10000 ? (
-                <Text style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 14, color: c.ink }}>
+                <Text style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14, color: c.ink }}>
                   {new Intl.NumberFormat('en-GB', {
                     notation: 'compact',
                     maximumFractionDigits: 1,
@@ -868,7 +946,9 @@ export function GameHeader() {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontFamily: 'Nunito_800ExtraBold', fontSize: 20, color: c.ink }}>?</Text>
+            <Text style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 20, color: c.ink }}>
+              ?
+            </Text>
             <View
               style={{
                 position: 'absolute',
@@ -895,7 +975,8 @@ export function Page({ children, style }: { children: React.ReactNode; style?: V
           {
             ...gameColumn,
             padding: gameLayout.gutter,
-            paddingBottom: dockClearance(insets.bottom),
+            paddingTop: hudClearance(insets.top),
+            paddingBottom: hotbarClearance(insets.bottom),
             gap: 12,
           },
           style,
@@ -907,11 +988,11 @@ export function Page({ children, style }: { children: React.ReactNode; style?: V
   );
 }
 export const styles = {
-  text: { fontFamily: 'Nunito_800ExtraBold', color: c.ink, fontSize: 15, lineHeight: 22 },
+  text: { fontFamily: 'PixelifySans_700Bold', color: c.ink, fontSize: 15, lineHeight: 22 },
   title: { fontSize: 20, lineHeight: 32 },
   border: panelStyle,
   input: {
-    fontFamily: 'Nunito_600SemiBold',
+    fontFamily: 'PixelifySans_500Medium',
     color: c.ink,
     borderWidth: 2,
     borderColor: c.outline,
