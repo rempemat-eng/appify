@@ -35,6 +35,44 @@ vm.runInNewContext(compile('lib/garden-map.ts'), {
   exports: mapModule.exports,
 });
 const map = mapModule.exports;
+// Layering: flat decals (the bridge) live in the ground layer. No object may be
+// drawn over a walkable spot on them, so a crossing companion is always visible.
+{
+  const flat = map.gardenFlat;
+  assert.ok(
+    flat.some((decal) => decal.id === 'bridge'),
+    'the bridge is ground',
+  );
+  assert.ok(
+    !map.gardenObjects.some((object) => object.sprite === 'bridge'),
+    'the bridge is not a layered object',
+  );
+  let walkableOnDecals = 0;
+  for (const decal of flat)
+    map.gardenWalk.forEach((row, r) =>
+      [...row].forEach((cell, c) => {
+        const x = c * map.GARDEN.cell + map.GARDEN.cell / 2;
+        const y = r * map.GARDEN.cell + map.GARDEN.cell / 2;
+        if (
+          cell !== '.' ||
+          x < decal.x ||
+          x >= decal.x + decal.w ||
+          y < decal.y ||
+          y >= decal.y + decal.h
+        )
+          return;
+        walkableOnDecals++;
+        const cover = map.gardenObjects.find(
+          (o) => o.y + o.h > y && x >= o.x && x < o.x + o.w && y >= o.y && y < o.y + o.h,
+        );
+        assert.ok(
+          !cover,
+          `${cover?.id} would draw over a companion on the ${decal.id} at ${x},${y}`,
+        );
+      }),
+    );
+  assert.ok(walkableOnDecals >= 6, 'the companion can actually walk on the bridge deck');
+}
 let hooks,
   index,
   effects,

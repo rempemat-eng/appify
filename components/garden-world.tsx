@@ -79,7 +79,6 @@ import gateImg from '@/assets/garden/gate.png';
 import readingNookImg from '@/assets/garden/reading_nook.png';
 import wateringCanImg from '@/assets/garden/watering_can.png';
 import lanternImg from '@/assets/garden/lantern.png';
-import bridgeImg from '@/assets/garden/bridge.png';
 import meadowSignImg from '@/assets/garden/meadow_sign.png';
 import groundTop from '@/assets/garden/ground-top.png';
 
@@ -103,7 +102,6 @@ const sprites: Record<string, ImageSourcePropType> = {
   reading_nook: readingNookImg,
   watering_can: wateringCanImg,
   lantern: lanternImg,
-  bridge: bridgeImg,
   meadow_sign: meadowSignImg,
 };
 const growthSize = (key: string): readonly [number, number] =>

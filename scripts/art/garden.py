@@ -745,7 +745,6 @@ OBJECTS = [
     # the forest behind the HUD: a back row of pines
     *[(f'pine-back-{i}', 'pine', -14 + i * 15, -44 + (i % 2) * 6, None) for i in range(15)],
     # the lower garden: stream, bridge, meadow, orchard edge and the gate out
-    ('bridge', 'bridge', meadow.BRIDGE[0], meadow.BRIDGE[1], None),
     ('meadow-sign', 'meadow_sign', 104, 230, 'meadow'),
     ('tree-7', 'tree', -14, 168, None),
     ('tree-8', 'tree_small', 172, 160, None),
@@ -771,8 +770,6 @@ def bake_shadows(terrain: Canvas, sprites: dict):
     in from the treeline. Shadows multiply the ground so they work on any surface."""
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
-        if key in ('bridge',):
-            continue
         foot = y + s.h
         if key in ('tree', 'tree_small', 'tree_autumn'):
             style.cast_shadow(terrain, x + s.w / 2 + 3, foot - 1, s.w * 0.5, 4.5)
@@ -803,8 +800,11 @@ def main():
         'fence_l': fence_h(80), 'fence_r': fence_h(78), 'gate': gate(),
         'reading_nook': reading_nook(), 'watering_can': watering_can(), 'lantern': leaf_lantern(),
         'frog': frog(),
-        'bridge': meadow.bridge(), 'meadow_sign': meadow.meadow_sign(),
+        'meadow_sign': meadow.meadow_sign(),
     }
+    # Flat, walkable things (the bridge deck) are part of the ground, not objects:
+    # baked into every ground frame, characters always draw on top of them.
+    flat = [(meadow.bridge(), meadow.BRIDGE[0], meadow.BRIDGE[1])]
     growth = meadow.growth_sprites()
     growth_dir = os.path.join(OUT, 'growth')
     os.makedirs(growth_dir, exist_ok=True)
@@ -813,6 +813,8 @@ def main():
     meadow.draw_top_band().save(os.path.join(OUT, 'ground-top.png'), SCALE)
     for frame in range(4):
         terrain = draw_terrain(frame)
+        for (decal, fx, fy) in flat:
+            terrain.paste(decal, fx, fy)
         bake_shadows(terrain, sprites)
         terrain.save(os.path.join(OUT, f'ground-{frame}.png'), SCALE)
     for key, s in sprites.items():
@@ -834,7 +836,7 @@ def main():
                 blocked.add((xx // cell, yy // cell))
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
-        if key == 'bridge' or y + s.h <= 0:
+        if y + s.h <= 0:
             continue
         foot_h = 6 if key not in ('hut', 'stall') else 14
         for yy in range(y + s.h - foot_h, y + s.h):
@@ -892,6 +894,8 @@ def main():
         f'export const gardenOrchard = {json.dumps([{"id": f"orchard-{i}", "x": x, "y": y} for i, (x, y) in enumerate(meadow.ORCHARD)], indent=2)} as const;',
         f'export const growthSpriteSizes = {json.dumps({k: [v.w, v.h] for k, v in growth.items()}, indent=2)} as const;',
         f'export const gardenObjects = {json.dumps([{"id": i, "sprite": k, "x": x, "y": y, "w": sizes[k][0], "h": sizes[k][1], "action": a} for (i, k, x, y, a) in OBJECTS], indent=2)} as const;',
+        '/** Flat, walkable decals baked into the ground layer (characters always draw above them). */',
+        f'export const gardenFlat = {json.dumps([{"id": "bridge", "x": meadow.BRIDGE[0], "y": meadow.BRIDGE[1], "w": meadow.BRIDGE[2], "h": meadow.BRIDGE[3]}], indent=2)} as const;',
         f'export const gardenHotspots = {json.dumps(hotspots, indent=2)} as const;',
         f'export const gardenWalk: readonly string[] = {json.dumps(walk, indent=2)};',
         '',

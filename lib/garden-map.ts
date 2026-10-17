@@ -533,15 +533,6 @@ export const gardenObjects = [
     action: null,
   },
   {
-    id: 'bridge',
-    sprite: 'bridge',
-    x: 80,
-    y: 190,
-    w: 32,
-    h: 30,
-    action: null,
-  },
-  {
     id: 'meadow-sign',
     sprite: 'meadow_sign',
     x: 104,
@@ -693,6 +684,16 @@ export const gardenObjects = [
     w: 22,
     h: 40,
     action: null,
+  },
+] as const;
+/** Flat, walkable decals baked into the ground layer (characters always draw above them). */
+export const gardenFlat = [
+  {
+    id: 'bridge',
+    x: 80,
+    y: 190,
+    w: 32,
+    h: 30,
   },
 ] as const;
 export const gardenHotspots = {
