@@ -1,5 +1,6 @@
-import { useState, type ReactNode, type Ref } from 'react';
+import { useState, type KeyboardEvent, type ReactNode, type Ref } from 'react';
 import {
+  Platform,
   Pressable,
   TextInput,
   View,
@@ -385,8 +386,28 @@ export function PixelSwitch({
   const width = 20 * u;
   const height = 11 * u;
   const knob = 7 * u;
+  // RN Web's Pressable handles Enter for a switch, but only handles Space for
+  // button/menuitem roles. Keep the switch semantics and fill that web-only gap.
+  const webKeys =
+    Platform.OS === 'web'
+      ? {
+          onKeyDown: (event: KeyboardEvent<HTMLElement>) => {
+            if (
+              (event.key !== ' ' && event.key !== 'Spacebar') ||
+              event.target !== event.currentTarget ||
+              event.altKey ||
+              event.ctrlKey ||
+              event.metaKey
+            )
+              return;
+            event.preventDefault();
+            if (!disabled && !event.repeat) onValueChange(!value);
+          },
+        }
+      : {};
   return (
     <Pressable
+      {...webKeys}
       accessibilityRole="switch"
       accessibilityLabel={accessibilityLabel}
       accessibilityHint={accessibilityHint}
