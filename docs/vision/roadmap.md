@@ -3,9 +3,8 @@
 ## Now: make it feel like one finished game
 
 1. **Art pass on the rest of the world, using the art-style.md rules.**
-   - Moss's stall and the small props.
-   - Mission worlds (`worlds.py`) and battle backdrops (`battle.py`), which still use the older, softer style.
-   - Companions and visitors: check that their outlines and shading match the new garden.
+   - Done (17 Oct): garden, hut, stall, signpost, trees, pines, bushes, rocks, ground, shadows, mission worlds.
+   - Left: battle backdrops (`battle.py`), the welcome-back and card vignettes (`vignettes.py`), and a check of companions and visitors against the new outlines and shading.
 2. **Missions, Arena and Shop as places, not pages.**
    - Shop becomes the inside of Moss's stall.
    - Missions becomes a world map past the gate.
