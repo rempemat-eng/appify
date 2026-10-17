@@ -183,6 +183,97 @@ def window(cv: Canvas, x: int, y: int, w: int = 16, h: int = 14, shutters=NAP, c
         detail.overhang_shadow(cv, x, x + w + 2, y + h + 2, lambda xx: 1 if xx < x + 4 else 2, k=2)
 
 
+def topdown_roof(cv: Canvas, ridge: float, apex_y: int, eave_y: int, left_x: int, right_x: int,
+                 ramp, hole=frozenset(), offset=None, seed: int = 31, moss=LEAF, lit_base: int = 3,
+                 shade_base: int = 2, barge=WOOD):
+    """A gable roof seen steeply from above (the hut's rule, shared by every building):
+    two slate planes falling left and right of a ridge that runs back from the front
+    gable's apex, the far edge peaking at the ridge, rounded ridge caps, eaves that show
+    their thickness and thick bargeboards along the gable. Returns the planes and the
+    bargeboard line, so callers can lay the gable and the front wall under it."""
+    slope = (eave_y - apex_y) / (ridge - left_x)
+
+    def edge_y(x):
+        return apex_y + abs(x + 0.5 - ridge) * slope
+
+    def back_y(x):
+        return 1 + abs(x + 0.5 - ridge) * slope
+
+    left = {(x, y) for x in range(left_x, int(ridge) + 1) for y in range(0, eave_y + 1)
+            if back_y(x) <= y <= edge_y(x)} - set(hole)
+    right = {(x, y) for x in range(int(ridge) + 1, right_x + 1) for y in range(0, eave_y + 1)
+             if back_y(x) <= y <= edge_y(x)} - set(hole)
+    detail.slate_plane(cv, left, ramp, lit_base, ridge, -1, seed=seed, moss=moss, skew=slope, offset=offset)
+    detail.slate_plane(cv, right, ramp, shade_base, ridge, 1, seed=seed + 1, moss=moss, skew=slope, offset=offset)
+    rx = int(ridge) - 2
+    for y in range(0, apex_y + 2):
+        k = y % 4
+        cv.set(rx, y, ramp[1]); cv.set(rx + 1, y, ramp[4] if k else ramp[3])
+        cv.set(rx + 2, y, ramp[3] if k else ramp[2]); cv.set(rx + 3, y, ramp[2] if k else ramp[1]); cv.set(rx + 4, y, ramp[0])
+    for x in range(left_x, right_x + 1):
+        by = int(back_y(x))
+        if (x, by) in left:
+            cv.set(x, by, ramp[4])
+        elif (x, by) in right:
+            cv.set(x, by, ramp[3])
+    for y in range(0, eave_y + 1):
+        if (left_x, y) in left:
+            cv.set(left_x, y, ramp[4])
+        if (right_x, y) in right:
+            cv.set(right_x, y, ramp[1])
+    for x in range(left_x - 1, right_x + 2):
+        ey = int(edge_y(x))
+        lit = x < ridge
+        cv.set(x, ey, barge[4] if lit else barge[3]); cv.set(x, ey + 1, barge[3] if lit else barge[2])
+        cv.set(x, ey + 2, barge[1])
+    return left, right, edge_y
+
+
+def topdown_gable(cv: Canvas, edge_y, x0: int, x1: int, apex_y: int, wall_top: int, ramp=WOOD,
+                  boards: bool = True) -> set:
+    """The gable under a top-down roof: boards (or plaster), shaded under the bargeboards."""
+    gable = {(x, y) for x in range(x0, x1 + 1) for y in range(apex_y, wall_top) if y > edge_y(x) + 2}
+    if boards:
+        detail.boards(cv, gable, ramp, 2, apex_y, board=5, vertical=True, x0=x0, joints=False, grain=0.05)
+    else:
+        for (x, y) in gable:
+            cv.set(x, y, ramp[4] if x < (x0 + x1) / 2 else ramp[3])
+    for (x, y) in gable:
+        if (x, y - 1) not in gable or (x, y - 2) not in gable:
+            detail.shade(cv, x, y, 2 if (x, y - 1) not in gable else 1)
+    return gable
+
+
+def arched_door(cv: Canvas, dx0: int, dy0: int, dw: int = 16, dh: int = 28, porthole: bool = True) -> set:
+    """A round-topped plank door recessed in a stone arch, with iron straps; returns the
+    arch's pixels (it stands proud of the wall)."""
+    door = {(x, y) for (x, y) in disc(dx0 + dw / 2, dy0 + dw / 2, dw / 2) if y < dy0 + dh}
+    door |= rect_set(dx0, dy0 + dw // 2, dw, dh - dw // 2)
+    arch = set()
+    for (x, y) in door:
+        for ax, ay in ((-1, 0), (1, 0), (0, -1), (-1, -1), (1, -1), (-2, 0), (2, 0), (0, -2), (-2, -1), (2, -1)):
+            if (x + ax, y + ay) not in door and y + ay < dy0 + dh:
+                arch.add((x + ax, y + ay))
+    for (x, y) in arch:
+        k = int(((x - dx0 - dw / 2) * 0.9 + (y - dy0) * 0.6) // 3)
+        cv.set(x, y, STONE[(3 if k % 2 else 2) - (1 if x > dx0 + dw / 2 + 1 else 0)])
+    for (x, y) in arch:
+        if (x - 1, y) not in arch and (x, y - 1) not in arch:
+            cv.set(x, y, STONE[4])
+    detail.boards(cv, door, WOOD, 3, dy0, board=4, vertical=True, x0=dx0, joints=False, grain=0.06)
+    for sy in (dy0 + dh // 2 - 1, dy0 + dh - 5):
+        cv.hline(dx0 + 1, sy, dw - 7, SLATE[1]); cv.hline(dx0 + 1, sy - 1, dw - 7, SLATE[2])
+        cv.set(dx0 + 3, sy - 1, SLATE[4])
+    if porthole:
+        for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 2.8):
+            cv.set(x, y, WOOD[1])
+        for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 1.9):
+            cv.set(x, y, WTR[2])
+    detail.recess(cv, door, depth=2, k=1)
+    cv.set(dx0 + dw - 4, dy0 + dh * 2 // 3, GOLD[4]); cv.set(dx0 + dw - 4, dy0 + dh * 2 // 3 + 1, GOLD[2])
+    return arch
+
+
 def hut() -> Canvas:
     """The nap hut in the steep top-down view (Matt's references, 17 Oct), 104 x 92: a
     big slate roof seen from above whose ridge runs back from a timber front gable, the

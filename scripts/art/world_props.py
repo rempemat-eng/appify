@@ -10,7 +10,7 @@ than the companion, benches and tables at companion height.
 from __future__ import annotations
 
 import detail
-from garden_props import PAD, canopy, plane, planks, post, rect_set, stone_blocks
+from garden_props import PAD, arched_door, canopy, plane, planks, post, rect_set, stone_blocks, topdown_gable, topdown_roof
 from garden_props import window as shuttered_window
 from materials import CREAM, GOLD, LEAF, MATERIALS, NAP, PLASTER, RED, ROOF, SLATE, SNOW, STONE, WOOD, WTR
 from pixel import Canvas, disc, noise2, oval
@@ -128,71 +128,52 @@ def hedge(w: int) -> Canvas:
 
 
 def library() -> Canvas:
-    """The little library, 128 x 100: a shingled pediment over round columns that cast
+    """The little library, 128 x 100, in the steep top-down view: a tiled roof seen from
+    above over a plaster pediment with the open-book sign, round columns that cast
     shadows on the ashlar wall, tall windows, a recessed double door and steps that show
     their treads and risers."""
     w, h = 128, 100
     cv = Canvas(w, h, pad=PAD)
-    wall = rect_set(8, 38, 112, 48)
-    detail.stones(cv, 8, 38, 112, 48, PLASTER, seed=3, course=6, base=4)
-    for x in range(110, 120):
-        for y in range(38, 86):
-            detail.shade(cv, x, y, 1)  # the side turning from the light
-    detail.stones(cv, 6, 86, 116, 6, STONE, seed=4, course=3, moss=LEAF)
+    ridge, apex_y, eave_y, wall_top, wall_bottom = 63.5, 24, 50, 50, 86
+    left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 1, 126, ROOF, seed=41, moss=None)
+    gable = topdown_gable(cv, edge_y, 6, 121, apex_y, wall_top, PLASTER, boards=False)
+    cv.rect(52, 34, 24, 12, WOOD[1]); cv.hline(52, 34, 24, WOOD[3]); cv.vline(52, 34, 12, WOOD[3])
+    for (x, y) in rect_set(54, 36, 20, 8):
+        cv.set(x, y, PLASTER[5] if x < 64 else PLASTER[4])
+    cv.vline(64, 36, 8, PLASTER[1]); cv.vline(65, 42, 6, NAP[3])  # the lilac bookmark
+    for x in range(56, 63, 2):
+        cv.set(x, 39, PLASTER[2])
+    for x in range(67, 73, 2):
+        cv.set(x, 39, PLASTER[1])
+    detail.stones(cv, 6, wall_top, 116, wall_bottom - wall_top, PLASTER, seed=3, course=6, base=4)
+    for x in range(112, 122):
+        for y in range(wall_top, wall_bottom):
+            detail.shade(cv, x, y, 1)
+    detail.stones(cv, 4, wall_bottom, 120, 5, STONE, seed=4, course=3, moss=LEAF)
     for x in (24, 92):
-        window(cv, x + 2, 48, 10, 24)
-    # recessed double door with panels and brass handles
-    door = rect_set(54, 56, 20, 30)
-    cv.rect(52, 54, 24, 2, PLASTER[5]); cv.vline(52, 54, 32, PLASTER[5]); cv.vline(75, 54, 32, PLASTER[2])
-    detail.boards(cv, door, WOOD, 2, 56, board=4, vertical=True, x0=54, joints=False, grain=0.05)
+        window(cv, x + 2, 55, 10, 22)
+    door = rect_set(54, 58, 20, 28)
+    cv.rect(52, 56, 24, 2, PLASTER[5]); cv.vline(52, 56, 30, PLASTER[5]); cv.vline(75, 56, 30, PLASTER[2])
+    detail.boards(cv, door, WOOD, 2, 58, board=4, vertical=True, x0=54, joints=False, grain=0.05)
     for x0 in (56, 65):
-        for py in (61, 73):
+        for py in (62, 74):
             cv.rect(x0 + 1, py, 6, 8, WOOD[3]); cv.hline(x0 + 1, py, 6, WOOD[4]); cv.vline(x0 + 1, py, 8, WOOD[4])
             cv.hline(x0 + 1, py + 7, 6, WOOD[1]); cv.vline(x0 + 6, py + 1, 7, WOOD[1])
-    cv.vline(63, 56, 30, WOOD[0])
+    cv.vline(63, 58, 28, WOOD[0])
     cv.set(62, 72, GOLD[4]); cv.set(66, 72, GOLD[4])
     detail.recess(cv, door, depth=2, k=1)
-    # round columns with capitals and bases, casting shadows on the wall
     cols = set()
     for x in (16, 36, 82, 102):
-        for y in range(43, 83):
+        for y in range(53, 83):
             for i, t in enumerate((4, 5, 5, 4, 4, 3, 3, 2, 1)):
                 cv.set(x + i, y, PLASTER[t])
             cols |= {(x + i, y) for i in range(9)}
-        for (cy, top) in ((40, True), (83, False)):
+        for cy in (50, 83):
             cv.rect(x - 2, cy, 13, 3, PLASTER[4]); cv.hline(x - 2, cy, 13, PLASTER[5])
             cv.hline(x - 2, cy + 2, 13, PLASTER[2]); cv.set(x + 10, cy + 1, PLASTER[3])
             cols |= rect_set(x - 2, cy, 13, 3)
     detail.cast(cv, cols, 1, 1, k=2, on=PLASTER, reach=3)
-    # the cornice: a lit top, a face and a deep shadow on the wall below it
-    cv.rect(0, 35, w, 4, PLASTER[4]); cv.hline(0, 35, w, PLASTER[5]); cv.hline(0, 38, w, PLASTER[2])
-    detail.overhang_shadow(cv, 8, 120, 39, lambda x: 2 + (x - 8) // 40, k=2, cap=2)
-    # pediment: shingled planes and a tympanum with the open-book sign
-    roof = set()
-    for y in range(2, 35):
-        span = int((y - 2) * 1.72) + 4
-        for x in range(w // 2 - span, w // 2 + span):
-            roof.add((x, y))
-    gable_roof(cv, roof, ROOF, w / 2, 2, seed=5)
-    gable = set()
-    for y in range(12, 35):
-        span = int((y - 12) * 1.55)
-        for x in range(w // 2 - span, w // 2 + span):
-            gable.add((x, y))
-    for (x, y) in gable:
-        cv.set(x, y, PLASTER[4] if x < w // 2 else PLASTER[3])
-    for (x, y) in gable:  # the raking cornice shades the tympanum below it
-        if (x, y - 1) not in gable or (x, y - 2) not in gable:
-            detail.shade(cv, x, y, 2)
-    cv.rect(52, 22, 24, 12, WOOD[1]); cv.hline(52, 22, 24, WOOD[3]); cv.vline(52, 22, 12, WOOD[3])
-    for (x, y) in rect_set(54, 24, 20, 8):
-        cv.set(x, y, PLASTER[5] if x < 64 else PLASTER[4])
-    cv.vline(64, 24, 8, PLASTER[1]); cv.vline(65, 30, 6, NAP[3])  # the lilac bookmark
-    for x in range(56, 63, 2):
-        cv.set(x, 27, PLASTER[2])
-    for x in range(67, 73, 2):
-        cv.set(x, 27, PLASTER[1])
-    # steps: each tread lit, each riser a step darker
+    detail.overhang_shadow(cv, 6, 122, wall_top, lambda x: 3 + (x - 6) // 40, k=2, cap=2)
     for i, y in enumerate((88, 92, 96)):
         x0, sw = 50 - i * 4, 28 + i * 8
         cv.rect(x0, y, sw, 2, STONE[4]); cv.rect(x0, y + 2, sw, 2, STONE[2])
@@ -202,50 +183,49 @@ def library() -> Canvas:
 
 
 def house(roof=None, sign: bool = False) -> Canvas:
-    """A town house, 80 x 76: a shingled gable roof over painted siding in the eave's
-    shadow, a brick chimney, a recessed door just taller than the companion, windows
-    with shutters and flower boxes, and a fieldstone footing."""
+    """A town house, 80 x 76, in the steep top-down view (the hut's rule): a slate roof
+    seen from above, a board gable, painted siding in the overhang's shadow, a recessed
+    arched door, windows with flower boxes, a stone chimney showing its cap and a
+    fieldstone footing."""
     roof = roof or ROOF
     w, h = 80, 76
     cv = Canvas(w, h, pad=PAD)
-    detail.bricks(cv, 54, 0, 8, 14, ROOF if roof is not ROOF else STONE, seed=w)
-    cv.rect(53, 0, 10, 2, STONE[3]); cv.hline(53, 0, 10, STONE[4])
-    detail.boards(cv, rect_set(6, 34, 62, 36), PLASTER, 4, 34, seed=11, joints=False)
-    detail.boards(cv, rect_set(68, 34, 6, 36), PLASTER, 3, 34, seed=12, joints=False)
-    detail.stones(cv, 4, 68, 72, 6, STONE, seed=13, course=3, moss=LEAF)
-    # door: a frame proud of the wall, the door recessed inside it
-    door = rect_set(32, 42, 16, 26)
-    cv.rect(30, 40, 20, 28, WOOD[2]); cv.hline(30, 40, 20, WOOD[4]); cv.vline(30, 40, 28, WOOD[3])
-    cv.vline(49, 41, 27, WOOD[1])
-    detail.boards(cv, door, WOOD, 3 if not sign else 2, 42, board=4, vertical=True, x0=32, joints=False, grain=0.05)
-    detail.recess(cv, door, depth=2, k=1)
-    cv.set(45, 56, GOLD[4]); cv.set(45, 57, GOLD[2])
-    proud = rect_set(30, 40, 20, 28)
+    ridge, apex_y, eave_y, wall_top, wall_bottom = 39.5, 20, 44, 44, 68
+    chim = rect_set(56, 8, 9, 13)
+    left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 2, 77, roof, hole=chim,
+                                       offset=lambda x, y: -1 if 65 <= x <= 68 and 10 <= y <= 24 else 0,
+                                       seed=51 if sign else 53)
+    detail.stones(cv, 56, 12, 9, 9, STONE, seed=54, course=3)
+    cv.vline(56, 12, 9, STONE[3]); cv.vline(64, 12, 9, STONE[1])
+    cv.rect(55, 8, 11, 4, STONE[3]); cv.hline(55, 8, 11, STONE[4]); cv.rect(58, 9, 5, 2, NAP[0])
+    gable = topdown_gable(cv, edge_y, 7, 72, apex_y, wall_top, WOOD if not sign else PLASTER, boards=not sign)
+    if sign:  # the bindery: a little book plaque in the gable
+        cv.rect(30, 30, 20, 9, WOOD[2]); cv.hline(30, 30, 20, WOOD[4]); cv.hline(30, 38, 20, WOOD[1])
+        cv.rect(33, 32, 14, 5, PLASTER[5]); cv.vline(40, 32, 5, PLASTER[2]); cv.vline(43, 36, 3, NAP[3])
+    else:
+        for (x, y) in disc(ridge, 33, 3.4):
+            cv.set(x, y, WOOD[4] if x + y < ridge + 32 else WOOD[1])
+        for (x, y) in disc(ridge, 33, 2.3):
+            cv.set(x, y, WTR[2] if x < ridge else WTR[1])
+    detail.boards(cv, rect_set(7, wall_top, 66, wall_bottom - wall_top), PLASTER, 4, wall_top, seed=11, joints=False)
+    proud = set()
+    for x0 in (7, 70):
+        for y in range(wall_top - 4, wall_bottom):
+            if (x0, y) in gable or y >= wall_top:
+                cv.set(x0, y, WOOD[3]); cv.set(x0 + 1, y, WOOD[4]); cv.set(x0 + 2, y, WOOD[2] if x0 == 7 else WOOD[1])
+                proud |= {(x0 + i, y) for i in range(3)}
+    proud |= arched_door(cv, 32, 40, 16, 28)
     family = NAP if sign else RED
-    for wx in (12, 54):
-        shuttered_window(cv, wx, 42, 14, 14, shutters=None if sign else NAP, warm=sign, sill=False)
-        cv.rect(wx - 1, 56, 16, 4, WOOD[2]); cv.hline(wx - 1, 56, 16, WOOD[4]); cv.hline(wx - 1, 59, 16, WOOD[1])
-        for i, x in enumerate(range(wx, wx + 14, 3)):
-            cv.set(x, 55, LEAF[3]); cv.set(x + 1, 55, LEAF[2])
-            cv.set(x, 54, family[3] if i % 2 else GOLD[3]); cv.set(x + 1, 54, family[4])
-        proud |= rect_set(wx - 1, 56, 16, 4)
-        if not sign:
-            proud |= rect_set(wx - 4, 42, 4, 14) | rect_set(wx + 14, 42, 4, 14)
+    for wx in (13, 55):
+        shuttered_window(cv, wx, 49, 12, 10, shutters=None, warm=sign, sill=False)
+        cv.rect(wx - 1, 59, 14, 3, WOOD[2]); cv.hline(wx - 1, 59, 14, WOOD[4]); cv.hline(wx - 1, 61, 14, WOOD[1])
+        for i, x in enumerate(range(wx, wx + 12, 3)):
+            cv.set(x, 58, LEAF[3]); cv.set(x + 1, 58, LEAF[2])
+            cv.set(x, 57, family[3] if i % 2 else GOLD[3]); cv.set(x + 1, 57, family[4])
+        proud |= rect_set(wx - 1, 59, 14, 3)
     detail.cast(cv, proud, 1, 1, k=2, on=PLASTER, reach=2)
-    mask = set()
-    for y in range(2, 35):
-        span = int((y - 2) * 1.2) + 6
-        for x in range(w // 2 - span, w // 2 + span):
-            mask.add((x, y))
-    mask -= {(x, y) for x in range(53, 63) for y in range(0, 14) if x > w // 2}
-    gable_roof(cv, mask, roof, w / 2, 2, seed=7 if sign else 9)
-    for x in range(0, w):  # the eave and its shadow on the siding
-        if cv.get(x, 34)[3] and (x, 33) in mask:
-            pass
-    detail.overhang_shadow(cv, 6, 74, 34, lambda x: 3 + (x - 6) // 24, k=2, cap=1)
-    if sign:  # the bindery: a little book plaque under the eaves
-        cv.rect(30, 24, 20, 9, WOOD[2]); cv.hline(30, 24, 20, WOOD[4]); cv.hline(30, 32, 20, WOOD[1])
-        cv.rect(33, 26, 14, 5, PLASTER[5]); cv.vline(40, 26, 5, PLASTER[2]); cv.vline(43, 30, 3, NAP[3])
+    detail.overhang_shadow(cv, 7, 73, wall_top, lambda x: (4 if x < 13 or x > 66 else 2) + (x - 7) // 40, k=2, cap=1)
+    detail.stones(cv, 5, wall_bottom, 70, 6, STONE, seed=13, course=3, moss=LEAF)
     return cv
 
 
@@ -290,53 +270,49 @@ def book_cart() -> Canvas:
 
 
 def cabin() -> Canvas:
-    """The mountain cabin, 100 x 86: round logs (a lit top, a dark underside) with ringed
-    ends at the corners, a snowy roof over wooden shingles, warm windows, a recessed door
-    and snow drifted against the front."""
+    """The mountain cabin, 100 x 86, in the steep top-down view: a shingled roof under
+    snow seen from above, a board gable, round logs with ringed ends at the corners,
+    warm windows, a recessed door and snow drifted against the front."""
     w, h = 100, 86
     cv = Canvas(w, h, pad=PAD)
-    for i, y in enumerate(range(38, 80, 5)):
+    ridge, apex_y, eave_y, wall_top, wall_bottom = 49.5, 22, 50, 50, 80
+    chim = rect_set(66, 6, 10, 16)
+    left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 96, WOOD, hole=chim, seed=61, moss=None)
+    slope = (eave_y - apex_y) / (ridge - 3)
+    for (x, y) in left | right:  # snow lies on the upper roof, rounded over its edge
+        depth = 14 + int(noise2(x // 4, 1, 62) * 4)
+        top = 1 + abs(x + 0.5 - ridge) * slope
+        if y < top + depth:
+            col = SNOW[3] if x < ridge else SNOW[2]
+            if y + 1 >= top + depth:
+                col = SNOW[1]
+            elif y < top + 2:
+                col = SNOW[3]
+            cv.set(x, y, col)
+        elif y < top + depth + 2:
+            detail.shade(cv, x, y, 2)
+    detail.stones(cv, 66, 10, 10, 12, STONE, seed=63, course=3)
+    cv.vline(66, 10, 12, STONE[3]); cv.vline(75, 10, 12, STONE[1])
+    cv.rect(65, 6, 12, 4, SNOW[2]); cv.hline(65, 6, 12, SNOW[3]); cv.rect(68, 7, 6, 2, NAP[0])
+    topdown_gable(cv, edge_y, 8, 91, apex_y, wall_top, WOOD)
+    for i, y in enumerate(range(wall_top, wall_bottom, 5)):
         for x in range(8, 92):
             for r, t in enumerate((4, 3, 3, 2, 1)):
+                if y + r >= wall_bottom:
+                    continue
                 tt = t - (1 if x > 84 else 0)
                 if r == 2 and noise2(x // 3, y, 51) < 0.08:
                     tt -= 1
                 cv.set(x, y + r, WOOD[max(0, tt)])
-        for x in (5, 92):  # log ends with rings, lit toward the upper left
+        for x in (5, 92):
             for (lx, ly) in disc(x + 1.5, y + 2.5, 2.6):
                 cv.set(lx, ly, WOOD[4] if lx + ly < x + y + 3.5 else WOOD[3])
             cv.set(x + 1, y + 2, WOOD[1]); cv.set(x + 2, y + 2, WOOD[2])
-    door = rect_set(42, 53, 16, 27)
-    cv.rect(40, 51, 20, 29, WOOD[1]); cv.hline(40, 51, 20, WOOD[3]); cv.vline(40, 51, 29, WOOD[2])
-    detail.boards(cv, door, WOOD, 2, 53, board=4, vertical=True, x0=42, joints=False, grain=0.06)
-    detail.recess(cv, door, depth=2, k=1)
-    cv.set(55, 66, GOLD[4])
-    window(cv, 16, 50, 16, 14, warm=True)
-    window(cv, 68, 50, 16, 14, warm=True)
-    roof = set()
-    for y in range(4, 40):
-        span = int((y - 4) * 1.42) + 6
-        for x in range(w // 2 - span, w // 2 + span):
-            roof.add((x, y))
-    roof -= {(x, y) for x in range(66, 76) for y in range(0, 20)}
-    snow = {(x, y) for (x, y) in roof if y < 18 + (x // 7) % 3 * 2 + (3 if 60 < x < 72 else 0)}
-    gable_roof(cv, roof - snow, WOOD, w / 2, 4, seed=21)
-    for (x, y) in snow:
-        lit = x < w // 2
-        col = SNOW[3] if lit else SNOW[2]
-        if (x, y + 1) not in snow:
-            col = SNOW[1]  # the snow's lower edge, rounded over the shingles
-        elif (x, y - 1) not in snow:
-            col = SNOW[3]
-        cv.set(x, y, col)
-    for (x, y) in roof - snow:
-        if (x, y - 1) in snow:
-            detail.shade(cv, x, y, 2)  # the snow's shadow on the shingles
-    detail.stones(cv, 66, 2, 10, 18, STONE, seed=22, course=3)
-    cv.vline(66, 2, 18, STONE[3])
-    cv.rect(65, 0, 12, 3, SNOW[2]); cv.hline(65, 0, 12, SNOW[3])
-    detail.overhang_shadow(cv, 8, 92, 38, lambda x: 2 + (x - 8) // 30, k=2, cap=1)
-    for (x, y) in oval(50, 83, 46, 3.5):  # snow drifted against the front
+    arched_door(cv, 42, 52, 16, 28, porthole=False)
+    window(cv, 16, 56, 16, 12, warm=True)
+    window(cv, 68, 56, 16, 12, warm=True)
+    detail.overhang_shadow(cv, 8, 92, wall_top, lambda x: 3 + (x - 8) // 30, k=2, cap=1)
+    for (x, y) in oval(50, 83, 46, 3.5):
         cv.set(x, y, SNOW[3] if y < 83 else SNOW[1])
     return cv
 
