@@ -36,6 +36,7 @@ import { topGameOverlay } from '@/lib/overlay-priority';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { gameColumn, gameSideInset } from '@/lib/layout';
 import { switchKeys } from '@/lib/switch-keys';
+import { SaveRecovery, cancelFreshStart } from '@/components/save-recovery';
 function Onboarding() {
   const reduced = useReducedMotion();
   const [step, setStep] = useState(0);
@@ -661,6 +662,10 @@ export function GameOverlays() {
   const cardReward = useGame((s) => s.cardReward);
   const missionReturnPending = useGame((s) => s.missionReturnPending);
   const recap = useGame((s) => s.recap);
+  // A save that could not be loaded is answered before anything else, onboarding
+  // included: its GROW path would otherwise advance while hatching stays blocked.
+  const saveLoadProblem = useGame((s) => s.saveLoadProblem);
+  const recovering = ready && Boolean(saveLoadProblem);
   const [returnPrompt, setReturnPrompt] = useState<string | null>(null);
   const insets = useSafeAreaInsets();
   const isScreenOff = !!p && p.mode !== 'awake';
@@ -683,13 +688,18 @@ export function GameOverlays() {
     if (earlyReturnKey !== null) setReturnPrompt(earlyReturnKey);
     else void gameStore.getState().wake();
   }
-  const visible = overlay !== null;
+  const visible = overlay !== null || recovering;
   useEffect(() => {
     if (!flash) return undefined;
     const timeout = setTimeout(() => useGame.setState({ flash: null }), 1600);
     return () => clearTimeout(timeout);
   }, [flash]);
   function dismiss() {
+    // Escape and Back only close the START FRESH confirmation; the screen stays.
+    if (recovering) {
+      cancelFreshStart();
+      return;
+    }
     if (!ready || !p) return;
     switch (overlay) {
       case 'nap':
@@ -723,7 +733,7 @@ export function GameOverlays() {
             flex: 1,
             paddingTop: insets.top,
             paddingBottom: overlay === 'welcome' ? 0 : insets.bottom,
-            backgroundColor: overlay === 'nap' ? c.night : c.paper,
+            backgroundColor: overlay === 'nap' && !recovering ? c.night : c.paper,
           }}
         >
           {/* Same centred phone-width column as the tab screens (Page maxWidth), so
@@ -747,6 +757,8 @@ export function GameOverlays() {
                 <Pet species="BLOB" walking size={64} />
                 <BodyText>one moment. tiny legs.</BodyText>
               </View>
+            ) : recovering && saveLoadProblem ? (
+              <SaveRecovery problem={saveLoadProblem} />
             ) : !p ? (
               <Onboarding />
             ) : overlay === 'nap' ? (
