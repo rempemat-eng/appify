@@ -517,6 +517,12 @@ async function main() {
       assert.equal(disk()[field], null, `Fresh garden clears ${field}`);
     assert.equal(disk().missionReturnPending, false);
     assert.equal(disk().quietView, false);
+    const recoveredIdentity = gameStore.getState().identity;
+    await reload();
+    assert.equal(gameStore.getState().saveLoadProblem, null);
+    assert.equal(gameStore.getState().player, null);
+    assert.equal(gameStore.getState().identity, recoveredIdentity);
+    assert.equal(values.get(backupKey), rejected);
     await gameStore.getState().hatch('RECOVERED', 'SPROUT', 'BLOB');
     await reload();
     assert.equal(gameStore.getState().player?.grass, 20);
