@@ -42,6 +42,10 @@ assert.ok(declaration, 'read the actual mission rules');
 const { missions } = evaluate(declaration);
 const maps = evaluate(read('lib/world-maps.ts'));
 const catalogue = evaluate(read('lib/world-catalogue.ts'));
+const missionMap = evaluate(read('lib/mission-map.ts'), (id) => {
+  assert.equal(id, '@/assets/missions/map.png', 'the map module only loads its image');
+  return 'map.png';
+});
 function nodes(tree) {
   if (!tree || typeof tree !== 'object') return [];
   if (Array.isArray(tree)) return tree.flatMap(nodes);
@@ -64,6 +68,8 @@ function fixture() {
     values: [],
     index: 0,
     calls: [],
+    pushed: [],
+    unit: 4 / 3,
   };
   const state = {
     player: { mode: 'awake', level: 1 },
@@ -88,17 +94,35 @@ function fixture() {
           },
         ];
       },
+      useEffect() {},
+      useRef: (current) => ({ current }),
     },
     'react/jsx-runtime': { jsx, jsxs: jsx, Fragment: 'Fragment' },
     'react-native': {
       Image: 'Image',
       Modal: 'Modal',
+      PixelRatio: { get: () => 3 },
       Pressable: 'Pressable',
       ScrollView: 'ScrollView',
       View: 'View',
       useWindowDimensions: () => control,
     },
-    'expo-router': { useNavigation: () => ({ isFocused: () => control.focused }) },
+    'expo-router': {
+      useNavigation: () => ({ isFocused: () => control.focused }),
+      router: { push: (route) => control.pushed.push(route) },
+    },
+    'react-native-reanimated': {
+      __esModule: true,
+      default: { View: 'Animated.View' },
+      Easing: { linear: 'linear', cubic: 'cubic', inOut: (e) => e },
+      useAnimatedStyle: () => ({}),
+      useSharedValue: (value) => ({ value, set() {} }),
+      withSequence: (...steps) => steps,
+      withTiming: (to) => to,
+    },
+    '@/lib/motion': { useReducedMotion: () => false },
+    '@/lib/mission-map': missionMap,
+    '@/components/guardian-pet': { GuardianPet: 'GuardianPet' },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
     'react-native-svg': { __esModule: true, default: 'Svg', Polyline: 'Polyline' },
     '@/lib/game': { missions, useGame, feedback() {} },
@@ -118,7 +142,7 @@ function fixture() {
     '@/components/cozy-ui': { CozyBackground: 'CozyBackground', CozySheet: 'CozySheet' },
     '@/components/pixel-feedback': { BodyText: 'BodyText' },
     '@/components/game-ui': { PixelButton: 'PixelButton' },
-    '@/components/pixel-frame': { PixelFrame: 'PixelFrame' },
+    '@/components/pixel-frame': { PixelFrame: 'PixelFrame', usePixelUnit: () => control.unit },
   };
   const components = evaluate(read('components/mission-departure.tsx'), (id) => {
     assert.ok(id in boundaries, `Known boundary ${id}`);
@@ -188,6 +212,69 @@ check(button(tree, 'ON A BREAK').props.disabled, 'background presentation cannot
 button(tree, 'ON A BREAK').props.onPress();
 check(background.control.calls.length === 0, 'inactive callback is harmless');
 
+const routes = fixture();
+tree = routes.render();
+byType(tree, routes.components.MissionDestinationMap).props.onSelect('arena');
+tree = routes.render();
+check(
+  !nodes(tree).some((n) => n.type === 'PixelButton' && /^START|BREAK IDEA/.test(n.props.label)),
+  'the sparring ring shows no mission departure',
+);
+const toRing = button(tree, 'TO THE SPARRING RING').props.onPress;
+routes.control.focused = false;
+toRing();
+check(routes.control.pushed.length === 0, 'stale tap after leaving the tab opens nothing');
+routes.control.focused = true;
+toRing();
+check(routes.control.pushed.join() === '/arena', 'the ring opens the battle zone');
+byType(tree, routes.components.MissionDestinationMap).props.onSelect('shop');
+tree = routes.render();
+button(tree, "VISIT MOSS'S STALL").props.onPress();
+check(routes.control.pushed.join() === '/arena,/shop', 'the stall opens the shop');
+check(routes.control.calls.length === 0, 'route places never start a mission');
+
+const places = missionMap.missionMapPlaces;
+const rects = Object.entries(places).map(([id, p]) => [id, p.tap]);
+for (const [id, tap] of rects) {
+  check(tap.w >= 44 && tap.h >= 44, `${id} tap area is 44 px even at one CSS px per art pixel`);
+  check(
+    tap.x >= 0 &&
+      tap.y >= 0 &&
+      tap.x + tap.w <= missionMap.missionMap.width &&
+      tap.y + tap.h <= missionMap.missionMap.height,
+    `${id} tap area lies on the map`,
+  );
+  const s = places[id].stand;
+  check(
+    s.x >= 16 && s.x <= missionMap.missionMap.width - 16 && s.y <= missionMap.missionMap.height - 2,
+    `${id} keeps the companion on the map`,
+  );
+}
+for (const [i, [a, ta]] of rects.entries())
+  for (const [b, tb] of rects.slice(i + 1))
+    check(
+      ta.x + ta.w <= tb.x || tb.x + tb.w <= ta.x || ta.y + ta.h <= tb.y || tb.y + tb.h <= ta.y,
+      `${a} and ${b} tap areas do not overlap`,
+    );
+for (const mission of missions) check(mission.id in places, `${mission.id} has a place on the map`);
+
+// Map pixel size per phone: [shared unit, dpr, map window width, tallest window, expected unit].
+for (const [shared, dpr, view, tall, unit] of [
+  [4 / 3, 3, 370 - 32 / 3, 380, 4 / 3],
+  [3 / 2, 2, 375 - 32 - 12, 260, 1],
+  [1, 1, 320 - 32 - 8, 260, 1],
+  [2, 1, 640 - 32 - 16, 380, 1],
+]) {
+  const u = f.components.mapUnitFor(shared, dpr, view, tall);
+  check(Math.abs(u - unit) < 1e-9, `map unit ${unit} for a ${view}px window at ${dpr}x`);
+  check(Number.isInteger(Math.round(u * dpr * 1e6) / 1e6), 'map pixels are whole device pixels');
+  check(
+    missionMap.missionMap.width * u <= view * 1.2 &&
+      missionMap.missionMap.height * u <= tall * 1.2,
+    'most of the map stays in its window',
+  );
+}
+
 for (const compact of [false, true]) {
   const map = f.components.MissionDestinationMap({
     selected: 'park',
@@ -196,23 +283,16 @@ for (const compact of [false, true]) {
     onSelect() {},
   });
   const choices = nodes(map).filter((n) => n.type === 'Pressable');
-  check(choices.length === missions.length, 'one choice for each actual mission');
-  for (const width of [288, 370, 608]) {
-    const intervals = choices.map((n) => {
-      const style = n.props.style;
-      check(style.width >= 44 && style.minHeight >= 44, 'destination target meets 44px minimum');
-      const left = (parseFloat(style.left) * width) / 100 + style.marginLeft;
-      check(
-        left >= 0 && left + style.width <= width,
-        'destination fits the source-level 320/402/640 columns',
-      );
-      return [left, left + style.width];
-    });
+  check(choices.length === Object.keys(places).length, 'one choice for each place on the map');
+  for (const choice of choices)
     check(
-      intervals.every((pair, i) => !i || pair[0] >= intervals[i - 1][1]),
-      'destination touch targets do not overlap horizontally',
+      choice.props.style.width >= 44 && choice.props.style.height >= 44,
+      'destination target meets 44px minimum',
     );
-  }
+  const tags = nodes(map).filter(
+    (n) => n.type === 'BodyText' && /LV 2/.test([].concat(n.props.children).join('')),
+  );
+  check(tags.length === 1, 'the locked mountain carries its level on its name tag');
   check(!nodes(map).some((n) => n.type === 'WorldScene'), 'map does not mount animated worlds');
 }
 check(
