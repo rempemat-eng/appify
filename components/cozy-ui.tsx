@@ -173,7 +173,9 @@ export function CozySheet({
       >
         <View style={{ height: 3, width: 32, borderRadius: 0, backgroundColor: c.depth }} />
         {animating && (
-          <Text style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 12, color: c.ink }}>Skip</Text>
+          <Text style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 12, color: c.ink }}>
+            Skip
+          </Text>
         )}
       </Pressable>
       {children}

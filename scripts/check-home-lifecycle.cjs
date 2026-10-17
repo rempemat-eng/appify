@@ -176,6 +176,7 @@ function homeFixture() {
   const runtime = hooks();
   const clock = timers();
   const control = { focused: false, foreground: true };
+  const ui = { sheet: null };
   const seen = [];
   const naps = [];
   const state = {
@@ -231,7 +232,22 @@ function homeFixture() {
         return { useGame, status: () => ({ kind: 'care' }), feedback: () => {} };
       if (id === '@/lib/cozy') return { cozy: {} };
       if (id === '@/lib/layout')
-        return { gameLayout: { gutter: 16, maxWidth: 640 }, dockClearance: () => 90 };
+        return {
+          gameLayout: { gutter: 16, maxWidth: 640 },
+          hotbarClearance: () => 90,
+          hudClearance: () => 70,
+        };
+      if (id === '@/lib/ui')
+        return {
+          useUi: (selector) => selector(ui),
+          openSheet: (sheet) => {
+            ui.sheet = sheet;
+          },
+          closeSheet: () => {
+            ui.sheet = null;
+          },
+        };
+      if (id === '@/components/garden-journey') return { gardenMarker: () => 'missions' };
       if (id === '@/lib/motion') return { useReducedMotion: () => false };
       if (id === '@/lib/app-active') return { useAppActive: () => control.foreground };
       if (id === '@/lib/garden-view') return { useGardenView: () => ['flat', () => {}] };
@@ -273,7 +289,55 @@ function homeFixture() {
     },
     clock.globals,
   ).HomeScreen;
-  return { control, state, seen, naps, clock, runtime, render: () => runtime.render(Home) };
+  return { control, state, seen, naps, clock, runtime, ui, render: () => runtime.render(Home) };
+}
+
+function napSheetFixture() {
+  const runtime = hooks();
+  const ui = { sheet: 'nap' };
+  const naps = [];
+  const state = {
+    player: { id: 'test', pet_name: 'MOSS', species: 'BLOB', mode: 'awake', mood: 50, grass: 30 },
+    sleep(mission, intention) {
+      naps.push({ mission, intention });
+      state.player = { ...state.player, mode: 'screen_off' };
+    },
+  };
+  const useGame = (selector) => selector(state);
+  useGame.getState = () => state;
+  const NapSheet = load('components/game-menus.tsx', (id) => {
+    if (id === 'react') return runtime.react;
+    if (id === 'react/jsx-runtime') return jsxRuntime;
+    if (id === 'react-native')
+      return {
+        ...Object.fromEntries(
+          ['Modal', 'Pressable', 'ScrollView', 'Text', 'View'].map((name) => [name, name]),
+        ),
+        useWindowDimensions: () => ({ height: 800, width: 390 }),
+      };
+    if (id === 'expo-router') return { router: { push: () => {} } };
+    if (id === 'react-native-safe-area-context')
+      return { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) };
+    if (id === '@/lib/game') return { useGame, feedback: () => {} };
+    if (id === '@/lib/ui')
+      return {
+        useUi: (selector) => selector(ui),
+        openSheet: (sheet) => {
+          ui.sheet = sheet;
+        },
+        closeSheet: () => {
+          ui.sheet = null;
+        },
+      };
+    if (id === '@/lib/visitors') return { guardianPlayer: (player) => player };
+    if (id === '@/components/offline-garden')
+      return { usePlayPaused: () => false, GardenProgress: 'GardenProgress' };
+    if (id === '@/components/game-ui')
+      return { PixelButton: 'PixelButton', PixelText: 'PixelText' };
+    if (id.startsWith('@/components/') || id.startsWith('@/lib/')) return boundary;
+    throw new Error('Unexpected menu import: ' + id);
+  }).NapSheet;
+  return { ui, state, naps, runtime, render: () => runtime.render(NapSheet) };
 }
 
 function visitorPresentationFixture(welcome = false) {
@@ -604,118 +668,82 @@ async function main() {
     home.seen.length === 1 && home.seen[0] === 'wake',
     'wake guidance is consumed only when visible',
   );
-  byType(tree, 'DailyRhythmCard').props.onOpenChange(true);
-  tree = home.render();
-  check(byType(tree, 'DailyRhythmCard').props.open, 'Home controls the planner sheet');
+  // Any game sheet (nap, menu, planner, stats...) covers Home and pauses it.
+  for (const sheet of ['rhythm', 'stats', 'nap', 'menu']) {
+    home.ui.sheet = sheet;
+    tree = home.render();
+    check(!byType(tree, 'GardenWorld').props.active, `the ${sheet} sheet pauses garden work`);
+    check(!byType(tree, 'GardenVisitor').props.active, `the ${sheet} sheet pauses the visitor`);
+    check(home.clock.intervals.size === 0, `the ${sheet} sheet pauses idle chatter`);
+    home.ui.sheet = null;
+    tree = home.render();
+    check(
+      byType(tree, 'GardenWorld').props.active,
+      `closing the ${sheet} sheet resumes the garden`,
+    );
+  }
   check(
-    !byType(tree, 'GardenWorld').props.active,
-    'opening the planner deactivates in-flight garden work',
+    byType(tree, 'GardenWorld').props.viewportHeight === 800,
+    'the garden fills the whole screen height',
   );
-  check(
-    !byType(tree, 'DailyRhythmCard').props.active,
-    'the planner clock shares the covered Home activity gate',
-  );
-  check(home.clock.intervals.size === 0, 'planner coverage pauses dialogue rotation');
-  check(
-    !byType(tree, 'GardenVisitor').props.active,
-    'planner coverage pauses the visiting companion',
-  );
+  check(byType(tree, 'GardenWorld').props.marker === 'missions', 'the garden shows its next place');
+  byType(tree, 'GardenWorld').props.onNap();
+  check(home.ui.sheet === 'nap', 'the garden bed opens the same nap sheet as the hotbar');
+  home.ui.sheet = null;
   home.control.focused = false;
   tree = home.render();
-  check(!byType(tree, 'DailyRhythmCard').props.open, 'tab blur closes the controlled planner');
+  check(!byType(tree, 'GardenWorld').props.active, 'tab blur pauses the garden');
   home.control.focused = true;
   tree = home.render();
-  check(
-    !byType(tree, 'DailyRhythmCard').props.open,
-    'returning Home does not reopen a stale planner',
-  );
   check(byType(tree, 'GardenWorld').props.active, 'returning Home reactivates its quiet garden');
-  find(tree, (node) => node.props.accessibilityLabel === 'Open garden stats').props.onPress();
-  tree = home.render();
-  check(
-    byType(tree, 'Modal').props.visible && !byType(tree, 'GardenWorld').props.active,
-    'Stats covers and pauses the garden',
-  );
-  home.control.focused = false;
-  tree = home.render();
-  check(!byType(tree, 'Modal').props.visible, 'tab blur closes Stats');
-  home.control.focused = true;
-  tree = home.render();
-  check(
-    !byType(tree, 'Modal').props.visible && byType(tree, 'GardenWorld').props.active,
-    'returning Home does not reopen stale Stats',
-  );
   home.runtime.unmount();
   check(home.clock.intervals.size === 0 && home.clock.timeouts.size === 0, 'Home timers clean up');
 
-  const departure = homeFixture();
-  departure.control.focused = true;
+  // The nap sheet holds the optional break idea and starts the ordinary nap.
+  const departure = napSheetFixture();
   tree = departure.render();
   check(
-    !nodes(tree).some((node) => node?.type === 'BreakIntentionPicker'),
-    'a quick Home nap requires no intention decision',
+    byType(tree, 'BreakIntentionPicker').props.value === null,
+    'a nap starts as just a break, with no decision required',
   );
-  find(tree, (node) => node.props.accessibilityLabel === 'Choose a break idea').props.onPress();
-  tree = departure.render();
-  check(!byType(tree, 'GardenWorld').props.active, 'choosing an intention cancels garden work');
   byType(tree, 'BreakIntentionPicker').props.onChange('read');
   tree = departure.render();
   check(
     byType(tree, 'BreakIntentionPicker').props.value === 'read',
-    'Home holds its optional reading idea',
+    'the nap sheet holds its optional reading idea',
   );
-  find(tree, (node) => node.props.accessibilityLabel === 'Take a nap').props.onPress();
+  find(
+    tree,
+    (node) => node.type === 'PixelButton' && node.props.label === 'START NAP',
+  ).props.onPress();
   check(
     departure.naps.length === 1 &&
       departure.naps[0].mission === undefined &&
       departure.naps[0].intention === 'read',
-    'header nap forwards the chosen idea to the existing ordinary nap',
+    'START NAP forwards the chosen idea to the existing ordinary nap',
   );
-  tree = departure.render();
-  check(
-    !nodes(tree).some((node) => node?.type === 'BreakIntentionPicker'),
-    'starting a nap closes the break preparation',
-  );
+  check(departure.ui.sheet === null, 'starting a nap closes the sheet');
   departure.state.player = { ...departure.state.player, mode: 'awake' };
-  tree = departure.render();
-  find(tree, (node) => node.props.accessibilityLabel === 'Choose a break idea').props.onPress();
+  departure.ui.sheet = 'nap';
   tree = departure.render();
   check(
     byType(tree, 'BreakIntentionPicker').props.value === null,
-    'the next break begins with Just a break',
+    'the next break begins with just a break again',
   );
   byType(tree, 'BreakIntentionPicker').props.onChange('move');
-  tree = departure.render();
-  find(tree, (node) => node.props.accessibilityLabel === 'Close break ideas').props.onPress();
-  tree = departure.render();
-  byType(tree, 'GardenWorld').props.onNap();
-  check(departure.naps[1].intention === 'move', 'the garden bed delegates the same selected idea');
+  departure.ui.sheet = null;
   departure.render();
-  departure.state.player = { ...departure.state.player, mode: 'awake' };
+  departure.ui.sheet = 'nap';
   tree = departure.render();
+  check(
+    byType(tree, 'BreakIntentionPicker').props.value === null,
+    'closing the sheet clears an unfinished break choice',
+  );
   find(
     tree,
-    (node) => node.type === 'PixelButton' && node.props.label === 'TAKE A NAP',
+    (node) => node.type === 'PixelButton' && node.props.label === 'START NAP',
   ).props.onPress();
-  check(
-    departure.naps[2].intention === null,
-    'the primary quick nap preserves no-intention default',
-  );
-  departure.render();
-  departure.state.player = { ...departure.state.player, mode: 'awake' };
-  tree = departure.render();
-  find(tree, (node) => node.props.accessibilityLabel === 'Choose a break idea').props.onPress();
-  tree = departure.render();
-  byType(tree, 'BreakIntentionPicker').props.onChange('create');
-  departure.control.focused = false;
-  departure.render();
-  departure.control.focused = true;
-  tree = departure.render();
-  check(
-    !nodes(tree).some((node) => node?.type === 'BreakIntentionPicker') &&
-      text(tree).includes('A break idea, if you like'),
-    'leaving Home clears the unfinished break choice',
-  );
+  check(departure.naps[1].intention === null, 'a quick nap keeps the no-idea default');
   departure.runtime.unmount();
 
   let instant = new Date(2026, 9, 16, 16, 59).getTime();

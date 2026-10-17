@@ -137,7 +137,9 @@ export function HabitCard({
         }}
       >
         <Zap size={11} color={c.ink} fill={c.ink} />
-        <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>{card.cost}</BodyText>
+        <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
+          {card.cost}
+        </BodyText>
       </View>
       <View style={{ alignItems: 'center', padding: 6, gap: 4 }}>
         <View

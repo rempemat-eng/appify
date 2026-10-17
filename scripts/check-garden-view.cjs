@@ -493,11 +493,15 @@ function quietNapPresentation() {
       );
       if (!mission) {
         const garden = findNode(tree, (node) => node.type === 'GardenWorld');
+        // The garden is top-down only now (2.5D was retired); the nap shows a
+        // window onto the hut and bed rather than the whole tall map.
         check(
           garden.props.napping === true &&
-            garden.props.view === 'tilt' &&
+            garden.props.view === undefined &&
+            typeof garden.props.viewportHeight === 'number' &&
+            garden.props.viewportHeight > 0 &&
             garden.props.memories === state.companionMemories,
-          label + ': ordinary nap preserves the passive garden preference and saved memories',
+          label + ': ordinary nap shows a window of the garden with saved memories',
         );
       }
       check(

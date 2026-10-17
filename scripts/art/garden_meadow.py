@@ -138,21 +138,16 @@ def draw_lower_details(cv: Canvas, path: set):
 
 
 def draw_top_band(phase: int = 0) -> Canvas:
-    """Forest floor above the clearing: shade under a canopy, ferns, a few logs."""
+    """Forest floor above the clearing: deep shade under the canopy."""
+    from style import FOREST_DARK, dither_dark
     cv = Canvas(W, TOP)
     for y in range(TOP):
         for x in range(W):
-            n = smooth_noise(x, y, 14, 17)
-            cv.set(x, y, G[0] if n < 0.45 else '#3B6B42')
-    for i in range(30):
-        x = int(noise2(i, 1, 18) * W)
-        y = int(noise2(i, 2, 18) * TOP)
-        cv.set(x, y, G[1]); cv.set(x + 1, y - 1, G[1]); cv.set(x + 2, y, G[1])
-    # fade into the clearing's grass on the last rows
-    for x in range(W):
-        cv.set(x, TOP - 1, G[2] if noise2(x, 0, 19) < 0.7 else G[1])
-        if noise2(x, 1, 19) < 0.45:
-            cv.set(x, TOP - 2, G[1])
+            cv.set(x, y, G[2] if y > TOP - 4 else G[1])
+    dither_dark(cv, 0, 0, W, TOP - 10, 1.0, FOREST_DARK)
+    dither_dark(cv, 0, TOP - 10, W, 3, 0.75, FOREST_DARK)
+    dither_dark(cv, 0, TOP - 7, W, 4, 0.5, FOREST_DARK)
+    dither_dark(cv, 0, TOP - 3, W, 3, 0.25, FOREST_DARK)
     return cv
 
 
@@ -253,8 +248,9 @@ def orchard_tree(stage: int) -> Canvas:
             cv.set(x, y, LEAF[3] if x + y < 11 else LEAF[2])
         cv.set(4, 4, LEAF[4]); cv.set(5, 3, LEAF[4])
         cv.vline(9, 9, 8, WOOD[3]); cv.set(8, 10, CREAM[2])  # a little support stake
-        cv.outline(LEAF[0])
+        cv.outline(INK)
         return cv
+    import style
     big = stage >= 3
     w, h = (36, 46) if big else (24, 32)
     cv = Canvas(w, h)
@@ -262,34 +258,15 @@ def orchard_tree(stage: int) -> Canvas:
     tw = 6 if big else 4
     tx = int(cx - tw / 2)
     trunk_top = h - (20 if big else 15)
-    cv.rect(tx, trunk_top, tw, h - 2 - trunk_top, WOOD[2])
-    cv.vline(tx, trunk_top, h - 2 - trunk_top, WOOD[1]); cv.vline(tx + tw - 1, trunk_top, h - 2 - trunk_top, WOOD[3])
-    for y in range(trunk_top + 3, h - 3, 3):
-        cv.set(tx + tw // 2, y, WOOD[1])  # bark
-    cv.set(tx - 1, h - 3, WOOD[1]); cv.set(tx - 2, h - 2, WOOD[1])
-    cv.set(tx + tw, h - 3, WOOD[1]); cv.set(tx + tw + 1, h - 2, WOOD[1])
-    r = 7.5 if big else 5.5
-    top = r + 1
-    blobs = [(cx, top, r), (cx - r * 0.95, top + r * 0.75, r), (cx + r * 0.95, top + r * 0.75, r),
-             (cx - r * 1.3, top + r * 1.55, r * 0.9), (cx, top + r * 1.45, r), (cx + r * 1.3, top + r * 1.55, r * 0.9)]
-    ramp = ['#1F4B2E', '#2F6A3A', '#4E9150', '#72B062', '#A3D184']
-    for (bx, by, br) in blobs:
-        for (x, y) in disc(bx, by, br):
-            if not (0 <= x < w and 0 <= y < h):
-                continue
-            dx, dy = (x + 0.5 - bx) / br, (y + 0.5 - by) / br
-            lit = -dx * 0.55 - dy * 0.85
-            col = ramp[4] if lit > 0.6 and smooth_noise(x, y, 3, 5) > 0.5 else ramp[3] if lit > 0.05 else ramp[2] if lit > -0.45 else ramp[1]
-            cv.set(x, y, col)
-    for x in range(tx, tx + tw):
-        if cv.get(x, trunk_top - 1)[3] == 0:
-            continue
-        cv.set(x, trunk_top, WOOD[0])  # canopy shadow on the trunk
+    style.trunk(cv, tx, trunk_top - 3, h, tw, WOOD)
+    crx, cry = (15.0, 13.5) if big else (10.0, 9.0)
+    canopy = style.leafy(cv, cx, cry + 2.5, crx, cry, LEAF, r=2.7 if big else 2.2, seed=20 + stage)
+    style.trunk(cv, tx, trunk_top, h, tw, WOOD, canopy)
     if stage >= 4:  # ripe fruit, lit from the top left
-        for (fx, fy) in ((cx - 9, top + 5), (cx + 7, top + 3), (cx - 3, top + 11), (cx + 10, top + 12), (cx - 12, top + 13), (cx + 2, top + 1)):
+        for (fx, fy) in ((cx - 9, 8), (cx + 6, 6), (cx - 3, 14), (cx + 9, 15), (cx - 12, 16), (cx + 2, 4)):
             fx, fy = int(fx), int(fy)
             cv.rect(fx, fy, 2, 2, RED[2]); cv.set(fx, fy, RED[4]); cv.set(fx + 1, fy + 1, RED[1])
-    cv.outline(ramp[0])
+    cv.outline(INK)
     return cv
 
 

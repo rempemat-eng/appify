@@ -31,7 +31,10 @@ assert.equal(artGrid.icon, 16, 'miniature artwork uses a 16×16 native grid');
 assert.match(artOutline, hex, 'outline colour');
 for (const [name, color] of Object.entries(artSurface))
   assert.match(color, hex, `${name} surface colour`);
-for (const [name, size] of Object.entries({ ...artGeometry, ...artGrid }))
+// Pixel frames have square corners, so radii may be zero; grids must be positive.
+for (const [name, size] of Object.entries(artGeometry))
+  assert.ok(Number.isInteger(size) && size >= 0, `${name} is a whole number`);
+for (const [name, size] of Object.entries(artGrid))
   assert.ok(Number.isInteger(size) && size > 0, `${name} is a positive integer`);
 for (const [name, ramp] of Object.entries(artMaterials)) {
   assert.ok(ramp.length > 1, `${name} has a shade and a highlight`);

@@ -175,6 +175,10 @@ const deps = {
   '@/components/garden-keepsakes': { GardenKeepsakeArt: 'GardenKeepsakeArt' },
   '@/components/game-ui': { FloatingZ: 'FloatingZ', Pet: 'Pet' },
   '@/components/pixel-feedback': { BodyText: 'BodyText' },
+  '@/components/pixel-frame': { FrameShape: 'FrameShape', frameTones: { gold: {}, paper: {} } },
+  '@/lib/garden-growth-assets': {
+    growthImages: new Proxy({}, { get: (_, key) => ({ asset: key }) }),
+  },
 };
 const mod = { exports: {} };
 function evaluate(file, destination, extra = '') {
@@ -210,6 +214,7 @@ for (const name of [
   'grasslings',
   'companion-profiles',
   'garden-life',
+  'garden-growth',
 ]) {
   const domainModule = { exports: {} };
   evaluate(`lib/${name}.ts`, domainModule);
@@ -303,6 +308,13 @@ const check = (condition, label) => {
 // Arrays from vm contexts have different prototypes; compare their plain data.
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
+// Expected arrival points come from the generated map, not fixed coordinates.
+const arrival = (action) => {
+  const route = pathModule.exports.findPath({ x: 96, y: 112 }, map.gardenHotspots[action]);
+  const last = route[route.length - 1];
+  return [last.x, last.y];
+};
+const safeY = { min: 40, max: map.GARDEN.fenceY - 4 };
 let worldTree = setup();
 press(worldTree, 'arena');
 let horizontalSequence = shared[0].animation;
@@ -316,7 +328,7 @@ complete(shared[0], horizontalSequence);
 complete(shared[1], verticalSequence);
 end(verticalSequence)(true);
 check(routes.length === 1, 'arrival runs action exactly once');
-check(same([shared[0].value, shared[1].value], [98, 142]), 'both visual axes arrive');
+check(same([shared[0].value, shared[1].value], arrival('arena')), 'both visual axes arrive');
 
 worldTree = setup();
 press(worldTree, 'mail');
@@ -376,7 +388,7 @@ for (const [id, timer] of Array.from(timers)) {
   }
 }
 check(
-  same([shared[0].value, shared[1].value], [98, 142]),
+  same([shared[0].value, shared[1].value], arrival('arena')),
   'motion change stops travel at endpoint',
 );
 end(verticalSequence)(true);
@@ -540,7 +552,7 @@ for (const viewMode of ['flat', 'tilt']) {
         );
         if (split)
           check(
-            box.zIndex > 158 &&
+            box.zIndex > map.GARDEN.fenceY - 4 &&
               elements.find((element) => element.key === `${object.id}-art`).props.pointerEvents ===
                 'none',
             `${platform}/${width}/${object.id}: hit area is above guardian while art stays passive`,
@@ -572,7 +584,7 @@ const walkable = (x, y) =>
   x * 4 + 2 >= 20 &&
   x * 4 + 2 <= 172 &&
   y * 4 + 2 >= 40 &&
-  y * 4 + 2 <= 158 &&
+  y * 4 + 2 <= map.GARDEN.fenceY - 4 &&
   map.gardenWalk[y][x] === '.';
 const cellKey = (x, y) => `${x},${y}`;
 const queue = [[24, 28]]; // START(96,112) / 4px cells
@@ -618,20 +630,24 @@ for (const [action, spot] of Object.entries(map.gardenHotspots)) {
   const route = mod.exports.findPath({ x: 96, y: 112 }, spot);
   check(
     route.length > 0 &&
-      route.every((point) => point.x >= 20 && point.x <= 172 && point.y >= 40 && point.y <= 158),
+      route.every(
+        (point) => point.x >= 20 && point.x <= 172 && point.y >= safeY.min && point.y <= safeY.max,
+      ),
     `${action}: actual path uses safe actor cells`,
   );
 }
 for (const edge of [
   { x: 0, y: 0 },
   { x: 192, y: 0 },
-  { x: 0, y: 176 },
-  { x: 192, y: 176 },
+  { x: 0, y: map.GARDEN.height },
+  { x: 192, y: map.GARDEN.height },
 ]) {
   const route = mod.exports.findPath({ x: 96, y: 112 }, edge);
   check(
     route.length > 0 &&
-      route.every((point) => point.x >= 20 && point.x <= 172 && point.y >= 40 && point.y <= 158),
+      route.every(
+        (point) => point.x >= 20 && point.x <= 172 && point.y >= safeY.min && point.y <= safeY.max,
+      ),
     'edge click resolves to reachable safe actor endpoints',
   );
 }

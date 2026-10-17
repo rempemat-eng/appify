@@ -15,6 +15,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise  # noqa: E402
 from garden_decor import reading_nook, watering_can, frog  # noqa: E402
 import garden_meadow as meadow  # noqa: E402
+import style  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'garden')
@@ -65,33 +66,32 @@ FLOWER_BEDS = [(126, 112, 34, 14), (148, 140, 22, 10)]  # x, y, w, h (dark soil 
 def draw_terrain(frame: int) -> Canvas:
     cv = Canvas(W, H)
     phase = frame % 4
-    # Broad, close-valued grass masses. Detail gathers near the garden's edges,
-    # leaving the companion's clearing quieter than the plants and buildings.
+    # Broad, close-valued grass masses with clean edges (no speckle), so the
+    # tufts and props carry the texture, as in the references.
     for y in range(H):
         for x in range(W):
-            n = smooth_noise(x, y, 22, 11)
-            base = G[2] if n < 0.62 else G[3]
-            cv.set(x, y, base)
-    # Jittered clusters, rather than a visible lawn of repeated tile marks.
-    for ty in range(0, H, 8):
-        for tx in range(0, W, 8):
-            x = tx + int(noise2(tx, ty, 4) * 8)
-            y = ty + int(noise2(tx, ty, 5) * 8)
+            n = smooth_noise(x, y, 18, 11)
+            cv.set(x, y, G[3] if n > 0.64 else G[2])
+    # Tufts: dark roots and light tips, clustered toward the edges and props.
+    for ty in range(0, H, 7):
+        for tx in range(0, W, 7):
+            x = tx + int(noise2(tx, ty, 4) * 7)
+            y = ty + int(noise2(tx, ty, 5) * 7)
             clearing = ((x - 100) / 36) ** 2 + ((y - 92) / 30) ** 2 < 1
             edge = min(x, W - x, y, H - y) < 22
             cluster = smooth_noise(x, y, 25, 63) > 0.57
-            density = 0.06 if clearing else 0.42 if edge else 0.28 if cluster else 0.10
+            density = 0.08 if clearing else 0.5 if edge else 0.34 if cluster else 0.14
             if noise2(tx, ty, 3) < density:
-                # A gentle two-pose sway held for two water frames. Adjacent
-                # tufts start on different halves of the cycle, not one twitch.
+                # a gentle two-pose sway held for two water frames
                 grass_phase = (phase // 2 + int(noise2(tx, ty, 64) * 2)) % 2
-                sway = 1 if (grass_phase and noise2(tx, ty, 6) < 0.22) else 0
-                cv.set(x, y + 2, G[1]); cv.set(x + 2, y + 2, G[1])
-                cv.set(x + 1, y + 3, G[1])
-                cv.set(x + sway, y + 1, G[1]); cv.set(x + 2 + sway, y + 1, G[1])
-                cv.set(x + 1 + sway, y + 1, G[4]) if noise2(x, y, 9) < 0.4 else None
-            elif edge and noise2(tx, ty, 7) < 0.15:
-                cv.set(x, y, G[4])
+                sway = 1 if (grass_phase and noise2(tx, ty, 6) < 0.25) else 0
+                tall = 3 if noise2(tx, ty, 8) < 0.35 else 2
+                style.tuft(cv, x, y + 2, G[1], G[4], tall)
+                if sway:
+                    cv.set(x + 1, y + 1 - (tall > 2), G[4])
+            elif noise2(tx, ty, 7) < 0.1:
+                cv.set(x, y, '#E9E4CF')  # a tiny white flower
+                cv.set(x, y + 1, G[1])
 
     # pond bank (sand) then water
     for (x, y) in BANK:
@@ -100,6 +100,8 @@ def draw_terrain(frame: int) -> Canvas:
     for (x, y) in BANK:
         if (x, y + 1) not in BANK and (x, y + 1) not in POND:
             cv.set(x, y, SAND[0])
+        if (x, y - 1) not in BANK and (x, y - 1) not in POND:
+            cv.set(x, y - 1, G[1])  # turf lip over the bank
     for (x, y) in POND:
         depth = ((x + 0.5 - POND_C[0]) / 27) ** 2 + ((y + 0.5 - POND_C[1]) / 16) ** 2
         col = WTR[1] if depth < 0.35 else WTR[2]
@@ -152,32 +154,58 @@ def draw_terrain(frame: int) -> Canvas:
 
     meadow.draw_stream(cv, phase)
 
-    # path: dirt with dark rim, grass overhang and pebbles
-    for (x, y) in PATH:
-        if not (0 <= x < W and 0 <= y < H) or (x, y) in meadow.STREAM:
+    # Paths sit lower than the turf. Packed dirt with clean lighter patches and
+    # small dark specks; where the turf above drops onto the path it leaves a
+    # dark lip and a shadow line, and the turf edge facing up catches the light.
+    dirt = PATH - meadow.STREAM
+    for (x, y) in dirt:
+        if not (0 <= x < W and 0 <= y < H):
             continue
-        n = smooth_noise(x, y, 6, 40)
-        col = P[2] if n < 0.74 else P[3]
-        cv.set(x, y, col)
-    for (x, y) in PATH - meadow.STREAM:
-        edge_up = (x, y - 1) not in PATH
-        edge = any((x + dx, y + dy) not in PATH for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
-        if edge_up:
-            cv.set(x, y, P[0])
-            cv.set(x, y + 1, P[1])
-        elif edge:
+        n = smooth_noise(x, y, 7, 40)
+        cv.set(x, y, P[3] if n > 0.7 else P[2])
+    for i in range(160):
+        x = int(noise2(i, 0, 50) * W)
+        y = int(noise2(i, 1, 50) * H)
+        if (x, y) in dirt and (x + 1, y) in dirt and (x, y + 1) in dirt:
             cv.set(x, y, P[1])
-    # grass overhang: little blades poking into the dirt along the edges
-    for (x, y) in PATH - meadow.STREAM:
-        for dx, dy in ((0, -1), (1, 0), (-1, 0)):
-            if (x + dx, y + dy) not in PATH and noise2(x, y, 44) < 0.33:
-                cv.set(x, y, G[3]); cv.set(x, y + 1, G[2]) if (x, y + 1) in PATH and dy == -1 else None
-    for i in range(40):
-        x = 70 + int(noise2(i, 0, 50) * 90)
-        y = 70 + int(noise2(i, 1, 50) * 100)
-        if (x, y) in PATH and (x + 1, y) in PATH and (x, y - 1) in PATH:
-            cv.set(x, y, P[1]); cv.set(x + 1, y, P[0] if i % 3 == 0 else P[1])
-            cv.set(x, y - 1, P[4])
+            if i % 3 == 0:
+                cv.set(x + 1, y, P[1])
+            if i % 5 == 0:
+                cv.set(x, y - 1, P[4])
+    for (x, y) in dirt:
+        if not (0 <= x < W and 0 <= y < H):
+            continue
+        above = (x, y - 1) not in PATH
+        if above:
+            # scalloped turf: every few pixels the lip hangs one pixel lower
+            hang = (x // 3 + int(noise2(x // 3, y, 45) * 2)) % 3 == 0
+            if hang and (x, y + 1) in dirt:
+                cv.set(x, y, G[1])
+                cv.set(x, y + 1, P[0])
+                if (x, y + 2) in dirt:
+                    cv.set(x, y + 2, P[1])
+            else:
+                cv.set(x, y, P[0])
+                if (x, y + 1) in dirt:
+                    cv.set(x, y + 1, P[1])
+        elif (x - 1, y) not in PATH or (x + 1, y) not in PATH:
+            side = -1 if (x - 1, y) not in PATH else 1
+            if (y // 3 + int(noise2(x, y // 3, 46) * 2)) % 3 == 0:
+                cv.set(x, y, G[2])  # a turf bump reaching onto the path
+                if (x - side, y) in dirt:
+                    cv.set(x - side, y, P[1])
+            else:
+                cv.set(x, y, P[1])
+        elif (x, y + 1) not in PATH:
+            cv.set(x, y, P[1])
+    for (x, y) in dirt:
+        if (x, y - 1) not in PATH and 0 <= y - 1 < H:
+            cv.set(x, y - 1, G[1])  # the turf's dark lip
+        if (x, y + 1) not in PATH and (x, y + 1) not in meadow.STREAM and y + 1 < H:
+            cv.set(x, y + 1, G[3])  # the lit edge of the turf below
+            if (x, y + 2) not in PATH and y + 2 < H:
+                cv.set(x, y + 2, G[3] if (x + y) % 3 else G[2])
+
     # footprints of a small creature along the main path
     for i, y in enumerate(range(116, 168, 9)):
         x = 92 + (4 if i % 2 else 0)
@@ -276,43 +304,30 @@ def leaf_bundle(cv: Canvas, cx: float, cy: float, r: float, ramp, solid: set):
     solid |= pts
 
 
+PINE = ['#1F2E2A', '#2F4A3C', '#46664B', '#5E8253', '#86A766']
+AUTUMN = ['#4A2A22', '#7A4030', '#A8623E', '#CB8650', '#E8B575']
+
+
 def tree(big: bool = True, autumn: bool = False) -> Canvas:
+    """Round broadleaf: a clean shaded canopy of leaf clumps over a flared trunk."""
     w, h = (36, 46) if big else (26, 34)
     cv = Canvas(w, h)
-    ramp = ['#5A2F18', '#8C4520', '#BF6A2B', '#E3964A', '#F6C774'] if autumn else LEAF
+    ramp = AUTUMN if autumn else LEAF
     cx = w / 2
-    # trunk with bark stripes and roots
     tw = 6 if big else 4
     tx = int(cx - tw / 2)
-    cv.rect(tx, h - 13, tw, 11, WOOD[2])
-    cv.vline(tx, h - 13, 11, WOOD[1]); cv.vline(tx + tw - 1, h - 13, 11, WOOD[3])
-    for y in range(h - 11, h - 3, 3):
-        cv.set(tx + tw // 2, y, WOOD[1])
-    cv.set(tx - 1, h - 3, WOOD[1]); cv.set(tx - 2, h - 2, WOOD[1]); cv.set(tx + tw, h - 3, WOOD[1]); cv.set(tx + tw + 1, h - 2, WOOD[1])
-    # canopy: back row of bundles, then front row overlapping (3/4 view)
-    r = 7.5 if big else 5.5
-    solid: set = set()
-    top = r + 1
-    rows = [
-        [(cx, top, r)],
-        [(cx - r * 0.95, top + r * 0.75, r), (cx + r * 0.95, top + r * 0.75, r)],
-        [(cx - r * 1.35, top + r * 1.6, r * 0.9), (cx, top + r * 1.45, r), (cx + r * 1.35, top + r * 1.6, r * 0.9)],
-    ]
-    for row in rows:
-        for (bx, by, br) in row:
-            leaf_bundle(cv, bx, by, br, ramp, solid)
-    # A branch fork connects the canopy to its trunk.
-    cv.set(tx + 1, h - 15, WOOD[1]); cv.set(tx, h - 16, WOOD[1])
-    cv.set(tx + tw - 2, h - 15, WOOD[2]); cv.set(tx + tw - 1, h - 16, WOOD[2])
-    # canopy underside shadow onto trunk
-    for x in range(tx, tx + tw):
-        cv.set(x, h - 13, WOOD[0])
-    if not autumn and big:
-        for (fx, fy) in ((cx - 7, top + 4), (cx + 6, top + 9), (cx - 2, top + 13)):
-            cv.set(int(fx), int(fy), RED[2]); cv.set(int(fx) + 1, int(fy), RED[3]); cv.set(int(fx), int(fy) - 1, RED[4])
+    ty = h - (19 if big else 14)
+    style.trunk(cv, tx, ty - 4, h, tw, WOOD)
+    crx, cry = (15.0, 13.5) if big else (10.8, 9.6)
+    ccy = cry + 2.5
+    canopy = style.leafy(cv, cx, ccy, crx, cry, ramp, r=2.7 if big else 2.2, seed=9 if autumn else 2 + big)
+    style.trunk(cv, tx, ty, h, tw, WOOD, canopy)
+    if not autumn and big:  # a few ripe apples on the lit side
+        for fx, fy in ((cx - 9, 9), (cx + 4, 6), (cx - 4, 15), (cx + 8, 14)):
+            fx, fy = int(fx), int(fy)
+            cv.rect(fx, fy, 2, 2, RED[2]); cv.set(fx, fy, RED[4]); cv.set(fx + 1, fy + 1, RED[1])
     if autumn:
-        # A single weathered birdhouse belongs to the copper tree, rather than
-        # repeating on every canopy. Its tiny entry faces the garden clearing.
+        # the copper tree keeps its weathered birdhouse
         cv.vline(25, 20, 9, WOOD[0])
         cv.rect(21, 24, 9, 9, WOOD[2])
         cv.rect(21, 24, 7, 8, WOOD[3])
@@ -322,133 +337,160 @@ def tree(big: bool = True, autumn: bool = False) -> Canvas:
             cv.set(x, y - 1, NAP[3])
         cv.rect(24, 26, 3, 3, WOOD[0]); cv.set(24, 26, INK)
         cv.hline(23, 30, 6, WOOD[1]); cv.set(23, 29, WOOD[4])
-    cv.outline(ramp[0])
+    cv.outline(INK)
     return cv
 
 
 def pine() -> Canvas:
+    """Tiered conifer: cone-shaded tiers, light clumps on the lit flank, dark hems."""
     w, h = 22, 40
     cv = Canvas(w, h)
-    cx = w // 2
-    cv.rect(cx - 2, h - 8, 4, 7, WOOD[2]); cv.vline(cx - 2, h - 8, 7, WOOD[1])
-    ramp = ['#173B2A', '#22543A', '#2F6E45', '#468A52', '#6CAE6A']
-    solid = set()
-    for tier, (ty, half) in enumerate(((4, 4), (11, 7), (19, 9), (27, 10.5))):
-        for y in range(ty, ty + 10):
-            span = half * (y - ty + 2) / 11
-            for x in range(int(cx - span), int(cx + span) + 1):
-                if 0 <= x < w and y < h - 6:
-                    side = (x - cx) / max(1, span)
-                    col = ramp[3] if side < -0.25 else ramp[2] if side < 0.45 else ramp[1]
-                    if y == ty + 9 or (y == ty + 8 and x % 3 == 0):
-                        col = ramp[1]
-                    if side < -0.55 and smooth_noise(x, y, 3, tier + 81) > 0.5:
-                        col = ramp[4]
-                    cv.set(x, y, col)
-                    solid.add((x, y))
-    cv.set(cx, 2, ramp[3]); cv.set(cx, 3, ramp[3])
-    cv.outline(ramp[0])
+    cx = w / 2 - 0.5
+    style.trunk(cv, int(cx) - 1, h - 10, h, 3, WOOD)
+    tiers = ((1, 10, 4.0), (7, 11, 6.5), (14, 12, 8.6), (22, 11, 10.4))
+    for t, (ty, th, half) in enumerate(tiers):
+        tier = {}
+        for y in range(ty, ty + th):
+            frac = (y - ty + 1) / th
+            span = half * (0.3 + 0.7 * frac)
+            for x in range(int(cx - span), int(cx + span) + 2):
+                if not (0 <= x < w):
+                    continue
+                if y == ty + th - 1 and (x + t) % 3 == 0:
+                    continue  # sawtooth hem
+                side = (x + 0.5 - cx) / max(1.0, span)
+                lv = -0.8 * side - 0.5 * (frac - 0.4)
+                tier[(x, y)] = 3 if lv > 0.45 else 2 if lv > -0.05 else 1 if lv > -0.6 else 0
+        for (x, y), tone in tier.items():
+            cv.set(x, y, PINE[tone])
+        # hem: the tier's lowest pixels sit in their own shade
+        for (x, y), tone in tier.items():
+            if (x, y + 1) not in tier:
+                cv.set(x, y, PINE[max(0, tone - 1)])
+        # needle clumps on the lit flank: small light caps with a dark lip
+        for k in range(3 + t):
+            yy = ty + 2 + int(noise2(k, t, 61) * max(1, th - 4))
+            span = half * (0.3 + 0.7 * (yy - ty + 1) / th)
+            xx = int(cx - span * (0.25 + 0.55 * noise2(k, t, 62)))
+            if (xx, yy) in tier and (xx + 2, yy) in tier and tier[(xx, yy)] >= 2:
+                cv.hline(xx, yy, 2, PINE[4])
+                cv.set(xx + 2, yy, PINE[3])
+                cv.hline(xx, yy + 1, 3, PINE[1])
+    cv.set(int(cx), 0, PINE[3])
+    cv.outline(INK)
     return cv
 
 
 def bush() -> Canvas:
-    cv = Canvas(18, 14)
-    solid = set()
-    for x, y, r in ((6, 8, 5.5), (11, 6, 5.5), (10, 10, 4.5)):
-        leaf_bundle(cv, x, y, r, LEAF, solid)
-    # Little berry florets sit on the leaf masses rather than speckling them.
-    for x, y in ((6, 6), (12, 5), (10, 9)):
-        cv.set(x, y, '#F2D16B'); cv.set(x - 1, y - 1, CREAM[3])
-        cv.set(x + 1, y, CREAM[2])
-    cv.outline(LEAF[0])
+    """A round shrub of leaf clumps with its stems peeking out below."""
+    w, h = 22, 18
+    cv = Canvas(w, h)
+    for x in (6, 10, 14):
+        cv.rect(x, h - 3, 3, 2, WOOD[1]); cv.set(x, h - 3, WOOD[2])
+    style.leafy(cv, w / 2, 8.5, 8.8, 6.6, LEAF, r=2.2, seed=5)
+    for x, y in ((7, 5), (13, 4)):  # small cream blossoms on the lit side
+        cv.set(x, y, CREAM[3]); cv.set(x + 1, y + 1, '#E2C76B')
+    cv.outline(INK)
     return cv
 
 
 def nap_hut() -> Canvas:
-    """Little lavender-roofed hut with a round door and a pillow bed out front."""
+    """The nap hut: a gabled lavender roof over plaster and timber, round door."""
     w, h = 50, 46
     cv = Canvas(w, h)
-    # walls (planks)
-    cv.rect(6, 20, 38, 20, WOOD[3])
-    for y in range(22, 40, 4):
-        cv.hline(6, y, 38, WOOD[2])
-    for x in (6, 43):
-        cv.vline(x, 20, 20, WOOD[1])
-    # Narrow shaded return and grain knots give the timber wall thickness.
-    cv.rect(41, 23, 3, 16, WOOD[2])
-    cv.vline(43, 23, 16, WOOD[1])
-    for x, y in ((10, 27), (15, 35), (33, 37)):
-        cv.hline(x, y, 3, WOOD[2]); cv.set(x + 1, y - 1, WOOD[4])
-    cv.hline(6, 39, 38, WOOD[1])
-    # foundation stones
-    for i, x in enumerate(range(5, 46, 5)):
-        cv.rect(x, 40, 4, 3, STONE[2 if i % 2 else 3])
-        cv.hline(x, 42, 4, STONE[1])
-    # roof (lavender shingles), overhanging
-    for y in range(4, 22):
-        span = int((y - 4) * 1.45) + 8
-        x0 = w // 2 - span
-        for x in range(x0, w // 2 + span):
-            row = (y - 4) // 4
-            tile = (x + (row % 2) * 4) % 8
-            col = NAP[2] if x < 31 else NAP[1]
-            # Rounded overlapping shingles read as little material planes.
-            if (y - 4) % 4 == 3:
-                col = NAP[1] if x < 31 else NAP[0]
-            elif tile == 0:
-                col = NAP[1]
-            elif (y - 4) % 4 == 0 and tile in (2, 3, 4, 5):
-                col = NAP[3] if x < 31 else NAP[2]
-            if x < w // 2 - span + 2:
-                col = NAP[0]
+    apex_x, apex_y, eave = 24.5, 12, 22
+
+    def gable(x, y):  # the front triangle under the roof's apex
+        if y < apex_y or y > eave + 1:
+            return False
+        half = (y - apex_y) * (15.5 / (eave + 1 - apex_y))
+        return abs(x + 0.5 - apex_x) <= half
+
+    # walls: plaster with timber posts and a beam under the eaves
+    cv.rect(4, 22, 42, 18, CREAM[2])
+    for y in range(22, 40):
+        for x in range(4, 46):
+            if x >= 36:
+                cv.set(x, y, CREAM[1])  # the wall turning away from the light
+    for x in (4, 5, 44, 45):
+        cv.vline(x, 22, 18, WOOD[2] if x in (4, 44) else WOOD[1])
+    cv.vline(4, 22, 18, WOOD[3])
+    cv.hline(4, 24, 42, WOOD[1]); cv.hline(4, 25, 42, CREAM[0])  # eave shadow
+    cv.hline(4, 38, 42, WOOD[1])
+    # stone foundation blocks
+    for i, x in enumerate(range(2, 48, 6)):
+        cv.rect(x, 39, 5, 5, STONE[2 if i % 2 else 3])
+        cv.hline(x, 39, 5, STONE[4]); cv.vline(x + 4, 40, 4, STONE[1]); cv.hline(x, 43, 5, STONE[1])
+    # gable triangle in timber, with a round vent and the moon sign
+    for y in range(apex_y, eave + 2):
+        for x in range(w):
+            if gable(x, y):
+                cv.set(x, y, WOOD[3] if (x // 3) % 2 == 0 else WOOD[2])
+    for (x, y) in disc(24.5, 18, 2.6):
+        cv.set(x, y, '#2E2A3D')
+    cv.set(23, 17, '#7A6FA6'); cv.set(24, 17, '#B9B0DD')
+    # roof planes with shingle rows: lit left slope, shaded right slope
+    for y in range(0, eave + 1):
+        for x in range(w):
+            outer_l = 6 - y * 6 / eave
+            outer_r = w - 1 - (6 - y * 6 / eave)
+            if x < outer_l or x > outer_r or gable(x, y):
+                continue
+            left = x < apex_x
+            body, rim, lit = (NAP[3], NAP[2], NAP[4]) if left else (NAP[2], NAP[1], NAP[3])
+            row = y % 3
+            joint = (x + (y // 3) * 3) % 6 == 0
+            col = body
+            if row == 2:
+                col = rim
+            elif joint:
+                col = rim
+            elif row == 0 and (x + (y // 3) * 3) % 6 == 1:
+                col = lit
             cv.set(x, y, col)
-        cv.set(x0 - 1, y, NAP[0]); cv.set(w // 2 + span, y, NAP[0])
-    for x in range(w // 2 - 7, w // 2 + 8):  # ridge highlight
-        cv.set(x, 4, NAP[4])
-    for y in range(5, 20, 3):
-        cv.set(w // 2 - 1 + (y % 2), y, NAP[3])
-    cv.hline(0, 21, w, NAP[0])
-    cv.hline(2, 22, w - 4, NAP[1])  # visible thickness beneath the shingles
-    # A squat brick chimney and a tiny repaired shingle tell the hut's story.
-    cv.rect(36, 2, 6, 10, STONE[1])
-    cv.rect(36, 2, 4, 9, STONE[2])
-    cv.hline(35, 1, 8, STONE[3]); cv.hline(36, 2, 6, STONE[4])
-    cv.hline(37, 3, 4, STONE[0])
-    cv.hline(36, 6, 5, STONE[1]); cv.set(38, 5, STONE[3])
-    cv.set(40, 8, STONE[0])
-    cv.hline(10, 16, 5, NAP[4]); cv.hline(11, 17, 4, NAP[3])
-    cv.set(12, 16, CREAM[2])
-    # round door
-    door = {(x, y) for (x, y) in disc(25, 31, 6.5) if y <= 39} | {(x, y) for x in range(19, 32) for y in range(31, 40)}
+    # timber: ridge beam, fascia along the gable and the eaves
+    for y in range(0, apex_y + 1):
+        cv.hline(23, y, 3, WOOD[2]); cv.set(23, y, WOOD[4]); cv.set(25, y, WOOD[1])
+    for y in range(apex_y, eave + 2):
+        half = (y - apex_y) * (15.5 / (eave + 1 - apex_y))
+        lx, rx = int(apex_x - half) - 1, int(apex_x + half)
+        cv.set(lx, y, WOOD[3]); cv.set(lx - 1, y, WOOD[2])
+        cv.set(rx + 1, y, WOOD[2]); cv.set(rx + 2, y, WOOD[1])
+    for x in range(0, w):
+        if cv.get(x, eave)[3]:
+            cv.set(x, eave, WOOD[1]); cv.set(x, eave - 1, WOOD[3] if x < apex_x else WOOD[2])
+    # chimney on the shaded slope
+    cv.rect(35, 0, 6, 9, STONE[2]); cv.vline(35, 0, 9, STONE[3]); cv.vline(40, 0, 9, STONE[1])
+    cv.hline(34, 0, 8, STONE[3]); cv.rect(36, 1, 4, 1, '#2A2628')
+    cv.hline(35, 4, 6, STONE[1]); cv.set(37, 6, STONE[1])
+    # door: rounded top, stone arch frame, planks lit from the left
+    door = {(x, y) for (x, y) in disc(24.5, 31.5, 5.2) if y <= 38} | {(x, y) for x in range(20, 30) for y in range(31, 39)}
+    frame = set()
     for (x, y) in door:
-        col = WOOD[1] if x % 4 else WOOD[0]
-        cv.set(x, y, WOOD[0] if y < 29 else col)
+        for dx, dy in ((1, 0), (-1, 0), (0, -1), (1, -1), (-1, -1)):
+            if (x + dx, y + dy) not in door:
+                frame.add((x + dx, y + dy))
+    for (x, y) in frame:
+        if y <= 38:
+            cv.set(x, y, STONE[3] if x < 25 else STONE[2])
     for (x, y) in door:
-        if any((x + dx, y + dy) not in door for dx, dy in ((1, 0), (-1, 0), (0, -1))):
-            cv.set(x, y, WOOD[0])
-    # A little leaf latch is a recurring garden-made detail.
-    cv.set(29, 34, LEAF[3]); cv.set(30, 33, LEAF[4]); cv.set(30, 34, LEAF[2])
-    # crescent moon sign above door
-    for (x, y) in disc(25, 15, 3):
-        if (x - 26.4) ** 2 + (y - 14.2) ** 2 > 6:
-            cv.set(x, y, '#F6E7A8')
-    # eave shadow on the wall under the roof
-    cv.hline(6, 22, 38, WOOD[1]); cv.hline(6, 23, 38, WOOD[2])
-    # window flower box
-    cv.rect(33, 32, 10, 3, WOOD[1]); cv.set(34, 31, RED[3]); cv.set(36, 31, '#F2D16B'); cv.set(38, 31, RED[3]); cv.set(40, 31, NAP[4])
-    cv.set(35, 31, LEAF[3]); cv.set(37, 31, LEAF[3]); cv.set(39, 31, LEAF[3])
-    # little window
-    cv.rect(35, 25, 6, 6, WOOD[0]); cv.rect(36, 26, 4, 4, '#9AD3EA'); cv.set(36, 26, '#E4F5FA')
-    cv.vline(38, 26, 4, WOOD[0])
-    cv.hline(35, 30, 7, WOOD[4])
-    # Worn threshold, lavender doormat, and climbing ivy at the shaded corner.
-    cv.hline(19, 39, 13, STONE[3]); cv.hline(19, 40, 13, STONE[1])
-    cv.rect(22, 41, 10, 2, NAP[1]); cv.hline(23, 41, 8, NAP[3])
-    for ix, iy in ((8, 26), (9, 29), (8, 32), (9, 35), (8, 38)):
-        cv.vline(ix, iy, 3, LEAF[1])
-        cv.hline(ix - 1, iy, 2, LEAF[3]); cv.set(ix - 1, iy - 1, LEAF[4])
-        cv.set(ix + 1, iy + 2, LEAF[2])
-    cv.set(8, 24, NAP[3]); cv.set(7, 25, NAP[4])
+        col = WOOD[2] if (x - 20) % 3 else WOOD[1]
+        if x == 20 or x == 21:
+            col = WOOD[3]
+        cv.set(x, y, col)
+    cv.set(27, 34, CREAM[3]); cv.set(27, 35, '#E2C76B')  # brass latch
+    # window with a flower box
+    cv.rect(34, 27, 8, 7, WOOD[1]); cv.rect(35, 28, 6, 5, '#2E3A4E')
+    cv.set(35, 28, '#9DB7D2'); cv.set(36, 28, '#C9DCEA'); cv.set(35, 29, '#9DB7D2')
+    cv.vline(38, 28, 5, WOOD[1])
+    cv.rect(33, 34, 10, 2, WOOD[2]); cv.hline(33, 34, 10, WOOD[3])
+    for i, x in enumerate(range(34, 42, 2)):
+        cv.set(x, 33, [RED[3], '#E2C76B', NAP[4], RED[3]][i]); cv.set(x + 1, 33, LEAF[3])
+    # ivy on the lit corner
+    for ix, iy in ((6, 27), (7, 30), (6, 33), (7, 36)):
+        cv.vline(ix, iy, 3, LEAF[1]); cv.set(ix + 1, iy, LEAF[3]); cv.set(ix + 1, iy + 1, LEAF[4])
+    # doormat
+    cv.rect(21, 44, 8, 2, NAP[1]); cv.hline(22, 44, 6, NAP[3])
     cv.outline(INK)
     return cv
 
@@ -625,16 +667,10 @@ def fence_h(length: int) -> Canvas:
 
 
 def rock(n: int) -> Canvas:
-    cv = Canvas(12, 9)
-    pts = oval(6, 5, 5.5, 3.8) | oval(4, 5.5, 3.5, 3)
-    shade_blob(cv, {(x, y) for (x, y) in pts if 0 <= x < 12 and 0 <= y < 9}, STONE[1], STONE[2], STONE[3], STONE[4])
-    # Angular planes and a short seam, rather than mottled all-over texture.
-    cv.hline(3, 3, 4, STONE[4]); cv.hline(2, 4, 3, STONE[3])
-    cv.set(7, 4, STONE[1]); cv.set(8, 5, STONE[1])
-    cv.hline(4, 7, 5, STONE[1]); cv.set(4, 6, STONE[2])
-    if n:
-        cv.hline(6, 5, 3, LEAF[2]); cv.set(6, 4, LEAF[3])
-        cv.set(7, 5, LEAF[4]); cv.set(9, 6, LEAF[1])
+    """A chunky field stone: lit top, shaded flank, a crack, moss on the mossy one."""
+    cv = Canvas(14, 11)
+    pts = {(x, y) for (x, y) in (oval(7, 6, 6, 4.2) | oval(5, 6.5, 4, 3.5)) if 0 <= x < 14 and 0 <= y < 11}
+    style.facet_stone(cv, pts, STONE, moss=LEAF if n else None, seed=n + 2, outline=None)
     cv.outline(INK)
     return cv
 
@@ -701,6 +737,35 @@ OBJECTS = [
 ]
 
 
+def bake_shadows(terrain: Canvas, sprites: dict):
+    """Hard cast shadows (light from the upper left), plus forest shade dithered
+    in from the treeline. Shadows multiply the ground so they work on any surface."""
+    for (_id, key, x, y, _a) in OBJECTS:
+        s = sprites[key]
+        if key in ('bridge',):
+            continue
+        foot = y + s.h
+        if key in ('tree', 'tree_small', 'tree_autumn'):
+            style.cast_shadow(terrain, x + s.w / 2 + 3, foot - 1, s.w * 0.5, 4.5)
+        elif key == 'pine':
+            style.cast_shadow(terrain, x + s.w / 2 + 2, foot, s.w * 0.45, 3.2)
+        elif key == 'bush':
+            style.cast_shadow(terrain, x + s.w / 2 + 2, foot - 1, s.w * 0.55, 3.2)
+        elif key.startswith('fence'):
+            for xx in range(x + 1, x + s.w):
+                style.darken(terrain, xx, foot)
+                style.darken(terrain, xx, foot + 1)
+        elif key in ('hut', 'stall'):
+            for yy in range(foot - 3, foot + 3):
+                for xx in range(x + 3, x + s.w + 2):
+                    style.darken(terrain, xx, yy)
+        else:
+            style.cast_shadow(terrain, x + s.w / 2 + 2.5, foot, max(3.5, s.w * 0.5), max(2.2, s.h * 0.12))
+    # shade under the canopy along the top of the clearing
+    for row, strength in ((0, 1.0), (1, 0.75), (2, 0.75), (3, 0.5), (4, 0.5), (5, 0.25), (6, 0.25)):
+        style.dither_dark(terrain, 0, row, W, 1, strength, style.FOREST_DARK)
+
+
 def main():
     sprites = {
         'tree': tree(True), 'tree_small': tree(False), 'tree_autumn': tree(True, True), 'pine': pine(),
@@ -719,12 +784,7 @@ def main():
     meadow.draw_top_band().save(os.path.join(OUT, 'ground-top.png'), SCALE)
     for frame in range(4):
         terrain = draw_terrain(frame)
-        # bake soft shadows for every object into the terrain
-        for (_id, key, x, y, _a) in OBJECTS:
-            s = sprites[key]
-            if key.startswith('fence') or key in ('pine', 'bridge'):
-                continue
-            terrain.shadow(x + s.w / 2 + 2, y + s.h - 1, s.w * 0.42, max(2.0, s.h * 0.09))
+        bake_shadows(terrain, sprites)
         terrain.save(os.path.join(OUT, f'ground-{frame}.png'), SCALE)
     for key, s in sprites.items():
         s.save(os.path.join(OUT, f'{key}.png'), SCALE)
@@ -759,6 +819,27 @@ def main():
             edge = r < 7 or r * cell >= meadow.FENCE_Y - 2
             row += '.' if ((c, r) not in blocked and not edge) else '#'
         walk.append(row)
+    # Keep only cells the companion can reach from home (same bounds and moves
+    # as lib/garden-path.ts: 8 directions, no corner cutting).
+    def ok(c, r):
+        x, y = c * cell + cell / 2, r * cell + cell / 2
+        return (0 <= r < rows and 0 <= c < cols and walk[r][c] == '.'
+                and 20 <= x <= W - 20 and 40 <= y <= meadow.FENCE_Y - 4)
+    start = (96 // cell, 112 // cell)
+    reached = {start}
+    queue = [start]
+    while queue:
+        c, r = queue.pop()
+        for dc, dr in ((1, 0), (-1, 0), (0, 1), (0, -1), (1, 1), (1, -1), (-1, 1), (-1, -1)):
+            n = (c + dc, r + dr)
+            if n in reached or not ok(*n):
+                continue
+            if dc and dr and (not ok(c + dc, r) or not ok(c, r + dr)):
+                continue
+            reached.add(n)
+            queue.append(n)
+    walk = [''.join('.' if (ch == '.' and (not ok(c, r) or (c, r) in reached)) else '#'
+                    for c, ch in enumerate(line)) for r, line in enumerate(walk)]
 
     hotspots = {
         'nap': {'x': 73, 'y': 82, 'label': 'nap in your bed'},
@@ -805,7 +886,9 @@ def main():
     # preview composite for review
     prev = Canvas(W, H + TOP)
     prev.paste(meadow.draw_top_band(), 0, 0)
-    prev.paste(draw_terrain(0), 0, TOP)
+    ground = draw_terrain(0)
+    bake_shadows(ground, sprites)
+    prev.paste(ground, 0, TOP)
     for (_id, key, x, y, _a) in sorted(OBJECTS, key=lambda o: o[3] + sprites[o[1]].h):
         prev.paste(sprites[key], x, y + TOP)
     # preview the meadow fully grown

@@ -1,5 +1,7 @@
 # NapAttack art direction
 
+> **Superseded in part by [docs/vision/](vision/README.md) (October 2026).** Matt asked for pixel frames with square corners, one pixel font for all text, near-black outlines and stronger shading. Where this page disagrees (rounded panel radii, normal body type, softer outlines), follow `docs/vision/`.
+
 NapAttack is a small, handmade world that welcomes its companion home after time away. Its visual identity combines soft organic shapes, useful little buildings, warm paper and timber, and deliberate pixel clusters. A player should recognise the same place in the garden, a mission, a card, a shop panel and a return screen.
 
 This is the production guide for new artwork. The companion and the player's next action remain more prominent than decorative detail. More detail means more material, shape and story, rather than more noise or more things to collect.

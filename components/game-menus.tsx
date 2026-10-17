@@ -86,7 +86,7 @@ export function GameSheet({
   );
 }
 
-function NapSheet() {
+export function NapSheet() {
   const open = useUi((s) => s.sheet === 'nap');
   const p = useGame((s) => s.player);
   const paused = usePlayPaused();
@@ -97,8 +97,13 @@ function NapSheet() {
   if (plan.open !== open) setPlan({ open, intention: null });
   if (!p) return null;
   const name = guardianPlayer(p).pet_name;
+  // Leaving the sheet always forgets an unfinished idea.
+  const close = () => {
+    setPlan({ open: false, intention: null });
+    closeSheet();
+  };
   return (
-    <GameSheet visible={open} title="TAKE A NAP" onClose={closeSheet}>
+    <GameSheet visible={open} title="TAKE A NAP" onClose={close}>
       <BodyText style={{ fontSize: 15, lineHeight: 21 }}>
         Put your phone down for a while. {name} will curl up in bed and keep the garden safe until
         you come back.
@@ -113,8 +118,9 @@ function NapSheet() {
         gold={paused}
         disabled={p.mode !== 'awake'}
         onPress={() => {
-          closeSheet();
-          useGame.getState().sleep(undefined, plan.intention);
+          const intention = plan.intention;
+          close();
+          useGame.getState().sleep(undefined, intention);
         }}
       />
       <PixelButton
@@ -122,7 +128,7 @@ function NapSheet() {
         small
         light
         onPress={() => {
-          closeSheet();
+          close();
           router.push('/missions');
         }}
       />

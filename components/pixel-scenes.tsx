@@ -47,10 +47,14 @@ export function PixelProp({
   size?: number;
   tint?: ColorValue;
 }) {
+  // The View keeps the icon in normal stacking order: on web a bare SVG paints
+  // beneath absolutely positioned siblings such as pixel frames.
   return (
-    <Svg width={size} height={size} viewBox="0 0 16 16" accessibilityLabel={kind}>
-      <Pixels kind={kind} tint={tint} />
-    </Svg>
+    <View style={{ width: size, height: size }}>
+      <Svg width={size} height={size} viewBox="0 0 16 16" accessibilityLabel={kind}>
+        <Pixels kind={kind} tint={tint} />
+      </Svg>
+    </View>
   );
 }
 export type SceneKind = keyof typeof sceneImages | 'night';

@@ -458,7 +458,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
           >
             <View style={{ flex: 1, gap: 6 }}>
               <PixelText>{request.practice ? 'SPARRING' : 'GARDEN RAID'}</PixelText>
-              <BodyText style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 11, lineHeight: 14 }}>
+              <BodyText
+                style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 11, lineHeight: 14 }}
+              >
                 ROUND {Math.max(combat.a.turns, combat.d.turns)}/12
               </BodyText>
             </View>

@@ -75,7 +75,8 @@ export function meadowLine(minutes: number): string {
   const s = meadowSummary(minutes);
   if (s.planted === 0)
     return `the meadow is resting. about ${s.nextIn} min of breaks and the first bed is sown.`;
-  if (s.nextIn === null) return 'the whole meadow is in bloom, and the orchard is heavy with fruit.';
+  if (s.nextIn === null)
+    return 'the whole meadow is in bloom, and the orchard is heavy with fruit.';
   const now =
     s.fruiting > 0
       ? `${s.blooming} beds in bloom and ${s.fruiting} tree${s.fruiting === 1 ? '' : 's'} with fruit.`

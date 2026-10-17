@@ -376,7 +376,9 @@ function ScreenOff() {
                 justifyContent: 'center',
               }}
             >
-              <BodyText style={{ color: c.paper, fontFamily: 'PixelifySans_700Bold', fontSize: 12 }}>
+              <BodyText
+                style={{ color: c.paper, fontFamily: 'PixelifySans_700Bold', fontSize: 12 }}
+              >
                 QUIET VIEW · {quiet ? 'ON' : 'OFF'}
               </BodyText>
             </Pressable>

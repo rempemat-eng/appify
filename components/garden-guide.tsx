@@ -209,7 +209,9 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
               >
                 {heading}
               </BodyText>
-              <BodyText style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 14, lineHeight: 21 }}>
+              <BodyText
+                style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 14, lineHeight: 21 }}
+              >
                 {text}
               </BodyText>
             </View>

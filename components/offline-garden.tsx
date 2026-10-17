@@ -136,7 +136,9 @@ export function RecentBreaks() {
   const history = useGame((s) => s.recentBreaks);
   return (
     <View style={{ gap: 12, paddingTop: 12 }}>
-      <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}>Recent breaks</BodyText>
+      <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}>
+        Recent breaks
+      </BodyText>
       {!history.length && (
         <View style={{ gap: 8 }}>
           <Moon color={c.ink} size={20} strokeWidth={2} />

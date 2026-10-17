@@ -102,77 +102,77 @@ export function DailyRhythmCard({
   return (
     <>
       {showCard && (
-      <CozyPanel style={{ padding: 12, gap: 7 }}>
-        <View style={styles.cardRow}>
-          <View style={[styles.icon, { backgroundColor: periodColors[period] }]}>
-            <RhythmIcon period={period} />
-          </View>
-          <View style={{ flex: 1, gap: 2 }}>
-            <BodyText style={styles.bold}>Your rhythm</BodyText>
-            <BodyText style={styles.caption}>
-              {loadError
-                ? 'Your saved planner could not load.'
-                : !loaded
-                  ? 'Loading your local plan…'
-                  : plan.enabled && status.current
-                    ? `${periodLabels[status.current]} now${status.next ? ` · ${periodLabels[status.next.period]} ${nextTimeLabel(status.next.at, now)}` : ''}`
-                    : 'An optional plan for rest, focus and your own time.'}
-            </BodyText>
-          </View>
-          {loaded && (
-            <Pressable
-              accessibilityRole="button"
-              accessibilityLabel={
-                plan.enabled ? 'Edit your daily rhythm' : 'Set up your daily rhythm'
-              }
-              disabled={!active}
-              onPress={() => onOpenChange(true)}
-              style={styles.edit}
-            >
-              <BodyText style={[styles.bold, { color: c.moss }]}>
-                {plan.enabled ? 'Edit' : 'Set up'}
-              </BodyText>
-            </Pressable>
-          )}
-        </View>
-        {loaded && plan.enabled && (
-          <BodyText style={styles.caption}>
-            Planning only · follows your device’s local time
-          </BodyText>
-        )}
-        {loadError && (
-          <>
-            <BodyText style={styles.caption}>
-              Your garden is safe. Retry loading, or start a new planner and save it to replace only
-              your rhythm settings.
-            </BodyText>
-            <View style={styles.actions}>
-              <View style={styles.action}>
-                <PixelButton
-                  label="RETRY"
-                  small
-                  light
-                  onPress={() => {
-                    setLoadError(false);
-                    void load();
-                  }}
-                />
-              </View>
-              <View style={styles.action}>
-                <PixelButton
-                  label="NEW PLAN"
-                  small
-                  light
-                  onPress={() => {
-                    setPlan(freshRhythm());
-                    onOpenChange(true);
-                  }}
-                />
-              </View>
+        <CozyPanel style={{ padding: 12, gap: 7 }}>
+          <View style={styles.cardRow}>
+            <View style={[styles.icon, { backgroundColor: periodColors[period] }]}>
+              <RhythmIcon period={period} />
             </View>
-          </>
-        )}
-      </CozyPanel>
+            <View style={{ flex: 1, gap: 2 }}>
+              <BodyText style={styles.bold}>Your rhythm</BodyText>
+              <BodyText style={styles.caption}>
+                {loadError
+                  ? 'Your saved planner could not load.'
+                  : !loaded
+                    ? 'Loading your local plan…'
+                    : plan.enabled && status.current
+                      ? `${periodLabels[status.current]} now${status.next ? ` · ${periodLabels[status.next.period]} ${nextTimeLabel(status.next.at, now)}` : ''}`
+                      : 'An optional plan for rest, focus and your own time.'}
+              </BodyText>
+            </View>
+            {loaded && (
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={
+                  plan.enabled ? 'Edit your daily rhythm' : 'Set up your daily rhythm'
+                }
+                disabled={!active}
+                onPress={() => onOpenChange(true)}
+                style={styles.edit}
+              >
+                <BodyText style={[styles.bold, { color: c.moss }]}>
+                  {plan.enabled ? 'Edit' : 'Set up'}
+                </BodyText>
+              </Pressable>
+            )}
+          </View>
+          {loaded && plan.enabled && (
+            <BodyText style={styles.caption}>
+              Planning only · follows your device’s local time
+            </BodyText>
+          )}
+          {loadError && (
+            <>
+              <BodyText style={styles.caption}>
+                Your garden is safe. Retry loading, or start a new planner and save it to replace
+                only your rhythm settings.
+              </BodyText>
+              <View style={styles.actions}>
+                <View style={styles.action}>
+                  <PixelButton
+                    label="RETRY"
+                    small
+                    light
+                    onPress={() => {
+                      setLoadError(false);
+                      void load();
+                    }}
+                  />
+                </View>
+                <View style={styles.action}>
+                  <PixelButton
+                    label="NEW PLAN"
+                    small
+                    light
+                    onPress={() => {
+                      setPlan(freshRhythm());
+                      onOpenChange(true);
+                    }}
+                  />
+                </View>
+              </View>
+            </>
+          )}
+        </CozyPanel>
       )}
       {open && (
         <RhythmEditor

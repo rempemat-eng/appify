@@ -863,617 +863,621 @@ export function GardenWorld({
       <Animated.View
         style={[{ position: 'absolute', left: 0, top: 0, width, height }, cameraStyle]}
       >
-      {camera && (
-        <Image
-          source={groundTop}
-          resizeMode="stretch"
-          style={{ position: 'absolute', left: 0, top: -topBand, width, height: topBand }}
-        />
-      )}
-      {tilt && (
-        <Image
-          source={night ? battleNight : battleDay}
-          resizeMode="stretch"
-          style={{
-            position: 'absolute',
-            left: 0,
-            // battle backdrop's horizon (native y 78 of 150) sits on the garden's far edge
-            top: Math.round(proj.horizon - 80 * (width / 216)),
-            width,
-            height: Math.round(150 * (width / 216)),
-          }}
-        />
-      )}
-      <View
-        pointerEvents="none"
-        style={[
-          {
-            position: 'absolute',
-            left: 0,
-            top: proj.bottom - Math.round(GARDEN.height * scale),
-            width,
-            height: Math.round(GARDEN.height * scale),
-          },
-          tilt && {
-            transform: [{ perspective: proj.persp }, { rotateX: `${TILT_DEG}deg` }],
-            transformOrigin: '50% 100%',
-          },
-        ]}
-      >
-        <Image
-          source={groundFrames[reduced ? 0 : frame]}
-          resizeMode="stretch"
-          style={{ width, height: Math.round(GARDEN.height * scale) }}
-        />
-        {destination && !napping && active && (
-          <View
+        {camera && (
+          <Image
+            source={groundTop}
+            resizeMode="stretch"
+            style={{ position: 'absolute', left: 0, top: -topBand, width, height: topBand }}
+          />
+        )}
+        {tilt && (
+          <Image
+            source={night ? battleNight : battleDay}
+            resizeMode="stretch"
             style={{
               position: 'absolute',
-              left: Math.round((destination.x - 3) * scale),
-              top: Math.round((destination.y - 2) * scale),
-              width: Math.round(6 * scale),
-              height: Math.round(4 * scale),
-              borderWidth: Math.max(1, Math.round(scale)),
-              borderColor: '#FFF0B7',
-              backgroundColor: 'rgba(81,107,55,0.3)',
+              left: 0,
+              // battle backdrop's horizon (native y 78 of 150) sits on the garden's far edge
+              top: Math.round(proj.horizon - 80 * (width / 216)),
+              width,
+              height: Math.round(150 * (width / 216)),
             }}
           />
         )}
-      </View>
-      <Pressable
-        accessibilityLabel={`Your garden. Tap to walk ${guardian.pet_name} around.`}
-        disabled={napping || !active}
-        onPress={onGroundPress}
-        style={{
-          position: 'absolute',
-          left: 0,
-          top: tilt ? proj.horizon : 0,
-          width,
-          height: tilt ? height - proj.horizon : height,
-        }}
-      />
-      {gardenObjects.map((o) => {
-        // Upright billboard standing on its footprint (identity in flat view).
-        const art = billboard(proj, o.x, o.y, o.w, o.h);
-        const px1 = scale * art.f; // one art pixel on screen at this depth
-        const sprite = <Sprite key={o.id} source={sprites[o.sprite]} rect={art} z={o.y + o.h} />;
-        if (!o.action)
-          return (
+        <View
+          pointerEvents="none"
+          style={[
+            {
+              position: 'absolute',
+              left: 0,
+              top: proj.bottom - Math.round(GARDEN.height * scale),
+              width,
+              height: Math.round(GARDEN.height * scale),
+            },
+            tilt && {
+              transform: [{ perspective: proj.persp }, { rotateX: `${TILT_DEG}deg` }],
+              transformOrigin: '50% 100%',
+            },
+          ]}
+        >
+          <Image
+            source={groundFrames[reduced ? 0 : frame]}
+            resizeMode="stretch"
+            style={{ width, height: Math.round(GARDEN.height * scale) }}
+          />
+          {destination && !napping && active && (
             <View
-              key={o.id}
-              pointerEvents="none"
-              style={{ position: 'absolute', zIndex: o.y + o.h }}
-            >
-              {sprite}
-            </View>
-          );
-        const action = o.action as Action;
-        const isNewInteraction = action === 'read' || action === 'water' || action === 'lantern';
-        const artLeft = Math.round(art.left);
-        const artTop = Math.round(art.top);
-        const artWidth = Math.round(art.width);
-        const artHeight = Math.round(art.height);
-        const targetWidth = Math.max(44, artWidth);
-        const targetHeight = Math.max(44, artHeight);
-        const targetLeft = Math.max(
-          0,
-          Math.min(width - targetWidth, artLeft - (targetWidth - artWidth) / 2),
-        );
-        const targetTop = Math.max(
-          0,
-          Math.min(height - targetHeight, artTop - (targetHeight - artHeight) / 2),
-        );
-        // These small props need a hit area above a nearby guardian, while
-        // their artwork keeps its ordinary depth and can still sit behind it.
-        const imageLeft = isNewInteraction ? artLeft : artLeft - targetLeft;
-        const imageTop = isNewInteraction ? artTop : artTop - targetTop;
-        const artwork = (
-          <>
-            <Image
-              key={`${o.id}-image`}
-              source={sprites[o.sprite]}
-              resizeMode="stretch"
               style={{
                 position: 'absolute',
-                left: imageLeft,
-                top: imageTop,
-                width: artWidth,
-                height: artHeight,
+                left: Math.round((destination.x - 3) * scale),
+                top: Math.round((destination.y - 2) * scale),
+                width: Math.round(6 * scale),
+                height: Math.round(4 * scale),
+                borderWidth: Math.max(1, Math.round(scale)),
+                borderColor: '#FFF0B7',
+                backgroundColor: 'rgba(81,107,55,0.3)',
               }}
             />
-            {action === 'lantern' && !lanternOn && (
+          )}
+        </View>
+        <Pressable
+          accessibilityLabel={`Your garden. Tap to walk ${guardian.pet_name} around.`}
+          disabled={napping || !active}
+          onPress={onGroundPress}
+          style={{
+            position: 'absolute',
+            left: 0,
+            top: tilt ? proj.horizon : 0,
+            width,
+            height: tilt ? height - proj.horizon : height,
+          }}
+        />
+        {gardenObjects.map((o) => {
+          // Upright billboard standing on its footprint (identity in flat view).
+          const art = billboard(proj, o.x, o.y, o.w, o.h);
+          const px1 = scale * art.f; // one art pixel on screen at this depth
+          const sprite = <Sprite key={o.id} source={sprites[o.sprite]} rect={art} z={o.y + o.h} />;
+          if (!o.action)
+            return (
               <View
+                key={o.id}
                 pointerEvents="none"
-                style={{
-                  position: 'absolute',
-                  left: imageLeft + Math.round(7 * px1),
-                  top: imageTop + Math.round(10 * px1),
-                  width: Math.round(3 * px1),
-                  height: Math.round(6 * px1),
-                  backgroundColor: '#71817A',
-                  borderLeftWidth: Math.max(1, Math.round(px1)),
-                  borderLeftColor: '#A6B69E',
-                }}
-              />
-            )}
-            {isNewInteraction && !napping && active && (
-              <View
-                pointerEvents="none"
-                style={{
-                  position: 'absolute',
-                  left: imageLeft + Math.round((o.w / 2 - 2) * px1),
-                  top: imageTop - Math.round(5 * px1),
-                  width: Math.round(4 * px1),
-                  height: Math.round(4 * px1),
-                  backgroundColor: '#FFF3CF',
-                  borderWidth: Math.max(1, Math.round(px1)),
-                  borderColor: '#647E46',
-                }}
-              />
-            )}
-          </>
-        );
-        return (
-          <Fragment key={o.id}>
-            {isNewInteraction && (
-              <View
-                key={`${o.id}-art`}
-                pointerEvents="none"
-                style={{ position: 'absolute', left: 0, top: 0, zIndex: o.y + o.h }}
+                style={{ position: 'absolute', zIndex: o.y + o.h }}
               >
-                {artwork}
+                {sprite}
               </View>
-            )}
-            <Pressable
-              key={o.id}
-              accessibilityRole="button"
-              accessibilityLabel={
-                action === 'lantern'
-                  ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
-                  : gardenHotspots[action].label
-              }
-              accessibilityHint={
-                action === 'read'
-                  ? 'Walk to the bench and turn a page.'
-                  : action === 'water'
-                    ? 'Walk over and water the flowers.'
-                    : action === 'lantern'
-                      ? 'Walk to the post, then change its light.'
-                      : undefined
-              }
-              aria-pressed={action === 'lantern' ? lanternOn : undefined}
-              disabled={napping || !active}
-              onFocus={() => {
-                if (activeRef.current && !napping)
-                  setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
-              }}
-              onPress={() => onObjectPress(action)}
-              style={{
-                position: 'absolute',
-                left: targetLeft,
-                top: targetTop,
-                width: targetWidth,
-                height: targetHeight,
-                zIndex: isNewInteraction ? 800 : o.y + o.h,
-              }}
-            >
-              {!isNewInteraction && artwork}
-            </Pressable>
-          </Fragment>
-        );
-      })}
-      {gardenPlots.map((plot, i) => {
-        const stage = plotStage(lifetimeMinutes, i);
-        const key = `plot_${plot.kind}_${stage}`;
-        const [sw, sh] = growthSize(key);
-        const hit = {
-          left: Math.round(plot.x * scale),
-          top: Math.round((plot.y - 6) * scale),
-          width: Math.max(44, Math.round(plot.w * scale)),
-          height: Math.max(44, Math.round((plot.h + 6) * scale)),
-        };
-        return (
-          <Fragment key={plot.id}>
-            {stage >= 0 && (
-              <Sprite
-                source={growthImages[key]}
-                rect={{
-                  left: plot.x * scale,
-                  top: (plot.y - (sh - plot.h)) * scale,
-                  width: sw * scale,
-                  height: sh * scale,
+            );
+          const action = o.action as Action;
+          const isNewInteraction = action === 'read' || action === 'water' || action === 'lantern';
+          const artLeft = Math.round(art.left);
+          const artTop = Math.round(art.top);
+          const artWidth = Math.round(art.width);
+          const artHeight = Math.round(art.height);
+          const targetWidth = Math.max(44, artWidth);
+          const targetHeight = Math.max(44, artHeight);
+          const targetLeft = Math.max(
+            0,
+            Math.min(width - targetWidth, artLeft - (targetWidth - artWidth) / 2),
+          );
+          const targetTop = Math.max(
+            0,
+            Math.min(height - targetHeight, artTop - (targetHeight - artHeight) / 2),
+          );
+          // These small props need a hit area above a nearby guardian, while
+          // their artwork keeps its ordinary depth and can still sit behind it.
+          const imageLeft = isNewInteraction ? artLeft : artLeft - targetLeft;
+          const imageTop = isNewInteraction ? artTop : artTop - targetTop;
+          const artwork = (
+            <>
+              <Image
+                key={`${o.id}-image`}
+                source={sprites[o.sprite]}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: imageLeft,
+                  top: imageTop,
+                  width: artWidth,
+                  height: artHeight,
                 }}
-                z={plot.y + plot.h}
               />
-            )}
+              {action === 'lantern' && !lanternOn && (
+                <View
+                  pointerEvents="none"
+                  style={{
+                    position: 'absolute',
+                    left: imageLeft + Math.round(7 * px1),
+                    top: imageTop + Math.round(10 * px1),
+                    width: Math.round(3 * px1),
+                    height: Math.round(6 * px1),
+                    backgroundColor: '#71817A',
+                    borderLeftWidth: Math.max(1, Math.round(px1)),
+                    borderLeftColor: '#A6B69E',
+                  }}
+                />
+              )}
+              {isNewInteraction && !napping && active && (
+                <View
+                  pointerEvents="none"
+                  style={{
+                    position: 'absolute',
+                    left: imageLeft + Math.round((o.w / 2 - 2) * px1),
+                    top: imageTop - Math.round(5 * px1),
+                    width: Math.round(4 * px1),
+                    height: Math.round(4 * px1),
+                    backgroundColor: '#FFF3CF',
+                    borderWidth: Math.max(1, Math.round(px1)),
+                    borderColor: '#647E46',
+                  }}
+                />
+              )}
+            </>
+          );
+          return (
+            <Fragment key={o.id}>
+              {isNewInteraction && (
+                <View
+                  key={`${o.id}-art`}
+                  pointerEvents="none"
+                  style={{ position: 'absolute', left: 0, top: 0, zIndex: o.y + o.h }}
+                >
+                  {artwork}
+                </View>
+              )}
+              <Pressable
+                key={o.id}
+                accessibilityRole="button"
+                accessibilityLabel={
+                  action === 'lantern'
+                    ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
+                    : gardenHotspots[action].label
+                }
+                accessibilityHint={
+                  action === 'read'
+                    ? 'Walk to the bench and turn a page.'
+                    : action === 'water'
+                      ? 'Walk over and water the flowers.'
+                      : action === 'lantern'
+                        ? 'Walk to the post, then change its light.'
+                        : undefined
+                }
+                aria-pressed={action === 'lantern' ? lanternOn : undefined}
+                disabled={napping || !active}
+                onFocus={() => {
+                  if (activeRef.current && !napping)
+                    setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
+                }}
+                onPress={() => onObjectPress(action)}
+                style={{
+                  position: 'absolute',
+                  left: targetLeft,
+                  top: targetTop,
+                  width: targetWidth,
+                  height: targetHeight,
+                  zIndex: isNewInteraction ? 800 : o.y + o.h,
+                }}
+              >
+                {!isNewInteraction && artwork}
+              </Pressable>
+            </Fragment>
+          );
+        })}
+        {gardenPlots.map((plot, i) => {
+          const stage = plotStage(lifetimeMinutes, i);
+          const key = `plot_${plot.kind}_${stage}`;
+          const [sw, sh] = growthSize(key);
+          const hit = {
+            left: Math.round(plot.x * scale),
+            top: Math.round((plot.y - 6) * scale),
+            width: Math.max(44, Math.round(plot.w * scale)),
+            height: Math.max(44, Math.round((plot.h + 6) * scale)),
+          };
+          return (
+            <Fragment key={plot.id}>
+              {stage >= 0 && (
+                <Sprite
+                  source={growthImages[key]}
+                  rect={{
+                    left: plot.x * scale,
+                    top: (plot.y - (sh - plot.h)) * scale,
+                    width: sw * scale,
+                    height: sh * scale,
+                  }}
+                  z={plot.y + plot.h}
+                />
+              )}
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={
+                  stage < 0
+                    ? 'An empty meadow bed, waiting for seeds'
+                    : stage === 4
+                      ? `A ${plot.kind} bed in bloom`
+                      : `A ${plot.kind} bed, still growing`
+                }
+                disabled={napping || !active}
+                onPress={() => onObjectPress('meadow')}
+                style={{ position: 'absolute', ...hit, zIndex: plot.y + plot.h }}
+              />
+            </Fragment>
+          );
+        })}
+        {gardenOrchard.map((pit, i) => {
+          const stage = orchardStage(lifetimeMinutes, i);
+          if (stage < 0) return null;
+          const key = `orchard_${stage}`;
+          const [sw, sh] = growthSize(key);
+          return (
             <Pressable
+              key={pit.id}
               accessibilityRole="button"
               accessibilityLabel={
-                stage < 0
-                  ? 'An empty meadow bed, waiting for seeds'
-                  : stage === 4
-                    ? `A ${plot.kind} bed in bloom`
-                    : `A ${plot.kind} bed, still growing`
+                stage === 4 ? 'A fruit tree in the orchard' : 'A young tree in the orchard'
               }
               disabled={napping || !active}
               onPress={() => onObjectPress('meadow')}
-              style={{ position: 'absolute', ...hit, zIndex: plot.y + plot.h }}
-            />
-          </Fragment>
-        );
-      })}
-      {gardenOrchard.map((pit, i) => {
-        const stage = orchardStage(lifetimeMinutes, i);
-        if (stage < 0) return null;
-        const key = `orchard_${stage}`;
-        const [sw, sh] = growthSize(key);
-        return (
-          <Pressable
-            key={pit.id}
-            accessibilityRole="button"
-            accessibilityLabel={
-              stage === 4 ? 'A fruit tree in the orchard' : 'A young tree in the orchard'
-            }
-            disabled={napping || !active}
-            onPress={() => onObjectPress('meadow')}
-            style={{
-              position: 'absolute',
-              left: Math.round((pit.x - sw / 2) * scale),
-              top: Math.round((pit.y - sh) * scale),
-              width: Math.max(44, Math.round(sw * scale)),
-              height: Math.max(44, Math.round(sh * scale)),
-              zIndex: pit.y,
-            }}
-          >
-            <Image
-              source={growthImages[key]}
-              resizeMode="stretch"
-              style={{ width: Math.round(sw * scale), height: Math.round(sh * scale) }}
-            />
-          </Pressable>
-        );
-      })}
-      {marker && !napping && active && (
-        <GardenMarker action={marker} scale={scale} bob={!reduced && frame % 2 === 1} />
-      )}
-      {keepsakeIntentions
-        .filter((intention) => keepsakes[intention])
-        .map((intention) => {
-          const location = keepsakeLocations[intention];
-          const foot = project(proj, location.x + 8, location.y + 16);
-          const size = Math.max(16, Math.round(scale * foot.f) * 16);
-          const memory = keepsakes[intention];
-          const box = {
-            position: 'absolute' as const,
-            left: Math.round(foot.sx - size / 2),
-            top: Math.round(foot.sy - size),
-            width: size,
-            height: size,
-          };
-          if (onKeepsakePress && memory && !napping)
-            return (
-              <Pressable
-                key={`keepsake-${intention}`}
-                testID={`garden-keepsake-${intention}`}
-                accessibilityRole="button"
-                accessibilityLabel={`Open the ${intention} keepsake from your break with ${memory.companion.name}`}
-                disabled={!active}
-                hitSlop={Math.max(0, Math.ceil((44 - size) / 2))}
-                onPress={() => {
-                  if (!activeRef.current) return;
-                  lastTouch.current = clock();
-                  onKeepsakePress(memory);
-                }}
-                style={{ ...box, zIndex: 801 }}
-              >
-                <GardenKeepsakeArt intention={intention} size={size} />
-              </Pressable>
-            );
-          return (
-            <View
-              key={`keepsake-${intention}`}
-              testID={`garden-keepsake-${intention}`}
-              pointerEvents="none"
-              aria-hidden
-              accessibilityElementsHidden
-              importantForAccessibility="no-hide-descendants"
-              style={{ ...box, zIndex: location.y + 17 }}
+              style={{
+                position: 'absolute',
+                left: Math.round((pit.x - sw / 2) * scale),
+                top: Math.round((pit.y - sh) * scale),
+                width: Math.max(44, Math.round(sw * scale)),
+                height: Math.max(44, Math.round(sh * scale)),
+                zIndex: pit.y,
+              }}
             >
-              <GardenKeepsakeArt intention={intention} size={size} />
-            </View>
+              <Image
+                source={growthImages[key]}
+                resizeMode="stretch"
+                style={{ width: Math.round(sw * scale), height: Math.round(sh * scale) }}
+              />
+            </Pressable>
           );
         })}
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Look into the pond"
-        disabled={napping || !active}
-        onPress={() => onObjectPress('pond')}
-        style={{
-          position: 'absolute',
-          left: Math.max(0, Math.min(width - pondWidth, pond.left - (pondWidth - pond.width) / 2)),
-          top: Math.max(
-            0,
-            Math.min(height - pondHeight, pond.top - (pondHeight - pond.height) / 2),
-          ),
-          width: pondWidth,
-          height: pondHeight,
-          zIndex: 1,
-        }}
-      />
-      <Animated.View
-        style={[
-          {
+        {marker && !napping && active && (
+          <GardenMarker action={marker} scale={scale} bob={!reduced && frame % 2 === 1} />
+        )}
+        {keepsakeIntentions
+          .filter((intention) => keepsakes[intention])
+          .map((intention) => {
+            const location = keepsakeLocations[intention];
+            const foot = project(proj, location.x + 8, location.y + 16);
+            const size = Math.max(16, Math.round(scale * foot.f) * 16);
+            const memory = keepsakes[intention];
+            const box = {
+              position: 'absolute' as const,
+              left: Math.round(foot.sx - size / 2),
+              top: Math.round(foot.sy - size),
+              width: size,
+              height: size,
+            };
+            if (onKeepsakePress && memory && !napping)
+              return (
+                <Pressable
+                  key={`keepsake-${intention}`}
+                  testID={`garden-keepsake-${intention}`}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Open the ${intention} keepsake from your break with ${memory.companion.name}`}
+                  disabled={!active}
+                  hitSlop={Math.max(0, Math.ceil((44 - size) / 2))}
+                  onPress={() => {
+                    if (!activeRef.current) return;
+                    lastTouch.current = clock();
+                    onKeepsakePress(memory);
+                  }}
+                  style={{ ...box, zIndex: 801 }}
+                >
+                  <GardenKeepsakeArt intention={intention} size={size} />
+                </Pressable>
+              );
+            return (
+              <View
+                key={`keepsake-${intention}`}
+                testID={`garden-keepsake-${intention}`}
+                pointerEvents="none"
+                aria-hidden
+                accessibilityElementsHidden
+                importantForAccessibility="no-hide-descendants"
+                style={{ ...box, zIndex: location.y + 17 }}
+              >
+                <GardenKeepsakeArt intention={intention} size={size} />
+              </View>
+            );
+          })}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Look into the pond"
+          disabled={napping || !active}
+          onPress={() => onObjectPress('pond')}
+          style={{
             position: 'absolute',
-            left: 0,
-            top: 0,
-            width: petPx,
-            height: petPx,
-            // Depth scaling must keep the sprite's feet on its projected path.
-            transformOrigin: '50% 93.75%',
-          },
-          petStyle,
-        ]}
-      >
-        {emote && (
+            left: Math.max(
+              0,
+              Math.min(width - pondWidth, pond.left - (pondWidth - pond.width) / 2),
+            ),
+            top: Math.max(
+              0,
+              Math.min(height - pondHeight, pond.top - (pondHeight - pond.height) / 2),
+            ),
+            width: pondWidth,
+            height: pondHeight,
+            zIndex: 1,
+          }}
+        />
+        <Animated.View
+          style={[
+            {
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: petPx,
+              height: petPx,
+              // Depth scaling must keep the sprite's feet on its projected path.
+              transformOrigin: '50% 93.75%',
+            },
+            petStyle,
+          ]}
+        >
+          {emote && (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                top: -petPx * 0.35,
+                alignSelf: 'center',
+                minWidth: 26,
+                paddingHorizontal: 6,
+                borderRadius: 10,
+                borderWidth: 2,
+                borderColor: c.outline,
+                backgroundColor: c.paper,
+                alignItems: 'center',
+              }}
+            >
+              <BodyText style={{ fontSize: 13, lineHeight: 18 }}>{emote}</BodyText>
+            </View>
+          )}
+          <GuardianPet
+            active={active}
+            player={player}
+            size={petPx}
+            facing={facing}
+            walking={walking && !napping && active}
+            grumpy={grumpy && !napping}
+            yawning={sleepy}
+            sleeping={napping}
+            curled={napping}
+            groundShadow={!napping}
+            bob={!walking && !napping && active}
+            gardenPose={
+              active && !napping && !walking && reaction?.signature
+                ? { id: reaction.id, kind: reaction.signature.pose }
+                : undefined
+            }
+            onPress={patGuardian}
+          />
+        </Animated.View>
+        {companions.map((v, i) => (
+          <View
+            key={v.id}
+            style={{
+              position: 'absolute',
+              left: Math.round(
+                project(proj, companionSpots[i].x, companionSpots[i].y).sx - companionPx / 2,
+              ),
+              top: Math.round(
+                project(proj, companionSpots[i].x, companionSpots[i].y).sy -
+                  companionPx * (30 / 32),
+              ),
+              width: companionPx,
+              height: companionPx,
+              transform: [{ scale: project(proj, companionSpots[i].x, companionSpots[i].y).f }],
+              transformOrigin: '50% 93.75%',
+              zIndex: companionSpots[i].y,
+            }}
+          >
+            <Pet
+              active={active}
+              visitor={v.id}
+              size={companionPx}
+              sleeping={napping}
+              facing={i % 2 ? 'left' : 'right'}
+              bob={!napping && active}
+              onPress={() => {
+                if (napping || !activeRef.current) return;
+                lastTouch.current = clock();
+                stopJourney();
+                setTag(null);
+                setFeedback(null);
+                setReaction(null);
+                useGame.setState({
+                  voice: `${visitorInfo(v.id).name.toLowerCase()} waves a leaf at you.`,
+                });
+              }}
+            />
+          </View>
+        ))}
+        {reaction && !napping && active && (
+          <GardenReactions
+            key={reaction.id}
+            reaction={reaction}
+            scale={scale}
+            reduced={reduced}
+            place={place}
+            base={reactionBase(reaction)}
+            actor={reaction.actor}
+            signature={reaction.signature}
+          />
+        )}
+        {(night || dusk || dawn) && (
           <View
             pointerEvents="none"
             style={{
               position: 'absolute',
-              top: -petPx * 0.35,
-              alignSelf: 'center',
-              minWidth: 26,
-              paddingHorizontal: 6,
-              borderRadius: 10,
-              borderWidth: 2,
-              borderColor: c.outline,
-              backgroundColor: c.paper,
+              left: 0,
+              top: camera ? -topBand : 0,
+              width,
+              height: height + (camera ? topBand : 0),
+              zIndex: 900,
+              backgroundColor: night
+                ? 'rgba(22,28,66,0.42)'
+                : dusk
+                  ? 'rgba(240,128,70,0.16)'
+                  : 'rgba(255,200,150,0.12)',
+            }}
+          />
+        )}
+        {[
+          ...(night ? [{ x: 48, y: 54, size: 8, ground: HUT_FOOT }] : []),
+          ...(lanternOn ? [{ x: 123, y: 71, size: 7, ground: LANTERN_FOOT }] : []),
+        ].map((light) => (
+          <View
+            key={`${light.x}-${light.y}`}
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              left: Math.round(place(light.x, light.y, light.ground).sx),
+              top: Math.round(place(light.x, light.y, light.ground).sy),
+              width: Math.round(light.size * scale),
+              height: Math.round(light.size * scale),
+              borderRadius: Math.round(4 * scale),
+              backgroundColor: 'rgba(255,214,120,0.35)',
+              zIndex: 901,
               alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
-            <BodyText style={{ fontSize: 13, lineHeight: 18 }}>{emote}</BodyText>
+            <View
+              style={{
+                width: Math.round(4 * scale),
+                height: Math.round(4 * scale),
+                backgroundColor: '#FFE08A',
+              }}
+            />
+          </View>
+        ))}
+        <Ambient
+          scale={scale}
+          place={place}
+          width={width}
+          height={height}
+          rain={grumpy && !napping}
+          night={night}
+          day={!night && !grumpy}
+          reduced={reduced}
+          active={active}
+        />
+        {napping && active && (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              left: Math.round(project(proj, BED.x, BED.y).sx),
+              top: Math.round(project(proj, BED.x, BED.y).sy - petPx * 1.1),
+              zIndex: 990,
+            }}
+          >
+            <FloatingZ />
           </View>
         )}
-        <GuardianPet
-          active={active}
-          player={player}
-          size={petPx}
-          facing={facing}
-          walking={walking && !napping && active}
-          grumpy={grumpy && !napping}
-          yawning={sleepy}
-          sleeping={napping}
-          curled={napping}
-          groundShadow={!napping}
-          bob={!walking && !napping && active}
-          gardenPose={
-            active && !napping && !walking && reaction?.signature
-              ? { id: reaction.id, kind: reaction.signature.pose }
-              : undefined
-          }
-          onPress={patGuardian}
-        />
-      </Animated.View>
-      {companions.map((v, i) => (
-        <View
-          key={v.id}
-          style={{
-            position: 'absolute',
-            left: Math.round(
-              project(proj, companionSpots[i].x, companionSpots[i].y).sx - companionPx / 2,
-            ),
-            top: Math.round(
-              project(proj, companionSpots[i].x, companionSpots[i].y).sy - companionPx * (30 / 32),
-            ),
-            width: companionPx,
-            height: companionPx,
-            transform: [{ scale: project(proj, companionSpots[i].x, companionSpots[i].y).f }],
-            transformOrigin: '50% 93.75%',
-            zIndex: companionSpots[i].y,
-          }}
-        >
-          <Pet
-            active={active}
-            visitor={v.id}
-            size={companionPx}
-            sleeping={napping}
-            facing={i % 2 ? 'left' : 'right'}
-            bob={!napping && active}
-            onPress={() => {
-              if (napping || !activeRef.current) return;
-              lastTouch.current = clock();
-              stopJourney();
-              setTag(null);
-              setFeedback(null);
-              setReaction(null);
-              useGame.setState({
-                voice: `${visitorInfo(v.id).name.toLowerCase()} waves a leaf at you.`,
-              });
-            }}
-          />
-        </View>
-      ))}
-      {reaction && !napping && active && (
-        <GardenReactions
-          key={reaction.id}
-          reaction={reaction}
-          scale={scale}
-          reduced={reduced}
-          place={place}
-          base={reactionBase(reaction)}
-          actor={reaction.actor}
-          signature={reaction.signature}
-        />
-      )}
-      {(night || dusk || dawn) && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: 0,
-            top: camera ? -topBand : 0,
-            width,
-            height: height + (camera ? topBand : 0),
-            zIndex: 900,
-            backgroundColor: night
-              ? 'rgba(22,28,66,0.42)'
-              : dusk
-                ? 'rgba(240,128,70,0.16)'
-                : 'rgba(255,200,150,0.12)',
-          }}
-        />
-      )}
-      {[
-        ...(night ? [{ x: 48, y: 54, size: 8, ground: HUT_FOOT }] : []),
-        ...(lanternOn ? [{ x: 123, y: 71, size: 7, ground: LANTERN_FOOT }] : []),
-      ].map((light) => (
-        <View
-          key={`${light.x}-${light.y}`}
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: Math.round(place(light.x, light.y, light.ground).sx),
-            top: Math.round(place(light.x, light.y, light.ground).sy),
-            width: Math.round(light.size * scale),
-            height: Math.round(light.size * scale),
-            borderRadius: Math.round(4 * scale),
-            backgroundColor: 'rgba(255,214,120,0.35)',
-            zIndex: 901,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
+        {tag && (
           <View
+            pointerEvents="none"
             style={{
-              width: Math.round(4 * scale),
-              height: Math.round(4 * scale),
-              backgroundColor: '#FFE08A',
-            }}
-          />
-        </View>
-      ))}
-      <Ambient
-        scale={scale}
-        place={place}
-        width={width}
-        height={height}
-        rain={grumpy && !napping}
-        night={night}
-        day={!night && !grumpy}
-        reduced={reduced}
-        active={active}
-      />
-      {napping && active && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: Math.round(project(proj, BED.x, BED.y).sx),
-            top: Math.round(project(proj, BED.x, BED.y).sy - petPx * 1.1),
-            zIndex: 990,
-          }}
-        >
-          <FloatingZ />
-        </View>
-      )}
-      {tag && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: Math.max(4, Math.min(width - 160, project(proj, tag.x, tag.y).sx - 80)),
-            top: Math.max(4, project(proj, tag.x, tag.y).sy - 70),
-            width: 160,
-            alignItems: 'center',
-            zIndex: 999,
-          }}
-        >
-          <BodyText
-            style={{
-              fontSize: 12,
-              fontFamily: 'PixelifySans_700Bold',
-              paddingHorizontal: 10,
-              paddingVertical: 3,
-              borderRadius: 999,
-              overflow: 'hidden',
-              backgroundColor: c.glass,
+              position: 'absolute',
+              left: Math.max(4, Math.min(width - 160, project(proj, tag.x, tag.y).sx - 80)),
+              top: Math.max(4, project(proj, tag.x, tag.y).sy - 70),
+              width: 160,
+              alignItems: 'center',
+              zIndex: 999,
             }}
           >
-            {tag.text}
-          </BodyText>
-        </View>
-      )}
-      {say && !feedback && !napping && active && (
-        <Animated.View
-          onLayout={(e) => setBubbleHeight(Math.round(e.nativeEvent.layout.height))}
-          style={[
-            { position: 'absolute', left: 0, top: 0, width: bubbleWidth, zIndex: 998 },
-            bubbleStyle,
-          ]}
-        >
-          <Pressable
-            accessibilityRole={say.onPress ? 'button' : 'text'}
-            accessibilityLabel={say.text}
-            accessibilityHint={say.hint}
-            disabled={!say.onPress}
-            onPress={say.onPress}
-            style={{ padding: 4 * Math.max(2, Math.round(scale)) }}
+            <BodyText
+              style={{
+                fontSize: 12,
+                fontFamily: 'PixelifySans_700Bold',
+                paddingHorizontal: 10,
+                paddingVertical: 3,
+                borderRadius: 999,
+                overflow: 'hidden',
+                backgroundColor: c.glass,
+              }}
+            >
+              {tag.text}
+            </BodyText>
+          </View>
+        )}
+        {say && !feedback && !napping && active && (
+          <Animated.View
+            onLayout={(e) => setBubbleHeight(Math.round(e.nativeEvent.layout.height))}
+            style={[
+              { position: 'absolute', left: 0, top: 0, width: bubbleWidth, zIndex: 998 },
+              bubbleStyle,
+            ]}
           >
-            <FrameShape tone={frameTones.paper} unit={Math.max(2, Math.round(scale))} />
+            <Pressable
+              accessibilityRole={say.onPress ? 'button' : 'text'}
+              accessibilityLabel={say.text}
+              accessibilityHint={say.hint}
+              disabled={!say.onPress}
+              onPress={say.onPress}
+              style={{ padding: 4 * Math.max(2, Math.round(scale)) }}
+            >
+              <FrameShape tone={frameTones.paper} unit={Math.max(2, Math.round(scale))} />
+              <BodyText
+                role="status"
+                aria-live="polite"
+                accessibilityLiveRegion="polite"
+                style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 14, lineHeight: 18 }}
+              >
+                {say.text.toLowerCase()}
+              </BodyText>
+              {say.hint && (
+                <BodyText style={{ fontSize: 11, lineHeight: 13, color: c.shade, marginTop: 2 }}>
+                  {say.hint}
+                </BodyText>
+              )}
+            </Pressable>
+          </Animated.View>
+        )}
+        {feedback && !napping && active && (
+          <View
+            pointerEvents="none"
+            style={{
+              position: 'absolute',
+              left: Math.max(
+                8,
+                Math.min(width - 224, project(proj, feedback.x, feedback.y).sx - 108),
+              ),
+              top: Math.max(
+                8,
+                Math.min(
+                  height - 94,
+                  feedback.kind === 'pat' || feedback.y < 90
+                    ? project(proj, feedback.x, feedback.y).sy + 12
+                    : project(proj, feedback.x, feedback.y).sy - 86,
+                ),
+              ),
+              width: Math.min(width - 16, 216),
+              zIndex: 999,
+              paddingHorizontal: 12,
+              paddingVertical: 8,
+              borderWidth: 2,
+              borderColor: c.outline,
+              borderRadius: 12,
+              backgroundColor: c.paper,
+              boxShadow: '0 3px 0 rgba(74,59,53,0.22)',
+            }}
+          >
             <BodyText
               role="status"
               aria-live="polite"
               accessibilityLiveRegion="polite"
-              style={{ fontFamily: 'PixelifySans_500Medium', fontSize: 14, lineHeight: 18 }}
+              style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13, lineHeight: 18 }}
             >
-              {say.text.toLowerCase()}
+              {feedback.text}
             </BodyText>
-            {say.hint && (
-              <BodyText style={{ fontSize: 11, lineHeight: 13, color: c.shade, marginTop: 2 }}>
-                {say.hint}
-              </BodyText>
-            )}
-          </Pressable>
-        </Animated.View>
-      )}
-      {feedback && !napping && active && (
-        <View
-          pointerEvents="none"
-          style={{
-            position: 'absolute',
-            left: Math.max(
-              8,
-              Math.min(width - 224, project(proj, feedback.x, feedback.y).sx - 108),
-            ),
-            top: Math.max(
-              8,
-              Math.min(
-                height - 94,
-                feedback.kind === 'pat' || feedback.y < 90
-                  ? project(proj, feedback.x, feedback.y).sy + 12
-                  : project(proj, feedback.x, feedback.y).sy - 86,
-              ),
-            ),
-            width: Math.min(width - 16, 216),
-            zIndex: 999,
-            paddingHorizontal: 12,
-            paddingVertical: 8,
-            borderWidth: 2,
-            borderColor: c.outline,
-            borderRadius: 12,
-            backgroundColor: c.paper,
-            boxShadow: '0 3px 0 rgba(74,59,53,0.22)',
-          }}
-        >
-          <BodyText
-            role="status"
-            aria-live="polite"
-            accessibilityLiveRegion="polite"
-            style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13, lineHeight: 18 }}
-          >
-            {feedback.text}
-          </BodyText>
-        </View>
-      )}
+          </View>
+        )}
       </Animated.View>
     </View>
   );

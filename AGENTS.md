@@ -2,6 +2,10 @@
 
 The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its preview are outdated. Real multiplayer is a later phase; finish the existing art, motion, HUD and local interactions before adding more content or mechanics.
 
+## Read the vision first
+
+`docs/vision/` holds Matt's direction and the shared design rules (art style, the full-screen interface, garden growth, roadmap). Read it before any design, art or interface work, follow it over older docs, and update it when the direction changes.
+
 ## Coordinate before editing
 
 - Read the current `main` and the active pull request head before starting. Check the working tree for other people's changes.

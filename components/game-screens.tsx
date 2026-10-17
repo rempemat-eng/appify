@@ -33,21 +33,14 @@ import { WorldPreview } from '@/components/world-scene';
 import { isWorldId } from '@/lib/world-maps';
 import { worldCatalogue } from '@/lib/world-catalogue';
 import { openSheet, useUi } from '@/lib/ui';
-import {
-  type BreakIntention,
-  type CompanionMemory,
-} from '@/lib/companion-memories';
+import { type BreakIntention, type CompanionMemory } from '@/lib/companion-memories';
 import { BreakIntentionPicker } from '@/components/companion-memories';
 import { GardenKeepsakeSheet } from '@/components/garden-keepsakes';
 import { gardenMarker } from '@/components/garden-journey';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
 import { CozyBackground, CozyPanel } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
-import {
-  PlayPause,
-  TogetherInvite,
-  usePlayPaused,
-} from '@/components/offline-garden';
+import { PlayPause, TogetherInvite, usePlayPaused } from '@/components/offline-garden';
 const lines = {
   grumpy: ['my leaves could use a breather.', 'a quiet pause would be nice. the garden can wait.'],
   exposed: [
@@ -55,7 +48,10 @@ const lines = {
     'shall we rest for a bit? i will keep watch.',
   ],
   care: ['a little time to settle in.', 'welcome home. have a look around.'],
-  idle: ['the grass is lovely today. you could go and touch some.', 'i am small, but i am very good company.'],
+  idle: [
+    'the grass is lovely today. you could go and touch some.',
+    'i am small, but i am very good company.',
+  ],
 };
 // Idle chatter shows for one tick in four, so the garden is mostly quiet.
 const CHAT_TICK_MS = 6000;

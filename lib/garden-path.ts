@@ -47,7 +47,7 @@ export function makeWalkGrid(
   // Nearest walkable cell to a point (the pet stops at the edge of the pond, etc.).
   function nearestWalkable(p: Point) {
     const { cx, cy } = toCell(p);
-    for (let r = 0; r < 12; r++)
+    for (let r = 0; r < 24; r++)
       for (let dy = -r; dy <= r; dy++)
         for (let dx = -r; dx <= r; dx++)
           if (Math.max(Math.abs(dx), Math.abs(dy)) === r && walkable(cx + dx, cy + dy))
