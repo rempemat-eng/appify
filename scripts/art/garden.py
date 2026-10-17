@@ -28,7 +28,7 @@ TOP = meadow.TOP  # forest band above y = 0
 SCALE = 4
 
 # ---- palette -------------------------------------------------------------
-from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK  # noqa: E402
+from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK, PLASTER  # noqa: E402
 
 
 # ---- terrain masks (native pixels) ----------------------------------------
@@ -66,7 +66,7 @@ for (x, y) in POND:
                 BANK.add((x + dx, y + dy))
 
 # Raised flower planters beside the stall path (decorative, watered by the can).
-FLOWER_BEDS = [(226, 136, 52, 20), (244, 170, 40, 16)]  # x, y, w, h
+FLOWER_BEDS = [(222, 142, 46, 18), (222, 168, 46, 18)]  # x, y, w, h: a matched pair by the lantern
 LILY_PADS = [(44, 208), (82, 224), (64, 200), (52, 220)]
 FROG_PAD = LILY_PADS[0]
 
@@ -74,32 +74,32 @@ FROG_PAD = LILY_PADS[0]
 def draw_terrain(frame: int) -> Canvas:
     cv = Canvas(W, H)
     phase = frame % 4
-    # Broad, close-valued grass masses with clean edges (no speckle), so the
-    # tufts and props carry the texture, as in the references.
+    # Broad, close-valued grass masses with soft, dithered edges, then many small
+    # tufts of blades (dark roots, lit tips) in a few shapes, denser toward the edges
+    # and around props, sparse in the trodden clearing (coherence plan, 6c).
+    import detail
     for y in range(H):
         for x in range(W):
             n = smooth_noise(x, y, 30, 11)
-            cv.set(x, y, G[3] if n > 0.66 else G[2])
-    # Tufts: dark roots and light tips, clustered toward the edges and props.
-    for ty in range(0, H, 8):
-        for tx in range(0, W, 8):
-            x = tx + int(noise2(tx, ty, 4) * 8)
-            y = ty + int(noise2(tx, ty, 5) * 8)
+            light = n > 0.66 or (n > 0.62 and (x + y) % 2 == 0) or (n > 0.6 and (x + 2 * y) % 4 == 0)
+            cv.set(x, y, G[3] if light else G[2])
+    for ty in range(0, H, 6):
+        for tx in range(0, W, 6):
+            x = tx + int(noise2(tx, ty, 4) * 6)
+            y = ty + int(noise2(tx, ty, 5) * 6)
             clearing = ((x - PLAZA[0]) / 70) ** 2 + ((y - PLAZA[1] + 40) / 70) ** 2 < 1
             edge = min(x, W - x, y, H - y) < 26
-            cluster = smooth_noise(x, y, 34, 63) > 0.6
-            density = 0.04 if clearing else 0.42 if edge else 0.26 if cluster else 0.08
+            cluster = smooth_noise(x, y, 34, 63) > 0.58
+            density = 0.05 if clearing else 0.5 if edge else 0.36 if cluster else 0.14
             if noise2(tx, ty, 3) < density:
-                # The ground is one still image: only the water is animated (as small
-                # overlays), which keeps the garden light on phones.
-                sway = 0
-                tall = 3 if noise2(tx, ty, 8) < 0.35 else 2
-                style.tuft(cv, x, y + 2, G[1], G[4], tall)
-                if sway:
-                    cv.set(x + 1, y + 1 - (tall > 2), G[4])
-            elif noise2(tx, ty, 7) < 0.1:
+                ground = 3 if cv.get(x, y)[:3] == tuple(int(G[3][k:k + 2], 16) for k in (1, 3, 5)) else 2
+                kind = int(noise2(tx, ty, 8) * 6) if not clearing else 3
+                detail.grass_tuft(cv, x, y, kind, G, ground)
+            elif noise2(tx, ty, 7) < 0.07:
                 cv.set(x, y, '#E9E4CF')  # a tiny white flower
                 cv.set(x, y + 1, G[1])
+            elif noise2(tx, ty, 9) < 0.05:  # clover: three leaves, lit on the left
+                cv.set(x, y, G[4]); cv.set(x + 1, y, G[3]); cv.set(x, y + 1, G[3]); cv.set(x + 1, y + 1, G[1])
 
     # pond bank (sand) then water
     for (x, y) in BANK:
@@ -214,6 +214,27 @@ def draw_terrain(frame: int) -> Canvas:
             if (x, y + 2) not in PATH and y + 2 < H:
                 cv.set(x, y + 2, G[3] if (x + y) % 3 else G[2])
 
+    # Pebbles bedded in the packed earth, lit on top with a dark underside.
+    import detail as _detail
+    for i in range(170):
+        x = int(noise2(i, 6, 51) * W)
+        y = int(noise2(i, 7, 51) * H)
+        if all((x + dx, y + dy) in dirt for dx in (-2, 0, 3) for dy in (-2, 0, 3)):
+            _detail.pebble(cv, x, y, STONE, big=i % 4 == 0)
+
+    # The kitchen garden's yard is raked gravel rather than packed earth, so the
+    # timber beds and dark soil stand out from it; its turf edges stay as drawn.
+    yx, yy, yw, yh = meadow.YARD
+    to_gravel = {P[1]: SAND[0], P[2]: SAND[1], P[3]: SAND[2]}
+    for y in range(yy, yy + yh):
+        for x in range(yx, yx + yw):
+            if (x, y) in dirt:
+                c = '#%02X%02X%02X' % cv.get(x, y)[:3]
+                if c in to_gravel:
+                    cv.set(x, y, to_gravel[c])
+                    if noise2(x, y, 88) < 0.025 and smooth_noise(x, y, 9, 87) > 0.45:
+                        cv.set(x, y, STONE[3] if noise2(x, y, 89) < 0.5 else STONE[2])
+
     # footprints of a small creature along the main path
     for i, y in enumerate(range(212, 280, 10)):
         x = PX - 4 + (6 if i % 2 else 0)
@@ -222,37 +243,26 @@ def draw_terrain(frame: int) -> Canvas:
     meadow.draw_beds(cv)
     meadow.draw_lower_details(cv, PATH)
 
-    # Raised beds have a lit rim, a shaded front face and individual plants.
+    # The flower planters by the lantern: the same raised timber beds as the meadow's,
+    # planted with tulips, chamomile and lavender in rows.
     for bi, (bx, by, bw, bh) in enumerate(FLOWER_BEDS):
-        cv.rect(bx, by, bw, bh, WOOD[1])
-        cv.rect(bx + 1, by + 1, bw - 2, bh - 2, '#5A3A26')
-        cv.hline(bx + 1, by, bw - 2, WOOD[3])
-        cv.hline(bx, by + bh - 1, bw, WOOD[0])
-        cv.hline(bx + 1, by + bh, bw - 1, G[1])
-        for sx in range(bx + 3, bx + bw - 2, 7):
-            cv.set(sx, by + bh - 2, WOOD[3])  # cut ends / worn planter lip
-            cv.set(sx + 1, by + 2, '#75492D')
-        for fy in range(by + 3, by + bh - 2, 6):
-            for fx in range(bx + 3, bx + bw - 3, 6):
-                kind = ((fx - bx - 3) // 6 + (fy - by - 3) // 6 + bi) % 3
-                petals = [RED[3], CREAM[3], NAP[3]][kind]
-                stem = LEAF[2]
-                cv.vline(fx, fy + 1, 3, stem)
-                cv.set(fx + 1, fy + 2, LEAF[3]); cv.set(fx - 1, fy + 3, LEAF[1])
-                if kind == 0:  # a cupped coral tulip, with a darker petal fold
-                    cv.hline(fx - 1, fy, 3, petals)
-                    cv.set(fx - 1, fy - 1, RED[4]); cv.set(fx + 1, fy - 1, RED[3])
-                    cv.set(fx, fy + 1, RED[2]); cv.set(fx - 1, fy + 2, LEAF[3])
-                elif kind == 1:  # chamomile has a warm centre and four cream rays
+        meadow.planter(cv, bx, by, bw, bh)
+        for row, fy in enumerate((by + 6, by + 11)):
+            for k, fx in enumerate(range(bx + 5 + 3 * row, bx + bw - 4, 6)):
+                kind = (k + row + bi) % 3
+                cv.vline(fx, fy - 2, 3, LEAF[2]); cv.set(fx - 1, fy, LEAF[3]); cv.set(fx + 1, fy - 1, LEAF[1])
+                if kind == 0:  # a cupped coral tulip, lit on its upper left
+                    cv.hline(fx - 1, fy - 4, 3, RED[3]); cv.hline(fx - 1, fy - 3, 3, RED[2])
+                    cv.set(fx - 1, fy - 5, RED[4]); cv.set(fx + 1, fy - 5, RED[3]); cv.set(fx - 1, fy - 4, RED[4])
+                elif kind == 1:  # chamomile: cream rays around a warm centre
                     for dx, dy in ((0, -1), (-1, 0), (1, 0), (0, 1)):
-                        cv.set(fx + dx, fy + dy, petals)
-                    cv.set(fx, fy, '#E8A33D')
-                else:  # a small lavender spike, shorter petals at the crown
-                    cv.vline(fx, fy - 2, 4, NAP[2])
-                    cv.set(fx, fy - 2, NAP[4])
-                    cv.hline(fx - 1, fy, 3, NAP[3]); cv.set(fx - 1, fy - 1, NAP[4])
+                        cv.set(fx + dx, fy - 4 + dy, PLASTER[5] if dy < 0 or dx < 0 else PLASTER[3])
+                    cv.set(fx, fy - 4, GOLD[3])
+                else:  # a lavender spike, paler at the crown
+                    cv.vline(fx, fy - 6, 4, NAP[2]); cv.set(fx, fy - 6, NAP[4]); cv.set(fx - 1, fy - 5, NAP[3])
+                    cv.set(fx + 1, fy - 4, NAP[2]); cv.set(fx - 1, fy - 3, NAP[3])
     # A pair of hand-painted crop markers gives the beds a cared-for history.
-    for mx, my, petal in ((FLOWER_BEDS[0][0] + FLOWER_BEDS[0][2] - 4, FLOWER_BEDS[0][1], RED[3]), (FLOWER_BEDS[1][0] + FLOWER_BEDS[1][2] - 4, FLOWER_BEDS[1][1], NAP[3])):
+    for mx, my, petal in ((FLOWER_BEDS[0][0] + FLOWER_BEDS[0][2] - 9, FLOWER_BEDS[0][1] + 4, RED[3]), (FLOWER_BEDS[1][0] + FLOWER_BEDS[1][2] - 9, FLOWER_BEDS[1][1] + 4, NAP[3])):
         cv.vline(mx, my - 3, 5, WOOD[1])
         cv.rect(mx - 2, my - 5, 5, 3, CREAM[2])
         cv.hline(mx - 2, my - 5, 5, CREAM[3])
@@ -317,7 +327,7 @@ OBJECTS = [
     ('rock-2', 'rock1', 210, 246, None),
     # the meadow below the stream
     ('meadow-sign', 'meadow_sign', 178, 334, 'meadow'),
-    ('rock-3', 'rock0', 116, 372, None),
+    ('rock-3', 'rock0', 98, 488, None),
     ('rock-4', 'rock1', 296, 496, None),
     ('bush-4', 'bush', 6, 476, None),
     ('bush-5', 'bush', 232, 488, None),
@@ -576,14 +586,18 @@ def main():
         ground.paste(decal, fx, fy)
     bake_shadows(ground, sprites)
     prev.paste(ground, 0, TOP)
+    # GARDEN_PREVIEW_STAGE=empty shows a new player's meadow; otherwise it is in bloom
+    grown = os.environ.get('GARDEN_PREVIEW_STAGE') != 'empty'
     for (x, y), k in zip(meadow.PLOTS, meadow.PLOT_KINDS):
-        g = growth[f'plot_{k}_4']
-        prev.paste(g, x, y - (g.h - meadow.PLOT_H) + TOP)
+        if grown:
+            g = growth[f'plot_{k}_4']
+            prev.paste(g, x, y - (g.h - meadow.PLOT_H) + TOP)
     for i, (x, y) in enumerate(meadow.ORCHARD):
-        t = growth[f'orchard_{[4, 2, 1][i]}']
-        prev.paste(t, x - t.w // 2, y - t.h + TOP)
+        if grown:
+            t = growth[f'orchard_{[4, 2, 1][i]}']
+            prev.paste(t, x - t.w // 2, y - t.h + TOP)
     for (_id, key, x, y, _a) in sorted(OBJECTS, key=lambda o: o[3] + sprites[o[1]].h):
-        prev.paste(sprites[key], x, y + TOP)
+        prev.paste(sprites[key], x + sprites[key].ox, y + sprites[key].oy + TOP)
     prev.save(os.environ.get('GARDEN_PREVIEW', '/tmp/garden-preview.png'), 2)
     print('ok', W, H, len(sprites), 'sprites')
 

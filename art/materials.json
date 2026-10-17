@@ -15,7 +15,9 @@
     "gold": ["#5E431E", "#8F6A2A", "#BF8F36", "#E6BC5C", "#F8DD8F"],
     "slate": ["#3A3F4E", "#565D70", "#767E90", "#9AA2B0", "#C4CAD2"],
     "roof": ["#4E2420", "#7A3428", "#A34A36", "#C96A4E", "#E6957A"],
-    "snow": ["#9FB0C4", "#C2CFDC", "#E2E9F0", "#F7FAFC"]
+    "snow": ["#9FB0C4", "#C2CFDC", "#E2E9F0", "#F7FAFC"],
+    "plaster": ["#54485A", "#857684", "#AFA09E", "#D6C7AA", "#EFE3C8", "#FFF7E6"],
+    "soil": ["#2B1C1A", "#43291F", "#5A3826", "#734A30", "#8F623F", "#AD7F55"]
   },
   "surfaces": {
     "ink": "#4A3B35",
@@ -27,7 +29,13 @@
     "depth": "#B8A586",
     "sage": "#E4EBD9"
   },
-  "geometry": { "panelRadius": 0, "controlRadius": 0, "tagRadius": 0, "border": 2, "depth": 3 },
+  "geometry": {
+    "panelRadius": 0,
+    "controlRadius": 0,
+    "tagRadius": 0,
+    "border": 2,
+    "depth": 3
+  },
   "grid": {
     "icon": 16,
     "companion": 32,

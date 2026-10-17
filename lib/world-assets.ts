@@ -51,7 +51,10 @@ export const worldProps: Record<string, ImageSourcePropType> = {
   tree_small: propTreeSmall,
 };
 /** One still ground per world; water animates as two-frame overlays. */
-export const worldImages: Record<string, { ground: ImageSourcePropType; water: ImageSourcePropType[] }> = {
+export const worldImages: Record<
+  string,
+  { ground: ImageSourcePropType; water: ImageSourcePropType[] }
+> = {
   park: { ground: parkGround, water: [parkWater0, parkWater1] },
   book: { ground: bookGround, water: [] },
   mountain: { ground: mountainGround, water: [mountainWater0, mountainWater1] },
