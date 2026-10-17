@@ -124,7 +124,7 @@ export default function FieldJournal() {
           feedback('select');
         }}
       >
-        <Tabs.List style={{ backgroundColor: c.transparent, padding: 2 * u }}>
+        <Tabs.List style={{ backgroundColor: c.transparent, padding: 2 * u, alignSelf: 'stretch' }}>
           <FrameFill fill={c.body} inset />
           <Tabs.Indicator style={{ borderRadius: 0, backgroundColor: c.paper }} />
           <Tabs.Trigger value="visitors" style={journalTabStyle}>

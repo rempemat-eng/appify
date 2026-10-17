@@ -146,6 +146,10 @@ for (const request of ['postcards', 'visitors', 'memories', 'invalid']) {
     progress(tree).length === (tab === 'visitors' ? 1 : 0),
     `${request}: only Visitors has friend progress`,
   );
+  check(
+    nodes(tree).find((node) => node.type === 'TabList').props.style.alignSelf === 'stretch',
+    'tab strip aligns with the journal column rather than its intrinsic label width',
+  );
   for (const trigger of nodes(tree).filter((node) => node.type === 'TabTrigger')) {
     check(
       trigger.props.style?.minHeight >= 44 && trigger.props.style?.minWidth >= 44,
