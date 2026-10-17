@@ -37,6 +37,14 @@ for (_x, _y) in STREAM:
         if (_x, _y + _dy) not in STREAM:
             STREAM_BANK.add((_x, _y + _dy))
 
+# The stream has cut into the land: its north bank is a small bluff, a raised tier
+# with a shaded earth face (coherence plan, step 6b: depth without tilting the view).
+STREAM_TOP = {}
+for (_x, _y) in STREAM:
+    STREAM_TOP[_x] = min(STREAM_TOP.get(_x, _y), _y)
+BLUFF_H = {_x: 7 + int(smooth_noise(_x, 3, 9, 92) * 3) for _x in STREAM_TOP}
+BLUFF = {(_x, _y) for _x, _top in STREAM_TOP.items() for _y in range(_top - BLUFF_H[_x], _top)}
+
 # The bridge deck is 44 wide between its rails (the path fits with room either side).
 BRIDGE = (PATH_X - 27, int(STREAM_Y - 20), 54, 40)  # x, y, w, h of the flat bridge decal
 
@@ -60,21 +68,51 @@ def meadow_path(thick_path):
     return pts
 
 
+def draw_bluff(cv: Canvas):
+    """The north bank's earth face: a lit grass lip with hanging tufts, a face of
+    layered earth one step darker than the path (it faces away from the light), the
+    occasional root, and a wet dark foot where it meets the water."""
+    for (x, y) in BLUFF:
+        if not (0 <= x < W):
+            continue
+        h = BLUFF_H[x]
+        k = y - (STREAM_TOP[x] - h)  # 0 at the top of the bluff
+        if k == 0:
+            col = G[3]
+        elif k == 1:
+            col = G[2] if (x // 3 + int(noise2(x // 3, 1, 93) * 2)) % 3 == 0 else G[1]
+        elif k == h - 1:
+            col = P[0]
+        elif k == 2:
+            col = P[2] if (x + 1) % 5 else P[1]
+        else:
+            col = P[0] if (k + x // 9) % 3 == 0 else P[1]
+        cv.set(x, y, col)
+    for i in range(18):
+        x = int(noise2(i, 2, 94) * W)
+        if x in STREAM_TOP:
+            top = STREAM_TOP[x] - BLUFF_H[x]
+            length = 2 + int(noise2(i, 3, 94) * 3)
+            cv.vline(x, top + 2, length, WOOD[1])
+            cv.set(x + 1, top + 2 + length - 1, WOOD[0])
+
+
 def draw_stream(cv: Canvas, phase: int):
     for (x, y) in STREAM_BANK:
-        if 0 <= x < W:
+        if 0 <= x < W and (x, y) not in BLUFF:
             cv.set(x, y, SAND[1] if noise2(x, y, 23) < 0.82 else SAND[2])
     for (x, y) in STREAM_BANK:
         if (x, y - 1) in STREAM and (x, y + 1) not in STREAM:
             cv.set(x, y, SAND[0])  # wet lower lip
+    draw_bluff(cv)
     for (x, y) in STREAM:
         if not (0 <= x < W):
             continue
         c = stream_centre(x)
         col = WTR[2] if abs(y - c) < 3 else WTR[1]
-        if (x, y - 1) not in STREAM:
-            col = WTR[0]
-        elif (x, y - 2) not in STREAM:
+        if (x, y - 1) not in STREAM or (x, y - 2) not in STREAM:
+            col = WTR[0]  # the bluff's shadow on the water
+        elif (x, y - 3) not in STREAM:
             col = WTR[1]
         cv.set(x, y, col)
     # Flowing highlights drift two pixels east per frame along the current.
@@ -93,7 +131,7 @@ def draw_stream(cv: Canvas, phase: int):
         y = int(stream_centre(sx)) + 9
         cv.hline(sx, y, 4, STONE[1]); cv.hline(sx + 1, y - 1, 3, STONE[3]); cv.set(sx + 1, y - 2, STONE[4])
     for rx in (8, 40, 86, 120, 204, 246, 292, 312):
-        y = int(stream_centre(rx)) - 10
+        y = int(stream_centre(rx)) + 16
         cv.vline(rx, y - 4, 5, LEAF[1]); cv.vline(rx + 2, y - 3, 4, LEAF[2])
         cv.set(rx - 1, y - 4, LEAF[3]); cv.set(rx + 1, y - 1, LEAF[3])
 

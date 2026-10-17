@@ -366,7 +366,7 @@ ANCHORS = {
     'pond': {'x': POND_C[0] - POND_R[0], 'y': POND_C[1] - POND_R[1], 'w': 2 * POND_R[0], 'h': 2 * POND_R[1]},
     'butterflies': {'x': 252, 'y': 150},
     'fireflies': {'x': 30, 'y': 60, 'w': 240, 'h': 200},
-    'companionSpots': [{'x': 120, 'y': 276}, {'x': 250, 'y': 214}, {'x': 40, 'y': 262}],
+    'companionSpots': [{'x': 120, 'y': 258}, {'x': 250, 'y': 214}, {'x': 40, 'y': 256}],
     'keepsakes': {
         'rest': {'x': 166, 'y': 112},
         'read': {'x': 200, 'y': 68},
@@ -481,7 +481,7 @@ def main():
     blocked = set()
     for (x, y) in POND:
         blocked.add((x // cell, y // cell))
-    for (x, y) in meadow.STREAM | meadow.STREAM_BANK:
+    for (x, y) in meadow.STREAM | meadow.STREAM_BANK | meadow.BLUFF:
         if not (bx + 6 <= x < bx + bw - 6):  # only the bridge deck crosses the water
             blocked.add((x // cell, y // cell))
     for (px, py) in meadow.PLOTS:
@@ -528,7 +528,8 @@ def main():
             queue.append(n)
     walk = [''.join('.' if (ch == '.' and (not ok(c, r) or (c, r) in reached)) else '#'
                     for c, ch in enumerate(line)) for r, line in enumerate(walk)]
-    for name, spot in list(HOTSPOTS.items()) + [('start', ANCHORS['start'])]:
+    for name, spot in list(HOTSPOTS.items()) + [('start', ANCHORS['start'])] + [
+            (f'companion spot {i}', p) for i, p in enumerate(ANCHORS['companionSpots'])]:
         c, r = int(spot['x']) // cell, int(spot['y']) // cell
         assert walk[r][c] == '.', f'{name} hotspot is not walkable'
 
