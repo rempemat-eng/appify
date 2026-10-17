@@ -14,11 +14,15 @@ import propBench from '@/assets/zones/props/bench.png';
 import propBoatBlue from '@/assets/zones/props/boat_blue.png';
 import propBoatRed from '@/assets/zones/props/boat_red.png';
 import propBollard from '@/assets/zones/props/bollard.png';
+import propBoulder from '@/assets/zones/props/boulder.png';
 import propBunting from '@/assets/zones/props/bunting.png';
 import propBuoy from '@/assets/zones/props/buoy.png';
 import propBush from '@/assets/zones/props/bush.png';
+import propCabin from '@/assets/zones/props/cabin.png';
 import propCablePole from '@/assets/zones/props/cable_pole.png';
 import propCafe from '@/assets/zones/props/cafe.png';
+import propCairn from '@/assets/zones/props/cairn.png';
+import propCampfire from '@/assets/zones/props/campfire.png';
 import propCart from '@/assets/zones/props/cart.png';
 import propCat from '@/assets/zones/props/cat.png';
 import propClockTower from '@/assets/zones/props/clock_tower.png';
@@ -44,6 +48,7 @@ import propFishStall from '@/assets/zones/props/fish_stall.png';
 import propForestBench from '@/assets/zones/props/forest_bench.png';
 import propForge from '@/assets/zones/props/forge.png';
 import propFountain from '@/assets/zones/props/fountain.png';
+import propFrozenTarn from '@/assets/zones/props/frozen_tarn.png';
 import propGardenPod from '@/assets/zones/props/garden_pod.png';
 import propGasLamp from '@/assets/zones/props/gas_lamp.png';
 import propGatehouse from '@/assets/zones/props/gatehouse.png';
@@ -93,9 +98,11 @@ import propShelter from '@/assets/zones/props/shelter.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
+import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propStall from '@/assets/zones/props/stall.png';
 import propSteamPuff from '@/assets/zones/props/steam_puff.png';
 import propSteamerTrunk from '@/assets/zones/props/steamer_trunk.png';
+import propStone from '@/assets/zones/props/stone.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
 import propTeaKiosk from '@/assets/zones/props/tea_kiosk.png';
@@ -126,6 +133,7 @@ import groundTown from '@/assets/zones/town/ground.png';
 import groundRiverside from '@/assets/zones/riverside/ground.png';
 import groundWoodland from '@/assets/zones/woodland/ground.png';
 import groundPark from '@/assets/zones/park/ground.png';
+import groundRidge from '@/assets/zones/ridge/ground.png';
 import groundJunction from '@/assets/zones/junction/ground.png';
 import groundNeon from '@/assets/zones/neon/ground.png';
 import groundGulch from '@/assets/zones/gulch/ground.png';
@@ -139,6 +147,7 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   riverside: groundRiverside,
   woodland: groundWoodland,
   park: groundPark,
+  ridge: groundRidge,
   junction: groundJunction,
   neon: groundNeon,
   gulch: groundGulch,
@@ -161,11 +170,15 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   boat_blue: propBoatBlue,
   boat_red: propBoatRed,
   bollard: propBollard,
+  boulder: propBoulder,
   bunting: propBunting,
   buoy: propBuoy,
   bush: propBush,
+  cabin: propCabin,
   cable_pole: propCablePole,
   cafe: propCafe,
+  cairn: propCairn,
+  campfire: propCampfire,
   cart: propCart,
   cat: propCat,
   clock_tower: propClockTower,
@@ -191,6 +204,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   forest_bench: propForestBench,
   forge: propForge,
   fountain: propFountain,
+  frozen_tarn: propFrozenTarn,
   garden_pod: propGardenPod,
   gas_lamp: propGasLamp,
   gatehouse: propGatehouse,
@@ -240,9 +254,11 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   shuttle: propShuttle,
   signpost: propSignpost,
   sleep_pod: propSleepPod,
+  snowy_pine: propSnowyPine,
   stall: propStall,
   steam_puff: propSteamPuff,
   steamer_trunk: propSteamerTrunk,
+  stone: propStone,
   store: propStore,
   street_light: propStreetLight,
   tea_kiosk: propTeaKiosk,

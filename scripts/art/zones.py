@@ -1326,6 +1326,95 @@ def park(frame: int = 0):
     return cv, objects, stands, water
 
 
+def ridge(frame: int = 0):
+    """The Snowy Ridge, north of the garden: the trail comes up out of the garden's
+    treeline at the bottom (the same x, through the same dark forest floor), climbs
+    through thinning pines onto an alpine meadow with a frozen tarn and cairns, then
+    by steps up a stone face to the terrace where the cabin stands under the peaks.
+    Snow lies only above the face (world logic); below it only a dusting on the pines."""
+    SNOWm, STONEm = MATERIALS['snow'], MATERIALS['stone']
+    cv = Canvas(W, H)
+    alpine = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
+    worlds.grass(cv, frame, alpine)
+    # the forest floor at the bottom, matching the garden's treeline band
+    for y in range(H - 80, H):
+        for x in range(W):
+            t = (y - (H - 80)) / 80
+            if noise2(x, y, 441) < t:
+                cv.set(x, y, G[1])
+    style.dither_dark(cv, 0, H - 40, W, 40, 1.0)
+    style.dither_dark(cv, 0, H - 60, W, 20, 0.5)
+    # the terrace: everything above the face is high ground under snow
+    def rim(x):
+        return 210 + int(math.sin(x / 27) * 8 + noise2(x // 6, 0, 442) * 6)
+    FACE_H = 24
+    for x in range(W):
+        r = rim(x)
+        for y in range(0, r):
+            n = smooth_noise(x, y, 18, 443)
+            c = SNOWm[3] if n > 0.35 else SNOWm[2]
+            if smooth_noise(x, y, 7, 444) > 0.8:
+                c = STONEm[3] if smooth_noise(x, y - 1, 7, 444) > 0.8 else STONEm[4]  # rock showing through
+            cv.set(x, y, c)
+        for k in range(FACE_H):
+            y = r + k
+            band = (k + int(noise2(x // 7, 3, 445) * 3)) // 5
+            c = STONEm[3] if band % 2 else STONEm[2]
+            if (k + int(noise2(x // 7, 3, 445) * 3)) % 5 == 0:
+                c = STONEm[4]
+            if k < 2:
+                c = SNOWm[3] if k == 0 else SNOWm[1]
+            if k > FACE_H - 4:
+                c = STONEm[1]
+            cv.set(x, y, c)
+        for d in range(3):
+            if (x + d) % 2 or d == 0:
+                style.darken(cv, x, r + FACE_H + d)
+    # peaks along the top
+    peak_pts = {}
+    for (ax, ay, half, base) in ((70, -14, 70, 70), (230, -24, 80, 80), (310, -6, 40, 50)):
+        for y in range(max(0, ay), base):
+            spread = (y - ay) / (base - ay) * half
+            for x in range(int(ax - spread), int(ax + spread * 0.9) + 1):
+                if 0 <= x < W:
+                    lit = x < ax + (y - ay) * 0.15
+                    hem = ay + 26 + abs((x + ax) % 8 - 4) + int(noise2(x // 8, ax, 446) * 5)
+                    c = (SNOWm[3] if lit else SNOWm[1]) if y < hem else (STONEm[3] if lit else STONEm[1])
+                    if y >= hem and (y - ay + (x if lit else -x) // 4) % 9 == 0:
+                        c = STONEm[2] if lit else STONEm[0]
+                    peak_pts[(x, y)] = c
+    for (x, y), c in peak_pts.items():
+        if (x - 1, y) not in peak_pts or (x + 1, y) not in peak_pts or (y > 0 and (x, y - 1) not in peak_pts):
+            c = STONEm[0]
+        cv.set(x, y, c)
+    # the trail: up from the garden, round the tarn, steps up the face, to the cabin
+    trail = worlds.thick([(206, H + 12), (206, H - 40), (190, 470), (150, 400), (130, 330), (150, 270), (150, 220)], 9.5, seed=29)
+    trail |= worlds.thick([(150, 220), (150, 170), (120, 140)], 8, seed=30)
+    on_terrace = {(x, y) for (x, y) in trail if y < rim(x)}
+    paint_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)})
+    for (x, y) in on_terrace:  # a trodden line in the snow
+        cv.set(x, y, SNOWm[1] if (x + y) % 3 else SNOWm[2])
+    steps = set()
+    for (x, y) in trail:
+        if rim(x) <= y < rim(x) + FACE_H:
+            steps.add((x, y))
+            cv.set(x, y, STONEm[4] if (y - rim(x)) % 4 == 0 else STONEm[2] if (y - rim(x)) % 4 < 3 else STONEm[1])
+    objects = [
+        # the garden's treeline continues at the bottom, clear of the trail
+        ('pine-b1', 'pine', 4, H - 100), ('pine-b2', 'pine', 50, H - 92), ('pine-b3', 'pine', 96, H - 102),
+        ('pine-b4', 'pine', 240, H - 98), ('pine-b5', 'pine', 280, H - 104), ('pine-b6', 'pine', 140, H - 150),
+        ('pine-m1', 'snowy_pine', 20, 330), ('pine-m2', 'snowy_pine', 262, 420), ('pine-m3', 'snowy_pine', 270, 250),
+        ('pine-m4', 'snowy_pine', 60, 250), ('tarn', 'frozen_tarn', 196, 380), ('cairn-1', 'cairn', 100, 360),
+        ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
+        ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
+        ('pine-t2', 'snowy_pine', 270, 120), ('pine-t3', 'snowy_pine', 40, 150),
+    ]
+    face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
+    peaks_block = set(peak_pts)
+    stands = {'garden': (206, H - 8), 'tarn': (170, 420), 'cabin': (200, 176), 'campfire': (146, 204)}
+    return cv, objects, stands, (face - steps) | peaks_block
+
+
 FOREST_FLOOR = ['#24382A', '#40603A', '#577A44', '#668A4E', '#8EAE68']
 DARK_FLOOR = [tuple(int(c[k:k + 2], 16) for k in (1, 3, 5)) for c in FOREST_FLOOR]
 
@@ -1480,7 +1569,7 @@ def build(name: str, fn, start: str):
 # Where each zone sits on its region's grid (column, row), in zone-sized steps. The
 # garden is the valley's (0, 0); it is drawn by garden.py and joins here by position.
 LAYOUT = {
-    'valley': {'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
+    'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'castle': (1, 2)},
     'steam': {'junction': (0, 0)}, 'west': {'gulch': (0, 0)}, 'lava': {'caldera': (0, 0)},
     'neon': {'neon': (0, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
@@ -1571,6 +1660,7 @@ def main():
     built['riverside'] = build('riverside', riverside, 'garden-north')
     built['woodland'] = build('woodland', woodland, 'garden')
     built['park'] = build('park', park, 'town')
+    built['ridge'] = build('ridge', ridge, 'garden')
     built['junction'] = build('junction', junction, 'platform')
     built['neon'] = build('neon', neon_city, 'crossing')
     built['gulch'] = build('gulch', gulch, 'platform')

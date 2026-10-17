@@ -14,7 +14,7 @@ from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
 import garden_props as gp  # noqa: E402
 import style  # noqa: E402
-from materials import MATERIALS, WOOD, STONE, LEAF, RED, WTR, PLASTER, GOLD, NAP, SLATE, G  # noqa: E402
+from materials import MATERIALS, WOOD, STONE, LEAF, RED, WTR, PLASTER, GOLD, NAP, SLATE, G, SNOW  # noqa: E402
 
 ROPE, TAR = MATERIALS['rope'], MATERIALS['tar']
 PAD = 4
@@ -276,11 +276,50 @@ def ice_cream_cart() -> Canvas:
     return cv
 
 
+def snowy_pine() -> Canvas:
+    """The garden's pine with snow lying on each tier: every needle pixel open to the
+    sky above it carries snow, lit on the left, blue in shade on the right."""
+    cv = gp.pine()
+    lum = lambda c: c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11  # noqa: E731
+    snow = []
+    for y in range(-cv.pad + 1, cv.h - 16):
+        for x in range(-cv.pad, cv.w + cv.pad):
+            c, above = cv.get(x, y), cv.get(x, y - 1)
+            # a tier's top: open sky above, or the darker underside of the tier above
+            if c[3] and (not above[3] or lum(c) - lum(above) > 34):
+                snow.append((x, y))
+    for (x, y) in snow:
+        lit = x < cv.w / 2
+        cv.set(x, y, SNOW[3] if lit else SNOW[1])
+        if noise2(x, y, 404) > 0.35 and cv.get(x, y + 1)[3]:
+            cv.set(x, y + 1, SNOW[2] if lit else SNOW[0])
+    return cv
+
+
+def frozen_tarn() -> Canvas:
+    """A small frozen tarn, 70 x 32 (a flat decal): pale ice with cracks and a dusting
+    of snow at its rim, a dark open patch where a spring keeps it from freezing."""
+    w, h = 70, 32
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(35, 16, 33, 14):
+        cv.set(x, y, SNOW[3] if not oval(35, 16, 30, 12).__contains__((x, y)) else '#BFD6E6' if (x + y) % 5 else '#D8E8F2')
+    for k in range(5):
+        a = k * 1.3
+        for t in range(10):
+            x, y = int(35 + math.cos(a) * t * 2.2), int(16 + math.sin(a) * t)
+            if (x, y) in oval(35, 16, 29, 11):
+                cv.set(x, y, '#8FAABF')
+    for (x, y) in oval(48, 12, 5, 2.5):
+        cv.set(x, y, WTR[1])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(), 'heron': heron(), 'lily_pads': lily_pads(),
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
+        'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(),
     }
 
 

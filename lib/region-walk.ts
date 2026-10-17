@@ -15,9 +15,13 @@ export const TILE = { width: ZONE.width, height: ZONE.height, cell: ZONE.cell } 
 const COLS = TILE.width / TILE.cell;
 const ROWS = TILE.height / TILE.cell;
 
-// The garden's grid keeps the companion inside the fence; for a walk on into the
-// town the gate stands open (cells in garden pixels: x from, x to, y from, y to).
-const GARDEN_OPENINGS = [{ x0: 144, x1: 176, y0: GARDEN.fenceY - 20, y1: GARDEN.height }];
+// The garden's grid keeps the companion inside the fence and below the trees; for a
+// walk on into the town the gate stands open, and into the ridge the trail does (cells in garden pixels: x from, x to, y from, y to).
+const GARDEN_OPENINGS = [
+  { x0: 144, x1: 176, y0: GARDEN.fenceY - 20, y1: GARDEN.height },
+  // and the ridge trail runs on up through the treeline
+  { x0: 198, x1: 214, y0: 0, y1: 48 },
+];
 
 function tileWalk(id: TileId): readonly string[] {
   if (id !== 'garden') return zoneMaps[id].walk;

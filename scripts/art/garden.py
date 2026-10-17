@@ -51,6 +51,9 @@ PATH = thick_path([(PX, 300), (PX - 1, 262), (PX + 1, 222), PLAZA], 18.5, 1)
 PATH |= thick_path([(PX - 12, 180), (118, 158), (84, 136), (68, 126)], 13.5, 2)    # to the nap hut
 PATH |= thick_path([(PX + 12, 178), (206, 156), (244, 132), (262, 116)], 13.5, 3)  # to Moss's stall
 PATH |= thick_path([(PX + 4, 170), (168, 128), (172, 92)], 9.5, 4)  # a quiet reading corner
+# the trail on up through the treeline to the Snowy Ridge (world-atlas.md)
+RIDGE_X = 206  # between the reading nook and Moss's stall
+PATH |= thick_path([(172, 92), (200, 84), (206, 40), (RIDGE_X, -16)], 9.5, 4)
 PATH |= disc(PLAZA[0], PLAZA[1], 27)  # the plaza at the fork
 PATH |= meadow.meadow_path(thick_path)  # down across the bridge, through the meadow
 
@@ -249,11 +252,12 @@ def draw_terrain(frame: int) -> Canvas:
 # their foot (y + h). Positions follow the proportions table (coherence plan).
 OBJECTS = [
     # the forest along the top edge, behind the HUD
-    *[(f'pine-{i}', 'pine', -14 + i * 26, -60 + (i % 2) * 6, None) for i in range(13)],
+    # (two pines stand back to let the ridge trail through the trees)
+    *[(f'pine-{i}', 'pine', -14 + i * 26, -60 + (i % 2) * 6, None) for i in range(13) if i not in (7, 8)],
     ('tree-0', 'tree', -24, -62, None),
     ('tree-1', 'tree_small', 36, -42, None),
     ('tree-2', 'tree', 104, -64, None),
-    ('tree-3', 'tree_small', 196, -44, None),
+    ('tree-3', 'tree_small', 228, -44, None),
     ('tree-4', 'tree_autumn', 236, -60, None),
     ('tree-5', 'tree', 286, -50, None),
     # the clearing
