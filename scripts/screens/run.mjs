@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process';
-import { mkdir } from 'node:fs/promises';
+import { mkdir, rm } from 'node:fs/promises';
 
 // Export a local-only build even if the developer's shell has backend settings.
 const env = {
@@ -26,6 +26,8 @@ const run = (args) =>
     });
   });
 
+// This directory contains generated review output only; never mix old captures.
+await rm('artifacts/screens', { recursive: true, force: true });
 await mkdir('artifacts/screens', { recursive: true });
 const build = await run(['node_modules/expo/bin/cli', 'export', '-p', 'web', '--clear']);
 process.exitCode =

@@ -70,6 +70,9 @@ overflow. Images are still captured when those checks fail. Open
 `artifacts/screens/index.html` for the gallery, `manifest.json` for dimensions,
 fixtures, routes and diagnostics, or `report/index.html` for the full test report
 and failure traces. These outputs are ignored by Git.
+Each run replaces the generated screenshot directory. A healthy full run holds
+all 144 images; CI stops after six failures and retains the completed captures
+and diagnostics so a broken startup cannot consume the whole job timeout.
 
 The **Screenshots** workflow runs on every PR and attaches that directory even
 when a capture fails. On GitHub, open the PR's Screenshots check, then download

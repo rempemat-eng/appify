@@ -12,6 +12,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 0,
+  // Keep a broken startup from exhausting the job before diagnostics can upload.
+  maxFailures: process.env.CI ? 6 : undefined,
   workers: 2,
   timeout: 45_000,
   expect: { timeout: 10_000 },
