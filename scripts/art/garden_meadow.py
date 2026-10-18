@@ -302,13 +302,24 @@ def draw_top_band(phase: int = 0) -> Canvas:
     dither_dark(cv, 0, TOP - 10, W, 3, 0.75, FOREST_DARK)
     dither_dark(cv, 0, TOP - 7, W, 4, 0.5, FOREST_DARK)
     dither_dark(cv, 0, TOP - 3, W, 3, 0.25, FOREST_DARK)
-    # the ridge trail runs up through the forest floor, half in shade
+    # the ridge trail runs up through the forest floor, half in shade: it bends a little
+    # from where the garden's path leaves the clearing (x 206) to where the ridge's trail
+    # carries on above (x 198, scripts/art/zones.py), its edges worn, not ruled
     for y in range(TOP):
-        for x in range(196, 217):
-            if abs(x - 206) <= 9 - (1 if (y // 5) % 2 else 0):
-                cv.set(x, y, P[2] if y < TOP - 20 else P[3])
-            elif abs(x - 206) == 10:
-                cv.set(x, y, G[1])
+        t = y / (TOP - 1)
+        cx = 198 + 8 * t * t + math.sin(y / 9) * 1.5 * (1 - t)
+        hw = 8.5 + (noise2(y // 3, 0, 931) - 0.5) * 2.4
+        for x in range(186, 226):
+            d = abs(x - cx)
+            if d <= hw:
+                lit = y >= TOP - 14
+                shade = not lit and (x + y) % 2 == 0 and noise2(x // 3, y // 3, 932) < 0.75
+                c = P[1] if shade else P[3] if lit else P[2]
+                if lit and noise2(x, y, 933) > 0.86:
+                    c = P[4]
+                cv.set(x, y, c)
+            elif d <= hw + 1.2:
+                cv.set(x, y, G[1] if y >= TOP - 14 else FOREST_DARK)
     return cv
 
 

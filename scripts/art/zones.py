@@ -1962,18 +1962,36 @@ def harbour(frame: int = 0):
     # the quay: dressed stone with a lit edge and a face down to the water
     quay = {(x, y) for x in range(100, 296) for y in range(232, shore_y(x) + 6)}
     worlds.paint_paving(cv, quay, seed=9)
+    bank = set()
     for x in range(100, W):
         y = shore_y(x) + 6
-        for k in range(8):
+        # past the quay the bank rises into the headland's sea cliff, as tall as the
+        # castle's at the border (world-rules.md: edges continue), so the cliff runs on
+        depth = 8 if x < 296 else 8 + (x - 296) * 18 // 23
+        if x >= 296:
+            y -= (x - 296) * 3 // 23
+        for k in range(depth):
             if x < 296:  # the quay's dressed face
                 c = STONE[3] if k == 0 else STONE[2] if (x + (k // 3) * 4) % 8 else STONE[0]
                 if k > 5:
                     c = MATERIALS['leaf'][1] if (x + k) % 3 else STONE[1]  # weed at the waterline
-            else:  # past the quay, a rough rocky bank that runs on below the headland
-                c = STONE[3] if (x // 4 + k // 3) % 2 else STONE[2]
-                if k < 2:
-                    c = G[1]
+            else:  # the cliff face, banded like the castle's
+                b = k + int(noise2(x // 6, 2, 322) * 3)
+                c = STONE[3] if (b // 5) % 2 else STONE[2]
+                if b % 5 == 0:
+                    c = STONE[4]
+                if k > depth - 4:
+                    c = STONE[1]
+                if k < 3:
+                    c = MATERIALS['grass'][4] if k == 0 else MATERIALS['grass'][1]
             cv.set(x, y + k, c)
+            if x >= 296:
+                water.discard((x, y + k))
+                bank.add((x, y + k))
+        if x >= 296:  # foam at the cliff's foot
+            for k in range(depth, depth + 3):
+                if (x, y + k) in water:
+                    cv.set(x, y + k, WTRm[4] if (x + frame) % 3 else WTRm[3])
     # the breakwater: big blocks curving round the basin to the lighthouse
     bw = worlds.thick([(W + 6, 410), (260, 452), (200, 500), (130, 526), (92, 528)], 12, seed=15)
     bw |= {(x, y) for (x, y) in disc(90, 530, 22)}  # the round platform under the lighthouse
@@ -2023,7 +2041,7 @@ def harbour(frame: int = 0):
         if 0.6 <= d and noise2(x, y, 611) > 0.5:
             cv.set(x, y, STONE[2])
         water.add((x, y))
-    blocked = water - set().union(*jetties)
+    blocked = (water | bank) - set().union(*jetties)
     stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (157, 384), 'beach': (34, 380), 'castle': (300, 116)}
     return cv, objects, stands, blocked
 
@@ -2078,13 +2096,16 @@ def castle(frame: int = 0):
             if (x, y) in sea and (x + 3, y) in sea and y - edge_y(min(W - 1, max(0, x))) > 36 and noise2(tx, ty, 326) < 0.45:
                 cv.hline(x, y, 3, WTRm[3])
     # the harbour's breakwater runs on to its root against the headland's foot
-    root = worlds.thick([(-8, 410), (22, 404)], 12)
+    root = worlds.thick([(-8, 415), (24, 405)], 12)
     for (x, y) in root:
         blk = ((x + 8 + (y // 7) % 2 * 5) // 10 + y // 7) % 3
         c = STONEm[3] if blk == 0 else STONEm[2] if blk == 1 else STONEm[4]
         if (x + 8 + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
             c = STONEm[1]
         cv.set(x, y, c)
+    for (x, y) in root:  # the same foam along its foot as in the harbour
+        if (x, y + 1) not in root and (x, y + 1) in sea:
+            cv.set(x, y + 1, WTRm[4]); cv.set(x, y + 2, WTRm[3])
     # the path from the harbour along the outer meadow to the drawbridge
     path = worlds.thick([(-6, 110), (12, 112)], 9) | worlds.thick([(10, 112), (30, 150), (40, 300), (74, 404), (140, 420), (182, 404), (182, 384)], 10, seed=19)
     paint_road(cv, path | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)})
@@ -2532,7 +2553,7 @@ def park(frame: int = 0):
         meadow.flower_planter(cv, *fb)
     objects = [
         ('bandstand', 'bandstand', 118, 140), ('fountain', 'fountain', 132, 300),
-        ('willow', 'willow', 196, 400), ('lilies', 'lily_pads', 140, 476), ('duck-1', 'duck', 170, 500),
+        ('willow', 'willow', 193, 371), ('lilies', 'lily_pads', 140, 476), ('duck-1', 'duck', 170, 500),
         ('duck-2', 'duck', 262, 488), ('heron', 'heron', 290, 440),
         ('hedge-n1', 'hedge', 4, 30), ('hedge-n2', 'hedge', 224, 30), ('tree-1', 'tree', 110, 4),
         ('tree-2', 'tree_autumn', 284, 140), ('tree-3', 'tree', 4, 150), ('tree-4', 'tree_small', 20, 470),
@@ -2556,14 +2577,16 @@ def ridge(frame: int = 0):
     cv = Canvas(W, H)
     alpine = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
     worlds.grass(cv, frame, alpine)
-    # the forest floor at the bottom, matching the garden's treeline band
-    for y in range(H - 80, H):
+    # the forest floor at the bottom, deepening into the garden's own treeline band
+    treeline = meadow.draw_top_band()
+    B = H - treeline.h
+    for y in range(B - 60, B):
         for x in range(W):
-            t = (y - (H - 80)) / 80
+            t = (y - (B - 60)) / 60
             if noise2(x, y, 441) < t:
                 cv.set(x, y, G[1])
-    style.dither_dark(cv, 0, H - 40, W, 40, 1.0)
-    style.dither_dark(cv, 0, H - 60, W, 20, 0.5)
+    style.dither_dark(cv, 0, B - 20, W, 20, 1.0)
+    style.dither_dark(cv, 0, B - 40, W, 20, 0.5)
     # the terrace: everything above the face is high ground under snow
     def rim(x):
         return 210 + int(math.sin(x / 27) * 8 + noise2(x // 6, 0, 442) * 6)
@@ -2648,6 +2671,12 @@ def ridge(frame: int = 0):
     trail |= worlds.thick([(150, 220), (150, 170), (120, 140)], 8, seed=30)
     on_terrace = {(x, y) for (x, y) in trail if y < rim(x)}
     paint_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)})
+    # the bottom is the band the garden screen draws above its clearing
+    # (garden_meadow.draw_top_band): the same shade and the same trail, so the ridge runs
+    # on into the garden without a seam, here and on the garden screen
+    for y in range(treeline.h):
+        for x in range(W):
+            cv.set(x, B + y, treeline.get(x, y))
     for (x, y) in on_terrace:  # a trodden line in the snow
         cv.set(x, y, SNOWm[1] if (x + y) % 3 else SNOWm[2])
     steps = set()
@@ -2703,9 +2732,15 @@ def halt(frame: int = 0):
         cv.vline(x, 320, 18, WOOD[2] if x % 2 else WOOD[1])
     cv.hline(232, 320, 12, RED[3])
     # a farm track south from the lane, down the east side to the farmyard
-    track = worlds.thick([(298, 300), (304, 360), (300, 440), (292, 500), (262, 548)], 8, seed=33)
-    yard = {(x, y) for (x, y) in oval(230, 560, 78, 22)}
-    paint_road(cv, track | yard | {(x, y) for (x, y0) in yard if y0 == H - 1 for y in range(H, H + 6)})
+    # (the farm ends at its yard: past it, to the south, the old forest begins, so
+    # nothing runs off the edge into it; world-rules.md, every path ends at a node)
+    for y in range(H - 56, H):  # the forest floor creeping out from under the trees
+        for x in range(W):
+            if noise2(x, y, 453) < (y - (H - 56)) / 56:
+                cv.set(x, y, FOREST_FLOOR[2] if (x + y) % 3 else FOREST_FLOOR[1])
+    track = worlds.thick([(298, 300), (304, 360), (300, 440), (292, 492), (262, 526)], 8, seed=33)
+    yard = {(x, y) for (x, y) in oval(232, 528, 66, 17)}
+    paint_road(cv, track | yard)
     # fields behind the fence: cabbages in furrows (west), wheat (east) with the
     # scarecrow, a pumpkin patch below; the farm's own bounds, not a grid
     SOILm = MATERIALS['soil']
@@ -2749,12 +2784,12 @@ def halt(frame: int = 0):
         ('fence-4', 'fence_c', 198, 356),
         ('scarecrow', 'scarecrow', 200, 380), ('barn', 'barn', 150, 452), ('hay-1', 'haystack', 132, 500),
         ('hay-2', 'haystack', 112, 530), ('pump-1', 'pumpkins', 30, 506), ('pump-2', 'pumpkins', 70, 524),
-        ('pump-3', 'pumpkins', 44, 540), ('barrel-f', 'barrel', 262, 520), ('crate-f', 'crate', 276, 530),
+        ('pump-3', 'pumpkins', 44, 540), ('barrel-f', 'barrel', 276, 500), ('crate-f', 'crate', 284, 520),
         ('tree-s2', 'tree_autumn', 236, 196),
     ]
     rails = {(x, y) for x in range(0, 246) for y in range(319, 338)}
     stands = {'town': (312, 300), 'platform': (130, 300), 'station': (118, 292), 'mill': (258, 186),
-              'farm': (232, 560)}
+              'farm': (262, 530)}
     return cv, objects, stands, rails | cabbage | wheat | patch
 
 
