@@ -100,6 +100,8 @@ All of this is presentation: it never adds rewards, costs or chores, every effec
 - **The world remembers (L7).** Repaired things stay repaired, befriended residents stay, chosen variants stay.
 - **Sound** (`sound.md`): an ambient bed per region (waves, wind, gears, the saloon piano, rain on neon), quiet by default.
 
+**Things move (18 Oct).** Boats, the ferry, the narrowboat and buoys bob a pixel on the water, each on its own phase; the halt's windmill turns, the riverside mill wheel turns and the castle's banners flutter. Turning things are frames drawn by the generator (`windmill_f1`, … exported as `zoneFrames`) and shown one at a time from one slow clock; all of it stops with reduced motion or an inactive screen.
+
 **Windows light up at night (18 Oct).** Every window is drawn by one helper (`garden_props.window`), which records its glass; the zone generator turns those into panes per sprite (`zoneWindows` in `lib/zone-maps.ts`), and after dark the walk lights them warm. A pane with nothing in front glows above the night tint; one that a tree or a nearer house overlaps stays at its building's depth, so it is still hidden behind the tree.
 
 ## Battles and customisation per region
