@@ -16,6 +16,7 @@ import propBasaltColumns from '@/assets/zones/props/basalt_columns.png';
 import propBasaltColumnsLow from '@/assets/zones/props/basalt_columns_low.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBed from '@/assets/zones/props/bed.png';
+import propBeehive from '@/assets/zones/props/beehive.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
 import propBikeRack from '@/assets/zones/props/bike_rack.png';
@@ -36,7 +37,6 @@ import propCairn from '@/assets/zones/props/cairn.png';
 import propCamel from '@/assets/zones/props/camel.png';
 import propCampfire from '@/assets/zones/props/campfire.png';
 import propCanalCrane from '@/assets/zones/props/canal_crane.png';
-import propCart from '@/assets/zones/props/cart.png';
 import propCat from '@/assets/zones/props/cat.png';
 import propCloche from '@/assets/zones/props/cloche.png';
 import propClockTower from '@/assets/zones/props/clock_tower.png';
@@ -145,6 +145,8 @@ import propSandstoneArch from '@/assets/zones/props/sandstone_arch.png';
 import propScarecrow from '@/assets/zones/props/scarecrow.png';
 import propSemaphore from '@/assets/zones/props/semaphore.png';
 import propShaduf from '@/assets/zones/props/shaduf.png';
+import propSheep from '@/assets/zones/props/sheep.png';
+import propSheepLeft from '@/assets/zones/props/sheep_left.png';
 import propShelter from '@/assets/zones/props/shelter.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
@@ -249,6 +251,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   basalt_columns_low: propBasaltColumnsLow,
   bathhouse: propBathhouse,
   bed: propBed,
+  beehive: propBeehive,
   bell_tower: propBellTower,
   bench: propBench,
   bike_rack: propBikeRack,
@@ -269,7 +272,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   camel: propCamel,
   campfire: propCampfire,
   canal_crane: propCanalCrane,
-  cart: propCart,
   cat: propCat,
   cloche: propCloche,
   clock_tower: propClockTower,
@@ -378,6 +380,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   scarecrow: propScarecrow,
   semaphore: propSemaphore,
   shaduf: propShaduf,
+  sheep: propSheep,
+  sheep_left: propSheepLeft,
   shelter: propShelter,
   shuttle: propShuttle,
   signpost: propSignpost,

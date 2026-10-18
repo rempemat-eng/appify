@@ -2319,6 +2319,13 @@ def riverside(frame: int = 0):
     path = worlds.thick([(24, 222), (60, 214), (130, 236), (200, 230)], 9, seed=21)  # a lane to the mill (the garden has no path at this edge)
     path |= worlds.thick([(30, 404), (70, 390), (160, 420), (W - 20, 430)], 9, seed=22)  # the south bank walk
     paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff})
+    for i in range(160):  # wildflowers on the north meadow, thickest by the hives
+        x, y = 14 + int(noise2(i, 0, 530) * 120), 30 + int(noise2(i, 1, 530) * 110)
+        col = ('#F2D27A', '#E8A0BC', '#FFFFFF', '#B8A0E8')[i % 4]
+        cv.set(x, y, col); cv.set(x, y + 1, '#447A50')
+    for (x, y) in oval(206, 100, 52, 40):  # the pasture grazed short
+        if (x + y) % 3 == 0:
+            cv.set(x, y, '#8EB86A')
     objects = [
         ('mill', 'water_mill', 140, top[220] - 96 + 6), ('willow-1', 'willow', 70, 330), ('willow-2', 'willow', 230, 360),
         ('reeds-1', 'reeds', 110, int(centre(120) + half(120)) - 24), ('reeds-2', 'reeds', 280, int(centre(290) + half(290)) - 26),
@@ -2326,7 +2333,12 @@ def riverside(frame: int = 0):
         ('lilies-1', 'lily_pads', 250, int(centre(265)) - 6), ('lilies-2', 'lily_pads', 120, int(centre(135)) + 2),
         ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 260, 110), ('bush-1', 'bush', 40, 470),
         ('bush-2', 'bush', 200, 500), ('tree-3', 'tree_autumn', 120, 470), ('bench', 'bench', 170, 440),
-        ('sack-1', 'sack', 120, 220), ('sack-2', 'sack', 108, 224), ('cart', 'cart', 80, 200),
+        ('sack-1', 'sack', 120, 220), ('sack-2', 'sack', 108, 224), ('barrel-m', 'barrel', 86, 206),
+        # a pasture on the north meadow: sheep grazing inside a fence, beehives by the flowers
+        ('pfence-1', 'fence_c', 150, 40), ('pfence-2', 'fence_c', 210, 40), ('pfence-3', 'fence_c', 150, 150),
+        ('pfence-4', 'fence_c', 210, 150),
+        ('sheep-1', 'sheep', 166, 72), ('sheep-2', 'sheep_left', 226, 92), ('sheep-3', 'sheep', 190, 118),
+        ('sheep-4', 'sheep_left', 244, 60), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
     ]
     stones = {(x, y) for x in range(38, 52) for y in range(int(centre(46) - half(46)) - 2, int(centre(46) + half(46)) + 3)}
     steps = {(x, y) for (x, y) in bluff if 38 <= x < 52}  # steps cut down the bluff to the stones

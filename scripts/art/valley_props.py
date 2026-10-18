@@ -513,10 +513,49 @@ def pumpkins() -> Canvas:
         cv.set(px, int(py - r * 0.8), '#5A7A3A')
     return cv
 
+def sheep(facing: int = 1) -> Canvas:
+    """A grazing sheep, 26 x 20: a woolly cloud body lit on the upper left, a dark face
+    lowered to the grass, thin dark legs."""
+    w, h = 26, 20
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(12, 9, 10, 6) | oval(8, 7, 5, 4) | oval(16, 7, 5, 4):
+        k = (x - 2) / 20 + (y - 2) / 12
+        c = '#FFFFFF' if k < 0.6 else '#EAE6DC' if k < 1.0 else '#C8C2B4'
+        if (x * 3 + y * 5) % 7 == 0:
+            c = '#D8D2C4' if k < 1 else '#B0A898'  # curls
+        cv.set(x if facing > 0 else w - 1 - x, y, c)
+    head = oval(22, 12, 3, 3.5)
+    for (x, y) in head:
+        cv.set(x if facing > 0 else w - 1 - x, y, '#3A3236' if x < 23 else '#2A2226')
+    for lx in (6, 9, 15, 18):
+        for y in range(14, 19):
+            cv.set(lx if facing > 0 else w - 1 - lx, y, '#2A2226')
+    return cv
+
+
+def beehive() -> Canvas:
+    """A white wooden beehive on a stand, 22 x 30: stacked boxes, a little roof, bees."""
+    w, h = 22, 30
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(4, 8):  # roof
+        for x in range(1, w - 1):
+            cv.set(x, y, SLATE[3] if x < w // 2 else SLATE[2])
+    for k in range(2):
+        for y in range(8 + k * 8, 16 + k * 8):
+            for x in range(3, w - 3):
+                cv.set(x, y, '#F2EEE6' if x < 6 else '#E2DCD0' if x < w - 6 else '#C8C2B4')
+        cv.hline(3, 8 + k * 8, w - 6, '#B0A898')
+    cv.hline(8, 22, 6, '#3A3236')  # the entrance
+    for x in (5, w - 6):
+        cv.vline(x, 24, 5, WOOD[2])
+    for (bx, by) in ((2, 2), (17, 1), (12, 0)):
+        cv.set(bx, by, GOLD[4]); cv.set(bx + 1, by, '#2A2226')
+    return cv
+
 def props() -> dict[str, Canvas]:
     return {
         'barn': barn(), 'haystack': haystack(), 'scarecrow': scarecrow(), 'windmill': windmill(),
-        'pumpkins': pumpkins(),
+        'pumpkins': pumpkins(), 'sheep': sheep(1), 'sheep_left': sheep(-1), 'beehive': beehive(),
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(), 'heron': heron(), 'lily_pads': lily_pads(),
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
