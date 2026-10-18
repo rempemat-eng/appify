@@ -6,6 +6,7 @@ import propAcacia from '@/assets/zones/props/acacia.png';
 import propAirlock from '@/assets/zones/props/airlock.png';
 import propAirshipMast from '@/assets/zones/props/airship_mast.png';
 import propAnchor from '@/assets/zones/props/anchor.png';
+import propAquariumColumn from '@/assets/zones/props/aquarium_column.png';
 import propArcheryButt from '@/assets/zones/props/archery_butt.png';
 import propArmchair from '@/assets/zones/props/armchair.png';
 import propAtmosCar from '@/assets/zones/props/atmos_car.png';
@@ -41,6 +42,7 @@ import propCairn from '@/assets/zones/props/cairn.png';
 import propCamel from '@/assets/zones/props/camel.png';
 import propCampfire from '@/assets/zones/props/campfire.png';
 import propCanalCrane from '@/assets/zones/props/canal_crane.png';
+import propCargoCrates from '@/assets/zones/props/cargo_crates.png';
 import propCastleWell from '@/assets/zones/props/castle_well.png';
 import propCat from '@/assets/zones/props/cat.png';
 import propCharredSnag from '@/assets/zones/props/charred_snag.png';
@@ -80,6 +82,7 @@ import propFireplace from '@/assets/zones/props/fireplace.png';
 import propFireweed from '@/assets/zones/props/fireweed.png';
 import propFireweedSmall from '@/assets/zones/props/fireweed_small.png';
 import propFishStall from '@/assets/zones/props/fish_stall.png';
+import propFloorCushions from '@/assets/zones/props/floor_cushions.png';
 import propFlowerKiosk from '@/assets/zones/props/flower_kiosk.png';
 import propForestBench from '@/assets/zones/props/forest_bench.png';
 import propForge from '@/assets/zones/props/forge.png';
@@ -274,6 +277,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   airlock: propAirlock,
   airship_mast: propAirshipMast,
   anchor: propAnchor,
+  aquarium_column: propAquariumColumn,
   archery_butt: propArcheryButt,
   armchair: propArmchair,
   atmos_car: propAtmosCar,
@@ -309,6 +313,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   camel: propCamel,
   campfire: propCampfire,
   canal_crane: propCanalCrane,
+  cargo_crates: propCargoCrates,
   castle_well: propCastleWell,
   cat: propCat,
   charred_snag: propCharredSnag,
@@ -348,6 +353,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   fireweed: propFireweed,
   fireweed_small: propFireweedSmall,
   fish_stall: propFishStall,
+  floor_cushions: propFloorCushions,
   flower_kiosk: propFlowerKiosk,
   forest_bench: propForestBench,
   forge: propForge,
