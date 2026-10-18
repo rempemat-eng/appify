@@ -322,6 +322,10 @@ deps['@/lib/keyboard-walk'] = {
   keySteps: (dx, dy) => [[dx, dy]],
   useKeyboardWalk() {},
 };
+// the outline behind tall props is pure geometry: the real module
+const occlusionModule = { exports: {} };
+evaluate('lib/occlusion.ts', occlusionModule);
+deps['@/lib/occlusion'] = occlusionModule.exports;
 const projectionModule = { exports: {} };
 evaluate('lib/garden-projection.ts', projectionModule);
 deps['@/lib/garden-projection'] = projectionModule.exports;
