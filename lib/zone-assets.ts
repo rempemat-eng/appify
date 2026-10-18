@@ -28,6 +28,7 @@ import propBoatRed from '@/assets/zones/props/boat_red.png';
 import propBollard from '@/assets/zones/props/bollard.png';
 import propBookcase from '@/assets/zones/props/bookcase.png';
 import propBookshelf from '@/assets/zones/props/bookshelf.png';
+import propBoots from '@/assets/zones/props/boots.png';
 import propBoulder from '@/assets/zones/props/boulder.png';
 import propBunting from '@/assets/zones/props/bunting.png';
 import propBuoy from '@/assets/zones/props/buoy.png';
@@ -46,6 +47,7 @@ import propCharredSnag from '@/assets/zones/props/charred_snag.png';
 import propCloche from '@/assets/zones/props/cloche.png';
 import propClockTower from '@/assets/zones/props/clock_tower.png';
 import propCoalCart from '@/assets/zones/props/coal_cart.png';
+import propCoatRack from '@/assets/zones/props/coat_rack.png';
 import propColumnStump from '@/assets/zones/props/column_stump.png';
 import propColumnStumpB from '@/assets/zones/props/column_stump_b.png';
 import propConsole from '@/assets/zones/props/console.png';
@@ -167,6 +169,7 @@ import propSheep from '@/assets/zones/props/sheep.png';
 import propSheepLeft from '@/assets/zones/props/sheep_left.png';
 import propShelter from '@/assets/zones/props/shelter.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
+import propSideTable from '@/assets/zones/props/side_table.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
 import propSkyBench from '@/assets/zones/props/sky_bench.png';
 import propSkyPlanter from '@/assets/zones/props/sky_planter.png';
@@ -216,6 +219,7 @@ import propWaterCrane from '@/assets/zones/props/water_crane.png';
 import propWaterJar from '@/assets/zones/props/water_jar.png';
 import propWaterMill from '@/assets/zones/props/water_mill.png';
 import propWaterTower from '@/assets/zones/props/water_tower.png';
+import propWateringCan from '@/assets/zones/props/watering_can.png';
 import propWeaponRack from '@/assets/zones/props/weapon_rack.png';
 import propWell from '@/assets/zones/props/well.png';
 import propWillow from '@/assets/zones/props/willow.png';
@@ -292,6 +296,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bollard: propBollard,
   bookcase: propBookcase,
   bookshelf: propBookshelf,
+  boots: propBoots,
   boulder: propBoulder,
   bunting: propBunting,
   buoy: propBuoy,
@@ -310,6 +315,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   cloche: propCloche,
   clock_tower: propClockTower,
   coal_cart: propCoalCart,
+  coat_rack: propCoatRack,
   column_stump: propColumnStump,
   column_stump_b: propColumnStumpB,
   console: propConsole,
@@ -431,6 +437,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   sheep_left: propSheepLeft,
   shelter: propShelter,
   shuttle: propShuttle,
+  side_table: propSideTable,
   signpost: propSignpost,
   sky_bench: propSkyBench,
   sky_planter: propSkyPlanter,
@@ -480,6 +487,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   water_jar: propWaterJar,
   water_mill: propWaterMill,
   water_tower: propWaterTower,
+  watering_can: propWateringCan,
   weapon_rack: propWeaponRack,
   well: propWell,
   willow: propWillow,

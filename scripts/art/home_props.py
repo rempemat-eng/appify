@@ -310,12 +310,86 @@ def desk() -> Canvas:
         cv.set(x, y, WOOD[3] if x < 22 else WOOD[2])
     return cv
 
+def coat_rack() -> Canvas:
+    """A coat stand by the door, 18 x 42: a turned post with pegs, a scarf and a coat
+    hanging from them, and a round foot."""
+    w, h = 18, 42
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(3, h - 3):
+        cv.set(8, y, WOOD[3]); cv.set(9, y, WOOD[1])
+    for (x, y) in disc(8.5, 2, 1.6):
+        cv.set(x, y, WOOD[4])
+    for (x0, dx) in ((7, -1), (10, 1)):
+        for t in range(4):
+            cv.set(x0 + dx * t, 6 - t // 2, WOOD[3])
+    for y in range(7, 22):  # a long coat, shaded on its right
+        for x in range(3, 9):
+            if x < 4 + (y - 7) // 6:
+                continue
+            cv.set(x, y, '#5A7A8A' if x < 6 else '#3E5A6A')
+    cv.hline(5, 7, 3, '#2E4652')
+    for y in range(6, 16):  # a scarf
+        cv.set(11 + (y > 10), y, RED[3]); cv.set(12 + (y > 10), y, RED[2])
+    for (x, y) in oval(8.5, h - 3, 6, 1.8):
+        cv.set(x, y, WOOD[3] if x < 9 else WOOD[1])
+    return cv
+
+
+def boots() -> Canvas:
+    """A pair of muddy boots on a little mat, 18 x 12."""
+    w, h = 18, 12
+    cv = Canvas(w, h, pad=PAD)
+    cv.rect(1, 8, 16, 3, '#8A6A3E'); cv.hline(1, 8, 16, '#B8945A')
+    for bx in (3, 10):
+        for y in range(1, 9):
+            cv.set(bx, y, '#6E4A2E'); cv.set(bx + 1, y, '#5A3A24'); cv.set(bx + 2, y, '#4A2E1C')
+        cv.hline(bx, 8, 5, '#4A2E1C'); cv.hline(bx + 3, 7, 2, '#5A3A24')
+        cv.hline(bx, 1, 3, '#8A6040')
+    return cv
+
+
+def side_table() -> Canvas:
+    """A small round side table, 22 x 26, with a lamp lit warm and a cup of tea."""
+    w, h = 22, 26
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(11, 14, 9, 3):
+        cv.set(x, y, WOOD[4] if y < 14 and x < 12 else WOOD[3])
+    cv.hline(3, 17, 17, WOOD[1])
+    for y in range(18, h - 1):
+        cv.set(10, y, WOOD[2]); cv.set(11, y, WOOD[1])
+    cv.hline(6, h - 2, 10, WOOD[1])
+    for y in range(3, 9):  # the lamp's shade
+        for x in range(4 + (8 - y) // 2, 12 - (8 - y) // 2):
+            cv.set(x, y, WARM[3] if x < 8 else WARM[2])
+    cv.vline(7, 9, 4, GOLD[2]); cv.hline(5, 12, 5, GOLD[3])
+    cv.rect(14, 10, 3, 3, CREAM[3]); cv.set(17, 11, CREAM[2]); cv.set(15, 10, '#A8703A')  # tea
+    return cv
+
+
+def watering_can() -> Canvas:
+    """A green watering can, 20 x 14, for the sunroom plants."""
+    w, h = 20, 14
+    cv = Canvas(w, h, pad=PAD)
+    GR = ['#2E5A40', '#447A50', '#62995E', '#8CBB76']
+    for y in range(5, h - 1):
+        for x in range(4, 13):
+            cv.set(x, y, GR[3] if x < 6 else GR[2] if x < 11 else GR[1])
+    cv.hline(4, 5, 9, GR[3])
+    for t in range(6):  # the spout
+        cv.set(13 + t, 9 - t // 2, GR[1]); cv.set(13 + t, 10 - t // 2, GR[0])
+    cv.hline(18, 6, 2, GR[3])
+    for x in range(5, 12):  # the handle
+        cv.set(x, 2 + abs(x - 8) // 2, GR[1])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'bed': bed(), 'nightstand': nightstand(), 'wardrobe': wardrobe(), 'fireplace': fireplace(),
         'armchair': armchair(), 'pet_bed': pet_bed(), 'dining_table': dining_table(), 'kitchen': kitchen(),
         'bookcase': bookcase(), 'plant_tall': plant_tall(), 'keepsake_chest': rug_chest(),
-        'window_seat': window_seat(), 'desk': desk(),
+        'window_seat': window_seat(), 'desk': desk(), 'coat_rack': coat_rack(), 'boots': boots(),
+        'side_table': side_table(), 'watering_can': watering_can(),
     }
 
 

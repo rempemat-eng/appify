@@ -1860,6 +1860,16 @@ def home(frame: int = 0):
         d = math.hypot((x - 150) / 60, (y - 350) / 26)
         ring = int(d * 6)
         cv.set(x, y, (NAP[2], CREAM[3], NAP[3], RED[3], NAP[2], CREAM[2])[min(5, ring)] if (x + y) % 7 else NAP[1])
+    # a woven runner from the front door into the sunroom
+    for y in range(470, 552):
+        for x in range(142, 178):
+            band = (y - 470) // 4 % 4
+            c = (NAP[2], CREAM[3], RED[2], CREAM[3])[band] if 146 <= x < 174 else NAP[1]
+            if (x + y) % 5 == 0 and 146 <= x < 174:
+                c = CREAM[2]
+            if x in (142, 177) and y % 2:
+                c = CREAM[3]  # the fringe
+            cv.set(x, y, c)
     # the hearth's glow on the floor
     light_pool(cv, 52, 300, 46, 18, '#F2721E', skip=frozenset(blocked))
     objects = [
@@ -1872,6 +1882,8 @@ def home(frame: int = 0):
         # the sunroom
         ('seat', 'window_seat', 30, 456), ('plant-1', 'plant_tall', 270, 446), ('plant-2', 'plant_tall', 240, 470),
         ('plant-3', 'plant_tall', 12, 500), ('chair-s', 'armchair', 200, 492),
+        ('coats', 'coat_rack', 116, 510), ('boots', 'boots', 186, 544), ('side', 'side_table', 98, 466),
+        ('can', 'watering_can', 262, 520),
     ]
     stands = {'door': (160, 544), 'bed': (96, 150), 'hearth': (60, 316), 'table': (240, 366), 'sunroom': (120, 500)}
     return cv, objects, stands, blocked
