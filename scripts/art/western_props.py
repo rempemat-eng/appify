@@ -28,8 +28,8 @@ def rect_set(x, y, w, h):
 
 def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'saloon') -> Canvas:
     """A false-front building, 104 x 92: the tall square facade hides a pitched tin roof
-    (its top shows behind), bleached clapboards, a sign board with abstract lettering
-    strokes, an upper window, a porch roof on posts that throws a deep shadow, and
+    (its top shows behind), bleached clapboards, a sign board with a pictogram
+    (a mug or a sack), an upper window, a porch roof on posts that throws a deep shadow, and
     swinging half doors (a saloon) or a shop window (a store)."""
     w, h = width, 92
     cv = Canvas(w, h, pad=PAD)
@@ -53,18 +53,23 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
         cv.set(x, y, sign_ramp[2] if y > sy0 else sign_ramp[3])
     cv.hline(sx0, sy1, sx1 - sx0, sign_ramp[0])
     ink = '#F4E6C8'
-    for i, x in enumerate(range(sx0 + 4, sx1 - 4, 6)):  # abstract lettering strokes, never words
-        stroke = int(noise2(i, seed, 201) * 5)
-        if stroke == 0:
-            cv.vline(x, 20, 6, ink); cv.vline(x + 3, 20, 6, ink); cv.hline(x, 22, 4, ink)
-        elif stroke == 1:
-            cv.hline(x, 20, 4, ink); cv.hline(x, 25, 4, ink); cv.vline(x, 20, 6, ink); cv.vline(x + 3, 20, 6, ink)
-        elif stroke == 2:
-            cv.vline(x + 1, 20, 6, ink); cv.hline(x, 20, 3, ink); cv.hline(x, 25, 3, ink)
-        elif stroke == 3:
-            cv.vline(x, 20, 6, ink); cv.hline(x, 25, 4, ink)
-        else:
-            cv.hline(x, 20, 4, ink); cv.vline(x, 20, 3, ink); cv.hline(x, 22, 4, ink); cv.vline(x + 3, 22, 4, ink); cv.hline(x, 25, 4, ink)
+    # a pictogram, not lettering (letters at this size read as nonsense words): a frothy
+    # mug for the saloon, a tied sack for the store, with small diamonds either side
+    mx = (sx0 + sx1) // 2
+    if kind == 'saloon':
+        for y in range(21, 28):
+            cv.hline(mx - 4, y, 7, '#E8B04A' if y > 22 else ink)  # the mug, its froth on top
+        cv.hline(mx - 4, 20, 7, ink); cv.set(mx - 3, 19, ink); cv.set(mx, 19, ink)
+        cv.vline(mx + 3, 22, 4, ink); cv.vline(mx + 4, 22, 4, ink); cv.set(mx + 4, 22, sign_ramp[2]); cv.set(mx + 4, 25, sign_ramp[2])
+        cv.vline(mx - 2, 23, 4, '#C8862A')
+    else:
+        for (x, y) in oval(mx, 24, 4.5, 3.6):
+            cv.set(x, y, ink if x < mx + 1 else '#D8C8A0')  # the sack
+        cv.hline(mx - 2, 20, 5, ink); cv.hline(mx - 1, 21, 3, '#C8862A')  # its tied neck
+    for dx in (-14, -9, 9, 14):
+        if sx0 + 2 < mx + dx < sx1 - 2:
+            x = mx + dx
+            cv.set(x, 22, ink); cv.set(x - 1, 23, ink); cv.set(x + 1, 23, ink); cv.set(x, 24, ink)
     # an upper window with a shutter
     gp.window(cv, w // 2 - 8, 33, 16, 12, shutters=None, sill=True, warm=False)
     # the porch roof and its posts
