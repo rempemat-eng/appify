@@ -117,7 +117,7 @@ export function WorldMap({
           horizontal
           showsHorizontalScrollIndicator={false}
           style={{ flexGrow: 0 }}
-          contentContainerStyle={{ gap: 6 }}
+          contentContainerStyle={{ gap: 6, paddingRight: 16 }}
         >
           {regions.map((r) => {
             const open = known(r.id);
@@ -132,7 +132,13 @@ export function WorldMap({
                 accessibilityState={{ selected, disabled: !open }}
                 disabled={!open}
                 onPress={() => setShown(r.id)}
-                style={{ minHeight: 44, paddingHorizontal: 10, justifyContent: 'center' }}
+                style={{
+                  minHeight: 44,
+                  minWidth: 44,
+                  paddingHorizontal: 10,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
               >
                 <FrameShape tone={selected ? frameTones.paper : frameTones.wood} unit={2} />
                 <BodyText
@@ -298,7 +304,7 @@ function gapCells(region: RegionId) {
       if (tiles.some((t) => t.col === col && t.row === row)) continue;
       const colour =
         region === 'valley'
-          ? row <= -2
+          ? row <= -1
             ? PEAKS
             : FOREST
           : region === 'west'
