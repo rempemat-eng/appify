@@ -32,7 +32,12 @@ def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
 
 
-def canopy(cv: Canvas, lobes, ramp, seed: int = 0) -> set:
+# the warm yellow-green the sun leaves on the outermost leaves (Cainos' and Eastward's
+# trees: a highlight hue, not just a lighter green); per leaf ramp
+LEAF_SUN = {'#A1C068': '#D2DC86', '#E8B575': '#F6D99A'}
+
+
+def canopy(cv: Canvas, lobes, ramp, seed: int = 0, clumps: bool = False) -> set:
     """Foliage as a few large leaf masses (Matt's references): each lobe is shaded as a
     sphere lit from the upper left in clean bands, a lobe in front casts a dark rim on
     the one behind it, the silhouette is scalloped by small leaf bumps, and a sparse
@@ -79,7 +84,69 @@ def canopy(cv: Canvas, lobes, ramp, seed: int = 0) -> set:
                            tuple(int(ramp[2][i:i + 2], 16) for i in (1, 3, 5))):
                 cv.set(x, y, ramp[4] if cur[:3] == tuple(int(ramp[3][i:i + 2], 16) for i in (1, 3, 5)) else ramp[3])
                 cv.set(x + 1, y + 1, ramp[1] if cur[:3] != tuple(int(ramp[3][i:i + 2], 16) for i in (1, 3, 5)) else ramp[2])
+    if clumps:
+        leaf_clumps(cv, shape, owner, lobes, ramp, seed)
     return shape
+
+
+def leaf_clumps(cv: Canvas, shape: set, owner: dict, lobes, ramp, seed: int):
+    """The art-style detail pass for a crown (art-style.md, detail target): every lobe is
+    built of smaller leaf clusters, each a little sphere of its own lit from the upper
+    left, so the crown reads as clusters within masses (Cainos' and Eastward's trees)
+    rather than as smooth balls. Clusters are drawn back to front; a front cluster's
+    dark underside lands on the one behind it. The sunniest clusters take the warm
+    yellow-green highlight on their upper-left crescent. Clusters stay inside their
+    lobe, so the dark line where one lobe passes in front of another survives, and the
+    shade side keeps fewer, darker clusters so it stays quiet at phone size."""
+    sun = LEAF_SUN.get(ramp[4], ramp[4])
+    clusters = []
+    for i, (cx, cy, r) in enumerate(lobes):
+        sub = r * 0.46
+        n = 6 if r > 11 else 5
+        for k in range(n):
+            a = 2 * math.pi * (k + 0.35 * noise2(k, seed + i, 71)) / n - math.pi / 2
+            d = r * (0.48 + 0.12 * noise2(k, seed + i, 72))
+            clusters.append((cx + d * math.cos(a), cy + d * math.sin(a) * 0.9, sub * (0.9 + 0.25 * noise2(k, i, 73)), i))
+        clusters.append((cx - r * 0.12, cy - r * 0.15, sub * 1.05, i))  # the lit middle
+    def band(px, py, i):
+        cx, cy, rr = lobes[i]
+        nx, ny = (px + 0.5 - cx) / rr, (py + 0.5 - cy) / rr
+        nz = math.sqrt(max(0.0, 1 - min(1.0, nx * nx + ny * ny)))
+        lv = -0.55 * nx - 0.75 * ny + 0.4 * nz
+        return 4 if lv > 0.82 else 3 if lv > 0.3 else 2 if lv > -0.25 else 1
+    for (ccx, ccy, rr, i) in sorted(clusters, key=lambda c: (c[1], c[0])):
+        pts = {p for p in disc(ccx, ccy, rr) if p in shape and owner.get(p) == i}
+        if not pts:
+            continue
+        t = band(ccx, ccy, i)
+        for (x, y) in pts:
+            nx, ny = (x + 0.5 - ccx) / rr, (y + 0.5 - ccy) / rr
+            lv = -0.6 * nx - 0.8 * ny
+            tone = t + (1 if lv > 0.45 else 0 if lv > -0.35 else -1)
+            tone = max(0 if t <= 1 else 1, min(4, tone))
+            cv.set(x, y, ramp[tone])
+        for (x, y) in pts:
+            nx, ny = (x + 0.5 - ccx) / rr, (y + 0.5 - ccy) / rr
+            if (x, y + 1) not in pts and ny > 0.2:
+                # the cluster's dark underside, notched so it reads as leaves, not a line
+                cv.set(x, y, ramp[max(0, t - 2)])
+                if (x + int(ccx * 3)) % 3 == 0 and (x, y - 1) in pts:
+                    cv.set(x, y - 1, ramp[max(0, t - 2)])
+            elif t >= 3 and -0.95 < nx < -0.15 and -0.95 < ny < -0.2 and nx * nx + ny * ny > 0.45:
+                cv.set(x, y, sun if t == 4 else ramp[4])  # its sunlit crescent
+        # leaf ticks: a few two-pixel leaves across the cluster, light on the lit side
+        # and dark on the shade side, so its surface has a grain at phone size
+        for q in range(max(1, len(pts) // 14)):
+            lx = int(ccx + (noise2(q, int(ccx), seed + 81) - 0.5) * rr * 1.4)
+            ly = int(ccy + (noise2(q, int(ccy), seed + 82) - 0.5) * rr * 1.2)
+            if (lx, ly) in pts and (lx + 1, ly) in pts and (lx, ly + 1) in pts:
+                nx, ny = (lx + 0.5 - ccx) / rr, (ly + 0.5 - ccy) / rr
+                lit = -0.6 * nx - 0.8 * ny > 0
+                if lit and t >= 2:
+                    cv.set(lx, ly, ramp[min(4, t + 1)] if t < 4 else sun)
+                    cv.set(lx + 1, ly, ramp[min(4, t)])
+                elif not lit:
+                    cv.set(lx, ly + 1, ramp[max(0, t - 2)])
 
 
 def plane(cv: Canvas, pts, ramp, base: int, lit_edge: bool = True, dark_edge: bool = True):
@@ -531,7 +598,7 @@ def tree(big: bool = True, autumn: bool = False) -> Canvas:
     k = 1.0 if big else 0.74
     lobes = [(cx + 11 * k, 20 * k, 15 * k), (cx - 12 * k, 22 * k, 15 * k), (cx + 2 * k, 13 * k, 15 * k),
              (cx - 9 * k, 36 * k, 14 * k), (cx + 10 * k, 37 * k, 14 * k), (cx, 30 * k, 14 * k)]
-    shape = canopy(cv, lobes, ramp, seed=9 if autumn else 2 + big)
+    shape = canopy(cv, lobes, ramp, seed=9 if autumn else 2 + big, clumps=True)
     style.trunk(cv, tx, trunk_top, h, tw, WOOD, shape)
     if not autumn and big:  # ripe apples on the lit side
         for fx, fy in ((cx - 18, 18), (cx + 6, 9), (cx - 8, 31), (cx + 16, 27), (cx - 3, 18)):

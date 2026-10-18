@@ -118,6 +118,17 @@ def paint_road(cv: Canvas, mask):
     so the border gets no turf edge and the two zones meet without a seam."""
     for (x, y) in mask:
         cv.set(x, y, P[4] if smooth_noise(x, y, 7, 40) > 0.7 else P[3])
+    # a trodden road (art-style.md, detail target): bedded pebbles, small dark hollows
+    # where rain stood, and a few lighter scuffs; sparse, so the way still reads clearly
+    inside = [(x, y) for (x, y) in mask if 0 <= x < W and 0 <= y < H]
+    for (x, y) in inside:
+        n = noise2(x, y, 545)
+        if n < 0.0035 and all((x + dx, y + dy) in mask for dx in (-2, 0, 3) for dy in (-1, 0, 3)):
+            detail.pebble(cv, x, y, STONE, big=n < 0.0012)
+        elif n > 0.994 and (x + 1, y) in mask and (x, y + 1) in mask:
+            cv.set(x, y, P[2]); cv.set(x + 1, y, P[2]); cv.set(x, y - 1, P[1])
+        elif 0.5 < n < 0.508 and (x + 2, y) in mask:
+            cv.hline(x, y, 3, P[4])
     detail.grass_edge(cv, set(mask), G, P, seed=11)  # pixels past any edge count as road too
     for (x, y) in mask:
         if (x, y + 1) not in mask and 0 <= y + 1 < H:

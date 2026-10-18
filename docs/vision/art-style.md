@@ -45,6 +45,13 @@ Matt pointed at Cainos' *Pixel Art Top Down - Village* (Unity Asset Store and it
 - **Soft outlines:** a dark, hue-shifted outline (not black) on props, broken where the light hits.
 - **Pilot first:** one zone redrawn to this level and compared side by side with the reference before the rest follow.
 
+**Eastward too (Matt, 18 Oct 16:55):** "i also really like eastwards art style … but stuff needs to fit mobile, so be careful". What we take from Eastward: warm, lived-in places crowded with small story props; light as a material (lamp and window pools, warm light against cool shade, colour in the shadows); soft, chunky shapes with dark hue-shifted outlines; weather and air (haze, drifting motes). What a phone sets as limits:
+
+- **Readable at 1.3 to 2 screen pixels per art pixel.** Detail comes in clusters of two or more pixels, never single-pixel noise that turns to grey; walkable ground stays calmer and lighter than what blocks the way; every interactive prop keeps a clear silhouette and a 44 px target.
+- **Quiet where you walk.** Clutter gathers at the edges of a place, against walls and under trees; paths, doors and the space round the companion stay open (world-rules.md, "a mostly empty node").
+- **Light baked in, few live layers.** Pools of light are drawn into the ground and props; at most a handful of live glows per screen, finite and still with reduced motion (AGENTS.md).
+- **Memory.** A zone's ground is one image; more detail must not mean more layers or larger files per zone. (The images are saved at 4x for crisp native scaling; a 1x save with nearest-neighbour scaling on the web would cut decoded memory sixteenfold, and is worth a test.)
+
 ## The rules
 
 1. **Outlines.** Every object gets a 1 px outline in `outline` from `art/materials.json` (`#1E1917`, a warm near-black). Do not outline ground textures such as grass and dirt.

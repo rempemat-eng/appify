@@ -40,6 +40,10 @@ def thick(points, radius, seed=0):
     return {(x, y) for (x, y) in pts if 0 <= x < W and 0 <= y < H}
 
 
+def _hex(c):
+    return tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))
+
+
 def grass(cv: Canvas, frame=0, tone=None):
     G = tone or g.G
     for y in range(H):
@@ -60,6 +64,20 @@ def grass(cv: Canvas, frame=0, tone=None):
                 detail.grass_tuft(cv, x, y + 2, int(noise2(tx, ty, 8) * 6) if not clearing else 3, G, ground)
             elif edge and noise2(tx, ty, 7) < 0.15:
                 cv.set(x, y, G[4])
+    # the grain of the lawn (art-style.md, detail target): short blades everywhere, each
+    # two pixels (a dark root under a lit tip) so they read as grass at phone size and
+    # never as single-pixel noise; lit tips on the light patches, dark ones in the shade
+    lit, mid = _hex(G[3]), _hex(G[2])
+    for y in range(2, H - 1):
+        for x in range(0, W, 1):
+            if noise2(x, y, 9) > 0.055:
+                continue
+            c = cv.get(x, y)[:3]
+            below = cv.get(x, y + 1)[:3]
+            if c == lit and below == lit:
+                cv.set(x, y, G[4]); cv.set(x, y + 1, G[2])
+            elif c == mid and below == mid:
+                cv.set(x, y, G[3]); cv.set(x, y + 1, G[1])
 
 
 def edge(mask, x, y):
