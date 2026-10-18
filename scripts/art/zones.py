@@ -2730,6 +2730,152 @@ def region_keys(name: str) -> frozenset:
     return frozenset(REGION_PROPS[name]())
 
 
+# Ground dressing (level of detail, Matt 18 Oct): small things lying on each zone's open
+# ground, in that ground's own palette and in keeping with the place. Drawn only where
+# the open ground is untouched for a few pixels round (never on a path, in water, on a
+# floor or under a prop's foot), on a jittered grid so it reads as scattered, not tiled.
+SOOT = ['#2B3B2E', '#46583F', '#5C6E4C', '#6B7C55', '#8E9C6E']
+ALPINE = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
+
+
+def _rgb(c):
+    return tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))
+
+
+def _flower(cv, x, y, petal, centre):
+    for (dx, dy) in ((0, -1), (-1, 0), (1, 0), (0, 1)):
+        cv.set(x + dx, y + dy, petal)
+    cv.set(x, y, centre)
+    cv.set(x, y + 2, '#447A50')
+
+
+def _decal(cv, kind, x, y, r):
+    """One small thing on the ground at (x, y); r in [0, 1) picks which."""
+    if kind == 'meadow':
+        if r < 0.3:
+            _flower(cv, x, y, '#F7F2E8', '#F2D27A')  # a daisy
+            if r < 0.15:
+                _flower(cv, x + 3, y + 2, '#F7F2E8', '#F2D27A')
+        elif r < 0.5:
+            cv.set(x, y, '#F2D27A'); cv.set(x + 2, y + 1, '#E6BC5C'); cv.set(x + 1, y + 2, '#F2D27A')  # buttercups
+            cv.set(x, y + 1, '#447A50'); cv.set(x + 2, y + 2, '#447A50')
+        elif r < 0.65:
+            for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1)):
+                cv.set(x + dx, y + dy, '#E8A0BC' if (dx + dy) % 2 else '#C8708A')  # clover head
+            cv.set(x, y + 2, '#5C7A44')
+        elif r < 0.78:
+            cv.set(x, y, '#9A8BC8'); cv.set(x, y + 1, '#7464A8'); cv.set(x + 1, y + 2, '#447A50')  # a bellflower
+        else:
+            detail.pebble(cv, x, y, STONE, big=r > 0.93)
+    elif kind == 'forest':
+        if r < 0.4:
+            col = ('#C8803A', '#A85A2E', '#E2BC5E')[int(r * 30) % 3]  # fallen leaves
+            cv.set(x, y, col); cv.set(x + 1, y, col); cv.set(x + 1, y + 1, '#5E3A24')
+        elif r < 0.48:
+            cv.hline(x - 1, y, 3, '#C2453A'); cv.set(x, y - 1, '#E86A5A'); cv.set(x, y + 1, '#E8DCC8')  # a toadstool
+            cv.set(x - 1, y, '#F7F2E8')
+        elif r < 0.6:
+            cv.set(x, y, '#5E3D2E'); cv.set(x + 1, y, '#80573A')  # a pine cone
+        elif r < 0.8:
+            for t in range(4):
+                cv.set(x + t, y + t // 2, '#5E3D2E')  # a twig
+        else:
+            cv.set(x, y, '#8DAE5A'); cv.set(x + 1, y - 1, '#B2CA78'); cv.set(x - 1, y - 1, '#7E9F50')  # a seedling
+    elif kind == 'alpine':
+        if r < 0.35:
+            cv.set(x, y, '#5A8AD0'); cv.set(x + 1, y, '#3E6AA8'); cv.set(x, y + 1, '#4F7A5A')  # gentians
+            cv.set(x + 3, y + 1, '#5A8AD0')
+        elif r < 0.6:
+            _flower(cv, x, y, '#F7FAFC', '#E8D8B8')  # edelweiss
+        else:
+            detail.pebble(cv, x, y, STONE, big=r > 0.85)
+    elif kind == 'soot':
+        if r < 0.4:
+            cv.set(x, y, '#1E1C22'); cv.set(x + 1, y, '#3A3840'); cv.set(x + 2, y + 1, '#1E1C22')  # coal crumbs
+        elif r < 0.6:
+            cv.set(x, y, '#9E6C26'); cv.set(x, y + 1, '#6E4718')  # a lost brass bolt
+        else:
+            detail.grass_tuft(cv, x, y, int(r * 60) % 6, SOOT, 2)
+    elif kind == 'desert':
+        D = MATERIALS['desert']
+        if r < 0.35:
+            detail.pebble(cv, x, y, MATERIALS['adobe'], big=r > 0.25)
+        elif r < 0.6:
+            for (dx, h) in ((0, 3), (2, 4), (4, 2)):
+                cv.vline(x + dx, y - h, h, '#B89A58' if dx else '#9A8044')  # dry grass
+        elif r < 0.75:
+            for k in range(3):
+                cv.set(x + k * 3, y + (k % 2), D[1])  # tracks
+        else:
+            cv.set(x, y, D[5]); cv.set(x + 1, y, D[4])  # a pale chip of stone
+    elif kind == 'ash':
+        A, L = MATERIALS['basalt'], MATERIALS['lava']
+        if r < 0.3:
+            cv.set(x, y, L[3]); cv.set(x + 1, y, L[1])  # a cinder still glowing
+        elif r < 0.75:
+            detail.pebble(cv, x, y, A, big=r > 0.6)
+        else:
+            cv.set(x, y, '#D86AA2'); cv.set(x, y + 1, '#447A50')  # a fireweed seedling
+    elif kind == 'street':
+        N = MATERIALS['night']
+        if r < 0.3:
+            col = ('#E8429A', '#1FB5D0', '#E8962A')[int(r * 30) % 3]  # a crushed can
+            cv.hline(x, y, 2, col); cv.set(x + 1, y, '#D2FBFF'); cv.hline(x, y + 1, 2, N[0])
+        elif r < 0.55:
+            cv.hline(x, y, 3, '#B8B4C8'); cv.set(x + 1, y + 1, '#8E8AA0')  # a paper flyer
+        elif r < 0.8:
+            cv.set(x, y, '#6FE6F2'); cv.set(x + 1, y, N[1])  # a glint in a puddle
+        else:
+            cv.set(x, y, N[0]); cv.set(x + 1, y + 1, N[0])  # gum and grime
+    elif kind == 'regolith':
+        R = MATERIALS['regolith']
+        if r < 0.45:
+            for (dx, dy, c) in ((-1, 0, R[1]), (1, 0, R[4]), (0, -1, R[1]), (0, 1, R[4])):
+                cv.set(x + dx, y + dy, c)  # a tiny crater
+        else:
+            cv.set(x, y, R[5]); cv.set(x + 1, y, R[3])
+            for t in range(1, 4):
+                cv.set(x + 1 + t, y + 1, R[0])  # a pebble with its long airless shadow
+
+
+DRESS = {
+    'town': ('meadow', G[2:4], 0.32), 'park': ('meadow', G[2:4], 0.4), 'riverside': ('meadow', G[2:4], 0.4),
+    'halt': ('meadow', G[2:4], 0.3), 'harbour': ('meadow', G[2:4], 0.3), 'castle': ('meadow', G[2:4], 0.32),
+    'woodland': ('forest', None, 0.26), 'ridge': ('alpine', ALPINE[2:4], 0.32),
+    'junction': ('soot', SOOT[2:4], 0.3), 'canal': ('soot', SOOT[2:4], 0.3),
+    'gulch': ('desert', MATERIALS['desert'][2:5], 0.22), 'oasis': ('desert', MATERIALS['desert'][2:5], 0.16),
+    'caldera': ('ash', MATERIALS['ash'][1:3], 0.3), 'springs': ('ash', MATERIALS['ash'][1:3], 0.3),
+    'neon': ('street', MATERIALS['night'][1:4], 0.18), 'lumen': ('regolith', MATERIALS['regolith'][2:4], 0.3),
+}
+
+
+def dress(cv: Canvas, name: str, objects, sprite_map, blocked):
+    if name not in DRESS:
+        return
+    kind, palette, density = DRESS[name]
+    if kind == 'forest':
+        palette = FOREST_FLOOR[1:4]
+    ok = {_rgb(c) for c in palette}
+    feet = set()
+    for (_i, key, x, y) in objects:
+        if key in OVERHEAD:
+            continue
+        sp = sprite_map[key]
+        feet |= {(xx, yy) for xx in range(x - 4, x + sp.w + 4) for yy in range(y + sp.h - 24, y + sp.h + 6)}
+    for ty in range(4, H - 4, 7):
+        for tx in range(4, W - 6, 7):
+            x, y = tx + int(noise2(tx, ty, 540) * 5), ty + int(noise2(tx, ty, 541) * 5)
+            r = noise2(tx, ty, 542)
+            # in drifts and patches rather than evenly: denser where a slow noise is high
+            if r > density * (0.15 + 1.5 * max(0.0, smooth_noise(tx, ty, 46, 544) - 0.25)):
+                continue
+            if (x, y) in feet or (x, y) in blocked:
+                continue
+            if not all(cv.get(x + dx, y + dy)[:3] in ok for dx in (-2, 0, 2, 4) for dy in (-2, 0, 2)):
+                continue
+            _decal(cv, kind, x, y, noise2(tx, ty, 543))
+
+
 def check_overhangs(built: dict):
     """A tall prop that rises over a zone's north border must rise over empty ground in
     the zone behind it (no prop there for its top to cover)."""
@@ -2761,6 +2907,7 @@ def build(name: str, fn, start: str):
         foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
         assert not foreign, f'{name} borrows props from another region: {foreign}'
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
+    dress(cv, name, objects, sprite_map, blocked_ground)
     shade = set()
     for (_id, key, x, y) in objects:
         if key not in OVERHEAD:

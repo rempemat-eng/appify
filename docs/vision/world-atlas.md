@@ -45,7 +45,7 @@ Matt: "make sure different worlds are as detailed as i instructed you to be and 
 
 ## Zones drawn so far (17 Oct)
 
-All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNGs in `assets/zones/<id>/`, each checked for reachability on foot, blocked water, lava and walls, and (outside the valley) region-only props. Walkable as a preview at `/atlas` (W1 prototype); not yet linked from the game.
+All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNGs in `assets/zones/<id>/`, each checked for reachability on foot, blocked water, lava and walls, and (outside the valley) region-only props. Walkable as a preview at `/world` (W1 prototype); not yet linked from the game.
 
 | Zone               | Region       | Joins                                                                                                |
 | ------------------ | ------------ | ---------------------------------------------------------------------------------------------------- |
