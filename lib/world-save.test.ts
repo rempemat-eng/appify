@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict';
 import { moveTo, restoreWorld } from './world-save';
 import { regionWalk, TILE } from './region-walk';
-import { doors, exits, missionPlaces, regionPoint, travelPoints } from './world-places';
+import { doors, exits, missionPlaces, regionPoint, rings, travelPoints } from './world-places';
 import { makeWalkGrid } from './garden-path';
 import { regionBounds } from './region-walk';
 import { readSave, writeSave } from './save-data';
+import { residentLines, residentRoutes } from './resident-routes';
 
 let checks = 0;
 const ok = (value: unknown, message: string) => {
@@ -59,6 +60,7 @@ const places = [
   ...Object.entries(travelPoints).map(([k, p]) => [`station ${k}`, p] as const),
   ...Object.entries(doors).map(([k, p]) => [`door ${k}`, p] as const),
   ...Object.entries(exits).map(([k, p]) => [`exit ${k}`, p] as const),
+  ...rings.map((p, i) => [`ring ${i}`, p] as const),
 ];
 for (const [name, place] of places) {
   const at = regionPoint(place);
@@ -84,3 +86,7 @@ for (const [name, place] of places) {
   ok(Math.hypot(end.x - at.x, end.y - at.y) < 12, `${name}: the walk ends there`);
 }
 console.log(`World save and places: ${checks} checks passed.`);
+
+// every resident has something to say when the companion stops beside them
+for (const who of Object.keys(residentRoutes)) ok(residentLines[who], `${who} has a line`);
+console.log(`Residents: ${Object.keys(residentRoutes).length} have a line each.`);

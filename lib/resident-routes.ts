@@ -36,3 +36,28 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   angler: { zone: 'riverside', from: [154, 362], to: [242, 362] },
   botanist: { zone: 'station', from: [64, 330], to: [152, 330] },
 };
+
+/** What each resident says when the companion stops beside them (decoration only). */
+export const residentLines: Record<string, string> = {
+  gardener: 'the beans are climbing again. slow is how they like it.',
+  baker: 'the rolls come out at noon. come by when the bell rings.',
+  fisher: 'the tide is turning. no hurry, the fish know the way.',
+  keeper: 'i light the lamp at dusk and then i read till morning.',
+  steward: 'the castle is quiet today. that is how we like it.',
+  tinkerer: 'every clock in cogsworth is a minute slow. on purpose.',
+  boatwoman: 'the lock takes its time. so do we.',
+  cowhand: 'the cattle know when to rest. wish folks did.',
+  saloon: 'lemonade on the house for anyone off their phone.',
+  trader: 'the spring never runs dry. the dunes keep its secret.',
+  smith: 'the forge cools at sunset. even fire needs a nap.',
+  attendant: 'the top pool is the warmest. towels are by the door.',
+  vendor: 'noodles, no notifications. best deal in the harbour.',
+  courier: 'i deliver everything except screens. those can wait.',
+  porter: 'mind the gap. the stars will still be there.',
+  farmer: 'the pumpkins grow while you sleep. funny, that.',
+  hiker: 'the view from the ridge is better with your phone away.',
+  forager: 'mushrooms come up after rain. you just have to look down.',
+  picnicker: 'there is always room on the blanket.',
+  angler: 'i have not caught a thing all day. perfect.',
+  botanist: 'plants in space still want the same thing: light and quiet.',
+};

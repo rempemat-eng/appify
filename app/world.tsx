@@ -10,13 +10,15 @@ import { BodyText } from '@/components/pixel-feedback';
 import { feedback, missions, useGame } from '@/lib/game';
 import { useAppActive } from '@/lib/app-active';
 import { worldCatalogue } from '@/lib/world-catalogue';
-import { tileAt, type RegionId, type TileId } from '@/lib/region-walk';
+import { regionTiles, tileAt, tileOrigin, type RegionId, type TileId } from '@/lib/region-walk';
+import { residentLines, residentRoutes } from '@/lib/resident-routes';
 import {
   PLACE_RADIUS,
   doors,
   exits,
   missionPlaces,
   regionPoint,
+  rings,
   travelBy,
   travelPoints,
   type MissionPlaceId,
@@ -41,7 +43,9 @@ type Card =
   | { kind: 'mission'; id: 'book' | 'park' | 'mountain' }
   | { kind: 'shop' | 'arena' | 'garden' }
   | { kind: 'travel' }
-  | { kind: 'hut' | 'inside' };
+  | { kind: 'hut' | 'inside' }
+  | { kind: 'ring' }
+  | { kind: 'chat'; who: string };
 
 /** The places to show by name in a region, so you can see where things are and walk there. */
 function placeMarkers(region: RegionId, card: Card | null) {
@@ -51,6 +55,9 @@ function placeMarkers(region: RegionId, card: Card | null) {
   const station = travelPoints[region];
   if (station)
     add('travel', regionPoint(station), travelBy[region] ?? 'STATION', card?.kind === 'travel');
+  rings
+    .filter((r) => r.region === region)
+    .forEach((r, i) => add(`ring-${i}`, regionPoint(r), 'SPARRING RING', card?.kind === 'ring'));
   if (region === 'home')
     add('inside', regionPoint(doors.inside), 'FRONT DOOR', card?.kind === 'inside');
   if (region === 'valley') {
@@ -78,6 +85,27 @@ function cardAt(region: RegionId, at: Point): Card | null {
   if (region === 'home') return near(at, regionPoint(doors.inside)) ? { kind: 'inside' } : null;
   const station = travelPoints[region];
   if (station && near(at, regionPoint(station))) return { kind: 'travel' };
+  if (rings.some((r) => r.region === region && near(at, regionPoint(r)))) return { kind: 'ring' };
+  // a resident on their route beside the companion says hello
+  for (const [who, route] of Object.entries(residentRoutes)) {
+    const tile = regionTiles(region).find((t) => t.id === route.zone);
+    if (!tile) continue;
+    const o = tileOrigin(region, tile);
+    const ax = o.x + route.from[0];
+    const ay = o.y + route.from[1];
+    const bx = o.x + route.to[0];
+    const by = o.y + route.to[1];
+    const t = Math.max(
+      0,
+      Math.min(
+        1,
+        ((at.x - ax) * (bx - ax) + (at.y - ay) * (by - ay)) /
+          Math.max(1, (bx - ax) ** 2 + (by - ay) ** 2),
+      ),
+    );
+    if (Math.hypot(at.x - (ax + (bx - ax) * t), at.y - (ay + (by - ay) * t)) <= 18)
+      return { kind: 'chat', who };
+  }
   if (region !== 'valley') return null;
   if (near(at, regionPoint(doors.hut))) return { kind: 'hut' };
   for (const id of placeIds) {
@@ -233,6 +261,33 @@ export default function World() {
         </>
       );
     }
+    if (card.kind === 'ring')
+      return (
+        <>
+          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
+            SPARRING RING
+          </BodyText>
+          <BodyText style={{ fontSize: 13 }}>
+            The same friendly ring as in town: spar with Doomscroll Dave or get ready for raids.
+          </BodyText>
+          <PixelButton
+            small
+            label="TO THE RING"
+            onPress={() => navigation.isFocused() && router.push('/arena')}
+          />
+        </>
+      );
+    if (card.kind === 'chat')
+      return (
+        <>
+          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
+            {card.who.toUpperCase()}
+          </BodyText>
+          <BodyText style={{ fontSize: 14 }}>
+            “{residentLines[card.who] ?? 'hello there.'}”
+          </BodyText>
+        </>
+      );
     if (card.kind === 'garden')
       return (
         <>

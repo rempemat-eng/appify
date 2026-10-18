@@ -42,6 +42,14 @@ export const travelPoints: Partial<Record<RegionId, PlaceDef>> = {
   moon: { region: 'moon', zone: 'lumen', at: stand('lumen', 'shuttle') },
 };
 
+/** Sparring rings out in the regions: each opens the same ring screen as the town's. */
+export const rings: PlaceDef[] = [
+  { region: 'steam', zone: 'junction', at: stand('junction', 'ring') },
+  { region: 'neon', zone: 'neon', at: stand('neon', 'court') },
+  { region: 'lava', zone: 'caldera', at: stand('caldera', 'ring') },
+  { region: 'moon', zone: 'lumen', at: stand('lumen', 'sparring') },
+];
+
 /** How each journey is made, for its name on the travel card. */
 export const travelBy: Partial<Record<RegionId, string>> = {
   valley: 'THE VALLEY TRAIN',
