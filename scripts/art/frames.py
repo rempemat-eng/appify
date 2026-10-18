@@ -141,7 +141,7 @@ def _inside(s, feats, t, d):
         return best[1]
     if span and span[0] - margin <= t < span[1] + margin:
         return None
-    wob = (smooth_noise(t, 0, 9, 71) - 0.5) * 3 if step else 0
+    wob = (smooth_noise(t, 0, 14, 71) - 0.5) * 7 if step else 0
     if abs(d) < core + wob:
         return (None, 0, 0, core)
     return None
@@ -175,13 +175,19 @@ def _colour(s, feats, gx, gy, t, d, hit, inside):
     if kind in ('trees', 'willows', 'firs', 'jungle'):
         # the floor of a belt of trees: undergrowth in deep shade, a few lit sprigs;
         # the trees standing on it (props) make the belt
+        # leafy undergrowth a little darker than the open ground, its clumps lit on
+        # the upper left; the shade only along its lower-right edge
         n = smooth_noise(gx, gy, 5, 76)
-        tone = 1 if n < 0.55 else 2
-        if noise2(gx, gy, 75) > 0.9:
-            tone = 3
+        tone = 2 if n < 0.5 else 3
+        if noise2(gx, gy, 75) > 0.88:
+            tone = min(len(ramp) - 1, tone + 1)
+        if smooth_noise(gx - 1, gy - 1, 5, 76) > n + 0.04:
+            tone = max(1, tone - 1)
         if kind == 'firs' and noise2(gx // 2, gy // 2, 80) > 0.8:
             return SNOW[1] if tone < 3 else SNOW[2]
-        return ramp[0] if (out_r or out_dn) and (gx + gy) % 2 else ramp[tone]
+        if out_r or out_dn:
+            return ramp[1]
+        return ramp[tone]
     if centre is None:  # the core between features: lower, in shade
         tone = 1 + (noise2(gx // 2, gy // 2, 77) > 0.6)
     else:
