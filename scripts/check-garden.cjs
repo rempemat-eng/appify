@@ -207,7 +207,17 @@ const deps = {
     AccessibilityInfo: { announceForAccessibility: (text) => announcements.push(text) },
   },
   'react-native-reanimated': { ...anim, default: { View: 'Animated.View' } },
-  'expo-router': { router: { push: (route) => routes.push(route) } },
+  'expo-router': {
+    router: {
+      // a route given as an object is recorded as its URL
+      push: (route) =>
+        routes.push(
+          typeof route === 'string'
+            ? route
+            : `${route.pathname}?${new URLSearchParams(route.params).toString()}`,
+        ),
+    },
+  },
   'expo-haptics': { selectionAsync: async () => {} },
   '@/lib/cozy': { cozy: {} },
   '@/lib/motion': { useReducedMotion: () => reduced },
@@ -1610,7 +1620,8 @@ const placeNavigationStart = count;
 const placeRoutes = [
   ['missions', '/missions'],
   ['shop', '/shop'],
-  ['arena', '/arena'],
+  // the gate opens on the valley (living-world plan W1): out into the walkable world
+  ['arena', '/world?from=gate'],
 ];
 for (const [routeIndex, [action, expectedRoute]] of placeRoutes.entries()) {
   const [replacement, replacementRoute] = placeRoutes[(routeIndex + 1) % placeRoutes.length];

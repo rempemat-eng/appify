@@ -399,6 +399,9 @@ EFFECTS = {
     'lantern': lantern, 'boop': boop, 'munch': munch,
 }
 AMBIENCE = {'day': ambience_day, 'night': ambience_night}
+# Matt, 18 Oct: "reduce the sound effects a bit". Every effect sits 5 dB under its
+# mastered peak (players stay at volume 1; the level lives in the files).
+EFFECT_TRIM_DB = -5.0
 
 
 def write_wav(path: str, x: np.ndarray, sr: int) -> None:
@@ -415,7 +418,7 @@ def main() -> None:
     durations: dict[str, float] = {}
     entries: list[tuple[str, str, str]] = []
     for seed, (name, make) in enumerate(EFFECTS.items()):
-        x = make(np.random.default_rng(1000 + seed))
+        x = make(np.random.default_rng(1000 + seed)) * (10 ** (EFFECT_TRIM_DB / 20))
         write_wav(os.path.join(OUT, f'{name}.wav'), x, SR)
         durations[name] = round(len(x) / SR, 3)
         entries.append((name, f'{name}.wav', 'effect'))

@@ -1,6 +1,7 @@
 # C9, first slice: lossless raid currency
 
-Base: `aeeceb1ecbae77549ef0aedd1815a17ee3b8e05c` (17 October 2026).
+Integrated base: `de010bed9f9794195969c5fef3a93530e28ccdaa`
+(18 October 2026). The original slice was based on `aeeceb1`.
 This is a bounded part of approved L2/C9, not the complete economy feature.
 No artwork, visual component, backend schema or saved-data version is changed.
 
@@ -68,6 +69,26 @@ and duplicate defence delivery credited once. No real requests are made.
 unversioned balances, hats/cards/history/collection/chosen companion and unknown
 save fields. Actual feed, level and hat purchase costs still lower the wallet
 only on those chosen actions. The existing full save fixture suite remains.
+
+### Latest-main integration (18 October)
+
+This follow-up incorporates Claude's live world on the same PR, without
+rewriting its published history. All upstream art, screens, generated maps,
+sound and checks are preserved. The only authored changes beyond the original
+currency slice are four store assertions and this handoff update.
+
+The new assertions cover an unversioned wallet with an existing world spot,
+lost defence followed by reload, and attacking win/loss followed by reload.
+They keep the exact fractional wallet, world coordinates and visited zones.
+The defence case also proves that an unknown nested world field survives the
+save writer. `saveVersion` remains **1**, with Claude's optional `world` field;
+the superseded PR #19's `worldProgress`/version-2 schema is not introduced.
+Both `check:world` and the additive `check:economy` remain in the check list.
+
+Current `check:game` has 152 source integration checks. These substitute native,
+storage and backend boundaries; they do not prove native lifecycle, world
+renderer navigation or real online raid behaviour. Existing protected mission
+return and Quiet view regressions remain unchanged and run in the full suite.
 
 Exact final commit, `npm run verify`, matching CI, screenshot artifact and
 preview coverage are recorded in the PR. A mocked transport does not establish

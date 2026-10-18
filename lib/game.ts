@@ -52,6 +52,8 @@ import {
   type RecentBreak,
 } from '@/lib/break-history';
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
+import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
+import type { RegionId } from '@/lib/region-walk';
 import {
   addCard,
   daveDeck,
@@ -194,6 +196,8 @@ export type Saved = {
   collectedCards: CardId[];
   waitingVisitor: WaitingVisitor | null;
   cardReward: WelcomeReward | null;
+  /** where the companion is in the walkable world (none until it first walks out) */
+  world?: WorldSpot | null;
 };
 export type SaveLoadProblem =
   | { kind: 'unreadable'; confirmationId: string | null; busy: boolean; error: string | null }
@@ -250,6 +254,9 @@ type Game = Saved & {
   dismissCards: () => void;
   dismissAlert: () => void;
   notify: (message: string, error?: boolean) => void;
+  world: WorldSpot | null;
+  /** record where the companion stands in the world; walking grants nothing */
+  walkWorld: (region: RegionId, x: number, y: number, settle?: boolean) => void;
 };
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -333,6 +340,7 @@ function migrateSaved(value: unknown) {
   if (value.waitingVisitor === undefined) value.waitingVisitor = null;
   if (value.offDeck === undefined) value.offDeck = null;
   if (value.cardReward === undefined) value.cardReward = null;
+  value.world = restoreWorld(value.world);
   if (isRecord(value.cardReward))
     value.cardReward = {
       grass: 0,
@@ -466,6 +474,7 @@ function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakI
     collectedCards: [],
     waitingVisitor: null,
     cardReward: null,
+    world: null,
   };
 }
 function emptySession() {
@@ -605,6 +614,7 @@ function persist() {
     alerts: s.alerts,
     collectedCards: s.collectedCards,
     cardReward: s.cardReward,
+    world: s.world,
     waitingVisitor: s.waitingVisitor,
   };
   const encoded = writeSave(saved, saveSource);
@@ -847,6 +857,22 @@ export const gameStore = create<Game>((set, get) => ({
   collectedCards: [],
   cardReward: null,
   waitingVisitor: null,
+  world: null,
+  walkWorld: (region, x, y, settle = false) => {
+    const s = get();
+    if (!s.player) return;
+    const next = moveTo(s.world, region, x, y);
+    const before = s.world;
+    set({ world: next });
+    // write when a zone is first seen or the region changes; positions ride along
+    if (
+      settle ||
+      !before ||
+      before.region !== region ||
+      before.visited.length !== next.visited.length
+    )
+      void persist();
+  },
   homeTipActive: null,
   befriendVisitor: () => {
     const s = get();

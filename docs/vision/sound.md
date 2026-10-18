@@ -8,7 +8,7 @@ Sound is part of "one game, not an app with a game in it", but it stays decorati
 - **Soft and warm:** sine and triangle tones, gentle attacks, low-passed noise. No harsh square waves, no alarms. Even `raid` and `oops` are low and brief.
 - **One scale:** notes come from C major pentatonic (`NOTE` in the generator), so any two cues sound kind together.
 - **Finite:** every effect is under 2 seconds and fades to silence. Only the two garden ambience loops repeat.
-- **Loudness lives in the files.** iOS Safari ignores programmatic volume, so each file is mastered at its own level (effects peak around -13 to -23 dBFS, ambience around -24) and players always run at volume 1. There are no fades in code.
+- **Loudness lives in the files.** iOS Safari ignores programmatic volume, so each file is mastered at its own level (effects peak around -18 to -28 dBFS since 18 Oct, when Matt asked for quieter effects; ambience around -24) and players always run at volume 1. There are no fades in code.
 - **WAV, not MP3.** MP3 adds about 50 ms of encoder padding, which delays a tap and gaps a loop. Effects are tiny. The two loops are 20 s of 16 kHz mono each.
 
 | Cue                                 | Sound                            | Where it plays                                     |

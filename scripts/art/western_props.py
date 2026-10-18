@@ -408,6 +408,280 @@ def corral_side() -> Canvas:
     return cv
 
 
+def palm(tall: bool = True) -> Canvas:
+    """A date palm, 56 x 84 (or 48 x 64): a ringed, gently curved trunk lit on the left,
+    a crown of long arching fronds lit on their upper faces, and a cluster of dates."""
+    w, h = (56, 84) if tall else (48, 64)
+    cv = Canvas(w, h, pad=PAD)
+    cx = w // 2
+    top = 22 if tall else 18
+    for y in range(top, h - 1):
+        bend = int(math.sin((y - top) / (h - top) * 2.2) * 3)
+        for dx in range(-3, 3):
+            x = cx + bend + dx
+            c = WOOD[3] if dx < -1 else WOOD[2] if dx < 1 else WOOD[1]
+            if (y - top) % 4 == 0:
+                c = WOOD[1] if dx > -2 else WOOD[2]  # the rings
+            cv.set(x, y, c)
+    for k in range(12):  # fronds arching out and down from the crown
+        a = math.pi * (-0.05 + 1.1 * k / 11)
+        length = (24 if tall else 19) + (k % 2) * 3
+        for t in range(length):
+            x = cx + math.cos(a) * t * (1 if k % 2 else 0.95)
+            y = top + 6 - math.sin(a) * t * 0.85 + (t / length) ** 2 * 12
+            for side in (-1, 1):  # leaflets either side of the rib
+                lx, ly = int(x + side * 0.5), int(y + side * 1.2 + (1 if t % 3 == 0 else 0))
+                cv.set(lx, ly, CACTUS[3] if side < 0 else CACTUS[1])
+            cv.set(int(x), int(y), CACTUS[4] if t < length * 0.6 else CACTUS[2])
+    for (x, y) in disc(cx + 3, top + 4, 2.5):
+        cv.set(x, y, '#8A4A2A' if (x + y) % 2 else '#B8693F')
+    return cv
+
+
+def sandstone_arch() -> Canvas:
+    """A ruined sandstone arch, 64 x 56: two weathered piers in courses, a broken lintel,
+    sand drifted against its feet."""
+    w, h = 64, 56
+    cv = Canvas(w, h, pad=PAD)
+    for (x0, x1) in ((4, 18), (46, 60)):
+        for y in range(10, h - 4):
+            for x in range(x0, x1):
+                course = (y - 10) // 6
+                c = ADOBE[4] if x < x0 + 3 else ADOBE[3] if x < x1 - 3 else ADOBE[2]
+                if (y - 10) % 6 == 5 or (x + course * 4) % 9 == 0:
+                    c = ADOBE[1]
+                cv.set(x, y, c)
+    for y in range(4, 12):  # the lintel, broken at the right
+        for x in range(2, 50 + (y // 3)):
+            cv.set(x, y, ADOBE[4] if y < 6 else ADOBE[3] if y < 10 else ADOBE[1])
+    for (x, y) in oval(11, h - 3, 12, 4) | oval(53, h - 3, 12, 4):
+        if y >= h - 5:
+            cv.set(x, y, DESERT[4] if x < 32 else DESERT[3])
+    return cv
+
+
+def awning() -> Canvas:
+    """A traders' shade awning, 72 x 50: striped cloth on poles seen from above, rugs
+    and cushions in its shade, a brass tea tray."""
+    w, h = 72, 50
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(4, 22):
+        for x in range(2, w - 2):
+            stripe = (x // 6) % 3
+            c = ('#C2453A', '#E8D8B8', '#3E6A8A')[stripe]
+            if y > 18:
+                c = ('#9A3028', '#C8B898', '#2C4A68')[stripe]
+            cv.set(x, y, c)
+    for px in (4, w - 7):
+        gp.post(cv, px, 20, h - 2, w=2, ramp=WOOD)
+    for (x, y) in ((xx, yy) for xx in range(10, w - 10) for yy in range(30, 44)):
+        cv.set(x, y, '#8A3A2A' if (x // 4 + y // 4) % 2 else '#B8693F')
+    for (cx0, c) in ((18, '#3E6A8A'), (50, GOLD[3])):
+        for (x, y) in oval(cx0, 34, 5, 3):
+            cv.set(x, y, c)
+    for (x, y) in oval(34, 38, 5, 2.5):
+        cv.set(x, y, MATERIALS['brass'][3] if x < 34 else MATERIALS['brass'][2])
+    return cv
+
+
+def water_jar() -> Canvas:
+    """A tall clay water jar, 14 x 20, beaded with damp."""
+    cv = Canvas(14, 20, pad=PAD)
+    for (x, y) in oval(7, 12, 6, 7):
+        cv.set(x, y, ADOBE[3] if x < 6 else ADOBE[2] if x < 9 else ADOBE[1])
+    for (x, y) in oval(7, 4, 3, 1.5):
+        cv.set(x, y, ADOBE[4])
+    cv.set(5, 10, '#C6DDEE'); cv.set(4, 13, '#C6DDEE')
+    return cv
+
+
+CAMEL = ['#4E3222', '#7E5638', '#A87C52', '#C9A06E', '#E0C08E']
+
+
+def camel() -> Canvas:
+    """A camel resting with its legs folded under it, 48 x 36, seen from the side: the
+    hump lit from the upper left, a striped saddle blanket, the long neck curving up to
+    a drowsy head, the folded knees in the sand."""
+    w, h = 48, 36
+    cv = Canvas(w, h, pad=PAD)
+    body = oval(20, 24, 16, 8) | oval(18, 15, 8, 6)  # body and hump
+    for (x, y) in body:
+        k = (x - 4) / 32 + (y - 8) / 22
+        c = CAMEL[4] if k < 0.55 else CAMEL[3] if k < 0.95 else CAMEL[2] if k < 1.3 else CAMEL[1]
+        cv.set(x, y, c)
+    for y in range(12, 23):  # a woven saddle blanket over the hump, diamonds on red
+        for x in range(11, 27):
+            if (x, y) in body:
+                d = (abs(x - 18) + abs(y - 17)) % 6
+                c = '#9A3028' if x < 13 or y > 21 else '#B8443A' if d > 1 else GOLD[3] if d == 0 else '#2C2A3A'
+                cv.set(x, y, c)
+    cv.hline(11, 22, 16, GOLD[2])  # its fringe
+    for t in range(18):  # the neck, curving up and forward
+        x, y = 34 + t * 0.55, 22 - t * 0.9 + (t / 18) ** 2 * 3
+        for d in range(-1, 2 + (t < 5)):
+            cv.set(int(x + d * 0.3), int(y + d), CAMEL[3] if d < 0 else CAMEL[2] if d < 1 else CAMEL[1])
+    for (x, y) in oval(44, 7, 4, 2.5):  # the head, eyes half shut
+        cv.set(x, y, CAMEL[3] if y < 7 else CAMEL[2])
+    cv.set(47, 8, CAMEL[0]); cv.set(43, 6, CAMEL[0]); cv.set(41, 4, CAMEL[2])
+    for (kx, ky) in ((8, 31), (28, 31), (34, 30)):  # the folded knees
+        for (x, y) in oval(kx, ky, 4, 2):
+            cv.set(x, y, CAMEL[2] if x < kx else CAMEL[1])
+    for x in range(4, 8):  # the tail
+        cv.set(x - 2, 22 + (x - 4), CAMEL[1])
+    return cv
+
+
+def tent() -> Canvas:
+    """A caravan tent, 72 x 48: dark woven goat-hair cloth pitched on poles, seen from
+    above at the angle of the rest, its front panel rolled up to show the shade inside,
+    guy ropes pegged in the sand."""
+    w, h = 72, 48
+    cv = Canvas(w, h, pad=PAD)
+    cloth = ['#2A2220', '#3E3330', '#56484A', '#6E5E5C', '#8A7A72']
+    poles = (22, 50)
+    for x in range(6, w - 6):
+        near = min(poles, key=lambda p: abs(x - p))
+        d = abs(x - near)
+        top = 4 + min(9, d * d // 22)  # the cloth sags between the poles
+        if x < 14 or x > w - 15:
+            top = max(top, 10 + abs(x - (14 if x < 14 else w - 15)))  # and falls away at the ends
+        for y in range(top, 30):
+            lit = x < near  # each peak's face towards the upper left catches the sun
+            c = cloth[4] if lit and d < 6 and y < top + 6 else cloth[3] if lit else cloth[2]
+            if y > 22:
+                c = cloth[2] if lit else cloth[1]
+            if (x * 2 + y * 3) % 13 == 0:
+                c = cloth[1] if c not in (cloth[1], cloth[0]) else cloth[0]  # the weave
+            if (x // 8) % 2 and y > top + 1 and (y - top) % 9 == 0:
+                c = cloth[0]  # seams between the woven strips
+            cv.set(x, y, c)
+        cv.set(x, top, cloth[4] if x < near else cloth[3])
+    for x in range(8, w - 8):  # the rolled front edge, white-striped
+        cv.set(x, 30, '#E8D8B8' if (x // 3) % 2 else cloth[3])
+        cv.set(x, 31, cloth[2])
+    for y in range(32, 42):  # the shade inside, rugs and a cushion
+        for x in range(12, w - 12):
+            c = '#1E1614' if y < 34 else ('#8A3A2A' if (x // 4 + y // 4) % 2 else '#B8693F')
+            cv.set(x, y, c)
+    for (x, y) in oval(24, 37, 4, 2):
+        cv.set(x, y, GOLD[3] if x < 24 else GOLD[2])
+    for px in (12, 36, w - 13):
+        gp.post(cv, px, 28, 42, w=1, ramp=WOOD)
+    for (x0, y0, x1, y1) in ((6, 12, 1, 4), (w - 7, 12, w - 2, 4), (6, 26, 1, 40), (w - 7, 26, w - 2, 40)):
+        for t in range(9):
+            cv.set(int(x0 + (x1 - x0) * t / 8), int(y0 + (y1 - y0) * t / 8), MATERIALS['rope'][2])
+    return cv
+
+
+def fire_pit() -> Canvas:
+    """A ring of stones round the embers of a small fire, 20 x 14, a teapot warming."""
+    cv = Canvas(20, 14, pad=PAD)
+    for k in range(10):
+        a = 2 * math.pi * k / 10
+        x, y = 10 + math.cos(a) * 7, 8 + math.sin(a) * 4
+        for (sx, sy) in disc(x, y, 1.6):
+            cv.set(sx, sy, STONE[3] if sy < y else STONE[1])
+    for (x, y) in oval(10, 8, 4, 2):
+        cv.set(x, y, '#3A2A22' if (x + y) % 2 else '#7A1A08')
+    cv.set(9, 8, '#F2721E'); cv.set(11, 7, '#FFB648'); cv.set(10, 9, '#C2380E')
+    for (x, y) in oval(15, 4, 2.5, 2):
+        cv.set(x, y, MATERIALS['brass'][3] if x < 15 else MATERIALS['brass'][1])
+    cv.set(18, 3, MATERIALS['brass'][2])
+    return cv
+
+
+def column_stump(seed: int = 0) -> Canvas:
+    """A broken sandstone column, 16 x 26: fluted drums lit on the left, a jagged break
+    at the top, one fallen drum and sand drifted at its foot."""
+    cv = Canvas(16, 26, pad=PAD)
+    top = 4 + seed % 3
+    for y in range(top, 23):
+        for x in range(3, 12):
+            c = ADOBE[4] if x < 5 else ADOBE[3] if x < 9 else ADOBE[2]
+            if (x - 3) % 3 == 2:
+                c = ADOBE[2] if x < 9 else ADOBE[1]  # flutes
+            if (y - top) % 7 == 6:
+                c = ADOBE[1]
+            cv.set(x, y, c)
+    for x in range(3, 12):  # the break
+        for y in range(top - 2 + int(noise2(x, seed, 470) * 3), top + 1):
+            cv.set(x, y, ADOBE[4] if x < 8 else ADOBE[3])
+    for (x, y) in oval(8, 23, 7, 2.5):
+        if y >= 23:
+            cv.set(x, y, DESERT[4] if x < 8 else DESERT[3])
+    return cv
+
+
+def papyrus() -> Canvas:
+    """A clump of papyrus by the water, 22 x 28: tall stems ending in green tufts."""
+    cv = Canvas(22, 28, pad=PAD)
+    for k in range(7):
+        bx = 5 + k * 2
+        lean = (k - 3) * 0.35
+        top = 6 + (k * 5) % 7
+        for y in range(top, 27):
+            cv.set(int(bx + lean * (27 - y) / 4), y, CACTUS[2] if k % 2 else CACTUS[3])
+        tx = int(bx + lean * (27 - top) / 4)
+        for (x, y) in disc(tx, top - 1, 2.6):
+            cv.set(x, y, CACTUS[4] if x <= tx and y < top else CACTUS[3] if (x + y) % 2 else CACTUS[2])
+    return cv
+
+
+def shaduf() -> Canvas:
+    """A shaduf, 56 x 52: the old lever for lifting water, a long pole balanced on a mud
+    pillar with a stone counterweight at one end and a leather bucket on a rope at the
+    other."""
+    w, h = 56, 52
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(22, h - 2):  # the pillar
+        for x in range(20, 28):
+            c = ADOBE[3] if x < 22 else ADOBE[2] if x < 26 else ADOBE[1]
+            if (y + (x // 4) * 3) % 8 == 0:
+                c = ADOBE[1]
+            cv.set(x, y, c)
+    for x in range(19, 29):
+        cv.set(x, 21, ADOBE[4])
+    for t in range(50):  # the pole, high over the water end
+        x, y = 2 + t, 30 - t * 0.5
+        cv.set(int(x), int(y), WOOD[3]); cv.set(int(x), int(y) + 1, WOOD[1])
+    for (x, y) in disc(5, 30, 4):
+        cv.set(x, y, STONE[3] if x + y < 33 else STONE[1])
+    for y in range(6, 30):
+        cv.set(51, y, MATERIALS['rope'][2])
+    for (x, y) in oval(51, 32, 3.5, 3):
+        cv.set(x, y, '#6A3E26' if x < 51 else '#4A2A1A')
+    cv.hline(48, 30, 7, '#8A5A3A')
+    return cv
+
+
+
+def water_crane() -> Canvas:
+    """A railway water crane, 34 x 56: an iron standpipe on a stone plinth, its arm
+    swung out over the line with a canvas drop hose, a wheel valve, a red cap. The pipe
+    under the sand brings it water from the spring."""
+    w, h = 34, 56
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(46, 54):
+        for x in range(6, 22):
+            cv.set(x, y, STONE[4] if y == 46 else STONE[3] if x < 9 else STONE[2] if x < 19 else STONE[1])
+    for y in range(10, 46):
+        for x in range(11, 17):
+            cv.set(x, y, IRON[4] if x == 11 else IRON[3] if x < 14 else IRON[2] if x < 16 else IRON[1])
+        if y % 12 == 0:
+            cv.hline(10, y, 8, IRON[1])
+    for x in range(8, 32):  # the arm
+        for y in range(10, 14):
+            cv.set(x, y, IRON[3] if y == 10 else IRON[2] if y < 13 else IRON[0])
+    for y in range(14, 30):  # the drop hose
+        cv.set(29, y, '#8A7A5A' if y % 3 else '#6E6046'); cv.set(30, y, '#6E6046')
+    for (x, y) in disc(14, 6, 3):
+        cv.set(x, y, RED[3] if x + y < 20 else RED[1])
+    for k in range(12):
+        a = 2 * math.pi * k / 12
+        cv.set(int(round(19 + math.cos(a) * 3)), int(round(30 + math.sin(a) * 3)), RED[2])
+    cv.set(19, 30, IRON[1]); cv.hline(17, 30, 2, IRON[1])
+    return cv
+
 def props() -> dict[str, Canvas]:
     return {
         'saloon': false_front(104, 0, RED, 'saloon'), 'store': false_front(88, 3, WTR, 'store'),
@@ -416,6 +690,10 @@ def props() -> dict[str, Canvas]:
         'cow_skull': cow_skull(), 'mine_portal': mine_portal(), 'dry_well': dry_well(), 'keg': keg(),
         'hay_bale': hay_bale(), 'dynamite_crate': dynamite_crate(), 'hitching_rail': hitching_rail(),
         'poster_board': poster_board(), 'corral_side': corral_side(), 'corral_rail': corral_rail(),
+        'palm': palm(True), 'palm_small': palm(False), 'sandstone_arch': sandstone_arch(), 'awning': awning(),
+        'water_jar': water_jar(), 'camel': camel(), 'tent': tent(), 'fire_pit': fire_pit(),
+        'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
+        'water_crane': water_crane(),
     }
 
 

@@ -702,7 +702,8 @@ export function GardenWorld({
         router.push('/missions');
         break;
       case 'arena':
-        router.push('/arena');
+        // the gate opens on the valley: walk on out into the world
+        router.push({ pathname: '/world', params: { from: 'gate' } });
         break;
       case 'feed':
         if (playPaused() || p.mood >= 100 || p.grass < 5) {

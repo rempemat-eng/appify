@@ -431,12 +431,236 @@ def tea_kiosk() -> Canvas:
     return cv
 
 
+BOAT_GREEN = ['#12261E', '#1E3E30', '#2C5A44', '#3E7A5A', '#5A9A72']
+
+
+def narrowboat() -> Canvas:
+    """A steam narrowboat moored on the canal, 112 x 34, side on and a little from
+    above: a long bottle-green hull with a red and gold rubbing strake, a cabin roof
+    with a brass funnel (its steam comes from the zone's life layer), round warm
+    portholes, a painted panel of abstract flowers, coal heaped in the open bow, a
+    tiller at the stern and a coil of rope."""
+    w, h = 112, 34
+    cv = Canvas(w, h, pad=PAD)
+    for x in range(4, w - 4):
+        bow = max(0, 18 - x) ** 2 // 30 + max(0, x - (w - 10)) ** 2 // 10
+        for y in range(18 + bow // 3, 30):
+            c = BOAT_GREEN[3] if y < 21 else BOAT_GREEN[2] if y < 26 else BOAT_GREEN[1]
+            if y in (22, 23):
+                c = RED[3] if y == 22 else GOLD[3]
+            cv.set(x, y, c)
+        cv.set(x, 30, BOAT_GREEN[0])
+    for x in range(30, w - 16):  # the cabin
+        for y in range(8, 18):
+            c = BOAT_GREEN[4] if y < 10 else BOAT_GREEN[3] if y < 14 else BOAT_GREEN[2]
+            cv.set(x, y, c)
+        cv.set(x, 8, WOOD[4] if x % 2 else WOOD[3])  # the planked roof's edge
+    for px in range(40, w - 22, 14):
+        porthole(cv, px, 13, 2.6)
+    for y in range(10, 17):  # the painted panel
+        for x in range(78, 92):
+            c = RED[3] if (x - 85) ** 2 + (y - 13) ** 2 < 6 else GOLD[3] if (x + y) % 5 == 0 else '#E8D8B8'
+            cv.set(x, y, c)
+    for y in range(0, 9):  # the funnel
+        for x in range(46, 51):
+            cv.set(x, y, BRASS[4] if x < 48 else BRASS[2])
+    cv.hline(45, 0, 7, BRASS[5])
+    for (x, y) in oval(14, 18, 8, 3):  # coal in the bow
+        cv.set(x, y, IRON[1] if (x + y) % 2 else IRON[0])
+    for t in range(10):  # the tiller
+        cv.set(w - 10 + t // 2, 16 - t // 2, WOOD[3])
+    for (x, y) in oval(w - 22, 17, 3, 1.5):
+        cv.set(x, y, MATERIALS['rope'][2] if (x + y) % 2 else MATERIALS['rope'][3])
+    return cv
+
+
+def canal_crane() -> Canvas:
+    """A hand-cranked iron jib crane on a brick plinth, 52 x 66: a lattice jib swung out
+    over the water with a hook and a crate on its chain, a geared winch drum lit in
+    brass."""
+    w, h = 52, 66
+    cv = Canvas(w, h, pad=PAD)
+    brick_wall(cv, 4, 50, 22, 14, seed=12)
+    cv.hline(4, 50, 22, STONE[4])
+    for y in range(14, 50):  # the post
+        for x in range(12, 18):
+            cv.set(x, y, IRON[4] if x == 12 else IRON[3] if x < 15 else IRON[1])
+    for t in range(36):  # the jib, a lattice out to the right
+        x = 15 + t
+        top, bot = 12 + t // 6, 18 - t // 8
+        cv.set(x, top, IRON[4]); cv.set(x, top + 1, IRON[2])
+        if t < 30:
+            cv.set(x, bot + t // 3, IRON[2])
+        if t % 6 == 0:
+            for k in range(bot + t // 3 - top):
+                cv.set(x + k // 3, top + k, IRON[2])
+    for y in range(20, 40):
+        cv.set(48, y, IRON[1])
+    for (x, y) in rect_set(43, 40, 11, 9):
+        cv.set(x, y, WOOD[4] if y == 40 else WOOD[3] if x < 47 else WOOD[2])
+    cv.vline(48, 41, 7, WOOD[1])
+    gear(cv, 20, 34, 5, BRASS, teeth=8)
+    return cv
+
+
+def foundry() -> Canvas:
+    """The foundry, 144 x 108: a long brick hall under a sawtooth roof of copper slopes
+    and glazed north lights glowing with the furnace, two tall brick chimneys, a great
+    arched doorway open on molten orange, a crucible track and a pile of moulds."""
+    w, h = 144, 108
+    cv = Canvas(w, h, pad=PAD)
+    for k in range(4):  # the sawtooth bays
+        x0 = 6 + k * 33
+        for x in range(x0, x0 + 33):
+            t = (x - x0) / 33
+            top = int(30 - t * 16)
+            for y in range(top, 46):
+                if t > 0.82:
+                    c = WARM[3] if (y // 3) % 2 else WARM[2]  # the glazing, lit from inside
+                    if (x - x0) % 3 == 0:
+                        c = IRON[1]
+                else:
+                    c = COPPER[3] if t < 0.2 else COPPER[2] if t < 0.6 else COPPER[1]
+                    if (x - x0) % 6 == 0:
+                        c = COPPER[4]
+                cv.set(x, y, c)
+            cv.set(x, top, COPPER[4] if t < 0.82 else IRON[2])
+    for (cx, top) in ((22, 0), (118, 6)):  # chimneys
+        for y in range(top, 40):
+            for x in range(cx, cx + 10):
+                c = BRICK[4] if x < cx + 2 else BRICK[3] if x < cx + 7 else BRICK[1]
+                if (y + (x // 4) * 2) % 4 == 0:
+                    c = BRICK[1] if x < cx + 7 else BRICK[0]
+                cv.set(x, y, c)
+        cv.hline(cx - 1, top, 12, STONE[4]); cv.hline(cx - 1, top + 1, 12, IRON[1])
+    brick_wall(cv, 6, 46, w - 12, 52, seed=21)
+    cv.hline(6, 46, w - 12, BRASS[4]); cv.hline(6, 47, w - 12, IRON[1])
+    for wx in range(14, w - 14, 22):  # tall arched windows, furnace-lit
+        if 50 < wx < 92:
+            continue
+        for (x, y) in rect_set(wx, 56, 8, 20) | {(x, y) for (x, y) in disc(wx + 4, 56, 4) if y < 56}:
+            cv.set(x, y, WARM[3] if y < 62 else WARM[2] if y < 70 else '#C2380E')
+        cv.vline(wx + 4, 52, 24, IRON[1])
+    door = {(x, y) for (x, y) in disc(72, 70, 16) if y < 70} | rect_set(56, 70, 32, 28)
+    for (x, y) in door:
+        d = abs(x - 72) / 16 + (98 - y) / 50
+        c = '#FFE9A0' if d < 0.45 else '#FFB648' if d < 0.75 else '#F2721E' if d < 1.0 else '#C2380E'
+        cv.set(x, y, c)
+    for (x, y) in door:
+        if (x - 1, y) not in door or (x + 1, y) not in door or (x, y - 1) not in door:
+            cv.set(x, y, BRICK[4] if x < 72 else BRICK[1])
+    for (x, y) in oval(72, 92, 6, 3):  # a crucible pouring
+        cv.set(x, y, IRON[1])
+    cv.hline(69, 90, 6, '#FFE9A0')
+    detail.stones(cv, 4, 98, w - 8, 8, STONE, seed=23, course=4)
+    for k, (mx, my) in enumerate(((108, 92), (116, 94), (124, 91))):  # moulds
+        for (x, y) in oval(mx, my, 4, 2.5):
+            cv.set(x, y, IRON[3] if x < mx else IRON[1])
+    return cv
+
+
+def tube_station() -> Canvas:
+    """The atmospheric railway's terminus, 80 x 70: Cogsworth's end of the maglev from
+    Neon Harbour, built the Cogsworth way. A glass-and-brass dome over a round booking
+    hall, ribbed in brass, warm inside; the brass tube leaves from its east side."""
+    w, h = 80, 70
+    cv = Canvas(w, h, pad=PAD)
+    cx = 38
+    for y in range(4, 36):  # the dome
+        half = int(math.sqrt(max(0, 1 - ((36 - y) / 32) ** 2)) * 30)
+        for x in range(cx - half, cx + half + 1):
+            rib = (x - cx) % 8 == 0 or (y - 4) % 9 == 0
+            k = (x - cx) / max(1, half)
+            c = BRASS[3] if rib and k < 0 else BRASS[1] if rib else (WARM[3] if k < -0.5 else WARM[2] if k < 0.3 else WARM[1])
+            if not rib and y < 12:
+                c = SNOW[2] if k < 0 else SNOW[1]  # the glass catches the sky near the top
+            cv.set(x, y, c)
+    cv.vline(cx, 0, 5, BRASS[4]); cv.set(cx, 0, BRASS[5])
+    for y in range(36, 62):  # the drum wall
+        for x in range(cx - 30, cx + 31):
+            k = (x - cx) / 30
+            c = BRASS[4] if k < -0.7 else BRASS[3] if k < 0 else BRASS[2] if k < 0.7 else BRASS[1]
+            if y in (36, 37):
+                c = BRASS[5] if y == 36 else IRON[1]
+            cv.set(x, y, c)
+    for px in (cx - 18, cx + 18):
+        porthole(cv, px, 46, 4)
+    for (x, y) in rect_set(cx - 7, 44, 14, 18):  # the door
+        cv.set(x, y, IRON[2] if x < cx else IRON[1])
+    cv.hline(cx - 8, 43, 16, BRASS[5])
+    for y in range(40, 56):  # the tube leaving east
+        for x in range(cx + 30, w - 1):
+            k = (y - 40) / 16
+            cv.set(x, y, BRASS[4] if k < 0.2 else BRASS[3] if k < 0.5 else BRASS[2] if k < 0.85 else BRASS[1])
+            if (x - cx) % 10 == 0:
+                cv.set(x, y, IRON[1])  # its flanges
+    detail.stones(cv, cx - 32, 62, 64, 6, STONE, seed=29, course=3)
+    return cv
+
+
+def atmos_car() -> Canvas:
+    """A capsule car on the atmospheric line, 64 x 26: a riveted brass shell with
+    portholes, riding on top of its tube."""
+    w, h = 64, 26
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(32, 12, 29, 9):
+        k = (y - 3) / 18
+        c = BRASS[5] if k < 0.15 else BRASS[4] if k < 0.4 else BRASS[3] if k < 0.7 else BRASS[2]
+        if (x % 9 == 0) and k > 0.2:
+            c = BRASS[1]
+        cv.set(x, y, c)
+    for px in range(14, 56, 9):
+        porthole(cv, px, 11, 2.4)
+    for x in range(6, 58):
+        cv.set(x, 21, IRON[1]); cv.set(x, 22, IRON[2] if x % 4 else IRON[3])
+    return cv
+
+
+def automaton() -> Canvas:
+    """A clockwork gardener, 26 x 44: a round brass head with one warm eye, a barrel
+    body with a key in its back, jointed arms holding a watering can."""
+    w, h = 26, 44
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in disc(12, 8, 6):
+        cv.set(x, y, BRASS[4] if x + y < 18 else BRASS[2])
+    cv.set(14, 8, WARM[3]); cv.set(15, 8, WARM[2])
+    for y in range(14, 32):
+        for x in range(6, 19):
+            k = (x - 6) / 12
+            cv.set(x, y, COPPER[3] if k < 0.3 else COPPER[2] if k < 0.75 else COPPER[1])
+        if y % 5 == 0:
+            cv.hline(6, y, 13, BRASS[3])
+    gear(cv, 4, 22, 2.5, BRASS, teeth=6, hub=False)  # the key
+    for y in range(32, 42):
+        cv.set(9, y, IRON[3]); cv.set(15, y, IRON[2])
+    cv.hline(7, 42, 4, IRON[1]); cv.hline(13, 42, 4, IRON[1])
+    for t in range(6):  # an arm out to the can
+        cv.set(18 + t // 2, 18 + t, IRON[3])
+    for (x, y) in rect_set(19, 24, 6, 5):
+        cv.set(x, y, '#5A7A8A' if x < 22 else '#3E5A6A')
+    cv.set(25, 23, '#5A7A8A'); cv.set(25, 26, SNOW[2])
+    return cv
+
+
+def cloche() -> Canvas:
+    """A glass bell cloche over a seedling, 14 x 12, brass knob on top."""
+    cv = Canvas(14, 12, pad=PAD)
+    for (x, y) in oval(7, 7, 6, 5):
+        if y <= 9:
+            cv.set(x, y, SNOW[3] if x < 5 and y < 6 else '#9AB8B0' if x < 9 else '#6E8A86')
+    cv.set(7, 1, BRASS[4])
+    cv.set(6, 7, '#62995E'); cv.set(8, 7, '#447A50'); cv.set(7, 8, '#447A50')
+    cv.hline(1, 10, 13, '#3A2A22')
+    return cv
+
 def props() -> dict[str, Canvas]:
     return {
         'workshop': workshop(), 'workshop_round': workshop(80, sign='round'), 'clock_tower': clock_tower(),
         'locomotive': locomotive(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
         'gear_pile': gear_pile(), 'iron_bench': iron_bench(), 'steamer_trunk': steamer_trunk(),
         'coal_cart': coal_cart(), 'airship_mast': airship_mast(), 'tea_kiosk': tea_kiosk(),
+        'narrowboat': narrowboat(), 'canal_crane': canal_crane(), 'foundry': foundry(), 'tube_station': tube_station(),
+        'atmos_car': atmos_car(), 'automaton': automaton(), 'cloche': cloche(),
     }
 
 

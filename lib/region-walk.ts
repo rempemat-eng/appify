@@ -1,5 +1,5 @@
-import { GARDEN, gardenWalk } from './garden-map';
-import { ZONE, regionLayout, zoneIds, zoneMaps, type ZoneId } from './zone-maps';
+import { GARDEN, gardenWalk } from '@/lib/garden-map';
+import { ZONE, regionLayout, zoneIds, zoneMaps, type ZoneId } from '@/lib/zone-maps';
 
 /**
  * One walk grid for a whole region (world-atlas.md, "Seamless travel"): each zone's

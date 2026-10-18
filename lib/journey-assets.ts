@@ -18,6 +18,9 @@ import neonNear from '@/assets/journeys/neon-near.png';
 import spaceSky from '@/assets/journeys/space-sky.png';
 import spaceFar from '@/assets/journeys/space-far.png';
 import spaceNear from '@/assets/journeys/space-near.png';
+import moonSky from '@/assets/journeys/moon-sky.png';
+import moonFar from '@/assets/journeys/moon-far.png';
+import moonNear from '@/assets/journeys/moon-near.png';
 import engine from '@/assets/journeys/engine.png';
 import carriage from '@/assets/journeys/carriage.png';
 import capsule from '@/assets/journeys/capsule.png';
@@ -40,6 +43,7 @@ export const journeyLayers: Record<
   lava: { sky: lavaSky, far: lavaFar, near: lavaNear, above: '#2A0E0A', below: '#3A3634' },
   neon: { sky: neonSky, far: neonFar, near: neonNear, above: '#140E28', below: '#100E1A' },
   space: { sky: spaceSky, far: spaceFar, near: spaceNear, above: '#05060C', below: '#05060C' },
+  moon: { sky: moonSky, far: moonFar, near: moonNear, above: '#05060C', below: '#2A2838' },
 };
 export const journeyVehicles: Record<
   string,

@@ -480,6 +480,45 @@ export function Pet({
           },
     { left: 31, right: 0, top: 31 },
   );
+  // Where each art pixel is drawn this frame. Walking is a four-frame cycle: a foot
+  // steps forward and lifts on the contact frames, the body rises a pixel on the
+  // passing frames, and the head (ears, leaves, hat) follows one frame late, so the
+  // body squashes and stretches a little and the head bobs after it (secondary motion).
+  // The whole body leans a pixel into the step on contact.
+  const headLine = bodyBounds.top + 7;
+  const headLift = canWalk && (walkFrame === 0 || walkFrame === 2) && headroom ? -1 : 0;
+  const lean = canWalk && (walkFrame === 0 || walkFrame === 2) ? 1 : 0;
+  const place = (rx: number, ry: number, color: string) => {
+    const shadow = groundShadow && ry >= 30 && color === c.stone;
+    const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
+    const leftStep = canWalk && walkFrame === 0 && rx < 17;
+    const rightStep = canWalk && walkFrame === 2 && rx >= 17;
+    const stepping = foot && (leftStep || rightStep);
+    const head = !foot && !shadow && ry < headLine;
+    const drawX = stepping ? rx + (leftStep ? -1 : 1) : !foot && !shadow && head ? rx + lean : rx;
+    const drawY =
+      curled && sleeping
+        ? 7 + Math.floor((ry * 24) / 32)
+        : canWalk && !shadow
+          ? ry + (head ? headLift : bodyLift) - (stepping ? 1 : 0)
+          : canIdle && breath && ry >= 16 && !shadow
+            ? ry - 1
+            : ry;
+    return { drawX, drawY };
+  };
+  // A puff of dust kicked up behind the stepping foot (two pale pixels, then gone).
+  const dust =
+    canWalk && groundShadow && (walkFrame === 0 || walkFrame === 2)
+      ? walkFrame === 0
+        ? [
+            { x: 4, y: 29 },
+            { x: 3, y: 28 },
+          ]
+        : [
+            { x: 5, y: 30 },
+            { x: 3, y: 29 },
+          ]
+      : [];
   const poseMotion = useAnimatedStyle(() => {
     const staticX = gardenPoseKind === 'nestle' ? 0 : gardenPoseKind === 'ponder' ? -1 : 1;
     const staticY = gardenPoseKind === 'ponder' ? 0 : 1;
@@ -527,20 +566,7 @@ export function Pet({
               {pixels
                 .filter((pixel) => !canPose || pixel.y < 27)
                 .map(({ x: rx, y: ry, color }) => {
-                  const shadow = groundShadow && ry >= 30 && color === c.stone;
-                  const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
-                  const leftStep = canWalk && walkFrame === 0 && rx < 17;
-                  const rightStep = canWalk && walkFrame === 2 && rx >= 17;
-                  const stepping = foot && (leftStep || rightStep);
-                  const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
-                  const drawY =
-                    curled && sleeping
-                      ? 7 + Math.floor((ry * 24) / 32)
-                      : canWalk && !shadow
-                        ? ry + bodyLift - (stepping ? 1 : 0)
-                        : canIdle && breath && ry >= 16 && !shadow
-                          ? ry - 1
-                          : ry;
+                  const { drawX, drawY } = place(rx, ry, color);
                   return (
                     <Rect
                       key={`${rx}-${ry}`}
@@ -560,6 +586,17 @@ export function Pet({
                     />
                   );
                 })}
+              {dust.map((d) => (
+                <Rect
+                  key={`dust-${d.x}-${d.y}`}
+                  x={d.x}
+                  y={d.y}
+                  width={1}
+                  height={1}
+                  fill="#E8DCC0"
+                  opacity={0.7}
+                />
+              ))}
               {((canIdle && idle === 'yawn') || yawning) && (
                 <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
               )}
@@ -639,20 +676,7 @@ export function Pet({
               {pixels
                 .filter((pixel) => !canPose || pixel.y < 27)
                 .map(({ x: rx, y: ry, color }) => {
-                  const shadow = groundShadow && ry >= 30 && color === c.stone;
-                  const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
-                  const leftStep = canWalk && walkFrame === 0 && rx < 17;
-                  const rightStep = canWalk && walkFrame === 2 && rx >= 17;
-                  const stepping = foot && (leftStep || rightStep);
-                  const drawX = stepping ? rx + (leftStep ? -1 : 1) : rx;
-                  const drawY =
-                    curled && sleeping
-                      ? 7 + Math.floor((ry * 24) / 32)
-                      : canWalk && !shadow
-                        ? ry + bodyLift - (stepping ? 1 : 0)
-                        : canIdle && breath && ry >= 16 && !shadow
-                          ? ry - 1
-                          : ry;
+                  const { drawX, drawY } = place(rx, ry, color);
                   return (
                     <Rect
                       key={`${rx}-${ry}`}
@@ -672,6 +696,17 @@ export function Pet({
                     />
                   );
                 })}
+              {dust.map((d) => (
+                <Rect
+                  key={`dust-${d.x}-${d.y}`}
+                  x={d.x}
+                  y={d.y}
+                  width={1}
+                  height={1}
+                  fill="#E8DCC0"
+                  opacity={0.7}
+                />
+              ))}
               {((canIdle && idle === 'yawn') || yawning) && (
                 <Rect x={21} y={22} width={3} height={3} fill={c.ink} />
               )}

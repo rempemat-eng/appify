@@ -45,32 +45,50 @@ Matt: "make sure different worlds are as detailed as i instructed you to be and 
 
 ## Zones drawn so far (17 Oct)
 
-All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNGs in `assets/zones/<id>/`, each checked for reachability on foot, blocked water, lava and walls, and (outside the valley) region-only props. Not yet walkable in the app: that comes with the zone engine (W1).
+All drawn by `scripts/art/zones.py` at 320 x 576 (the garden's size), ground PNGs in `assets/zones/<id>/`, each checked for reachability on foot, blocked water, lava and walls, and (outside the valley) region-only props. Walkable as a preview at `/world` (W1 prototype); not yet linked from the game.
 
-| Zone               | Region       | Joins                                                                               |
-| ------------------ | ------------ | ----------------------------------------------------------------------------------- |
-| Woodland           | Valley       | east: the garden (orchard walk, stream, bluff)                                      |
-| Riverside          | Valley       | west: the garden (stream, bluff)                                                    |
-| Crossroads Town    | Valley       | north: the garden gate road; east: Town Park; south: Driftwood Harbour              |
-| Town Park          | Valley       | west: Crossroads Town street                                                        |
-| Driftwood Harbour  | Valley coast | north: Crossroads Town road; east: Hearthold Castle (cliff path, water, breakwater) |
-| Hearthold Castle   | Valley coast | west: Driftwood Harbour                                                             |
-| Cogsworth Junction | Steam        | by train from Crossroads Town                                                       |
-| Dust Gulch         | Western      | by train from Cogsworth; south-west track to the oasis; mine cart to the caldera    |
-| Ember Caldera      | Lava         | mine cart tunnel from Dust Gulch                                                    |
-| Neon Harbour       | Cyberpunk    | maglev from Cogsworth                                                               |
-| Halcyon Station    | Space        | space elevator from Neon Harbour; shuttle hatch to Lumen                            |
-| Lumen              | Space        | shuttle from Halcyon                                                                |
+| Zone               | Region       | Joins                                                                                                |
+| ------------------ | ------------ | ---------------------------------------------------------------------------------------------------- |
+| Woodland           | Valley       | east: the garden (orchard walk, stream, bluff)                                                       |
+| Riverside          | Valley       | west: the garden (stream, bluff)                                                                     |
+| Crossroads Town    | Valley       | north: the garden gate road; east: Town Park; south: Driftwood Harbour                               |
+| Town Park          | Valley       | west: Crossroads Town street                                                                         |
+| Driftwood Harbour  | Valley coast | north: Crossroads Town road; east: Hearthold Castle (cliff path, water, breakwater)                  |
+| Hearthold Castle   | Valley coast | west: Driftwood Harbour                                                                              |
+| Snowy Ridge        | Valley       | south: the garden (the ridge trail through the treeline)                                             |
+| Valley Halt        | Valley       | east: Crossroads Town (west lane); the train to Cogsworth leaves here                                |
+| Cogsworth Junction | Steam        | by train from Crossroads Town                                                                        |
+| Cogsworth Canal    | Steam        | north: Cogsworth Junction (the lane through the pipe wall); atmospheric line to Neon's Skyport       |
+| Dust Gulch         | Western      | by train from Cogsworth; west: the oasis (street, dry creek, railway); mine cart to the caldera      |
+| Desert Oasis       | Western      | east: Dust Gulch (street, dry creek, railway and ground continue across)                             |
+| Ember Caldera      | Lava         | mine cart tunnel from Dust Gulch                                                                     |
+| Cinder Springs     | Lava         | west: Ember Caldera (lava lake, lava river, ash and the flagstone path continue)                     |
+| Neon Harbour       | Cyberpunk    | maglev from Cogsworth                                                                                |
+| Skyport            | Cyberpunk    | west: Neon Harbour (street, quay, water and rain continue); maglev to Cogsworth; elevator to Halcyon |
+| Halcyon Station    | Space        | space elevator from Neon Harbour; shuttle hatch to Lumen                                             |
+| Lumen              | Space        | shuttle from Halcyon                                                                                 |
 
-Still to draw: the Snowy Ridge north of the garden (it needs a trail through the garden's treeline, done with W3), the Desert Oasis, and the station stops for the train, maglev and elevator in the zones they leave from.
+Every journey now leaves from a drawn stop: the valley train from Valley Halt, the Cogsworth train at the junction platform, the maglev between the Skyport and the atmospheric terminus on Cogsworth Canal, the mine cart in Dust Gulch, the elevator from the Skyport's anchor.
 
-**How borders meet.** No prop crosses a border with a neighbour. A road that crosses a border keeps its x (or y) and width and is painted on past the edge, so neither side draws a turf edge there (`paint_road` and the garden's path painter both treat pixels beyond the edge as road). Water, banks and bluffs continue on the same line (the Riverside and the Woodland reuse the garden's stream function with an x offset). Where the ground differs, the side that changes dithers into its neighbour's ground over the last 56 pixels (the Woodland's forest floor into the garden's grass).
+**Cogsworth Canal is the working side of the steam town, not the square again.** The junction is a cobbled square of workshops and a clock tower; the canal has water and industry: a towpath of setts, an iron bridge, a steam narrowboat by a jib crane, a lock with black-and-white balance beams, the foundry under its sawtooth roof with the pour glowing through its door, and the brass-and-glass terminus where the maglev from Neon arrives as an atmospheric railway (the two cities meeting in each other's style). At the bottom, allotments warmed by the foundry's waste steam, tended by a clockwork gardener. Its own props: narrowboat, canal crane, foundry, tube station, atmospheric car, automaton, cloches.
+
+**Cinder Springs is where the fire country rests, not more lava field.** The caldera is crust, columns and the forge; the springs are a staircase of hot-spring terraces (milky turquoise pools held by scalloped cream travertine lips, orange mats round the hottest, each spilling into the next), a hot stream that hisses where it meets the end of the caldera's lava river, sulphur round the fumaroles, fireweed (the first plant back on burnt ground), and a lantern-lit path to a bathhouse of charred cedar. Its own props: bathhouse, fireweed, stone lanterns.
+
+**Halcyon Station has rooms now.** Bulkheads with lit doorways divide the arrival hall (hydroponic troughs, hazard stripes at the elevator's airlock), the atrium (garden pods, the low-gravity ring), the sleep bay on soft carpet with lockers, the galley on warm deck boards (a round table, tea), the navigation consoles and the shuttle hatch, and the lounge under the viewports (benches, books, a telescope). The hull is closed: Lumen is its own region, reached by shuttle (the atlas plays the climb), never on foot through the wall.
+
+**Lumen ends the journey in the Dream Grove.** Footprints wind down from the shuttle's scorched pad past boulders with hard airless shadows, rayed craters, a rille and a ring of crystals round the sparring crater, to a wide crater carpeted in glowing moss round the sleeping tree, with dream pools, glowing caps and a hammock slung between two crystal spires: the deepest rest. Its own props: moon tree, hammock, moon rocks, glow caps.
+
+**The Skyport is where the city's noise stops.** Neon Harbour's wet street runs in and ends at a quiet drop-off loop round a tree; the dark tiles give way (an ordered dither over the first 56 pixels) to pale polished slabs. The maglev waits on a white guideway along the north; a concourse with departure pylons, ticket gates you walk through, benches and living trees leads to a pier and the anchor out in the harbour, where the elevator's ribbon climbs out of sight. Brighter and calmer than the street: the way up and out, in keeping with the journey from screens back to rest. Its own props: maglev, tether, ticket gates, departure pylons, pod trees, sky benches, luggage bots.
+
+**The Desert Oasis is its own place, not the gulch again.** The gulch is a flat town on cracked hardpan; the oasis is a sea of sculpted dunes (lit windward faces with ripples, a sharp crest, a shaded slip face) round a hollow where a spring fills a clear pool, with stone steps, papyrus, a shaduf and palms. It explains the gulch: the gulch's dry creek was the pool's overflow until a dune crept over the outlet, and the drift still lies across the bed. The gulch's wagon track ends at a caravan camp (tent, resting camels, a fire with tea), the railway runs on west past a water crane piped from the spring, and an older town lies half-buried in the south-west (you walk through its arch). Its own props: palms, papyrus, shaduf, tent, camel, fire pit, water crane, column stumps, awning, jars.
+
+**How borders meet.** No prop crosses a border with a neighbour (the generator fails if one does; a tall prop may rise up to 48 px over a north border only where nothing stands in the zone behind). Every door faces open, reachable ground with nothing standing in front of it (also checked). A road that crosses a border keeps its x (or y) and width and is painted on past the edge, so neither side draws a turf edge there (`paint_road` and the garden's path painter both treat pixels beyond the edge as road). Water, banks and bluffs continue on the same line (the Riverside and the Woodland reuse the garden's stream function with an x offset). Where the ground differs, the side that changes dithers into its neighbour's ground over the last 56 pixels (the Woodland's forest floor into the garden's grass).
 
 ## A world that feels alive
 
 All of this is presentation: it never adds rewards, costs or chores, every effect is finite, stops when its screen is inactive, and shows a still frame with reduced motion.
 
-- **Residents with routines (L6).** Each region has its people: Moss and the gardener in the valley, fishers and the lighthouse keeper at the harbour, the castle's steward, tinkerers in Cogsworth, a saloon keeper in Dust Gulch, forge workers in the caldera, street vendors in Neon Harbour, a station botanist on Halcyon. They walk short routes by time of day, greet the companion and say short lines that react to world health.
+- **Residents with routines (L6).** Each region has its people: Moss and the gardener in the valley, fishers and the lighthouse keeper at the harbour, the castle's steward, tinkerers in Cogsworth, a saloon keeper in Dust Gulch, forge workers in the caldera, street vendors in Neon Harbour, a station botanist on Halcyon. They walk short routes by time of day, greet the companion and say short lines that react to world health. First pass on main (`scripts/art/residents.py`, `lib/resident-routes.ts`): sixteen residents dressed for their places (a gardener and a baker in town, a fisher and the lighthouse keeper, the castle's steward, a tinkerer, a boatwoman on the canal, a cowhand and the saloon keeper, a caravan trader, a smith, a bath attendant, a street vendor and a courier, a porter, the station botanist) walk short routes there and back with pauses, on open ground clear of every prop (checked); greetings and time-of-day routines come with C21.
 - **Animals that belong.** Butterflies, fireflies, birds and the frog in the valley; gulls and a harbour cat; ravens on the castle walls; clockwork birds in Cogsworth; lizards and a tumbleweed in Dust Gulch; ember moths in the caldera; neon moths and drones in the city; drifting spores on Lumen. Birds lift off when the companion walks close.
 - **Things that move by themselves.** Smoke from chimneys, steam from vents, washing on lines, flags and banners, a windmill, boats bobbing in the harbour, water wheels, lanterns that flicker on at dusk, neon that buzzes on and off, lava that glows and crusts.
 - **Weather and light per region (L4).** Rain in Neon Harbour, dust in Dust Gulch, sea mist in the harbour, snow on the ridge; warm windows at night everywhere.

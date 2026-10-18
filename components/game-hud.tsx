@@ -293,7 +293,6 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   const awake = useGame((s) => s.player?.mode === 'awake');
   const side = gameSideInset(width) - 8;
   const slotHeight = hotbarSlot(u);
-  const napWidth = 45 * u;
   const slot = (index: number) => {
     const route = state.routes[index];
     if (!route) return null;
@@ -365,49 +364,34 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
       >
         {slot(0)}
         {slot(1)}
-        <View style={{ width: napWidth }} />
+        {/* the nap sits in the row like the other slots, set apart only by its colour
+            and a slightly larger icon, so it never rises over the screen above */}
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="Take a nap"
+          accessibilityHint="Choose an optional break idea, then put your phone down"
+          disabled={!awake}
+          onPress={() => {
+            feedback('select');
+            openSheet('nap');
+          }}
+          style={({ pressed }) => ({
+            flex: 1,
+            height: slotHeight,
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: u,
+            transform: [{ translateY: pressed ? u : 0 }],
+            opacity: awake ? 1 : 0.6,
+          })}
+        >
+          <FrameShape tone={frameTones.nap} unit={u} />
+          <PixelIcon name="nap" size={iconSize.medium(u)} />
+          <Text style={[type.label, { fontSize: 10, lineHeight: 12, color: '#FFF7E2' }]}>NAP</Text>
+        </Pressable>
         {slot(2)}
         {slot(3)}
       </PixelFrame>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel="Take a nap"
-        accessibilityHint="Choose an optional break idea, then put your phone down"
-        disabled={!awake}
-        onPress={() => {
-          feedback('select');
-          openSheet('nap');
-        }}
-        style={({ pressed }) => ({
-          position: 'absolute',
-          left: '50%',
-          marginLeft: -napWidth / 2,
-          // its bottom lines up with the slots' bottom edge; it rises above the bar
-          bottom: u + contentInset(u),
-          width: napWidth,
-          height: slotHeight + 18 * u,
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: u,
-          transform: [{ translateY: pressed ? u : 0 }],
-          opacity: awake ? 1 : 0.6,
-        })}
-      >
-        <FrameShape
-          tone={{
-            ...frameTones.nap,
-            fill: frameTones.nap.base,
-            light: frameTones.nap.base,
-            dark: frameTones.nap.base,
-          }}
-          unit={u}
-          offset={2 * u}
-          bevel={false}
-        />
-        <FrameShape tone={frameTones.nap} unit={u} />
-        <PixelIcon name="nap" size={iconSize.large(u)} />
-        <Text style={[type.label, { fontSize: 13, lineHeight: 16, color: '#FFF7E2' }]}>NAP</Text>
-      </Pressable>
     </View>
   );
 }

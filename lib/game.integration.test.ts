@@ -281,6 +281,8 @@ async function main() {
       const { default: currencyStorage } =
         await import('@react-native-async-storage/async-storage');
       const { GAME_SAVE_KEY } = await import('./save-data');
+      const { moveTo } = await import('./world-save');
+      const { regionPoint, travelPoints } = await import('./world-places');
       const originalCurrencySave = await currencyStorage.getItem(GAME_SAVE_KEY);
       assert.ok(originalCurrencySave);
       const originalRandom = Math.random;
@@ -311,11 +313,18 @@ async function main() {
         legacyWallet.player.guardian = 'inkling';
         legacyWallet.futureEconomyField = { keep: 'verbatim' };
         legacyWallet.player.futureWalletField = ['keep', 17];
+        const station = regionPoint(travelPoints.west!);
+        const visitedWorld = moveTo(null, 'west', station.x, station.y);
+        legacyWallet.world = { ...visitedWorld, futureTravelField: { keep: 'verbatim' } };
         await currencyStorage.setItem(GAME_SAVE_KEY, JSON.stringify(legacyWallet));
         await reload();
         check(
           gameStore.getState().player!.grass === 500.25,
           'C9 legacy migration keeps the exact wallet',
+        );
+        check(
+          isDeepStrictEqual(gameStore.getState().world, visitedWorld),
+          'C9 legacy wallet migration retains the current world spot and visits',
         );
         Math.random = () => 0.25;
         gameStore.getState().incomingBot();
@@ -340,6 +349,12 @@ async function main() {
               legacyWallet.player.futureWalletField,
             ),
           'C9 settlement preserves unknown root and player save fields',
+        );
+        check(
+          savedCurrency.saveVersion === 1 &&
+            isDeepStrictEqual(gameStore.getState().world, visitedWorld) &&
+            isDeepStrictEqual(savedCurrency.world, legacyWallet.world),
+          'C9 defence settlement preserves optional world and unknown world fields in the v1 save',
         );
         for (const key of [
           'level',
@@ -389,6 +404,20 @@ async function main() {
             gameStore.getState().player!.grass === raidCurrencyState.player!.grass &&
               gameStore.getState().outgoing[0].grass_amount === 0,
             'C9 attacker settlement and safe pending transport survive reload',
+          );
+        }
+
+        for (const won of [false, true]) {
+          resetCurrency(500.25);
+          gameStore.setState({ world: visitedWorld });
+          const target = { ...baseCurrencyPlayer, id: 'world-rival', grass: 100 };
+          gameStore.setState({ battle: { target, practice: false } });
+          gameStore.getState().finishBattle(won, target, false);
+          await reload();
+          check(
+            isDeepStrictEqual(gameStore.getState().world, visitedWorld) &&
+              gameStore.getState().player!.grass === (won ? 530.25 : 500.25),
+            `C9 attacking ${won ? 'win' : 'loss'} keeps world progress alongside fractional wallet`,
           );
         }
 

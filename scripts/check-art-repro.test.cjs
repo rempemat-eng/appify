@@ -28,7 +28,13 @@ try {
   write('.gitignore', 'node_modules/\n');
   write('assets/example.png', Buffer.from([0, 1, 2, 255]));
   write('node_modules/.bin/oxfmt', '# installed formatter fixture\n');
-  const atlasModules = ['lib/zone-maps.ts', 'lib/zone-assets.ts', 'lib/journey-assets.ts'];
+  const atlasModules = [
+    'lib/zone-maps.ts',
+    'lib/zone-assets.ts',
+    'lib/journey-assets.ts',
+    'lib/resident-sprites.ts',
+    'lib/resident-assets.ts',
+  ];
   for (const file of atlasModules) write(file, 'atlas fixture\n');
   write('assets/journeys/example.png', Buffer.from([6, 7, 8, 255]));
   for (const name of generators) write(`scripts/art/${name}.py`, '# generator fixture\n');
@@ -44,6 +50,7 @@ try {
     'mission_map',
     'zones',
     'journey',
+    'residents',
   ]);
   checks++;
   for (const file of atlasModules) check(generatedTypescript.includes(file), 'formats ' + file);
