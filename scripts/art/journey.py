@@ -59,12 +59,21 @@ def sky(theme) -> Canvas:
         for (x, y) in disc(250, 46, 26):  # the planet, far behind now
             band = int((y + math.sin(x / 7) * 2) / 4) % 3
             cv.set(x, y, ('#3E6AA8', '#5A8AC4', '#E6EEF6')[band] if (x - 250) + (y - 46) < 20 else '#2C4A78')
-    if theme['kind'] == 'space':
-        for (x, y) in disc(240, 150, 70):  # the planet below
-            if 0 <= y < H:
-                band = int((y + math.sin(x / 9) * 2) / 5) % 3
-                cv.set(x, y, ('#3E6AA8', '#5A8AC4', '#E6EEF6')[band])
+    if theme['kind'] == 'space':  # a faint band of the galaxy, dithered, and a far sun
+        for x in range(W):
+            for y in range(20, 70):
+                d = abs(y - (44 + 10 * math.sin(2 * math.pi * x / W)))
+                if d < 12 and (x + y) % 3 == 0 and noise2(x, y, 560) > d / 14:
+                    cv.set(x, y, '#2A3460' if d > 5 else '#3E4A80')
+        for (x, y) in disc(60, 30, 5):
+            cv.set(x, y, '#FFF4D0' if math.hypot(x - 60, y - 30) < 3 else '#FFD88A')
     return cv
+
+
+def looped_noise(x: float, y: float, scale: float, seed: int) -> float:
+    """smooth_noise that wraps across the loop's width (blended with itself one loop over)."""
+    t = (x % W) / W
+    return smooth_noise(x % W, y, scale, seed) * (1 - t) + smooth_noise(x % W - W, y, scale, seed) * t
 
 
 def ridge(cv: Canvas, ramp, base: int, amp: float, freq: float, seed: int, lit: bool = True):
@@ -146,8 +155,26 @@ def far(theme) -> Canvas:
     cv = Canvas(W, H)
     kind = theme['kind']
     air = theme['sky'][1]
-    if kind == 'space':
-        return cv  # the void; the planet is in the sky layer
+    if kind == 'space':  # the planet below: its limb along the bottom, turning slowly
+        for x in range(W):
+            top = 112 + int(round(3 * math.sin(2 * math.pi * x / W)))
+            for y in range(top - 3, H):
+                if y < top:  # the atmosphere's glow, dithered off into space
+                    if (x + y) % (top - y + 1) == 0:
+                        cv.set(x, y, '#3E8AC4')
+                    continue
+                k = y - top
+                land = looped_noise(x, y * 1.6, 22, 561)
+                cloud = looped_noise(x * 0.6, y * 3, 14, 562)
+                c = '#1E4A8A' if land < 0.55 else '#3E7A4A' if land < 0.66 else '#7A8A4A'
+                if k > 26:
+                    c = '#163A6E' if land < 0.55 else '#2E5A3A'  # the night side, further round
+                if cloud > 0.62 and (cloud > 0.7 or (x + y) % 2):
+                    c = '#E6EEF6' if k < 26 else '#9AB0C8'
+                if k < 2:
+                    c = '#9AD2FF' if k == 0 else '#5AA8E6'  # the bright rim
+                cv.set(x, y, c)
+        return cv
     if kind == 'moon':  # the moon's grey mountains coming up to meet the shuttle
         ridge(cv, theme['far'], 110, 22, 2, 4)
         ridge(cv, [theme['far'][1], theme['far'][2], theme['far'][3]], 130, 10, 3, 6)
@@ -254,10 +281,26 @@ def near(theme, rail: bool = True) -> Canvas:
                 cv.set(x % W, y, ramp[1] if (x - cx) + (y - 144) * 2 > 0 else ramp[4])
         return cv
     if kind == 'space':
-        for x in range(W):  # the elevator's cable rushing past
-            if x % 80 in (38, 39):
-                for y in range(0, H):
-                    cv.set(x, y, M['hull'][3] if x % 80 == 38 else M['hull'][2])
+        HULL = M['hull']
+        for sx in (40, 200):  # struts of the elevator's tower flicking past, close
+            for y in range(0, H):
+                for dx in range(6):
+                    c = HULL[4] if dx < 2 else HULL[3] if dx < 4 else HULL[2]
+                    if y % 16 in (0, 1):
+                        c = HULL[1]  # a joint
+                    cv.set(sx + dx, y, c)
+            for y in range(4, H, 16):  # cross-bracing
+                for t in range(14):
+                    cv.set(sx + 6 + t, y + t // 2, HULL[2])
+        for (cx, cy) in ((120, 30), (280, 84)):  # a satellite with its panels out
+            for (x, y) in disc(cx, cy, 3):
+                cv.set(x, y, HULL[5] if x < cx else HULL[3])
+            for side in (-1, 1):
+                for x in range(4, 14):
+                    for y in range(-2, 3):
+                        px = cx + side * x
+                        cv.set(px, cy + y, '#2C4A78' if (x + y) % 3 else '#5A8AC4')
+            cv.set(cx, cy - 4, '#FF5A5A')
         return cv
     for y in range(112, H):  # the embankment: calm bands, tufts along its top
         for x in range(W):
@@ -434,7 +477,18 @@ def foot(theme, cv: Canvas):
     beside the line in each land, rushing past fastest."""
     kind, ramp = theme['kind'], theme['near']
     y0 = TOP + H - 8
-    if kind == 'space':
+    if kind == 'space':  # the struts run on down past the scene
+        HULL = M['hull']
+        for sx in (40, 200):
+            for y in [*range(0, TOP), *range(TOP + H, FULL_H)]:
+                for dx in range(6):
+                    c = HULL[4] if dx < 2 else HULL[3] if dx < 4 else HULL[2]
+                    if (y - TOP) % 16 in (0, 1):
+                        c = HULL[1]
+                    cv.set(sx + dx, y, c)
+            for y in range(TOP + H + 4, FULL_H, 16):
+                for t in range(14):
+                    cv.set(sx + 6 + t, y + t // 2, HULL[2])
         return
     for y in range(y0, FULL_H):  # the ground continues
         for x in range(W):
@@ -514,7 +568,13 @@ def main():
     for i, (dest, theme) in enumerate(THEMES.items()):
         near_l = tall(near(theme))
         foot(theme, near_l)
-        layers = {'sky': tall_sky(theme), 'far': tall(far(theme)), 'near': near_l}
+        far_l = tall(far(theme))
+        if theme['kind'] == 'space':  # the planet's night side carries on below the scene
+            for y in range(TOP + H, FULL_H):
+                for x in range(W):
+                    land = looped_noise(x, y * 1.6, 22, 561)
+                    far_l.set(x, y, '#0C2244' if land < 0.55 else '#1A3424')
+        layers = {'sky': tall_sky(theme), 'far': far_l, 'near': near_l}
         for name, cv in layers.items():
             cv.save(os.path.join(OUT, f'{dest}-{name}.png'), SCALE)
         if dest in YARDS:  # the same land without the railway: a region ring's battle ground
