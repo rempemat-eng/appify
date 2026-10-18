@@ -2552,13 +2552,18 @@ def forest_edge(cv: Canvas, side: str, seed: int):
                 cv.set(x, y, FLOOR[3] if n > 0.6 else FLOOR[2] if n > 0.22 or (x + y) % 2 else FLOOR[1])
 
 
-def isle_ground(cv: Canvas, ramp, seed: int):
-    """Lush turf: broad patches in two close tones, small bright tufts."""
+def isle_ground(cv: Canvas, ramp, seed: int, zone: str = ''):
+    """Lush turf: broad patches in two close tones, small bright tufts. Drawn in the
+    island's own coordinates, so the turf runs on unbroken from one zone into the next."""
+    ox, oy = ((LAYOUT['isles'][zone][0] * W, LAYOUT['isles'][zone][1] * H) if zone else (0, 0))
+    if zone:
+        seed = 911
     for y in range(H):
         for x in range(W):
-            n = smooth_noise(x, y, 20, seed)
-            c = ramp[3] if n > 0.5 else ramp[2] if n > 0.25 or (x + y) % 2 else ramp[1]
-            if noise2(x, y, seed + 1) > 0.985:
+            gx, gy = x + ox, y + oy
+            n = smooth_noise(gx, gy, 20, seed)
+            c = ramp[3] if n > 0.5 else ramp[2] if n > 0.25 or (gx + gy) % 2 else ramp[1]
+            if noise2(gx, gy, seed + 1) > 0.985:
                 c = ramp[4]
             cv.set(x, y, c)
 
@@ -2627,7 +2632,7 @@ def isle_landing(frame: int = 0):
     rainforest comes down on the west and spreads into the lagoon; the trail goes north
     into the forest and east along the shore to the cove."""
     cv = Canvas(W, H)
-    isle_ground(cv, TROPIC, 911)
+    isle_ground(cv, TROPIC, 911, 'landing')
     # sand along the lagoon shore
     forest_edge(cv, 'north', 918)
     def shore_x(y):  # the lagoon's east shore along the west, widening to the south;
@@ -2726,7 +2731,7 @@ def isle_headwaters(frame: int = 0):
     pool west for the rainforest; a footbridge carries the trail over it, and a spur goes
     to the pool's edge. The sea breaks on the cliffs to the east."""
     cv = Canvas(W, H)
-    isle_ground(cv, TROPIC, 931)
+    isle_ground(cv, TROPIC, 931, 'headwaters')
     forest_edge(cv, 'west', 939)
     MOSS = ['#22362A', '#2F4A34', '#3E6040', '#56784A']
     # the volcano's flank across the top: a steep jumble of great mossy basalt blocks
@@ -2802,7 +2807,7 @@ def isle_cove(frame: int = 0):
     sand where the surf runs in white; rocks of old lava stand in the shallows, a turtle
     rests above the tide line. The shore path goes west back to the landing."""
     cv = Canvas(W, H)
-    isle_ground(cv, TROPIC, 941)
+    isle_ground(cv, TROPIC, 941, 'cove')
     SAND = BASALT_R
     def sea_y(x):
         return isle_south_water(W + x)
@@ -2920,7 +2925,7 @@ def scorch(frame: int = 0):
                     c = BASALT[2]  # a cinder
             # Dust Gulch's own sand carries on over the west edge (the two are one walk
             # since 18 Oct), giving way over the last 56 pixels
-            if x < 56 and c in DESERT and noise2(x, y, 757) * 56 > x - 4:
+            if x < 56 and (c in DESERT or x < 12) and noise2(x, y, 757) * 56 > x - 4:
                 c = gulch_sand(W + x, y)
             cv.set(x, y, c)
     for (pts, r, sd) in (([(190, 120), (226, 150), (262, 160)], 13, 747),
@@ -4114,6 +4119,24 @@ def build(name: str, fn, start: str):
         foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
         assert not foreign, f'{name} borrows props from another region: {foreign}'
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
+    # the borders this zone shares are closed except at their ports (frames.py): drawn
+    # over ground that was open, before the ground is dressed
+    import frames
+    import world_lint
+    pre = walk_grid([o for o in objects if o[1] not in OVERHEAD], sprite_map)
+    pre_cells = {(x // CELL, y // CELL) for (x, y) in blocked_ground}
+    pre = [''.join('#' if (c, r) in pre_cells else ch for c, ch in enumerate(row)) for r, row in enumerate(pre)]
+    wet = WATER_MASKS.get(fn.__name__) or set()
+
+    def is_water(x, y):
+        if fn.__name__ in WATER_MASKS:  # (night palettes: the zone declares its water)
+            return (x, y) in wet
+        px = cv.get(x, y)[:3]
+        return world_lint._bluish(*px) or world_lint._lava(*px)
+
+    blocked_ground = set(blocked_ground) | frames.apply(cv, name, LAYOUT, pre, is_water)
+    allowed = (region_keys(name) | SHARED_PROPS) if name in REGION_PROPS else None
+    objects = objects + frames.place(name, LAYOUT, sprite_map, allowed, objects, stands, pre)
     dress(cv, name, objects, sprite_map, blocked_ground)
     shade = set()
     for (_id, key, x, y) in objects:
@@ -4525,6 +4548,9 @@ def export(built: dict):
         f'export const zonePlacement: Record<string, \'floating\' | \'wet\' | \'supported\' | \'overhead\'> = {json.dumps(placement)};',
         '/** Each region\'s zones on a grid of zone-sized steps; the garden is the valley\'s (0, 0). */',
         f'export const regionLayout = {json.dumps({r: {z: list(p) for z, p in zs.items()} for r, zs in LAYOUT.items()})} as const;',
+        '/** Where neighbouring zones meet (scripts/art/frames.py, Codex\'s connected-world contract): for each',
+        ' *  shared edge, "west|east" or "north|south", the open span along it in art px; null = closed throughout. */',
+        f'export const zonePorts: Record<string, {{ span: readonly [number, number] | null; frame: string }}> = {json.dumps(__import__("frames").export())};',
         '',
     ]
     assets = [
@@ -4612,6 +4638,8 @@ def main():
     built['lumen'] = build('lumen', lumen, 'shuttle')
     built['home'] = build('home', home, 'door')
     check_overhangs(built)
+    import frames  # places meet only at their ports (Codex's connected-world contract)
+    frames.check(built, LAYOUT)
     import world_lint  # the world's logic lint (world-rules.md, section 7): report only, for now
     world_lint.run(built, LAYOUT, None, OVERHEAD, {z: b['preview'] for z, b in built.items() if b['preview'] is not None})
     import map_tiles  # the world map's tiles, drawn from the same reading of each zone

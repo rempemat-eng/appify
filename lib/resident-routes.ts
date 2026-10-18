@@ -29,7 +29,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   vendor: { zone: 'neon', from: [70, 332], to: [158, 332] },
   courier: { zone: 'neon', from: [18, 184], to: [106, 184] },
   porter: { zone: 'skyport', from: [52, 240], to: [140, 240] },
-  farmer: { zone: 'halt', from: [202, 448], to: [290, 448] },
+  farmer: { zone: 'halt', from: [202, 448], to: [262, 448] },
   hiker: { zone: 'ridge', from: [130, 228], to: [130, 316] },
   forager: { zone: 'woodland', from: [108, 278], to: [196, 278] },
   picnicker: { zone: 'park', from: [18, 100], to: [106, 100] },

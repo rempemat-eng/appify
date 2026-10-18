@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { makeWalkGrid } from './garden-path';
 import { gardenAnchors } from './garden-map';
 import { regionBounds, regionTiles, regionWalk, tileAt, tileOrigin, TILE } from './region-walk';
-import { zoneMaps, zoneOverhead } from './zone-maps';
+import { regionLayout, zoneMaps, zoneOverhead, zonePorts } from './zone-maps';
 import { residentRoutes } from './resident-routes';
 import { residentSprites } from './resident-sprites';
 
@@ -104,3 +104,41 @@ for (const [rid, route] of Object.entries(residentRoutes)) {
 console.log(
   `Residents: ${Object.keys(residentRoutes).length} routes, ${walked} steps on open ground.`,
 );
+
+// Places meet only at their ports (Codex's connected-world contract, PR #23;
+// scripts/art/frames.py). On every shared edge the walk crosses inside the declared
+// span and nowhere else, so the drawn hedge, wall, tree belt or rock shoulder that
+// closes the rest is really closed.
+{
+  let seams = 0;
+  for (const [key, { span }] of Object.entries(zonePorts)) {
+    const [a, c] = key.split('|');
+    const reg = (Object.keys(regionLayout) as (keyof typeof regionLayout)[]).find(
+      (r) => a in regionLayout[r] && c in regionLayout[r],
+    );
+    assert.ok(reg, `${key}: both zones are in one region`);
+    const tiles = regionTiles(reg);
+    const ta = tiles.find((t) => t.id === a);
+    const tb = tiles.find((t) => t.id === c);
+    assert.ok(ta && tb, `${key}: both zones are laid out`);
+    const vertical = tb.col === ta.col + 1 && tb.row === ta.row;
+    assert.ok(vertical || (tb.col === ta.col && tb.row === ta.row + 1), `${key}: the zones touch`);
+    const g = regionWalk(reg);
+    const oa = tileOrigin(reg, ta);
+    const ob = tileOrigin(reg, tb);
+    const n = (vertical ? TILE.height : TILE.width) / TILE.cell;
+    let open = 0;
+    for (let k = 0; k < n; k++) {
+      const p = k * TILE.cell;
+      const ra = vertical ? g[oa.y / TILE.cell + k][(oa.x + TILE.width) / TILE.cell - 1] : g[(oa.y + TILE.height) / TILE.cell - 1][oa.x / TILE.cell + k];
+      const rb = vertical ? g[ob.y / TILE.cell + k][ob.x / TILE.cell] : g[ob.y / TILE.cell][ob.x / TILE.cell + k];
+      const crosses = ra === '.' && rb === '.';
+      if (crosses) open++;
+      const inside = span !== null && p >= span[0] && p < span[1];
+      if (!inside) assert.ok(!crosses, `${key}: no way across outside the port (at ${p} px)`);
+    }
+    if (span !== null) assert.ok(open > 0, `${key}: the port at ${span[0]}-${span[1]} px is open`);
+    seams++;
+  }
+  assert.ok(seams >= 28, 'every shared edge has a port record');
+}
