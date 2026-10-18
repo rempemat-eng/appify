@@ -350,6 +350,34 @@ def hay_bale() -> Canvas:
     return cv
 
 
+def ore_tub() -> Canvas:
+    """A mine cart's ore tub on the narrow-gauge rails, 22 x 18 (seen from the south):
+    a riveted iron box, lit on its upper left, heaped with ore, on four small wheels."""
+    cv = Canvas(22, 18, pad=PAD)
+    for y in range(4, 14):  # the box, narrowing a little toward its foot
+        inset = (y - 4) // 5
+        for x in range(1 + inset, 21 - inset):
+            c = IRON[3] if x < 7 else IRON[2] if x < 16 else IRON[1]
+            if y == 4:
+                c = IRON[4]  # the lit rim
+            elif y == 13:
+                c = IRON[0]
+            cv.set(x, y, c)
+    for x in (3, 10, 18):  # straps and rivets
+        cv.vline(x, 5, 8, IRON[1]); cv.set(x, 6, IRON[4]); cv.set(x, 11, IRON[4])
+    for (x, y) in oval(11, 4, 9, 4):  # the ore, heaped above the rim
+        if y <= 4:
+            n = noise2(x // 2, y // 2, 941)
+            c = '#5A4A44' if n > 0.6 else '#3C302C' if n > 0.25 else '#2A2220'
+            if (x + y) % 5 == 0 and x < 11:
+                c = '#9A8A7A'
+            cv.set(x, y, c)
+    cv.set(8, 2, GOLD[4]); cv.set(14, 3, GOLD[3])  # a glint of ore
+    for wx in (4, 16):  # the wheels under it
+        cv.hline(wx - 1, 14, 4, IRON[1]); cv.hline(wx - 1, 15, 4, IRON[0]); cv.set(wx, 14, IRON[3])
+    return cv
+
+
 def dynamite_crate() -> Canvas:
     """A mining crate with red sticks peeking out and a stencilled band, 22 x 18."""
     cv = Canvas(22, 18, pad=PAD)
@@ -798,7 +826,7 @@ def props() -> dict[str, Canvas]:
         'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
         'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
         'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
-        'horse': horse(), 'prickly_pear': prickly_pear(),
+        'horse': horse(), 'prickly_pear': prickly_pear(), 'ore_tub': ore_tub(),
     }
 
 

@@ -244,17 +244,31 @@ def herb_bed() -> Canvas:
 
 
 def training_dummy() -> Canvas:
-    """A straw training dummy on a post with a wooden shield, 26 x 40."""
+    """A practice dummy, 26 x 40: a burlap sack stuffed with straw, tied at the waist
+    with twine, on a post with a crossbar for arms (straw sticking out of the sleeves)
+    and a battered wooden shield; a sack head with a painted face-guard line."""
+    BURLAP = ['#5E4A30', '#7E6440', '#A08254', '#BFA06C', '#D8BC88']
     cv = Canvas(26, 40, pad=PAD)
     gp.post(cv, 12, 18, 40, w=3, ramp=WOOD)
-    for (x, y) in oval(13, 14, 7, 9):
-        cv.set(x, y, '#E2BC5E' if x < 12 else '#C99A3C' if x < 16 else '#A87E2C')
-    for (x, y) in disc(13, 4, 4):
-        cv.set(x, y, '#E2BC5E' if x < 13 else '#C99A3C')
-    cv.hline(5, 14, 17, '#7A5A22')
-    for (x, y) in oval(20, 22, 4, 5):
+    cv.rect(2, 12, 22, 3, WOOD[2]); cv.hline(2, 12, 22, WOOD[4]); cv.hline(2, 14, 22, WOOD[1])  # the arms
+    for (sx, d) in ((2, -1), (23, 1)):  # straw out of the sleeves
+        for k in range(3):
+            cv.set(sx + d * k, 11 + k, '#E2BC5E' if k % 2 else '#C99A3C')
+            cv.set(sx + d * k, 15 - k, '#C99A3C')
+    for (x, y) in oval(13, 18, 6, 8):  # the stuffed sack
+        lit = (x - 13) + (y - 18) * 0.7 < -2
+        c = BURLAP[3] if lit else BURLAP[2] if x < 17 else BURLAP[1]
+        if (x * 3 + y * 5) % 11 == 0:
+            c = BURLAP[4] if lit else BURLAP[3]  # the weave catching the light
+        cv.set(x, y, c)
+    cv.hline(8, 20, 11, '#7A5A22'); cv.set(9, 21, '#7A5A22')  # twine at the waist
+    for (x, y) in disc(13, 6, 4):  # the head, a smaller sack tied at the neck
+        cv.set(x, y, BURLAP[4] if x < 12 and y < 6 else BURLAP[3] if x < 15 else BURLAP[2])
+    cv.hline(10, 6, 7, RED[2])  # the painted guard line where a helm's slit would be
+    cv.hline(11, 10, 5, '#7A5A22')
+    for (x, y) in oval(20, 24, 4, 5):  # the shield, dented
         cv.set(x, y, RED[3] if x < 20 else RED[2])
-    cv.vline(20, 18, 9, GOLD[3])
+    cv.vline(20, 20, 9, GOLD[3]); cv.set(18, 23, RED[1])
     return cv
 
 

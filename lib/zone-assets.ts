@@ -159,6 +159,7 @@ import propNoticeBoard from '@/assets/zones/props/notice_board.png';
 import propObsidian from '@/assets/zones/props/obsidian.png';
 import propObsidianSmall from '@/assets/zones/props/obsidian_small.png';
 import propOldLander from '@/assets/zones/props/old_lander.png';
+import propOreTub from '@/assets/zones/props/ore_tub.png';
 import propPalm from '@/assets/zones/props/palm.png';
 import propPalmSmall from '@/assets/zones/props/palm_small.png';
 import propPapyrus from '@/assets/zones/props/papyrus.png';
@@ -211,6 +212,7 @@ import propStationHouse from '@/assets/zones/props/station_house.png';
 import propSteamPuff from '@/assets/zones/props/steam_puff.png';
 import propSteamerTrunk from '@/assets/zones/props/steamer_trunk.png';
 import propStone from '@/assets/zones/props/stone.png';
+import propStoneBench from '@/assets/zones/props/stone_bench.png';
 import propStoneLantern from '@/assets/zones/props/stone_lantern.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
@@ -567,6 +569,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   obsidian: propObsidian,
   obsidian_small: propObsidianSmall,
   old_lander: propOldLander,
+  ore_tub: propOreTub,
   palm: propPalm,
   palm_small: propPalmSmall,
   papyrus: propPapyrus,
@@ -619,6 +622,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   steam_puff: propSteamPuff,
   steamer_trunk: propSteamerTrunk,
   stone: propStone,
+  stone_bench: propStoneBench,
   stone_lantern: propStoneLantern,
   store: propStore,
   street_light: propStreetLight,
