@@ -55,12 +55,12 @@ PORTS = {
     ('park', 'headland'): ((112, 168), 'hedge'),
     ('harbour', 'headland'): ((88, 144), 'rocks'),
     # the Frostline Highlands
-    ('hollow', 'ridge'): ((144, 200), 'firs'),
+    ('hollow', 'ridge'): ((320, 376), 'firs'),
     ('hollow', 'woodland'): (None, 'rocks'),
-    ('snowmelt', 'hollow'): ((120, 148), 'snowrocks'),
-    ('snowmelt', 'saddle'): ((404, 436), 'snowrocks'),
-    ('saddle', 'ridge'): ((172, 196), 'snowrocks'),
-    ('summit', 'saddle'): ((140, 164), 'snowrocks'),
+    ('snowmelt', 'hollow'): ((144, 200), 'snowrocks'),
+    ('snowmelt', 'saddle'): ((248, 304), 'snowrocks'),
+    ('saddle', 'ridge'): ((176, 232), 'snowrocks'),
+    ('summit', 'saddle'): ((120, 168), 'snowrocks'),
     # Cogsworth, Neon
     ('junction', 'canal'): ((128, 192), 'wall'),
     ('neon', 'skyport'): ((164, 220), 'quay'),
@@ -172,6 +172,16 @@ def _colour(s, feats, gx, gy, t, d, hit, inside):
     if kind in BUILT:
         return _built(kind, ramp, gx, gy, s, d, out_l, out_r, out_u, out_dn)
     centre, dt, dd, r = hit
+    if kind in ('trees', 'willows', 'firs', 'jungle'):
+        # the floor of a belt of trees: undergrowth in deep shade, a few lit sprigs;
+        # the trees standing on it (props) make the belt
+        n = smooth_noise(gx, gy, 5, 76)
+        tone = 1 if n < 0.55 else 2
+        if noise2(gx, gy, 75) > 0.9:
+            tone = 3
+        if kind == 'firs' and noise2(gx // 2, gy // 2, 80) > 0.8:
+            return SNOW[1] if tone < 3 else SNOW[2]
+        return ramp[0] if (out_r or out_dn) and (gx + gy) % 2 else ramp[tone]
     if centre is None:  # the core between features: lower, in shade
         tone = 1 + (noise2(gx // 2, gy // 2, 77) > 0.6)
     else:
@@ -181,10 +191,11 @@ def _colour(s, feats, gx, gy, t, d, hit, inside):
         else:
             ux, uy = dt, dd
         lit = -(ux + uy) / (r * 1.3)
-        tone = 1 + int((lit + 1) * 1.6 + noise2(gx, gy, 78) * 0.9)
+        stony = kind in ('rocks', 'snowrocks', 'ash', 'dunes')
+        tone = (2 if stony else 1) + int((lit + 1) * (1.2 if stony else 1.6) + noise2(gx, gy, 78) * 0.9)
         tone = max(1, min(len(ramp) - 1, tone))
     if out_r or out_dn:
-        return ramp[0]
+        return ramp[1] if kind in ('rocks', 'snowrocks', 'dunes') else ramp[0]
     if out_l or out_u:
         tone = max(1, tone - 1) if kind in ('rocks', 'snowrocks', 'basalt', 'ash', 'dunes') else tone
     c = ramp[tone]
@@ -236,9 +247,9 @@ PROPS = {
     'hedge': ([], ['bush']),
     'wall': ([], []),
     'quay': ([], []),
-    'firs': (['snowy_pine', 'pine', 'snowy_pine'], ['scree_small', 'stone']),
-    'rocks': (['boulder', 'scree', 'scree_b'], ['stone', 'scree_small', 'bush']),
-    'snowrocks': (['scree', 'boulder', 'scree_b', 'snowy_pine'], ['scree_small', 'stone']),
+    'firs': (['snowy_pine', 'pine', 'snowy_pine'], ['stone', 'boulder']),
+    'rocks': (['boulder', 'stone', 'boulder'], ['stone', 'bush']),
+    'snowrocks': (['boulder', 'stone', 'stone'], ['stone']),
     'jungle': (['tree_fern', 'monstera', 'tree_fern', 'hibiscus'], ['monstera', 'fern', 'hibiscus']),
     'basalt': (['black_rock', 'tree_fern', 'black_rock_small'], ['black_rock_small', 'monstera', 'fern']),
     'ash': (['obsidian', 'charred_snag', 'obsidian_small'], ['obsidian_small', 'obsidian']),
@@ -250,13 +261,15 @@ STAND_IN = {'black_rock': 'obsidian', 'black_rock_small': 'obsidian_small', 'tre
             'monstera': 'obsidian_small', 'fern': 'obsidian_small', 'boulder': 'obsidian', 'stone': 'obsidian_small'}
 
 
-def _place(s, name: str, sprites: dict, allowed, objects, stands, walk) -> list:
+def _place(s, name: str, sprites: dict, allowed, objects, stands, walk, is_water=None) -> list:
     """Props along this zone's side of a seam: (id, key, x, y) in sprite pixels."""
     tall, low = PROPS[s['kind']]
     side = s['side']
     # tall props stand where they rise over their own ground: a north-south seam's
     # either side (they grow upwards, along it), an east-west seam's north side
-    pool = (tall or low) if side in ('west', 'east', 'south') else low
+    # (tall props on one side of a north-south seam only, the west zone's: a belt, not
+    # a double wall of trees)
+    pool = (tall or low) if side in ('east', 'south') else low
     if not pool:
         return []
     seed = sum(ord(c) for c in s['pair'][0] + s['pair'][1]) + (7 if side in ('west', 'north') else 0)
@@ -274,8 +287,8 @@ def _place(s, name: str, sprites: dict, allowed, objects, stands, walk) -> list:
                 k += 1
                 continue
         sp = sprites[key]
-        j = int(noise2(k, 6, seed) * 5)
-        along = sp.w if not s['vertical'] else max(10, sp.h // 3)
+        j = int(noise2(k, 6, seed) * (16 if s['vertical'] else 5))
+        along = sp.w if not s['vertical'] else max(28, int(sp.h * 0.6))
         if s['vertical']:
             foot = t
             x = W - sp.w - j if side == 'east' else j
@@ -287,8 +300,10 @@ def _place(s, name: str, sprites: dict, allowed, objects, stands, walk) -> list:
             t0, t1 = x, x + sp.w
             if side == 'north' and y < 0:
                 y = 0
-        t += max(8, int(along * (0.7 + noise2(k, 7, seed) * 0.4)))
+        t += max(8, int(along * (0.8 + noise2(k, 7, seed) * 0.7)))
         k += 1
+        if noise2(k, 8, seed) > 0.72:
+            continue  # a gap now and then, so the belt is not a row
         span = s['span']
         if span and t1 > span[0] - 8 and t0 < span[1] + 8:
             continue  # the way through stays clear
@@ -300,8 +315,13 @@ def _place(s, name: str, sprites: dict, allowed, objects, stands, walk) -> list:
         if any(box[0] < o[2] and box[2] > o[0] and box[1] < o[3] and box[3] > o[1] - 6 for o in occupied):
             continue
         # its foot on ground that was open, away from every stand
-        fx0, fx1, fy = (x + 3) // CELL, (x + sp.w - 3) // CELL, (y + sp.h - 2) // CELL
-        if not (0 <= fy < len(walk)) or any(walk[fy][c] != '.' for c in range(max(0, fx0), min(len(walk[0]), fx1 + 1))):
+        fx0, fx1 = (x + 1) // CELL, (x + sp.w - 1) // CELL
+        fy0, fy1 = (y + sp.h - 12) // CELL, (y + sp.h - 1) // CELL
+        if fy1 >= len(walk) or any(walk[r][c] != '.' for r in range(max(0, fy0), fy1 + 1)
+                                   for c in range(max(0, fx0), min(len(walk[0]), fx1 + 1))):
+            continue
+        if is_water and any(is_water(xx, yy) for xx in range(max(0, x), min(W, x + sp.w), 2)
+                            for yy in range(max(0, y + sp.h - 14), min(H, y + sp.h + 2), 2)):
             continue
         if any(x - 6 <= sx <= x + sp.w + 6 and y + sp.h - 24 <= sy <= y + sp.h + 10 for (sx, sy) in stands.values()):
             continue
@@ -384,10 +404,10 @@ def export() -> dict:
             for (a, b), (span, kind) in PORTS.items()}
 
 
-def place(name: str, layout: dict, sprites: dict, allowed, objects, stands, walk) -> list:
+def place(name: str, layout: dict, sprites: dict, allowed, objects, stands, walk, is_water=None) -> list:
     """The props standing along every boundary this zone shares."""
     _region, _pos, seams = seams_of(name, layout)
     out = []
     for s in seams:
-        out += _place(s, name, sprites, allowed, list(objects) + out, stands, walk)
+        out += _place(s, name, sprites, allowed, list(objects) + out, stands, walk, is_water)
     return out
