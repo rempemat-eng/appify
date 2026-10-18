@@ -394,6 +394,16 @@ console.log('Keepsakes: found by walking, placed freely, never in the way.');
 }
 console.log('Layouts: old saves carried forward; the desert walks into the fire country.');
 
+/** A zone's named stand in its region's pixels. */
+function standAt(region: 'valley' | 'isles', zone: string, stand: string) {
+  const t = regionTiles(region).find((x) => x.id === zone)!;
+  const o = tileOrigin(region, t);
+  const p = (zoneMaps as Record<string, { stands: Record<string, readonly [number, number]> }>)[
+    zone
+  ].stands[stand];
+  return { x: o.x + p[0], y: o.y + p[1] };
+}
+
 // The Frostline Highlands: the valley grows north; a saved spot stays where it was in its
 // zone, and the high loop and the lookout are walked from the ridge cabin.
 {
@@ -405,14 +415,7 @@ console.log('Layouts: old saves carried forward; the desert walks into the fire 
     'a valley spot saved before the Frostline is the same spot in the garden today',
   );
   const rows = regionWalk('valley');
-  const at = (zone: string, stand: string) => {
-    const t = regionTiles('valley').find((x) => x.id === zone)!;
-    const o = tileOrigin('valley', t);
-    const s = (zoneMaps as Record<string, { stands: Record<string, readonly [number, number]> }>)[
-      zone
-    ].stands[stand];
-    return { x: o.x + s[0], y: o.y + s[1] };
-  };
+  const at = (zone: string, stand: string) => standAt('valley', zone, stand);
   const cabin = at('ridge', 'cabin');
   const grid = makeWalkGrid(rows, {
     cell: TILE.cell,
@@ -432,3 +435,25 @@ console.log('Layouts: old saves carried forward; the desert walks into the fire 
   );
 }
 console.log('Frostline: the high loop is walked from the ridge, old spots stay put.');
+
+// The Tidebloom Isles: the ferry runs from Driftwood's jetty, and the island is one loop.
+{
+  ok(travelRoute('pier', 'isles').join() === 'isles', 'the ferry runs from the jetty to the isles');
+  ok(travelVehicle('pier', 'isles') === 'ferry', 'and it is a ferry');
+  ok(travelRoute('valley', 'isles').length === 0, 'the valley train does not run to the isles');
+  const rows = regionWalk('isles');
+  const at = (zone: string, stand: string) => standAt('isles', zone, stand);
+  const pier = regionPoint(travelPoints.isles);
+  const grid = makeWalkGrid(rows, {
+    cell: TILE.cell,
+    width: regionBounds('isles').width,
+    start: pier,
+  });
+  for (const [zone, stand] of [
+    ['rainforest', 'bridge'],
+    ['headwaters', 'pool'],
+    ['cove', 'beach'],
+  ] as const)
+    ok(grid.findPath(pier, at(zone, stand)).length > 0, `the pier walks to ${zone}`);
+}
+console.log('Isles: the ferry runs from the jetty; the island is walked from its pier.');

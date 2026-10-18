@@ -21,6 +21,12 @@ import spaceNear from '@/assets/journeys/space-near.png';
 import moonSky from '@/assets/journeys/moon-sky.png';
 import moonFar from '@/assets/journeys/moon-far.png';
 import moonNear from '@/assets/journeys/moon-near.png';
+import islesSky from '@/assets/journeys/isles-sky.png';
+import islesFar from '@/assets/journeys/isles-far.png';
+import islesNear from '@/assets/journeys/isles-near.png';
+import pierSky from '@/assets/journeys/pier-sky.png';
+import pierFar from '@/assets/journeys/pier-far.png';
+import pierNear from '@/assets/journeys/pier-near.png';
 import steamYard from '@/assets/journeys/steam-yard.png';
 import neonYard from '@/assets/journeys/neon-yard.png';
 import lavaYard from '@/assets/journeys/lava-yard.png';
@@ -31,6 +37,7 @@ import capsule from '@/assets/journeys/capsule.png';
 import maglev from '@/assets/journeys/maglev.png';
 import carts from '@/assets/journeys/carts.png';
 import shuttle from '@/assets/journeys/shuttle.png';
+import ferry from '@/assets/journeys/ferry.png';
 export const JOURNEY = { width: 320, height: 240, rail: 160 } as const;
 /** Sky, far land and near land for the trip to each region; each loops across. `above` and
  * `below` fill the screen past the band (the sky's top, the ground's foot). */
@@ -51,6 +58,8 @@ export const journeyLayers: Record<
   neon: { sky: neonSky, far: neonFar, near: neonNear, above: '#140E28', below: '#100E1A' },
   space: { sky: spaceSky, far: spaceFar, near: spaceNear, above: '#05060C', below: '#05060C' },
   moon: { sky: moonSky, far: moonFar, near: moonNear, above: '#05060C', below: '#2A2838' },
+  isles: { sky: islesSky, far: islesFar, near: islesNear, above: '#5EB4E8', below: '#2C3C58' },
+  pier: { sky: pierSky, far: pierFar, near: pierNear, above: '#7FB4E6', below: '#2C3C58' },
 };
 /** The near land without the railway, for sparring at a region's own ring (battle backdrop). */
 export const journeyYards: Record<string, ImageSourcePropType> = {
@@ -71,4 +80,5 @@ export const journeyVehicles: Record<
   maglev: { source: maglev, w: 130, h: 25 },
   carts: { source: carts, w: 90, h: 21 },
   shuttle: { source: shuttle, w: 73, h: 42 },
+  ferry: { source: ferry, w: 84, h: 36 },
 };

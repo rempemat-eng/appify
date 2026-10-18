@@ -130,6 +130,15 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'ember', x: 72, y: 240, seed: 17 },
     { kind: 'ember', x: 116, y: 500, seed: 18 },
   ],
+  // the Tidebloom Isles: gulls over the cove, fish in the lagoon by the pier
+  cove: [
+    { kind: 'gull', x: 230, y: 470, seed: 19 },
+    { kind: 'gull', x: 120, y: 520, seed: 20 },
+  ],
+  landing: [
+    { kind: 'fish', x: 60, y: 500, seed: 21 },
+    { kind: 'fish', x: 220, y: 540, seed: 22 },
+  ],
   // gulls over the Headland's sea (the castle moved to the Ember Lands, 18 Oct)
   headland: [
     { kind: 'gull', x: 200, y: 520, seed: 4 },

@@ -29,6 +29,11 @@ THEMES = {
     'neon': {'sky': ('#140E28', '#3A1E4A'), 'far': M['night'], 'near': M['night'], 'kind': 'city'},
     'space': {'sky': ('#05060C', '#141A30'), 'far': M['hull'], 'near': M['hull'], 'kind': 'space'},
     'moon': {'sky': ('#05060C', '#0B0E1C'), 'far': M['regolith'], 'near': M['regolith'], 'kind': 'moon'},
+    # the ferry between Driftwood's jetty and Lagoon Landing (Matt, 18 Oct 19:07)
+    'isles': {'sky': ('#5EB4E8', '#D6F0F6'), 'far': ['#2E5A30', '#3F7A3A', '#5A9A46'], 'near': M['water'], 'kind': 'sea',
+              'land': 'isle'},
+    'pier': {'sky': ('#7FB4E6', '#D8ECF6'), 'far': ['#4E7A50', '#6E9A70', '#8AB27E'], 'near': M['water'], 'kind': 'sea',
+             'land': 'coast'},
 }
 
 
@@ -179,6 +184,37 @@ def far(theme) -> Canvas:
         ridge(cv, theme['far'], 110, 22, 2, 4)
         ridge(cv, [theme['far'][1], theme['far'][2], theme['far'][3]], 130, 10, 3, 6)
         return cv
+    if kind == 'sea':
+        SEA = M['water']
+        HZ = 104
+        if theme['land'] == 'isle':  # the island: a dormant volcano, green to its top
+            for x in range(W):
+                top = int(HZ - max(0, 46 - abs(x - 170) * 0.55) - max(0, 18 - abs(x - 230) * 0.4)
+                          - looped_noise(x, 0, 12, 571) * 4)
+                for y in range(top, HZ):
+                    c = theme['far'][2] if x < 170 else theme['far'][1]
+                    if (y - top) < 2:
+                        c = theme['far'][2]
+                    cv.set(x, y, lerp(c, air, 0.25))
+            for x in range(40, 90):  # a smaller islet off its west
+                top = int(HZ - max(0, 10 - abs(x - 64) * 0.4))
+                for y in range(top, HZ):
+                    cv.set(x, y, lerp(theme['far'][1], air, 0.4))
+        else:  # home: the valley's coast, the headland and its lighthouse, the hills behind
+            far_land(cv, ['#7E98B0', '#93AEC2', '#AFC6D4'], 78, 14, 3, 2)
+            far_land(cv, theme['far'], 96, 6, 2, 5)
+            for y in range(70, 96):  # the lighthouse on the headland
+                for x in range(220, 226):
+                    cv.set(x, y, '#F3E9D2' if (y // 5) % 2 else '#C66C55')
+            cv.rect(219, 66, 8, 4, '#E6BC5C')
+        for y in range(HZ, H):  # the sea out to the horizon, banded with the light
+            for x in range(W):
+                d = (y - HZ) / (H - HZ)
+                c = SEA[3] if d < 0.08 else SEA[2] if d < 0.45 else SEA[1]
+                if (y + int(math.sin(x / 13 + y) * 2)) % 9 == 0 and d > 0.1:
+                    c = SEA[3]
+                cv.set(x, y, c)
+        return cv
     if kind == 'meadow':
         import garden_props as gp
         import valley_props as vp
@@ -270,6 +306,24 @@ def near(theme, rail: bool = True) -> Canvas:
     cv = Canvas(W, H)
     ramp = theme['near']
     kind = theme['kind']
+    if kind == 'sea':  # the swell beside the ferry: rows of short bright crests, foam
+        for y in range(116, H):
+            for x in range(W):
+                k = y - 116
+                c = ramp[3] if k < 2 else ramp[2] if k < 18 else ramp[1]
+                cv.set(x, y, c)
+        for row in range(120, H - 4, 7):
+            for i in range(10):
+                x0 = int(noise2(i, row, 574) * W)
+                length = 5 + int(noise2(i, row, 575) * 8)
+                for t in range(length):
+                    cv.set((x0 + t) % W, row, ramp[4] if t < length - 2 else ramp[3])
+                    cv.set((x0 + t + 1) % W, row + 1, ramp[1])  # the trough behind the crest
+        for i in range(8):  # foam patches
+            cx, cy = int(noise2(i, 0, 572) * W), 122 + int(noise2(i, 1, 572) * 24)
+            for (x, y) in oval(cx, cy, 5, 1.2):
+                cv.set(x % W, y, '#F4F8F8' if (x + y) % 2 else ramp[4])
+        return cv
     if kind == 'moon':  # regolith and craters rushing past under the shuttle
         for y in range(128, H):
             for x in range(W):
@@ -490,6 +544,12 @@ def foot(theme, cv: Canvas):
                 for t in range(14):
                     cv.set(sx + 6 + t, y + t // 2, HULL[2])
         return
+    if kind == 'sea':  # deep water under the band
+        for y in range(y0, FULL_H):
+            for x in range(W):
+                n = smooth_noise(x, y, 30, 573)
+                cv.set(x, y, ramp[0] if n > 0.6 or (n > 0.52 and (x + y) % 2) else ramp[1])
+        return
     for y in range(y0, FULL_H):  # the ground continues
         for x in range(W):
             n = smooth_noise(x, y, 16, 531)
@@ -598,6 +658,9 @@ def main():
             carts.hline(k * 32 - 6, 16, 7, M['iron'][1])
     carts_f = style.finalize(carts, name='journey-carts')
     ship = style.finalize(spp.shuttle(), name='journey-shuttle')
+    import isle_props as ipp
+    boat = style.finalize(ipp.ferry(), name='journey-ferry')
+    boat.save(os.path.join(OUT, 'ferry.png'), SCALE)
     mag_l.save(os.path.join(OUT, 'maglev.png'), SCALE)
     carts_f.save(os.path.join(OUT, 'carts.png'), SCALE)
     ship.save(os.path.join(OUT, 'shuttle.png'), SCALE)
@@ -627,6 +690,7 @@ def main():
         "import maglev from '@/assets/journeys/maglev.png';",
         "import carts from '@/assets/journeys/carts.png';",
         "import shuttle from '@/assets/journeys/shuttle.png';",
+        "import ferry from '@/assets/journeys/ferry.png';",
         f'export const JOURNEY = {{ width: {W}, height: {FULL_H}, rail: {TOP + 120} }} as const;',
         '/** Sky, far land and near land for the trip to each region; each loops across. `above` and',
         ' * `below` fill the screen past the band (the sky\'s top, the ground\'s foot). */',
@@ -646,6 +710,7 @@ def main():
         f'  maglev: {{ source: maglev, w: {mag_l.w}, h: {mag_l.h} }},',
         f'  carts: {{ source: carts, w: {carts_f.w}, h: {carts_f.h} }},',
         f'  shuttle: {{ source: shuttle, w: {ship.w}, h: {ship.h} }},',
+        f'  ferry: {{ source: ferry, w: {boat.w}, h: {boat.h} }},',
         '};',
         '',
     ]

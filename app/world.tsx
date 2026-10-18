@@ -67,19 +67,22 @@ const regionNames: Record<RegionId, string> = {
   valley: 'THE VALLEY',
   steam: 'COGSWORTH',
   west: 'SUNSTONE REACH',
+  isles: 'TIDEBLOOM ISLES',
   neon: 'NEON HARBOUR',
   space: 'HALCYON STATION',
   moon: 'LUMEN',
   home: 'THE NAP HUT',
 };
 const placeIds: MissionPlaceId[] = ['book', 'park', 'mountain', 'shop', 'arena', 'garden'];
-const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'neon', 'space', 'moon'];
+const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon'];
 /** Each stop's name on the travel card and the journey's label. */
 const stopNames: Record<StopId, string> = {
   valley: 'THE VALLEY',
   steam: 'COGSWORTH',
   west: 'DUST GULCH',
   lava: 'EMBER CALDERA',
+  pier: 'DRIFTWOOD',
+  isles: 'TIDEBLOOM ISLES',
   neon: 'NEON HARBOUR',
   space: 'HALCYON STATION',
   moon: 'LUMEN',
@@ -89,6 +92,8 @@ const stopShort: Record<StopId, string> = {
   steam: 'Cogsworth',
   west: 'Dust Gulch',
   lava: 'the caldera',
+  pier: 'Driftwood',
+  isles: 'the isles',
   neon: 'Neon Harbour',
   space: 'Halcyon',
   moon: 'Lumen',

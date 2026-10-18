@@ -25,7 +25,7 @@ W, H, CELL = 320, 576, 4
 COLS, ROWS = W // CELL, H // CELL
 
 # Regions whose findings fail the build; the rest are reported until they are fixed.
-STRICT = ('valley', 'steam', 'west', 'neon', 'space', 'moon', 'home')
+STRICT = ('valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon', 'home')
 
 # Findings that are right as drawn, each with its reason (world-rules.md, section 6,
 # the override registry; check 18: an override that no longer exempts anything is
@@ -36,7 +36,7 @@ OVERRIDES = {
 }
 
 # Placement types (rules, section 2); anything not listed is a ground prop.
-FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
+FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'island_ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
 WET = {'reeds', 'heron', 'net_rack', 'upturned_boat', 'driftwood', 'papyrus', 'water_crane', 'canal_crane'}
 SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge', 'maglev'}
 _rgb = lambda c: tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))  # noqa: E731
