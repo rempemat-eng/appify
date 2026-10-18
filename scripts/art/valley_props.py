@@ -598,6 +598,106 @@ def stump() -> Canvas:
     return cv
 
 
+def woodpile() -> Canvas:
+    """Split logs stacked against the cabin, 30 x 20, their cut ends lit, a cap of snow."""
+    w, h = 30, 20
+    cv = Canvas(w, h, pad=PAD)
+    for row in range(3):
+        for k in range(5 - row):
+            cx, cy = 5 + k * 5 + row * 2.5, h - 5 - row * 4.4
+            for (x, y) in disc(cx, cy, 2.6):
+                d = math.hypot(x - cx, y - cy)
+                cv.set(x, y, WOOD[1] if d > 2.1 else '#E2C08A' if d < 1 else '#C8A070')
+    for x in range(8, 24):  # snow on top
+        cv.set(x, h - 18 + (1 if x in (8, 23) else 0), SNOW[3]); cv.set(x, h - 17, SNOW[2])
+    return cv
+
+
+def sled() -> Canvas:
+    """A wooden sled with red runners leaning in the snow, 28 x 14."""
+    w, h = 28, 14
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(3, 8):
+        for x in range(4, 24):
+            cv.set(x, y, WOOD[4] if y == 3 else WOOD[3] if (x - 4) % 5 else WOOD[1])
+    for x in range(3, 25):
+        cv.set(x, 10, RED[3] if x < 14 else RED[2])
+    cv.set(2, 9, RED[3]); cv.set(2, 8, RED[3]); cv.set(25, 9, RED[2])
+    for px in (7, 20):
+        cv.vline(px, 8, 2, RED[2])
+    return cv
+
+
+def snowman() -> Canvas:
+    """A small snowman, 20 x 30: two snowballs shaded blue on the lower right, coal eyes,
+    a carrot nose, a red scarf and twig arms."""
+    w, h = 20, 30
+    cv = Canvas(w, h, pad=PAD)
+    for (cx, cy, r) in ((10, 21, 7), (10, 10, 5)):
+        for (x, y) in disc(cx, cy, r):
+            k = (x - cx) + (y - cy)
+            cv.set(x, y, SNOW[3] if k < -r * 0.4 else SNOW[2] if k < r * 0.5 else SNOW[1])
+    cv.set(8, 9, '#1E1917'); cv.set(11, 9, '#1E1917')
+    cv.hline(10, 11, 3, '#E8803A')
+    cv.hline(5, 15, 10, RED[3]); cv.vline(13, 15, 4, RED[2])
+    for t in range(5):
+        cv.set(4 - t, 17 - t // 2, WOOD[2]); cv.set(16 + t, 17 - t // 2, WOOD[1])
+    return cv
+
+
+def drystone_wall(length: int = 64) -> Canvas:
+    """A dry stone field wall, 64 x 14: rounded stones of different sizes stacked without
+    mortar, each lit on top, with a coping row on edge and grass at its foot."""
+    w, h = length, 14
+    cv = Canvas(w, h, pad=PAD)
+    x = 1
+    k = 0
+    while x < w - 2:  # the body: two courses of rounded stones
+        for (row, y0) in ((0, 7), (1, 3)):
+            sw = 5 + int(noise2(k, row, 433) * 4)
+            off = 2 if row else 0
+            for yy in range(y0, y0 + 4):
+                for xx in range(x + off, min(w - 1, x + off + sw)):
+                    edge = xx == x + off or yy == y0 + 3
+                    c = STONE[1] if edge else STONE[4] if yy == y0 else STONE[3] if xx < x + off + sw // 2 else STONE[2]
+                    cv.set(xx, yy, c)
+        x += 5 + int(noise2(k, 0, 433) * 4)
+        k += 1
+    for xx in range(1, w - 1, 2):  # the coping: stones on edge
+        cv.vline(xx, 1, 2, STONE[4] if xx % 4 == 1 else STONE[3])
+    cv.hline(1, h - 2, w - 2, LEAF[2])
+    return cv
+
+
+def marmot_rock() -> Canvas:
+    """A sun-warmed boulder with a marmot sitting up on it, 28 x 26."""
+    import style
+    w, h = 28, 26
+    cv = Canvas(w, h, pad=PAD)
+    pts = {(x, y) for (x, y) in oval(14, 18, 12, 6)}
+    style.facet_stone(cv, pts, STONE, moss=LEAF, seed=81)
+    FUR = ['#4A3424', '#6E4E34', '#94704A', '#B8946A']
+    for (x, y) in oval(13, 9, 5, 5):  # the marmot's round body, sitting up
+        cv.set(x, y, FUR[3] if x < 12 else FUR[2] if x < 16 else FUR[1])
+    for (x, y) in oval(13, 10, 2.4, 3):
+        cv.set(x, y, '#C8A882')  # its pale belly
+    for (x, y) in disc(13, 3, 3.2):
+        cv.set(x, y, FUR[3] if x < 13 else FUR[2])
+    cv.set(11, 3, '#1E1917'); cv.set(15, 3, '#1E1917'); cv.set(13, 5, FUR[0])
+    cv.set(10, 0, FUR[2]); cv.set(16, 0, FUR[1])  # little ears
+    cv.set(11, 8, FUR[1]); cv.set(15, 8, FUR[1])  # paws held up
+    return cv
+
+
+def cotton_grass() -> Canvas:
+    """A tuft of cotton grass from a wet alpine margin, 12 x 14: thin stems with white tufts."""
+    cv = Canvas(12, 14, pad=PAD)
+    for k, (x, top) in enumerate(((3, 2), (6, 0), (9, 3), (5, 5))):
+        cv.vline(x, top + 2, 12 - top, LEAF[3] if k % 2 else LEAF[2])
+        cv.set(x, top, '#FFFFFF'); cv.set(x + 1, top + 1, '#E2E9F0'); cv.set(x - 1, top + 1, '#FFFFFF'); cv.set(x, top + 1, '#F7FAFC')
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'barn': barn(), 'haystack': haystack(), 'scarecrow': scarecrow(), 'windmill': windmill(),
@@ -607,7 +707,8 @@ def props() -> dict[str, Canvas]:
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
         'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(), 'station_house': station_house(),
         'semaphore': semaphore(), 'standing_stone': standing_stone(0, True), 'standing_stone_b': standing_stone(3, True),
-        'standing_stone_low': standing_stone(6, False), 'stump': stump(),
+        'standing_stone_low': standing_stone(6, False), 'stump': stump(), 'woodpile': woodpile(), 'sled': sled(),
+        'snowman': snowman(), 'drystone_wall': drystone_wall(64), 'marmot_rock': marmot_rock(), 'cotton_grass': cotton_grass(),
     }
 
 

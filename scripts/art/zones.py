@@ -2631,6 +2631,9 @@ def ridge(frame: int = 0):
         ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
         ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
         ('pine-t2', 'snowy_pine', 270, 120), ('pine-t3', 'snowy_pine', 40, 150),
+        ('woodpile', 'woodpile', 122, 138), ('sled', 'sled', 214, 190), ('snowman', 'snowman', 90, 96),
+        ('wall-1', 'drystone_wall', 166, 334), ('wall-2', 'drystone_wall', 228, 334), ('wall-3', 'drystone_wall', 290, 334), ('marmot', 'marmot_rock', 220, 470),
+        ('cotton-1', 'cotton_grass', 196, 380), ('cotton-2', 'cotton_grass', 270, 398), ('cotton-3', 'cotton_grass', 210, 418),
     ]
     face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
     peaks_block = set(peak_pts)

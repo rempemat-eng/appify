@@ -55,6 +55,7 @@ import propCorralRail from '@/assets/zones/props/corral_rail.png';
 import propCorralSide from '@/assets/zones/props/corral_side.png';
 import propCottage from '@/assets/zones/props/cottage.png';
 import propCottageB from '@/assets/zones/props/cottage_b.png';
+import propCottonGrass from '@/assets/zones/props/cotton_grass.png';
 import propCowSkull from '@/assets/zones/props/cow_skull.png';
 import propCrate from '@/assets/zones/props/crate.png';
 import propDeparturePylon from '@/assets/zones/props/departure_pylon.png';
@@ -65,6 +66,7 @@ import propDiningTable from '@/assets/zones/props/dining_table.png';
 import propDreamPool from '@/assets/zones/props/dream_pool.png';
 import propDrone from '@/assets/zones/props/drone.png';
 import propDryWell from '@/assets/zones/props/dry_well.png';
+import propDrystoneWall from '@/assets/zones/props/drystone_wall.png';
 import propDuck from '@/assets/zones/props/duck.png';
 import propDynamiteCrate from '@/assets/zones/props/dynamite_crate.png';
 import propEmberShrine from '@/assets/zones/props/ember_shrine.png';
@@ -115,6 +117,7 @@ import propLocomotive from '@/assets/zones/props/locomotive.png';
 import propLoungeBench from '@/assets/zones/props/lounge_bench.png';
 import propLuggageBot from '@/assets/zones/props/luggage_bot.png';
 import propMaglev from '@/assets/zones/props/maglev.png';
+import propMarmotRock from '@/assets/zones/props/marmot_rock.png';
 import propMinePortal from '@/assets/zones/props/mine_portal.png';
 import propMoonArch from '@/assets/zones/props/moon_arch.png';
 import propMoonCrystal from '@/assets/zones/props/moon_crystal.png';
@@ -168,7 +171,9 @@ import propSignpost from '@/assets/zones/props/signpost.png';
 import propSkyBench from '@/assets/zones/props/sky_bench.png';
 import propSkyPlanter from '@/assets/zones/props/sky_planter.png';
 import propSkyPlanterB from '@/assets/zones/props/sky_planter_b.png';
+import propSled from '@/assets/zones/props/sled.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
+import propSnowman from '@/assets/zones/props/snowman.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propStall from '@/assets/zones/props/stall.png';
 import propStandingStone from '@/assets/zones/props/standing_stone.png';
@@ -217,6 +222,7 @@ import propWillow from '@/assets/zones/props/willow.png';
 import propWindmill from '@/assets/zones/props/windmill.png';
 import propWindowSeat from '@/assets/zones/props/window_seat.png';
 import propWindpump from '@/assets/zones/props/windpump.png';
+import propWoodpile from '@/assets/zones/props/woodpile.png';
 import propWorkshop from '@/assets/zones/props/workshop.png';
 import propWorkshopRound from '@/assets/zones/props/workshop_round.png';
 import groundTown from '@/assets/zones/town/ground.png';
@@ -313,6 +319,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   corral_side: propCorralSide,
   cottage: propCottage,
   cottage_b: propCottageB,
+  cotton_grass: propCottonGrass,
   cow_skull: propCowSkull,
   crate: propCrate,
   departure_pylon: propDeparturePylon,
@@ -323,6 +330,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   dream_pool: propDreamPool,
   drone: propDrone,
   dry_well: propDryWell,
+  drystone_wall: propDrystoneWall,
   duck: propDuck,
   dynamite_crate: propDynamiteCrate,
   ember_shrine: propEmberShrine,
@@ -373,6 +381,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lounge_bench: propLoungeBench,
   luggage_bot: propLuggageBot,
   maglev: propMaglev,
+  marmot_rock: propMarmotRock,
   mine_portal: propMinePortal,
   moon_arch: propMoonArch,
   moon_crystal: propMoonCrystal,
@@ -426,7 +435,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   sky_bench: propSkyBench,
   sky_planter: propSkyPlanter,
   sky_planter_b: propSkyPlanterB,
+  sled: propSled,
   sleep_pod: propSleepPod,
+  snowman: propSnowman,
   snowy_pine: propSnowyPine,
   stall: propStall,
   standing_stone: propStandingStone,
@@ -475,6 +486,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   windmill: propWindmill,
   window_seat: propWindowSeat,
   windpump: propWindpump,
+  woodpile: propWoodpile,
   workshop: propWorkshop,
   workshop_round: propWorkshopRound,
 };
