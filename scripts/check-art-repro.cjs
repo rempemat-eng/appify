@@ -20,6 +20,7 @@ const generators = [
 const generatedTypescript = [
   'lib/garden-map.ts',
   'lib/garden-growth-assets.ts',
+  'lib/garden-hut-assets.ts',
   'lib/pet-sprites.ts',
   'lib/world-maps.ts',
   'lib/world-assets.ts',

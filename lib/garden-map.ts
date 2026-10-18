@@ -578,6 +578,15 @@ export const gardenWater = [
     h: 56,
   },
 ] as const;
+/** Where the hut path's other surfaces lie over the earth path (overlays on the ground). */
+export const gardenHutPaths = {
+  flagstones: {
+    x: 60,
+    y: 116,
+    w: 78,
+    h: 57,
+  },
+} as const;
 export const gardenHotspots = {
   nap: {
     x: 143,

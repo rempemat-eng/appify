@@ -347,14 +347,48 @@ def arched_door(cv: Canvas, dx0: int, dy0: int, dw: int = 16, dh: int = 28, port
     return arch
 
 
-def hut() -> Canvas:
+# The hut's outside, chosen while decorating (coherence plan, B1): the door's paint as
+# (ramp, base tone), and what sits under each window. The defaults are the hut as drawn
+# before the choices, which the vignettes still use.
+HUT_DOORS = {'oak': (WOOD, 3), 'red': (RED, 2), 'violet': (NAP, 2), 'green': (LEAF, 2)}
+HUT_SILLS = ('sill', 'flowers', 'herbs')
+
+
+def window_box(cv: Canvas, x0: int, y0: int, planting: str, seed: int, shift: int = 0):
+    """A planter 18 x 4 hung under a window, its top edge lit, with flowers (bloom heads
+    over leaves) or kitchen herbs (round basil, thin rosemary, chives in lilac flower)."""
+    detail.boards(cv, rect_set(x0, y0, 18, 4), WOOD, 2, y0, board=4, seed=seed)
+    cv.hline(x0, y0, 18, WOOD[4]); cv.hline(x0, y0 + 3, 18, WOOD[1])
+    if planting == 'flowers':
+        blooms = (RED[3], GOLD[3], NAP[4], RED[4], PLASTER[5], NAP[3])
+        for i, x in enumerate(range(x0 + 1, x0 + 17, 3)):
+            cv.set(x, y0 - 1, LEAF[2]); cv.set(x + 1, y0 - 1, LEAF[3]); cv.set(x + 1, y0 - 2, LEAF[4])
+            petal = blooms[(i + shift) % len(blooms)]
+            cv.set(x, y0 - 3, petal); cv.set(x + 1, y0 - 3, petal); cv.set(x, y0 - 4, petal)
+        return
+    for i, x in enumerate(range(x0 + 1, x0 + 17, 3)):
+        kind = (i + shift) % 3
+        if kind == 0:  # basil: a round clump, lit on its upper left
+            cv.set(x, y0 - 1, LEAF[2]); cv.set(x + 1, y0 - 1, LEAF[2])
+            cv.set(x, y0 - 2, LEAF[4]); cv.set(x + 1, y0 - 2, LEAF[3]); cv.set(x, y0 - 3, LEAF[3])
+        elif kind == 1:  # rosemary: dark needles, taller and thin
+            cv.set(x, y0 - 1, LEAF[1]); cv.set(x, y0 - 2, LEAF[2]); cv.set(x + 1, y0 - 3, LEAF[2])
+            cv.set(x, y0 - 4, LEAF[3]); cv.set(x, y0 - 5, LEAF[2])
+        else:  # chives, flowering
+            cv.set(x, y0 - 1, LEAF[2]); cv.set(x + 1, y0 - 1, LEAF[3]); cv.set(x, y0 - 2, LEAF[3])
+            cv.set(x + 1, y0 - 3, LEAF[4]); cv.set(x + 1, y0 - 4, NAP[4]); cv.set(x, y0 - 4, NAP[3])
+
+
+def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
     """The nap hut in the steep top-down view (Matt's references, 17 Oct), 104 x 92: a
     big slate roof seen from above whose ridge runs back from a timber front gable, the
     lit left plane and the shaded right plane, a stone chimney showing its cap, a short
     painted front with a recessed round-topped door (16 x 28), shuttered windows and a
-    fieldstone footing."""
+    fieldstone footing. `door` is the door's paint (HUT_DOORS) and `sills` what sits
+    under the left and the right window: a plain sill or a box of flowers or herbs."""
     w, h = 104, 92
     cv = Canvas(w, h, pad=PAD)
+    paint, tone0 = HUT_DOORS[door]
     ridge = 51.5
     apex_y, eave_y = 30, 60  # the front gable's apex, and the eaves at the roof's front corners
     left_x, right_x = 5, 98  # the roof's side eaves (it overhangs the walls)
@@ -404,28 +438,25 @@ def hut() -> Canvas:
     for (x, y) in arch:
         if (x - 1, y) not in arch and (x, y - 1) not in arch:
             cv.set(x, y, STONE[4])
-    detail.boards(cv, door, WOOD, 3, dy0, board=4, vertical=True, x0=dx0, joints=False, grain=0.06)
+    detail.boards(cv, door, paint, tone0, dy0, board=4, vertical=True, x0=dx0, joints=False, grain=0.06)
     for sy in (dy0 + 13, dy0 + 23):
         cv.hline(dx0 + 1, sy, 9, SLATE[1]); cv.hline(dx0 + 1, sy - 1, 9, SLATE[2])
         cv.set(dx0 + 3, sy - 1, SLATE[4]); cv.set(dx0 + 7, sy - 1, SLATE[4])
     for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 2.8):
-        cv.set(x, y, WOOD[1])
+        cv.set(x, y, paint[1])
     for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 1.9):
         cv.set(x, y, WTR[2])
     cv.set(dx0 + 7, dy0 + 6, WTR[4])
     detail.recess(cv, door, depth=2, k=1)
     cv.set(dx0 + 12, dy0 + 17, GOLD[4]); cv.set(dx0 + 12, dy0 + 18, GOLD[2]); cv.set(dx0 + 13, dy0 + 18, GOLD[1])
-    window(cv, 20, 66, 14, 11, sill=True)
-    window(cv, 70, 66, 14, 11, sill=False)
-    detail.boards(cv, rect_set(68, 77, 18, 4), WOOD, 2, 77, board=4, seed=8)
-    cv.hline(68, 77, 18, WOOD[4]); cv.hline(68, 80, 18, WOOD[1])
-    blooms = (RED[3], GOLD[3], NAP[4], RED[4], PLASTER[5], NAP[3])
-    for i, x in enumerate(range(69, 85, 3)):
-        cv.set(x, 76, LEAF[2]); cv.set(x + 1, 76, LEAF[3]); cv.set(x + 1, 75, LEAF[4])
-        petal = blooms[i % len(blooms)]
-        cv.set(x, 74, petal); cv.set(x + 1, 74, petal); cv.set(x, 73, petal)
     proud = posts | arch | rect_set(16, 66, 4, 11) | rect_set(34, 66, 4, 11) | rect_set(66, 66, 4, 11)
-    proud |= rect_set(84, 66, 4, 11) | rect_set(19, 77, 16, 2) | rect_set(68, 77, 18, 4)
+    proud |= rect_set(84, 66, 4, 11)
+    for wx, sill in zip((20, 70), sills):
+        window(cv, wx, 66, 14, 11, sill=sill == 'sill')
+        proud |= rect_set(wx - 1, 77, 16, 2) if sill == 'sill' else rect_set(wx - 2, 77, 18, 4)
+    for i, (wx, sill) in enumerate(zip((20, 70), sills)):
+        if sill != 'sill':
+            window_box(cv, wx - 2, 77, sill, seed=8 if i else 7, shift=0 if i else 3)
     detail.cast(cv, proud, 1, 1, k=2, on=PLASTER, reach=2)
     for y in range(wall_top, wall_bottom):
         detail.shade(cv, wall_l + 3, y, 1); detail.shade(cv, wall_r - 3, y, 1)
