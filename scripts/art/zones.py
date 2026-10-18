@@ -2729,27 +2729,42 @@ def isle_headwaters(frame: int = 0):
     isle_ground(cv, TROPIC, 931)
     forest_edge(cv, 'west', 939)
     MOSS = ['#22362A', '#2F4A34', '#3E6040', '#56784A']
-    # the volcano's flank across the top: mossy rock, steep, blocked
+    # the volcano's flank across the top: a steep jumble of great mossy basalt blocks
+    # stepping up out of the forest, ferns in the joints between them (blocked)
     flank = set()
+    tops = {}
     for x in range(W):
-        top = 120 + int(math.sin(x / 40) * 18 + smooth_noise(x, 0, 20, 932) * 14)
-        for y in range(0, top):
-            # dark basalt in steps, each ledge's top furred green with moss and fern
-            k = (y + int(smooth_noise(x, 0, 14, 933) * 10)) % 18
-            rockc = BASALT_R[2] if k > 9 else BASALT_R[3] if k > 3 else BASALT_R[1]
-            green = smooth_noise(x, y, 12, 934) > 0.45 and k < 9
-            c = (TROPIC[3] if k < 3 else TROPIC[2] if (x + y) % 3 else TROPIC[1]) if green else rockc
-            if y > top - 3:
-                c = BASALT_R[0]
-            cv.set(x, y, c)
+        tops[x] = 120 + int(math.sin(x / 40) * 18 + smooth_noise(x, 0, 20, 932) * 14)
+        for y in range(0, tops[x]):
+            # the deep shade between the blocks: wet dark green, not black
+            cv.set(x, y, TROPIC[0] if (x + y) % 3 else BASALT_R[1])
             flank.add((x, y))
+    blocks = []
+    for i in range(70):  # back (high) to front (low), so the lower blocks overlap
+        bx = int(noise2(i, 0, 951) * (W + 20)) - 10
+        by = int(noise2(i, 1, 951) * 150) - 20
+        if by + 8 > tops[max(0, min(W - 1, bx))]:
+            continue
+        blocks.append((by, bx, 10 + noise2(i, 2, 951) * 12, 7 + noise2(i, 3, 951) * 7, i))
+    for (by, bx, rx, ry, i) in sorted(blocks):
+        pts = {(x, y) for (x, y) in oval(bx, by, rx, ry) if (x, y) in flank}
+        if len(pts) > 12:
+            style.facet_stone(cv, pts, BASALT_R, moss=TROPIC, seed=960 + i, outline=None)
+    for i in range(40):  # ferns and moss tumbling from the joints
+        fx = int(noise2(i, 4, 951) * W)
+        fy = int(noise2(i, 5, 951) * (tops[max(0, min(W - 1, fx))] - 6))
+        style.leafy(cv, fx, fy, 4 + noise2(i, 6, 951) * 3, 3, TROPIC, r=1.8, seed=970 + i)
+    for x in range(W):  # the forest's dark edge at the flank's foot
+        for d in range(3):
+            cv.set(x, tops[x] - 1 - d, TROPIC[0] if d == 0 else TROPIC[1] if (x + d) % 2 else BASALT_R[0])
     # the top-left corner meets the rainforest's sea
     sea = {(x, y) for x in range(W) for y in range(H)
            if (x < 60 - int(smooth_noise(0, y, 20, 934) * 20) and y < 34 + int(smooth_noise(x, 0, 30, 923) * 14) - 8)}
     east = {(x, y) for x in range(W) for y in range(H) if x > 286 + int(smooth_noise(0, y, 30, 935) * 12)}
     isle_water(cv, sea | east, MATERIALS['water'], 936, surf=True)
     # the fall: white water down the flank into the pool
-    pool = {(x, y) for (x, y) in oval(220, 176, 42, 30)}
+    pool = {(x, y) for x in range(170, 270) for y in range(140, 215)
+            if math.hypot((x - 220) / 42, (y - 176) / 30) < 1 - (smooth_noise(x, y, 10, 955) - 0.5) * 0.3}
     for y in range(0, 160):
         half = 7 + y / 40
         for x in range(200, 240):
@@ -2762,11 +2777,12 @@ def isle_headwaters(frame: int = 0):
                 flank.add((x, y))
             elif off < half + 2:
                 cv.set(x, y, BASALT_R[0])
-    river = river_pts([(200, 196), (140, 250), (60, 290), (-12, ISLE_RIVER_WE)])
+    river = river_pts([(200, 196), (176, 226), (150, 236), (128, 256), (90, 280), (60, 290), (-12, ISLE_RIVER_WE)])
     isle_water(cv, pool | river, LAGOON, 937)
-    for (x, y) in pool:  # spray where the fall lands
-        if math.hypot(x - 220, y - 160) < 12 and (x + y) % 2:
-            cv.set(x, y, '#F4F8F8')
+    for (x, y) in pool:  # foam where the fall lands, thinning outward
+        d = math.hypot(x - 220, (y - 154) * 1.4)
+        if d < 14 and noise2(x, y, 956) * 14 > d - 2:
+            cv.set(x, y, '#F4F8F8' if (x + y) % 2 else LAGOON[4])
     deck, rails = plank_bridge(cv, 113, 234, 30, 46, vertical=True)
     trail = isle_trail(cv, [(-12, ISLE_TRAIL_WE['north']), (60, 160), (110, 200), (128, 255), (150, 330), (196, 430), (ISLE_TRAIL_NS, H + 12)], 938)
     trail |= isle_trail(cv, [(150, 330), (200, 250)], 939)  # the spur to the pool's edge
