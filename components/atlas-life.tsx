@@ -35,7 +35,8 @@ type Kind =
   | 'firefly'
   | 'lizard'
   | 'fish'
-  | 'leaf';
+  | 'leaf'
+  | 'twinkle';
 type Emitter = { kind: Kind; x: number; y: number; seed: number };
 
 // Each period divides the clock's 36 s loop, so no particle jumps when it wraps.
@@ -50,6 +51,7 @@ const PERIOD = {
   lizard: 9000,
   fish: 12000,
   leaf: 7200,
+  twinkle: 4500,
 } as const;
 
 // Where a prop gives off something, relative to its top-left in zone pixels.
@@ -94,7 +96,16 @@ function rainOver(drops: number): Emitter[] {
   }));
 }
 
+// stars twinkling over Lumen's horizon (the sky above y = 60, clear of the planet)
+const LUMEN_STARS: Emitter[] = Array.from({ length: 14 }, (_, i) => ({
+  kind: 'twinkle' as const,
+  x: 8 + ((i * 97) % 300),
+  y: 4 + ((i * 37) % 50),
+  seed: 70 + i,
+})).filter((e) => Math.hypot(e.x - 230, e.y - 150) > 124);
+
 const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
+  lumen: LUMEN_STARS,
   harbour: [
     { kind: 'fish', x: 200, y: 470, seed: 53 },
     { kind: 'gull', x: 120, y: 360, seed: 1 },
@@ -208,6 +219,10 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
       dx = Math.sin(t * 6.28 + phase * 6) * 14 + Math.sin(t * 18.8) * 3;
       dy = Math.cos(t * 6.28) * 8;
       opacity = Math.max(0, Math.sin(t * 25 + phase * 9)); // slow blinks
+    } else if (e.kind === 'twinkle') {
+      // a star brightening and fading once in its loop, still otherwise
+      const w = Math.max(0, Math.sin(t * Math.PI * 2));
+      opacity = w > 0.7 ? 1 : w > 0.35 ? 0.5 : 0;
     } else if (e.kind === 'lizard') {
       // a dash, a long still sunbathe, a dash back
       const run = t < 0.08 ? t / 0.08 : t < 0.5 ? 1 : t < 0.58 ? 1 - (t - 0.5) / 0.08 : 0;
@@ -262,6 +277,7 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
   if (e.kind === 'spore') return <Animated.View style={[box(1, 1, '#6FF2D2'), style]} />;
   if (e.kind === 'rain') return <Animated.View style={[box(1, 5, '#B8C8E8'), style]} />;
   if (e.kind === 'firefly') return <Animated.View style={[box(1, 1, '#E8FF8A'), style]} />;
+  if (e.kind === 'twinkle') return <Animated.View style={[box(1, 1, '#FFFFFF'), style]} />;
   if (e.kind === 'leaf') return <Animated.View style={[box(2, 1, '#E07A28'), style]} />;
   if (e.kind === 'fish')
     return (
