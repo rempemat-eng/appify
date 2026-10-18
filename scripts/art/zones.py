@@ -709,6 +709,32 @@ def skyport(frame: int = 0):
             k = (x - 8) / 48  # the change over the first 56 pixels, in an ordered dither by whole tiles
             bayer = (0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5)[((y // 16) % 4) * 4 + (x // 12) % 4] / 16
             cv.set(x, y, dark if k < 0 or (k < 1 and bayer >= k) else pale)
+    # a compass rose inlaid in the concourse floor, pointing the way up
+    MX, MY = 140, 300
+    for (x, y) in oval(MX, MY, 44, 22):
+        d = math.hypot((x - MX) / 44, (y - MY) / 22)
+        a = math.atan2((y - MY) * 2, x - MX)
+        star = d < 0.95 * (0.35 + 0.65 * abs(math.cos(2 * a)) ** 6)  # four long points
+        if 0.9 < d < 0.96 or 0.55 < d < 0.58:
+            cv.set(x, y, CYAN[2] if (x + y) % 2 else CYAN[1])
+        elif star:
+            cv.set(x, y, PORC[5] if (x - MX) * 0.3 + (y - MY) < 0 else PORC[3])
+        elif d < 0.9:
+            cv.set(x, y, PORC[2] if (x // 3 + y // 3) % 2 else PORC[1])
+    # a still reflecting pool under the platform, holding the platform lights
+    pool = rect_set_z(16, 108, 70, 36)
+    for (x, y) in pool:
+        c = '#16324A' if (x + y // 2) % 9 else '#22486A'
+        if y < 111:
+            c = '#0B1220'  # the shadow of its rim
+        if (x - 30) % 22 < 3 and y % 6 == 3:
+            c = AMBER[3]  # the platform lights doubled
+        cv.set(x, y, c)
+        blocked.add((x, y))
+    for (x, y) in rect_set_z(14, 106, 74, 40):
+        if (x, y) not in pool:
+            cv.set(x, y, PORC[4] if y < 108 or x < 16 else PORC[1])
+            blocked.add((x, y))
     # Neon Harbour's street, continued, ending at a drop-off loop
     LX, LY = 238, 192
     loop = {(x, y) for (x, y) in oval(LX, LY, 66, 44)}
@@ -824,7 +850,7 @@ def skyport(frame: int = 0):
             cv.set(x, y, NIGHT[4] if x < bx else NIGHT[2])
         cv.hline(bx - 2, 460, 5, AMBER[3])
     for (lx, ly, rx, ry, col) in ((AX, AY, 70, 34, CYAN[2]), (60, 84, 50, 14, AMBER[4]), (160, 84, 50, 14, AMBER[4]),
-                                  (140, 300, 60, 22, CYAN[4]), (40, 410, 34, 12, AMBER[3]), (150, 420, 34, 12, AMBER[3]),
+                                  (140, 300, 52, 26, CYAN[4]), (40, 410, 34, 12, AMBER[3]), (150, 420, 34, 12, AMBER[3]),
                                   (LX, LY, 40, 24, AMBER[3]), (AX, 400, 30, 60, CYAN[3])):
         light_pool(cv, lx, ly, rx, ry, col, skip=frozenset(water - ring - pier))
     blocked |= water - ring - pier
@@ -833,9 +859,10 @@ def skyport(frame: int = 0):
         ('tree-loop', 'pod_tree', LX - 18, LY - 40), ('tree-1', 'pod_tree', 280, 236), ('tree-2', 'pod_tree', 4, 236),
         ('pylon-1', 'departure_pylon', 60, 240), ('pylon-2', 'departure_pylon', 180, 240),
         ('gates', 'ticket_gates', 64, 316), ('bench-1', 'sky_bench', 14, 400), ('bench-2', 'sky_bench', 124, 400),
-        ('tree-3', 'pod_tree', 176, 372), ('tree-4', 'pod_tree', 284, 380), ('bot-1', 'luggage_bot', 150, 440),
+        ('tree-3', 'pod_tree', 176, 372), ('tree-4', 'pod_tree', 284, 380), ('bot-1', 'luggage_bot', 120, 440),
         ('bot-2', 'luggage_bot', 200, 300), ('tether', 'tether', AX - 20, AY - 254),
         ('drone-1', 'drone', 120, 140), ('drone-2', 'drone', 290, 300),
+        ('kiosk', 'flower_kiosk', 244, 106), ('planter-1', 'sky_planter', 40, 424), ('planter-2', 'sky_planter_b', 160, 424),
     ]
     stands = {'neon': (10, 192), 'platform': (70, 84), 'gates': (104, 360), 'anchor': (AX, AY + 14)}
     return cv, objects, stands, blocked

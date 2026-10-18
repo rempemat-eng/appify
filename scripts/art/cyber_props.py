@@ -496,6 +496,64 @@ def sky_bench() -> Canvas:
         cv.set(x, 10 + sag, CYAN[2] if x % 2 else CYAN[1])
     return cv
 
+
+def sky_planter(seed: int = 0) -> Canvas:
+    """A long white planter bed, 64 x 24: soft feather grasses and a few low flowering
+    clumps (style.leafy) spilling over a porcelain trough lit on its top edge."""
+    import style
+    w, h = 64, 24
+    cv = Canvas(w, h, pad=PAD)
+    G = ['#1E3A2E', '#2E5A40', '#447A50', '#62995E', '#8CBB76']
+    for k in range(3):
+        style.leafy(cv, 12 + k * 20 + int(noise2(k, seed, 494) * 4), 10, 10, 5, G, r=2.2, seed=seed + k)
+    for k in range(9):  # feather grass blades over the clumps
+        x = 5 + k * 6 + int(noise2(k, seed, 495) * 3)
+        top = 1 + int(noise2(k, seed, 496) * 4)
+        for y in range(top, 13):
+            cv.set(x + (1 if y < top + 3 else 0), y, '#C8C89A' if y < top + 2 else G[3])
+    for k in range(5):  # flowers
+        x, y = 8 + int(noise2(k, seed, 497) * 48), 7 + int(noise2(k, seed, 498) * 5)
+        if cv.get(x, y)[3]:
+            col = ('#F2A0C8', '#F7F2E8', '#9A8BC8')[k % 3]
+            cv.set(x, y, col); cv.set(x + 1, y, col)
+    for y in range(13, h - 1):
+        for x in range(2, w - 2):
+            cv.set(x, y, PORCELAIN[5] if y == 13 else PORCELAIN[4] if y < 16 else PORCELAIN[3] if x < w - 8 else PORCELAIN[1])
+    cv.hline(3, 14, w - 6, '#3A2A22')  # the soil line
+    cv.hline(2, h - 2, w - 4, PORCELAIN[1])
+    return cv
+
+
+def flower_kiosk() -> Canvas:
+    """A small flower kiosk under the guideway, 48 x 40: a curved white canopy with a
+    cyan edge light, buckets of flowers on stepped shelves, and a warm lamp inside."""
+    w, h = 48, 40
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(4, 14):  # the canopy, seen from above and in front
+        for x in range(2, w - 2):
+            c = PORCELAIN[5] if y < 7 else PORCELAIN[4] if x < w - 10 else PORCELAIN[3]
+            cv.set(x, y, c)
+    for x in range(2, w - 2):
+        cv.set(x, 14, CYAN[3] if x % 2 else CYAN[2])
+    for y in range(15, h - 2):  # the back wall in warm lamplight
+        for x in range(5, w - 5):
+            cv.set(x, y, '#E8C890' if y < 20 and x < w - 12 else '#B88E62' if x < w - 12 else '#7A5A44')
+    PETAL = ['#F2A0C8', '#E8D27A', '#F7F2E8', '#E86A5A', '#9A8BC8']
+    for row, y in enumerate((22, 28)):  # stepped shelves of buckets
+        cv.hline(5, y + 5, w - 10, PORCELAIN[2])
+        for k in range(5):
+            bx = 8 + k * 7 + row * 3
+            cv.rect(bx, y + 2, 5, 3, PORCELAIN[3] if k % 2 else PORCELAIN[4])
+            for (dx, dy) in ((0, 0), (2, -1), (4, 0), (1, 1), (3, 1)):
+                cv.set(bx + dx, y + dy, PETAL[(k + row * 2 + dx) % 5])
+            cv.set(bx + 1, y + 1, '#447A50'); cv.set(bx + 3, y, '#447A50')
+    for y in range(15, h - 1):  # the posts
+        cv.set(3, y, PORCELAIN[4]); cv.set(4, y, PORCELAIN[2])
+        cv.set(w - 5, y, PORCELAIN[3]); cv.set(w - 4, y, PORCELAIN[1])
+    cv.hline(3, h - 2, w - 6, PORCELAIN[1])
+    return cv
+
+
 def cables() -> Canvas:
     """Wires strung over the street, 300 x 150 (drawn above everything): sagging lines
     from the towers to the pole across the road, a string of small lanterns on one,
@@ -549,7 +607,8 @@ def props() -> dict[str, Canvas]:
         'containers': containers(), 'ferry': ferry(),
         'maglev': maglev(), 'tether': tether(), 'ticket_gates': ticket_gates(), 'departure_pylon': departure_pylon(),
         'luggage_bot': luggage_bot(), 'pod_tree': pod_tree(), 'sky_bench': sky_bench(),
-        'cables': cables(), 'bike_rack': bike_rack(),
+        'cables': cables(), 'bike_rack': bike_rack(), 'sky_planter': sky_planter(0), 'sky_planter_b': sky_planter(3),
+        'flower_kiosk': flower_kiosk(),
     }
 
 

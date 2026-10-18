@@ -73,6 +73,7 @@ import propFireplace from '@/assets/zones/props/fireplace.png';
 import propFireweed from '@/assets/zones/props/fireweed.png';
 import propFireweedSmall from '@/assets/zones/props/fireweed_small.png';
 import propFishStall from '@/assets/zones/props/fish_stall.png';
+import propFlowerKiosk from '@/assets/zones/props/flower_kiosk.png';
 import propForestBench from '@/assets/zones/props/forest_bench.png';
 import propForge from '@/assets/zones/props/forge.png';
 import propFoundry from '@/assets/zones/props/foundry.png';
@@ -162,6 +163,8 @@ import propShelter from '@/assets/zones/props/shelter.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
 import propSkyBench from '@/assets/zones/props/sky_bench.png';
+import propSkyPlanter from '@/assets/zones/props/sky_planter.png';
+import propSkyPlanterB from '@/assets/zones/props/sky_planter_b.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propStall from '@/assets/zones/props/stall.png';
@@ -319,6 +322,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   fireweed: propFireweed,
   fireweed_small: propFireweedSmall,
   fish_stall: propFishStall,
+  flower_kiosk: propFlowerKiosk,
   forest_bench: propForestBench,
   forge: propForge,
   foundry: propFoundry,
@@ -408,6 +412,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   shuttle: propShuttle,
   signpost: propSignpost,
   sky_bench: propSkyBench,
+  sky_planter: propSkyPlanter,
+  sky_planter_b: propSkyPlanterB,
   sleep_pod: propSleepPod,
   snowy_pine: propSnowyPine,
   stall: propStall,
