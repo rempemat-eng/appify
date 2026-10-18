@@ -65,6 +65,21 @@ export const travelLinks: readonly (readonly [RegionId, RegionId])[] = [
   ['space', 'moon'],
 ];
 
+/** What runs on each line: the steam train in the valley and out west, the maglev to the
+ * city, the mine carts to the caldera, the elevator capsule up to Halcyon, the shuttle on
+ * to Lumen. */
+export function travelVehicle(
+  a: RegionId,
+  b: RegionId,
+): 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle' {
+  const pair = new Set([a, b]);
+  if (pair.has('lava')) return 'carts';
+  if (pair.has('moon')) return 'shuttle';
+  if (pair.has('space')) return 'capsule';
+  if (pair.has('neon')) return 'maglev';
+  return 'train';
+}
+
 /** The stations a trip stops at from one region to another, the destination last
  * (the start left out); empty when there is no line. */
 export function travelRoute(from: RegionId, to: RegionId): RegionId[] {

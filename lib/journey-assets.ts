@@ -24,6 +24,9 @@ import moonNear from '@/assets/journeys/moon-near.png';
 import engine from '@/assets/journeys/engine.png';
 import carriage from '@/assets/journeys/carriage.png';
 import capsule from '@/assets/journeys/capsule.png';
+import maglev from '@/assets/journeys/maglev.png';
+import carts from '@/assets/journeys/carts.png';
+import shuttle from '@/assets/journeys/shuttle.png';
 export const JOURNEY = { width: 320, height: 240, rail: 160 } as const;
 /** Sky, far land and near land for the trip to each region; each loops across. `above` and
  * `below` fill the screen past the band (the sky's top, the ground's foot). */
@@ -52,4 +55,7 @@ export const journeyVehicles: Record<
   engine: { source: engine, w: 100, h: 50 },
   carriage: { source: carriage, w: 74, h: 38 },
   capsule: { source: capsule, w: 42, h: 58 },
+  maglev: { source: maglev, w: 130, h: 25 },
+  carts: { source: carts, w: 90, h: 21 },
+  shuttle: { source: shuttle, w: 73, h: 42 },
 };

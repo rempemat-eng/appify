@@ -24,6 +24,7 @@ import {
   travelBy,
   travelPoints,
   travelRoute,
+  travelVehicle,
   type MissionPlaceId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
@@ -462,6 +463,10 @@ export default function World() {
                 : regionNames[dest]
             }
             ms={trip.legs.length > 1 ? 2200 : undefined}
+            vehicle={travelVehicle(
+              trip.leg === 0 ? spawn.region : trip.legs[trip.leg - 1],
+              trip.legs[trip.leg],
+            )}
             width={width}
             height={viewH}
             u={u}

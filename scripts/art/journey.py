@@ -520,6 +520,24 @@ def main():
             for k in range(2):
                 for name in ('sky', 'far', 'near'):
                     sheet.paste(layers[name], k * W, i * FULL_H)
+    import cyber_props as cyp
+    import space_props as spp
+    from PIL import Image as _Image
+    mag = style.finalize(cyp.maglev(), name='journey-maglev')
+    mag_l = Canvas(mag.w, mag.h)  # mirrored: every vehicle leads to the left
+    mag_l.img = mag.img.transpose(_Image.FLIP_LEFT_RIGHT)
+    mag_l._px = mag_l.img.load(); mag_l.px = mag_l._px
+    cart = sp.coal_cart()
+    carts = Canvas(96, 24, pad=4)  # three coal tubs coupled, as the mine line runs them
+    for k in range(3):
+        carts.paste(style.finalize(cart, name='journey-cart'), k * 32, 2)
+        if k:
+            carts.hline(k * 32 - 6, 16, 7, M['iron'][1])
+    carts_f = style.finalize(carts, name='journey-carts')
+    ship = style.finalize(spp.shuttle(), name='journey-shuttle')
+    mag_l.save(os.path.join(OUT, 'maglev.png'), SCALE)
+    carts_f.save(os.path.join(OUT, 'carts.png'), SCALE)
+    ship.save(os.path.join(OUT, 'shuttle.png'), SCALE)
     engine = style.finalize(sp.locomotive(), name='journey-engine')
     coach = style.finalize(carriage(), name='journey-carriage')
     pod = style.finalize(capsule(), name='journey-capsule')
@@ -542,6 +560,9 @@ def main():
         "import engine from '@/assets/journeys/engine.png';",
         "import carriage from '@/assets/journeys/carriage.png';",
         "import capsule from '@/assets/journeys/capsule.png';",
+        "import maglev from '@/assets/journeys/maglev.png';",
+        "import carts from '@/assets/journeys/carts.png';",
+        "import shuttle from '@/assets/journeys/shuttle.png';",
         f'export const JOURNEY = {{ width: {W}, height: {FULL_H}, rail: {TOP + 120} }} as const;',
         '/** Sky, far land and near land for the trip to each region; each loops across. `above` and',
         ' * `below` fill the screen past the band (the sky\'s top, the ground\'s foot). */',
@@ -552,6 +573,9 @@ def main():
         f'  engine: {{ source: engine, w: {engine.w}, h: {engine.h} }},',
         f'  carriage: {{ source: carriage, w: {coach.w}, h: {coach.h} }},',
         f'  capsule: {{ source: capsule, w: {pod.w}, h: {pod.h} }},',
+        f'  maglev: {{ source: maglev, w: {mag_l.w}, h: {mag_l.h} }},',
+        f'  carts: {{ source: carts, w: {carts_f.w}, h: {carts_f.h} }},',
+        f'  shuttle: {{ source: shuttle, w: {ship.w}, h: {ship.h} }},',
         '};',
         '',
     ]

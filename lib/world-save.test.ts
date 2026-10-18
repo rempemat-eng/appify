@@ -9,6 +9,7 @@ import {
   rings,
   travelPoints,
   travelRoute,
+  travelVehicle,
 } from './world-places';
 import { makeWalkGrid } from './garden-path';
 import { regionBounds } from './region-walk';
@@ -139,3 +140,7 @@ ok(
 );
 ok(travelRoute('valley', 'valley').length === 0, 'no trip to where you are');
 console.log('Travel: every station reaches every other along the lines.');
+ok(travelVehicle('steam', 'neon') === 'maglev', 'the maglev runs to the city');
+ok(travelVehicle('lava', 'west') === 'carts', 'the mine carts run to the caldera');
+ok(travelVehicle('space', 'moon') === 'shuttle', 'the shuttle flies to Lumen');
+ok(travelVehicle('valley', 'steam') === 'train', 'the valley train is a steam train');
