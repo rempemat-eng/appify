@@ -272,7 +272,10 @@ export default function World() {
           <PixelButton
             small
             label="TO THE RING"
-            onPress={() => navigation.isFocused() && router.push('/arena')}
+            onPress={() =>
+              navigation.isFocused() &&
+              router.push({ pathname: '/arena', params: { ring: spawn.region } })
+            }
           />
         </>
       );

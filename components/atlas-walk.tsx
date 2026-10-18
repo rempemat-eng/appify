@@ -662,3 +662,41 @@ export function AtlasWalk({
     </View>
   );
 }
+
+/**
+ * A still window onto a place in the world (coherence plan step 10: the Shop and the
+ * Arena are places): the companion standing there, the residents and life around it,
+ * no walking. Measures its own width; only the zones round the place are mounted.
+ */
+export function WorldWindow({
+  region,
+  at,
+  height,
+}: {
+  region: RegionId;
+  at: Point;
+  height: number;
+}) {
+  const [width, setWidth] = useState(0);
+  return (
+    <View
+      onLayout={(event) => {
+        const w = event.nativeEvent.layout.width;
+        setWidth((old) => (Math.abs(old - w) < 0.5 ? old : w));
+      }}
+      style={{ height, overflow: 'hidden' }}
+    >
+      {width > 0 && (
+        <AtlasWalk
+          region={region}
+          width={width}
+          height={height}
+          start={at}
+          interactive={false}
+          showName={false}
+          focusY={0.62}
+        />
+      )}
+    </View>
+  );
+}

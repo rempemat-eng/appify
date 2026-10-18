@@ -7,7 +7,7 @@ import {
   View,
   useWindowDimensions,
 } from 'react-native';
-import { router, useIsFocused } from 'expo-router';
+import { router, useIsFocused, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { PixelIcon } from '@/components/pixel-icon';
 import { cozy as c } from '@/lib/cozy';
@@ -26,7 +26,8 @@ import { GuardianPet } from '@/components/guardian-pet';
 import { GardenVisitor } from '@/components/visitors';
 import { GardenTip } from '@/components/garden-guide';
 import { Page, Pet, PixelButton, PixelText, StatusChip } from '@/components/game-ui';
-import { PixelScene } from '@/components/pixel-scenes';
+import { WorldWindow } from '@/components/atlas-walk';
+import { missionPlaces, regionPoint, rings } from '@/lib/world-places';
 import { GardenWorld } from '@/components/garden-world';
 import { MissionDeparture } from '@/components/mission-departure';
 import { openSheet, useUi } from '@/lib/ui';
@@ -35,7 +36,7 @@ import { type CompanionMemory } from '@/lib/companion-memories';
 import { GardenKeepsakeSheet } from '@/components/garden-keepsakes';
 import { gardenMarker } from '@/components/garden-journey';
 import { BodyText, Dialogue } from '@/components/pixel-feedback';
-import { PixelInput } from '@/components/pixel-frame';
+import { PixelFrame, PixelInput } from '@/components/pixel-frame';
 import { CozyBackground, CozyPanel } from '@/components/cozy-ui';
 import { PixelBurst } from '@/components/cozy-motion';
 import { PlayPause, TogetherInvite, usePlayPaused } from '@/components/offline-garden';
@@ -248,12 +249,13 @@ export function ShopScreen() {
           }}
         />
       </CozyPanel>
-      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <PixelScene kind="market" mini height={80} style={{ width: 96 }} />
-        <View style={{ flex: 1 }}>
-          <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>Moss the merchant</BodyText>
-          <BodyText style={{ fontSize: 12 }}>{merchant}</BodyText>
-        </View>
+      {/* the stall is a place: Moss's corner of Crossroads Town, as it is in the world */}
+      <PixelFrame tone="leaf" style={{ padding: 4 }}>
+        <WorldWindow region="valley" at={regionPoint(missionPlaces.shop)} height={150} />
+      </PixelFrame>
+      <View style={{ gap: 2 }}>
+        <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>Moss the merchant</BodyText>
+        <BodyText style={{ fontSize: 12 }}>{merchant}</BodyText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'baseline', marginTop: 12 }}>
         <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16, flex: 1 }}>
@@ -437,6 +439,8 @@ function RivalRow({
   );
 }
 export function ArenaScreen() {
+  const params = useLocalSearchParams<{ ring?: string }>();
+  const ring = rings.find((r) => r.region === params.ring);
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const listRef = useRef<FlatList<Player>>(null);
@@ -508,7 +512,14 @@ export function ArenaScreen() {
       <BodyText style={{ fontSize: 12 }}>
         {backendConfigured ? `RAIDS LEFT TODAY: ${Math.max(0, 3 - raids)}` : 'PRACTICE ARENA'}
       </BodyText>
-      <PixelScene kind="town" height={160} />
+      {/* the ring is a place: the one you walked to, or the town's */}
+      <PixelFrame tone="leaf" style={{ padding: 4 }}>
+        <WorldWindow
+          region={ring?.region ?? 'valley'}
+          at={regionPoint(ring ?? missionPlaces.arena)}
+          height={160}
+        />
+      </PixelFrame>
       {backendConfigured && <GardenTip id="arena" eligible={focused} />}
       {!backendConfigured && (
         <BodyText style={{ fontSize: 12 }}>
