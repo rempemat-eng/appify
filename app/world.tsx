@@ -262,6 +262,20 @@ export default function World() {
   useEffect(() => {
     useUi.setState({ worldLink: null });
   }, []);
+  // the address only says where the world opened: clear it, so a reload resumes where
+  // the companion has walked or travelled since (play-test 18 Oct: a reload on the
+  // isles went back to Driftwood's jetty)
+  const addressed = !!(params.from || params.place || params.station || params.ex || params.ey);
+  useEffect(() => {
+    if (!addressed) return;
+    router.setParams({
+      from: undefined,
+      place: undefined,
+      station: undefined,
+      ex: undefined,
+      ey: undefined,
+    });
+  }, [addressed]);
   // Walked out of the garden screen: the same spot in the valley's garden, walking on
   // out through the gap it left by.
   const exit = exitIds.find((id) => id === link.from);
