@@ -67,7 +67,6 @@ import propForestBench from '@/assets/zones/props/forest_bench.png';
 import propForge from '@/assets/zones/props/forge.png';
 import propFoundry from '@/assets/zones/props/foundry.png';
 import propFountain from '@/assets/zones/props/fountain.png';
-import propFrozenTarn from '@/assets/zones/props/frozen_tarn.png';
 import propGalleyTable from '@/assets/zones/props/galley_table.png';
 import propGardenPod from '@/assets/zones/props/garden_pod.png';
 import propGasLamp from '@/assets/zones/props/gas_lamp.png';
@@ -286,7 +285,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   forge: propForge,
   foundry: propFoundry,
   fountain: propFountain,
-  frozen_tarn: propFrozenTarn,
   galley_table: propGalleyTable,
   garden_pod: propGardenPod,
   gas_lamp: propGasLamp,

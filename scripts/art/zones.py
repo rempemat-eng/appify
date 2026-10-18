@@ -2233,9 +2233,10 @@ def park(frame: int = 0):
 def ridge(frame: int = 0):
     """The Snowy Ridge, north of the garden: the trail comes up out of the garden's
     treeline at the bottom (the same x, through the same dark forest floor), climbs
-    through thinning pines onto an alpine meadow with a frozen tarn and cairns, then
+    through thinning pines onto an alpine meadow with an open tarn and cairns, then
     by steps up a stone face to the terrace where the cabin stands under the peaks.
-    Snow lies only above the face (world logic); below it only a dusting on the pines."""
+    Snow lies only above the face (world logic): the pines, the tarn and the meadow
+    below it are clear of it."""
     SNOWm, STONEm = MATERIALS['snow'], MATERIALS['stone']
     cv = Canvas(W, H)
     alpine = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
@@ -2254,11 +2255,14 @@ def ridge(frame: int = 0):
     FACE_H = 24
     for x in range(W):
         r = rim(x)
-        for y in range(0, r):
+        for y in range(0, r):  # snow: soft drifts, wind ripples, blue in the hollows
             n = smooth_noise(x, y, 18, 443)
-            c = SNOWm[3] if n > 0.35 else SNOWm[2]
-            if smooth_noise(x, y, 7, 444) > 0.8:
-                c = STONEm[3] if smooth_noise(x, y - 1, 7, 444) > 0.8 else STONEm[4]  # rock showing through
+            c = SNOWm[3] if n > 0.4 else SNOWm[2] if n > 0.22 or (x + y) % 2 else SNOWm[1]
+            rip = (y * 2 + int(math.sin(x / 13 + y / 31) * 4)) % 9
+            if rip == 0 and n > 0.3:
+                c = SNOWm[2]  # sastrugi: the wind's ripples
+            elif rip == 1 and n > 0.3:
+                c = SNOWm[3]
             cv.set(x, y, c)
         for k in range(FACE_H):
             y = r + k
@@ -2274,23 +2278,56 @@ def ridge(frame: int = 0):
         for d in range(3):
             if (x + d) % 2 or d == 0:
                 style.darken(cv, x, r + FACE_H + d)
-    # peaks along the top
+    for i in range(26):  # rocks poking through the snow, each with snow on its top
+        x, y = int(noise2(i, 0, 447) * W), 70 + int(noise2(i, 1, 447) * 130)
+        if y < rim(x) - 6:
+            detail.pebble(cv, x, y, STONEm, big=i % 3 == 0)
+            cv.set(x, y - 1, SNOWm[3]); cv.set(x + 1, y - 1, SNOWm[3])
+    # the peaks along the top: one ridgeline of summits, sunlit snowfields on their west
+    # faces, blue shade on the east, rock ribs running down the fall line
+    summits = [(54, -10), (128, 14), (226, -26), (300, -2)]
+    def ridge_y(x):
+        return min(ay + abs(x - ax) * (1.05 if x < ax else 0.85) for (ax, ay) in summits) + noise2(x // 3, 7, 448) * 3
+    BASE = 74
     peak_pts = {}
-    for (ax, ay, half, base) in ((70, -14, 70, 70), (230, -24, 80, 80), (310, -6, 40, 50)):
-        for y in range(max(0, ay), base):
-            spread = (y - ay) / (base - ay) * half
-            for x in range(int(ax - spread), int(ax + spread * 0.9) + 1):
-                if 0 <= x < W:
-                    lit = x < ax + (y - ay) * 0.15
-                    hem = ay + 26 + abs((x + ax) % 8 - 4) + int(noise2(x // 8, ax, 446) * 5)
-                    c = (SNOWm[3] if lit else SNOWm[1]) if y < hem else (STONEm[3] if lit else STONEm[1])
-                    if y >= hem and (y - ay + (x if lit else -x) // 4) % 9 == 0:
-                        c = STONEm[2] if lit else STONEm[0]
-                    peak_pts[(x, y)] = c
+    for x in range(W):
+        top = int(ridge_y(x))
+        ax, ay = min(summits, key=lambda p: p[1] + abs(x - p[0]))
+        for y in range(max(0, top), BASE + int(noise2(x // 9, 8, 449) * 6)):
+            lit = x < ax
+            depth = y - top
+            fall = (x - ax) * 0.6 + (y - ay) * (1 if lit else -1) * 0.25
+            rib = (int(fall) % 11 == 0) and depth > 6
+            snowline = 30 + int(noise2(x // 6, ax, 446) * 14)
+            if depth < snowline and not rib:
+                c = SNOWm[3] if lit else SNOWm[1] if depth % 7 else SNOWm[0]
+                if lit and depth < 2:
+                    c = '#FFFFFF'
+            else:
+                c = STONEm[3] if lit else STONEm[1]
+                if rib:
+                    c = STONEm[2] if lit else STONEm[0]
+            peak_pts[(x, y)] = c
     for (x, y), c in peak_pts.items():
-        if (x - 1, y) not in peak_pts or (x + 1, y) not in peak_pts or (y > 0 and (x, y - 1) not in peak_pts):
-            c = STONEm[0]
+        if (x, y - 1) not in peak_pts and y > 0:
+            c = STONEm[0] if (x + 1, y - 1) in peak_pts or (x - 1, y - 1) in peak_pts else STONEm[1]
         cv.set(x, y, c)
+    # the alpine tarn below the face, open water (no snow lies down here)
+    WTR = MATERIALS['water']
+    tarn = {(x, y) for (x, y) in oval(232, 404, 38, 15)}
+    for (x, y) in tarn:
+        d = math.hypot((x - 232) / 38, (y - 404) / 15)
+        c = WTR[1] if d < 0.6 else WTR[2]
+        if (x, y - 1) not in tarn or (x, y - 2) not in tarn:
+            c = STONEm[1]
+        cv.set(x, y, c)
+    for (x, y) in oval(232, 405, 42, 18):
+        if (x, y) not in tarn:
+            cv.set(x, y, STONEm[3] if (x + y) % 3 else STONEm[2])  # a stony shore
+    for k in range(5):
+        gx = 206 + k * 11
+        if (gx, 400 + k % 2) in tarn:
+            cv.hline(gx, 400 + k % 2, 3, WTR[4])
     # the trail: up from the garden, round the tarn, steps up the face, to the cabin
     trail = worlds.thick([(206, H + 12), (206, H - 40), (190, 470), (150, 400), (130, 330), (150, 270), (150, 220)], 9.5, seed=29)
     trail |= worlds.thick([(150, 220), (150, 170), (120, 140)], 8, seed=30)
@@ -2307,16 +2344,16 @@ def ridge(frame: int = 0):
         # the garden's treeline continues at the bottom, clear of the trail
         ('pine-b1', 'pine', 4, H - 100), ('pine-b2', 'pine', 50, H - 92), ('pine-b3', 'pine', 96, H - 102),
         ('pine-b4', 'pine', 240, H - 98), ('pine-b5', 'pine', 280, H - 104), ('pine-b6', 'pine', 140, H - 150),
-        ('pine-m1', 'snowy_pine', 20, 330), ('pine-m2', 'snowy_pine', 262, 420), ('pine-m3', 'snowy_pine', 270, 250),
-        ('pine-m4', 'snowy_pine', 60, 250), ('tarn', 'frozen_tarn', 196, 380), ('cairn-1', 'cairn', 100, 360),
+        ('pine-m1', 'pine', 20, 330), ('pine-m2', 'pine', 270, 440), ('pine-m3', 'pine', 270, 250),
+        ('pine-m4', 'pine', 60, 250), ('cairn-1', 'cairn', 100, 360),
         ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
         ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
         ('pine-t2', 'snowy_pine', 270, 120), ('pine-t3', 'snowy_pine', 40, 150),
     ]
     face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
     peaks_block = set(peak_pts)
-    stands = {'garden': (206, H - 8), 'tarn': (170, 420), 'cabin': (200, 176), 'campfire': (146, 204)}
-    return cv, objects, stands, (face - steps) | peaks_block
+    stands = {'garden': (206, H - 8), 'tarn': (186, 424), 'cabin': (200, 176), 'campfire': (146, 204)}
+    return cv, objects, stands, (face - steps) | peaks_block | tarn
 
 
 def halt(frame: int = 0):
