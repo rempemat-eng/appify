@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { useReducedMotion } from '@/lib/motion';
 import { AtlasWalk, zoneNames } from '@/components/atlas-walk';
 import { Journey } from '@/components/journey';
 import { usePixelUnit, PixelFrame } from '@/components/pixel-frame';
@@ -154,6 +156,7 @@ export default function World() {
     () => tileAt(spawn.region, spawn.at.x, spawn.at.y)?.id,
   );
   const [trip, setTrip] = useState<RegionId | null>(null);
+  const reduced = useReducedMotion();
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(undefined);
   const walkToPlace = (id: string) => {
     const marker = placeMarkers(spawn.region, null).find((m) => m.id === id);
@@ -371,21 +374,27 @@ export default function World() {
             </PixelFrame>
           </View>
         ) : (
-          <AtlasWalk
+          // each arrival (a journey's end, a door) fades in from the dark (none with reduced motion)
+          <Animated.View
             key={`${spawn.region}-${spawn.key}`}
-            region={spawn.region}
-            start={spawn.at}
-            width={width}
-            height={viewH}
-            onZone={setZone}
-            onSettle={settle}
-            showName={false}
-            focusY={card ? 0.3 : 0.55}
-            padBottom={card ? cardH + insets.bottom + 16 : 0}
-            target={goal}
-            markers={placeMarkers(spawn.region, card)}
-            onMarker={walkToPlace}
-          />
+            entering={reduced ? undefined : FadeIn.duration(320)}
+            style={{ width, height: viewH }}
+          >
+            <AtlasWalk
+              region={spawn.region}
+              start={spawn.at}
+              width={width}
+              height={viewH}
+              onZone={setZone}
+              onSettle={settle}
+              showName={false}
+              focusY={card ? 0.3 : 0.55}
+              padBottom={card ? cardH + insets.bottom + 16 : 0}
+              target={goal}
+              markers={placeMarkers(spawn.region, card)}
+              onMarker={walkToPlace}
+            />
+          </Animated.View>
         )}
         {card && !away && !trip && (
           <View
