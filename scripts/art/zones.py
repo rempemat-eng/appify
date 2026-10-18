@@ -1958,9 +1958,13 @@ def station(frame: int = 0):
 
 
 def lumen(frame: int = 0):
-    """Lumen, the quiet moon: pale regolith pocked with craters lit on their far rims,
-    the shuttle landed at the top, a trail of footprints, glowing shrubs and moon
-    crystals, dream pools holding the stars, and a wide crater for gentle sparring."""
+    """Lumen, the quiet moon and the deepest rest: pale regolith under a black sky with
+    the planet rising over a far ridge. The shuttle sits on a scorched pad at the top;
+    a winding line of footprints leads down past boulders with hard airless shadows,
+    bright-rayed craters and a sinuous rille, by a ring of crystals round a small
+    crater (gentle sparring), to the Dream Grove: a wide crater whose floor is carpeted
+    in glowing moss round the sleeping tree, with dream pools holding the stars, little
+    glowing caps, and a hammock slung between two crystal spires."""
     R, GLOWm, VOID = MATERIALS['regolith'], MATERIALS['glowflora'], MATERIALS['void']
     cv = Canvas(W, H)
     for y in range(H):
@@ -1985,9 +1989,28 @@ def lumen(frame: int = 0):
         cv.set(x, hz, R[5]); cv.set(x, hz + 1, R[4])
         for k in range(2, 6):
             cv.set(x, hz + k, R[2] if k < 4 else R[3])
-    craters = [(60, 120, 22), (250, 80, 14), (220, 300, 30), (70, 380, 12), (150, 470, 40), (280, 460, 10),
-               (40, 250, 9), (120, 200, 8)]
-    for (cx, cy, r) in craters:
+    for x in range(W):  # a far ridge along the horizon, in shade
+        top = horizon(x) - 6 - int(abs(math.sin(x / 37)) * 10 + noise2(x // 4, 1, 366) * 4)
+        for y in range(max(0, top), horizon(x)):
+            d = math.hypot(x - 230, y - 150)
+            if d >= 117 or y > 40:
+                cv.set(x, y, R[1] if y > top + 1 else R[2])
+    # a rille: a winding collapsed channel across the west
+    rille = worlds.thick([(-6, 210), (40, 230), (60, 290), (30, 350), (-6, 380)], 7, seed=367)
+    for (x, y) in rille:
+        lit = (x - 1, y) not in rille or (x, y - 1) not in rille
+        cv.set(x, y, R[1] if not lit else R[4])
+    for (x, y) in rille:
+        if (x + 1, y) not in rille and (x + 2, y) not in rille:
+            cv.set(x + 1, y, R[5])
+    def crater(cx, cy, r, rays=False):
+        if rays:  # bright ejecta rays across the dust
+            for k in range(9):
+                a = 2 * math.pi * k / 9 + 0.3
+                for t in range(int(r * 1.1), int(r * (2.4 + noise2(k, 0, 368)))):
+                    x, y = int(cx + math.cos(a) * t), int(cy + math.sin(a) * t * 0.6)
+                    if (x + y) % 3 and 0 <= x < W and 0 <= y < H and y > 80:
+                        cv.set(x, y, R[4])
         for (x, y) in oval(cx, cy, r, r * 0.6):
             dx, dy = (x - cx) / r, (y - cy) / (r * 0.6)
             d = math.hypot(dx, dy)
@@ -1997,21 +2020,65 @@ def lumen(frame: int = 0):
             else:  # the raised rim: lit on its upper-left outside, shaded lower right
                 v = 3.4 - t * 2.2 + (0.3 if (x + y) % 2 else 0)
             cv.set(x, y, R[max(0, min(5, int(v)))])
-    for i, y in enumerate(range(140, 460, 7)):  # footprints from the shuttle
-        x = 160 + int(math.sin(y / 40) * 30) + (3 if i % 2 else -3)
-        cv.set(x, y, R[1]); cv.set(x + 1, y, R[1]); cv.set(x, y + 1, R[2])
+    for (cx, cy, r, rays) in ((54, 130, 18, True), (270, 96, 10, False), (296, 380, 12, False), (40, 470, 9, False),
+                              (120, 250, 8, False), (210, 150, 6, False), (280, 560, 14, True)):
+        crater(cx, cy, r, rays)
+    # the shuttle's pad: a ring scorched into the dust
+    for (x, y) in oval(160, 126, 50, 16):
+        d = math.hypot((x - 160) / 50, (y - 126) / 16)
+        if d > 0.55 and (x + y) % 2:
+            cv.set(x, y, R[1] if d < 0.8 else R[2])
+    # the sparring crater with its ring of crystals
+    crater(236, 262, 34)
+    # the Dream Grove: a wide crater carpeted in glowing moss
+    GX, GY, GRX, GRY = 168, 452, 104, 58
+    for (x, y) in oval(GX, GY, GRX, GRY):
+        d = math.hypot((x - GX) / GRX, (y - GY) / GRY)
+        t = ((x - GX) / GRX + (y - GY) / GRY) * 0.7
+        if d > 0.86:  # its rim
+            v = 3.4 - t * 2.2 + (0.3 if (x + y) % 2 else 0)
+            cv.set(x, y, R[max(0, min(5, int(v)))])
+            continue
+        n = smooth_noise(x, y, 7, 369)
+        c = GLOWm[1] if n > 0.45 else GLOWm[0]
+        if n > 0.72 or (n > 0.66 and (x + y) % 2):
+            c = GLOWm[2]
+        if d > 0.76 and (x + y) % 2:
+            c = R[2]  # the moss thinning toward the rim
+        cv.set(x, y, c)
+    for i in range(60):  # moss sparkles
+        x, y = GX + int((noise2(i, 0, 370) - 0.5) * GRX * 1.5), GY + int((noise2(i, 1, 370) - 0.5) * GRY * 1.5)
+        if math.hypot((x - GX) / GRX, (y - GY) / GRY) < 0.7:
+            cv.set(x, y, GLOWm[4] if i % 3 == 0 else GLOWm[3])
+    light_pool(cv, GX, GY + 10, 90, 44, GLOWm[3])
+    # footprints from the shuttle, winding down past it all to the grove
+    pts = [(160, 150), (176, 200), (150, 250), (130, 300), (170, 340), (164, 392)]
+    for i in range(len(pts) - 1):
+        (x0, y0), (x1, y1) = pts[i], pts[i + 1]
+        steps = int(math.hypot(x1 - x0, y1 - y0) / 7)
+        for k in range(steps):
+            x = int(x0 + (x1 - x0) * k / steps) + (3 if (k + i) % 2 else -3)
+            y = int(y0 + (y1 - y0) * k / steps)
+            cv.set(x, y, R[1]); cv.set(x + 1, y, R[1]); cv.set(x, y + 1, R[2])
     objects = [
-        ('shuttle', 'shuttle', 118, 72), ('shrub-1', 'moon_shrub', 20, 180), ('shrub-2', 'moon_shrub', 270, 160),
-        ('shrub-3', 'moon_shrub', 30, 470), ('shrub-4', 'moon_shrub', 280, 360), ('shrub-5', 'moon_shrub', 196, 380),
-        ('crystal-1', 'moon_crystal', 96, 290), ('crystal-2', 'moon_crystal', 290, 250), ('crystal-3', 'moon_crystal', 6, 320),
-        ('crystal-4', 'moon_crystal', 250, 530), ('pool-1', 'dream_pool', 70, 240), ('pool-2', 'dream_pool', 200, 210),
-        ('pool-3', 'dream_pool', 40, 540), ('shrub-6', 'moon_shrub', 120, 330), ('shrub-7', 'moon_shrub', 150, 256),
-        ('crystal-5', 'moon_crystal', 214, 120), ('crystal-6', 'moon_crystal', 230, 128), ('shrub-8', 'moon_shrub', 290, 520),
+        ('shuttle', 'shuttle', 118, 72),
+        ('rock-1', 'moon_rock', 26, 180), ('rock-2', 'moon_rock_small', 230, 200), ('rock-3', 'moon_rock', 278, 300),
+        ('rock-4', 'moon_rock_small', 80, 330), ('rock-5', 'moon_rock_small', 290, 470), ('rock-6', 'moon_rock', 14, 540),
+        ('crystal-1', 'moon_crystal', 196, 228), ('crystal-2', 'moon_crystal', 262, 236), ('crystal-3', 'moon_crystal', 200, 276),
+        ('crystal-4', 'moon_crystal', 262, 280), ('crystal-5', 'moon_crystal', 214, 112), ('crystal-6', 'moon_crystal', 90, 150),
+        ('shrub-1', 'moon_shrub', 30, 260), ('shrub-2', 'moon_shrub', 280, 150), ('shrub-3', 'moon_shrub', 96, 380),
+        ('shrub-4', 'moon_shrub', 240, 380),
+        # the Dream Grove
+        ('tree', 'moon_tree', GX - 38, GY - 82), ('hammock', 'hammock', GX - 112 + 30, GY - 6),
+        ('pool-1', 'dream_pool', GX + 40, GY + 6), ('pool-2', 'dream_pool', GX - 30, GY + 28),
+        ('caps-1', 'glow_caps', GX + 14, GY + 30), ('caps-2', 'glow_caps', GX - 70, GY - 30), ('caps-3', 'glow_caps', GX + 64, GY - 24),
+        ('shrub-5', 'moon_shrub', GX + 74, GY + 10), ('shrub-6', 'moon_shrub', GX - 96, GY + 20),
     ]
     for (_i, key, x, y) in objects:  # the flora's glow on the dust
         if key == 'moon_shrub':
             light_pool(cv, x + 17, y + 32, 26, 12, GLOWm[1])
-    stands = {'shuttle': (160, 142), 'pool': (100, 274), 'crater': (150, 470), 'east': (290, 300)}
+    stands = {'shuttle': (160, 146), 'sparring': (236, 262), 'grove': (168, 410), 'hammock': (118, 496),
+              'rille': (80, 300)}
     return cv, objects, stands
 
 

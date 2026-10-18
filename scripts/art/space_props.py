@@ -341,6 +341,100 @@ def tea_dispenser() -> Canvas:
     return cv
 
 
+def moon_tree() -> Canvas:
+    """The sleeping tree at the heart of Lumen, 76 x 92: a pale twisted trunk lit from
+    the upper left, a wide crown of soft teal leaves glowing from within, and lantern
+    pods hanging from its boughs like slow breaths."""
+    w, h = 76, 92
+    cv = Canvas(w, h, pad=PAD)
+    cx = w // 2
+    for y in range(44, h - 2):  # the trunk, twisting, with roots spreading
+        t = (y - 44) / (h - 46)
+        twist = int(math.sin(t * 4) * 2)
+        hw = 4 + int(t * t * 8)
+        for x in range(cx - hw + twist, cx + hw + twist):
+            k = (x - (cx - hw + twist)) / (2 * hw)
+            c = REGOLITH[5] if k < 0.25 else REGOLITH[4] if k < 0.55 else REGOLITH[3] if k < 0.8 else REGOLITH[2]
+            if (y + x // 3) % 7 == 0:
+                c = REGOLITH[2]  # the bark's spiral grain
+            cv.set(x, y, c)
+    for (bx, by, ex, ey) in ((cx, 50, 14, 34), (cx, 48, 62, 30), (cx, 46, 30, 22)):
+        for t in range(24):
+            x, y = bx + (ex - bx) * t / 23, by + (ey - by) * t / 23
+            cv.set(int(x), int(y), REGOLITH[4]); cv.set(int(x), int(y) + 1, REGOLITH[2])
+    clumps = []  # the crown in soft clumps, each lit on its own upper left
+    for i in range(46):
+        a = noise2(i, 0, 360) * 2 * math.pi
+        r = math.sqrt(noise2(i, 1, 360))
+        clumps.append((cx + math.cos(a) * r * 30, 27 + math.sin(a) * r * 18, 5 + noise2(i, 2, 360) * 3))
+    for (ccx, ccy, cr) in sorted(clumps, key=lambda c: c[1]):
+        base = (ccx - 4) / 68 + (ccy - 6) / 46  # where the clump sits in the crown's light
+        for (x, y) in disc(ccx, ccy, cr):
+            k = base + ((x - ccx) + (y - ccy)) / (cr * 4)
+            c = GLOW[4] if k < 0.5 else GLOW[3] if k < 0.85 else GLOW[2] if k < 1.2 else GLOW[1]
+            cv.set(x, y, c)
+    for (px, py) in ((16, 44), (30, 50), (50, 48), (62, 42), (40, 52)):  # hanging lantern pods
+        cv.vline(px, py - 6, 6, GLOW[1])
+        for (x, y) in oval(px, py + 2, 2.5, 3.5):
+            cv.set(x, y, '#FFF6D0' if x < px else '#F2D27A')
+    return cv
+
+
+def hammock() -> Canvas:
+    """A hammock slung between two crystal spires, 68 x 40: soft woven cloth in nap
+    violet sagging in the low gravity, a folded blanket and a small pillow in it."""
+    w, h = 68, 40
+    cv = Canvas(w, h, pad=PAD)
+    for (cx, top) in ((5, 2), (62, 4)):  # the spires
+        for y in range(top, h - 2):
+            hw = min(4, (y - top) // 2 + 1)
+            for x in range(cx - hw, cx + hw + 1):
+                k = (x - (cx - hw)) / (2 * hw + 1)
+                cv.set(x, y, '#E6E0FA' if k < 0.35 else '#B8AEE6' if k < 0.7 else NAP[2])
+    for x in range(9, 59):  # the cloth, sagging
+        t = (x - 9) / 49
+        y0 = int(14 + math.sin(t * math.pi) * 10)
+        for y in range(y0, y0 + 5):
+            c = NAP[4] if y == y0 else NAP[3] if (x // 3 + y) % 2 else NAP[2]
+            cv.set(x, y, c)
+        if x % 4 == 0:
+            cv.set(x, y0 + 5, NAP[1])  # its fringe
+    for (x, y) in oval(22, 20, 6, 2.5):
+        cv.set(x, y, '#F2EEE6' if x < 22 else '#D8D2C6')  # pillow
+    for x in range(30, 46):
+        cv.set(x, 22, GOLD[3]); cv.set(x, 23, GOLD[2])  # the blanket's edge
+    for (ax, ay, bx, by) in ((6, 10, 10, 15), (61, 12, 57, 15)):
+        for t in range(6):
+            cv.set(int(ax + (bx - ax) * t / 5), int(ay + (by - ay) * t / 5), REGOLITH[1])
+    return cv
+
+
+def moon_rock(big: bool = True) -> Canvas:
+    """A moon boulder, 30 x 20 (or 18 x 12): rounded, lit on its upper left, a sharp
+    dark side in the airless light."""
+    w, h = (30, 20) if big else (18, 12)
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(w / 2, h / 2 + 1, w / 2 - 2, h / 2 - 2):
+        k = (x - 2) / (w - 4) + (y - 2) / (h - 4)
+        c = REGOLITH[5] if k < 0.5 else REGOLITH[4] if k < 0.9 else REGOLITH[2] if k < 1.3 else REGOLITH[1]
+        if noise2(x // 2, y // 2, 365 + w) > 0.82:
+            c = REGOLITH[3]
+        cv.set(x, y, c)
+    return cv
+
+
+def glow_caps() -> Canvas:
+    """A ring of little glowing mushrooms, 26 x 14, their caps lit from beneath."""
+    cv = Canvas(26, 14, pad=PAD)
+    for k, (mx, my, r) in enumerate(((5, 8, 3), (12, 5, 4), (20, 8, 3), (16, 11, 2), (8, 11, 2))):
+        cv.vline(mx, my, 3, REGOLITH[4])
+        for (x, y) in oval(mx, my, r, r * 0.6):
+            if y <= my:
+                cv.set(x, y, GLOW[4] if x < mx else GLOW[3])
+        cv.set(mx - 1, my, GLOW[2])
+    return cv
+
+
 def props_station() -> dict[str, Canvas]:
     return {'garden_pod': garden_pod(), 'viewport': viewport(), 'sleep_pod': sleep_pod(), 'airlock': airlock(),
             'console': console(), 'hydro_trough': hydro_trough(), 'galley_table': galley_table(),
@@ -349,7 +443,9 @@ def props_station() -> dict[str, Canvas]:
 
 
 def props_lumen() -> dict[str, Canvas]:
-    return {'moon_shrub': moon_shrub(), 'moon_crystal': moon_crystal(), 'shuttle': shuttle(), 'dream_pool': dream_pool()}
+    return {'moon_shrub': moon_shrub(), 'moon_crystal': moon_crystal(), 'shuttle': shuttle(), 'dream_pool': dream_pool(),
+            'moon_tree': moon_tree(), 'hammock': hammock(), 'moon_rock': moon_rock(True), 'moon_rock_small': moon_rock(False),
+            'glow_caps': glow_caps()}
 
 
 def props() -> dict[str, Canvas]:

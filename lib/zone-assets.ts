@@ -70,6 +70,8 @@ import propGardenPod from '@/assets/zones/props/garden_pod.png';
 import propGasLamp from '@/assets/zones/props/gas_lamp.png';
 import propGatehouse from '@/assets/zones/props/gatehouse.png';
 import propGearPile from '@/assets/zones/props/gear_pile.png';
+import propGlowCaps from '@/assets/zones/props/glow_caps.png';
+import propHammock from '@/assets/zones/props/hammock.png';
 import propHayBale from '@/assets/zones/props/hay_bale.png';
 import propHedge from '@/assets/zones/props/hedge.png';
 import propHerbBed from '@/assets/zones/props/herb_bed.png';
@@ -96,7 +98,10 @@ import propLuggageBot from '@/assets/zones/props/luggage_bot.png';
 import propMaglev from '@/assets/zones/props/maglev.png';
 import propMinePortal from '@/assets/zones/props/mine_portal.png';
 import propMoonCrystal from '@/assets/zones/props/moon_crystal.png';
+import propMoonRock from '@/assets/zones/props/moon_rock.png';
+import propMoonRockSmall from '@/assets/zones/props/moon_rock_small.png';
 import propMoonShrub from '@/assets/zones/props/moon_shrub.png';
+import propMoonTree from '@/assets/zones/props/moon_tree.png';
 import propMossyLog from '@/assets/zones/props/mossy_log.png';
 import propMushroomRing from '@/assets/zones/props/mushroom_ring.png';
 import propNarrowboat from '@/assets/zones/props/narrowboat.png';
@@ -277,6 +282,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   gas_lamp: propGasLamp,
   gatehouse: propGatehouse,
   gear_pile: propGearPile,
+  glow_caps: propGlowCaps,
+  hammock: propHammock,
   hay_bale: propHayBale,
   hedge: propHedge,
   herb_bed: propHerbBed,
@@ -303,7 +310,10 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   maglev: propMaglev,
   mine_portal: propMinePortal,
   moon_crystal: propMoonCrystal,
+  moon_rock: propMoonRock,
+  moon_rock_small: propMoonRockSmall,
   moon_shrub: propMoonShrub,
+  moon_tree: propMoonTree,
   mossy_log: propMossyLog,
   mushroom_ring: propMushroomRing,
   narrowboat: propNarrowboat,
