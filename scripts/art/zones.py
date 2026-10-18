@@ -1110,6 +1110,8 @@ def gulch(frame: int = 0):
         ('cactus-4', 'saguaro_small', 286, 540), ('cactus-5', 'saguaro', 280, 60), ('cactus-6', 'saguaro_small', 4, 2),
         ('cactus-7', 'saguaro', 290, 300), ('weed-1', 'tumbleweed', 170, 380), ('weed-2', 'tumbleweed', 96, 562),
         ('skull', 'cow_skull', 250, 520), ('barrel-p', 'keg', 40, 62), ('sack-p', 'hay_bale', 196, 56),
+        ('horse', 'horse', ccx - 30, ccy - 24), ('pear-1', 'prickly_pear', 244, 466), ('pear-2', 'prickly_pear', 280, 426),
+        ('pear-3', 'prickly_pear', 200, 548),
     ]
     stands = {'platform': (128, 70), 'saloon': (58, 200), 'street': (132, 260), 'corral': (190, 470),
               'oasis': (12, 548), 'mine': (284, 236), 'well': (75, 404)}

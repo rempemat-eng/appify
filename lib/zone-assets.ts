@@ -106,6 +106,7 @@ import propHeron from '@/assets/zones/props/heron.png';
 import propHitchingRail from '@/assets/zones/props/hitching_rail.png';
 import propHollowTree from '@/assets/zones/props/hollow_tree.png';
 import propHoloBoard from '@/assets/zones/props/holo_board.png';
+import propHorse from '@/assets/zones/props/horse.png';
 import propHouseBlue from '@/assets/zones/props/house_blue.png';
 import propHouseRed from '@/assets/zones/props/house_red.png';
 import propHydroTrough from '@/assets/zones/props/hydro_trough.png';
@@ -154,6 +155,7 @@ import propPlantTall from '@/assets/zones/props/plant_tall.png';
 import propPodTree from '@/assets/zones/props/pod_tree.png';
 import propPosterBoard from '@/assets/zones/props/poster_board.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
+import propPricklyPear from '@/assets/zones/props/prickly_pear.png';
 import propPumpkins from '@/assets/zones/props/pumpkins.png';
 import propReeds from '@/assets/zones/props/reeds.png';
 import propRingPost from '@/assets/zones/props/ring_post.png';
@@ -381,6 +383,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   hitching_rail: propHitchingRail,
   hollow_tree: propHollowTree,
   holo_board: propHoloBoard,
+  horse: propHorse,
   house_blue: propHouseBlue,
   house_red: propHouseRed,
   hydro_trough: propHydroTrough,
@@ -429,6 +432,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   pod_tree: propPodTree,
   poster_board: propPosterBoard,
   potted_plant: propPottedPlant,
+  prickly_pear: propPricklyPear,
   pumpkins: propPumpkins,
   reeds: propReeds,
   ring_post: propRingPost,

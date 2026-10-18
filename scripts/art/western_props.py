@@ -739,6 +739,52 @@ def sandstone_outcrop(seed: int = 0) -> Canvas:
     return cv
 
 
+def horse() -> Canvas:
+    """A bay horse dozing on its feet in the corral, 44 x 36, seen from the side: the
+    body lit along its back, a dark mane and tail, one hind hoof cocked (resting), the
+    head low and its eyes shut."""
+    w, h = 44, 36
+    cv = Canvas(w, h, pad=PAD)
+    BAY = ['#3A2218', '#5E3A24', '#80522E', '#A06A3C', '#C08850']
+    body = oval(20, 17, 13, 7)
+    for (x, y) in body:
+        k = (x - 7) / 26 + (y - 10) / 14
+        cv.set(x, y, BAY[4] if k < 0.45 else BAY[3] if k < 0.9 else BAY[2] if k < 1.3 else BAY[1])
+    for (lx, cocked) in ((10, False), (14, True), (27, False), (30, False)):  # legs
+        for y in range(22, h - 2 - (2 if cocked else 0)):
+            cv.set(lx, y, BAY[2] if lx in (10, 27) else BAY[1]); cv.set(lx + 1, y, BAY[1])
+        foot = h - 2 - (2 if cocked else 0)
+        cv.hline(lx, foot, 2, '#2A2026')
+        cv.set(lx, foot - 2, '#E8DCC8') if lx == 27 else None  # one white sock
+    for t in range(9):  # the neck, low and forward
+        x, y = 31 + t, 13 + t * 0.6
+        for d in range(-2, 3):
+            cv.set(int(x), int(y + d), BAY[3] if d < 0 else BAY[2])
+    for (x, y) in oval(41, 20, 3.5, 2.8):  # the head, dozing
+        cv.set(x, y, BAY[3] if y < 20 else BAY[2])
+    cv.set(43, 22, BAY[0]); cv.set(40, 19, BAY[0]); cv.set(39, 16, BAY[2])
+    for t in range(9):  # the mane
+        cv.set(30 + t, 11 + int(t * 0.6), BAY[0]); cv.set(30 + t, 12 + int(t * 0.6), BAY[1])
+    for t in range(10):  # the tail
+        cv.set(7 - t // 4, 14 + t, BAY[0]); cv.set(8 - t // 4, 14 + t, BAY[1])
+    return cv
+
+
+def prickly_pear() -> Canvas:
+    """A prickly pear, 20 x 18: flat round pads lit upper left, spines, two red fruit."""
+    w, h = 20, 18
+    cv = Canvas(w, h, pad=PAD)
+    PAD_G = ['#2E5A34', '#447A44', '#62995A', '#8CBB72']
+    for (cx, cy, rx, ry) in ((10, 13, 5, 4), (6, 8, 4, 3.5), (14, 7, 3.5, 3.2)):
+        for (x, y) in oval(cx, cy, rx, ry):
+            k = (x - cx) / rx + (y - cy) / ry
+            cv.set(x, y, PAD_G[3] if k < -0.6 else PAD_G[2] if k < 0.4 else PAD_G[1])
+        for (dx, dy) in ((-2, -1), (1, 1), (2, -2)):
+            cv.set(cx + dx, cy + dy, '#E8DCC8')
+    cv.set(6, 4, '#C2453A'); cv.set(7, 4, '#9A3028'); cv.set(15, 3, '#C2453A')
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'saloon': false_front(104, 0, RED, 'saloon'), 'store': false_front(88, 3, WTR, 'store'),
@@ -752,6 +798,7 @@ def props() -> dict[str, Canvas]:
         'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
         'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
         'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
+        'horse': horse(), 'prickly_pear': prickly_pear(),
     }
 
 
