@@ -33,7 +33,7 @@ Two places that touch are joined only at a declared port, about 48–64 art px w
 | summit/saddle         | 120–168    | 120–168    | steep snow and rock | matches                                                                   |
 | junction/canal        | 128–192    | 128–192    | parapet             | matches                                                                   |
 | neon/skyport          | 164–220    | 164–220    | quay wall           | matches                                                                   |
-| oasis/gulch           | 496–552    | 296–352    | dune ridges         | kept: the oasis road meets Dust Gulch's main street at mid-height         |
+| oasis/gulch           | 496–552    | 496–552    | dune ridges         | matches: Dust Gulch's street runs on as the oasis track to the camp       |
 | gulch/scorch          | 204–268    | 356–412    | dune ridges         | kept: the road to the lava bridge leaves the gulch's south yard           |
 | scorch/hearthold      | (no seam)  | 140–188    | ash rocks           | Claude's two-bridge Hearthold, which Codex's `gameplay-logic.md` keeps    |
 | caldera/hearthold     | (no seam)  | 104–152    | basalt              | the postern, as above                                                     |

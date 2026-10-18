@@ -65,7 +65,7 @@ PORTS = {
     ('junction', 'canal'): ((128, 192), 'wall'),
     ('neon', 'skyport'): ((164, 220), 'quay'),
     # Sunstone Reach
-    ('oasis', 'gulch'): ((296, 352), 'dunes'),
+    ('oasis', 'gulch'): ((496, 552), 'dunes'),
     ('gulch', 'scorch'): ((356, 412), 'dunes'),
     ('hearthold', 'scorch'): ((140, 188), 'ash'),
     ('caldera', 'hearthold'): ((104, 152), 'basalt'),

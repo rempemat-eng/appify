@@ -142,7 +142,6 @@ import propLoungeBench from '@/assets/zones/props/lounge_bench.png';
 import propLuggageBot from '@/assets/zones/props/luggage_bot.png';
 import propMaglev from '@/assets/zones/props/maglev.png';
 import propMarmotRock from '@/assets/zones/props/marmot_rock.png';
-import propMinePortal from '@/assets/zones/props/mine_portal.png';
 import propMonstera from '@/assets/zones/props/monstera.png';
 import propMoonArch from '@/assets/zones/props/moon_arch.png';
 import propMoonCrystal from '@/assets/zones/props/moon_crystal.png';
@@ -551,7 +550,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   luggage_bot: propLuggageBot,
   maglev: propMaglev,
   marmot_rock: propMarmotRock,
-  mine_portal: propMinePortal,
   monstera: propMonstera,
   moon_arch: propMoonArch,
   moon_crystal: propMoonCrystal,

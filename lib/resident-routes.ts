@@ -25,7 +25,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   saloon: { zone: 'gulch', from: [102, 380], to: [190, 380] },
   trader: { zone: 'oasis', from: [210, 546], to: [298, 546] },
   smith: { zone: 'caldera', from: [18, 434], to: [106, 434] },
-  attendant: { zone: 'springs', from: [96, 516], to: [184, 516] },
+  attendant: { zone: 'springs', from: [106, 516], to: [184, 516] },
   vendor: { zone: 'neon', from: [70, 332], to: [158, 332] },
   courier: { zone: 'neon', from: [18, 184], to: [106, 184] },
   porter: { zone: 'skyport', from: [52, 240], to: [140, 240] },
