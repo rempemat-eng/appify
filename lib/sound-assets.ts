@@ -19,6 +19,9 @@ import boop from '@/assets/sounds/boop.wav';
 import munch from '@/assets/sounds/munch.wav';
 import ambience_day from '@/assets/sounds/ambience-day.wav';
 import ambience_night from '@/assets/sounds/ambience-night.wav';
+import ambience_frost from '@/assets/sounds/ambience-frost.wav';
+import ambience_sunstone from '@/assets/sounds/ambience-sunstone.wav';
+import ambience_isles from '@/assets/sounds/ambience-isles.wav';
 
 export const soundEffects = {
   tap,
@@ -45,6 +48,9 @@ export type SoundId = keyof typeof soundEffects;
 export const ambienceLoops = {
   day: ambience_day,
   night: ambience_night,
+  frost: ambience_frost,
+  sunstone: ambience_sunstone,
+  isles: ambience_isles,
 } as const;
 export type AmbienceId = keyof typeof ambienceLoops;
 
@@ -70,4 +76,7 @@ export const soundDurations: Record<string, number> = {
   munch: 0.5,
   'ambience-day': 20.0,
   'ambience-night': 20.0,
+  'ambience-frost': 15.0,
+  'ambience-sunstone': 15.0,
+  'ambience-isles': 15.0,
 };
