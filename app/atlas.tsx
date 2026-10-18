@@ -1,5 +1,5 @@
 import { useCallback, useState } from 'react';
-import { View, useWindowDimensions } from 'react-native';
+import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { Stack, router } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AtlasWalk } from '@/components/atlas-walk';
@@ -8,6 +8,7 @@ import { usePixelUnit } from '@/components/pixel-frame';
 import { PixelButton } from '@/components/game-ui';
 import type { RegionId } from '@/lib/region-walk';
 
+const BUTTON_W = 88; // wide enough for a region's name and a 44 px touch target
 const regionIds: RegionId[] = ['home', 'valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 const regionNames: Record<RegionId, string> = {
   valley: 'VALLEY',
@@ -52,21 +53,23 @@ export default function Atlas() {
           />
         )}
       </View>
-      <View
-        style={{
-          height: bar,
+      {/* a scrolling row, so every button keeps a full touch target however many regions */}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ height: bar, flexGrow: 0 }}
+        contentContainerStyle={{
           paddingBottom: insets.bottom,
           paddingHorizontal: 8,
-          flexDirection: 'row',
           gap: 6,
           alignItems: 'center',
         }}
       >
-        <View style={{ flex: 1 }}>
+        <View style={{ width: BUTTON_W }}>
           <PixelButton small light label="HOME" onPress={() => router.replace('/')} />
         </View>
         {regionIds.map((r) => (
-          <View key={r} style={{ flex: 1 }}>
+          <View key={r} style={{ width: BUTTON_W }}>
             <PixelButton
               small
               light={r !== region}
@@ -81,7 +84,7 @@ export default function Atlas() {
             />
           </View>
         ))}
-      </View>
+      </ScrollView>
     </View>
   );
 }
