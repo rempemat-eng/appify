@@ -18,7 +18,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   baker: { zone: 'town', from: [186, 212], to: [186, 300] },
   fisher: { zone: 'harbour', from: [152, 290], to: [240, 290] },
   keeper: { zone: 'harbour', from: [66, 276], to: [66, 364] },
-  steward: { zone: 'castle', from: [146, 296], to: [196, 296] },
+  steward: { zone: 'hearthold', from: [146, 296], to: [196, 296] },
   tinkerer: { zone: 'junction', from: [96, 372], to: [184, 372] },
   boatwoman: { zone: 'canal', from: [136, 170], to: [224, 170] },
   cowhand: { zone: 'gulch', from: [132, 200], to: [132, 288] },

@@ -268,7 +268,7 @@ import groundCaldera from '@/assets/zones/caldera/ground.png';
 import groundSprings from '@/assets/zones/springs/ground.png';
 import groundHarbour from '@/assets/zones/harbour/ground.png';
 import groundHeadland from '@/assets/zones/headland/ground.png';
-import groundCastle from '@/assets/zones/castle/ground.png';
+import groundHearthold from '@/assets/zones/hearthold/ground.png';
 import groundScorch from '@/assets/zones/scorch/ground.png';
 import groundStation from '@/assets/zones/station/ground.png';
 import groundLumen from '@/assets/zones/lumen/ground.png';
@@ -290,7 +290,7 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   springs: groundSprings,
   harbour: groundHarbour,
   headland: groundHeadland,
-  castle: groundCastle,
+  hearthold: groundHearthold,
   scorch: groundScorch,
   station: groundStation,
   lumen: groundLumen,
@@ -312,7 +312,7 @@ import mapCaldera from '@/assets/zones/caldera/map.png';
 import mapSprings from '@/assets/zones/springs/map.png';
 import mapHarbour from '@/assets/zones/harbour/map.png';
 import mapHeadland from '@/assets/zones/headland/map.png';
-import mapCastle from '@/assets/zones/castle/map.png';
+import mapHearthold from '@/assets/zones/hearthold/map.png';
 import mapScorch from '@/assets/zones/scorch/map.png';
 import mapStation from '@/assets/zones/station/map.png';
 import mapLumen from '@/assets/zones/lumen/map.png';
@@ -336,7 +336,7 @@ export const zoneMapTiles: Record<ZoneId | 'garden', ImageSourcePropType> = {
   springs: mapSprings,
   harbour: mapHarbour,
   headland: mapHeadland,
-  castle: mapCastle,
+  hearthold: mapHearthold,
   scorch: mapScorch,
   station: mapStation,
   lumen: mapLumen,

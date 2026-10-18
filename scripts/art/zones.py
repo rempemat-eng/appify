@@ -3174,7 +3174,7 @@ def woodland(frame: int = 0):
 # Every region is its own place (Matt, 17 Oct: "not just reskins of other worlds"): a
 # zone outside the valley draws only its own region's props, plus the few shared
 # things below that would really be found anywhere.
-REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'springs': cdp.props, 'home': hp.props, 'neon': cp.props, 'skyport': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'castle': lambda: {**csp.props(), **cdp.props()}, 'scorch': lambda: {**wsp.props(), **cdp.props()},
+REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'springs': cdp.props, 'home': hp.props, 'neon': cp.props, 'skyport': cp.props, 'gulch': wsp.props, 'oasis': wsp.props, 'caldera': cdp.props, 'harbour': hbp.props, 'hearthold': lambda: {**csp.props(), **cdp.props()}, 'scorch': lambda: {**wsp.props(), **cdp.props()},
                 'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
@@ -3297,7 +3297,7 @@ def _decal(cv, kind, x, y, r):
 DRESS = {
     'town': ('meadow', G[2:4], 0.32), 'park': ('meadow', G[2:4], 0.4), 'riverside': ('meadow', G[2:4], 0.4),
     'halt': ('meadow', G[2:4], 0.3), 'harbour': ('meadow', G[2:4], 0.3), 'headland': ('meadow', G[2:4], 0.4),
-    'castle': ('ash', MATERIALS['ash'][1:3], 0.26), 'scorch': ('ash', MATERIALS['ash'][1:3], 0.22),
+    'hearthold': ('ash', MATERIALS['ash'][1:3], 0.26), 'scorch': ('ash', MATERIALS['ash'][1:3], 0.22),
     'woodland': ('forest', None, 0.26), 'ridge': ('alpine', ALPINE[2:4], 0.32),
     'junction': ('soot', SOOT[2:4], 0.3), 'canal': ('soot', SOOT[2:4], 0.3),
     'gulch': ('desert', MATERIALS['desert'][2:5], 0.22), 'oasis': ('desert', MATERIALS['desert'][2:5], 0.16),
@@ -3454,7 +3454,7 @@ DOORS = {k: 0.5 for k in ('house_blue', 'house_red', 'cabin', 'cafe', 'library',
 LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'headland': (1, 2), 'halt': (-1, 1)},
-    'steam': {'junction': (0, 0), 'canal': (0, 1)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, -1), 'springs': (1, -1), 'castle': (0, 0), 'scorch': (0, 1)},
+    'steam': {'junction': (0, 0), 'canal': (0, 1)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, -1), 'springs': (1, -1), 'hearthold': (0, 0), 'scorch': (0, 1)},
     'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)}, 'home': {'home': (0, 0)},
 }
 
@@ -3692,7 +3692,9 @@ def main():
     built['springs'] = build('springs', springs, 'caldera')
     built['harbour'] = build('harbour', harbour, 'town')
     built['headland'] = build('headland', headland, 'harbour')
-    built['castle'] = build('castle', castle, 'scorch')
+    # (a new zone id: the valley's old 'castle' corner is the Headland now, so saved
+    # visits to 'castle' are read as the Headland, lib/world-save.ts)
+    built['hearthold'] = build('hearthold', castle, 'scorch')
     built['scorch'] = build('scorch', scorch, 'gulch')
     built['station'] = build('station', station, 'lift')
     built['lumen'] = build('lumen', lumen, 'shuttle')

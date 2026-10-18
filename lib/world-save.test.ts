@@ -37,6 +37,21 @@ ok(
   'a spot outside its region is dropped',
 );
 ok(restoreWorld({ region: 'valley', x: Number.NaN, y: 10 }) === null, 'a broken number is dropped');
+{
+  // 18 Oct: the valley's old castle corner is the Headland now, and the castle is in the
+  // Ember Lands as 'hearthold'. An old visit inks the Headland, never the far castle.
+  const old = restoreWorld({ region: 'valley', x: 480, y: 900, visited: ['castle', 'harbour'] });
+  ok(
+    old?.visited.includes('headland') === true && old.visited.includes('harbour'),
+    'a saved visit to the old castle corner is a visit to the Headland',
+  );
+  ok(
+    old?.visited.includes('hearthold') === false && !old.visited.includes('castle'),
+    'an old castle visit never inks the castle in the Ember Lands',
+  );
+  const both = restoreWorld({ region: 'valley', x: 480, y: 900, visited: ['castle', 'headland'] });
+  ok(both?.visited.filter((z) => z === 'headland').length === 1, 'the Headland is listed once');
+}
 const good = restoreWorld({
   region: 'valley',
   x: 480,

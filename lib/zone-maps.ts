@@ -18,7 +18,7 @@ export const zoneIds = [
   'springs',
   'harbour',
   'headland',
-  'castle',
+  'hearthold',
   'scorch',
   'station',
   'lumen',
@@ -3106,7 +3106,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
     ].map(unrle),
     stands: { harbour: [14, 112], tower: [228, 430], bench: [74, 448], down: [150, 280] },
   },
-  castle: {
+  hearthold: {
     objects: [
       ['tower-nw', 'round_tower', 47, 65, 45, 96],
       ['wall-n1', 'wall_run', 113, 105, 98, 42],
@@ -6339,7 +6339,7 @@ export const zoneTerrain: Record<ZoneId, readonly string[]> = {
     '80~',
     '80~',
   ].map(unrleTerrain),
-  castle: [
+  hearthold: [
     '30.4=20.1^1!1^3!20.',
     '30.4=20.1^5!20.',
     '30.4=20.1^4!21.',
@@ -7114,7 +7114,7 @@ export const regionLayout = {
   },
   steam: { junction: [0, 0], canal: [0, 1] },
   west: { gulch: [0, 0], oasis: [-1, 0] },
-  lava: { caldera: [0, -1], springs: [1, -1], castle: [0, 0], scorch: [0, 1] },
+  lava: { caldera: [0, -1], springs: [1, -1], hearthold: [0, 0], scorch: [0, 1] },
   neon: { neon: [0, 0], skyport: [1, 0] },
   space: { station: [0, 0] },
   moon: { lumen: [0, 0] },

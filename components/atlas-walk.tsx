@@ -121,7 +121,7 @@ export const zoneNames: Record<TileId, string> = {
   town: 'CROSSROADS TOWN',
   park: 'TOWN PARK',
   harbour: 'DRIFTWOOD HARBOUR',
-  castle: 'HEARTHOLD CASTLE',
+  hearthold: 'HEARTHOLD CASTLE',
   headland: 'THE HEADLAND',
   scorch: 'THE SCORCHED PASS',
   junction: 'COGSWORTH JUNCTION',
@@ -145,7 +145,7 @@ const OWN_LIGHT: TileId[] = [
   'lumen',
   'caldera',
   'springs',
-  'castle',
+  'hearthold',
   'scorch',
   'home',
 ];
