@@ -275,12 +275,72 @@ def buoy() -> Canvas:
     return cv
 
 
+def deck_chair(stripe=RED) -> Canvas:
+    """A striped deck chair on the sand, 20 x 18: canvas slung in a wooden frame."""
+    w, h = 20, 18
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(2, 13):  # the canvas, sloping back
+        for x in range(4 + (y < 4), 16 - (y < 4)):
+            band = (x // 3) % 2
+            c = (stripe[3] if band else '#F2EEE6') if y < 9 else (stripe[2] if band else '#D8D2C6')
+            cv.set(x, y, c)
+    for (x0, x1) in ((3, 2), (16, 17)):  # the frame
+        for t in range(14):
+            cv.set(x0 + (x1 - x0) * t // 13, 2 + t, WOOD[3] if x0 < 10 else WOOD[2])
+    cv.hline(3, 12, 14, WOOD[2]); cv.hline(3, 13, 14, WOOD[1])
+    return cv
+
+
+def driftwood() -> Canvas:
+    """A bleached driftwood branch half in the sand, 34 x 12."""
+    w, h = 34, 12
+    cv = Canvas(w, h, pad=PAD)
+    BONE = ['#6E625A', '#9A8E82', '#C2B8AA', '#E2DACE']
+    for x in range(2, w - 4):
+        y = 6 + int(math.sin(x / 6) * 1.5)
+        cv.set(x, y - 1, BONE[3]); cv.set(x, y, BONE[2]); cv.set(x, y + 1, BONE[1])
+    for (x0, dx, n) in ((10, 1, 6), (22, 1, 5)):  # snapped side branches
+        for t in range(n):
+            cv.set(x0 + dx * t, 5 - t // 2, BONE[2]); cv.set(x0 + dx * t, 6 - t // 2, BONE[1])
+    cv.hline(4, 9, 20, '#C8A878')  # sand drifted along its foot
+    return cv
+
+
+def sailboat() -> Canvas:
+    """A small sailboat out past the breakwater, 40 x 52: a white hull lit on its port
+    side, a mast and a cream sail bellied by the wind, its shadow on the water."""
+    w, h = 40, 52
+    cv = Canvas(w, h, pad=PAD)
+    hull = set()
+    for x in range(4, w - 4):
+        t = (x - 4) / (w - 8)
+        half = 5 * (1 - abs(t - 0.4) ** 1.6 * 1.6) if t < 0.95 else 1
+        for y in range(int(h - 10 - half), int(h - 10 + half) + 1):
+            hull.add((x, y))
+    for (x, y) in hull:
+        cv.set(x, y, PLASTER[5] if y < h - 10 else PLASTER[3])
+        if (x, y + 1) not in hull:
+            cv.set(x, y, WTR[1])
+    cv.hline(8, h - 10, w - 18, WOOD[3])  # the deck
+    for y in range(4, h - 11):
+        cv.set(18, y, WOOD[1])
+    for y in range(6, h - 14):  # the sail, bellied out to the right
+        span = int((y - 6) * 0.42 + 2 + math.sin((y - 6) / (h - 20) * math.pi) * 3)
+        for x in range(19, 19 + span):
+            cv.set(x, y, SAILCLOTH[4] if x < 19 + span - 3 else SAILCLOTH[3])
+    cv.hline(19, h - 14, 16, WOOD[2])  # the boom
+    for x in range(6, w - 4, 3):
+        cv.set(x, h - 3, '#E6EEF6')  # its wake
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'cottage': cottage(80, 0), 'cottage_b': cottage(72, 1), 'lighthouse': lighthouse(),
         'boat_blue': fishing_boat(64, WTR), 'boat_red': fishing_boat(56, RED), 'net_rack': net_rack(),
         'lobster_pots': lobster_pots(), 'fish_stall': fish_stall(), 'bollard': bollard(), 'anchor': anchor(),
         'upturned_boat': upturned_boat(), 'washing_line': washing_line(), 'buoy': buoy(),
+        'deck_chair': deck_chair(RED), 'deck_chair_b': deck_chair(WTR), 'driftwood': driftwood(), 'sailboat': sailboat(),
     }
 
 

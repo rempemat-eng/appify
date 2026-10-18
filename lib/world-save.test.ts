@@ -1,11 +1,21 @@
 import assert from 'node:assert/strict';
 import { moveTo, restoreWorld } from './world-save';
 import { regionWalk, TILE } from './region-walk';
-import { doors, exits, missionPlaces, regionPoint, rings, travelPoints } from './world-places';
+import {
+  doors,
+  exits,
+  missionPlaces,
+  regionPoint,
+  rings,
+  travelPoints,
+  travelRoute,
+  travelVehicle,
+} from './world-places';
 import { makeWalkGrid } from './garden-path';
 import { regionBounds } from './region-walk';
 import { readSave, writeSave } from './save-data';
 import { residentLines, residentRoutes } from './resident-routes';
+import { zoneMaps, zoneWindows } from './zone-maps';
 
 let checks = 0;
 const ok = (value: unknown, message: string) => {
@@ -90,3 +100,47 @@ console.log(`World save and places: ${checks} checks passed.`);
 // every resident has something to say when the companion stops beside them
 for (const who of Object.keys(residentRoutes)) ok(residentLines[who], `${who} has a line`);
 console.log(`Residents: ${Object.keys(residentRoutes).length} have a line each.`);
+
+// lit windows: every pane sits inside the sprite it belongs to, wherever that sprite stands
+let panes = 0;
+for (const zone of Object.values(zoneMaps)) {
+  for (const [id, sprite, , , w, h] of zone.objects) {
+    for (const [x, y, pw, ph] of zoneWindows[sprite] ?? []) {
+      ok(
+        x >= 0 && y >= 0 && x + pw <= w && y + ph <= h && pw > 0 && ph > 0,
+        `${id}: a pane inside ${sprite}`,
+      );
+      panes++;
+    }
+  }
+}
+ok(panes > 20, 'the valley houses have lit windows');
+console.log(`Lit windows: ${panes} panes inside their buildings.`);
+
+// travel follows the lines: every station reaches every other, neighbours in one leg
+const stations = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'] as const;
+for (const from of stations)
+  for (const to of stations) {
+    if (from === to) continue;
+    const route = travelRoute(from, to);
+    ok(route.length > 0 && route[route.length - 1] === to, `${from} reaches ${to}`);
+    ok(
+      route.every((r) => travelPoints[r]),
+      `${from} to ${to} stops only at stations`,
+    );
+  }
+ok(travelRoute('valley', 'steam').join() === 'steam', 'the valley train goes to Cogsworth');
+ok(
+  travelRoute('valley', 'moon').join() === 'steam,neon,space,moon',
+  'Lumen is four legs from the valley',
+);
+ok(
+  travelRoute('lava', 'neon').join() === 'west,steam,neon',
+  'the caldera to the city changes twice',
+);
+ok(travelRoute('valley', 'valley').length === 0, 'no trip to where you are');
+console.log('Travel: every station reaches every other along the lines.');
+ok(travelVehicle('steam', 'neon') === 'maglev', 'the maglev runs to the city');
+ok(travelVehicle('lava', 'west') === 'carts', 'the mine carts run to the caldera');
+ok(travelVehicle('space', 'moon') === 'shuttle', 'the shuttle flies to Lumen');
+ok(travelVehicle('valley', 'steam') === 'train', 'the valley train is a steam train');

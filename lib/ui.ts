@@ -16,12 +16,16 @@ type UiState = {
   close: () => void;
   closeAll: () => void;
   openMenu: (tab?: MenuTab) => void;
+  /** Where the next spar happens (a region's ring in the world), for the battle's backdrop
+   * only; null is the garden's own field. Presentation, never a rule. */
+  battlePlace: string | null;
 };
 
 export const useUi = create<UiState>((set) => ({
   sheet: null,
   back: null,
   menuTab: 'companion',
+  battlePlace: null,
   open: (sheet) =>
     set((s) => ({ sheet, back: s.sheet === 'menu' && sheet !== 'menu' ? 'menu' : null })),
   close: () => set((s) => ({ sheet: s.back, back: null })),

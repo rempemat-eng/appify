@@ -54,6 +54,8 @@ function Strip({
   );
 }
 
+export type JourneyVehicle = 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle';
+
 /**
  * The trip between regions (world-atlas.md, "Seamless travel": between regions the
  * journey is the transition). The view from beside the line: sky, far land and near
@@ -69,6 +71,11 @@ export function Journey({
   height,
   u,
   onArrive,
+  insetTop = 0,
+  insetBottom = 0,
+  ms = TRIP_MS,
+  onSkip,
+  vehicle,
 }: {
   to: keyof typeof journeyLayers;
   label: string;
@@ -76,6 +83,15 @@ export function Journey({
   height: number;
   u: number;
   onArrive: () => void;
+  /** Safe-area room at the top and bottom, so the label and SKIP stay clear of it. */
+  insetTop?: number;
+  insetBottom?: number;
+  /** How long this leg takes (a trip of several legs plays each a little quicker). */
+  ms?: number;
+  /** SKIP ends the whole trip (defaults to arriving at the end of this leg). */
+  onSkip?: () => void;
+  /** What carries the companion on this line (defaults by destination). */
+  vehicle?: JourneyVehicle;
 }) {
   const reduced = useReducedMotion();
   const active = useAppActive();
@@ -84,7 +100,7 @@ export function Journey({
   const skip = () => {
     if (done.current) return;
     done.current = true;
-    onArrive();
+    (onSkip ?? onArrive)();
   };
   useEffect(() => {
     const finish = () => {
@@ -102,12 +118,12 @@ export function Journey({
       return () => clearTimeout(s);
     }
     t.set(
-      withTiming(1, { duration: TRIP_MS, easing: Easing.inOut(Easing.quad) }, (finished) => {
+      withTiming(1, { duration: ms, easing: Easing.inOut(Easing.quad) }, (finished) => {
         if (finished) runOnJS(finish)();
       }),
     );
     return () => cancelAnimation(t);
-  }, [active, reduced, t, onArrive]);
+  }, [active, reduced, t, onArrive, ms]);
 
   const layers = journeyLayers[to];
   const lw = JOURNEY.width * u; // one loop of a layer
@@ -120,10 +136,13 @@ export function Journey({
   const bob = useAnimatedStyle(() => ({
     transform: [{ translateY: Math.round(Math.sin(t.value * 80) * 0.6 * u * scale) }],
   }));
-  const space = to === 'space' || to === 'moon';
+  const ride: JourneyVehicle =
+    vehicle ?? (to === 'space' ? 'capsule' : to === 'moon' ? 'shuttle' : 'train');
+  const flying = ride === 'capsule' || ride === 'shuttle';
+  const flyer = ride === 'shuttle' ? journeyVehicles.shuttle : journeyVehicles.capsule;
+  const rider = ride === 'maglev' ? journeyVehicles.maglev : journeyVehicles.carts;
   const engine = journeyVehicles.engine;
   const coach = journeyVehicles.carriage;
-  const pod = journeyVehicles.capsule;
   const k = u * scale;
   const railY = top + JOURNEY.rail * k;
   return (
@@ -180,19 +199,19 @@ export function Journey({
         copies={copies}
       />
       <Animated.View style={[{ position: 'absolute', left: 0, top: 0, width, height }, bob]}>
-        {space ? (
+        {flying ? (
           <Image
-            source={pod.source}
+            source={flyer.source}
             resizeMode="stretch"
             style={{
               position: 'absolute',
-              left: width / 2 - (pod.w * k) / 2,
+              left: width / 2 - (flyer.w * k) / 2,
               top: top + viewH * 0.3,
-              width: pod.w * k,
-              height: pod.h * k,
+              width: flyer.w * k,
+              height: flyer.h * k,
             }}
           />
-        ) : (
+        ) : ride === 'train' ? (
           <>
             <Image
               source={engine.source}
@@ -217,16 +236,37 @@ export function Journey({
               }}
             />
           </>
+        ) : (
+          // the maglev floats a little above the line; the mine carts sit on it
+          <Image
+            source={rider.source}
+            resizeMode="stretch"
+            style={{
+              position: 'absolute',
+              left: width * 0.5 - (rider.w * k) / 2,
+              top: railY - (rider.h + (ride === 'maglev' ? 3 : -2)) * k,
+              width: rider.w * k,
+              height: rider.h * k,
+            }}
+          />
         )}
       </Animated.View>
-      <View style={{ position: 'absolute', top: 16, left: 0, right: 0, alignItems: 'center' }}>
+      <View
+        style={{
+          position: 'absolute',
+          top: insetTop + 16,
+          left: 0,
+          right: 0,
+          alignItems: 'center',
+        }}
+      >
         <PixelFrame tone="paper" style={{ paddingVertical: 4 * u, paddingHorizontal: 8 * u }}>
           <BodyText
             style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14 }}
           >{`TO ${label}`}</BodyText>
         </PixelFrame>
       </View>
-      <View style={{ position: 'absolute', bottom: 16, right: 16, width: 110 }}>
+      <View style={{ position: 'absolute', bottom: insetBottom + 16, right: 16, width: 110 }}>
         <PixelButton small light label="SKIP" onPress={skip} />
       </View>
     </View>

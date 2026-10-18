@@ -179,6 +179,8 @@ RESIDENTS = {
     'angler': {'zone': 'riverside', 'skin': 'b', 'top': '#5A7A4A', 'legs': '#3E4A3A', 'hat': ('wide', '#7A6A4A')},
     'botanist': {'zone': 'station', 'skin': 'a', 'top': '#B8C2D6', 'trim': '#22B5A0', 'hair': 'blond',
                  'carry': ('plant', '#557A45')},
+    'stargazer': {'zone': 'lumen', 'skin': 'e', 'top': '#3E3A6A', 'trim': '#9AD2FF', 'legs': '#2A2838',
+                  'hat': ('helmet', '#C8C2DA'), 'carry': ('lantern', '#9AD2FF')},
 }
 
 

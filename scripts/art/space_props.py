@@ -435,17 +435,144 @@ def glow_caps() -> Canvas:
     return cv
 
 
+def old_lander() -> Canvas:
+    """An old lander left long ago, 40 x 36: a squat octagonal body wrapped in gold foil
+    (lit facets upper left, creased, a dark facet lower right), a dish on top, four
+    splayed legs on round feet, and dust drifted over one foot."""
+    w, h = 40, 36
+    cv = Canvas(w, h, pad=PAD)
+    FOIL = ['#5A3A10', '#8A5E1A', '#C2902E', '#E8BE52', '#FFE28A']
+    for (x0, y0, x1, y1, fx) in ((8, 20, 2, 32, -1), (32, 20, 38, 32, 1), (14, 22, 11, 34, -1), (26, 22, 29, 34, 1)):
+        n = max(abs(x1 - x0), abs(y1 - y0))
+        for t in range(n + 1):  # a leg
+            x, y = x0 + (x1 - x0) * t // n, y0 + (y1 - y0) * t // n
+            cv.set(x, y, HULL[3] if fx < 0 else HULL[2]); cv.set(x + 1, y, HULL[1])
+        for (x, y) in oval(x1, y1, 3, 1.4):
+            cv.set(x, y, HULL[4] if x < x1 else HULL[2])  # its foot
+    body = {(x, y) for y in range(8, 24) for x in range(7, 33) if abs(x - 20) + abs(y - 16) * 0.8 < 16}
+    for (x, y) in body:
+        face = (x - 7) // 6
+        c = FOIL[4] if face == 0 else FOIL[3] if face == 1 else FOIL[2] if face < 3 else FOIL[1]
+        if y < 11:
+            c = FOIL[4] if x < 22 else FOIL[3]
+        if (x * 7 + y * 3) % 11 == 0:
+            c = FOIL[min(4, FOIL.index(c) + 1)] if x < 20 else FOIL[max(0, FOIL.index(c) - 1)]  # creases in the foil
+        if (x - 7) % 6 == 0:
+            c = FOIL[0]  # the seam between facets
+        cv.set(x, y, c)
+    for (x, y) in body:
+        if (x, y + 1) not in body:
+            cv.set(x, y, FOIL[0])
+    cv.vline(20, 2, 7, HULL[2])
+    for (x, y) in oval(20, 3, 6, 2.4):  # the dish
+        cv.set(x, y, HULL[5] if x < 19 else HULL[3] if y < 4 else HULL[2])
+    cv.set(20, 3, HULL[1])
+    for (x, y) in oval(29, 34, 7, 2):  # dust over a foot
+        if y >= 33:
+            cv.set(x, y, REGOLITH[4] if x < 29 else REGOLITH[3])
+    return cv
+
+
+def moon_arch() -> Canvas:
+    """A natural arch of moon rock, 64 x 44: two rounded piers and a span worn smooth,
+    pale where the sun strikes the upper left, dark under the span; you walk through."""
+    w, h = 64, 44
+    cv = Canvas(w, h, pad=PAD)
+    rock = set()
+    for (x, y) in oval(32, 20, 30, 18):
+        inner = ((x - 32) / 15) ** 2 + ((y - 30) / 16) ** 2 < 1  # the hole, open below
+        if not inner:
+            rock.add((x, y))
+    for (x0, x1) in ((3, 18), (46, 61)):  # the piers down to the ground
+        rock |= {(x, y) for x in range(x0, x1) for y in range(20, h - 2)
+                 if abs(x - (x0 + x1) / 2) < (x1 - x0) / 2 - (1 if y > h - 6 else 0)}
+    for (x, y) in rock:
+        k = (x - 3) / 58 + (y - 2) / (h - 4) * 0.8
+        c = REGOLITH[5] if k < 0.35 else REGOLITH[4] if k < 0.75 else REGOLITH[3] if k < 1.15 else REGOLITH[2]
+        if noise2(x // 3, y // 3, 372) > 0.84:
+            c = REGOLITH[max(1, REGOLITH.index(c) - 1)]  # pits
+        cv.set(x, y, c)
+    for (x, y) in rock:
+        if (x, y + 1) not in rock and y < h - 6:
+            cv.set(x, y, REGOLITH[1])  # the underside of the span
+            cv.set(x, y - 1, REGOLITH[2])
+    return cv
+
+
+def aquarium_column() -> Canvas:
+    """A round water column in the atrium, 26 x 50: in low gravity the station keeps its
+    fish in a standing cylinder of water, lit cyan from the base, weeds swaying, two
+    little fish, bubbles, and hull rings at top and foot."""
+    w, h = 26, 50
+    cv = Canvas(w, h, pad=PAD)
+    WATER = ['#0E3A4A', '#16586A', '#1F7A8A', '#3EA6B0', '#8ADCDC']
+    for y in range(6, h - 6):
+        for x in range(3, w - 3):
+            k = (x - 3) / (w - 6)
+            c = WATER[3] if k < 0.2 else WATER[2] if k < 0.65 else WATER[1]
+            if y > h - 14 and (x + y) % 2:
+                c = WATER[3]  # the light from below
+            cv.set(x, y, c)
+        cv.set(5, y, WATER[4] if y % 7 else WATER[3])  # the glass catching the light
+    for (bx, top) in ((8, 26), (16, 20), (12, 30)):  # weeds
+        for y in range(top, h - 6):
+            cv.set(bx + (1 if (y // 3) % 2 else 0), y, '#447A50' if y % 4 else '#62995E')
+    for (fx, fy, col) in ((10, 16, '#E8803A'), (16, 32, '#F2D27A')):  # fish
+        cv.hline(fx, fy, 3, col); cv.set(fx - 1, fy, col); cv.set(fx + 3, fy - 1, col); cv.set(fx + 3, fy + 1, col)
+        cv.set(fx, fy, '#1E1917')
+    for (x, y) in ((14, 10), (15, 13), (13, 17), (18, 24)):
+        cv.set(x, y, WATER[4])
+    for (y0, y1) in ((2, 6), (h - 6, h - 1)):  # hull rings
+        for y in range(y0, y1):
+            for x in range(1, w - 1):
+                cv.set(x, y, HULL[5] if y == y0 else HULL[3] if x < w // 2 else HULL[2])
+        cv.hline(1, y1 - 1, w - 2, HULL[1])
+    cv.hline(3, h - 6, w - 6, CYAN[3])
+    return cv
+
+
+def cargo_crates() -> Canvas:
+    """Supply crates strapped down in the atrium, 34 x 26: white hull boxes with orange
+    stencils and webbing straps, the smaller one stacked on top."""
+    w, h = 34, 26
+    cv = Canvas(w, h, pad=PAD)
+    for (x0, y0, bw, bh) in ((2, 10, 20, 14), (20, 14, 12, 10), (6, 2, 12, 9)):
+        for y in range(y0, y0 + bh):
+            for x in range(x0, x0 + bw):
+                c = HULL[5] if y < y0 + 2 else HULL[4] if x < x0 + bw - 3 else HULL[3]
+                cv.set(x, y, c)
+        cv.hline(x0, y0 + bh - 1, bw, HULL[2])
+        cv.hline(x0 + 2, y0 + bh // 2, max(2, bw - 6), '#E8803A')  # a stencil stripe
+        cv.vline(x0 + bw // 2, y0, bh, '#3E5A6A')  # a strap
+    return cv
+
+
+def floor_cushions() -> Canvas:
+    """A heap of floor cushions and a folded blanket in the sleep bay, 34 x 18."""
+    w, h = 34, 18
+    cv = Canvas(w, h, pad=PAD)
+    for (cx, cy, rx, ry, col) in ((10, 11, 8, 5, NAP), (22, 12, 9, 5, GOLD), (16, 6, 7, 4, NAP)):
+        for (x, y) in oval(cx, cy, rx, ry):
+            k = (x - cx) / rx + (y - cy) / ry
+            cv.set(x, y, col[3] if k < -0.4 else col[2] if k < 0.6 else col[1])
+        cv.set(cx, cy, col[1])  # a button
+    for x in range(20, 32):  # the blanket's folded edge
+        cv.set(x, h - 3, '#C8D2E6'); cv.set(x, h - 2, '#8E9AB8')
+    return cv
+
+
 def props_station() -> dict[str, Canvas]:
     return {'garden_pod': garden_pod(), 'viewport': viewport(), 'sleep_pod': sleep_pod(), 'airlock': airlock(),
             'console': console(), 'hydro_trough': hydro_trough(), 'galley_table': galley_table(),
             'bookshelf': bookshelf(), 'telescope': telescope(), 'lounge_bench': lounge_bench(), 'lockers': lockers(),
-            'tea_dispenser': tea_dispenser()}
+            'tea_dispenser': tea_dispenser(), 'aquarium_column': aquarium_column(), 'cargo_crates': cargo_crates(),
+            'floor_cushions': floor_cushions()}
 
 
 def props_lumen() -> dict[str, Canvas]:
     return {'moon_shrub': moon_shrub(), 'moon_crystal': moon_crystal(), 'shuttle': shuttle(), 'dream_pool': dream_pool(),
             'moon_tree': moon_tree(), 'hammock': hammock(), 'moon_rock': moon_rock(True), 'moon_rock_small': moon_rock(False),
-            'glow_caps': glow_caps()}
+            'glow_caps': glow_caps(), 'old_lander': old_lander(), 'moon_arch': moon_arch()}
 
 
 def props() -> dict[str, Canvas]:

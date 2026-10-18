@@ -27,6 +27,7 @@ import battleNearDay from '@/assets/battle/near-day.png';
 import battleNearNight from '@/assets/battle/near-night.png';
 import battlePlatform from '@/assets/battle/platform.png';
 import battlePlatformNight from '@/assets/battle/platform-night.png';
+import { JOURNEY, YARD_FEET, journeyLayers, journeyYards } from '@/lib/journey-assets';
 
 function Pixels({
   kind,
@@ -192,12 +193,15 @@ export function RaidGarden({
   pixel,
   petSize,
   inset = 12,
+  region,
 }: {
   attacker?: Player;
   defender?: Player;
   pixel: number;
   petSize: number;
   inset?: number;
+  /** A region whose own ring this is: its sky, far land and yard (journey art) instead. */
+  region?: string | null;
 }) {
   const hour = new Date(useGame((s) => s.now)).getHours();
   const night = hour < 6 || hour >= 21;
@@ -226,6 +230,40 @@ export function RaidGarden({
     width: bw,
     height: bh,
   };
+  const yard = region ? journeyYards[region] : undefined;
+  const land = region ? journeyLayers[region] : undefined;
+  if (yard && land) {
+    // the region's own land, at the same art pixel, its standing line on the fighters' feet
+    const jw = JOURNEY.width * pixel;
+    const jh = JOURNEY.height * pixel;
+    const jl = {
+      position: 'absolute' as const,
+      left: '50%' as const,
+      marginLeft: -jw / 2,
+      bottom: (BATTLE.feet - YARD_FEET) * pixel,
+      width: jw,
+      height: jh,
+    };
+    return (
+      <View
+        pointerEvents="none"
+        // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
+        dataSet={{ pixel: 'true' }}
+        style={[StyleSheet.absoluteFill, { backgroundColor: land.above, overflow: 'hidden' }]}
+      >
+        <Image source={land.sky} resizeMode="stretch" style={{ ...jl, width: jw, height: jh }} />
+        <Animated.View style={[StyleSheet.absoluteFill, farStyle]}>
+          <Image source={land.far} resizeMode="stretch" style={{ ...jl, width: jw, height: jh }} />
+        </Animated.View>
+        <Animated.View style={[StyleSheet.absoluteFill, nearStyle]}>
+          <Image source={yard} resizeMode="stretch" style={{ ...jl, width: jw, height: jh }} />
+        </Animated.View>
+        {night && region === 'steam' && (
+          <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(22,28,66,0.42)' }]} />
+        )}
+      </View>
+    );
+  }
   // Mounds share the art pixel and sit centred under each fighter's feet.
   const pw = BATTLE.platformW * pixel;
   const ph = BATTLE.platformH * pixel;

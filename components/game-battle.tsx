@@ -53,6 +53,7 @@ import {
 } from '@/lib/battle';
 import { EnergyPips, Meter, Pet, PixelButton, PixelText } from '@/components/game-ui';
 import { RaidGarden } from '@/components/pixel-scenes';
+import { useUi } from '@/lib/ui';
 import { guardianPlayer } from '@/lib/visitors';
 import { grasslingName, grasslings } from '@/lib/grasslings';
 import { GrassFlight } from '@/components/grassling-feedback';
@@ -152,6 +153,9 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const [player] = useState(() => guardianPlayer(gameStore.getState().player!));
   const { width, height } = useWindowDimensions();
   const rules = useGame((s) => s.rules);
+  // a spar at a region's ring is fought in front of that region (presentation only)
+  const [place] = useState(() => (request.practice ? useUi.getState().battlePlace : null));
+  useEffect(() => () => useUi.setState({ battlePlace: null }), []);
   const [cardLesson, setCardLesson] = useState(
     () => request.practice && !gameStore.getState().tips.includes('card'),
   );
@@ -527,7 +531,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
               paddingBottom: 24 * art - 3 * art,
             }}
           >
-            <RaidGarden pixel={art} petSize={petSize} />
+            <RaidGarden pixel={art} petSize={petSize} region={place} />
             <Animated.View
               entering={reduced ? undefined : FadeIn.duration(150)}
               style={{

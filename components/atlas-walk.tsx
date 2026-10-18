@@ -14,8 +14,10 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withRepeat,
   withSequence,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
 import { useAppActive } from '@/lib/app-active';
@@ -34,8 +36,8 @@ import {
   type RegionTile,
   type TileId,
 } from '@/lib/region-walk';
-import { zoneMaps, zoneOverhead } from '@/lib/zone-maps';
-import { zoneGrounds, zoneProps } from '@/lib/zone-assets';
+import { zoneFrames, zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
+import { BEYOND_SPILL, zoneBeyond, zoneGrounds, zoneProps } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
@@ -135,6 +137,7 @@ const LAMPS: Record<string, readonly [number, number]> = {
   stone_lantern: [8, 10],
   foundry: [72, 84],
   tube_station: [38, 30],
+  campfire: [13, 10],
 };
 const NAME_MS = 2200; // how long a zone's name stays up after crossing into it
 
@@ -148,6 +151,127 @@ type Drawable = {
   h: number;
   z: number;
 };
+
+// Things afloat ride the water: up and down by one art pixel, each on its own phase.
+const FLOATS: Record<string, number> = {
+  boat_blue: 3400,
+  boat_red: 3800,
+  sailboat: 4200,
+  narrowboat: 5200,
+  ferry: 4600,
+  buoy: 2600,
+};
+const FLOAT_LOOP = 36000; // the shared clock's loop; every period divides it
+
+function Floating({
+  d,
+  clock,
+  u,
+  snap,
+}: {
+  d: Drawable;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const period = FLOATS[d.sprite] ?? 4000;
+  const phase = (d.x * 7 + d.y * 3) % period;
+  const style = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: Math.round(Math.sin(((clock.value + phase) / period) * 2 * Math.PI) * 1) * u,
+      },
+    ],
+  }));
+  return (
+    <Animated.Image
+      source={d.src}
+      resizeMode="stretch"
+      style={[
+        {
+          position: 'absolute',
+          left: snap(d.x * u),
+          top: snap(d.y * u),
+          width: snap(d.w * u),
+          height: snap(d.h * u),
+          zIndex: d.z,
+        },
+        style,
+      ]}
+    />
+  );
+}
+
+// Things that turn (a windmill's sails): the sprite and its frames, one shown at a time.
+const FRAME_MS = 400; // divides FLOAT_LOOP
+
+function TurningFrame({
+  src,
+  index,
+  count,
+  clock,
+  style,
+}: {
+  src: ImageSourcePropType;
+  index: number;
+  count: number;
+  clock: SharedValue<number>;
+  style: object;
+}) {
+  const shown = useAnimatedStyle(() => ({
+    opacity: Math.floor(clock.value / FRAME_MS) % count === index ? 1 : 0,
+  }));
+  return <Animated.Image source={src} resizeMode="stretch" style={[style, shown]} />;
+}
+
+function Turning({
+  d,
+  clock,
+  u,
+  snap,
+}: {
+  d: Drawable;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const frames = zoneFrames[d.sprite] ?? [];
+  const all: [string, ImageSourcePropType, number, number, number, number][] = [
+    [d.sprite, d.src, 0, 0, d.w, d.h],
+    ...frames.map(
+      ([key, dx, dy, w, h]) =>
+        [key, zoneProps[key] ?? d.src, dx, dy, w, h] as [
+          string,
+          ImageSourcePropType,
+          number,
+          number,
+          number,
+          number,
+        ],
+    ),
+  ];
+  return (
+    <>
+      {all.map(([name, src, dx, dy, w, h], i) => (
+        <TurningFrame
+          key={`${d.key}-${name}`}
+          src={src}
+          index={i}
+          count={all.length}
+          clock={clock}
+          style={{
+            position: 'absolute',
+            left: snap((d.x + dx) * u),
+            top: snap((d.y + dy) * u),
+            width: snap(w * u),
+            height: snap(h * u),
+            zIndex: d.z,
+          }}
+        />
+      ))}
+    </>
+  );
+}
 
 function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
   const o = tileOrigin(region, tile);
@@ -263,6 +387,20 @@ export function AtlasWalk({
 
   const px = useSharedValue(grid.start.x);
   const py = useSharedValue(grid.start.y);
+  const landing = useSharedValue(0);
+  // one slow clock for everything afloat; still with reduced motion or an inactive screen
+  const bob = useSharedValue(0);
+  useEffect(() => {
+    if (!active || reduced) {
+      cancelAnimation(bob);
+      return undefined;
+    }
+    bob.set(0);
+    bob.set(
+      withRepeat(withTiming(FLOAT_LOOP, { duration: FLOAT_LOOP, easing: Easing.linear }), -1),
+    );
+    return () => cancelAnimation(bob);
+  }, [active, reduced, bob]);
   const pos = useRef<Point>({ ...grid.start });
   const [walking, setWalking] = useState(false);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
@@ -332,20 +470,37 @@ export function AtlasWalk({
     // a long walk on the missions map is squeezed into a moment
     const squeeze = maxWalkMs ? Math.min(1, maxWalkMs / Math.max(1, (length / SPEED) * 1000)) : 1;
     let from = from0;
-    const xs = [];
-    const ys = [];
-    for (const p of path) {
+    const xs: number[] = [];
+    const ys: number[] = [];
+    path.forEach((p, i) => {
       const duration = Math.max(
         squeeze < 1 ? 8 : 60,
         (Math.hypot(p.x - from.x, p.y - from.y) / SPEED) * 1000 * squeeze,
       );
-      xs.push(withTiming(p.x, { duration, easing: Easing.linear }));
-      ys.push(withTiming(p.y, { duration, easing: Easing.linear }));
+      // set off gently and slow into the last step (anticipate, act, settle); level between
+      const first = i === 0;
+      const last = i === path.length - 1;
+      const easing =
+        first && last
+          ? Easing.inOut(Easing.quad)
+          : first
+            ? Easing.in(Easing.quad)
+            : last
+              ? Easing.out(Easing.quad)
+              : Easing.linear;
+      xs.push(withTiming(p.x, { duration: first || last ? duration * 1.25 : duration, easing }));
+      ys.push(withTiming(p.y, { duration: first || last ? duration * 1.25 : duration, easing }));
       from = p;
-    }
+    });
     const arrive = () => {
       pos.current = end;
       setWalking(false);
+      if (!reduced && active) {
+        // a small squash as the feet settle, then still
+        landing.set(
+          withSequence(withTiming(1, { duration: 90 }), withTiming(0, { duration: 170 })),
+        );
+      }
       const tile = tileAt(region, end.x, end.y);
       if (tile) setHere(tile.id);
       calls.current.onSettle?.(end);
@@ -384,6 +539,14 @@ export function AtlasWalk({
     const cy = Math.max(0, Math.min(regionH - height + padBottom, py.value * u - height * focusY));
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
+  const landStyle = useAnimatedStyle(() => ({
+    // squash about the feet: shorter and a little wider, the bottom edge kept in place
+    transform: [
+      { translateY: landing.value * petPx * 0.04 },
+      { scaleY: 1 - landing.value * 0.08 },
+      { scaleX: 1 + landing.value * 0.05 },
+    ],
+  }));
   const petStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: Math.round(px.value * u - petPx / 2) },
@@ -397,7 +560,35 @@ export function AtlasWalk({
   const near = tiles.filter(
     (t) => Math.abs(t.col - hereTile.col) <= 1 && Math.abs(t.row - hereTile.row) <= 1,
   );
+  const gaps: { col: number; row: number }[] = [];
+  for (let col = hereTile.col - 1; col <= hereTile.col + 1; col++)
+    for (let row = hereTile.row - 1; row <= hereTile.row + 1; row++) {
+      const inside =
+        col >= bounds.minCol &&
+        row >= bounds.minRow &&
+        col < bounds.minCol + bounds.tileCols &&
+        row < bounds.minRow + bounds.tileRows;
+      if (inside && !tiles.some((t) => t.col === col && t.row === row)) gaps.push({ col, row });
+    }
   const drawables = near.flatMap((t) => tileDrawables(region, t));
+  const panes = !night
+    ? []
+    : drawables.flatMap((d) =>
+        (zoneWindows[d.sprite] ?? []).map(([wx, wy, ww, wh]) => {
+          const x = d.x + wx;
+          const y = d.y + wy;
+          const clear = !drawables.some(
+            (o) =>
+              o !== d &&
+              o.z > d.z &&
+              o.x < x + ww &&
+              o.x + o.w > x &&
+              o.y < y + wh &&
+              o.y + o.h > y,
+          );
+          return { key: `pane-${d.key}-${wx}-${wy}`, x, y, w: ww, h: wh, z: d.z, clear };
+        }),
+      );
 
   const onPress = (e: GestureResponderEvent) => {
     // react-native-web reports the press position on the overlay as offsetX/offsetY
@@ -420,6 +611,23 @@ export function AtlasWalk({
             cameraStyle,
           ]}
         >
+          {/* old forest where the region's grid has no zone (the valley's corners) */}
+          {gaps.map((g) => (
+            <Image
+              key={`beyond-${g.col}-${g.row}`}
+              source={zoneBeyond}
+              resizeMode="stretch"
+              style={{
+                // its crowns spill over the zones beside it (above their ground, under their props)
+                position: 'absolute',
+                left: snap(((g.col - bounds.minCol) * TILE.width - BEYOND_SPILL) * u),
+                top: snap(((g.row - bounds.minRow) * TILE.height - BEYOND_SPILL) * u),
+                width: snap((TILE.width + 2 * BEYOND_SPILL) * u),
+                height: snap((TILE.height + 2 * BEYOND_SPILL) * u),
+                zIndex: 1,
+              }}
+            />
+          ))}
           {near.map((t) => {
             const o = tileOrigin(region, t);
             const left = snap(o.x * u);
@@ -465,21 +673,27 @@ export function AtlasWalk({
               </View>
             );
           })}
-          {drawables.map((d) => (
-            <Image
-              key={d.key}
-              source={d.src}
-              resizeMode="stretch"
-              style={{
-                position: 'absolute',
-                left: snap(d.x * u),
-                top: snap(d.y * u),
-                width: snap(d.w * u),
-                height: snap(d.h * u),
-                zIndex: d.z,
-              }}
-            />
-          ))}
+          {drawables.map((d) =>
+            FLOATS[d.sprite] && active && !reduced ? (
+              <Floating key={d.key} d={d} clock={bob} u={u} snap={snap} />
+            ) : zoneFrames[d.sprite] && active && !reduced ? (
+              <Turning key={d.key} d={d} clock={bob} u={u} snap={snap} />
+            ) : (
+              <Image
+                key={d.key}
+                source={d.src}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: snap(d.x * u),
+                  top: snap(d.y * u),
+                  width: snap(d.w * u),
+                  height: snap(d.h * u),
+                  zIndex: d.z,
+                }}
+              />
+            ),
+          )}
           {near.map((t) =>
             t.id === 'garden' ? null : (
               <Fragment key={`zone-${t.id}`}>
@@ -518,6 +732,25 @@ export function AtlasWalk({
                   }}
                 />
               ))}
+          {night &&
+            // lamplight in the windows (panes recorded by the generator, zoneWindows): a pane
+            // with nothing in front glows above the night tint; one that a nearer thing overlaps
+            // stays at its building's depth (under the tint), so trees still hide it
+            panes.map((p) => (
+              <View
+                key={p.key}
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: snap(p.x * u),
+                  top: snap(p.y * u),
+                  width: snap(p.w * u),
+                  height: snap(p.h * u),
+                  backgroundColor: p.clear ? 'rgba(255,200,104,0.92)' : 'rgba(255,214,130,1)',
+                  zIndex: p.clear ? 150001 : p.z,
+                }}
+              />
+            ))}
           {night &&
             drawables
               .filter((d) => LAMPS[d.sprite])
@@ -575,25 +808,27 @@ export function AtlasWalk({
               petStyle,
             ]}
           >
-            {player ? (
-              <GuardianPet
-                player={player}
-                size={petPx}
-                facing={facing}
-                walking={walking && active && !reduced}
-                bob={!walking && !reduced && active}
-                active={active}
-                decorative
-              />
-            ) : (
-              <Pet
-                size={petPx}
-                facing={facing}
-                walking={walking && !reduced}
-                active={active}
-                decorative
-              />
-            )}
+            <Animated.View style={landStyle}>
+              {player ? (
+                <GuardianPet
+                  player={player}
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && active && !reduced}
+                  bob={!walking && !reduced && active}
+                  active={active}
+                  decorative
+                />
+              ) : (
+                <Pet
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && !reduced}
+                  active={active}
+                  decorative
+                />
+              )}
+            </Animated.View>
           </Animated.View>
         </Animated.View>
       </View>
@@ -658,6 +893,44 @@ export function AtlasWalk({
             </BodyText>
           </PixelFrame>
         </View>
+      )}
+    </View>
+  );
+}
+
+/**
+ * A still window onto a place in the world (coherence plan step 10: the Shop and the
+ * Arena are places): the companion standing there, the residents and life around it,
+ * no walking. Measures its own width; only the zones round the place are mounted.
+ */
+export function WorldWindow({
+  region,
+  at,
+  height,
+}: {
+  region: RegionId;
+  at: Point;
+  height: number;
+}) {
+  const [width, setWidth] = useState(0);
+  return (
+    <View
+      onLayout={(event) => {
+        const w = event.nativeEvent.layout.width;
+        setWidth((old) => (Math.abs(old - w) < 0.5 ? old : w));
+      }}
+      style={{ height, overflow: 'hidden' }}
+    >
+      {width > 0 && (
+        <AtlasWalk
+          region={region}
+          width={width}
+          height={height}
+          start={at}
+          interactive={false}
+          showName={false}
+          focusY={0.62}
+        />
       )}
     </View>
   );

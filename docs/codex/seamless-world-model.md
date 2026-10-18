@@ -1,6 +1,6 @@
 # C20: seamless-world engineering foundation
 
-Base: `de010bed9f9794195969c5fef3a93530e28ccdaa`, 18 October 2026.
+Base: `a8c3927bbfcf317b14e6772f8569c645de3ae403`, 18 October 2026.
 This is a **draft foundation**, not completed C20 or a shipped renderer change.
 It reuses Claude's current `region-walk`, `world-places` and optional `world`
 save. It does not resurrect superseded PR #19, edit artwork/screens, change
@@ -23,7 +23,7 @@ rules or rewards, write player data, or introduce a second zone catalogue.
 - `idleJourney`, `beginJourney`, `cancelJourney`, `finishJourney` and
   `skipJourney`: ephemeral, identity-checked tickets using current generated
   stations. No timers, animations, navigation, currency or save writes happen
-  inside the model. Skip and natural completion consume the same ticket once.
+  inside the model. Natural completion consumes one leg; SKIP consumes the whole trip.
 
 The caller must assign the returned state **before** applying an arrival:
 
@@ -39,6 +39,58 @@ different navigation. A callback from an old trip cannot complete or cancel a
 new one, even when the destination is identical or a screen has remounted.
 Tickets are not serialized. A successful arrival returns the current WorldSpot
 shape and keeps the visited history through the existing `moveTo` function.
+
+## Per-leg cancellation (Claude's 18 October feedback)
+
+The route is copied from `travelRoute(from, to)`, never a second transport
+catalogue. A ticket has the trip's origin `from`, final `to` and station `at`,
+its frozen `legs`, and current `leg`. The scene stays in the origin region
+until the final arrival, matching current World behaviour.
+
+- **Natural completion:** `finishJourney` advances one leg with a fresh ticket
+  identity and no arrival. Only the last leg returns a WorldSpot.
+- **SKIP:** `skipJourney` consumes the current leg and returns one arrival at
+  the final destination, including from the middle of a five-leg trip.
+- **Whole-scene exit:** cancel unconditionally on Back, blur, background, a nap,
+  battle or other navigation. Both completion paths also recheck live eligibility.
+- **Leg cleanup:** use `cancelJourney(liveState, capturedTicket)`. Cleanup from
+  an already-consumed leg cannot cancel a newly mounted leg or replacement trip.
+- A copied ticket, previous leg, replaced trip or remounted scene cannot advance,
+  arrive, or cancel the current one. Returned visit history is detached from the
+  saved array; no decision mutates a save or grants anything.
+
+Publish returned state into a **synchronous live ref before** React state,
+arrival effects or mounting the next leg. React setState by itself is not an
+exactly-once guard: two callbacks can run before the next render. Always pass
+that live state and freshly read focus/app-active/awake/not-busy eligibility to
+the model, never a closure's stale state or eligibility. A leg effect retains
+its own captured ticket. Use a caller-local trip generation plus leg as the
+component key; `key={leg}` alone cannot distinguish two replacement trips both
+on leg zero. These identities are ephemeral, never serialized.
+
+The model tests all **42 station pairs / 100 authored leg positions**: natural
+completion, leaving, each disabled-eligibility cause, old cleanup, copied tickets,
+same/different destination replacement, remount, SKIP-first and timer-first,
+duplicate completion, unchanged history and one whole-trip arrival. These are
+pure-model tests, not real React/native lifecycle coverage.
+
+### Feedback for Claude: the screen still needs wiring
+
+On the base above, a source-boundary diagnostic of the actual Journey and
+World callbacks accepts a queued completion after leaving, and inactivity
+advances a leg. A specific ordering queues runOnJS(finish), performs unmount
+cleanup, then flushes the queued JS: an arrival is still accepted. Cancelling
+an animation or timeout does not invalidate work already queued on JS. The
+renderer needs the per-leg ticket/live-ref contract and an effect-generation
+guard invalidated on cleanup. Do not just set the old done ref in cleanup
+without handling effect reruns and replacement identity. Claude owns these
+screen/component files; this PR deliberately does not edit them or claim a
+shipped fix. The diagnostic was a substituted hook/worklet boundary, not an
+observation of physical-device timing.
+
+The rebase preserves `battlePlace`, regional battle yards and journey layers,
+`zoneFrames`, floating/turning props, twinkling stars, the garden-view harness's
+journey-assets stub and `art:sheet`. No battle or reward rule changes.
 
 ## Border coverage, without false visual approval
 
@@ -91,7 +143,7 @@ this PR and have not been tested on a native device.
 
 ## Verification and remaining gates
 
-The model has 1,572 assertions over current layouts, every physical border,
+The model checks current layouts, every physical border,
 320/402/768 px camera windows, scales, card padding and all 42 distinct station
 pairs. A substituted source boundary executes AtlasWalk's actual camera
 worklet body and compares its snapped result with the model, so the two cannot

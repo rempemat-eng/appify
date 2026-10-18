@@ -260,11 +260,21 @@ def sprites() -> dict[str, Canvas]:
     items.update(spp.props())
     items.update(hp.props())
     items['fence_c'] = gp.fence_h(60)
-    return {key: style.finalize(sp, name=key) for key, sp in items.items()}
+    out = {key: style.finalize(sp, name=key) for key, sp in items.items()}
+    for key, raw in items.items():  # the window panes of each building, in sprite pixels
+        fin = out[key]
+        panes = [(gx - fin.ox, gy - fin.oy, gw, gh) for (c, (gx, gy, gw, gh)) in gp.WINDOWS if c is raw]
+        if panes:
+            SPRITE_WINDOWS[key] = panes
+    return out
+
+
+# Window panes per sprite (filled by sprites()): lit warm at night where a zone has no light of its own.
+SPRITE_WINDOWS: dict = {}
 
 
 # Props with a way through them: (from, to) in sprite pixels.
-OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44), 'ticket_gates': (4, 80)}
+OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44), 'ticket_gates': (4, 80), 'moon_arch': (20, 44)}
 
 
 def walk_grid(objects, sprite_map) -> list[str]:
@@ -709,6 +719,32 @@ def skyport(frame: int = 0):
             k = (x - 8) / 48  # the change over the first 56 pixels, in an ordered dither by whole tiles
             bayer = (0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5)[((y // 16) % 4) * 4 + (x // 12) % 4] / 16
             cv.set(x, y, dark if k < 0 or (k < 1 and bayer >= k) else pale)
+    # a compass rose inlaid in the concourse floor, pointing the way up
+    MX, MY = 140, 300
+    for (x, y) in oval(MX, MY, 44, 22):
+        d = math.hypot((x - MX) / 44, (y - MY) / 22)
+        a = math.atan2((y - MY) * 2, x - MX)
+        star = d < 0.95 * (0.35 + 0.65 * abs(math.cos(2 * a)) ** 6)  # four long points
+        if 0.9 < d < 0.96 or 0.55 < d < 0.58:
+            cv.set(x, y, CYAN[2] if (x + y) % 2 else CYAN[1])
+        elif star:
+            cv.set(x, y, PORC[5] if (x - MX) * 0.3 + (y - MY) < 0 else PORC[3])
+        elif d < 0.9:
+            cv.set(x, y, PORC[2] if (x // 3 + y // 3) % 2 else PORC[1])
+    # a still reflecting pool under the platform, holding the platform lights
+    pool = rect_set_z(16, 108, 70, 36)
+    for (x, y) in pool:
+        c = '#16324A' if (x + y // 2) % 9 else '#22486A'
+        if y < 111:
+            c = '#0B1220'  # the shadow of its rim
+        if (x - 30) % 22 < 3 and y % 6 == 3:
+            c = AMBER[3]  # the platform lights doubled
+        cv.set(x, y, c)
+        blocked.add((x, y))
+    for (x, y) in rect_set_z(14, 106, 74, 40):
+        if (x, y) not in pool:
+            cv.set(x, y, PORC[4] if y < 108 or x < 16 else PORC[1])
+            blocked.add((x, y))
     # Neon Harbour's street, continued, ending at a drop-off loop
     LX, LY = 238, 192
     loop = {(x, y) for (x, y) in oval(LX, LY, 66, 44)}
@@ -824,7 +860,7 @@ def skyport(frame: int = 0):
             cv.set(x, y, NIGHT[4] if x < bx else NIGHT[2])
         cv.hline(bx - 2, 460, 5, AMBER[3])
     for (lx, ly, rx, ry, col) in ((AX, AY, 70, 34, CYAN[2]), (60, 84, 50, 14, AMBER[4]), (160, 84, 50, 14, AMBER[4]),
-                                  (140, 300, 60, 22, CYAN[4]), (40, 410, 34, 12, AMBER[3]), (150, 420, 34, 12, AMBER[3]),
+                                  (140, 300, 52, 26, CYAN[4]), (40, 410, 34, 12, AMBER[3]), (150, 420, 34, 12, AMBER[3]),
                                   (LX, LY, 40, 24, AMBER[3]), (AX, 400, 30, 60, CYAN[3])):
         light_pool(cv, lx, ly, rx, ry, col, skip=frozenset(water - ring - pier))
     blocked |= water - ring - pier
@@ -833,9 +869,10 @@ def skyport(frame: int = 0):
         ('tree-loop', 'pod_tree', LX - 18, LY - 40), ('tree-1', 'pod_tree', 280, 236), ('tree-2', 'pod_tree', 4, 236),
         ('pylon-1', 'departure_pylon', 60, 240), ('pylon-2', 'departure_pylon', 180, 240),
         ('gates', 'ticket_gates', 64, 316), ('bench-1', 'sky_bench', 14, 400), ('bench-2', 'sky_bench', 124, 400),
-        ('tree-3', 'pod_tree', 176, 372), ('tree-4', 'pod_tree', 284, 380), ('bot-1', 'luggage_bot', 150, 440),
+        ('tree-3', 'pod_tree', 176, 372), ('tree-4', 'pod_tree', 284, 380), ('bot-1', 'luggage_bot', 120, 440),
         ('bot-2', 'luggage_bot', 200, 300), ('tether', 'tether', AX - 20, AY - 254),
         ('drone-1', 'drone', 120, 140), ('drone-2', 'drone', 290, 300),
+        ('kiosk', 'flower_kiosk', 244, 106), ('planter-1', 'sky_planter', 40, 424), ('planter-2', 'sky_planter_b', 160, 424),
     ]
     stands = {'neon': (10, 192), 'platform': (70, 84), 'gates': (104, 360), 'anchor': (AX, AY + 14)}
     return cv, objects, stands, blocked
@@ -1083,6 +1120,8 @@ def gulch(frame: int = 0):
         ('cactus-4', 'saguaro_small', 286, 540), ('cactus-5', 'saguaro', 280, 60), ('cactus-6', 'saguaro_small', 4, 2),
         ('cactus-7', 'saguaro', 290, 300), ('weed-1', 'tumbleweed', 170, 380), ('weed-2', 'tumbleweed', 96, 562),
         ('skull', 'cow_skull', 250, 520), ('barrel-p', 'keg', 40, 62), ('sack-p', 'hay_bale', 196, 56),
+        ('horse', 'horse', ccx - 30, ccy - 24), ('pear-1', 'prickly_pear', 244, 466), ('pear-2', 'prickly_pear', 280, 426),
+        ('pear-3', 'prickly_pear', 200, 548),
     ]
     stands = {'platform': (128, 70), 'saloon': (58, 200), 'street': (132, 260), 'corral': (190, 470),
               'oasis': (12, 548), 'mine': (284, 236), 'well': (75, 404)}
@@ -1291,7 +1330,10 @@ def oasis(frame: int = 0):
         ('col-3', 'column_stump_b', 10, 500),
         # out in the dunes
         ('cactus-1', 'saguaro_small', 286, 118), ('skull', 'cow_skull', 180, 540), ('weed', 'tumbleweed', 40, 150),
-        ('weed-2', 'tumbleweed', 250, 220),
+        ('weed-2', 'tumbleweed', 250, 220), ('acacia-1', 'acacia', 226, 84), ('acacia-2', 'acacia', 4, 92),
+        ('scrub-1', 'desert_scrub', 128, 140), ('scrub-2', 'desert_scrub_b', 16, 400), ('scrub-3', 'desert_scrub', 184, 420),
+        ('scrub-4', 'desert_scrub_b', 288, 300), ('rocks-1', 'sandstone_outcrop', 140, 505),
+        ('rocks-2', 'sandstone_outcrop_b', 256, 170),
     ]
     stands = {'gulch': (312, 548), 'pool': (130, 352), 'camp': (250, 500), 'arch': (58, 500),
               'crane': (110, 76), 'dunes': (200, 140)}
@@ -1305,6 +1347,58 @@ CALDERA_RIVER = [(170, 60), (178, 140), (160, 230), (200, 320), (250, 400), (300
 def caldera_rim(x):
     """The crater rim's line (x in the caldera's coordinates)."""
     return 62 + int(math.sin(x / 19) * 7 + noise2(x // 5, 0, 263) * 6)
+
+
+def cooled_flow(cv: Canvas, points, radius: float, seed: int, skip=frozenset()):
+    """A tongue of old lava cooled flat on the ash (pahoehoe): a dark basalt sheet whose
+    skin wrinkled into ropes as it flowed, the ropes bowed downstream (they ran faster
+    down the middle), a lit lip along its upper edge and a dark toe with a hard shadow
+    on the ash below. Walkable ground; paths and rivers painted later cover it."""
+    BASALT = MATERIALS['basalt']
+    # narrow where it left its source, spreading as it went, and ending in round toes
+    total = sum(math.hypot(x1 - x0, y1 - y0) for (x0, y0), (x1, y1) in zip(points, points[1:]))
+    sheet, run = set(), 0.0
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        seg = math.hypot(x1 - x0, y1 - y0)
+        for i in range(int(seg) + 1):
+            t = i / max(1, seg)
+            f = (run + seg * t) / total
+            r = radius * (0.45 + 0.75 * f) * (0.85 + 0.3 * smooth_noise(x0 + i, y0, 7, seed))
+            sheet |= disc(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, r)
+        run += seg
+    (ax, ay), (bx, by) = points[-2], points[-1]
+    ux, uy = (bx - ax) / math.hypot(bx - ax, by - ay), (by - ay) / math.hypot(bx - ax, by - ay)
+    for (side, ahead, rr) in ((-0.9, 0.4, 0.7), (0.9, 0.2, 0.62), (0.0, 0.9, 0.55)):  # the toes
+        cx = bx + (ux * ahead - uy * side) * radius
+        cy = by + (uy * ahead + ux * side) * radius
+        sheet |= disc(cx, cy, radius * rr)
+    sheet = {(x, y) for (x, y) in sheet if 0 <= x < W and 0 <= y < H} - set(skip)
+    line, run = [], 0.0
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        n = int(max(abs(x1 - x0), abs(y1 - y0))) or 1
+        for i in range(n):
+            t = i / n
+            line.append((x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, run + math.hypot(x1 - x0, y1 - y0) * t))
+        run += math.hypot(x1 - x0, y1 - y0)
+    for (x, y) in sheet:
+        lx, ly, along = min(line, key=lambda p: (p[0] - x) ** 2 + (p[1] - y) ** 2)
+        d2 = (lx - x) ** 2 + (ly - y) ** 2
+        rope = int(along - d2 / (radius * 1.1) + noise2(x // 4, y // 4, seed) * 1.5) % 6
+        c = BASALT[3] if smooth_noise(x, y, 6, seed + 1) > 0.35 else BASALT[2]  # a dull sheen
+        if rope == 0:
+            c = BASALT[4]  # the lit crest of a rope
+        elif rope == 1:
+            c = BASALT[2]  # its shaded downstream side
+        cv.set(x, y, c)
+    for (x, y) in sheet:
+        if (x, y - 1) not in sheet:
+            cv.set(x, y, MATERIALS['ash'][3] if x % 4 else BASALT[4])  # the lit lip
+        elif (x, y + 1) not in sheet:
+            cv.set(x, y, BASALT[1])  # the toe
+            if (x, y + 1) not in skip and 0 <= y + 1 < H:
+                style.darken(cv, x + 1, y + 1)  # its shadow on the ash
+        elif (x + 1, y) not in sheet:
+            cv.set(x, y, BASALT[2])
 
 
 def caldera(frame: int = 0):
@@ -1329,6 +1423,11 @@ def caldera(frame: int = 0):
     for i in range(200):
         x, y = int(noise2(i, 0, 262) * W), int(noise2(i, 1, 262) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
+    # old flows, cooled flat on the ash between the newer things
+    for (pts, r, sd) in (([(226, 80), (256, 96), (284, 104)], 13, 601),
+                         ([(4, 182), (36, 196), (70, 206)], 14, 602),
+                         ([(152, 446), (170, 486), (186, 520)], 12, 604)):
+        cooled_flow(cv, pts, r, sd)
     # the crater: a lava lake at the top behind a ragged basalt rim
     rim = caldera_rim
     for x in range(W):
@@ -1431,6 +1530,9 @@ def caldera(frame: int = 0):
         ('cols-4', 'basalt_columns_low', 262, 220), ('cols-5', 'basalt_columns', 0, 520),
         ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 238, 326), ('obs-3', 'obsidian', 262, 556 - 26),
         ('obs-4', 'obsidian_small', 60, 230), ('vent-2', 'cooling_vent', 214, 196), ('vent-3', 'cooling_vent', 280, 360),
+        ('scree-1', 'scree', 92, 176), ('scree-2', 'scree_small', 206, 90), ('scree-3', 'scree_b', 232, 440),
+        ('scree-4', 'scree_small', 176, 546), ('scree-5', 'scree_small', 6, 486),
+        ('snag-1', 'charred_snag', 290, 236), ('snag-2', 'charred_snag', 14, 120 + 64), ('snag-3', 'charred_snag', 196, 470),
     ]
     # the bridge is part of the ground (walkable), drawn across the river
     deck = style.finalize(cdp.basalt_bridge(), name='basalt_bridge')
@@ -1471,6 +1573,10 @@ def springs(frame: int = 0):
     for i in range(140):
         x, y = int(noise2(i, 0, 500) * W), int(noise2(i, 1, 500) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
+    for (pts, r, sd) in (([(2, 112), (24, 132), (50, 146)], 13, 611),
+                         ([(318, 176), (288, 194), (262, 200)], 12, 612),
+                         ([(118, 498), (142, 520), (164, 546)], 12, 613)):
+        cooled_flow(cv, pts, r, sd)
     # the end of the crater lake, closed by its rim
     def rim(x):
         return caldera_rim(x + W) - max(0, x - 16) * 0.9
@@ -1632,6 +1738,9 @@ def springs(frame: int = 0):
         ('cols-1', 'basalt_columns', 262, 520), ('cols-2', 'basalt_columns_low', 286, 40), ('cols-3', 'basalt_columns_low', 210, 540),
         ('vent-1', 'cooling_vent', 150, 60), ('vent-2', 'cooling_vent', 300, 120), ('vent-3', 'cooling_vent', 110, 556 - 20),
         ('obs-1', 'obsidian_small', 20, 470), ('obs-2', 'obsidian', 286, 400),
+        ('scree-1', 'scree', 28, 128), ('scree-2', 'scree_small', 196, 70), ('scree-3', 'scree_b', 250, 352),
+        ('scree-4', 'scree_small', 40, 504), ('snag-1', 'charred_snag', 226, 84), ('snag-2', 'charred_snag', 4, 190),
+        ('snag-3', 'charred_snag', 296, 166),
     ]
     stands = {'caldera': (8, 300), 'pools': (100, 250), 'bath': (250, 494), 'delta': (130, 540), 'slope': (220, 70)}
     return cv, objects, stands, blocked | lake
@@ -1763,6 +1872,16 @@ def home(frame: int = 0):
         d = math.hypot((x - 150) / 60, (y - 350) / 26)
         ring = int(d * 6)
         cv.set(x, y, (NAP[2], CREAM[3], NAP[3], RED[3], NAP[2], CREAM[2])[min(5, ring)] if (x + y) % 7 else NAP[1])
+    # a woven runner from the front door into the sunroom
+    for y in range(470, 552):
+        for x in range(142, 178):
+            band = (y - 470) // 4 % 4
+            c = (NAP[2], CREAM[3], RED[2], CREAM[3])[band] if 146 <= x < 174 else NAP[1]
+            if (x + y) % 5 == 0 and 146 <= x < 174:
+                c = CREAM[2]
+            if x in (142, 177) and y % 2:
+                c = CREAM[3]  # the fringe
+            cv.set(x, y, c)
     # the hearth's glow on the floor
     light_pool(cv, 52, 300, 46, 18, '#F2721E', skip=frozenset(blocked))
     objects = [
@@ -1775,6 +1894,8 @@ def home(frame: int = 0):
         # the sunroom
         ('seat', 'window_seat', 30, 456), ('plant-1', 'plant_tall', 270, 446), ('plant-2', 'plant_tall', 240, 470),
         ('plant-3', 'plant_tall', 12, 500), ('chair-s', 'armchair', 200, 492),
+        ('coats', 'coat_rack', 116, 510), ('boots', 'boots', 186, 544), ('side', 'side_table', 98, 466),
+        ('can', 'watering_can', 262, 520),
     ]
     stands = {'door': (160, 544), 'bed': (96, 150), 'hearth': (60, 316), 'table': (240, 366), 'sunroom': (120, 500)}
     return cv, objects, stands, blocked
@@ -1892,8 +2013,16 @@ def harbour(frame: int = 0):
         ('boat-3', 'boat_blue', 186, 420), ('bollard-1', 'bollard', 140, 290), ('bollard-2', 'bollard', 226, 290),
         ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 286, 206),
         ('upturned', 'upturned_boat', 8, 400), ('washing', 'washing_line', 110, 90), ('buoy-1', 'buoy', 120, 450),
-        ('buoy-2', 'buoy', 300, 380),
+        ('buoy-2', 'buoy', 300, 380), ('chair-1', 'deck_chair', 10, 348), ('chair-2', 'deck_chair_b', 32, 354),
+        ('drift', 'driftwood', 6, 452), ('sail', 'sailboat', 262, 496),
     ]
+    # a rock pool on the lower beach: dark stones round a little pool of sky
+    for (x, y) in oval(30, 506, 14, 6):
+        d = math.hypot((x - 30) / 14, (y - 506) / 6)
+        cv.set(x, y, WTRm[2] if d < 0.6 and (x + y) % 5 else WTRm[4] if d < 0.6 else STONE[3] if y < 506 else STONE[1])
+        if 0.6 <= d and noise2(x, y, 611) > 0.5:
+            cv.set(x, y, STONE[2])
+        water.add((x, y))
     blocked = water - set().union(*jetties)
     stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (157, 384), 'beach': (34, 380), 'castle': (300, 116)}
     return cv, objects, stands, blocked
@@ -1996,6 +2125,9 @@ def castle(frame: int = 0):
         ('wall-s1', 'wall_run', 70, 306), ('gate', 'gatehouse', 122, 262), ('wall-s2', 'wall_run', 200, 306),
         ('tower-sw', 'round_tower', 52, 262), ('tower-se', 'round_tower', 268, 262),
         ('tower-ne', 'round_tower', 268, -40),
+        ('well', 'castle_well', 236, 150), ('rack', 'weapon_rack', 240, 196), ('bench-c', 'stone_bench', 196, 50),
+        ('butt-1', 'archery_butt', 236, 432), ('butt-2', 'archery_butt', 268, 420), ('bench-m', 'stone_bench', 96, 440),
+        ('pole-1', 'banner_pole', 142, 372), ('pole-2', 'banner_pole', 210, 372),
     ]
     blocked = sea | ditch - {(x, y) for x in range(168, 196) for y in range(350, 384)}
     blocked |= {(x, y) for x in range(70, 82) for y in range(40, 350)} | {(x, y) for x in range(282, 294) for y in range(40, 350)}
@@ -2111,6 +2243,7 @@ def station(frame: int = 0):
         ('table', 'galley_table', 236, 240), ('tea', 'tea_dispenser', 280, 186), ('trough-g', 'hydro_trough', 226, 186),
         ('lock-shuttle', 'airlock', 262, 330), ('console-1', 'console', 226, 440), ('console-2', 'console', 268, 440),
         # the arrival hall: hydroponics either side
+        ('aquarium', 'aquarium_column', 110, 380), ('crates', 'cargo_crates', 196, 330), ('cushions', 'floor_cushions', 68, 360),
         ('trough-1', 'hydro_trough', 22, 492), ('trough-2', 'hydro_trough', 22, 530), ('trough-3', 'hydro_trough', 242, 492),
         ('trough-4', 'hydro_trough', 242, 530), ('lock-lift', 'airlock', 132, 516),
     ]
@@ -2183,7 +2316,8 @@ def lumen(frame: int = 0):
                 v = 3.4 - t * 2.2 + (0.3 if (x + y) % 2 else 0)
             cv.set(x, y, R[max(0, min(5, int(v)))])
     for (cx, cy, r, rays) in ((54, 130, 18, True), (270, 96, 10, False), (296, 380, 12, False), (40, 470, 9, False),
-                              (120, 250, 8, False), (210, 150, 6, False), (280, 560, 14, True)):
+                              (120, 250, 8, False), (210, 150, 6, False), (280, 560, 14, True),
+                              (130, 556, 7, False), (306, 236, 6, False), (196, 352, 5, False), (24, 330 - 20, 4, False)):
         crater(cx, cy, r, rays)
     # the shuttle's pad: a ring scorched into the dust
     for (x, y) in oval(160, 126, 50, 16):
@@ -2222,8 +2356,18 @@ def lumen(frame: int = 0):
             x = int(x0 + (x1 - x0) * k / steps) + (3 if (k + i) % 2 else -3)
             y = int(y0 + (y1 - y0) * k / steps)
             cv.set(x, y, R[1]); cv.set(x + 1, y, R[1]); cv.set(x, y + 1, R[2])
+    # the old lander's tracks: it rolled a little way on its feet before it stopped
+    for track in ([(318, 372), (296, 376), (276, 362)], [(254, 358), (226, 372), (204, 362)]):
+        for side in (0, 6):
+            for i in range(len(track) - 1):
+                (x0, y0), (x1, y1) = track[i], track[i + 1]
+                n = int(math.hypot(x1 - x0, y1 - y0))
+                for k in range(0, n, 2):
+                    x, y = x0 + (x1 - x0) * k // n, y0 + (y1 - y0) * k // n + side
+                    cv.set(x, y, R[1]); cv.set(x, y + 1, R[4])
     objects = [
-        ('shuttle', 'shuttle', 118, 72),
+        ('shuttle', 'shuttle', 118, 72), ('lander', 'old_lander', 246, 322), ('arch', 'moon_arch', 196, 524),
+        ('rock-7', 'moon_rock', 20, 420), ('rock-8', 'moon_rock_small', 50, 434), ('rock-9', 'moon_rock_small', 104, 206),
         ('rock-1', 'moon_rock', 26, 180), ('rock-2', 'moon_rock_small', 230, 200), ('rock-3', 'moon_rock', 278, 300),
         ('rock-4', 'moon_rock_small', 80, 330), ('rock-5', 'moon_rock_small', 290, 470), ('rock-6', 'moon_rock', 14, 540),
         ('crystal-1', 'moon_crystal', 196, 228), ('crystal-2', 'moon_crystal', 262, 236), ('crystal-3', 'moon_crystal', 200, 276),
@@ -2520,6 +2664,9 @@ def ridge(frame: int = 0):
         ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
         ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
         ('pine-t2', 'snowy_pine', 270, 120), ('pine-t3', 'snowy_pine', 40, 150),
+        ('woodpile', 'woodpile', 122, 138), ('sled', 'sled', 214, 190), ('snowman', 'snowman', 90, 96),
+        ('wall-1', 'drystone_wall', 166, 334), ('wall-2', 'drystone_wall', 228, 334), ('wall-end', 'stone', 288, 330), ('marmot', 'marmot_rock', 220, 470),
+        ('cotton-1', 'cotton_grass', 196, 380), ('cotton-2', 'cotton_grass', 270, 398), ('cotton-3', 'cotton_grass', 210, 418),
     ]
     face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
     peaks_block = set(peak_pts)
@@ -2694,15 +2841,55 @@ def woodland(frame: int = 0):
         lx, ly = int(noise2(i, 0, 426) * W), int(noise2(i, 1, 426) * H)
         light_pool(cv, lx, ly, 12 + i % 3 * 4, 6 + i % 2 * 3, GOLDm[2], water)
     light_pool(cv, 110, 140, 44, 26, G[4], water)
+    # the stone circle in its own small clearing: a ring of reddish trodden earth round
+    # muted grass, the stones standing in it (the reference Matt chose as the bar)
+    SX, SY, SRX, SRY = 78, 410, 44, 24
+    spur = worlds.thick([(152, 386), (118, 408)], 5, seed=27)
+    paint_road(cv, spur)
+    for (x, y) in oval(SX, SY, SRX + 8, SRY + 6):
+        d = math.hypot((x - SX) / SRX, (y - SY) / SRY)
+        if d < 0.72:
+            n = smooth_noise(x, y, 9, 428)
+            cv.set(x, y, '#86A755' if n > 0.42 else '#76984A')
+        elif d < 1.0:
+            n = noise2(x // 2, y // 2, 429)
+            c = '#AE7E64' if n > 0.35 else '#9A6A52'
+            if d < 0.76 and (x + y) % 2:
+                c = '#76984A'  # the grass fraying onto the earth
+            if d > 0.95 and (x + y) % 2:
+                c = '#C29A7E'
+            cv.set(x, y, c)
+        elif d < 1.12 and (x + y) % 2 == 0:
+            cv.set(x, y, '#76984A')
+    # where the canopy closes in at the outer edges, the floor goes into deep shade
+    # (checker dithering toward FOREST_DARK, style rule 9); the path and the water stay lit
+    keep = set(path) | water | rock | set(clearing) | set(oval(SX, SY, SRX + 8, SRY + 6))
+    for y in range(H):
+        for x in range(W):
+            if (x, y) in keep:
+                continue
+            d = min(x + noise2(x // 6, y // 6, 430) * 10, y + 14 + noise2(x // 6, y // 6, 431) * 10)
+            s = 1 - d / 44
+            if s >= 0.85 or (s >= 0.6 and ((x + y) % 2 == 0 or (x % 2 == 0 and y % 2 == 0))) \
+                    or (s >= 0.35 and (x + y) % 2 == 0) or (s >= 0.12 and x % 2 == 0 and y % 2 == 0):
+                cv.set(x, y, style.FOREST_DARK)
     objects = [
+        # the stone circle
+        ('stone-1', 'standing_stone', SX - 10, SY - SRY - 26), ('stone-2', 'standing_stone_b', SX + 26, SY - SRY - 18),
+        ('stone-3', 'standing_stone_low', SX + SRX - 8, SY - 10), ('stone-4', 'standing_stone', SX + 22, SY + SRY - 26),
+        ('stone-5', 'standing_stone_b', SX - 34, SY + SRY - 28), ('stone-6', 'standing_stone_low', SX - SRX - 4, SY - 14),
+        ('stone-7', 'standing_stone_low', SX - 38, SY - SRY - 12),
+        ('stump-1', 'stump', 166, 232), ('stump-2', 'stump', 40, 340), ('stump-3', 'stump', 236, 120),
+        ('pine-6', 'pine', -16, 110), ('pine-7', 'pine', 110, -44), ('tree-8', 'tree_small', -26, 380),
+        ('bush-2', 'bush', 4, 250), ('bush-3', 'bush', 160, 40), ('fern-5', 'fern', 150, 250),
         # old trees closing in round the edges (none crosses the east border into the garden)
         ('tree-1', 'tree', -20, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
         ('tree-3', 'tree', -24, 200), ('pine-3', 'pine', -10, 330), ('tree-4', 'tree', 230, 160),
         ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 480),
         ('pine-5', 'pine', 150, 490), ('tree-7', 'tree_small', 250, 504),
         ('oak', 'hollow_tree', 70, 30), ('ring', 'mushroom_ring', 128, 150), ('log-1', 'mossy_log', 200, 230),
-        ('log-2', 'mossy_log', 40, 420), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
-        ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 90, 380), ('bench', 'forest_bench', 150, 170),
+        ('log-2', 'mossy_log', 128, 468), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
+        ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 100, 330), ('bench', 'forest_bench', 150, 170),
         ('willow', 'willow', 220, 340), ('bush-1', 'bush', 286, 380),
     ]
     # a split-log footbridge where the path crosses the young stream
@@ -2711,7 +2898,8 @@ def woodland(frame: int = 0):
         cv.set(x, y, WOOD[4] if x in (122, 131) else WOOD[3] if x < 131 else WOOD[2])
     for y in range(min(yy for _, yy in plank), max(yy for _, yy in plank) + 1):
         cv.set(140, y, WTRm[0])
-    stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18)}
+    stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18),
+              'stones': (SX, SY + 4)}
     return cv, objects, stands, (water | rock) - plank
 
 
@@ -3000,6 +3188,54 @@ def rle(row: str) -> str:
     return ''.join(out)
 
 
+BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
+
+
+@functools.lru_cache(maxsize=1)
+def beyond() -> Canvas:
+    """What lies past a region's own zones where its grid has a gap (the valley's corners):
+    old forest, a closed canopy of leaf masses in deep shade, each row overlapping the
+    one behind it. Its outermost crowns spill a little over the neighbouring zones, so
+    the forest's edge is grown, not cut; the canvas is the zone plus that spill all round."""
+    S = BEYOND_SPILL
+    cv = Canvas(W + 2 * S, H + 2 * S)
+    for y in range(S, H + S):
+        for x in range(S, W + S):
+            # the shade under the canopy, its edge ragged so no straight line shows
+            m = 2 + int(noise2(x // 3, y // 3, 553) * 7)
+            if min(x - S, W + S - 1 - x, y - S, H + S - 1 - y) < m:
+                continue
+            cv.set(x, y, style.FOREST_DARK if (x + y) % 2 else '#24382A')
+    ramp = ['#122019', '#1A2C22', '#22392A', '#2E4C34', '#3E6240']
+    crowns = []
+    k = 0
+    for gy in range(S + 4, H + S, 30):  # crowns on a jittered grid, so the canopy closes
+        for gx in range(S + 6, W + S, 40):
+            crowns.append((gy + (noise2(k, 1, 552) - 0.5) * 22, gx + (noise2(k, 0, 552) - 0.5) * 28,
+                           22 + noise2(k, 2, 552) * 12, k))
+            k += 1
+    for t in range(0, max(W, H) + 1, 22):  # small crowns straddling the edge all round
+        for (ex, ey) in ((S + t, S), (S + t, H + S), (S, S + t), (W + S, S + t)):
+            if S <= ex <= W + S and S <= ey <= H + S:
+                crowns.append((ey + (noise2(t, ex, 554) - 0.5) * 6, ex + (noise2(t, ey, 554) - 0.5) * 6,
+                               9 + noise2(ex, ey, 555) * 4, k))
+                k += 1
+    for (cy, cx, rx, k) in sorted(crowns):
+        # crowns by the edge stay inside the canvas, so the spill ends in round crowns
+        rx = max(8.0, min(rx, cx - 8, cv.w - cx - 8, (cy - 8) / 0.72, (cv.h - cy - 8) / 0.72))
+        ry = rx * 0.72
+        blob = Canvas(int(rx * 2) + 14, int(ry * 2) + 14)
+        style.leafy(blob, blob.w / 2, blob.h / 2, rx, ry, ramp, r=3.8, seed=k + 3)
+        bx, by = int(cx - blob.w / 2), int(cy - blob.h / 2)
+        for yy in range(blob.h):
+            for xx in range(blob.w):
+                c = blob.get(xx, yy)
+                X, Y = bx + xx, by + yy
+                if c[3] and 0 <= X < cv.w and 0 <= Y < cv.h:
+                    cv.set(X, Y, c)
+    return cv
+
+
 def export(built: dict):
     """Write the props every zone uses and lib/zone-maps.ts (objects, walk grids,
     stands, the region layout and static image imports)."""
@@ -3007,10 +3243,24 @@ def export(built: dict):
     os.makedirs(props_dir, exist_ok=True)
     for old in os.listdir(props_dir):
         os.remove(os.path.join(props_dir, old))
+    beyond().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond.png'), worlds.SCALE)
     used = {}
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
             used[k] = z['sprites'][k]
+    # animation frames of a placed sprite ('windmill_f1', ...), placed relative to it
+    frames = {}
+    for key in sorted(used):
+        sm = next(z['sprites'] for z in built.values())
+        base = sm[key]
+        n = 1
+        while f'{key}_f{n}' in sm:
+            fr = sm[f'{key}_f{n}']
+            frames.setdefault(key, []).append([f'{key}_f{n}', fr.ox - base.ox, fr.oy - base.oy, fr.w, fr.h])
+            n += 1
+    for key, fl in frames.items():
+        for (fk, *_r) in fl:
+            used[fk] = next(z['sprites'] for z in built.values())[fk]
     for key, sp in sorted(used.items()):
         sp.save(os.path.join(props_dir, f'{key}.png'), worlds.SCALE)
     ident = lambda k: ''.join(p.capitalize() for p in k.split('_'))  # noqa: E731
@@ -3025,6 +3275,10 @@ def export(built: dict):
         'export type ZoneMap = { objects: readonly ZoneObject[]; walk: readonly string[]; stands: Readonly<Record<string, readonly [number, number]>> };',
         '/** Things above head height: no ground shadow, never block a walk, drawn on top. */',
         f'export const zoneOverhead: readonly string[] = {json.dumps(sorted(OVERHEAD))};',
+        '/** Animation frames of a sprite: [frame sprite, dx, dy, w, h] from the sprite\'s own top-left. */',
+        f'export const zoneFrames: Record<string, readonly (readonly [string, number, number, number, number])[]> = {json.dumps(frames)};',
+        '/** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */',
+        f'export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {json.dumps({k: [list(r) for r in v] for k, v in sorted(SPRITE_WINDOWS.items()) if k in used})};',
         '/** Walk rows are run-length encoded (\'12.3#\' = twelve open cells, three blocked). */',
         'const unrle = (row: string) => row.replace(/(\\d+)([.#])/g, (_m, n: string, c: string) => c.repeat(Number(n)));',
         'export const zoneMaps: Record<ZoneId, ZoneMap> = {',
@@ -3052,6 +3306,10 @@ def export(built: dict):
         'export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {',
         *[f'  {z}: ground{ident(z)},' for z in built],
         '};',
+        "import beyondImage from '@/assets/zones/beyond.png';",
+        '/** Old forest, drawn where a region\'s grid has no zone (the valley\'s corners). */',
+        'export const zoneBeyond: ImageSourcePropType = beyondImage;',
+        f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
         '};',

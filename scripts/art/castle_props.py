@@ -258,10 +258,129 @@ def training_dummy() -> Canvas:
     return cv
 
 
+def castle_well() -> Canvas:
+    """The courtyard well, 30 x 34: a round curb of dressed blocks lit upper left, dark
+    water inside, a timber frame with a slate hood, a windlass and a bucket."""
+    w, h = 30, 34
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(15, 26, 12, 6):  # the curb, seen from above and in front
+        d = math.hypot((x - 15) / 12, (y - 26) / 6)
+        if d < 0.62:
+            cv.set(x, y, '#16243A' if y < 26 else '#22344E')  # the water, deep
+        else:
+            k = (x - 3) / 24
+            c = ASHLAR[4] if y < 24 and k < 0.6 else ASHLAR[3] if k < 0.7 else ASHLAR[2]
+            if (x + (y // 3) * 3) % 6 == 0:
+                c = ASHLAR[1]
+            cv.set(x, y, c)
+    for y in range(26, h - 1):  # its front face
+        for x in range(4, 27):
+            if ((x - 15) / 12) ** 2 + ((y - 26) / 6) ** 2 > 1 and y > 28:
+                continue
+            if y > 27:
+                k = (x - 4) / 22
+                cv.set(x, y, ASHLAR[3] if k < 0.35 else ASHLAR[2] if k < 0.75 else ASHLAR[1])
+                if (y - 28) % 3 == 2 or (x + (y // 3) % 2 * 3) % 6 == 0:
+                    cv.set(x, y, ASHLAR[1])
+    for px in (5, 24):  # the posts
+        for y in range(6, 26):
+            cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[1])
+    for y in range(2, 9):  # the slate hood
+        for x in range(2 + (8 - y) // 2, w - 2 - (8 - y) // 2):
+            cv.set(x, y, SLATE[3] if x < 15 else SLATE[2])
+        cv.set(15, y, SLATE[4])
+    cv.hline(3, 9, w - 6, SLATE[1])
+    cv.hline(6, 14, 18, WOOD[2]); cv.hline(6, 13, 18, WOOD[3])  # the windlass
+    cv.vline(15, 15, 6, '#5E3D2E')
+    cv.rect(13, 20, 5, 4, WOOD[2]); cv.hline(13, 20, 5, IRON[3])  # the bucket
+    return cv
+
+
+def archery_butt() -> Canvas:
+    """A straw archery butt on a wooden easel, 26 x 34: painted rings, two arrows in it."""
+    w, h = 26, 34
+    cv = Canvas(w, h, pad=PAD)
+    for (x0, x1) in ((6, 3), (20, 23)):
+        for t in range(14):
+            cv.set(x0 + (x1 - x0) * t // 13, 20 + t, WOOD[3] if x0 < 13 else WOOD[2])
+    for (x, y) in disc(13, 14, 10):
+        d = math.hypot(x - 13, y - 14)
+        c = '#E8DCC8' if d > 8.5 else RED[3] if d > 6 else '#F2EEE6' if d > 4 else '#3E6A8A' if d > 2 else GOLD[4]
+        if x > 17 and d > 8.5:
+            c = '#C8B898'
+        if d > 9.3:
+            c = '#C99A3C' if x < 14 else '#A87E2C'  # the straw rim
+        cv.set(x, y, c)
+    for (ax, ay) in ((10, 11), (16, 17)):
+        for t in range(5):
+            cv.set(ax - t, ay - t // 2, WOOD[4])
+        cv.set(ax - 5, ay - 3, '#F2EEE6'); cv.set(ax - 6, ay - 3, '#F2EEE6')
+    return cv
+
+
+def weapon_rack() -> Canvas:
+    """A rack of wooden practice swords and round shields, 36 x 30, for the dummies."""
+    w, h = 36, 30
+    cv = Canvas(w, h, pad=PAD)
+    for px in (3, 31):
+        for y in range(8, h - 1):
+            cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[1])
+    cv.hline(3, 9, 30, WOOD[4]); cv.hline(3, 10, 30, WOOD[2]); cv.hline(3, h - 6, 30, WOOD[2])
+    for k in range(4):  # practice swords
+        x = 8 + k * 5
+        for y in range(4, h - 5):
+            cv.set(x, y, WOOD[4] if y < 16 else WOOD[2])
+        cv.hline(x - 2, 16, 5, '#5E3D2E')
+    for (cx, col) in ((29, NAP), (8, RED)):  # shields leaning at the ends
+        for (x, y) in oval(cx, h - 8, 5, 6):
+            cv.set(x, y, col[3] if x < cx else col[2])
+        cv.set(cx, h - 8, GOLD[4])
+    return cv
+
+
+def stone_bench() -> Canvas:
+    """A plain stone bench, 34 x 14: a lit slab on two blocks."""
+    w, h = 34, 14
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(2, 7):
+        for x in range(2, w - 2):
+            cv.set(x, y, ASHLAR[4] if y < 4 else ASHLAR[3] if x < w - 6 else ASHLAR[2])
+    cv.hline(2, 7, w - 4, ASHLAR[1])
+    for bx in (5, w - 11):
+        for y in range(8, h - 1):
+            for x in range(bx, bx + 6):
+                cv.set(x, y, ASHLAR[3] if x < bx + 2 else ASHLAR[2] if x < bx + 5 else ASHLAR[1])
+    return cv
+
+
+def banner_pole(wave: int = 0) -> Canvas:
+    """A tall pole flying the castle's violet and gold pennant, 18 x 48; `wave` (0 to 2)
+    ripples the cloth for the frames it flutters through."""
+    w, h = 18, 48
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(3, h - 1):
+        cv.set(4, y, WOOD[3]); cv.set(5, y, WOOD[1])
+    for (x, y) in disc(5, 3, 1.5):
+        cv.set(x, y, GOLD[4])
+    for y in range(6, 22):  # the pennant, tapering
+        for x in range(6, 6 + max(2, 11 - abs(y - 10) // 1 if y > 10 else 11)):
+            if x > 6 + (22 - y) * 0.75:
+                continue
+            c = NAP[3] if y < 10 else NAP[2]
+            if y in (8, 9):
+                c = GOLD[3]
+            ripple = round(math.sin((x - 6) / 2.2 + wave * 2.1) * (x - 6) / 8) if wave else 0
+            cv.set(x, y + ripple, c)
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'keep': keep(), 'round_tower': round_tower(), 'wall_run': wall_run(), 'gatehouse': gatehouse(),
         'bell_tower': bell_tower(), 'herb_bed': herb_bed(), 'training_dummy': training_dummy(),
+        'castle_well': castle_well(), 'archery_butt': archery_butt(), 'weapon_rack': weapon_rack(),
+        'stone_bench': stone_bench(), 'banner_pole': banner_pole(),
+        'banner_pole_f1': banner_pole(1), 'banner_pole_f2': banner_pole(2),
     }
 
 

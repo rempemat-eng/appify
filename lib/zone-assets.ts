@@ -2,14 +2,20 @@
 /* eslint-disable */
 import type { ImageSourcePropType } from 'react-native';
 import type { ZoneId } from './zone-maps';
+import propAcacia from '@/assets/zones/props/acacia.png';
 import propAirlock from '@/assets/zones/props/airlock.png';
 import propAirshipMast from '@/assets/zones/props/airship_mast.png';
 import propAnchor from '@/assets/zones/props/anchor.png';
+import propAquariumColumn from '@/assets/zones/props/aquarium_column.png';
+import propArcheryButt from '@/assets/zones/props/archery_butt.png';
 import propArmchair from '@/assets/zones/props/armchair.png';
 import propAtmosCar from '@/assets/zones/props/atmos_car.png';
 import propAutomaton from '@/assets/zones/props/automaton.png';
 import propAwning from '@/assets/zones/props/awning.png';
 import propBandstand from '@/assets/zones/props/bandstand.png';
+import propBannerPole from '@/assets/zones/props/banner_pole.png';
+import propBannerPoleF1 from '@/assets/zones/props/banner_pole_f1.png';
+import propBannerPoleF2 from '@/assets/zones/props/banner_pole_f2.png';
 import propBarn from '@/assets/zones/props/barn.png';
 import propBarrel from '@/assets/zones/props/barrel.png';
 import propBasaltColumns from '@/assets/zones/props/basalt_columns.png';
@@ -25,6 +31,7 @@ import propBoatRed from '@/assets/zones/props/boat_red.png';
 import propBollard from '@/assets/zones/props/bollard.png';
 import propBookcase from '@/assets/zones/props/bookcase.png';
 import propBookshelf from '@/assets/zones/props/bookshelf.png';
+import propBoots from '@/assets/zones/props/boots.png';
 import propBoulder from '@/assets/zones/props/boulder.png';
 import propBunting from '@/assets/zones/props/bunting.png';
 import propBuoy from '@/assets/zones/props/buoy.png';
@@ -37,10 +44,14 @@ import propCairn from '@/assets/zones/props/cairn.png';
 import propCamel from '@/assets/zones/props/camel.png';
 import propCampfire from '@/assets/zones/props/campfire.png';
 import propCanalCrane from '@/assets/zones/props/canal_crane.png';
+import propCargoCrates from '@/assets/zones/props/cargo_crates.png';
+import propCastleWell from '@/assets/zones/props/castle_well.png';
 import propCat from '@/assets/zones/props/cat.png';
+import propCharredSnag from '@/assets/zones/props/charred_snag.png';
 import propCloche from '@/assets/zones/props/cloche.png';
 import propClockTower from '@/assets/zones/props/clock_tower.png';
 import propCoalCart from '@/assets/zones/props/coal_cart.png';
+import propCoatRack from '@/assets/zones/props/coat_rack.png';
 import propColumnStump from '@/assets/zones/props/column_stump.png';
 import propColumnStumpB from '@/assets/zones/props/column_stump_b.png';
 import propConsole from '@/assets/zones/props/console.png';
@@ -50,14 +61,21 @@ import propCorralRail from '@/assets/zones/props/corral_rail.png';
 import propCorralSide from '@/assets/zones/props/corral_side.png';
 import propCottage from '@/assets/zones/props/cottage.png';
 import propCottageB from '@/assets/zones/props/cottage_b.png';
+import propCottonGrass from '@/assets/zones/props/cotton_grass.png';
 import propCowSkull from '@/assets/zones/props/cow_skull.png';
 import propCrate from '@/assets/zones/props/crate.png';
+import propDeckChair from '@/assets/zones/props/deck_chair.png';
+import propDeckChairB from '@/assets/zones/props/deck_chair_b.png';
 import propDeparturePylon from '@/assets/zones/props/departure_pylon.png';
+import propDesertScrub from '@/assets/zones/props/desert_scrub.png';
+import propDesertScrubB from '@/assets/zones/props/desert_scrub_b.png';
 import propDesk from '@/assets/zones/props/desk.png';
 import propDiningTable from '@/assets/zones/props/dining_table.png';
 import propDreamPool from '@/assets/zones/props/dream_pool.png';
+import propDriftwood from '@/assets/zones/props/driftwood.png';
 import propDrone from '@/assets/zones/props/drone.png';
 import propDryWell from '@/assets/zones/props/dry_well.png';
+import propDrystoneWall from '@/assets/zones/props/drystone_wall.png';
 import propDuck from '@/assets/zones/props/duck.png';
 import propDynamiteCrate from '@/assets/zones/props/dynamite_crate.png';
 import propEmberShrine from '@/assets/zones/props/ember_shrine.png';
@@ -69,6 +87,8 @@ import propFireplace from '@/assets/zones/props/fireplace.png';
 import propFireweed from '@/assets/zones/props/fireweed.png';
 import propFireweedSmall from '@/assets/zones/props/fireweed_small.png';
 import propFishStall from '@/assets/zones/props/fish_stall.png';
+import propFloorCushions from '@/assets/zones/props/floor_cushions.png';
+import propFlowerKiosk from '@/assets/zones/props/flower_kiosk.png';
 import propForestBench from '@/assets/zones/props/forest_bench.png';
 import propForge from '@/assets/zones/props/forge.png';
 import propFoundry from '@/assets/zones/props/foundry.png';
@@ -88,6 +108,7 @@ import propHeron from '@/assets/zones/props/heron.png';
 import propHitchingRail from '@/assets/zones/props/hitching_rail.png';
 import propHollowTree from '@/assets/zones/props/hollow_tree.png';
 import propHoloBoard from '@/assets/zones/props/holo_board.png';
+import propHorse from '@/assets/zones/props/horse.png';
 import propHouseBlue from '@/assets/zones/props/house_blue.png';
 import propHouseRed from '@/assets/zones/props/house_red.png';
 import propHydroTrough from '@/assets/zones/props/hydro_trough.png';
@@ -107,7 +128,9 @@ import propLocomotive from '@/assets/zones/props/locomotive.png';
 import propLoungeBench from '@/assets/zones/props/lounge_bench.png';
 import propLuggageBot from '@/assets/zones/props/luggage_bot.png';
 import propMaglev from '@/assets/zones/props/maglev.png';
+import propMarmotRock from '@/assets/zones/props/marmot_rock.png';
 import propMinePortal from '@/assets/zones/props/mine_portal.png';
+import propMoonArch from '@/assets/zones/props/moon_arch.png';
 import propMoonCrystal from '@/assets/zones/props/moon_crystal.png';
 import propMoonRock from '@/assets/zones/props/moon_rock.png';
 import propMoonRockSmall from '@/assets/zones/props/moon_rock_small.png';
@@ -122,6 +145,7 @@ import propNoodleStall from '@/assets/zones/props/noodle_stall.png';
 import propNoticeBoard from '@/assets/zones/props/notice_board.png';
 import propObsidian from '@/assets/zones/props/obsidian.png';
 import propObsidianSmall from '@/assets/zones/props/obsidian_small.png';
+import propOldLander from '@/assets/zones/props/old_lander.png';
 import propPalm from '@/assets/zones/props/palm.png';
 import propPalmSmall from '@/assets/zones/props/palm_small.png';
 import propPapyrus from '@/assets/zones/props/papyrus.png';
@@ -133,6 +157,7 @@ import propPlantTall from '@/assets/zones/props/plant_tall.png';
 import propPodTree from '@/assets/zones/props/pod_tree.png';
 import propPosterBoard from '@/assets/zones/props/poster_board.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
+import propPricklyPear from '@/assets/zones/props/prickly_pear.png';
 import propPumpkins from '@/assets/zones/props/pumpkins.png';
 import propReeds from '@/assets/zones/props/reeds.png';
 import propRingPost from '@/assets/zones/props/ring_post.png';
@@ -140,27 +165,43 @@ import propRoundTower from '@/assets/zones/props/round_tower.png';
 import propSack from '@/assets/zones/props/sack.png';
 import propSaguaro from '@/assets/zones/props/saguaro.png';
 import propSaguaroSmall from '@/assets/zones/props/saguaro_small.png';
+import propSailboat from '@/assets/zones/props/sailboat.png';
 import propSaloon from '@/assets/zones/props/saloon.png';
 import propSandstoneArch from '@/assets/zones/props/sandstone_arch.png';
+import propSandstoneOutcrop from '@/assets/zones/props/sandstone_outcrop.png';
+import propSandstoneOutcropB from '@/assets/zones/props/sandstone_outcrop_b.png';
 import propScarecrow from '@/assets/zones/props/scarecrow.png';
+import propScree from '@/assets/zones/props/scree.png';
+import propScreeB from '@/assets/zones/props/scree_b.png';
+import propScreeSmall from '@/assets/zones/props/scree_small.png';
 import propSemaphore from '@/assets/zones/props/semaphore.png';
 import propShaduf from '@/assets/zones/props/shaduf.png';
 import propSheep from '@/assets/zones/props/sheep.png';
 import propSheepLeft from '@/assets/zones/props/sheep_left.png';
 import propShelter from '@/assets/zones/props/shelter.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
+import propSideTable from '@/assets/zones/props/side_table.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
 import propSkyBench from '@/assets/zones/props/sky_bench.png';
+import propSkyPlanter from '@/assets/zones/props/sky_planter.png';
+import propSkyPlanterB from '@/assets/zones/props/sky_planter_b.png';
+import propSled from '@/assets/zones/props/sled.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
+import propSnowman from '@/assets/zones/props/snowman.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propStall from '@/assets/zones/props/stall.png';
+import propStandingStone from '@/assets/zones/props/standing_stone.png';
+import propStandingStoneB from '@/assets/zones/props/standing_stone_b.png';
+import propStandingStoneLow from '@/assets/zones/props/standing_stone_low.png';
 import propStationHouse from '@/assets/zones/props/station_house.png';
 import propSteamPuff from '@/assets/zones/props/steam_puff.png';
 import propSteamerTrunk from '@/assets/zones/props/steamer_trunk.png';
 import propStone from '@/assets/zones/props/stone.png';
+import propStoneBench from '@/assets/zones/props/stone_bench.png';
 import propStoneLantern from '@/assets/zones/props/stone_lantern.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
+import propStump from '@/assets/zones/props/stump.png';
 import propTeaDispenser from '@/assets/zones/props/tea_dispenser.png';
 import propTeaKiosk from '@/assets/zones/props/tea_kiosk.png';
 import propTelescope from '@/assets/zones/props/telescope.png';
@@ -188,13 +229,25 @@ import propWashingLine from '@/assets/zones/props/washing_line.png';
 import propWaterCrane from '@/assets/zones/props/water_crane.png';
 import propWaterJar from '@/assets/zones/props/water_jar.png';
 import propWaterMill from '@/assets/zones/props/water_mill.png';
+import propWaterMillF1 from '@/assets/zones/props/water_mill_f1.png';
+import propWaterMillF2 from '@/assets/zones/props/water_mill_f2.png';
+import propWaterMillF3 from '@/assets/zones/props/water_mill_f3.png';
+import propWaterMillF4 from '@/assets/zones/props/water_mill_f4.png';
+import propWaterMillF5 from '@/assets/zones/props/water_mill_f5.png';
 import propWaterTower from '@/assets/zones/props/water_tower.png';
+import propWateringCan from '@/assets/zones/props/watering_can.png';
+import propWeaponRack from '@/assets/zones/props/weapon_rack.png';
 import propWell from '@/assets/zones/props/well.png';
 import propWillow from '@/assets/zones/props/willow.png';
 import propWindmill from '@/assets/zones/props/windmill.png';
+import propWindmillF1 from '@/assets/zones/props/windmill_f1.png';
+import propWindmillF2 from '@/assets/zones/props/windmill_f2.png';
 import propWindowSeat from '@/assets/zones/props/window_seat.png';
 import propWindpump from '@/assets/zones/props/windpump.png';
+import propWoodpile from '@/assets/zones/props/woodpile.png';
 import propWorkshop from '@/assets/zones/props/workshop.png';
+import propWorkshopF1 from '@/assets/zones/props/workshop_f1.png';
+import propWorkshopF2 from '@/assets/zones/props/workshop_f2.png';
 import propWorkshopRound from '@/assets/zones/props/workshop_round.png';
 import groundTown from '@/assets/zones/town/ground.png';
 import groundRiverside from '@/assets/zones/riverside/ground.png';
@@ -236,15 +289,25 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   lumen: groundLumen,
   home: groundHome,
 };
+import beyondImage from '@/assets/zones/beyond.png';
+/** Old forest, drawn where a region's grid has no zone (the valley's corners). */
+export const zoneBeyond: ImageSourcePropType = beyondImage;
+export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
+  acacia: propAcacia,
   airlock: propAirlock,
   airship_mast: propAirshipMast,
   anchor: propAnchor,
+  aquarium_column: propAquariumColumn,
+  archery_butt: propArcheryButt,
   armchair: propArmchair,
   atmos_car: propAtmosCar,
   automaton: propAutomaton,
   awning: propAwning,
   bandstand: propBandstand,
+  banner_pole: propBannerPole,
+  banner_pole_f1: propBannerPoleF1,
+  banner_pole_f2: propBannerPoleF2,
   barn: propBarn,
   barrel: propBarrel,
   basalt_columns: propBasaltColumns,
@@ -260,6 +323,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bollard: propBollard,
   bookcase: propBookcase,
   bookshelf: propBookshelf,
+  boots: propBoots,
   boulder: propBoulder,
   bunting: propBunting,
   buoy: propBuoy,
@@ -272,10 +336,14 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   camel: propCamel,
   campfire: propCampfire,
   canal_crane: propCanalCrane,
+  cargo_crates: propCargoCrates,
+  castle_well: propCastleWell,
   cat: propCat,
+  charred_snag: propCharredSnag,
   cloche: propCloche,
   clock_tower: propClockTower,
   coal_cart: propCoalCart,
+  coat_rack: propCoatRack,
   column_stump: propColumnStump,
   column_stump_b: propColumnStumpB,
   console: propConsole,
@@ -285,14 +353,21 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   corral_side: propCorralSide,
   cottage: propCottage,
   cottage_b: propCottageB,
+  cotton_grass: propCottonGrass,
   cow_skull: propCowSkull,
   crate: propCrate,
+  deck_chair: propDeckChair,
+  deck_chair_b: propDeckChairB,
   departure_pylon: propDeparturePylon,
+  desert_scrub: propDesertScrub,
+  desert_scrub_b: propDesertScrubB,
   desk: propDesk,
   dining_table: propDiningTable,
   dream_pool: propDreamPool,
+  driftwood: propDriftwood,
   drone: propDrone,
   dry_well: propDryWell,
+  drystone_wall: propDrystoneWall,
   duck: propDuck,
   dynamite_crate: propDynamiteCrate,
   ember_shrine: propEmberShrine,
@@ -304,6 +379,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   fireweed: propFireweed,
   fireweed_small: propFireweedSmall,
   fish_stall: propFishStall,
+  floor_cushions: propFloorCushions,
+  flower_kiosk: propFlowerKiosk,
   forest_bench: propForestBench,
   forge: propForge,
   foundry: propFoundry,
@@ -323,6 +400,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   hitching_rail: propHitchingRail,
   hollow_tree: propHollowTree,
   holo_board: propHoloBoard,
+  horse: propHorse,
   house_blue: propHouseBlue,
   house_red: propHouseRed,
   hydro_trough: propHydroTrough,
@@ -342,7 +420,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lounge_bench: propLoungeBench,
   luggage_bot: propLuggageBot,
   maglev: propMaglev,
+  marmot_rock: propMarmotRock,
   mine_portal: propMinePortal,
+  moon_arch: propMoonArch,
   moon_crystal: propMoonCrystal,
   moon_rock: propMoonRock,
   moon_rock_small: propMoonRockSmall,
@@ -357,6 +437,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   notice_board: propNoticeBoard,
   obsidian: propObsidian,
   obsidian_small: propObsidianSmall,
+  old_lander: propOldLander,
   palm: propPalm,
   palm_small: propPalmSmall,
   papyrus: propPapyrus,
@@ -368,6 +449,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   pod_tree: propPodTree,
   poster_board: propPosterBoard,
   potted_plant: propPottedPlant,
+  prickly_pear: propPricklyPear,
   pumpkins: propPumpkins,
   reeds: propReeds,
   ring_post: propRingPost,
@@ -375,27 +457,43 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   sack: propSack,
   saguaro: propSaguaro,
   saguaro_small: propSaguaroSmall,
+  sailboat: propSailboat,
   saloon: propSaloon,
   sandstone_arch: propSandstoneArch,
+  sandstone_outcrop: propSandstoneOutcrop,
+  sandstone_outcrop_b: propSandstoneOutcropB,
   scarecrow: propScarecrow,
+  scree: propScree,
+  scree_b: propScreeB,
+  scree_small: propScreeSmall,
   semaphore: propSemaphore,
   shaduf: propShaduf,
   sheep: propSheep,
   sheep_left: propSheepLeft,
   shelter: propShelter,
   shuttle: propShuttle,
+  side_table: propSideTable,
   signpost: propSignpost,
   sky_bench: propSkyBench,
+  sky_planter: propSkyPlanter,
+  sky_planter_b: propSkyPlanterB,
+  sled: propSled,
   sleep_pod: propSleepPod,
+  snowman: propSnowman,
   snowy_pine: propSnowyPine,
   stall: propStall,
+  standing_stone: propStandingStone,
+  standing_stone_b: propStandingStoneB,
+  standing_stone_low: propStandingStoneLow,
   station_house: propStationHouse,
   steam_puff: propSteamPuff,
   steamer_trunk: propSteamerTrunk,
   stone: propStone,
+  stone_bench: propStoneBench,
   stone_lantern: propStoneLantern,
   store: propStore,
   street_light: propStreetLight,
+  stump: propStump,
   tea_dispenser: propTeaDispenser,
   tea_kiosk: propTeaKiosk,
   telescope: propTelescope,
@@ -423,12 +521,24 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   water_crane: propWaterCrane,
   water_jar: propWaterJar,
   water_mill: propWaterMill,
+  water_mill_f1: propWaterMillF1,
+  water_mill_f2: propWaterMillF2,
+  water_mill_f3: propWaterMillF3,
+  water_mill_f4: propWaterMillF4,
+  water_mill_f5: propWaterMillF5,
   water_tower: propWaterTower,
+  watering_can: propWateringCan,
+  weapon_rack: propWeaponRack,
   well: propWell,
   willow: propWillow,
   windmill: propWindmill,
+  windmill_f1: propWindmillF1,
+  windmill_f2: propWindmillF2,
   window_seat: propWindowSeat,
   windpump: propWindpump,
+  woodpile: propWoodpile,
   workshop: propWorkshop,
+  workshop_f1: propWorkshopF1,
+  workshop_f2: propWorkshopF2,
   workshop_round: propWorkshopRound,
 };

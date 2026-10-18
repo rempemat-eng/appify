@@ -35,6 +35,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   picnicker: { zone: 'park', from: [18, 100], to: [106, 100] },
   angler: { zone: 'riverside', from: [154, 362], to: [242, 362] },
   botanist: { zone: 'station', from: [64, 330], to: [152, 330] },
+  stargazer: { zone: 'lumen', from: [176, 362], to: [264, 362] },
 };
 
 /** What each resident says when the companion stops beside them (decoration only). */
@@ -60,4 +61,5 @@ export const residentLines: Record<string, string> = {
   picnicker: 'there is always room on the blanket.',
   angler: 'i have not caught a thing all day. perfect.',
   botanist: 'plants in space still want the same thing: light and quiet.',
+  stargazer: 'i count the stars until one of us falls asleep.',
 };

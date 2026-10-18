@@ -129,6 +129,11 @@ def stone_blocks(cv: Canvas, x0, y0, w, h, block=8):
 
 
 # ---- the nap hut -----------------------------------------------------------
+# Every window drawn, as (canvas, glass rect): zones.py turns these into the panes
+# that light up at night (lib/zone-maps.ts, zoneWindows).
+WINDOWS: list = []
+
+
 def window(cv: Canvas, x: int, y: int, w: int = 16, h: int = 14, shutters=NAP, curtain=PLASTER,
            sill: bool = True, warm: bool = False):
     """A deep window: a trim lit on its top and left, glass that reflects the sky at the
@@ -140,6 +145,7 @@ def window(cv: Canvas, x: int, y: int, w: int = 16, h: int = 14, shutters=NAP, c
     cv.hline(x, y, w, WOOD[4]); cv.vline(x, y, h, WOOD[3])
     cv.hline(x + 1, y + h - 1, w - 1, WOOD[1]); cv.vline(x + w - 1, y + 1, h - 1, WOOD[1])
     gx, gy, gw, gh = x + 2, y + 2, w - 4, h - 4
+    WINDOWS.append((cv, (gx, gy, gw, gh)))
     glass = rect_set(gx, gy, gw, gh)
     for (xx, yy) in glass:
         k = yy - gy

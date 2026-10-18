@@ -28,8 +28,8 @@ def rect_set(x, y, w, h):
 
 def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'saloon') -> Canvas:
     """A false-front building, 104 x 92: the tall square facade hides a pitched tin roof
-    (its top shows behind), bleached clapboards, a sign board with abstract lettering
-    strokes, an upper window, a porch roof on posts that throws a deep shadow, and
+    (its top shows behind), bleached clapboards, a sign board with a pictogram
+    (a mug or a sack), an upper window, a porch roof on posts that throws a deep shadow, and
     swinging half doors (a saloon) or a shop window (a store)."""
     w, h = width, 92
     cv = Canvas(w, h, pad=PAD)
@@ -53,18 +53,23 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
         cv.set(x, y, sign_ramp[2] if y > sy0 else sign_ramp[3])
     cv.hline(sx0, sy1, sx1 - sx0, sign_ramp[0])
     ink = '#F4E6C8'
-    for i, x in enumerate(range(sx0 + 4, sx1 - 4, 6)):  # abstract lettering strokes, never words
-        stroke = int(noise2(i, seed, 201) * 5)
-        if stroke == 0:
-            cv.vline(x, 20, 6, ink); cv.vline(x + 3, 20, 6, ink); cv.hline(x, 22, 4, ink)
-        elif stroke == 1:
-            cv.hline(x, 20, 4, ink); cv.hline(x, 25, 4, ink); cv.vline(x, 20, 6, ink); cv.vline(x + 3, 20, 6, ink)
-        elif stroke == 2:
-            cv.vline(x + 1, 20, 6, ink); cv.hline(x, 20, 3, ink); cv.hline(x, 25, 3, ink)
-        elif stroke == 3:
-            cv.vline(x, 20, 6, ink); cv.hline(x, 25, 4, ink)
-        else:
-            cv.hline(x, 20, 4, ink); cv.vline(x, 20, 3, ink); cv.hline(x, 22, 4, ink); cv.vline(x + 3, 22, 4, ink); cv.hline(x, 25, 4, ink)
+    # a pictogram, not lettering (letters at this size read as nonsense words): a frothy
+    # mug for the saloon, a tied sack for the store, with small diamonds either side
+    mx = (sx0 + sx1) // 2
+    if kind == 'saloon':
+        for y in range(21, 28):
+            cv.hline(mx - 4, y, 7, '#E8B04A' if y > 22 else ink)  # the mug, its froth on top
+        cv.hline(mx - 4, 20, 7, ink); cv.set(mx - 3, 19, ink); cv.set(mx, 19, ink)
+        cv.vline(mx + 3, 22, 4, ink); cv.vline(mx + 4, 22, 4, ink); cv.set(mx + 4, 22, sign_ramp[2]); cv.set(mx + 4, 25, sign_ramp[2])
+        cv.vline(mx - 2, 23, 4, '#C8862A')
+    else:
+        for (x, y) in oval(mx, 24, 4.5, 3.6):
+            cv.set(x, y, ink if x < mx + 1 else '#D8C8A0')  # the sack
+        cv.hline(mx - 2, 20, 5, ink); cv.hline(mx - 1, 21, 3, '#C8862A')  # its tied neck
+    for dx in (-14, -9, 9, 14):
+        if sx0 + 2 < mx + dx < sx1 - 2:
+            x = mx + dx
+            cv.set(x, 22, ink); cv.set(x - 1, 23, ink); cv.set(x + 1, 23, ink); cv.set(x, 24, ink)
     # an upper window with a shutter
     gp.window(cv, w // 2 - 8, 33, 16, 12, shutters=None, sill=True, warm=False)
     # the porch roof and its posts
@@ -682,6 +687,104 @@ def water_crane() -> Canvas:
     cv.set(19, 30, IRON[1]); cv.hline(17, 30, 2, IRON[1])
     return cv
 
+def acacia() -> Canvas:
+    """A desert acacia, 56 x 46: a flat umbrella crown of small olive leaf clumps (light
+    caps, dark rims; style.leafy) on a leaning, forked trunk."""
+    import style
+    w, h = 56, 46
+    cv = Canvas(w, h, pad=PAD)
+    BARK = ['#3A2618', '#5A3C24', '#7A5434', '#9A7048', '#B88E62']
+    for (x0, y0, x1, y1, wd) in ((26, h - 2, 24, 22, 3), (25, 28, 14, 16, 2), (25, 26, 40, 15, 2), (24, 24, 28, 12, 1)):
+        n = max(abs(x1 - x0), abs(y1 - y0))
+        for t in range(n + 1):
+            x, y = x0 + (x1 - x0) * t / n, y0 + (y1 - y0) * t / n
+            for dx in range(wd + 1):
+                cv.set(int(x) + dx, int(y), BARK[3] if dx == 0 else BARK[2] if dx < wd else BARK[1])
+    OLIVE = ['#2E3A1C', '#4A5A2A', '#6A7A38', '#8E9A4A', '#B4BA6A']
+    style.leafy(cv, 27, 12, 25, 8, OLIVE, r=2.4, seed=17)
+    return cv
+
+
+def desert_scrub(seed: int = 0) -> Canvas:
+    """A low tamarisk scrub, 26 x 16: a tangle of grey-green feathery clumps with a few
+    pink flower tips, dry twigs at its feet."""
+    import style
+    w, h = 26, 16
+    cv = Canvas(w, h, pad=PAD)
+    SAGE = ['#38402C', '#56603E', '#78825A', '#98A27A', '#BCC4A0']
+    style.leafy(cv, 13, 8, 11, 5.5, SAGE, r=2.0, seed=seed + 9)
+    for k in range(4):
+        x, y = 5 + int(noise2(k, seed, 378) * 16), 4 + int(noise2(k, seed, 379) * 5)
+        if cv.get(x, y)[3]:
+            cv.set(x, y, '#E8A0BC')
+    return cv
+
+
+def sandstone_outcrop(seed: int = 0) -> Canvas:
+    """Weathered sandstone blocks breaking out of the dune, 40 x 24: layered beds in
+    adobe tones (lit tops, shaded right flanks; style.facet_stone), sand piled at the foot."""
+    import style
+    w, h = 40, 24
+    cv = Canvas(w, h, pad=PAD)
+    for k, (cx, cy, rx, ry) in enumerate(((16, 12, 13, 9), (30, 15, 9, 7), (8, 18, 6, 4))):
+        pts = {(x, y) for y in range(cy - ry, cy + ry + 1) for x in range(cx - rx, cx + rx + 1)
+               if max(abs(x - cx) / rx, abs(y - cy) / ry) * 0.7 + math.hypot((x - cx) / rx, (y - cy) / ry) * 0.3 <= 1}
+        style.facet_stone(cv, pts, ADOBE, seed=seed + k)
+        for (x, y) in pts:  # the beds
+            if (y - cy + 40) % 4 == 0 and (x, y - 1) in pts and (x, y + 1) in pts:
+                cv.set(x, y, ADOBE[1] if x > cx else ADOBE[2])
+    for (x, y) in oval(20, h - 2, 18, 2.5):
+        if y >= h - 3:
+            cv.set(x, y, DESERT[4] if x < 20 else DESERT[3])
+    return cv
+
+
+def horse() -> Canvas:
+    """A bay horse dozing on its feet in the corral, 44 x 36, seen from the side: the
+    body lit along its back, a dark mane and tail, one hind hoof cocked (resting), the
+    head low and its eyes shut."""
+    w, h = 44, 36
+    cv = Canvas(w, h, pad=PAD)
+    BAY = ['#3A2218', '#5E3A24', '#80522E', '#A06A3C', '#C08850']
+    body = oval(20, 17, 13, 7)
+    for (x, y) in body:
+        k = (x - 7) / 26 + (y - 10) / 14
+        cv.set(x, y, BAY[4] if k < 0.45 else BAY[3] if k < 0.9 else BAY[2] if k < 1.3 else BAY[1])
+    for (lx, cocked) in ((10, False), (14, True), (27, False), (30, False)):  # legs
+        for y in range(22, h - 2 - (2 if cocked else 0)):
+            cv.set(lx, y, BAY[2] if lx in (10, 27) else BAY[1]); cv.set(lx + 1, y, BAY[1])
+        foot = h - 2 - (2 if cocked else 0)
+        cv.hline(lx, foot, 2, '#2A2026')
+        cv.set(lx, foot - 2, '#E8DCC8') if lx == 27 else None  # one white sock
+    for t in range(9):  # the neck, low and forward
+        x, y = 31 + t, 13 + t * 0.6
+        for d in range(-2, 3):
+            cv.set(int(x), int(y + d), BAY[3] if d < 0 else BAY[2])
+    for (x, y) in oval(41, 20, 3.5, 2.8):  # the head, dozing
+        cv.set(x, y, BAY[3] if y < 20 else BAY[2])
+    cv.set(43, 22, BAY[0]); cv.set(40, 19, BAY[0]); cv.set(39, 16, BAY[2])
+    for t in range(9):  # the mane
+        cv.set(30 + t, 11 + int(t * 0.6), BAY[0]); cv.set(30 + t, 12 + int(t * 0.6), BAY[1])
+    for t in range(10):  # the tail
+        cv.set(7 - t // 4, 14 + t, BAY[0]); cv.set(8 - t // 4, 14 + t, BAY[1])
+    return cv
+
+
+def prickly_pear() -> Canvas:
+    """A prickly pear, 20 x 18: flat round pads lit upper left, spines, two red fruit."""
+    w, h = 20, 18
+    cv = Canvas(w, h, pad=PAD)
+    PAD_G = ['#2E5A34', '#447A44', '#62995A', '#8CBB72']
+    for (cx, cy, rx, ry) in ((10, 13, 5, 4), (6, 8, 4, 3.5), (14, 7, 3.5, 3.2)):
+        for (x, y) in oval(cx, cy, rx, ry):
+            k = (x - cx) / rx + (y - cy) / ry
+            cv.set(x, y, PAD_G[3] if k < -0.6 else PAD_G[2] if k < 0.4 else PAD_G[1])
+        for (dx, dy) in ((-2, -1), (1, 1), (2, -2)):
+            cv.set(cx + dx, cy + dy, '#E8DCC8')
+    cv.set(6, 4, '#C2453A'); cv.set(7, 4, '#9A3028'); cv.set(15, 3, '#C2453A')
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'saloon': false_front(104, 0, RED, 'saloon'), 'store': false_front(88, 3, WTR, 'store'),
@@ -693,7 +796,9 @@ def props() -> dict[str, Canvas]:
         'palm': palm(True), 'palm_small': palm(False), 'sandstone_arch': sandstone_arch(), 'awning': awning(),
         'water_jar': water_jar(), 'camel': camel(), 'tent': tent(), 'fire_pit': fire_pit(),
         'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
-        'water_crane': water_crane(),
+        'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
+        'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
+        'horse': horse(), 'prickly_pear': prickly_pear(),
     }
 
 

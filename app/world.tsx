@@ -2,6 +2,8 @@ import { useCallback, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import Animated, { FadeIn } from 'react-native-reanimated';
+import { useReducedMotion } from '@/lib/motion';
 import { AtlasWalk, zoneNames } from '@/components/atlas-walk';
 import { Journey } from '@/components/journey';
 import { usePixelUnit, PixelFrame } from '@/components/pixel-frame';
@@ -21,6 +23,8 @@ import {
   rings,
   travelBy,
   travelPoints,
+  travelRoute,
+  travelVehicle,
   type MissionPlaceId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
@@ -37,6 +41,16 @@ const regionNames: Record<RegionId, string> = {
   home: 'THE NAP HUT',
 };
 const placeIds: MissionPlaceId[] = ['book', 'park', 'mountain', 'shop', 'arena', 'garden'];
+const shortNames: Record<RegionId, string> = {
+  valley: 'the valley',
+  steam: 'Cogsworth',
+  west: 'Dust Gulch',
+  lava: 'the caldera',
+  neon: 'Neon Harbour',
+  space: 'Halcyon',
+  moon: 'Lumen',
+  home: 'home',
+};
 const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 
 type Card =
@@ -153,7 +167,11 @@ export default function World() {
   const [zone, setZone] = useState<TileId | undefined>(
     () => tileAt(spawn.region, spawn.at.x, spawn.at.y)?.id,
   );
-  const [trip, setTrip] = useState<RegionId | null>(null);
+  // a trip is the stations it stops at (the lines in world-places.ts), the destination
+  // last, and which leg is playing
+  const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
+  const dest = trip ? trip.legs[trip.legs.length - 1] : null;
+  const reduced = useReducedMotion();
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(undefined);
   const walkToPlace = (id: string) => {
     const marker = placeMarkers(spawn.region, null).find((m) => m.id === id);
@@ -170,17 +188,22 @@ export default function World() {
     [spawn.region, walkWorld],
   );
   const arrive = useCallback(() => {
-    if (!trip) return;
-    const station = travelPoints[trip];
+    if (!dest) return;
+    const station = travelPoints[dest];
     if (station) {
       const at = regionPoint(station);
-      setSpawn((s) => ({ region: trip, at, key: s.key + 1 }));
+      setSpawn((s) => ({ region: dest, at, key: s.key + 1 }));
       setGoal(undefined);
-      walkWorld(trip, at.x, at.y, true);
+      walkWorld(dest, at.x, at.y, true);
       setCard({ kind: 'travel' });
     }
     setTrip(null);
-  }, [trip, walkWorld]);
+  }, [dest, walkWorld]);
+  // the end of one leg: change at that station and go on, or arrive
+  const legDone = useCallback(() => {
+    if (trip && trip.leg < trip.legs.length - 1) setTrip({ ...trip, leg: trip.leg + 1 });
+    else arrive();
+  }, [trip, arrive]);
 
   const away = !player || player.mode !== 'awake' || !!battle || pendingReturn;
   const cardH = card ? Math.min(260, height * 0.36) : 0;
@@ -272,7 +295,10 @@ export default function World() {
           <PixelButton
             small
             label="TO THE RING"
-            onPress={() => navigation.isFocused() && router.push('/arena')}
+            onPress={() =>
+              navigation.isFocused() &&
+              router.push({ pathname: '/arena', params: { ring: spawn.region } })
+            }
           />
         </>
       );
@@ -325,7 +351,14 @@ export default function World() {
           />
         </>
       );
-    // a station: the journeys to every other region leave from here
+    // a station: the lines leave from here; further places change on the way
+    const routes = travelOrder
+      .filter((r) => r !== spawn.region && travelPoints[r])
+      .map((r) => ({ r, route: travelRoute(spawn.region, r) }))
+      .filter((x) => x.route.length > 0)
+      .sort((a, b) => a.route.length - b.route.length);
+    const direct = routes.filter((x) => x.route.length === 1);
+    const further = routes.filter((x) => x.route.length > 1);
     return (
       <>
         <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
@@ -334,24 +367,39 @@ export default function World() {
         <BodyText style={{ fontSize: 13 }}>
           Where to? The journey is free; skip it any time.
         </BodyText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-          {travelOrder
-            .filter((r) => r !== spawn.region && travelPoints[r])
-            .map((r) => (
-              <View key={r} style={{ width: '48%' }}>
-                <PixelButton
-                  small
-                  light
-                  label={regionNames[r]}
-                  disabled={away || !!trip}
-                  onPress={() => {
-                    feedback('select');
-                    setTrip(r);
-                  }}
-                />
+        {[direct, further].map((group, g) =>
+          group.length ? (
+            <View key={g === 0 ? 'direct' : 'further'} style={{ gap: 4 }}>
+              {g === 1 && (
+                <BodyText style={{ fontSize: 12 }}>Further, changing on the way:</BodyText>
+              )}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                {group.map(({ r, route }) => (
+                  <View key={r} style={{ width: '48%', gap: 2 }}>
+                    <PixelButton
+                      small
+                      light
+                      label={regionNames[r]}
+                      disabled={away || !!trip}
+                      onPress={() => {
+                        feedback('select');
+                        setTrip({ legs: route, leg: 0 });
+                      }}
+                    />
+                    {route.length > 1 && (
+                      <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
+                        {`via ${route
+                          .slice(0, -1)
+                          .map((s) => shortNames[s])
+                          .join(', ')}`}
+                      </BodyText>
+                    )}
+                  </View>
+                ))}
               </View>
-            ))}
-        </View>
+            </View>
+          ) : null,
+        )}
       </>
     );
   };
@@ -368,21 +416,27 @@ export default function World() {
             </PixelFrame>
           </View>
         ) : (
-          <AtlasWalk
+          // each arrival (a journey's end, a door) fades in from the dark (none with reduced motion)
+          <Animated.View
             key={`${spawn.region}-${spawn.key}`}
-            region={spawn.region}
-            start={spawn.at}
-            width={width}
-            height={viewH}
-            onZone={setZone}
-            onSettle={settle}
-            showName={false}
-            focusY={card ? 0.3 : 0.55}
-            padBottom={card ? cardH + insets.bottom + 16 : 0}
-            target={goal}
-            markers={placeMarkers(spawn.region, card)}
-            onMarker={walkToPlace}
-          />
+            entering={reduced ? undefined : FadeIn.duration(320)}
+            style={{ width, height: viewH }}
+          >
+            <AtlasWalk
+              region={spawn.region}
+              start={spawn.at}
+              width={width}
+              height={viewH}
+              onZone={setZone}
+              onSettle={settle}
+              showName={false}
+              focusY={card ? 0.3 : 0.55}
+              padBottom={card ? cardH + insets.bottom + 16 : 0}
+              target={goal}
+              markers={placeMarkers(spawn.region, card)}
+              onMarker={walkToPlace}
+            />
+          </Animated.View>
         )}
         {card && !away && !trip && (
           <View
@@ -399,53 +453,71 @@ export default function World() {
             </PixelFrame>
           </View>
         )}
-        {trip && (
+        {trip && dest && (
           <Journey
-            to={trip === 'home' ? 'valley' : trip}
-            label={regionNames[trip]}
+            key={trip.leg}
+            to={trip.legs[trip.leg] === 'home' ? 'valley' : trip.legs[trip.leg]}
+            label={
+              trip.leg < trip.legs.length - 1
+                ? `${regionNames[trip.legs[trip.leg]]}, THEN ${regionNames[dest]}`
+                : regionNames[dest]
+            }
+            ms={trip.legs.length > 1 ? 2200 : undefined}
+            vehicle={travelVehicle(
+              trip.leg === 0 ? spawn.region : trip.legs[trip.leg - 1],
+              trip.legs[trip.leg],
+            )}
             width={width}
             height={viewH}
             u={u}
-            onArrive={arrive}
+            onArrive={legDone}
+            onSkip={arrive}
+            insetTop={insets.top}
+            insetBottom={insets.bottom}
           />
         )}
       </View>
-      {/* the bar floats over the world like the game's HUD */}
-      <View
-        pointerEvents="box-none"
-        style={{
-          position: 'absolute',
-          top: insets.top + 8,
-          left: 8,
-          right: 8,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <View style={{ width: 112 }}>
-          <PixelButton small light label="◀ GARDEN" onPress={goHome} />
-        </View>
-        <PixelFrame
-          tone="paper"
+      {/* the bar floats over the world like the game's HUD (the journey has its own label) */}
+      {!trip && (
+        <View
+          pointerEvents="box-none"
           style={{
-            flex: 1,
-            paddingVertical: 2 * u,
-            paddingHorizontal: 4 * u,
-            minHeight: 44,
-            justifyContent: 'center',
+            position: 'absolute',
+            top: insets.top + 8,
+            left: 8,
+            right: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
           }}
         >
-          <BodyText numberOfLines={1} style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
-            {regionNames[spawn.region]}
-          </BodyText>
-          {zone && (
-            <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
-              {zoneNames[zone]}
+          <View style={{ width: 112 }}>
+            <PixelButton small light label="◀ GARDEN" onPress={goHome} />
+          </View>
+          <PixelFrame
+            tone="paper"
+            style={{
+              flex: 1,
+              paddingVertical: 2 * u,
+              paddingHorizontal: 4 * u,
+              minHeight: 44,
+              justifyContent: 'center',
+            }}
+          >
+            <BodyText
+              numberOfLines={1}
+              style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}
+            >
+              {regionNames[spawn.region]}
             </BodyText>
-          )}
-        </PixelFrame>
-      </View>
+            {zone && (
+              <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
+                {zoneNames[zone]}
+              </BodyText>
+            )}
+          </PixelFrame>
+        </View>
+      )}
     </View>
   );
 }

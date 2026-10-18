@@ -1,6 +1,6 @@
 import type { Point } from './garden-path';
 import { regionBounds, regionTiles, type RegionId, type RegionTile } from './region-walk';
-import { regionPoint, travelPoints } from './world-places';
+import { regionPoint, travelPoints, travelRoute } from './world-places';
 import { moveTo, type WorldSpot } from './world-save';
 
 /** C20 geometry uses the generated region grid, never a second zone catalogue. */
@@ -85,7 +85,15 @@ export function screenToWorld(
 }
 
 // Tickets are ephemeral identities, not save fields, counters or navigation effects.
-export type JourneyTicket = Readonly<{ from: RegionId; to: RegionId; at: Readonly<Point> }>;
+export type JourneyTicket = Readonly<{
+  /** The scene stays in its origin region until the whole trip arrives. */
+  from: RegionId;
+  to: RegionId;
+  at: Readonly<Point>;
+  /** Authored line stops, excluding the origin and including the destination. */
+  legs: readonly RegionId[];
+  leg: number;
+}>;
 export type JourneyState = Readonly<{ pending: JourneyTicket | null }>;
 export const idleJourney = (): JourneyState => ({ pending: null });
 
@@ -99,24 +107,69 @@ export function beginJourney(
   const source = travelPoints[from];
   const destination = travelPoints[to];
   if (!enabled || from === to || !source || !destination) return state;
-  return { pending: Object.freeze({ from, to, at: Object.freeze(regionPoint(destination)) }) };
+  const legs = travelRoute(from, to);
+  if (!legs.length) return state;
+  return {
+    pending: Object.freeze({
+      from,
+      to,
+      at: Object.freeze(regionPoint(destination)),
+      legs: Object.freeze([...legs]),
+      leg: 0,
+    }),
+  };
 }
 
-/** Back, background, unmount or another navigation invalidates old closures. */
-export const cancelJourney = (_state: JourneyState): JourneyState => idleJourney();
+/**
+ * Back/blur/background cancels the whole trip. An individual leg's cleanup passes
+ * its captured ticket so an old cleanup cannot cancel the next leg or a new trip.
+ */
+export function cancelJourney(state: JourneyState, ticket?: JourneyTicket): JourneyState {
+  return ticket && state.pending !== ticket ? state : idleJourney();
+}
 
-/** Assign result.state BEFORE applying result.arrival. Repeated finishes then do nothing. */
-export function finishJourney(
+type JourneyResult = Readonly<{ state: JourneyState; arrival: WorldSpot | null }>;
+type JourneyEligibility = Readonly<{ region: RegionId; enabled: boolean }>;
+
+function resolveJourney(
   state: JourneyState,
   ticket: JourneyTicket,
-  current: Readonly<{ region: RegionId; enabled: boolean }>,
+  current: JourneyEligibility,
   saved: WorldSpot | null,
-): { state: JourneyState; arrival: WorldSpot | null } {
+  skip: boolean,
+): JourneyResult {
   if (state.pending !== ticket) return { state, arrival: null };
   const next = cancelJourney(state);
   if (!current.enabled || current.region !== ticket.from) return { state: next, arrival: null };
-  return { state: next, arrival: moveTo(saved, ticket.to, ticket.at.x, ticket.at.y) };
+  if (!skip && ticket.leg + 1 < ticket.legs.length) {
+    return {
+      state: { pending: Object.freeze({ ...ticket, leg: ticket.leg + 1 }) },
+      arrival: null,
+    };
+  }
+  const arrival = moveTo(saved, ticket.to, ticket.at.x, ticket.at.y);
+  return { state: next, arrival: { ...arrival, visited: [...arrival.visited] } };
 }
 
-/** Skipping is completion, not a separate arrival or a reward path. */
-export const skipJourney = finishJourney;
+/**
+ * Finish only this captured leg. Publish result.state synchronously before applying
+ * an arrival or mounting the next leg; every advance has a fresh ticket identity.
+ */
+export function finishJourney(
+  state: JourneyState,
+  ticket: JourneyTicket,
+  current: JourneyEligibility,
+  saved: WorldSpot | null,
+): JourneyResult {
+  return resolveJourney(state, ticket, current, saved, false);
+}
+
+/** SKIP consumes the current leg and arrives once at the whole trip's destination. */
+export function skipJourney(
+  state: JourneyState,
+  ticket: JourneyTicket,
+  current: JourneyEligibility,
+  saved: WorldSpot | null,
+): JourneyResult {
+  return resolveJourney(state, ticket, current, saved, true);
+}

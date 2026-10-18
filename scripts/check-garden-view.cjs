@@ -783,6 +783,14 @@ function decorativeFramePresentation() {
         status: () => ({ kind: 'awake' }),
       };
     if (id.startsWith('@/assets/battle/') && id.endsWith('.png')) return id;
+    // a region ring's battle backdrop (journey art); these frame checks use the garden field
+    if (id === '@/lib/journey-assets')
+      return {
+        JOURNEY: { width: 320, height: 240, rail: 160 },
+        YARD_FEET: 84,
+        journeyLayers: {},
+        journeyYards: {},
+      };
     throw new Error('Unexpected decorative frame import: ' + id);
   });
   const render = (props, width, height) => {

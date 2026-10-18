@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import { regionLayout } from './zone-maps';
 import { regionBounds, regionTiles, tileOrigin, TILE, type RegionId } from './region-walk';
-import { regionPoint, travelPoints } from './world-places';
+import { regionPoint, travelPoints, travelRoute } from './world-places';
 import {
   cameraOffset,
   mountedNeighbours,
@@ -14,6 +14,7 @@ import {
   finishJourney,
   idleJourney,
   skipJourney,
+  type JourneyTicket,
 } from './world-travel';
 
 let checks = 0;
@@ -145,7 +146,8 @@ for (const from of destinations)
     const saved = { region: from, ...regionPoint(travelPoints[from]!), visited: ['town'] };
     const original = JSON.stringify(saved);
     const expected = regionPoint(travelPoints[to]!);
-    const complete = finishJourney(state, ticket, { region: from, enabled: true }, saved);
+    // SKIP always resolves the whole trip; natural completion is per leg below.
+    const complete = skipJourney(state, ticket, { region: from, enabled: true }, saved);
     ok(
       complete.arrival?.region === to &&
         complete.arrival.x === Math.round(expected.x) &&
@@ -213,6 +215,140 @@ ok(
   !beginJourney(idleJourney(), 'valley', 'home', true).pending,
   'hut remains a door, not a vehicle destination',
 );
+let legChecks = 0;
+for (const from of destinations)
+  for (const to of destinations) {
+    if (from === to) continue;
+    let state = beginJourney(idleJourney(), from, to, true);
+    const route = travelRoute(from, to);
+    const saved = {
+      region: from,
+      ...regionPoint(travelPoints[from]!),
+      visited: ['town', travelPoints[to]!.zone],
+    };
+    Object.freeze(saved.visited);
+    Object.freeze(saved);
+    const savedBefore = JSON.stringify(saved);
+    const live = { region: from, enabled: true };
+    let arrivals = 0;
+    const oldTickets: JourneyTicket[] = [];
+    for (let leg = 0; leg < route.length; leg++) {
+      legChecks++;
+      const ticket = state.pending!;
+      ok(ticket.leg === leg, 'current ticket identifies the authored leg');
+      assert.deepEqual(ticket.legs, route, 'route is derived from current lines');
+      checks++;
+      ok(Object.isFrozen(ticket) && Object.isFrozen(ticket.legs), 'ticket and route immutable');
+      ok(Object.isFrozen(ticket.at), 'arrival point immutable');
+      ok(ticket.from === from && ticket.to === to, 'origin/final destination survive changes');
+
+      for (const stale of oldTickets) {
+        const ignored = finishJourney(state, stale, live, saved);
+        ok(ignored.state === state && !ignored.arrival, 'previous leg cannot advance this leg');
+        const ignoredSkip = skipJourney(state, stale, live, saved);
+        ok(
+          ignoredSkip.state === state && !ignoredSkip.arrival,
+          'previous leg SKIP cannot complete the trip',
+        );
+        ok(cancelJourney(state, stale) === state, 'old leg cleanup cannot cancel current leg');
+      }
+      ok(
+        !finishJourney(state, { ...ticket }, live, saved).arrival,
+        'copied leg ticket cannot finish',
+      );
+      ok(
+        finishJourney(state, { ...ticket }, live, saved).state === state,
+        'copied leg ticket cannot advance either',
+      );
+      const cancelled = cancelJourney(state, ticket);
+      ok(!cancelled.pending, 'leaving any leg consumes its ticket');
+      ok(
+        !finishJourney(cancelled, ticket, live, saved).arrival &&
+          !finishJourney(cancelled, ticket, live, saved).state.pending,
+        'queued completion after leaving cannot restore an intermediate trip or arrive',
+      );
+      for (const reason of ['background', 'blur', 'resting', 'battle', 'pending return']) {
+        const blocked = finishJourney(state, ticket, { region: from, enabled: false }, saved);
+        ok(!blocked.state.pending && !blocked.arrival, `${reason} invalidates every leg`);
+        ok(
+          !finishJourney(blocked.state, ticket, live, saved).state.pending,
+          `${reason} cannot resume through an old callback`,
+        );
+        const skipped = skipJourney(state, ticket, { region: from, enabled: false }, saved);
+        ok(!skipped.state.pending && !skipped.arrival, `${reason} also blocks SKIP`);
+      }
+      const moved = finishJourney(state, ticket, { region: to, enabled: true }, saved);
+      ok(!moved.state.pending && !moved.arrival, 'changed live origin rejects current leg');
+      const replacement = beginJourney(state, from, to, true);
+      ok(replacement.pending !== ticket, 'same-destination replacement gets new identity');
+      ok(
+        finishJourney(replacement, ticket, live, saved).state === replacement,
+        'replaced callback cannot advance the new trip',
+      );
+      ok(cancelJourney(replacement, ticket) === replacement, 'old cleanup preserves replacement');
+      const other = destinations.find((r) => r !== from && r !== to)!;
+      const rerouted = beginJourney(state, from, other, true);
+      ok(
+        skipJourney(rerouted, ticket, live, saved).state === rerouted &&
+          finishJourney(rerouted, ticket, live, saved).state === rerouted,
+        'old destination callbacks cannot affect a differently routed trip',
+      );
+      ok(
+        skipJourney(rerouted, rerouted.pending!, live, saved).arrival?.region === other,
+        'only the replacement destination can arrive',
+      );
+      const remounted = beginJourney(idleJourney(), from, to, true);
+      ok(
+        finishJourney(remounted, ticket, live, saved).state === remounted,
+        'remount rejects every old leg callback',
+      );
+
+      // Both event orders: SKIP wins, or the natural completion wins first.
+      const skip = skipJourney(state, ticket, live, saved);
+      ok(skip.arrival?.region === to && !skip.state.pending, 'SKIP at any leg ends whole trip');
+      ok(
+        !finishJourney(skip.state, ticket, live, saved).arrival &&
+          !finishJourney(skip.state, ticket, live, saved).state.pending,
+        'completion delivered after SKIP cannot arrive again or restore trip',
+      );
+      ok(!skipJourney(skip.state, ticket, live, saved).arrival, 'duplicate SKIP is harmless');
+      const natural = finishJourney(state, ticket, live, saved);
+      if (leg < route.length - 1) {
+        ok(!natural.arrival, 'intermediate leg never writes a world arrival');
+        ok(
+          natural.state.pending !== ticket && natural.state.pending?.leg === leg + 1,
+          'advancing creates a new current-leg identity',
+        );
+        ok(
+          skipJourney(natural.state, ticket, live, saved).state === natural.state,
+          'SKIP queued by previous leg cannot finish the new leg',
+        );
+        const liveSkip = skipJourney(natural.state, natural.state.pending!, live, saved);
+        ok(liveSkip.arrival?.region === to, 'the new leg can still SKIP the whole trip');
+      } else {
+        arrivals += natural.arrival ? 1 : 0;
+        ok(natural.arrival?.region === to && !natural.state.pending, 'last leg arrives once');
+        ok(
+          !skipJourney(natural.state, ticket, live, saved).arrival,
+          'SKIP after final completion cannot arrive twice',
+        );
+        assert.deepEqual(natural.arrival?.visited, skip.arrival?.visited);
+        checks++;
+        // Returned history is detached even when the destination was already visited.
+        natural.arrival?.visited.push('consumer-only');
+        ok(JSON.stringify(saved) === savedBefore, 'returned arrival cannot mutate saved history');
+      }
+      ok(
+        finishJourney(natural.state, ticket, live, saved).state === natural.state,
+        'duplicate completion cannot advance two legs',
+      );
+      ok(cancelJourney(natural.state, ticket) === natural.state, 'consumed cleanup cannot rewind');
+      oldTickets.push(ticket);
+      state = natural.state;
+    }
+    ok(arrivals === 1, 'one whole-trip arrival across all natural leg completions');
+    ok(JSON.stringify(saved) === savedBefore, 'per-leg decisions never mutate saved history');
+  }
 console.log(
-  `World travel model: ${checks} geometry and stale-journey assertions passed; renderer integration not claimed.`,
+  `World travel model: ${checks} assertions, including ${legChecks} authored leg positions; renderer integration not claimed.`,
 );
