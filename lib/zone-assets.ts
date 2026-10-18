@@ -31,6 +31,7 @@ import propBollard from '@/assets/zones/props/bollard.png';
 import propBookcase from '@/assets/zones/props/bookcase.png';
 import propBookshelf from '@/assets/zones/props/bookshelf.png';
 import propBoots from '@/assets/zones/props/boots.png';
+import propBothy from '@/assets/zones/props/bothy.png';
 import propBoulder from '@/assets/zones/props/boulder.png';
 import propBunting from '@/assets/zones/props/bunting.png';
 import propBuoy from '@/assets/zones/props/buoy.png';
@@ -115,6 +116,7 @@ import propHorse from '@/assets/zones/props/horse.png';
 import propHouseBlue from '@/assets/zones/props/house_blue.png';
 import propHouseRed from '@/assets/zones/props/house_red.png';
 import propHydroTrough from '@/assets/zones/props/hydro_trough.png';
+import propIbex from '@/assets/zones/props/ibex.png';
 import propIceCreamCart from '@/assets/zones/props/ice_cream_cart.png';
 import propIronBench from '@/assets/zones/props/iron_bench.png';
 import propKeep from '@/assets/zones/props/keep.png';
@@ -214,6 +216,7 @@ import propTicketGates from '@/assets/zones/props/ticket_gates.png';
 import propTowerAmber from '@/assets/zones/props/tower_amber.png';
 import propTowerCyan from '@/assets/zones/props/tower_cyan.png';
 import propTowerPink from '@/assets/zones/props/tower_pink.png';
+import propTrailPost from '@/assets/zones/props/trail_post.png';
 import propTrainingDummy from '@/assets/zones/props/training_dummy.png';
 import propTree from '@/assets/zones/props/tree.png';
 import propTreeAutumn from '@/assets/zones/props/tree_autumn.png';
@@ -247,6 +250,7 @@ import propWindmillF1 from '@/assets/zones/props/windmill_f1.png';
 import propWindmillF2 from '@/assets/zones/props/windmill_f2.png';
 import propWindowSeat from '@/assets/zones/props/window_seat.png';
 import propWindpump from '@/assets/zones/props/windpump.png';
+import propWindsock from '@/assets/zones/props/windsock.png';
 import propWoodpile from '@/assets/zones/props/woodpile.png';
 import propWorkshop from '@/assets/zones/props/workshop.png';
 import propWorkshopF1 from '@/assets/zones/props/workshop_f1.png';
@@ -257,6 +261,10 @@ import groundRiverside from '@/assets/zones/riverside/ground.png';
 import groundWoodland from '@/assets/zones/woodland/ground.png';
 import groundPark from '@/assets/zones/park/ground.png';
 import groundRidge from '@/assets/zones/ridge/ground.png';
+import groundHollow from '@/assets/zones/hollow/ground.png';
+import groundSnowmelt from '@/assets/zones/snowmelt/ground.png';
+import groundSaddle from '@/assets/zones/saddle/ground.png';
+import groundSummit from '@/assets/zones/summit/ground.png';
 import groundHalt from '@/assets/zones/halt/ground.png';
 import groundJunction from '@/assets/zones/junction/ground.png';
 import groundCanal from '@/assets/zones/canal/ground.png';
@@ -279,6 +287,10 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   woodland: groundWoodland,
   park: groundPark,
   ridge: groundRidge,
+  hollow: groundHollow,
+  snowmelt: groundSnowmelt,
+  saddle: groundSaddle,
+  summit: groundSummit,
   halt: groundHalt,
   junction: groundJunction,
   canal: groundCanal,
@@ -301,6 +313,10 @@ import mapRiverside from '@/assets/zones/riverside/map.png';
 import mapWoodland from '@/assets/zones/woodland/map.png';
 import mapPark from '@/assets/zones/park/map.png';
 import mapRidge from '@/assets/zones/ridge/map.png';
+import mapHollow from '@/assets/zones/hollow/map.png';
+import mapSnowmelt from '@/assets/zones/snowmelt/map.png';
+import mapSaddle from '@/assets/zones/saddle/map.png';
+import mapSummit from '@/assets/zones/summit/map.png';
 import mapHalt from '@/assets/zones/halt/map.png';
 import mapJunction from '@/assets/zones/junction/map.png';
 import mapCanal from '@/assets/zones/canal/map.png';
@@ -325,6 +341,10 @@ export const zoneMapTiles: Record<ZoneId | 'garden', ImageSourcePropType> = {
   woodland: mapWoodland,
   park: mapPark,
   ridge: mapRidge,
+  hollow: mapHollow,
+  snowmelt: mapSnowmelt,
+  saddle: mapSaddle,
+  summit: mapSummit,
   halt: mapHalt,
   junction: mapJunction,
   canal: mapCanal,
@@ -346,6 +366,7 @@ export const zoneMapTiles: Record<ZoneId | 'garden', ImageSourcePropType> = {
 import beyondImage from '@/assets/zones/beyond.png';
 import beyondAshImage from '@/assets/zones/beyond-ash.png';
 import beyondDunesImage from '@/assets/zones/beyond-dunes.png';
+import beyondPeaksImage from '@/assets/zones/beyond-peaks.png';
 /** Old forest, drawn where a region's grid has no zone (the valley's corners). */
 export const zoneBeyond: ImageSourcePropType = beyondImage;
 /** What lies past a region other than the valley, in its gaps and round its edges when
@@ -355,6 +376,8 @@ export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = {
 };
 /** The volcano's flank: what lies round the fire country's end of Sunstone Reach. */
 export const zoneBeyondAsh: ImageSourcePropType = beyondAshImage;
+/** The high peaks: what lies round the Frostline Highlands. */
+export const zoneBeyondPeaks: ImageSourcePropType = beyondPeaksImage;
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,
@@ -386,6 +409,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bookcase: propBookcase,
   bookshelf: propBookshelf,
   boots: propBoots,
+  bothy: propBothy,
   boulder: propBoulder,
   bunting: propBunting,
   buoy: propBuoy,
@@ -470,6 +494,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   house_blue: propHouseBlue,
   house_red: propHouseRed,
   hydro_trough: propHydroTrough,
+  ibex: propIbex,
   ice_cream_cart: propIceCreamCart,
   iron_bench: propIronBench,
   keep: propKeep,
@@ -569,6 +594,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   tower_amber: propTowerAmber,
   tower_cyan: propTowerCyan,
   tower_pink: propTowerPink,
+  trail_post: propTrailPost,
   training_dummy: propTrainingDummy,
   tree: propTree,
   tree_autumn: propTreeAutumn,
@@ -602,6 +628,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   windmill_f2: propWindmillF2,
   window_seat: propWindowSeat,
   windpump: propWindpump,
+  windsock: propWindsock,
   woodpile: propWoodpile,
   workshop: propWorkshop,
   workshop_f1: propWorkshopF1,

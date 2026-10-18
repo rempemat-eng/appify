@@ -43,6 +43,7 @@ import {
   BEYOND_SPILL,
   zoneBeyond,
   zoneBeyondAsh,
+  zoneBeyondPeaks,
   zoneBeyondByRegion,
   zoneGrounds,
   zoneProps,
@@ -123,6 +124,10 @@ export const zoneNames: Record<TileId, string> = {
   town: 'CROSSROADS TOWN',
   park: 'TOWN PARK',
   harbour: 'DRIFTWOOD HARBOUR',
+  hollow: 'FIR HOLLOW',
+  snowmelt: 'SNOWMELT LAKE',
+  saddle: 'THE SNOW SADDLE',
+  summit: 'THE HIGH LOOKOUT',
   hearthold: 'HEARTHOLD CASTLE',
   headland: 'THE HEADLAND',
   scorch: 'THE SCORCHED PASS',
@@ -350,6 +355,8 @@ const FRAME_MS = 400; // divides FLOAT_LOOP
  *  Scorched Pass and everything north and east of it). */
 function beyondAt(region: RegionId, col: number, row: number) {
   if (region === 'west' && (col >= 1 || (col >= 0 && row <= -1))) return zoneBeyondAsh;
+  // the valley's high country: peaks round the Frostline, forest lower down
+  if (region === 'valley' && row <= -2) return zoneBeyondPeaks;
   return zoneBeyondByRegion[region] ?? zoneBeyond;
 }
 

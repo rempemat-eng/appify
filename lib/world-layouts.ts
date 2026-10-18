@@ -12,12 +12,39 @@ import { regionLayout } from '@/lib/zone-maps';
  * To change the layout: copy today's `regionLayout` here under the current version,
  * then raise LAYOUT_VERSION.
  */
-export const LAYOUT_VERSION = 2;
+export const LAYOUT_VERSION = 3;
 
 type Layout = Record<string, Record<string, readonly [number, number]>>;
 
 /** Earlier layouts, by version. (A save with no version was made in layout 1.) */
 const history: Record<number, Layout> = {
+  // before the Frostline Highlands grew the valley north (18 Oct)
+  2: {
+    valley: {
+      ridge: [0, -1],
+      woodland: [-1, 0],
+      garden: [0, 0],
+      riverside: [1, 0],
+      town: [0, 1],
+      park: [1, 1],
+      harbour: [0, 2],
+      headland: [1, 2],
+      halt: [-1, 1],
+    },
+    steam: { junction: [0, 0], canal: [0, 1] },
+    west: {
+      gulch: [0, 0],
+      oasis: [-1, 0],
+      scorch: [1, 0],
+      hearthold: [1, -1],
+      caldera: [1, -2],
+      springs: [2, -2],
+    },
+    neon: { neon: [0, 0], skyport: [1, 0] },
+    space: { station: [0, 0] },
+    moon: { lumen: [0, 0] },
+    home: { home: [0, 0] },
+  },
   // before 18 Oct 19:07: the desert and the fire country were two regions
   1: {
     valley: {

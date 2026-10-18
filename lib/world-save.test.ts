@@ -393,3 +393,42 @@ console.log('Keepsakes: found by walking, placed freely, never in the way.');
   );
 }
 console.log('Layouts: old saves carried forward; the desert walks into the fire country.');
+
+// The Frostline Highlands: the valley grows north; a saved spot stays where it was in its
+// zone, and the high loop and the lookout are walked from the ridge cabin.
+{
+  const g = regionTiles('valley').find((t) => t.id === 'garden')!;
+  const go = tileOrigin('valley', g);
+  const home = restoreWorld({ region: 'valley', x: 320 + 160, y: 576 + 200, layout: 2 });
+  ok(
+    home?.region === 'valley' && home.x === go.x + 160 && home.y === go.y + 200,
+    'a valley spot saved before the Frostline is the same spot in the garden today',
+  );
+  const rows = regionWalk('valley');
+  const at = (zone: string, stand: string) => {
+    const t = regionTiles('valley').find((x) => x.id === zone)!;
+    const o = tileOrigin('valley', t);
+    const s = (zoneMaps as Record<string, { stands: Record<string, readonly [number, number]> }>)[
+      zone
+    ].stands[stand];
+    return { x: o.x + s[0], y: o.y + s[1] };
+  };
+  const cabin = at('ridge', 'cabin');
+  const grid = makeWalkGrid(rows, {
+    cell: TILE.cell,
+    width: regionBounds('valley').width,
+    start: cabin,
+  });
+  for (const [zone, stand] of [
+    ['hollow', 'clearing'],
+    ['snowmelt', 'shore'],
+    ['saddle', 'bothy'],
+    ['summit', 'scope'],
+  ] as const)
+    ok(grid.findPath(cabin, at(zone, stand)).length > 0, `the ridge cabin walks to ${zone}`);
+  ok(
+    grid.findPath(at('woodland', 'clearing'), at('hollow', 'clearing')).length > 0,
+    'the woodland reaches the hollow (the long way round, by the ridge)',
+  );
+}
+console.log('Frostline: the high loop is walked from the ridge, old spots stay put.');
