@@ -21,7 +21,9 @@ const ok = (v: unknown, label: string) => {
   assert.ok(v, label);
   checks++;
 };
-const regions = Object.keys(regionLayout) as RegionId[];
+const regions = Object.keys(regionLayout).filter((id): id is RegionId =>
+  Object.prototype.hasOwnProperty.call(regionLayout, id),
+);
 // Execute only the actual pure camera worklet body at a substituted boundary.
 // This catches drift while Claude's renderer still owns the inline calculation.
 const cameraBody = readFileSync(
@@ -59,7 +61,7 @@ for (const region of regions) {
     );
   }
   ok(
-    mountedNeighbours(region, 'not-a-zone' as never).length === 0,
+    mountedNeighbours(region, 'not-a-zone').length === 0,
     'unknown zone does not mount unrelated art',
   );
   const edges = regionEdges(region);

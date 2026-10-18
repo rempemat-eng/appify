@@ -1,16 +1,10 @@
 import type { Point } from './garden-path';
-import {
-  regionBounds,
-  regionTiles,
-  type RegionId,
-  type RegionTile,
-  type TileId,
-} from './region-walk';
+import { regionBounds, regionTiles, type RegionId, type RegionTile } from './region-walk';
 import { regionPoint, travelPoints } from './world-places';
 import { moveTo, type WorldSpot } from './world-save';
 
 /** C20 geometry uses the generated region grid, never a second zone catalogue. */
-export function mountedNeighbours(region: RegionId, here: TileId): RegionTile[] {
+export function mountedNeighbours(region: RegionId, here: string): RegionTile[] {
   const tiles = regionTiles(region);
   const centre = tiles.find((tile) => tile.id === here);
   return centre
