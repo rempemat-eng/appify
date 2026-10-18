@@ -121,6 +121,8 @@ function fixture() {
       withTiming: (to) => to,
     },
     '@/lib/motion': { useReducedMotion: () => false },
+    // WALK THERE leaves the world's link here (presentation only)
+    '@/lib/ui': { useUi: { setState: () => {} } },
     '@/lib/mission-map': missionMap,
     '@/lib/world-places': {
       missionPlaces: Object.fromEntries(

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Modal, ScrollView, View, useWindowDimensions } from 'react-native';
 import { router, useNavigation } from 'expo-router';
+import { useUi } from '@/lib/ui';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { missions, feedback, useGame, type Player } from '@/lib/game';
 import { useAppActive } from '@/lib/app-active';
@@ -266,7 +267,8 @@ export function MissionDeparture() {
               onPress={() => {
                 // walk out of the gate and on to the place yourself (free, grants nothing)
                 if (!navigation.isFocused()) return;
-                router.push({ pathname: '/world', params: { place: selected } });
+                useUi.setState({ worldLink: { place: selected } });
+                router.push('/world');
               }}
             />
           )}

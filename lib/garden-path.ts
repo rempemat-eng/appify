@@ -127,3 +127,35 @@ const garden = makeWalkGrid(gardenWalk, {
   bounds: { minX: 16, maxX: GARDEN.width - 16, minY: 48, maxY: GARDEN.fenceY - 4 },
 });
 export const { walkable, toCell, toPoint, nearestWalkable, findPath, randomSpot } = garden;
+
+// ---- ways out of the home garden ---------------------------------------------
+// Every exit is a break in the garden's frame with a way through it
+// (docs/vision/world-rules.md, check 7): the gate in the south fence, the ridge trail
+// leaving the clearing's top edge, and the open meadow edges east and west.
+export type GardenExit = 'gate' | 'trail' | 'west' | 'east';
+/** Where the companion stands to go in at the hut's door (garden pixels). */
+export const HUT_DOOR: Point = { x: 68, y: 132 };
+/** Where the ridge trail leaves the top of the clearing, and the gate's opening. */
+export const TRAIL_X = 204;
+export const GATE_SPAN = { x0: 140, x1: 180 } as const;
+
+/** The exit a tap (or a held key) asks for when it points past the garden's edge, if any. */
+export function gardenExitToward(p: Point): GardenExit | null {
+  if (!Number.isFinite(p.x) || !Number.isFinite(p.y)) return null;
+  if (p.y >= GARDEN.fenceY - 2 && p.x >= GATE_SPAN.x0 && p.x <= GATE_SPAN.x1) return 'gate';
+  if (p.y <= 44 && Math.abs(p.x - TRAIL_X) <= 24) return 'trail';
+  if (p.y > 48 && p.y < GARDEN.fenceY - 4) {
+    if (p.x <= 14) return 'west';
+    if (p.x >= GARDEN.width - 14) return 'east';
+  }
+  return null;
+}
+
+/** Whether the companion stands at that exit, ready to walk on out. */
+export function atGardenExit(exit: GardenExit, p: Point): boolean {
+  if (exit === 'gate')
+    return p.y >= GARDEN.fenceY - 18 && p.x >= GATE_SPAN.x0 - 8 && p.x <= GATE_SPAN.x1 + 8;
+  if (exit === 'trail') return p.y <= 60 && Math.abs(p.x - TRAIL_X) <= 28;
+  if (exit === 'west') return p.x <= 24;
+  return p.x >= GARDEN.width - 24;
+}

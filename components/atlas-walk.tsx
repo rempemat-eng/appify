@@ -20,7 +20,7 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
-import { STEP_MS, useKeyboardWalk } from '@/lib/keyboard-walk';
+import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
 import { useAppActive } from '@/lib/app-active';
 import { useGame } from '@/lib/game';
 import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
@@ -125,6 +125,7 @@ export const zoneNames: Record<TileId, string> = {
 };
 
 const SPEED = 40; // art pixels per second, a brisk walk
+const KEY_SPEED = 52; // walking by the keys: a purposeful trot
 // Zones that keep their own light at every hour (no night tint).
 const OWN_LIGHT: TileId[] = ['neon', 'skyport', 'station', 'lumen', 'caldera', 'springs', 'home'];
 // Where a lamp's light sits on its sprite (x, y from its top-left, in art pixels).
@@ -323,6 +324,7 @@ export function AtlasWalk({
   markers,
   onMarker,
   onZone,
+  onMove,
   onSettle,
   maxWalkMs,
   showName = true,
@@ -340,6 +342,8 @@ export function AtlasWalk({
   markers?: WorldMarker[];
   onMarker?: (id: string) => void;
   onZone?: (zone: TileId) => void;
+  /** Where the companion is, a few times a second while it walks. */
+  onMove?: (at: Point) => void;
   /** where a walk ended (or stopped) */
   onSettle?: (at: Point) => void;
   /** squeeze a long walk into this many milliseconds (the missions map) */
@@ -423,6 +427,11 @@ export function AtlasWalk({
     return () => clearTimeout(t);
   }, [named]);
 
+  // The parent's callbacks, read through a ref so a new closure never restarts a walk.
+  const calls = useRef({ onZone, onSettle, onMove });
+  useEffect(() => {
+    calls.current = { onZone, onSettle, onMove };
+  });
   // While walking, check which zone the companion is in a few times a second (JS
   // side, so the mounted zones follow it across borders).
   useEffect(() => {
@@ -430,15 +439,11 @@ export function AtlasWalk({
     const t = setInterval(() => {
       const tile = tileAt(region, px.get(), py.get());
       if (tile) setHere(tile.id);
+      calls.current.onMove?.({ x: px.get(), y: py.get() });
     }, 150);
     return () => clearInterval(t);
   }, [walking, region, px, py]);
 
-  // The parent's callbacks, read through a ref so a new closure never restarts a walk.
-  const calls = useRef({ onZone, onSettle });
-  useEffect(() => {
-    calls.current = { onZone, onSettle };
-  });
   useEffect(() => {
     calls.current.onZone?.(here);
   }, [here]);
@@ -479,7 +484,7 @@ export function AtlasWalk({
     path.forEach((p, i) => {
       const duration = Math.max(
         squeeze < 1 ? 8 : 60,
-        (Math.hypot(p.x - from.x, p.y - from.y) / SPEED) * 1000 * squeeze,
+        (Math.hypot(p.x - from.x, p.y - from.y) / (glide ? KEY_SPEED : SPEED)) * 1000 * squeeze,
       );
       // set off gently and slow into the last step (anticipate, act, settle); level between
       const first = i === 0;
@@ -528,13 +533,9 @@ export function AtlasWalk({
     (dx, dy) => {
       keysHeld.current = true;
       const from = { x: px.get(), y: py.get() };
-      const reach = SPEED * (STEP_MS / 1000) * 1.6; // a little past the next tick, so it never stops between
-      for (const [ax, ay] of [
-        [dx, dy],
-        [dx, 0],
-        [0, dy],
-      ] as const) {
-        if (!ax && !ay) continue;
+      // well past the next tick, so a held key never arrives (and re-renders) between ticks
+      const reach = KEY_SPEED * (STEP_MS / 1000) * 2.5;
+      for (const [ax, ay] of keySteps(dx, dy)) {
         const to = { x: from.x + ax * reach, y: from.y + ay * reach };
         const c = grid.walk.toCell(to);
         if (grid.walk.walkable(c.cx, c.cy)) {

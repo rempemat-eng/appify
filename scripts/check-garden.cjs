@@ -193,6 +193,7 @@ useGame.setState = (patch) => {
   gameWrites.push(patch);
 };
 const jsxElement = (type, props, key) => ({ type, props, key });
+const uiLink = { current: null };
 const deps = {
   react,
   'react/jsx-runtime': { jsx: jsxElement, jsxs: jsxElement },
@@ -209,13 +210,26 @@ const deps = {
   'react-native-reanimated': { ...anim, default: { View: 'Animated.View' } },
   'expo-router': {
     router: {
-      // a route given as an object is recorded as its URL
-      push: (route) =>
+      // a route given as an object is recorded as its URL; the world's link (lib/ui.ts,
+      // set just before) is recorded as that URL's query
+      push: (route) => {
+        const link = route === '/world' ? uiLink.current : null;
+        uiLink.current = null;
         routes.push(
           typeof route === 'string'
-            ? route
+            ? link
+              ? `${route}?${new URLSearchParams(link).toString()}`
+              : route
             : `${route.pathname}?${new URLSearchParams(route.params).toString()}`,
-        ),
+        );
+      },
+    },
+  },
+  '@/lib/ui': {
+    useUi: {
+      setState: (patch) => {
+        if ('worldLink' in patch) uiLink.current = patch.worldLink;
+      },
     },
   },
   'expo-haptics': { selectionAsync: async () => {} },
@@ -297,7 +311,11 @@ const pathModule = { exports: {} };
 evaluate('lib/garden-path.ts', pathModule);
 deps['@/lib/garden-path'] = pathModule.exports;
 // keyboard walking is a web-only extra (lib/keyboard-walk.ts): inert in this harness
-deps['@/lib/keyboard-walk'] = { STEP_MS: 120, useKeyboardWalk() {} };
+deps['@/lib/keyboard-walk'] = {
+  STEP_MS: 120,
+  keySteps: (dx, dy) => [[dx, dy]],
+  useKeyboardWalk() {},
+};
 const projectionModule = { exports: {} };
 evaluate('lib/garden-projection.ts', projectionModule);
 deps['@/lib/garden-projection'] = projectionModule.exports;
@@ -363,7 +381,10 @@ function find(tree, label) {
 }
 function actionElement(tree, action) {
   if (action === 'pond') return find(tree, 'Look into the pond');
-  const actionObject = map.gardenObjects.find((object) => object.action === action);
+  // (the hut is walked into by its door; the bed beside it is the nap)
+  const actionObject = map.gardenObjects.find(
+    (object) => object.action === action && object.id !== 'hut',
+  );
   return allElements(tree).find(
     (element) => element.type === 'Pressable' && element.key === actionObject.id,
   );
@@ -522,6 +543,15 @@ check(sleeps === 0, 'queued nap callback cannot sleep after blur');
 render();
 pendingNap[1].fn();
 check(sleeps === 0, 'queued old nap callback remains invalid after refocus');
+
+// The hut is walked into: up to its door, then the room inside (app/world.tsx).
+worldTree = setup();
+allElements(worldTree)
+  .find((element) => element.type === 'Pressable' && element.key === 'hut')
+  .props.onPress();
+complete(shared[0], shared[0].animation);
+complete(shared[1], shared[1].animation);
+check(same(routes, ['/world?from=hut']) && sleeps === 0, 'the hut door leads inside, not to a nap');
 
 worldTree = setup(false, { active: false });
 press(worldTree, 'shop');
@@ -1622,8 +1652,12 @@ const placeNavigationStart = count;
 const placeRoutes = [
   ['missions', '/missions'],
   ['shop', '/shop'],
-  // the gate opens on the valley (living-world plan W1): out into the walkable world
-  ['arena', '/world?from=gate'],
+  // the gate opens on the valley (living-world plan W1): out into the walkable world,
+  // picking up where the companion stands at the gate
+  [
+    'arena',
+    `/world?from=gate&ex=${Math.round(arrival('arena')[0])}&ey=${Math.round(arrival('arena')[1])}`,
+  ],
 ];
 for (const [routeIndex, [action, expectedRoute]] of placeRoutes.entries()) {
   const [replacement, replacementRoute] = placeRoutes[(routeIndex + 1) % placeRoutes.length];

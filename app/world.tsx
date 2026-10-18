@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -17,7 +17,9 @@ import { residentLines, residentRoutes } from '@/lib/resident-routes';
 import {
   PLACE_RADIUS,
   doors,
+  exitWalk,
   exits,
+  inGardenYard,
   missionPlaces,
   regionPoint,
   rings,
@@ -25,10 +27,12 @@ import {
   travelPoints,
   travelRoute,
   travelVehicle,
+  type ExitId,
   type MissionPlaceId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
-import type { Point } from '@/lib/garden-path';
+import { useUi } from '@/lib/ui';
+import { HUT_DOOR, type Point } from '@/lib/garden-path';
 
 const regionNames: Record<RegionId, string> = {
   valley: 'THE VALLEY',
@@ -52,6 +56,16 @@ const shortNames: Record<RegionId, string> = {
   home: 'home',
 };
 const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
+const exitIds: ExitId[] = ['gate', 'trail', 'west', 'east'];
+const insideDoor = regionPoint(doors.inside);
+/** Where on the garden screen a point counts as home: the garden's yard, or the hut's
+ *  front door seen from inside (garden pixels), else null. */
+const homeAt = (region: RegionId, at: Point): Point | null =>
+  region === 'home'
+    ? Math.hypot(at.x - insideDoor.x, at.y - insideDoor.y) <= 10
+      ? HUT_DOOR
+      : null
+    : inGardenYard(region, at);
 
 type Card =
   | { kind: 'mission'; id: 'book' | 'park' | 'mountain' }
@@ -75,7 +89,6 @@ function placeMarkers(region: RegionId, card: Card | null) {
   if (region === 'home')
     add('inside', regionPoint(doors.inside), 'FRONT DOOR', card?.kind === 'inside');
   if (region === 'valley') {
-    add('hut', regionPoint(doors.hut), 'THE NAP HUT', card?.kind === 'hut');
     const names: Record<MissionPlaceId, string> = {
       book: 'LIBRARY',
       park: 'PARK',
@@ -139,7 +152,13 @@ function cardAt(region: RegionId, at: Point): Card | null {
  * move the companion and record where it is.
  */
 export default function World() {
-  const params = useLocalSearchParams<{ from?: string; place?: string; station?: string }>();
+  const params = useLocalSearchParams<{
+    from?: string;
+    place?: string;
+    station?: string;
+    ex?: string;
+    ey?: string;
+  }>();
   const { width, height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const u = usePixelUnit();
@@ -150,15 +169,38 @@ export default function World() {
   const pendingReturn = useGame((s) => s.missionReturnPending);
   const walkWorld = useGame((s) => s.walkWorld);
 
+  // How the game opened the world (lib/ui.ts), read once; a typed address
+  // (/world?station=moon) still works for testing.
+  const [link] = useState(
+    () =>
+      useUi.getState().worldLink ?? {
+        from: params.from,
+        place: params.place,
+        station: params.station,
+        ex: params.ex ? Number(params.ex) : undefined,
+        ey: params.ey ? Number(params.ey) : undefined,
+      },
+  );
+  useEffect(() => {
+    useUi.setState({ worldLink: null });
+  }, []);
+  // Walked out of the garden screen: the same spot in the valley's garden, walking on
+  // out through the gap it left by.
+  const exit = exitIds.find((id) => id === link.from);
+  const walkOut =
+    exit && Number.isFinite(link.ex) && Number.isFinite(link.ey)
+      ? exitWalk(exit, Number(link.ex), Number(link.ey))
+      : null;
   // Where to begin: a named place, the gate or the trail, or where it last stood.
   const [spawn, setSpawn] = useState<{ region: RegionId; at: Point; key: number }>(() => {
-    const place = placeIds.find((id) => id === params.place);
+    const place = placeIds.find((id) => id === link.place);
     if (place) return { region: 'valley', at: regionPoint(missionPlaces[place]), key: 0 };
-    const station = travelOrder.find((r) => r === params.station);
+    const station = travelOrder.find((r) => r === link.station);
     const stop = station ? travelPoints[station] : undefined;
     if (station && stop) return { region: station, at: regionPoint(stop), key: 0 };
-    if (params.from === 'trail') return { region: 'valley', at: regionPoint(exits.trail), key: 0 };
-    if (params.from === 'gate') return { region: 'valley', at: regionPoint(exits.gate), key: 0 };
+    if (walkOut) return { region: 'valley', at: walkOut.start, key: 0 };
+    if (link.from === 'hut') return { region: 'home', at: regionPoint(doors.inside), key: 0 };
+    if (exit) return { region: 'valley', at: regionPoint(exits[exit]), key: 0 };
     const saved = restoreWorld(useGame.getState().world);
     if (saved) return { region: saved.region, at: { x: saved.x, y: saved.y }, key: 0 };
     return { region: 'valley', at: regionPoint(exits.gate), key: 0 };
@@ -172,7 +214,26 @@ export default function World() {
   const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
   const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
-  const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(undefined);
+  const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(() =>
+    walkOut && spawn.key === 0 ? { point: walkOut.goal, key: 1 } : undefined,
+  );
+  // Walking back into the garden's yard from outside it is going home: the garden
+  // screen picks up at the same spot. Inside the hut, walking back to the front door
+  // steps out into the garden. (Arriving at either, by a door or a journey, waits until
+  // the companion has walked away once, or a few steps.)
+  const outside = useRef(!homeAt(spawn.region, spawn.at));
+  const homeward = (at: Point) => {
+    const g = homeAt(spawn.region, at);
+    if (!g) {
+      outside.current = true;
+      return;
+    }
+    // (or having walked a few steps from where it arrived: never left standing in the
+    // valley's copy of the garden)
+    if (!outside.current && Math.hypot(at.x - spawn.at.x, at.y - spawn.at.y) < 24) return;
+    outside.current = false;
+    goHome(g);
+  };
   const walkToPlace = (id: string) => {
     const marker = placeMarkers(spawn.region, null).find((m) => m.id === id);
     if (!marker) return;
@@ -180,13 +241,11 @@ export default function World() {
     setGoal((g) => ({ point: { x: marker.x, y: marker.y }, key: (g?.key ?? 0) + 1 }));
   };
 
-  const settle = useCallback(
-    (at: Point) => {
-      walkWorld(spawn.region, at.x, at.y, true);
-      setCard(cardAt(spawn.region, at));
-    },
-    [spawn.region, walkWorld],
-  );
+  const settle = (at: Point) => {
+    walkWorld(spawn.region, at.x, at.y, true);
+    setCard(cardAt(spawn.region, at));
+    homeward(at);
+  };
   const arrive = useCallback(() => {
     if (!dest) return;
     const station = travelPoints[dest];
@@ -194,6 +253,7 @@ export default function World() {
       const at = regionPoint(station);
       setSpawn((s) => ({ region: dest, at, key: s.key + 1 }));
       setGoal(undefined);
+      outside.current = !homeAt(dest, at);
       walkWorld(dest, at.x, at.y, true);
       setCard({ kind: 'travel' });
     }
@@ -206,17 +266,33 @@ export default function World() {
   }, [trip, arrive]);
 
   const away = !player || player.mode !== 'awake' || !!battle || pendingReturn;
-  const cardH = card ? Math.min(260, height * 0.36) : 0;
+  // a station's card lists every line, so it may take up to half the screen; it
+  // scrolls when even that is not enough
+  const cardH = !card
+    ? 0
+    : card.kind === 'travel'
+      ? Math.min(420, height * 0.5)
+      : Math.min(260, height * 0.36);
   const viewH = height;
 
-  const goHome = () => {
+  // back to the garden screen, standing at `at` (garden pixels) when given
+  const goHome = (at?: Point) => {
     if (!navigation.isFocused()) return;
+    if (!at) {
+      router.replace('/');
+      return;
+    }
+    feedback('select');
+    useUi.setState({
+      homeArrival: { x: Math.round(at.x), y: Math.round(at.y), key: String(Date.now()) },
+    });
     router.replace('/');
   };
   const enter = (region: RegionId, at: Point) => {
     feedback('select');
     setSpawn((s) => ({ region, at, key: s.key + 1 }));
     setGoal(undefined);
+    outside.current = !homeAt(region, at);
     walkWorld(region, at.x, at.y, true);
     setCard(cardAt(region, at));
   };
@@ -322,7 +398,7 @@ export default function World() {
           <BodyText style={{ fontSize: 13 }}>
             The meadow, the pond and your companion’s bed.
           </BodyText>
-          <PixelButton small label="BACK TO THE GARDEN" onPress={goHome} />
+          <PixelButton small label="BACK TO THE GARDEN" onPress={() => goHome()} />
         </>
       );
     if (card.kind === 'hut')
@@ -344,11 +420,7 @@ export default function World() {
           <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
             THE FRONT DOOR
           </BodyText>
-          <PixelButton
-            small
-            label="STEP OUTSIDE"
-            onPress={() => enter('valley', regionPoint(doors.hut))}
-          />
+          <PixelButton small label="STEP OUTSIDE" onPress={() => goHome(HUT_DOOR)} />
         </>
       );
     // a station: the lines leave from here; further places change on the way
@@ -411,7 +483,7 @@ export default function World() {
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
             <PixelFrame tone="paper" style={{ padding: 4 * u, gap: 8 }}>
               <BodyText>Your companion is away or resting. The world will wait.</BodyText>
-              <PixelButton small label="BACK TO THE GARDEN" onPress={goHome} />
+              <PixelButton small label="BACK TO THE GARDEN" onPress={() => goHome()} />
             </PixelFrame>
           </View>
         ) : (
@@ -428,6 +500,7 @@ export default function World() {
               height={viewH}
               onZone={setZone}
               onSettle={settle}
+              onMove={homeward}
               showName={false}
               focusY={card ? 0.3 : 0.55}
               padBottom={card ? cardH + insets.bottom + 16 : 0}
@@ -449,7 +522,9 @@ export default function World() {
             }}
           >
             <PixelFrame tone="paper" style={{ padding: 4 * u }}>
-              <ScrollView contentContainerStyle={{ gap: 6 }}>{cardBody()}</ScrollView>
+              <ScrollView style={{ maxHeight: cardH - 8 * u }} contentContainerStyle={{ gap: 6 }}>
+                {cardBody()}
+              </ScrollView>
             </PixelFrame>
           </View>
         )}
@@ -492,7 +567,7 @@ export default function World() {
           }}
         >
           <View style={{ width: 112 }}>
-            <PixelButton small light label="◀ GARDEN" onPress={goHome} />
+            <PixelButton small light label="◀ GARDEN" onPress={() => goHome()} />
           </View>
           <PixelFrame
             tone="paper"

@@ -1,6 +1,6 @@
 import { tileOrigin, regionTiles, type RegionId, type TileId } from '@/lib/region-walk';
 import { zoneMaps, type ZoneId } from '@/lib/zone-maps';
-import type { Point } from '@/lib/garden-path';
+import { HUT_DOOR, type Point } from '@/lib/garden-path';
 
 /**
  * The places in the walkable world where something happens (living-world plan W1/W2):
@@ -115,15 +115,51 @@ export const travelBy: Partial<Record<RegionId, string>> = {
 
 /** The doors between the garden and the inside of the hut. */
 export const doors = {
-  hut: { region: 'valley', zone: 'garden', at: [68, 132] },
+  hut: { region: 'valley', zone: 'garden', at: [HUT_DOOR.x, HUT_DOOR.y] },
   inside: { region: 'home', zone: 'home', at: stand('home', 'door') },
 } as const satisfies Record<string, PlaceDef>;
 
-/** Where the walk out of the garden screen begins: past the gate, or up the ridge trail. */
+/** Where the walk out of the garden screen leads: past the gate, up the ridge trail, or
+ *  over the meadow's sides into the woodland and the riverside. */
 export const exits = {
   gate: { region: 'valley', zone: 'town', at: stand('town', 'garden') },
   trail: { region: 'valley', zone: 'ridge', at: stand('ridge', 'garden') },
+  west: { region: 'valley', zone: 'woodland', at: stand('woodland', 'garden') },
+  east: { region: 'valley', zone: 'riverside', at: stand('riverside', 'garden-north') },
 } as const satisfies Record<string, PlaceDef>;
+export type ExitId = keyof typeof exits;
+
+/** The home garden's walkable yard (its feet bounds in lib/garden-path.ts), in garden pixels. */
+export const GARDEN_YARD = { minX: 16, maxX: 304, minY: 48, maxY: 524 } as const;
+
+/** A point of the valley in the garden's own pixels when it is inside the garden's yard. */
+export function inGardenYard(region: string, at: Point): Point | null {
+  if (region !== 'valley') return null;
+  const o = regionPoint({ region: 'valley', zone: 'garden', at: [0, 0] });
+  const g = { x: at.x - o.x, y: at.y - o.y };
+  const y = GARDEN_YARD;
+  return g.x >= y.minX && g.x <= y.maxX && g.y >= y.minY && g.y <= y.maxY ? g : null;
+}
+
+const mid = (x: number, centre: number) => centre + Math.max(-6, Math.min(6, x - centre));
+
+/** Walking out of the garden screen: start at the same spot in the valley's garden and
+ *  walk on through the gap, a little past the border. */
+export function exitWalk(exit: ExitId, gx: number, gy: number): { start: Point; goal: Point } {
+  const at = (x: number, y: number) =>
+    regionPoint({ region: 'valley', zone: 'garden', at: [x, y] });
+  // through the gate and up the trail, keep to the middle of the gap
+  const sx = exit === 'gate' ? mid(gx, 162) : exit === 'trail' ? mid(gx, 200) : gx;
+  const goal =
+    exit === 'gate'
+      ? at(162, 576 + 30)
+      : exit === 'trail'
+        ? at(200, -40)
+        : exit === 'west'
+          ? at(-40, gy)
+          : at(320 + 40, gy);
+  return { start: at(sx, gy), goal };
+}
 
 /** A place's position in its region's pixels. */
 export function regionPoint(place: PlaceDef): Point {

@@ -42,13 +42,20 @@ import { growthImages } from '@/lib/garden-growth-assets';
 import { meadowLine, orchardStage, plotStage } from '@/lib/garden-growth';
 import {
   GARDEN_START,
+  HUT_DOOR,
+  atGardenExit,
   findPath,
+  gardenExitToward,
+  nearestWalkable,
   randomSpot,
   toCell,
+  toPoint,
   walkable,
+  type GardenExit,
   type Point,
 } from '@/lib/garden-path';
-import { STEP_MS, useKeyboardWalk } from '@/lib/keyboard-walk';
+import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
+import { useUi } from '@/lib/ui';
 import {
   TILT_DEG,
   billboard,
@@ -105,6 +112,7 @@ import wateringCanImg from '@/assets/garden/watering_can.png';
 import lanternImg from '@/assets/garden/lantern.png';
 import meadowSignImg from '@/assets/garden/meadow_sign.png';
 import groundTop from '@/assets/garden/ground-top.png';
+import townTop from '@/assets/zones/town/top.png';
 
 const sprites: Record<string, ImageSourcePropType> = {
   tree: treeImg,
@@ -136,6 +144,7 @@ type Action = keyof typeof gardenHotspots;
 // Wall clock for 'player touched recently' checks (only ever called from handlers).
 const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
+const KEY_SPEED = 52; // walking by the keys: a purposeful trot, so crossing the garden is quick
 const START: Point = GARDEN_START;
 const BED: Point = gardenAnchors.bed;
 // One still ground image; only the water moves, as small four-frame overlays.
@@ -431,6 +440,8 @@ export function GardenWorld({
   marker = null,
   onKeepsakePress,
   say = null,
+  padBottom = 0,
+  arrival = null,
 }: {
   width: number;
   player: Player;
@@ -459,6 +470,10 @@ export function GardenWorld({
   onKeepsakePress?: (memory: CompanionMemory) => void;
   /** Something the companion says, shown in a bubble that follows it. */
   say?: { text: string; onPress?: () => void; hint?: string } | null;
+  /** Screen height covered at the bottom (the hotbar): the camera keeps the gate above it. */
+  padBottom?: number;
+  /** Walked in from the valley: stand here (garden pixels); a new key moves it again. */
+  arrival?: { x: number; y: number; key: string } | null;
 }) {
   const reduced = useReducedMotion();
   const appActive = useAppActive();
@@ -492,8 +507,11 @@ export function GardenWorld({
   const camera = !tilt && viewportHeight !== undefined;
   const topBand = Math.round(GARDEN.top * scale);
   const viewHeight = camera ? viewportHeight : height;
+  // the part of the window not under the hotbar: the camera can always bring the
+  // fence and its gate up above it
+  const seenHeight = Math.max(1, viewHeight - (camera ? padBottom : 0));
   const cameraMin = camera ? -topBand : 0;
-  const cameraMax = camera ? Math.max(cameraMin, height - viewHeight) : 0;
+  const cameraMax = camera ? Math.max(cameraMin, height - seenHeight) : 0;
   const lifetimeMinutes = player.offline_seconds;
   // Characters are drawn on the same grid as the world: 32 art pixels.
   const petPx = 32 * scale;
@@ -537,15 +555,25 @@ export function GardenWorld({
     }
   }
   const busy = useRef(false);
+  // walking out once: a held key's repeats must not open the valley twice as it opens
+  const leaving = useRef(false);
   const activeRef = useRef(active);
   const lastTouch = useRef(0);
   const journeyId = useRef(0);
-  const journey = useRef<{ id: number; action: Action | null; end: Point } | null>(null);
+  const journey = useRef<{
+    id: number;
+    action: Action | null;
+    end: Point;
+    exit: GardenExit | 'door' | null;
+  } | null>(null);
   const napTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useLayoutEffect(() => {
     activeRef.current = active;
-    if (active) return;
+    if (active) {
+      leaving.current = false;
+      return;
+    }
     journeyId.current += 1;
     journey.current = null;
     cancelAnimation(px);
@@ -626,15 +654,34 @@ export function GardenWorld({
 
   function arrived(id: number, action: Action | null, point: Point) {
     if (!activeRef.current || id !== journeyId.current || journey.current?.id !== id) return;
+    const exit = journey.current.exit;
     journey.current = null;
     pos.current = point;
     setWalking(false);
     setDestination(null);
     busy.current = false;
     if (action) act(action);
+    else if (exit === 'door') {
+      // in at the hut's door: the room inside picks up there (app/world.tsx)
+      if (Math.hypot(point.x - HUT_DOOR.x, point.y - HUT_DOOR.y) <= 12)
+        if (!leaving.current) {
+          leaving.current = true;
+          useUi.setState({ worldLink: { from: 'hut' } });
+          router.push('/world');
+        }
+    } else if (exit && atGardenExit(exit, point)) leave(exit, point);
   }
 
-  function walkTo(target: Point, action: Action | null = null) {
+  // Walking out: the valley picks up at this very spot and the companion walks on
+  // through the gap (app/world.tsx); walking back in returns here.
+  function leave(exit: GardenExit, at: Point) {
+    if (napping || !activeRef.current || leaving.current) return;
+    leaving.current = true;
+    useUi.setState({ worldLink: { from: exit, ex: Math.round(at.x), ey: Math.round(at.y) } });
+    router.push('/world');
+  }
+
+  function walkTo(target: Point, action: Action | null = null, door = false, speed = SPEED) {
     if (napping || !activeRef.current) return;
     const id = ++journeyId.current;
     cancelAnimation(px);
@@ -646,7 +693,13 @@ export function GardenWorld({
     const path = findPath(start, target);
     const end = path[path.length - 1] ?? start;
     setDestination(action ? end : null);
-    journey.current = { id, action, end };
+    // a tap past the garden's edge (the gate, the trail, the meadow's sides) walks on out
+    journey.current = {
+      id,
+      action,
+      end,
+      exit: door ? 'door' : action ? null : gardenExitToward(target),
+    };
     if (!path.length) {
       arrived(id, action, end);
       return;
@@ -665,7 +718,7 @@ export function GardenWorld({
     const ys = [];
     for (const p of path) {
       const d = Math.hypot(p.x - from.x, p.y - from.y);
-      const duration = Math.max(60, (d / SPEED) * 1000);
+      const duration = Math.max(60, (d / speed) * 1000);
       xs.push(withTiming(p.x, { duration, easing: Easing.linear }));
       ys.push(withTiming(p.y, { duration, easing: Easing.linear }));
       from = p;
@@ -711,7 +764,7 @@ export function GardenWorld({
         break;
       case 'arena':
         // the gate opens on the valley: walk on out into the world
-        router.push({ pathname: '/world', params: { from: 'gate' } });
+        leave('gate', pos.current);
         break;
       case 'feed':
         if (playPaused() || p.mood >= 100 || p.grass < 5) {
@@ -769,23 +822,45 @@ export function GardenWorld({
     active && !napping,
     (dx, dy) => {
       const from = { x: px.get(), y: py.get() };
-      const reach = SPEED * (STEP_MS / 1000) * 1.6; // past the next tick, so it never stops between
-      for (const [ax, ay] of [
-        [dx, dy],
-        [dx, 0],
-        [0, dy],
-      ] as const) {
-        if (!ax && !ay) continue;
+      // well past the next tick, so a held key never arrives (and re-renders) between ticks
+      const reach = KEY_SPEED * (STEP_MS / 1000) * 2.5;
+      for (const [ax, ay] of keySteps(dx, dy)) {
         const to = { x: from.x + ax * reach, y: from.y + ay * reach };
         const cell = toCell(to);
         if (walkable(cell.cx, cell.cy)) {
-          walkTo(to);
+          walkTo(to, null, false, KEY_SPEED);
           return;
         }
       }
+      // held against the garden's edge at an exit: on out into the valley
+      const exit = gardenExitToward({ x: from.x + dx * 16, y: from.y + dy * 16 });
+      if (exit && atGardenExit(exit, from)) leave(exit, from);
     },
     () => {},
   );
+
+  // Back from the valley: stand where the companion walked in (no walk is under way:
+  // the garden was off screen).
+  const arrivalKey = arrival?.key;
+  const arrivalAt = useRef(arrival);
+  useEffect(() => {
+    arrivalAt.current = arrival;
+  });
+  useLayoutEffect(() => {
+    const a = arrivalAt.current;
+    if (!arrivalKey || !a || napping) return;
+    journeyId.current += 1;
+    journey.current = null;
+    cancelAnimation(px);
+    cancelAnimation(py);
+    const cell = nearestWalkable({ x: a.x, y: a.y });
+    const p = toPoint(cell.cx, cell.cy);
+    px.set(p.x);
+    py.set(p.y);
+    pos.current = p;
+    busy.current = false;
+    lastTouch.current = clock();
+  }, [arrivalKey, napping, px, py]);
 
   // Idle life: wander, sniff the flowers, sit. Never while the player is acting.
   const walkRef = useRef(walkTo);
@@ -884,7 +959,7 @@ export function GardenWorld({
   const cameraStyle = useAnimatedStyle(() => {
     const x = windowLeft(project(proj, px.value, py.value).sx);
     if (!camera) return { transform: [{ translateX: -Math.round(x) }, { translateY: 0 }] };
-    const target = py.value * scale - viewHeight * 0.55;
+    const target = py.value * scale - seenHeight * 0.55;
     const y = Math.min(cameraMax, Math.max(cameraMin, target));
     return { transform: [{ translateX: -Math.round(x) }, { translateY: -Math.round(y) }] };
   });
@@ -924,6 +999,17 @@ export function GardenWorld({
     setTag({ text: spot.label, x: spot.x, y: spot.y });
     playSound('steps');
     walkTo({ x: spot.x, y: spot.y }, action);
+  }
+
+  // The hut's door: walk up to it and go in.
+  function goInside() {
+    if (napping || !activeRef.current) return;
+    lastTouch.current = clock();
+    setFeedback(null);
+    setReaction(null);
+    setTag({ text: 'go inside the hut', x: HUT_DOOR.x, y: HUT_DOOR.y - 20 });
+    playSound('steps');
+    walkTo(HUT_DOOR, null, true);
   }
 
   function stopJourney() {
@@ -995,6 +1081,21 @@ export function GardenWorld({
               top: -topBand,
               width: worldWidth,
               height: topBand,
+            }}
+          />
+        )}
+        {camera && (
+          // past the gate the valley goes on: the top of the town lane, where walking
+          // out of the gate leads (app/world.tsx)
+          <Image
+            source={townTop}
+            resizeMode="stretch"
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: height,
+              width: worldWidth,
+              height: Math.round(64 * scale),
             }}
           />
         )}
@@ -1179,9 +1280,11 @@ export function GardenWorld({
                 key={o.id}
                 accessibilityRole="button"
                 accessibilityLabel={
-                  action === 'lantern'
-                    ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
-                    : gardenHotspots[action].label
+                  o.id === 'hut'
+                    ? 'go inside the hut'
+                    : action === 'lantern'
+                      ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
+                      : gardenHotspots[action].label
                 }
                 accessibilityHint={
                   action === 'read'
@@ -1196,9 +1299,14 @@ export function GardenWorld({
                 disabled={napping || !active}
                 onFocus={() => {
                   if (activeRef.current && !napping)
-                    setTag({ text: gardenHotspots[action].label, x: o.x + o.w / 2, y: o.y });
+                    setTag({
+                      text: o.id === 'hut' ? 'go inside the hut' : gardenHotspots[action].label,
+                      x: o.x + o.w / 2,
+                      y: o.y,
+                    });
                 }}
-                onPress={() => onObjectPress(action)}
+                // the hut is walked into by its door; the bed beside it is the nap
+                onPress={() => (o.id === 'hut' ? goInside() : onObjectPress(action))}
                 style={{
                   position: 'absolute',
                   left: targetLeft,

@@ -7,6 +7,17 @@ export type GameSheet = 'nap' | 'menu' | 'companions' | 'rhythm';
 /** The game menu's pages (coherence plan, step 5). */
 export type MenuTab = 'companion' | 'bag' | 'journal' | 'garden' | 'rhythm' | 'settings';
 
+/** How the game opens the world screen: walking out of the garden (where, which way),
+ *  at a place, or at a station. Read once by the world when it opens; not in the page's
+ *  address, so a reload resumes from where the companion last stood (the save). */
+export type WorldLink = {
+  from?: 'gate' | 'trail' | 'west' | 'east' | 'hut';
+  place?: string;
+  station?: string;
+  ex?: number;
+  ey?: number;
+};
+
 type UiState = {
   sheet: GameSheet | null;
   /** A sheet opened from the menu returns to the menu when it closes. */
@@ -19,6 +30,10 @@ type UiState = {
   /** Where the next spar happens (a region's ring in the world), for the battle's backdrop
    * only; null is the garden's own field. Presentation, never a rule. */
   battlePlace: string | null;
+  worldLink: WorldLink | null;
+  /** Walked back into the garden from the valley: where its companion stands (garden
+   *  pixels); a new key moves it again. */
+  homeArrival: { x: number; y: number; key: string } | null;
 };
 
 export const useUi = create<UiState>((set) => ({
@@ -26,6 +41,8 @@ export const useUi = create<UiState>((set) => ({
   back: null,
   menuTab: 'companion',
   battlePlace: null,
+  worldLink: null,
+  homeArrival: null,
   open: (sheet) =>
     set((s) => ({ sheet, back: s.sheet === 'menu' && sheet !== 'menu' ? 'menu' : null })),
   close: () => set((s) => ({ sheet: s.back, back: null })),

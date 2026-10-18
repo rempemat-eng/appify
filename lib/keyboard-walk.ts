@@ -44,6 +44,21 @@ export function heldDirection(held: Iterable<string>): { dx: number; dy: number 
   return { dx: x / n, dy: y / n };
 }
 
+/**
+ * The steps to try for a held direction, best first: straight on, then sliding along
+ * a wall (each axis alone), then edging round a corner (a straight move blocked by a
+ * post or a tree trunk tries the two diagonals beside it, so the companion slips
+ * round small things instead of stopping dead).
+ */
+export function keySteps(dx: number, dy: number): (readonly [number, number])[] {
+  const out: (readonly [number, number])[] = [[dx, dy]];
+  if (dx && dy) out.push([Math.sign(dx), 0], [0, Math.sign(dy)]);
+  const d = Math.SQRT1_2;
+  if (!dx && dy) out.push([d, dy * d], [-d, dy * d]);
+  if (dx && !dy) out.push([dx * d, d], [dx * d, -d]);
+  return out;
+}
+
 const typing = (target: EventTarget | null) => {
   if (!target || typeof target !== 'object') return false;
   const tag = 'tagName' in target ? target.tagName : undefined;

@@ -68,6 +68,8 @@ export function HomeScreen() {
   const memories = useGame((s) => s.companionMemories);
   const sheet = useUi((s) => s.sheet);
   const paused = usePlayPaused();
+  // walked back in from the valley (app/world.tsx): where, in garden pixels
+  const arrival = useUi((s) => s.homeArrival);
   const busy = useGame((s) =>
     Boolean(
       s.message ||
@@ -160,6 +162,8 @@ export function HomeScreen() {
           memories={memories}
           width={worldWidth}
           viewportHeight={height}
+          padBottom={hotbarClearance(insets.bottom)}
+          arrival={arrival}
           player={p}
           grumpy={p.mood < 30}
           sleepy={paused}
@@ -259,7 +263,8 @@ export function ShopScreen() {
         label="VISIT THE STALL"
         onPress={() => {
           // walk out of the gate to Moss's stall yourself (free, grants nothing)
-          router.push({ pathname: '/world', params: { place: 'shop' } });
+          useUi.setState({ worldLink: { place: 'shop' } });
+          router.push('/world');
         }}
       />
       <View style={{ gap: 2 }}>
@@ -540,7 +545,8 @@ export function ArenaScreen() {
           label="WALK TO THE RING"
           onPress={() => {
             // walk out of the gate to the town's ring yourself (free, grants nothing)
-            router.push({ pathname: '/world', params: { place: 'arena' } });
+            useUi.setState({ worldLink: { place: 'arena' } });
+            router.push('/world');
           }}
         />
       )}

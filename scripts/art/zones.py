@@ -3147,6 +3147,15 @@ def build(name: str, fn, start: str):
     out = os.path.join(worlds.ROOT, 'assets', 'zones', name)
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
+    if name == 'town':
+        # the lane past the garden gate, drawn below the garden screen's fence, so the
+        # garden's south edge shows the valley going on (components/garden-world.tsx)
+        strip = Canvas(W, 64)
+        strip.paste(cv, 0, 0)
+        for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h):
+            if key not in OVERHEAD and y < 64:
+                strip.paste(sprite_map[key], x, y)
+        strip.save(os.path.join(out, 'top.png'), worlds.SCALE)
     preview = os.environ.get('ZONE_PREVIEW')
     prev = None
     if preview or os.environ.get('LINT_OUT'):

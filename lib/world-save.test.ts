@@ -2,8 +2,11 @@ import assert from 'node:assert/strict';
 import { moveTo, restoreWorld } from './world-save';
 import { regionWalk, TILE } from './region-walk';
 import {
+  GARDEN_YARD,
   doors,
+  exitWalk,
   exits,
+  inGardenYard,
   missionPlaces,
   regionPoint,
   rings,
@@ -11,7 +14,8 @@ import {
   travelRoute,
   travelVehicle,
 } from './world-places';
-import { makeWalkGrid } from './garden-path';
+import { HUT_DOOR, atGardenExit, gardenExitToward, makeWalkGrid } from './garden-path';
+import { regionTiles, tileAt, tileOrigin } from './region-walk';
 import { regionBounds } from './region-walk';
 import { readSave, writeSave } from './save-data';
 import { residentLines, residentRoutes } from './resident-routes';
@@ -95,6 +99,57 @@ for (const [name, place] of places) {
   const end = path[path.length - 1];
   ok(Math.hypot(end.x - at.x, end.y - at.y) < 12, `${name}: the walk ends there`);
 }
+
+// Walking out of the garden screen (and back): each exit is asked for only past its
+// own gap, stands at it, starts at the same spot in the valley's garden and walks on
+// into the right neighbour; arriving back inside the yard is home again.
+ok(gardenExitToward({ x: 160, y: 560 }) === 'gate', 'a tap past the gate asks for the gate');
+ok(gardenExitToward({ x: 60, y: 560 }) === null, 'a tap past the fence asks for nothing');
+ok(gardenExitToward({ x: 204, y: 20 }) === 'trail', 'a tap past the trail asks for the trail');
+ok(gardenExitToward({ x: 60, y: 20 }) === null, 'the forest above the clearing is no exit');
+ok(gardenExitToward({ x: 4, y: 300 }) === 'west', 'the meadow’s west side leads out');
+ok(gardenExitToward({ x: 316, y: 300 }) === 'east', 'the meadow’s east side leads out');
+ok(gardenExitToward({ x: 160, y: 300 }) === null, 'the middle of the garden is no exit');
+ok(gardenExitToward({ x: Number.NaN, y: 300 }) === null, 'a bad point asks for nothing');
+ok(atGardenExit('gate', { x: 162, y: 522 }), 'the gate hotspot stands at the gate');
+ok(!atGardenExit('gate', { x: 60, y: 522 }), 'the fence beside it does not');
+const valley = makeWalkGrid(regionWalk('valley'), {
+  cell: TILE.cell,
+  width: regionBounds('valley').width,
+  start: regionPoint(exits.gate),
+});
+const gardenTile = regionTiles('valley').find((t) => t.id === 'garden')!;
+const g0 = tileOrigin('valley', gardenTile);
+const neighbour = { gate: 'town', trail: 'ridge', west: 'woodland', east: 'riverside' } as const;
+for (const [exit, gx, gy] of [
+  ['gate', 162, 522],
+  ['trail', 198, 50],
+  ['west', 18, 400],
+  ['east', 302, 250],
+] as const) {
+  const walk = exitWalk(exit, gx, gy);
+  ok(walk.start.x === g0.x + gx && walk.start.y === g0.y + gy, `${exit}: starts where it left`);
+  ok(inGardenYard('valley', walk.start), `${exit}: that spot is in the garden's yard`);
+  const path = valley.findPath(walk.start, walk.goal);
+  const end = path[path.length - 1];
+  ok(
+    end && tileAt('valley', end.x, end.y)?.id === neighbour[exit],
+    `${exit}: walks on into the ${neighbour[exit]}`,
+  );
+  ok(
+    end && !inGardenYard('valley', end),
+    `${exit}: and out of the yard, so walking back is going home`,
+  );
+}
+ok(!inGardenYard('steam', g0), 'only the valley has the garden');
+ok(
+  inGardenYard('valley', { x: g0.x + GARDEN_YARD.minX, y: g0.y + GARDEN_YARD.maxY }) !== null,
+  'the yard includes its edges',
+);
+ok(
+  doors.hut.at[0] === HUT_DOOR.x && doors.hut.at[1] === HUT_DOOR.y,
+  'the world and the garden agree where the hut door is',
+);
 console.log(`World save and places: ${checks} checks passed.`);
 
 // every resident has something to say when the companion stops beside them
