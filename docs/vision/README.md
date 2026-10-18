@@ -2,15 +2,16 @@
 
 This folder is the shared brief for anyone building NapAttack: Matt, Claude and Codex. Read it before any design, art or interface work, and update it when the direction changes. When this folder and an older doc disagree, this folder wins.
 
-| File                                         | What it covers                                                                                                                             |
-| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| [art-style.md](art-style.md)                 | How the world art should look, the techniques the generators use, references and a review checklist                                        |
-| [interface.md](interface.md)                 | The full-screen game layout: HUD, hotbar, sheets, pixel frames and the pixel font                                                          |
-| [garden-growth.md](garden-growth.md)         | How the meadow grows from time away, and its limits                                                                                        |
-| [sound.md](sound.md)                         | The generated sound palette, where each cue plays, and the rules for new sounds                                                            |
-| [coherence-plan.md](coherence-plan.md)       | **The current plan:** Matt's 17 Oct review, the audit, targets and the ordered steps                                                       |
-| [living-world-plan.md](living-world-plan.md) | **The approved new work (17 Oct):** currency and care, decay, atmosphere, menus, people, decorating, world memory, biomes, and their order |
-| [roadmap.md](roadmap.md)                     | What comes next, open questions and ideas we have not built                                                                                |
+| File                                         | What it covers                                                                                                                                                                    |
+| -------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [art-style.md](art-style.md)                 | How the world art should look, the techniques the generators use, references and a review checklist                                                                               |
+| [interface.md](interface.md)                 | The full-screen game layout: HUD, hotbar, sheets, pixel frames and the pixel font                                                                                                 |
+| [garden-growth.md](garden-growth.md)         | How the meadow grows from time away, and its limits                                                                                                                               |
+| [sound.md](sound.md)                         | The generated sound palette, where each cue plays, and the rules for new sounds                                                                                                   |
+| [coherence-plan.md](coherence-plan.md)       | **The current plan:** Matt's 17 Oct review, the audit, targets and the ordered steps                                                                                              |
+| [living-world-plan.md](living-world-plan.md) | **The approved new work (17 Oct):** currency and care, decay, atmosphere, menus, people, decorating, world memory, biomes, and their order                                        |
+| [roadmap.md](roadmap.md)                     | What comes next, open questions and ideas we have not built                                                                                                                       |
+| [world-rules.md](world-rules.md)             | **The world's rulebook (18 Oct):** what each kind of ground means, what may stand on it, how neighbouring places join, corridors, detail derived from logic, and the bug protocol |
 
 ## Matt's direction (October 2026)
 
@@ -22,6 +23,8 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 - **Intuitive and immersive.** Show, do not explain. Guidance appears in the world (a "!" over the next place, the companion speaking) rather than as cards of text.
 - **Content after polish.** Once the look and feel are right, add more places, visitors and things to do.
 - **A living world (17 Oct).** Matt approved the merged plan and Codex's living-world ideas: a safe currency earned away from the phone, gentle reversible decay, seasons and weather as scenery, people with routines, decorating and interiors, lasting story changes and new biomes. Order and rules: [living-world-plan.md](living-world-plan.md).
+
+**World rules** (Matt, 18 Oct): the world must make sense: water has a source and a sink and only floating or supported things stand on it, paths lead to places, gates sit in fences, neighbouring places are built together with corridors between them, and detail follows from these rules. The research is [../research/2d-world-design.md](../research/2d-world-design.md); the rules are [world-rules.md](world-rules.md).
 
 **World atlas** (Matt, 17 Oct): the regions beyond the valley (Driftwood Harbour, Hearthold Castle, steampunk Cogsworth Junction, the western Dust Gulch, the Ember Caldera, cyberpunk Neon Harbour, Halcyon Station and the moon Lumen), the theme that ties them together (a journey from rest to screens and back to sleep), seamless travel and a world that feels alive: [world-atlas.md](world-atlas.md).
 
