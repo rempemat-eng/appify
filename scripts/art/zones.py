@@ -168,7 +168,7 @@ def town(frame: int = 0):
         # the treeline either side of the road from the garden
         # (no prop crosses a border: the garden's meadow runs on above these)
         ('pine-n0', 'pine', 4, 6), ('tree-n1', 'tree', 40, 14), ('pine-n2', 'pine', 92, 4),
-        ('pine-n3', 'pine', 200, 2), ('tree-n4', 'tree_autumn', 228, 12), ('pine-n5', 'pine', 288, 8),
+        ('pine-n3', 'pine', 200, 2), ('tree-n4', 'tree_autumn', 228, 12), ('pine-n5', 'pine', 280, 8),
         ('tree-n6', 'tree_small', 100, 96), ('bush-n7', 'bush', 196, 112), ('signpost', 'signpost', 192, 150),
         ('lamp-r1', 'lamp', 132, 168), ('lamp-r2', 'lamp', 178, 168),
         # buildings on the square's north side, facing south
@@ -186,7 +186,7 @@ def town(frame: int = 0):
         # the ring and its spectators
         ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 130, 440),
         # hedges either side of the road south, and framing trees
-        ('hedge-s1', 'hedge', 0, 548), ('hedge-s3', 'hedge', 192, 548),
+        ('hedge-s1', 'hedge', 4, 548), ('hedge-s3', 'hedge', 192, 548),
         ('tree-w1', 'tree', 2, 196), ('tree-e1', 'tree', 252, 470),
         ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 196, 416),
         ('bunting', 'bunting', 60, 238), ('cat', 'cat', 182, 352),
@@ -1282,7 +1282,7 @@ def oasis(frame: int = 0):
         # the railway's water crane, fed from the spring
         ('crane', 'water_crane', 84, 52),
         # the caravan camp where the track ends
-        ('tent', 'tent', 238, 420), ('camel-1', 'camel', 214, 482), ('camel-2', 'camel', 274, 486),
+        ('tent', 'tent', 238, 420), ('camel-1', 'camel', 214, 482), ('camel-2', 'camel', 266, 486),
         ('fire', 'fire_pit', 260, 460), ('awning', 'awning', 240, 360), ('jar-3', 'water_jar', 228, 386),
         # the older town
         ('arch', 'sandstone_arch', 26, 450), ('col-1', 'column_stump', 92, 470), ('col-2', 'column_stump_b', 92, 500),
@@ -1745,7 +1745,7 @@ def harbour(frame: int = 0):
         ('nets-1', 'net_rack', 6, 236), ('nets-2', 'net_rack', 4, 300), ('anchor', 'anchor', 286, 240),
         ('lighthouse', 'lighthouse', 68, 396), ('boat-1', 'boat_blue', 168, 330), ('boat-2', 'boat_red', 254, 340),
         ('boat-3', 'boat_blue', 186, 420), ('bollard-1', 'bollard', 140, 290), ('bollard-2', 'bollard', 226, 290),
-        ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 270, 196),
+        ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 286, 206),
         ('upturned', 'upturned_boat', 8, 400), ('washing', 'washing_line', 110, 90), ('buoy-1', 'buoy', 120, 450),
         ('buoy-2', 'buoy', 300, 380),
     ]
@@ -2221,12 +2221,12 @@ def park(frame: int = 0):
         ('bandstand', 'bandstand', 118, 140), ('fountain', 'fountain', 132, 300),
         ('willow', 'willow', 196, 400), ('lilies', 'lily_pads', 140, 476), ('duck-1', 'duck', 170, 500),
         ('duck-2', 'duck', 262, 488), ('heron', 'heron', 290, 440),
-        ('hedge-n1', 'hedge', 0, 30), ('hedge-n2', 'hedge', 224, 30), ('tree-1', 'tree', 110, -24),
+        ('hedge-n1', 'hedge', 4, 30), ('hedge-n2', 'hedge', 224, 30), ('tree-1', 'tree', 110, 4),
         ('tree-2', 'tree_autumn', 284, 140), ('tree-3', 'tree', 4, 150), ('tree-4', 'tree_small', 20, 470),
         ('bench-1', 'bench', 60, 196), ('bench-2', 'bench', 216, 196), ('bench-3', 'bench', 96, 360),
         ('lamp-1', 'lamp', 66, 260), ('lamp-2', 'lamp', 246, 260), ('lamp-3', 'lamp', 108, 410),
         ('icecream', 'ice_cream_cart', 220, 296), ('bush-1', 'bush', 0, 250), ('bush-2', 'bush', 290, 250),
-        ('bush-3', 'bush', 40, 540), ('bush-4', 'bush', 280, 540),
+        ('bush-3', 'bush', 4, 540), ('bush-4', 'bush', 220, 540),
     ]
     stands = {'town': (8, 300), 'bandstand': (160, 240), 'fountain': (160, 360), 'pond': (100, 456)}
     return cv, objects, stands, water
@@ -2561,6 +2561,28 @@ def region_keys(name: str) -> frozenset:
     return frozenset(REGION_PROPS[name]())
 
 
+def check_overhangs(built: dict):
+    """A tall prop that rises over a zone's north border must rise over empty ground in
+    the zone behind it (no prop there for its top to cover)."""
+    for region, zs in LAYOUT.items():
+        at = {pos: z for z, pos in zs.items()}
+        for z, (col, row) in zs.items():
+            behind = at.get((col, row - 1))
+            if z not in built or behind not in built:
+                continue
+            for (oid, key, x, y) in built[z]['objects']:
+                sp = built[z]['sprites'][key]
+                if y >= 0 or key in OVERHEAD:
+                    continue
+                top = H + y  # the overhang, in the zone behind
+                for (oid2, key2, x2, y2) in built[behind]['objects']:
+                    sp2 = built[behind]['sprites'][key2]
+                    if key2 in OVERHEAD:
+                        continue
+                    assert not (x < x2 + sp2.w and x + sp.w > x2 and top < y2 + sp2.h), \
+                        f'{z}/{oid} rises over {behind}/{oid2}'
+
+
 def build(name: str, fn, start: str):
     sprite_map = sprites()
     cv, objects, stands, *rest = fn()
@@ -2582,6 +2604,42 @@ def build(name: str, fn, start: str):
     seen = reachable(walk, stands[start])
     lost = [k for k, (x, y) in stands.items() if (y // CELL, x // CELL) not in seen]
     assert not lost, f'{name}: not reachable on foot from {start}: {lost}'
+    # every door can be walked up to: the ground just in front of it is open and
+    # reachable (nothing parked or planted in front of a door)
+    shut = []
+    for (oid, key, x, y) in objects:
+        if key not in DOORS:
+            continue
+        sp = sprite_map[key]
+        dx = x + int(sp.w * DOORS[key])
+        front = [(dx // CELL + d, (y + sp.h + k) // CELL) for d in (-1, 0, 1) for k in (2, 6)]
+        if not any((r, c) in seen for (c, r) in front):
+            shut.append(oid)
+        foot = y + sp.h
+        for (oid2, key2, x2, y2) in objects:  # and nothing stands in front of it, hiding it
+            sp2 = sprite_map[key2]
+            if oid2 == oid or key2 in OVERHEAD or y2 + sp2.h <= foot:
+                continue
+            if x2 + 3 < dx + 6 and x2 + sp2.w - 3 > dx - 6 and y2 < foot and y2 + sp2.h > foot - 16:
+                shut.append(f'{oid} (hidden by {oid2})')
+    assert not shut, f'{name}: nothing can reach the door of {shut}'
+    # no prop crosses a border into a neighbouring zone (world-atlas.md, "How borders meet")
+    region = next(r for r, zs in LAYOUT.items() if name in zs)
+    col, row = LAYOUT[region][name]
+    near = {pos for pos in LAYOUT[region].values()}
+    sides = {'west': (col - 1, row) in near, 'east': (col + 1, row) in near,
+             'north': (col, row - 1) in near, 'south': (col, row + 1) in near}
+    over = []
+    for (oid, key, x, y) in objects:
+        if key in OVERHEAD:
+            continue
+        sp = sprite_map[key]
+        # (a tall prop may rise over the north border into the zone behind it, by up to
+        # 48 px, as long as nothing stands there: see check_overhangs)
+        if (sides['west'] and x < 0) or (sides['east'] and x + sp.w > W) or \
+                (sides['north'] and y < -48) or (sides['south'] and y + sp.h > H):
+            over.append(f'{oid} at {x},{y} size {sp.w}x{sp.h}')
+    assert not over, f'{name}: props cross into a neighbouring zone: {over}'
     out = os.path.join(worlds.ROOT, 'assets', 'zones', name)
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
@@ -2596,6 +2654,13 @@ def build(name: str, fn, start: str):
         prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
     print('ok zone', name, W, H)
     return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map}
+
+
+# Buildings whose door faces the viewer, and where the door sits across the sprite
+# (a fraction of its width).
+DOORS = {k: 0.5 for k in ('house_blue', 'house_red', 'cabin', 'cafe', 'library', 'workshop', 'workshop_round',
+                          'station_house', 'barn', 'bathhouse', 'foundry', 'tube_station', 'cottage', 'cottage_b',
+                          'saloon', 'store', 'mine_portal', 'clock_tower')}
 
 
 # Where each zone sits on its region's grid (column, row), in zone-sized steps. The
@@ -2706,6 +2771,7 @@ def main():
     built['castle'] = build('castle', castle, 'harbour')
     built['station'] = build('station', station, 'lift')
     built['lumen'] = build('lumen', lumen, 'shuttle')
+    check_overhangs(built)
     export(built)
 
 
