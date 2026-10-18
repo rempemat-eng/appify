@@ -104,8 +104,8 @@ Two families of bug, named so reviews can be specific:
 
 Four stages, every time a zone changes:
 
-1. **Logic lint** (automatic, in the generator and `npm run verify`): the checklist below.
-2. **Stitched region render** (`ZONE_PREVIEW`): each region drawn whole with its zones in place, reviewed for rivers, roads, fences and tone across seams, and for what you see from each entry edge.
+1. **Logic lint** (automatic, in the generator and `npm run verify`): the checklist below. `scripts/art/world_lint.py` runs at the end of every `zones.py` build and prints its findings (checks 1, 2, 6 and 10 so far; report only until the valley is fixed). It reads each walk cell as a class: a blocked cell is water when blue, lava when orange, else wall; an open cell is path when drawn in the path colours, else ground. The classes and placement types are exported as `zoneTerrain` and `zonePlacement` in `lib/zone-maps.ts`, so `check:world-logic` (C23) can test the same data.
+2. **Stitched region render**: `LINT_OUT=<folder> python3 scripts/art/zones.py` writes `world-lint.txt` and each region drawn whole (`region-<id>.png`, zones in place, findings boxed in red), reviewed for rivers, roads, fences and tone across seams, and for what you see from each entry edge.
 3. **"Why is this here" pass**: every prop answers who put it there, what for, and how you reach it.
 4. **Play-test** (AGENTS.md): normal and reduced motion, day and night, interrupted walks, overlapping props; plus walking every corridor and tapping every prop near water.
 

@@ -3148,16 +3148,19 @@ def build(name: str, fn, start: str):
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
     preview = os.environ.get('ZONE_PREVIEW')
-    if preview:
+    prev = None
+    if preview or os.environ.get('LINT_OUT'):
         prev = Canvas(W, H)
         prev.paste(cv, 0, 0)
         for (_id, key, x, y) in sorted(objects, key=lambda o: o[3] + sprite_map[o[1]].h + (900 if o[1] in OVERHEAD else 0)):
             prev.paste(sprite_map[key], x, y)
         if name == 'neon':
             rain(prev)
-        prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
+        if preview:
+            prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
     print('ok zone', name, W, H)
-    return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map}
+    return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map,
+            'ground_img': cv.img.copy(), 'blocked': blocked_ground, 'preview': prev.img if prev else None}
 
 
 # Buildings whose door faces the viewer, and where the door sits across the sprite
@@ -3290,8 +3293,19 @@ def export(built: dict):
         lines.append(f"    walk: {json.dumps([rle(r) for r in z['walk']])}.map(unrle),")
         lines.append(f"    stands: {json.dumps({k: list(v) for k, v in z['stands'].items()})},")
         lines.append('  },')
+    import world_lint
+    placement = {k: t for t, ks in (('floating', world_lint.FLOATING), ('wet', world_lint.WET),
+                                     ('supported', world_lint.SUPPORTED), ('overhead', OVERHEAD)) for k in sorted(ks) if k in used}
     lines += [
         '};',
+        '/** What each walk cell of a zone is (docs/vision/world-rules.md, section 1): \'~\' water, \'!\' lava,',
+        ' *  \'^\' wall or cliff, \'=\' path, \'.\' ground. Rows are run-length encoded like the walk rows. */',
+        'const unrleTerrain = (row: string) => row.replace(/(\\d+)([~!^=.])/g, (_m, n: string, c: string) => c.repeat(Number(n)));',
+        'export const zoneTerrain: Record<ZoneId, readonly string[]> = {',
+        *[f"  {zid}: {json.dumps([rle(r) for r in z['terrain']])}.map(unrleTerrain)," for zid, z in built.items()],
+        '};',
+        '/** How a prop meets the ground (world-rules.md, section 2); any sprite not listed stands on plain ground. */',
+        f'export const zonePlacement: Record<string, \'floating\' | \'wet\' | \'supported\' | \'overhead\'> = {json.dumps(placement)};',
         '/** Each region\'s zones on a grid of zone-sized steps; the garden is the valley\'s (0, 0). */',
         f'export const regionLayout = {json.dumps({r: {z: list(p) for z, p in zs.items()} for r, zs in LAYOUT.items()})} as const;',
         '',
@@ -3347,6 +3361,8 @@ def main():
     built['lumen'] = build('lumen', lumen, 'shuttle')
     built['home'] = build('home', home, 'door')
     check_overhangs(built)
+    import world_lint  # the world's logic lint (world-rules.md, section 7): report only, for now
+    world_lint.run(built, LAYOUT, None, OVERHEAD, {z: b['preview'] for z, b in built.items() if b['preview'] is not None})
     export(built)
 
 
