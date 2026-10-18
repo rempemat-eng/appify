@@ -36,6 +36,11 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   angler: { zone: 'riverside', from: [154, 362], to: [242, 362] },
   botanist: { zone: 'station', from: [64, 330], to: [152, 330] },
   stargazer: { zone: 'lumen', from: [176, 362], to: [264, 362] },
+  warden: { zone: 'saddle', from: [152, 230], to: [152, 330] },
+  skater: { zone: 'snowmelt', from: [170, 414], to: [250, 412] },
+  ferryman: { zone: 'landing', from: [194, 190], to: [180, 290] },
+  naturalist: { zone: 'rainforest', from: [200, 430], to: [200, 520] },
+  beachcomber: { zone: 'cove', from: [20, 404], to: [110, 408] },
 };
 
 /** What each resident says when the companion stops beside them (decoration only). */
@@ -62,4 +67,9 @@ export const residentLines: Record<string, string> = {
   angler: 'i have not caught a thing all day. perfect.',
   botanist: 'plants in space still want the same thing: light and quiet.',
   stargazer: 'i count the stars until one of us falls asleep.',
+  warden: 'the bothy is always open. the kettle is always on.',
+  skater: 'the lake thaws a little more each day. i like watching it.',
+  ferryman: 'the ferry leaves when you are ready. the island will wait.',
+  naturalist: 'there are frogs here no bigger than a fingernail. listen.',
+  beachcomber: 'the black sand is warm by noon. lie down a while.',
 };
