@@ -61,9 +61,10 @@ PATH |= thick_path([(172, 92), (200, 84), (206, 40), (RIDGE_X, -16)], 9.5, 4)
 # where it climbs through the treeline it widens toward the ridge's port (176-232,
 # docs/vision/world-ports.md), so the way out reads from the clearing
 PATH |= thick_path([(205, 52), (204, 20), (204, -16)], 13.5, 6)
-# a short bank path east from the plaza under the flower planters, out to the
-# riverside's port (192-248) where its willows open
-PATH |= thick_path([(PX + 22, 198), (232, 206), (272, 214), (330, 222)], 11.5, 5)
+# a short bank path east from the plaza under the flower planters toward the
+# riverside's port (192-248) where its willows open; it stops just short of the edge
+# until the riverside draws its half (world_lint's seam-path rule: a path meets a path)
+PATH |= thick_path([(PX + 22, 198), (232, 206), (272, 214), (292, 218)], 11.5, 5)
 PATH |= disc(PLAZA[0], PLAZA[1], 27)  # the plaza at the fork
 PATH |= meadow.meadow_path(thick_path)  # down across the bridge, through the meadow
 # The hut's own path, which can be laid with flagstones (coherence plan, B1): its branch
