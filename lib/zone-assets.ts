@@ -9,6 +9,7 @@ import propAtmosCar from '@/assets/zones/props/atmos_car.png';
 import propAutomaton from '@/assets/zones/props/automaton.png';
 import propAwning from '@/assets/zones/props/awning.png';
 import propBandstand from '@/assets/zones/props/bandstand.png';
+import propBarn from '@/assets/zones/props/barn.png';
 import propBarrel from '@/assets/zones/props/barrel.png';
 import propBasaltColumns from '@/assets/zones/props/basalt_columns.png';
 import propBasaltColumnsLow from '@/assets/zones/props/basalt_columns_low.png';
@@ -73,6 +74,7 @@ import propGearPile from '@/assets/zones/props/gear_pile.png';
 import propGlowCaps from '@/assets/zones/props/glow_caps.png';
 import propHammock from '@/assets/zones/props/hammock.png';
 import propHayBale from '@/assets/zones/props/hay_bale.png';
+import propHaystack from '@/assets/zones/props/haystack.png';
 import propHedge from '@/assets/zones/props/hedge.png';
 import propHerbBed from '@/assets/zones/props/herb_bed.png';
 import propHeron from '@/assets/zones/props/heron.png';
@@ -119,6 +121,7 @@ import propPipeRun from '@/assets/zones/props/pipe_run.png';
 import propPodTree from '@/assets/zones/props/pod_tree.png';
 import propPosterBoard from '@/assets/zones/props/poster_board.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
+import propPumpkins from '@/assets/zones/props/pumpkins.png';
 import propReeds from '@/assets/zones/props/reeds.png';
 import propRingPost from '@/assets/zones/props/ring_post.png';
 import propRoundTower from '@/assets/zones/props/round_tower.png';
@@ -127,6 +130,7 @@ import propSaguaro from '@/assets/zones/props/saguaro.png';
 import propSaguaroSmall from '@/assets/zones/props/saguaro_small.png';
 import propSaloon from '@/assets/zones/props/saloon.png';
 import propSandstoneArch from '@/assets/zones/props/sandstone_arch.png';
+import propScarecrow from '@/assets/zones/props/scarecrow.png';
 import propSemaphore from '@/assets/zones/props/semaphore.png';
 import propShaduf from '@/assets/zones/props/shaduf.png';
 import propShelter from '@/assets/zones/props/shelter.png';
@@ -172,6 +176,7 @@ import propWaterMill from '@/assets/zones/props/water_mill.png';
 import propWaterTower from '@/assets/zones/props/water_tower.png';
 import propWell from '@/assets/zones/props/well.png';
 import propWillow from '@/assets/zones/props/willow.png';
+import propWindmill from '@/assets/zones/props/windmill.png';
 import propWindpump from '@/assets/zones/props/windpump.png';
 import propWorkshop from '@/assets/zones/props/workshop.png';
 import propWorkshopRound from '@/assets/zones/props/workshop_round.png';
@@ -221,6 +226,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   automaton: propAutomaton,
   awning: propAwning,
   bandstand: propBandstand,
+  barn: propBarn,
   barrel: propBarrel,
   basalt_columns: propBasaltColumns,
   basalt_columns_low: propBasaltColumnsLow,
@@ -285,6 +291,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   glow_caps: propGlowCaps,
   hammock: propHammock,
   hay_bale: propHayBale,
+  haystack: propHaystack,
   hedge: propHedge,
   herb_bed: propHerbBed,
   heron: propHeron,
@@ -331,6 +338,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   pod_tree: propPodTree,
   poster_board: propPosterBoard,
   potted_plant: propPottedPlant,
+  pumpkins: propPumpkins,
   reeds: propReeds,
   ring_post: propRingPost,
   round_tower: propRoundTower,
@@ -339,6 +347,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   saguaro_small: propSaguaroSmall,
   saloon: propSaloon,
   sandstone_arch: propSandstoneArch,
+  scarecrow: propScarecrow,
   semaphore: propSemaphore,
   shaduf: propShaduf,
   shelter: propShelter,
@@ -384,6 +393,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   water_tower: propWaterTower,
   well: propWell,
   willow: propWillow,
+  windmill: propWindmill,
   windpump: propWindpump,
   workshop: propWorkshop,
   workshop_round: propWorkshopRound,

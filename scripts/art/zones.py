@@ -2320,8 +2320,10 @@ def halt(frame: int = 0):
     """The Valley Halt, west of Crossroads Town and south of the Woodland: the lane from
     the town comes in at the east edge and opens on the platform, where the little stone
     station faces the line under its canopy; the rails run west out of the valley (the
-    train to Cogsworth) and stop at a buffer before the town. South of the line lie
-    fields in rows behind a fence; to the north the woodland's floor reaches down."""
+    train to Cogsworth) and stop at a buffer before the town. A windmill turns on the
+    meadow to the north under the woodland's edge; south of the line, behind a fence, a
+    small farm: cabbages, wheat with a scarecrow, a pumpkin patch, haystacks and a red
+    barn, reached by a track down the east side."""
     cv = Canvas(W, H)
     worlds.grass(cv, frame)
     # the woodland's forest floor reaches down along the top edge
@@ -2342,15 +2344,18 @@ def halt(frame: int = 0):
     for x in range(232, 244):
         cv.vline(x, 320, 18, WOOD[2] if x % 2 else WOOD[1])
     cv.hline(232, 320, 12, RED[3])
-    # fields south of the line, behind a fence: furrows of soil, cabbages in rows on
-    # the first, ripening wheat swaying in the second
+    # a farm track south from the lane, down the east side to the farmyard
+    track = worlds.thick([(298, 300), (304, 360), (300, 440), (292, 500), (262, 548)], 8, seed=33)
+    yard = {(x, y) for (x, y) in oval(230, 560, 78, 22)}
+    paint_road(cv, track | yard | {(x, y) for (x, y0) in yard if y0 == H - 1 for y in range(H, H + 6)})
+    # fields behind the fence: cabbages in furrows (west), wheat (east) with the
+    # scarecrow, a pumpkin patch below; the farm's own bounds, not a grid
     SOILm = MATERIALS['soil']
-    for y in range(380, 540):
-        for x in range(20, 300):
-            row = (y - 380) % 10
-            wheat = 460 <= y < 540 and x > 160
-            if wheat:
-                stalk = (x + (y // 3) % 2) % 3
+    def furrows(mask, crop):
+        for (x, y) in mask:
+            row = (y - 372) % 10
+            if crop == 'wheat':
+                stalk = (x + (y // 3) % 2 + int(math.sin(y / 9) * 2)) % 3
                 c = '#E2BC5E' if stalk == 0 else '#C99A3C' if stalk == 1 else '#F2D27A'
                 if row == 9:
                     c = '#A87E2C'
@@ -2359,29 +2364,40 @@ def halt(frame: int = 0):
                 if row == 0:
                     c = SOILm[4]
             cv.set(x, y, c)
-    for y in range(383, 540, 10):  # cabbages along the furrows
-        for x in range(24, 296, 7):
-            if 460 <= y < 540 and x > 160:
-                continue
+    cabbage = {(x, y) for y in range(372, 472) for x in range(14, 150 - (y - 372) // 8)}
+    wheat = {(x, y) for y in range(372, 446) for x in range(162 + (y - 372) // 10, 280 - max(0, y - 420))}
+    patch = {(x, y) for y in range(492, 560) for x in range(16 + (y - 492) // 6, 128)}
+    furrows(cabbage, 'cabbage'); furrows(wheat, 'wheat'); furrows(patch, 'patch')
+    for y in range(375, 472, 10):  # cabbages along the furrows
+        for x in range(18, 146, 7):
             cx = x + int(noise2(x, y, 452) * 2)
+            if (cx, y + 2) not in cabbage:
+                continue
             for (px, py) in disc(cx, y + 2, 2.4):
                 cv.set(px, py, MATERIALS['leaf'][3] if (px - cx) + (py - y - 2) < 0 else MATERIALS['leaf'][2])
             cv.set(cx - 1, y + 1, MATERIALS['leaf'][4])
-    for x in range(161, 300, 2):  # the wheat's lit heads along its top edge
-        cv.set(x, 460, '#F8E6A0'); cv.set(x + 1, 461, '#F2D27A')
+    for x in range(162, 280, 2):  # the wheat's lit heads along its top edge
+        cv.set(x, 372, '#F8E6A0'); cv.set(x + 1, 373, '#F2D27A')
+    for (mask, grass_edge) in ((cabbage, True), (wheat, True), (patch, True)):
+        for (x, y) in mask:  # a low hedge of long grass round each field
+            if any((x + dx, y + dy) not in mask for (dx, dy) in ((1, 0), (-1, 0), (0, 1))):
+                cv.set(x, y, G[3] if (x + y) % 2 else G[4])
     objects = [
         ('station', 'station_house', 66, 204), ('signal', 'semaphore', 20, 262), ('bench-p', 'bench', 190, 280),
         ('lamp-p1', 'lamp', 40, 268), ('lamp-p2', 'lamp', 220, 268), ('sack-p', 'sack', 178, 300), ('crate-p', 'crate', 160, 298),
-        ('pine-n1', 'pine', 10, 20), ('tree-n2', 'tree', 90, 30), ('pine-n3', 'pine', 200, 14), ('tree-n4', 'tree_small', 260, 40),
-        ('bush-1', 'bush', 250, 220), ('bush-2', 'bush', 6, 200),
-        ('fence-1', 'fence_c', 18, 362), ('fence-2', 'fence_c', 78, 362), ('fence-3', 'fence_c', 138, 362),
-        ('fence-4', 'fence_c', 198, 362), ('fence-5', 'fence_c', 258, 362),
-        ('tree-s1', 'tree', 4, 500), ('tree-s2', 'tree_autumn', 250, 520), ('sack-f', 'sack', 120, 548),
+        ('pine-n1', 'pine', 10, 20), ('tree-n2', 'tree', 90, 30), ('pine-n3', 'pine', 150, 14),
+        ('mill', 'windmill', 226, 70), ('bush-1', 'bush', 286, 200), ('bush-2', 'bush', 6, 200),
+        ('fence-1', 'fence_c', 18, 356), ('fence-2', 'fence_c', 78, 356), ('fence-3', 'fence_c', 138, 356),
+        ('fence-4', 'fence_c', 198, 356),
+        ('scarecrow', 'scarecrow', 200, 380), ('barn', 'barn', 150, 452), ('hay-1', 'haystack', 132, 500),
+        ('hay-2', 'haystack', 112, 530), ('pump-1', 'pumpkins', 30, 506), ('pump-2', 'pumpkins', 70, 524),
+        ('pump-3', 'pumpkins', 44, 540), ('barrel-f', 'barrel', 262, 520), ('crate-f', 'crate', 276, 530),
+        ('tree-s2', 'tree_autumn', 236, 196),
     ]
     rails = {(x, y) for x in range(0, 246) for y in range(319, 338)}
-    fields = {(x, y) for x in range(20, 300) for y in range(370, 540)}
-    stands = {'town': (312, 300), 'platform': (130, 300), 'station': (118, 292)}
-    return cv, objects, stands, rails | fields
+    stands = {'town': (312, 300), 'platform': (130, 300), 'station': (118, 292), 'mill': (258, 186),
+              'farm': (232, 560)}
+    return cv, objects, stands, rails | cabbage | wheat | patch
 
 
 FOREST_FLOOR = ['#24382A', '#40603A', '#577A44', '#668A4E', '#8EAE68']

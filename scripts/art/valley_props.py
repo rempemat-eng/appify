@@ -373,8 +373,150 @@ def semaphore() -> Canvas:
     return cv
 
 
+BARN_RED = ['#4A1E1A', '#6E2C24', '#8E3A2E', '#B04E3A', '#C86A50']
+
+
+def barn() -> Canvas:
+    """A red barn, 100 x 88: a broad roof of weathered shingles seen from above, red
+    vertical boards with white trim, big double doors crossed in white and a hayloft
+    door with hay spilling from it."""
+    w, h = 100, 88
+    cv = Canvas(w, h, pad=PAD)
+    ridge, apex_y, eave_y, wall_top, wall_bottom = (w - 1) / 2, 12, 40, 40, 82
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, seed=93, moss=LEAF)
+    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7, w - 8,
+                     apex_y, wall_top, BARN_RED, boards=True)
+    for (x, y) in rect_set(int(ridge) - 7, 24, 14, 12):  # the hayloft door
+        cv.set(x, y, '#2A1A14')
+    for (x, y) in oval(ridge, 36, 9, 3):
+        if y >= 34:
+            cv.set(x, y, '#E2BC5E' if (x + y) % 2 else '#C99A3C')
+    for y in range(wall_top, wall_bottom):
+        for x in range(7, w - 7):
+            c = BARN_RED[3] if (x // 4) % 2 else BARN_RED[2]
+            if x % 4 == 0:
+                c = BARN_RED[1]
+            if x < 10:
+                c = BARN_RED[4]
+            cv.set(x, y, c)
+    for x in range(7, w - 7):
+        cv.set(x, wall_top, '#F2EEE6')
+    dx0, dw = int(ridge) - 20, 40
+    for y in range(wall_top + 10, wall_bottom):  # the double doors, crossed in white
+        for x in range(dx0, dx0 + dw):
+            c = BARN_RED[2] if x < ridge else BARN_RED[1]
+            fx = x - dx0 if x < ridge else x - int(ridge)
+            fy = y - wall_top - 10
+            if x in (dx0, dx0 + dw - 1, int(ridge)) or y == wall_top + 10 or abs(fx * 32 / 20 - fy) < 1.5 or abs((20 - fx) * 32 / 20 - fy) < 1.5:
+                c = '#F2EEE6'
+            cv.set(x, y, c)
+    for wx in (14, w - 26):
+        gp.window(cv, wx, wall_top + 10, 12, 10, shutters=None, sill=False, warm=True)
+    detail.overhang_shadow(cv, 7, w - 7, wall_top + 1, lambda x: 3, k=2, cap=1)
+    detail.stones(cv, 5, wall_bottom, w - 10, 5, STONE, seed=35, course=3)
+    return cv
+
+
+def haystack() -> Canvas:
+    """A round haystack, 34 x 30, lit gold on the upper left, a few loose wisps."""
+    w, h = 34, 30
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(17, 17, 15, 12) | oval(17, 9, 9, 7):
+        k = (x - 2) / 30 + (y - 2) / 26
+        c = '#F2D27A' if k < 0.6 else '#E2BC5E' if k < 1.0 else '#C99A3C' if k < 1.35 else '#A87E2C'
+        if (x * 3 + y * 5) % 11 == 0:
+            c = '#A87E2C' if k < 1 else '#8A6420'
+        cv.set(x, y, c)
+    for (x, y) in ((3, 26), (30, 25), (8, 28)):
+        cv.hline(x, y, 3, '#E2BC5E')
+    return cv
+
+
+def scarecrow() -> Canvas:
+    """A scarecrow, 32 x 46: a straw hat, a sack face with a stitched smile, a patched
+    coat on a crossbar, a crow perched on one arm."""
+    w, h = 32, 46
+    cv = Canvas(w, h, pad=PAD)
+    cv.vline(15, 14, 30, WOOD[2]); cv.vline(16, 14, 30, WOOD[1])
+    for x in range(2, 30):
+        cv.set(x, 18, WOOD[3]); cv.set(x, 19, WOOD[1])
+    for y in range(17, 32):  # the coat
+        for x in range(9, 23):
+            c = '#4A6A8A' if x < 13 else '#3A5470' if x < 20 else '#2C4058'
+            if 14 <= x < 18 and 22 <= y < 26:
+                c = RED[3]  # a patch
+            cv.set(x, y, c)
+    for x in range(3, 9):
+        cv.set(x, 20, '#E2BC5E'); cv.set(x + 21, 20, '#E2BC5E')  # straw from the cuffs
+    for (x, y) in disc(16, 11, 5):  # the sack head
+        cv.set(x, y, '#D8C4A0' if x + y < 26 else '#B89A74')
+    cv.set(14, 10, '#2A1E18'); cv.set(18, 10, '#2A1E18')
+    cv.hline(14, 13, 5, '#5A3A24')
+    for x in range(8, 25):  # the hat
+        cv.set(x, 6, '#E2BC5E' if x < 16 else '#C99A3C')
+    for y in range(1, 6):
+        cv.hline(12, y, 9, '#F2D27A' if y < 3 else '#E2BC5E')
+    for (x, y) in oval(27, 15, 3, 2):  # the crow
+        cv.set(x, y, '#1E1C22')
+    cv.set(29, 14, '#E8A23A'); cv.set(26, 14, '#3A3840')
+    return cv
+
+
+def windmill() -> Canvas:
+    """A valley windmill, 64 x 104: a tapering white tower of plaster with a little
+    door and window, a boat-shaped cap, and four lattice sails turning (drawn still)."""
+    w, h = 64, 104
+    cv = Canvas(w, h, pad=PAD)
+    cx = w // 2
+    for y in range(34, h - 2):
+        t = (y - 34) / (h - 36)
+        hw = int(10 + t * 8)
+        for x in range(cx - hw, cx + hw):
+            k = (x - (cx - hw)) / (2 * hw)
+            c = PLASTER[4] if k < 0.25 else PLASTER[3] if k < 0.6 else PLASTER[2] if k < 0.85 else PLASTER[1]
+            cv.set(x, y, c)
+    for (x, y) in rect_set(cx - 4, h - 16, 8, 14):
+        cv.set(x, y, WOOD[2] if x < cx else WOOD[1])
+    gp.window(cv, cx - 4, 58, 8, 8, shutters=None, sill=False, warm=True)
+    for y in range(24, 36):  # the cap
+        hw = 12 - abs(y - 30)
+        for x in range(cx - 12, cx + 12):
+            cv.set(x, y, SLATE[3] if x < cx else SLATE[2])
+    for k in range(4):  # the sails
+        a = math.pi / 4 + k * math.pi / 2
+        for t in range(4, 30):
+            bx, by = cx + math.cos(a) * t, 30 + math.sin(a) * t
+            cv.set(int(bx), int(by), WOOD[1])
+            if t > 8:
+                for side in range(1, 6):
+                    px = bx + math.cos(a + math.pi / 2) * side
+                    py = by + math.sin(a + math.pi / 2) * side
+                    lattice = side % 2 == 0 or t % 3 == 0
+                    cv.set(int(px), int(py), WOOD[3] if lattice else '#F2EEE6')
+    for (x, y) in disc(cx, 30, 2.5):
+        cv.set(x, y, WOOD[1])
+    return cv
+
+
+def pumpkins() -> Canvas:
+    """Pumpkins on a vine, 30 x 14, lit on their upper left, curling green tendrils."""
+    cv = Canvas(30, 14, pad=PAD)
+    for x in range(2, 28):
+        cv.set(x, 10 + int(math.sin(x / 3) * 1.5), '#447A50')
+    for (px, py, r) in ((7, 8, 4), (19, 9, 5), (26, 7, 2.6)):
+        for (x, y) in oval(px, py, r, r * 0.8):
+            k = (x - px + r) / (2 * r)
+            c = '#F2A048' if k < 0.35 else '#E07A28' if k < 0.7 else '#B85A1A'
+            if (x - px) % 3 == 0 and k > 0.2:
+                c = '#B85A1A' if c != '#B85A1A' else '#8A4010'
+            cv.set(x, y, c)
+        cv.set(px, int(py - r * 0.8), '#5A7A3A')
+    return cv
+
 def props() -> dict[str, Canvas]:
     return {
+        'barn': barn(), 'haystack': haystack(), 'scarecrow': scarecrow(), 'windmill': windmill(),
+        'pumpkins': pumpkins(),
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(), 'heron': heron(), 'lily_pads': lily_pads(),
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
