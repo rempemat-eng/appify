@@ -37,6 +37,13 @@ export const zoneFrames: Record<
   string,
   readonly (readonly [string, number, number, number, number])[]
 > = {
+  water_mill: [
+    ['water_mill_f1', 0, 0, 115, 88],
+    ['water_mill_f2', 0, 0, 115, 88],
+    ['water_mill_f3', 0, 0, 115, 88],
+    ['water_mill_f4', 0, 0, 115, 88],
+    ['water_mill_f5', 0, 0, 115, 88],
+  ],
   windmill: [
     ['windmill_f1', -5, -5, 62, 104],
     ['windmill_f2', -3, -3, 58, 102],
@@ -76,6 +83,26 @@ export const zoneWindows: Record<string, readonly (readonly [number, number, num
   station_house: [[17, 57, 10, 8]],
   store: [[39, 34, 12, 8]],
   water_mill: [
+    [16, 47, 8, 6],
+    [52, 47, 8, 6],
+  ],
+  water_mill_f1: [
+    [16, 47, 8, 6],
+    [52, 47, 8, 6],
+  ],
+  water_mill_f2: [
+    [16, 47, 8, 6],
+    [52, 47, 8, 6],
+  ],
+  water_mill_f3: [
+    [16, 47, 8, 6],
+    [52, 47, 8, 6],
+  ],
+  water_mill_f4: [
+    [16, 47, 8, 6],
+    [52, 47, 8, 6],
+  ],
+  water_mill_f5: [
     [16, 47, 8, 6],
     [52, 47, 8, 6],
   ],

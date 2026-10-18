@@ -62,8 +62,9 @@ def reeds() -> Canvas:
     return cv
 
 
-def water_mill() -> Canvas:
-    """The watermill, 112 x 96: a stone mill house with a thatched-look tarred roof seen
+def water_mill(turn: float = 0.0) -> Canvas:
+    """The watermill, 112 x 96 (its wheel `turn` radians round; six frames a 24th of a
+    turn apart loop, since paddles and spokes repeat every quarter turn): a stone mill house with a thatched-look tarred roof seen
     from above, a timber upper floor, warm windows, and a big wooden wheel on its east
     side with buckets, turning in the race."""
     w, h = 112, 96
@@ -89,14 +90,14 @@ def water_mill() -> Canvas:
             cv.set(int(round(wcx + t * math.cos(a))), int(round(wcy + t * math.sin(a))),
                    WOOD[4] if lit and t == r else WOOD[3] if lit else WOOD[1] if t == r else WOOD[2])
     for k in range(16):  # paddles standing out past the rim
-        a = 2 * math.pi * k / 16
+        a = 2 * math.pi * k / 16 + turn
         for t in range(r - 2, r + 4):
             for o in (0, 1):
                 x = int(round(wcx + t * math.cos(a) - o * math.sin(a)))
                 y = int(round(wcy + t * math.sin(a) + o * math.cos(a)))
                 cv.set(x, y, WOOD[3] if o == 0 else WOOD[1])
     for k in range(8):
-        a = 2 * math.pi * k / 8 + 0.2
+        a = 2 * math.pi * k / 8 + 0.2 + turn
         for t in range(3, r - 2):
             cv.set(int(round(wcx + t * math.cos(a))), int(round(wcy + t * math.sin(a))), WOOD[2])
     for (x, y) in disc(wcx, wcy, 3.2):
@@ -704,7 +705,8 @@ def props() -> dict[str, Canvas]:
         'barn': barn(), 'haystack': haystack(), 'scarecrow': scarecrow(), 'windmill': windmill(),
         'windmill_f1': windmill(math.pi / 6), 'windmill_f2': windmill(math.pi / 3),
         'pumpkins': pumpkins(), 'sheep': sheep(1), 'sheep_left': sheep(-1), 'beehive': beehive(),
-        'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(), 'heron': heron(), 'lily_pads': lily_pads(),
+        'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(),
+        **{f'water_mill_f{n}': water_mill(n * math.pi / 24) for n in range(1, 6)}, 'heron': heron(), 'lily_pads': lily_pads(),
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
         'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(), 'station_house': station_house(),

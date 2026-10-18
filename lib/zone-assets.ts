@@ -227,6 +227,11 @@ import propWashingLine from '@/assets/zones/props/washing_line.png';
 import propWaterCrane from '@/assets/zones/props/water_crane.png';
 import propWaterJar from '@/assets/zones/props/water_jar.png';
 import propWaterMill from '@/assets/zones/props/water_mill.png';
+import propWaterMillF1 from '@/assets/zones/props/water_mill_f1.png';
+import propWaterMillF2 from '@/assets/zones/props/water_mill_f2.png';
+import propWaterMillF3 from '@/assets/zones/props/water_mill_f3.png';
+import propWaterMillF4 from '@/assets/zones/props/water_mill_f4.png';
+import propWaterMillF5 from '@/assets/zones/props/water_mill_f5.png';
 import propWaterTower from '@/assets/zones/props/water_tower.png';
 import propWateringCan from '@/assets/zones/props/watering_can.png';
 import propWeaponRack from '@/assets/zones/props/weapon_rack.png';
@@ -510,6 +515,11 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   water_crane: propWaterCrane,
   water_jar: propWaterJar,
   water_mill: propWaterMill,
+  water_mill_f1: propWaterMillF1,
+  water_mill_f2: propWaterMillF2,
+  water_mill_f3: propWaterMillF3,
+  water_mill_f4: propWaterMillF4,
+  water_mill_f5: propWaterMillF5,
   water_tower: propWaterTower,
   watering_can: propWateringCan,
   weapon_rack: propWeaponRack,
