@@ -106,6 +106,13 @@ const LUMEN_STARS: Emitter[] = Array.from({ length: 14 }, (_, i) => ({
 
 const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
   lumen: LUMEN_STARS,
+  // and in Halcyon's viewports, above the planet's rim
+  station: Array.from({ length: 8 }, (_, i) => ({
+    kind: 'twinkle' as const,
+    x: 30 + ((i * 113) % 260),
+    y: 16 + ((i * 29) % 26),
+    seed: 90 + i,
+  })),
   harbour: [
     { kind: 'fish', x: 200, y: 470, seed: 53 },
     { kind: 'gull', x: 120, y: 360, seed: 1 },
