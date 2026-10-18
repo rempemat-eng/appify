@@ -126,6 +126,9 @@ export const zoneNames: Record<TileId, string> = {
 
 const SPEED = 40; // art pixels per second, a brisk walk
 const KEY_SPEED = 52; // walking by the keys: a purposeful trot
+/** Which way a leg of a walk faces; null for one that only goes up or down. */
+const legFacing = (a: Point, b: Point) =>
+  Math.abs(b.x - a.x) < 2 ? null : b.x < a.x ? ('left' as const) : ('right' as const);
 // Zones that keep their own light at every hour (no night tint).
 const OWN_LIGHT: TileId[] = ['neon', 'skyport', 'station', 'lumen', 'caldera', 'springs', 'home'];
 // Where a lamp's light sits on its sprite (x, y from its top-left, in art pixels).
@@ -468,7 +471,9 @@ export function AtlasWalk({
     const path = grid.walk.findPath(from0, goal);
     if (!path.length) return;
     const end = path[path.length - 1];
-    setFacing(end.x < from0.x ? 'left' : 'right');
+    // face the way each leg goes; a leg that only goes up or down keeps the facing
+    const firstFacing = legFacing(from0, path[0]) ?? legFacing(from0, end);
+    if (firstFacing) setFacing(firstFacing);
     setWalking(true);
     let length = 0;
     let prev = from0;
@@ -499,7 +504,13 @@ export function AtlasWalk({
               ? Easing.out(Easing.quad)
               : Easing.linear;
       const ms = !glide && (first || last) ? duration * 1.25 : duration;
-      xs.push(withTiming(p.x, { duration: ms, easing }));
+      const next = path[i + 1];
+      const nextFacing = next ? legFacing(p, next) : null;
+      xs.push(
+        withTiming(p.x, { duration: ms, easing }, (finished) => {
+          if (finished && nextFacing) runOnJS(setFacing)(nextFacing);
+        }),
+      );
       ys.push(withTiming(p.y, { duration: ms, easing }));
       from = p;
     });

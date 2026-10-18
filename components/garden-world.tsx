@@ -145,6 +145,9 @@ type Action = keyof typeof gardenHotspots;
 const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
 const KEY_SPEED = 52; // walking by the keys: a purposeful trot, so crossing the garden is quick
+/** Which way a leg of a walk faces; null for one that only goes up or down. */
+const turn = (a: Point, b: Point) =>
+  Math.abs(b.x - a.x) < 2 ? null : b.x < a.x ? ('left' as const) : ('right' as const);
 const START: Point = GARDEN_START;
 const BED: Point = gardenAnchors.bed;
 // One still ground image; only the water moves, as small four-frame overlays.
@@ -557,6 +560,9 @@ export function GardenWorld({
   const busy = useRef(false);
   // walking out once: a held key's repeats must not open the valley twice as it opens
   const leaving = useRef(false);
+  const veil = useSharedValue(0);
+  const veilPending = useRef(false);
+  const veilStyle = useAnimatedStyle(() => ({ opacity: veil.value }));
   const activeRef = useRef(active);
   const lastTouch = useRef(0);
   const journeyId = useRef(0);
@@ -572,6 +578,15 @@ export function GardenWorld({
     activeRef.current = active;
     if (active) {
       leaving.current = false;
+      // walked back in from the valley or the hut: the garden fades up from the dark,
+      // as the world does on arrival (none with reduced motion)
+      if (veilPending.current) {
+        veilPending.current = false;
+        if (!reduced) {
+          veil.set(1);
+          veil.set(withTiming(0, { duration: 320 }));
+        }
+      }
       return;
     }
     journeyId.current += 1;
@@ -582,7 +597,7 @@ export function GardenWorld({
     busy.current = false;
     if (napTimer.current) clearTimeout(napTimer.current);
     napTimer.current = null;
-  }, [active, px, py]);
+  }, [active, px, py, reduced, veil]);
 
   useEffect(
     () => () => {
@@ -704,7 +719,10 @@ export function GardenWorld({
       arrived(id, action, end);
       return;
     }
-    setFacing(end.x < start.x ? 'left' : 'right');
+    // face the way each leg goes (a path that doubles back turns round on the way),
+    // keeping the old facing for a leg that only goes up or down
+    const firstFacing = turn(start, path[0]) ?? turn(start, end);
+    if (firstFacing) setFacing(firstFacing);
     if (reduced) {
       px.set(end.x);
       py.set(end.y);
@@ -713,14 +731,34 @@ export function GardenWorld({
     }
     busy.current = true;
     setWalking(true);
+    // set off gently and slow into the last step (anticipate, act, settle); level in
+    // between, and level all the way for a held key, which is retargeted every tick
+    const keyed = speed !== SPEED;
     let from = start;
     const xs = [];
     const ys = [];
-    for (const p of path) {
+    for (const [i, p] of path.entries()) {
       const d = Math.hypot(p.x - from.x, p.y - from.y);
-      const duration = Math.max(60, (d / speed) * 1000);
-      xs.push(withTiming(p.x, { duration, easing: Easing.linear }));
-      ys.push(withTiming(p.y, { duration, easing: Easing.linear }));
+      const first = i === 0;
+      const last = i === path.length - 1;
+      const easing = keyed
+        ? Easing.linear
+        : first && last
+          ? Easing.inOut(Easing.quad)
+          : first
+            ? Easing.in(Easing.quad)
+            : last
+              ? Easing.out(Easing.quad)
+              : Easing.linear;
+      const duration = Math.max(60, (d / speed) * 1000) * (!keyed && (first || last) ? 1.25 : 1);
+      const next = path[i + 1];
+      const nextFacing = next ? turn(p, next) : null;
+      xs.push(
+        withTiming(p.x, { duration, easing }, (finished) => {
+          if (finished && nextFacing) runOnJS(setFacing)(nextFacing);
+        }),
+      );
+      ys.push(withTiming(p.y, { duration, easing }));
       from = p;
     }
     px.set(withSequence(...xs));
@@ -860,6 +898,7 @@ export function GardenWorld({
     pos.current = p;
     busy.current = false;
     lastTouch.current = clock();
+    veilPending.current = true;
   }, [arrivalKey, napping, px, py]);
 
   // Idle life: wander, sniff the flowers, sit. Never while the player is acting.
@@ -1747,6 +1786,21 @@ export function GardenWorld({
             );
           })()}
       </Animated.View>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width,
+            height: viewHeight,
+            backgroundColor: '#1E1917',
+            zIndex: 2000,
+          },
+          veilStyle,
+        ]}
+      />
     </View>
   );
 }
