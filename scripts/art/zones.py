@@ -13,6 +13,7 @@ draws the art and checks its own logic (every exit and stand reachable on foot).
 """
 from __future__ import annotations
 
+import functools
 import json
 import math
 import os
@@ -241,7 +242,9 @@ def pennant() -> Canvas:
     return pole
 
 
+@functools.lru_cache(maxsize=1)
 def sprites() -> dict[str, Canvas]:
+    """Every zone sprite, finalized once (drawing is deterministic, so one copy serves all zones)."""
     items = wp.props()
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
                   'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant(),
@@ -2428,12 +2431,17 @@ SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 OVERHEAD = {'steam_puff', 'drone', 'bunting'}
 
 
+@functools.lru_cache(maxsize=None)
+def region_keys(name: str) -> frozenset:
+    return frozenset(REGION_PROPS[name]())
+
+
 def build(name: str, fn, start: str):
     sprite_map = sprites()
     cv, objects, stands, *rest = fn()
     blocked_ground = rest[0] if rest else set()
     if name in REGION_PROPS:
-        own = set(REGION_PROPS[name]()) | SHARED_PROPS
+        own = region_keys(name) | SHARED_PROPS
         foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
         assert not foreign, f'{name} borrows props from another region: {foreign}'
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
