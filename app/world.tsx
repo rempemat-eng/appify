@@ -33,6 +33,7 @@ import {
 import { restoreWorld } from '@/lib/world-save';
 import { useUi } from '@/lib/ui';
 import { prefetchRegion } from '@/lib/zone-prefetch';
+import { WorldMap } from '@/components/world-map';
 import { HUT_DOOR, type Point } from '@/lib/garden-path';
 
 const regionNames: Record<RegionId, string> = {
@@ -58,6 +59,7 @@ const shortNames: Record<RegionId, string> = {
 };
 const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 const exitIds: ExitId[] = ['gate', 'trail', 'west', 'east'];
+const noZones: readonly string[] = [];
 const insideDoor = regionPoint(doors.inside);
 /** Where on the garden screen a point counts as home: the garden's yard, or the hut's
  *  front door seen from inside (garden pixels), else null. */
@@ -212,7 +214,16 @@ export default function World() {
   );
   // a trip is the stations it stops at (the lines in world-places.ts), the destination
   // last, and which leg is playing
+  // where the world opened counts as walked (the map inks it in); later walks, journeys
+  // and doors record their own steps
+  const [opening] = useState(spawn);
+  useEffect(() => {
+    walkWorld(opening.region, opening.at.x, opening.at.y, true);
+  }, [opening, walkWorld]);
   const [cardBox, setCardBox] = useState(0);
+  const [mapOpen, setMapOpen] = useState(false);
+  // where the companion stands and which zones it has walked, for the map (only while it is open)
+  const worldSpot = useGame((s) => (mapOpen ? s.world : null));
   const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
   const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
@@ -506,7 +517,12 @@ export default function World() {
               height={viewH}
               onZone={setZone}
               onSettle={settle}
-              onMove={homeward}
+              onMove={(at) => {
+                // the zones crossed on the way are walked too (the map inks them in)
+                walkWorld(spawn.region, at.x, at.y);
+                homeward(at);
+              }}
+              interactive={!mapOpen}
               showName={false}
               focusY={card ? 0.3 : 0.55}
               padBottom={card ? Math.min(cardH, cardBox || cardH) + insets.bottom + 16 : 0}
@@ -599,7 +615,27 @@ export default function World() {
               </BodyText>
             )}
           </PixelFrame>
+          <View style={{ width: 72 }}>
+            <PixelButton small light label="MAP" onPress={() => setMapOpen(true)} />
+          </View>
         </View>
+      )}
+      {mapOpen && !trip && (
+        <WorldMap
+          regions={travelOrder.map((id) => ({ id, name: regionNames[id] }))}
+          current={spawn.region}
+          here={
+            worldSpot && worldSpot.region === spawn.region
+              ? { x: worldSpot.x, y: worldSpot.y }
+              : spawn.at
+          }
+          visited={worldSpot?.visited ?? noZones}
+          width={width}
+          height={height}
+          insetTop={insets.top}
+          insetBottom={insets.bottom}
+          onClose={() => setMapOpen(false)}
+        />
       )}
     </View>
   );

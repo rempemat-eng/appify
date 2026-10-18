@@ -3372,6 +3372,11 @@ def export(built: dict):
         'export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {',
         *[f'  {z}: ground{ident(z)},' for z in built],
         '};',
+        *[f"import map{ident(z)} from '@/assets/zones/{z}/map.png';" for z in [*built, 'garden']],
+        '/** Each zone drawn small as a paper map (scripts/art/map_tiles.py), 40 x 72 art pixels. */',
+        'export const zoneMapTiles: Record<ZoneId | \'garden\', ImageSourcePropType> = {',
+        *[f'  {z}: map{ident(z)},' for z in [*built, 'garden']],
+        '};',
         "import beyondImage from '@/assets/zones/beyond.png';",
         '/** Old forest, drawn where a region\'s grid has no zone (the valley\'s corners). */',
         'export const zoneBeyond: ImageSourcePropType = beyondImage;',
@@ -3415,6 +3420,8 @@ def main():
     check_overhangs(built)
     import world_lint  # the world's logic lint (world-rules.md, section 7): report only, for now
     world_lint.run(built, LAYOUT, None, OVERHEAD, {z: b['preview'] for z, b in built.items() if b['preview'] is not None})
+    import map_tiles  # the world map's tiles, drawn from the same reading of each zone
+    map_tiles.write_all(built, world_lint.garden_zone(), set(DOORS))
     export(built)
 
 

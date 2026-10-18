@@ -10,7 +10,7 @@ NapAttack is about resting instead of scrolling, so the world is laid out as a j
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ---------------------------------------------------------------------- |
 | **The Valley** (home)         | The garden, Crossroads Town, the Town Park, the Snowy Ridge, the Riverside, the Woodland                                                                                                                            | Rest, nature, slow days                   | On foot from the garden                                                |
 | **Driftwood Harbour**         | The coast south of town: a fishing harbour with jetties, boats, nets, a fish market and a lighthouse that keeps the night dark for the sleepers                                                                     | The calm of a tide; the lighthouse keeper | On foot (south of town, where the Cove was planned)                    |
-| **Hearthold Castle**          | A castle on the headland above the harbour: a courtyard with a well and banners, a great hall, a walled herb garden and a library tower. Its old ruler declared fixed hours for sleep; the bell still rings bedtime | Routine and keeping hours                 | On foot along the cliff path from the harbour, over a drawbridge       |
+| **Hearthold Castle**          | A castle on a rock ringed by lava past the desert (moved 18 Oct): a courtyard with a well and banners, a great hall, a walled herb garden and a library tower; a dragon circles the towers. Its old ruler declared fixed hours for sleep; the bell still rings bedtime | Routine and keeping hours                 | On foot from Dust Gulch, over the stone bridge across the lava chasm       |
 | **Cogsworth Junction**        | Steampunk: a railway town of brass, copper roofs, clock towers, pipes, steam vents and an airship mast. Everyone runs to the minute                                                                                 | Schedules and clockwork busyness          | The steam train from Crossroads Town station                           |
 | **Dust Gulch**                | A western desert town: a saloon, a water tower, boardwalks, cacti, tumbleweed, a dry well, and the Desert Oasis (L8) outside town                                                                                   | Drought: a well run dry, like attention   | The train line west from Cogsworth                                     |
 | **Ember Caldera**             | Lava fields under a volcano: obsidian paths, lava rivers crossed by stone bridges, forges, heat shimmer, a cooled crust where it is safe                                                                            | Burnout                                   | The old mine cart line from Dust Gulch's mine                          |
@@ -18,6 +18,15 @@ NapAttack is about resting instead of scrolling, so the world is laid out as a j
 | **Halcyon Station and Lumen** | A space station in orbit with garden pods and a window onto the planet, then Lumen, a small quiet moon with glowing flora, slow light and low gravity                                                               | The deepest sleep, far above the noise    | The space elevator at the edge of Neon Harbour                         |
 
 Later regions from the earlier list (tundra, sky islands, coral reef, glowshroom forest, dreamscape) fold into these where they fit: the glowshroom forest and dreamscape become Lumen's flora, the sky islands sit on the airship route from Cogsworth, the coral reef lies off Driftwood Harbour.
+
+## Hearthold moves to the fire country (Matt, 18 Oct 16:33)
+
+Matt: "the castle could be in the lava section. perhaps you go through the desert biome and at the end there is a stone bridge underneath which lava flows and around the castle is lava, perhaps with a dragon flying around." So:
+
+- **The way there is walked, not ridden.** The desert and the fire country become one walkable region: Dust Gulch and the oasis, then a scorched stretch where the sand darkens to basalt and the first cracks glow, then a long stone bridge over a lava chasm (lava flowing under it, heat shimmer, no rail on the drop side), then Hearthold on a rock ringed by lava, reached only by that bridge. The caldera and the hot springs stay in the same region, past the castle. Real-world logic holds: lava runs downhill from the volcano round the castle's rock to the chasm, cools to crust at its edges, and nothing green grows near it.
+- **The dragon is the castle's keeper, and it is scenery.** It circles the towers on a slow, finite loop and lands on the keep to rest; it grants nothing, costs nothing and never blocks a path (AGENTS.md). With reduced motion it sleeps curled on the keep.
+- **The valley's corner becomes the Headland:** sea cliffs above the harbour's breakwater, a stone lookout tower with a timber top (the reference Matt sent), wildflowers, sheep and the cliff path's end. The harbour keeps its breakwater root and its sea.
+- **Order:** the Headland replaces the castle zone in the valley; the castle is redrawn for its new ground; the desert and fire regions are joined (the mine cart line stays as a shortcut back); the world map shows the new layout.
 
 ## Every region is its own place (Matt, 17 Oct 20:52)
 
@@ -31,7 +40,7 @@ Matt: "make sure different worlds are as detailed as i instructed you to be and 
 
 ## World logic for the atlas
 
-- Walking zones join only where the ground could really meet: the valley, the harbour and the castle are one walkable region.
+- Walking zones join only where the ground could really meet: the valley and the harbour are one walkable region; the desert, the castle and the fire country another (18 Oct).
 - Distant regions are joined by a vehicle that belongs to both ends: a railway from town, the airship from Cogsworth, a mine cart into the caldera, the maglev into the city, the space elevator out of it. The station or dock is drawn in both zones.
 - Each region keeps its own rules: sand and cacti only in Dust Gulch and the oasis, lava only in the caldera (it flows downhill and cools to crust at its edges), rain and neon in Neon Harbour, snow on the ridge.
 - Day and night are shared everywhere, except that Neon Harbour never gets fully dark or fully bright, and Lumen's sky is always starry.

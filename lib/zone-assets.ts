@@ -291,6 +291,49 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   lumen: groundLumen,
   home: groundHome,
 };
+import mapTown from '@/assets/zones/town/map.png';
+import mapRiverside from '@/assets/zones/riverside/map.png';
+import mapWoodland from '@/assets/zones/woodland/map.png';
+import mapPark from '@/assets/zones/park/map.png';
+import mapRidge from '@/assets/zones/ridge/map.png';
+import mapHalt from '@/assets/zones/halt/map.png';
+import mapJunction from '@/assets/zones/junction/map.png';
+import mapCanal from '@/assets/zones/canal/map.png';
+import mapNeon from '@/assets/zones/neon/map.png';
+import mapSkyport from '@/assets/zones/skyport/map.png';
+import mapGulch from '@/assets/zones/gulch/map.png';
+import mapOasis from '@/assets/zones/oasis/map.png';
+import mapCaldera from '@/assets/zones/caldera/map.png';
+import mapSprings from '@/assets/zones/springs/map.png';
+import mapHarbour from '@/assets/zones/harbour/map.png';
+import mapCastle from '@/assets/zones/castle/map.png';
+import mapStation from '@/assets/zones/station/map.png';
+import mapLumen from '@/assets/zones/lumen/map.png';
+import mapHome from '@/assets/zones/home/map.png';
+import mapGarden from '@/assets/zones/garden/map.png';
+/** Each zone drawn small as a paper map (scripts/art/map_tiles.py), 40 x 72 art pixels. */
+export const zoneMapTiles: Record<ZoneId | 'garden', ImageSourcePropType> = {
+  town: mapTown,
+  riverside: mapRiverside,
+  woodland: mapWoodland,
+  park: mapPark,
+  ridge: mapRidge,
+  halt: mapHalt,
+  junction: mapJunction,
+  canal: mapCanal,
+  neon: mapNeon,
+  skyport: mapSkyport,
+  gulch: mapGulch,
+  oasis: mapOasis,
+  caldera: mapCaldera,
+  springs: mapSprings,
+  harbour: mapHarbour,
+  castle: mapCastle,
+  station: mapStation,
+  lumen: mapLumen,
+  home: mapHome,
+  garden: mapGarden,
+};
 import beyondImage from '@/assets/zones/beyond.png';
 /** Old forest, drawn where a region's grid has no zone (the valley's corners). */
 export const zoneBeyond: ImageSourcePropType = beyondImage;
