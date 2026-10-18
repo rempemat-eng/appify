@@ -264,6 +264,7 @@ export function AtlasWalk({
 
   const px = useSharedValue(grid.start.x);
   const py = useSharedValue(grid.start.y);
+  const landing = useSharedValue(0);
   const pos = useRef<Point>({ ...grid.start });
   const [walking, setWalking] = useState(false);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
@@ -333,20 +334,37 @@ export function AtlasWalk({
     // a long walk on the missions map is squeezed into a moment
     const squeeze = maxWalkMs ? Math.min(1, maxWalkMs / Math.max(1, (length / SPEED) * 1000)) : 1;
     let from = from0;
-    const xs = [];
-    const ys = [];
-    for (const p of path) {
+    const xs: number[] = [];
+    const ys: number[] = [];
+    path.forEach((p, i) => {
       const duration = Math.max(
         squeeze < 1 ? 8 : 60,
         (Math.hypot(p.x - from.x, p.y - from.y) / SPEED) * 1000 * squeeze,
       );
-      xs.push(withTiming(p.x, { duration, easing: Easing.linear }));
-      ys.push(withTiming(p.y, { duration, easing: Easing.linear }));
+      // set off gently and slow into the last step (anticipate, act, settle); level between
+      const first = i === 0;
+      const last = i === path.length - 1;
+      const easing =
+        first && last
+          ? Easing.inOut(Easing.quad)
+          : first
+            ? Easing.in(Easing.quad)
+            : last
+              ? Easing.out(Easing.quad)
+              : Easing.linear;
+      xs.push(withTiming(p.x, { duration: first || last ? duration * 1.25 : duration, easing }));
+      ys.push(withTiming(p.y, { duration: first || last ? duration * 1.25 : duration, easing }));
       from = p;
-    }
+    });
     const arrive = () => {
       pos.current = end;
       setWalking(false);
+      if (!reduced && active) {
+        // a small squash as the feet settle, then still
+        landing.set(
+          withSequence(withTiming(1, { duration: 90 }), withTiming(0, { duration: 170 })),
+        );
+      }
       const tile = tileAt(region, end.x, end.y);
       if (tile) setHere(tile.id);
       calls.current.onSettle?.(end);
@@ -385,6 +403,14 @@ export function AtlasWalk({
     const cy = Math.max(0, Math.min(regionH - height + padBottom, py.value * u - height * focusY));
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
+  const landStyle = useAnimatedStyle(() => ({
+    // squash about the feet: shorter and a little wider, the bottom edge kept in place
+    transform: [
+      { translateY: landing.value * petPx * 0.04 },
+      { scaleY: 1 - landing.value * 0.08 },
+      { scaleX: 1 + landing.value * 0.05 },
+    ],
+  }));
   const petStyle = useAnimatedStyle(() => ({
     transform: [
       { translateX: Math.round(px.value * u - petPx / 2) },
@@ -613,25 +639,27 @@ export function AtlasWalk({
               petStyle,
             ]}
           >
-            {player ? (
-              <GuardianPet
-                player={player}
-                size={petPx}
-                facing={facing}
-                walking={walking && active && !reduced}
-                bob={!walking && !reduced && active}
-                active={active}
-                decorative
-              />
-            ) : (
-              <Pet
-                size={petPx}
-                facing={facing}
-                walking={walking && !reduced}
-                active={active}
-                decorative
-              />
-            )}
+            <Animated.View style={landStyle}>
+              {player ? (
+                <GuardianPet
+                  player={player}
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && active && !reduced}
+                  bob={!walking && !reduced && active}
+                  active={active}
+                  decorative
+                />
+              ) : (
+                <Pet
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && !reduced}
+                  active={active}
+                  decorative
+                />
+              )}
+            </Animated.View>
           </Animated.View>
         </Animated.View>
       </View>
