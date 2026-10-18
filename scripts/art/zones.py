@@ -264,7 +264,7 @@ def sprites() -> dict[str, Canvas]:
 
 
 # Props with a way through them: (from, to) in sprite pixels.
-OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44), 'ticket_gates': (4, 80)}
+OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44), 'ticket_gates': (4, 80), 'moon_arch': (20, 44)}
 
 
 def walk_grid(objects, sprite_map) -> list[str]:
@@ -1291,7 +1291,10 @@ def oasis(frame: int = 0):
         ('col-3', 'column_stump_b', 10, 500),
         # out in the dunes
         ('cactus-1', 'saguaro_small', 286, 118), ('skull', 'cow_skull', 180, 540), ('weed', 'tumbleweed', 40, 150),
-        ('weed-2', 'tumbleweed', 250, 220),
+        ('weed-2', 'tumbleweed', 250, 220), ('acacia-1', 'acacia', 226, 84), ('acacia-2', 'acacia', 4, 92),
+        ('scrub-1', 'desert_scrub', 128, 140), ('scrub-2', 'desert_scrub_b', 16, 400), ('scrub-3', 'desert_scrub', 184, 420),
+        ('scrub-4', 'desert_scrub_b', 288, 300), ('rocks-1', 'sandstone_outcrop', 140, 505),
+        ('rocks-2', 'sandstone_outcrop_b', 256, 170),
     ]
     stands = {'gulch': (312, 548), 'pool': (130, 352), 'camp': (250, 500), 'arch': (58, 500),
               'crane': (110, 76), 'dunes': (200, 140)}
@@ -1305,6 +1308,58 @@ CALDERA_RIVER = [(170, 60), (178, 140), (160, 230), (200, 320), (250, 400), (300
 def caldera_rim(x):
     """The crater rim's line (x in the caldera's coordinates)."""
     return 62 + int(math.sin(x / 19) * 7 + noise2(x // 5, 0, 263) * 6)
+
+
+def cooled_flow(cv: Canvas, points, radius: float, seed: int, skip=frozenset()):
+    """A tongue of old lava cooled flat on the ash (pahoehoe): a dark basalt sheet whose
+    skin wrinkled into ropes as it flowed, the ropes bowed downstream (they ran faster
+    down the middle), a lit lip along its upper edge and a dark toe with a hard shadow
+    on the ash below. Walkable ground; paths and rivers painted later cover it."""
+    BASALT = MATERIALS['basalt']
+    # narrow where it left its source, spreading as it went, and ending in round toes
+    total = sum(math.hypot(x1 - x0, y1 - y0) for (x0, y0), (x1, y1) in zip(points, points[1:]))
+    sheet, run = set(), 0.0
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        seg = math.hypot(x1 - x0, y1 - y0)
+        for i in range(int(seg) + 1):
+            t = i / max(1, seg)
+            f = (run + seg * t) / total
+            r = radius * (0.45 + 0.75 * f) * (0.85 + 0.3 * smooth_noise(x0 + i, y0, 7, seed))
+            sheet |= disc(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, r)
+        run += seg
+    (ax, ay), (bx, by) = points[-2], points[-1]
+    ux, uy = (bx - ax) / math.hypot(bx - ax, by - ay), (by - ay) / math.hypot(bx - ax, by - ay)
+    for (side, ahead, rr) in ((-0.9, 0.4, 0.7), (0.9, 0.2, 0.62), (0.0, 0.9, 0.55)):  # the toes
+        cx = bx + (ux * ahead - uy * side) * radius
+        cy = by + (uy * ahead + ux * side) * radius
+        sheet |= disc(cx, cy, radius * rr)
+    sheet = {(x, y) for (x, y) in sheet if 0 <= x < W and 0 <= y < H} - set(skip)
+    line, run = [], 0.0
+    for (x0, y0), (x1, y1) in zip(points, points[1:]):
+        n = int(max(abs(x1 - x0), abs(y1 - y0))) or 1
+        for i in range(n):
+            t = i / n
+            line.append((x0 + (x1 - x0) * t, y0 + (y1 - y0) * t, run + math.hypot(x1 - x0, y1 - y0) * t))
+        run += math.hypot(x1 - x0, y1 - y0)
+    for (x, y) in sheet:
+        lx, ly, along = min(line, key=lambda p: (p[0] - x) ** 2 + (p[1] - y) ** 2)
+        d2 = (lx - x) ** 2 + (ly - y) ** 2
+        rope = int(along - d2 / (radius * 1.1) + noise2(x // 4, y // 4, seed) * 1.5) % 6
+        c = BASALT[3] if smooth_noise(x, y, 6, seed + 1) > 0.35 else BASALT[2]  # a dull sheen
+        if rope == 0:
+            c = BASALT[4]  # the lit crest of a rope
+        elif rope == 1:
+            c = BASALT[2]  # its shaded downstream side
+        cv.set(x, y, c)
+    for (x, y) in sheet:
+        if (x, y - 1) not in sheet:
+            cv.set(x, y, MATERIALS['ash'][3] if x % 4 else BASALT[4])  # the lit lip
+        elif (x, y + 1) not in sheet:
+            cv.set(x, y, BASALT[1])  # the toe
+            if (x, y + 1) not in skip and 0 <= y + 1 < H:
+                style.darken(cv, x + 1, y + 1)  # its shadow on the ash
+        elif (x + 1, y) not in sheet:
+            cv.set(x, y, BASALT[2])
 
 
 def caldera(frame: int = 0):
@@ -1329,6 +1384,11 @@ def caldera(frame: int = 0):
     for i in range(200):
         x, y = int(noise2(i, 0, 262) * W), int(noise2(i, 1, 262) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
+    # old flows, cooled flat on the ash between the newer things
+    for (pts, r, sd) in (([(226, 80), (256, 96), (284, 104)], 13, 601),
+                         ([(4, 182), (36, 196), (70, 206)], 14, 602),
+                         ([(152, 446), (170, 486), (186, 520)], 12, 604)):
+        cooled_flow(cv, pts, r, sd)
     # the crater: a lava lake at the top behind a ragged basalt rim
     rim = caldera_rim
     for x in range(W):
@@ -1431,6 +1491,9 @@ def caldera(frame: int = 0):
         ('cols-4', 'basalt_columns_low', 262, 220), ('cols-5', 'basalt_columns', 0, 520),
         ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 238, 326), ('obs-3', 'obsidian', 262, 556 - 26),
         ('obs-4', 'obsidian_small', 60, 230), ('vent-2', 'cooling_vent', 214, 196), ('vent-3', 'cooling_vent', 280, 360),
+        ('scree-1', 'scree', 92, 176), ('scree-2', 'scree_small', 206, 90), ('scree-3', 'scree_b', 232, 440),
+        ('scree-4', 'scree_small', 176, 546), ('scree-5', 'scree_small', 6, 486),
+        ('snag-1', 'charred_snag', 290, 236), ('snag-2', 'charred_snag', 14, 120 + 64), ('snag-3', 'charred_snag', 196, 470),
     ]
     # the bridge is part of the ground (walkable), drawn across the river
     deck = style.finalize(cdp.basalt_bridge(), name='basalt_bridge')
@@ -1471,6 +1534,10 @@ def springs(frame: int = 0):
     for i in range(140):
         x, y = int(noise2(i, 0, 500) * W), int(noise2(i, 1, 500) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
+    for (pts, r, sd) in (([(2, 112), (24, 132), (50, 146)], 13, 611),
+                         ([(318, 176), (288, 194), (262, 200)], 12, 612),
+                         ([(118, 498), (142, 520), (164, 546)], 12, 613)):
+        cooled_flow(cv, pts, r, sd)
     # the end of the crater lake, closed by its rim
     def rim(x):
         return caldera_rim(x + W) - max(0, x - 16) * 0.9
@@ -1632,6 +1699,9 @@ def springs(frame: int = 0):
         ('cols-1', 'basalt_columns', 262, 520), ('cols-2', 'basalt_columns_low', 286, 40), ('cols-3', 'basalt_columns_low', 210, 540),
         ('vent-1', 'cooling_vent', 150, 60), ('vent-2', 'cooling_vent', 300, 120), ('vent-3', 'cooling_vent', 110, 556 - 20),
         ('obs-1', 'obsidian_small', 20, 470), ('obs-2', 'obsidian', 286, 400),
+        ('scree-1', 'scree', 28, 128), ('scree-2', 'scree_small', 196, 70), ('scree-3', 'scree_b', 250, 352),
+        ('scree-4', 'scree_small', 40, 504), ('snag-1', 'charred_snag', 226, 84), ('snag-2', 'charred_snag', 4, 190),
+        ('snag-3', 'charred_snag', 296, 166),
     ]
     stands = {'caldera': (8, 300), 'pools': (100, 250), 'bath': (250, 494), 'delta': (130, 540), 'slope': (220, 70)}
     return cv, objects, stands, blocked | lake
@@ -2183,7 +2253,8 @@ def lumen(frame: int = 0):
                 v = 3.4 - t * 2.2 + (0.3 if (x + y) % 2 else 0)
             cv.set(x, y, R[max(0, min(5, int(v)))])
     for (cx, cy, r, rays) in ((54, 130, 18, True), (270, 96, 10, False), (296, 380, 12, False), (40, 470, 9, False),
-                              (120, 250, 8, False), (210, 150, 6, False), (280, 560, 14, True)):
+                              (120, 250, 8, False), (210, 150, 6, False), (280, 560, 14, True),
+                              (130, 556, 7, False), (306, 236, 6, False), (196, 352, 5, False), (24, 330 - 20, 4, False)):
         crater(cx, cy, r, rays)
     # the shuttle's pad: a ring scorched into the dust
     for (x, y) in oval(160, 126, 50, 16):
@@ -2222,8 +2293,18 @@ def lumen(frame: int = 0):
             x = int(x0 + (x1 - x0) * k / steps) + (3 if (k + i) % 2 else -3)
             y = int(y0 + (y1 - y0) * k / steps)
             cv.set(x, y, R[1]); cv.set(x + 1, y, R[1]); cv.set(x, y + 1, R[2])
+    # the old lander's tracks: it rolled a little way on its feet before it stopped
+    for track in ([(318, 372), (296, 376), (276, 362)], [(254, 358), (226, 372), (204, 362)]):
+        for side in (0, 6):
+            for i in range(len(track) - 1):
+                (x0, y0), (x1, y1) = track[i], track[i + 1]
+                n = int(math.hypot(x1 - x0, y1 - y0))
+                for k in range(0, n, 2):
+                    x, y = x0 + (x1 - x0) * k // n, y0 + (y1 - y0) * k // n + side
+                    cv.set(x, y, R[1]); cv.set(x, y + 1, R[4])
     objects = [
-        ('shuttle', 'shuttle', 118, 72),
+        ('shuttle', 'shuttle', 118, 72), ('lander', 'old_lander', 246, 322), ('arch', 'moon_arch', 196, 524),
+        ('rock-7', 'moon_rock', 20, 420), ('rock-8', 'moon_rock_small', 50, 434), ('rock-9', 'moon_rock_small', 104, 206),
         ('rock-1', 'moon_rock', 26, 180), ('rock-2', 'moon_rock_small', 230, 200), ('rock-3', 'moon_rock', 278, 300),
         ('rock-4', 'moon_rock_small', 80, 330), ('rock-5', 'moon_rock_small', 290, 470), ('rock-6', 'moon_rock', 14, 540),
         ('crystal-1', 'moon_crystal', 196, 228), ('crystal-2', 'moon_crystal', 262, 236), ('crystal-3', 'moon_crystal', 200, 276),

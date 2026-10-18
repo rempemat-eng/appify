@@ -682,6 +682,58 @@ def water_crane() -> Canvas:
     cv.set(19, 30, IRON[1]); cv.hline(17, 30, 2, IRON[1])
     return cv
 
+def acacia() -> Canvas:
+    """A desert acacia, 56 x 46: a flat umbrella crown of small olive leaf clumps (light
+    caps, dark rims; style.leafy) on a leaning, forked trunk."""
+    import style
+    w, h = 56, 46
+    cv = Canvas(w, h, pad=PAD)
+    BARK = ['#3A2618', '#5A3C24', '#7A5434', '#9A7048', '#B88E62']
+    for (x0, y0, x1, y1, wd) in ((26, h - 2, 24, 22, 3), (25, 28, 14, 16, 2), (25, 26, 40, 15, 2), (24, 24, 28, 12, 1)):
+        n = max(abs(x1 - x0), abs(y1 - y0))
+        for t in range(n + 1):
+            x, y = x0 + (x1 - x0) * t / n, y0 + (y1 - y0) * t / n
+            for dx in range(wd + 1):
+                cv.set(int(x) + dx, int(y), BARK[3] if dx == 0 else BARK[2] if dx < wd else BARK[1])
+    OLIVE = ['#2E3A1C', '#4A5A2A', '#6A7A38', '#8E9A4A', '#B4BA6A']
+    style.leafy(cv, 27, 12, 25, 8, OLIVE, r=2.4, seed=17)
+    return cv
+
+
+def desert_scrub(seed: int = 0) -> Canvas:
+    """A low tamarisk scrub, 26 x 16: a tangle of grey-green feathery clumps with a few
+    pink flower tips, dry twigs at its feet."""
+    import style
+    w, h = 26, 16
+    cv = Canvas(w, h, pad=PAD)
+    SAGE = ['#38402C', '#56603E', '#78825A', '#98A27A', '#BCC4A0']
+    style.leafy(cv, 13, 8, 11, 5.5, SAGE, r=2.0, seed=seed + 9)
+    for k in range(4):
+        x, y = 5 + int(noise2(k, seed, 378) * 16), 4 + int(noise2(k, seed, 379) * 5)
+        if cv.get(x, y)[3]:
+            cv.set(x, y, '#E8A0BC')
+    return cv
+
+
+def sandstone_outcrop(seed: int = 0) -> Canvas:
+    """Weathered sandstone blocks breaking out of the dune, 40 x 24: layered beds in
+    adobe tones (lit tops, shaded right flanks; style.facet_stone), sand piled at the foot."""
+    import style
+    w, h = 40, 24
+    cv = Canvas(w, h, pad=PAD)
+    for k, (cx, cy, rx, ry) in enumerate(((16, 12, 13, 9), (30, 15, 9, 7), (8, 18, 6, 4))):
+        pts = {(x, y) for y in range(cy - ry, cy + ry + 1) for x in range(cx - rx, cx + rx + 1)
+               if max(abs(x - cx) / rx, abs(y - cy) / ry) * 0.7 + math.hypot((x - cx) / rx, (y - cy) / ry) * 0.3 <= 1}
+        style.facet_stone(cv, pts, ADOBE, seed=seed + k)
+        for (x, y) in pts:  # the beds
+            if (y - cy + 40) % 4 == 0 and (x, y - 1) in pts and (x, y + 1) in pts:
+                cv.set(x, y, ADOBE[1] if x > cx else ADOBE[2])
+    for (x, y) in oval(20, h - 2, 18, 2.5):
+        if y >= h - 3:
+            cv.set(x, y, DESERT[4] if x < 20 else DESERT[3])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'saloon': false_front(104, 0, RED, 'saloon'), 'store': false_front(88, 3, WTR, 'store'),
@@ -693,7 +745,8 @@ def props() -> dict[str, Canvas]:
         'palm': palm(True), 'palm_small': palm(False), 'sandstone_arch': sandstone_arch(), 'awning': awning(),
         'water_jar': water_jar(), 'camel': camel(), 'tent': tent(), 'fire_pit': fire_pit(),
         'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
-        'water_crane': water_crane(),
+        'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
+        'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
     }
 
 

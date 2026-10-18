@@ -295,13 +295,72 @@ def stone_lantern() -> Canvas:
         cv.hline(3, y, 10, BASALT[3] if y == 22 else BASALT[1])
     return cv
 
+
+def scree(big: bool = True, seed: int = 0) -> Canvas:
+    """Fallen basalt boulders, 30 x 20 (or 20 x 14): three or four chunky blocks, each
+    with a lit top plane, a mid front and a dark right flank (style.facet_stone), the
+    small ones tucked in front of the big one, and grit spilled round their feet."""
+    import style
+    w, h = (30, 20) if big else (20, 14)
+    cv = Canvas(w, h, pad=PAD)
+    blocks = ((0.42, 0.42, 0.34, 0.5), (0.16, 0.7, 0.2, 0.3), (0.74, 0.74, 0.22, 0.3), (0.5, 0.86, 0.14, 0.18)) if big \
+        else ((0.4, 0.45, 0.38, 0.55), (0.78, 0.76, 0.22, 0.3), (0.14, 0.8, 0.16, 0.24))
+    for k, (fx, fy, fw, fh) in enumerate(blocks):
+        cx, cy, rx, ry = fx * w, fy * h, fw * w, fh * h
+        pts = set()
+        for y in range(int(cy - ry), int(cy + ry) + 1):
+            for x in range(int(cx - rx), int(cx + rx) + 1):
+                # a squarish rounded block, chipped at one corner
+                d = max(abs(x - cx) / rx, abs(y - cy) / ry) * 0.6 + math.hypot((x - cx) / rx, (y - cy) / ry) * 0.4
+                if d <= 1 and not (x - cx > rx * 0.5 and y - cy < -ry * 0.4 and noise2(k, seed, 254) > 0.4):
+                    pts.add((x, y))
+        style.facet_stone(cv, pts, BASALT, seed=seed * 7 + k)
+    for i in range(5):  # grit round the feet
+        gx = 2 + int(noise2(i, seed, 255) * (w - 4))
+        cv.set(gx, h - 1, BASALT[2]); cv.set(gx + 1, h - 1, BASALT[1])
+    return cv
+
+
+def charred_snag(seed: int = 0) -> Canvas:
+    """A tree the lava burned and left standing, 24 x 40: a split black trunk lit grey on
+    its left flank, two bare limbs, bark checked into squares like charcoal, and one
+    crack still glowing near the foot."""
+    w, h = 24, 40
+    cv = Canvas(w, h, pad=PAD)
+    CHAR = ['#141014', '#241C1E', '#3A3032', '#5A4C4C', '#7E6E6A']
+    cx = 12
+    for y in range(8, h - 1):
+        half = 3 + (1 if y > h - 9 else 0) + (1 if y > h - 4 else 0)
+        for x in range(cx - half, cx + half + 1):
+            k = (x - (cx - half)) / (2 * half)
+            c = CHAR[3] if k < 0.3 else CHAR[2] if k < 0.7 else CHAR[1]
+            if (y // 3 + x // 2) % 2 == 0 and 0.2 < k < 0.8 and y % 3 == 0:
+                c = CHAR[0]  # charcoal checking
+            cv.set(x, y, c)
+        if y < 14:  # the split top
+            cv.set(cx, y, CHAR[0])
+    for (x0, y0, dx, n) in ((cx - 3, 20, -1, 9), (cx + 3, 15, 1, 8), (cx - 1, 9, -1, 5)):
+        for t in range(n):  # bare limbs reaching up and out, 2 px thick, lit on top
+            x, y = x0 + dx * t, y0 - int(t * 0.8)
+            cv.set(x, y, CHAR[3] if dx < 0 else CHAR[2]); cv.set(x, y + 1, CHAR[1])
+            if t < n - 3:
+                cv.set(x, y + 2, CHAR[1])
+        tx, ty = x0 + dx * (n - 1), y0 - int((n - 1) * 0.8)
+        cv.set(tx + dx, ty - 1, CHAR[2]); cv.set(tx, ty - 2, CHAR[2])  # a forked twig at the end
+    for y in range(h - 9, h - 4):  # the crack still glowing
+        cv.set(cx + 1 + (y % 2), y, LAVA[3] if y == h - 7 else LAVA[2])
+    cv.hline(cx - 6, h - 1, 13, ASH[1])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'basalt_columns': basalt_columns(5, 0), 'basalt_columns_low': basalt_columns(3, 7), 'forge': forge(),
         'obsidian': obsidian_rock(True), 'obsidian_small': obsidian_rock(False), 'cooling_vent': cooling_vent(),
         'basalt_bridge': basalt_bridge(), 'ember_shrine': ember_shrine(),
         'bathhouse': bathhouse(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
-        'stone_lantern': stone_lantern(),
+        'stone_lantern': stone_lantern(), 'scree': scree(True, 0), 'scree_small': scree(False, 3),
+        'scree_b': scree(True, 5), 'charred_snag': charred_snag(),
     }
 
 

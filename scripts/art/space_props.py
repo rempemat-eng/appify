@@ -435,6 +435,70 @@ def glow_caps() -> Canvas:
     return cv
 
 
+def old_lander() -> Canvas:
+    """An old lander left long ago, 40 x 36: a squat octagonal body wrapped in gold foil
+    (lit facets upper left, creased, a dark facet lower right), a dish on top, four
+    splayed legs on round feet, and dust drifted over one foot."""
+    w, h = 40, 36
+    cv = Canvas(w, h, pad=PAD)
+    FOIL = ['#5A3A10', '#8A5E1A', '#C2902E', '#E8BE52', '#FFE28A']
+    for (x0, y0, x1, y1, fx) in ((8, 20, 2, 32, -1), (32, 20, 38, 32, 1), (14, 22, 11, 34, -1), (26, 22, 29, 34, 1)):
+        n = max(abs(x1 - x0), abs(y1 - y0))
+        for t in range(n + 1):  # a leg
+            x, y = x0 + (x1 - x0) * t // n, y0 + (y1 - y0) * t // n
+            cv.set(x, y, HULL[3] if fx < 0 else HULL[2]); cv.set(x + 1, y, HULL[1])
+        for (x, y) in oval(x1, y1, 3, 1.4):
+            cv.set(x, y, HULL[4] if x < x1 else HULL[2])  # its foot
+    body = {(x, y) for y in range(8, 24) for x in range(7, 33) if abs(x - 20) + abs(y - 16) * 0.8 < 16}
+    for (x, y) in body:
+        face = (x - 7) // 6
+        c = FOIL[4] if face == 0 else FOIL[3] if face == 1 else FOIL[2] if face < 3 else FOIL[1]
+        if y < 11:
+            c = FOIL[4] if x < 22 else FOIL[3]
+        if (x * 7 + y * 3) % 11 == 0:
+            c = FOIL[min(4, FOIL.index(c) + 1)] if x < 20 else FOIL[max(0, FOIL.index(c) - 1)]  # creases in the foil
+        if (x - 7) % 6 == 0:
+            c = FOIL[0]  # the seam between facets
+        cv.set(x, y, c)
+    for (x, y) in body:
+        if (x, y + 1) not in body:
+            cv.set(x, y, FOIL[0])
+    cv.vline(20, 2, 7, HULL[2])
+    for (x, y) in oval(20, 3, 6, 2.4):  # the dish
+        cv.set(x, y, HULL[5] if x < 19 else HULL[3] if y < 4 else HULL[2])
+    cv.set(20, 3, HULL[1])
+    for (x, y) in oval(29, 34, 7, 2):  # dust over a foot
+        if y >= 33:
+            cv.set(x, y, REGOLITH[4] if x < 29 else REGOLITH[3])
+    return cv
+
+
+def moon_arch() -> Canvas:
+    """A natural arch of moon rock, 64 x 44: two rounded piers and a span worn smooth,
+    pale where the sun strikes the upper left, dark under the span; you walk through."""
+    w, h = 64, 44
+    cv = Canvas(w, h, pad=PAD)
+    rock = set()
+    for (x, y) in oval(32, 20, 30, 18):
+        inner = ((x - 32) / 15) ** 2 + ((y - 30) / 16) ** 2 < 1  # the hole, open below
+        if not inner:
+            rock.add((x, y))
+    for (x0, x1) in ((3, 18), (46, 61)):  # the piers down to the ground
+        rock |= {(x, y) for x in range(x0, x1) for y in range(20, h - 2)
+                 if abs(x - (x0 + x1) / 2) < (x1 - x0) / 2 - (1 if y > h - 6 else 0)}
+    for (x, y) in rock:
+        k = (x - 3) / 58 + (y - 2) / (h - 4) * 0.8
+        c = REGOLITH[5] if k < 0.35 else REGOLITH[4] if k < 0.75 else REGOLITH[3] if k < 1.15 else REGOLITH[2]
+        if noise2(x // 3, y // 3, 372) > 0.84:
+            c = REGOLITH[max(1, REGOLITH.index(c) - 1)]  # pits
+        cv.set(x, y, c)
+    for (x, y) in rock:
+        if (x, y + 1) not in rock and y < h - 6:
+            cv.set(x, y, REGOLITH[1])  # the underside of the span
+            cv.set(x, y - 1, REGOLITH[2])
+    return cv
+
+
 def props_station() -> dict[str, Canvas]:
     return {'garden_pod': garden_pod(), 'viewport': viewport(), 'sleep_pod': sleep_pod(), 'airlock': airlock(),
             'console': console(), 'hydro_trough': hydro_trough(), 'galley_table': galley_table(),
@@ -445,7 +509,7 @@ def props_station() -> dict[str, Canvas]:
 def props_lumen() -> dict[str, Canvas]:
     return {'moon_shrub': moon_shrub(), 'moon_crystal': moon_crystal(), 'shuttle': shuttle(), 'dream_pool': dream_pool(),
             'moon_tree': moon_tree(), 'hammock': hammock(), 'moon_rock': moon_rock(True), 'moon_rock_small': moon_rock(False),
-            'glow_caps': glow_caps()}
+            'glow_caps': glow_caps(), 'old_lander': old_lander(), 'moon_arch': moon_arch()}
 
 
 def props() -> dict[str, Canvas]:
