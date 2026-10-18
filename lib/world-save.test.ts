@@ -6,6 +6,7 @@ import { makeWalkGrid } from './garden-path';
 import { regionBounds } from './region-walk';
 import { readSave, writeSave } from './save-data';
 import { residentLines, residentRoutes } from './resident-routes';
+import { zoneMaps, zoneWindows } from './zone-maps';
 
 let checks = 0;
 const ok = (value: unknown, message: string) => {
@@ -90,3 +91,19 @@ console.log(`World save and places: ${checks} checks passed.`);
 // every resident has something to say when the companion stops beside them
 for (const who of Object.keys(residentRoutes)) ok(residentLines[who], `${who} has a line`);
 console.log(`Residents: ${Object.keys(residentRoutes).length} have a line each.`);
+
+// lit windows: every pane sits inside the sprite it belongs to, wherever that sprite stands
+let panes = 0;
+for (const zone of Object.values(zoneMaps)) {
+  for (const [id, sprite, , , w, h] of zone.objects) {
+    for (const [x, y, pw, ph] of zoneWindows[sprite] ?? []) {
+      ok(
+        x >= 0 && y >= 0 && x + pw <= w && y + ph <= h && pw > 0 && ph > 0,
+        `${id}: a pane inside ${sprite}`,
+      );
+      panes++;
+    }
+  }
+}
+ok(panes > 20, 'the valley houses have lit windows');
+console.log(`Lit windows: ${panes} panes inside their buildings.`);
