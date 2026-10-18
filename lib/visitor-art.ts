@@ -1,5 +1,5 @@
 import { palette as c } from '@/lib/game';
-import type { ArtPixel } from '@/lib/pet-art';
+import { shadowRows, type ArtPixel } from '@/lib/pet-art';
 import type { VisitorId } from '@/lib/visitors';
 import { PET_INDEX, hatSprites, petPalette, visitorSprites } from '@/lib/pet-sprites';
 
@@ -17,7 +17,7 @@ export function visitorPixels(
   const rect = (x: number, y: number, w: number, h: number, color: string) => {
     for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) dot(xx, yy, color);
   };
-  if (groundShadow) rect(9, 30, 16, 1, c.stone);
+  if (groundShadow) shadowRows(dot);
   // Redrawn visitors (scripts/art/pets.py): shaded 32x32 sprites.
   const sprite = visitorSprites[id];
   const draw = (rows: readonly string[], left = 0, top = 0) =>
