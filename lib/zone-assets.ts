@@ -345,10 +345,15 @@ export const zoneMapTiles: Record<ZoneId | 'garden', ImageSourcePropType> = {
 };
 import beyondImage from '@/assets/zones/beyond.png';
 import beyondAshImage from '@/assets/zones/beyond-ash.png';
+import beyondDunesImage from '@/assets/zones/beyond-dunes.png';
 /** Old forest, drawn where a region's grid has no zone (the valley's corners). */
 export const zoneBeyond: ImageSourcePropType = beyondImage;
-/** What fills a gap in a region other than the valley (the volcano's flank in the fire country). */
-export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = { lava: beyondAshImage };
+/** What lies past a region other than the valley, in its gaps and round its edges when
+ * the screen sees past them: the volcano's flank, the open desert. */
+export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = {
+  lava: beyondAshImage,
+  west: beyondDunesImage,
+};
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,

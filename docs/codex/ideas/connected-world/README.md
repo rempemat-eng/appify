@@ -2,6 +2,8 @@
 
 Research, geography proposal and engineering handoff for Claude · 18 October 2026
 
+**Latest logic and gameplay proposal:** [Places, paths and coming home](./gameplay-logic.md), reviewed against main `c0e8252e8a54f09430b4783cf5e7ba08b5b9add6`. Read this first for the current-source handoff. It retains Claude's separate western/fire regions, walking pass and two Hearthold bridges. The older merged Sunreach arrangement and single castle approach below are superseded alternatives. Neither JSON contract nor illustration is the implemented world's authority; the new document separates existing behavior, proposed safeguards and expansion requiring approval. PR #23 remains a draft design reference, as Claude requested.
+
 **Status: design proposal, not a live-world replacement.** Matt explicitly requested a fresh map, substantial comparable-game research, a second polish pass, path/segment logic and a GitHub handoff. This package does not import anything into the game, move an existing zone, migrate a real save, alter a rule/reward, or edit Claude's art/vision/UI lane. The initial reviewed code is `f299f59a989191a9070fd23bfdf6162f6fb34e1c`; the verification baseline is newer main `500605d39f16164eab6af50168ba6b3bccdbcd63` (Claude's foliage/detail pass).
 
 ![Whole-world geography concept](./world-concept.png)

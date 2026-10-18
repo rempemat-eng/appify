@@ -332,6 +332,19 @@ function Flyer({
 // Things that turn (a windmill's sails): the sprite and its frames, one shown at a time.
 const FRAME_MS = 400; // divides FLOAT_LOOP
 
+/**
+ * What shows past a region with no open country round it, when the screen sees past its
+ * edge: the night over the city's water, space round the station and the moon, the dark
+ * of the room. (The valley, the desert and the fire country draw their land instead.)
+ */
+const BACKDROP: Partial<Record<RegionId, string>> = {
+  neon: '#100E1A',
+  space: '#05060C',
+  moon: '#05060C',
+  home: '#1E1612',
+  steam: '#2A2D36',
+};
+
 /** The companion's outline through whatever hides it: fades in, faint, never takes taps. */
 function Ghost({
   px,
@@ -788,6 +801,7 @@ export function AtlasWalk({
     (t) => Math.abs(t.col - hereTile.col) <= reachX && Math.abs(t.row - hereTile.row) <= reachY,
   );
   const gaps: { col: number; row: number }[] = [];
+  const opensOut = region === 'valley' || !!zoneBeyondByRegion[region];
   for (let col = hereTile.col - reachX; col <= hereTile.col + reachX; col++)
     for (let row = hereTile.row - reachY; row <= hereTile.row + reachY; row++) {
       const inside =
@@ -795,7 +809,10 @@ export function AtlasWalk({
         row >= bounds.minRow &&
         col < bounds.minCol + bounds.tileCols &&
         row < bounds.minRow + bounds.tileRows;
-      if (inside && !tiles.some((t) => t.col === col && t.row === row)) gaps.push({ col, row });
+      // past a region's edge (a region shorter or narrower than the screen) the land runs
+      // on where it has open country round it; elsewhere the backdrop's colour shows
+      if (inside ? !tiles.some((t) => t.col === col && t.row === row) : opensOut)
+        gaps.push({ col, row });
     }
   const drawables = near.flatMap((t) => tileDrawables(region, t));
   // behind a building or a big tree, the companion's outline shows through (a flyer's box
@@ -840,7 +857,9 @@ export function AtlasWalk({
   };
 
   return (
-    <View style={{ width, height, overflow: 'hidden', backgroundColor: '#2F4630' }}>
+    <View
+      style={{ width, height, overflow: 'hidden', backgroundColor: BACKDROP[region] ?? '#2F4630' }}
+    >
       <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, width, height }}>
         <Animated.View
           // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
