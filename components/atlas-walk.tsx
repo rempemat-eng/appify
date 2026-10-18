@@ -416,6 +416,7 @@ export function AtlasWalk({
                 top={snap(tileOrigin(region, t).y * u)}
                 u={u}
                 running={active && !reduced}
+                night={night && !OWN_LIGHT.includes(t.id)}
               />
             ),
           )}

@@ -15,13 +15,24 @@ import { zoneMaps, type ZoneId } from '@/lib/zone-maps';
  * Small things that move by themselves in a zone (world-atlas.md, "A world that
  * feels alive"): steam from chimneys, vents and the engine, embers over the forge
  * and the shrine, spores drifting off Lumen's shrubs, gulls over the harbour,
- * butterflies in the valley, rain over Neon Harbour and the Skyport. Presentation only. Everything
+ * butterflies in the valley (fireflies at night), falling leaves, lizards in the
+ * desert, a fish jumping now and then, rain over Neon Harbour and the Skyport. Presentation only. Everything
  * runs from one clock per zone, stops when the screen is inactive and is absent
  * with reduced motion. Where things appear follows the zone's own props, so the
  * life always belongs to what is drawn. (Codex's C21 schedule will later decide
  * which of these are out at each time of day and weather.)
  */
-type Kind = 'puff' | 'ember' | 'spore' | 'gull' | 'butterfly' | 'rain';
+type Kind =
+  | 'puff'
+  | 'ember'
+  | 'spore'
+  | 'gull'
+  | 'butterfly'
+  | 'rain'
+  | 'firefly'
+  | 'lizard'
+  | 'fish'
+  | 'leaf';
 type Emitter = { kind: Kind; x: number; y: number; seed: number };
 
 // Each period divides the clock's 36 s loop, so no particle jumps when it wraps.
@@ -32,6 +43,10 @@ const PERIOD = {
   gull: 9000,
   butterfly: 6000,
   rain: 720,
+  firefly: 4000,
+  lizard: 9000,
+  fish: 12000,
+  leaf: 7200,
 } as const;
 
 // Where a prop gives off something, relative to its top-left in zone pixels.
@@ -73,6 +88,7 @@ function rainOver(drops: number): Emitter[] {
 
 const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
   harbour: [
+    { kind: 'fish', x: 200, y: 470, seed: 53 },
     { kind: 'gull', x: 120, y: 360, seed: 1 },
     { kind: 'gull', x: 230, y: 430, seed: 2 },
     { kind: 'gull', x: 60, y: 300, seed: 3 },
@@ -89,8 +105,29 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
   woodland: [
     { kind: 'butterfly', x: 110, y: 140, seed: 9 },
     { kind: 'butterfly', x: 150, y: 170, seed: 10 },
+    { kind: 'leaf', x: 60, y: 120, seed: 50 },
+    { kind: 'leaf', x: 240, y: 300, seed: 51 },
+    { kind: 'leaf', x: 140, y: 420, seed: 52 },
   ],
-  riverside: [{ kind: 'butterfly', x: 120, y: 420, seed: 11 }],
+  riverside: [
+    { kind: 'butterfly', x: 120, y: 420, seed: 11 },
+    { kind: 'fish', x: 150, y: 298, seed: 40 },
+    { kind: 'fish', x: 100, y: 302, seed: 41 },
+  ],
+  oasis: [
+    { kind: 'lizard', x: 230, y: 140, seed: 42 },
+    { kind: 'lizard', x: 60, y: 420, seed: 43 },
+    { kind: 'lizard', x: 270, y: 260, seed: 44 },
+    { kind: 'fish', x: 100, y: 296, seed: 45 },
+  ],
+  gulch: [
+    { kind: 'lizard', x: 200, y: 360, seed: 46 },
+    { kind: 'lizard', x: 260, y: 470, seed: 47 },
+  ],
+  halt: [
+    { kind: 'butterfly', x: 220, y: 400, seed: 48 },
+    { kind: 'leaf', x: 250, y: 200, seed: 49 },
+  ],
   // steam off the hot pools, and where the hot stream meets the dying lava
   springs: [
     { kind: 'puff', x: 236, y: 150, seed: 20 },
@@ -114,14 +151,18 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
   skyport: rainOver(70),
 };
 
-export function zoneEmitters(zone: ZoneId): Emitter[] {
+/** What is out in a zone; at night the butterflies give way to fireflies. */
+export function zoneEmitters(zone: ZoneId, night = false): Emitter[] {
   const out: Emitter[] = [];
   zoneMaps[zone].objects.forEach(([, sprite, x, y], i) => {
     for (const s of SOURCES[sprite] ?? [])
       for (let k = 0; k < 3; k++)
         out.push({ kind: s.kind, x: x + s.dx, y: y + s.dy, seed: i * 7 + k });
   });
-  return [...out, ...(ZONE_EXTRAS[zone] ?? [])];
+  const extras = (ZONE_EXTRAS[zone] ?? []).map((e) =>
+    night && e.kind === 'butterfly' ? { ...e, kind: 'firefly' as const } : e,
+  );
+  return [...out, ...extras];
 }
 
 function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: number }) {
@@ -155,6 +196,27 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
       dx = Math.cos(t * 6.28) * 16 + Math.sin(t * 18.8) * 3;
       dy = Math.sin(t * 12.6) * 7;
       scale = Math.sin(t * 50) > 0 ? 1 : 0.4; // wing beat
+    } else if (e.kind === 'firefly') {
+      dx = Math.sin(t * 6.28 + phase * 6) * 14 + Math.sin(t * 18.8) * 3;
+      dy = Math.cos(t * 6.28) * 8;
+      opacity = Math.max(0, Math.sin(t * 25 + phase * 9)); // slow blinks
+    } else if (e.kind === 'lizard') {
+      // a dash, a long still sunbathe, a dash back
+      const run = t < 0.08 ? t / 0.08 : t < 0.5 ? 1 : t < 0.58 ? 1 - (t - 0.5) / 0.08 : 0;
+      dx = run * 26;
+      dy = run * 4;
+      scale = t < 0.5 ? 1 : -1;
+    } else if (e.kind === 'fish') {
+      // still water most of the time, then one jump: an arc and a ring
+      const j = (t - 0.8) / 0.2;
+      opacity = t > 0.8 ? 1 : 0;
+      dx = j * 10;
+      dy = t > 0.8 ? -Math.sin(j * 3.14) * 9 : 0;
+      scale = j > 0.85 ? 2 : 1;
+    } else if (e.kind === 'leaf') {
+      dx = Math.sin(t * 12.6) * 8 + t * 10;
+      dy = t * 70;
+      opacity = t < 0.1 ? t / 0.1 : t > 0.85 ? (1 - t) / 0.15 : 1;
     } else {
       dx = -t * 12;
       dy = t * 120;
@@ -165,11 +227,9 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
       transform: [
         { translateX: Math.round((e.x + dx) * u) },
         { translateY: Math.round((e.y + dy) * u) },
-        e.kind === 'gull'
+        e.kind === 'gull' || e.kind === 'butterfly' || e.kind === 'lizard'
           ? { scaleX: scale }
-          : e.kind === 'butterfly'
-            ? { scaleX: scale }
-            : { scale },
+          : { scale },
       ],
     };
   });
@@ -193,6 +253,22 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
   if (e.kind === 'ember') return <Animated.View style={[box(1, 1, '#FFB648'), style]} />;
   if (e.kind === 'spore') return <Animated.View style={[box(1, 1, '#6FF2D2'), style]} />;
   if (e.kind === 'rain') return <Animated.View style={[box(1, 5, '#B8C8E8'), style]} />;
+  if (e.kind === 'firefly') return <Animated.View style={[box(1, 1, '#E8FF8A'), style]} />;
+  if (e.kind === 'leaf') return <Animated.View style={[box(2, 1, '#E07A28'), style]} />;
+  if (e.kind === 'fish')
+    return (
+      <Animated.View style={[{ position: 'absolute', left: 0, top: 0 }, style]}>
+        <View style={{ ...box(3, 1, '#C8D4DC'), left: 0, top: 0 }} />
+        <View style={{ ...box(1, 1, '#8A9AA8'), left: 3 * px, top: px }} />
+      </Animated.View>
+    );
+  if (e.kind === 'lizard')
+    return (
+      <Animated.View style={[{ position: 'absolute', left: 0, top: 0 }, style]}>
+        <View style={{ ...box(4, 1, '#5A6A3A'), left: 0, top: 0 }} />
+        <View style={{ ...box(2, 1, '#3E4A28'), left: 4 * px, top: px }} />
+      </Animated.View>
+    );
   if (e.kind === 'gull')
     return (
       <Animated.View style={[{ position: 'absolute', left: 0, top: 0 }, style]}>
@@ -216,12 +292,14 @@ export function ZoneLife({
   top,
   u,
   running,
+  night = false,
 }: {
   zone: ZoneId;
   left: number;
   top: number;
   u: number;
   running: boolean;
+  night?: boolean;
 }) {
   const clock = useSharedValue(0);
   useEffect(() => {
@@ -240,7 +318,7 @@ export function ZoneLife({
       pointerEvents="none"
       style={{ position: 'absolute', left, top, width: 320 * u, height: 576 * u, zIndex: 200000 }}
     >
-      {zoneEmitters(zone).map((e) => (
+      {zoneEmitters(zone, night).map((e) => (
         <Particle key={`${e.kind}-${e.x}-${e.y}-${e.seed}`} e={e} clock={clock} u={u} />
       ))}
     </View>
