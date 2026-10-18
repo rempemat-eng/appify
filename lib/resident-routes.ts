@@ -38,9 +38,9 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   stargazer: { zone: 'lumen', from: [176, 362], to: [264, 362] },
   warden: { zone: 'saddle', from: [152, 240], to: [168, 330] },
   skater: { zone: 'snowmelt', from: [162, 300], to: [208, 292] },
-  ferryman: { zone: 'landing', from: [194, 190], to: [180, 290] },
-  naturalist: { zone: 'rainforest', from: [200, 430], to: [200, 520] },
-  beachcomber: { zone: 'cove', from: [20, 404], to: [110, 408] },
+  ferryman: { zone: 'landing', from: [128, 360], to: [200, 364] },
+  naturalist: { zone: 'rainforest', from: [212, 420], to: [212, 520] },
+  beachcomber: { zone: 'cove', from: [160, 398], to: [250, 398] },
 };
 
 /** What each resident says when the companion stops beside them (decoration only). */
