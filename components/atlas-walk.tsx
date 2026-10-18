@@ -165,6 +165,18 @@ const LAMPS: Record<string, readonly [number, number]> = {
 };
 const NAME_MS = 2200; // how long a zone's name stays up after crossing into it
 
+/** Something more standing in a scene (a keepsake): its image and box in region pixels,
+ *  and its depth (its feet; 2 for a rug, which lies under everything). */
+export type SceneExtra = {
+  key: string;
+  src: ImageSourcePropType;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  z: number;
+};
+
 type Drawable = {
   key: string;
   sprite: string;
@@ -509,6 +521,10 @@ export function AtlasWalk({
   onZone,
   onMove,
   onSettle,
+  onTap,
+  walk: walkRows,
+  extras,
+  preview,
   maxWalkMs,
   showName = true,
   focusY = 0.55,
@@ -529,6 +545,17 @@ export function AtlasWalk({
   onMove?: (at: Point) => void;
   /** where a walk ended (or stopped) */
   onSettle?: (at: Point) => void;
+  /** A tap on the scene, in region pixels, before the companion walks: return true when
+   *  the tap was used (no walk), a point to walk there instead, or nothing to walk to it. */
+  onTap?: (at: Point) => boolean | Point | void;
+  /** the region's walk rows when something stands in the way (keepsakes in the hut);
+   *  keep the same array while it is unchanged */
+  walk?: readonly string[];
+  /** more things standing in the scene, in region pixels (keepsakes) */
+  extras?: readonly SceneExtra[];
+  /** a thing about to be placed: drawn faint, its footprint green where it may stand, red
+   *  where not */
+  preview?: SceneExtra & { ok: boolean; foot: { x: number; y: number; w: number; h: number } };
   /** squeeze a long walk into this many milliseconds (the missions map) */
   maxWalkMs?: number;
   showName?: boolean;
@@ -565,13 +592,13 @@ export function AtlasWalk({
           })();
     return {
       start: first,
-      walk: makeWalkGrid(regionWalk(region), {
+      walk: makeWalkGrid(walkRows ?? regionWalk(region), {
         cell: TILE.cell,
         width: bounds.width,
         start: first,
       }),
     };
-  }, [region, tiles, bounds.width, initial]);
+  }, [region, tiles, bounds.width, initial, walkRows]);
 
   const px = useSharedValue(grid.start.x);
   const py = useSharedValue(grid.start.y);
@@ -814,7 +841,10 @@ export function AtlasWalk({
       if (inside ? !tiles.some((t) => t.col === col && t.row === row) : opensOut)
         gaps.push({ col, row });
     }
-  const drawables = near.flatMap((t) => tileDrawables(region, t));
+  const drawables = [
+    ...near.flatMap((t) => tileDrawables(region, t)),
+    ...(extras ?? []).map((e) => ({ ...e, sprite: `extra:${e.key}` })),
+  ];
   // behind a building or a big tree, the companion's outline shows through (a flyer's box
   // is not where it flies, so it never counts)
   const hidden = hiddenBehind(
@@ -853,7 +883,10 @@ export function AtlasWalk({
       regionH <= height - padBottom
         ? (regionH - height + padBottom) / 2
         : Math.max(0, Math.min(regionH - height + padBottom, py.get() * u - height * focusY));
-    walkTo({ x: (locationX + cx) / u, y: (locationY + cy) / u });
+    const at = { x: (locationX + cx) / u, y: (locationY + cy) / u };
+    const used = onTap?.(at);
+    if (used === true) return;
+    walkTo(used ? used : at);
   };
 
   return (
@@ -1090,6 +1123,36 @@ export function AtlasWalk({
               )}
             </Animated.View>
           </Animated.View>
+          {preview && (
+            // a keepsake about to be set down: its footprint lit green (it may stand
+            // there) or red (not), the thing itself faint above it
+            <View pointerEvents="none" style={{ position: 'absolute', zIndex: 149998 }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  left: snap(preview.foot.x * u),
+                  top: snap(preview.foot.y * u),
+                  width: snap(preview.foot.w * u),
+                  height: snap(preview.foot.h * u),
+                  backgroundColor: preview.ok ? 'rgba(126,200,96,0.55)' : 'rgba(214,72,60,0.55)',
+                  borderWidth: Math.max(1, Math.round(u)),
+                  borderColor: preview.ok ? '#3E7A2E' : '#8A2A22',
+                }}
+              />
+              <Image
+                source={preview.src}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: snap(preview.x * u),
+                  top: snap(preview.y * u),
+                  width: snap(preview.w * u),
+                  height: snap(preview.h * u),
+                  opacity: 0.8,
+                }}
+              />
+            </View>
+          )}
           {hidden && (
             // the same companion again, faint, above everything but the night tint, so it
             // reads through what hides it and lines up with itself where nothing does

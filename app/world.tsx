@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
 import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +21,7 @@ import {
   exits,
   inGardenYard,
   missionPlaces,
+  keepsakeChest,
   passAt,
   regionPoint,
   rings,
@@ -36,6 +37,18 @@ import { useUi } from '@/lib/ui';
 import { prefetchRegion } from '@/lib/zone-prefetch';
 import { WorldMap } from '@/components/world-map';
 import { HUT_DOOR, type Point } from '@/lib/garden-path';
+import { DecoratePanel } from '@/components/decorate-panel';
+import {
+  checkDecor,
+  decorBox,
+  foundKeepsakes,
+  hutWalk,
+  keepsakes,
+  snapDecor,
+  walkWithDecor,
+  type DecorPlacement,
+} from '@/lib/decor';
+import { decorImages } from '@/lib/decor-assets';
 
 const regionNames: Record<RegionId, string> = {
   valley: 'THE VALLEY',
@@ -75,7 +88,7 @@ type Card =
   | { kind: 'mission'; id: 'book' | 'park' | 'mountain' }
   | { kind: 'shop' | 'arena' | 'garden' }
   | { kind: 'travel' }
-  | { kind: 'hut' | 'inside' }
+  | { kind: 'hut' | 'inside' | 'chest' }
   | { kind: 'ring' }
   | { kind: 'chat'; who: string };
 
@@ -90,8 +103,10 @@ function placeMarkers(region: RegionId, card: Card | null) {
   rings
     .filter((r) => r.region === region)
     .forEach((r, i) => add(`ring-${i}`, regionPoint(r), 'SPARRING RING', card?.kind === 'ring'));
-  if (region === 'home')
+  if (region === 'home') {
     add('inside', regionPoint(doors.inside), 'FRONT DOOR', card?.kind === 'inside');
+    add('chest', regionPoint(keepsakeChest), 'KEEPSAKE CHEST', card?.kind === 'chest');
+  }
   if (region === 'valley') {
     const names: Record<MissionPlaceId, string> = {
       book: 'LIBRARY',
@@ -113,7 +128,12 @@ const near = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y) <= PLACE_R
 
 /** What, if anything, happens where the companion stands. */
 function cardAt(region: RegionId, at: Point): Card | null {
-  if (region === 'home') return near(at, regionPoint(doors.inside)) ? { kind: 'inside' } : null;
+  if (region === 'home')
+    return near(at, regionPoint(doors.inside))
+      ? { kind: 'inside' }
+      : near(at, regionPoint(keepsakeChest))
+        ? { kind: 'chest' }
+        : null;
   const station = travelPoints[region];
   if (station && near(at, regionPoint(station))) return { kind: 'travel' };
   if (rings.some((r) => r.region === region && near(at, regionPoint(r)))) return { kind: 'ring' };
@@ -223,6 +243,31 @@ export default function World() {
   }, [opening, walkWorld]);
   const [cardBox, setCardBox] = useState(0);
   const [mapOpen, setMapOpen] = useState(false);
+  // Decorating the hut (C12): the keepsakes set out, the one in hand and where it was
+  // last tapped. Only inside the hut, and never during a journey.
+  const decor = useGame((s) => s.decor);
+  const visited = useGame((s) => s.world?.visited ?? noZones);
+  const found = useMemo(() => foundKeepsakes(visited), [visited]);
+  const [decorating, setDecorating] = useState(false);
+  const [hand, setHand] = useState<{ item: string; at: Point | null } | null>(null);
+  const homeWalk = useMemo(() => walkWithDecor(hutWalk(), decor), [decor]);
+  const homeExtras = useMemo(
+    () =>
+      decor.map((p) => {
+        const b = decorBox(p.item, p.x, p.y);
+        return {
+          key: `decor-${p.item}`,
+          src: decorImages[p.item],
+          x: b.left,
+          y: b.top,
+          w: b.w,
+          h: b.h,
+          // a rug lies under everything; the rest stand at their feet
+          z: b.flat ? 2 : p.y,
+        };
+      }),
+    [decor],
+  );
   // where the companion stands and which zones it has walked, for the map (only while it is open)
   const worldSpot = useGame((s) => (mapOpen ? s.world : null));
   const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
@@ -271,6 +316,8 @@ export default function World() {
 
   const settle = (at: Point) => {
     walkWorld(spawn.region, at.x, at.y, true);
+    // (while decorating, the companion only carries keepsakes about the room)
+    if (decorating) return;
     setCard(cardAt(spawn.region, at));
     homeward(at);
     throughPass(at);
@@ -298,11 +345,13 @@ export default function World() {
   const away = !player || player.mode !== 'awake' || !!battle || pendingReturn;
   // a station's card lists every line, so it may take up to half the screen; it
   // scrolls when even that is not enough
-  const cardH = !card
-    ? 0
-    : card.kind === 'travel'
-      ? Math.min(420, height * 0.5)
-      : Math.min(260, height * 0.36);
+  const cardH = decorating
+    ? Math.min(320, height * 0.46)
+    : !card
+      ? 0
+      : card.kind === 'travel'
+        ? Math.min(420, height * 0.5)
+        : Math.min(260, height * 0.36);
   const viewH = height;
 
   // back to the garden screen, standing at `at` (garden pixels) when given
@@ -320,6 +369,8 @@ export default function World() {
   };
   const enter = (region: RegionId, at: Point) => {
     feedback('select');
+    setDecorating(false);
+    setHand(null);
     setSpawn((s) => ({ region, at, key: s.key + 1 }));
     setGoal(undefined);
     setZone(tileAt(region, at.x, at.y)?.id);
@@ -346,8 +397,78 @@ export default function World() {
     if (useGame.getState().player?.mode === 'mission') router.replace('/');
   };
 
+  // Decorating: a tap on a keepsake in the room takes it in hand; with one in hand, a tap
+  // on the floor is where it would go, and the companion carries it there.
+  const placeDecor = useGame((s) => s.placeDecor);
+  const storeDecor = useGame((s) => s.storeDecor);
+  const decorTap = (at: Point): boolean | Point | void => {
+    const under = decor.filter((p) => {
+      const b = decorBox(p.item, p.x, p.y);
+      return at.x >= b.left && at.x < b.left + b.w && at.y >= b.top && at.y < b.top + b.h;
+    });
+    const solid = under
+      .filter((p) => !decorBox(p.item, p.x, p.y).flat)
+      .sort((a, b) => b.y - a.y)[0];
+    // (a rug is only picked up when nothing is in hand, so things can be set on it)
+    const hit: DecorPlacement | undefined = solid ?? (hand ? undefined : under[0]);
+    if (hit && hit.item !== hand?.item) {
+      feedback('select');
+      setHand({ item: hit.item, at: null });
+      return true;
+    }
+    if (!hand) return undefined;
+    const spot = snapDecor(at);
+    setHand({ item: hand.item, at: spot });
+    // stand just in front of the spot, not on it
+    return { x: spot.x, y: spot.y + 12 };
+  };
+  const handCheck = hand?.at ? checkDecor(hutWalk(), decor, hand.item, hand.at.x, hand.at.y) : null;
+  const preview = (() => {
+    if (!hand?.at) return undefined;
+    const b = decorBox(hand.item, hand.at.x, hand.at.y);
+    const xs = b.cells.map(([cx]) => cx * 4);
+    const ys = b.cells.map(([, cy]) => cy * 4);
+    return {
+      key: 'preview',
+      src: decorImages[hand.item],
+      x: b.left,
+      y: b.top,
+      w: b.w,
+      h: b.h,
+      z: hand.at.y,
+      ok: !!handCheck?.ok,
+      foot: {
+        x: Math.min(...xs),
+        y: Math.min(...ys),
+        w: Math.max(...xs) + 4 - Math.min(...xs),
+        h: Math.max(...ys) + 4 - Math.min(...ys),
+      },
+    };
+  })();
+
   const cardBody = () => {
     if (!card || !player) return null;
+    if (card.kind === 'chest')
+      return (
+        <>
+          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
+            THE KEEPSAKE CHEST
+          </BodyText>
+          <BodyText style={{ fontSize: 13 }}>
+            {found.length} of {keepsakes.length} keepsakes found. Every place you walk leaves one;
+            set them out anywhere in the hut, and move them whenever you like.
+          </BodyText>
+          <PixelButton
+            small
+            label="DECORATE"
+            onPress={() => {
+              feedback('select');
+              setHand(null);
+              setDecorating(true);
+            }}
+          />
+        </>
+      );
     if (card.kind === 'mission') {
       const mission = missions.find((m) => m.id === card.id);
       if (!mission) return null;
@@ -537,20 +658,27 @@ export default function World() {
               onMove={(at) => {
                 // the zones crossed on the way are walked too (the map inks them in)
                 walkWorld(spawn.region, at.x, at.y);
+                if (decorating) return;
                 homeward(at);
                 throughPass(at);
               }}
               interactive={!mapOpen}
               showName={false}
-              focusY={card ? 0.3 : 0.55}
-              padBottom={card ? Math.min(cardH, cardBox || cardH) + insets.bottom + 16 : 0}
+              focusY={card || decorating ? 0.3 : 0.55}
+              padBottom={
+                card || decorating ? Math.min(cardH, cardBox || cardH) + insets.bottom + 16 : 0
+              }
               target={goal}
-              markers={placeMarkers(spawn.region, card)}
+              markers={decorating ? undefined : placeMarkers(spawn.region, card)}
               onMarker={walkToPlace}
+              walk={spawn.region === 'home' ? homeWalk : undefined}
+              extras={spawn.region === 'home' ? homeExtras : undefined}
+              preview={decorating ? preview : undefined}
+              onTap={decorating ? decorTap : undefined}
             />
           </Animated.View>
         )}
-        {card && !away && !trip && (
+        {(card || decorating) && !away && !trip && (
           <View
             // the camera keeps the scene above the card as it is, not as tall as it may grow
             onLayout={(e) => setCardBox(Math.round(e.nativeEvent.layout.height))}
@@ -565,7 +693,35 @@ export default function World() {
           >
             <PixelFrame tone="paper" style={{ padding: 4 * u }}>
               <ScrollView style={{ maxHeight: cardH - 8 * u }} contentContainerStyle={{ gap: 6 }}>
-                {cardBody()}
+                {decorating ? (
+                  <DecoratePanel
+                    found={found}
+                    placed={decor}
+                    selected={hand?.item ?? null}
+                    check={handCheck}
+                    onSelect={(item) => setHand(item ? { item, at: null } : null)}
+                    onPlace={() => {
+                      if (!hand?.at) return;
+                      if (placeDecor(hand.item, hand.at.x, hand.at.y).ok) {
+                        feedback('select');
+                        setHand(null);
+                      }
+                    }}
+                    onStore={() => {
+                      if (!hand) return;
+                      storeDecor(hand.item);
+                      feedback('select');
+                      setHand(null);
+                    }}
+                    onDone={() => {
+                      setDecorating(false);
+                      setHand(null);
+                      setCard(null);
+                    }}
+                  />
+                ) : (
+                  cardBody()
+                )}
               </ScrollView>
             </PixelFrame>
           </View>

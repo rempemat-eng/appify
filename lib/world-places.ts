@@ -119,6 +119,9 @@ export const doors = {
   inside: { region: 'home', zone: 'home', at: stand('home', 'door') },
 } as const satisfies Record<string, PlaceDef>;
 
+/** The keepsake chest in the hut's bedroom, where decorating starts (lib/decor.ts). */
+export const keepsakeChest: PlaceDef = { region: 'home', zone: 'home', at: stand('home', 'chest') };
+
 /** Where the walk out of the garden screen leads: past the gate, up the ridge trail, or
  *  over the meadow's sides into the woodland and the riverside. */
 export const exits = {

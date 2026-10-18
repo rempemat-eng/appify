@@ -1926,7 +1926,8 @@ def home(frame: int = 0):
         ('coats', 'coat_rack', 116, 510), ('boots', 'boots', 186, 544), ('side', 'side_table', 98, 466),
         ('can', 'watering_can', 262, 520),
     ]
-    stands = {'door': (160, 544), 'bed': (96, 150), 'hearth': (60, 316), 'table': (240, 366), 'sunroom': (120, 500)}
+    stands = {'door': (160, 544), 'bed': (96, 150), 'hearth': (60, 316), 'table': (240, 366), 'sunroom': (120, 500),
+              'chest': (288, 186)}  # the keepsake chest: decorating starts here (C12)
     return cv, objects, stands, blocked
 
 

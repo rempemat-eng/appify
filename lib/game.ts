@@ -46,6 +46,16 @@ import {
 } from '@/lib/break-history';
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
 import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
+import {
+  checkDecor,
+  foundKeepsakes,
+  hutWalk,
+  keepsake,
+  newKeepsakes,
+  restoreDecor,
+  type DecorCheck,
+  type DecorPlacement,
+} from '@/lib/decor';
 import type { RegionId } from '@/lib/region-walk';
 import {
   addCard,
@@ -191,6 +201,8 @@ export type Saved = {
   cardReward: WelcomeReward | null;
   /** where the companion is in the walkable world (none until it first walks out) */
   world?: WorldSpot | null;
+  /** keepsakes set out in the nap hut (the rest wait in the chest; lib/decor.ts) */
+  decor?: DecorPlacement[];
 };
 export type SaveLoadProblem =
   | { kind: 'unreadable'; confirmationId: string | null; busy: boolean; error: string | null }
@@ -250,6 +262,12 @@ type Game = Saved & {
   world: WorldSpot | null;
   /** record where the companion stands in the world; walking grants nothing */
   walkWorld: (region: RegionId, x: number, y: number, settle?: boolean) => void;
+  decor: DecorPlacement[];
+  /** set a found keepsake on the hut's floor (or move it there); free, and refused if it
+   *  would stand in the way */
+  placeDecor: (item: string, x: number, y: number) => DecorCheck;
+  /** put a keepsake back in the chest */
+  storeDecor: (item: string) => void;
 };
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -334,6 +352,11 @@ function migrateSaved(value: unknown) {
   if (value.offDeck === undefined) value.offDeck = null;
   if (value.cardReward === undefined) value.cardReward = null;
   value.world = restoreWorld(value.world);
+  value.decor = restoreDecor(
+    value.decor,
+    isRecord(value.world) && isStringArray(value.world.visited) ? value.world.visited : [],
+    hutWalk(),
+  );
   if (isRecord(value.cardReward))
     value.cardReward = {
       grass: 0,
@@ -468,6 +491,7 @@ function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakI
     waitingVisitor: null,
     cardReward: null,
     world: null,
+    decor: [],
   };
 }
 function emptySession() {
@@ -608,6 +632,7 @@ function persist() {
     collectedCards: s.collectedCards,
     cardReward: s.cardReward,
     world: s.world,
+    decor: s.decor,
     waitingVisitor: s.waitingVisitor,
   };
   const encoded = writeSave(saved, saveSource);
@@ -850,12 +875,39 @@ export const gameStore = create<Game>((set, get) => ({
   cardReward: null,
   waitingVisitor: null,
   world: null,
+  decor: [],
+  placeDecor: (item, x, y) => {
+    const s = get();
+    if (!s.player || !foundKeepsakes(s.world?.visited ?? []).includes(item))
+      return { ok: false, why: 'unknown' };
+    const check = checkDecor(hutWalk(), s.decor, item, x, y);
+    if (!check.ok) return check;
+    set({ decor: [...s.decor.filter((p) => p.item !== item), { item, x, y }] });
+    void persist();
+    return check;
+  },
+  storeDecor: (item) => {
+    const s = get();
+    if (!s.decor.some((p) => p.item === item)) return;
+    set({ decor: s.decor.filter((p) => p.item !== item) });
+    void persist();
+  },
   walkWorld: (region, x, y, settle = false) => {
     const s = get();
     if (!s.player) return;
     const next = moveTo(s.world, region, x, y);
     const before = s.world;
     set({ world: next });
+    // a place walked for the first time leaves its keepsake in the hut's chest
+    const zone = next.visited.find((z) => !(before?.visited ?? []).includes(z));
+    const found = zone ? newKeepsakes(before?.visited ?? [], zone) : [];
+    if (found.length) {
+      const k = keepsake(found[0]);
+      if (k)
+        get().notify(
+          `A keepsake from ${k.from}: ${k.name.toLowerCase()}. It waits in the chest at home.`,
+        );
+    }
     // write when a zone is first seen or the region changes; positions ride along
     if (
       settle ||

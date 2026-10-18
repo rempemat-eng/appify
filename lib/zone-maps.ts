@@ -3995,6 +3995,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       hearth: [60, 316],
       table: [240, 366],
       sunroom: [120, 500],
+      chest: [288, 186],
     },
   },
 };
