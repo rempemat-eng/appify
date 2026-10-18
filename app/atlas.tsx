@@ -8,7 +8,7 @@ import { usePixelUnit } from '@/components/pixel-frame';
 import { PixelButton } from '@/components/game-ui';
 import type { RegionId } from '@/lib/region-walk';
 
-const regionIds: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
+const regionIds: RegionId[] = ['home', 'valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 const regionNames: Record<RegionId, string> = {
   valley: 'VALLEY',
   steam: 'COGSWORTH',
@@ -17,6 +17,7 @@ const regionNames: Record<RegionId, string> = {
   neon: 'NEON',
   space: 'HALCYON',
   moon: 'LUMEN',
+  home: 'HOUSE',
 };
 // Lumen is reached by shuttle from Halcyon: the same climb out of the atmosphere
 const journeyFor = (r: RegionId) => (r === 'moon' ? 'space' : r);
@@ -73,7 +74,12 @@ export default function Atlas() {
               light={r !== region}
               label={regionNames[r]}
               disabled={!!trip}
-              onPress={() => r !== region && setTrip(r)}
+              onPress={() => {
+                if (r === region) return;
+                // the house is through the door, not a journey away
+                if (r === 'home' || region === 'home') setRegion(r);
+                else setTrip(r);
+              }}
             />
           </View>
         ))}
