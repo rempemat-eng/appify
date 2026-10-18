@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { View } from 'react-native';
+import { Image, View } from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -10,6 +10,9 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated';
 import { zoneMaps, type ZoneId } from '@/lib/zone-maps';
+import { residentRoutes, type ResidentRoute } from '@/lib/resident-routes';
+import { residentSprites } from '@/lib/resident-sprites';
+import { residentFrames } from '@/lib/resident-assets';
 
 /**
  * Small things that move by themselves in a zone (world-atlas.md, "A world that
@@ -282,6 +285,108 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
       <View style={{ ...box(2, 2, '#F6C6D8'), left: 0, top: 0 }} />
       <View style={{ ...box(2, 2, '#E8A0BC'), left: 2 * px, top: 0 }} />
     </Animated.View>
+  );
+}
+
+const RESIDENT_PERIOD = 18000; // divides the 36 s clock
+const STEP_MS = 220; // one walking frame
+
+/**
+ * A resident on their route: a pause at one end, the walk across, a pause, the walk
+ * back. Two frames swap while walking; they face the way they go. Still at the start
+ * of the route when the clock is not running (reduced motion or an inactive screen).
+ */
+function Resident({
+  id,
+  route,
+  clock,
+  u,
+}: {
+  id: string;
+  route: ResidentRoute;
+  clock: SharedValue<number>;
+  u: number;
+}) {
+  const { w, h } = residentSprites[id];
+  const frames = residentFrames[id];
+  const [fx, fy] = route.from;
+  const [tx, ty] = route.to;
+  const phase = (((id.length * 0.13) % 1) + 1) % 1;
+  const place = useAnimatedStyle(() => {
+    const t = (((clock.value / RESIDENT_PERIOD + phase) % 1) + 1) % 1;
+    // 0-.1 pause, .1-.45 there, .45-.6 pause, .6-.95 back, .95-1 pause
+    const k =
+      t < 0.1 ? 0 : t < 0.45 ? (t - 0.1) / 0.35 : t < 0.6 ? 1 : t < 0.95 ? 1 - (t - 0.6) / 0.35 : 0;
+    const back = t >= 0.45;
+    const x = fx + (tx - fx) * k;
+    const y = fy + (ty - fy) * k;
+    return {
+      transform: [
+        { translateX: Math.round((x - w / 2) * u) },
+        { translateY: Math.round((y - h + 2) * u) },
+        { scaleX: tx >= fx ? (back ? -1 : 1) : back ? 1 : -1 },
+      ],
+    };
+  });
+  const step = useAnimatedStyle(() => {
+    const t = (((clock.value / RESIDENT_PERIOD + phase) % 1) + 1) % 1;
+    const walking = (t > 0.1 && t < 0.45) || (t > 0.6 && t < 0.95);
+    return { opacity: walking && Math.floor(clock.value / STEP_MS) % 2 === 1 ? 1 : 0 };
+  });
+  const box = { position: 'absolute' as const, left: 0, top: 0 };
+  return (
+    <Animated.View
+      style={[{ position: 'absolute', left: 0, top: 0, width: w * u, height: h * u }, place]}
+    >
+      <Image
+        source={frames[0]}
+        resizeMode="stretch"
+        style={{ ...box, width: w * u, height: h * u }}
+      />
+      <Animated.View style={[{ ...box, width: w * u, height: h * u }, step]}>
+        <Image
+          source={frames[1]}
+          resizeMode="stretch"
+          style={{ ...box, width: w * u, height: h * u }}
+        />
+      </Animated.View>
+    </Animated.View>
+  );
+}
+
+/** The people who live in a zone (static where the life layer is off). */
+export function ZoneResidents({
+  zone,
+  left,
+  top,
+  u,
+  running,
+}: {
+  zone: ZoneId;
+  left: number;
+  top: number;
+  u: number;
+  running: boolean;
+}) {
+  const clock = useSharedValue(0);
+  useEffect(() => {
+    cancelAnimation(clock);
+    clock.set(0);
+    if (!running) return undefined;
+    clock.set(withRepeat(withTiming(36000, { duration: 36000, easing: Easing.linear }), -1, false));
+    return () => cancelAnimation(clock);
+  }, [running, clock]);
+  const here = Object.entries(residentRoutes).filter(([, r]) => r.zone === zone);
+  if (here.length === 0) return null;
+  return (
+    <View
+      pointerEvents="none"
+      style={{ position: 'absolute', left, top, width: 320 * u, height: 576 * u, zIndex: 150000 }}
+    >
+      {here.map(([id, route]) => (
+        <Resident key={id} id={id} route={route} clock={clock} u={u} />
+      ))}
+    </View>
   );
 }
 

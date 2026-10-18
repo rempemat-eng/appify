@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Image,
   PixelRatio,
@@ -37,7 +37,7 @@ import {
 import { zoneMaps, zoneOverhead } from '@/lib/zone-maps';
 import { zoneGrounds, zoneProps } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
-import { ZoneLife } from '@/components/atlas-life';
+import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelFrame } from '@/components/pixel-frame';
@@ -409,15 +409,23 @@ export function AtlasWalk({
           ))}
           {near.map((t) =>
             t.id === 'garden' ? null : (
-              <ZoneLife
-                key={`life-${t.id}`}
-                zone={t.id}
-                left={snap(tileOrigin(region, t).x * u)}
-                top={snap(tileOrigin(region, t).y * u)}
-                u={u}
-                running={active && !reduced}
-                night={night && !OWN_LIGHT.includes(t.id)}
-              />
+              <Fragment key={`zone-${t.id}`}>
+                <ZoneLife
+                  zone={t.id}
+                  left={snap(tileOrigin(region, t).x * u)}
+                  top={snap(tileOrigin(region, t).y * u)}
+                  u={u}
+                  running={active && !reduced}
+                  night={night && !OWN_LIGHT.includes(t.id)}
+                />
+                <ZoneResidents
+                  zone={t.id}
+                  left={snap(tileOrigin(region, t).x * u)}
+                  top={snap(tileOrigin(region, t).y * u)}
+                  u={u}
+                  running={active && !reduced}
+                />
+              </Fragment>
             ),
           )}
           {night &&

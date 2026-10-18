@@ -2,7 +2,9 @@ import assert from 'node:assert/strict';
 import { makeWalkGrid } from './garden-path';
 import { gardenAnchors } from './garden-map';
 import { regionBounds, regionTiles, regionWalk, tileAt, tileOrigin, TILE } from './region-walk';
-import { zoneMaps } from './zone-maps';
+import { zoneMaps, zoneOverhead } from './zone-maps';
+import { residentRoutes } from './resident-routes';
+import { residentSprites } from './resident-sprites';
 
 // The valley is walkable as one place: from the garden's start the companion can
 // reach a stand in every zone of the region without any cut between zones.
@@ -71,3 +73,32 @@ for (const r of ['steam', 'west', 'lava', 'neon', 'space', 'moon'] as const) {
   }
 }
 console.log(`Region walk: ${others} stands reachable across the other regions.`);
+
+// Residents walk only on open ground, clear of every prop (so they never pass behind
+// a building), and each has its sprite.
+let walked = 0;
+for (const [rid, route] of Object.entries(residentRoutes)) {
+  assert.ok(residentSprites[rid], `${rid} has a sprite`);
+  const { w: RES_W, h: RES_H } = residentSprites[rid];
+  assert.equal(residentSprites[rid].zone, route.zone, `${rid} is drawn for the zone it walks`);
+  const m = zoneMaps[route.zone];
+  const steps = Math.ceil(Math.hypot(route.to[0] - route.from[0], route.to[1] - route.from[1]) / 2);
+  for (let i = 0; i <= steps; i++) {
+    const x = route.from[0] + ((route.to[0] - route.from[0]) * i) / steps;
+    const y = route.from[1] + ((route.to[1] - route.from[1]) * i) / steps;
+    assert.equal(
+      m.walk[Math.floor(y / TILE.cell)][Math.floor(x / TILE.cell)],
+      '.',
+      `${rid} walks on open ground at ${x},${y}`,
+    );
+    for (const [id, key, ox, oy, w, h] of m.objects) {
+      if (zoneOverhead.includes(key)) continue;
+      const overlaps = x - RES_W / 2 < ox + w && x + RES_W / 2 > ox && y - RES_H < oy + h && y > oy;
+      assert.ok(!overlaps, `${rid} passes clear of ${id}`);
+    }
+    walked++;
+  }
+}
+console.log(
+  `Residents: ${Object.keys(residentRoutes).length} routes, ${walked} steps on open ground.`,
+);
