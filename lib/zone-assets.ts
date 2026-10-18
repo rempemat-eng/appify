@@ -84,6 +84,8 @@ import propFern from '@/assets/zones/props/fern.png';
 import propFerry from '@/assets/zones/props/ferry.png';
 import propFirePit from '@/assets/zones/props/fire_pit.png';
 import propFireplace from '@/assets/zones/props/fireplace.png';
+import propFireplaceF1 from '@/assets/zones/props/fireplace_f1.png';
+import propFireplaceF2 from '@/assets/zones/props/fireplace_f2.png';
 import propFireweed from '@/assets/zones/props/fireweed.png';
 import propFireweedSmall from '@/assets/zones/props/fireweed_small.png';
 import propFishStall from '@/assets/zones/props/fish_stall.png';
@@ -376,6 +378,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   ferry: propFerry,
   fire_pit: propFirePit,
   fireplace: propFireplace,
+  fireplace_f1: propFireplaceF1,
+  fireplace_f2: propFireplaceF2,
   fireweed: propFireweed,
   fireweed_small: propFireweedSmall,
   fish_stall: propFishStall,

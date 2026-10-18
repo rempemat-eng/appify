@@ -41,6 +41,10 @@ export const zoneFrames: Record<
     ['banner_pole_f1', 0, 0, 15, 47],
     ['banner_pole_f2', 0, 0, 15, 47],
   ],
+  fireplace: [
+    ['fireplace_f1', 0, 0, 66, 57],
+    ['fireplace_f2', 0, 0, 66, 57],
+  ],
   water_mill: [
     ['water_mill_f1', 0, 0, 115, 88],
     ['water_mill_f2', 0, 0, 115, 88],
