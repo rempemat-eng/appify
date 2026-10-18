@@ -487,6 +487,88 @@ async function main() {
       await gameStore.getState().init();
       await flushGameSave();
     };
+    // C22 exercises the real migration, action and writer, not a duplicate store.
+    const { buildWorldMap } = await import('./world-map');
+    const { regionPoint } = await import('./world-places');
+    const parkSpot = {
+      region: 'valley' as const,
+      ...regionPoint({ region: 'valley', zone: 'park', at: [160, 200] }),
+      visited: ['garden', 'town', 'park'],
+    };
+    await loadPatchedSave((saved) => {
+      if (saved.player && typeof saved.player === 'object' && 'grass' in saved.player)
+        saved.player.grass = 87.25;
+    });
+    const mapProgress = progressSnapshot();
+    for (const version of [undefined, 1]) {
+      await loadPatchedSave((saved) => {
+        if (version === undefined) delete saved.saveVersion;
+        else saved.saveVersion = version;
+        delete saved.mapSeen;
+        saved.world = { ...parkSpot, futureGround: { keep: true } };
+        saved.futureWorldMap = { keep: ['a', 'b'] };
+      });
+      check(
+        isDeepStrictEqual(gameStore.getState().mapSeen, ['garden', 'town', 'park']),
+        'Actual legacy map migration acknowledges existing visits without upgrade backlog',
+      );
+      check(
+        isDeepStrictEqual(progressSnapshot(), mapProgress),
+        'Map migration preserves companion, level, fractional currency, hats, cards, collection, history and rules',
+      );
+      const saved = JSON.parse((await storage.getItem('screenagotchi-v1'))!);
+      check(
+        saved.world.futureGround.keep && saved.futureWorldMap.keep.join() === 'a,b',
+        'Actual map migration retains unknown top-level and nested world fields',
+      );
+    }
+    await loadPatchedSave((saved) => {
+      saved.mapSeen = ['garden', 'future-zone', 'garden', 7, null, ''];
+    });
+    check(
+      isDeepStrictEqual(gameStore.getState().mapSeen, ['garden', 'future-zone']),
+      'Malformed seen entries are sanitised without discarding future string IDs',
+    );
+    const mapBeforeRead = JSON.stringify(await storage.getItem('screenagotchi-v1'));
+    const openMap = buildWorldMap({
+      world: gameStore.getState().world,
+      mapSeen: gameStore.getState().mapSeen,
+      current: 'garden',
+    });
+    check(
+      JSON.stringify(await storage.getItem('screenagotchi-v1')) === mapBeforeRead,
+      'Reading a map does not persist or acknowledge it',
+    );
+    const ridgeAt = regionPoint({ region: 'valley', zone: 'ridge', at: [160, 200] });
+    gameStore.getState().walkWorld('valley', ridgeAt.x, ridgeAt.y, true);
+    const visitsBeforeOpen = structuredClone(gameStore.getState().world);
+    gameStore.getState().markWorldMapSeen(openMap.visitedSnapshot);
+    gameStore.getState().markWorldMapSeen(openMap.visitedSnapshot);
+    gameStore.getState().markWorldMapSeen(['lumen', 'not-visited']);
+    await reload();
+    check(
+      gameStore.getState().mapSeen.includes('park') &&
+        !gameStore.getState().mapSeen.includes('ridge') &&
+        !gameStore.getState().mapSeen.includes('lumen'),
+      'Repeated captured-open action acknowledges old visits, not later or unvisited places, across reload',
+    );
+    check(
+      isDeepStrictEqual(gameStore.getState().world, visitsBeforeOpen) &&
+        isDeepStrictEqual(progressSnapshot(), mapProgress),
+      'Map acknowledgement changes no exploration location/history, rewards, ownership or game rules',
+    );
+    const persistedMap = JSON.parse((await storage.getItem('screenagotchi-v1'))!);
+    check(
+      persistedMap.mapSeen.includes('future-zone') && persistedMap.world.futureGround.keep,
+      'Unknown seen IDs and future world fields survive walking, opening and reload',
+    );
+    check(
+      buildWorldMap({
+        world: gameStore.getState().world,
+        mapSeen: gameStore.getState().mapSeen,
+      }).nodes.some((n) => n.id === 'zone:ridge' && n.isNew),
+      'A discovery made after the map opened remains new until the next opening',
+    );
     await loadPatchedSave((saved) => {
       saved.pendingMemories = [null, { id: 'forged' }, ...queued, ...queued];
       saved.companionMemories = [null, {}, ...gameStore.getState().companionMemories];

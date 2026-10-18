@@ -146,6 +146,7 @@ const saveShape = object(
       ['settlementId'],
     ),
     world: object({ region: true, x: true, y: true, visited: strings }),
+    mapSeen: strings,
   } satisfies Record<keyof Saved, Shape>,
   ['identity'],
 );

@@ -46,6 +46,7 @@ import {
 } from '@/lib/break-history';
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
 import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
+import { acknowledgeMapSeen, restoreMapSeen } from '@/lib/world-map';
 import type { RegionId } from '@/lib/region-walk';
 import {
   addCard,
@@ -191,6 +192,8 @@ export type Saved = {
   cardReward: WelcomeReward | null;
   /** where the companion is in the walkable world (none until it first walks out) */
   world?: WorldSpot | null;
+  /** Discoveries acknowledged when the map was opened; no reward or unlock. */
+  mapSeen?: string[];
 };
 export type SaveLoadProblem =
   | { kind: 'unreadable'; confirmationId: string | null; busy: boolean; error: string | null }
@@ -248,6 +251,8 @@ type Game = Saved & {
   dismissAlert: () => void;
   notify: (message: string, error?: boolean) => void;
   world: WorldSpot | null;
+  mapSeen: string[];
+  markWorldMapSeen: (capturedVisited: readonly string[]) => void;
   /** record where the companion stands in the world; walking grants nothing */
   walkWorld: (region: RegionId, x: number, y: number, settle?: boolean) => void;
 };
@@ -333,7 +338,9 @@ function migrateSaved(value: unknown) {
   if (value.waitingVisitor === undefined) value.waitingVisitor = null;
   if (value.offDeck === undefined) value.offDeck = null;
   if (value.cardReward === undefined) value.cardReward = null;
-  value.world = restoreWorld(value.world);
+  const world = restoreWorld(value.world);
+  value.world = world;
+  value.mapSeen = restoreMapSeen(value.mapSeen, world);
   if (isRecord(value.cardReward))
     value.cardReward = {
       grass: 0,
@@ -468,6 +475,7 @@ function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakI
     waitingVisitor: null,
     cardReward: null,
     world: null,
+    mapSeen: [],
   };
 }
 function emptySession() {
@@ -608,6 +616,7 @@ function persist() {
     collectedCards: s.collectedCards,
     cardReward: s.cardReward,
     world: s.world,
+    mapSeen: s.mapSeen,
     waitingVisitor: s.waitingVisitor,
   };
   const encoded = writeSave(saved, saveSource);
@@ -850,6 +859,15 @@ export const gameStore = create<Game>((set, get) => ({
   cardReward: null,
   waitingVisitor: null,
   world: null,
+  mapSeen: [],
+  markWorldMapSeen: (capturedVisited) => {
+    const s = get();
+    if (!saveWritable || !s.ready || !s.player) return;
+    const mapSeen = acknowledgeMapSeen(s.mapSeen, capturedVisited, s.world);
+    if (mapSeen.length === s.mapSeen.length) return;
+    set({ mapSeen });
+    void persist();
+  },
   walkWorld: (region, x, y, settle = false) => {
     const s = get();
     if (!s.player) return;
