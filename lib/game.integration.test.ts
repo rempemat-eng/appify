@@ -273,6 +273,181 @@ async function main() {
       'Actual sparring win pays 5 GRASS and creates no player raid',
     );
     await flushGameSave();
+    // C9: real store settlements in disposable storage. A precondition battle
+    // fixture exercises finishBattle; it does not simulate online authorisation.
+    {
+      const baseCurrencyState = gameStore.getState();
+      const baseCurrencyPlayer = baseCurrencyState.player!;
+      const { default: currencyStorage } =
+        await import('@react-native-async-storage/async-storage');
+      const { GAME_SAVE_KEY } = await import('./save-data');
+      const { moveTo } = await import('./world-save');
+      const { regionPoint, travelPoints } = await import('./world-places');
+      const originalCurrencySave = await currencyStorage.getItem(GAME_SAVE_KEY);
+      assert.ok(originalCurrencySave);
+      const originalRandom = Math.random;
+      const resetCurrency = (grass: number, mood = 80) => {
+        gameStore.setState({
+          ...baseCurrencyState,
+          player: { ...baseCurrencyPlayer, grass, mood, care_until: 0, recovery_until: 0 },
+          rules: { ...baseCurrencyState.rules, budget: { startedAt: 0, usedMs: 0 }, days: {} },
+          battle: null,
+          alerts: [],
+          staged: [],
+          outgoing: [],
+          applied: [],
+          recap: null,
+          flash: null,
+        });
+        accountPlay(now);
+      };
+      try {
+        const legacyWallet = JSON.parse(originalCurrencySave);
+        delete legacyWallet.saveVersion;
+        legacyWallet.player.grass = 500.25;
+        legacyWallet.player.care_until = 0;
+        legacyWallet.player.recovery_until = 0;
+        legacyWallet.player.collection = [
+          { id: 'inkling', metAt: now, minutes: 15, befriendedAt: now },
+        ];
+        legacyWallet.player.guardian = 'inkling';
+        legacyWallet.futureEconomyField = { keep: 'verbatim' };
+        legacyWallet.player.futureWalletField = ['keep', 17];
+        const station = regionPoint(travelPoints.west!);
+        const visitedWorld = moveTo(null, 'west', station.x, station.y);
+        legacyWallet.world = { ...visitedWorld, futureTravelField: { keep: 'verbatim' } };
+        await currencyStorage.setItem(GAME_SAVE_KEY, JSON.stringify(legacyWallet));
+        await reload();
+        check(
+          gameStore.getState().player!.grass === 500.25,
+          'C9 legacy migration keeps the exact wallet',
+        );
+        check(
+          isDeepStrictEqual(gameStore.getState().world, visitedWorld),
+          'C9 legacy wallet migration retains the current world spot and visits',
+        );
+        Math.random = () => 0.25;
+        gameStore.getState().incomingBot();
+        const raid = gameStore.getState().alerts.at(-1)!.raid;
+        check(
+          raid.attacker_won &&
+            raid.grass_amount === 0 &&
+            gameStore.getState().player!.grass === 500.25,
+          'C9 simulated lost defence has zero transfer and never debits GRASS',
+        );
+        await reload();
+        check(
+          gameStore.getState().player!.grass === 500.25 &&
+            gameStore.getState().applied.filter((id) => id === raid.id).length === 1,
+          'C9 lost defence reload keeps wallet and one settlement marker',
+        );
+        const savedCurrency = JSON.parse((await currencyStorage.getItem(GAME_SAVE_KEY))!);
+        check(
+          isDeepStrictEqual(savedCurrency.futureEconomyField, legacyWallet.futureEconomyField) &&
+            isDeepStrictEqual(
+              savedCurrency.player.futureWalletField,
+              legacyWallet.player.futureWalletField,
+            ),
+          'C9 settlement preserves unknown root and player save fields',
+        );
+        check(
+          savedCurrency.saveVersion === 1 &&
+            isDeepStrictEqual(gameStore.getState().world, visitedWorld) &&
+            isDeepStrictEqual(savedCurrency.world, legacyWallet.world),
+          'C9 defence settlement preserves optional world and unknown world fields in the v1 save',
+        );
+        for (const key of [
+          'level',
+          'owned_hats',
+          'hat',
+          'deck',
+          'collection',
+          'postcards',
+          'guardian',
+          'offline_seconds',
+        ] as const)
+          check(
+            isDeepStrictEqual(gameStore.getState().player![key], legacyWallet.player[key]),
+            `C9 lost defence/reload preserves ${key}`,
+          );
+
+        resetCurrency(500);
+        Math.random = () => 0.75;
+        gameStore.getState().incomingBot();
+        check(
+          gameStore.getState().player!.grass === 520,
+          'C9 successful defence retains the old +20 reward',
+        );
+        await reload();
+        check(gameStore.getState().player!.grass === 520, 'C9 defence reload never credits twice');
+
+        for (const won of [false, true]) {
+          resetCurrency(500);
+          const target = { ...baseCurrencyPlayer, id: 'currency-rival', grass: 100 };
+          gameStore.setState({ battle: { target, practice: false } });
+          gameStore.getState().finishBattle(won, target, false);
+          const raidCurrencyState = gameStore.getState();
+          check(
+            raidCurrencyState.player!.grass === (won ? 530 : 500) &&
+              raidCurrencyState.outgoing[0].grass_amount === 0,
+            `C9 attacker ${won ? 'win keeps its reward' : 'loss keeps its wallet'} with zero wire debit`,
+          );
+          check(target.grass === 100, 'C9 settlement never mutates the rival wallet');
+          gameStore.getState().finishBattle(won, target, false);
+          check(
+            gameStore.getState().player!.grass === raidCurrencyState.player!.grass &&
+              gameStore.getState().outgoing.length === 1,
+            'C9 duplicate finish cannot settle or enqueue twice',
+          );
+          await reload();
+          check(
+            gameStore.getState().player!.grass === raidCurrencyState.player!.grass &&
+              gameStore.getState().outgoing[0].grass_amount === 0,
+            'C9 attacker settlement and safe pending transport survive reload',
+          );
+        }
+
+        for (const won of [false, true]) {
+          resetCurrency(500.25);
+          gameStore.setState({ world: visitedWorld });
+          const target = { ...baseCurrencyPlayer, id: 'world-rival', grass: 100 };
+          gameStore.setState({ battle: { target, practice: false } });
+          gameStore.getState().finishBattle(won, target, false);
+          await reload();
+          check(
+            isDeepStrictEqual(gameStore.getState().world, visitedWorld) &&
+              gameStore.getState().player!.grass === (won ? 530.25 : 500.25),
+            `C9 attacking ${won ? 'win' : 'loss'} keeps world progress alongside fractional wallet`,
+          );
+        }
+
+        resetCurrency(100, 50);
+        gameStore.getState().feed();
+        check(gameStore.getState().player!.grass === 95, 'C9 feeding still deliberately costs 5');
+        resetCurrency(100);
+        const levelCost = 50 * baseCurrencyPlayer.level;
+        gameStore.getState().levelUp();
+        check(
+          gameStore.getState().player!.grass === 100 - levelCost,
+          'C9 level purchase keeps its old cost',
+        );
+        resetCurrency(100);
+        gameStore.setState({
+          player: { ...gameStore.getState().player!, owned_hats: [], hat: null },
+        });
+        gameStore.getState().hatAction('CAP');
+        check(
+          gameStore.getState().player!.grass === 70,
+          'C9 hat purchase still deliberately costs 30',
+        );
+      } finally {
+        Math.random = originalRandom;
+        await flushGameSave();
+        await currencyStorage.setItem(GAME_SAVE_KEY, originalCurrencySave);
+        gameStore.setState(baseCurrencyState);
+        await reload();
+      }
+    }
     lines.push(...(await runRefinementChecks()));
     const { freshRules } = await import('./offline-rules');
     const { default: storage } = await import('@react-native-async-storage/async-storage');
