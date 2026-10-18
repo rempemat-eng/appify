@@ -2,7 +2,14 @@ import assert from 'node:assert/strict';
 import { acknowledgeMapSeen, buildWorldMap, mapVisitedZones, restoreMapSeen } from './world-map';
 import { regionTiles, tileOrigin, type RegionId } from './region-walk';
 import { regionLayout } from './zone-maps';
-import { doors, regionPoint, travelLinks, travelPoints, travelRoute } from './world-places';
+import {
+  doors,
+  regionPasses,
+  regionPoint,
+  travelLinks,
+  travelPoints,
+  travelRoute,
+} from './world-places';
 import { restoreWorld, type WorldSpot } from './world-save';
 import { readSave, SAVE_VERSION, writeSave } from './save-data';
 
@@ -62,6 +69,68 @@ equal(
   map.links.filter((l) => l.kind === 'door'),
   [{ from: doors.hut.zone, to: doors.inside.zone, kind: 'door' }],
   'hut uses its authored door',
+);
+
+equal(
+  map.links.filter((l) => l.kind === 'pass'),
+  regionPasses.map(({ a, b }) => ({ from: a.zone, to: b.zone, kind: 'pass' })),
+  'inter-region walking passes retain their authored zone endpoints',
+);
+ok(
+  map.links.some((l) => l.kind === 'pass' && l.from === 'gulch' && l.to === 'scorch'),
+  'Gulch reaches Scorched Pass on foot',
+);
+ok(
+  map.links.some((l) => l.kind === 'line' && l.from === 'gulch' && l.to === 'caldera'),
+  'mine-cart shortcut stays distinct',
+);
+const legacyCoast: WorldSpot = {
+  region: 'valley',
+  ...regionPoint({ region: 'valley', zone: 'headland', at: [160, 200] }),
+  visited: ['garden', 'castle'],
+};
+const legacySeen = restoreMapSeen(['garden', 'castle', 'headland', 'future-zone'], legacyCoast);
+equal(
+  legacySeen,
+  ['garden', 'headland', 'future-zone'],
+  'seen IDs share the world rename and keep future IDs',
+);
+const legacyMap = buildWorldMap({ world: legacyCoast, mapSeen: legacySeen });
+equal(
+  restoreMapSeen(['constructor', '__proto__', 'future-zone'], legacyCoast),
+  ['constructor', '__proto__', 'future-zone'],
+  'future IDs cannot resolve inherited object properties',
+);
+equal(
+  legacyMap.nodes.find((n) => n.id === 'zone:headland')?.state,
+  'here',
+  'old coastal position stays on Headland',
+);
+equal(
+  legacyMap.nodes.find((n) => n.id === 'zone:headland')?.isNew,
+  false,
+  'old seen coast is not a fresh discovery',
+);
+equal(
+  legacyMap.nodes.find((n) => n.id === 'zone:hearthold')?.state,
+  'unseen',
+  'old castle never reveals far Hearthold',
+);
+ok(!legacyMap.nodes.some((n) => n.id === 'zone:castle'), 'retired castle node is absent');
+equal(
+  acknowledgeMapSeen(['future-zone', 'castle'], ['castle'], legacyCoast),
+  ['future-zone', 'headland'],
+  'old opening cannot restore retired ID',
+);
+const passWorld: WorldSpot = {
+  region: 'west',
+  ...regionPoint(travelPoints.west!),
+  visited: zones.filter((id) => id !== 'scorch' && id !== 'hearthold'),
+};
+equal(
+  buildWorldMap({ world: passWorld, mapSeen: [] }).suggestion,
+  'scorch',
+  'walking pass participates in suggestions',
 );
 
 // All transport regions reach one another along the existing lines; the interior

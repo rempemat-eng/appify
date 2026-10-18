@@ -47,6 +47,16 @@ import {
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
 import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
 import { acknowledgeMapSeen, restoreMapSeen } from '@/lib/world-map';
+import {
+  checkDecor,
+  foundKeepsakes,
+  hutWalk,
+  keepsake,
+  newKeepsakes,
+  restoreDecor,
+  type DecorCheck,
+  type DecorPlacement,
+} from '@/lib/decor';
 import type { RegionId } from '@/lib/region-walk';
 import {
   addCard,
@@ -194,6 +204,8 @@ export type Saved = {
   world?: WorldSpot | null;
   /** Discoveries acknowledged when the map was opened; no reward or unlock. */
   mapSeen?: string[];
+  /** keepsakes set out in the nap hut (the rest wait in the chest; lib/decor.ts) */
+  decor?: DecorPlacement[];
 };
 export type SaveLoadProblem =
   | { kind: 'unreadable'; confirmationId: string | null; busy: boolean; error: string | null }
@@ -255,6 +267,12 @@ type Game = Saved & {
   markWorldMapSeen: (capturedVisited: readonly string[]) => void;
   /** record where the companion stands in the world; walking grants nothing */
   walkWorld: (region: RegionId, x: number, y: number, settle?: boolean) => void;
+  decor: DecorPlacement[];
+  /** set a found keepsake on the hut's floor (or move it there); free, and refused if it
+   *  would stand in the way */
+  placeDecor: (item: string, x: number, y: number) => DecorCheck;
+  /** put a keepsake back in the chest */
+  storeDecor: (item: string) => void;
 };
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -341,6 +359,11 @@ function migrateSaved(value: unknown) {
   const world = restoreWorld(value.world);
   value.world = world;
   value.mapSeen = restoreMapSeen(value.mapSeen, world);
+  value.decor = restoreDecor(
+    value.decor,
+    isRecord(value.world) && isStringArray(value.world.visited) ? value.world.visited : [],
+    hutWalk(),
+  );
   if (isRecord(value.cardReward))
     value.cardReward = {
       grass: 0,
@@ -476,6 +499,7 @@ function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakI
     cardReward: null,
     world: null,
     mapSeen: [],
+    decor: [],
   };
 }
 function emptySession() {
@@ -617,6 +641,7 @@ function persist() {
     cardReward: s.cardReward,
     world: s.world,
     mapSeen: s.mapSeen,
+    decor: s.decor,
     waitingVisitor: s.waitingVisitor,
   };
   const encoded = writeSave(saved, saveSource);
@@ -864,8 +889,26 @@ export const gameStore = create<Game>((set, get) => ({
     const s = get();
     if (!saveWritable || !s.ready || !s.player) return;
     const mapSeen = acknowledgeMapSeen(s.mapSeen, capturedVisited, s.world);
-    if (mapSeen.length === s.mapSeen.length) return;
+    if (mapSeen.length === s.mapSeen.length && mapSeen.every((id, i) => id === s.mapSeen[i]))
+      return;
     set({ mapSeen });
+    void persist();
+  },
+  decor: [],
+  placeDecor: (item, x, y) => {
+    const s = get();
+    if (!s.player || !foundKeepsakes(s.world?.visited ?? []).includes(item))
+      return { ok: false, why: 'unknown' };
+    const check = checkDecor(hutWalk(), s.decor, item, x, y);
+    if (!check.ok) return check;
+    set({ decor: [...s.decor.filter((p) => p.item !== item), { item, x, y }] });
+    void persist();
+    return check;
+  },
+  storeDecor: (item) => {
+    const s = get();
+    if (!s.decor.some((p) => p.item === item)) return;
+    set({ decor: s.decor.filter((p) => p.item !== item) });
     void persist();
   },
   walkWorld: (region, x, y, settle = false) => {
@@ -874,6 +917,16 @@ export const gameStore = create<Game>((set, get) => ({
     const next = moveTo(s.world, region, x, y);
     const before = s.world;
     set({ world: next });
+    // a place walked for the first time leaves its keepsake in the hut's chest
+    const zone = next.visited.find((z) => !(before?.visited ?? []).includes(z));
+    const found = zone ? newKeepsakes(before?.visited ?? [], zone) : [];
+    if (found.length) {
+      const k = keepsake(found[0]);
+      if (k)
+        get().notify(
+          `A keepsake from ${k.from}: ${k.name.toLowerCase()}. It waits in the chest at home.`,
+        );
+    }
     // write when a zone is first seen or the region changes; positions ride along
     if (
       settle ||

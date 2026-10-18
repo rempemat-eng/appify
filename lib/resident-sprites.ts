@@ -8,7 +8,7 @@ export const residentSprites: Record<string, { zone: ZoneId; w: number; h: numbe
   baker: { zone: 'town', w: 20, h: 28 },
   fisher: { zone: 'harbour', w: 20, h: 28 },
   keeper: { zone: 'harbour', w: 20, h: 28 },
-  steward: { zone: 'castle', w: 20, h: 28 },
+  steward: { zone: 'hearthold', w: 20, h: 28 },
   tinkerer: { zone: 'junction', w: 20, h: 28 },
   boatwoman: { zone: 'canal', w: 20, h: 28 },
   cowhand: { zone: 'gulch', w: 20, h: 28 },

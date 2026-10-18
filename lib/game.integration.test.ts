@@ -523,6 +523,48 @@ async function main() {
       );
     }
     await loadPatchedSave((saved) => {
+      saved.world = {
+        region: 'valley',
+        ...regionPoint({ region: 'valley', zone: 'headland', at: [160, 200] }),
+        visited: ['garden', 'castle'],
+        futureGround: { keep: true },
+      };
+      saved.mapSeen = ['garden', 'castle', 'constructor', '__proto__', 'future-zone'];
+      saved.decor = [{ item: 'stool', x: 160, y: 380, futureDecor: { keep: true } }];
+    });
+    check(
+      gameStore.getState().world?.visited.includes('headland') === true &&
+        !gameStore.getState().world?.visited.includes('hearthold') &&
+        isDeepStrictEqual(gameStore.getState().mapSeen, [
+          'garden',
+          'headland',
+          'constructor',
+          '__proto__',
+          'future-zone',
+        ]),
+      'Legacy coastal discovery and acknowledgement share one rename, preserving opaque string IDs',
+    );
+    gameStore.setState({
+      mapSeen: ['garden', 'castle', 'constructor', '__proto__', 'future-zone'],
+    });
+    gameStore.getState().markWorldMapSeen(['garden', 'castle']);
+    check(
+      gameStore.getState().mapSeen.includes('headland') &&
+        !gameStore.getState().mapSeen.includes('castle'),
+      'An acknowledgement persists canonical IDs even when list length does not change',
+    );
+    await reload();
+    const decoratedMapSave = JSON.parse((await storage.getItem('screenagotchi-v1'))!);
+    check(
+      gameStore.getState().decor.length === 1 &&
+        gameStore.getState().decor[0].item === 'stool' &&
+        decoratedMapSave.decor[0].futureDecor.keep &&
+        decoratedMapSave.world.futureGround.keep &&
+        isDeepStrictEqual(progressSnapshot(), mapProgress),
+      'Map migration and acknowledgement preserve placed C12 decor, unknown fields and player progress through reload',
+    );
+    await loadPatchedSave((saved) => {
+      saved.world = { ...parkSpot, futureGround: { keep: true } };
       saved.mapSeen = ['garden', 'future-zone', 'garden', 7, null, ''];
     });
     check(

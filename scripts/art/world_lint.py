@@ -18,17 +18,31 @@ from collections import deque
 
 from PIL import Image, ImageDraw
 
-from materials import P
+from materials import MATERIALS, P
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 W, H, CELL = 320, 576, 4
 COLS, ROWS = W // CELL, H // CELL
 
+# Regions whose findings fail the build; the rest are reported until they are fixed.
+STRICT = ('valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon', 'home')
+
+# Findings that are right as drawn, each with its reason (world-rules.md, section 6,
+# the override registry; check 18: an override that no longer exempts anything is
+# reported, so stale ones get deleted). Keyed (zone, kind, what).
+OVERRIDES = {
+    ('caldera', 'seam-lava', 'caldera|springs'):
+        'the flow crosses the border on a steep slant; the band is continuous, its edge jogs a cell',
+}
+
 # Placement types (rules, section 2); anything not listed is a ground prop.
 FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
 WET = {'reeds', 'heron', 'net_rack', 'upturned_boat', 'driftwood', 'papyrus', 'water_crane', 'canal_crane'}
-SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge'}
-PATH_COLOURS = {tuple(int(c[k:k + 2], 16) for k in (1, 3, 5)) for c in P[2:5]}
+SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge', 'maglev'}
+_rgb = lambda c: tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))  # noqa: E731
+PATH_COLOURS = {_rgb(c) for c in P[1:5]}  # P[1]: a path in shade
+PATH_COLOURS |= {_rgb(c) for c in MATERIALS['ash'][3:5]}  # the fire country's pale ash flags
+WATER_COLOURS = {_rgb(c) for c in MATERIALS['water']}  # foam and glints included
 
 
 def _bluish(r, g, b):
@@ -39,9 +53,10 @@ def _lava(r, g, b):
     return r >= 170 and g <= 160 and b <= 90 and r - g >= 50
 
 
-def classify(ground: Image.Image, blocked: set) -> list[str]:
+def classify(ground: Image.Image, blocked: set, water_mask: set | None = None) -> list[str]:
     """One character per walk cell: '~' water, '!' lava, '^' wall/cliff/other blocked,
-    '=' path, '.' ground (the majority of the cell's pixels decides)."""
+    '=' path, '.' ground (the majority of the cell's pixels decides). A zone that declares
+    its water (`water_mask`) is read by that, not by colour."""
     px = ground.load()
     rows = []
     for cy in range(ROWS):
@@ -56,7 +71,9 @@ def classify(ground: Image.Image, blocked: set) -> list[str]:
                     # pavement or an orange floor is ground (rules, section 1)
                     if (x, y) in blocked and _lava(r, g, b):
                         k = '!'
-                    elif (x, y) in blocked and _bluish(r, g, b):
+                    elif (x, y) in blocked and (
+                            ((x, y) in water_mask) if water_mask is not None
+                            else (_bluish(r, g, b) or (r, g, b) in WATER_COLOURS)):
                         k = '~'
                     elif (x, y) in blocked:
                         k = '^'
@@ -70,10 +87,19 @@ def classify(ground: Image.Image, blocked: set) -> list[str]:
     return rows
 
 
+# Things that stand on a trunk or a post: only the middle of the sprite touches the
+# ground (a willow's crown may hang over the water; its trunk may not stand in it).
+TRUNKED = ('tree', 'pine', 'willow', 'acacia', 'palm', 'snag', 'lamp', 'light', 'pole', 'post')
+
+
 def _foot_cells(x, y, w, h, key):
-    foot = 20 if w > 60 else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 6
+    if any(t in key for t in TRUNKED):
+        x, w = x + w * 3 // 8, max(4, w // 4)
+        foot = 8
+    else:
+        foot = 20 if w > 60 else 6
     return [(cx, cy) for cy in range((y + h - foot) // CELL, (y + h) // CELL)
-            for cx in range((x + 3) // CELL, (x + w - 3) // CELL)
+            for cx in range((x + 1) // CELL, max((x + 1) // CELL + 1, (x + w - 1) // CELL))
             if 0 <= cx < COLS and 0 <= cy < ROWS]
 
 
@@ -101,28 +127,37 @@ def check_props(name, terrain, objects, sprites, overhead):
     return out
 
 
-def _edge(terrain, side):
+def _edge(terrain, side, depth=3):
+    """The classes along a border, each position the set of classes in the first
+    `depth` cells in from it (a path shaded at the very edge still counts)."""
     if side == 'north':
-        return terrain[0]
+        rows = terrain[:depth]
+        return [set(col) for col in zip(*rows)]
     if side == 'south':
-        return terrain[-1]
+        rows = terrain[-depth:]
+        return [set(col) for col in zip(*rows)]
     if side == 'west':
-        return ''.join(r[0] for r in terrain)
-    return ''.join(r[-1] for r in terrain)
+        return [set(r[:depth]) for r in terrain]
+    return [set(r[-depth:]) for r in terrain]
+
+
+# A shore or a path edge that crosses a border at a slant is off by a cell or three
+# where it meets; a run must be 16 px or longer to be a seam.
+MIN_RUN = 4
 
 
 def _runs(a, b, want):
-    """Stretches along an edge where one side is `want` and the other is not."""
+    """Stretches along an edge where one side has `want` and the other has not."""
     out, start = [], None
     for i, (p, q) in enumerate(zip(a, b)):
-        bad = (p in want) != (q in want)
+        bad = bool(p & set(want)) != bool(q & set(want))
         if bad and start is None:
             start = i
         if not bad and start is not None:
-            if i - start >= 2:
+            if i - start >= MIN_RUN:
                 out.append((start, i))
             start = None
-    if start is not None and len(a) - start >= 2:
+    if start is not None and len(a) - start >= MIN_RUN:
         out.append((start, len(a)))
     return out
 
@@ -235,7 +270,7 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
     violations = []
     for name, z in built.items():
         ground = z['ground_img']
-        terrain = classify(ground, z['blocked'])
+        terrain = classify(ground, z['blocked'], z.get('water'))
         zones[name] = {'ground': ground, 'terrain': terrain}
         z['terrain'] = terrain
         violations += check_props(name, terrain, z['objects'], z['sprites'], overhead)
@@ -246,7 +281,18 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
     kinds = {}
     for v in violations:
         kinds[v[1]] = kinds.get(v[1], 0) + 1
-    print('world lint:', len(violations), 'findings', json.dumps(kinds))
+    used = {k for k in OVERRIDES if any(v[:3] == k for v in violations)}
+    for k in sorted(set(OVERRIDES) - used):
+        print('world lint: override no longer exempts anything, delete it:', k)
+    violations = [v for v in violations if v[:3] not in OVERRIDES]
+    kinds = {}
+    for v in violations:
+        kinds[v[1]] = kinds.get(v[1], 0) + 1
+    print('world lint:', len(violations), 'findings', json.dumps(kinds), f'({len(used)} overridden)')
+    # regions that have been fixed against the rules fail the build on a new finding
+    # (world-rules.md, section 8: the valley first, then one region at a time)
+    strict = [v for v in violations if any(v[0] in layout[r] for r in STRICT)]
+    assert not strict, 'world lint (strict regions): ' + '; '.join(f'{v[0]} {v[1]} {v[2]}: {v[4]}' for v in strict)
     out = os.environ.get('LINT_OUT')
     if out:
         os.makedirs(out, exist_ok=True)

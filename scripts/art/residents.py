@@ -151,7 +151,7 @@ RESIDENTS = {
     'fisher': {'zone': 'harbour', 'skin': 'c', 'top': '#E8C04A', 'legs': '#3E5468', 'hat': ('cap', '#3E5468')},
     'keeper': {'zone': 'harbour', 'skin': 'a', 'top': '#3E4A6A', 'hair': 'grey', 'trim': '#E8D8B8',
                'carry': ('lantern', '#FFC766')},
-    'steward': {'zone': 'castle', 'skin': 'd', 'top': '#6A4A8A', 'trim': '#E6BC5C', 'hair': 'black'},
+    'steward': {'zone': 'hearthold', 'skin': 'd', 'top': '#6A4A8A', 'trim': '#E6BC5C', 'hair': 'black'},
     'tinkerer': {'zone': 'junction', 'skin': 'e', 'top': '#6E4A2E', 'apron': '#3E2A1E', 'hat': ('goggles', ''),
                  'hair': 'brown'},
     'boatwoman': {'zone': 'canal', 'skin': 'b', 'top': '#2C5A44', 'skirt': '#6E2C24', 'hat': ('cap', '#1E3E30'),

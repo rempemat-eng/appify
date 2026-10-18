@@ -55,6 +55,7 @@ import {
   type Point,
 } from '@/lib/garden-path';
 import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
+import { hiddenBehind } from '@/lib/occlusion';
 import { useUi } from '@/lib/ui';
 import {
   TILT_DEG,
@@ -114,6 +115,11 @@ import meadowSignImg from '@/assets/garden/meadow_sign.png';
 import groundTop from '@/assets/garden/ground-top.png';
 import townTop from '@/assets/zones/town/top.png';
 
+// what can hide the companion in the garden (its whole box, its feet for depth), and how
+// faint its outline is through them (art-style.md, rule 11)
+const OCCLUDERS = gardenObjects.map((o) => ({ x: o.x, y: o.y, w: o.w, h: o.h, z: o.y + o.h }));
+const GHOST = 0.42;
+
 const sprites: Record<string, ImageSourcePropType> = {
   tree: treeImg,
   tree_small: treeSmallImg,
@@ -145,6 +151,9 @@ type Action = keyof typeof gardenHotspots;
 const clock = () => Date.now();
 const SPEED = 34; // native pixels per second, a gentle stroll
 const KEY_SPEED = 52; // walking by the keys: a purposeful trot, so crossing the garden is quick
+/** Which way a leg of a walk faces; null for one that only goes up or down. */
+const turn = (a: Point, b: Point) =>
+  Math.abs(b.x - a.x) < 2 ? null : b.x < a.x ? ('left' as const) : ('right' as const);
 const START: Point = GARDEN_START;
 const BED: Point = gardenAnchors.bed;
 // One still ground image; only the water moves, as small four-frame overlays.
@@ -525,6 +534,9 @@ export function GardenWorld({
   const dusk = !night && hour >= 17;
   const dawn = !night && hour < 9;
   const [walking, setWalking] = useState(false);
+  // where the feet are, a few times a second while walking (for the outline behind the
+  // hut, the stall and the trees: lib/occlusion.ts)
+  const [feet, setFeet] = useState<Point>(home);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
   const [frame, setFrame] = useState(0);
   const [tag, setTag] = useState<{ text: string; x: number; y: number } | null>(null);
@@ -557,6 +569,9 @@ export function GardenWorld({
   const busy = useRef(false);
   // walking out once: a held key's repeats must not open the valley twice as it opens
   const leaving = useRef(false);
+  const veil = useSharedValue(0);
+  const veilPending = useRef(false);
+  const veilStyle = useAnimatedStyle(() => ({ opacity: veil.value }));
   const activeRef = useRef(active);
   const lastTouch = useRef(0);
   const journeyId = useRef(0);
@@ -572,6 +587,15 @@ export function GardenWorld({
     activeRef.current = active;
     if (active) {
       leaving.current = false;
+      // walked back in from the valley or the hut: the garden fades up from the dark,
+      // as the world does on arrival (none with reduced motion)
+      if (veilPending.current) {
+        veilPending.current = false;
+        if (!reduced) {
+          veil.set(1);
+          veil.set(withTiming(0, { duration: 320 }));
+        }
+      }
       return;
     }
     journeyId.current += 1;
@@ -582,7 +606,7 @@ export function GardenWorld({
     busy.current = false;
     if (napTimer.current) clearTimeout(napTimer.current);
     napTimer.current = null;
-  }, [active, px, py]);
+  }, [active, px, py, reduced, veil]);
 
   useEffect(
     () => () => {
@@ -657,6 +681,7 @@ export function GardenWorld({
     const exit = journey.current.exit;
     journey.current = null;
     pos.current = point;
+    setFeet(point);
     setWalking(false);
     setDestination(null);
     busy.current = false;
@@ -704,7 +729,10 @@ export function GardenWorld({
       arrived(id, action, end);
       return;
     }
-    setFacing(end.x < start.x ? 'left' : 'right');
+    // face the way each leg goes (a path that doubles back turns round on the way),
+    // keeping the old facing for a leg that only goes up or down
+    const firstFacing = turn(start, path[0]) ?? turn(start, end);
+    if (firstFacing) setFacing(firstFacing);
     if (reduced) {
       px.set(end.x);
       py.set(end.y);
@@ -713,14 +741,34 @@ export function GardenWorld({
     }
     busy.current = true;
     setWalking(true);
+    // set off gently and slow into the last step (anticipate, act, settle); level in
+    // between, and level all the way for a held key, which is retargeted every tick
+    const keyed = speed !== SPEED;
     let from = start;
     const xs = [];
     const ys = [];
-    for (const p of path) {
+    for (const [i, p] of path.entries()) {
       const d = Math.hypot(p.x - from.x, p.y - from.y);
-      const duration = Math.max(60, (d / speed) * 1000);
-      xs.push(withTiming(p.x, { duration, easing: Easing.linear }));
-      ys.push(withTiming(p.y, { duration, easing: Easing.linear }));
+      const first = i === 0;
+      const last = i === path.length - 1;
+      const easing = keyed
+        ? Easing.linear
+        : first && last
+          ? Easing.inOut(Easing.quad)
+          : first
+            ? Easing.in(Easing.quad)
+            : last
+              ? Easing.out(Easing.quad)
+              : Easing.linear;
+      const duration = Math.max(60, (d / speed) * 1000) * (!keyed && (first || last) ? 1.25 : 1);
+      const next = path[i + 1];
+      const nextFacing = next ? turn(p, next) : null;
+      xs.push(
+        withTiming(p.x, { duration, easing }, (finished) => {
+          if (finished && nextFacing) runOnJS(setFacing)(nextFacing);
+        }),
+      );
+      ys.push(withTiming(p.y, { duration, easing }));
       from = p;
     }
     px.set(withSequence(...xs));
@@ -858,8 +906,10 @@ export function GardenWorld({
     px.set(p.x);
     py.set(p.y);
     pos.current = p;
+    setFeet(p);
     busy.current = false;
     lastTouch.current = clock();
+    veilPending.current = true;
   }, [arrivalKey, napping, px, py]);
 
   // Idle life: wander, sniff the flowers, sit. Never while the player is acting.
@@ -907,6 +957,41 @@ export function GardenWorld({
       clearTimeout(emoteTimer);
     };
   }, [reduced, sleepy, grumpy, napping, active]);
+
+  useEffect(() => {
+    if (!walking) return undefined;
+    const t = setInterval(() => {
+      const x = Math.round(px.get());
+      const y = Math.round(py.get());
+      setFeet((f) => (f.x === x && f.y === y ? f : { x, y }));
+    }, 150);
+    return () => clearInterval(t);
+  }, [walking, px, py]);
+  // behind the hut, the stall or a tree, a faint copy shows through (never while napping:
+  // the bed is meant to be inside)
+  const hidden = !napping && hiddenBehind(OCCLUDERS, feet);
+  const ghostFade = useSharedValue(0);
+  useEffect(() => {
+    if (!hidden) {
+      ghostFade.set(0);
+      return undefined;
+    }
+    ghostFade.set(
+      reduced ? GHOST : withTiming(GHOST, { duration: 180, easing: Easing.out(Easing.quad) }),
+    );
+    return () => cancelAnimation(ghostFade);
+  }, [hidden, reduced, ghostFade]);
+  const ghostStyle = useAnimatedStyle(() => {
+    const s = project(proj, px.value, py.value);
+    return {
+      opacity: ghostFade.value,
+      transform: [
+        { translateX: Math.round(s.sx - petPx / 2) },
+        { translateY: Math.round(s.sy - petPx * (30 / 32)) },
+        { scale: s.f },
+      ],
+    };
+  });
 
   const petStyle = useAnimatedStyle(() => {
     const s = project(proj, px.value, py.value);
@@ -1020,6 +1105,7 @@ export function GardenWorld({
     if (napTimer.current) clearTimeout(napTimer.current);
     napTimer.current = null;
     pos.current = { x: px.get(), y: py.get() };
+    setFeet(pos.current);
     busy.current = false;
     setWalking(false);
     setDestination(null);
@@ -1515,6 +1601,37 @@ export function GardenWorld({
             onPress={patGuardian}
           />
         </Animated.View>
+        {hidden && (
+          <Animated.View
+            pointerEvents="none"
+            style={[
+              {
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                width: petPx,
+                height: petPx,
+                transformOrigin: '50% 93.75%',
+                // above every prop, under the light of the hour (900)
+                zIndex: 899,
+              },
+              ghostStyle,
+            ]}
+          >
+            <GuardianPet
+              active={active}
+              player={player}
+              size={petPx}
+              facing={facing}
+              walking={walking && active}
+              grumpy={grumpy}
+              yawning={sleepy}
+              groundShadow={false}
+              bob={!walking && active}
+              decorative
+            />
+          </Animated.View>
+        )}
         {companions.map((v, i) => (
           <View
             key={v.id}
@@ -1747,6 +1864,21 @@ export function GardenWorld({
             );
           })()}
       </Animated.View>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width,
+            height: viewHeight,
+            backgroundColor: '#1E1917',
+            zIndex: 2000,
+          },
+          veilStyle,
+        ]}
+      />
     </View>
   );
 }

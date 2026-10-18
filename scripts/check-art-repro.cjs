@@ -15,6 +15,7 @@ const generators = [
   'zones',
   'journey',
   'residents',
+  'decor',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -30,6 +31,8 @@ const generatedTypescript = [
   'lib/journey-assets.ts',
   'lib/resident-sprites.ts',
   'lib/resident-assets.ts',
+  'lib/decor-assets.ts',
+  'lib/decor-sizes.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 

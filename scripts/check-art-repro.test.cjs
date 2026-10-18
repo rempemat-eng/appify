@@ -34,6 +34,8 @@ try {
     'lib/journey-assets.ts',
     'lib/resident-sprites.ts',
     'lib/resident-assets.ts',
+    'lib/decor-assets.ts',
+    'lib/decor-sizes.ts',
   ];
   for (const file of atlasModules) write(file, 'atlas fixture\n');
   write('assets/journeys/example.png', Buffer.from([6, 7, 8, 255]));
@@ -51,6 +53,7 @@ try {
     'zones',
     'journey',
     'residents',
+    'decor',
   ]);
   checks++;
   for (const file of atlasModules) check(generatedTypescript.includes(file), 'formats ' + file);

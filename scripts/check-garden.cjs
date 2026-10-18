@@ -185,7 +185,13 @@ const anim = {
     value.animation = null;
   },
   runOnJS: (fn) => fn,
-  Easing: { linear: 'linear' },
+  Easing: {
+    linear: 'linear',
+    quad: 'quad',
+    in: (e) => `in-${e}`,
+    out: (e) => `out-${e}`,
+    inOut: (e) => `inOut-${e}`,
+  },
 };
 const useGame = (select) => select(game);
 useGame.getState = () => game;
@@ -316,6 +322,10 @@ deps['@/lib/keyboard-walk'] = {
   keySteps: (dx, dy) => [[dx, dy]],
   useKeyboardWalk() {},
 };
+// the outline behind tall props is pure geometry: the real module
+const occlusionModule = { exports: {} };
+evaluate('lib/occlusion.ts', occlusionModule);
+deps['@/lib/occlusion'] = occlusionModule.exports;
 const projectionModule = { exports: {} };
 evaluate('lib/garden-projection.ts', projectionModule);
 deps['@/lib/garden-projection'] = projectionModule.exports;
@@ -452,11 +462,16 @@ check(
   ),
   'retarget Y uses actual origin',
 );
+// (the first leg sets off gently: a quarter longer than the stroll's pace)
 check(
   Math.abs(
     horizontalSequence.steps[0].duration -
-      (Math.hypot(plannedPath[0].x - actualOrigin.x, plannedPath[0].y - actualOrigin.y) / 34) *
-        1000,
+      Math.max(
+        60,
+        (Math.hypot(plannedPath[0].x - actualOrigin.x, plannedPath[0].y - actualOrigin.y) / 34) *
+          1000,
+      ) *
+        1.25,
   ) < 0.0001,
   'duration uses actual displayed origin',
 );

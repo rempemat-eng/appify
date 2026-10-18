@@ -1,7 +1,14 @@
 import { regionTiles, tileAt, type RegionId, type TileId } from './region-walk';
 import { regionLayout } from './zone-maps';
-import { doors, PLACE_RADIUS, regionPoint, travelLinks, travelPoints } from './world-places';
-import { restoreWorld, type WorldSpot } from './world-save';
+import {
+  doors,
+  PLACE_RADIUS,
+  regionPasses,
+  regionPoint,
+  travelLinks,
+  travelPoints,
+} from './world-places';
+import { restoreWorld, restoreWorldZoneId, type WorldSpot } from './world-save';
 
 /** C22: a schematic, not a navigator or an unlock/reward system. */
 export type MapState = 'unseen' | 'visited' | 'here';
@@ -20,7 +27,7 @@ export type MapNode = {
 export type MapLink = {
   from: TileId;
   to: TileId;
-  kind: 'border' | 'line' | 'door';
+  kind: 'border' | 'pass' | 'line' | 'door';
 };
 
 const regions = Object.keys(regionLayout).filter((id): id is RegionId =>
@@ -44,7 +51,9 @@ export function mapVisitedZones(world: WorldSpot | null): TileId[] {
 /** Additive v1 migration: don't turn a veteran's old discoveries into a new backlog.
  * Unknown future string IDs survive round trips, but never appear in today's atlas. */
 export function restoreMapSeen(value: unknown, world: WorldSpot | null): string[] {
-  return Array.isArray(value) ? strings(value) : mapVisitedZones(world);
+  return Array.isArray(value)
+    ? [...new Set(strings(value).map(restoreWorldZoneId))]
+    : mapVisitedZones(world);
 }
 
 /** Acknowledge only the visited IDs captured when the map opened, not later visits. */
@@ -54,7 +63,12 @@ export function acknowledgeMapSeen(
   world: WorldSpot | null,
 ): string[] {
   const visited = new Set<string>(mapVisitedZones(world));
-  return [...new Set([...previous, ...captured.filter((id) => visited.has(id))])];
+  return [
+    ...new Set([
+      ...previous.map(restoreWorldZoneId),
+      ...captured.map(restoreWorldZoneId).filter((id) => visited.has(id)),
+    ]),
+  ];
 }
 
 /** Authored topology only. Border edges do not certify passability; the existing walk
@@ -71,6 +85,8 @@ function atlasLinks(): MapLink[] {
           links.push({ from: a.id, to: b.id, kind: 'border' });
       }
   }
+  // A pass joins regions on foot and stays distinct from a vehicle service.
+  for (const { a, b } of regionPasses) links.push({ from: a.zone, to: b.zone, kind: 'pass' });
   for (const [a, b] of travelLinks) {
     const from = travelPoints[a],
       to = travelPoints[b];

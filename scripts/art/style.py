@@ -268,23 +268,40 @@ def leafy(cv: Canvas, cx: float, cy: float, rx: float, ry: float, ramp, r: float
 
 
 def trunk(cv: Canvas, x: int, top: int, bottom: int, width: int, ramp, canopy: set | None = None):
-    """A cylinder trunk lit from the left, with bark marks, root flare and canopy shade."""
+    """A cylinder trunk lit from the left: bark in broken vertical furrows (a lit ridge
+    beside each dark one), roots flaring into the ground on both sides, and the crown's
+    shadow falling on its top in a soft two-step band (art-style.md, detail target)."""
     for y in range(top, bottom):
         for xx in range(x, x + width):
             f = (xx - x) / max(1, width - 1)
             cv.set(xx, y, ramp[3] if f < 0.3 else ramp[2] if f < 0.7 else ramp[1])
-    for y in range(top + 2, bottom - 2, 3):
-        cv.set(x + width // 2, y, ramp[1])
-    cv.set(x - 1, bottom - 2, ramp[2]); cv.set(x - 2, bottom - 1, ramp[2])
-    cv.set(x + width, bottom - 2, ramp[1]); cv.set(x + width + 1, bottom - 1, ramp[1])
-    cv.hline(x - 1, bottom - 1, width + 2, ramp[1])
+    # bark furrows: short dark runs with a lit ridge on their left, staggered
+    for k, fx in enumerate(range(x + 1, x + width - 1, 3)):
+        y = top + 1 + (k * 5) % 7
+        while y < bottom - 3:
+            run = 2 + (y + fx) % 3
+            for yy in range(y, min(bottom - 3, y + run)):
+                cv.set(fx, yy, ramp[1] if fx > x + width // 3 else ramp[2])
+                if fx - 1 >= x and fx - 1 < x + width // 3 + 1:
+                    cv.set(fx - 1, yy, ramp[4] if len(ramp) > 4 else ramp[3])
+            y += run + 3 + (fx + y) % 3
+    # roots: the trunk widens into the ground, a root on each side and one in front
+    for d in range(3):
+        cv.set(x - 1 - d, bottom - 3 + d, ramp[2] if d < 2 else ramp[1])
+        cv.set(x + width + d, bottom - 3 + d, ramp[1])
+    cv.hline(x - 2, bottom - 2, 2, ramp[3])
+    cv.hline(x - 3, bottom - 1, width + 6, ramp[1])
+    if width >= 6:
+        cv.set(x + width // 2, bottom - 1, ramp[2]); cv.set(x + width // 2 - 1, bottom - 1, ramp[3])
     if canopy:
         for xx in range(x, x + width):
             for y in range(top, bottom):
                 if (xx, y) not in canopy:
                     cv.set(xx, y, ramp[0])
                     if y + 1 < bottom:
-                        cv.set(xx, y + 1, ramp[1])
+                        cv.set(xx, y + 1, ramp[0] if xx % 2 else ramp[1])
+                    if y + 2 < bottom and xx % 2 == 0:
+                        cv.set(xx, y + 2, ramp[1])
                     break
 
 

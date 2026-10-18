@@ -97,7 +97,7 @@ export const gardenObjects = [
     x: -14,
     y: -61,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -106,7 +106,7 @@ export const gardenObjects = [
     x: 12,
     y: -55,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -115,7 +115,7 @@ export const gardenObjects = [
     x: 38,
     y: -61,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -124,7 +124,7 @@ export const gardenObjects = [
     x: 64,
     y: -55,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -133,7 +133,7 @@ export const gardenObjects = [
     x: 90,
     y: -61,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -142,7 +142,7 @@ export const gardenObjects = [
     x: 116,
     y: -55,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -151,7 +151,7 @@ export const gardenObjects = [
     x: 142,
     y: -61,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -160,7 +160,7 @@ export const gardenObjects = [
     x: 220,
     y: -55,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -169,7 +169,7 @@ export const gardenObjects = [
     x: 246,
     y: -61,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -178,7 +178,7 @@ export const gardenObjects = [
     x: 272,
     y: -55,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -187,7 +187,7 @@ export const gardenObjects = [
     x: 298,
     y: -61,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -538,7 +538,7 @@ export const gardenObjects = [
     x: 70,
     y: 503,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
   {
@@ -547,7 +547,7 @@ export const gardenObjects = [
     x: 216,
     y: 505,
     w: 36,
-    h: 78,
+    h: 77,
     action: null,
   },
 ] as const;

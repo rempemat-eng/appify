@@ -33,6 +33,25 @@ Matt shared these as the bar ("it should be at least like this"). The images are
   - Raymond Schlitter's [Pixelblog 20: Top Down Tiles](https://slynyrd.com/blog/2019/8/27/pixelblog-20-top-down-tiles) and [Pixelblog 21: Top Down Objects](https://www.slynyrd.com/blog/2019/9/18/pixelblog-21-top-down-objects): few colours per texture, staggered leaf clusters, subtle hard shadows, one consistent projection.
   - Lospec's [outlines article](https://lospec.com/articles/pixel-art-outlines-part-2-using-color).
 
+## Detail target (Matt, 18 Oct 16:33)
+
+Matt pointed at Cainos' *Pixel Art Top Down - Village* (Unity Asset Store and itch.io) as "the exact sort of art style i want, in terms of detail". It is a reference, not a source: our art stays generated, on our palette and light. What its detail means for the generators, at the same 32 px scale:
+
+- **Stone in courses:** every wall, tower and cliff face laid as blocks of slightly different tone with mortar lines, chipped corners and moss in the lower joints; cliffs are stacked blocks with dark crevices, not bands.
+- **Roofs in shingles or slates:** rows that overlap, each row's lower edge lit, ridge caps, a darker eave shadow on the wall below.
+- **Timber with grain:** planks with a lit edge, knots and nail heads; posts with a cap.
+- **Foliage in clusters:** crowns built from many small leaf clumps, three or four greens plus a yellow-green rim on the lit side, gaps showing the dark interior; birches and autumn trees add pale trunks and golden leaves.
+- **Ground that is never flat:** grass tufts, small flowers, pebbles and worn dirt patches where feet go; paths edged with grass breaking over them.
+- **Soft outlines:** a dark, hue-shifted outline (not black) on props, broken where the light hits.
+- **Pilot first:** one zone redrawn to this level and compared side by side with the reference before the rest follow.
+
+**Eastward too (Matt, 18 Oct 16:55):** "i also really like eastwards art style … but stuff needs to fit mobile, so be careful". What we take from Eastward: warm, lived-in places crowded with small story props; light as a material (lamp and window pools, warm light against cool shade, colour in the shadows); soft, chunky shapes with dark hue-shifted outlines; weather and air (haze, drifting motes). What a phone sets as limits:
+
+- **Readable at 1.3 to 2 screen pixels per art pixel.** Detail comes in clusters of two or more pixels, never single-pixel noise that turns to grey; walkable ground stays calmer and lighter than what blocks the way; every interactive prop keeps a clear silhouette and a 44 px target.
+- **Quiet where you walk.** Clutter gathers at the edges of a place, against walls and under trees; paths, doors and the space round the companion stay open (world-rules.md, "a mostly empty node").
+- **Light baked in, few live layers.** Pools of light are drawn into the ground and props; at most a handful of live glows per screen, finite and still with reduced motion (AGENTS.md).
+- **Memory.** A zone's ground is one image; more detail must not mean more layers or larger files per zone. (The images are saved at 4x for crisp native scaling; a 1x save with nearest-neighbour scaling on the web would cut decoded memory sixteenfold, and is worth a test.)
+
 ## The rules
 
 1. **Outlines.** Every object gets a 1 px outline in `outline` from `art/materials.json` (`#1E1917`, a warm near-black). Do not outline ground textures such as grass and dirt.
@@ -67,6 +86,7 @@ Matt shared these as the bar ("it should be at least like this"). The images are
 8. **Cast shadows.** Shadows are hard-edged and multiply the ground (`style.cast_shadow()`, `SHADOW_MUL`). They sit under each object, offset slightly right and down. They live in the ground image so they work on grass, dirt and sand alike.
 9. **Forest shade.** Where the canopy closes in, the ground goes to `FOREST_DARK` through checker dithering (`style.dither_dark()`).
 10. **Clean over busy.** If a texture makes an area noisy, remove it. Leave negative space in the clearing where the companion walks.
+11. **The companion stays readable.** Tall things may stand in front of the companion (it walks behind roofs, trees and the forge), but when one hides at least 40% of its body, a faint copy (42% opacity) shows through, under the night tint (`lib/occlusion.ts`; `Ghost` in `components/atlas-walk.tsx`, and the same in `components/garden-world.tsx`, never while napping). It fades in and never takes taps. A low fence across the feet does not count.
 
 ## Where the code lives
 

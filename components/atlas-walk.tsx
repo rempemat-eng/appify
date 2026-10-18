@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Image,
   PixelRatio,
@@ -26,6 +26,7 @@ import { useGame } from '@/lib/game';
 import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
 import { makeWalkGrid, type Point } from '@/lib/garden-path';
 import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
+import { hiddenBehind } from '@/lib/occlusion';
 import {
   TILE,
   regionBounds,
@@ -38,7 +39,13 @@ import {
   type TileId,
 } from '@/lib/region-walk';
 import { zoneFrames, zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
-import { BEYOND_SPILL, zoneBeyond, zoneGrounds, zoneProps } from '@/lib/zone-assets';
+import {
+  BEYOND_SPILL,
+  zoneBeyond,
+  zoneBeyondByRegion,
+  zoneGrounds,
+  zoneProps,
+} from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
@@ -115,7 +122,9 @@ export const zoneNames: Record<TileId, string> = {
   town: 'CROSSROADS TOWN',
   park: 'TOWN PARK',
   harbour: 'DRIFTWOOD HARBOUR',
-  castle: 'HEARTHOLD CASTLE',
+  hearthold: 'HEARTHOLD CASTLE',
+  headland: 'THE HEADLAND',
+  scorch: 'THE SCORCHED PASS',
   junction: 'COGSWORTH JUNCTION',
   gulch: 'DUST GULCH',
   caldera: 'EMBER CALDERA',
@@ -126,8 +135,21 @@ export const zoneNames: Record<TileId, string> = {
 
 const SPEED = 40; // art pixels per second, a brisk walk
 const KEY_SPEED = 52; // walking by the keys: a purposeful trot
+/** Which way a leg of a walk faces; null for one that only goes up or down. */
+const legFacing = (a: Point, b: Point) =>
+  Math.abs(b.x - a.x) < 2 ? null : b.x < a.x ? ('left' as const) : ('right' as const);
 // Zones that keep their own light at every hour (no night tint).
-const OWN_LIGHT: TileId[] = ['neon', 'skyport', 'station', 'lumen', 'caldera', 'springs', 'home'];
+const OWN_LIGHT: TileId[] = [
+  'neon',
+  'skyport',
+  'station',
+  'lumen',
+  'caldera',
+  'springs',
+  'hearthold',
+  'scorch',
+  'home',
+];
 // Where a lamp's light sits on its sprite (x, y from its top-left, in art pixels).
 const LAMPS: Record<string, readonly [number, number]> = {
   lamp: [7, 8],
@@ -142,6 +164,18 @@ const LAMPS: Record<string, readonly [number, number]> = {
   campfire: [13, 10],
 };
 const NAME_MS = 2200; // how long a zone's name stays up after crossing into it
+
+/** Something more standing in a scene (a keepsake): its image and box in region pixels,
+ *  and its depth (its feet; 2 for a rug, which lies under everything). */
+export type SceneExtra = {
+  key: string;
+  src: ImageSourcePropType;
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  z: number;
+};
 
 type Drawable = {
   key: string;
@@ -204,8 +238,167 @@ function Floating({
   );
 }
 
+// Things that fly (the castle's dragon; Matt, 18 Oct): with motion on, the perched
+// sprite takes off and circles on the shared clock, beating its wings (its frames) and
+// turning to face the way it flies, its shadow sliding over the ground below. With
+// reduced motion, or off screen, it stays perched. Scenery only: it never blocks or
+// grants anything. Orbit centre (dx, dy) from the perch, radii, period (divides the loop).
+const FLYERS: Record<string, { dx: number; dy: number; rx: number; ry: number; period: number }> = {
+  dragon: { dx: -40, dy: 96, rx: 132, ry: 92, period: 18000 },
+};
+const WING_MS = 300; // divides FLOAT_LOOP
+
+function Flyer({
+  d,
+  clock,
+  u,
+  snap,
+}: {
+  d: Drawable;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const f = FLYERS[d.sprite];
+  const frames = zoneFrames[d.sprite] ?? [];
+  const fw = Math.max(...frames.map((fr) => fr[3]), d.w);
+  const fh = Math.max(...frames.map((fr) => fr[4]), d.h);
+  const cx = d.x + d.w / 2 + f.dx;
+  const cy = d.y + d.h / 2 + f.dy;
+  const body = useAnimatedStyle(() => {
+    const a = (clock.value / f.period) * 2 * Math.PI;
+    const x = cx + f.rx * Math.cos(a) - fw / 2;
+    const y = cy + f.ry * Math.sin(a) - fh / 2;
+    const right = -Math.sin(a) > 0;
+    return {
+      transform: [
+        { translateX: Math.round(x) * u },
+        { translateY: Math.round(y) * u },
+        { scaleX: right ? 1 : -1 },
+      ],
+    };
+  });
+  const shadow = useAnimatedStyle(() => {
+    const a = (clock.value / f.period) * 2 * Math.PI;
+    return {
+      transform: [
+        { translateX: Math.round(cx + f.rx * Math.cos(a) - fw * 0.3) * u },
+        { translateY: Math.round(cy + f.ry * Math.sin(a) + 56) * u },
+      ],
+    };
+  });
+  return (
+    <>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: snap(fw * 0.6 * u),
+            height: snap(6 * u),
+            borderRadius: snap(3 * u),
+            backgroundColor: 'rgba(20,14,18,0.28)',
+            zIndex: 2,
+          },
+          shadow,
+        ]}
+      />
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: snap(fw * u),
+            height: snap(fh * u),
+            zIndex: 100000,
+          },
+          body,
+        ]}
+      >
+        {frames.map(([key, , , w, h], i) => (
+          <TurningFrame
+            key={key}
+            src={zoneProps[key] ?? d.src}
+            index={i}
+            count={frames.length}
+            clock={clock}
+            ms={WING_MS}
+            style={{
+              position: 'absolute',
+              left: snap(((fw - w) / 2) * u),
+              top: snap(((fh - h) / 2) * u),
+              width: snap(w * u),
+              height: snap(h * u),
+            }}
+          />
+        ))}
+      </Animated.View>
+    </>
+  );
+}
+
 // Things that turn (a windmill's sails): the sprite and its frames, one shown at a time.
 const FRAME_MS = 400; // divides FLOAT_LOOP
+
+/**
+ * What shows past a region with no open country round it, when the screen sees past its
+ * edge: the night over the city's water, space round the station and the moon, the dark
+ * of the room. (The valley, the desert and the fire country draw their land instead.)
+ */
+const BACKDROP: Partial<Record<RegionId, string>> = {
+  neon: '#100E1A',
+  space: '#05060C',
+  moon: '#05060C',
+  home: '#1E1612',
+  steam: '#2A2D36',
+};
+
+/** The companion's outline through whatever hides it: fades in, faint, never takes taps. */
+function Ghost({
+  px,
+  py,
+  u,
+  size,
+  reduced,
+  children,
+}: {
+  px: SharedValue<number>;
+  py: SharedValue<number>;
+  u: number;
+  size: number;
+  reduced: boolean;
+  children: ReactNode;
+}) {
+  const shown = useSharedValue(reduced ? GHOST : 0);
+  useEffect(() => {
+    if (!reduced) shown.set(withTiming(GHOST, { duration: 180, easing: Easing.out(Easing.quad) }));
+    return () => cancelAnimation(shown);
+  }, [reduced, shown]);
+  // where the companion is drawn, without its depth (which would put this back behind)
+  const style = useAnimatedStyle(() => ({
+    opacity: shown.value,
+    transform: [
+      { translateX: Math.round(px.value * u - size / 2) },
+      { translateY: Math.round(py.value * u - size * (30 / 32)) },
+    ],
+  }));
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        { position: 'absolute', left: 0, top: 0, width: size, height: size, zIndex: 149999 },
+        style,
+      ]}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+const GHOST = 0.42;
 
 function TurningFrame({
   src,
@@ -213,15 +406,17 @@ function TurningFrame({
   count,
   clock,
   style,
+  ms = FRAME_MS,
 }: {
   src: ImageSourcePropType;
   index: number;
   count: number;
   clock: SharedValue<number>;
   style: object;
+  ms?: number;
 }) {
   const shown = useAnimatedStyle(() => ({
-    opacity: Math.floor(clock.value / FRAME_MS) % count === index ? 1 : 0,
+    opacity: Math.floor(clock.value / ms) % count === index ? 1 : 0,
   }));
   return <Animated.Image source={src} resizeMode="stretch" style={[style, shown]} />;
 }
@@ -326,6 +521,10 @@ export function AtlasWalk({
   onZone,
   onMove,
   onSettle,
+  onTap,
+  walk: walkRows,
+  extras,
+  preview,
   maxWalkMs,
   showName = true,
   focusY = 0.55,
@@ -346,6 +545,17 @@ export function AtlasWalk({
   onMove?: (at: Point) => void;
   /** where a walk ended (or stopped) */
   onSettle?: (at: Point) => void;
+  /** A tap on the scene, in region pixels, before the companion walks: return true when
+   *  the tap was used (no walk), a point to walk there instead, or nothing to walk to it. */
+  onTap?: (at: Point) => boolean | Point | void;
+  /** the region's walk rows when something stands in the way (keepsakes in the hut);
+   *  keep the same array while it is unchanged */
+  walk?: readonly string[];
+  /** more things standing in the scene, in region pixels (keepsakes) */
+  extras?: readonly SceneExtra[];
+  /** a thing about to be placed: drawn faint, its footprint green where it may stand, red
+   *  where not */
+  preview?: SceneExtra & { ok: boolean; foot: { x: number; y: number; w: number; h: number } };
   /** squeeze a long walk into this many milliseconds (the missions map) */
   maxWalkMs?: number;
   showName?: boolean;
@@ -382,13 +592,13 @@ export function AtlasWalk({
           })();
     return {
       start: first,
-      walk: makeWalkGrid(regionWalk(region), {
+      walk: makeWalkGrid(walkRows ?? regionWalk(region), {
         cell: TILE.cell,
         width: bounds.width,
         start: first,
       }),
     };
-  }, [region, tiles, bounds.width, initial]);
+  }, [region, tiles, bounds.width, initial, walkRows]);
 
   const px = useSharedValue(grid.start.x);
   const py = useSharedValue(grid.start.y);
@@ -408,6 +618,8 @@ export function AtlasWalk({
   }, [active, reduced, bob]);
   const pos = useRef<Point>({ ...grid.start });
   const [walking, setWalking] = useState(false);
+  // where the feet are, a few times a second (for the outline behind tall things)
+  const [feet, setFeet] = useState<Point>(grid.start);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
   const [here, setHere] = useState<TileId>(
     tileAt(region, grid.start.x, grid.start.y)?.id ?? 'garden',
@@ -439,6 +651,9 @@ export function AtlasWalk({
     const t = setInterval(() => {
       const tile = tileAt(region, px.get(), py.get());
       if (tile) setHere(tile.id);
+      const x = Math.round(px.get());
+      const y = Math.round(py.get());
+      setFeet((f) => (f.x === x && f.y === y ? f : { x, y }));
       calls.current.onMove?.({ x: px.get(), y: py.get() });
     }, 150);
     return () => clearInterval(t);
@@ -468,7 +683,9 @@ export function AtlasWalk({
     const path = grid.walk.findPath(from0, goal);
     if (!path.length) return;
     const end = path[path.length - 1];
-    setFacing(end.x < from0.x ? 'left' : 'right');
+    // face the way each leg goes; a leg that only goes up or down keeps the facing
+    const firstFacing = legFacing(from0, path[0]) ?? legFacing(from0, end);
+    if (firstFacing) setFacing(firstFacing);
     setWalking(true);
     let length = 0;
     let prev = from0;
@@ -499,13 +716,20 @@ export function AtlasWalk({
               ? Easing.out(Easing.quad)
               : Easing.linear;
       const ms = !glide && (first || last) ? duration * 1.25 : duration;
-      xs.push(withTiming(p.x, { duration: ms, easing }));
+      const next = path[i + 1];
+      const nextFacing = next ? legFacing(p, next) : null;
+      xs.push(
+        withTiming(p.x, { duration: ms, easing }, (finished) => {
+          if (finished && nextFacing) runOnJS(setFacing)(nextFacing);
+        }),
+      );
       ys.push(withTiming(p.y, { duration: ms, easing }));
       from = p;
     });
     const arrive = () => {
       pos.current = end;
       setWalking(false);
+      setFeet(end);
       if (!reduced && active && !keysHeld.current) {
         // a small squash as the feet settle, then still
         landing.set(
@@ -604,6 +828,7 @@ export function AtlasWalk({
     (t) => Math.abs(t.col - hereTile.col) <= reachX && Math.abs(t.row - hereTile.row) <= reachY,
   );
   const gaps: { col: number; row: number }[] = [];
+  const opensOut = region === 'valley' || !!zoneBeyondByRegion[region];
   for (let col = hereTile.col - reachX; col <= hereTile.col + reachX; col++)
     for (let row = hereTile.row - reachY; row <= hereTile.row + reachY; row++) {
       const inside =
@@ -611,9 +836,21 @@ export function AtlasWalk({
         row >= bounds.minRow &&
         col < bounds.minCol + bounds.tileCols &&
         row < bounds.minRow + bounds.tileRows;
-      if (inside && !tiles.some((t) => t.col === col && t.row === row)) gaps.push({ col, row });
+      // past a region's edge (a region shorter or narrower than the screen) the land runs
+      // on where it has open country round it; elsewhere the backdrop's colour shows
+      if (inside ? !tiles.some((t) => t.col === col && t.row === row) : opensOut)
+        gaps.push({ col, row });
     }
-  const drawables = near.flatMap((t) => tileDrawables(region, t));
+  const drawables = [
+    ...near.flatMap((t) => tileDrawables(region, t)),
+    ...(extras ?? []).map((e) => ({ ...e, sprite: `extra:${e.key}` })),
+  ];
+  // behind a building or a big tree, the companion's outline shows through (a flyer's box
+  // is not where it flies, so it never counts)
+  const hidden = hiddenBehind(
+    drawables.filter((d) => !FLYERS[d.sprite]),
+    feet,
+  );
   const panes = !night
     ? []
     : drawables.flatMap((d) =>
@@ -646,11 +883,16 @@ export function AtlasWalk({
       regionH <= height - padBottom
         ? (regionH - height + padBottom) / 2
         : Math.max(0, Math.min(regionH - height + padBottom, py.get() * u - height * focusY));
-    walkTo({ x: (locationX + cx) / u, y: (locationY + cy) / u });
+    const at = { x: (locationX + cx) / u, y: (locationY + cy) / u };
+    const used = onTap?.(at);
+    if (used === true) return;
+    walkTo(used ? used : at);
   };
 
   return (
-    <View style={{ width, height, overflow: 'hidden', backgroundColor: '#2F4630' }}>
+    <View
+      style={{ width, height, overflow: 'hidden', backgroundColor: BACKDROP[region] ?? '#2F4630' }}
+    >
       <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, width, height }}>
         <Animated.View
           // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
@@ -664,7 +906,7 @@ export function AtlasWalk({
           {gaps.map((g) => (
             <Image
               key={`beyond-${g.col}-${g.row}`}
-              source={zoneBeyond}
+              source={zoneBeyondByRegion[region] ?? zoneBeyond}
               resizeMode="stretch"
               style={{
                 // its crowns spill over the zones beside it (above their ground, under their props)
@@ -723,9 +965,11 @@ export function AtlasWalk({
             );
           })}
           {drawables.map((d) =>
-            FLOATS[d.sprite] && active && !reduced ? (
+            FLYERS[d.sprite] && active && !reduced ? (
+              <Flyer key={d.key} d={d} clock={bob} u={u} snap={snap} />
+            ) : FLOATS[d.sprite] && active && !reduced ? (
               <Floating key={d.key} d={d} clock={bob} u={u} snap={snap} />
-            ) : zoneFrames[d.sprite] && active && !reduced ? (
+            ) : zoneFrames[d.sprite] && active && !reduced && !FLYERS[d.sprite] ? (
               <Turning key={d.key} d={d} clock={bob} u={u} snap={snap} />
             ) : (
               <Image
@@ -879,6 +1123,61 @@ export function AtlasWalk({
               )}
             </Animated.View>
           </Animated.View>
+          {preview && (
+            // a keepsake about to be set down: its footprint lit green (it may stand
+            // there) or red (not), the thing itself faint above it
+            <View pointerEvents="none" style={{ position: 'absolute', zIndex: 149998 }}>
+              <View
+                style={{
+                  position: 'absolute',
+                  left: snap(preview.foot.x * u),
+                  top: snap(preview.foot.y * u),
+                  width: snap(preview.foot.w * u),
+                  height: snap(preview.foot.h * u),
+                  backgroundColor: preview.ok ? 'rgba(126,200,96,0.55)' : 'rgba(214,72,60,0.55)',
+                  borderWidth: Math.max(1, Math.round(u)),
+                  borderColor: preview.ok ? '#3E7A2E' : '#8A2A22',
+                }}
+              />
+              <Image
+                source={preview.src}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: snap(preview.x * u),
+                  top: snap(preview.y * u),
+                  width: snap(preview.w * u),
+                  height: snap(preview.h * u),
+                  opacity: 0.8,
+                }}
+              />
+            </View>
+          )}
+          {hidden && (
+            // the same companion again, faint, above everything but the night tint, so it
+            // reads through what hides it and lines up with itself where nothing does
+            <Ghost px={px} py={py} u={u} size={petPx} reduced={reduced}>
+              {player ? (
+                <GuardianPet
+                  player={player}
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && active && !reduced}
+                  bob={!walking && !reduced && active}
+                  active={active}
+                  decorative
+                />
+              ) : (
+                <Pet
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && !reduced}
+                  active={active}
+                  decorative
+                />
+              )}
+            </Ghost>
+          )}
         </Animated.View>
       </View>
       {/* one transparent layer takes the taps, so their position is the window's */}
