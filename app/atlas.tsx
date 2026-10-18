@@ -19,8 +19,6 @@ const regionNames: Record<RegionId, string> = {
   moon: 'LUMEN',
   home: 'HOUSE',
 };
-// Lumen is reached by shuttle from Halcyon: the same climb out of the atmosphere
-const journeyFor = (r: RegionId) => (r === 'moon' ? 'space' : r);
 
 /**
  * A preview of the open world (living-world plan W1): walk across the drawn zones
@@ -45,7 +43,7 @@ export default function Atlas() {
         <AtlasWalk key={region} region={region} width={width} height={height - bar} />
         {trip && (
           <Journey
-            to={journeyFor(trip)}
+            to={trip === 'home' ? 'valley' : trip}
             label={regionNames[trip]}
             width={width}
             height={height - bar}
