@@ -14,6 +14,7 @@ The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its 
 - Never force-push shared work. Push with an expected-head check when using the GitHub connector. Do not push locally reconstructed Git history over the repository's real history.
 - The user merges pull requests. Do not merge, change branch protection or enable auto-merge unless asked.
 - Continuous work: Codex takes tasks from the Codex queue in `docs/vision/coherence-plan.md` and answers the Feedback written there; Claude keeps that queue stocked and, as Matt asked, verifies and merges quiet Codex PRs.
+- Two Claude chats may work at once (Matt, 18 Oct). The first (Claude A) builds the world and merges; a second (Claude B) takes Claude B's queue in `docs/vision/coherence-plan.md`, "Who does what", on a `claude-b/` branch with a PR, and edits only the files that table gives it.
 
 ## Keep the design coherent
 
