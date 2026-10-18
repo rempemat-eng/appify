@@ -253,6 +253,15 @@ export function ShopScreen() {
       <PixelFrame tone="leaf" style={{ padding: 4 }}>
         <WorldWindow region="valley" at={regionPoint(missionPlaces.shop)} height={150} />
       </PixelFrame>
+      <PixelButton
+        small
+        light
+        label="VISIT THE STALL"
+        onPress={() => {
+          // walk out of the gate to Moss's stall yourself (free, grants nothing)
+          router.push({ pathname: '/world', params: { place: 'shop' } });
+        }}
+      />
       <View style={{ gap: 2 }}>
         <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>Moss the merchant</BodyText>
         <BodyText style={{ fontSize: 12 }}>{merchant}</BodyText>
@@ -520,6 +529,17 @@ export function ArenaScreen() {
           height={160}
         />
       </PixelFrame>
+      {!ring && (
+        <PixelButton
+          small
+          light
+          label="WALK TO THE RING"
+          onPress={() => {
+            // walk out of the gate to the town's ring yourself (free, grants nothing)
+            router.push({ pathname: '/world', params: { place: 'arena' } });
+          }}
+        />
+      )}
       {backendConfigured && <GardenTip id="arena" eligible={focused} />}
       {!backendConfigured && (
         <BodyText style={{ fontSize: 12 }}>
