@@ -5,11 +5,13 @@ with nearest-neighbour so the app can show crisp pixels on any screen.
 """
 from __future__ import annotations
 
+import functools
 import math
 import random
 from PIL import Image
 
 
+@functools.lru_cache(maxsize=8192)  # pure; called millions of times with a few hundred colours
 def hex_rgba(value: str, alpha: int = 255) -> tuple[int, int, int, int]:
     value = value.lstrip('#')
     return (int(value[0:2], 16), int(value[2:4], 16), int(value[4:6], 16), alpha)
@@ -145,13 +147,19 @@ def noise2(x: int, y: int, seed: int = 0) -> float:
     return v - math.floor(v)
 
 
+@functools.lru_cache(maxsize=1 << 18)
+def _lattice(x: int, y: int, seed: int) -> float:
+    """noise2 at a lattice point, remembered: neighbouring pixels share their corners."""
+    return noise2(x, y, seed)
+
+
 def smooth_noise(x: float, y: float, scale: float, seed: int = 0) -> float:
     gx, gy = x / scale, y / scale
     x0, y0 = math.floor(gx), math.floor(gy)
     fx, fy = gx - x0, gy - y0
     fx, fy = fx * fx * (3 - 2 * fx), fy * fy * (3 - 2 * fy)
-    a, b = noise2(x0, y0, seed), noise2(x0 + 1, y0, seed)
-    c, d = noise2(x0, y0 + 1, seed), noise2(x0 + 1, y0 + 1, seed)
+    a, b = _lattice(x0, y0, seed), _lattice(x0 + 1, y0, seed)
+    c, d = _lattice(x0, y0 + 1, seed), _lattice(x0 + 1, y0 + 1, seed)
     return (a * (1 - fx) + b * fx) * (1 - fy) + (c * (1 - fx) + d * fx) * fy
 
 
