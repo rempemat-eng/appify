@@ -120,13 +120,26 @@ export function makeWalkGrid(
 export const GARDEN_START: Point = gardenAnchors.start;
 // The map describes feet, but the companion is 32 art pixels wide. Keep its
 // centre and head inside the scene even when wandering or following an edge tap.
-const garden = makeWalkGrid(gardenWalk, {
-  cell: GARDEN.cell,
-  width: GARDEN.width,
-  start: GARDEN_START,
-  bounds: { minX: 16, maxX: GARDEN.width - 16, minY: 48, maxY: GARDEN.fenceY - 4 },
-});
-export const { walkable, toCell, toPoint, nearestWalkable, findPath, randomSpot } = garden;
+const gardenGrid = (rows: readonly string[]) =>
+  makeWalkGrid(rows, {
+    cell: GARDEN.cell,
+    width: GARDEN.width,
+    start: GARDEN_START,
+    bounds: { minX: 16, maxX: GARDEN.width - 16, minY: 48, maxY: GARDEN.fenceY - 4 },
+  });
+let garden = gardenGrid(gardenWalk);
+/** The garden's walk with keepsakes standing in it (lib/decor.ts); the garden's own rows
+ *  when none do. Paths found after this go round them. */
+export function setGardenWalk(rows: readonly string[]) {
+  garden = gardenGrid(rows);
+}
+export const walkable = (cx: number, cy: number) => garden.walkable(cx, cy);
+export const toCell = (p: Point) => garden.toCell(p);
+export const toPoint = (cx: number, cy: number) => garden.toPoint(cx, cy);
+export const nearestWalkable = (p: Point) => garden.nearestWalkable(p);
+export const findPath = (from: Point, to: Point) => garden.findPath(from, to);
+export const randomSpot = (near: Point, radius: number, random?: () => number) =>
+  garden.randomSpot(near, radius, random);
 
 // ---- ways out of the home garden ---------------------------------------------
 // Every exit is a break in the garden's frame with a way through it

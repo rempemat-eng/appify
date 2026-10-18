@@ -1,14 +1,7 @@
 import assert from 'node:assert/strict';
 import { moveTo, restoreWorld } from './world-save';
 import { hiddenBehind } from './occlusion';
-import {
-  checkDecor,
-  foundKeepsakes,
-  hutWalk,
-  keepsakes,
-  newKeepsakes,
-  restoreDecor,
-} from './decor';
+import { checkDecor, foundKeepsakes, keepsakes, newKeepsakes, restoreDecor } from './decor';
 import { decorSizes } from './decor-sizes';
 import { regionWalk, TILE } from './region-walk';
 import {
@@ -282,23 +275,22 @@ console.log('Occlusion: the outline shows only behind what hides the companion.'
     keepsakes.every((k) => decorSizes[k.id]) && Object.keys(decorSizes).length === keepsakes.length,
     'every keepsake has its drawing and every drawing a keepsake',
   );
-  const walk = hutWalk();
-  ok(checkDecor(walk, [], 'stool', 160, 380).ok, 'a stool stands on open floor');
-  ok(!checkDecor(walk, [], 'stool', 160, 20).ok, 'not in the wall');
+  ok(checkDecor('hut', [], 'stool', 160, 380).ok, 'a stool stands on open floor');
+  ok(!checkDecor('hut', [], 'stool', 160, 20).ok, 'not in the wall');
   const door = zoneMaps.home.stands.door;
-  const atDoor = checkDecor(walk, [], 'stool', door[0], door[1] + 2);
+  const atDoor = checkDecor('hut', [], 'stool', door[0], door[1] + 2);
   ok(!atDoor.ok && atDoor.why === 'spot', 'not where the companion stands at the door');
-  ok(checkDecor(walk, [], 'rag_rug', 160, 380).ok, 'a rug lies on open floor');
+  ok(checkDecor('hut', [], 'rag_rug', 160, 380).ok, 'a rug lies on open floor');
   ok(
-    checkDecor(walk, [{ item: 'rag_rug', x: 160, y: 380 }], 'stool', 160, 372).ok,
+    checkDecor('hut', [{ item: 'rag_rug', x: 160, y: 380 }], 'stool', 160, 372).ok,
     'a stool may stand on the rug',
   );
   ok(
-    !checkDecor(walk, [{ item: 'stool', x: 160, y: 380 }], 'cairn', 160, 380).ok,
+    !checkDecor('hut', [{ item: 'stool', x: 160, y: 380 }], 'cairn', 160, 380).ok,
     'two keepsakes never share a spot',
   );
   ok(
-    checkDecor(walk, [{ item: 'stool', x: 160, y: 380 }], 'stool', 120, 380).ok,
+    checkDecor('hut', [{ item: 'stool', x: 160, y: 380 }], 'stool', 120, 380).ok,
     'moving a keepsake ignores where it stood',
   );
   // a doorway half filled: the keepsake that would close it is refused
@@ -307,17 +299,17 @@ console.log('Occlusion: the outline shows only behind what hides the companion.'
     { item: 'cairn', x: 160, y: 404 },
   ];
   ok(
-    half.every((p, i) => checkDecor(walk, half.slice(0, i), p.item, p.x, p.y).ok),
+    half.every((p, i) => checkDecor('hut', half.slice(0, i), p.item, p.x, p.y).ok),
     'two keepsakes may stand in the doorway',
   );
-  const closing = [168, 172, 176, 180].map((x) => checkDecor(walk, half, 'cog_clock', x, 404));
+  const closing = [168, 172, 176, 180].map((x) => checkDecor('hut', half, 'cog_clock', x, 404));
   ok(
     closing.some((c) => !c.ok && c.why === 'cut-off'),
     'the one that would close the doorway is refused for cutting the room off',
   );
   let allowed = 0;
   for (let y = 8; y < 576; y += 8)
-    for (let x = 8; x < 320; x += 8) if (checkDecor(walk, [], 'cog_clock', x, y).ok) allowed++;
+    for (let x = 8; x < 320; x += 8) if (checkDecor('hut', [], 'cog_clock', x, y).ok) allowed++;
   ok(allowed > 300, 'most of the floor is free for keepsakes');
   const restored = restoreDecor(
     [
@@ -329,11 +321,36 @@ console.log('Occlusion: the outline shows only behind what hides the companion.'
       'junk',
     ],
     [],
-    walk,
   );
   ok(
     restored.length === 1 && restored[0].item === 'stool' && restored[0].x === 160,
     'a save keeps one of each found keepsake where it may stand; the rest wait in the chest',
+  );
+}
+{
+  // ... and out in the garden, by the same rules against the garden's own walk
+  ok(checkDecor('garden', [], 'stool', 60, 340).ok, 'a stool stands in the open garden');
+  const nap = checkDecor('garden', [], 'cairn', 143, 128);
+  ok(!nap.ok && nap.why === 'spot', 'not on the way to the nap hotspot');
+  ok(!checkDecor('garden', [], 'rag_rug', 160, 316).ok, 'not on the bridge');
+  ok(
+    checkDecor('garden', [{ item: 'stool', x: 160, y: 380 }], 'stool', 60, 340).ok,
+    'a keepsake moves out of the hut into the garden',
+  );
+  ok(
+    checkDecor('hut', [{ item: 'cairn', x: 60, y: 340, area: 'garden' }], 'stool', 160, 380).ok,
+    'a garden keepsake takes no room in the hut',
+  );
+  const both = restoreDecor(
+    [
+      { item: 'stool', x: 160, y: 380 },
+      { item: 'fern_pot', x: 60, y: 340, area: 'garden' },
+    ],
+    [],
+  );
+  ok(
+    both.length === 2 && both[1].area === 'garden' && both[0].area === undefined,
+    'a save keeps where each keepsake stands, inside or out',
   );
 }
 console.log('Keepsakes: found by walking, placed freely, never in the way.');

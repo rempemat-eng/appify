@@ -146,7 +146,7 @@ const saveShape = object(
       ['settlementId'],
     ),
     world: object({ region: true, x: true, y: true, visited: strings }),
-    decor: list(object({ item: true, x: true, y: true }), ['item']),
+    decor: list(object({ item: true, x: true, y: true, area: true }), ['item']),
   } satisfies Record<keyof Saved, Shape>,
   ['identity'],
 );

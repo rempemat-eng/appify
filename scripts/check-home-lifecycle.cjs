@@ -56,6 +56,12 @@ function hooks() {
         slots[at] = { dependencies, callback };
       return slots[at].callback;
     },
+    useMemo(compute, dependencies) {
+      const at = index++;
+      if (!slots[at] || !equal(slots[at].dependencies, dependencies))
+        slots[at] = { dependencies, value: compute() };
+      return slots[at].value;
+    },
     useLayoutEffect(effect, dependencies) {
       react.useEffect(effect, dependencies);
     },
@@ -198,6 +204,7 @@ function homeFixture() {
     tips: [],
     companionMemories: [],
     alerts: [],
+    decor: [],
     seeTip: (tip) => seen.push(tip),
     sleep(mission, intention) {
       naps.push({ mission, intention });
@@ -250,6 +257,13 @@ function homeFixture() {
           },
         };
       if (id === '@/components/garden-journey') return { gardenMarker: () => 'missions' };
+      // keepsakes (C12): not decorating here; the model is tested in check:world
+      if (id === '@/lib/decor')
+        return {
+          checkDecor: () => ({ ok: true }),
+          foundKeepsakes: () => [],
+          tapToDecorate: () => ({ hand: null, walk: null }),
+        };
       if (id === '@/lib/motion') return { useReducedMotion: () => false };
       if (id === '@/lib/app-active') return { useAppActive: () => control.foreground };
       if (id === '@/lib/sound')

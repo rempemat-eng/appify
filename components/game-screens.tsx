@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import {
   FlatList,
   KeyboardAvoidingView,
@@ -29,6 +29,8 @@ import { Page, Pet, PixelButton, PixelText, StatusChip } from '@/components/game
 import { WorldWindow } from '@/components/atlas-walk';
 import { missionPlaces, regionPoint, rings } from '@/lib/world-places';
 import { GardenWorld } from '@/components/garden-world';
+import { DecoratePanel } from '@/components/decorate-panel';
+import { checkDecor, foundKeepsakes, tapToDecorate, type DecorHand } from '@/lib/decor';
 import { MissionDeparture } from '@/components/mission-departure';
 import { openSheet, useUi } from '@/lib/ui';
 import { useAmbience } from '@/lib/sound';
@@ -54,6 +56,8 @@ const lines = {
 };
 // Idle chatter shows for one tick in four, so the garden is mostly quiet.
 const CHAT_TICK_MS = 6000;
+const noVisits: readonly string[] = [];
+
 export function HomeScreen() {
   const reduced = useReducedMotion();
   const focused = useIsFocused();
@@ -70,6 +74,18 @@ export function HomeScreen() {
   const paused = usePlayPaused();
   // walked back in from the valley (app/world.tsx): where, in garden pixels
   const arrival = useUi((s) => s.homeArrival);
+  // Decorating the garden (C12), come out from the hut's keepsake chest: the keepsakes
+  // found, the one in hand and where it was last tapped
+  const decorating = useUi((s) => s.gardenDecorating);
+  const decor = useGame((s) => s.decor);
+  const visited = useGame((s) => s.world?.visited ?? noVisits);
+  const found = useMemo(() => foundKeepsakes(visited), [visited]);
+  const placeDecor = useGame((s) => s.placeDecor);
+  const storeDecor = useGame((s) => s.storeDecor);
+  const [hand, setHand] = useState<DecorHand | null>(null);
+  const [panelH, setPanelH] = useState(0);
+  const handCheck =
+    decorating && hand?.at ? checkDecor('garden', decor, hand.item, hand.at.x, hand.at.y) : null;
   const busy = useGame((s) =>
     Boolean(
       s.message ||
@@ -162,12 +178,27 @@ export function HomeScreen() {
           memories={memories}
           width={worldWidth}
           viewportHeight={height}
-          padBottom={hotbarClearance(insets.bottom)}
+          padBottom={hotbarClearance(insets.bottom) + (decorating ? panelH + 8 : 0)}
           arrival={arrival}
+          decorate={
+            decorating
+              ? {
+                  onTap: (at) => {
+                    const r = tapToDecorate(decor, 'garden', hand, at);
+                    if (r.hand?.item !== hand?.item) feedback('select');
+                    setHand(r.hand);
+                    return r.walk ?? undefined;
+                  },
+                  preview: hand?.at
+                    ? { item: hand.item, x: hand.at.x, y: hand.at.y, ok: !!handCheck?.ok }
+                    : null,
+                }
+              : null
+          }
           player={p}
           grumpy={p.mood < 30}
           sleepy={paused}
-          say={gardenActive ? say : null}
+          say={gardenActive && !decorating ? say : null}
           marker={gardenMarker(p)}
           onKeepsakePress={(memory) => setKeepsakeSheet({ focused, memory })}
           onNap={() => openSheet('nap')}
@@ -189,6 +220,55 @@ export function HomeScreen() {
           <GardenVisitor active={gardenActive} />
           {crumbs && <PixelBurst />}
         </View>
+        {decorating && (
+          <View
+            onLayout={(e) => setPanelH(Math.round(e.nativeEvent.layout.height))}
+            style={{
+              position: 'absolute',
+              left: 8,
+              right: 8,
+              bottom: hotbarClearance(insets.bottom) + 8,
+              zIndex: 2000,
+            }}
+          >
+            <PixelFrame tone="paper" style={{ padding: 10 }}>
+              <DecoratePanel
+                area="garden"
+                onArea={() => {
+                  // back into the hut, still decorating
+                  setHand(null);
+                  useUi.setState({
+                    gardenDecorating: false,
+                    worldLink: { from: 'hut', decorate: true },
+                  });
+                  router.push('/world');
+                }}
+                found={found}
+                placed={decor}
+                selected={hand?.item ?? null}
+                check={handCheck}
+                onSelect={(item) => setHand(item ? { item, at: null } : null)}
+                onPlace={() => {
+                  if (!hand?.at) return;
+                  if (placeDecor(hand.item, hand.at.x, hand.at.y, 'garden').ok) {
+                    feedback('select');
+                    setHand(null);
+                  }
+                }}
+                onStore={() => {
+                  if (!hand) return;
+                  storeDecor(hand.item);
+                  feedback('select');
+                  setHand(null);
+                }}
+                onDone={() => {
+                  setHand(null);
+                  useUi.setState({ gardenDecorating: false });
+                }}
+              />
+            </PixelFrame>
+          </View>
+        )}
       </View>
       <GardenKeepsakeSheet
         memory={openMemory}

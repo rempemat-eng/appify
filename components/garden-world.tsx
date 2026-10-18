@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import {
   AccessibilityInfo,
   Image,
@@ -36,6 +36,7 @@ import {
   gardenObjects,
   gardenOrchard,
   gardenPlots,
+  gardenWalk,
   growthSpriteSizes,
 } from '@/lib/garden-map';
 import { growthImages } from '@/lib/garden-growth-assets';
@@ -43,6 +44,7 @@ import { meadowLine, orchardStage, plotStage } from '@/lib/garden-growth';
 import {
   GARDEN_START,
   HUT_DOOR,
+  setGardenWalk,
   atGardenExit,
   findPath,
   gardenExitToward,
@@ -56,6 +58,8 @@ import {
 } from '@/lib/garden-path';
 import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
 import { hiddenBehind } from '@/lib/occlusion';
+import { areaOf, decorBox, walkWithDecor, type DecorPlacement } from '@/lib/decor';
+import { decorImages } from '@/lib/decor-assets';
 import { useUi } from '@/lib/ui';
 import {
   TILT_DEG,
@@ -224,6 +228,77 @@ function Sprite({
         zIndex: z,
       }}
     />
+  );
+}
+
+// ---- keepsakes (C12) ------------------------------------------------------
+type Rect = { left: number; top: number; width: number; height: number };
+function DecorSprite({
+  d,
+  proj,
+  snapRect,
+}: {
+  d: DecorPlacement;
+  proj: ReturnType<typeof makeProjection>;
+  snapRect: (r: Rect) => Rect;
+}) {
+  const b = decorBox(d.item, d.x, d.y);
+  // a rug lies on the grass under everything; the rest stand at their feet
+  const z = b.flat ? 3 : d.y;
+  return (
+    <View pointerEvents="none" style={{ position: 'absolute', zIndex: z }}>
+      <Sprite
+        source={decorImages[d.item]}
+        rect={snapRect(billboard(proj, b.left, b.top, b.w, b.h))}
+        z={z}
+      />
+    </View>
+  );
+}
+function DecorPreview({
+  preview,
+  proj,
+  snapRect,
+  unit,
+}: {
+  preview: { item: string; x: number; y: number; ok: boolean };
+  proj: ReturnType<typeof makeProjection>;
+  snapRect: (r: Rect) => Rect;
+  unit: number;
+}) {
+  const b = decorBox(preview.item, preview.x, preview.y);
+  const xs = b.cells.map(([cx]) => cx * 4);
+  const ys = b.cells.map(([, cy]) => cy * 4);
+  const x0 = Math.min(...xs);
+  const y0 = Math.min(...ys);
+  const foot = snapRect(
+    billboard(proj, x0, y0, Math.max(...xs) + 4 - x0, Math.max(...ys) + 4 - y0),
+  );
+  const art = snapRect(billboard(proj, b.left, b.top, b.w, b.h));
+  return (
+    <View pointerEvents="none" style={{ position: 'absolute', zIndex: 969 }}>
+      <View
+        style={{
+          position: 'absolute',
+          ...foot,
+          backgroundColor: preview.ok ? 'rgba(126,200,96,0.55)' : 'rgba(214,72,60,0.55)',
+          borderWidth: unit,
+          borderColor: preview.ok ? '#3E7A2E' : '#8A2A22',
+        }}
+      />
+      <Image
+        source={decorImages[preview.item]}
+        resizeMode="stretch"
+        style={{
+          position: 'absolute',
+          left: art.left,
+          top: art.top,
+          width: art.width,
+          height: art.height,
+          opacity: 0.8,
+        }}
+      />
+    </View>
   );
 }
 
@@ -451,6 +526,7 @@ export function GardenWorld({
   say = null,
   padBottom = 0,
   arrival = null,
+  decorate = null,
 }: {
   width: number;
   player: Player;
@@ -483,6 +559,16 @@ export function GardenWorld({
   padBottom?: number;
   /** Walked in from the valley: stand here (garden pixels); a new key moves it again. */
   arrival?: { x: number; y: number; key: string } | null;
+  /**
+   * Decorating the garden (C12): every tap goes here first (garden pixels): true when
+   * it was used, a point for the companion to walk to instead, or nothing to walk to
+   * the tap. The places' own actions wait, and nothing leads out of the garden. The
+   * keepsake about to be set down shows faint over its footprint, green or red.
+   */
+  decorate?: {
+    onTap: (at: Point) => boolean | Point | void;
+    preview: { item: string; x: number; y: number; ok: boolean } | null;
+  } | null;
 }) {
   const reduced = useReducedMotion();
   const appActive = useAppActive();
@@ -867,7 +953,7 @@ export function GardenWorld({
 
   // Arrow keys / WASD (web): short walks in the held direction, sliding along walls.
   useKeyboardWalk(
-    active && !napping,
+    active && !napping && !decorate,
     (dx, dy) => {
       const from = { x: px.get(), y: py.get() };
       // well past the next tick, so a held key never arrives (and re-renders) between ticks
@@ -969,6 +1055,12 @@ export function GardenWorld({
   }, [walking, px, py]);
   // behind the hut, the stall or a tree, a faint copy shows through (never while napping:
   // the bed is meant to be inside)
+  // keepsakes set out in the garden stand in the way like any prop (lib/decor.ts)
+  const decor = useGame((s) => s.decor);
+  const gardenDecor = useMemo(() => decor.filter((d) => areaOf(d) === 'garden'), [decor]);
+  useEffect(() => {
+    setGardenWalk(walkWithDecor(gardenWalk, gardenDecor));
+  }, [gardenDecor]);
   const hidden = !napping && hiddenBehind(OCCLUDERS, feet);
   const ghostFade = useSharedValue(0);
   useEffect(() => {
@@ -1270,6 +1362,51 @@ export function GardenWorld({
             height: tilt ? height - proj.horizon : height,
           }}
         />
+        {gardenDecor.map((d) => (
+          <DecorSprite key={`decor-${d.item}`} d={d} proj={proj} snapRect={snapRect} />
+        ))}
+        {decorate?.preview && (
+          <DecorPreview
+            preview={decorate.preview}
+            proj={proj}
+            snapRect={snapRect}
+            unit={Math.max(1, Math.round(scale))}
+          />
+        )}
+        {decorate && (
+          // while decorating, every tap is about where a keepsake goes (or which one to
+          // move); the places' own actions wait
+          <Pressable
+            accessibilityRole="button"
+            accessibilityLabel="Tap where the keepsake goes"
+            onPress={(e) => {
+              const ne = e.nativeEvent as typeof e.nativeEvent & {
+                offsetX?: number;
+                offsetY?: number;
+              };
+              const lx = ne.locationX ?? ne.offsetX;
+              const ly = ne.locationY ?? ne.offsetY;
+              if (typeof lx !== 'number' || typeof ly !== 'number') return;
+              const at = unproject(proj, lx, ly);
+              const used = decorate.onTap(at);
+              if (used === true || napping || !activeRef.current) return;
+              const to = used || at;
+              // never out through the gate, the trail or the meadow's sides from here
+              walkTo({
+                x: Math.max(24, Math.min(GARDEN.width - 24, to.x)),
+                y: Math.max(56, Math.min(GARDEN.fenceY - 20, to.y)),
+              });
+            }}
+            style={{
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width: worldWidth,
+              height,
+              zIndex: 970,
+            }}
+          />
+        )}
         {gardenObjects.map((o) => {
           // Upright billboard standing on its footprint (identity in flat view).
           const art = billboard(proj, o.x, o.y, o.w, o.h);

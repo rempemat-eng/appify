@@ -12,7 +12,14 @@ import { BodyText } from '@/components/pixel-feedback';
 import { feedback, missions, useGame } from '@/lib/game';
 import { useAppActive } from '@/lib/app-active';
 import { worldCatalogue } from '@/lib/world-catalogue';
-import { regionTiles, tileAt, tileOrigin, type RegionId, type TileId } from '@/lib/region-walk';
+import {
+  regionTiles,
+  regionWalk,
+  tileAt,
+  tileOrigin,
+  type RegionId,
+  type TileId,
+} from '@/lib/region-walk';
 import { residentLines, residentRoutes } from '@/lib/resident-routes';
 import {
   PLACE_RADIUS,
@@ -39,13 +46,16 @@ import { WorldMap } from '@/components/world-map';
 import { HUT_DOOR, type Point } from '@/lib/garden-path';
 import { DecoratePanel } from '@/components/decorate-panel';
 import {
+  areaOf,
   checkDecor,
   decorBox,
+  decorFootprint,
+  tapToDecorate,
   foundKeepsakes,
   hutWalk,
   keepsakes,
-  snapDecor,
   walkWithDecor,
+  type DecorHand,
   type DecorPlacement,
 } from '@/lib/decor';
 import { decorImages } from '@/lib/decor-assets';
@@ -123,6 +133,27 @@ function placeMarkers(region: RegionId, card: Card | null) {
   }
   return out;
 }
+
+/** Keepsakes as things standing in a scene (their feet in region pixels). */
+function decorExtras(list: readonly DecorPlacement[]) {
+  return list.map((p) => {
+    const b = decorBox(p.item, p.x, p.y);
+    return {
+      key: `decor-${p.item}`,
+      src: decorImages[p.item],
+      x: b.left,
+      y: b.top,
+      w: b.w,
+      h: b.h,
+      // a rug lies under everything; the rest stand at their feet
+      z: b.flat ? 2 : p.y,
+    };
+  });
+}
+const gardenOrigin = (() => {
+  const t = regionTiles('valley').find((x) => x.id === 'garden');
+  return t ? tileOrigin('valley', t) : { x: 0, y: 0 };
+})();
 
 const near = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y) <= PLACE_RADIUS * 1.6;
 
@@ -248,26 +279,32 @@ export default function World() {
   const decor = useGame((s) => s.decor);
   const visited = useGame((s) => s.world?.visited ?? noZones);
   const found = useMemo(() => foundKeepsakes(visited), [visited]);
-  const [decorating, setDecorating] = useState(false);
-  const [hand, setHand] = useState<{ item: string; at: Point | null } | null>(null);
-  const homeWalk = useMemo(() => walkWithDecor(hutWalk(), decor), [decor]);
-  const homeExtras = useMemo(
+  const [decorating, setDecorating] = useState(
+    () => useUi.getState().worldLink?.decorate === true && spawn.region === 'home',
+  );
+  const [hand, setHand] = useState<DecorHand | null>(null);
+  const homeWalk = useMemo(
     () =>
-      decor.map((p) => {
-        const b = decorBox(p.item, p.x, p.y);
-        return {
-          key: `decor-${p.item}`,
-          src: decorImages[p.item],
-          x: b.left,
-          y: b.top,
-          w: b.w,
-          h: b.h,
-          // a rug lies under everything; the rest stand at their feet
-          z: b.flat ? 2 : p.y,
-        };
-      }),
+      walkWithDecor(
+        hutWalk(),
+        decor.filter((p) => areaOf(p) === 'hut'),
+      ),
     [decor],
   );
+  const homeExtras = useMemo(() => decorExtras(decor.filter((p) => areaOf(p) === 'hut')), [decor]);
+  // the garden's keepsakes stand in the valley's copy of the garden too
+  const valleyDecor = useMemo(
+    () =>
+      decor
+        .filter((p) => areaOf(p) === 'garden')
+        .map((p) => ({ ...p, x: p.x + gardenOrigin.x, y: p.y + gardenOrigin.y })),
+    [decor],
+  );
+  const valleyWalk = useMemo(
+    () => (valleyDecor.length ? walkWithDecor(regionWalk('valley'), valleyDecor) : undefined),
+    [valleyDecor],
+  );
+  const valleyExtras = useMemo(() => decorExtras(valleyDecor), [valleyDecor]);
   // where the companion stands and which zones it has walked, for the map (only while it is open)
   const worldSpot = useGame((s) => (mapOpen ? s.world : null));
   const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
@@ -402,32 +439,15 @@ export default function World() {
   const placeDecor = useGame((s) => s.placeDecor);
   const storeDecor = useGame((s) => s.storeDecor);
   const decorTap = (at: Point): boolean | Point | void => {
-    const under = decor.filter((p) => {
-      const b = decorBox(p.item, p.x, p.y);
-      return at.x >= b.left && at.x < b.left + b.w && at.y >= b.top && at.y < b.top + b.h;
-    });
-    const solid = under
-      .filter((p) => !decorBox(p.item, p.x, p.y).flat)
-      .sort((a, b) => b.y - a.y)[0];
-    // (a rug is only picked up when nothing is in hand, so things can be set on it)
-    const hit: DecorPlacement | undefined = solid ?? (hand ? undefined : under[0]);
-    if (hit && hit.item !== hand?.item) {
-      feedback('select');
-      setHand({ item: hit.item, at: null });
-      return true;
-    }
-    if (!hand) return undefined;
-    const spot = snapDecor(at);
-    setHand({ item: hand.item, at: spot });
-    // stand just in front of the spot, not on it
-    return { x: spot.x, y: spot.y + 12 };
+    const r = tapToDecorate(decor, 'hut', hand, at);
+    if (r.hand?.item !== hand?.item) feedback('select');
+    setHand(r.hand);
+    return r.walk ?? undefined;
   };
-  const handCheck = hand?.at ? checkDecor(hutWalk(), decor, hand.item, hand.at.x, hand.at.y) : null;
+  const handCheck = hand?.at ? checkDecor('hut', decor, hand.item, hand.at.x, hand.at.y) : null;
   const preview = (() => {
     if (!hand?.at) return undefined;
     const b = decorBox(hand.item, hand.at.x, hand.at.y);
-    const xs = b.cells.map(([cx]) => cx * 4);
-    const ys = b.cells.map(([, cy]) => cy * 4);
     return {
       key: 'preview',
       src: decorImages[hand.item],
@@ -437,12 +457,7 @@ export default function World() {
       h: b.h,
       z: hand.at.y,
       ok: !!handCheck?.ok,
-      foot: {
-        x: Math.min(...xs),
-        y: Math.min(...ys),
-        w: Math.max(...xs) + 4 - Math.min(...xs),
-        h: Math.max(...ys) + 4 - Math.min(...ys),
-      },
+      foot: decorFootprint(hand.item, hand.at.x, hand.at.y),
     };
   })();
 
@@ -662,7 +677,8 @@ export default function World() {
                 homeward(at);
                 throughPass(at);
               }}
-              interactive={!mapOpen}
+              // (never under the map or a journey: no walking, held keys included, behind them)
+              interactive={!mapOpen && !trip}
               showName={false}
               focusY={card || decorating ? 0.3 : 0.55}
               padBottom={
@@ -671,8 +687,20 @@ export default function World() {
               target={goal}
               markers={decorating ? undefined : placeMarkers(spawn.region, card)}
               onMarker={walkToPlace}
-              walk={spawn.region === 'home' ? homeWalk : undefined}
-              extras={spawn.region === 'home' ? homeExtras : undefined}
+              walk={
+                spawn.region === 'home'
+                  ? homeWalk
+                  : spawn.region === 'valley'
+                    ? valleyWalk
+                    : undefined
+              }
+              extras={
+                spawn.region === 'home'
+                  ? homeExtras
+                  : spawn.region === 'valley'
+                    ? valleyExtras
+                    : undefined
+              }
               preview={decorating ? preview : undefined}
               onTap={decorating ? decorTap : undefined}
             />
@@ -695,6 +723,14 @@ export default function World() {
               <ScrollView style={{ maxHeight: cardH - 8 * u }} contentContainerStyle={{ gap: 6 }}>
                 {decorating ? (
                   <DecoratePanel
+                    area="hut"
+                    onArea={() => {
+                      // out to the garden, still decorating
+                      setDecorating(false);
+                      setHand(null);
+                      useUi.setState({ gardenDecorating: true });
+                      goHome(HUT_DOOR);
+                    }}
                     found={found}
                     placed={decor}
                     selected={hand?.item ?? null}

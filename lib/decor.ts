@@ -1,6 +1,8 @@
 import { decorSizes } from '@/lib/decor-sizes';
 import { zoneMaps } from '@/lib/zone-maps';
 import { regionWalk } from '@/lib/region-walk';
+import { GARDEN, gardenAnchors, gardenFlat, gardenHotspots, gardenWalk } from '@/lib/garden-map';
+import { HUT_DOOR, TRAIL_X } from '@/lib/garden-path';
 
 /**
  * Keepsakes and where they stand in the nap hut (C12, living-world plan W4; research:
@@ -11,7 +13,11 @@ import { regionWalk } from '@/lib/region-walk';
  * can walk, and a placement is refused if it would cut off any part of the room.
  * Pure, so it is tested (lib/world-save.test.ts).
  */
-export type DecorPlacement = { item: string; x: number; y: number };
+/** Where a keepsake can stand: inside the hut, or out in the garden. */
+export type DecorArea = 'hut' | 'garden';
+/** A keepsake set out; `area` is left out inside the hut (saves from before the garden). */
+export type DecorPlacement = { item: string; x: number; y: number; area?: 'garden' };
+export const areaOf = (p: DecorPlacement): DecorArea => p.area ?? 'hut';
 
 type Keepsake = {
   id: string;
@@ -67,18 +73,77 @@ export function newKeepsakes(before: readonly string[], zone: string): string[] 
 }
 
 const CELL = 4;
+type Spot = readonly [number, number];
 const home = zoneMaps.home;
-/** where the companion must always be able to reach: the door first, then the bed, the
- *  hearth, the table, the sunroom and the chest */
-const stands: readonly (readonly [number, number])[] = [
-  home.stands.door,
-  ...Object.entries(home.stands)
-    .filter(([k]) => k !== 'door')
-    .map(([, v]) => v),
-];
 let hutRows: string[] | null = null;
 /** The hut's own walk rows (the home region is the hut alone, so its pixels are the hut's). */
 export const hutWalk = () => (hutRows ??= regionWalk('home'));
+let gardenRows: string[] | null = null;
+/** The garden's walk rows, kept inside the scene the way the companion is (garden-path.ts). */
+export const gardenFloor = () =>
+  (gardenRows ??= gardenWalk.map((row, cy) =>
+    row
+      .split('')
+      .map((c, cx) => {
+        const x = cx * CELL + CELL / 2;
+        const y = cy * CELL + CELL / 2;
+        const inside = x >= 16 && x <= GARDEN.width - 16 && y >= 48 && y <= GARDEN.fenceY - 4;
+        return inside ? c : '#';
+      })
+      .join(''),
+  ));
+/** The nearest open cell to a point, as the point of its centre. */
+function onFloor(rows: readonly string[], [x, y]: Spot): Spot {
+  const cx = Math.floor(x / CELL);
+  const cy = Math.floor(y / CELL);
+  for (let r = 0; r < 12; r++)
+    for (let dy = -r; dy <= r; dy++)
+      for (let dx = -r; dx <= r; dx++)
+        if (Math.max(Math.abs(dx), Math.abs(dy)) === r && rows[cy + dy]?.[cx + dx] === '.')
+          return [(cx + dx) * CELL + CELL / 2, (cy + dy) * CELL + CELL / 2];
+  return [x, y];
+}
+/**
+ * Each area's floor and the places the companion must always be able to reach there
+ * (the first is where the reach is measured from): in the hut the front door, the bed,
+ * the hearth, the table, the sunroom and the chest; in the garden where it wakes, every
+ * hotspot, the hut's door and the four ways out. Garden flats (the bridge) stay bare.
+ */
+const areas: Record<
+  DecorArea,
+  {
+    floor: () => readonly string[];
+    keep: () => readonly Spot[];
+    bare: readonly { x: number; y: number; w: number; h: number }[];
+  }
+> = {
+  hut: {
+    floor: hutWalk,
+    keep: () => [
+      home.stands.door,
+      ...Object.entries(home.stands)
+        .filter(([k]) => k !== 'door')
+        .map(([, v]) => v),
+    ],
+    bare: [],
+  },
+  garden: {
+    floor: gardenFloor,
+    keep: () =>
+      (
+        [
+          [gardenAnchors.start.x, gardenAnchors.start.y],
+          [HUT_DOOR.x, HUT_DOOR.y],
+          ...Object.values(gardenHotspots).map((h) => [h.x, h.y] as const),
+          [TRAIL_X, 52],
+          [20, 456],
+          [GARDEN.width - 20, 220],
+        ] as Spot[]
+      ).map((p) => onFloor(gardenFloor(), p)),
+    bare: gardenFlat,
+  },
+};
+export const decorFloor = (area: DecorArea) => areas[area].floor();
 /** how near a stand nothing may stand, so the companion has room there */
 const STAND_CLEAR = 10;
 
@@ -121,12 +186,12 @@ export type DecorCheck =
   | { ok: false; why: 'wall' | 'crowded' | 'spot' | 'cut-off' | 'unknown' };
 
 /**
- * Whether `item` can stand with its feet at `x, y` among the `placed` ones (`placed`
- * may include the item itself, which is ignored, so moving is a check like any other).
- * `walk` is the hut's own walk rows, without keepsakes.
+ * Whether `item` can stand with its feet at `x, y` in `area` among the `placed` ones
+ * (any area; `placed` may include the item itself, which is ignored, so moving is a
+ * check like any other).
  */
 export function checkDecor(
-  walk: readonly string[],
+  area: DecorArea,
   placed: readonly DecorPlacement[],
   item: string,
   x: number,
@@ -134,10 +199,19 @@ export function checkDecor(
 ): DecorCheck {
   if (!decorSizes[item] || !Number.isFinite(x) || !Number.isFinite(y))
     return { ok: false, why: 'unknown' };
-  const others = placed.filter((p) => p.item !== item && decorSizes[p.item]);
+  const { floor, keep, bare } = areas[area];
+  const walk = floor();
+  const stands = keep();
+  const others = placed.filter((p) => p.item !== item && decorSizes[p.item] && areaOf(p) === area);
   const box = decorBox(item, x, y);
   // on the floor: every footprint cell is open floor in the room itself
   if (!box.cells.every(([cx, cy]) => walk[cy]?.[cx] === '.')) return { ok: false, why: 'wall' };
+  if (
+    bare.some(
+      (f) => box.left < f.x + f.w && box.left + box.w > f.x && box.top < f.y + f.h && y > f.y,
+    )
+  )
+    return { ok: false, why: 'wall' };
   // not on another keepsake (a stool may stand on a rug, a rug not on a rug)
   const taken = new Set<string>();
   for (const p of others) {
@@ -156,13 +230,13 @@ export function checkDecor(
     }
   // and every one of them still reachable from the door
   const rows = walkWithDecor(walk, [...others, { item, x, y }]);
-  if (!allReachable(rows)) return { ok: false, why: 'cut-off' };
+  if (!allReachable(rows, stands)) return { ok: false, why: 'cut-off' };
   return { ok: true };
 }
 
-function allReachable(rows: readonly string[]) {
+function allReachable(rows: readonly string[], stands: readonly Spot[]) {
   const cols = rows[0]?.length ?? 0;
-  const cell = ([x, y]: readonly [number, number]) => [Math.floor(x / CELL), Math.floor(y / CELL)];
+  const cell = ([x, y]: Spot) => [Math.floor(x / CELL), Math.floor(y / CELL)];
   const [dx, dy] = cell(stands[0]);
   const seen = new Set<number>([dy * cols + dx]);
   const queue: [number, number][] = [[dx, dy]];
@@ -191,11 +265,7 @@ function allReachable(rows: readonly string[]) {
  * Saved keepsakes, made safe: known, found, one of each, and each still standing where
  * it may (a hut redrawn since the save sends one that no longer fits back to the chest).
  */
-export function restoreDecor(
-  value: unknown,
-  visited: readonly string[],
-  walk: readonly string[],
-): DecorPlacement[] {
+export function restoreDecor(value: unknown, visited: readonly string[]): DecorPlacement[] {
   if (!Array.isArray(value)) return [];
   const found = new Set(foundKeepsakes(visited));
   const out: DecorPlacement[] = [];
@@ -204,9 +274,49 @@ export function restoreDecor(
     const item: unknown = Reflect.get(v, 'item');
     const x: unknown = Reflect.get(v, 'x');
     const y: unknown = Reflect.get(v, 'y');
+    const area: DecorArea = Reflect.get(v, 'area') === 'garden' ? 'garden' : 'hut';
     if (typeof item !== 'string' || typeof x !== 'number' || typeof y !== 'number') continue;
     if (!found.has(item) || out.some((p) => p.item === item)) continue;
-    if (checkDecor(walk, out, item, x, y).ok) out.push({ item, x, y });
+    if (checkDecor(area, out, item, x, y).ok)
+      out.push(area === 'garden' ? { item, x, y, area } : { item, x, y });
   }
   return out;
+}
+
+/** The keepsake in hand while decorating, and where it was last tapped. */
+export type DecorHand = { item: string; at: { x: number; y: number } | null };
+
+/**
+ * What a tap does while decorating `area`: a keepsake standing there under the tap is
+ * taken in hand (to move or put away; a rug only when nothing is in hand, so things can
+ * be set on it); with one in hand, the tap is where it would go, and the companion walks
+ * to just in front of it. `walk` is true for no walk, or the point to walk to.
+ */
+export function tapToDecorate(
+  placed: readonly DecorPlacement[],
+  area: DecorArea,
+  hand: DecorHand | null,
+  at: { x: number; y: number },
+): { hand: DecorHand | null; walk: true | { x: number; y: number } | null } {
+  const under = placed.filter((p) => {
+    if (areaOf(p) !== area || !decorSizes[p.item]) return false;
+    const b = decorBox(p.item, p.x, p.y);
+    return at.x >= b.left && at.x < b.left + b.w && at.y >= b.top && at.y < b.top + b.h;
+  });
+  const solid = under.filter((p) => !decorBox(p.item, p.x, p.y).flat).sort((a, b) => b.y - a.y)[0];
+  const hit = solid ?? (hand ? undefined : under[0]);
+  if (hit && hit.item !== hand?.item) return { hand: { item: hit.item, at: null }, walk: true };
+  if (!hand) return { hand: null, walk: null };
+  const spot = snapDecor(at);
+  return { hand: { item: hand.item, at: spot }, walk: { x: spot.x, y: spot.y + 12 } };
+}
+
+/** The footprint to light up under a keepsake about to be set down (area pixels). */
+export function decorFootprint(item: string, x: number, y: number) {
+  const b = decorBox(item, x, y);
+  const xs = b.cells.map(([cx]) => cx * CELL);
+  const ys = b.cells.map(([, cy]) => cy * CELL);
+  const x0 = Math.min(...xs);
+  const y0 = Math.min(...ys);
+  return { x: x0, y: y0, w: Math.max(...xs) + CELL - x0, h: Math.max(...ys) + CELL - y0 };
 }

@@ -98,6 +98,8 @@ class QAClock extends Date {
   }
 }
 const game = {
+  // no keepsakes set out in the garden (lib/decor.ts is checked in check:world)
+  decor: [],
   player: {
     id: 'gardener',
     code: 'ABCD',
@@ -155,6 +157,13 @@ const react = {
   },
   useLayoutEffect(fn, deps) {
     react.useEffect(fn, deps);
+  },
+  useMemo(fn, deps) {
+    const i = index++;
+    const old = hooks[i];
+    if (!old || !deps || deps.some((value, k) => value !== old.deps?.[k]))
+      hooks[i] = { deps, value: fn() };
+    return hooks[i].value;
   },
 };
 const anim = {
@@ -317,6 +326,14 @@ const pathModule = { exports: {} };
 evaluate('lib/garden-path.ts', pathModule);
 deps['@/lib/garden-path'] = pathModule.exports;
 // keyboard walking is a web-only extra (lib/keyboard-walk.ts): inert in this harness
+// keepsakes (C12): none are set out here, so the garden's own walk stands; the model
+// itself is tested in lib/world-save.test.ts
+deps['@/lib/decor'] = {
+  areaOf: (p) => p.area ?? 'hut',
+  decorBox: () => ({ left: 0, top: 0, w: 1, h: 1, flat: true, cells: [] }),
+  walkWithDecor: (rows) => rows,
+};
+deps['@/lib/decor-assets'] = { decorImages: {} };
 deps['@/lib/keyboard-walk'] = {
   STEP_MS: 120,
   keySteps: (dx, dy) => [[dx, dy]],

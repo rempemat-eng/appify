@@ -106,7 +106,8 @@ Matt asked for decorating inside and out, tied to the game's mechanics. The tie 
 - A keepsake stands on open floor only, keeps room where the companion stands (the door, the bed, the hearth, the table, the sunroom, the chest) and is refused if it would close the way through the room; a rug lies under everything and may carry a keepsake. A save from before a change to the hut sends any keepsake that no longer fits back to the chest.
 - Walking into a place for the first time says which keepsake it left. The notice is the only thing that happens; no reward, cost or chore.
 - Code: `lib/decor.ts` (catalogue, finding, placement checks, save restore), `scripts/art/decor.py` (the art), `components/decorate-panel.tsx`, the chest in `app/world.tsx`. Tests in `lib/world-save.test.ts`.
-- Next: the outside (keepsakes in the garden, and the hut's exterior: door colour, window boxes, a path), with the same rules against the garden's walk grid and its hotspots.
+- Outside too (18 Oct): IN THE GARDEN in the panel takes you out to the garden still decorating; keepsakes stand on open grass, keep room at every hotspot, the hut's door, where the companion wakes and the four ways out, never on the bridge, and never close a way through. They stand in the valley's view of the garden as well. A keepsake is in one place at a time; setting it out in the other moves it.
+- Next: the hut's exterior (door colour, window boxes), which changes the hut's own art rather than adding keepsakes.
 
 ## A world that feels alive
 
