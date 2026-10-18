@@ -49,8 +49,6 @@ import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
 import {
   checkDecor,
   foundKeepsakes,
-  keepsake,
-  newKeepsakes,
   restoreDecor,
   type DecorArea,
   type DecorCheck,
@@ -902,16 +900,8 @@ export const gameStore = create<Game>((set, get) => ({
     const next = moveTo(s.world, region, x, y);
     const before = s.world;
     set({ world: next });
-    // a place walked for the first time leaves its keepsake in the hut's chest
-    const zone = next.visited.find((z) => !(before?.visited ?? []).includes(z));
-    const found = zone ? newKeepsakes(before?.visited ?? [], zone) : [];
-    if (found.length) {
-      const k = keepsake(found[0]);
-      if (k)
-        get().notify(
-          `A keepsake from ${k.from}: ${k.name.toLowerCase()}. It waits in the chest at home.`,
-        );
-    }
+    // (a place walked for the first time leaves its keepsake in the hut's chest; the
+    // world screen says so quietly, app/world.tsx)
     // write when a zone is first seen or the region changes; positions ride along
     if (
       settle ||

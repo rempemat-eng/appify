@@ -50,6 +50,8 @@ import { HUT_DOOR, type Point } from '@/lib/garden-path';
 import { DecoratePanel } from '@/components/decorate-panel';
 import {
   areaOf,
+  keepsake,
+  newKeepsakes,
   checkDecor,
   decorBox,
   decorFootprint,
@@ -302,6 +304,26 @@ export default function World() {
   const decor = useGame((s) => s.decor);
   const visited = useGame((s) => s.world?.visited ?? noZones);
   const found = useMemo(() => foundKeepsakes(visited), [visited]);
+  // A place walked for the first time leaves its keepsake in the chest: say so quietly,
+  // under the header, for a few seconds (nothing to press, nothing in the way).
+  const [heard, setHeard] = useState(visited);
+  const [foundNote, setFoundNote] = useState<string | null>(null);
+  if (heard !== visited) {
+    setHeard(visited);
+    const fresh = visited.filter((z) => !heard.includes(z));
+    let had = heard;
+    for (const z of fresh) {
+      const k = newKeepsakes(had, z).map(keepsake)[0];
+      had = [...had, z];
+      if (k)
+        setFoundNote(`Keepsake found: ${k.name.toLowerCase()}. It waits in the chest at home.`);
+    }
+  }
+  useEffect(() => {
+    if (!foundNote) return undefined;
+    const t = setTimeout(() => setFoundNote(null), 5000);
+    return () => clearTimeout(t);
+  }, [foundNote]);
   const [decorating, setDecorating] = useState(
     () => useUi.getState().worldLink?.decorate === true && spawn.region === 'home',
   );
@@ -855,6 +877,26 @@ export default function World() {
             <PixelButton small light label="MAP" onPress={() => setMapOpen(true)} />
           </View>
         </View>
+      )}
+      {foundNote && !trip && !mapOpen && (
+        <Animated.View
+          entering={reduced ? undefined : FadeIn.duration(240)}
+          pointerEvents="none"
+          accessibilityLiveRegion="polite"
+          style={{
+            position: 'absolute',
+            top: insets.top + 8 + 52,
+            left: Math.max(16, (width - 420) / 2),
+            right: Math.max(16, (width - 420) / 2),
+            alignItems: 'center',
+          }}
+        >
+          <PixelFrame tone="paper" style={{ paddingVertical: 2 * u, paddingHorizontal: 4 * u }}>
+            <BodyText style={{ fontSize: 12, lineHeight: 15, textAlign: 'center' }}>
+              {foundNote}
+            </BodyText>
+          </PixelFrame>
+        </Animated.View>
       )}
       {mapOpen && !trip && (
         <WorldMap
