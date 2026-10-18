@@ -14,8 +14,10 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withRepeat,
   withSequence,
   withTiming,
+  type SharedValue,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
 import { useAppActive } from '@/lib/app-active';
@@ -150,6 +152,56 @@ type Drawable = {
   z: number;
 };
 
+// Things afloat ride the water: up and down by one art pixel, each on its own phase.
+const FLOATS: Record<string, number> = {
+  boat_blue: 3400,
+  boat_red: 3800,
+  sailboat: 4200,
+  narrowboat: 5200,
+  ferry: 4600,
+  buoy: 2600,
+};
+const FLOAT_LOOP = 36000; // the shared clock's loop; every period divides it
+
+function Floating({
+  d,
+  clock,
+  u,
+  snap,
+}: {
+  d: Drawable;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const period = FLOATS[d.sprite] ?? 4000;
+  const phase = (d.x * 7 + d.y * 3) % period;
+  const style = useAnimatedStyle(() => ({
+    transform: [
+      {
+        translateY: Math.round(Math.sin(((clock.value + phase) / period) * 2 * Math.PI) * 1) * u,
+      },
+    ],
+  }));
+  return (
+    <Animated.Image
+      source={d.src}
+      resizeMode="stretch"
+      style={[
+        {
+          position: 'absolute',
+          left: snap(d.x * u),
+          top: snap(d.y * u),
+          width: snap(d.w * u),
+          height: snap(d.h * u),
+          zIndex: d.z,
+        },
+        style,
+      ]}
+    />
+  );
+}
+
 function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
   const o = tileOrigin(region, tile);
   if (tile.id === 'garden') {
@@ -265,6 +317,19 @@ export function AtlasWalk({
   const px = useSharedValue(grid.start.x);
   const py = useSharedValue(grid.start.y);
   const landing = useSharedValue(0);
+  // one slow clock for everything afloat; still with reduced motion or an inactive screen
+  const bob = useSharedValue(0);
+  useEffect(() => {
+    if (!active || reduced) {
+      cancelAnimation(bob);
+      return undefined;
+    }
+    bob.set(0);
+    bob.set(
+      withRepeat(withTiming(FLOAT_LOOP, { duration: FLOAT_LOOP, easing: Easing.linear }), -1),
+    );
+    return () => cancelAnimation(bob);
+  }, [active, reduced, bob]);
   const pos = useRef<Point>({ ...grid.start });
   const [walking, setWalking] = useState(false);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
@@ -537,21 +602,25 @@ export function AtlasWalk({
               </View>
             );
           })}
-          {drawables.map((d) => (
-            <Image
-              key={d.key}
-              source={d.src}
-              resizeMode="stretch"
-              style={{
-                position: 'absolute',
-                left: snap(d.x * u),
-                top: snap(d.y * u),
-                width: snap(d.w * u),
-                height: snap(d.h * u),
-                zIndex: d.z,
-              }}
-            />
-          ))}
+          {drawables.map((d) =>
+            FLOATS[d.sprite] && active && !reduced ? (
+              <Floating key={d.key} d={d} clock={bob} u={u} snap={snap} />
+            ) : (
+              <Image
+                key={d.key}
+                source={d.src}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: snap(d.x * u),
+                  top: snap(d.y * u),
+                  width: snap(d.w * u),
+                  height: snap(d.h * u),
+                  zIndex: d.z,
+                }}
+              />
+            ),
+          )}
           {near.map((t) =>
             t.id === 'garden' ? null : (
               <Fragment key={`zone-${t.id}`}>
