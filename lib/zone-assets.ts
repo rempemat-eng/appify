@@ -16,6 +16,7 @@ import propBasaltColumnsLow from '@/assets/zones/props/basalt_columns_low.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
+import propBikeRack from '@/assets/zones/props/bike_rack.png';
 import propBoatBlue from '@/assets/zones/props/boat_blue.png';
 import propBoatRed from '@/assets/zones/props/boat_red.png';
 import propBollard from '@/assets/zones/props/bollard.png';
@@ -26,6 +27,7 @@ import propBuoy from '@/assets/zones/props/buoy.png';
 import propBush from '@/assets/zones/props/bush.png';
 import propCabin from '@/assets/zones/props/cabin.png';
 import propCablePole from '@/assets/zones/props/cable_pole.png';
+import propCables from '@/assets/zones/props/cables.png';
 import propCafe from '@/assets/zones/props/cafe.png';
 import propCairn from '@/assets/zones/props/cairn.png';
 import propCamel from '@/assets/zones/props/camel.png';
@@ -233,6 +235,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bathhouse: propBathhouse,
   bell_tower: propBellTower,
   bench: propBench,
+  bike_rack: propBikeRack,
   boat_blue: propBoatBlue,
   boat_red: propBoatRed,
   bollard: propBollard,
@@ -243,6 +246,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bush: propBush,
   cabin: propCabin,
   cable_pole: propCablePole,
+  cables: propCables,
   cafe: propCafe,
   cairn: propCairn,
   camel: propCamel,

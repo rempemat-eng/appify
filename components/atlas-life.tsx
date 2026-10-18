@@ -54,6 +54,7 @@ const SOURCES: Record<string, { kind: Kind; dx: number; dy: number }[]> = {
   cottage_b: [{ kind: 'puff', dx: 16, dy: 2 }],
   water_mill: [{ kind: 'puff', dx: 92, dy: 60 }],
   narrowboat: [{ kind: 'puff', dx: 48, dy: 0 }],
+  noodle_stall: [{ kind: 'puff', dx: 52, dy: 16 }],
   foundry: [
     { kind: 'puff', dx: 27, dy: 0 },
     { kind: 'puff', dx: 123, dy: 6 },
@@ -102,7 +103,13 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'ember', x: 40, y: 534, seed: 27 },
     { kind: 'ember', x: 66, y: 544, seed: 28 },
   ],
-  neon: rainOver(90),
+  neon: [
+    ...rainOver(90),
+    // steam from the grates in the pavement
+    { kind: 'puff', x: 118, y: 336, seed: 30 },
+    { kind: 'puff', x: 238, y: 300, seed: 31 },
+    { kind: 'puff', x: 66, y: 440, seed: 32 },
+  ],
   // the same rain carries on over the Skyport (the weather does not stop at a border)
   skyport: rainOver(70),
 };

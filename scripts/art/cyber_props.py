@@ -496,6 +496,50 @@ def sky_bench() -> Canvas:
         cv.set(x, 10 + sag, CYAN[2] if x % 2 else CYAN[1])
     return cv
 
+def cables() -> Canvas:
+    """Wires strung over the street, 300 x 150 (drawn above everything): sagging lines
+    from the towers to the pole across the road, a string of small lanterns on one,
+    and a sign hanging from another."""
+    w, h = 300, 150
+    cv = Canvas(w, h, pad=PAD)
+    spans = [((10, 6), (152, 144), 22), ((120, 10), (290, 108), 18), ((40, 4), (290, 40), 26), ((152, 144), (290, 70), 10)]
+    for k, ((x0, y0), (x1, y1), sag) in enumerate(spans):
+        n = int(abs(x1 - x0)) + 1
+        for i in range(n):
+            t = i / (n - 1)
+            x = x0 + (x1 - x0) * t
+            y = y0 + (y1 - y0) * t + math.sin(t * math.pi) * sag
+            cv.set(int(x), int(y), NIGHT[1] if k % 2 else '#0A0910')
+            if k == 2 and i % 14 == 7:  # a string of lanterns
+                ramp = (PINK, CYAN, AMBER)[(i // 14) % 3]
+                for (px, py) in disc(int(x), int(y) + 3, 1.8):
+                    cv.set(px, py, ramp[3] if px <= x else ramp[2])
+    for y in range(52, 64):  # a hanging sign on the long span
+        for x in range(196, 210):
+            cv.set(x, y, NIGHT[2] if x in (196, 209) or y in (52, 63) else CYAN[1])
+    glyph(cv, 199, 55, 5, CYAN, size=5)
+    cv.vline(198, 46, 6, NIGHT[1]); cv.vline(207, 46, 6, NIGHT[1])
+    return cv
+
+
+def bike_rack() -> Canvas:
+    """A rack of three e-bikes, 46 x 22, their little lights glowing."""
+    w, h = 46, 22
+    cv = Canvas(w, h, pad=PAD)
+    for x in range(2, w - 2):
+        cv.set(x, 18, IRON[3]); cv.set(x, 19, IRON[1])
+    for k in range(3):
+        bx = 6 + k * 13
+        for (cx, cy) in ((bx, 14), (bx + 9, 14)):
+            for a in range(16):
+                ang = 2 * math.pi * a / 16
+                cv.set(int(round(cx + math.cos(ang) * 3.5)), int(round(cy + math.sin(ang) * 3.5)), NIGHT[4])
+        for t in range(9):
+            cv.set(bx + t, 10 - (t > 3), (PINK, CYAN, AMBER)[k][2])
+        cv.vline(bx + 7, 6, 4, NIGHT[4]); cv.hline(bx + 6, 6, 3, NIGHT[5])
+        cv.set(bx + 9, 9, (PINK, CYAN, AMBER)[k][4])
+    return cv
+
 def props() -> dict[str, Canvas]:
     return {
         'tower_pink': tower(112, 150, 0, PINK), 'tower_cyan': tower(96, 136, 1, CYAN),
@@ -505,6 +549,7 @@ def props() -> dict[str, Canvas]:
         'containers': containers(), 'ferry': ferry(),
         'maglev': maglev(), 'tether': tether(), 'ticket_gates': ticket_gates(), 'departure_pylon': departure_pylon(),
         'luggage_bot': luggage_bot(), 'pod_tree': pod_tree(), 'sky_bench': sky_bench(),
+        'cables': cables(), 'bike_rack': bike_rack(),
     }
 
 

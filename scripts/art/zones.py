@@ -661,7 +661,10 @@ def neon_city(frame: int = 0):
         ('drone-1', 'drone', 92, 140), ('drone-2', 'drone', 230, 330), ('drone-3', 'drone', 120, 440),
         ('boxes-q', 'containers', 252, 404), ('shelter-q', 'shelter', 70, 412), ('plant-q1', 'uv_planter', 4, 300),
         ('plant-q2', 'uv_planter', 290, 260), ('ferry', 'ferry', 120, 490),
+        ('wires', 'cables', 10, 96), ('bikes', 'bike_rack', 170, 300), ('bikes-2', 'bike_rack', 176, 440),
     ]
+    for (gx, gy) in ((112, 336), (232, 300), (60, 440)):  # steam grates in the pavement
+        grate(cv, gx, gy)
     stands = {'crossing': (160, 192), 'stalls': (60, 300), 'court': (160, 382), 'quay': (160, 452)}
     return cv, objects, stands
 
@@ -2511,7 +2514,7 @@ REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'springs': cdp.props, '
                 'station': spp.props_station, 'lumen': spp.props_lumen}
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
-OVERHEAD = {'steam_puff', 'drone', 'bunting'}
+OVERHEAD = {'steam_puff', 'drone', 'bunting', 'cables'}
 
 
 @functools.lru_cache(maxsize=None)

@@ -30,7 +30,7 @@ export type ZoneMap = {
   stands: Readonly<Record<string, readonly [number, number]>>;
 };
 /** Things above head height: no ground shadow, never block a walk, drawn on top. */
-export const zoneOverhead: readonly string[] = ['bunting', 'drone', 'steam_puff'];
+export const zoneOverhead: readonly string[] = ['bunting', 'cables', 'drone', 'steam_puff'];
 /** Walk rows are run-length encoded ('12.3#' = twelve open cells, three blocked). */
 const unrle = (row: string) =>
   row.replace(/(\d+)([.#])/g, (_m, n: string, c: string) => c.repeat(Number(n)));
@@ -1533,6 +1533,9 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['plant-q1', 'uv_planter', 5, 302, 24, 27],
       ['plant-q2', 'uv_planter', 291, 262, 24, 27],
       ['ferry', 'ferry', 123, 489, 106, 44],
+      ['wires', 'cables', 20, 100, 281, 141],
+      ['bikes', 'bike_rack', 171, 305, 45, 15],
+      ['bikes-2', 'bike_rack', 177, 445, 45, 15],
     ],
     walk: [
       '80.',
@@ -1613,8 +1616,8 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       '38.5#37.',
       '38.5#37.',
       '80.',
-      '80.',
-      '80.',
+      '43.11#26.',
+      '43.11#26.',
       '2.5#73.',
       '2.5#73.',
       '2.5#73.',
@@ -1648,8 +1651,8 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       '64.14#2.',
       '64.14#2.',
       '18.13#33.14#2.',
-      '18.13#49.',
-      '80.',
+      '18.13#14.10#25.',
+      '45.10#25.',
       '80.',
       '80.',
       '80.',
