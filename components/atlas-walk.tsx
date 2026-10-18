@@ -44,6 +44,7 @@ import {
   zoneBeyond,
   zoneBeyondAsh,
   zoneBeyondPeaks,
+  zoneBeyondRegolith,
   zoneBeyondByRegion,
   zoneGrounds,
   zoneProps,
@@ -361,6 +362,8 @@ function beyondAt(region: RegionId, col: number, row: number) {
   if (region === 'west' && (col >= 1 || (col >= 0 && row <= -1))) return zoneBeyondAsh;
   // the valley's high country: peaks round the Frostline, forest lower down
   if (region === 'valley' && row <= -2) return zoneBeyondPeaks;
+  // Lumen's plain runs on below and beside it; above, only space (the backdrop)
+  if (region === 'moon') return zoneBeyondRegolith;
   return zoneBeyondByRegion[region] ?? zoneBeyond;
 }
 
@@ -857,7 +860,7 @@ export function AtlasWalk({
     (t) => Math.abs(t.col - hereTile.col) <= reachX && Math.abs(t.row - hereTile.row) <= reachY,
   );
   const gaps: { col: number; row: number }[] = [];
-  const opensOut = region === 'valley' || !!zoneBeyondByRegion[region];
+  const opensOut = region === 'valley' || region === 'moon' || !!zoneBeyondByRegion[region];
   for (let col = hereTile.col - reachX; col <= hereTile.col + reachX; col++)
     for (let row = hereTile.row - reachY; row <= hereTile.row + reachY; row++) {
       const inside =
@@ -867,7 +870,11 @@ export function AtlasWalk({
         row < bounds.minRow + bounds.tileRows;
       // past a region's edge (a region shorter or narrower than the screen) the land runs
       // on where it has open country round it; elsewhere the backdrop's colour shows
-      if (inside ? !tiles.some((t) => t.col === col && t.row === row) : opensOut)
+      if (
+        inside
+          ? !tiles.some((t) => t.col === col && t.row === row)
+          : opensOut && !(region === 'moon' && row < 0)
+      )
         gaps.push({ col, row });
     }
   const drawables = [

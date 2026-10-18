@@ -4289,6 +4289,26 @@ def beyond() -> Canvas:
 WTR_ = MATERIALS['water']
 
 
+def beyond_regolith() -> Canvas:
+    """What lies round Lumen below its horizon: the moon's grey plain running on, soft
+    dust in two tones, small craters lit on their far rims, a few stones."""
+    S = BEYOND_SPILL
+    R = MATERIALS['regolith']
+    cv = Canvas(W + 2 * S, H + 2 * S)
+    for y in range(S, H + S):
+        for x in range(S, W + S):
+            n = smooth_noise(x, y, 26, 871)
+            cv.set(x, y, R[3] if n > 0.55 else R[2] if n > 0.3 or (x + y) % 2 else R[1])
+    for i in range(16):
+        cx, cy = S + int(noise2(i, 0, 872) * W), S + int(noise2(i, 1, 872) * H)
+        r = 4 + noise2(i, 2, 872) * 10
+        for (x, y) in oval(cx, cy, r, r * 0.6):
+            if S <= x < W + S and S <= y < H + S:
+                d = (x - cx) + (y - cy) * 1.6
+                cv.set(x, y, R[1] if d < 0 else R[4] if d > r * 0.9 else R[2])
+    return cv
+
+
 def beyond_sea() -> Canvas:
     """What lies round the Tidebloom Isles: open sea, deep blue with long swells and
     the odd whitecap. It fills its own cell only: the islands' coasts meet it with
@@ -4443,6 +4463,7 @@ def export(built: dict):
     beyond_dunes().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-dunes.png'), worlds.SCALE)
     beyond_peaks().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-peaks.png'), worlds.SCALE)
     beyond_sea().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-sea.png'), worlds.SCALE)
+    beyond_regolith().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-regolith.png'), worlds.SCALE)
     used = {}
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
@@ -4526,6 +4547,7 @@ def export(built: dict):
         "import beyondDunesImage from '@/assets/zones/beyond-dunes.png';",
         "import beyondPeaksImage from '@/assets/zones/beyond-peaks.png';",
         "import beyondSeaImage from '@/assets/zones/beyond-sea.png';",
+        "import beyondRegolithImage from '@/assets/zones/beyond-regolith.png';",
         '/** Old forest, drawn where a region\'s grid has no zone (the valley\'s corners). */',
         'export const zoneBeyond: ImageSourcePropType = beyondImage;',
         '/** What lies past a region other than the valley, in its gaps and round its edges when',
@@ -4538,6 +4560,8 @@ def export(built: dict):
         'export const zoneBeyondAsh: ImageSourcePropType = beyondAshImage;',
         '/** The high peaks: what lies round the Frostline Highlands. */',
         'export const zoneBeyondPeaks: ImageSourcePropType = beyondPeaksImage;',
+        '/** The moon\'s plain: what lies round Lumen below its horizon. */',
+        'export const zoneBeyondRegolith: ImageSourcePropType = beyondRegolithImage;',
         f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],

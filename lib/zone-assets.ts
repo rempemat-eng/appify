@@ -394,6 +394,7 @@ import beyondAshImage from '@/assets/zones/beyond-ash.png';
 import beyondDunesImage from '@/assets/zones/beyond-dunes.png';
 import beyondPeaksImage from '@/assets/zones/beyond-peaks.png';
 import beyondSeaImage from '@/assets/zones/beyond-sea.png';
+import beyondRegolithImage from '@/assets/zones/beyond-regolith.png';
 /** Old forest, drawn where a region's grid has no zone (the valley's corners). */
 export const zoneBeyond: ImageSourcePropType = beyondImage;
 /** What lies past a region other than the valley, in its gaps and round its edges when
@@ -406,6 +407,8 @@ export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = {
 export const zoneBeyondAsh: ImageSourcePropType = beyondAshImage;
 /** The high peaks: what lies round the Frostline Highlands. */
 export const zoneBeyondPeaks: ImageSourcePropType = beyondPeaksImage;
+/** The moon's plain: what lies round Lumen below its horizon. */
+export const zoneBeyondRegolith: ImageSourcePropType = beyondRegolithImage;
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,
