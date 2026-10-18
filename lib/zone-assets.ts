@@ -351,9 +351,10 @@ export const zoneBeyond: ImageSourcePropType = beyondImage;
 /** What lies past a region other than the valley, in its gaps and round its edges when
  * the screen sees past them: the volcano's flank, the open desert. */
 export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = {
-  lava: beyondAshImage,
   west: beyondDunesImage,
 };
+/** The volcano's flank: what lies round the fire country's end of Sunstone Reach. */
+export const zoneBeyondAsh: ImageSourcePropType = beyondAshImage;
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,

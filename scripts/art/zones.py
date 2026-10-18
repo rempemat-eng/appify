@@ -987,6 +987,27 @@ def wagon_ruts(cv: Canvas, road: set, xs, ramp):
             cv.set(x, mid + (2 if (x // 7) % 2 else -2), ramp[0])  # hoof prints
 
 
+def gulch_sand(x: int, y: int) -> str:
+    """Dust Gulch's open sand at its own pixel `x, y` (x past its east edge carries on
+    into the Scorched Pass): wind ripples, darker drifts dithered in, and flat cracked
+    hardpan in patches."""
+    DESERT = MATERIALS['desert']
+    if smooth_noise(x, y, 18, 223) > 0.74:
+        return DESERT[1] if cracked(x, y, 8, 1) else DESERT[4] if (x + y) % 5 else DESERT[3]
+    n = smooth_noise(x, y, 26, 211)
+    c = DESERT[3]
+    if n < 0.3 or (n < 0.36 and (x + y) % 2):
+        c = DESERT[2]
+    elif n > 0.68 or (n > 0.63 and (x + y) % 2):
+        c = DESERT[4]
+    ripple = (y + int(math.sin(x / 9 + y / 40) * 3)) % 9
+    if ripple == 0 and 0.36 < n < 0.63:
+        c = DESERT[4]
+    elif ripple == 1 and 0.36 < n < 0.63:
+        c = DESERT[2]
+    return c
+
+
 def gulch(frame: int = 0):
     """Dust Gulch, its own place: a town strung along one street that runs down from the
     railway's end, under a sandstone mesa on the east with the old mine cut into its
@@ -996,24 +1017,9 @@ def gulch(frame: int = 0):
     DESERT, ADOBE = MATERIALS['desert'], MATERIALS['adobe']
     BLEACHED = wsp.BLEACHED
     cv = Canvas(W, H)
-    for y in range(H):  # sand with wind ripples, darker drifts dithered in
+    for y in range(H):
         for x in range(W):
-            n = smooth_noise(x, y, 26, 211)
-            c = DESERT[3]
-            if n < 0.3 or (n < 0.36 and (x + y) % 2):
-                c = DESERT[2]
-            elif n > 0.68 or (n > 0.63 and (x + y) % 2):
-                c = DESERT[4]
-            ripple = (y + int(math.sin(x / 9 + y / 40) * 3)) % 9
-            if ripple == 0 and 0.36 < n < 0.63:
-                c = DESERT[4]
-            elif ripple == 1 and 0.36 < n < 0.63:
-                c = DESERT[2]
-            cv.set(x, y, c)
-    for y in range(H):  # hardpan: flat cracked patches
-        for x in range(W):
-            if smooth_noise(x, y, 18, 223) > 0.74:
-                cv.set(x, y, DESERT[1] if cracked(x, y, 8, 1) else DESERT[4] if (x + y) % 5 else DESERT[3])
+            cv.set(x, y, gulch_sand(x, y))
     # the dry creek: a winding bed of cracked mud with rounded stones and pale banks
     creek = worlds.thick(GULCH_CREEK, 9, seed=12)
     for (x, y) in creek:
@@ -1133,7 +1139,7 @@ def gulch(frame: int = 0):
         ('store', 'store', 6, 210), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
         ('tower', 'water_tower', 168, 200), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 176, 300),
         ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
-        ('mine', 'mine_portal', 248, 170), ('dyn-1', 'dynamite_crate', 228, 214), ('dyn-2', 'dynamite_crate', 300, 222),
+        ('mine', 'mine_portal', 248, 170), ('dyn-1', 'dynamite_crate', 228, 214), ('dyn-2', 'dynamite_crate', 290, 222),
         ('corral-n', 'corral_rail', ccx - 46, ccy - 36), ('corral-s', 'corral_rail', ccx - 46, ccy + 22),
         ('corral-w', 'corral_side', ccx - 52, ccy - 22),
         ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
@@ -2198,6 +2204,10 @@ def scorch(frame: int = 0):
                 c = ASH[2] if k > 0.3 or (k > 0.26 and (x + y) % 2) else ASH[1]
                 if noise2(x, y, 746) > 0.94:
                     c = BASALT[2]  # a cinder
+            # Dust Gulch's own sand carries on over the west edge (the two are one walk
+            # since 18 Oct), giving way over the last 56 pixels
+            if x < 56 and c in DESERT and noise2(x, y, 757) * 56 > x - 4:
+                c = gulch_sand(W + x, y)
             cv.set(x, y, c)
     for (pts, r, sd) in (([(190, 120), (226, 150), (262, 160)], 13, 747),
                          ([(250, 300), (276, 340), (300, 362)], 12, 748)):
@@ -3374,6 +3384,12 @@ def build(name: str, fn, start: str):
         style.darken(cv, sx, sy)
     walk = walk_grid([o for o in objects if o[1] not in OVERHEAD], sprite_map)
     cells = {(x // CELL, y // CELL) for (x, y) in blocked_ground}
+    # keep a step back from lava at the sides: the companion's body is wider than its
+    # feet, so feet in the cell beside a lava cell would stand it in the glow
+    # (a bridge's deck is never lava-coloured, so the way over it stays open)
+    import world_lint
+    hot = {(c, r) for (c, r) in cells if world_lint._lava(*cv.get(c * CELL + 2, r * CELL + 2)[:3])}
+    cells |= {(c + d, r) for (c, r) in hot for d in (-1, 1) if 0 <= c + d < W // CELL}
     walk = [''.join('#' if (c, r) in cells else ch for c, ch in enumerate(row)) for r, row in enumerate(walk)]
     seen = reachable(walk, stands[start])
     lost = [k for k, (x, y) in stands.items() if (y // CELL, x // CELL) not in seen]
@@ -3455,7 +3471,11 @@ DOORS = {k: 0.5 for k in ('house_blue', 'house_red', 'cabin', 'cafe', 'library',
 LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'headland': (1, 2), 'halt': (-1, 1)},
-    'steam': {'junction': (0, 0), 'canal': (0, 1)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, -1), 'springs': (1, -1), 'hearthold': (0, 0), 'scorch': (0, 1)},
+    'steam': {'junction': (0, 0), 'canal': (0, 1)}, 
+    # Sunstone Reach (Matt, 18 Oct 19:07: the world Codex drew): the desert and the fire
+    # country are one walk, the Scorched Pass east of Dust Gulch climbing to Hearthold
+    'west': {'gulch': (0, 0), 'oasis': (-1, 0), 'scorch': (1, 0), 'hearthold': (1, -1),
+             'caldera': (1, -2), 'springs': (2, -2)},
     'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)}, 'home': {'home': (0, 0)},
 }
 
@@ -3713,9 +3733,10 @@ def export(built: dict):
         '/** What lies past a region other than the valley, in its gaps and round its edges when',
         ' * the screen sees past them: the volcano\'s flank, the open desert. */',
         'export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = {',
-        '  lava: beyondAshImage,',
         '  west: beyondDunesImage,',
         '};',
+        '/** The volcano\'s flank: what lies round the fire country\'s end of Sunstone Reach. */',
+        'export const zoneBeyondAsh: ImageSourcePropType = beyondAshImage;',
         f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],

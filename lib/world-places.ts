@@ -52,7 +52,7 @@ export const travelPoints: Record<StopId, PlaceDef> = {
   valley: { region: 'valley', zone: 'halt', at: stand('halt', 'platform') },
   steam: { region: 'steam', zone: 'junction', at: stand('junction', 'platform') },
   west: { region: 'west', zone: 'gulch', at: stand('gulch', 'platform') },
-  lava: { region: 'lava', zone: 'caldera', at: stand('caldera', 'tunnel') },
+  lava: { region: 'west', zone: 'caldera', at: stand('caldera', 'tunnel') },
   neon: { region: 'neon', zone: 'skyport', at: stand('skyport', 'platform') },
   space: { region: 'space', zone: 'station', at: stand('station', 'lift') },
   moon: { region: 'moon', zone: 'lumen', at: stand('lumen', 'shuttle') },
@@ -63,7 +63,7 @@ export const travelPoints: Record<StopId, PlaceDef> = {
 export const rings: (PlaceDef & { backdrop: string })[] = [
   { region: 'steam', zone: 'junction', at: stand('junction', 'ring'), backdrop: 'steam' },
   { region: 'neon', zone: 'neon', at: stand('neon', 'court'), backdrop: 'neon' },
-  { region: 'lava', zone: 'caldera', at: stand('caldera', 'ring'), backdrop: 'lava' },
+  { region: 'west', zone: 'caldera', at: stand('caldera', 'ring'), backdrop: 'lava' },
   { region: 'moon', zone: 'lumen', at: stand('lumen', 'sparring'), backdrop: 'moon' },
 ];
 
@@ -185,21 +185,15 @@ export function exitWalk(exit: ExitId, gx: number, gy: number): { start: Point; 
   return { start: at(sx, gy), goal };
 }
 
+type PassEnd = PlaceDef & { side: 'east' | 'west' };
 /**
- * Where one region's edge walks on into another's (Matt, 18 Oct: from the desert on foot
- * into the fire country): Dust Gulch's track east leaves its east edge at the pass and
- * comes in at the Scorched Pass's west edge. Crossing is a walk, not a journey: the
- * scene fades and the companion walks on (app/world.tsx).
+ * Where one region's edge walks on into another's: crossing is a walk, not a journey;
+ * the scene fades and the companion walks on (app/world.tsx). None today: the pass from
+ * Dust Gulch into the Scorched Pass became an ordinary border when the desert and the
+ * fire country became one walk (Matt, 18 Oct 19:07). Kept for a crossing that has to
+ * join two regions.
  */
-export const regionPasses = [
-  {
-    a: { region: 'west', zone: 'gulch', at: stand('gulch', 'pass'), side: 'east' },
-    b: { region: 'lava', zone: 'scorch', at: stand('scorch', 'gulch'), side: 'west' },
-  },
-] as const satisfies readonly {
-  a: PlaceDef & { side: 'east' | 'west' };
-  b: PlaceDef & { side: 'east' | 'west' };
-}[];
+export const regionPasses: readonly { a: PassEnd; b: PassEnd }[] = [];
 
 /** The pass a point stands at the end of, if any: where it leads and which way to walk on. */
 export function passAt(
