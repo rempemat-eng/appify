@@ -28,4 +28,7 @@ jobs:
           node-version: '24.19.0'
           package-manager-cache: false
       - name: Validate design topology and negative controls
-        run: node docs/codex/ideas/connected-world/check-topology.cjs
+        run: |
+          node docs/codex/ideas/connected-world/check-biomes.cjs
+          node docs/codex/ideas/connected-world/render-biome-contract.cjs
+          git diff --exit-code -- docs/codex/ideas/connected-world/biome-connections.svg

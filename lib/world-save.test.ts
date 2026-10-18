@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { moveTo, restoreWorld } from './world-save';
+import { hiddenBehind } from './occlusion';
 import { regionWalk, TILE } from './region-walk';
 import {
   GARDEN_YARD,
@@ -8,6 +9,8 @@ import {
   exits,
   inGardenYard,
   missionPlaces,
+  passAt,
+  regionPasses,
   regionPoint,
   rings,
   travelPoints,
@@ -35,6 +38,21 @@ ok(
   'a spot outside its region is dropped',
 );
 ok(restoreWorld({ region: 'valley', x: Number.NaN, y: 10 }) === null, 'a broken number is dropped');
+{
+  // 18 Oct: the valley's old castle corner is the Headland now, and the castle is in the
+  // Ember Lands as 'hearthold'. An old visit inks the Headland, never the far castle.
+  const old = restoreWorld({ region: 'valley', x: 480, y: 900, visited: ['castle', 'harbour'] });
+  ok(
+    old?.visited.includes('headland') === true && old.visited.includes('harbour'),
+    'a saved visit to the old castle corner is a visit to the Headland',
+  );
+  ok(
+    old?.visited.includes('hearthold') === false && !old.visited.includes('castle'),
+    'an old castle visit never inks the castle in the Ember Lands',
+  );
+  const both = restoreWorld({ region: 'valley', x: 480, y: 900, visited: ['castle', 'headland'] });
+  ok(both?.visited.filter((z) => z === 'headland').length === 1, 'the Headland is listed once');
+}
 const good = restoreWorld({
   region: 'valley',
   x: 480,
@@ -150,6 +168,31 @@ ok(
   doors.hut.at[0] === HUT_DOOR.x && doors.hut.at[1] === HUT_DOOR.y,
   'the world and the garden agree where the hut door is',
 );
+// the pass from the desert into the Ember Lands: both ends open and reachable, and
+// each leads to the other, walking on inward
+for (const { a, b } of regionPasses) {
+  for (const [here, there] of [
+    [a, b],
+    [b, a],
+  ] as const) {
+    const at = regionPoint(here);
+    const grid = makeWalkGrid(regionWalk(here.region), {
+      cell: TILE.cell,
+      width: regionBounds(here.region).width,
+      start: at,
+    });
+    const c = grid.toCell(at);
+    ok(grid.walkable(c.cx, c.cy), `the pass in ${here.zone} stands on open ground`);
+    const from =
+      here.region === 'west' ? regionPoint(travelPoints.west!) : regionPoint(travelPoints.lava!);
+    // (from the lava station at the caldera's tunnel it is a long walk: through the
+    // castle and over both its bridges, down the Scorched Pass)
+    ok(grid.findPath(from, at).length > 0, `${here.zone}: the station walks to the pass`);
+    const p = passAt(here.region, at);
+    ok(p && p.region === there.region, `the pass in ${here.zone} leads to ${there.zone}`);
+  }
+}
+ok(passAt('west', regionPoint(travelPoints.west!)) === null, 'the station is no pass');
 console.log(`World save and places: ${checks} checks passed.`);
 
 // every resident has something to say when the companion stops beside them
@@ -199,3 +242,17 @@ ok(travelVehicle('steam', 'neon') === 'maglev', 'the maglev runs to the city');
 ok(travelVehicle('lava', 'west') === 'carts', 'the mine carts run to the caldera');
 ok(travelVehicle('space', 'moon') === 'shuttle', 'the shuttle flies to Lumen');
 ok(travelVehicle('valley', 'steam') === 'train', 'the valley train is a steam train');
+
+// The companion's outline shows through a building or a big tree in front of it, never
+// through what it stands in front of (lib/occlusion.ts).
+{
+  const house = { x: 100, y: 100, w: 60, h: 50, z: 150 };
+  ok(hiddenBehind([house], { x: 130, y: 140 }), 'behind a house the outline shows');
+  ok(!hiddenBehind([house], { x: 130, y: 170 }), 'in front of the house it does not');
+  ok(!hiddenBehind([house], { x: 220, y: 140 }), 'beside the house it does not');
+  ok(
+    !hiddenBehind([{ x: 120, y: 136, w: 20, h: 6, z: 142 }], { x: 130, y: 140 }),
+    'a low fence across the feet does not count as hiding',
+  );
+}
+console.log('Occlusion: the outline shows only behind what hides the companion.');

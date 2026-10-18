@@ -374,6 +374,117 @@ def banner_pole(wave: int = 0) -> Canvas:
     return cv
 
 
+# The castle's dragon (Matt, 18 Oct: "perhaps with a dragon flying around"; his
+# reference: a night-blue dragon with pale wings curled round a tower). Scenery only.
+DRAGON = ['#141526', '#1F2440', '#2E3660', '#48528A', '#6E7BB8']
+MEMBRANE = ['#6A5A48', '#9C8668', '#C9B48E', '#E3D2AE']
+HORN = '#E8DFC8'
+
+
+def _dragon_body(cv: Canvas, cx: float, cy: float, facing: int = 1):
+    """Body, neck, head and tail seen from above and a little behind, lit from the upper
+    left: night-blue scales with a paler belly line, horns and a gold eye."""
+    body = set(oval(cx, cy, 10, 5.5))
+    for (x, y) in body:
+        lv = -0.55 * (x - cx) / 10 - 0.85 * (y - cy) / 5.5
+        cv.set(x, y, DRAGON[4] if lv > 0.55 else DRAGON[3] if lv > 0.0 else DRAGON[2] if lv > -0.6 else DRAGON[1])
+    for x in range(int(cx) - 7, int(cx) + 8):  # the pale belly under the lit flank
+        cv.set(x, int(cy) + 4, MEMBRANE[2] if x % 3 else MEMBRANE[1])
+    # the neck and head, forward and up
+    hx, hy = cx + 15 * facing, cy - 5
+    for t in range(12):  # the neck rises in a curve from the shoulders to the head
+        f = t / 11
+        nx = cx + (7 + 8 * f) * facing
+        ny = cy - 1 - 4 * math.sin(f * math.pi / 2) - (1 - f) * 0.5
+        for (x, y) in disc(nx, ny, 3.0 - f * 1.1):
+            cv.set(x, y, DRAGON[4] if y < ny - 1 else DRAGON[3] if y < ny + 0.5 else DRAGON[2])
+    for (x, y) in oval(hx, hy, 4.5, 3.2):
+        cv.set(x, y, DRAGON[4] if y < hy - 0.5 else DRAGON[3])
+    for k in range(4):  # the snout
+        cv.set(int(hx + (4 + k) * facing), int(hy) + (1 if k > 1 else 0), DRAGON[3] if k < 3 else DRAGON[2])
+    cv.set(int(hx + 1 * facing), int(hy) - 1, '#F2C14E')  # the eye
+    for k in range(4):  # two swept horns
+        cv.set(int(hx - (2 + k) * facing), int(hy) - 3 - k // 2, HORN)
+        cv.set(int(hx - (1 + k) * facing), int(hy) - 2 - k // 2, MEMBRANE[2] if k < 2 else HORN)
+    # the tail: shrinking scales curling back
+    for t in range(17):
+        tx = cx - (9 + t * 1.25) * facing
+        ty = cy + 1 + math.sin(t / 3.2) * 3
+        for (x, y) in disc(tx, ty, max(1.0, 3.0 - t * 0.13)):
+            cv.set(x, y, DRAGON[3] if y < ty - 0.5 else DRAGON[2] if y < ty + 0.5 else DRAGON[1])
+    ex, ey = cx - (9 + 17 * 1.25) * facing, cy + 1 + math.sin(17 / 3.2) * 3
+    for (x, y) in _poly([(ex + facing, ey), (ex - 3 * facing, ey - 2.5), (ex - 4 * facing, ey + 0.5), (ex - 2 * facing, ey + 2.5)]):
+        cv.set(x, y, MEMBRANE[2])  # the spade at its tip
+
+
+def _poly(points) -> set:
+    """The pixels inside a polygon (even-odd scanline fill)."""
+    xs = [p[0] for p in points]
+    ys = [p[1] for p in points]
+    out = set()
+    for y in range(int(min(ys)), int(max(ys)) + 1):
+        cy = y + 0.5
+        cross = []
+        for (ax, ay), (bx, by) in zip(points, points[1:] + points[:1]):
+            if (ay <= cy < by) or (by <= cy < ay):
+                cross.append(ax + (cy - ay) * (bx - ax) / (by - ay))
+        cross.sort()
+        for a, b in zip(cross[::2], cross[1::2]):
+            for x in range(int(math.ceil(a - 0.5)), int(math.floor(b - 0.5)) + 1):
+                out.add((x, y))
+    return out
+
+
+def _wing(cv: Canvas, shoulder, wrist, tips, trail, near: bool):
+    """A bat wing: the arm from the shoulder to the wrist (the leading edge), three
+    finger bones fanning from the wrist to the tips, and the skin stretched from the
+    tips back to the body (`trail`), scalloped in between each pair of fingers. Pale and
+    lit on the near wing, a step darker on the far one."""
+    outline = [shoulder, wrist, *tips, trail]
+    skin = _poly(outline)
+    # scallops: bite a soft curve out of the trailing edge between neighbouring tips
+    edge = [*tips, trail]
+    for (ax, ay), (bx, by) in zip(edge, edge[1:]):
+        mx, my = (ax + bx) / 2, (ay + by) / 2
+        # push the bite toward the wing's inside
+        ix, iy = (wrist[0] + shoulder[0]) / 2, (wrist[1] + shoulder[1]) / 2
+        dx, dy = mx - ix, my - iy
+        n = math.hypot(dx, dy) or 1
+        r = math.hypot(bx - ax, by - ay) * 0.36
+        skin -= set(disc(mx + dx / n * r * 0.55, my + dy / n * r * 0.55, r))
+    for (x, y) in skin:
+        lit = (x + y) % 4 != 0
+        cv.set(x, y, (MEMBRANE[3] if lit else MEMBRANE[2]) if near else (MEMBRANE[2] if lit else MEMBRANE[1]))
+    bone = DRAGON[3] if near else DRAGON[2]
+    for (a, b) in [(shoulder, wrist), *[(wrist, t) for t in tips]]:
+        n = int(max(abs(b[0] - a[0]), abs(b[1] - a[1]))) or 1
+        for i in range(n + 1):
+            cv.set(int(round(a[0] + (b[0] - a[0]) * i / n)), int(round(a[1] + (b[1] - a[1]) * i / n)), bone)
+    cv.set(int(wrist[0]), int(wrist[1]), HORN)  # the wrist claw
+    return skin
+
+
+def dragon(phase: int = 0) -> Canvas:
+    """The dragon: perched on the keep, wings folded, head up (phase 0, 56 x 30), or in
+    flight with its wings up (1) or down (2), 64 x 44, facing right."""
+    if phase == 0:
+        cv = Canvas(56, 30, pad=PAD)
+        _wing(cv, (30, 16), (26, 6), [(16, 8), (14, 13), (18, 17)], (28, 19), near=False)  # folded, far
+        _dragon_body(cv, 32, 19, facing=1)
+        _wing(cv, (33, 17), (28, 8), [(19, 11), (18, 16), (23, 20)], (31, 21), near=True)  # folded, near
+        return cv
+    cv = Canvas(64, 44, pad=PAD)
+    if phase == 1:  # wings raised high
+        _wing(cv, (28, 19), (24, 6), [(10, 2), (8, 9), (13, 14)], (24, 19), near=False)
+        _dragon_body(cv, 32, 23, facing=1)
+        _wing(cv, (34, 20), (38, 4), [(26, 1), (22, 7), (26, 13)], (32, 20), near=True)
+    else:  # wings swept down
+        _wing(cv, (28, 22), (22, 33), [(10, 40), (9, 33), (14, 28)], (24, 24), near=False)
+        _dragon_body(cv, 32, 21, facing=1)
+        _wing(cv, (34, 24), (36, 37), [(26, 43), (21, 38), (25, 31)], (32, 26), near=True)
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'keep': keep(), 'round_tower': round_tower(), 'wall_run': wall_run(), 'gatehouse': gatehouse(),
@@ -381,6 +492,7 @@ def props() -> dict[str, Canvas]:
         'castle_well': castle_well(), 'archery_butt': archery_butt(), 'weapon_rack': weapon_rack(),
         'stone_bench': stone_bench(), 'banner_pole': banner_pole(),
         'banner_pole_f1': banner_pole(1), 'banner_pole_f2': banner_pole(2),
+        'dragon': dragon(0), 'dragon_f1': dragon(1), 'dragon_f2': dragon(2),
     }
 
 

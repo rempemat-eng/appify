@@ -8,7 +8,13 @@ Research, geography proposal and engineering handoff for Claude · 18 October 20
 
 The render communicates landforms, district identity and relative relationships. It is **not** a collision mask, a measured world projection or an instruction to copy generated pixels into the game. `topology.json` is the authoritative proposed adjacency/port contract; the prose explains its intent. The existing game remains authoritative until a separately verified implementation lands.
 
-[Exact segment-and-crossing schematic](./connections.svg) · [Machine-readable proposal](./topology.json) · [Executable design checks](./check-topology.cjs)
+[Logical map (SVG)](./biome-connections.svg) · [Logical map (PNG)](./biome-connections.png) · [Transport/endpoint rules](./transport-contract.json) · [Continuity review](./continuity-review.md)
+
+Original base: [23-segment schematic](./connections.svg) · [Base contract](./topology.json) · [Base design checks](./check-topology.cjs). The combined logical map includes the biome extension below.
+
+**18 October extension requested by Matt:** add **Tidebloom Isles**, inspired by Hawaiʻi/Indonesia's island landscapes, and make **Frostline Highlands** a proper snowy mountain district rather than background peaks. The updated whole-world render includes both. [Additive segment contract](./biome-extensions.json) · [Combined route schematic](./biome-connections.svg) · [Extension checks](./check-biomes.cjs). The base JSON above remains the original 23-segment proposal; read it together with the eight added segments, not as the complete updated map by itself.
+
+This is still a design-only handoff. Latest reviewed main `601849dc38485b033335eeeae9e95c1bb5241476` already moves Hearthold inland, gives it its own `hearthold` ID, maps old coastal-castle discovery to Headland, adds Scorched Pass, and connects Gulch to fire country through `regionPasses`/`passAt`. Those are **Claude's implemented changes**, not work supplied by this update. Its current lava layout and castle postern differ from the earlier proposal's arrangement/single entrance. Claude should reconcile the older fire-country suggestion with that newer work, not replace it from this concept. The migration demonstration below is pinned to the older `500605d` layout; it is not a migration for latest main. The proposal's internal `castle` node is historical design vocabulary, not permission to reuse the old saved-discovery ID for current Hearthold.
 
 ## 1. The design decision
 
@@ -52,15 +58,17 @@ Additional design evidence: [GDC's expert roundtable](https://www.gamedeveloper.
 
 ## 3. World types, without another pile of biomes
 
-| Place family                      | Identity and fit                                                                                                                                                | Separation/transition                                                                                                                  |
-| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
-| **Home Valley**                   | Domestic meadow, broadleaf wood, river/mill, upland lookout and tide-washed coast. Existing home, growing meadow, missions, shop and practice ring belong here. | Tree belts, a coherent stream, terraced bluffs and the estuary. Meadow → sparse trees → canopy; river meadow → reeds → beach.          |
-| **Cogsworth waterworks**          | A small canal/rail settlement, not a giant unrelated industrial city. Clocks, locks and copper roofs express busyness.                                          | Wooded hills/inlet separate it from home; train arrival and canal towpath establish a new district.                                    |
-| **Sunstone Reach / fire country** | Western dry town and spring-fed oasis become scrub, basalt, lava chasm, Hearthold and caldera. Mineral springs occupy the cooler outer basin.                   | A mountain rain shadow explains the dry region. Sand never touches snow or molten lava; scrub and cooled crust mediate the transition. |
-| **Neon Harbour / Skyport**        | One compact sheltered waterfront and transit district. Different social energy, not just meadow props recoloured purple.                                        | Sea channel and an unmistakable maglev journey. No pedestrian route across the train viaduct.                                          |
-| **Halcyon / Lumen**               | Orbital greenhouse followed by quiet lunar/glow-flora garden. Existing distant destinations, not land north of the city.                                        | Separate inset/local maps, reached by existing elevator and shuttle.                                                                   |
+| Place family                      | Identity and fit                                                                                                                                                | Separation/transition                                                                                                                                   |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Home Valley**                   | Domestic meadow, broadleaf wood, river/mill, upland lookout and tide-washed coast. Existing home, growing meadow, missions, shop and practice ring belong here. | Tree belts, a coherent stream, terraced bluffs and the estuary. Meadow → sparse trees → canopy; river meadow → reeds → beach.                           |
+| **Frostline Highlands**           | Snowy extension above the existing ridge cabin: fir hollow, alpine lake, saddle and optional lookout. No new mountain mission.                                  | Sparse firs → patchy snow → open alpine lake → broad snowy saddle. Rock shoulders frame a safe circuit, not a cliff-climbing mechanic.                  |
+| **Tidebloom Isles**               | Separate dormant volcanic island, rain-catching forest, waterfall, sheltered lagoon and exposed black-sand coast.                                               | Real ocean channel from Driftwood; proposed deliberate sea link, then one continuous island walking loop. Reef/islets are scenery, not stepping stones. |
+| **Cogsworth waterworks**          | A small canal/rail settlement, not a giant unrelated industrial city. Clocks, locks and copper roofs express busyness.                                          | Wooded hills/inlet separate it from home; train arrival and canal towpath establish a new district.                                                     |
+| **Sunstone Reach / fire country** | Western dry town and spring-fed oasis become scrub, basalt, lava chasm, Hearthold and caldera. Mineral springs occupy the cooler outer basin.                   | A mountain rain shadow explains the dry region. Sand never touches snow or molten lava; scrub and cooled crust mediate the transition.                  |
+| **Neon Harbour / Skyport**        | One compact sheltered waterfront and transit district. Different social energy, not just meadow props recoloured purple.                                        | Sea channel and an unmistakable maglev journey. No pedestrian route across the train viaduct.                                                           |
+| **Halcyon / Lumen**               | Orbital greenhouse followed by quiet lunar/glow-flora garden. Existing distant destinations, not land north of the city.                                        | Separate inset/local maps, reached by existing elevator and shuttle.                                                                                    |
 
-Ideas worth developing **within** these families later: a moss-water hollow in the woodland; a tide-glass cove off the harbour; a mineral/steam garden at the springs; a small glow-flora grotto on Lumen. These are atmosphere/place proposals, not four additional worlds or new mechanics. Coral, sky islands and a dream forest should remain off this initial footprint rather than filling every sea/mountain gap.
+Ideas worth developing **within** these families later: a moss-water hollow in the woodland; a tide-glass cove off the harbour; a mineral/steam garden at the springs; a small glow-flora grotto on Lumen. These are atmosphere/place proposals, not four additional worlds or new mechanics. Tidebloom supersedes the earlier decision to leave a tropical island out; its outer reef is non-walkable scenery. Extra sky islands and a dream forest remain outside this footprint.
 
 No current sprite is mandatory. Keep the useful place identities and stable data references; let Claude redraw their landforms, footprints and compositions. The map is not a demand to reuse every asset.
 
@@ -81,7 +89,7 @@ Three overlapping walking circuits share familiar approaches:
 2. Garden → Riverside → Park → Town → Garden.
 3. Town → Harbour → Headland → Park → Town.
 
-The ridge is a short, visibly intentional lookout spur. Town has four approaches, but they need not converge at one congested tile: the north lane arrives through gardens, the west through the station edge, the east beside the park, and the south down the harbour lane. The home clearing remains off the public route.
+The ridge remains a short, visibly intentional destination on its own; the optional highland extension starts beyond its cabin terrace, never between Garden and the existing mission interaction. Town has four approaches, but they need not converge at one congested tile: the north lane arrives through gardens, the west through the station edge, the east beside the park, and the south down the harbour lane. The home clearing remains off the public route.
 
 The river originates below the high ridge, runs east across the lower garden terrace and turns south through Riverside/Park to the harbour estuary. Water drops tiers at visible falls; the pond has an outlet. Roads cross it only at drawn, supported bridges with dry path landings. The rail bridge is distinct from a footbridge.
 
@@ -165,7 +173,83 @@ Before live integration: real-grid flood fill from every arrival to every action
 
 ```sh
 node docs/codex/ideas/connected-world/check-topology.cjs
+node docs/codex/ideas/connected-world/check-biomes.cjs
 npm run verify
 ```
 
-The first command validates this design-only package and its negative controls. The second checks the app source; it does not by itself validate a future redraw. See the PR's final handoff for exact tested commit, CI and remaining gaps.
+The first command validates the base design and its negative controls. The second also validates the biome extension. The third checks the app source; it does not by itself validate a future redraw. See the PR's final handoff for exact tested commit, CI and remaining gaps.
+
+## 10. Tidebloom Isles: a landscape, not a tropical asset shelf
+
+One main island occupies the southwest sea, beyond a visible channel from Driftwood. Its outer silhouette is folded green upland, a low sheltered lagoon and a darker exposed coast. Small outer islets and a reef give the archipelago depth without adding loaded maps, collectible islands or an obligation to visit everything. Dormant eroded volcanic rock distinguishes it from the active fire country.
+
+| Segment         | Local grid    | Route and boundary                                                                                                                           |
+| --------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Lagoon Landing  | [0,1], tier 0 | Sole proposed mainland arrival/return pier. Dry shore route goes north into forest or east around the coast. Mangrove water closes the rest. |
+| Rainforest      | [0,0], tier 1 | Stream valley and canopy; supported crossing and switchbacks, not a solid wall of plants. Connects landing to headwaters.                    |
+| Headwaters      | [1,0], tier 2 | Waterfall and cloud-catching upland. Path goes beside the gorge and descends around the east shoulder, never across the lip.                 |
+| Black-sand Cove | [1,1], tier 0 | Ocean-facing basalt, black sand and a dry contour path back to the landing. Not a second boat stop or lava hazard.                           |
+
+**Circuit:** Landing → Rainforest → Headwaters → Black-sand Cove → Landing, reversible throughout. Freshwater drains Headwaters → Rainforest → Lagoon, while the dry walking descent can go the other way round. Watercourses and routes are separate layers. Place bridges at actual water crossings, with dry abutments; mangrove roots, lagoon water and offshore coral do not become generic walk tiles.
+
+**Mainland access is explicitly unresolved engineering, not a shipped service.** `harbour-isles` is a separately typed `proposed-sea-link`, not an entry in existing `travelLinks`. A boat is the geography recommendation, but this PR does not approve or implement a new vehicle, journey timing, fare or unlock. The two inland pier anchors provide an unambiguous bidirectional design contract. A later approved implementation must preserve deliberate departure, cancel/stale ownership, return anchors, existing background/skip semantics, and a direct way Home. No real-world schedule, tide window, compulsory wait or resource cost. Until that adapter is separately approved, the island is conceptually reachable but **not reachable in the live game**.
+
+Research checked on 18 October:
+
+- [Hawaiʻi DLNR, streams and mountain-to-sea land divisions](https://dlnr.hawaii.gov/dar/habitat/about-streams/cultural-importance/): supports the connected upland/forest/coast watershed idea. This is environmental inspiration, not permission to use a culturally specific land-tenure system as a game mechanic or label.
+- [NPS, Hawaiʻi geology](https://www.nps.gov/locations/hawaii/geology.htm): supports volcanic relief rather than a flat palm postcard.
+- [Indonesia's Ministry of Tourism, Raja Ampat](https://www.indonesia.travel/gb/en/destination/maluku-papua/southwest-papua/raja-ampat): informs the sheltered water, wooded rock islets and outer reef silhouette, not copied landforms or assets. No travel/flight facts are used in gameplay.
+
+The composite is fictional, not a claim that Hawaiʻi and Indonesia share one culture or ecology. Avoid temple/tiki mashups, borrowed sacred motifs, invented Indigenous names or resort imagery. Architecture stays modest and fictional pending a focused cultural/art brief. Nature carries the identity first.
+
+## 11. Frostline Highlands: the valley's upper watershed
+
+The existing `ridge` cabin remains the sole existing mountain mission binding, at the same local action point. North/west of it, a new optional circuit provides a real snowy area without putting a longer walk in front of the mission.
+
+| Row | West [-1]                 | Centre [0]                   |
+| --- | ------------------------- | ---------------------------- |
+| -3  | Scenery / closed rock     | High Lookout, tier 5         |
+| -2  | Snowmelt Lake, tier 4     | Snow Saddle, tier 4          |
+| -1  | Fir Hollow, tier 3        | Existing Ridge cabin, tier 3 |
+| 0   | Existing Woodland, tier 2 | Existing Garden, tier 2      |
+
+**Circuit:** Ridge → Fir Hollow → Snowmelt Lake → Snow Saddle → Ridge. High Lookout is a short northward optional spur from the saddle, not a mandatory summit or completion goal. The shared Fir Hollow–Woodland border is a **closed visible escarpment**; the existing Garden–Ridge approach remains the clear ascent. Snowline follows elevation: sheltered firs, scattered snow, open alpine shore, then exposed high rock/snow. Use sparse low vegetation above treeline rather than full-size forest pasted onto the summit.
+
+The lake drains through a drawn stream and cascades towards the valley river. The path stays on dry shore/supports; a frozen-looking lake is not a seasonal shortcut. Wide switchbacks, resting terraces and visible rock shoulders explain altitude changes. No climbing controls, stamina, damage, cold meter, rescue demand, weather closure, equipment gate, new mission or reward. Snow/weather can change presentation, never availability or progress. The companion can turn round immediately.
+
+Primary landscape references: [NPS Rocky Mountain alpine tundra](https://www.nps.gov/romo/learn/nature/alpine_tundra_ecosystem.htm) and [subalpine ecosystem](https://www.nps.gov/romo/learn/nature/subalpine_ecosystem.htm). These inform the forest-to-treeless transition, not a literal Colorado setting or numeric elevation requirement. All placement/path choices are design inferences, not NPS recommendations for the game.
+
+## 12. Expanded handoff and integration risks
+
+The combined concept has **31 segments in 8 physical regions**, **28 walk seams**, **5 walking circuits**, the existing hut door and **6 retained transit services**, plus **one separately proposed sea link**. Frostline is a named district within the valley's continuous walking domain; Tidebloom requires its own region. More zones here do not mean more gameplay systems.
+
+Claude: greybox these eight additional landscape rooms before adding buildings or props. Establish the lagoon's sole pier, island loop and watershed; establish the ridge cabin's unchanged mission approach, snow loop and lookout spur. Reserve clear approach bands and safe supported crossings. Do not treat the generated PNG as exact geometry: use `biome-extensions.json` plus the combined SVG for endpoints, local coordinates and closed seams. The render may simplify relief and relative spacing; it cannot add a route absent from those contracts.
+
+**Save warning:** extending valley minRow from -1 to -3 shifts every existing valley absolute origin by **+1152 art px in y**, even though its zone-local placement is unchanged. The checks demonstrate that offset for every original proposal valley segment. Resolve an old position against its exact old layout first; never apply this proposed offset blindly to real current saves. Include current main's Headland/Scorched Pass/lava offsets, reload-mid-walk, return anchors, residents and future fields in a separately versioned real migration. New islands must not become visited by migration. No migration is supplied here.
+
+**Risk/effort:** a moderate art/semantic-grid expansion, a small topology contract extension, but a non-trivial native/browser/save/travel integration. No time estimate is claimed before Claude greyboxes actual grids. Biggest risks are an island drawn too close to the mainland, a boat mistaken for a current service, the snow origin shift, props blocking switchbacks, and copying cultural imagery without a focused brief. Test supported banks and the two-tier Headwaters descent on real maps, not just graph connectivity. Both additions remain optional places to wander briefly; no daily reward, checklist, decay timer or FOMO.
+
+**Open decisions:** Claude/Matt to choose the eventual boat presentation and approve its separate adapter; confirm final footprint after stitching real maps; agree the modest fictional architectural vocabulary before detailed island buildings. These decisions do not block this geography proposal, but do block live integration.
+
+The extension checker reuses the 911 base assertions, then checks reciprocal ports cell by cell, district reachability and cycles, blocked cliff/corners, landing anchors, proposed-only boat status and the snow-origin shift. Its negative fixtures deliberately break ocean separation, boat activation, return point, tide policy, island circuit, coordinates, port direction, slope and save policy. None of this proves actual terrain or production save safety.
+
+## 13. Visual map versus logical map: continuity audit
+
+Matt specifically flagged rails turning into ordinary paths or disappearing in the concept image. That is a real illustration defect, not an acceptable interpretation of the transport model. The landscape render conveys the landforms; **the logical map and [transport contract](./transport-contract.json) define which connections exist and their mode**. If a decorative mark disagrees, correct the drawing, not the rules. Do not copy an incidental generated junction into final art.
+
+| Network              | Complete alignment                                    | Ends and transfers                                                                                                                                                       |
+| -------------------- | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Conventional railway | Valley Halt → Cogsworth through-platform → Dust Gulch | Explicit buffers at Valley Halt and Gulch. Rail and sleepers continue through Cogsworth; no track-to-street conversion.                                                  |
+| Mine-cart railway    | Separate Gulch bay → Caldera landing                  | Buffers at both ends. A pedestrian forecourt transfers between train/cart platforms, not a same-track vehicle transformation. Does not cross the castle footbridge.      |
+| Maglev               | Separate Cogsworth platform → Skyport                 | Continuous raised guideway, supported viaduct, terminal stops. No join to the conventional track or ordinary walking path.                                               |
+| Orbital lift         | Skyport dock → Halcyon dock                           | Different mode and separate dock, shown in the orbit inset. Not a rail line disappearing into a cloud.                                                                   |
+| Lunar shuttle        | Halcyon pad → Lumen pad                               | Two declared pads and a flight link. Not a walkable bridge or track.                                                                                                     |
+| Proposed sea link    | Driftwood pier ↔ Lagoon Landing pier                  | Open-water route with reachable dry shore anchors. No lighthouse, Black-sand Cove, jungle or waterfall shortcut. Not implemented/approved as a service by this document. |
+
+On the logical sheet, district panels have separate atlas display positions. Inter-panel lines are **schematic connections**, not a claim that a track cuts physically across every panel/line it overlaps. No interchange exists without an explicit station circle; separate mode platforms have small display offsets for readability, not new runtime arrival coordinates. A buffer/dock marker ends every terminal; the through-platform at Cogsworth does not get a terminating buffer. Conventional and mine rail use sleepers; maglev uses a smooth guideway; paths remain gold; sea is teal dots; lift/shuttle are blue dashes.
+
+Before production art: establish exact terrain-local alignments and declare every bridge, paired tunnel or crossing in semantic data. No tunnel is required in the schematic. A new tunnel needs two portals on the same gauge/network and a continuous hidden alignment, never a single dark hole used to hide a missing track. Railway/walking intersections need a real grade-separated crossing or an explicitly authored level crossing; crossing drawn diagram lines do not supply one. Every bridge needs supported deck, gap/water, both abutments and reachable approaches. Every slope needs a drawn ramp/switchback. There is no claim that the concept PNG already supplies this geometry.
+
+The transport checks cover all six current service edges exactly once, preserve their modes, verify consecutive station endpoints, through-stations, explicit terminals and separate pedestrian interchanges. Negative fixtures reject a removed rail segment, train changed into a path, track fading into an untyped end, a rail–maglev join, a lost Cogsworth through-platform and a wrong island landing. The base migration fixtures remain explicitly historical; `reviewed-source-layout.json` separately records newer main's actual layout and causes unknown future layout shapes to fail for manual review.
+
+**Handoff gate:** the abstract route logic is specified and checked; Claude receives a design brief for detailed art, not an assertion that generated pixels are collision-correct. Final local rail/water/support geometry, paired tunnels if used, actual route reachability and the real save/travel adapters still require implementation and a second continuity audit before the map can go live.

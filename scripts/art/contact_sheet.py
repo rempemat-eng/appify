@@ -14,7 +14,7 @@ import zones  # noqa: E402
 GROUPS = [
     ('Valley', None), ('Cogsworth', 'junction'), ('Dust Gulch and the oasis', 'gulch'),
     ('Ember Caldera and Cinder Springs', 'caldera'), ('Neon Harbour and the Skyport', 'neon'),
-    ('Driftwood Harbour', 'harbour'), ('Hearthold Castle', 'castle'), ('Halcyon Station', 'station'),
+    ('Driftwood Harbour', 'harbour'), ('Hearthold Castle', 'hearthold'), ('Halcyon Station', 'station'),
     ('Lumen', 'lumen'), ('The hut', 'home'),
 ]
 

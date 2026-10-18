@@ -7,7 +7,6 @@ import propAirlock from '@/assets/zones/props/airlock.png';
 import propAirshipMast from '@/assets/zones/props/airship_mast.png';
 import propAnchor from '@/assets/zones/props/anchor.png';
 import propAquariumColumn from '@/assets/zones/props/aquarium_column.png';
-import propArcheryButt from '@/assets/zones/props/archery_butt.png';
 import propArmchair from '@/assets/zones/props/armchair.png';
 import propAtmosCar from '@/assets/zones/props/atmos_car.png';
 import propAutomaton from '@/assets/zones/props/automaton.png';
@@ -71,6 +70,9 @@ import propDesertScrub from '@/assets/zones/props/desert_scrub.png';
 import propDesertScrubB from '@/assets/zones/props/desert_scrub_b.png';
 import propDesk from '@/assets/zones/props/desk.png';
 import propDiningTable from '@/assets/zones/props/dining_table.png';
+import propDragon from '@/assets/zones/props/dragon.png';
+import propDragonF1 from '@/assets/zones/props/dragon_f1.png';
+import propDragonF2 from '@/assets/zones/props/dragon_f2.png';
 import propDreamPool from '@/assets/zones/props/dream_pool.png';
 import propDriftwood from '@/assets/zones/props/driftwood.png';
 import propDrone from '@/assets/zones/props/drone.png';
@@ -105,7 +107,6 @@ import propHammock from '@/assets/zones/props/hammock.png';
 import propHayBale from '@/assets/zones/props/hay_bale.png';
 import propHaystack from '@/assets/zones/props/haystack.png';
 import propHedge from '@/assets/zones/props/hedge.png';
-import propHerbBed from '@/assets/zones/props/herb_bed.png';
 import propHeron from '@/assets/zones/props/heron.png';
 import propHitchingRail from '@/assets/zones/props/hitching_rail.png';
 import propHollowTree from '@/assets/zones/props/hollow_tree.png';
@@ -127,6 +128,7 @@ import propLilyPads from '@/assets/zones/props/lily_pads.png';
 import propLobsterPots from '@/assets/zones/props/lobster_pots.png';
 import propLockers from '@/assets/zones/props/lockers.png';
 import propLocomotive from '@/assets/zones/props/locomotive.png';
+import propLookoutTower from '@/assets/zones/props/lookout_tower.png';
 import propLoungeBench from '@/assets/zones/props/lounge_bench.png';
 import propLuggageBot from '@/assets/zones/props/luggage_bot.png';
 import propMaglev from '@/assets/zones/props/maglev.png';
@@ -199,7 +201,6 @@ import propStationHouse from '@/assets/zones/props/station_house.png';
 import propSteamPuff from '@/assets/zones/props/steam_puff.png';
 import propSteamerTrunk from '@/assets/zones/props/steamer_trunk.png';
 import propStone from '@/assets/zones/props/stone.png';
-import propStoneBench from '@/assets/zones/props/stone_bench.png';
 import propStoneLantern from '@/assets/zones/props/stone_lantern.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
@@ -266,7 +267,9 @@ import groundOasis from '@/assets/zones/oasis/ground.png';
 import groundCaldera from '@/assets/zones/caldera/ground.png';
 import groundSprings from '@/assets/zones/springs/ground.png';
 import groundHarbour from '@/assets/zones/harbour/ground.png';
-import groundCastle from '@/assets/zones/castle/ground.png';
+import groundHeadland from '@/assets/zones/headland/ground.png';
+import groundHearthold from '@/assets/zones/hearthold/ground.png';
+import groundScorch from '@/assets/zones/scorch/ground.png';
 import groundStation from '@/assets/zones/station/ground.png';
 import groundLumen from '@/assets/zones/lumen/ground.png';
 import groundHome from '@/assets/zones/home/ground.png';
@@ -286,7 +289,9 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   caldera: groundCaldera,
   springs: groundSprings,
   harbour: groundHarbour,
-  castle: groundCastle,
+  headland: groundHeadland,
+  hearthold: groundHearthold,
+  scorch: groundScorch,
   station: groundStation,
   lumen: groundLumen,
   home: groundHome,
@@ -306,7 +311,9 @@ import mapOasis from '@/assets/zones/oasis/map.png';
 import mapCaldera from '@/assets/zones/caldera/map.png';
 import mapSprings from '@/assets/zones/springs/map.png';
 import mapHarbour from '@/assets/zones/harbour/map.png';
-import mapCastle from '@/assets/zones/castle/map.png';
+import mapHeadland from '@/assets/zones/headland/map.png';
+import mapHearthold from '@/assets/zones/hearthold/map.png';
+import mapScorch from '@/assets/zones/scorch/map.png';
 import mapStation from '@/assets/zones/station/map.png';
 import mapLumen from '@/assets/zones/lumen/map.png';
 import mapHome from '@/assets/zones/home/map.png';
@@ -328,15 +335,20 @@ export const zoneMapTiles: Record<ZoneId | 'garden', ImageSourcePropType> = {
   caldera: mapCaldera,
   springs: mapSprings,
   harbour: mapHarbour,
-  castle: mapCastle,
+  headland: mapHeadland,
+  hearthold: mapHearthold,
+  scorch: mapScorch,
   station: mapStation,
   lumen: mapLumen,
   home: mapHome,
   garden: mapGarden,
 };
 import beyondImage from '@/assets/zones/beyond.png';
+import beyondAshImage from '@/assets/zones/beyond-ash.png';
 /** Old forest, drawn where a region's grid has no zone (the valley's corners). */
 export const zoneBeyond: ImageSourcePropType = beyondImage;
+/** What fills a gap in a region other than the valley (the volcano's flank in the fire country). */
+export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = { lava: beyondAshImage };
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,
@@ -344,7 +356,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   airship_mast: propAirshipMast,
   anchor: propAnchor,
   aquarium_column: propAquariumColumn,
-  archery_butt: propArcheryButt,
   armchair: propArmchair,
   atmos_car: propAtmosCar,
   automaton: propAutomaton,
@@ -408,6 +419,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   desert_scrub_b: propDesertScrubB,
   desk: propDesk,
   dining_table: propDiningTable,
+  dragon: propDragon,
+  dragon_f1: propDragonF1,
+  dragon_f2: propDragonF2,
   dream_pool: propDreamPool,
   driftwood: propDriftwood,
   drone: propDrone,
@@ -442,7 +456,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   hay_bale: propHayBale,
   haystack: propHaystack,
   hedge: propHedge,
-  herb_bed: propHerbBed,
   heron: propHeron,
   hitching_rail: propHitchingRail,
   hollow_tree: propHollowTree,
@@ -464,6 +477,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lobster_pots: propLobsterPots,
   lockers: propLockers,
   locomotive: propLocomotive,
+  lookout_tower: propLookoutTower,
   lounge_bench: propLoungeBench,
   luggage_bot: propLuggageBot,
   maglev: propMaglev,
@@ -536,7 +550,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   steam_puff: propSteamPuff,
   steamer_trunk: propSteamerTrunk,
   stone: propStone,
-  stone_bench: propStoneBench,
   stone_lantern: propStoneLantern,
   store: propStore,
   street_light: propStreetLight,

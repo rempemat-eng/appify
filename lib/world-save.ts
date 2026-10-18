@@ -13,6 +13,9 @@ const isRegion = (value: unknown): value is RegionId =>
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
+/** Zone ids retired from the world, and the place that took each one's ground. */
+const LEGACY_ZONES: Record<string, string> = { castle: 'headland' };
+
 /** A saved spot if it is whole and inside its region; otherwise none (start fresh). */
 export function restoreWorld(value: unknown): WorldSpot | null {
   if (!isRecord(value)) return null;
@@ -24,8 +27,20 @@ export function restoreWorld(value: unknown): WorldSpot | null {
   const b = regionBounds(v.region);
   if (x < 0 || y < 0 || x >= b.width || y >= b.height || !tileAt(v.region, x, y)) return null;
   const known = new Set<string>(Object.values(regionLayout).flatMap((r) => Object.keys(r)));
+  // (18 Oct: the valley's castle corner became the Headland and the castle moved to the
+  // Ember Lands as 'hearthold'; a saved visit to the old corner is a visit to the
+  // Headland, never to the new castle. A spot there keeps its valley x/y, which now
+  // falls in the Headland.)
+  const renamed = (z: string) => LEGACY_ZONES[z] ?? z;
   const visited = Array.isArray(v.visited)
-    ? [...new Set(v.visited.filter((z): z is string => typeof z === 'string' && known.has(z)))]
+    ? [
+        ...new Set(
+          v.visited
+            .filter((z): z is string => typeof z === 'string')
+            .map(renamed)
+            .filter((z) => known.has(z)),
+        ),
+      ]
     : [];
   return { region: v.region, x, y, visited };
 }

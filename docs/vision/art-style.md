@@ -86,6 +86,7 @@ Matt pointed at Cainos' *Pixel Art Top Down - Village* (Unity Asset Store and it
 8. **Cast shadows.** Shadows are hard-edged and multiply the ground (`style.cast_shadow()`, `SHADOW_MUL`). They sit under each object, offset slightly right and down. They live in the ground image so they work on grass, dirt and sand alike.
 9. **Forest shade.** Where the canopy closes in, the ground goes to `FOREST_DARK` through checker dithering (`style.dither_dark()`).
 10. **Clean over busy.** If a texture makes an area noisy, remove it. Leave negative space in the clearing where the companion walks.
+11. **The companion stays readable.** Tall things may stand in front of the companion (it walks behind roofs, trees and the forge), but when one hides at least 40% of its body, a faint copy (42% opacity) shows through, under the night tint (`lib/occlusion.ts`; `Ghost` in `components/atlas-walk.tsx`, and the same in `components/garden-world.tsx`, never while napping). It fades in and never takes taps. A low fence across the feet does not count.
 
 ## Where the code lives
 

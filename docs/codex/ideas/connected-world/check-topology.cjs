@@ -324,7 +324,10 @@ function validate(data) {
   const actualTransit = data.connections.filter((link) => link.kind === 'transit');
   demand(
     JSON.stringify(
-      actualTransit.map((link) => ({ endpoints: link.serviceEndpoints, vehicle: link.vehicle })),
+      actualTransit.map((link) => ({
+        endpoints: link.serviceEndpoints,
+        vehicle: link.vehicle,
+      })),
     ) === JSON.stringify(currentTransit.links),
     'source-derived service links and vehicles',
   );
@@ -476,10 +479,19 @@ function maskReachable(mask, from, to) {
 // A deliberately small owner/generation demonstration, not an app lifecycle patch.
 function intent(state, event) {
   if (event.type === 'start')
-    return { ...state, generation: state.generation + 1, pending: event.target };
+    return {
+      ...state,
+      generation: state.generation + 1,
+      pending: event.target,
+    };
   if (event.type === 'cancel') return { ...state, generation: state.generation + 1, pending: null };
   if (event.type === 'finish' && state.pending && event.generation === state.generation) {
-    return { ...state, pending: null, position: state.pending, settlements: state.settlements + 1 };
+    return {
+      ...state,
+      pending: null,
+      position: state.pending,
+      settlements: state.settlements + 1,
+    };
   }
   return state;
 }
@@ -710,7 +722,12 @@ check(
   'synthetic west bridge reaches east-abutment north branch',
 );
 
-let state = { generation: 0, pending: null, position: 'garden', settlements: 0 };
+let state = {
+  generation: 0,
+  pending: null,
+  position: 'garden',
+  settlements: 0,
+};
 state = intent(state, { type: 'start', target: 'woodland' });
 const staleGeneration = state.generation;
 state = intent(state, { type: 'cancel' });
@@ -746,12 +763,16 @@ check(
 const actualLayout = JSON.parse(
   layoutLiteral.replace(/(\w+)\s*:/g, '"$1":').replace(/,\s*([}\]])/g, '$1'),
 );
-assert.deepEqual(
-  actualLayout,
-  spec.migrationPrototype.oldLayout,
-  'legacy layout matches actual source',
+const reviewedSourceLayout = JSON.parse(
+  fs.readFileSync(path.join(__dirname, 'reviewed-source-layout.json'), 'utf8'),
 );
-checks += 1;
+// The older migration demonstration stays frozen. New main already moved the castle;
+// do not pretend its current layout is the legacy input. Reject unreviewed new shapes.
+check(
+  JSON.stringify(actualLayout) === JSON.stringify(spec.migrationPrototype.oldLayout) ||
+    JSON.stringify(actualLayout) === JSON.stringify(reviewedSourceLayout.layout),
+  'source layout matches the original baseline or explicitly reviewed newer main',
+);
 check(
   origin(actualLayout.valley, 'garden').join(',') === '320,576',
   'old valley origin includes minCol=-1 and minRow=-1',
@@ -879,7 +900,10 @@ const negatives = [
   [
     'distinct IDs but repeated cycle edges',
     (s) => {
-      s.loops = [0, 1, 2].map((i) => ({ ...clone(s.loops[0]), id: `repeated-${i}` }));
+      s.loops = [0, 1, 2].map((i) => ({
+        ...clone(s.loops[0]),
+        id: `repeated-${i}`,
+      }));
     },
     'three independent named cycles',
   ],
@@ -1007,3 +1031,13 @@ console.log(
 console.log(
   'NOT tested: actual generated terrain/collisions, real bridge supports, app routing or saves, visuals, browser, phone, native lifecycle or multiplayer. No game files or player saves were changed.',
 );
+
+// Shared only with the adjacent design-extension checks, never imported by the app.
+module.exports = {
+  graph,
+  reachable,
+  crossing,
+  attemptCross,
+  origin,
+  proposedLayouts,
+};

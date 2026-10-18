@@ -119,7 +119,22 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'gull', x: 230, y: 430, seed: 2 },
     { kind: 'gull', x: 60, y: 300, seed: 3 },
   ],
-  castle: [{ kind: 'gull', x: 200, y: 520, seed: 4 }],
+  // sparks lifting off the lava round Hearthold and along the Scorch's channel
+  hearthold: [
+    { kind: 'ember', x: 28, y: 216, seed: 13 },
+    { kind: 'ember', x: 282, y: 300, seed: 14 },
+    { kind: 'ember', x: 120, y: 410, seed: 15 },
+    { kind: 'ember', x: 180, y: 76, seed: 16 },
+  ],
+  scorch: [
+    { kind: 'ember', x: 72, y: 240, seed: 17 },
+    { kind: 'ember', x: 116, y: 500, seed: 18 },
+  ],
+  // gulls over the Headland's sea (the castle moved to the Ember Lands, 18 Oct)
+  headland: [
+    { kind: 'gull', x: 200, y: 520, seed: 4 },
+    { kind: 'gull', x: 80, y: 548, seed: 12 },
+  ],
   town: [
     { kind: 'butterfly', x: 270, y: 196, seed: 5 },
     { kind: 'butterfly', x: 210, y: 470, seed: 6 },
