@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useReducedMotion } from '@/lib/motion';
 import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
 import { useAppActive } from '@/lib/app-active';
@@ -149,6 +150,11 @@ const KEY_SPEED = 52; // walking by the keys: a purposeful trot
 /** Which way a leg of a walk faces; null for one that only goes up or down. */
 const legFacing = (a: Point, b: Point) =>
   Math.abs(b.x - a.x) < 2 ? null : b.x < a.x ? ('left' as const) : ('right' as const);
+// Zones lit by their own light on one side only: the hour's tint fades out across them
+// toward that light (the Scorched Pass: Dust Gulch's night on its sandy west, the lava's
+// glow on its east), so the light never stops at a tile edge (play-test 18 Oct, 1).
+const FADE_LIGHT: Partial<Record<TileId, 'east'>> = { scorch: 'east' };
+const clearOf = (c: string) => c.replace(/[\d.]+\)$/, '0)');
 // Zones that keep their own light at every hour (no night tint).
 const OWN_LIGHT: TileId[] = [
   'neon',
@@ -361,7 +367,7 @@ const FRAME_MS = 400; // divides FLOAT_LOOP
 function beyondAt(region: RegionId, col: number, row: number) {
   if (region === 'west' && (col >= 1 || (col >= 0 && row <= -1))) return zoneBeyondAsh;
   // the valley's high country: peaks round the Frostline, forest lower down
-  if (region === 'valley' && row <= -2) return zoneBeyondPeaks;
+  if (region === 'valley' && row <= -1) return zoneBeyondPeaks;
   // Lumen's plain runs on below and beside it; above, only space (the backdrop)
   if (region === 'moon') return zoneBeyondRegolith;
   return zoneBeyondByRegion[region] ?? zoneBeyond;
@@ -823,6 +829,10 @@ export function AtlasWalk({
   const regionW = bounds.width * u;
   const regionH = bounds.height * u;
   const petPx = 32 * u;
+  // where the land runs on past the region's top, the camera may look a little past
+  // it, so a companion at a north-edge stand is not left under the header
+  // (play-test 18 Oct, finding 9)
+  const roomAbove = region === 'valley' || zoneBeyondByRegion[region] ? 96 : 0;
   const cameraStyle = useAnimatedStyle(() => {
     // a region narrower (or shorter) than the screen sits in its middle
     const cx =
@@ -832,7 +842,10 @@ export function AtlasWalk({
     const cy =
       regionH <= height - padBottom
         ? (regionH - height + padBottom) / 2
-        : Math.max(0, Math.min(regionH - height + padBottom, py.value * u - height * focusY));
+        : Math.max(
+            -roomAbove,
+            Math.min(regionH - height + padBottom, py.value * u - height * focusY),
+          );
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
   const landStyle = useAnimatedStyle(() => ({
@@ -1057,20 +1070,44 @@ export function AtlasWalk({
                     x: (g.col - bounds.minCol) * TILE.width,
                     y: (g.row - bounds.minRow) * TILE.height,
                   }))),
-            ].map((c) => (
-              <View
-                key={`tint-${c.key}`}
-                style={{
-                  position: 'absolute',
-                  left: snap(c.x * u),
-                  top: snap(c.y * u),
-                  width: snap(TILE.width * u),
-                  height: snap(TILE.height * u),
-                  backgroundColor: tint,
-                  zIndex: 150000,
-                }}
-              />
-            ))}
+            ]
+              .concat(
+                near
+                  .filter((t) => FADE_LIGHT[t.id])
+                  .map((t) => ({ key: `fade-${t.id}`, fade: true, ...tileOrigin(region, t) })),
+              )
+              .map((c) =>
+                'fade' in c ? (
+                  <LinearGradient
+                    key={`tint-${c.key}`}
+                    pointerEvents="none"
+                    colors={[tint, clearOf(tint)]}
+                    start={{ x: 0, y: 0.5 }}
+                    end={{ x: 0.7, y: 0.5 }}
+                    style={{
+                      position: 'absolute',
+                      left: snap(c.x * u),
+                      top: snap(c.y * u),
+                      width: snap(TILE.width * u),
+                      height: snap(TILE.height * u),
+                      zIndex: 150000,
+                    }}
+                  />
+                ) : (
+                  <View
+                    key={`tint-${c.key}`}
+                    style={{
+                      position: 'absolute',
+                      left: snap(c.x * u),
+                      top: snap(c.y * u),
+                      width: snap(TILE.width * u),
+                      height: snap(TILE.height * u),
+                      backgroundColor: tint,
+                      zIndex: 150000,
+                    }}
+                  />
+                ),
+              )}
           {night &&
             // lamplight in the windows (panes recorded by the generator, zoneWindows): a pane
             // with nothing in front glows above the night tint; one that a nearer thing overlaps
@@ -1254,9 +1291,11 @@ export function AtlasWalk({
               style={{
                 position: 'absolute',
                 left: m.x * u - 70,
-                top: m.y * u - 56 * u,
+                // the label's foot sits above a standing companion's head, so it never
+                // covers the companion at the stand (play-test 18 Oct, finding 3)
+                top: m.y * u - 50 * u - 44,
                 width: 140,
-                minHeight: 44,
+                height: 44,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
               }}

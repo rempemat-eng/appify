@@ -113,9 +113,9 @@ console.log(
   let seams = 0;
   for (const [key, { span }] of Object.entries(zonePorts)) {
     const [a, c] = key.split('|');
-    const reg = (Object.keys(regionLayout) as (keyof typeof regionLayout)[]).find(
-      (r) => a in regionLayout[r] && c in regionLayout[r],
-    );
+    const reg = Object.keys(regionLayout)
+      .filter((r): r is keyof typeof regionLayout => r in regionLayout)
+      .find((r) => a in regionLayout[r] && c in regionLayout[r]);
     assert.ok(reg, `${key}: both zones are in one region`);
     const tiles = regionTiles(reg);
     const ta = tiles.find((t) => t.id === a);
@@ -130,8 +130,12 @@ console.log(
     let open = 0;
     for (let k = 0; k < n; k++) {
       const p = k * TILE.cell;
-      const ra = vertical ? g[oa.y / TILE.cell + k][(oa.x + TILE.width) / TILE.cell - 1] : g[(oa.y + TILE.height) / TILE.cell - 1][oa.x / TILE.cell + k];
-      const rb = vertical ? g[ob.y / TILE.cell + k][ob.x / TILE.cell] : g[ob.y / TILE.cell][ob.x / TILE.cell + k];
+      const ra = vertical
+        ? g[oa.y / TILE.cell + k][(oa.x + TILE.width) / TILE.cell - 1]
+        : g[(oa.y + TILE.height) / TILE.cell - 1][oa.x / TILE.cell + k];
+      const rb = vertical
+        ? g[ob.y / TILE.cell + k][ob.x / TILE.cell]
+        : g[ob.y / TILE.cell][ob.x / TILE.cell + k];
       const crosses = ra === '.' && rb === '.';
       if (crosses) open++;
       const inside = span !== null && p >= span[0] && p < span[1];
