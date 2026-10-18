@@ -188,7 +188,7 @@ def town(frame: int = 0):
         # hedges either side of the road south, and framing trees
         ('hedge-s1', 'hedge', 0, 548), ('hedge-s3', 'hedge', 192, 548),
         ('tree-w1', 'tree', 2, 196), ('tree-e1', 'tree', 252, 470),
-        ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 250, 400),
+        ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 196, 416),
         ('bunting', 'bunting', 60, 238), ('cat', 'cat', 182, 352),
     ]
     ring_fence(objects, rcx, rcy, 58, 28)
