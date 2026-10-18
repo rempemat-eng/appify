@@ -1711,7 +1711,8 @@ def springs(frame: int = 0):
             if noise2(x // 2, y // 2, 508) > 0.45:
                 cv.set(x, y, '#E8D24A' if (x + y) % 3 else '#B8A030')
     # the hot stream from the lowest pool down to the lava, and stepping stones over it
-    stream = worlds.thick([(96, 400), (88, 440), (98, 480), (90, 516), (92, 534)], 4, seed=41)
+    # (it runs right into the crusting tongue of lava, and steams there)
+    stream = worlds.thick([(96, 400), (88, 440), (98, 480), (90, 516), (88, 534), (82, 546)], 4, seed=41)
     for (x, y) in stream:
         cv.set(x, y, SPRING[2] if (x + y) % 3 else SPRING[3])
         blocked.add((x, y))
@@ -1775,7 +1776,7 @@ def springs(frame: int = 0):
         ('weed-7', 'fireweed', 130, 120), ('weed-8', 'fireweed_small', 20, 240), ('weed-9', 'fireweed', 264, 300),
         ('weed-10', 'fireweed_small', 280, 340), ('weed-11', 'fireweed', 300, 470), ('weed-12', 'fireweed_small', 60, 180),
         ('cols-4', 'basalt_columns', 250, 236),
-        ('cols-1', 'basalt_columns', 262, 520), ('cols-2', 'basalt_columns_low', 286, 40), ('cols-3', 'basalt_columns_low', 210, 540),
+        ('cols-1', 'basalt_columns', 262, 506), ('cols-2', 'basalt_columns_low', 286, 40), ('cols-3', 'basalt_columns_low', 214, 518), ('hiss', 'steam_puff', 72, 520),
         ('vent-1', 'cooling_vent', 150, 60), ('vent-2', 'cooling_vent', 300, 120), ('vent-3', 'cooling_vent', 110, 556 - 20),
         ('obs-1', 'obsidian_small', 20, 470), ('obs-2', 'obsidian', 286, 400),
         ('scree-1', 'scree', 28, 128), ('scree-2', 'scree_small', 196, 70), ('scree-3', 'scree_b', 250, 352),
