@@ -42,7 +42,8 @@
     "check:sprites": "node scripts/check-sprites.cjs",
     "check:mission-departure": "node scripts/check-mission-departure.cjs",
     "check:journal": "node scripts/check-journal.cjs",
-    "sound": "python3 scripts/audio/sounds.py && oxfmt --write lib/sound-assets.ts"
+    "sound": "python3 scripts/audio/sounds.py && oxfmt --write lib/sound-assets.ts",
+    "art:sheet": "python3 scripts/art/contact_sheet.py"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",
