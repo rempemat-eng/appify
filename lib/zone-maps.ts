@@ -52,6 +52,10 @@ export const zoneFrames: Record<
     ['windmill_f1', -5, -5, 62, 104],
     ['windmill_f2', -3, -3, 58, 102],
   ],
+  workshop: [
+    ['workshop_f1', 0, 0, 96, 87],
+    ['workshop_f2', 0, 0, 96, 87],
+  ],
 };
 /** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */
 export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {

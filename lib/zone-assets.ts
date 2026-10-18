@@ -246,6 +246,8 @@ import propWindowSeat from '@/assets/zones/props/window_seat.png';
 import propWindpump from '@/assets/zones/props/windpump.png';
 import propWoodpile from '@/assets/zones/props/woodpile.png';
 import propWorkshop from '@/assets/zones/props/workshop.png';
+import propWorkshopF1 from '@/assets/zones/props/workshop_f1.png';
+import propWorkshopF2 from '@/assets/zones/props/workshop_f2.png';
 import propWorkshopRound from '@/assets/zones/props/workshop_round.png';
 import groundTown from '@/assets/zones/town/ground.png';
 import groundRiverside from '@/assets/zones/riverside/ground.png';
@@ -536,5 +538,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   windpump: propWindpump,
   woodpile: propWoodpile,
   workshop: propWorkshop,
+  workshop_f1: propWorkshopF1,
+  workshop_f2: propWorkshopF2,
   workshop_round: propWorkshopRound,
 };

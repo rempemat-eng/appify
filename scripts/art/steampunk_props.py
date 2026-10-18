@@ -51,11 +51,11 @@ def pipe_h(cv: Canvas, x0: int, x1: int, y: int, ramp=BRASS):
             cv.vline(x, y - 1, 5, ramp[2]); cv.set(x, y - 1, ramp[5] if len(ramp) > 5 else ramp[4])
 
 
-def gear(cv: Canvas, cx: float, cy: float, r: float, ramp=BRASS, teeth: int = 8, hub=True):
+def gear(cv: Canvas, cx: float, cy: float, r: float, ramp=BRASS, teeth: int = 8, hub=True, turn: float = 0.0):
     """A gear seen face on: teeth around a lit rim, a dark hub and spokes."""
     body = disc(cx, cy, r)
     for k in range(teeth):
-        a = 2 * math.pi * k / teeth
+        a = 2 * math.pi * k / teeth + turn
         body |= disc(cx + math.cos(a) * (r + 1.2), cy + math.sin(a) * (r + 1.2), 1.3)
     for (x, y) in body:
         lit = (x - cx) + (y - cy) < 0
@@ -88,7 +88,7 @@ def copper_roof(cv: Canvas, ridge: float, apex_y: int, eave_y: int, left_x: int,
     return left, right, edge_y
 
 
-def workshop(width: int = 96, sign: str = 'gear') -> Canvas:
+def workshop(width: int = 96, sign: str = 'gear', turn: float = 0.0) -> Canvas:
     """A tinkerer's workshop, 96 x 86: a copper roof with an iron chimney, a brick gable
     with a brass gear emblem, brick walls, round warm windows, a riveted iron door,
     a brass pipe down the corner and a stone footing."""
@@ -112,7 +112,7 @@ def workshop(width: int = 96, sign: str = 'gear') -> Canvas:
     # re-lay the roof over the bricks the helper spilled above the gable line
     left, right, edge_y = copper_roof(cv, ridge, apex_y, eave_y, 2, w - 3, hole=chim)
     if sign == 'gear':
-        gear(cv, ridge, 35, 6, BRASS, teeth=9)
+        gear(cv, ridge, 35, 6, BRASS, teeth=9, turn=turn)  # turning, in the frames
     else:
         porthole(cv, ridge, 35, 5)
     brick_wall(cv, 7, wall_top, w - 14, wall_bottom - wall_top, seed=5)
@@ -655,7 +655,8 @@ def cloche() -> Canvas:
 
 def props() -> dict[str, Canvas]:
     return {
-        'workshop': workshop(), 'workshop_round': workshop(80, sign='round'), 'clock_tower': clock_tower(),
+        'workshop': workshop(), **{f'workshop_f{n}': workshop(turn=n * 2 * math.pi / 27) for n in (1, 2)},
+        'workshop_round': workshop(80, sign='round'), 'clock_tower': clock_tower(),
         'locomotive': locomotive(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
         'gear_pile': gear_pile(), 'iron_bench': iron_bench(), 'steamer_trunk': steamer_trunk(),
         'coal_cart': coal_cart(), 'airship_mast': airship_mast(), 'tea_kiosk': tea_kiosk(),
