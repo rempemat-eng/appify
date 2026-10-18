@@ -3188,6 +3188,31 @@ def rle(row: str) -> str:
     return ''.join(out)
 
 
+@functools.lru_cache(maxsize=1)
+def beyond() -> Canvas:
+    """What lies past a region's own zones where its grid has a gap (the valley's corners):
+    old forest, a closed canopy of leaf masses in deep shade, lit only at their crowns,
+    each row overlapping the one behind it."""
+    cv = Canvas(W, H)
+    for y in range(H):
+        for x in range(W):
+            cv.set(x, y, style.FOREST_DARK if (x + y) % 2 else '#24382A')
+    ramp = ['#122019', '#1A2C22', '#22392A', '#2E4C34', '#3E6240']
+    crowns = []
+    k = 0
+    for gy in range(-10, H + 30, 30):  # crowns on a jittered grid, so the canopy closes
+        for gx in range(-10, W + 30, 40):
+            crowns.append((gy + (noise2(k, 1, 552) - 0.5) * 22, gx + (noise2(k, 0, 552) - 0.5) * 28,
+                           22 + noise2(k, 2, 552) * 12, k))
+            k += 1
+    for (cy, cx, rx, k) in sorted(crowns):
+        ry = rx * 0.72
+        blob = Canvas(int(rx * 2) + 14, int(ry * 2) + 14)
+        style.leafy(blob, blob.w / 2, blob.h / 2, rx, ry, ramp, r=3.8, seed=k + 3)
+        cv.paste(blob, int(cx - blob.w / 2), int(cy - blob.h / 2))
+    return cv
+
+
 def export(built: dict):
     """Write the props every zone uses and lib/zone-maps.ts (objects, walk grids,
     stands, the region layout and static image imports)."""
@@ -3195,6 +3220,7 @@ def export(built: dict):
     os.makedirs(props_dir, exist_ok=True)
     for old in os.listdir(props_dir):
         os.remove(os.path.join(props_dir, old))
+    beyond().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond.png'), worlds.SCALE)
     used = {}
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
@@ -3242,6 +3268,9 @@ def export(built: dict):
         'export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {',
         *[f'  {z}: ground{ident(z)},' for z in built],
         '};',
+        "import beyondImage from '@/assets/zones/beyond.png';",
+        '/** Old forest, drawn where a region\'s grid has no zone (the valley\'s corners). */',
+        'export const zoneBeyond: ImageSourcePropType = beyondImage;',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
         '};',

@@ -35,7 +35,7 @@ import {
   type TileId,
 } from '@/lib/region-walk';
 import { zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
-import { zoneGrounds, zoneProps } from '@/lib/zone-assets';
+import { zoneBeyond, zoneGrounds, zoneProps } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
@@ -424,6 +424,16 @@ export function AtlasWalk({
   const near = tiles.filter(
     (t) => Math.abs(t.col - hereTile.col) <= 1 && Math.abs(t.row - hereTile.row) <= 1,
   );
+  const gaps: { col: number; row: number }[] = [];
+  for (let col = hereTile.col - 1; col <= hereTile.col + 1; col++)
+    for (let row = hereTile.row - 1; row <= hereTile.row + 1; row++) {
+      const inside =
+        col >= bounds.minCol &&
+        row >= bounds.minRow &&
+        col < bounds.minCol + bounds.tileCols &&
+        row < bounds.minRow + bounds.tileRows;
+      if (inside && !tiles.some((t) => t.col === col && t.row === row)) gaps.push({ col, row });
+    }
   const drawables = near.flatMap((t) => tileDrawables(region, t));
   const panes = !night
     ? []
@@ -465,6 +475,21 @@ export function AtlasWalk({
             cameraStyle,
           ]}
         >
+          {/* old forest where the region's grid has no zone (the valley's corners) */}
+          {gaps.map((g) => (
+            <Image
+              key={`beyond-${g.col}-${g.row}`}
+              source={zoneBeyond}
+              resizeMode="stretch"
+              style={{
+                position: 'absolute',
+                left: snap((g.col - bounds.minCol) * TILE.width * u),
+                top: snap((g.row - bounds.minRow) * TILE.height * u),
+                width: snap(TILE.width * u),
+                height: snap(TILE.height * u),
+              }}
+            />
+          ))}
           {near.map((t) => {
             const o = tileOrigin(region, t);
             const left = snap(o.x * u);

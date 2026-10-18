@@ -278,6 +278,9 @@ export const zoneGrounds: Record<ZoneId, ImageSourcePropType> = {
   lumen: groundLumen,
   home: groundHome,
 };
+import beyondImage from '@/assets/zones/beyond.png';
+/** Old forest, drawn where a region's grid has no zone (the valley's corners). */
+export const zoneBeyond: ImageSourcePropType = beyondImage;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,
   airlock: propAirlock,
