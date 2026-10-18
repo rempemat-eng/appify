@@ -1,5 +1,6 @@
 import assert from 'node:assert/strict';
 import { moveTo, restoreWorld } from './world-save';
+import { hiddenBehind } from './occlusion';
 import { regionWalk, TILE } from './region-walk';
 import {
   GARDEN_YARD,
@@ -241,3 +242,17 @@ ok(travelVehicle('steam', 'neon') === 'maglev', 'the maglev runs to the city');
 ok(travelVehicle('lava', 'west') === 'carts', 'the mine carts run to the caldera');
 ok(travelVehicle('space', 'moon') === 'shuttle', 'the shuttle flies to Lumen');
 ok(travelVehicle('valley', 'steam') === 'train', 'the valley train is a steam train');
+
+// The companion's outline shows through a building or a big tree in front of it, never
+// through what it stands in front of (lib/occlusion.ts).
+{
+  const house = { x: 100, y: 100, w: 60, h: 50, z: 150 };
+  ok(hiddenBehind([house], { x: 130, y: 140 }), 'behind a house the outline shows');
+  ok(!hiddenBehind([house], { x: 130, y: 170 }), 'in front of the house it does not');
+  ok(!hiddenBehind([house], { x: 220, y: 140 }), 'beside the house it does not');
+  ok(
+    !hiddenBehind([{ x: 120, y: 136, w: 20, h: 6, z: 142 }], { x: 130, y: 140 }),
+    'a low fence across the feet does not count as hiding',
+  );
+}
+console.log('Occlusion: the outline shows only behind what hides the companion.');

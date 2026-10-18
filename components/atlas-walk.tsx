@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Image,
   PixelRatio,
@@ -26,6 +26,7 @@ import { useGame } from '@/lib/game';
 import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
 import { makeWalkGrid, type Point } from '@/lib/garden-path';
 import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
+import { hiddenBehind } from '@/lib/occlusion';
 import {
   TILE,
   regionBounds,
@@ -331,6 +332,49 @@ function Flyer({
 // Things that turn (a windmill's sails): the sprite and its frames, one shown at a time.
 const FRAME_MS = 400; // divides FLOAT_LOOP
 
+/** The companion's outline through whatever hides it: fades in, faint, never takes taps. */
+function Ghost({
+  px,
+  py,
+  u,
+  size,
+  reduced,
+  children,
+}: {
+  px: SharedValue<number>;
+  py: SharedValue<number>;
+  u: number;
+  size: number;
+  reduced: boolean;
+  children: ReactNode;
+}) {
+  const shown = useSharedValue(reduced ? GHOST : 0);
+  useEffect(() => {
+    if (!reduced) shown.set(withTiming(GHOST, { duration: 180, easing: Easing.out(Easing.quad) }));
+    return () => cancelAnimation(shown);
+  }, [reduced, shown]);
+  // where the companion is drawn, without its depth (which would put this back behind)
+  const style = useAnimatedStyle(() => ({
+    opacity: shown.value,
+    transform: [
+      { translateX: Math.round(px.value * u - size / 2) },
+      { translateY: Math.round(py.value * u - size * (30 / 32)) },
+    ],
+  }));
+  return (
+    <Animated.View
+      pointerEvents="none"
+      style={[
+        { position: 'absolute', left: 0, top: 0, width: size, height: size, zIndex: 149999 },
+        style,
+      ]}
+    >
+      {children}
+    </Animated.View>
+  );
+}
+const GHOST = 0.42;
+
 function TurningFrame({
   src,
   index,
@@ -534,6 +578,8 @@ export function AtlasWalk({
   }, [active, reduced, bob]);
   const pos = useRef<Point>({ ...grid.start });
   const [walking, setWalking] = useState(false);
+  // where the feet are, a few times a second (for the outline behind tall things)
+  const [feet, setFeet] = useState<Point>(grid.start);
   const [facing, setFacing] = useState<'left' | 'right'>('right');
   const [here, setHere] = useState<TileId>(
     tileAt(region, grid.start.x, grid.start.y)?.id ?? 'garden',
@@ -565,6 +611,9 @@ export function AtlasWalk({
     const t = setInterval(() => {
       const tile = tileAt(region, px.get(), py.get());
       if (tile) setHere(tile.id);
+      const x = Math.round(px.get());
+      const y = Math.round(py.get());
+      setFeet((f) => (f.x === x && f.y === y ? f : { x, y }));
       calls.current.onMove?.({ x: px.get(), y: py.get() });
     }, 150);
     return () => clearInterval(t);
@@ -640,6 +689,7 @@ export function AtlasWalk({
     const arrive = () => {
       pos.current = end;
       setWalking(false);
+      setFeet(end);
       if (!reduced && active && !keysHeld.current) {
         // a small squash as the feet settle, then still
         landing.set(
@@ -748,6 +798,12 @@ export function AtlasWalk({
       if (inside && !tiles.some((t) => t.col === col && t.row === row)) gaps.push({ col, row });
     }
   const drawables = near.flatMap((t) => tileDrawables(region, t));
+  // behind a building or a big tree, the companion's outline shows through (a flyer's box
+  // is not where it flies, so it never counts)
+  const hidden = hiddenBehind(
+    drawables.filter((d) => !FLYERS[d.sprite]),
+    feet,
+  );
   const panes = !night
     ? []
     : drawables.flatMap((d) =>
@@ -1015,6 +1071,31 @@ export function AtlasWalk({
               )}
             </Animated.View>
           </Animated.View>
+          {hidden && (
+            // the same companion again, faint, above everything but the night tint, so it
+            // reads through what hides it and lines up with itself where nothing does
+            <Ghost px={px} py={py} u={u} size={petPx} reduced={reduced}>
+              {player ? (
+                <GuardianPet
+                  player={player}
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && active && !reduced}
+                  bob={!walking && !reduced && active}
+                  active={active}
+                  decorative
+                />
+              ) : (
+                <Pet
+                  size={petPx}
+                  facing={facing}
+                  walking={walking && !reduced}
+                  active={active}
+                  decorative
+                />
+              )}
+            </Ghost>
+          )}
         </Animated.View>
       </View>
       {/* one transparent layer takes the taps, so their position is the window's */}
