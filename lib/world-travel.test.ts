@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
+import ts from 'typescript';
 import { regionLayout } from './zone-maps';
 import { regionBounds, regionTiles, tileOrigin, TILE, type RegionId } from './region-walk';
 import { regionPoint, travelPoints, travelRoute } from './world-places';
@@ -27,20 +28,30 @@ const regions = Object.keys(regionLayout).filter((id): id is RegionId =>
 );
 // Execute only the actual pure camera worklet body at a substituted boundary.
 // This catches drift while Claude's renderer still owns the inline calculation.
-const cameraBody = readFileSync(
-  new URL('../components/atlas-walk.tsx', import.meta.url),
-  'utf8',
-).match(/const cameraStyle = useAnimatedStyle\(\(\) => \{([\s\S]*?)\n  \}\);/)?.[1];
+const atlasSource = readFileSync(new URL('../components/atlas-walk.tsx', import.meta.url), 'utf8');
+const cameraBody = atlasSource.match(
+  /const cameraStyle = useAnimatedStyle\(\(\) => \{([\s\S]*?)\n  \}\);/,
+)?.[1];
 assert.ok(cameraBody, 'AtlasWalk camera worklet must be covered or its adapter updated');
+const mountBody = atlasSource.match(/(const hereTile = [\s\S]*?)\n  const gaps:/)?.[1];
+assert.ok(mountBody, 'AtlasWalk viewport mount policy must be covered');
+const pressBody = atlasSource.match(
+  /const onPress = \(e: GestureResponderEvent\) => \{([\s\S]*?)\n  \};/,
+)?.[1];
+assert.ok(pressBody, 'AtlasWalk tap conversion must be covered');
+const pressCode = ts.transpileModule(`(e: any) => {${pressBody}}`, {
+  compilerOptions: { target: ts.ScriptTarget.ES2022, module: ts.ModuleKind.CommonJS },
+}).outputText;
+const defaultView = { width: 402, height: 640, scale: 4 / 3 };
 for (const region of regions) {
   const tiles = regionTiles(region);
   const bounds = regionBounds(region);
   const all = JSON.stringify(tiles);
   for (const tile of tiles) {
-    const neighbours = mountedNeighbours(region, tile.id);
+    const neighbours = mountedNeighbours(region, tile.id, defaultView);
     ok(
-      neighbours.length > 0 && neighbours.length <= 9,
-      `${region}/${tile.id}: bounded 3x3 neighbourhood`,
+      neighbours.length > 0 && neighbours.length <= tiles.length,
+      `${region}/${tile.id}: mounted set bounded by its own generated region`,
     );
     ok(
       neighbours.some((n) => n.id === tile.id),
@@ -49,7 +60,10 @@ for (const region of regions) {
     for (const other of tiles)
       ok(
         neighbours.some((n) => n.id === other.id) ===
-          (Math.abs(other.col - tile.col) <= 1 && Math.abs(other.row - tile.row) <= 1),
+          (Math.abs(other.col - tile.col) <=
+            1 + Math.ceil(defaultView.width / (2 * TILE.width * defaultView.scale)) &&
+            Math.abs(other.row - tile.row) <=
+              1 + Math.ceil(defaultView.height / (2 * TILE.height * defaultView.scale))),
         'neighbours derive from the actual grid, including diagonals',
       );
     const o = tileOrigin(region, tile);
@@ -62,7 +76,7 @@ for (const region of regions) {
     );
   }
   ok(
-    mountedNeighbours(region, 'not-a-zone').length === 0,
+    mountedNeighbours(region, 'not-a-zone', defaultView).length === 0,
     'unknown zone does not mount unrelated art',
   );
   const edges = regionEdges(region);
@@ -80,8 +94,8 @@ for (const region of regions) {
     const axis = direction === 'east' ? 'x' : 'y';
     const other = axis === 'x' ? 'y' : 'x';
     ok(
-      mountedNeighbours(region, a.id).some((t) => t.id === b.id) &&
-        mountedNeighbours(region, b.id).some((t) => t.id === a.id),
+      mountedNeighbours(region, a.id, defaultView).some((t) => t.id === b.id) &&
+        mountedNeighbours(region, b.id, defaultView).some((t) => t.id === a.id),
       'both sides are pre-mounted across each border',
     );
     for (const width of [320, 402, 768])
@@ -124,6 +138,119 @@ for (const region of regions) {
   }
   ok(JSON.stringify(tiles) === all, 'geometry inspection never mutates generated data');
 }
+// The new wide-screen renderer centres small regions and preloads beyond 3x3.
+// Exercise actual renderer/tap/mount bodies, not three copies of an expected formula.
+let viewportCases = 0;
+for (const region of regions) {
+  const bounds = regionBounds(region);
+  const tiles = regionTiles(region);
+  const before = JSON.stringify({ bounds, tiles });
+  for (const width of [320, 402, 768, 1363, 1920, 2560])
+    for (const height of [640, 1600])
+      for (const scale of [1, 4 / 3, 2])
+        for (const padBottom of [0, 240]) {
+          const view = { width, height, scale, padBottom, focusY: padBottom ? 0.3 : 0.55 };
+          const regionW = bounds.width * scale;
+          const regionH = bounds.height * scale;
+          for (const tile of tiles) {
+            viewportCases++;
+            const origin = tileOrigin(region, tile);
+            const point = { x: origin.x + TILE.width / 2, y: origin.y + TILE.height / 2 };
+            const camera = cameraOffset(region, point, view);
+            const context = {
+              regionW,
+              regionH,
+              width,
+              height,
+              padBottom,
+              focusY: view.focusY,
+              px: { value: point.x, get: () => point.x },
+              py: { value: point.y, get: () => point.y },
+              u: scale,
+              walkTo: (_point: { x: number; y: number }) => {},
+            };
+            const rendered = runInNewContext(`(() => {${cameraBody}})()`, context);
+            ok(
+              rendered.transform[0].translateX === -Math.round(camera.x) &&
+                rendered.transform[1].translateY === -Math.round(camera.y),
+              'camera worklet matches for narrow, wide, tall and padded viewports',
+            );
+            if (regionW <= width)
+              ok(
+                Math.abs(-camera.x - (width + camera.x - regionW)) < 1e-8,
+                'a narrow region has equal left and right margins, including singleton regions',
+              );
+            else ok(camera.x >= 0 && camera.x <= regionW - width, 'wide land camera stays clamped');
+            if (regionH <= height - padBottom)
+              ok(
+                Math.abs(-camera.y - (height - padBottom + camera.y - regionH)) < 1e-8,
+                'a short region is centred above the place-card clearance',
+              );
+            else
+              ok(
+                camera.y >= 0 && camera.y <= regionH - height + padBottom,
+                'tall land stays clamped',
+              );
+            const mounted = mountedNeighbours(region, tile.id, view);
+            const actual = runInNewContext(`(() => {${mountBody}; return near;})()`, {
+              tiles,
+              here: tile.id,
+              TILE,
+              width,
+              height,
+              u: scale,
+            });
+            ok(
+              mounted.map((t) => t.id).join(',') ===
+                actual.map((t: { id: string }) => t.id).join(','),
+              'viewport-aware mounted set matches the current source policy exactly',
+            );
+            ok(new Set(mounted.map((t) => t.id)).size === mounted.length, 'no duplicate mounts');
+            for (const other of tiles) {
+              const o = tileOrigin(region, other);
+              const visible =
+                o.x * scale < camera.x + width &&
+                (o.x + TILE.width) * scale > camera.x &&
+                o.y * scale < camera.y + height &&
+                (o.y + TILE.height) * scale > camera.y;
+              if (visible)
+                ok(
+                  mounted.some((t) => t.id === other.id),
+                  'every visible authored tile is mounted',
+                );
+            }
+            for (const screen of [
+              { x: point.x * scale - camera.x, y: point.y * scale - camera.y },
+              { x: 0, y: 0 },
+              { x: width, y: height - padBottom },
+            ]) {
+              const converted = screenToWorld(region, point, view, screen);
+              const press = runInNewContext(pressCode, context);
+              for (const nativeEvent of [
+                { locationX: screen.x, locationY: screen.y },
+                { offsetX: screen.x, offsetY: screen.y },
+              ]) {
+                let target: { x: number; y: number } | undefined;
+                // The source callback resolves walkTo from its VM context.
+                context.walkTo = (p: { x: number; y: number }) => {
+                  target = p;
+                };
+                press({ nativeEvent });
+                ok(
+                  target &&
+                    Math.abs(target.x - converted.x) < 1e-8 &&
+                    Math.abs(target.y - converted.y) < 1e-8,
+                  'actual native/web tap conversion shares the same camera origin',
+                );
+              }
+            }
+          }
+        }
+  ok(
+    JSON.stringify({ bounds, tiles }) === before,
+    'viewport inspection leaves authored maps intact',
+  );
+}
 for (const view of [
   { width: 0, height: 640, scale: 1 },
   { width: 320, height: 640, scale: 0 },
@@ -132,6 +259,19 @@ for (const view of [
   { width: 320, height: 640, scale: 1, padBottom: -1 },
 ]) {
   assert.throws(() => cameraOffset('valley', { x: 0, y: 0 }, view), RangeError);
+  checks++;
+}
+for (const view of [
+  { width: 0, height: 640, scale: 1 },
+  { width: -1, height: 640, scale: 1 },
+  { width: Infinity, height: 640, scale: 1 },
+  { width: 320, height: 0, scale: 1 },
+  { width: 320, height: NaN, scale: 1 },
+  { width: 320, height: 640, scale: -1 },
+  { width: 320, height: 640, scale: 0 },
+  { width: 320, height: 640, scale: NaN },
+]) {
+  assert.throws(() => mountedNeighbours('valley', 'garden', view), RangeError);
   checks++;
 }
 const destinations = regions.filter((r) => travelPoints[r]);
@@ -350,5 +490,5 @@ for (const from of destinations)
     ok(JSON.stringify(saved) === savedBefore, 'per-leg decisions never mutate saved history');
   }
 console.log(
-  `World travel model: ${checks} assertions, including ${legChecks} authored leg positions; renderer integration not claimed.`,
+  `World travel model: ${checks} assertions, ${viewportCases} viewport cases and ${legChecks} authored leg positions; renderer integration not claimed.`,
 );

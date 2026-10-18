@@ -15,6 +15,8 @@ import { JOURNEY, journeyLayers, journeyVehicles } from '@/lib/journey-assets';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelButton } from '@/components/game-ui';
 import { PixelFrame } from '@/components/pixel-frame';
+import { GuardianPet } from '@/components/guardian-pet';
+import { useGame } from '@/lib/game';
 
 const TRIP_MS = 3200;
 const STILL_MS = 700; // reduced motion: a still frame, then on
@@ -143,7 +145,10 @@ export function Journey({
   const rider = ride === 'maglev' ? journeyVehicles.maglev : journeyVehicles.carts;
   const engine = journeyVehicles.engine;
   const coach = journeyVehicles.carriage;
+  // the companion rides along: on the coach roof, or sat in the first coal tub
+  const player = useGame((st) => st.player);
   const k = u * scale;
+  const petPx = 32 * k;
   const railY = top + JOURNEY.rail * k;
   return (
     <View
@@ -235,20 +240,48 @@ export function Journey({
                 height: coach.h * k,
               }}
             />
+            {player && (
+              <View
+                style={{
+                  position: 'absolute',
+                  left: width * 0.42 + (engine.w * k) / 2 + 2 * k,
+                  top: railY - (coach.h - 3) * k - petPx + 3 * k,
+                  width: petPx,
+                  height: petPx,
+                }}
+              >
+                <GuardianPet player={player} size={petPx} facing="left" bob={false} decorative />
+              </View>
+            )}
           </>
         ) : (
-          // the maglev floats a little above the line; the mine carts sit on it
-          <Image
-            source={rider.source}
-            resizeMode="stretch"
-            style={{
-              position: 'absolute',
-              left: width * 0.5 - (rider.w * k) / 2,
-              top: railY - (rider.h + (ride === 'maglev' ? 3 : -2)) * k,
-              width: rider.w * k,
-              height: rider.h * k,
-            }}
-          />
+          <>
+            {ride === 'carts' && player && (
+              <View
+                style={{
+                  position: 'absolute',
+                  left: width * 0.5 - (rider.w * k) / 2 - 3 * k,
+                  top: railY - (rider.h - 2) * k - petPx + 13 * k,
+                  width: petPx,
+                  height: petPx,
+                }}
+              >
+                <GuardianPet player={player} size={petPx} facing="left" bob={false} decorative />
+              </View>
+            )}
+            {/* the maglev floats a little above the line; the mine carts sit on it */}
+            <Image
+              source={rider.source}
+              resizeMode="stretch"
+              style={{
+                position: 'absolute',
+                left: width * 0.5 - (rider.w * k) / 2,
+                top: railY - (rider.h + (ride === 'maglev' ? 3 : -2)) * k,
+                width: rider.w * k,
+                height: rider.h * k,
+              }}
+            />
+          </>
         )}
       </Animated.View>
       <View

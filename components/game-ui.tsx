@@ -30,7 +30,7 @@ import { playSound } from '@/lib/sound';
 import { status, clock, useGame, type Player } from '@/lib/game';
 import { visitorPixels } from '@/lib/visitor-art';
 import { isVisitorId, visitorInfo } from '@/lib/visitors';
-import { petPixels } from '@/lib/pet-art';
+import { GROUND_SHADOW, petPixels } from '@/lib/pet-art';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
 import { PixelIcon } from '@/components/pixel-icon';
@@ -489,7 +489,7 @@ export function Pet({
   const headLift = canWalk && (walkFrame === 0 || walkFrame === 2) && headroom ? -1 : 0;
   const lean = canWalk && (walkFrame === 0 || walkFrame === 2) ? 1 : 0;
   const place = (rx: number, ry: number, color: string) => {
-    const shadow = groundShadow && ry >= 30 && color === c.stone;
+    const shadow = groundShadow && ry >= 29 && color === GROUND_SHADOW;
     const foot = !shadow && ry >= 27 && rx >= 6 && rx <= 27;
     const leftStep = canWalk && walkFrame === 0 && rx < 17;
     const rightStep = canWalk && walkFrame === 2 && rx >= 17;

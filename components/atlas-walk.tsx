@@ -535,8 +535,15 @@ export function AtlasWalk({
   const regionH = bounds.height * u;
   const petPx = 32 * u;
   const cameraStyle = useAnimatedStyle(() => {
-    const cx = Math.max(0, Math.min(regionW - width, px.value * u - width / 2));
-    const cy = Math.max(0, Math.min(regionH - height + padBottom, py.value * u - height * focusY));
+    // a region narrower (or shorter) than the screen sits in its middle
+    const cx =
+      regionW <= width
+        ? (regionW - width) / 2
+        : Math.max(0, Math.min(regionW - width, px.value * u - width / 2));
+    const cy =
+      regionH <= height - padBottom
+        ? (regionH - height + padBottom) / 2
+        : Math.max(0, Math.min(regionH - height + padBottom, py.value * u - height * focusY));
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
   const landStyle = useAnimatedStyle(() => ({
@@ -557,12 +564,15 @@ export function AtlasWalk({
 
   // Mount the zone the companion is in and its neighbours (diagonals too), no more.
   const hereTile = tiles.find((t) => t.id === here) ?? tiles[0];
+  // (on a wide screen the view spans more than one zone: mount as far as it can see)
+  const reachX = 1 + Math.ceil(width / (2 * TILE.width * u));
+  const reachY = 1 + Math.ceil(height / (2 * TILE.height * u));
   const near = tiles.filter(
-    (t) => Math.abs(t.col - hereTile.col) <= 1 && Math.abs(t.row - hereTile.row) <= 1,
+    (t) => Math.abs(t.col - hereTile.col) <= reachX && Math.abs(t.row - hereTile.row) <= reachY,
   );
   const gaps: { col: number; row: number }[] = [];
-  for (let col = hereTile.col - 1; col <= hereTile.col + 1; col++)
-    for (let row = hereTile.row - 1; row <= hereTile.row + 1; row++) {
+  for (let col = hereTile.col - reachX; col <= hereTile.col + reachX; col++)
+    for (let row = hereTile.row - reachY; row <= hereTile.row + reachY; row++) {
       const inside =
         col >= bounds.minCol &&
         row >= bounds.minRow &&
@@ -595,8 +605,14 @@ export function AtlasWalk({
     const ne = e.nativeEvent as typeof e.nativeEvent & { offsetX?: number; offsetY?: number };
     const locationX = ne.locationX ?? ne.offsetX ?? 0;
     const locationY = ne.locationY ?? ne.offsetY ?? 0;
-    const cx = Math.max(0, Math.min(regionW - width, px.get() * u - width / 2));
-    const cy = Math.max(0, Math.min(regionH - height + padBottom, py.get() * u - height * focusY));
+    const cx =
+      regionW <= width
+        ? (regionW - width) / 2
+        : Math.max(0, Math.min(regionW - width, px.get() * u - width / 2));
+    const cy =
+      regionH <= height - padBottom
+        ? (regionH - height + padBottom) / 2
+        : Math.max(0, Math.min(regionH - height + padBottom, py.get() * u - height * focusY));
     walkTo({ x: (locationX + cx) / u, y: (locationY + cy) / u });
   };
 

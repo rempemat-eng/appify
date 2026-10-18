@@ -1,15 +1,23 @@
 import type { Point } from './garden-path';
-import { regionBounds, regionTiles, type RegionId, type RegionTile } from './region-walk';
+import { regionBounds, regionTiles, TILE, type RegionId, type RegionTile } from './region-walk';
 import { regionPoint, travelPoints, travelRoute } from './world-places';
 import { moveTo, type WorldSpot } from './world-save';
 
-/** C20 geometry uses the generated region grid, never a second zone catalogue. */
-export function mountedNeighbours(region: RegionId, here: string): RegionTile[] {
+/** Same viewport-aware preload reach as AtlasWalk, never a second zone catalogue. */
+export function mountedNeighbours(
+  region: RegionId,
+  here: string,
+  view: Pick<CameraWindow, 'width' | 'height' | 'scale'>,
+): RegionTile[] {
+  validateViewport(view);
   const tiles = regionTiles(region);
   const centre = tiles.find((tile) => tile.id === here);
+  const reachX = 1 + Math.ceil(view.width / (2 * TILE.width * view.scale));
+  const reachY = 1 + Math.ceil(view.height / (2 * TILE.height * view.scale));
   return centre
     ? tiles.filter(
-        (tile) => Math.abs(tile.col - centre.col) <= 1 && Math.abs(tile.row - centre.row) <= 1,
+        (tile) =>
+          Math.abs(tile.col - centre.col) <= reachX && Math.abs(tile.row - centre.row) <= reachY,
       )
     : [];
 }
@@ -40,35 +48,46 @@ export type CameraWindow = Readonly<{
   padBottom?: number;
 }>;
 
+function validateViewport(view: Pick<CameraWindow, 'width' | 'height' | 'scale'>): void {
+  if (
+    ![view.width, view.height, view.scale].every(Number.isFinite) ||
+    view.width <= 0 ||
+    view.height <= 0 ||
+    view.scale <= 0
+  )
+    throw new RangeError('Invalid world viewport');
+}
+
 /** Same continuous region-space camera as AtlasWalk; the renderer snaps pixels. */
 export function cameraOffset(region: RegionId, point: Point, view: CameraWindow): Point {
+  validateViewport(view);
   const focusY = view.focusY ?? 0.55;
   const padBottom = view.padBottom ?? 0;
   if (
-    ![point.x, point.y, view.width, view.height, view.scale, focusY, padBottom].every(
-      Number.isFinite,
-    ) ||
-    view.width <= 0 ||
-    view.height <= 0 ||
-    view.scale <= 0 ||
+    ![point.x, point.y, focusY, padBottom].every(Number.isFinite) ||
     focusY < 0 ||
     focusY > 1 ||
     padBottom < 0
   )
     throw new RangeError('Invalid world camera geometry');
   const bounds = regionBounds(region);
+  const regionW = bounds.width * view.scale;
+  const regionH = bounds.height * view.scale;
   return {
-    x: Math.max(
-      0,
-      Math.min(bounds.width * view.scale - view.width, point.x * view.scale - view.width / 2),
-    ),
-    y: Math.max(
-      0,
-      Math.min(
-        bounds.height * view.scale - view.height + padBottom,
-        point.y * view.scale - view.height * focusY,
-      ),
-    ),
+    x:
+      regionW <= view.width
+        ? (regionW - view.width) / 2
+        : Math.max(0, Math.min(regionW - view.width, point.x * view.scale - view.width / 2)),
+    y:
+      regionH <= view.height - padBottom
+        ? (regionH - view.height + padBottom) / 2
+        : Math.max(
+            0,
+            Math.min(
+              regionH - view.height + padBottom,
+              point.y * view.scale - view.height * focusY,
+            ),
+          ),
   };
 }
 

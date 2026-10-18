@@ -3,6 +3,17 @@ import { PET_INDEX, hatSprites, petPalette, petSprites, visitorSprites } from '@
 
 export type ArtPixel = { x: number; y: number; color: string };
 
+/** The ground shadow under a character (art-style rule 8): hard-edged, cool and
+ * translucent so it darkens whatever ground it falls on, offset a pixel to the right
+ * and down from the feet, and still while the feet move. */
+export const GROUND_SHADOW = 'rgba(32,26,40,0.34)';
+export function shadowRows(dot: (x: number, y: number, color: string) => void, cx = 17) {
+  // a flat ellipse three pixels deep: narrow, wide, narrow
+  for (let x = cx - 7; x <= cx + 7; x++) dot(x, 29, GROUND_SHADOW);
+  for (let x = cx - 9; x <= cx + 9; x++) dot(x, 30, GROUND_SHADOW);
+  for (let x = cx - 6; x <= cx + 6; x++) dot(x, 31, GROUND_SHADOW);
+}
+
 // Original integer-grid plant-animal silhouettes; species codes remain save-compatible.
 export function petPixels(
   species: Player['species'],
@@ -21,10 +32,7 @@ export function petPixels(
   function rect(x: number, y: number, w: number, h: number, color: string) {
     for (let yy = y; yy < y + h; yy++) for (let xx = x; xx < x + w; xx++) dot(xx, yy, color);
   }
-  if (groundShadow) {
-    rect(8, 30, 20, 1, c.stone);
-    rect(11, 31, 14, 1, c.stone);
-  }
+  if (groundShadow) shadowRows(dot);
   if (dave) {
     visitorSprites.dave[sleeping ? 'closed' : 'open'].forEach((row, y) => {
       for (let x = 0; x < row.length; x++) {

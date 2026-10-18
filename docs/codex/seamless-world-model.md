@@ -1,6 +1,6 @@
 # C20: seamless-world engineering foundation
 
-Base: `a8c3927bbfcf317b14e6772f8569c645de3ae403`, 18 October 2026.
+Base: `f962275a56803f7d3ca0414696d2970bc18ee123`, 18 October 2026.
 This is a **draft foundation**, not completed C20 or a shipped renderer change.
 It reuses Claude's current `region-walk`, `world-places` and optional `world`
 save. It does not resurrect superseded PR #19, edit artwork/screens, change
@@ -10,14 +10,18 @@ rules or rewards, write player data, or introduce a second zone catalogue.
 
 `lib/world-travel.ts` provides:
 
-- `mountedNeighbours(region, here)`: the current tile and its eight possible
-  neighbours, matching AtlasWalk's existing diagonal-inclusive policy. Unknown
-  tiles return none; distant regions never become foot neighbours.
+- `mountedNeighbours(region, here, view)`: the current tile and the viewport-aware
+  preload neighbourhood, matching AtlasWalk's diagonal-inclusive policy. Pass
+  the current screen `width`, `height` and pixel `scale`; wide/tall screens can
+  need tiles beyond the old 3x3 set. Unknown tiles return none; distant regions
+  never become foot neighbours. Invalid or non-finite dimensions fail explicitly.
 - `regionEdges(region)`: each generated east/south adjacency once, including
   negative layout coordinates and singleton regions with no invented exits.
 - `cameraOffset(region, point, view)` and `screenToWorld(...)`: the existing
   region-wide camera formula, including the place card's `focusY` and
-  `padBottom`. The output is continuous, not reset to local tile coordinates.
+  `padBottom`. Regions smaller than the available view are centred; the bottom
+  place-card clearance is excluded when centring vertically. Larger regions
+  stay clamped to their bounds. The output is continuous, not reset to local tile coordinates.
   Pixel snapping remains the renderer's responsibility. Invalid sizes, scales,
   non-finite coordinates and padding fail explicitly.
 - `idleJourney`, `beginJourney`, `cancelJourney`, `finishJourney` and
@@ -90,7 +94,33 @@ observation of physical-device timing.
 
 The rebase preserves `battlePlace`, regional battle yards and journey layers,
 `zoneFrames`, floating/turning props, twinkling stars, the garden-view harness's
-journey-assets stub and `art:sheet`. No battle or reward rule changes.
+journey-assets stub and `art:sheet`. It also preserves the companion riding on
+journeys, the compact change-of-line label, hearth frames and ground shadows.
+No battle or reward rule changes.
+
+## Wide-screen compatibility (18 October follow-up)
+
+Claude's main now centres small regions and mounts the full visible area.
+The previous model failed its actual-camera worklet assertion on this source;
+its old 3x3 preload could omit visible tiles at 768 px and wider. The pure
+helpers now follow that current policy, not the retired top-left camera.
+
+Tests cover 320, 402, 768, 1363, 1920 and 2560 px widths, 640 and 1600 px
+heights, three scales and both ordinary and raised-card views. They execute
+the actual camera, preload and native/web tap-conversion bodies at substituted
+boundaries, check equal margins for small/singleton regions, keep every visible
+authored tile mounted, and leave the generated maps unchanged. No source
+boundary is proof of real React layout, image loading or device performance.
+The tap model intentionally follows the renderer's unsnapped camera inversion;
+the visual transform rounds to a device pixel, just as it does on main.
+
+### Feedback for Claude
+
+When adopting the preload helper, pass the live viewport dimensions and scale
+as its third argument. The model does not impose a new image budget or remove
+the existing forest filler. Border semantics/bitmap checks and the actual
+journey cancellation wiring below remain outstanding. This compatibility fix
+does not mark those parts done.
 
 ## Border coverage, without false visual approval
 
@@ -144,9 +174,9 @@ this PR and have not been tested on a native device.
 ## Verification and remaining gates
 
 The model checks current layouts, every physical border,
-320/402/768 px camera windows, scales, card padding and all 42 distinct station
+320 through 2560 px camera windows, scales, card padding and all 42 distinct station
 pairs. A substituted source boundary executes AtlasWalk's actual camera
-worklet body and compares its snapped result with the model, so the two cannot
+worklet, preload and tap bodies and compares their results with the model, so the two cannot
 silently drift while renderer wiring is pending. Border fixtures cover blocked crossings, road-to-water gaps, explicit
 blends, malformed grids and strict missing-export failure. These are pure/source
 checks, not a visual or native test. `check:world` remains in the full check list.

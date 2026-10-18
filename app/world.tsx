@@ -388,10 +388,9 @@ export default function World() {
                     />
                     {route.length > 1 && (
                       <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
-                        {`via ${route
-                          .slice(0, -1)
-                          .map((s) => shortNames[s])
-                          .join(', ')}`}
+                        {route.length === 2
+                          ? `via ${shortNames[route[0]]}`
+                          : `via ${shortNames[route[0]]} · ${route.length - 1} changes`}
                       </BodyText>
                     )}
                   </View>
@@ -442,8 +441,9 @@ export default function World() {
           <View
             style={{
               position: 'absolute',
-              left: 8,
-              right: 8,
+              // full width on a phone; a readable column on a wide screen
+              left: Math.max(8, (width - 560) / 2),
+              right: Math.max(8, (width - 560) / 2),
               bottom: insets.bottom + 8,
               maxHeight: cardH,
             }}

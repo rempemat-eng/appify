@@ -96,16 +96,18 @@ def wardrobe() -> Canvas:
     return cv
 
 
-def fireplace() -> Canvas:
+def fireplace(flicker: int = 0) -> Canvas:
     """The hearth, 64 x 56: a fieldstone chimney breast, a wooden mantel with a candle
-    and a little clock, the fire burning low and orange inside the arch."""
+    and a little clock, the fire burning low and orange inside the arch (`flicker` 1 or 2
+    leans and swells the flames for the frames it flickers through)."""
     w, h = 64, 56
     cv = Canvas(w, h, pad=PAD)
     detail.stones(cv, 4, 0, w - 8, h - 4, STONE, seed=61, course=5)
     wood_box(cv, 2, 16, w - 4, 6, 2)
     arch = {(x, y) for (x, y) in disc(w // 2, 34, 13) if y >= 30} | rect_set(w // 2 - 13, 34, 26, 18)
+    fx, fy, sc = ((0, 0, 1.0), (-1, -1, 1.12), (1, 0, 0.92))[flicker]
     for (x, y) in arch:
-        d = math.hypot(x - w // 2, y - 48)
+        d = math.hypot(x - w // 2 - fx, (y - 48 - fy) * (1.3 if flicker == 1 else 1.0)) / sc
         c = LAVA[5] if d < 3 else LAVA[4] if d < 6 else LAVA[3] if d < 9 else '#2A1A14' if d < 14 else '#1A1210'
         cv.set(x, y, c)
     for (x, y) in arch:
@@ -386,7 +388,7 @@ def watering_can() -> Canvas:
 def props() -> dict[str, Canvas]:
     return {
         'bed': bed(), 'nightstand': nightstand(), 'wardrobe': wardrobe(), 'fireplace': fireplace(),
-        'armchair': armchair(), 'pet_bed': pet_bed(), 'dining_table': dining_table(), 'kitchen': kitchen(),
+        'fireplace_f1': fireplace(1), 'fireplace_f2': fireplace(2), 'armchair': armchair(), 'pet_bed': pet_bed(), 'dining_table': dining_table(), 'kitchen': kitchen(),
         'bookcase': bookcase(), 'plant_tall': plant_tall(), 'keepsake_chest': rug_chest(),
         'window_seat': window_seat(), 'desk': desk(), 'coat_rack': coat_rack(), 'boots': boots(),
         'side_table': side_table(), 'watering_can': watering_can(),

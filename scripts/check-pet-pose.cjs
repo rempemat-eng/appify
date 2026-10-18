@@ -56,7 +56,9 @@ modules['../art/materials.json'] = JSON.parse(read('art/materials.json'));
 modules['@/lib/art-direction'] = evaluate(read('lib/art-direction.ts'));
 const cozy = evaluate(read('lib/cozy.ts')).cozy;
 modules['@/lib/pet-sprites'] = evaluate(read('lib/pet-sprites.ts'));
-const { petPixels } = evaluate(read('lib/pet-art.ts'));
+const petArt = evaluate(read('lib/pet-art.ts'));
+const { petPixels, GROUND_SHADOW } = petArt;
+modules['@/lib/pet-art'] = petArt; // visitor-art draws its shadow with pet-art's helper
 const { visitorPixels } = evaluate(read('lib/visitor-art.ts'));
 const grasslings = evaluate(read('lib/grasslings.ts'));
 
@@ -154,6 +156,7 @@ vm.runInNewContext(compile(petFunction.getText(uiTree)), {
   useReducedMotion: () => reduced,
   c: cozy,
   petPixels,
+  GROUND_SHADOW,
   visitorPixels,
   ...grasslings,
   // This matrix covers the three starters. Visitor identity remains a leaf
