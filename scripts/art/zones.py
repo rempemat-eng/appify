@@ -2870,43 +2870,9 @@ def ridge(frame: int = 0):
         if y < rim(x) - 6:
             detail.pebble(cv, x, y, STONEm, big=i % 3 == 0)
             cv.set(x, y - 1, SNOWm[3]); cv.set(x + 1, y - 1, SNOWm[3])
-    # the peaks along the top: one ridgeline of summits, sunlit snowfields on their west
-    # faces, blue shade on the east, rock ribs running down the fall line
-    summits = [(54, -10), (128, 14), (226, -26), (300, -2)]
-    def ridge_y(x):
-        return min(ay + abs(x - ax) * (1.05 if x < ax else 0.85) for (ax, ay) in summits) + noise2(x // 3, 7, 448) * 3
-    BASE = 74
-    peak_pts = {}
-    for x in range(W):
-        top = int(ridge_y(x))
-        ax, ay = min(summits, key=lambda p: p[1] + abs(x - p[0]))
-        if RIDGE_COL[0] <= x < RIDGE_COL[1]:
-            continue  # the gap up to the Snow Saddle (Frostline, 18 Oct)
-        for y in range(0, top):  # above the outline: the next slope up, also snow
-            peak_pts[(x, y)] = high_slope_px(x, y)
-        for y in range(max(0, top), BASE + int(noise2(x // 9, 8, 449) * 6)):
-            lit = x < ax
-            depth = y - top
-            fall = (x - ax) * 0.6 + (y - ay) * (1 if lit else -1) * 0.25
-            rib = (int(fall) % 11 == 0) and depth > 6
-            snowline = 30 + int(noise2(x // 6, ax, 446) * 14)
-            if depth < snowline and not rib:
-                c = SNOWm[3] if lit else SNOWm[1] if depth % 7 else SNOWm[0]
-                if lit and depth < 2:
-                    c = '#FFFFFF'
-            else:
-                c = STONEm[3] if lit else STONEm[1]
-                if rib:
-                    c = STONEm[2] if lit else STONEm[0]
-            peak_pts[(x, y)] = c
-    for (x, y), c in peak_pts.items():
-        if (x, y - 1) not in peak_pts and y > 0:
-            c = STONEm[0] if (x + 1, y - 1) in peak_pts or (x - 1, y - 1) in peak_pts else STONEm[1]
-        cv.set(x, y, c)
-    for y in range(0, BASE + 6):  # the gap: a snow gully between rock walls
-        for x in range(RIDGE_COL[0], RIDGE_COL[1]):
-            cv.set(x, y, snow_px(x, y, 451))
-        cv.set(RIDGE_COL[0], y, STONEm[3]); cv.set(RIDGE_COL[1] - 1, y, STONEm[1])
+    # along the top: the stepped rock shoulders up to the Snow Saddle, one band with the
+    # saddle's (frost_zones.shoulders), open where the switchback comes down
+    shoulder = shoulders(cv, 'ridge')
     # the alpine tarn below the face, open water (no snow lies down here)
     WTR = MATERIALS['water']
     tarn = {(x, y) for (x, y) in oval(232, 404, 38, 15)}
@@ -2927,8 +2893,10 @@ def ridge(frame: int = 0):
     trail = worlds.thick([(206, H + 12), (206, H - 40), (190, 470), (150, 400), (130, 330), (150, 270), (150, 220)], 9.5, seed=29)
     trail |= worlds.thick([(150, 220), (150, 170), (120, 140)], 8, seed=30)
     # on up through the gap to the Snow Saddle, and west across the terrace to Fir Hollow
-    trail |= worlds.thick([(150, 170), (184, 120), (184, 60), (184, -10)], 8, seed=31)
-    trail |= worlds.thick([(150, 190), (80, 176), (-10, 168)], 8, seed=32)
+    # the switchback up past the cabin's east end to the saddle (Codex: it "reveals the
+    # cabin roof"), and west across the meadow to Fir Hollow at its port
+    trail |= gthick('ridge', [(150, -386), (236, -392), (262, -456), (258, -514), (204, -546), (204, -586)], 8)
+    trail |= gthick('ridge', [(132, -240), (60, -228), (-10, -228)], 8)
     on_terrace = {(x, y) for (x, y) in trail if y < rim(x)}
     paint_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)})
     # the bottom is the band the garden screen draws above its clearing
@@ -2948,7 +2916,7 @@ def ridge(frame: int = 0):
         # the garden's treeline continues at the bottom, clear of the trail
         ('pine-b1', 'pine', 4, H - 100), ('pine-b2', 'pine', 50, H - 92), ('pine-b3', 'pine', 96, H - 102),
         ('pine-b4', 'pine', 240, H - 98), ('pine-b5', 'pine', 280, H - 104), ('pine-b6', 'pine', 140, H - 150),
-        ('pine-m1', 'pine', 20, 330), ('pine-m2', 'pine', 270, 440), ('pine-m3', 'pine', 270, 250),
+        ('pine-m1', 'pine', 14, 392), ('pine-m2', 'pine', 270, 440), ('pine-m3', 'pine', 270, 250),
         ('pine-m4', 'pine', 60, 250), ('cairn-1', 'cairn', 100, 360),
         ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
         ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
@@ -2958,10 +2926,9 @@ def ridge(frame: int = 0):
         ('cotton-1', 'cotton_grass', 196, 380), ('cotton-2', 'cotton_grass', 270, 398), ('cotton-3', 'cotton_grass', 210, 418),
     ]
     face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
-    peaks_block = set(peak_pts)
     stands = {'garden': (206, H - 8), 'tarn': (186, 424), 'cabin': (200, 176), 'campfire': (146, 204),
-              'saddle': (184, 6), 'hollow': (4, 168)}
-    return cv, objects, stands, (face - steps) | peaks_block | tarn
+              'saddle': (204, 6), 'hollow': (4, 348)}
+    return cv, objects, stands, (face - steps) | shoulder | tarn
 
 
 def halt(frame: int = 0):
@@ -3107,6 +3074,21 @@ def woodland(frame: int = 0):
             cv.set(x, y, WTRm[4] if (x + y + frame) % 3 == 0 else WTRm[3] if x < fx + 1 else WTRm[2])
     for k in range(10):  # foam where it lands
         cv.set(fx - 5 + k, int(centre(spring_x)) - 1 + (k % 2), WTRm[4])
+    # the spring is the foot of Fir Hollow's fall: the meltwater from Snowmelt Lake comes
+    # down off the escarpment above (frost_zones.FALLS_X) as a brook under the trees and
+    # over the mossy rock (Codex: the lake's water reaches the valley's river)
+    brook = worlds.thick([(FALLS_X, -4), (62, 60), (54, 140), (64, 214), (fx + 1, int(centre(spring_x)) - 26)], 3)
+    for (x, y) in brook:
+        if (x, y) in rock:
+            continue
+        c = WTRm[2] if (x + y // 2) % 4 else WTRm[3]
+        if (x - 1, y) not in brook:
+            c = WTRm[0]
+        cv.set(x, y, c)
+    for (x, y) in brook:
+        if (x + 1, y) not in brook and noise2(x, y, 428) > 0.4:
+            cv.set(x + 1, y, STONE[2])
+    water = water | {p for p in brook if p not in rock}
     # the path from the garden's west side into the trees and the clearing
     # (the garden's orchard walk runs on across the border at the same height and width)
     path = worlds.thick([(W + 12, meadow.ORCHARD_WALK_Y), (250, meadow.ORCHARD_WALK_Y)], 8.5) | worlds.thick([(254, meadow.ORCHARD_WALK_Y), (190, 420), (150, 380), (130, 330)], 9, seed=25)
@@ -3421,7 +3403,7 @@ def build(name: str, fn, start: str):
 
     blocked_ground = set(blocked_ground) | frames.apply(cv, name, LAYOUT, pre, is_water)
     allowed = (region_keys(name) | SHARED_PROPS) if name in REGION_PROPS else None
-    objects = objects + frames.place(name, LAYOUT, sprite_map, allowed, objects, stands, pre)
+    objects = objects + frames.place(name, LAYOUT, sprite_map, allowed, objects, stands, pre, is_water)
     dress(cv, name, objects, sprite_map, blocked_ground)
     shade = set()
     for (_id, key, x, y) in objects:
