@@ -2001,8 +2001,16 @@ def harbour(frame: int = 0):
         ('boat-3', 'boat_blue', 186, 420), ('bollard-1', 'bollard', 140, 290), ('bollard-2', 'bollard', 226, 290),
         ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 286, 206),
         ('upturned', 'upturned_boat', 8, 400), ('washing', 'washing_line', 110, 90), ('buoy-1', 'buoy', 120, 450),
-        ('buoy-2', 'buoy', 300, 380),
+        ('buoy-2', 'buoy', 300, 380), ('chair-1', 'deck_chair', 52, 346), ('chair-2', 'deck_chair_b', 72, 352),
+        ('drift', 'driftwood', 6, 452), ('sail', 'sailboat', 262, 496),
     ]
+    # a rock pool on the lower beach: dark stones round a little pool of sky
+    for (x, y) in oval(30, 506, 14, 6):
+        d = math.hypot((x - 30) / 14, (y - 506) / 6)
+        cv.set(x, y, WTRm[2] if d < 0.6 and (x + y) % 5 else WTRm[4] if d < 0.6 else STONE[3] if y < 506 else STONE[1])
+        if 0.6 <= d and noise2(x, y, 611) > 0.5:
+            cv.set(x, y, STONE[2])
+        water.add((x, y))
     blocked = water - set().union(*jetties)
     stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (157, 384), 'beach': (34, 380), 'castle': (300, 116)}
     return cv, objects, stands, blocked

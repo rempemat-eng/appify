@@ -62,12 +62,15 @@ import propCottageB from '@/assets/zones/props/cottage_b.png';
 import propCottonGrass from '@/assets/zones/props/cotton_grass.png';
 import propCowSkull from '@/assets/zones/props/cow_skull.png';
 import propCrate from '@/assets/zones/props/crate.png';
+import propDeckChair from '@/assets/zones/props/deck_chair.png';
+import propDeckChairB from '@/assets/zones/props/deck_chair_b.png';
 import propDeparturePylon from '@/assets/zones/props/departure_pylon.png';
 import propDesertScrub from '@/assets/zones/props/desert_scrub.png';
 import propDesertScrubB from '@/assets/zones/props/desert_scrub_b.png';
 import propDesk from '@/assets/zones/props/desk.png';
 import propDiningTable from '@/assets/zones/props/dining_table.png';
 import propDreamPool from '@/assets/zones/props/dream_pool.png';
+import propDriftwood from '@/assets/zones/props/driftwood.png';
 import propDrone from '@/assets/zones/props/drone.png';
 import propDryWell from '@/assets/zones/props/dry_well.png';
 import propDrystoneWall from '@/assets/zones/props/drystone_wall.png';
@@ -158,6 +161,7 @@ import propRoundTower from '@/assets/zones/props/round_tower.png';
 import propSack from '@/assets/zones/props/sack.png';
 import propSaguaro from '@/assets/zones/props/saguaro.png';
 import propSaguaroSmall from '@/assets/zones/props/saguaro_small.png';
+import propSailboat from '@/assets/zones/props/sailboat.png';
 import propSaloon from '@/assets/zones/props/saloon.png';
 import propSandstoneArch from '@/assets/zones/props/sandstone_arch.png';
 import propSandstoneOutcrop from '@/assets/zones/props/sandstone_outcrop.png';
@@ -333,12 +337,15 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   cotton_grass: propCottonGrass,
   cow_skull: propCowSkull,
   crate: propCrate,
+  deck_chair: propDeckChair,
+  deck_chair_b: propDeckChairB,
   departure_pylon: propDeparturePylon,
   desert_scrub: propDesertScrub,
   desert_scrub_b: propDesertScrubB,
   desk: propDesk,
   dining_table: propDiningTable,
   dream_pool: propDreamPool,
+  driftwood: propDriftwood,
   drone: propDrone,
   dry_well: propDryWell,
   drystone_wall: propDrystoneWall,
@@ -429,6 +436,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   sack: propSack,
   saguaro: propSaguaro,
   saguaro_small: propSaguaroSmall,
+  sailboat: propSailboat,
   saloon: propSaloon,
   sandstone_arch: propSandstoneArch,
   sandstone_outcrop: propSandstoneOutcrop,
