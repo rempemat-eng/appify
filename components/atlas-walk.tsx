@@ -44,6 +44,7 @@ import {
   zoneBeyond,
   zoneBeyondAsh,
   zoneBeyondPeaks,
+  zoneBeyondRegolith,
   zoneBeyondByRegion,
   zoneGrounds,
   zoneProps,
@@ -125,6 +126,10 @@ export const zoneNames: Record<TileId, string> = {
   park: 'TOWN PARK',
   harbour: 'DRIFTWOOD HARBOUR',
   hollow: 'FIR HOLLOW',
+  landing: 'LAGOON LANDING',
+  rainforest: 'THE RAINFOREST',
+  headwaters: 'THE HEADWATERS',
+  cove: 'BLACK-SAND COVE',
   snowmelt: 'SNOWMELT LAKE',
   saddle: 'THE SNOW SADDLE',
   summit: 'THE HIGH LOOKOUT',
@@ -357,6 +362,8 @@ function beyondAt(region: RegionId, col: number, row: number) {
   if (region === 'west' && (col >= 1 || (col >= 0 && row <= -1))) return zoneBeyondAsh;
   // the valley's high country: peaks round the Frostline, forest lower down
   if (region === 'valley' && row <= -2) return zoneBeyondPeaks;
+  // Lumen's plain runs on below and beside it; above, only space (the backdrop)
+  if (region === 'moon') return zoneBeyondRegolith;
   return zoneBeyondByRegion[region] ?? zoneBeyond;
 }
 
@@ -585,6 +592,15 @@ export function AtlasWalk({
   const player = useGame((s) => s.player);
   const hour = new Date(useGame((s) => s.now)).getHours();
   const night = hour < 6 || hour >= 21;
+  // the light of the hour (as on the garden screen): blue at night, warm at dusk, a
+  // soft gold at dawn; places that make their own light keep it
+  const tint = night
+    ? 'rgba(22,28,66,0.42)'
+    : hour >= 17
+      ? 'rgba(240,128,70,0.16)'
+      : hour < 9
+        ? 'rgba(255,200,150,0.12)'
+        : null;
   const screen = useWindowDimensions();
   const dpr = PixelRatio.get();
   const u = pixelScale(screen.width, dpr);
@@ -844,7 +860,7 @@ export function AtlasWalk({
     (t) => Math.abs(t.col - hereTile.col) <= reachX && Math.abs(t.row - hereTile.row) <= reachY,
   );
   const gaps: { col: number; row: number }[] = [];
-  const opensOut = region === 'valley' || !!zoneBeyondByRegion[region];
+  const opensOut = region === 'valley' || region === 'moon' || !!zoneBeyondByRegion[region];
   for (let col = hereTile.col - reachX; col <= hereTile.col + reachX; col++)
     for (let row = hereTile.row - reachY; row <= hereTile.row + reachY; row++) {
       const inside =
@@ -854,7 +870,11 @@ export function AtlasWalk({
         row < bounds.minRow + bounds.tileRows;
       // past a region's edge (a region shorter or narrower than the screen) the land runs
       // on where it has open country round it; elsewhere the backdrop's colour shows
-      if (inside ? !tiles.some((t) => t.col === col && t.row === row) : opensOut)
+      if (
+        inside
+          ? !tiles.some((t) => t.col === col && t.row === row)
+          : opensOut && !(region === 'moon' && row < 0)
+      )
         gaps.push({ col, row });
     }
   const drawables = [
@@ -1024,23 +1044,33 @@ export function AtlasWalk({
               </Fragment>
             ),
           )}
-          {night &&
-            near
-              .filter((t) => !OWN_LIGHT.includes(t.id))
-              .map((t) => (
-                <View
-                  key={`night-${t.id}`}
-                  style={{
-                    position: 'absolute',
-                    left: snap(tileOrigin(region, t).x * u),
-                    top: snap(tileOrigin(region, t).y * u),
-                    width: snap(TILE.width * u),
-                    height: snap(TILE.height * u),
-                    backgroundColor: 'rgba(22,28,66,0.42)',
-                    zIndex: 150000,
-                  }}
-                />
-              ))}
+          {tint &&
+            [
+              ...near
+                .filter((t) => !OWN_LIGHT.includes(t.id))
+                .map((t) => ({ key: t.id, ...tileOrigin(region, t) })),
+              // and what lies past the places, so the land beyond darkens with them
+              ...(near.every((t) => OWN_LIGHT.includes(t.id))
+                ? []
+                : gaps.map((g) => ({
+                    key: `gap-${g.col}-${g.row}`,
+                    x: (g.col - bounds.minCol) * TILE.width,
+                    y: (g.row - bounds.minRow) * TILE.height,
+                  }))),
+            ].map((c) => (
+              <View
+                key={`tint-${c.key}`}
+                style={{
+                  position: 'absolute',
+                  left: snap(c.x * u),
+                  top: snap(c.y * u),
+                  width: snap(TILE.width * u),
+                  height: snap(TILE.height * u),
+                  backgroundColor: tint,
+                  zIndex: 150000,
+                }}
+              />
+            ))}
           {night &&
             // lamplight in the windows (panes recorded by the generator, zoneWindows): a pane
             // with nothing in front glows above the night tint; one that a nearer thing overlaps

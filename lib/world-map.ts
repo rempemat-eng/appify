@@ -1,5 +1,5 @@
 import { regionTiles, tileAt, type RegionId, type TileId } from './region-walk';
-import { regionLayout } from './zone-maps';
+import { regionLayout, zonePorts } from './zone-maps';
 import { LAYOUT_VERSION } from './world-layouts';
 import {
   doors,
@@ -103,8 +103,12 @@ function atlasLinks(): MapLink[] {
       for (let j = i + 1; j < tiles.length; j++) {
         const a = tiles[i],
           b = tiles[j];
-        if (Math.abs(a.col - b.col) + Math.abs(a.row - b.row) === 1)
-          links.push({ from: a.id, to: b.id, kind: 'border' });
+        if (Math.abs(a.col - b.col) + Math.abs(a.row - b.row) !== 1) continue;
+        // Port keys run west|east or north|south, independently of tile order.
+        // Adjacency alone must not bridge a closed escarpment or an unknown seam.
+        const key = a.col < b.col || a.row < b.row ? `${a.id}|${b.id}` : `${b.id}|${a.id}`;
+        const span = zonePorts[key]?.span;
+        if (span && span[1] > span[0]) links.push({ from: a.id, to: b.id, kind: 'border' });
       }
   }
   // A pass joins regions on foot and stays distinct from a vehicle service.

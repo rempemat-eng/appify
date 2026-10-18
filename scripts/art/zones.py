@@ -21,6 +21,7 @@ import sys
 from collections import deque
 
 sys.path.insert(0, os.path.dirname(__file__))
+sys.modules.setdefault('zones', sys.modules[__name__])  # so the district modules share this one
 from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
 import garden_meadow as meadow  # noqa: E402
@@ -39,6 +40,7 @@ import castle_props as csp  # noqa: E402
 import space_props as spp  # noqa: E402
 import home_props as hp  # noqa: E402
 import frost_props as fp  # noqa: E402
+import isle_props as ip  # noqa: E402
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 IRONm, LEAFm = MATERIALS['iron'], MATERIALS['leaf']
@@ -272,6 +274,7 @@ def sprites() -> dict[str, Canvas]:
     items.update(spp.props())
     items.update(hp.props())
     items.update(fp.props())
+    items.update(ip.props())
     items['fence_c'] = gp.fence_h(60)
     out = {key: style.finalize(sp, name=key) for key, sp in items.items()}
     for key, raw in items.items():  # the window panes of each building, in sprite pixels
@@ -2127,371 +2130,6 @@ def sea_cliffs(cv: Canvas, frame: int, edge_y):
     return sea
 
 
-# ---- the Frostline Highlands (Matt, 18 Oct 19:07: the connected world Codex drew) ----
-# Above the Ridge cabin the valley climbs on: Fir Hollow west of the ridge, Snowmelt Lake
-# above it, the Snow Saddle above the ridge and the High Lookout at the top. One loop
-# (ridge, hollow, lake, saddle, ridge) and one spur (the lookout). Snow deepens with
-# height: below a face there is none; on the terraces it lies; up high it is all there is.
-# The ways between them are gaps in the rock at fixed spans, the same on both sides.
-RIDGE_COL = (172, 196)    # the ridge's north edge / the saddle's south edge
-HOLLOW_COL = (120, 148)   # the hollow's north edge / the lake's south edge
-LAKE_PORT = (404, 436)    # the lake's east edge / the saddle's west edge (y)
-SUMMIT_COL = (140, 164)   # the saddle's north edge / the lookout's south edge
-FACE_H = 24
-
-
-def snow_px(x: int, y: int, seed: int = 443) -> str:
-    """Lying snow: soft drifts, the wind's ripples (sastrugi), blue in the hollows."""
-    SN = MATERIALS['snow']
-    n = smooth_noise(x, y, 18, seed)
-    c = SN[3] if n > 0.4 else SN[2] if n > 0.22 or (x + y) % 2 else SN[1]
-    rip = (y * 2 + int(math.sin(x / 13 + y / 31) * 4)) % 9
-    if rip == 0 and n > 0.3:
-        c = SN[2]
-    elif rip == 1 and n > 0.3:
-        c = SN[3]
-    return c
-
-
-def high_slope_px(x: int, y: int) -> str:
-    """The steep snow of the peaks' upper slopes, where no one walks: broad wind-packed
-    fields, a shade bluer than the snow underfoot, with rock breaking through in patches
-    (lit on their upper left)."""
-    SN, ST = MATERIALS['snow'], MATERIALS['stone']
-    rock = smooth_noise(x, y, 16, 805) * 0.7 + smooth_noise(x, y, 60, 806) * 0.3
-    if rock > 0.8:
-        # a rock outcrop: lit toward the upper left, its lower right in shade
-        edge = smooth_noise(x - 2, y - 2, 16, 805) * 0.7 + smooth_noise(x - 2, y - 2, 60, 806) * 0.3
-        return ST[3] if edge > rock else ST[2] if rock < 0.84 else ST[1]
-    if rock > 0.78:
-        return SN[1]  # the snow's shadowed lip round the rock
-    n = smooth_noise(x, y, 40, 801)
-    c = SN[2] if n > 0.4 else SN[1] if n > 0.2 or (x + y) % 2 else SN[0]
-    return c
-
-
-def high_band(cv: Canvas, y0: int, y1: int, gap: tuple[int, int], edge: str) -> set:
-    """A band of steep upper slope across the zone from y0 to y1 (blocked), open only in
-    the gap; the gap's sides are rock walls lit on the west. Returns the blocked set."""
-    ST = MATERIALS['stone']
-    blocked = set()
-    for y in range(y0, y1):
-        for x in range(W):
-            # the gap narrows its walls a little with noise, never closing
-            wob = int(noise2(y // 6, x // 40, 803) * 3)
-            g0, g1 = gap[0] - wob, gap[1] + wob
-            if g0 <= x < g1:
-                cv.set(x, y, snow_px(x, y, 804))
-                continue
-            near = min(abs(x - g0), abs(x - g1))
-            # the gully's sides: rock walls, lit on the side facing east
-            cv.set(x, y, (ST[2] if x < g0 else ST[1]) if near < 3 else high_slope_px(x, y))
-            blocked.add((x, y))
-    return blocked
-
-
-def snow_trail(cv: Canvas, pts, width=8.5, seed=0) -> set:
-    """A trodden line in the snow: packed and a shade darker, with boot dimples."""
-    SN = MATERIALS['snow']
-    trail = {(x, y) for (x, y) in worlds.thick(pts, width, seed=seed) if 0 <= x < W and 0 <= y < H}
-    for (x, y) in trail:
-        c = SN[1] if (x + y) % 3 else SN[2]
-        if noise2(x, y, seed + 900) > 0.93:
-            c = SN[0]
-        cv.set(x, y, c)
-    return trail
-
-
-def peak_row(cv: Canvas, summits, base: int, gap=None, seed: int = 448) -> set:
-    """A row of summits along the top of a zone (as on the ridge): sunlit snowfields on
-    their west faces, blue shade east, rock ribs; the slope above their outline is the
-    next slope up, also snow. Open only in the gap. Returns the blocked set."""
-    SN, ST = MATERIALS['snow'], MATERIALS['stone']
-    pts = set()
-
-    def ridge_y(x):
-        return min(ay + abs(x - ax) * (1.05 if x < ax else 0.85) for (ax, ay) in summits) + noise2(x // 3, 7, seed) * 3
-
-    for x in range(W):
-        if gap and gap[0] <= x < gap[1]:
-            continue
-        top = int(ridge_y(x))
-        ax, ay = min(summits, key=lambda p: p[1] + abs(x - p[0]))
-        bottom = base + int(noise2(x // 9, 8, seed + 1) * 6)
-        for y in range(0, bottom):
-            if y < top:
-                c = high_slope_px(x, y)
-            else:
-                lit = x < ax
-                depth = y - top
-                fall = (x - ax) * 0.6 + (y - ay) * (1 if lit else -1) * 0.25
-                rib = (int(fall) % 11 == 0) and depth > 6
-                snowline = 30 + int(noise2(x // 6, ax, seed + 2) * 14)
-                if depth < snowline and not rib:
-                    c = SN[3] if lit else SN[1] if depth % 7 else SN[0]
-                    if lit and depth < 2:
-                        c = '#FFFFFF'
-                else:
-                    c = ST[3] if lit else ST[1]
-                    if rib:
-                        c = ST[2] if lit else ST[0]
-            cv.set(x, y, c)
-            pts.add((x, y))
-    if gap:  # the gap: a snow gully between rock walls
-        for y in range(0, base + 6):
-            for x in range(gap[0], gap[1]):
-                cv.set(x, y, snow_px(x, y, seed + 3))
-            cv.set(gap[0], y, ST[3]); cv.set(gap[1] - 1, y, ST[1])
-    return pts
-
-
-def rim_hollow(x: int) -> int:
-    """The face's top in Fir Hollow: the ridge's own face carried on west (its x - 320),
-    rising a little as it goes."""
-    xr = x - W
-    return 210 + int(math.sin(xr / 27) * 8 + noise2(xr // 6, 0, 442) * 6) - (W - x) // 10
-
-
-def hollow(frame: int = 0):
-    """Fir Hollow, west of the ridge: the ridge's snowy terrace and its stone face carry on
-    west, the face bending up as the ground rises; under the face a sheltered hollow of
-    old firs on alpine turf, no snow down there, closing into dark forest at the bottom
-    (the escarpment above the Woodland: no way down). Steps in the face join the two.
-    A trail crosses the terrace from the ridge and climbs north through a gap in the
-    peaks to Snowmelt Lake."""
-    SN, ST = MATERIALS['snow'], MATERIALS['stone']
-    cv = Canvas(W, H)
-    alpine = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
-    worlds.grass(cv, frame, alpine)
-    for x in range(W):
-        r = rim_hollow(x)
-        for y in range(0, r):
-            cv.set(x, y, snow_px(x, y))
-        for k in range(FACE_H):
-            y = r + k
-            band = (k + int(noise2(x // 7, 3, 445) * 3)) // 5
-            c = ST[3] if band % 2 else ST[2]
-            if (k + int(noise2(x // 7, 3, 445) * 3)) % 5 == 0:
-                c = ST[4]
-            if k < 2:
-                c = SN[3] if k == 0 else SN[1]
-            if k > FACE_H - 4:
-                c = ST[1]
-            cv.set(x, y, c)
-        for d in range(3):
-            if (x + d) % 2 or d == 0:
-                style.darken(cv, x, r + FACE_H + d)
-    # (the ridge's own westmost summit stands just past the border, at its x + 320)
-    peaks = peak_row(cv, [(30, -8), (110, 12), (220, -18), (374, -10)], 74, gap=HOLLOW_COL, seed=811)
-    # the bottom: the forest closes in and darkens over the escarpment (no way down),
-    # darkening where the ridge's does, into the same deep shade
-    B = H - meadow.draw_top_band().h
-    for y in range(B - 60, H):
-        for x in range(W):
-            t = (y - (B - 60)) / 60
-            if noise2(x, y, 812) < t:
-                cv.set(x, y, G[1])
-    style.dither_dark(cv, 0, B - 20, W, H - B + 20, 1.0)
-    style.dither_dark(cv, 0, B - 40, W, 20, 0.5)
-    # (the forest floor is walkable like the ridge's; only the escarpment's lip at the
-    # very bottom is closed, so there is no way down into the Woodland)
-    forest = {(x, y) for x in range(W) for y in range(H - 12, H)}
-    # steps up the face near the west, as on the ridge
-    steps = set()
-    for x in range(56, 70):
-        r = rim_hollow(x)
-        for y in range(r, r + FACE_H):
-            steps.add((x, y))
-            cv.set(x, y, ST[4] if (y - r) % 4 == 0 else ST[2] if (y - r) % 4 < 3 else ST[1])
-    face = {(x, y) for x in range(W) for y in range(rim_hollow(x), rim_hollow(x) + FACE_H)}
-    # the trail on the terrace: in from the ridge, across, and north through the gap
-    trail = snow_trail(cv, [(W + 10, 168), (250, 166), (190, 150), (150, 120), (134, 80), (134, -10)], seed=813)
-    trail |= snow_trail(cv, [(190, 150), (100, 180), (63, rim_hollow(63) - 4)], 7, seed=814)
-    objects = [
-        ('pine-t1', 'snowy_pine', 20, 96), ('pine-t2', 'snowy_pine', 230, 70), ('pine-t3', 'snowy_pine', 280, 104),
-        ('pine-t4', 'snowy_pine', 70, 120), ('ibex', 'ibex', 250, 110), ('post', 'trail_post', 176, 118),
-        ('stone-1', 'stone', 120, 176),
-        # the hollow under the face: old firs in a ring round a quiet clearing
-        ('fir-1', 'pine', 10, 260), ('fir-2', 'pine', 60, 300), ('fir-3', 'pine', 230, 260), ('fir-4', 'pine', 270, 320),
-        ('fir-5', 'pine', 20, 390), ('fir-6', 'pine', 250, 400), ('fir-7', 'pine', 120, 420), ('fir-8', 'pine', 190, 430),
-        ('fir-9', 'pine', 70, 440), ('fir-10', 'pine', 278, 444), ('log', 'mossy_log', 140, 330),
-        ('stump', 'stump', 196, 330), ('fern-1', 'fern', 100, 360), ('fern-2', 'fern', 176, 380),
-        ('mush', 'mushroom_ring', 150, 380),
-    ]
-    stands = {'ridge': (316, 168), 'lake': (134, 6), 'steps': (63, rim_hollow(63) + FACE_H + 8), 'clearing': (160, 370)}
-    return cv, objects, stands, (face - steps) | peaks | forest
-
-
-def snowmelt(frame: int = 0):
-    """Snowmelt Lake, above Fir Hollow: a cirque, the bowl the old glacier left. Cliffs
-    ring it on the north with a waterfall frozen down their face; the lake fills the
-    bowl, open dark water in its middle and ice at its rim; snow all round. The trail
-    comes up through the gap from the hollow and follows the south shore east to the
-    Snow Saddle."""
-    SN, ST = MATERIALS['snow'], MATERIALS['stone']
-    WTR = MATERIALS['water']
-    ICE = ['#7C9CB8', '#A6C2D8', '#C8DCEA', '#E6F0F7']
-    cv = Canvas(W, H)
-    for y in range(H):
-        for x in range(W):
-            cv.set(x, y, snow_px(x, y, 821))
-    # the cirque wall: rock cliffs across the top and down the west side
-    def wall_y(x):
-        return 120 + int(math.sin(x / 31) * 14 + noise2(x // 7, 1, 822) * 8)
-    def face_px(x, y, k, height):
-        """A stratified rock face (as the ridge's): bands, lit ledges, snow on them."""
-        band = (k + int(noise2(x // 7, 3, 827) * 3)) // 5
-        c = ST[3] if band % 2 else ST[2]
-        if (k + int(noise2(x // 7, 3, 827) * 3)) % 5 == 0:
-            c = SN[2] if noise2(x // 4, band, 828) > 0.55 else ST[4]  # a ledge, snow on some
-        if k > height - 3:
-            c = ST[1]
-        return c
-    cliff = set()
-    for x in range(W):
-        wy = wall_y(x)
-        for y in range(0, wy):
-            cv.set(x, y, high_slope_px(x, y) if y < wy - 40 else face_px(x, y, y - (wy - 40), 40))
-            cliff.add((x, y))
-        for d in range(3):
-            if (x + d) % 2 or d == 0:
-                style.darken(cv, x, wy + d)
-    for y in range(wall_y(0), H - 60):
-        depth = 18 + int(smooth_noise(0, y, 30, 823) * 10)
-        for x in range(0, depth):
-            cv.set(x, y, high_slope_px(x, y) if x < depth - 10 else face_px(y, x, x - (depth - 10), 10))
-            cliff.add((x, y))
-    # the frozen fall down the north wall into the lake
-    for y in range(20, wall_y(110) + 4):
-        for x in range(104, 118):
-            if abs(x - 111 - math.sin(y / 9) * 2) < 5:
-                cv.set(x, y, ICE[3] if x < 110 else ICE[2] if (y // 3) % 2 else ICE[1])
-    # the lake: open water within an ice rim, a stony shore
-    def shore(x, y):
-        return math.hypot((x - 160) / 112, (y - 270) / 74) - (smooth_noise(x, y, 24, 829) - 0.5) * 0.22
-    lake = {(x, y) for x in range(W) for y in range(H) if shore(x, y) < 1} - cliff
-    for (x, y) in lake:
-        d = shore(x, y)
-        if d > 0.86:
-            c = ICE[3] if (x + y) % 4 else ICE[2]
-        elif d > 0.78:
-            c = ICE[1] if noise2(x // 3, y // 3, 824) > 0.5 else ICE[2]
-        else:
-            c = WTR[1] if d < 0.5 else WTR[2]
-            if (y + int(math.sin(x / 11) * 2)) % 13 == 0 and d < 0.7:
-                c = WTR[3]
-        cv.set(x, y, c)
-    for x in range(W):
-        for y in range(H):
-            if (x, y) not in lake and (x, y) not in cliff and shore(x, y) < 1.05:
-                cv.set(x, y, ST[3] if (x + y) % 3 else ST[2])  # a stony shore
-    floes = [(84, 300), (230, 238), (196, 320)]
-    for (fx, fy) in floes:
-        for (x, y) in oval(fx, fy, 9, 4):
-            if (x, y) in lake:
-                cv.set(x, y, ICE[3] if y < fy else ICE[2])
-    # the high band at the bottom closes the bowl's lip toward the hollow, but for the gap
-    lip = high_band(cv, H - 44, H, HOLLOW_COL, 'south')
-    # the trail: up through the gap, round the south shore, east to the saddle
-    trail = snow_trail(cv, [(134, H + 10), (134, 470), (170, 410), (230, 404), (280, 418), (W + 10, 420)], seed=825)
-    objects = [
-        ('pine-1', 'snowy_pine', 26, 400), ('pine-2', 'snowy_pine', 262, 470), ('pine-3', 'snowy_pine', 60, 470),
-        ('cairn', 'cairn', 216, 440), ('post', 'trail_post', 150, 450), ('boulder-1', 'boulder', 270, 470),
-        ('stone-1', 'stone', 48, 360), ('ibex', 'ibex', 260, 140), ('boulder-2', 'boulder', 30, 160),
-    ]
-    # the east edge is the saddle's rock except where the trail goes through
-    east = set()
-    for y in range(wall_y(W - 1), H - 44):
-        if LAKE_PORT[0] <= y < LAKE_PORT[1]:
-            continue
-        for x in range(W - 14 - int(smooth_noise(0, y, 20, 826) * 10), W):
-            cv.set(x, y, high_slope_px(x, y))
-            east.add((x, y))
-    stands = {'hollow': (134, H - 6), 'shore': (200, 404), 'saddle': (316, 420)}
-    return cv, objects, stands, cliff | lake | lip | east
-
-
-def saddle(frame: int = 0):
-    """The Snow Saddle, above the ridge: the broad snow col between two peaks, where
-    the wind never quite stops (a windsock shows which way). A stone bothy shelters by
-    the fork: the trail up from the ridge's gap divides here, west to Snowmelt Lake,
-    north to the High Lookout. Cairns mark the way in a whiteout; an ibex watches from
-    the rocks."""
-    SN, ST = MATERIALS['snow'], MATERIALS['stone']
-    cv = Canvas(W, H)
-    for y in range(H):
-        for x in range(W):
-            cv.set(x, y, snow_px(x, y, 831))
-    # the two peaks' flanks: west above the lake path, east all the way down
-    rock = set()
-    for y in range(H):
-        e0 = 250 - int(math.sin(y / 70) * 18 + noise2(y // 9, 1, 832) * 8)
-        w1 = 46 + int(math.sin(y / 53) * 14 + noise2(y // 9, 2, 833) * 6) if y < LAKE_PORT[0] - 10 or y >= LAKE_PORT[1] + 30 else 0
-        for x in range(W):
-            if x >= e0 or x < w1:
-                cv.set(x, y, high_slope_px(x, y))
-                rock.add((x, y))
-            elif (e0 - 3 <= x < e0 or w1 <= x < w1 + 3) and (x + y) % 2:
-                cv.set(x, y, SN[3])  # the walkable snow's bright lip at the steep edge
-    top = peak_row(cv, [(60, -10), (240, -16)], 60, gap=SUMMIT_COL, seed=834)
-    bottom = high_band(cv, H - 50, H, RIDGE_COL, 'south')
-    trail = snow_trail(cv, [(184, H + 10), (184, 500), (170, 440), (152, 360), (152, 200), (152, -10)], seed=835)
-    trail |= snow_trail(cv, [(170, 440), (110, 426), (40, 420), (-10, 420)], seed=836)
-    objects = [
-        ('bothy', 'bothy', 176, 300), ('windsock', 'windsock', 96, 340), ('post', 'trail_post', 130, 440),
-        ('cairn-1', 'cairn', 200, 470), ('cairn-2', 'cairn', 120, 250), ('cairn-3', 'cairn', 172, 120),
-        ('ibex', 'ibex', 210, 200), ('stone-1', 'stone', 80, 470), ('boulder-1', 'boulder', 196, 410),
-    ]
-    stands = {'ridge': (184, H - 6), 'fork': (160, 450), 'bothy': (204, 384), 'lake': (4, 420), 'lookout': (152, 6)}
-    return cv, objects, stands, rock | top | bottom
-
-
-def summit(frame: int = 0):
-    """The High Lookout: the top of the valley's world. The path comes up through the gap
-    onto a small snowy summit with a stone windbreak, a bench and a brass viewing scope
-    that looks out over everything walked so far; crags fall away on every side."""
-    SN, ST = MATERIALS['snow'], MATERIALS['stone']
-    cv = Canvas(W, H)
-    for y in range(H):
-        for x in range(W):
-            cv.set(x, y, high_slope_px(x, y))
-    # the summit: a rounded top of firm snow, rock showing at its crown
-    def inside(x, y):
-        d = ((x - 156) / 118) ** 2 + ((y - 300) / 200) ** 2
-        return d < 0.92 + (smooth_noise(x, y, 20, 844) - 0.5) * 0.5
-    top = {(x, y) for x in range(W) for y in range(H) if inside(x, y)}
-    for (x, y) in top:
-        cv.set(x, y, snow_px(x, y, 841))
-    # the rim: a corniced lip of bright snow, then the drop's shadow below and right
-    for (x, y) in top:
-        if (x, y - 2) not in top or (x - 2, y) not in top:
-            cv.set(x, y, SN[3])
-        elif (x, y + 2) not in top or (x + 2, y) not in top:
-            cv.set(x, y, SN[1])
-    for x in range(W):
-        for y in range(H):
-            if (x, y) not in top and ((x - 2, y) in top or (x, y - 2) in top) and (x + y) % 2:
-                cv.set(x, y, SN[0])
-    for (x, y) in oval(156, 190, 40, 22):  # the summit's crown of bare rock
-        if (x, y) in top:
-            style.darken(cv, x, y) if (x + y) % 5 == 0 else None
-    style.facet_stone(cv, oval(156, 186, 30, 14), ST, seed=845, outline=None)
-    # the way up from the saddle's gap
-    for y in range(H - 150, H):
-        for x in range(SUMMIT_COL[0] - 6, SUMMIT_COL[1] + 6):
-            if (x, y) not in top:
-                cv.set(x, y, snow_px(x, y, 842))
-                top.add((x, y))
-    trail = snow_trail(cv, [(152, H + 10), (152, 470), (150, 340), (160, 250)], seed=843)
-    rock = {(x, y) for x in range(W) for y in range(H)} - top
-    objects = [
-        ('scope', 'telescope', 150, 186), ('wall', 'drystone_wall', 110, 150), ('bench', 'forest_bench', 190, 230),
-        ('cairn', 'cairn', 100, 220), ('post', 'trail_post', 170, 300), ('pine', 'snowy_pine', 80, 400),
-    ]
-    stands = {'saddle': (152, H - 6), 'scope': (162, 236), 'bench': (204, 262)}
-    return cv, objects, stands, rock
-
-
 def headland(frame: int = 0):
     """The Headland, east of the harbour (Matt, 18 Oct: the castle moved to the fire
     country): the cliff path from the harbour comes in at the west edge and climbs the
@@ -2573,7 +2211,7 @@ def scorch(frame: int = 0):
                     c = BASALT[2]  # a cinder
             # Dust Gulch's own sand carries on over the west edge (the two are one walk
             # since 18 Oct), giving way over the last 56 pixels
-            if x < 56 and c in DESERT and noise2(x, y, 757) * 56 > x - 4:
+            if x < 56 and (c in DESERT or x < 12) and noise2(x, y, 757) * 56 > x - 4:
                 c = gulch_sand(W + x, y)
             cv.set(x, y, c)
     for (pts, r, sd) in (([(190, 120), (226, 150), (262, 160)], 13, 747),
@@ -3232,43 +2870,9 @@ def ridge(frame: int = 0):
         if y < rim(x) - 6:
             detail.pebble(cv, x, y, STONEm, big=i % 3 == 0)
             cv.set(x, y - 1, SNOWm[3]); cv.set(x + 1, y - 1, SNOWm[3])
-    # the peaks along the top: one ridgeline of summits, sunlit snowfields on their west
-    # faces, blue shade on the east, rock ribs running down the fall line
-    summits = [(54, -10), (128, 14), (226, -26), (300, -2)]
-    def ridge_y(x):
-        return min(ay + abs(x - ax) * (1.05 if x < ax else 0.85) for (ax, ay) in summits) + noise2(x // 3, 7, 448) * 3
-    BASE = 74
-    peak_pts = {}
-    for x in range(W):
-        top = int(ridge_y(x))
-        ax, ay = min(summits, key=lambda p: p[1] + abs(x - p[0]))
-        if RIDGE_COL[0] <= x < RIDGE_COL[1]:
-            continue  # the gap up to the Snow Saddle (Frostline, 18 Oct)
-        for y in range(0, top):  # above the outline: the next slope up, also snow
-            peak_pts[(x, y)] = high_slope_px(x, y)
-        for y in range(max(0, top), BASE + int(noise2(x // 9, 8, 449) * 6)):
-            lit = x < ax
-            depth = y - top
-            fall = (x - ax) * 0.6 + (y - ay) * (1 if lit else -1) * 0.25
-            rib = (int(fall) % 11 == 0) and depth > 6
-            snowline = 30 + int(noise2(x // 6, ax, 446) * 14)
-            if depth < snowline and not rib:
-                c = SNOWm[3] if lit else SNOWm[1] if depth % 7 else SNOWm[0]
-                if lit and depth < 2:
-                    c = '#FFFFFF'
-            else:
-                c = STONEm[3] if lit else STONEm[1]
-                if rib:
-                    c = STONEm[2] if lit else STONEm[0]
-            peak_pts[(x, y)] = c
-    for (x, y), c in peak_pts.items():
-        if (x, y - 1) not in peak_pts and y > 0:
-            c = STONEm[0] if (x + 1, y - 1) in peak_pts or (x - 1, y - 1) in peak_pts else STONEm[1]
-        cv.set(x, y, c)
-    for y in range(0, BASE + 6):  # the gap: a snow gully between rock walls
-        for x in range(RIDGE_COL[0], RIDGE_COL[1]):
-            cv.set(x, y, snow_px(x, y, 451))
-        cv.set(RIDGE_COL[0], y, STONEm[3]); cv.set(RIDGE_COL[1] - 1, y, STONEm[1])
+    # along the top: the stepped rock shoulders up to the Snow Saddle, one band with the
+    # saddle's (frost_zones.shoulders), open where the switchback comes down
+    shoulder = shoulders(cv, 'ridge')
     # the alpine tarn below the face, open water (no snow lies down here)
     WTR = MATERIALS['water']
     tarn = {(x, y) for (x, y) in oval(232, 404, 38, 15)}
@@ -3289,8 +2893,10 @@ def ridge(frame: int = 0):
     trail = worlds.thick([(206, H + 12), (206, H - 40), (190, 470), (150, 400), (130, 330), (150, 270), (150, 220)], 9.5, seed=29)
     trail |= worlds.thick([(150, 220), (150, 170), (120, 140)], 8, seed=30)
     # on up through the gap to the Snow Saddle, and west across the terrace to Fir Hollow
-    trail |= worlds.thick([(150, 170), (184, 120), (184, 60), (184, -10)], 8, seed=31)
-    trail |= worlds.thick([(150, 190), (80, 176), (-10, 168)], 8, seed=32)
+    # the switchback up past the cabin's east end to the saddle (Codex: it "reveals the
+    # cabin roof"), and west across the meadow to Fir Hollow at its port
+    trail |= gthick('ridge', [(150, -386), (236, -392), (262, -456), (258, -514), (204, -546), (204, -586)], 8)
+    trail |= gthick('ridge', [(132, -240), (60, -228), (-10, -228)], 8)
     on_terrace = {(x, y) for (x, y) in trail if y < rim(x)}
     paint_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)})
     # the bottom is the band the garden screen draws above its clearing
@@ -3310,7 +2916,7 @@ def ridge(frame: int = 0):
         # the garden's treeline continues at the bottom, clear of the trail
         ('pine-b1', 'pine', 4, H - 100), ('pine-b2', 'pine', 50, H - 92), ('pine-b3', 'pine', 96, H - 102),
         ('pine-b4', 'pine', 240, H - 98), ('pine-b5', 'pine', 280, H - 104), ('pine-b6', 'pine', 140, H - 150),
-        ('pine-m1', 'pine', 20, 330), ('pine-m2', 'pine', 270, 440), ('pine-m3', 'pine', 270, 250),
+        ('pine-m1', 'pine', 14, 392), ('pine-m2', 'pine', 270, 440), ('pine-m3', 'pine', 270, 250),
         ('pine-m4', 'pine', 60, 250), ('cairn-1', 'cairn', 100, 360),
         ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
         ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
@@ -3320,10 +2926,9 @@ def ridge(frame: int = 0):
         ('cotton-1', 'cotton_grass', 196, 380), ('cotton-2', 'cotton_grass', 270, 398), ('cotton-3', 'cotton_grass', 210, 418),
     ]
     face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
-    peaks_block = set(peak_pts)
     stands = {'garden': (206, H - 8), 'tarn': (186, 424), 'cabin': (200, 176), 'campfire': (146, 204),
-              'saddle': (184, 6), 'hollow': (4, 168)}
-    return cv, objects, stands, (face - steps) | peaks_block | tarn
+              'saddle': (204, 6), 'hollow': (4, 348)}
+    return cv, objects, stands, (face - steps) | shoulder | tarn
 
 
 def halt(frame: int = 0):
@@ -3469,6 +3074,21 @@ def woodland(frame: int = 0):
             cv.set(x, y, WTRm[4] if (x + y + frame) % 3 == 0 else WTRm[3] if x < fx + 1 else WTRm[2])
     for k in range(10):  # foam where it lands
         cv.set(fx - 5 + k, int(centre(spring_x)) - 1 + (k % 2), WTRm[4])
+    # the spring is the foot of Fir Hollow's fall: the meltwater from Snowmelt Lake comes
+    # down off the escarpment above (frost_zones.FALLS_X) as a brook under the trees and
+    # over the mossy rock (Codex: the lake's water reaches the valley's river)
+    brook = worlds.thick([(FALLS_X, -4), (62, 60), (54, 140), (64, 214), (fx + 1, int(centre(spring_x)) - 26)], 3)
+    for (x, y) in brook:
+        if (x, y) in rock:
+            continue
+        c = WTRm[2] if (x + y // 2) % 4 else WTRm[3]
+        if (x - 1, y) not in brook:
+            c = WTRm[0]
+        cv.set(x, y, c)
+    for (x, y) in brook:
+        if (x + 1, y) not in brook and noise2(x, y, 428) > 0.4:
+            cv.set(x + 1, y, STONE[2])
+    water = water | {p for p in brook if p not in rock}
     # the path from the garden's west side into the trees and the clearing
     # (the garden's orchard walk runs on across the border at the same height and width)
     path = worlds.thick([(W + 12, meadow.ORCHARD_WALK_Y), (250, meadow.ORCHARD_WALK_Y)], 8.5) | worlds.thick([(254, meadow.ORCHARD_WALK_Y), (190, 420), (150, 380), (130, 330)], 9, seed=25)
@@ -3700,6 +3320,7 @@ DRESS = {
     'woodland': ('forest', None, 0.26), 'ridge': ('alpine', ALPINE[2:4], 0.32),
     'hollow': ('alpine', ALPINE[2:4], 0.3), 'snowmelt': ('snow', MATERIALS['snow'][1:4], 0.2),
     'saddle': ('snow', MATERIALS['snow'][1:4], 0.22), 'summit': ('snow', MATERIALS['snow'][1:4], 0.16),
+    # (the isles' entries are added by isle_zones.py)
     'junction': ('soot', SOOT[2:4], 0.3), 'canal': ('soot', SOOT[2:4], 0.3),
     'gulch': ('desert', MATERIALS['desert'][2:5], 0.22), 'oasis': ('desert', MATERIALS['desert'][2:5], 0.16),
     'caldera': ('ash', MATERIALS['ash'][1:3], 0.3), 'springs': ('ash', MATERIALS['ash'][1:3], 0.3),
@@ -3765,6 +3386,24 @@ def build(name: str, fn, start: str):
         foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
         assert not foreign, f'{name} borrows props from another region: {foreign}'
     objects = [(i, k, x + sprite_map[k].ox, y + sprite_map[k].oy) for (i, k, x, y) in objects]
+    # the borders this zone shares are closed except at their ports (frames.py): drawn
+    # over ground that was open, before the ground is dressed
+    import frames
+    import world_lint
+    pre = walk_grid([o for o in objects if o[1] not in OVERHEAD], sprite_map)
+    pre_cells = {(x // CELL, y // CELL) for (x, y) in blocked_ground}
+    pre = [''.join('#' if (c, r) in pre_cells else ch for c, ch in enumerate(row)) for r, row in enumerate(pre)]
+    wet = WATER_MASKS.get(fn.__name__) or set()
+
+    def is_water(x, y):
+        if fn.__name__ in WATER_MASKS:  # (night palettes: the zone declares its water)
+            return (x, y) in wet
+        px = cv.get(x, y)[:3]
+        return world_lint._bluish(*px) or world_lint._lava(*px)
+
+    blocked_ground = set(blocked_ground) | frames.apply(cv, name, LAYOUT, pre, is_water)
+    allowed = (region_keys(name) | SHARED_PROPS) if name in REGION_PROPS else None
+    objects = objects + frames.place(name, LAYOUT, sprite_map, allowed, objects, stands, pre, is_water)
     dress(cv, name, objects, sprite_map, blocked_ground)
     shade = set()
     for (_id, key, x, y) in objects:
@@ -3868,6 +3507,8 @@ LAYOUT = {
     # country are one walk, the Scorched Pass east of Dust Gulch climbing to Hearthold
     'west': {'gulch': (0, 0), 'oasis': (-1, 0), 'scorch': (1, 0), 'hearthold': (1, -1),
              'caldera': (1, -2), 'springs': (2, -2)},
+    # the Tidebloom Isles, by ferry from Driftwood's jetty (Matt, 18 Oct 19:07)
+    'isles': {'rainforest': (0, 0), 'headwaters': (1, 0), 'landing': (0, 1), 'cove': (1, 1)},
     'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)}, 'home': {'home': (0, 0)},
 }
 
@@ -3932,6 +3573,48 @@ def beyond() -> Canvas:
                 X, Y = bx + xx, by + yy
                 if c[3] and 0 <= X < cv.w and 0 <= Y < cv.h:
                     cv.set(X, Y, c)
+    return cv
+
+
+WTR_ = MATERIALS['water']
+
+
+def beyond_regolith() -> Canvas:
+    """What lies round Lumen below its horizon: the moon's grey plain running on, soft
+    dust in two tones, small craters lit on their far rims, a few stones."""
+    S = BEYOND_SPILL
+    R = MATERIALS['regolith']
+    cv = Canvas(W + 2 * S, H + 2 * S)
+    for y in range(S, H + S):
+        for x in range(S, W + S):
+            n = smooth_noise(x, y, 26, 871)
+            cv.set(x, y, R[3] if n > 0.55 else R[2] if n > 0.3 or (x + y) % 2 else R[1])
+    for i in range(16):
+        cx, cy = S + int(noise2(i, 0, 872) * W), S + int(noise2(i, 1, 872) * H)
+        r = 4 + noise2(i, 2, 872) * 10
+        for (x, y) in oval(cx, cy, r, r * 0.6):
+            if S <= x < W + S and S <= y < H + S:
+                d = (x - cx) + (y - cy) * 1.6
+                cv.set(x, y, R[1] if d < 0 else R[4] if d > r * 0.9 else R[2])
+    return cv
+
+
+def beyond_sea() -> Canvas:
+    """What lies round the Tidebloom Isles: open sea, deep blue with long swells and
+    the odd whitecap. It fills its own cell only: the islands' coasts meet it with
+    their own surf."""
+    S = BEYOND_SPILL
+    cv = Canvas(W + 2 * S, H + 2 * S)
+    for y in range(S, H + S):
+        for x in range(S, W + S):
+            n = smooth_noise(x, y, 40, 861)
+            c = WTR_[0] if n > 0.55 else WTR_[1]
+            swell = (y + int(math.sin(x / 23) * 4 + smooth_noise(x, y, 60, 862) * 8)) % 19
+            if swell == 0:
+                c = WTR_[2]
+            elif swell == 1 and noise2(x // 5, y // 19, 863) > 0.8:
+                c = '#F4F8F8'  # a whitecap
+            cv.set(x, y, c)
     return cv
 
 
@@ -4069,6 +3752,8 @@ def export(built: dict):
     beyond_ash().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-ash.png'), worlds.SCALE)
     beyond_dunes().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-dunes.png'), worlds.SCALE)
     beyond_peaks().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-peaks.png'), worlds.SCALE)
+    beyond_sea().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-sea.png'), worlds.SCALE)
+    beyond_regolith().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-regolith.png'), worlds.SCALE)
     used = {}
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
@@ -4130,6 +3815,9 @@ def export(built: dict):
         f'export const zonePlacement: Record<string, \'floating\' | \'wet\' | \'supported\' | \'overhead\'> = {json.dumps(placement)};',
         '/** Each region\'s zones on a grid of zone-sized steps; the garden is the valley\'s (0, 0). */',
         f'export const regionLayout = {json.dumps({r: {z: list(p) for z, p in zs.items()} for r, zs in LAYOUT.items()})} as const;',
+        '/** Where neighbouring zones meet (scripts/art/frames.py, Codex\'s connected-world contract): for each',
+        ' *  shared edge, "west|east" or "north|south", the open span along it in art px; null = closed throughout. */',
+        f'export const zonePorts: Record<string, {{ span: readonly [number, number] | null; frame: string }}> = {json.dumps(__import__("frames").export())};',
         '',
     ]
     assets = [
@@ -4151,17 +3839,22 @@ def export(built: dict):
         "import beyondAshImage from '@/assets/zones/beyond-ash.png';",
         "import beyondDunesImage from '@/assets/zones/beyond-dunes.png';",
         "import beyondPeaksImage from '@/assets/zones/beyond-peaks.png';",
+        "import beyondSeaImage from '@/assets/zones/beyond-sea.png';",
+        "import beyondRegolithImage from '@/assets/zones/beyond-regolith.png';",
         '/** Old forest, drawn where a region\'s grid has no zone (the valley\'s corners). */',
         'export const zoneBeyond: ImageSourcePropType = beyondImage;',
         '/** What lies past a region other than the valley, in its gaps and round its edges when',
         ' * the screen sees past them: the volcano\'s flank, the open desert. */',
         'export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = {',
         '  west: beyondDunesImage,',
+        '  isles: beyondSeaImage,',
         '};',
         '/** The volcano\'s flank: what lies round the fire country\'s end of Sunstone Reach. */',
         'export const zoneBeyondAsh: ImageSourcePropType = beyondAshImage;',
         '/** The high peaks: what lies round the Frostline Highlands. */',
         'export const zoneBeyondPeaks: ImageSourcePropType = beyondPeaksImage;',
+        '/** The moon\'s plain: what lies round Lumen below its horizon. */',
+        'export const zoneBeyondRegolith: ImageSourcePropType = beyondRegolithImage;',
         f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
@@ -4178,6 +3871,11 @@ def export(built: dict):
                    cwd=worlds.ROOT, check=False, capture_output=True)
 
 
+# the districts drawn in their own files (frost_zones.py, isle_zones.py)
+from frost_zones import *  # noqa: E402,F401,F403
+from isle_zones import *  # noqa: E402,F401,F403
+
+
 def main():
     built = {}
     built['town'] = build('town', town, 'garden')
@@ -4189,6 +3887,10 @@ def main():
     built['snowmelt'] = build('snowmelt', snowmelt, 'hollow')
     built['saddle'] = build('saddle', saddle, 'ridge')
     built['summit'] = build('summit', summit, 'saddle')
+    built['landing'] = build('landing', isle_landing, 'pier')
+    built['rainforest'] = build('rainforest', isle_rainforest, 'landing')
+    built['headwaters'] = build('headwaters', isle_headwaters, 'rainforest')
+    built['cove'] = build('cove', isle_cove, 'headwaters')
     built['halt'] = build('halt', halt, 'town')
     built['junction'] = build('junction', junction, 'platform')
     built['canal'] = build('canal', canal, 'junction')
@@ -4208,6 +3910,8 @@ def main():
     built['lumen'] = build('lumen', lumen, 'shuttle')
     built['home'] = build('home', home, 'door')
     check_overhangs(built)
+    import frames  # places meet only at their ports (Codex's connected-world contract)
+    frames.check(built, LAYOUT)
     import world_lint  # the world's logic lint (world-rules.md, section 7): report only, for now
     world_lint.run(built, LAYOUT, None, OVERHEAD, {z: b['preview'] for z, b in built.items() if b['preview'] is not None})
     import map_tiles  # the world map's tiles, drawn from the same reading of each zone

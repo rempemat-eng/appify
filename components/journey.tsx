@@ -56,7 +56,7 @@ function Strip({
   );
 }
 
-export type JourneyVehicle = 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle';
+export type JourneyVehicle = 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle' | 'ferry';
 
 /**
  * The trip between regions (world-atlas.md, "Seamless travel": between regions the
@@ -142,7 +142,12 @@ export function Journey({
     vehicle ?? (to === 'space' ? 'capsule' : to === 'moon' ? 'shuttle' : 'train');
   const flying = ride === 'capsule' || ride === 'shuttle';
   const flyer = ride === 'shuttle' ? journeyVehicles.shuttle : journeyVehicles.capsule;
-  const rider = ride === 'maglev' ? journeyVehicles.maglev : journeyVehicles.carts;
+  const rider =
+    ride === 'maglev'
+      ? journeyVehicles.maglev
+      : ride === 'ferry'
+        ? journeyVehicles.ferry
+        : journeyVehicles.carts;
   const engine = journeyVehicles.engine;
   const coach = journeyVehicles.carriage;
   // the companion rides along: on the coach roof, or sat in the first coal tub
@@ -150,6 +155,8 @@ export function Journey({
   const k = u * scale;
   const petPx = 32 * k;
   const railY = top + JOURNEY.rail * k;
+  // the ferry sits in the swell, its waterline a little below the sea's surface line
+  const riderTop = railY - (rider.h + (ride === 'maglev' ? 3 : ride === 'ferry' ? -6 : -2)) * k;
   return (
     <View
       // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
@@ -269,6 +276,21 @@ export function Journey({
                 <GuardianPet player={player} size={petPx} facing="left" bob={false} decorative />
               </View>
             )}
+            {ride === 'ferry' && player && (
+              // on the ferry's foredeck, in front of the cabin
+              <View
+                style={{
+                  position: 'absolute',
+                  left: width * 0.5 - (rider.w * k) / 2 + 8 * k,
+                  top: riderTop + 22 * k - petPx + 3 * k,
+                  width: petPx,
+                  height: petPx,
+                  zIndex: 1,
+                }}
+              >
+                <GuardianPet player={player} size={petPx} facing="left" bob={false} decorative />
+              </View>
+            )}
             {/* the maglev floats a little above the line; the mine carts sit on it */}
             <Image
               source={rider.source}
@@ -276,7 +298,7 @@ export function Journey({
               style={{
                 position: 'absolute',
                 left: width * 0.5 - (rider.w * k) / 2,
-                top: railY - (rider.h + (ride === 'maglev' ? 3 : -2)) * k,
+                top: riderTop,
                 width: rider.w * k,
                 height: rider.h * k,
               }}

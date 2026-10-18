@@ -181,6 +181,17 @@ RESIDENTS = {
                  'carry': ('plant', '#557A45')},
     'stargazer': {'zone': 'lumen', 'skin': 'e', 'top': '#3E3A6A', 'trim': '#9AD2FF', 'legs': '#2A2838',
                   'hat': ('helmet', '#C8C2DA'), 'carry': ('lantern', '#9AD2FF')},
+    # the Frostline Highlands and the Tidebloom Isles (18 Oct)
+    'warden': {'zone': 'saddle', 'skin': 'b', 'top': '#B83A32', 'legs': '#3E3A50', 'hat': ('cap', '#E8DCC8'),
+               'carry': ('lantern', '#FFC766')},
+    'skater': {'zone': 'snowmelt', 'skin': 'a', 'top': '#3E6AA8', 'trim': '#F7F2E8', 'legs': '#2A2838',
+               'hat': ('hood', '#F7F2E8')},
+    'ferryman': {'zone': 'landing', 'skin': 'c', 'top': '#F2EEE6', 'trim': '#3E6AA8', 'legs': '#3E5468',
+                 'hat': ('cap', '#3E6AA8')},
+    'naturalist': {'zone': 'rainforest', 'skin': 'd', 'top': '#7A8A4A', 'legs': '#5E4A3A', 'hat': ('wide', '#C8B48A'),
+                   'carry': ('plant', '#4A8A44')},
+    'beachcomber': {'zone': 'cove', 'skin': 'e', 'top': '#E8A0BC', 'skirt': '#F2EEE6', 'hair': 'dark',
+                    'carry': ('basket', '#C89C6A')},
 }
 
 

@@ -14,6 +14,10 @@ const MAP_H = 72;
 const FOG = '#D9CBA4';
 const FOG_EDGE = '#B8A57C';
 const FOREST = '#3E5A3E';
+const PEAKS = '#C9D3DE';
+const ASH = '#4A424F';
+const DUNES = '#D8B583';
+const SEA = '#3E6A9A';
 
 export type MapRegion = { id: RegionId; name: string };
 
@@ -161,6 +165,20 @@ export function WorldMap({
                 backgroundColor: shown === 'valley' ? FOREST : '#2A2420',
               }}
             >
+              {gapCells(shown).map((g) => (
+                // what lies past the places on the map: forest, peaks, dunes, ash or sea
+                <View
+                  key={`gap-${g.col}-${g.row}`}
+                  style={{
+                    position: 'absolute',
+                    left: (g.col - b.minCol) * MAP_W * k,
+                    top: (g.row - b.minRow) * MAP_H * k,
+                    width: MAP_W * k,
+                    height: MAP_H * k,
+                    backgroundColor: g.colour,
+                  }}
+                />
+              ))}
               {tiles.map((t) => {
                 const o = tileOrigin(shown, t);
                 const left = (o.x / 8) * k;
@@ -268,6 +286,31 @@ export function WorldMap({
       </PixelFrame>
     </View>
   );
+}
+
+/** The cells of a region's grid with no place in them, and what lies there. */
+function gapCells(region: RegionId) {
+  const b = regionBounds(region);
+  const tiles = regionTiles(region);
+  const out: { col: number; row: number; colour: string }[] = [];
+  for (let col = b.minCol; col < b.minCol + b.tileCols; col++)
+    for (let row = b.minRow; row < b.minRow + b.tileRows; row++) {
+      if (tiles.some((t) => t.col === col && t.row === row)) continue;
+      const colour =
+        region === 'valley'
+          ? row <= -2
+            ? PEAKS
+            : FOREST
+          : region === 'west'
+            ? col >= 1 || (col >= 0 && row <= -1)
+              ? ASH
+              : DUNES
+            : region === 'isles'
+              ? SEA
+              : '#2A2420';
+      out.push({ col, row, colour });
+    }
+  return out;
 }
 
 function Legend({ colour, edge, label }: { colour: string; edge?: string; label: string }) {

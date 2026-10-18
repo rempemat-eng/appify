@@ -25,7 +25,7 @@ W, H, CELL = 320, 576, 4
 COLS, ROWS = W // CELL, H // CELL
 
 # Regions whose findings fail the build; the rest are reported until they are fixed.
-STRICT = ('valley', 'steam', 'west', 'neon', 'space', 'moon', 'home')
+STRICT = ('valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon', 'home')
 
 # Findings that are right as drawn, each with its reason (world-rules.md, section 6,
 # the override registry; check 18: an override that no longer exempts anything is
@@ -36,7 +36,7 @@ OVERRIDES = {
 }
 
 # Placement types (rules, section 2); anything not listed is a ground prop.
-FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
+FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'island_ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
 WET = {'reeds', 'heron', 'net_rack', 'upturned_boat', 'driftwood', 'papyrus', 'water_crane', 'canal_crane'}
 SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge', 'maglev'}
 _rgb = lambda c: tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))  # noqa: E731
@@ -162,14 +162,18 @@ def _runs(a, b, want):
     return out
 
 
-def _strip_tone(ground, terrain, side):
-    """Mean colour of the 6 px nearest the edge, over plain ground cells only."""
+def _strip_tone(ground, terrain, side, keep=None):
+    """Mean colour of the 6 px nearest the edge, over plain ground cells only (and only
+    where the walk crosses the border, `keep`: a closed stretch is a hedge or a wall on
+    one side and need not match)."""
     px = ground.load()
     tot, n = [0, 0, 0], 0
     if side in ('north', 'south'):
         ys = range(0, 6) if side == 'north' else range(H - 6, H)
         for x in range(W):
             if terrain[0 if side == 'north' else ROWS - 1][x // CELL] != '.':
+                continue
+            if keep is not None and x // CELL not in keep:
                 continue
             for y in ys:
                 r, g, b, _ = px[x, y]
@@ -179,9 +183,16 @@ def _strip_tone(ground, terrain, side):
         for y in range(H):
             if terrain[y // CELL][0 if side == 'west' else COLS - 1] != '.':
                 continue
+            if keep is not None and y // CELL not in keep:
+                continue
             for x in xs:
                 r, g, b, _ = px[x, y]
                 tot[0] += r; tot[1] += g; tot[2] += b; n += 1
+    if os.environ.get('LINT_DEBUG'):
+        idx = [i for i in range(COLS if side in ('north', 'south') else ROWS)
+               if (terrain[0 if side == 'north' else ROWS - 1][i] if side in ('north', 'south')
+                   else terrain[i][0 if side == 'west' else COLS - 1]) == '.']
+        print('   strip', side, n, [i * CELL for i in idx][:40], [round(t / max(n, 1)) for t in tot])
     return [t / n for t in tot] if n > 200 else None
 
 
@@ -203,7 +214,17 @@ def check_borders(region, layout, zones):
                 for (i0, i1) in _runs(ea, eb, want):
                     span = (i0 * CELL, i1 * CELL)
                     out.append((a, kind, f'{a}|{b}', (sa, span), f'{what} stops at the {sa} border with {b} ({span[0]}-{span[1]} px)'))
-            ta, tb = _strip_tone(zones[a]['ground'], zones[a]['terrain'], sa), _strip_tone(zones[b]['ground'], zones[b]['terrain'], sb)
+            keep = None
+            if zones[a].get('walk') or zones[b].get('walk'):
+                def opened(z, side):
+                    g = z.get('walk') or [''.join('.' if ch in '.=' else '#' for ch in r) for r in z['terrain']]
+                    if side == 'north':
+                        return [ch == '.' for ch in g[0]]
+                    if side == 'south':
+                        return [ch == '.' for ch in g[-1]]
+                    return [r[0 if side == 'west' else -1] == '.' for r in g]
+                keep = {i for i, (p, q) in enumerate(zip(opened(zones[a], sa), opened(zones[b], sb))) if p and q}
+            ta, tb = _strip_tone(zones[a]['ground'], zones[a]['terrain'], sa, keep), _strip_tone(zones[b]['ground'], zones[b]['terrain'], sb, keep)
             if ta and tb:
                 d = sum(abs(x - y) for x, y in zip(ta, tb)) / 3
                 if os.environ.get('LINT_DEBUG'):
@@ -271,7 +292,7 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
     for name, z in built.items():
         ground = z['ground_img']
         terrain = classify(ground, z['blocked'], z.get('water'))
-        zones[name] = {'ground': ground, 'terrain': terrain}
+        zones[name] = {'ground': ground, 'terrain': terrain, 'walk': z['walk']}
         z['terrain'] = terrain
         violations += check_props(name, terrain, z['objects'], z['sprites'], overhead)
         violations += check_paths(name, terrain, z['stands'], z['objects'], z['sprites'], None)

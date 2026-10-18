@@ -45,6 +45,16 @@ import residentBotanist0 from '@/assets/residents/botanist-0.png';
 import residentBotanist1 from '@/assets/residents/botanist-1.png';
 import residentStargazer0 from '@/assets/residents/stargazer-0.png';
 import residentStargazer1 from '@/assets/residents/stargazer-1.png';
+import residentWarden0 from '@/assets/residents/warden-0.png';
+import residentWarden1 from '@/assets/residents/warden-1.png';
+import residentSkater0 from '@/assets/residents/skater-0.png';
+import residentSkater1 from '@/assets/residents/skater-1.png';
+import residentFerryman0 from '@/assets/residents/ferryman-0.png';
+import residentFerryman1 from '@/assets/residents/ferryman-1.png';
+import residentNaturalist0 from '@/assets/residents/naturalist-0.png';
+import residentNaturalist1 from '@/assets/residents/naturalist-1.png';
+import residentBeachcomber0 from '@/assets/residents/beachcomber-0.png';
+import residentBeachcomber1 from '@/assets/residents/beachcomber-1.png';
 
 /** Two walking frames for each resident. */
 export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
@@ -70,4 +80,9 @@ export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
   angler: [residentAngler0, residentAngler1],
   botanist: [residentBotanist0, residentBotanist1],
   stargazer: [residentStargazer0, residentStargazer1],
+  warden: [residentWarden0, residentWarden1],
+  skater: [residentSkater0, residentSkater1],
+  ferryman: [residentFerryman0, residentFerryman1],
+  naturalist: [residentNaturalist0, residentNaturalist1],
+  beachcomber: [residentBeachcomber0, residentBeachcomber1],
 };

@@ -1,5 +1,5 @@
 import { GARDEN, gardenWalk } from '@/lib/garden-map';
-import { ZONE, regionLayout, zoneIds, zoneMaps, type ZoneId } from '@/lib/zone-maps';
+import { ZONE, regionLayout, zoneIds, zoneMaps, zonePorts, type ZoneId } from '@/lib/zone-maps';
 
 /**
  * One walk grid for a whole region (world-atlas.md, "Seamless travel"): each zone's
@@ -23,8 +23,19 @@ const GARDEN_OPENINGS = [
   { x0: 198, x1: 214, y0: 0, y1: 48 },
 ];
 
+// The garden meets its neighbours only at their ports (Codex's connected-world
+// contract, scripts/art/frames.py): along its west and east edges the meadow is closed
+// two cells deep except where the woodland lane and the riverside bank come through.
+const GARDEN_EDGE = 2;
+function gardenSpan(side: 'west' | 'east'): readonly [number, number] | null {
+  const key = side === 'west' ? 'woodland|garden' : 'garden|riverside';
+  return zonePorts[key]?.span ?? null;
+}
+
 function tileWalk(id: TileId): readonly string[] {
   if (id !== 'garden') return zoneMaps[id].walk;
+  const west = gardenSpan('west');
+  const east = gardenSpan('east');
   return gardenWalk.map((row, r) =>
     row
       .split('')
@@ -32,7 +43,11 @@ function tileWalk(id: TileId): readonly string[] {
         const x = c * TILE.cell + TILE.cell / 2;
         const y = r * TILE.cell + TILE.cell / 2;
         const open = GARDEN_OPENINGS.some((o) => x >= o.x0 && x < o.x1 && y >= o.y0 && y < o.y1);
-        return open ? '.' : ch;
+        if (open) return '.';
+        const inSpan = (s: readonly [number, number] | null) => s !== null && y >= s[0] && y < s[1];
+        if (c < GARDEN_EDGE && !inSpan(west)) return '#';
+        if (c >= COLS - GARDEN_EDGE && !inSpan(east)) return '#';
+        return ch;
       })
       .join(''),
   );

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { acknowledgeMapSeen, buildWorldMap, mapVisitedZones, restoreMapSeen } from './world-map';
 import { regionTiles, tileOrigin, type RegionId } from './region-walk';
-import { regionLayout } from './zone-maps';
+import { regionLayout, zonePorts } from './zone-maps';
 import {
   doors,
   regionPasses,
@@ -10,6 +10,8 @@ import {
   travelLinks,
   travelPoints,
   travelRoute,
+  travelVehicle,
+  type StopId,
 } from './world-places';
 import { restoreWorld, type WorldSpot } from './world-save';
 import { LAYOUT_VERSION } from './world-layouts';
@@ -73,6 +75,50 @@ equal(
   [{ from: doors.hut.zone, to: doors.inside.zone, kind: 'door' }],
   'hut uses its authored door',
 );
+
+// Touching tiles are not necessarily connected: the Hollow/Woodland escarpment
+// is closed, and a missing future port declaration must never invent a path.
+const connects = (link: { from: string; to: string }, a: string, b: string) =>
+  (link.from === a && link.to === b) || (link.from === b && link.to === a);
+const borders = map.links.filter((link) => link.kind === 'border');
+for (const [key, { span }] of Object.entries(zonePorts)) {
+  const [a, b] = key.split('|');
+  equal(
+    borders.filter((link) => connects(link, a, b)).length,
+    span !== null && span[1] > span[0] ? 1 : 0,
+    `${key}: atlas respects the declared open or closed border, in either tile order`,
+  );
+}
+equal(
+  borders.length,
+  Object.values(zonePorts).filter(({ span }) => span !== null && span[1] > span[0]).length,
+  'no extra walking borders are inferred from tile adjacency',
+);
+const portKey = 'halt|town';
+const originalPort = zonePorts[portKey];
+try {
+  const cases: [string, readonly [number, number] | null | undefined][] = [
+    ['closed', null],
+    ['empty', [120, 120]],
+    ['reversed', [184, 120]],
+    ['missing', undefined],
+  ];
+  for (const [label, span] of cases) {
+    if (span === undefined) delete zonePorts[portKey];
+    else zonePorts[portKey] = { ...originalPort, span };
+    const nextMap = buildWorldMap({ world: park, mapSeen: [] });
+    ok(
+      !nextMap.links.some((link) => link.kind === 'border' && connects(link, 'halt', 'town')),
+      `${label} port cannot create a walking connection`,
+    );
+    ok(
+      borders.some((link) => connects(link, 'halt', 'town')),
+      `${label} port fixture cannot mutate the previously captured map`,
+    );
+  }
+} finally {
+  zonePorts[portKey] = originalPort;
+}
 
 equal(
   map.links.filter((l) => l.kind === 'pass'),
@@ -197,12 +243,69 @@ equal(
   'Sunstone walking border participates in suggestions',
 );
 
-// All transport regions reach one another along the existing lines; the interior
-// reaches the atlas through the door, not a fabricated train or fast-travel rule.
+// Vehicle routes describe a service, not the whole world's walking graph. The
+// harbour ferry is deliberately separate from the rail/space network: the player
+// walks between Valley Halt and the pier, rather than a train changing into a boat.
+const services: StopId[][] = [
+  ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'],
+  ['pier', 'isles'],
+];
+equal(
+  services.flat().sort(),
+  [...stopIds].sort(),
+  'every current stop belongs to an explicitly reviewed service network',
+);
 for (const from of stopIds)
-  for (const to of stopIds)
-    if (from !== to)
-      ok(travelRoute(from, to).at(-1) === to, `${from} reaches ${to} on existing lines`);
+  for (const to of stopIds) {
+    if (from === to) continue;
+    const route = travelRoute(from, to);
+    const sameService = services.some((stops) => stops.includes(from) && stops.includes(to));
+    if (!sameService) {
+      equal(route, [], `${from} to ${to}: no invented connection between vehicle services`);
+      continue;
+    }
+    equal(route.at(-1), to, `${from} reaches ${to} on its existing service network`);
+    let previous = from;
+    for (const leg of route) {
+      ok(
+        travelLinks.some(
+          ([a, b]) => (a === previous && b === leg) || (b === previous && a === leg),
+        ),
+        `${previous} to ${leg}: each routed leg uses an authored service edge`,
+      );
+      previous = leg;
+    }
+  }
+equal(travelRoute('pier', 'isles'), ['isles'], 'ferry departs from the actual harbour pier');
+equal(travelRoute('isles', 'pier'), ['pier'], 'ferry returns to that same pier');
+equal(travelVehicle('pier', 'isles'), 'ferry', 'outbound island service is a ferry');
+equal(travelVehicle('isles', 'pier'), 'ferry', 'return island service remains a ferry');
+equal(
+  map.links.find((l) => l.kind === 'line' && l.fromStop === 'pier' && l.toStop === 'isles'),
+  { from: 'harbour', to: 'landing', kind: 'line', fromStop: 'pier', toStop: 'isles' },
+  'ferry joins the two real terminal zones without borrowing a train station',
+);
+equal(
+  map.nodes
+    .filter((n) => n.kind === 'station' && (n.stop === 'pier' || n.stop === 'isles'))
+    .map((n) => [n.stop, n.region, n.zone]),
+  [
+    ['pier', 'valley', 'harbour'],
+    ['isles', 'isles', 'landing'],
+  ],
+  'both ferry terminal markers keep their distinct stop and region identity',
+);
+const interchange = new Set<string>([travelPoints.valley.zone]);
+for (let i = 0; i < zones.length; i++)
+  for (const link of map.links.filter((l) => l.kind === 'border' || l.kind === 'pass')) {
+    if (interchange.has(link.from)) interchange.add(link.to);
+    if (interchange.has(link.to)) interchange.add(link.from);
+  }
+ok(
+  interchange.has(travelPoints.pier.zone),
+  'Valley Halt and the harbour pier connect through walking borders, with no vehicle leg',
+);
+ok(!interchange.has(travelPoints.isles.zone), 'walking alone cannot cross the sea to the isles');
 const reachable = new Set<string>(['garden']);
 for (let i = 0; i < zones.length; i++)
   for (const link of map.links) {

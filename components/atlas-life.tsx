@@ -36,6 +36,7 @@ type Kind =
   | 'lizard'
   | 'fish'
   | 'leaf'
+  | 'flake'
   | 'twinkle';
 type Emitter = { kind: Kind; x: number; y: number; seed: number };
 
@@ -52,6 +53,7 @@ const PERIOD = {
   fish: 12000,
   leaf: 7200,
   twinkle: 4500,
+  flake: 9000,
 } as const;
 
 // Where a prop gives off something, relative to its top-left in zone pixels.
@@ -96,6 +98,15 @@ function rainOver(drops: number): Emitter[] {
   }));
 }
 
+function snowfall(flakes: number, seed: number): Emitter[] {
+  return Array.from({ length: flakes }, (_, i) => ({
+    kind: 'flake' as const,
+    x: (i * 97 + seed) % 300,
+    y: (i * 131 + seed * 3) % 480,
+    seed: seed + i,
+  }));
+}
+
 // stars twinkling over Lumen's horizon (the sky above y = 60, clear of the planet)
 const LUMEN_STARS: Emitter[] = Array.from({ length: 14 }, (_, i) => ({
   kind: 'twinkle' as const,
@@ -129,6 +140,24 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
   scorch: [
     { kind: 'ember', x: 72, y: 240, seed: 17 },
     { kind: 'ember', x: 116, y: 500, seed: 18 },
+  ],
+  // the Frostline: a few flakes always drifting on the high ground
+  saddle: snowfall(12, 70),
+  summit: snowfall(12, 80),
+  snowmelt: snowfall(9, 90),
+  // the waterfall's spray rising off the pool
+  headwaters: [
+    { kind: 'puff', x: 214, y: 158, seed: 23 },
+    { kind: 'puff', x: 226, y: 164, seed: 24 },
+  ],
+  // the Tidebloom Isles: gulls over the cove, fish in the lagoon by the pier
+  cove: [
+    { kind: 'gull', x: 230, y: 470, seed: 19 },
+    { kind: 'gull', x: 120, y: 520, seed: 20 },
+  ],
+  landing: [
+    { kind: 'fish', x: 60, y: 500, seed: 21 },
+    { kind: 'fish', x: 220, y: 540, seed: 22 },
   ],
   // gulls over the Headland's sea (the castle moved to the Ember Lands, 18 Oct)
   headland: [
@@ -258,6 +287,11 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
       dx = j * 10;
       dy = t > 0.8 ? -Math.sin(j * 3.14) * 9 : 0;
       scale = j > 0.85 ? 2 : 1;
+    } else if (e.kind === 'flake') {
+      // a snowflake drifting down, swaying, faded in and out
+      dx = Math.sin(t * 12.6 + phase * 6) * 5 + t * 8;
+      dy = t * 60;
+      opacity = t < 0.15 ? t / 0.15 : t > 0.8 ? (1 - t) / 0.2 : 1;
     } else if (e.kind === 'leaf') {
       dx = Math.sin(t * 12.6) * 8 + t * 10;
       dy = t * 70;
@@ -301,6 +335,7 @@ function Particle({ e, clock, u }: { e: Emitter; clock: SharedValue<number>; u: 
   if (e.kind === 'firefly') return <Animated.View style={[box(1, 1, '#E8FF8A'), style]} />;
   if (e.kind === 'twinkle') return <Animated.View style={[box(1, 1, '#FFFFFF'), style]} />;
   if (e.kind === 'leaf') return <Animated.View style={[box(2, 1, '#E07A28'), style]} />;
+  if (e.kind === 'flake') return <Animated.View style={[box(1, 1, '#FFFFFF'), style]} />;
   if (e.kind === 'fish')
     return (
       <Animated.View style={[{ position: 'absolute', left: 0, top: 0 }, style]}>

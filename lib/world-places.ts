@@ -36,7 +36,16 @@ export const missionPlaces: Record<MissionPlaceId, PlaceDef> = {
  * has its own name; one region may hold more than one (Dust Gulch's platform and the
  * caldera's cart bay once the desert and the fire country are one walk).
  */
-export type StopId = 'valley' | 'steam' | 'west' | 'lava' | 'neon' | 'space' | 'moon';
+export type StopId =
+  | 'valley'
+  | 'steam'
+  | 'west'
+  | 'lava'
+  | 'neon'
+  | 'space'
+  | 'moon'
+  | 'pier'
+  | 'isles';
 export const stopIds: readonly StopId[] = [
   'valley',
   'steam',
@@ -45,6 +54,8 @@ export const stopIds: readonly StopId[] = [
   'neon',
   'space',
   'moon',
+  'pier',
+  'isles',
 ];
 
 /** Where each stop is (its region, zone and stand). */
@@ -56,6 +67,9 @@ export const travelPoints: Record<StopId, PlaceDef> = {
   neon: { region: 'neon', zone: 'skyport', at: stand('skyport', 'platform') },
   space: { region: 'space', zone: 'station', at: stand('station', 'lift') },
   moon: { region: 'moon', zone: 'lumen', at: stand('lumen', 'shuttle') },
+  // the ferry: Driftwood's jetty and the pier at Lagoon Landing
+  pier: { region: 'valley', zone: 'harbour', at: stand('harbour', 'jetty') },
+  isles: { region: 'isles', zone: 'landing', at: stand('landing', 'pier') },
 };
 
 /** Sparring rings out in the regions: each opens the same ring screen as the town's,
@@ -80,6 +94,7 @@ export const travelLinks: readonly (readonly [StopId, StopId])[] = [
   ['steam', 'neon'],
   ['neon', 'space'],
   ['space', 'moon'],
+  ['pier', 'isles'],
 ];
 
 /** What runs on each line: the steam train in the valley and out west, the maglev to the
@@ -88,8 +103,9 @@ export const travelLinks: readonly (readonly [StopId, StopId])[] = [
 export function travelVehicle(
   a: StopId,
   b: StopId,
-): 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle' {
+): 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle' | 'ferry' {
   const pair = new Set([a, b]);
+  if (pair.has('isles')) return 'ferry';
   if (pair.has('lava')) return 'carts';
   if (pair.has('moon')) return 'shuttle';
   if (pair.has('space')) return 'capsule';
@@ -128,6 +144,8 @@ export const travelBy: Record<StopId, string> = {
   neon: 'THE MAGLEV',
   space: 'THE SPACE ELEVATOR',
   moon: 'THE SHUTTLE',
+  pier: 'THE DRIFTWOOD FERRY',
+  isles: 'THE LAGOON FERRY',
 };
 
 /** The stops in a region. */
