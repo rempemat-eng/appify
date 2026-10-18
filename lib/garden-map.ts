@@ -607,7 +607,7 @@ export const gardenHotspots = {
   arena: {
     x: 160,
     y: 522,
-    label: 'head out the gate to the arena',
+    label: 'head out of the gate into the valley',
   },
   meadow: {
     x: 186,

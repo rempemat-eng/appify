@@ -177,21 +177,50 @@ function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
   }));
 }
 
+/** A name tag in the world: a place you can pick or walk to. */
+export type WorldMarker = { id: string; x: number; y: number; label: string; selected?: boolean };
+
 /**
  * A walk across a whole region with no cuts between zones (world-atlas.md, "Seamless
- * travel"; living-world plan W1, first prototype). Tap anywhere to walk there: the
- * camera follows across zone borders, only the zones round the companion are
- * mounted, and a zone's name shows as you cross into it. Presentation only: it saves
- * nothing, grants nothing and costs nothing; the saved position comes with C19.
+ * travel"; living-world plan W1). The camera follows across zone borders, only the
+ * zones round the companion are mounted, and a zone's name shows as you cross into it.
+ * Interactive, a tap walks there; otherwise the parent moves the companion with
+ * `target` (the missions map). Walking only reports where the companion is
+ * (`onZone`, `onSettle`): it grants nothing and costs nothing.
  */
 export function AtlasWalk({
   region = 'valley',
   width,
   height,
+  start,
+  target,
+  interactive = true,
+  markers,
+  onMarker,
+  onZone,
+  onSettle,
+  maxWalkMs,
+  showName = true,
+  focusY = 0.55,
 }: {
   region?: RegionId;
   width: number;
   height: number;
+  /** where the companion stands first, in region pixels */
+  start?: Point;
+  /** walk here when `key` changes */
+  target?: { point: Point; key: number };
+  interactive?: boolean;
+  markers?: WorldMarker[];
+  onMarker?: (id: string) => void;
+  onZone?: (zone: TileId) => void;
+  /** where a walk ended (or stopped) */
+  onSettle?: (at: Point) => void;
+  /** squeeze a long walk into this many milliseconds (the missions map) */
+  maxWalkMs?: number;
+  showName?: boolean;
+  /** where the companion sits down the window (0 top, 1 bottom) */
+  focusY?: number;
 }) {
   const reduced = useReducedMotion();
   const active = useAppActive();
@@ -204,12 +233,15 @@ export function AtlasWalk({
   const snap = (v: number) => snapToDevice(v, dpr);
   const bounds = regionBounds(region);
   const tiles = useMemo(() => regionTiles(region), [region]);
+  // the start is read once (a moved start never teleports a walk under way)
+  const [initial] = useState(start);
   const grid = useMemo(() => {
     const garden = tiles.find((t) => t.id === 'garden');
     const g0 = garden ? tileOrigin(region, garden) : { x: 0, y: 0 };
     const startTile = garden ?? tiles[0];
-    const first =
-      startTile.id === 'garden'
+    const first = initial
+      ? initial
+      : startTile.id === 'garden'
         ? { x: g0.x + gardenAnchors.start.x, y: g0.y + gardenAnchors.start.y }
         : (() => {
             const o = tileOrigin(region, startTile);
@@ -224,7 +256,7 @@ export function AtlasWalk({
         start: first,
       }),
     };
-  }, [region, tiles, bounds.width]);
+  }, [region, tiles, bounds.width, initial]);
 
   const px = useSharedValue(grid.start.x);
   const py = useSharedValue(grid.start.y);
@@ -260,29 +292,50 @@ export function AtlasWalk({
     return () => clearInterval(t);
   }, [walking, region, px, py]);
 
+  // The parent's callbacks, read through a ref so a new closure never restarts a walk.
+  const calls = useRef({ onZone, onSettle });
+  useEffect(() => {
+    calls.current = { onZone, onSettle };
+  });
+  useEffect(() => {
+    calls.current.onZone?.(here);
+  }, [here]);
+
   // Leaving the screen stops the walk where it is: no stale arrival later.
   useEffect(() => {
     if (active) return;
     cancelAnimation(px);
     cancelAnimation(py);
     pos.current = { x: px.get(), y: py.get() };
+    calls.current.onSettle?.(pos.current);
   }, [active, px, py]);
 
-  const walkTo = (target: Point) => {
+  const walkTo = (goal: Point) => {
     cancelAnimation(px);
     cancelAnimation(py);
     const from0 = { x: px.get(), y: py.get() };
     pos.current = from0;
-    const path = grid.walk.findPath(from0, target);
+    const path = grid.walk.findPath(from0, goal);
     if (!path.length) return;
     const end = path[path.length - 1];
     setFacing(end.x < from0.x ? 'left' : 'right');
     setWalking(true);
+    let length = 0;
+    let prev = from0;
+    for (const p of path) {
+      length += Math.hypot(p.x - prev.x, p.y - prev.y);
+      prev = p;
+    }
+    // a long walk on the missions map is squeezed into a moment
+    const squeeze = maxWalkMs ? Math.min(1, maxWalkMs / Math.max(1, (length / SPEED) * 1000)) : 1;
     let from = from0;
     const xs = [];
     const ys = [];
     for (const p of path) {
-      const duration = Math.max(60, (Math.hypot(p.x - from.x, p.y - from.y) / SPEED) * 1000);
+      const duration = Math.max(
+        squeeze < 1 ? 8 : 60,
+        (Math.hypot(p.x - from.x, p.y - from.y) / SPEED) * 1000 * squeeze,
+      );
       xs.push(withTiming(p.x, { duration, easing: Easing.linear }));
       ys.push(withTiming(p.y, { duration, easing: Easing.linear }));
       from = p;
@@ -292,6 +345,7 @@ export function AtlasWalk({
       setWalking(false);
       const tile = tileAt(region, end.x, end.y);
       if (tile) setHere(tile.id);
+      calls.current.onSettle?.(end);
     };
     px.set(withSequence(...xs));
     py.set(
@@ -304,12 +358,27 @@ export function AtlasWalk({
     );
   };
 
+  // The parent moves the companion by giving a new target key.
+  const walkRef = useRef(walkTo);
+  useEffect(() => {
+    walkRef.current = walkTo;
+  });
+  const targetKey = target?.key;
+  const targetPoint = useRef(target?.point);
+  useEffect(() => {
+    targetPoint.current = target?.point;
+  });
+  useEffect(() => {
+    if (targetKey === undefined || !targetPoint.current) return;
+    walkRef.current(targetPoint.current);
+  }, [targetKey]);
+
   const regionW = bounds.width * u;
   const regionH = bounds.height * u;
   const petPx = 32 * u;
   const cameraStyle = useAnimatedStyle(() => {
     const cx = Math.max(0, Math.min(regionW - width, px.value * u - width / 2));
-    const cy = Math.max(0, Math.min(regionH - height, py.value * u - height * 0.55));
+    const cy = Math.max(0, Math.min(regionH - height, py.value * u - height * focusY));
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
   const petStyle = useAnimatedStyle(() => ({
@@ -333,7 +402,7 @@ export function AtlasWalk({
     const locationX = ne.locationX ?? ne.offsetX ?? 0;
     const locationY = ne.locationY ?? ne.offsetY ?? 0;
     const cx = Math.max(0, Math.min(regionW - width, px.get() * u - width / 2));
-    const cy = Math.max(0, Math.min(regionH - height, py.get() * u - height * 0.55));
+    const cy = Math.max(0, Math.min(regionH - height, py.get() * u - height * focusY));
     walkTo({ x: (locationX + cx) / u, y: (locationY + cy) / u });
   };
 
@@ -526,13 +595,56 @@ export function AtlasWalk({
         </Animated.View>
       </View>
       {/* one transparent layer takes the taps, so their position is the window's */}
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`Walk around ${zoneNames[here].toLowerCase()}. Tap where to go.`}
-        onPress={onPress}
-        style={{ position: 'absolute', left: 0, top: 0, width, height }}
-      />
-      {named && (
+      {interactive && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={`Walk around ${zoneNames[here].toLowerCase()}. Tap where to go.`}
+          onPress={onPress}
+          style={{ position: 'absolute', left: 0, top: 0, width, height }}
+        />
+      )}
+      {markers && markers.length > 0 && (
+        <Animated.View
+          pointerEvents="box-none"
+          style={[
+            { position: 'absolute', left: 0, top: 0, width: regionW, height: regionH },
+            cameraStyle,
+          ]}
+        >
+          {markers.map((m) => (
+            <Pressable
+              key={m.id}
+              disabled={!onMarker}
+              accessibilityRole="button"
+              accessibilityLabel={m.label}
+              accessibilityState={{ selected: !!m.selected }}
+              onPress={() => onMarker?.(m.id)}
+              style={{
+                position: 'absolute',
+                left: m.x * u - 70,
+                top: m.y * u - 56 * u,
+                width: 140,
+                minHeight: 44,
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <PixelFrame
+                tone={m.selected ? 'gold' : 'paper'}
+                style={{ paddingVertical: 2 * u, paddingHorizontal: 4 * u, alignItems: 'center' }}
+              >
+                <BodyText
+                  numberOfLines={1}
+                  style={{ fontSize: 11, lineHeight: 13, fontFamily: 'PixelifySans_700Bold' }}
+                >
+                  {m.label}
+                </BodyText>
+              </PixelFrame>
+            </Pressable>
+          ))}
+        </Animated.View>
+      )}
+      {showName && named && (
         <View
           pointerEvents="none"
           style={{ position: 'absolute', top: 12, left: 0, right: 0, alignItems: 'center' }}

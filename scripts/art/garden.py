@@ -306,7 +306,7 @@ HOTSPOTS = {
     'shop': {'x': 262, 'y': 120, 'label': "visit Moss's hat stall"},
     'missions': {'x': 196, 'y': 198, 'label': 'read the signpost to missions'},
     'feed': {'x': 110, 'y': 148, 'label': 'fill the food bowl'},
-    'arena': {'x': meadow.PATH_X, 'y': meadow.FENCE_Y - 6, 'label': 'head out the gate to the arena'},
+    'arena': {'x': meadow.PATH_X, 'y': meadow.FENCE_Y - 6, 'label': 'head out of the gate into the valley'},
     'meadow': {'x': 186, 'y': 380, 'label': 'see what is growing in the meadow'},
     'pond': {'x': 124, 'y': 214, 'label': 'look into the pond'},
     'read': {'x': 172, 'y': 88, 'label': 'settle into the reading nook'},

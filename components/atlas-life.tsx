@@ -333,22 +333,34 @@ function Resident({
     const walking = (t > 0.1 && t < 0.45) || (t > 0.6 && t < 0.95);
     return { opacity: walking && Math.floor(clock.value / STEP_MS) % 2 === 1 ? 1 : 0 };
   });
+  // a one-pixel bob on the passing step, so they walk rather than glide
+  const bob = useAnimatedStyle(() => {
+    const t = (((clock.value / RESIDENT_PERIOD + phase) % 1) + 1) % 1;
+    const walking = (t > 0.1 && t < 0.45) || (t > 0.6 && t < 0.95);
+    return {
+      transform: [
+        { translateY: walking && Math.floor(clock.value / STEP_MS) % 2 === 1 ? -Math.round(u) : 0 },
+      ],
+    };
+  });
   const box = { position: 'absolute' as const, left: 0, top: 0 };
   return (
     <Animated.View
       style={[{ position: 'absolute', left: 0, top: 0, width: w * u, height: h * u }, place]}
     >
-      <Image
-        source={frames[0]}
-        resizeMode="stretch"
-        style={{ ...box, width: w * u, height: h * u }}
-      />
-      <Animated.View style={[{ ...box, width: w * u, height: h * u }, step]}>
+      <Animated.View style={[{ ...box, width: w * u, height: h * u }, bob]}>
         <Image
-          source={frames[1]}
+          source={frames[0]}
           resizeMode="stretch"
           style={{ ...box, width: w * u, height: h * u }}
         />
+        <Animated.View style={[{ ...box, width: w * u, height: h * u }, step]}>
+          <Image
+            source={frames[1]}
+            resizeMode="stretch"
+            style={{ ...box, width: w * u, height: h * u }}
+          />
+        </Animated.View>
       </Animated.View>
     </Animated.View>
   );

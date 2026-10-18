@@ -122,6 +122,13 @@ function fixture() {
     },
     '@/lib/motion': { useReducedMotion: () => false },
     '@/lib/mission-map': missionMap,
+    '@/lib/world-places': {
+      missionPlaces: Object.fromEntries(
+        ['book', 'park', 'mountain', 'shop', 'arena', 'garden'].map((id) => [id, { id }]),
+      ),
+      regionPoint: () => ({ x: 480, y: 900 }),
+    },
+    '@/components/atlas-walk': { AtlasWalk: 'AtlasWalk' },
     '@/components/guardian-pet': { GuardianPet: 'GuardianPet' },
     'react-native-safe-area-context': { useSafeAreaInsets: () => ({ top: 0, bottom: 0 }) },
     'react-native-svg': { __esModule: true, default: 'Svg', Polyline: 'Polyline' },
@@ -234,94 +241,10 @@ check(routes.control.pushed.join() === '/arena,/shop', 'the stall opens the shop
 check(routes.control.calls.length === 0, 'route places never start a mission');
 
 const places = missionMap.missionMapPlaces;
-const rects = Object.entries(places).map(([id, p]) => [id, p.tap]);
-for (const [id, tap] of rects) {
-  check(tap.w >= 44 && tap.h >= 44, `${id} tap area is 44 px even at one CSS px per art pixel`);
-  check(
-    tap.x >= 0 &&
-      tap.y >= 0 &&
-      tap.x + tap.w <= missionMap.missionMap.width &&
-      tap.y + tap.h <= missionMap.missionMap.height,
-    `${id} tap area lies on the map`,
-  );
-  const s = places[id].stand;
-  check(
-    s.x >= 16 && s.x <= missionMap.missionMap.width - 16 && s.y <= missionMap.missionMap.height - 2,
-    `${id} keeps the companion on the map`,
-  );
-}
-for (const [i, [a, ta]] of rects.entries())
-  for (const [b, tb] of rects.slice(i + 1))
-    check(
-      ta.x + ta.w <= tb.x || tb.x + tb.w <= ta.x || ta.y + ta.h <= tb.y || tb.y + tb.h <= ta.y,
-      `${a} and ${b} tap areas do not overlap`,
-    );
 for (const mission of missions) check(mission.id in places, `${mission.id} has a place on the map`);
-
-// Map logic (Matt, 17 Oct: "make sure the logic is right"): every place is reachable on
-// foot from the gate, the stone face is only climbed by its steps, and snow lies only up
-// on the mountain terrace, never in the meadow.
-const terrain = missionMap.missionMapTerrain;
-const cellOf = (p) => [Math.floor(p.y / terrain.cell), Math.floor(p.x / terrain.cell)];
-const walk = (blocked) => {
-  const start = cellOf(places.garden.stand);
-  const seen = new Set([start.join()]);
-  const queue = [start];
-  while (queue.length) {
-    const [r, c] = queue.shift();
-    for (const [dr, dc] of [
-      [1, 0],
-      [-1, 0],
-      [0, 1],
-      [0, -1],
-    ]) {
-      const next = [r + dr, c + dc];
-      const t = terrain.rows[next[0]]?.[next[1]];
-      if (t && !blocked.includes(t) && !seen.has(next.join())) {
-        seen.add(next.join());
-        queue.push(next);
-      }
-    }
-  }
-  return seen;
-};
-const onFoot = walk(['f', 'p']);
-for (const [id, place] of Object.entries(places))
-  check(onFoot.has(cellOf(place.stand).join()), `${id} is reachable on foot from the gate`);
-const belowFace = walk(['f', 'p', 's']);
-check(
-  [...belowFace].every((key) => {
-    const [r, c] = key.split(',').map(Number);
-    return !'an'.includes(terrain.rows[r][c]);
-  }),
-  'the mountain terrace is reached only by its steps',
-);
-check(
-  !belowFace.has(cellOf(places.mountain.stand).join()),
-  'the cabin stands up on the terrace, not in the meadow',
-);
-check(
-  terrain.rows.every((row, r) =>
-    [...row].every((t, c) => t !== 'n' || !belowFace.has(`${r},${c}`)),
-  ),
-  'snow lies only above the stone face',
-);
-
-// Map pixel size per phone: [shared unit, dpr, map window width, tallest window, expected unit].
-for (const [shared, dpr, view, tall, unit] of [
-  [4 / 3, 3, 370 - 32 / 3, 380, 4 / 3],
-  [3 / 2, 2, 375 - 32 - 12, 260, 1],
-  [1, 1, 320 - 32 - 8, 260, 1],
-  [2, 1, 640 - 32 - 16, 380, 1],
-]) {
-  const u = f.components.mapUnitFor(shared, dpr, view, tall);
-  check(Math.abs(u - unit) < 1e-9, `map unit ${unit} for a ${view}px window at ${dpr}x`);
-  check(Number.isInteger(Math.round(u * dpr * 1e6) / 1e6), 'map pixels are whole device pixels');
-  check(
-    missionMap.missionMap.width * u <= view * 1.2 && missionMap.missionMap.height * u <= tall * 1.2,
-    'most of the map stays in its window',
-  );
-}
+// The map is now the valley itself (components/atlas-walk.tsx): where each place
+// stands in the world, and that it is open, reachable ground, is checked in
+// lib/world-save.test.ts.
 
 for (const compact of [false, true]) {
   const map = f.components.MissionDestinationMap({
@@ -330,17 +253,24 @@ for (const compact of [false, true]) {
     compact,
     onSelect() {},
   });
-  const choices = nodes(map).filter((n) => n.type === 'Pressable');
+  const choices = nodes(map).filter((n) => n.type === 'PixelButton');
   check(choices.length === Object.keys(places).length, 'one choice for each place on the map');
-  for (const choice of choices)
-    check(
-      choice.props.style.width >= 44 && choice.props.style.height >= 44,
-      'destination target meets 44px minimum',
-    );
-  const tags = nodes(map).filter(
-    (n) => n.type === 'BodyText' && /LV 2/.test([].concat(n.props.children).join('')),
-  );
-  check(tags.length === 1, 'the locked mountain carries its level on its name tag');
+  const tags = choices.filter((n) => /LV 2/.test(n.props.label));
+  check(tags.length === 1, 'the locked mountain carries its level on its button');
+  let picked = null;
+  const pick = f.components.MissionDestinationMap({
+    selected: 'park',
+    level: 1,
+    compact,
+    onSelect(id) {
+      picked = id;
+    },
+  });
+  nodes(pick)
+    .filter((n) => n.type === 'PixelButton')
+    .find((n) => /BOOK|LIBRARY/i.test(n.props.label) || n.props.label)
+    .props.onPress();
+  check(picked !== null, 'a place button picks its place');
   check(!nodes(map).some((n) => n.type === 'WorldScene'), 'map does not mount animated worlds');
 }
 check(
