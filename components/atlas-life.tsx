@@ -64,6 +64,8 @@ const SOURCES: Record<string, { kind: Kind; dx: number; dy: number }[]> = {
     { kind: 'ember', dx: 30, dy: 44 },
   ],
   ember_shrine: [{ kind: 'ember', dx: 15, dy: 8 }],
+  // the crack still glowing near a burnt snag's foot
+  charred_snag: [{ kind: 'ember', dx: 14, dy: 27 }],
   moon_shrub: [
     { kind: 'spore', dx: 10, dy: 6 },
     { kind: 'spore', dx: 22, dy: 4 },
