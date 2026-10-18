@@ -14,6 +14,8 @@ import propAutomaton from '@/assets/zones/props/automaton.png';
 import propAwning from '@/assets/zones/props/awning.png';
 import propBandstand from '@/assets/zones/props/bandstand.png';
 import propBannerPole from '@/assets/zones/props/banner_pole.png';
+import propBannerPoleF1 from '@/assets/zones/props/banner_pole_f1.png';
+import propBannerPoleF2 from '@/assets/zones/props/banner_pole_f2.png';
 import propBarn from '@/assets/zones/props/barn.png';
 import propBarrel from '@/assets/zones/props/barrel.png';
 import propBasaltColumns from '@/assets/zones/props/basalt_columns.png';
@@ -302,6 +304,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   awning: propAwning,
   bandstand: propBandstand,
   banner_pole: propBannerPole,
+  banner_pole_f1: propBannerPoleF1,
+  banner_pole_f2: propBannerPoleF2,
   barn: propBarn,
   barrel: propBarrel,
   basalt_columns: propBasaltColumns,

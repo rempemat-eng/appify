@@ -37,6 +37,10 @@ export const zoneFrames: Record<
   string,
   readonly (readonly [string, number, number, number, number])[]
 > = {
+  banner_pole: [
+    ['banner_pole_f1', 0, 0, 15, 47],
+    ['banner_pole_f2', 0, 0, 15, 47],
+  ],
   water_mill: [
     ['water_mill_f1', 0, 0, 115, 88],
     ['water_mill_f2', 0, 0, 115, 88],

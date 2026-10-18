@@ -353,8 +353,9 @@ def stone_bench() -> Canvas:
     return cv
 
 
-def banner_pole() -> Canvas:
-    """A tall pole flying the castle's violet and gold pennant, 18 x 48."""
+def banner_pole(wave: int = 0) -> Canvas:
+    """A tall pole flying the castle's violet and gold pennant, 18 x 48; `wave` (0 to 2)
+    ripples the cloth for the frames it flutters through."""
     w, h = 18, 48
     cv = Canvas(w, h, pad=PAD)
     for y in range(3, h - 1):
@@ -368,7 +369,8 @@ def banner_pole() -> Canvas:
             c = NAP[3] if y < 10 else NAP[2]
             if y in (8, 9):
                 c = GOLD[3]
-            cv.set(x, y, c)
+            ripple = round(math.sin((x - 6) / 2.2 + wave * 2.1) * (x - 6) / 8) if wave else 0
+            cv.set(x, y + ripple, c)
     return cv
 
 
@@ -378,6 +380,7 @@ def props() -> dict[str, Canvas]:
         'bell_tower': bell_tower(), 'herb_bed': herb_bed(), 'training_dummy': training_dummy(),
         'castle_well': castle_well(), 'archery_butt': archery_butt(), 'weapon_rack': weapon_rack(),
         'stone_bench': stone_bench(), 'banner_pole': banner_pole(),
+        'banner_pole_f1': banner_pole(1), 'banner_pole_f2': banner_pole(2),
     }
 
 
