@@ -1782,15 +1782,27 @@ def castle(frame: int = 0):
                     c = STONEm[4]
                 if k > 22:
                     c = STONEm[1]
-            else:
+            else:  # the sea, as in the harbour: shallower and lighter near the cliff foot
                 n = smooth_noise(x, y, 10, 323 + frame)
-                c = WTRm[1] if n > 0.4 else WTRm[0]
+                depth = k - 26 + int(n * 18)
+                c = WTRm[2] if depth < 30 or (depth < 38 and (x + y) % 2) else WTRm[1]
+                if depth > 90 or (depth > 82 and (x + y) % 2):
+                    c = WTRm[0]
+                if n > 0.74:
+                    c = WTRm[min(4, WTRm.index(c) + 1)]
                 if k < 30:
-                    c = WTRm[4] if (x + frame) % 3 else WTRm[3]
+                    c = WTRm[4] if (x + frame) % 3 else WTRm[3]  # foam at the foot
+                elif k < 34 and (x + y) % 2:
+                    c = WTRm[3]
                 sea.add((x, y))
             cv.set(x, y, c)
             if k < 26:
                 sea.add((x, y)) if k > 2 else None
+    for ty in range(300, H, 6):  # wave glints on the open water
+        for tx in range(0, W, 11):
+            x, y = tx + int(noise2(tx, ty, 324) * 6), ty + int(noise2(tx, ty, 325) * 3)
+            if (x, y) in sea and (x + 3, y) in sea and y - edge_y(min(W - 1, max(0, x))) > 36 and noise2(tx, ty, 326) < 0.45:
+                cv.hline(x, y, 3, WTRm[3])
     # the harbour's breakwater runs on to its root against the headland's foot
     root = worlds.thick([(-8, 410), (22, 404)], 12)
     for (x, y) in root:
