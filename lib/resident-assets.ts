@@ -43,6 +43,8 @@ import residentAngler0 from '@/assets/residents/angler-0.png';
 import residentAngler1 from '@/assets/residents/angler-1.png';
 import residentBotanist0 from '@/assets/residents/botanist-0.png';
 import residentBotanist1 from '@/assets/residents/botanist-1.png';
+import residentStargazer0 from '@/assets/residents/stargazer-0.png';
+import residentStargazer1 from '@/assets/residents/stargazer-1.png';
 
 /** Two walking frames for each resident. */
 export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
@@ -67,4 +69,5 @@ export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
   picnicker: [residentPicnicker0, residentPicnicker1],
   angler: [residentAngler0, residentAngler1],
   botanist: [residentBotanist0, residentBotanist1],
+  stargazer: [residentStargazer0, residentStargazer1],
 };
