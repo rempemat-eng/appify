@@ -354,6 +354,82 @@ def station_house() -> Canvas:
     return cv
 
 
+def lookout_tower() -> Canvas:
+    """The Headland's lookout (Matt's reference, 18 Oct: a stone tower with a timber
+    top above the sea), 60 x 120: a square shaft of coursed stone with moss in its lower
+    joints and a slit window, a jettied timber watch room on carved brackets with a
+    window on the sea, a steep slate roof seen from above with a lantern finial, an oak
+    door up two stone steps, and a lean-to log store against its lit side."""
+    w, h = 60, 120
+    cv = Canvas(w, h, pad=PAD)
+    cx = (w - 1) / 2
+    # the roof: steep slate planes falling from a short ridge, a lantern on top
+    ridge, apex_y, eave_y = cx, 14, 34
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 3, w - 4, SLATE, seed=131, moss=LEAF, lit_base=2, shade_base=1)
+    slope = (eave_y - apex_y) / (ridge - 3)
+    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * slope, 6, w - 7, apex_y, 35, WOOD)
+    for (x, y) in disc(cx, 4, 3.2):  # the lantern finial, its glass catching the light
+        cv.set(x, y, GOLD[3] if (x - cx) + (y - 4) < 0 else GOLD[2])
+    cv.vline(int(cx), 7, 4, WOOD[1])
+    # the timber watch room, jettied out over the shaft
+    room_top, room_bottom = 35, 64
+    gp.planks(cv, 4, room_top, w - 8, room_bottom - room_top, WOOD, step=5, vertical=True, base=2)
+    for y in (room_top, room_bottom - 1):  # rails top and bottom
+        cv.hline(4, y, w - 8, WOOD[4] if y == room_top else WOOD[0])
+    for x in (4, w - 5):  # corner posts
+        cv.vline(x, room_top, room_bottom - room_top, WOOD[3] if x == 4 else WOOD[1])
+    gp.window(cv, int(cx) - 8, room_top + 7, 16, 13, shutters=None, sill=True)
+    detail.overhang_shadow(cv, 5, w - 5, room_top, lambda x: 2, k=2, cap=1)
+    # carved brackets under the jetty
+    for bx in (10, w - 13):
+        for k in range(5):
+            cv.hline(bx + k // 2, room_bottom + k, 3 - k // 2, WOOD[1] if k else WOOD[3])
+    # the stone shaft, its courses lit on the left, moss low down
+    shaft_x0, shaft_x1, shaft_top, shaft_bottom = 12, w - 12, room_bottom, h - 8
+    detail.stones(cv, shaft_x0, shaft_top, shaft_x1 - shaft_x0, shaft_bottom - shaft_top, STONE,
+                  seed=37, course=6, moss=None)
+    for y in range(shaft_top, shaft_bottom):  # the shaft's lit and shaded faces
+        cv.set(shaft_x0, y, STONE[4]); cv.set(shaft_x1 - 1, y, STONE[0])
+        if (y // 6) % 2 and y > shaft_bottom - 20:
+            cv.set(shaft_x0 + 1 + (y % 5), y, LEAF[2])  # moss in the low joints
+    detail.overhang_shadow(cv, shaft_x0, shaft_x1, shaft_top, lambda x: 3, k=2, cap=1)
+    for y in range(shaft_top + 12, shaft_top + 22):  # a slit window
+        cv.set(int(cx), y, '#2A2D36'); cv.set(int(cx) - 1, y, STONE[1])
+    # the door: oak boards under a round head, up two steps
+    dw, dh = 14, 20
+    dx0, dy0 = int(cx) - dw // 2, shaft_bottom - dh
+    for y in range(dy0, shaft_bottom):
+        for x in range(dx0, dx0 + dw):
+            top = y - dy0
+            if top < 4 and abs(x + 0.5 - (dx0 + dw / 2)) > (dw / 2) * math.sqrt(max(0, 1 - ((4 - top) / 4) ** 2)):
+                continue
+            cv.set(x, y, WOOD[2] if (x - dx0) % 4 else WOOD[1])
+    cv.set(dx0 + dw - 4, dy0 + 11, GOLD[3])  # the ring handle
+    for k, (sx0, sw) in enumerate(((dx0 - 3, dw + 6), (dx0 - 6, dw + 12))):  # the steps
+        y0 = shaft_bottom + k * 4
+        for y in range(y0, y0 + 4):
+            for x in range(sx0, sx0 + sw):
+                cv.set(x, y, STONE[4] if y == y0 else STONE[2] if y < y0 + 3 else STONE[0])
+    # a log store against the lit side of the shaft: cut ends stacked under a little
+    # slanted roof, each end a pale ring in dark bark
+    for k in range(5):  # the roof
+        cv.hline(0, shaft_bottom - 22 + k, shaft_x0 + 1, WOOD[1] if k == 4 else WOOD[3] if k else WOOD[4])
+    for y in range(shaft_bottom - 17, shaft_bottom):
+        for x in range(1, shaft_x0):
+            cv.set(x, y, WOOD[0])
+    for row, n in enumerate((2, 3, 3)):
+        for j in range(n):
+            ox = 1 + j * 4 - (2 if n == 2 else 0) + (2 if n == 2 else 0)
+            oy = shaft_bottom - 5 - row * 4 - (0)
+            if n == 2:
+                ox = 3 + j * 4
+            for (x, y) in disc(ox + 1.5, oy + 1.5, 1.9):
+                if 1 <= x < shaft_x0:
+                    cv.set(x, y, WOOD[1])
+            cv.set(ox + 1, oy + 1, WOOD[4]); cv.set(ox + 2, oy + 1, WOOD[3]); cv.set(ox + 1, oy + 2, WOOD[3])
+    return cv
+
+
 def semaphore() -> Canvas:
     """A railway semaphore signal, 26 x 60: a lattice post, a red arm with a white band
     raised to clear, a lamp, a little ladder."""
@@ -713,6 +789,7 @@ def props() -> dict[str, Canvas]:
         'semaphore': semaphore(), 'standing_stone': standing_stone(0, True), 'standing_stone_b': standing_stone(3, True),
         'standing_stone_low': standing_stone(6, False), 'stump': stump(), 'woodpile': woodpile(), 'sled': sled(),
         'snowman': snowman(), 'drystone_wall': drystone_wall(64), 'marmot_rock': marmot_rock(), 'cotton_grass': cotton_grass(),
+        'lookout_tower': lookout_tower(),
     }
 
 

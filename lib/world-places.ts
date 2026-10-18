@@ -161,6 +161,45 @@ export function exitWalk(exit: ExitId, gx: number, gy: number): { start: Point; 
   return { start: at(sx, gy), goal };
 }
 
+/**
+ * Where one region's edge walks on into another's (Matt, 18 Oct: from the desert on foot
+ * into the fire country): Dust Gulch's track east leaves its east edge at the pass and
+ * comes in at the Scorched Pass's west edge. Crossing is a walk, not a journey: the
+ * scene fades and the companion walks on (app/world.tsx).
+ */
+export const regionPasses = [
+  {
+    a: { region: 'west', zone: 'gulch', at: stand('gulch', 'pass'), side: 'east' },
+    b: { region: 'lava', zone: 'scorch', at: stand('scorch', 'gulch'), side: 'west' },
+  },
+] as const satisfies readonly {
+  a: PlaceDef & { side: 'east' | 'west' };
+  b: PlaceDef & { side: 'east' | 'west' };
+}[];
+
+/** The pass a point stands at the end of, if any: where it leads and which way to walk on. */
+export function passAt(
+  region: RegionId,
+  at: Point,
+): { region: RegionId; at: Point; goal: Point } | null {
+  for (const { a, b } of regionPasses) {
+    for (const [here, there] of [
+      [a, b],
+      [b, a],
+    ] as const) {
+      if (here.region !== region) continue;
+      const p = regionPoint(here);
+      // within a few steps of the edge, on the track
+      if (Math.abs(at.x - p.x) <= 10 && Math.abs(at.y - p.y) <= 22) {
+        const q = regionPoint(there);
+        const inward = there.side === 'west' ? 36 : -36;
+        return { region: there.region, at: q, goal: { x: q.x + inward, y: q.y } };
+      }
+    }
+  }
+  return null;
+}
+
 /** A place's position in its region's pixels. */
 export function regionPoint(place: PlaceDef): Point {
   const tile = regionTiles(place.region).find((t) => t.id === place.zone);

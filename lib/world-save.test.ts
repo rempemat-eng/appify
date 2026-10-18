@@ -8,6 +8,8 @@ import {
   exits,
   inGardenYard,
   missionPlaces,
+  passAt,
+  regionPasses,
   regionPoint,
   rings,
   travelPoints,
@@ -150,6 +152,31 @@ ok(
   doors.hut.at[0] === HUT_DOOR.x && doors.hut.at[1] === HUT_DOOR.y,
   'the world and the garden agree where the hut door is',
 );
+// the pass from the desert into the Ember Lands: both ends open and reachable, and
+// each leads to the other, walking on inward
+for (const { a, b } of regionPasses) {
+  for (const [here, there] of [
+    [a, b],
+    [b, a],
+  ] as const) {
+    const at = regionPoint(here);
+    const grid = makeWalkGrid(regionWalk(here.region), {
+      cell: TILE.cell,
+      width: regionBounds(here.region).width,
+      start: at,
+    });
+    const c = grid.toCell(at);
+    ok(grid.walkable(c.cx, c.cy), `the pass in ${here.zone} stands on open ground`);
+    const from =
+      here.region === 'west' ? regionPoint(travelPoints.west!) : regionPoint(travelPoints.lava!);
+    // (from the lava station at the caldera's tunnel it is a long walk: through the
+    // castle and over both its bridges, down the Scorched Pass)
+    ok(grid.findPath(from, at).length > 0, `${here.zone}: the station walks to the pass`);
+    const p = passAt(here.region, at);
+    ok(p && p.region === there.region, `the pass in ${here.zone} leads to ${there.zone}`);
+  }
+}
+ok(passAt('west', regionPoint(travelPoints.west!)) === null, 'the station is no pass');
 console.log(`World save and places: ${checks} checks passed.`);
 
 // every resident has something to say when the companion stops beside them

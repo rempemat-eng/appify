@@ -21,6 +21,7 @@ import {
   exits,
   inGardenYard,
   missionPlaces,
+  passAt,
   regionPoint,
   rings,
   travelBy,
@@ -40,7 +41,7 @@ const regionNames: Record<RegionId, string> = {
   valley: 'THE VALLEY',
   steam: 'COGSWORTH',
   west: 'DUST GULCH',
-  lava: 'THE CALDERA',
+  lava: 'THE EMBER LANDS',
   neon: 'NEON HARBOUR',
   space: 'HALCYON STATION',
   moon: 'LUMEN',
@@ -51,7 +52,7 @@ const shortNames: Record<RegionId, string> = {
   valley: 'the valley',
   steam: 'Cogsworth',
   west: 'Dust Gulch',
-  lava: 'the caldera',
+  lava: 'the Ember Lands',
   neon: 'Neon Harbour',
   space: 'Halcyon',
   moon: 'Lumen',
@@ -235,6 +236,20 @@ export default function World() {
   // steps out into the garden. (Arriving at either, by a door or a journey, waits until
   // the companion has walked away once, or a few steps.)
   const outside = useRef(!homeAt(spawn.region, spawn.at));
+  // Walking to the end of a pass between regions walks on into the next (the desert
+  // into the Ember Lands): the scene fades and the companion carries on. Arriving at a
+  // pass waits until it has walked away once, so it never bounces straight back.
+  const awayFromPass = useRef(!passAt(spawn.region, spawn.at));
+  const throughPass = (at: Point) => {
+    const pass = passAt(spawn.region, at);
+    if (!pass) {
+      awayFromPass.current = true;
+      return;
+    }
+    if (!awayFromPass.current || !navigation.isFocused()) return;
+    enter(pass.region, pass.at);
+    setGoal((g) => ({ point: pass.goal, key: (g?.key ?? 0) + 1 }));
+  };
   const homeward = (at: Point) => {
     const g = homeAt(spawn.region, at);
     if (!g) {
@@ -258,6 +273,7 @@ export default function World() {
     walkWorld(spawn.region, at.x, at.y, true);
     setCard(cardAt(spawn.region, at));
     homeward(at);
+    throughPass(at);
   };
   const arrive = useCallback(() => {
     if (!dest) return;
@@ -308,6 +324,7 @@ export default function World() {
     setGoal(undefined);
     setZone(tileAt(region, at.x, at.y)?.id);
     outside.current = !homeAt(region, at);
+    awayFromPass.current = !passAt(region, at);
     walkWorld(region, at.x, at.y, true);
     setCard(cardAt(region, at));
   };
@@ -521,6 +538,7 @@ export default function World() {
                 // the zones crossed on the way are walked too (the map inks them in)
                 walkWorld(spawn.region, at.x, at.y);
                 homeward(at);
+                throughPass(at);
               }}
               interactive={!mapOpen}
               showName={false}

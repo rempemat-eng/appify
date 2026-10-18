@@ -38,7 +38,13 @@ import {
   type TileId,
 } from '@/lib/region-walk';
 import { zoneFrames, zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
-import { BEYOND_SPILL, zoneBeyond, zoneGrounds, zoneProps } from '@/lib/zone-assets';
+import {
+  BEYOND_SPILL,
+  zoneBeyond,
+  zoneBeyondByRegion,
+  zoneGrounds,
+  zoneProps,
+} from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
@@ -116,6 +122,8 @@ export const zoneNames: Record<TileId, string> = {
   park: 'TOWN PARK',
   harbour: 'DRIFTWOOD HARBOUR',
   castle: 'HEARTHOLD CASTLE',
+  headland: 'THE HEADLAND',
+  scorch: 'THE SCORCHED PASS',
   junction: 'COGSWORTH JUNCTION',
   gulch: 'DUST GULCH',
   caldera: 'EMBER CALDERA',
@@ -130,7 +138,17 @@ const KEY_SPEED = 52; // walking by the keys: a purposeful trot
 const legFacing = (a: Point, b: Point) =>
   Math.abs(b.x - a.x) < 2 ? null : b.x < a.x ? ('left' as const) : ('right' as const);
 // Zones that keep their own light at every hour (no night tint).
-const OWN_LIGHT: TileId[] = ['neon', 'skyport', 'station', 'lumen', 'caldera', 'springs', 'home'];
+const OWN_LIGHT: TileId[] = [
+  'neon',
+  'skyport',
+  'station',
+  'lumen',
+  'caldera',
+  'springs',
+  'castle',
+  'scorch',
+  'home',
+];
 // Where a lamp's light sits on its sprite (x, y from its top-left, in art pixels).
 const LAMPS: Record<string, readonly [number, number]> = {
   lamp: [7, 8],
@@ -207,6 +225,109 @@ function Floating({
   );
 }
 
+// Things that fly (the castle's dragon; Matt, 18 Oct): with motion on, the perched
+// sprite takes off and circles on the shared clock, beating its wings (its frames) and
+// turning to face the way it flies, its shadow sliding over the ground below. With
+// reduced motion, or off screen, it stays perched. Scenery only: it never blocks or
+// grants anything. Orbit centre (dx, dy) from the perch, radii, period (divides the loop).
+const FLYERS: Record<string, { dx: number; dy: number; rx: number; ry: number; period: number }> = {
+  dragon: { dx: -40, dy: 96, rx: 132, ry: 92, period: 18000 },
+};
+const WING_MS = 300; // divides FLOAT_LOOP
+
+function Flyer({
+  d,
+  clock,
+  u,
+  snap,
+}: {
+  d: Drawable;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const f = FLYERS[d.sprite];
+  const frames = zoneFrames[d.sprite] ?? [];
+  const fw = Math.max(...frames.map((fr) => fr[3]), d.w);
+  const fh = Math.max(...frames.map((fr) => fr[4]), d.h);
+  const cx = d.x + d.w / 2 + f.dx;
+  const cy = d.y + d.h / 2 + f.dy;
+  const body = useAnimatedStyle(() => {
+    const a = (clock.value / f.period) * 2 * Math.PI;
+    const x = cx + f.rx * Math.cos(a) - fw / 2;
+    const y = cy + f.ry * Math.sin(a) - fh / 2;
+    const right = -Math.sin(a) > 0;
+    return {
+      transform: [
+        { translateX: Math.round(x) * u },
+        { translateY: Math.round(y) * u },
+        { scaleX: right ? 1 : -1 },
+      ],
+    };
+  });
+  const shadow = useAnimatedStyle(() => {
+    const a = (clock.value / f.period) * 2 * Math.PI;
+    return {
+      transform: [
+        { translateX: Math.round(cx + f.rx * Math.cos(a) - fw * 0.3) * u },
+        { translateY: Math.round(cy + f.ry * Math.sin(a) + 56) * u },
+      ],
+    };
+  });
+  return (
+    <>
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: snap(fw * 0.6 * u),
+            height: snap(6 * u),
+            borderRadius: snap(3 * u),
+            backgroundColor: 'rgba(20,14,18,0.28)',
+            zIndex: 2,
+          },
+          shadow,
+        ]}
+      />
+      <Animated.View
+        pointerEvents="none"
+        style={[
+          {
+            position: 'absolute',
+            left: 0,
+            top: 0,
+            width: snap(fw * u),
+            height: snap(fh * u),
+            zIndex: 100000,
+          },
+          body,
+        ]}
+      >
+        {frames.map(([key, , , w, h], i) => (
+          <TurningFrame
+            key={key}
+            src={zoneProps[key] ?? d.src}
+            index={i}
+            count={frames.length}
+            clock={clock}
+            ms={WING_MS}
+            style={{
+              position: 'absolute',
+              left: snap(((fw - w) / 2) * u),
+              top: snap(((fh - h) / 2) * u),
+              width: snap(w * u),
+              height: snap(h * u),
+            }}
+          />
+        ))}
+      </Animated.View>
+    </>
+  );
+}
+
 // Things that turn (a windmill's sails): the sprite and its frames, one shown at a time.
 const FRAME_MS = 400; // divides FLOAT_LOOP
 
@@ -216,15 +337,17 @@ function TurningFrame({
   count,
   clock,
   style,
+  ms = FRAME_MS,
 }: {
   src: ImageSourcePropType;
   index: number;
   count: number;
   clock: SharedValue<number>;
   style: object;
+  ms?: number;
 }) {
   const shown = useAnimatedStyle(() => ({
-    opacity: Math.floor(clock.value / FRAME_MS) % count === index ? 1 : 0,
+    opacity: Math.floor(clock.value / ms) % count === index ? 1 : 0,
   }));
   return <Animated.Image source={src} resizeMode="stretch" style={[style, shown]} />;
 }
@@ -675,7 +798,7 @@ export function AtlasWalk({
           {gaps.map((g) => (
             <Image
               key={`beyond-${g.col}-${g.row}`}
-              source={zoneBeyond}
+              source={zoneBeyondByRegion[region] ?? zoneBeyond}
               resizeMode="stretch"
               style={{
                 // its crowns spill over the zones beside it (above their ground, under their props)
@@ -734,9 +857,11 @@ export function AtlasWalk({
             );
           })}
           {drawables.map((d) =>
-            FLOATS[d.sprite] && active && !reduced ? (
+            FLYERS[d.sprite] && active && !reduced ? (
+              <Flyer key={d.key} d={d} clock={bob} u={u} snap={snap} />
+            ) : FLOATS[d.sprite] && active && !reduced ? (
               <Floating key={d.key} d={d} clock={bob} u={u} snap={snap} />
-            ) : zoneFrames[d.sprite] && active && !reduced ? (
+            ) : zoneFrames[d.sprite] && active && !reduced && !FLYERS[d.sprite] ? (
               <Turning key={d.key} d={d} clock={bob} u={u} snap={snap} />
             ) : (
               <Image
