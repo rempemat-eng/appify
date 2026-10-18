@@ -1,12 +1,20 @@
 import { regionBounds, tileAt, type RegionId } from '@/lib/region-walk';
 import { regionLayout } from '@/lib/zone-maps';
+import { LAYOUT_VERSION, carryForward } from '@/lib/world-layouts';
 
 /**
  * Where the companion is in the walkable world, and which zones it has seen (living-
  * world plan W1; this takes over Codex's C19). Saved with the game; walking only moves
  * it and grants nothing. Pure, so it can be tested (lib/world-save.test.ts).
  */
-export type WorldSpot = { region: RegionId; x: number; y: number; visited: string[] };
+export type WorldSpot = {
+  region: RegionId;
+  x: number;
+  y: number;
+  visited: string[];
+  /** the shape of the world it was saved in (lib/world-layouts.ts) */
+  layout?: number;
+};
 
 const isRegion = (value: unknown): value is RegionId =>
   typeof value === 'string' && Object.hasOwn(regionLayout, value);
@@ -15,8 +23,6 @@ const isRecord = (value: unknown): value is Record<string, unknown> =>
 
 /** Zone ids retired from the world, and the place that took each one's ground. */
 const LEGACY_ZONES: Record<string, string> = { castle: 'headland' };
-
-/** Shared by position and map acknowledgement migrations; unknown future IDs survive. */
 export const restoreWorldZoneId = (id: string): string =>
   Object.hasOwn(LEGACY_ZONES, id) ? LEGACY_ZONES[id] : id;
 
@@ -24,12 +30,26 @@ export const restoreWorldZoneId = (id: string): string =>
 export function restoreWorld(value: unknown): WorldSpot | null {
   if (!isRecord(value)) return null;
   const v = value;
-  if (!isRegion(v.region)) return null;
-  const { x, y } = v;
-  if (typeof x !== 'number' || typeof y !== 'number' || !Number.isFinite(x) || !Number.isFinite(y))
+  if (typeof v.region !== 'string') return null;
+  if (
+    typeof v.x !== 'number' ||
+    typeof v.y !== 'number' ||
+    !Number.isFinite(v.x) ||
+    !Number.isFinite(v.y)
+  )
     return null;
-  const b = regionBounds(v.region);
-  if (x < 0 || y < 0 || x >= b.width || y >= b.height || !tileAt(v.region, x, y)) return null;
+  // a spot saved in an earlier shape of the world: the same place in its zone, today
+  const version = typeof v.layout === 'number' ? v.layout : 1;
+  const here =
+    version === LAYOUT_VERSION
+      ? isRegion(v.region)
+        ? { region: v.region, x: v.x, y: v.y }
+        : null
+      : carryForward(version, v.region, v.x, v.y);
+  if (!here) return null;
+  const { region, x, y } = here;
+  const b = regionBounds(region);
+  if (x < 0 || y < 0 || x >= b.width || y >= b.height || !tileAt(region, x, y)) return null;
   const known = new Set<string>(Object.values(regionLayout).flatMap((r) => Object.keys(r)));
   // (18 Oct: the valley's castle corner became the Headland and the castle moved to the
   // Ember Lands as 'hearthold'; a saved visit to the old corner is a visit to the
@@ -45,7 +65,7 @@ export function restoreWorld(value: unknown): WorldSpot | null {
         ),
       ]
     : [];
-  return { region: v.region, x, y, visited };
+  return { region, x, y, visited, layout: LAYOUT_VERSION };
 }
 
 /** The spot after a step: the new position, and the zone underfoot added to the visited. */
@@ -57,5 +77,6 @@ export function moveTo(spot: WorldSpot | null, region: RegionId, x: number, y: n
     x: Math.round(x),
     y: Math.round(y),
     visited: zone && !visited.includes(zone) ? [...visited, zone] : visited,
+    layout: LAYOUT_VERSION,
   };
 }

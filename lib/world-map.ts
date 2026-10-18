@@ -1,12 +1,15 @@
 import { regionTiles, tileAt, type RegionId, type TileId } from './region-walk';
 import { regionLayout } from './zone-maps';
+import { LAYOUT_VERSION } from './world-layouts';
 import {
   doors,
   PLACE_RADIUS,
   regionPasses,
   regionPoint,
+  stopsIn,
   travelLinks,
   travelPoints,
+  type StopId,
 } from './world-places';
 import { restoreWorld, restoreWorldZoneId, type WorldSpot } from './world-save';
 
@@ -18,6 +21,8 @@ export type MapNode = {
   kind: 'region' | 'zone' | 'station';
   region: RegionId;
   zone?: TileId;
+  /** A transport stop is not a region: a region may contain several stops. */
+  stop?: StopId;
   /** Zone coordinates in the authored region grid; not screen pixels. */
   col?: number;
   row?: number;
@@ -28,6 +33,9 @@ export type MapLink = {
   from: TileId;
   to: TileId;
   kind: 'border' | 'pass' | 'line' | 'door';
+  /** Service identity, even when both stops occupy the same region or zone. */
+  fromStop?: StopId;
+  toStop?: StopId;
 };
 
 const regions = Object.keys(regionLayout).filter((id): id is RegionId =>
@@ -90,7 +98,8 @@ function atlasLinks(): MapLink[] {
   for (const [a, b] of travelLinks) {
     const from = travelPoints[a],
       to = travelPoints[b];
-    if (from && to) links.push({ from: from.zone, to: to.zone, kind: 'line' });
+    if (from && to)
+      links.push({ from: from.zone, to: to.zone, kind: 'line', fromStop: a, toStop: b });
   }
   links.push({ from: doors.hut.zone, to: doors.inside.zone, kind: 'door' });
   return links;
@@ -109,7 +118,9 @@ export function buildWorldMap(input: {
     input.current === 'garden'
       ? { region: 'valley' as const, ...regionPoint(doors.hut) }
       : (input.current ?? saved ?? { region: 'valley' as const, ...regionPoint(doors.hut) });
-  const location = restoreWorld({ ...current, visited: [] });
+  // Explicit live positions and restored saves are already in today's layout.
+  // Never reinterpret them as unversioned legacy coordinates after a layout move.
+  const location = restoreWorld({ ...current, visited: [], layout: LAYOUT_VERSION });
   const here = location && tileAt(location.region, location.x, location.y)?.id;
   const visited = new Set<string>(mapVisitedZones(saved));
   // The live position is visible, without recording it in exploration history.
@@ -144,17 +155,18 @@ export function buildWorldMap(input: {
         state: state(tile.id),
         isNew: fresh(tile.id),
       });
-    const station = travelPoints[region];
-    if (station) {
+    for (const stop of stopsIn(region)) {
+      const station = travelPoints[stop];
       const at = regionPoint(station);
       const atStation =
         location?.region === region &&
         Math.hypot(location.x - at.x, location.y - at.y) <= PLACE_RADIUS;
       nodes.push({
-        id: `station:${region}`,
+        id: `station:${stop}`,
         kind: 'station',
         region,
         zone: station.zone,
+        stop,
         state: atStation ? 'here' : visited.has(station.zone) ? 'visited' : 'unseen',
         isNew: fresh(station.zone),
       });

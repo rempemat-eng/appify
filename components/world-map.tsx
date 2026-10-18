@@ -5,7 +5,7 @@ import { PixelButton } from '@/components/game-ui';
 import { FrameShape, PixelFrame, frameTones } from '@/components/pixel-frame';
 import { zoneNames } from '@/components/atlas-walk';
 import { regionBounds, regionTiles, tileOrigin, type RegionId } from '@/lib/region-walk';
-import { regionPoint, travelBy, travelLinks, travelPoints } from '@/lib/world-places';
+import { regionPoint, stopsIn, travelBy, travelLinks, travelPoints } from '@/lib/world-places';
 import { zoneMapTiles } from '@/lib/zone-assets';
 
 /** A zone on the map: 40 x 72 map pixels, one for every 8 zone pixels (map_tiles.py). */
@@ -64,11 +64,17 @@ export function WorldMap({
   const mapW = b.tileCols * MAP_W * k;
   const mapH = b.tileRows * MAP_H * k;
   const pin = shown === current && here ? { x: (here.x / 8) * k, y: (here.y / 8) * k } : null;
-  const station = travelPoints[shown];
-  const stop = station ? regionPoint(station) : null;
-  const lines = travelLinks
-    .filter(([a, c]) => a === shown || c === shown)
-    .map(([a, c]) => (a === shown ? c : a));
+  const stops = stopsIn(shown);
+  const station = stops.length ? travelPoints[stops[0]] : null;
+  // the regions the lines from here run to (a line within the region is no line out)
+  const lines = [
+    ...new Set(
+      travelLinks
+        .map(([a, c]) => [travelPoints[a].region, travelPoints[c].region] as const)
+        .filter(([a, c]) => a !== c && (a === shown || c === shown))
+        .map(([a, c]) => (a === shown ? c : a)),
+    ),
+  ];
   const nameOf = (r: RegionId) => regions.find((x) => x.id === r)?.name ?? r;
   return (
     <View
@@ -197,21 +203,26 @@ export function WorldMap({
                   </View>
                 );
               })}
-              {stop && station && seen(station.zone) && (
-                <View
-                  pointerEvents="none"
-                  style={{
-                    position: 'absolute',
-                    left: (stop.x / 8) * k - 6,
-                    top: (stop.y / 8) * k - 6,
-                    width: 12,
-                    height: 12,
-                    backgroundColor: '#3B6FA8',
-                    borderWidth: 2,
-                    borderColor: '#F4EBD0',
-                  }}
-                />
-              )}
+              {stops
+                .map((id) => travelPoints[id])
+                .filter((p) => seen(p.zone))
+                .map((p) => regionPoint(p))
+                .map((stop) => (
+                  <View
+                    key={`${stop.x}-${stop.y}`}
+                    pointerEvents="none"
+                    style={{
+                      position: 'absolute',
+                      left: (stop.x / 8) * k - 6,
+                      top: (stop.y / 8) * k - 6,
+                      width: 12,
+                      height: 12,
+                      backgroundColor: '#3B6FA8',
+                      borderWidth: 2,
+                      borderColor: '#F4EBD0',
+                    }}
+                  />
+                ))}
               {pin && (
                 <View
                   pointerEvents="none"
@@ -241,7 +252,10 @@ export function WorldMap({
           <View style={{ flexDirection: 'row', gap: 12, flexWrap: 'wrap' }}>
             <Legend colour="#C8443A" label="you" />
             {station && (
-              <Legend colour="#3B6FA8" label={(travelBy[shown] ?? 'station').toLowerCase()} />
+              <Legend
+                colour="#3B6FA8"
+                label={stops.map((id) => travelBy[id].toLowerCase()).join(', ')}
+              />
             )}
             <Legend colour={FOG} edge={FOG_EDGE} label="not walked yet" />
           </View>

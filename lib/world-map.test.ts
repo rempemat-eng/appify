@@ -6,11 +6,13 @@ import {
   doors,
   regionPasses,
   regionPoint,
+  stopIds,
   travelLinks,
   travelPoints,
   travelRoute,
 } from './world-places';
 import { restoreWorld, type WorldSpot } from './world-save';
+import { LAYOUT_VERSION } from './world-layouts';
 import { readSave, SAVE_VERSION, writeSave } from './save-data';
 
 let checks = 0;
@@ -124,7 +126,7 @@ equal(
 );
 const passWorld: WorldSpot = {
   region: 'west',
-  ...regionPoint(travelPoints.west!),
+  ...regionPoint(travelPoints.west),
   visited: zones.filter((id) => id !== 'scorch' && id !== 'hearthold'),
 };
 equal(
@@ -135,8 +137,8 @@ equal(
 
 // All transport regions reach one another along the existing lines; the interior
 // reaches the atlas through the door, not a fabricated train or fast-travel rule.
-for (const from of regions.filter((r) => travelPoints[r]))
-  for (const to of regions.filter((r) => travelPoints[r]))
+for (const from of stopIds)
+  for (const to of stopIds)
     if (from !== to)
       ok(travelRoute(from, to).at(-1) === to, `${from} reaches ${to} on existing lines`);
 const reachable = new Set<string>(['garden']);
@@ -150,7 +152,7 @@ equal(
   [...zones].sort(),
   'all zones and every region join the authored schematic',
 );
-equal(travelRoute('valley', 'home'), [], 'map does not change transport rules for the interior');
+ok(!Object.hasOwn(travelPoints, 'home'), 'interior is not a transport stop');
 
 for (const region of regions)
   for (const tile of regionTiles(region)) {
@@ -173,20 +175,53 @@ for (const region of regions)
       `${tile.id}: derived grid row`,
     );
   }
-for (const [region, station] of Object.entries(travelPoints)) {
+for (const [stop, station] of Object.entries(travelPoints)) {
   const world = { region: station.region, ...regionPoint(station), visited: [station.zone] };
   const atlas = buildWorldMap({ world, mapSeen: [] });
   equal(
-    atlas.nodes.find((n) => n.id === `station:${region}`)?.state,
+    atlas.nodes.find((n) => n.id === `station:${stop}`)?.state,
     'here',
-    `${region}: station marker at its real stand`,
+    `${stop}: station marker at its real stand`,
   );
   const away = buildWorldMap({ world, mapSeen: [], current: { ...world, x: world.x + 24 } });
   equal(
-    away.nodes.find((n) => n.id === `station:${region}`)?.state,
+    away.nodes.find((n) => n.id === `station:${stop}`)?.state,
     'visited',
-    `${region}: being in a station's zone is not standing at station`,
+    `${stop}: being in a station's zone is not standing at station`,
   );
+  equal(
+    atlas.nodes.find((n) => n.id === `station:${stop}`)?.region,
+    station.region,
+    `${stop}: marker uses the stop's authored region`,
+  );
+}
+
+// Named stops can share a region and even a zone without becoming the same stop.
+const originalLava = travelPoints.lava;
+try {
+  const west = travelPoints.west;
+  travelPoints.lava = { ...west, at: [west.at[0] + 40, west.at[1]] };
+  const atlas = buildWorldMap({
+    world: { region: west.region, ...regionPoint(west), visited: [west.zone] },
+    mapSeen: [],
+  });
+  equal(
+    atlas.nodes
+      .filter((n) => n.kind === 'station' && n.region === west.region)
+      .map((n) => [n.id, n.stop, n.zone, n.state]),
+    [
+      ['station:west', 'west', west.zone, 'here'],
+      ['station:lava', 'lava', west.zone, 'visited'],
+    ],
+    'two named stops in one zone remain distinct, with independent proximity',
+  );
+  equal(
+    atlas.links.find((l) => l.kind === 'line' && l.fromStop === 'west' && l.toStop === 'lava'),
+    { from: west.zone, to: west.zone, kind: 'line', fromStop: 'west', toStop: 'lava' },
+    'service endpoints retain stop identity even when zone IDs coincide',
+  );
+} finally {
+  travelPoints.lava = originalLava;
 }
 const home = buildWorldMap({ world: park, mapSeen: [], current: 'garden' });
 equal(
@@ -298,8 +333,8 @@ for (const version of [undefined, 1]) {
   equal(written.futureField, fixture.futureField, 'unknown top-level fields retained');
   equal(
     written.world,
-    fixture.world,
-    'world coordinates, visits and future nested fields unchanged',
+    { ...fixture.world, layout: LAYOUT_VERSION },
+    'world coordinates, visits and future fields unchanged; current layout is stamped',
   );
   equal(written.mapSeen, mapVisitedZones(park), 'old save gains only acknowledgement baseline');
   equal(written.saveVersion, SAVE_VERSION, 'stays in current v1 save format');

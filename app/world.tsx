@@ -12,7 +12,14 @@ import { BodyText } from '@/components/pixel-feedback';
 import { feedback, missions, useGame } from '@/lib/game';
 import { useAppActive } from '@/lib/app-active';
 import { worldCatalogue } from '@/lib/world-catalogue';
-import { regionTiles, tileAt, tileOrigin, type RegionId, type TileId } from '@/lib/region-walk';
+import {
+  regionTiles,
+  regionWalk,
+  tileAt,
+  tileOrigin,
+  type RegionId,
+  type TileId,
+} from '@/lib/region-walk';
 import { residentLines, residentRoutes } from '@/lib/resident-routes';
 import {
   PLACE_RADIUS,
@@ -25,12 +32,15 @@ import {
   passAt,
   regionPoint,
   rings,
+  stopIds,
+  stopsIn,
   travelBy,
   travelPoints,
   travelRoute,
   travelVehicle,
   type ExitId,
   type MissionPlaceId,
+  type StopId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
 import { useUi } from '@/lib/ui';
@@ -39,13 +49,16 @@ import { WorldMap } from '@/components/world-map';
 import { HUT_DOOR, type Point } from '@/lib/garden-path';
 import { DecoratePanel } from '@/components/decorate-panel';
 import {
+  areaOf,
   checkDecor,
   decorBox,
+  decorFootprint,
+  tapToDecorate,
   foundKeepsakes,
   hutWalk,
   keepsakes,
-  snapDecor,
   walkWithDecor,
+  type DecorHand,
   type DecorPlacement,
 } from '@/lib/decor';
 import { decorImages } from '@/lib/decor-assets';
@@ -61,7 +74,18 @@ const regionNames: Record<RegionId, string> = {
   home: 'THE NAP HUT',
 };
 const placeIds: MissionPlaceId[] = ['book', 'park', 'mountain', 'shop', 'arena', 'garden'];
-const shortNames: Record<RegionId, string> = {
+const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
+/** Each stop's name on the travel card and the journey's label. */
+const stopNames: Record<StopId, string> = {
+  valley: 'THE VALLEY',
+  steam: 'COGSWORTH',
+  west: 'DUST GULCH',
+  lava: 'THE EMBER LANDS',
+  neon: 'NEON HARBOUR',
+  space: 'HALCYON STATION',
+  moon: 'LUMEN',
+};
+const stopShort: Record<StopId, string> = {
   valley: 'the valley',
   steam: 'Cogsworth',
   west: 'Dust Gulch',
@@ -69,9 +93,7 @@ const shortNames: Record<RegionId, string> = {
   neon: 'Neon Harbour',
   space: 'Halcyon',
   moon: 'Lumen',
-  home: 'home',
 };
-const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 const exitIds: ExitId[] = ['gate', 'trail', 'west', 'east'];
 const noZones: readonly string[] = [];
 const insideDoor = regionPoint(doors.inside);
@@ -87,9 +109,9 @@ const homeAt = (region: RegionId, at: Point): Point | null =>
 type Card =
   | { kind: 'mission'; id: 'book' | 'park' | 'mountain' }
   | { kind: 'shop' | 'arena' | 'garden' }
-  | { kind: 'travel' }
+  | { kind: 'travel'; stop: StopId }
   | { kind: 'hut' | 'inside' | 'chest' }
-  | { kind: 'ring' }
+  | { kind: 'ring'; backdrop: string }
   | { kind: 'chat'; who: string };
 
 /** The places to show by name in a region, so you can see where things are and walk there. */
@@ -97,9 +119,13 @@ function placeMarkers(region: RegionId, card: Card | null) {
   const out: { id: string; x: number; y: number; label: string; selected?: boolean }[] = [];
   const add = (id: string, at: Point, label: string, selected = false) =>
     out.push({ id, x: at.x, y: at.y, label, selected });
-  const station = travelPoints[region];
-  if (station)
-    add('travel', regionPoint(station), travelBy[region] ?? 'STATION', card?.kind === 'travel');
+  for (const stop of stopsIn(region))
+    add(
+      `travel-${stop}`,
+      regionPoint(travelPoints[stop]),
+      travelBy[stop],
+      card?.kind === 'travel' && card.stop === stop,
+    );
   rings
     .filter((r) => r.region === region)
     .forEach((r, i) => add(`ring-${i}`, regionPoint(r), 'SPARRING RING', card?.kind === 'ring'));
@@ -124,6 +150,27 @@ function placeMarkers(region: RegionId, card: Card | null) {
   return out;
 }
 
+/** Keepsakes as things standing in a scene (their feet in region pixels). */
+function decorExtras(list: readonly DecorPlacement[]) {
+  return list.map((p) => {
+    const b = decorBox(p.item, p.x, p.y);
+    return {
+      key: `decor-${p.item}`,
+      src: decorImages[p.item],
+      x: b.left,
+      y: b.top,
+      w: b.w,
+      h: b.h,
+      // a rug lies under everything; the rest stand at their feet
+      z: b.flat ? 2 : p.y,
+    };
+  });
+}
+const gardenOrigin = (() => {
+  const t = regionTiles('valley').find((x) => x.id === 'garden');
+  return t ? tileOrigin('valley', t) : { x: 0, y: 0 };
+})();
+
 const near = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y) <= PLACE_RADIUS * 1.6;
 
 /** What, if anything, happens where the companion stands. */
@@ -134,9 +181,10 @@ function cardAt(region: RegionId, at: Point): Card | null {
       : near(at, regionPoint(keepsakeChest))
         ? { kind: 'chest' }
         : null;
-  const station = travelPoints[region];
-  if (station && near(at, regionPoint(station))) return { kind: 'travel' };
-  if (rings.some((r) => r.region === region && near(at, regionPoint(r)))) return { kind: 'ring' };
+  const stop = stopsIn(region).find((id) => near(at, regionPoint(travelPoints[id])));
+  if (stop) return { kind: 'travel', stop };
+  const ring = rings.find((r) => r.region === region && near(at, regionPoint(r)));
+  if (ring) return { kind: 'ring', backdrop: ring.backdrop };
   // a resident on their route beside the companion says hello
   for (const [who, route] of Object.entries(residentRoutes)) {
     const tile = regionTiles(region).find((t) => t.id === route.zone);
@@ -219,9 +267,11 @@ export default function World() {
   const [spawn, setSpawn] = useState<{ region: RegionId; at: Point; key: number }>(() => {
     const place = placeIds.find((id) => id === link.place);
     if (place) return { region: 'valley', at: regionPoint(missionPlaces[place]), key: 0 };
-    const station = travelOrder.find((r) => r === link.station);
-    const stop = station ? travelPoints[station] : undefined;
-    if (station && stop) return { region: station, at: regionPoint(stop), key: 0 };
+    const station = stopIds.find((r) => r === link.station);
+    if (station) {
+      const stop = travelPoints[station];
+      return { region: stop.region, at: regionPoint(stop), key: 0 };
+    }
     if (walkOut) return { region: 'valley', at: walkOut.start, key: 0 };
     if (link.from === 'hut') return { region: 'home', at: regionPoint(doors.inside), key: 0 };
     if (exit) return { region: 'valley', at: regionPoint(exits[exit]), key: 0 };
@@ -248,29 +298,37 @@ export default function World() {
   const decor = useGame((s) => s.decor);
   const visited = useGame((s) => s.world?.visited ?? noZones);
   const found = useMemo(() => foundKeepsakes(visited), [visited]);
-  const [decorating, setDecorating] = useState(false);
-  const [hand, setHand] = useState<{ item: string; at: Point | null } | null>(null);
-  const homeWalk = useMemo(() => walkWithDecor(hutWalk(), decor), [decor]);
-  const homeExtras = useMemo(
+  const [decorating, setDecorating] = useState(
+    () => useUi.getState().worldLink?.decorate === true && spawn.region === 'home',
+  );
+  const [hand, setHand] = useState<DecorHand | null>(null);
+  const homeWalk = useMemo(
     () =>
-      decor.map((p) => {
-        const b = decorBox(p.item, p.x, p.y);
-        return {
-          key: `decor-${p.item}`,
-          src: decorImages[p.item],
-          x: b.left,
-          y: b.top,
-          w: b.w,
-          h: b.h,
-          // a rug lies under everything; the rest stand at their feet
-          z: b.flat ? 2 : p.y,
-        };
-      }),
+      walkWithDecor(
+        hutWalk(),
+        decor.filter((p) => areaOf(p) === 'hut'),
+      ),
     [decor],
   );
+  const homeExtras = useMemo(() => decorExtras(decor.filter((p) => areaOf(p) === 'hut')), [decor]);
+  // the garden's keepsakes stand in the valley's copy of the garden too
+  const valleyDecor = useMemo(
+    () =>
+      decor
+        .filter((p) => areaOf(p) === 'garden')
+        .map((p) => ({ ...p, x: p.x + gardenOrigin.x, y: p.y + gardenOrigin.y })),
+    [decor],
+  );
+  const valleyWalk = useMemo(
+    () => (valleyDecor.length ? walkWithDecor(regionWalk('valley'), valleyDecor) : undefined),
+    [valleyDecor],
+  );
+  const valleyExtras = useMemo(() => decorExtras(valleyDecor), [valleyDecor]);
   // where the companion stands and which zones it has walked, for the map (only while it is open)
   const worldSpot = useGame((s) => (mapOpen ? s.world : null));
-  const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
+  // a trip: the stop it left from, the stops it calls at (the destination last) and
+  // which leg is playing
+  const [trip, setTrip] = useState<{ from: StopId; legs: StopId[]; leg: number } | null>(null);
   const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(() =>
@@ -325,15 +383,14 @@ export default function World() {
   const arrive = useCallback(() => {
     if (!dest) return;
     const station = travelPoints[dest];
-    if (station) {
-      const at = regionPoint(station);
-      setSpawn((s) => ({ region: dest, at, key: s.key + 1 }));
-      setGoal(undefined);
-      setZone(tileAt(dest, at.x, at.y)?.id);
-      outside.current = !homeAt(dest, at);
-      walkWorld(dest, at.x, at.y, true);
-      setCard({ kind: 'travel' });
-    }
+    const region = station.region;
+    const at = regionPoint(station);
+    setSpawn((s) => ({ region, at, key: s.key + 1 }));
+    setGoal(undefined);
+    setZone(tileAt(region, at.x, at.y)?.id);
+    outside.current = !homeAt(region, at);
+    walkWorld(region, at.x, at.y, true);
+    setCard({ kind: 'travel', stop: dest });
     setTrip(null);
   }, [dest, walkWorld]);
   // the end of one leg: change at that station and go on, or arrive
@@ -402,32 +459,15 @@ export default function World() {
   const placeDecor = useGame((s) => s.placeDecor);
   const storeDecor = useGame((s) => s.storeDecor);
   const decorTap = (at: Point): boolean | Point | void => {
-    const under = decor.filter((p) => {
-      const b = decorBox(p.item, p.x, p.y);
-      return at.x >= b.left && at.x < b.left + b.w && at.y >= b.top && at.y < b.top + b.h;
-    });
-    const solid = under
-      .filter((p) => !decorBox(p.item, p.x, p.y).flat)
-      .sort((a, b) => b.y - a.y)[0];
-    // (a rug is only picked up when nothing is in hand, so things can be set on it)
-    const hit: DecorPlacement | undefined = solid ?? (hand ? undefined : under[0]);
-    if (hit && hit.item !== hand?.item) {
-      feedback('select');
-      setHand({ item: hit.item, at: null });
-      return true;
-    }
-    if (!hand) return undefined;
-    const spot = snapDecor(at);
-    setHand({ item: hand.item, at: spot });
-    // stand just in front of the spot, not on it
-    return { x: spot.x, y: spot.y + 12 };
+    const r = tapToDecorate(decor, 'hut', hand, at);
+    if (r.hand?.item !== hand?.item) feedback('select');
+    setHand(r.hand);
+    return r.walk ?? undefined;
   };
-  const handCheck = hand?.at ? checkDecor(hutWalk(), decor, hand.item, hand.at.x, hand.at.y) : null;
+  const handCheck = hand?.at ? checkDecor('hut', decor, hand.item, hand.at.x, hand.at.y) : null;
   const preview = (() => {
     if (!hand?.at) return undefined;
     const b = decorBox(hand.item, hand.at.x, hand.at.y);
-    const xs = b.cells.map(([cx]) => cx * 4);
-    const ys = b.cells.map(([, cy]) => cy * 4);
     return {
       key: 'preview',
       src: decorImages[hand.item],
@@ -437,12 +477,7 @@ export default function World() {
       h: b.h,
       z: hand.at.y,
       ok: !!handCheck?.ok,
-      foot: {
-        x: Math.min(...xs),
-        y: Math.min(...ys),
-        w: Math.max(...xs) + 4 - Math.min(...xs),
-        h: Math.max(...ys) + 4 - Math.min(...ys),
-      },
+      foot: decorFootprint(hand.item, hand.at.x, hand.at.y),
     };
   })();
 
@@ -526,7 +561,7 @@ export default function World() {
             label="TO THE RING"
             onPress={() =>
               navigation.isFocused() &&
-              router.push({ pathname: '/arena', params: { ring: spawn.region } })
+              router.push({ pathname: '/arena', params: { ring: card.backdrop } })
             }
           />
         </>
@@ -577,9 +612,11 @@ export default function World() {
         </>
       );
     // a station: the lines leave from here; further places change on the way
-    const routes = travelOrder
-      .filter((r) => r !== spawn.region && travelPoints[r])
-      .map((r) => ({ r, route: travelRoute(spawn.region, r) }))
+    if (card.kind !== 'travel') return null;
+    const here = card.stop;
+    const routes = stopIds
+      .filter((r) => r !== here)
+      .map((r) => ({ r, route: travelRoute(here, r) }))
       .filter((x) => x.route.length > 0)
       .sort((a, b) => a.route.length - b.route.length);
     const direct = routes.filter((x) => x.route.length === 1);
@@ -587,7 +624,7 @@ export default function World() {
     return (
       <>
         <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-          {travelBy[spawn.region] ?? 'THE STATION'}
+          {travelBy[here]}
         </BodyText>
         <BodyText style={{ fontSize: 13 }}>
           Where to? The journey is free; skip it any time.
@@ -604,20 +641,20 @@ export default function World() {
                     <PixelButton
                       small
                       light
-                      label={regionNames[r]}
+                      label={stopNames[r]}
                       disabled={away || !!trip}
                       onPress={() => {
                         feedback('select');
                         // the places on the way load while the journey plays
-                        route.forEach(prefetchRegion);
-                        setTrip({ legs: route, leg: 0 });
+                        route.forEach((stop) => prefetchRegion(travelPoints[stop].region));
+                        setTrip({ from: here, legs: route, leg: 0 });
                       }}
                     />
                     {route.length > 1 && (
                       <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
                         {route.length === 2
-                          ? `via ${shortNames[route[0]]}`
-                          : `via ${shortNames[route[0]]} · ${route.length - 1} changes`}
+                          ? `via ${stopShort[route[0]]}`
+                          : `via ${stopShort[route[0]]} · ${route.length - 1} changes`}
                       </BodyText>
                     )}
                   </View>
@@ -662,7 +699,8 @@ export default function World() {
                 homeward(at);
                 throughPass(at);
               }}
-              interactive={!mapOpen}
+              // (never under the map or a journey: no walking, held keys included, behind them)
+              interactive={!mapOpen && !trip}
               showName={false}
               focusY={card || decorating ? 0.3 : 0.55}
               padBottom={
@@ -671,8 +709,20 @@ export default function World() {
               target={goal}
               markers={decorating ? undefined : placeMarkers(spawn.region, card)}
               onMarker={walkToPlace}
-              walk={spawn.region === 'home' ? homeWalk : undefined}
-              extras={spawn.region === 'home' ? homeExtras : undefined}
+              walk={
+                spawn.region === 'home'
+                  ? homeWalk
+                  : spawn.region === 'valley'
+                    ? valleyWalk
+                    : undefined
+              }
+              extras={
+                spawn.region === 'home'
+                  ? homeExtras
+                  : spawn.region === 'valley'
+                    ? valleyExtras
+                    : undefined
+              }
               preview={decorating ? preview : undefined}
               onTap={decorating ? decorTap : undefined}
             />
@@ -695,6 +745,14 @@ export default function World() {
               <ScrollView style={{ maxHeight: cardH - 8 * u }} contentContainerStyle={{ gap: 6 }}>
                 {decorating ? (
                   <DecoratePanel
+                    area="hut"
+                    onArea={() => {
+                      // out to the garden, still decorating
+                      setDecorating(false);
+                      setHand(null);
+                      useUi.setState({ gardenDecorating: true });
+                      goHome(HUT_DOOR);
+                    }}
                     found={found}
                     placed={decor}
                     selected={hand?.item ?? null}
@@ -729,15 +787,15 @@ export default function World() {
         {trip && dest && (
           <Journey
             key={trip.leg}
-            to={trip.legs[trip.leg] === 'home' ? 'valley' : trip.legs[trip.leg]}
+            to={trip.legs[trip.leg]}
             label={
               trip.leg < trip.legs.length - 1
-                ? `${regionNames[trip.legs[trip.leg]]}, THEN ${regionNames[dest]}`
-                : regionNames[dest]
+                ? `${stopNames[trip.legs[trip.leg]]}, THEN ${stopNames[dest]}`
+                : stopNames[dest]
             }
             ms={trip.legs.length > 1 ? 2200 : undefined}
             vehicle={travelVehicle(
-              trip.leg === 0 ? spawn.region : trip.legs[trip.leg - 1],
+              trip.leg === 0 ? trip.from : trip.legs[trip.leg - 1],
               trip.legs[trip.leg],
             )}
             width={width}

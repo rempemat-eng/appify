@@ -2,16 +2,37 @@ import { Image, Pressable, ScrollView, View } from 'react-native';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelButton } from '@/components/game-ui';
 import { FrameShape, frameTones } from '@/components/pixel-frame';
-import { keepsake, keepsakes, type DecorCheck, type DecorPlacement } from '@/lib/decor';
+import {
+  areaOf,
+  keepsake,
+  keepsakes,
+  type DecorArea,
+  type DecorCheck,
+  type DecorPlacement,
+} from '@/lib/decor';
 import { decorImages } from '@/lib/decor-assets';
 import { decorSizes } from '@/lib/decor-sizes';
 
-const WHY: Record<Exclude<DecorCheck, { ok: true }>['why'], string> = {
-  wall: 'Not there: that is a wall or furniture.',
-  crowded: 'Something already stands there.',
-  spot: 'Keep room where your companion stands: the door, the bed, the hearth, the table, the chest.',
-  'cut-off': 'That would close the way through the room.',
-  unknown: 'That keepsake has not been found yet.',
+type Why = Exclude<DecorCheck, { ok: true }>['why'];
+const WHY: Record<DecorArea, Record<Why, string>> = {
+  hut: {
+    wall: 'Not there: that is a wall or furniture.',
+    crowded: 'Something already stands there.',
+    spot: 'Keep room where your companion stands: the door, the bed, the hearth, the table, the chest.',
+    'cut-off': 'That would close the way through the room.',
+    unknown: 'That keepsake has not been found yet.',
+  },
+  garden: {
+    wall: 'Not there: that is water, a bed of plants, a path across or something built.',
+    crowded: 'Something already stands there.',
+    spot: 'Keep room at the places your companion goes: the hut, the pond, the stall, the gate.',
+    'cut-off': 'That would close a way through the garden.',
+    unknown: 'That keepsake has not been found yet.',
+  },
+};
+const WHERE: Record<DecorArea, { name: string; ground: string; tag: string }> = {
+  hut: { name: 'IN THE HUT', ground: 'floor', tag: 'HUT' },
+  garden: { name: 'IN THE GARDEN', ground: 'grass', tag: 'GARDEN' },
 };
 
 /**
@@ -21,6 +42,8 @@ const WHY: Record<Exclude<DecorCheck, { ok: true }>['why'], string> = {
  * move it or put it away. Nothing here costs or grants anything.
  */
 export function DecoratePanel({
+  area,
+  onArea,
   found,
   placed,
   selected,
@@ -30,6 +53,10 @@ export function DecoratePanel({
   onStore,
   onDone,
 }: {
+  /** where keepsakes are being set out now */
+  area: DecorArea;
+  /** go and decorate the other place */
+  onArea: (area: DecorArea) => void;
   found: readonly string[];
   placed: readonly DecorPlacement[];
   /** the keepsake in hand, if any */
@@ -42,14 +69,15 @@ export function DecoratePanel({
   onDone: () => void;
 }) {
   const name = selected ? (keepsake(selected)?.name ?? selected).toLowerCase() : '';
-  const isPlaced = !!selected && placed.some((p) => p.item === selected);
+  const isPlaced = !!selected && placed.some((p) => p.item === selected && areaOf(p) === area);
+  const elsewhere = !!selected && placed.some((p) => p.item === selected && areaOf(p) !== area);
   const status = !selected
-    ? `${found.length} of ${keepsakes.length} keepsakes found. Choose one, or tap one in the room to move it.`
+    ? `${found.length} of ${keepsakes.length} keepsakes found. Choose one, or tap one ${area === 'hut' ? 'in the room' : 'in the garden'} to move it.`
     : !check
-      ? `Tap the floor where the ${name} goes.`
+      ? `Tap the ${WHERE[area].ground} where the ${name} goes.${elsewhere ? ` It comes from ${area === 'hut' ? 'the garden' : 'the hut'}.` : ''}`
       : check.ok
         ? `The ${name} fits here.`
-        : WHY[check.why];
+        : WHY[area][check.why];
   return (
     <View style={{ gap: 8 }}>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
@@ -63,6 +91,23 @@ export function DecoratePanel({
           <PixelButton small light label="DONE" onPress={onDone} />
         </View>
       </View>
+      <View style={{ flexDirection: 'row', gap: 6 }}>
+        {(['hut', 'garden'] as const).map((a) => (
+          <Pressable
+            key={a}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: a === area }}
+            accessibilityLabel={`Decorate ${a === 'hut' ? 'the hut' : 'the garden'}`}
+            onPress={() => a !== area && onArea(a)}
+            style={{ flex: 1, minHeight: 44, alignItems: 'center', justifyContent: 'center' }}
+          >
+            <FrameShape tone={a === area ? frameTones.leaf : frameTones.paper} unit={2} />
+            <BodyText style={{ fontSize: 12, fontFamily: 'PixelifySans_700Bold' }}>
+              {WHERE[a].name}
+            </BodyText>
+          </Pressable>
+        ))}
+      </View>
       <BodyText accessibilityLiveRegion="polite" style={{ fontSize: 13, lineHeight: 17 }}>
         {status}
       </BodyText>
@@ -74,7 +119,8 @@ export function DecoratePanel({
         {keepsakes.map((k) => {
           const open = found.includes(k.id);
           const chosen = k.id === selected;
-          const out = placed.some((p) => p.item === k.id);
+          const at = placed.find((p) => p.item === k.id);
+          const out = at ? WHERE[areaOf(at)].tag : null;
           const size = decorSizes[k.id];
           // the keepsake drawn at whole art pixels, as large as fits the tile
           const scale = Math.max(1, Math.floor(Math.min(40 / size.w, 34 / size.h)));
@@ -84,7 +130,7 @@ export function DecoratePanel({
               accessibilityRole="button"
               accessibilityLabel={
                 open
-                  ? `${k.name}${out ? ', set out in the room' : ''}`
+                  ? `${k.name}${out ? `, set out in the ${out.toLowerCase()}` : ''}`
                   : `A keepsake not found yet, from ${k.from}`
               }
               accessibilityState={{ selected: chosen, disabled: !open }}
@@ -125,7 +171,7 @@ export function DecoratePanel({
                   opacity: open ? 1 : 0.7,
                 }}
               >
-                {open ? (out ? `${k.name} ·  OUT` : k.name) : k.from}
+                {open ? (out ? `${k.name} · ${out}` : k.name) : k.from}
               </BodyText>
             </Pressable>
           );
@@ -136,7 +182,7 @@ export function DecoratePanel({
           <View style={{ flex: 1 }}>
             <PixelButton
               small
-              label={isPlaced ? 'MOVE HERE' : 'SET IT HERE'}
+              label={isPlaced || elsewhere ? 'MOVE HERE' : 'SET IT HERE'}
               disabled={!check?.ok}
               onPress={onPlace}
             />

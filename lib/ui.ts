@@ -16,6 +16,8 @@ export type WorldLink = {
   station?: string;
   ex?: number;
   ey?: number;
+  /** open the hut already decorating (from the garden's decorate panel) */
+  decorate?: boolean;
 };
 
 type UiState = {
@@ -34,6 +36,8 @@ type UiState = {
   /** Walked back into the garden from the valley: where its companion stands (garden
    *  pixels); a new key moves it again. */
   homeArrival: { x: number; y: number; key: string } | null;
+  /** Decorating the garden (C12): the home screen shows the keepsakes and takes taps. */
+  gardenDecorating: boolean;
 };
 
 export const useUi = create<UiState>((set) => ({
@@ -43,6 +47,7 @@ export const useUi = create<UiState>((set) => ({
   battlePlace: null,
   worldLink: null,
   homeArrival: null,
+  gardenDecorating: false,
   open: (sheet) =>
     set((s) => ({ sheet, back: s.sheet === 'menu' && sheet !== 'menu' ? 'menu' : null })),
   close: () => set((s) => ({ sheet: s.back, back: null })),

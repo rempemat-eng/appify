@@ -50,10 +50,10 @@ import { acknowledgeMapSeen, restoreMapSeen } from '@/lib/world-map';
 import {
   checkDecor,
   foundKeepsakes,
-  hutWalk,
   keepsake,
   newKeepsakes,
   restoreDecor,
+  type DecorArea,
   type DecorCheck,
   type DecorPlacement,
 } from '@/lib/decor';
@@ -270,7 +270,7 @@ type Game = Saved & {
   decor: DecorPlacement[];
   /** set a found keepsake on the hut's floor (or move it there); free, and refused if it
    *  would stand in the way */
-  placeDecor: (item: string, x: number, y: number) => DecorCheck;
+  placeDecor: (item: string, x: number, y: number, area?: DecorArea) => DecorCheck;
   /** put a keepsake back in the chest */
   storeDecor: (item: string) => void;
 };
@@ -362,7 +362,6 @@ function migrateSaved(value: unknown) {
   value.decor = restoreDecor(
     value.decor,
     isRecord(value.world) && isStringArray(value.world.visited) ? value.world.visited : [],
-    hutWalk(),
   );
   if (isRecord(value.cardReward))
     value.cardReward = {
@@ -895,13 +894,18 @@ export const gameStore = create<Game>((set, get) => ({
     void persist();
   },
   decor: [],
-  placeDecor: (item, x, y) => {
+  placeDecor: (item, x, y, area = 'hut') => {
     const s = get();
     if (!s.player || !foundKeepsakes(s.world?.visited ?? []).includes(item))
       return { ok: false, why: 'unknown' };
-    const check = checkDecor(hutWalk(), s.decor, item, x, y);
+    const check = checkDecor(area, s.decor, item, x, y);
     if (!check.ok) return check;
-    set({ decor: [...s.decor.filter((p) => p.item !== item), { item, x, y }] });
+    set({
+      decor: [
+        ...s.decor.filter((p) => p.item !== item),
+        area === 'garden' ? { item, x, y, area } : { item, x, y },
+      ],
+    });
     void persist();
     return check;
   },

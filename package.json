@@ -20,7 +20,7 @@
     "check:places": "node --import tsx lib/mission-places.test.ts",
     "check:region-walk": "node --import tsx lib/region-walk.test.ts",
     "check:world": "node --import tsx lib/world-save.test.ts && npm run check:world-map",
-    "check:world-map": "node --import tsx lib/world-map.test.ts",
+    "check:world-map": "node --import tsx lib/world-map.test.ts && node --import tsx lib/world-map.layout.test.ts",
     "check:images": "node scripts/check-images.cjs",
     "check:images-test": "node scripts/check-images.test.cjs",
     "check:art-repro": "node scripts/check-art-repro.cjs",

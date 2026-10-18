@@ -31,8 +31,24 @@ export const missionPlaces: Record<MissionPlaceId, PlaceDef> = {
   garden: { region: 'valley', zone: 'garden', at: [160, 196] },
 };
 
-/** Where each region's journeys leave from and arrive (its station, platform or hatch). */
-export const travelPoints: Partial<Record<RegionId, PlaceDef>> = {
+/**
+ * The stops the journeys run between (a station, platform, cart bay or hatch). A stop
+ * has its own name; one region may hold more than one (Dust Gulch's platform and the
+ * caldera's cart bay once the desert and the fire country are one walk).
+ */
+export type StopId = 'valley' | 'steam' | 'west' | 'lava' | 'neon' | 'space' | 'moon';
+export const stopIds: readonly StopId[] = [
+  'valley',
+  'steam',
+  'west',
+  'lava',
+  'neon',
+  'space',
+  'moon',
+];
+
+/** Where each stop is (its region, zone and stand). */
+export const travelPoints: Record<StopId, PlaceDef> = {
   valley: { region: 'valley', zone: 'halt', at: stand('halt', 'platform') },
   steam: { region: 'steam', zone: 'junction', at: stand('junction', 'platform') },
   west: { region: 'west', zone: 'gulch', at: stand('gulch', 'platform') },
@@ -42,12 +58,13 @@ export const travelPoints: Partial<Record<RegionId, PlaceDef>> = {
   moon: { region: 'moon', zone: 'lumen', at: stand('lumen', 'shuttle') },
 };
 
-/** Sparring rings out in the regions: each opens the same ring screen as the town's. */
-export const rings: PlaceDef[] = [
-  { region: 'steam', zone: 'junction', at: stand('junction', 'ring') },
-  { region: 'neon', zone: 'neon', at: stand('neon', 'court') },
-  { region: 'lava', zone: 'caldera', at: stand('caldera', 'ring') },
-  { region: 'moon', zone: 'lumen', at: stand('lumen', 'sparring') },
+/** Sparring rings out in the regions: each opens the same ring screen as the town's,
+ *  with its own place behind the battle (`backdrop`, the battle's scenery id). */
+export const rings: (PlaceDef & { backdrop: string })[] = [
+  { region: 'steam', zone: 'junction', at: stand('junction', 'ring'), backdrop: 'steam' },
+  { region: 'neon', zone: 'neon', at: stand('neon', 'court'), backdrop: 'neon' },
+  { region: 'lava', zone: 'caldera', at: stand('caldera', 'ring'), backdrop: 'lava' },
+  { region: 'moon', zone: 'lumen', at: stand('lumen', 'sparring'), backdrop: 'moon' },
 ];
 
 /**
@@ -56,7 +73,7 @@ export const rings: PlaceDef[] = [
  * mine cart from the gulch to the caldera; the space elevator from Neon Harbour to
  * Halcyon, and Halcyon's shuttle to Lumen. A tree rooted at the valley.
  */
-export const travelLinks: readonly (readonly [RegionId, RegionId])[] = [
+export const travelLinks: readonly (readonly [StopId, StopId])[] = [
   ['valley', 'steam'],
   ['steam', 'west'],
   ['west', 'lava'],
@@ -69,8 +86,8 @@ export const travelLinks: readonly (readonly [RegionId, RegionId])[] = [
  * city, the mine carts to the caldera, the elevator capsule up to Halcyon, the shuttle on
  * to Lumen. */
 export function travelVehicle(
-  a: RegionId,
-  b: RegionId,
+  a: StopId,
+  b: StopId,
 ): 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle' {
   const pair = new Set([a, b]);
   if (pair.has('lava')) return 'carts';
@@ -82,10 +99,10 @@ export function travelVehicle(
 
 /** The stations a trip stops at from one region to another, the destination last
  * (the start left out); empty when there is no line. */
-export function travelRoute(from: RegionId, to: RegionId): RegionId[] {
+export function travelRoute(from: StopId, to: StopId): StopId[] {
   if (from === to) return [];
-  const prev = new Map<RegionId, RegionId>([[from, from]]);
-  const queue: RegionId[] = [from];
+  const prev = new Map<StopId, StopId>([[from, from]]);
+  const queue: StopId[] = [from];
   while (queue.length) {
     const here = queue.shift()!;
     for (const [a, b] of travelLinks) {
@@ -97,13 +114,13 @@ export function travelRoute(from: RegionId, to: RegionId): RegionId[] {
     }
   }
   if (!prev.has(to)) return [];
-  const route: RegionId[] = [];
+  const route: StopId[] = [];
   for (let r = to; r !== from; r = prev.get(r)!) route.unshift(r);
   return route;
 }
 
 /** How each journey is made, for its name on the travel card. */
-export const travelBy: Partial<Record<RegionId, string>> = {
+export const travelBy: Record<StopId, string> = {
   valley: 'THE VALLEY TRAIN',
   steam: 'THE COGSWORTH LINE',
   west: 'THE DESERT LINE',
@@ -112,6 +129,10 @@ export const travelBy: Partial<Record<RegionId, string>> = {
   space: 'THE SPACE ELEVATOR',
   moon: 'THE SHUTTLE',
 };
+
+/** The stops in a region. */
+export const stopsIn = (region: RegionId): StopId[] =>
+  stopIds.filter((id) => travelPoints[id].region === region);
 
 /** The doors between the garden and the inside of the hut. */
 export const doors = {
