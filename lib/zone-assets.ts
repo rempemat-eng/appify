@@ -168,6 +168,9 @@ import propSkyPlanterB from '@/assets/zones/props/sky_planter_b.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propStall from '@/assets/zones/props/stall.png';
+import propStandingStone from '@/assets/zones/props/standing_stone.png';
+import propStandingStoneB from '@/assets/zones/props/standing_stone_b.png';
+import propStandingStoneLow from '@/assets/zones/props/standing_stone_low.png';
 import propStationHouse from '@/assets/zones/props/station_house.png';
 import propSteamPuff from '@/assets/zones/props/steam_puff.png';
 import propSteamerTrunk from '@/assets/zones/props/steamer_trunk.png';
@@ -175,6 +178,7 @@ import propStone from '@/assets/zones/props/stone.png';
 import propStoneLantern from '@/assets/zones/props/stone_lantern.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
+import propStump from '@/assets/zones/props/stump.png';
 import propTeaDispenser from '@/assets/zones/props/tea_dispenser.png';
 import propTeaKiosk from '@/assets/zones/props/tea_kiosk.png';
 import propTelescope from '@/assets/zones/props/telescope.png';
@@ -417,6 +421,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   sleep_pod: propSleepPod,
   snowy_pine: propSnowyPine,
   stall: propStall,
+  standing_stone: propStandingStone,
+  standing_stone_b: propStandingStoneB,
+  standing_stone_low: propStandingStoneLow,
   station_house: propStationHouse,
   steam_puff: propSteamPuff,
   steamer_trunk: propSteamerTrunk,
@@ -424,6 +431,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   stone_lantern: propStoneLantern,
   store: propStore,
   street_light: propStreetLight,
+  stump: propStump,
   tea_dispenser: propTeaDispenser,
   tea_kiosk: propTeaKiosk,
   telescope: propTelescope,

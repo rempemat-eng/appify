@@ -552,6 +552,52 @@ def beehive() -> Canvas:
         cv.set(bx, by, GOLD[4]); cv.set(bx + 1, by, '#2A2226')
     return cv
 
+MEGALITH = ['#3A3446', '#585068', '#787088', '#9A92A8', '#C2BACC']  # grey-purple standing stone
+
+
+def standing_stone(seed: int = 0, tall: bool = True) -> Canvas:
+    """An old standing stone, 18 x 30 (or 16 x 22): a weathered grey-purple slab, its top
+    rounded and a little skewed, lit on its upper-left plane, shaded on its right flank,
+    with a moss cap that drips down its face (style.facet_stone, as in the references)."""
+    w, h = (18, 30) if tall else (16, 22)
+    cv = Canvas(w, h, pad=PAD)
+    lean = (noise2(seed, 0, 431) - 0.5) * 0.25
+    pts = set()
+    for y in range(2, h - 1):
+        f = (y - 2) / (h - 3)
+        half = (w / 2 - 3) * (0.5 + 0.5 * min(1.0, f * 1.4)) + (1 if y > h - 4 else 0)
+        cx = w / 2 + lean * (h - y)
+        for x in range(int(cx - half), int(cx + half) + 1):
+            if f < 0.18 and ((x - cx) / half) ** 2 + ((0.18 - f) / 0.18) ** 2 > 1:
+                continue  # the rounded top
+            pts.add((x, y))
+    style.facet_stone(cv, pts, MEGALITH, moss=LEAF, seed=seed + 40)
+    cv.hline(int(w / 2 - 5), h - 1, 10, MATERIALS['leaf'][1])  # grass at its foot
+    return cv
+
+
+def stump() -> Canvas:
+    """An old tree stump, 22 x 18: a lit ring-cut top, bark sides shaded right, roots
+    reaching into the moss, and a cluster of small brown mushrooms."""
+    w, h = 22, 18
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(6, h - 2):
+        for x in range(4, 18):
+            k = (x - 4) / 14
+            cv.set(x, y, WOOD[3] if k < 0.3 else WOOD[2] if k < 0.75 else WOOD[1])
+            if (x * 3 + y) % 7 == 0:
+                cv.set(x, y, WOOD[1])  # bark furrows
+    for (x, y) in oval(11, 6, 7, 3):
+        d = math.hypot((x - 11) / 7, (y - 6) / 3)
+        cv.set(x, y, WOOD[4] if d > 0.8 else '#E2C08A' if int(d * 4) % 2 else '#C8A070')  # rings
+    for (x0, dx) in ((4, -1), (17, 1)):
+        for t in range(4):
+            cv.set(x0 + dx * t, h - 3 + (t > 1), WOOD[2] if dx < 0 else WOOD[1])  # roots
+    for (mx, my) in ((16, 13), (18, 15), (14, 15)):
+        cv.set(mx, my, '#B8794A'); cv.set(mx + 1, my, '#8E5A36'); cv.set(mx, my + 1, '#E8DCC8')
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'barn': barn(), 'haystack': haystack(), 'scarecrow': scarecrow(), 'windmill': windmill(),
@@ -560,7 +606,8 @@ def props() -> dict[str, Canvas]:
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
         'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(), 'station_house': station_house(),
-        'semaphore': semaphore(),
+        'semaphore': semaphore(), 'standing_stone': standing_stone(0, True), 'standing_stone_b': standing_stone(3, True),
+        'standing_stone_low': standing_stone(6, False), 'stump': stump(),
     }
 
 

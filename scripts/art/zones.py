@@ -2802,15 +2802,55 @@ def woodland(frame: int = 0):
         lx, ly = int(noise2(i, 0, 426) * W), int(noise2(i, 1, 426) * H)
         light_pool(cv, lx, ly, 12 + i % 3 * 4, 6 + i % 2 * 3, GOLDm[2], water)
     light_pool(cv, 110, 140, 44, 26, G[4], water)
+    # the stone circle in its own small clearing: a ring of reddish trodden earth round
+    # muted grass, the stones standing in it (the reference Matt chose as the bar)
+    SX, SY, SRX, SRY = 78, 410, 44, 24
+    spur = worlds.thick([(152, 386), (118, 408)], 5, seed=27)
+    paint_road(cv, spur)
+    for (x, y) in oval(SX, SY, SRX + 8, SRY + 6):
+        d = math.hypot((x - SX) / SRX, (y - SY) / SRY)
+        if d < 0.72:
+            n = smooth_noise(x, y, 9, 428)
+            cv.set(x, y, '#86A755' if n > 0.42 else '#76984A')
+        elif d < 1.0:
+            n = noise2(x // 2, y // 2, 429)
+            c = '#AE7E64' if n > 0.35 else '#9A6A52'
+            if d < 0.76 and (x + y) % 2:
+                c = '#76984A'  # the grass fraying onto the earth
+            if d > 0.95 and (x + y) % 2:
+                c = '#C29A7E'
+            cv.set(x, y, c)
+        elif d < 1.12 and (x + y) % 2 == 0:
+            cv.set(x, y, '#76984A')
+    # where the canopy closes in at the outer edges, the floor goes into deep shade
+    # (checker dithering toward FOREST_DARK, style rule 9); the path and the water stay lit
+    keep = set(path) | water | rock | set(clearing) | set(oval(SX, SY, SRX + 8, SRY + 6))
+    for y in range(H):
+        for x in range(W):
+            if (x, y) in keep:
+                continue
+            d = min(x + noise2(x // 6, y // 6, 430) * 10, y + 14 + noise2(x // 6, y // 6, 431) * 10)
+            s = 1 - d / 44
+            if s >= 0.85 or (s >= 0.6 and ((x + y) % 2 == 0 or (x % 2 == 0 and y % 2 == 0))) \
+                    or (s >= 0.35 and (x + y) % 2 == 0) or (s >= 0.12 and x % 2 == 0 and y % 2 == 0):
+                cv.set(x, y, style.FOREST_DARK)
     objects = [
+        # the stone circle
+        ('stone-1', 'standing_stone', SX - 10, SY - SRY - 26), ('stone-2', 'standing_stone_b', SX + 26, SY - SRY - 18),
+        ('stone-3', 'standing_stone_low', SX + SRX - 8, SY - 10), ('stone-4', 'standing_stone', SX + 22, SY + SRY - 26),
+        ('stone-5', 'standing_stone_b', SX - 34, SY + SRY - 28), ('stone-6', 'standing_stone_low', SX - SRX - 4, SY - 14),
+        ('stone-7', 'standing_stone_low', SX - 38, SY - SRY - 12),
+        ('stump-1', 'stump', 166, 232), ('stump-2', 'stump', 40, 340), ('stump-3', 'stump', 236, 120),
+        ('pine-6', 'pine', -16, 110), ('pine-7', 'pine', 110, -44), ('tree-8', 'tree_small', -26, 380),
+        ('bush-2', 'bush', 4, 250), ('bush-3', 'bush', 160, 40), ('fern-5', 'fern', 150, 250),
         # old trees closing in round the edges (none crosses the east border into the garden)
         ('tree-1', 'tree', -20, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
         ('tree-3', 'tree', -24, 200), ('pine-3', 'pine', -10, 330), ('tree-4', 'tree', 230, 160),
         ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 480),
         ('pine-5', 'pine', 150, 490), ('tree-7', 'tree_small', 250, 504),
         ('oak', 'hollow_tree', 70, 30), ('ring', 'mushroom_ring', 128, 150), ('log-1', 'mossy_log', 200, 230),
-        ('log-2', 'mossy_log', 40, 420), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
-        ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 90, 380), ('bench', 'forest_bench', 150, 170),
+        ('log-2', 'mossy_log', 128, 468), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
+        ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 100, 330), ('bench', 'forest_bench', 150, 170),
         ('willow', 'willow', 220, 340), ('bush-1', 'bush', 286, 380),
     ]
     # a split-log footbridge where the path crosses the young stream
@@ -2819,7 +2859,8 @@ def woodland(frame: int = 0):
         cv.set(x, y, WOOD[4] if x in (122, 131) else WOOD[3] if x < 131 else WOOD[2])
     for y in range(min(yy for _, yy in plank), max(yy for _, yy in plank) + 1):
         cv.set(140, y, WTRm[0])
-    stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18)}
+    stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18),
+              'stones': (SX, SY + 4)}
     return cv, objects, stands, (water | rock) - plank
 
 
