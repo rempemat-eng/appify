@@ -1,7 +1,9 @@
 # C19: saved world exploration, without drawing
 
-Based on main `c1cc1e8274a2bf2667037df015188539822d6470` (17 October 2026 UTC),
-including Cinder Springs and Claude's all-region reachability checks.
+Integrated with main `4467eba6e1af89c9545a307d1b471fa049d82138` (18 October 2026 UTC),
+including the hut interior, residents, separate moon region, moon journey,
+scrolling atlas bar and Riverside pasture. All ten art generators and thirteen
+generated modules remain covered by Claude's latest reproducibility checks.
 C9's currency PR #18 remains separate. This change makes no economy, reward,
 combat, mission, mood or ownership changes and does not wire the atlas UI.
 
@@ -15,8 +17,10 @@ combat, mission, mood or ownership changes and does not wire the atlas UI.
   exact reverse exit. Multiple riverside paths remain separate. Nearby markers
   may offer multiple usable cells on the same border, not distinct destinations.
 - Only named walking connections become exits. Neighbouring tiles alone do not
-  create one. Station/Lumen requires a shuttle; distant trips remain C20. No
-  invented vehicle connection, cost or unlock is included here.
+  create one. Station/Lumen requires a shuttle; distant trips remain C20. The
+  house is a separate room, not a walking border to a physically adjacent tile.
+  Its door transition also needs the C20 transition guard before it can commit
+  exploration. No invented vehicle connection, cost or unlock is included here.
 - `exitsFromWorldZone(zone, { level, mountainLevel })` filters the existing ridge
   gate. The store supplies `mountainLevel` from the actual mountain mission rule,
   not a new balance value. Do not use the ungated graph as an admission check.
@@ -62,6 +66,12 @@ Explicit version-1 migration is checked as well as the unversioned historical
 fixtures. Older version-1 clients will reject a version-2 save through the existing
 newer-save protection, not reset it. Preserve version 2 when integrating PR #18,
 and keep both additive check scripts if its package script line conflicts.
+
+The graph derives all twenty current zone ids and all region keys, including
+`home` and `moon`, from the generated catalogue. Regression checks cover an open
+spawn and known-zone resume for every zone while retaining an unknown future
+visited id. Single-zone regions never gain an invented walking exit. These tests
+do not assert that the prototype's HOUSE or vehicle buttons use the store yet.
 
 Two read-only, in-memory negative controls proved the new pure tests fail when
 cancellation is removed or the mountain level comparison is bypassed. No broken

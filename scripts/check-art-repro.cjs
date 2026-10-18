@@ -14,6 +14,7 @@ const generators = [
   'mission_map',
   'zones',
   'journey',
+  'residents',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -27,6 +28,8 @@ const generatedTypescript = [
   'lib/zone-maps.ts',
   'lib/zone-assets.ts',
   'lib/journey-assets.ts',
+  'lib/resident-sprites.ts',
+  'lib/resident-assets.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 

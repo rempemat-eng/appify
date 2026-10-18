@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
 import {
   Image,
   PixelRatio,
@@ -37,7 +37,7 @@ import {
 import { zoneMaps, zoneOverhead } from '@/lib/zone-maps';
 import { zoneGrounds, zoneProps } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
-import { ZoneLife } from '@/components/atlas-life';
+import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelFrame } from '@/components/pixel-frame';
@@ -106,6 +106,7 @@ export const zoneNames: Record<TileId, string> = {
   skyport: 'THE SKYPORT',
   canal: 'COGSWORTH CANAL',
   springs: 'CINDER SPRINGS',
+  home: 'THE NAP HUT',
   woodland: 'THE WOODLAND',
   riverside: 'THE RIVERSIDE',
   town: 'CROSSROADS TOWN',
@@ -122,7 +123,7 @@ export const zoneNames: Record<TileId, string> = {
 
 const SPEED = 40; // art pixels per second, a brisk walk
 // Zones that keep their own light at every hour (no night tint).
-const OWN_LIGHT: TileId[] = ['neon', 'skyport', 'station', 'lumen', 'caldera', 'springs'];
+const OWN_LIGHT: TileId[] = ['neon', 'skyport', 'station', 'lumen', 'caldera', 'springs', 'home'];
 // Where a lamp's light sits on its sprite (x, y from its top-left, in art pixels).
 const LAMPS: Record<string, readonly [number, number]> = {
   lamp: [7, 8],
@@ -409,14 +410,23 @@ export function AtlasWalk({
           ))}
           {near.map((t) =>
             t.id === 'garden' ? null : (
-              <ZoneLife
-                key={`life-${t.id}`}
-                zone={t.id}
-                left={snap(tileOrigin(region, t).x * u)}
-                top={snap(tileOrigin(region, t).y * u)}
-                u={u}
-                running={active && !reduced}
-              />
+              <Fragment key={`zone-${t.id}`}>
+                <ZoneLife
+                  zone={t.id}
+                  left={snap(tileOrigin(region, t).x * u)}
+                  top={snap(tileOrigin(region, t).y * u)}
+                  u={u}
+                  running={active && !reduced}
+                  night={night && !OWN_LIGHT.includes(t.id)}
+                />
+                <ZoneResidents
+                  zone={t.id}
+                  left={snap(tileOrigin(region, t).x * u)}
+                  top={snap(tileOrigin(region, t).y * u)}
+                  u={u}
+                  running={active && !reduced}
+                />
+              </Fragment>
             ),
           )}
           {night &&

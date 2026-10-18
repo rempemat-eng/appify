@@ -120,7 +120,7 @@ export function Journey({
   const bob = useAnimatedStyle(() => ({
     transform: [{ translateY: Math.round(Math.sin(t.value * 80) * 0.6 * u * scale) }],
   }));
-  const space = to === 'space';
+  const space = to === 'space' || to === 'moon';
   const engine = journeyVehicles.engine;
   const coach = journeyVehicles.carriage;
   const pod = journeyVehicles.capsule;

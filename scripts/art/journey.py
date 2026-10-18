@@ -28,6 +28,7 @@ THEMES = {
     'lava': {'sky': ('#2A0E0A', '#7A2A10'), 'far': M['basalt'], 'near': M['ash'], 'kind': 'lava'},
     'neon': {'sky': ('#140E28', '#3A1E4A'), 'far': M['night'], 'near': M['night'], 'kind': 'city'},
     'space': {'sky': ('#05060C', '#141A30'), 'far': M['hull'], 'near': M['hull'], 'kind': 'space'},
+    'moon': {'sky': ('#05060C', '#0B0E1C'), 'far': M['regolith'], 'near': M['regolith'], 'kind': 'moon'},
 }
 
 
@@ -46,14 +47,18 @@ def sky(theme) -> Canvas:
         for x in range(W):
             tt = band if (x + y) % 2 or abs(t - band) > 0.03 else t
             cv.set(x, y, lerp(top, bottom, tt))
-    if theme['kind'] in ('neon', 'space', 'lava') or theme['kind'] == 'city':
-        for i in range(70 if theme['kind'] == 'space' else 30):
+    if theme['kind'] in ('neon', 'space', 'lava', 'moon') or theme['kind'] == 'city':
+        for i in range(70 if theme['kind'] in ('space', 'moon') else 30):
             x, y = int(noise2(i, 0, 501) * W), int(noise2(i, 1, 501) * H * 0.7)
             cv.set(x, y, '#FFFFFF' if theme['kind'] != 'lava' else '#FFB648')
     else:
         for (cx, cy, r) in ((60, 30, 14), (210, 22, 18), (290, 44, 10)):  # soft clouds
             for (x, y) in oval(cx, cy, r * 1.8, r * 0.6):
                 cv.set(x % W, y, '#FFFFFF' if y < cy else '#EAF2F8')
+    if theme['kind'] == 'moon':
+        for (x, y) in disc(250, 46, 26):  # the planet, far behind now
+            band = int((y + math.sin(x / 7) * 2) / 4) % 3
+            cv.set(x, y, ('#3E6AA8', '#5A8AC4', '#E6EEF6')[band] if (x - 250) + (y - 46) < 20 else '#2C4A78')
     if theme['kind'] == 'space':
         for (x, y) in disc(240, 150, 70):  # the planet below
             if 0 <= y < H:
@@ -89,6 +94,10 @@ def far(theme) -> Canvas:
         return cv
     if kind == 'space':
         return cv  # the void; the planet is in the sky layer
+    if kind == 'moon':  # the moon's grey mountains coming up to meet the shuttle
+        ridge(cv, theme['far'], 110, 22, 2, 4)
+        ridge(cv, [theme['far'][1], theme['far'][2], theme['far'][3]], 130, 10, 3, 6)
+        return cv
     if kind == 'town':
         for i in range(10):  # chimneys and clock towers on the horizon
             x0 = i * 32 + int(noise2(i, 0, 504) * 8)
@@ -123,6 +132,16 @@ def near(theme) -> Canvas:
     cv = Canvas(W, H)
     ramp = theme['near']
     kind = theme['kind']
+    if kind == 'moon':  # regolith and craters rushing past under the shuttle
+        for y in range(128, H):
+            for x in range(W):
+                n = smooth_noise(x, y, 12, 509)
+                cv.set(x, y, ramp[3] if n > 0.45 else ramp[2])
+        for i in range(8):
+            cx = i * 40 + int(noise2(i, 0, 510) * 10)
+            for (x, y) in oval(cx, 144, 10, 4):
+                cv.set(x % W, y, ramp[1] if (x - cx) + (y - 144) * 2 > 0 else ramp[4])
+        return cv
     if kind == 'space':
         for x in range(W):  # the elevator's cable rushing past
             if x % 80 in (38, 39):
@@ -229,7 +248,7 @@ def main():
     pod.save(os.path.join(OUT, 'capsule.png'), SCALE)
     if sheet:
         for i in range(len(THEMES)):
-            if list(THEMES)[i] != 'space':  # the engine faces left and leads; the coach follows
+            if list(THEMES)[i] not in ('space', 'moon'):  # the engine faces left and leads; the coach follows
                 sheet.paste(engine, 120, i * H + 72)
                 sheet.paste(coach, 226, i * H + 82)
             else:

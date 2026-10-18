@@ -32,6 +32,37 @@ equal(
 equal(worldZoneStart('garden'), gardenAnchors.start, 'garden spawn comes from art data');
 equal(worldExits.length > 0, true, 'walking graph exists');
 equal(new Set(worldExits.map((e) => e.id)).size, worldExits.length, 'exit ids unique');
+for (const region of worldRegionIds) {
+  const tiles = regionTiles(region);
+  const rows = regionWalk(region);
+  if (tiles.length === 1)
+    equal(
+      worldExits.some((exit) => exit.from === tiles[0].id || exit.to === tiles[0].id),
+      false,
+      `${region}: a separate room or vehicle destination has no invented walking border`,
+    );
+  for (const tile of tiles) {
+    const origin = tileOrigin(region, tile);
+    const spawn = worldZoneStart(tile.id);
+    equal(
+      rows[Math.floor((origin.y + spawn.y) / TILE.cell)]?.[
+        Math.floor((origin.x + spawn.x) / TILE.cell)
+      ],
+      '.',
+      `${tile.id}: the generated initial standing point is on open ground`,
+    );
+    const progress = restoreWorldProgress({
+      currentZone: tile.id,
+      visitedZones: ['future-keepsake-room', tile.id],
+    });
+    equal(currentWorldZone(progress, access), tile.id, `${tile.id}: known saved zone resumes`);
+    equal(
+      progress.visitedZones.includes('future-keepsake-room'),
+      true,
+      `${tile.id}: newly drawn zones do not discard future visit history`,
+    );
+  }
+}
 for (const exit of worldExits) {
   const back = worldExits.find(
     (e) =>
