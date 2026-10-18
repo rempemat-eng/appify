@@ -32,6 +32,7 @@ const park: WorldSpot = {
   region: 'valley',
   ...regionPoint({ region: 'valley', zone: 'park', at: [160, 200] }),
   visited: ['garden', 'town', 'park'],
+  layout: LAYOUT_VERSION,
 };
 const before = JSON.stringify(park);
 Object.freeze(park.visited);
@@ -79,17 +80,77 @@ equal(
   'inter-region walking passes retain their authored zone endpoints',
 );
 ok(
-  map.links.some((l) => l.kind === 'pass' && l.from === 'gulch' && l.to === 'scorch'),
-  'Gulch reaches Scorched Pass on foot',
+  map.links.some((l) => l.kind === 'border' && l.from === 'gulch' && l.to === 'scorch'),
+  'Sunstone: Gulch reaches Scorched Pass through its ordinary walking border',
 );
 ok(
   map.links.some((l) => l.kind === 'line' && l.from === 'gulch' && l.to === 'caldera'),
   'mine-cart shortcut stays distinct',
 );
+equal(
+  map.nodes
+    .filter((n) => n.kind === 'station' && n.region === 'west')
+    .map((n) => [n.id, n.stop, n.zone]),
+  [
+    ['station:west', 'west', 'gulch'],
+    ['station:lava', 'lava', 'caldera'],
+  ],
+  'Sunstone retains both actual stops in the merged region',
+);
+ok(!map.nodes.some((n) => n.id === 'region:lava'), 'retired lava region is not invented');
+const oldFire = restoreWorld({
+  region: 'lava',
+  x: 160,
+  y: 200,
+  visited: ['caldera'],
+  layout: 1,
+});
+equal(
+  oldFire,
+  {
+    region: 'west',
+    ...regionPoint({ region: 'west', zone: 'caldera', at: [160, 200] }),
+    visited: ['caldera'],
+    layout: LAYOUT_VERSION,
+  },
+  'layout-1 fire-country point restores at the same point in Caldera',
+);
+equal(
+  buildWorldMap({ world: oldFire, mapSeen: ['caldera'] })
+    .nodes.filter((n) => n.kind === 'zone' && n.state === 'here')
+    .map((n) => n.zone),
+  ['caldera'],
+  'restored fire-country marker stays in Caldera, not the desert or old region',
+);
+const beforeFrostline = restoreWorld({
+  region: 'valley',
+  x: 480,
+  y: 776,
+  visited: ['garden'],
+  layout: 2,
+});
+equal(
+  beforeFrostline,
+  {
+    region: 'valley',
+    ...regionPoint({ region: 'valley', zone: 'garden', at: [160, 200] }),
+    visited: ['garden'],
+    layout: LAYOUT_VERSION,
+  },
+  'layout-2 valley point stays in its garden zone after the northern expansion',
+);
+equal(
+  buildWorldMap({ world: beforeFrostline, mapSeen: ['garden'] })
+    .nodes.filter((n) => n.kind === 'zone' && n.state === 'here')
+    .map((n) => n.zone),
+  ['garden'],
+  'restored garden marker is not shifted into a snowy zone',
+);
 const legacyCoast: WorldSpot = {
   region: 'valley',
   ...regionPoint({ region: 'valley', zone: 'headland', at: [160, 200] }),
   visited: ['garden', 'castle'],
+  layout: LAYOUT_VERSION,
 };
 const legacySeen = restoreMapSeen(['garden', 'castle', 'headland', 'future-zone'], legacyCoast);
 equal(
@@ -128,11 +189,12 @@ const passWorld: WorldSpot = {
   region: 'west',
   ...regionPoint(travelPoints.west),
   visited: zones.filter((id) => id !== 'scorch' && id !== 'hearthold'),
+  layout: LAYOUT_VERSION,
 };
 equal(
   buildWorldMap({ world: passWorld, mapSeen: [] }).suggestion,
   'scorch',
-  'walking pass participates in suggestions',
+  'Sunstone walking border participates in suggestions',
 );
 
 // All transport regions reach one another along the existing lines; the interior
@@ -157,12 +219,12 @@ ok(!Object.hasOwn(travelPoints, 'home'), 'interior is not a transport stop');
 for (const region of regions)
   for (const tile of regionTiles(region)) {
     const at = tileOrigin(region, tile);
-    const world = { region, x: at.x + 160, y: at.y + 200, visited: [] };
+    const world = { region, x: at.x + 160, y: at.y + 200, visited: [], layout: LAYOUT_VERSION };
     const atlas = buildWorldMap({ world, mapSeen: [] });
     equal(
       atlas.nodes.filter((n) => n.kind === 'zone' && n.state === 'here').map((n) => n.zone),
       [tile.id],
-      `${tile.id}: legacy missing visited list still has current marker`,
+      `${tile.id}: missing visited list still has current marker`,
     );
     equal(
       atlas.nodes.find((n) => n.id === `zone:${tile.id}`)?.col,
@@ -176,7 +238,12 @@ for (const region of regions)
     );
   }
 for (const [stop, station] of Object.entries(travelPoints)) {
-  const world = { region: station.region, ...regionPoint(station), visited: [station.zone] };
+  const world = {
+    region: station.region,
+    ...regionPoint(station),
+    visited: [station.zone],
+    layout: LAYOUT_VERSION,
+  };
   const atlas = buildWorldMap({ world, mapSeen: [] });
   equal(
     atlas.nodes.find((n) => n.id === `station:${stop}`)?.state,
@@ -202,7 +269,12 @@ try {
   const west = travelPoints.west;
   travelPoints.lava = { ...west, at: [west.at[0] + 40, west.at[1]] };
   const atlas = buildWorldMap({
-    world: { region: west.region, ...regionPoint(west), visited: [west.zone] },
+    world: {
+      region: west.region,
+      ...regionPoint(west),
+      visited: [west.zone],
+      layout: LAYOUT_VERSION,
+    },
     mapSeen: [],
   });
   equal(

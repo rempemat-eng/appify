@@ -25,7 +25,7 @@ W, H, CELL = 320, 576, 4
 COLS, ROWS = W // CELL, H // CELL
 
 # Regions whose findings fail the build; the rest are reported until they are fixed.
-STRICT = ('valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon', 'home')
+STRICT = ('valley', 'steam', 'west', 'neon', 'space', 'moon', 'home')
 
 # Findings that are right as drawn, each with its reason (world-rules.md, section 6,
 # the override registry; check 18: an override that no longer exempts anything is

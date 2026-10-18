@@ -19,6 +19,17 @@ NapAttack is about resting instead of scrolling, so the world is laid out as a j
 
 Later regions from the earlier list (tundra, sky islands, coral reef, glowshroom forest, dreamscape) fold into these where they fit: the glowshroom forest and dreamscape become Lumen's flora, the sky islands sit on the airship route from Cogsworth, the coral reef lies off Driftwood Harbour.
 
+## The connected world (Matt, 18 Oct 19:07)
+
+Matt: "i really want this world to be immersive. you shouldnt sacrifice immersiveness to save compute. so i would like you to roughly follow what codex drew up." The reference is Codex's concept map and logical map in draft PR #23 (`docs/codex/ideas/connected-world/`): one continent, with places joined on foot wherever the land joins them, and journeys only where the land does not (rail, maglev, lift, shuttle, and a ferry to the islands).
+
+- **Sunstone Reach (done, 18 Oct):** the desert and the fire country are one walk. Palm Oasis, Dust Gulch, then the Scorched Pass east of the gulch where the sand gives way to ash, Hearthold north of it over its long bridge, and the caldera and Cinder Springs beyond. The mine cart still runs from the gulch to the caldera's cart bay as a quick way there. Region id `west`; the stops are `west` (the desert line) and `lava` (the cart bay).
+- **Frostline Highlands (done, 18 Oct):** above the Ridge cabin, part of the valley's own walk. The ridge's terrace and face run on west into **Fir Hollow** (old firs under the face, no snow down there; its foot closes over the Woodland, no way down); a gap in the peaks leads north to **Snowmelt Lake** in its cirque (a frozen fall on the wall, ice at the rim); the south shore path goes east to **the Snow Saddle** (a stone bothy, a windsock, the fork), which drops through the ridge's own gap back to the cabin; north of the saddle a spur climbs to **the High Lookout** (a viewing scope, a windbreak, a bench). Zone ids `hollow`, `snowmelt`, `saddle`, `summit`; the ways through are fixed spans in `zones.py` (`RIDGE_COL`, `HOLLOW_COL`, `LAKE_PORT`, `SUMMIT_COL`), the same on both sides. Past the edges: the high peaks (`beyond_peaks()`). The ridge's mission is unchanged.
+- **Tidebloom Isles (after):** a dormant volcanic island off Driftwood Harbour: Lagoon Landing, the Rainforest, the Headwaters waterfall and Black-sand Cove, walked as a loop. Reached by a free ferry from Driftwood's pier to Lagoon Landing, a journey like the train (Matt approved following the drawing, which includes the ferry).
+- **Saved places survive every change:** a saved spot records the layout it was saved in (`lib/world-layouts.ts`) and is carried to the same point of the same zone in the new world. The walked-zone list is kept as it is.
+- **Journeys run between stops, not regions** (`StopId` in `lib/world-places.ts`), so a region can hold more than one.
+- **Lava keeps its distance:** the walk grid leaves a cell beside lava at the sides, so the companion never looks as if it stands in it.
+
 ## Hearthold moves to the fire country (Matt, 18 Oct 16:33)
 
 Matt: "the castle could be in the lava section. perhaps you go through the desert biome and at the end there is a stone bridge underneath which lava flows and around the castle is lava, perhaps with a dragon flying around." So:

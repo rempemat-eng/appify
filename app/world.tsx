@@ -66,21 +66,20 @@ import { decorImages } from '@/lib/decor-assets';
 const regionNames: Record<RegionId, string> = {
   valley: 'THE VALLEY',
   steam: 'COGSWORTH',
-  west: 'DUST GULCH',
-  lava: 'THE EMBER LANDS',
+  west: 'SUNSTONE REACH',
   neon: 'NEON HARBOUR',
   space: 'HALCYON STATION',
   moon: 'LUMEN',
   home: 'THE NAP HUT',
 };
 const placeIds: MissionPlaceId[] = ['book', 'park', 'mountain', 'shop', 'arena', 'garden'];
-const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
+const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'neon', 'space', 'moon'];
 /** Each stop's name on the travel card and the journey's label. */
 const stopNames: Record<StopId, string> = {
   valley: 'THE VALLEY',
   steam: 'COGSWORTH',
   west: 'DUST GULCH',
-  lava: 'THE EMBER LANDS',
+  lava: 'EMBER CALDERA',
   neon: 'NEON HARBOUR',
   space: 'HALCYON STATION',
   moon: 'LUMEN',
@@ -89,7 +88,7 @@ const stopShort: Record<StopId, string> = {
   valley: 'the valley',
   steam: 'Cogsworth',
   west: 'Dust Gulch',
-  lava: 'the Ember Lands',
+  lava: 'the caldera',
   neon: 'Neon Harbour',
   space: 'Halcyon',
   moon: 'Lumen',

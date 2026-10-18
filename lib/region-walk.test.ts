@@ -46,7 +46,7 @@ console.log(`Region walk: ${checks} stands reachable from the garden across zone
 // every zone is reachable without a cut, including across the new borders (the
 // oasis, the canal, the springs, the Skyport).
 let others = 0;
-for (const r of ['steam', 'west', 'lava', 'neon', 'space', 'moon', 'home'] as const) {
+for (const r of ['steam', 'west', 'neon', 'space', 'moon', 'home'] as const) {
   const tiles = regionTiles(r);
   const bb = regionBounds(r);
   const first = tiles[0];

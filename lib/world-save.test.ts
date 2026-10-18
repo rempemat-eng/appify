@@ -18,6 +18,7 @@ import {
   travelPoints,
   travelRoute,
   travelVehicle,
+  stopsIn,
 } from './world-places';
 import { HUT_DOOR, atGardenExit, gardenExitToward, makeWalkGrid } from './garden-path';
 import { regionTiles, tileAt, tileOrigin } from './region-walk';
@@ -112,7 +113,7 @@ for (const [name, place] of places) {
       ? regionPoint(doors.inside)
       : place.region === 'valley'
         ? regionPoint(exits.gate)
-        : regionPoint(travelPoints[place.region]!);
+        : regionPoint(travelPoints[stopsIn(place.region)[0]]);
   if (Math.hypot(from.x - at.x, from.y - at.y) < TILE.cell) continue;
   const path = grid.findPath(from, at);
   ok(path.length > 0, `${name} can be walked to`);
@@ -172,10 +173,10 @@ ok(
 );
 // the pass from the desert into the Ember Lands: both ends open and reachable, and
 // each leads to the other, walking on inward
-for (const { a, b } of regionPasses) {
+for (const { a: endA, b: endB } of regionPasses) {
   for (const [here, there] of [
-    [a, b],
-    [b, a],
+    [endA, endB],
+    [endB, endA],
   ] as const) {
     const at = regionPoint(here);
     const grid = makeWalkGrid(regionWalk(here.region), {
@@ -354,3 +355,80 @@ console.log('Occlusion: the outline shows only behind what hides the companion.'
   );
 }
 console.log('Keepsakes: found by walking, placed freely, never in the way.');
+
+// The connected world (Matt, 18 Oct 19:07): saves from the old shape land in the same
+// place in their zone, and the desert walks on into the fire country.
+{
+  const castle = restoreWorld({ region: 'lava', x: 160, y: 576 + 300, visited: ['hearthold'] });
+  const h = regionTiles('west').find((t) => t.id === 'hearthold')!;
+  const ho = tileOrigin('west', h);
+  ok(
+    castle?.region === 'west' && castle.x === ho.x + 160 && castle.y === ho.y + 300,
+    'a spot saved in the old Ember Lands is the same spot in Hearthold today',
+  );
+  const g = regionTiles('west').find((t) => t.id === 'gulch')!;
+  const go = tileOrigin('west', g);
+  const town = restoreWorld({ region: 'west', x: 320 + 100, y: 200, visited: [] });
+  ok(
+    town?.x === go.x + 100 && town.y === go.y + 200,
+    'a spot saved in the old Dust Gulch is the same spot in it today',
+  );
+  ok(
+    restoreWorld({ region: 'west', x: go.x + 100, y: go.y + 200, layout: 2 })?.y === go.y + 200,
+    'a spot saved in today’s shape is read as it is',
+  );
+  ok(
+    restoreWorld({ region: 'lava', x: 1, y: 1, layout: 99 }) === null,
+    'an unknown shape starts fresh',
+  );
+  const rows = regionWalk('west');
+  const grid = makeWalkGrid(rows, {
+    cell: TILE.cell,
+    width: regionBounds('west').width,
+    start: regionPoint(travelPoints.west),
+  });
+  ok(
+    grid.findPath(regionPoint(travelPoints.west), regionPoint(travelPoints.lava)).length > 0,
+    'Dust Gulch’s platform walks all the way to the caldera’s cart bay',
+  );
+}
+console.log('Layouts: old saves carried forward; the desert walks into the fire country.');
+
+// The Frostline Highlands: the valley grows north; a saved spot stays where it was in its
+// zone, and the high loop and the lookout are walked from the ridge cabin.
+{
+  const g = regionTiles('valley').find((t) => t.id === 'garden')!;
+  const go = tileOrigin('valley', g);
+  const home = restoreWorld({ region: 'valley', x: 320 + 160, y: 576 + 200, layout: 2 });
+  ok(
+    home?.region === 'valley' && home.x === go.x + 160 && home.y === go.y + 200,
+    'a valley spot saved before the Frostline is the same spot in the garden today',
+  );
+  const rows = regionWalk('valley');
+  const at = (zone: string, stand: string) => {
+    const t = regionTiles('valley').find((x) => x.id === zone)!;
+    const o = tileOrigin('valley', t);
+    const s = (zoneMaps as Record<string, { stands: Record<string, readonly [number, number]> }>)[
+      zone
+    ].stands[stand];
+    return { x: o.x + s[0], y: o.y + s[1] };
+  };
+  const cabin = at('ridge', 'cabin');
+  const grid = makeWalkGrid(rows, {
+    cell: TILE.cell,
+    width: regionBounds('valley').width,
+    start: cabin,
+  });
+  for (const [zone, stand] of [
+    ['hollow', 'clearing'],
+    ['snowmelt', 'shore'],
+    ['saddle', 'bothy'],
+    ['summit', 'scope'],
+  ] as const)
+    ok(grid.findPath(cabin, at(zone, stand)).length > 0, `the ridge cabin walks to ${zone}`);
+  ok(
+    grid.findPath(at('woodland', 'clearing'), at('hollow', 'clearing')).length > 0,
+    'the woodland reaches the hollow (the long way round, by the ridge)',
+  );
+}
+console.log('Frostline: the high loop is walked from the ridge, old spots stay put.');

@@ -91,9 +91,12 @@ async function prepare(page: Page, screen: Screen) {
       break;
     case 'missions':
       await click(page, page.getByRole('tab', { name: /^MISSIONS/ }));
+      await expect(page.getByRole('heading', { name: 'THE VALLEY', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'PARK PATROL', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'WALK THERE', exact: true })).toBeVisible();
       await expect(
-        page.getByRole('heading', { name: 'BEYOND THE GARDEN GATE', exact: true }),
-      ).toBeVisible();
+        page.getByRole('button', { name: 'START PARK PATROL', exact: true }),
+      ).toBeEnabled();
       break;
     case 'shop':
       await click(page, page.getByRole('tab', { name: /^SHOP/ }));

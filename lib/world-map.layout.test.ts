@@ -1,15 +1,25 @@
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { regionPoint, travelPoints } from './world-places';
 
 // Simulate the next layout at the version/migration boundary only. The actual
 // map builder and world restorer below must distinguish saved and live positions.
 // This is not a test of authored layout history (world-save.test.ts owns that).
+// Read the version literal without loading the module: a preloaded CJS module
+// would bypass the fixture resolver for one of tsx's import paths.
+const version = readFileSync(join(__dirname, 'world-layouts.ts'), 'utf8').match(
+  /export const LAYOUT_VERSION = (\d+);/,
+);
+assert.ok(version, 'current layout declares its version');
+const currentLayoutVersion = Number(version[1]);
 const moved = { region: 'west', ...regionPoint(travelPoints.west) };
 const source = `
-  export const LAYOUT_VERSION = 2;
+  export const LAYOUT_VERSION = ${currentLayoutVersion + 1};
   export const carryForward = (version) =>
-    version === 1 ? ${JSON.stringify(moved)} : null;
+    (globalThis[Symbol.for("napattack.map-layout-migrations")]++, version === ${currentLayoutVersion})
+      ? ${JSON.stringify(moved)} : null;
 `;
 const url = `data:text/javascript,${encodeURIComponent(source)}`;
 const hooks = registerHooks({
@@ -22,10 +32,7 @@ const hooks = registerHooks({
     if (target === url)
       return {
         format: 'module',
-        source: source.replace(
-          'version === 1 ?',
-          '(globalThis[Symbol.for("napattack.map-layout-migrations")]++, version === 1) ?',
-        ),
+        source,
         shortCircuit: true,
       };
     return nextLoad(target, context);
@@ -39,7 +46,7 @@ async function main() {
       region: 'valley' as const,
       ...regionPoint({ region: 'valley', zone: 'park', at: [160, 200] }),
     };
-    const oldSave = { ...live, visited: ['garden'], layout: 1 };
+    const oldSave = { ...live, visited: ['garden'], layout: currentLayoutVersion };
     const key = Symbol.for('napattack.map-layout-migrations');
     const counters = globalThis as typeof globalThis & { [key: symbol]: number };
     counters[key] = 0;
@@ -61,8 +68,8 @@ async function main() {
     });
     assert.equal(future.nodes.find((n) => n.id === 'zone:park')?.state, 'here');
     assert.deepEqual(future.visitedSnapshot, ['garden']);
-    assert.deepEqual(oldSave, { ...live, visited: ['garden'], layout: 1 });
-    console.log('World map layout boundary: 9 checks passed (simulated next version).');
+    assert.deepEqual(oldSave, { ...live, visited: ['garden'], layout: currentLayoutVersion });
+    console.log('World map layout boundary: 10 checks passed (simulated next version).');
   } finally {
     hooks.deregister();
     delete (globalThis as typeof globalThis & { [key: symbol]: number })[

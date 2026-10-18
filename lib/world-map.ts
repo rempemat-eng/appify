@@ -11,7 +11,7 @@ import {
   travelPoints,
   type StopId,
 } from './world-places';
-import { restoreWorld, restoreWorldZoneId, type WorldSpot } from './world-save';
+import { restoreWorld, type WorldSpot } from './world-save';
 
 /** C22: a schematic, not a navigator or an unlock/reward system. */
 export type MapState = 'unseen' | 'visited' | 'here';
@@ -46,6 +46,20 @@ const strings = (value: unknown): string[] =>
   Array.isArray(value)
     ? [...new Set(value.filter((v): v is string => typeof v === 'string' && v.length > 0))]
     : [];
+
+/** Let the authoritative world restorer resolve a retired visited-zone ID.
+ * Unknown future strings are intentionally kept by the atlas, not filtered out.
+ * This avoids a second alias table or edits to Claude A's world-save module. */
+function restoreWorldZoneId(id: string): string {
+  return (
+    restoreWorld({
+      region: doors.hut.region,
+      ...regionPoint(doors.hut),
+      visited: [id],
+      layout: LAYOUT_VERSION,
+    })?.visited[0] ?? id
+  );
+}
 
 /** Home is already known; a valid legacy position is known even if its list is missing. */
 export function mapVisitedZones(world: WorldSpot | null): TileId[] {

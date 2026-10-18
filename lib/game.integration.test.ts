@@ -490,10 +490,12 @@ async function main() {
     // C22 exercises the real migration, action and writer, not a duplicate store.
     const { buildWorldMap } = await import('./world-map');
     const { regionPoint } = await import('./world-places');
+    const { LAYOUT_VERSION } = await import('./world-layouts');
     const parkSpot = {
       region: 'valley' as const,
       ...regionPoint({ region: 'valley', zone: 'park', at: [160, 200] }),
       visited: ['garden', 'town', 'park'],
+      layout: LAYOUT_VERSION,
     };
     await loadPatchedSave((saved) => {
       if (saved.player && typeof saved.player === 'object' && 'grass' in saved.player)
@@ -527,6 +529,7 @@ async function main() {
         region: 'valley',
         ...regionPoint({ region: 'valley', zone: 'headland', at: [160, 200] }),
         visited: ['garden', 'castle'],
+        layout: LAYOUT_VERSION,
         futureGround: { keep: true },
       };
       saved.mapSeen = ['garden', 'castle', 'constructor', '__proto__', 'future-zone'];
