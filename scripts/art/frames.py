@@ -71,10 +71,10 @@ PORTS = {
     ('caldera', 'hearthold'): ((104, 152), 'basalt'),
     ('caldera', 'springs'): ((264, 320), 'basalt'),
     # the Tidebloom Isles
-    ('rainforest', 'headwaters'): ((120, 168), 'jungle'),
-    ('rainforest', 'landing'): ((172, 228), 'jungle'),
-    ('headwaters', 'cove'): ((192, 248), 'jungle'),
-    ('landing', 'cove'): ((352, 408), 'jungle'),
+    ('rainforest', 'headwaters'): ((224, 280), 'jungle'),
+    ('rainforest', 'landing'): ((128, 184), 'jungle'),
+    ('headwaters', 'cove'): ((192, 248), 'basalt'),
+    ('landing', 'cove'): ((352, 408), 'basalt'),
 }
 
 

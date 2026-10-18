@@ -20,7 +20,7 @@ from PIL import Image, ImageDraw
 from zones import *  # noqa: F401,F403  (zones.py registers itself under that name)
 from zones import _decal, _rgb  # noqa: F401
 
-__all__ = ['ISLE_TRAIL_NS', 'ISLE_TRAIL_WE', 'TROPIC', 'LAGOON', 'BASALT_R', 'FLOOR', 'IW', 'IH', 'island',
+__all__ = ['TROPIC', 'LAGOON', 'BASALT_R', 'FLOOR', 'IW', 'IH', 'island',
            'isle_trail', 'plank_bridge', 'isle_landing', 'isle_rainforest', 'isle_headwaters', 'isle_cove']
 
 
@@ -30,10 +30,14 @@ __all__ = ['ISLE_TRAIL_NS', 'ISLE_TRAIL_WE', 'TROPIC', 'LAGOON', 'BASALT_R', 'FL
 # lagoon and the pier), the Rainforest (north-west, a stream valley), the Headwaters
 # (north-east, the upland and the falls) and Black-sand Cove (south-east, the exposed
 # basalt coast). Fresh water runs from the Headwaters' falls west through the Rainforest
-# and south into the lagoon; the walk goes the other way round. Trail crossings, the
-# same both sides of each border:
-ISLE_TRAIL_NS = 200   # x where the trail crosses the north/south borders
-ISLE_TRAIL_WE = {'north': 140, 'south': 380}  # y where it crosses the west/east borders
+# and south into the lagoon; the walk goes the other way round.
+#
+# Height (Codex's tiers): the Landing and the Cove at sea level (0), the Rainforest one
+# step up (1), the Headwaters two (2). The steps are basalt escarpments along the zone
+# borders, so each border is closed by rock except where Codex put the way through
+# (frames.PORTS): a broad stair up from the landing (x 128-184), a switchback up the
+# Headwaters' escarpment beside the waterfall gorge (y 224-280) and a two-tier terraced
+# descent round the island's east shoulder to the cove (x 192-248, then a second stair).
 TROPIC = ['#1F3A22', '#2E5A30', '#3F7A3A', '#5A9A46', '#86BE5E']
 LAGOON = ['#1E6E7A', '#2A8E96', '#45B2B0', '#7FD6CC', '#C8F0E6']
 BASALT_R = MATERIALS['basalt']
@@ -83,6 +87,31 @@ ISLETS = [(600, 1100, 22, 12, True), (478, 1128, 11, 6, False), (296, 1138, 9, 5
 # the cove's black beach and the rainforest's sandy bay (everywhere else the open sea
 # meets rock)
 BEACH = (392, 570)
+
+# The trails, in island px: drawn once, so each runs on unbroken across the borders.
+TRAILS = [
+    # the pier up the dry shore lane beside the stream, the broad stair, the footbridge
+    # over the river and on to the foot of the switchback
+    [(112, 950), (110, 904), (122, 862), (140, 806), (154, 736), (154, 660), (156, 600), (156, 540), (160, 470),
+     (165, 420), (165, 330), (180, 304), (222, 292), (270, 288), (298, 280), (318, 278)],
+    # the landing's shore path round the headland to the cove and up its terraces
+    [(140, 806), (228, 814), (282, 880), (304, 940), (340, 958), (400, 952), (452, 936), (500, 908), (544, 864),
+     (566, 800), (568, 740), (566, 690)],
+    # the Headwaters: from the switchback's top over the footbridge, across the upland
+    # and down round the east shoulder: the first stair, the terrace, the second stair
+    [(372, 242), (392, 248), (400, 262), (400, 312), (430, 352), (480, 398), (532, 440), (548, 490), (542, 530),
+     (540, 552), (540, 600), (562, 616), (566, 630)],
+    # the spur to the pool's edge
+    [(430, 352), (490, 292), (516, 266)],
+]
+TRAIL_W = 9.5
+# the switchback up the Headwaters' escarpment: three short legs across the slope
+ZIGZAG = [(316, 278), (364, 278), (364, 260), (342, 260), (342, 242), (384, 242)]
+SLOPE = (332, 230, 290)  # its west edge and its rows; it runs east to the escarpment
+# footbridges over the river (x, y, w, h), and the broad stairs at the escarpments
+BRIDGES = [(152, 338, 26, 52), (387, 262, 26, 42)]
+STAIR_XS = {'west': (126, 186), 'east': (510, 570), 'terrace': (552, 580)}
+FACE = 18  # a cliff face's height for one step of height, in art px
 
 
 def _smoothstep(t: float) -> float:
@@ -189,6 +218,35 @@ def flank_top(gx: float) -> int:
     return int(base + (full - base) * _smoothstep((gx - 340) / 100))
 
 
+def x12(gy: float) -> float:
+    """The escarpment between the Rainforest (west) and the higher ground east of it,
+    bowed east where the switchback climbs it beside the gorge."""
+    t = (gy - 252) / 72
+    bulge = 46 * max(0.0, 1 - t * t) ** 1.5
+    return 320 + bulge + math.sin(gy / 23) * 1.5 + (smooth_noise(0, gy, 17, 1301) - 0.5) * 3
+
+
+def y01(gx: float) -> float:
+    """The escarpment between the Rainforest and the Landing below it."""
+    return 568 + math.sin(gx / 19) * 2 + (smooth_noise(gx, 0, 15, 1302) - 0.5) * 4
+
+
+def y2a(gx: float) -> float:
+    """The Headwaters' south edge, down to the terrace."""
+    return 567 + math.sin(gx / 21) * 2 + (smooth_noise(gx, 0, 15, 1303) - 0.5) * 4
+
+
+def y2b(gx: float) -> float:
+    """The terrace's south edge, down to the cove."""
+    return 664 + 22 * math.sin((gx - 320) / 60) + (smooth_noise(gx, 0, 20, 1304) - 0.5) * 10
+
+
+def tier(gx: int, gy: int, X12, Y01, Y2A, Y2B) -> int:
+    if gx < X12[gy]:
+        return 1 if gy < Y01[gx] else 0
+    return 2 if gy < Y2A[gx] else 1 if gy < Y2B[gx] else 0
+
+
 class Island:
     """The island's ground, drawn once: `cv` (IW x IH) and the masks the zones cut."""
 
@@ -196,6 +254,9 @@ class Island:
         self.cv = Canvas(IW, IH)
         self.blocked = bytearray(N)
         self.water = bytearray(N)
+        self.trail = set()
+        self.zig = set()
+        self.stairs = []  # (x0, y0, w, h)
 
 
 def _put(px, x, y, c):
@@ -419,6 +480,7 @@ def island() -> Island:
     # ---- the Headwaters: the old volcano's flank, the falls and their pool
     _flank(cv, I, land)
     _falls(cv, I, pool)
+    _heights(cv, I, land, river, d_fresh)
 
     for i in range(N):
         if I.water[i] or islet[i]:
@@ -530,6 +592,179 @@ def _falls(cv: Canvas, I: Island, pool: bytearray):
                 cv.set(gx, gy, FOAM if (gx + gy) % 2 else LAGOON[4])
 
 
+def _heights(cv: Canvas, I: Island, land: bytearray, river: bytearray, d_fresh: bytearray):
+    """The island's three heights: basalt escarpments in courses where the ground steps
+    down to the south (their faces seen from the front) or to the west (seen edge on), a
+    cascade where the river goes over one, the gorge it has cut below, the switchback's
+    vegetated slope, and the broad stairs where the trails go up and down."""
+    px = cv.img.load()
+    X12 = [x12(gy) for gy in range(IH)]
+    Y01 = [y01(gx) for gx in range(IW)]
+    Y2A = [y2a(gx) for gx in range(IW)]
+    Y2B = [y2b(gx) for gx in range(IW)]
+    T = [[0] * IW for _ in range(IH)]
+    for gy in range(IH):
+        row = T[gy]
+        for gx in range(IW):
+            row[gx] = tier(gx, gy, X12, Y01, Y2A, Y2B)
+    wet = lambda i: river[i]  # noqa: E731
+    face = {}  # (gx, gy) -> (row in the face, its height)
+    for gx in range(IW):
+        for gy in range(1, IH):
+            drop = T[gy - 1][gx] - T[gy][gx]
+            # (a front face only where an east-west line steps down; where the
+            # north-south escarpment shifts a column it is seen edge on, below)
+            if drop > 0 and (gx >= X12[gy - 1]) == (gx >= X12[gy]):
+                fh = FACE * drop
+                for r in range(fh):
+                    if gy + r < IH:
+                        face[(gx, gy + r)] = (r, fh)
+    side = set()
+    edges = []
+    for gy in range(IH):
+        for gx in range(1, IW):
+            if T[gy][gx - 1] != T[gy][gx]:
+                edges.append((gx, gy))
+                for d in range(-5, 6):
+                    if (gx + d, gy) not in face:
+                        side.add((gx + d, gy))
+    # the switchback's slope: a steep bank of fern and rock instead of a sheer face
+    sx0, sy0, sy1 = SLOPE
+    slope = {(gx, gy) for gy in range(sy0, sy1) for gx in range(sx0, int(X12[gy]) + 6)}
+    side -= slope
+    zig = _thick(ZIGZAG, 6.5, 0)
+    stairs = []
+    for key, (a, b) in STAIR_XS.items():
+        line = Y01 if key == 'west' else Y2A if key == 'east' else Y2B
+        top = int(min(line[a:b])) - 1
+        bottom = int(max(line[a:b])) + FACE + 1
+        stairs.append((a, top, b - a, bottom - top))
+    I.stairs = stairs
+    in_stair = {(x, y) for (x0, y0, w, h) in stairs for y in range(y0, y0 + h) for x in range(x0, x0 + w)}
+    O = BASALT_R
+    for (gx, gy), (r, fh) in face.items():
+        i = gy * IW + gx
+        if not (land[i] or wet(i)) or (gx, gy) in in_stair:
+            continue
+        if wet(i):  # the river pours over the edge
+            c = FOAM if (gx * 3 + r * 2) % 5 < 2 else LAGOON[4] if r < fh - 2 else LAGOON[3]
+            _put(px, gx, gy, c)
+            continue
+        course, k = (r - 1) // 4, (r - 1) % 4
+        off = int(noise2(course, gx // 9, 1310) * 9)
+        joint = (gx + off) % 9 == 0
+        if r == 0:
+            c = TROPIC[4] if (gx // 2) % 3 else TROPIC[3]  # the grass lip, catching the light
+        elif r == fh - 1:
+            c = O[0]
+        elif joint:
+            c = O[0]
+        elif k == 0:
+            c = O[3] if (gx + off) % 9 < 6 else O[2]
+        elif k == 3:
+            c = TROPIC[1] if noise2(gx, course, 1311) > 0.7 else O[1]
+        else:
+            c = O[2] if (gx + off + 1) % 9 else O[1]
+        if r and noise2(gx // 2, 0, 1312) > 0.86 and r < 2 + int(noise2(gx, 1, 1313) * (fh - 2)):
+            c = TROPIC[2] if gx % 2 else TROPIC[3]  # a fern or a vine hanging over
+        _put(px, gx, gy, c)
+        I.blocked[i] = 1
+    for (gx, gy), (r, fh) in face.items():  # its shadow at the foot
+        if r == fh - 1 and (gx, gy + 1) not in face and 0 <= gy + 2 < IH:
+            for d in (1, 2):
+                j = (gy + d) * IW + gx
+                if land[j] and (gx, gy + d) not in in_stair:
+                    style.darken(cv, gx, gy + d)
+                elif wet(j):
+                    _put(px, gx, gy + d, FOAM if (gx + d) % 2 else LAGOON[4])
+    for (gx, gy) in side:
+        i = gy * IW + gx
+        if not (0 <= gx < IW) or not (land[i] or wet(i)) or (gx, gy) in in_stair:
+            continue
+        e = gx - int(X12[gy])
+        if wet(i):  # the falls into the gorge, seen edge on
+            _put(px, gx, gy, FOAM if (gy * 3 + gx) % 5 < 2 else LAGOON[4])
+            continue
+        if e >= 5:
+            c = TROPIC[4] if gy % 3 else TROPIC[3]
+        elif e <= -5:
+            c = O[0]
+        elif gy % 5 == 0 or e <= -4:
+            c = O[1]
+        else:
+            c = O[3] if e < 1 and (gy // 5 + gx) % 3 else O[2]
+        _put(px, gx, gy, c)
+        I.blocked[i] = 1
+    for (gx, gy) in slope:
+        i = gy * IW + gx
+        if not land[i]:
+            continue
+        if zig[i]:
+            continue
+        n = smooth_noise(gx, gy, 5, 1314)
+        c = O[2] if n > 0.7 else O[3] if n > 0.64 else TROPIC[1] if n < 0.3 or (gx + gy) % 2 else TROPIC[2]
+        _put(px, gx, gy, c)
+        I.blocked[i] = 1
+    I.zig = {(i % IW, i // IW) for i in range(sy0 * IW, (sy1 + 8) * IW) if zig[i] and land[i]}
+    # bushes leaning over each escarpment's lip, scree fallen at its foot
+    near_stair = {(x, y) for (x0, y0, w, h) in stairs for y in range(y0 - 10, y0 + h + 10)
+                  for x in range(x0 - 8, x0 + w + 8)}
+    lips, feet = [], []
+    for (gx, gy), (r, fh) in face.items():
+        if r == 0 and gx % 9 == int(noise2(gx // 9, gy // 40, 1315) * 9):
+            lips.append((gx, gy - 1))
+            feet.append((gx + int(noise2(gx, gy, 1316) * 6) - 3, gy + fh + 3))
+    for (gx, gy) in edges:
+        if gy % 10 == int(noise2(gx // 40, gy // 10, 1317) * 10) and (gx, gy) not in slope:
+            lips.append((gx + 7, gy))
+            feet.append((gx - 9, gy + int(noise2(gx, gy, 1318) * 4)))
+    for k, (gx, gy) in enumerate(lips):
+        i = gy * IW + gx
+        if not (0 < gx < IW - 1 and 0 < gy < IH - 1) or not land[i] or (gx, gy) in near_stair or (gx, gy) in slope:
+            continue
+        if noise2(gx, gy, 1319) < 0.25 or d_fresh[i] < 10:
+            continue
+        rx, ry = 4 + noise2(gx, gy, 1321) * 4, 3 + noise2(gx, gy, 1322) * 2
+        tmp = Canvas(24, 18)
+        shape = style.leafy(tmp, 12, 9, rx, ry, TROPIC, r=1.7, seed=1323 + k)
+        for (a, b) in shape:
+            x, y = gx - 12 + a, gy - 9 + b
+            if 0 <= x < IW and 0 <= y < IH and land[y * IW + x]:
+                cv.set(x, y, tmp.get(a, b))
+                I.blocked[y * IW + x] = 1
+    for k, (gx, gy) in enumerate(feet):
+        if not (2 < gx < IW - 3 and 2 < gy < IH - 3) or (gx, gy) in near_stair or (gx, gy) in slope:
+            continue
+        i = gy * IW + gx
+        if not land[i] or d_fresh[i] < 9 or (gx, gy) in face or noise2(gx, gy, 1324) < 0.35:
+            continue
+        rr = 2 + noise2(gx, gy, 1325) * 2.5
+        pts = {(x, y) for (x, y) in oval(gx, gy, rr + 1, rr) if land[y * IW + x] and (x, y) not in face}
+        if len(pts) > 4:
+            style.facet_stone(cv, pts, O, seed=1326 + k, outline=None)
+            for (x, y) in pts:
+                I.blocked[y * IW + x] = 1
+    # the gorge below the falls: basalt walls either side of the river
+    for gy in range(260, 360):
+        lip = int(X12[gy])
+        for gx in range(lip - 64, lip - 2):
+            i = gy * IW + gx
+            if land[i] and 1 <= d_fresh[i] <= 5 and (gx, gy) not in face and (gx, gy) not in side:
+                below = river[i + IW] if gy + 1 < IH else 0
+                c = O[0] if d_fresh[i] == 1 else O[1] if below else O[3] if d_fresh[i] == 5 else O[2]
+                _put(px, gx, gy, c)
+                I.blocked[i] = 1
+    # the trails, in island px (painted zone by zone over the cut, see `paint`)
+    for line in TRAILS:
+        m = _thick(line, TRAIL_W, 1320)
+        I.trail |= {(i % IW, i // IW) for i in range(N) if m[i]}
+    for (gx, gy) in in_stair:
+        I.blocked[gy * IW + gx] = 0
+    for i in range(sy0 * IW, (sy1 + 8) * IW):
+        if zig[i] and land[i]:
+            I.blocked[i] = 0
+
+
 def cut(zone: str):
     """This zone's piece of the island: its ground, and its water and blocked ground in
     zone pixels."""
@@ -546,7 +781,66 @@ def cut(zone: str):
                 water.add((x, y))
             if I.blocked[base + x]:
                 blocked.add((x, y))
-    return cv, water, blocked
+    return cv, water, blocked, ox, oy
+
+
+def _stair(cv: Canvas, x0: int, y0: int, w: int, h: int, gy0: int):
+    """A broad stair of basalt steps between low walls; returns (steps, walls). The
+    treads are laid from island row 576, so the stair matches itself across a border."""
+    steps, walls = set(), set()
+    for y in range(y0, y0 + h):
+        for x in range(x0, x0 + w):
+            a = min(x - x0, x0 + w - 1 - x)
+            if a < 2:
+                walls.add((x, y))
+                c = STONE[0] if a == 0 or (x - x0 > 1 and y % 4 == 3) else STONE[2]
+                if y == y0:
+                    c = STONE[3]
+            else:
+                steps.add((x, y))
+                g = gy0 + y - y0 - H
+                k = g % 6
+                c = STONE[4] if k == 0 else STONE[3] if k < 3 else STONE[2] if k < 5 else STONE[1]
+                if k in (2, 3) and (x * 7 + (g // 6) * 3) % 11 == 0:
+                    c = STONE[1]  # the joint between two slabs
+            cv.set(x, y, c)
+    return steps, walls
+
+
+def paint(zone: str):
+    """Cut this zone from the island and lay its share of the trails, stairs and
+    footbridges over it. Returns (canvas, water, blocked, deck, ox, oy)."""
+    I = island()
+    cv, water, blocked, ox, oy = cut(zone)
+    mask = {(x - ox, y - oy) for (x, y) in I.trail if ox - 2 <= x < ox + W + 2 and oy - 2 <= y < oy + H + 2}
+    paint_road(cv, mask)
+    for (gx, gy) in I.zig:  # the switchback, over the trail's grass edge
+        x, y = gx - ox, gy - oy
+        if 0 <= x < W and 0 <= y < H:
+            c = P[4] if smooth_noise(gx, gy, 7, 40) > 0.7 else P[3]
+            if (gx, gy + 1) not in I.zig:
+                c = P[1]  # the downhill edge
+            elif gx % 6 == 0 and (gx - 2, gy) in I.zig and (gx + 2, gy) in I.zig:
+                c = P[2]  # a step
+            cv.set(x, y, c)
+    open_ = set()
+    shut = set()
+    for (x0, y0, w, h) in I.stairs:
+        if x0 + w > ox and x0 < ox + W and y0 + h > oy and y0 < oy + H:
+            steps, walls = _stair(cv, x0 - ox, y0 - oy, w, h, y0)
+            open_ |= steps
+            shut |= walls
+    for (x0, y0, w, h) in BRIDGES:
+        if ox <= x0 < ox + W and oy <= y0 < oy + H:
+            deck, rails = plank_bridge(cv, x0 - ox, y0 - oy, w, h, vertical=True)
+            open_ |= deck
+            shut |= rails
+    inside = lambda pts: {(x, y) for (x, y) in pts if 0 <= x < W and 0 <= y < H}  # noqa: E731
+    return cv, water, (blocked - open_) | inside(shut) | (water - open_), inside(open_), ox, oy
+
+
+def _stand(gx: int, gy: int, ox: int, oy: int):
+    return (gx - ox, gy - oy)
 
 
 def isle_trail(cv: Canvas, points, seed: int) -> set:
@@ -586,90 +880,82 @@ def plank_bridge(cv: Canvas, x0: int, y0: int, w: int, h: int, vertical: bool = 
 
 
 def isle_landing(frame: int = 0):
-    """Lagoon Landing: the island's one pier, where the ferry from Driftwood ties up, out
-    over the sheltered lagoon inside the reef. The river from the rainforest comes down
-    on the west and spreads into the lagoon through a fringe of mangroves; the trail
-    goes north into the forest and east along the shore, round the basalt headland, to
-    the cove."""
-    cv, water, blocked = cut('landing')
-    trail = isle_trail(cv, [(ISLE_TRAIL_NS, -12), (192, 140), (132, 236), (110, 300), (112, 376)], 917)
-    trail |= isle_trail(cv, [(150, 212), (232, 246), (282, 330), (300, 370), (W + 12, ISLE_TRAIL_WE['south'])], 918)
+    """Lagoon Landing (sea level): the island's one pier, where the ferry from Driftwood
+    ties up, out over the sheltered lagoon inside the reef. The river from the rainforest
+    comes down over the escarpment on the west and spreads into the lagoon through a
+    fringe of mangroves; the dry shore lane climbs beside it to the broad stair, and the
+    shore path goes east round the basalt headland to the cove."""
+    cv, water, blocked, deck, ox, oy = paint('landing')
     # the pier: planks out over the shallows to where the ferry ties up (Codex's anchor,
     # island-pier at (112, 440))
     pier, rails = plank_bridge(cv, 99, 368, 26, 104, vertical=True)
     objects = [
         ('boathouse', 'boathouse', 146, 272), ('ferry', 'island_ferry', 128, 432), ('canoe', 'canoe', 196, 388),
-        ('palm-1', 'palm', 236, 120), ('palm-2', 'palm', 262, 292), ('palm-3', 'palm', 60, 210),
-        ('fern-1', 'tree_fern', 250, 30), ('fern-2', 'tree_fern', 120, 40), ('jt-1', 'jungle_tree', 214, 12),
-        ('hib-1', 'hibiscus', 150, 120), ('hib-2', 'hibiscus', 268, 236), ('mon-1', 'monstera', 216, 170),
+        ('palm-1', 'palm', 236, 110), ('palm-2', 'palm', 262, 292), ('palm-3', 'palm', 60, 200),
+        ('fern-1', 'tree_fern', 250, 40), ('fern-2', 'tree_fern', 100, 60), ('jt-1', 'jungle_tree', 196, 20),
+        ('hib-1', 'hibiscus', 190, 140), ('hib-2', 'hibiscus', 268, 236), ('mon-1', 'monstera', 216, 180),
         ('rock-1', 'black_rock_small', 290, 424), ('heron', 'heron', 64, 330),
     ]
-    WATER_MASKS['isle_landing'] = water - pier
-    stands = {'pier': (112, 440), 'rainforest': (ISLE_TRAIL_NS, 6), 'cove': (314, ISLE_TRAIL_WE['south']),
-              'boathouse': (184, 352)}
-    return cv, objects, stands, (blocked - pier - trail) | rails | (water - pier)
+    WATER_MASKS['isle_landing'] = water - pier - deck
+    stands = {'pier': (112, 440), 'rainforest': (156, 6), 'cove': (314, 382), 'boathouse': (184, 352)}
+    return cv, objects, stands, (blocked - pier) | rails
 
 
 def isle_rainforest(frame: int = 0):
-    """The Rainforest: a stream valley under a closed canopy, giants with buttress roots,
-    tree ferns and big-leafed plants, the floor dark and damp. The river from the falls
-    winds west through it and turns south for the lagoon, crossed by a footbridge; the
-    sea breaks on black rocks along the north and west, with one small sandy bay."""
-    cv, water, blocked = cut('rainforest')
-    trail = isle_trail(cv, [(ISLE_TRAIL_NS, H + 12), (204, 470), (200, 384), (206, 320), (232, 250), (270, 176),
-                            (W + 12, ISLE_TRAIL_WE['north'])], 927)
-    deck, rails = plank_bridge(cv, 193, 314, 26, 52, vertical=True)
+    """The Rainforest (one step up): a stream valley under a closed canopy, giants with
+    buttress roots, tree ferns and big-leafed plants, the floor dark and damp. The river
+    falls into it through a gorge from the Headwaters, winds west and turns south over
+    the escarpment for the lagoon; the trail crosses it on a footbridge. The sea breaks
+    on black rocks along the north and west, with one small sandy bay."""
+    cv, water, blocked, deck, ox, oy = paint('rainforest')
     objects = [
-        ('jt-1', 'jungle_tree', 52, 120), ('jt-2', 'jungle_tree', 100, 200), ('jt-3', 'jungle_tree', 226, 380),
-        ('jt-4', 'jungle_tree', 40, 340), ('jt-5', 'jungle_tree', 110, 440), ('jt-6', 'jungle_tree', 150, 30),
-        ('fern-1', 'tree_fern', 160, 120), ('fern-2', 'tree_fern', 60, 250), ('fern-3', 'tree_fern', 270, 350),
-        ('fern-4', 'tree_fern', 30, 470), ('fern-5', 'tree_fern', 262, 500), ('mon-1', 'monstera', 140, 280),
-        ('mon-2', 'monstera', 160, 200), ('mon-3', 'monstera', 40, 420), ('mon-4', 'monstera', 150, 520),
-        ('hib', 'hibiscus', 270, 90), ('log', 'mossy_log', 130, 230),
+        ('jt-1', 'jungle_tree', 52, 120), ('jt-2', 'jungle_tree', 90, 210), ('jt-3', 'jungle_tree', 210, 420),
+        ('jt-4', 'jungle_tree', 30, 340), ('palm-1', 'palm', 176, 34),
+        ('fern-1', 'tree_fern', 170, 130), ('fern-2', 'tree_fern', 40, 250), ('fern-3', 'tree_fern', 250, 360),
+        ('fern-4', 'tree_fern', 20, 480), ('fern-5', 'tree_fern', 230, 500), ('mon-1', 'monstera', 120, 290),
+        ('mon-2', 'monstera', 200, 200), ('mon-3', 'monstera', 30, 420), ('mon-4', 'monstera', 200, 520),
+        ('hib', 'hibiscus', 250, 120), ('log', 'mossy_log', 210, 240),
     ]
     WATER_MASKS['isle_rainforest'] = water - deck
-    stands = {'landing': (ISLE_TRAIL_NS, H - 6), 'headwaters': (314, ISLE_TRAIL_WE['north']), 'bridge': (206, 380)}
-    return cv, objects, stands, ((blocked - deck - trail) | rails | (water - deck))
+    stands = {'landing': (156, H - 6), 'headwaters': (314, 278), 'bridge': (165, 404)}
+    return cv, objects, stands, blocked
 
 
 def isle_headwaters(frame: int = 0):
-    """The Headwaters: the island's old volcano rises behind, its flank green with moss
-    and fern, and a waterfall drops from it into a deep round pool. The river leaves the
-    pool west for the rainforest; a footbridge carries the trail over it, and a spur goes
-    to the pool's edge. The sea breaks on the cliffs to the east."""
-    cv, water, blocked = cut('headwaters')
-    trail = isle_trail(cv, [(-12, ISLE_TRAIL_WE['north']), (50, 160), (100, 204), (130, 256), (150, 330), (196, 430),
-                            (ISLE_TRAIL_NS, H + 12)], 938)
-    trail |= isle_trail(cv, [(150, 330), (196, 262)], 939)  # the spur to the pool's edge
-    deck, rails = plank_bridge(cv, 116, 228, 26, 50, vertical=True)
+    """The Headwaters (two steps up): the island's old volcano rises behind, its flank
+    green with moss and fern, and a waterfall drops from it into a deep round pool. The
+    river leaves the pool west across the upland and goes over the escarpment into the
+    gorge; the switchback climbs the slope beside it, a footbridge carries the trail over
+    the river well above the lip, and a spur goes to the pool's edge. The trail leaves by
+    the east shoulder, down a broad stair to the terrace above the cove."""
+    cv, water, blocked, deck, ox, oy = paint('headwaters')
     objects = [
-        ('fern-1', 'tree_fern', 20, 200), ('fern-2', 'tree_fern', 250, 236), ('fern-3', 'tree_fern', 60, 400),
-        ('jt-1', 'jungle_tree', 200, 316), ('jt-2', 'jungle_tree', 10, 460), ('mon-1', 'monstera', 160, 380),
-        ('mon-2', 'monstera', 196, 470), ('hib-1', 'hibiscus', 80, 330), ('rock-1', 'black_rock', 224, 500),
-        ('rock-2', 'black_rock_small', 120, 480),
+        ('fern-1', 'tree_fern', 120, 170), ('fern-2', 'tree_fern', 250, 236), ('fern-3', 'tree_fern', 60, 400),
+        ('jt-1', 'jungle_tree', 150, 300), ('jt-2', 'jungle_tree', 10, 440), ('mon-1', 'monstera', 120, 400),
+        ('mon-2', 'monstera', 200, 480), ('hib-1', 'hibiscus', 60, 330), ('rock-1', 'black_rock', 250, 380),
+        ('rock-2', 'black_rock_small', 100, 500),
     ]
     WATER_MASKS['isle_headwaters'] = water - deck
-    stands = {'rainforest': (6, ISLE_TRAIL_WE['north']), 'pool': (196, 256), 'cove': (ISLE_TRAIL_NS, H - 6)}
-    return cv, objects, stands, ((blocked - deck - trail) | rails | (water - deck))
+    stands = {'rainforest': (2, 278), 'pool': (196, 266), 'cove': (220, H - 6)}
+    return cv, objects, stands, blocked
 
 
 def isle_cove(frame: int = 0):
-    """Black-sand Cove: the island's exposed south-east coast. The trail comes down out
-    of the trees onto a bay of black volcanic sand where the surf runs in white between
-    basalt headlands; a turtle rests above the tide line. The shore path goes west round
-    the headland to the lagoon and the landing."""
-    cv, water, blocked = cut('cove')
-    trail = isle_trail(cv, [(ISLE_TRAIL_NS, -12), (196, 200), (176, 290), (120, 356), (60, 376),
-                            (-12, ISLE_TRAIL_WE['south'])], 948)
+    """Black-sand Cove (sea level): the island's exposed south-east coast. From the
+    terrace below the Headwaters a second stair goes down, and the trail comes out of the
+    trees above a bay of black volcanic sand where the surf runs in white between basalt
+    headlands; a turtle rests above the tide line. The shore path goes west round the
+    headland to the lagoon and the landing."""
+    cv, water, blocked, deck, ox, oy = paint('cove')
     objects = [
-        ('rock-1', 'black_rock', 236, 340), ('rock-2', 'black_rock_small', 80, 392), ('rock-3', 'black_rock', 60, 300),
-        ('turtle', 'sea_turtle', 120, 378), ('palm-1', 'palm', 222, 200), ('palm-2', 'palm', 60, 200),
-        ('fern-1', 'tree_fern', 250, 60), ('jt-1', 'jungle_tree', 20, 30), ('hib-1', 'hibiscus', 110, 120),
+        ('rock-1', 'black_rock', 150, 330), ('rock-2', 'black_rock_small', 80, 392), ('rock-3', 'black_rock', 40, 280),
+        ('turtle', 'sea_turtle', 120, 378), ('palm-1', 'palm', 180, 200), ('palm-2', 'palm', 60, 160),
+        ('fern-1', 'tree_fern', 110, 40), ('jt-1', 'jungle_tree', 10, 20), ('hib-1', 'hibiscus', 150, 120),
         ('canoe', 'canoe', 190, 380),
     ]
     WATER_MASKS['isle_cove'] = water
-    stands = {'headwaters': (ISLE_TRAIL_NS, 6), 'landing': (6, ISLE_TRAIL_WE['south']), 'beach': (166, 388)}
-    return cv, objects, stands, (blocked - trail) | water
+    stands = {'headwaters': (220, 24), 'landing': (6, 382), 'beach': (166, 388)}
+    return cv, objects, stands, blocked
 
 
 # how each island zone's open ground is dressed (zones.dress)
