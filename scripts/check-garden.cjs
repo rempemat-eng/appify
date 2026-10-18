@@ -100,6 +100,8 @@ class QAClock extends Date {
 const game = {
   // no keepsakes set out in the garden (lib/decor.ts is checked in check:world)
   decor: [],
+  // the hut as it first stands (its looks are checked in lib/hut-look.test.ts)
+  hutLook: { door: 'oak', boxes: 'flowers', path: 'earth' },
   player: {
     id: 'gardener',
     code: 'ABCD',
@@ -332,8 +334,10 @@ deps['@/lib/decor'] = {
   areaOf: (p) => p.area ?? 'hut',
   decorBox: () => ({ left: 0, top: 0, w: 1, h: 1, flat: true, cells: [] }),
   walkWithDecor: (rows) => rows,
+  hutImageKey: (look) => `${look.door}-${look.boxes}`,
 };
 deps['@/lib/decor-assets'] = { decorImages: {} };
+deps['@/lib/garden-hut-assets'] = { hutImages: {}, hutPathImages: {} };
 deps['@/lib/keyboard-walk'] = {
   STEP_MS: 120,
   keySteps: (dx, dy) => [[dx, dy]],

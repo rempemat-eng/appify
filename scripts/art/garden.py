@@ -48,7 +48,9 @@ PX = meadow.PATH_X
 PLAZA = (PX, 184)
 # Paths are at least 36 wide (a companion fits with room on both sides).
 PATH = thick_path([(PX, 300), (PX - 1, 262), (PX + 1, 222), PLAZA], 18.5, 1)
-PATH |= thick_path([(PX - 12, 180), (118, 158), (84, 136), (68, 126)], 13.5, 2)    # to the nap hut
+HUT_LINE = [(PX - 12, 180), (118, 158), (84, 136), (68, 126)]
+HUT_BRANCH = thick_path(HUT_LINE, 13.5, 2)
+PATH |= HUT_BRANCH  # to the nap hut
 PATH |= thick_path([(PX + 12, 178), (206, 156), (244, 132), (262, 116)], 13.5, 3)  # to Moss's stall
 PATH |= thick_path([(PX + 4, 170), (168, 128), (172, 92)], 9.5, 4)  # a quiet reading corner
 # the trail on up through the treeline to the Snowy Ridge (world-atlas.md)
@@ -56,6 +58,72 @@ RIDGE_X = 206  # between the reading nook and Moss's stall
 PATH |= thick_path([(172, 92), (200, 84), (206, 40), (RIDGE_X, -16)], 9.5, 4)
 PATH |= disc(PLAZA[0], PLAZA[1], 27)  # the plaza at the fork
 PATH |= meadow.meadow_path(thick_path)  # down across the bridge, through the meadow
+# The hut's own path, which can be laid with flagstones (coherence plan, B1): its branch
+# from where it leaves the plaza and the main path up to the hut's step.
+HUT_PAVING = HUT_BRANCH - thick_path([(PX, 300), (PX - 1, 262), (PX + 1, 222), PLAZA], 18.5, 1) \
+    - disc(PLAZA[0], PLAZA[1], 27)
+HUT_PATHS = ('earth', 'flagstones')
+
+
+def flagstones(cv: Canvas, seed: int = 11):
+    """Flagstones laid up the middle of the hut's path, from the plaza to the step: a
+    strip of irregular flat slabs (crazy paving: each pixel belongs to its nearest slab
+    centre, two across, staggered) parted by thin packed-earth seams. Each slab is lit
+    along its top and left edges and darker along the bottom and right, with the odd
+    pale fleck and moss in a seam; earth shows either side of the strip."""
+    line = [(68, 119), (84, 136), (118, 158), (PX - 12, 180)]
+    segs = []
+    for (x0, y0), (x1, y1) in zip(line, line[1:]):
+        length = math.hypot(x1 - x0, y1 - y0)
+        segs.append((x0, y0, (x1 - x0) / length, (y1 - y0) / length, length))
+    centres = []
+    k = 0
+    for (x0, y0, ux, uy, length) in segs:
+        d = 0.0
+        while d < length:
+            cx, cy = x0 + ux * d, y0 + uy * d
+            for side in (-1, 1):
+                off = side * 3.6 + (1.6 if k % 2 else -1.6)  # every other course steps over
+                jx = (noise2(k, side + 3, seed) - 0.5) * 2
+                jy = (noise2(k, side + 9, seed) - 0.5) * 2
+                centres.append((cx - uy * off + jx, cy + ux * off + jy))
+            k += 1
+            d += 7.0
+
+    def across(x, y):  # distance from the path's middle line
+        best = 1e9
+        for (x0, y0, ux, uy, length) in segs:
+            t = max(0.0, min(length, (x - x0) * ux + (y - y0) * uy))
+            best = min(best, math.hypot(x - x0 - ux * t, y - y0 - uy * t))
+        return best
+
+    strip = {(x, y) for (x, y) in HUT_PAVING if across(x + 0.5, y + 0.5) <= 7.2 + noise2(x, y, seed) * 1.4}
+    cell = {}
+    for (x, y) in strip:
+        cell[(x, y)] = min(range(len(centres)),
+                           key=lambda i: (x + 0.5 - centres[i][0]) ** 2 + (y + 0.5 - centres[i][1]) ** 2)
+    # the paving ends slab by slab where the branch meets the main path, not on a cut line
+    whole = {i for i, (cx, cy) in enumerate(centres)
+             if all((int(cx) + ax, int(cy) + ay) in HUT_PAVING for ax in (-4, 0, 4) for ay in (-4, 0, 4))}
+    strip = {p for p in strip if cell[p] in whole}
+    cell = {p: cell[p] for p in strip}
+    # seams: where the slab to the right or below is another one; the strip's edge is a seam too
+    seam = {(x, y) for (x, y) in strip
+            if any(cell.get((x + ax, y + ay), -1) != cell[(x, y)] for ax, ay in ((1, 0), (0, 1)))}
+    for (x, y) in strip:
+        if (x, y) in seam:
+            cv.set(x, y, P[1] if noise2(x, y, seed + 5) > 0.06 else LEAF[2])
+            continue
+        c = cell[(x, y)]
+        lit = cell.get((x - 1, y)) != c or cell.get((x, y - 1)) != c or (x - 1, y) in seam or (x, y - 1) in seam
+        dark = (x + 1, y + 1) in seam or (x, y + 1) in seam
+        n = noise2(x, y, seed + 3)
+        tone = 4 if lit and not dark else 2 if dark else 3
+        if tone == 3 and n < 0.10:
+            tone = 2
+        elif tone == 3 and n > 0.95:
+            tone = 4
+        cv.set(x, y, STONE[tone])
 
 POND_C, POND_R = (70, 214), (44, 24)
 POND = {(x, y) for (x, y) in oval(POND_C[0], POND_C[1], POND_R[0], POND_R[1])
@@ -74,7 +142,7 @@ LILY_PADS = [(44, 208), (82, 224), (64, 200), (52, 220)]
 FROG_PAD = LILY_PADS[0]
 
 
-def draw_terrain(frame: int) -> Canvas:
+def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
     cv = Canvas(W, H)
     phase = frame % 4
     # Broad, close-valued grass masses with soft, dithered edges, then many small
@@ -190,6 +258,8 @@ def draw_terrain(frame: int) -> Canvas:
                 cv.set(x + 1, y, P[1])
             if i % 5 == 0:
                 cv.set(x, y - 1, P[4])
+    if hut_path == 'flagstones':
+        flagstones(cv)
     # Ragged turf breaks onto the path in lit teeth with shade beneath (detail.py).
     import detail as _edge
     bridge = {(x, y) for (x, y) in dirt if BX0 <= x < BX1 and BY0 <= y < BY1} if 'BX0' in globals() else set()
@@ -398,8 +468,20 @@ def bake_shadows(terrain: Canvas, sprites: dict):
         style.dither_dark(terrain, 0, row, W, 1, strength, style.FOREST_DARK)
 
 
+# The hut's outside as the player chooses it (lib/decor.ts, HutLook): the door's paint
+# and what sits under both windows. hut.png is the default look; the rest are variants
+# beside it, all the same size and placement, so only the image changes.
+HUT_BOXES = {'none': 'sill', 'flowers': 'flowers', 'herbs': 'herbs'}
+HUT_DEFAULT = ('oak', 'flowers')
+
+
+def hut_look(door: str, boxes: str) -> Canvas:
+    return props.hut(door, (HUT_BOXES[boxes], HUT_BOXES[boxes]))
+
+
 def main():
     sprites = props.props()
+    sprites['hut'] = hut_look(*HUT_DEFAULT)
     sprites['fence_l'] = props.fence_h(meadow.GATE_X)
     sprites['fence_r'] = props.fence_h(W - meadow.GATE_X - meadow.GATE_W)
     # Flat, walkable things (the bridge deck) are part of the ground, not objects:
@@ -458,6 +540,37 @@ def main():
             crop.save(os.path.join(OUT, f'water-{name}-{i}.png'), SCALE)
     for key, s in sprites.items():
         s.save(os.path.join(OUT, f'{key}.png'), SCALE)
+    # The hut's other looks: every door with every window planting, trimmed exactly as the
+    # default (the choices stay inside its silhouette, so its shadow and footprint hold).
+    hut_dir = os.path.join(OUT, 'hut')
+    os.makedirs(hut_dir, exist_ok=True)
+    for old in os.listdir(hut_dir):
+        os.remove(os.path.join(hut_dir, old))
+    base = sprites['hut']
+    hut_keys = []
+    for door in props.HUT_DOORS:
+        for boxes in HUT_BOXES:
+            hut_keys.append(f'{door}-{boxes}')
+            if (door, boxes) == HUT_DEFAULT:
+                continue
+            v = style.finalize(hut_look(door, boxes), name='hut')
+            assert (v.w, v.h, v.ox, v.oy) == (base.w, base.h, base.ox, base.oy), f'hut {door}-{boxes} moved'
+            v.save(os.path.join(hut_dir, f'{door}-{boxes}.png'), SCALE)
+    # The hut's path laid with flagstones: the ground drawn with them, shadows baked the
+    # same way, kept as an overlay of just the pixels that differ from the earth path.
+    paved = draw_terrain(0, 'flagstones')
+    for (decal, fx, fy) in flat:
+        paved.paste(decal, fx, fy)
+    bake_shadows(paved, sprites)
+    changed = [(x, y) for y in range(H) for x in range(W) if paved.get(x, y) != frames[0].get(x, y)]
+    assert changed and all(p in HUT_PAVING for p in changed), 'flagstones strayed off the hut path'
+    px0, py0 = min(x for x, _ in changed), min(y for _, y in changed)
+    px1, py1 = max(x for x, _ in changed), max(y for _, y in changed)
+    overlay = Canvas(px1 - px0 + 1, py1 - py0 + 1)
+    for (x, y) in changed:
+        overlay.px[x - px0, y - py0] = paved.get(x, y)
+    overlay.save(os.path.join(OUT, 'path-flagstones.png'), SCALE)
+    hut_paths = {'flagstones': {'x': px0, 'y': py0, 'w': px1 - px0 + 1, 'h': py1 - py0 + 1}}
     for light in ANCHORS['lights']:
         light_pool(light['w'], light['h']).save(os.path.join(OUT, f"light-{light['id']}.png"), SCALE)
 
@@ -532,6 +645,8 @@ def main():
         f'export const gardenFlat = {json.dumps([{"id": "bridge", "x": bx, "y": by, "w": bw, "h": bh}], indent=2)} as const;',
         '/** Animated water overlays (four frames each) on the still ground image. */',
         f'export const gardenWater = {json.dumps([{"id": k, "x": v[0], "y": v[1], "w": v[2], "h": v[3]} for k, v in water.items()], indent=2)} as const;',
+        '/** Where the hut path\'s other surfaces lie over the earth path (overlays on the ground). */',
+        f'export const gardenHutPaths = {json.dumps(hut_paths, indent=2)} as const;',
         f'export const gardenHotspots = {json.dumps(HOTSPOTS, indent=2)} as const;',
         '/** Named points in the garden: home, the bed, effects and keepsake places. */',
         f'export const gardenAnchors = {json.dumps(ANCHORS, indent=2)} as const;',
@@ -552,6 +667,26 @@ def main():
     lines.append('};')
     lines.append('')
     with open(os.path.join(ROOT, 'lib', 'garden-growth-assets.ts'), 'w') as f:
+        f.write('\n'.join(lines))
+
+    # Static imports for the hut's looks and its path's surfaces.
+    hut_var = lambda k: 'hut' + ''.join(part.capitalize() for part in k.split('-'))  # noqa: E731
+    lines = ['// Generated by scripts/art/garden.py. Do not edit by hand.', '/* eslint-disable */',
+             "import type { ImageSourcePropType } from 'react-native';",
+             "import hut from '@/assets/garden/hut.png';",
+             "import pathFlagstones from '@/assets/garden/path-flagstones.png';"]
+    lines += [f"import {hut_var(k)} from '@/assets/garden/hut/{k}.png';"
+              for k in hut_keys if k != '-'.join(HUT_DEFAULT)]
+    lines.append('/** The hut drawn with each door and window planting, by `door-boxes`. */')
+    lines.append('export const hutImages: Record<string, ImageSourcePropType> = {')
+    lines += [f"  '{k}': {'hut' if k == '-'.join(HUT_DEFAULT) else hut_var(k)}," for k in hut_keys]
+    lines.append('};')
+    lines.append('/** The hut path\'s surfaces drawn over the earth (none for the earth itself). */')
+    lines.append('export const hutPathImages: Record<string, ImageSourcePropType> = {')
+    lines.append('  flagstones: pathFlagstones,')
+    lines.append('};')
+    lines.append('')
+    with open(os.path.join(ROOT, 'lib', 'garden-hut-assets.ts'), 'w') as f:
         f.write('\n'.join(lines))
 
     # preview composite for review

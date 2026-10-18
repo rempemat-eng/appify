@@ -4,14 +4,105 @@ import { PixelButton } from '@/components/game-ui';
 import { FrameShape, frameTones } from '@/components/pixel-frame';
 import {
   areaOf,
+  hutBoxes,
+  hutDoors,
+  hutPaths,
   keepsake,
   keepsakes,
   type DecorArea,
   type DecorCheck,
   type DecorPlacement,
+  type HutLook,
 } from '@/lib/decor';
+import { artMaterials } from '@/lib/art-direction';
 import { decorImages } from '@/lib/decor-assets';
 import { decorSizes } from '@/lib/decor-sizes';
+import { useGame } from '@/lib/game';
+
+/** Each door's paint as the hut draws it (scripts/art/garden_props.py, HUT_DOORS). */
+const DOOR_PAINT: Readonly<Record<string, string>> = {
+  oak: artMaterials.wood[3],
+  red: artMaterials.red[2],
+  violet: artMaterials.nap[2],
+  green: artMaterials.leaf[2],
+} satisfies Record<HutLook['door'], string>;
+const HUT_CHOICES = [
+  { part: 'door', name: 'DOOR', options: hutDoors },
+  { part: 'boxes', name: 'WINDOWS', options: hutBoxes },
+  { part: 'path', name: 'PATH', options: hutPaths },
+] as const;
+
+/**
+ * The hut's outside (coherence plan, B1): its door's paint, what grows in boxes under
+ * its windows and the path up to its step, each a row of choices. All are open from the
+ * start, free and instant; the hut changes at once in the garden behind the panel.
+ */
+function HutLookChoices() {
+  const look = useGame((s) => s.hutLook);
+  const setHutLook = useGame((s) => s.setHutLook);
+  return (
+    <View style={{ gap: 6 }}>
+      <BodyText
+        accessibilityRole="header"
+        style={{ fontSize: 13, fontFamily: 'PixelifySans_700Bold' }}
+      >
+        THE HUT
+      </BodyText>
+      {HUT_CHOICES.map(({ part, name, options }) => (
+        <View
+          key={part}
+          accessibilityRole="radiogroup"
+          accessibilityLabel={`The hut's ${part === 'boxes' ? 'window boxes' : part}`}
+          style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}
+        >
+          <BodyText style={{ width: 64, fontSize: 11, fontFamily: 'PixelifySans_700Bold' }}>
+            {name}
+          </BodyText>
+          {options.map((option) => {
+            const chosen = look[part] === option;
+            return (
+              <Pressable
+                key={option}
+                accessibilityRole="radio"
+                accessibilityState={{ checked: chosen }}
+                accessibilityLabel={`${option}${part === 'door' ? ' door' : ''}`}
+                onPress={() => !chosen && setHutLook({ [part]: option })}
+                style={{
+                  flex: 1,
+                  minHeight: 44,
+                  paddingHorizontal: 4,
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: 4,
+                }}
+              >
+                <FrameShape tone={chosen ? frameTones.gold : frameTones.paper} unit={2} />
+                {part === 'door' && (
+                  <View
+                    style={{
+                      width: 8,
+                      height: 12,
+                      backgroundColor: DOOR_PAINT[option],
+                      borderTopLeftRadius: 4,
+                      borderTopRightRadius: 4,
+                    }}
+                  />
+                )}
+                <BodyText
+                  numberOfLines={1}
+                  style={{ fontSize: 10, fontFamily: 'PixelifySans_700Bold' }}
+                >
+                  {option.toUpperCase()}
+                </BodyText>
+              </Pressable>
+            );
+          })}
+        </View>
+      ))}
+    </View>
+  );
+}
 
 type Why = Exclude<DecorCheck, { ok: true }>['why'];
 const WHY: Record<DecorArea, Record<Why, string>> = {
@@ -194,6 +285,7 @@ export function DecoratePanel({
           )}
         </View>
       )}
+      {area === 'garden' && !selected && <HutLookChoices />}
     </View>
   );
 }
