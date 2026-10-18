@@ -236,11 +236,12 @@ function Turning({
   snap: (v: number) => number;
 }) {
   const frames = zoneFrames[d.sprite] ?? [];
-  const all: [ImageSourcePropType, number, number, number, number][] = [
-    [d.src, 0, 0, d.w, d.h],
+  const all: [string, ImageSourcePropType, number, number, number, number][] = [
+    [d.sprite, d.src, 0, 0, d.w, d.h],
     ...frames.map(
       ([key, dx, dy, w, h]) =>
-        [zoneProps[key] ?? d.src, dx, dy, w, h] as [
+        [key, zoneProps[key] ?? d.src, dx, dy, w, h] as [
+          string,
           ImageSourcePropType,
           number,
           number,
@@ -251,9 +252,9 @@ function Turning({
   ];
   return (
     <>
-      {all.map(([src, dx, dy, w, h], i) => (
+      {all.map(([name, src, dx, dy, w, h], i) => (
         <TurningFrame
-          key={`${d.key}-f${dx}-${dy}-${w}`}
+          key={`${d.key}-${name}`}
           src={src}
           index={i}
           count={all.length}

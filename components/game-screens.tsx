@@ -505,7 +505,11 @@ export function ArenaScreen() {
       <PixelButton
         label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
         disabled={paused}
-        onPress={() => void useGame.getState().startBattle(bot(p), true)}
+        onPress={() => {
+          // the spar happens where you are: a region's ring shows that region behind it
+          useUi.setState({ battlePlace: ring?.region ?? null });
+          void useGame.getState().startBattle(bot(p), true);
+        }}
       />
       <PixelButton
         label="SIMULATE INCOMING RAID"

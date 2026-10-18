@@ -21,6 +21,10 @@ import spaceNear from '@/assets/journeys/space-near.png';
 import moonSky from '@/assets/journeys/moon-sky.png';
 import moonFar from '@/assets/journeys/moon-far.png';
 import moonNear from '@/assets/journeys/moon-near.png';
+import steamYard from '@/assets/journeys/steam-yard.png';
+import neonYard from '@/assets/journeys/neon-yard.png';
+import lavaYard from '@/assets/journeys/lava-yard.png';
+import moonYard from '@/assets/journeys/moon-yard.png';
 import engine from '@/assets/journeys/engine.png';
 import carriage from '@/assets/journeys/carriage.png';
 import capsule from '@/assets/journeys/capsule.png';
@@ -48,6 +52,15 @@ export const journeyLayers: Record<
   space: { sky: spaceSky, far: spaceFar, near: spaceNear, above: '#05060C', below: '#05060C' },
   moon: { sky: moonSky, far: moonFar, near: moonNear, above: '#05060C', below: '#2A2838' },
 };
+/** The near land without the railway, for sparring at a region's own ring (battle backdrop). */
+export const journeyYards: Record<string, ImageSourcePropType> = {
+  steam: steamYard,
+  neon: neonYard,
+  lava: lavaYard,
+  moon: moonYard,
+};
+/** Where feet stand on a yard, in art pixels up from its bottom edge. */
+export const YARD_FEET = 84;
 export const journeyVehicles: Record<
   string,
   { source: ImageSourcePropType; w: number; h: number }

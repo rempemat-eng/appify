@@ -106,7 +106,7 @@ All of this is presentation: it never adds rewards, costs or chores, every effec
 
 ## Battles and customisation per region
 
-- **Battles:** each region has its sparring ring, its resident rival and its backdrop: a harbour jetty, the castle courtyard, a gear-floored arena, a dusty corral, a basalt ring by the lava, a neon rooftop, a zero-g dome. Gentle terrain effects (approved) are balanced by Codex first (C17); none makes raids harsher or costs GRASS.
+- **Battles:** each region has its sparring ring, its resident rival and its backdrop: a harbour jetty, the castle courtyard, a gear-floored arena, a dusty corral, a basalt ring by the lava, a neon rooftop, a zero-g dome. Gentle terrain effects (approved) are balanced by Codex first (C17); none makes raids harsher or costs GRASS. **In the game (18 Oct):** a spar at a region's own ring (Cogsworth, Neon Harbour, the caldera, Lumen) is fought in front of that region: its journey sky and far land and a yard (the near land without the railway, `journeyYards`); the town ring and raids keep the garden's field. Which ring is presentation only (`battlePlace` in `lib/ui.ts`), never a rule.
 - **Customisation:** keepsakes from each region become decor at home (a ship in a bottle, a castle banner, a brass clock, a cow skull, an obsidian lamp, a neon sign, a moon rock), and region outfits for the companion (a sailor cap, a crown of daisies, goggles, a cowboy hat, a heat visor, a raincoat with LEDs, a tiny space helmet). Which mission or visit grants which keepsake is a proposal for Matt.
 
 ## Open questions for Matt
