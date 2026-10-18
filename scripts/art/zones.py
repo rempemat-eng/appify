@@ -2093,6 +2093,9 @@ def castle(frame: int = 0):
         ('wall-s1', 'wall_run', 70, 306), ('gate', 'gatehouse', 122, 262), ('wall-s2', 'wall_run', 200, 306),
         ('tower-sw', 'round_tower', 52, 262), ('tower-se', 'round_tower', 268, 262),
         ('tower-ne', 'round_tower', 268, -40),
+        ('well', 'castle_well', 236, 150), ('rack', 'weapon_rack', 240, 196), ('bench-c', 'stone_bench', 196, 50),
+        ('butt-1', 'archery_butt', 236, 432), ('butt-2', 'archery_butt', 268, 420), ('bench-m', 'stone_bench', 96, 440),
+        ('pole-1', 'banner_pole', 142, 372), ('pole-2', 'banner_pole', 210, 372),
     ]
     blocked = sea | ditch - {(x, y) for x in range(168, 196) for y in range(350, 384)}
     blocked |= {(x, y) for x in range(70, 82) for y in range(40, 350)} | {(x, y) for x in range(282, 294) for y in range(40, 350)}
