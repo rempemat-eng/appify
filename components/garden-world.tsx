@@ -109,6 +109,7 @@ import stallImg from '@/assets/garden/stall.png';
 import signpostImg from '@/assets/garden/signpost.png';
 import bowlImg from '@/assets/garden/bowl.png';
 import bushImg from '@/assets/garden/bush.png';
+import fernImg from '@/assets/garden/fern.png';
 import rock0Img from '@/assets/garden/rock0.png';
 import rock1Img from '@/assets/garden/rock1.png';
 import fenceLImg from '@/assets/garden/fence_l.png';
@@ -138,6 +139,8 @@ const sprites: Record<string, ImageSourcePropType> = {
   signpost: signpostImg,
   bowl: bowlImg,
   bush: bushImg,
+  // the undergrowth of the woodland's tree belt along the garden's west edge (garden.py, B0)
+  fern: fernImg,
   rock0: rock0Img,
   rock1: rock1Img,
   fence_l: fenceLImg,

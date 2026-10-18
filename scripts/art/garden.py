@@ -16,6 +16,8 @@ from pixel import Canvas, disc, noise2, oval, shade_blob, smooth_noise  # noqa: 
 import garden_meadow as meadow  # noqa: E402
 import style  # noqa: E402
 import garden_props as props  # noqa: E402
+import frames as borders  # noqa: E402  (both sides of a boundary draw it alike)
+import valley_props  # noqa: E402
 
 ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 OUT = os.path.join(ROOT, 'assets', 'garden')
@@ -56,6 +58,12 @@ PATH |= thick_path([(PX + 4, 170), (168, 128), (172, 92)], 9.5, 4)  # a quiet re
 # the trail on up through the treeline to the Snowy Ridge (world-atlas.md)
 RIDGE_X = 206  # between the reading nook and Moss's stall
 PATH |= thick_path([(172, 92), (200, 84), (206, 40), (RIDGE_X, -16)], 9.5, 4)
+# where it climbs through the treeline it widens toward the ridge's port (176-232,
+# docs/vision/world-ports.md), so the way out reads from the clearing
+PATH |= thick_path([(205, 52), (204, 20), (204, -16)], 13.5, 6)
+# a short bank path east from the plaza under the flower planters, out to the
+# riverside's port (192-248) where its willows open
+PATH |= thick_path([(PX + 22, 198), (232, 206), (272, 214), (330, 222)], 11.5, 5)
 PATH |= disc(PLAZA[0], PLAZA[1], 27)  # the plaza at the fork
 PATH |= meadow.meadow_path(thick_path)  # down across the bridge, through the meadow
 # The hut's own path, which can be laid with flagstones (coherence plan, B1): its branch
@@ -322,12 +330,14 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
 # their foot (y + h). Positions follow the proportions table (coherence plan).
 OBJECTS = [
     # the forest along the top edge, behind the HUD
-    # (two pines stand back to let the ridge trail through the trees)
-    *[(f'pine-{i}', 'pine', -14 + i * 26, -60 + (i % 2) * 6, None) for i in range(13) if i not in (7, 8)],
+    # (two pines stand back to let the ridge trail through the trees, and the next one
+    # east steps aside so the gap is the ridge's port, 176-232)
+    *[(f'pine-{i}', 'pine', -14 + i * 26 + (14 if i == 9 else 0), -60 + (i % 2) * 6, None)
+      for i in range(13) if i not in (7, 8)],
     ('tree-0', 'tree', -24, -62, None),
     ('tree-1', 'tree_small', 36, -42, None),
     ('tree-2', 'tree', 104, -64, None),
-    ('tree-3', 'tree_small', 228, -44, None),
+    ('tree-3', 'tree_small', 238, -44, None),
     ('tree-4', 'tree_autumn', 236, -60, None),
     ('tree-5', 'tree', 286, -50, None),
     # the clearing
@@ -350,7 +360,7 @@ OBJECTS = [
     ('tree-6', 'tree_small', 284, 108, None),
     ('tree-7', 'tree', -30, 186, None),
     ('bush-1', 'bush', 0, 146, None),
-    ('bush-2', 'bush', 290, 240, None),
+    ('bush-2', 'bush', 286, 262, None),  # clear of the riverside's way through
     ('bush-3', 'bush', 120, 256, None),
     ('rock-1', 'rock0', 128, 184, None),
     ('rock-2', 'rock1', 210, 246, None),
@@ -468,6 +478,60 @@ def bake_shadows(terrain: Canvas, sprites: dict):
         style.dither_dark(terrain, 0, row, W, 1, strength, style.FOREST_DARK)
 
 
+# The garden's own side of its borders (coherence plan B0, docs/vision/world-ports.md).
+# Its west and east neighbours, placed as in lib/zone-maps.ts (regionLayout): the garden
+# draws its half of the woodland's tree belt and of the riverside's willows from world
+# coordinates with scripts/art/frames.py, as they draw theirs, so each reads as one belt
+# across the seam and opens only at the port (the woodland lane, the bank path). The
+# ridge's treeline and the town's fence are the garden's own drawing.
+BORDERS = {'valley': {'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0)}}
+BORDER_PLANTS = ('willow', 'reeds', 'fern')  # the belts' plants the garden lacked (valley_props)
+# where the companion leaves for each neighbour (lib/decor.ts keeps them clear too)
+WAYS_OUT = {'woodland': (20, 456), 'riverside': (W - 20, 220), 'ridge': (204, 52)}
+
+
+def is_water(x, y):
+    return (x, y) in POND or (x, y) in BANK or (x, y) in meadow.STREAM or (x, y) in meadow.STREAM_BANK
+
+
+def walk_rows(sprites, closed=frozenset()):
+    """The walk grid at 4 px cells, before reachability: grass and path, not water, beds,
+    object footprints or ground a boundary closes."""
+    cell = 4
+    cols, rows = W // cell, H // cell
+    bx, by, bw, bh = meadow.BRIDGE
+    blocked = {(x // cell, y // cell) for (x, y) in closed}
+    for (x, y) in POND:
+        blocked.add((x // cell, y // cell))
+    for (x, y) in meadow.STREAM | meadow.STREAM_BANK | meadow.BLUFF:
+        if not (bx + 6 <= x < bx + bw - 6):  # only the bridge deck crosses the water
+            blocked.add((x // cell, y // cell))
+    for (px, py) in meadow.PLOTS:
+        for yy in range(py, py + meadow.PLOT_H):
+            for xx in range(px, px + meadow.PLOT_W):
+                blocked.add((xx // cell, yy // cell))
+    for (fx, fy, fw, fh) in FLOWER_BEDS:
+        for yy in range(fy, fy + fh):
+            for xx in range(fx, fx + fw):
+                blocked.add((xx // cell, yy // cell))
+    for (_id, key, x, y, _a) in OBJECTS:
+        s = sprites[key]
+        if y + s.h <= 0:
+            continue
+        foot_h = 22 if key in ('hut', 'stall') else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine', 'willow') else 7
+        for yy in range(y + s.h - foot_h, y + s.h):
+            for xx in range(x + 3, x + s.w - 3):
+                blocked.add((xx // cell, yy // cell))
+    walk = []
+    for r in range(rows):
+        row = ''
+        for c in range(cols):
+            edge = r * cell < 40 or r * cell >= meadow.FENCE_Y - 2
+            row += '.' if ((c, r) not in blocked and not edge) else '#'
+        walk.append(row)
+    return walk
+
+
 # The hut's outside as the player chooses it (lib/decor.ts, HutLook): the door's paint
 # and what sits under both windows. hut.png is the default look; the rest are variants
 # beside it, all the same size and placement, so only the image changes.
@@ -484,6 +548,8 @@ def main():
     sprites['hut'] = hut_look(*HUT_DEFAULT)
     sprites['fence_l'] = props.fence_h(meadow.GATE_X)
     sprites['fence_r'] = props.fence_h(W - meadow.GATE_X - meadow.GATE_W)
+    for key in BORDER_PLANTS:
+        sprites[key] = getattr(valley_props, key)()
     # Flat, walkable things (the bridge deck) are part of the ground, not objects:
     # baked into every ground frame, characters always draw on top of them.
     bx, by, bw, bh = meadow.BRIDGE
@@ -498,6 +564,18 @@ def main():
     # Nothing may stick out above the forest band at the top of the map.
     for (i, k, x, y, _a) in OBJECTS:
         assert y >= -TOP, f'{i} reaches {-y} px above the map; the top band is {TOP}'
+    # The plants standing along the garden's half of its east and west borders, kept off
+    # every place the companion goes, its ways out and the ground already taken.
+    pre = walk_rows(sprites)
+    stands = {name: (h['x'], h['y']) for name, h in HOTSPOTS.items()}
+    stands.update({f'start': (ANCHORS['start']['x'], ANCHORS['start']['y'])})
+    stands.update({f'out-{k}': p for k, p in WAYS_OUT.items()})
+    planted = borders.place('garden', BORDERS, sprites, set(sprites),
+                            [(i, k, x, y) for (i, k, x, y, _a) in OBJECTS], stands, pre, is_water)
+    OBJECTS += [(i, k, x, y, None) for (i, k, x, y) in planted]
+    for key in BORDER_PLANTS:  # only the plants that found room are drawn and shipped
+        if key not in {k for (_i, k, _x, _y) in planted}:
+            del sprites[key]
     growth_dir = os.path.join(OUT, 'growth')
     os.makedirs(growth_dir, exist_ok=True)
     for old in os.listdir(growth_dir):
@@ -505,12 +583,19 @@ def main():
     for key, g in growth.items():
         g.save(os.path.join(growth_dir, f'{key}.png'), SCALE)
     meadow.draw_top_band().save(os.path.join(OUT, 'ground-top.png'), SCALE)
-    frames = []
-    for frame in range(4):
-        terrain = draw_terrain(frame)
+    def ground(frame, hut_path='earth'):
+        """One frame of the ground: terrain, the bridge deck, the garden's half of its
+        borders (returning the ground they close) and the baked shadows."""
+        terrain = draw_terrain(frame, hut_path)
         for (decal, fx, fy) in flat:
             terrain.paste(decal, fx, fy)
+        shut = borders.apply(terrain, 'garden', BORDERS, pre, is_water)
         bake_shadows(terrain, sprites)
+        return terrain, shut
+
+    frames = []
+    for frame in range(4):
+        terrain, closed = ground(frame)
         frames.append(terrain)
     for old in os.listdir(OUT):
         if old.startswith(('ground-', 'water-')) and old != 'ground-top.png':
@@ -558,10 +643,7 @@ def main():
             v.save(os.path.join(hut_dir, f'{door}-{boxes}.png'), SCALE)
     # The hut's path laid with flagstones: the ground drawn with them, shadows baked the
     # same way, kept as an overlay of just the pixels that differ from the earth path.
-    paved = draw_terrain(0, 'flagstones')
-    for (decal, fx, fy) in flat:
-        paved.paste(decal, fx, fy)
-    bake_shadows(paved, sprites)
+    paved, _shut = ground(0, 'flagstones')
     changed = [(x, y) for y in range(H) for x in range(W) if paved.get(x, y) != frames[0].get(x, y)]
     assert changed and all(p in HUT_PAVING for p in changed), 'flagstones strayed off the hut path'
     px0, py0 = min(x for x, _ in changed), min(y for _, y in changed)
@@ -574,38 +656,11 @@ def main():
     for light in ANCHORS['lights']:
         light_pool(light['w'], light['h']).save(os.path.join(OUT, f"light-{light['id']}.png"), SCALE)
 
-    # walkable grid at 4px cells: grass/path, not water, not under object footprints
+    # walkable grid at 4px cells: grass/path, not water, not under object footprints,
+    # not where the borders close the ground
     cell = 4
     cols, rows = W // cell, H // cell
-    blocked = set()
-    for (x, y) in POND:
-        blocked.add((x // cell, y // cell))
-    for (x, y) in meadow.STREAM | meadow.STREAM_BANK | meadow.BLUFF:
-        if not (bx + 6 <= x < bx + bw - 6):  # only the bridge deck crosses the water
-            blocked.add((x // cell, y // cell))
-    for (px, py) in meadow.PLOTS:
-        for yy in range(py, py + meadow.PLOT_H):
-            for xx in range(px, px + meadow.PLOT_W):
-                blocked.add((xx // cell, yy // cell))
-    for (fx, fy, fw, fh) in FLOWER_BEDS:
-        for yy in range(fy, fy + fh):
-            for xx in range(fx, fx + fw):
-                blocked.add((xx // cell, yy // cell))
-    for (_id, key, x, y, _a) in OBJECTS:
-        s = sprites[key]
-        if y + s.h <= 0:
-            continue
-        foot_h = 22 if key in ('hut', 'stall') else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 7
-        for yy in range(y + s.h - foot_h, y + s.h):
-            for xx in range(x + 3, x + s.w - 3):
-                blocked.add((xx // cell, yy // cell))
-    walk = []
-    for r in range(rows):
-        row = ''
-        for c in range(cols):
-            edge = r * cell < 40 or r * cell >= meadow.FENCE_Y - 2
-            row += '.' if ((c, r) not in blocked and not edge) else '#'
-        walk.append(row)
+    walk = walk_rows(sprites, closed)
     # Keep only cells the companion can reach from home (same bounds and moves
     # as lib/garden-path.ts: 8 directions, no corner cutting).
     def ok(c, r):
@@ -631,6 +686,8 @@ def main():
             (f'companion spot {i}', p) for i, p in enumerate(ANCHORS['companionSpots'])]:
         c, r = int(spot['x']) // cell, int(spot['y']) // cell
         assert walk[r][c] == '.', f'{name} hotspot is not walkable'
+    for name, (x, y) in WAYS_OUT.items():  # every way out stays open to the edge
+        assert walk[y // cell][x // cell] == '.', f'the way out to the {name} is closed'
 
     sizes = {k: [v.w, v.h] for k, v in sprites.items()}
     ts = [
@@ -692,11 +749,7 @@ def main():
     # preview composite for review
     prev = Canvas(W, H + TOP)
     prev.paste(meadow.draw_top_band(), 0, 0)
-    ground = draw_terrain(0)
-    for (decal, fx, fy) in flat:
-        ground.paste(decal, fx, fy)
-    bake_shadows(ground, sprites)
-    prev.paste(ground, 0, TOP)
+    prev.paste(frames[0], 0, TOP)
     # GARDEN_PREVIEW_STAGE=empty shows a new player's meadow; otherwise it is in bloom
     grown = os.environ.get('GARDEN_PREVIEW_STAGE') != 'empty'
     for (x, y), k in zip(meadow.PLOTS, meadow.PLOT_KINDS):
