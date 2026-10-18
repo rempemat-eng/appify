@@ -19,5 +19,10 @@ export const residentSprites: Record<string, { zone: ZoneId; w: number; h: numbe
   vendor: { zone: 'neon', w: 20, h: 28 },
   courier: { zone: 'neon', w: 20, h: 28 },
   porter: { zone: 'skyport', w: 20, h: 28 },
+  farmer: { zone: 'halt', w: 20, h: 28 },
+  hiker: { zone: 'ridge', w: 20, h: 28 },
+  forager: { zone: 'woodland', w: 20, h: 28 },
+  picnicker: { zone: 'park', w: 20, h: 28 },
+  angler: { zone: 'riverside', w: 20, h: 28 },
   botanist: { zone: 'station', w: 20, h: 28 },
 };

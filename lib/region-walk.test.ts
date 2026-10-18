@@ -74,8 +74,8 @@ for (const r of ['steam', 'west', 'lava', 'neon', 'space', 'moon'] as const) {
 }
 console.log(`Region walk: ${others} stands reachable across the other regions.`);
 
-// Residents walk only on open ground, clear of every prop (so they never pass behind
-// a building), and each has its sprite.
+// Residents walk only on open ground and never behind a prop (they are drawn above
+// the props), and each has its sprite.
 let walked = 0;
 for (const [rid, route] of Object.entries(residentRoutes)) {
   assert.ok(residentSprites[rid], `${rid} has a sprite`);
@@ -93,8 +93,10 @@ for (const [rid, route] of Object.entries(residentRoutes)) {
     );
     for (const [id, key, ox, oy, w, h] of m.objects) {
       if (zoneOverhead.includes(key)) continue;
+      // residents are drawn above the props, which is right only where they stand in
+      // front: overlapping a prop whose foot is lower would put them in front of it
       const overlaps = x - RES_W / 2 < ox + w && x + RES_W / 2 > ox && y - RES_H < oy + h && y > oy;
-      assert.ok(!overlaps, `${rid} passes clear of ${id}`);
+      assert.ok(!overlaps || y >= oy + h, `${rid} never walks behind ${id}`);
     }
     walked++;
   }

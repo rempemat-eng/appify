@@ -31,6 +31,16 @@ import residentCourier0 from '@/assets/residents/courier-0.png';
 import residentCourier1 from '@/assets/residents/courier-1.png';
 import residentPorter0 from '@/assets/residents/porter-0.png';
 import residentPorter1 from '@/assets/residents/porter-1.png';
+import residentFarmer0 from '@/assets/residents/farmer-0.png';
+import residentFarmer1 from '@/assets/residents/farmer-1.png';
+import residentHiker0 from '@/assets/residents/hiker-0.png';
+import residentHiker1 from '@/assets/residents/hiker-1.png';
+import residentForager0 from '@/assets/residents/forager-0.png';
+import residentForager1 from '@/assets/residents/forager-1.png';
+import residentPicnicker0 from '@/assets/residents/picnicker-0.png';
+import residentPicnicker1 from '@/assets/residents/picnicker-1.png';
+import residentAngler0 from '@/assets/residents/angler-0.png';
+import residentAngler1 from '@/assets/residents/angler-1.png';
 import residentBotanist0 from '@/assets/residents/botanist-0.png';
 import residentBotanist1 from '@/assets/residents/botanist-1.png';
 
@@ -51,5 +61,10 @@ export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
   vendor: [residentVendor0, residentVendor1],
   courier: [residentCourier0, residentCourier1],
   porter: [residentPorter0, residentPorter1],
+  farmer: [residentFarmer0, residentFarmer1],
+  hiker: [residentHiker0, residentHiker1],
+  forager: [residentForager0, residentForager1],
+  picnicker: [residentPicnicker0, residentPicnicker1],
+  angler: [residentAngler0, residentAngler1],
   botanist: [residentBotanist0, residentBotanist1],
 };
