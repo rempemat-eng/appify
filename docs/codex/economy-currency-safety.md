@@ -75,7 +75,8 @@ only on those chosen actions. The existing full save fixture suite remains.
 This follow-up incorporates Claude's live world on the same PR, without
 rewriting its published history. All upstream art, screens, generated maps,
 sound and checks are preserved. The only authored changes beyond the original
-currency slice are four store assertions and this handoff update.
+currency slice are four store assertions, the current-Missions screenshot
+harness update and this handoff update.
 
 The new assertions cover an unversioned wallet with an existing world spot,
 lost defence followed by reload, and attacking win/loss followed by reload.
@@ -84,6 +85,14 @@ The defence case also proves that an unknown nested world field survives the
 save writer. `saveVersion` remains **1**, with Claude's optional `world` field;
 the superseded PR #19's `worldProgress`/version-2 schema is not introduced.
 Both `check:world` and the additive `check:economy` remain in the check list.
+
+The first integrated screenshot run stopped because its readiness selector
+still expected the retired BEYOND THE GARDEN GATE heading. The new scenario
+requires THE VALLEY, PARK PATROL, WALK THERE and an enabled START PARK PATROL.
+Its horizontal-scroll exception is restricted to the six named destination
+buttons in a horizontal-only rail, like the existing companion and card rails;
+page overflow and overflowing vertical sheets still fail. No visual component
+is changed to satisfy an outdated test.
 
 Current `check:game` has 152 source integration checks. These substitute native,
 storage and backend boundaries; they do not prove native lifecycle, world

@@ -91,9 +91,12 @@ async function prepare(page: Page, screen: Screen) {
       break;
     case 'missions':
       await click(page, page.getByRole('tab', { name: /^MISSIONS/ }));
+      await expect(page.getByRole('heading', { name: 'THE VALLEY', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'PARK PATROL', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'WALK THERE', exact: true })).toBeVisible();
       await expect(
-        page.getByRole('heading', { name: 'BEYOND THE GARDEN GATE', exact: true }),
-      ).toBeVisible();
+        page.getByRole('button', { name: 'START PARK PATROL', exact: true }),
+      ).toBeEnabled();
       break;
     case 'shop':
       await click(page, page.getByRole('tab', { name: /^SHOP/ }));
@@ -147,7 +150,7 @@ async function overflow(page: Page, screen: Screen) {
         ['auto', 'scroll'].includes(style.overflowX) &&
         element.scrollWidth > element.clientWidth + 1
       ) {
-        // These two existing controls intentionally scroll sideways. Keep the
+        // These existing controls intentionally scroll sideways. Keep the
         // exception tied to their contents and horizontal-only scrolling, so a
         // wider page or overflowing vertical sheet still fails.
         const intentionalRail =
@@ -155,7 +158,16 @@ async function overflow(page: Page, screen: Screen) {
           ((current === 'companions' &&
             element.querySelectorAll('[role="button"][aria-label^="Preview "]').length > 1) ||
             (current === 'battle' &&
-              element.querySelectorAll('[role="button"][aria-label$="tap to select"]').length > 0));
+              element.querySelectorAll('[role="button"][aria-label$="tap to select"]').length >
+                0) ||
+            (current === 'missions' &&
+              element.querySelectorAll('[role="button"]').length === 6 &&
+              ['LIBRARY', 'MOUNTAIN', 'PARK', "MOSS'S STALL", 'SPARRING RING', 'HOME GARDEN'].every(
+                (name) =>
+                  Array.from(element.querySelectorAll('[role="button"]')).some(
+                    (button) => button.getAttribute('aria-label') === name,
+                  ),
+              )));
         if (intentionalRail) continue;
         problems.push(
           `${element.getAttribute('aria-label') ?? element.getAttribute('role') ?? element.tagName}: horizontal scroll ${element.scrollWidth} > ${element.clientWidth}`,
