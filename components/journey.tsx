@@ -69,6 +69,8 @@ export function Journey({
   height,
   u,
   onArrive,
+  insetTop = 0,
+  insetBottom = 0,
 }: {
   to: keyof typeof journeyLayers;
   label: string;
@@ -76,6 +78,9 @@ export function Journey({
   height: number;
   u: number;
   onArrive: () => void;
+  /** Safe-area room at the top and bottom, so the label and SKIP stay clear of it. */
+  insetTop?: number;
+  insetBottom?: number;
 }) {
   const reduced = useReducedMotion();
   const active = useAppActive();
@@ -219,14 +224,22 @@ export function Journey({
           </>
         )}
       </Animated.View>
-      <View style={{ position: 'absolute', top: 16, left: 0, right: 0, alignItems: 'center' }}>
+      <View
+        style={{
+          position: 'absolute',
+          top: insetTop + 16,
+          left: 0,
+          right: 0,
+          alignItems: 'center',
+        }}
+      >
         <PixelFrame tone="paper" style={{ paddingVertical: 4 * u, paddingHorizontal: 8 * u }}>
           <BodyText
             style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14 }}
           >{`TO ${label}`}</BodyText>
         </PixelFrame>
       </View>
-      <View style={{ position: 'absolute', bottom: 16, right: 16, width: 110 }}>
+      <View style={{ position: 'absolute', bottom: insetBottom + 16, right: 16, width: 110 }}>
         <PixelButton small light label="SKIP" onPress={skip} />
       </View>
     </View>

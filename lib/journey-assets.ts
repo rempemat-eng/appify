@@ -24,7 +24,7 @@ import moonNear from '@/assets/journeys/moon-near.png';
 import engine from '@/assets/journeys/engine.png';
 import carriage from '@/assets/journeys/carriage.png';
 import capsule from '@/assets/journeys/capsule.png';
-export const JOURNEY = { width: 320, height: 160, rail: 120 } as const;
+export const JOURNEY = { width: 320, height: 240, rail: 160 } as const;
 /** Sky, far land and near land for the trip to each region; each loops across. `above` and
  * `below` fill the screen past the band (the sky's top, the ground's foot). */
 export const journeyLayers: Record<

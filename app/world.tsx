@@ -410,45 +410,52 @@ export default function World() {
             height={viewH}
             u={u}
             onArrive={arrive}
+            insetTop={insets.top}
+            insetBottom={insets.bottom}
           />
         )}
       </View>
-      {/* the bar floats over the world like the game's HUD */}
-      <View
-        pointerEvents="box-none"
-        style={{
-          position: 'absolute',
-          top: insets.top + 8,
-          left: 8,
-          right: 8,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-        }}
-      >
-        <View style={{ width: 112 }}>
-          <PixelButton small light label="◀ GARDEN" onPress={goHome} />
-        </View>
-        <PixelFrame
-          tone="paper"
+      {/* the bar floats over the world like the game's HUD (the journey has its own label) */}
+      {!trip && (
+        <View
+          pointerEvents="box-none"
           style={{
-            flex: 1,
-            paddingVertical: 2 * u,
-            paddingHorizontal: 4 * u,
-            minHeight: 44,
-            justifyContent: 'center',
+            position: 'absolute',
+            top: insets.top + 8,
+            left: 8,
+            right: 8,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 8,
           }}
         >
-          <BodyText numberOfLines={1} style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
-            {regionNames[spawn.region]}
-          </BodyText>
-          {zone && (
-            <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
-              {zoneNames[zone]}
+          <View style={{ width: 112 }}>
+            <PixelButton small light label="◀ GARDEN" onPress={goHome} />
+          </View>
+          <PixelFrame
+            tone="paper"
+            style={{
+              flex: 1,
+              paddingVertical: 2 * u,
+              paddingHorizontal: 4 * u,
+              minHeight: 44,
+              justifyContent: 'center',
+            }}
+          >
+            <BodyText
+              numberOfLines={1}
+              style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}
+            >
+              {regionNames[spawn.region]}
             </BodyText>
-          )}
-        </PixelFrame>
-      </View>
+            {zone && (
+              <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
+                {zoneNames[zone]}
+              </BodyText>
+            )}
+          </PixelFrame>
+        </View>
+      )}
     </View>
   );
 }
