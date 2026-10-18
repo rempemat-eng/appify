@@ -98,6 +98,8 @@ All of this is presentation: it never adds rewards, costs or chores, every effec
 - **The world remembers (L7).** Repaired things stay repaired, befriended residents stay, chosen variants stay.
 - **Sound** (`sound.md`): an ambient bed per region (waves, wind, gears, the saloon piano, rain on neon), quiet by default.
 
+**Windows light up at night (18 Oct).** Every window is drawn by one helper (`garden_props.window`), which records its glass; the zone generator turns those into panes per sprite (`zoneWindows` in `lib/zone-maps.ts`), and after dark the walk lights them warm. A pane with nothing in front glows above the night tint; one that a tree or a nearer house overlaps stays at its building's depth, so it is still hidden behind the tree.
+
 ## Battles and customisation per region
 
 - **Battles:** each region has its sparring ring, its resident rival and its backdrop: a harbour jetty, the castle courtyard, a gear-floored arena, a dusty corral, a basalt ring by the lava, a neon rooftop, a zero-g dome. Gentle terrain effects (approved) are balanced by Codex first (C17); none makes raids harsher or costs GRASS.

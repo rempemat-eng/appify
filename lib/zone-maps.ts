@@ -32,6 +32,45 @@ export type ZoneMap = {
 };
 /** Things above head height: no ground shadow, never block a walk, drawn on top. */
 export const zoneOverhead: readonly string[] = ['bunting', 'cables', 'drone', 'steam_puff'];
+/** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */
+export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {
+  barn: [
+    [16, 53, 8, 6],
+    [76, 53, 8, 6],
+  ],
+  cabin: [
+    [17, 59, 12, 8],
+    [69, 59, 12, 8],
+  ],
+  cottage: [
+    [15, 49, 8, 6],
+    [57, 49, 8, 6],
+  ],
+  cottage_b: [
+    [15, 49, 8, 6],
+    [49, 49, 8, 6],
+  ],
+  house_blue: [
+    [15, 52, 8, 6],
+    [57, 52, 8, 6],
+  ],
+  house_red: [
+    [15, 52, 8, 6],
+    [57, 52, 8, 6],
+  ],
+  library: [
+    [29, 58, 6, 18],
+    [97, 58, 6, 18],
+  ],
+  saloon: [[47, 34, 12, 8]],
+  station_house: [[17, 57, 10, 8]],
+  store: [[39, 34, 12, 8]],
+  water_mill: [
+    [16, 47, 8, 6],
+    [52, 47, 8, 6],
+  ],
+  windmill: [[24, 56, 4, 4]],
+};
 /** Walk rows are run-length encoded ('12.3#' = twelve open cells, three blocked). */
 const unrle = (row: string) =>
   row.replace(/(\d+)([.#])/g, (_m, n: string, c: string) => c.repeat(Number(n)));

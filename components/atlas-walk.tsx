@@ -34,7 +34,7 @@ import {
   type RegionTile,
   type TileId,
 } from '@/lib/region-walk';
-import { zoneMaps, zoneOverhead } from '@/lib/zone-maps';
+import { zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
 import { zoneGrounds, zoneProps } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
@@ -399,6 +399,24 @@ export function AtlasWalk({
     (t) => Math.abs(t.col - hereTile.col) <= 1 && Math.abs(t.row - hereTile.row) <= 1,
   );
   const drawables = near.flatMap((t) => tileDrawables(region, t));
+  const panes = !night
+    ? []
+    : drawables.flatMap((d) =>
+        (zoneWindows[d.sprite] ?? []).map(([wx, wy, ww, wh]) => {
+          const x = d.x + wx;
+          const y = d.y + wy;
+          const clear = !drawables.some(
+            (o) =>
+              o !== d &&
+              o.z > d.z &&
+              o.x < x + ww &&
+              o.x + o.w > x &&
+              o.y < y + wh &&
+              o.y + o.h > y,
+          );
+          return { key: `pane-${d.key}-${wx}-${wy}`, x, y, w: ww, h: wh, z: d.z, clear };
+        }),
+      );
 
   const onPress = (e: GestureResponderEvent) => {
     // react-native-web reports the press position on the overlay as offsetX/offsetY
@@ -519,6 +537,25 @@ export function AtlasWalk({
                   }}
                 />
               ))}
+          {night &&
+            // lamplight in the windows (panes recorded by the generator, zoneWindows): a pane
+            // with nothing in front glows above the night tint; one that a nearer thing overlaps
+            // stays at its building's depth (under the tint), so trees still hide it
+            panes.map((p) => (
+              <View
+                key={p.key}
+                pointerEvents="none"
+                style={{
+                  position: 'absolute',
+                  left: snap(p.x * u),
+                  top: snap(p.y * u),
+                  width: snap(p.w * u),
+                  height: snap(p.h * u),
+                  backgroundColor: p.clear ? 'rgba(255,200,104,0.92)' : 'rgba(255,214,130,1)',
+                  zIndex: p.clear ? 150001 : p.z,
+                }}
+              />
+            ))}
           {night &&
             drawables
               .filter((d) => LAMPS[d.sprite])

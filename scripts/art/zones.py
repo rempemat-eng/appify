@@ -260,7 +260,17 @@ def sprites() -> dict[str, Canvas]:
     items.update(spp.props())
     items.update(hp.props())
     items['fence_c'] = gp.fence_h(60)
-    return {key: style.finalize(sp, name=key) for key, sp in items.items()}
+    out = {key: style.finalize(sp, name=key) for key, sp in items.items()}
+    for key, raw in items.items():  # the window panes of each building, in sprite pixels
+        fin = out[key]
+        panes = [(gx - fin.ox, gy - fin.oy, gw, gh) for (c, (gx, gy, gw, gh)) in gp.WINDOWS if c is raw]
+        if panes:
+            SPRITE_WINDOWS[key] = panes
+    return out
+
+
+# Window panes per sprite (filled by sprites()): lit warm at night where a zone has no light of its own.
+SPRITE_WINDOWS: dict = {}
 
 
 # Props with a way through them: (from, to) in sprite pixels.
@@ -3203,6 +3213,8 @@ def export(built: dict):
         'export type ZoneMap = { objects: readonly ZoneObject[]; walk: readonly string[]; stands: Readonly<Record<string, readonly [number, number]>> };',
         '/** Things above head height: no ground shadow, never block a walk, drawn on top. */',
         f'export const zoneOverhead: readonly string[] = {json.dumps(sorted(OVERHEAD))};',
+        '/** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */',
+        f'export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {json.dumps({k: [list(r) for r in v] for k, v in sorted(SPRITE_WINDOWS.items()) if k in used})};',
         '/** Walk rows are run-length encoded (\'12.3#\' = twelve open cells, three blocked). */',
         'const unrle = (row: string) => row.replace(/(\\d+)([.#])/g, (_m, n: string, c: string) => c.repeat(Number(n)));',
         'export const zoneMaps: Record<ZoneId, ZoneMap> = {',
