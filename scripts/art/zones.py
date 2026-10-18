@@ -2001,7 +2001,7 @@ def harbour(frame: int = 0):
         ('boat-3', 'boat_blue', 186, 420), ('bollard-1', 'bollard', 140, 290), ('bollard-2', 'bollard', 226, 290),
         ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 286, 206),
         ('upturned', 'upturned_boat', 8, 400), ('washing', 'washing_line', 110, 90), ('buoy-1', 'buoy', 120, 450),
-        ('buoy-2', 'buoy', 300, 380), ('chair-1', 'deck_chair', 52, 346), ('chair-2', 'deck_chair_b', 72, 352),
+        ('buoy-2', 'buoy', 300, 380), ('chair-1', 'deck_chair', 10, 348), ('chair-2', 'deck_chair_b', 32, 354),
         ('drift', 'driftwood', 6, 452), ('sail', 'sailboat', 262, 496),
     ]
     # a rock pool on the lower beach: dark stones round a little pool of sky
