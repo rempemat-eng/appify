@@ -1,0 +1,728 @@
+{
+  "schemaVersion": 1,
+  "status": "proposal-not-runtime",
+  "sourceCommit": "500605d39f16164eab6af50168ba6b3bccdbcd63",
+  "name": "Connected world: route and segment contract",
+  "scope": "Design-only adjacency, crossings and compatibility prototype. No application import, generated art, player save or game rule is changed.",
+  "coordinates": {
+    "unit": "art-pixel",
+    "zoneWidth": 320,
+    "zoneHeight": 576,
+    "cell": 4,
+    "arrivalInset": 16,
+    "portWidthRangeInclusive": [48, 64],
+    "tapTargetMinScreenPixels": 44,
+    "originRule": "region origin = minimum col,row; zone origin = (col-minCol)*width,(row-minRow)*height",
+    "portRule": "One connection owns the shared [start,end) lateral span. Both reciprocal ports are derived from that record; all unlisted seam cells are blocked."
+  },
+  "policies": {
+    "runtimeImported": false,
+    "changesGameRules": false,
+    "addsTravelCosts": false,
+    "addsLevelGates": false,
+    "addsRewards": false,
+    "resetsPlayerData": false,
+    "weatherAffectsRoutes": false,
+    "discoveryRequiredForTravel": false,
+    "walkingIsOptionalPresentation": true,
+    "explicitMissionDepartureRequired": true,
+    "preserveQuietViewAndProtectedReturn": true
+  },
+  "regions": [
+    {
+      "id": "valley",
+      "name": "Home valley",
+      "role": "Three short overlapping loops around home and the existing mission places."
+    },
+    {
+      "id": "home",
+      "name": "Nap hut",
+      "role": "Separate interior reached through the existing garden door."
+    },
+    {
+      "id": "steam",
+      "name": "Cogsworth",
+      "role": "Compact working canal town; rail interchange, not an obligatory grind hub."
+    },
+    {
+      "id": "sunreach",
+      "name": "Sunreach",
+      "role": "Proposed continuous rain-shadow basin: oasis, dry town, basalt pass, supported lava crossing and castle terminus. Replaces the west/lava layout only after a tested migration and matching art."
+    },
+    {
+      "id": "neon",
+      "name": "Neon Harbour",
+      "role": "A deliberately separate bright city reached by the existing maglev, not a sharp climate seam in the home meadow."
+    },
+    {
+      "id": "space",
+      "name": "Halcyon",
+      "role": "Existing separate orbital destination; no walkable ground connection to the island."
+    },
+    {
+      "id": "moon",
+      "name": "Lumen",
+      "role": "Existing shuttle destination kept off the terrestrial geographic plate."
+    }
+  ],
+  "zones": [
+    {
+      "id": "ridge",
+      "region": "valley",
+      "col": 0,
+      "row": -1,
+      "tier": 3,
+      "role": "Existing mountain mission cabin; one northward spur, not a new unlock."
+    },
+    {
+      "id": "woodland",
+      "region": "valley",
+      "col": -1,
+      "row": 0,
+      "tier": 2,
+      "role": "Quiet west loop and spring woodland."
+    },
+    {
+      "id": "garden",
+      "region": "valley",
+      "col": 0,
+      "row": 0,
+      "tier": 2,
+      "role": "Home and four existing exits; the quiet clearing is not a road junction full of props."
+    },
+    {
+      "id": "riverside",
+      "region": "valley",
+      "col": 1,
+      "row": 0,
+      "tier": 2,
+      "role": "River and mill, with bank-side walking; water has a source and an outlet."
+    },
+    {
+      "id": "halt",
+      "region": "valley",
+      "col": -1,
+      "row": 1,
+      "tier": 1,
+      "role": "Existing train platform; joins the west loop without a new journey cost."
+    },
+    {
+      "id": "town",
+      "region": "valley",
+      "col": 0,
+      "row": 1,
+      "tier": 1,
+      "role": "Existing library, shop and sparring ring; a legible square with a clear through-route."
+    },
+    {
+      "id": "park",
+      "region": "valley",
+      "col": 1,
+      "row": 1,
+      "tier": 1,
+      "role": "Existing park mission and east-loop resting place."
+    },
+    {
+      "id": "harbour",
+      "region": "valley",
+      "col": 0,
+      "row": 2,
+      "tier": 0,
+      "role": "Sea-level river outlet and working harbour."
+    },
+    {
+      "id": "headland",
+      "region": "valley",
+      "col": 1,
+      "row": 2,
+      "tier": 1,
+      "role": "New elevated coastal endpoint for the valley loop. The old coastal castle position migrates here; the inland castle is a different destination."
+    },
+    {
+      "id": "home",
+      "region": "home",
+      "col": 0,
+      "row": 0,
+      "tier": 0,
+      "role": "Existing hut interior; its threshold is a door, not a tile seam."
+    },
+    {
+      "id": "junction",
+      "region": "steam",
+      "col": 0,
+      "row": 0,
+      "tier": 1,
+      "role": "Existing train interchange and ring."
+    },
+    {
+      "id": "canal",
+      "region": "steam",
+      "col": 0,
+      "row": 1,
+      "tier": 1,
+      "role": "Existing canal district; supported bridge and quay, not land props on water."
+    },
+    {
+      "id": "oasis",
+      "region": "sunreach",
+      "col": -1,
+      "row": 0,
+      "tier": 1,
+      "role": "Wet refuge at the dry basin's west edge; no timed access or care demand."
+    },
+    {
+      "id": "gulch",
+      "region": "sunreach",
+      "col": 0,
+      "row": 0,
+      "tier": 1,
+      "role": "Existing dry town and train platform; mine-cart shortcut retained."
+    },
+    {
+      "id": "basalt_pass",
+      "region": "sunreach",
+      "col": 1,
+      "row": 0,
+      "tier": 2,
+      "role": "New scrub-to-ash transition and sheltered switchback; not an instantaneous sand/lava boundary."
+    },
+    {
+      "id": "lava_bridge",
+      "region": "sunreach",
+      "col": 2,
+      "row": 0,
+      "tier": 2,
+      "role": "New supported east-west crossing with solid abutments. North branch begins on the EAST abutment, never in the lava channel."
+    },
+    {
+      "id": "castle",
+      "region": "sunreach",
+      "col": 3,
+      "row": 0,
+      "tier": 2,
+      "role": "Relocated design castle at the end of one guarded approach. No second entrance from the springs and no false discovery carried from the former coastal castle."
+    },
+    {
+      "id": "caldera",
+      "region": "sunreach",
+      "col": 2,
+      "row": -1,
+      "tier": 3,
+      "role": "Existing caldera identity; mine-cart landing and ring retained. Upstream vent scenery needs no new damage rule."
+    },
+    {
+      "id": "springs",
+      "region": "sunreach",
+      "col": 3,
+      "row": -1,
+      "tier": 3,
+      "role": "Existing hot springs identity. Continuous escarpment on its south edge keeps it separate from the castle below."
+    },
+    {
+      "id": "neon",
+      "region": "neon",
+      "col": 0,
+      "row": 0,
+      "tier": 0,
+      "role": "Existing city quay and court."
+    },
+    {
+      "id": "skyport",
+      "region": "neon",
+      "col": 1,
+      "row": 0,
+      "tier": 0,
+      "role": "Existing region travel point for BOTH maglev and elevator; do not invent a different station contract."
+    },
+    {
+      "id": "station",
+      "region": "space",
+      "col": 0,
+      "row": 0,
+      "tier": 0,
+      "role": "Existing Halcyon arrival at the lift standing point; shuttle presentation does not introduce an additional journey rule."
+    },
+    {
+      "id": "lumen",
+      "region": "moon",
+      "col": 0,
+      "row": 0,
+      "tier": 0,
+      "role": "Existing quiet lunar grove and ring."
+    }
+  ],
+  "transitIdentityContract": {
+    "stopIds": "Stable existing service IDs, independent of the proposed physical RegionId.",
+    "physicalRegions": "Walking, camera and save layout domains. Several service stops may occupy one physical region.",
+    "integrationGap": "Current travelRoute(fromRegion,toRegion) returns [] when the region IDs match, and travelPoints has one point per RegionId. It cannot directly represent both west and lava stops in sunreach. A stop-ID to physical-region/zone/point adapter and updated trip ownership are REQUIRED before live integration.",
+    "prototypeOnly": "The checker routes on serviceEndpoints, never on physicalRegion equality. No current runtime API or RegionId type is changed."
+  },
+  "transitStops": [
+    { "id": "valley", "zone": "halt", "physicalRegion": "valley", "at": [130, 300] },
+    { "id": "steam", "zone": "junction", "physicalRegion": "steam", "at": [160, 120] },
+    { "id": "west", "zone": "gulch", "physicalRegion": "sunreach", "at": [128, 70] },
+    { "id": "lava", "zone": "caldera", "physicalRegion": "sunreach", "at": [44, 300] },
+    { "id": "neon", "zone": "skyport", "physicalRegion": "neon", "at": [70, 84] },
+    { "id": "space", "zone": "station", "physicalRegion": "space", "at": [160, 500] },
+    { "id": "moon", "zone": "lumen", "physicalRegion": "moon", "at": [160, 146] }
+  ],
+  "connections": [
+    {
+      "id": "garden-woodland",
+      "kind": "walk",
+      "a": { "zone": "garden", "side": "west" },
+      "b": { "zone": "woodland", "side": "east" },
+      "span": [412, 468],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Meadow lane under a low open canopy; one bend and a spring glimpse.",
+      "frame": "Treeline and low hedges outside the shared path."
+    },
+    {
+      "id": "woodland-halt",
+      "kind": "walk",
+      "a": { "zone": "woodland", "side": "south" },
+      "b": { "zone": "halt", "side": "north" },
+      "span": [120, 184],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Gentle wooded slope to the station lane; platform roof visible before arrival.",
+      "frame": "Planted embankment and fence; only the lane crosses."
+    },
+    {
+      "id": "halt-town",
+      "kind": "walk",
+      "a": { "zone": "halt", "side": "east" },
+      "b": { "zone": "town", "side": "west" },
+      "span": [268, 324],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Station forecourt narrows into the town lane, then opens onto the well.",
+      "frame": "Continuous hedgerow with a visible gateway."
+    },
+    {
+      "id": "town-garden",
+      "kind": "walk",
+      "a": { "zone": "town", "side": "north" },
+      "b": { "zone": "garden", "side": "south" },
+      "span": [136, 192],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Existing garden gate lane; rising ground and a bend shelter the companion clearing.",
+      "frame": "A real fence around the gate, not a freestanding gate in grass."
+    },
+    {
+      "id": "garden-riverside",
+      "kind": "walk",
+      "a": { "zone": "garden", "side": "east" },
+      "b": { "zone": "riverside", "side": "west" },
+      "span": [192, 248],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Meadow becomes a dry bank path; the mill roof appears across the water.",
+      "frame": "Willows and bank edge, with the open side facing the river."
+    },
+    {
+      "id": "riverside-park",
+      "kind": "walk",
+      "a": { "zone": "riverside", "side": "south" },
+      "b": { "zone": "park", "side": "north" },
+      "span": [136, 192],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Downstream bank walk opens at the park gate; any drawn bridge must span real water and land on both paths.",
+      "frame": "Riverbank and planted boundary; no open grass shortcut through water."
+    },
+    {
+      "id": "park-town",
+      "kind": "walk",
+      "a": { "zone": "park", "side": "west" },
+      "b": { "zone": "town", "side": "east" },
+      "span": [272, 328],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Park gate and small paved apron into the square.",
+      "frame": "Low park wall and hedge, interrupted only at the gate."
+    },
+    {
+      "id": "town-harbour",
+      "kind": "walk",
+      "a": { "zone": "town", "side": "south" },
+      "b": { "zone": "harbour", "side": "north" },
+      "span": [136, 192],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Descending market lane; roofs step down and the harbour water is visible beyond the quay.",
+      "frame": "Terraced retaining walls and working yards."
+    },
+    {
+      "id": "harbour-headland",
+      "kind": "walk",
+      "a": { "zone": "harbour", "side": "east" },
+      "b": { "zone": "headland", "side": "west" },
+      "span": [88, 144],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Cliff-side coast path climbs from the quay, with sea as its permeable side and a single sheltered pause.",
+      "frame": "Landward bluff and seaward rail; the rising path is explicit and there is no route across open sea."
+    },
+    {
+      "id": "headland-park",
+      "kind": "walk",
+      "a": { "zone": "headland", "side": "north" },
+      "b": { "zone": "park", "side": "south" },
+      "span": [112, 168],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "High coastal garden lane bends through a park threshold on the same terrace, completing the lower loop.",
+      "frame": "Cliff planting and hedge frame a level terrace path."
+    },
+    {
+      "id": "garden-ridge",
+      "kind": "walk",
+      "a": { "zone": "garden", "side": "north" },
+      "b": { "zone": "ridge", "side": "south" },
+      "span": [176, 232],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Existing ridge-trail intention, widened for the redraw: trees, alpine meadow, then snow above; cabin visible on the final bend.",
+      "frame": "Treeline and rock shoulders outside the trail."
+    },
+    {
+      "id": "junction-canal",
+      "kind": "walk",
+      "a": { "zone": "junction", "side": "south" },
+      "b": { "zone": "canal", "side": "north" },
+      "span": [128, 192],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Station street becomes a working canal quay at the bridge node.",
+      "frame": "Canal parapets and workshop walls."
+    },
+    {
+      "id": "oasis-gulch",
+      "kind": "walk",
+      "a": { "zone": "oasis", "side": "east" },
+      "b": { "zone": "gulch", "side": "west" },
+      "span": [496, 552],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Dry lane from the oasis camp to the gulch; palms give way to scrub before the town.",
+      "frame": "Dune ridges and low stone walls."
+    },
+    {
+      "id": "gulch-basalt",
+      "kind": "walk",
+      "a": { "zone": "gulch", "side": "east" },
+      "b": { "zone": "basalt_pass", "side": "west" },
+      "span": [204, 268],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "Town mine road climbs through scrub, mineral scree and dark stone; not sand touching lava.",
+      "frame": "Canyon walls with a readable cut in the rock."
+    },
+    {
+      "id": "basalt-lava-bridge",
+      "kind": "walk",
+      "a": { "zone": "basalt_pass", "side": "east" },
+      "b": { "zone": "lava_bridge", "side": "west" },
+      "span": [272, 328],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Basalt approach meets the solid west abutment. The bridge crossing is supported and has parapets.",
+      "frame": "Continuous chasm edge; lava is never walkable ground."
+    },
+    {
+      "id": "lava-bridge-castle",
+      "kind": "walk",
+      "a": { "zone": "lava_bridge", "side": "east" },
+      "b": { "zone": "castle", "side": "west" },
+      "span": [272, 328],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "East abutment and defended causeway lead to the castle's sole approach.",
+      "frame": "Cliff and castle perimeter close every other approach."
+    },
+    {
+      "id": "lava-bridge-caldera",
+      "kind": "walk",
+      "a": { "zone": "lava_bridge", "side": "north" },
+      "b": { "zone": "caldera", "side": "south" },
+      "span": [248, 296],
+      "grade": 1,
+      "gradeChange": "ramp",
+      "corridor": "A switchback leaves the solid EAST abutment and rises to the caldera. The north exit is NOT above the middle of the lava channel.",
+      "frame": "Basalt escarpment; the ascending path has solid ground all the way."
+    },
+    {
+      "id": "caldera-springs",
+      "kind": "walk",
+      "a": { "zone": "caldera", "side": "east" },
+      "b": { "zone": "springs", "side": "west" },
+      "span": [264, 320],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "Crust becomes mineral terraces and the hot-springs boardwalk; water stays below the standing surface.",
+      "frame": "Rock rim and mineral banks."
+    },
+    {
+      "id": "neon-skyport",
+      "kind": "walk",
+      "a": { "zone": "neon", "side": "east" },
+      "b": { "zone": "skyport", "side": "west" },
+      "span": [164, 220],
+      "grade": 1,
+      "gradeChange": "level",
+      "corridor": "City crossing continues into the transit forecourt and then the quiet platform.",
+      "frame": "Quay walls and station structures; no unmarked edge teleport."
+    },
+    {
+      "id": "garden-hut",
+      "kind": "door",
+      "a": { "zone": "garden", "at": [68, 132] },
+      "b": { "zone": "home", "at": [160, 544] },
+      "activation": "explicit-door-action",
+      "source": "lib/world-places.ts#doors"
+    },
+    {
+      "id": "valley-cogsworth",
+      "kind": "transit",
+      "serviceEndpoints": ["valley", "steam"],
+      "vehicle": "train",
+      "a": { "zone": "halt", "at": [130, 300] },
+      "b": { "zone": "junction", "at": [160, 120] },
+      "source": "lib/world-places.ts#travelPoints.valley,steam"
+    },
+    {
+      "id": "cogsworth-gulch",
+      "kind": "transit",
+      "serviceEndpoints": ["steam", "west"],
+      "vehicle": "train",
+      "a": { "zone": "junction", "at": [160, 120] },
+      "b": { "zone": "gulch", "at": [128, 70] },
+      "source": "lib/world-places.ts#travelPoints.steam,west"
+    },
+    {
+      "id": "gulch-caldera",
+      "kind": "transit",
+      "serviceEndpoints": ["west", "lava"],
+      "vehicle": "carts",
+      "a": { "zone": "gulch", "at": [128, 70] },
+      "b": { "zone": "caldera", "at": [44, 300] },
+      "source": "lib/world-places.ts#travelPoints.west,lava",
+      "note": "Retained existing mine-cart shortcut; the new walking chain does not add a new transit or charge."
+    },
+    {
+      "id": "cogsworth-neon",
+      "kind": "transit",
+      "serviceEndpoints": ["steam", "neon"],
+      "vehicle": "maglev",
+      "a": { "zone": "junction", "at": [160, 120] },
+      "b": { "zone": "skyport", "at": [70, 84] },
+      "source": "lib/world-places.ts#travelPoints.steam,neon",
+      "note": "Actual current Neon Harbour travel point is in skyport, not neon."
+    },
+    {
+      "id": "neon-halcyon",
+      "kind": "transit",
+      "serviceEndpoints": ["neon", "space"],
+      "vehicle": "capsule",
+      "a": { "zone": "skyport", "at": [70, 84] },
+      "b": { "zone": "station", "at": [160, 500] },
+      "source": "lib/world-places.ts#travelPoints.neon,space"
+    },
+    {
+      "id": "halcyon-lumen",
+      "kind": "transit",
+      "serviceEndpoints": ["space", "moon"],
+      "vehicle": "shuttle",
+      "a": { "zone": "station", "at": [160, 500] },
+      "b": { "zone": "lumen", "at": [160, 146] },
+      "source": "lib/world-places.ts#travelPoints.space,moon",
+      "note": "Preserves the current shared regional travel point; the separately drawn shuttle stand is not silently substituted."
+    }
+  ],
+  "blockedAdjacencies": [
+    {
+      "a": "castle",
+      "b": "springs",
+      "reason": "Continuous basalt escarpment on castle north / springs south. No stairs, ramp, gate, door or crossing. Castle remains a one-approach terminus."
+    }
+  ],
+  "corridorRules": {
+    "approachBandEachSideArtPixels": 160,
+    "varyWidthByAbout": "one-third within each approach; shared border span is exact",
+    "bendCountMinimum": 1,
+    "pauseCount": 1,
+    "permeableSideMinimumFraction": 0.5,
+    "nextLandmarkVisibleBeforeSeam": true,
+    "outsideListedSpans": "blocked with continuous legible terrain framing",
+    "geometryProof": "NOT PROVIDED: abstract connection and synthetic edge-mask checks do not prove generated terrain, bridge supports, door clearance, landmark sightlines or rendered seams."
+  },
+  "syntheticMaskExample": {
+    "status": "synthetic-not-current-generated-masks",
+    "default": "Open interior with closed border cells except the declared ports. This proves the abstract crossing contract only.",
+    "lavaBridge": {
+      "zone": "lava_bridge",
+      "blockedLavaColumns": [112, 224],
+      "supportedBridgeRows": [272, 328],
+      "northBranch": "Solid east abutment, x >= 224. The central lava column remains blocked north of the bridge."
+    }
+  },
+  "loops": [
+    { "id": "west-home-loop", "zones": ["garden", "woodland", "halt", "town", "garden"] },
+    { "id": "river-home-loop", "zones": ["garden", "riverside", "park", "town", "garden"] },
+    { "id": "coast-loop", "zones": ["town", "harbour", "headland", "park", "town"] }
+  ],
+  "bindings": [
+    {
+      "id": "garden",
+      "zone": "garden",
+      "at": [160, 196],
+      "kind": "route",
+      "path": "/",
+      "existingRef": "lib/world-places.ts#missionPlaces.garden"
+    },
+    {
+      "id": "book",
+      "zone": "town",
+      "at": [70, 238],
+      "kind": "mission",
+      "missionId": "book",
+      "rulesRef": "lib/game.ts#missions",
+      "activation": "select-then-explicit-departure",
+      "existingRef": "lib/world-places.ts#missionPlaces.book"
+    },
+    {
+      "id": "park",
+      "zone": "park",
+      "at": [160, 240],
+      "kind": "mission",
+      "missionId": "park",
+      "rulesRef": "lib/game.ts#missions",
+      "activation": "select-then-explicit-departure",
+      "existingRef": "lib/world-places.ts#missionPlaces.park"
+    },
+    {
+      "id": "mountain",
+      "zone": "ridge",
+      "at": [200, 176],
+      "kind": "mission",
+      "missionId": "mountain",
+      "rulesRef": "lib/game.ts#missions",
+      "activation": "select-then-explicit-departure",
+      "existingRef": "lib/world-places.ts#missionPlaces.mountain"
+    },
+    {
+      "id": "shop",
+      "zone": "town",
+      "at": [60, 424],
+      "kind": "route",
+      "path": "/shop",
+      "existingRef": "lib/world-places.ts#missionPlaces.shop"
+    },
+    {
+      "id": "arena",
+      "zone": "town",
+      "at": [76, 486],
+      "kind": "route",
+      "path": "/arena",
+      "existingRef": "lib/world-places.ts#missionPlaces.arena"
+    },
+    {
+      "id": "steam-ring",
+      "zone": "junction",
+      "at": [160, 492],
+      "kind": "route",
+      "path": "/arena",
+      "existingRef": "lib/world-places.ts#rings"
+    },
+    {
+      "id": "neon-ring",
+      "zone": "neon",
+      "at": [160, 382],
+      "kind": "route",
+      "path": "/arena",
+      "existingRef": "lib/world-places.ts#rings"
+    },
+    {
+      "id": "caldera-ring",
+      "zone": "caldera",
+      "at": [120, 500],
+      "kind": "route",
+      "path": "/arena",
+      "existingRef": "lib/world-places.ts#rings"
+    },
+    {
+      "id": "lumen-ring",
+      "zone": "lumen",
+      "at": [236, 262],
+      "kind": "route",
+      "path": "/arena",
+      "existingRef": "lib/world-places.ts#rings"
+    }
+  ],
+  "lifecycle": {
+    "prototype": "The checker demonstrates generation-token cancellation and one-shot completion. This is NOT a claim that existing app/world.tsx or AtlasWalk implements this reducer.",
+    "selection": "Show the existing destination card; do not start a mission or spend anything.",
+    "departure": "Recheck current focus, foreground, awake state, battle, pending return and existing mission level rule at explicit action time.",
+    "newIntent": "Increment generation; replace the previous walk or trip intent.",
+    "cancel": "Increment generation on interruption, route departure or invalidated owner; ignore stale completion callbacks.",
+    "completion": "Accept matching active generation exactly once, settle position once, and clear intent.",
+    "existingJourneyPolicy": "Current Journey arrives at a leg when backgrounded; SKIP arrives at the final destination. Keep this existing policy unless Claude deliberately adapts it, with the same one-shot owner checks.",
+    "reducedMotion": "Use the same selected endpoint, with still/finite presentation and no rule or reward differences.",
+    "homeArrival": "Retain current yard/door arrival debounce; do not bounce immediately back through the arrival threshold."
+  },
+  "migrationPrototype": {
+    "status": "demonstration-only-not-player-store-ready",
+    "fromLayoutVersion": 1,
+    "toLayoutVersion": 2,
+    "saveKeyMustRemain": "screenagotchi-v1",
+    "oldLayout": {
+      "valley": {
+        "ridge": [0, -1],
+        "woodland": [-1, 0],
+        "garden": [0, 0],
+        "riverside": [1, 0],
+        "town": [0, 1],
+        "park": [1, 1],
+        "harbour": [0, 2],
+        "castle": [1, 2],
+        "halt": [-1, 1]
+      },
+      "steam": { "junction": [0, 0], "canal": [0, 1] },
+      "west": { "gulch": [0, 0], "oasis": [-1, 0] },
+      "lava": { "caldera": [0, 0], "springs": [1, 0] },
+      "neon": { "neon": [0, 0], "skyport": [1, 0] },
+      "space": { "station": [0, 0] },
+      "moon": { "lumen": [0, 0] },
+      "home": { "home": [0, 0] }
+    },
+    "legacyZoneToProposedZone": { "castle": "headland" },
+    "discoveryRule": "Map legacy coastal castle discovery to headland; retain original discovery separately in legacyDiscovery. Never mark the new inland castle visited merely because old castle was visited.",
+    "positionRule": "Resolve old absolute coordinates using OLD minimum col,row; retain local x,y and move that local position to the proposed zone origin. Validate the actual new grid before any real save migration.",
+    "unsupportedInputRule": "Return an explicit unresolved result without mutating or overwriting the original save. Unknown future layout versions are not interpreted.",
+    "preserve": [
+      "player",
+      "level",
+      "grass",
+      "owned_hats",
+      "deck",
+      "history",
+      "collection",
+      "guardian",
+      "missionReturnPending",
+      "quietView",
+      "unknown-fields",
+      "original-legacy-discovery"
+    ],
+    "missingForProduction": [
+      "stop-ID to physical-region/zone/point adapter: current one-travel-point-per-RegionId API cannot retain west-to-lava travel inside proposed sunreach",
+      "actual generated walk masks and safe standing points",
+      "versioned save-data integration and fixtures",
+      "invalid/blocked coordinate recovery policy approved without resetting account data",
+      "browser reload and interrupted-navigation tests",
+      "phone and native lifecycle tests"
+    ]
+  }
+}
