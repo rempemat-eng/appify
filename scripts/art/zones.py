@@ -1840,11 +1840,14 @@ def castle(frame: int = 0):
 
 
 def station(frame: int = 0):
-    """Halcyon Station: the space elevator arrives through the airlock at the bottom; a
-    corridor of deck plates with light strips leads up to the atrium of garden pods and
-    on to the long viewport where the planet turns below; the crew's sleep pods line
-    the west bay, the navigation consoles the east; a low-gravity ring is marked out on
-    the atrium floor; the shuttle hatch to Lumen is in the east wall."""
+    """Halcyon Station: the space elevator arrives through the airlock at the bottom into
+    a hall of hydroponic troughs; through a bulkhead door the corridor runs up past the
+    low-gravity ring and the garden pods of the atrium; the crew's sleep pods and
+    lockers stand on soft carpet in the west bay, the galley (warm deck boards, a round
+    table, tea) and the navigation consoles in the east, with the shuttle hatch to
+    Lumen in the east wall; through the last bulkhead, the lounge under the long
+    viewports, with benches, books and a telescope on the planet turning below. The
+    hull is closed: Lumen is reached by shuttle, never on foot."""
     HULL, VOID = MATERIALS['hull'], MATERIALS['void']
     CYAN = MATERIALS['neon_cyan']
     cv = Canvas(W, H)
@@ -1871,16 +1874,57 @@ def station(frame: int = 0):
                     c = HULL[2]
                 cv.set(x, y, c)
             cv.set(x1 - 1 if x0 == 0 else x0, y, CYAN[2] if (y // 6) % 2 else CYAN[1])
+    NAPm, WOODm = MATERIALS['nap'], MATERIALS['wood']
+    blocked = {(x, y) for y in range(H) for x in list(range(0, 18)) + list(range(W - 18, W))}  # the hull
+    # the observation lounge under the viewports: a round rug, starlight on the deck
+    for (x, y) in oval(160, 124, 92, 22):
+        d = math.hypot((x - 160) / 92, (y - 124) / 22)
+        cv.set(x, y, NAPm[1] if d > 0.9 else NAPm[2] if (d * 10) % 2 < 1 else NAPm[1])
+    for i in range(40):
+        x, y = 20 + int(noise2(i, 0, 352) * 280), 82 + int(noise2(i, 1, 352) * 20)
+        cv.set(x, y, HULL[4])  # starlight caught on the plates
+    # the sleep bay: soft carpet, quiet
+    for y in range(180, 462):
+        for x in range(18, 104):
+            n = noise2(x // 2, y // 2, 353)
+            cv.set(x, y, NAPm[1] if n > 0.5 else '#3E3560')
+            if x == 103:
+                cv.set(x, y, NAPm[3])
+    # the galley: warm deck boards
+    for y in range(180, 320):
+        for x in range(216, W - 18):
+            c = WOODm[3] if (y // 6) % 2 else WOODm[2]
+            if y % 6 == 0 or (x + (y // 6) * 13) % 37 == 0:
+                c = WOODm[1]
+            if x == 216:
+                c = WOODm[4]
+            cv.set(x, y, c)
+    # bulkheads between the rooms, each with a lit doorway
+    for by in (160, 470):
+        for y in range(by, by + 10):
+            for x in range(18, W - 18):
+                if 136 <= x < 184:
+                    continue
+                c = HULL[4] if y == by else HULL[3] if y < by + 3 else HULL[1]
+                if (x - 18) % 40 == 0:
+                    c = HULL[0]
+                cv.set(x, y, c)
+                blocked.add((x, y))
+        for y in range(by - 2, by + 12):
+            cv.set(135, y, CYAN[3]); cv.set(184, y, CYAN[3])
     # a soft violet runner down the corridor (the station keeps quiet hours)
-    for y in range(300, H - 40):
-        for x in range(146, 174):
-            cv.set(x, y, MATERIALS['nap'][1] if (x in (146, 173)) else MATERIALS['nap'][2] if (y // 2 + x // 2) % 2 else MATERIALS['nap'][1])
-    # the corridor's floor light strips
-    for y in range(300, H - 40):
-        for x in (140, 179):
-            cv.set(x, y, CYAN[3] if (y // 3 + frame) % 4 else CYAN[2])
+    for (y0, y1) in ((330, 470), (480, 512)):
+        for y in range(y0, y1):
+            for x in range(146, 174):
+                cv.set(x, y, NAPm[1] if (x in (146, 173)) else NAPm[2] if (y // 2 + x // 2) % 2 else NAPm[1])
+        for y in range(y0, y1):
+            for x in (140, 179):
+                cv.set(x, y, CYAN[3] if (y // 3 + frame) % 4 else CYAN[2])
+    for x in range(126, 194):  # hazard stripes before the elevator's airlock
+        for y in range(506, 514):
+            cv.set(x, y, '#E8C04A' if ((x + y) // 4) % 2 else '#2A2630')
     # the low-gravity ring on the atrium floor
-    ccx, ccy = 160, 250
+    ccx, ccy = 160, 300
     for k in range(260):
         a = 2 * math.pi * k / 260
         for (rx, ry) in ((64, 30), (50, 23)):
@@ -1890,14 +1934,24 @@ def station(frame: int = 0):
         cv.set(x, y, CYAN[2] if (x + y) % 2 else CYAN[1])
     objects = [
         ('view-1', 'viewport', 20, 8), ('view-2', 'viewport', 140, 8), ('view-3', 'viewport', 200, 8),
-        ('pod-1', 'garden_pod', 30, 120), ('pod-2', 'garden_pod', 226, 120), ('pod-3', 'garden_pod', 30, 330),
-        ('sleep-1', 'sleep_pod', 22, 210), ('sleep-2', 'sleep_pod', 22, 270), ('sleep-3', 'sleep_pod', 60, 404),
-        ('console-1', 'console', 258, 330), ('console-2', 'console', 258, 372), ('lock-lift', 'airlock', 132, 516),
-        ('lock-shuttle', 'airlock', 258, 214),
+        # the lounge
+        ('shelf', 'bookshelf', 22, 104), ('bench-1', 'lounge_bench', 74, 120), ('bench-2', 'lounge_bench', 194, 120),
+        ('scope', 'telescope', 262, 98),
+        # the atrium and its gardens
+        ('pod-1', 'garden_pod', 128, 180), ('pod-2', 'garden_pod', 178, 372),
+        # the sleep bay
+        ('sleep-1', 'sleep_pod', 24, 186), ('sleep-2', 'sleep_pod', 24, 246), ('sleep-3', 'sleep_pod', 24, 306),
+        ('sleep-4', 'sleep_pod', 64, 186), ('lockers', 'lockers', 30, 410),
+        # the galley, the shuttle hatch and the navigation consoles
+        ('table', 'galley_table', 236, 240), ('tea', 'tea_dispenser', 280, 186), ('trough-g', 'hydro_trough', 226, 186),
+        ('lock-shuttle', 'airlock', 262, 330), ('console-1', 'console', 226, 440), ('console-2', 'console', 268, 440),
+        # the arrival hall: hydroponics either side
+        ('trough-1', 'hydro_trough', 22, 492), ('trough-2', 'hydro_trough', 22, 530), ('trough-3', 'hydro_trough', 242, 492),
+        ('trough-4', 'hydro_trough', 242, 530), ('lock-lift', 'airlock', 132, 516),
     ]
-    stands = {'lift': (160, 512), 'atrium': (160, 250), 'viewport': (160, 96), 'sleep': (70, 250),
-              'shuttle': (286, 280)}
-    return cv, objects, stands
+    stands = {'lift': (160, 500), 'atrium': (160, 300), 'viewport': (160, 144), 'sleep': (84, 280),
+              'galley': (256, 296), 'shuttle': (290, 392)}
+    return cv, objects, stands, blocked
 
 
 def lumen(frame: int = 0):
@@ -2417,7 +2471,7 @@ LAYOUT = {
     'valley': {'ridge': (0, -1), 'woodland': (-1, 0), 'garden': (0, 0), 'riverside': (1, 0), 'town': (0, 1), 'park': (1, 1),
                'harbour': (0, 2), 'castle': (1, 2), 'halt': (-1, 1)},
     'steam': {'junction': (0, 0), 'canal': (0, 1)}, 'west': {'gulch': (0, 0), 'oasis': (-1, 0)}, 'lava': {'caldera': (0, 0), 'springs': (1, 0)},
-    'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0), 'lumen': (1, 0)},
+    'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)},
 }
 
 

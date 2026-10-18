@@ -13,7 +13,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
-from materials import MATERIALS, LEAF, NAP, GOLD, RED, WTR  # noqa: E402
+from materials import MATERIALS, LEAF, NAP, GOLD, RED, WTR, WOOD  # noqa: E402
 
 HULL, VOID, REGOLITH, GLOW = (MATERIALS[k] for k in ('hull', 'void', 'regolith', 'glowflora'))
 CYAN = MATERIALS['neon_cyan']
@@ -201,9 +201,151 @@ def dream_pool() -> Canvas:
     return cv
 
 
+def hydro_trough() -> Canvas:
+    """A hydroponic trough, 56 x 30: a white tank of leafy greens in rows (lettuce and
+    herbs, lit from above), a violet grow-light bar on two arms, a drip line."""
+    w, h = 56, 30
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(14, 28):
+        for x in range(2, w - 2):
+            c = HULL[5] if y == 14 else HULL[4] if y < 20 else HULL[3] if x < w - 6 else HULL[2]
+            cv.set(x, y, c)
+    for k in range(9):  # heads of greens in two rows
+        for row in (0, 1):
+            cx, cy = 7 + k * 5 + row * 2, 13 + row * 3
+            for (x, y) in disc(cx, cy, 2.6):
+                cv.set(x, y, LEAF[4] if x + y < cx + cy - 1 else LEAF[3] if (x + y) % 2 else LEAF[2])
+    for px in (4, w - 6):
+        cv.vline(px, 2, 12, HULL[3]); cv.vline(px + 1, 2, 12, HULL[1])
+    for x in range(4, w - 4):
+        cv.set(x, 2, NAP[4]); cv.set(x, 3, NAP[3]); cv.set(x, 4, HULL[1])
+    for x in range(6, w - 6, 3):
+        cv.set(x, 5, NAP[2] if x % 2 else NAP[1])  # the violet light falling
+    cv.hline(3, 22, w - 6, CYAN[2])
+    return cv
+
+
+def galley_table() -> Canvas:
+    """The galley table, 52 x 34: a round white table with two mugs and a teapot, four
+    stools round it, the crew's one shared meal a day."""
+    w, h = 52, 34
+    cv = Canvas(w, h, pad=PAD)
+    for (sx, sy) in ((6, 16), (46, 16), (26, 4), (26, 30)):
+        for (x, y) in oval(sx, sy, 5, 3):
+            cv.set(x, y, NAP[3] if y < sy else NAP[2])
+        cv.set(sx, sy + 3, HULL[1])
+    for (x, y) in oval(26, 16, 16, 9):
+        k = (x - 10) / 32 + (y - 7) / 18
+        cv.set(x, y, HULL[5] if k < 0.5 else HULL[4] if k < 1.0 else HULL[3])
+    for y in range(25, 28):
+        cv.hline(23, y, 6, HULL[1])
+    for (mx, my, c) in ((18, 14, RED[3]), (32, 18, GOLD[3])):
+        for (x, y) in disc(mx, my, 2):
+            cv.set(x, y, c)
+        cv.set(mx, my, '#5A3A24')
+    for (x, y) in oval(26, 13, 4, 3):
+        cv.set(x, y, WTR[3] if x < 26 else WTR[2])
+    cv.set(30, 12, WTR[2]); cv.set(26, 9, HULL[5])
+    return cv
+
+
+def bookshelf() -> Canvas:
+    """A curved bookshelf, 44 x 46, its shelves held by elastic straps against zero g:
+    spines in soft colours, a plant trailing from the top."""
+    w, h = 44, 46
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(8, h - 2):
+        for x in range(2, w - 2):
+            cv.set(x, y, HULL[3] if x < 5 else HULL[2] if x < w - 5 else HULL[1])
+    cols = [RED[3], GOLD[3], NAP[3], LEAF[3], WTR[3], '#E8D8B8', RED[2], NAP[2]]
+    for shelf in range(3):
+        y0 = 11 + shelf * 11
+        x = 6
+        k = shelf * 3
+        while x < w - 7:
+            bw = 2 + (k * 7) % 3
+            bh = 7 + (k * 5) % 3
+            for yy in range(y0 + 9 - bh, y0 + 9):
+                for xx in range(x, min(x + bw, w - 6)):
+                    cv.set(xx, yy, cols[k % len(cols)] if xx > x else HULL[0])
+            x += bw + 1
+            k += 1
+        cv.hline(5, y0 + 9, w - 10, HULL[4])
+        cv.hline(5, y0 + 5, w - 10, CYAN[1])  # the strap
+    for (x, y) in disc(12, 6, 5):  # the plant on top, trailing down the side
+        cv.set(x, y, LEAF[4] if x + y < 16 else LEAF[2])
+    for t in range(14):
+        cv.set(4 + (t % 2), 8 + t, LEAF[3] if t % 3 else LEAF[1])
+    return cv
+
+
+def telescope() -> Canvas:
+    """A brass telescope on a tripod, 30 x 40, pointed out of the viewport at the planet."""
+    w, h = 30, 40
+    cv = Canvas(w, h, pad=PAD)
+    for t in range(22):  # the tube, raised toward the upper right
+        x, y = 6 + t, 20 - t * 0.6
+        for d in range(-2, 3):
+            cv.set(int(x), int(y + d), GOLD[4] if d < -1 else GOLD[3] if d < 1 else GOLD[1])
+    for (x, y) in disc(27, 7, 2.5):
+        cv.set(x, y, HULL[1])
+    for (dx, ex) in ((14, 5), (16, 16), (18, 26)):
+        for t in range(18):
+            cv.set(int(dx + (ex - dx) * t / 18), 20 + t, HULL[3] if ex < 16 else HULL[1])
+    return cv
+
+
+def lounge_bench() -> Canvas:
+    """A low padded bench, 52 x 18, cushions in soft violet, for watching the planet."""
+    w, h = 52, 18
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(6, 14):
+        for x in range(2, w - 2):
+            cv.set(x, y, HULL[3] if y > 11 else NAP[3] if y < 8 else NAP[2])
+    for cx in (10, 26, 42):
+        for (x, y) in oval(cx, 6, 6, 3):
+            cv.set(x, y, NAP[4] if x < cx else NAP[3])
+    cv.hline(2, 14, w - 4, HULL[1])
+    return cv
+
+
+def lockers() -> Canvas:
+    """Crew lockers, 46 x 40: four tall doors with name glyphs and a pressed suit badge."""
+    w, h = 46, 40
+    cv = Canvas(w, h, pad=PAD)
+    for k in range(4):
+        x0 = 2 + k * 11
+        for y in range(4, h - 2):
+            for x in range(x0, x0 + 10):
+                cv.set(x, y, HULL[4] if x == x0 or y == 4 else HULL[3] if x < x0 + 8 else HULL[2])
+        for x in range(x0 + 2, x0 + 8, 2):
+            cv.set(x, 9, (CYAN[3], GOLD[3], NAP[3], LEAF[4])[k])
+        cv.hline(x0 + 7, 20, 2, HULL[1])
+        for y in range(28, 34, 2):
+            cv.hline(x0 + 2, y, 6, HULL[1])  # vents
+    return cv
+
+
+def tea_dispenser() -> Canvas:
+    """A wall tea dispenser, 18 x 30: a squat urn with a warm amber light and a cup."""
+    cv = Canvas(18, 30, pad=PAD)
+    for y in range(4, 24):
+        for x in range(3, 15):
+            cv.set(x, y, HULL[5] if x < 5 else HULL[4] if x < 12 else HULL[2])
+    for (x, y) in rect_set(5, 8, 8, 5):
+        cv.set(x, y, GOLD[3] if y < 10 else GOLD[2])
+    cv.hline(7, 16, 4, HULL[0]); cv.set(9, 17, WTR[2])
+    for (x, y) in rect_set(7, 19, 4, 4):
+        cv.set(x, y, '#F2EEE6' if x < 9 else '#D8D2C6')
+    cv.hline(3, 24, 12, HULL[1])
+    return cv
+
+
 def props_station() -> dict[str, Canvas]:
     return {'garden_pod': garden_pod(), 'viewport': viewport(), 'sleep_pod': sleep_pod(), 'airlock': airlock(),
-            'console': console()}
+            'console': console(), 'hydro_trough': hydro_trough(), 'galley_table': galley_table(),
+            'bookshelf': bookshelf(), 'telescope': telescope(), 'lounge_bench': lounge_bench(), 'lockers': lockers(),
+            'tea_dispenser': tea_dispenser()}
 
 
 def props_lumen() -> dict[str, Canvas]:

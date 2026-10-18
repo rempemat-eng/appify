@@ -18,6 +18,7 @@ import propBench from '@/assets/zones/props/bench.png';
 import propBoatBlue from '@/assets/zones/props/boat_blue.png';
 import propBoatRed from '@/assets/zones/props/boat_red.png';
 import propBollard from '@/assets/zones/props/bollard.png';
+import propBookshelf from '@/assets/zones/props/bookshelf.png';
 import propBoulder from '@/assets/zones/props/boulder.png';
 import propBunting from '@/assets/zones/props/bunting.png';
 import propBuoy from '@/assets/zones/props/buoy.png';
@@ -64,6 +65,7 @@ import propForge from '@/assets/zones/props/forge.png';
 import propFoundry from '@/assets/zones/props/foundry.png';
 import propFountain from '@/assets/zones/props/fountain.png';
 import propFrozenTarn from '@/assets/zones/props/frozen_tarn.png';
+import propGalleyTable from '@/assets/zones/props/galley_table.png';
 import propGardenPod from '@/assets/zones/props/garden_pod.png';
 import propGasLamp from '@/assets/zones/props/gas_lamp.png';
 import propGatehouse from '@/assets/zones/props/gatehouse.png';
@@ -77,6 +79,7 @@ import propHollowTree from '@/assets/zones/props/hollow_tree.png';
 import propHoloBoard from '@/assets/zones/props/holo_board.png';
 import propHouseBlue from '@/assets/zones/props/house_blue.png';
 import propHouseRed from '@/assets/zones/props/house_red.png';
+import propHydroTrough from '@/assets/zones/props/hydro_trough.png';
 import propIceCreamCart from '@/assets/zones/props/ice_cream_cart.png';
 import propIronBench from '@/assets/zones/props/iron_bench.png';
 import propKeep from '@/assets/zones/props/keep.png';
@@ -86,7 +89,9 @@ import propLibrary from '@/assets/zones/props/library.png';
 import propLighthouse from '@/assets/zones/props/lighthouse.png';
 import propLilyPads from '@/assets/zones/props/lily_pads.png';
 import propLobsterPots from '@/assets/zones/props/lobster_pots.png';
+import propLockers from '@/assets/zones/props/lockers.png';
 import propLocomotive from '@/assets/zones/props/locomotive.png';
+import propLoungeBench from '@/assets/zones/props/lounge_bench.png';
 import propLuggageBot from '@/assets/zones/props/luggage_bot.png';
 import propMaglev from '@/assets/zones/props/maglev.png';
 import propMinePortal from '@/assets/zones/props/mine_portal.png';
@@ -133,7 +138,9 @@ import propStone from '@/assets/zones/props/stone.png';
 import propStoneLantern from '@/assets/zones/props/stone_lantern.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
+import propTeaDispenser from '@/assets/zones/props/tea_dispenser.png';
 import propTeaKiosk from '@/assets/zones/props/tea_kiosk.png';
+import propTelescope from '@/assets/zones/props/telescope.png';
 import propTent from '@/assets/zones/props/tent.png';
 import propTether from '@/assets/zones/props/tether.png';
 import propTicketGates from '@/assets/zones/props/ticket_gates.png';
@@ -218,6 +225,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   boat_blue: propBoatBlue,
   boat_red: propBoatRed,
   bollard: propBollard,
+  bookshelf: propBookshelf,
   boulder: propBoulder,
   bunting: propBunting,
   buoy: propBuoy,
@@ -264,6 +272,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   foundry: propFoundry,
   fountain: propFountain,
   frozen_tarn: propFrozenTarn,
+  galley_table: propGalleyTable,
   garden_pod: propGardenPod,
   gas_lamp: propGasLamp,
   gatehouse: propGatehouse,
@@ -277,6 +286,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   holo_board: propHoloBoard,
   house_blue: propHouseBlue,
   house_red: propHouseRed,
+  hydro_trough: propHydroTrough,
   ice_cream_cart: propIceCreamCart,
   iron_bench: propIronBench,
   keep: propKeep,
@@ -286,7 +296,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lighthouse: propLighthouse,
   lily_pads: propLilyPads,
   lobster_pots: propLobsterPots,
+  lockers: propLockers,
   locomotive: propLocomotive,
+  lounge_bench: propLoungeBench,
   luggage_bot: propLuggageBot,
   maglev: propMaglev,
   mine_portal: propMinePortal,
@@ -333,7 +345,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   stone_lantern: propStoneLantern,
   store: propStore,
   street_light: propStreetLight,
+  tea_dispenser: propTeaDispenser,
   tea_kiosk: propTeaKiosk,
+  telescope: propTelescope,
   tent: propTent,
   tether: propTether,
   ticket_gates: propTicketGates,

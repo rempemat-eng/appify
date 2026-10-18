@@ -8,15 +8,18 @@ import { usePixelUnit } from '@/components/pixel-frame';
 import { PixelButton } from '@/components/game-ui';
 import type { RegionId } from '@/lib/region-walk';
 
-const regionIds: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space'];
+const regionIds: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 const regionNames: Record<RegionId, string> = {
   valley: 'VALLEY',
   steam: 'COGSWORTH',
   west: 'DUST GULCH',
   lava: 'CALDERA',
   neon: 'NEON',
-  space: 'SPACE',
+  space: 'HALCYON',
+  moon: 'LUMEN',
 };
+// Lumen is reached by shuttle from Halcyon: the same climb out of the atmosphere
+const journeyFor = (r: RegionId) => (r === 'moon' ? 'space' : r);
 
 /**
  * A preview of the open world (living-world plan W1): walk across the drawn zones
@@ -41,7 +44,7 @@ export default function Atlas() {
         <AtlasWalk key={region} region={region} width={width} height={height - bar} />
         {trip && (
           <Journey
-            to={trip}
+            to={journeyFor(trip)}
             label={regionNames[trip]}
             width={width}
             height={height - bar}
