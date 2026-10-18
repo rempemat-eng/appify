@@ -1,9 +1,10 @@
 import type { Player, Raid, Saved } from './game';
+import { restoreWorldProgress } from './world-zones';
 
 // The storage key stays stable. Versions describe its JSON payload, not a new
 // account or storage location. Releases before this module were unversioned.
 export const GAME_SAVE_KEY = 'screenagotchi-v1';
-export const SAVE_VERSION = 1;
+export const SAVE_VERSION = 2;
 
 type RecordValue = Record<string, unknown>;
 type Shape =
@@ -71,6 +72,7 @@ const incoming = list(object({ raid, attacker: player }), ['raid.id']);
 // runtime store, including names that happen to match store actions.
 const saveShape = object(
   {
+    worldProgress: object({ currentZone: true, visitedZones: strings }),
     missionReturnPending: true,
     quietView: true,
     recentBreaks: list(
@@ -226,11 +228,17 @@ export function readSave(
     throw new Error('Invalid save version');
   if (version > SAVE_VERSION) throw new FutureSaveError('Newer save version');
   let data = project(source, saveShape);
-  // v0 -> v1: the existing legacy defaults and starter-deck upgrade. Current
-  // saves retain the same optional-field restoration/validation on each load.
-  const migrations = [restore];
+  // v0 -> v1's legacy defaults/starter deck are handled by the cumulative
+  // restore callback below. v1 -> v2 adds only garden exploration defaults.
+  const migrations = [
+    (value: unknown) => value,
+    (value: unknown) =>
+      isRecord(value)
+        ? { ...value, worldProgress: restoreWorldProgress(value.worldProgress) }
+        : value,
+  ];
   for (let step = version; step < SAVE_VERSION; step++) data = migrations[step](data);
-  if (version === SAVE_VERSION) data = restore(data);
+  data = restore(data);
   return { data, source };
 }
 

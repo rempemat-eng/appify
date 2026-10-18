@@ -130,6 +130,11 @@ async function main() {
       const after = gameStore.getState();
       const before = original.player;
       assert.ok(after.player, fixture.name);
+      assert.deepEqual(
+        after.worldProgress,
+        { currentZone: 'garden', visitedZones: ['garden'] },
+        `${fixture.name}: pre-exploration save starts in garden`,
+      );
       for (const key of [
         'id',
         'name',
@@ -186,6 +191,28 @@ async function main() {
       );
     }
 
+    const versionOne = currentSaveFixture();
+    versionOne.saveVersion = 1;
+    await load(JSON.stringify(versionOne));
+    assert.deepEqual(gameStore.getState().worldProgress, {
+      currentZone: 'garden',
+      visitedZones: ['garden'],
+    });
+    assert.deepEqual(
+      gameStore.getState().player,
+      versionOne.player,
+      'explicit version-1 migration preserves every player field',
+    );
+    assert.deepEqual(disk().recentBreaks, versionOne.recentBreaks);
+    assert.deepEqual(disk().companionMemories, versionOne.companionMemories);
+    assert.equal(disk().saveVersion, 2);
+    const migratedVersionOne = disk();
+    await reload();
+    assert.deepEqual(disk(), migratedVersionOne, 'version-1 to version-2 migration is idempotent');
+    console.log(
+      'PASS: explicit version-1 exploration migration preserves the whole player and saved history',
+    );
+
     const extra = currentSaveFixture();
     const p = record(extra.player);
     const rules = record(extra.rules);
@@ -193,6 +220,11 @@ async function main() {
     const memories = records(extra.companionMemories);
     const history = records(extra.recentBreaks);
     extra.saveVersion = SAVE_VERSION;
+    extra.worldProgress = {
+      currentZone: 'future-moon',
+      visitedZones: ['garden', 'future-moon'],
+      futureAtlas: { memory: 'kept' },
+    };
     extra.futureWorld = { seasons: ['autumn'], weather: { selected: null } };
     extra.tick = 'future data, never an action';
     extra.sync = { future: true };
@@ -232,6 +264,11 @@ async function main() {
     await reload();
     const kept = disk();
     assert.deepEqual(kept.futureWorld, extra.futureWorld);
+    assert.deepEqual(
+      kept.worldProgress,
+      extra.worldProgress,
+      'unknown zone ids and nested exploration fields survive round-trip',
+    );
     assert.deepEqual(kept.tick, extra.tick);
     assert.deepEqual(kept.sync, extra.sync);
     assert.equal(kept.ready, false);
@@ -404,7 +441,7 @@ async function main() {
       assert.equal(gameStore.getState().player, null);
     }
     assert.throws(
-      () => readSave(JSON.stringify({ saveVersion: 2 }), (value) => value),
+      () => readSave(JSON.stringify({ saveVersion: SAVE_VERSION + 1 }), (value) => value),
       FutureSaveError,
     );
     console.log(

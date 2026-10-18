@@ -38,6 +38,15 @@ import { bilt, backendUnavailableMessage } from '@/lib/bilt';
 import { FutureSaveError, GAME_SAVE_KEY, readSave, writeSave } from '@/lib/save-data';
 import { backupBeforeFreshStart, SaveRecoveryChangedError } from '@/lib/save-recovery';
 import {
+  freshWorldProgress,
+  restoreWorldProgress,
+  currentWorldZone,
+  createWorldWalkGuard,
+  enterWorldZone,
+  type WorldProgress,
+  type WorldWalk,
+} from '@/lib/world-zones';
+import {
   appendBreak,
   breakReceipt,
   addTogetherReceiptBonus,
@@ -158,6 +167,7 @@ function code() {
 export type Incoming = { raid: Raid; attacker: Player | null };
 export type BattleRequest = { target: Player; practice: boolean };
 export type Saved = {
+  worldProgress: WorldProgress;
   missionReturnPending: boolean;
   quietView: boolean;
   recentBreaks?: RecentBreak[];
@@ -192,6 +202,9 @@ export type SaveLoadProblem =
   | { kind: 'unreadable'; confirmationId: string | null; busy: boolean; error: string | null }
   | { kind: 'newer' | 'storage' };
 type Game = Saved & {
+  beginWorldWalk: (exitId: string) => WorldWalk | null;
+  finishWorldWalk: (walk: WorldWalk) => boolean;
+  cancelWorldWalk: () => void;
   saveLoadProblem: SaveLoadProblem | null;
   requestSaveRecovery: () => string | null;
   cancelSaveRecovery: () => void;
@@ -280,6 +293,7 @@ function isPlayer(value: unknown): value is Player {
 }
 function migrateSaved(value: unknown) {
   if (!isRecord(value)) return value;
+  value.worldProgress = restoreWorldProgress(value.worldProgress);
   const recentBreaks = restoreBreakHistory(value.recentBreaks);
   value.recentBreaks = recentBreaks;
   if (typeof value.breakId !== 'string') value.breakId = null;
@@ -423,6 +437,11 @@ let unreadableSave: { raw: string; generation: number } | null = null;
 let active = true;
 let syncRequested = false;
 let battleGeneration = 0;
+const worldWalkGuard = createWorldWalkGuard();
+const worldAccess = (player: Player) => ({
+  level: player.level,
+  mountainLevel: missions.find((m) => m.id === 'mountain')?.level ?? Infinity,
+});
 let playAt = Date.now();
 let playEligible = false;
 let accounting = false;
@@ -430,6 +449,7 @@ let accounting = false;
 // partially reuses a rejected save; the original bytes live only in its backup.
 function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakId: null } {
   return {
+    worldProgress: freshWorldProgress(),
     missionReturnPending: false,
     quietView: false,
     recentBreaks: [],
@@ -570,6 +590,7 @@ function persist() {
   if (!saveWritable) return persistence;
   const s = gameStore.getState();
   const saved: Saved = {
+    worldProgress: s.worldProgress,
     missionReturnPending: s.missionReturnPending,
     quietView: s.quietView,
     recentBreaks: s.recentBreaks,
@@ -637,6 +658,31 @@ function applyIncoming(item: Incoming) {
   feedback('raid');
 }
 export const gameStore = create<Game>((set, get) => ({
+  worldProgress: freshWorldProgress(),
+  beginWorldWalk: (exitId) => {
+    worldWalkGuard.cancel();
+    const s = get(),
+      p = s.player;
+    if (!active || !s.ready || s.saveLoadProblem || !p || p.mode !== 'awake' || s.battle)
+      return null;
+    const access = worldAccess(p);
+    return worldWalkGuard.begin(currentWorldZone(s.worldProgress, access), exitId, p.id, access);
+  },
+  finishWorldWalk: (walk) => {
+    const s = get(),
+      p = s.player;
+    if (!active || !s.ready || s.saveLoadProblem || !p || p.mode !== 'awake' || s.battle) {
+      worldWalkGuard.cancel();
+      return false;
+    }
+    const access = worldAccess(p);
+    const to = worldWalkGuard.finish(walk, currentWorldZone(s.worldProgress, access), p.id, access);
+    if (!to) return false;
+    set({ worldProgress: enterWorldZone(s.worldProgress, to) });
+    void persist();
+    return true;
+  },
+  cancelWorldWalk: () => worldWalkGuard.cancel(),
   missionReturnPending: false,
   quietView: false,
   setQuietView: (quietView) => {
@@ -970,6 +1016,7 @@ export const gameStore = create<Game>((set, get) => ({
   init: () => {
     if (loadInFlight) return loadInFlight;
     if (get().ready) return Promise.resolve();
+    worldWalkGuard.cancel();
     const generation = ++loadGeneration;
     saveWritable = false;
     unreadableSave = null;
@@ -1083,6 +1130,7 @@ export const gameStore = create<Game>((set, get) => ({
     };
     set({
       player,
+      worldProgress: freshWorldProgress(),
       missionReturnPending: false,
       cardReward: null,
       breakId: null,
@@ -1750,6 +1798,18 @@ export const gameStore = create<Game>((set, get) => ({
     changed();
   },
 }));
+gameStore.subscribe((next, previous) => {
+  if (
+    !next.ready ||
+    next.saveLoadProblem ||
+    next.player?.id !== previous.player?.id ||
+    next.player?.mode !== previous.player?.mode ||
+    next.battle !== previous.battle ||
+    next.quietView !== previous.quietView ||
+    next.worldProgress !== previous.worldProgress
+  )
+    worldWalkGuard.cancel();
+});
 gameStore.subscribe(() => {
   if (!accounting && eligiblePlay() !== playEligible) accountPlay();
 });
@@ -1789,6 +1849,7 @@ export function startGame() {
     if (wasActive === active) return;
     accountPlay();
     if (!active) {
+      worldWalkGuard.cancel();
       gameStore.setState({ lastActiveAt: Date.now() });
       battleGeneration += 1;
       void persist();
@@ -1808,6 +1869,7 @@ export function startGame() {
     const visible = !document.hidden;
     if (active === visible) return;
     if (document.hidden) {
+      worldWalkGuard.cancel();
       active = false;
       battleGeneration += 1;
       gameStore.setState({ lastActiveAt: Date.now() });
@@ -1827,6 +1889,7 @@ export function startGame() {
   };
   if (Platform.OS === 'web') document.addEventListener('visibilitychange', visibility);
   stop = () => {
+    worldWalkGuard.cancel();
     clearInterval(tick);
     clearInterval(sync);
     sub.remove();

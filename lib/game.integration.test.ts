@@ -107,8 +107,79 @@ async function main() {
       gameStore.getState().ready && !gameStore.getState().player,
       'Empty storage opens onboarding state',
     );
+    check(
+      gameStore.getState().beginWorldWalk('any') === null,
+      'Onboarding cannot start a world walk',
+    );
     await gameStore.getState().hatch('GARDENER', 'SPROUT', 'BLOB');
     const identity = gameStore.getState().player!.id;
+    const { worldExits, exitsFromWorldZone, currentWorldZone } = await import('./world-zones');
+    const worldAccess = { level: 1, mountainLevel: 2 };
+    const townExit = exitsFromWorldZone('garden', worldAccess).find((e) => e.to === 'town')!;
+    const ridgeExit = worldExits.find((e) => e.from === 'garden' && e.to === 'ridge')!;
+    const starter = structuredClone(gameStore.getState().player);
+    check(
+      currentWorldZone(gameStore.getState().worldProgress, worldAccess) === 'garden',
+      'New account starts exploring in the garden',
+    );
+    check(
+      gameStore.getState().beginWorldWalk(ridgeExit.id) === null,
+      'Actual store rejects existing mountain gate at level one',
+    );
+    const cancelledWalk = gameStore.getState().beginWorldWalk(townExit.id)!;
+    gameStore.getState().cancelWorldWalk();
+    check(
+      !gameStore.getState().finishWorldWalk(cancelledWalk),
+      'Closing the atlas invalidates a pending store arrival',
+    );
+    const interruptedWalk = gameStore.getState().beginWorldWalk(townExit.id)!;
+    gameStore.getState().change({ mode: 'screen_off' });
+    gameStore.getState().change({ mode: 'awake' });
+    check(
+      !gameStore.getState().finishWorldWalk(interruptedWalk),
+      'Nap and return cannot revive an interrupted walk',
+    );
+    const battleWalk = gameStore.getState().beginWorldWalk(townExit.id)!;
+    gameStore.setState({ battle: { target: bot(gameStore.getState().player!), practice: true } });
+    gameStore.setState({ battle: null });
+    check(
+      !gameStore.getState().finishWorldWalk(battleWalk),
+      'Battle and return cannot revive an interrupted walk',
+    );
+    const quietWalk = gameStore.getState().beginWorldWalk(townExit.id)!;
+    gameStore.getState().setQuietView(true);
+    gameStore.getState().setQuietView(false);
+    check(
+      !gameStore.getState().finishWorldWalk(quietWalk),
+      'Changing Quiet view cannot revive a pending walk',
+    );
+    const walk = gameStore.getState().beginWorldWalk(townExit.id)!;
+    check(
+      gameStore.getState().finishWorldWalk(walk),
+      'Actual store commits a deliberate valid arrival',
+    );
+    check(!gameStore.getState().finishWorldWalk(walk), 'Actual store ignores duplicate arrivals');
+    check(
+      isDeepStrictEqual(gameStore.getState().player, starter),
+      'Exploring changes no wallet, mood, rewards, ownership or player fields',
+    );
+    const returning = exitsFromWorldZone('town', worldAccess).find((e) => e.to === 'garden')!;
+    const beforeReload = gameStore.getState().beginWorldWalk(returning.id)!;
+    await reload();
+    check(
+      gameStore.getState().worldProgress.currentZone === 'town' &&
+        isDeepStrictEqual(gameStore.getState().worldProgress.visitedZones, ['garden', 'town']),
+      'Current zone and visited set survive actual persistence',
+    );
+    check(
+      !gameStore.getState().finishWorldWalk(beforeReload),
+      'Pending walk is not restored with a saved game',
+    );
+    const home = gameStore.getState().beginWorldWalk(returning.id)!;
+    check(
+      gameStore.getState().finishWorldWalk(home),
+      'Saved town can return through the matching garden entry',
+    );
     check(
       gameStore.getState().player!.grass === 20 && gameStore.getState().player!.deck.length === 7,
       'Actual hatch creates the original 20-GRASS, seven-card starter',
