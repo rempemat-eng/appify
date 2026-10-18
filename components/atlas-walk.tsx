@@ -35,7 +35,7 @@ import {
   type TileId,
 } from '@/lib/region-walk';
 import { zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
-import { zoneBeyond, zoneGrounds, zoneProps } from '@/lib/zone-assets';
+import { BEYOND_SPILL, zoneBeyond, zoneGrounds, zoneProps } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
@@ -482,11 +482,13 @@ export function AtlasWalk({
               source={zoneBeyond}
               resizeMode="stretch"
               style={{
+                // its crowns spill over the zones beside it (above their ground, under their props)
                 position: 'absolute',
-                left: snap((g.col - bounds.minCol) * TILE.width * u),
-                top: snap((g.row - bounds.minRow) * TILE.height * u),
-                width: snap(TILE.width * u),
-                height: snap(TILE.height * u),
+                left: snap(((g.col - bounds.minCol) * TILE.width - BEYOND_SPILL) * u),
+                top: snap(((g.row - bounds.minRow) * TILE.height - BEYOND_SPILL) * u),
+                width: snap((TILE.width + 2 * BEYOND_SPILL) * u),
+                height: snap((TILE.height + 2 * BEYOND_SPILL) * u),
+                zIndex: 1,
               }}
             />
           ))}

@@ -3188,28 +3188,51 @@ def rle(row: str) -> str:
     return ''.join(out)
 
 
+BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
+
+
 @functools.lru_cache(maxsize=1)
 def beyond() -> Canvas:
     """What lies past a region's own zones where its grid has a gap (the valley's corners):
-    old forest, a closed canopy of leaf masses in deep shade, lit only at their crowns,
-    each row overlapping the one behind it."""
-    cv = Canvas(W, H)
-    for y in range(H):
-        for x in range(W):
+    old forest, a closed canopy of leaf masses in deep shade, each row overlapping the
+    one behind it. Its outermost crowns spill a little over the neighbouring zones, so
+    the forest's edge is grown, not cut; the canvas is the zone plus that spill all round."""
+    S = BEYOND_SPILL
+    cv = Canvas(W + 2 * S, H + 2 * S)
+    for y in range(S, H + S):
+        for x in range(S, W + S):
+            # the shade under the canopy, its edge ragged so no straight line shows
+            m = 2 + int(noise2(x // 3, y // 3, 553) * 7)
+            if min(x - S, W + S - 1 - x, y - S, H + S - 1 - y) < m:
+                continue
             cv.set(x, y, style.FOREST_DARK if (x + y) % 2 else '#24382A')
     ramp = ['#122019', '#1A2C22', '#22392A', '#2E4C34', '#3E6240']
     crowns = []
     k = 0
-    for gy in range(-10, H + 30, 30):  # crowns on a jittered grid, so the canopy closes
-        for gx in range(-10, W + 30, 40):
+    for gy in range(S + 4, H + S, 30):  # crowns on a jittered grid, so the canopy closes
+        for gx in range(S + 6, W + S, 40):
             crowns.append((gy + (noise2(k, 1, 552) - 0.5) * 22, gx + (noise2(k, 0, 552) - 0.5) * 28,
                            22 + noise2(k, 2, 552) * 12, k))
             k += 1
+    for t in range(0, max(W, H) + 1, 22):  # small crowns straddling the edge all round
+        for (ex, ey) in ((S + t, S), (S + t, H + S), (S, S + t), (W + S, S + t)):
+            if S <= ex <= W + S and S <= ey <= H + S:
+                crowns.append((ey + (noise2(t, ex, 554) - 0.5) * 6, ex + (noise2(t, ey, 554) - 0.5) * 6,
+                               9 + noise2(ex, ey, 555) * 4, k))
+                k += 1
     for (cy, cx, rx, k) in sorted(crowns):
+        # crowns by the edge stay inside the canvas, so the spill ends in round crowns
+        rx = max(8.0, min(rx, cx - 8, cv.w - cx - 8, (cy - 8) / 0.72, (cv.h - cy - 8) / 0.72))
         ry = rx * 0.72
         blob = Canvas(int(rx * 2) + 14, int(ry * 2) + 14)
         style.leafy(blob, blob.w / 2, blob.h / 2, rx, ry, ramp, r=3.8, seed=k + 3)
-        cv.paste(blob, int(cx - blob.w / 2), int(cy - blob.h / 2))
+        bx, by = int(cx - blob.w / 2), int(cy - blob.h / 2)
+        for yy in range(blob.h):
+            for xx in range(blob.w):
+                c = blob.get(xx, yy)
+                X, Y = bx + xx, by + yy
+                if c[3] and 0 <= X < cv.w and 0 <= Y < cv.h:
+                    cv.set(X, Y, c)
     return cv
 
 
@@ -3271,6 +3294,7 @@ def export(built: dict):
         "import beyondImage from '@/assets/zones/beyond.png';",
         '/** Old forest, drawn where a region\'s grid has no zone (the valley\'s corners). */',
         'export const zoneBeyond: ImageSourcePropType = beyondImage;',
+        f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
         '};',
