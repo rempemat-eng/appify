@@ -1,7 +1,15 @@
 import assert from 'node:assert/strict';
 import { moveTo, restoreWorld } from './world-save';
 import { regionWalk, TILE } from './region-walk';
-import { doors, exits, missionPlaces, regionPoint, rings, travelPoints } from './world-places';
+import {
+  doors,
+  exits,
+  missionPlaces,
+  regionPoint,
+  rings,
+  travelPoints,
+  travelRoute,
+} from './world-places';
 import { makeWalkGrid } from './garden-path';
 import { regionBounds } from './region-walk';
 import { readSave, writeSave } from './save-data';
@@ -107,3 +115,27 @@ for (const zone of Object.values(zoneMaps)) {
 }
 ok(panes > 20, 'the valley houses have lit windows');
 console.log(`Lit windows: ${panes} panes inside their buildings.`);
+
+// travel follows the lines: every station reaches every other, neighbours in one leg
+const stations = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'] as const;
+for (const from of stations)
+  for (const to of stations) {
+    if (from === to) continue;
+    const route = travelRoute(from, to);
+    ok(route.length > 0 && route[route.length - 1] === to, `${from} reaches ${to}`);
+    ok(
+      route.every((r) => travelPoints[r]),
+      `${from} to ${to} stops only at stations`,
+    );
+  }
+ok(travelRoute('valley', 'steam').join() === 'steam', 'the valley train goes to Cogsworth');
+ok(
+  travelRoute('valley', 'moon').join() === 'steam,neon,space,moon',
+  'Lumen is four legs from the valley',
+);
+ok(
+  travelRoute('lava', 'neon').join() === 'west,steam,neon',
+  'the caldera to the city changes twice',
+);
+ok(travelRoute('valley', 'valley').length === 0, 'no trip to where you are');
+console.log('Travel: every station reaches every other along the lines.');

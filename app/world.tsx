@@ -23,6 +23,7 @@ import {
   rings,
   travelBy,
   travelPoints,
+  travelRoute,
   type MissionPlaceId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
@@ -39,6 +40,16 @@ const regionNames: Record<RegionId, string> = {
   home: 'THE NAP HUT',
 };
 const placeIds: MissionPlaceId[] = ['book', 'park', 'mountain', 'shop', 'arena', 'garden'];
+const shortNames: Record<RegionId, string> = {
+  valley: 'the valley',
+  steam: 'Cogsworth',
+  west: 'Dust Gulch',
+  lava: 'the caldera',
+  neon: 'Neon Harbour',
+  space: 'Halcyon',
+  moon: 'Lumen',
+  home: 'home',
+};
 const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 
 type Card =
@@ -155,7 +166,10 @@ export default function World() {
   const [zone, setZone] = useState<TileId | undefined>(
     () => tileAt(spawn.region, spawn.at.x, spawn.at.y)?.id,
   );
-  const [trip, setTrip] = useState<RegionId | null>(null);
+  // a trip is the stations it stops at (the lines in world-places.ts), the destination
+  // last, and which leg is playing
+  const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
+  const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(undefined);
   const walkToPlace = (id: string) => {
@@ -173,17 +187,22 @@ export default function World() {
     [spawn.region, walkWorld],
   );
   const arrive = useCallback(() => {
-    if (!trip) return;
-    const station = travelPoints[trip];
+    if (!dest) return;
+    const station = travelPoints[dest];
     if (station) {
       const at = regionPoint(station);
-      setSpawn((s) => ({ region: trip, at, key: s.key + 1 }));
+      setSpawn((s) => ({ region: dest, at, key: s.key + 1 }));
       setGoal(undefined);
-      walkWorld(trip, at.x, at.y, true);
+      walkWorld(dest, at.x, at.y, true);
       setCard({ kind: 'travel' });
     }
     setTrip(null);
-  }, [trip, walkWorld]);
+  }, [dest, walkWorld]);
+  // the end of one leg: change at that station and go on, or arrive
+  const legDone = useCallback(() => {
+    if (trip && trip.leg < trip.legs.length - 1) setTrip({ ...trip, leg: trip.leg + 1 });
+    else arrive();
+  }, [trip, arrive]);
 
   const away = !player || player.mode !== 'awake' || !!battle || pendingReturn;
   const cardH = card ? Math.min(260, height * 0.36) : 0;
@@ -331,7 +350,14 @@ export default function World() {
           />
         </>
       );
-    // a station: the journeys to every other region leave from here
+    // a station: the lines leave from here; further places change on the way
+    const routes = travelOrder
+      .filter((r) => r !== spawn.region && travelPoints[r])
+      .map((r) => ({ r, route: travelRoute(spawn.region, r) }))
+      .filter((x) => x.route.length > 0)
+      .sort((a, b) => a.route.length - b.route.length);
+    const direct = routes.filter((x) => x.route.length === 1);
+    const further = routes.filter((x) => x.route.length > 1);
     return (
       <>
         <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
@@ -340,24 +366,39 @@ export default function World() {
         <BodyText style={{ fontSize: 13 }}>
           Where to? The journey is free; skip it any time.
         </BodyText>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-          {travelOrder
-            .filter((r) => r !== spawn.region && travelPoints[r])
-            .map((r) => (
-              <View key={r} style={{ width: '48%' }}>
-                <PixelButton
-                  small
-                  light
-                  label={regionNames[r]}
-                  disabled={away || !!trip}
-                  onPress={() => {
-                    feedback('select');
-                    setTrip(r);
-                  }}
-                />
+        {[direct, further].map((group, g) =>
+          group.length ? (
+            <View key={g === 0 ? 'direct' : 'further'} style={{ gap: 4 }}>
+              {g === 1 && (
+                <BodyText style={{ fontSize: 12 }}>Further, changing on the way:</BodyText>
+              )}
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
+                {group.map(({ r, route }) => (
+                  <View key={r} style={{ width: '48%', gap: 2 }}>
+                    <PixelButton
+                      small
+                      light
+                      label={regionNames[r]}
+                      disabled={away || !!trip}
+                      onPress={() => {
+                        feedback('select');
+                        setTrip({ legs: route, leg: 0 });
+                      }}
+                    />
+                    {route.length > 1 && (
+                      <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
+                        {`via ${route
+                          .slice(0, -1)
+                          .map((s) => shortNames[s])
+                          .join(', ')}`}
+                      </BodyText>
+                    )}
+                  </View>
+                ))}
               </View>
-            ))}
-        </View>
+            </View>
+          ) : null,
+        )}
       </>
     );
   };
@@ -411,14 +452,21 @@ export default function World() {
             </PixelFrame>
           </View>
         )}
-        {trip && (
+        {trip && dest && (
           <Journey
-            to={trip === 'home' ? 'valley' : trip}
-            label={regionNames[trip]}
+            key={trip.leg}
+            to={trip.legs[trip.leg] === 'home' ? 'valley' : trip.legs[trip.leg]}
+            label={
+              trip.leg < trip.legs.length - 1
+                ? `${regionNames[trip.legs[trip.leg]]}, THEN ${regionNames[dest]}`
+                : regionNames[dest]
+            }
+            ms={trip.legs.length > 1 ? 2200 : undefined}
             width={width}
             height={viewH}
             u={u}
-            onArrive={arrive}
+            onArrive={legDone}
+            onSkip={arrive}
             insetTop={insets.top}
             insetBottom={insets.bottom}
           />

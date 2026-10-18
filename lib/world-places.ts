@@ -50,6 +50,43 @@ export const rings: PlaceDef[] = [
   { region: 'moon', zone: 'lumen', at: stand('lumen', 'sparring') },
 ];
 
+/**
+ * The lines between regions (world-atlas.md, "How you reach it"): the valley train to
+ * Cogsworth; from there the line west to Dust Gulch and the maglev to Neon Harbour; the
+ * mine cart from the gulch to the caldera; the space elevator from Neon Harbour to
+ * Halcyon, and Halcyon's shuttle to Lumen. A tree rooted at the valley.
+ */
+export const travelLinks: readonly (readonly [RegionId, RegionId])[] = [
+  ['valley', 'steam'],
+  ['steam', 'west'],
+  ['west', 'lava'],
+  ['steam', 'neon'],
+  ['neon', 'space'],
+  ['space', 'moon'],
+];
+
+/** The stations a trip stops at from one region to another, the destination last
+ * (the start left out); empty when there is no line. */
+export function travelRoute(from: RegionId, to: RegionId): RegionId[] {
+  if (from === to) return [];
+  const prev = new Map<RegionId, RegionId>([[from, from]]);
+  const queue: RegionId[] = [from];
+  while (queue.length) {
+    const here = queue.shift()!;
+    for (const [a, b] of travelLinks) {
+      const next = a === here ? b : b === here ? a : undefined;
+      if (next && !prev.has(next)) {
+        prev.set(next, here);
+        queue.push(next);
+      }
+    }
+  }
+  if (!prev.has(to)) return [];
+  const route: RegionId[] = [];
+  for (let r = to; r !== from; r = prev.get(r)!) route.unshift(r);
+  return route;
+}
+
 /** How each journey is made, for its name on the travel card. */
 export const travelBy: Partial<Record<RegionId, string>> = {
   valley: 'THE VALLEY TRAIN',

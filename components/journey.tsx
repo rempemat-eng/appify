@@ -71,6 +71,8 @@ export function Journey({
   onArrive,
   insetTop = 0,
   insetBottom = 0,
+  ms = TRIP_MS,
+  onSkip,
 }: {
   to: keyof typeof journeyLayers;
   label: string;
@@ -81,6 +83,10 @@ export function Journey({
   /** Safe-area room at the top and bottom, so the label and SKIP stay clear of it. */
   insetTop?: number;
   insetBottom?: number;
+  /** How long this leg takes (a trip of several legs plays each a little quicker). */
+  ms?: number;
+  /** SKIP ends the whole trip (defaults to arriving at the end of this leg). */
+  onSkip?: () => void;
 }) {
   const reduced = useReducedMotion();
   const active = useAppActive();
@@ -89,7 +95,7 @@ export function Journey({
   const skip = () => {
     if (done.current) return;
     done.current = true;
-    onArrive();
+    (onSkip ?? onArrive)();
   };
   useEffect(() => {
     const finish = () => {
@@ -107,12 +113,12 @@ export function Journey({
       return () => clearTimeout(s);
     }
     t.set(
-      withTiming(1, { duration: TRIP_MS, easing: Easing.inOut(Easing.quad) }, (finished) => {
+      withTiming(1, { duration: ms, easing: Easing.inOut(Easing.quad) }, (finished) => {
         if (finished) runOnJS(finish)();
       }),
     );
     return () => cancelAnimation(t);
-  }, [active, reduced, t, onArrive]);
+  }, [active, reduced, t, onArrive, ms]);
 
   const layers = journeyLayers[to];
   const lw = JOURNEY.width * u; // one loop of a layer
