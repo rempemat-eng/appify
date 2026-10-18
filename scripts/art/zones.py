@@ -386,8 +386,10 @@ def junction(frame: int = 0):
         cv.set(x, 134, STONE[1]); cv.set(x, 135, STONE[2])
     # the cobbled square and lanes
     # cobbled streets fill the town; the meadow only returns round the ring
-    square = {(x, y) for x in range(W) for y in range(136, 436)
-              if y < 420 + int(noise2(x // 8, 1, 152) * 16) - (12 if x < 30 or x > 290 else 0)}
+    def square_edge(x):  # a gently curving edge, drawn back a little at the sides
+        side = max(0, 30 - x, x - 290) / 30
+        return 420 + int(math.sin(x / 41) * 5 + smooth_noise(x, 0, 23, 152) * 10 - side * 14)
+    square = {(x, y) for x in range(W) for y in range(136, 436) if y < square_edge(x)}
     lane = worlds.thick([(160, 430), (160, 468)], 16)
     worlds.paint_cobbles(cv, square | lane)
     for (x, y) in square | lane:  # a kerb of dressed stone where the cobbles meet the grass
