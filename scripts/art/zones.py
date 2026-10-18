@@ -680,7 +680,9 @@ def neon_city(frame: int = 0):
     for (gx, gy) in ((112, 336), (232, 300), (60, 440)):  # steam grates in the pavement
         grate(cv, gx, gy)
     stands = {'crossing': (160, 192), 'stalls': (60, 300), 'court': (160, 382), 'quay': (160, 452)}
-    return cv, objects, stands
+    water = {(x, y) for x in range(W) for y in range(470, H)}
+    WATER_MASKS['neon_city'] = water
+    return cv, objects, stands, water  # the harbour is water: no walking on it
 
 
 def skyport(frame: int = 0):
@@ -864,6 +866,7 @@ def skyport(frame: int = 0):
                                   (LX, LY, 40, 24, AMBER[3]), (AX, 400, 30, 60, CYAN[3])):
         light_pool(cv, lx, ly, rx, ry, col, skip=frozenset(water - ring - pier))
     blocked |= water - ring - pier
+    WATER_MASKS['skyport'] = water - ring - pier
     objects = [
         ('maglev', 'maglev', 26, 26), ('pylon-p', 'departure_pylon', 160, 40), ('light-p', 'street_light', 30, 40),
         ('tree-loop', 'pod_tree', LX - 18, LY - 40), ('tree-1', 'pod_tree', 280, 236), ('tree-2', 'pod_tree', 4, 236),
@@ -3204,7 +3207,8 @@ def build(name: str, fn, start: str):
             prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
     print('ok zone', name, W, H)
     return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map,
-            'ground_img': cv.img.copy(), 'blocked': blocked_ground, 'preview': prev.img if prev else None}
+            'ground_img': cv.img.copy(), 'blocked': blocked_ground, 'preview': prev.img if prev else None,
+            'water': WATER_MASKS.get(fn.__name__)}
 
 
 # Buildings whose door faces the viewer, and where the door sits across the sprite
@@ -3234,6 +3238,10 @@ def rle(row: str) -> str:
         i = j
     return ''.join(out)
 
+
+# Water a zone declares outright (world-rules.md, section 1: the semantic layer), for
+# zones whose night palettes the lint cannot read by colour; others are read by colour.
+WATER_MASKS: dict[str, set] = {}
 
 BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
 

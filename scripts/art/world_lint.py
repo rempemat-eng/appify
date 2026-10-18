@@ -24,10 +24,21 @@ ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 W, H, CELL = 320, 576, 4
 COLS, ROWS = W // CELL, H // CELL
 
+# Regions whose findings fail the build; the rest are reported until they are fixed.
+STRICT = ('valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon', 'home')
+
+# Findings that are right as drawn, each with its reason (world-rules.md, section 6,
+# the override registry; check 18: an override that no longer exempts anything is
+# reported, so stale ones get deleted). Keyed (zone, kind, what).
+OVERRIDES = {
+    ('caldera', 'seam-lava', 'caldera|springs'):
+        'the flow crosses the border on a steep slant; the band is continuous, its edge jogs a cell',
+}
+
 # Placement types (rules, section 2); anything not listed is a ground prop.
 FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
 WET = {'reeds', 'heron', 'net_rack', 'upturned_boat', 'driftwood', 'papyrus', 'water_crane', 'canal_crane'}
-SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge'}
+SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge', 'maglev'}
 _rgb = lambda c: tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))  # noqa: E731
 PATH_COLOURS = {_rgb(c) for c in P[1:5]}  # P[1]: a path in shade
 WATER_COLOURS = {_rgb(c) for c in MATERIALS['water']}  # foam and glints included
@@ -41,9 +52,10 @@ def _lava(r, g, b):
     return r >= 170 and g <= 160 and b <= 90 and r - g >= 50
 
 
-def classify(ground: Image.Image, blocked: set) -> list[str]:
+def classify(ground: Image.Image, blocked: set, water_mask: set | None = None) -> list[str]:
     """One character per walk cell: '~' water, '!' lava, '^' wall/cliff/other blocked,
-    '=' path, '.' ground (the majority of the cell's pixels decides)."""
+    '=' path, '.' ground (the majority of the cell's pixels decides). A zone that declares
+    its water (`water_mask`) is read by that, not by colour."""
     px = ground.load()
     rows = []
     for cy in range(ROWS):
@@ -58,7 +70,9 @@ def classify(ground: Image.Image, blocked: set) -> list[str]:
                     # pavement or an orange floor is ground (rules, section 1)
                     if (x, y) in blocked and _lava(r, g, b):
                         k = '!'
-                    elif (x, y) in blocked and (_bluish(r, g, b) or (r, g, b) in WATER_COLOURS):
+                    elif (x, y) in blocked and (
+                            ((x, y) in water_mask) if water_mask is not None
+                            else (_bluish(r, g, b) or (r, g, b) in WATER_COLOURS)):
                         k = '~'
                     elif (x, y) in blocked:
                         k = '^'
@@ -255,7 +269,7 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
     violations = []
     for name, z in built.items():
         ground = z['ground_img']
-        terrain = classify(ground, z['blocked'])
+        terrain = classify(ground, z['blocked'], z.get('water'))
         zones[name] = {'ground': ground, 'terrain': terrain}
         z['terrain'] = terrain
         violations += check_props(name, terrain, z['objects'], z['sprites'], overhead)
@@ -266,7 +280,18 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
     kinds = {}
     for v in violations:
         kinds[v[1]] = kinds.get(v[1], 0) + 1
-    print('world lint:', len(violations), 'findings', json.dumps(kinds))
+    used = {k for k in OVERRIDES if any(v[:3] == k for v in violations)}
+    for k in sorted(set(OVERRIDES) - used):
+        print('world lint: override no longer exempts anything, delete it:', k)
+    violations = [v for v in violations if v[:3] not in OVERRIDES]
+    kinds = {}
+    for v in violations:
+        kinds[v[1]] = kinds.get(v[1], 0) + 1
+    print('world lint:', len(violations), 'findings', json.dumps(kinds), f'({len(used)} overridden)')
+    # regions that have been fixed against the rules fail the build on a new finding
+    # (world-rules.md, section 8: the valley first, then one region at a time)
+    strict = [v for v in violations if any(v[0] in layout[r] for r in STRICT)]
+    assert not strict, 'world lint (strict regions): ' + '; '.join(f'{v[0]} {v[1]} {v[2]}: {v[4]}' for v in strict)
     out = os.environ.get('LINT_OUT')
     if out:
         os.makedirs(out, exist_ok=True)
