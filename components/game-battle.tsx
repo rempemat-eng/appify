@@ -147,6 +147,18 @@ function Info({ p, f }: { p: Player; f: Fighter }) {
     </View>
   );
 }
+/**
+ * How wide a hand card is: the whole hand side by side when it fits (cards 120 px or
+ * wider), else wide enough to read with the next card peeking in at the edge, so it is
+ * plain the hand scrolls on.
+ */
+function handCardWidth(screenWidth: number, count: number) {
+  const room = Math.min(screenWidth, 640) - 32;
+  if (count * 168 + (count - 1) * 12 <= room) return 168;
+  const fit = Math.floor((room - (count - 1) * 12) / count);
+  return fit >= 120 ? fit : Math.floor((room - 24) / 2.35);
+}
+
 export function BattleScreen({ request }: { request: BattleRequest }) {
   const paused = usePlayPaused();
   const reduced = useReducedMotion();
@@ -782,7 +794,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                         contentContainerStyle={{ gap: 12, paddingTop: 12, paddingBottom: 8 }}
                       >
                         {handCards.map(({ id, key }, index) => (
-                          <View key={key} style={{ width: 168 }}>
+                          <View key={key} style={{ width: handCardWidth(width, handCards.length) }}>
                             <HabitCard
                               id={id}
                               species={player.species}

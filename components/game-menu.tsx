@@ -12,7 +12,7 @@ import { PLAY_LIMIT_MS, remainingPlay } from '@/lib/offline-rules';
 import { cardDetails, cardIds, cards, type CardId } from '@/lib/cards';
 import { closeAllSheets, closeSheet, openSheet, useUi, type MenuTab } from '@/lib/ui';
 import { useReducedMotion } from '@/lib/motion';
-import { gameLayout } from '@/lib/layout';
+import { gameLayout, touchReach } from '@/lib/layout';
 import {
   contentInset,
   iconSize,
@@ -169,7 +169,7 @@ function MenuTabButton({
   // the active tab reaches down over the wooden rim and the page's top edge
   // the active tab reaches down over the wooden rim (4) and the page's top edge (2)
   const reach = 6 * u;
-  const height = 30 * u;
+  const height = Math.max(44, 30 * u); // a 44 px target on small phones too
   return (
     <Pressable
       accessibilityRole="tab"
@@ -223,12 +223,13 @@ function CornerButton({
     <Pressable
       accessibilityRole="button"
       accessibilityLabel={label}
-      hitSlop={Math.max(0, Math.ceil((44 - size) / 2))}
       onPress={onPress}
-      style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}
+      style={touchReach(size)}
     >
-      <FrameShape tone={frameTones.parchment} unit={u} />
-      <PixelIcon name={icon} size={iconSize.small(u)} />
+      <View style={{ width: size, height: size, alignItems: 'center', justifyContent: 'center' }}>
+        <FrameShape tone={frameTones.parchment} unit={u} />
+        <PixelIcon name={icon} size={iconSize.small(u)} />
+      </View>
     </Pressable>
   );
 }

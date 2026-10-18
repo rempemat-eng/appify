@@ -135,7 +135,7 @@ export function MissionDestinationMap({
         contentContainerStyle={{ gap: 6 }}
       >
         {placeOrder.map((id) => (
-          <View key={id} style={{ width: 118 }}>
+          <View key={id} style={{ minWidth: 118 }}>
             <PixelButton
               small
               light={id !== selected}
@@ -258,26 +258,28 @@ export function MissionDeparture() {
               </PixelFrame>
             )
           )}
-          {selected !== 'garden' && (
-            <PixelButton
-              small
-              light
-              label="WALK THERE"
-              disabled={busy}
-              onPress={() => {
-                // walk out of the gate and on to the place yourself (free, grants nothing)
-                if (!navigation.isFocused()) return;
-                useUi.setState({ worldLink: { place: selected } });
-                router.push('/world');
-              }}
-            />
-          )}
         </ScrollView>
-        {route ? (
-          <PixelButton small label={route.action} onPress={go} />
-        ) : (
-          mission && (
-            <View style={{ flexDirection: 'row', gap: 8, alignItems: 'stretch' }}>
+        {/* the actions stay in one fixed block under the scrolling map and card, so none
+            is ever covered: walking there and the break idea side by side, then the go */}
+        {(selected !== 'garden' || (mission && !route)) && (
+          <View style={{ flexDirection: 'row', gap: 8, alignItems: 'stretch' }}>
+            {selected !== 'garden' && (
+              <View style={{ flex: 1 }}>
+                <PixelButton
+                  small
+                  light
+                  label="WALK THERE"
+                  disabled={busy}
+                  onPress={() => {
+                    // walk out of the gate and on to the place yourself (free, grants nothing)
+                    if (!navigation.isFocused()) return;
+                    useUi.setState({ worldLink: { place: selected } });
+                    router.push('/world');
+                  }}
+                />
+              </View>
+            )}
+            {!route && mission && (
               <View style={{ flex: 1 }}>
                 <PixelButton
                   small
@@ -287,21 +289,25 @@ export function MissionDeparture() {
                   onPress={() => setIdeasOpen(true)}
                 />
               </View>
-              <View style={{ flex: 2 }}>
-                <PixelButton
-                  small
-                  label={
-                    locked
-                      ? `LEVEL ${mission.level} NEEDED`
-                      : busy
-                        ? 'ON A BREAK'
-                        : `START ${mission.name}`
-                  }
-                  disabled={locked || busy}
-                  onPress={start}
-                />
-              </View>
-            </View>
+            )}
+          </View>
+        )}
+        {route ? (
+          <PixelButton small label={route.action} onPress={go} />
+        ) : (
+          mission && (
+            <PixelButton
+              small
+              label={
+                locked
+                  ? `LEVEL ${mission.level} NEEDED`
+                  : busy
+                    ? 'ON A BREAK'
+                    : `START ${mission.name}`
+              }
+              disabled={locked || busy}
+              onPress={start}
+            />
           )
         )}
       </View>

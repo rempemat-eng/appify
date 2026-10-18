@@ -15,6 +15,8 @@ export function GuardianPet({
       visitor={guardian.guardian}
       level={player.level}
       hat={player.hat}
+      // greeted by its own name, not its kind
+      actionLabel={`Greet ${guardian.pet_name}`}
       {...props}
     />
   );

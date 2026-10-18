@@ -34,7 +34,7 @@ import { useReducedMotion } from '@/lib/motion';
 import { breakIntentionLabel } from '@/lib/companion-memories';
 import { topGameOverlay } from '@/lib/overlay-priority';
 import Animated, { FadeIn } from 'react-native-reanimated';
-import { gameColumn, gameSideInset } from '@/lib/layout';
+import { gameColumn, gameSideInset, hudClearance } from '@/lib/layout';
 import { switchKeys } from '@/lib/switch-keys';
 import { SaveRecovery, cancelFreshStart } from '@/components/save-recovery';
 function Onboarding() {
@@ -694,6 +694,14 @@ export function GameOverlays() {
     const timeout = setTimeout(() => useGame.setState({ flash: null }), 1600);
     return () => clearTimeout(timeout);
   }, [flash]);
+  // a notice ("TRAILHOP wandered off.") is read and goes by itself; OK still closes it
+  useEffect(() => {
+    if (!message) return undefined;
+    const timeout = setTimeout(() => {
+      if (useGame.getState().message === message) useGame.setState({ message: null });
+    }, 7000);
+    return () => clearTimeout(timeout);
+  }, [message]);
   function dismiss() {
     // Escape and Back only close the START FRESH confirmation; the screen stays.
     if (recovering) {
@@ -838,7 +846,8 @@ export function GameOverlays() {
           entering={reduced ? undefined : FadeIn.duration(100)}
           style={{
             position: 'absolute',
-            top: insets.top + 12,
+            // under the HUD, never over its menu, GRASS and timers
+            top: hudClearance(insets.top),
             left: sideInset,
             right: sideInset,
             zIndex: 100,

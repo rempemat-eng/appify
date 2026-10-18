@@ -32,7 +32,7 @@ import { visitorPixels } from '@/lib/visitor-art';
 import { isVisitorId, visitorInfo } from '@/lib/visitors';
 import { GROUND_SHADOW, petPixels } from '@/lib/pet-art';
 import { grasslings, growthStage } from '@/lib/grasslings';
-import { gameColumn, gameLayout, hotbarClearance, hudClearance } from '@/lib/layout';
+import { gameColumn, gameLayout, hotbarClearance, hudClearance, touchReach } from '@/lib/layout';
 import { PixelIcon } from '@/components/pixel-icon';
 
 export function PixelText({ style, ...props }: TextProps) {
@@ -629,7 +629,8 @@ export function Pet({
           accessibilityLabel={actionLabel ?? `Greet ${petLabel}`}
           accessibilityState={{ disabled: !active }}
           disabled={!active}
-          style={{ backgroundColor: c.transparent }}
+          // at least 44 px to tap, even when the companion is drawn small
+          style={{ backgroundColor: c.transparent, ...touchReach(scaledSize) }}
           onPress={() => {
             if (!active) return;
             cancelAnimation(patY);

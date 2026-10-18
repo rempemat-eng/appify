@@ -217,7 +217,7 @@ export function ShopScreen() {
       <PixelText style={{ fontSize: 16 }}>GROW YOUR GARDEN</PixelText>
       <CozyPanel style={{ padding: 16, gap: 12 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-          <GuardianPet player={p} level={p.level + 1} size={96} bob={false} />
+          <GuardianPet player={p} level={p.level + 1} size={96} bob={false} decorative />
           <View style={{ flex: 1, gap: 4 }}>
             <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 16 }}>
               Level {p.level} → {p.level + 1}
@@ -313,7 +313,7 @@ export function ShopScreen() {
                   {equipped ? 'WEARING' : 'OWNED'}
                 </BodyText>
               )}
-              <GuardianPet player={p} hat={h.id} size={80} bob={false} />
+              <GuardianPet player={p} hat={h.id} size={80} bob={false} decorative />
               <BodyText
                 style={{
                   fontFamily: 'PixelifySans_700Bold',
@@ -500,7 +500,7 @@ export function ArenaScreen() {
         <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>Sparring</BodyText>
       </View>
       <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-        <Pet dave level={p.level} size={96} bob={false} />
+        <Pet dave level={p.level} size={96} bob={false} decorative />
         <View style={{ flex: 1 }}>
           <BodyText style={{ fontFamily: 'PixelifySans_700Bold' }}>DOOMSCROLL DAVE</BodyText>
           <BodyText>LV {p.level} · MOOD 50</BodyText>

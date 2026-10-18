@@ -32,6 +32,7 @@ import {
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
 import { useUi } from '@/lib/ui';
+import { prefetchRegion } from '@/lib/zone-prefetch';
 import { HUT_DOOR, type Point } from '@/lib/garden-path';
 
 const regionNames: Record<RegionId, string> = {
@@ -211,6 +212,7 @@ export default function World() {
   );
   // a trip is the stations it stops at (the lines in world-places.ts), the destination
   // last, and which leg is playing
+  const [cardBox, setCardBox] = useState(0);
   const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
   const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
@@ -253,6 +255,7 @@ export default function World() {
       const at = regionPoint(station);
       setSpawn((s) => ({ region: dest, at, key: s.key + 1 }));
       setGoal(undefined);
+      setZone(tileAt(dest, at.x, at.y)?.id);
       outside.current = !homeAt(dest, at);
       walkWorld(dest, at.x, at.y, true);
       setCard({ kind: 'travel' });
@@ -292,6 +295,7 @@ export default function World() {
     feedback('select');
     setSpawn((s) => ({ region, at, key: s.key + 1 }));
     setGoal(undefined);
+    setZone(tileAt(region, at.x, at.y)?.id);
     outside.current = !homeAt(region, at);
     walkWorld(region, at.x, at.y, true);
     setCard(cardAt(region, at));
@@ -455,6 +459,8 @@ export default function World() {
                       disabled={away || !!trip}
                       onPress={() => {
                         feedback('select');
+                        // the places on the way load while the journey plays
+                        route.forEach(prefetchRegion);
                         setTrip({ legs: route, leg: 0 });
                       }}
                     />
@@ -503,7 +509,7 @@ export default function World() {
               onMove={homeward}
               showName={false}
               focusY={card ? 0.3 : 0.55}
-              padBottom={card ? cardH + insets.bottom + 16 : 0}
+              padBottom={card ? Math.min(cardH, cardBox || cardH) + insets.bottom + 16 : 0}
               target={goal}
               markers={placeMarkers(spawn.region, card)}
               onMarker={walkToPlace}
@@ -512,6 +518,8 @@ export default function World() {
         )}
         {card && !away && !trip && (
           <View
+            // the camera keeps the scene above the card as it is, not as tall as it may grow
+            onLayout={(e) => setCardBox(Math.round(e.nativeEvent.layout.height))}
             style={{
               position: 'absolute',
               // full width on a phone; a readable column on a wide screen

@@ -7,7 +7,7 @@ import { backendConfigured } from '@/lib/bilt';
 import { clock, feedback, status, useGame } from '@/lib/game';
 import { remainingPlay } from '@/lib/offline-rules';
 import { guardianPlayer } from '@/lib/visitors';
-import { gameSideInset, hudLayout } from '@/lib/layout';
+import { gameSideInset, hudLayout, touchReach } from '@/lib/layout';
 import { openSheet } from '@/lib/ui';
 import {
   FrameFill,
@@ -100,10 +100,9 @@ function StatChip({
     paddingHorizontal: contentInset(u) - u,
   } as const;
   // A 44 px target even though the drawn well is 36 px tall on phones.
-  const hitSlop = Math.max(0, Math.ceil((44 - barControl(u)) / 2));
   return press.onPress ? (
-    <Pressable accessibilityRole="button" hitSlop={hitSlop} {...press} style={style}>
-      {body}
+    <Pressable accessibilityRole="button" {...press} style={touchReach(44, barControl(u))}>
+      <View style={style}>{body}</View>
     </Pressable>
   ) : (
     <View
@@ -245,30 +244,33 @@ export function GameHud() {
         <Pressable
           accessibilityRole="button"
           accessibilityLabel={`Open the menu. ${live ? 'Garden synced' : backendConfigured ? 'No signal' : 'Local garden, saved on this device'}`}
-          hitSlop={Math.max(0, Math.ceil((44 - control) / 2))}
           onPress={() => {
             feedback('select');
             openSheet('menu');
           }}
-          style={{
-            width: control,
-            height: control,
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
+          style={touchReach(control)}
         >
-          <FrameShape tone={frameTones.parchment} unit={u} />
-          <PixelIcon name="menu" size={iconSize.small(u)} />
           <View
             style={{
-              position: 'absolute',
-              right: 4 * u,
-              top: 4 * u,
-              width: u,
-              height: u,
-              backgroundColor: live || !backendConfigured ? c.moss : c.error,
+              width: control,
+              height: control,
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
-          />
+          >
+            <FrameShape tone={frameTones.parchment} unit={u} />
+            <PixelIcon name="menu" size={iconSize.small(u)} />
+            <View
+              style={{
+                position: 'absolute',
+                right: 4 * u,
+                top: 4 * u,
+                width: u,
+                height: u,
+                backgroundColor: live || !backendConfigured ? c.moss : c.error,
+              }}
+            />
+          </View>
         </Pressable>
       </PixelFrame>
     </View>

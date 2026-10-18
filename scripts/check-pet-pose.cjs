@@ -158,6 +158,8 @@ vm.runInNewContext(compile(petFunction.getText(uiTree)), {
   petPixels,
   GROUND_SHADOW,
   visitorPixels,
+  // the 44 px touch area helper (lib/layout.ts): layout only, outside these pose checks
+  touchReach: () => ({}),
   ...grasslings,
   // This matrix covers the three starters. Visitor identity remains a leaf
   // boundary here; actual visitor rendering is loaded for the function contract.

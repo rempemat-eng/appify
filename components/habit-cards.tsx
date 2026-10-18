@@ -152,7 +152,11 @@ export function HabitCard({
         >
           {card.name}
         </BodyText>
-        <BodyText numberOfLines={1} style={{ fontSize: 12, lineHeight: 18, textAlign: 'center' }}>
+        {/* two lines, so a narrow card in a phone's hand still reads its whole effect */}
+        <BodyText
+          numberOfLines={2}
+          style={{ fontSize: 12, lineHeight: 18, minHeight: 36, textAlign: 'center' }}
+        >
           {effect}
         </BodyText>
       </View>
