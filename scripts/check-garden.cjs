@@ -296,6 +296,8 @@ const EDGE = { min: 16, max: map.GARDEN.width - 16 };
 const pathModule = { exports: {} };
 evaluate('lib/garden-path.ts', pathModule);
 deps['@/lib/garden-path'] = pathModule.exports;
+// keyboard walking is a web-only extra (lib/keyboard-walk.ts): inert in this harness
+deps['@/lib/keyboard-walk'] = { STEP_MS: 120, useKeyboardWalk() {} };
 const projectionModule = { exports: {} };
 evaluate('lib/garden-projection.ts', projectionModule);
 deps['@/lib/garden-projection'] = projectionModule.exports;

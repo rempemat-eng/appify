@@ -20,6 +20,7 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
+import { STEP_MS, useKeyboardWalk } from '@/lib/keyboard-walk';
 import { useAppActive } from '@/lib/app-active';
 import { useGame } from '@/lib/game';
 import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
@@ -451,7 +452,10 @@ export function AtlasWalk({
     calls.current.onSettle?.(pos.current);
   }, [active, px, py]);
 
-  const walkTo = (goal: Point) => {
+  // glide: a keyboard step, retargeted every STEP_MS: level speed, no settle until the
+  // keys are released
+  const keysHeld = useRef(false);
+  const walkTo = (goal: Point, glide = false) => {
     cancelAnimation(px);
     cancelAnimation(py);
     const from0 = { x: px.get(), y: py.get() };
@@ -480,22 +484,24 @@ export function AtlasWalk({
       // set off gently and slow into the last step (anticipate, act, settle); level between
       const first = i === 0;
       const last = i === path.length - 1;
-      const easing =
-        first && last
+      const easing = glide
+        ? Easing.linear
+        : first && last
           ? Easing.inOut(Easing.quad)
           : first
             ? Easing.in(Easing.quad)
             : last
               ? Easing.out(Easing.quad)
               : Easing.linear;
-      xs.push(withTiming(p.x, { duration: first || last ? duration * 1.25 : duration, easing }));
-      ys.push(withTiming(p.y, { duration: first || last ? duration * 1.25 : duration, easing }));
+      const ms = !glide && (first || last) ? duration * 1.25 : duration;
+      xs.push(withTiming(p.x, { duration: ms, easing }));
+      ys.push(withTiming(p.y, { duration: ms, easing }));
       from = p;
     });
     const arrive = () => {
       pos.current = end;
       setWalking(false);
-      if (!reduced && active) {
+      if (!reduced && active && !keysHeld.current) {
         // a small squash as the feet settle, then still
         landing.set(
           withSequence(withTiming(1, { duration: 90 }), withTiming(0, { duration: 170 })),
@@ -515,6 +521,32 @@ export function AtlasWalk({
       ),
     );
   };
+
+  // Arrow keys / WASD (web): short glides in the held direction, sliding along walls.
+  useKeyboardWalk(
+    interactive && active,
+    (dx, dy) => {
+      keysHeld.current = true;
+      const from = { x: px.get(), y: py.get() };
+      const reach = SPEED * (STEP_MS / 1000) * 1.6; // a little past the next tick, so it never stops between
+      for (const [ax, ay] of [
+        [dx, dy],
+        [dx, 0],
+        [0, dy],
+      ] as const) {
+        if (!ax && !ay) continue;
+        const to = { x: from.x + ax * reach, y: from.y + ay * reach };
+        const c = grid.walk.toCell(to);
+        if (grid.walk.walkable(c.cx, c.cy)) {
+          walkTo(to, true);
+          return;
+        }
+      }
+    },
+    () => {
+      keysHeld.current = false;
+    },
+  );
 
   // The parent moves the companion by giving a new target key.
   const walkRef = useRef(walkTo);

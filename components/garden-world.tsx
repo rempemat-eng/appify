@@ -40,7 +40,15 @@ import {
 } from '@/lib/garden-map';
 import { growthImages } from '@/lib/garden-growth-assets';
 import { meadowLine, orchardStage, plotStage } from '@/lib/garden-growth';
-import { GARDEN_START, findPath, randomSpot, type Point } from '@/lib/garden-path';
+import {
+  GARDEN_START,
+  findPath,
+  randomSpot,
+  toCell,
+  walkable,
+  type Point,
+} from '@/lib/garden-path';
+import { STEP_MS, useKeyboardWalk } from '@/lib/keyboard-walk';
 import {
   TILT_DEG,
   billboard,
@@ -755,6 +763,29 @@ export function GardenWorld({
       }
     }
   }
+
+  // Arrow keys / WASD (web): short walks in the held direction, sliding along walls.
+  useKeyboardWalk(
+    active && !napping,
+    (dx, dy) => {
+      const from = { x: px.get(), y: py.get() };
+      const reach = SPEED * (STEP_MS / 1000) * 1.6; // past the next tick, so it never stops between
+      for (const [ax, ay] of [
+        [dx, dy],
+        [dx, 0],
+        [0, dy],
+      ] as const) {
+        if (!ax && !ay) continue;
+        const to = { x: from.x + ax * reach, y: from.y + ay * reach };
+        const cell = toCell(to);
+        if (walkable(cell.cx, cell.cy)) {
+          walkTo(to);
+          return;
+        }
+      }
+    },
+    () => {},
+  );
 
   // Idle life: wander, sniff the flowers, sit. Never while the player is acting.
   const walkRef = useRef(walkTo);
