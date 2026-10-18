@@ -202,6 +202,7 @@ export function AtlasWalk({
   maxWalkMs,
   showName = true,
   focusY = 0.55,
+  padBottom = 0,
 }: {
   region?: RegionId;
   width: number;
@@ -221,6 +222,8 @@ export function AtlasWalk({
   showName?: boolean;
   /** where the companion sits down the window (0 top, 1 bottom) */
   focusY?: number;
+  /** let the camera look past the region's bottom edge by this much (a card over the view) */
+  padBottom?: number;
 }) {
   const reduced = useReducedMotion();
   const active = useAppActive();
@@ -378,7 +381,7 @@ export function AtlasWalk({
   const petPx = 32 * u;
   const cameraStyle = useAnimatedStyle(() => {
     const cx = Math.max(0, Math.min(regionW - width, px.value * u - width / 2));
-    const cy = Math.max(0, Math.min(regionH - height, py.value * u - height * focusY));
+    const cy = Math.max(0, Math.min(regionH - height + padBottom, py.value * u - height * focusY));
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
   const petStyle = useAnimatedStyle(() => ({
@@ -402,7 +405,7 @@ export function AtlasWalk({
     const locationX = ne.locationX ?? ne.offsetX ?? 0;
     const locationY = ne.locationY ?? ne.offsetY ?? 0;
     const cx = Math.max(0, Math.min(regionW - width, px.get() * u - width / 2));
-    const cy = Math.max(0, Math.min(regionH - height, py.get() * u - height * focusY));
+    const cy = Math.max(0, Math.min(regionH - height + padBottom, py.get() * u - height * focusY));
     walkTo({ x: (locationX + cx) / u, y: (locationY + cy) / u });
   };
 

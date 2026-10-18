@@ -183,9 +183,8 @@ export default function World() {
   }, [trip, walkWorld]);
 
   const away = !player || player.mode !== 'awake' || !!battle || pendingReturn;
-  const barH = 52;
   const cardH = card ? Math.min(260, height * 0.36) : 0;
-  const viewH = height - insets.top - barH;
+  const viewH = height;
 
   const goHome = () => {
     if (!navigation.isFocused()) return;
@@ -358,28 +357,8 @@ export default function World() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: '#1E1917', paddingTop: insets.top }}>
+    <View style={{ flex: 1, backgroundColor: '#1E1917' }}>
       <Stack.Screen options={{ headerShown: false }} />
-      <View
-        style={{
-          height: barH,
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: 8,
-          paddingHorizontal: 8,
-        }}
-      >
-        <View style={{ width: 120 }}>
-          <PixelButton small light label="◀ GARDEN" onPress={goHome} />
-        </View>
-        <BodyText
-          numberOfLines={1}
-          style={{ flex: 1, color: '#F3E9D2', fontFamily: 'PixelifySans_700Bold', fontSize: 14 }}
-        >
-          {regionNames[spawn.region]}
-          {zone ? ` · ${zoneNames[zone]}` : ''}
-        </BodyText>
-      </View>
       <View style={{ width, height: viewH }}>
         {away ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
@@ -397,7 +376,9 @@ export default function World() {
             height={viewH}
             onZone={setZone}
             onSettle={settle}
+            showName={false}
             focusY={card ? 0.3 : 0.55}
+            padBottom={card ? cardH + insets.bottom + 16 : 0}
             target={goal}
             markers={placeMarkers(spawn.region, card)}
             onMarker={walkToPlace}
@@ -428,6 +409,42 @@ export default function World() {
             onArrive={arrive}
           />
         )}
+      </View>
+      {/* the bar floats over the world like the game's HUD */}
+      <View
+        pointerEvents="box-none"
+        style={{
+          position: 'absolute',
+          top: insets.top + 8,
+          left: 8,
+          right: 8,
+          flexDirection: 'row',
+          alignItems: 'center',
+          gap: 8,
+        }}
+      >
+        <View style={{ width: 112 }}>
+          <PixelButton small light label="◀ GARDEN" onPress={goHome} />
+        </View>
+        <PixelFrame
+          tone="paper"
+          style={{
+            flex: 1,
+            paddingVertical: 2 * u,
+            paddingHorizontal: 4 * u,
+            minHeight: 44,
+            justifyContent: 'center',
+          }}
+        >
+          <BodyText numberOfLines={1} style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}>
+            {regionNames[spawn.region]}
+          </BodyText>
+          {zone && (
+            <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
+              {zoneNames[zone]}
+            </BodyText>
+          )}
+        </PixelFrame>
       </View>
     </View>
   );
