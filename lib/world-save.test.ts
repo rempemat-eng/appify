@@ -186,7 +186,7 @@ for (const { a, b } of regionPasses) {
     const c = grid.toCell(at);
     ok(grid.walkable(c.cx, c.cy), `the pass in ${here.zone} stands on open ground`);
     const from =
-      here.region === 'west' ? regionPoint(travelPoints.west!) : regionPoint(travelPoints.lava!);
+      here.region === 'west' ? regionPoint(travelPoints.west) : regionPoint(travelPoints.lava);
     // (from the lava station at the caldera's tunnel it is a long walk: through the
     // castle and over both its bridges, down the Scorched Pass)
     ok(grid.findPath(from, at).length > 0, `${here.zone}: the station walks to the pass`);
@@ -194,7 +194,7 @@ for (const { a, b } of regionPasses) {
     ok(p && p.region === there.region, `the pass in ${here.zone} leads to ${there.zone}`);
   }
 }
-ok(passAt('west', regionPoint(travelPoints.west!)) === null, 'the station is no pass');
+ok(passAt('west', regionPoint(travelPoints.west)) === null, 'the station is no pass');
 console.log(`World save and places: ${checks} checks passed.`);
 
 // every resident has something to say when the companion stops beside them

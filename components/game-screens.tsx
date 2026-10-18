@@ -534,7 +534,7 @@ function RivalRow({
 }
 export function ArenaScreen() {
   const params = useLocalSearchParams<{ ring?: string }>();
-  const ring = rings.find((r) => r.region === params.ring);
+  const ring = rings.find((r) => r.backdrop === params.ring);
   const insets = useSafeAreaInsets();
   const reduced = useReducedMotion();
   const listRef = useRef<FlatList<Player>>(null);
@@ -592,7 +592,7 @@ export function ArenaScreen() {
         disabled={paused}
         onPress={() => {
           // the spar happens where you are: a region's ring shows that region behind it
-          useUi.setState({ battlePlace: ring?.region ?? null });
+          useUi.setState({ battlePlace: ring?.backdrop ?? null });
           void useGame.getState().startBattle(bot(p), true);
         }}
       />

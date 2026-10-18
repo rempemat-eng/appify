@@ -32,12 +32,15 @@ import {
   passAt,
   regionPoint,
   rings,
+  stopIds,
+  stopsIn,
   travelBy,
   travelPoints,
   travelRoute,
   travelVehicle,
   type ExitId,
   type MissionPlaceId,
+  type StopId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
 import { useUi } from '@/lib/ui';
@@ -71,7 +74,18 @@ const regionNames: Record<RegionId, string> = {
   home: 'THE NAP HUT',
 };
 const placeIds: MissionPlaceId[] = ['book', 'park', 'mountain', 'shop', 'arena', 'garden'];
-const shortNames: Record<RegionId, string> = {
+const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
+/** Each stop's name on the travel card and the journey's label. */
+const stopNames: Record<StopId, string> = {
+  valley: 'THE VALLEY',
+  steam: 'COGSWORTH',
+  west: 'DUST GULCH',
+  lava: 'THE EMBER LANDS',
+  neon: 'NEON HARBOUR',
+  space: 'HALCYON STATION',
+  moon: 'LUMEN',
+};
+const stopShort: Record<StopId, string> = {
   valley: 'the valley',
   steam: 'Cogsworth',
   west: 'Dust Gulch',
@@ -79,9 +93,7 @@ const shortNames: Record<RegionId, string> = {
   neon: 'Neon Harbour',
   space: 'Halcyon',
   moon: 'Lumen',
-  home: 'home',
 };
-const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'];
 const exitIds: ExitId[] = ['gate', 'trail', 'west', 'east'];
 const noZones: readonly string[] = [];
 const insideDoor = regionPoint(doors.inside);
@@ -97,9 +109,9 @@ const homeAt = (region: RegionId, at: Point): Point | null =>
 type Card =
   | { kind: 'mission'; id: 'book' | 'park' | 'mountain' }
   | { kind: 'shop' | 'arena' | 'garden' }
-  | { kind: 'travel' }
+  | { kind: 'travel'; stop: StopId }
   | { kind: 'hut' | 'inside' | 'chest' }
-  | { kind: 'ring' }
+  | { kind: 'ring'; backdrop: string }
   | { kind: 'chat'; who: string };
 
 /** The places to show by name in a region, so you can see where things are and walk there. */
@@ -107,9 +119,13 @@ function placeMarkers(region: RegionId, card: Card | null) {
   const out: { id: string; x: number; y: number; label: string; selected?: boolean }[] = [];
   const add = (id: string, at: Point, label: string, selected = false) =>
     out.push({ id, x: at.x, y: at.y, label, selected });
-  const station = travelPoints[region];
-  if (station)
-    add('travel', regionPoint(station), travelBy[region] ?? 'STATION', card?.kind === 'travel');
+  for (const stop of stopsIn(region))
+    add(
+      `travel-${stop}`,
+      regionPoint(travelPoints[stop]),
+      travelBy[stop],
+      card?.kind === 'travel' && card.stop === stop,
+    );
   rings
     .filter((r) => r.region === region)
     .forEach((r, i) => add(`ring-${i}`, regionPoint(r), 'SPARRING RING', card?.kind === 'ring'));
@@ -165,9 +181,10 @@ function cardAt(region: RegionId, at: Point): Card | null {
       : near(at, regionPoint(keepsakeChest))
         ? { kind: 'chest' }
         : null;
-  const station = travelPoints[region];
-  if (station && near(at, regionPoint(station))) return { kind: 'travel' };
-  if (rings.some((r) => r.region === region && near(at, regionPoint(r)))) return { kind: 'ring' };
+  const stop = stopsIn(region).find((id) => near(at, regionPoint(travelPoints[id])));
+  if (stop) return { kind: 'travel', stop };
+  const ring = rings.find((r) => r.region === region && near(at, regionPoint(r)));
+  if (ring) return { kind: 'ring', backdrop: ring.backdrop };
   // a resident on their route beside the companion says hello
   for (const [who, route] of Object.entries(residentRoutes)) {
     const tile = regionTiles(region).find((t) => t.id === route.zone);
@@ -250,9 +267,11 @@ export default function World() {
   const [spawn, setSpawn] = useState<{ region: RegionId; at: Point; key: number }>(() => {
     const place = placeIds.find((id) => id === link.place);
     if (place) return { region: 'valley', at: regionPoint(missionPlaces[place]), key: 0 };
-    const station = travelOrder.find((r) => r === link.station);
-    const stop = station ? travelPoints[station] : undefined;
-    if (station && stop) return { region: station, at: regionPoint(stop), key: 0 };
+    const station = stopIds.find((r) => r === link.station);
+    if (station) {
+      const stop = travelPoints[station];
+      return { region: stop.region, at: regionPoint(stop), key: 0 };
+    }
     if (walkOut) return { region: 'valley', at: walkOut.start, key: 0 };
     if (link.from === 'hut') return { region: 'home', at: regionPoint(doors.inside), key: 0 };
     if (exit) return { region: 'valley', at: regionPoint(exits[exit]), key: 0 };
@@ -307,7 +326,9 @@ export default function World() {
   const valleyExtras = useMemo(() => decorExtras(valleyDecor), [valleyDecor]);
   // where the companion stands and which zones it has walked, for the map (only while it is open)
   const worldSpot = useGame((s) => (mapOpen ? s.world : null));
-  const [trip, setTrip] = useState<{ legs: RegionId[]; leg: number } | null>(null);
+  // a trip: the stop it left from, the stops it calls at (the destination last) and
+  // which leg is playing
+  const [trip, setTrip] = useState<{ from: StopId; legs: StopId[]; leg: number } | null>(null);
   const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(() =>
@@ -362,15 +383,14 @@ export default function World() {
   const arrive = useCallback(() => {
     if (!dest) return;
     const station = travelPoints[dest];
-    if (station) {
-      const at = regionPoint(station);
-      setSpawn((s) => ({ region: dest, at, key: s.key + 1 }));
-      setGoal(undefined);
-      setZone(tileAt(dest, at.x, at.y)?.id);
-      outside.current = !homeAt(dest, at);
-      walkWorld(dest, at.x, at.y, true);
-      setCard({ kind: 'travel' });
-    }
+    const region = station.region;
+    const at = regionPoint(station);
+    setSpawn((s) => ({ region, at, key: s.key + 1 }));
+    setGoal(undefined);
+    setZone(tileAt(region, at.x, at.y)?.id);
+    outside.current = !homeAt(region, at);
+    walkWorld(region, at.x, at.y, true);
+    setCard({ kind: 'travel', stop: dest });
     setTrip(null);
   }, [dest, walkWorld]);
   // the end of one leg: change at that station and go on, or arrive
@@ -541,7 +561,7 @@ export default function World() {
             label="TO THE RING"
             onPress={() =>
               navigation.isFocused() &&
-              router.push({ pathname: '/arena', params: { ring: spawn.region } })
+              router.push({ pathname: '/arena', params: { ring: card.backdrop } })
             }
           />
         </>
@@ -592,9 +612,11 @@ export default function World() {
         </>
       );
     // a station: the lines leave from here; further places change on the way
-    const routes = travelOrder
-      .filter((r) => r !== spawn.region && travelPoints[r])
-      .map((r) => ({ r, route: travelRoute(spawn.region, r) }))
+    if (card.kind !== 'travel') return null;
+    const here = card.stop;
+    const routes = stopIds
+      .filter((r) => r !== here)
+      .map((r) => ({ r, route: travelRoute(here, r) }))
       .filter((x) => x.route.length > 0)
       .sort((a, b) => a.route.length - b.route.length);
     const direct = routes.filter((x) => x.route.length === 1);
@@ -602,7 +624,7 @@ export default function World() {
     return (
       <>
         <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-          {travelBy[spawn.region] ?? 'THE STATION'}
+          {travelBy[here]}
         </BodyText>
         <BodyText style={{ fontSize: 13 }}>
           Where to? The journey is free; skip it any time.
@@ -619,20 +641,20 @@ export default function World() {
                     <PixelButton
                       small
                       light
-                      label={regionNames[r]}
+                      label={stopNames[r]}
                       disabled={away || !!trip}
                       onPress={() => {
                         feedback('select');
                         // the places on the way load while the journey plays
-                        route.forEach(prefetchRegion);
-                        setTrip({ legs: route, leg: 0 });
+                        route.forEach((stop) => prefetchRegion(travelPoints[stop].region));
+                        setTrip({ from: here, legs: route, leg: 0 });
                       }}
                     />
                     {route.length > 1 && (
                       <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
                         {route.length === 2
-                          ? `via ${shortNames[route[0]]}`
-                          : `via ${shortNames[route[0]]} · ${route.length - 1} changes`}
+                          ? `via ${stopShort[route[0]]}`
+                          : `via ${stopShort[route[0]]} · ${route.length - 1} changes`}
                       </BodyText>
                     )}
                   </View>
@@ -765,15 +787,15 @@ export default function World() {
         {trip && dest && (
           <Journey
             key={trip.leg}
-            to={trip.legs[trip.leg] === 'home' ? 'valley' : trip.legs[trip.leg]}
+            to={trip.legs[trip.leg]}
             label={
               trip.leg < trip.legs.length - 1
-                ? `${regionNames[trip.legs[trip.leg]]}, THEN ${regionNames[dest]}`
-                : regionNames[dest]
+                ? `${stopNames[trip.legs[trip.leg]]}, THEN ${stopNames[dest]}`
+                : stopNames[dest]
             }
             ms={trip.legs.length > 1 ? 2200 : undefined}
             vehicle={travelVehicle(
-              trip.leg === 0 ? spawn.region : trip.legs[trip.leg - 1],
+              trip.leg === 0 ? trip.from : trip.legs[trip.leg - 1],
               trip.legs[trip.leg],
             )}
             width={width}
