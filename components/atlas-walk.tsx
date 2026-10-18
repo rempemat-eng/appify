@@ -36,7 +36,7 @@ import {
   type RegionTile,
   type TileId,
 } from '@/lib/region-walk';
-import { zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
+import { zoneFrames, zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
 import { BEYOND_SPILL, zoneBeyond, zoneGrounds, zoneProps } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
@@ -199,6 +199,76 @@ function Floating({
         style,
       ]}
     />
+  );
+}
+
+// Things that turn (a windmill's sails): the sprite and its frames, one shown at a time.
+const FRAME_MS = 400; // divides FLOAT_LOOP
+
+function TurningFrame({
+  src,
+  index,
+  count,
+  clock,
+  style,
+}: {
+  src: ImageSourcePropType;
+  index: number;
+  count: number;
+  clock: SharedValue<number>;
+  style: object;
+}) {
+  const shown = useAnimatedStyle(() => ({
+    opacity: Math.floor(clock.value / FRAME_MS) % count === index ? 1 : 0,
+  }));
+  return <Animated.Image source={src} resizeMode="stretch" style={[style, shown]} />;
+}
+
+function Turning({
+  d,
+  clock,
+  u,
+  snap,
+}: {
+  d: Drawable;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const frames = zoneFrames[d.sprite] ?? [];
+  const all: [ImageSourcePropType, number, number, number, number][] = [
+    [d.src, 0, 0, d.w, d.h],
+    ...frames.map(
+      ([key, dx, dy, w, h]) =>
+        [zoneProps[key] ?? d.src, dx, dy, w, h] as [
+          ImageSourcePropType,
+          number,
+          number,
+          number,
+          number,
+        ],
+    ),
+  ];
+  return (
+    <>
+      {all.map(([src, dx, dy, w, h], i) => (
+        <TurningFrame
+          key={`${d.key}-f${dx}-${dy}-${w}`}
+          src={src}
+          index={i}
+          count={all.length}
+          clock={clock}
+          style={{
+            position: 'absolute',
+            left: snap((d.x + dx) * u),
+            top: snap((d.y + dy) * u),
+            width: snap(w * u),
+            height: snap(h * u),
+            zIndex: d.z,
+          }}
+        />
+      ))}
+    </>
   );
 }
 
@@ -605,6 +675,8 @@ export function AtlasWalk({
           {drawables.map((d) =>
             FLOATS[d.sprite] && active && !reduced ? (
               <Floating key={d.key} d={d} clock={bob} u={u} snap={snap} />
+            ) : zoneFrames[d.sprite] && active && !reduced ? (
+              <Turning key={d.key} d={d} clock={bob} u={u} snap={snap} />
             ) : (
               <Image
                 key={d.key}

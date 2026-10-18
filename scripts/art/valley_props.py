@@ -462,9 +462,10 @@ def scarecrow() -> Canvas:
     return cv
 
 
-def windmill() -> Canvas:
+def windmill(turn: float = 0.0) -> Canvas:
     """A valley windmill, 64 x 104: a tapering white tower of plaster with a little
-    door and window, a boat-shaped cap, and four lattice sails turning (drawn still)."""
+    door and window, a boat-shaped cap, and four lattice sails, `turn` radians round
+    (the sails repeat every quarter turn, so three frames a sixth of a turn apart loop)."""
     w, h = 64, 104
     cv = Canvas(w, h, pad=PAD)
     cx = w // 2
@@ -483,7 +484,7 @@ def windmill() -> Canvas:
         for x in range(cx - 12, cx + 12):
             cv.set(x, y, SLATE[3] if x < cx else SLATE[2])
     for k in range(4):  # the sails
-        a = math.pi / 4 + k * math.pi / 2
+        a = math.pi / 4 + k * math.pi / 2 + turn
         for t in range(4, 30):
             bx, by = cx + math.cos(a) * t, 30 + math.sin(a) * t
             cv.set(int(bx), int(by), WOOD[1])
@@ -701,6 +702,7 @@ def cotton_grass() -> Canvas:
 def props() -> dict[str, Canvas]:
     return {
         'barn': barn(), 'haystack': haystack(), 'scarecrow': scarecrow(), 'windmill': windmill(),
+        'windmill_f1': windmill(math.pi / 6), 'windmill_f2': windmill(math.pi / 3),
         'pumpkins': pumpkins(), 'sheep': sheep(1), 'sheep_left': sheep(-1), 'beehive': beehive(),
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(), 'heron': heron(), 'lily_pads': lily_pads(),
         'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),

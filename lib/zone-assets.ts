@@ -233,6 +233,8 @@ import propWeaponRack from '@/assets/zones/props/weapon_rack.png';
 import propWell from '@/assets/zones/props/well.png';
 import propWillow from '@/assets/zones/props/willow.png';
 import propWindmill from '@/assets/zones/props/windmill.png';
+import propWindmillF1 from '@/assets/zones/props/windmill_f1.png';
+import propWindmillF2 from '@/assets/zones/props/windmill_f2.png';
 import propWindowSeat from '@/assets/zones/props/window_seat.png';
 import propWindpump from '@/assets/zones/props/windpump.png';
 import propWoodpile from '@/assets/zones/props/woodpile.png';
@@ -514,6 +516,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   well: propWell,
   willow: propWillow,
   windmill: propWindmill,
+  windmill_f1: propWindmillF1,
+  windmill_f2: propWindmillF2,
   window_seat: propWindowSeat,
   windpump: propWindpump,
   woodpile: propWoodpile,

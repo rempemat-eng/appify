@@ -32,6 +32,16 @@ export type ZoneMap = {
 };
 /** Things above head height: no ground shadow, never block a walk, drawn on top. */
 export const zoneOverhead: readonly string[] = ['bunting', 'cables', 'drone', 'steam_puff'];
+/** Animation frames of a sprite: [frame sprite, dx, dy, w, h] from the sprite's own top-left. */
+export const zoneFrames: Record<
+  string,
+  readonly (readonly [string, number, number, number, number])[]
+> = {
+  windmill: [
+    ['windmill_f1', -5, -5, 62, 104],
+    ['windmill_f2', -3, -3, 58, 102],
+  ],
+};
 /** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */
 export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {
   barn: [
@@ -70,6 +80,8 @@ export const zoneWindows: Record<string, readonly (readonly [number, number, num
     [52, 47, 8, 6],
   ],
   windmill: [[24, 56, 4, 4]],
+  windmill_f1: [[29, 61, 4, 4]],
+  windmill_f2: [[27, 59, 4, 4]],
 };
 /** Walk rows are run-length encoded ('12.3#' = twelve open cells, three blocked). */
 const unrle = (row: string) =>

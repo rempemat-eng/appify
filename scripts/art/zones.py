@@ -3248,6 +3248,19 @@ def export(built: dict):
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
             used[k] = z['sprites'][k]
+    # animation frames of a placed sprite ('windmill_f1', ...), placed relative to it
+    frames = {}
+    for key in sorted(used):
+        sm = next(z['sprites'] for z in built.values())
+        base = sm[key]
+        n = 1
+        while f'{key}_f{n}' in sm:
+            fr = sm[f'{key}_f{n}']
+            frames.setdefault(key, []).append([f'{key}_f{n}', fr.ox - base.ox, fr.oy - base.oy, fr.w, fr.h])
+            n += 1
+    for key, fl in frames.items():
+        for (fk, *_r) in fl:
+            used[fk] = next(z['sprites'] for z in built.values())[fk]
     for key, sp in sorted(used.items()):
         sp.save(os.path.join(props_dir, f'{key}.png'), worlds.SCALE)
     ident = lambda k: ''.join(p.capitalize() for p in k.split('_'))  # noqa: E731
@@ -3262,6 +3275,8 @@ def export(built: dict):
         'export type ZoneMap = { objects: readonly ZoneObject[]; walk: readonly string[]; stands: Readonly<Record<string, readonly [number, number]>> };',
         '/** Things above head height: no ground shadow, never block a walk, drawn on top. */',
         f'export const zoneOverhead: readonly string[] = {json.dumps(sorted(OVERHEAD))};',
+        '/** Animation frames of a sprite: [frame sprite, dx, dy, w, h] from the sprite\'s own top-left. */',
+        f'export const zoneFrames: Record<string, readonly (readonly [string, number, number, number, number])[]> = {json.dumps(frames)};',
         '/** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */',
         f'export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {json.dumps({k: [list(r) for r in v] for k, v in sorted(SPRITE_WINDOWS.items()) if k in used})};',
         '/** Walk rows are run-length encoded (\'12.3#\' = twelve open cells, three blocked). */',
