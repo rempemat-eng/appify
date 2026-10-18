@@ -441,8 +441,9 @@ export default function World() {
           <View
             style={{
               position: 'absolute',
-              left: 8,
-              right: 8,
+              // full width on a phone; a readable column on a wide screen
+              left: Math.max(8, (width - 560) / 2),
+              right: Math.max(8, (width - 560) / 2),
               bottom: insets.bottom + 8,
               maxHeight: cardH,
             }}
