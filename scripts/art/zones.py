@@ -3523,6 +3523,57 @@ def beyond() -> Canvas:
 
 
 @functools.lru_cache(maxsize=1)
+def beyond_dunes() -> Canvas:
+    """What lies past Dust Gulch and the oasis: open desert, long dunes with a lit crest
+    and a shaded lee, wind ripples, a few dry tufts and stones. Its edge drifts a little
+    over the zones beside it as blown sand, dithered thin at the tip, so the desert runs
+    on instead of stopping at a line (shown round a region shorter or narrower than the
+    screen)."""
+    S = BEYOND_SPILL
+    DESERT = MATERIALS['desert']
+    cv = Canvas(W + 2 * S, H + 2 * S)
+
+    def sand(x, y):
+        # a dune: its crest line wanders; light rises toward the crest, the lee falls dark
+        lx = x + int(smooth_noise(0, y, 60, 781) * 40)
+        k = (y + int(math.sin(lx / 23) * 9 + smooth_noise(x, 0, 50, 782) * 18)) % 46
+        c = DESERT[3]
+        if k < 2:
+            c = DESERT[5]  # the crest catches the sun (upper left)
+        elif k < 12:
+            c = DESERT[4]
+        elif k > 38:
+            c = DESERT[2]  # the lee, out of the light
+        elif k > 34 and (x + y) % 2:
+            c = DESERT[2]
+        ripple = (y + int(math.sin(x / 8 + y / 37) * 2)) % 7
+        if ripple == 0 and 14 < k < 32:
+            c = DESERT[4]
+        return c
+
+    for y in range(cv.h):
+        for x in range(cv.w):
+            # distance into the spill: 0 inside the cell, up to S past its edge
+            d = max(S - x, x - (W + S - 1), S - y, y - (H + S - 1), 0)
+            if d:
+                reach = 3 + int(noise2(x // 4, y // 4, 783) * 9)
+                if d > reach or (d > reach - 3 and (x + y) % 2):
+                    continue
+            cv.set(x, y, sand(x, y))
+    for i in range(26):  # dry tufts with a shadow to the lower right, and a few stones
+        x, y = S + 8 + int(noise2(i, 0, 784) * (W - 16)), S + 8 + int(noise2(i, 1, 784) * (H - 16))
+        if i % 3:
+            for (dx, dy) in ((0, 0), (-1, -1), (1, -1), (0, -2), (-2, -2), (2, -2)):
+                cv.set(x + dx, y + dy, MATERIALS['cactus'][1] if dy else MATERIALS['cactus'][0])
+            cv.set(x + 1, y + 1, DESERT[1])
+            cv.set(x + 2, y + 1, DESERT[1])
+        else:
+            for (dx, dy) in ((0, 0), (1, 0), (0, -1), (1, -1)):
+                cv.set(x + dx, y + dy, DESERT[1] if dy == 0 else DESERT[3])
+            cv.set(x + 2, y + 1, DESERT[2])
+    return cv
+
+
 def beyond_ash() -> Canvas:
     """What lies past the fire country's zones where its grid has a gap: the volcano's
     flank, black basalt in rough steps with ash drifted in the hollows and a few cracks
@@ -3574,6 +3625,7 @@ def export(built: dict):
         os.remove(os.path.join(props_dir, old))
     beyond().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond.png'), worlds.SCALE)
     beyond_ash().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-ash.png'), worlds.SCALE)
+    beyond_dunes().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-dunes.png'), worlds.SCALE)
     used = {}
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
@@ -3654,10 +3706,15 @@ def export(built: dict):
         '};',
         "import beyondImage from '@/assets/zones/beyond.png';",
         "import beyondAshImage from '@/assets/zones/beyond-ash.png';",
+        "import beyondDunesImage from '@/assets/zones/beyond-dunes.png';",
         '/** Old forest, drawn where a region\'s grid has no zone (the valley\'s corners). */',
         'export const zoneBeyond: ImageSourcePropType = beyondImage;',
-        '/** What fills a gap in a region other than the valley (the volcano\'s flank in the fire country). */',
-        'export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = { lava: beyondAshImage };',
+        '/** What lies past a region other than the valley, in its gaps and round its edges when',
+        ' * the screen sees past them: the volcano\'s flank, the open desert. */',
+        'export const zoneBeyondByRegion: Record<string, ImageSourcePropType> = {',
+        '  lava: beyondAshImage,',
+        '  west: beyondDunesImage,',
+        '};',
         f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
