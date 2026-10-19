@@ -49,7 +49,14 @@ import {
   type RegionTile,
   type TileId,
 } from '@/lib/region-walk';
-import { zoneFrames, zoneMaps, zoneOverhead, zoneTone, zoneWindows } from '@/lib/zone-maps';
+import {
+  zoneDecks,
+  zoneFrames,
+  zoneMaps,
+  zoneOverhead,
+  zoneTone,
+  zoneWindows,
+} from '@/lib/zone-maps';
 import {
   BEYOND_SPILL,
   zoneBeyond,
@@ -57,6 +64,7 @@ import {
   zoneBeyondPeaks,
   zoneBeyondRegolith,
   zoneBeyondByRegion,
+  zoneDeckArt,
   zoneGrounds,
   zoneProps,
   zoneScenery,
@@ -555,7 +563,7 @@ function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourceProp
         z: o.y + g.y + g.h,
       }));
   }
-  return zoneMaps[tile.id].objects.map(([id, sprite, x, y, w, h]) => ({
+  const props = zoneMaps[tile.id].objects.map(([id, sprite, x, y, w, h]) => ({
     key: `${tile.id}-${id}`,
     sprite,
     src: zoneProps[sprite],
@@ -565,7 +573,27 @@ function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourceProp
     h,
     z: zoneOverhead.includes(sprite) ? 100000 : o.y + y + h,
   }));
+  // A deck (two-level-walk.md) sorts by its front foot among the street's props: what
+  // stands on the street behind it is covered; what stands on it draws above it all.
+  const deck = zoneDecks[tile.id];
+  const art = zoneDeckArt[tile.id];
+  if (!deck || !art) return props;
+  const front = deck.walk.reduce((last, row, r) => (row.includes('.') ? r : last), 0);
+  return [
+    ...props,
+    {
+      key: `${tile.id}-deck`,
+      sprite: DECK,
+      src: art.deck,
+      x: o.x,
+      y: o.y,
+      w: TILE.width,
+      h: TILE.height,
+      z: o.y + (front + 1) * TILE.cell,
+    },
+  ];
 }
+const DECK = 'deck';
 
 /** A name tag in the world: a place you can pick or walk to. */
 /** Where the companion stands, as the parent hears it: the ground point (region pixels)
@@ -771,6 +799,12 @@ export function AtlasWalk({
     return p;
   };
   const onDeck = useSharedValue(grid.startLogical === grid.start ? 0 : 1);
+  // (the same, for drawing: whether the companion's outline can be hidden)
+  const [upHere, setUpHere] = useState(grid.startLogical !== grid.start);
+  const setLevel = (up: boolean) => {
+    onDeck.set(up ? 1 : 0);
+    setUpHere(up);
+  };
   // what the parent hears: the ground point under the feet, and the level (a deck point
   // is reported as the ground it stands over, so places, doors and passes read it as is)
   const spotOf = (p: Point): WalkSpot =>
@@ -909,7 +943,7 @@ export function AtlasWalk({
   const ride = (from: Point, to: Point, then: () => void) => {
     const a = toScreen(from);
     const b = toScreen(to);
-    onDeck.set(levels && to.x >= levels.offset ? 1 : 0);
+    setLevel(!!levels && to.x >= levels.offset);
     const done = () => {
       pos.current = to;
       then();
@@ -969,7 +1003,7 @@ export function AtlasWalk({
     const end = path[path.length - 1];
     const arrive = () => {
       pos.current = lastLogical;
-      onDeck.set(levels && lastLogical.x >= levels.offset ? 1 : 0);
+      setLevel(!!levels && lastLogical.x >= levels.offset);
       setWalking(false);
       setFeet(end);
       settleSquash();
@@ -981,7 +1015,7 @@ export function AtlasWalk({
     };
     // on a deck the feet draw above everything on the ground for the whole walk once the
     // first step is on it (a walk down a stair keeps it until it arrives)
-    if (levels && logical.some((p) => p.x >= levels.offset)) onDeck.set(1);
+    if (levels && logical.some((p) => p.x >= levels.offset)) setLevel(true);
     // face the way each leg goes; a leg that only goes up or down keeps the facing
     const firstFacing = legFacing(from0, path[0]) ?? legFacing(from0, end);
     if (firstFacing) setFacing(firstFacing);
@@ -1226,10 +1260,13 @@ export function AtlasWalk({
   );
   // behind a building or a big tree, the companion's outline shows through (a flyer's box
   // is not where it flies, so it never counts)
-  const hidden = hiddenBehind(
-    drawables.filter((d) => !FLYERS[d.sprite]),
-    feet,
-  );
+  // (on a deck the companion draws above everything on the street, so nothing hides it)
+  const hidden =
+    !upHere &&
+    hiddenBehind(
+      drawables.filter((d) => !FLYERS[d.sprite]),
+      feet,
+    );
   const panes = !night
     ? []
     : drawables.flatMap((d) =>
@@ -1371,6 +1408,14 @@ export function AtlasWalk({
                   resizeMode="stretch"
                   style={{ position: 'absolute', left: 0, top: 0, width: w, height: h }}
                 />
+                {/* the street under a deck, darker, and the deck's shadow on it */}
+                {t.id !== 'garden' && zoneDeckArt[t.id] && (
+                  <Image
+                    source={zoneDeckArt[t.id]?.shadow}
+                    resizeMode="stretch"
+                    style={{ position: 'absolute', left: 0, top: 0, width: w, height: h }}
+                  />
+                )}
                 {t.id === 'garden' && !homeLayer && (
                   <>
                     <Image
