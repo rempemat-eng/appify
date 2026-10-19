@@ -7,10 +7,16 @@ import type { ZoneId } from './zone-maps';
  * are drawn above the props; checked in region-walk.test.ts).
  * Presentation only: residents never block the companion and grant nothing.
  */
+/** Which way someone faces: toward the viewer, away, or to a side (screen east or west). */
+export type Facing = 'front' | 'back' | 'east' | 'west';
+
 export type ResidentRoute = {
   zone: ZoneId;
   from: readonly [number, number];
   to: readonly [number, number];
+  /** which way they face while paused at `from` and at `to` (their work: an angler
+   *  toward the water, a miller toward the door); toward the viewer when not given */
+  face?: readonly [Facing, Facing];
 };
 
 export const residentRoutes: Record<string, ResidentRoute> = {
