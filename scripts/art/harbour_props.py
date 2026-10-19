@@ -124,45 +124,137 @@ def cottage(width: int = 80, seed: int = 0, door=None, shutters=None, porch: boo
 
 
 def lighthouse() -> Canvas:
-    """The lighthouse at the breakwater's end, 44 x 140: a round tower in red and white
-    bands shaded as a cylinder, a black gallery with a rail, a glazed lantern room with
-    the lamp lit, a domed cap and a weather vane."""
+    """The lighthouse on the west point's rocks, 44 x 140, in the valley's three-quarter
+    view (Claude E, fault 10: a plain round plinth to stand on a rock drawn in the ground).
+    A round plinth of coursed stone, its top seen from a little above; a tapering tower in
+    red and white bands that curve round it, shaded as a cylinder lit from the left, with
+    an arched door over a step and two small windows; a gallery deck with its rail running
+    round behind and in front of the glazed lantern room, the lamp lit (its light is
+    declared in atlas-walk.tsx LAMPS, at the same place as before); a domed cap and a vane."""
     w, h = 44, 140
     cv = Canvas(w, h, pad=PAD)
-    cx = (w - 1) / 2
-    for y in range(36, h - 10):
-        t = (y - 36) / (h - 46)
-        r = 9 + t * 6
-        for x in range(int(cx - r), int(cx + r) + 1):
-            k = (x - (cx - r)) / (2 * r + 1)
-            band = ((y - 36) // 14) % 2
-            ramp = RED if band else PLASTER
-            lo = 2 if ramp is RED else 3
-            c = ramp[lo + 2] if k < 0.18 else ramp[lo + 1] if k < 0.45 else ramp[lo] if k < 0.78 else ramp[lo - 1]
+    cx = 21.5
+    fs = 0.42  # how much of a round top the camera sees
+
+    def arc(r, dx):
+        return r * fs * math.sqrt(max(0.0, 1 - (dx / r) ** 2))
+
+    def cyl(k, ramp, lo):
+        """A cylinder's tone lit from the left: k is 0 at its left edge, 1 at its right."""
+        return ramp[lo + 2] if k < 0.16 else ramp[lo + 1] if k < 0.45 else ramp[lo] if k < 0.8 else ramp[lo - 1]
+    # the plinth: a drum of coursed stone, its top a ring of flags round the tower's foot
+    R, PH = 18, 8
+    bot = h - 1 - R * fs  # the plinth's bottom ellipse's centre
+    top = bot - PH
+    for x in range(int(cx - R), int(cx + R) + 1):
+        dx = x + 0.5 - cx
+        if abs(dx) > R:
+            continue
+        k = (dx + R) / (2 * R)
+        y0, y1 = int(round(top + arc(R, dx))), int(round(bot + arc(R, dx)))
+        for y in range(y0, y1 + 1):
+            z = y - y0
+            course = z // 3
+            joint = z % 3 == 2 or int(dx + R + course * 3) % 7 == 0
+            c = STONE[1] if joint else cyl(k, STONE, 2) if k < 0.8 else STONE[1]
+            cv.set(x, y, STONE[0] if y == y1 else c)
+        for y in range(int(round(top - arc(R, dx))), y0):  # the top, seen from above
+            c = STONE[4] if k < 0.5 else STONE[3]
+            if (int(dx + 40) * 3 + int(y)) % 9 == 0:
+                c = STONE[2]  # the joints between the flags
             cv.set(x, y, c)
-    for (x, y) in rect_set(int(cx) - 4, h - 34, 9, 14):  # a door at the foot
-        cv.set(x, y, WOOD[2] if x < cx else WOOD[1])
-    for wy in (60, 88):
-        cv.rect(int(cx) - 2, wy, 4, 6, '#2A2D36')
-    for y in range(h - 10, h):  # the plinth
-        for x in range(int(cx - 18), int(cx + 18)):
-            cv.set(x, y, STONE[3] if y == h - 10 else STONE[2] if x < cx else STONE[1])
-    # gallery, lantern room, cap
-    cv.rect(int(cx) - 14, 32, 29, 4, TAR[2]); cv.hline(int(cx) - 14, 32, 29, TAR[4])
-    for x in range(int(cx) - 14, int(cx) + 15, 3):
-        cv.vline(x, 28, 4, TAR[3])
-    cv.hline(int(cx) - 14, 28, 29, TAR[3])
-    for y in range(14, 28):
-        for x in range(int(cx) - 8, int(cx) + 9):
-            glass = (x - int(cx)) % 5 != 0
-            cv.set(x, y, ('#FFF2B8' if abs(x - cx) < 3 and 17 < y < 25 else '#BFD6E6' if x < cx else '#8FAABF') if glass else TAR[1])
-    for (x, y) in disc(cx, 20, 3):
-        cv.set(x, y, '#FFFBE0')
-    for y in range(4, 14):
-        hw = (y - 2) * 0.9
-        for x in range(int(cx - hw), int(cx + hw) + 1):
-            cv.set(x, y, TAR[3] if x < cx else TAR[1])
-    cv.vline(int(cx), 0, 5, TAR[2]); cv.hline(int(cx) - 3, 1, 7, GOLD[3])
+        cv.set(x, y0, STONE[4] if k < 0.7 else STONE[3])  # the lit front edge of the top
+    # the tower: a tapering cylinder, its bands curving round it
+    base_r, top_r, ty = 11.5, 7.5, 36
+    foot_y = top  # the tower's foot ellipse's centre, on the plinth's top
+    for y in range(ty, int(foot_y + arc(base_r, 0)) + 1):
+        t = min(1.0, (y - ty) / (foot_y - ty))
+        r = top_r + (base_r - top_r) * t
+        for x in range(int(cx - r), int(cx + r) + 1):
+            dx = x + 0.5 - cx
+            if abs(dx) > r or y > foot_y + arc(base_r, dx):
+                continue
+            k = (dx + r) / (2 * r)
+            v = foot_y - (y - arc(r, dx))  # height up the tower, along its surface
+            band = int(v // 14) % 2
+            ramp, lo = (RED, 2) if band else (PLASTER, 3)
+            c = cyl(k, ramp, lo)
+            if y >= foot_y + arc(base_r, dx) - 1:
+                c = ramp[lo - 1]  # where it stands on the plinth
+            cv.set(x, y, c)
+    # the door at its foot: arched, planked, over a step on the plinth's top
+    dy1 = int(foot_y + arc(base_r, 0))
+    for y in range(dy1 - 11, dy1 + 1):
+        for x in range(int(cx) - 3, int(cx) + 3):
+            arch = y == dy1 - 11 and x in (int(cx) - 3, int(cx) + 2)
+            if arch:
+                continue
+            c = WOOD[1] if x == int(cx) + 2 or y == dy1 - 10 else WOOD[2] if (x - int(cx)) % 2 else WOOD[3]
+            cv.set(x, y, c)
+    cv.set(int(cx) + 1, dy1 - 5, GOLD[3])  # the latch
+    for x in range(int(cx) - 4, int(cx) + 4):
+        cv.set(x, dy1 + 1, STONE[4]); cv.set(x, dy1 + 2, STONE[2])  # the step
+    for (wy, r) in ((62, 9.0), (90, 10.2)):  # two small windows, deep in the wall
+        for y in range(wy, wy + 6):
+            for x in range(int(cx) - 1, int(cx) + 2):
+                cv.set(x, y + (1 if x != int(cx) else 0), '#2A2D36' if y > wy else '#3C404C')
+        cv.hline(int(cx) - 1, wy + 7, 3, PLASTER[4])
+    # the gallery: its deck seen from a little above, a rail round it
+    GR, gy = 13.5, 33
+    rail = []
+    for x in range(int(cx - GR), int(cx + GR) + 1):
+        dx = x + 0.5 - cx
+        if abs(dx) > GR:
+            continue
+        a = arc(GR, dx)
+        for y in range(int(round(gy - a)), int(round(gy + a)) + 1):
+            cv.set(x, y, STONE[3] if (dx + GR) / (2 * GR) < 0.5 else STONE[2])  # the deck
+        cv.set(x, int(round(gy + a)) + 1, TAR[2]); cv.set(x, int(round(gy + a)) + 2, TAR[1])  # its edge
+        rail.append((x, dx, a))
+    for (x, dx, a) in rail:  # the rail behind the lantern room
+        cv.set(x, int(round(gy - a)) - 4, TAR[2])
+        if int(dx + GR) % 3 == 0:
+            cv.vline(x, int(round(gy - a)) - 3, 3, TAR[1])
+    # the lantern room: glazing bars spaced round the drum, the lamp lit inside
+    LR, l0, l1 = 7.5, 12, 29
+    for y in range(l0, l1 + 1):
+        for x in range(int(cx - LR), int(cx + LR) + 1):
+            dx = x + 0.5 - cx
+            if abs(dx) > LR:
+                continue
+            k = (dx + LR) / (2 * LR)
+            ang = math.asin(max(-1.0, min(1.0, dx / LR)))
+            bar = abs(((ang / math.pi * 8) % 1) - 0.5) > 0.4
+            if y in (l0, l1):
+                c = TAR[2]
+            elif bar:
+                c = TAR[1]
+            else:
+                c = '#C9DCE8' if k < 0.3 and y < 20 else '#9FB8C9' if k < 0.6 else '#7790A3'
+            cv.set(x, y, c)
+    for (x, y) in disc(cx, 20.5, 3.2):  # the lamp
+        cv.set(x, y, '#FFFBE0' if (x - cx) + (y - 20.5) < 0 else '#FFE9A0')
+    for (x, dx, a) in rail:  # the rail in front
+        yy = int(round(gy + a)) - 4
+        cv.set(x, yy, TAR[3] if dx < 0 else TAR[2])
+        if int(dx + GR) % 3 == 0:
+            cv.vline(x, yy + 1, 3, TAR[1])
+    # the cap: a dome over a rim, lit on its left, a ball and the vane on top
+    CR = 9.0
+    for x in range(int(cx - CR), int(cx + CR) + 1):
+        dx = x + 0.5 - cx
+        if abs(dx) > CR:
+            continue
+        k = (dx + CR) / (2 * CR)
+        a = arc(CR, dx)
+        cv.set(x, int(round(l0 + a * 0.4)), TAR[1])  # the rim's shadow on the glass
+        hgt = 7 * math.sqrt(max(0.0, 1 - (dx / CR) ** 2))
+        for y in range(int(round(l0 - 1 - hgt)), int(round(l0 + a * 0.4))):
+            c = TAR[4] if k < 0.3 and y < l0 - 2 else TAR[3] if k < 0.6 else TAR[2] if k < 0.85 else TAR[1]
+            cv.set(x, y, c)
+    for (x, y) in disc(cx, 3.5, 1.6):
+        cv.set(x, y, GOLD[3] if x < cx else GOLD[2])
+    cv.vline(int(cx), 0, 3, TAR[2]); cv.hline(int(cx) - 3, 1, 7, GOLD[3])
     return cv
 
 
@@ -516,17 +608,8 @@ def props() -> dict[str, Canvas]:
 
 
 if __name__ == '__main__':
-    from PIL import Image
-    import style
-    items = {k: style.finalize(v, name=k) for k, v in props().items()}
-    pad = 6
-    width = sum(v.w for v in items.values()) + pad * (len(items) + 1)
-    height = max(v.h for v in items.values()) + 2 * pad
-    out = Image.new('RGBA', (width, height), (221, 200, 164, 255))
-    x = pad
-    for key, cv in items.items():
-        out.alpha_composite(cv.img, (x, height - pad - cv.h))
-        x += cv.w + pad
-    out = out.resize((out.width * 3, out.height * 3), Image.NEAREST)
-    out.save(os.environ.get('SHEET', '/tmp/harbour-props.png'))
-    print('sheet', out.size)
+    # by day, at night and on a second ground (prop_sheet.py; SHEET_GROUND picks it)
+    import prop_sheet
+    size = prop_sheet.sheet(props(), os.environ.get('SHEET', '/tmp/harbour-props.png'),
+                            second=os.environ.get('SHEET_GROUND', 'sand'))
+    print('sheet', size)

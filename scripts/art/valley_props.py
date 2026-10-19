@@ -585,21 +585,6 @@ def barn() -> Canvas:
     return cv
 
 
-def haystack() -> Canvas:
-    """A round haystack, 34 x 30, lit gold on the upper left, a few loose wisps."""
-    w, h = 34, 30
-    cv = Canvas(w, h, pad=PAD)
-    for (x, y) in oval(17, 17, 15, 12) | oval(17, 9, 9, 7):
-        k = (x - 2) / 30 + (y - 2) / 26
-        c = '#F2D27A' if k < 0.6 else '#E2BC5E' if k < 1.0 else '#C99A3C' if k < 1.35 else '#A87E2C'
-        if (x * 3 + y * 5) % 11 == 0:
-            c = '#A87E2C' if k < 1 else '#8A6420'
-        cv.set(x, y, c)
-    for (x, y) in ((3, 26), (30, 25), (8, 28)):
-        cv.hline(x, y, 3, '#E2BC5E')
-    return cv
-
-
 def scarecrow() -> Canvas:
     """A scarecrow, 32 x 46: a straw hat, a sack face with a stitched smile, a patched
     coat on a crossbar, a crow perched on one arm."""
@@ -752,21 +737,6 @@ def windmill(turn: float = 0.0) -> Canvas:
     return cv
 
 
-def pumpkins() -> Canvas:
-    """Pumpkins on a vine, 30 x 14, lit on their upper left, curling green tendrils."""
-    cv = Canvas(30, 14, pad=PAD)
-    for x in range(2, 28):
-        cv.set(x, 10 + int(math.sin(x / 3) * 1.5), '#447A50')
-    for (px, py, r) in ((7, 8, 4), (19, 9, 5), (26, 7, 2.6)):
-        for (x, y) in oval(px, py, r, r * 0.8):
-            k = (x - px + r) / (2 * r)
-            c = '#F2A048' if k < 0.35 else '#E07A28' if k < 0.7 else '#B85A1A'
-            if (x - px) % 3 == 0 and k > 0.2:
-                c = '#B85A1A' if c != '#B85A1A' else '#8A4010'
-            cv.set(x, y, c)
-        cv.set(px, int(py - r * 0.8), '#5A7A3A')
-    return cv
-
 def sheep(facing: int = 1) -> Canvas:
     """A grazing sheep, 26 x 20: a woolly cloud body lit on the upper left, a dark face
     lowered to the grass, thin dark legs."""
@@ -899,30 +869,6 @@ def snowman() -> Canvas:
     return cv
 
 
-def drystone_wall(length: int = 64) -> Canvas:
-    """A dry stone field wall, 64 x 14: rounded stones of different sizes stacked without
-    mortar, each lit on top, with a coping row on edge and grass at its foot."""
-    w, h = length, 14
-    cv = Canvas(w, h, pad=PAD)
-    x = 1
-    k = 0
-    while x < w - 2:  # the body: two courses of rounded stones
-        for (row, y0) in ((0, 7), (1, 3)):
-            sw = 5 + int(noise2(k, row, 433) * 4)
-            off = 2 if row else 0
-            for yy in range(y0, y0 + 4):
-                for xx in range(x + off, min(w - 1, x + off + sw)):
-                    edge = xx == x + off or yy == y0 + 3
-                    c = STONE[1] if edge else STONE[4] if yy == y0 else STONE[3] if xx < x + off + sw // 2 else STONE[2]
-                    cv.set(xx, yy, c)
-        x += 5 + int(noise2(k, 0, 433) * 4)
-        k += 1
-    for xx in range(1, w - 1, 2):  # the coping: stones on edge
-        cv.vline(xx, 1, 2, STONE[4] if xx % 4 == 1 else STONE[3])
-    cv.hline(1, h - 2, w - 2, LEAF[2])
-    return cv
-
-
 def marmot_rock() -> Canvas:
     """A sun-warmed boulder with a marmot sitting up on it, 28 x 26."""
     import style
@@ -952,9 +898,410 @@ def cotton_grass() -> Canvas:
     return cv
 
 
+
+# ---- the farm (B6, Claude E's list 6 and 7): hay, pumpkins and dry stone walls --------
+# Each sits on its own base, its weight pressing a darker last row into the grass; the
+# zone throws the cast shadow from its silhouette (detail.silhouette_shadow), so none is
+# painted here, and nothing assumes the time of day.
+HAY = ['#5E4418', '#8A6420', '#A87E2C', '#C99A3C', '#E2BC5E', '#F2D27A', '#FBE6A8']
+PUMPKIN = ['#6A2E12', '#A44C1A', '#D46E26', '#EE9840', '#FFC97A']
+STALK = ['#3E3A1C', '#5E5A2A', '#807A3A']
+LICHEN = '#B9B77A'
+
+
+def _hay(i: int) -> str:
+    return HAY[max(0, min(len(HAY) - 1, i))]
+
+
+def round_bale() -> Canvas:
+    """A round bale lying with its end toward the viewer, 20 x 25: the rolled end a spiral
+    of straw winding in to a dark core, its rim lit on the upper left and turned from the
+    light at the lower right; above it the top of the roll running back, the brightest
+    thing on it (it faces the sky), streaked along its length and cinched by two twines;
+    flattened where its weight sits."""
+    w, h = 20, 25
+    cv = Canvas(w, h, pad=PAD)
+    r, depth = 8.6, 7
+    cx, cy = 9.6, h - r + 0.4
+    bottom = h - 1
+    face = {(x, y) for (x, y) in disc(cx, cy, r) if y <= bottom}
+    roll = set()
+    for t in range(depth + 1):
+        roll |= {(x, y) for (x, y) in disc(cx, cy - t, r) if y <= bottom}
+    for (x, y) in roll - face:  # the top of the roll, running back
+        nx = max(-1.0, min(1.0, (x + 0.5 - cx) / r))
+        lam = 0.8 * math.sqrt(1 - nx * nx) - 0.6 * nx
+        i = 6 if lam > 1.0 else 5 if lam > 0.6 else 4 if lam > 0.15 else 3
+        n = noise2(x, y // 3, 611)
+        i += -1 if n > 0.72 else 0
+        cv.set(x, y, _hay(i))
+    for t in (2.5, 5.2):  # two twines round the roll
+        for x in range(int(cx - r), int(cx + r) + 1):
+            nx = (x + 0.5 - cx) / r
+            if abs(nx) >= 1:
+                continue
+            y = int(round(cy - t - r * math.sqrt(1 - nx * nx)))
+            if (x, y) in roll and (x, y) not in face:
+                cv.set(x, y, _hay(2 if nx > 0.3 else 3))
+    for (x, y) in face:  # the rolled end
+        dx, dy = x + 0.5 - cx, y + 0.5 - cy
+        d, a = math.hypot(dx, dy), math.atan2(dy, dx)
+        f = (-dx * 0.6 - dy * 0.8) / r
+        i = 4 if f > 0.5 else 3 if f > -0.1 else 2 if f > -0.55 else 1
+        if (d + (a + math.pi) / (2 * math.pi) * 2.3) % 2.3 < 0.85 and d > 1.4:
+            i -= 1  # the groove between one turn of the roll and the next
+        elif noise2(x, y, 612) > 0.92 and f > 0:
+            i += 1  # cut straw ends catching the light
+        if d < 1.5:
+            i = 1
+        if (x, y - 1) not in face and (x, y - 1) in roll:
+            i = 2  # the crease where the end turns into the roll, loose straw shading it
+        elif any((x + ex, y + ey) not in face for ex, ey in ((1, 0), (-1, 0), (0, 1))):
+            i = 4 if dx + dy < -3 else 1 if dx + dy > 1 else i
+        cv.set(x, y, _hay(i))
+    for x in range(w):  # its weight pressed onto the ground
+        if cv.get(x, bottom)[3]:
+            cv.set(x, bottom, _hay(1 if x < cx + 3 else 0))
+    return cv
+
+
+def round_bale_side() -> Canvas:
+    """A round bale lying across the view, 22 x 20: the curve of the roll seen side on, its
+    top facing the sky and lit, rounding over a soft ridge of light into its front in half
+    light and its underside in shade; straw running along it, two twines round it, the
+    ends' edges rounded only where the roll's curve meets them, flat where it sits."""
+    w, h = 22, 20
+    cv = Canvas(w, h, pad=PAD)
+    x0, x1, top, bottom = 1, 20, 1, h - 1
+    rows = bottom - top + 1
+    for y in range(top, bottom + 1):
+        s = (y - top) / (rows - 1)
+        for x in range(x0, x1 + 1):
+            cut = 2 if s < 0.06 else 1 if s < 0.16 or s > 0.9 else 0
+            if x < x0 + cut or x > x1 - cut:
+                continue
+            # the top (s < 0.4) faces the sky, the ridge of light where it rounds over,
+            # then the front and the underside
+            i = 5 if s < 0.38 else 6 if s < 0.47 else 4 if s < 0.62 else 3 if s < 0.8 else 2 if s < 0.92 else 1
+            if x >= x1 - 1:
+                i -= 1  # the far end's rounded edge, turned from the light
+            elif x <= x0 and 0.1 < s < 0.8:
+                i += 1  # the near end's edge catching it
+            n = noise2(x // 3, y, 613)
+            i += -1 if n > 0.74 else 0
+            cv.set(x, y, _hay(i))
+    for tx in (6, 15):  # the twines, round the roll
+        for y in range(top + 1, bottom):
+            if cv.get(tx, y)[3]:
+                s = (y - top) / (rows - 1)
+                cv.set(tx, y, _hay(3 if s < 0.47 else 2 if s < 0.8 else 1))
+    for x in range(w):
+        if cv.get(x, bottom)[3]:
+            cv.set(x, bottom, _hay(0))
+    return cv
+
+
+def haystack() -> Canvas:
+    """A haystack, 34 x 30: a rick of loose hay built round a stake, swelling out to its
+    eaves and tucked in at its foot, its straw raked down its slopes and lit on the upper
+    left; a thatched cap tied over the top with two ropes, a stone weight hanging from each
+    rope's end, and the stake standing out of the cap."""
+    w, h = 34, 30
+    cv = Canvas(w, h, pad=PAD)
+    cx, tip, bottom = 16.5, 3, h - 1
+
+    def half(y):
+        t = (y - tip) / (bottom - tip)
+        if t < 0.72:
+            return 15.6 * math.sqrt(max(0.0, 1 - (1 - t / 0.72) ** 2)) ** 0.9
+        return 15.6 - (t - 0.72) / 0.28 * 1.6
+
+    def eave(x):
+        return tip + 10 + int(math.sin(x / 2.3) * 0.8 + noise2(x, 0, 621) * 1.2)
+    rick = set()
+    for y in range(tip, bottom + 1):
+        hw = half(y) + (noise2(y, 1, 622) - 0.5) * 0.9
+        for x in range(int(cx - hw), int(math.ceil(cx + hw))):
+            rick.add((x, y))
+    for (x, y) in rick:
+        t = (y - tip) / (bottom - tip)
+        nx = (x + 0.5 - cx) / max(1.0, half(y))
+        capped = y < eave(x)
+        lam = -0.65 * nx + (0.9 if capped else 0.55) * (1 - t) - 0.15
+        if capped:  # the thatch: combed straw running down from the top, a deeper gold
+            i = 4 if lam > 0.45 else 3 if lam > 0.05 else 2 if lam > -0.4 else 1
+            sx = int(x - (x - cx) * 0.4)
+            if noise2(sx, y // 3, 623) > 0.7:
+                i -= 1
+        else:  # the hay below, raked down the slopes in strands
+            i = 5 if lam > 0.5 else 4 if lam > 0.15 else 3 if lam > -0.25 else 2
+            sx = int(x - (x - cx) * t * 0.3)
+            n = noise2(sx, y // 3, 624)
+            i += -1 if n > 0.72 else 1 if n < 0.06 and lam > 0 else 0
+            if y == eave(x):
+                i = 1  # the cap's overhang shades the hay under it
+        cv.set(x, y, _hay(i))
+    for y in range(bottom - 1, bottom + 1):  # its foot, pressed and pulled at
+        for x in range(w):
+            if cv.get(x, y)[3]:
+                cv.set(x, y, _hay(1 if y == bottom else 2) if noise2(x, y, 625) < 0.75 else _hay(3))
+    for (ex, side) in ((cx - 10, -1), (cx + 9, 1)):  # the ropes over the cap, and their weights
+        ey = eave(int(ex))
+        for k in range(14):
+            t = k / 13
+            x = int(round(cx + (ex - cx) * t))
+            y = int(round(tip + 1 + (ey - tip - 1) * t + math.sin(t * math.pi) * -1.2))
+            cv.set(x, y, ROPE[2] if side < 0 else ROPE[1])
+        for y in range(ey, ey + 5):
+            cv.set(int(ex), y, ROPE[1])
+        for (x, y) in ((0, 0), (1, 0), (0, 1), (1, 1), (-1, 1)):  # a stone tied on, hanging
+            cv.set(int(ex) + x, ey + 5 + y, STONE[3] if (x, y) == (0, 0) else STONE[2] if y == 0 or x < 0 else STONE[1])
+    cv.vline(int(cx), 0, tip + 1, WOOD[2]); cv.vline(int(cx) + 1, 0, tip + 1, WOOD[1])  # the stake
+    cv.set(int(cx), 0, WOOD[3])
+    return cv
+
+
+def _pumpkin(cv: Canvas, cx: float, base: int, w: float, h: float, ribs: int, seed: int):
+    """One pumpkin sitting on the ground: a squat round of ribs that run from the stalk's
+    dimple to its foot, each rib a small bulge lit on its left, the grooves between them
+    following the round; lit from the upper left, a short curled stalk."""
+    rx, ry = w / 2, h / 2
+    cy = base - ry + 1.2
+    pts = {(x, y) for (x, y) in oval(cx, cy, rx, ry) if y <= base}
+    phase = noise2(seed, 0, 631)
+    for (x, y) in pts:
+        nx, ny = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+        nz = math.sqrt(max(0.0, 1 - nx * nx - ny * ny))
+        lam = -0.55 * nx - 0.6 * ny + 0.62 * nz
+        ring = math.sqrt(max(0.05, 1 - ny * ny))
+        theta = math.asin(max(-1.0, min(1.0, nx / ring)))
+        k = (theta / math.pi * ribs + phase) % 1
+        if k < 0.13:
+            lam -= 0.38  # a groove
+        elif k < 0.42:
+            lam += 0.14  # the rib's lit side
+        elif k > 0.8:
+            lam -= 0.12
+        i = 4 if lam > 0.92 else 3 if lam > 0.5 else 2 if lam > 0.12 else 1 if lam > -0.3 else 0
+        if ny < -0.72 and abs(nx) < 0.3:
+            i = max(1, i - 1)  # the dimple round the stalk
+        if y == base:
+            i = min(i, 1)
+        cv.set(x, y, PUMPKIN[i])
+    top = min(y for (_, y) in pts)
+    sx = int(cx)
+    cv.set(sx, top, STALK[1]); cv.set(sx, top - 1, STALK[2]); cv.set(sx + 1, top - 1, STALK[1])
+    if w > 9:
+        cv.set(sx + 1, top - 2, STALK[1]); cv.set(sx + 2, top - 2, STALK[0])
+
+
+def _leaf(cv: Canvas, cx: int, cy: int, flip: int = 1):
+    """A broad pumpkin leaf lying on the ground, three rounded lobes, lit on its upper left,
+    its veins running out from the stalk."""
+    lobes = [(cx - 2 * flip, cy), (cx, cy - 1), (cx + 2 * flip, cy)]
+    pts = set()
+    for (lx, ly) in lobes:
+        pts |= disc(lx + 0.5, ly + 0.5, 1.7)
+    for (x, y) in pts:
+        lam = -(x - cx) / 3.5 - (y - cy) / 2.0
+        cv.set(x, y, LEAF[4] if lam > 0.8 else LEAF[3] if lam > -0.3 else LEAF[2])
+    for (lx, ly) in lobes:
+        cv.set(lx, ly, LEAF[2])  # the veins
+    cv.set(cx, cy + 1, LEAF[1])
+
+
+def pumpkins() -> Canvas:
+    """Three pumpkins on their vine, 32 x 22: a big one in front, a smaller one behind it to
+    the right and a little one beside it, each sitting on the ground on its flattened foot,
+    the vine running between them under broad leaves, a curled tendril."""
+    w, h = 32, 22
+    cv = Canvas(w, h, pad=PAD)
+    for x in range(6, 28):  # the vine, along the ground between them
+        y = 16 + int(math.sin(x / 4.1) * 1.4)
+        cv.set(x, y, LEAF[2])
+    for (lx, ly, f) in ((5, 15, 1), (18, 13, -1), (28, 15, -1)):
+        _leaf(cv, lx, ly, f)
+    for (tx, ty) in ((27, 10), (28, 9), (29, 9), (30, 10), (29, 11)):  # a tendril's curl
+        cv.set(tx, ty, LEAF[3])
+    _pumpkin(cv, 22.5, 15, 10, 8, 5, seed=3)
+    _pumpkin(cv, 11.5, h - 2, 15, 11, 6, seed=1)
+    _pumpkin(cv, 26, h - 1, 6.5, 5, 4, seed=7)
+    _leaf(cv, 19, h - 2, 1)  # a leaf in front, at the big one's foot
+    return cv
+
+
+# Dry stone walls are built here as a ground plan raised to a height: each piece is a
+# footprint on the ground, the wall's body stands on it, and a coping of stones set on
+# edge stands on the body, inset from its sides. Faces that look toward the viewer are
+# drawn; everything else is hidden behind them, as it would be (one camera, world-rules
+# 2a). The stones of every face and top are laid by a jittered Voronoi, so no two are
+# alike and no joint runs on along a line.
+WALL_H = 6
+
+
+def _stone_at(u: float, v: float, su: float, sv: float, seed: int):
+    """The stone a point of a face or top lies in: its id, how close the point is to a
+    joint (px) and its offset from the stone's middle, from sites about su x sv apart,
+    each course shifted so the joints never line up."""
+    k = su / sv
+    best = []
+    gv = int(math.floor(v / sv))
+    for j in range(gv - 1, gv + 2):
+        off = noise2(j, 0, seed) * su
+        gu = int(math.floor((u - off) / su))
+        for i in range(gu - 1, gu + 2):
+            pu = (i + 0.25 + noise2(i, j, seed + 1) * 0.5) * su + off
+            pv = (j + 0.25 + noise2(i, j, seed + 2) * 0.5) * sv
+            best.append((math.hypot(u - pu, (v - pv) * k), (i, j), u - pu, v - pv))
+    best.sort()
+    # the gap to the next stone, in screen pixels whichever way that stone lies (the
+    # sites are measured stretched across v, so a bed joint would come out too thin)
+    a, b = best[0], best[1]
+    du, dv = b[2] - a[2], b[3] - a[3]
+    n = math.hypot(du, dv) or 1.0
+    stretch = math.hypot(du / n, dv / n * k)
+    return a[1], (b[0] - a[0]) / stretch, a[2], a[3]
+
+
+def _stone_px(sid, joint: float, du: float, dv: float, su: float, sv: float, base: int, seed: int) -> str:
+    """One pixel of a dry stone: the stone's own tone, lit on its upper left and turned
+    from the light at its lower right, dark in the joints (no mortar), now and then a
+    fleck of lichen on a lit top."""
+    if joint < 1.05:
+        return STONE[0] if noise2(*sid, seed + 3) > 0.35 else STONE[1]
+    t = base + (1 if noise2(*sid, seed + 4) > 0.7 else -1 if noise2(*sid, seed + 4) < 0.2 else 0)
+    lam = -du / su * 1.6 + dv / sv * 1.8
+    t += 1 if lam > 0.42 else -1 if lam < -0.5 else 0
+    if lam > 0.5 and noise2(sid[0], sid[1], seed + 5) > 0.82 and noise2(int(du * 7), int(dv * 7), seed + 6) > 0.6:
+        return LICHEN
+    return STONE[max(1, min(4, t))]
+
+
+def _drystone(cv: Canvas, body: set, coping: dict, dirs: dict, seed: int):
+    """Raise a dry stone wall on `body` (ground pixels), WALL_H high, with its coping on
+    the `coping` pixels (each pixel's height above the body); `dirs` gives the way the
+    wall runs at each pixel ('ew' or 'ns'), which way its coping stones lie across."""
+    ys = sorted({y for (_, y) in body})
+    for y in ys:
+        for x in sorted(x for (x, yy) in body if yy == y):
+            if (x, y + 1) not in body:  # a face toward the viewer
+                for z in range(WALL_H):
+                    sid, j, du, dv = _stone_at(x, z, 7.5, 3.3, seed)
+                    c = _stone_px(sid, j, du, dv, 7.5, 3.3, 2, seed)
+                    if z == 0:
+                        c = STONE[1] if c not in (STONE[0], STONE[1]) else STONE[0]  # where it meets the ground
+                    cv.set(x, y - z, c)
+            if (x, y) not in coping:  # the body's top, a ledge either side of the coping
+                sid, j, du, dv = _stone_at(x, y, 6.0, 2.6, seed + 10)
+                cv.set(x, y - WALL_H, _stone_px(sid, j, du, -dv, 6.0, 2.6, 3, seed + 10))
+        for x in sorted(x for (x, yy) in coping if yy == y):
+            hc, ns = coping[(x, y)], dirs.get((x, y)) == 'ns'
+            su, sv = (8.0, 3.4) if ns else (3.4, 6.0)
+            if (x, y + 1) not in coping:  # the coping stones' edges toward the viewer
+                for z in range(hc):
+                    sid, j, du, dv = _stone_at(x, z + WALL_H, 3.4, 9.0, seed + 20)
+                    c = _stone_px(sid, j, du, dv, 3.4, 9.0, 3, seed + 20)
+                    cv.set(x, y - WALL_H - z, c)
+            sid, j, du, dv = _stone_at(x, y, su, sv, seed + 30)
+            cv.set(x, y - WALL_H - hc, _stone_px(sid, j, du, -dv, su, sv, 4, seed + 30))
+
+
+def _coping(body: set, dirs: dict, seed: int) -> dict:
+    """The coping stands on the body inset a pixel from each side, a little ragged in
+    height, stone by stone (2 or 3 px)."""
+    out = {}
+    for (x, y) in body:
+        ns = dirs.get((x, y)) == 'ns'
+        inner = all((x + dx, y + dy) in body for dx, dy in (((1, 0), (-1, 0)) if ns else ((0, 1), (0, -1))))
+        if ns:
+            inner = inner and (x, y + 1) in body
+        else:
+            inner = inner and (x - 1, y) in body and (x + 1, y) in body
+        if inner:
+            sid = _stone_at(x, y, *((8.0, 3.4) if ns else (3.4, 6.0)), seed + 30)[0]
+            out[(x, y)] = 2 + (noise2(*sid, seed + 40) > 0.55)
+    return out
+
+
+def drystone_wall(length: int = 64) -> Canvas:
+    """A dry stone field wall running across the view, 64 x 14: its face of rounded stones
+    of every size laid without mortar, dark in the joints and lit on their upper left, a
+    ledge along its top and a ragged coping of stones set on edge."""
+    w, h = length, 14
+    cv = Canvas(w, h, pad=PAD)
+    body = {(x, y) for x in range(w) for y in range(h - 4, h)}
+    dirs = {p: 'ew' for p in body}
+    _drystone(cv, body, _coping(body, dirs, 71), dirs, 71)
+    return cv
+
+
+def drystone_wall_ns(length: int = 40) -> Canvas:
+    """A dry stone wall running away from the viewer, 10 x 50: from the camera its long top
+    with the coping stones laid across it, and its end's face toward the viewer."""
+    w, h = 10, length + 10
+    cv = Canvas(w, h, pad=PAD)
+    body = {(x, y) for x in range(1, 9) for y in range(10, h)}
+    dirs = {p: 'ns' for p in body}
+    _drystone(cv, body, _coping(body, dirs, 72), dirs, 72)
+    return cv
+
+
+def drystone_corner(side: str = 'w') -> Canvas:
+    """A dry stone wall's corner, 36 x 40: a run across the view turning toward the viewer
+    at its west end (side 'w') or its east end ('e'), the coping running round the turn,
+    the two ways of laying its stones meeting at the corner."""
+    w, h = 36, 40
+    cv = Canvas(w, h, pad=PAD)
+    r0 = 10
+    arm = range(0, 8) if side == 'w' else range(w - 8, w)
+    body = {(x, y) for x in range(w) for y in range(r0, r0 + 4)} | {(x, y) for x in arm for y in range(r0, h)}
+    dirs = {(x, y): 'ns' if y >= r0 + 4 else 'ew' for (x, y) in body}
+    _drystone(cv, body, _coping(body, dirs, 73 if side == 'w' else 74), dirs, 73 if side == 'w' else 74)
+    return cv
+
+
+def drystone_gatepost() -> Canvas:
+    """A gatepost where a dry stone wall ends at a gap, 10 x 26: a pier of big squared
+    quoins taller than the wall, laid long and short in turn, a flat capstone over it
+    with its front edge in half light, and the iron pins a gate hangs on. Placed with its
+    foot a pixel below the wall's, it stands in front of the wall's end."""
+    w, h = 10, 26
+    cv = Canvas(w, h, pad=PAD)
+    x0, x1, ph = 2, 8, 17
+    foot = h - 1
+    for x in range(x0, x1):  # the pier's face: courses of quoins, long and short in turn
+        for z in range(ph):
+            course = z // 4
+            split = x0 + (2 if course % 2 else 4)
+            joint = z % 4 == 3 or x == split
+            if joint:
+                c = STONE[1] if noise2(x, z, 741) > 0.3 else STONE[0]
+            else:  # each quoin lit along its top and left, turned from the light at its right
+                left = x0 if x < split else split + 1
+                c = STONE[4] if x == left or z % 4 == 2 else STONE[3]
+                if x == x1 - 1:
+                    c = STONE[2]  # the pier's corner, turning away from the light
+                if noise2(x, z, 742) > 0.92:
+                    c = STONE[2]  # a pit in the stone
+            cv.set(x, foot - z, STONE[1] if z == 0 else c)
+    top = foot - ph
+    for x in range(x0 - 1, x1 + 1):  # the capstone's front edge
+        cv.set(x, top, STONE[2]); cv.set(x, top - 1, STONE[3])
+    for y in range(top - 5, top - 1):  # its top, overhanging the pier all round
+        for x in range(x0 - 1, x1 + 1):
+            c = STONE[4] if x < x1 - 1 and y > top - 5 else STONE[3]
+            if x == x0 + 3 and y > top - 4:
+                c = STONE[2]  # where two slabs meet
+            cv.set(x, y, c)
+    cv.set(x1, top - 1, STONE[1]); cv.set(x1, top, STONE[1])
+    for py in (foot - 3, foot - 11):  # the gate's iron pins
+        cv.set(x1 - 1, py, '#2A2D36'); cv.set(x1, py, '#3C404C'); cv.set(x1 - 1, py - 1, '#545A68')
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
-        'barn': barn(), 'haystack': haystack(), 'scarecrow': scarecrow(), 'windmill': windmill(),
+        'barn': barn(), 'haystack': haystack(), 'round_bale': round_bale(), 'round_bale_side': round_bale_side(), 'scarecrow': scarecrow(), 'windmill': windmill(),
         'windmill_f1': windmill(math.pi / 6), 'windmill_f2': windmill(math.pi / 3),
         'pumpkins': pumpkins(), 'sheep': sheep(1), 'sheep_left': sheep(-1), 'beehive': beehive(),
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(),
@@ -964,22 +1311,16 @@ def props() -> dict[str, Canvas]:
         'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(), 'station_house': station_house(),
         'semaphore': semaphore(), 'standing_stone': standing_stone(0, True), 'standing_stone_b': standing_stone(3, True),
         'standing_stone_low': standing_stone(6, False), 'stump': stump(), 'woodpile': woodpile(), 'sled': sled(),
-        'snowman': snowman(), 'drystone_wall': drystone_wall(64), 'marmot_rock': marmot_rock(), 'cotton_grass': cotton_grass(),
+        'snowman': snowman(), 'drystone_wall': drystone_wall(64), 'drystone_wall_short': drystone_wall(32),
+        'drystone_wall_ns': drystone_wall_ns(40), 'drystone_corner_w': drystone_corner('w'), 'drystone_corner_e': drystone_corner('e'),
+        'drystone_gatepost': drystone_gatepost(), 'marmot_rock': marmot_rock(), 'cotton_grass': cotton_grass(),
         'lookout_tower': lookout_tower(),
     }
 
 
 if __name__ == '__main__':
-    from PIL import Image
-    items = {k: style.finalize(v, name=k) for k, v in props().items()}
-    pad = 6
-    width = sum(v.w for v in items.values()) + pad * (len(items) + 1)
-    height = max(v.h for v in items.values()) + 2 * pad
-    out = Image.new('RGBA', (width, height), (126, 159, 80, 255))
-    x = pad
-    for key, cv in items.items():
-        out.alpha_composite(cv.img, (x, height - pad - cv.h))
-        x += cv.w + pad
-    out = out.resize((out.width * 3, out.height * 3), Image.NEAREST)
-    out.save(os.environ.get('SHEET', '/tmp/valley-props.png'))
-    print('sheet', out.size)
+    # by day, at night and on a second ground (prop_sheet.py; SHEET_GROUND picks it)
+    import prop_sheet
+    size = prop_sheet.sheet(props(), os.environ.get('SHEET', '/tmp/valley-props.png'),
+                            second=os.environ.get('SHEET_GROUND', 'snow'))
+    print('sheet', size)
