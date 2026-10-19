@@ -50,7 +50,10 @@ import {
   type TileId,
 } from '@/lib/region-walk';
 import {
+  FLOW_FRAMES,
+  FLOW_FRAME_MS,
   zoneDecks,
+  zoneFlow,
   zoneFrames,
   zoneMaps,
   zoneOverhead,
@@ -65,6 +68,7 @@ import {
   zoneBeyondRegolith,
   zoneBeyondByRegion,
   zoneDeckArt,
+  zoneFlowArt,
   zoneGrounds,
   zoneProps,
   zoneScenery,
@@ -288,6 +292,53 @@ function Floating({
         style,
       ]}
     />
+  );
+}
+
+// Moving water and lava (scripts/art/water_flow.py; Matt, 19 Oct: "water should have
+// flowing animations"): one picture per zone with its frames stacked, clipped to the box
+// round its water and stepped on the shared clock. The clock stops with reduced motion or
+// an inactive screen, so the water holds still on its current frame.
+function FlowLayer({
+  zone,
+  clock,
+  u,
+  snap,
+}: {
+  zone: TileId;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const rect = zone === 'garden' ? undefined : zoneFlow[zone];
+  const art = zone === 'garden' ? undefined : zoneFlowArt[zone];
+  const bh = rect ? snap(rect[3] * u) : 0;
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateY: -(Math.floor(clock.value / FLOW_FRAME_MS) % FLOW_FRAMES) * bh }],
+  }));
+  if (!rect || !art) return null;
+  const [x, y, w] = rect;
+  return (
+    <View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        left: snap(x * u),
+        top: snap(y * u),
+        width: snap(w * u),
+        height: bh,
+        overflow: 'hidden',
+      }}
+    >
+      <Animated.Image
+        source={art}
+        resizeMode="stretch"
+        style={[
+          { position: 'absolute', left: 0, top: 0, width: snap(w * u), height: bh * FLOW_FRAMES },
+          style,
+        ]}
+      />
+    </View>
   );
 }
 
@@ -1411,6 +1462,7 @@ export function AtlasWalk({
                   resizeMode="stretch"
                   style={{ position: 'absolute', left: 0, top: 0, width: w, height: h }}
                 />
+                <FlowLayer zone={t.id} clock={bob} u={u} snap={snap} />
                 {/* the street under a deck, darker, and the deck's shadow on it */}
                 {t.id !== 'garden' && zoneDeckArt[t.id] && (
                   <Image

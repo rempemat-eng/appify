@@ -6636,6 +6636,38 @@ export type ZoneDeck = {
     top: readonly [number, number];
   }[];
 };
+/** Moving water and lava (scripts/art/water_flow.py): the box round a zone's water, in zone px; its
+ *  picture holds 8 frames stacked top to bottom, shown 150 ms apart. */
+export const FLOW_FRAMES = 8;
+export const FLOW_FRAME_MS = 150;
+export const zoneFlow: Partial<Record<ZoneId, readonly [number, number, number, number]>> = {
+  riverside: [0, 267, 293, 309],
+  woodland: [51, 0, 269, 317],
+  park: [28, 0, 153, 576],
+  ridge: [191, 390, 77, 29],
+  hollow: [78, 0, 197, 576],
+  snowmelt: [77, 79, 216, 497],
+  landing: [0, 0, 320, 576],
+  rainforest: [0, 0, 320, 576],
+  headwaters: [0, 0, 320, 576],
+  cove: [0, 0, 320, 576],
+  halt: [0, 541, 281, 35],
+  canal: [0, 185, 320, 59],
+  neon: [0, 470, 320, 106],
+  skyport: [0, 470, 320, 106],
+  waterfront: [160, 0, 160, 576],
+  docks: [160, 0, 160, 576],
+  point: [0, 0, 320, 576],
+  oasis: [51, 265, 134, 67],
+  caldera: [29, 0, 282, 576],
+  springs: [37, 0, 232, 536],
+  harbour: [0, 15, 320, 561],
+  headland: [0, 0, 288, 576],
+  hearthold: [16, 0, 272, 574],
+  scorch: [37, 2, 120, 510],
+  station: [0, 0, 320, 576],
+  home: [45, 12, 230, 411],
+};
 export const zoneDecks: Partial<Record<ZoneId, ZoneDeck>> = {};
 /** What each walk cell of a zone is (docs/vision/world-rules.md, section 1): '~' water, '!' lava,
  *  '^' wall or cliff, '=' path, '.' ground. Rows are run-length encoded like the walk rows. */
