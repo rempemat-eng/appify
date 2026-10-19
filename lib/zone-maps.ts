@@ -6640,7 +6640,7 @@ export type ZoneDeck = {
 export const FLOW_FRAMES = 8;
 export const FLOW_FRAME_MS = 150;
 export const zoneFlow: Partial<Record<ZoneId, readonly [number, number, number, number]>> = {
-  riverside: [0, 267, 293, 309],
+  riverside: [0, 0, 304, 576],
   woodland: [51, 0, 269, 317],
   park: [28, 0, 153, 576],
   ridge: [191, 390, 77, 29],
