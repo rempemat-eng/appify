@@ -1,4 +1,12 @@
-import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import {
+  Fragment,
+  type ReactNode,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   AccessibilityInfo,
   Image,
@@ -12,6 +20,7 @@ import {
 import Animated, {
   cancelAnimation,
   runOnJS,
+  useAnimatedReaction,
   useAnimatedStyle,
   useSharedValue,
   withSequence,
@@ -19,6 +28,7 @@ import Animated, {
   Easing,
 } from 'react-native-reanimated';
 import { router } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import * as Haptics from 'expo-haptics';
 import { cozy as c } from '@/lib/cozy';
 import { useReducedMotion } from '@/lib/motion';
@@ -26,7 +36,7 @@ import { useAppActive } from '@/lib/app-active';
 import { playSound } from '@/lib/sound';
 import type { BreakIntention, CompanionMemory } from '@/lib/companion-memories';
 import { gardenKeepsakes, gardenResponse, gardenSignature } from '@/lib/garden-life';
-import { playPaused, useGame, type Player } from '@/lib/game';
+import { feedback as gameFeedback, missions, playPaused, useGame, type Player } from '@/lib/game';
 import { collectionOf, guardianPlayer, visitorInfo } from '@/lib/visitors';
 import {
   GARDEN,
@@ -58,8 +68,31 @@ import {
   type Point,
 } from '@/lib/garden-path';
 import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
+import {
+  GATE_OUT,
+  HUB_REGION,
+  gardenOrigin,
+  homeSide,
+  hubCardAt,
+  hubWalk,
+  toGarden,
+  toRegion,
+  type HomeWalk,
+  type HubSide,
+} from '@/lib/home-hub';
+import { regionWalk } from '@/lib/region-walk';
+import { placeMarkers, type Card } from '@/lib/world-cards';
+import { keepsake, newKeepsakes } from '@/lib/decor';
+import { hudClearance } from '@/lib/layout';
 import { hiddenBehind } from '@/lib/occlusion';
-import { areaOf, decorBox, hutImageKey, walkWithDecor, type DecorPlacement } from '@/lib/decor';
+import {
+  areaOf,
+  decorBox,
+  decorFootprint,
+  hutImageKey,
+  walkWithDecor,
+  type DecorPlacement,
+} from '@/lib/decor';
 import { hutImages, hutPathImages } from '@/lib/garden-hut-assets';
 import { decorImages } from '@/lib/decor-assets';
 import { useUi } from '@/lib/ui';
@@ -73,12 +106,15 @@ import {
   unproject,
   type ViewMode,
 } from '@/lib/garden-projection';
+import { AtlasWalk } from '@/components/atlas-walk';
+import { PlaceCardBody } from '@/components/place-card';
+import { decorExtras } from '@/components/scene-decor';
 import { GuardianPet } from '@/components/guardian-pet';
 import { FloatingZ, Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { GardenReactions, type GardenReaction, type Place } from '@/components/garden-reactions';
 import { GardenKeepsakeArt } from '@/components/garden-keepsakes';
-import { FrameShape, PixelTail, frameTones } from '@/components/pixel-frame';
+import { FrameShape, PixelFrame, PixelTail, frameTones } from '@/components/pixel-frame';
 import { contentInset, type } from '@/lib/ui-tokens';
 import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
 
@@ -200,6 +236,16 @@ function reactionBase(r: GardenReaction): number | undefined {
 }
 
 const companionSpots: readonly Point[] = gardenAnchors.companionSpots;
+// The garden's own walk (inside its fence); the home hub walks the whole valley instead.
+const gardenOnlyWalk: HomeWalk = {
+  walkable,
+  toCell,
+  toPoint,
+  nearestWalkable,
+  findPath,
+  randomSpot,
+};
+const noZones: readonly string[] = [];
 
 const noMemories: readonly CompanionMemory[] = [];
 const keepsakeIntentions: readonly BreakIntention[] = ['rest', 'read', 'move', 'create'];
@@ -315,6 +361,7 @@ function Ambient({
   day,
   reduced,
   active,
+  smoke: puffs = true,
 }: {
   scale: number;
   place: Place;
@@ -325,6 +372,8 @@ function Ambient({
   day: boolean;
   reduced: boolean;
   active: boolean;
+  /** the chimney's puffs (off for a layer of rain over the whole window) */
+  smoke?: boolean;
 }) {
   const [t, setT] = useState(0);
   useEffect(() => {
@@ -366,7 +415,7 @@ function Ambient({
   // Two small puffs share this layer's clock, rise once and dissolve. A long
   // quiet gap keeps the chimney from becoming a constant stream of particles.
   const smoke =
-    !reduced && active
+    puffs && !reduced && active
       ? [0, 10]
           .map((delay) => {
             const age = (t + 72 - delay) % 72;
@@ -575,6 +624,12 @@ export function GardenWorld({
   const reduced = useReducedMotion();
   const appActive = useAppActive();
   const active = screenActive && appActive;
+  // The home hub (docs/vision/home-hub.md): the Home tab's garden is a place in the
+  // valley, drawn and walked by the world's renderer (AtlasWalk) with no screen between
+  // them. Its interactions stay here, in garden pixels that run on past the garden's
+  // edges. The nap screen's small window (napping) keeps the garden's own scene.
+  const hub = viewportHeight !== undefined && !napping && view === 'flat';
+  const insets = useSafeAreaInsets();
   // One art pixel is the game's shared pixel (coherence plan, step 6): the map is
   // wider than a phone and the camera follows the companion across it.
   const screen = useWindowDimensions();
@@ -654,6 +709,30 @@ export function GardenWorld({
       setFeedback(null);
     }
   }
+  // keepsakes set out in the garden stand in the way like any prop (lib/decor.ts)
+  const decor = useGame((s) => s.decor);
+  const gardenDecor = useMemo(() => decor.filter((d) => areaOf(d) === 'garden'), [decor]);
+  // in the hub they stand in the valley's copy of the garden (its own pixels plus the
+  // garden's origin), and the companion walks the whole valley round them
+  const valleyDecor = useMemo(
+    () => gardenDecor.map((d) => ({ ...d, x: d.x + gardenOrigin.x, y: d.y + gardenOrigin.y })),
+    [gardenDecor],
+  );
+  const hubRows = useMemo(
+    () => (hub ? walkWithDecor(regionWalk(HUB_REGION), valleyDecor) : null),
+    [hub, valleyDecor],
+  );
+  const hubGrid = useMemo(() => (hubRows ? hubWalk(hubRows) : null), [hubRows]);
+  const valleyExtras = useMemo(() => decorExtras(valleyDecor), [valleyDecor]);
+  const grid = hubGrid ?? gardenOnlyWalk;
+  // the place card where the companion stands out in the valley, and whether it is home
+  const [card, setCard] = useState<Card | null>(null);
+  const [cardBox, setCardBox] = useState(0);
+  const [side, setSide] = useState<HubSide>('home');
+  const battle = useGame((s) => s.battle);
+  const pendingReturn = useGame((s) => s.missionReturnPending);
+  // the camera's top-left in the valley's screen pixels (AtlasWalk writes it)
+  const cam = useSharedValue({ x: 0, y: 0 });
   const busy = useRef(false);
   // walking out once: a held key's repeats must not open the valley twice as it opens
   const leaving = useRef(false);
@@ -783,12 +862,22 @@ export function GardenWorld({
           router.push('/world');
         }
     } else if (exit && atGardenExit(exit, point)) leave(exit, point);
+    else if (hub) settleHub(point);
+  }
+
+  // Standing still in the hub: the place's card (the stall, a station, a mission's
+  // start), and the walked spot recorded for the map, as the world screen did.
+  function settleHub(point: Point) {
+    const r = toRegion(point);
+    useGame.getState().walkWorld(HUB_REGION, r.x, r.y, true);
+    noteSide(point);
+    if (!decorate) setCard(hubCardAt(point));
   }
 
   // Walking out: the valley picks up at this very spot and the companion walks on
   // through the gap (app/world.tsx); walking back in returns here.
   function leave(exit: GardenExit, at: Point) {
-    if (napping || !activeRef.current || leaving.current) return;
+    if (hub || napping || !activeRef.current || leaving.current) return;
     leaving.current = true;
     useUi.setState({ worldLink: { from: exit, ex: Math.round(at.x), ey: Math.round(at.y) } });
     router.push('/world');
@@ -803,15 +892,18 @@ export function GardenWorld({
     // Retarget from the displayed position, including a stroll interrupted mid-leg.
     const start = { x: px.get(), y: py.get() };
     pos.current = start;
-    const path = findPath(start, target);
+    const path = grid.findPath(start, target);
     const end = path[path.length - 1] ?? start;
     setDestination(action ? end : null);
-    // a tap past the garden's edge (the gate, the trail, the meadow's sides) walks on out
+    // a new walk leaves the place it stood at (its card closes)
+    setCard(null);
+    // a tap past the garden's edge (the gate, the trail, the meadow's sides) walks on out;
+    // in the hub the valley simply goes on, so only the hut's door leads anywhere
     journey.current = {
       id,
       action,
       end,
-      exit: door ? 'door' : action ? null : gardenExitToward(target),
+      exit: door ? 'door' : action || hub ? null : gardenExitToward(target),
     };
     if (!path.length) {
       arrived(id, action, end);
@@ -899,8 +991,10 @@ export function GardenWorld({
         router.push('/missions');
         break;
       case 'arena':
-        // the gate opens on the valley: walk on out into the world
-        leave('gate', pos.current);
+        // the gate opens on the valley: walk on out into the world (in the hub, on down
+        // the lane, the same spot the world screen used to open at)
+        if (hub) walkTo(GATE_OUT);
+        else leave('gate', pos.current);
         break;
       case 'feed':
         if (playPaused() || p.mood >= 100 || p.grass < 5) {
@@ -962,13 +1056,15 @@ export function GardenWorld({
       const reach = KEY_SPEED * (STEP_MS / 1000) * 2.5;
       for (const [ax, ay] of keySteps(dx, dy)) {
         const to = { x: from.x + ax * reach, y: from.y + ay * reach };
-        const cell = toCell(to);
-        if (walkable(cell.cx, cell.cy)) {
+        const cell = grid.toCell(to);
+        if (grid.walkable(cell.cx, cell.cy)) {
           walkTo(to, null, false, KEY_SPEED);
           return;
         }
       }
-      // held against the garden's edge at an exit: on out into the valley
+      // held against the garden's edge at an exit: on out into the valley (the hub's
+      // valley goes on, so there is no edge to hold against)
+      if (hub) return;
       const exit = gardenExitToward({ x: from.x + dx * 16, y: from.y + dy * 16 });
       if (exit && atGardenExit(exit, from)) leave(exit, from);
     },
@@ -989,8 +1085,8 @@ export function GardenWorld({
     journey.current = null;
     cancelAnimation(px);
     cancelAnimation(py);
-    const cell = nearestWalkable({ x: a.x, y: a.y });
-    const p = toPoint(cell.cx, cell.cy);
+    const cell = grid.nearestWalkable({ x: a.x, y: a.y });
+    const p = grid.toPoint(cell.cx, cell.cy);
     px.set(p.x);
     py.set(p.y);
     pos.current = p;
@@ -998,14 +1094,22 @@ export function GardenWorld({
     busy.current = false;
     lastTouch.current = clock();
     veilPending.current = true;
-  }, [arrivalKey, napping, px, py]);
+    if (hub) {
+      setSide(homeSide('out', p));
+      setCard(hubCardAt(p));
+    }
+  }, [arrivalKey, napping, px, py, grid, hub]);
 
   // Idle life: wander, sniff the flowers, sit. Never while the player is acting.
   const walkRef = useRef(walkTo);
   const arriveRef = useRef(arrived);
+  const gridRef = useRef(grid);
+  const sideRef = useRef(side);
   useEffect(() => {
     walkRef.current = walkTo;
     arriveRef.current = arrived;
+    gridRef.current = grid;
+    sideRef.current = side;
   });
   useEffect(() => {
     if (!reduced || !active) return undefined;
@@ -1027,10 +1131,13 @@ export function GardenWorld({
     let emoteTimer: ReturnType<typeof setTimeout>;
     const tick = () => {
       if (!activeRef.current) return;
-      if (!busy.current && clock() - lastTouch.current > 6000) {
+      // (in the hub only at home: out in the valley it waits where it was left)
+      if (!busy.current && clock() - lastTouch.current > 6000 && sideRef.current === 'home') {
         const roll = Math.random();
-        if (roll < 0.5) walkRef.current(randomSpot(pos.current, 40));
-        else if (roll < 0.7) {
+        const spot = gridRef.current.randomSpot(pos.current, 40);
+        if (roll < 0.5) {
+          if (homeSide('home', spot) === 'home') walkRef.current(spot);
+        } else if (roll < 0.7) {
           walkRef.current({ x: 142, y: 130 });
           emoteTimer = setTimeout(() => {
             if (activeRef.current && clock() - lastTouch.current > 6000) setEmote('♪');
@@ -1047,19 +1154,40 @@ export function GardenWorld({
   }, [reduced, sleepy, grumpy, napping, active]);
 
   useEffect(() => {
-    if (!walking) return undefined;
+    // (in the hub AtlasWalk reads the feet; the garden only needs to know home or out)
+    if (!walking || hub) return undefined;
     const t = setInterval(() => {
       const x = Math.round(px.get());
       const y = Math.round(py.get());
       setFeet((f) => (f.x === x && f.y === y ? f : { x, y }));
     }, 150);
     return () => clearInterval(t);
-  }, [walking, px, py]);
+  }, [walking, px, py, hub]);
+  // home or out in the valley, with hysteresis at the yard's edge (lib/home-hub.ts); it
+  // changes the scene only when it flips
+  const noteSide = (at: Point) => setSide((prev) => homeSide(prev, at));
+  // A place walked for the first time from the hub leaves its keepsake in the hut's
+  // chest: the companion says so (as the world screen's note did), and nothing more.
+  const visited = useGame((s) => s.world?.visited ?? noZones);
+  const [heard, setHeard] = useState(visited);
+  const [foundNote, setFoundNote] = useState<string | null>(null);
+  if (heard !== visited) {
+    setHeard(visited);
+    if (hub) {
+      let had = heard;
+      for (const z of visited.filter((v) => !heard.includes(v))) {
+        const k = newKeepsakes(had, z).map(keepsake)[0];
+        had = [...had, z];
+        if (k)
+          setFoundNote(`keepsake found: ${k.name.toLowerCase()}. it waits in the chest at home.`);
+      }
+    }
+  }
+  useEffect(() => {
+    if (foundNote) useGame.setState({ voice: foundNote });
+  }, [foundNote]);
   // behind the hut, the stall or a tree, a faint copy shows through (never while napping:
   // the bed is meant to be inside)
-  // keepsakes set out in the garden stand in the way like any prop (lib/decor.ts)
-  const decor = useGame((s) => s.decor);
-  const gardenDecor = useMemo(() => decor.filter((d) => areaOf(d) === 'garden'), [decor]);
   useEffect(() => {
     setGardenWalk(walkWithDecor(gardenWalk, gardenDecor));
   }, [gardenDecor]);
@@ -1119,21 +1247,44 @@ export function GardenWorld({
   const ui = scale;
   const [bubbleHeight, setBubbleHeight] = useState(0);
   const bubbleWidth = Math.min(width - 16, 232);
+  // In the hub the garden sits at its origin in the valley, and the window is AtlasWalk's
+  // camera: bubbles keep inside it, and flip below near its top.
+  const OX = snap(gardenOrigin.x * scale);
+  const OY = snap(gardenOrigin.y * scale);
+  /** The window's left edge, in the garden's own screen pixels. */
+  const viewLeft = (sx: number) => {
+    'worklet';
+    return hub ? cam.value.x - OX : windowLeft(sx);
+  };
+  // the same edge for bubbles placed once (a tag, a reply), read on the JS side and only
+  // when the camera has moved a little (never during render)
+  const [camLeft, setCamLeft] = useState(0);
+  useAnimatedReaction(
+    () => (hub ? Math.round(cam.value.x / 16) * 16 : 0),
+    (x, last) => {
+      if (x !== last) runOnJS(setCamLeft)(x);
+    },
+  );
+  /** Whether the companion (feet at screen y `sy`, garden y `y`) is near the window's top. */
+  const nearTop = (sy: number, y: number) => {
+    'worklet';
+    return hub ? sy + OY - cam.value.y < TOP_FLIP * scale : y < TOP_FLIP;
+  };
   const bubbleStyle = useAnimatedStyle(() => {
     const s = project(proj, px.value, py.value);
-    const view0 = windowLeft(s.sx);
+    const view0 = viewLeft(s.sx);
     const left = Math.min(
       view0 + width - bubbleWidth - 8,
       Math.max(view0 + 8, s.sx - bubbleWidth / 2),
     );
     const above = s.sy - petPx * 0.95 - bubbleHeight - 3 * ui;
-    const top = py.value < TOP_FLIP ? s.sy + 3 * ui : above;
+    const top = nearTop(s.sy, py.value) ? s.sy + 3 * ui : above;
     return { transform: [{ translateX: Math.round(left) }, { translateY: Math.round(top) }] };
   });
   // The tail slides to stay over the companion when the bubble is held at the edge.
   const tailStyle = useAnimatedStyle(() => {
     const s = project(proj, px.value, py.value);
-    const view0 = windowLeft(s.sx);
+    const view0 = viewLeft(s.sx);
     const left = Math.min(
       view0 + width - bubbleWidth - 8,
       Math.max(view0 + 8, s.sx - bubbleWidth / 2),
@@ -1142,8 +1293,12 @@ export function GardenWorld({
     const dx = Math.max(-reach, Math.min(reach, s.sx - left - bubbleWidth / 2));
     return { transform: [{ translateX: Math.round(dx / ui) * ui }] };
   });
-  const tailDown = useAnimatedStyle(() => ({ opacity: py.value < TOP_FLIP ? 0 : 1 }));
-  const tailUp = useAnimatedStyle(() => ({ opacity: py.value < TOP_FLIP ? 1 : 0 }));
+  const tailDown = useAnimatedStyle(() => ({
+    opacity: nearTop(project(proj, px.value, py.value).sy, py.value) ? 0 : 1,
+  }));
+  const tailUp = useAnimatedStyle(() => ({
+    opacity: nearTop(project(proj, px.value, py.value).sy, py.value) ? 1 : 0,
+  }));
   const [tagWidth, setTagWidth] = useState<{ text: string; width: number } | null>(null);
 
   // The camera keeps the companion a little above centre and, when the map is wider
@@ -1193,6 +1348,60 @@ export function GardenWorld({
     walkTo({ x: spot.x, y: spot.y }, action);
   }
 
+  // ---- the hub's own ways in: a tap on the valley, a place's pin, a mission's start
+  /** A tap anywhere in the hub (valley pixels): the same as a tap on the garden's ground,
+   *  or, while decorating, where the keepsake in hand goes. */
+  function hubTap(r: Point): boolean {
+    if (!activeRef.current) return true;
+    const g = toGarden(r);
+    if (decorate) {
+      const used = decorate.onTap(g);
+      if (used === true) return true;
+      const to = used || g;
+      // never out of the garden from here
+      walkTo({
+        x: Math.max(24, Math.min(GARDEN.width - 24, to.x)),
+        y: Math.max(56, Math.min(GARDEN.fenceY - 20, to.y)),
+      });
+      return true;
+    }
+    lastTouch.current = clock();
+    setTag(null);
+    setFeedback(null);
+    setReaction(null);
+    playSound('steps');
+    walkTo(g);
+    return true;
+  }
+
+  function walkToMarker(id: string) {
+    const m = placeMarkers(HUB_REGION, null).find((x) => x.id === id);
+    if (!m || !activeRef.current) return;
+    lastTouch.current = clock();
+    setTag(null);
+    setFeedback(null);
+    setReaction(null);
+    gameFeedback('select');
+    walkTo(toGarden(m));
+  }
+
+  /** A mission set out from its place in the valley (the same checks as the world's). */
+  function startMission(id: string) {
+    const mission = missions.find((m) => m.id === id);
+    const latest = useGame.getState();
+    if (
+      !mission ||
+      !activeRef.current ||
+      !latest.player ||
+      latest.player.mode !== 'awake' ||
+      latest.player.level < mission.level ||
+      latest.battle ||
+      latest.missionReturnPending
+    )
+      return;
+    latest.sleep(mission.id, null);
+  }
+
   // The hut's door: walk up to it and go in.
   function goInside() {
     if (napping || !activeRef.current) return;
@@ -1229,6 +1438,129 @@ export function GardenWorld({
     respond('pat', companionLine('pat'), pos.current);
   }
 
+  // The bubbles: the tag over a place being walked to, the companion's words and a
+  // place's reply. Shared by the garden's own scene and the hub (above its tap layer).
+  const bubbles = (
+    <>
+      {tag &&
+        !feedback &&
+        (() => {
+          const at = project(proj, tag.x, tag.y);
+          const measured = tagWidth?.text === tag.text ? tagWidth.width : 0;
+          const view0 = hub ? camLeft - OX : windowLeft(at.sx);
+          const left = Math.max(
+            view0 + 4,
+            Math.min(view0 + width - measured - 4, at.sx - measured / 2),
+          );
+          const reach = Math.max(0, measured / 2 - 5 * ui);
+          const tail = Math.max(-reach, Math.min(reach, at.sx - left - measured / 2));
+          const tagHeight = type.label.lineHeight + 2 * contentInset(ui);
+          return (
+            <View
+              pointerEvents="none"
+              onLayout={(e) =>
+                setTagWidth({ text: tag.text, width: Math.round(e.nativeEvent.layout.width) })
+              }
+              style={{
+                position: 'absolute',
+                left: Math.round(left),
+                top: Math.max(4, Math.round(at.sy - tagHeight - 3 * ui)),
+                padding: contentInset(ui),
+                opacity: measured ? 1 : 0,
+                zIndex: 999,
+              }}
+            >
+              <FrameShape tone={frameTones.paper} unit={ui} />
+              <BodyText style={[type.label, { color: c.ink }]}>{tag.text.toUpperCase()}</BodyText>
+              <PixelTail offset={tail} />
+            </View>
+          );
+        })()}
+      {say && !feedback && !tag && !napping && active && (
+        <Animated.View
+          onLayout={(e) => setBubbleHeight(Math.round(e.nativeEvent.layout.height))}
+          style={[
+            { position: 'absolute', left: 0, top: 0, width: bubbleWidth, zIndex: 998 },
+            bubbleStyle,
+          ]}
+        >
+          <Pressable
+            accessibilityRole={say.onPress ? 'button' : 'text'}
+            accessibilityLabel={say.text}
+            accessibilityHint={say.hint}
+            disabled={!say.onPress}
+            onPress={say.onPress}
+            style={{ padding: contentInset(ui) }}
+          >
+            <FrameShape tone={frameTones.paper} unit={ui} />
+            <BodyText
+              role="status"
+              aria-live="polite"
+              accessibilityLiveRegion="polite"
+              style={type.body}
+            >
+              {say.text.toLowerCase()}
+            </BodyText>
+            {say.hint && <BodyText style={[type.caption, { color: c.shade }]}>{say.hint}</BodyText>}
+            <Animated.View
+              pointerEvents="none"
+              style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailStyle]}
+            >
+              <Animated.View
+                style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailDown]}
+              >
+                <PixelTail />
+              </Animated.View>
+              <Animated.View
+                style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailUp]}
+              >
+                <PixelTail side="top" />
+              </Animated.View>
+            </Animated.View>
+          </Pressable>
+        </Animated.View>
+      )}
+      {feedback &&
+        !napping &&
+        active &&
+        (() => {
+          const at = project(proj, feedback.x, feedback.y);
+          const w = Math.min(width - 16, 216);
+          const view0 = hub ? camLeft - OX : windowLeft(at.sx);
+          const left = Math.max(view0 + 8, Math.min(view0 + width - w - 8, at.sx - w / 2));
+          const below = feedback.kind === 'pat' || feedback.y < 90;
+          const reach = w / 2 - 6 * ui;
+          const tail = Math.max(-reach, Math.min(reach, at.sx - left - w / 2));
+          return (
+            <View
+              pointerEvents="none"
+              style={{
+                position: 'absolute',
+                left: Math.round(left),
+                width: w,
+                padding: contentInset(ui),
+                zIndex: 999,
+                // anchored by the edge nearest the target, so the tail always reaches it
+                ...(below
+                  ? { top: Math.round(Math.min(height - 94, at.sy + 12)) }
+                  : { bottom: Math.round(Math.min(height - 8, height - at.sy + 24)) }),
+              }}
+            >
+              <FrameShape tone={frameTones.paper} unit={ui} />
+              <BodyText
+                role="status"
+                aria-live="polite"
+                accessibilityLiveRegion="polite"
+                style={type.body}
+              >
+                {feedback.text}
+              </BodyText>
+              <PixelTail side={below ? 'top' : 'bottom'} offset={tail} />
+            </View>
+          );
+        })()}
+    </>
+  );
   const guardian = guardianPlayer(player);
   const companions = collectionOf(player)
     .filter((v) => v.befriendedAt !== null && v.id !== player.guardian)
@@ -1243,6 +1575,618 @@ export function GardenWorld({
   const keepsakes = gardenKeepsakes(memories);
   const pondWidth = Math.max(44, pond.width);
   const pondHeight = Math.max(44, pond.height);
+  if (hub) {
+    // ---- the home hub: AtlasWalk draws the valley, the garden's life is a layer in it
+    const oz = gardenOrigin.y; // depth (feet) in the valley's pixels = the garden's + this
+    // something of the garden's at its own depth among the valley's props: placed at the
+    // garden's origin, its children in the garden's own screen pixels
+    const at = (key: string, z: number, children: ReactNode) => (
+      <View
+        key={key}
+        pointerEvents="none"
+        style={{ position: 'absolute', left: OX, top: OY, zIndex: z }}
+      >
+        {children}
+      </View>
+    );
+    const cardPad = card ? (cardBox || 160) + 8 : 0;
+    const seen = Math.max(1, viewHeight - padBottom - cardPad);
+    const markers = decorate
+      ? undefined
+      : placeMarkers(HUB_REGION, card).filter((m) => m.id !== 'garden' || side === 'out');
+    const away = player.mode !== 'awake' || !!battle || pendingReturn || !active;
+    const preview = decorate?.preview
+      ? (() => {
+          const v = decorate.preview;
+          const b = decorBox(v.item, v.x, v.y);
+          const f = decorFootprint(v.item, v.x, v.y);
+          return {
+            key: 'preview',
+            src: decorImages[v.item],
+            x: b.left + gardenOrigin.x,
+            y: b.top + gardenOrigin.y,
+            w: b.w,
+            h: b.h,
+            z: v.y + oz,
+            ok: v.ok,
+            foot: { ...f, x: f.x + gardenOrigin.x, y: f.y + gardenOrigin.y },
+          };
+        })()
+      : undefined;
+    const scene = (
+      <>
+        {at(
+          'home-ground',
+          1,
+          <>
+            {gardenWater.map((water) => {
+              const r = snapRect({
+                left: water.x * scale,
+                top: water.y * scale,
+                width: water.w * scale,
+                height: water.h * scale,
+              });
+              return (
+                <Image
+                  key={water.id}
+                  source={waterFrames[water.id][reduced ? 0 : frame]}
+                  resizeMode="stretch"
+                  style={{
+                    position: 'absolute',
+                    left: r.left,
+                    top: r.top,
+                    width: r.width,
+                    height: r.height,
+                  }}
+                />
+              );
+            })}
+            {hutLook.path === 'flagstones' && (
+              <Image
+                source={hutPathImages.flagstones}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: flagstones.left,
+                  top: flagstones.top,
+                  width: flagstones.width,
+                  height: flagstones.height,
+                }}
+              />
+            )}
+            {destination && active && (
+              <View
+                style={{
+                  position: 'absolute',
+                  left: Math.round((destination.x - 3) * scale),
+                  top: Math.round((destination.y - 2) * scale),
+                  width: Math.round(6 * scale),
+                  height: Math.round(4 * scale),
+                  borderWidth: Math.max(1, Math.round(scale)),
+                  borderColor: '#FFF0B7',
+                  backgroundColor: 'rgba(81,107,55,0.3)',
+                }}
+              />
+            )}
+          </>,
+        )}
+        {gardenObjects
+          .filter((o) => o.action === 'lantern' || o.action === 'read' || o.action === 'water')
+          .map((o) => {
+            // the lantern's dark glass when it is off, and the small dot over the props
+            // that answer a tap (the props themselves are AtlasWalk's)
+            const art = billboard(proj, o.x, o.y, o.w, o.h);
+            const px1 = scale * art.f;
+            const left = snap(art.left);
+            const top = snap(art.top);
+            return at(
+              `home-mark-${o.id}`,
+              o.y + o.h + oz,
+              <>
+                {o.action === 'lantern' && !lanternOn && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      left: left + snap(7 * px1),
+                      top: top + snap(11 * px1),
+                      width: snap(5 * px1),
+                      height: snap(10 * px1),
+                      backgroundColor: '#71817A',
+                      borderLeftWidth: Math.max(1, Math.round(px1)),
+                      borderLeftColor: '#A6B69E',
+                    }}
+                  />
+                )}
+                {active && (
+                  <View
+                    style={{
+                      position: 'absolute',
+                      left: left + Math.round((o.w / 2 - 2) * px1),
+                      top: top - Math.round(5 * px1),
+                      width: Math.round(4 * px1),
+                      height: Math.round(4 * px1),
+                      backgroundColor: '#FFF3CF',
+                      borderWidth: Math.max(1, Math.round(px1)),
+                      borderColor: '#647E46',
+                    }}
+                  />
+                )}
+              </>,
+            );
+          })}
+        {gardenPlots.map((plot, i) => {
+          const stage = plotStage(lifetimeMinutes, i);
+          if (stage < 0) return null;
+          const key = `plot_${plot.kind}_${stage}`;
+          const [sw, sh] = growthSize(key);
+          return at(
+            `home-${plot.id}`,
+            plot.y + plot.h + oz,
+            <Sprite
+              source={growthImages[key]}
+              rect={snapRect({
+                left: plot.x * scale,
+                top: (plot.y - (sh - plot.h)) * scale,
+                width: sw * scale,
+                height: sh * scale,
+              })}
+              z={0}
+            />,
+          );
+        })}
+        {gardenOrchard.map((pit, i) => {
+          const stage = orchardStage(lifetimeMinutes, i);
+          if (stage < 0) return null;
+          const key = `orchard_${stage}`;
+          const [sw, sh] = growthSize(key);
+          return at(
+            `home-${pit.id}`,
+            pit.y + oz,
+            <Sprite
+              source={growthImages[key]}
+              rect={snapRect({
+                left: (pit.x - sw / 2) * scale,
+                top: (pit.y - sh) * scale,
+                width: sw * scale,
+                height: sh * scale,
+              })}
+              z={0}
+            />,
+          );
+        })}
+        {keepsakeIntentions
+          .filter((intention) => keepsakes[intention])
+          .map((intention) => {
+            const location = keepsakeLocations[intention];
+            const foot = project(proj, location.x + 8, location.y + 16);
+            const size = snap(16 * scale * foot.f);
+            return at(
+              `home-keepsake-${intention}`,
+              location.y + 17 + oz,
+              <View
+                style={{
+                  position: 'absolute',
+                  left: snap(foot.sx - size / 2),
+                  top: snap(foot.sy - size),
+                  width: size,
+                  height: size,
+                }}
+              >
+                <GardenKeepsakeArt intention={intention} size={size} />
+              </View>,
+            );
+          })}
+        {companions.map((v, i) => {
+          const spot = project(proj, companionSpots[i].x, companionSpots[i].y);
+          return at(
+            `home-visitor-${v.id}`,
+            companionSpots[i].y + oz,
+            <View
+              style={{
+                position: 'absolute',
+                left: Math.round(spot.sx - companionPx / 2),
+                top: Math.round(spot.sy - companionPx * (30 / 32)),
+                width: companionPx,
+                height: companionPx,
+              }}
+            >
+              <Pet
+                active={active}
+                visitor={v.id}
+                size={companionPx}
+                facing={i % 2 ? 'left' : 'right'}
+                bob={active}
+                decorative
+              />
+            </View>,
+          );
+        })}
+        {/* the hour's light is AtlasWalk's tint (150000); reactions sit under it, the
+            garden's own light pools, life and guide above it, as in the garden */}
+        {reaction &&
+          active &&
+          at(
+            'home-reaction',
+            149500,
+            <GardenReactions
+              key={reaction.id}
+              reaction={reaction}
+              scale={scale}
+              reduced={reduced}
+              place={place}
+              base={reactionBase(reaction)}
+              actor={reaction.actor}
+              signature={reaction.signature}
+            />,
+          )}
+        {at(
+          'home-lights',
+          150002,
+          gardenAnchors.lights
+            .filter((light) => (light.kind === 'lantern' ? lanternOn : night))
+            .map((light) => (
+              <Image
+                key={light.id}
+                source={lightImages[light.id]}
+                resizeMode="stretch"
+                style={{
+                  position: 'absolute',
+                  left: snap(light.x * scale),
+                  top: snap(light.y * scale),
+                  width: snap(light.w * scale),
+                  height: snap(light.h * scale),
+                }}
+              />
+            )),
+        )}
+        {at(
+          'home-ambient',
+          150003,
+          <Ambient
+            scale={scale}
+            place={place}
+            width={worldWidth}
+            height={height}
+            rain={false}
+            night={night}
+            day={!night && !grumpy}
+            reduced={reduced}
+            active={active}
+          />,
+        )}
+        {marker &&
+          active &&
+          at(
+            'home-marker',
+            150004,
+            <GardenMarker action={marker} scale={scale} bob={!reduced && frame % 2 === 1} />,
+          )}
+      </>
+    );
+    // hit areas and bubbles: above AtlasWalk's tap layer, following its camera, in the
+    // garden's own screen pixels (their depth only orders them among themselves)
+    const hits = (
+      <View
+        pointerEvents="box-none"
+        style={{ position: 'absolute', left: OX, top: OY, width: worldWidth, height }}
+      >
+        {!decorate && (
+          <>
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel="Look into the pond"
+              disabled={!active}
+              onPress={() => onObjectPress('pond')}
+              style={{
+                position: 'absolute',
+                left: pond.left - (pondWidth - pond.width) / 2,
+                top: pond.top - (pondHeight - pond.height) / 2,
+                width: pondWidth,
+                height: pondHeight,
+                zIndex: 1,
+              }}
+            />
+            {gardenObjects.map((o) => {
+              if (!o.action) return null;
+              const action = o.action as Action;
+              const small = action === 'read' || action === 'water' || action === 'lantern';
+              const art = billboard(proj, o.x, o.y, o.w, o.h);
+              const w = snap(art.width);
+              const h = snap(art.height);
+              const tw = Math.max(44, w);
+              const th = Math.max(44, h);
+              return (
+                <Pressable
+                  key={o.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    o.id === 'hut'
+                      ? 'go inside the hut'
+                      : action === 'lantern'
+                        ? `Turn the leaf lantern ${lanternOn ? 'off' : 'on'}`
+                        : gardenHotspots[action].label
+                  }
+                  aria-pressed={action === 'lantern' ? lanternOn : undefined}
+                  disabled={!active}
+                  onFocus={() => {
+                    if (activeRef.current)
+                      setTag({
+                        text: o.id === 'hut' ? 'go inside the hut' : gardenHotspots[action].label,
+                        x: o.x + o.w / 2,
+                        y: o.y,
+                      });
+                  }}
+                  onPress={() => (o.id === 'hut' ? goInside() : onObjectPress(action))}
+                  style={{
+                    position: 'absolute',
+                    left: snap(snap(art.left) - (tw - w) / 2),
+                    top: snap(snap(art.top) - (th - h) / 2),
+                    width: tw,
+                    height: th,
+                    // small props answer above a companion standing by them
+                    zIndex: small ? 800 : o.y + o.h,
+                  }}
+                />
+              );
+            })}
+            {gardenPlots.map((plot, i) => {
+              const stage = plotStage(lifetimeMinutes, i);
+              return (
+                <Pressable
+                  key={plot.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    stage < 0
+                      ? 'An empty meadow bed, waiting for seeds'
+                      : stage === 4
+                        ? `A ${plot.kind} bed in bloom`
+                        : `A ${plot.kind} bed, still growing`
+                  }
+                  disabled={!active}
+                  onPress={() => onObjectPress('meadow')}
+                  style={{
+                    position: 'absolute',
+                    left: Math.round(plot.x * scale),
+                    top: Math.round((plot.y - 6) * scale),
+                    width: Math.max(44, Math.round(plot.w * scale)),
+                    height: Math.max(44, Math.round((plot.h + 6) * scale)),
+                    zIndex: plot.y + plot.h,
+                  }}
+                />
+              );
+            })}
+            {gardenOrchard.map((pit, i) => {
+              const stage = orchardStage(lifetimeMinutes, i);
+              if (stage < 0) return null;
+              const [sw, sh] = growthSize(`orchard_${stage}`);
+              return (
+                <Pressable
+                  key={pit.id}
+                  accessibilityRole="button"
+                  accessibilityLabel={
+                    stage === 4 ? 'A fruit tree in the orchard' : 'A young tree in the orchard'
+                  }
+                  disabled={!active}
+                  onPress={() => onObjectPress('meadow')}
+                  style={{
+                    position: 'absolute',
+                    left: Math.round((pit.x - sw / 2) * scale),
+                    top: Math.round((pit.y - sh) * scale),
+                    width: Math.max(44, Math.round(sw * scale)),
+                    height: Math.max(44, Math.round(sh * scale)),
+                    zIndex: pit.y,
+                  }}
+                />
+              );
+            })}
+            {onKeepsakePress &&
+              keepsakeIntentions.map((intention) => {
+                const memory = keepsakes[intention];
+                if (!memory) return null;
+                const location = keepsakeLocations[intention];
+                const foot = project(proj, location.x + 8, location.y + 16);
+                const size = snap(16 * scale * foot.f);
+                const grow = Math.max(0, Math.ceil((44 - size) / 2));
+                return (
+                  <Pressable
+                    key={`keepsake-${intention}`}
+                    testID={`garden-keepsake-${intention}`}
+                    accessibilityRole="button"
+                    accessibilityLabel={`Open the ${intention} keepsake from your break with ${memory.companion.name}`}
+                    disabled={!active}
+                    onPress={() => {
+                      if (!activeRef.current) return;
+                      lastTouch.current = clock();
+                      onKeepsakePress(memory);
+                    }}
+                    style={{
+                      position: 'absolute',
+                      left: snap(foot.sx - size / 2) - grow,
+                      top: snap(foot.sy - size) - grow,
+                      width: size + 2 * grow,
+                      height: size + 2 * grow,
+                      zIndex: 801,
+                    }}
+                  />
+                );
+              })}
+            {companions.map((v, i) => {
+              const spot = project(proj, companionSpots[i].x, companionSpots[i].y);
+              return (
+                <Pressable
+                  key={`visitor-${v.id}`}
+                  accessibilityRole="button"
+                  accessibilityLabel={`Greet ${visitorInfo(v.id).name}`}
+                  disabled={!active}
+                  onPress={() => {
+                    if (!activeRef.current) return;
+                    lastTouch.current = clock();
+                    stopJourney();
+                    setTag(null);
+                    setFeedback(null);
+                    setReaction(null);
+                    useGame.setState({
+                      voice: `${visitorInfo(v.id).name.toLowerCase()} waves a leaf at you.`,
+                    });
+                  }}
+                  style={{
+                    position: 'absolute',
+                    left: Math.round(spot.sx - companionPx / 2),
+                    top: Math.round(spot.sy - companionPx * (30 / 32)),
+                    width: companionPx,
+                    height: companionPx,
+                    zIndex: companionSpots[i].y,
+                  }}
+                />
+              );
+            })}
+            <Animated.View
+              style={[
+                { position: 'absolute', left: 0, top: 0, width: petPx, height: petPx },
+                petStyle,
+              ]}
+            >
+              <Pressable
+                accessibilityRole="button"
+                accessibilityLabel={`Greet ${guardian.pet_name}`}
+                disabled={!active}
+                onPress={patGuardian}
+                style={{ width: petPx, height: petPx }}
+              />
+            </Animated.View>
+          </>
+        )}
+        {active && bubbles}
+      </View>
+    );
+    return (
+      <View
+        pointerEvents={active ? 'auto' : 'none'}
+        {...(Platform.OS === 'web' ? { inert: !active } : {})}
+        aria-hidden={!active}
+        accessibilityElementsHidden={!active}
+        importantForAccessibility={active ? 'auto' : 'no-hide-descendants'}
+        style={{ width, height: viewHeight, overflow: 'hidden', backgroundColor: '#315C3B' }}
+      >
+        <AtlasWalk
+          region={HUB_REGION}
+          width={width}
+          height={viewHeight}
+          active={active}
+          start={toRegion(home)}
+          follow={{ px, py, ox: gardenOrigin.x, oy: gardenOrigin.y, cam }}
+          companion={{
+            walking: walking && active,
+            facing,
+            grumpy,
+            yawning: sleepy,
+            bob: !walking && active,
+            pose:
+              active && !walking && reaction?.signature
+                ? { id: reaction.id, kind: reaction.signature.pose }
+                : undefined,
+            emote,
+          }}
+          homeLayer
+          walk={hubRows ?? undefined}
+          extras={valleyExtras}
+          preview={preview}
+          onTap={hubTap}
+          onMove={(r) => {
+            useGame.getState().walkWorld(HUB_REGION, r.x, r.y);
+            noteSide(toGarden(r));
+          }}
+          markers={markers}
+          onMarker={walkToMarker}
+          // a place's name, small, under the HUD (the HUD and the tab bar never change)
+          showName
+          nameTop={hudClearance(insets.top) + 4}
+          // the companion a little above the middle of what is seen above the hotbar and
+          // any card; the camera eases there when a card opens or closes
+          focusY={(seen * 0.55) / viewHeight}
+          padBottom={padBottom + cardPad}
+          scene={scene}
+          hits={hits}
+        />
+        {grumpy && (
+          // the grey day's rain over the whole window, as it fell over the whole garden
+          <Ambient
+            scale={scale}
+            place={(x, y) => ({
+              sx: (x / GARDEN.width) * width,
+              sy: (y / GARDEN.height) * viewHeight,
+              f: 1,
+            })}
+            width={width}
+            height={viewHeight}
+            rain
+            night={false}
+            day={false}
+            reduced={reduced}
+            active={active}
+            smoke={false}
+          />
+        )}
+        {card && active && !decorate && (
+          <View
+            // the camera keeps the scene above the card as it is, not as tall as it may grow
+            onLayout={(e) => setCardBox(Math.round(e.nativeEvent.layout.height))}
+            style={{
+              position: 'absolute',
+              left: Math.max(8, (width - 560) / 2),
+              right: Math.max(8, (width - 560) / 2),
+              bottom: padBottom + 8,
+              maxHeight: Math.min(420, viewHeight * 0.5),
+              zIndex: 10,
+            }}
+          >
+            <PixelFrame tone="paper" style={{ padding: 4 * ui, gap: 6 }}>
+              <PlaceCardBody
+                card={card}
+                player={player}
+                away={away}
+                appActive={appActive}
+                act={{
+                  startMission,
+                  openShop: () => activeRef.current && router.push('/shop'),
+                  openArena: () => activeRef.current && router.push('/arena'),
+                  travel: (here, route) => {
+                    if (!activeRef.current || !route.length) return;
+                    gameFeedback('select');
+                    // the journey plays on the world screen; one back to the valley lands
+                    // here again (app/world.tsx)
+                    useUi.setState({
+                      worldLink: { trip: { from: here, to: route[route.length - 1] } },
+                    });
+                    router.push('/world');
+                  },
+                  goHome: () => setCard(null),
+                  goInside,
+                  stepOutside: () => setCard(null),
+                  decorate: () => setCard(null),
+                }}
+              />
+            </PixelFrame>
+          </View>
+        )}
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            {
+              position: 'absolute',
+              left: 0,
+              top: 0,
+              width,
+              height: viewHeight,
+              backgroundColor: '#1E1917',
+              zIndex: 2000,
+            },
+            veilStyle,
+          ]}
+        />
+      </View>
+    );
+  }
   return (
     <View
       // @ts-expect-error dataSet is a react-native-web prop (sets data-pixel for crisp CSS scaling)
@@ -1915,125 +2859,7 @@ export function GardenWorld({
             <FloatingZ />
           </View>
         )}
-        {tag &&
-          !feedback &&
-          (() => {
-            const at = project(proj, tag.x, tag.y);
-            const measured = tagWidth?.text === tag.text ? tagWidth.width : 0;
-            const view0 = windowLeft(at.sx);
-            const left = Math.max(
-              view0 + 4,
-              Math.min(view0 + width - measured - 4, at.sx - measured / 2),
-            );
-            const reach = Math.max(0, measured / 2 - 5 * ui);
-            const tail = Math.max(-reach, Math.min(reach, at.sx - left - measured / 2));
-            const tagHeight = type.label.lineHeight + 2 * contentInset(ui);
-            return (
-              <View
-                pointerEvents="none"
-                onLayout={(e) =>
-                  setTagWidth({ text: tag.text, width: Math.round(e.nativeEvent.layout.width) })
-                }
-                style={{
-                  position: 'absolute',
-                  left: Math.round(left),
-                  top: Math.max(4, Math.round(at.sy - tagHeight - 3 * ui)),
-                  padding: contentInset(ui),
-                  opacity: measured ? 1 : 0,
-                  zIndex: 999,
-                }}
-              >
-                <FrameShape tone={frameTones.paper} unit={ui} />
-                <BodyText style={[type.label, { color: c.ink }]}>{tag.text.toUpperCase()}</BodyText>
-                <PixelTail offset={tail} />
-              </View>
-            );
-          })()}
-        {say && !feedback && !tag && !napping && active && (
-          <Animated.View
-            onLayout={(e) => setBubbleHeight(Math.round(e.nativeEvent.layout.height))}
-            style={[
-              { position: 'absolute', left: 0, top: 0, width: bubbleWidth, zIndex: 998 },
-              bubbleStyle,
-            ]}
-          >
-            <Pressable
-              accessibilityRole={say.onPress ? 'button' : 'text'}
-              accessibilityLabel={say.text}
-              accessibilityHint={say.hint}
-              disabled={!say.onPress}
-              onPress={say.onPress}
-              style={{ padding: contentInset(ui) }}
-            >
-              <FrameShape tone={frameTones.paper} unit={ui} />
-              <BodyText
-                role="status"
-                aria-live="polite"
-                accessibilityLiveRegion="polite"
-                style={type.body}
-              >
-                {say.text.toLowerCase()}
-              </BodyText>
-              {say.hint && (
-                <BodyText style={[type.caption, { color: c.shade }]}>{say.hint}</BodyText>
-              )}
-              <Animated.View
-                pointerEvents="none"
-                style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailStyle]}
-              >
-                <Animated.View
-                  style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailDown]}
-                >
-                  <PixelTail />
-                </Animated.View>
-                <Animated.View
-                  style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailUp]}
-                >
-                  <PixelTail side="top" />
-                </Animated.View>
-              </Animated.View>
-            </Pressable>
-          </Animated.View>
-        )}
-        {feedback &&
-          !napping &&
-          active &&
-          (() => {
-            const at = project(proj, feedback.x, feedback.y);
-            const w = Math.min(width - 16, 216);
-            const view0 = windowLeft(at.sx);
-            const left = Math.max(view0 + 8, Math.min(view0 + width - w - 8, at.sx - w / 2));
-            const below = feedback.kind === 'pat' || feedback.y < 90;
-            const reach = w / 2 - 6 * ui;
-            const tail = Math.max(-reach, Math.min(reach, at.sx - left - w / 2));
-            return (
-              <View
-                pointerEvents="none"
-                style={{
-                  position: 'absolute',
-                  left: Math.round(left),
-                  width: w,
-                  padding: contentInset(ui),
-                  zIndex: 999,
-                  // anchored by the edge nearest the target, so the tail always reaches it
-                  ...(below
-                    ? { top: Math.round(Math.min(height - 94, at.sy + 12)) }
-                    : { bottom: Math.round(Math.min(height - 8, height - at.sy + 24)) }),
-                }}
-              >
-                <FrameShape tone={frameTones.paper} unit={ui} />
-                <BodyText
-                  role="status"
-                  aria-live="polite"
-                  accessibilityLiveRegion="polite"
-                  style={type.body}
-                >
-                  {feedback.text}
-                </BodyText>
-                <PixelTail side={below ? 'top' : 'bottom'} offset={tail} />
-              </View>
-            );
-          })()}
+        {bubbles}
       </Animated.View>
       <Animated.View
         pointerEvents="none"
