@@ -43,7 +43,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   hiker: { zone: 'ridge', from: [144, 320], to: [168, 286], face: ['front', 'east'] },
   forager: { zone: 'woodland', from: [180, 172], to: [214, 168], face: ['west', 'front'] },
   picnicker: { zone: 'park', from: [18, 100], to: [106, 100], face: ['front', 'east'] },
-  angler: { zone: 'riverside', from: [262, 434], to: [278, 434], face: ['east', 'east'] },
+  angler: { zone: 'riverside', from: [261, 434], to: [270, 434], face: ['east', 'east'] },
   miller: { zone: 'riverside', from: [96, 280], to: [128, 282], face: ['front', 'east'] },
   botanist: { zone: 'station', from: [64, 330], to: [152, 330], face: ['west', 'back'] },
   stargazer: { zone: 'station', from: [44, 152], to: [128, 152], face: ['back', 'east'] },

@@ -805,7 +805,7 @@ def harbour(frame: int = 0):
         ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
         ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
         # the beach: nets drying, boats hauled up, chairs, driftwood
-        ('nets-1', 'net_rack', 16, 236), ('nets-2', 'net_rack', 16, 290), 
+        ('nets-1', 'net_rack', 16, 236), ('pots-3', 'lobster_pots', 22, 300), 
         ('chair-1', 'deck_chair', 30, 344), ('chair-2', 'deck_chair_b', 50, 352),
         # the boats: each at a jetty's end, one on its buoy in the basin, a sail beyond
         ('boat-1', 'boat_blue', 83, 318), ('boat-2', 'boat_red', 248, 348), ('boat-3', 'boat_blue', 150, 430),
@@ -1055,9 +1055,15 @@ def riverside(frame: int = 0):
                 style.darken(cv, x, mt + k)
     for y in range(mt - 5, mt + 4):
         cv.set(157, y, STONE[1]); cv.set(206, y, STONE[0])
+    for px in (160, 180, 200):  # stone piers under its front, standing in the water
+        for y in range(mt + 5, mt + 10):
+            for x in range(px, px + 4):
+                cv.set(x, y, STONE[2] if x < px + 3 else STONE[0])
+            cv.set(px, y, STONE[3])
+        cv.hline(px - 1, mt + 10, 6, WTR[4])  # the ripple round its foot
     towpath |= landing
     # the fishing platform at the end of the bank walk, out over the slack water
-    deck = dipping_deck(cv, deck_x, 424, 24, 14, river)
+    deck = dipping_deck(cv, deck_x, 424, 16, 14, river)  # out to mid-stream, not across it
     for (rx, ry, n) in ((deck_x - 18, 460, 6), (300, 330, 5), (250, 520, 7), (120, 310, 5), (180, 318, 4)):
         if (rx, ry) in river or any((rx + d, ry) in river for d in (-3, 3)):
             reeds(cv, rx, ry, seed=rx, n=n)
