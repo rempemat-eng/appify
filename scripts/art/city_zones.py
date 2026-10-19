@@ -13,8 +13,8 @@ import math  # noqa: F401
 from zones import *  # noqa: F401,F403  (zones.py registers itself under that name)
 from zones import _decal, _rgb  # noqa: F401
 
-__all__ = ['junction', 'canal', 'skyport', 'grate', 'gear_ring', 'city_neon', 'city_heights', 'city_plaza',
-           'city_waterfront', 'city_market', 'city_downtown', 'city_docks', 'city_point']
+__all__ = ['junction', 'canal', 'skyport', 'grate', 'gear_ring', 'paint_fan', 'GRANITE', 'city_neon', 'city_heights',
+           'city_plaza', 'city_waterfront', 'city_market', 'city_downtown', 'city_docks', 'city_point']
 
 
 def grate(cv: Canvas, x0: int, y0: int, w: int = 12, h: int = 8):
@@ -73,19 +73,103 @@ def ring_posts(cv: Canvas, cx: int, cy: int, rx: int, ry: int):
         cv.set(x, y - 7, BRASS[4]); cv.set(x + 1, y + 1, IRON[0])
 
 
+GRANITE = ['#3A3A42', '#55555E', '#73737A', '#93918F', '#B4B0A8', '#D2CDC2']
+
+
+def paint_fan(cv: Canvas, mask, seed: int = 0, R: int = 15):
+    """Setts laid in fans (segmental arcs, the way a square is paved by hand): each
+    course a curve, each sett lit on its top edge, a dark joint all round, the stones'
+    tones varied one by one, so the square reads as laid stone and never as one flat
+    texture."""
+    for (x, y) in mask:
+        col = (x + (R if (y // R) % 2 else 0)) // (2 * R)
+        u = x + (R if (y // R) % 2 else 0) - col * 2 * R - R
+        yy = y + R - math.sqrt(max(0.0, R * R - u * u)) * 0.85
+        row = int(yy // 4)
+        along = x + row * 3
+        stone = along // 5
+        r, a = int(yy) % 4, along % 5
+        t = noise2(stone, row, 1701 + seed)
+        base = GRANITE[4] if t > 0.78 else GRANITE[3] if t > 0.3 else GRANITE[2]
+        if r == 0 or a == 0:
+            c = GRANITE[1]
+        elif r == 1:
+            c = GRANITE[5] if t > 0.78 else GRANITE[4]
+        elif r == 3 or a == 4:
+            c = GRANITE[2] if base != GRANITE[2] else GRANITE[1]
+        else:
+            c = base
+        cv.set(x, y, c)
+
+
+def wear(cv: Canvas, lines, mask, width: float = 7.0, seed: int = 0):
+    """Where feet go most the setts are polished paler: along the lines people walk
+    (platform to tower, tower to the lane, the lane to each door), dithered at the edge."""
+    for line in lines:
+        for (x, y) in worlds.thick(line, width, seed=seed):
+            if (x, y) in mask and noise2(x, y, 1711) > 0.35:
+                r, g, b, a = cv.get(x, y)
+                cv.set(x, y, (min(255, r + 14), min(255, g + 13), min(255, b + 10), a))
+
+
+def cinder_yard(cv: Canvas, x0: int, y0: int, x1: int, y1: int, seed: int = 0):
+    """A railway yard's ground: cinders and ballast in small lit and dark lumps, oil-dark
+    where engines stood, sooty grass in the corners."""
+    for y in range(y0, y1):
+        for x in range(x0, x1):
+            k = (x // 3 + (y // 2) * 7) % 5
+            n = noise2(x // 3, y // 2, 1720 + seed)
+            c = IRON[3] if n > 0.8 else IRON[2] if n > 0.45 else STONE[1] if n > 0.15 else IRON[1]
+            if (x % 3 == 0 or y % 2 == 0) and k:
+                c = IRON[1] if c != IRON[1] else IRON[0]
+            if smooth_noise(x, y, 18, 1721 + seed) > 0.76:
+                c = IRON[0] if (x + y) % 2 else IRON[1]  # oil where engines stood
+            if smooth_noise(x, y, 11, 1722 + seed) < 0.16 and (x + y) % 3:
+                c = '#46583F' if (x + y) % 2 else '#5C6E4C'  # sooty grass
+            cv.set(x, y, c)
+
+
+def siding(cv: Canvas, blocked: set, x0: int, x1: int, y0: int):
+    """A short siding: sleepers and rails ending at a timber buffer stop to the east."""
+    for x in range(x0, x1, 7):
+        for y in range(y0, y0 + 11):
+            cv.set(x, y, WOOD[3] if y == y0 else WOOD[2]); cv.set(x + 1, y, WOOD[2]); cv.set(x + 2, y, WOOD[1])
+    for ry in (y0 + 2, y0 + 8):
+        cv.hline(x0, ry, x1 - x0, IRON[4]); cv.hline(x0, ry + 1, x1 - x0, IRON[2])
+    for y in range(y0 - 4, y0 + 12):  # the buffer stop: a timber beam on rail posts
+        for x in range(x1, x1 + 6):
+            c = WOOD[4] if y < y0 - 1 else WOOD[3] if x < x1 + 2 else WOOD[1]
+            if y in (y0 + 1, y0 + 7) and x < x1 + 3:
+                c = RED[3]  # the buffers' red faces
+            cv.set(x, y, c)
+            blocked.add((x, y))
+
+
+def sleeper_stack(cv: Canvas, blocked: set, x0: int, y0: int, n: int = 4):
+    """Spare sleepers stacked crosswise: their lit tops and their end grain."""
+    for k in range(n):
+        y = y0 - k * 3
+        for x in range(x0 + (k % 2) * 2, x0 + 30 + (k % 2) * 2):
+            cv.set(x, y, WOOD[4] if x < x0 + 20 else WOOD[3]); cv.set(x, y + 1, WOOD[2]); cv.set(x, y + 2, WOOD[1])
+            blocked |= {(x, y), (x, y + 1), (x, y + 2)}
+    for x in range(x0, x0 + 32):
+        style.darken(cv, x + 1, y0 + 3)
+
+
 def junction(frame: int = 0):
     """Cogsworth Junction: the train from the valley stands at the platform, the
     square below has the clock tower and the tinkerers' workshops, pipes and steam
     vents, and the gear ring at the bottom. The rails run on east toward Dust Gulch."""
     cv = Canvas(W, H)
     worlds.grass(cv, frame, ['#2B3B2E', '#46583F', '#5C6E4C', '#6B7C55', '#8E9C6E'])  # sooty grass
-    # north of the line: a soot-dark yard behind a wall
-    for y in range(0, 76):
-        for x in range(W):
-            n = noise2(x, y, 151)
-            cv.set(x, y, IRON[1] if n > 0.6 else IRON[2] if n > 0.2 else STONE[1])
-    detail.bricks(cv, 0, 62, W, 14, BRICK, seed=9, base=3)
-    cv.hline(0, 62, W, BRICK[4])
+    # north of the line: the engine yard, cinders and ballast, a siding ending at its
+    # buffer stop, spare sleepers stacked; the signal box and the water tower stand
+    # beside the running line (nothing is cut off by the world's edge)
+    blocked = set()
+    cinder_yard(cv, 0, 0, W, 80, seed=1)
+    siding(cv, blocked, 128, 236, 12)
+    sleeper_stack(cv, blocked, 248, 60, 4)
+    sleeper_stack(cv, blocked, 20, 28, 3)
     paint_rails(cv, 82)
     # the platform: stone slabs with a painted edge
     plat = {(x, y) for x in range(W) for y in range(100, 134)}
@@ -101,8 +185,20 @@ def junction(frame: int = 0):
     square = {(x, y) for x in range(W) for y in range(136, 436) if y < square_edge(x)}
     lane = worlds.thick([(160, 430), (160, 468)], 16)
     spur = worlds.thick([(150, 504), (128, 506)], 7)  # the short way off the lane into the ring
-    worlds.paint_cobbles(cv, square | lane)
-    for (x, y) in square | lane:  # a kerb of dressed stone where the cobbles meet the grass
+    paint_fan(cv, square | lane, seed=1)
+    # a ring of dark granite setts round the clock tower, and a gutter down the lane
+    for (x, y) in square:
+        k = ((x - 163) / 52) ** 2 + ((y - 312) / 24) ** 2
+        if 0.78 < k < 1.0:
+            cv.set(x, y, GRANITE[1] if (x // 3 + y) % 2 else GRANITE[2])
+        elif 0.74 < k <= 0.78:
+            cv.set(x, y, GRANITE[4])
+    for y in range(350, 470):
+        cv.set(159, y, GRANITE[1]); cv.set(160, y, GRANITE[0] if y % 6 else GRANITE[2]); cv.set(161, y, GRANITE[3])
+    wear(cv, [[(160, 136), (160, 176), (150, 300)], [(160, 330), (160, 436)], [(60, 240), (110, 270), (150, 300)],
+              [(250, 262), (200, 290), (172, 300)], [(60, 392), (110, 360), (152, 336)], [(160, 120), (210, 120)]],
+         square | lane)
+    for (x, y) in square | lane:  # a kerb of dressed stone where the setts meet the grass
         if (x, y + 1) not in square and (x, y + 1) not in lane and y + 1 < H:
             cv.set(x, y, STONE[3]); cv.set(x, y + 1, STONE[1])
     for (gx, gy) in ((70, 190), (238, 196), (110, 360), (214, 372)):
@@ -126,21 +222,21 @@ def junction(frame: int = 0):
             if k < 0.55:
                 style.darken(cv, x, y)
     objects = [
-        # the far side of the line: chimneys and pipes over the wall
-        ('ws-far-1', 'workshop_round', 10, -26), ('ws-far-2', 'workshop', 200, -24),
-        ('pipes-far', 'pipe_run', 104, 48),
+        # beside the running line: the signal box at the west end, the water tower east
+        ('signal-box', 'signal_box', 4, 12), ('water-tower', 'engine_tank', 266, 12),
+        ('wagon', 'coal_cart', 196, 2),
         # the train at the platform, steam from its stack
-        ('engine', 'locomotive', 96, 43), ('puff-engine', 'steam_puff', 112, 26),
+        ('engine', 'locomotive', 86, 33), ('puff-engine', 'steam_puff', 104, 12),
         # the platform
         ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'iron_bench', 208, 104),
         ('trunk-p1', 'steamer_trunk', 14, 112), ('trunk-p2', 'steamer_trunk', 30, 118), ('coal-p', 'coal_cart', 284, 110),
-        # the square
-        ('ws-left', 'workshop', 4, 150), ('ws-right', 'workshop_f1', 222, 166),
+        # the square: the tinkerers' workshop, the lodging house, the outfitter's shop
+        ('ws-left', 'workshop', 4, 150), ('ws-right', 'house_slate', 226, 152),
         ('tower', 'clock_tower', 136, 176),
         ('lamp-s1', 'gas_lamp', 112, 280), ('lamp-s2', 'gas_lamp', 196, 280),
-        ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 236, 252),
-        ('puff-c1', 'steam_puff', 66, 132), ('puff-c2', 'steam_puff', 282, 132),
-        ('ws-low', 'workshop_round', 6, 320), ('coal-1', 'coal_cart', 90, 384),
+        ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 214, 420),
+        ('puff-c1', 'steam_puff', 66, 132),
+        ('ws-low', 'shop_ashlar', 2, 296), ('coal-1', 'coal_cart', 100, 384),
         ('trunk-2', 'steamer_trunk', 280, 396),
         ('puff-v3', 'steam_puff', 206, 352), ('kiosk', 'tea_kiosk', 250, 300),
         # round the ring
@@ -149,7 +245,7 @@ def junction(frame: int = 0):
     ]
     stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (80, 508), 'workshop': (52, 248),
               'canal': (160, 568)}
-    return cv, objects, stands
+    return cv, objects, stands, blocked
 
 
 def canal(frame: int = 0):
@@ -248,12 +344,30 @@ def canal(frame: int = 0):
         cv.set(x, 372, '#2B3B2E')
     # the forecourt before the foundry's door: setts black with spilt slag, lit orange
     fore = {(x, y) for x in range(24, 144) for y in range(404, 430)}
-    worlds.paint_cobbles(cv, fore)
-    for (x, y) in fore:
-        if noise2(x // 4, y // 3, 498) > 0.72:
-            cv.set(x, y, IRON[1])  # spilt slag
-        if y == 429:
-            cv.set(x, y, STONE[1])
+    paint_fan(cv, fore, seed=2)
+    # the casting floors either side of the great door (the way to the door stays clear):
+    # beds of moulding sand with the pig bed pressed in, a sow channel along each and
+    # the pigs branching off it like teeth; the newest pour still glows nearest the door
+    for (bx0, bx1) in ((28, 60), (86, 132)):
+        for y in range(407, 428):
+            for x in range(bx0, bx1):
+                n = noise2(x // 2, y // 2, 1730)
+                c = '#8C7A5E' if n > 0.5 else '#7A6A50' if n > 0.15 else '#9C8A6C'
+                cv.set(x, y, '#B4A07E' if y == 407 else c)
+                blocked.add((x, y))
+        door_side = bx1 if bx0 < 72 else bx0
+        for x in range(bx0 + 2, bx1 - 2):
+            hot = abs(x - door_side) < 14
+            cv.set(x, 417, '#FFB648' if hot else IRON[1]); cv.set(x, 418, '#F2721E' if hot else IRON[0])
+        for px in range(bx0 + 3, bx1 - 3, 5):
+            hot = abs(px - door_side) < 12
+            for y in list(range(409, 416)) + list(range(420, 427)):
+                c = ('#F2721E' if (y - 409) % 3 else '#FFB648') if hot else (IRON[2] if y in (409, 420) else IRON[1])
+                cv.set(px, y, c); cv.set(px + 1, y, '#C2380E' if hot else IRON[0])
+        for x in range(bx0, bx1):  # the bed's timber curb, lit on top
+            cv.set(x, 406, WOOD[4]); cv.set(x, 428, WOOD[2])
+        for y in range(406, 429):
+            cv.set(bx0, y, WOOD[3]); cv.set(bx1 - 1, y, WOOD[1])
     light_pool(cv, 72, 412, 52, 18, '#FFB648')
     # the allotments (fault 23): beds of different sizes and crops, edged with boards
     # whose fronts are seen, gravel between them, a picket fence round the plot with
@@ -270,7 +384,7 @@ def canal(frame: int = 0):
     picket_fence(cv, blocked, 8, 314, 438, 556, gate=(142, 178))
     objects = [
         # warehouses either side of the lane at the top
-        ('wh-1', 'workshop_round', 20, 22), ('wh-2', 'workshop_f2', 200, 34),
+        ('wh-1', 'warehouse', 14, -8), ('wh-2', 'workshop_round', 206, 24),
         ('lamp-1', 'gas_lamp', 124, 96), ('lamp-2', 'gas_lamp', 184, 96),
         # the north towpath: the crane and the moored boat
         ('crane', 'canal_crane', 70, 112), ('boat', 'narrowboat', 8, 186), ('trunk-1', 'steamer_trunk', 30, 150),

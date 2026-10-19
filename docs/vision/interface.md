@@ -16,6 +16,7 @@
 └──────────────────────────────┘
 ```
 
+- Home is the home hub ([home-hub.md](home-hub.md)): the garden is a place in the valley, and walking out of the gate, up the trail or over the meadow's sides carries on into Crossroads Town, the ridge, the woodland and the riverside on the same screen. The HUD and the hotbar stay; a zone's name shows small under the HUD for a moment; a place out in the valley shows its card above the hotbar. Only doors (the hut) and journeys change screen.
 - Home never scrolls. Everything Home used to stack below the garden now lives in a sheet or in the world:
   - **Nap and break ideas:** the NAP sheet (from the hotbar or the bed).
   - **Companion:** the HUD portrait opens the companion sheet.

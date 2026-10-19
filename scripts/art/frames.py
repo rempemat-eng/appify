@@ -81,11 +81,12 @@ PORTS = {
     ('hearthold', 'scorch'): (OPEN, None),
     ('caldera', 'hearthold'): (OPEN, None),
     ('caldera', 'springs'): (OPEN, None),
-    # the Tidebloom Isles: the escarpments and the gorge close what they close; the
-    # landing and the cove are both at sea level, so the land runs on between them
-    ('rainforest', 'headwaters'): ((224, 280), None),
-    ('rainforest', 'landing'): ((128, 184), None),
-    ('headwaters', 'cove'): ((192, 248), None),
+    # the Tidebloom Isles: the land runs on across every seam; the escarpments, which
+    # follow the contours and cross the seams where the land puts them, close what they
+    # close, and stairs carry the trails up them (isle_zones.py)
+    ('rainforest', 'headwaters'): (OPEN, None),
+    ('rainforest', 'landing'): (OPEN, None),
+    ('headwaters', 'cove'): (OPEN, None),
     ('landing', 'cove'): (OPEN, None),
 }
 

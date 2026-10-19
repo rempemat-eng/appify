@@ -79,6 +79,6 @@ export const journeyVehicles: Record<
   capsule: { source: capsule, w: 42, h: 58 },
   maglev: { source: maglev, w: 130, h: 25 },
   carts: { source: carts, w: 90, h: 21 },
-  shuttle: { source: shuttle, w: 73, h: 42 },
+  shuttle: { source: shuttle, w: 84, h: 75 },
   ferry: { source: ferry, w: 84, h: 36 },
 };

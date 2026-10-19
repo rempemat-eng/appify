@@ -19,7 +19,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   fisher: { zone: 'harbour', from: [172, 290], to: [212, 290] },
   keeper: { zone: 'harbour', from: [80, 252], to: [80, 330] },
   steward: { zone: 'hearthold', from: [146, 296], to: [196, 296] },
-  tinkerer: { zone: 'junction', from: [96, 372], to: [184, 372] },
+  tinkerer: { zone: 'junction', from: [108, 372], to: [184, 372] },
   boatwoman: { zone: 'canal', from: [136, 170], to: [224, 170] },
   cowhand: { zone: 'gulch', from: [132, 200], to: [132, 288] },
   saloon: { zone: 'gulch', from: [102, 380], to: [190, 380] },
@@ -38,12 +38,12 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   picnicker: { zone: 'park', from: [18, 100], to: [106, 100] },
   angler: { zone: 'riverside', from: [60, 362], to: [140, 362] },
   botanist: { zone: 'station', from: [64, 330], to: [152, 330] },
-  stargazer: { zone: 'lumen', from: [176, 362], to: [264, 362] },
+  stargazer: { zone: 'lumen', from: [120, 284], to: [206, 284] },
   warden: { zone: 'saddle', from: [152, 240], to: [168, 330] },
   skater: { zone: 'snowmelt', from: [162, 300], to: [208, 292] },
   ferryman: { zone: 'landing', from: [128, 360], to: [200, 364] },
-  naturalist: { zone: 'rainforest', from: [161, 436], to: [157, 526] },
-  beachcomber: { zone: 'cove', from: [160, 398], to: [250, 398] },
+  naturalist: { zone: 'rainforest', from: [200, 440], to: [194, 520] },
+  beachcomber: { zone: 'cove', from: [130, 396], to: [206, 396] },
 };
 
 /** What each resident says when the companion stops beside them (decoration only). */

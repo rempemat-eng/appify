@@ -72,6 +72,161 @@ def basalt_columns(n: int = 5, seed: int = 0) -> Canvas:
     return cv
 
 
+def _column(cv: Canvas, cx: float, top: int, foot: int, r: float, seed: int, glow: bool, broken: bool = False):
+    """One hexagonal basalt column standing from `foot` up to `top`, seen in the three-
+    quarter view: its top a hexagon foreshortened to the same angle as everything else
+    (a vertex left and right, a flat edge front and back), three vertical faces below it
+    (the left lit by the sky, the front mid, the right in shade) split by dark arrises,
+    joints across it at the column's own spacing, each joint's lower block lit along its
+    top edge, the top cracked across and chipped when `broken`, weathering streaks down
+    the front, and at the foot either the lava's glow (`glow`) or grit banked against it."""
+    spacing = 7 + int(noise2(seed, 0, 256) * 5)
+    joint0 = int(noise2(seed, 1, 256) * spacing)
+    tilt = (noise2(seed, 2, 256) - 0.5) * 0.8  # joints are not quite level
+    fs = 0.42 * r  # the top's half depth, foreshortened
+
+    def edge(x):  # where the top's front edges meet the faces
+        d = abs(x - cx)
+        return top + fs if d <= r * 0.5 else top + fs * (r - d) / (r * 0.5)
+    for x in range(int(cx - r + 1), int(cx + r)):
+        k = (x - cx) / r
+        for y in range(int(edge(x + 0.5)), foot + 1):
+            c = BASALT[3] if k < -0.5 else BASALT[2] if k < 0.46 else BASALT[1]
+            if -0.58 < k <= -0.48 or 0.44 < k < 0.56:
+                c = BASALT[0] if k > 0 else BASALT[1]  # the arrises between faces
+            j = (y - top + joint0 + int(k * tilt * r)) % spacing
+            if j == 0:
+                c = BASALT[0] if k > -0.5 else BASALT[1]  # a joint
+            elif j == 1 and k < 0.44:
+                c = BASALT[4] if k < -0.5 else BASALT[3]  # the lit top edge of the block below it
+            if -0.4 < k < 0.36 and noise2(x, (y - top) // 3, seed + 3) > 0.92:
+                c = BASALT[1]  # a weathering streak down the front
+            if glow and y > foot - 3:
+                c = LAVA[1] if k < 0.46 else BASALT[0]  # the lava's glow on its foot
+            elif glow and y == foot - 3 and k < 0.46:
+                c = LAVA[0]
+            elif not glow and y > foot - 2:
+                c = BASALT[1] if k < 0.46 else BASALT[0]  # grit banked at its foot
+            cv.set(x, y, c)
+    pts = set()
+    for y in range(int(top - fs), int(top + fs) + 1):
+        for x in range(int(cx - r + 1), int(cx + r)):
+            d = abs(x + 0.5 - cx)
+            half = fs if d <= r * 0.5 else fs * (r - d) / (r * 0.5)
+            if abs(y + 0.5 - top) <= half:
+                pts.add((x, y))
+    for (x, y) in pts:
+        u = (x - cx) / r + (y - top) / max(1, fs) * 0.5
+        c = BASALT[4] if u < -0.35 else BASALT[3] if u < 0.35 else BASALT[2]
+        if (x, y - 1) not in pts and x < cx + r * 0.3:
+            c = BASALT[4]  # the back edges catch the sky
+        elif (x, y + 1) not in pts:
+            c = BASALT[2] if x < cx - r * 0.5 else BASALT[1]  # the front arrises
+        cv.set(x, y, c)
+    if broken:  # a crack across the top and a chipped corner
+        for t in range(int(r * 1.4)):
+            x = int(cx - r * 0.7 + t)
+            y = int(top - fs * 0.6 + t * fs / r + noise2(t, seed, 257) * 1.2)
+            if (x, y) in pts:
+                cv.set(x, y, BASALT[0])
+        for (x, y) in pts:
+            if x > cx + r * 0.25 and y < top - fs * 0.1:
+                cv.set(x, y, BASALT[1] if (x + y) % 2 else BASALT[2])
+    return pts
+
+
+def basalt_formation(cols, w: int, h: int, seed: int = 0, glow: bool = False) -> Canvas:
+    """A group of basalt columns, each (cx, top, foot, r, broken): drawn from the back
+    (highest foot) forward, so nearer columns overlap the ones behind them, with rubble
+    of fallen drums at the front."""
+    cv = Canvas(w, h, pad=PAD)
+    for i, (cx, top, foot, r, broken) in sorted(enumerate(cols), key=lambda c: (c[1][2], c[1][0])):
+        _column(cv, cx, top, foot, r, seed * 31 + i, glow, broken)
+    for i in range(3 + seed % 3):  # drums fallen from the tops, lying at the front
+        fx = 4 + int(noise2(i, seed, 258) * (w - 10))
+        fy = h - 3 - int(noise2(i, seed, 259) * 3)
+        rr = 2 + noise2(i, seed, 260) * 2
+        for (x, y) in oval(fx, fy, rr + 1, rr * 0.7):
+            if 0 <= x < w and 0 <= y < h and not cv.get(x, y)[3]:
+                cv.set(x, y, BASALT[3] if (x - fx) + (y - fy) < -1 else BASALT[2] if x < fx + 1 else BASALT[1])
+    return cv
+
+
+def basalt_columns(n: int = 5, seed: int = 0, glow: bool = False) -> Canvas:
+    """A cluster of hexagonal basalt columns of different heights and girths, 60 x 64,
+    standing where lava cooled slowly (`glow`: lit from below, for one standing in lava)."""
+    w, h = 60, 64
+    cols = []
+    for k in range(n):
+        cx = 10 + int(noise2(k, 0, 251 + seed) * 40)
+        top = 8 + int(noise2(k, 1, 251 + seed) * 28)
+        r = 7 + noise2(k, 3, 251 + seed) * 3.5
+        foot = h - 2 - int(noise2(k, 4, 251 + seed) * 5)
+        cols.append((cx, top, foot, r, noise2(k, 5, 251 + seed) > 0.75))
+    return basalt_formation(cols, w, h, seed, glow=glow)
+
+
+def basalt_steps() -> Canvas:
+    """A stepped causeway of basalt, 88 x 70, the way cooled flows crack on a slope:
+    columns rising from short stumps at the front left to tall ones at the back right,
+    their hexagonal tops making a honeycomb of steps."""
+    cols = []
+    for k in range(11):
+        row, i = divmod(k, 4)
+        cx = 10 + i * 17 + row * 9 + int(noise2(k, 0, 261) * 4)
+        foot = 66 - row * 7
+        height = 6 + i * 6 + row * 7 + int(noise2(k, 1, 261) * 5)
+        cols.append((cx, foot - height, foot, 8 + noise2(k, 2, 261) * 1.5, k in (2, 7)))
+    return basalt_formation(cols, 88, 70, 3)
+
+
+def basalt_stack() -> Canvas:
+    """Three tall columns packed together with a shorter broken one in front, 40 x 88:
+    a stack left standing where the cliff round it fell away."""
+    return basalt_formation([(10, 16, 82, 8, False), (24, 9, 78, 9, False), (31, 28, 85, 7.5, False),
+                             (16, 54, 86, 7, True)], 40, 88, 5)
+
+
+def basalt_stumps(seed: int = 0) -> Canvas:
+    """Short broken columns in a loose group, 48 x 30: what is left of an outcrop the
+    weather has taken down, the tops cracked and chipped, drums lying round them."""
+    cols = []
+    for k in range(4):
+        cx = 7 + k * 11 + int(noise2(k, 0, 262 + seed) * 4)
+        foot = 26 - int(noise2(k, 1, 262 + seed) * 6)
+        top = foot - 7 - int(noise2(k, 2, 262 + seed) * 9)
+        cols.append((cx, top, foot, 6 + noise2(k, 3, 262 + seed) * 2.5, k != 1))
+    return basalt_formation(cols, 48, 30, 7 + seed)
+
+
+def basalt_fallen() -> Canvas:
+    """A column lying on its side, 54 x 20, broken into drums at its joints: its lit top
+    face, the shaded front face, the hexagonal end toward the light, sunk a little into
+    the ash it fell on."""
+    w, h = 54, 20
+    cv = Canvas(w, h, pad=PAD)
+    x0, x1, yt = 8, 50, 5
+    for x in range(x0, x1):
+        drum = (x - x0) // 9
+        dy = int(noise2(drum, 0, 263) * 2)  # each drum settled a little differently
+        for y in range(yt + dy, yt + dy + 12):
+            k = (y - yt - dy) / 12
+            c = BASALT[3] if k < 0.4 else BASALT[2] if k < 0.75 else BASALT[1]
+            if k < 0.1:
+                c = BASALT[4]
+            if (x - x0) % 9 == 0:
+                c = BASALT[0]  # the joint between two drums
+            elif (x - x0) % 9 == 1 and k < 0.75:
+                c = BASALT[4] if k < 0.4 else BASALT[3]
+            cv.set(x, y, c)
+    for (x, y) in oval(x0, yt + 6, 4, 6.5):  # the end, a hexagon seen edge-on, toward the light
+        cv.set(x, y, BASALT[4] if y < yt + 4 else BASALT[3] if y < yt + 9 else BASALT[2])
+    for x in range(x0 - 3, x1 + 1):  # ash heaped against its foot
+        cv.set(x, yt + 13 + (x % 3 == 0), ASH[2])
+        cv.set(x, yt + 14, ASH[1])
+    return cv
+
+
 def forge() -> Canvas:
     """A smithy built into the rock, 96 x 80: a slab roof of iron plates seen from above,
     a stone face with a glowing furnace mouth, an anvil, a quench trough, bellows and a
@@ -360,7 +515,10 @@ def _ore_tub() -> Canvas:
 
 def props() -> dict[str, Canvas]:
     return {
-        'basalt_columns': basalt_columns(5, 0), 'basalt_columns_low': basalt_columns(3, 7), 'forge': forge(),
+        'basalt_columns': basalt_columns(5, 0), 'basalt_columns_low': basalt_columns(3, 7),
+        'basalt_columns_b': basalt_columns(4, 13), 'basalt_steps': basalt_steps(), 'basalt_stack': basalt_stack(),
+        'basalt_stumps': basalt_stumps(0), 'basalt_stumps_b': basalt_stumps(5), 'basalt_fallen': basalt_fallen(),
+        'forge': forge(),
         'obsidian': obsidian_rock(True), 'obsidian_small': obsidian_rock(False), 'cooling_vent': cooling_vent(),
         'basalt_bridge': basalt_bridge(), 'ember_shrine': ember_shrine(),
         'bathhouse': bathhouse(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
