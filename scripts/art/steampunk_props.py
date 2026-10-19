@@ -280,19 +280,6 @@ def locomotive() -> Canvas:
 
 
 
-def locomotive_parked() -> Canvas:
-    """The engine standing at the platform in the three-quarter view (the zones' key
-    'locomotive'): the side-on engine (which the journey draws) with its roofs seen from above, the cab's top and
-    the boiler's crown catching the light, and its wheels on the rails."""
-    cv = locomotive()
-    for x in range(70, 100):  # the cab roof, its top surface
-        for y in range(1, 5):
-            cv.set(x, y, IRON[4] if y == 1 else IRON[3] if x < 92 else IRON[2])
-    for x in range(20, 72):  # the boiler's crown, a lit band along the top
-        cv.set(x, 15, IRON[4] if x % 14 else BRASS[5])
-    return cv
-
-
 def gas_lamp() -> Canvas:
     """A brass gas lamp, 16 x 48: an iron post with a ring, a glass lantern lit warm."""
     cv = Canvas(16, 48, pad=PAD)
@@ -709,11 +696,422 @@ def cloche() -> Canvas:
     cv.hline(1, 10, 13, '#3A2A22')
     return cv
 
+SLATE = MATERIALS['slate']
+ASHLAR = MATERIALS['ashlar']
+TAR = MATERIALS['tar']
+BROWN = ['#2A1A16', '#46302A', '#5E4236', '#7A5846', '#98725A']  # a darker, browner brick
+
+
+def sash(cv: Canvas, x0: int, y0: int, ww: int = 10, wh: int = 14, lit: bool = True, sill=STONE):
+    """A sash window in a painted frame: two panes over two, warm or dark glass, a stone
+    lintel above and a lit sill below; returns its pixels (proud of the wall)."""
+    pts = rect_set(x0 - 1, y0 - 2, ww + 2, wh + 4)
+    for (x, y) in rect_set(x0, y0, ww, wh):
+        top = y < y0 + wh // 2
+        g = (WARM[3] if top else WARM[2]) if lit else (SLATE[2] if top else SLATE[1])
+        if x in (x0, x0 + ww - 1) or y in (y0, y0 + wh - 1, y0 + wh // 2) or x == x0 + ww // 2:
+            g = '#E8E2D2' if x < x0 + ww // 2 or y == y0 else '#B8B0A0'  # the frame and glazing bars
+        cv.set(x, y, g)
+    if lit:
+        cv.set(x0 + 2, y0 + 2, '#FFF6D8')
+    cv.hline(x0 - 1, y0 - 2, ww + 2, sill[4]); cv.hline(x0 - 1, y0 - 1, ww + 2, sill[2])  # the lintel
+    cv.hline(x0 - 1, y0 + wh, ww + 2, sill[4]); cv.hline(x0 - 1, y0 + wh + 1, ww + 2, sill[1])  # the sill
+    return pts
+
+
+def panel_door(cv: Canvas, x0: int, y1: int, dw: int = 14, dh: int = 24, paint=None):
+    """A panelled front door with a fanlight and a brass knob, a stone step before it;
+    returns its pixels."""
+    paint = paint or ['#1E2A34', '#2C3E4C', '#3E566A', '#5A7690']
+    y0 = y1 - dh
+    pts = set()
+    for (x, y) in rect_set(x0, y0, dw, dh):
+        c = paint[2] if x < x0 + dw // 2 else paint[1]
+        if x in (x0, x0 + dw - 1):
+            c = paint[0]
+        px_, py_ = (x - x0) % (dw // 2), (y - y0 - 6)
+        if 1 <= px_ <= dw // 2 - 2 and py_ >= 0 and py_ % 9 in (0, 7):
+            c = paint[3] if py_ % 9 == 0 else paint[0]  # the panels' mouldings
+        cv.set(x, y, c)
+        pts.add((x, y))
+    for (x, y) in rect_set(x0, y0, dw, 5):  # the fanlight
+        cv.set(x, y, WARM[3] if (x + y) % 3 else '#E8E2D2')
+    cv.hline(x0, y0 + 5, dw, '#E8E2D2')
+    cv.set(x0 + dw - 4, y0 + 15, BRASS[5]); cv.set(x0 + dw - 4, y0 + 16, BRASS[2])
+    cv.hline(x0 - 3, y0 - 2, dw + 6, STONE[4]); cv.hline(x0 - 3, y0 - 1, dw + 6, STONE[2])  # the hood
+    for (x, y) in rect_set(x0 - 2, y1, dw + 4, 3):  # the step
+        cv.set(x, y, STONE[4] if y == y1 else STONE[2] if y == y1 + 1 else STONE[1])
+        pts.add((x, y))
+    return pts
+
+
+def brick_stack(cv: Canvas, x0: int, y0: int, y1: int, w: int = 10, pots: int = 2):
+    """A brick chimney stack on a roof, lit on its west face, with a stone cap and pots."""
+    for y in range(y0, y1):
+        for x in range(x0, x0 + w):
+            c = BRICK[4] if x < x0 + 2 else BRICK[3] if x < x0 + w - 3 else BRICK[1]
+            if (y - y0 + ((x - x0) // 4) * 2) % 4 == 3:
+                c = BRICK[1] if x < x0 + w - 3 else BRICK[0]
+            cv.set(x, y, c)
+    cv.hline(x0 - 1, y0, w + 2, STONE[4]); cv.hline(x0 - 1, y0 + 1, w + 2, STONE[2])
+    for k in range(pots):
+        px = x0 + 1 + k * (w // max(1, pots))
+        for y in range(y0 - 4, y0):
+            cv.set(px, y, '#C27A52'); cv.set(px + 1, y, '#A65E3E'); cv.set(px + 2, y, '#7A4230')
+        cv.hline(px, y0 - 5, 3, '#2A1A16')
+
+
+def townhouse(width: int = 88, storeys: int = 2, roof=None, wall: str = 'brown', door_x: int | None = None,
+              shop: bool = False, chimney: int = 1, seed: int = 0) -> Canvas:
+    """A Cogsworth house or shop in the three-quarter view, built like the workshops (a
+    top-down gable roof, its gable to the front, walls under it) but varied: slate or
+    tarred iron roofs, brown brick or dressed ashlar, one or two storeys with a stone
+    string course, sash windows with lintels and sills, a panelled door with a fanlight
+    and a step, a brick stack with pots, a drainpipe; a shop has a glazed front under a
+    striped awning and a signboard."""
+    roof = roof or SLATE
+    w = width
+    storey = 27
+    apex_y, eave_y = 20, 42
+    wall_top = eave_y
+    wall_bottom = wall_top + storey * storeys + 4
+    h = wall_bottom + 8
+    cv = Canvas(w, h, pad=PAD)
+    ridge = (w - 1) / 2
+    sx = int(ridge + chimney * w * 0.24) - 5
+    stack = rect_set(sx, 2, 10, apex_y)
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, roof, hole=stack, seed=91 + seed, moss=None,
+                    barge=WOOD if roof is SLATE else IRON)
+    brick_stack(cv, sx, 6, 6 + apex_y - 4)
+    ramp = ASHLAR if wall == 'ashlar' else BROWN if wall == 'brown' else BRICK
+    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2),
+                     7, w - 8, apex_y, wall_top, ['#B8AE9C', '#CFC6B2', '#E2DACB', '#EEE8DA', '#F6F2E8'], boards=False)
+    if wall == 'ashlar':
+        detail.stones(cv, 7, wall_top, w - 14, wall_bottom - wall_top, ASHLAR, seed=31 + seed, course=5, base=3)
+    else:
+        detail.bricks(cv, 7, wall_top, w - 14, wall_bottom - wall_top, ramp, seed=33 + seed, base=3)
+    for x in range(7, w - 7):  # soot low on the wall
+        for y in range(wall_bottom - 3, wall_bottom):
+            detail.shade(cv, x, y, 1)
+    proud = set()
+    if storeys > 1:  # the string course between the floors
+        sy = wall_top + storey
+        cv.hline(6, sy, w - 12, STONE[4]); cv.hline(6, sy + 1, w - 12, STONE[2])
+        proud |= rect_set(6, sy, w - 12, 2)
+    # the gable's round window, and the upper floor's windows
+    porthole(cv, ridge, 33, 4, warm=bool(seed % 2))
+    proud |= disc(ridge, 33, 4)
+    dx = door_x if door_x is not None else int(ridge) - 7
+    if storeys > 1:
+        n = 3 if w >= 88 else 2
+        for k in range(n):
+            wx = int(12 + (w - 34) * k / max(1, n - 1))
+            proud |= sash(cv, wx, wall_top + 6, 10, 14, lit=(k + seed) % 3 != 1)
+    if shop:
+        fx0, fx1 = 11, w - 11
+        fy0, fy1 = wall_bottom - 22, wall_bottom - 1
+        for (x, y) in rect_set(fx0, fy0, fx1 - fx0, fy1 - fy0):  # the glazed shop front
+            c = WARM[3] if y < fy0 + 8 else WARM[2]
+            if (x - fx0) % 9 == 0 or y in (fy0, fy1 - 1):
+                c = '#2C3E4C' if (x - fx0) % 9 == 0 else '#3E566A'
+            cv.set(x, y, c)
+        for k, gx in enumerate(range(fx0 + 4, fx1 - 4, 9)):  # goods in the window
+            if gx < dx - 2 or gx > dx + 16:
+                cv.set(gx, fy1 - 3, BRASS[4] if k % 2 else COPPER[3]); cv.set(gx + 1, fy1 - 3, BRASS[2])
+                cv.set(gx, fy1 - 4, BRASS[3] if k % 2 else COPPER[4])
+        proud |= rect_set(fx0, fy0, fx1 - fx0, fy1 - fy0)
+        ay = fy0 - 7  # the striped awning, a plane sloping out toward us
+        for y in range(ay, fy0):
+            for x in range(fx0 - 3, fx1 + 3):
+                stripe = ((x - fx0) // 5) % 2
+                c = ('#C8463A' if stripe else '#F2ECDE') if y < fy0 - 2 else ('#9A3028' if stripe else '#C8C0B0')
+                cv.set(x, y, c)
+        cv.hline(fx0 - 3, fy0, fx1 - fx0 + 6, '#5A2018')
+        proud |= rect_set(fx0 - 3, ay, fx1 - fx0 + 6, 8)
+        sy0 = ay - 7  # the signboard over it
+        for (x, y) in rect_set(fx0 + 6, sy0, fx1 - fx0 - 12, 6):
+            c = '#2C3E4C' if 0 < x - fx0 - 6 < fx1 - fx0 - 13 and 0 < y - sy0 < 5 else BRASS[3]
+            if c == '#2C3E4C' and (x // 2) % 3 and y == sy0 + 2:
+                c = '#E8D8A8'  # the lettering
+            cv.set(x, y, c)
+        proud |= rect_set(fx0 + 6, sy0, fx1 - fx0 - 12, 6)
+    else:
+        for k, wx in enumerate((12, w - 24)):
+            if abs(wx - dx) > 14:
+                proud |= sash(cv, wx, wall_bottom - 22, 10, 16, lit=(k + seed) % 2 == 0)
+    proud |= panel_door(cv, dx, wall_bottom - 1, 14, 24)
+    for y in range(wall_top + 1, wall_bottom):  # the drainpipe down the corner
+        cv.set(w - 11, y, IRON[3]); cv.set(w - 10, y, IRON[1])
+        if y % 9 == 0:
+            cv.hline(w - 12, y, 4, IRON[2])
+    proud |= rect_set(w - 11, wall_top + 1, 2, wall_bottom - wall_top - 1)
+    detail.cast(cv, proud, 1, 1, k=1, on=ramp, reach=2)
+    detail.overhang_shadow(cv, 7, w - 7, wall_top, lambda x: 3, k=2, cap=1)
+    detail.stones(cv, 5, wall_bottom, w - 10, 8, STONE, seed=37 + seed, course=4)
+    return cv
+
+
+def warehouse() -> Canvas:
+    """A canal warehouse, 112 x 116: three storeys of brown brick under a long slate roof,
+    a column of loft doors over the cart door, a hoist beam out over them with its
+    pulley and rope, small barred windows, iron tie-plates, and a painted name band."""
+    w = 112
+    storey = 22
+    apex_y, eave_y = 18, 38
+    wall_top, wall_bottom = eave_y, eave_y + 3 * storey + 4
+    h = wall_bottom + 8
+    cv = Canvas(w, h, pad=PAD)
+    ridge = (w - 1) / 2
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, seed=97, moss=None, barge=IRON)
+    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2),
+                     7, w - 8, apex_y, wall_top, BROWN, boards=False)
+    detail.bricks(cv, 7, apex_y + 4, w - 14, wall_top - apex_y - 4, BROWN, seed=41, base=3)
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, seed=97, moss=None, barge=IRON)
+    detail.bricks(cv, 7, wall_top, w - 14, wall_bottom - wall_top, BROWN, seed=43, base=3)
+    proud = set()
+    for (x, y) in rect_set(18, wall_top + 3, w - 36, 6):  # the name band
+        c = '#E8DCC0' if 0 < y - wall_top - 3 < 5 else '#2A1A16'
+        if c == '#E8DCC0' and y == wall_top + 5 and (x // 2) % 4 and 22 < x < w - 22:
+            c = '#3A2A22'
+        cv.set(x, y, c)
+    proud |= rect_set(18, wall_top + 3, w - 36, 6)
+    cx = int(ridge)
+    for k in range(3):  # the loft doors, one a floor, the cart door at the bottom
+        y0 = wall_top + 12 + k * storey
+        dh = 16 if k < 2 else 26
+        y0 = y0 if k < 2 else wall_bottom - dh
+        for (x, y) in rect_set(cx - 8, y0, 16, dh):
+            c = WOOD[3] if (x - cx + 8) % 4 else WOOD[2]
+            if x in (cx - 8, cx + 7) or y == y0:
+                c = WOOD[1]
+            if k < 2 and abs((x - cx) - (y - y0 - 8)) < 1:
+                c = WOOD[4]  # the brace
+            cv.set(x, y, c)
+        cv.hline(cx - 10, y0 - 2, 20, STONE[4]); cv.hline(cx - 10, y0 - 1, 20, STONE[2])
+        proud |= rect_set(cx - 10, y0 - 2, 20, dh + 2)
+        for wx in (16, 36, w - 46, w - 26):  # small barred windows
+            if k < 2 or wx in (16, w - 26):
+                wy = y0 + 2 if k < 2 else wall_bottom - 20
+                for (x, y) in rect_set(wx, wy, 10, 10):
+                    c = (WARM[2] if (k + wx // 20) % 3 == 0 else '#1E2A34') if (x - wx) % 3 else IRON[3]
+                    cv.set(x, y, c)
+                cv.hline(wx - 1, wy - 1, 12, STONE[4]); cv.hline(wx - 1, wy + 10, 12, STONE[3])
+                proud |= rect_set(wx - 1, wy - 1, 12, 12)
+    for (tx, ty) in ((10, wall_top + 26), (w - 13, wall_top + 26), (10, wall_top + 48), (w - 13, wall_top + 48)):
+        for (x, y) in disc(tx + 1, ty, 2):  # iron tie-plates
+            cv.set(x, y, IRON[3] if x <= tx else IRON[1])
+    # the hoist: a beam out from the gable over the loft doors, a pulley, rope to a hook
+    for y in range(wall_top - 2, wall_top + 2):
+        for x in range(cx - 3, cx + 4):
+            cv.set(x, y, WOOD[4] if y == wall_top - 2 else WOOD[2])
+    for (x, y) in disc(cx, wall_top + 4, 2.5):
+        cv.set(x, y, IRON[3] if x < cx else IRON[1])
+    for y in range(wall_top + 6, wall_top + 30):
+        cv.set(cx + 2, y, MATERIALS['rope'][2])
+    cv.set(cx + 1, wall_top + 30, IRON[3]); cv.set(cx + 2, wall_top + 31, IRON[3]); cv.set(cx + 3, wall_top + 30, IRON[3])
+    detail.cast(cv, proud, 1, 1, k=1, on=BROWN, reach=2)
+    detail.overhang_shadow(cv, 7, w - 7, wall_top, lambda x: 3, k=2, cap=1)
+    detail.stones(cv, 5, wall_bottom, w - 10, 8, STONE, seed=45, course=4)
+    return cv
+
+
+def water_tower() -> Canvas:
+    """The engine shed's water tower, 52 x 76: a riveted iron tank with a lit lid seen from
+    above, on a brick base with an arched doorway, a leather hose swung up on its
+    jib, a ladder up the side."""
+    w, h = 52, 76
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(26, 10, 22, 7):  # the tank's top: a lid and its rim
+        k = ((x - 26) / 22) ** 2 + ((y - 10) / 7) ** 2
+        c = IRON[4] if k > 0.75 and (x < 26 or y < 9) else IRON[3] if k > 0.7 else IRON[2] if x < 30 else IRON[1]
+        cv.set(x, y, c)
+    for (x, y) in oval(24, 9, 5, 2):
+        cv.set(x, y, IRON[1])  # the hatch
+    for y in range(10, 38):  # the tank's side: a cylinder lit on the left
+        for x in range(4, 49):
+            if y > 10 + 7 * math.sqrt(max(0.0, 1 - ((x - 26) / 22) ** 2)) - 7 * 0 and y >= 10:
+                if y < 10 + int(7 * math.sqrt(max(0.0, 1 - ((x - 26) / 22) ** 2))):
+                    continue
+                k = (x - 4) / 44
+                c = IRON[4] if k < 0.12 else IRON[3] if k < 0.4 else IRON[2] if k < 0.75 else IRON[1]
+                if (y - 10) % 9 == 0:
+                    c = IRON[1] if k < 0.75 else IRON[0]  # the seams, riveted
+                    if x % 3 == 0:
+                        c = IRON[4]
+                cv.set(x, y, c)
+    for x in range(4, 49):  # the tank's curved bottom edge
+        yb = 38 + int(3 * math.sqrt(max(0.0, 1 - ((x - 26) / 22) ** 2)))
+        for y in range(38, yb):
+            cv.set(x, y, IRON[1])
+        cv.set(x, yb, IRON[0])
+    brick_wall(cv, 8, 41, 37, 27, seed=47)  # the brick base
+    for y in range(41, 68):
+        cv.set(44, y, BRICK[1]); cv.set(8, y, BRICK[4])
+    door = {(x, y) for (x, y) in disc(26, 53, 7) if y < 53} | rect_set(19, 53, 15, 15)
+    for (x, y) in door:
+        cv.set(x, y, IRON[0] if x > 24 else IRON[1])
+    for (x, y) in door:
+        if (x, y - 1) not in door:
+            cv.set(x, y - 1, STONE[4])
+    for y in range(12, 68):  # the ladder up the west side
+        cv.set(2, y, IRON[3]); cv.set(6, y, IRON[2])
+        if y % 4 == 0:
+            cv.hline(2, y, 5, IRON[4])
+    for t in range(14):  # the hose on its jib, swung up and lashed
+        x, y = 47 + t // 4, 26 + t
+        cv.set(x, y, '#3A2A22'); cv.set(x + 1, y, '#5A4232')
+    detail.stones(cv, 6, 68, 41, 6, STONE, seed=49, course=3)
+    return cv
+
+
+def signal_box() -> Canvas:
+    """The signal box beside the line, 60 x 70: a glazed upper room for the signalman on a
+    brick base, a hipped slate roof seen from above, a stove pipe, the lever frame's
+    windows lit warm, an outside stair up the east end."""
+    w, h = 60, 70
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(2, 16):  # the hipped roof: front plane and east plane, ridge on top
+        t = (y - 2) / 13
+        l, r = 22 - t * 18, 34 + t * 18
+        for x in range(int(l), int(r) + 1):
+            front = l + 4 * t < x < r - 4 * t or True
+            c = SLATE[3] if x < 28 else SLATE[2]
+            if x > r - 6 * t - 1:
+                c = SLATE[1]  # the east hip, in shade
+            if (y - 2) % 4 == 3:
+                c = SLATE[1] if x < 28 else SLATE[0]
+            cv.set(x, y, c)
+    cv.hline(21, 2, 14, SLATE[4])
+    for y in range(0, 8):  # the stove pipe
+        cv.set(40, y, IRON[3]); cv.set(41, y, IRON[1])
+    cv.hline(39, 0, 4, IRON[4])
+    cv.hline(2, 16, 56, WOOD[4]); cv.hline(2, 17, 56, WOOD[2])  # the eaves board
+    for y in range(18, 36):  # the glazed signal room
+        for x in range(4, 56):
+            c = WOOD[3]
+            if 20 <= y < 33 and (x - 4) % 8 not in (0, 7):
+                c = WARM[3] if y < 26 else WARM[2]
+                if x > 44:
+                    c = '#1E2A34' if y < 26 else '#2C3E4C'
+            if y == 33:
+                c = WOOD[4]
+            cv.set(x, y, c)
+    for lx in range(10, 42, 5):  # the lever frame inside, seen through the glass
+        cv.vline(lx, 27, 5, '#C8463A' if lx % 10 else '#F2ECDE')
+    brick_wall(cv, 6, 36, 48, 26, seed=51)
+    for (x, y) in rect_set(14, 44, 8, 10):
+        cv.set(x, y, '#1E2A34' if (x - 14) % 4 else IRON[3])  # the locking room window
+    for k in range(7):  # the outside stair up the east end
+        for x in range(46 + k, 56):
+            cv.set(x, 60 - k * 4, WOOD[4]); cv.set(x, 61 - k * 4, WOOD[2])
+        cv.vline(56, 34, 28, WOOD[1])
+    detail.stones(cv, 4, 62, 52, 6, STONE, seed=53, course=3)
+    return cv
+
+
+def locomotive_34() -> Canvas:
+    """The engine standing at the platform in the three-quarter view (the
+    zones' 'locomotive', 120 x 62). It runs east-west, so we see its long south side and, above
+    it, everything that faces up: the boiler's crown catching the light, the stack's
+    open mouth and the dome as rounded tops, the running board as a lit ledge the
+    length of the engine, the cab's roof as a plane, the tender's coal heaped and seen
+    from above. Wheels are round, the near ones whole. (Its shadow is cast by the zone,
+    not drawn into the sprite.)"""
+    w, h = 120, 62
+    cv = Canvas(w, h, pad=PAD)
+    D = 7  # how much of each top we see
+    # the tender (east, behind the cab): a box with its top full of coal
+    tx0, tx1, ty0, ty1 = 96, 118, 22, 46
+    for x in range(tx0, tx1):
+        for y in range(ty0 - D, ty0):  # its top: the coal heap
+            n = noise2(x // 2, y // 2, 61)
+            cv.set(x, y, '#1A1A22' if n > 0.55 else '#2E2E38' if n > 0.2 else '#4A4A56')
+        for y in range(ty0, ty1):
+            k = (y - ty0) / (ty1 - ty0)
+            c = '#3E566A' if k < 0.1 else '#2C3E4C' if k < 0.7 else '#1E2A34'
+            if x in (tx0, tx1 - 1):
+                c = '#1E2A34'
+            if (x - tx0) % 7 == 3 and 0.2 < k < 0.8:
+                c = BRASS[3]  # the lining
+            cv.set(x, y, c)
+    cv.hline(tx0, ty0 - D, tx1 - tx0, IRON[3]); cv.hline(tx0, ty0, tx1 - tx0, BRASS[4])
+    # the cab: a roof seen as a plane, a front spectacle, a side opening with the crew's lamp
+    cx0, cx1 = 74, 98
+    for x in range(cx0 - 1, cx1 + 1):
+        for y in range(4, 4 + D):
+            cv.set(x, y, IRON[4] if y == 4 else IRON[3] if x < 90 else IRON[2])
+        cv.set(x, 4 + D, IRON[1])
+    for x in range(cx0, cx1):
+        for y in range(12, 44):
+            c = RED[3] if x < cx0 + 3 else RED[2]
+            if 16 <= y < 28 and cx0 + 5 <= x < cx1 - 5:
+                c = WARM[3] if y < 21 else WARM[2]  # the side opening, lamplit
+            if y == 15 or y == 28:
+                c = BRASS[4] if y == 15 else RED[1]
+            cv.set(x, y, c)
+    cv.vline(cx1 - 1, 12, 32, RED[1])
+    # the boiler: a cylinder lying east-west, its crown lit, its belly in shade
+    bx0, bx1 = 16, 74
+    for x in range(bx0, bx1):
+        for y in range(14 - 3, 36):
+            k = (y - 11) / 25
+            c = IRON[4] if k < 0.12 else IRON[3] if k < 0.35 else IRON[2] if k < 0.7 else IRON[1]
+            if (x - bx0) % 14 == 6:
+                c = BRASS[5] if k < 0.2 else BRASS[4] if k < 0.5 else BRASS[2]  # the bands
+            cv.set(x, y, c)
+    for (x, y) in oval(bx0, 23, 5, 12):  # the smokebox's round front, seen a little from the side
+        if x <= bx0 + 1:
+            cv.set(x, y, IRON[2] if y < 20 else IRON[1])
+    cv.set(bx0 - 3, 23, BRASS[4]); cv.set(bx0 - 2, 23, BRASS[2])
+    # the stack and its open mouth, the dome, the safety valve
+    for y in range(0, 12):
+        hw = 5 if y < 3 else 4
+        for x in range(28 - hw, 28 + hw + 1):
+            cv.set(x, y, IRON[3] if x < 27 else IRON[2] if x < 30 else IRON[1])
+    for (x, y) in oval(28, 1, 5, 2):
+        cv.set(x, y, '#0E0E14' if abs(x - 28) < 4 else IRON[4])
+    for (x, y) in oval(52, 10, 6, 4):
+        if y <= 11:
+            cv.set(x, y, BRASS[5] if x < 50 and y < 9 else BRASS[4] if x < 54 else BRASS[2])
+    cv.set(64, 8, BRASS[4]); cv.set(64, 9, BRASS[3]); cv.set(65, 9, BRASS[2])
+    # the running board: a lit ledge the whole length, its edge in shade
+    for x in range(8, 98):
+        cv.set(x, 36, IRON[4]); cv.set(x, 37, IRON[3]); cv.set(x, 38, '#1E2A34'); cv.set(x, 39, RED[2])
+    # the buffer beam, red, and two buffers toward us
+    for x in range(6, 12):
+        for y in range(36, 44):
+            cv.set(x, y, RED[3] if x < 8 else RED[2])
+    for by in (38,):
+        for x in range(2, 7):
+            cv.set(x, by, IRON[4]); cv.set(x, by + 1, IRON[2])
+        cv.vline(2, by - 1, 4, IRON[3])
+    # the wheels: three drivers, round, red spokes, the coupling rod across them
+    for (wx, r) in ((30, 9), (52, 9), (84, 6), (104, 5), (114, 5)):
+        cy = 52 - (9 - r) // 1 * 0 + (9 - r)
+        for (x, y) in disc(wx, cy, r):
+            cv.set(x, y, RED[2] if (x - wx) + (y - cy) < 0 else RED[1])
+        for (x, y) in disc(wx, cy, r - 2):
+            cv.set(x, y, '#1E1C22')
+        for k in range(6):
+            a = math.pi * k / 3
+            for t in range(1, r - 1):
+                cv.set(int(round(wx + math.cos(a) * t)), int(round(cy + math.sin(a) * t)), RED[3])
+        cv.set(wx, cy, BRASS[4]); cv.set(wx - 1, cy - 1, BRASS[5])
+        for (x, y) in disc(wx, cy, r):
+            if (x, y - 1) not in disc(wx, cy, r) and x < wx:
+                cv.set(x, y, RED[4])  # the rim's lit top
+    cv.hline(30, 54, 23, IRON[4]); cv.hline(30, 55, 23, IRON[2])  # the coupling rod
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'workshop': workshop(), **{f'workshop_f{n}': workshop(turn=n * 2 * math.pi / 27) for n in (1, 2)},
         'workshop_round': workshop(80, sign='round'), 'clock_tower': clock_tower(),
-        'locomotive': locomotive_parked(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
+        'locomotive': locomotive_34(),
+        'house_slate': townhouse(88, 2, SLATE, 'brown', door_x=18, chimney=1, seed=1),
+        'shop_ashlar': townhouse(92, 2, TAR, 'ashlar', shop=True, chimney=-1, seed=2),
+        'warehouse': warehouse(), 'engine_tank': water_tower(), 'signal_box': signal_box(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
         'gear_pile': gear_pile(), 'iron_bench': iron_bench(), 'steamer_trunk': steamer_trunk(),
         'coal_cart': coal_cart(), 'airship_mast': airship_mast(), 'tea_kiosk': tea_kiosk(),
         'narrowboat': narrowboat(), 'canal_crane': canal_crane(), 'foundry': foundry(), 'tube_station': tube_station(),
