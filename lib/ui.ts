@@ -18,6 +18,9 @@ export type WorldLink = {
   ey?: number;
   /** open the hut already decorating (from the garden's decorate panel) */
   decorate?: boolean;
+  /** a journey chosen at a station in the home hub: it plays on the world screen, and
+   *  one back to the valley lands in the hub again (docs/vision/home-hub.md) */
+  trip?: { from: string; to: string };
 };
 
 type UiState = {

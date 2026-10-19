@@ -11,6 +11,7 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 | [coherence-plan.md](coherence-plan.md)       | **The current plan:** Matt's 17 Oct review, the audit, targets and the ordered steps                                                                                              |
 | [living-world-plan.md](living-world-plan.md) | **The approved new work (17 Oct):** currency and care, decay, atmosphere, menus, people, decorating, world memory, biomes, and their order                                        |
 | [roadmap.md](roadmap.md)                     | What comes next, open questions and ideas we have not built                                                                                                                       |
+| [home-hub.md](home-hub.md)                   | **The home hub (19 Oct):** the garden as a place in the one world, on one screen with the valley; why the old handoff popped, the design and its phases                           |
 | [world-rules.md](world-rules.md)             | **The world's rulebook (18 Oct):** what each kind of ground means, what may stand on it, how neighbouring places join, corridors, detail derived from logic, and the bug protocol |
 
 ## Matt's direction (October 2026)

@@ -11,35 +11,19 @@ import { PixelButton } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { feedback, missions, useGame } from '@/lib/game';
 import { useAppActive } from '@/lib/app-active';
-import { worldCatalogue } from '@/lib/world-catalogue';
+import { tileAt, type RegionId, type TileId } from '@/lib/region-walk';
 import {
-  regionTiles,
-  regionWalk,
-  tileAt,
-  tileOrigin,
-  type RegionId,
-  type TileId,
-} from '@/lib/region-walk';
-import { residentLines, residentRoutes } from '@/lib/resident-routes';
-import {
-  PLACE_RADIUS,
   doors,
   exitWalk,
   exits,
-  inGardenYard,
   missionPlaces,
-  keepsakeChest,
   passAt,
   regionPoint,
-  rings,
   stopIds,
-  stopsIn,
-  travelBy,
   travelPoints,
   travelRoute,
   travelVehicle,
   type ExitId,
-  type MissionPlaceId,
   type StopId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
@@ -62,9 +46,12 @@ import {
   keepsakes,
   walkWithDecor,
   type DecorHand,
-  type DecorPlacement,
 } from '@/lib/decor';
 import { decorImages } from '@/lib/decor-assets';
+import { cardAt, placeIds, placeMarkers, type Card } from '@/lib/world-cards';
+import { HUB_REGION, hubOpening, toGarden } from '@/lib/home-hub';
+import { PlaceCardBody, stopNames } from '@/components/place-card';
+import { decorExtras } from '@/components/scene-decor';
 
 const regionNames: Record<RegionId, string> = {
   valley: 'THE VALLEY',
@@ -76,159 +63,36 @@ const regionNames: Record<RegionId, string> = {
   moon: 'LUMEN',
   home: 'THE NAP HUT',
 };
-const placeIds: MissionPlaceId[] = ['book', 'park', 'mountain', 'shop', 'arena', 'garden'];
 const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon'];
-/** Each stop's name on the travel card and the journey's label. */
-const stopNames: Record<StopId, string> = {
-  valley: 'THE VALLEY',
-  steam: 'COGSWORTH',
-  west: 'DUST GULCH',
-  lava: 'EMBER CALDERA',
-  pier: 'DRIFTWOOD',
-  isles: 'TIDEBLOOM ISLES',
-  neon: 'NEON HARBOUR',
-  space: 'HALCYON STATION',
-  moon: 'LUMEN',
-};
-const stopShort: Record<StopId, string> = {
-  valley: 'the valley',
-  steam: 'Cogsworth',
-  west: 'Dust Gulch',
-  lava: 'the caldera',
-  pier: 'Driftwood',
-  isles: 'the isles',
-  neon: 'Neon Harbour',
-  space: 'Halcyon',
-  moon: 'Lumen',
-};
 const exitIds: ExitId[] = ['gate', 'trail', 'west', 'east'];
 const noZones: readonly string[] = [];
 const insideDoor = regionPoint(doors.inside);
-/** Where on the garden screen a point counts as home: the garden's yard, or the hut's
- *  front door seen from inside (garden pixels), else null. */
-const homeAt = (region: RegionId, at: Point): Point | null =>
-  region === 'home'
-    ? Math.hypot(at.x - insideDoor.x, at.y - insideDoor.y) <= 10
-      ? HUT_DOOR
-      : null
-    : inGardenYard(region, at);
-
-type Card =
-  | { kind: 'mission'; id: 'book' | 'park' | 'mountain' }
-  | { kind: 'shop' | 'arena' | 'garden' }
-  | { kind: 'travel'; stop: StopId }
-  | { kind: 'hut' | 'inside' | 'chest' }
-  | { kind: 'ring'; backdrop: string }
-  | { kind: 'chat'; who: string };
-
-/** The places to show by name in a region, so you can see where things are and walk there. */
-function placeMarkers(region: RegionId, card: Card | null) {
-  const out: { id: string; x: number; y: number; label: string; selected?: boolean }[] = [];
-  const add = (id: string, at: Point, label: string, selected = false) =>
-    out.push({ id, x: at.x, y: at.y, label, selected });
-  for (const stop of stopsIn(region))
-    add(
-      `travel-${stop}`,
-      regionPoint(travelPoints[stop]),
-      travelBy[stop],
-      card?.kind === 'travel' && card.stop === stop,
-    );
-  rings
-    .filter((r) => r.region === region)
-    .forEach((r, i) => add(`ring-${i}`, regionPoint(r), 'SPARRING RING', card?.kind === 'ring'));
-  if (region === 'home') {
-    add('inside', regionPoint(doors.inside), 'FRONT DOOR', card?.kind === 'inside');
-    add('chest', regionPoint(keepsakeChest), 'KEEPSAKE CHEST', card?.kind === 'chest');
+/** Back to the home hub (the Home tab), standing at `at` (garden pixels) when given. */
+function sendHome(focused: boolean, at?: Point) {
+  if (!focused) return;
+  if (!at) {
+    router.replace('/');
+    return;
   }
-  if (region === 'valley') {
-    const names: Record<MissionPlaceId, string> = {
-      book: 'LIBRARY',
-      park: 'PARK',
-      mountain: 'MOUNTAIN CABIN',
-      shop: "MOSS'S STALL",
-      arena: 'SPARRING RING',
-      garden: 'HOME GARDEN',
-    };
-    for (const id of placeIds) {
-      const selected = card?.kind === 'mission' ? card.id === id : card?.kind === id;
-      add(id, regionPoint(missionPlaces[id]), names[id], selected);
-    }
-  }
-  return out;
-}
-
-/** Keepsakes as things standing in a scene (their feet in region pixels). */
-function decorExtras(list: readonly DecorPlacement[]) {
-  return list.map((p) => {
-    const b = decorBox(p.item, p.x, p.y);
-    return {
-      key: `decor-${p.item}`,
-      src: decorImages[p.item],
-      x: b.left,
-      y: b.top,
-      w: b.w,
-      h: b.h,
-      // a rug lies under everything; the rest stand at their feet
-      z: b.flat ? 2 : p.y,
-    };
+  feedback('select');
+  useUi.setState({
+    homeArrival: { x: Math.round(at.x), y: Math.round(at.y), key: String(Date.now()) },
   });
+  router.replace('/');
 }
-const gardenOrigin = (() => {
-  const t = regionTiles('valley').find((x) => x.id === 'garden');
-  return t ? tileOrigin('valley', t) : { x: 0, y: 0 };
-})();
-
-const near = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y) <= PLACE_RADIUS * 1.6;
-
-/** What, if anything, happens where the companion stands. */
-function cardAt(region: RegionId, at: Point): Card | null {
-  if (region === 'home')
-    return near(at, regionPoint(doors.inside))
-      ? { kind: 'inside' }
-      : near(at, regionPoint(keepsakeChest))
-        ? { kind: 'chest' }
-        : null;
-  const stop = stopsIn(region).find((id) => near(at, regionPoint(travelPoints[id])));
-  if (stop) return { kind: 'travel', stop };
-  const ring = rings.find((r) => r.region === region && near(at, regionPoint(r)));
-  if (ring) return { kind: 'ring', backdrop: ring.backdrop };
-  // a resident on their route beside the companion says hello
-  for (const [who, route] of Object.entries(residentRoutes)) {
-    const tile = regionTiles(region).find((t) => t.id === route.zone);
-    if (!tile) continue;
-    const o = tileOrigin(region, tile);
-    const ax = o.x + route.from[0];
-    const ay = o.y + route.from[1];
-    const bx = o.x + route.to[0];
-    const by = o.y + route.to[1];
-    const t = Math.max(
-      0,
-      Math.min(
-        1,
-        ((at.x - ax) * (bx - ax) + (at.y - ay) * (by - ay)) /
-          Math.max(1, (bx - ax) ** 2 + (by - ay) ** 2),
-      ),
-    );
-    if (Math.hypot(at.x - (ax + (bx - ax) * t), at.y - (ay + (by - ay) * t)) <= 18)
-      return { kind: 'chat', who };
-  }
-  if (region !== 'valley') return null;
-  if (near(at, regionPoint(doors.hut))) return { kind: 'hut' };
-  for (const id of placeIds) {
-    if (!near(at, regionPoint(missionPlaces[id]))) continue;
-    if (id === 'shop' || id === 'arena' || id === 'garden') return { kind: id };
-    return { kind: 'mission', id };
-  }
-  return null;
-}
+/** Inside the hut, the front door seen from inside: walking back to it steps out into the
+ *  garden (garden pixels), else null. (The valley itself is the home hub's,
+ *  docs/vision/home-hub.md: this screen hands it over and never walks it.) */
+const doorAt = (region: RegionId, at: Point): Point | null =>
+  region === 'home' && Math.hypot(at.x - insideDoor.x, at.y - insideDoor.y) <= 10 ? HUT_DOOR : null;
 
 /**
- * The world beyond the garden (living-world plan W1/W2): walk out of the gate and on
- * through the valley's zones with no cuts between them, take the train, maglev or
- * elevator between regions from each region's station, and step into the hut. Missions
- * set out from their places (the same rules and rewards as the missions map); the
- * stall and the ring open their screens. Walking and travelling are free: they only
- * move the companion and record where it is.
+ * The world beyond the valley (living-world plan W1/W2): the inside of the hut, and the
+ * regions the journeys reach (the train, maglev, elevator, shuttle and ferry between
+ * their stations). The valley and the garden are the home hub's (the Home tab,
+ * docs/vision/home-hub.md): a way in that would open in the valley hands over to it, and
+ * a journey back to the valley lands there. Rings open their screen. Walking and
+ * travelling are free: they only move the companion and record where it is.
  */
 export default function World() {
   const params = useLocalSearchParams<{
@@ -260,6 +124,13 @@ export default function World() {
         ey: params.ey ? Number(params.ey) : undefined,
       },
   );
+  // A way in that opens in the valley belongs to the home hub: hand it over at once, at
+  // that spot (lib/home-hub.ts). Read once, like the link.
+  const [handOff] = useState(() => hubOpening(link, restoreWorld(useGame.getState().world)));
+  // a journey chosen at a station in the hub: it starts at that station, already under way
+  const linkTrip = 'trip' in link ? link.trip : undefined;
+  const tripFrom = stopIds.find((r) => r === linkTrip?.from);
+  const tripTo = stopIds.find((r) => r === linkTrip?.to);
   useEffect(() => {
     useUi.setState({ worldLink: null });
   }, []);
@@ -272,6 +143,10 @@ export default function World() {
       : null;
   // Where to begin: a named place, the gate or the trail, or where it last stood.
   const [spawn, setSpawn] = useState<{ region: RegionId; at: Point; key: number }>(() => {
+    if (tripFrom) {
+      const stop = travelPoints[tripFrom];
+      return { region: stop.region, at: regionPoint(stop), key: 0 };
+    }
     const place = placeIds.find((id) => id === link.place);
     if (place) return { region: 'valley', at: regionPoint(missionPlaces[place]), key: 0 };
     const station = stopIds.find((r) => r === link.station);
@@ -286,7 +161,9 @@ export default function World() {
     if (saved) return { region: saved.region, at: { x: saved.x, y: saved.y }, key: 0 };
     return { region: 'valley', at: regionPoint(exits.gate), key: 0 };
   });
-  const [card, setCard] = useState<Card | null>(() => cardAt(spawn.region, spawn.at));
+  const [card, setCard] = useState<Card | null>(() =>
+    tripFrom ? null : cardAt(spawn.region, spawn.at),
+  );
   const [zone, setZone] = useState<TileId | undefined>(
     () => tileAt(spawn.region, spawn.at.x, spawn.at.y)?.id,
   );
@@ -296,8 +173,9 @@ export default function World() {
   // and doors record their own steps
   const [opening] = useState(spawn);
   useEffect(() => {
+    if (handOff) return;
     walkWorld(opening.region, opening.at.x, opening.at.y, true);
-  }, [opening, walkWorld]);
+  }, [opening, walkWorld, handOff]);
   const [cardBox, setCardBox] = useState(0);
   const [mapOpen, setMapOpen] = useState(false);
   // Decorating the hut (C12): the keepsakes set out, the one in hand and where it was
@@ -338,24 +216,17 @@ export default function World() {
     [decor],
   );
   const homeExtras = useMemo(() => decorExtras(decor.filter((p) => areaOf(p) === 'hut')), [decor]);
-  // the garden's keepsakes stand in the valley's copy of the garden too
-  const valleyDecor = useMemo(
-    () =>
-      decor
-        .filter((p) => areaOf(p) === 'garden')
-        .map((p) => ({ ...p, x: p.x + gardenOrigin.x, y: p.y + gardenOrigin.y })),
-    [decor],
-  );
-  const valleyWalk = useMemo(
-    () => (valleyDecor.length ? walkWithDecor(regionWalk('valley'), valleyDecor) : undefined),
-    [valleyDecor],
-  );
-  const valleyExtras = useMemo(() => decorExtras(valleyDecor), [valleyDecor]);
   // where the companion stands and which zones it has walked, for the map (only while it is open)
   const worldSpot = useGame((s) => (mapOpen ? s.world : null));
   // a trip: the stop it left from, the stops it calls at (the destination last) and
   // which leg is playing
-  const [trip, setTrip] = useState<{ from: StopId; legs: StopId[]; leg: number } | null>(null);
+  const [trip, setTrip] = useState<{ from: StopId; legs: StopId[]; leg: number } | null>(() => {
+    if (!tripFrom || !tripTo) return null;
+    const legs = travelRoute(tripFrom, tripTo);
+    // the places on the way load while the journey plays
+    legs.forEach((stop) => prefetchRegion(travelPoints[stop].region));
+    return legs.length ? { from: tripFrom, legs, leg: 0 } : null;
+  });
   // the place's own sound (Claude B's ambience: the Frostline's wind, the isles' surf,
   // Sunstone's dry air), quiet under a journey or the map; mute, background and first-tap
   // rules ride on the garden's ambience
@@ -365,11 +236,9 @@ export default function World() {
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(() =>
     walkOut && spawn.key === 0 ? { point: walkOut.goal, key: 1 } : undefined,
   );
-  // Walking back into the garden's yard from outside it is going home: the garden
-  // screen picks up at the same spot. Inside the hut, walking back to the front door
-  // steps out into the garden. (Arriving at either, by a door or a journey, waits until
-  // the companion has walked away once, or a few steps.)
-  const outside = useRef(!homeAt(spawn.region, spawn.at));
+  // Inside the hut, walking back to the front door steps out into the garden (arriving
+  // there waits until the companion has walked away once, or a few steps).
+  const outside = useRef(!doorAt(spawn.region, spawn.at));
   // Walking to the end of a pass between regions walks on into the next (the desert
   // into the Ember Lands): the scene fades and the companion carries on. Arriving at a
   // pass waits until it has walked away once, so it never bounces straight back.
@@ -385,13 +254,11 @@ export default function World() {
     setGoal((g) => ({ point: pass.goal, key: (g?.key ?? 0) + 1 }));
   };
   const homeward = (at: Point) => {
-    const g = homeAt(spawn.region, at);
+    const g = doorAt(spawn.region, at);
     if (!g) {
       outside.current = true;
       return;
     }
-    // (or having walked a few steps from where it arrived: never left standing in the
-    // valley's copy of the garden)
     if (!outside.current && Math.hypot(at.x - spawn.at.x, at.y - spawn.at.y) < 24) return;
     outside.current = false;
     goHome(g);
@@ -416,14 +283,20 @@ export default function World() {
     const station = travelPoints[dest];
     const region = station.region;
     const at = regionPoint(station);
+    // back in the valley: the home hub picks up at the station
+    if (region === HUB_REGION) {
+      setTrip(null);
+      sendHome(navigation.isFocused(), toGarden(at));
+      return;
+    }
     setSpawn((s) => ({ region, at, key: s.key + 1 }));
     setGoal(undefined);
     setZone(tileAt(region, at.x, at.y)?.id);
-    outside.current = !homeAt(region, at);
+    outside.current = !doorAt(region, at);
     walkWorld(region, at.x, at.y, true);
     setCard({ kind: 'travel', stop: dest });
     setTrip(null);
-  }, [dest, walkWorld]);
+  }, [dest, walkWorld, navigation]);
   // the end of one leg: change at that station and go on, or arrive
   const legDone = useCallback(() => {
     if (trip && trip.leg < trip.legs.length - 1) setTrip({ ...trip, leg: trip.leg + 1 });
@@ -442,19 +315,10 @@ export default function World() {
         : Math.min(260, height * 0.36);
   const viewH = height;
 
-  // back to the garden screen, standing at `at` (garden pixels) when given
-  const goHome = (at?: Point) => {
-    if (!navigation.isFocused()) return;
-    if (!at) {
-      router.replace('/');
-      return;
-    }
-    feedback('select');
-    useUi.setState({
-      homeArrival: { x: Math.round(at.x), y: Math.round(at.y), key: String(Date.now()) },
-    });
-    router.replace('/');
-  };
+  const goHome = (at?: Point) => sendHome(navigation.isFocused(), at);
+  useEffect(() => {
+    if (handOff) sendHome(navigation.isFocused(), handOff);
+  }, [handOff, navigation]);
   const enter = (region: RegionId, at: Point) => {
     feedback('select');
     setDecorating(false);
@@ -462,7 +326,7 @@ export default function World() {
     setSpawn((s) => ({ region, at, key: s.key + 1 }));
     setGoal(undefined);
     setZone(tileAt(region, at.x, at.y)?.id);
-    outside.current = !homeAt(region, at);
+    outside.current = !doorAt(region, at);
     awayFromPass.current = !passAt(region, at);
     walkWorld(region, at.x, at.y, true);
     setCard(cardAt(region, at));
@@ -514,190 +378,42 @@ export default function World() {
 
   const cardBody = () => {
     if (!card || !player) return null;
-    if (card.kind === 'chest')
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            THE KEEPSAKE CHEST
-          </BodyText>
-          <BodyText style={{ fontSize: 13 }}>
-            {found.length} of {keepsakes.length} keepsakes found. Every place you walk leaves one;
-            set them out anywhere in the hut, and move them whenever you like.
-          </BodyText>
-          <PixelButton
-            small
-            label="DECORATE"
-            onPress={() => {
-              feedback('select');
-              setHand(null);
-              setDecorating(true);
-            }}
-          />
-        </>
-      );
-    if (card.kind === 'mission') {
-      const mission = missions.find((m) => m.id === card.id);
-      if (!mission) return null;
-      const locked = player.level < mission.level;
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            {mission.name}
-          </BodyText>
-          <BodyText style={{ fontSize: 13 }}>{worldCatalogue[card.id].description}</BodyText>
-          <BodyText style={{ fontSize: 13 }}>
-            {mission.duration} MIN · {mission.reward} GRASS ·{' '}
-            {mission.id === 'mountain' ? 'EPIC' : 'RARE'} card · postcard
-          </BodyText>
-          <PixelButton
-            small
-            label={locked ? `LEVEL ${mission.level} NEEDED` : `START ${mission.name}`}
-            disabled={locked || away || !appActive}
-            onPress={() => startMission(mission.id)}
-          />
-        </>
-      );
-    }
-    if (card.kind === 'shop' || card.kind === 'arena') {
-      const shop = card.kind === 'shop';
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            {shop ? "MOSS'S STALL" : 'SPARRING RING'}
-          </BodyText>
-          <BodyText style={{ fontSize: 13 }}>
-            {shop
-              ? 'Moss keeps the stall at the crossroads, with everything to grow your garden.'
-              : 'A trodden ring by the square. Spar with Doomscroll Dave and get ready for raids.'}
-          </BodyText>
-          <PixelButton
-            small
-            label={shop ? "VISIT MOSS'S STALL" : 'TO THE RING'}
-            onPress={() => navigation.isFocused() && router.push(shop ? '/shop' : '/arena')}
-          />
-        </>
-      );
-    }
-    if (card.kind === 'ring')
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            SPARRING RING
-          </BodyText>
-          <BodyText style={{ fontSize: 13 }}>
-            The same friendly ring as in town: spar with Doomscroll Dave or get ready for raids.
-          </BodyText>
-          <PixelButton
-            small
-            label="TO THE RING"
-            onPress={() =>
-              navigation.isFocused() &&
-              router.push({ pathname: '/arena', params: { ring: card.backdrop } })
-            }
-          />
-        </>
-      );
-    if (card.kind === 'chat')
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            {card.who.toUpperCase()}
-          </BodyText>
-          <BodyText style={{ fontSize: 14 }}>
-            “{residentLines[card.who] ?? 'hello there.'}”
-          </BodyText>
-        </>
-      );
-    if (card.kind === 'garden')
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            HOME GARDEN
-          </BodyText>
-          <BodyText style={{ fontSize: 13 }}>
-            The meadow, the pond and your companion’s bed.
-          </BodyText>
-          <PixelButton small label="BACK TO THE GARDEN" onPress={() => goHome()} />
-        </>
-      );
-    if (card.kind === 'hut')
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            THE NAP HUT
-          </BodyText>
-          <PixelButton
-            small
-            label="GO INSIDE"
-            onPress={() => enter('home', regionPoint(doors.inside))}
-          />
-        </>
-      );
-    if (card.kind === 'inside')
-      return (
-        <>
-          <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-            THE FRONT DOOR
-          </BodyText>
-          <PixelButton small label="STEP OUTSIDE" onPress={() => goHome(HUT_DOOR)} />
-        </>
-      );
-    // a station: the lines leave from here; further places change on the way
-    if (card.kind !== 'travel') return null;
-    const here = card.stop;
-    const routes = stopIds
-      .filter((r) => r !== here)
-      .map((r) => ({ r, route: travelRoute(here, r) }))
-      .filter((x) => x.route.length > 0)
-      .sort((a, b) => a.route.length - b.route.length);
-    const direct = routes.filter((x) => x.route.length === 1);
-    const further = routes.filter((x) => x.route.length > 1);
     return (
-      <>
-        <BodyText style={{ fontSize: 16, fontFamily: 'PixelifySans_700Bold' }}>
-          {travelBy[here]}
-        </BodyText>
-        <BodyText style={{ fontSize: 13 }}>
-          Where to? The journey is free; skip it any time.
-        </BodyText>
-        {[direct, further].map((group, g) =>
-          group.length ? (
-            <View key={g === 0 ? 'direct' : 'further'} style={{ gap: 4 }}>
-              {g === 1 && (
-                <BodyText style={{ fontSize: 12 }}>Further, changing on the way:</BodyText>
-              )}
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 6 }}>
-                {group.map(({ r, route }) => (
-                  <View key={r} style={{ width: '48%', gap: 2 }}>
-                    <PixelButton
-                      small
-                      light
-                      label={stopNames[r]}
-                      disabled={away || !!trip}
-                      onPress={() => {
-                        feedback('select');
-                        // the places on the way load while the journey plays
-                        route.forEach((stop) => prefetchRegion(travelPoints[stop].region));
-                        setTrip({ from: here, legs: route, leg: 0 });
-                      }}
-                    />
-                    {route.length > 1 && (
-                      <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
-                        {route.length === 2
-                          ? `via ${stopShort[route[0]]}`
-                          : `via ${stopShort[route[0]]} · ${route.length - 1} changes`}
-                      </BodyText>
-                    )}
-                  </View>
-                ))}
-              </View>
-            </View>
-          ) : null,
-        )}
-      </>
+      <PlaceCardBody
+        card={card}
+        player={player}
+        away={away}
+        appActive={appActive}
+        travelling={!!trip}
+        found={found.length}
+        keepsakeCount={keepsakes.length}
+        act={{
+          startMission,
+          openShop: () => navigation.isFocused() && router.push('/shop'),
+          openArena: (backdrop) =>
+            navigation.isFocused() &&
+            router.push(backdrop ? { pathname: '/arena', params: { ring: backdrop } } : '/arena'),
+          travel: (here, route) => {
+            feedback('select');
+            // the places on the way load while the journey plays
+            route.forEach((stop) => prefetchRegion(travelPoints[stop].region));
+            setTrip({ from: here, legs: route, leg: 0 });
+          },
+          goHome: () => goHome(),
+          goInside: () => enter('home', regionPoint(doors.inside)),
+          stepOutside: () => goHome(HUT_DOOR),
+          decorate: () => {
+            feedback('select');
+            setHand(null);
+            setDecorating(true);
+          },
+        }}
+      />
     );
   };
 
+  // handing over to the home hub: nothing of the world shows on the way
+  if (handOff) return <View style={{ flex: 1, backgroundColor: '#1E1917' }} />;
   return (
     <View style={{ flex: 1, backgroundColor: '#1E1917' }}>
       <Stack.Screen options={{ headerShown: false }} />
@@ -740,20 +456,8 @@ export default function World() {
               target={goal}
               markers={decorating ? undefined : placeMarkers(spawn.region, card)}
               onMarker={walkToPlace}
-              walk={
-                spawn.region === 'home'
-                  ? homeWalk
-                  : spawn.region === 'valley'
-                    ? valleyWalk
-                    : undefined
-              }
-              extras={
-                spawn.region === 'home'
-                  ? homeExtras
-                  : spawn.region === 'valley'
-                    ? valleyExtras
-                    : undefined
-              }
+              walk={spawn.region === 'home' ? homeWalk : undefined}
+              extras={spawn.region === 'home' ? homeExtras : undefined}
               preview={decorating ? preview : undefined}
               onTap={decorating ? decorTap : undefined}
             />
