@@ -4958,7 +4958,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
   },
   caldera: {
     objects: [
-      ['forge', 'forge', 23, 319, 90, 74],
+      ['forge', 'forge', 22, 319, 92, 76],
       ['shrine', 'ember_shrine', 152, 365, 26, 43],
       ['vent-1', 'cooling_vent', 41, 460, 28, 22],
       ['cols-1', 'basalt_steps', 4, 102, 77, 55],

@@ -228,47 +228,119 @@ def basalt_fallen() -> Canvas:
 
 
 def forge() -> Canvas:
-    """A smithy built into the rock, 96 x 80: a slab roof of iron plates seen from above,
-    a stone face with a glowing furnace mouth, an anvil, a quench trough, bellows and a
-    chimney trailing ember sparks."""
+    """The smithy, 96 x 80, in Hearthold's material kit (sunstone-comparison.md, "still
+    to do": the forge as made as the castle): a slate roof pitched toward the viewer, its
+    ridge lit and its eaves throwing a shadow on the wall; a chimney stack of dressed
+    stone at the east end, sooted at the top, where the embers rise; a wall of coursed
+    stone, every block its own tone and blackened round the furnace; the furnace mouth
+    under an arch of voussoirs, white at its heart, its glow spilling on the floor; a
+    leather bellows beside it; and to the east an open bay under an oak lean-to on two
+    posts: the anvil on its stump, a quench trough of dark water and a rack of tongs and
+    hammers. The anchors stay where the ember sources expect them (chimney top at x 75,
+    the furnace at 30, 44)."""
+    import castle_props as csp
     w, h = 96, 80
     cv = Canvas(w, h, pad=PAD)
-    for y in range(6, 28):  # iron plate roof
-        for x in range(4, w - 4):
-            plate = (x // 12 + y // 8) % 2
-            cv.set(x, y, IRON[3] if plate else IRON[2])
-            if x % 12 == 0 or y % 8 == 0:
-                cv.set(x, y, IRON[1])
-            if x % 12 == 2 and y % 8 == 2:
-                cv.set(x, y, IRON[4])  # rivets
-    cv.hline(4, 6, w - 8, IRON[4]); cv.hline(4, 28, w - 8, IRON[0])
-    for y in range(0, 14):  # the chimney
-        for x in range(70, 80):
-            cv.set(x, y, BASALT[3] if x < 74 else BASALT[2])
-    cv.rect(69, 0, 12, 2, BASALT[4])
-    for (sx, sy) in ((74, -2), (78, -5), (71, -7)):
-        cv.set(sx, sy + 8, LAVA[4])
-    detail.stones(cv, 4, 28, w - 8, 44, BASALT, seed=31, course=5, base=2)
-    detail.overhang_shadow(cv, 4, w - 4, 29, lambda x: 4, k=2, cap=2)
-    mouth = {(x, y) for (x, y) in disc(30, 52, 13) if y >= 46} | rect_set(17, 52, 27, 18)
+    ST, SL, OAK = csp.STONE_R, csp.SLATE_R, csp.OAK
+    # the wall: coursed stone, sooted toward the furnace and the foot
+    wall = rect_set(4, 26, w - 8, 44)
+    csp.masonry(cv, wall, seed=231, light=lambda x, y: -0.6 * max(0, 1 - math.hypot(x - 30, y - 50) / 26) - (0.5 if x > 60 else 0),
+                course=(4, 6), block=(6, 11), soot=4)
+    # the roof: slates pitched toward the viewer, lighter toward the ridge and the west
+    roof = {(x, y) for y in range(6, 27) for x in range(3 + (26 - y) // 7, w - 3 - (26 - y) // 7)}
+    csp.slates(cv, roof, seed=232, row=3, tile=(4, 6),
+               light=lambda x, y: (-0.6 if y < 12 else -1.4) + (0.3 if x < 40 else -0.4 if x > 70 else 0))
+    for y in range(8, 26):  # the verges: the roof's sloping ends, a lit barge stone on the west
+        xl, xr = 3 + (26 - y) // 7, w - 4 - (26 - y) // 7
+        cv.set(xl, y, SL[4]); cv.set(xr, y, SL[0])
+    for x in range(6, w - 6):  # the ridge, its capping lit
+        cv.set(x, 6, SL[5] if x < 60 else SL[4]); cv.set(x, 7, SL[3])
+    for x in range(3, w - 3):  # the eaves' lip, and their shadow on the wall
+        cv.set(x, 25, SL[1]); cv.set(x, 26, SL[0])
+    detail.overhang_shadow(cv, 4, w - 4, 27, lambda x: 3, k=2, cap=2)
+    # the chimney stack at the east end, standing through the roof
+    stack = rect_set(70, 0, 11, 20)
+    csp.masonry(cv, stack, seed=233, light=lambda x, y: 1 if x < 73 else -1 if x > 78 else 0, course=(3, 4), block=(4, 6))
+    for x in range(69, 82):
+        cv.set(x, 0, ST[5] if x < 76 else ST[3]); cv.set(x, 1, ST[1])  # its cap stone
+    for (x, y) in rect_set(72, 2, 7, 3):  # soot round the flue's mouth
+        if (x + y) % 2 == 0:
+            cv.set(x, y, '#2A2628')
+    for x in range(71, 81):
+        cv.set(x, 20, SL[0])  # flashing where the stack meets the slates
+    # the furnace: an arch of voussoirs, the fire white at its heart
+    mouth = {(x, y) for (x, y) in disc(30, 52, 12) if y >= 46} | rect_set(18, 52, 25, 16)
+    ring = {(x, y) for (x, y) in disc(30, 52, 16) if y >= 42} - mouth
+    for (x, y) in ring:
+        a = math.atan2(y - 52, x - 30)
+        joint = int((a + math.pi) / (math.pi / 9)) != int((a + math.pi + 0.06) / (math.pi / 9))
+        c = ST[4] if x < 27 else ST[3] if x < 34 else ST[2]
+        cv.set(x, y, ST[1] if joint else c)
+    for (x, y) in rect_set(14, 52, 4, 16) | rect_set(43, 52, 4, 16):  # the jambs
+        cv.set(x, y, ST[4] if x < 30 and (x, y) not in mouth else ST[2])
+        if y % 5 == 0:
+            cv.set(x, y, ST[1])
     for (x, y) in mouth:
-        d = math.hypot(x - 30, y - 58)
-        cv.set(x, y, LAVA[5] if d < 4 else LAVA[4] if d < 8 else LAVA[3] if d < 11 else LAVA[2])
-    for (x, y) in mouth:
-        for (ax, ay) in ((-1, 0), (1, 0), (0, -1), (-2, 0), (2, 0), (0, -2)):
-            q = (x + ax, y + ay)
-            if q not in mouth and ay <= 0:
-                cv.set(*q, ASH[3] if q[0] < 30 else ASH[1])
-    for (x, y) in rect_set(4, 66, w - 8, 6):  # the glow spills on the floor stones
-        if (x + y) % 2 == 0 and abs(x - 30) < 22:
-            cv.set(x, y, LAVA[2])
-    # the anvil and quench trough
-    for (x, y) in rect_set(56, 52, 18, 5):
-        cv.set(x, y, IRON[4] if y == 52 else IRON[2])
-    cv.rect(61, 57, 8, 8, IRON[1]); cv.rect(58, 64, 14, 3, IRON[2])
-    for (x, y) in rect_set(78, 58, 14, 8):
-        cv.set(x, y, WOOD[2] if y > 59 else WOOD[4])
-    cv.hline(80, 59, 10, '#3E5468')
+        d = math.hypot(x - 30, (y - 58) * 1.2)
+        c = LAVA[5] if d < 4 else LAVA[4] if d < 8 else LAVA[3] if d < 11 else LAVA[2]
+        if y >= 64:
+            c = LAVA[1] if (x + y) % 2 else BASALT[1]  # the coals' bed
+        cv.set(x, y, c)
+    for (x, y) in ring:  # the fire's light on the arch's inner edge
+        if any((x + dx, y + dy) in mouth for dx, dy in ((1, 0), (-1, 0), (0, 1))):
+            cv.set(x, y, LAVA[3] if (x + y) % 2 else LAVA[2])
+    # the bellows, leather between two oak boards, its nozzle into the furnace's side
+    for (x, y) in oval(8, 60, 4, 6):
+        cv.set(x, y, '#6A4632' if x < 8 else '#4E3426')
+    for y in range(55, 66, 3):
+        cv.hline(5, y, 7, '#3A261C')
+    cv.vline(8, 66, 3, OAK[3]); cv.hline(9, 60, 6, IRON[2])
+    # the floor in front: flags, the glow spilling on them
+    for (x, y) in rect_set(4, 68, w - 8, 6):
+        sx = (x + (y // 3) % 2 * 4) // 8
+        c = ST[2] if noise2(sx, y // 3, 234) > 0.4 else ST[1]
+        if (x + (y // 3) % 2 * 4) % 8 == 0 or y % 3 == 0:
+            c = MATERIALS['ash'][0]
+        if abs(x - 30) < 18 and (x + y) % 2 == 0:
+            c = LAVA[2] if abs(x - 30) < 10 else LAVA[1]
+        cv.set(x, y, c)
+    for x in range(4, w - 4):
+        cv.set(x, 74, BASALT[0])  # the step's shadow on the ash
+    # the open bay: an oak lean-to on two posts, its shade on the wall
+    for x in range(54, w - 3):
+        for y in range(36, 41):
+            cv.set(x, y, OAK[4] if y == 36 else OAK[3] if y < 39 else OAK[1])
+        if x % 6 == 0:
+            cv.set(x, 37, OAK[2]); cv.set(x, 38, OAK[2])  # the boards' joints
+    for x in range(55, w - 4):
+        for y in range(41, 45):
+            detail.shade(cv, x, y, 1 if y > 42 else 2)
+    for px in (56, w - 8):
+        for y in range(41, 70):
+            cv.set(px, y, OAK[4]); cv.set(px + 1, y, OAK[3]); cv.set(px + 2, y, OAK[1])
+    # a rack of tongs and hammers on the wall under the lean-to
+    cv.hline(62, 46, 22, OAK[2]); cv.hline(62, 47, 22, OAK[0])
+    for k, tx in enumerate(range(64, 84, 4)):
+        L = 7 + (k % 2) * 3
+        cv.vline(tx, 48, L, IRON[3]); cv.set(tx + 1, 48, IRON[1])
+        if k % 2:
+            cv.hline(tx - 1, 48 + L, 3, IRON[2])  # a hammer's head
+        else:
+            cv.set(tx - 1, 48 + L, IRON[2]); cv.set(tx + 1, 48 + L, IRON[2])  # the tongs' jaws
+    # the anvil on its stump
+    for (x, y) in oval(66, 66, 6, 3):
+        cv.set(x, y, OAK[3] if y < 66 else OAK[1])
+    for y in range(62, 66):
+        cv.hline(62, y, 9, OAK[2] if y > 62 else OAK[4])
+    cv.hline(58, 57, 15, IRON[4]); cv.hline(58, 58, 15, IRON[3]); cv.hline(57, 57, 2, IRON[3])  # the face and horn
+    for y in range(59, 62):
+        cv.hline(62, y, 7, IRON[2] if y < 61 else IRON[1])
+    cv.set(59, 57, IRON[5] if len(IRON) > 5 else IRON[4])
+    # the quench trough, dark water with a glint
+    for (x, y) in rect_set(76, 60, 14, 8):
+        edge = x in (76, 89) or y in (60, 67)
+        cv.set(x, y, OAK[4] if (edge and (y == 60 or x == 76)) else OAK[1] if edge else '#2E4458')
+    cv.hline(78, 62, 3, '#6C8CA4')
     return cv
 
 
