@@ -13,6 +13,7 @@ import {
   PixelRatio,
   Platform,
   Pressable,
+  ScrollView,
   View,
   useWindowDimensions,
   type ImageSourcePropType,
@@ -659,6 +660,9 @@ export function GardenWorld({
   const camera = !tilt && viewportHeight !== undefined;
   const topBand = Math.round(GARDEN.top * scale);
   const viewHeight = camera ? viewportHeight : height;
+  // a place's card never takes more than about two fifths of the view (a station's card
+  // scrolls inside that)
+  const hubCardMax = Math.min(380, viewHeight * 0.42);
   // the part of the window not under the hotbar: the camera can always bring the
   // fence and its gate up above it
   const seenHeight = Math.max(1, viewHeight - (camera ? padBottom : 0));
@@ -2138,36 +2142,43 @@ export function GardenWorld({
               left: Math.max(8, (width - 560) / 2),
               right: Math.max(8, (width - 560) / 2),
               bottom: padBottom + 8,
-              maxHeight: Math.min(420, viewHeight * 0.5),
+              maxHeight: hubCardMax,
               zIndex: 10,
             }}
           >
-            <PixelFrame tone="paper" style={{ padding: 4 * ui, gap: 6 }}>
-              <PlaceCardBody
-                card={card}
-                player={player}
-                away={away}
-                appActive={appActive}
-                act={{
-                  startMission,
-                  openShop: () => activeRef.current && router.push('/shop'),
-                  openArena: () => activeRef.current && router.push('/arena'),
-                  travel: (here, route) => {
-                    if (!activeRef.current || !route.length) return;
-                    gameFeedback('select');
-                    // the journey plays on the world screen; one back to the valley lands
-                    // here again (app/world.tsx)
-                    useUi.setState({
-                      worldLink: { trip: { from: here, to: route[route.length - 1] } },
-                    });
-                    router.push('/world');
-                  },
-                  goHome: () => setCard(null),
-                  goInside,
-                  stepOutside: () => setCard(null),
-                  decorate: () => setCard(null),
-                }}
-              />
+            <PixelFrame tone="paper" style={{ padding: 4 * ui }}>
+              {/* (a station's card lists every line: on a short screen it scrolls rather
+                  than being cut off, so the scene above stays in view) */}
+              <ScrollView
+                style={{ maxHeight: hubCardMax - 8 * ui }}
+                contentContainerStyle={{ gap: 6 }}
+              >
+                <PlaceCardBody
+                  card={card}
+                  player={player}
+                  away={away}
+                  appActive={appActive}
+                  act={{
+                    startMission,
+                    openShop: () => activeRef.current && router.push('/shop'),
+                    openArena: () => activeRef.current && router.push('/arena'),
+                    travel: (here, route) => {
+                      if (!activeRef.current || !route.length) return;
+                      gameFeedback('select');
+                      // the journey plays on the world screen; one back to the valley lands
+                      // here again (app/world.tsx)
+                      useUi.setState({
+                        worldLink: { trip: { from: here, to: route[route.length - 1] } },
+                      });
+                      router.push('/world');
+                    },
+                    goHome: () => setCard(null),
+                    goInside,
+                    stepOutside: () => setCard(null),
+                    decorate: () => setCard(null),
+                  }}
+                />
+              </ScrollView>
             </PixelFrame>
           </View>
         )}
