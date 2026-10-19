@@ -82,6 +82,8 @@ Matt: "there cannot be anyone standing on water, neither should trees be in a pa
 - Height changes only at a drawn slope, bank, cliff, stair, ramp, ladder or lift, and a stair or ramp always carries a path to a node at both ends (see 4).
 - Things on a higher level hide what is behind them and are hidden by what is in front; the companion is drawn behind a wall it walks behind and in front of a wall it walks past in front of (the `Ghost` outline shows it through anything that hides it).
 
+**Where these come from, and what comes next.** `docs/vision/research/placement-paths-verticality.md` (19 Oct, sourced) gives the test for each rule, a path generator (a cost field with squared slope cost, A\* in 16 directions, roads then lanes meeting as T-junctions then desire-line footpaths merging in a Y, bridges at narrow points, Chaikin smoothing and worn verges) and the two-level walk for the city (a walk grid per level, decks drawn raised, stairs and lifts as connectors, a fixed draw order, fading what hides the companion). Its numbers are starting points to tune in play. Claude A builds the path generator and the second walk level; zone owners use them once they land.
+
 ## 3. Places are nodes joined by graded paths
 
 A zone is a small Lynch map: **one landmark** visible from where you enter; a **frame** of edges on all four sides made of materials that belong there (water, bluff, hedge, treeline, fence, wall); **one clearing or square** kept mostly empty as its node; and **paths in at most three grades**.
