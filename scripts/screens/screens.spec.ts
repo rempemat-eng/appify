@@ -2,6 +2,7 @@ import { mkdir } from 'node:fs/promises';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { makeSavedGame } from './fixtures';
 import { SAVE_VERSION } from '../../lib/save-data';
+import { screenOverflow } from './overflow';
 
 const screens = [
   'onboarding',
@@ -92,6 +93,11 @@ async function prepare(page: Page, screen: Screen) {
     case 'missions':
       await click(page, page.getByRole('tab', { name: /^MISSIONS/ }));
       await expect(page.getByRole('heading', { name: 'THE VALLEY', exact: true })).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'PARK PATROL', exact: true })).toBeVisible();
+      await expect(page.getByRole('button', { name: 'WALK THERE', exact: true })).toBeVisible();
+      await expect(
+        page.getByRole('button', { name: 'START PARK PATROL', exact: true }),
+      ).toBeEnabled();
       break;
     case 'shop':
       await click(page, page.getByRole('tab', { name: /^SHOP/ }));
@@ -118,53 +124,7 @@ async function prepare(page: Page, screen: Screen) {
 }
 
 async function overflow(page: Page, screen: Screen) {
-  return page.evaluate((current) => {
-    const problems: string[] = [];
-    if (
-      document.documentElement.scrollWidth > innerWidth + 1 ||
-      document.body.scrollWidth > innerWidth + 1
-    )
-      problems.push(
-        `Document width ${Math.max(document.documentElement.scrollWidth, document.body.scrollWidth)} > viewport ${innerWidth}`,
-      );
-    for (const element of document.querySelectorAll<HTMLElement>('body *')) {
-      const style = getComputedStyle(element);
-      const rect = element.getBoundingClientRect();
-      if (
-        rect.width <= 0 ||
-        rect.height <= 0 ||
-        rect.right <= 0 ||
-        rect.left >= innerWidth ||
-        rect.bottom <= 0 ||
-        rect.top >= innerHeight ||
-        style.visibility === 'hidden' ||
-        style.display === 'none'
-      )
-        continue;
-      if (
-        ['auto', 'scroll'].includes(style.overflowX) &&
-        element.scrollWidth > element.clientWidth + 1
-      ) {
-        // These two existing controls intentionally scroll sideways. Keep the
-        // exception tied to their contents and horizontal-only scrolling, so a
-        // wider page or overflowing vertical sheet still fails.
-        const intentionalRail =
-          style.overflowY === 'hidden' &&
-          ((current === 'companions' &&
-            element.querySelectorAll('[role="button"][aria-label^="Preview "]').length > 1) ||
-            (current === 'battle' &&
-              element.querySelectorAll('[role="button"][aria-label$="tap to select"]').length >
-                0) ||
-            // the row of places on the Missions tab (components/mission-departure.tsx), a rail by design
-            (current === 'missions' && element.querySelectorAll('[role="button"]').length > 3));
-        if (intentionalRail) continue;
-        problems.push(
-          `${element.getAttribute('aria-label') ?? element.getAttribute('role') ?? element.tagName}: horizontal scroll ${element.scrollWidth} > ${element.clientWidth}`,
-        );
-      }
-    }
-    return problems;
-  }, screen);
+  return page.evaluate(screenOverflow, screen);
 }
 
 // Exercise the real store through the rendered confirmation, after its capture.
