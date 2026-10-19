@@ -702,6 +702,21 @@ def build(name: str, fn, start: str):
         import decks  # the deck drawn from its walk (two-level-walk.md)
         top = min(y for (_x, y) in deck['walk']) - int(deck['height']) - decks.RAIL - 1
         assert top >= 0, f'{name}: the deck is drawn off the top of the zone (raise its foot below y {-top + 1 + min(y for (_x, y) in deck["walk"])})'
+        # deck-occlusion (two-level-walk.md): a deck is narrow, so the street under it is
+        # hidden for 40 px at most, and no door on the street is drawn under it
+        cols = {}
+        for (x, y) in deck['walk']:
+            cols.setdefault(x, set()).add(y)
+        deep = [x for x, ys in cols.items() if max(ys) - min(ys) + 1 > 40]
+        assert not deep, f'{name}: the deck is deeper than 40 px over the street at x {deep[:3]}'
+        rail = int(deck['height']) + decks.RAIL
+        for (oid, key, x, y) in objects:
+            if key not in DOORS:
+                continue
+            sp = sprite_map[key]
+            dx, dy = x + int(sp.w * DOORS[key]), y + sp.h - 8
+            assert not any(fy - rail <= dy <= fy + decks.FACE for fy in cols.get(dx, ())), \
+                f'{name}: the door of {oid} is drawn under the deck'
         art, under = decks.paint(deck, W, H)
         art.save(os.path.join(out, 'deck.png'), worlds.SCALE)
         under.save(os.path.join(out, 'deck-shadow.png'), worlds.SCALE)
