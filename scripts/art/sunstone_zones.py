@@ -115,7 +115,7 @@ def gulch(frame: int = 0):
     cv = Canvas(W, H)
     for y in range(H):
         for x in range(W):
-            cv.set(x, y, gulch_sand(x, y))
+            cv.set(x, y, desert_edge(x, y) if x > W - 110 else gulch_sand(x, y))
     # the dry creek: a winding bed of cracked mud with rounded stones and pale banks
     creek = worlds.thick(GULCH_CREEK, 9, seed=12)
     for (x, y) in creek:
@@ -134,7 +134,7 @@ def gulch(frame: int = 0):
     paint_rails(cv, 40)
     for y in range(36, 60):  # nothing beyond the buffer: the ballast stops with the line
         for x in range(MESA_X0 - 15, W):
-            cv.set(x, y, gulch_sand(x, y))
+            cv.set(x, y, desert_edge(x, y) if x > W - 110 else gulch_sand(x, y))
     buffer_stop(cv, MESA_X0 - 22, 38)
     for y in range(58, 78):
         for x in range(20, MESA_X0 - 2):
@@ -599,6 +599,36 @@ def lava_px(X: int, Y: int, frame: int = 0) -> str:
     return c
 
 
+def fire_ash(X: int, Y: int) -> str:
+    """The fire country's ground at a point in its own coordinates: grey ash, gently
+    darker in the hollows, with cinders and pale flecks. One painter for the caldera,
+    the springs, Hearthold and the Scorched Pass, so the ground runs on across their
+    borders with no change at a tile edge (art-faults.md, rule 1)."""
+    ASH, BASALT = MATERIALS['ash'], MATERIALS['basalt']
+    n = smooth_noise(X, Y, 30, 261)
+    c = ASH[2] if n > 0.3 or (n > 0.26 and (X + Y) % 2) else ASH[1]
+    g = noise2(X, Y, 270)
+    if g > 0.93:
+        c = BASALT[2]  # a cinder
+    elif g > 0.9:
+        c = ASH[3]
+    return c
+
+
+def desert_edge(GX: int, GY: int) -> str:
+    """The ground where Dust Gulch's sand gives out into the fire country, in the
+    gulch's coordinates (the Scorched Pass is x + W): sand, then a belt of scrub with
+    sand blown in among the ash, then ash, blended over about 100 px across the border
+    along a wandering line
+    so no change lines up with it (art-faults.md, rule 1)."""
+    s = (W - GX) / 120 + 0.5 + (smooth_noise(GX, GY, 40, 741) - 0.5) * 0.6 + (smooth_noise(GX, GY, 12, 742) - 0.5) * 0.2
+    if s > 0.6 or (s > 0.45 and (GX + GY) % 2):
+        return gulch_sand(GX, GY)
+    if s > 0.25 and noise2(GX // 2, GY // 2, 744) > 0.7:
+        return MATERIALS['desert'][2] if (GX + GY) % 2 else MATERIALS['ash'][3]  # sand blown in
+    return fire_ash(GX - W, GY + 2 * H)
+
+
 def paint_lava(cv: Canvas, zone: str, frame: int = 0, lake=frozenset()) -> set:
     """Paint the part of the fire country's lava that crosses `zone`: the molten bands,
     crust plates drifting at the edges, cooled crust on the banks with glowing seams, a
@@ -731,14 +761,7 @@ def caldera(frame: int = 0):
     cv = Canvas(W, H)
     for y in range(H):  # ash ground with cinders, gently darker in hollows
         for x in range(W):
-            n = smooth_noise(x, y, 30, 261)
-            c = ASH[2] if n > 0.3 or (n > 0.26 and (x + y) % 2) else ASH[1]
-            g = noise2(x, y, 270)
-            if g > 0.93:
-                c = BASALT[2]  # a cinder
-            elif g > 0.9:
-                c = ASH[3]
-            cv.set(x, y, c)
+            cv.set(x, y, fire_ash(x, y))
     for i in range(200):
         x, y = int(noise2(i, 0, 262) * W), int(noise2(i, 1, 262) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
@@ -878,14 +901,7 @@ def springs(frame: int = 0):
     blocked = set()
     for y in range(H):  # the caldera's ash ground, continued
         for x in range(W):
-            n = smooth_noise(x + W, y, 30, 261)
-            c = ASH[2] if n > 0.3 or (n > 0.26 and (x + y) % 2) else ASH[1]
-            g = noise2(x + W, y, 270)
-            if g > 0.93:
-                c = BASALT[2]
-            elif g > 0.9:
-                c = ASH[3]
-            cv.set(x, y, c)
+            cv.set(x, y, fire_ash(x + W, y))
     for i in range(140):
         x, y = int(noise2(i, 0, 500) * W), int(noise2(i, 1, 500) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
@@ -1099,20 +1115,14 @@ def scorch(frame: int = 0):
     dist = _distance(hot, 64)
     for y in range(H):
         for x in range(W):
-            # sand at the west edge, a belt of scrub, then ash; never sand near the lava
-            s = (34 - x) / 22 + (smooth_noise(x, y, 18, 741) - 0.5) * 0.9
-            s = min(s, (dist[y][x] - 24) / 10)
-            k = smooth_noise(x, y, 30, 745)
-            c = ASH[2] if k > 0.3 or (k > 0.26 and (x + y) % 2) else ASH[1]
-            if noise2(x, y, 746) > 0.94:
-                c = BASALT[2]  # a cinder
-            if s > 0.5 or (s > 0.3 and (x + y) % 2):
-                c = gulch_sand(W + x, y)  # Dust Gulch's own sand, carried on over the border
-            elif s > 0.1 and noise2(x // 2, y // 2, 744) > 0.7:
-                c = DESERT[2] if (x + y) % 2 else ASH[3]  # sand blown in among the scrub
-            cv.set(x, y, c)
+            # the gulch's sand giving out over the border into scrub and ash (one blend
+            # across both zones, desert_edge); within 24 px of lava it is always ash
+            if dist[y][x] < 24:
+                cv.set(x, y, fire_ash(x + ox, y + oy))
+            else:
+                cv.set(x, y, desert_edge(x + W, y))
     for i in range(46):  # dry tufts in the scrub belt, each with its small shadow
-        x, y = 10 + int(noise2(i, 0, 748) * 40), 6 + int(noise2(i, 1, 748) * (H - 12))
+        x, y = int(noise2(i, 0, 748) * 30), 6 + int(noise2(i, 1, 748) * (H - 12))
         if dist[y][x] < 26 or 352 < y < 416:
             continue
         for (dx, dy) in ((0, 0), (-1, -1), (1, -1), (0, -2), (-2, -2), (2, -2)):
@@ -1245,16 +1255,9 @@ def castle(frame: int = 0):
     LAVA, BASALT, ASH = MATERIALS['lava'], MATERIALS['basalt'], MATERIALS['ash']
     ASHLAR = MATERIALS['ashlar']
     cv = Canvas(W, H)
-    for y in range(H):  # ash ground with cinders, as in the caldera
+    for y in range(H):  # the fire country's ash, running on from the caldera and the Scorch
         for x in range(W):
-            n = smooth_noise(x, y, 30, 731)
-            c = ASH[2] if n > 0.3 or (n > 0.26 and (x + y) % 2) else ASH[1]
-            g = noise2(x, y, 732)
-            if g > 0.94:
-                c = BASALT[2]
-            elif g > 0.91:
-                c = ASH[3]
-            cv.set(x, y, c)
+            cv.set(x, y, fire_ash(x, y + H))
     lava = paint_lava(cv, 'hearthold', frame)  # the moat, the river in and the drain out
     ix, iy, irx, iry = ISLE
 

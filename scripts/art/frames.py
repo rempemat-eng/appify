@@ -68,11 +68,13 @@ PORTS = {
     ('junction', 'canal'): (OPEN, None),
     ('neon', 'skyport'): (OPEN, None),
     # Sunstone Reach (Claude D's lines)
-    ('oasis', 'gulch'): ((496, 552), 'dunes'),
-    ('gulch', 'scorch'): ((356, 412), 'dunes'),
-    ('hearthold', 'scorch'): ((140, 188), 'ash'),
-    ('caldera', 'hearthold'): ((104, 152), 'basalt'),
-    ('caldera', 'springs'): ((264, 320), 'basalt'),
+    # Sunstone Reach: the desert runs into the scrub and the ash as open land; only the
+    # lava, the moat and Hearthold's walls stop you (Matt, 19 Oct)
+    ('oasis', 'gulch'): (OPEN, None),
+    ('gulch', 'scorch'): (OPEN, None),
+    ('hearthold', 'scorch'): (OPEN, None),
+    ('caldera', 'hearthold'): (OPEN, None),
+    ('caldera', 'springs'): (OPEN, None),
     # the Tidebloom Isles: the escarpments and the gorge close what they close; the
     # landing and the cove are both at sea level, so the land runs on between them
     ('rainforest', 'headwaters'): ((224, 280), None),

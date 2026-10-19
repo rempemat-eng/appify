@@ -33,11 +33,11 @@ Matt, 18 Oct 22:21: "really make sure that the world comes to life as Codex mapp
 | summit/saddle         | 120–168    | 116–172   | the steep ground below the lookout                               |
 | junction/canal        | 128–192    | open land | nothing: open land                                               |
 | neon/skyport          | 164–220    | open land | nothing: open land                                               |
-| oasis/gulch           | 496–552    | 496–552   | dune ridges, open at the oasis track                             |
-| gulch/scorch          | 204–268    | 356–412   | dunes frame (owner to review)                                    |
-| hearthold/scorch      | (no seam)  | 140–188   | ash frame (owner to review)                                      |
-| caldera/hearthold     | (no seam)  | 104–152   | basalt frame (owner to review)                                   |
-| caldera/springs       | 264–320    | 264–320   | basalt frame (owner to review)                                   |
+| oasis/gulch           | 496–552    | open land | nothing: the street runs on as the oasis track                   |
+| gulch/scorch          | 204–268    | open land | nothing: sand, then scrub, then ash                              |
+| hearthold/scorch      | (no seam)  | open land | the lava and the moat; the long bridge                           |
+| caldera/hearthold     | (no seam)  | open land | the lava and the moat; the postern bridge                        |
+| caldera/springs       | 264–320    | open land | nothing: open ash                                                |
 | rainforest/headwaters | 224–280    | 224–280   | the escarpment and the gorge's rim; the switchback up the recess |
 | rainforest/landing    | 128–184    | 128–184   | the escarpment; the broad stair                                  |
 | headwaters/cove       | 192–248    | 192–248   | the escarpment; the first stair of the descent                   |
