@@ -656,6 +656,11 @@ export const zoneScenery: Record<string, ImageSourcePropType> = {
   'moon:1:0': sceneryMoon10,
   'moon:1:1': sceneryMoon11,
 };
+/** Each deck drawn from its walk (scripts/art/decks.py): the raised deck, and the
+ *  street darkened under it with its shadow. Zone-sized, at the zone's origin. */
+export const zoneDeckArt: Partial<
+  Record<ZoneId, { deck: ImageSourcePropType; shadow: ImageSourcePropType }>
+> = {};
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,
