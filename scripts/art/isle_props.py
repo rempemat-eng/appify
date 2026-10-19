@@ -136,8 +136,9 @@ def boathouse() -> Canvas:
 
 
 def ferry() -> Canvas:
-    """The little island ferry, 90 x 40, bow to the left: a white wooden hull with a
-    blue stripe, a cabin with round windows and a short funnel."""
+    """The little island ferry from the side, 90 x 40, bow to the left, for the
+    side-on ferry journey (journey.py): a white wooden hull with a blue stripe, a cabin
+    with round windows and a short funnel. Moored in a zone it is `ferry_moored`."""
     w, h = 90, 40
     cv = Canvas(w, h, pad=PAD)
     hull = set()
@@ -168,6 +169,78 @@ def ferry() -> Canvas:
     for y in range(0, 8):  # the funnel
         for x in range(60, 66):
             cv.set(x, y, RED[3] if y > 2 else MATERIALS['iron'][1])
+    return cv
+
+
+def ferry_moored() -> Canvas:
+    """The little island ferry moored at the pier, 92 x 46, bow to the left, in the same three-quarter view
+    as the buildings (art-faults.md, rule 4): the planked deck seen from above inside a
+    white gunwale, the hull's side below it with a blue stripe at the waterline, a cabin
+    with a lit red roof and round windows in its front, a short funnel."""
+    w, h = 92, 46
+    cv = Canvas(w, h, pad=PAD)
+    cy, sq = 24, 0.5  # the deck's centre line and how far its plan is foreshortened
+
+    def half(x):  # the hull's half-width in plan: a fine bow, a full stern
+        t = (x - 3) / 30
+        return 14 * math.sqrt(max(0.0, min(1.0, t))) * (1 - max(0.0, (x - 84) / 20))
+
+    deck, side = set(), set()
+    for x in range(3, 89):
+        hw = half(x) * sq
+        if hw < 0.6:
+            continue
+        top, bot = int(cy - hw), int(cy + hw)
+        for y in range(top, bot + 1):
+            deck.add((x, y))
+        for y in range(bot + 1, bot + 9 - int(max(0, 18 - x) * 0.3)):  # the side below its front edge
+            side.add((x, y))
+    for (x, y) in side:
+        d = y - min(yy for (xx, yy) in side if xx == x)
+        c = CREAM[3] if d < 2 else CREAM[2]
+        if d in (4, 5):
+            c = WTR[2]
+        elif d >= 6:
+            c = WTR[1] if x < 60 else WTR[0]
+        if x > 70 and d < 4:
+            c = CREAM[2] if d < 2 else CREAM[1]  # the stern turning out of the light
+        cv.set(x, y, c)
+    for (x, y) in deck:
+        edge = (x, y - 1) not in deck or (x, y + 1) not in deck or (x - 1, y) not in deck or (x + 1, y) not in deck
+        if edge:
+            cv.set(x, y, CREAM[3] if y < cy else CREAM[2])  # the gunwale
+        else:
+            cv.set(x, y, WOOD[1] if (y - cy) % 3 == 0 else WOOD[3] if x < 64 else WOOD[2])
+    # the cabin: roof (top face) and front face, the left end lit
+    x0, x1, roof0, roof1, front1 = 40, 70, 9, 15, 23
+    for y in range(roof0, front1):
+        for x in range(x0, x1):
+            if y < roof1:
+                c = RED[4] if y == roof0 or x == x0 else RED[3] if x < x1 - 4 else RED[2]
+            else:
+                c = CREAM[3] if x < x0 + 3 else CREAM[2] if x < x1 - 2 else CREAM[1]
+                if y == front1 - 1:
+                    c = WOOD[1]
+            cv.set(x, y, c)
+    for wx in (46, 54, 62):
+        for (x, y) in disc(wx, 19, 2.1):
+            cv.set(x, y, '#9FC7E6' if (x - wx) + (y - 19) < 0 else WTR[1])
+    for x in range(x0, x1):  # the roof's shadow on the deck behind
+        if (x + 2, front1) in deck:
+            r, g, b, a = cv.get(x + 2, front1)
+            cv.set(x + 2, front1, (int(r * 0.7), int(g * 0.7), int(b * 0.78), a))
+    # the funnel: a short cylinder on the roof, lit on its left, dark mouth on top
+    for y in range(1, 11):
+        for x in range(58, 65):
+            cv.set(x, y, RED[4] if x < 60 else RED[3] if x < 63 else RED[2])
+    for (x, y) in oval(61, 1.5, 3.4, 1.4):
+        cv.set(x, y, MATERIALS['iron'][0] if y > 1 else MATERIALS['iron'][1])
+    for x in range(58, 65):
+        cv.set(x, 6, '#2E3A48')  # a band round it
+    for px in range(10, 86, 9):  # rail posts along the near gunwale
+        hw = half(px) * sq
+        if hw > 2:
+            cv.set(px, int(cy + hw) - 1, WOOD[0])
     return cv
 
 
@@ -346,7 +419,7 @@ def rain_shelter() -> Canvas:
 def props() -> dict[str, Canvas]:
     return {
         'jungle_tree': jungle_tree(), 'tree_fern': tree_fern(), 'monstera': monstera(), 'hibiscus': hibiscus(),
-        'boathouse': boathouse(), 'island_ferry': ferry(), 'canoe': canoe(), 'black_rock': black_rock(True),
+        'boathouse': boathouse(), 'island_ferry': ferry_moored(), 'canoe': canoe(), 'black_rock': black_rock(True),
         'black_rock_small': black_rock(False), 'sea_turtle': sea_turtle(),
         'pandanus': pandanus(), 'banana': banana(), 'bird_of_paradise': bird_of_paradise(), 'crab': crab(),
         'rain_shelter': rain_shelter(),
