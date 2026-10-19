@@ -89,23 +89,46 @@ import propCityB7 from '@/assets/zones/props/city_b7.png';
 import propCityB8 from '@/assets/zones/props/city_b8.png';
 import propCityB9 from '@/assets/zones/props/city_b9.png';
 import propCityBench from '@/assets/zones/props/city_bench.png';
+import propCityBike from '@/assets/zones/props/city_bike.png';
+import propCityBikeB from '@/assets/zones/props/city_bike_b.png';
+import propCityBikeC from '@/assets/zones/props/city_bike_c.png';
+import propCityBusStop from '@/assets/zones/props/city_bus_stop.png';
+import propCityCafeTable from '@/assets/zones/props/city_cafe_table.png';
+import propCityCar from '@/assets/zones/props/city_car.png';
+import propCityCarB from '@/assets/zones/props/city_car_b.png';
+import propCityCarC from '@/assets/zones/props/city_car_c.png';
+import propCityCarD from '@/assets/zones/props/city_car_d.png';
 import propCityCargoShip from '@/assets/zones/props/city_cargo_ship.png';
+import propCityCat from '@/assets/zones/props/city_cat.png';
 import propCityContainerStackB from '@/assets/zones/props/city_container_stack_b.png';
 import propCityContainerStackC from '@/assets/zones/props/city_container_stack_c.png';
 import propCityContainerStackD from '@/assets/zones/props/city_container_stack_d.png';
+import propCityCrates from '@/assets/zones/props/city_crates.png';
+import propCityCratesB from '@/assets/zones/props/city_crates_b.png';
+import propCityDumpster from '@/assets/zones/props/city_dumpster.png';
+import propCityDumpsterB from '@/assets/zones/props/city_dumpster_b.png';
+import propCityDumpsterC from '@/assets/zones/props/city_dumpster_c.png';
 import propCityFoodKiosk from '@/assets/zones/props/city_food_kiosk.png';
 import propCityFountain from '@/assets/zones/props/city_fountain.png';
 import propCityGantryCrane from '@/assets/zones/props/city_gantry_crane.png';
+import propCityHandcart from '@/assets/zones/props/city_handcart.png';
+import propCityHoop from '@/assets/zones/props/city_hoop.png';
 import propCityLamp from '@/assets/zones/props/city_lamp.png';
+import propCityLaundry from '@/assets/zones/props/city_laundry.png';
 import propCityLighthouse from '@/assets/zones/props/city_lighthouse.png';
 import propCityMarketStall from '@/assets/zones/props/city_market_stall.png';
 import propCityMarketStallB from '@/assets/zones/props/city_market_stall_b.png';
 import propCityMarketStallC from '@/assets/zones/props/city_market_stall_c.png';
 import propCityMarketStallD from '@/assets/zones/props/city_market_stall_d.png';
+import propCityMarketStallE from '@/assets/zones/props/city_market_stall_e.png';
+import propCityMarketStallF from '@/assets/zones/props/city_market_stall_f.png';
+import propCityPayMachine from '@/assets/zones/props/city_pay_machine.png';
+import propCityPots from '@/assets/zones/props/city_pots.png';
+import propCityPotsB from '@/assets/zones/props/city_pots_b.png';
 import propCityQuayBollard from '@/assets/zones/props/city_quay_bollard.png';
 import propCityStreetTree from '@/assets/zones/props/city_street_tree.png';
 import propCityStreetTreeB from '@/assets/zones/props/city_street_tree_b.png';
-import propCityTramStop from '@/assets/zones/props/city_tram_stop.png';
+import propCityTelescope from '@/assets/zones/props/city_telescope.png';
 import propCityTreePlanted from '@/assets/zones/props/city_tree_planted.png';
 import propCityVendingBox from '@/assets/zones/props/city_vending_box.png';
 import propCityVendingBoxB from '@/assets/zones/props/city_vending_box_b.png';
@@ -750,23 +773,46 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   city_b8: propCityB8,
   city_b9: propCityB9,
   city_bench: propCityBench,
+  city_bike: propCityBike,
+  city_bike_b: propCityBikeB,
+  city_bike_c: propCityBikeC,
+  city_bus_stop: propCityBusStop,
+  city_cafe_table: propCityCafeTable,
+  city_car: propCityCar,
+  city_car_b: propCityCarB,
+  city_car_c: propCityCarC,
+  city_car_d: propCityCarD,
   city_cargo_ship: propCityCargoShip,
+  city_cat: propCityCat,
   city_container_stack_b: propCityContainerStackB,
   city_container_stack_c: propCityContainerStackC,
   city_container_stack_d: propCityContainerStackD,
+  city_crates: propCityCrates,
+  city_crates_b: propCityCratesB,
+  city_dumpster: propCityDumpster,
+  city_dumpster_b: propCityDumpsterB,
+  city_dumpster_c: propCityDumpsterC,
   city_food_kiosk: propCityFoodKiosk,
   city_fountain: propCityFountain,
   city_gantry_crane: propCityGantryCrane,
+  city_handcart: propCityHandcart,
+  city_hoop: propCityHoop,
   city_lamp: propCityLamp,
+  city_laundry: propCityLaundry,
   city_lighthouse: propCityLighthouse,
   city_market_stall: propCityMarketStall,
   city_market_stall_b: propCityMarketStallB,
   city_market_stall_c: propCityMarketStallC,
   city_market_stall_d: propCityMarketStallD,
+  city_market_stall_e: propCityMarketStallE,
+  city_market_stall_f: propCityMarketStallF,
+  city_pay_machine: propCityPayMachine,
+  city_pots: propCityPots,
+  city_pots_b: propCityPotsB,
   city_quay_bollard: propCityQuayBollard,
   city_street_tree: propCityStreetTree,
   city_street_tree_b: propCityStreetTreeB,
-  city_tram_stop: propCityTramStop,
+  city_telescope: propCityTelescope,
   city_tree_planted: propCityTreePlanted,
   city_vending_box: propCityVendingBox,
   city_vending_box_b: propCityVendingBoxB,

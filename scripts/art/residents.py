@@ -105,6 +105,13 @@ def person(look: dict, frame: int) -> Canvas:
             cv.set(cx + 5, 17, '#2A2026'); cv.set(cx + 5, 18, col); cv.set(cx + 6, 18, shade(col, 0.8))
         elif kind == 'tray':
             cv.hline(cx + 3, 14, 5, col)
+        elif kind == 'broom':  # a street broom held across the body, its head on the ground
+            for t in range(13):
+                cv.set(cx + 6 - t // 4, 12 + t, '#8A6A44' if t < 10 else col)
+            cv.hline(cx + 1, 25, 5, col)
+        elif kind == 'board':  # a clipboard
+            for y in range(13, 17):
+                cv.hline(cx + 4, y, 3, col if y > 13 else '#8A6A44')
     # the head
     for (x, y) in disc(cx, 6, 3.6):
         cv.set(x, y, skin if x < cx + 2 else skin_dark)
@@ -173,6 +180,13 @@ def _carried(cv, kind: str, col: str, hx: int, hy: int, d: int):
         cv.hline(min(hx - d, hx + d * 3), hy, 5, col)
         cv.hline(min(hx - d, hx + d * 3), hy + 1, 5, shade(col, 0.72))
         cv.set(hx + d, hy - 1, shade(col, 1.15)); cv.set(hx + d * 2, hy - 1, shade(col, 0.95))
+    elif kind == 'broom':  # a street broom, its handle in the hand, its head on the ground ahead
+        for t in range(10):
+            cv.set(hx + d * (t // 3), hy - 3 + t, '#8A6A44' if t < 8 else col)
+        cv.hline(min(hx + d * 2, hx + d * 5), hy + 7, 4, col)
+    elif kind == 'board':  # a clipboard held flat
+        for y in range(hy - 1, hy + 3):
+            cv.hline(min(hx, hx + d * 2), y, 3, col if y > hy - 1 else '#8A6A44')
 
 
 def person_side(look: dict, frame: int, d: int) -> Canvas:
@@ -463,6 +477,16 @@ RESIDENTS = {
     # the city's new quarters (N1, 19 Oct)
     'seller': {'zone': 'market', 'skin': 'c', 'top': '#C8463A', 'apron': '#F2ECDE', 'hat': ('wrap', '#2A2640'),
                'carry': ('tray', '#FFC766')},
+    # the city at work (N3, 19 Oct): a stallholder in the gap by her stall, the plaza's
+    # sweeper, the car park's attendant, the noodle cook by his stall
+    'stallholder': {'zone': 'market', 'skin': 'b', 'top': '#2E5A40', 'apron': '#E8E2D2', 'hair': 'black',
+                    'carry': ('basket', '#C89C6A')},
+    'sweeper': {'zone': 'plaza', 'skin': 'd', 'top': '#E8962A', 'trim': '#F2ECDE', 'legs': '#2C3E4C',
+                'hat': ('cap', '#2C3E4C'), 'carry': ('broom', '#C8B48A')},
+    'parker': {'zone': 'waterfront', 'skin': 'a', 'top': '#2A4068', 'trim': '#FFC766', 'legs': '#1C192B',
+               'hat': ('cap', '#FFC766'), 'carry': ('board', '#E8ECF4')},
+    'cook': {'zone': 'neon', 'skin': 'c', 'top': '#F2EEE6', 'apron': '#C8463A', 'legs': '#2A2640',
+             'hat': ('wrap', '#F2EEE6'), 'carry': ('tray', '#C8803A')},
     'docker': {'zone': 'docks', 'skin': 'd', 'top': '#E8962A', 'legs': '#2C3E4C', 'hat': ('helmet', '#F2ECDE')},
     'stroller': {'zone': 'waterfront', 'skin': 'a', 'top': '#3E566A', 'trim': '#6FE6F2', 'hair': 'grey',
                  'legs': '#1C192B'},

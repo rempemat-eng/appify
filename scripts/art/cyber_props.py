@@ -367,40 +367,18 @@ def maglev() -> Canvas:
 
 
 def tether() -> Canvas:
-    """The space elevator's lift, 56 x 272, standing on its anchor ring (fault 25): a
+    """The space elevator's lift, 56 x 92, standing on its anchor ring (fault 25): a
     climber car docked in its cradle at the foot, door open toward the boarding ramp,
-    gripping the ribbon with a wheel housing on its roof; the ribbon (two pale strands
-    tied every few pixels, a cyan guide light between) climbs out of its roof and out
-    of sight, narrowing and breaking into dashes as it goes; a second car far up, small,
-    its own grip on the ribbon. No glow: the light is in the guide line and the windows."""
-    w, h = 56, 272
+    gripping the ribbon with a wheel housing on its roof, and the ribbon's first stretch
+    above the housing (two strands, a cyan guide light between). The rest of the ribbon is
+    painted on the floor behind everything (city_zones.skyport), thin and fading as it
+    climbs out of sight, so it never reads as a pole standing in the plaza."""
+    w, h = 56, 92
     cv = Canvas(w, h, pad=PAD)
     cx = w // 2
     car_top, car_bot = h - 58, h - 14
-    # the ribbon, from the top of the sprite down into the roof housing
-    for y in range(0, car_top - 6):
-        t = y / (car_top - 6)  # 0 far up, 1 at the car
-        half = 1 if t < 0.25 else 2 if t < 0.6 else 3
-        if t < 0.25 and y % 5 in (3, 4):
-            continue  # far up it breaks into dashes, out of sight
-        if 0.25 <= t < 0.4 and y % 9 == 8:
-            continue
-        cv.set(cx - half, y, PORCELAIN[5] if half > 1 else PORCELAIN[4])
-        cv.set(cx + half, y, PORCELAIN[2])
-        for dx in range(-half + 1, half):
-            cv.set(cx + dx, y, CYAN[4] if dx == 0 else CYAN[2])
-        if half == 3 and y % 6 == 0:
-            cv.hline(cx - 3, y, 7, PORCELAIN[3])  # ties between the strands
-    # a second car far up the ribbon, small, with its grips
-    uy = int((car_top - 6) * 0.3)
-    for y in range(uy, uy + 12):
-        for x in range(cx - 5, cx + 6):
-            c = PORCELAIN[5] if x < cx - 1 else PORCELAIN[3] if x < cx + 3 else PORCELAIN[1]
-            if y in (uy + 5, uy + 6) and cx - 4 <= x <= cx + 4:
-                c = AMBER[3] if x % 2 else AMBER[2]
-            cv.set(x, y, c)
-    for y in (uy - 2, uy + 13):
-        cv.hline(cx - 3, y, 7, NIGHT[1]); cv.set(cx - 3, y, PORCELAIN[3]); cv.set(cx + 3, y, PORCELAIN[3])
+    for y in range(car_top - 26, car_top - 6):
+        cv.set(cx - 1, y, PORCELAIN[5]); cv.set(cx, y, CYAN[4] if y % 6 else CYAN[3]); cv.set(cx + 1, y, PORCELAIN[2])
     # the roof housing: the grip, two wheels pressing each strand
     for y in range(car_top - 7, car_top + 1):
         for x in range(cx - 8, cx + 9):
@@ -713,6 +691,282 @@ def bike_rack() -> Canvas:
         cv.vline(bx + 7, 6, 4, NIGHT[4]); cv.hline(bx + 6, 6, 3, NIGHT[5])
         cv.set(bx + 9, 9, (PINK, CYAN, AMBER)[k][4])
     return cv
+
+# ---- the lots between the towers (review 15:54, the Eastward comparison): the
+# residents' own clutter and small places, each prop drawn alone in the one view and the
+# one light, its cast shadow left to the ground pass, no painted daylight
+CAR_PAINT = (['#5A1A22', '#8A2A30', '#B83A3E', '#E25A52', '#F49A88'],  # red
+             ['#1A2A44', '#24406A', '#30588E', '#4A7AB4', '#7EA8D8'],  # blue
+             ['#2A2A30', '#3E3E46', '#5A5A62', '#7E7E86', '#AEAEB4'],  # graphite
+             ['#4A3A12', '#7A5E1A', '#A88224', '#D2A838', '#F2D27A'])  # a cab's yellow
+
+
+def parked_car(seed: int = 0) -> Canvas:
+    """A small car parked nose toward us, 26 x 34, in the three-quarter view: its roof seen
+    from above with the light catching the upper left, the windscreen sloping down to the
+    bonnet, the bonnet's crease, two headlamps and the grille on the front face, the
+    wheels showing under the sills, the far wheels darker; wet paint holding a streak of
+    the city's light. A cab has its roof sign; the lamps are off (parked)."""
+    paint = CAR_PAINT[seed % 4]
+    cv = Canvas(26, 34, pad=PAD)
+    for wy in (8, 25):  # the wheels under the sills, the far ones darker
+        for y in range(wy, wy + 6):
+            cv.set(2, y, NIGHT[0] if wy == 8 else IRON[1]); cv.set(23, y, NIGHT[0])
+            cv.set(3, y, IRON[1]); cv.set(22, y, NIGHT[0])
+    for y in range(4, 30):  # the body, seen from above: rounded at its corners
+        inset = 1 if y in (4, 29) else 0
+        for x in range(3 + inset, 23 - inset):
+            k = (x - 3) / 20
+            c = paint[3] if k < 0.25 else paint[2] if k < 0.8 else paint[1]
+            cv.set(x, y, c)
+    for y in range(9, 21):  # the cabin: rear window, roof, windscreen
+        for x in range(6, 20):
+            if y < 11:
+                c = '#1E2E50' if x > 6 else '#3A5684'  # the rear window
+            elif y < 17:
+                c = paint[4] if x < 9 else paint[3] if x < 16 else paint[2]  # the roof
+            else:
+                c = '#3A5684' if x < 10 else '#22304C'  # the windscreen, sloping to us
+                if (x + y) % 9 == 0:
+                    c = '#6A88B8'
+            cv.set(x, y, c)
+    for x in range(5, 21):  # the bonnet's crease, the front face below
+        cv.set(x, 24, paint[2] if x % 6 else paint[1])
+    for y in range(29, 33):
+        for x in range(4, 22):
+            c = paint[1] if y < 31 else paint[0]
+            if y in (29, 30) and x in (5, 6, 19, 20):
+                c = '#D8D2C4'  # the headlamps, off
+            if y == 30 and 9 <= x <= 16:
+                c = NIGHT[0] if x % 2 else IRON[2]  # the grille
+            cv.set(x, y, c)
+    cv.hline(4, 32, 18, IRON[2])  # the bumper
+    for y in range(12, 27, 1):  # a streak of the city's light in the wet paint
+        if (y * 3) % 7 == 0:
+            cv.set(4, y, paint[4])
+    if seed % 4 == 3:  # a cab: the lit sign on its roof
+        for x in range(10, 16):
+            cv.set(x, 12, AMBER[4] if x < 13 else AMBER[3]); cv.set(x, 13, AMBER[2])
+    return cv
+
+
+def ticket_machine() -> Canvas:
+    """A car park's pay machine, 14 x 30: a steel cabinet on a plinth, its top seen, a lit
+    screen and a slot, a blue P plate on a post above it (a sign anyone reads)."""
+    cv = Canvas(14, 30, pad=PAD)
+    for y in range(12, 28):
+        for x in range(2, 12):
+            c = METAL[4] if x < 4 else METAL[3] if x < 9 else METAL[1]
+            if 15 <= y < 19 and 4 <= x < 10:
+                c = COOL_W[3] if y < 17 else COOL_W[2]
+            if y == 22 and 5 <= x < 9:
+                c = NIGHT[0]
+            cv.set(x, y, c)
+    cv.hline(2, 11, 10, METAL[5])
+    cv.hline(1, 28, 12, CONCRETE[3])
+    for y in range(0, 11):  # the P plate on its post
+        cv.set(6, y + 2, METAL[2]) if y > 6 else None
+        if y < 8:
+            for x in range(3, 11):
+                c = '#2A5AB8' if 0 < y < 7 and 3 < x < 10 else '#E8ECF4'
+                cv.set(x, y, c)
+    for (x, y) in ((5, 2), (5, 3), (5, 4), (5, 5), (6, 2), (7, 2), (7, 3), (6, 4)):
+        cv.set(x + 1, y, '#E8ECF4')  # the letter P, the one glyph a car park must show
+    return cv
+
+
+def hoop(flip: int = 0) -> Canvas:
+    """A basketball hoop at the end of a court, 20 x 44: a steel post leaning its arm out
+    over the court, a glass backboard catching the light with its painted square, the rim
+    and a chain net."""
+    cv = Canvas(20, 44, pad=PAD)
+    for y in range(8, 42):
+        cv.set(9, y, METAL[4]); cv.set(10, y, METAL[2])
+    cv.hline(6, 42, 8, METAL[3])
+    for y in range(0, 12):  # the backboard, seen from the front a little above
+        for x in range(2, 18):
+            c = '#3A5684' if (x + y) % 7 else '#5A78A8'
+            if x in (2, 17) or y in (0, 11):
+                c = '#E8ECF4'
+            if (x in (7, 12) and 4 <= y <= 9) or (y in (4, 9) and 7 <= x <= 12):
+                c = '#E8ECF4'
+            cv.set(x, y, c)
+    cv.hline(6, 12, 8, '#E2623A'); cv.hline(7, 13, 6, '#A8482A')  # the rim
+    for y in range(14, 19):  # the chain net
+        for x in range(7 + (y - 14) // 2, 13 - (y - 14) // 2):
+            if (x + y) % 2:
+                cv.set(x, y, METAL[5])
+    return cv
+
+
+def dumpster(seed: int = 0) -> Canvas:
+    """A wheeled bin in a back alley, 30 x 26: a steel box with its lid half up, lit on
+    the west, a stencil band, castors, a bag left beside it."""
+    body = (['#1E3A2E', '#2E5A40', '#447A50', '#62995E'], ['#2A2A3A', '#3C3C50', '#545468', '#70708A'],
+            ['#4A3010', '#6E4A1A', '#94662A', '#B8884A'])[seed % 3]
+    cv = Canvas(30, 26, pad=PAD)
+    for y in range(8, 23):
+        for x in range(2, 26):
+            c = body[3] if x < 5 else body[2] if x < 20 else body[1]
+            if y == 14:
+                c = body[0]  # the stencil band's edge
+            if 15 <= y <= 16 and 8 <= x < 18 and x % 3:
+                c = '#C8C0B0'
+            cv.set(x, y, c)
+    for y in range(3, 9):  # the lid, propped half up toward the back
+        for x in range(2 + (8 - y) // 2, 26):
+            cv.set(x, y, body[3] if y < 5 else body[2])
+    cv.hline(2, 8, 24, body[0])
+    for cx in (5, 22):
+        cv.set(cx, 23, NIGHT[0]); cv.set(cx + 1, 23, IRON[2])
+    for (x, y) in disc(27, 20, 2.6):  # a bag beside it
+        cv.set(x, y, NIGHT[2] if x < 27 else NIGHT[1])
+    return cv
+
+
+def crates(seed: int = 0) -> Canvas:
+    """Stacked crates by a back door, 24 x 26: timber boxes with their tops seen, their
+    slats and corner battens, one with produce showing, a plastic one in a colour."""
+    cv = Canvas(24, 26, pad=PAD)
+    boxes = ((1, 12, 12, 12), (12, 14, 11, 10), (3, 2, 11, 10))
+    for k, (bx, by, bw, bh) in enumerate(boxes):
+        plastic = (seed + k) % 3 == 2
+        ramp = (PINK if seed % 2 else CYAN) if plastic else WOOD
+        for y in range(by, by + bh):
+            for x in range(bx, bx + bw):
+                top = y < by + 3
+                c = ramp[4] if top and not plastic else ramp[3] if top else ramp[2] if x < bx + bw - 2 else ramp[1]
+                if not plastic and (y - by) % 3 == 0 and not top:
+                    c = ramp[1]  # the slats
+                if x in (bx, bx + bw - 1) and not top:
+                    c = ramp[1] if plastic else WOOD[1]
+                cv.set(x, y, c)
+        if k == 0:
+            for x in range(bx + 2, bx + bw - 2, 2):
+                cv.set(x, by + 1, ('#C8463A', '#62995E', '#E8962A')[(x + seed) % 3])
+    return cv
+
+
+def parked_bike(seed: int = 0) -> Canvas:
+    """A bicycle leaning on its stand, 28 x 18, seen side on as the three-quarter view
+    shows a thin thing: two spoked wheels, the frame in a colour, a basket, a saddle."""
+    ramp = (PINK, CYAN, AMBER)[seed % 3]
+    cv = Canvas(28, 18, pad=PAD)
+    for (cx, cy) in ((6, 12), (21, 12)):
+        for a in range(20):
+            ang = 2 * math.pi * a / 20
+            cv.set(int(round(cx + math.cos(ang) * 4.5)), int(round(cy + math.sin(ang) * 4.5)), METAL[4] if a < 10 else METAL[3])
+        cv.set(cx, cy, METAL[5])
+    for t in range(14):  # the frame
+        cv.set(7 + t, 12 - (t * 5) // 14, ramp[2])
+    for t in range(6):
+        cv.set(12 + t // 2, 7 + t, ramp[1])
+    cv.hline(10, 6, 4, NIGHT[1])  # the saddle
+    cv.vline(20, 4, 4, METAL[4]); cv.hline(19, 4, 4, METAL[4])  # the bars
+    for y in range(4, 8):  # the basket
+        for x in range(22, 27):
+            cv.set(x, y, WOOD[3] if (x + y) % 2 else WOOD[2])
+    cv.set(27, 9, ramp[4])  # its little lamp
+    return cv
+
+
+def laundry_line() -> Canvas:
+    """Washing hung out in a yard, 56 x 34: two timber posts with a line between them
+    sagging under shirts, a sheet and socks pegged on, a basket at one post's foot."""
+    cv = Canvas(56, 34, pad=PAD)
+    for px in (3, 51):
+        for y in range(4, 32):
+            cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[1])
+        cv.hline(px - 1, 4, 4, WOOD[4])
+    for x in range(5, 51):  # the line, sagging
+        sag = int(4 * math.sin(math.pi * (x - 5) / 46))
+        cv.set(x, 6 + sag, '#C8C0B0')
+    items = ((8, 6, 7, '#E8E2D2'), (16, 9, 9, '#6FA8D8'), (27, 14, 11, '#F2ECDE'), (40, 7, 8, '#C8463A'), (47, 3, 4, '#E2BC5E'))
+    for (ix, iw, ih, col) in items:
+        for x in range(ix, ix + iw):
+            top = 7 + int(4 * math.sin(math.pi * (x - 5) / 46))
+            for y in range(top, top + ih):
+                c = col if x < ix + iw - 1 else _shade(col, 3)
+                if y == top + ih - 1:
+                    c = _shade(col, 2)
+                cv.set(x, y, c)
+    for y in range(26, 32):  # the basket
+        for x in range(6, 16):
+            cv.set(x, y, WOOD[3] if (x + y) % 2 else WOOD[2])
+    cv.hline(6, 26, 10, WOOD[4])
+    return cv
+
+
+def pot_plants(seed: int = 0) -> Canvas:
+    """A cluster of potted plants on a step, 26 x 22: terracotta and glazed pots of three
+    sizes, a palm, a round shrub and a trailing plant, each lit from the upper left."""
+    cv = Canvas(26, 22, pad=PAD)
+    G = ['#14281F', '#1F3A2A', '#2E5A40', '#447A50', '#62995E']
+    pots = ((3, 13, 7, '#A8482A'), (11, 11, 9, '#3E6A8A' if seed % 2 else '#A8482A'), (20, 15, 5, '#C88A5A'))
+    for k, (px_, py_, pw_, col) in enumerate(pots):
+        for (x, y) in disc(px_ + pw_ / 2, py_ - 4 - k % 2 * 2, pw_ / 2 + 1.5):
+            cv.set(int(x), int(y), G[4] if x < px_ + pw_ / 2 - 1 and y < py_ - 5 else G[3] if (x + y) % 3 else G[2])
+        for y in range(py_, py_ + 6):
+            for x in range(px_, px_ + pw_):
+                cv.set(x, y, _shade(col, -3) if x < px_ + 2 else col if x < px_ + pw_ - 2 else _shade(col, 3))
+        cv.hline(px_ - 1, py_, pw_ + 2, _shade(col, -4))
+    return cv
+
+
+def cafe_table() -> Canvas:
+    """A café table out on the paving, 30 x 24: a round top seen from above with a cup and
+    a little lamp on it, its pedestal, two stools either side."""
+    cv = Canvas(30, 24, pad=PAD)
+    for (x, y) in oval(15, 9, 8, 3.5):
+        cv.set(x, y, METAL[5] if x < 13 else METAL[4] if x < 19 else METAL[3])
+    cv.hline(7, 12, 17, METAL[2])
+    cv.vline(15, 13, 8, METAL[2]); cv.hline(12, 21, 7, METAL[3])
+    cv.set(12, 8, '#F2ECDE'); cv.set(13, 8, '#F2ECDE'); cv.set(12, 9, '#C8C0B0')  # a cup
+    cv.set(17, 7, AMBER[4]); cv.set(17, 8, AMBER[2])  # a table lamp
+    for sx in (1, 24):
+        for (x, y) in oval(sx + 2.5, 14, 3, 1.4):
+            cv.set(x, y, WOOD[4] if x < sx + 2 else WOOD[3])
+        cv.vline(sx + 1, 15, 6, METAL[2]); cv.vline(sx + 4, 15, 6, METAL[1])
+    return cv
+
+
+def handcart() -> Canvas:
+    """A stallholder's handcart, 30 x 22: a flat timber bed on two wheels, its handle, a
+    folded tarp and a crate riding on it."""
+    cv = Canvas(30, 22, pad=PAD)
+    for y in range(8, 14):
+        for x in range(3, 24):
+            cv.set(x, y, WOOD[4] if y == 8 else WOOD[3] if y < 12 else WOOD[1])
+    for t in range(6):
+        cv.set(24 + t, 9 - t // 2, WOOD[2])
+    for (x, y) in disc(8, 16, 4):
+        cv.set(x, y, NIGHT[3] if (x - 8) ** 2 + (y - 16) ** 2 > 6 else IRON[2])
+    for (x, y) in disc(19, 16, 4):
+        cv.set(x, y, NIGHT[2] if (x - 19) ** 2 + (y - 16) ** 2 > 6 else IRON[1])
+    for y in range(4, 8):
+        for x in range(5, 13):
+            cv.set(x, y, '#3E566A' if y > 4 else '#5A7A8E')  # the tarp
+    for y in range(2, 8):
+        for x in range(14, 21):
+            cv.set(x, y, WOOD[4] if y == 2 else WOOD[2] if x < 20 else WOOD[1])
+    return cv
+
+
+def street_cat() -> Canvas:
+    """A cat curled on a step, 14 x 10, ginger, one ear up, its tail round its paws."""
+    cv = Canvas(14, 10, pad=PAD)
+    C_ = ['#5E3014', '#8A4A1E', '#C2742E', '#E8A050']
+    for (x, y) in oval(7, 6, 5.5, 3):
+        cv.set(x, y, C_[3] if x < 6 and y < 6 else C_[2] if x < 10 else C_[1])
+    for (x, y) in disc(3, 4, 2.4):
+        cv.set(x, y, C_[3] if x < 3 else C_[2])
+    cv.set(2, 1, C_[2]); cv.set(4, 1, C_[1]); cv.set(2, 2, C_[3])
+    cv.set(2, 4, '#2A2026'); cv.set(4, 4, '#2A2026')
+    cv.hline(5, 8, 7, C_[1])  # the tail round the paws
+    for x in range(4, 12, 3):
+        cv.set(x, 5, C_[1])  # stripes
+    return cv
+
 
 # ---- the city's buildings (N1): every one different, all from one generator ----------
 GLASS = ['#0E1424', '#16203A', '#1E2E50', '#2A4068', '#3A5684', '#5A78A8']
@@ -1186,46 +1440,155 @@ def vending_box(seed: int = 0) -> Canvas:
 
 
 def market_stall(seed: int = 0) -> Canvas:
-    """A market stall, 58 x 44: a striped canopy as a plane sloping toward us on poles, a
-    lantern under it, the counter's front of boards with goods heaped on its top (fruit,
-    fish on ice, lanterns or parts by the seed), crates stacked beside it."""
-    cv = Canvas(58, 44, pad=PAD)
-    canopy = SIGN_RAMPS[seed % 3]
-    kind = seed % 4
-    for y in range(2, 14):  # the canopy
-        for x in range(2, 56):
-            st = ((x - 2) // 6) % 2
-            c = (canopy[3] if st else '#F2ECDE') if y < 11 else (canopy[2] if st else '#C8C0B0')
-            if y == 2:
-                c = canopy[4] if st else '#FFFFFF'
-            cv.set(x, y, c)
-        if y == 13:
-            for x in range(2, 56, 6):
-                cv.set(x + 2, 14, canopy[1])  # the scalloped edge
-    for px in (4, 52):
-        for y in range(14, 40):
+    """A night-market stall, 56 x 48, in the three-quarter view: a canvas canopy pitched
+    toward us on a timber frame (its top plane striped and lit at its upper-left, a
+    scalloped valance hanging from its front pole, the stripes darker in the fold), a
+    string of warm bulbs along the valance, a sign plank of glyphs under it, goods hung
+    from the back rail, a counter of boards with its trays of goods seen from above (by
+    the seed: fruit, fish on ice, paper lanterns, parts and cables, steamer baskets with
+    their steam, flowers in buckets), price tags, crates stacked at one end and a stool at
+    the other. No painted daylight: the bulbs and the lantern are its lights."""
+    cv = Canvas(56, 48, pad=PAD)
+    ramp = SIGN_RAMPS[seed % 3]
+    kind = seed % 6
+    flip = seed % 2  # which end the crates stand at
+    # the frame: two front posts and the back rail's posts, lit on the west face
+    for px in (5, 49):
+        for y in range(13, 46):
             cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[1])
-    for (x, y) in disc(28, 18, 2.5):  # a paper lantern
-        cv.set(x, y, AMBER[3] if x < 28 else AMBER[2])
-    for y in range(26, 40):  # the counter's front
-        for x in range(6, 52):
+    for px in (9, 45):  # (the back posts, shorter as they stand further away)
+        for y in range(10, 26):
+            cv.set(px, y, WOOD[2])
+    cv.hline(9, 18, 37, WOOD[2])  # the back rail
+    # goods hung from the back rail
+    for k, hx in enumerate(range(12, 44, 5)):
+        hang = [('#E8E2D2', '#B8B0A0'), (ramp[3], ramp[1]), ('#C8463A', '#7A2420'), (AMBER[3], AMBER[1]),
+                ('#62995E', '#2E5A40'), ('#76808E', '#3C4452')][(kind + k) % 6]
+        hl = 3 + int(noise2(seed, k, 1967) * 3)
+        cv.set(hx, 19, IRON[3])
+        for y in range(20, 20 + hl):
+            cv.set(hx, y, hang[0]); cv.set(hx + 1, y, hang[1])
+    # the canopy: a plane sloping toward us, 2..11 its top, the valance 12..15
+    for y in range(2, 12):
+        t = (y - 2) / 9
+        x0, x1 = int(4 - t * 2), int(52 + t * 2)
+        for x in range(x0, x1):
+            st = ((x - 2) // 6) % 2
+            light = ramp[3] if st else '#F2ECDE'
+            dark = ramp[2] if st else '#C8C0B0'
+            c = light if (y < 9 and x < 40) or y < 5 else dark
+            if y == 2 or x == x0:
+                c = ramp[4] if st else '#FFFFFF'
+            if (x - 2) % 6 == 0 and y > 3:
+                c = dark  # the seam between two widths of canvas
+            cv.set(x, y, c)
+    cv.hline(2, 12, 52, WOOD[2])  # the front pole
+    for x in range(2, 54):  # the valance, scalloped
+        st = ((x - 2) // 6) % 2
+        depth = 3 - abs(((x - 2) % 6) - 2.5) // 1.5
+        for y in range(13, 13 + int(depth) + 1):
+            cv.set(x, y, (ramp[2] if st else '#C8C0B0') if y < 15 else (ramp[1] if st else '#9A9284'))
+    for k, bx in enumerate(range(5, 52, 5)):  # the bulbs along it
+        cv.set(bx, 16 + (k % 2), WARM_W[4]); cv.set(bx, 17 + (k % 2), WARM_W[2])
+    glow(cv, {(bx, 16 + (k % 2)) for k, bx in enumerate(range(5, 52, 5))}, AMBER, r=1)
+    # the sign plank of glyphs under the valance
+    for x in range(16, 40):
+        cv.set(x, 21, NIGHT[0]); cv.set(x, 22, NIGHT[0])
+    tubes = set()
+    for k in range(3):
+        tubes |= glyph(cv, 18 + k * 7, 20, seed * 3 + k, ramp, size=3)
+    glow(cv, tubes, ramp, r=1)
+    # the counter: its top (trays of goods seen from above) and its front of boards
+    for y in range(28, 32):
+        for x in range(7, 49):
+            cv.set(x, y, WOOD[4] if y == 28 else WOOD[3])
+    for y in range(32, 45):
+        for x in range(7, 49):
             c = WOOD[3] if (x // 5) % 2 else WOOD[2]
-            if y == 26:
+            if y == 32:
                 c = WOOD[4]
+            if x in (7, 48):
+                c = WOOD[1]
+            if y == 44:
+                c = WOOD[0]
             cv.set(x, y, c)
-    goods = [(AMBER, '#C8463A', '#62995E'), ('#DCE2EC', '#9AB0C8', '#5A78A8'), (PINK, AMBER, CYAN),
-             ('#76808E', '#A0A8B4', AMBER)][kind]
-    for k in range(18):  # the goods heaped on the counter's top
-        gx = 8 + (k * 7 + int(noise2(seed, k, 1965) * 4)) % 42
-        gy = 22 + int(noise2(k, seed, 1966) * 4)
-        g = goods[k % 3]
-        col = g[3] if isinstance(g, list) else g
-        cv.set(gx, gy, col); cv.set(gx + 1, gy, col); cv.set(gx, gy + 1, col)
-        cv.set(gx + 1, gy + 1, (g[1] if isinstance(g, list) else '#3A3040'))
-    for y in range(32, 42):  # crates stacked beside
-        for x in range(50, 58):
-            c = WOOD[3] if y in (32, 37) else WOOD[2] if x < 56 else WOOD[1]
+        if y in (36, 40):
+            cv.hline(7, y, 42, WOOD[1])  # the battens
+    for t in range(4):  # trays
+        tx = 9 + t * 10
+        tray = (METAL[4], METAL[2]) if kind == 1 else (WOOD[2], WOOD[1])
+        cv.hline(tx, 31, 9, tray[1])
+        for x in range(tx, tx + 9):
+            for y in range(26, 31):
+                if kind == 0:  # fruit: round heaps, a highlight on each
+                    g = ('#E8962A', '#C8463A', '#62995E', '#E2BC5E')[(t + x // 3) % 4]
+                    c = g if (x + y) % 3 else _shade(g, 3)
+                    if (x - tx) % 3 == 1 and y == 27:
+                        c = _shade(g, -4)
+                elif kind == 1:  # fish laid on ice
+                    c = '#DCE8F0' if (x + y) % 3 else '#A8C8DC'
+                    if y in (27, 29) and 1 <= (x - tx) <= 7:
+                        c = '#9AB0C8' if (x - tx) < 6 else '#5A78A8'
+                elif kind == 2:  # paper lanterns, folded flat in a basket
+                    c = (PINK[2], AMBER[2], CYAN[2])[(t + y) % 3] if (x - tx) % 4 else WOOD[1]
+                elif kind == 3:  # parts and cables
+                    c = METAL[(x * 3 + y + t) % 5 + 1] if (x + y) % 2 else METAL[1]
+                    if (x - tx) == 4 and y == 27:
+                        c = CYAN[3]
+                elif kind == 4:  # steamer baskets
+                    c = WOOD[3] if (x - tx) in (0, 8) or y == 26 else '#E8D8B8' if (x + y) % 4 else WOOD[2]
+                else:  # flowers in buckets
+                    c = ('#E8429A', '#FFC766', '#F2ECDE', '#C8463A')[(x // 2 + t) % 4] if y < 29 else '#2E5A40'
+                    if y == 30:
+                        c = METAL[3]
+                if y >= 26:
+                    cv.set(x, y, c)
+        cv.set(tx + 4, 32, '#F2ECDE'); cv.set(tx + 5, 32, '#F2ECDE')  # a price tag
+        cv.set(tx + 4, 33, NIGHT[1])
+    if kind == 4:  # the steam rising off the baskets, thinning out
+        for k in range(10):
+            sx = 12 + (k * 13) % 30
+            for d in range(4):
+                if noise2(k, d, 1968) > 0.3:
+                    cv.set(sx + (d % 2), 24 - d * 2, '#C8C0D8' if d < 2 else '#8A84A0')
+    # crates at one end, a stool at the other
+    cx0 = 46 if not flip else 0
+    for y in range(36, 47):
+        for x in range(cx0, cx0 + 10):
+            c = WOOD[3] if y in (36, 41) else WOOD[2] if x < cx0 + 8 else WOOD[1]
+            if (x - cx0) in (0, 4) and y not in (36, 41):
+                c = WOOD[1]
             cv.set(x, y, c)
+    sx0 = 2 if not flip else 46
+    cv.hline(sx0, 39, 7, METAL[4]); cv.hline(sx0, 40, 7, METAL[2])
+    for lx in (sx0 + 1, sx0 + 5):
+        cv.vline(lx, 41, 6, METAL[2])
+    return cv
+
+
+def coin_telescope() -> Canvas:
+    """A coin-operated viewer at a lookout, 16 x 30: a pair of binocular barrels with their
+    eyepiece hood toward us and lenses toward the view, on a yoke, a steel post with its
+    coin box lit by a little amber window, bolted to a round plate."""
+    cv = Canvas(16, 30, pad=PAD)
+    for y in range(12, 27):  # the post
+        cv.set(7, y, METAL[4]); cv.set(8, y, METAL[2])
+    for y in range(16, 22):  # the coin box
+        for x in range(5, 11):
+            cv.set(x, y, METAL[3] if x < 9 else METAL[1])
+    cv.set(6, 18, AMBER[3]); cv.set(7, 18, AMBER[2])
+    for (x, y) in oval(7.5, 27, 5, 1.6):  # the base plate
+        cv.set(x, y, METAL[3] if x < 8 else METAL[1])
+    cv.hline(5, 11, 6, METAL[2])  # the yoke
+    for y in range(3, 11):  # the barrels, tilted a little toward the view
+        for x in range(2, 14):
+            c = METAL[4] if y < 5 else METAL[3] if x < 8 else METAL[2]
+            if x in (7, 8):
+                c = METAL[1]
+            cv.set(x, y, c)
+    for x in range(3, 13):  # the eyepiece hood, darker, toward us
+        cv.set(x, 10, NIGHT[0])
+    cv.set(4, 3, CYAN[3]); cv.set(11, 3, CYAN[3])  # the lenses catching the city's light
     return cv
 
 
@@ -1264,9 +1627,10 @@ def fountain() -> Canvas:
 PORC_ = ['#3A4258', '#5C6680', '#8A94AC', '#B8C0D2', '#DCE2EC', '#F4F7FB']
 
 
-def tram_stop() -> Canvas:
-    """A tram stop, 64 x 50: a glass shelter whose roof we see from above, its back panel a
-    lit map of the lines, a bench inside, a pole with the stop's lit sign."""
+def bus_stop() -> Canvas:
+    """A bus stop, 64 x 50: a glass shelter whose roof we see from above, its back panel a
+    lit map of the routes, a bench inside, a pole with the stop's lit sign (a bus drawn on
+    it, no words)."""
     cv = Canvas(64, 50, pad=PAD)
     for y in range(4, 12):  # the roof, from above
         for x in range(2, 58):
@@ -1283,9 +1647,12 @@ def tram_stop() -> Canvas:
         cv.set(x, 36, WOOD[4]); cv.set(x, 37, WOOD[2])
     for y in range(4, 48):
         cv.set(60, y, METAL[4]); cv.set(61, y, METAL[2])
-    for y in range(4, 12):
-        for x in range(57, 64):
-            cv.set(x, y, AMBER[3] if 58 < x < 63 and 5 < y < 11 else METAL[2])
+    for y in range(3, 13):
+        for x in range(56, 64):
+            cv.set(x, y, AMBER[3] if 56 < x < 63 and 3 < y < 12 else METAL[2])
+    for y in range(5, 10):  # the bus on the sign: its body, windows, wheels
+        for x in range(57, 63):
+            cv.set(x, y, NIGHT[1] if y in (6, 7) and x % 2 else NIGHT[0] if y == 9 and x in (58, 61) else AMBER[1])
     return cv
 
 
@@ -1496,6 +1863,29 @@ def skybridge(width: int = 64, seed: int = 0) -> Canvas:
         for y in range(10, 19):
             cv.set(px, y, NIGHT[0]); cv.set(px + 1, y, NIGHT[0])
         cv.set(px, 9, NIGHT[1]); cv.set(px + 1, 9, NIGHT[1])
+    # where it lands: a glazed lobby bay let into each tower's facade, a little taller and
+    # wider than the walkway, framed in steel, lit warm inside, a door's mullion and a
+    # transom, its lintel catching the light; the walkway runs into it
+    for (x0, x1) in ((0, 8), (w - 8, w)):
+        for y in range(0, 24):
+            for x in range(x0, x1):
+                edge_l, edge_r = x == x0, x == x1 - 1
+                if y == 0:
+                    c = METAL[5]
+                elif y == 1:
+                    c = METAL[3]
+                elif edge_l:
+                    c = METAL[4]
+                elif edge_r:
+                    c = METAL[1]
+                elif y == 7:
+                    c = METAL[3]  # the transom
+                elif x == (x0 + x1) // 2:
+                    c = METAL[2]  # the doors' meeting stiles
+                else:
+                    c = WARM_W[4] if y < 7 else WARM_W[3] if y < 16 else WARM_W[2]
+                cv.set(x, y, c)
+        cv.hline(x0, 24, x1 - x0, METAL[4]); cv.hline(x0, 25, x1 - x0, METAL[1])  # the sill
     return cv
 
 
@@ -1535,7 +1925,7 @@ STREETS = [
     ('cable_e', [(480, 600), (640, 612), (QUAY_X - 30, 606)], 10, 10, 2),
     ('market', [(-20, 880), (160, 872), (330, 862), (480, 872), (650, 884), (QUAY_X - 30, 880)], 14, 14, 1),
     ('harbour', [(-20, 1344), (300, 1344), (420, 1344)], 36, 0, 1),  # (the old core's street, as it was)
-    ('avenue', [(160, 1310), (158, 1150), (150, 960), (164, 760), (172, 520), (166, 330), (150, 140), (140, 40)],
+    ('avenue', [(160, 1310), (158, 1150), (150, 960), (164, 760), (172, 520), (166, 330), (150, 140), (144, 76)],
      16, 12, 1),
     ('towerrow', [(480, 404), (486, 520), (478, 720), (482, 880), (480, 1110)], 12, 12, 1),
     ('quayroad', [(QUAY_X - 40, 40), (QUAY_X - 40, 600), (QUAY_X - 60, 700), (QUAY_X - 60, 1060), (QUAY_X - 46, 1420)],
@@ -1547,6 +1937,17 @@ PLAZA = (480, 340, 110, 70)
 # the heights' terraces above Hill Street, climbed by stairs (rim rows, from the street up)
 TERRACES = [(232, 'lower'), (150, 'upper')]
 TERRACE_STAIRS = [(130, 232, 56), (123, 150, 56)]
+# the lookout at the top of the Heights: a paved knoll held up by its own retaining wall
+# a storey above the upper terrace, climbed by a short flight where the lane arrives
+# (x from, x to, its rim row, the stair's x and width)
+LOOKOUT = (84, 216, 58, 128, 32)
+# Streets that are for people, not traffic (the 15:54 review, finding 1 and the Castelia
+# comparison): (name, axis, from, to, half-width). Within that stretch the street is laid
+# in setts from frontage to frontage with no carriageway, kerbs or lane lines, and
+# bollards where it meets a road. Market Street from the west edge to Tower Row is the
+# night market, wide enough for a row of stalls down its middle with a lane either side; the
+# avenue north of Hill Street is the Heights' stepped lane, too steep for cars.
+PEDESTRIAN = {'market': ('x', -40, 466, 48), 'avenue': ('y', -40, 286, 28)}
 
 
 def chaikin(pts, n: int = 3):
@@ -1575,6 +1976,18 @@ def _line_y(name: str, x: float) -> float:
     if name in RIMS:
         return rim_y(x, *RIMS[name])
     return street_y(name, x)
+def half_width(name: str, at: float) -> float:
+    """How far a street's frontages stand from its centre line at `at` (x for an
+    east-west street, y for a north-south one): its road and pavement, or its full width
+    where it is a pedestrian street."""
+    _sm, hw, pw, _g = LINES[name]
+    if name in PEDESTRIAN:
+        _axis, a, b, half = PEDESTRIAN[name]
+        if a <= at <= b:
+            return half
+    return hw + pw
+
+
 def street_y(name: str, x: float) -> float:
     """Where an east-west street's centre line runs at x (city px)."""
     sm = LINES[name][0]
@@ -1644,7 +2057,8 @@ def city_buildings() -> list:
         while x < xb - 40:
             w = 48 + int(noise2(n, 1, 1950) * 60)
             w -= w % 4
-            foot = min(_line_y(street, xx) for xx in range(int(x), int(x + w), 4)) - hw - pw - 1
+            foot = min(_line_y(street, xx) - (half_width(street, xx) if street in LINES else 0)
+                       for xx in range(int(x), int(x + w), 4)) - 1
             if street in RIMS:
                 foot -= 7  # (a walk along the terrace's edge in front of the houses)
             pcx, pcy, prx, pry = PLAZA
@@ -1656,8 +2070,7 @@ def city_buildings() -> list:
             elif behind in RIMS:
                 limit = foot - (max(_line_y(behind, xx) for xx in range(int(x), int(x + w), 4)) + 18)
             else:
-                bsm, bhw, bpw, _ = LINES[behind]
-                limit = foot - (max(street_y(behind, xx) for xx in range(int(x), int(x + w), 4)) + bhw + bpw) - 16
+                limit = foot - max(street_y(behind, xx) + half_width(behind, xx) for xx in range(int(x), int(x + w), 4)) - 16
             room = int((limit - 18 - 24 - 6) // 12)
             floors = max(2, min(most, room) - int(noise2(n, 3, 1950) * 4))
             if x < pcx + prx + 4 and x + w > pcx - prx - 4 and foot > pcy + pry:
@@ -1719,11 +2132,17 @@ def city_props() -> dict[str, Canvas]:
         'city_bench': city_bench(), 'city_litter_bin': litter_bin(), 'city_quay_bollard': bollard(),
         'city_crossing_signal': crossing_signal(), 'city_vending_box': vending_box(0), 'city_vending_box_b': vending_box(1),
         'city_vending_box_c': vending_box(2), 'city_market_stall': market_stall(0), 'city_market_stall_b': market_stall(1),
-        'city_market_stall_c': market_stall(2), 'city_market_stall_d': market_stall(3), 'city_fountain': fountain(),
-        'city_tram_stop': tram_stop(), 'city_food_kiosk': food_kiosk(0), 'city_food_kiosk_b': food_kiosk(1),
+        'city_market_stall_c': market_stall(2), 'city_market_stall_d': market_stall(3),
+        'city_market_stall_e': market_stall(4), 'city_market_stall_f': market_stall(5), 'city_fountain': fountain(),
+        'city_bus_stop': bus_stop(), 'city_telescope': coin_telescope(), 'city_food_kiosk': food_kiosk(0), 'city_food_kiosk_b': food_kiosk(1),
         'city_gantry_crane': gantry_crane(), 'city_container_stack': container_stack(0), 'city_container_stack_b': container_stack(1),
         'city_container_stack_c': container_stack(2), 'city_container_stack_d': container_stack(3),
-        'city_cargo_ship': cargo_ship(), 'city_lighthouse': lighthouse(), 'city_water_taxi': water_taxi(),
+        'city_cargo_ship': cargo_ship(),
+        'city_car': parked_car(0), 'city_car_b': parked_car(1), 'city_car_c': parked_car(2), 'city_car_d': parked_car(3),
+        'city_pay_machine': ticket_machine(), 'city_hoop': hoop(), 'city_dumpster': dumpster(0), 'city_dumpster_b': dumpster(1),
+        'city_dumpster_c': dumpster(2), 'city_crates': crates(0), 'city_crates_b': crates(1), 'city_bike': parked_bike(0),
+        'city_bike_b': parked_bike(1), 'city_bike_c': parked_bike(2), 'city_laundry': laundry_line(), 'city_pots': pot_plants(0),
+        'city_pots_b': pot_plants(1), 'city_cafe_table': cafe_table(), 'city_handcart': handcart(), 'city_cat': street_cat(), 'city_lighthouse': lighthouse(), 'city_water_taxi': water_taxi(),
     })
     return out
 
