@@ -41,8 +41,11 @@ export default ({ config }: ConfigContext): ExpoConfig => {
       output: 'single',
       favicon: './public/icons/napattack.png',
     },
+    // the Expo project the cloud builds (EAS) belong to: @napattack/screenagotchi
+    owner: 'napattack',
     extra: {
       appStoreAppId: process.env.BILT_APP_STORE_APP_ID,
+      eas: { projectId: '4d8c2dff-3489-4b00-9045-5f4521baa82b' },
     },
     plugins: [
       'expo-router',
