@@ -367,59 +367,174 @@ def maglev() -> Canvas:
 
 
 def tether() -> Canvas:
-    """The space elevator's ribbon, 40 x 260, rising from its anchor out of sight: two
-    pale strands with a cyan guide light between and a soft glow round them, a climber
-    car a third of the way up with its windows lit, the whole thing thinning and fading
-    into dots as it climbs."""
-    w, h = 40, 260
+    """The space elevator's lift, 56 x 272, standing on its anchor ring (fault 25): a
+    climber car docked in its cradle at the foot, door open toward the boarding ramp,
+    gripping the ribbon with a wheel housing on its roof; the ribbon (two pale strands
+    tied every few pixels, a cyan guide light between) climbs out of its roof and out
+    of sight, narrowing and breaking into dashes as it goes; a second car far up, small,
+    its own grip on the ribbon. No glow: the light is in the guide line and the windows."""
+    w, h = 56, 272
     cv = Canvas(w, h, pad=PAD)
     cx = w // 2
-    for y in range(0, h - 2):
-        t = y / h  # 0 at the top, far up
-        if t > 0.3:  # the glow, strongest near the ground
-            for dx in (-7, -6, 6, 7) if t > 0.6 else (-6, 6):
-                if (y + dx) % 2:
-                    cv.set(cx + dx, y, CYAN[1] if abs(dx) == 6 else CYAN[0])
-        for dx, c in ((-4, PORCELAIN[5]), (-3, PORCELAIN[3]), (3, PORCELAIN[2]), (4, PORCELAIN[1])):
-            if t > 0.35 or (y + dx) % max(2, int(7 - t * 14)) == 0:
-                cv.set(cx + dx, y, c)
-        if t > 0.2 or y % 3 == 0:
-            for dx in (-1, 0, 1):
-                cv.set(cx + dx, y, CYAN[4] if dx == 0 else CYAN[3] if (y // 4) % 2 else CYAN[2])
-        if y % 14 == 0 and t > 0.3:
-            cv.hline(cx - 5, y, 11, PORCELAIN[5])  # spacer clamps
-    cy = int(h * 0.38)  # the climber
-    for y in range(cy, cy + 32):
-        for x in range(cx - 15, cx + 16):
-            r = abs(x - cx) / 15
-            if r > 1 - (abs(y - cy - 16) / 16) ** 4 * 0.45:
-                continue
-            c = PORCELAIN[5] if x < cx - 7 else PORCELAIN[4] if x < cx + 4 else PORCELAIN[2]
-            if 9 <= y - cy <= 15 and abs(x - cx) < 12:
-                c = AMBER[3] if (x - cx) % 4 else NIGHT[1]
+    car_top, car_bot = h - 58, h - 14
+    # the ribbon, from the top of the sprite down into the roof housing
+    for y in range(0, car_top - 6):
+        t = y / (car_top - 6)  # 0 far up, 1 at the car
+        half = 1 if t < 0.25 else 2 if t < 0.6 else 3
+        if t < 0.25 and y % 5 in (3, 4):
+            continue  # far up it breaks into dashes, out of sight
+        if 0.25 <= t < 0.4 and y % 9 == 8:
+            continue
+        cv.set(cx - half, y, PORCELAIN[5] if half > 1 else PORCELAIN[4])
+        cv.set(cx + half, y, PORCELAIN[2])
+        for dx in range(-half + 1, half):
+            cv.set(cx + dx, y, CYAN[4] if dx == 0 else CYAN[2])
+        if half == 3 and y % 6 == 0:
+            cv.hline(cx - 3, y, 7, PORCELAIN[3])  # ties between the strands
+    # a second car far up the ribbon, small, with its grips
+    uy = int((car_top - 6) * 0.3)
+    for y in range(uy, uy + 12):
+        for x in range(cx - 5, cx + 6):
+            c = PORCELAIN[5] if x < cx - 1 else PORCELAIN[3] if x < cx + 3 else PORCELAIN[1]
+            if y in (uy + 5, uy + 6) and cx - 4 <= x <= cx + 4:
+                c = AMBER[3] if x % 2 else AMBER[2]
             cv.set(x, y, c)
-    cv.hline(cx - 12, cy + 24, 25, CYAN[3])
-    for y in range(h - 16, h - 2):  # its foot: a clamp collar
-        cv.hline(cx - 8, y, 17, PORCELAIN[3] if y % 4 else PORCELAIN[1])
-        cv.set(cx - 8, y, PORCELAIN[5])
+    for y in (uy - 2, uy + 13):
+        cv.hline(cx - 3, y, 7, NIGHT[1]); cv.set(cx - 3, y, PORCELAIN[3]); cv.set(cx + 3, y, PORCELAIN[3])
+    # the roof housing: the grip, two wheels pressing each strand
+    for y in range(car_top - 7, car_top + 1):
+        for x in range(cx - 8, cx + 9):
+            c = NIGHT[2] if y > car_top - 6 else PORCELAIN[3]
+            if x <= cx - 7:
+                c = PORCELAIN[4]
+            elif x >= cx + 7:
+                c = PORCELAIN[1]
+            cv.set(x, y, c)
+    for wx in (cx - 5, cx + 4):
+        for (x, y) in disc(wx, car_top - 3, 1.6):
+            cv.set(x, y, PORCELAIN[2] if x <= wx else NIGHT[3])
+        cv.set(wx, car_top - 3, CYAN[3])
+    # the car: a rounded capsule, lit on its upper left, a band of windows, its door open
+    for y in range(car_top, car_bot):
+        ry = (y - car_top) / (car_bot - car_top)
+        inset = int(6 * (1 - min(ry / 0.25, 1)) ** 2) + int(3 * max(0, (ry - 0.85) / 0.15) ** 2)
+        for x in range(cx - 17 + inset, cx + 18 - inset):
+            k = (x - (cx - 17)) / 34
+            c = PORCELAIN[5] if k < 0.22 and ry < 0.7 else PORCELAIN[4] if k < 0.55 else PORCELAIN[3] if k < 0.82 else PORCELAIN[1]
+            if ry < 0.12:
+                c = PORCELAIN[5] if k < 0.6 else PORCELAIN[3]
+            cv.set(x, y, c)
+    wy = car_top + 12
+    for x in range(cx - 14, cx + 15):  # the window band, mullions every 5
+        for y in range(wy, wy + 6):
+            cv.set(x, y, NIGHT[1] if (x - cx) % 5 == 0 else AMBER[3] if y < wy + 2 else AMBER[2])
+    cv.hline(cx - 15, wy - 1, 31, PORCELAIN[2])
+    cv.hline(cx - 15, wy + 6, 31, PORCELAIN[5])
+    dx0, dy0 = cx - 5, car_top + 22  # the door, slid open: lit inside, a seat back
+    for y in range(dy0, car_bot - 2):
+        for x in range(dx0, dx0 + 10):
+            cv.set(x, y, '#E8C890' if y < dy0 + 4 else '#B88E62' if x < dx0 + 8 else '#7A5A44')
+    cv.hline(dx0 + 2, dy0 + 8, 6, '#5C6680'); cv.hline(dx0 + 2, dy0 + 9, 6, '#3A4258')
+    for y in range(dy0, car_bot - 2):
+        cv.set(dx0 - 1, y, PORCELAIN[5]); cv.set(dx0 + 10, y, PORCELAIN[1])
+    cv.hline(cx - 12, car_top + 28, 5, CYAN[3]); cv.hline(cx + 8, car_top + 28, 5, CYAN[3])  # the running lights
+    # the cradle: four arms out to a ring of clamps on the deck, the boarding ramp
+    for (ax, side) in ((cx - 18, -1), (cx + 18, 1)):
+        for y in range(car_bot - 16, car_bot + 2):
+            for x in range(ax - (2 if side < 0 else 0), ax + (1 if side < 0 else 3)):
+                cv.set(x, y, PORCELAIN[4] if side < 0 else PORCELAIN[1])
+        cv.set(ax, car_bot - 16, PORCELAIN[5])
+    for y in range(car_bot - 2, car_bot + 8):  # the ramp, its edges lit cyan
+        for x in range(dx0 - 1, dx0 + 11):
+            c = PORCELAIN[3] if (y - car_bot) % 3 else PORCELAIN[2]
+            if x in (dx0 - 1, dx0 + 10):
+                c = CYAN[3]
+            cv.set(x, y, c)
     return cv
 
 
 def ticket_gates() -> Canvas:
-    """A row of five quiet ticket gates, 82 x 24: white pods with cyan-lit readers and
-    glass paddles open, seen from above at the angle of the rest."""
-    w, h = 82, 24
+    """A bank of ticket gates across the pier's entry, 82 x 30 (fault 24): six cabinets
+    seen in the three-quarter view, each a long top (a lit reader at the near end, a
+    small screen) over a front face with a status light and a kick plate; between them
+    the glass paddles stand folded back, so the five lanes are open."""
+    w, h = 82, 30
     cv = Canvas(w, h, pad=PAD)
     for k in range(6):
-        x0 = 2 + k * 15
-        for y in range(4, 20):
+        x0 = 1 + k * 15
+        for y in range(5, 18):  # the top, long because it runs away from us
             for x in range(x0, x0 + 6):
-                c = PORCELAIN[5] if y < 7 else PORCELAIN[4] if x < x0 + 2 else PORCELAIN[3] if x < x0 + 5 else PORCELAIN[1]
+                c = PORCELAIN[5] if x == x0 or y == 5 else PORCELAIN[4] if x < x0 + 4 else PORCELAIN[3]
                 cv.set(x, y, c)
-        cv.hline(x0 + 1, 8, 4, CYAN[3]); cv.hline(x0 + 1, 9, 4, CYAN[1])
-        if k < 5:
-            for y in range(10, 16):  # the glass paddles, open
-                cv.set(x0 + 7, y, CYAN[1]); cv.set(x0 + 13, y, CYAN[1])
+        cv.rect(x0 + 1, 7, 4, 2, CYAN[3]); cv.hline(x0 + 1, 9, 4, CYAN[1])  # the reader
+        cv.rect(x0 + 1, 12, 4, 3, NIGHT[1]); cv.hline(x0 + 2, 13, 2, AMBER[3])  # the screen
+        for y in range(18, 28):  # the front face, in shade
+            for x in range(x0, x0 + 6):
+                c = PORCELAIN[2] if x < x0 + 4 else PORCELAIN[1]
+                if y == 20:
+                    c = CYAN[3] if k % 2 == 0 else CYAN[2]
+                if y >= 26:
+                    c = NIGHT[2]
+                cv.set(x, y, c)
+        if k < 5:  # the paddles, folded back against each side of the lane
+            for y in range(10, 22):
+                cv.set(x0 + 6, y, (164, 220, 236, 150) if y < 20 else PORCELAIN[1])
+                cv.set(x0 + 14, y, (164, 220, 236, 150) if y < 20 else PORCELAIN[1])
+            cv.set(x0 + 6, 10, PORCELAIN[5]); cv.set(x0 + 14, 10, PORCELAIN[5])
+    return cv
+
+
+def glass_screen() -> Canvas:
+    """A glass screen, 24 x 26, that closes the pier's entry either side of the gates: a
+    chrome top rail on three posts, the glass between catching two pale glints."""
+    w, h = 24, 26
+    cv = Canvas(w, h, pad=PAD)
+    for y in range(6, 23):
+        for x in range(1, w - 1):
+            cv.set(x, y, (150, 206, 226, 110))
+    for k, x in enumerate(range(5, w - 3, 7)):  # glints, slanting with the light
+        for d in range(5):
+            cv.set(x + d, 18 - d * 2, (240, 250, 255, 200)); cv.set(x + d, 17 - d * 2, (240, 250, 255, 200))
+    cv.hline(0, 5, w, PORCELAIN[5]); cv.hline(0, 6, w, PORCELAIN[3])
+    cv.hline(0, 23, w, PORCELAIN[2]); cv.hline(0, 24, w, PORCELAIN[0])
+    for x in (0, w // 2 - 1, w - 2):
+        for y in range(5, 25):
+            cv.set(x, y, PORCELAIN[4]); cv.set(x + 1, y, PORCELAIN[2])
+    return cv
+
+
+def holo_map() -> Canvas:
+    """A wayfinding table, 40 x 40 (fault 24): a low round porcelain plinth with a dark
+    glass top, and over it a small crisp hologram of the planet with the ribbon rising
+    from it and a climber on the ribbon, drawn in whole cyan lines with a scan gap."""
+    w, h = 40, 40
+    cv = Canvas(w, h, pad=PAD)
+    cx = w // 2
+    for y in range(26, 38):  # the plinth: a short drum seen from above and in front
+        for x in range(cx - 13, cx + 14):
+            if ((x - cx) / 13.5) ** 2 + ((y - 29) / 4) ** 2 <= 1:
+                cv.set(x, y, NIGHT[1] if ((x - cx) / 11) ** 2 + ((y - 29) / 3) ** 2 <= 1 else PORCELAIN[5] if x < cx else PORCELAIN[3])
+            elif y > 29 and abs(x - cx) <= 13 - max(0, y - 35):
+                cv.set(x, y, PORCELAIN[4] if x < cx - 6 else PORCELAIN[2] if x < cx + 7 else PORCELAIN[1])
+    cv.hline(cx - 12, 34, 25, CYAN[2])
+    for x in range(cx - 8, cx + 9):  # the emitter ring on the glass
+        cv.set(x, 29 + (1 if abs(x - cx) < 6 else 0), CYAN[3])
+    gy = 16  # the planet: a circle of lines, a latitude band, the night side broken
+    for a in range(0, 360, 6):
+        r = math.radians(a)
+        x, y = cx + round(8 * math.cos(r)), gy + round(7 * math.sin(r))
+        if a < 200 or a % 12 == 0:
+            cv.set(x, y, CYAN[4] if 100 < a < 260 else CYAN[3])
+    for x in range(cx - 7, cx + 8):
+        if x % 2 or x < cx:
+            cv.set(x, gy + 1, CYAN[2])
+    for y in range(gy - 6, gy + 7):
+        cv.set(cx - 3 + abs(y - gy) // 3, y, CYAN[2] if y % 2 else CYAN[1])
+    for y in range(0, gy - 6):  # the ribbon from the planet, a climber on it
+        cv.set(cx + 4, y, CYAN[4] if y % 4 else CYAN[2])
+    cv.rect(cx + 3, 4, 3, 3, CYAN[4])
+    for y in range(gy + 8, 28, 2):  # the beam down to the glass, in scan lines
+        cv.hline(cx - 2, y, 5, CYAN[1])
     return cv
 
 
@@ -962,22 +1077,28 @@ def city_lamp() -> Canvas:
     return cv
 
 
-def street_tree(seed: int = 0) -> Canvas:
+def street_tree(seed: int = 0, pit: bool = True) -> Canvas:
     """A street tree in its pit, 40 x 60: a cast-iron grate round the trunk, a slim trunk
-    lit on the west, a crown of leaf clusters darker at dusk, a guard hoop."""
+    lit on the west, a crown of leaf clusters darker at dusk, a guard hoop. Without its
+    pit (pit=False) it is planted in open ground: the trunk flares into roots instead."""
     import style as _st
     cv = Canvas(40, 60, pad=PAD)
-    for y in range(52, 58):  # the grate
-        for x in range(10, 30):
-            c = IRON[2] if (x + y) % 3 else IRON[1]
-            if y == 52:
-                c = IRON[3]
-            cv.set(x, y, c)
-    for y in range(26, 55):
+    if pit:
+        for y in range(52, 58):  # the grate
+            for x in range(10, 30):
+                c = IRON[2] if (x + y) % 3 else IRON[1]
+                if y == 52:
+                    c = IRON[3]
+                cv.set(x, y, c)
+    for y in range(26, 55 if pit else 57):
         cv.set(19, y, '#5E4632'); cv.set(20, y, '#4A3828'); cv.set(21, y, '#33261C')
-    for y in range(44, 54):  # the guard hoop
-        cv.set(13, y, METAL[4]); cv.set(27, y, METAL[2])
-    cv.hline(13, 44, 15, METAL[4])
+    if pit:
+        for y in range(44, 54):  # the guard hoop
+            cv.set(13, y, METAL[4]); cv.set(27, y, METAL[2])
+        cv.hline(13, 44, 15, METAL[4])
+    else:
+        cv.hline(17, 56, 7, '#4A3828'); cv.set(18, 55, '#5E4632'); cv.set(22, 55, '#33261C')
+        cv.set(16, 57, '#5E4632'); cv.set(24, 57, '#33261C')
     _st.leafy(cv, 20, 18, 15 + noise2(seed, 1, 1960) * 3, 13, ['#14281F', '#1F3A2A', '#2E5A40', '#447A50', '#62995E'],
               r=2.4, seed=1961 + seed)
     return cv
@@ -1594,7 +1715,7 @@ def city_props() -> dict[str, Canvas]:
     out = {key: building(*spec) for (key, spec, _x, _y) in city_buildings()}
     out.update({key: skybridge(w, seed=k) for k, (key, w, _x, _y, _h) in enumerate(city_skybridges())})
     out.update({
-        'city_lamp': city_lamp(), 'city_street_tree': street_tree(0), 'city_street_tree_b': street_tree(1),
+        'city_lamp': city_lamp(), 'city_street_tree': street_tree(0), 'city_street_tree_b': street_tree(1), 'city_tree_planted': street_tree(2, pit=False),
         'city_bench': city_bench(), 'city_litter_bin': litter_bin(), 'city_quay_bollard': bollard(),
         'city_crossing_signal': crossing_signal(), 'city_vending_box': vending_box(0), 'city_vending_box_b': vending_box(1),
         'city_vending_box_c': vending_box(2), 'city_market_stall': market_stall(0), 'city_market_stall_b': market_stall(1),
@@ -1614,7 +1735,8 @@ def props() -> dict[str, Canvas]:
         'vending_machine': vending_machine(), 'street_light': street_light(), 'holo_board': holo_board(),
         'drone': drone(), 'cable_pole': cable_pole(), 'shelter': shelter(), 'uv_planter': uv_planter(),
         'containers': containers(), 'ferry': ferry(),
-        'maglev': maglev(), 'tether': tether(), 'ticket_gates': ticket_gates(), 'departure_pylon': departure_pylon(),
+        'maglev': maglev(), 'tether': tether(), 'ticket_gates': ticket_gates(), 'glass_screen': glass_screen(),
+        'holo_map': holo_map(), 'departure_pylon': departure_pylon(),
         'luggage_bot': luggage_bot(), 'pod_tree': pod_tree(), 'sky_bench': sky_bench(),
         'cables': cables(), 'bike_rack': bike_rack(), 'sky_planter': sky_planter(0), 'sky_planter_b': sky_planter(3),
         'flower_kiosk': flower_kiosk(),
