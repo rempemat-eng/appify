@@ -15,133 +15,284 @@ __all__ = ['home']
 
 
 def home(frame: int = 0):
-    """Inside the nap hut (living-world plan W4, the house you decorate): a bedroom
-    under the back wall's two windows, and through a doorway in the timber partition
-    the living room, with the hearth and the companion's basket beside it, an armchair,
-    the kitchen run along the partition, a round table, a bookcase and a big plant;
-    the front door at the bottom opens on the garden. Warm boards, sun from the
-    windows, the fire's glow. The furniture is placed by hand here; decorating (moving
-    it, adding keepsakes) comes with C12."""
+    """Inside the nap hut (living-world plan W4, the house you decorate), drawn with depth
+    (Matt, 19 Oct: "lacks detail ... the fire pit should be against the wall ... looks
+    very flat and not 3d"). Three rooms one behind another at the world's three-quarter
+    angle. Every wall shows its thickness as a timber plate seen from above, then its
+    face: crown moulding, plaster, a chair rail, panelled wainscot and a skirting board;
+    a doorway shows the wall's depth at its ends and a threshold board. The floor is
+    boards of varied tone with grain, knots and nails, shaded where it meets each wall.
+    At the back the bedroom under two deep-set, curtained windows; through the first
+    doorway the living room, its hearth built into the back wall with the chimney rising
+    through the wall's top, the bookcase and the kitchen run along the same wall, the
+    companion's basket and an armchair by the fire, the table with its chairs; through
+    the second the sunroom on terracotta tiles, and the front door. Everything stands
+    against a wall or round the hearth and the table, for a reason."""
     PL, WD = MATERIALS['plaster'], MATERIALS['wood']
     GOLD, NAP, CREAM = MATERIALS['gold'], MATERIALS['nap'], MATERIALS['cream']
+    LEAF = MATERIALS['leaf']
     cv = Canvas(W, H)
     blocked = set()
-    # the floor: long boards, lit along their top edge
-    for y in range(H):
-        for x in range(W):
-            row = y // 8
-            off = (row * 53) % 96
-            c = WD[3] if noise2((x + off) // 96, row, 520) > 0.5 else WD[2]
-            if y % 8 == 0:
-                c = WD[1]
-            elif y % 8 == 1 and c == WD[3]:
-                c = WD[4]
-            if (x + off) % 96 == 0:
-                c = WD[1]
-            cv.set(x, y, c)
+    CAP, SIDE = 6, 8                    # a wall's thickness seen from above; the side walls' plates
+    DOOR = (136, 184)                   # the doorways through both partitions
+    BACK_FACE, PART_FACE = 58, 38       # how tall each wall's face shows
+    MID, LOW, FRONT = 196, 396, H - 20  # where the partitions and the front wall stand
 
-    def wall(y0, face, x0=0, x1=W, door=None):
-        """A plastered wall seen from the room: a beamed top, the plaster face with
-        timber posts, a skirting board; open where the doorway is."""
-        for y in range(y0, y0 + face):
-            for x in range(x0, x1):
-                if door and door[0] <= x < door[1]:
+    def hexc(c):
+        return c if isinstance(c, str) else '#%02X%02X%02X' % tuple(c[:3])
+
+    def blend(a, b, t):
+        ra, rb = _rgb(hexc(a)), _rgb(hexc(b))
+        return '#%02X%02X%02X' % tuple(int(ra[i] + (rb[i] - ra[i]) * t) for i in range(3))
+
+    def dim(x, y, k):
+        if 0 <= x < W and 0 <= y < H:
+            r, g, b = cv.get(x, y)[:3]
+            cv.set(x, y, (min(255, int(r * k)), min(255, int(g * k)), min(255, int(b * k)), 255))
+
+    # ---- the floor: boards running across the room, each its own tone ----------------
+    tones = [blend(WD[2], WD[3], 0.4), blend(WD[2], WD[3], 0.6), blend(WD[2], WD[3], 0.8)]
+    lit = [blend(t, WD[4], 0.3) for t in tones]
+    dark = [blend(t, WD[1], 0.25) for t in tones]
+    seam = blend(WD[1], WD[2], 0.45)
+    for y in range(H):
+        row, k = y // 8, y % 8
+        off = (row * 37) % 72
+        for x in range(W):
+            plank = (x + off) // 72
+            t = int(noise2(plank, row, 520) * 2.99)
+            c = tones[t]
+            j = (x + off) % 72
+            if k == 7:
+                c = seam  # the gap between rows
+            elif k == 0:
+                c = lit[t]  # the lit leading edge
+            elif j == 0:
+                c = seam  # a butt joint
+            elif j == 1:
+                c = lit[t]
+            elif noise2((x + off) // 7, y, 523 + plank) > 0.95:
+                c = dark[t]  # a grain streak
+            if j in (3, 68) and k in (2, 5):
+                c = dark[t]  # nail heads
+            cv.set(x, y, c)
+        if k == 3 and noise2(row, 9, 524) > 0.55:  # a knot now and then
+            kx = int(noise2(row, 10, 524) * (W - 20)) + 10
+            for (x, y2) in ((kx, y), (kx + 1, y), (kx, y + 1)):
+                cv.set(x, y2, WD[1])
+            cv.set(kx + 1, y + 1, dark[1])
+
+    # ---- walls -------------------------------------------------------------------------
+    def wall(y0, face, door=None, rail=0.5, posts=()):
+        """A wall across the room: its top (the wall's thickness, a timber plate seen
+        from above), then its face, shaded where the floor meets it."""
+        def gap(x):
+            return door is not None and door[0] <= x < door[1]
+        for y in range(y0, y0 + CAP):
+            k = y - y0
+            for x in range(W):
+                if gap(x):
                     continue
-                k = y - y0
-                c = PL[4]
-                if k in (0, 1):
-                    c = WD[4] if k == 0 else WD[3]
-                elif k < 7:
-                    c = WD[1] if k == 6 else WD[2]
-                elif (x - x0) % 64 < 4:
-                    c = WD[2] if (x - x0) % 64 < 2 else WD[1]  # posts
-                elif y > y0 + face - 5:
-                    c = WD[2] if y > y0 + face - 3 else WD[3]  # skirting
+                c = WD[4] if k == 0 else WD[3] if k < CAP - 2 else WD[2] if k == CAP - 2 else WD[0]
+                if k in (1, 2) and noise2(x // 9, y, 530) > 0.85:
+                    c = WD[2]  # the plate's grain
+                cv.set(x, y, c)
+                blocked.add((x, y))
+        top = y0 + CAP
+        rail_y = top + int(face * rail)
+        foot = top + face
+        for y in range(top, foot):
+            k = y - top
+            for x in range(W):
+                if gap(x):
+                    continue
+                if k < 3:
+                    c = (WD[4], WD[3], WD[1])[k]  # the crown moulding
+                elif y < rail_y:
+                    c = PL[3] if k < 5 else PL[4]  # plaster, shaded just under the crown
+                    if (x * 7 + y * 3) % 29 == 0:
+                        c = PL[3]
+                    if x in posts or x - 1 in posts or x - 2 in posts:
+                        c = WD[3] if x in posts else WD[2] if x - 1 in posts else WD[1]  # timber posts
+                elif y < rail_y + 2:
+                    c = WD[4] if y == rail_y else WD[1]  # the chair rail
+                elif y < foot - 4:
+                    px, py, ph = x % 32, y - rail_y - 2, foot - 4 - rail_y - 2
+                    c = WD[2]  # panelled wainscot: a lit frame, a sunk panel
+                    if px == 0 or py == 0:
+                        c = WD[3]
+                    elif px == 31 or py == ph - 1:
+                        c = WD[1]
+                    elif 3 <= px <= 28 and 2 <= py <= ph - 3:
+                        c = WD[1] if px == 3 or py == 2 else WD[3] if px == 28 or py == ph - 3 else WD[2]
+                else:
+                    c = (WD[4], WD[2], WD[2], WD[1])[y - (foot - 4)]  # the skirting board
                 cv.set(x, y, c)
                 blocked.add((x, y))
         if door:
-            for y in range(y0, y0 + face):  # the door frame
-                for x in (door[0] - 2, door[0] - 1, door[1], door[1] + 1):
-                    cv.set(x, y, WD[3] if x < door[0] else WD[1])
-    # the back wall, with two windows onto the garden and a picture between them
-    wall(0, 64)
+            for y in range(y0, foot):  # the wall's ends either side of the doorway
+                for d in range(3):
+                    if y < top:
+                        c = WD[3]
+                    else:
+                        c = PL[2] if d else WD[1]
+                    cv.set(door[0] - 1 - d, y, c)  # the west end faces the light from the doorway
+                    cv.set(door[1] + d, y, PL[5] if d == 0 and y >= top else WD[3] if y < top else PL[4])
+            for x in range(door[0], door[1]):  # the threshold board
+                cv.set(x, foot, WD[1]); cv.set(x, foot + 1, WD[3]); cv.set(x, foot + 2, WD[2])
+        for k, f in enumerate((0.74, 0.82, 0.88, 0.93, 0.97)):  # the floor in the wall's shade
+            for x in range(W):
+                if not gap(x):
+                    dim(x, foot + k, f)
+        return foot
+
+    floor_top = wall(0, BACK_FACE, posts=(126, 194))
+    living_top = wall(MID, PART_FACE, door=DOOR)
+    sun_top = wall(LOW, PART_FACE, door=DOOR)
+
+    # ---- windows in the back wall: deep reveals, a sill, curtains --------------------
     for wx in (52, 220):
-        for y in range(14, 50):
-            for x in range(wx, wx + 48):
-                c = '#9CC8E0' if y < 30 else '#7EA868' if y < 40 else '#5E8A52'
-                if (x - wx) in (0, 1, 23, 24, 46, 47) or (y - 14) in (0, 1, 17, 34, 35):
-                    c = WD[3] if (x - wx) < 2 or (y - 14) < 2 else WD[1]
+        wy, ww, wh = 14, 48, 34
+        for y in range(wy, wy + wh):
+            for x in range(wx, wx + ww):
+                d = y - wy
+                c = '#A9D3E6' if d < 12 else '#BFE0EE' if d < 15 else '#8CB874' if d < 22 else '#6E9A5C' if d < 28 else '#5E8A52'
+                if 26 <= d <= 30 and noise2(x // 3, 1, 531 + wx) > 0.6:
+                    c = '#4E7A46'  # the garden's hedge beyond
                 cv.set(x, y, c)
-        cv.hline(wx - 2, 50, 52, WD[4]); cv.hline(wx - 2, 51, 52, WD[2])  # sills
-    for y in range(20, 42):  # a picture of the valley
-        for x in range(146, 174):
-            c = GOLD[3] if x in (146, 173) or y in (20, 41) else '#9CC8E0' if y < 30 else '#6A9468'
+        for (x, y) in disc(wx + 34, wy + 17, 5):  # a tree outside
+            cv.set(x, y, '#5E8A52' if x + y < wx + wy + 51 else '#4E7A46')
+        for y in range(wy, wy + wh):  # the reveal: the wall's depth round the glass
+            for d in range(3):
+                cv.set(wx + d, y, PL[2] if d < 2 else PL[3])
+                cv.set(wx + ww - 1 - d, y, PL[5] if d == 0 else PL[4])
+        for x in range(wx, wx + ww):
+            cv.set(x, wy, PL[2]); cv.set(x, wy + 1, PL[2]); cv.set(x, wy + 2, PL[3])
+        for y in range(wy + 3, wy + wh):  # the frame's bars
+            cv.set(wx + ww // 2, y, WD[4]); cv.set(wx + ww // 2 + 1, y, WD[2])
+        for x in range(wx + 3, wx + ww - 3):
+            cv.set(x, wy + wh // 2 + 1, WD[4]); cv.set(x, wy + wh // 2 + 2, WD[2])
+        cv.set(wx + 8, wy + 5, '#FFFFFF'); cv.set(wx + 7, wy + 6, '#E4F2F8')  # a glint
+        for x in range(wx - 3, wx + ww + 3):  # the sill stands out from the wall, its shadow below
+            cv.set(x, wy + wh, WD[4]); cv.set(x, wy + wh + 1, WD[3]); cv.set(x, wy + wh + 2, WD[1])
+            cv.set(x, wy + wh + 3, PL[2]); cv.set(x, wy + wh + 4, PL[3])
+        for (cx, side) in ((wx - 7, -1), (wx + ww + 1, 1)):  # curtains, gathered
+            for y in range(wy - 3, wy + wh + 6):
+                for i in range(6):
+                    fold = (i + (y // 3) % 2) % 3
+                    c = (NAP[3], NAP[2], NAP[1])[fold] if side < 0 else (NAP[2], NAP[1], NAP[1])[fold]
+                    if y == wy + wh - 4:
+                        c = GOLD[3]  # the tie
+                    cv.set(cx + i, y, c)
+        for x in range(wx - 9, wx + ww + 9):  # the rod
+            cv.set(x, wy - 4, GOLD[4]); cv.set(x, wy - 3, GOLD[2])
+        for (x, y) in ((wx + 39, wy + wh - 1), (wx + 40, wy + wh - 2), (wx + 41, wy + wh - 1), (wx + 40, wy + wh - 3)):
+            cv.set(x, y, LEAF[3])  # a sprig in a pot on the east sill
+        cv.set(wx + 40, wy + wh - 1, RED[2])
+    for y in range(18, 44):  # a painting of the valley between them, gilt frame
+        for x in range(142, 178):
+            edge = x in (142, 143, 176, 177) or y in (18, 19, 42, 43)
+            c = (GOLD[4] if x < 160 and y < 30 else GOLD[2]) if edge else '#A9D3E6' if y < 28 else '#7EA868' if y < 36 else '#5E8A52'
             cv.set(x, y, c)
-    for (x, y) in disc(166, 25, 2):
+    for (x, y) in disc(168, 23, 2):
         cv.set(x, y, '#F8DD8F')
-    # the two partitions with their doorways, and the front wall with the front door
-    wall(196, 44, door=(136, 184))
-    wall(396, 44, door=(136, 184))
-    wall(H - 20, 20, door=(140, 180))
-    for (px, py, scene) in ((40, 408, 'sea'), (232, 408, 'hill')):  # pictures on the partition, from the sunroom
-        for y in range(py, py + 18):
-            for x in range(px, px + 26):
-                edge = x in (px, px + 25) or y in (py, py + 17)
-                sky = '#9CC8E0' if scene == 'hill' else '#B8D8E8'
-                c = WD[1] if edge else sky if y < py + 9 else ('#6A9468' if scene == 'hill' else '#44628E')
-                cv.set(x, y, c)
-    for k, col in enumerate(('#C2453A', '#3E6A8A', '#E2BC5E')):  # coats on hooks by the door
-        hx = 98 + k * 11
-        cv.set(hx + 3, 410, WD[1])
-        for y in range(412, 430):
-            for x in range(hx, hx + 7 - (1 if y < 416 else 0)):
-                cv.set(x, y, col if x < hx + 4 else tuple(int(int(col[i:i + 2], 16) * 0.75) for i in (1, 3, 5)) + (255,))
-    for (x, y) in disc(110, 214, 7):  # the clock on the upper partition
-        cv.set(x, y, CREAM[3] if (x - 110) + (y - 214) < 4 else CREAM[2])
-    for (x, y) in disc(110, 214, 7):
-        if (x - 110) ** 2 + (y - 214) ** 2 > 36:
+    for x in range(144, 177):
+        dim(x, 44, 0.86)  # its shadow on the plaster
+
+    # ---- the living room's back wall: a clock; the sunroom's: two pictures ---------
+    cx, cy = 195, MID + CAP + 14
+    for (x, y) in disc(cx, cy, 6):
+        cv.set(x, y, CREAM[3] if (x - cx) + (y - cy) < 3 else CREAM[2])
+        if (x - cx) ** 2 + (y - cy) ** 2 > 25:
             cv.set(x, y, WD[1])
-    cv.vline(110, 209, 5, WD[0]); cv.hline(110, 214, 4, WD[0])
-    # the sunroom at the front: terracotta tiles under a glazed wall
-    for y in range(440, H - 20):
-        for x in range(8, W - 8):
-            c = '#C8743E' if ((x // 16) + (y // 16)) % 2 else '#B8683A'
+    cv.vline(cx, cy - 4, 4, WD[0]); cv.hline(cx, cy, 3, WD[0])
+    for (px, scene) in ((44, 'sea'), (234, 'hill')):
+        py = LOW + CAP + 6
+        for y in range(py, py + 16):
+            for x in range(px, px + 26):
+                edge = x in (px, px + 25) or y in (py, py + 15)
+                c = WD[1] if edge else ('#B8D8E8' if y < py + 8 else '#44628E') if scene == 'sea' else ('#9CC8E0' if y < py + 7 else '#6A9468')
+                cv.set(x, y, c)
+        for x in range(px + 1, px + 26):
+            dim(x, py + 16, 0.86)
+
+    # ---- the side walls: plates seen from above, shading the floor beside them -------
+    for y in range(H):
+        for x in range(SIDE):
+            c = WD[1] if x == 0 else WD[0] if x == SIDE - 1 else WD[3] if noise2(y // 7, x, 532) > 0.3 else WD[2]
+            cv.set(x, y, c); blocked.add((x, y))
+            c = WD[4] if x == 0 else WD[1] if x == SIDE - 1 else WD[3] if noise2(y // 7, x, 533) > 0.3 else WD[2]
+            cv.set(W - SIDE + x, y, c); blocked.add((W - SIDE + x, y))
+        for k, f in enumerate((0.78, 0.86, 0.92, 0.97)):
+            if (SIDE + k, y) not in blocked:
+                dim(SIDE + k, y, f)
+        if (W - SIDE - 1, y) not in blocked:
+            dim(W - SIDE - 1, y, 0.92)
+
+    # ---- the sunroom: terracotta tiles, lit at their top edge -------------------------
+    for y in range(sun_top, FRONT):
+        for x in range(SIDE, W - SIDE):
+            tx, ty = x // 16, y // 16
+            base = ('#C8743E', '#BE6E3C', '#B8683A')[int(noise2(tx, ty, 534) * 2.99)]
+            c = base
             if x % 16 == 0 or y % 16 == 0:
-                c = '#8A4A2A'
+                c = '#8A4A2A'  # the grout
+            elif y % 16 == 1 or x % 16 == 1:
+                c = blend(base, '#E8A07A', 0.4)  # each tile's lit edge
             cv.set(x, y, c)
-    for x in range(8, W - 8):  # the glazing along the partition's foot lets the sun in
-        if (x // 16) % 2:
-            for y in range(440, 452):
-                c = cv.get(x, y)
-                cv.set(x, y, tuple(min(255, v + 22) for v in c[:3]) + (255,))
-    for x in range(140, 180):  # the doorstep and mat
-        for y in range(H - 20, H):
-            cv.set(x, y, STONE[3] if y < H - 16 else '#8A6A3A' if (x + y) % 3 else '#A8844A')
-    for (x0) in (0, W - 8):  # side walls, seen edge on
-        for y in range(64, H - 20):
-            for x in range(x0, x0 + 8):
-                cv.set(x, y, WD[2] if x in (x0, x0 + 7) else PL[3])
-                blocked.add((x, y))
-    # sunlight through the back windows on the boards
+        if y - sun_top < 5:
+            for x in range(SIDE, W - SIDE):
+                if not (DOOR[0] <= x < DOOR[1]):
+                    dim(x, y, (0.76, 0.84, 0.9, 0.95, 0.98)[y - sun_top])
+
+    # ---- the front wall: its top across the room, the door open onto the step --------
+    for y in range(FRONT, H):
+        for x in range(W):
+            if 140 <= x < 180:
+                c = STONE[3] if y < FRONT + 4 else '#8A6A3A' if (x + y) % 3 else '#A8844A'  # the step and the mat
+                cv.set(x, y, c)
+                continue
+            k = y - FRONT
+            c = WD[4] if k == 0 else WD[3] if k < 4 else WD[2] if noise2(x // 9, y, 535) > 0.3 else WD[3]
+            cv.set(x, y, c); blocked.add((x, y))
+    for y in range(FRONT, H):  # the door's jambs
+        cv.set(139, y, WD[1]); cv.set(180, y, WD[4])
+
+    # ---- light: the sun through the back windows, the fire's glow -------------------
     for wx in (52, 220):
-        for y in range(66, 120):
-            for x in range(wx + int((y - 66) * 0.3), wx + 48 + int((y - 66) * 0.3)):
-                if (x - wx) % 24 > 1 and (y - 66) % 18 > 1:
-                    c = cv.get(x, y)
-                    cv.set(x, y, tuple(min(255, v + 18) for v in c[:3]) + (255,))
-    # rugs: a long one by the bed, a round one in the living room
-    for y in range(150, 186):
-        for x in range(48, 160):
-            c = RED[3] if ((x - 48) // 6 + (y - 150) // 6) % 2 else RED[2]
-            if y in (150, 185) or x in (48, 159):
+        for y in range(floor_top + 2, floor_top + 56):
+            for x in range(wx + int((y - floor_top) * 0.35), wx + 48 + int((y - floor_top) * 0.35)):
+                if (x - wx) % 24 in (0, 1) or (y - floor_top) % 18 in (0, 1) or (x, y) in blocked:
+                    continue
+                if y > floor_top + 44 and (x + y) % 2:
+                    continue  # the patch fades out, dithered
+                r, g, b = cv.get(x, y)[:3]
+                cv.set(x, y, (min(255, r + 20), min(255, g + 17), min(255, b + 10), 255))
+    light_pool(cv, 46, living_top + 16, 50, 18, '#F2721E', skip=frozenset(blocked))
+
+    # ---- rugs: a long one at the bed's foot, a braided oval by the fire -------------
+    for y in range(152, 186):
+        for x in range(46, 142):
+            c = RED[3] if ((x - 46) // 6 + (y - 152) // 6) % 2 else RED[2]
+            if y in (152, 185) or x in (46, 141):
                 c = GOLD[3]
+            if y == 185 or x == 141:
+                c = GOLD[2]
             cv.set(x, y, c)
-    for (x, y) in oval(150, 350, 60, 26):
-        d = math.hypot((x - 150) / 60, (y - 350) / 26)
+    for x in range(47, 143):
+        dim(x, 186, 0.85)
+    RX, RY, RCX, RCY = 46, 18, 58, 292  # the braided rug before the fire
+    for (x, y) in oval(RCX, RCY, RX, RY):
+        d = math.hypot((x - RCX) / RX, (y - RCY) / RY)
         ring = int(d * 6)
-        cv.set(x, y, (NAP[2], CREAM[3], NAP[3], RED[3], NAP[2], CREAM[2])[min(5, ring)] if (x + y) % 7 else NAP[1])
+        c = (NAP[2], CREAM[3], NAP[3], RED[3], NAP[2], CREAM[2])[min(5, ring)]
+        if (x + 2 * y) % 7 == 0:
+            c = NAP[1]  # the braid
+        if (x - RCX) + (y - RCY) * 2 > 0 and d > 0.9:
+            c = NAP[1]  # its lower rim in shade
+        cv.set(x, y, c)
     # a woven runner from the front door into the sunroom
-    for y in range(470, 552):
+    for y in range(470, FRONT):
         for x in range(142, 178):
             band = (y - 470) // 4 % 4
             c = (NAP[2], CREAM[3], RED[2], CREAM[3])[band] if 146 <= x < 174 else NAP[1]
@@ -150,21 +301,25 @@ def home(frame: int = 0):
             if x in (142, 177) and y % 2:
                 c = CREAM[3]  # the fringe
             cv.set(x, y, c)
-    # the hearth's glow on the floor
-    light_pool(cv, 52, 300, 46, 18, '#F2721E', skip=frozenset(blocked))
+
     objects = [
-        # the bedroom
-        ('bed', 'bed', 64, 70), ('stand-1', 'nightstand', 38, 92), ('stand-2', 'nightstand', 130, 92),
-        ('wardrobe', 'wardrobe', 264, 60), ('desk', 'desk', 200, 100), ('chest', 'keepsake_chest', 270, 150),
-        # the living room
-        ('hearth', 'fireplace', 14, 228), ('basket', 'pet_bed', 72, 282), ('chair', 'armchair', 108, 268),
-        ('kitchen', 'kitchen', 206, 226), ('table', 'dining_table', 214, 310), ('books', 'bookcase', 12, 332),
-        # the sunroom
-        ('seat', 'window_seat', 30, 456), ('plant-1', 'plant_tall', 270, 446), ('plant-2', 'plant_tall', 240, 470),
-        ('plant-3', 'plant_tall', 12, 500), ('chair-s', 'armchair', 200, 492),
-        ('coats', 'coat_rack', 116, 510), ('boots', 'boots', 186, 544), ('side', 'side_table', 98, 466),
-        ('can', 'watering_can', 262, 520),
+        # the bedroom: the bed between its nightstands against the back wall, the desk
+        # under the east window, the wardrobe in the corner, the keepsake chest at the
+        # bed's foot
+        ('bed', 'bed', 64, 54), ('stand-1', 'nightstand', 40, 44), ('stand-2', 'nightstand', 130, 44),
+        ('desk', 'desk', 222, 44), ('wardrobe', 'wardrobe', 270, 22), ('chest', 'keepsake_chest', 78, 128),
+        # the living room: the hearth built into the back wall with its chimney through
+        # the wall's top, the bookcase beside it, the kitchen run along the rest; the
+        # basket on the hearth's warm corner, a reading chair before the books by the
+        # fire, the table with its chairs by the kitchen
+        ('hearth', 'fireplace', 12, 190), ('books', 'bookcase', 90, 194), ('kitchen', 'kitchen', 206, 199),
+        ('basket', 'pet_bed', 12, 248), ('chair', 'armchair', 92, 250), ('table', 'dining_table', 226, 262),
+        # the sunroom: a window seat and an armchair with its side table along the wall,
+        # plants in the corners, coats and boots by the front door
+        ('seat', 'window_seat', 20, 432), ('side', 'side_table', 206, 424), ('chair-s', 'armchair', 232, 410),
+        ('plant-1', 'plant_tall', 278, 410), ('plant-2', 'plant_tall', 10, 506), ('plant-3', 'plant_tall', 282, 506),
+        ('coats', 'coat_rack', 116, 512), ('boots', 'boots', 186, 542), ('can', 'watering_can', 262, 540),
     ]
-    stands = {'door': (160, 544), 'bed': (96, 150), 'hearth': (60, 316), 'table': (240, 366), 'sunroom': (120, 500),
-              'chest': (288, 186)}  # the keepsake chest: decorating starts here (C12)
+    stands = {'door': (160, 544), 'bed': (140, 104), 'hearth': (64, 268), 'table': (250, 312),
+              'sunroom': (120, 486), 'chest': (95, 162)}  # the keepsake chest: decorating starts here (C12)
     return cv, objects, stands, blocked

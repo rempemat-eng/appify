@@ -51,6 +51,7 @@ import {
   zoneBeyondByRegion,
   zoneGrounds,
   zoneProps,
+  zoneScenery,
 } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
@@ -367,6 +368,10 @@ const FRAME_MS = 400; // divides FLOAT_LOOP
  *  Reach open dunes round the desert and the volcano's flank round the fire country (the
  *  Scorched Pass and everything north and east of it). */
 function beyondAt(region: RegionId, col: number, row: number) {
+  // the land past the world painted for this very cell (scripts/art/scenery.py), where
+  // there is one: it runs on from its neighbours without a seam
+  const own = zoneScenery[`${region}:${col}:${row}`];
+  if (own) return own;
   // (Sunstone: the volcano's ash flank round the fire country, desert north of the gulch)
   if (region === 'west' && (col >= 1 || (col >= 0 && row <= -2))) return zoneBeyondAsh;
   // the valley: mountains above the Frostline and the ridge, the sea past the harbour and

@@ -487,13 +487,16 @@ def snowmelt(frame: int = 0):
             if (x, y) not in outflow:
                 scarp.add((x, y))
     # the trail: up the switchback from the hollow, round the south shore, over the bridge
-    trail = gthick('snowmelt', [(-148, -586), (-148, -616), (-196, -664), (-134, -716), (-170, -760),
+    # (the first point lies past the seam, so the trail meets the hollow's track with no gap)
+    trail = gthick('snowmelt', [(-148, -566), (-148, -616), (-196, -664), (-134, -716), (-170, -760),
                                 (-150, -828), (-100, -864), (-60, -872), (10, -876)], 8)
     for (x, y) in trail:
         if (x, y) not in outflow and (x, y) not in lake:
-            if y > 534 - int(smooth_noise(x + ox, 0, 6, 877) * 10):
-                # where the switchback comes down through the scarp the snow has
-                # gone off it: the hollow's earth track begins here
+            # coming down through the scarp the snow thins off the trail: packed snow
+            # gives way to the hollow's earth track over the last 80 px, in patches
+            # (review 19 Oct, 7: the surface changed at the seam)
+            t = (y - 496) / 80
+            if smooth_noise(x + ox, y + oy, 9, 878) < t:
                 cv.set(x, y, P[3] if smooth_noise(x + ox, y + oy, 7, 874) < 0.7 else P[4])
             else:
                 cv.set(x, y, SN[1] if (x + y) % 3 else SN[2])
@@ -532,9 +535,25 @@ def saddle(frame: int = 0):
         e0 = 262 - int(math.sin((y + oy) / 70) * 16 + smooth_noise(0, y + oy, 20, 832) * 10)
         open_west = LAKE_PORT[0] - 30 <= y < LAKE_PORT[1] + 20
         w1 = 0 if open_west else 34 + int(math.sin((y + oy) / 53) * 12 + smooth_noise(1, y + oy, 20, 833) * 8)
+        # the west rock is two ribs coming down off the cirque wall, not a slab on the
+        # seam: below the lake's wall the snow runs on from the lake's side, and each rib
+        # ends in a tapering toe (review 19 Oct, 6)
+        wall = 96 + int(math.sin((ox - 1) / 31) * 12 + smooth_noise(ox - 1, 0, 14, 822) * 10)
+        if y < wall:
+            x0 = 0
+        elif y < LAKE_PORT[0] - 30:
+            t = (y - wall) / max(1, LAKE_PORT[0] - 30 - wall)
+            x0 = int(4 + 24 * t ** 0.8 + smooth_noise(2, y + oy, 12, 836) * 6)
+            w1 = int(w1 * (1 - 0.75 * t ** 1.6))
+        elif y >= LAKE_PORT[1] + 20:
+            t = min(1.0, (y - LAKE_PORT[1] - 20) / 70)
+            x0 = int(10 + 18 * (1 - t) + smooth_noise(3, y + oy, 12, 837) * 6) if y < 516 else 0
+            w1 = int(w1 * (0.35 + 0.65 * t ** 0.7))
+        else:
+            x0 = 0
         for x in range(W):
             north = y < 70 - int(smooth_noise(x + ox, 0, 16, 834) * 14) and not (SUMMIT_COL[0] - 6 <= x < SUMMIT_COL[1] + 6)
-            if x >= e0 or x < w1 or north:
+            if x >= e0 or x0 <= x < w1 or north:
                 cv.set(x, y, steep_px(x + ox, y + oy))
                 steep.add((x, y))
     shoulder = shoulders(cv, 'saddle')

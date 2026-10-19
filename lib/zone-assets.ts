@@ -412,6 +412,64 @@ export const zoneBeyondAsh: ImageSourcePropType = beyondAshImage;
 export const zoneBeyondPeaks: ImageSourcePropType = beyondPeaksImage;
 /** The moon's plain: what lies round Lumen below its horizon. */
 export const zoneBeyondRegolith: ImageSourcePropType = beyondRegolithImage;
+import sceneryValleyM2M4 from '@/assets/zones/scenery/valley_m2_m4.png';
+import sceneryValleyM2M3 from '@/assets/zones/scenery/valley_m2_m3.png';
+import sceneryValleyM2M2 from '@/assets/zones/scenery/valley_m2_m2.png';
+import sceneryValleyM2M1 from '@/assets/zones/scenery/valley_m2_m1.png';
+import sceneryValleyM20 from '@/assets/zones/scenery/valley_m2_0.png';
+import sceneryValleyM21 from '@/assets/zones/scenery/valley_m2_1.png';
+import sceneryValleyM22 from '@/assets/zones/scenery/valley_m2_2.png';
+import sceneryValleyM23 from '@/assets/zones/scenery/valley_m2_3.png';
+import sceneryValleyM1M4 from '@/assets/zones/scenery/valley_m1_m4.png';
+import sceneryValleyM1M3 from '@/assets/zones/scenery/valley_m1_m3.png';
+import sceneryValleyM12 from '@/assets/zones/scenery/valley_m1_2.png';
+import sceneryValleyM13 from '@/assets/zones/scenery/valley_m1_3.png';
+import sceneryValley0M4 from '@/assets/zones/scenery/valley_0_m4.png';
+import sceneryValley03 from '@/assets/zones/scenery/valley_0_3.png';
+import sceneryValley1M4 from '@/assets/zones/scenery/valley_1_m4.png';
+import sceneryValley1M3 from '@/assets/zones/scenery/valley_1_m3.png';
+import sceneryValley1M2 from '@/assets/zones/scenery/valley_1_m2.png';
+import sceneryValley1M1 from '@/assets/zones/scenery/valley_1_m1.png';
+import sceneryValley13 from '@/assets/zones/scenery/valley_1_3.png';
+import sceneryValley2M4 from '@/assets/zones/scenery/valley_2_m4.png';
+import sceneryValley2M3 from '@/assets/zones/scenery/valley_2_m3.png';
+import sceneryValley2M2 from '@/assets/zones/scenery/valley_2_m2.png';
+import sceneryValley2M1 from '@/assets/zones/scenery/valley_2_m1.png';
+import sceneryValley20 from '@/assets/zones/scenery/valley_2_0.png';
+import sceneryValley21 from '@/assets/zones/scenery/valley_2_1.png';
+import sceneryValley22 from '@/assets/zones/scenery/valley_2_2.png';
+import sceneryValley23 from '@/assets/zones/scenery/valley_2_3.png';
+/** The land past the walkable world, one picture per cell round a region and in its
+ *  grid's gaps, painted in the region's coordinates (scripts/art/scenery.py). */
+export const zoneScenery: Record<string, ImageSourcePropType> = {
+  'valley:-2:-4': sceneryValleyM2M4,
+  'valley:-2:-3': sceneryValleyM2M3,
+  'valley:-2:-2': sceneryValleyM2M2,
+  'valley:-2:-1': sceneryValleyM2M1,
+  'valley:-2:0': sceneryValleyM20,
+  'valley:-2:1': sceneryValleyM21,
+  'valley:-2:2': sceneryValleyM22,
+  'valley:-2:3': sceneryValleyM23,
+  'valley:-1:-4': sceneryValleyM1M4,
+  'valley:-1:-3': sceneryValleyM1M3,
+  'valley:-1:2': sceneryValleyM12,
+  'valley:-1:3': sceneryValleyM13,
+  'valley:0:-4': sceneryValley0M4,
+  'valley:0:3': sceneryValley03,
+  'valley:1:-4': sceneryValley1M4,
+  'valley:1:-3': sceneryValley1M3,
+  'valley:1:-2': sceneryValley1M2,
+  'valley:1:-1': sceneryValley1M1,
+  'valley:1:3': sceneryValley13,
+  'valley:2:-4': sceneryValley2M4,
+  'valley:2:-3': sceneryValley2M3,
+  'valley:2:-2': sceneryValley2M2,
+  'valley:2:-1': sceneryValley2M1,
+  'valley:2:0': sceneryValley20,
+  'valley:2:1': sceneryValley21,
+  'valley:2:2': sceneryValley22,
+  'valley:2:3': sceneryValley23,
+};
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,

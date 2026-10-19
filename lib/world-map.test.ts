@@ -1,0 +1,517 @@
+import assert from 'node:assert/strict';
+import { acknowledgeMapSeen, buildWorldMap, mapVisitedZones, restoreMapSeen } from './world-map';
+import { regionTiles, tileOrigin, type RegionId } from './region-walk';
+import { regionLayout, zonePorts } from './zone-maps';
+import {
+  doors,
+  regionPasses,
+  regionPoint,
+  stopIds,
+  travelLinks,
+  travelPoints,
+  travelRoute,
+  travelVehicle,
+  type StopId,
+} from './world-places';
+import { restoreWorld, type WorldSpot } from './world-save';
+import { LAYOUT_VERSION } from './world-layouts';
+import { readSave, SAVE_VERSION, writeSave } from './save-data';
+
+let checks = 0;
+const ok = (v: unknown, message: string) => {
+  assert.ok(v, message);
+  checks++;
+};
+const equal = (a: unknown, b: unknown, message: string) => {
+  assert.deepEqual(a, b, message);
+  checks++;
+};
+const regions = Object.keys(regionLayout).filter((id): id is RegionId =>
+  Object.hasOwn(regionLayout, id),
+);
+const zones = regions.flatMap((r) => regionTiles(r).map((t) => t.id));
+const park: WorldSpot = {
+  region: 'valley',
+  ...regionPoint({ region: 'valley', zone: 'park', at: [160, 200] }),
+  visited: ['garden', 'town', 'park'],
+  layout: LAYOUT_VERSION,
+};
+const before = JSON.stringify(park);
+Object.freeze(park.visited);
+Object.freeze(park);
+const map = buildWorldMap({ world: park, mapSeen: ['garden', 'town'] });
+equal(park, JSON.parse(before), 'building never mutates save input');
+equal(
+  map.nodes.length,
+  regions.length + zones.length + Object.keys(travelPoints).length,
+  'one node per region, zone and real station',
+);
+equal(new Set(map.nodes.map((n) => n.id)).size, map.nodes.length, 'namespaced IDs are unique');
+equal(
+  map.nodes.filter((n) => n.kind === 'zone' && n.state === 'here').map((n) => n.zone),
+  ['park'],
+  'only the exact current zone is here',
+);
+equal(
+  map.nodes.filter((n) => n.kind === 'region' && n.state === 'here').map((n) => n.region),
+  ['valley'],
+  'only its region is here',
+);
+equal(
+  map.nodes.filter((n) => n.kind === 'zone' && n.isNew).map((n) => n.zone),
+  ['park'],
+  'new is a visited discovery since last open',
+);
+equal(map.nodes.find((n) => n.id === 'zone:town')?.state, 'visited', 'past zone is visited');
+equal(map.nodes.find((n) => n.id === 'zone:lumen')?.state, 'unseen', 'unvisited remains outline');
+ok(!map.nodes.find((n) => n.id === 'station:home'), 'no invented station in the hut');
+equal(
+  map.links.filter((l) => l.kind === 'line').length,
+  travelLinks.length,
+  'each existing line represented once',
+);
+equal(
+  map.links.filter((l) => l.kind === 'door'),
+  [{ from: doors.hut.zone, to: doors.inside.zone, kind: 'door' }],
+  'hut uses its authored door',
+);
+
+// Touching tiles are not necessarily connected: the Hollow/Woodland escarpment
+// is closed, and a missing future port declaration must never invent a path.
+const connects = (link: { from: string; to: string }, a: string, b: string) =>
+  (link.from === a && link.to === b) || (link.from === b && link.to === a);
+const borders = map.links.filter((link) => link.kind === 'border');
+for (const [key, { span }] of Object.entries(zonePorts)) {
+  const [a, b] = key.split('|');
+  equal(
+    borders.filter((link) => connects(link, a, b)).length,
+    span !== null && span[1] > span[0] ? 1 : 0,
+    `${key}: atlas respects the declared open or closed border, in either tile order`,
+  );
+}
+equal(
+  borders.length,
+  Object.values(zonePorts).filter(({ span }) => span !== null && span[1] > span[0]).length,
+  'no extra walking borders are inferred from tile adjacency',
+);
+const portKey = 'halt|town';
+const originalPort = zonePorts[portKey];
+try {
+  const cases: [string, readonly [number, number] | null | undefined][] = [
+    ['closed', null],
+    ['empty', [120, 120]],
+    ['reversed', [184, 120]],
+    ['missing', undefined],
+  ];
+  for (const [label, span] of cases) {
+    if (span === undefined) delete zonePorts[portKey];
+    else zonePorts[portKey] = { ...originalPort, span };
+    const nextMap = buildWorldMap({ world: park, mapSeen: [] });
+    ok(
+      !nextMap.links.some((link) => link.kind === 'border' && connects(link, 'halt', 'town')),
+      `${label} port cannot create a walking connection`,
+    );
+    ok(
+      borders.some((link) => connects(link, 'halt', 'town')),
+      `${label} port fixture cannot mutate the previously captured map`,
+    );
+  }
+} finally {
+  zonePorts[portKey] = originalPort;
+}
+
+equal(
+  map.links.filter((l) => l.kind === 'pass'),
+  regionPasses.map(({ a, b }) => ({ from: a.zone, to: b.zone, kind: 'pass' })),
+  'inter-region walking passes retain their authored zone endpoints',
+);
+ok(
+  map.links.some((l) => l.kind === 'border' && l.from === 'gulch' && l.to === 'scorch'),
+  'Sunstone: Gulch reaches Scorched Pass through its ordinary walking border',
+);
+ok(
+  map.links.some((l) => l.kind === 'line' && l.from === 'gulch' && l.to === 'caldera'),
+  'mine-cart shortcut stays distinct',
+);
+equal(
+  map.nodes
+    .filter((n) => n.kind === 'station' && n.region === 'west')
+    .map((n) => [n.id, n.stop, n.zone]),
+  [
+    ['station:west', 'west', 'gulch'],
+    ['station:lava', 'lava', 'caldera'],
+  ],
+  'Sunstone retains both actual stops in the merged region',
+);
+ok(!map.nodes.some((n) => n.id === 'region:lava'), 'retired lava region is not invented');
+const oldFire = restoreWorld({
+  region: 'lava',
+  x: 160,
+  y: 200,
+  visited: ['caldera'],
+  layout: 1,
+});
+equal(
+  oldFire,
+  {
+    region: 'west',
+    ...regionPoint({ region: 'west', zone: 'caldera', at: [160, 200] }),
+    visited: ['caldera'],
+    layout: LAYOUT_VERSION,
+  },
+  'layout-1 fire-country point restores at the same point in Caldera',
+);
+equal(
+  buildWorldMap({ world: oldFire, mapSeen: ['caldera'] })
+    .nodes.filter((n) => n.kind === 'zone' && n.state === 'here')
+    .map((n) => n.zone),
+  ['caldera'],
+  'restored fire-country marker stays in Caldera, not the desert or old region',
+);
+const beforeFrostline = restoreWorld({
+  region: 'valley',
+  x: 480,
+  y: 776,
+  visited: ['garden'],
+  layout: 2,
+});
+equal(
+  beforeFrostline,
+  {
+    region: 'valley',
+    ...regionPoint({ region: 'valley', zone: 'garden', at: [160, 200] }),
+    visited: ['garden'],
+    layout: LAYOUT_VERSION,
+  },
+  'layout-2 valley point stays in its garden zone after the northern expansion',
+);
+equal(
+  buildWorldMap({ world: beforeFrostline, mapSeen: ['garden'] })
+    .nodes.filter((n) => n.kind === 'zone' && n.state === 'here')
+    .map((n) => n.zone),
+  ['garden'],
+  'restored garden marker is not shifted into a snowy zone',
+);
+const legacyCoast: WorldSpot = {
+  region: 'valley',
+  ...regionPoint({ region: 'valley', zone: 'headland', at: [160, 200] }),
+  visited: ['garden', 'castle'],
+  layout: LAYOUT_VERSION,
+};
+const legacySeen = restoreMapSeen(['garden', 'castle', 'headland', 'future-zone'], legacyCoast);
+equal(
+  legacySeen,
+  ['garden', 'headland', 'future-zone'],
+  'seen IDs share the world rename and keep future IDs',
+);
+const legacyMap = buildWorldMap({ world: legacyCoast, mapSeen: legacySeen });
+equal(
+  restoreMapSeen(['constructor', '__proto__', 'future-zone'], legacyCoast),
+  ['constructor', '__proto__', 'future-zone'],
+  'future IDs cannot resolve inherited object properties',
+);
+equal(
+  legacyMap.nodes.find((n) => n.id === 'zone:headland')?.state,
+  'here',
+  'old coastal position stays on Headland',
+);
+equal(
+  legacyMap.nodes.find((n) => n.id === 'zone:headland')?.isNew,
+  false,
+  'old seen coast is not a fresh discovery',
+);
+equal(
+  legacyMap.nodes.find((n) => n.id === 'zone:hearthold')?.state,
+  'unseen',
+  'old castle never reveals far Hearthold',
+);
+ok(!legacyMap.nodes.some((n) => n.id === 'zone:castle'), 'retired castle node is absent');
+equal(
+  acknowledgeMapSeen(['future-zone', 'castle'], ['castle'], legacyCoast),
+  ['future-zone', 'headland'],
+  'old opening cannot restore retired ID',
+);
+const passWorld: WorldSpot = {
+  region: 'west',
+  ...regionPoint(travelPoints.west),
+  visited: zones.filter((id) => id !== 'scorch' && id !== 'hearthold'),
+  layout: LAYOUT_VERSION,
+};
+equal(
+  buildWorldMap({ world: passWorld, mapSeen: [] }).suggestion,
+  'scorch',
+  'Sunstone walking border participates in suggestions',
+);
+
+// Vehicle routes describe a service, not the whole world's walking graph. The
+// harbour ferry is deliberately separate from the rail/space network: the player
+// walks between Valley Halt and the pier, rather than a train changing into a boat.
+const services: StopId[][] = [
+  ['valley', 'steam', 'west', 'lava', 'neon', 'space', 'moon'],
+  ['pier', 'isles'],
+];
+equal(
+  services.flat().sort(),
+  [...stopIds].sort(),
+  'every current stop belongs to an explicitly reviewed service network',
+);
+for (const from of stopIds)
+  for (const to of stopIds) {
+    if (from === to) continue;
+    const route = travelRoute(from, to);
+    const sameService = services.some((stops) => stops.includes(from) && stops.includes(to));
+    if (!sameService) {
+      equal(route, [], `${from} to ${to}: no invented connection between vehicle services`);
+      continue;
+    }
+    equal(route.at(-1), to, `${from} reaches ${to} on its existing service network`);
+    let previous = from;
+    for (const leg of route) {
+      ok(
+        travelLinks.some(
+          ([a, b]) => (a === previous && b === leg) || (b === previous && a === leg),
+        ),
+        `${previous} to ${leg}: each routed leg uses an authored service edge`,
+      );
+      previous = leg;
+    }
+  }
+equal(travelRoute('pier', 'isles'), ['isles'], 'ferry departs from the actual harbour pier');
+equal(travelRoute('isles', 'pier'), ['pier'], 'ferry returns to that same pier');
+equal(travelVehicle('pier', 'isles'), 'ferry', 'outbound island service is a ferry');
+equal(travelVehicle('isles', 'pier'), 'ferry', 'return island service remains a ferry');
+equal(
+  map.links.find((l) => l.kind === 'line' && l.fromStop === 'pier' && l.toStop === 'isles'),
+  { from: 'harbour', to: 'landing', kind: 'line', fromStop: 'pier', toStop: 'isles' },
+  'ferry joins the two real terminal zones without borrowing a train station',
+);
+equal(
+  map.nodes
+    .filter((n) => n.kind === 'station' && (n.stop === 'pier' || n.stop === 'isles'))
+    .map((n) => [n.stop, n.region, n.zone]),
+  [
+    ['pier', 'valley', 'harbour'],
+    ['isles', 'isles', 'landing'],
+  ],
+  'both ferry terminal markers keep their distinct stop and region identity',
+);
+const interchange = new Set<string>([travelPoints.valley.zone]);
+for (let i = 0; i < zones.length; i++)
+  for (const link of map.links.filter((l) => l.kind === 'border' || l.kind === 'pass')) {
+    if (interchange.has(link.from)) interchange.add(link.to);
+    if (interchange.has(link.to)) interchange.add(link.from);
+  }
+ok(
+  interchange.has(travelPoints.pier.zone),
+  'Valley Halt and the harbour pier connect through walking borders, with no vehicle leg',
+);
+ok(!interchange.has(travelPoints.isles.zone), 'walking alone cannot cross the sea to the isles');
+const reachable = new Set<string>(['garden']);
+for (let i = 0; i < zones.length; i++)
+  for (const link of map.links) {
+    if (reachable.has(link.from)) reachable.add(link.to);
+    if (reachable.has(link.to)) reachable.add(link.from);
+  }
+equal(
+  [...reachable].sort(),
+  [...zones].sort(),
+  'all zones and every region join the authored schematic',
+);
+ok(!Object.hasOwn(travelPoints, 'home'), 'interior is not a transport stop');
+
+for (const region of regions)
+  for (const tile of regionTiles(region)) {
+    const at = tileOrigin(region, tile);
+    const world = { region, x: at.x + 160, y: at.y + 200, visited: [], layout: LAYOUT_VERSION };
+    const atlas = buildWorldMap({ world, mapSeen: [] });
+    equal(
+      atlas.nodes.filter((n) => n.kind === 'zone' && n.state === 'here').map((n) => n.zone),
+      [tile.id],
+      `${tile.id}: missing visited list still has current marker`,
+    );
+    equal(
+      atlas.nodes.find((n) => n.id === `zone:${tile.id}`)?.col,
+      tile.col,
+      `${tile.id}: derived grid column`,
+    );
+    equal(
+      atlas.nodes.find((n) => n.id === `zone:${tile.id}`)?.row,
+      tile.row,
+      `${tile.id}: derived grid row`,
+    );
+  }
+for (const [stop, station] of Object.entries(travelPoints)) {
+  const world = {
+    region: station.region,
+    ...regionPoint(station),
+    visited: [station.zone],
+    layout: LAYOUT_VERSION,
+  };
+  const atlas = buildWorldMap({ world, mapSeen: [] });
+  equal(
+    atlas.nodes.find((n) => n.id === `station:${stop}`)?.state,
+    'here',
+    `${stop}: station marker at its real stand`,
+  );
+  const away = buildWorldMap({ world, mapSeen: [], current: { ...world, x: world.x + 24 } });
+  equal(
+    away.nodes.find((n) => n.id === `station:${stop}`)?.state,
+    'visited',
+    `${stop}: being in a station's zone is not standing at station`,
+  );
+  equal(
+    atlas.nodes.find((n) => n.id === `station:${stop}`)?.region,
+    station.region,
+    `${stop}: marker uses the stop's authored region`,
+  );
+}
+
+// Named stops can share a region and even a zone without becoming the same stop.
+const originalLava = travelPoints.lava;
+try {
+  const west = travelPoints.west;
+  travelPoints.lava = { ...west, at: [west.at[0] + 40, west.at[1]] };
+  const atlas = buildWorldMap({
+    world: {
+      region: west.region,
+      ...regionPoint(west),
+      visited: [west.zone],
+      layout: LAYOUT_VERSION,
+    },
+    mapSeen: [],
+  });
+  equal(
+    atlas.nodes
+      .filter((n) => n.kind === 'station' && n.region === west.region)
+      .map((n) => [n.id, n.stop, n.zone, n.state]),
+    [
+      ['station:west', 'west', west.zone, 'here'],
+      ['station:lava', 'lava', west.zone, 'visited'],
+    ],
+    'two named stops in one zone remain distinct, with independent proximity',
+  );
+  equal(
+    atlas.links.find((l) => l.kind === 'line' && l.fromStop === 'west' && l.toStop === 'lava'),
+    { from: west.zone, to: west.zone, kind: 'line', fromStop: 'west', toStop: 'lava' },
+    'service endpoints retain stop identity even when zone IDs coincide',
+  );
+} finally {
+  travelPoints.lava = originalLava;
+}
+const home = buildWorldMap({ world: park, mapSeen: [], current: 'garden' });
+equal(
+  home.nodes.filter((n) => n.kind === 'zone' && n.state === 'here').map((n) => n.zone),
+  ['garden'],
+  'Home override does not mistake saved resume location for current screen',
+);
+equal(
+  buildWorldMap({ world: null, mapSeen: [] }).nodes.find((n) => n.id === 'zone:garden')?.state,
+  'here',
+  'first account starts at the garden',
+);
+equal(
+  buildWorldMap({ world: park, mapSeen: [], current: { region: 'valley', x: NaN, y: -1 } })
+    .suggestion,
+  null,
+  'invalid explicit current location has no misleading suggestion',
+);
+
+const captured = [...map.visitedSnapshot];
+equal(
+  acknowledgeMapSeen([], captured, park),
+  captured,
+  'opening acknowledges captured discoveries',
+);
+const later = { ...park, visited: [...park.visited, 'ridge'] };
+const acknowledged = acknowledgeMapSeen(['future-zone'], captured, later);
+ok(!acknowledged.includes('ridge'), 'a later visit is not cleared by an older map opening');
+ok(acknowledged.includes('future-zone'), 'unknown future seen IDs are not discarded');
+equal(
+  acknowledgeMapSeen(acknowledged, captured, later),
+  acknowledged,
+  'acknowledgement is idempotent',
+);
+equal(
+  acknowledgeMapSeen([], ['lumen', 'future-zone'], park),
+  [],
+  'cannot mark unvisited or unknown discoveries seen',
+);
+equal(restoreMapSeen(undefined, park), mapVisitedZones(park), 'old save has no upgrade backlog');
+equal(
+  restoreMapSeen({ corrupt: true }, park),
+  mapVisitedZones(park),
+  'malformed optional field does not reset exploration',
+);
+equal(
+  restoreMapSeen(['garden', 'garden', null, 4, '', 'future-zone'], park),
+  ['garden', 'future-zone'],
+  'deduplicate valid string IDs, retain future IDs',
+);
+equal(restoreMapSeen([], park), [], 'an explicit empty mapSeen remains an empty history');
+const afterOpen = buildWorldMap({ world: later, mapSeen: acknowledged });
+equal(
+  afterOpen.nodes.filter((n) => n.kind === 'zone' && n.isNew).map((n) => n.zone),
+  ['ridge'],
+  'only later discovery stays new',
+);
+equal(
+  buildWorldMap({ world: { ...park, visited: zones }, mapSeen: [] }).suggestion,
+  null,
+  'all known places visited gives no completion chore',
+);
+ok(
+  map.suggestion && !park.visited.includes(map.suggestion),
+  'suggestion points only to an unvisited place',
+);
+equal(
+  buildWorldMap({ world: park, mapSeen: [] }).suggestion,
+  map.suggestion,
+  'seen badges do not change exploration suggestion',
+);
+equal(
+  buildWorldMap({ world: park, mapSeen: [] }).suggestion,
+  map.suggestion,
+  'suggestion is deterministic',
+);
+map.nodes[0].state = 'unseen';
+map.links.length = 0;
+map.visitedSnapshot.length = 0;
+ok(buildWorldMap({ world: park, mapSeen: [] }).links.length > 0, 'output is detached across reads');
+
+// Save codec plus the actual additive helpers: no new version, reset or lost future fields.
+for (const version of [undefined, 1]) {
+  const fixture = {
+    ...(version ? { saveVersion: version } : {}),
+    world: { ...park, futureGround: { tide: 3 } },
+    player: {
+      grass: 87.25,
+      level: 6,
+      owned_hats: ['leaf'],
+      deck: ['grass_blade'],
+      collection: [{ id: 'future', memo: 'keep' }],
+      guardian: 'future-companion',
+    },
+    futureField: { keep: [1, 2] },
+  };
+  const read = readSave(JSON.stringify(fixture), (v) => {
+    if (typeof v !== 'object' || v === null || Array.isArray(v)) return v;
+    const world = restoreWorld('world' in v ? v.world : undefined);
+    return { ...v, world, mapSeen: restoreMapSeen('mapSeen' in v ? v.mapSeen : undefined, world) };
+  });
+  assert.ok(typeof read.data === 'object' && read.data !== null);
+  const written = JSON.parse(writeSave(read.data, read.source).raw);
+  equal(
+    written.player,
+    fixture.player,
+    'old save balance, level, hats, cards, collection and companion unchanged',
+  );
+  equal(written.futureField, fixture.futureField, 'unknown top-level fields retained');
+  equal(
+    written.world,
+    { ...fixture.world, layout: LAYOUT_VERSION },
+    'world coordinates, visits and future fields unchanged; current layout is stamped',
+  );
+  equal(written.mapSeen, mapVisitedZones(park), 'old save gains only acknowledgement baseline');
+  equal(written.saveVersion, SAVE_VERSION, 'stays in current v1 save format');
+}
+console.log(`World map: ${checks} checks passed (pure/source, not visual or device validation).`);
