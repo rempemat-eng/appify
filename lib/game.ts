@@ -268,8 +268,9 @@ type Game = Saved & {
   world: WorldSpot | null;
   mapSeen: string[];
   markWorldMapSeen: (capturedVisited: readonly string[]) => void;
-  /** record where the companion stands in the world; walking grants nothing */
-  walkWorld: (region: RegionId, x: number, y: number, settle?: boolean) => void;
+  /** record where the companion stands in the world (`level` 1: on a deck above x/y);
+   *  walking grants nothing */
+  walkWorld: (region: RegionId, x: number, y: number, settle?: boolean, level?: 1) => void;
   decor: DecorPlacement[];
   /** set a found keepsake on the hut's floor (or move it there); free, and refused if it
    *  would stand in the way */
@@ -939,10 +940,10 @@ export const gameStore = create<Game>((set, get) => ({
     set({ hutLook: next });
     void persist();
   },
-  walkWorld: (region, x, y, settle = false) => {
+  walkWorld: (region, x, y, settle = false, level) => {
     const s = get();
     if (!s.player) return;
-    const next = moveTo(s.world, region, x, y);
+    const next = moveTo(s.world, region, x, y, level);
     const before = s.world;
     set({ world: next });
     // (a place walked for the first time leaves its keepsake in the hut's chest; the

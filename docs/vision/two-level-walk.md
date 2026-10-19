@@ -72,4 +72,7 @@ Built, with nothing using it yet (no zone has a deck, so every region walks on o
 
 - **Lifts**: a walk to the other level with no stair on the way walks to the nearest lift, rides it (the cab carries the feet between its two ends as drawn, 0.9 s; at once with reduced motion), then walks on. Each part starts only when the one before finished, so an interrupted walk never rides a stale lift.
 
+- **Levels meet only at connectors** (Claude C's review, 19 Oct): the deck level lies past one blocked column, so no cell of one level neighbours a cell of the other, diagonals included; a ground walk reaches a deck only by its stairs, ramps or lifts.
+- **A logical address**: the walk reports where the companion stands as the ground point under its feet plus `level: 1` on a deck (`WalkSpot`), never the raised drawn point. The world screen saves it (`WorldSpot.level`, absent on the ground, so every older save loads as before; a deck spot whose deck is gone loads on the ground below) and reads places, doors and passes only on the ground: a deck has none of its own yet, so on a deck no card opens and no door or pass fires. Places on decks will carry a level when the first one is added.
+
 Still to do: the deck's surface and shadow drawn by the renderer from its walk rows (until then the zone draws its deck as props, overhead), residents on decks, the deck checks in the world lint, and the first deck in the city (Claude C).

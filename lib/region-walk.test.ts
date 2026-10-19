@@ -190,8 +190,14 @@ const isRegion = (k: string): k is RegionId => k in regionLayout;
     if (!levels) continue;
     assert.equal(
       levels.rows[0].length,
-      regionWalk(region)[0].length * 2,
-      `${region}: two levels side by side`,
+      regionWalk(key)[0].length * 2 + 1,
+      `${key}: two levels side by side, a blocked column between them`,
+    );
+    // the levels meet only at their connectors: nothing walks across the seam beside them
+    const seam = levels.offset / 4 - 1;
+    assert.ok(
+      levels.rows.every((row) => row[seam] === '#'),
+      `${key}: the column between the levels is blocked`,
     );
     for (const [bottom, top] of [...levels.links, ...levels.lifts]) {
       assert.ok(

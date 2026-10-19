@@ -116,7 +116,8 @@ export function regionWalk(region: RegionId): string[] {
 /**
  * A region's two walk levels (docs/vision/two-level-walk.md), or null when it has no
  * decks. The deck level is laid beside the ground level, `offset` region pixels to the
- * right, so one walk grid covers both and a point's level is which half it is in. The
+ * right (past one blocked column, so the levels meet only at their connectors), so one
+ * walk grid covers both and a point's level is which half it is in. The
  * stairs and ramps are `links` between a ground cell and a deck cell; lifts are links a
  * walk takes only when asked to (`lifts`), so an interrupted walk never rides one.
  * `heightAt` is how high the deck under a deck point is drawn.
@@ -129,6 +130,9 @@ export function regionLevels(region: RegionId) {
   });
   if (decked.length === 0) return null;
   const ground = regionWalk(region);
+  // (one blocked column between the levels, so neither steps onto the other beside it:
+  // the levels meet only at their connectors)
+  const offset = b.width + TILE.cell;
   const upper = Array.from({ length: b.tileRows * ROWS }, () => Array(b.tileCols * COLS).fill('#'));
   const links: [Point, Point][] = [];
   const lifts: [Point, Point][] = [];
@@ -144,22 +148,33 @@ export function regionLevels(region: RegionId) {
     for (const c of deck.connectors) {
       const pair: [Point, Point] = [
         { x: o.x + c.bottom[0], y: o.y + c.bottom[1] },
-        { x: b.width + o.x + c.top[0], y: o.y + c.top[1] },
+        { x: offset + o.x + c.top[0], y: o.y + c.top[1] },
       ];
       (c.kind === 'lift' ? lifts : links).push(pair);
     }
     heights.push({ x: o.x, y: o.y, height: deck.height });
   }
-  const rows = ground.map((row, r) => row + upper[r].join(''));
+  const rows = ground.map((row, r) => row + '#' + upper[r].join(''));
   const heightAt = (p: Point) => {
-    if (p.x < b.width) return 0;
-    const x = p.x - b.width;
+    if (p.x < offset) return 0;
+    const x = p.x - offset;
     const h = heights.find(
       (t) => x >= t.x && x < t.x + TILE.width && p.y >= t.y && p.y < t.y + TILE.height,
     );
     return h ? h.height : 0;
   };
-  return { rows, offset: b.width, links, lifts, heightAt };
+  return { rows, offset, width: offset + b.width, links, lifts, heightAt };
+}
+
+/** Whether a ground point (region pixels) has a deck's walkable surface above it, so a
+ *  spot saved on the deck there can stand on it again. */
+export function deckAt(region: RegionId, x: number, y: number): boolean {
+  const tile = tileAt(region, x, y);
+  const deck = tile && tile.id !== 'garden' ? zoneDecks[tile.id] : undefined;
+  if (!tile || !deck) return false;
+  const o = tileOrigin(region, tile);
+  const row = deck.walk[Math.floor((y - o.y) / TILE.cell)];
+  return row?.[Math.floor((x - o.x) / TILE.cell)] === '.';
 }
 
 /** The tile under a point in region pixels, if any. */

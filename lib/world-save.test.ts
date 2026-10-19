@@ -101,6 +101,19 @@ ok(
   "visited defaults to none",
 );
 
+// a spot on a deck (two-level-walk.md) keeps its level only while a deck is above it;
+// with none there it stands on the ground below, and a ground spot carries no level
+{
+  const onDeck = moveTo(null, "valley", 480, 1200, 1);
+  ok(onDeck.level === 1, "a step on a deck records the level");
+  ok(!("level" in moveTo(null, "valley", 480, 1200)), "a ground step has no level");
+  const back = restoreWorld({ ...onDeck });
+  ok(
+    back !== null && back.x === 480 && back.level === undefined,
+    "a deck spot with no deck above it loads on the ground",
+  );
+}
+
 // moving records the zone underfoot once
 const a = moveTo(null, "valley", 480, 1200);
 ok(a.visited.length === 1, "the first zone is seen");

@@ -4,7 +4,7 @@ import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router'
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
-import { AtlasWalk, zoneNames } from '@/components/atlas-walk';
+import { AtlasWalk, zoneNames, type WalkSpot } from '@/components/atlas-walk';
 import { Journey } from '@/components/journey';
 import { usePixelUnit, PixelFrame } from '@/components/pixel-frame';
 import { PixelButton } from '@/components/game-ui';
@@ -144,7 +144,7 @@ export default function World() {
       ? exitWalk(exit, Number(link.ex), Number(link.ey))
       : null;
   // Where to begin: a named place, the gate or the trail, or where it last stood.
-  const [spawn, setSpawn] = useState<{ region: RegionId; at: Point; key: number }>(() => {
+  const [spawn, setSpawn] = useState<{ region: RegionId; at: WalkSpot; key: number }>(() => {
     if (tripFrom) {
       const stop = travelPoints[tripFrom];
       return { region: stop.region, at: regionPoint(stop), key: 0 };
@@ -160,11 +160,16 @@ export default function World() {
     if (link.from === 'hut') return { region: 'home', at: regionPoint(doors.inside), key: 0 };
     if (exit) return { region: 'valley', at: regionPoint(exits[exit]), key: 0 };
     const saved = restoreWorld(useGame.getState().world);
-    if (saved) return { region: saved.region, at: { x: saved.x, y: saved.y }, key: 0 };
+    if (saved)
+      return {
+        region: saved.region,
+        at: { x: saved.x, y: saved.y, ...(saved.level ? { level: saved.level } : {}) },
+        key: 0,
+      };
     return { region: 'valley', at: regionPoint(exits.gate), key: 0 };
   });
   const [card, setCard] = useState<Card | null>(() =>
-    tripFrom ? null : cardAt(spawn.region, spawn.at),
+    tripFrom || spawn.at.level ? null : cardAt(spawn.region, spawn.at),
   );
   const [zone, setZone] = useState<TileId | undefined>(
     () => tileAt(spawn.region, spawn.at.x, spawn.at.y)?.id,
@@ -176,7 +181,7 @@ export default function World() {
   const [opening] = useState(spawn);
   useEffect(() => {
     if (handOff) return;
-    walkWorld(opening.region, opening.at.x, opening.at.y, true);
+    walkWorld(opening.region, opening.at.x, opening.at.y, true, opening.at.level);
   }, [opening, walkWorld, handOff]);
   const [cardBox, setCardBox] = useState(0);
   const [mapOpen, setMapOpen] = useState(false);
@@ -240,11 +245,11 @@ export default function World() {
   );
   // Inside the hut, walking back to the front door steps out into the garden (arriving
   // there waits until the companion has walked away once, or a few steps).
-  const outside = useRef(!doorAt(spawn.region, spawn.at));
+  const outside = useRef(!!spawn.at.level || !doorAt(spawn.region, spawn.at));
   // Walking to the end of a pass between regions walks on into the next (the desert
   // into the Ember Lands): the scene fades and the companion carries on. Arriving at a
   // pass waits until it has walked away once, so it never bounces straight back.
-  const awayFromPass = useRef(!passAt(spawn.region, spawn.at));
+  const awayFromPass = useRef(!!spawn.at.level || !passAt(spawn.region, spawn.at));
   const throughPass = (at: Point) => {
     const pass = passAt(spawn.region, at);
     if (!pass) {
@@ -272,10 +277,18 @@ export default function World() {
     setGoal((g) => ({ point: { x: marker.x, y: marker.y }, key: (g?.key ?? 0) + 1 }));
   };
 
-  const settle = (at: Point) => {
-    walkWorld(spawn.region, at.x, at.y, true);
+  const settle = (at: WalkSpot) => {
+    walkWorld(spawn.region, at.x, at.y, true, at.level);
     // (while decorating, the companion only carries keepsakes about the room)
     if (decorating) return;
+    // On a deck, the places, doors and passes of the street below are not underfoot
+    // (two-level-walk.md); a deck has none of its own yet.
+    if (at.level) {
+      setCard(null);
+      outside.current = true;
+      awayFromPass.current = true;
+      return;
+    }
     setCard(cardAt(spawn.region, at));
     homeward(at);
     throughPass(at);
@@ -444,8 +457,8 @@ export default function World() {
               onSettle={settle}
               onMove={(at) => {
                 // the zones crossed on the way are walked too (the map inks them in)
-                walkWorld(spawn.region, at.x, at.y);
-                if (decorating) return;
+                walkWorld(spawn.region, at.x, at.y, false, at.level);
+                if (decorating || at.level) return;
                 homeward(at);
                 throughPass(at);
               }}

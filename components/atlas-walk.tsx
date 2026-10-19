@@ -568,6 +568,11 @@ function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourceProp
 }
 
 /** A name tag in the world: a place you can pick or walk to. */
+/** Where the companion stands, as the parent hears it: the ground point (region pixels)
+ *  under its feet, and `level` 1 when it is on a deck above that point
+ *  (docs/vision/two-level-walk.md). Absent level: the ground. */
+export type WalkSpot = Point & { level?: 1 };
+
 export type WorldMarker = { id: string; x: number; y: number; label: string; selected?: boolean };
 
 /**
@@ -646,7 +651,7 @@ export function AtlasWalk({
   width: number;
   height: number;
   /** where the companion stands first, in region pixels */
-  start?: Point;
+  start?: WalkSpot;
   /** walk here when `key` changes */
   target?: { point: Point; key: number };
   interactive?: boolean;
@@ -654,9 +659,9 @@ export function AtlasWalk({
   onMarker?: (id: string) => void;
   onZone?: (zone: TileId) => void;
   /** Where the companion is, a few times a second while it walks. */
-  onMove?: (at: Point) => void;
+  onMove?: (at: WalkSpot) => void;
   /** where a walk ended (or stopped) */
-  onSettle?: (at: Point) => void;
+  onSettle?: (at: WalkSpot) => void;
   /** A tap on the scene, in region pixels, before the companion walks: return true when
    *  the tap was used (no walk), a point to walk there instead, or nothing to walk to it.
    *  With `follow`, every tap goes here and AtlasWalk never walks by itself. */
@@ -733,13 +738,19 @@ export function AtlasWalk({
           })();
     // a region with decks walks on two levels laid side by side (two-level-walk.md)
     const levels = walkRows ? null : regionLevels(region);
+    // (a start on a deck is on the deck level's half of the walk, drawn raised)
+    const logical =
+      levels && initial?.level === 1 ? { x: first.x + levels.offset, y: first.y } : first;
+    const drawn =
+      levels && logical !== first ? { x: first.x, y: first.y - levels.heightAt(logical) } : first;
     return {
-      start: first,
+      start: drawn,
+      startLogical: logical,
       levels,
       walk: makeWalkGrid(walkRows ?? levels?.rows ?? regionWalk(region), {
         cell: TILE.cell,
-        width: levels ? bounds.width * 2 : bounds.width,
-        start: first,
+        width: levels ? levels.width : bounds.width,
+        start: logical,
         links: levels?.links,
       }),
     };
@@ -759,7 +770,11 @@ export function AtlasWalk({
     }
     return p;
   };
-  const onDeck = useSharedValue(0);
+  const onDeck = useSharedValue(grid.startLogical === grid.start ? 0 : 1);
+  // what the parent hears: the ground point under the feet, and the level (a deck point
+  // is reported as the ground it stands over, so places, doors and passes read it as is)
+  const spotOf = (p: Point): WalkSpot =>
+    levels && p.x >= levels.offset ? { x: p.x - levels.offset, y: p.y, level: 1 } : p;
   // the walk's own position under where the feet are drawn (on the deck while on it)
   const logicalOf = (drawn: Point): Point => (levels && onDeck.get() ? fromScreen(drawn) : drawn);
 
@@ -784,7 +799,7 @@ export function AtlasWalk({
     );
     return () => cancelAnimation(bob);
   }, [active, reduced, bob]);
-  const pos = useRef<Point>({ ...grid.start });
+  const pos = useRef<Point>({ ...grid.startLogical });
   const [ownWalking, setWalking] = useState(false);
   const walking = companion?.walking ?? ownWalking;
   // where the feet are, a few times a second (for the outline behind tall things)
@@ -836,6 +851,11 @@ export function AtlasWalk({
       runOnJS(noteBlock)(px.value + ox, py.value + oy);
     },
   );
+  // (the walk point and spot under drawn feet, read by timers with this render's levels)
+  const spotRef = useRef({ logical: (drawn: Point) => drawn, spot: (p: Point): WalkSpot => p });
+  useEffect(() => {
+    spotRef.current = { logical: logicalOf, spot: spotOf };
+  });
   // While walking, read the feet a few times a second (JS side), for the outline behind
   // tall things and the parent's onMove.
   useEffect(() => {
@@ -844,10 +864,11 @@ export function AtlasWalk({
       const x = px.get() + ox;
       const y = py.get() + oy;
       noteRef.current(x, y);
-      calls.current.onMove?.({ x, y });
+      const { logical, spot } = spotRef.current;
+      calls.current.onMove?.(follow ? { x, y } : spot(logical({ x, y })));
     }, FEET_MS);
     return () => clearInterval(t);
-  }, [walking, active, px, py, ox, oy]);
+  }, [walking, active, px, py, ox, oy, follow]);
 
   useEffect(() => {
     calls.current.onZone?.(here);
@@ -859,8 +880,9 @@ export function AtlasWalk({
     if (active || follow) return;
     cancelAnimation(ownX);
     cancelAnimation(ownY);
-    pos.current = { x: ownX.get(), y: ownY.get() };
-    calls.current.onSettle?.(pos.current);
+    const { logical, spot } = spotRef.current;
+    pos.current = logical({ x: ownX.get(), y: ownY.get() });
+    calls.current.onSettle?.(spot(pos.current));
   }, [active, follow, ownX, ownY]);
 
   // glide: a keyboard step, retargeted every STEP_MS: level speed, no settle until the
@@ -951,9 +973,10 @@ export function AtlasWalk({
       setWalking(false);
       setFeet(end);
       settleSquash();
-      const tile = tileAt(region, end.x, end.y);
-      if (tile) setHere((prev) => tileWithHysteresis(region, prev, end.x, end.y)?.id ?? prev);
-      calls.current.onSettle?.(end);
+      const foot = spotOf(lastLogical);
+      const tile = tileAt(region, foot.x, foot.y);
+      if (tile) setHere((prev) => tileWithHysteresis(region, prev, foot.x, foot.y)?.id ?? prev);
+      calls.current.onSettle?.(foot);
       then?.();
     };
     // on a deck the feet draw above everything on the ground for the whole walk once the

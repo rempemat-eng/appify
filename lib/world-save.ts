@@ -1,4 +1,4 @@
-import { regionBounds, tileAt, type RegionId } from '@/lib/region-walk';
+import { deckAt, regionBounds, tileAt, type RegionId } from '@/lib/region-walk';
 import { regionLayout } from '@/lib/zone-maps';
 import { LAYOUT_VERSION, carryForward } from '@/lib/world-layouts';
 
@@ -12,6 +12,9 @@ export type WorldSpot = {
   x: number;
   y: number;
   visited: string[];
+  /** on a deck above x/y (docs/vision/two-level-walk.md); absent on the ground, as every
+   *  spot saved before decks is */
+  level?: 1;
   /** the shape of the world it was saved in (lib/world-layouts.ts) */
   layout?: number;
 };
@@ -64,11 +67,19 @@ export function restoreWorld(value: unknown): WorldSpot | null {
         ),
       ]
     : [];
-  return { region, x, y, visited, layout: LAYOUT_VERSION };
+  // (on a deck only while that deck is still there; otherwise on the ground below it)
+  const level = v.level === 1 && version === LAYOUT_VERSION && deckAt(region, x, y) ? 1 : undefined;
+  return { region, x, y, visited, layout: LAYOUT_VERSION, ...(level ? { level } : {}) };
 }
 
 /** The spot after a step: the new position, and the zone underfoot added to the visited. */
-export function moveTo(spot: WorldSpot | null, region: RegionId, x: number, y: number): WorldSpot {
+export function moveTo(
+  spot: WorldSpot | null,
+  region: RegionId,
+  x: number,
+  y: number,
+  level?: 1,
+): WorldSpot {
   const zone = tileAt(region, x, y)?.id;
   const visited = spot?.visited ?? [];
   return {
@@ -77,5 +88,6 @@ export function moveTo(spot: WorldSpot | null, region: RegionId, x: number, y: n
     y: Math.round(y),
     visited: zone && !visited.includes(zone) ? [...visited, zone] : visited,
     layout: LAYOUT_VERSION,
+    ...(level ? { level } : {}),
   };
 }
