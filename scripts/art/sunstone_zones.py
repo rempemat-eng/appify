@@ -416,7 +416,7 @@ def gulch(frame: int = 0):
         ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
         ('dyn-1', 'dynamite_crate', CART_X + 20, MINE_Y + 8),
         ('dyn-2', 'dynamite_crate', CART_X + 26, MINE_Y + 30), ('tub', 'ore_tub', CART_X - 5, MINE_Y + 10),
-        ('keg-f', 'keg', MESA_X0 - 30, 100), ('sack-f', 'hay_bale', MESA_X0 - 52, 104),
+        ('keg-f', 'keg', MESA_X0 - 30, 100), ('sack-f', 'hay_bale', 60, 60),
         ('corral-n', 'corral_rail', ccx - 46, ccy - 36), ('corral-s', 'corral_rail', ccx - 46, ccy + 22),
         ('corral-w', 'corral_side', ccx - 52, ccy - 22),
         ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
