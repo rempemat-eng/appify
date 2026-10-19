@@ -43,6 +43,20 @@ import home_props as hp  # noqa: E402
 import frost_props as fp  # noqa: E402
 import isle_props as ip  # noqa: E402
 
+# Each prop module may declare how its props meet the ground, so its owner registers a
+# boat or a ladder without editing the lint: PLACEMENT = {'harbour_ferry': 'floating',
+# 'pier_ladder': 'supported', 'reeds': 'wet'} (world-rules.md, section 2).
+def _register_placements():
+    import world_lint as _wl
+    kinds = {'floating': _wl.FLOATING, 'wet': _wl.WET, 'supported': _wl.SUPPORTED}
+    for mod in (gp, wp, vp, sp, cp, wsp, cdp, hbp, csp, spp, hp, fp, ip):
+        for key, kind in getattr(mod, 'PLACEMENT', {}).items():
+            assert kind in kinds, f'{mod.__name__}.PLACEMENT[{key!r}]: unknown kind {kind!r}'
+            kinds[kind].add(key)
+
+
+_register_placements()
+
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 IRONm, LEAFm = MATERIALS['iron'], MATERIALS['leaf']
 

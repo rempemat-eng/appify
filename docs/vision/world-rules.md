@@ -42,6 +42,8 @@ Every prop key in the generators gets one placement type (`PLACEMENT` in `zones.
 
 A `ground` prop on water is a bug; a `floating` prop on grass is a bug; a `supported` structure with no drawn support is a bug.
 
+A prop's owner declares its type in its own module, `PLACEMENT = {'harbour_ferry': 'floating', 'pier_ladder': 'supported'}` (any prop not listed is `ground`; `overhead` props go in `zones.OVERHEAD`), so nobody edits the lint to add a boat.
+
 ## 2a. Physics and common sense (Matt, 19 Oct)
 
 Matt: "there cannot be anyone standing on water, neither should trees be in a path", and every agent is to learn "general physics rules, logic and map creation rules". Before placing anything, ask what holds it up, how it got there, who uses it and how they reach it. Each rule below names the lint check that guards it (`scripts/art/world_lint.py`); rules without one are checked by eye in the stitched preview and by the scheduled world review.
