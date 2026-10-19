@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
-import { router, useLocalSearchParams, useNavigation } from 'expo-router';
-import { useIsFocused } from '@react-navigation/native';
+import { router, useIsFocused, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
@@ -86,7 +85,22 @@ const doorAt = (region: RegionId, at: Point): Point | null =>
  * a journey back to the valley lands there. Rings open their screen. Walking and
  * travelling are free: they only move the companion and record where it is.
  */
-export default function World() {
+/** The world tab: drawn only while it is the screen in front, and drawn afresh on every
+ *  visit, so each way in (a door, a journey, a place link) starts from its own spot and
+ *  nothing of the world runs behind the home hub (it lives in the tabs, home-hub.md
+ *  phase 2). */
+export default function WorldTab() {
+  const focused = useIsFocused();
+  const [visit, setVisit] = useState(0);
+  const was = useRef(false);
+  useEffect(() => {
+    if (focused && !was.current) setVisit((v) => v + 1);
+    was.current = focused;
+  }, [focused]);
+  return focused && visit > 0 ? <World key={visit} /> : null;
+}
+
+function World() {
   const params = useLocalSearchParams<{
     from?: string;
     place?: string;
