@@ -296,7 +296,7 @@ def town(frame: int = 0):
         ('stall', 'stall', 2, 338), ('crate-1', 'crate', 92, 386), ('barrel-1', 'barrel', 108, 384),
         ('sack-1', 'sack', 6, 398),
         # the second street of houses, east
-        ('house-blue', 'house_blue', 236, 344), ('pot-hb', 'potted_plant', 238, 418),
+        ('house-blue', 'house_blue', 236, 344), ('pot-hb', 'potted_plant', 288, 404),  # beside the door, off its lane
         # the ring and its spectators
         ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 130, 440),
         # trees framing the road south (no hedge along the border: open land runs on)
@@ -674,10 +674,10 @@ def harbour(frame: int = 0):
     decks |= pier_head(cv, 138, 246, 402, 12, water)
     # the road down from the town, the lanes to the cottages, the cliff path east
     road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (152, 120), (166, 230)], 14, seed=16)
-    road |= worlds.thick([(154, 112), (100, 116), (64, 112)], 8, seed=17)  # to cottage 1's door
-    road |= worlds.thick([(160, 186), (116, 212), (84, 230)], 7, seed=18)  # down to cottage 3 and the beach
-    road |= worlds.thick([(158, 96), (210, 106), (290, 104), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path
-    road |= worlds.thick([(166, 200), (230, 222), (262, 222)], 7, seed=20)  # to cottage 4's door
+    road |= worlds.thick([(154, 120), (100, 118), (64, 112)], 8, seed=17)  # to cottage 1's door (a T off the road)
+    road |= worlds.thick([(160, 176), (116, 208), (84, 230)], 7, seed=18)  # down to cottage 3 and the beach
+    road |= worlds.thick([(156, 70), (196, 96), (240, 104), (290, 104), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path, a Y off the road above the T
+    road |= worlds.thick([(164, 212), (230, 224), (262, 222)], 7, seed=20)  # to cottage 4's door
     paint_road(cv, (road - quay) | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
                | {(x, y) for (x0, y) in road if x0 == W - 1 for x in range(W, W + 12)})
     objects = [
@@ -685,7 +685,7 @@ def harbour(frame: int = 0):
         ('cottage-1', 'cottage', 30, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage_c', 44, 150),
         ('cottage-4', 'cottage_d', 224, 140),
         # the washing line in the yard beside cottage 4, clear of the lanes
-        ('washing', 'washing_line', 170, 116),
+        ('washing', 'washing_line', 184, 118),
         # the quay: the fish market, pots and the spare anchor by the chandler's corner
         ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
         ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
@@ -751,7 +751,7 @@ def headland(frame: int = 0):
         ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 210, 150),
         ('sheep-4', 'sheep_left', 262, 92),
         ('hive-1', 'beehive', 150, 186), ('hive-2', 'beehive', 172, 194),
-        ('tree-w', 'tree_small', 70, 196), ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
+        ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
         # the down falls to trees on the east, running on into the woods beyond
         ('pine-e1', 'pine', 284, 300), ('tree-e2', 'tree', 256, 372), ('pine-e3', 'pine', 284, 440),
@@ -809,9 +809,10 @@ def riverside(frame: int = 0):
     slow river. It runs east past the watermill, whose wheel turns in a stone race off
     the north bank with a towpath along the mill's front, then swings south through the
     lower meadow toward the park. Stepping stones cross where it is still narrow; willows
-    lean over its west bank, where a path ends at a fishing platform; reeds and lilies
-    fill its slack water. Sheep graze in a walled fold on the north meadow by the hives,
-    and old trees close in on the east under the forest."""
+    lean over its west bank, where a path ends at a fishing platform; reeds grow in the
+    shallows at its banks and a heron wades at the outer bend (no lilies: the water
+    flows). Hay is made on the north meadow by the hives, and old trees close in on the
+    east under the forest. The miller works at the mill's door, the angler on the bank."""
     cv = Canvas(W, H)
     ground.valley(cv, 'riverside', frame)  # one turf across the valley (ground.py)
     river, deep, line = river_in('riverside')
@@ -900,9 +901,13 @@ def riverside(frame: int = 0):
             detail.grass_tuft(cv, x, y + 1, int(noise2(x, y, 1204) * 6), G, 3)
     fold_wall = set()
     lc = [(x, y) for (x, y, h) in line]
+    # the heron's feet in the edge of the water at the outer bend (the sprite's feet are
+    # 9 px in and at its foot row), a stride inside the bank's lip
+    heron_x, heron_y = next((x - 19, y - 30) for y in range(330, 360) for x in range(300, 240, -1)
+                            if (x, y) in river and (x + 1, y) not in river)
     objects = [
         ('mill', 'water_mill', 140, mt - 104), ('willow-1', 'willow', 176, 300), ('willow-2', 'willow', 96, 470),
-        ('heron', 'heron', 262, 300), ('lilies-1', 'lily_pads', 230, 470), ('lilies-2', 'lily_pads', 120, 300),
+        ('heron', 'heron', heron_x, heron_y),  # wading in the shallows at the outer bank
         ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 266, 100), ('bush-1', 'bush', 40, 500),
         ('bench', 'bench', 196, 446), ('sack-1', 'sack', 124, mt - 30), ('barrel-m', 'barrel', 104, mt - 34),
         # old trees on the east bank, running on into the forest beyond
@@ -945,7 +950,8 @@ def park(frame: int = 0):
     the park, then runs on to the fountain plaza, where benches look onto the fountain
     and the ice cream cart stands at its edge. North of the plaza a ring of paths goes
     round the bandstand; south, a path goes down through the lawns to a timber platform
-    on the river bank, with a willow leaning over the water and ducks on it. Trees
+    on the river bank, with a willow leaning over the water and a pair of mallards
+    dabbling in the slack water by the platform (no lilies: the river flows). Trees
     gather in clumps, thickest on the east toward the old forest."""
     cv = Canvas(W, H)
     ground.valley(cv, 'park', frame)  # one turf across the valley (ground.py)
@@ -976,22 +982,26 @@ def park(frame: int = 0):
             detail.pebble(cv, x, y, STONE)
     bridge = stone_bridge(cv, bx0, bx1, 291, 310, river)
     deck = dipping_deck(cv, dx, deck_y, 18, 12, river)
-    for (rx, ry, n) in ((70, 520, 6), (128, 60, 5), (40, 470, 5), (100, 180, 4)):
-        reeds(cv, rx, ry, seed=rx, n=n)
+    for (ry, side, n) in ((520, 1, 6), (60, -1, 5), (470, -1, 5), (180, 1, 4)):
+        # reeds in the shallows at a bank, never mid-channel
+        xs = [x for (x, y) in river if y == ry]
+        reeds(cv, (max(xs) - 1) if side > 0 else (min(xs) + 1), ry, seed=ry, n=n)
     for fb in ((bx1 + 4, 268, 40, 16, 1), (bx1 + 4, 316, 40, 16, 2)):  # flanking the street at the bridge
         meadow.flower_planter(cv, *fb)
     objects = [
         ('bandstand', 'bandstand', RX - 39, RY - 50), ('fountain', 'fountain', PX - 27, PY - 32),
-        # the willow on the east bank, leaning out over the water; ducks and lilies on it
-        ('willow', 'willow', 70, 466), ('lilies', 'lily_pads', on(400) - 14, 400), ('lilies-2', 'lily_pads', on(128) - 12, 120),
-        ('duck-1', 'duck', on(446) - 6, 440), ('duck-2', 'duck', on(358) - 8, 352), ('heron', 'heron', on(520) + 10, 494),
+        # the willow on the east bank, leaning out over the water; the mallards in the
+        # slack water off the platform, where people stop and bread comes their way
+        ('willow', 'willow', 70, 466),
+        ('duck-1', 'duck', dx - 22, deck_y + 2), ('duck-2', 'duck', on(deck_y + 18) - 4, deck_y + 9), ('heron', 'heron', on(520) + 10, 494),
         # trees in clumps round the lawns, thickest on the east
         ('tree-1', 'tree', 230, 10), ('tree-1b', 'tree_small', 196, 24), ('tree-2', 'tree_autumn', 260, 200),
         ('tree-3', 'tree', 4, 110), ('tree-4', 'tree_small', 275, 420), ('tree-5', 'tree', 260, 470),
         ('tree-6', 'tree_small', 200, 480), ('tree-7', 'pine', 284, 300), ('tree-8', 'tree', 176, 470),
         # benches looking onto the fountain and the river
-        ('bench-1', 'bench', PX - 52, PY - 66), ('bench-2', 'bench', PX + 20, PY - 66), ('bench-3', 'bench', 120, 450),
-        ('lamp-1', 'lamp', bx1 + 2, 250), ('lamp-2', 'lamp', PX + 48, 290), ('lamp-3', 'lamp', 178, 400),
+        ('bench-1', 'bench', PX - 52, PY - 66), ('bench-2', 'bench', PX + 20, PY - 66),
+        # lamps beside the walks, each clear of the planters and the cart
+        ('lamp-1', 'lamp', bx1 + 46, 250), ('lamp-2', 'lamp', PX - 56, 306), ('lamp-3', 'lamp', 178, 400),
         ('icecream', 'ice_cream_cart', PX + 44, PY - 6), ('bush-1', 'bush', 160, 100), ('bush-2', 'bush', 288, 90),
         ('bush-3', 'bush', 230, 540), ('bush-4', 'bush', 284, 548),
     ]
@@ -1632,7 +1642,10 @@ def halt(frame: int = 0):
     sea(cv, hsea, seed=457, open_edges='s')
     hface = cliff(cv, htop, hh, seed=458)
     track = worlds.thick([(298, 300), (304, 360), (300, 440), (292, 492), (262, 526)], 8, seed=33)
-    yard = blob(236, 524, 62, 15, seed=459, rough=0.15)
+    # the farmyard: trodden earth from the track's end along the front of the barn, so its
+    # doors open onto the yard (they face south, toward the cliff top)
+    yard = blob(236, 526, 64, 14, seed=459, rough=0.15) | blob(196, 532, 52, 9, seed=460, rough=0.12)
+    yard = {(x, y) for (x, y) in yard if y < htop[x] - 1}
     paint_road(cv, track | yard)
     # the fields behind the fence: worked plots with softened corners, their rows set out
     # east-west by hand; a margin of long grass round each, where the plough turned
@@ -1663,9 +1676,9 @@ def halt(frame: int = 0):
         ('mill', 'windmill', 226, 70), ('sack-m', 'sack', 276, 160), ('bush-1', 'bush', 286, 200), ('bush-2', 'bush', 6, 200),
         ('fence-1', 'fence_c', 18, 356), ('fence-2', 'fence_c', 78, 356), ('fence-3', 'fence_c', 138, 356),
         ('fence-4', 'fence_c', 198, 356),
-        ('scarecrow', 'scarecrow', 204, 384), ('barn', 'barn', 150, 452),
+        ('scarecrow', 'scarecrow', 204, 384), ('barn', 'barn', 150, 438),
         # the hay stacked against the barn's west wall, by the pumpkin patch, out of the rain
-        ('hay-1', 'haystack', 118, 486), ('hay-2', 'hay_bale', 124, 518),
+        ('hay-1', 'haystack', 118, 474), ('hay-2', 'hay_bale', 124, 506),
         ('trough-f', 'trough', 254, 474), ('wood-f', 'woodpile', 276, 508), ('barrel-f', 'barrel', 258, 506),
         ('tree-s2', 'tree_autumn', 150, 160),
     ]

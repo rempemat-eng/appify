@@ -39,6 +39,8 @@ import residentForager0 from '@/assets/residents/forager-0.png';
 import residentForager1 from '@/assets/residents/forager-1.png';
 import residentPicnicker0 from '@/assets/residents/picnicker-0.png';
 import residentPicnicker1 from '@/assets/residents/picnicker-1.png';
+import residentMiller0 from '@/assets/residents/miller-0.png';
+import residentMiller1 from '@/assets/residents/miller-1.png';
 import residentAngler0 from '@/assets/residents/angler-0.png';
 import residentAngler1 from '@/assets/residents/angler-1.png';
 import residentBotanist0 from '@/assets/residents/botanist-0.png';
@@ -77,6 +79,7 @@ export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
   hiker: [residentHiker0, residentHiker1],
   forager: [residentForager0, residentForager1],
   picnicker: [residentPicnicker0, residentPicnicker1],
+  miller: [residentMiller0, residentMiller1],
   angler: [residentAngler0, residentAngler1],
   botanist: [residentBotanist0, residentBotanist1],
   stargazer: [residentStargazer0, residentStargazer1],

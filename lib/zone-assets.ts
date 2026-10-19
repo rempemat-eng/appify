@@ -137,7 +137,6 @@ import propKitchen from '@/assets/zones/props/kitchen.png';
 import propLamp from '@/assets/zones/props/lamp.png';
 import propLibrary from '@/assets/zones/props/library.png';
 import propLighthouse from '@/assets/zones/props/lighthouse.png';
-import propLilyPads from '@/assets/zones/props/lily_pads.png';
 import propLobsterPots from '@/assets/zones/props/lobster_pots.png';
 import propLockers from '@/assets/zones/props/lockers.png';
 import propLocomotive from '@/assets/zones/props/locomotive.png';
@@ -692,7 +691,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lamp: propLamp,
   library: propLibrary,
   lighthouse: propLighthouse,
-  lily_pads: propLilyPads,
   lobster_pots: propLobsterPots,
   lockers: propLockers,
   locomotive: propLocomotive,

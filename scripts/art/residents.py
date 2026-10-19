@@ -176,6 +176,8 @@ RESIDENTS = {
                 'carry': ('basket', '#A5764C')},
     'picnicker': {'zone': 'park', 'skin': 'e', 'top': '#E8A0BC', 'skirt': '#F2EEE6', 'hair': 'blond',
                   'carry': ('basket', '#C89C6A')},
+    'miller': {'zone': 'riverside', 'skin': 'd', 'top': '#8A7A5E', 'apron': '#F2EEE6', 'legs': '#5E4A3A',
+               'hat': ('cap', '#D8D0BE')},
     'angler': {'zone': 'riverside', 'skin': 'b', 'top': '#5A7A4A', 'legs': '#3E4A3A', 'hat': ('wide', '#7A6A4A')},
     'botanist': {'zone': 'station', 'skin': 'a', 'top': '#B8C2D6', 'trim': '#22B5A0', 'hair': 'blond',
                  'carry': ('plant', '#557A45')},
