@@ -762,7 +762,7 @@ def harbour(frame: int = 0):
     # path comes down the neck west of the tower and round to its door on the south side
     knoll = outcrop(cv, [(52, 510, 24, 11), (70, 560, 28, 20), (40, 574, 30, 14), (6, 484, 14, 10), (76, 500, 10, 14),
                          (14, 556, 14, 12)], seed=985, moss=True)
-    lpath = worlds.thick([(40, 372), (28, 392), (24, 452), (24, 500), (30, 530), (52, 532)], 5, seed=986)
+    lpath = worlds.thick([(40, 372), (28, 392), (24, 452), (24, 500), (30, 528), (46, 530), (51, 522)], 5, seed=986)
     lpath = {(x, y) for (x, y) in lpath if (x, y) not in water and (x, y) not in knoll and (x, y) not in west_rocks and (x, y) not in pools}
     for (x, y) in point:
         if y < 470 and (x, y) not in knoll and noise2(x, y, 986) > 0.92:
@@ -777,12 +777,13 @@ def harbour(frame: int = 0):
     # the road down from the town, the lanes to the cottages, the cliff path east
     road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (152, 120), (166, 230)], 14, seed=16)
     road |= worlds.thick([(154, 120), (110, 118), (76, 108)], 8, seed=17)  # to cottage 1's door (a T off the road)
-    d3x, d3y = door_front('cottage_c', 44, 150)
-    road |= worlds.thick([(160, 176), (128, 206), (d3x + 10, d3y + 6), (d3x, d3y + 3)], 7, seed=18)  # down to cottage 3's door
-    road |= worlds.thick([(d3x + 6, d3y + 6), (92, 228)], 6, seed=21)  # and on down to the beach
+    d3x, d3y = door_front('cottage_c', 44, 140)
+    # (it runs in front of the cottage, below its foot, so it is seen to reach the door)
+    road |= worlds.thick([(160, 176), (142, 204), (124, d3y + 5), (d3x + 8, d3y + 5), (d3x, d3y + 2)], 6, seed=18)  # down to cottage 3's door
+    road |= worlds.thick([(d3x + 2, d3y + 6), (90, d3y + 14)], 5, seed=21)  # and on down to the beach
     road |= worlds.thick([(156, 70), (196, 96), (240, 104), (290, 104), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path, a Y off the road above the T
     road |= worlds.thick([(164, 212), (230, 224), (262, 222)], 7, seed=20)  # to cottage 4's door
-    hdoors = [door_front(k, x, y) for (k, x, y) in (('cottage', 42, 26), ('cottage_b', 210, 26), ('cottage_c', 44, 150),
+    hdoors = [door_front(k, x, y) for (k, x, y) in (('cottage', 42, 26), ('cottage_b', 210, 26), ('cottage_c', 44, 140),
                                                     ('cottage_d', 224, 140))]
     lay_road(cv, (road - quay) | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
              | {(x, y) for (x0, y) in road if x0 == W - 1 for x in range(W, W + 12)},
@@ -790,7 +791,7 @@ def harbour(frame: int = 0):
     paint_road(cv, lpath)  # the keeper's path over the sand and the point
     objects = [
         # four households, four cottages: a net on the wall, shutters, a porch, a net shed
-        ('cottage-1', 'cottage', 42, 26), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage_c', 44, 150),
+        ('cottage-1', 'cottage', 42, 26), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage_c', 44, 140),
         ('cottage-4', 'cottage_d', 224, 140),
         # the washing line in the yard beside cottage 4, clear of the lanes
         ('washing', 'washing_line', 184, 118),
@@ -860,13 +861,26 @@ def headland(frame: int = 0):
     fold = poly_field([(142, 76), (280, 58), (294, 168), (152, 188)], seed=996)
     posts = []
     wall = drystone_loop(cv, fold, gap=(146, 146, 8), seed=997, ends=posts)
+    # the gateway's piers: squared stone a little taller than the wall (Claude A after #64:
+    # the 26 px gateposts read as chimneys over a wall this low), each with a capstone
+    for (px, py) in posts:
+        pier = {(x, y) for x in range(px - 2, px + 3) for y in range(py - 4, py + 6)}
+        for (x, y) in pier:
+            c = STONE[3] if x < px + 2 else STONE[1]
+            if y == py - 4:
+                c = STONE[4]  # the capstone's lit top
+            elif y == py - 3:
+                c = STONE[2]
+            elif (y - py) % 3 == 0:
+                c = STONE[1]  # a joint between courses
+            cv.set(x, y, c)
+        for y in range(py - 3, py + 7):
+            style.darken(cv, px + 3, y)  # its shadow to the right
+        wall |= pier
     objects = [
         ('tower', 'lookout_tower', 198, 300),
         ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 210, 150),
         ('sheep-4', 'sheep_left', 262, 92),
-        # the fold's gateway: a squared pier either side of the gap, where the spur path
-        # from the cliff path comes in (its foot a pixel below the wall's, in front of it)
-        *[(f'gatepost-{k}', 'drystone_gatepost', x - 5, y + 6 - 26) for k, (x, y) in enumerate(posts)],
         ('hive-1', 'beehive', 108, 194), ('hive-2', 'beehive', 128, 202),
         ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
@@ -998,11 +1012,25 @@ def riverside(frame: int = 0):
     path |= worlds.thick([(46, ys[0] - 2), (44, 262), (40, 230)], 5, seed=23)  # the stepping stones' path up to the lane
     path |= worlds.thick([(46, ys[-1] + 2), (46, 360), (40, 398)], 5, seed=24)  # and down to the bank walk
     path |= worlds.thick([(180, 430), (186, 470)], 5, seed=25)  # to the bench on the bank above the bend
+    path |= worlds.thick([(76, 236), (112, 196), (140, 164), (146, 152)], 6, seed=26)  # the cart track up to the hay field's gateway
     lay_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff}, seed=77,
              avoid=river | bluff | race | towpath | stones)
     worlds.paint_paving(cv, towpath, seed=1405)
     for x in range(118, mx - 6):
         cv.set(x, mt - 6, STONE[1]); cv.set(x, mt - 5, STONE[0])  # its kerb above the water
+    # a landing out over the race before the mill's door, so the door opens onto room to
+    # stand and load, not a ledge (Claude A after #64/#68): flags on a stone pier with its
+    # lit kerb lower down and its shadow on the water
+    landing = {(x, y) for x in range(158, 206) for y in range(mt - 7, mt + 4)}
+    worlds.paint_paving(cv, landing, seed=1407)
+    for x in range(158, 206):
+        cv.set(x, mt + 3, STONE[1]); cv.set(x, mt + 4, STONE[0])
+        for k in (5, 6):
+            if (x, mt + k) in river:
+                style.darken(cv, x, mt + k)
+    for y in range(mt - 5, mt + 4):
+        cv.set(157, y, STONE[1]); cv.set(206, y, STONE[0])
+    towpath |= landing
     # the fishing platform at the end of the bank walk, out over the slack water
     deck = dipping_deck(cv, deck_x, 424, 24, 14, river)
     for (rx, ry, n) in ((deck_x - 18, 460, 6), (300, 330, 5), (250, 520, 7), (120, 310, 5), (180, 318, 4)):
@@ -1041,7 +1069,7 @@ def riverside(frame: int = 0):
         ('bale-1', 'round_bale', 170, 78), ('bale-2', 'round_bale_side', 222, 116), ('bale-3', 'round_bale', 238, 82), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
     ]
     blocked = ((river | bluff | race) - stones - deck - towpath) | fold_wall
-    stands = {'garden-north': (8, 222), 'garden-south': (8, 402), 'mill': (190, mt - 14), 'stones': (46, (ys[0] + ys[-1]) // 2),
+    stands = {'garden-north': (8, 222), 'garden-south': (8, 402), 'mill': (190, mt - 14), 'hayfield': (138, 168), 'stones': (46, (ys[0] + ys[-1]) // 2),
               'willows': (120, 426), 'platform': (deck_x + 8, 430)}
     return cv, objects, stands, blocked
 
