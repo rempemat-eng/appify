@@ -522,6 +522,33 @@ def dress(cv: Canvas, name: str, objects, sprite_map, blocked):
             _decal(cv, kind, x, y, noise2(tx, ty, 543))
 
 
+def share_feet(built: dict):
+    """A prop whose foot reaches over a side border closes the ground under it in the
+    neighbouring zone too, so nothing can walk through the part of it across the line."""
+    for region, zs in LAYOUT.items():
+        at = {pos: z for z, pos in zs.items()}
+        for z, (col, row) in zs.items():
+            if z not in built:
+                continue
+            for side, dc in (('west', -1), ('east', 1)):
+                other = at.get((col + dc, row))
+                if other not in built:
+                    continue
+                shifted = []
+                for (oid, key, x, y) in built[z]['objects']:
+                    if key in OVERHEAD:
+                        continue
+                    sp = built[z]['sprites'][key]
+                    if (dc < 0 and x + 3 < 0) or (dc > 0 and x + sp.w - 3 > W):
+                        shifted.append((oid, key, x - dc * W, y))
+                if not shifted:
+                    continue
+                extra = walk_grid(shifted, built[z]['sprites'])
+                walk = built[other]['walk']
+                built[other]['walk'] = [''.join('#' if e == '#' else ch for ch, e in zip(row_w, row_e))
+                                        for row_w, row_e in zip(walk, extra)]
+
+
 def check_overhangs(built: dict):
     """A tall prop that rises over a zone's north border must rise over empty ground in
     the zone behind it (no prop there for its top to cover)."""
@@ -609,23 +636,24 @@ def build(name: str, fn, start: str):
             if x2 + 3 < dx + 6 and x2 + sp2.w - 3 > dx - 6 and y2 < foot and y2 + sp2.h > foot - 16:
                 shut.append(f'{oid} (hidden by {oid2})')
     assert not shut, f'{name}: nothing can reach the door of {shut}'
-    # no prop crosses a border into a neighbouring zone (world-atlas.md, "How borders meet")
+    # A prop may reach across a border into a neighbouring zone (Matt, 19 Oct: "the world
+    # does not need to be divided into screen sized sections"): it belongs to the zone its
+    # foot stands in, and share_feet() closes the ground under its foot on the other side.
+    # (The renderer mounts every tile near the screen, so the reach always draws.)
     region = next(r for r, zs in LAYOUT.items() if name in zs)
     col, row = LAYOUT[region][name]
-    near = {pos for pos in LAYOUT[region].values()}
-    sides = {'west': (col - 1, row) in near, 'east': (col + 1, row) in near,
-             'north': (col, row - 1) in near, 'south': (col, row + 1) in near}
+    near = set(LAYOUT[region].values())
     over = []
     for (oid, key, x, y) in objects:
         if key in OVERHEAD:
             continue
         sp = sprite_map[key]
-        # (a tall prop may rise over the north border into the zone behind it, by up to
-        # 48 px, as long as nothing stands there: see check_overhangs)
-        if (sides['west'] and x < 0) or (sides['east'] and x + sp.w > W) or \
-                (sides['north'] and y < -48) or (sides['south'] and y + sp.h > H):
-            over.append(f'{oid} at {x},{y} size {sp.w}x{sp.h}')
-    assert not over, f'{name}: props cross into a neighbouring zone: {over}'
+        fx, fy = x + sp.w // 2, y + sp.h - 2
+        dc = -1 if fx < 0 else 1 if fx >= W else 0
+        dr = -1 if fy < 0 else 1 if fy >= H else 0
+        if (dc or dr) and (col + dc, row + dr) in near:
+            over.append(f'{oid}: its foot ({fx},{fy}) stands in the neighbouring zone')
+    assert not over, f'{name}: {over}'
     out = os.path.join(worlds.ROOT, 'assets', 'zones', name)
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
@@ -969,6 +997,7 @@ def main():
     built['lumen'] = build('lumen', lumen, 'shuttle')
     built['home'] = build('home', home, 'door')
     check_overhangs(built)
+    share_feet(built)
     import frames  # places meet only at their ports (Codex's connected-world contract)
     frames.check(built, LAYOUT)
     import world_lint  # the world's logic lint (world-rules.md, section 7): report only, for now
