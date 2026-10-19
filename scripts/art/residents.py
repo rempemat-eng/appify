@@ -161,6 +161,9 @@ RESIDENTS = {
     'saloon': {'zone': 'gulch', 'skin': 'a', 'top': '#E8DCC8', 'trim': '#5E3A24', 'hat': ('bowler', '#2A2026'),
                'legs': '#2A2026'},
     'trader': {'zone': 'oasis', 'skin': 'd', 'top': '#E2D2B0', 'skirt': '#C8B48A', 'hat': ('wrap', '#3E6A8A')},
+    # the prospector by the old mine's landing, a lamp in hand for the drift (S5)
+    'prospector': {'zone': 'gulch', 'skin': 'b', 'top': '#7A5A3A', 'legs': '#3E4A6A', 'hat': ('wide', '#6A5040'),
+                   'carry': ('lantern', '#FFC766')},
     'smith': {'zone': 'caldera', 'skin': 'c', 'top': '#3E3A44', 'apron': '#6E4A2E', 'hair': 'black'},
     'attendant': {'zone': 'springs', 'skin': 'a', 'top': '#E8E2D8', 'trim': '#C2621E', 'hair': 'dark',
                   'carry': ('tray', '#F2EEE6')},

@@ -21,6 +21,8 @@ import residentSaloon0 from '@/assets/residents/saloon-0.png';
 import residentSaloon1 from '@/assets/residents/saloon-1.png';
 import residentTrader0 from '@/assets/residents/trader-0.png';
 import residentTrader1 from '@/assets/residents/trader-1.png';
+import residentProspector0 from '@/assets/residents/prospector-0.png';
+import residentProspector1 from '@/assets/residents/prospector-1.png';
 import residentSmith0 from '@/assets/residents/smith-0.png';
 import residentSmith1 from '@/assets/residents/smith-1.png';
 import residentAttendant0 from '@/assets/residents/attendant-0.png';
@@ -76,6 +78,7 @@ export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
   cowhand: [residentCowhand0, residentCowhand1],
   saloon: [residentSaloon0, residentSaloon1],
   trader: [residentTrader0, residentTrader1],
+  prospector: [residentProspector0, residentProspector1],
   smith: [residentSmith0, residentSmith1],
   attendant: [residentAttendant0, residentAttendant1],
   vendor: [residentVendor0, residentVendor1],
