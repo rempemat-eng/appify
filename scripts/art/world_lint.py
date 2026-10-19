@@ -374,21 +374,42 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
         with open(os.path.join(out, 'world-lint.txt'), 'w') as f:
             for v in sorted(violations):
                 f.write(f'{v[0]:10} {v[1]:18} {v[2]:16} {v[4]}\n')
-        if previews is not None:
-            _stitch(out, layout, previews, zones, violations)
+    # each region drawn whole (with ZONE_PREVIEW or LINT_OUT): reviews look at these
+    for folder in {d for d in (out, os.environ.get('ZONE_PREVIEW')) if d}:
+        os.makedirs(folder, exist_ok=True)
+        _stitch(folder, layout, previews or {}, zones, violations if folder == out else [], built, overhead)
     return violations
 
 
-def _stitch(out, layout, previews, zones, violations):
+def _stitch(out, layout, previews, zones, violations, built=None, overhead=()):
+    """A region drawn whole: every zone's ground, then every prop in region coordinates,
+    sorted by its foot across the whole region (overhead ones last), so a tower whose
+    body rises into the zone above is drawn whole, as the game draws it."""
     for region, places in layout.items():
         cols = [c for c, _r in places.values()]
         rows = [r for _c, r in places.values()]
         c0, r0 = min(cols), min(rows)
         img = Image.new('RGBA', ((max(cols) - c0 + 1) * W, (max(rows) - r0 + 1) * H), (30, 25, 23, 255))
+        props = []
         for z, (c, r) in places.items():
+            ox, oy = (c - c0) * W, (r - r0) * H
+            if built is not None and z in built:
+                img.alpha_composite(built[z]['ground_img'].convert('RGBA'), (ox, oy))
+                for (_oid, key, x, y) in built[z]['objects']:
+                    sp = built[z]['sprites'][key]
+                    props.append((oy + y + sp.h + (100000 if key in overhead else 0), ox + x, oy + y, sp))
+                continue
             src = previews.get(z) or (zones[z]['ground'] if z in zones else None)
             if src is not None:
-                img.alpha_composite(src.convert('RGBA'), ((c - c0) * W, (r - r0) * H))
+                img.alpha_composite(src.convert('RGBA'), (ox, oy))
+        for (_z, px, py, sp) in sorted(props, key=lambda p: p[0]):
+            pad = getattr(sp, 'pad', 0)
+            spr = sp.img.crop((pad, pad, pad + sp.w, pad + sp.h)).convert('RGBA')
+            # (clipped to the region picture: a prop may reach past the region's edge)
+            cx, cy = max(0, -px), max(0, -py)
+            if cx >= sp.w or cy >= sp.h or px >= img.width or py >= img.height:
+                continue
+            img.alpha_composite(spr, (px + cx, py + cy), (cx, cy))
         d = ImageDraw.Draw(img)
         for (zone, kind, _oid, box, _msg) in violations:
             if zone not in places:
