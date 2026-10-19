@@ -728,7 +728,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
   },
   park: {
     objects: [
-      ['bandstand', 'bandstand', 186, 101, 78, 80],
+      ['bandstand', 'bandstand', 186, 99, 78, 81],
       ['fountain', 'fountain', 174, 291, 54, 46],
       ['willow', 'willow', 75, 468, 68, 95],
       ['lilies', 'lily_pads', 53, 401, 27, 15],
@@ -751,7 +751,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['lamp-1', 'lamp', 86, 249, 15, 44],
       ['lamp-2', 'lamp', 248, 289, 15, 44],
       ['lamp-3', 'lamp', 160, 379, 15, 44],
-      ['icecream', 'ice_cream_cart', 247, 316, 38, 39],
+      ['icecream', 'ice_cream_cart', 247, 318, 40, 36],
       ['bush-1', 'bush', 160, 98, 32, 25],
       ['bush-2', 'bush', 292, 88, 32, 25],
       ['bush-3', 'bush', 230, 538, 32, 25],
@@ -803,7 +803,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       '23.10#14.19#14.',
       '23.9#15.19#14.',
       '22.10#15.19#14.',
-      '22.9#16.19#14.',
+      '22.9#49.',
       '22.9#49.',
       '16#5.9#50.',
       '16#5.9#50.',
