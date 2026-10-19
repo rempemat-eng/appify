@@ -30,10 +30,7 @@ STRICT = ('valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon', 'home')
 # Findings that are right as drawn, each with its reason (world-rules.md, section 6,
 # the override registry; check 18: an override that no longer exempts anything is
 # reported, so stale ones get deleted). Keyed (zone, kind, what).
-OVERRIDES = {
-    ('caldera', 'seam-lava', 'caldera|springs'):
-        'the flow crosses the border on a steep slant; the band is continuous, its edge jogs a cell',
-}
+OVERRIDES: dict = {}
 
 # Placement types (rules, section 2); anything not listed is a ground prop.
 FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'island_ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
