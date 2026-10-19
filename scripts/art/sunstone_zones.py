@@ -242,14 +242,19 @@ def gulch(frame: int = 0):
     wagon_ruts(cv, street, range(0, 72), DESERT)
     # the track east under the mesa to the Scorched Pass (the lava region, 18 Oct)
     pass_track = worlds.thick(GULCH_PASS, 8, seed=755)
-    ASHm = MATERIALS['ash']
+    flags = set()
     for (x, y) in pass_track:
         if 0 <= x < W and 0 <= y < H and (x, y) not in street:
             n = smooth_noise(x, y, 10, 213)
-            if x < W - 30 + int(noise2(y // 4, 0, 772) * 8):  # (the same switch as the pass's road)
+            if x < W - 48 + int(smooth_noise(x, y, 4, 773) * 18):
                 cv.set(x, y, DESERT[2] if n > 0.3 or (x + y) % 2 else DESERT[1])
-            else:  # trodden pale where it runs on into the ash (as in the Scorched Pass)
-                cv.set(x, y, ASHm[3] if n > 0.3 else ASHm[4] if (x + y) % 3 else ASHm[3])
+            else:  # where it reaches the ash it becomes the laid road up to Hearthold, its
+                ash_flags(cv, x, y, 754)  # first flags half buried in drifted sand
+                if x < W - 24 and smooth_noise(x, y, 3, 774) > 0.55:
+                    cv.set(x, y, DESERT[3] if smooth_noise(x, y, 2, 775) > 0.5 else DESERT[2])
+                else:
+                    flags.add((x, y))
+    road_edges(cv, flags)
     for y in range(80, 506):  # two wheel ruts following the street's centre line
         cx = None
         for (xx, yy) in ((x2, y) for x2 in range(W)):
@@ -265,7 +270,7 @@ def gulch(frame: int = 0):
         if y % 7 == 0:
             cv.set(mid + (2 if (y // 7) % 2 else -2), y, DESERT[0])  # hoof prints
     # boardwalks in front of the buildings, out to the street
-    for (x0, y0, w0) in ((6, 186, 108), (6, 300, 92)):
+    for (x0, y0, w0) in ((6, 186, 108), (150, 296, 88)):
         for y in range(y0, y0 + 8):
             for x in range(x0, x0 + w0):
                 cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
@@ -325,14 +330,27 @@ def gulch(frame: int = 0):
                 c = MESA[1]  # its edge against the sand
             cv.set(x, y, c)
             mesa.add((x, y))
+    def east_end(y):
+        """Where the mesa's east end stands at row y: not a straight cut on the border but
+        buttresses and bays, the rock broken back where it has fallen."""
+        return MESA_X1 - int(smooth_noise(0, y, 11, 776) * 12) - (3 if (y // 17) % 3 == 1 else 0)
     for y in range(0, rim(MESA_X1 - 1) + FACE_H):  # the east end, in shade, and its shadow
+        e = east_end(y)
+        for x in range(e, MESA_X1 + 5):  # ground where the rock has broken back
+            cv.set(x, y, desert_edge(x, y))
+            mesa.discard((x, y))
         for k in range(5):
-            x = MESA_X1 + k
-            cv.set(x, y, MESA[1] if (y // 5 + k) % 3 else MESA[0])
+            x = e + k
+            c = MESA[1] if (y // 5 + k) % 3 else MESA[0]
+            if k == 0 and east_end(y - 1) < e:
+                c = MESA[3]  # the top of a buttress, catching the light
+            cv.set(x, y, c)
             mesa.add((x, y))
-        for d in range(5, 9):
-            if (d + y) % 2 or d < 7:
-                style.darken(cv, MESA_X1 + d, y)
+        for d in range(5, 10):
+            if smooth_noise(e + d, y, 2, 777) > 0.35 or d < 7:
+                style.darken(cv, e + d, y)
+        if noise2(y // 3, 0, 778) > 0.8:  # talus fallen from it
+            detail.pebble(cv, e + 6 + int(noise2(y, 1, 778) * 6), y, MESA, big=y % 2 == 0)
     for x in range(MESA_X0, MESA_X1):  # desert varnish: dark streaks run down from the rim
         if noise2(x // 3, 0, 232) > 0.62:
             top = rim(x)
@@ -411,8 +429,8 @@ def gulch(frame: int = 0):
         cv.set(x, y, DESERT[1] if n > 0.6 else DESERT[2] if n > 0.25 else ADOBE[2])
     objects = [
         ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 66, 178), ('poster', 'poster_board', 150, 86),
-        ('store', 'store', 6, 210), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
-        ('tower', 'water_tower', 168, 200), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 176, 300),
+        ('store', 'store', 150, 204), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
+        ('tower', 'water_tower', 250, 196), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 72, 222),
         ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
         ('dyn-1', 'dynamite_crate', CART_X + 20, MINE_Y + 8),
         ('dyn-2', 'dynamite_crate', CART_X + 26, MINE_Y + 30), ('tub', 'ore_tub', CART_X - 5, MINE_Y + 10),
@@ -421,9 +439,9 @@ def gulch(frame: int = 0):
         ('corral-w', 'corral_side', ccx - 52, ccy - 22),
         ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
         ('cactus-4', 'saguaro_small', 286, 540), ('cactus-5', 'saguaro', 276, 4),
-        ('cactus-7', 'saguaro', 232, 286), ('weed-1', 'tumbleweed', 170, 380),
+        ('cactus-7', 'saguaro', 244, 330), ('weed-1', 'tumbleweed', 170, 380),
         # scrub where the sand gives out into the ash, in clumps
-        ('scrub-1', 'desert_scrub', 254, 232), ('scrub-2', 'desert_scrub_b', 270, 318), ('scrub-3', 'desert_scrub', 286, 410), ('weed-2', 'tumbleweed', 96, 562),
+        ('scrub-1', 'desert_scrub', 296, 262), ('scrub-2', 'desert_scrub_b', 270, 318), ('scrub-3', 'desert_scrub', 286, 410), ('weed-2', 'tumbleweed', 96, 562),
         ('skull', 'cow_skull', 250, 520), ('barrel-p', 'keg', 40, 62), ('sack-p', 'hay_bale', 196, 56),
         ('horse', 'horse', ccx - 30, ccy - 24), ('pear-1', 'prickly_pear', 244, 466), ('pear-2', 'prickly_pear', 280, 426),
         ('pear-3', 'prickly_pear', 200, 548),
@@ -756,14 +774,15 @@ def desert_edge(GX: int, GY: int, heat: float = 0.0) -> str:
     sand, then a belt where scrub grows and sand is blown in among the ash, then ash,
     dithered where they meet, so no change lines up with a border (art-faults rule 1)."""
     s = sand_share(GX, GY, heat)
-    if s > 0.66 or (s > 0.58 and (GX + GY) % 2):
+    grain = smooth_noise(GX, GY, 3, 746)  # small soft patches where they meet, not a checker
+    if s + (grain - 0.5) * 0.16 > 0.62:
         return gulch_sand(GX, GY)
     if s > 0.3:  # the belt: drifts of sand lying in the ash, thinning toward the fire country
-        drift = smooth_noise(GX, GY, 7, 744) + (s - 0.3) * 1.4
-        if drift > 0.95 or (drift > 0.86 and (GX + GY) % 2):
+        drift = smooth_noise(GX, GY, 7, 744) + (s - 0.3) * 1.4 + (grain - 0.5) * 0.12
+        if drift > 0.9:
             return gulch_sand(GX, GY)
-        if drift > 0.78:
-            return MATERIALS['desert'][2] if (GX + GY) % 2 else MATERIALS['ash'][3]  # sand blown thin
+        if drift > 0.8:
+            return MATERIALS['desert'][2] if grain > 0.5 else MATERIALS['ash'][3]  # sand blown thin
     return fire_ash(GX - W, GY + 2 * H)
 
 
@@ -819,8 +838,10 @@ def paint_lava(cv: Canvas, zone: str, frame: int = 0, lake=frozenset()) -> set:
         x, y = X - ox, Y - oy
         if (x, y) not in local:
             continue
-        if (X, Y - 1) not in hot and (X, Y - 1) not in crust:
-            cv.set(x, y, LAVA[5] if (X, Y) in molten else BASALT[4])  # the lit upper bank
+        if all((X + d, Y - 1) not in hot and (X + d, Y - 1) not in crust for d in (-1, 0, 1)):
+            # the lit upper bank, only where the bank above runs across (a bank running down
+            # the channel's side would leave a straight dotted line of light in the lava)
+            cv.set(x, y, LAVA[5] if (X, Y) in molten else BASALT[4])
         if (X, Y + 1) not in hot and (X, Y + 1) not in crust and y + 1 < H:
             cv.set(x, y + 1, BASALT[0])
     spots = {(X // 26 * 26 + 13, Y // 26 * 26 + 13) for (X, Y) in molten}
@@ -1418,21 +1439,13 @@ def scorch(frame: int = 0):
     road = worlds.thick(SCORCH_ROAD, 9, seed=752)
     ash_dressing(cv, channel | road | {(x, y) for y in range(H) for x in range(W) if dist[y][x] < 14 or x < 40},
                  791, 120, *FIRE_OFF['scorch'])
-    # the road: the gulch's rutted track over the sand, trodden pale through the scrub
-    # and ash to the bridge, then flagged as it climbs to Hearthold
+    # the road: the gulch's rutted track turns into a laid road of pale ash flags where it
+    # reaches the ash, over the small bridge and up to Hearthold
     for (x, y) in road:
         if not (0 <= x < W and 0 <= y < H) or (x, y) in channel:
             continue
-        if x < 116:
-            n = smooth_noise(x, y, 6, 753)
-            c = ASH[3] if n > 0.3 else ASH[4] if (x + y) % 3 else ASH[3]
-            if abs(y - 382) in (5, 6) and noise2(x // 3, y, 229) > 0.25:
-                c = ASH[2]  # the ruts carry on, fainter
-        else:
-            ash_flags(cv, x, y, 754)
-            continue
-        cv.set(x, y, c)
-    road_edges(cv, {(x, y) for (x, y) in road if x >= 116}, channel)
+        ash_flags(cv, x, y, 754)  # the laid road, from the sand's edge in the gulch to the castle
+    road_edges(cv, {(x, y) for (x, y) in road if 0 <= x < W and 0 <= y < H and (x, y) not in channel}, channel)
     for (lx, ly) in ((182, 300), (150, 150), (136, 388)):  # the road's lanterns throw a warm pool
         light_pool(cv, lx + 6, ly + 26, 18, 8, '#F2A048', channel)
     deck, parapet = stone_bridge(cv, 84, 372, 36, 24, vertical=False)
@@ -1737,6 +1750,8 @@ def castle(frame: int = 0):
             c = FLAG[1]  # a scuff
         cv.set(x, y, c)
     # the wall walk: a lit coping, merlons standing proud along the outer edge
+    def side(x, y):  # on the west or east wall, which run north-south down the isle's flanks
+        return abs(x - ix) > irx * 0.62 and abs(y - iy) < iry * 0.82
     for (x, y) in wall:
         r = rr(x, y)
         c = ASHLAR[3] if (x // 7 + y // 6) % 3 else ASHLAR[2]
@@ -1744,6 +1759,23 @@ def castle(frame: int = 0):
             c = ASHLAR[5] if (x // 4 + y // 4) % 2 else ASHLAR[1]  # merlons and embrasures
         elif r < WALL_IN + 0.012:
             c = ASHLAR[4]  # the inner coping, catching the light
+        if side(x, y):
+            # the flanks, built up so they read as wall, not paving (review 19 Oct 14:20): a
+            # parapet of merlons along the outer edge, each block lit on its upper left
+            # with a dark embrasure between, a walk of worn flags, a lit inner coping
+            t = (r - WALL_IN) / (WALL_OUT - WALL_IN)
+            west = x < ix
+            if t > 0.62:
+                blk = (y // 5) % 2
+                c = (ASHLAR[5] if (y % 5 == 0 or (west and t > 0.9)) else ASHLAR[4]) if blk else ASHLAR[0]
+                if blk and not west and t > 0.9:
+                    c = ASHLAR[2]  # the merlons' shaded outer side, on the east wall
+            elif t > 0.24:
+                c = ASHLAR[2] if (y // 6 + x // 5) % 3 else ASHLAR[1]
+                if y % 6 == 0:
+                    c = ASHLAR[1]
+            else:
+                c = ASHLAR[5] if west else ASHLAR[4]
         cv.set(x, y, c)
     # its faces: the inner one shows below the north wall, the outer one over the cliff
     # below the south wall; dressed blocks in courses, the lowest course in shade
@@ -1755,7 +1787,7 @@ def castle(frame: int = 0):
             q = (x, y + k)
             if q in wall or q not in isle or gap(*q):
                 break
-            if (y < iy and q in yard) or (y > iy and q in rim):
+            if y > iy and q in rim:  # (the north wall's inner face is the wall sprites')
                 face.add(q)
                 course = (k - 1) // 4
                 bx = (x + (7 if course % 2 else 0)) // 9
@@ -1768,10 +1800,23 @@ def castle(frame: int = 0):
     for (x, y) in face:  # the face's shadow on the flags at its foot (north wall)
         if (x, y + 1) in yard and (x, y + 1) not in face and y < iy:
             style.darken(cv, x, y + 1); style.darken(cv, x + 1, y + 2)
-    for (x, y) in wall:  # the west wall's shadow falls on the yard to its right
-        if x < ix and (x + 1, y) in yard and (x + 1, y) not in face:
-            for d in range(1, 4):
+    for (x, y) in wall:
+        if side(x, y) and ((x < ix and (x + 1, y) in yard) or (x > ix and (x - 1, y) in yard)):
+            # the flank's inner face, a few courses of shaded masonry above the yard (it
+            # stands taller than the yard; nothing walks into it)
+            d = 1 if x < ix else -1
+            for k in range(1, 4):
+                q = (x + d * k, y)
+                if q in yard:
+                    face.add(q)
+                    cv.set(*q, ASHLAR[1] if (y + k) % 4 else ASHLAR[0])
+        if x < ix and (x + 1, y) in yard:  # the west wall's shadow falls on the yard to its right
+            for d in range(1, 8 if side(x, y) else 4):
                 if (x + d, y) in yard and (x + d, y) not in face:
+                    style.darken(cv, x + d, y)
+        if x > ix and side(x, y) and (x + 1, y) in rim:  # the east wall's shadow falls on its rim
+            for d in range(1, 4):
+                if (x + d, y) in rim:
                     style.darken(cv, x + d, y)
     for (x0, x1) in (GATE_GAP, POSTERN_GAP):  # the jambs either side of each way through
         for x in (x0 - 1, x1):
@@ -1801,8 +1846,10 @@ def castle(frame: int = 0):
     north_deck, north_par = postern_bridge(cv, 90, 44, 112, lava)
     light_pool(cv, 108, 154, 16, 7, '#F2A048', lava | plinth)  # the postern's lantern on the yard
     objects = [
-        ('tower-nw', 'round_tower', 40, 66), ('postern', 'postern', 86, 104), ('wall-n1', 'wall_run', 114, 104),
-        ('tower-ne', 'round_tower', 226, 66),
+        # the north wall stands on its footing line (the bridge passes behind it to the
+        # postern's arch, which opens onto the yard at the wall's foot)
+        ('tower-nw', 'round_tower', 40, 46), ('postern', 'postern', 86, 82), ('wall-n1', 'wall_run', 114, 82),
+        ('tower-ne', 'round_tower', 226, 46),
         ('keep', 'keep', 148, 156), ('bell', 'bell_tower', 54, 168),
         ('well', 'castle_well', 110, 300), ('dummy-1', 'training_dummy', 200, 300), ('rack', 'weapon_rack', 212, 336),
         ('tower-sw', 'round_tower', 50, 232), ('gate', 'gatehouse', 102, 320),
