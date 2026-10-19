@@ -44,7 +44,6 @@ import propBookshelf from '@/assets/zones/props/bookshelf.png';
 import propBoots from '@/assets/zones/props/boots.png';
 import propBothy from '@/assets/zones/props/bothy.png';
 import propBoulder from '@/assets/zones/props/boulder.png';
-import propBunting from '@/assets/zones/props/bunting.png';
 import propBuoy from '@/assets/zones/props/buoy.png';
 import propBush from '@/assets/zones/props/bush.png';
 import propCabin from '@/assets/zones/props/cabin.png';
@@ -608,7 +607,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   boots: propBoots,
   bothy: propBothy,
   boulder: propBoulder,
-  bunting: propBunting,
   buoy: propBuoy,
   bush: propBush,
   cabin: propCabin,

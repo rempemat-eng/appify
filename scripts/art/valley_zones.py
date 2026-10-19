@@ -251,6 +251,7 @@ def town(frame: int = 0):
     # the town grows down the road toward the harbour: lanes to the houses' doors
     south |= worlds.thick([(160, 424), (230, 426), (276, 424)], 6, seed=71)
     south |= worlds.thick([(160, 524), (200, 526), (228, 522)], 6, seed=72)
+    south |= worlds.thick([(236, 244), (250, 222), (254, 204)], 6, seed=73)  # to the red house's door
     paint_road(cv, south | {(x, y) for (x, y0) in south if y0 == H - 1 for y in range(H, H + 12)})
     worlds.paint_paving(cv, square | east, seed=3)
     # a ring of darker setts around the well, and a kerb where the square meets the lawn
@@ -304,7 +305,7 @@ def town(frame: int = 0):
         ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 182, 396),
         # trees across the borders: the woods of the halt and the park reach into the town
         ('tree-x1', 'tree_small', -22, 120), ('tree-x2', 'tree', 284, 112),
-        ('bunting', 'bunting', 60, 238), ('cat', 'cat', 182, 352),
+        ('cat', 'cat', 182, 352),
     ]
     ring_fence(objects, rcx, rcy, 58, 28)
     stands = {
@@ -317,7 +318,11 @@ def town(frame: int = 0):
 def west_shore(y: int) -> int:
     """Where Driftwood's west shore runs (harbour x): the open sea lies west of it, past
     the valley's edge, and the land rises from it in rocks."""
-    return int(min(y / 2, 7) + smooth_noise(0, y, 17, 941) * 7 + (smooth_noise(1, y, 5, 942) - 0.5) * 2)
+    return int(min(y / 2, 2) + smooth_noise(0, y, 23, 941) * 14 + (smooth_noise(1, y, 6, 942) - 0.5) * 4)
+
+
+SHORE_STONES = [STONE, ['#2F2C34', '#47444D', '#66636B', '#88868A', '#AEACA8'],
+                ['#3E3A36', '#5C5650', '#7C766E', '#A09A90', '#C4BEB2']]  # cool, dark and warm stones
 
 
 def shore_rocks(cv: Canvas, line, seed: int = 0, step: int = 11) -> set:
@@ -333,8 +338,12 @@ def shore_rocks(cv: Canvas, line, seed: int = 0, step: int = 11) -> set:
         w = (16 + int(noise2(k, 1, seed) * 8)) if big else (7 + int(noise2(k, 1, seed) * 8))
         h = (10 + int(noise2(k, 2, seed) * 4)) if big else (5 + int(noise2(k, 2, seed) * 4))
         if noise2(k, 3, seed) > 0.12:
+            ramp = SHORE_STONES[int(noise2(k, 10, seed) * len(SHORE_STONES))]
             pts |= boulder(cv, x + w // 2 - 3 + int(noise2(k, 4, seed) * 6), y + h // 2, w, h, seed + k,
-                           moss=noise2(k, 5, seed) > 0.55)
+                           moss=noise2(k, 5, seed) > 0.55, ramp=ramp)
+        for q in range(3):  # shingle in the gaps
+            px, py = x + 2 + int(noise2(k, 20 + q, seed) * 10), y + int(noise2(k, 30 + q, seed) * 8)
+            detail.pebble(cv, px, py, SHORE_STONES[q % len(SHORE_STONES)], big=q == 0)
         if noise2(k, 6, seed) > 0.7:  # a small one beside it, further up the shore
             pts |= boulder(cv, x + w + 2, y + 3, 6 + int(noise2(k, 7, seed) * 4), 4 + int(noise2(k, 8, seed) * 3), seed + k + 99, moss=False)
         i += max(5, int(h * 0.9 + noise2(k, 9, seed) * 6))
@@ -362,7 +371,7 @@ def coast_height(gx: int) -> int:
     return 22 + int(smooth_noise(gx, 1, 18, 953) * 14)
 
 
-BREAKWATER = [(172, 470), (200, 458), (236, 440), (262, 416), (282, 392)]
+BREAKWATER = [(166, 478), (186, 472), (210, 464), (234, 450), (254, 432), (270, 412), (282, 390)]
 
 
 @functools.lru_cache(maxsize=1)
@@ -637,10 +646,10 @@ def harbour(frame: int = 0):
     paint_road(cv, (road - quay) | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
                | {(x, y) for (x0, y) in road if x0 == W - 1 for x in range(W, W + 12)})
     objects = [
-        ('cottage-1', 'cottage', 24, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 44, 150),
+        ('cottage-1', 'cottage', 30, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 44, 150),
         ('cottage-4', 'cottage_b', 236, 140),
         # the washing line in cottage 1's yard, beside the house and clear of the lanes
-        ('washing', 'washing_line', 106, 40),
+        ('washing', 'washing_line', 178, 118),
         # the quay: the fish market, pots and the spare anchor by the chandler's corner
         ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
         ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
@@ -686,7 +695,7 @@ def headland(frame: int = 0):
             talus |= boulder(cv, gx + int(noise2(i, 1, 992) * 12), by, 10 + int(noise2(i, 2, 992) * 8), 7 + int(noise2(i, 3, 992) * 4), 993 + i, moss=False)
     # the cliff path from the harbour up the down to the tower, then on to the viewpoint
     path = worlds.thick([(-6, 110), (58, 112)], 8) | worlds.thick(
-        [(56, 112), (66, 150), (80, 222), (140, 300), (196, 368), (228, 412), (228, 424)], 8, seed=19)
+        [(56, 112), (66, 150), (80, 222), (140, 300), (176, 372), (198, 428), (226, 430)], 8, seed=19)
     path |= worlds.thick([(118, 280), (100, 340), (112, 404), (120, 430)], 6, seed=23)
     path |= worlds.thick([(54, 168), (100, 162), (146, 146)], 5, seed=998)  # a spur from the path to the fold's gate
     paint_road(cv, (path - river) | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)})
@@ -707,7 +716,7 @@ def headland(frame: int = 0):
         ('tree-w', 'tree_small', 70, 196), ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
         # the down falls to trees on the east, running on into the woods beyond
-        ('pine-e1', 'pine', 290, 300), ('tree-e2', 'tree', 286, 380), ('pine-e3', 'pine', 300, 440),
+        ('pine-e1', 'pine', 284, 300), ('tree-e2', 'tree', 256, 372), ('pine-e3', 'pine', 284, 440),
     ]
     blocked = sea_px | face | wall | talus | (river - bridge)
     stands = {'harbour': (14, 112), 'tower': (228, 430), 'bench': (124, 440), 'down': (150, 280), 'fold': (144, 146)}
@@ -838,12 +847,20 @@ def riverside(frame: int = 0):
         x, y = 14 + int(noise2(i, 0, 530) * 120), 30 + int(noise2(i, 1, 530) * 110)
         col = ('#F2D27A', '#E8A0BC', '#FFFFFF', '#B8A0E8')[i % 4]
         cv.set(x, y, col); cv.set(x, y + 1, '#447A50')
-    fold = blob(206, 104, 64, 50, seed=1201, rough=0.12)
-    for (x, y) in fold:  # the pasture grazed short
-        n = smooth_noise(x, y, 6, 1202)
-        if n > 0.62 or (n > 0.55 and (x // 2 + y // 2) % 2):
-            cv.set(x, y, G[3])  # grazed short in patches, the sheep's favourite spots
-    fold_wall = drystone_loop(cv, fold, gap=(170, 156, 7), seed=1203)  # its gate faces the mill lane
+    # the hay meadow above the mill: mown in long swathes that follow the slope, the cut
+    # grass lying in rows to dry, two stacks already made; the bees work the uncut margin
+    hay = blob(200, 112, 78, 56, seed=1201, rough=0.14)
+    for (x, y) in hay:
+        sw = (y + int(math.sin(x / 31) * 6)) % 12
+        if sw < 7:
+            cv.set(x, y, G[3] if (x + y) % 5 else G[4])  # the mown stubble, pale
+            if sw == 6 and x % 3:
+                cv.set(x, y, '#C9B66A')  # a windrow of drying hay
+                cv.set(x, y + 1, '#9E8A48')
+    for (x, y) in edge_of(hay):
+        if noise2(x, y, 1203) > 0.6:
+            detail.grass_tuft(cv, x, y + 1, int(noise2(x, y, 1204) * 6), G, 3)
+    fold_wall = set()
     lc = [(x, y) for (x, y, h) in line]
     objects = [
         ('mill', 'water_mill', 140, mt - 104), ('willow-1', 'willow', 176, 300), ('willow-2', 'willow', 96, 470),
@@ -851,10 +868,9 @@ def riverside(frame: int = 0):
         ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 266, 100), ('bush-1', 'bush', 40, 500),
         ('bench', 'bench', 196, 446), ('sack-1', 'sack', 124, mt - 30), ('barrel-m', 'barrel', 104, mt - 34),
         # old trees on the east bank, running on into the forest beyond
-        ('tree-e1', 'tree', 276, 400), ('pine-e2', 'pine', 290, 470), ('tree-e3', 'tree_autumn', 280, 230),
-        ('bush-e4', 'bush', 288, 540),
-        ('sheep-1', 'sheep', 166, 72), ('sheep-2', 'sheep_left', 226, 92), ('sheep-3', 'sheep', 190, 118),
-        ('sheep-4', 'sheep_left', 244, 60), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
+        ('tree-e1', 'tree', 258, 400), ('pine-e2', 'pine', 280, 470), ('tree-e3', 'tree_autumn', 260, 226),
+        ('bush-e4', 'bush', 286, 540),
+        ('hay-1', 'haystack', 176, 84), ('hay-2', 'haystack', 228, 122), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
     ]
     blocked = ((river | bluff | race) - stones - deck - towpath) | fold_wall
     stands = {'garden-north': (8, 222), 'garden-south': (8, 402), 'mill': (190, mt - 14), 'stones': (46, (ys[0] + ys[-1]) // 2),
@@ -932,13 +948,13 @@ def park(frame: int = 0):
         ('willow', 'willow', 70, 466), ('lilies', 'lily_pads', on(400) - 14, 400), ('lilies-2', 'lily_pads', on(128) - 12, 120),
         ('duck-1', 'duck', on(446) - 6, 440), ('duck-2', 'duck', on(358) - 8, 352), ('heron', 'heron', on(520) + 10, 494),
         # trees in clumps round the lawns, thickest on the east
-        ('tree-1', 'tree', 230, 10), ('tree-1b', 'tree_small', 196, 24), ('tree-2', 'tree_autumn', 276, 200),
-        ('tree-3', 'tree', 4, 110), ('tree-4', 'tree_small', 280, 420), ('tree-5', 'tree', 264, 470),
-        ('tree-6', 'tree_small', 200, 480), ('tree-7', 'pine', 290, 300), ('tree-8', 'tree', 176, 470),
+        ('tree-1', 'tree', 230, 10), ('tree-1b', 'tree_small', 196, 24), ('tree-2', 'tree_autumn', 260, 200),
+        ('tree-3', 'tree', 4, 110), ('tree-4', 'tree_small', 275, 420), ('tree-5', 'tree', 260, 470),
+        ('tree-6', 'tree_small', 200, 480), ('tree-7', 'pine', 284, 300), ('tree-8', 'tree', 176, 470),
         # benches looking onto the fountain and the river
         ('bench-1', 'bench', PX - 52, PY - 66), ('bench-2', 'bench', PX + 20, PY - 66), ('bench-3', 'bench', 120, 450),
-        ('lamp-1', 'lamp', bx1 + 2, 250), ('lamp-2', 'lamp', PX + 48, 290), ('lamp-3', 'lamp', 160, 380),
-        ('icecream', 'ice_cream_cart', PX + 44, PY - 6), ('bush-1', 'bush', 160, 100), ('bush-2', 'bush', 292, 90),
+        ('lamp-1', 'lamp', bx1 + 2, 250), ('lamp-2', 'lamp', PX + 48, 290), ('lamp-3', 'lamp', 178, 400),
+        ('icecream', 'ice_cream_cart', PX + 44, PY - 6), ('bush-1', 'bush', 160, 100), ('bush-2', 'bush', 288, 90),
         ('bush-3', 'bush', 230, 540), ('bush-4', 'bush', 284, 548),
     ]
     stands = {'town': (8, 300), 'bandstand': (RX, RY + 56), 'fountain': (PX, PY + 34), 'pond': (dx + 8, deck_y + 6)}
@@ -1071,7 +1087,7 @@ def ridge(frame: int = 0):
         # two clumps of pines either side of the trail, running down into the garden's treeline
         ('pine-b1', 'pine', 0, H - 96), ('pine-b2', 'pine', 34, H - 82), ('pine-b3', 'pine', 70, H - 112),
         ('pine-b7', 'pine', 18, H - 140), ('pine-b4', 'pine', 238, H - 88), ('pine-b5', 'pine', 270, H - 108),
-        ('pine-b6', 'pine', 290, H - 150), ('pine-b8', 'pine', 252, H - 160),
+        ('pine-b6', 'pine', 284, H - 150), ('pine-b8', 'pine', 252, H - 160),
         ('pine-m1', 'pine', 14, 392), ('pine-m2', 'pine', 270, 440), ('pine-m3', 'pine', 270, 250),
         ('pine-m4', 'pine', 60, 250), ('cairn-1', 'cairn', 100, 360),
         ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
@@ -1572,7 +1588,7 @@ def halt(frame: int = 0):
     # (the farm ends at its yard: past it, to the south, the old forest begins, so
     # nothing runs off the edge into it; world-rules.md, every path ends at a node)
     # past the farm the land ends at a low sea cliff (the open sea lies south of the halt)
-    htop = {x: 556 + int((smooth_noise(x, 0, 13, 455) - 0.5) * 10) for x in range(W)}
+    htop = {x: min(556, 550 + int(math.sin(x / 41 + 0.7) * 6 + (smooth_noise(x, 0, 13, 455) - 0.5) * 12)) for x in range(W)}
     hh = {x: 11 + int(smooth_noise(x, 1, 9, 456) * 5) for x in range(W)}
     hsea = {(x, y) for x in range(W) for y in range(htop[x] + hh[x], H)}
     sea(cv, hsea, seed=457, open_edges='s')
@@ -1604,7 +1620,7 @@ def halt(frame: int = 0):
         cv.set(x, y, STONE[1] if (x, y + 1) not in apron else STONE[3])
     objects = [
         ('station', 'station_house', 66, 204), ('signal', 'semaphore', 40, 244), ('bench-p', 'bench', 190, 280),
-        ('lamp-p1', 'lamp', 70, 268), ('pine-c1', 'pine', -14, 228), ('bush-c2', 'bush', 4, 344), ('lamp-p2', 'lamp', 220, 268), ('sack-p', 'sack', 178, 300), ('crate-p', 'crate', 160, 298),
+        ('lamp-p1', 'lamp', 70, 268), ('pine-c1', 'pine', 0, 228), ('bush-c2', 'bush', 4, 344), ('lamp-p2', 'lamp', 220, 268), ('sack-p', 'sack', 178, 300), ('crate-p', 'crate', 160, 298),
         ('pine-n1', 'pine', 10, 20), ('tree-n2', 'tree', 90, 30), ('pine-n3', 'pine', 150, 14),
         ('mill', 'windmill', 226, 70), ('sack-m', 'sack', 276, 160), ('bush-1', 'bush', 286, 200), ('bush-2', 'bush', 6, 200),
         ('fence-1', 'fence_c', 18, 356), ('fence-2', 'fence_c', 78, 356), ('fence-3', 'fence_c', 138, 356),
@@ -1844,11 +1860,11 @@ def woodland(frame: int = 0):
         ('stone-5', 'standing_stone_b', SX - 34, SY + SRY - 28), ('stone-6', 'standing_stone_low', SX - SRX - 4, SY - 14),
         ('stone-7', 'standing_stone_low', SX - 38, SY - SRY - 12),
         ('stump-1', 'stump', 166, 232), ('stump-2', 'stump', 40, 340), ('stump-3', 'stump', 236, 120),
-        ('pine-6', 'pine', -16, 110), ('pine-7', 'pine', 110, -44), ('tree-8', 'tree_small', -26, 380),
+        ('pine-6', 'pine', 0, 110), ('pine-7', 'pine', 110, -44), ('tree-8', 'tree_small', -2, 380),
         ('bush-2', 'bush', 4, 250), ('bush-3', 'bush', 160, 40),
         # old trees closing in round the edges (none crosses the east border into the garden)
-        ('tree-1', 'tree', -20, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
-        ('tree-3', 'tree', -24, 200), ('pine-3', 'pine', -10, 330), ('tree-4', 'tree', 230, 160),
+        ('tree-1', 'tree', -3, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
+        ('tree-3', 'tree', -3, 200), ('pine-3', 'pine', 0, 330), ('tree-4', 'tree', 230, 160),
         ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 480),
         ('pine-5', 'pine', 150, 490), ('tree-7', 'tree_small', 250, 504),
         ('oak', 'hollow_tree', 70, 30), ('log-1', 'mossy_log', 200, 230),
