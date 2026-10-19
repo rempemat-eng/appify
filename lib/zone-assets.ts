@@ -50,6 +50,7 @@ import propCabin from '@/assets/zones/props/cabin.png';
 import propCafe from '@/assets/zones/props/cafe.png';
 import propCairn from '@/assets/zones/props/cairn.png';
 import propCamel from '@/assets/zones/props/camel.png';
+import propCamelB from '@/assets/zones/props/camel_b.png';
 import propCamelString from '@/assets/zones/props/camel_string.png';
 import propCampfire from '@/assets/zones/props/campfire.png';
 import propCanalCrane from '@/assets/zones/props/canal_crane.png';
@@ -119,6 +120,7 @@ import propColumnStumpB from '@/assets/zones/props/column_stump_b.png';
 import propCommMast from '@/assets/zones/props/comm_mast.png';
 import propConsole from '@/assets/zones/props/console.png';
 import propCoolingVent from '@/assets/zones/props/cooling_vent.png';
+import propCorralGate from '@/assets/zones/props/corral_gate.png';
 import propCorralRail from '@/assets/zones/props/corral_rail.png';
 import propCorralSide from '@/assets/zones/props/corral_side.png';
 import propCottage from '@/assets/zones/props/cottage.png';
@@ -165,6 +167,7 @@ import propFoundry from '@/assets/zones/props/foundry.png';
 import propFountain from '@/assets/zones/props/fountain.png';
 import propGalleyTable from '@/assets/zones/props/galley_table.png';
 import propGardenPod from '@/assets/zones/props/garden_pod.png';
+import propGardenPodB from '@/assets/zones/props/garden_pod_b.png';
 import propGasLamp from '@/assets/zones/props/gas_lamp.png';
 import propGatehouse from '@/assets/zones/props/gatehouse.png';
 import propGearPile from '@/assets/zones/props/gear_pile.png';
@@ -188,6 +191,9 @@ import propHouseBlue from '@/assets/zones/props/house_blue.png';
 import propHouseRed from '@/assets/zones/props/house_red.png';
 import propHouseSlate from '@/assets/zones/props/house_slate.png';
 import propHydroTrough from '@/assets/zones/props/hydro_trough.png';
+import propHydroTroughHerbs from '@/assets/zones/props/hydro_trough_herbs.png';
+import propHydroTroughSprouts from '@/assets/zones/props/hydro_trough_sprouts.png';
+import propHydroTroughTomato from '@/assets/zones/props/hydro_trough_tomato.png';
 import propIbex from '@/assets/zones/props/ibex.png';
 import propIceCreamCart from '@/assets/zones/props/ice_cream_cart.png';
 import propIceRig from '@/assets/zones/props/ice_rig.png';
@@ -285,6 +291,7 @@ import propSnowman from '@/assets/zones/props/snowman.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propSolarArray from '@/assets/zones/props/solar_array.png';
 import propSolarArrayB from '@/assets/zones/props/solar_array_b.png';
+import propSolarArrayC from '@/assets/zones/props/solar_array_c.png';
 import propStall from '@/assets/zones/props/stall.png';
 import propStandingStone from '@/assets/zones/props/standing_stone.png';
 import propStandingStoneB from '@/assets/zones/props/standing_stone_b.png';
@@ -711,6 +718,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   cafe: propCafe,
   cairn: propCairn,
   camel: propCamel,
+  camel_b: propCamelB,
   camel_string: propCamelString,
   campfire: propCampfire,
   canal_crane: propCanalCrane,
@@ -780,6 +788,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   comm_mast: propCommMast,
   console: propConsole,
   cooling_vent: propCoolingVent,
+  corral_gate: propCorralGate,
   corral_rail: propCorralRail,
   corral_side: propCorralSide,
   cottage: propCottage,
@@ -826,6 +835,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   fountain: propFountain,
   galley_table: propGalleyTable,
   garden_pod: propGardenPod,
+  garden_pod_b: propGardenPodB,
   gas_lamp: propGasLamp,
   gatehouse: propGatehouse,
   gear_pile: propGearPile,
@@ -849,6 +859,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   house_red: propHouseRed,
   house_slate: propHouseSlate,
   hydro_trough: propHydroTrough,
+  hydro_trough_herbs: propHydroTroughHerbs,
+  hydro_trough_sprouts: propHydroTroughSprouts,
+  hydro_trough_tomato: propHydroTroughTomato,
   ibex: propIbex,
   ice_cream_cart: propIceCreamCart,
   ice_rig: propIceRig,
@@ -946,6 +959,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   snowy_pine: propSnowyPine,
   solar_array: propSolarArray,
   solar_array_b: propSolarArrayB,
+  solar_array_c: propSolarArrayC,
   stall: propStall,
   standing_stone: propStandingStone,
   standing_stone_b: propStandingStoneB,
