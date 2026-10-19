@@ -540,39 +540,124 @@ def scarecrow() -> Canvas:
 
 
 def windmill(turn: float = 0.0) -> Canvas:
-    """A valley windmill, 64 x 104: a tapering white tower of plaster with a little
-    door and window, a boat-shaped cap, and four lattice sails, `turn` radians round
-    (the sails repeat every quarter turn, so three frames a sixth of a turn apart loop)."""
+    """A tower windmill in the valley's three-quarter view, 64 x 104 (Matt, 19 Oct, fault
+    05: "flat tower, thin sails that do not meet the cap, no base or ground contact"): a
+    round fieldstone footing, its top seen from above; a whitewashed tower over a stone
+    base course, rounded so it is lit on the left and turns into shade on the right; a
+    wooden stage round its waist; a door with a step and two small windows; a shingled cap
+    seen from a little above with a finial; and four lattice sails with canvas on stocks
+    that meet at the hub on the cap's front, `turn` radians round (three frames a sixth of
+    a turn apart loop)."""
     w, h = 64, 104
     cv = Canvas(w, h, pad=PAD)
     cx = w // 2
-    for y in range(34, h - 2):
-        t = (y - 34) / (h - 36)
-        hw = int(10 + t * 8)
-        for x in range(cx - hw, cx + hw):
-            k = (x - (cx - hw)) / (2 * hw)
-            c = PLASTER[4] if k < 0.25 else PLASTER[3] if k < 0.6 else PLASTER[2] if k < 0.85 else PLASTER[1]
+    CLOTH = ('#F2EEE6', '#DCD4C4')
+    # the footing: a low round plinth of fieldstone, its top an ellipse, its front a band
+    fy, frx, fry = h - 9, 21, 5
+    for x in range(cx - frx, cx + frx + 1):
+        dx = (x + 0.5 - cx) / frx
+        if abs(dx) >= 1:
+            continue
+        e = fry * math.sqrt(1 - dx * dx)
+        k = (x - (cx - frx)) / (2 * frx)
+        for y in range(int(fy - e), int(fy + e) + 1):
+            cv.set(x, y, STONE[4] if k < 0.3 and y < fy - e + 2 else STONE[3] if k < 0.6 else STONE[2])
+        for d in range(5):
+            y = int(fy + e) + 1 + d
+            c = STONE[3] if k < 0.3 else STONE[2] if k < 0.72 else STONE[1]
+            if d == 2 or (x + (0 if d < 2 else 3)) % 6 == 0:
+                c = STONE[1] if c != STONE[1] else STONE[0]  # coursing and joints
             cv.set(x, y, c)
-    for (x, y) in rect_set(cx - 4, h - 16, 8, 14):
-        cv.set(x, y, WOOD[2] if x < cx else WOOD[1])
-    gp.window(cv, cx - 4, 58, 8, 8, shutters=None, sill=False, warm=True)
-    for y in range(24, 36):  # the cap
-        hw = 12 - abs(y - 30)
-        for x in range(cx - 12, cx + 12):
-            cv.set(x, y, SLATE[3] if x < cx else SLATE[2])
-    for k in range(4):  # the sails
+    # the tower: tapering, rounded, a stone base course under whitewash
+    top, bottom = 40, fy + 1
+
+    def radius(y):
+        return 9 + (y - top) / (bottom - top) * 6
+
+    stage = 70
+    for y in range(top, bottom):
+        r = radius(y)
+        for x in range(int(cx - r), int(cx + r) + 1):
+            k = (x + 0.5 - (cx - r)) / (2 * r)
+            if y > bottom - 13:  # the base course
+                c = STONE[3] if k < 0.25 else STONE[2] if k < 0.62 else STONE[1]
+                if (bottom - y) % 4 == 0 or (x + 3 * ((bottom - y) // 4 % 2)) % 6 == 0:
+                    c = STONE[1] if c != STONE[1] else STONE[0]
+            else:
+                c = PLASTER[4] if k < 0.18 else PLASTER[3] if k < 0.5 else PLASTER[2] if k < 0.8 else PLASTER[1]
+                if k < 0.5 and noise2(x, y // 3, 941) > 0.93:
+                    c = PLASTER[2]  # a weathered streak
+            if stage + 2 <= y <= stage + 4:
+                c = detail.tone(PLASTER, PLASTER.index(c) - 1) if c in PLASTER else c  # the stage's shadow
+            cv.set(x, y, c)
+    for (wy, wx) in ((48, cx - 4), (59, cx + 1)):  # two small windows above the stage, deep set
+        for y in range(wy, wy + 7):
+            for x in range(wx, wx + 5):
+                cv.set(x, y, '#2E3A48' if (x, y) != (wx + 1, wy + 1) else '#7E96AE')
+        cv.hline(wx - 1, wy - 1, 7, WOOD[3]); cv.hline(wx - 1, wy + 7, 7, WOOD[4])
+    door_top = bottom - 15
+    for y in range(door_top, bottom - 1):  # the door, arched, in a stone surround
+        for x in range(cx - 4, cx + 4):
+            if y < door_top + 3 and abs(x + 0.5 - cx) > 4 - (y - door_top + 1):
+                continue
+            c = WOOD[3] if x < cx - 1 else WOOD[2] if x < cx + 2 else WOOD[1]
+            if (x - cx) % 3 == 0:
+                c = WOOD[1]
+            cv.set(x, y, c)
+    cv.set(cx + 2, door_top + 8, GOLD[4])
+    for x in range(cx - 6, cx + 6):  # the step on the footing
+        cv.set(x, bottom - 1, STONE[4] if x < cx else STONE[3]); cv.set(x, bottom, STONE[2])
+    # the stage round the tower's waist: its deck seen from above, a rail on the front
+    srx, sry = radius(stage) + 6, 3
+    for x in range(int(cx - srx), int(cx + srx) + 1):
+        dx = (x + 0.5 - cx) / srx
+        if abs(dx) >= 1:
+            continue
+        e = sry * math.sqrt(1 - dx * dx)
+        for y in range(int(stage - e), int(stage + e) + 1):
+            if abs(x + 0.5 - cx) < radius(y) - 1 and y < stage:
+                continue  # the tower stands through the deck's back half
+            cv.set(x, y, WOOD[4] if x < cx - 6 else WOOD[3])
+        fy2 = int(stage + e) + 1
+        cv.set(x, fy2, WOOD[2]); cv.set(x, fy2 + 1, WOOD[1])
+        if x % 4 == 0:  # the rail's posts
+            for d in range(1, 5):
+                cv.set(x, int(stage + e) - d, WOOD[2])
+        cv.set(x, int(stage + e) - 4, WOOD[3])
+    # the cap: a shingled dome seen from a little above, its eave and a finial
+    cap_top, cap_eave, crx = 24, 42, 13
+    pts = set()
+    for y in range(cap_top, cap_eave + 1):
+        hw = crx * math.sqrt(max(0.0, 1 - ((cap_eave - y) / (cap_eave - cap_top)) ** 2))
+        for x in range(int(cx - hw), int(cx + hw) + 1):
+            pts.add((x, y))
+    detail.shingles(cv, pts, WOOD, 2, cap_top, course=3, width=5, seed=943,
+                    offset=lambda x, y: 1 if x < cx - 3 else -1 if x > cx + 4 else 0)
+    for x in range(cx - crx - 1, cx + crx + 2):
+        cv.set(x, cap_eave + 1, WOOD[1])
+        if abs(x - cx) <= radius(top):
+            cv.set(x, cap_eave + 2, PLASTER[1])  # the eave's shadow on the tower
+    cv.set(cx, cap_top - 2, GOLD[4]); cv.set(cx, cap_top - 1, GOLD[2]); cv.set(cx - 1, cap_top - 1, GOLD[3])
+    # the sails: stocks from the hub on the cap's front, lattice frames with canvas
+    hx, hy = cx, 36
+    for k in range(4):
         a = math.pi / 4 + k * math.pi / 2 + turn
-        for t in range(4, 30):
-            bx, by = cx + math.cos(a) * t, 30 + math.sin(a) * t
-            cv.set(int(bx), int(by), WOOD[1])
-            if t > 8:
-                for side in range(1, 6):
-                    px = bx + math.cos(a + math.pi / 2) * side
-                    py = by + math.sin(a + math.pi / 2) * side
-                    lattice = side % 2 == 0 or t % 3 == 0
-                    cv.set(int(px), int(py), WOOD[3] if lattice else '#F2EEE6')
-    for (x, y) in disc(cx, 30, 2.5):
+        ux, uy = math.cos(a), math.sin(a)
+        px, py = -uy, ux  # the sail's trailing side
+        for t10 in range(0, 330):
+            t = t10 / 10
+            x, y = hx + ux * t, hy + uy * t
+            if t >= 7:
+                for side10 in range(10, 75, 4):
+                    side = side10 / 10
+                    sx, sy = x + px * side, y + py * side
+                    frame = side10 >= 70 or side10 <= 14 or t > 32.4 or t < 7.3 or int(t) % 4 == 0
+                    cv.set(int(sx), int(sy), WOOD[3] if frame else CLOTH[0] if side < 4.5 else CLOTH[1])
+            cv.set(int(x), int(y), WOOD[2])
+            cv.set(int(x - px), int(y - py), WOOD[3] if t > 2 else WOOD[2])
+    for (x, y) in disc(hx, hy, 3):
         cv.set(x, y, WOOD[1])
+    cv.set(hx - 1, hy - 1, WOOD[3])
     return cv
 
 
