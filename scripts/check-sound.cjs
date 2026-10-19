@@ -80,7 +80,9 @@ for (const [id, file] of Object.entries(ambienceLoops)) {
   for (let i = 0; i < wav.length; i += 7) peak = Math.max(peak, Math.abs(wav.sample(i)));
   check(peak < 0.1, `${id} ambience: stays quiet (peak ${peak.toFixed(3)})`);
 }
-check(totalBytes < 2.5 * 1024 * 1024, `all sounds fit in 2.5 MB (${totalBytes} bytes)`);
+// 2.5 MB held the effects and the garden's two loops; the new places' three loops
+// (8 kHz, 15 s, 0.7 MB together; coherence plan B3) take the palette to about 2.6 MB.
+check(totalBytes < 2.75 * 1024 * 1024, `all sounds fit in 2.75 MB (${totalBytes} bytes)`);
 
 // ------------------------------------------------------------------- engine
 const soundSource = compile('lib/sound.ts');
@@ -292,6 +294,39 @@ async function main() {
     world.effects.at(-1)();
     check(world.pauses.at(-1) === ambienceLoops.day, 'unmounting the garden stops its loop');
     check(typeof cleanup === 'function', 'the ambience hook always returns a cleanup');
+
+    // The new places (coherence plan B3): each of their zones has its region's loop.
+    const maps = fs.readFileSync(path.join(root, 'lib/zone-maps.ts'), 'utf8');
+    const layout = maps.slice(maps.indexOf('export const regionLayout'));
+    const zonesOf = (region) =>
+      [
+        ...(layout.match(new RegExp(`\\b${region}: \\{([^}]*)\\}`))?.[1] ?? '').matchAll(/(\w+):/g),
+      ].map((m) => m[1]);
+    const places = {
+      frost: ['hollow', 'snowmelt', 'saddle', 'summit'],
+      sunstone: zonesOf('west'),
+      isles: zonesOf('isles'),
+    };
+    for (const [loop, zones] of Object.entries(places)) {
+      check(zones.length >= 4, `${loop}: the region's zones are found in lib/zone-maps.ts`);
+      for (const zone of zones)
+        check(sound.zoneAmbience[zone] === loop, `${zone} plays the ${loop} loop`);
+    }
+    for (const loop of Object.values(sound.zoneAmbience))
+      check(loop in ambienceLoops, `the ${loop} loop is generated`);
+    sound.useZoneAmbience('cove');
+    check(world.plays.at(-1) === ambienceLoops.isles, 'walking the cove plays the isles loop');
+    sound.useZoneAmbience('summit');
+    check(
+      world.pauses.at(-1) === ambienceLoops.isles && world.plays.at(-1) === ambienceLoops.frost,
+      'walking on to the Frostline swaps the loop',
+    );
+    sound.useZoneAmbience('town');
+    check(world.pauses.at(-1) === ambienceLoops.frost, 'a place without a loop is quiet');
+    sound.useZoneAmbience('caldera');
+    check(world.plays.at(-1) === ambienceLoops.sunstone, 'the caldera plays Sunstone Reach');
+    sound.useZoneAmbience(null);
+    check(world.pauses.at(-1) === ambienceLoops.sunstone, 'leaving the walk stops the loop');
   }
 
   // A deferred rewind must not outlive mute, cleanup, or a newer cue.

@@ -43,6 +43,7 @@ import {
   type StopId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
+import { useZoneAmbience } from '@/lib/sound';
 import { useUi } from '@/lib/ui';
 import { prefetchRegion } from '@/lib/zone-prefetch';
 import { WorldMap } from '@/components/world-map';
@@ -262,20 +263,6 @@ export default function World() {
   useEffect(() => {
     useUi.setState({ worldLink: null });
   }, []);
-  // the address only says where the world opened: clear it, so a reload resumes where
-  // the companion has walked or travelled since (play-test 18 Oct: a reload on the
-  // isles went back to Driftwood's jetty)
-  const addressed = !!(params.from || params.place || params.station || params.ex || params.ey);
-  useEffect(() => {
-    if (!addressed) return;
-    router.setParams({
-      from: undefined,
-      place: undefined,
-      station: undefined,
-      ex: undefined,
-      ey: undefined,
-    });
-  }, [addressed]);
   // Walked out of the garden screen: the same spot in the valley's garden, walking on
   // out through the gap it left by.
   const exit = exitIds.find((id) => id === link.from);
@@ -369,6 +356,10 @@ export default function World() {
   // a trip: the stop it left from, the stops it calls at (the destination last) and
   // which leg is playing
   const [trip, setTrip] = useState<{ from: StopId; legs: StopId[]; leg: number } | null>(null);
+  // the place's own sound (Claude B's ambience: the Frostline's wind, the isles' surf,
+  // Sunstone's dry air), quiet under a journey or the map; mute, background and first-tap
+  // rules ride on the garden's ambience
+  useZoneAmbience(appActive && !trip && !mapOpen ? (zone ?? null) : null);
   const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(() =>

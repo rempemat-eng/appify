@@ -22,6 +22,7 @@ Matt shared these as the bar ("it should be at least like this"). The images are
   - [Moonlighter](https://store.steampowered.com/app/606150/Moonlighter/): shops and props.
   - [Owlboy](https://store.steampowered.com/app/115800/Owlboy/): foliage and colour.
   - Soulbound.
+  - [Chef RPG](https://store.steampowered.com/app/1796790/Chef_RPG/) by World 2 Studio (Matt, 19 Oct 00:59: "in terms of art style i really like Chef RPG as well"). Take three things from it: a port town and its interiors built with real height (walls with thickness, wainscot and shelving), dense small story props (crockery, produce, signage) in one consistent three-quarter view, and warm light. Look at its store page and official trailers before drawing interiors (H1), towns (N1) and the harbour.
 - **Asset sources Matt linked for inspiration:**
   - [CraftPix](https://craftpix.net/), its top-down tilesets (grassland, forest, farm, swamp, tavern).
   - The [Top-Down Farm with Animals](https://www.behance.net/gallery/227432629/Top-Down-Farm-with-Animals-Pixel-Art-Asset-Pack) pack on Behance.

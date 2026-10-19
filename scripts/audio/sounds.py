@@ -5,7 +5,8 @@ Run with `npm run sound`. Writes assets/sounds/*.wav and lib/sound-assets.ts.
 Style (see docs/vision/sound.md):
 - soft and warm: sine and triangle tones, gentle attacks, low-passed noise;
 - notes come from the C major pentatonic scale, so any two cues sound kind together;
-- every effect is short and finite; only the two ambience loops repeat;
+- every effect is short and finite; only the ambience loops repeat (the garden's day and
+  night, and one for each kind of place out in the world);
 - loudness is baked into each file (iOS Safari ignores programmatic volume),
   so players always run at volume 1.
 
@@ -326,10 +327,11 @@ def munch(rng):
 
 # ------------------------------------------------------------------ ambience
 
-def chirp_phrase(rng, sr):
-    """One small bird phrase: two to five quick up- or down-swept notes."""
+def chirp_phrase(rng, sr, low=2400.0, spread=1100.0):
+    """One small bird phrase: two to five quick up- or down-swept notes, starting
+    between `low` and `low + spread` Hz (lower birds suit a loop stored at 8 kHz)."""
     notes = int(rng.integers(2, 6))
-    base = 2400 + 1100 * rng.random()
+    base = low + spread * rng.random()
     out = silence(1.2, sr)
     at = 0.0
     for _ in range(notes):
@@ -392,13 +394,126 @@ def ambience_night(rng):
     return finish(loopable(out, LOOP_SECONDS, sr), -25, sr, edges=False)
 
 
+# The new places' loops (coherence plan B3): one for each region, as the plan asks.
+# They hold nothing above 4 kHz, so they are stored at 8 kHz and run 15 s, which keeps
+# all three to 0.7 MB (check:sound's size budget).
+PLACE_SR = 8000
+PLACE_SECONDS = 15.0
+
+
+def norm(x: np.ndarray) -> np.ndarray:
+    return x / (np.max(np.abs(x)) + 1e-9)
+
+
+def gusts(total, sr, centres, width):
+    """A gust envelope: soft bumps (Gaussian, `width` seconds) at the given times."""
+    t = times(total, sr)
+    out = np.zeros_like(t)
+    for at in centres:
+        out += np.exp(-(((t - at) / width) ** 2))
+    return np.clip(out, 0, 1)
+
+
+def caw(rng, sr, f0):
+    """A raven's far 'kraa': a short falling call of a few soft harmonics with a quick
+    flutter, low-passed hard so it stays distant rather than harsh."""
+    d = 0.3
+    f = sweep(f0 * 1.06, f0 * 0.84, d, sr, curve=0.8)
+    flutter = (40 + 10 * rng.random(), 0.035)
+    call = sum((0.62 ** k) * osc(f * k, d, sr, vibrato=flutter) for k in range(1, 5))
+    return band(call * env(d, 0.025, 0.08, sr, hold=0.1), None, 1400, sr)
+
+
+def ambience_frost(rng):
+    """The Frostline: cold wind over the high ground, gusting twice with a dry hiss of
+    blown snow and a faint whistle (G5) over the ridges; one raven calls far off."""
+    sr = PLACE_SR
+    total = PLACE_SECONDS + 2.0
+    out = 0.55 * wind(rng, total, sr, 480)
+    gust = gusts(total, sr, (3.0 + 2 * rng.random(), 10.0 + 2 * rng.random()), 1.6)
+    out += 0.2 * norm(band(noise(total, rng, sr, 'pink'), 900, 3000, sr)) * (0.02 + 0.98 * gust ** 2)
+    whistle = norm(band(noise(total, rng, sr), NOTE['G5'] - 18, NOTE['G5'] + 18, sr, order=2))
+    out += 0.06 * whistle * (0.08 + 0.92 * gust)
+    call = silence(1.4, sr)
+    place(call, caw(rng, sr, 520), 0.0, sr)
+    place(call, caw(rng, sr, 490), 0.55, sr)
+    place(out, call, 6.5 + 2 * rng.random(), sr, gain=0.16)
+    return finish(loopable(out, PLACE_SECONDS, sr), -25, sr, edges=False)
+
+
+def ambience_sunstone(rng):
+    """Sunstone Reach, from Dust Gulch to the caldera: a warm, dry wind with sand hissing
+    along the ground in three gusts and the odd rattle of dry grass, over the lava's low
+    rumble, which swells slowly (with a warmer band so a phone speaker carries it), and
+    three slow bubbles popping far off (C3 sliding to G2)."""
+    sr = PLACE_SR
+    total = PLACE_SECONDS + 2.0
+    t = times(total, sr)
+    out = 0.45 * wind(rng, total, sr, 420)
+    gust = gusts(total, sr, np.sort(rng.random(3)) * (total - 4) + 2, 2.0)
+    out += 0.17 * norm(band(noise(total, rng, sr), 1500, 3400, sr)) * (0.02 + 0.98 * gust ** 2)
+    for at in np.sort(rng.random(5)) * (total - 1):
+        rattle = band(noise(0.25, rng, sr), 2000, 3700, sr) * env(0.25, 0.01, 0.05, sr)
+        place(out, rattle, at, sr, gain=0.06)
+    swell = 0.75 + 0.25 * np.sin(2 * np.pi * 0.06 * t)
+    out += 0.38 * norm(band(noise(total, rng, sr, 'brown'), 40, 170, sr)) * swell
+    out += 0.11 * norm(band(noise(total, rng, sr, 'brown'), 170, 380, sr)) * swell
+    for i in range(3):
+        d = 0.36
+        pop = osc(sweep(130.81, 98.0, d, sr), d, sr) * env(d, 0.012, 0.08, sr)
+        place(out, pop, (i + 0.15 + 0.6 * rng.random()) * total / 3, sr, gain=0.16)
+    return finish(loopable(out, PLACE_SECONDS, sr), -25, sr, edges=False)
+
+
+def ambience_isles(rng):
+    """The Tidebloom Isles: the falls' steady rush under the canopy, waves arriving every
+    five or six seconds (a slow swell that breaks, then draws back as a brighter hiss over
+    the sand), birds near and far, a two-note whistle (G5, E5) answered across the water,
+    and a dove's low coo (G4, E4)."""
+    sr = PLACE_SR
+    total = PLACE_SECONDS + 2.0
+    t = times(total, sr)
+    out = 0.07 * norm(band(noise(total, rng, sr, 'pink'), 200, 1500, sr)) * (0.9 + 0.1 * np.sin(2 * np.pi * 0.11 * t))
+    at = 0.2
+    while at < total:
+        dur = 4.6 + 1.8 * rng.random()
+        crash = norm(band(noise(dur, rng, sr, 'pink'), 180, 2400, sr))
+        crash *= env(dur, 0.9 + 0.5 * rng.random(), 1.0, sr, hold=0.2) ** 1.5
+        wash = norm(band(noise(dur, rng, sr), 1500, 3400, sr)) * env(dur, 1.9, 0.8, sr, hold=0.4) ** 2
+        place(out, crash + 0.2 * wash, at, sr, gain=0.42 + 0.12 * rng.random())
+        at += dur * (0.72 + 0.18 * rng.random())
+    for i in range(8):
+        far = rng.random() < 0.45
+        phrase = chirp_phrase(rng, sr, low=1700, spread=900)
+        if far:
+            phrase = band(phrase, None, 2400, sr)
+        place(out, phrase, (i + 0.8 * rng.random()) * total / 8, sr, gain=0.08 if far else 0.17)
+    whistle = silence(0.9, sr)
+    for k, (note, d) in enumerate([('G5', 0.22), ('E5', 0.34)]):
+        place(whistle, osc(NOTE[note], d, sr, vibrato=(6, 0.012)) * env(d, 0.03, 0.12, sr, hold=0.05),
+              0.3 * k, sr)
+    place(out, whistle, 2.5 + rng.random(), sr, gain=0.14)
+    place(out, band(whistle, None, 2000, sr), 4.6 + rng.random(), sr, gain=0.07)
+    coo = silence(1.1, sr)
+    for k, note in enumerate(('G4', 'E4', 'E4')):
+        d = 0.28
+        place(coo, osc(NOTE[note], d, sr) * env(d, 0.05, 0.1, sr, hold=0.06), 0.33 * k, sr)
+    place(out, band(coo, None, 1200, sr), 9.5 + rng.random(), sr, gain=0.16)
+    return finish(loopable(out, PLACE_SECONDS, sr), -24, sr, edges=False)
+
+
 EFFECTS = {
     'tap': tap, 'chime': chime, 'oops': oops, 'hit': hit, 'raid': raid,
     'nap': nap, 'wake': wake, 'friend': friend, 'levelup': levelup, 'reward': reward,
     'steps': steps, 'splash': splash, 'page': page, 'water': water, 'rustle': rustle,
     'lantern': lantern, 'boop': boop, 'munch': munch,
 }
-AMBIENCE = {'day': ambience_day, 'night': ambience_night}
+# Each loop with its sample rate. New loops go at the end: the seed follows the order.
+AMBIENCE = {
+    'day': (ambience_day, AMB_SR), 'night': (ambience_night, AMB_SR),
+    'frost': (ambience_frost, PLACE_SR), 'sunstone': (ambience_sunstone, PLACE_SR),
+    'isles': (ambience_isles, PLACE_SR),
+}
 # Matt, 18 Oct: "reduce the sound effects a bit". Every effect sits 5 dB under its
 # mastered peak (players stay at volume 1; the level lives in the files).
 EFFECT_TRIM_DB = -5.0
@@ -422,10 +537,10 @@ def main() -> None:
         write_wav(os.path.join(OUT, f'{name}.wav'), x, SR)
         durations[name] = round(len(x) / SR, 3)
         entries.append((name, f'{name}.wav', 'effect'))
-    for seed, (name, make) in enumerate(AMBIENCE.items()):
+    for seed, (name, (make, sr)) in enumerate(AMBIENCE.items()):
         x = make(np.random.default_rng(2000 + seed))
-        write_wav(os.path.join(OUT, f'ambience-{name}.wav'), x, AMB_SR)
-        durations[f'ambience-{name}'] = round(len(x) / AMB_SR, 3)
+        write_wav(os.path.join(OUT, f'ambience-{name}.wav'), x, sr)
+        durations[f'ambience-{name}'] = round(len(x) / sr, 3)
         entries.append((f'ambience-{name}', f'ambience-{name}.wav', 'ambience'))
 
     lines = [

@@ -40,31 +40,34 @@ MOSS = ['#2C4A2E', '#3F6A3A', '#5C8C46']
 # edge (art px from the zone's top or left) and what closes the rest. Codex's spans
 # where the drawing allows; docs/vision/world-ports.md records each one that differs
 # and why. A pair listed with no opening is closed along its whole length.
+OPEN = 'open'  # the land runs on across the whole edge (Matt, 19 Oct: "there do not need to
+# be boundaries everywhere, only where they need to be for gameplay purposes")
 PORTS = {
-    # the home valley (the garden's own side is closed in lib/region-walk.ts and drawn
-    # by garden.py; its neighbours draw their half here)
-    ('woodland', 'garden'): ((412, 468), 'trees'),
-    ('garden', 'riverside'): ((192, 248), 'willows'),
-    ('ridge', 'garden'): ((196, 216), 'trees'),
-    ('garden', 'town'): ((144, 176), 'hedge'),
-    ('woodland', 'halt'): ((120, 184), 'hedge'),
-    ('halt', 'town'): ((268, 324), 'hedge'),
-    ('riverside', 'park'): ((136, 192), 'willows'),
-    ('town', 'park'): ((272, 328), 'wall'),
-    ('town', 'harbour'): ((136, 192), 'wall'),
-    ('park', 'headland'): ((112, 168), 'hedge'),
-    ('harbour', 'headland'): ((88, 144), 'rocks'),
-    # the Frostline Highlands
-    ('hollow', 'ridge'): ((320, 376), 'firs'),
-    ('hollow', 'woodland'): (None, 'rocks'),
-    ('snowmelt', 'hollow'): ((144, 200), 'snowrocks'),
-    ('snowmelt', 'saddle'): ((248, 304), 'snowrocks'),
-    ('saddle', 'ridge'): ((176, 232), 'snowrocks'),
-    ('summit', 'saddle'): ((120, 168), 'snowrocks'),
+    # the home valley: meadow, wood and town flow into each other. The garden is closed
+    # only by its own fence and treeline (garden.py): its gate and its ridge trail.
+    ('woodland', 'garden'): (OPEN, None),
+    ('garden', 'riverside'): (OPEN, None),
+    ('ridge', 'garden'): ((196, 216), None),
+    ('garden', 'town'): ((144, 176), None),
+    ('woodland', 'halt'): (OPEN, None),
+    ('halt', 'town'): (OPEN, None),
+    ('riverside', 'park'): (OPEN, None),
+    ('town', 'park'): (OPEN, None),
+    ('town', 'harbour'): (OPEN, None),
+    ('park', 'headland'): (OPEN, None),
+    ('harbour', 'headland'): (OPEN, None),
+    # the Frostline Highlands: the height changes close what they close (the scarp, the
+    # rock shoulders, the steep ground, the escarpment above the Woodland)
+    ('hollow', 'ridge'): (OPEN, None),
+    ('hollow', 'woodland'): (None, None),
+    ('snowmelt', 'hollow'): (OPEN, None),  # (the scarp above it is the step up)
+    ('snowmelt', 'saddle'): (OPEN, None),  # (the same tier: the saddle's flank closes the rest)
+    ('saddle', 'ridge'): ((176, 232), None),
+    ('summit', 'saddle'): ((116, 172), None),
     # Cogsworth, Neon
-    ('junction', 'canal'): ((128, 192), 'wall'),
-    ('neon', 'skyport'): ((164, 220), 'quay'),
-    # Sunstone Reach
+    ('junction', 'canal'): (OPEN, None),
+    ('neon', 'skyport'): (OPEN, None),
+    # Sunstone Reach (Claude D's lines)
     ('oasis', 'gulch'): ((296, 352), 'dunes'),
     ('gulch', 'scorch'): ((356, 412), 'dunes'),
     ('hearthold', 'scorch'): ((140, 188), 'ash'),
@@ -141,7 +144,7 @@ def _inside(s, feats, t, d):
         return best[1]
     if span and span[0] - margin <= t < span[1] + margin:
         return None
-    wob = (smooth_noise(t, 0, 9, 71) - 0.5) * 3 if step else 0
+    wob = (smooth_noise(t, 0, 14, 71) - 0.5) * 7 if step else 0
     if abs(d) < core + wob:
         return (None, 0, 0, core)
     return None
@@ -175,13 +178,19 @@ def _colour(s, feats, gx, gy, t, d, hit, inside):
     if kind in ('trees', 'willows', 'firs', 'jungle'):
         # the floor of a belt of trees: undergrowth in deep shade, a few lit sprigs;
         # the trees standing on it (props) make the belt
+        # leafy undergrowth a little darker than the open ground, its clumps lit on
+        # the upper left; the shade only along its lower-right edge
         n = smooth_noise(gx, gy, 5, 76)
-        tone = 1 if n < 0.55 else 2
-        if noise2(gx, gy, 75) > 0.9:
-            tone = 3
+        tone = 2 if n < 0.5 else 3
+        if noise2(gx, gy, 75) > 0.88:
+            tone = min(len(ramp) - 1, tone + 1)
+        if smooth_noise(gx - 1, gy - 1, 5, 76) > n + 0.04:
+            tone = max(1, tone - 1)
         if kind == 'firs' and noise2(gx // 2, gy // 2, 80) > 0.8:
             return SNOW[1] if tone < 3 else SNOW[2]
-        return ramp[0] if (out_r or out_dn) and (gx + gy) % 2 else ramp[tone]
+        if out_r or out_dn:
+            return ramp[1]
+        return ramp[tone]
     if centre is None:  # the core between features: lower, in shade
         tone = 1 + (noise2(gx // 2, gy // 2, 77) > 0.6)
     else:
@@ -335,6 +344,8 @@ def apply(cv, name: str, layout: dict, walk: list[str], is_water) -> set:
     region, (col, row), seams = seams_of(name, layout)
     closed = set()
     for s in seams:
+        if s['kind'] is None or s['span'] == OPEN:
+            continue  # nothing drawn: the land runs on, or the zone's own drawing closes it
         feats = _features(s)
 
         def inside(t, d, s=s, feats=feats):
@@ -384,6 +395,13 @@ def check(built: dict, layout: dict):
         assert vertical or rb == ra + 1, f'{a} and {b} do not touch'
         wa, wb = built[a]['walk'], built[b]['walk']
         n = (H if vertical else W) // CELL
+        if span == OPEN:
+            crossings = sum(1 for k in range(n)
+                            if ((wa[k][-1] == '.' and wb[k][0] == '.') if vertical
+                                else (wa[-1][k] == '.' and wb[0][k] == '.')))
+            if crossings < 8:
+                bad.append(f'{a}|{b}: open land, but almost no way across ({crossings} cells)')
+            continue
         for k in range(n):
             if vertical:
                 oa, ob = wa[k][-1] == '.', wb[k][0] == '.'
@@ -400,7 +418,13 @@ def check(built: dict, layout: dict):
 
 def export() -> dict:
     """The ports for lib/zone-maps.ts (the route checks read them)."""
-    return {f'{a}|{b}': {'span': list(span) if span else None, 'frame': kind}
+    def edge(a, b):
+        for zs in __import__('zones').LAYOUT.values():
+            if a in zs and b in zs:
+                return H if zs[b][0] == zs[a][0] + 1 else W
+        return W
+    return {f'{a}|{b}': {'span': ([0, edge(a, b)] if span == OPEN else list(span) if span else None),
+                         'frame': kind or ('open' if span == OPEN else 'drawn')}
             for (a, b), (span, kind) in PORTS.items()}
 
 
@@ -409,5 +433,7 @@ def place(name: str, layout: dict, sprites: dict, allowed, objects, stands, walk
     _region, _pos, seams = seams_of(name, layout)
     out = []
     for s in seams:
+        if s['kind'] is None or s['span'] == OPEN:
+            continue
         out += _place(s, name, sprites, allowed, list(objects) + out, stands, walk, is_water)
     return out

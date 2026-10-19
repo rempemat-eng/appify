@@ -162,6 +162,37 @@ export function useAmbience(id: AmbienceId | null) {
   }, [id]);
 }
 
+/**
+ * The loop each place out in the world plays (coherence plan B3): wind and a far raven on
+ * the Frostline, dry wind over the lava's rumble across Sunstone Reach, and surf, birds
+ * and the falls on the Tidebloom Isles. Zones not listed stay quiet, as before.
+ */
+export const zoneAmbience: Readonly<Record<string, AmbienceId>> = {
+  hollow: 'frost',
+  snowmelt: 'frost',
+  saddle: 'frost',
+  summit: 'frost',
+  gulch: 'sunstone',
+  oasis: 'sunstone',
+  scorch: 'sunstone',
+  hearthold: 'sunstone',
+  caldera: 'sunstone',
+  springs: 'sunstone',
+  landing: 'isles',
+  rainforest: 'isles',
+  headwaters: 'isles',
+  cove: 'isles',
+};
+
+/**
+ * Plays the loop of the zone being walked, while the calling screen is mounted; pass
+ * null while the walk is not the visible, active screen (a journey, the map, a sheet).
+ * Like the garden's loop it follows the ambience switch and stops in the background.
+ */
+export function useZoneAmbience(zone: string | null) {
+  useAmbience(zone === null ? null : (zoneAmbience[zone] ?? null));
+}
+
 // A missing or unreadable setting means on: sound is the default experience.
 const savedOn = (result: PromiseSettledResult<string | null>) =>
   result.status !== 'fulfilled' || result.value !== 'false';

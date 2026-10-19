@@ -28,6 +28,8 @@ import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
 import { makeWalkGrid, type Point } from '@/lib/garden-path';
 import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
 import { hiddenBehind } from '@/lib/occlusion';
+import { hutImageKey } from '@/lib/decor';
+import { hutImages } from '@/lib/garden-hut-assets';
 import {
   TILE,
   regionBounds,
@@ -499,7 +501,7 @@ function Turning({
   );
 }
 
-function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
+function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourcePropType): Drawable[] {
   const o = tileOrigin(region, tile);
   if (tile.id === 'garden') {
     return gardenObjects
@@ -507,7 +509,8 @@ function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
       .map((g) => ({
         key: `garden-${g.id}`,
         sprite: g.sprite,
-        src: gardenSprites[g.sprite],
+        // the hut as the player has made it (door colour, window boxes)
+        src: g.sprite === 'hut' && hut ? hut : gardenSprites[g.sprite],
         x: o.x + g.x,
         y: o.y + g.y,
         w: g.w,
@@ -596,6 +599,7 @@ export function AtlasWalk({
   const reduced = useReducedMotion();
   const active = useAppActive();
   const player = useGame((s) => s.player);
+  const hutLook = useGame((s) => s.hutLook);
   const hour = new Date(useGame((s) => s.now)).getHours();
   const night = hour < 6 || hour >= 21;
   // the light of the hour (as on the garden screen): blue at night, warm at dusk, a
@@ -891,7 +895,7 @@ export function AtlasWalk({
         gaps.push({ col, row });
     }
   const drawables = [
-    ...near.flatMap((t) => tileDrawables(region, t)),
+    ...near.flatMap((t) => tileDrawables(region, t, hutImages[hutImageKey(hutLook)])),
     ...(extras ?? []).map((e) => ({ ...e, sprite: `extra:${e.key}` })),
   ];
   // behind a building or a big tree, the companion's outline shows through (a flyer's box

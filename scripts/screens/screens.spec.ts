@@ -91,9 +91,7 @@ async function prepare(page: Page, screen: Screen) {
       break;
     case 'missions':
       await click(page, page.getByRole('tab', { name: /^MISSIONS/ }));
-      await expect(
-        page.getByRole('heading', { name: 'BEYOND THE GARDEN GATE', exact: true }),
-      ).toBeVisible();
+      await expect(page.getByRole('heading', { name: 'THE VALLEY', exact: true })).toBeVisible();
       break;
     case 'shop':
       await click(page, page.getByRole('tab', { name: /^SHOP/ }));

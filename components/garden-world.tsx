@@ -32,6 +32,7 @@ import {
   GARDEN,
   gardenAnchors,
   gardenHotspots,
+  gardenHutPaths,
   gardenWater,
   gardenObjects,
   gardenOrchard,
@@ -58,7 +59,8 @@ import {
 } from '@/lib/garden-path';
 import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
 import { hiddenBehind } from '@/lib/occlusion';
-import { areaOf, decorBox, walkWithDecor, type DecorPlacement } from '@/lib/decor';
+import { areaOf, decorBox, hutImageKey, walkWithDecor, type DecorPlacement } from '@/lib/decor';
+import { hutImages, hutPathImages } from '@/lib/garden-hut-assets';
 import { decorImages } from '@/lib/decor-assets';
 import { useUi } from '@/lib/ui';
 import {
@@ -1061,6 +1063,19 @@ export function GardenWorld({
   useEffect(() => {
     setGardenWalk(walkWithDecor(gardenWalk, gardenDecor));
   }, [gardenDecor]);
+  // the hut as chosen while decorating: its door, window boxes and path (lib/decor.ts);
+  // every look has the same size and footprint, so only the images change
+  const hutLook = useGame((s) => s.hutLook);
+  const objectSprites = useMemo<Record<string, ImageSourcePropType>>(
+    () => ({ ...sprites, hut: hutImages[hutImageKey(hutLook)] ?? hutImg }),
+    [hutLook],
+  );
+  const flagstones = snapRect({
+    left: gardenHutPaths.flagstones.x * scale,
+    top: gardenHutPaths.flagstones.y * scale,
+    width: gardenHutPaths.flagstones.w * scale,
+    height: gardenHutPaths.flagstones.h * scale,
+  });
   const hidden = !napping && hiddenBehind(OCCLUDERS, feet);
   const ghostFade = useSharedValue(0);
   useEffect(() => {
@@ -1335,6 +1350,20 @@ export function GardenWorld({
               />
             );
           })}
+          {hutLook.path === 'flagstones' && (
+            // the hut's path laid with flagstones, over the earth path baked in the ground
+            <Image
+              source={hutPathImages.flagstones}
+              resizeMode="stretch"
+              style={{
+                position: 'absolute',
+                left: flagstones.left,
+                top: flagstones.top,
+                width: flagstones.width,
+                height: flagstones.height,
+              }}
+            />
+          )}
           {destination && !napping && active && (
             <View
               style={{
@@ -1412,7 +1441,12 @@ export function GardenWorld({
           const art = billboard(proj, o.x, o.y, o.w, o.h);
           const px1 = scale * art.f; // one art pixel on screen at this depth
           const sprite = (
-            <Sprite key={o.id} source={sprites[o.sprite]} rect={snapRect(art)} z={o.y + o.h} />
+            <Sprite
+              key={o.id}
+              source={objectSprites[o.sprite]}
+              rect={snapRect(art)}
+              z={o.y + o.h}
+            />
           );
           if (!o.action)
             return (
@@ -1446,7 +1480,7 @@ export function GardenWorld({
             <>
               <Image
                 key={`${o.id}-image`}
-                source={sprites[o.sprite]}
+                source={objectSprites[o.sprite]}
                 resizeMode="stretch"
                 style={{
                   position: 'absolute',
