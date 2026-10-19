@@ -12,7 +12,222 @@ from zones import *  # noqa: F401,F403  (zones.py registers itself under that na
 from zones import _decal, _rgb  # noqa: F401
 import ground  # noqa: F401
 
-__all__ = ['town', 'harbour', 'headland', 'riverside', 'park', 'ridge', 'halt', 'woodland', 'sea_cliffs']
+__all__ = ['town', 'harbour', 'headland', 'riverside', 'park', 'ridge', 'halt', 'woodland']
+
+
+# ---------------------------------------------------------------------------------------
+# Natural shapes and small living things drawn into the ground (docs/vision/art-faults.md,
+# rules 3, 9 and 11: no perfect shapes in nature, every surface has its material, drawn
+# to the detail target from the first draw). Each is lit from the upper left and sits on
+# the ground with a contact shadow.
+# ---------------------------------------------------------------------------------------
+LEAF = MATERIALS['leaf']
+WTR = MATERIALS['water']
+FOAM = '#EEF5F8'
+
+
+def blob(cx: float, cy: float, rx: float, ry: float, seed: int = 0, rough: float = 0.18) -> set:
+    """An organic closed shape: an ellipse whose radius wanders with the angle in a few
+    slow lobes, so ponds, clearings and rocks never read as a drawn ellipse."""
+    ph = [noise2(seed, k, 771) * 6.283 for k in range(4)]
+    pts = set()
+    span = 1 + rough * 1.3
+    for y in range(int(cy - ry * span) - 2, int(cy + ry * span) + 3):
+        for x in range(int(cx - rx * span) - 2, int(cx + rx * span) + 3):
+            dx, dy = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+            a = math.atan2(dy, dx)
+            r = 1 + rough * (0.55 * math.sin(2 * a + ph[0]) + 0.35 * math.sin(3 * a + ph[1])
+                             + 0.2 * math.sin(5 * a + ph[2]) + 0.1 * math.sin(8 * a + ph[3]))
+            if dx * dx + dy * dy <= r * r:
+                pts.add((x, y))
+    return pts
+
+
+def edge_of(mask: set) -> set:
+    return {(x, y) for (x, y) in mask if any((x + dx, y + dy) not in mask for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))}
+
+
+def contact(cv: Canvas, cx: float, cy: float, rx: float, ry: float):
+    """A hard contact shadow on the ground, offset down and right."""
+    style.cast_shadow(cv, cx + 1, cy + 1, rx, ry)
+
+
+def boulder(cv: Canvas, cx: float, base: float, w: float, h: float, seed: int, moss: bool = True,
+            ramp=None) -> set:
+    """One stone lying on the ground: a lumpy mass with a lit top plane, a mid front, a
+    dark right flank and base, a crack or two and moss on its top (style.facet_stone),
+    on its own contact shadow. Returns its pixels."""
+    ramp = ramp or STONE
+    pts = blob(cx, base - h / 2, w / 2, h / 2, seed=seed, rough=0.16)
+    pts = {(x, y) for (x, y) in pts if y < base}
+    contact(cv, cx + 1, base - 1, w / 2 + 1, max(2, h / 5))
+    style.facet_stone(cv, pts, ramp, moss=LEAF if moss else None, seed=seed)
+    return pts
+
+
+def outcrop(cv: Canvas, stones, seed: int = 0, moss: bool = True) -> set:
+    """Several boulders heaped together, drawn back to front, with dark crevices
+    between them: a rock face with form rather than a dithered oval.
+    `stones` are (cx, base, w, h)."""
+    pts = set()
+    for i, (cx, base, w, h) in enumerate(sorted(stones, key=lambda s: s[1])):
+        pts |= boulder(cv, cx, base, w, h, seed + i * 7, moss=moss)
+    return pts
+
+
+def fern(cv: Canvas, x: int, y: int, seed: int = 0, size: float = 1.0):
+    """A fern growing from (x, y): seven arching fronds fanning up and out, each a
+    spine with paired leaflets shrinking to its tip; the upper leaflets lit, the lower
+    ones in shade, the back fronds darker, on a small shadow."""
+    contact(cv, x + 1, y, 6 * size, 2)
+    fronds = [(-160, 0.7, 1), (-20, 0.7, 1), (-125, 1.0, 2), (-55, 1.0, 2), (-100, 0.95, 3), (-78, 0.9, 3),
+              (-140, 0.8, 3), (-38, 0.8, 3)]
+    for k, (deg, ln, tier) in enumerate(fronds):
+        a = math.radians(deg + (noise2(seed, k, 781) - 0.5) * 16)
+        L = (8 + noise2(seed, k, 782) * 3) * ln * size
+        steps = int(L * 1.6)
+        for s in range(steps):
+            t = s / max(1, steps - 1)
+            px = x + math.cos(a) * L * t
+            py = y + math.sin(a) * L * t + 5 * size * t * t * (0.6 if abs(math.cos(a)) > 0.5 else 0.3)
+            ix, iy = int(round(px)), int(round(py))
+            cv.set(ix, iy, LEAF[1 + (tier > 1)])
+            if s % 2 == 0 and t < 0.92:
+                leaf = max(1, int((1 - t) * 3 * size + 0.5))
+                nx, ny = -math.sin(a), math.cos(a)
+                for side in (-1, 1):
+                    for q in range(1, leaf + 1):
+                        lx, ly = int(round(px + nx * q * side)), int(round(py + ny * q * side - q * 0.4))
+                        up = (ny * side) < 0  # this leaflet faces up, toward the light
+                        c = LEAF[min(4, tier + 1)] if up else LEAF[max(1, tier - 1)]
+                        if up and q == leaf and tier == 3:
+                            c = LEAF[4]
+                        cv.set(lx, ly, c)
+    cv.set(x, y, LEAF[0]); cv.set(x + 1, y, LEAF[0])
+
+
+def mushroom(cv: Canvas, x: int, y: int, size: int, seed: int = 0, cap=('#7A2A26', '#B0403A', '#D45E4A', '#F08A6E')):
+    """A toadstool standing at (x, y): a pale stem, a domed cap lit on its upper left
+    with white spots, a dark gill line under the rim and a contact shadow."""
+    contact(cv, x + 1, y, size * 0.7 + 1, 1)
+    hgt = size + 1
+    for k in range(hgt):
+        cv.set(x, y - k, '#E8DCC8' if k < hgt - 1 else '#C9B89C')
+        if size > 2:
+            cv.set(x + 1, y - k, '#C9B89C')
+    top = y - hgt
+    rx = size * 0.8 + 0.6
+    for dy in range(-size // 2 - 1, 1):
+        for dx in range(-int(rx) - 1, int(rx) + 2):
+            if (dx / (rx + 0.3)) ** 2 + (dy / (size / 2 + 0.8)) ** 2 <= 1:
+                lit = dx < 0 and dy < -size // 4
+                c = cap[3] if lit and dx < -1 else cap[2] if dx <= 0 else cap[1]
+                if dy == 0:
+                    c = cap[0]
+                cv.set(x + dx + (size > 2) // 2, top + dy, c)
+    if size >= 2:
+        cv.set(x - 1, top - size // 2, '#F7F2E8')
+        if size >= 3:
+            cv.set(x + 1 + (seed % 2), top - 1, '#F7F2E8')
+
+
+def waterfall(cv: Canvas, x0: int, w: int, y0: int, y1: int, seed: int = 0):
+    """A narrow fall of water from a lip at y0 to a pool at y1: a lit curl over the lip,
+    streaks running down (lighter on the left, toward the light), a darker right edge,
+    and white water where it lands."""
+    for y in range(y0, y1):
+        for x in range(x0, x0 + w):
+            f = (x - x0) / max(1, w - 1)
+            c = WTR[3] if f < 0.7 else WTR[2]
+            if f < 0.2:
+                c = WTR[4]
+            run = (y - y0 + int(noise2(x, seed, 783) * 9)) % 7
+            if 0.2 <= f < 0.7 and run < 3:
+                c = WTR[4] if (x + seed) % 2 else FOAM
+            if f >= 0.85:
+                c = WTR[1]
+            cv.set(x, y, c)
+    cv.hline(x0 - 1, y0, w + 2, WTR[4]); cv.hline(x0, y0 - 1, w, FOAM)
+    for k in range(w + 6):  # where it lands: white water in a broken crescent
+        xx = x0 - 3 + k
+        cv.set(xx, y1 + (k % 3 == 0), FOAM if k % 4 else WTR[4])
+        if 1 < k < w + 4:
+            cv.set(xx, y1 + 1 + (k % 2), WTR[4])
+    for k in range(4):  # spray
+        cv.set(x0 - 4 + k * (w + 6) // 3, y1 - 2 - (k % 2), FOAM)
+
+
+def water_body(cv: Canvas, water: set, deep=None, seed: int = 0, glints: int = 40):
+    """Still or slow water in an organic shape: a dark band under its near (north) bank
+    where the bank casts its shadow, deeper colour toward the middle, short highlights
+    on the open water and a lit wet edge along the far (south) bank."""
+    deep = deep or set()
+    for (x, y) in water:
+        c = WTR[1] if (x, y) in deep else WTR[2]
+        if (x, y) in deep and smooth_noise(x, y, 7, seed + 1) > 0.66:
+            c = WTR[2]
+        if (x, y - 1) not in water or (x, y - 2) not in water:
+            c = WTR[0]
+        elif (x, y - 3) not in water and (x + y) % 2:
+            c = WTR[1]
+        cv.set(x, y, c)
+    for (x, y) in water:
+        if (x, y + 1) not in water and (x, y - 3) in water:
+            cv.set(x, y, WTR[3])  # the wet edge catching the light
+    for i in range(glints):
+        x = int(noise2(i, seed, 784) * 400)
+        y = int(noise2(seed, i, 785) * 700)
+        if all((x + t, y) in water and (x + t, y - 3) in water and (x + t, y + 2) in water for t in range(-1, 5)):
+            cv.hline(x, y, 3 + (i % 2), WTR[3])
+            if i % 3 == 0:
+                cv.set(x + 1, y, WTR[4])
+
+
+def bank(cv: Canvas, water: set, keep=frozenset(), seed: int = 0, sandy: bool = False):
+    """The ground round water: on the far (south) side a lit lip of earth or sand
+    dropping to the water; on the near (north) side the turf overhangs as a dark lip
+    with a mossy shadow; pebbles and the odd reed clump at the waterline."""
+    ring = set()
+    for (x, y) in water:
+        for dx, dy in ((0, -1), (0, -2), (0, 1), (0, 2), (-1, 0), (1, 0), (-2, 0), (2, 0)):
+            q = (x + dx, y + dy)
+            if q not in water and q not in keep:
+                ring.add(q)
+    for (x, y) in ring:
+        below_water = any((x, y + k) in water for k in (1, 2))
+        above_water = any((x, y - k) in water for k in (1, 2))
+        if below_water:  # the north bank: turf breaking over the water
+            c = G[1] if (x, y + 1) in water else G[2]
+            if (x, y + 1) in water and noise2(x, y, seed + 786) > 0.6:
+                c = LEAF[1]
+        elif above_water:  # the south bank: a lit lip of earth or sand
+            c = (SAND_R[2] if (x, y - 1) in water else SAND_R[1]) if sandy else (SOIL_R[5] if (x, y - 1) in water else SOIL_R[4])
+        else:
+            c = SOIL_R[4] if not sandy else SAND_R[1]
+        cv.set(x, y, c)
+    for (x, y) in ring:
+        if noise2(x, y, seed + 787) > 0.965 and (x, y - 1) in water:
+            detail.pebble(cv, x, y, STONE, big=noise2(x, y, seed + 788) > 0.5)
+    return ring
+
+
+SAND_R = MATERIALS['sand']
+SOIL_R = MATERIALS['soil']  # (earth banks: kept off the path colours, so the lint reads them as ground)
+
+
+def reeds(cv: Canvas, x: int, y: int, seed: int = 0, n: int = 6):
+    """A clump of reeds standing in the shallows: blades of different heights, lit on
+    the left, two brown seed heads."""
+    for k in range(n):
+        bx = x + k * 2 - n + int(noise2(seed, k, 789) * 2)
+        h = 6 + int(noise2(k, seed, 790) * 6)
+        lean = 1 if k > n // 2 else -1 if k < n // 3 else 0
+        for t in range(h):
+            xx = bx + (lean if t > h * 0.6 else 0)
+            cv.set(xx, y - t, LEAF[3] if k % 2 == 0 and t > 1 else LEAF[2] if t > 1 else LEAF[1])
+        if k in (1, n - 2):
+            cv.vline(bx + lean, y - h - 2, 3, WOOD[1]); cv.set(bx + lean, y - h - 2, WOOD[2])
+    cv.hline(x - n, y + 1, 2 * n, WTR[3])
 
 
 def town(frame: int = 0):
@@ -54,7 +269,7 @@ def town(frame: int = 0):
     for k in range(26):
         a = 2 * math.pi * k / 26
         detail.pebble(cv, int(rcx + 54 * math.cos(a)), int(rcy + 26 * math.sin(a)), STONE, big=k % 2 == 0)
-    for fb in ((258, 196, 40, 16, 2), (200, 452, 40, 16, 1), (200, 500, 40, 16, 3)):
+    for fb in ((258, 196, 40, 16, 2),):  # a planter by the red house's door
         meadow.flower_planter(cv, *fb)
     objects = [
         # the treeline either side of the road from the garden
@@ -77,9 +292,8 @@ def town(frame: int = 0):
         ('house-blue', 'house_blue', 236, 344), ('pot-hb', 'potted_plant', 238, 418),
         # the ring and its spectators
         ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 130, 440),
-        # hedges either side of the road south, and framing trees
-        ('hedge-s1', 'hedge', 4, 548), ('hedge-s3', 'hedge', 192, 548),
-        ('tree-w1', 'tree', 2, 196), ('tree-e1', 'tree', 252, 470),
+        # trees framing the road south (no hedge along the border: open land runs on)
+        ('tree-s1', 'tree_small', 20, 500), ('bush-s2', 'bush', 214, 534), ('tree-w1', 'tree', 2, 196), ('tree-e1', 'tree', 252, 470),
         ('bush-e2', 'bush', 286, 228), ('bush-w4', 'bush', 196, 416),
         ('bunting', 'bunting', 60, 238), ('cat', 'cat', 182, 352),
     ]
@@ -91,224 +305,438 @@ def town(frame: int = 0):
     return cv, objects, stands
 
 
+def west_shore(y: int) -> int:
+    """Where Driftwood's west shore runs (harbour x): the open sea lies west of it, past
+    the valley's edge, and the land rises from it in rocks."""
+    return int(min(y / 2, 7) + smooth_noise(0, y, 17, 941) * 7 + (smooth_noise(1, y, 5, 942) - 0.5) * 2)
+
+
+def shore_rocks(cv: Canvas, line, seed: int = 0, step: int = 11) -> set:
+    """Boulders along a rocky shore, `line` being (x, y) points on the waterline: big
+    ones and small ones in no order, some in pairs, a gap now and then where the
+    shingle shows, the surf working round their feet."""
+    pts = set()
+    i, k = 0, 0
+    while i < len(line):
+        x, y = line[i]
+        n = noise2(k, 0, seed)
+        big = n > 0.78
+        w = (16 + int(noise2(k, 1, seed) * 8)) if big else (7 + int(noise2(k, 1, seed) * 8))
+        h = (10 + int(noise2(k, 2, seed) * 4)) if big else (5 + int(noise2(k, 2, seed) * 4))
+        if noise2(k, 3, seed) > 0.12:
+            pts |= boulder(cv, x + w // 2 - 3 + int(noise2(k, 4, seed) * 6), y + h // 2, w, h, seed + k,
+                           moss=noise2(k, 5, seed) > 0.55)
+        if noise2(k, 6, seed) > 0.7:  # a small one beside it, further up the shore
+            pts |= boulder(cv, x + w + 2, y + 3, 6 + int(noise2(k, 7, seed) * 4), 4 + int(noise2(k, 8, seed) * 3), seed + k + 99, moss=False)
+        i += max(5, int(h * 0.9 + noise2(k, 9, seed) * 6))
+        k += 1
+    return pts
+
+
+def coast_top(gx: int) -> int:
+    """Where the sea cliffs' turf lip runs, in the valley's x (harbour 0-319, headland
+    320-639): low at Driftwood's east shore, swinging south round the Headland, and
+    turning down out through the Headland's bottom edge near its east side."""
+    x = gx - 320
+    n = (smooth_noise(gx, 0, 9, 951) - 0.5) * 8 + (smooth_noise(gx, 3, 31, 952) - 0.5) * 10
+    if x < 0:
+        return 300 + int(n * 0.4)
+    if x < 120:
+        u = x / 120
+        return int(300 + 172 * u * u * (3 - 2 * u) + n * (0.4 + u))
+    if x < 250:
+        return int(472 + math.sin(x / 23) * 8 + n)
+    return int(472 + (x - 250) * 1.9 + n)
+
+
+def coast_height(gx: int) -> int:
+    return 22 + int(smooth_noise(gx, 1, 18, 953) * 14)
+
+
+BREAKWATER = [(172, 470), (200, 458), (236, 440), (262, 416), (282, 392)]
+
+
+@functools.lru_cache(maxsize=1)
+def _coast_cells():
+    """How far the sea off Driftwood and the Headland lies from land, on a 4 px grid in
+    the valley's x (0-639), measured from one outline of both zones' shores, so the
+    water deepens the same way on both sides of their border."""
+    from collections import deque
+    C = 4
+    cw, ch = 640 // C, H // C
+    land = set()
+    for gx in range(0, 640, 2):  # the cliffs' feet, and the land above them
+        if gx >= 292:
+            foot = coast_top(gx) + coast_height(gx)
+            for y in range(0, min(H, foot), C):
+                land.add((gx // C, y // C))
+    for y in range(0, H, 2):
+        bx = int(100 - (y - 296) * 0.26 - math.sin((y - 296) / 70) * 12) if y >= 296 else 100
+        for x in range(0, bx, C):
+            land.add((x // C, y // C))
+    for x in range(0, 292, C):  # the quay and the village above it
+        for y in range(0, 306, C):
+            land.add((x // C, y // C))
+    for (x, y) in blob(16, 540, 62, 74, seed=972, rough=0.14):  # the west point
+        if x >= 0 and y < H:
+            land.add((x // C, y // C))
+    for (ax, ay), (bx, by) in zip(BREAKWATER, BREAKWATER[1:]):  # the breakwater and its root
+        for k in range(12):
+            land.add((int(ax + (bx - ax) * k / 12) // C, int(ay + (by - ay) * k / 12) // C))
+    for (x, y) in blob(294, 366, 22, 28, seed=0, rough=0.0):
+        land.add((x // C, y // C))
+    dist, q = {}, deque()
+    for c in land:
+        dist[c] = 0
+        q.append(c)
+    while q:
+        cx, cy = q.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (cx + dx, cy + dy)
+            if 0 <= n[0] < cw and 0 <= n[1] < ch and n not in dist:
+                dist[n] = dist[(cx, cy)] + 1
+                q.append(n)
+    return dist
+
+
+class coast_depth:
+    """Depth for one zone's sea, read from the shared outline (zone x + ox)."""
+    def __init__(self, ox: int):
+        self.ox = ox
+        self.cells = _coast_cells()
+
+    def __call__(self, x, y):
+        gx = x + self.ox
+        a = self.cells.get((gx // 4, y // 4), 0)
+        b = self.cells.get(((gx + 3) // 4, (y + 3) // 4), a)
+        return (a + b) * 2
+
+
+def jetty(cv: Canvas, x0: int, w: int, y0: int, y1: int, water: set, ladder: bool = True) -> set:
+    """A timber jetty out over the water: weathered planks laid across, a lit stringer
+    along its west side and a shaded one along its east, piles under its sides and its
+    end standing in rings of ripples, its shadow on the water, and a ladder down into
+    the water at its end. Returns the deck (walkable)."""
+    BL = MATERIALS['bleached']
+    deck = {(x, y) for x in range(x0, x0 + w) for y in range(y0, y1)}
+    for (x, y) in deck:
+        r = (y - y0) % 3
+        pk = (y - y0) // 3
+        t = 4 + (1 if noise2(pk, x0, 961) > 0.82 else -1 if noise2(pk, x0, 961) < 0.18 else 0)
+        c = detail.tone(BL, t + 1) if r == 0 else detail.tone(BL, t) if r == 1 else BL[1]
+        if r == 1 and noise2(x // 4, pk, 962) < 0.15:
+            c = detail.tone(BL, t - 1)
+        if x == x0:
+            c = BL[5] if r != 2 else BL[3]
+        elif x == x0 + w - 1:
+            c = BL[2] if r != 2 else BL[0]
+        if r == 1 and x in (x0 + 2, x0 + w - 3):
+            c = STONE[1]  # nails over the stringers
+        cv.set(x, y, c)
+    for y in range(y0 + 8, y1, 14):  # piles along each side, seen past the deck's edge
+        for (px, dx) in ((x0 - 1, -1), (x0 + w, 1)):
+            cv.vline(px, y, 5, WOOD[2] if dx < 0 else WOOD[1])
+            cv.set(px, y + 5, WTR[4]); cv.set(px + dx, y + 5, WTR[3])
+    for x in range(x0, x0 + w):  # the end: a beam, and piles going down into the water
+        cv.set(x, y1, BL[1]); cv.set(x, y1 + 1, WOOD[1] if x in (x0, x0 + 1, x0 + w - 2, x0 + w - 1) else WTR[0])
+        cv.set(x, y1 + 2, WOOD[0] if x in (x0, x0 + 1, x0 + w - 2, x0 + w - 1) else WTR[1])
+    for (px) in (x0, x0 + w - 2):
+        cv.hline(px - 1, y1 + 3, 4, WTR[4])
+    if ladder:
+        lx = x0 + w // 2 - 2
+        for k in range(1, 8):
+            cv.set(lx, y1 + k, WOOD[3]); cv.set(lx + 4, y1 + k, WOOD[2])
+            if k % 2 == 0:
+                cv.hline(lx + 1, y1 + k, 3, WOOD[2])
+        cv.hline(lx - 1, y1 + 8, 7, WTR[3])
+    for y in range(y0, y1 + 3):  # the deck's shadow on the water, down and right
+        for x in range(x0 + w + 1, x0 + w + 4):
+            if (x, y) in water and (x, y) not in deck:
+                style.darken(cv, x, y)
+    return deck
+
+
+def breakwater(cv: Canvas, pts, seed: int = 0) -> set:
+    """A curving rubble breakwater: a capped wall of big dressed blocks, its walkway top
+    lit and jointed, its seaward face in courses, a round head, and a fringe of rough
+    armour boulders along its foot on the sea side. Returns everything it covers."""
+    cover = set()
+    line = []
+    for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+        n = int(max(abs(bx - ax), abs(by - ay)))
+        for k in range(n):
+            line.append((ax + (bx - ax) * k / n, ay + (by - ay) * k / n))
+    cy = {}
+    for (x, y) in line:
+        cy.setdefault(int(x), y)
+    xs = sorted(cy)
+    # armour boulders first along the seaward foot (behind the cap when drawn after)
+    for i, x in enumerate(xs[::9]):
+        y = cy[x]
+        cover |= boulder(cv, x + 4 + int(noise2(i, 0, seed) * 4), y + 18 + int(noise2(i, 1, seed) * 3),
+                         12 + int(noise2(i, 2, seed) * 8), 9 + int(noise2(i, 3, seed) * 4), seed + i, moss=False)
+    for x in xs:
+        y = int(cy[x])
+        for yy in range(y - 4, y + 4):  # the cap's top: big slabs, jointed
+            j = (x + (0 if ((yy - y + 4) // 4) % 2 else 6)) % 12
+            c = STONE[4] if yy == y - 4 else STONE[3] if j else STONE[1]
+            if (yy - y + 4) % 4 == 3 and j:
+                c = STONE[2]
+            cv.set(x, yy, c)
+            cover.add((x, yy))
+        for k in range(8):  # the seaward face in courses
+            yy = y + 4 + k
+            c = STONE[2] if (x + (k // 4) * 5) % 10 else STONE[0]
+            if k % 4 == 3:
+                c = STONE[0]
+            if k >= 6:
+                c = STONE[1] if k == 6 else '#2E4A3A'
+            cv.set(x, yy, c)
+            cover.add((x, yy))
+        cv.set(x, y - 5, STONE[1])  # the lip on the harbour side, lapped by the water
+        cover.add((x, y - 5))
+    hx, hy = xs[0], cy[xs[0]]  # the head: a round drum
+    head = blob(hx, hy, 11, 8, seed=seed + 50, rough=0.04)
+    for (x, y) in head:
+        cv.set(x, y, STONE[4] if (x - hx) + (y - hy) < -6 else STONE[3] if (x - hx) < 4 else STONE[2])
+    for x in range(int(hx) - 11, int(hx) + 12):
+        bot = max((yy for (xx, yy) in head if xx == x), default=None)
+        if bot is None:
+            continue
+        for k in range(1, 9):
+            cv.set(x, bot + k, STONE[2] if k < 4 else STONE[1] if k < 7 else '#2E4A3A')
+            cover.add((x, bot + k))
+    cover |= head
+    return cover
+
+
 def harbour(frame: int = 0):
     """Driftwood Harbour: the road from Crossroads Town comes down between whitewashed
-    cottages to a stone quay and the fish market; wooden jetties run out into a basin
-    sheltered by a curving breakwater with the lighthouse on its tip; a sandy beach
-    with rock pools and drying nets lies to the west; the cliff path climbs away east
-    toward Hearthold Castle. The open sea lies beyond the breakwater."""
-    SAND, WTRm = MATERIALS['sand'], MATERIALS['water']
+    cottages to a stone quay and the fish market. Two timber jetties run out from the
+    quay with boats moored at their ends and ladders down to the water; a curving
+    breakwater of big blocks reaches out from the eastern rocks to shelter the basin;
+    across the mouth, the lighthouse stands on the rocks of the west point, where the
+    beach of drying nets and rock pools ends. The cliff path climbs away east to the
+    Headland. Past the breakwater the sea opens to the south."""
     BLEACHED = MATERIALS['bleached']
     cv = Canvas(W, H)
     ground.valley(cv, 'harbour', frame)  # one turf across the valley (ground.py)
-    # the water: the basin and the sea, deeper away from the shore
-    shore_y = lambda x: 300 + int(math.sin(x / 40) * 4)  # noqa: E731  (the quay line)
-    beach = {(x, y) for x in range(0, 130) for y in range(240, H) if x < 124 - (y - 240) * 0.38 + int(noise2(y // 9, 0, 291) * 6)}
-    water = {(x, y) for y in range(H) for x in range(W) if y > shore_y(x) + 6 and (x, y) not in beach}
+    QX0, QX1, QY0, QY1 = 96, 272, 226, 296  # the quay's paved top
+    # the shore: the beach's waterline curves from the slipway to the west point; past
+    # the quay the eastern rocks rise to the sea cliffs that run on round the Headland
+    def beach_x(y):
+        return int(100 - (y - 296) * 0.26 - math.sin((y - 296) / 70) * 12 + (smooth_noise(0, y, 12, 971) - 0.5) * 6)
+    point = {(x, y) for (x, y) in blob(16, 540, 62, 74, seed=972, rough=0.14) if x >= west_shore(y) + 2 and y < H + 8}
+    sand_top = {x: 214 + int((smooth_noise(x, 0, 16, 973) - 0.5) * 14) for x in range(W)}
+    beach = {(x, y) for y in range(200, H) for x in range(west_shore(y) + 2, QX0 + 8) if y >= sand_top[x] and (y < 296 or x <= beach_x(y))} - point
+    cliff_t = {x: coast_top(x) for x in range(292, W)}
+    cliff_h = {x: coast_height(x) for x in range(292, W)}
+    water = {(x, y) for y in range(H) for x in range(0, west_shore(y))}  # the open sea off the west shore
+    for y in range(QY1 + 9, H):
+        for x in range(W):
+            if (x, y) in beach or (x, y) in point:
+                continue
+            if x >= 292 and y < cliff_t[x] + cliff_h[x]:
+                continue
+            if 272 <= x < 292 and y < 318 - (x - 272) // 4:
+                continue
+            water.add((x, y))
+    # the sand: dry and pale up the beach, darker and wet at the waterline, ripples
     for (x, y) in beach:
-        n = smooth_noise(x, y, 6, 292)
-        cv.set(x, y, SAND[2] if n > 0.35 or (n > 0.3 and (x + y) % 2) else SAND[1])
-        if noise2(x, y, 299) > 0.97:
-            cv.set(x, y, MATERIALS['stone'][3])  # a shell or a pebble
-    for (x, y) in water:
-        depth = (y - shore_y(x)) / 230 + smooth_noise(x, y, 40, 300) * 0.35
-        n = smooth_noise(x, y, 12, 293 + frame)
-        band = 2 if depth < 0.42 else 1 if depth < 0.8 else 0
-        if (0.38 < depth < 0.46 or 0.76 < depth < 0.84) and (x + y) % 2:
-            band = max(0, band - 1) if depth < 0.5 else band
-        c = WTRm[band]
-        if n > 0.72:
-            c = WTRm[band + 1]
+        n = smooth_noise(x, y, 7, 974)
+        c = SAND_R[2] if n > 0.42 else SAND_R[1]
+        wet = any((x + d, y) in water for d in (1, 2, 3, 4)) or any((x + d, y + 3) in water for d in (1, 3))
+        if wet:
+            c = SAND_R[0] if (x + y) % 3 else SAND_R[1]
+        elif y > 300 and (y + int(math.sin(x / 6) * 2)) % 7 == 0 and n < 0.6:
+            c = SAND_R[1]  # the ripples the tide left
         cv.set(x, y, c)
-    for (x, y) in water:  # foam along the beach
-        if any((x + dx, y + dy) in beach for dx, dy in ((-1, 0), (0, -1), (-2, 0), (0, -2))):
-            cv.set(x, y, WTRm[4] if (x + y + frame) % 3 else WTRm[3])
-    for ty in range(300, H, 6):  # ripples
-        for tx in range(0, W, 8):
-            x, y = tx + int(noise2(tx, ty, 294) * 6), ty + int(noise2(tx, ty, 295) * 4)
-            if (x, y) in water and (x + 4, y) in water and noise2(tx, ty, 296) < 0.45:
-                cv.hline(x + (frame if noise2(tx, ty, 297) < 0.4 else 0), y, 3, WTRm[3])
-    # rock pools on the beach
-    for (px, py) in ((30, 320), (52, 352), (20, 400)):
-        for (x, y) in oval(px, py, 8, 4):
-            cv.set(x, y, WTRm[2] if (x, y - 1) in oval(px, py, 8, 4) else MATERIALS['stone'][3])
-        for k in range(6):
-            detail.pebble(cv, px - 9 + int(noise2(k, px, 298) * 18), py - 5 + int(noise2(k, py, 298) * 10), MATERIALS['stone'], big=k % 2 == 0)
-    # the quay: dressed stone with a lit edge and a face down to the water
-    quay = {(x, y) for x in range(100, 296) for y in range(232, shore_y(x) + 6)}
+    for (x, y) in beach:  # the turf's edge onto the sand: dune grass in tufts
+        if y == sand_top[x]:
+            cv.set(x, y - 1, G[1])
+            if noise2(x, y, 975) > 0.5:
+                detail.grass_tuft(cv, x, y + 1, int(noise2(x, 0, 976) * 6), G, 2)
+        elif noise2(x // 3, y // 3, 977) > 0.985:
+            cv.set(x, y, '#F2EEE2'); cv.set(x + 1, y, SAND_R[0])  # a shell
+    # rock pools left by the tide, each a ring of stones round still water
+    pools = set()
+    for (px, py, rx, ry, sd) in ((34, 330, 11, 5, 1), (58, 402, 8, 4, 2), (32, 438, 9, 4, 3)):
+        pool = blob(px, py, rx, ry, seed=978 + sd, rough=0.25)
+        for (x, y) in pool:
+            cv.set(x, y, WTR[0] if (x, y - 1) not in pool else WTR[2] if (x + y) % 5 else WTR[3])
+        for (x, y) in edge_of(pool):
+            if (x, y - 1) not in pool:
+                cv.set(x, y, WTR[0])
+        for k, (x, y) in enumerate(sorted(edge_of(blob(px, py, rx + 2, ry + 2, seed=978 + sd, rough=0.25)))):
+            if k % 3 == 0:
+                detail.pebble(cv, x, y, STONE, big=k % 2 == 0)
+        pools |= pool
+    # the sea: calm inside the breakwater, surf on the beach and under the cliffs
+    calm = {(x, y) for (x, y) in water if y < 440 - max(0, 120 - x) and x > 80}
+    sea(cv, water, seed=979, calm=calm, depth=coast_depth(0), open_edges='ws')
+    west_rocks = shore_rocks(cv, [(west_shore(y), y) for y in range(-4, H, 1) if not (470 < y)], seed=943)
+    # the quay: dressed stone with a lit kerb and a front face in courses down to the
+    # water, a slipway down onto the beach at its west end, the eastern rocks at its east
+    quay = {(x, y) for x in range(QX0, QX1) for y in range(QY0, QY1)}
     worlds.paint_paving(cv, quay, seed=9)
-    bank = set()
-    for x in range(100, W):
-        y = shore_y(x) + 6
-        # past the quay the bank rises into the headland's sea cliff, as tall as the
-        # castle's at the border (world-rules.md: edges continue), so the cliff runs on
-        depth = 8 if x < 296 else 8 + (x - 296) * 18 // 23
-        if x >= 296:
-            y -= (x - 296) * 3 // 23
-        for k in range(depth):
-            if x < 296:  # the quay's dressed face
-                c = STONE[3] if k == 0 else STONE[2] if (x + (k // 3) * 4) % 8 else STONE[0]
-                if k > 5:
-                    c = MATERIALS['leaf'][1] if (x + k) % 3 else STONE[1]  # weed at the waterline
-            else:  # the cliff face, banded like the castle's
-                b = k + int(noise2(x // 6, 2, 322) * 3)
-                c = STONE[3] if (b // 5) % 2 else STONE[2]
-                if b % 5 == 0:
-                    c = STONE[4]
-                if k > depth - 4:
-                    c = STONE[1]
-                if k < 3:
-                    c = MATERIALS['grass'][4] if k == 0 else MATERIALS['grass'][1]
-            cv.set(x, y + k, c)
-            if x >= 296:
-                water.discard((x, y + k))
-                bank.add((x, y + k))
-        if x >= 296:  # foam at the cliff's foot
-            for k in range(depth, depth + 3):
-                if (x, y + k) in water:
-                    cv.set(x, y + k, WTRm[4] if (x + frame) % 3 else WTRm[3])
-    # the breakwater: big blocks curving round the basin to the lighthouse
-    bw = worlds.thick([(W + 6, 410), (260, 452), (200, 500), (130, 526), (92, 528)], 12, seed=15)
-    bw |= {(x, y) for (x, y) in disc(90, 530, 22)}  # the round platform under the lighthouse
-    for (x, y) in bw:
-        blk = ((x + (y // 7) % 2 * 5) // 10 + y // 7) % 3
-        c = STONE[3] if blk == 0 else STONE[2] if blk == 1 else STONE[4]
-        if (x + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
-            c = STONE[1]
-        if (x, y - 2) not in bw:
-            c = STONE[4]
-        cv.set(x, y, c)
-    for (x, y) in bw:
-        if (x, y + 1) not in bw and (x, y + 1) in water:
-            cv.set(x, y + 1, WTRm[4]); cv.set(x, y + 2, WTRm[3])
-    # wooden jetties out over the basin (walkable planks)
-    jetties = []
-    for (jx, jy0, jy1) in ((150, 296, 392), (236, 296, 372)):
-        deck = {(x, y) for x in range(jx, jx + 14) for y in range(jy0, jy1)}
-        for (x, y) in deck:
-            cv.set(x, y, BLEACHED[4] if (y % 4 == 0) else BLEACHED[3] if (x - jx) % 7 else BLEACHED[1])
-        for (x, y) in ((jx - 1, yy) for yy in range(jy0, jy1, 12)):
-            cv.set(x, y, WOOD[1]); cv.set(jx + 14, y, WOOD[1])
-        for y in range(jy0, jy1):  # the deck's shadow on the water
-            cv.set(jx + 14, y, WTRm[0]); cv.set(jx + 15, y, WTRm[1])
-        jetties.append(deck)
-    # the road down from the town and the lanes between the cottages
-    road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (150, 120), (170, 232)], 14, seed=16)
-    road |= worlds.thick([(160, 120), (60, 140), (20, 200)], 9, seed=17)
-    paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
-    cliff = worlds.thick([(W + 6, 110), (W - 12, 112)], 9) | worlds.thick([(W - 10, 112), (270, 130), (230, 180), (220, 232)], 9, seed=18)  # to the castle
-    paint_road(cv, cliff | {(x, y) for (x0, y) in cliff if x0 == W - 1 for x in range(W, W + 12)})
-    objects = [
-        ('cottage-1', 'cottage', 10, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 40, 150),
-        ('cottage-4', 'cottage_b', 236, 140), ('market', 'fish_stall', 108, 226), ('pots-1', 'lobster_pots', 196, 240),
-        ('nets-1', 'net_rack', 6, 236), ('nets-2', 'net_rack', 4, 300), ('anchor', 'anchor', 286, 240),
-        ('lighthouse', 'lighthouse', 68, 396), ('boat-1', 'boat_blue', 168, 330), ('boat-2', 'boat_red', 254, 340),
-        ('boat-3', 'boat_blue', 186, 420), ('bollard-1', 'bollard', 140, 290), ('bollard-2', 'bollard', 226, 290),
-        ('bollard-3', 'bollard', 290, 290), ('pots-2', 'lobster_pots', 286, 206),
-        ('upturned', 'upturned_boat', 8, 400), ('washing', 'washing_line', 110, 90), ('buoy-1', 'buoy', 120, 450),
-        ('buoy-2', 'buoy', 300, 380), ('chair-1', 'deck_chair', 10, 348), ('chair-2', 'deck_chair_b', 32, 354),
-        ('drift', 'driftwood', 6, 452), ('sail', 'sailboat', 262, 496),
-    ]
-    # a rock pool on the lower beach: dark stones round a little pool of sky
-    for (x, y) in oval(30, 506, 14, 6):
-        d = math.hypot((x - 30) / 14, (y - 506) / 6)
-        cv.set(x, y, WTRm[2] if d < 0.6 and (x + y) % 5 else WTRm[4] if d < 0.6 else STONE[3] if y < 506 else STONE[1])
-        if 0.6 <= d and noise2(x, y, 611) > 0.5:
-            cv.set(x, y, STONE[2])
-        water.add((x, y))
-    blocked = (water | bank) - set().union(*jetties)
-    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (157, 384), 'beach': (34, 380), 'castle': (300, 116)}
-    return cv, objects, stands, blocked
-
-
-def sea_cliffs(cv: Canvas, frame: int, edge_y):
-    """The headland's sea cliffs (shared by the Headland): below `edge_y(x)` a grass lip,
-    a banded stone face and then the sea, foamy at the cliff's foot, with glints on the
-    open water. Returns the sea and face pixels (blocked)."""
-    WTRm, STONEm = MATERIALS['water'], MATERIALS['stone']
-    sea = set()
-    for x in range(W):
-        e = edge_y(x)
-        for y in range(e, H):
-            k = y - e
-            if k < 3:
-                c = MATERIALS['grass'][4] if k == 0 else MATERIALS['grass'][1]
-            elif k < 26:
-                band = (k + int(noise2(x // 6, 2, 322) * 3)) // 5
-                c = STONEm[3] if band % 2 else STONEm[2]
-                if (k + int(noise2(x // 6, 2, 322) * 3)) % 5 == 0:
-                    c = STONEm[4]
-                if k > 22:
-                    c = STONEm[1]
-            else:
-                n = smooth_noise(x, y, 10, 323 + frame)
-                depth = k - 26 + int(n * 18)
-                c = WTRm[2] if depth < 30 or (depth < 38 and (x + y) % 2) else WTRm[1]
-                if depth > 90 or (depth > 82 and (x + y) % 2):
-                    c = WTRm[0]
-                if n > 0.74:
-                    c = WTRm[min(4, WTRm.index(c) + 1)]
-                if k < 30:
-                    c = WTRm[4] if (x + frame) % 3 else WTRm[3]
-                elif k < 34 and (x + y) % 2:
-                    c = WTRm[3]
-                sea.add((x, y))
+    cv.hline(QX0, QY1 - 1, QX1 - QX0, STONE[4])
+    detail.stones(cv, QX0, QY1, QX1 - QX0, 8, STONE, seed=980, course=4, base=2)
+    cv.hline(QX0, QY1 + 8, QX1 - QX0, '#2E4A3A')
+    for x in range(QX0, QX1):  # weed and wet at the waterline
+        if (x + 1) % 3:
+            cv.set(x, QY1 + 7, STONE[1])
+    for y in range(QY0 + 2, QY1 + 9):  # the quay's west end: a stone slipway down onto the sand
+        for k in range(10):
+            x = QX0 - 10 + k
+            c = STONE[4] if (y - QY0) % 6 == 0 else STONE[3] if k < 7 else STONE[2]
+            if k == 0:
+                c = STONE[2]
             cv.set(x, y, c)
-            if 2 < k < 26:
-                sea.add((x, y))
-    for ty in range(300, H, 6):
-        for tx in range(0, W, 11):
-            x, y = tx + int(noise2(tx, ty, 324) * 6), ty + int(noise2(tx, ty, 325) * 3)
-            if (x, y) in sea and (x + 3, y) in sea and y - edge_y(min(W - 1, max(0, x))) > 36 and noise2(tx, ty, 326) < 0.45:
-                cv.hline(x, y, 3, WTRm[3])
-    return sea
+    for y in range(QY0 + 2, QY1 + 9):
+        cv.set(QX0 - 1, y, STONE[1])
+    for x in range(QX0, QX1):  # the kerb along the back
+        cv.set(x, QY0, STONE[1]); cv.set(x, QY0 + 1, STONE[4])
+    # the eastern rocks: boulders heaped from the quay's end up to the cliffs
+    rocks = outcrop(cv, [(280, 300, 22, 16), (296, 292, 20, 18), (276, 318, 18, 12), (306, 306, 16, 12),
+                         (288, 322, 16, 10), (270, 302, 12, 9)], seed=981, moss=True)
+    face = cliff(cv, cliff_t, cliff_h, seed=982)
+    # the breakwater reaches out from the cliff's foot round the basin
+    spur = outcrop(cv, [(298, 352, 26, 22), (288, 372, 22, 16), (306, 340, 14, 14), (276, 388, 16, 12),
+                        (300, 384, 18, 12)], seed=988, moss=True)  # rocks fallen from the cliff: the breakwater's root
+    bw = breakwater(cv, BREAKWATER, seed=983)
+    # the west point: a rocky knoll with pines on it, the lighthouse on its tip
+    for (x, y) in point:
+        n = smooth_noise(x, y, 9, 984)
+        cv.set(x, y, G[2] if n > 0.45 else G[1])
+    knoll = outcrop(cv, [(50, 530, 46, 20), (52, 488, 30, 20), (64, 512, 26, 22), (48, 540, 34, 24), (70, 560, 28, 20),
+                         (30, 474, 22, 14), (40, 572, 30, 16), (8, 478, 18, 12)], seed=985, moss=True)
+    for (x, y) in point:
+        if y < 470 and (x, y) not in knoll and noise2(x, y, 986) > 0.92:
+            detail.grass_tuft(cv, x, y, int(noise2(x, y, 987) * 6), G, 2)
+    # wooden jetties out over the basin, each ending at a moored boat and a ladder
+    decks = set()
+    decks |= jetty(cv, 146, 14, QY1 - 2, 392, water)
+    decks |= jetty(cv, 232, 14, QY1 - 2, 372, water)
+    # the road down from the town, the lanes to the cottages, the cliff path east
+    road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (152, 120), (166, 230)], 14, seed=16)
+    road |= worlds.thick([(154, 112), (100, 116), (64, 112)], 8, seed=17)  # to cottage 1's door
+    road |= worlds.thick([(160, 186), (116, 212), (84, 230)], 7, seed=18)  # down to cottage 3 and the beach
+    road |= worlds.thick([(158, 96), (210, 106), (290, 104), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path
+    road |= worlds.thick([(166, 200), (230, 222), (276, 222)], 7, seed=20)  # to cottage 4's door
+    paint_road(cv, (road - quay) | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
+               | {(x, y) for (x0, y) in road if x0 == W - 1 for x in range(W, W + 12)})
+    objects = [
+        ('cottage-1', 'cottage', 24, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 44, 150),
+        ('cottage-4', 'cottage_b', 236, 140),
+        # the washing line in cottage 1's yard, beside the house and clear of the lanes
+        ('washing', 'washing_line', 106, 40),
+        # the quay: the fish market, pots and the spare anchor by the chandler's corner
+        ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
+        ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
+        # the beach: nets drying, boats hauled up, chairs, driftwood
+        ('nets-1', 'net_rack', 16, 236), ('nets-2', 'net_rack', 16, 290), ('upturned', 'upturned_boat', 18, 386),
+        ('chair-1', 'deck_chair', 30, 344), ('chair-2', 'deck_chair_b', 50, 352), ('drift', 'driftwood', 40, 452),
+        # the boats: each at a jetty's end, one on its buoy in the basin, a sail beyond
+        ('boat-1', 'boat_blue', 162, 368), ('boat-2', 'boat_red', 248, 348), ('boat-3', 'boat_blue', 186, 412),
+        ('buoy-1', 'buoy', 252, 404), ('buoy-2', 'buoy', 112, 440), ('sail', 'sailboat', 238, 506),
+        # the lighthouse on the west point's rocks, lighting the harbour mouth
+        ('lighthouse', 'lighthouse', 30, 380),
+    ]
+    quay_face = {(x, y) for x in range(QX0, QX1) for y in range(QY1, QY1 + 9)}
+    blocked = (water | face | rocks | spur | bw | knoll | pools | west_rocks | quay_face) - decks
+    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (153, 384), 'beach': (34, 380), 'castle': (300, 116)}
+    return cv, objects, stands, blocked
 
 
 def headland(frame: int = 0):
     """The Headland, east of the harbour (Matt, 18 Oct: the castle moved to the fire
     country): the cliff path from the harbour comes in at the west edge and climbs the
-    open down to the lookout tower that watches the sea from the cliff top; sheep graze
-    behind a dry stone wall to the north, a bench looks out over the water, and the sea
-    cliffs drop away south and east to the breakwater's root at their foot. Wind-bent
-    and quiet: the valley's last place before the sea."""
-    STONEm = MATERIALS['stone']
+    open down to the lookout tower that watches the sea from the cliff top. Sheep graze
+    in a fold walled with dry stone, with a stile where the path passes; hives stand in
+    the lee of its wall. The path ends at a flagged viewpoint on the cliff's edge with
+    a bench beside it looking out to sea. The cliffs drop away south round the down,
+    and turn inland at its east side under the trees."""
     cv = Canvas(W, H)
     ground.valley(cv, 'headland', frame)  # one turf across the valley (ground.py)
-
-    def edge_y(x):
-        # the harbour's water meets the headland's west edge below y = 306 (seamless rule)
-        e = 470 + int(math.sin(x / 31) * 10 + noise2(x // 7, 0, 321) * 8) - max(0, (x - 260) * 2)
-        return min(e, 306 + int(x * 2.7)) if x < 60 else e
-    sea = sea_cliffs(cv, frame, edge_y)
-    # the harbour's breakwater runs on to its root against the cliff's foot
-    root = worlds.thick([(-8, 415), (24, 405)], 12)
-    for (x, y) in root:
-        blk = ((x + 8 + (y // 7) % 2 * 5) // 10 + y // 7) % 3
-        c = STONEm[3] if blk == 0 else STONEm[2] if blk == 1 else STONEm[4]
-        if (x + 8 + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
-            c = STONEm[1]
-        cv.set(x, y, c)
-    for (x, y) in root:
-        if (x, y + 1) not in root and (x, y + 1) in sea:
-            cv.set(x, y + 1, MATERIALS['water'][4]); cv.set(x, y + 2, MATERIALS['water'][3])
-    # the cliff path from the harbour up the down to the tower's steps, and a spur to
-    # the bench on the cliff top
-    path = worlds.thick([(-6, 110), (12, 112)], 9) | worlds.thick(
-        [(10, 112), (46, 150), (80, 222), (140, 300), (196, 368), (228, 412), (228, 424)], 9, seed=19)
-    path |= worlds.thick([(120, 274), (92, 330), (76, 400), (74, 440)], 6, seed=23)
+    top = {x: coast_top(x + W) for x in range(W)}
+    hgt = {x: coast_height(x + W) for x in range(W)}
+    sea_px = {(x, y) for x in range(W) for y in range(top[x] + hgt[x], H)}
+    sea(cv, sea_px, seed=991, depth=coast_depth(W))
+    face = cliff(cv, {x: t for x, t in top.items() if t < H}, {x: min(hgt[x], H - top[x]) for x in range(W) if top[x] < H}, seed=982)
+    # boulders fallen from the cliff, lying in the surf at its foot
+    talus = set()
+    for i, gx in enumerate(range(18, 300, 37)):
+        by = top[gx] + hgt[gx] + 4 + int(noise2(i, 0, 992) * 6)
+        if by < H - 4:
+            talus |= boulder(cv, gx + int(noise2(i, 1, 992) * 12), by, 10 + int(noise2(i, 2, 992) * 8), 7 + int(noise2(i, 3, 992) * 4), 993 + i, moss=False)
+    # the cliff path from the harbour up the down to the tower, then on to the viewpoint
+    path = worlds.thick([(-6, 110), (12, 112)], 8) | worlds.thick(
+        [(10, 112), (46, 150), (80, 222), (140, 300), (196, 368), (228, 412), (228, 424)], 8, seed=19)
+    path |= worlds.thick([(118, 280), (100, 340), (112, 404), (120, 430)], 6, seed=23)
+    path |= worlds.thick([(54, 168), (100, 162), (146, 146)], 5, seed=998)  # a spur from the path to the fold's gate
     paint_road(cv, path | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)})
+    view = blob(122, 440, 20, 9, seed=994, rough=0.1)  # the viewpoint: flags laid on the cliff top
+    worlds.paint_paving(cv, view, seed=995)
+    for (x, y) in edge_of(view):
+        cv.set(x, y, STONE[1] if (x, y + 1) not in view else STONE[4] if (x, y - 1) not in view else STONE[2])
+    # the sheep fold: a dry stone wall round a rough field on the down, open at a stile
+    fold = blob(214, 122, 84, 56, seed=996, rough=0.12)
+    wall = drystone_loop(cv, fold, gap=(136, 146, 8), seed=997)
     objects = [
         ('tower', 'lookout_tower', 198, 300),
-        ('wall-1', 'drystone_wall', 150, 70), ('wall-2', 'drystone_wall', 214, 70), ('wall-3', 'drystone_wall', 150, 190),
-        ('wall-end', 'stone', 284, 186),
-        ('sheep-1', 'sheep', 176, 110), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 204, 156),
-        ('hive-1', 'beehive', 112, 40), ('hive-2', 'beehive', 128, 52),
+        ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 210, 150),
+        ('sheep-4', 'sheep_left', 262, 92),
+        ('hive-1', 'beehive', 150, 186), ('hive-2', 'beehive', 172, 194),
         ('tree-w', 'tree_small', 10, 196), ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 30, 300),
-        ('bench', 'bench', 52, 410), ('stone-1', 'stone', 280, 400), ('stone-2', 'stone', 140, 440),
+        ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
+        # the down falls to trees on the east, running on into the woods beyond
+        ('pine-e1', 'pine', 290, 300), ('tree-e2', 'tree', 286, 380), ('pine-e3', 'pine', 300, 440),
     ]
-    blocked = set(sea)
-    stands = {'harbour': (14, 112), 'tower': (228, 430), 'bench': (74, 448), 'down': (150, 280)}
+    blocked = sea_px | face | wall | talus
+    stands = {'harbour': (14, 112), 'tower': (228, 430), 'bench': (124, 440), 'down': (150, 280), 'fold': (144, 146)}
     return cv, objects, stands, blocked
+
+
+def drystone_loop(cv: Canvas, field: set, gap=(0, 0), seed: int = 0) -> set:
+    """A dry stone wall round a field: rough stones of every size laid in two courses
+    with a row of upright coping stones, lit on their tops, dark in the joints, lichen
+    here and there, the turf growing up against its foot; `gap` is the stretch of its
+    length (in px, from its westmost point, clockwise) left open as a stile."""
+    ring = edge_of(field)
+    cx = sum(x for x, _ in ring) / len(ring)
+    cy = sum(y for _, y in ring) / len(ring)
+    order = sorted(ring, key=lambda p: math.atan2(p[1] - cy, p[0] - cx))
+    start = min(range(len(order)), key=lambda i: order[i][0])
+    order = order[start:] + order[:start]
+    if len(gap) == 3:  # (x, y, half-width): the gap where the wall passes nearest that point
+        gi = min(range(len(order)), key=lambda i: math.hypot(order[i][0] - gap[0], order[i][1] - gap[1]))
+        line = [p for i, p in enumerate(order) if min(abs(i - gi), len(order) - abs(i - gi)) > gap[2]]
+    else:
+        line = [p for i, p in enumerate(order) if not (gap[0] <= i < gap[1])]
+    top = set()
+    for (x, y) in line:
+        top |= {(x + dx, y + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+    wall = set(top)
+    for (x, y) in top:  # the wall's lit top: rough stones, two or three across
+        st = noise2(x // 3, y // 2, seed)
+        c = STONE[4] if st > 0.66 else STONE[3] if st > 0.25 else STONE[2]
+        if noise2(x, y, seed + 2) > 0.85:
+            c = STONE[1]  # a joint
+        cv.set(x, y, c)
+    for (x, y) in top:  # its face toward us where it runs across the slope: two courses
+        if (x, y + 1) in top:
+            continue
+        for k in range(1, 5):
+            st = (x // 4 + (k // 2) * 2 + int(noise2(x // 4, k // 2, seed) * 2)) % 3
+            c = STONE[1] if k == 4 else STONE[0] if st == 0 and k % 2 else STONE[2] if st == 1 else STONE[3] if k == 1 else STONE[2]
+            if k in (2, 3) and noise2(x, y + k, seed + 1) > 0.92:
+                c = '#B8B47A'  # lichen
+            cv.set(x, y + k, c)
+            wall.add((x, y + k))
+        style.darken(cv, x + 1, y + 5)
+        if noise2(x, y, seed + 3) > 0.7:
+            detail.grass_tuft(cv, x, y + 6, int(noise2(x, 1, seed) * 6), G, 2)
+    return wall
 
 
 def riverside(frame: int = 0):
@@ -390,9 +818,12 @@ def riverside(frame: int = 0):
         x, y = 14 + int(noise2(i, 0, 530) * 120), 30 + int(noise2(i, 1, 530) * 110)
         col = ('#F2D27A', '#E8A0BC', '#FFFFFF', '#B8A0E8')[i % 4]
         cv.set(x, y, col); cv.set(x, y + 1, '#447A50')
-    for (x, y) in oval(206, 100, 52, 40):  # the pasture grazed short
-        if (x + y) % 3 == 0:
-            cv.set(x, y, '#8EB86A')
+    fold = blob(206, 104, 64, 50, seed=1201, rough=0.12)
+    for (x, y) in fold:  # the pasture grazed short
+        n = smooth_noise(x, y, 6, 1202)
+        if n > 0.62 or (n > 0.55 and (x // 2 + y // 2) % 2):
+            cv.set(x, y, G[3])  # grazed short in patches, the sheep's favourite spots
+    fold_wall = drystone_loop(cv, fold, gap=(170, 156, 7), seed=1203)  # its gate faces the mill lane
     objects = [
         ('mill', 'water_mill', 140, top[220] - 96 + 6), ('willow-1', 'willow', 70, 330), ('willow-2', 'willow', 230, 360),
         ('reeds-1', 'reeds', 110, int(centre(120) + half(120)) - 24), ('reeds-2', 'reeds', 280, int(centre(290) + half(290)) - 26),
@@ -401,9 +832,7 @@ def riverside(frame: int = 0):
         ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 260, 110), ('bush-1', 'bush', 40, 470),
         ('bush-2', 'bush', 200, 500), ('tree-3', 'tree_autumn', 120, 470), ('bench', 'bench', 170, 440),
         ('sack-1', 'sack', 120, 220), ('sack-2', 'sack', 108, 224), ('barrel-m', 'barrel', 86, 206),
-        # a pasture on the north meadow: sheep grazing inside a fence, beehives by the flowers
-        ('pfence-1', 'fence_c', 150, 40), ('pfence-2', 'fence_c', 210, 40), ('pfence-3', 'fence_c', 150, 150),
-        ('pfence-4', 'fence_c', 210, 150),
+        # a pasture on the north meadow: sheep grazing inside a stone-walled fold, hives by the flowers
         ('sheep-1', 'sheep', 166, 72), ('sheep-2', 'sheep_left', 226, 92), ('sheep-3', 'sheep', 190, 118),
         ('sheep-4', 'sheep_left', 244, 60), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
     ]
@@ -412,60 +841,82 @@ def riverside(frame: int = 0):
     for (x, y) in steps:
         cv.set(x, y, STONE[4] if (y - top[x]) % 3 == 0 else STONE[2] if x < 50 else STONE[1])
     stones |= steps
-    blocked = (river | bluff) - stones
+    blocked = ((river | bluff) - stones) | fold_wall
     stands = {'garden-north': (8, 220), 'garden-south': (8, 400), 'mill': (190, 232), 'stones': (46, int(centre(46))),
               'willows': (120, 430)}
     return cv, objects, stands, blocked
 
 
+def dipping_deck(cv: Canvas, x0: int, y0: int, w: int, h: int, water: set) -> set:
+    """A small timber platform built out over the edge of a pond, where a path ends:
+    planks laid east-west, a lit front edge and two posts into the water, its shadow on
+    the water. Returns its pixels (walkable)."""
+    BL = MATERIALS['bleached']
+    deck = {(x, y) for x in range(x0, x0 + w) for y in range(y0, y0 + h)}
+    for (x, y) in deck:
+        r = (y - y0) % 3
+        c = BL[4] if r == 0 else BL[3] if r == 1 else BL[1]
+        if x == x0 + w - 1:
+            c = BL[2]
+        cv.set(x, y, c)
+    for x in range(x0, x0 + w):
+        cv.set(x, y0 + h, BL[1]); cv.set(x, y0 + h + 1, WOOD[0] if x in (x0 + 1, x0 + w - 2) else WTR[0])
+    for (px) in (x0 + 1, x0 + w - 2):
+        cv.set(px, y0 + h + 2, WOOD[0]); cv.hline(px - 1, y0 + h + 3, 3, WTR[4])
+    for y in range(y0, y0 + h + 2):
+        for x in range(x0 + w, x0 + w + 3):
+            if (x, y) in water:
+                style.darken(cv, x, y)
+    return deck
+
+
 def park(frame: int = 0):
     """The Town Park, east of Crossroads Town: the town's paved street comes in at the
-    west edge at the same height and width and opens on a ring of paths round the
-    bandstand; the fountain plaza lies south, then a duck pond with a little island
-    and a willow; flower beds, clipped hedges, benches, lamps and the ice cream cart."""
-    WTRm = MATERIALS['water']
+    west edge at the same height and width, between two flower planters, and opens on a
+    ring of paths round the bandstand; the fountain plaza lies south with benches looking
+    onto it and the ice cream cart at its edge; then a duck pond with a natural edge of
+    reeds and pebbles, a willow leaning over it from the north bank, and a timber
+    dipping platform where the path comes down to the water."""
     cv = Canvas(W, H)
     ground.valley(cv, 'park', frame)  # one turf across the valley (ground.py)
+    pond = blob(200, 474, 80, 44, seed=1101, rough=0.2)
+    pond = {(x, y) for (x, y) in pond if 0 <= x < W and y < H - 8}
+    deep = blob(206, 478, 50, 24, seed=1102, rough=0.25)
     paths = worlds.thick([(-8, 300), (60, 300)], 13)  # the town's street, unchanged
     paths |= {(x, y) for (x, y) in oval(160, 190, 92, 52)} - {(x, y) for (x, y) in oval(160, 190, 74, 38)}
     paths |= worlds.thick([(60, 300), (160, 300), (160, 240)], 11, seed=27)
     paths |= {(x, y) for (x, y) in oval(160, 330, 44, 26)}  # the fountain plaza
-    paths |= worlds.thick([(160, 356), (150, 420), (100, 460)], 9, seed=28)
+    paths |= worlds.thick([(160, 356), (148, 404), (126, 436)], 8, seed=28)  # down to the pond
+    paths -= pond
     worlds.paint_paving(cv, paths | {(x, y) for (x0, y) in paths if x0 == 0 for x in range(-12, 0)}, seed=11)
-    pond = {(x, y) for (x, y) in oval(200, 470, 84, 46)}
-    island = {(x, y) for (x, y) in oval(232, 462, 20, 10)}
-    water = pond - island
-    for (x, y) in water:
-        d = math.hypot((x - 200) / 84, (y - 470) / 46)
-        c = WTRm[2] if d > 0.7 else WTRm[1]
-        if (x, y - 1) not in pond or (x, y - 2) not in pond:
-            c = WTRm[0]
-        cv.set(x, y, c)
-    for (x, y) in pond:
-        if (x, y + 1) not in pond:
-            cv.set(x, y + 1, MATERIALS['sand'][1])
-    for ty in range(430, 516, 6):
-        for tx in range(120, 290, 9):
-            x, y = tx + int(noise2(tx, ty, 431) * 5), ty + int(noise2(tx, ty, 432) * 3)
-            if (x, y) in water and (x + 3, y) in water and (x, y - 2) in water:
-                cv.hline(x, y, 3, WTRm[3])
-    for (x, y) in island:
-        cv.set(x, y, G[3] if (x - 232) + (y - 462) < 0 else G[2])
-    for fb in ((40, 120, 40, 16, 1), (240, 120, 40, 16, 2), (30, 380, 40, 16, 3), (250, 380, 40, 16, 0)):
+    ring = bank(cv, pond, seed=1103)
+    water_body(cv, pond, deep, seed=1104, glints=50)
+    deck = dipping_deck(cv, 112, 436, 18, 12, pond)
+    for (x, y) in sorted(ring):  # pebbles and reeds along the edge, thickest in the east
+        if (x, y - 1) in pond and noise2(x, y, 1105) > 0.9:
+            detail.pebble(cv, x, y, STONE)
+    for (rx, ry, n) in ((252, 448, 7), (270, 474, 6), (176, 512, 5), (130, 470, 4), (232, 516, 6)):
+        reeds(cv, rx, ry, seed=rx, n=n)
+    for fb in ((6, 270, 40, 16, 1), (6, 316, 40, 16, 2)):  # flanking the way in from the town
         meadow.flower_planter(cv, *fb)
     objects = [
         ('bandstand', 'bandstand', 118, 140), ('fountain', 'fountain', 132, 300),
-        ('willow', 'willow', 193, 371), ('lilies', 'lily_pads', 140, 476), ('duck-1', 'duck', 170, 500),
-        ('duck-2', 'duck', 262, 488), ('heron', 'heron', 290, 440),
-        ('hedge-n1', 'hedge', 4, 30), ('hedge-n2', 'hedge', 224, 30), ('tree-1', 'tree', 110, 4),
-        ('tree-2', 'tree_autumn', 284, 140), ('tree-3', 'tree', 4, 150), ('tree-4', 'tree_small', 20, 470),
-        ('bench-1', 'bench', 60, 196), ('bench-2', 'bench', 216, 196), ('bench-3', 'bench', 96, 360),
-        ('lamp-1', 'lamp', 66, 260), ('lamp-2', 'lamp', 246, 260), ('lamp-3', 'lamp', 108, 410),
-        ('icecream', 'ice_cream_cart', 220, 296), ('bush-1', 'bush', 0, 250), ('bush-2', 'bush', 290, 250),
-        ('bush-3', 'bush', 4, 540), ('bush-4', 'bush', 220, 540),
+        # the willow on the north bank, leaning out over the water
+        ('willow', 'willow', 222, 330), ('lilies', 'lily_pads', 196, 482), ('lilies-2', 'lily_pads', 236, 458),
+        ('duck-1', 'duck', 170, 494), ('duck-2', 'duck', 222, 500), ('heron', 'heron', 264, 470),
+        # trees in clumps round the lawns
+        ('tree-1', 'tree', 98, 0), ('tree-1b', 'tree_small', 140, 26), ('tree-2', 'tree_autumn', 266, 150),
+        ('tree-3', 'tree', 2, 150), ('tree-4', 'tree_small', 14, 452), ('tree-5', 'tree', 262, 10),
+        ('tree-6', 'tree_small', 36, 494),
+        # benches looking onto the fountain and the pond
+        ('bench-1', 'bench', 96, 258), ('bench-2', 'bench', 236, 262), ('bench-3', 'bench', 176, 396),
+        ('lamp-1', 'lamp', 66, 260), ('lamp-2', 'lamp', 220, 256), ('lamp-3', 'lamp', 138, 380),
+        # the ice cream cart at the plaza's edge, on the paving, serving the benches
+        ('icecream', 'ice_cream_cart', 200, 318), ('bush-1', 'bush', 0, 236), ('bush-2', 'bush', 292, 236),
+        ('bush-3', 'bush', 4, 540), ('bush-4', 'bush', 284, 548), ('bush-5', 'bush', 64, 520),
     ]
-    stands = {'town': (8, 300), 'bandstand': (160, 240), 'fountain': (160, 360), 'pond': (100, 456)}
-    return cv, objects, stands, water
+    stands = {'town': (8, 300), 'bandstand': (160, 240), 'fountain': (160, 360), 'pond': (120, 444)}
+    return cv, objects, stands, pond - deck
 
 
 def ridge(frame: int = 0):
@@ -528,14 +979,14 @@ def ridge(frame: int = 0):
     shoulder = shoulders(cv, 'ridge')
     # the alpine tarn below the face, open water (no snow lies down here)
     WTR = MATERIALS['water']
-    tarn = {(x, y) for (x, y) in oval(232, 404, 38, 15)}
+    tarn = blob(232, 404, 38, 15, seed=1301, rough=0.18)
     for (x, y) in tarn:
         d = math.hypot((x - 232) / 38, (y - 404) / 15)
         c = WTR[1] if d < 0.6 else WTR[2]
         if (x, y - 1) not in tarn or (x, y - 2) not in tarn:
             c = STONEm[1]
         cv.set(x, y, c)
-    for (x, y) in oval(232, 405, 42, 18):
+    for (x, y) in blob(232, 405, 43, 19, seed=1301, rough=0.18):
         if (x, y) not in tarn:
             cv.set(x, y, STONEm[3] if (x + y) % 3 else STONEm[2])  # a stony shore
     for k in range(5):
@@ -575,13 +1026,340 @@ def ridge(frame: int = 0):
         ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
         ('pine-t2', 'snowy_pine', 270, 120), ('pine-t3', 'snowy_pine', 40, 150),
         ('woodpile', 'woodpile', 122, 138), ('sled', 'sled', 214, 190), ('snowman', 'snowman', 90, 96),
-        ('wall-1', 'drystone_wall', 166, 334), ('wall-2', 'drystone_wall', 228, 334), ('wall-end', 'stone', 288, 330), ('marmot', 'marmot_rock', 220, 470),
+        ('marmot', 'marmot_rock', 220, 470),
         ('cotton-1', 'cotton_grass', 196, 380), ('cotton-2', 'cotton_grass', 270, 398), ('cotton-3', 'cotton_grass', 210, 418),
     ]
     face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
     stands = {'garden': (206, H - 8), 'tarn': (186, 424), 'cabin': (200, 176), 'campfire': (146, 204),
               'saddle': (204, 6), 'hollow': (4, 348)}
     return cv, objects, stands, (face - steps) | shoulder | tarn
+
+
+def shore_distance(water: set, cap: int = 90) -> dict:
+    """How far each water pixel lies from the nearest land, in px (up to `cap`)."""
+    from collections import deque
+    dist, q = {}, deque()
+    for (x, y) in water:
+        if any((x + dx, y + dy) not in water and 0 <= x + dx < W and 0 <= y + dy < H
+               for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            dist[(x, y)] = 0
+            q.append((x, y))
+    while q:
+        x, y = q.popleft()
+        d = dist[(x, y)]
+        if d >= cap:
+            continue
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, y + dy)
+            if n in water and n not in dist:
+                dist[n] = d + 1
+                q.append(n)
+    return dist
+
+
+def sea(cv: Canvas, water: set, seed: int = 0, calm=frozenset(), surf: bool = True, depth=None, open_edges=''):
+    """The sea: pale over the sand in the shallows, deepening in broad soft-edged
+    bands away from land to the open sea's deep blue with long swells (the same water
+    as beyond-sea, so it runs on past the valley); a broken line of foam where it
+    meets the shore and a second line of surf coming in. `calm` water (inside the
+    harbour) has no surf, only a dark lap at the wall."""
+    dist = shore_distance(water)
+    ox = depth.ox if depth else 0
+    for (x, y) in water:
+        gx = x + ox
+        d = (depth(x, y) if depth else dist.get((x, y), 90)) + (smooth_noise(gx, y, 26, 979) - 0.5) * 22
+        if (x, y) in calm:
+            d = min(d, 36)
+        # where the world's sea runs on past the zone's edge (beyond-sea), the water at
+        # the edge is the open sea's, so the two meet without a seam
+        e = min([x for c in 'w' if c in open_edges] + [W - 1 - x for c in 'e' if c in open_edges]
+                + [H - 1 - y for c in 's' if c in open_edges] + [999])
+        d = max(d, 76 - e * 2.2)
+        chk = (x // 2 + y // 2) % 2
+        if d < 5:
+            c = WTR[3]
+        elif d < 8:
+            c = WTR[3] if chk else WTR[2]
+        elif d < 26:
+            c = WTR[2]
+        elif d < 32:
+            c = WTR[2] if chk else WTR[1]
+        elif d < 60:
+            c = WTR[1]
+        else:
+            n = smooth_noise(gx, y, 40, 861)
+            c = WTR[0] if n > 0.55 else WTR[1]
+            if d < 66 and chk:
+                c = WTR[1]
+        sw = (y + int(math.sin(gx / 23) * 4 + smooth_noise(gx, y, 60, 862) * 8)) % 19
+        if (x, y) in calm:
+            sw = -1
+        if d > 46 and sw == 0 and noise2(gx // 9, y // 19, 864) > 0.25:
+            c = WTR[2] if d > 56 else WTR[3]
+        elif d > 50 and sw == 1 and noise2(gx // 5, y // 19, 863) > 0.8:
+            c = '#F4F8F8'  # a whitecap out on the open sea
+        cv.set(x, y, c)
+    for (x, y) in water:  # the waterline
+        dd = dist.get((x, y), 90)
+        if (x, y) in calm:
+            if dd == 0:
+                cv.set(x, y, WTR[0])
+            elif dd == 1 and (x + y) % 3:
+                cv.set(x, y, WTR[1])
+            continue
+        if not surf:
+            continue
+        wob = int((smooth_noise(x, y, 5, seed + 1) - 0.5) * 3)
+        if dd == 0 or (dd == 1 and (x + y) % 3):
+            cv.set(x, y, FOAM)
+        elif dd == 2 and (x // 2 + y) % 3:
+            cv.set(x, y, WTR[4])
+        elif dd == 6 + wob and smooth_noise(x, y, 9, seed + 2) > 0.45:
+            cv.set(x, y, WTR[4] if (x + y) % 4 else FOAM)  # the next wave coming in
+        elif dd == 7 + wob and smooth_noise(x, y, 9, seed + 2) > 0.5 and (x + y) % 2:
+            cv.set(x, y, WTR[3])
+    return dist
+
+
+def cliff(cv: Canvas, top: dict, height: dict, seed: int = 0, lip=None) -> set:
+    """A rock face seen from the front, from its turf lip at `top[x]` down `height[x]`
+    px: stacked irregular blocks, each with a lit ledge along its top, a dark crevice
+    under it and down its right side, the odd one mossy or darker; wet and dark with
+    weed at its foot. The lip is turf breaking over the edge in tufts."""
+    lip = lip or G
+    face = {(x, y) for x, t in top.items() for y in range(t, t + height[x])}
+    if not face:
+        return face
+    seeds = {}
+    for (x, y) in face:
+        gx, gy = x // 11, y // 7
+        if (gx, gy) not in seeds:
+            seeds[(gx, gy)] = (gx * 11 + noise2(gx, gy, seed) * 10, gy * 7 + noise2(gx, gy, seed + 1) * 6)
+    owner = {}
+    for (x, y) in face:
+        gx, gy = x // 11, y // 7
+        best, bd = None, 1e9
+        for ox in (-1, 0, 1):
+            for oy in (-1, 0, 1):
+                sd = seeds.get((gx + ox, gy + oy))
+                if sd is None:
+                    sd = ((gx + ox) * 11 + noise2(gx + ox, gy + oy, seed) * 10, (gy + oy) * 7 + noise2(gx + ox, gy + oy, seed + 1) * 6)
+                d = ((x - sd[0]) / 1.5) ** 2 + (y - sd[1]) ** 2
+                if d < bd:
+                    best, bd = (gx + ox, gy + oy), d
+        owner[(x, y)] = best
+    for (x, y) in face:
+        b = owner[(x, y)]
+        k = y - top[x]
+        t = 3 if noise2(b[0], b[1], seed + 2) > 0.55 else 2
+        if noise2(b[0], b[1], seed + 3) > 0.9:
+            t = 1
+        up, dn, rt, lf = owner.get((x, y - 1)), owner.get((x, y + 1)), owner.get((x + 1, y)), owner.get((x - 1, y))
+        if up != b:
+            c = STONE[min(4, t + 1)] if up is not None else STONE[4]
+        elif dn != b and dn is not None:
+            c = STONE[0]
+        elif rt != b and rt is not None:
+            c = STONE[0] if (x + y) % 3 else STONE[1]
+        elif lf != b and lf is not None:
+            c = STONE[t + 1] if t < 3 else STONE[3]
+        else:
+            c = STONE[t]
+            if noise2(x, y, seed + 4) > 0.93:
+                c = STONE[t - 1]  # a pit in the stone
+        if up != b and noise2(b[0], b[1], seed + 5) > 0.7 and (x + b[0]) % 3:
+            c = LEAF[2] if (x + y) % 2 else LEAF[3]  # moss on the ledge
+        foot = height[x] - k
+        if foot <= 4:
+            c = STONE[1] if c in (STONE[2], STONE[3], STONE[4]) else c
+            if foot <= 2:
+                c = '#2E4A3A' if (x + y) % 2 else STONE[0]  # weed and wet rock at the waterline
+        cv.set(x, y, c)
+    for x, t in top.items():  # the turf lip breaking over the edge
+        cv.set(x, t - 1, lip[1])
+        cv.set(x, t - 2, lip[3] if x % 3 else lip[4])
+        if noise2(x // 2, t, seed + 6) > 0.5:
+            cv.set(x, t, lip[2]); 
+            if noise2(x, t, seed + 7) > 0.6:
+                cv.set(x, t + 1, lip[1])
+    return face
+
+
+def field_mask(x0: int, y0: int, x1: int, y1: int, seed: int = 0) -> set:
+    """A worked field: a plot set out by hand, roughly rectangular, with corners rounded
+    where the plough turned and sides that wander a pixel or two with the ground."""
+    pts = set()
+    r = 9
+    for y in range(y0, y1):
+        wl = int((smooth_noise(0, y, 14, seed) - 0.5) * 4)
+        wr = int((smooth_noise(1, y, 14, seed) - 0.5) * 4)
+        for x in range(x0 + wl, x1 + wr):
+            dx = max(x0 + r - x, 0, x - (x1 - r))
+            dy = max(y0 + r - y, 0, y - (y1 - r))
+            if dx * dx + dy * dy <= r * r:
+                pts.add((x, y))
+    return pts
+
+
+def tilled(cv: Canvas, mask: set, row: int = 9, seed: int = 0, ridged: bool = True):
+    """Ploughed earth in east-west rows: each ridge lit along its top, the furrow beside
+    it in shade, clods and the odd stone; or (unridged) dug earth in soft patches."""
+    S = MATERIALS['soil']
+    y0 = min(y for _, y in mask)
+    for (x, y) in mask:
+        if ridged:
+            r = (y - y0) % row
+            c = S[4] if r == 0 else S[3] if r < 3 else S[2] if r < row - 2 else S[1]
+            if r in (1, 2) and noise2(x // 2, y, seed) > 0.85:
+                c = S[4]  # a clod catching the light
+        else:
+            n = smooth_noise(x, y, 5, seed)
+            c = S[3] if n > 0.55 else S[2]
+            if noise2(x // 2, y // 2, seed + 1) > 0.9:
+                c = S[4]
+        cv.set(x, y, c)
+
+
+def rows_of(mask: set, row: int, step: int, seed: int = 0):
+    """Plant positions along a field's ridges: set out by hand, so evenly spaced but
+    each a little off its mark, and now and then one missing."""
+    y0 = min(y for _, y in mask)
+    xs = [x for x, _ in mask]
+    out = []
+    k = 0
+    for y in range(y0 + 4, max(y for _, y in mask) - 2, row):
+        off = (step // 2) * ((y - y0) // row % 2)
+        for x in range(min(xs) + 5 + off, max(xs) - 3, step):
+            k += 1
+            if noise2(x, y, seed) < 0.06:
+                continue
+            cx, cy = x + int((noise2(x, y, seed + 1) - 0.5) * 2), y
+            if all((cx + dx, cy + dy) in mask for dx in (-4, 4) for dy in (-3, 3)):
+                out.append((cx, cy, k))
+    return out
+
+
+def cabbage_head(cv: Canvas, cx: int, cy: int, r: float, seed: int = 0):
+    """A cabbage on its ridge: a ring of loose outer leaves, darker and veined, round a
+    pale tight head lit on its upper left, on its own small shadow."""
+    contact(cv, cx + 1, cy + 1, r + 1.5, r * 0.6 + 0.5)
+    outer = blob(cx, cy, r + 1.4, (r + 1.4) * 0.8, seed=seed, rough=0.25)
+    for (x, y) in outer:
+        cv.set(x, y, LEAF[2] if (x - cx) + (y - cy) < 0 else LEAF[1])
+    for (x, y) in edge_of(outer):
+        if y >= cy:
+            cv.set(x, y, LEAF[0])
+        elif (x + y) % 2:
+            cv.set(x, y, LEAF[3])
+    head = disc(cx - 0.3, cy - 0.6, r * 0.8)
+    for (x, y) in head:
+        d = (x - cx) + (y - cy)
+        cv.set(x, y, '#C9E0A0' if d < -r * 0.6 else '#A8C878' if d < r * 0.3 else '#86A85E')
+    cv.set(int(cx), int(cy - 0.6), '#86A85E')  # the head's fold
+
+
+WHEAT = ['#6E4F1E', '#A87E2C', '#C99A3C', '#E2BC5E', '#F2D27A', '#F8E6A0']
+
+
+def wheat_field(cv: Canvas, mask: set, seed: int = 0):
+    """Standing wheat seen from above and a little in front: a dense pile of ears in
+    staggered rows, each ear lit on its top, the stems in shade between them; long
+    swathes where the wind has laid it lighter; stalks showing along the front edge and
+    heads breaking over the back edge; a shaded right side."""
+    xs = [x for x, _ in mask]
+    x1 = max(xs)
+    for (x, y) in mask:  # the shade down among the stalks
+        cv.set(x, y, WHEAT[1] if (x + y // 2) % 3 else WHEAT[2])
+    ys = [y for _, y in mask]
+    for gy in range(min(ys) - 1, max(ys) + 1, 3):
+        for gx in range(min(xs) + (gy // 3 % 2) * 2, x1 + 1, 4):
+            if noise2(gx, gy, seed) < 0.08:
+                continue
+            ex = gx + int((noise2(gx, gy, seed + 1) - 0.5) * 3)
+            ey = gy + int((noise2(gx, gy, seed + 2) - 0.5) * 2)
+            wind = smooth_noise(ex + ey * 0.5, ey, 10, seed + 3) > 0.6
+            lean = 1 if wind else 0
+            shade = 1 if ex > x1 - 5 else 0
+            ear = [(ex + lean, ey, WHEAT[5 - shade] if not wind else WHEAT[5]), (ex, ey + 1, WHEAT[4 - shade]),
+                   (ex + 1, ey + 1, WHEAT[3 - shade]), (ex, ey + 2, WHEAT[3 - shade]), (ex + 1, ey + 2, WHEAT[2 - shade])]
+            for (px, py, c) in ear:
+                if (px, py) in mask:
+                    cv.set(px, py, c)
+    for (x, y) in edge_of(mask):
+        if (x, y + 1) not in mask:  # the front edge: stalks standing on the ground
+            for k in range(1, 3):
+                if (x, y + k) not in mask and x % 2 == 0:
+                    cv.set(x, y + k, WHEAT[1] if k == 1 else WHEAT[0])
+        if (x, y - 1) not in mask and x % 2:  # the back edge: ears nodding over it
+            cv.set(x, y - 1, WHEAT[4])
+            cv.set(x, y, WHEAT[5])
+
+
+PUMPKIN = ['#6A2E12', '#A44C1A', '#D46E26', '#EE9840', '#FFC97A']
+
+
+def pumpkin(cv: Canvas, cx: int, cy: int, w: int, seed: int = 0):
+    """A pumpkin lying on the earth: a squat ribbed round, lit on its upper left, a dark
+    groove between the ribs, a woody stalk, and its shadow."""
+    h = max(3, int(w * 0.7))
+    contact(cv, cx + 1, cy + h // 2, w / 2 + 1, 1.5)
+    pts = blob(cx, cy, w / 2, h / 2, seed=seed, rough=0.06)
+    for (x, y) in pts:
+        f = (x - cx) / (w / 2) + (y - cy) / (h / 2) * 0.8
+        c = PUMPKIN[4] if f < -0.95 else PUMPKIN[3] if f < -0.2 else PUMPKIN[2] if f < 0.6 else PUMPKIN[1]
+        if abs((x - cx) % max(3, w // 3)) == 0 and abs(x - cx) < w / 2 - 1 and f > -0.9:
+            c = PUMPKIN[1] if f > -0.2 else PUMPKIN[2]  # the grooves between the ribs
+        cv.set(x, y, c)
+    for (x, y) in edge_of(pts):
+        if y >= cy:
+            cv.set(x, y, PUMPKIN[0])
+    top = min(y for _, y in pts)
+    cv.set(cx, top - 1, WOOD[2]); cv.set(cx + 1, top - 1, WOOD[1]); cv.set(cx, top, WOOD[1])
+
+
+def pumpkin_patch(cv: Canvas, mask: set, seed: int = 0):
+    """Pumpkins growing on the dug earth: vines wandering across it with broad leaves
+    in clumps, and pumpkins of every size lying along them."""
+    xs, ys = [x for x, _ in mask], [y for _, y in mask]
+    vines = []
+    for v in range(7):
+        x, y = min(xs) + 6 + v * (max(xs) - min(xs) - 12) // 6, min(ys) + 6 + int(noise2(v, 0, seed) * 8)
+        a = noise2(v, 1, seed) * 6.28
+        for t in range(70):
+            a += (noise2(v, t, seed + 1) - 0.5) * 0.9
+            x += math.cos(a) * 1.1
+            y += abs(math.sin(a)) * 0.6 + 0.25
+            if (int(x), int(y)) not in mask:
+                break
+            cv.set(int(x), int(y), LEAF[2])
+            vines.append((int(x), int(y), v, t))
+    for (x, y, v, t) in vines:
+        if t % 9 == 4:  # a broad leaf
+            for (lx, ly) in blob(x, y, 3, 2.2, seed=v * 31 + t, rough=0.3):
+                if (lx, ly) in mask:
+                    cv.set(lx, ly, LEAF[3] if (lx - x) + (ly - y) < 0 else LEAF[2])
+            cv.set(x - 1, y - 1, LEAF[4]); cv.set(x + 1, y + 2, LEAF[1])
+    spots = [(x, y, v) for (x, y, v, t) in vines if t % 19 == 11]
+    for (x, y, v) in sorted(spots, key=lambda s: s[1]):
+        w = 8 + int(noise2(x, y, seed + 2) * 6)
+        if all((x + dx, y + dy) in mask for dx in (-w // 2 - 1, w // 2 + 1) for dy in (-3, 3)):
+            pumpkin(cv, x, y, w, seed=v)
+
+
+def margin(cv: Canvas, mask: set, seed: int = 0):
+    """The uncut margin round a field: long grass tufts along its edge, thickest at the
+    corners, the odd poppy and cornflower in it."""
+    for (x, y) in edge_of(mask):
+        q = [(x + dx, y + dy) for dx, dy in ((0, 2), (0, -2), (2, 0), (-2, 0)) if (x + dx, y + dy) not in mask]
+        if not q or noise2(x, y, seed) > 0.42:
+            continue
+        gx, gy = q[0]
+        detail.grass_tuft(cv, gx, gy + 1, int(noise2(x, y, seed + 1) * 6), G, 3)
+        n = noise2(x, y, seed + 2)
+        if n > 0.93:
+            cv.set(gx, gy - 2, '#D8463A'); cv.set(gx + 1, gy - 2, '#B0303A')  # a poppy
+        elif n < 0.05:
+            cv.set(gx, gy - 2, '#5A7AD0')  # a cornflower
 
 
 def halt(frame: int = 0):
@@ -611,77 +1389,112 @@ def halt(frame: int = 0):
     # a farm track south from the lane, down the east side to the farmyard
     # (the farm ends at its yard: past it, to the south, the old forest begins, so
     # nothing runs off the edge into it; world-rules.md, every path ends at a node)
-    for y in range(H - 56, H):  # the forest floor creeping out from under the trees
-        for x in range(W):
-            if noise2(x, y, 453) < (y - (H - 56)) / 56:
-                cv.set(x, y, FOREST_FLOOR[2] if (x + y) % 3 else FOREST_FLOOR[1])
+    # past the farm the land ends at a low sea cliff (the open sea lies south of the halt)
+    htop = {x: 556 + int((smooth_noise(x, 0, 13, 455) - 0.5) * 10) for x in range(W)}
+    hh = {x: 11 + int(smooth_noise(x, 1, 9, 456) * 5) for x in range(W)}
+    hsea = {(x, y) for x in range(W) for y in range(htop[x] + hh[x], H)}
+    sea(cv, hsea, seed=457, open_edges='s')
+    hface = cliff(cv, htop, hh, seed=458)
     track = worlds.thick([(298, 300), (304, 360), (300, 440), (292, 492), (262, 526)], 8, seed=33)
-    yard = {(x, y) for (x, y) in oval(232, 528, 66, 17)}
+    yard = blob(236, 524, 62, 15, seed=459, rough=0.15)
     paint_road(cv, track | yard)
-    # fields behind the fence: cabbages in furrows (west), wheat (east) with the
-    # scarecrow, a pumpkin patch below; the farm's own bounds, not a grid
+    # the fields behind the fence: worked plots with softened corners, their rows set out
+    # east-west by hand; a margin of long grass round each, where the plough turned
     SOILm = MATERIALS['soil']
-    def furrows(mask, crop):
-        for (x, y) in mask:
-            row = (y - 372) % 10
-            if crop == 'wheat':
-                stalk = (x + (y // 3) % 2 + int(math.sin(y / 9) * 2)) % 3
-                c = '#E2BC5E' if stalk == 0 else '#C99A3C' if stalk == 1 else '#F2D27A'
-                if row == 9:
-                    c = '#A87E2C'
-            else:
-                c = SOILm[3] if row < 3 else SOILm[2] if row < 8 else SOILm[1]
-                if row == 0:
-                    c = SOILm[4]
-            cv.set(x, y, c)
-    cabbage = {(x, y) for y in range(372, 472) for x in range(14, 150 - (y - 372) // 8)}
-    wheat = {(x, y) for y in range(372, 446) for x in range(162 + (y - 372) // 10, 280 - max(0, y - 420))}
-    patch = {(x, y) for y in range(492, 560) for x in range(16 + (y - 492) // 6, 128)}
-    furrows(cabbage, 'cabbage'); furrows(wheat, 'wheat'); furrows(patch, 'patch')
-    for y in range(375, 472, 10):  # cabbages along the furrows
-        for x in range(18, 146, 7):
-            cx = x + int(noise2(x, y, 452) * 2)
-            if (cx, y + 2) not in cabbage:
-                continue
-            for (px, py) in disc(cx, y + 2, 2.4):
-                cv.set(px, py, MATERIALS['leaf'][3] if (px - cx) + (py - y - 2) < 0 else MATERIALS['leaf'][2])
-            cv.set(cx - 1, y + 1, MATERIALS['leaf'][4])
-    for x in range(162, 280, 2):  # the wheat's lit heads along its top edge
-        cv.set(x, 372, '#F8E6A0'); cv.set(x + 1, 373, '#F2D27A')
-    for (mask, grass_edge) in ((cabbage, True), (wheat, True), (patch, True)):
-        for (x, y) in mask:  # a low hedge of long grass round each field
-            if any((x + dx, y + dy) not in mask for (dx, dy) in ((1, 0), (-1, 0), (0, 1))):
-                cv.set(x, y, G[3] if (x + y) % 2 else G[4])
+    cabbage = field_mask(14, 372, 142, 468, seed=81)
+    wheat = field_mask(160, 372, 282, 444, seed=82)
+    patch = field_mask(16, 482, 112, 538, seed=83)
+    tilled(cv, cabbage, row=9, seed=84)
+    tilled(cv, patch, row=11, seed=85, ridged=False)
+    for (cx, cy, k) in rows_of(cabbage, row=9, step=8, seed=86):
+        cabbage_head(cv, cx, cy, 2.2 + noise2(cx, cy, 87) * 1.3, seed=k)
+    wheat_field(cv, wheat, seed=88)
+    pumpkin_patch(cv, patch, seed=89)
+    for mask in (cabbage, wheat, patch):
+        margin(cv, mask, seed=90)
+    # the windmill grinds the farm's wheat: a cart track up from the lane to its door,
+    # and a cobbled apron round its foot
+    mill_track = worlds.thick([(266, 294), (272, 240), (256, 182)], 6, seed=91)
+    paint_road(cv, mill_track)
+    apron = blob(252, 172, 26, 9, seed=92, rough=0.12)
+    worlds.paint_paving(cv, apron, seed=93)
+    for (x, y) in edge_of(apron):
+        cv.set(x, y, STONE[1] if (x, y + 1) not in apron else STONE[3])
     objects = [
         ('station', 'station_house', 66, 204), ('signal', 'semaphore', 20, 262), ('bench-p', 'bench', 190, 280),
         ('lamp-p1', 'lamp', 40, 268), ('lamp-p2', 'lamp', 220, 268), ('sack-p', 'sack', 178, 300), ('crate-p', 'crate', 160, 298),
         ('pine-n1', 'pine', 10, 20), ('tree-n2', 'tree', 90, 30), ('pine-n3', 'pine', 150, 14),
-        ('mill', 'windmill', 226, 70), ('bush-1', 'bush', 286, 200), ('bush-2', 'bush', 6, 200),
+        ('mill', 'windmill', 226, 70), ('sack-m', 'sack', 276, 160), ('bush-1', 'bush', 286, 200), ('bush-2', 'bush', 6, 200),
         ('fence-1', 'fence_c', 18, 356), ('fence-2', 'fence_c', 78, 356), ('fence-3', 'fence_c', 138, 356),
         ('fence-4', 'fence_c', 198, 356),
-        ('scarecrow', 'scarecrow', 200, 380), ('barn', 'barn', 150, 452), ('hay-1', 'haystack', 132, 500),
-        ('hay-2', 'haystack', 112, 530), ('pump-1', 'pumpkins', 30, 506), ('pump-2', 'pumpkins', 70, 524),
-        ('pump-3', 'pumpkins', 44, 540), ('barrel-f', 'barrel', 276, 500), ('crate-f', 'crate', 284, 520),
-        ('tree-s2', 'tree_autumn', 236, 196),
+        ('scarecrow', 'scarecrow', 204, 384), ('barn', 'barn', 150, 452),
+        # the hay stacked against the barn's west wall, by the pumpkin patch, out of the rain
+        ('hay-1', 'haystack', 118, 486), ('hay-2', 'hay_bale', 124, 518),
+        ('trough-f', 'trough', 254, 474), ('wood-f', 'woodpile', 276, 508), ('barrel-f', 'barrel', 258, 506),
+        ('tree-s2', 'tree_autumn', 150, 160),
     ]
     rails = {(x, y) for x in range(0, 246) for y in range(319, 338)}
     stands = {'town': (312, 300), 'platform': (130, 300), 'station': (118, 292), 'mill': (258, 186),
               'farm': (262, 530)}
-    return cv, objects, stands, rails | cabbage | wheat | patch
+    return cv, objects, stands, rails | cabbage | wheat | patch | hsea | hface
+
+
+def footbridge(cv: Canvas, x0: int, w: int, y0: int, y1: int, water: set):
+    """A plank footbridge carrying a path north-south over a stream, in the same
+    three-quarter view as the buildings: planks laid across on two log stringers, each
+    plank lit along its top edge with grain and a nail at each end, a rail on posts
+    along each side (the west rail lit, the east in shade, throwing its shadow on the
+    water), and stone abutments on both banks, the south one showing its face."""
+    for y in range(y0, y1):
+        r = (y - y0) % 3
+        pk = (y - y0) // 3
+        for x in range(x0, x0 + w):
+            t = 3 + (1 if noise2(pk, 0, 791) > 0.8 else -1 if noise2(pk, 0, 791) < 0.2 else 0)
+            c = detail.tone(WOOD, t + 1) if r == 0 else detail.tone(WOOD, t) if r == 1 else WOOD[1]
+            if r == 1 and noise2(x // 3, pk, 792) < 0.2:
+                c = detail.tone(WOOD, t - 1)  # grain
+            if x in (x0 + 1, x0 + w - 2) and r == 1:
+                c = STONE[1]  # nail heads over the stringers
+            cv.set(x, y, c)
+    # the stone abutments: a step of dressed stones at each end, the south face lit
+    for x in range(x0 - 3, x0 + w + 3):
+        for k in range(3):
+            y = y0 - 1 - k
+            if (x, y) not in water:
+                cv.set(x, y, STONE[3] if k == 2 else STONE[2] if (x + k) % 5 else STONE[1])
+        for k in range(4):
+            y = y1 + k
+            c = STONE[4] if k == 0 else STONE[3] if (x + (k // 2) * 3) % 6 else STONE[1]
+            if k == 3:
+                c = STONE[1]
+            cv.set(x, y, c)
+    # rails on posts: posts stand at the ends and the middle, the rail runs over them
+    for (rx, lit) in ((x0 - 1, True), (x0 + w, False)):
+        for y in range(y0 - 4, y1 - 2):
+            cv.set(rx, y, WOOD[4] if lit else WOOD[2])
+            if not lit:
+                cv.set(rx + 1, y, WOOD[1])
+        for py in (y0 - 1, (y0 + y1) // 2, y1 - 1):
+            for k in range(4):
+                cv.set(rx, py - k, WOOD[3] if lit else WOOD[1])
+                cv.set(rx + (1 if lit else -1), py - k, WOOD[2] if lit else WOOD[1]) if k == 3 else None
+    for y in range(y0 - 2, y1 + 2):  # the bridge's shadow on the water, down and right
+        for x in range(x0 + w + 2, x0 + w + 5):
+            if (x, y) in water:
+                style.darken(cv, x, y)
 
 
 def woodland(frame: int = 0):
     """The Woodland, west of the garden: the garden's stream is born here. It leaves the
-    east edge exactly where it enters the garden, and upstream it narrows to a spring
-    that falls from a mossy rock into a pool. Old trees close in at the edges, light
-    comes through in dappled pools, a path winds to a clearing with the hollow oak,
-    a fairy ring, ferns, fallen logs and a hidden bench."""
-    WTRm, GOLDm = MATERIALS['water'], MATERIALS['gold']
+    east edge exactly where it enters the garden, and upstream it springs from a heap of
+    mossy boulders, falling in a white ribbon into a rock pool. Old trees close in at
+    the edges with the floor going dark under them, light comes through in dappled
+    pools, a path winds over a plank bridge to a sunlit glade round the hollow oak, where
+    a ring of toadstools has come up in the grass, and south of the stream to the old
+    stone circle. Ferns grow where it is damp and shaded."""
+    GOLDm = MATERIALS['gold']
     cv = Canvas(W, H)
     ground.valley(cv, 'woodland', frame)  # one turf across the valley (ground.py)
-    for i in range(260):  # leaf litter
-        x, y = int(noise2(i, 0, 421) * W), int(noise2(i, 1, 421) * H)
-        cv.set(x, y, ('#8A6A3E', '#B8945A', '#6E8A3E')[i % 3])
     OFF = -meadow.W
 
     def centre(x):
@@ -692,57 +1505,66 @@ def woodland(frame: int = 0):
         return full * min(1.0, max(0.0, (x - 96) / 120)) + 3 * (x >= 96)
 
     spring_x = 96
+    cy = int(centre(spring_x))
     river = {(x, y) for x in range(spring_x, W) for y in range(int(centre(x) - half(x)), int(centre(x) + half(x)) + 1)}
-    pool = {(x, y) for (x, y) in oval(spring_x - 6, centre(spring_x) + 2, 20, 11)}
+    # the rock pool: an organic basin under the fall, its outlet narrowing into the stream
+    pool = blob(spring_x - 10, cy + 1, 22, 11, seed=61, rough=0.2)
     water = river | pool
-    for (x, y) in water:
-        c = WTRm[2] if (x, y) in river and abs(y - centre(x)) < 2 else WTRm[1]
-        if (x, y - 1) not in water:
-            c = WTRm[0]
-        cv.set(x, y, c)
-    for (x, y) in water:  # a stony, mossy rim
-        for dx, dy in ((0, 1), (0, 2), (1, 0), (-1, 0)):
-            q = (x + dx, y + dy)
-            if q not in water and 0 <= q[0] < W:
-                cv.set(*q, STONE[3] if noise2(q[0], q[1], 422) > 0.5 else MATERIALS['leaf'][2])
-    # the spring: a mossy rock face with the water falling from a cleft into the pool
-    rock = {(x, y) for (x, y) in oval(spring_x - 22, centre(spring_x) - 22, 34, 18)}
-    for (x, y) in rock:
-        band = (y + int(noise2(x // 5, 0, 423) * 3)) // 4
-        c = STONE[3] if band % 2 else STONE[2]
-        if (x, y - 1) not in rock or noise2(x // 3, y // 3, 424) > 0.7:
-            c = MATERIALS['leaf'][3] if (x, y - 1) not in rock else MATERIALS['leaf'][2]
-        cv.set(x, y, c)
-    fx = spring_x - 14
-    for y in range(int(centre(spring_x) - 26), int(centre(spring_x) - 2)):
-        for x in range(fx - 3, fx + 4):
-            cv.set(x, y, WTRm[4] if (x + y + frame) % 3 == 0 else WTRm[3] if x < fx + 1 else WTRm[2])
-    for k in range(10):  # foam where it lands
-        cv.set(fx - 5 + k, int(centre(spring_x)) - 1 + (k % 2), WTRm[4])
-    # the spring is the foot of Fir Hollow's fall: the meltwater from Snowmelt Lake comes
-    # down off the escarpment above (frost_zones.FALLS_X) as a brook under the trees and
-    # over the mossy rock (Codex: the lake's water reaches the valley's river)
-    brook = worlds.thick([(FALLS_X, -4), (62, 60), (54, 140), (64, 214), (fx + 1, int(centre(spring_x)) - 26)], 3)
+    deep = {(x, y) for (x, y) in pool if math.hypot((x - spring_x + 12) / 15, (y - cy) / 6) < 1}
+    deep |= {(x, y) for (x, y) in river if half(x) > 8 and abs(y - centre(x)) < half(x) * 0.35}
+    # the spring's rocks: a heap of mossy boulders behind (north of) the pool, the fall
+    # coming down a cleft between them; the meltwater brook from Fir Hollow (frost_zones
+    # FALLS_X) runs to the top of the heap under the trees
+    fx = spring_x - 16
+    brook = worlds.thick([(FALLS_X, -4), (62, 60), (54, 140), (62, 214), (fx + 2, cy - 40)], 3)
+    rocks = [(fx - 30, cy - 9, 30, 22), (fx + 22, cy - 9, 28, 20), (fx - 14, cy - 22, 26, 22),
+             (fx + 13, cy - 24, 24, 22), (fx - 2, cy - 36, 22, 16), (fx + 32, cy - 20, 16, 12),
+             (fx - 40, cy - 20, 18, 13), (fx + 4, cy + 1 - 22 + 22, 1, 1)]
+    rocks = [r for r in rocks if r[2] > 2]
+    bank(cv, water, keep=set(brook), seed=62)
+    water_body(cv, water, deep, seed=63, glints=60)
     for (x, y) in brook:
-        if (x, y) in rock:
+        if y > cy - 46:
             continue
-        c = WTRm[2] if (x + y // 2) % 4 else WTRm[3]
+        c = WTR[2] if (x + y // 2) % 4 else WTR[3]
         if (x - 1, y) not in brook:
-            c = WTRm[0]
+            c = WTR[0]
+        elif (x + 1, y) not in brook:
+            c = WTR[1]
         cv.set(x, y, c)
-    for (x, y) in brook:
-        if (x + 1, y) not in brook and noise2(x, y, 428) > 0.4:
-            cv.set(x + 1, y, STONE[2])
+    for (x, y) in brook:  # mossy stones along the brook
+        if (x + 1, y) not in brook and y < cy - 46 and noise2(x, y, 428) > 0.55:
+            cv.set(x + 1, y, STONE[2] if (x + y) % 3 else LEAF[2])
+        if (x - 1, y) not in brook and y < cy - 46 and noise2(x, y, 429) > 0.7:
+            cv.set(x - 1, y, LEAF[1])
+    rock = outcrop(cv, rocks, seed=64)
+    waterfall(cv, fx - 1, 6, cy - 40, cy - 2, seed=65)
+    # moss and drips round the cleft, ferns in the damp at the heap's foot
+    for k in range(9):
+        cv.set(fx - 3 - (k % 3), cy - 36 + k * 4, LEAF[3] if k % 2 else LEAF[2])
+        cv.set(fx + 6 + (k % 2), cy - 34 + k * 4, LEAF[1])
     water = water | {p for p in brook if p not in rock}
-    # the path from the garden's west side into the trees and the clearing
+    # the path from the garden's west side into the trees and the glade
     # (the garden's orchard walk runs on across the border at the same height and width)
     path = worlds.thick([(W + 12, meadow.ORCHARD_WALK_Y), (250, meadow.ORCHARD_WALK_Y)], 8.5) | worlds.thick([(254, meadow.ORCHARD_WALK_Y), (190, 420), (150, 380), (130, 330)], 9, seed=25)
-    path |= worlds.thick([(130, 270), (150, 200), (120, 140)], 9, seed=26)
-    clearing = {(x, y) for (x, y) in oval(110, 140, 52, 34)}
-    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in water} | {(x, y) for (x0, y) in path if x0 == W - 1 for x in range(W, W + 12)})
-    for (x, y) in clearing:  # the clearing is sunlit grass
+    path |= worlds.thick([(130, 270), (150, 200), (124, 150)], 9, seed=26)
+    path |= worlds.thick([(130, 334), (130, 306)], 7) | worlds.thick([(130, 274), (130, 296)], 7)  # onto the bridge
+    # the glade: a sunlit hollow in the trees round the oak, with a wandering edge
+    glade = blob(112, 136, 58, 38, seed=66, rough=0.24)
+    for (x, y) in glade:
         n = smooth_noise(x, y, 14, 425)
-        cv.set(x, y, G[3] if n > 0.45 else G[2])
+        e = min(math.hypot(x - ex, y - ey) for (ex, ey) in ((112, 136),)) / 60
+        if (x, y) not in path:
+            c = G[3] if n > 0.42 else G[2]
+            if e > 0.75 and (x // 2 + y // 2) % 2 and n < 0.5:
+                c = FOREST_FLOOR[3]
+            cv.set(x, y, c)
+    for (x, y) in edge_of(glade):  # the glade's edge frays into the forest floor in clumps
+        if noise2(x // 2, y // 2, 667) > 0.45:
+            cv.set(x, y, FOREST_FLOOR[2])
+    spur = worlds.thick([(152, 386), (118, 408)], 5, seed=27)  # to the stone circle
+    paint_road(cv, spur)
+    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in water} | {(x, y) for (x0, y) in path if x0 == W - 1 for x in range(W, W + 12)})
     # the garden's bluff on the north bank runs on and sinks into the ground upstream
     for x in range(150, W):
         bh = int((7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)) * min(1.0, (x - 150) / 150))
@@ -753,43 +1575,86 @@ def woodland(frame: int = 0):
             if k == bh - 1:
                 c = STONE[1]
             cv.set(x, y, c)
-    # dappled light through the canopy
-    for i in range(14):
-        lx, ly = int(noise2(i, 0, 426) * W), int(noise2(i, 1, 426) * H)
-        light_pool(cv, lx, ly, 12 + i % 3 * 4, 6 + i % 2 * 3, GOLDm[2], water)
-    light_pool(cv, 110, 140, 44, 26, G[4], water)
     # the stone circle in its own small clearing: a ring of reddish trodden earth round
     # muted grass, the stones standing in it (the reference Matt chose as the bar)
     SX, SY, SRX, SRY = 78, 410, 44, 24
-    spur = worlds.thick([(152, 386), (118, 408)], 5, seed=27)
-    paint_road(cv, spur)
-    for (x, y) in oval(SX, SY, SRX + 8, SRY + 6):
-        d = math.hypot((x - SX) / SRX, (y - SY) / SRY)
-        if d < 0.72:
+    ring_out = blob(SX, SY, SRX + 2, SRY + 2, seed=68, rough=0.12)
+    ring_in = blob(SX, SY, SRX * 0.7, SRY * 0.68, seed=69, rough=0.14)
+    for (x, y) in ring_out:
+        if (x, y) in ring_in:
             n = smooth_noise(x, y, 9, 428)
             cv.set(x, y, '#86A755' if n > 0.42 else '#76984A')
-        elif d < 1.0:
+        else:
             n = noise2(x // 2, y // 2, 429)
             c = '#AE7E64' if n > 0.35 else '#9A6A52'
-            if d < 0.76 and (x + y) % 2:
+            if any((x + d, y) in ring_in for d in (-1, 1)) and (x + y) % 2:
                 c = '#76984A'  # the grass fraying onto the earth
-            if d > 0.95 and (x + y) % 2:
-                c = '#C29A7E'
             cv.set(x, y, c)
-        elif d < 1.12 and (x + y) % 2 == 0:
+    for (x, y) in edge_of(ring_out):
+        if (x, y + 1) not in ring_out:
+            cv.set(x, y, '#C29A7E')  # the lit outer lip
+        elif noise2(x, y, 670) > 0.5:
             cv.set(x, y, '#76984A')
-    # where the canopy closes in at the outer edges, the floor goes into deep shade
-    # (checker dithering toward FOREST_DARK, style rule 9); the path and the water stay lit
-    keep = set(path) | water | rock | set(clearing) | set(oval(SX, SY, SRX + 8, SRY + 6))
+    # where the canopy closes in at the outer edges the floor goes into shade: two calm
+    # steps of shadow in broad soft-edged pools (no checker), darkest in the far corner
+    keep = set(path) | water | rock | glade | ring_out
     for y in range(H):
         for x in range(W):
             if (x, y) in keep:
                 continue
-            d = min(x + noise2(x // 6, y // 6, 430) * 10, y + 14 + noise2(x // 6, y // 6, 431) * 10)
-            s = 1 - d / 44
-            if s >= 0.85 or (s >= 0.6 and ((x + y) % 2 == 0 or (x % 2 == 0 and y % 2 == 0))) \
-                    or (s >= 0.35 and (x + y) % 2 == 0) or (s >= 0.12 and x % 2 == 0 and y % 2 == 0):
-                cv.set(x, y, style.FOREST_DARK)
+            d = min(x + 6, y + 18)
+            s = (1 - d / 64 + (smooth_noise(x, y, 16, 431) - 0.5) * 0.7) * min(1.0, (H - y) / 70)
+            if s > 0.12:
+                style.darken(cv, x, y)
+            if s > 0.55:
+                style.darken(cv, x, y, (0.8, 0.82, 0.86))
+    # dappled light through the canopy, and the glade in full sun
+    for i in range(10):
+        lx, ly = 20 + int(noise2(i, 0, 426) * 290), 170 + int(noise2(i, 1, 426) * 380)
+        light_pool(cv, lx, ly, 10 + i % 3 * 4, 5 + i % 2 * 3, GOLDm[2], water | rock | path)
+    sun = blob(108, 128, 40, 24, seed=72, rough=0.3)  # the sun on the glade, in a ragged patch
+    for (x, y) in sun - path:
+        if smooth_noise(x, y, 6, 673) > 0.35 or (x + y) % 2 == 0:
+            c = cv.get(x, y)
+            cv.set(x, y, tuple(int(c[i] + (_rgb(G[4])[i] - c[i]) * 0.3) for i in range(3)) + (255,))
+    # the fairy ring: toadstools come up in a broken ring in the glade, the grass
+    # inside it greener where the ring has fed it (not a grid of one mushroom)
+    RX, RY = 154, 162
+    for k in range(13):
+        a = 2 * math.pi * k / 13 + noise2(k, 0, 671) * 0.4
+        rr = 1 + (noise2(k, 1, 671) - 0.5) * 0.25
+        mx, my = int(RX + 15 * rr * math.cos(a)), int(RY + 8 * rr * math.sin(a))
+        if noise2(k, 2, 671) < 0.15:
+            continue
+        for (gx, gy) in disc(mx, my, 2.5):
+            if (gx, gy) not in path:
+                cv.set(gx, gy, G[1] if (gx + gy) % 2 else G[2])
+    shrooms = []
+    for k in range(13):
+        a = 2 * math.pi * k / 13 + noise2(k, 0, 671) * 0.4
+        rr = 1 + (noise2(k, 1, 671) - 0.5) * 0.25
+        if noise2(k, 2, 671) < 0.15:
+            continue
+        shrooms.append((int(RX + 15 * rr * math.cos(a)), int(RY + 8 * rr * math.sin(a)), 2 + int(noise2(k, 3, 671) * 3), k))
+    for (mx, my, sz, k) in sorted(shrooms, key=lambda m: m[1]):
+        mushroom(cv, mx, my, sz, seed=k)
+    # ferns where it is damp and shaded: by the spring, along the stream, at the trees' feet
+    for (x, y, s) in ((44, 272, 1.1), (fx + 46, cy - 6, 0.9), (180, 352, 1.0), (262, 412, 1.1), (98, 322, 0.9),
+                      (154, 244, 1.0), (30, 470, 1.2), (228, 266, 0.85), (20, 330, 1.0), (206, 520, 1.0),
+                      (120, 228, 0.8), (290, 350, 0.9), (60, 250, 1.0), (250, 300, 0.9), (300, 470, 1.0), (20, 560, 1.1),
+                      (110, 524, 0.9), (270, 236, 0.9), (204, 176, 0.8), (60, 170, 0.9), (16, 404, 1.0), (292, 560, 1.0)):
+        if all((x + dx, y + dy) not in path and (x + dx, y + dy) not in water for dx in range(-16, 17, 2) for dy in range(-14, 4, 2)):
+            fern(cv, x, y, seed=x * 7 + y, size=s * 1.5)
+    for (x, y) in ((fx - 46, cy + 4), (fx + 44, cy + 8), (196, int(centre(196) + half(196)) + 1)):
+        reeds(cv, x, y, seed=x)
+    # a few fallen leaves gathered in drifts under the deciduous trees
+    for i in range(70):
+        bx, by = ((200, 150), (60, 500), (250, 520), (30, 220), (230, 340))[i % 5]
+        x, y = bx + int((noise2(i, 0, 421) - 0.5) * 50), by + int((noise2(i, 1, 421) - 0.5) * 30)
+        if (x, y) in keep:
+            continue
+        col = ('#B8703A', '#8A4A2A', '#D2A04E')[i % 3]
+        cv.set(x, y, col); cv.set(x + 1, y, col); cv.set(x + 1, y + 1, '#4A2E1E')
     objects = [
         # the stone circle
         ('stone-1', 'standing_stone', SX - 10, SY - SRY - 26), ('stone-2', 'standing_stone_b', SX + 26, SY - SRY - 18),
@@ -798,23 +1663,20 @@ def woodland(frame: int = 0):
         ('stone-7', 'standing_stone_low', SX - 38, SY - SRY - 12),
         ('stump-1', 'stump', 166, 232), ('stump-2', 'stump', 40, 340), ('stump-3', 'stump', 236, 120),
         ('pine-6', 'pine', -16, 110), ('pine-7', 'pine', 110, -44), ('tree-8', 'tree_small', -26, 380),
-        ('bush-2', 'bush', 4, 250), ('bush-3', 'bush', 160, 40), ('fern-5', 'fern', 150, 250),
+        ('bush-2', 'bush', 4, 250), ('bush-3', 'bush', 160, 40),
         # old trees closing in round the edges (none crosses the east border into the garden)
         ('tree-1', 'tree', -20, -30), ('pine-1', 'pine', 50, -40), ('tree-2', 'tree', 200, -26), ('pine-2', 'pine', 250, -36),
         ('tree-3', 'tree', -24, 200), ('pine-3', 'pine', -10, 330), ('tree-4', 'tree', 230, 160),
         ('tree-5', 'tree_small', 196, 300), ('pine-4', 'pine', 20, 470), ('tree-6', 'tree', 60, 480),
         ('pine-5', 'pine', 150, 490), ('tree-7', 'tree_small', 250, 504),
-        ('oak', 'hollow_tree', 70, 30), ('ring', 'mushroom_ring', 128, 150), ('log-1', 'mossy_log', 200, 230),
-        ('log-2', 'mossy_log', 128, 468), ('fern-1', 'fern', 30, 270), ('fern-2', 'fern', 180, 360),
-        ('fern-3', 'fern', 260, 420), ('fern-4', 'fern', 100, 330), ('bench', 'forest_bench', 150, 170),
+        ('oak', 'hollow_tree', 70, 30), ('log-1', 'mossy_log', 200, 230),
+        ('log-2', 'mossy_log', 128, 468), ('bench', 'forest_bench', 150, 186),
         ('willow', 'willow', 220, 340), ('bush-1', 'bush', 286, 380),
     ]
-    # a split-log footbridge where the path crosses the young stream
-    plank = {(x, y) for x in range(122, 140) for y in range(int(centre(130) - half(130)) - 3, int(centre(130) + half(130)) + 4)}
-    for (x, y) in plank:
-        cv.set(x, y, WOOD[4] if x in (122, 131) else WOOD[3] if x < 131 else WOOD[2])
-    for y in range(min(yy for _, yy in plank), max(yy for _, yy in plank) + 1):
-        cv.set(140, y, WTRm[0])
+    # the plank footbridge where the path crosses the young stream
+    by0, by1 = int(centre(130) - half(130)) - 2, int(centre(130) + half(130)) + 3
+    plank = {(x, y) for x in range(122, 138) for y in range(by0 - 3, by1 + 4)}
+    footbridge(cv, 123, 14, by0, by1, water)
     stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18),
               'stones': (SX, SY + 4)}
     return cv, objects, stands, (water | rock) - plank

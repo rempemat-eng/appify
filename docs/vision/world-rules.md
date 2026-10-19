@@ -42,6 +42,48 @@ Every prop key in the generators gets one placement type (`PLACEMENT` in `zones.
 
 A `ground` prop on water is a bug; a `floating` prop on grass is a bug; a `supported` structure with no drawn support is a bug.
 
+## 2a. Physics and common sense (Matt, 19 Oct)
+
+Matt: "there cannot be anyone standing on water, neither should trees be in a path", and every agent is to learn "general physics rules, logic and map creation rules". Before placing anything, ask what holds it up, how it got there, who uses it and how they reach it. Each rule below names the lint check that guards it (`scripts/art/world_lint.py`); rules without one are checked by eye in the stitched preview and by the scheduled world review.
+
+**Gravity and support**
+
+- Everything rests on something that can bear it: ground, a floor, a pier, a post, a wall bracket, a rope. Nothing hangs in the air unless it flies (birds, drones, airships with their mooring) or hangs from something drawn (a sign from its bracket, bunting from two posts, a lantern from a hook). Check: `ground-on-water`, `ground-on-lava`, `floating-on-land`.
+- Heavy things stand on level ground: buildings, wells, stalls, wagons. On a slope they get a drawn terrace, plinth or retaining wall. A building never straddles a cliff edge, a path or a river.
+- Overhangs are supported: a balcony on brackets, a deck on posts, a bridge on piers or abutments, a skybridge landing in a doorway at both ends.
+
+**Water**
+
+- Water flows downhill from a source to an outlet, drops tiers only at a fall, and pools only in a hollow (see 1). Still water is level: a pond's rim is one height all round.
+- Only things that float or wade are in water: boats, buoys, ducks, lily pads in still water, reeds and herons in shallows. People, animals that do not swim, trees, furniture and buildings are never in water; a house by water stands on piles that are drawn entering it. Check: `ground-on-water`, `stand-in-water`; residents' routes in `lib/region-walk.test.ts`.
+- Crossings are bridges, fords or stepping stones, at a narrow point, with dry ends that land on a path.
+
+**Paths and doors**
+
+- A path is a line people walk: nothing natural grows in it and nothing heavy blocks it. Trees, bushes, rocks, stumps and crops stand beside paths, never on them; the path bends round an old tree. Check: `plant-on-path`.
+- A door opens onto somewhere you can stand (a step, a path, a yard), with a path or worn ground leading away from it. A door never faces a wall, water, a cliff or a prop. Check: `door-shut-in`.
+- Gates sit in a continuous fence or wall, and the path runs through them. Fences and walls enclose something (a field, a yard, a fold with animals); they end at a post, a corner or a building, never in open grass. Rails end at buffers.
+- Paths follow the land: they take the gentlest line, bend round obstacles and contours, climb slopes in switchbacks or stairs, meet other paths at Y or T junctions (not perfect crosses), widen where people stop (a door, a bench, a well) and wear their verges. Paths come in grades (see 3); a footpath never turns into a road for no reason.
+
+**Living things**
+
+- Plants grow where they can live: by moisture, light and soil. Reeds at still water, ferns in shade, cacti in sand, nothing green on lava or open regolith; alpine plants and pines thin out with height; trees grow in groups and at the edges of clearings, with saplings and stumps near old ones.
+- People and animals stand on walkable ground, face what they are doing (a fisher faces the water, a vendor faces the lane), and are the right size for the doors and benches round them. Grazing animals stand inside a field or a fold, never on a road or a roof.
+- Life away from the planet needs a pressurised, shielded habitat with air, water, light and power (rule 10 in `art-faults.md`).
+
+**Light, scale and view**
+
+- One light: from the upper left. Every prop has its lit faces up and left, its contact shadow down and right, and the same shadow length for the same height.
+- One camera: the three-quarter view (art-faults rule 4). Everything shows its top and its front, flat things are foreshortened to the same angle.
+- One scale: doors fit people and the companion; a cottage is a few doors wide; a tree is taller than a house's eaves; a bench seats two.
+
+**Height**
+
+- Height changes only at a drawn slope, bank, cliff, stair, ramp, ladder or lift, and a stair or ramp always carries a path to a node at both ends (see 4).
+- Things on a higher level hide what is behind them and are hidden by what is in front; the companion is drawn behind a wall it walks behind and in front of a wall it walks past in front of (the `Ghost` outline shows it through anything that hides it).
+
+**Where these come from, and what comes next.** `docs/vision/research/placement-paths-verticality.md` (19 Oct, sourced) gives the test for each rule, a path generator (a cost field with squared slope cost, A\* in 16 directions, roads then lanes meeting as T-junctions then desire-line footpaths merging in a Y, bridges at narrow points, Chaikin smoothing and worn verges) and the two-level walk for the city (a walk grid per level, decks drawn raised, stairs and lifts as connectors, a fixed draw order, fading what hides the companion). Its numbers are starting points to tune in play. Claude A builds the path generator and the second walk level; zone owners use them once they land.
+
 ## 3. Places are nodes joined by graded paths
 
 A zone is a small Lynch map: **one landmark** visible from where you enter; a **frame** of edges on all four sides made of materials that belong there (water, bluff, hedge, treeline, fence, wall); **one clearing or square** kept mostly empty as its node; and **paths in at most three grades**.

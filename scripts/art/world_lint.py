@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from collections import deque
 
 from PIL import Image, ImageDraw
@@ -122,6 +123,57 @@ def check_props(name, terrain, objects, sprites, overhead):
         elif hot > 0.2:
             out.append((name, 'ground-on-lava', oid, box, f'{key} stands in lava'))
     return out
+
+
+# Things that grow or lie on the ground and never stand on a trodden path or a road
+# (Matt, 19 Oct: "neither should trees be in a path"): a path goes round a tree, a
+# rock or a bush, or the tree was felled for it.
+NATURAL = ('tree', 'pine', 'willow', 'acacia', 'palm', 'snag', 'bush', 'hedge', 'fern', 'shrub',
+           'boulder', 'rock', 'stone', 'scree', 'stump', 'log', 'cactus', 'saguaro', 'prickly',
+           'monstera', 'pandanus', 'hibiscus', 'bird_of_paradise', 'banana', 'reeds', 'papyrus',
+           'fireweed', 'cotton_grass', 'mushroom', 'crystal', 'obsidian', 'outcrop')
+# ...except the ones people put there on purpose
+NATURAL_OK = ('standing_stone', 'stone_bench', 'stone_lantern', 'milestone', 'stepping')
+# Buildings with a door in the middle of their front: something must be walkable in front
+# of it (a door opens onto a step, a path or ground, never onto a wall, water or a prop).
+DOORED = ('house', 'cottage', 'cabin', 'cafe', 'store', 'saloon', 'library', 'bothy', 'barn',
+          'station_house', 'boathouse', 'bathhouse', 'workshop', 'shelter', 'tea_kiosk', 'forge')
+
+
+def _is(key, words):
+    return any(w in key for w in words)
+
+
+def check_logic(name, terrain, walk, stands, objects, sprites, overhead):
+    """Common-sense placement (docs/vision/world-rules.md, "Placement logic"): nothing
+    natural stands on a path; a door opens onto somewhere you can stand; a stand (where
+    the companion or someone waits) is never in water, lava or a wall."""
+    out = []
+    for (oid, key, x, y) in objects:
+        if key in overhead or key in SUPPORTED or key in FLOATING or key in WET:
+            continue
+        sp = sprites[key]
+        box = (x, y, sp.w, sp.h)
+        if _is(key, NATURAL) and not _is(key, NATURAL_OK):
+            cells = _foot_cells(x, y, sp.w, sp.h, key)
+            if cells and sum(terrain[cy][cx] == '=' for (cx, cy) in cells) / len(cells) >= 0.25:
+                out.append((name, 'plant-on-path', oid, box, f'{key} stands on a path'))
+        if _is(key, DOORED) and sp.w >= 28 and not re.search(r'_f\d+$', key):
+            fy = (y + sp.h + 2) // CELL
+            xs = range((x + sp.w * 3 // 10) // CELL, (x + sp.w * 7 // 10) // CELL + 1)
+            if 0 <= fy < ROWS and not any(0 <= cx < COLS and walk[fy][cx] == '.' for cx in xs) \
+                    and not any(0 <= cx < COLS and fy + 1 < ROWS and walk[fy + 1][cx] == '.' for cx in xs):
+                out.append((name, 'door-shut-in', oid, box, f'nothing walkable in front of the {key}\'s door'))
+    for sid, (sx, sy) in stands.items():
+        cx, cy = sx // CELL, sy // CELL
+        if 0 <= cx < COLS and 0 <= cy < ROWS and terrain[cy][cx] in '~!':
+            out.append((name, 'stand-in-water', sid, (sx - 4, sy - 4, 8, 8), f'the stand {sid} is in water or lava'))
+    return out
+
+
+# Kinds of finding that are new and reported, not yet failing the build, until every
+# region is clear of them (then they join the strict check).
+REPORTED = {'plant-on-path', 'door-shut-in', 'stand-in-water'}
 
 
 def _edge(terrain, side, depth=3):
@@ -293,6 +345,7 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
         z['terrain'] = terrain
         violations += check_props(name, terrain, z['objects'], z['sprites'], overhead)
         violations += check_paths(name, terrain, z['stands'], z['objects'], z['sprites'], None)
+        violations += check_logic(name, terrain, z['walk'], z['stands'], z['objects'], z['sprites'], overhead)
     zones['garden'] = garden_zone()
     for region, places in layout.items():
         violations += check_borders(region, places, zones)
@@ -309,7 +362,9 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
     print('world lint:', len(violations), 'findings', json.dumps(kinds), f'({len(used)} overridden)')
     # regions that have been fixed against the rules fail the build on a new finding
     # (world-rules.md, section 8: the valley first, then one region at a time)
-    strict = [v for v in violations if any(v[0] in layout[r] for r in STRICT)]
+    strict = [v for v in violations if any(v[0] in layout[r] for r in STRICT) and v[1] not in REPORTED]
+    for v in sorted(v for v in violations if v[1] in REPORTED):
+        print(f'world lint (reported): {v[0]} {v[1]} {v[2]} at {v[3][:2]}: {v[4]}')
     assert not strict, 'world lint (strict regions): ' + '; '.join(f'{v[0]} {v[1]} {v[2]}: {v[4]}' for v in strict)
     out = os.environ.get('LINT_OUT')
     if out:

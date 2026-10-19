@@ -46,6 +46,7 @@ import {
 } from '@/lib/break-history';
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
 import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
+import { acknowledgeMapSeen, restoreMapSeen } from '@/lib/world-map';
 import {
   checkDecor,
   DEFAULT_HUT_LOOK,
@@ -202,6 +203,8 @@ export type Saved = {
   cardReward: WelcomeReward | null;
   /** where the companion is in the walkable world (none until it first walks out) */
   world?: WorldSpot | null;
+  /** Discoveries acknowledged when the map was opened; no reward or unlock. */
+  mapSeen?: string[];
   /** keepsakes set out in the nap hut (the rest wait in the chest; lib/decor.ts) */
   decor?: DecorPlacement[];
   /** the hut's door, window boxes and path, as chosen while decorating (lib/decor.ts) */
@@ -263,6 +266,8 @@ type Game = Saved & {
   dismissAlert: () => void;
   notify: (message: string, error?: boolean) => void;
   world: WorldSpot | null;
+  mapSeen: string[];
+  markWorldMapSeen: (capturedVisited: readonly string[]) => void;
   /** record where the companion stands in the world; walking grants nothing */
   walkWorld: (region: RegionId, x: number, y: number, settle?: boolean) => void;
   decor: DecorPlacement[];
@@ -357,7 +362,9 @@ function migrateSaved(value: unknown) {
   if (value.waitingVisitor === undefined) value.waitingVisitor = null;
   if (value.offDeck === undefined) value.offDeck = null;
   if (value.cardReward === undefined) value.cardReward = null;
-  value.world = restoreWorld(value.world);
+  const world = restoreWorld(value.world);
+  value.world = world;
+  value.mapSeen = restoreMapSeen(value.mapSeen, world);
   value.decor = restoreDecor(
     value.decor,
     isRecord(value.world) && isStringArray(value.world.visited) ? value.world.visited : [],
@@ -497,6 +504,7 @@ function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakI
     waitingVisitor: null,
     cardReward: null,
     world: null,
+    mapSeen: [],
     decor: [],
     hutLook: { ...DEFAULT_HUT_LOOK },
   };
@@ -639,6 +647,7 @@ function persist() {
     collectedCards: s.collectedCards,
     cardReward: s.cardReward,
     world: s.world,
+    mapSeen: s.mapSeen,
     decor: s.decor,
     hutLook: s.hutLook,
     waitingVisitor: s.waitingVisitor,
@@ -883,6 +892,16 @@ export const gameStore = create<Game>((set, get) => ({
   cardReward: null,
   waitingVisitor: null,
   world: null,
+  mapSeen: [],
+  markWorldMapSeen: (capturedVisited) => {
+    const s = get();
+    if (!saveWritable || !s.ready || !s.player) return;
+    const mapSeen = acknowledgeMapSeen(s.mapSeen, capturedVisited, s.world);
+    if (mapSeen.length === s.mapSeen.length && mapSeen.every((id, i) => id === s.mapSeen[i]))
+      return;
+    set({ mapSeen });
+    void persist();
+  },
   decor: [],
   placeDecor: (item, x, y, area = 'hut') => {
     const s = get();
