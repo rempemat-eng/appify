@@ -259,10 +259,12 @@ function Sprite({
   source,
   rect,
   z,
+  flip,
 }: {
   source: ImageSourcePropType;
   rect: { left: number; top: number; width: number; height: number };
   z: number;
+  flip?: boolean;
 }) {
   return (
     <Image
@@ -275,6 +277,9 @@ function Sprite({
         width: rect.width,
         height: rect.height,
         zIndex: z,
+        // a turned keepsake faces the other way; its box is centred on its foot, so the
+        // mirror keeps it in place (as in atlas-walk's garden)
+        transform: flip ? [{ scaleX: -1 }] : undefined,
       }}
     />
   );
@@ -300,6 +305,7 @@ function DecorSprite({
         source={decorImages[d.item]}
         rect={snapRect(billboard(proj, b.left, b.top, b.w, b.h))}
         z={z}
+        flip={d.flip === true}
       />
     </View>
   );
@@ -345,6 +351,7 @@ function DecorPreview({
           width: art.width,
           height: art.height,
           opacity: 0.8,
+          transform: preview.flip ? [{ scaleX: -1 }] : undefined,
         }}
       />
     </View>
