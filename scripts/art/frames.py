@@ -68,7 +68,7 @@ PORTS = {
     ('junction', 'canal'): (OPEN, None),
     ('neon', 'skyport'): (OPEN, None),
     # Sunstone Reach (Claude D's lines)
-    ('oasis', 'gulch'): ((296, 352), 'dunes'),
+    ('oasis', 'gulch'): ((496, 552), 'dunes'),
     ('gulch', 'scorch'): ((356, 412), 'dunes'),
     ('hearthold', 'scorch'): ((140, 188), 'ash'),
     ('caldera', 'hearthold'): ((104, 152), 'basalt'),

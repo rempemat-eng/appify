@@ -33,7 +33,7 @@ Matt, 18 Oct 22:21: "really make sure that the world comes to life as Codex mapp
 | summit/saddle         | 120–168    | 116–172   | the steep ground below the lookout                               |
 | junction/canal        | 128–192    | open land | nothing: open land                                               |
 | neon/skyport          | 164–220    | open land | nothing: open land                                               |
-| oasis/gulch           | 496–552    | 296–352   | dunes frame (owner to review)                                    |
+| oasis/gulch           | 496–552    | 496–552   | dune ridges, open at the oasis track                             |
 | gulch/scorch          | 204–268    | 356–412   | dunes frame (owner to review)                                    |
 | hearthold/scorch      | (no seam)  | 140–188   | ash frame (owner to review)                                      |
 | caldera/hearthold     | (no seam)  | 104–152   | basalt frame (owner to review)                                   |
