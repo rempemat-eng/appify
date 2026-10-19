@@ -29,7 +29,7 @@ export const residentSprites: Record<string, { zone: ZoneId; w: number; h: numbe
   miller: { zone: 'riverside', w: 20, h: 28 },
   angler: { zone: 'riverside', w: 20, h: 28 },
   botanist: { zone: 'station', w: 20, h: 28 },
-  stargazer: { zone: 'lumen', w: 20, h: 28 },
+  stargazer: { zone: 'station', w: 20, h: 28 },
   warden: { zone: 'saddle', w: 20, h: 28 },
   skater: { zone: 'snowmelt', w: 20, h: 28 },
   ferryman: { zone: 'landing', w: 20, h: 28 },

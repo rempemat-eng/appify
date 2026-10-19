@@ -187,11 +187,10 @@ RESIDENTS = {
     'angler': {'zone': 'riverside', 'skin': 'b', 'top': '#5A7A4A', 'legs': '#3E4A3A', 'hat': ('wide', '#7A6A4A')},
     'botanist': {'zone': 'station', 'skin': 'a', 'top': '#B8C2D6', 'trim': '#22B5A0', 'hair': 'blond',
                  'carry': ('plant', '#557A45')},
-    # in her pressure suit (white, with the shuttle line's violet trim): she has just come
-    # in through the hub's hatch from counting stars outside (M1: nobody stands on the
-    # regolith without a suit, and the companion never goes out)
-    'stargazer': {'zone': 'lumen', 'skin': 'e', 'top': '#E8ECF2', 'trim': '#7464A8', 'legs': '#C8CED8',
-                  'hat': ('helmet', '#F4F6FA'), 'carry': ('lantern', '#9AD2FF')},
+    # in Halcyon's lounge, under the long windows (Lumen's walkable rooms are all roofed
+    # now, so nobody walks in the open there; review 19 Oct 14:20)
+    'stargazer': {'zone': 'station', 'skin': 'e', 'top': '#3E3A6A', 'trim': '#9AD2FF', 'legs': '#2A2838',
+                  'hair': 'black'},
     # the Frostline Highlands and the Tidebloom Isles (18 Oct)
     'warden': {'zone': 'saddle', 'skin': 'b', 'top': '#B83A32', 'legs': '#3E3A50', 'hat': ('cap', '#E8DCC8'),
                'carry': ('lantern', '#FFC766')},
