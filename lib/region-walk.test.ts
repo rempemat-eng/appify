@@ -9,6 +9,8 @@ import {
   tileAt,
   tileOrigin,
   TILE,
+  zoneReach,
+  zonesToMount,
   type RegionId,
 } from './region-walk';
 import { regionLayout, zoneMaps, zoneOverhead, zonePorts } from './zone-maps';
@@ -209,4 +211,26 @@ const isRegion = (k: string): k is RegionId => k in regionLayout;
   console.log(
     'Two levels: a deck is reached only by its stairs, and both ends of a stair are kept.',
   );
+}
+
+// A zone whose art reaches out of its rectangle (a tower whose body rises into the zone
+// above) is mounted while that art is in view, even with its own rectangle out of view.
+{
+  let towers = 0;
+  for (const key of Object.keys(regionLayout)) {
+    if (!isRegion(key)) continue;
+    for (const t of regionTiles(key)) {
+      const r = zoneReach(t.id);
+      if (!r || r.y0 > -80) continue;
+      const o = tileOrigin(key, t);
+      // a thin view across the top of the overhang only, well above the zone itself
+      const view = { x0: o.x, x1: o.x + TILE.width, y0: o.y + r.y0, y1: o.y + r.y0 + 20 };
+      assert.ok(
+        zonesToMount(key, view).includes(t.id),
+        `${key}: ${t.id} is mounted while its art reaching ${-r.y0} px above it is in view`,
+      );
+      towers++;
+    }
+  }
+  console.log(`Mounting: ${towers} zones with art reaching far above them mount while it is seen.`);
 }

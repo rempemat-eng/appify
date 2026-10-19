@@ -334,11 +334,24 @@ def hollow(frame: int = 0):
     cv = Canvas(W, H)
     turf_or_snow(cv, 'hollow', frame)
     # the escarpment's rim along the bottom, then its face falling away to the woodland
+    # (it wanders off the seam, and toward the Ridge it dies out as a scree slope rather
+    # than ending in a cut at the zone's edge: review 15:54)
     def rim(x):
-        return 524 + int(smooth_noise(x + ox, 0, 16, 871) * 10)
+        base = 512 + int(smooth_noise(x + ox, 0, 22, 871) * 26)
+        t = max(0.0, (x - 200) / 112)
+        return min(H, base + int(t * t * (H - base + 4)))
     scarp = set()
     for x in range(W):
         r = rim(x)
+        # the slope is too steep and loose to walk wherever the old face stood: no way
+        # down to the woodland or round onto the ridge here (the Ridge is the way up)
+        steep_top = min(r, 524 + int(smooth_noise(x + ox, 0, 16, 871) * 10))
+        for y in range(steep_top, r):
+            scarp.add((x, y))
+            if noise2(x, y, 876) > 0.62:  # scree: loose stones over the turf, more lower down
+                cv.set(x, y, ST[3] if noise2(x, y, 877) > 0.5 else ST[2])
+            elif noise2(x // 2, y // 2, 878) > 0.8:
+                cv.set(x, y, ST[4])
         for y in range(r, H):
             k = y - r
             c = ST[3] if (k + int(noise2(x // 6, 1, 872) * 3)) // 5 % 2 else ST[2]

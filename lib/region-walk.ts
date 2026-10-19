@@ -253,10 +253,50 @@ export function zonesToMount(
     new Set(cellsNear(region, view, m).map(({ col, row }) => `${col},${row}`));
   const close = near(margin);
   const kept = near(margin * 2);
+  const b = regionBounds(region);
+  // (a zone whose art reaches into the view, a tower standing in it whose body rises into
+  // the zone above, is mounted too, or the tower would vanish as its foot leaves the view)
+  const reaches = (t: RegionTile, m: number) => {
+    const r = zoneReach(t.id);
+    if (!r) return false;
+    const ox = (t.col - b.minCol) * TILE.width;
+    const oy = (t.row - b.minRow) * TILE.height;
+    return (
+      ox + r.x0 < view.x1 + m &&
+      ox + r.x1 > view.x0 - m &&
+      oy + r.y0 < view.y1 + m &&
+      oy + r.y1 > view.y0 - m
+    );
+  };
   return tiles
     .filter(
       (t) =>
-        close.has(`${t.col},${t.row}`) || (mounted.includes(t.id) && kept.has(`${t.col},${t.row}`)),
+        close.has(`${t.col},${t.row}`) ||
+        reaches(t, margin) ||
+        (mounted.includes(t.id) && (kept.has(`${t.col},${t.row}`) || reaches(t, margin * 2))),
     )
     .map((t) => t.id);
+}
+
+/** How far a zone's props reach past its own rectangle (zone pixels, its origin at 0, 0),
+ *  or none when they all stay inside it. */
+const reachCache = new Map<TileId, RegionRect | null>();
+export function zoneReach(id: TileId): RegionRect | null {
+  if (reachCache.has(id)) return reachCache.get(id) ?? null;
+  let r: RegionRect | null = null;
+  if (id !== 'garden') {
+    let x0 = 0;
+    let y0 = 0;
+    let x1: number = TILE.width;
+    let y1: number = TILE.height;
+    for (const [, , x, y, w, h] of zoneMaps[id].objects) {
+      x0 = Math.min(x0, x);
+      y0 = Math.min(y0, y);
+      x1 = Math.max(x1, x + w);
+      y1 = Math.max(y1, y + h);
+    }
+    if (x0 < 0 || y0 < 0 || x1 > TILE.width || y1 > TILE.height) r = { x0, y0, x1, y1 };
+  }
+  reachCache.set(id, r);
+  return r;
 }

@@ -687,6 +687,8 @@ def build(name: str, fn, start: str):
                 strip.paste(sprite_map[key], x, y)
         strip.save(os.path.join(out, 'top.png'), worlds.SCALE)
     preview = os.environ.get('ZONE_PREVIEW')
+    if preview:
+        os.makedirs(preview, exist_ok=True)
     prev = None
     if preview or os.environ.get('LINT_OUT'):
         prev = Canvas(W, H)
