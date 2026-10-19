@@ -88,7 +88,9 @@ VALLEY_COAST = [(-960, 1690), (-560, 1700), (-320, 1716), (0, 1721), (640, 1531)
                 (1000, 1420), (1280, 1400)]
 # The river that leaves the riverside at its east edge (region y 1-576 band 295-350)
 # runs on east through the old forest (its centre line by region x, and its width).
-VALLEY_RIVER = [(640, 322), (720, 330), (800, 352), (880, 344), (960, 320), (1100, 300)]
+# (none since 19 Oct: Claude E's V2 turns the valley's river south inside the valley, so
+# nothing leaves the riverside's east edge; kept as a hook for a river that does)
+VALLEY_RIVER: list = []
 RIVER_HALF = 26
 
 
@@ -101,8 +103,11 @@ def valley_fields(X, Y):
     away = np.clip(np.minimum(np.abs(X - 0), np.abs(X - 640)) / 80, 0, 1)
     coast = coast + away * 46 * (vnoise(X, 0 * X, 70, 933) - 0.5) + away * 12 * (vnoise(X, 0 * X, 18, 934) - 0.5)
     sea = Y > coast
-    rc = _lerp_points(X, VALLEY_RIVER) + 10 * (vnoise(X, 0 * X, 40, 935) - 0.5) * np.clip((X - 640) / 60, 0, 1)
-    river = (np.abs(Y - rc) < RIVER_HALF) & (X >= 640) & (Y > -60) & (Y < 600)
+    if VALLEY_RIVER:
+        rc = _lerp_points(X, VALLEY_RIVER) + 10 * (vnoise(X, 0 * X, 40, 935) - 0.5) * np.clip((X - 640) / 60, 0, 1)
+        river = (np.abs(Y - rc) < RIVER_HALF) & (X >= 640) & (Y > -60) & (Y < 600)
+    else:
+        rc, river = np.zeros(np.shape(X)), np.zeros(np.shape(X), dtype=bool)
     return alt, sea, river, coast, rc
 
 
@@ -324,6 +329,46 @@ def _peaks(col: int, row: int, alt_at, free):
     return sorted(out)
 
 
+# The valley's railway leaves the halt's west edge in its cutting (halt rows 306-333) and
+# runs on west to a tunnel portal in the wooded hillside, so the line visibly goes
+# somewhere (the 19 Oct merge review: it ran straight into the canopy).
+RAIL = {'zone': 'halt', 'cell': (-1, 1), 'y0': 306, 'y1': 334, 'portal_in': 150}
+
+
+@functools.lru_cache(maxsize=4)
+def _zone_ground(zone: str) -> np.ndarray:
+    import os
+    path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'zones', zone, 'ground.png')
+    return np.array(Image.open(path).convert('RGB').resize((W, H), Image.NEAREST))
+
+
+@functools.lru_cache(maxsize=2)
+def _portal(w: int = 44, h: int = 46) -> Image.Image:
+    """A railway tunnel's portal in the three-quarter view: a face of coursed stone with
+    a lit upper-left edge, a round-headed arch over the track with a keystone, the dark
+    of the tunnel inside, and a bank of earth over its top."""
+    yy, xx = np.mgrid[0:h, 0:w]
+    rgb = _pick(ST, np.where(((yy // 4) % 2 == 0) ^ (((xx + (yy // 4) * 3) // 7) % 2 == 0), 2, 3))
+    rgb = np.where(((yy % 4) == 3)[..., None], _pick(ST, np.full(xx.shape, 1)), rgb)
+    cx, top, half = w / 2, h - 30, 11
+    arch = ((np.abs(xx + 0.5 - cx) <= half) & (yy >= top + half)) | (np.hypot(xx + 0.5 - cx, yy + 0.5 - (top + half)) <= half)
+    ring = (((np.abs(xx + 0.5 - cx) <= half + 3) & (yy >= top + half)) | (np.hypot(xx + 0.5 - cx, yy + 0.5 - (top + half)) <= half + 3)) & ~arch
+    rgb = np.where(ring[..., None], _pick(ST, np.where(xx < cx, 4, 2)), rgb)
+    key = (np.abs(xx + 0.5 - cx) <= 2) & (yy >= top - 3) & (yy < top + 1)
+    rgb = np.where(key[..., None], _pick(ST, np.full(xx.shape, 4)), rgb)
+    rgb = np.where(arch[..., None], np.array(_rgb('#14131A'), dtype=np.uint8), rgb)
+    inner = arch & (np.abs(xx + 0.5 - cx) > half - 2)
+    rgb = np.where(inner[..., None], np.array(_rgb('#2A2733'), dtype=np.uint8), rgb)
+    bank = yy < 6
+    rgb = np.where(bank[..., None], _pick(FOREST_FLOOR, np.where(yy < 3, 1, 2)), rgb)
+    lit = (xx < 2) & ~bank
+    rgb = np.where(lit[..., None], _pick(ST, np.full(xx.shape, 4)), rgb)
+    a = np.zeros((h, w, 4), dtype=np.uint8)
+    a[..., :3] = rgb
+    a[..., 3] = 255
+    return Image.fromarray(a, 'RGBA')
+
+
 def valley_cell(col: int, row: int, zone_at) -> Canvas:
     """One cell of scenery in the valley. `zone_at(col, row)` names the zone there, if any.
 
@@ -349,6 +394,18 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
     ground = np.where((river & ~sea)[..., None], _river_rgb(X, Y, rc), ground)
     inside = np.zeros((CH, CW), dtype=bool)
     inside[S:S + H, S:S + W] = True
+    # the railway: the halt's cutting (its walls, ballast, sleepers and rails) carried on
+    # west from its edge, column for column, to the portal
+    rc_, rr_ = RAIL['cell']
+    ry0, ry1 = rr_ * H + RAIL['y0'], rr_ * H + RAIL['y1']
+    rx_end = rc_ * W                       # the halt's west edge, in region x
+    rx_portal = rx_end - RAIL['portal_in']
+    track = (Y >= ry0) & (Y < ry1) & (X >= rx_portal) & (X < rx_end)
+    if track.any() and zone_at(rc_, rr_) == RAIL['zone']:
+        hg = _zone_ground(RAIL['zone'])
+        lx = 1 + np.mod(X - rx_end, 7)
+        ly = np.clip(Y - rr_ * H, 0, H - 1)
+        ground = np.where(track[..., None], hg[ly, lx], ground)
     _paint(cv, ground, inside)
 
     def field(x, y):
@@ -374,13 +431,16 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
         a, s1, r1, _c, _r = valley_fields(GX, GY)
         zone = np.vectorize(lambda x, y: bool(zone_px(x, y)))(GX, GY)
         beach = GY > _lerp_points(GX, VALLEY_COAST) - 34
-        return np.where(s1 | r1 | zone | (a > 0.6), None,
+        rail = (GY > ry0 - 14) & (GY < ry1 + 22) & (GX > rx_portal - 6) & (GX < rx_end)
+        return np.where(s1 | r1 | zone | rail | (a > 0.6), None,
                         np.where(a > 0.12, 'pine', np.where(beach, None, 'crown')))
 
     # mountains and trees together, back to front
     things = [(by, 'peak', (left, top, w, h, seed, snow)) for (by, left, top, w, h, seed, snow)
               in _peaks(col, row, lambda x, y: field(x, y)[0], free)]
     things += [(gy, what, (gx, rx, k)) for (gy, gx, what, rx, k) in _trees('valley', col, row, kind_at)]
+    if track.any() and zone_at(rc_, rr_) == RAIL['zone']:
+        things.append((ry1, 'portal', None))
     pine = _pine()
     for (by, what, d) in sorted(things, key=lambda t: t[0]):
         if what == 'peak':
@@ -392,6 +452,9 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
             cx1, cy1 = min(CW, px + w), min(CH, py + h)
             if cx1 > cx0 and cy1 > cy0:
                 cv.img.alpha_composite(sp.crop((cx0 - px, cy0 - py, cx1 - px, cy1 - py)), (cx0, cy0))
+        elif what == 'portal':
+            pi = _portal()
+            _stamp(cv, pi, int(rx_portal - x0 - pi.width + 6), int(ry1 - y0 - pi.height))
         elif what == 'crown':
             gx, rx, k = d
             X0, Y0 = gx - x0, by - y0
@@ -407,10 +470,238 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
     return cv
 
 
+DESERT, BASALT, ASH, LAVA = (MATERIALS[k] for k in ('desert', 'basalt', 'ash', 'lava'))
+ADOBE, REGOLITH = MATERIALS['adobe'], MATERIALS['regolith']
+
+
+def _blend_cells(X, Y, value, spread: float = 0.28, seed: int = 1101):
+    """A field that is `value(col, row)` at each cell's middle and blends between cells:
+    bilinear between the middles, then a wandering noise, so a change of kind lies
+    somewhere across the land rather than on a cell's edge."""
+    fx, fy = X / W - 0.5, Y / H - 0.5
+    c0, r0 = np.floor(fx).astype(int), np.floor(fy).astype(int)
+    tx, ty = fx - c0, fy - r0
+    vals = {}
+    def v(c, r):
+        out = np.zeros(c.shape)
+        for (cc, rr) in set(zip(c.ravel().tolist(), r.ravel().tolist())):
+            if (cc, rr) not in vals:
+                vals[(cc, rr)] = float(value(cc, rr))
+            out[(c == cc) & (r == rr)] = vals[(cc, rr)]
+        return out
+    a = v(c0, r0) * (1 - tx) + v(c0 + 1, r0) * tx
+    b = v(c0, r0 + 1) * (1 - tx) + v(c0 + 1, r0 + 1) * tx
+    f = a * (1 - ty) + b * ty
+    return f + spread * (vnoise(X, Y, 90, seed) - 0.5) + 0.1 * (vnoise(X, Y, 23, seed + 1) - 0.5)
+
+
+@functools.lru_cache(maxsize=256)
+def _mesa(w: int, h: int, seed: int) -> Image.Image:
+    """A sandstone butte in the three-quarter view: a flat top lit by the sun, sheer
+    walls of banded strata (the west wall lit, the east in shade), a skirt of talus at
+    its foot."""
+    rnd = lambda k: float(_hash(np.array(seed), np.array(k), 1201))  # noqa: E731
+    yy, xx = np.mgrid[0:h, 0:w].astype(float)
+    u = (xx + 0.5) / w * 2 - 1
+    v = (yy + 0.5) / h
+    jag = (vnoise(xx, yy, 6, seed * 5 + 1) - 0.5) * 0.08
+    top = 0.18 + rnd(1) * 0.1
+    half_top = 0.55 + rnd(2) * 0.2 + jag
+    # the cap (an ellipse seen from above), the walls below it, the talus flaring out
+    cap = ((u / half_top) ** 2 + ((v - top) / 0.16) ** 2) <= 1
+    wall = (v >= top) & (np.abs(u) <= half_top + np.maximum(0, v - 0.72) * 1.4 + jag)
+    body = (cap | wall) & (v <= 1 - 0.12 * u * u)
+    west = u < -0.1 + (vnoise(0 * xx, yy, 11, seed * 5 + 2) - 0.5) * 0.2
+    band = ((yy + vnoise(xx, 0 * yy, 20, seed * 5 + 3) * 6) // max(3, h // 18)).astype(int) % 3
+    wall_i = np.where(west, np.where(band == 0, 4, 3), np.where(band == 0, 2, 1))
+    rgb = _pick(ADOBE, wall_i)
+    talus = v > 0.74
+    rgb = np.where(talus[..., None], _pick(DESERT, np.where(west, 3, 2)), rgb)
+    is_cap = cap & ~(v > top + 0.13)
+    rgb = np.where(is_cap[..., None], _pick(DESERT, np.where(vnoise(xx, yy, 7, seed) > 0.6, 5, 4)), rgb)
+    rim = cap & ~np.roll(cap, -2, axis=0) & (v > top)   # the cap's lit south lip
+    rgb = np.where(rim[..., None], _pick(DESERT, np.full(u.shape, 5)), rgb)
+    a = np.zeros((h, w, 4), dtype=np.uint8)
+    a[..., :3] = rgb
+    a[..., 3] = np.where(body, 255, 0)
+    edge_px = body & ~(np.roll(body, 1, 0) & np.roll(body, -1, 0) & np.roll(body, 1, 1) & np.roll(body, -1, 1))
+    a[edge_px & (v < 0.9), :3] = _rgb(ADOBE[0])
+    return Image.fromarray(a, 'RGBA')
+
+
+@functools.lru_cache(maxsize=256)
+def _cinder_cone(w: int, h: int, seed: int) -> Image.Image:
+    """A cinder cone on the volcano's flank: a black cone of loose scoria, lit on the
+    west, grey ash streaking its slopes, a crater at the top with a faint glow."""
+    yy, xx = np.mgrid[0:h, 0:w].astype(float)
+    u = (xx + 0.5) / w * 2 - 1
+    v = (yy + 0.5) / h
+    crater_v = 0.16
+    span = (v - crater_v * 0.4) / (1 - crater_v * 0.4)
+    jag = (vnoise(xx, yy, 6, seed * 3 + 1) - 0.5) * 0.08
+    body = (span >= 0) & (np.abs(u) <= 0.28 + span * 0.72 + jag) & (v <= 1 - 0.1 * u * u)
+    west = u < (vnoise(0 * xx, yy, 13, seed * 3 + 2) - 0.5) * 0.15
+    streak = ridged(u * 30 / np.maximum(v, 0.1), yy * 0.2, 5, seed * 3 + 3) > 0.78
+    idx = np.where(west, 3, 1)
+    rgb = _pick(BASALT, idx)
+    rgb = np.where((streak & west)[..., None], _pick(ASH, np.full(u.shape, 3)), rgb)
+    rgb = np.where((streak & ~west)[..., None], _pick(ASH, np.full(u.shape, 1)), rgb)
+    crater = ((u / 0.3) ** 2 + ((v - crater_v) / 0.07) ** 2) <= 1
+    rgb = np.where(crater[..., None], _pick(BASALT, np.full(u.shape, 0)), rgb)
+    glow = ((u / 0.16) ** 2 + ((v - crater_v - 0.01) / 0.035) ** 2) <= 1
+    rgb = np.where(glow[..., None], _pick(LAVA, np.full(u.shape, 1)), rgb)
+    a = np.zeros((h, w, 4), dtype=np.uint8)
+    a[..., :3] = rgb
+    a[..., 3] = np.where(body, 255, 0)
+    edge_px = body & ~(np.roll(body, 1, 0) & np.roll(body, -1, 0) & np.roll(body, 1, 1) & np.roll(body, -1, 1))
+    a[edge_px & (v < 0.9), :3] = _rgb(BASALT[0])
+    return Image.fromarray(a, 'RGBA')
+
+
+def _scatter(col, row, step_x, step_y, seed, margin=200):
+    """Jittered points over the region reaching this cell's canvas (rows offset by half a
+    step, so nothing lines up)."""
+    x0, y0 = col * W - S - margin, row * H - S - 40
+    x1, y1 = (col + 1) * W + S + margin, (row + 1) * H + S + margin
+    for j in range(math.floor(y0 / step_y), math.ceil(y1 / step_y) + 1):
+        for i in range(math.floor(x0 / step_x), math.ceil(x1 / step_x) + 1):
+            bx = i * step_x + (step_x / 2 if j % 2 else 0) + (noise2(i, j, seed) - 0.5) * step_x * 0.7
+            by = j * step_y + (noise2(i, j, seed + 1) - 0.5) * step_y * 0.7
+            yield i, j, bx, by
+
+
+def _place(cv, img, left, top, x0, y0):
+    px, py = left - x0, top - y0
+    _stamp(cv, img, px, py)
+
+
+def _free_of_zones(zone_at, left, top, w, h):
+    for fx in (0.0, 0.25, 0.5, 0.75, 1.0):
+        for fy in (0.0, 0.5, 1.0):
+            x, y = left + fx * w, top + fy * h
+            if zone_at(math.floor(x / W), math.floor(y / H)) and zone_at(
+                    math.floor((x + (S if fx < 0.5 else -S)) / W), math.floor((y + (S if fy < 0.5 else -S)) / H)):
+                return False
+    return True
+
+
+def west_cell(col: int, row: int, zone_at) -> Canvas:
+    """Sunstone Reach's surroundings: open desert of long dunes with sandstone buttes
+    round the gulch and the oasis, giving way (across the land, not at a line) to the
+    volcano's flank of basalt steps, drifted ash and cinder cones round the fire country."""
+    CW, CH = W + 2 * S, H + 2 * S
+    cv = Canvas(CW, CH)
+    x0, y0 = col * W - S, row * H - S
+    X, Y = np.meshgrid(np.arange(x0, x0 + CW), np.arange(y0, y0 + CH))
+    ashy = lambda c, r: 1.0 if (c >= 1 or (c >= 0 and r <= -2)) else 0.0  # noqa: E731
+    ash = _blend_cells(X, Y, ashy) > 0.5
+    # dunes: a wandering crest line, light rising to the crest, the lee in shade
+    lx = X + (vnoise(0 * X, Y, 60, 781) * 40).astype(int)
+    k = (Y + (np.sin(lx / 23.0) * 9 + vnoise(X, 0 * Y, 50, 782) * 18).astype(int)) % 46
+    di = np.where(k < 2, 5, np.where(k < 12, 4, np.where(k > 38, 2, 3)))
+    di = np.where((k > 34) & ((X + Y) % 2 == 1), 2, di)
+    ripple = (Y + (np.sin(X / 8.0 + Y / 37.0) * 2).astype(int)) % 7
+    di = np.where((ripple == 0) & (k > 14) & (k < 32), 4, di)
+    sand = _pick(DESERT, di)
+    # the flank: basalt steps with lit lips, ash in the hollows, a few glowing cracks
+    off = (vnoise(X, 0 * Y, 40, 762) * 30).astype(int)
+    kk = (Y + off) % 22
+    bi = np.where(((Y + off) // 22) % 2 == 1, 2, 1)
+    bi = np.where(kk == 0, 4, np.where(kk < 3, 3, np.where(kk > 18, 0, bi)))
+    basalt = _pick(BASALT, bi)
+    drift = (vnoise(X, Y, 14, 763) > 0.6) & (kk > 3)
+    basalt = np.where(drift[..., None], _pick(ASH, np.where((X + Y) % 2 == 1, 1, 2)), basalt)
+    crack = (ridged(X, Y, 18, 767) > 0.97) & (vnoise(X, Y, 60, 768) > 0.55)
+    basalt = np.where(crack[..., None], _pick(LAVA, np.where((X + Y) % 3 == 0, 2, 1)), basalt)
+    # the shore of the two: sand blown over the first of the basalt
+    near = np.abs(_blend_cells(X, Y, ashy) - 0.5) < 0.04
+    ground = np.where(ash[..., None], basalt, sand)
+    ground = np.where((near & ash & ((X * 7 + Y * 3) % 5 < 2))[..., None], _pick(DESERT, np.full(X.shape, 2)), ground)
+    inside = np.zeros((CH, CW), dtype=bool)
+    inside[S:S + H, S:S + W] = True
+    _paint(cv, ground, inside)
+    things = []
+    for i, j, bx, by in _scatter(col, row, 190, 150, 1301, margin=280):
+        # a few landmarks with open country between them, never a field of stamps
+        if noise2(i, j, 1303) < 0.72:
+            continue
+        fld = _blend_cells(np.array([[bx]]), np.array([[by]]), ashy)[0, 0]
+        if abs(fld - 0.5) < 0.12:
+            continue  # the change of ground stays open
+        size = 0.5 + noise2(i, j, 1304) ** 2 * 1.1
+        if fld > 0.5:
+            w = int(80 + 110 * size) // 8 * 8
+            h = int(w * (0.5 + noise2(i, j, 1306) * 0.2)) // 8 * 8
+            img = ('cone', w, h, (i * 31 + j) % 17)
+        else:
+            w = int(100 + 150 * size) // 8 * 8
+            h = int(w * (0.45 + noise2(i, j, 1305) * 0.35)) // 8 * 8
+            img = ('mesa', w, h, (i * 31 + j) % 17)
+        left, top = int(bx - w / 2), int(by - h)
+        if _free_of_zones(zone_at, left, top, w, h):
+            things.append((by, left, top, img))
+    for (by, left, top, (kind, w, h, seed)) in sorted(things):
+        img = _cinder_cone(w, h, seed) if kind == 'cone' else _mesa(w, h, seed)
+        _place(cv, img, left, top, x0, y0)
+    return cv
+
+
+def isles_cell(col: int, row: int, zone_at) -> Canvas:
+    """Open sea round the Tidebloom Isles, in the islands' own water, the swells and
+    whitecaps running on from cell to cell."""
+    CW, CH = W + 2 * S, H + 2 * S
+    cv = Canvas(CW, CH)
+    x0, y0 = col * W - S, row * H - S
+    X, Y = np.meshgrid(np.arange(x0, x0 + CW), np.arange(y0, y0 + CH))
+    sea = _sea_rgb(X, Y, np.full(X.shape, -10 ** 6))
+    inside = np.zeros((CH, CW), dtype=bool)
+    inside[S:S + H, S:S + W] = True
+    _paint(cv, sea, inside)
+    return cv
+
+
+def moon_cell(col: int, row: int, zone_at) -> Canvas:
+    """Lumen's plain, running on round the base: grey regolith, craters of every size
+    (each rim lit on its upper left and its bowl shaded on the same side, as the light
+    falls), scattered rocks with their shadows, and nothing alive on it."""
+    CW, CH = W + 2 * S, H + 2 * S
+    cv = Canvas(CW, CH)
+    x0, y0 = col * W - S, row * H - S
+    X, Y = np.meshgrid(np.arange(x0, x0 + CW), np.arange(y0, y0 + CH))
+    n = vnoise(X, Y, 40, 1401) * 0.7 + vnoise(X, Y, 9, 1402) * 0.3
+    ri = np.where(n > 0.62, 4, np.where(n > 0.32, 3, 2))
+    ground = _pick(REGOLITH, ri)
+    for i, j, bx, by in _scatter(col, row, 70, 60, 1411, margin=60):
+        if noise2(i, j, 1413) < 0.55:
+            continue
+        r = 4 + noise2(i, j, 1414) ** 3 * 44  # many small craters, a few big ones
+        dx, dy = (X - bx) / r, (Y - by) / (r * 0.72)
+        d = np.hypot(dx, dy)
+        bowl = d < 1
+        rim = (d >= 1) & (d < 1.22)
+        lit_side = (dx + dy) > 0  # inside the bowl the far (lower right) wall catches the light
+        ground = np.where((bowl & ~lit_side)[..., None], _pick(REGOLITH, np.full(X.shape, 1)), ground)
+        ground = np.where((bowl & lit_side)[..., None], _pick(REGOLITH, np.full(X.shape, 3)), ground)
+        ground = np.where((rim & ((dx + dy) < 0))[..., None], _pick(REGOLITH, np.full(X.shape, 5)), ground)
+        ground = np.where((rim & ((dx + dy) >= 0))[..., None], _pick(REGOLITH, np.full(X.shape, 2)), ground)
+    rocks = (vnoise(X, Y, 3, 1421) > 0.86) & (vnoise(X, Y, 50, 1422) > 0.45)
+    ground = np.where(rocks[..., None], _pick(REGOLITH, np.full(X.shape, 4)), ground)
+    shadow = np.roll(np.roll(rocks, 1, 0), 1, 1) & ~rocks
+    ground = np.where(shadow[..., None], _pick(REGOLITH, np.full(X.shape, 0)), ground)
+    inside = np.zeros((CH, CW), dtype=bool)
+    inside[S:S + H, S:S + W] = True
+    _paint(cv, ground, inside)
+    return cv
+
+
+CELL_PAINTERS = {'valley': None, 'west': west_cell, 'isles': isles_cell, 'moon': moon_cell}
+
+
 def cells(layout: dict, region: str, ring: int = 1):
     """The cells of scenery a region needs: its grid's gaps and a ring round it."""
-    if region != 'valley':
+    if region not in CELL_PAINTERS:
         return {}
+    paint = CELL_PAINTERS[region] or valley_cell
     cols = [c for c, _r in layout.values()]
     rows = [r for _c, r in layout.values()]
     taken = {tuple(v): k for k, v in layout.items()}
@@ -419,5 +710,7 @@ def cells(layout: dict, region: str, ring: int = 1):
     for row in range(min(rows) - ring, max(rows) + ring + 1):
         for col in range(min(cols) - ring, max(cols) + ring + 1):
             if (col, row) not in taken:
-                out[(col, row)] = valley_cell(col, row, zone_at)
+                if region == 'moon' and row < 0:
+                    continue  # above the moon's horizon there is only space (the backdrop)
+                out[(col, row)] = paint(col, row, zone_at)
     return out

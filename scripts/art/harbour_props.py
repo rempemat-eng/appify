@@ -26,41 +26,100 @@ def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
 
 
-def cottage(width: int = 80, seed: int = 0) -> Canvas:
-    """A fisher's cottage, 80 x 74: a steep roof of tarred boards seen from above with a
-    whitewashed chimney, thick whitewashed walls with small deep windows, a blue door,
-    a net hung to dry on the wall and a lobster pot by the step."""
-    w, h = width, 74
+def cottage(width: int = 80, seed: int = 0, door=None, shutters=None, porch: bool = False,
+            shed: int = 0, net: str = 'right') -> Canvas:
+    """A fisher's cottage, `width` x 74 (plus a lean-to `shed` px wide on its east side): a
+    steep roof of tarred boards seen from above with a whitewashed chimney, thick
+    whitewashed walls with small deep windows, a painted door (`door`, a colour ramp),
+    painted `shutters` or none, a little timber `porch` over the door or none, a net hung
+    to dry on the wall (`net`: 'left', 'right' or none) and stone footings. The variants
+    keep Driftwood's four houses from being one sprite (rule 8; Claude A's review, 19 Oct)."""
+    door = door or WTR
+    house = width
+    w, h = width + shed, 74
     cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = (w - 1) / 2, 18, 40, 40, 66
+    ridge, apex_y, eave_y, wall_top, wall_bottom = (house - 1) / 2, 18, 40, 40, 66
+    if shed:  # the lean-to first: the house's roof overlaps its top
+        sx0 = house - 6
+        for y in range(28, wall_bottom):
+            for x in range(sx0, w - 2):
+                if y < 44:  # its single slope of tarred boards, falling east
+                    c = TAR[3] if (x - sx0) % 5 else TAR[2]
+                    if y == 28:
+                        c = TAR[4]
+                    if x >= w - 4:
+                        c = TAR[1]
+                elif x < w - 3:  # its plank wall, open at the front where the nets hang
+                    c = WOOD[2] if (x - sx0) % 4 else WOOD[1]
+                    if y > 50 and sx0 + 6 < x < w - 7:
+                        c = '#3E332C' if (x + y) % 5 else '#4A3D34'  # the open front, dim inside
+                else:
+                    c = WOOD[1]
+                cv.set(x, y, c)
+        for x in range(sx0, w - 2):
+            cv.set(x, 44, TAR[1])  # the eave's shadow line
+        for t in range(12):  # a net hanging in the open front
+            for k in range(6):
+                x, y = sx0 + 8 + k * 2 + (t % 2), 52 + t
+                if x < w - 7 and (x + y) % 3 == 0:
+                    cv.set(x, y, ROPE[-1] if t < 6 else ROPE[-2])
+        for t in range(22):  # two oars leaning on the wall
+            for (ox, col) in ((w - 6, WOOD[4]), (w - 9, WOOD[3])):
+                x, y = ox + t // 6, 44 + t
+                cv.set(x, y, col)
+            if t > 17:
+                cv.set(w - 6 + t // 6 - 1, 44 + t, WOOD[3])
     chim = rect_set(12, 6, 10, 14)
-    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, TAR, hole=chim, seed=71 + seed, moss=None)
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, house - 3, TAR, hole=chim, seed=71 + seed, moss=None)
     for (x, y) in rect_set(12, 6, 10, 14):
         cv.set(x, y, PLASTER[4] if x < 16 else PLASTER[3])
     cv.rect(11, 5, 12, 3, PLASTER[5]); cv.rect(14, 6, 6, 2, '#2A2420')
-    gable = gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7, w - 8,
-                             apex_y, wall_top, PLASTER, boards=False)
-    for (x, y) in rect_set(7, wall_top, w - 14, wall_bottom - wall_top):  # whitewash over rough stone
+    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7, house - 8,
+                     apex_y, wall_top, PLASTER, boards=False)
+    for (x, y) in rect_set(7, wall_top, house - 14, wall_bottom - wall_top):  # whitewash over rough stone
         n = noise2(x // 2, y // 2, 281 + seed)
         cv.set(x, y, PLASTER[5] if n > 0.55 else PLASTER[4])
-        if noise2(x, y, 282) > 0.94:
+        if noise2(x, y, 282 + seed) > 0.94:
             cv.set(x, y, PLASTER[2])  # a chip showing the stone
     proud = set()
     dx = int(ridge) - 7
-    for (x, y) in rect_set(dx, wall_bottom - 20, 14, 20):  # the blue door
-        cv.set(x, y, WTR[2] if (x - dx) % 4 else WTR[1])
-    cv.hline(dx, wall_bottom - 20, 14, WTR[3]); cv.set(dx + 11, wall_bottom - 10, GOLD[4])
+    for (x, y) in rect_set(dx, wall_bottom - 20, 14, 20):  # the painted door, its boards
+        cv.set(x, y, door[2] if (x - dx) % 4 else door[1])
+    cv.hline(dx, wall_bottom - 20, 14, door[3]); cv.set(dx + 11, wall_bottom - 10, GOLD[4])
     proud |= rect_set(dx - 1, wall_bottom - 21, 16, 1)
-    for wx in (13, w - 25):
-        gp.window(cv, wx, wall_top + 6, 12, 10, shutters=None, sill=True, warm=seed % 2 == 0)
-    for k in range(10):  # a net drying on the wall: a diamond mesh of rope
-        for t in range(8):
-            x, y = w - 22 + (k + t) % 10 + (t // 2), wall_top + 2 + t
-            if 7 < x < w - 7 and (x + y) % 3 == 0:
-                cv.set(x, y, ROPE[2])
+    for wx in (13, house - 25):
+        gp.window(cv, wx, wall_top + 6, 12, 10, shutters=shutters, sill=True, warm=seed % 2 == 0)
+    if net:  # a net drying on the wall: a diamond mesh of rope
+        nx = house - 22 if net == 'right' else 10
+        for k in range(10):
+            for t in range(8):
+                x, y = nx + (k + t) % 10 + (t // 2), wall_top + 2 + t
+                if 7 < x < house - 7 and (x + y) % 3 == 0:
+                    cv.set(x, y, ROPE[2])
     detail.cast(cv, proud, 1, 1, k=1, on=PLASTER, reach=2)
-    detail.overhang_shadow(cv, 7, w - 7, wall_top, lambda x: 3, k=2, cap=1)
-    detail.stones(cv, 5, wall_bottom, w - 10, 8, STONE, seed=19 + seed, course=4, moss=LEAF)
+    detail.overhang_shadow(cv, 7, house - 7, wall_top, lambda x: 3, k=2, cap=1)
+    if porch:  # a little porch: a pitched canopy seen from above, on two posts
+        px0, px1, py = dx - 4, dx + 18, wall_bottom - 27
+        mid = (px0 + px1 - 1) / 2
+        for y in range(py, py + 7):
+            half = 5 + (y - py) * 1.1  # the canopy widens from its ridge to its eave
+            for x in range(int(mid - half), int(mid + half) + 1):
+                c = TAR[4] if x < mid else TAR[2]
+                if y == py:
+                    c = TAR[4]
+                elif (x + y) % 4 == 0:
+                    c = TAR[3] if x < mid else TAR[1]  # its boards
+                cv.set(x, y, c)
+            cv.set(int(mid), y, TAR[3])  # the ridge
+        for x in range(px0 - 2, px1 + 2):
+            cv.set(x, py + 7, WOOD[3]); cv.set(x, py + 8, WOOD[1])  # the fascia board
+            cv.set(x, py + 9, PLASTER[2])  # its shadow on the wall
+        for x in (px0, px1 - 1):  # the posts down to the step
+            for y in range(py + 9, wall_bottom + 2):
+                cv.set(x, y, WOOD[4] if x < dx else WOOD[2]); cv.set(x + 1, y, WOOD[1])
+        for x in range(px0 - 1, px1 + 1):
+            cv.set(x, wall_bottom + 2, STONE[4]); cv.set(x, wall_bottom + 3, STONE[2])  # the step
+    detail.stones(cv, 5, wall_bottom, house - 10, 8, STONE, seed=19 + seed, course=4, moss=LEAF)
     return cv
 
 
@@ -331,6 +390,47 @@ def washing_line() -> Canvas:
     return cv
 
 
+def harbour_ferry() -> Canvas:
+    """The little island ferry tied up at Driftwood's jetty, 92 x 46, bow to the left: the
+    same boat Claude C draws moored at Lagoon Landing (isle_props.ferry_moored), since one
+    ferry plies the route, here under the harbour's own key (the harbour uses harbour
+    props only)."""
+    import isle_props
+    return isle_props.ferry_moored()
+
+
+def pier_ladder() -> Canvas:
+    """A ladder down from a jetty's end into the water, 10 x 24, in the three-quarter view
+    (art-faults.md rule 5: a jetty ends at a boat or a ladder): two wooden rails lit on the
+    left with rungs between, iron straps at the top where it is bolted to the jetty's edge,
+    weed on the rungs just above the waterline, the lower rungs dim and green under the
+    water, and small ripples where the rails go in."""
+    w, h = 10, 24
+    cv = Canvas(w, h, pad=PAD)
+    IRON = MATERIALS['iron']
+    water = 15  # the waterline
+    under = ('#3E5A4A', '#2E4438', '#24362C')
+    for y in range(h):
+        for (x, lit) in ((1, True), (7, False)):
+            if y > water:
+                c, edge = (under[0] if lit else under[1]), under[2]
+            elif y > water - 4:
+                c = LEAF[2] if (x + y) % 2 else (WOOD[2] if lit else WOOD[1])  # weed at the tide line
+                edge = WOOD[1]
+            else:
+                c, edge = (WOOD[3] if lit else WOOD[2]), WOOD[1]
+            cv.set(x, y, c); cv.set(x + 1, y, edge)
+    for y in range(3, h - 1, 4):  # the rungs
+        for x in range(3, 7):
+            above = y <= water
+            cv.set(x, y, WOOD[4] if above else under[0]); cv.set(x, y + 1, WOOD[1] if above else under[2])
+    for x in (1, 2, 7, 8):  # iron straps where it is bolted to the jetty's edge
+        cv.set(x, 0, IRON[3]); cv.set(x, 1, IRON[1])
+    for x in (0, 3, 6, 9):  # small ripples round the rails at the waterline
+        cv.set(x, water + 1, WTR[4] if x in (0, 6) else WTR[3])
+    return cv
+
+
 def buoy() -> Canvas:
     """A mooring buoy bobbing in the basin, 14 x 12, red with a white band."""
     cv = Canvas(14, 12, pad=PAD)
@@ -404,10 +504,13 @@ def sailboat() -> Canvas:
 
 def props() -> dict[str, Canvas]:
     return {
-        'cottage': cottage(80, 0), 'cottage_b': cottage(72, 1), 'lighthouse': lighthouse(),
+        'cottage': cottage(80, 0), 'cottage_b': cottage(72, 1, door=RED, shutters=LEAF, net=''),
+        'cottage_c': cottage(80, 2, door=LEAF, porch=True, net='left'),
+        'cottage_d': cottage(76, 3, door=GOLD, shutters=WTR, shed=20, net=''), 'lighthouse': lighthouse(),
         'boat_blue': fishing_boat(64, WTR), 'boat_red': fishing_boat(56, RED), 'net_rack': net_rack(),
         'lobster_pots': lobster_pots(), 'fish_stall': fish_stall(), 'bollard': bollard(), 'anchor': anchor(),
         'upturned_boat': upturned_boat(), 'washing_line': washing_line(), 'buoy': buoy(),
+        'harbour_ferry': harbour_ferry(), 'pier_ladder': pier_ladder(),
         'deck_chair': deck_chair(RED), 'deck_chair_b': deck_chair(WTR), 'driftwood': driftwood(), 'sailboat': sailboat(),
     }
 

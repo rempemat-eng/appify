@@ -221,59 +221,150 @@ def forest_bench() -> Canvas:
     return cv
 
 
+def _cone_roof(cv, cx, apex_y, eave_y, rx, ry, panels, ramp_a, ramp_b, trim):
+    """A conical roof (or parasol) in the three-quarter view: its top surface seen from a
+    little above, panels radiating from the apex to an elliptical eave, lit on the left,
+    a trim along the eave's front arc. Returns the eave's points (for shadows below)."""
+    pts = []
+    for y in range(apex_y, eave_y + ry + 1):
+        for x in range(int(cx - rx) - 1, int(cx + rx) + 2):
+            # a point lies on the cone's visible surface if it is inside the silhouette
+            # made by the apex and the eave ellipse
+            ex = (x + 0.5 - cx) / rx
+            if abs(ex) > 1:
+                continue
+            front = eave_y + ry * math.sqrt(1 - ex * ex)  # the eave's front edge at this x
+            back = eave_y - ry * math.sqrt(1 - ex * ex)
+            t = (y - apex_y) / max(1, back - apex_y) if y < back else 1
+            if y < back and abs(x + 0.5 - cx) > rx * t:
+                continue
+            if y > front:
+                continue
+            a = math.atan2(y + 0.5 - apex_y, x + 0.5 - cx)  # the seams radiate from the apex
+            seg = int(a / (2 * math.pi / panels) + 0.5) % 2
+            lit = (x + 0.5 - cx) < -rx * 0.15
+            shade = (x + 0.5 - cx) > rx * 0.45
+            ramp = ramp_a if seg else ramp_b
+            c = ramp[2] if lit else ramp[0] if shade else ramp[1]
+            if y >= front - 1.5:
+                c = trim[1] if lit else trim[0]  # the eave's trim
+            cv.set(x, y, c)
+            pts.append((x, y))
+    return pts
+
+
 def bandstand() -> Canvas:
-    """The park's bandstand, 84 x 80: an octagonal roof seen from above in alternating
-    red and cream panels with a gilded finial, slender iron columns, a railing, and a
-    stone plinth with steps."""
+    """The park's bandstand in the three-quarter view, 84 x 80 (Matt, 19 Oct, fault 17: "a
+    cage of bars on a slab"): an octagonal stone plinth whose top is seen from above and
+    whose front shows its courses, with steps at the front; a boarded floor; slender
+    columns, the far ones seen through behind the floor, the near ones in front; a low
+    railing open at the steps; and a conical roof seen from a little above in red and
+    cream panels, lit on the left, a gilt eave and a finial."""
     w, h = 84, 80
     cv = Canvas(w, h, pad=PAD)
-    cx, cy = 42, 22
-    for y in range(2, 40):
-        for x in range(4, w - 4):
-            dx, dy = x - cx, (y - cy) * 1.9
-            r = math.hypot(dx, dy)
-            if r > 38:
-                continue
-            a = math.atan2(dy, dx)
-            seg = int((a + math.pi) / (2 * math.pi) * 8) % 2
-            lit = dx + dy < 0
-            c = (RED[3] if lit else RED[2]) if seg else (PLASTER[5] if lit else PLASTER[3])
-            if r > 35:
-                c = GOLD[3] if lit else GOLD[1]
+    cx = 42
+    IRON = ['#2A2D36', '#3C404C', '#545A68', '#727A8A']
+    py, prx, pry = h - 20, 36, 11  # the plinth's top: an ellipse (an octagon rounded at this size)
+    eave_y, erx, ery = 30, 38, 10
+    cols = [(cx + math.cos(k * math.pi / 4 + math.pi / 8) * (prx - 4), py + math.sin(k * math.pi / 4 + math.pi / 8) * (pry - 2)) for k in range(8)]
+    # the far columns first, standing behind the floor
+    for (x0, y0) in cols:
+        if y0 >= py:
+            continue
+        top = eave_y + int((y0 - py) / pry * ery * 0.9)
+        for y in range(top, int(y0) + 1):
+            cv.set(int(x0), y, IRON[1]); cv.set(int(x0) + 1, y, IRON[0])
+    # the plinth: its front face of coursed stone, then its top
+    for x in range(cx - prx, cx + prx + 1):
+        ex = (x + 0.5 - cx) / prx
+        if abs(ex) >= 1:
+            continue
+        front = py + pry * math.sqrt(1 - ex * ex)
+        k = (x - (cx - prx)) / (2 * prx)
+        for d in range(8):
+            y = int(front) + 1 + d
+            c = STONE[3] if k < 0.3 else STONE[2] if k < 0.72 else STONE[1]
+            if d in (3, 7) or (x + (0 if d < 4 else 4)) % 8 == 0:
+                c = STONE[1] if c != STONE[1] else STONE[0]
             cv.set(x, y, c)
-    for (x, y) in disc(cx, cy - 1, 2.4):
-        cv.set(x, y, GOLD[4])
-    cv.vline(cx, cy - 8, 6, GOLD[3])
-    for k, colx in enumerate((10, 26, 42, 58, 74)):  # columns
-        for y in range(38, 64):
-            cv.set(colx, y, '#3C404C'); cv.set(colx + 1, y, '#727A8A' if k < 2 else '#545A68')
-    for y in (50, 52):  # the railing
-        cv.hline(8, y, w - 16, '#545A68')
-    for x in range(10, w - 10, 4):
-        cv.vline(x, 50, 10, '#3C404C')
-    detail.stones(cv, 4, 62, w - 8, 12, STONE, seed=61, course=4)
-    for k, (x0, wd) in enumerate(((30, 24), (26, 32))):
-        y = 74 + k * 3
+        back = py - pry * math.sqrt(1 - ex * ex)
+        for y in range(int(back), int(front) + 1):
+            edge = y >= front - 1.5 or y <= back + 0.5
+            c = STONE[4] if edge and x < cx else STONE[3] if edge else (WOOD[3] if (y - int(back)) % 3 else WOOD[2])
+            if not edge and x > cx + 18:
+                c = WOOD[2] if (y - int(back)) % 3 else WOOD[1]
+            cv.set(x, y, c)
+    for k, (x0, wd) in enumerate(((cx - 9, 18), (cx - 11, 22))):  # the steps at the front
+        y = h - 10 + k * 3
         cv.hline(x0, y, wd, STONE[4]); cv.hline(x0, y + 1, wd, STONE[3]); cv.hline(x0, y + 2, wd, STONE[1])
+    # the railing round the near half, open at the steps
+    for x in range(cx - prx + 4, cx + prx - 3):
+        ex = (x + 0.5 - cx) / (prx - 3)
+        if abs(ex) >= 1 or abs(x + 0.5 - cx) < 10:
+            continue
+        fy = py + (pry - 2) * math.sqrt(1 - ex * ex)
+        cv.set(x, int(fy) - 6, IRON[3] if x < cx else IRON[2])
+        if x % 4 == 0:
+            for d in range(1, 6):
+                cv.set(x, int(fy) - d, IRON[1])
+    # the near columns, in front
+    for (x0, y0) in cols:
+        if y0 < py:
+            continue
+        top = eave_y + ery - 1
+        for y in range(top, int(y0) + 1):
+            cv.set(int(x0), y, IRON[3] if x0 < cx else IRON[2]); cv.set(int(x0) + 1, y, IRON[0])
+    # the roof
+    eave = _cone_roof(cv, cx, 4, eave_y, erx, ery, 14, (RED[2], RED[3], RED[4]),
+                      (PLASTER[3], PLASTER[4], PLASTER[5]), (GOLD[1], GOLD[3]))
+    for (x, y) in eave:  # its shadow on the columns just below the eave
+        if (x, y + 1) not in eave and cv.get(x, y + 2)[3]:
+            r, g, b, a = cv.get(x, y + 2)
+            cv.set(x, y + 2, (int(r * 0.7), int(g * 0.7), int(b * 0.78), a))
+    for (x, y) in disc(cx, 3, 2.2):
+        cv.set(x, y, GOLD[4] if x < cx else GOLD[2])
+    cv.vline(cx, 0, 2, GOLD[3])
     return cv
 
 
 def ice_cream_cart() -> Canvas:
-    """An ice cream cart, 44 x 40: a striped parasol from above, a pastel box on two
-    wheels with tubs showing through the glass lid."""
-    cv = Canvas(44, 40, pad=PAD)
-    for (x, y) in oval(22, 10, 18, 9):
-        a = math.atan2(y - 10, x - 22)
-        seg = int((a + math.pi) / (2 * math.pi) * 10) % 2
-        cv.set(x, y, ('#F6C6D8' if seg else '#FFFFFF') if (x - 22) + (y - 10) < 4 else ('#D89AB0' if seg else '#E6E2DC'))
-    cv.vline(22, 18, 6, '#545A68')
-    for (x, y) in rect_set(6, 22, 32, 12):
-        cv.set(x, y, '#BFE3E0' if y < 25 else '#94C8C4')
-    for k, c in enumerate(('#F6E2A0', '#F6C6D8', '#8A5A3A', '#C6E6B0')):
-        cv.rect(9 + k * 7, 23, 5, 2, c)
-    for wx in (12, 32):
-        for (x, y) in disc(wx, 36, 3):
-            cv.set(x, y, '#3C404C' if x < wx else '#2A2D36')
+    """An ice-cream cart in the three-quarter view, 44 x 40 (Matt, 19 Oct, fault 16: "the
+    parasol is a flat top-down ellipse on a side-view cart, with a lamp growing out of
+    it"): a pastel box whose glass lid shows the tubs, a striped front, two wheels and a
+    push handle; over it a striped parasol seen from a little above, on its pole down into
+    the cart."""
+    w, h = 44, 40
+    cv = Canvas(w, h, pad=PAD)
+    MINT = ['#5E9E98', '#94C8C4', '#BFE3E0', '#E2F4F2']
+    PINK = ['#C07A94', '#E6A2BA', '#F6C6D8']
+    WHITE = ['#C9C4BC', '#E6E2DC', '#FFFFFF']
+    # the cart: its lid (top face) and its front
+    for y in range(22, 34):
+        for x in range(8, 38):
+            if y < 26:
+                c = '#D8EEF2' if (x + y) % 5 else '#F2FAFC'  # the glass lid
+                if y == 22 or x in (8, 37):
+                    c = MINT[3] if x < 30 else MINT[1]
+            else:
+                c = MINT[2] if x < 14 else MINT[1] if x < 34 else MINT[0]
+                if y in (28, 29):
+                    c = PINK[2] if x < 20 else PINK[1]  # the stripe
+                if y == 33:
+                    c = MINT[0]
+            cv.set(x, y, c)
+    for k, col in enumerate(('#F6E2A0', '#F6C6D8', '#8A5A3A', '#C6E6B0')):  # tubs under the glass
+        cv.rect(11 + k * 6, 23, 4, 2, col)
+    for wx in (13, 33):  # wheels
+        for (x, y) in disc(wx, 35, 3.4):
+            d = math.hypot(x + 0.5 - wx, y + 0.5 - 35)
+            cv.set(x, y, '#2A2D36' if d > 2.4 else '#727A8A' if x < wx else '#545A68')
+        cv.set(wx, 35, '#C9C4BC')
+    for t in range(9):  # the push handle at the east end
+        cv.set(38 + t // 3, 26 - t // 3, '#545A68')
+    cv.hline(40, 23, 3, '#3C404C')
+    for y in range(12, 22):  # the parasol's pole down into the cart
+        cv.set(22, y, '#545A68'); cv.set(23, y, '#2A2D36')
+    _cone_roof(cv, 22, 2, 11, 18, 5, 14, PINK, WHITE, (PINK[0], PINK[1]))
     return cv
 
 
