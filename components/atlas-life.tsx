@@ -207,8 +207,6 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'puff', x: 104, y: 382, seed: 24 },
     { kind: 'puff', x: 90, y: 536, seed: 25 },
     { kind: 'puff', x: 84, y: 540, seed: 26 },
-    { kind: 'ember', x: 40, y: 534, seed: 27 },
-    { kind: 'ember', x: 66, y: 544, seed: 28 },
   ],
   neon: [
     ...rainOver(90),

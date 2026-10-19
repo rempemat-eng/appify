@@ -56,7 +56,7 @@ import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
-import { PixelFrame } from '@/components/pixel-frame';
+import { PixelFrame, frameTones } from '@/components/pixel-frame';
 import gardenGround from '@/assets/garden/ground.png';
 import gStream from '@/assets/garden/water-stream-0.png';
 import gPond from '@/assets/garden/water-pond-0.png';
@@ -367,12 +367,12 @@ const FRAME_MS = 400; // divides FLOAT_LOOP
  *  Reach open dunes round the desert and the volcano's flank round the fire country (the
  *  Scorched Pass and everything north and east of it). */
 function beyondAt(region: RegionId, col: number, row: number) {
-  if (region === 'west' && (col >= 1 || (col >= 0 && row <= -1))) return zoneBeyondAsh;
-  // the valley's high country: peaks round the Frostline, forest lower down
-  // (the valley: mountains above the Frostline and the ridge, the sea past the harbour
-  // and round the halt's south, old forest east and west)
+  // (Sunstone: the volcano's ash flank round the fire country, desert north of the gulch)
+  if (region === 'west' && (col >= 1 || (col >= 0 && row <= -2))) return zoneBeyondAsh;
+  // the valley: mountains above the Frostline and the ridge, the sea past the harbour and
+  // the headland, old forest east and west (Driftwood's west point meets the woods)
   if (region === 'valley' && row <= -1) return zoneBeyondPeaks;
-  if (region === 'valley' && (row >= 3 || (row >= 2 && col <= -1))) return zoneBeyondByRegion.isles;
+  if (region === 'valley' && row >= 3) return zoneBeyondByRegion.isles;
   // Lumen's plain runs on below and beside it; above, only space (the backdrop)
   if (region === 'moon') return zoneBeyondRegolith;
   return zoneBeyondByRegion[region] ?? zoneBeyond;
@@ -1321,27 +1321,37 @@ export function AtlasWalk({
               onPress={() => onMarker?.(m.id)}
               style={{
                 position: 'absolute',
-                left: m.x * u - 70,
+                left: m.x * u - (m.selected ? 70 : 22),
                 // the label's foot sits above a standing companion's head, so it never
                 // covers the companion at the stand (play-test 18 Oct, finding 3)
                 top: m.y * u - 50 * u - 44,
-                width: 140,
+                width: m.selected ? 140 : 44,
                 height: 44,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
               }}
             >
-              <PixelFrame
-                tone={m.selected ? 'gold' : 'paper'}
-                style={{ paddingVertical: 2 * u, paddingHorizontal: 4 * u, alignItems: 'center' }}
-              >
-                <BodyText
-                  numberOfLines={1}
-                  style={{ fontSize: 11, lineHeight: 13, fontFamily: 'PixelifySans_700Bold' }}
+              {m.selected ? (
+                <PixelFrame
+                  tone="gold"
+                  style={{ paddingVertical: 2 * u, paddingHorizontal: 4 * u, alignItems: 'center' }}
                 >
-                  {m.label}
-                </BodyText>
-              </PixelFrame>
+                  <BodyText
+                    numberOfLines={1}
+                    style={{ fontSize: 11, lineHeight: 13, fontFamily: 'PixelifySans_700Bold' }}
+                  >
+                    {m.label}
+                  </BodyText>
+                </PixelFrame>
+              ) : (
+                // a small pin over what can be visited: the name shows once it is chosen,
+                // so labels never cover the place itself (Matt, 19 Oct, fault 20)
+                <PixelFrame tone="paper" style={{ padding: 2 * u }}>
+                  <View
+                    style={{ width: 4 * u, height: 4 * u, backgroundColor: frameTones.gold.fill }}
+                  />
+                </PixelFrame>
+              )}
             </Pressable>
           ))}
         </Animated.View>

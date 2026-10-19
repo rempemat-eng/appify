@@ -306,11 +306,11 @@ function gapCells(region: RegionId) {
         region === 'valley'
           ? row <= -1
             ? PEAKS
-            : row >= 3 || (row >= 2 && col <= -1)
+            : row >= 3
               ? SEA
               : FOREST
           : region === 'west'
-            ? col >= 1 || (col >= 0 && row <= -1)
+            ? col >= 1 || (col >= 0 && row <= -2)
               ? ASH
               : DUNES
             : region === 'isles'

@@ -153,7 +153,10 @@ async function overflow(page: Page, screen: Screen) {
           ((current === 'companions' &&
             element.querySelectorAll('[role="button"][aria-label^="Preview "]').length > 1) ||
             (current === 'battle' &&
-              element.querySelectorAll('[role="button"][aria-label$="tap to select"]').length > 0));
+              element.querySelectorAll('[role="button"][aria-label$="tap to select"]').length >
+                0) ||
+            // the row of places on the Missions tab (components/mission-departure.tsx), a rail by design
+            (current === 'missions' && element.querySelectorAll('[role="button"]').length > 3));
         if (intentionalRail) continue;
         problems.push(
           `${element.getAttribute('aria-label') ?? element.getAttribute('role') ?? element.tagName}: horizontal scroll ${element.scrollWidth} > ${element.clientWidth}`,
