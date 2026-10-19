@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { Image, View } from 'react-native';
+import { Image, View, type ImageSourcePropType } from 'react-native';
 import Animated, {
   cancelAnimation,
   Easing,
@@ -10,9 +10,9 @@ import Animated, {
   type SharedValue,
 } from 'react-native-reanimated';
 import { zoneMaps, type ZoneId } from '@/lib/zone-maps';
-import { residentRoutes, type ResidentRoute } from '@/lib/resident-routes';
+import { residentRoutes, type Facing, type ResidentRoute } from '@/lib/resident-routes';
 import { residentSprites } from '@/lib/resident-sprites';
-import { residentFrames } from '@/lib/resident-assets';
+import { residentFacingFrames, residentFrames } from '@/lib/resident-assets';
 
 /**
  * Small things that move by themselves in a zone (world-atlas.md, "A world that
@@ -377,9 +377,17 @@ const STEP_MS = 220; // one walking frame
 
 /**
  * A resident on their route: a pause at one end, the walk across, a pause, the walk
- * back. Two frames swap while walking; they face the way they go. Still at the start
- * of the route when the clock is not running (reduced motion or an inactive screen).
+ * back. Two frames swap while walking. Walking, they face the way they go (away up the
+ * screen, toward the viewer down it, else to that side); paused, they face their work
+ * (`route.face`). Still at the start of the route when the clock is not running
+ * (reduced motion or an inactive screen).
  */
+const FACINGS: readonly Facing[] = ['front', 'back', 'east', 'west'];
+function legFacingOf(dx: number, dy: number): Facing {
+  'worklet';
+  if (Math.abs(dy) > Math.abs(dx)) return dy < 0 ? 'back' : 'front';
+  return dx >= 0 ? 'east' : 'west';
+}
 function Resident({
   id,
   route,
@@ -392,24 +400,89 @@ function Resident({
   u: number;
 }) {
   const { w, h } = residentSprites[id];
-  const frames = residentFrames[id];
+  const sides = residentFacingFrames[id];
+  const frames: Record<Facing, readonly ImageSourcePropType[]> = {
+    front: residentFrames[id],
+    back: sides?.back ?? residentFrames[id],
+    east: sides?.east ?? residentFrames[id],
+    west: sides?.west ?? residentFrames[id],
+  };
   const [fx, fy] = route.from;
   const [tx, ty] = route.to;
+  const [atFrom, atTo] = route.face ?? ['front', 'front'];
+  const there = legFacingOf(tx - fx, ty - fy);
+  const home = legFacingOf(fx - tx, fy - ty);
   const phase = (((id.length * 0.13) % 1) + 1) % 1;
   const place = useAnimatedStyle(() => {
     const t = (((clock.value / RESIDENT_PERIOD + phase) % 1) + 1) % 1;
     // 0-.1 pause, .1-.45 there, .45-.6 pause, .6-.95 back, .95-1 pause
     const k =
       t < 0.1 ? 0 : t < 0.45 ? (t - 0.1) / 0.35 : t < 0.6 ? 1 : t < 0.95 ? 1 - (t - 0.6) / 0.35 : 0;
-    const back = t >= 0.45;
     const x = fx + (tx - fx) * k;
     const y = fy + (ty - fy) * k;
     return {
       transform: [
         { translateX: Math.round((x - w / 2) * u) },
         { translateY: Math.round((y - h + 2) * u) },
-        { scaleX: tx >= fx ? (back ? -1 : 1) : back ? 1 : -1 },
       ],
+    };
+  });
+  const box = { position: 'absolute' as const, left: 0, top: 0 };
+  // (one layer per facing; only the one they face shows)
+  return (
+    <Animated.View
+      style={[{ position: 'absolute', left: 0, top: 0, width: w * u, height: h * u }, place]}
+    >
+      {FACINGS.map((f) => (
+        <FacingLayer
+          key={f}
+          facing={f}
+          frames={frames[f]}
+          clock={clock}
+          phase={phase}
+          faces={[atFrom, there, atTo, home]}
+          w={w}
+          h={h}
+          u={u}
+          box={box}
+        />
+      ))}
+    </Animated.View>
+  );
+}
+
+function FacingLayer({
+  facing,
+  frames,
+  clock,
+  phase,
+  faces,
+  w,
+  h,
+  u,
+  box,
+}: {
+  facing: Facing;
+  frames: readonly ImageSourcePropType[];
+  clock: SharedValue<number>;
+  phase: number;
+  /** paused at the start, walking there, paused at the end, walking back */
+  faces: readonly [Facing, Facing, Facing, Facing];
+  w: number;
+  h: number;
+  u: number;
+  box: { position: 'absolute'; left: number; top: number };
+}) {
+  const [f0, f1, f2, f3] = faces;
+  const shown = useAnimatedStyle(() => {
+    const t = (((clock.value / RESIDENT_PERIOD + phase) % 1) + 1) % 1;
+    const now = t < 0.1 || t >= 0.95 ? f0 : t < 0.45 ? f1 : t < 0.6 ? f2 : f3;
+    // a one-pixel bob on the passing step, so they walk rather than glide
+    const walking = (t > 0.1 && t < 0.45) || (t > 0.6 && t < 0.95);
+    const passing = walking && Math.floor(clock.value / STEP_MS) % 2 === 1;
+    return {
+      opacity: now === facing ? 1 : 0,
+      transform: [{ translateY: passing ? -Math.round(u) : 0 }],
     };
   });
   const step = useAnimatedStyle(() => {
@@ -417,34 +490,19 @@ function Resident({
     const walking = (t > 0.1 && t < 0.45) || (t > 0.6 && t < 0.95);
     return { opacity: walking && Math.floor(clock.value / STEP_MS) % 2 === 1 ? 1 : 0 };
   });
-  // a one-pixel bob on the passing step, so they walk rather than glide
-  const bob = useAnimatedStyle(() => {
-    const t = (((clock.value / RESIDENT_PERIOD + phase) % 1) + 1) % 1;
-    const walking = (t > 0.1 && t < 0.45) || (t > 0.6 && t < 0.95);
-    return {
-      transform: [
-        { translateY: walking && Math.floor(clock.value / STEP_MS) % 2 === 1 ? -Math.round(u) : 0 },
-      ],
-    };
-  });
-  const box = { position: 'absolute' as const, left: 0, top: 0 };
   return (
-    <Animated.View
-      style={[{ position: 'absolute', left: 0, top: 0, width: w * u, height: h * u }, place]}
-    >
-      <Animated.View style={[{ ...box, width: w * u, height: h * u }, bob]}>
+    <Animated.View style={[{ ...box, width: w * u, height: h * u }, shown]}>
+      <Image
+        source={frames[0]}
+        resizeMode="stretch"
+        style={{ ...box, width: w * u, height: h * u }}
+      />
+      <Animated.View style={[{ ...box, width: w * u, height: h * u }, step]}>
         <Image
-          source={frames[0]}
+          source={frames[1]}
           resizeMode="stretch"
           style={{ ...box, width: w * u, height: h * u }}
         />
-        <Animated.View style={[{ ...box, width: w * u, height: h * u }, step]}>
-          <Image
-            source={frames[1]}
-            resizeMode="stretch"
-            style={{ ...box, width: w * u, height: h * u }}
-          />
-        </Animated.View>
       </Animated.View>
     </Animated.View>
   );
