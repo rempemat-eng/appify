@@ -291,17 +291,76 @@ def draw_lower_details(cv: Canvas, path: set):
         cv.set(x + 1, y, G[1])
 
 
+# The pines along the clearing's top edge (garden.py places them from this table): each
+# pine's number and the x, y of its sprite's nominal top-left. Two (7 and 8) stand back to
+# let the ridge trail through.
+TREELINE = {i: (-14 + i * 26, -60 + (i % 2) * 6) for i in range(13) if i not in (7, 8)}
+FOREST_FLOOR = ['#1E2A22', '#2C3F30', '#3E5A3C', '#577A44', '#6A9468']
+
+
+def crown_shade(x: float, y: float) -> float:
+    """How deep the forest's shade lies at a point of the garden (y < 0 is the band above
+    the clearing, Claude A's review of 19 Oct, finding 2): deep under the forest beyond,
+    thinning with dappled sun toward the clearing, and reaching into it in a lobe under
+    each pine's crown, offset down and right (light from the upper left), with a ragged
+    edge. Never a ruled line: no row or column is the same all along."""
+    depth = min(1.0, max(0.0, (-y - 4) / (TOP - 30)))  # the forest beyond deepens upward
+    for (px, py) in TREELINE.values():
+        cx, cy = px + 22, py + 74  # just below and right of the crown, round the trunk's foot
+        d = ((x - cx) / 21) ** 2 + ((y - cy) / 11) ** 2
+        if d < 1:
+            depth = max(depth, 0.85 * (1 - d) ** 0.6)
+    rag = (smooth_noise(x, y, 9, 951) - 0.5) * 0.5 + (noise2(x // 2, y // 2, 952) - 0.5) * 0.18
+    return max(0.0, min(1.0, depth + rag))
+
+
+# The forest floor where the Snowy Ridge comes down to the garden: the shade of the two
+# clumps of pines either side of the ridge trail (valley_zones.ridge places them), each
+# (x, y, rx, ry) in the ridge's own coordinates, so -H above the garden's top row.
+RIDGE_CLUMPS = [(36, -46, 64, 52), (100, -34, 34, 30), (272, -50, 64, 56), (300, -120, 34, 40), (16, -120, 34, 36)]
+
+
+def forest_edge_shade(x: float, sy: float) -> float:
+    """One shade field across the ridge/garden seam (sy < 0 in the ridge, sy = ridge y - H;
+    sy >= 0 in the garden): the ridge's clumps of pines, a ragged noise edge, and a
+    deepening toward the seam from both sides, so the forest floor runs on across it and
+    then gives way to the clearing over twenty-odd rows. For y in the ridge it is exactly
+    the field valley_zones.ridge paints its bottom rows from (its noise is read in its own
+    rows, H + sy); darken above 0.12, darken again above 0.55."""
+    sh = max(1 - math.hypot((x - cx) / rx, (sy - cy) / ry) for (cx, cy, rx, ry) in RIDGE_CLUMPS)
+    sh += (smooth_noise(x, H + sy, 8, 449) - 0.5) * 0.5
+    if sy < 0:
+        return sh + max(0, (26 + sy) / 26) * 0.6
+    # in the garden the deepening mirrors the ridge's and the clearing's light wins it back
+    return sh + max(0, 1 - (sy + 1) / 26) * 0.6 - max(0, (sy - 10) / 16) * 0.4
+
+
 def draw_top_band(phase: int = 0) -> Canvas:
-    """Forest floor above the clearing: deep shade under the canopy."""
-    from style import FOREST_DARK, dither_dark
+    """Forest floor above the clearing (y -TOP..0), the ridge's lower edge too
+    (valley_zones.py pastes it): needles and leaf litter in the pines' shade, painted from
+    crown_shade so the shade deepens raggedly into the forest and no tone runs along a
+    line; the ridge trail runs up through it."""
     cv = Canvas(W, TOP)
+    F = FOREST_FLOOR
     for y in range(TOP):
+        gy = y - TOP
         for x in range(W):
-            cv.set(x, y, G[2] if y > TOP - 4 else G[1])
-    dither_dark(cv, 0, 0, W, TOP - 10, 1.0, FOREST_DARK)
-    dither_dark(cv, 0, TOP - 10, W, 3, 0.75, FOREST_DARK)
-    dither_dark(cv, 0, TOP - 7, W, 4, 0.5, FOREST_DARK)
-    dither_dark(cv, 0, TOP - 3, W, 3, 0.25, FOREST_DARK)
+            s = crown_shade(x, gy)
+            if s > 0.78:
+                c = F[0] if (x + y) % 2 or s > 0.9 else F[1]
+            elif s > 0.55:
+                c = F[1] if (x + y) % 3 else F[0]
+            elif s > 0.32:
+                c = F[2] if (x + y) % 2 else F[1]
+            else:
+                c = F[3] if noise2(x // 3, y // 2, 953) > 0.35 else F[2]
+                # toward the clearing the floor turns to the garden's own turf, more of it
+                # the lower it lies, in ragged patches (no line where the meadow begins)
+                if smooth_noise(x, y, 6, 955) < (y - (TOP - 26)) / 26:
+                    c = G[3] if noise2(x // 3, y // 2, 956) > 0.4 else G[2]
+            if s < 0.6 and noise2(x, y, 954) > 0.93 and c in F:
+                c = F[min(4, F.index(c) + 1)]  # needles and a fleck of sun
+            cv.set(x, y, c)
     # the ridge trail runs up through the forest floor, half in shade: it bends a little
     # from where the garden's path leaves the clearing (x 206) to where the ridge's trail
     # carries on above (x 198, scripts/art/zones.py), its edges worn, not ruled
@@ -319,7 +378,7 @@ def draw_top_band(phase: int = 0) -> Canvas:
                     c = P[4]
                 cv.set(x, y, c)
             elif d <= hw + 1.2:
-                cv.set(x, y, G[1] if y >= TOP - 14 else FOREST_DARK)
+                cv.set(x, y, G[1] if y >= TOP - 14 else FOREST_FLOOR[0])
     return cv
 
 
