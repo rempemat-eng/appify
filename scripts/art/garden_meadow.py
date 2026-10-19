@@ -314,6 +314,27 @@ def crown_shade(x: float, y: float) -> float:
     return max(0.0, min(1.0, depth + rag))
 
 
+# The forest floor where the Snowy Ridge comes down to the garden: the shade of the two
+# clumps of pines either side of the ridge trail (valley_zones.ridge places them), each
+# (x, y, rx, ry) in the ridge's own coordinates, so -H above the garden's top row.
+RIDGE_CLUMPS = [(36, -46, 64, 52), (100, -34, 34, 30), (272, -50, 64, 56), (300, -120, 34, 40), (16, -120, 34, 36)]
+
+
+def forest_edge_shade(x: float, sy: float) -> float:
+    """One shade field across the ridge/garden seam (sy < 0 in the ridge, sy = ridge y - H;
+    sy >= 0 in the garden): the ridge's clumps of pines, a ragged noise edge, and a
+    deepening toward the seam from both sides, so the forest floor runs on across it and
+    then gives way to the clearing over twenty-odd rows. For y in the ridge it is exactly
+    the field valley_zones.ridge paints its bottom rows from (its noise is read in its own
+    rows, H + sy); darken above 0.12, darken again above 0.55."""
+    sh = max(1 - math.hypot((x - cx) / rx, (sy - cy) / ry) for (cx, cy, rx, ry) in RIDGE_CLUMPS)
+    sh += (smooth_noise(x, H + sy, 8, 449) - 0.5) * 0.5
+    if sy < 0:
+        return sh + max(0, (26 + sy) / 26) * 0.6
+    # in the garden the deepening mirrors the ridge's and the clearing's light wins it back
+    return sh + max(0, 1 - (sy + 1) / 26) * 0.6 - max(0, (sy - 10) / 16) * 0.4
+
+
 def draw_top_band(phase: int = 0) -> Canvas:
     """Forest floor above the clearing (y -TOP..0), the ridge's lower edge too
     (valley_zones.py pastes it): needles and leaf litter in the pines' shade, painted from

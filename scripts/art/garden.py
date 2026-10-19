@@ -463,13 +463,17 @@ def bake_shadows(terrain: Canvas, sprites: dict):
             if s.get(xx, s.h - 1)[3]:
                 style.darken(terrain, x + s.ox + xx, foot)
                 style.darken(terrain, x + s.ox + xx + 1, foot + 1)
-    # The forest's shade spills into the clearing under the pines (the same field as the
-    # band above, garden_meadow.crown_shade), raggedly, never in ruled rows.
+    # The forest's shade spills into the clearing: the ridge's forest floor runs on across
+    # the seam and thins out (garden_meadow.forest_edge_shade, the ridge's own field), and
+    # each pine of the treeline casts its lobe (garden_meadow.crown_shade), raggedly,
+    # never in ruled rows.
     for y in range(0, 28):
         for x in range(W):
-            k = meadow.crown_shade(x, y)
-            if k > 0.62 or (k > 0.38 and (x + y) % 2 == 0) or (k > 0.22 and (x + 2 * y) % 4 == 0):
+            e, k = meadow.forest_edge_shade(x, y), meadow.crown_shade(x, y)
+            if e > 0.12 or k > 0.62 or (k > 0.38 and (x + y) % 2 == 0) or (k > 0.22 and (x + 2 * y) % 4 == 0):
                 style.darken(terrain, x, y)
+            if e > 0.55:
+                style.darken(terrain, x, y, (0.78, 0.8, 0.84))
 
 
 # The hut's outside as the player chooses it (lib/decor.ts, HutLook): the door's paint
