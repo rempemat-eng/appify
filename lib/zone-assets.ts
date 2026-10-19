@@ -438,6 +438,47 @@ import sceneryValley20 from '@/assets/zones/scenery/valley_2_0.png';
 import sceneryValley21 from '@/assets/zones/scenery/valley_2_1.png';
 import sceneryValley22 from '@/assets/zones/scenery/valley_2_2.png';
 import sceneryValley23 from '@/assets/zones/scenery/valley_2_3.png';
+import sceneryWestM2M3 from '@/assets/zones/scenery/west_m2_m3.png';
+import sceneryWestM2M2 from '@/assets/zones/scenery/west_m2_m2.png';
+import sceneryWestM2M1 from '@/assets/zones/scenery/west_m2_m1.png';
+import sceneryWestM20 from '@/assets/zones/scenery/west_m2_0.png';
+import sceneryWestM21 from '@/assets/zones/scenery/west_m2_1.png';
+import sceneryWestM1M3 from '@/assets/zones/scenery/west_m1_m3.png';
+import sceneryWestM1M2 from '@/assets/zones/scenery/west_m1_m2.png';
+import sceneryWestM1M1 from '@/assets/zones/scenery/west_m1_m1.png';
+import sceneryWestM11 from '@/assets/zones/scenery/west_m1_1.png';
+import sceneryWest0M3 from '@/assets/zones/scenery/west_0_m3.png';
+import sceneryWest0M2 from '@/assets/zones/scenery/west_0_m2.png';
+import sceneryWest0M1 from '@/assets/zones/scenery/west_0_m1.png';
+import sceneryWest01 from '@/assets/zones/scenery/west_0_1.png';
+import sceneryWest1M3 from '@/assets/zones/scenery/west_1_m3.png';
+import sceneryWest11 from '@/assets/zones/scenery/west_1_1.png';
+import sceneryWest2M3 from '@/assets/zones/scenery/west_2_m3.png';
+import sceneryWest2M1 from '@/assets/zones/scenery/west_2_m1.png';
+import sceneryWest20 from '@/assets/zones/scenery/west_2_0.png';
+import sceneryWest21 from '@/assets/zones/scenery/west_2_1.png';
+import sceneryWest3M3 from '@/assets/zones/scenery/west_3_m3.png';
+import sceneryWest3M2 from '@/assets/zones/scenery/west_3_m2.png';
+import sceneryWest3M1 from '@/assets/zones/scenery/west_3_m1.png';
+import sceneryWest30 from '@/assets/zones/scenery/west_3_0.png';
+import sceneryWest31 from '@/assets/zones/scenery/west_3_1.png';
+import sceneryIslesM1M1 from '@/assets/zones/scenery/isles_m1_m1.png';
+import sceneryIslesM10 from '@/assets/zones/scenery/isles_m1_0.png';
+import sceneryIslesM11 from '@/assets/zones/scenery/isles_m1_1.png';
+import sceneryIslesM12 from '@/assets/zones/scenery/isles_m1_2.png';
+import sceneryIsles0M1 from '@/assets/zones/scenery/isles_0_m1.png';
+import sceneryIsles02 from '@/assets/zones/scenery/isles_0_2.png';
+import sceneryIsles1M1 from '@/assets/zones/scenery/isles_1_m1.png';
+import sceneryIsles12 from '@/assets/zones/scenery/isles_1_2.png';
+import sceneryIsles2M1 from '@/assets/zones/scenery/isles_2_m1.png';
+import sceneryIsles20 from '@/assets/zones/scenery/isles_2_0.png';
+import sceneryIsles21 from '@/assets/zones/scenery/isles_2_1.png';
+import sceneryIsles22 from '@/assets/zones/scenery/isles_2_2.png';
+import sceneryMoonM10 from '@/assets/zones/scenery/moon_m1_0.png';
+import sceneryMoonM11 from '@/assets/zones/scenery/moon_m1_1.png';
+import sceneryMoon01 from '@/assets/zones/scenery/moon_0_1.png';
+import sceneryMoon10 from '@/assets/zones/scenery/moon_1_0.png';
+import sceneryMoon11 from '@/assets/zones/scenery/moon_1_1.png';
 /** The land past the walkable world, one picture per cell round a region and in its
  *  grid's gaps, painted in the region's coordinates (scripts/art/scenery.py). */
 export const zoneScenery: Record<string, ImageSourcePropType> = {
@@ -468,6 +509,47 @@ export const zoneScenery: Record<string, ImageSourcePropType> = {
   'valley:2:1': sceneryValley21,
   'valley:2:2': sceneryValley22,
   'valley:2:3': sceneryValley23,
+  'west:-2:-3': sceneryWestM2M3,
+  'west:-2:-2': sceneryWestM2M2,
+  'west:-2:-1': sceneryWestM2M1,
+  'west:-2:0': sceneryWestM20,
+  'west:-2:1': sceneryWestM21,
+  'west:-1:-3': sceneryWestM1M3,
+  'west:-1:-2': sceneryWestM1M2,
+  'west:-1:-1': sceneryWestM1M1,
+  'west:-1:1': sceneryWestM11,
+  'west:0:-3': sceneryWest0M3,
+  'west:0:-2': sceneryWest0M2,
+  'west:0:-1': sceneryWest0M1,
+  'west:0:1': sceneryWest01,
+  'west:1:-3': sceneryWest1M3,
+  'west:1:1': sceneryWest11,
+  'west:2:-3': sceneryWest2M3,
+  'west:2:-1': sceneryWest2M1,
+  'west:2:0': sceneryWest20,
+  'west:2:1': sceneryWest21,
+  'west:3:-3': sceneryWest3M3,
+  'west:3:-2': sceneryWest3M2,
+  'west:3:-1': sceneryWest3M1,
+  'west:3:0': sceneryWest30,
+  'west:3:1': sceneryWest31,
+  'isles:-1:-1': sceneryIslesM1M1,
+  'isles:-1:0': sceneryIslesM10,
+  'isles:-1:1': sceneryIslesM11,
+  'isles:-1:2': sceneryIslesM12,
+  'isles:0:-1': sceneryIsles0M1,
+  'isles:0:2': sceneryIsles02,
+  'isles:1:-1': sceneryIsles1M1,
+  'isles:1:2': sceneryIsles12,
+  'isles:2:-1': sceneryIsles2M1,
+  'isles:2:0': sceneryIsles20,
+  'isles:2:1': sceneryIsles21,
+  'isles:2:2': sceneryIsles22,
+  'moon:-1:0': sceneryMoonM10,
+  'moon:-1:1': sceneryMoonM11,
+  'moon:0:1': sceneryMoon01,
+  'moon:1:0': sceneryMoon10,
+  'moon:1:1': sceneryMoon11,
 };
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
