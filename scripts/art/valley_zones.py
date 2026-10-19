@@ -447,28 +447,39 @@ SHORE_STONES = [STONE, ['#2F2C34', '#47444D', '#66636B', '#88868A', '#AEACA8'],
                 ['#3E3A36', '#5C5650', '#7C766E', '#A09A90', '#C4BEB2']]  # cool, dark and warm stones
 
 
-def shore_rocks(cv: Canvas, line, seed: int = 0, step: int = 11) -> set:
+def shore_rocks(cv: Canvas, line, seed: int = 0, step: int = 11, clusters: bool = False, avoid=frozenset()) -> set:
     """Boulders along a rocky shore, `line` being (x, y) points on the waterline: big
     ones and small ones in no order, some in pairs, a gap now and then where the
-    shingle shows, the surf working round their feet."""
+    shingle shows, the surf working round their feet. With `clusters` the rocks lie in
+    heaps of a few with stretches of shingle between (Claude A's E11: not one column
+    the length of the shore), the heaps biggest at the points."""
     pts = set()
     i, k = 0, 0
     while i < len(line):
         x, y = line[i]
+        heap = smooth_noise(0, y, 26, seed + 40)
+        if clusters and heap < 0.54:  # a stretch of open shingle
+            for q in range(2):
+                detail.pebble(cv, x + 1 + int(noise2(k, 40 + q, seed) * 6), y + int(noise2(k, 50 + q, seed) * 6),
+                              SHORE_STONES[(k + q) % len(SHORE_STONES)], big=q == 0)
+            i += 6
+            k += 1
+            continue
         n = noise2(k, 0, seed)
-        big = n > 0.78
+        big = n > (0.55 if clusters and heap > 0.62 else 0.78)
         w = (16 + int(noise2(k, 1, seed) * 8)) if big else (7 + int(noise2(k, 1, seed) * 8))
         h = (10 + int(noise2(k, 2, seed) * 4)) if big else (5 + int(noise2(k, 2, seed) * 4))
-        if noise2(k, 3, seed) > 0.12:
+        clear = not any((x + a, y + b) in avoid for a in range(-2, w + 3, 2) for b in range(-2, h + 2, 2))
+        if noise2(k, 3, seed) > 0.12 and clear:
             ramp = SHORE_STONES[int(noise2(k, 10, seed) * len(SHORE_STONES))]
             pts |= boulder(cv, x + w // 2 - 3 + int(noise2(k, 4, seed) * 6), y + h // 2, w, h, seed + k,
                            moss=noise2(k, 5, seed) > 0.55, ramp=ramp)
         for q in range(3):  # shingle in the gaps
             px, py = x + 2 + int(noise2(k, 20 + q, seed) * 10), y + int(noise2(k, 30 + q, seed) * 8)
             detail.pebble(cv, px, py, SHORE_STONES[q % len(SHORE_STONES)], big=q == 0)
-        if noise2(k, 6, seed) > 0.7:  # a small one beside it, further up the shore
+        if noise2(k, 6, seed) > (0.4 if clusters else 0.7) and not any((x + w + a, y + b) in avoid for a in range(-2, 12, 2) for b in range(-6, 6, 2)):  # a small one beside it, further up the shore
             pts |= boulder(cv, x + w + 2, y + 3, 6 + int(noise2(k, 7, seed) * 4), 4 + int(noise2(k, 8, seed) * 3), seed + k + 99, moss=False)
-        i += max(5, int(h * 0.9 + noise2(k, 9, seed) * 6))
+        i += max(5, int(h * (0.6 if clusters else 0.9) + noise2(k, 9, seed) * 6))
         k += 1
     return pts
 
@@ -481,19 +492,27 @@ def coast_top(gx: int) -> int:
     n = (smooth_noise(gx, 0, 9, 951) - 0.5) * 8 + (smooth_noise(gx, 3, 31, 952) - 0.5) * 10
     if x < 0:
         return 300 + int(n * 0.4)
+
+    def g(c, w):
+        return math.exp(-((x - c) / w) ** 2)
+    # coves and points at the scale of the down (Claude A's E14), not one smooth sweep:
+    # a cove under the bridge's path, points either side of the viewpoint, a cove where
+    # the coast turns south, a last point under the trees
+    bays = min(1.0, x / 30) * (-18 * g(40, 13) + 14 * g(96, 12) + 20 * g(152, 15) - 8 * g(196, 13)
+                               + 18 * g(234, 11) - 22 * g(282, 13) + 14 * g(314, 9))
     if x < 120:
         u = x / 120
-        return int(300 + 172 * u * u * (3 - 2 * u) + n * (0.4 + u))
+        return int(300 + 172 * u * u * (3 - 2 * u) + n * (0.4 + u) + bays)
     if x < 250:
-        return int(472 + math.sin(x / 23) * 8 + n)
-    return int(472 + (x - 250) * 1.9 + n)
+        return int(472 + math.sin(x / 23) * 8 + n + bays)
+    return int(472 + (x - 250) * 1.9 + n + bays)
 
 
 def coast_height(gx: int) -> int:
     return 22 + int(smooth_noise(gx, 1, 18, 953) * 14)
 
 
-BREAKWATER = [(166, 478), (186, 472), (210, 464), (234, 450), (254, 432), (270, 412), (284, 390), (296, 370), (306, 352)]
+BREAKWATER = [(166, 478), (196, 476), (224, 471), (246, 463), (258, 446), (272, 420), (286, 396), (298, 372), (308, 350), (314, 334)]
 
 
 @functools.lru_cache(maxsize=1)
@@ -629,9 +648,12 @@ def pier_head(cv: Canvas, x0: int, x1: int, y0: int, h: int, water: set) -> set:
 
 
 def breakwater(cv: Canvas, pts, seed: int = 0) -> set:
-    """A curving rubble breakwater: a capped wall of big dressed blocks, its walkway top
-    lit and jointed, its seaward face in courses, a round head, and a fringe of rough
-    armour boulders along its foot on the sea side. Returns everything it covers."""
+    """A rubble breakwater (Claude A's E13: not an even band ruled from end to end): a
+    capped wall of big dressed blocks whose width swells and narrows as it was built out
+    in seasons, with a dog-leg where it turns, rooted in the rocks fallen from the cliff;
+    its seaward face in courses; armour boulders tipped against its sea side in heaps,
+    thickest at the turn and the head; a round head with a small beacon on it. Returns
+    everything it covers."""
     cover = set()
     line = []
     for (ax, ay), (bx, by) in zip(pts, pts[1:]):
@@ -642,22 +664,37 @@ def breakwater(cv: Canvas, pts, seed: int = 0) -> set:
     for (x, y) in line:
         cy.setdefault(int(x), y)
     xs = sorted(cy)
-    # armour boulders first along the seaward foot (behind the cap when drawn after)
-    for i, x in enumerate(xs[::9]):
+    half = {x: 3 + int(smooth_noise(x, 0, 23, seed + 9) * 4.2) for x in xs}  # the cap's half-width, 3-6 px
+    # armour boulders first along the seaward foot (behind the cap when drawn after), in
+    # heaps: a few together, then a stretch where the face shows to the water
+    turn = 250  # the dog-leg
+    i, k = 0, 0
+    while i < len(xs):
+        x = xs[i]
         y = cy[x]
-        cover |= boulder(cv, x + 4 + int(noise2(i, 0, seed) * 4), y + 18 + int(noise2(i, 1, seed) * 3),
-                         12 + int(noise2(i, 2, seed) * 8), 9 + int(noise2(i, 3, seed) * 4), seed + i, moss=False)
+        heap = smooth_noise(x, 1, 30, seed + 11) + (0.35 if abs(x - turn) < 18 or i < 26 else 0)
+        if heap > 0.55:
+            for q in range(1 + (noise2(k, 5, seed) > 0.5) + (heap > 0.85)):
+                cover |= boulder(cv, x + 3 + q * 7 + int(noise2(k, q, seed) * 4), y + half[x] + 13 + q * 2 + int(noise2(k, 1, seed) * 3),
+                                 10 + int(noise2(k, 2 + q, seed) * 9), 7 + int(noise2(k, 3, seed) * 5), seed + k * 3 + q, moss=False)
+            i += 6 + int(noise2(k, 6, seed) * 5)
+        else:
+            i += 4
+        k += 1
     for x in xs:
         y = int(cy[x])
-        for yy in range(y - 4, y + 4):  # the cap's top: big slabs, jointed
-            j = (x + (0 if ((yy - y + 4) // 4) % 2 else 6)) % 12
-            c = STONE[4] if yy == y - 4 else STONE[3] if j else STONE[1]
-            if (yy - y + 4) % 4 == 3 and j:
+        hw = half[x]
+        for yy in range(y - hw, y + hw):  # the cap's top: big slabs, jointed
+            j = (x + (0 if ((yy - y + hw) // 4) % 2 else 6)) % 12
+            c = STONE[4] if yy == y - hw else STONE[3] if j else STONE[1]
+            if (yy - y + hw) % 4 == 3 and j:
                 c = STONE[2]
+            if noise2(x // 3, yy // 3, seed + 12) > 0.9:
+                c = STONE[2]  # a block of another season's stone
             cv.set(x, yy, c)
             cover.add((x, yy))
         for k in range(8):  # the seaward face in courses
-            yy = y + 4 + k
+            yy = y + hw + k
             c = STONE[2] if (x + (k // 4) * 5) % 10 else STONE[0]
             if k % 4 == 3:
                 c = STONE[0]
@@ -665,8 +702,8 @@ def breakwater(cv: Canvas, pts, seed: int = 0) -> set:
                 c = STONE[1] if k == 6 else '#2E4A3A'
             cv.set(x, yy, c)
             cover.add((x, yy))
-        cv.set(x, y - 5, STONE[1])  # the lip on the harbour side, lapped by the water
-        cover.add((x, y - 5))
+        cv.set(x, y - hw - 1, STONE[1])  # the lip on the harbour side, lapped by the water
+        cover.add((x, y - hw - 1))
     hx, hy = xs[0], cy[xs[0]]  # the head: a round drum
     head = blob(hx, hy, 11, 8, seed=seed + 50, rough=0.04)
     for (x, y) in head:
@@ -679,7 +716,48 @@ def breakwater(cv: Canvas, pts, seed: int = 0) -> set:
             cv.set(x, bot + k, STONE[2] if k < 4 else STONE[1] if k < 7 else '#2E4A3A')
             cover.add((x, bot + k))
     cover |= head
+    # the beacon on the head: a short white iron column with a red band, its lamp on top
+    bx, by = int(hx) + 1, int(hy) + 1
+    for k in range(13):
+        for d in (0, 1, 2):
+            c = '#F2EEE2' if d < 2 else '#B8B4AC'
+            if 5 <= k <= 7:
+                c = RED[3] if d < 2 else RED[1]
+            cv.set(bx + d, by - k, c)
+    cv.hline(bx - 1, by - 13, 5, STONE[1]); cv.hline(bx - 1, by - 14, 5, STONE[0])
+    cv.set(bx, by - 15, '#F8E6A0'); cv.set(bx + 1, by - 15, '#F2C94C'); cv.set(bx + 2, by - 15, STONE[0])  # its lamp
+    cv.hline(bx, by - 16, 3, STONE[0])
+    style.darken(cv, bx + 3, by); style.darken(cv, bx + 4, by + 1)
     return cover
+
+
+def rail_fence(cv: Canvas, pts, seed: int = 0, gap=None) -> set:
+    """A post-and-rail fence along a line of points (its foot): weathered posts every six
+    pixels, two rails between them, lit on top, its shadow down and right on the ground.
+    `gap` (x, y, r) leaves a gateway. Returns the pixels it stands on (they block a walk)."""
+    BL = MATERIALS['bleached']
+    foot = []
+    for (ax, ay), (bx, by) in zip(pts, pts[1:]):
+        n = int(max(abs(bx - ax), abs(by - ay), 1))
+        foot += [(round(ax + (bx - ax) * k / n), round(ay + (by - ay) * k / n)) for k in range(n)]
+    foot.append(tuple(pts[-1]))
+    if gap is not None:
+        foot = [(x, y) for (x, y) in foot if math.hypot(x - gap[0], y - gap[1]) > gap[2]]
+    out = set()
+    for i, (x, y) in enumerate(foot):
+        for r in (7, 3):  # the rails
+            cv.set(x, y - r, BL[4] if r == 7 else BL[3])
+            cv.set(x, y - r + 1, BL[1])
+        out |= {(x, y), (x, y - 1)}
+        style.darken(cv, x + 1, y + 1)
+    for i, (x, y) in enumerate(foot):
+        if i % 6 == 0 or i == len(foot) - 1:  # a post, a little taller than the top rail
+            for k in range(0, 9):
+                cv.set(x, y - k, BL[4] if k == 8 else BL[3] if k > 5 else BL[2])
+                cv.set(x + 1, y - k, BL[1] if k < 8 else BL[3])
+            style.darken(cv, x + 2, y)
+            style.darken(cv, x + 2, y + 1)
+    return out
 
 
 def harbour(frame: int = 0):
@@ -712,6 +790,10 @@ def harbour(frame: int = 0):
             if x >= 304 and y < cliff_t[x] + cliff_h[x]:
                 continue
             water.add((x, y))
+    # the river's mouth (Claude A's E12): the sea runs up into it in a bight, not across a
+    # ruled row, so the two waters meet on a curve
+    mouth = {(x, y) for (x, y) in river if y >= QY1 - 2 + int(10 * abs((x - 290) / 18) ** 1.6)}
+    water |= mouth
     estuary = set(river) - water
     # the sand: dry and pale up the beach, darker and wet at the waterline, ripples
     for (x, y) in beach:
@@ -749,11 +831,25 @@ def harbour(frame: int = 0):
     bank(cv, estuary, keep=water, seed=976)
     water_body(cv, estuary, set(rdeep) & estuary, seed=977, glints=12)
     water |= estuary
-    west_rocks = shore_rocks(cv, [(west_shore(y), y) for y in range(-4, H, 1) if not (470 < y)], seed=943)
+    lpath0 = worlds.thick([(40, 372), (28, 392), (24, 452), (24, 500), (30, 528), (46, 530), (51, 522)], 5, seed=986)
+    west_rocks = shore_rocks(cv, [(west_shore(y), y) for y in range(-4, H, 1) if not (470 < y)], seed=943, clusters=True,
+                             avoid={(x + a, y + b) for (x, y) in lpath0 for (a, b) in ((0, 0), (3, 0), (-3, 0))})
     # the quay: dressed stone with a lit kerb and a front face in courses down to the
     # water, a slipway down onto the beach at its west end, the eastern rocks at its east
     quay = {(x, y) for x in range(QX0, QX1) for y in range(QY0, QY1)}
+    # its east end runs on to the river and returns along its bank as a wall (E12), so
+    # the paving never stops on a ruled line against the grass
+    quay |= {(x, y) for y in range(QY0, QY1) for x in range(QX1, W) if all((x + d, y) not in river for d in range(0, 5))
+             and any((x + d, y) in river for d in range(5, 60))}
     worlds.paint_paving(cv, quay, seed=9)
+    for (x, y) in quay:
+        if (x + 1, y) not in quay and x + 1 < W:  # the return wall's lit kerb, its face down to the river
+            cv.set(x, y, STONE[4])
+            for k in range(1, 5):
+                if (x + k, y) in river:
+                    cv.set(x + k, y, STONE[2] if (y + (k // 2) * 3) % 4 else STONE[0])
+                    if k == 4:
+                        cv.set(x + k, y, '#2E4A3A')
     cv.hline(QX0, QY1 - 1, QX1 - QX0, STONE[4])
     detail.stones(cv, QX0, QY1, QX1 - QX0, 8, STONE, seed=980, course=4, base=2)
     cv.hline(QX0, QY1 + 8, QX1 - QX0, '#2E4A3A')
@@ -771,6 +867,16 @@ def harbour(frame: int = 0):
         cv.set(QX0 - 1, y, STONE[1])
     for x in range(QX0, QX1):  # the kerb along the back
         cv.set(x, QY0, STONE[1]); cv.set(x, QY0 + 1, STONE[4])
+    # cottage 4's back yard (E10): a post-and-rail fence round the grass behind it, the
+    # washing hung east-west across it in the sun, a basket of pegged-out washing below
+    yard_fence = rail_fence(cv, [(226, 150), (214, 150), (214, 117), (316, 117), (316, 150)], seed=990)
+    for (x, y, c) in ((292, 136, None),):
+        for i in range(8):
+            for j in range(5):
+                cv.set(x + i, y + j, WOOD[3] if j == 0 else WOOD[2] if (i + j) % 2 else WOOD[1])
+        for i in range(1, 7):
+            cv.set(x + i, y - 1, '#F2EEE2' if i % 3 else '#9CC0E0')  # the folded washing in it
+        style.darken(cv, x + 8, y + 3); style.darken(cv, x + 8, y + 4)
     # the eastern rocks: boulders heaped from the quay's end up to the cliffs
     rocks = outcrop(cv, [(274, 310, 12, 9), (268, 322, 10, 7), (312, 300, 16, 12), (306, 318, 12, 9)], seed=981, moss=True)
     face = cliff(cv, cliff_t, cliff_h, seed=982)
@@ -805,7 +911,7 @@ def harbour(frame: int = 0):
     # (it runs in front of the cottage, below its foot, so it is seen to reach the door)
     road |= worlds.thick([(160, 176), (142, 204), (124, d3y + 5), (d3x + 8, d3y + 5), (d3x, d3y + 2)], 6, seed=18)  # down to cottage 3's door
     road |= worlds.thick([(d3x + 2, d3y + 6), (90, d3y + 14)], 5, seed=21)  # and on down to the beach
-    road |= worlds.thick([(156, 70), (196, 96), (240, 104), (290, 104), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path, a Y off the road above the T
+    road |= worlds.thick([(156, 70), (196, 94), (240, 100), (290, 102), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path, a Y off the road above the T
     road |= worlds.thick([(164, 212), (230, 224), (262, 222)], 7, seed=20)  # to cottage 4's door
     hdoors = [door_front(k, x, y) for (k, x, y) in (('cottage', 42, 26), ('cottage_b', 210, 26), ('cottage_c', 44, 140),
                                                     ('cottage_d', 224, 140))]
@@ -817,14 +923,16 @@ def harbour(frame: int = 0):
         # four households, four cottages: a net on the wall, shutters, a porch, a net shed
         ('cottage-1', 'cottage', 42, 26), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage_c', 44, 140),
         ('cottage-4', 'cottage_d', 224, 140),
-        # the washing line in the yard beside cottage 4, clear of the lanes
-        ('washing', 'washing_line', 184, 118),
+        # the washing line across cottage 4's back yard, east-west, in the sun
+        ('washing', 'washing_line', 236, 104),
+        # the net rack before cottage 4's net shed, where the nets are mended (E10)
+        ('nets-1', 'net_rack', 266, 186),
         # the quay: the fish market, pots and the spare anchor by the chandler's corner
-        ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
-        ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
-        # the beach: nets drying, boats hauled up, chairs, driftwood
-        ('nets-1', 'net_rack', 16, 236), ('pots-3', 'lobster_pots', 22, 300), 
-        ('chair-1', 'deck_chair', 30, 344), ('chair-2', 'deck_chair_b', 50, 352),
+        ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 228, 240),
+        ('anchor', 'anchor', 210, 262), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
+        # the beach: pots stacked by the slipway, two chairs up on the dry sand facing the sea (E11)
+        ('pots-3', 'lobster_pots', 56, 272),
+        ('chair-1', 'deck_chair', 26, 244), ('chair-2', 'deck_chair_b', 48, 250),
         # the boats: each at a jetty's end, one on its buoy in the basin, a sail beyond
         ('boat-1', 'boat_blue', 83, 318), ('boat-2', 'boat_red', 248, 348), ('boat-3', 'boat_blue', 150, 430),
         # the ferry to Lagoon Landing, moored port side to the pier's head, and its ladder
@@ -834,8 +942,8 @@ def harbour(frame: int = 0):
         ('lighthouse', 'lighthouse', 30, 380),
     ]
     quay_face = {(x, y) for x in range(QX0, QX1) for y in range(QY1, QY1 + 9)}
-    blocked = (water | face | rocks | spur | bw | knoll | pools | west_rocks | quay_face) - decks
-    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (196, 408), 'beach': (34, 380), 'castle': (300, 116),
+    blocked = ((water | face | rocks | spur | bw | knoll | pools | west_rocks | quay_face) - decks - quay) | yard_fence
+    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (196, 408), 'beach': (34, 380), 'castle': (304, 106),
               'lighthouse': (52, 532)}
     return cv, objects, stands, blocked
 
@@ -865,10 +973,29 @@ def headland(frame: int = 0):
         by = top[gx] + hgt[gx] + 4 + int(noise2(i, 0, 992) * 6)
         if by < H - 4:
             talus |= boulder(cv, gx + int(noise2(i, 1, 992) * 12), by, 10 + int(noise2(i, 2, 992) * 8), 7 + int(noise2(i, 3, 992) * 4), 993 + i, moss=False)
+    # rock shelves running out from the cliff's foot at the points, the sea washing over
+    # their ends: flat beds of the same stone, lit on top, cracked along the bedding
+    for (sx, sw) in ((96, 14), (152, 18), (234, 13), (314, 8)):
+        fy = top[sx] + hgt[sx]
+        if fy + 6 >= H:
+            continue
+        shelf = {(x, y) for (x, y) in blob(sx, fy + 4, sw, 4, seed=sx, rough=0.25) if (x, y) in sea_px}
+        for (x, y) in shelf:
+            c = STONE[3] if (x, y - 1) in shelf or (x, y - 1) not in sea_px else STONE[4]
+            if (x * 3 + y) % 11 == 0:
+                c = STONE[1]  # a crack along the bedding
+            if (x, y + 1) not in shelf:
+                c = '#2E4A3A'  # wet and weedy at the water
+            cv.set(x, y, c)
+        for (x, y) in edge_of(shelf):
+            if (x, y + 2) in sea_px and (x, y + 2) not in shelf and noise2(x, y, 999) > 0.5:
+                cv.set(x, y + 2, '#E8F0F2')  # the wash over its end
     # the cliff path from the harbour up the down to the tower, then on to the viewpoint
     path = worlds.thick([(-6, 110), (58, 112)], 8) | worlds.thick(
-        [(56, 112), (66, 150), (80, 222), (140, 300), (176, 372), (198, 428), (226, 430)], 8, seed=19)
-    path |= worlds.thick([(118, 280), (100, 340), (112, 404), (120, 430)], 6, seed=23)
+        [(56, 112), (66, 150), (80, 222), (140, 300), (176, 368), (206, 404), (227, 418)], 8, seed=19)
+    # (Claude A's E17: one way to the tower's door, and one branch off it to the viewpoint,
+    # not two paths side by side)
+    path |= worlds.thick([(150, 318), (134, 360), (124, 400), (122, 434)], 6, seed=23)
     path |= worlds.thick([(88, 240), (150, 216), (210, 196), (214, 186)], 6, seed=998)  # a spur from the path up to the fold's gate
     lay_road(cv, (path - river) | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)}, seed=76,
              avoid=river | sea_px | face | {(x + a, y + b) for (x, y) in poly_field([(142, 76), (280, 58), (294, 168), (152, 188)], seed=996)
@@ -890,26 +1017,26 @@ def headland(frame: int = 0):
     # the gateway's piers: squared stone a little taller than the wall (Claude A after #64:
     # the 26 px gateposts read as chimneys over a wall this low), each with a capstone
     for (px, py) in posts:
-        pier = {(x, y) for x in range(px - 2, px + 3) for y in range(py - 9, py + 6)}
+        pier = {(x, y) for x in range(px - 2, px + 3) for y in range(py - 11, py + 9)}
         for (x, y) in pier:
             c = STONE[3] if x < px + 2 else STONE[1]
-            if y == py - 9:
+            if y == py - 11:
                 c = STONE[4]  # the capstone's lit top
-            elif y == py - 8:
+            elif y == py - 10:
                 c = STONE[2]
             elif (y - py) % 3 == 0:
                 c = STONE[1]  # a joint between courses
             cv.set(x, y, c)
-        for y in range(py - 8, py + 7):
+        for y in range(py - 10, py + 11):
             style.darken(cv, px + 3, y)  # its shadow to the right
         wall |= pier
     objects = [
         ('tower', 'lookout_tower', 198, 300),
-        ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 210, 150),
+        ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 188, 132),  # inside, off the gate (E15)
         ('sheep-4', 'sheep_left', 262, 92),
-        # the gate (Claude B's field_gate) hung on the west pier and shut against the east
-        # one, its foot on the piers' foot row
-        *([('fold-gate', 'field_gate', min(posts)[0] + 2, min(posts)[1] + 6 - 25)] if posts else []),
+        # the gate (Claude B's low field gate, #82) hung on the west pier and shut against
+        # the east one, its row 11 on the piers' foot row
+        *([('fold-gate', 'field_gate_low', min(posts)[0] + 2, min(posts)[1] + 8 - 11)] if posts else []),
         ('hive-1', 'beehive', 100, 112), ('hive-2', 'beehive', 120, 106),  # in the lee of the fold's west wall
         ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
@@ -945,25 +1072,44 @@ def drystone_loop(cv: Canvas, field: set, gap=(0, 0), seed: int = 0, ends=None) 
     for (x, y) in line:  # a wall about five stones' width across its top
         top |= {(x + dx, y + dy) for dx in range(-2, 3) for dy in range(-2, 2) if dx * dx + dy * dy <= 5}
     wall = set(top)
-    for (x, y) in top:  # the wall's lit top: rough stones, two or three across
-        st = noise2(x // 3, y // 2, seed)
-        c = STONE[4] if st > 0.66 else STONE[3] if st > 0.25 else STONE[2]
-        if noise2(x, y, seed + 2) > 0.85:
-            c = STONE[1]  # a joint
+    # (Claude A's E15: a 3-4 px line does not read as a wall) the coping: a row of stones
+    # set on edge along its top, lit on their tops, dark between, standing a pixel proud
+    def along(x, y):  # how far along the wall: x where it runs across the view, y where down it
+        return x if (x - 3, y) in top and (x + 3, y) in top else y
+    for (x, y) in top:
+        a = along(x, y) + int(noise2(along(x, y) // 3, 0, seed) * 2)
+        c = STONE[4] if a % 3 == 0 else STONE[3] if noise2(a // 3, 1, seed) > 0.3 else STONE[2]
+        if a % 3 == 2:
+            c = STONE[1]  # the gap between two coping stones
+        if (x, y + 1) not in top and c != STONE[1]:
+            c = STONE[2]  # the coping's shaded front
         cv.set(x, y, c)
-    for (x, y) in top:  # its face toward us where it runs across the slope: two courses
+    for (x, y) in top:
+        if (x, y - 1) not in top and along(x, y) % 3 == 0:
+            cv.set(x, y - 1, STONE[3])
+            wall.add((x, y - 1))
+    for (x, y) in top:  # its face toward us, eight pixels down to the turf: three courses
         if (x, y + 1) in top:
             continue
-        for k in range(1, 7):
-            st = (x // 4 + (k // 2) * 2 + int(noise2(x // 4, k // 2, seed) * 2)) % 3
-            c = STONE[1] if k == 6 else STONE[0] if st == 0 and k % 2 else STONE[2] if st == 1 else STONE[3] if k == 1 else STONE[2]
-            if k in (2, 3, 4) and noise2(x, y + k, seed + 1) > 0.92:
+        for k in range(1, 9):
+            row = (k - 1) // 3
+            bx = (x + row * 2 + int(noise2(x // 4, row, seed) * 2)) // 4
+            st = noise2(bx, row, seed + 4)
+            c = STONE[3] if st > 0.62 else STONE[2] if st > 0.2 else STONE[1]
+            if (k - 1) % 3 == 0:
+                c = STONE[min(4, [STONE[1], STONE[2], STONE[3]].index(c) + 2)] if c != STONE[1] else STONE[2]  # a stone's lit top
+            if (k - 1) % 3 == 2 or (x + row * 2 + int(noise2(x // 4, row, seed) * 2)) % 4 == 3:
+                c = STONE[0]  # the joints
+            if k == 1:
+                c = STONE[1]  # under the coping's overhang
+            if k in (3, 4, 5, 6) and noise2(x, y + k, seed + 1) > 0.93:
                 c = '#B8B47A'  # lichen
             cv.set(x, y + k, c)
             wall.add((x, y + k))
-        style.darken(cv, x + 1, y + 7)
+        for d in (9, 10):
+            style.darken(cv, x + 1, y + d)  # its shadow on the turf at its foot
         if noise2(x, y, seed + 3) > 0.7:
-            detail.grass_tuft(cv, x, y + 8, int(noise2(x, 1, seed) * 6), G, 2)
+            detail.grass_tuft(cv, x, y + 10, int(noise2(x, 1, seed) * 6), G, 2)
     return wall
 
 
@@ -1678,34 +1824,91 @@ def river_at(zone: str, y: int):
 
 
 def stone_bridge(cv: Canvas, x0: int, x1: int, y0: int, y1: int, water: set, horizontal: bool = True):
-    """A stone bridge carrying a road east-west over the river: a paved deck between two
-    parapets of dressed stone with lit copings, the arch's dark mouth and its reflection
-    on the water to the south, cutwaters at its feet. Returns the deck (walkable)."""
+    """A stone bridge carrying a road east-west over the river (Claude A's E16: built,
+    not a flat slab): a paved deck between two parapets of coursed stone under a lit
+    coping, a pier standing a little proud at each end; on the downstream (south) face,
+    an arch ring of voussoirs round the arch's dark mouth with its keystone proud at the
+    crown, coursed spandrels either side, the abutments carried down to the banks, wing
+    walls splaying out along them, and pointed cutwaters at the arch's feet in the water,
+    the arch's reflection below. Returns the deck (walkable)."""
     deck = {(x, y) for x in range(x0, x1) for y in range(y0, y1)}
     worlds.paint_paving(cv, deck, seed=x0)
-    for x in range(x0 - 2, x1 + 2):
-        for (py, lit) in ((y0 - 3, True), (y1, False)):  # the parapets
-            for k in range(3):
-                c = STONE[4] if k == 0 and lit else STONE[3] if k == 0 else STONE[2] if (x + k * 3) % 7 else STONE[1]
-                cv.set(x, py + k, c)
-        for k in range(3, 11):  # the face of the bridge on the downstream (south) side
-            y = y1 + k
-            if (x, y) not in water and k > 3:
-                continue
-            c = STONE[2] if (x + (k // 3) * 4) % 8 else STONE[1]
-            if k == 3:
-                c = STONE[3]
-            cv.set(x, y, c)
     span = [x for x in range(x0, x1) if any((x, y1 + 8 + k) in water for k in range(3))]
-    if span:
-        a, b = min(span), max(span)
-        cx, r = (a + b) / 2, max(3, (b - a) / 2 - 2)
-        for x in range(int(cx - r), int(cx + r) + 1):  # the arch's dark mouth
-            hgt = int(math.sqrt(max(0, r * r - (x - cx) ** 2)) * 0.6)
-            for k in range(hgt + 1):
-                cv.set(x, y1 + 10 - k, WTR[0] if k < hgt else STONE[1])
-            if (x, y1 + 12) in water:
-                cv.set(x, y1 + 12, WTR[1]); cv.set(x, y1 + 13, WTR[1] if x % 2 else WTR[2])
+    a, b = (min(span), max(span)) if span else (x0, x1)
+    cx, r = (a + b) / 2, max(4, (b - a) / 2)
+    rise = max(5, int(r * 0.55))  # a segmental arch, lower than a half circle
+    spring = y1 + 12  # the springing line, at the water
+    FACE = range(y1 + 3, spring + 3)
+    for x in range(x0 - 4, x1 + 4):
+        # the spandrel's coursed face, then the arch cut out of it
+        for y in FACE:
+            k = y - y1
+            c = STONE[2] if (x + ((k - 3) // 3) * 5) % 9 else STONE[1]
+            if (k - 3) % 3 == 2:
+                c = STONE[1]
+            elif (k - 3) % 3 == 0 and (x + ((k - 3) // 3) * 5) % 9:
+                c = STONE[3]
+            if k == 3:
+                c = STONE[1]  # the string course's shadow under the parapet
+            cv.set(x, y, c)
+    for x in range(int(cx - r) - 2, int(cx + r) + 3):  # the arch: its ring of voussoirs, its mouth
+        d = (x - cx) / (r + 2)
+        if abs(d) > 1:
+            continue
+        ring_top = spring - int(math.sqrt(1 - d * d) * (rise + 2))
+        d2 = (x - cx) / r
+        mouth_top = spring - int(math.sqrt(max(0, 1 - d2 * d2)) * rise) if abs(d2) <= 1 else spring
+        for y in range(ring_top, mouth_top):
+            vou = int(math.degrees(math.atan2(spring - y, x - cx)) // 12)  # a wedge every 12 degrees
+            cv.set(x, y, STONE[1] if (y - ring_top == 0 and False) else (STONE[3] if vou % 2 else STONE[2]))
+            if math.degrees(math.atan2(spring - y, x - cx)) % 12 < 2:
+                cv.set(x, y, STONE[0])  # the joint between two voussoirs
+        for y in range(mouth_top, spring + 3):
+            cv.set(x, y, WTR[0] if y > mouth_top + 1 else '#1C2A3A')  # the dark under the arch
+    for dx in (-1, 0, 1):  # the keystone, proud at the crown
+        x = int(cx) + dx
+        top_y = spring - rise - 4
+        for y in range(top_y, spring - rise + 1):
+            cv.set(x, y, STONE[4] if dx < 1 else STONE[2])
+    cv.set(int(cx) - 1, spring - rise - 4, '#F2EEE2')
+    for (fx, sgn) in ((a, -1), (b, 1)):  # cutwaters at its feet, pointed into the stream
+        for k in range(5):
+            for w in range(4 - k // 2):
+                x = fx + sgn * w
+                y = spring + 2 + k
+                if (x, y) in water:
+                    cv.set(x, y, STONE[2] if w < 2 else STONE[1])
+        cv.hline(fx - 3, spring + 7, 7, WTR[4])  # the ripple round it
+    for x in range(int(cx - r), int(cx + r) + 1):  # the arch's reflection
+        for k in range(3, 6):
+            if (x, spring + k) in water and abs(x - cx) < r - 1:
+                cv.set(x, spring + k, WTR[1] if (x + k) % 3 else WTR[2])
+    # the abutments and their wing walls, carried down onto the banks either side
+    for (ex, sgn) in ((x0 - 4, -1), (x1 + 3, 1)):
+        for k in range(0, 9):
+            for w in range(0, 3):
+                x = ex + sgn * (k // 2 + w)
+                y = spring - 6 + k
+                if (x, y) not in water and 0 <= x < W:
+                    cv.set(x, y, STONE[2] if w == 1 else STONE[3] if w == 0 else STONE[1])
+            style.darken(cv, ex + sgn * (k // 2 + 3), spring - 6 + k)
+    for x in range(x0 - 4, x1 + 4):  # the parapets: coursed stone under a lit coping
+        for (py, lit) in ((y0 - 4, True), (y1, False)):
+            for k in range(4):
+                c = STONE[2] if (x + k * 3) % 7 else STONE[1]
+                if k == 0:
+                    c = STONE[4] if lit else STONE[3]  # the coping's top
+                    if x % 8 == 0:
+                        c = STONE[2]  # a joint in the coping
+                elif k == 1:
+                    c = STONE[1]  # the coping's drip, in shadow
+                cv.set(x, py + k, c)
+    for ex in (x0 - 4, x1 + 1):  # a pier at each end, a little taller than the parapet
+        for py in (y0 - 4, y1):
+            for x in range(ex, ex + 3):
+                cv.set(x, py - 1, STONE[4] if x < ex + 2 else STONE[2])
+                for k in range(0, 4):
+                    cv.set(x, py + k, STONE[3] if x == ex else STONE[2] if x == ex + 1 else STONE[1])
     return deck
 
 
