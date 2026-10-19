@@ -141,6 +141,7 @@ import propDreamPoolB from '@/assets/zones/props/dream_pool_b.png';
 import propDriftwood from '@/assets/zones/props/driftwood.png';
 import propDrone from '@/assets/zones/props/drone.png';
 import propDryWell from '@/assets/zones/props/dry_well.png';
+import propDrystoneGatepost from '@/assets/zones/props/drystone_gatepost.png';
 import propDrystoneWall from '@/assets/zones/props/drystone_wall.png';
 import propDuck from '@/assets/zones/props/duck.png';
 import propDynamiteCrate from '@/assets/zones/props/dynamite_crate.png';
@@ -236,6 +237,8 @@ import propPricklyPear from '@/assets/zones/props/prickly_pear.png';
 import propRadiator from '@/assets/zones/props/radiator.png';
 import propRainShelter from '@/assets/zones/props/rain_shelter.png';
 import propRingPost from '@/assets/zones/props/ring_post.png';
+import propRoundBale from '@/assets/zones/props/round_bale.png';
+import propRoundBaleSide from '@/assets/zones/props/round_bale_side.png';
 import propRoundTower from '@/assets/zones/props/round_tower.png';
 import propSack from '@/assets/zones/props/sack.png';
 import propSaguaro from '@/assets/zones/props/saguaro.png';
@@ -786,6 +789,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   driftwood: propDriftwood,
   drone: propDrone,
   dry_well: propDryWell,
+  drystone_gatepost: propDrystoneGatepost,
   drystone_wall: propDrystoneWall,
   duck: propDuck,
   dynamite_crate: propDynamiteCrate,
@@ -881,6 +885,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   radiator: propRadiator,
   rain_shelter: propRainShelter,
   ring_post: propRingPost,
+  round_bale: propRoundBale,
+  round_bale_side: propRoundBaleSide,
   round_tower: propRoundTower,
   sack: propSack,
   saguaro: propSaguaro,
