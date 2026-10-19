@@ -15,8 +15,9 @@ import { HUT_DOOR, TRAIL_X } from '@/lib/garden-path';
  */
 /** Where a keepsake can stand: inside the hut, or out in the garden. */
 export type DecorArea = 'hut' | 'garden';
-/** A keepsake set out; `area` is left out inside the hut (saves from before the garden). */
-export type DecorPlacement = { item: string; x: number; y: number; area?: 'garden' };
+/** A keepsake set out; `area` is left out inside the hut (saves from before the garden);
+ *  `flip` turns it to face the other way. */
+export type DecorPlacement = { item: string; x: number; y: number; area?: 'garden'; flip?: true };
 export const areaOf = (p: DecorPlacement): DecorArea => p.area ?? 'hut';
 
 /**
@@ -119,6 +120,67 @@ export function newKeepsakes(before: readonly string[], zone: string): string[] 
 const CELL = 4;
 type Spot = readonly [number, number];
 const home = zoneMaps.home;
+
+/**
+ * Where a keepsake belongs (coherence plan H1, Matt: "nothing placed at random"). Every
+ * keepsake can stand on the floor; the small ones (a bowl, a vase, a jar, a lamp, a globe,
+ * the mantel clock, the little sign) can also stand on a surface in the hut: the mantel,
+ * the top of the bookcase, the kitchen counter, the table, the bedroom window's sill.
+ * Set on a surface, a keepsake takes no floor and never blocks a way through.
+ */
+export type DecorPlace = 'floor' | 'surface';
+const SURFACE_ITEMS = new Set([
+  'shell_bowl',
+  'reed_vase',
+  'pinecone_jar',
+  'town_lantern',
+  'ember_lamp',
+  'star_globe',
+  'moon_crystal',
+  'orchid_pot',
+  'cactus_pot',
+  'cog_clock',
+  'neon_sign',
+]);
+export const placeOf = (item: string): DecorPlace =>
+  SURFACE_ITEMS.has(item) ? 'surface' : 'floor';
+
+type Surface = { x: number; y: number; on: string; depth: number };
+let surfaces: Surface[] | null = null;
+/**
+ * The surfaces in the hut a small keepsake can stand on, each the point its feet rest at
+ * (scripts/art/home_zones.py): read from the furniture where it stands, so they move with
+ * it, and the bedroom's west window sill, which is part of the wall.
+ */
+export function hutSurfaces(): readonly Surface[] {
+  if (surfaces) return surfaces;
+  const at = (id: string, dx: number, dy: number, on: string): Surface[] => {
+    const o = home.objects.find(([oid]) => oid === id);
+    return o ? [{ x: o[2] + dx, y: o[3] + dy, on, depth: o[3] + o[5] + 1 }] : [];
+  };
+  surfaces = [
+    ...at('hearth', 23, 19, 'the mantel'), // between the candle and the mantel clock's place
+    ...at('hearth', 37, 19, 'the mantel'),
+    ...at('books', 11, 3, 'the bookcase'), // beside the plant on its top
+    ...at('kitchen', 29, 25, 'the counter'), // between the herbs and the sink
+    ...at('table', 14, 21, 'the table'), // in front of the cups
+    ...at('table', 35, 21, 'the table'),
+    { x: 68, y: 50, on: 'the window sill', depth: 65 }, // the bedroom's west window (x 52, sill at 48)
+    { x: 82, y: 50, on: 'the window sill', depth: 65 },
+  ];
+  return surfaces;
+}
+const surfaceAt = (x: number, y: number) => hutSurfaces().find((s) => s.x === x && s.y === y);
+/** The depth to draw a keepsake at: its feet, or, on a surface, just in front of the
+ *  furniture it stands on (so the mantel never hides what is set on it). */
+export function decorDepth(p: DecorPlacement): number {
+  const s = areaOf(p) === 'hut' && placeOf(p.item) === 'surface' ? surfaceAt(p.x, p.y) : undefined;
+  return s ? Math.max(p.y, s.depth) : p.y;
+}
+/** Whether a keepsake stands on a surface in the hut, off the floor. */
+export function raised(p: DecorPlacement): boolean {
+  return areaOf(p) === 'hut' && placeOf(p.item) === 'surface' && surfaceAt(p.x, p.y) !== undefined;
+}
 let hutRows: string[] | null = null;
 /** The hut's own walk rows (the home region is the hut alone, so its pixels are the hut's). */
 export const hutWalk = () => (hutRows ??= regionWalk('home'));
@@ -213,11 +275,30 @@ export const snapDecor = (p: { x: number; y: number }) => ({
   y: Math.round(p.y / CELL) * CELL,
 });
 
-/** The hut's walk rows with the placed keepsakes standing in the way (rugs are walked over). */
+/** Where a tap puts a keepsake's feet: on the cell grid, or, for a small keepsake tapped
+ *  near a surface in the hut, on that surface. */
+export function snapDecorFor(item: string, area: DecorArea, p: { x: number; y: number }) {
+  if (area === 'hut' && placeOf(item) === 'surface') {
+    let best: Surface | null = null;
+    let near = 20;
+    for (const s of hutSurfaces()) {
+      const d = Math.hypot(s.x - p.x, s.y - p.y);
+      if (d < near) {
+        near = d;
+        best = s;
+      }
+    }
+    if (best) return { x: best.x, y: best.y };
+  }
+  return snapDecor(p);
+}
+
+/** The hut's walk rows with the placed keepsakes standing in the way (rugs are walked
+ *  over, and those on a surface take no floor). */
 export function walkWithDecor(walk: readonly string[], placed: readonly DecorPlacement[]) {
   const rows = walk.map((r) => r.split(''));
   for (const p of placed) {
-    if (!decorSizes[p.item]) continue;
+    if (!decorSizes[p.item] || raised(p)) continue;
     const b = decorBox(p.item, p.x, p.y);
     if (b.flat) continue;
     for (const [cx, cy] of b.cells) if (rows[cy]?.[cx] !== undefined) rows[cy][cx] = '#';
@@ -243,11 +324,24 @@ export function checkDecor(
 ): DecorCheck {
   if (!decorSizes[item] || !Number.isFinite(x) || !Number.isFinite(y))
     return { ok: false, why: 'unknown' };
+  const box = decorBox(item, x, y);
+  if (raised({ item, x, y, ...(area === 'garden' ? { area } : {}) })) {
+    // on a surface: it takes no floor; only another keepsake on a surface can be in its way
+    const clash = placed.some((p) => {
+      if (p.item === item || !decorSizes[p.item] || !raised(p)) return false;
+      const b = decorBox(p.item, p.x, p.y);
+      return (
+        box.left < b.left + b.w && box.left + box.w > b.left && box.top < b.top + b.h && y > b.top
+      );
+    });
+    return clash ? { ok: false, why: 'crowded' } : { ok: true };
+  }
   const { floor, keep, bare } = areas[area];
   const walk = floor();
   const stands = keep();
-  const others = placed.filter((p) => p.item !== item && decorSizes[p.item] && areaOf(p) === area);
-  const box = decorBox(item, x, y);
+  const others = placed.filter(
+    (p) => p.item !== item && decorSizes[p.item] && areaOf(p) === area && !raised(p),
+  );
   // on the floor: every footprint cell is open floor in the room itself
   if (!box.cells.every(([cx, cy]) => walk[cy]?.[cx] === '.')) return { ok: false, why: 'wall' };
   if (
@@ -319,16 +413,18 @@ export function restoreDecor(value: unknown, visited: readonly string[]): DecorP
     const x: unknown = Reflect.get(v, 'x');
     const y: unknown = Reflect.get(v, 'y');
     const area: DecorArea = Reflect.get(v, 'area') === 'garden' ? 'garden' : 'hut';
+    const flip = Reflect.get(v, 'flip') === true ? { flip: true as const } : {};
     if (typeof item !== 'string' || typeof x !== 'number' || typeof y !== 'number') continue;
     if (!found.has(item) || out.some((p) => p.item === item)) continue;
     if (checkDecor(area, out, item, x, y).ok)
-      out.push(area === 'garden' ? { item, x, y, area } : { item, x, y });
+      out.push(area === 'garden' ? { item, x, y, area, ...flip } : { item, x, y, ...flip });
   }
   return out;
 }
 
-/** The keepsake in hand while decorating, and where it was last tapped. */
-export type DecorHand = { item: string; at: { x: number; y: number } | null };
+/** The keepsake in hand while decorating, where it was last tapped, and whether it is
+ *  turned to face the other way. */
+export type DecorHand = { item: string; at: { x: number; y: number } | null; flip?: boolean };
 
 /**
  * What a tap does while decorating `area`: a keepsake standing there under the tap is
@@ -349,11 +445,22 @@ export function tapToDecorate(
   });
   const solid = under.filter((p) => !decorBox(p.item, p.x, p.y).flat).sort((a, b) => b.y - a.y)[0];
   const hit = solid ?? (hand ? undefined : under[0]);
-  if (hit && hit.item !== hand?.item) return { hand: { item: hit.item, at: null }, walk: true };
+  if (hit && hit.item !== hand?.item)
+    return { hand: { item: hit.item, at: null, ...(hit.flip ? { flip: true } : {}) }, walk: true };
   if (!hand) return { hand: null, walk: null };
-  const spot = snapDecor(at);
-  return { hand: { item: hand.item, at: spot }, walk: { x: spot.x, y: spot.y + 12 } };
+  const spot = snapDecorFor(hand.item, area, at);
+  const kept = { item: hand.item, at: spot, ...(hand.flip ? { flip: true } : {}) };
+  if (area === 'hut' && surfaceAt(spot.x, spot.y) && placeOf(hand.item) === 'surface') {
+    // set on a surface: the companion walks to the floor in front of it
+    const [fx, fy] = onFloor(decorFloor(area), [spot.x, spot.y + 24]);
+    return { hand: kept, walk: { x: fx, y: fy } };
+  }
+  return { hand: kept, walk: { x: spot.x, y: spot.y + 12 } };
 }
+
+/** A keepsake in hand turned to face the other way (decorating's TURN). */
+export const turnHand = (hand: DecorHand): DecorHand =>
+  hand.flip ? { item: hand.item, at: hand.at } : { ...hand, flip: true };
 
 /** The footprint to light up under a keepsake about to be set down (area pixels). */
 export function decorFootprint(item: string, x: number, y: number) {

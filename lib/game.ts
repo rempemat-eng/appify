@@ -273,7 +273,7 @@ type Game = Saved & {
   decor: DecorPlacement[];
   /** set a found keepsake on the hut's floor (or move it there); free, and refused if it
    *  would stand in the way */
-  placeDecor: (item: string, x: number, y: number, area?: DecorArea) => DecorCheck;
+  placeDecor: (item: string, x: number, y: number, area?: DecorArea, flip?: boolean) => DecorCheck;
   /** put a keepsake back in the chest */
   storeDecor: (item: string) => void;
   hutLook: HutLook;
@@ -903,16 +903,17 @@ export const gameStore = create<Game>((set, get) => ({
     void persist();
   },
   decor: [],
-  placeDecor: (item, x, y, area = 'hut') => {
+  placeDecor: (item, x, y, area = 'hut', flip = false) => {
     const s = get();
     if (!s.player || !foundKeepsakes(s.world?.visited ?? []).includes(item))
       return { ok: false, why: 'unknown' };
     const check = checkDecor(area, s.decor, item, x, y);
     if (!check.ok) return check;
+    const turned = flip ? { flip: true as const } : {};
     set({
       decor: [
         ...s.decor.filter((p) => p.item !== item),
-        area === 'garden' ? { item, x, y, area } : { item, x, y },
+        area === 'garden' ? { item, x, y, area, ...turned } : { item, x, y, ...turned },
       ],
     });
     void persist();
