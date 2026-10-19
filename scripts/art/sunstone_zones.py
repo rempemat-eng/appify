@@ -443,9 +443,10 @@ def gulch(frame: int = 0):
         # scrub where the sand gives out into the ash, in clumps
         ('scrub-1', 'desert_scrub', 296, 262), ('scrub-2', 'desert_scrub_b', 270, 318), ('scrub-3', 'desert_scrub', 286, 410), ('weed-2', 'tumbleweed', 96, 562),
         ('skull', 'cow_skull', 250, 520), ('barrel-p', 'keg', 40, 62), ('sack-p', 'hay_bale', 196, 56),
-        # life (S5): a horse tied at the saloon's rail, dozing; vultures waiting in a dead
-        # mesquite above the skull in the dry scrub; a lizard basking on warm sandstone
-        ('horse-rail', 'horse', 60, 196), ('vultures', 'snag_vultures', 258, 452), ('lizard', 'lizard_rock', 34, 528),
+        # life (S5): a saddled grey tied nose to the saloon's rail (the corral's bay dozes
+        # side-on); vultures waiting in a dead mesquite above the skull in the dry scrub; a
+        # lizard basking on warm sandstone
+        ('horse-rail', 'horse_tied', 76, 181), ('vultures', 'snag_vultures', 258, 452), ('lizard', 'lizard_rock', 34, 528),
         ('horse', 'horse', ccx - 30, ccy - 24), ('pear-1', 'prickly_pear', 234, 472), ('pear-2', 'prickly_pear', 280, 426),
         ('pear-3', 'prickly_pear', 200, 548),
     ]
@@ -647,7 +648,7 @@ def oasis(frame: int = 0):
     objects = [
         # the pool's grove
         ('palm-1', 'palm', 8, 196), ('palm-2', 'palm', 120, 186), ('palm-3', 'palm_small', 20, 300),
-        ('palm-4', 'palm', 168, 226), ('palm-5', 'palm_small', 70, 330), ('palm-6', 'palm', 150, 334),
+        ('palm-4', 'palm', 168, 226), ('palm-5', 'palm_small', 60, 318), ('palm-6', 'palm', 150, 334),
         ('palm-7', 'palm_small', 196, 260), ('papyrus-1', 'papyrus', 52, 266), ('papyrus-2', 'papyrus', 160, 288),
         ('papyrus-3', 'papyrus', 98, 316), ('shaduf', 'shaduf', 158, 256), ('jar-1', 'water_jar', 140, 344),
         ('jar-2', 'water_jar', 152, 350),
@@ -662,11 +663,12 @@ def oasis(frame: int = 0):
         # out in the dunes
         ('cactus-1', 'saguaro_small', 286, 118), ('skull', 'cow_skull', 180, 540), ('weed', 'tumbleweed', 40, 150),
         ('weed-2', 'tumbleweed', 250, 220), ('acacia-1', 'acacia', 226, 84), ('acacia-2', 'acacia', 4, 92),
-        ('scrub-1', 'desert_scrub', 128, 140), ('scrub-2', 'desert_scrub_b', 150, 426), ('scrub-3', 'desert_scrub', 184, 420),
+        ('scrub-1', 'desert_scrub', 128, 140), ('scrub-2', 'desert_scrub_b', 196, 448), ('scrub-3', 'desert_scrub', 184, 420),
         ('scrub-4', 'desert_scrub_b', 288, 300), ('rocks-1', 'sandstone_outcrop', 140, 505),
         ('rocks-2', 'lizard_rock_b', 256, 170),
-        # a string of laden camels hobbled near the water, tethered nose to tail to a stake
-        ('camels', 'camel_string', 20, 360),
+        # a string of laden camels near the water, tethered nose to tail to a stake on open
+        # sand below the grove (review 19 Oct: no palm inside the string)
+        ('camels', 'camel_string', 2, 384),
     ]
     stands = {'gulch': (312, 524), 'pool': (130, 352), 'camp': (250, 500), 'arch': (58, 500),
               'crane': (110, 76), 'dunes': (200, 140)}

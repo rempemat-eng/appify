@@ -798,6 +798,70 @@ def horse() -> Canvas:
     return cv
 
 
+def horse_tied() -> Canvas:
+    """A saddled grey horse tied at the saloon's hitching rail, 24 x 44 (review 19 Oct:
+    face it to the rail with a rein, and make it another horse than the corral's bay):
+    it stands nose to the rail, so in the town's high three-quarter view we look down on
+    its back: the long head reaching north over the beam with the bridle on it and the
+    ears pricked at the poll, the neck widening to the shoulders, the barrel under a
+    leather saddle on a striped blanket (stirrups hanging either side), the hips and the
+    rounded rump toward the street with the tail falling over it, and the hind hooves
+    showing behind. A dappled grey coat lit along its left side; the rein looped round
+    the rail by its head."""
+    w, h = 24, 44
+    cv = Canvas(w, h, pad=PAD)
+    GREY = ['#34343A', '#5A5A62', '#83838A', '#A9A8AA', '#CFCCC6']
+    cx = 11.5
+
+    def half(y):  # the silhouette's half width down its length, from muzzle to rump
+        prof = [(0, 1.8), (3, 2.5), (7, 2.6), (9, 2.4), (11, 3.4), (14, 5.4), (17, 6.0), (21, 6.2),
+                (24, 7.4), (28, 7.8), (31, 7.0), (33, 5.0), (34, 0)]
+        for (y0, h0), (y1, h1) in zip(prof, prof[1:]):
+            if y0 <= y <= y1:
+                return h0 + (h1 - h0) * (y - y0) / (y1 - y0)
+        return 0
+
+    def coat(x, y, k):
+        c = GREY[4] if k < -0.55 else GREY[3] if k < 0.15 else GREY[2] if k < 0.65 else GREY[1]
+        if noise2(x // 2, y // 2, 811) > 0.78 and c in (GREY[3], GREY[2]):
+            c = GREY[min(4, GREY.index(c) + 1)]  # the dapples
+        return c
+    for lx in (5, 16):  # the hind legs below the rump, the hocks lit on the left, dark hooves
+        for y in range(31, 41):
+            cv.set(lx, y, GREY[3] if lx < 11 else GREY[2]); cv.set(lx + 1, y, GREY[2] if lx < 11 else GREY[1])
+            cv.set(lx + 2, y, GREY[1] if y < 36 else GREY[0]) if y > 31 else None
+        cv.hline(lx, 41, 3, '#2A2026'); cv.hline(lx - 1, 42, 4, '#2A2026')
+    for y in range(0, 34):
+        hw = half(y + 0.5)
+        for x in range(int(cx - hw), int(cx + hw) + 1):
+            if abs(x + 0.5 - cx) <= hw:
+                k = (x + 0.5 - cx) / max(hw, 1) + (0.35 if y > 29 else 0)
+                cv.set(x, y, coat(x, y, k))
+    cv.hline(10, 0, 3, GREY[1])  # the muzzle, darker
+    for (ex, c1, c2) in ((8, GREY[4], GREY[2]), (15, GREY[2], GREY[0])):  # the ears at the poll, pricked
+        cv.set(ex, 9, c1); cv.set(ex, 10, c2)
+    cv.hline(9, 8, 6, '#3A2618')  # the bridle's browband and cheek straps
+    cv.vline(9, 3, 5, '#3A2618'); cv.vline(14, 3, 5, '#3A2618')
+    for y in range(11, 18):
+        cv.set(13, y, GREY[0])  # the mane falling on its off side
+    for (x, y) in ((8, 3), (7, 2), (6, 1), (5, 1), (4, 2), (4, 3), (5, 4)):  # the rein looped round the rail
+        cv.set(x, y, '#2E1E14')
+    for y in range(15, 23):  # the striped blanket under the saddle, showing at the sides
+        hw = half(y + 0.5) - 0.5
+        for x in range(int(cx - hw), int(cx + hw) + 1):
+            if abs(x + 0.5 - cx) <= hw:
+                cv.set(x, y, '#E8DCC0' if y % 3 == 0 else '#A8382C' if x < cx else '#842A22')
+    for (x, y) in oval(cx, 19, 4.2, 3.4):  # the saddle: the seat, the pommel lit, the cantle behind
+        cv.set(x, y, '#8A5A34' if x < cx else '#6A4226')
+    cv.hline(10, 15, 4, '#B07C4C'); cv.hline(10, 22, 4, '#4E2E1A')
+    for (sx, lit) in ((4, True), (19, False)):  # the stirrups hanging either side
+        cv.vline(sx, 19, 5, '#3A2618'); cv.hline(sx - 1, 24, 2, '#C8A060' if lit else '#8A6A40')
+    cv.vline(11, 27, 6, GREY[1])  # the cleft of the rump
+    for y in range(28, 40):  # the tail falling over the rump between the hind legs
+        cv.set(11, y, GREY[0] if y % 3 else GREY[1]); cv.set(12, y, GREY[1])
+    return cv
+
+
 def prickly_pear() -> Canvas:
     """A prickly pear, 20 x 18: flat round pads lit upper left, spines, two red fruit."""
     w, h = 20, 18
@@ -818,21 +882,34 @@ def prickly_pear() -> Canvas:
 # morning; vultures wait on a dead tree near a skull (they perch when there is no thermal
 # to ride); a string of laden camels stands tethered nose to tail at the caravan camp.
 def _lizard(cv: Canvas, x: int, y: int, facing: int = 1):
-    """A small lizard basking flat on a rock, 12 x 5: a lit, banded back, its tail
-    curving behind it, its legs splayed, its head raised toward the sun."""
-    LIZ = ['#3A3020', '#6A5A34', '#8E7A44', '#B8A060']
-    for t in range(8):  # the body and tail, a gentle curve
-        bx = x + facing * t
-        by = y + (1 if 2 < t < 6 else 0)
-        cv.set(bx, by, LIZ[3] if t < 4 else LIZ[2])
-        if t < 5:
-            cv.set(bx, by + 1, LIZ[1] if t % 2 else LIZ[2])  # its bands
-    for t in range(4):  # the tail tip, thin
-        cv.set(x - facing * (t + 1), y + 1 + t // 2, LIZ[2] if t < 2 else LIZ[1])
-    cv.set(x + facing * 8, y - 1, LIZ[3]); cv.set(x + facing * 9, y - 1, LIZ[2])  # the raised head
-    cv.set(x + facing * 9, y - 2, LIZ[0])  # its eye
-    for (lx, d) in ((1, 1), (5, 1)):  # splayed legs
-        cv.set(x + facing * lx, y + 2, LIZ[1]); cv.set(x + facing * (lx - 1), y + 3, LIZ[0])
+    """A desert lizard basking flat on a rock, 14 x 6 (review 19 Oct: the first one read as
+    moss): pale sand above with dark brown cross-bands, a dark outline so it reads on the
+    sandstone, its tail tapering behind it in a curve, four splayed legs with toes, the head
+    raised toward the sun with a dark eye, and its own small shadow on the rock below and to
+    the right."""
+    SKIN = ['#3A2618', '#6A4A2A', '#A8804E', '#D2B07A', '#ECD6A4']
+    ROCK_SH = ADOBE[1]
+    body = [(x + facing * t, y + (1 if 3 < t < 7 else 0)) for t in range(10)]
+    for i, (bx, by) in enumerate(body):  # its shadow first, one row down and to the right
+        cv.set(bx + 1, by + 2, ROCK_SH)
+    for t in range(5):  # the tail: thin, curving down and back
+        tx, ty = x - facing * (t + 1), y + 1 + t // 2
+        cv.set(tx, ty, SKIN[2] if t < 3 else SKIN[1]); cv.set(tx + 1, ty + 1, ROCK_SH)
+    for i, (bx, by) in enumerate(body):  # the body: two pixels deep, its back lit
+        band = i in (3, 6)
+        cv.set(bx, by - 1, SKIN[0])  # the outline along its back
+        cv.set(bx, by, SKIN[1] if band else SKIN[4] if i < 6 else SKIN[3])
+        cv.set(bx, by + 1, SKIN[1] if band else SKIN[2])
+        cv.set(bx, by + 2, SKIN[0])  # and along its belly
+    hx = x + facing * 10
+    for (dx, dy, c) in ((0, -2, SKIN[0]), (0, -1, SKIN[3]), (1, -2, SKIN[3]), (1, -3, SKIN[0]), (2, -2, SKIN[0]),
+                        (1, -1, SKIN[2]), (0, 0, SKIN[2])):
+        cv.set(hx + facing * dx, y + dy, c)  # the raised head
+    cv.set(hx + facing, y - 2, '#1A1210')  # its eye
+    for lx in (1, 7):  # four splayed legs, the toes spread on the warm rock
+        for side in (-1, 1):
+            fx, fy = x + facing * lx, y + (3 if side > 0 else -2)
+            cv.set(fx, fy, SKIN[1]); cv.set(fx - facing, fy + side, SKIN[0]); cv.set(fx + facing, fy + side, SKIN[0])
 
 
 def lizard_rock(seed: int = 0) -> Canvas:
@@ -840,7 +917,7 @@ def lizard_rock(seed: int = 0) -> Canvas:
     base = sandstone_outcrop(seed)
     cv = Canvas(40, 26, pad=PAD)
     cv.paste(base, 0, 2)
-    _lizard(cv, 10, 5, 1)
+    _lizard(cv, 9, 7, 1)
     return cv
 
 
@@ -902,65 +979,106 @@ def snag_vultures() -> Canvas:
 
 
 def camel_string() -> Canvas:
-    """Three camels standing tethered nose to tail at the caravan camp, 120 x 52, seen
-    from the side like the resting one: each laden (bales and water skins lashed across
-    a saddle), legs long and knobbly, necks curved, a lead rope from each head to the
-    next saddle, and the first tied to a stake in the sand."""
-    w, h = 120, 52
+    """Three camels standing tethered nose to tail at the caravan camp, 150 x 66 (review
+    19 Oct: not three identical camels in a row): seen from the side like the resting one,
+    staggered along a gentle diagonal as a string stands when it has shuffled to a halt,
+    each its own animal: the lead camel tall and pale with its head up, laden with a bale
+    and a red water skin, roped to a stake; the second darker, its head lowered to nose
+    the sand, carrying two clay jars in a net; the last a young one, smaller and sandy,
+    under a striped saddle blanket only. Each wears a halter, and a lead rope sags from it
+    to the saddle of the camel in front."""
+    w, h = 150, 66
     cv = Canvas(w, h, pad=PAD)
+    PALE = ['#5A3E2A', '#8E6A48', '#B8946A', '#D8B88C', '#ECD6AE']
+    DARK = ['#3A2418', '#5E3E28', '#80583A', '#A27650', '#BE9468']
+    ROPE = '#3E2818'
 
-    def standing(ox: int, load: int):
-        """One camel standing, facing east: a deep barrel of a body under a single
-        hump, long thin legs with knobbly knees and broad pads, the neck dipping
-        forward then rising in an S to a long drowsy head."""
-        body = oval(ox + 17, 24, 13, 6) | oval(ox + 16, 17, 6, 5)  # the barrel and the hump
+    def standing(ox: int, oy: int, ramp, load: str, head: str, s: float = 1.0):
+        """One camel standing, facing east, its feet on row oy + 52 * s: a deep barrel
+        under a single hump, long legs with knobbly knees and broad pads, and the neck
+        in an S, the head up (`head` 'up') or lowered to the sand ('down'). Returns the
+        halter's position and the saddle's rear (where the next rope ties)."""
+        def P(x, y):
+            return ox + int(x * s), oy + int(y * s)
+        body = oval(*P(17, 24), 13 * s, 6 * s) | oval(*P(16, 17), 6 * s, 5 * s)
         for (x, y) in body:
-            k = (x - ox - 4) / 26 + (y - 11) / 18
-            cv.set(x, y, CAMEL[4] if k < 0.5 else CAMEL[3] if k < 0.9 else CAMEL[2] if k < 1.25 else CAMEL[1])
-        for (lx, back) in ((ox + 7, True), (ox + 10, False), (ox + 23, True), (ox + 26, False)):  # legs
-            for y in range(28, h - 2):
-                thin = 1 if y > 32 else 2
-                c = CAMEL[2] if not back else CAMEL[1]
-                if y in (38, 39):
-                    c = CAMEL[3] if not back else CAMEL[2]  # the knobbly knee, catching the light
-                for d in range(thin):
-                    cv.set(lx + d, y, c if d == 0 else CAMEL[1])
-            cv.hline(lx - 1, h - 2, 3, CAMEL[1])  # the broad pad
-            cv.set(lx - 1, h - 1, '#2A2026'); cv.set(lx + 1, h - 1, '#2A2026')
-        for t in range(20):  # the neck: forward and down from the chest, then up
-            u = t / 19
-            x = ox + 29 + t * 0.55
-            y = 22 + math.sin(u * math.pi) * 3 - u * 14
-            for d in range(-1, 2):
-                cv.set(int(x), int(y + d), CAMEL[3] if d < 0 else CAMEL[2] if d == 0 else CAMEL[1])
-        hx, hy = ox + 40, 8
-        for (x, y) in oval(hx + 1, hy, 4, 2):  # the long head
-            cv.set(x, y, CAMEL[3] if y < hy else CAMEL[2])
-        cv.set(hx + 4, hy + 1, CAMEL[0]); cv.set(hx, hy - 1, CAMEL[0])  # the muzzle, a drowsy eye
-        cv.set(hx - 2, hy - 2, CAMEL[2]); cv.set(hx - 1, hy - 3, CAMEL[2])  # an ear
-        for t in range(6):  # the tail
-            cv.set(ox + 4 - t // 3, 22 + t, CAMEL[1])
-        # the load lashed across the hump: a bale on the near side, a water skin behind
-        for (x, y) in oval(ox + 14, 17, 5, 4):
-            cv.set(x, y, '#C8B48A' if x < ox + 14 else '#A8946A')
-            if (x + y) % 5 == 0:
-                cv.set(x, y, '#8E7A54')  # its weave
-        for (x, y) in oval(ox + 21, 17, 4, 4):
-            cv.set(x, y, ('#8E3A2E' if load % 2 else '#3E6A8A') if x < ox + 21 else ('#6E2A22' if load % 2 else '#2E506A'))
-        cv.hline(ox + 9, 14, 17, '#5A3A24')  # the lashing over it
-        for y in range(15, 23):
-            cv.set(ox + 18, y, '#5A3A24')
-    for k, ox in enumerate((76, 38, 0)):  # back to front: the last camel first
-        standing(ox, k)
-    for hx in (44, 82):  # a lead rope from each head, sagging, to the next one's saddle
-        for t in range(11):
-            cv.set(hx + t // 2, 10 + int(math.sin(t / 10 * math.pi) * 4) + t // 3, '#5A3A24')
-    sx = 118  # the first one's rope down to a stake driven into the sand
-    for t in range(16):
-        cv.set(sx - 2 + t // 8, 10 + t * 2, '#5A3A24')
-    for y in range(h - 10, h - 1):
+            k = (x - ox - 4 * s) / (26 * s) + (y - oy - 11 * s) / (18 * s)
+            cv.set(x, y, ramp[4] if k < 0.5 else ramp[3] if k < 0.9 else ramp[2] if k < 1.25 else ramp[1])
+        foot = oy + int(52 * s)
+        for (lx, back) in ((7, True), (10, False), (23, True), (26, False)):
+            x0, _ = P(lx, 0)
+            for y in range(oy + int(28 * s), foot):
+                c = ramp[2] if not back else ramp[1]
+                if y in (oy + int(38 * s), oy + int(39 * s)):
+                    c = ramp[3] if not back else ramp[2]  # the knobbly knee
+                cv.set(x0, y, c)
+                cv.set(x0 + 1, y, ramp[1] if not back else ramp[0])  # two pixels thick, shaded behind
+                if y < oy + int(33 * s):
+                    cv.set(x0 - 1, y, c)  # the thigh, thicker
+            cv.hline(x0 - 1, foot, 3, ramp[1])  # the broad pad
+            cv.set(x0 - 1, foot + 1, '#2A2026'); cv.set(x0 + 1, foot + 1, '#2A2026')
+        if head == 'up':
+            hx, hy = P(40, 8)
+            for t in range(20):
+                u = t / 19
+                x, y = P(29 + t * 0.55, 22 + math.sin(u * math.pi) * 3 - u * 14)
+                for d in range(-2, 2):
+                    cv.set(x, y + d, ramp[3] if d < 0 else ramp[2] if d == 0 else ramp[1])
+        else:  # the neck reaching forward and down, the head low over the sand
+            hx, hy = P(42, 40)
+            for t in range(20):
+                u = t / 19
+                x, y = P(29 + t * 0.62, 20 + u * 19 - math.sin(u * math.pi) * 4)
+                for d in range(-1, 2):
+                    cv.set(x, y + d, ramp[3] if d < 0 else ramp[2] if d == 0 else ramp[1])
+                    cv.set(x + 1, y + d, ramp[2] if d < 1 else ramp[1])
+        for (x, y) in oval(hx + 1, hy, 4 * s, 2 * s):
+            cv.set(x, y, ramp[3] if y < hy else ramp[2])
+        cv.set(hx + int(4 * s), hy + 1, ramp[0]); cv.set(hx, hy - 1, ramp[0])  # the muzzle, a drowsy eye
+        cv.set(hx - 2, hy - 2, ramp[2]); cv.set(hx - 1, hy - 3, ramp[2])  # an ear
+        cv.vline(hx + 2, hy - 2, 4, ROPE); cv.hline(hx + 2, hy + 2, 3, ROPE)  # the halter
+        tx, ty = P(4, 22)
+        for t in range(int(6 * s)):  # the tail
+            cv.set(tx - t // 3, ty + t, ramp[1])
+        if load == 'bale':  # a bale on the near side, a red water skin behind, lashed over the hump
+            for (x, y) in oval(*P(14, 17), 5 * s, 4 * s):
+                cv.set(x, y, '#C8B48A' if x < ox + 14 * s else '#A8946A')
+                if (x + y) % 5 == 0:
+                    cv.set(x, y, '#8E7A54')
+            for (x, y) in oval(*P(21, 17), 4 * s, 4 * s):
+                cv.set(x, y, '#8E3A2E' if x < ox + 21 * s else '#6E2A22')
+            cv.hline(*P(9, 14), int(17 * s), ROPE)
+        elif load == 'jars':  # two clay jars hung either side in a rope net
+            for jx in (12, 22):
+                for (x, y) in oval(*P(jx, 19), 3.2 * s, 4.2 * s):
+                    cv.set(x, y, '#C8743E' if x < ox + jx * s else '#9A5230')
+                cv.hline(*P(jx - 2, 14), 5, '#E0A070')  # its lip
+                for y in range(oy + int(15 * s), oy + int(23 * s), 2):
+                    cv.hline(ox + int((jx - 3) * s), y, int(6 * s), ROPE) if y % 4 == 0 else None
+            cv.hline(*P(10, 13), int(15 * s), ROPE)
+        else:  # a striped saddle blanket only
+            for (x, y) in oval(*P(16, 19), 7 * s, 4 * s):
+                cv.set(x, y, '#E8DCC0' if (x // 2) % 3 == 0 else '#3E6A8A' if x < ox + 16 * s else '#2E506A')
+        return (hx + int(5 * s), hy + 1), P(10, 16)
+
+    # back to front: the lead camel (furthest, highest) first, the young one nearest last
+    halter1, saddle1 = standing(96, 0, PALE, 'bale', 'up')
+    halter2, saddle2 = standing(50, 6, DARK, 'jars', 'down')
+    halter3, _ = standing(8, 18, CAMEL, 'blanket', 'up', 0.86)
+
+    def rope(a, b, sag):
+        (x0, y0), (x1, y1) = a, b
+        n = max(abs(x1 - x0), abs(y1 - y0), 1) * 2
+        for t in range(n + 1):
+            u = t / n
+            cv.set(round(x0 + (x1 - x0) * u), round(y0 + (y1 - y0) * u + math.sin(u * math.pi) * sag), ROPE)
+    rope(halter2, saddle1, 4)  # the second's lead rope to the lead camel's saddle
+    rope(halter3, saddle2, 5)  # the young one's to the second's
+    sx = w - 4  # the lead camel's rope down to a stake driven into the sand
+    rope(halter1, (sx, h - 12), 3)
+    for y in range(h - 12, h - 1):
         cv.set(sx, y, WOOD[3]); cv.set(sx + 1, y, WOOD[1])
-    cv.set(sx, h - 11, WOOD[4])
+    cv.set(sx, h - 13, WOOD[4])
     return cv
 
 
@@ -977,7 +1095,7 @@ def props() -> dict[str, Canvas]:
         'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
         'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
         'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
-        'horse': horse(), 'prickly_pear': prickly_pear(), 'ore_tub': ore_tub(),
+        'horse': horse(), 'horse_tied': horse_tied(), 'prickly_pear': prickly_pear(), 'ore_tub': ore_tub(),
         'lizard_rock': lizard_rock(0), 'lizard_rock_b': lizard_rock(5), 'snag_vultures': snag_vultures(),
         'camel_string': camel_string(),
     }

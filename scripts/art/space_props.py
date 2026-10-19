@@ -699,8 +699,8 @@ def radiator() -> Canvas:
 def ice_rig() -> Canvas:
     """The ice rig at the dark crater's rim, 72 x 52: a tracked excavator in white and
     orange with its arm reaching down into the shadow, its bucket heaped with icy
-    regolith, a hopper on its back; beside it, someone in a suit (white suit, gold
-    visor, life-support pack) checking the line that carries the melt to the base."""
+    regolith, a hopper on its back. It is driven from inside the hub (nobody walks the
+    surface): a whip antenna with a red beacon and a camera head over the arm."""
     w, h = 72, 52
     cv = Canvas(w, h, pad=PAD)
     for y in range(36, 46):  # the tracks: treads in a dark band, the wheels showing
@@ -733,25 +733,14 @@ def ice_rig() -> Canvas:
             if y < by:
                 c = '#C8DCEE' if (x + y) % 2 else '#8EA4BE'
             cv.set(x, y, c)
-    # someone in a suit, beside the rig, with a tool
-    sx, sy = 52, 26
-    for y in range(sy + 8, sy + 22):  # body and legs
-        for x in range(sx - 4, sx + 4):
-            if y > sy + 16 and x == sx:
-                continue  # between the legs
-            c = WHITE[5] if x < sx - 1 else WHITE[4] if x < sx + 2 else WHITE[2]
-            if y == sy + 13:
-                c = WHITE[2]  # the belt
-            cv.set(x, y, c)
-    _box(cv, sx + 2, sy + 7, 4, 1, 7, WHITE)  # the life-support pack on its back
-    for (x, y) in disc(sx, sy + 5, 4.2):  # the helmet, its gold visor catching the sun
-        k = (x - sx) + (y - sy - 5)
-        cv.set(x, y, WHITE[5] if k < -3 else WHITE[4])
-    for (x, y) in oval(sx - 1, sy + 5, 2.6, 1.8):
-        cv.set(x, y, GOLD[4] if x < sx - 1 else GOLD[2])
-    for t in range(6):  # its arm and the tool
-        cv.set(sx - 4 - t // 2, sy + 10 + t, WHITE[3])
-    cv.set(sx - 8, sy + 16, ORANGE[3]); cv.set(sx - 8, sy + 17, ORANGE[2])
+    # nobody stands out here (review 19 Oct: nothing alive outside the pressurised base):
+    # the rig is driven from the hub, so it carries a whip antenna with a beacon and a
+    # camera head looking down the arm
+    cv.vline(14, 0, 10, WHITE[3]); cv.set(15, 1, WHITE[1])
+    cv.set(14, 0, RED[3]); cv.set(13, 0, RED[4])
+    for (x, y) in rect_set(34, 16, 5, 3):
+        cv.set(x, y, WHITE[4] if y == 16 else WHITE[2])
+    cv.set(38, 17, '#2A4480'); cv.set(38, 18, '#5A7AC0')  # its lens, toward the bucket
     return cv
 
 
@@ -895,23 +884,30 @@ REG = ['#2A2838', '#3E3A50', '#585270', '#77708E', '#9C96B2', '#C8C2DA']  # rego
 
 
 def _bags(cv: Canvas, x: int, y: int, lit: float, seed: int = 0):
-    """One pixel of a berm of regolith bags laid over a roof, in courses, each bag lit
-    along its top edge; `lit` (-1..1) shades the berm as a form under the upper-left sun."""
-    row = y // 4
-    off = (row % 2) * 5
-    u, v = (x + off) % 10, y % 4
+    """One pixel of a berm of regolith bags laid in courses: each bag a soft pillow 10 x 5,
+    its ends rounded into the gaps, a highlight along the middle of its top where it
+    bulges, its lower half in shade; the courses wander a little so they never line up
+    like brick. `lit` (-1..1) shades the berm as a form under the upper-left sun."""
+    row = y // 5
+    off = (row % 2) * 5 + int(noise2(row, 0, 407 + seed) * 3)
+    u, v = (x + off) % 10, y % 5
     t = noise2((x + off) // 10, row, 401 + seed)
-    base = 3 + (1 if t > 0.62 else 0) + round(lit)
+    base = 3 + (1 if t > 0.7 else -1 if t < 0.15 else 0) + round(lit)
     base = max(1, min(4, base))
     c = REG[base]
-    if v == 0:
-        c = REG[min(5, base + 1)] if u < 8 else REG[base]
-    elif v == 3 or u == 9:
-        c = REG[max(0, base - 2)] if v == 3 else REG[base - 1]
+    end = u in (0, 9)
+    if (end and v in (0, 4)) or (u == 0 and v in (1, 3)):
+        c = REG[max(0, base - 2)]  # the gap between two bags, where their rounded ends meet
+    elif v == 4:
+        c = REG[max(0, base - 2)] if not end else REG[max(0, base - 1)]  # the shadow under the bag
+    elif v == 0 and 2 <= u <= 7:
+        c = REG[min(5, base + 1)]  # the bulge of its top catching the light
+    elif v == 3 or end:
+        c = REG[max(1, base - 1)]
     cv.set(x, y, c)
 
 
-def pressure_tube(length: int = TUBE_L) -> Canvas:
+def pressure_tube(length: int = TUBE_L, dock: bool = False) -> Canvas:
     """A closed pressurised tube between two modules, running north-south, 28 x `length`:
     a white hull seen from above, rounded (lit on the left, falling into shade on the
     right), stiffened by ring frames every few paces, a strip of small lit ports along
@@ -932,6 +928,16 @@ def pressure_tube(length: int = TUBE_L) -> Canvas:
             if x == 9 and ring in (5, 6):
                 c = '#FFDC92' if ring == 5 else '#F2A048'  # a small lit port on the crown
             cv.set(x, y, c)
+    if dock:  # the docking collar at its north end, clamped to the shuttle's hatch
+        for y in range(0, 6):
+            for x in range(1, w - 1):
+                k = (x - 1) / (w - 3)
+                c = WHITE[5] if k < 0.2 else WHITE[4] if k < 0.6 else WHITE[2] if k < 0.9 else WHITE[1]
+                if y in (2, 5):
+                    c = WHITE[1] if k > 0.5 else WHITE[2]
+                if y == 3 and x % 5 == 0:
+                    c = '#E8C04A'  # the clamps
+                cv.set(x, y, c)
     for y in range(6, h, 24):  # saddles on their feet, at the sides
         for (sx, d) in ((1, -1), (w - 3, 1)):
             for k in range(3):
@@ -942,11 +948,13 @@ def pressure_tube(length: int = TUBE_L) -> Canvas:
 
 def hab_hub() -> Canvas:
     """The hub, 148 x 122: a vaulted habitat buried under a berm of regolith bags (a
-    metre or two of moon dust stops the radiation and the micrometeorites), lit from the
-    upper left with the vault's crest catching the sun; roof hatches and a vent mast on
-    top; at the front, a white entrance porch with its hatch open into the warm-lit
-    lock and a lamp over it, where the tube to the greenhouse leaves; and on the east
-    flank the small hatch out to the surface with its hazard frame."""
+    metre or two of moon dust stops the radiation and the micrometeorites), seen from
+    above: the roof as smooth dust heaped over the vault and lit from the upper left,
+    breaking at a clear edge over the front wall of bags laid in courses in its shade
+    (review 19 Oct: no brick all over, no diagonal seam, no face); a flat service hatch
+    and a vent mast on the roof; at the front, a white entrance porch with its hatch open
+    into the warm-lit lock and a lamp over it, where the tube to the greenhouse leaves.
+    No door to the surface: nobody goes out."""
     w, h = 148, 122
     cv = Canvas(w, h, pad=PAD)
     cx = w / 2
@@ -956,26 +964,37 @@ def hab_hub() -> Canvas:
         top = int(8 + 30 * d ** 2.4 + (smooth_noise(x, 0, 9, 402) - 0.5) * 4)
         for y in range(top, h - 2 - int(10 * d ** 3)):  # its toe rounding off at the ends
             berm.add((x, y))
+    def crest(x):  # where the roof's slope breaks over into the bagged front wall
+        return int(70 - abs(x - cx) / (w / 2) * 10 + (smooth_noise(x, 1, 11, 405) - 0.5) * 3)
     for (x, y) in berm:
         k = (x - cx) / (w / 2)
-        crest = 44 - abs(k) * 6  # the vault's crest line, running east-west
-        lit = 0.6 - k * 0.9 if y < crest else -0.4 - k * 0.6 - (y - crest) / 140
-        _bags(cv, x, y, lit)
-        if smooth_noise(x, y, 7, 403) > 0.6:  # loose dust drifted over the bags
-            base = max(1, min(4, 3 + round(lit)))
-            cv.set(x, y, REG[base] if smooth_noise(x, y, 2, 404) > 0.4 else REG[max(1, base - 1)])
-    for (x, y) in berm:  # its lit edge against the sky above, its toe in shadow
+        if y < crest(x):  # the roof: moon dust heaped over the vault, smooth, lit from the upper left
+            n = smooth_noise(x, y, 8, 403)
+            lit = 1.0 - (k + 1) * 0.35 + (n - 0.5) * 0.8
+            base = max(2, min(5, 3 + round(lit)))
+            c = REG[base] if (x + y) % 2 or n > 0.45 else REG[max(2, base - 1)]
+            if noise2(x, y, 406) > 0.97:
+                c = REG[5]  # a bright grain
+            cv.set(x, y, c)
+        else:  # the front wall: regolith bags in courses, in the shade of the roof's edge
+            _bags(cv, x, y, -0.7 - max(0, k) * 0.4, seed=1)
+    for (x, y) in berm:  # the break between roof and wall: a lit lip, the shadow under it
+        cy = crest(x)
+        if y == cy - 1:
+            cv.set(x, y, REG[5] if x < cx + 30 else REG[4])
+        elif y in (cy, cy + 1):
+            cv.set(x, y, REG[0] if y == cy else REG[1])
+    for (x, y) in berm:  # its edge against the dust beyond, its toe in shadow
         if (x, y - 1) not in berm:
             cv.set(x, y, REG[5] if x < cx + 30 else REG[4])
         elif (x, y + 1) not in berm:
-            cv.set(x, y, REG[1])
-    for (hx, hy) in ((44, 26), (100, 28)):  # roof hatches, round and white, lit on the left
-        for (x, y) in oval(hx, hy, 6, 3.5):
-            cv.set(x, y, WHITE[4] if x < hx else WHITE[2])
-        for (x, y) in oval(hx, hy, 3, 1.6):
-            cv.set(x, y, WHITE[1])
-    cv.vline(122, 8, 22, WHITE[3]); cv.vline(123, 8, 22, WHITE[1])  # the vent mast
+            cv.set(x, y, REG[0])
+    for (x, y) in rect_set(36, 24, 12, 6):  # one flat service hatch on the roof, white, its rim lit
+        cv.set(x, y, WHITE[4] if y == 24 or x == 36 else WHITE[2] if x < 47 else WHITE[1])
+    cv.hline(37, 30, 11, REG[1])  # its shadow on the dust
+    cv.vline(122, 8, 30, WHITE[3]); cv.vline(123, 8, 30, WHITE[1])  # the vent mast
     cv.set(122, 7, RED[3]); cv.set(123, 7, RED[2])
+    cv.hline(124, 38, 3, REG[1])
     # the entrance porch at the front: a white box with its hatch open into the lit lock
     px0, pw, ptop, pfoot = 60, 28, 76, h - 1
     for y in range(ptop, ptop + 8):  # its roof
@@ -998,17 +1017,6 @@ def hab_hub() -> Canvas:
             cv.set(x, y, WHITE[2])
     for x in range(px0 + 10, px0 + 18):  # the lamp over it
         cv.set(x, ptop + 9, '#FFE8B0')
-    # the hatch to the surface on the east flank, its hazard frame
-    ex, ey = 118, 62
-    for y in range(ey, ey + 16):
-        for x in range(ex, ex + 12):
-            c = WHITE[3] if x < ex + 9 else WHITE[1]
-            if x in (ex, ex + 11) or y in (ey, ey + 15):
-                c = '#E8C04A' if (y // 2) % 2 else '#2A2630'
-            cv.set(x, y, c)
-    for (x, y) in disc(ex + 6, ey + 8, 3.2):
-        cv.set(x, y, WHITE[1] if x > ex + 6 else WHITE[2])
-    cv.set(ex + 6, ey + 8, WHITE[4])
     return cv
 
 
@@ -1046,8 +1054,8 @@ def glass_dome() -> Canvas:
     """The greenhouse dome, 240 x 208, glazed all over (the review: "glaze the whole
     dome, plants inside"): panes of tinted glass in a frame of struts, meridians and
     rings, the sun's reflection on the upper left, the glass only faintly tinted so the
-    plants and the people inside show through it, on a cast sill. Drawn over everything
-    inside it."""
+    plants and the people inside show through it, on a cast sill, with a collar where
+    the airlock joins it at the back. Drawn over everything inside it."""
     cx, cy, rx, ry, dh = DOME
     w, h = 2 * cx, cy + ry + 4
     cv = Canvas(w, h, pad=PAD)
@@ -1083,6 +1091,17 @@ def glass_dome() -> Canvas:
             elif front and u > 0.95:
                 c = (255, 255, 255, 190)
         cv.set(x, y, c)
+    # the collar where the airlock from the corridor joins the glass at the back (review
+    # 19 Oct): a white frame round the opening, lit on its top and left, clamped to the sill
+    ax0, ax1, ay0, ay1 = 89, 139, cy - ry - 10, cy - ry + 8
+    for y in range(ay0, ay1):
+        for x in range(ax0, ax1):
+            edge = min(x - ax0, ax1 - 1 - x, y - ay0, ay1 - 1 - y)
+            if edge < 4:
+                c = (238, 240, 246, 255) if (y - ay0 < 2 or x - ax0 < 2) else (178, 182, 198, 255) if edge < 3 else (124, 128, 148, 255)
+                if edge == 1 and (x + y) % 6 == 0:
+                    c = (232, 192, 74, 255)  # its clamps
+                cv.set(x, y, c)
     for i in range(0, 721):  # the sill: a cast ring the glass stands on, its front lit
         th = 2 * math.pi * i / 720
         for k in range(4):
@@ -1106,7 +1125,7 @@ def props_lumen() -> dict[str, Canvas]:
             'moon_rock': moon_rock(True), 'moon_rock_small': moon_rock(False), 'moon_rock_b': moon_rock(True, 3),
             'moon_rock_small_b': moon_rock(False, 5), 'glow_caps': glow_caps(), 'old_lander': old_lander(),
             'solar_array': solar_array(64, 0), 'solar_array_b': solar_array(52, 1), 'radiator': radiator(),
-            'ice_rig': ice_rig(), 'comm_mast': comm_mast(), 'grow_lamp': grow_lamp(), 'pressure_tube': pressure_tube(), 'hab_hub': hab_hub(),
+            'ice_rig': ice_rig(), 'comm_mast': comm_mast(), 'grow_lamp': grow_lamp(), 'pressure_tube': pressure_tube(), 'pressure_tube_dock': pressure_tube(78, dock=True), 'hab_hub': hab_hub(),
             'airlock_module': airlock_module(), 'glass_dome': glass_dome()}
 
 

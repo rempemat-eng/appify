@@ -153,7 +153,7 @@ def station(frame: int = 0):
 # The base's roofed modules are gateways the companion walks through (their walk cells
 # stay open under them; the renderer draws the companion behind them with its Ghost
 # showing): registered in zones.py's OPENINGS table, as the castle's postern is.
-OPENINGS.update({'pressure_tube': (0, 28), 'hab_hub': (62, 86), 'airlock_module': (12, 34)})
+OPENINGS.update({'pressure_tube': (0, 28), 'pressure_tube_dock': (0, 28), 'hab_hub': (62, 86), 'airlock_module': (12, 34)})
 
 
 # Lumen's base (M1). The moon has no air, no water on the surface and nights two weeks
@@ -322,7 +322,7 @@ def lumen(frame: int = 0):
         cv.set(lx, ly, '#FFE8A0'); cv.set(lx + 1, ly, '#F2A048'); cv.set(lx, ly + 1, HULL[1])
         light_pool(cv, lx, ly + 1, 6, 3, '#F2A048')
     # the base, cut away
-    gang_f, gang_w = _room(cv, 146, 132, 176, 206, 6, [('n', 152, 170), ('s', 152, 170)])
+    gang_f, gang_w = _room(cv, 146, 120, 176, 206, 6, [('n', 152, 170), ('s', 152, 170)])
     hx0, hy0, hx1, hy1 = LUMEN_HUB
     hub_f, hub_w = _room(cv, hx0, hy0, hx1, hy1, LUMEN_WALL, [('n', 152, 170), ('s', 152, 170)])
     cor_f, cor_w = _room(cv, 144, 300, 178, 372, 7, [('n', 152, 170), ('s', 152, 170)])
@@ -385,6 +385,19 @@ def lumen(frame: int = 0):
             cv.set(x, y, '#E8ECF2'); cv.set(x, y + 1, '#8A93A8')
             if t % 6 == 0:
                 cv.set(x, y + 2, HULL[2]); cv.set(x, y + 3, HULL[1])  # a trestle
+    # the coolant line from the hub's east end out to the radiators on low trestles (review
+    # 19 Oct: the radiators need a line to what they cool)
+    cool = [(228, 246), (244, 240), (300, 240)]
+    for (a, b) in zip(cool, cool[1:]):
+        n = int(max(abs(b[0] - a[0]), abs(b[1] - a[1])))
+        for t in range(n + 1):
+            x, y = int(a[0] + (b[0] - a[0]) * t / n), int(a[1] + (b[1] - a[1]) * t / n)
+            cv.set(x, y, '#E8ECF2'); cv.set(x, y + 1, '#8A93A8')
+            if t % 8 == 0:
+                cv.set(x, y + 2, HULL[2]); cv.set(x, y + 3, HULL[1])
+    for (rx, ry0) in ((254, 230), (286, 236)):  # the drops from each radiator's manifold
+        for y in range(ry0, 240):
+            cv.set(rx, y, '#E8ECF2'); cv.set(rx + 1, y, '#8A93A8')
     for (sx, sy) in ((40, 238), (48, 292), (42, 344)):
         for x in range(sx, hx0):
             cv.set(x, sy + (x // 11) % 2, '#22222C')
@@ -403,12 +416,12 @@ def lumen(frame: int = 0):
         ('rock-7', 'moon_rock_small_b', 232, 102), ('rock-8', 'moon_rock', 76, 92),
         # the base: the gangway tube from the shuttle, the hub under its berm, the tube to
         # the airlock, the glazed dome (the companion walks inside them, behind them)
-        ('gangway', 'pressure_tube', 147, 130), ('hub', 'hab_hub', 86, 180),
+        ('gangway', 'pressure_tube_dock', 147, 118), ('hub', 'hab_hub', 86, 180),
         ('corridor', 'pressure_tube', 147, 300), ('lock', 'airlock_module', 137, 360),
         ('dome', 'glass_dome', DX - 120, DY - 140),
         # the greenhouse
-        ('tree', 'moon_tree', DX - 38, DY - 86), ('hammock', 'hammock', DX - 94, DY - 4),
-        ('pool-1', 'dream_pool', DX + 36, DY + 4), ('pool-2', 'dream_pool_b', DX - 30, DY + 30),
+        ('tree', 'moon_tree', DX - 10, DY - 50), ('hammock', 'hammock', DX - 94, DY - 4),
+        ('pool-1', 'dream_pool', DX + 48, DY + 22), ('pool-2', 'dream_pool_b', DX - 34, DY + 34),
         ('caps-1', 'glow_caps', DX + 18, DY + 34), ('caps-2', 'glow_caps', DX - 76, DY - 30), ('caps-3', 'glow_caps', DX + 66, DY - 26),
         ('lamp-1', 'grow_lamp', DX - 102, DY - 30), ('lamp-2', 'grow_lamp', DX + 70, DY + 6),
     ]
