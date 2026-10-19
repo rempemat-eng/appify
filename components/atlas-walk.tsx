@@ -882,7 +882,31 @@ export function AtlasWalk({
     wasWalking.current = walking;
     if (follow && was && !walking) squashRef.current();
   }, [walking, follow]);
-  const walkTo = (goal: Point, glide = false) => {
+  // A lift ride: the cab carries the feet straight between the lift's two ends as drawn,
+  // then the walk goes on. (Reduced motion: at once.)
+  const ride = (from: Point, to: Point, then: () => void) => {
+    const a = toScreen(from);
+    const b = toScreen(to);
+    onDeck.set(levels && to.x >= levels.offset ? 1 : 0);
+    const done = () => {
+      pos.current = to;
+      then();
+    };
+    if (reduced) {
+      ownX.set(b.x);
+      ownY.set(b.y);
+      done();
+      return;
+    }
+    ownX.set(a.x);
+    ownX.set(withTiming(b.x, { duration: 900, easing: Easing.inOut(Easing.quad) }));
+    ownY.set(
+      withTiming(b.y, { duration: 900, easing: Easing.inOut(Easing.quad) }, (finished) => {
+        if (finished) runOnJS(done)();
+      }),
+    );
+  };
+  const walkTo = (goal: Point, glide = false, then?: () => void) => {
     if (follow) return;
     cancelAnimation(ownX);
     cancelAnimation(ownY);
@@ -890,7 +914,34 @@ export function AtlasWalk({
     const from0 = logicalOf({ x: ownX.get(), y: ownY.get() });
     pos.current = from0;
     const logical = grid.walk.findPath(from0, goal);
-    if (!logical.length) return;
+    // A walk to the other level with no stair on the way takes a lift: walk to the lift,
+    // ride, walk on. Each part starts only when the one before has finished, so a tap
+    // that interrupts it never rides a stale lift (two-level-walk.md, rule 5).
+    if (levels && levels.lifts.length && !glide && !then) {
+      const upper = (q: Point) => q.x >= levels.offset;
+      const reached = logical.length ? logical[logical.length - 1] : from0;
+      if (upper(reached) !== upper(goal)) {
+        let best: { from: Point; to: Point; cost: number } | null = null;
+        for (const [bottom, top] of levels.lifts) {
+          const [mine, other] = upper(from0) ? [top, bottom] : [bottom, top];
+          const leg1 = grid.walk.findPath(from0, mine);
+          const leg2 = grid.walk.findPath(other, goal);
+          const near = Math.hypot(from0.x - mine.x, from0.y - mine.y) < 6;
+          if ((!leg1.length && !near) || !leg2.length) continue;
+          const cost = leg1.length + leg2.length;
+          if (!best || cost < best.cost) best = { from: mine, to: other, cost };
+        }
+        if (best) {
+          const lift = best;
+          walkTo(lift.from, false, () => ride(lift.from, lift.to, () => walkTo(goal)));
+          return;
+        }
+      }
+    }
+    if (!logical.length) {
+      then?.();
+      return;
+    }
     const lastLogical = logical[logical.length - 1];
     const path = logical.map(toScreen);
     const end = path[path.length - 1];
@@ -903,6 +954,7 @@ export function AtlasWalk({
       const tile = tileAt(region, end.x, end.y);
       if (tile) setHere((prev) => tileWithHysteresis(region, prev, end.x, end.y)?.id ?? prev);
       calls.current.onSettle?.(end);
+      then?.();
     };
     // on a deck the feet draw above everything on the ground for the whole walk once the
     // first step is on it (a walk down a stair keeps it until it arrives)
