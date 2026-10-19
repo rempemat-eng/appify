@@ -500,18 +500,33 @@ def skyport(frame: int = 0):
                 dark = NIGHT[1]
             elif ty == 1:
                 dark = NIGHT[4] if n > 0.5 else NIGHT[3]
-            sx, sy = x % 24, y % 16
-            m = noise2(x // 24, y // 16, 492)
+            # the concourse: pale slabs laid in a running bond (each course offset by half a
+            # slab), a slab here and there a shade off, worn paler where people walk
+            bx_ = x + (y // 16 % 2) * 12
+            sx, sy = bx_ % 24, y % 16
+            m = noise2(bx_ // 24, y // 16, 492)
             pale = PORC[2] if m > 0.45 else PORC[1]
+            if m > 0.9:
+                pale = PORC[3]
             if sx == 0 or sy == 0:
                 pale = PORC[0]
             elif sy == 1:
                 pale = PORC[3] if m > 0.45 else PORC[2]
-            if (x // 24 + y // 16) % 5 == 0 and sy == 8:
-                pale = CYAN[1]  # a cyan inlay line now and then
-            k = (x - 8) / 48  # the change over the first 56 pixels, in an ordered dither by whole tiles
-            bayer = (0, 8, 2, 10, 12, 4, 14, 6, 3, 11, 1, 9, 15, 7, 13, 5)[((y // 16) % 4) * 4 + (x // 12) % 4] / 16
-            cv.set(x, y, dark if k < 0 or (k < 1 and bayer >= k) else pale)
+            if 236 <= y < 252 or 440 <= y < 452:  # border courses of darker slabs
+                pale = PORC[1] if not (sx == 0 or sy == 0) else PORC[0]
+            # Neon's tiles end at a granite edge that wanders with the old core's paving,
+            # not a dither down the zone's side (review, to-c-after-65)
+            edge = 12 + int(smooth_noise(0, y, 36, 494) * 14)
+            if x < edge:
+                c = dark
+            elif x < edge + 2:
+                c = GRANITE[4] if x == edge else GRANITE[2]
+            else:
+                c = pale
+            cv.set(x, y, c)
+    for gx in range(40, W, 64):  # drains along the border course by the quay
+        for x in range(gx, gx + 8):
+            cv.set(x, 444, NIGHT[0]); cv.set(x, 445, NIGHT[1] if x % 2 else NIGHT[0])
     # a compass rose inlaid in the concourse floor, pointing the way up
     MX, MY = 140, 300
     for (x, y) in oval(MX, MY, 44, 22):
@@ -568,7 +583,7 @@ def skyport(frame: int = 0):
     for y in range(0, 34):
         for x in range(W):
             c = NIGHT[2] if (x // 20 + y // 12) % 2 else NIGHT[1]
-            if x % 20 == 0 or y % 12 == 0:
+            if x % 20 == 0 or y % 12 == 6:
                 c = PORC[2]
             if y == 33:
                 c = PORC[4]
@@ -647,6 +662,17 @@ def skyport(frame: int = 0):
         if d > 0.94 and y > AY:
             c = PORC[0]  # the platform's side above the water
         cv.set(x, y, c)
+    # the ring stands on a concrete caisson (review 15:54, finding 7): below its south rim
+    # a wet face drops to the waterline, darker toward it, foam where the swell breaks;
+    # the pier's deck shows its thickness along both sides
+    for (x, y) in ring:
+        if (x, y + 1) not in ring and y > AY:
+            for d in range(1, 7):
+                cv.set(x, y + d, GRANITE[2] if d < 3 else GRANITE[1] if d < 5 else '#16202E')
+            if noise2(x // 2, 0, 495) > 0.3:
+                cv.set(x, y + 7, '#C8D8E8' if x % 3 else '#8AA0B8')
+    for y in range(470, 500):  # the pier's sides seen edge on over the water
+        cv.set(229, y, GRANITE[3]); cv.set(268, y, GRANITE[1])
     # the pier's entry: its paving runs north to a bank of ticket gates, and glass screens
     # close it either side down to the quay edge, so the gates are the way onto the pier
     for y in range(436, 466):
@@ -667,6 +693,17 @@ def skyport(frame: int = 0):
         for (x, y) in disc(bx, 460, 3):
             cv.set(x, y, NIGHT[4] if x < bx else NIGHT[2])
         cv.hline(bx - 2, 460, 5, AMBER[3])
+    # the ribbon above the car (to-c-after-65): a thin cable rising out of view, catching the
+    # light here and there, behind everything that stands on the concourse, fading upward
+    for y in range(200, AY + 6 - 64):
+        t = (y - 200) / (AY + 6 - 64 - 200)  # 0 far up, 1 at the car's grip
+        if t < 0.35 and y % 4:
+            continue
+        if t < 0.65 and y % 7 == 6:
+            continue
+        cv.set(AX, y, CYAN[3] if y % 9 else '#E8FBFF')
+        if t > 0.5:
+            cv.set(AX - 1, y, PORC[4] if y % 5 else PORC[5]); cv.set(AX + 1, y, PORC[2])
     # light thrown only where it reads (the dark road); the pale floor carries its own sheen
     light_pool(cv, LX, LY, 40, 24, AMBER[3], skip=frozenset(water - ring - pier))
     blocked |= water - ring - pier
@@ -683,7 +720,7 @@ def skyport(frame: int = 0):
         ('gates', 'ticket_gates', 207, 406), ('screen-w', 'glass_screen', 184, 410), ('screen-e', 'glass_screen', 289, 410),
         ('planter-1', 'sky_planter', 4, 414), ('bench-1', 'sky_bench', 14, 442),
         ('planter-2', 'sky_planter_b', 92, 414), ('bench-2', 'sky_bench', 102, 442),
-        ('bot-1', 'luggage_bot', 196, 380), ('bot-2', 'luggage_bot', 236, 300), ('tether', 'tether', AX - 28, AY + 6 - 272),
+        ('bot-1', 'luggage_bot', 196, 380), ('bot-2', 'luggage_bot', 96, 352), ('tether', 'tether', AX - 28, AY + 6 - 272),
         ('drone-1', 'drone', 120, 140), ('drone-2', 'drone', 290, 300),
         ('kiosk', 'flower_kiosk', 240, 108),
     ]
@@ -767,6 +804,9 @@ class CityPlan:
         self.lines = {}
         self.open = set()
         self.shut = set()
+        self.setts = bytearray(CN)
+        self.plaza = bytearray(CN)
+        self.lots = []  # (bbox, cells) of each pocket park
 
 
 @functools.lru_cache(maxsize=1)
@@ -815,6 +855,17 @@ def city() -> CityPlan:
                     P.road[i] = 1
                 elif p[i]:
                     P.pave[i] = 1
+    # the quay road ends in a turning head where the point's promenade begins (review
+    # 15:54, finding 3), kerbed like every other street
+    qx, qy = P.lines['quayroad'][0][-1]
+    for y in range(int(qy) - 30, int(qy) + 31):
+        for x in range(int(qx) - 30, int(qx) + 31):
+            d = math.hypot(x - qx, y - qy)
+            i = y * CW + x
+            if d <= 22:
+                P.road[i] = 1
+            elif d <= 28 and land[i] == 1:
+                P.pave[i] = 1
     for i in range(CN):
         if P.road[i]:
             P.pave[i] = 0
@@ -826,11 +877,33 @@ def city() -> CityPlan:
             d = ((x - pcx) / prx) ** 2 + ((y - pcy) / pry) ** 2
             if d < 1:
                 plaza[y * CW + x] = 1
+                P.plaza[y * CW + x] = 1
                 P.road[y * CW + x] = 0
                 P.pave[y * CW + x] = 0
+    # ---- the pedestrian streets (N3; review 15:54, finding 1 and 2): Market Street west of
+    # Tower Row is the night market's street and the avenue above Hill Street climbs the
+    # heights as a stepped street; both are laid in setts with no lanes, flush with their
+    # pavements, and bollards stop the traffic where they meet a road
+    av_sm, av_hw = P.lines['avenue'][0], P.lines['avenue'][1]
+    hill_sm, hill_hw = P.lines['hill'][0], P.lines['hill'][1]
+    mk_sm, mk_hw = P.lines['market'][0], P.lines['market'][1]
+    av_road, hill_road, mk_road = _band(av_sm, av_hw), _band(hill_sm, hill_hw), _band(mk_sm, mk_hw)
+    for i in range(CN):
+        if not P.road[i]:
+            continue
+        y, x = divmod(i, CW)
+        if (mk_road[i] and x < PED_MARKET_X and not av_road[i]) or (av_road[i] and y < 300 and not hill_road[i]):
+            P.road[i] = 0
+            P.pave[i] = 1
+            P.setts[i] = 1
+    for y in range(4, 60):  # the lookout at the top of the stepped street
+        for x in range(LOOKOUT[0], LOOKOUT[1]):
+            i = y * CW + x
+            if not P.road[i]:
+                P.setts[i] = 2
+                P.pave[i] = 1
     # ---- the heights' terraces (x < 300): rims that follow the hill, flat where stairs cross
-    for x in range(0, 320):
-        fade = max(0.0, min(1.0, (306 - x) / 18))
+    for x in range(0, 380):
         r1 = rim_y(x, 232, 1810)
         r2 = rim_y(x, 150, 1812)
         for (sx, rim, sw) in TERRACE_STAIRS:
@@ -840,8 +913,10 @@ def city() -> CityPlan:
                 else:
                     r2 = rim
         for y in range(0, int(r1)):
-            if fade <= 0:
-                break
+            # the hill's east end curves into the Plaza's north-west corner instead of
+            # stopping on a ruled line at the seam (review 15:54, finding 6)
+            if x >= 306 + 54 * max(0.0, 1 - y / 250) ** 2:
+                continue
             P.tier[y * CW + x] = 2 if y < r2 else 1
     # faces: south-facing rims hang a face below; the east ends are seen edge on
     for x in range(CW):
@@ -860,9 +935,13 @@ def city() -> CityPlan:
                 c = SEA_C[1] if n > 0.55 else SEA_C[2] if n > 0.3 else SEA_C[0]
                 if (y % 7) == 3 and noise2(x // 9, y, 186) > 0.6:
                     c = SEA_C[3]
-            elif land[i] == 2:  # the breakwater's stones
-                k = (x // 4 + y // 3) % 3
-                c = CONC[4] if k == 0 else CONC[3] if noise2(x // 4, y // 3, 1820) > 0.4 else CONC[2]
+            elif land[i] == 2:  # the mole's top: dressed granite blocks, their joints dark
+                bx = (x + (y // 4 % 2) * 3) // 6
+                c = GRANITE[3] if noise2(bx, y // 4, 1820) > 0.45 else GRANITE[2]
+                if y % 4 == 0 or (x + (y // 4 % 2) * 3) % 6 == 0:
+                    c = GRANITE[1]
+                if not land[i - CW] or not land[i - 1]:
+                    c = GRANITE[5]  # the coping, lit on its upper-left edge
                 P.blocked[i] = 0
             elif land[i] == 3:
                 c = CONC[3] if smooth_noise(x, y, 4, 1821) > 0.5 else CONC[2]  # the rock's worn top, walked to the door
@@ -873,6 +952,13 @@ def city() -> CityPlan:
                     c = '#26304A'  # a sheen where rain lies on the road
             elif plaza[i]:
                 c = _plaza_px(x, y)
+            elif P.setts[i] == 1:
+                c = _setts_px(x, y)
+            elif P.setts[i] == 2:  # the lookout's flags, pale granite in a running bond
+                fx, fy = (x + (y // 10) * 7) % 14, y % 10
+                c = GRANITE[3] if noise2((x + (y // 10) * 7) // 14, y // 10, 1834) > 0.5 else GRANITE[2]
+                if fx == 0 or fy == 0:
+                    c = GRANITE[1]
             elif P.pave[i]:
                 tx, ty = x % 8, y % 8
                 n = noise2(x // 8, y // 8, 181)
@@ -897,10 +983,16 @@ def city() -> CityPlan:
                     c = NIGHT_[1]
                 elif ty == 1:
                     c = NIGHT_[4] if n > 0.5 else NIGHT_[3]
-            elif 1143 <= y < 1152 and 320 <= x < 640:  # the Skyport terminal's back wall
-                c = PORC_C[4] if y == 1143 else PORC_C[2] if (x // 12) % 2 else PORC_C[1]
-                if y > 1145 and x % 12 in (4, 5, 6, 7):
-                    c = CYAN_[1]
+            elif 1140 <= y < 1152 and 320 <= x < 640:  # the Skyport terminal's glass roof, its
+                # north eave: the Skyport's roof runs on across the seam (review 15:54, finding 6)
+                lx, ly = x - 320, y - 1152
+                c = NIGHT_[2] if (lx // 20 + ly // 12) % 2 else NIGHT_[1]
+                if lx % 20 == 0 or ly % 12 == 6:
+                    c = PORC_C[2]
+                if y == 1140:
+                    c = PORC_C[4]  # the eave's lit edge
+                elif y == 1141:
+                    c = PORC_C[1]
                 P.blocked[i] = 1
             else:  # courts, yards and the ground round the buildings: poured concrete, worn
                 # and patched, a joint every few metres, never a ruled grid
@@ -914,7 +1006,7 @@ def city() -> CityPlan:
                     c = CONC[1]
                 if noise2(x, y // 3, 1828) > 0.997:
                     c = CONC[0]  # a crack
-                if y < 320 and x < 300 and P.tier[i] and smooth_noise(x, y, 20, 1824) > 0.55:
+                if y < 320 and x < 380 and P.tier[i] and smooth_noise(x, y, 20, 1824) > 0.55:
                     c = '#2E4A36' if (x + y) % 3 else '#3E5E40'  # gardens on the terraces
             put(x, y, c)
     # kerbs where a road meets a pavement: the lit top of the stone, its face below
@@ -927,10 +1019,22 @@ def city() -> CityPlan:
                 put(x, y, NIGHT_[4])
             elif P.pave[i] and ((x + 1 < CW and P.road[i + 1]) or (x > 0 and P.road[i - 1])):
                 put(x, y, NIGHT_[4])
+    # the buildings' ground: a building stands on its whole lot, from its front to the
+    # street behind (N3), so nobody walks hidden under its roofs
+    for (_key, spec, fx, fy) in city_buildings():
+        w, depth = spec[0], spec[7]
+        for y in range(max(0, fy - depth), min(CH, fy + 1)):
+            for x in range(max(0, fx - w // 2 + 1), min(CW, fx + w // 2 - 1)):
+                P.blocked[y * CW + x] = 1
+    _pocket_parks(P, put)
     _court(P, put)
     _markings(P, put)
     _plaza_bollards(P, put)
+    _ped_bollards(P, put)
+    _tram_rails(P, put)
+    _lookout_rail(P, put)
     _quays(P, put, land)
+    _mole(P, put, land)
     _terrace_faces(P, put)
     return P
 
@@ -972,6 +1076,169 @@ def _plaza_bollards(P: CityPlan, put):
 
 
 METAL_C = ['#1A1E26', '#2A303C', '#3C4452', '#56606E', '#76808E', '#A0A8B4']
+PED_MARKET_X = 452  # Market Street is a pedestrian street west of here
+TRAM_END = 600  # the tram's buffer on Hill Street, by the square
+
+
+def _tram_rails(P: CityPlan, put):
+    """Two steel rails in Hill Street's middle from the waterfront to the buffer by the
+    square, their running tops lit, set in a band of darker setts; the buffer stop."""
+    for x in range(TRAM_END, QUAY_X - 30):
+        cy = street_y('hill', x)
+        for d in range(-6, 7):
+            y = int(cy + d)
+            if P.road[y * CW + x]:
+                if d in (-4, 4):
+                    put(x, y, METAL_C[5] if x % 2 else METAL_C[4])
+                elif d in (-3, 3):
+                    put(x, y, METAL_C[1])
+                else:
+                    put(x, y, _setts_px(x, y))
+    cy = int(street_y('hill', TRAM_END))
+    for y in range(cy - 6, cy + 7):  # the buffer: a steel frame with a red lamp
+        put(TRAM_END, y, METAL_C[4]); put(TRAM_END + 1, y, METAL_C[2])
+    put(TRAM_END, cy - 7, PINK_[3]); put(TRAM_END + 1, cy - 7, PINK_[2])
+LOOKOUT = (112, 186)  # the lookout's x span at the top of the stepped street
+
+
+def _pocket_parks(P: CityPlan, put):
+    """The lots the buildings leave (Eastward's towns: "lots are never just ground"; review
+    15:54): every open lot at least 24 px across, away from the docks' yard, becomes a
+    pocket park: a lawn mown in stripes inside a kerb, a gravel path, flowers along its
+    edge. The trees and a bench go on it in city_props_placed."""
+    from collections import deque
+
+    def yard(x, y):
+        i = y * CW + x
+        return not (P.water[i] or P.road[i] or P.pave[i] or P.setts[i] or P.blocked[i] or P.tier[i] or P.plaza[i]
+                    or (x, y) in P.face) and y < 1100 and x < 744 and not (x >= 630 and y >= 870)
+    cells = {(cx, cy) for cy in range(0, 1100 // 4) for cx in range(0, 744 // 4) if yard(cx * 4 + 2, cy * 4 + 2)}
+    core = {c for c in cells if all((c[0] + dx, c[1] + dy) in cells for dx in (-3, 0, 3) for dy in (-3, 0, 3))}
+    grown = {(c[0] + dx, c[1] + dy) for c in core for dx in range(-3, 4) for dy in range(-3, 4)} & cells
+    seen = set()
+    for c in sorted(grown):
+        if c in seen:
+            continue
+        q, comp = deque([c]), []
+        seen.add(c)
+        while q:
+            a = q.popleft()
+            comp.append(a)
+            for d in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                nb = (a[0] + d[0], a[1] + d[1])
+                if nb in grown and nb not in seen:
+                    seen.add(nb)
+                    q.append(nb)
+        pix = {(cx * 4 + dx, cy * 4 + dy) for (cx, cy) in comp for dx in range(4) for dy in range(4)
+               if yard(cx * 4 + dx, cy * 4 + dy)}
+        xs, ys = [p[0] for p in pix], [p[1] for p in pix]
+        P.lots.append(((min(xs), min(ys), max(xs), max(ys)), frozenset(c for c in comp if c in core)))
+        for (x, y) in pix:
+            edge = any((x + dx, y + dy) not in pix for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)))
+            if edge:
+                c = CONC[4] if (x, y - 1) not in pix else CONC[2]  # the kerb round the lawn
+            elif any((x + dx, y + dy) not in pix for dx in (-2, 2) for dy in (-2, 2)) and noise2(x, y, 1836) > 0.7:
+                c = ('#E8A0C0', '#F2E2A0', '#C8C0F0')[(x + y) % 3]  # flowers along the edge
+            else:
+                c = '#3E5E40' if (x // 6) % 2 else '#4A6C46'  # the lawn, mown in stripes
+                if noise2(x // 2, y // 2, 1837) > 0.85:
+                    c = '#2E4A36'
+            put(x, y, c)
+        x0, y0, x1, y1 = min(xs), min(ys), max(xs), max(ys)
+        for t in range(0, 1000):  # a gravel path across it, corner to corner
+            px_ = int(x0 + (x1 - x0) * t / 1000)
+            py_ = int(y1 - (y1 - y0) * t / 1000)
+            for d in (-1, 0, 1):
+                if (px_ + d, py_) in pix:
+                    put(px_ + d, py_, GRANITE[3] if (px_ + py_ + d) % 3 else GRANITE[2])
+
+
+def _mole(P: CityPlan, put, land):
+    """The mole out to the lighthouse (review 15:54, finding 3): below its south and east
+    edges a wet face of granite in shadow drops into the sea, darkening to the waterline,
+    with a broken line of foam where the swell breaks on it; three steps down where it
+    leaves the quay."""
+    for y in range(1, CH - 8):
+        for x in range(1, CW - 2):
+            i = y * CW + x
+            if land[i] != 2:
+                continue
+            if P.water[i + CW]:
+                for d in range(1, 6):
+                    if P.water[i + d * CW]:
+                        put(x, y + d, GRANITE[1] if d < 3 else GRANITE[0] if d < 5 else '#16202E')
+                if P.water[i + 6 * CW] and noise2(x // 2, y, 1838) > 0.35:
+                    put(x, y + 6, '#C8D8E8' if x % 3 else '#8AA0B8')
+            elif P.water[i + 1]:
+                put(x + 1, y, GRANITE[1]); put(x + 2, y, GRANITE[0])
+    for y in range(1, CH - 1):  # the steps where the mole leaves the quay
+        for x in range(1, CW - 1):
+            i = y * CW + x
+            if land[i] == 2 and any(land[i + dx + dy * CW] == 1 for dx in (-8, 0, 8) for dy in (-8, 0, 8)):
+                k = (x + y) % 4
+                put(x, y, GRANITE[4] if k == 0 else GRANITE[3] if k == 1 else GRANITE[2])
+
+
+def _setts_px(x: int, y: int) -> str:
+    """Setts: small dark granite blocks laid in courses across the street, each course
+    offset by half a block, the joints darker, a block here and there worn pale or wet."""
+    course = y // 3
+    bx = (x + (course % 2) * 2) // 4
+    c = GRANITE[2] if noise2(bx, course, 1832) > 0.55 else GRANITE[1]
+    if y % 3 == 0 or (x + (course % 2) * 2) % 4 == 0:
+        c = GRANITE[0]
+    elif noise2(bx, course, 1833) > 0.93:
+        c = GRANITE[3]
+    elif smooth_noise(x, y, 12, 1835) > 0.74 and (x + y) % 2:
+        c = '#2A3046'  # where the rain lies
+    return c
+
+
+def _bollard(put, bx: int, by: int):
+    for (x, y) in disc(bx, by - 2, 1.6):
+        put(x, y, METAL_C[4] if x < bx else METAL_C[2])
+    put(bx, by - 4, METAL_C[5]); put(bx + 1, by, NIGHT_[0])
+    put(bx, by - 2, AMBER_[3])
+
+
+def _ped_bollards(P: CityPlan, put):
+    """Rows of bollards across each pedestrian street's mouth where it meets a road: at
+    Tower Row, both sides of the avenue's crossing, and where the stepped street comes
+    down to Hill Street. People walk on between them (they are drawn, not blocked)."""
+    mk_hw = LINES['market'][1]
+    ends = [(PED_MARKET_X - 2, street_y('market', PED_MARKET_X - 2), 'v')]
+    yx = street_y('market', street_x('avenue', 880))
+    ax = street_x('avenue', yx)
+    ends += [(ax - LINES['avenue'][1] - 3, street_y('market', ax - 20), 'v'),
+             (ax + LINES['avenue'][1] + 3, street_y('market', ax + 20), 'v')]
+    for (ex, ey, d) in ends:
+        for k in range(-mk_hw, mk_hw + 1, 7):
+            _bollard(put, int(ex), int(ey) + k)
+    qx, qy = P.lines['quayroad'][0][-1]
+    for k in range(-21, 22, 7):  # beyond the quay road's turning head, the promenade
+        _bollard(put, int(qx) + k, int(qy) + 31)
+    for (x, y) in disc(qx, qy, 8):  # the turning head's island: a kerbed bed of shrubs
+        d = math.hypot(x - qx, y - qy)
+        put(x, y, NIGHT_[5] if d > 7 and y < qy else NIGHT_[4] if d > 7 else '#3E5E40' if (x + y) % 3 else '#2E4A36')
+        P.shut.add((x, y))
+    hy = street_y('hill', street_x('avenue', 280)) - LINES['hill'][1] - LINES['hill'][2] - 3
+    hx = street_x('avenue', hy)
+    for k in range(-LINES['avenue'][1], LINES['avenue'][1] + 1, 7):
+        _bollard(put, int(hx) + k, int(hy))
+
+
+def _lookout_rail(P: CityPlan, put):
+    """The lookout's railing along its south edge either side of the stepped street, so
+    you stand at the rail and look south over the city; posts every 6 px, a lit top rail."""
+    y = 58
+    ax = street_x('avenue', y)
+    for x in range(LOOKOUT[0], LOOKOUT[1]):
+        if abs(x - ax) < LINES['avenue'][1] + 2:
+            continue
+        put(x, y - 4, IRON[3]); put(x, y - 3, IRON[2])
+        if x % 6 == 0:
+            put(x, y - 2, IRON[2]); put(x, y - 1, IRON[1])
+        P.shut.add((x, y - 1)); P.shut.add((x, y))
 
 
 def _court(P: CityPlan, put):
@@ -1023,6 +1290,8 @@ def _markings(P: CityPlan, put):
                 continue
             if not P.road[y * CW + x]:
                 continue
+            if name == 'hill' and x >= TRAM_END - 4:
+                continue  # (the tram's rails run here instead)
             if int(s) % 12 < 6 and hw >= 12:
                 put(x, y, AMBER_[2])
                 put(x + int(round(-dy)), y + int(round(dx)), AMBER_[1])
@@ -1124,7 +1393,7 @@ def _terrace_faces(P: CityPlan, put):
 def _door_aprons() -> list:
     """The ground in front of every building's door (city px), kept clear of furniture."""
     out = []
-    for (key, (w, floors, style, seed, shop, setback, blade), fx, fy) in city_buildings():
+    for (key, (w, floors, style, seed, shop, setback, blade, *_rest), fx, fy) in city_buildings():
         x0 = fx - w // 2
         if style == 'glass':
             dx = fx
@@ -1166,16 +1435,20 @@ def city_props_placed() -> list:
     out = []
     feet = []
     aprons = _door_aprons()
+    tall = []  # each building's sprite box, for the cross-seam check in ok()
     for (key, spec, fx, fy) in city_buildings():
         out.append((key, key, fx, fy))
         w, _h = spec[0], 0
         feet.append((fx - w // 2, fy - 20, fx + w // 2, fy))
+        tall.append((fx - w // 2, fy - smap[key].h, fx + w // 2, fy))
     for (key, w, fx, fy, h) in city_skybridges():
         out.append((key, key, fx, fy - h))  # (overhead: drawn raised, its foot on the deck)
 
     def ok(key, fx, fy, where=('pave',), gap=3):
         w, h = size(key)
         half = max(3, w // 2 - 2)
+        if 'tree' in key:
+            half = 7  # (a tree stands on its trunk and grate; its crown spreads over the road)
         x0, x1, y0, y1 = int(fx - half), int(fx + half), int(fy - 4), int(fy)
         if x0 < 2 or x1 >= CW - 2 or y0 < 2 or y1 >= CH - 2:
             return False
@@ -1195,17 +1468,29 @@ def city_props_placed() -> list:
         box = (x0 - gap, y0 - gap, x1 + gap, y1 + gap)
         if any(box[0] < b[2] and box[2] > b[0] and box[1] < b[3] and box[3] > b[1] for b in feet + aprons):
             return False
+        # nothing stands behind a building that rises over a zone's north edge from the
+        # zone in front (zones.check_overhangs: its top would cover it across the seam)
+        sx0, sx1, sy0 = fx - w // 2, fx + w // 2, fy - h
+        for (bx0, by0, bx1, by1) in tall:
+            if by1 // H != int(fy - 2) // H and sx0 < bx1 and sx1 > bx0 and sy0 < by1 and fy > by0:
+                return False
         return True
 
     def put(oid, key, fx, fy, where=('pave',), gap=3):
         if ok(key, fx, fy, where, gap):
             w, h = size(key)
+            if 'tree' in key:
+                w = 18
             feet.append((int(fx - w // 2 + 2), int(fy - 4), int(fx + w // 2 - 2), int(fy)))
             out.append((oid, key, int(fx), int(fy)))
             return True
         return False
 
     n = 0
+    # the tram waits at its stop (placed first, so nothing stands in the road under it)
+    tx, ty = TRAM_END + 64, int(street_y('hill', TRAM_END + 64)) + 6
+    out.append(('tram-car', 'city_tram', tx, ty))
+    feet.append((tx - 56, ty - 40, tx + 56, ty + 22))
     # lamps along both kerbs of the graded streets, staggered
     for (name, line, hw, pw, grade) in STREETS:
         if grade != 1 or name == 'harbour':
@@ -1236,12 +1521,68 @@ def city_props_placed() -> list:
         if key == 'city_lamp' and noise2(int(x), int(y), 1981) > 0.6:
             put(f'bin-{n}', 'city_litter_bin', x + 12, y)
             n += 1
-    # the market: stalls on Market Street's south pavement in the old core's block, and
-    # along the terminal walk; benches by them
-    for (x, y) in _along('market', 62, LINES['market'][1] + 8, 6):
-        if x < 300 and put(f'stall-{n}', ('city_market_stall', 'city_market_stall_b', 'city_market_stall_c', 'city_market_stall_d')[n % 4],
-                           x, y + 4, gap=2):
+    # street life (to-c-city-review 4; review 15:54, Eastward): cars parked at the kerbs of
+    # the roads that keep their traffic, away from the crossings; steam from a grate by
+    # some shopfronts, bikes racked by others, a cat on a doorstep; food carts where
+    # people walk
+    cars = ('city_car', 'city_car_b', 'city_car_c', 'city_car_d', 'city_car_e')
+
+    def clear_of_junctions(x, y):
+        for nm in ('avenue', 'towerrow', 'quayroad'):
+            sm2 = LINES[nm][0]
+            if min(p[1] for p in sm2) - 30 <= y <= max(p[1] for p in sm2) + 30 and abs(x - street_x(nm, y)) < 46:
+                return False
+        return True
+    for nm, start in (('hill', 28), ('cable', 18), ('cable_e', 22), ('market', 40)):
+        hw_ = LINES[nm][1]
+        for (x, y) in _along(nm, 58, hw_ - 3, start):
+            if nm == 'market' and x < PED_MARKET_X + 30:
+                continue
+            if nm == 'hill' and x > TRAM_END - 30:
+                continue
+            if clear_of_junctions(x, y) and noise2(int(x), 0, 1987) > 0.25:
+                if put(f'car-{n}', cars[n % 5], x, y, where=('road',), gap=4):
+                    n += 1
+    for (x, y) in _along('quayroad', 130, -(LINES['quayroad'][1] - 3), 30):
+        if 120 < y < 1300 and clear_of_junctions(x + 200, y) and put(f'car-{n}', cars[n % 5], x, y, where=('road',), gap=4):
             n += 1
+    for k, (key, spec, fx, fy) in enumerate(city_buildings()):
+        w_, style_, seed_ = spec[0], spec[2], spec[3]
+        x0 = fx - w_ // 2
+        dx = fx if style_ == 'glass' else (x0 + 10 if noise2(seed_, 1, 1920) > 0.5 else x0 + w_ - 10)
+        r = noise2(k, 7, 1980)
+        if r > 0.78:
+            put(f'steam-{n}', 'city_steam', (x0 + 8) if dx > fx else (x0 + w_ - 8), fy + 7, gap=1)
+        elif r > 0.6 and w_ >= 64:
+            put(f'bikes-{n}', 'city_bike_rack', (x0 + 26) if dx > fx else (x0 + w_ - 26), fy + 8, gap=1)
+        elif r < 0.12:
+            put(f'cat-{n}', ('city_cat', 'city_cat_b', 'city_cat_c')[k % 3], dx + 18, fy + 3, gap=0)
+        n += 1
+    put('cart-q', 'city_food_cart', QUAY_X - 26, 250, gap=4)
+    # the night market: stalls along Market Street's pedestrian stretch
+    # (down the middle of the setts, a row of stalls with the walk on either side, as
+    # night markets lay them out; the shopfronts behind stay clear)
+    for (x, y) in _along('market', 70, 4, 20):
+        if x < PED_MARKET_X - 20 and put(f'stall-{n}', ('city_market_stall', 'city_market_stall_b', 'city_market_stall_c',
+                                                        'city_market_stall_d')[n % 4], x, y, gap=2):
+            n += 1
+    # the pocket parks: two trees and a bench on each, the bench by the path
+    for k, ((x0, y0, x1, y1), core) in enumerate(P.lots):
+        spots = sorted(core, key=lambda c: noise2(c[0], c[1], 1838 + k))
+        placed = 0
+        for (cx, cy) in spots:
+            key = 'city_tree_planted' if placed < 2 else 'city_bench'
+            if put(f'park-{k}-{placed}', key, cx * 4 + 2, cy * 4 + 2, gap=6):
+                placed += 1
+            if placed == 3:
+                break
+    # the lookout at the top of the stepped street: a bench facing south over the city, a
+    # coin telescope at the rail
+    put('look-bench', 'city_bench', LOOKOUT[0] + 16, 46, where=('pave',), gap=2)
+    put('look-scope', 'city_telescope', LOOKOUT[1] - 14, 52, where=('pave',), gap=2)
+    for k, x in enumerate(range(60, PED_MARKET_X - 20, 37)):  # food carts between the stalls
+        if put(f'cart-{k}', 'city_food_cart_b' if k % 2 else 'city_food_cart', x, int(street_y('market', x)) + 4, gap=1):
+            pass
     # the plaza: the fountain at its heart, the tram stop on Hill Street, benches round
     # the fountain facing it, trees in its corners
     pcx, pcy, prx, pry = PLAZA
@@ -1252,7 +1593,10 @@ def city_props_placed() -> list:
         a = math.pi * (0.1 + 0.8 * k / 9)
         put(f'lamp-sq{k}', 'city_lamp', pcx + math.cos(a + math.pi) * (prx - 6) * -1, pcy + math.sin(a) * (pry - 4),
             where=('pave', 'plaza'), gap=2)
-    put('tram', 'city_tram_stop', 620, int(street_y('hill', 620)) + 34)
+    # the tram (review 15:54, finding 1): its rails come along Hill Street from the
+    # waterfront to a buffer at the square's edge; the shelter stands on the square's
+    # paving by the buffer, its back to the fountain; a tram waits at the stop
+    put('tram', 'city_tram_stop', PLAZA[0] + 82, PLAZA[1] + 14, where=('pave', 'plaza'), gap=2)
     # the promenade along the east quay: benches looking at the sea, kiosks, taxis moored
     for k, y in enumerate(range(80, 560, 96)):
         put(f'bench-q{k}', 'city_bench', QUAY_X - 14, y, gap=6)
@@ -1264,8 +1608,8 @@ def city_props_placed() -> list:
     for k, y in enumerate((760, 960)):
         out.append((f'crane-{k}', 'city_gantry_crane', DOCK_X - 20, y))
     k = 0
-    for y in range(660, 1110, 54):  # the container yard: stacks in rows, as a port lays them out
-        for x in (668, 700):
+    for y in range(916, 1110, 50):  # the container yard behind the cranes: stacks in a row, as a port lays them out
+        for x in (684,):
             kind = ('city_container_stack', 'city_container_stack_b', 'city_container_stack_c', 'city_container_stack_d')[
                 int(noise2(x, y, 1985) * 4)]
             if put(f'boxes-{k}', kind, x + int(noise2(y, x, 1986) * 6) - 3, y, gap=1):
@@ -1330,7 +1674,7 @@ def _city_cut(zone: str):
 CITY_STANDS = {
     'heights': {'lookout': (150, 60), 'terrace': (150, 196), 'hill': (220, 300)},
     'plaza': {'fountain': (160, 400), 'tram': (298, 310), 'hill': (10, 300)},
-    'waterfront': {'promenade': (140, 300), 'plaza': (10, 300), 'kiosk': (116, 180)},
+    'waterfront': {'promenade': (140, 300), 'plaza': (10, 322), 'kiosk': (116, 180)},
     'market': {'avenue': (156, 300), 'stalls': (60, 330), 'downtown': (300, 296)},
     'downtown': {'towers': (160, 296), 'market': (10, 296), 'docks': (310, 304)},
     'docks': {'cranes': (110, 300), 'downtown': (10, 304), 'quay': (130, 500)},
