@@ -89,6 +89,7 @@ import propDrystoneWall from '@/assets/zones/props/drystone_wall.png';
 import propDuck from '@/assets/zones/props/duck.png';
 import propDynamiteCrate from '@/assets/zones/props/dynamite_crate.png';
 import propEmberShrine from '@/assets/zones/props/ember_shrine.png';
+import propEngineTank from '@/assets/zones/props/engine_tank.png';
 import propFenceC from '@/assets/zones/props/fence_c.png';
 import propFern from '@/assets/zones/props/fern.png';
 import propFerry from '@/assets/zones/props/ferry.png';
@@ -122,6 +123,7 @@ import propHoloBoard from '@/assets/zones/props/holo_board.png';
 import propHorse from '@/assets/zones/props/horse.png';
 import propHouseBlue from '@/assets/zones/props/house_blue.png';
 import propHouseRed from '@/assets/zones/props/house_red.png';
+import propHouseSlate from '@/assets/zones/props/house_slate.png';
 import propHydroTrough from '@/assets/zones/props/hydro_trough.png';
 import propIbex from '@/assets/zones/props/ibex.png';
 import propIceCreamCart from '@/assets/zones/props/ice_cream_cart.png';
@@ -197,8 +199,10 @@ import propShaduf from '@/assets/zones/props/shaduf.png';
 import propSheep from '@/assets/zones/props/sheep.png';
 import propSheepLeft from '@/assets/zones/props/sheep_left.png';
 import propShelter from '@/assets/zones/props/shelter.png';
+import propShopAshlar from '@/assets/zones/props/shop_ashlar.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
 import propSideTable from '@/assets/zones/props/side_table.png';
+import propSignalBox from '@/assets/zones/props/signal_box.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
 import propSkyBench from '@/assets/zones/props/sky_bench.png';
 import propSkyPlanter from '@/assets/zones/props/sky_planter.png';
@@ -245,6 +249,7 @@ import propViewport from '@/assets/zones/props/viewport.png';
 import propWagon from '@/assets/zones/props/wagon.png';
 import propWallRun from '@/assets/zones/props/wall_run.png';
 import propWardrobe from '@/assets/zones/props/wardrobe.png';
+import propWarehouse from '@/assets/zones/props/warehouse.png';
 import propWashingLine from '@/assets/zones/props/washing_line.png';
 import propWaterCrane from '@/assets/zones/props/water_crane.png';
 import propWaterJar from '@/assets/zones/props/water_jar.png';
@@ -642,6 +647,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   duck: propDuck,
   dynamite_crate: propDynamiteCrate,
   ember_shrine: propEmberShrine,
+  engine_tank: propEngineTank,
   fence_c: propFenceC,
   fern: propFern,
   ferry: propFerry,
@@ -675,6 +681,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   horse: propHorse,
   house_blue: propHouseBlue,
   house_red: propHouseRed,
+  house_slate: propHouseSlate,
   hydro_trough: propHydroTrough,
   ibex: propIbex,
   ice_cream_cart: propIceCreamCart,
@@ -750,8 +757,10 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   sheep: propSheep,
   sheep_left: propSheepLeft,
   shelter: propShelter,
+  shop_ashlar: propShopAshlar,
   shuttle: propShuttle,
   side_table: propSideTable,
+  signal_box: propSignalBox,
   signpost: propSignpost,
   sky_bench: propSkyBench,
   sky_planter: propSkyPlanter,
@@ -798,6 +807,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   wagon: propWagon,
   wall_run: propWallRun,
   wardrobe: propWardrobe,
+  warehouse: propWarehouse,
   washing_line: propWashingLine,
   water_crane: propWaterCrane,
   water_jar: propWaterJar,
