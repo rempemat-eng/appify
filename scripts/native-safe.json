@@ -36,7 +36,7 @@
     "guard": "only typeof guards, so it does run on native: document is undefined there (getTargetOrigin returns '*'), window.parent is undefined so postMessage throws inside its try and is ignored. Harmless, but a Platform.OS === 'web' check would be clearer"
   },
   "lib/sound.ts": {
-    "uses": 4,
+    "uses": 2,
     "guard": "the first-gesture listeners are added and removed only when Platform.OS === 'web' (browsers block audio until a gesture; native plays at once)"
   }
 }

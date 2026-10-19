@@ -53,15 +53,20 @@ export const feedbackSounds: Record<FeedbackKind, SoundId> = {
 export const REPEAT_MS = 90;
 
 // Browsers refuse to start audio before the page has had a user gesture, and
-// expo-audio's web play() does not catch that refusal, so wait for one.
+// expo-audio's web play() does not catch that refusal (an unhandled NotAllowedError),
+// so play nothing until the browser itself counts a gesture.
 let activated = Platform.OS !== 'web';
-function userActive() {
-  if (activated) return true;
+type Activation = { hasBeenActive: boolean };
+function browserActivation(): Activation | undefined {
   const nav =
     typeof navigator === 'undefined'
       ? undefined
-      : (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } });
-  if (nav?.userActivation?.hasBeenActive) activated = true;
+      : (navigator as Navigator & { userActivation?: Activation });
+  return nav?.userActivation;
+}
+function userActive() {
+  if (activated) return true;
+  if (browserActivation()?.hasBeenActive) activated = true;
   return activated;
 }
 
@@ -222,23 +227,30 @@ export function startSound() {
   void loadSoundPreference();
   const stopFeedback = onFeedback((kind) => playSound(feedbackSounds[kind]));
   const stopPreference = useSoundPreference.subscribe(applyAmbience);
-  const markActive = () => {
+  // A gesture counts once the browser says so: a touch's pointerdown does not (activation
+  // comes with its pointerup or touchend), so starting audio there was refused. Browsers
+  // without navigator.userActivation get the same rule from the event itself.
+  const markActive = (event?: Event) => {
+    const browser = browserActivation();
+    if (browser) {
+      if (!browser.hasBeenActive) return;
+    } else if (
+      event?.type === 'pointerdown' &&
+      (event as Event & { pointerType?: string }).pointerType !== 'mouse'
+    )
+      return;
     activated = true;
     applyAmbience();
   };
+  const gestures = ['pointerdown', 'pointerup', 'touchend', 'keydown'] as const;
   const web = Platform.OS === 'web' && typeof window !== 'undefined';
-  if (web) {
-    window.addEventListener('pointerdown', markActive, { capture: true });
-    window.addEventListener('keydown', markActive, { capture: true });
-  }
+  if (web) for (const type of gestures) window.addEventListener(type, markActive, { capture: true });
   return () => {
     stopFeedback();
     stopPreference();
     stopEffects();
-    if (web) {
-      window.removeEventListener('pointerdown', markActive, { capture: true });
-      window.removeEventListener('keydown', markActive, { capture: true });
-    }
+    if (web)
+      for (const type of gestures) window.removeEventListener(type, markActive, { capture: true });
     setAmbience(null);
   };
 }
