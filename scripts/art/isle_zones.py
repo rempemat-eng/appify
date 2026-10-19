@@ -94,24 +94,25 @@ TRAILS = [
     # the pier up the dry shore lane beside the stream, the broad stair, the footbridge
     # over the river and on to the foot of the switchback
     [(112, 950), (110, 904), (122, 862), (140, 806), (154, 736), (154, 660), (156, 600), (156, 540), (160, 470),
-     (165, 420), (165, 330), (180, 304), (222, 292), (270, 288), (298, 280), (318, 278)],
+     (165, 420), (165, 330), (180, 304), (222, 292), (262, 284), (296, 270), (318, 266)],
     # the landing's shore path round the headland to the cove and up its terraces
     [(140, 806), (228, 814), (282, 880), (304, 940), (340, 958), (400, 952), (452, 936), (500, 908), (544, 864),
      (566, 800), (568, 740), (566, 690)],
     # the Headwaters: from the switchback's top over the footbridge, across the upland
     # and down round the east shoulder: the first stair, the terrace, the second stair
-    [(372, 242), (392, 248), (400, 262), (400, 312), (430, 352), (480, 398), (532, 440), (548, 490), (542, 530),
+    [(380, 234), (396, 244), (400, 262), (400, 312), (430, 352), (480, 398), (532, 440), (548, 490), (542, 530),
      (540, 552), (540, 600), (562, 616), (566, 630)],
     # the spur to the pool's edge
     [(430, 352), (490, 292), (516, 266)],
 ]
 TRAIL_W = 9.5
 # the switchback up the Headwaters' escarpment: three short legs across the slope
-ZIGZAG = [(316, 278), (364, 278), (364, 260), (342, 260), (342, 242), (384, 242)]
-SLOPE = (332, 230, 290)  # its west edge and its rows; it runs east to the escarpment
+ZIGZAG = [(316, 266), (370, 266), (370, 250), (346, 250), (346, 234), (390, 234)]
+SLOPE = (336, 226, 280)  # its west edge and its rows; it runs east to the escarpment
 # footbridges over the river (x, y, w, h), and the broad stairs at the escarpments
 BRIDGES = [(152, 338, 26, 52), (387, 262, 26, 42)]
 STAIR_XS = {'west': (126, 186), 'east': (510, 570), 'terrace': (552, 580)}
+RECESS = (206, 312)  # the rows of the gorge's recess in the Headwaters' escarpment
 FACE = 18  # a cliff face's height for one step of height, in art px
 
 
@@ -220,26 +221,32 @@ def flank_top(gx: float) -> int:
 
 
 def x12(gy: float) -> float:
-    """The escarpment between the Rainforest (west) and the higher ground east of it,
-    bowed east where the switchback climbs it beside the gorge."""
-    t = (gy - 252) / 72
-    bulge = 46 * max(0.0, 1 - t * t) ** 1.5
-    return 320 + bulge + math.sin(gy / 23) * 1.5 + (smooth_noise(0, gy, 17, 1301) - 0.5) * 3
+    """The escarpment between the Rainforest (west) and the higher ground east of it.
+    Where the river has cut its gorge the cliff steps back into a recess (island rows
+    206-312): its north wall is a front face above the way through, the switchback
+    climbs its east side, and the gorge's rim closes it to the south."""
+    base = 320 + (smooth_noise(0, gy, 46, 1301) - 0.5) * 10 + (smooth_noise(0, gy, 11, 1306) - 0.5) * 4
+    if RECESS[0] <= gy < RECESS[1]:
+        return base + 44 + (smooth_noise(0, gy, 11, 1305) - 0.5) * 6
+    return base
 
 
 def y01(gx: float) -> float:
     """The escarpment between the Rainforest and the Landing below it."""
-    return 568 + math.sin(gx / 19) * 2 + (smooth_noise(gx, 0, 15, 1302) - 0.5) * 4
+    return 566 + (smooth_noise(gx, 0, 48, 1302) - 0.5) * 13 + (smooth_noise(gx, 0, 12, 1307) - 0.5) * 4
 
 
 def y2a(gx: float) -> float:
     """The Headwaters' south edge, down to the terrace."""
-    return 567 + math.sin(gx / 21) * 2 + (smooth_noise(gx, 0, 15, 1303) - 0.5) * 4
+    return 566 + (smooth_noise(gx, 0, 48, 1303) - 0.5) * 13 + (smooth_noise(gx, 0, 12, 1308) - 0.5) * 4
 
 
 def y2b(gx: float) -> float:
-    """The terrace's south edge, down to the cove."""
-    return 664 + 22 * math.sin((gx - 320) / 60) + (smooth_noise(gx, 0, 20, 1304) - 0.5) * 10
+    """The terrace's south edge, down to the cove. It narrows to nothing toward the
+    landing, so no step runs down the open border between the landing and the cove."""
+    full = 664 + 22 * math.sin((gx - 320) / 60) + (smooth_noise(gx, 0, 20, 1304) - 0.5) * 10
+    top = y2a(gx)
+    return top + (full - top) * _smoothstep((gx - 326) / 120)
 
 
 def tier(gx: int, gy: int, X12, Y01, Y2A, Y2B) -> int:
@@ -327,7 +334,7 @@ def island() -> Island:
             f = 0.9 * min((290 - gx) / 110, (560 - gy) / 100)
             if gy < 780:
                 f = max(f, 0.9 * (1 - d_fresh[i] / 46) - max(0, gy - 640) / 140)
-            if gx > 300:
+            if gx > 300 and gy - foot[gx] < 70:  # (only where it adds forest: no seam at x 300)
                 f = max(f, 0.8 * (1 - (gy - foot[gx]) / 70) * _smoothstep((gx - 300) / 90))
             f += (smooth_noise(gx, gy, 48, 1211) - 0.5) * 1.3 + (smooth_noise(gx, gy, 14, 1215) - 0.5) * 0.35
             if f > 0:
@@ -616,7 +623,7 @@ def _heights(cv: Canvas, I: Island, land: bytearray, river: bytearray, d_fresh: 
             drop = T[gy - 1][gx] - T[gy][gx]
             # (a front face only where an east-west line steps down; where the
             # north-south escarpment shifts a column it is seen edge on, below)
-            if drop > 0 and (gx >= X12[gy - 1]) == (gx >= X12[gy]):
+            if drop > 0 and ((gx >= X12[gy - 1]) == (gx >= X12[gy]) or abs(X12[gy] - X12[gy - 1]) > 6):
                 fh = FACE * drop
                 for r in range(fh):
                     if gy + r < IH:
@@ -640,6 +647,8 @@ def _heights(cv: Canvas, I: Island, land: bytearray, river: bytearray, d_fresh: 
         line = Y01 if key == 'west' else Y2A if key == 'east' else Y2B
         top = int(min(line[a:b])) - 1
         bottom = int(max(line[a:b])) + FACE + 1
+        if key != 'terrace':  # (a border stair runs well past the seam on both sides)
+            top, bottom = min(top, H - 14), max(bottom, H + 14)
         stairs.append((a, top, b - a, bottom - top))
     I.stairs = stairs
     in_stair = {(x, y) for (x0, y0, w, h) in stairs for y in range(y0, y0 + h) for x in range(x0, x0 + w)}
@@ -708,39 +717,16 @@ def _heights(cv: Canvas, I: Island, land: bytearray, river: bytearray, d_fresh: 
         _put(px, gx, gy, c)
         I.blocked[i] = 1
     I.zig = {(i % IW, i // IW) for i in range(sy0 * IW, (sy1 + 8) * IW) if zig[i] and land[i]}
-    # the basalt headland's spine between the landing and the cove (both at sea level):
-    # mossy outcrops of irregular width, open where the shore path rounds it
-    spine_top = int(Y2B[322]) + FACE + 2
-    for k, gy in enumerate(range(spine_top, 1066, 5)):
-        if 916 <= gy <= 994:
-            continue  # the shore path's way round (port 352-408)
-        cx = 320 + math.sin(gy / 31) * 3 + (noise2(k, 0, 1330) - 0.5) * 4
-        rx = 6 + smooth_noise(0, gy, 40, 1331) * 7 + noise2(k, 1, 1330) * 2
-        ry = 4 + noise2(k, 2, 1330) * 3
-        pts = {(x, y) for (x, y) in oval(cx, gy, rx, ry) if 0 <= y < IH and land[y * IW + x]
-               and not (916 <= y <= 994)}
-        if len(pts) > 8:
-            style.facet_stone(cv, pts, O, moss=TROPIC, seed=1332 + k, outline=None)
-            for (x, y) in pts:
-                I.blocked[y * IW + x] = 1
-        if noise2(k, 3, 1330) > 0.55 and not (906 <= gy <= 1004):
-            tmp = Canvas(24, 18)
-            shape = style.leafy(tmp, 12, 9, 4 + noise2(k, 4, 1330) * 3, 3, TROPIC, r=1.7, seed=1340 + k)
-            for (a, b) in shape:
-                x, y = int(cx) - 12 + a + int((noise2(k, 5, 1330) - 0.5) * 8), gy - 12 + b
-                if land[y * IW + x]:
-                    cv.set(x, y, tmp.get(a, b))
-                    I.blocked[y * IW + x] = 1
     # bushes leaning over each escarpment's lip, scree fallen at its foot
     near_stair = {(x, y) for (x0, y0, w, h) in stairs for y in range(y0 - 10, y0 + h + 10)
                   for x in range(x0 - 8, x0 + w + 8)}
     lips, feet = [], []
     for (gx, gy), (r, fh) in face.items():
-        if r == 0 and gx % 9 == int(noise2(gx // 9, gy // 40, 1315) * 9):
+        if r == 0 and smooth_noise(gx, gy, 26, 1315) > 0.48 and noise2(gx, gy // 8, 1314) < 0.2:
             lips.append((gx, gy - 1))
             feet.append((gx + int(noise2(gx, gy, 1316) * 6) - 3, gy + fh + 3))
     for (gx, gy) in edges:
-        if gy % 10 == int(noise2(gx // 40, gy // 10, 1317) * 10) and (gx, gy) not in slope:
+        if smooth_noise(gx, gy, 26, 1317) > 0.48 and noise2(gx // 8, gy, 1316) < 0.16 and (gx, gy) not in slope:
             lips.append((gx + 7, gy))
             feet.append((gx - 9, gy + int(noise2(gx, gy, 1318) * 4)))
     for k, (gx, gy) in enumerate(lips):
@@ -774,9 +760,10 @@ def _heights(cv: Canvas, I: Island, land: bytearray, river: bytearray, d_fresh: 
         lip = int(X12[gy])
         for gx in range(lip - 64, lip - 2):
             i = gy * IW + gx
-            if land[i] and 1 <= d_fresh[i] <= 5 and (gx, gy) not in face and (gx, gy) not in side:
+            rim = 5 + (8 if abs(gx - 320) < 16 and gy < 300 else 0)
+            if land[i] and 1 <= d_fresh[i] <= rim and (gx, gy) not in face and (gx, gy) not in side:
                 below = river[i + IW] if gy + 1 < IH else 0
-                c = O[0] if d_fresh[i] == 1 else O[1] if below else O[3] if d_fresh[i] == 5 else O[2]
+                c = O[0] if d_fresh[i] == 1 else O[1] if below else O[3] if d_fresh[i] == rim else O[2]
                 _put(px, gx, gy, c)
                 I.blocked[i] = 1
     # the trails, in island px (painted zone by zone over the cut, see `paint`)
@@ -1101,7 +1088,7 @@ def isle_rainforest(frame: int = 0):
         ('banana', 2, {'floor'}), ('bird_of_paradise', 2, {'floor', 'turf'}), ('fern', 10, {'floor'}),
         ('pandanus', 2, {'sand'})], 1502)
     WATER_MASKS['isle_rainforest'] = water - deck
-    stands = {'landing': (156, H - 6), 'headwaters': (314, 278), 'bridge': (165, 404)}
+    stands = {'landing': (156, H - 6), 'headwaters': (314, 266), 'bridge': (165, 404)}
     return cv, objects, stands, blocked
 
 
@@ -1125,7 +1112,7 @@ def isle_headwaters(frame: int = 0):
         ('bird_of_paradise', 3, {'turf'}), ('hibiscus', 2, {'turf'}), ('banana', 2, {'turf', 'floor'}),
         ('fern', 8, {'turf', 'floor'}), ('black_rock_small', 3, {'turf'})], 1503)
     WATER_MASKS['isle_headwaters'] = water - deck
-    stands = {'rainforest': (2, 278), 'pool': (196, 266), 'cove': (220, H - 6)}
+    stands = {'rainforest': (2, 266), 'pool': (196, 266), 'cove': (220, H - 6)}
     return cv, objects, stands, blocked
 
 
