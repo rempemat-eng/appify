@@ -244,7 +244,8 @@ export function startSound() {
   };
   const gestures = ['pointerdown', 'pointerup', 'touchend', 'keydown'] as const;
   const web = Platform.OS === 'web' && typeof window !== 'undefined';
-  if (web) for (const type of gestures) window.addEventListener(type, markActive, { capture: true });
+  if (web)
+    for (const type of gestures) window.addEventListener(type, markActive, { capture: true });
   return () => {
     stopFeedback();
     stopPreference();
