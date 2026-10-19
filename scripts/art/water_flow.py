@@ -72,11 +72,14 @@ def _flow(mask: np.ndarray):
     coherence = np.where(tr > 1e-9, det / np.maximum(tr, 1e-9), 0.0)
     # the strongest gradient's direction (across the channel); the flow is at right angles
     theta = 0.5 * np.arctan2(2 * jxy, jxx - jyy)
-    fx, fy = -np.sin(theta), np.cos(theta)
+    # quantised to whole steps (1/256 and 1/1000) so a last-bit difference in sin, cos or a
+    # sum on another machine can't flip a pixel: the pictures must reproduce byte for byte
+    fx = np.rint(-np.sin(theta) * 256).astype(np.int64)
+    fy = np.rint(np.cos(theta) * 256).astype(np.int64)
     # downhill: down the screen, and east where the channel runs level
-    flip = (fy < -0.25) | ((np.abs(fy) <= 0.25) & (fx < 0))
+    flip = (fy < -64) | ((np.abs(fy) <= 64) & (fx < 0))
     fx, fy = np.where(flip, -fx, fx), np.where(flip, -fy, fy)
-    return fx, fy, coherence
+    return fx, fy, np.rint(coherence * 1000).astype(np.int64)
 
 
 def _hash(*v: np.ndarray) -> np.ndarray:
@@ -111,9 +114,9 @@ def sheet(ground: Image.Image, water: set, lava: set):
         lava_pass = light is LAVA_LIGHT
         fx, fy, coh = _flow(mask)
         depth = _depth(mask)
-        u = xs * fx + ys * fy            # along the flow
-        v = -xs * fy + ys * fx           # across it
-        lane = np.floor(v / lane_w).astype(np.int64)
+        u = (xs * fx + ys * fy) // 256   # along the flow (whole px)
+        v = (-xs * fy + ys * fx) // 256  # across it
+        lane = v // lane_w
         lh = _hash(lane, np.zeros_like(lane) + (7 if lava_pass else 3))
         lane_on = (lh % 3) == 0
         phase = (lh >> np.uint32(4)) % period
@@ -128,14 +131,14 @@ def sheet(ground: Image.Image, water: set, lava: set):
             widest[:, 1:] = np.maximum(widest[:, 1:], widest[:, :-1])
             widest[:, :-1] = np.maximum(widest[:, :-1], widest[:, 1:])
         narrow = widest <= 20  # a stream or river up to ~40 px wide; wider is a lake or the sea
-        channel = mask & narrow & (coh > 0.5) & (depth >= 1)
+        channel = mask & narrow & (coh > 500) & (depth >= 1)
         open_w = mask & ~channel & (depth >= 2)
         gh = _hash(xs // 5, ys // 3, np.zeros_like(xs) + 11)
         glint = open_w & ((gh % 41) == 0)
         g_phase = (gh >> np.uint32(6)) % FRAMES
         shore = mask & (depth == 0)
         for f in range(FRAMES):
-            pos = np.floor(u + phase - f * shift).astype(np.int64) % period
+            pos = (u + phase.astype(np.int64) - f * shift) % period
             streak = channel & lane_on & (pos < length)
             head = streak & (pos == 0)
             lit = np.zeros((h, w), dtype=np.float32)

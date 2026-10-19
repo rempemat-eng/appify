@@ -6664,7 +6664,7 @@ export const zoneFlow: Partial<Record<ZoneId, readonly [number, number, number, 
   harbour: [0, 15, 320, 561],
   headland: [0, 0, 288, 576],
   hearthold: [16, 0, 272, 574],
-  scorch: [37, 2, 120, 510],
+  scorch: [37, 2, 119, 510],
   station: [0, 0, 320, 576],
   home: [45, 12, 230, 411],
 };
