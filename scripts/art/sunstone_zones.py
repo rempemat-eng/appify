@@ -1305,6 +1305,23 @@ def stone_bridge(cv: Canvas, x0: int, y0: int, w: int, h: int, vertical: bool = 
     return deck, parapet
 
 
+def _cell(x: int, y: int, cell: int, seed: int):
+    """The jittered cell (Voronoi) a pixel falls in: its id, the distance to the next
+    cell's edge, and which side of the cell's centre the pixel lies (for lit lips)."""
+    best, second, bid, bc = 1e9, 1e9, None, (0, 0)
+    gx, gy = x // cell, y // cell
+    for j in (-1, 0, 1):
+        for i in (-1, 0, 1):
+            cx = (gx + i) * cell + noise2(gx + i, gy + j, 240 + seed) * cell
+            cy = (gy + j) * cell + noise2(gx + i, gy + j, 241 + seed) * cell
+            d = (x - cx) ** 2 + (y - cy) ** 2
+            if d < best:
+                best, second, bid, bc = d, best, (gx + i, gy + j), (cx, cy)
+            elif d < second:
+                second = d
+    return bid, math.sqrt(second) - math.sqrt(best), bc[0] - x, bc[1] - y
+
+
 # Hearthold's curtain wall: the band of the isle (as a fraction of its radius) between
 # the flagged yard and the cliff, and the two ways through it (x spans).
 WALL_IN, WALL_OUT, WALL_FACE = 0.875, 0.965, 10
@@ -1323,7 +1340,7 @@ def castle(frame: int = 0):
     steward's training yard. Nothing green grows this close to the lava: the courtyard
     is flagged, the old herb garden long gone."""
     LAVA, BASALT, ASH = MATERIALS['lava'], MATERIALS['basalt'], MATERIALS['ash']
-    ASHLAR = MATERIALS['ashlar']
+    ASHLAR = csp.STONE_R  # the same dressed stone as the keep and the towers
     cv = Canvas(W, H)
     for y in range(H):  # the fire country's ash, running on from the caldera and the Scorch
         for x in range(W):
@@ -1346,18 +1363,20 @@ def castle(frame: int = 0):
         if rr(x, y) > 0.99 and y > iy:
             c = LAVA[1] if (x + y) % 3 else BASALT[1]
         cv.set(x, y, c)
-    for (x, y) in yard:  # square flags, each its own tone, lit on top and left (no moss here)
-        SL = ['#8C8574', '#A9A28F', '#C2B9A2', '#D4CBB3', '#E6DEC8']
-        row = y // 9
-        cx, cy = (x + (row % 2) * 6) % 12, y % 9
-        t = 3 if noise2((x + (row % 2) * 6) // 12, row, 797) > 0.35 else 2 if noise2((x + (row % 2) * 6) // 12, row, 797) > 0.1 else 4
-        c = SL[t]
-        if cx == 11 or cy == 8:
-            c = SL[0]
-        elif cx == 0 or cy == 0:
-            c = SL[min(4, t + 1)]
-        elif cx == 10 or cy == 7:
-            c = SL[t - 1]
+    # the yard: big irregular flagstones, dusty and worn, each its own tone, the joints
+    # soft, a lit lip on the upper left of each stone; calmer than the walls so the
+    # buildings stand off it. No moss this close to the lava.
+    FLAG = ['#6E6862', '#857E75', '#968F84', '#A49C90', '#B4AC9E']
+    for (x, y) in yard:
+        cid, edge, dx, dy = _cell(x, y, 13, 797)
+        t = noise2(cid[0], cid[1], 798)
+        c = FLAG[3] if t > 0.6 else FLAG[2] if t > 0.2 else FLAG[1]
+        if edge < 1.2:
+            c = FLAG[0]  # the joint
+        elif edge < 2.4 and dx + dy > 0:
+            c = FLAG[4] if c != FLAG[1] else FLAG[3]  # the lit lip toward the light
+        elif noise2(x // 2, y // 2, 799) > 0.94:
+            c = FLAG[1]  # a scuff
         cv.set(x, y, c)
     # the wall walk: a lit coping, merlons standing proud along the outer edge
     for (x, y) in wall:
@@ -1426,7 +1445,7 @@ def castle(frame: int = 0):
         ('tower-nw', 'round_tower', 46, 66), ('wall-n1', 'wall_run', 114, 104), ('tower-ne', 'round_tower', 226, 66),
         ('keep', 'keep', 148, 156), ('bell', 'bell_tower', 54, 168),
         ('well', 'castle_well', 110, 300), ('dummy-1', 'training_dummy', 200, 300), ('rack', 'weapon_rack', 212, 336),
-        ('tower-sw', 'round_tower', 50, 232), ('gate', 'gatehouse', 102, 322),
+        ('tower-sw', 'round_tower', 50, 232), ('gate', 'gatehouse', 102, 320),
         ('pole-1', 'banner_pole', 128, 466), ('pole-2', 'banner_pole', 180, 466),
         ('lantern-n', 'stone_lantern', 150, 6),
         ('bench-1', 'stone_bench', 64, 336), ('bench-2', 'stone_bench', 226, 266),
