@@ -682,6 +682,61 @@ export const zoneScenery: Record<string, ImageSourcePropType> = {
 export const zoneDeckArt: Partial<
   Record<ZoneId, { deck: ImageSourcePropType; shadow: ImageSourcePropType }>
 > = {};
+import flowRiverside from '@/assets/zones/riverside/flow.png';
+import flowWoodland from '@/assets/zones/woodland/flow.png';
+import flowPark from '@/assets/zones/park/flow.png';
+import flowRidge from '@/assets/zones/ridge/flow.png';
+import flowHollow from '@/assets/zones/hollow/flow.png';
+import flowSnowmelt from '@/assets/zones/snowmelt/flow.png';
+import flowLanding from '@/assets/zones/landing/flow.png';
+import flowRainforest from '@/assets/zones/rainforest/flow.png';
+import flowHeadwaters from '@/assets/zones/headwaters/flow.png';
+import flowCove from '@/assets/zones/cove/flow.png';
+import flowHalt from '@/assets/zones/halt/flow.png';
+import flowCanal from '@/assets/zones/canal/flow.png';
+import flowNeon from '@/assets/zones/neon/flow.png';
+import flowSkyport from '@/assets/zones/skyport/flow.png';
+import flowWaterfront from '@/assets/zones/waterfront/flow.png';
+import flowDocks from '@/assets/zones/docks/flow.png';
+import flowPoint from '@/assets/zones/point/flow.png';
+import flowOasis from '@/assets/zones/oasis/flow.png';
+import flowCaldera from '@/assets/zones/caldera/flow.png';
+import flowSprings from '@/assets/zones/springs/flow.png';
+import flowHarbour from '@/assets/zones/harbour/flow.png';
+import flowHeadland from '@/assets/zones/headland/flow.png';
+import flowHearthold from '@/assets/zones/hearthold/flow.png';
+import flowScorch from '@/assets/zones/scorch/flow.png';
+import flowStation from '@/assets/zones/station/flow.png';
+import flowHome from '@/assets/zones/home/flow.png';
+/** Each zone's moving water, frames stacked (scripts/art/water_flow.py; boxes in zone-maps.ts). */
+export const zoneFlowArt: Partial<Record<ZoneId, ImageSourcePropType>> = {
+  riverside: flowRiverside,
+  woodland: flowWoodland,
+  park: flowPark,
+  ridge: flowRidge,
+  hollow: flowHollow,
+  snowmelt: flowSnowmelt,
+  landing: flowLanding,
+  rainforest: flowRainforest,
+  headwaters: flowHeadwaters,
+  cove: flowCove,
+  halt: flowHalt,
+  canal: flowCanal,
+  neon: flowNeon,
+  skyport: flowSkyport,
+  waterfront: flowWaterfront,
+  docks: flowDocks,
+  point: flowPoint,
+  oasis: flowOasis,
+  caldera: flowCaldera,
+  springs: flowSprings,
+  harbour: flowHarbour,
+  headland: flowHeadland,
+  hearthold: flowHearthold,
+  scorch: flowScorch,
+  station: flowStation,
+  home: flowHome,
+};
 export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,
