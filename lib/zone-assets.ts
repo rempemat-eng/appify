@@ -4,6 +4,7 @@ import type { ImageSourcePropType } from 'react-native';
 import type { ZoneId } from './zone-maps';
 import propAcacia from '@/assets/zones/props/acacia.png';
 import propAirlock from '@/assets/zones/props/airlock.png';
+import propAirlockModule from '@/assets/zones/props/airlock_module.png';
 import propAirshipMast from '@/assets/zones/props/airship_mast.png';
 import propAnchor from '@/assets/zones/props/anchor.png';
 import propAquariumColumn from '@/assets/zones/props/aquarium_column.png';
@@ -164,8 +165,10 @@ import propGardenPod from '@/assets/zones/props/garden_pod.png';
 import propGasLamp from '@/assets/zones/props/gas_lamp.png';
 import propGatehouse from '@/assets/zones/props/gatehouse.png';
 import propGearPile from '@/assets/zones/props/gear_pile.png';
+import propGlassDome from '@/assets/zones/props/glass_dome.png';
 import propGlowCaps from '@/assets/zones/props/glow_caps.png';
 import propGrowLamp from '@/assets/zones/props/grow_lamp.png';
+import propHabHub from '@/assets/zones/props/hab_hub.png';
 import propHammock from '@/assets/zones/props/hammock.png';
 import propHayBale from '@/assets/zones/props/hay_bale.png';
 import propHaystack from '@/assets/zones/props/haystack.png';
@@ -230,6 +233,7 @@ import propPodTree from '@/assets/zones/props/pod_tree.png';
 import propPosterBoard from '@/assets/zones/props/poster_board.png';
 import propPostern from '@/assets/zones/props/postern.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
+import propPressureTube from '@/assets/zones/props/pressure_tube.png';
 import propPricklyPear from '@/assets/zones/props/prickly_pear.png';
 import propRadiator from '@/assets/zones/props/radiator.png';
 import propRainShelter from '@/assets/zones/props/rain_shelter.png';
@@ -282,7 +286,6 @@ import propStoneLantern from '@/assets/zones/props/stone_lantern.png';
 import propStore from '@/assets/zones/props/store.png';
 import propStreetLight from '@/assets/zones/props/street_light.png';
 import propStump from '@/assets/zones/props/stump.png';
-import propSuitRack from '@/assets/zones/props/suit_rack.png';
 import propTeaDispenser from '@/assets/zones/props/tea_dispenser.png';
 import propTeaKiosk from '@/assets/zones/props/tea_kiosk.png';
 import propTelescope from '@/assets/zones/props/telescope.png';
@@ -315,7 +318,6 @@ import propWaterMillF2 from '@/assets/zones/props/water_mill_f2.png';
 import propWaterMillF3 from '@/assets/zones/props/water_mill_f3.png';
 import propWaterMillF4 from '@/assets/zones/props/water_mill_f4.png';
 import propWaterMillF5 from '@/assets/zones/props/water_mill_f5.png';
-import propWaterTank from '@/assets/zones/props/water_tank.png';
 import propWaterTower from '@/assets/zones/props/water_tower.png';
 import propWateringCan from '@/assets/zones/props/watering_can.png';
 import propWeaponRack from '@/assets/zones/props/weapon_rack.png';
@@ -647,6 +649,7 @@ export const BEYOND_SPILL = 20;
 export const zoneProps: Record<string, ImageSourcePropType> = {
   acacia: propAcacia,
   airlock: propAirlock,
+  airlock_module: propAirlockModule,
   airship_mast: propAirshipMast,
   anchor: propAnchor,
   aquarium_column: propAquariumColumn,
@@ -807,8 +810,10 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   gas_lamp: propGasLamp,
   gatehouse: propGatehouse,
   gear_pile: propGearPile,
+  glass_dome: propGlassDome,
   glow_caps: propGlowCaps,
   grow_lamp: propGrowLamp,
+  hab_hub: propHabHub,
   hammock: propHammock,
   hay_bale: propHayBale,
   haystack: propHaystack,
@@ -873,6 +878,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   poster_board: propPosterBoard,
   postern: propPostern,
   potted_plant: propPottedPlant,
+  pressure_tube: propPressureTube,
   prickly_pear: propPricklyPear,
   radiator: propRadiator,
   rain_shelter: propRainShelter,
@@ -925,7 +931,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   store: propStore,
   street_light: propStreetLight,
   stump: propStump,
-  suit_rack: propSuitRack,
   tea_dispenser: propTeaDispenser,
   tea_kiosk: propTeaKiosk,
   telescope: propTelescope,
@@ -958,7 +963,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   water_mill_f3: propWaterMillF3,
   water_mill_f4: propWaterMillF4,
   water_mill_f5: propWaterMillF5,
-  water_tank: propWaterTank,
   water_tower: propWaterTower,
   watering_can: propWateringCan,
   weapon_rack: propWeaponRack,

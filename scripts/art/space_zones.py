@@ -150,36 +150,24 @@ def station(frame: int = 0):
     return cv, objects, stands, blocked
 
 
+# The base's roofed modules are gateways the companion walks through (their walk cells
+# stay open under them; the renderer draws the companion behind them with its Ghost
+# showing): registered in zones.py's OPENINGS table, as the castle's postern is.
+OPENINGS.update({'pressure_tube': (0, 28), 'hab_hub': (62, 86), 'airlock_module': (12, 34)})
+
+
 # Lumen's base (M1). The moon has no air, no water on the surface and nights two weeks
 # long, so the companion and everyone with it live and walk only inside: a gangway from
 # the shuttle, a hub dug in under a berm of regolith (shielding from radiation and
 # micrometeorites), a corridor and an airlock, and the greenhouse dome where the plants
 # grow under lamps, watered from ice dug out of a crater in permanent shadow and powered
-# by solar arrays. Rooms are drawn cut away (no roof), as Halcyon Station is, so you see
-# inside; the front half of the dome is cut away the same way, so its glass never shows
-# stars through the ground (art-faults.md, faults 34 to 38, rule 10).
-LUMEN_HUB = (88, 186, 232, 300)        # outer x0, y0, x1, y1 of the hub's berm
+# by solar arrays. Every pressurised volume is closed: the tubes and the airlock have
+# hulls, the hub a roof under its berm, the dome glass all over, so the plants and the
+# companion are seen through it (art-faults.md, faults 34 to 38, rule 10; Claude A's
+# review, 19 Oct 14:20). The floors under them are drawn too, for the walk.
+LUMEN_HUB = (90, 200, 230, 300)        # outer x0, y0, x1, y1 of the hub's berm
 LUMEN_DOME = (166, 470, 118, 64, 74)   # base centre, radii and the dome's height
 LUMEN_WALL = 10                         # the berm's thickness
-
-
-def _sandbags(cv: Canvas, x: int, y: int, seed: int = 0):
-    """One pixel of a berm of regolith-filled bags, laid in courses: each bag lit along
-    its top and left, its foot and right end in shade."""
-    R = MATERIALS['regolith']
-    row = y // 4
-    off = (row % 2) * 5
-    bx = (x + off) // 10
-    u, v = (x + off) % 10, y % 4
-    t = noise2(bx, row, 391 + seed)
-    c = R[4] if t > 0.6 else R[3]
-    if v == 0:
-        c = R[5] if u < 7 else R[4]
-    elif v == 3 or u == 9:
-        c = R[2] if v != 3 else R[1]
-    elif u == 0:
-        c = R[4]
-    cv.set(x, y, c)
 
 
 def _deck(cv: Canvas, x: int, y: int, warm: bool = False):
@@ -199,16 +187,15 @@ def _deck(cv: Canvas, x: int, y: int, warm: bool = False):
         cv.set(x, y, (min(255, r + 14), min(255, g + 8), b, a))
 
 
-def _room(cv: Canvas, x0: int, y0: int, x1: int, y1: int, t: int, doors, face: int = 0) -> tuple:
-    """A cut-away room under a berm: walls `t` thick of regolith bags round a tiled
-    floor; `doors` are (side, a, b) gaps; `face` px of the north wall's inner face
-    showing below it (hull panels, a lit strip). Returns (floor, walls)."""
-    HULL, CYAN = MATERIALS['hull'], MATERIALS['neon_cyan']
+def _room(cv: Canvas, x0: int, y0: int, x1: int, y1: int, t: int, doors) -> tuple:
+    """The walk inside a closed module (its hull or roof is the module's sprite, drawn
+    over it): a tiled floor inside walls `t` thick, `doors` (side, a, b) the gaps where
+    the next module joins. Returns (floor, walls)."""
     floor, walls = set(), set()
 
     def gap(x, y):
         for (side, a, b) in doors:
-            if side in ('n', 's') and a <= x < b and ((side == 'n' and y < y0 + t + face) or (side == 's' and y >= y1 - t)):
+            if side in ('n', 's') and a <= x < b and ((side == 'n' and y < y0 + t) or (side == 's' and y >= y1 - t)):
                 return True
             if side in ('w', 'e') and a <= y < b and ((side == 'w' and x < x0 + t) or (side == 'e' and x >= x1 - t)):
                 return True
@@ -220,77 +207,23 @@ def _room(cv: Canvas, x0: int, y0: int, x1: int, y1: int, t: int, doors, face: i
                 floor.add((x, y))
                 _deck(cv, x, y)
             elif edge < t:
-                walls.add((x, y))
-                _sandbags(cv, x, y)
-            elif y < y0 + t + face:  # the north wall's inner face
-                walls.add((x, y))
-                k = y - (y0 + t)
-                c = HULL[3] if k < 2 else HULL[2] if k < face - 2 else HULL[1]
-                if (x - x0) % 12 == 0:
-                    c = HULL[1]  # the ribs of the shell under the berm
-                if k == face // 2:
-                    c = CYAN[3] if (x // 3) % 3 else CYAN[2]  # a light strip
-                cv.set(x, y, c)
+                walls.add((x, y))  # (the module's hull is its sprite; here, the walk's wall)
             else:
                 floor.add((x, y))
                 _deck(cv, x, y, warm=True)
-    for (x, y) in walls:  # the berm's lit crest and its shadow on the dust outside
-        if (x, y - 1) not in walls and (x, y - 1) not in floor:
-            cv.set(x, y, MATERIALS['regolith'][5])
-        if y == y1 - 1 and (x, y) in walls:
-            for d in (1, 2, 3):
-                if 0 <= y + d < H:
-                    style.darken(cv, x + d, y + d)
-    for (x, y) in floor:  # the berm's shadow on the floor inside (upper left light)
-        if (x - 1, y) in walls or (x, y - 1) in walls:
-            style.darken(cv, x, y)
     return floor, walls
 
 
-def _earth(cv: Canvas, ex: int, ey: int, r: int, horizon):
-    """The planet in the black sky, lit from the upper left like everything else: blue
-    sea, green and ochre land, white cloud swirls, a thin bright rim of air, the right
-    side turning into night with a scatter of city lights."""
-    for y in range(max(0, ey - r - 3), ey + r + 3):
-        for x in range(max(0, ex - r - 3), min(W, ex + r + 3)):
-            if y >= horizon(x):
-                continue
-            d = math.hypot(x - ex, y - ey)
-            if d > r + 2:
-                continue
-            if d > r:
-                cv.set(x, y, '#3A5A9A' if d < r + 1 else '#1E2A50')  # the air's thin rim
-                continue
-            nx, ny = (x - ex) / r, (y - ey) / r
-            nz = math.sqrt(max(0.0, 1 - nx * nx - ny * ny))
-            sx, sy = nx / (0.6 + 0.4 * nz) * 60, ny / (0.6 + 0.4 * nz) * 60  # flattened toward the limb
-            land = smooth_noise(sx + 200, sy + 200, 22, 393) > 0.55
-            cloud = smooth_noise(sx * 0.8 + sy * 0.6 + 50, sy * 1.6 + 50, 9, 394) > 0.66
-            light = -0.6 * nx - 0.5 * ny + 0.62 * nz  # the sun from the upper left
-            if cloud:
-                c = '#F4F6FA' if light > 0.3 else '#B8C2D6' if light > 0.05 else '#3A425A'
-            elif land:
-                g = smooth_noise(sx, sy, 8, 395) > 0.45
-                c = ('#7A9A4A' if g else '#B89A5A') if light > 0.3 else ('#4E6A36' if g else '#7A6A44') if light > 0.05 else '#1A2216'
-            else:
-                c = '#3E6AA8' if light > 0.3 else '#2A4A80' if light > 0.05 else '#0E1830'
-            if light <= 0.05 and land and not cloud and noise2(x, y, 396) > 0.9:
-                c = '#F2C46A'  # city lights on the night side
-            if light > 0.75 and not cloud and (x + y) % 3 == 0:
-                c = '#9AC8F2' if not land else c  # the sun's glint on the sea
-            cv.set(x, y, c)
-
-
 def lumen(frame: int = 0):
-    """Lumen, the quiet moon and the deepest rest, made livable (M1): grey regolith
-    under a black sky, the planet up over the far ridge. The shuttle stands on a
-    sintered pad ringed with landing lights; a pressurised gangway runs from its hatch
-    to the hub, dug in under a berm of regolith bags, with the suits by its hatch, the
-    melt tank and the padded ring for low-gravity sparring. A corridor and an airlock
-    lead on to the greenhouse dome: glass on a cast sill, the sleeping tree, beds of
-    moss, pools of melt water and a hammock, all under grow lamps. Outside, nothing
-    grows: solar arrays turned to the sun, radiators, a mast, the ice rig at a crater
-    whose floor never sees the sun, the old lander, boulders and craters."""
+    """Lumen, the quiet moon and the deepest rest, made livable (M1): grey regolith seen
+    from above like everything else. The shuttle stands on a sintered pad ringed with
+    landing lights; a closed tube runs from its hatch to the hub, a vault buried under a
+    berm of regolith bags (suits by its hatch out, the melt tank and a padded ring for
+    low-gravity sparring inside); a second tube and an airlock lead on to the greenhouse
+    dome, glazed all over on a cast sill, with the sleeping tree, beds of moss, pools of
+    melt water and a hammock under grow lamps. Outside, nothing grows: solar arrays
+    turned to the sun, radiators, a mast, the ice rig at a crater whose floor never sees
+    the sun, the old lander, boulders and craters."""
     R, GLOWm, VOID = MATERIALS['regolith'], MATERIALS['glowflora'], MATERIALS['void']
     HULL, CYAN, NAPm = MATERIALS['hull'], MATERIALS['neon_cyan'], MATERIALS['nap']
     cv = Canvas(W, H)
@@ -302,21 +235,8 @@ def lumen(frame: int = 0):
                 c = R[4]
             cv.set(x, y, c)
 
-    def horizon(x):
-        return 64 + int(math.sin(x / 23) * 4 + noise2(x // 6, 0, 363) * 5)
-    for x in range(W):  # the black sky with its stars, down to the moon's edge
-        for y in range(0, horizon(x)):
-            cv.set(x, y, VOID[0] if noise2(x, y, 364) > 0.015 else '#FFFFFF')
-    _earth(cv, 230, 150, 117, horizon)
-    for x in range(W):
-        hz = horizon(x)
-        cv.set(x, hz, R[5]); cv.set(x, hz + 1, R[4])
-        for k in range(2, 6):
-            cv.set(x, hz + k, R[2] if k < 4 else R[3])
-    for x in range(W):  # a far ridge along the horizon, in shade (it hides the planet's foot)
-        top = horizon(x) - 6 - int(abs(math.sin(x / 37)) * 10 + noise2(x // 4, 1, 366) * 4)
-        for y in range(max(0, top), horizon(x)):
-            cv.set(x, y, R[1] if y > top + 1 else R[2])
+    # (no sky: the camera looks down on the ground from above, as everywhere else in
+    # the world; the review, 19 Oct 14:20: one camera)
     blocked = set()
 
     def crater(cx, cy, r, rays=False, seed=0):
@@ -328,7 +248,7 @@ def lumen(frame: int = 0):
                 a = 2 * math.pi * k / 9 + 0.3 + seed
                 for t in range(int(r * 1.1), int(r * (2.4 + noise2(k, seed, 368)))):
                     x, y = int(cx + math.cos(a) * t), int(cy + math.sin(a) * t * 0.6)
-                    if (x + y) % 3 and 0 <= x < W and 0 <= y < H and y > 80:
+                    if (x + y) % 3 and 0 <= x < W and 0 <= y < H:
                         cv.set(x, y, R[4])
         pts = []
         for y in range(int(cy - r * 0.75), int(cy + r * 0.75) + 1):
@@ -402,9 +322,9 @@ def lumen(frame: int = 0):
         cv.set(lx, ly, '#FFE8A0'); cv.set(lx + 1, ly, '#F2A048'); cv.set(lx, ly + 1, HULL[1])
         light_pool(cv, lx, ly + 1, 6, 3, '#F2A048')
     # the base, cut away
-    gang_f, gang_w = _room(cv, 146, 132, 176, 196, 6, [('n', 152, 170), ('s', 152, 170)])
+    gang_f, gang_w = _room(cv, 146, 132, 176, 206, 6, [('n', 152, 170), ('s', 152, 170)])
     hx0, hy0, hx1, hy1 = LUMEN_HUB
-    hub_f, hub_w = _room(cv, hx0, hy0, hx1, hy1, LUMEN_WALL, [('n', 152, 170), ('s', 152, 170)], face=10)
+    hub_f, hub_w = _room(cv, hx0, hy0, hx1, hy1, LUMEN_WALL, [('n', 152, 170), ('s', 152, 170)])
     cor_f, cor_w = _room(cv, 144, 300, 178, 372, 7, [('n', 152, 170), ('s', 152, 170)])
     walk = gang_f | hub_f | cor_f
     walls = gang_w | hub_w | cor_w
@@ -415,42 +335,13 @@ def lumen(frame: int = 0):
         if 0.9 < d:
             c = CYAN[3] if (x + y) % 3 else CYAN[2]
         cv.set(x, y, c)
-    # the hatch out to the surface in the hub's east wall (suits on, one at a time)
-    for y in range(226, 252):
-        for x in range(hx1 - LUMEN_WALL, hx1 - 2):
-            c = HULL[4] if y in (226, 251) else HULL[3] if x < hx1 - 6 else HULL[2]
-            if y == 238 and x == hx1 - 7:
-                c = '#E8C04A'
-            cv.set(x, y, c)
-    for y in range(226, 252, 3):
-        cv.set(hx1 - LUMEN_WALL - 1, y, '#E8C04A')  # its hazard edge
-    # the dome: a hemisphere of glass panes in a frame on a cast sill; its back half
-    # stands behind the floor (glass over the dust behind it, panes and struts, the
-    # sun's reflection on the upper left), its front half cut away to the sill
+    # the dome's floor and the cast sill it stands on (the glazed dome itself is the
+    # greenhouse_dome sprite, drawn over everything inside it)
     DX, DY, DRX, DRY, DH = LUMEN_DOME
     inside = {(x, y) for x in range(DX - DRX, DX + DRX + 1) for y in range(DY - DRY, DY + DRY + 1)
               if math.hypot((x - DX) / DRX, (y - DY) / DRY) < 0.95}
     sill = {(x, y) for x in range(DX - DRX - 2, DX + DRX + 3) for y in range(DY - DRY - 2, DY + DRY + 5)
             if 0.95 <= math.hypot((x - DX) / DRX, (y - DY) / DRY) < 1.03 and y >= DY - 6}
-    glass = {}
-    for i in range(0, 361):
-        th = math.pi * i / 360  # 0..pi: the back half
-        for j in range(0, 181):
-            ph = (math.pi / 2) * j / 180
-            X = DX + DRX * math.cos(ph) * math.cos(th)
-            Y = DY - DRY * math.cos(ph) * math.sin(th) - DH * math.sin(ph)
-            p = (int(X), int(Y))
-            if p not in inside and 0 <= p[1] < H:
-                glass[p] = (th, ph)
-    for (x, y), (th, ph) in glass.items():
-        r, g, b, a = cv.get(x, y)
-        r, g, b = int(r * 0.42 + 22), int(g * 0.48 + 36), int(b * 0.55 + 62)  # the dust seen through tinted glass
-        strut = abs((th * 10 / math.pi) - round(th * 10 / math.pi)) < 0.05 or abs((ph * 8 / math.pi) - round(ph * 8 / math.pi)) < 0.06
-        if strut:
-            r, g, b = (232, 236, 244) if th > math.pi / 2 else (168, 176, 194)
-        elif 1.8 < th < 2.6 and 0.25 < ph < 0.75 and (x + y) % 2 == 0:
-            r, g, b = min(255, r + 70), min(255, g + 72), min(255, b + 74)  # the sun's reflection
-        cv.set(x, y, (r, g, b, 255))
     floor_d = set()
     for (x, y) in inside:  # the greenhouse floor: beds of moss in arcs, cast paths between
         d = math.hypot((x - DX) / DRX, (y - DY) / DRY)
@@ -473,22 +364,17 @@ def lumen(frame: int = 0):
         k = math.atan2(y - DY, x - DX)
         c = '#E8E4EE' if y < DY else '#B8B4C8' if math.cos(k) < 0.4 else '#8A86A0'
         cv.set(x, y, c)
-    for i in range(1, 10):  # the frame's stubs along the front, where the cut-away panes stood
-        th = math.pi + math.pi * i / 10
-        sx, sy = int(DX + DRX * math.cos(th)), int(DY - DRY * math.sin(th))
-        for k in range(1, 4):
-            cv.set(sx, sy - k, '#F2F4F8' if k < 3 else '#B8C2D6')
     for (x, y) in sill:
         if y > DY and (x, y + 1) not in sill and y + 1 < H:
             for d in (1, 2):
                 style.darken(cv, x + d - 1, y + d)
-    light_pool(cv, DX, DY + 4, 92, 46, '#FFE0A0', set(glass) | sill)  # the lamps' warm light
+    light_pool(cv, DX, DY + 4, 92, 46, '#FFE0A0', sill)  # the lamps' warm light
     # the airlock between the corridor and the dome: a short room through the glass
     lock_f, lock_w = _room(cv, 142, 366, 180, 420, 8, [('n', 152, 170), ('s', 152, 170)])
     for y in (380, 404):  # its two hatches, open, their frames lit
         for x in range(150, 172):
             cv.set(x, y, '#E8C04A' if (x // 3) % 2 else '#2A2630')
-    walk |= lock_f | (floor_d - set(glass))
+    walk |= lock_f | floor_d
     walls |= lock_w
     # the pipe from the ice rig to the hub on low trestles, and the arrays' cables
     pipe = [(200, 320), (214, 312), (224, 300)]
@@ -515,8 +401,11 @@ def lumen(frame: int = 0):
         ('rock-1', 'moon_rock', 20, 164), ('rock-2', 'moon_rock_small_b', 52, 176), ('rock-3', 'moon_rock_b', 290, 412),
         ('rock-4', 'moon_rock_small', 304, 432), ('rock-5', 'moon_rock_small', 60, 550), ('rock-6', 'moon_rock_b', 214, 552),
         ('rock-7', 'moon_rock_small_b', 232, 102), ('rock-8', 'moon_rock', 76, 92),
-        # the hub
-        ('suits', 'suit_rack', 98, 192), ('tank', 'water_tank', 196, 188),
+        # the base: the gangway tube from the shuttle, the hub under its berm, the tube to
+        # the airlock, the glazed dome (the companion walks inside them, behind them)
+        ('gangway', 'pressure_tube', 147, 130), ('hub', 'hab_hub', 86, 180),
+        ('corridor', 'pressure_tube', 147, 300), ('lock', 'airlock_module', 137, 360),
+        ('dome', 'glass_dome', DX - 120, DY - 140),
         # the greenhouse
         ('tree', 'moon_tree', DX - 38, DY - 86), ('hammock', 'hammock', DX - 94, DY - 4),
         ('pool-1', 'dream_pool', DX + 36, DY + 4), ('pool-2', 'dream_pool_b', DX - 30, DY + 30),
@@ -524,7 +413,7 @@ def lumen(frame: int = 0):
         ('lamp-1', 'grow_lamp', DX - 102, DY - 30), ('lamp-2', 'grow_lamp', DX + 70, DY + 6),
     ]
     stands = {'shuttle': (160, 150), 'sparring': (160, 254), 'grove': (166, 446), 'hammock': (DX - 60, DY + 40),
-              'airlock': (160, 392), 'tank': (180, 236)}
+              'airlock': (160, 392)}
     return cv, objects, stands, walls
 
 
