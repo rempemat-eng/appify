@@ -392,6 +392,33 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
     ground = np.where((alt <= 0.12)[..., None], _forest_floor_rgb(X, Y), ground)
     ground = np.where(sea[..., None], _sea_rgb(X, Y, coast), ground)
     ground = np.where((river & ~sea)[..., None], _river_rgb(X, Y, rc), ground)
+    # Where a zone beside the cell lies under snow at the shared edge, its snow runs on
+    # into the scenery for a ragged 30 to 80 px, so a snowfield never stops on a ruled
+    # line against green (review 15:54, the ridge beside the forest past the riverside).
+    reach = 30 + vnoise(X, Y, 18, 996) * 50
+    for (dc, dr) in ((-1, 0), (1, 0), (0, -1), (0, 1)):
+        z = zone_at(col + dc, row + dr)
+        if not z or z == 'garden':
+            continue
+        g = _zone_ground(z).astype(int)
+        edge = g[:, W - 1] if dc < 0 else g[:, 0] if dc > 0 else g[H - 1, :] if dr < 0 else g[0, :]
+        # snow, and the bare grey rock of a snowy face (neither is green)
+        sat = edge.max(axis=1) - edge.min(axis=1)
+        raw = (((edge.sum(axis=1) > 600) & (edge[:, 2] >= edge[:, 0])) | ((sat < 26) & (edge.sum(axis=1) > 330))).astype(float)
+        # (the snow's extent along the edge, not single bright pixels: a running majority)
+        frac = np.convolve(raw, np.ones(41) / 41, mode='same')
+        # (how far the snow runs in: full along the snow, tapering where it ends)
+        snowline = np.clip((frac - 0.3) / 0.45, 0, 1)
+        if not snowline.any():
+            continue
+        if dc:
+            along = np.clip(Y - row * H, 0, H - 1)
+            d = (X - col * W) if dc < 0 else ((col + 1) * W - 1 - X)
+        else:
+            along = np.clip(X - col * W, 0, W - 1)
+            d = (Y - row * H) if dr < 0 else ((row + 1) * H - 1 - Y)
+        under = (d >= 0) & (d < reach * snowline[along])
+        ground = np.where(under[..., None], snowfield, ground)
     inside = np.zeros((CH, CW), dtype=bool)
     inside[S:S + H, S:S + W] = True
     # the railway: the halt's cutting (its walls, ballast, sleepers and rails) carried on
@@ -439,6 +466,31 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
     things = [(by, 'peak', (left, top, w, h, seed, snow)) for (by, left, top, w, h, seed, snow)
               in _peaks(col, row, lambda x, y: field(x, y)[0], free)]
     things += [(gy, what, (gx, rx, k)) for (gy, gx, what, rx, k) in _trees('valley', col, row, kind_at)]
+    # Along an edge the forest shares with a zone, a fringe of crowns straddling the edge,
+    # so the forest floor never ends on a ruled line against the zone's ground (the
+    # crowns reach over it by up to the spill, each by a different amount: review 15:54).
+    cx0_, cy0_ = col * W, row * H
+    for side, (dc, dr) in {'w': (-1, 0), 'e': (1, 0), 'n': (0, -1), 's': (0, 1)}.items():
+        if not zone_at(col + dc, row + dr):
+            continue
+        span = H if side in 'we' else W
+        for i in range(-1, span // 22 + 2):
+            t = i * 22 + (noise2(i, col * 31 + row, 561 + len(side)) - 0.5) * 12
+            inset = 3 + noise2(i, row * 17 + col, 562) * 12      # how far inside the cell
+            if side == 'w':
+                gx, gy = cx0_ + inset, cy0_ + t
+            elif side == 'e':
+                gx, gy = cx0_ + W - inset, cy0_ + t
+            elif side == 'n':
+                gx, gy = cx0_ + t, cy0_ + inset
+            else:
+                gx, gy = cx0_ + t, cy0_ + H - inset
+            ix, iy = gx + (8 if side == 'w' else -8 if side == 'e' else 0), gy + (8 if side == 'n' else -8 if side == 's' else 0)
+            what = kind_at(np.array([[ix]]), np.array([[iy]]))[0, 0]
+            if what == 'crown':
+                things.append((gy, 'crown', (gx, 14 + noise2(i, col + row * 7, 563) * 8, i * 131 + col * 17 + row)))
+            elif what == 'pine' and noise2(i, col + row * 5, 564) < 0.8:
+                things.append((gy + 8, 'pine', (gx, 0, 0)))
     if track.any() and zone_at(rc_, rr_) == RAIL['zone']:
         things.append((ry1, 'portal', None))
     pine = _pine()
