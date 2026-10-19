@@ -2,6 +2,12 @@ import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
 import { isDeepStrictEqual } from 'node:util';
 import type { TogetherSession } from './game';
+import {
+  fixtureNow,
+  layoutSaveFixtures,
+  keepsakeSaveFixture,
+  worldAccountFixture,
+} from './fixtures/save-fixtures';
 
 // Test-only native boundaries. Game rules, store methods, cards, visitors and
 // backend availability are all imported from the actual source below.
@@ -565,6 +571,108 @@ async function main() {
         isDeepStrictEqual(progressSnapshot(), beforeDeferredRecording),
       'The archived-receipt reflection can be recorded exactly once without altering any progress',
     );
+    // C26: store actions against real decor, world migration and serialized saves.
+    // Freeze the account at its fixture time so this is not an absence/reward test.
+    now = fixtureNow;
+    const { checkDecor, foundKeepsakes } = await import('./decor');
+    const { tileAt, tileOrigin } = await import('./region-walk');
+    for (const fixture of layoutSaveFixtures) {
+      await loadPatchedSave((saved) => Object.assign(saved, worldAccountFixture(fixture.world)));
+      const world = gameStore.getState().world!;
+      const tile = tileAt(world.region, world.x, world.y)!;
+      const origin = tileOrigin(world.region, tile);
+      check(
+        isDeepStrictEqual(world, fixture.expected) &&
+          tile.id === fixture.zone &&
+          world.x - origin.x === fixture.local.x &&
+          world.y - origin.y === fixture.local.y,
+        `C26 ${fixture.name}: real initialization preserves zone-local coordinates`,
+      );
+      const first = structuredClone(world);
+      await reload();
+      check(
+        isDeepStrictEqual(gameStore.getState().world, first) &&
+          gameStore.getState().player!.grass === 437.125,
+        `C26 ${fixture.name}: reload does not shift twice or alter fractional GRASS`,
+      );
+    }
+    {
+      const fixture = keepsakeSaveFixture;
+      await loadPatchedSave((saved) =>
+        Object.assign(saved, worldAccountFixture(fixture.world, fixture.decor)),
+      );
+      check(
+        isDeepStrictEqual(gameStore.getState().decor, fixture.expected),
+        'C26 load keeps one valid keepsake per identity across hut and garden, dropping unfound/no-fit entries',
+      );
+      check(
+        checkDecor('garden', gameStore.getState().decor, 'stool', 100, 340).ok,
+        'C26 duplicate identity fixture has another valid spot, so it is not dropped for bad geometry',
+      );
+      check(
+        checkDecor('hut', [], 'dragon_plush', 100, 380).ok &&
+          !foundKeepsakes(gameStore.getState().world!.visited).includes('dragon_plush'),
+        'C26 unfound refusal fixture fits the room but has not been discovered',
+      );
+      check(
+        foundKeepsakes(gameStore.getState().world!.visited).includes('town_lantern') &&
+          !checkDecor('hut', [], 'town_lantern', 160, 20).ok,
+        'C26 no-fit load fixture is discovered but its old footprint is invalid',
+      );
+      const before = progressSnapshot();
+      const originalWorld = structuredClone(gameStore.getState().world);
+      const originalQuiet = gameStore.getState().quietView;
+      const oldDecor = structuredClone(gameStore.getState().decor);
+      const refused = gameStore.getState().placeDecor('dragon_plush', 100, 380);
+      await reload();
+      check(
+        !refused.ok &&
+          refused.why === 'unknown' &&
+          isDeepStrictEqual(gameStore.getState().decor, oldDecor) &&
+          isDeepStrictEqual(progressSnapshot(), before),
+        'C26 placeDecor refuses a geometrically valid unfound keepsake without changing save progress',
+      );
+      check(
+        gameStore.getState().placeDecor('stool', 120, 380).ok,
+        'C26 a found keepsake can move to another valid hut spot',
+      );
+      await reload();
+      check(
+        gameStore.getState().decor.filter((p) => p.item === 'stool').length === 1 &&
+          gameStore.getState().decor.find((p) => p.item === 'stool')?.x === 120,
+        'C26 moving persists exactly one copy',
+      );
+      check(
+        gameStore.getState().placeDecor('stool', 100, 340, 'garden').ok,
+        'C26 the same keepsake can move out into the garden',
+      );
+      await reload();
+      check(
+        gameStore.getState().decor.filter((p) => p.item === 'stool').length === 1 &&
+          gameStore.getState().decor.find((p) => p.item === 'stool')?.area === 'garden',
+        'C26 moving areas replaces the identity instead of cloning ownership',
+      );
+      const saved = JSON.parse((await storage.getItem('screenagotchi-v1'))!);
+      check(
+        saved.decor.find((p: { item: string }) => p.item === 'stool')?.futurePatina?.colour ===
+          'copper' &&
+          saved.decor.find((p: { item: string }) => p.item === 'cairn')?.futurePlaque === 'kept' &&
+          saved.futureWorldNote?.kept === true &&
+          saved.player.futureTrait.colour === 'violet',
+        'C26 move/write/reload preserves opaque saved account and decor fields',
+      );
+      gameStore.getState().storeDecor('stool');
+      gameStore.getState().storeDecor('stool');
+      await reload();
+      check(
+        !gameStore.getState().decor.some((p) => p.item === 'stool') &&
+          foundKeepsakes(gameStore.getState().world!.visited).includes('stool') &&
+          isDeepStrictEqual(gameStore.getState().world, originalWorld) &&
+          gameStore.getState().quietView === originalQuiet &&
+          isDeepStrictEqual(progressSnapshot(), before),
+        'C26 putting away is idempotent, keeps ownership/history and never charges or rewards GRASS',
+      );
+    }
     await gameStore.getState().hatch('NEW GARDENER', 'NEW PET', 'RAT');
     check(
       gameStore.getState().companionMemories.length === 0 &&
