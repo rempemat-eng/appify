@@ -34,9 +34,9 @@ STRICT = ('valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon', 'home')
 OVERRIDES: dict = {}
 
 # Placement types (rules, section 2); anything not listed is a ground prop.
-FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'island_ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
+FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'island_ferry', 'harbour_ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
 WET = {'reeds', 'heron', 'net_rack', 'upturned_boat', 'driftwood', 'papyrus', 'water_crane', 'canal_crane'}
-SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge', 'maglev'}
+SUPPORTED = {'lighthouse', 'water_mill', 'pier_ladder', 'tether', 'shaduf', 'bridge', 'basalt_bridge', 'maglev'}
 _rgb = lambda c: tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))  # noqa: E731
 PATH_COLOURS = {_rgb(c) for c in P[1:5]}  # P[1]: a path in shade
 PATH_COLOURS |= {_rgb(c) for c in MATERIALS['ash'][3:5]}  # the fire country's pale ash flags
