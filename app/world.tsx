@@ -31,6 +31,7 @@ import { useZoneAmbience } from '@/lib/sound';
 import { useUi } from '@/lib/ui';
 import { prefetchRegion } from '@/lib/zone-prefetch';
 import { WorldMap } from '@/components/world-map';
+import { mapRegionOrder as travelOrder, regionNames } from '@/lib/world-map';
 import { HUT_DOOR, type Point } from '@/lib/garden-path';
 import { DecoratePanel } from '@/components/decorate-panel';
 import {
@@ -55,17 +56,6 @@ import { HUB_REGION, hubOpening, toGarden } from '@/lib/home-hub';
 import { PlaceCardBody, stopNames } from '@/components/place-card';
 import { decorExtras } from '@/components/scene-decor';
 
-const regionNames: Record<RegionId, string> = {
-  valley: 'THE VALLEY',
-  steam: 'COGSWORTH',
-  west: 'SUNSTONE REACH',
-  isles: 'TIDEBLOOM ISLES',
-  neon: 'NEON HARBOUR',
-  space: 'HALCYON STATION',
-  moon: 'LUMEN',
-  home: 'THE NAP HUT',
-};
-const travelOrder: RegionId[] = ['valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon'];
 const exitIds: ExitId[] = ['gate', 'trail', 'west', 'east'];
 const noZones: readonly string[] = [];
 const insideDoor = regionPoint(doors.inside);

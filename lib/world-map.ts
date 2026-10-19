@@ -219,3 +219,26 @@ export function buildWorldMap(input: {
     visitedSnapshot: mapVisitedZones(saved),
   };
 }
+
+/** Each region's name on the map and in the world's header. */
+export const regionNames: Record<RegionId, string> = {
+  valley: 'THE VALLEY',
+  steam: 'COGSWORTH',
+  west: 'SUNSTONE REACH',
+  isles: 'TIDEBLOOM ISLES',
+  neon: 'NEON HARBOUR',
+  space: 'HALCYON STATION',
+  moon: 'LUMEN',
+  home: 'THE NAP HUT',
+};
+
+/** The regions in the map's order (the hut is inside the valley, not on the map). */
+export const mapRegionOrder: readonly RegionId[] = [
+  'valley',
+  'steam',
+  'west',
+  'isles',
+  'neon',
+  'space',
+  'moon',
+];

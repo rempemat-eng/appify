@@ -77,7 +77,7 @@ How phase 1 is built, for whoever works on it next:
 - **What still changes screen, on purpose.** The hut's door (into the room and out), journeys, and the shop, ring, missions and journal screens a place opens. Each was already its own screen.
 - **Not yet in the hub.** The world map (it opens from the world screen's header, so from the hut or after a journey), the ambience of the Frostline zones (the Home tab plays the garden's loop everywhere in the valley, because `HomeScreen` picks it), and the hut's inside.
 
-**Phase 2: one world screen.** The hut's inside and the other regions open in the same hub, so the world screen and its header go. The world map opens from the HUD or the ☰ menu. Callers (Shop, Missions, decorating) set the hub's arrival directly instead of going through `/world`.
+**Phase 2: one world screen.** Started (19 Oct): the world map opens from the ☰ menu's Map page over any screen, the Home tab's hub included (`WorldMapSheet` in `components/game-menus.tsx`, the region names in `lib/world-map.ts`). Still to come: The hut's inside and the other regions open in the same hub, so the world screen and its header go. The world map opens from the HUD or the ☰ menu. Callers (Shop, Missions, decorating) set the hub's arrival directly instead of going through `/world`.
 
 **Phase 3: the garden scene retires.** The nap screen draws its window with `AtlasWalk` too, and the garden's art that `AtlasWalk` does not yet draw (beds, orchard, night pools) becomes ordinary scene data, so `GardenWorld` keeps only the home's interactions. The source harness follows the layer.
 

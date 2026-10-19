@@ -177,6 +177,15 @@ export function deckAt(region: RegionId, x: number, y: number): boolean {
   return row?.[Math.floor((x - o.x) / TILE.cell)] === '.';
 }
 
+/** The region a zone is in ('garden' is the valley's). */
+export function zoneRegion(zone: string): RegionId | undefined {
+  if (zone === 'garden') return 'valley';
+  for (const [region, places] of Object.entries(regionLayout))
+    if (Object.hasOwn(places, zone) && isRegionId(region)) return region;
+  return undefined;
+}
+const isRegionId = (k: string): k is RegionId => Object.hasOwn(regionLayout, k);
+
 /** The tile under a point in region pixels, if any. */
 export function tileAt(region: RegionId, x: number, y: number): RegionTile | undefined {
   const b = regionBounds(region);

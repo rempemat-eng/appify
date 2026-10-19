@@ -2,10 +2,10 @@ import { create } from 'zustand';
 
 // Interface-only state for the game's sheets. Nothing here is saved or synced:
 // it decides which menu is open, never anything about the garden or rewards.
-export type GameSheet = 'nap' | 'menu' | 'companions' | 'rhythm';
+export type GameSheet = 'nap' | 'menu' | 'companions' | 'rhythm' | 'map';
 
 /** The game menu's pages (coherence plan, step 5). */
-export type MenuTab = 'companion' | 'bag' | 'journal' | 'garden' | 'rhythm' | 'settings';
+export type MenuTab = 'companion' | 'bag' | 'journal' | 'garden' | 'map' | 'rhythm' | 'settings';
 
 /** How the game opens the world screen: walking out of the garden (where, which way),
  *  at a place, or at a station. Read once by the world when it opens; not in the page's

@@ -41,6 +41,8 @@ import {
   usePlayPaused,
 } from '@/components/offline-garden';
 import { DailyRhythmCard } from '@/components/daily-rhythm';
+import { regionNames } from '@/lib/world-map';
+import { zoneRegion } from '@/lib/region-walk';
 import { MotionSetting, SoundSettings } from '@/components/garden-guide';
 
 /**
@@ -54,6 +56,7 @@ const tabs: { id: MenuTab; label: string; title: string; icon: IconName }[] = [
   { id: 'bag', label: 'Bag', title: 'BAG', icon: 'bag' },
   { id: 'journal', label: 'Journal', title: 'JOURNAL', icon: 'journal' },
   { id: 'garden', label: 'Garden', title: 'GARDEN', icon: 'garden' },
+  { id: 'map', label: 'Map', title: 'MAP', icon: 'signpost' },
   { id: 'rhythm', label: 'Rhythm', title: 'RHYTHM', icon: 'rhythm' },
   { id: 'settings', label: 'Settings', title: 'SETTINGS', icon: 'settings' },
 ];
@@ -244,6 +247,8 @@ function MenuPage({ tab, player, unit }: { tab: MenuTab; player: Player; unit: n
       return <JournalPage player={player} unit={unit} />;
     case 'garden':
       return <GardenPage player={player} unit={unit} />;
+    case 'map':
+      return <MapPage />;
     case 'rhythm':
       return <RhythmPage />;
     default:
@@ -615,6 +620,25 @@ function GardenPage({ player: p, unit: u }: { player: Player; unit: number }) {
         />
       </Section>
     </>
+  );
+}
+
+/** The map's page: where the companion is and how much of the world it has walked;
+ *  the map itself opens over everything (one map for the whole game, home-hub.md
+ *  phase 2). */
+function MapPage() {
+  const world = useGame((s) => s.world);
+  const unit = usePixelUnit();
+  const regionsSeen = new Set((world?.visited ?? []).map((z) => zoneRegion(z))).size;
+  return (
+    <Section label="THE WORLD" unit={unit}>
+      <Text style={[type.body, { color: c.ink }]}>
+        {world
+          ? `In ${regionNames[world.region].toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase())}. ${world.visited.length} ${world.visited.length === 1 ? 'place' : 'places'} walked in ${regionsSeen} ${regionsSeen === 1 ? 'region' : 'regions'}.`
+          : 'Walk out of the garden gate and the map fills in as you go.'}
+      </Text>
+      <PixelButton label="OPEN THE MAP" small light onPress={() => openSheet('map')} />
+    </Section>
   );
 }
 
