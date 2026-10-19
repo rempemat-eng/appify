@@ -2100,6 +2100,7 @@ export function GardenWorld({
           onMarker={walkToMarker}
           // a place's name, small, under the HUD (the HUD and the tab bar never change)
           showName
+          nameAtStart={false}
           nameTop={hudClearance(insets.top) + 4}
           // the companion a little above the middle of what is seen above the hotbar and
           // any card; the camera eases there when a card opens or closes

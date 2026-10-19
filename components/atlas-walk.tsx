@@ -613,6 +613,7 @@ export function AtlasWalk({
   preview,
   maxWalkMs,
   showName = true,
+  nameAtStart = true,
   nameTop = 12,
   focusY = 0.55,
   padBottom = 0,
@@ -653,6 +654,8 @@ export function AtlasWalk({
   /** squeeze a long walk into this many milliseconds (the missions map) */
   maxWalkMs?: number;
   showName?: boolean;
+  /** show the starting zone's name too (the home hub only names zones walked into) */
+  nameAtStart?: boolean;
   /** how far down the window the zone's name sits (below a floating HUD) */
   nameTop?: number;
   /** where the companion sits down the window (0 top, 1 bottom) */
@@ -751,7 +754,7 @@ export function AtlasWalk({
   const [here, setHere] = useState<TileId>(
     tileAt(region, grid.start.x, grid.start.y)?.id ?? 'garden',
   );
-  const [named, setNamed] = useState<TileId | null>(here);
+  const [named, setNamed] = useState<TileId | null>(nameAtStart ? here : null);
 
   // Show a zone's name for a moment after crossing into it: noticed during render
   // (React's pattern for reacting to a changed value), cleared by a timer.
