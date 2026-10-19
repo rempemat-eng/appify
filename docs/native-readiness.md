@@ -4,11 +4,13 @@ NapAttack runs as a web app today. Matt wants it to become an iPhone and Android
 
 ## Where it stands (19 Oct 2026)
 
-- **The project.** It is an Expo project (SDK 57, React Native 0.86) with expo-router. Its storage (AsyncStorage), sound (expo-audio) and lifecycle (AppState, `useAppActive`) already work on native.
+- **The project.** It is an Expo project (SDK 57, React Native 0.86) with expo-router. Its storage (AsyncStorage), sound (expo-audio) and lifecycle (AppState, `useAppActive`) use libraries made for native as well as the web.
 - **Web-only pieces.** The map has a web-only version (`components/MapView.web.tsx`) next to a native `MapView.tsx`. The PWA pieces (the service worker and the install prompt) switch themselves off outside the web.
 - **Build setup.**
   - `eas.json` has a `development` profile and a `development-simulator` profile. The app is linked to the Expo project `@napattack/screenagotchi` (`owner` and `extra.eas.projectId` in `app.config.ts`).
-  - A first iOS simulator development build was made on Expo's servers on 19 Oct as a baseline.
+  - **The baseline build, 19 Oct.** A first iOS simulator development build was made on Expo's servers (build `28ca170a`, about 10 minutes on the free plan). On the iPhone 18 Pro simulator it installs, loads the game from the dev server and runs the first screens natively: the seed choice, the naming form and its check that a name is given.
+  - **Not checked yet:** typing into a text field (simulator text input didn't reach the field), the world itself, sound and saves.
+  - **Native-only nit:** the status bar's clock and battery are drawn white on the cream background, so they're hard to see. The status bar style wants to be dark there.
 - **CI.** "Native readiness" runs `expo-doctor` and `expo prebuild` whenever the native config or the packages change.
 
 ## The rules
