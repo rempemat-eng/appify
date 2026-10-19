@@ -114,7 +114,6 @@ import propGlowCaps from '@/assets/zones/props/glow_caps.png';
 import propHammock from '@/assets/zones/props/hammock.png';
 import propHayBale from '@/assets/zones/props/hay_bale.png';
 import propHaystack from '@/assets/zones/props/haystack.png';
-import propHedge from '@/assets/zones/props/hedge.png';
 import propHeron from '@/assets/zones/props/heron.png';
 import propHibiscus from '@/assets/zones/props/hibiscus.png';
 import propHitchingRail from '@/assets/zones/props/hitching_rail.png';
@@ -175,7 +174,6 @@ import propPodTree from '@/assets/zones/props/pod_tree.png';
 import propPosterBoard from '@/assets/zones/props/poster_board.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
 import propPricklyPear from '@/assets/zones/props/prickly_pear.png';
-import propPumpkins from '@/assets/zones/props/pumpkins.png';
 import propRainShelter from '@/assets/zones/props/rain_shelter.png';
 import propReeds from '@/assets/zones/props/reeds.png';
 import propRingPost from '@/assets/zones/props/ring_post.png';
@@ -527,7 +525,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   hammock: propHammock,
   hay_bale: propHayBale,
   haystack: propHaystack,
-  hedge: propHedge,
   heron: propHeron,
   hibiscus: propHibiscus,
   hitching_rail: propHitchingRail,
@@ -588,7 +585,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   poster_board: propPosterBoard,
   potted_plant: propPottedPlant,
   prickly_pear: propPricklyPear,
-  pumpkins: propPumpkins,
   rain_shelter: propRainShelter,
   reeds: propReeds,
   ring_post: propRingPost,
