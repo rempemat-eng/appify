@@ -69,6 +69,14 @@ The world screen has two smaller pops of its own, which the hub would inherit:
 - The world screen (`app/world.tsx`) remains for the hut's inside and the other regions. When it would open in the valley (a place link from the Shop or Missions tab, a saved spot), it hands over to the hub at that spot. Journeys from the halt or the jetty play on the world screen and land back in the hub.
 - Checks: `lib/home-hub.test.ts` (the moved grid, the handoff routing, hysteresis, view mounting) and a hub block in `scripts/check-garden.cjs` (no navigation across the yard's edge, hotspot actions, the hut door, interrupted walks).
 
+How phase 1 is built, for whoever works on it next:
+
+- **Coordinates.** `GardenWorld`'s companion (`px`, `py`) stays in garden pixels; in the hub they run on past the garden's edges (negative to the west and north). `lib/home-hub.ts` has the garden's origin in the valley (`gardenOrigin`), the conversions (`toRegion`, `toGarden`) and the valley's walk moved into garden pixels (`hubWalk`), so `walkTo`, `arrived` and `act` are unchanged.
+- **Depth.** On the web every React Native view stacks on its own, so the home layer never wraps the garden in one view (it would sit wholly above or below the valley's props). Each thing that stands among props is its own view at the garden's origin with its depth in valley pixels (`at()` in `garden-world.tsx`). The hour's tint is AtlasWalk's at 150000; reactions sit just under it, and the garden's light pools, ambient life and the guide's "!" just over it.
+- **Taps.** AtlasWalk has one tap layer for the ground (`onTap`, valley pixels); the garden's hit areas and bubbles are in `hits`, above it, ordered only among themselves.
+- **What still changes screen, on purpose.** The hut's door (into the room and out), journeys, and the shop, ring, missions and journal screens a place opens. Each was already its own screen.
+- **Not yet in the hub.** The world map (it opens from the world screen's header, so from the hut or after a journey), the ambience of the Frostline zones (the Home tab plays the garden's loop everywhere in the valley, because `HomeScreen` picks it), and the hut's inside.
+
 **Phase 2: one world screen.** The hut's inside and the other regions open in the same hub, so the world screen and its header go. The world map opens from the HUD or the ☰ menu. Callers (Shop, Missions, decorating) set the hub's arrival directly instead of going through `/world`.
 
 **Phase 3: the garden scene retires.** The nap screen draws its window with `AtlasWalk` too, and the garden's art that `AtlasWalk` does not yet draw (beds, orchard, night pools) becomes ordinary scene data, so `GardenWorld` keeps only the home's interactions. The source harness follows the layer.
