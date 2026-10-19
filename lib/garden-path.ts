@@ -13,6 +13,9 @@ export function makeWalkGrid(
     start: Point;
     /** keep the companion's body inside the scene (feet-based grid) */
     bounds?: { minX: number; maxX: number; minY: number; maxY: number };
+    /** pairs of points a walk may step between directly, both ways: the stairs and
+     *  ramps joining two walk levels laid side by side (docs/vision/two-level-walk.md) */
+    links?: readonly (readonly [Point, Point])[];
   },
 ) {
   const rows = walk.length;
@@ -55,7 +58,18 @@ export function makeWalkGrid(
     return toCell(start);
   }
 
-  // Breadth-first search (8 directions, no corner cutting), thinned to turning points.
+  const linkTo = new Map<number, number[]>();
+  for (const [p, q] of opts.links ?? []) {
+    const ca = toCell(p);
+    const cb = toCell(q);
+    const ka = ca.cy * cols + ca.cx;
+    const kb = cb.cy * cols + cb.cx;
+    linkTo.set(ka, [...(linkTo.get(ka) ?? []), kb]);
+    linkTo.set(kb, [...(linkTo.get(kb) ?? []), ka]);
+  }
+
+  // Breadth-first search (8 directions, no corner cutting, and across any links),
+  // thinned to turning points; both ends of a link are always kept.
   function findPath(from: Point, to: Point): Point[] {
     if (![from.x, from.y, to.x, to.y].every(Number.isFinite)) return [];
     const a = nearestWalkable(from);
@@ -84,19 +98,30 @@ export function makeWalkGrid(
         prev.set(key(nx, ny), key(x, y));
         queue.push([nx, ny]);
       }
+      for (const k of linkTo.get(key(x, y)) ?? []) {
+        const nx = k % cols;
+        const ny = Math.floor(k / cols);
+        if (!walkable(nx, ny) || prev.has(k)) continue;
+        prev.set(k, key(x, y));
+        queue.push([nx, ny]);
+      }
     }
     if (!prev.has(key(z.cx, z.cy))) return [];
     const cells: [number, number][] = [];
     for (let k = key(z.cx, z.cy); k !== -1; k = prev.get(k)!)
       cells.unshift([k % cols, Math.floor(k / cols)]);
     const out: Point[] = [];
+    const jump = (i: number) =>
+      i > 0 &&
+      i < cells.length &&
+      (Math.abs(cells[i][0] - cells[i - 1][0]) > 1 || Math.abs(cells[i][1] - cells[i - 1][1]) > 1);
     for (let i = 1; i < cells.length; i++) {
       const last = i === cells.length - 1;
       const turn =
         !last &&
         (cells[i + 1][0] - cells[i][0] !== cells[i][0] - cells[i - 1][0] ||
           cells[i + 1][1] - cells[i][1] !== cells[i][1] - cells[i - 1][1]);
-      if (last || turn) out.push(toPoint(cells[i][0], cells[i][1]));
+      if (last || turn || jump(i) || jump(i + 1)) out.push(toPoint(cells[i][0], cells[i][1]));
     }
     return out;
   }

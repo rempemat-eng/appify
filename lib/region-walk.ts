@@ -1,5 +1,14 @@
 import { GARDEN, gardenWalk } from '@/lib/garden-map';
-import { ZONE, regionLayout, zoneIds, zoneMaps, zonePorts, type ZoneId } from '@/lib/zone-maps';
+import {
+  ZONE,
+  regionLayout,
+  zoneDecks,
+  zoneIds,
+  zoneMaps,
+  zonePorts,
+  type ZoneId,
+} from '@/lib/zone-maps';
+import type { Point } from '@/lib/garden-path';
 
 /**
  * One walk grid for a whole region (world-atlas.md, "Seamless travel"): each zone's
@@ -102,6 +111,55 @@ export function regionWalk(region: RegionId): string[] {
     });
   }
   return grid.map((row) => row.join(''));
+}
+
+/**
+ * A region's two walk levels (docs/vision/two-level-walk.md), or null when it has no
+ * decks. The deck level is laid beside the ground level, `offset` region pixels to the
+ * right, so one walk grid covers both and a point's level is which half it is in. The
+ * stairs and ramps are `links` between a ground cell and a deck cell; lifts are links a
+ * walk takes only when asked to (`lifts`), so an interrupted walk never rides one.
+ * `heightAt` is how high the deck under a deck point is drawn.
+ */
+export function regionLevels(region: RegionId) {
+  const b = regionBounds(region);
+  const decked = regionTiles(region).flatMap((t) => {
+    const deck = t.id === 'garden' ? undefined : zoneDecks[t.id];
+    return deck ? [{ tile: t, deck }] : [];
+  });
+  if (decked.length === 0) return null;
+  const ground = regionWalk(region);
+  const upper = Array.from({ length: b.tileRows * ROWS }, () => Array(b.tileCols * COLS).fill('#'));
+  const links: [Point, Point][] = [];
+  const lifts: [Point, Point][] = [];
+  const heights: { x: number; y: number; height: number }[] = [];
+  for (const { tile, deck } of decked) {
+    const o = tileOrigin(region, tile);
+    const oc = o.x / TILE.cell;
+    const or = o.y / TILE.cell;
+    deck.walk.forEach((row, r) => {
+      for (let c = 0; c < row.length && c < COLS; c++)
+        if (row[c] === '.') upper[or + r][oc + c] = '.';
+    });
+    for (const c of deck.connectors) {
+      const pair: [Point, Point] = [
+        { x: o.x + c.bottom[0], y: o.y + c.bottom[1] },
+        { x: b.width + o.x + c.top[0], y: o.y + c.top[1] },
+      ];
+      (c.kind === 'lift' ? lifts : links).push(pair);
+    }
+    heights.push({ x: o.x, y: o.y, height: deck.height });
+  }
+  const rows = ground.map((row, r) => row + upper[r].join(''));
+  const heightAt = (p: Point) => {
+    if (p.x < b.width) return 0;
+    const x = p.x - b.width;
+    const h = heights.find(
+      (t) => x >= t.x && x < t.x + TILE.width && p.y >= t.y && p.y < t.y + TILE.height,
+    );
+    return h ? h.height : 0;
+  };
+  return { rows, offset: b.width, links, lifts, heightAt };
 }
 
 /** The tile under a point in region pixels, if any. */

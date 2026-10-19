@@ -6587,6 +6587,19 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
     },
   },
 };
+/** A zone's upper walk level (docs/vision/two-level-walk.md): its walk rows in the coordinates of the
+ *  ground it stands over, how high it is drawn above that ground, and the stairs, ramps and lifts
+ *  joining it to the ground (bottom on the ground's walk, top on the deck's). */
+export type ZoneDeck = {
+  height: number;
+  walk: readonly string[];
+  connectors: readonly {
+    kind: 'stair' | 'ramp' | 'lift';
+    bottom: readonly [number, number];
+    top: readonly [number, number];
+  }[];
+};
+export const zoneDecks: Partial<Record<ZoneId, ZoneDeck>> = {};
 /** What each walk cell of a zone is (docs/vision/world-rules.md, section 1): '~' water, '!' lava,
  *  '^' wall or cliff, '=' path, '.' ground. Rows are run-length encoded like the walk rows. */
 const unrleTerrain = (row: string) =>

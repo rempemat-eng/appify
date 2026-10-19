@@ -1,7 +1,16 @@
 import assert from 'node:assert/strict';
-import { makeWalkGrid } from './garden-path';
+import { makeWalkGrid, type Point } from './garden-path';
 import { gardenAnchors } from './garden-map';
-import { regionBounds, regionTiles, regionWalk, tileAt, tileOrigin, TILE } from './region-walk';
+import {
+  regionBounds,
+  regionLevels,
+  regionTiles,
+  regionWalk,
+  tileAt,
+  tileOrigin,
+  TILE,
+  type RegionId,
+} from './region-walk';
 import { regionLayout, zoneMaps, zoneOverhead, zonePorts } from './zone-maps';
 import { residentRoutes } from './resident-routes';
 import { residentSprites } from './resident-sprites';
@@ -145,4 +154,53 @@ console.log(
     seams++;
   }
   assert.ok(seams >= 28, 'every shared edge has a port record');
+}
+
+// Two walk levels (docs/vision/two-level-walk.md): a deck laid beside the ground and
+// joined by a stair link. A walk crosses only by the link, keeps both of its ends, and
+// with no link the deck cannot be reached.
+const isRegion = (k: string): k is RegionId => k in regionLayout;
+{
+  const ground = '.....#.....';
+  const twoLevels = Array.from({ length: 5 }, () => ground);
+  const stair: [Point, Point] = [
+    { x: 4 * 4 + 2, y: 2 * 4 + 2 },
+    { x: 6 * 4 + 2, y: 2 * 4 + 2 },
+  ];
+  const linked = makeWalkGrid(twoLevels, {
+    cell: 4,
+    width: 44,
+    start: { x: 2, y: 2 },
+    links: [stair],
+  });
+  const across = linked.findPath({ x: 2, y: 2 }, { x: 40, y: 18 });
+  assert.ok(across.length > 0, 'the deck is reached by the stair');
+  assert.ok(
+    across.some((p) => p.x === stair[0].x && p.y === stair[0].y) &&
+      across.some((p) => p.x === stair[1].x && p.y === stair[1].y),
+    'both ends of the stair are kept in the path',
+  );
+  const unlinked = makeWalkGrid(twoLevels, { cell: 4, width: 44, start: { x: 2, y: 2 } });
+  const end = unlinked.findPath({ x: 2, y: 2 }, { x: 40, y: 18 });
+  const last = end[end.length - 1];
+  assert.ok(!last || last.x < 20, 'without a stair the walk stays on its own level');
+  for (const key of Object.keys(regionLayout)) {
+    if (!isRegion(key)) continue;
+    const levels = regionLevels(key);
+    if (!levels) continue;
+    assert.equal(
+      levels.rows[0].length,
+      regionWalk(region)[0].length * 2,
+      `${region}: two levels side by side`,
+    );
+    for (const [bottom, top] of [...levels.links, ...levels.lifts]) {
+      assert.ok(
+        bottom.x < levels.offset && top.x >= levels.offset,
+        `${key}: connectors join the two levels`,
+      );
+    }
+  }
+  console.log(
+    'Two levels: a deck is reached only by its stairs, and both ends of a stair are kept.',
+  );
 }

@@ -576,6 +576,10 @@ def build(name: str, fn, start: str):
     sprite_map = sprites()
     cv, objects, stands, *rest = fn()
     blocked_ground = rest[0] if rest else set()
+    # an upper walk level (docs/vision/two-level-walk.md): {'walk': pixels of the deck's
+    # surface in the coordinates of the ground it stands over, 'height': px it is drawn
+    # raised by, 'connectors': [{'kind', 'bottom': (x, y), 'top': (x, y)}]}
+    deck = rest[1] if len(rest) > 1 else None
     if name in REGION_PROPS:
         own = region_keys(name) | SHARED_PROPS
         foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
@@ -680,9 +684,41 @@ def build(name: str, fn, start: str):
         if preview:
             prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
     print('ok zone', name, W, H)
-    return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map,
+    if deck:
+        deck = deck_grid(name, deck, walk)
+    return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map, 'deck': deck,
             'ground_img': cv.img.copy(), 'blocked': blocked_ground, 'preview': prev.img if prev else None,
             'water': WATER_MASKS.get(fn.__name__)}
+
+
+def deck_grid(name: str, deck: dict, ground_walk: list) -> dict:
+    """A zone's deck as walk rows (a cell is open where most of its pixels are deck), its
+    height and its connectors, checked: every connector's bottom stands on open ground,
+    its top on the deck, and every open deck cell is reached from a connector's top."""
+    surface = deck['walk']
+    rows = []
+    for cy in range(H // CELL):
+        row = ''
+        for cx in range(W // CELL):
+            n = sum((cx * CELL + dx, cy * CELL + dy) in surface for dx in range(CELL) for dy in range(CELL))
+            row += '.' if n * 2 > CELL * CELL else '#'
+        rows.append(row)
+    conns = deck.get('connectors', [])
+    assert conns, f'{name}: a deck needs at least one stair, ramp or lift'
+    for c in conns:
+        assert c['kind'] in ('stair', 'ramp', 'lift'), f'{name}: unknown connector {c}'
+        bx, by = c['bottom']
+        tx, ty = c['top']
+        assert ground_walk[by // CELL][bx // CELL] == '.', f'{name}: a {c["kind"]} starts on blocked ground at {c["bottom"]}'
+        assert rows[ty // CELL][tx // CELL] == '.', f'{name}: a {c["kind"]} lands off the deck at {c["top"]}'
+    seen = set()
+    for c in conns:
+        tx, ty = c['top']
+        seen |= reachable(rows, (tx, ty))
+    stranded = [(cx, cy) for cy, row in enumerate(rows) for cx, ch in enumerate(row) if ch == '.' and (cy, cx) not in seen]
+    assert not stranded, f'{name}: {len(stranded)} deck cells reached by no stair or lift (first {stranded[:3]})'
+    return {'walk': rows, 'height': int(deck['height']),
+            'connectors': [{'kind': c['kind'], 'bottom': list(c['bottom']), 'top': list(c['top'])} for c in conns]}
 
 
 # Buildings whose door faces the viewer, and where the door sits across the sprite
@@ -917,10 +953,22 @@ def export(built: dict):
         lines.append(f"    walk: {json.dumps([rle(r) for r in z['walk']])}.map(unrle),")
         lines.append(f"    stands: {json.dumps({k: list(v) for k, v in z['stands'].items()})},")
         lines.append('  },')
+    decks = {zid: z['deck'] for zid, z in built.items() if z.get('deck')}
     import world_lint
     placement = {k: t for t, ks in (('floating', world_lint.FLOATING), ('wet', world_lint.WET),
                                      ('supported', world_lint.SUPPORTED), ('overhead', OVERHEAD)) for k in sorted(ks) if k in used}
     lines += [
+        '};',
+        '/** A zone\'s upper walk level (docs/vision/two-level-walk.md): its walk rows in the coordinates of the',
+        ' *  ground it stands over, how high it is drawn above that ground, and the stairs, ramps and lifts',
+        ' *  joining it to the ground (bottom on the ground\'s walk, top on the deck\'s). */',
+        'export type ZoneDeck = {',
+        '  height: number;',
+        '  walk: readonly string[];',
+        "  connectors: readonly { kind: 'stair' | 'ramp' | 'lift'; bottom: readonly [number, number]; top: readonly [number, number] }[];",
+        '};',
+        'export const zoneDecks: Partial<Record<ZoneId, ZoneDeck>> = {',
+        *[f"  {zid}: {{ height: {d['height']}, walk: {json.dumps([rle(r) for r in d['walk']])}.map(unrle), connectors: {json.dumps(d['connectors'])} }}," for zid, d in decks.items()],
         '};',
         '/** What each walk cell of a zone is (docs/vision/world-rules.md, section 1): \'~\' water, \'!\' lava,',
         ' *  \'^\' wall or cliff, \'=\' path, \'.\' ground. Rows are run-length encoded like the walk rows. */',

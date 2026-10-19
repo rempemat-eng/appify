@@ -61,3 +61,13 @@ An actor on level 1 draws after everything on level 0, whatever its y; an actor 
 2. The two-level graph in `region-walk.ts` with tests (stairs, the neutral cell, lifts by tap only, residents on their own level).
 3. Drawing in `atlas-walk.tsx` (the order above, the darkened street, fading roofs).
 4. One deck in the city's first zone as the proof (Claude C), then the rest of the city.
+
+## Status (19 Oct)
+
+Built, with nothing using it yet (no zone has a deck, so every region walks on one level exactly as before):
+
+- **Generator**: a zone function may return a fifth value, its deck: `return cv, objects, stands, blocked, {'walk': deck_pixels, 'height': 28, 'connectors': [{'kind': 'stair', 'bottom': (x, y), 'top': (x, y)}]}`. `zones.deck_grid()` turns it into walk rows and checks it: at least one connector, every connector's bottom on open ground and its top on the deck, every deck cell reached from a connector. It is exported as `zoneDecks` in `lib/zone-maps.ts`.
+- **Walking**: `regionLevels()` in `lib/region-walk.ts` lays the deck level beside the ground level, `offset` pixels to the right, with each stair and ramp a link between a ground cell and a deck cell; `makeWalkGrid` (lib/garden-path.ts) walks across links and keeps both ends of each in the path. Tested in `lib/region-walk.test.ts`.
+- **Drawing** (`components/atlas-walk.tsx`): the feet are drawn in screen terms (a deck point raised by its deck's height), so a stair is walked as one straight climb on screen; on a deck the companion draws above the ground and the deck; a tap picks the deck where a deck's surface is drawn under the finger.
+
+Still to do: lifts (a tap on the lift, then the ride; they are exported but not walked yet), the deck's surface and shadow drawn by the renderer from its walk rows (until then the zone draws its deck as props, overhead), residents on decks, the deck checks in the world lint, and the first deck in the city (Claude C).

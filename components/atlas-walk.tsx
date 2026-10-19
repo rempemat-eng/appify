@@ -39,6 +39,7 @@ import {
   cellsNear,
   regionBounds,
   regionTiles,
+  regionLevels,
   regionWalk,
   tileAt,
   tileOrigin,
@@ -727,15 +728,37 @@ export function AtlasWalk({
             const [sx, sy] = Object.values(zoneMaps[startTile.id].stands)[0];
             return { x: o.x + sx, y: o.y + sy };
           })();
+    // a region with decks walks on two levels laid side by side (two-level-walk.md)
+    const levels = walkRows ? null : regionLevels(region);
     return {
       start: first,
-      walk: makeWalkGrid(walkRows ?? regionWalk(region), {
+      levels,
+      walk: makeWalkGrid(walkRows ?? levels?.rows ?? regionWalk(region), {
         cell: TILE.cell,
-        width: bounds.width,
+        width: levels ? bounds.width * 2 : bounds.width,
         start: first,
+        links: levels?.links,
       }),
     };
   }, [region, tiles, bounds.width, initial, walkRows]);
+  // Where a walk point is drawn: a point on the deck level is drawn over the ground it
+  // stands above, raised by the deck's height. (Identity where a region has no decks.)
+  const levels = grid.levels;
+  const toScreen = (p: Point): Point =>
+    levels && p.x >= levels.offset ? { x: p.x - levels.offset, y: p.y - levels.heightAt(p) } : p;
+  // and a tap on the drawn scene: on a deck if a deck's surface is drawn there
+  const fromScreen = (p: Point): Point => {
+    if (!levels) return p;
+    for (let h = 8; h <= 64; h += 4) {
+      const q = { x: p.x + levels.offset, y: p.y + h };
+      const c = grid.walk.toCell(q);
+      if (grid.walk.walkable(c.cx, c.cy) && levels.heightAt(q) === h) return q;
+    }
+    return p;
+  };
+  const onDeck = useSharedValue(0);
+  // the walk's own position under where the feet are drawn (on the deck while on it)
+  const logicalOf = (drawn: Point): Point => (levels && onDeck.get() ? fromScreen(drawn) : drawn);
 
   const ownX = useSharedValue(grid.start.x);
   const ownY = useSharedValue(grid.start.y);
@@ -860,13 +883,17 @@ export function AtlasWalk({
     if (follow) return;
     cancelAnimation(ownX);
     cancelAnimation(ownY);
-    const from0 = { x: ownX.get(), y: ownY.get() };
+    // (the feet are drawn in screen terms; the walk's own position may be on the deck)
+    const from0 = logicalOf({ x: ownX.get(), y: ownY.get() });
     pos.current = from0;
-    const path = grid.walk.findPath(from0, goal);
-    if (!path.length) return;
+    const logical = grid.walk.findPath(from0, goal);
+    if (!logical.length) return;
+    const lastLogical = logical[logical.length - 1];
+    const path = logical.map(toScreen);
     const end = path[path.length - 1];
     const arrive = () => {
-      pos.current = end;
+      pos.current = lastLogical;
+      onDeck.set(levels && lastLogical.x >= levels.offset ? 1 : 0);
       setWalking(false);
       setFeet(end);
       settleSquash();
@@ -874,6 +901,9 @@ export function AtlasWalk({
       if (tile) setHere((prev) => tileWithHysteresis(region, prev, end.x, end.y)?.id ?? prev);
       calls.current.onSettle?.(end);
     };
+    // on a deck the feet draw above everything on the ground for the whole walk once the
+    // first step is on it (a walk down a stair keeps it until it arrives)
+    if (levels && logical.some((p) => p.x >= levels.offset)) onDeck.set(1);
     // face the way each leg goes; a leg that only goes up or down keeps the facing
     const firstFacing = legFacing(from0, path[0]) ?? legFacing(from0, end);
     if (firstFacing) setFacing(firstFacing);
@@ -941,7 +971,7 @@ export function AtlasWalk({
     interactive && active && !follow,
     (dx, dy) => {
       keysHeld.current = true;
-      const from = { x: ownX.get(), y: ownY.get() };
+      const from = logicalOf({ x: ownX.get(), y: ownY.get() });
       // well past the next tick, so a held key never arrives (and re-renders) between ticks
       const reach = KEY_SPEED * (STEP_MS / 1000) * 2.5;
       for (const [ax, ay] of keySteps(dx, dy)) {
@@ -1063,7 +1093,8 @@ export function AtlasWalk({
       { translateX: Math.round((px.value + ox) * u - petPx / 2) },
       { translateY: Math.round((py.value + oy) * u - petPx * (30 / 32)) },
     ],
-    zIndex: Math.round(py.value + oy),
+    // on a deck, above the ground and the deck itself (two-level-walk.md, drawing order)
+    zIndex: Math.round(py.value + oy) + (onDeck.value ? 300000 : 0),
   }));
 
   // Mount the zones the camera can see from where the feet are, and a margin round them
@@ -1178,7 +1209,7 @@ export function AtlasWalk({
     const at = { x: (locationX + c.x) / u, y: (locationY + c.y) / u };
     const used = onTap?.(at);
     if (used === true || follow) return;
-    walkTo(used ? used : at);
+    walkTo(fromScreen(used ? used : at));
   };
 
   const pet = (shadow: boolean) =>
