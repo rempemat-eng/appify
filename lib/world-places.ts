@@ -206,7 +206,7 @@ export function exitWalk(exit: ExitId, gx: number, gy: number): { start: Point; 
 type PassEnd = PlaceDef & { side: 'east' | 'west' };
 /**
  * Where one region's edge walks on into another's: crossing is a walk, not a journey;
- * the scene fades and the companion walks on (app/world.tsx). None today: the pass from
+ * the scene fades and the companion walks on (app/(tabs)/world.tsx). None today: the pass from
  * Dust Gulch into the Scorched Pass became an ordinary border when the desert and the
  * fire country became one walk (Matt, 18 Oct 19:07). Kept for a crossing that has to
  * join two regions.

@@ -31,6 +31,9 @@ export default function TabLayout() {
         <Tabs.Screen name="missions" options={{ title: 'MISSIONS' }} />
         <Tabs.Screen name="arena" options={{ title: 'ARENA' }} />
         <Tabs.Screen name="shop" options={{ title: 'SHOP' }} />
+        {/* the world beyond the valley and the hut's inside, under the same HUD and
+            hotbar as the home hub (docs/vision/home-hub.md, phase 2); no tab of its own */}
+        <Tabs.Screen name="world" options={{ title: 'HOME', href: null }} />
       </Tabs>
       <GameHud />
       <GameMenus />

@@ -1,10 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ScrollView, View, useWindowDimensions } from 'react-native';
-import { Stack, router, useLocalSearchParams, useNavigation } from 'expo-router';
+import { router, useIsFocused, useLocalSearchParams, useNavigation } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Animated, { FadeIn } from 'react-native-reanimated';
 import { useReducedMotion } from '@/lib/motion';
-import { AtlasWalk, zoneNames, type WalkSpot } from '@/components/atlas-walk';
+import { AtlasWalk, type WalkSpot } from '@/components/atlas-walk';
 import { Journey } from '@/components/journey';
 import { usePixelUnit, PixelFrame } from '@/components/pixel-frame';
 import { PixelButton } from '@/components/game-ui';
@@ -30,8 +30,7 @@ import { restoreWorld } from '@/lib/world-save';
 import { useZoneAmbience } from '@/lib/sound';
 import { useUi } from '@/lib/ui';
 import { prefetchRegion } from '@/lib/zone-prefetch';
-import { WorldMap } from '@/components/world-map';
-import { mapRegionOrder as travelOrder, regionNames } from '@/lib/world-map';
+import { hotbarClearance, hudClearance } from '@/lib/layout';
 import { HUT_DOOR, type Point } from '@/lib/garden-path';
 import { DecoratePanel } from '@/components/decorate-panel';
 import {
@@ -86,7 +85,22 @@ const doorAt = (region: RegionId, at: Point): Point | null =>
  * a journey back to the valley lands there. Rings open their screen. Walking and
  * travelling are free: they only move the companion and record where it is.
  */
-export default function World() {
+/** The world tab: drawn only while it is the screen in front, and drawn afresh on every
+ *  visit, so each way in (a door, a journey, a place link) starts from its own spot and
+ *  nothing of the world runs behind the home hub (it lives in the tabs, home-hub.md
+ *  phase 2). */
+export default function WorldTab() {
+  const focused = useIsFocused();
+  const [visit, setVisit] = useState(0);
+  const was = useRef(false);
+  useEffect(() => {
+    if (focused && !was.current) setVisit((v) => v + 1);
+    was.current = focused;
+  }, [focused]);
+  return focused && visit > 0 ? <World key={visit} /> : null;
+}
+
+function World() {
   const params = useLocalSearchParams<{
     from?: string;
     place?: string;
@@ -174,7 +188,12 @@ export default function World() {
     walkWorld(opening.region, opening.at.x, opening.at.y, true, opening.at.level);
   }, [opening, walkWorld, handOff]);
   const [cardBox, setCardBox] = useState(0);
-  const [mapOpen, setMapOpen] = useState(false);
+  // (the map is the menu's now, over every screen: home-hub.md phase 2)
+  const mapOpen = useUi((s) => s.sheet === 'map');
+  const focused = useIsFocused();
+  // the HUD above and the hotbar below, as on every tab
+  const hudTop = hudClearance(insets.top);
+  const barBottom = hotbarClearance(insets.bottom);
   // Decorating the hut (C12): the keepsakes set out, the one in hand and where it was
   // last tapped. Only inside the hut, and never during a journey.
   const decor = useGame((s) => s.decor);
@@ -214,7 +233,6 @@ export default function World() {
   );
   const homeExtras = useMemo(() => decorExtras(decor.filter((p) => areaOf(p) === 'hut')), [decor]);
   // where the companion stands and which zones it has walked, for the map (only while it is open)
-  const worldSpot = useGame((s) => (mapOpen ? s.world : null));
   // a trip: the stop it left from, the stops it calls at (the destination last) and
   // which leg is playing
   const [trip, setTrip] = useState<{ from: StopId; legs: StopId[]; leg: number } | null>(() => {
@@ -425,7 +443,6 @@ export default function World() {
   if (handOff) return <View style={{ flex: 1, backgroundColor: '#1E1917' }} />;
   return (
     <View style={{ flex: 1, backgroundColor: '#1E1917' }}>
-      <Stack.Screen options={{ headerShown: false }} />
       <View style={{ width, height: viewH }}>
         {away ? (
           <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 }}>
@@ -457,10 +474,12 @@ export default function World() {
               }}
               // (never under the map or a journey: no walking, held keys included, behind them)
               interactive={!mapOpen && !trip}
-              showName={false}
+              active={focused}
+              // the place's name for a moment under the HUD, as in the home hub
+              nameTop={hudTop + 4}
               focusY={card || decorating ? 0.3 : 0.55}
               padBottom={
-                card || decorating ? Math.min(cardH, cardBox || cardH) + insets.bottom + 16 : 0
+                (card || decorating ? Math.min(cardH, cardBox || cardH) + 16 : 0) + barBottom
               }
               target={goal}
               markers={decorating ? undefined : placeMarkers(spawn.region, card)}
@@ -482,7 +501,7 @@ export default function World() {
               // full width on a phone; a readable column on a wide screen
               left: Math.max(8, (width - 560) / 2),
               right: Math.max(8, (width - 560) / 2),
-              bottom: insets.bottom + 8,
+              bottom: barBottom + 8,
               maxHeight: cardH,
             }}
           >
@@ -550,56 +569,11 @@ export default function World() {
             u={u}
             onArrive={legDone}
             onSkip={arrive}
-            insetTop={insets.top}
-            insetBottom={insets.bottom}
+            insetTop={hudTop}
+            insetBottom={barBottom}
           />
         )}
       </View>
-      {/* the bar floats over the world like the game's HUD (the journey has its own label) */}
-      {!trip && (
-        <View
-          pointerEvents="box-none"
-          style={{
-            position: 'absolute',
-            top: insets.top + 8,
-            left: 8,
-            right: 8,
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 8,
-          }}
-        >
-          <View style={{ width: 112 }}>
-            <PixelButton small light label="◀ GARDEN" onPress={() => goHome()} />
-          </View>
-          <PixelFrame
-            tone="paper"
-            style={{
-              flex: 1,
-              paddingVertical: 2 * u,
-              paddingHorizontal: 4 * u,
-              minHeight: 44,
-              justifyContent: 'center',
-            }}
-          >
-            <BodyText
-              numberOfLines={1}
-              style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 13 }}
-            >
-              {regionNames[spawn.region]}
-            </BodyText>
-            {/* (a place named like its region, the hut, is named once) */}
-            {zone && zoneNames[zone].toLowerCase() !== regionNames[spawn.region].toLowerCase() && (
-              <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
-                {zoneNames[zone]}
-              </BodyText>
-            )}
-          </PixelFrame>
-          <View style={{ width: 72 }}>
-            <PixelButton small light label="MAP" onPress={() => setMapOpen(true)} />
-          </View>
-        </View>
-      )}
       {foundNote && !trip && !mapOpen && (
         <Animated.View
           entering={reduced ? undefined : FadeIn.duration(240)}
@@ -607,7 +581,7 @@ export default function World() {
           accessibilityLiveRegion="polite"
           style={{
             position: 'absolute',
-            top: insets.top + 8 + 52,
+            top: hudTop + 36,
             left: Math.max(16, (width - 420) / 2),
             right: Math.max(16, (width - 420) / 2),
             alignItems: 'center',
@@ -619,23 +593,6 @@ export default function World() {
             </BodyText>
           </PixelFrame>
         </Animated.View>
-      )}
-      {mapOpen && !trip && (
-        <WorldMap
-          regions={travelOrder.map((id) => ({ id, name: regionNames[id] }))}
-          current={spawn.region}
-          here={
-            worldSpot && worldSpot.region === spawn.region
-              ? { x: worldSpot.x, y: worldSpot.y }
-              : spawn.at
-          }
-          visited={worldSpot?.visited ?? noZones}
-          width={width}
-          height={height}
-          insetTop={insets.top}
-          insetBottom={insets.bottom}
-          onClose={() => setMapOpen(false)}
-        />
       )}
     </View>
   );

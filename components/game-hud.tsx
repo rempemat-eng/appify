@@ -300,12 +300,15 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
     if (!route) return null;
     const meta = tabs[route.name] ?? { label: route.name.toUpperCase(), icon: 'home' as const };
     const focused = state.index === index;
+    // (the world beyond the valley is part of HOME: its tab stays lit there, and a tap
+    // on it goes back to the home hub)
+    const lit = focused || (route.name === 'index' && state.routes[state.index]?.name === 'world');
     return (
       <Pressable
         key={route.key}
         accessibilityRole="tab"
-        accessibilityState={{ selected: focused }}
-        aria-selected={focused}
+        accessibilityState={{ selected: lit }}
+        aria-selected={lit}
         accessibilityLabel={meta.label}
         onPress={() => {
           const event = navigation.emit({
@@ -326,7 +329,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
           gap: u,
         }}
       >
-        {focused ? (
+        {lit ? (
           <FrameShape tone={frameTones.leaf} unit={u} />
         ) : (
           <FrameFill fill={layers.well} outline={c.outline} inset />
@@ -334,10 +337,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
         <PixelIcon name={meta.icon} size={iconSize.medium(u)} />
         <Text
           numberOfLines={1}
-          style={[
-            type.label,
-            { fontSize: 10, lineHeight: 12, color: focused ? c.buttonInk : c.ink },
-          ]}
+          style={[type.label, { fontSize: 10, lineHeight: 12, color: lit ? c.buttonInk : c.ink }]}
         >
           {meta.label}
         </Text>
