@@ -212,11 +212,144 @@ def sea_turtle() -> Canvas:
     return cv
 
 
+def pandanus() -> Canvas:
+    """A screwpine of the sandy coasts, 44 x 58: a slim ringed trunk standing on a cone
+    of stilt roots, a ragged crown of long strap leaves that droop at their tips."""
+    w, h = 44, 58
+    cv = Canvas(w, h, pad=PAD)
+    cx = w // 2
+    bark = ['#4A3E34', '#6E6052', '#948470', '#B4A48C']
+    for y in range(22, h - 10):  # the trunk, ringed with old leaf scars
+        lean = int((y - 22) * 0.12)
+        for dx in range(-2, 2):
+            c = bark[2] if dx < 0 else bark[1]
+            if y % 4 == 0:
+                c = bark[0] if dx >= 0 else bark[1]
+            cv.set(cx + dx + lean, y, c)
+    base = cx + int((h - 32) * 0.12)
+    for k in range(-3, 4):  # stilt roots splaying into the sand
+        if k == 0:
+            continue
+        for t in range(12):
+            x = base + int(k * t * 0.55)
+            y = h - 12 + t
+            cv.set(x, y, bark[3] if k < 0 else bark[1])
+            if t % 4 == 0:
+                cv.set(x, y, bark[0])
+    order = sorted(range(14), key=lambda k: math.sin(2 * math.pi * k / 14))  # back to front
+    for k in order:
+        a = 2 * math.pi * k / 14 + 0.3
+        lit = math.cos(a) < 0.2 and math.sin(a) < 0.6
+        L = 15 + int(noise2(k, 3, 41) * 6)
+        for t in range(L):
+            x = cx + math.cos(a) * t
+            y = 20 + math.sin(a) * t * 0.5 + (t * t) * 0.035  # drooping at the tip
+            c = JUNGLE[4] if lit and t % 5 == 0 else JUNGLE[3] if lit else JUNGLE[2] if math.sin(a) > 0 else JUNGLE[1]
+            cv.set(int(x), int(y), c)
+            cv.set(int(x), int(y) + 1, JUNGLE[1] if not lit else JUNGLE[2])
+    for (x, y) in disc(cx, 20, 2.4):
+        cv.set(x, y, JUNGLE[1])
+    for (fx, fy) in ((cx - 3, 24), (cx + 2, 25)):  # a hanging fruit, like a pine cone
+        for (x, y) in disc(fx, fy, 2.2):
+            cv.set(x, y, GOLD[3] if (x - fx) + (y - fy) < 0 else GOLD[2])
+    return cv
+
+
+def banana() -> Canvas:
+    """A clump of wild banana, 40 x 48: two green stems and broad paddle leaves, one of
+    them torn by the wind, a flower bud hanging purple under the crown."""
+    w, h = 40, 48
+    cv = Canvas(w, h, pad=PAD)
+    for sx in (17, 23):  # the stems
+        for y in range(24, h):
+            cv.set(sx, y, JUNGLE[3] if sx == 17 else JUNGLE[2])
+            cv.set(sx + 1, y, JUNGLE[2] if sx == 17 else JUNGLE[1])
+    leaves = [(-1, 16, 17, -0.7), (1, 18, 18, -0.4), (-1, 26, 15, 0.45), (1, 27, 15, 0.6), (0, 16, 12, -1.2)]
+    for k, (side, ly, L, tilt) in enumerate(leaves):
+        x0 = 20
+        for t in range(L):
+            x = x0 + side * t if side else x0 + int(t * 0.2)
+            y = ly + int(t * tilt * 0.6) - (0 if side else t)
+            half = 5.2 * math.sin(math.pi * (t + 1) / (L + 1)) + 0.6
+            for d in range(-int(half), int(half) + 1):
+                if k == 2 and d > 0 and t % 3 == 0:
+                    continue  # the torn leaf
+                lit = d < 0
+                cv.set(int(x), int(y + d), JUNGLE[4] if lit and abs(d) == int(half) else JUNGLE[3] if lit else JUNGLE[2])
+            cv.set(int(x), int(y), JUNGLE[1])  # the midrib
+    for (x, y) in oval(25, 34, 2, 3):  # the bud
+        cv.set(x, y, '#6A3A5A' if x < 25 else '#4A2A44')
+    return cv
+
+
+def bird_of_paradise() -> Canvas:
+    """A clump of bird-of-paradise, 30 x 26: stiff blue-green leaves and three flowers,
+    orange crests on beaked purple bracts."""
+    cv = Canvas(30, 26, pad=PAD)
+    BG = ['#1E3A34', '#2E5A4E', '#4A7E6A', '#7AAE90']
+    for k, (a, L) in enumerate(((-1.9, 14), (-1.3, 16), (-0.9, 12), (-2.3, 12), (-1.6, 18))):
+        for t in range(L):
+            x, y = 15 + math.cos(a) * t, 24 + math.sin(a) * t
+            for d in (-1, 0, 1):
+                cv.set(int(x) + d, int(y), BG[3] if d < 0 and t % 2 else BG[2] if d <= 0 else BG[1])
+    for (fx, fy) in ((8, 8), (20, 5), (24, 12)):
+        for t in range(6):  # the beak
+            cv.set(fx + t, fy + 2, '#5A3A6A' if t < 4 else '#3A2A4A')
+        for t in range(4):  # the crest
+            cv.set(fx + 1 + t, fy + 1 - t // 2, RED[4] if t % 2 else GOLD[4])
+            cv.set(fx + 1 + t, fy - t // 2, GOLD[3])
+        cv.set(fx + 4, fy + 1, '#4A6AB8')  # a blue tongue
+    return cv
+
+
+def crab() -> Canvas:
+    """A small red crab on the sand, 12 x 8, claws raised."""
+    cv = Canvas(12, 8, pad=PAD)
+    for (x, y) in oval(6, 4.5, 3.5, 2.4):
+        cv.set(x, y, RED[4] if y < 4 else RED[3])
+    for (x, y) in ((1, 2), (2, 1), (10, 2), (9, 1)):
+        cv.set(x, y, RED[4])
+    for (x, y) in ((1, 6), (2, 7), (10, 6), (9, 7), (3, 7), (8, 7)):
+        cv.set(x, y, RED[2])
+    cv.set(5, 3, '#1E1917'); cv.set(7, 3, '#1E1917')
+    return cv
+
+
+def rain_shelter() -> Canvas:
+    """A walkers' rain shelter on the upland, 60 x 56: four timber posts under a
+    shingled roof, a plank bench inside, a water jug on it. Modest and made here, not
+    borrowed from anyone's temple or resort."""
+    w, h = 60, 56
+    cv = Canvas(w, h, pad=PAD)
+    ridge, apex_y, eave_y = 29.5, 6, 26
+    topdown_roof(cv, ridge, apex_y, eave_y, 2, 58, SLATE, seed=911, moss=JUNGLE)
+    for y in range(eave_y + 1, h - 4):  # the dark under the roof
+        for x in range(6, 54):
+            cv.set(x, y, WOOD[0] if y < eave_y + 5 else '#2A3A2A')
+    for x in range(10, 50):  # the bench
+        for y in range(h - 16, h - 12):
+            cv.set(x, y, WOOD[4] if y == h - 16 else WOOD[3] if (x % 6) else WOOD[1])
+        cv.set(x, h - 12, WOOD[1])
+    for lx in (14, 44):
+        for y in range(h - 12, h - 7):
+            cv.set(lx, y, WOOD[1])
+    for (x, y) in oval(38, h - 19, 2.5, 3):  # a water jug
+        cv.set(x, y, '#B86A44' if x < 38 else '#8A4A30')
+    for px_ in (4, 54):  # posts, lit on their left
+        for y in range(eave_y - 2, h - 2):
+            cv.set(px_, y, WOOD[3]); cv.set(px_ + 1, y, WOOD[2]); cv.set(px_ + 2, y, WOOD[1])
+        cv.rect(px_ - 1, h - 3, 5, 2, STONE[2])  # its stone footing
+    detail.overhang_shadow(cv, 6, 54, eave_y + 1, lambda x: 3, k=2, cap=1)
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'jungle_tree': jungle_tree(), 'tree_fern': tree_fern(), 'monstera': monstera(), 'hibiscus': hibiscus(),
         'boathouse': boathouse(), 'island_ferry': ferry(), 'canoe': canoe(), 'black_rock': black_rock(True),
         'black_rock_small': black_rock(False), 'sea_turtle': sea_turtle(),
+        'pandanus': pandanus(), 'banana': banana(), 'bird_of_paradise': bird_of_paradise(), 'crab': crab(),
+        'rain_shelter': rain_shelter(),
     }
 
 

@@ -29,6 +29,7 @@ import garden_props as gp  # noqa: E402
 import style  # noqa: E402
 import world_props as wp  # noqa: E402
 import worlds  # noqa: E402
+import ground  # noqa: E402
 from materials import G, P, STONE, WOOD, SLATE, RED, MATERIALS  # noqa: E402
 import valley_props as vp  # noqa: E402
 import steampunk_props as sp  # noqa: E402
@@ -140,7 +141,7 @@ def paint_road(cv: Canvas, mask):
 
 def town(frame: int = 0):
     cv = Canvas(W, H)
-    worlds.grass(cv, frame)
+    ground.valley(cv, 'town', frame)  # one turf across the valley (ground.py)
     # the road from the garden gate, then cobbled streets and the paved square
     # the garden's main path (36 px wide, centred on x = 160) crosses the border unchanged
     road = worlds.thick([(160, -4), (160, 24)], 18, seed=0) | worlds.thick([(160, 20), (158, 60), (164, 130), (160, 240)], 15, seed=5)
@@ -428,7 +429,7 @@ def harbour(frame: int = 0):
     SAND, WTRm = MATERIALS['sand'], MATERIALS['water']
     BLEACHED = MATERIALS['bleached']
     cv = Canvas(W, H)
-    worlds.grass(cv, frame)
+    ground.valley(cv, 'harbour', frame)  # one turf across the valley (ground.py)
     # the water: the basin and the sea, deeper away from the shore
     shore_y = lambda x: 300 + int(math.sin(x / 40) * 4)  # noqa: E731  (the quay line)
     beach = {(x, y) for x in range(0, 130) for y in range(240, H) if x < 124 - (y - 240) * 0.38 + int(noise2(y // 9, 0, 291) * 6)}
@@ -601,7 +602,7 @@ def headland(frame: int = 0):
     and quiet: the valley's last place before the sea."""
     STONEm = MATERIALS['stone']
     cv = Canvas(W, H)
-    worlds.grass(cv, frame)
+    ground.valley(cv, 'headland', frame)  # one turf across the valley (ground.py)
 
     def edge_y(x):
         # the harbour's water meets the headland's west edge below y = 306 (seamless rule)
@@ -647,7 +648,7 @@ def riverside(frame: int = 0):
     shallows, a heron fishes, and stepping stones cross where it is still narrow."""
     WTRm, SAND = MATERIALS['water'], MATERIALS['sand']
     cv = Canvas(W, H)
-    worlds.grass(cv, frame)
+    ground.valley(cv, 'riverside', frame)  # one turf across the valley (ground.py)
     OFF = meadow.W  # this zone continues the garden's x axis
 
     def centre(x):
@@ -753,7 +754,7 @@ def park(frame: int = 0):
     and a willow; flower beds, clipped hedges, benches, lamps and the ice cream cart."""
     WTRm = MATERIALS['water']
     cv = Canvas(W, H)
-    worlds.grass(cv, frame)
+    ground.valley(cv, 'park', frame)  # one turf across the valley (ground.py)
     paths = worlds.thick([(-8, 300), (60, 300)], 13)  # the town's street, unchanged
     paths |= {(x, y) for (x, y) in oval(160, 190, 92, 52)} - {(x, y) for (x, y) in oval(160, 190, 74, 38)}
     paths |= worlds.thick([(60, 300), (160, 300), (160, 240)], 11, seed=27)
@@ -806,7 +807,7 @@ def ridge(frame: int = 0):
     SNOWm, STONEm = MATERIALS['snow'], MATERIALS['stone']
     cv = Canvas(W, H)
     alpine = ['#2F4E3E', '#4F7A5A', '#6A9468', '#78A06E', '#A3C38C']
-    worlds.grass(cv, frame, alpine)
+    ground.valley(cv, 'ridge', frame)  # one turf across the valley (ground.py)
     # the forest floor at the bottom, deepening into the garden's own treeline band
     treeline = meadow.draw_top_band()
     B = H - treeline.h
@@ -921,12 +922,8 @@ def halt(frame: int = 0):
     small farm: cabbages, wheat with a scarecrow, a pumpkin patch, haystacks and a red
     barn, reached by a track down the east side."""
     cv = Canvas(W, H)
-    worlds.grass(cv, frame)
-    # the woodland's forest floor reaches down along the top edge
-    for y in range(0, 60):
-        for x in range(W):
-            if noise2(x, y, 451) < 1 - y / 60:
-                cv.set(x, y, FOREST_FLOOR[2] if (x + y) % 3 else FOREST_FLOOR[1])
+    ground.valley(cv, 'halt', frame)  # one turf across the valley (ground.py)
+    # (the woodland's forest floor reaches down over the top: ground.py blends it)
     lane = worlds.thick([(W + 12, 300), (W - 12, 300)], 11) | worlds.thick([(W - 10, 300), (230, 296), (190, 290)], 11, seed=31)
     paint_road(cv, lane | {(x, y) for (x0, y) in lane if x0 == W - 1 for x in range(W, W + 12)})
     # the platform: dressed slabs with a white edge over the line
@@ -1014,7 +1011,7 @@ def woodland(frame: int = 0):
     a fairy ring, ferns, fallen logs and a hidden bench."""
     WTRm, GOLDm = MATERIALS['water'], MATERIALS['gold']
     cv = Canvas(W, H)
-    worlds.grass(cv, frame, FOREST_FLOOR)  # shaded forest floor
+    ground.valley(cv, 'woodland', frame)  # one turf across the valley (ground.py)
     for i in range(260):  # leaf litter
         x, y = int(noise2(i, 0, 421) * W), int(noise2(i, 1, 421) * H)
         cv.set(x, y, ('#8A6A3E', '#B8945A', '#6E8A3E')[i % 3])
@@ -1089,12 +1086,6 @@ def woodland(frame: int = 0):
             if k == bh - 1:
                 c = STONE[1]
             cv.set(x, y, c)
-    # near the garden the forest floor brightens into the garden's own grass
-    for y in range(H):
-        for x in range(W - 56, W):
-            t = (x - (W - 56)) / 56
-            if noise2(x, y, 427) < t and cv.get(x, y)[:3] in DARK_FLOOR:
-                cv.set(x, y, G[DARK_FLOOR.index(cv.get(x, y)[:3])])
     # dappled light through the canopy
     for i in range(14):
         lx, ly = int(noise2(i, 0, 426) * W), int(noise2(i, 1, 426) * H)
