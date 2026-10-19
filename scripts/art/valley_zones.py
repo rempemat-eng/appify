@@ -311,7 +311,7 @@ def town(frame: int = 0):
     # the garden's main path (36 px wide, centred on x = 160) crosses the border unchanged
     road = worlds.thick([(160, -4), (160, 24)], 18, seed=0) | worlds.thick([(160, 20), (158, 60), (164, 130), (160, 240)], 15, seed=5)
     road |= {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
-    square = {(x, y) for (x, y) in oval(SQUARE[0], SQUARE[1], 118, 62)}
+    square = blob(SQUARE[0], SQUARE[1], 118, 62, seed=301, rough=0.07)  # laid by hand along the houses, not a compass ellipse
     east = worlds.thick([(250, 300), (W + 4, 300)], 13)
     # the lane west to the Valley Halt, at the same height and width as the halt's lane
     west = worlds.thick([(-12, 300), (12, 300)], 11) | worlds.thick([(10, 300), (76, 296)], 11, seed=8)
@@ -345,19 +345,23 @@ def town(frame: int = 0):
             cv.set(x, y, STONE[3])
     # the sparring ring: trodden earth edged with stones
     rcx, rcy = 76, 486
-    ring = oval(rcx, rcy, 52, 24)
+    ring = blob(rcx, rcy, 52, 24, seed=486, rough=0.1)
     for (x, y) in ring:
         cv.set(x, y, P[3] if smooth_noise(x, y, 6, 9) > 0.55 else P[2])
     detail.grass_edge(cv, set(ring), G, P, seed=35)
+    def ring_r(a):  # the ring's edge at angle a: follows the trodden earth, not a compass
+        return 1 + 0.07 * (smooth_noise(int(a * 40), 0, 23, 487) - 0.5) * 2
     for k in range(26):
         a = 2 * math.pi * k / 26
-        detail.pebble(cv, int(rcx + 54 * math.cos(a)), int(rcy + 26 * math.sin(a)), STONE, big=k % 2 == 0)
-    # a rope run from post to post round the ring (posts placed by zones.ring_fence),
-    # sagging between them at about knee height, open at the north where the path comes in
+        detail.pebble(cv, int(rcx + 54 * ring_r(a) * math.cos(a)), int(rcy + 26 * ring_r(a) * math.sin(a)), STONE, big=k % 2 == 0)
+    # posts round the ring on its edge, a rope run from post to post sagging between them
+    # at about knee height, and one gap only, a post's width either side of the path
+    # coming in at the north (Claude A after #70)
+    NP = 36
     posts = []
-    for k in range(20):
-        a = 2 * math.pi * k / 20
-        posts.append(None if abs(a - 1.5 * math.pi) < 0.35 else (int(rcx + 58 * math.cos(a)), int(rcy + 28 * math.sin(a))))
+    for k in range(NP):
+        a = 2 * math.pi * k / NP
+        posts.append(None if k == 27 else (int(rcx + 58 * ring_r(a) * math.cos(a)), int(rcy + 28 * ring_r(a) * math.sin(a))))
     for p0, p1 in zip(posts, posts[1:] + posts[:1]):
         if p0 is None or p1 is None:
             continue
@@ -367,8 +371,10 @@ def town(frame: int = 0):
             t = i / n
             x = round(x0 + (x1 - x0) * t)
             y = round(y0 + (y1 - y0) * t - 9 + 2.5 * math.sin(math.pi * t))  # 9 px up its posts, sagging
-            cv.set(x, y, '#D9C9A0')
-            cv.set(x, y + 1, '#8E7650')
+            cv.set(x, y - 1, '#E2D2A6')  # the rope's lit top
+            cv.set(x, y, '#B89A62')
+            cv.set(x, y + 1, '#6E5434')  # its shaded underside
+            style.darken(cv, x + 1, y + 4)  # and its shadow on the ground below
     for fb in ((258, 196, 40, 16, 2),):  # a planter by the red house's door
         meadow.flower_planter(cv, *fb)
     objects = [
@@ -391,7 +397,7 @@ def town(frame: int = 0):
         # the second street of houses, east
         ('house-blue', 'house_blue', 236, 344), ('pot-hb', 'potted_plant', 288, 404),  # beside the door, off its lane
         # the ring and its spectators
-        ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 130, 440),
+        ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 8, 430),
         # trees framing the road south (no hedge along the border: open land runs on)
         ('tree-s1', 'tree_small', 20, 500), ('bush-s2', 'bush', 250, 540), ('tree-w1', 'tree', 2, 196),
         ('house-s1', 'house_red', 188, 444), ('pot-s1', 'potted_plant', 252, 504), ('tree-e1', 'tree', 280, 446),
@@ -400,7 +406,7 @@ def town(frame: int = 0):
         ('tree-x1', 'tree_small', -22, 120), ('tree-x2', 'tree', 284, 112),
         ('cat', 'cat', 182, 352),
     ]
-    ring_fence(objects, rcx, rcy, 58, 28)
+    objects += [(f'ring-post-{k}', 'ring_post', p[0] - 3, p[1] - 14) for k, p in enumerate(posts) if p]
     stands = {
         'garden': (160, 18), 'library': (70, 238), 'well': (160, 316), 'stall': (60, 424),
         'ring': (76, 486), 'park': (306, 300), 'harbour': (160, 540), 'halt': (8, 300),
@@ -799,7 +805,7 @@ def harbour(frame: int = 0):
         ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
         ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
         # the beach: nets drying, boats hauled up, chairs, driftwood
-        ('nets-1', 'net_rack', 16, 236), ('nets-2', 'net_rack', 16, 290), 
+        ('nets-1', 'net_rack', 16, 236), ('pots-3', 'lobster_pots', 22, 300), 
         ('chair-1', 'deck_chair', 30, 344), ('chair-2', 'deck_chair_b', 50, 352),
         # the boats: each at a jetty's end, one on its buoy in the basin, a sail beyond
         ('boat-1', 'boat_blue', 83, 318), ('boat-2', 'boat_red', 248, 348), ('boat-3', 'boat_blue', 150, 430),
@@ -845,7 +851,7 @@ def headland(frame: int = 0):
     path = worlds.thick([(-6, 110), (58, 112)], 8) | worlds.thick(
         [(56, 112), (66, 150), (80, 222), (140, 300), (176, 372), (198, 428), (226, 430)], 8, seed=19)
     path |= worlds.thick([(118, 280), (100, 340), (112, 404), (120, 430)], 6, seed=23)
-    path |= worlds.thick([(54, 168), (100, 162), (146, 146)], 5, seed=998)  # a spur from the path to the fold's gate
+    path |= worlds.thick([(88, 240), (150, 216), (210, 196), (214, 186)], 6, seed=998)  # a spur from the path up to the fold's gate
     lay_road(cv, (path - river) | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)}, seed=76,
              avoid=river | sea_px | face | {(x + a, y + b) for (x, y) in poly_field([(142, 76), (280, 58), (294, 168), (152, 188)], seed=996)
                                              for (a, b) in ((0, 0), (-3, 0), (3, 0), (0, -3), (0, 4))},
@@ -860,35 +866,40 @@ def headland(frame: int = 0):
     # (a four-sided fold walled along the lie of the down, not a compass ellipse)
     fold = poly_field([(142, 76), (280, 58), (294, 168), (152, 188)], seed=996)
     posts = []
-    wall = drystone_loop(cv, fold, gap=(146, 146, 8), seed=997, ends=posts)
+    # its gateway in the south wall, which the camera sees face on (in the west wall,
+    # seen edge-on, the piers stacked into one pillar: Claude A after #70)
+    wall = drystone_loop(cv, fold, gap=(214, 180, 7), seed=997, ends=posts)
     # the gateway's piers: squared stone a little taller than the wall (Claude A after #64:
     # the 26 px gateposts read as chimneys over a wall this low), each with a capstone
     for (px, py) in posts:
-        pier = {(x, y) for x in range(px - 2, px + 3) for y in range(py - 4, py + 6)}
+        pier = {(x, y) for x in range(px - 2, px + 3) for y in range(py - 9, py + 6)}
         for (x, y) in pier:
             c = STONE[3] if x < px + 2 else STONE[1]
-            if y == py - 4:
+            if y == py - 9:
                 c = STONE[4]  # the capstone's lit top
-            elif y == py - 3:
+            elif y == py - 8:
                 c = STONE[2]
             elif (y - py) % 3 == 0:
                 c = STONE[1]  # a joint between courses
             cv.set(x, y, c)
-        for y in range(py - 3, py + 7):
+        for y in range(py - 8, py + 7):
             style.darken(cv, px + 3, y)  # its shadow to the right
         wall |= pier
     objects = [
         ('tower', 'lookout_tower', 198, 300),
         ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 210, 150),
         ('sheep-4', 'sheep_left', 262, 92),
-        ('hive-1', 'beehive', 108, 194), ('hive-2', 'beehive', 128, 202),
+        # the gate (Claude B's field_gate) hung on the west pier and shut against the east
+        # one, its foot on the piers' foot row
+        *([('fold-gate', 'field_gate', min(posts)[0] + 2, min(posts)[1] + 6 - 25)] if posts else []),
+        ('hive-1', 'beehive', 100, 112), ('hive-2', 'beehive', 120, 106),  # in the lee of the fold's west wall
         ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
         # the down falls to trees on the east, running on into the woods beyond
-        ('pine-e1', 'pine', 284, 300), ('tree-e2', 'tree', 256, 372), ('pine-e3', 'pine', 284, 440),
+        ('pine-e1', 'pine', 280, 296), ('tree-e2', 'tree', 252, 376), ('tree-e3', 'tree_small', 272, 452), ('bush-e4', 'bush', 292, 360),
     ]
     blocked = sea_px | face | wall | talus | (river - bridge)
-    stands = {'harbour': (14, 112), 'tower': (228, 430), 'bench': (124, 440), 'down': (150, 280), 'fold': (144, 146)}
+    stands = {'harbour': (14, 112), 'tower': (228, 430), 'bench': (124, 440), 'down': (150, 280), 'fold': (212, 198)}
     return cv, objects, stands, blocked
 
 
@@ -913,8 +924,8 @@ def drystone_loop(cv: Canvas, field: set, gap=(0, 0), seed: int = 0, ends=None) 
     else:
         line = [p for i, p in enumerate(order) if not (gap[0] <= i < gap[1])]
     top = set()
-    for (x, y) in line:
-        top |= {(x + dx, y + dy) for dx in (-1, 0, 1) for dy in (-1, 0, 1)}
+    for (x, y) in line:  # a wall about five stones' width across its top
+        top |= {(x + dx, y + dy) for dx in range(-2, 3) for dy in range(-2, 2) if dx * dx + dy * dy <= 5}
     wall = set(top)
     for (x, y) in top:  # the wall's lit top: rough stones, two or three across
         st = noise2(x // 3, y // 2, seed)
@@ -925,16 +936,16 @@ def drystone_loop(cv: Canvas, field: set, gap=(0, 0), seed: int = 0, ends=None) 
     for (x, y) in top:  # its face toward us where it runs across the slope: two courses
         if (x, y + 1) in top:
             continue
-        for k in range(1, 5):
+        for k in range(1, 7):
             st = (x // 4 + (k // 2) * 2 + int(noise2(x // 4, k // 2, seed) * 2)) % 3
-            c = STONE[1] if k == 4 else STONE[0] if st == 0 and k % 2 else STONE[2] if st == 1 else STONE[3] if k == 1 else STONE[2]
-            if k in (2, 3) and noise2(x, y + k, seed + 1) > 0.92:
+            c = STONE[1] if k == 6 else STONE[0] if st == 0 and k % 2 else STONE[2] if st == 1 else STONE[3] if k == 1 else STONE[2]
+            if k in (2, 3, 4) and noise2(x, y + k, seed + 1) > 0.92:
                 c = '#B8B47A'  # lichen
             cv.set(x, y + k, c)
             wall.add((x, y + k))
-        style.darken(cv, x + 1, y + 5)
+        style.darken(cv, x + 1, y + 7)
         if noise2(x, y, seed + 3) > 0.7:
-            detail.grass_tuft(cv, x, y + 6, int(noise2(x, 1, seed) * 6), G, 2)
+            detail.grass_tuft(cv, x, y + 8, int(noise2(x, 1, seed) * 6), G, 2)
     return wall
 
 
@@ -950,6 +961,17 @@ def riverside(frame: int = 0):
     east under the forest. The miller works at the mill's door, the angler on the bank."""
     cv = Canvas(W, H)
     ground.valley(cv, 'riverside', frame)  # one turf across the valley (ground.py)
+    # the garden's forest-edge shade carried round its north-east corner into the first
+    # rows, thinning east (Claude B's garden_meadow.riverside_edge_shade, #75), so the
+    # garden|riverside seam meets in one tone
+    import garden_meadow
+    for y in range(0, 28):
+        for x in range(0, 90):
+            sh = garden_meadow.riverside_edge_shade(x, y)
+            if sh > 0.12:
+                style.darken(cv, x, y)
+            if sh > 0.55:
+                style.darken(cv, x, y, (0.78, 0.8, 0.84))
     river, deep, line = river_in('riverside')
     river, deep = set(river), set(deep)
     top = {}
@@ -1005,14 +1027,17 @@ def riverside(frame: int = 0):
             c = WTR[3]
         cv.set(x, y, c)
     towpath = {(x, y) for x in range(118, mx - 6) for y in range(mt - 20, mt - 6)}
-    path = worlds.thick([(22, 224), (70, 230), (118, mt - 11)], 8, seed=21)  # the lane to the mill (the garden has no path at this edge)
+    # the lane to the mill, in from the garden's footpath at the same rows and width at
+    # the seam (garden rows 112-119, Claude B's #75), then down the meadow to the mill yard
+    path = worlds.thick([(-8, 116), (14, 116)], 4) | worlds.thick([(12, 116), (34, 132), (56, 176), (74, 220), (118, mt - 11)], 7, seed=21)
     deck_x = min(x for (x, y) in river if y == 432) - 6
     path |= worlds.thick([(8, 402), (60, 398), (110, 418), (200, 430), (deck_x + 2, 432)], 8, seed=22)  # the west bank walk
     path |= blob(110, 280, 22, 8, seed=1406, rough=0.15)  # the mill yard by the sacks, where the lane comes in
-    path |= worlds.thick([(46, ys[0] - 2), (44, 262), (40, 230)], 5, seed=23)  # the stepping stones' path up to the lane
+    path |= worlds.thick([(46, ys[0] - 2), (48, 262), (70, 228)], 5, seed=23)  # the stepping stones' path up to the lane
     path |= worlds.thick([(46, ys[-1] + 2), (46, 360), (40, 398)], 5, seed=24)  # and down to the bank walk
     path |= worlds.thick([(180, 430), (186, 470)], 5, seed=25)  # to the bench on the bank above the bend
     path |= worlds.thick([(76, 236), (112, 196), (140, 164), (146, 152)], 6, seed=26)  # the cart track up to the hay field's gateway
+    path |= {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)}  # runs on across the seam
     lay_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff}, seed=77,
              avoid=river | bluff | race | towpath | stones)
     worlds.paint_paving(cv, towpath, seed=1405)
@@ -1030,9 +1055,15 @@ def riverside(frame: int = 0):
                 style.darken(cv, x, mt + k)
     for y in range(mt - 5, mt + 4):
         cv.set(157, y, STONE[1]); cv.set(206, y, STONE[0])
+    for px in (160, 180, 200):  # stone piers under its front, standing in the water
+        for y in range(mt + 5, mt + 10):
+            for x in range(px, px + 4):
+                cv.set(x, y, STONE[2] if x < px + 3 else STONE[0])
+            cv.set(px, y, STONE[3])
+        cv.hline(px - 1, mt + 10, 6, WTR[4])  # the ripple round its foot
     towpath |= landing
     # the fishing platform at the end of the bank walk, out over the slack water
-    deck = dipping_deck(cv, deck_x, 424, 24, 14, river)
+    deck = dipping_deck(cv, deck_x, 424, 16, 14, river)  # out to mid-stream, not across it
     for (rx, ry, n) in ((deck_x - 18, 460, 6), (300, 330, 5), (250, 520, 7), (120, 310, 5), (180, 318, 4)):
         if (rx, ry) in river or any((rx + d, ry) in river for d in (-3, 3)):
             reeds(cv, rx, ry, seed=rx, n=n)
@@ -1061,7 +1092,7 @@ def riverside(frame: int = 0):
     objects = [
         ('mill', 'water_mill', 140, mt - 104), ('willow-1', 'willow', 176, 300), ('willow-2', 'willow', 96, 470),
         ('heron', 'heron', heron_x, heron_y),  # wading in the shallows at the outer bank
-        ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 272, 150), ('bush-1', 'bush', 40, 500),
+        ('tree-1', 'tree', 2, 280), ('tree-2', 'tree_small', 272, 150), ('bush-1', 'bush', 40, 500),
         ('bench', 'bench', 168, 472),  # on the bank above the bend, looking down onto the water ('sack-1', 'sack', 146, mt - 28), ('barrel-m', 'barrel', 200, mt - 32),
         # old trees on the east bank, running on into the forest beyond
         ('pine-e2', 'pine', 280, 470), ('tree-e3', 'tree_autumn', 260, 226),
@@ -1069,7 +1100,7 @@ def riverside(frame: int = 0):
         ('bale-1', 'round_bale', 170, 78), ('bale-2', 'round_bale_side', 222, 116), ('bale-3', 'round_bale', 238, 82), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
     ]
     blocked = ((river | bluff | race) - stones - deck - towpath) | fold_wall
-    stands = {'garden-north': (8, 222), 'garden-south': (8, 402), 'mill': (190, mt - 14), 'hayfield': (138, 168), 'stones': (46, (ys[0] + ys[-1]) // 2),
+    stands = {'garden-north': (8, 116), 'garden-south': (8, 402), 'mill': (190, mt - 14), 'hayfield': (138, 168), 'stones': (46, (ys[0] + ys[-1]) // 2),
               'willows': (120, 426), 'platform': (deck_x + 8, 430)}
     return cv, objects, stands, blocked
 
@@ -1240,7 +1271,11 @@ def ridge(frame: int = 0):
     # on up through the gap to the Snow Saddle, and west across the terrace to Fir Hollow
     # the switchback up past the cabin's east end to the saddle (Codex: it "reveals the
     # cabin roof"), and west across the meadow to Fir Hollow at its port
-    trail |= gthick('ridge', [(150, -386), (236, -392), (262, -456), (258, -514), (204, -546), (204, -586)], 8)
+    trail |= gthick('ridge', [(150, -382), (214, -380), (262, -396), (274, -446), (258, -514), (204, -546), (204, -586)], 8)
+    # (the switchback runs clear of the cabin's east end, so it reads all the way down;
+    # Claude A after #70) and a trodden way from the stair top to the cabin's door
+    cdx, cdy = door_front('cabin', 150, 80)
+    trail |= worlds.thick([(156, 196), (cdx - 2, cdy + 12), (cdx, cdy + 2)], 6, seed=31)
     trail |= gthick('ridge', [(132, -240), (60, -228), (-10, -228)], 8)
     on_terrace = {(x, y) for (x, y) in trail if y < rim(x)}
     lay_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)},
@@ -1266,11 +1301,14 @@ def ridge(frame: int = 0):
     tc = {}
     for (x, y) in on_terrace:
         tc.setdefault(y, []).append(x)
+    def depth(x, y):  # how far in from the trodden way's edge (each branch on its own)
+        for r in (1, 2, 3):
+            if any((x + a, y + b) not in on_terrace for (a, b) in ((r, 0), (-r, 0), (0, r), (0, -r))):
+                return r
+        return 4
     for (x, y) in on_terrace:
-        xs = tc[y]
-        mid = (min(xs) + max(xs)) / 2
-        d = abs(x - mid) / max(1, (max(xs) - min(xs)) / 2)
-        c = SNOWm[0] if d < 0.35 and (x + y) % 3 else SNOWm[1] if d < 0.75 else SNOWm[2]
+        dd = depth(x, y)
+        c = SNOWm[0] if dd >= 3 and (x + y) % 3 else SNOWm[1] if dd >= 2 else SNOWm[2]
         cv.set(x, y, c)
     for y, xs in tc.items():
         if y % 6 == 0:
@@ -1305,7 +1343,7 @@ def ridge(frame: int = 0):
         ('pine-m4', 'pine', 60, 250), ('cairn-1', 'cairn', 100, 360),
         ('cairn-2', 'cairn', 176, 250), ('boulder-1', 'boulder', 20, 430), ('stone-1', 'stone', 280, 470),
         ('cabin', 'cabin', 150, 80), ('campfire', 'campfire', 110, 176), ('pine-t1', 'snowy_pine', 10, 120),
-        ('pine-t2', 'snowy_pine', 270, 120), ('pine-t3', 'snowy_pine', 40, 150),
+        ('pine-t3', 'snowy_pine', 40, 118),
         ('woodpile', 'woodpile', 122, 138), ('sled', 'sled', 214, 190), ('snowman', 'snowman', 90, 96),
         ('marmot', 'marmot_rock', 220, 470),
         ('cotton-1', 'cotton_grass', 196, 380), ('cotton-2', 'cotton_grass', 270, 398), ('cotton-3', 'cotton_grass', 210, 418),
