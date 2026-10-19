@@ -13,6 +13,7 @@ adds its own trail, bridges and props."""
 from __future__ import annotations
 
 import functools
+import os
 import math
 
 from PIL import Image, ImageDraw
@@ -481,6 +482,7 @@ def island() -> Island:
     _flank(cv, I, land)
     _falls(cv, I, pool)
     _heights(cv, I, land, river, d_fresh)
+    _ground_detail(cv, I, land, d_fresh)
 
     for i in range(N):
         if I.water[i] or islet[i]:
@@ -706,6 +708,29 @@ def _heights(cv: Canvas, I: Island, land: bytearray, river: bytearray, d_fresh: 
         _put(px, gx, gy, c)
         I.blocked[i] = 1
     I.zig = {(i % IW, i // IW) for i in range(sy0 * IW, (sy1 + 8) * IW) if zig[i] and land[i]}
+    # the basalt headland's spine between the landing and the cove (both at sea level):
+    # mossy outcrops of irregular width, open where the shore path rounds it
+    spine_top = int(Y2B[322]) + FACE + 2
+    for k, gy in enumerate(range(spine_top, 1066, 5)):
+        if 916 <= gy <= 994:
+            continue  # the shore path's way round (port 352-408)
+        cx = 320 + math.sin(gy / 31) * 3 + (noise2(k, 0, 1330) - 0.5) * 4
+        rx = 6 + smooth_noise(0, gy, 40, 1331) * 7 + noise2(k, 1, 1330) * 2
+        ry = 4 + noise2(k, 2, 1330) * 3
+        pts = {(x, y) for (x, y) in oval(cx, gy, rx, ry) if 0 <= y < IH and land[y * IW + x]
+               and not (916 <= y <= 994)}
+        if len(pts) > 8:
+            style.facet_stone(cv, pts, O, moss=TROPIC, seed=1332 + k, outline=None)
+            for (x, y) in pts:
+                I.blocked[y * IW + x] = 1
+        if noise2(k, 3, 1330) > 0.55 and not (906 <= gy <= 1004):
+            tmp = Canvas(24, 18)
+            shape = style.leafy(tmp, 12, 9, 4 + noise2(k, 4, 1330) * 3, 3, TROPIC, r=1.7, seed=1340 + k)
+            for (a, b) in shape:
+                x, y = int(cx) - 12 + a + int((noise2(k, 5, 1330) - 0.5) * 8), gy - 12 + b
+                if land[y * IW + x]:
+                    cv.set(x, y, tmp.get(a, b))
+                    I.blocked[y * IW + x] = 1
     # bushes leaning over each escarpment's lip, scree fallen at its foot
     near_stair = {(x, y) for (x0, y0, w, h) in stairs for y in range(y0 - 10, y0 + h + 10)
                   for x in range(x0 - 8, x0 + w + 8)}
@@ -763,6 +788,71 @@ def _heights(cv: Canvas, I: Island, land: bytearray, river: bytearray, d_fresh: 
     for i in range(sy0 * IW, (sy1 + 8) * IW):
         if zig[i] and land[i]:
             I.blocked[i] = 0
+
+
+def _ground_detail(cv: Canvas, I: Island, land: bytearray, d_fresh: bytearray):
+    """Small things on the open ground, in clusters of two or more pixels (art-style.md,
+    detail target): grass tufts and a few flowers on the turf, leaf litter and fern
+    sprigs on the forest floor, shells and wrack on the pale sand, pebbles on the black,
+    and the falls' spray drifting over the ground round the pool and the gorge."""
+    px = cv.img.load()
+    turf = {_rgb(c) for c in TROPIC[1:4]}
+    floor = {_rgb(c) for c in FLOOR[1:5]}
+    pale = {_rgb(c) for c in MATERIALS['sand']}
+    black = {_rgb(c) for c in BASALT_R[1:4]}
+    trail = I.trail
+
+    def clear(x, y, r=2):
+        for dy in range(-r, r + 1):
+            for dx in range(-r, r + 1):
+                j = (y + dy) * IW + x + dx
+                if not (0 <= x + dx < IW and 0 <= y + dy < IH) or I.blocked[j] or not land[j] or (x + dx, y + dy) in trail:
+                    return False
+        return True
+
+    for ty in range(4, IH - 4, 6):
+        for tx in range(4, IW - 4, 6):
+            x = tx + int(noise2(tx, ty, 1400) * 5)
+            y = ty + int(noise2(tx, ty, 1401) * 5)
+            r = noise2(tx, ty, 1402)
+            if not clear(x, y):
+                continue
+            c = px[x, y][:3]
+            if c in turf:
+                if r < 0.16:
+                    style.tuft(cv, x, y, TROPIC[1], TROPIC[4], tall=3 if r < 0.05 else 2)
+                elif r < 0.19:
+                    petal = ('#F2EEE6', '#E8C85A', '#E07A6A')[int(noise2(tx, ty, 1403) * 3)]
+                    cv.set(x, y, petal); cv.set(x + 1, y, petal); cv.set(x, y + 1, petal)
+                    cv.set(x + 1, y + 1, TROPIC[1])
+            elif c in floor:
+                if r < 0.12:  # fallen leaves
+                    leaf = '#7A6A3A' if noise2(tx, ty, 1404) > 0.5 else '#5E5A2E'
+                    cv.set(x, y, leaf); cv.set(x + 1, y, leaf); cv.set(x + 1, y + 1, FLOOR[0])
+                elif r < 0.2:  # a fern sprig
+                    for d in range(3):
+                        cv.set(x - d, y - d, FLOOR[4] if d else FLOOR[3]); cv.set(x + d, y - d, FLOOR[3])
+                    cv.set(x, y + 1, FLOOR[1])
+            elif c in pale and r < 0.1:
+                if noise2(tx, ty, 1405) > 0.6:
+                    cv.set(x, y, '#F2EEE6'); cv.set(x + 1, y, '#D8C8B0')  # a shell
+                else:
+                    for d in range(4):  # a line of wrack along the strand
+                        cv.set(x + d, y + (d // 2), '#4A5A3A' if d % 2 else '#3A4A2E')
+            elif c in black and r < 0.1:
+                cv.set(x, y, '#9AA4A8'); cv.set(x + 1, y, '#C9D2D6'); cv.set(x, y + 1, BASALT_R[0])
+    # the spray: a pale drift over the ground round the pool and below the gorge's lip
+    for (cx, cy, rad) in ((POOL[0], POOL[1] + 10, 70), (int(x12(300)) - 14, 304, 36)):
+        for y in range(cy - rad, cy + rad):
+            for x in range(cx - rad, cx + rad):
+                if not (0 <= x < IW and 0 <= y < IH):
+                    continue
+                d = math.hypot(x - cx, (y - cy) * 1.3) / rad
+                if d >= 1 or not land[y * IW + x]:
+                    continue
+                if noise2(x // 2, y // 2, 1406) < (1 - d) * 0.35:
+                    r0, g0, b0, a0 = px[x, y]
+                    px[x, y] = (int(r0 + (232 - r0) * 0.28), int(g0 + (244 - g0) * 0.28), int(b0 + (240 - b0) * 0.28), a0)
 
 
 def cut(zone: str):
@@ -879,6 +969,92 @@ def plank_bridge(cv: Canvas, x0: int, y0: int, w: int, h: int, vertical: bool = 
     return deck, rails
 
 
+@functools.lru_cache(maxsize=1)
+def _sprites():
+    return sprites()
+
+
+@functools.lru_cache(maxsize=1)
+def _routes() -> dict:
+    """The residents' walks (lib/resident-routes.ts), so planting keeps clear of them."""
+    import re
+    src = open(os.path.join(worlds.ROOT, 'lib', 'resident-routes.ts')).read()
+    out = {}
+    for (zone, a, b, c, d) in re.findall(r"zone: '(\w+)', from: \[(\d+), (\d+)\], to: \[(\d+), (\d+)\]", src):
+        out.setdefault(zone, []).append((int(a), int(b), int(c), int(d)))
+    return out
+
+
+def _kind(cv: Canvas, x: int, y: int) -> str:
+    c = cv.get(x, y)[:3]
+    if c in {_rgb(k) for k in MATERIALS['sand']}:
+        return 'sand'
+    if c in {_rgb(k) for k in BASALT_R[1:4]}:
+        return 'black'
+    if c in {_rgb(k) for k in FLOOR}:
+        return 'floor'
+    return 'turf'
+
+
+def scatter(cv: Canvas, zone: str, blocked: set, objects: list, stands: dict, rules, seed: int,
+            trail_gap: int = 14) -> list:
+    """Plant more along the edges of a place (art-style.md: clutter gathers at the
+    edges, the paths and the space round the companion stay open). Each rule is (key,
+    how many, the ground kinds it grows on). A prop goes only where its foot is on open
+    ground of that kind, clear of the trail by `trail_gap`, of every stand and of the
+    other props, and inside the zone."""
+    sm = _sprites()
+    I = island()
+    feet = []
+    for (_i, k, x, y) in objects:
+        sp = sm[k]
+        feet.append((x + sp.ox - 3, y + sp.oy + sp.h - 12, x + sp.ox + sp.w + 3, y + sp.oy + sp.h + 4))
+    path = blocked
+    out = []
+    col, row = LAYOUT['isles'][zone]
+    ox, oy = col * W, row * H
+    trail = {(x - ox, y - oy) for (x, y) in I.trail if ox - 30 <= x < ox + W + 30 and oy - 30 <= y < oy + H + 30}
+    trail |= {(x - ox, y - oy) for (x, y) in I.zig}
+    near_trail = set()
+    for (x, y) in trail:
+        if x % 3 == 0 and y % 3 == 0:
+            for dy in range(-trail_gap, trail_gap + 1, 3):
+                for dx in range(-trail_gap, trail_gap + 1, 3):
+                    near_trail.add(((x + dx) // 3, (y + dy) // 3))
+    for r, (key, n, kinds) in enumerate(rules):
+        sp = sm[key]
+        placed = 0
+        for t in range(400):
+            if placed >= n:
+                break
+            fx = int(noise2(t, r, seed) * (W - sp.w - 4)) + 2   # the sprite's left
+            fy = int(noise2(t, r, seed + 1) * (H - sp.h - 8)) + 4  # its top
+            x0, x1, yb = fx + 2, fx + sp.w - 2, fy + sp.h
+            if fy < 2 or yb > H - 4 or (row == 0 and fy < 6):
+                continue
+            cx = (x0 + x1) // 2
+            if _kind(cv, cx, yb - 2) not in kinds:
+                continue
+            if any((x, y) in path for x in range(x0, x1, 2) for y in range(yb - 8, yb + 2, 2)):
+                continue
+            if any(((x // 3), (y // 3)) in near_trail for x in range(x0, x1, 3) for y in range(yb - 10, yb + 3, 3)):
+                continue
+            if any(x0 - 18 < sx < x1 + 18 and yb - 30 < sy < yb + 18 for (sx, sy) in stands.values()):
+                continue
+            if any(fx - 12 < max(a, c) and fx + sp.w + 12 > min(a, c) and fy - 4 < max(b, d) and yb + 34 > min(b, d)
+                   for (a, b, c, d) in _routes().get(zone, [])):
+                continue  # a resident walks here
+            box = (fx - 3, yb - 12, fx + sp.w + 3, yb + 4)
+            if any(box[0] < b[2] and box[2] > b[0] and box[1] < b[3] and box[3] > b[1] for b in feet):
+                continue
+            feet.append(box)
+            # (objects are given before the sprite's own offset, as in the zones' lists)
+            out.append((f'{key}-s{placed}', key, fx - sp.ox, fy - sp.oy))
+            placed += 1
+    return out
+
+
+
 def isle_landing(frame: int = 0):
     """Lagoon Landing (sea level): the island's one pier, where the ferry from Driftwood
     ties up, out over the sheltered lagoon inside the reef. The river from the rainforest
@@ -896,6 +1072,10 @@ def isle_landing(frame: int = 0):
         ('hib-1', 'hibiscus', 190, 140), ('hib-2', 'hibiscus', 268, 236), ('mon-1', 'monstera', 216, 180),
         ('rock-1', 'black_rock_small', 290, 424), ('heron', 'heron', 64, 330),
     ]
+    objects += scatter(cv, 'landing', blocked | pier | rails, objects, {'pier': (112, 440), 'boathouse': (184, 352)}, [
+        ('palm', 4, {'turf', 'sand'}), ('pandanus', 4, {'sand', 'turf'}), ('banana', 3, {'turf'}),
+        ('bird_of_paradise', 3, {'turf'}), ('hibiscus', 2, {'turf'}), ('bush', 3, {'turf'}), ('fern', 6, {'turf', 'floor'}),
+        ('crab', 2, {'sand'}), ('driftwood', 2, {'sand'})], 1501)
     WATER_MASKS['isle_landing'] = water - pier - deck
     stands = {'pier': (112, 440), 'rainforest': (156, 6), 'cove': (314, 382), 'boathouse': (184, 352)}
     return cv, objects, stands, (blocked - pier) | rails
@@ -916,6 +1096,10 @@ def isle_rainforest(frame: int = 0):
         ('mon-2', 'monstera', 200, 200), ('mon-3', 'monstera', 30, 420), ('mon-4', 'monstera', 200, 520),
         ('hib', 'hibiscus', 250, 120), ('log', 'mossy_log', 210, 240),
     ]
+    objects += scatter(cv, 'rainforest', blocked, objects, {'bridge': (165, 404)}, [
+        ('jungle_tree', 4, {'floor'}), ('tree_fern', 6, {'floor'}), ('monstera', 6, {'floor', 'turf'}),
+        ('banana', 2, {'floor'}), ('bird_of_paradise', 2, {'floor', 'turf'}), ('fern', 10, {'floor'}),
+        ('pandanus', 2, {'sand'})], 1502)
     WATER_MASKS['isle_rainforest'] = water - deck
     stands = {'landing': (156, H - 6), 'headwaters': (314, 278), 'bridge': (165, 404)}
     return cv, objects, stands, blocked
@@ -935,6 +1119,11 @@ def isle_headwaters(frame: int = 0):
         ('mon-2', 'monstera', 200, 480), ('hib-1', 'hibiscus', 60, 330), ('rock-1', 'black_rock', 250, 380),
         ('rock-2', 'black_rock_small', 100, 500),
     ]
+    objects.append(('shelter', 'rain_shelter', 208, 292))  # a place to sit out the rain by the pool
+    objects += scatter(cv, 'headwaters', blocked, objects, {'pool': (196, 266)}, [
+        ('tree_fern', 5, {'turf', 'floor'}), ('jungle_tree', 2, {'turf', 'floor'}), ('monstera', 4, {'turf', 'floor'}),
+        ('bird_of_paradise', 3, {'turf'}), ('hibiscus', 2, {'turf'}), ('banana', 2, {'turf', 'floor'}),
+        ('fern', 8, {'turf', 'floor'}), ('black_rock_small', 3, {'turf'})], 1503)
     WATER_MASKS['isle_headwaters'] = water - deck
     stands = {'rainforest': (2, 278), 'pool': (196, 266), 'cove': (220, H - 6)}
     return cv, objects, stands, blocked
@@ -953,6 +1142,10 @@ def isle_cove(frame: int = 0):
         ('fern-1', 'tree_fern', 110, 40), ('jt-1', 'jungle_tree', 10, 20), ('hib-1', 'hibiscus', 150, 120),
         ('canoe', 'canoe', 190, 380),
     ]
+    objects += scatter(cv, 'cove', blocked, objects, {'beach': (166, 388)}, [
+        ('palm', 3, {'turf'}), ('pandanus', 3, {'turf', 'black'}), ('driftwood', 3, {'black'}), ('crab', 3, {'black'}),
+        ('black_rock_small', 3, {'black', 'turf'}), ('tree_fern', 3, {'turf'}), ('hibiscus', 2, {'turf'}),
+        ('bird_of_paradise', 2, {'turf'}), ('fern', 5, {'turf'})], 1504)
     WATER_MASKS['isle_cove'] = water
     stands = {'headwaters': (220, 24), 'landing': (6, 382), 'beach': (166, 388)}
     return cv, objects, stands, blocked
