@@ -356,6 +356,7 @@ REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'springs': cdp.props, '
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
 OVERHEAD = {'steam_puff', 'drone', 'bunting', 'cables', 'dragon'}
+OVERHEAD |= {key for (key, *_rest) in cp.city_skybridges()}  # the city's decks, until they can be walked
 
 
 @functools.lru_cache(maxsize=None)
@@ -706,7 +707,10 @@ LAYOUT = {
              'caldera': (1, -2), 'springs': (2, -2)},
     # the Tidebloom Isles, by ferry from Driftwood's jetty (Matt, 18 Oct 19:07)
     'isles': {'rainforest': (0, 0), 'headwaters': (1, 0), 'landing': (0, 1), 'cove': (1, 1)},
-    'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)}, 'home': {'home': (0, 0)},
+    # the city (N1, Claude C): the old core and the Skyport keep their cells on the coast,
+    # the rest grows inland and along the east quay (city_zones.py)
+    'neon': {'neon': (0, 0), 'skyport': (1, 0), 'point': (2, 0), 'market': (0, -1), 'downtown': (1, -1),
+             'docks': (2, -1), 'heights': (0, -2), 'plaza': (1, -2), 'waterfront': (2, -2)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)}, 'home': {'home': (0, 0)},
 }
 
 
@@ -1019,8 +1023,15 @@ def main():
     built['halt'] = build('halt', halt, 'town')
     built['junction'] = build('junction', junction, 'platform')
     built['canal'] = build('canal', canal, 'junction')
-    built['neon'] = build('neon', neon_city, 'crossing')
+    built['neon'] = build('neon', city_neon, 'crossing')
     built['skyport'] = build('skyport', skyport, 'neon')
+    built['market'] = build('market', city_market, 'avenue')
+    built['downtown'] = build('downtown', city_downtown, 'towers')
+    built['heights'] = build('heights', city_heights, 'hill')
+    built['plaza'] = build('plaza', city_plaza, 'fountain')
+    built['waterfront'] = build('waterfront', city_waterfront, 'promenade')
+    built['docks'] = build('docks', city_docks, 'cranes')
+    built['point'] = build('point', city_point, 'quay')
     built['gulch'] = build('gulch', gulch, 'platform')
     built['oasis'] = build('oasis', oasis, 'gulch')
     built['caldera'] = build('caldera', caldera, 'tunnel')

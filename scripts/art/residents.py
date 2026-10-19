@@ -168,6 +168,12 @@ RESIDENTS = {
     'courier': {'zone': 'neon', 'skin': 'd', 'top': '#1FB5D0', 'legs': '#1C192B', 'hat': ('cap', '#1C192B')},
     'porter': {'zone': 'skyport', 'skin': 'b', 'top': '#DCE2EC', 'trim': '#1FB5D0', 'legs': '#5C6680',
                'hat': ('cap', '#5C6680')},
+    # the city's new quarters (N1, 19 Oct)
+    'seller': {'zone': 'market', 'skin': 'c', 'top': '#C8463A', 'apron': '#F2ECDE', 'hat': ('wrap', '#2A2640'),
+               'carry': ('tray', '#FFC766')},
+    'docker': {'zone': 'docks', 'skin': 'd', 'top': '#E8962A', 'legs': '#2C3E4C', 'hat': ('helmet', '#F2ECDE')},
+    'stroller': {'zone': 'waterfront', 'skin': 'a', 'top': '#3E566A', 'trim': '#6FE6F2', 'hair': 'grey',
+                 'legs': '#1C192B'},
     'farmer': {'zone': 'halt', 'skin': 'c', 'top': '#4A6A8A', 'apron': '#3E5468', 'hat': ('straw', '#E2BC5E'),
                'legs': '#5E4A3A'},
     'hiker': {'zone': 'ridge', 'skin': 'a', 'top': '#C2453A', 'legs': '#3E3A50', 'hat': ('cap', '#2E5A40'),

@@ -67,6 +67,12 @@ PORTS = {
     # Cogsworth, Neon
     ('junction', 'canal'): (OPEN, None),
     ('neon', 'skyport'): (OPEN, None),
+    # the city (Claude C): open streets and quays across every seam but one, where the
+    # Skyport terminal's back wall closes downtown's south edge
+    ('heights', 'plaza'): (OPEN, None), ('plaza', 'waterfront'): (OPEN, None),
+    ('market', 'downtown'): (OPEN, None), ('downtown', 'docks'): (OPEN, None), ('skyport', 'point'): (OPEN, None),
+    ('heights', 'market'): (OPEN, None), ('plaza', 'downtown'): (OPEN, None), ('waterfront', 'docks'): (OPEN, None),
+    ('market', 'neon'): (OPEN, None), ('downtown', 'skyport'): (None, None), ('docks', 'point'): (OPEN, None),
     # Sunstone Reach (Claude D's lines)
     # Sunstone Reach: the desert runs into the scrub and the ash as open land; only the
     # lava, the moat and Hearthold's walls stop you (Matt, 19 Oct)

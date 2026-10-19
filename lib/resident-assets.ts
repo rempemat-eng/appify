@@ -31,6 +31,12 @@ import residentCourier0 from '@/assets/residents/courier-0.png';
 import residentCourier1 from '@/assets/residents/courier-1.png';
 import residentPorter0 from '@/assets/residents/porter-0.png';
 import residentPorter1 from '@/assets/residents/porter-1.png';
+import residentSeller0 from '@/assets/residents/seller-0.png';
+import residentSeller1 from '@/assets/residents/seller-1.png';
+import residentDocker0 from '@/assets/residents/docker-0.png';
+import residentDocker1 from '@/assets/residents/docker-1.png';
+import residentStroller0 from '@/assets/residents/stroller-0.png';
+import residentStroller1 from '@/assets/residents/stroller-1.png';
 import residentFarmer0 from '@/assets/residents/farmer-0.png';
 import residentFarmer1 from '@/assets/residents/farmer-1.png';
 import residentHiker0 from '@/assets/residents/hiker-0.png';
@@ -73,6 +79,9 @@ export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
   vendor: [residentVendor0, residentVendor1],
   courier: [residentCourier0, residentCourier1],
   porter: [residentPorter0, residentPorter1],
+  seller: [residentSeller0, residentSeller1],
+  docker: [residentDocker0, residentDocker1],
+  stroller: [residentStroller0, residentStroller1],
   farmer: [residentFarmer0, residentFarmer1],
   hiker: [residentHiker0, residentHiker1],
   forager: [residentForager0, residentForager1],
