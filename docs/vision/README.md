@@ -27,6 +27,8 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 
 **World rules** (Matt, 18 Oct): the world must make sense: water has a source and a sink and only floating or supported things stand on it, paths lead to places, gates sit in fences, neighbouring places are built together with corridors between them, and detail follows from these rules. The research is [../research/2d-world-design.md](../research/2d-world-design.md); the rules are [world-rules.md](world-rules.md).
 
+**World references** (Matt, 20 Oct): what good natural worlds look like in the games Matt named (Eastward, Stardew Valley, Sea of Stars, Chained Echoes, CrossCode, Moonlighter, Hyper Light Drifter, TUNIC, Chef RPG, Nintendo), as concrete rules at our scale and an answer to each play-test fault: [research/world-references.md](research/world-references.md). The official screenshots it cites are fetched, never committed, with `python3 scripts/refs/fetch_references.py`.
+
 **World atlas** (Matt, 17 Oct): the regions beyond the valley (Driftwood Harbour, Hearthold Castle, steampunk Cogsworth Junction, the western Dust Gulch, the Ember Caldera, cyberpunk Neon Harbour, Halcyon Station and the moon Lumen), the theme that ties them together (a journey from rest to screens and back to sleep), seamless travel and a world that feels alive: [world-atlas.md](world-atlas.md).
 
 ## Working agreements
