@@ -369,7 +369,10 @@ const FRAME_MS = 400; // divides FLOAT_LOOP
 function beyondAt(region: RegionId, col: number, row: number) {
   if (region === 'west' && (col >= 1 || (col >= 0 && row <= -1))) return zoneBeyondAsh;
   // the valley's high country: peaks round the Frostline, forest lower down
+  // (the valley: mountains above the Frostline and the ridge, the sea past the harbour
+  // and round the halt's south, old forest east and west)
   if (region === 'valley' && row <= -1) return zoneBeyondPeaks;
+  if (region === 'valley' && (row >= 3 || (row >= 2 && col <= -1))) return zoneBeyondByRegion.isles;
   // Lumen's plain runs on below and beside it; above, only space (the backdrop)
   if (region === 'moon') return zoneBeyondRegolith;
   return zoneBeyondByRegion[region] ?? zoneBeyond;
@@ -837,19 +840,43 @@ export function AtlasWalk({
   // it, so a companion at a north-edge stand is not left under the header
   // (play-test 18 Oct, finding 9)
   const roomAbove = region === 'valley' || zoneBeyondByRegion[region] ? 96 : 0;
+  // The camera keeps to the land you can walk on, plus a margin (art-faults.md, rule 13:
+  // no screens full of what lies past the world), not to the region's whole rectangle.
+  const land = (() => {
+    const rows = walkRows ?? regionWalk(region);
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    let y0 = Infinity;
+    let y1 = -Infinity;
+    rows.forEach((row, r) => {
+      const a = row.indexOf('.');
+      if (a < 0) return;
+      const b = row.lastIndexOf('.');
+      x0 = Math.min(x0, a);
+      x1 = Math.max(x1, b + 1);
+      y0 = Math.min(y0, r);
+      y1 = Math.max(y1, r + 1);
+    });
+    const PAD = 40;
+    const c = TILE.cell;
+    return {
+      x0: Math.max(0, x0 * c - PAD) * u,
+      x1: Math.min(bounds.width, x1 * c + PAD) * u,
+      y0: Math.max(0, y0 * c - PAD) * u,
+      y1: Math.min(bounds.height, y1 * c + PAD) * u,
+    };
+  })();
   const cameraStyle = useAnimatedStyle(() => {
-    // a region narrower (or shorter) than the screen sits in its middle
+    // land narrower (or shorter) than the screen sits in its middle
     const cx =
-      regionW <= width
-        ? (regionW - width) / 2
-        : Math.max(0, Math.min(regionW - width, px.value * u - width / 2));
+      land.x1 - land.x0 <= width
+        ? (land.x0 + land.x1 - width) / 2
+        : Math.max(land.x0, Math.min(land.x1 - width, px.value * u - width / 2));
+    const top = Math.max(-roomAbove, land.y0 - roomAbove);
     const cy =
-      regionH <= height - padBottom
-        ? (regionH - height + padBottom) / 2
-        : Math.max(
-            -roomAbove,
-            Math.min(regionH - height + padBottom, py.value * u - height * focusY),
-          );
+      land.y1 - top <= height - padBottom
+        ? (top + land.y1 - height + padBottom) / 2
+        : Math.max(top, Math.min(land.y1 - height + padBottom, py.value * u - height * focusY));
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
   const landStyle = useAnimatedStyle(() => ({

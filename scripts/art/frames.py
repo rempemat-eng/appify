@@ -75,11 +75,12 @@ PORTS = {
     ('hearthold', 'scorch'): (OPEN, None),
     ('caldera', 'hearthold'): (OPEN, None),
     ('caldera', 'springs'): (OPEN, None),
-    # the Tidebloom Isles
-    ('rainforest', 'headwaters'): ((224, 280), 'jungle'),
-    ('rainforest', 'landing'): ((128, 184), 'jungle'),
-    ('headwaters', 'cove'): ((192, 248), 'basalt'),
-    ('landing', 'cove'): ((352, 408), 'basalt'),
+    # the Tidebloom Isles: the escarpments and the gorge close what they close; the
+    # landing and the cove are both at sea level, so the land runs on between them
+    ('rainforest', 'headwaters'): ((224, 280), None),
+    ('rainforest', 'landing'): ((128, 184), None),
+    ('headwaters', 'cove'): ((192, 248), None),
+    ('landing', 'cove'): (OPEN, None),
 }
 
 
