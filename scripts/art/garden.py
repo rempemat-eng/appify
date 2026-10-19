@@ -323,7 +323,7 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
 OBJECTS = [
     # the forest along the top edge, behind the HUD
     # (two pines stand back to let the ridge trail through the trees)
-    *[(f'pine-{i}', 'pine', -14 + i * 26, -60 + (i % 2) * 6, None) for i in range(13) if i not in (7, 8)],
+    *[(f'pine-{i}', 'pine', x, y, None) for i, (x, y) in meadow.TREELINE.items()],
     ('tree-0', 'tree', -24, -62, None),
     ('tree-1', 'tree_small', 36, -42, None),
     ('tree-2', 'tree', 104, -64, None),
@@ -463,9 +463,13 @@ def bake_shadows(terrain: Canvas, sprites: dict):
             if s.get(xx, s.h - 1)[3]:
                 style.darken(terrain, x + s.ox + xx, foot)
                 style.darken(terrain, x + s.ox + xx + 1, foot + 1)
-    for row, strength in ((0, 1.0), (1, 0.75), (2, 0.75), (3, 0.5), (4, 0.5), (5, 0.25), (6, 0.25)):
-
-        style.dither_dark(terrain, 0, row, W, 1, strength, style.FOREST_DARK)
+    # The forest's shade spills into the clearing under the pines (the same field as the
+    # band above, garden_meadow.crown_shade), raggedly, never in ruled rows.
+    for y in range(0, 28):
+        for x in range(W):
+            k = meadow.crown_shade(x, y)
+            if k > 0.62 or (k > 0.38 and (x + y) % 2 == 0) or (k > 0.22 and (x + 2 * y) % 4 == 0):
+                style.darken(terrain, x, y)
 
 
 # The hut's outside as the player chooses it (lib/decor.ts, HutLook): the door's paint
