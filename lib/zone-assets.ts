@@ -176,7 +176,6 @@ import propPosterBoard from '@/assets/zones/props/poster_board.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
 import propPricklyPear from '@/assets/zones/props/prickly_pear.png';
 import propRainShelter from '@/assets/zones/props/rain_shelter.png';
-import propReeds from '@/assets/zones/props/reeds.png';
 import propRingPost from '@/assets/zones/props/ring_post.png';
 import propRoundTower from '@/assets/zones/props/round_tower.png';
 import propSack from '@/assets/zones/props/sack.png';
@@ -589,7 +588,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   potted_plant: propPottedPlant,
   prickly_pear: propPricklyPear,
   rain_shelter: propRainShelter,
-  reeds: propReeds,
   ring_post: propRingPost,
   round_tower: propRoundTower,
   sack: propSack,
