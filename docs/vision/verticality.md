@@ -50,7 +50,7 @@ Why ours read flat: the faces are shorter than the companion, so a drop reads as
 
 Every region's generator calls it instead of drawing its own cliffs. It replaces the city's `_terrace_faces`, the isles' face code, the ridge's and frost's ledges, the gulch mesa's face and `cliff()` in `valley_zones.py` (each owner switches its own file once the toolkit lands).
 
-**Tier map.** A zone function returns, beside its ground, a `tiers` spec: rims as polylines with a tier number on each side, or a per-pixel tier array for natural shapes. `build()` derives the face bands, records a per-cell tier layer (`zoneTier` in `lib/zone-maps.ts`, run-length encoded like `walk`, digits for tiers, `f` for a face, `s` for a stair) and blocks the faces.
+**Tier map.** A zone function returns, beside its ground, a `tiers` spec on the 8 px terrain grid (section 4f): a tier number per grid cell, given as rectangles or a cell array. The toolkit rounds each corner by one cell and puts all the natural roughness in the edge cells, so no rim is a free curve. `build()` derives the face bands, records a per-cell tier layer (`zoneTier` in `lib/zone-maps.ts`, run-length encoded like `walk`, digits for tiers, `f` for a face, `s` for a stair) and blocks the faces.
 
 **Sizes** (zone px; an adult resident is 25 tall, the companion 24; 44 screen px is 33 art px at 1.33 px each):
 
@@ -157,6 +157,39 @@ Acceptance for every step:
 - `world_lint` clean, strict, including the new checks.
 - A Playwright walk at 402 x 874: up and down every stair, along every rail (the rail covers the feet), behind every lower-tier building that rises over an upper tier (the outline shows), a tap on the upper tier from below (the walk goes by the stairs), with reduced motion and at night.
 - `npm run verify` and `npm run check:art-repro` pass before a PR leaves draft.
+
+### f. Grid-led terrain
+
+Matt, 19 Oct 22:44, sending Eastward's "Strange Forest": "maybe it would help if you moved into a natural looking grid direction? like in the screenshot". In that screen every ledge, cliff, stair, bridge, field and path runs along the horizontal and vertical lines of a tile grid and turns with a rounded corner about one tile across. Only the edges are rough: grass lips hang over the faces in scallops, roots and stones break out of the earth, tall grass gathers at the feet. A diagonal appears only as a staircase of short straight runs. The ground reads as natural, and its structure reads at a glance. Ours does the opposite: diagonal breakwaters, an elliptical town square, a waterfall drawn as a diagonal band over a wavy cliff, diagonal paths and round ponds, so the structure is vague and the edges are smooth.
+
+**The grid is 8 px** in zone px: two walk cells, a third of an adult (A = 25), close to Eastward's tile (about 0.45 of an adult). Every size in the tables above is already a multiple of 8 (faces 32 and 40, stairs 40 and 48, paths 16 and 24, landings 8), and a zone is 40 x 72 cells. A 16 px grid (0.64 A) would be too coarse for a 16 px footpath or a one-cell corner.
+
+**Edges.**
+
+- Tier rims, side faces, river banks, field and plaza edges, walls and fences run in straight lines along the grid. Their rows and columns are multiples of 8.
+- Each corner, inner and outer, is rounded by one cell (a radius of about 6 to 8 px). The toolkit does this by closing and then opening the grid mask with a small disc, so straight runs stay exactly on the grid.
+- All organic roughness lives inside the edge cells, within about 4 px of the line: the grass lip's scallops (2 to 5 px of overhang), roots hanging from it, stones and lumps in the face (irregular earth or rock lumps of about 13 x 9 px), moss, tall grass at the foot, a chipped coping.
+- A diagonal is a staircase of runs at least two cells long. A single-cell zigzag is not allowed.
+
+**What stays free-form:** trees, bushes, rocks, flowers, tufts, fallen leaves, worn patches, shadows, and the water line inside a river's grid-led banks (it may wobble by 2 px). Built round things stay round: a well, a fountain basin, a bandstand, a stone circle. Ground shapes may not be round: a pond or a plaza is a rounded rectangle, never an ellipse.
+
+**Paths.** Paths are orthogonal runs on the grid: 16 px for a footpath, 24 for a lane, 32 or more for a road. They turn with a rounded corner of 8 to 12 px, change direction in dog-legs rather than diagonals, cross a ledge only at stairs, and meet at T-junctions. Their edges are worn and soft: the edge pixels are broken where the grass grows over, with a dark turf lip above and a lit one below (art-style rule 7), and pebbles and hollows inside. This replaces the research's 16-direction search with Chaikin smoothing for terrain paths (`research/placement-paths-verticality.md`, 2.2). The path search runs on the 8 px grid in four directions with a cost for each turn, and a turn is rounded rather than smoothed. Desire lines (grade 3) stay free-form, as worn grass rather than path.
+
+**Water.**
+
+- Rivers and streams flow in grid-led banks: a stream is 24 px wide, a river 40 or more. Each bank has a 3 px earth band, a dark band under the north bank and a lit lip on the south bank, and the flowing highlights run with the current.
+- Water changes tier only at a fall. A fall drops straight down the tier's face, as wide as its channel, white where it tips over the lip, with spray on the face beside it, into a pool at least a cell wider than the stream on each side, with foam where it lands. It is never a diagonal band over a slope.
+- Falls and highlights move in two or three frames, as a finite loop that is still with reduced motion.
+- Ponds and lakes are rounded rectangles on the grid. A coast is grid-led at the large scale, with organic edge cells (sand, foam, rocks); breakwaters and quays run along an axis.
+
+**The lint** (`world_lint.py`, report first):
+
+- `grid-edges`: sample every tier, bank, path and plaza boundary every 4 px. A sample is on the grid when the boundary runs on in the same row or column 4 px either side. At least 80 % of a zone's samples should be on the grid; the woodland mock-up scores 88 %.
+- `no-ellipse`: a closed ground boundary (a pond, a plaza, a field) that fits an ellipse within 1.5 px all round fails, unless it belongs to a built round thing declared as one (a well, a fountain, a bandstand).
+- `fall-vertical`: water on a face must run straight down it as one channel, and water between two tiers with no face under it fails.
+- `rim-on-grid`: rim rows and side columns are multiples of 8, except inside a corner's rounding.
+
+**How the toolkit takes it.** `terrace.py` builds every tier, bank and plaza from grid cells. The city's noise contours (`rim_y`), the isles' wavy ledges, the valley's diagonal stream and its waterfall over rocks, the harbour's diagonal breakwater and the town's elliptical square are each redrawn on the grid by their owner, in the order of 4e.
 
 ## 5. Scale
 
@@ -272,6 +305,8 @@ Each fix is checked by a line-up (the building with a resident beside it, at 3x)
 
 A standalone mock (not game art) was drawn with the repo's palette, `Canvas`, `style.finalize`, the city's `building()` and street props and the companion sprite: a Neon "stair street" with an upper street of six touching buildings (one with a pitched roof), a 40 px concrete wall with a mural, a drain, a pipe, a vent and a subway mouth, 48 px stairs with cheeks and a centre rail, two lower-tier buildings rising against the wall, a plaza of setts with a market corner, a 32 px dressed-stone embankment with railing, stairs and outfalls, a brick towpath and the canal, wires and leaves in a foreground layer. Its walk grid checks reach every stand from the towpath, no tier step outside stairs, and both stairs at least 44 screen px wide. Three iterations fixed what read wrong: a wall face as dark as the plaza below it (lightened, stronger foot shadow), wear drawn as a soft blend (now on the sett grid), stairs too narrow for a thumb (widened), and a towpath in the wall's own stone. It also found the row-closure issue in (b). A fourth round reworked it to the scale table: five buildings instead of six, two or three storeys each with 32 px storeys, a 44 px shop storey and 14 x 32 doors, a 32 px tall subway mouth, a 30 px vending machine, an 84 px utility pole, 11 px crates and pots by the doors, and residents on every tier for comparison. The images live in the study's scratchpad, not in the repo.
 
+A second mock-up redraws the valley woodland on the 8 px grid, at the scale table, as section 4f describes. It has three tiers with 32 px earth faces made of irregular lumps, overhanging grass lips, roots and stones, side faces where a tier steps along x, and 8 px cast shadows. Two 40 px timber stairs climb the faces. A 24 px stream comes down from the north in grid-led banks, falls straight down a face into a pool with foam and spray, passes under a 40 px footbridge and turns east to the garden's seam. Pines and broadleaves stand in clusters with saplings and stumps, and there are ferns, tall grass at the feet of the faces and verges, flowers and fallen leaves. The path is made of orthogonal runs with worn edges and turns at the stairs. A 32 px bench, three residents and the companion show the scale. Its checks: every stand is reachable from the south seam, no tier changes outside the stairs, and 88 % of the terrain edge runs along the grid. The high woods west of the stream are a frame and cannot be walked. Four rounds changed four things: the face texture went from stripes, to small lumps that read as brick, to irregular lumps like `cliff()`; the grass lip became scalloped; the stream gained earth banks; and tall grass, bare patches and fallen leaves were added.
+
 ## 7. Open questions for Matt
 
 1. **Tier height.** 40 px faces in the city (close to Eastward) and 32 px elsewhere: right, or should the valley stay gentler?
@@ -282,3 +317,5 @@ A standalone mock (not game art) was drawn with the repo's palette, `Canvas`, `s
 6. **The home garden on a raised yard.** The hut on a porch and yard with steps down to the beds, as in Stardew: shall Claude B redraw the garden's ground for it?
 7. **The companion's size.** It is drawn as tall as an adult (24 px against 25). Keep it (readable, already drawn), or make it a smaller pet of about 16 to 18 px, which would change every companion and visitor sprite?
 8. **Fewer, taller city buildings.** True storeys mean the city's towers drop from up to 32 storeys to three to six, with a few landmark towers. Is that the trade you want?
+9. **How far the grid goes.** Grid-led terrain everywhere (ledges, rivers, ponds, plazas, fields, paths), with roughness only at the edges, as in the Strange Forest? And the coasts too? The isles' plan (I1) asks for an organic coast all round; grid-led at the large scale with organic edge cells would change it.
+10. **Round things.** May built round things (the well, a fountain, the bandstand, the stone circle) stay round, while ground shapes (ponds, the town square) become rounded rectangles?
