@@ -303,7 +303,6 @@ import propTreeSmall from '@/assets/zones/props/tree_small.png';
 import propTrough from '@/assets/zones/props/trough.png';
 import propTubeStation from '@/assets/zones/props/tube_station.png';
 import propTumbleweed from '@/assets/zones/props/tumbleweed.png';
-import propUpturnedBoat from '@/assets/zones/props/upturned_boat.png';
 import propViewport from '@/assets/zones/props/viewport.png';
 import propViewportB from '@/assets/zones/props/viewport_b.png';
 import propViewportC from '@/assets/zones/props/viewport_c.png';
@@ -951,7 +950,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   trough: propTrough,
   tube_station: propTubeStation,
   tumbleweed: propTumbleweed,
-  upturned_boat: propUpturnedBoat,
   viewport: propViewport,
   viewport_b: propViewportB,
   viewport_c: propViewportC,
