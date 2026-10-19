@@ -19,7 +19,13 @@ import propBannerPoleF2 from '@/assets/zones/props/banner_pole_f2.png';
 import propBarn from '@/assets/zones/props/barn.png';
 import propBarrel from '@/assets/zones/props/barrel.png';
 import propBasaltColumns from '@/assets/zones/props/basalt_columns.png';
+import propBasaltColumnsB from '@/assets/zones/props/basalt_columns_b.png';
 import propBasaltColumnsLow from '@/assets/zones/props/basalt_columns_low.png';
+import propBasaltFallen from '@/assets/zones/props/basalt_fallen.png';
+import propBasaltStack from '@/assets/zones/props/basalt_stack.png';
+import propBasaltSteps from '@/assets/zones/props/basalt_steps.png';
+import propBasaltStumps from '@/assets/zones/props/basalt_stumps.png';
+import propBasaltStumpsB from '@/assets/zones/props/basalt_stumps_b.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBed from '@/assets/zones/props/bed.png';
 import propBeehive from '@/assets/zones/props/beehive.png';
@@ -175,6 +181,7 @@ import propPipeRun from '@/assets/zones/props/pipe_run.png';
 import propPlantTall from '@/assets/zones/props/plant_tall.png';
 import propPodTree from '@/assets/zones/props/pod_tree.png';
 import propPosterBoard from '@/assets/zones/props/poster_board.png';
+import propPostern from '@/assets/zones/props/postern.png';
 import propPottedPlant from '@/assets/zones/props/potted_plant.png';
 import propPricklyPear from '@/assets/zones/props/prickly_pear.png';
 import propRainShelter from '@/assets/zones/props/rain_shelter.png';
@@ -576,7 +583,13 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   barn: propBarn,
   barrel: propBarrel,
   basalt_columns: propBasaltColumns,
+  basalt_columns_b: propBasaltColumnsB,
   basalt_columns_low: propBasaltColumnsLow,
+  basalt_fallen: propBasaltFallen,
+  basalt_stack: propBasaltStack,
+  basalt_steps: propBasaltSteps,
+  basalt_stumps: propBasaltStumps,
+  basalt_stumps_b: propBasaltStumpsB,
   bathhouse: propBathhouse,
   bed: propBed,
   beehive: propBeehive,
@@ -732,6 +745,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   plant_tall: propPlantTall,
   pod_tree: propPodTree,
   poster_board: propPosterBoard,
+  postern: propPostern,
   potted_plant: propPottedPlant,
   prickly_pear: propPricklyPear,
   rain_shelter: propRainShelter,

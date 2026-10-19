@@ -360,6 +360,63 @@ def wall_run(length: int = 96) -> Canvas:
     return cv
 
 
+def postern() -> Canvas:
+    """The postern in the north curtain wall, 28 x 44, the wall run's height so the two
+    meet: merlons along the walk, coursed stone, a round arch in dressed voussoirs over a
+    passage you walk through, the lava's glow showing at its far end, the oak door swung
+    back against the west reveal (iron straps, a ring), and a lantern on an iron bracket
+    beside it, lit."""
+    w, h = 28, 44
+    cv = Canvas(w, h, pad=PAD)
+    battlements(cv, 0, w, 4, 57)
+    masonry(cv, rect_set(0, 12, w, 30), 59, lambda x, y: 0.3 - x / w * 0.5 - max(0, y - 34) / 10, soot=4)
+    for x in range(w):
+        _shade(cv, x, 12)
+    ax0, ax1, spring = 8, 24, 27  # the opening: its sides, and where the arch springs
+    cxa, ra = (ax0 + ax1 - 1) / 2, (ax1 - ax0) / 2
+    arch = {(x, y) for x in range(ax0, ax1) for y in range(16, h)
+            if y >= spring or (x + 0.5 - cxa) ** 2 + ((y - spring) * 1.0) ** 2 <= ra ** 2}
+    for (x, y) in arch:
+        c = '#1C1418' if y < h - 6 else '#2A1E20'  # the passage, its floor a little lighter
+        if y < spring + 4 and (x + y) % 2 == 0:
+            c = '#5A2414'  # the lava's glow from the far end of the passage
+        cv.set(x, y, c)
+    for (x, y) in arch:  # the voussoirs: wedge stones round the arch, alternately lit
+        for (ax, ay) in ((-2, 0), (2, 0), (0, -2), (-1, -2), (1, -2)):
+            q = (x + ax, y + ay)
+            if q not in arch and 0 <= q[0] < w and 12 <= q[1] < spring + 2:
+                v = int((math.atan2(q[1] - spring, q[0] - cxa) + math.pi) * 3)
+                lit = q[0] < cxa
+                cv.set(*q, (STONE_R[5] if v % 2 else STONE_R[4]) if lit else (STONE_R[3] if v % 2 else STONE_R[2]))
+    for y in range(spring - 1, h - 1):  # the door, swung back against the west reveal
+        for k in range(3):
+            c = OAK[4 - k] if (y // 5) % 2 else OAK[3 - k]
+            if (y - spring) % 9 == 3:
+                c = IRON[3] if k < 2 else IRON[1]  # an iron strap
+            cv.set(ax0 + k, y, c)
+    cv.set(ax0 + 2, spring + 9, IRON[4]); cv.set(ax0 + 2, spring + 10, IRON[2])  # its ring
+    for x in range(ax0 + 3, ax1):  # the threshold, worn
+        cv.set(x, h - 2, STONE_R[3] if x % 4 else STONE_R[2])
+    # the lantern on its bracket, east of the arch: an iron arm, a cage of glass, a glow
+    cv.hline(ax1 + 1, 17, 3, IRON[2]); cv.set(ax1 + 1, 18, IRON[1])
+    cv.vline(ax1 + 2, 18, 1, IRON[1])
+    for y in range(19, 25):
+        for x in range(ax1 + 1, ax1 + 4):
+            c = GLASS_L[3] if x == ax1 + 2 and 20 <= y <= 22 else GLASS_L[2]
+            if y in (19, 24):
+                c = IRON[1]
+            cv.set(x, y, c)
+    cv.set(ax1 + 2, 25, IRON[2])
+    for (x, y) in ((ax1, 22), (ax1 + 4, 21), (ax1 + 4, 23), (ax1 + 2, 26)):  # its light on the stone round it
+        r, g, b, a = cv.get(x, y)
+        if a:
+            cv.set(x, y, (min(255, r + 40), min(255, g + 24), b, a))
+    return cv
+
+
+GLASS_L = ['#2C3440', '#7A3A12', '#F2A048', '#FFE0A0']
+
+
 def gatehouse() -> Canvas:
     """The gatehouse, 120 x 92: two drum towers with timber hoardings and slate cones
     flanking a battlemented gate, a pointed arch in dressed voussoirs, the portcullis
@@ -726,6 +783,7 @@ def dragon(phase: int = 0) -> Canvas:
 def props() -> dict[str, Canvas]:
     return {
         'keep': keep(), 'round_tower': round_tower(), 'wall_run': wall_run(), 'gatehouse': gatehouse(),
+        'postern': postern(),
         'bell_tower': bell_tower(), 'herb_bed': herb_bed(), 'training_dummy': training_dummy(),
         'castle_well': castle_well(), 'archery_butt': archery_butt(), 'weapon_rack': weapon_rack(),
         'stone_bench': stone_bench(), 'banner_pole': banner_pole(),
