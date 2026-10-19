@@ -9767,7 +9767,7 @@ export const zoneTone: Record<string, string> = {
   oasis: '#F1D2A4',
   caldera: '#716A64',
   springs: '#716A64',
-  harbour: '#7E9F50',
+  harbour: '#44628E',
   headland: '#7E9F50',
   hearthold: '#716A64',
   scorch: '#716A64',
