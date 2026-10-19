@@ -118,6 +118,7 @@ function load({ os = 'web', saved = {}, activated = false, deferredSeeks = false
     effects: [],
     handlers: new Map(),
     seeks: [],
+    navigator: { userActivation: { hasBeenActive: activated } },
   };
   const player = (source) => {
     const fake = {
@@ -151,7 +152,7 @@ function load({ os = 'web', saved = {}, activated = false, deferredSeeks = false
     Date: { now: () => world.now },
     Promise,
     window: os === 'web' ? window : undefined,
-    navigator: os === 'web' ? { userActivation: { hasBeenActive: activated } } : undefined,
+    navigator: os === 'web' ? world.navigator : undefined,
     require(id) {
       if (id === 'react')
         return {
@@ -243,7 +244,11 @@ async function main() {
     sound.playSound('tap');
     sound.setAmbience('day');
     check(world.plays.length === 0, 'before a gesture the web build stays silent');
-    world.handlers.get('pointerdown')();
+    // a finger going down is not yet a gesture the browser counts: playing then is refused
+    world.handlers.get('pointerdown')({ type: 'pointerdown', pointerType: 'touch' });
+    check(world.plays.length === 0, 'a touch pointerdown before activation starts nothing');
+    world.navigator.userActivation.hasBeenActive = true;
+    world.handlers.get('pointerup')({ type: 'pointerup', pointerType: 'touch' });
     check(world.plays.at(-1) === ambienceLoops.day, 'the first tap starts the waiting ambience');
     const dayPlayer = world.players.find((fake) => fake.source === ambienceLoops.day);
     check(dayPlayer.loop === true, 'ambience players loop');
@@ -251,6 +256,29 @@ async function main() {
     check(world.plays.at(-1) === soundEffects.tap, 'after a gesture effects play');
     stop();
     check(world.pauses.includes(ambienceLoops.day), 'stopping sound pauses the ambience');
+  }
+
+  // Without navigator.userActivation the event decides: a touch pointerdown waits for its
+  // pointerup, a mouse pointerdown counts at once.
+  {
+    const { sound, world } = load();
+    delete world.navigator.userActivation;
+    sound.startSound();
+    await settle();
+    sound.setAmbience('day');
+    world.handlers.get('pointerdown')({ type: 'pointerdown', pointerType: 'touch' });
+    check(world.plays.length === 0, 'without the API a touch pointerdown still waits');
+    world.handlers.get('touchend')({ type: 'touchend' });
+    check(world.plays.at(-1) === ambienceLoops.day, 'without the API the touch ending starts audio');
+  }
+  {
+    const { sound, world } = load();
+    delete world.navigator.userActivation;
+    sound.startSound();
+    await settle();
+    sound.setAmbience('day');
+    world.handlers.get('pointerdown')({ type: 'pointerdown', pointerType: 'mouse' });
+    check(world.plays.at(-1) === ambienceLoops.day, 'without the API a mouse press starts audio');
   }
 
   // Repeats, restarts and ambience switching.
