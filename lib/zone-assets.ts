@@ -120,6 +120,8 @@ import propCorralRail from '@/assets/zones/props/corral_rail.png';
 import propCorralSide from '@/assets/zones/props/corral_side.png';
 import propCottage from '@/assets/zones/props/cottage.png';
 import propCottageB from '@/assets/zones/props/cottage_b.png';
+import propCottageC from '@/assets/zones/props/cottage_c.png';
+import propCottageD from '@/assets/zones/props/cottage_d.png';
 import propCottonGrass from '@/assets/zones/props/cotton_grass.png';
 import propCowSkull from '@/assets/zones/props/cow_skull.png';
 import propCrab from '@/assets/zones/props/crab.png';
@@ -167,6 +169,7 @@ import propGearPile from '@/assets/zones/props/gear_pile.png';
 import propGlowCaps from '@/assets/zones/props/glow_caps.png';
 import propGrowLamp from '@/assets/zones/props/grow_lamp.png';
 import propHammock from '@/assets/zones/props/hammock.png';
+import propHarbourFerry from '@/assets/zones/props/harbour_ferry.png';
 import propHayBale from '@/assets/zones/props/hay_bale.png';
 import propHaystack from '@/assets/zones/props/haystack.png';
 import propHeron from '@/assets/zones/props/heron.png';
@@ -223,6 +226,7 @@ import propPandanus from '@/assets/zones/props/pandanus.png';
 import propPapyrus from '@/assets/zones/props/papyrus.png';
 import propPennant from '@/assets/zones/props/pennant.png';
 import propPetBed from '@/assets/zones/props/pet_bed.png';
+import propPierLadder from '@/assets/zones/props/pier_ladder.png';
 import propPine from '@/assets/zones/props/pine.png';
 import propPipeRun from '@/assets/zones/props/pipe_run.png';
 import propPlantTall from '@/assets/zones/props/plant_tall.png';
@@ -763,6 +767,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   corral_side: propCorralSide,
   cottage: propCottage,
   cottage_b: propCottageB,
+  cottage_c: propCottageC,
+  cottage_d: propCottageD,
   cotton_grass: propCottonGrass,
   cow_skull: propCowSkull,
   crab: propCrab,
@@ -810,6 +816,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   glow_caps: propGlowCaps,
   grow_lamp: propGrowLamp,
   hammock: propHammock,
+  harbour_ferry: propHarbourFerry,
   hay_bale: propHayBale,
   haystack: propHaystack,
   heron: propHeron,
@@ -866,6 +873,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   papyrus: propPapyrus,
   pennant: propPennant,
   pet_bed: propPetBed,
+  pier_ladder: propPierLadder,
   pine: propPine,
   pipe_run: propPipeRun,
   plant_tall: propPlantTall,

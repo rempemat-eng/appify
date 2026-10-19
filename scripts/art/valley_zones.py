@@ -474,6 +474,38 @@ def jetty(cv: Canvas, x0: int, w: int, y0: int, y1: int, water: set, ladder: boo
     return deck
 
 
+def pier_head(cv: Canvas, x0: int, x1: int, y0: int, h: int, water: set) -> set:
+    """The T-head of a pier, running east-west where a boat lies alongside: planks laid
+    north-south, a lit north edge where the boat's fenders rub, a heavy beam along its
+    front with piles going down into the water at intervals, and its shadow on the water.
+    Returns the deck (walkable)."""
+    BL = MATERIALS['bleached']
+    deck = {(x, y) for x in range(x0, x1) for y in range(y0, y0 + h)}
+    for (x, y) in deck:
+        r = (x - x0) % 3
+        pk = (x - x0) // 3
+        t = 4 + (1 if noise2(pk, y0, 963) > 0.82 else -1 if noise2(pk, y0, 963) < 0.18 else 0)
+        c = detail.tone(BL, t + 1) if r == 0 else detail.tone(BL, t) if r == 1 else BL[1]
+        if y == y0:
+            c = BL[5]
+        if r == 1 and y in (y0 + 2, y0 + h - 3):
+            c = STONE[1]
+        cv.set(x, y, c)
+    for x in range(x0, x1):
+        cv.set(x, y0 + h, WOOD[2]); cv.set(x, y0 + h + 1, WOOD[1])  # the front beam
+        pile = (x - x0) % 16 in (0, 1)
+        for k in range(2, 6):
+            if (x, y0 + h + k) in water:
+                cv.set(x, y0 + h + k, WOOD[0] if pile else (WTR[0] if k < 4 else WTR[1]))
+        if pile:
+            cv.set(x, y0 + h + 6, WTR[4])
+    for y in range(y0, y0 + h + 4):
+        for x in range(x1, x1 + 3):
+            if (x, y) in water and (x, y) not in deck:
+                style.darken(cv, x, y)
+    return deck
+
+
 def breakwater(cv: Canvas, pts, seed: int = 0) -> set:
     """A curving rubble breakwater: a capped wall of big dressed blocks, its walkway top
     lit and jointed, its seaward face in courses, a round head, and a fringe of rough
@@ -633,23 +665,27 @@ def harbour(frame: int = 0):
     for (x, y) in point:
         if y < 470 and (x, y) not in knoll and noise2(x, y, 986) > 0.92:
             detail.grass_tuft(cv, x, y, int(noise2(x, y, 987) * 6), G, 2)
-    # wooden jetties out over the basin, each ending at a moored boat and a ladder
+    # a short jetty for the fishing boats, and the ferry pier: a broad timber pier out
+    # from the quay's east end to a T-head where the island ferry lies alongside, with a
+    # ladder down to the water (play-test 18 Oct, finding 15)
     decks = set()
-    decks |= jetty(cv, 146, 14, QY1 - 2, 392, water)
-    decks |= jetty(cv, 232, 14, QY1 - 2, 372, water)
+    decks |= jetty(cv, 146, 14, QY1 - 2, 340, water)
+    decks |= jetty(cv, 228, 18, QY1 - 2, 404, water, ladder=False)
+    decks |= pier_head(cv, 138, 246, 402, 12, water)
     # the road down from the town, the lanes to the cottages, the cliff path east
     road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (152, 120), (166, 230)], 14, seed=16)
     road |= worlds.thick([(154, 112), (100, 116), (64, 112)], 8, seed=17)  # to cottage 1's door
     road |= worlds.thick([(160, 186), (116, 212), (84, 230)], 7, seed=18)  # down to cottage 3 and the beach
     road |= worlds.thick([(158, 96), (210, 106), (290, 104), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path
-    road |= worlds.thick([(166, 200), (230, 222), (276, 222)], 7, seed=20)  # to cottage 4's door
+    road |= worlds.thick([(166, 200), (230, 222), (262, 222)], 7, seed=20)  # to cottage 4's door
     paint_road(cv, (road - quay) | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
                | {(x, y) for (x0, y) in road if x0 == W - 1 for x in range(W, W + 12)})
     objects = [
-        ('cottage-1', 'cottage', 30, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage', 44, 150),
-        ('cottage-4', 'cottage_b', 236, 140),
-        # the washing line in cottage 1's yard, beside the house and clear of the lanes
-        ('washing', 'washing_line', 178, 118),
+        # four households, four cottages: a net on the wall, shutters, a porch, a net shed
+        ('cottage-1', 'cottage', 30, 30), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage_c', 44, 150),
+        ('cottage-4', 'cottage_d', 224, 140),
+        # the washing line in the yard beside cottage 4, clear of the lanes
+        ('washing', 'washing_line', 170, 116),
         # the quay: the fish market, pots and the spare anchor by the chandler's corner
         ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
         ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
@@ -657,14 +693,16 @@ def harbour(frame: int = 0):
         ('nets-1', 'net_rack', 16, 236), ('nets-2', 'net_rack', 16, 290), ('upturned', 'upturned_boat', 18, 386),
         ('chair-1', 'deck_chair', 30, 344), ('chair-2', 'deck_chair_b', 50, 352), ('drift', 'driftwood', 40, 452),
         # the boats: each at a jetty's end, one on its buoy in the basin, a sail beyond
-        ('boat-1', 'boat_blue', 162, 368), ('boat-2', 'boat_red', 248, 348), ('boat-3', 'boat_blue', 186, 412),
+        ('boat-1', 'boat_blue', 83, 318), ('boat-2', 'boat_red', 248, 348), ('boat-3', 'boat_blue', 150, 430),
+        # the ferry to Lagoon Landing, moored port side to the pier's head, and its ladder
+        ('ferry', 'harbour_ferry', 137, 362), ('ladder', 'pier_ladder', 238, 413),
         ('buoy-1', 'buoy', 252, 404), ('buoy-2', 'buoy', 112, 440), ('sail', 'sailboat', 238, 506),
         # the lighthouse on the west point's rocks, lighting the harbour mouth
         ('lighthouse', 'lighthouse', 30, 380),
     ]
     quay_face = {(x, y) for x in range(QX0, QX1) for y in range(QY1, QY1 + 9)}
     blocked = (water | face | rocks | spur | bw | knoll | pools | west_rocks | quay_face) - decks
-    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (153, 384), 'beach': (34, 380), 'castle': (300, 116)}
+    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (196, 408), 'beach': (34, 380), 'castle': (300, 116)}
     return cv, objects, stands, blocked
 
 
