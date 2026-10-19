@@ -56,6 +56,11 @@ PATH |= thick_path([(PX + 4, 170), (168, 128), (172, 92)], 9.5, 4)  # a quiet re
 # the trail on up through the treeline to the Snowy Ridge (world-atlas.md)
 RIDGE_X = 206  # between the reading nook and Moss's stall
 PATH |= thick_path([(172, 92), (200, 84), (206, 40), (RIDGE_X, -16)], 9.5, 4)
+# a footpath on past the stall, under the little tree's crown, out of the garden's east
+# side to the Riverside's lane from the mill: 8 px wide (rows 112-119) where it crosses
+# x 319, square to the edge, so the Riverside's lane meets it at the same row and width
+PATH |= thick_path([(256, 116), (276, 114), (296, 116)], 4.4, 5)
+PATH |= {(x, y) for x in range(292, W + 12) for y in range(112, 120)}
 PATH |= disc(PLAZA[0], PLAZA[1], 27)  # the plaza at the fork
 PATH |= meadow.meadow_path(thick_path)  # down across the bridge, through the meadow
 # The hut's own path, which can be laid with flagstones (coherence plan, B1): its branch
@@ -126,17 +131,80 @@ def flagstones(cv: Canvas, seed: int = 11):
         cv.set(x, y, STONE[tone])
 
 POND_C, POND_R = (70, 214), (44, 24)
+# The overlay box the pond's animation is cut to; components/atlas-walk.tsx and the world
+# lint place it at these numbers, so the pond and its bank stay inside it.
+POND_BOX = (22, 186, 96, 56)
+
+
+def _pond_reach(x: float, y: float) -> float:
+    """How far the pond reaches toward (x, y), as a share of its oval: a rim with a few
+    soft bays and a shallow point or two, never bulging past the oval (so it stays in
+    its box), never a clean ellipse (art-faults.md rule 3)."""
+    a = math.atan2((y - POND_C[1]) / POND_R[1], (x - POND_C[0]) / POND_R[0])
+    k = (0.90 + 0.05 * math.sin(2 * a + 0.8) + 0.035 * math.sin(3 * a + 2.1) + 0.025 * math.sin(5 * a + 0.4)
+         + (smooth_noise(x, y, 7, 5) - 0.5) * 0.12)
+    return min(k, 0.965)
+
+
 POND = {(x, y) for (x, y) in oval(POND_C[0], POND_C[1], POND_R[0], POND_R[1])
         if ((x + 0.5 - POND_C[0]) / POND_R[0]) ** 2 + ((y + 0.5 - POND_C[1]) / POND_R[1]) ** 2
-        <= 1 - (smooth_noise(x, y, 9, 5) - 0.5) * 0.3}
+        <= _pond_reach(x + 0.5, y + 0.5) ** 2}
 BANK = set()
 for (x, y) in POND:
     for dx in range(-3, 4):
         for dy in range(-3, 4):
-            if (x + dx, y + dy) not in POND:
+            if (x + dx, y + dy) not in POND and dx * dx + dy * dy <= (2.2 + noise2(x + dx, y + dy, 6) * 1.4) ** 2:
                 BANK.add((x + dx, y + dy))
+assert all(POND_BOX[0] < x < POND_BOX[0] + POND_BOX[2] - 1 and POND_BOX[1] < y < POND_BOX[1] + POND_BOX[3] - 1
+           for (x, y) in POND | BANK), 'the pond outgrew its overlay box'
 
-# Raised flower planters beside the stall path (decorative, watered by the can).
+
+def _depth_map(region: set) -> dict:
+    """Each water pixel's distance in from the rim (4-neighbour steps), so the deep water
+    follows the pond's own shape rather than a smaller ellipse inside it."""
+    from collections import deque
+    dist, q = {}, deque()
+    for (x, y) in region:
+        if any((x + dx, y + dy) not in region for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))):
+            dist[(x, y)] = 1
+            q.append((x, y))
+    while q:
+        x, y = q.popleft()
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            p = (x + dx, y + dy)
+            if p in region and p not in dist:
+                dist[p] = dist[(x, y)] + 1
+                q.append(p)
+    return dist
+
+
+POND_DEPTH = _depth_map(POND)
+
+
+def _rill_points():
+    """The pond's overflow: a trickle from its south rim, down the slope between the pond and
+    the main path, through a notch in the stream's stone bluff into the stream (still water
+    needs an outlet; art-faults.md rule 7). Returns the rill's water and its banks."""
+    pts = [(90, 230), (94, 239), (91, 248), (85, 256), (87, 265), (95, 273), (94, 283), (92, 296)]
+    water = set()
+    for (x0, y0), (x1, y1) in zip(pts, pts[1:]):
+        for k in range(0, 41):
+            t = k / 40
+            x, y = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+            wob = (smooth_noise(0, y, 5, 31) - 0.5) * 1.6
+            wide = 2 if abs(y - 256) < 4 or abs(y - 273) < 3 else 1  # it pools a little on the bends
+            for dx in range(-1, wide + 1):
+                if dx == wide and y < 280 and noise2(int(x), int(y), 32) < 0.35:
+                    continue  # it narrows here and there
+                water.add((int(round(x + wob)) + dx, int(round(y))))
+    water = {(x, y) for (x, y) in water if (x, y) not in POND and y < meadow.STREAM_TOP.get(x, 999)}
+    banks = {(x + dx, y + dy) for (x, y) in water for dx in (-1, 1) for dy in (-1, 0, 1)} - water - POND - BANK
+    return water, banks
+
+
+RILL, RILL_BANK = _rill_points()
+
+# Raised flower planters# Raised flower planters beside the stall path (decorative, watered by the can).
 FLOWER_BEDS = [(222, 142, 46, 18), (222, 168, 46, 18)]  # x, y, w, h: a matched pair by the lantern
 LILY_PADS = [(44, 208), (82, 224), (64, 200), (52, 220)]
 FROG_PAD = LILY_PADS[0]
@@ -182,8 +250,8 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
         if (x, y - 1) not in BANK and (x, y - 1) not in POND:
             cv.set(x, y - 1, G[1])  # turf lip over the bank
     for (x, y) in POND:
-        depth = ((x + 0.5 - POND_C[0]) / POND_R[0]) ** 2 + ((y + 0.5 - POND_C[1]) / POND_R[1]) ** 2
-        col = WTR[1] if depth < 0.35 else WTR[2]
+        dd = POND_DEPTH[(x, y)]
+        col = WTR[1] if dd > 7 or (dd == 7 and (x + y) % 2) else WTR[2]  # deep water follows the rim
         # Looking down into the pond, the far bank shows its earth face above the
         # water, and the water under it lies in its shadow (coherence plan, 6c).
         k = next((i for i in range(5) if (x, y - i - 1) not in POND), 5)
@@ -221,24 +289,64 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
         cv.hline(lx - 2, ly, 3, LEAF[1])
         cv.set(lx - 1, ly - 1, LEAF[4])
     cv.set(LILY_PADS[1][0], LILY_PADS[1][1] - 2, RED[4]); cv.set(LILY_PADS[1][0] + 1, LILY_PADS[1][1] - 2, RED[3])  # a water flower
-    # Reeds make the bank belong to the water; retain an open viewing edge.
-    for rx, ry in ((30, 204), (38, 194), (102, 200), (100, 232)):
-        cv.vline(rx, ry - 4, 5, LEAF[1])
-        cv.vline(rx + 2, ry - 3, 4, LEAF[2])
-        cv.set(rx - 1, ry - 4, LEAF[3])
-        cv.set(rx + 1, ry - 1, LEAF[3])
-    # Cattails and a few visible flat bank stones distinguish the wet margin
-    # from the trimmed flower garden. These are low ground details, not walls.
-    for rx, ry in ((29, 200), (104, 198), (98, 234)):
-        cv.vline(rx, ry - 5, 6, LEAF[1])
-        cv.vline(rx, ry - 7, 3, WOOD[1])
-        cv.set(rx - 1, ry - 7, WOOD[3])
+    # Reeds make the bank belong to the water: they grow in clumps along the shaded side
+    # (the south and east rim, away from the light), thinning out round to the west and
+    # leaving the viewing edge east of the pond and the outlet open.
+    rim = sorted((x, y) for (x, y) in POND if any((x + dx, y + dy) not in POND for dx, dy in ((1, 0), (0, 1))))
+    clumps = []
+    for (x, y) in rim:
+        a = math.degrees(math.atan2((y - POND_C[1]) / POND_R[1], (x - POND_C[0]) / POND_R[0]))
+        if not (-25 <= a <= 150):
+            continue
+        if x > 104 and abs(y - 214) < 9 or 84 <= x <= 97 and y > 226:
+            continue  # the viewing edge and the outlet
+        if all(abs(x - cx) + abs(y - cy) > 9 for (cx, cy) in clumps) and noise2(x, y, 41) < (0.5 if a < 110 else 0.2):
+            clumps.append((x, y))
+    for ci, (cx, cy) in enumerate(clumps):
+        for b in range(3 + ci % 3):
+            bx = cx - 2 + b * 2 - (ci % 2)
+            hgt = 5 + int(noise2(bx, cy, 42) * 5)
+            lean = 1 if noise2(bx, cy, 43) > 0.6 else 0
+            for k in range(hgt):
+                x = bx + (lean if k > hgt * 0.6 else 0)
+                cv.set(x, cy - k, LEAF[3] if (b == 0 and k > 1) else LEAF[2] if k > hgt // 2 else LEAF[1])
+            if b % 2 == 0 and hgt > 7:  # a cattail head on the taller stems
+                top = cy - hgt
+                cv.set(bx, top, WOOD[3]); cv.set(bx, top + 1, WOOD[2]); cv.set(bx, top + 2, WOOD[1])
+        cv.hline(cx - 2, cy + 1, 6, WTR[0])  # their shade on the water
     for sx, sy in ((24, 220), (46, 240), (96, 192)):
         cv.hline(sx, sy, 5, STONE[1])
         cv.hline(sx + 1, sy - 1, 3, STONE[3])
         cv.set(sx + 1, sy - 2, STONE[4])
 
     meadow.draw_stream(cv, phase)
+    # The pond's overflow trickling down to the stream: wet earth banks with a turf lip,
+    # the water lit on its left, a few pebbles in its bed, and a little fall where it
+    # drops through a notch in the bluff, foaming where it meets the stream.
+    for (x, y) in RILL_BANK:
+        if 0 <= y < H and (x, y) not in meadow.STREAM:
+            shaded = (x - 1, y) in RILL  # the east bank faces away from the light
+            cv.set(x, y, P[0] if shaded else P[2] if (x + 1, y) in RILL else P[1])
+            if shaded and (x + 1, y) not in RILL_BANK and noise2(x, y, 33) < 0.6:
+                cv.set(x + 1, y, G[1])  # the turf lip over the shaded bank
+    for (x, y) in sorted(RILL):
+        fall = y >= meadow.STREAM_TOP.get(x, 999) - meadow.BLUFF_H.get(x, 0) - 1
+        left, right = (x - 1, y) not in RILL, (x + 1, y) not in RILL
+        if fall:
+            c = WTR[4] if (x + y) % 3 == 0 else WTR[3] if left else WTR[2]
+        else:
+            c = WTR[3] if left else WTR[1] if right else WTR[2]
+            if (y * 7 + x) % 11 == 0 and not left and not right:
+                c = WTR[4]  # a glint where it runs over a stone
+        cv.set(x, y, c)
+    for (x, y) in sorted(RILL):
+        if (x, y + 1) not in RILL and (x, y + 1) in meadow.STREAM:
+            cv.set(x, y + 1, WTR[4]); cv.set(x - 1, y + 2, WTR[3]); cv.set(x + 1, y + 2, WTR[3])  # foam below the fall
+    for (sx, sy) in ((87, 232), (95, 233)):  # the stones the pond spills between
+        cv.hline(sx, sy, 3, STONE[2]); cv.set(sx, sy - 1, STONE[4]); cv.set(sx + 1, sy - 1, STONE[3]); cv.set(sx + 2, sy, STONE[1])
+    for (px, py) in ((92, 247), (88, 266)):
+        if (px, py) in RILL:
+            cv.set(px, py, STONE[3]); cv.set(px + 1, py, STONE[1])
 
     # Paths sit lower than the turf. Packed dirt with clean lighter patches and
     # small dark specks; where the turf above drops onto the path it leaves a
@@ -265,7 +373,10 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
     bridge = {(x, y) for (x, y) in dirt if BX0 <= x < BX1 and BY0 <= y < BY1} if 'BX0' in globals() else set()
     # The main path runs on past the bottom edge into Crossroads Town (world-atlas.md,
     # seamless travel), so the border itself gets no turf edge: rows below the map count.
-    _edge.grass_edge(cv, {(x, y) for (x, y) in dirt if x < W and 0 <= y}, G, P, keep=bridge, seed=7)
+    # The same at the top: the path carries on up into the ridge's trail (the top band and
+    # the Snowy Ridge), so rows above the map count too and no turf lip crosses it at y 0.
+    top_rows = {(x, y) for (x, y0) in dirt if y0 == 0 for y in range(-12, 0)}
+    _edge.grass_edge(cv, {(x, y) for (x, y) in dirt if 0 <= y} | top_rows, G, P, keep=bridge, seed=7)
     for (x, y) in dirt:
         if (x, y + 1) not in PATH and (x, y + 1) not in meadow.STREAM and 0 <= y + 1 < H:
             cv.set(x, y + 1, G[3])  # the lit edge of the turf below the path
@@ -451,6 +562,8 @@ def bake_shadows(terrain: Canvas, sprites: dict):
     shade = set()
     for (_id, key, x, y, _a) in OBJECTS:
         s = sprites[key]
+        if _id.startswith(('pine-', 'tree-')) and y + s.oy + s.h < 34:
+            continue  # the treeline's shade is its crowns' lobes below (crown_shade), not flat smears
         shade |= detail.silhouette_shadow(s, x + s.ox, y + s.oy)
     for (sx, sy) in shade:
         style.darken(terrain, sx, sy)
@@ -469,6 +582,10 @@ def bake_shadows(terrain: Canvas, sprites: dict):
     # never in ruled rows.
     for y in range(0, 28):
         for x in range(W):
+            if (x, y) in PATH:  # the path is only dappled where it runs on from the ridge's trail
+                if meadow.trail_dapple(x, y):
+                    style.darken(terrain, x, y, (0.85, 0.86, 0.9))
+                continue
             e, k = meadow.forest_edge_shade(x, y), meadow.crown_shade(x, y)
             if e > 0.12 or k > 0.62 or (k > 0.38 and (x + y) % 2 == 0) or (k > 0.22 and (x + 2 * y) % 4 == 0):
                 style.darken(terrain, x, y)
@@ -532,7 +649,7 @@ def main():
         x0, y0 = max(0, min(xs) - pad), max(0, min(ys) - pad)
         x1, y1 = min(W - 1, max(xs) + pad), min(H - 1, max(ys) + pad)
         return (x0, y0, x1 - x0 + 1, y1 - y0 + 1)
-    water = {'stream': bbox(meadow.STREAM | meadow.STREAM_BANK), 'pond': bbox(POND | BANK)}
+    water = {'stream': bbox(meadow.STREAM | meadow.STREAM_BANK), 'pond': POND_BOX}
     inside = lambda x, y: any(rx <= x < rx + rw and ry <= y < ry + rh for (rx, ry, rw, rh) in water.values())  # noqa: E731
     for y in range(H):
         for x in range(W):
@@ -586,7 +703,7 @@ def main():
     cell = 4
     cols, rows = W // cell, H // cell
     blocked = set()
-    for (x, y) in POND:
+    for (x, y) in POND | RILL:
         blocked.add((x // cell, y // cell))
     for (x, y) in meadow.STREAM | meadow.STREAM_BANK | meadow.BLUFF:
         if not (bx + 6 <= x < bx + bw - 6):  # only the bridge deck crosses the water

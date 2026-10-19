@@ -294,7 +294,12 @@ def draw_lower_details(cv: Canvas, path: set):
 # The pines along the clearing's top edge (garden.py places them from this table): each
 # pine's number and the x, y of its sprite's nominal top-left. Two (7 and 8) stand back to
 # let the ridge trail through.
-TREELINE = {i: (-14 + i * 26, -60 + (i % 2) * 6) for i in range(13) if i not in (7, 8)}
+# The pines along the clearing's north edge: spaced and set back unevenly, as trees grow,
+# so neither their crowns nor the shadows they throw into the garden line up in a row
+# (art-faults.md rules 8 and 12). Indices 7 and 8 stand back for the ridge trail.
+_TREE_JITTER = [(-3, 2), (4, -5), (-2, 6), (5, -1), (-4, -6), (2, 4), (-5, 0), (0, 0), (0, 0), (5, -4), (-3, 5), (3, -3), (-2, 3)]
+TREELINE = {i: (-14 + i * 26 + _TREE_JITTER[i][0], -60 + (i % 2) * 4 + _TREE_JITTER[i][1])
+            for i in range(13) if i not in (7, 8)}
 FOREST_FLOOR = ['#1E2A22', '#2C3F30', '#3E5A3C', '#577A44', '#6A9468']
 
 
@@ -335,39 +340,72 @@ def forest_edge_shade(x: float, sy: float) -> float:
     return sh + max(0, 1 - (sy + 1) / 26) * 0.6 - max(0, (sy - 10) / 16) * 0.4
 
 
+def riverside_edge_shade(x: float, y: float) -> float:
+    """The forest edge's shade carried round the garden's north-east corner into the
+    Riverside's first rows (its x 0 is the garden's x 320), for valley_zones.riverside to
+    darken its ground by exactly as garden.bake_shadows does (above 0.12 once, above 0.55
+    again): the same field as the garden's, so the two meet at the seam in one tone, then
+    thinning out over 60 px east as the trees fall back from the meadow."""
+    if y >= 28:
+        return 0.0
+    return forest_edge_shade(W + x, y) - max(0.0, x / 70) * 0.6
+
+
+def trail_dapple(x: int, sy: int) -> bool:
+    """Sun and shade on the trail where it passes under the trees at the ridge/garden seam:
+    the same noise valley_zones.ridge reads for its trail's last rows (in its own rows,
+    H + sy), thinning out over the garden's first rows."""
+    fade = 1.0 if sy < 0 else max(0.0, 1 - sy / 16)
+    return smooth_noise(x, H + sy, 5, 450) > 1 - 0.45 * fade
+
+
 def draw_top_band(phase: int = 0) -> Canvas:
     """Forest floor above the clearing (y -TOP..0), the ridge's lower edge too
     (valley_zones.py pastes it): needles and leaf litter in the pines' shade, painted from
     crown_shade so the shade deepens raggedly into the forest and no tone runs along a
     line; the ridge trail runs up through it."""
+    import style
     cv = Canvas(W, TOP)
     F = FOREST_FLOOR
+    turf = []
     for y in range(TOP):
         gy = y - TOP
         for x in range(W):
             s = crown_shade(x, gy)
             if s > 0.78:
-                c = F[0] if (x + y) % 2 or s > 0.9 else F[1]
+                # the deepest shade is dim, never black: needles in shadow, a darker fleck
+                c = F[0] if (x + 2 * y) % 5 == 0 and s > 0.9 else F[1]
             elif s > 0.55:
-                c = F[1] if (x + y) % 3 else F[0]
+                c = F[1] if (x + y) % 3 else F[2]
             elif s > 0.32:
                 c = F[2] if (x + y) % 2 else F[1]
             else:
                 c = F[3] if noise2(x // 3, y // 2, 953) > 0.35 else F[2]
                 # toward the clearing the floor turns to the garden's own turf, more of it
-                # the lower it lies, in ragged patches (no line where the meadow begins)
-                if smooth_noise(x, y, 6, 955) < (y - (TOP - 26)) / 26:
-                    c = G[3] if noise2(x // 3, y // 2, 956) > 0.4 else G[2]
+                # the lower it lies, in ragged patches (no line where the meadow begins),
+                # in the same shade the garden's first rows and the ridge's last rows take
+                # from forest_edge_shade, so the band meets the garden at y 0 with no seam
+                if smooth_noise(x, y, 6, 955) < (y - (TOP - 30)) / 22:
+                    n = smooth_noise(x, gy, 30, 11)
+                    light = n > 0.66 or (n > 0.62 and (x + gy) % 2 == 0)
+                    c = G[3] if light else G[2]
+                    turf.append((x, y))
             if s < 0.6 and noise2(x, y, 954) > 0.93 and c in F:
                 c = F[min(4, F.index(c) + 1)]  # needles and a fleck of sun
             cv.set(x, y, c)
     # the ridge trail runs up through the forest floor, half in shade: it bends a little
-    # from where the garden's path leaves the clearing (x 206) to where the ridge's trail
-    # carries on above (x 198, scripts/art/zones.py), its edges worn, not ruled
+    # from where the garden's path leaves the clearing (x 198-213 at the garden's top row)
+    # to where the ridge's trail carries on above (x 198, scripts/art/zones.py), its edges
+    # worn, not ruled; near the garden its edge breaks into turf teeth exactly as the
+    # garden's path does, so the two run on across y 0 at one width and one tone
+    import detail
+    trail = set()
     for y in range(TOP):
         t = y / (TOP - 1)
-        cx = 198 + 8 * t * t + math.sin(y / 9) * 1.5 * (1 - t)
+        cx = 198 + 7.5 * t * t + math.sin(y / 9) * 1.5 * (1 - t)
         hw = 8.5 + (noise2(y // 3, 0, 931) - 0.5) * 2.4
+        b = min(1.0, max(0.0, (y - (TOP - 34)) / 20))  # narrowing to the garden path's own width at its top
+        hw = hw * (1 - b) + (7.6 + (noise2(y // 3, 0, 931) - 0.5) * 0.8) * b
         for x in range(186, 226):
             d = abs(x - cx)
             if d <= hw:
@@ -377,8 +415,20 @@ def draw_top_band(phase: int = 0) -> Canvas:
                 if lit and noise2(x, y, 933) > 0.86:
                     c = P[4]
                 cv.set(x, y, c)
-            elif d <= hw + 1.2:
-                cv.set(x, y, G[1] if y >= TOP - 14 else FOREST_FLOOR[0])
+                trail.add((x, y))
+            elif d <= hw + 1.2 and y < TOP - 14:
+                cv.set(x, y, FOREST_FLOOR[0])
+    below = {(x, y) for (x, y) in trail if y == TOP - 1 for y in range(TOP, TOP + 12)}
+    detail.grass_edge(cv, trail | below, G, P, keep={(x, y) for (x, y) in trail if y < TOP - 14}, seed=7)
+    for (x, y) in set(turf) - trail:
+        e = forest_edge_shade(x, y - TOP)  # darkened exactly as the garden darkens its first rows
+        if e > 0.12:
+            style.darken(cv, x, y)
+        if e > 0.55:
+            style.darken(cv, x, y, (0.78, 0.8, 0.84))
+    for (x, y) in trail:  # the trail itself only dappled, as the ridge dapples its own (valley_zones.ridge)
+        if y >= TOP - 14 and trail_dapple(x, y - TOP):
+            style.darken(cv, x, y, (0.85, 0.86, 0.9))
     return cv
 
 
