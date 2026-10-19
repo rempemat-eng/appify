@@ -353,6 +353,11 @@ def charred_snag(seed: int = 0) -> Canvas:
     return cv
 
 
+def _ore_tub() -> Canvas:
+    import western_props
+    return western_props.ore_tub()
+
+
 def props() -> dict[str, Canvas]:
     return {
         'basalt_columns': basalt_columns(5, 0), 'basalt_columns_low': basalt_columns(3, 7), 'forge': forge(),
@@ -361,6 +366,7 @@ def props() -> dict[str, Canvas]:
         'bathhouse': bathhouse(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
         'stone_lantern': stone_lantern(), 'scree': scree(True, 0), 'scree_small': scree(False, 3),
         'scree_b': scree(True, 5), 'charred_snag': charred_snag(),
+        'ore_tub': _ore_tub(),  # the mine line's tub, the same as Dust Gulch's
     }
 
 

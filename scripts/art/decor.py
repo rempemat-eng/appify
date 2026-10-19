@@ -314,6 +314,58 @@ def moon_crystal() -> Canvas:
     return cv
 
 
+def brass_telescope() -> Canvas:
+    """A little brass telescope from the Frostline's High Lookout, 20 x 22: its tube tilted
+    up toward the sky on a three-legged wooden stand, lit along its upper edge, a collar
+    at the middle and a lens catching the light."""
+    cv = Canvas(20, 22, pad=PAD)
+    for (x1, y1, tone) in ((3, 21, WOOD[3]), (17, 21, WOOD[1]), (10, 21, WOOD[2])):  # the legs
+        steps = max(abs(x1 - 10), abs(y1 - 12))
+        for i in range(steps + 1):
+            cv.set(round(10 + (x1 - 10) * i / steps), round(12 + (y1 - 12) * i / steps), tone)
+    ex, ey, lx, ly = 15.0, 12.0, 4.0, 3.5  # the eyepiece, low right; the lens, high left
+    n = 16
+    for i in range(n + 1):
+        cx, cy = ex + (lx - ex) * i / n, ey + (ly - ey) * i / n
+        for (x, y) in disc(cx, cy, 1.3 + 0.7 * i / n):  # the tube widens toward the lens
+            side = (x + 0.5 - cx) + (y + 0.5 - cy)
+            cv.set(x, y, BRASS[4] if side < -0.7 else BRASS[2] if side > 0.7 else BRASS[3])
+    mx, my = round((ex + lx) / 2), round((ey + ly) / 2)
+    for d in (-1, 0, 1):  # the collar where the stand holds it
+        cv.set(mx + d, my - d, BRASS[5] if d < 0 else BRASS[1])
+    for (x, y) in disc(lx - 0.5, ly - 0.5, 1.6):  # the lens
+        cv.set(x, y, WTR[2])
+    cv.set(round(lx) - 1, round(ly) - 1, WTR[4])
+    cv.set(round(ex) + 1, round(ey) + 1, BRASS[1]); cv.set(round(ex) + 1, round(ey), BRASS[2])  # the eyepiece
+    cv.set(10, 12, BRASS[2]); cv.set(10, 13, WOOD[1])  # the stand's head
+    return cv
+
+
+def orchid_pot() -> Canvas:
+    """A moth orchid in a little basalt pot from the Tidebloom Isles, 18 x 24: two broad
+    leaves over the rim, an arching stem and three pale lavender blooms with a deep pink
+    lip, lit on their upper left."""
+    cv = Canvas(18, 24, pad=PAD)
+    for (x, y) in ((8, 15), (8, 14), (8, 13), (8, 12), (8, 11), (9, 10), (9, 9), (10, 8), (11, 7), (12, 6), (13, 6)):
+        cv.set(x, y, LEAF[2])  # the stem
+    for (cx, cy) in ((6, 10), (10, 6), (14, 5)):
+        for (x, y) in disc(cx, cy, 2.4):
+            cv.set(x, y, NAP[4] if (x - cx) + (y - cy) < 0 else NAP[3])
+        cv.set(cx - 1, cy - 1, CREAM[3])
+        cv.set(cx, cy, RED[3]); cv.set(cx, cy + 1, RED[2])  # the lip
+    for (x0, way) in ((8, -1), (10, 1)):  # two broad leaves drooping out over the rim
+        for t in range(8):
+            x = x0 + way * t
+            y = 15 + int(t * t * 0.07)
+            thick = 1 if t in (0, 7) else 2
+            lit = way < 0
+            cv.set(x, y, LEAF[4] if lit else LEAF[3])  # the upper face catches the light
+            if thick == 2:
+                cv.set(x, y + 1, LEAF[2] if lit else LEAF[1])
+    _pot(cv, 9, 17, 24, 4.5, 3.5, ramp=BASALT)
+    return cv
+
+
 # id: (painter, footprint height in art pixels (0: flat, walked over))
 ITEMS = {
     'fern_pot': (fern_pot, 6),
@@ -331,6 +383,8 @@ ITEMS = {
     'dragon_plush': (dragon_plush, 6),
     'star_globe': (star_globe, 4),
     'moon_crystal': (moon_crystal, 5),
+    'brass_telescope': (brass_telescope, 5),
+    'orchid_pot': (orchid_pot, 5),
 }
 
 

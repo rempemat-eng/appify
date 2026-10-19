@@ -534,6 +534,12 @@ async function main() {
       };
       saved.mapSeen = ['garden', 'castle', 'constructor', '__proto__', 'future-zone'];
       saved.decor = [{ item: 'stool', x: 160, y: 380, futureDecor: { keep: true } }];
+      saved.hutLook = {
+        door: 'violet',
+        boxes: 'herbs',
+        path: 'flagstones',
+        futureTrim: { keep: true },
+      };
     });
     check(
       gameStore.getState().world?.visited.includes('headland') === true &&
@@ -566,6 +572,32 @@ async function main() {
         isDeepStrictEqual(progressSnapshot(), mapProgress),
       'Map migration and acknowledgement preserve placed C12 decor, unknown fields and player progress through reload',
     );
+    check(
+      isDeepStrictEqual(gameStore.getState().hutLook, {
+        door: 'violet',
+        boxes: 'herbs',
+        path: 'flagstones',
+      }) && decoratedMapSave.hutLook.futureTrim.keep,
+      'C22 acknowledgement preserves the merged hut appearance and unknown nested choices across reload',
+    );
+    const seenBeforeHutChange = [...gameStore.getState().mapSeen];
+    const worldBeforeHutChange = structuredClone(gameStore.getState().world);
+    gameStore.getState().setHutLook({ door: 'red' });
+    await reload();
+    const changedHutSave = JSON.parse((await storage.getItem('screenagotchi-v1'))!);
+    check(
+      isDeepStrictEqual(gameStore.getState().hutLook, {
+        door: 'red',
+        boxes: 'herbs',
+        path: 'flagstones',
+      }) &&
+        isDeepStrictEqual(gameStore.getState().mapSeen, seenBeforeHutChange) &&
+        isDeepStrictEqual(gameStore.getState().world, worldBeforeHutChange) &&
+        isDeepStrictEqual(progressSnapshot(), mapProgress) &&
+        changedHutSave.hutLook.futureTrim.keep &&
+        changedHutSave.decor[0].futureDecor.keep,
+      'A deliberate hut appearance change preserves discoveries, world, decor, opaque fields and progress',
+    );
     await loadPatchedSave((saved) => {
       saved.world = { ...parkSpot, futureGround: { keep: true } };
       saved.mapSeen = ['garden', 'future-zone', 'garden', 7, null, ''];
@@ -596,6 +628,12 @@ async function main() {
         !gameStore.getState().mapSeen.includes('ridge') &&
         !gameStore.getState().mapSeen.includes('lumen'),
       'Repeated captured-open action acknowledges old visits, not later or unvisited places, across reload',
+    );
+    check(
+      gameStore.getState().hutLook.door === 'red' &&
+        gameStore.getState().hutLook.boxes === 'herbs' &&
+        gameStore.getState().hutLook.path === 'flagstones',
+      'Walking and repeated map acknowledgement do not reset the chosen hut appearance',
     );
     check(
       isDeepStrictEqual(gameStore.getState().world, visitsBeforeOpen) &&

@@ -19,6 +19,38 @@ export type DecorArea = 'hut' | 'garden';
 export type DecorPlacement = { item: string; x: number; y: number; area?: 'garden' };
 export const areaOf = (p: DecorPlacement): DecorArea => p.area ?? 'hut';
 
+/**
+ * The hut's outside (C12's second half, coherence plan B1): its door's paint, what grows
+ * under its windows and the path up to its step. Every choice is open from the start,
+ * free and instant, and only a look: the hut's footprint, its door and the garden's
+ * hotspots never move. Each look is drawn by scripts/art/garden.py.
+ */
+export const hutDoors = ['oak', 'red', 'violet', 'green'] as const;
+export const hutBoxes = ['none', 'flowers', 'herbs'] as const;
+export const hutPaths = ['earth', 'flagstones'] as const;
+export type HutLook = {
+  door: (typeof hutDoors)[number];
+  boxes: (typeof hutBoxes)[number];
+  path: (typeof hutPaths)[number];
+};
+export const DEFAULT_HUT_LOOK: HutLook = { door: 'oak', boxes: 'flowers', path: 'earth' };
+/** The drawn hut for a look (lib/garden-hut-assets.ts, hutImages). */
+export const hutImageKey = (look: HutLook) => `${look.door}-${look.boxes}`;
+
+function oneOf<T extends string>(options: readonly T[], value: unknown, fallback: T): T {
+  return options.find((o) => o === value) ?? fallback;
+}
+/** A saved hut look, made safe: each part known, or the hut as it first stood. */
+export function restoreHutLook(value: unknown): HutLook {
+  if (typeof value !== 'object' || value === null || Array.isArray(value))
+    return { ...DEFAULT_HUT_LOOK };
+  return {
+    door: oneOf(hutDoors, Reflect.get(value, 'door'), DEFAULT_HUT_LOOK.door),
+    boxes: oneOf(hutBoxes, Reflect.get(value, 'boxes'), DEFAULT_HUT_LOOK.boxes),
+    path: oneOf(hutPaths, Reflect.get(value, 'path'), DEFAULT_HUT_LOOK.path),
+  };
+}
+
 type Keepsake = {
   id: string;
   name: string;
@@ -37,10 +69,22 @@ export const keepsakes: readonly Keepsake[] = [
   { id: 'pinecone_jar', name: 'Jar of pine cones', from: 'the Woodland', zones: ['woodland'] },
   { id: 'cairn', name: 'Little cairn', from: 'the Snowy Ridge', zones: ['ridge'] },
   {
+    id: 'brass_telescope',
+    name: 'Brass telescope',
+    from: 'the Frostline',
+    zones: ['hollow', 'snowmelt', 'saddle', 'summit'],
+  },
+  {
     id: 'shell_bowl',
     name: 'Bowl of shells',
     from: 'Driftwood Harbour',
     zones: ['harbour', 'headland'],
+  },
+  {
+    id: 'orchid_pot',
+    name: 'Potted orchid',
+    from: 'the Tidebloom Isles',
+    zones: ['landing', 'rainforest', 'headwaters', 'cove'],
   },
   { id: 'cog_clock', name: 'Cog clock', from: 'Cogsworth', zones: ['junction', 'canal'] },
   { id: 'cactus_pot', name: 'Potted cactus', from: 'Dust Gulch', zones: ['gulch', 'oasis'] },

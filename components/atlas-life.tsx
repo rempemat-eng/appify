@@ -157,7 +157,7 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
   ],
   landing: [
     { kind: 'fish', x: 60, y: 500, seed: 21 },
-    { kind: 'fish', x: 220, y: 540, seed: 22 },
+    { kind: 'fish', x: 200, y: 500, seed: 22 },
   ],
   // gulls over the Headland's sea (the castle moved to the Ember Lands, 18 Oct)
   headland: [
@@ -207,8 +207,6 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'puff', x: 104, y: 382, seed: 24 },
     { kind: 'puff', x: 90, y: 536, seed: 25 },
     { kind: 'puff', x: 84, y: 540, seed: 26 },
-    { kind: 'ember', x: 40, y: 534, seed: 27 },
-    { kind: 'ember', x: 66, y: 544, seed: 28 },
   ],
   neon: [
     ...rainOver(90),

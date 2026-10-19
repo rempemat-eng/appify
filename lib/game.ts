@@ -49,11 +49,14 @@ import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
 import { acknowledgeMapSeen, restoreMapSeen } from '@/lib/world-map';
 import {
   checkDecor,
+  DEFAULT_HUT_LOOK,
   foundKeepsakes,
   restoreDecor,
+  restoreHutLook,
   type DecorArea,
   type DecorCheck,
   type DecorPlacement,
+  type HutLook,
 } from '@/lib/decor';
 import type { RegionId } from '@/lib/region-walk';
 import {
@@ -204,6 +207,8 @@ export type Saved = {
   mapSeen?: string[];
   /** keepsakes set out in the nap hut (the rest wait in the chest; lib/decor.ts) */
   decor?: DecorPlacement[];
+  /** the hut's door, window boxes and path, as chosen while decorating (lib/decor.ts) */
+  hutLook?: HutLook;
 };
 export type SaveLoadProblem =
   | { kind: 'unreadable'; confirmationId: string | null; busy: boolean; error: string | null }
@@ -271,6 +276,9 @@ type Game = Saved & {
   placeDecor: (item: string, x: number, y: number, area?: DecorArea) => DecorCheck;
   /** put a keepsake back in the chest */
   storeDecor: (item: string) => void;
+  hutLook: HutLook;
+  /** change the hut's door, window boxes or path; free, and only ever a look */
+  setHutLook: (look: Partial<HutLook>) => void;
 };
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -361,6 +369,7 @@ function migrateSaved(value: unknown) {
     value.decor,
     isRecord(value.world) && isStringArray(value.world.visited) ? value.world.visited : [],
   );
+  value.hutLook = restoreHutLook(value.hutLook);
   if (isRecord(value.cardReward))
     value.cardReward = {
       grass: 0,
@@ -497,6 +506,7 @@ function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakI
     world: null,
     mapSeen: [],
     decor: [],
+    hutLook: { ...DEFAULT_HUT_LOOK },
   };
 }
 function emptySession() {
@@ -639,6 +649,7 @@ function persist() {
     world: s.world,
     mapSeen: s.mapSeen,
     decor: s.decor,
+    hutLook: s.hutLook,
     waitingVisitor: s.waitingVisitor,
   };
   const encoded = writeSave(saved, saveSource);
@@ -911,6 +922,20 @@ export const gameStore = create<Game>((set, get) => ({
     const s = get();
     if (!s.decor.some((p) => p.item === item)) return;
     set({ decor: s.decor.filter((p) => p.item !== item) });
+    void persist();
+  },
+  hutLook: { ...DEFAULT_HUT_LOOK },
+  setHutLook: (look) => {
+    const s = get();
+    if (!s.player) return;
+    const next = restoreHutLook({ ...s.hutLook, ...look });
+    if (
+      next.door === s.hutLook.door &&
+      next.boxes === s.hutLook.boxes &&
+      next.path === s.hutLook.path
+    )
+      return;
+    set({ hutLook: next });
     void persist();
   },
   walkWorld: (region, x, y, settle = false) => {

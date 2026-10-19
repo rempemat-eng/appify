@@ -19,6 +19,7 @@ import Animated, {
   withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
+import { LinearGradient } from 'expo-linear-gradient';
 import { useReducedMotion } from '@/lib/motion';
 import { STEP_MS, keySteps, useKeyboardWalk } from '@/lib/keyboard-walk';
 import { useAppActive } from '@/lib/app-active';
@@ -27,6 +28,8 @@ import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
 import { makeWalkGrid, type Point } from '@/lib/garden-path';
 import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
 import { hiddenBehind } from '@/lib/occlusion';
+import { hutImageKey } from '@/lib/decor';
+import { hutImages } from '@/lib/garden-hut-assets';
 import {
   TILE,
   regionBounds,
@@ -38,7 +41,7 @@ import {
   type RegionTile,
   type TileId,
 } from '@/lib/region-walk';
-import { zoneFrames, zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
+import { zoneFrames, zoneMaps, zoneOverhead, zoneTone, zoneWindows } from '@/lib/zone-maps';
 import {
   BEYOND_SPILL,
   zoneBeyond,
@@ -53,7 +56,7 @@ import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
-import { PixelFrame } from '@/components/pixel-frame';
+import { PixelFrame, frameTones } from '@/components/pixel-frame';
 import gardenGround from '@/assets/garden/ground.png';
 import gStream from '@/assets/garden/water-stream-0.png';
 import gPond from '@/assets/garden/water-pond-0.png';
@@ -149,6 +152,11 @@ const KEY_SPEED = 52; // walking by the keys: a purposeful trot
 /** Which way a leg of a walk faces; null for one that only goes up or down. */
 const legFacing = (a: Point, b: Point) =>
   Math.abs(b.x - a.x) < 2 ? null : b.x < a.x ? ('left' as const) : ('right' as const);
+// Zones lit by their own light on one side only: the hour's tint fades out across them
+// toward that light (the Scorched Pass: Dust Gulch's night on its sandy west, the lava's
+// glow on its east), so the light never stops at a tile edge (play-test 18 Oct, 1).
+const FADE_LIGHT: Partial<Record<TileId, 'east'>> = { scorch: 'east' };
+const clearOf = (c: string) => c.replace(/[\d.]+\)$/, '0)');
 // Zones that keep their own light at every hour (no night tint).
 const OWN_LIGHT: TileId[] = [
   'neon',
@@ -359,9 +367,12 @@ const FRAME_MS = 400; // divides FLOAT_LOOP
  *  Reach open dunes round the desert and the volcano's flank round the fire country (the
  *  Scorched Pass and everything north and east of it). */
 function beyondAt(region: RegionId, col: number, row: number) {
-  if (region === 'west' && (col >= 1 || (col >= 0 && row <= -1))) return zoneBeyondAsh;
-  // the valley's high country: peaks round the Frostline, forest lower down
-  if (region === 'valley' && row <= -2) return zoneBeyondPeaks;
+  // (Sunstone: the volcano's ash flank round the fire country, desert north of the gulch)
+  if (region === 'west' && (col >= 1 || (col >= 0 && row <= -2))) return zoneBeyondAsh;
+  // the valley: mountains above the Frostline and the ridge, the sea past the harbour and
+  // the headland, old forest east and west (Driftwood's west point meets the woods)
+  if (region === 'valley' && row <= -1) return zoneBeyondPeaks;
+  if (region === 'valley' && row >= 3) return zoneBeyondByRegion.isles;
   // Lumen's plain runs on below and beside it; above, only space (the backdrop)
   if (region === 'moon') return zoneBeyondRegolith;
   return zoneBeyondByRegion[region] ?? zoneBeyond;
@@ -493,7 +504,7 @@ function Turning({
   );
 }
 
-function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
+function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourcePropType): Drawable[] {
   const o = tileOrigin(region, tile);
   if (tile.id === 'garden') {
     return gardenObjects
@@ -501,7 +512,8 @@ function tileDrawables(region: RegionId, tile: RegionTile): Drawable[] {
       .map((g) => ({
         key: `garden-${g.id}`,
         sprite: g.sprite,
-        src: gardenSprites[g.sprite],
+        // the hut as the player has made it (door colour, window boxes)
+        src: g.sprite === 'hut' && hut ? hut : gardenSprites[g.sprite],
         x: o.x + g.x,
         y: o.y + g.y,
         w: g.w,
@@ -590,6 +602,7 @@ export function AtlasWalk({
   const reduced = useReducedMotion();
   const active = useAppActive();
   const player = useGame((s) => s.player);
+  const hutLook = useGame((s) => s.hutLook);
   const hour = new Date(useGame((s) => s.now)).getHours();
   const night = hour < 6 || hour >= 21;
   // the light of the hour (as on the garden screen): blue at night, warm at dusk, a
@@ -823,16 +836,47 @@ export function AtlasWalk({
   const regionW = bounds.width * u;
   const regionH = bounds.height * u;
   const petPx = 32 * u;
+  // where the land runs on past the region's top, the camera may look a little past
+  // it, so a companion at a north-edge stand is not left under the header
+  // (play-test 18 Oct, finding 9)
+  const roomAbove = region === 'valley' || zoneBeyondByRegion[region] ? 96 : 0;
+  // The camera keeps to the land you can walk on, plus a margin (art-faults.md, rule 13:
+  // no screens full of what lies past the world), not to the region's whole rectangle.
+  const land = (() => {
+    const rows = walkRows ?? regionWalk(region);
+    let x0 = Infinity;
+    let x1 = -Infinity;
+    let y0 = Infinity;
+    let y1 = -Infinity;
+    rows.forEach((row, r) => {
+      const a = row.indexOf('.');
+      if (a < 0) return;
+      const b = row.lastIndexOf('.');
+      x0 = Math.min(x0, a);
+      x1 = Math.max(x1, b + 1);
+      y0 = Math.min(y0, r);
+      y1 = Math.max(y1, r + 1);
+    });
+    const PAD = 40;
+    const c = TILE.cell;
+    return {
+      x0: Math.max(0, x0 * c - PAD) * u,
+      x1: Math.min(bounds.width, x1 * c + PAD) * u,
+      y0: Math.max(0, y0 * c - PAD) * u,
+      y1: Math.min(bounds.height, y1 * c + PAD) * u,
+    };
+  })();
   const cameraStyle = useAnimatedStyle(() => {
-    // a region narrower (or shorter) than the screen sits in its middle
+    // land narrower (or shorter) than the screen sits in its middle
     const cx =
-      regionW <= width
-        ? (regionW - width) / 2
-        : Math.max(0, Math.min(regionW - width, px.value * u - width / 2));
+      land.x1 - land.x0 <= width
+        ? (land.x0 + land.x1 - width) / 2
+        : Math.max(land.x0, Math.min(land.x1 - width, px.value * u - width / 2));
+    const top = Math.max(-roomAbove, land.y0 - roomAbove);
     const cy =
-      regionH <= height - padBottom
-        ? (regionH - height + padBottom) / 2
-        : Math.max(0, Math.min(regionH - height + padBottom, py.value * u - height * focusY));
+      land.y1 - top <= height - padBottom
+        ? (top + land.y1 - height + padBottom) / 2
+        : Math.max(top, Math.min(land.y1 - height + padBottom, py.value * u - height * focusY));
     return { transform: [{ translateX: -Math.round(cx) }, { translateY: -Math.round(cy) }] };
   });
   const landStyle = useAnimatedStyle(() => ({
@@ -878,7 +922,7 @@ export function AtlasWalk({
         gaps.push({ col, row });
     }
   const drawables = [
-    ...near.flatMap((t) => tileDrawables(region, t)),
+    ...near.flatMap((t) => tileDrawables(region, t, hutImages[hutImageKey(hutLook)])),
     ...(extras ?? []).map((e) => ({ ...e, sprite: `extra:${e.key}` })),
   ];
   // behind a building or a big tree, the companion's outline shows through (a flyer's box
@@ -964,7 +1008,15 @@ export function AtlasWalk({
             return (
               <View
                 key={`ground-${t.id}`}
-                style={{ position: 'absolute', left, top, width: w, height: h }}
+                style={{
+                  position: 'absolute',
+                  left,
+                  top,
+                  width: w,
+                  height: h,
+                  // the ground's own colour under its picture, in case a phone drops it
+                  backgroundColor: zoneTone[t.id],
+                }}
               >
                 <Image
                   source={t.id === 'garden' ? gardenGround : zoneGrounds[t.id]}
@@ -1057,20 +1109,44 @@ export function AtlasWalk({
                     x: (g.col - bounds.minCol) * TILE.width,
                     y: (g.row - bounds.minRow) * TILE.height,
                   }))),
-            ].map((c) => (
-              <View
-                key={`tint-${c.key}`}
-                style={{
-                  position: 'absolute',
-                  left: snap(c.x * u),
-                  top: snap(c.y * u),
-                  width: snap(TILE.width * u),
-                  height: snap(TILE.height * u),
-                  backgroundColor: tint,
-                  zIndex: 150000,
-                }}
-              />
-            ))}
+            ]
+              .concat(
+                near
+                  .filter((t) => FADE_LIGHT[t.id])
+                  .map((t) => ({ key: `fade-${t.id}`, fade: true, ...tileOrigin(region, t) })),
+              )
+              .map((c) =>
+                'fade' in c ? (
+                  <LinearGradient
+                    key={`tint-${c.key}`}
+                    pointerEvents="none"
+                    colors={[tint, clearOf(tint)]}
+                    start={{ x: 0, y: 0.5 }}
+                    end={{ x: 0.7, y: 0.5 }}
+                    style={{
+                      position: 'absolute',
+                      left: snap(c.x * u),
+                      top: snap(c.y * u),
+                      width: snap(TILE.width * u),
+                      height: snap(TILE.height * u),
+                      zIndex: 150000,
+                    }}
+                  />
+                ) : (
+                  <View
+                    key={`tint-${c.key}`}
+                    style={{
+                      position: 'absolute',
+                      left: snap(c.x * u),
+                      top: snap(c.y * u),
+                      width: snap(TILE.width * u),
+                      height: snap(TILE.height * u),
+                      backgroundColor: tint,
+                      zIndex: 150000,
+                    }}
+                  />
+                ),
+              )}
           {night &&
             // lamplight in the windows (panes recorded by the generator, zoneWindows): a pane
             // with nothing in front glows above the night tint; one that a nearer thing overlaps
@@ -1253,25 +1329,37 @@ export function AtlasWalk({
               onPress={() => onMarker?.(m.id)}
               style={{
                 position: 'absolute',
-                left: m.x * u - 70,
-                top: m.y * u - 56 * u,
-                width: 140,
-                minHeight: 44,
+                left: m.x * u - (m.selected ? 70 : 22),
+                // the label's foot sits above a standing companion's head, so it never
+                // covers the companion at the stand (play-test 18 Oct, finding 3)
+                top: m.y * u - 50 * u - 44,
+                width: m.selected ? 140 : 44,
+                height: 44,
                 alignItems: 'center',
                 justifyContent: 'flex-end',
               }}
             >
-              <PixelFrame
-                tone={m.selected ? 'gold' : 'paper'}
-                style={{ paddingVertical: 2 * u, paddingHorizontal: 4 * u, alignItems: 'center' }}
-              >
-                <BodyText
-                  numberOfLines={1}
-                  style={{ fontSize: 11, lineHeight: 13, fontFamily: 'PixelifySans_700Bold' }}
+              {m.selected ? (
+                <PixelFrame
+                  tone="gold"
+                  style={{ paddingVertical: 2 * u, paddingHorizontal: 4 * u, alignItems: 'center' }}
                 >
-                  {m.label}
-                </BodyText>
-              </PixelFrame>
+                  <BodyText
+                    numberOfLines={1}
+                    style={{ fontSize: 11, lineHeight: 13, fontFamily: 'PixelifySans_700Bold' }}
+                  >
+                    {m.label}
+                  </BodyText>
+                </PixelFrame>
+              ) : (
+                // a small pin over what can be visited: the name shows once it is chosen,
+                // so labels never cover the place itself (Matt, 19 Oct, fault 20)
+                <PixelFrame tone="paper" style={{ padding: 2 * u }}>
+                  <View
+                    style={{ width: 4 * u, height: 4 * u, backgroundColor: frameTones.gold.fill }}
+                  />
+                </PixelFrame>
+              )}
             </Pressable>
           ))}
         </Animated.View>

@@ -17,4 +17,6 @@ export const decorSizes: Record<string, { w: number; h: number; foot: number }> 
   dragon_plush: { w: 21, h: 17, foot: 6 },
   star_globe: { w: 15, h: 21, foot: 4 },
   moon_crystal: { w: 16, h: 21, foot: 5 },
+  brass_telescope: { w: 17, h: 23, foot: 5 },
+  orchid_pot: { w: 19, h: 23, foot: 5 },
 };

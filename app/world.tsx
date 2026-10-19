@@ -43,6 +43,7 @@ import {
   type StopId,
 } from '@/lib/world-places';
 import { restoreWorld } from '@/lib/world-save';
+import { useZoneAmbience } from '@/lib/sound';
 import { useUi } from '@/lib/ui';
 import { prefetchRegion } from '@/lib/zone-prefetch';
 import { WorldMap } from '@/components/world-map';
@@ -355,6 +356,10 @@ export default function World() {
   // a trip: the stop it left from, the stops it calls at (the destination last) and
   // which leg is playing
   const [trip, setTrip] = useState<{ from: StopId; legs: StopId[]; leg: number } | null>(null);
+  // the place's own sound (Claude B's ambience: the Frostline's wind, the isles' surf,
+  // Sunstone's dry air), quiet under a journey or the map; mute, background and first-tap
+  // rules ride on the garden's ambience
+  useZoneAmbience(appActive && !trip && !mapOpen ? (zone ?? null) : null);
   const dest = trip ? trip.legs[trip.legs.length - 1] : null;
   const reduced = useReducedMotion();
   const [goal, setGoal] = useState<{ point: Point; key: number } | undefined>(() =>

@@ -114,7 +114,7 @@ console.log(
   for (const [key, { span }] of Object.entries(zonePorts)) {
     const [a, c] = key.split('|');
     const reg = Object.keys(regionLayout)
-      .filter((r): r is keyof typeof regionLayout => Object.hasOwn(regionLayout, r))
+      .filter((r): r is keyof typeof regionLayout => r in regionLayout)
       .find((r) => a in regionLayout[r] && c in regionLayout[r]);
     assert.ok(reg, `${key}: both zones are in one region`);
     const tiles = regionTiles(reg);
