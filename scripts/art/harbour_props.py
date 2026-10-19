@@ -20,6 +20,8 @@ TAR = MATERIALS['tar']  # tarred roof boards
 SAILCLOTH = MATERIALS['sailcloth']
 ROPE = MATERIALS['rope']
 PAD = 4
+# How these props meet the ground (zones.py registers them with the world lint):
+PLACEMENT = {'harbour_ferry': 'floating', 'pier_ladder': 'supported'}
 
 
 def rect_set(x, y, w, h):
@@ -483,12 +485,275 @@ def washing_line() -> Canvas:
 
 
 def harbour_ferry() -> Canvas:
-    """The little island ferry tied up at Driftwood's jetty, 92 x 46, bow to the left: the
-    same boat Claude C draws moored at Lagoon Landing (isle_props.ferry_moored), since one
-    ferry plies the route, here under the harbour's own key (the harbour uses harbour
-    props only)."""
-    import isle_props
-    return isle_props.ferry_moored()
+    """The ferry to the Tidebloom Isles at Driftwood's pier, 128 x 55, bow to the left, in
+    the three-quarter view (art-faults.md rule 4) at a ferry's size, twice a fishing boat's
+    length: the planked deck seen from above inside its bulwarks, the hull's near side below
+    it lit toward the bow (white topsides with a rubbing strake, portholes, a navy stripe and
+    a red boot-top at the level waterline, the stem raked and the sheer rising forward),
+    fenders hung on the pier side, a saloon with a red roof and a row of windows, a door
+    opening onto the gangway, the wheelhouse on top forward with its mast and masthead
+    lamp, a red funnel with a black top, benches on the open after deck, bitts and a
+    windlass on the foredeck, and the bow and stern lines and the gangway down to the pier
+    along the near side. Its foot is the waterline (the bottom row), so the zone's cast
+    shadow and the water lint start there. The windows declare their panes for night."""
+    w, h = 128, 55
+    # The zone places the ferry by the old 92 x 46 ferry's box (valley_zones.harbour, at
+    # (137, 362)); the sprite contract lets art reach past its nominal box (placement adds
+    # the trimmed offset), so the hull is drawn 37 px west and 12 px up of that box and
+    # lies along the pier head with its waterline on the head's edge, with no re-placing.
+    box = Canvas(92, 46, pad=44)
+    cv = _Offset(box, -37, -12)
+    IRON, HULL_W = MATERIALS['iron'], PLASTER
+    cy, sq, wl = 34, 0.8, h - 1  # the deck's centre line, the plan's foreshortening, the waterline row
+
+    def half(x):  # the hull's half-beam in plan: a fine bow, full amidships, a rounded stern
+        t = (x - 3) / 38
+        b = 12.5 * math.sqrt(max(0.0, min(1.0, t)))
+        if x > 110:
+            b *= math.sqrt(max(0.0, 1 - ((x - 110) / 15) ** 2))
+        return b
+
+    def sheer(x):  # the deck rises toward the bow
+        return -round(3.4 * max(0.0, (44 - x) / 41))
+
+    deck, side, near = set(), set(), {}
+    for x in range(3, 126):
+        hw = half(x) * sq
+        if hw < 0.6:
+            continue
+        top, bot = int(round(cy - hw)) + sheer(x), int(round(cy + hw)) + sheer(x)
+        for y in range(top, bot + 1):
+            deck.add((x, y))
+        near[x] = bot
+        foot = wl if x >= 10 else bot + 1 + int((wl - bot - 1) * (x - 3) / 7)  # the raked stem
+        for y in range(bot + 1, foot + 1):
+            side.add((x, y))
+    # the hull's near side: lit toward the bow, turning out of the light at the stern
+    for (x, y) in side:
+        d = y - near[x] - 1
+        lit = 2 if x < 30 else 1 if x < 92 else 0
+        if d == 0:
+            c = WOOD[3] if x < 92 else WOOD[2]  # the rubbing strake
+        elif y == wl:
+            c = '#22304A'  # the waterline, wet and dark
+        elif y >= wl - 2:
+            c = RED[2] if lit else RED[1]  # the boot-top
+        elif y >= wl - 4:
+            c = TAR[2] if lit == 2 else TAR[1] if lit else TAR[0]  # the stripe
+        else:
+            c = HULL_W[3 + lit] if d > 1 else HULL_W[5] if lit else HULL_W[4]
+            if d > 1 and d % 3 == 0:
+                c = HULL_W[2 + lit]  # the plank seams of the topsides
+        if x >= 120:
+            c = shade_hex(c, 0.78)  # the stern's rounding
+        cv.set(x, y, c)
+    for x in range(4, 10):  # the stem post, lit
+        if x in near:
+            cv.set(x, near[x] + 1, WOOD[4])
+    for px in range(34, 100, 9):  # portholes: brass rims, glass catching the sky
+        py = near[px] + 4
+        cv.set(px, py, '#9FC7E6'); cv.set(px + 1, py, WTR[1]); cv.set(px, py + 1, WTR[1]); cv.set(px + 1, py + 1, WTR[0])
+        cv.set(px - 1, py, GOLD[2]); cv.set(px + 2, py + 1, GOLD[1])
+    # the hawse pipe at the bow, rust running from it, the chain going in
+    ax, ay = 13, near[13] + 2
+    cv.set(ax, ay, IRON[0]); cv.set(ax + 1, ay, IRON[1]); cv.set(ax, ay + 1, IRON[1])
+    for k in range(2, 5):
+        cv.set(ax + (k % 2), ay + k, RED[1] if k < 4 else HULL_W[2])
+    # the deck: planks fore and aft, caulked seams, lit at the bow
+    for (x, y) in deck:
+        e_far = (x, y - 1) not in deck
+        e_near = (x, y + 1) not in deck
+        if e_far:
+            c = WOOD[4] if x < 60 else WOOD[3]  # the far bulwark's cap rail
+        elif (x, y - 2) not in deck:
+            c = HULL_W[3] if x < 60 else HULL_W[2]  # the far bulwark's inner face
+        elif e_near:
+            c = WOOD[4] if x < 60 else WOOD[3]  # the near cap rail
+        else:
+            c = WOOD[2] if (y - cy) % 2 == 0 else (WOOD[4] if x < 34 else WOOD[3])
+            if (y - cy) % 2 == 0 and (x * 7 + y * 3) % 23 == 0:
+                c = WOOD[1]  # a butt joint
+        cv.set(x, y, c)
+
+    def P(x, py, z):  # a point in plan (x, py across the beam) at height z, to the screen
+        return int(round(cy + py * sq - z))
+
+    # the foredeck: two bitts, a windlass and a coil of rope by the hatch
+    for bx in (18, 30):
+        by = P(bx, 3, 0)
+        cv.set(bx, by - 2, IRON[3]); cv.set(bx, by - 1, IRON[2]); cv.set(bx + 1, by - 1, IRON[1]); cv.set(bx + 1, by - 2, IRON[2])
+    for x in range(22, 27):
+        cv.set(x, P(x, -1, 2), IRON[3] if x < 24 else IRON[2]); cv.set(x, P(x, -1, 1), IRON[1])
+    cv.set(21, P(21, -1, 2), IRON[2]); cv.set(27, P(27, -1, 2), IRON[1])
+    for k in range(12):
+        a = k * 0.55
+        cv.set(int(round(30 + math.cos(a) * 2.6)), int(round(P(30, -3, 0) + math.sin(a) * 1.4)), ROPE[3] if k % 3 else ROPE[1])
+    # the saloon: roof (top face) and front face, the left end lit
+    sx0, sx1, sh, shw = 36, 98, 10, 8  # its plan, height and half-depth
+    roof0, roof1 = P(0, -shw, sh), P(0, shw, sh)
+    front0, front1 = roof1 + 1, P(0, shw, 0)
+    for y in range(roof0, front1 + 1):
+        for x in range(sx0, sx1):
+            if y <= roof1:
+                c = RED[4] if (y == roof0 or x == sx0) else RED[3] if x < sx1 - 6 else RED[2]
+                if y == roof1:
+                    c = RED[1]  # the roof's front eave
+            else:
+                c = HULL_W[5] if x < sx0 + 2 else HULL_W[4] if x < sx1 - 3 else HULL_W[3]
+                if y == front0:
+                    c = HULL_W[2]  # the eave's shadow on the face
+                if y == front1:
+                    c = WOOD[1]  # the coaming where it meets the deck
+            cv.set(x, y, c)
+    for x in range(sx0 + 3, sx1 - 2, 4):  # the roof's seams
+        for y in range(roof0 + 1, roof1):
+            if (x + y) % 2:
+                cv.set(x, y, RED[3] if x < sx1 - 6 else RED[1])
+    wy = front0 + 2
+    panes = []
+    for wx in list(range(sx0 + 8, 80, 7)):  # the saloon windows
+        for yy in range(wy, wy + 4):
+            for xx in range(wx, wx + 5):
+                k = yy - wy
+                c = '#B8D6EE' if (k == 0 and xx < wx + 3) else WTR[2] if k < 2 else WTR[1]
+                cv.set(xx, yy, c)
+        cv.hline(wx, wy + 4, 5, HULL_W[2])  # the sill's shadow
+        cv.set(wx + 4, wy, WTR[1])
+        panes.append((wx, wy, 5, 4))
+    # a life ring by the forward end of the saloon
+    for (x, y) in disc(sx0 + 4, wy + 2, 2.4):
+        if (x - (sx0 + 4)) ** 2 + (y - (wy + 2)) ** 2 > 1.2:
+            cv.set(x, y, RED[3] if (x + y) % 3 else HULL_W[5])
+    # the door onto the gangway: planked, a brass knob, a step
+    dx0 = 84
+    for y in range(wy - 1, front1):
+        for x in range(dx0, dx0 + 5):
+            cv.set(x, y, WOOD[3] if x == dx0 else WOOD[2] if (x - dx0) % 2 else WOOD[1])
+    cv.set(dx0 + 3, wy + 3, GOLD[3])
+    cv.hline(dx0 - 1, wy - 2, 7, HULL_W[2])
+    # the wheelhouse on the saloon's forward end: roof, a face of windows, the helmsman's lamp
+    hx0, hx1, hh, hhw = 40, 58, 9, 4
+    hroof0, hroof1 = P(0, -hhw, sh + hh), P(0, hhw, sh + hh)
+    hface1 = P(0, hhw, sh)
+    for y in range(hroof0, hface1 + 1):
+        for x in range(hx0, hx1):
+            if y <= hroof1:
+                c = HULL_W[5] if (y == hroof0 or x == hx0) else HULL_W[4] if x < hx1 - 3 else HULL_W[3]
+                if y == hroof1:
+                    c = HULL_W[2]
+            else:
+                c = HULL_W[4] if x < hx0 + 2 else HULL_W[3] if x < hx1 - 2 else HULL_W[2]
+            cv.set(x, y, c)
+    hy = hroof1 + 2
+    for wx in (hx0 + 2, hx0 + 7, hx0 + 12):
+        for yy in range(hy, hy + 3):
+            for xx in range(wx, wx + 4):
+                cv.set(xx, yy, '#B8D6EE' if (yy == hy and xx < wx + 2) else WTR[2] if yy == hy else WTR[1])
+        panes.append((wx, hy, 4, 3))
+    cv.hline(hx0, hface1, hx1 - hx0, HULL_W[1])  # the wheelhouse's shadow on the saloon roof
+    cv.hline(hx0 + 1, hface1 + 1, hx1 - hx0, RED[1])
+    # the mast behind the wheelhouse: a masthead lamp and a pennant
+    mx = 55
+    for y in range(1, hroof0 + 1):
+        cv.set(mx, y, WOOD[3]); cv.set(mx + 1, y, WOOD[1])
+    cv.hline(mx - 3, 6, 8, WOOD[2])  # the yard
+    cv.set(mx, 0, GOLD[4]); cv.set(mx + 1, 0, GOLD[3])  # the masthead lamp
+    for k in range(5):
+        cv.set(mx + 2 + k, 2 + k // 3, RED[3] if k < 3 else RED[2])
+    panes.append((mx, 0, 2, 1))
+    # the funnel: a cylinder on the roof, lit left, a company band, a black top with its mouth
+    fx0, fx1, fz0, fz1 = 70, 78, sh, sh + 15
+    base, top = P(0, 0, fz0), P(0, 0, fz1)
+    for y in range(top, base + 1):
+        for x in range(fx0, fx1):
+            k = x - fx0
+            c = RED[4] if k < 2 else RED[3] if k < 5 else RED[2] if k < 7 else RED[1]
+            if y < top + 3:
+                c = IRON[3] if k < 2 else IRON[2] if k < 5 else IRON[1]
+            elif y in (top + 6, top + 7):
+                c = HULL_W[5] if k < 3 else HULL_W[4] if k < 6 else HULL_W[3]
+            cv.set(x, y, c)
+    for (x, y) in oval(fx0 + 4, top, 4, 1.3):
+        cv.set(x, y, IRON[0] if y >= top else IRON[2])
+    cv.set(fx0 + 1, top - 1, IRON[4])
+    for x in range(fx0, fx1 + 1):  # the funnel's shadow on the roof behind it
+        if cv.get(x + 2, base + 1)[3]:
+            cv.set(x + 2, base + 1, RED[1])
+    # the after deck: benches against the far bulwark, a bollard pair, the ensign staff
+    for bx0 in (100, 110):
+        by = P(bx0, -6, 0)
+        cv.hline(bx0, by, 7, WOOD[4]); cv.hline(bx0, by + 1, 7, WOOD[2])
+        cv.set(bx0, by + 2, WOOD[1]); cv.set(bx0 + 6, by + 2, WOOD[1])
+    for bx in (112, 117):
+        by = P(bx, 4, 0)
+        cv.set(bx, by - 1, IRON[3]); cv.set(bx, by, IRON[1]); cv.set(bx + 1, by - 1, IRON[2]); cv.set(bx + 1, by, IRON[0])
+    ex = 122
+    ey = P(ex, 0, 0)
+    for y in range(ey - 12, ey):
+        cv.set(ex, y, WOOD[2])
+    for y in range(ey - 12, ey - 7):
+        for x in range(ex + 1, ex + 5):
+            cv.set(x, y, WTR[2] if y < ey - 9 else RED[3])
+    # the near rail: white stanchions and a top rail, open at the gangway
+    gate = range(dx0 - 1, dx0 + 7)
+    for x in range(8, 121):
+        if x not in near or x in gate:
+            continue
+        ry = near[x]
+        cv.set(x, ry - 3, HULL_W[5] if x < 60 else HULL_W[4])
+        if x % 5 == 0:
+            cv.set(x, ry - 2, HULL_W[4]); cv.set(x, ry - 1, HULL_W[3])
+    # fenders on the pier side: short rope-covered bolsters on lanyards over the strake
+    for fx in (26, 52, 68, 102, 112):
+        y0 = near[fx] + 1
+        cv.set(fx, y0, ROPE[1]); cv.set(fx, y0 + 1, ROPE[1])
+        for (x, y) in oval(fx + 0.5, y0 + 4.5, 1.6, 2.6):
+            cv.set(x, y, ROPE[3] if x <= fx and y < y0 + 5 else ROPE[2] if x <= fx else ROPE[1])
+        cv.set(fx + 1, y0 + 7, ROPE[0])
+    # the gangway: a cleated plank from the door down to the pier, with a rope handrail
+    g0, g1 = near[dx0] - 1, wl
+    for y in range(g0, g1 + 1):
+        t = (y - g0) / (g1 - g0)
+        x = int(round(dx0 + t * 9))
+        for k in range(5):
+            cv.set(x + k, y, WOOD[4] if k == 0 else WOOD[3] if k < 4 else WOOD[1])
+        if (y - g0) % 3 == 1:
+            cv.hline(x + 1, y, 3, WOOD[2])  # a cleat
+        hy2 = y - 4
+        if hy2 >= g0 - 3:
+            cv.set(x + 5, hy2, ROPE[2])
+    # the mooring lines down to the pier: a bow spring and a stern line, sagging a little
+    for (x0, x1) in ((19, 40), (116, 108)):
+        y0 = P(x0, 3, 1)
+        for k in range(0, 101):
+            t = k / 100
+            x = int(round(x0 + (x1 - x0) * t))
+            y = int(round(y0 + (wl - y0) * t + math.sin(t * math.pi) * 2))
+            if not cv.get(x, y)[3] or (x, y) in side:
+                cv.set(x, y, ROPE[1] if (x, y) in side else ROPE[2])
+    gp.WINDOWS.extend((box, (x - 37, y - 12, pw, ph)) for (x, y, pw, ph) in panes)
+    return box
+
+
+class _Offset:
+    """Draws onto a canvas shifted by (dx, dy), so a prop can be drawn in its own frame."""
+
+    def __init__(self, cv: Canvas, dx: int, dy: int):
+        self.cv, self.dx, self.dy = cv, dx, dy
+
+    def set(self, x, y, c):
+        self.cv.set(x + self.dx, y + self.dy, c)
+
+    def get(self, x, y):
+        return self.cv.get(x + self.dx, y + self.dy)
+
+    def hline(self, x, y, w, c):
+        self.cv.hline(x + self.dx, y + self.dy, w, c)
+
+
+def shade_hex(c: str, k: float) -> str:
+    r, g, b = (int(c[i:i + 2], 16) for i in (1, 3, 5))
+    return '#%02X%02X%02X' % (int(r * k), int(g * k), int(b * k))
 
 
 def pier_ladder() -> Canvas:

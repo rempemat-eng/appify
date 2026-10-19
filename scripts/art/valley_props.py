@@ -1260,6 +1260,104 @@ def drystone_corner(side: str = 'w') -> Canvas:
     return cv
 
 
+def field_gate(swing: float = 0.0) -> Canvas:
+    """A five-bar timber field gate for a gap in a dry stone wall, 24 x 26, in the three-
+    quarter view: hung on its left end (the heel, a thick post-like stile with two iron
+    strap hinges at the heights of drystone_gatepost's pins, x 0 sitting on the pins) and
+    shut against the right post with an iron hasp (swing 0), or swung half open toward the
+    viewer (swing 0.5 to 1: the gate foreshortened, its latch end coming down the view on
+    the ground's angle). Five rails, the top one heavier, and the diagonal brace from the
+    heel's foot up to the head of the latch stile; oak, weathered, lit on its upper left
+    faces, rails a shade darker on their undersides. Placed with its x on the left post's
+    pin column and its row 25 on the posts' foot row (the open gate's box runs on below)."""
+    length = 19  # heel to latch end, along the gate
+    gh = 14  # the gate's height, under the posts' capstones
+    ang = swing * math.pi / 2 * 0.7  # how far round it has swung
+    run = math.cos(ang)  # its width across the view
+    drop = math.sin(ang) * 0.55  # the latch end comes down the view as it swings toward us
+    w, h = 24, 26 + math.ceil(length * drop)  # an open gate reaches down the view past the posts' foot
+    cv = Canvas(w, h, pad=PAD)
+    foot = 25  # the heel's foot, on the posts' foot row
+    lift = 3  # its bottom rail stands clear of the ground
+
+    def at(u, z):  # a point u along the gate from the heel, z up from its bottom rail
+        return 1 + u * run, foot - lift - z + u * drop
+
+    def plot(u, z, c):
+        x, y = at(u, z)
+        cv.set(int(round(x)), int(round(y)), c)
+
+    us = [k / 4 for k in range(int(length * 4) + 1)]
+    # the brace first, behind the rails it crosses
+    for k in range(0, 101):
+        t = k / 100
+        u, z = 2 + t * (length - 4), t * (gh - 2)
+        plot(u, z, WOOD[2]); plot(u, z + 1, WOOD[3])
+    # the five rails, a pixel each with gaps widening upward (close at the foot to keep lambs
+    # in), the top rail heavier: lit on its top, its underside in shade
+    for (z0, top) in ((0, False), (2, False), (5, False), (9, False), (13, True)):
+        for u in us:
+            if u < 1.5 or u > length - 1:
+                continue
+            plot(u, z0, (WOOD[4] if u < length * 0.4 else WOOD[3]) if not top else WOOD[2])
+            if top:
+                plot(u, z0 + 1, WOOD[4] if u < length * 0.6 else WOOD[3])
+    # the heel (hanging stile), thick, and the latch stile
+    for z10 in range(0, (gh + 1) * 4):
+        z = z10 / 4
+        for du in (0, 0.5, 1, 1.5):
+            plot(du, z, WOOD[4] if du < 1 else WOOD[2])
+        for du in (length - 1, length - 0.5):
+            plot(du, z, WOOD[3] if du < length - 0.6 else WOOD[1])
+    x, y = at(0, gh + 1)
+    cv.set(int(round(x)), int(round(y)), WOOD[4]); cv.set(int(round(x)) + 1, int(round(y)), WOOD[3])  # the heel's cap
+    # strap hinges at the post's pins (foot - 3 and foot - 11), the straps along the rails
+    for (pz, k) in ((0, 1.0), (8, 1.0)):
+        for u in (0, 0.5, 1, 1.5, 2, 2.5, 3, 3.5):
+            plot(u, pz + 0.5, '#3C404C' if u < 3 else '#2A2D36')
+        plot(0, pz + 1, '#545A68')
+    # the hasp on the latch end, and a chain-loop over it when shut
+    plot(length - 0.5, 7.5, '#2A2D36'); plot(length, 7.5, '#545A68'); plot(length, 6.5, '#3C404C')
+    return cv
+
+
+def wattle_hurdle() -> Canvas:
+    """A wattle hurdle, 22 x 16, the sheep fold's quick fence: split hazel rods woven in and
+    out of nine upright sails, the weave lit along each rod's upper edge and dark where it
+    passes behind a sail, the ends twisted round the end sails, the two end sails left long
+    and driven into the ground, in the three-quarter view (running across it, seen from
+    the front, its top edge a little ragged)."""
+    w, h = 22, 16
+    cv = Canvas(w, h, pad=PAD)
+    foot = h - 1
+    top = 3
+    sails = [1, 3, 6, 8, 11, 13, 15, 18, 20]
+    for (i, sx) in enumerate(sails):
+        end = i in (0, len(sails) - 1)
+        y0 = top - (1 if end else 0) + (1 if noise2(sx, 0, 761) > 0.7 else 0)
+        y1 = foot if end else foot - 2
+        for y in range(y0, y1 + 1):
+            cv.set(sx, y, WOOD[3] if y < y1 - 1 else WOOD[2])
+        cv.set(sx, y0, WOOD[4])
+    for row, y in enumerate(range(top + 1, foot - 2)):
+        for x in range(1, 21):
+            si = next((k for k, sx in enumerate(sails) if sx >= x), len(sails) - 1)
+            behind = x in sails and (si + row) % 2 == 0
+            if x in sails and not behind:
+                continue  # the sail passes in front here
+            lit = (y - top) % 2 == 1
+            c = (WOOD[3] if lit else WOOD[2]) if not behind else WOOD[1]
+            if not behind and noise2(x, y, 762) > 0.88:
+                c = WOOD[4] if lit else WOOD[1]  # a knot, a bit of bark
+            cv.set(x, y, c)
+    for y in range(top + 1, foot - 2, 2):  # the rods twisted round the end sails
+        cv.set(0, y, WOOD[2]); cv.set(21, y, WOOD[1])
+    for x in range(2, 20, 3):  # the ragged top: rod ends sticking up
+        if noise2(x, 1, 763) > 0.5:
+            cv.set(x, top, WOOD[3])
+    return cv
+
+
 def drystone_gatepost() -> Canvas:
     """A gatepost where a dry stone wall ends at a gap, 10 x 26: a pier of big squared
     quoins taller than the wall, laid long and short in turn, a flat capstone over it
@@ -1313,7 +1411,8 @@ def props() -> dict[str, Canvas]:
         'standing_stone_low': standing_stone(6, False), 'stump': stump(), 'woodpile': woodpile(), 'sled': sled(),
         'snowman': snowman(), 'drystone_wall': drystone_wall(64), 'drystone_wall_short': drystone_wall(32),
         'drystone_wall_ns': drystone_wall_ns(40), 'drystone_corner_w': drystone_corner('w'), 'drystone_corner_e': drystone_corner('e'),
-        'drystone_gatepost': drystone_gatepost(), 'marmot_rock': marmot_rock(), 'cotton_grass': cotton_grass(),
+        'drystone_gatepost': drystone_gatepost(), 'field_gate': field_gate(0.0), 'field_gate_open': field_gate(0.8),
+        'wattle_hurdle': wattle_hurdle(), 'marmot_rock': marmot_rock(), 'cotton_grass': cotton_grass(),
         'lookout_tower': lookout_tower(),
     }
 
