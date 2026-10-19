@@ -521,9 +521,9 @@ def skyport(frame: int = 0):
         if 0.9 < d < 0.96 or 0.55 < d < 0.58:
             cv.set(x, y, CYAN[2] if (x + y) % 2 else CYAN[1])
         elif star:
-            cv.set(x, y, PORC[5] if (x - MX) * 0.3 + (y - MY) < 0 else PORC[3])
+            cv.set(x, y, PORC[4] if (x - MX) * 0.3 + (y - MY) < 0 else PORC[3])
         elif d < 0.9:
-            cv.set(x, y, PORC[2] if (x // 3 + y // 3) % 2 else PORC[1])
+            cv.set(x, y, PORC[2])
     # a still reflecting pool under the platform, holding the platform lights
     pool = rect_set_z(16, 108, 70, 36)
     for (x, y) in pool:
@@ -540,7 +540,7 @@ def skyport(frame: int = 0):
             blocked.add((x, y))
     # Neon Harbour's street, continued, ending at a drop-off loop
     LX, LY = 238, 192
-    loop = {(x, y) for (x, y) in oval(LX, LY, 66, 44)}
+    loop = {(x, y) for (x, y) in oval(LX, LY, 66, 36)}
     island = {(x, y) for (x, y) in oval(LX, LY, 32, 18)}
     street = {(x, y) for y in range(156, 228) for x in range(0, LX)} | loop
     for (x, y) in street:
@@ -610,7 +610,7 @@ def skyport(frame: int = 0):
         for y in range(66, 152):
             if (x + y) % 2 and y < 80:
                 style.darken(cv, x, y)
-    for px0 in (232, 288):
+    for px0 in (222, 298):
         for y in range(66, 152):
             for x in range(px0, px0 + 12):
                 cv.set(x, y, PORC[3] if x < px0 + 3 else PORC[2] if x < px0 + 9 else PORC[1])
@@ -631,10 +631,9 @@ def skyport(frame: int = 0):
     AX, AY = 248, 528
     pier = {(x, y) for y in range(462, 506) for x in range(230, 268)}
     ring = {(x, y) for (x, y) in oval(AX, AY, 58, 28)}
-    for y in range(470, H, 2):  # the ribbon's glow doubled in the water
-        for x in range(AX - 8, AX + 9):
-            if (x, y) not in ring and noise2(x // 2, y, 493) > 0.45:
-                cv.set(x, y, CYAN[1] if abs(x - AX) < 4 else '#16324A')
+    for y in range(470, H):  # the ribbon's guide light doubled in the water, broken by ripples
+        if (x := AX + int((noise2(y // 3, 0, 493) - 0.5) * 3)) is not None and y % 5 < 3:
+            cv.hline(x - 1, y, 3, CYAN[1] if y % 5 else '#16324A')
     for (x, y) in pier:
         c = PORC[3] if (y // 8) % 2 else PORC[2]
         if x in (230, 231, 266, 267):
@@ -648,27 +647,47 @@ def skyport(frame: int = 0):
         if d > 0.94 and y > AY:
             c = PORC[0]  # the platform's side above the water
         cv.set(x, y, c)
-    for bx in (46, 90, 134, 178, 310):  # bollards, on Neon's spacing
+    # the pier's entry: its paving runs north to a bank of ticket gates, and glass screens
+    # close it either side down to the quay edge, so the gates are the way onto the pier
+    for y in range(436, 466):
+        for x in range(186, 311):
+            c = PORC[3] if (y // 8) % 2 else PORC[2]
+            if 208 <= x < 290 and (x - 208) % 15 >= 7 and y in (438, 439):
+                c = AMBER[3] if x % 2 else AMBER[2]  # a tactile strip across each lane's mouth
+            cv.set(x, y, c)
+    for gx in (185, 311):  # the screens running south, seen edge on
+        for y in range(426, 466):
+            cv.set(gx, y, PORC[5] if y < 456 else PORC[2]); cv.set(gx + 1, y, '#96CEE2' if y < 456 else PORC[1])
+            if y % 10 == 6:
+                cv.set(gx - 1, y, PORC[4]); cv.set(gx + 2, y, PORC[1])
+        for y in range(430, 467):
+            for x in range(gx - 2, gx + 4):
+                blocked.add((x, y))
+    for bx in (80, 170):  # bollards, on the city quay's spacing
         for (x, y) in disc(bx, 460, 3):
             cv.set(x, y, NIGHT[4] if x < bx else NIGHT[2])
         cv.hline(bx - 2, 460, 5, AMBER[3])
-    for (lx, ly, rx, ry, col) in ((AX, AY, 70, 34, CYAN[2]), (60, 84, 50, 14, AMBER[4]), (160, 84, 50, 14, AMBER[4]),
-                                  (140, 300, 52, 26, CYAN[4]), (40, 410, 34, 12, AMBER[3]), (150, 420, 34, 12, AMBER[3]),
-                                  (LX, LY, 40, 24, AMBER[3]), (AX, 400, 30, 60, CYAN[3])):
-        light_pool(cv, lx, ly, rx, ry, col, skip=frozenset(water - ring - pier))
+    # light thrown only where it reads (the dark road); the pale floor carries its own sheen
+    light_pool(cv, LX, LY, 40, 24, AMBER[3], skip=frozenset(water - ring - pier))
     blocked |= water - ring - pier
     WATER_MASKS['skyport'] = water - ring - pier
+    # Everything has a reason to be where it is (faults 24-26): the departures hall between
+    # the two pylons, with the wayfinding table on the compass; the gates across the
+    # pier's entry; the lift docked on its ring; seats on the quay looking at the sea and
+    # the lift, each backed by a planter as a windbreak; trees on the road's kerb either
+    # side of the concourse; the flower kiosk between the guideway's piers.
     objects = [
         ('maglev', 'maglev', 26, 26), ('pylon-p', 'departure_pylon', 160, 40), ('light-p', 'street_light', 30, 40),
-        ('tree-loop', 'pod_tree', LX - 18, LY - 40), ('tree-1', 'pod_tree', 280, 236), ('tree-2', 'pod_tree', 4, 236),
-        ('pylon-1', 'departure_pylon', 60, 240), ('pylon-2', 'departure_pylon', 180, 240),
-        ('gates', 'ticket_gates', 64, 316), ('bench-1', 'sky_bench', 14, 400), ('bench-2', 'sky_bench', 124, 400),
-        ('tree-3', 'pod_tree', 176, 372), ('tree-4', 'pod_tree', 284, 380), ('bot-1', 'luggage_bot', 120, 440),
-        ('bot-2', 'luggage_bot', 200, 300), ('tether', 'tether', AX - 20, AY - 254),
+        ('tree-loop', 'city_tree_planted', LX - 14, LY - 44), ('tree-1', 'pod_tree', 280, 236), ('tree-2', 'pod_tree', 4, 236),
+        ('pylon-1', 'departure_pylon', 60, 240), ('pylon-2', 'departure_pylon', 180, 240), ('holo', 'holo_map', MX - 20, MY - 36),
+        ('gates', 'ticket_gates', 207, 406), ('screen-w', 'glass_screen', 184, 410), ('screen-e', 'glass_screen', 289, 410),
+        ('planter-1', 'sky_planter', 4, 414), ('bench-1', 'sky_bench', 14, 442),
+        ('planter-2', 'sky_planter_b', 92, 414), ('bench-2', 'sky_bench', 102, 442),
+        ('bot-1', 'luggage_bot', 196, 380), ('bot-2', 'luggage_bot', 236, 300), ('tether', 'tether', AX - 28, AY + 6 - 272),
         ('drone-1', 'drone', 120, 140), ('drone-2', 'drone', 290, 300),
-        ('kiosk', 'flower_kiosk', 244, 106), ('planter-1', 'sky_planter', 40, 424), ('planter-2', 'sky_planter_b', 160, 424),
+        ('kiosk', 'flower_kiosk', 240, 108),
     ]
-    stands = {'neon': (10, 192), 'platform': (70, 84), 'gates': (104, 360), 'anchor': (AX, AY + 14)}
+    stands = {'neon': (10, 192), 'platform': (70, 84), 'gates': (248, 396), 'anchor': (AX, AY + 14)}
     return cv, objects, stands, blocked
 
 
