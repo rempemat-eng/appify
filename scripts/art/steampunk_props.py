@@ -153,59 +153,76 @@ def workshop(width: int = 96, sign: str = 'gear', turn: float = 0.0) -> Canvas:
 
 
 def clock_tower() -> Canvas:
-    """The junction's clock tower, 48 x 132: a copper spire seen from above, a belfry,
-    a big clock face lit from the upper left with brass hands, a brick shaft with a
-    round window, and a stone base with steps."""
-    w, h = 48, 132
+    """The junction's clock tower, 54 x 138, in the same three-quarter view as the
+    workshops (art-faults.md, rule 4): a square brick shaft whose front faces the
+    square and whose east side turns into shade, a copper spire of four planes (the
+    front and east ones seen), a belfry, the clock lit from the upper left, and a
+    stone plinth with steps up to the door, its contact shadow on the paving."""
+    w, h = 54, 138
     cv = Canvas(w, h, pad=PAD)
-    cx = (w - 1) / 2
-    # the spire: a pyramid roof seen steeply from above, two planes and a finial
-    for y in range(4, 34):
-        half = 2 + (y - 4) * 0.72
-        for x in range(int(cx - half), int(cx + half) + 1):
-            lit = x < cx
+    fx0, fx1, sx1 = 6, 40, 48  # the front face, and the east side's far edge
+    cx = (fx0 + fx1 - 1) / 2
+    # the spire: front plane and east plane of a square pyramid, a finial on top
+    apex = (cx + 4, 2)
+    for y in range(4, 36):
+        t = (y - 4) / 31
+        l, r, e = cx - t * (cx - fx0 + 1), cx + t * (fx1 - cx), cx + 4 + t * (sx1 - cx - 4)
+        for x in range(int(l), int(e) + 1):
+            front = x <= r
             band = (y - 4) % 6 == 5
-            c = COPPER[3 if lit else 1]
+            c = (COPPER[3] if x < cx else COPPER[2]) if front else COPPER[1]
             if band:
-                c = COPPER[2 if lit else 0]
-            if abs(x - cx) < 1:
-                c = COPPER[4]
+                c = COPPER[2] if front and x < cx else COPPER[0]
+            if abs(x - r) < 1 and not front:
+                c = COPPER[4]  # the hip between the two planes catches the light
             cv.set(x, y, c)
-    cv.vline(int(cx), 0, 5, BRASS[3]); cv.set(int(cx), 0, BRASS[5]); cv.hline(int(cx) - 1, 2, 3, BRASS[4])
-    cv.hline(int(cx - 24), 34, 48, BRASS[2]); cv.hline(int(cx - 24), 33, 48, BRASS[4])
-    # the belfry
-    brick_wall(cv, 6, 35, 36, 14, seed=21)
+    cv.vline(int(apex[0]), 0, 5, BRASS[3]); cv.set(int(apex[0]), 0, BRASS[5]); cv.hline(int(apex[0]) - 1, 2, 3, BRASS[4])
+    cv.hline(fx0 - 2, 36, sx1 - fx0 + 4, BRASS[2]); cv.hline(fx0 - 2, 35, fx1 - fx0 + 4, BRASS[4])
+    # the shaft: front in brick, east side in shade
+    brick_wall(cv, fx0, 37, fx1 - fx0, 80, seed=21)
+    for y in range(37, 117):
+        for x in range(fx1, sx1):
+            k = (y + (x - fx1) * 2) % 5
+            cv.set(x, y, BRICK[1] if k else BRICK[0])
+        cv.set(fx1, y, BRICK[3])  # the lit corner
+    # the belfry openings
     for bx in (12, 26):
-        for (x, y) in rect_set(bx, 38, 10, 10) | {(x, y) for (x, y) in disc(bx + 4.5, 38, 5) if y < 38}:
+        for (x, y) in rect_set(bx, 41, 8, 10) | {(x, y) for (x, y) in disc(bx + 3.5, 41, 4) if y < 41}:
             cv.set(x, y, IRON[0])
-        cv.vline(bx + 4, 39, 7, BRASS[3]); cv.set(bx + 4, 46, BRASS[4])
-    cv.hline(5, 49, 38, STONE[4]); cv.hline(5, 50, 38, STONE[2])
+        cv.vline(bx + 3, 42, 7, BRASS[3]); cv.set(bx + 3, 49, BRASS[4])
+    cv.hline(fx0 - 1, 52, sx1 - fx0 + 1, STONE[4]); cv.hline(fx0 - 1, 53, sx1 - fx0 + 1, STONE[2])
     # the clock
-    brick_wall(cv, 6, 51, 36, 66, seed=22)
-    for (x, y) in disc(cx, 66, 13):
-        cv.set(x, y, BRASS[3] if (x - cx) + (y - 66) < 0 else BRASS[1])
-    for (x, y) in disc(cx, 66, 11):
-        cv.set(x, y, '#F7EEDC' if (x - cx) + (y - 66) < 4 else '#E3D3B4')
+    cy = 69
+    for (x, y) in disc(cx, cy, 13):
+        cv.set(x, y, BRASS[3] if (x - cx) + (y - cy) < 0 else BRASS[1])
+    for (x, y) in disc(cx, cy, 11):
+        cv.set(x, y, '#F7EEDC' if (x - cx) + (y - cy) < 4 else '#E3D3B4')
     for k in range(12):
         a = 2 * math.pi * k / 12
-        cv.set(int(round(cx + math.cos(a) * 9)), int(round(66 + math.sin(a) * 9)), IRON[1])
+        cv.set(int(round(cx + math.cos(a) * 9)), int(round(cy + math.sin(a) * 9)), IRON[1])
     for t in range(1, 7):
-        cv.set(int(round(cx + t * 0.15)), 66 - t, IRON[0])  # the minute hand, near twelve
+        cv.set(int(round(cx + t * 0.15)), cy - t, IRON[0])
     for t in range(1, 6):
-        cv.set(int(round(cx + t * 0.8)), int(round(66 + t * 0.5)), IRON[0])  # the hour hand
-    cv.set(int(cx), 66, BRASS[4])
-    porthole(cv, cx, 92, 5)
-    for (x, y) in rect_set(int(cx) - 1, 82, 3, 3):
-        cv.set(x, y, IRON[1])
-    pipe_v(cv, 36, 54, 118, BRASS)
-    detail.overhang_shadow(cv, 6, 42, 51, lambda x: 2, k=1, cap=1)
-    # the base and steps
-    detail.stones(cv, 3, 116, 42, 10, STONE, seed=23, course=4)
-    for (x0, y, wd) in ((13, 126, 22), (11, 129, 26)):
+        cv.set(int(round(cx + t * 0.8)), int(round(cy + t * 0.5)), IRON[0])
+    cv.set(int(cx), cy, BRASS[4])
+    for (x, y) in disc(sx1 - 4, cy, 3):  # the clock on the east face, seen edge on
+        cv.set(x, y, BRASS[1] if x < sx1 - 5 else '#B8A88C')
+    porthole(cv, cx, 95, 5)
+    pipe_v(cv, fx1 - 4, 56, 116, BRASS)
+    detail.overhang_shadow(cv, fx0, fx1, 37, lambda x: 2, k=1, cap=1)
+    # the plinth: a stone base with a lit top and a front face, steps to the door
+    detail.stones(cv, fx0 - 3, 117, fx1 - fx0 + 6, 9, STONE, seed=23, course=4)
+    for y in range(117, 126):
+        for x in range(fx1 + 3, sx1 + 3):
+            cv.set(x, y, STONE[1] if (x + y) % 4 else STONE[0])
+    cv.hline(fx0 - 3, 116, sx1 - fx0 + 6, STONE[4])
+    for (x0, y, wd) in ((14, 126, 20), (12, 129, 24), (10, 132, 28)):
         cv.hline(x0, y, wd, STONE[4]); cv.hline(x0, y + 1, wd, STONE[3]); cv.hline(x0, y + 2, wd, STONE[1])
-    dx = int(cx) - 6
-    for (x, y) in rect_set(dx, 106, 12, 10) | {(x, y) for (x, y) in disc(dx + 5.5, 106, 6) if y < 106}:
+        cv.set(x0 + wd, y + 1, STONE[1]); cv.set(x0 + wd, y + 2, STONE[0])
+    dx = int(cx) - 5
+    for (x, y) in rect_set(dx, 106, 11, 11) | {(x, y) for (x, y) in disc(dx + 5, 106, 5.5) if y < 106}:
         cv.set(x, y, WOOD[1] if x > cx else WOOD[2])
+    cv.set(dx + 8, 111, BRASS[4])
     return cv
 
 
@@ -259,6 +276,20 @@ def locomotive() -> Canvas:
     cv.hline(30, 41, 23, IRON[3])  # the coupling rod
     for i in range(7):
         cv.vline(2 + i * 2, 38 + i // 3, 10 - i, IRON[3] if i % 2 else IRON[2])
+    return cv
+
+
+
+def locomotive_parked() -> Canvas:
+    """The engine standing at the platform in the three-quarter view (the zones' key
+    'locomotive'): the side-on engine (which the journey draws) with its roofs seen from above, the cab's top and
+    the boiler's crown catching the light, and its wheels on the rails."""
+    cv = locomotive()
+    for x in range(70, 100):  # the cab roof, its top surface
+        for y in range(1, 5):
+            cv.set(x, y, IRON[4] if y == 1 else IRON[3] if x < 92 else IRON[2])
+    for x in range(20, 72):  # the boiler's crown, a lit band along the top
+        cv.set(x, 15, IRON[4] if x % 14 else BRASS[5])
     return cv
 
 
@@ -361,10 +392,11 @@ def coal_cart() -> Canvas:
 
 
 def airship_mast() -> Canvas:
-    """The airship mast, 96 x 128: an iron lattice tower with a lit lamp, and a small
-    airship moored to it, its envelope a lit ochre cigar with panel seams, a gondola
-    with warm windows and a turning propeller."""
-    w, h = 104, 132
+    """The airship mast, 104 x 168: a tall iron lattice tower with a lit lamp, and a
+    small airship moored to its top by a line, riding high in the air (its shadow
+    falls on the ground beside the mast, drawn by the zone): a lit ochre envelope with
+    panel seams, a gondola with warm windows and a turning propeller."""
+    w, h = 104, 168
     cv = Canvas(w, h, pad=PAD)
     # the envelope, seen from above and a little from the side
     env = oval(46, 30, 42, 17)
@@ -397,10 +429,10 @@ def airship_mast() -> Canvas:
         t = (y - 40) / (h - 42)
         lx, rx = int(mx - 2 - t * 8), int(mx + 2 + t * 8)
         cv.set(lx, y, IRON[3]); cv.set(rx, y, IRON[1])
-        if (y - 40) % 12 == 0 and y < h - 14:
+        if (y - 40) % 14 == 0 and y < h - 14:
             cv.hline(lx, y, rx - lx + 1, IRON[2])
             for k in range(rx - lx):
-                cv.set(lx + k, y + min(11, k * 12 // max(1, rx - lx)), IRON[2])
+                cv.set(lx + k, y + min(13, k * 14 // max(1, rx - lx)), IRON[2])
     for (x, y) in disc(mx, 38, 3):
         cv.set(x, y, '#FFE7A6' if x < mx else '#F0B85A')
     cv.hline(60, 40, mx - 60, IRON[2])  # the mooring line
@@ -409,25 +441,49 @@ def airship_mast() -> Canvas:
 
 
 def tea_kiosk() -> Canvas:
-    """A brass tea kiosk, 40 x 46: an onion dome of copper seen from above, a round
-    brass body with a warm hatch, a kettle steaming on the counter."""
-    cv = Canvas(40, 46, pad=PAD)
-    for y in range(2, 18):
-        half = min(17, 3 + (y - 2) * 2) if y < 10 else 17 - (y - 10) // 3
-        for x in range(20 - half, 20 + half + 1):
-            cv.set(x, y, COPPER[3] if x < 18 else COPPER[1] if x > 25 else COPPER[2])
-    cv.vline(20, 0, 3, BRASS[4])
-    for y in range(18, 44):
-        for x in range(4, 36):
-            k = (x - 4) / 32
-            cv.set(x, y, BRASS[4] if k < 0.15 else BRASS[3] if k < 0.5 else BRASS[2] if k < 0.85 else BRASS[1])
-    cv.hline(3, 18, 34, BRASS[5]); cv.hline(3, 19, 34, IRON[1])
-    for (x, y) in rect_set(10, 23, 20, 10):
-        cv.set(x, y, WARM[3] if y < 26 else WARM[2])
-    cv.hline(8, 33, 24, WOOD[4]); cv.hline(8, 34, 24, WOOD[2])
-    for (x, y) in oval(25, 31, 3, 2.2):
-        cv.set(x, y, IRON[3] if x < 25 else IRON[1])
-    cv.set(22, 28, SNOW[2]); cv.set(23, 27, SNOW[3]); cv.set(22, 26, SNOW[2])
+    """A tea kiosk, 42 x 50, in the three-quarter view: a copper roof whose top and
+    front slope are seen, a striped canvas awning over the serving hatch, a brass-
+    banded timber booth with its east side in shade, a kettle steaming on the
+    counter and a menu slate leaning by the door."""
+    w, h = 42, 50
+    cv = Canvas(w, h, pad=PAD)
+    fx0, fx1, sx1 = 3, 31, 39
+    # the roof: a low hip, its top plane lit, its front slope and east slope below
+    for y in range(2, 15):
+        t = (y - 2) / 12
+        l, r, e = 10 - t * 9, 24 + t * 8, 28 + t * 12
+        for x in range(int(l), int(e) + 1):
+            c = COPPER[3] if y < 6 else (COPPER[2] if x <= r else COPPER[1])
+            if y == 14:
+                c = COPPER[0]
+            cv.set(x, y, c)
+    cv.vline(17, 0, 3, BRASS[4])
+    # the booth's front and east side
+    for y in range(15, 46):
+        for x in range(fx0, sx1):
+            if x < fx1:
+                c = WOOD[3] if (x - fx0) % 6 else WOOD[2]
+                if y in (15, 30):
+                    c = BRASS[4]
+            else:
+                c = WOOD[1] if (y // 3) % 2 else WOOD[0]
+            cv.set(x, y, c)
+        cv.set(fx1, y, WOOD[4])
+    for (x, y) in rect_set(8, 19, 18, 9):  # the hatch, warm inside
+        cv.set(x, y, WARM[3] if y < 22 else WARM[2])
+    # the awning: canvas stripes sloping out over the hatch, its top lit
+    for y in range(15, 20):
+        for x in range(5 - (y - 15), fx1 + (y - 15) // 2):
+            stripe = ((x + (y - 15)) // 4) % 2
+            c = ('#E8DCC4' if stripe else RED[3]) if y < 19 else ('#B8AC94' if stripe else RED[1])
+            cv.set(x, y, c)
+    cv.hline(6, 28, 22, WOOD[4]); cv.hline(6, 29, 22, WOOD[1])  # the counter
+    for (x, y) in oval(21, 26, 2.6, 2):
+        cv.set(x, y, IRON[3] if x < 21 else IRON[1])
+    cv.set(20, 23, SNOW[2]); cv.set(21, 22, SNOW[3]); cv.set(20, 21, SNOW[2])
+    for (x, y) in rect_set(33, 36, 6, 10):  # a menu slate leaning on the east side
+        cv.set(x, y, IRON[1] if (x, y) != (35, 39) else SNOW[2])
+    cv.hline(33, 35, 6, WOOD[3])
     return cv
 
 
@@ -657,7 +713,7 @@ def props() -> dict[str, Canvas]:
     return {
         'workshop': workshop(), **{f'workshop_f{n}': workshop(turn=n * 2 * math.pi / 27) for n in (1, 2)},
         'workshop_round': workshop(80, sign='round'), 'clock_tower': clock_tower(),
-        'locomotive': locomotive(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
+        'locomotive': locomotive_parked(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
         'gear_pile': gear_pile(), 'iron_bench': iron_bench(), 'steamer_trunk': steamer_trunk(),
         'coal_cart': coal_cart(), 'airship_mast': airship_mast(), 'tea_kiosk': tea_kiosk(),
         'narrowboat': narrowboat(), 'canal_crane': canal_crane(), 'foundry': foundry(), 'tube_station': tube_station(),

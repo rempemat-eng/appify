@@ -49,6 +49,27 @@ def gear_ring(cv: Canvas, cx: int, cy: int, rx: int, ry: int):
         cv.set(x, y, BRASS[3] if x < cx else BRASS[2])
 
 
+def ring_posts(cv: Canvas, cx: int, cy: int, rx: int, ry: int):
+    """Short iron posts round a ring with a sagging rope between them, open toward the
+    lane (east) where the way in is."""
+    posts = []
+    for k in range(14):
+        a = 2 * math.pi * k / 14
+        if abs(math.cos(a) - 1) < 0.12:
+            continue  # the way in, facing the lane
+        posts.append((int(cx + (rx + 7) * math.cos(a)), int(cy + (ry + 4) * math.sin(a))))
+    for (x0, y0), (x1, y1) in zip(posts, posts[1:]):
+        n = max(abs(x1 - x0), 1)
+        for t in range(n + 1):
+            x = x0 + (x1 - x0) * t // n
+            y = y0 + (y1 - y0) * t // n - 5 + int(math.sin(math.pi * t / n) * 2)
+            cv.set(x, y, MATERIALS['rope'][2])
+    for (x, y) in posts:
+        for d in range(7):
+            cv.set(x, y - d, IRON[3] if d > 4 else IRON[2]); cv.set(x + 1, y - d, IRON[1])
+        cv.set(x, y - 7, BRASS[4]); cv.set(x + 1, y + 1, IRON[0])
+
+
 def junction(frame: int = 0):
     """Cogsworth Junction: the train from the valley stands at the platform, the
     square below has the clock tower and the tinkerers' workshops, pipes and steam
@@ -76,6 +97,7 @@ def junction(frame: int = 0):
         return 420 + int(math.sin(x / 41) * 5 + smooth_noise(x, 0, 23, 152) * 10 - side * 14)
     square = {(x, y) for x in range(W) for y in range(136, 436) if y < square_edge(x)}
     lane = worlds.thick([(160, 430), (160, 468)], 16)
+    spur = worlds.thick([(150, 504), (128, 506)], 7)  # the short way off the lane into the ring
     worlds.paint_cobbles(cv, square | lane)
     for (x, y) in square | lane:  # a kerb of dressed stone where the cobbles meet the grass
         if (x, y + 1) not in square and (x, y + 1) not in lane and y + 1 < H:
@@ -83,36 +105,46 @@ def junction(frame: int = 0):
     for (gx, gy) in ((70, 190), (238, 196), (110, 360), (214, 372)):
         grate(cv, gx, gy)
     # the lane on south through the gap in the pipe wall, down to the canal
-    south = {(x, y) for x in range(144, 176) for y in range(500, H + 4)}
-    worlds.paint_cobbles(cv, south)
-    for y in range(500, H):
-        cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1]); cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
-    gear_ring(cv, 160, 492, 56, 24)
+    south = {(x, y) for x in range(144, 176) for y in range(460, H + 4)}
+    worlds.paint_cobbles(cv, south | spur)
+    for y in range(460, H):
+        if not (498 <= y <= 512):
+            cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1])
+        cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
+    # the sparring ring beside the lane, not across it (art-faults.md, fault 19): an iron
+    # floor with a toothed brass rim, ringed by short posts with a rope between them
+    gear_ring(cv, 80, 508, 50, 21)
+    ring_posts(cv, 80, 508, 50, 21)
+    # the moored airship's shadow on the meadow, cast down and right of the ship
+    for (x, y) in oval(268, 538, 34, 8):
+        if 0 <= x < W and 0 <= y < H:
+            k = ((x - 268) / 34) ** 2 + ((y - 538) / 8) ** 2
+            style.darken(cv, x, y)
+            if k < 0.55:
+                style.darken(cv, x, y)
     objects = [
         # the far side of the line: chimneys and pipes over the wall
         ('ws-far-1', 'workshop_round', 10, -26), ('ws-far-2', 'workshop', 200, -24),
         ('pipes-far', 'pipe_run', 104, 48),
         # the train at the platform, steam from its stack
-        ('engine', 'locomotive', 96, 50), ('puff-engine', 'steam_puff', 112, 34),
+        ('engine', 'locomotive', 96, 43), ('puff-engine', 'steam_puff', 112, 26),
         # the platform
         ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'iron_bench', 208, 104),
         ('trunk-p1', 'steamer_trunk', 14, 112), ('trunk-p2', 'steamer_trunk', 30, 118), ('coal-p', 'coal_cart', 284, 110),
         # the square
-        ('ws-left', 'workshop', 4, 150), ('ws-right', 'workshop', 220, 150),
+        ('ws-left', 'workshop', 4, 150), ('ws-right', 'workshop_f1', 222, 166),
         ('tower', 'clock_tower', 136, 176),
         ('lamp-s1', 'gas_lamp', 112, 280), ('lamp-s2', 'gas_lamp', 196, 280),
         ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 236, 252),
         ('puff-c1', 'steam_puff', 66, 132), ('puff-c2', 'steam_puff', 282, 132),
         ('ws-low', 'workshop_round', 6, 320), ('coal-1', 'coal_cart', 90, 384),
-        ('trunk-2', 'steamer_trunk', 280, 396), ('pipes-2', 'pipe_run', 240, 410),
+        ('trunk-2', 'steamer_trunk', 280, 396),
         ('puff-v3', 'steam_puff', 206, 352), ('kiosk', 'tea_kiosk', 250, 300),
         # round the ring
-        ('lamp-r1', 'gas_lamp', 92, 470), ('lamp-r2', 'gas_lamp', 216, 470), ('bench-r', 'iron_bench', 22, 486),
-        ('mast', 'airship_mast', 214, 412),
-        ('wall-s1', 'pipe_run', 0, 556), ('wall-s2', 'pipe_run', 64, 556), ('wall-s3', 'pipe_run', 192, 556),
-        ('wall-s4', 'pipe_run', 256, 556),
+        ('lamp-r1', 'gas_lamp', 128, 466), ('bench-r', 'iron_bench', 52, 446),
+        ('mast', 'airship_mast', 206, 392),
     ]
-    stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (160, 492), 'workshop': (52, 248),
+    stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (80, 508), 'workshop': (52, 248),
               'canal': (160, 568)}
     return cv, objects, stands
 
@@ -220,27 +252,22 @@ def canal(frame: int = 0):
         if y == 429:
             cv.set(x, y, STONE[1])
     light_pool(cv, 72, 412, 52, 18, '#FFB648')
-    # the allotments: raised beds of dark earth in rows, sprouts, gravel paths between
-    beds = [(16, 452, 56, 26), (16, 500, 56, 26), (88, 452, 48, 26), (88, 500, 48, 26),
-            (190, 452, 52, 26), (190, 500, 52, 26), (256, 452, 50, 26), (256, 500, 50, 26)]
-    for y in range(436, 548):
+    # the allotments (fault 23): beds of different sizes and crops, edged with boards
+    # whose fronts are seen, gravel between them, a picket fence round the plot with
+    # its gate on the lane
+    for y in range(436, 556):
         for x in range(8, 314):
             n = noise2(x // 2, y // 2, 499)
             cv.set(x, y, '#8C8576' if n > 0.6 else '#76705F' if n > 0.25 else '#9C9584')
-    for (bx, by, bw, bh) in beds:
-        for y in range(by, by + bh):
-            for x in range(bx, bx + bw):
-                c = '#3A2A22' if (y - by) % 6 else '#2A1E18'
-                if (y - by) % 6 == 3 and (x * 7 + y) % 9 < 3:
-                    c = '#62995E' if (x + y) % 2 else '#447A50'  # sprouts
-                cv.set(x, y, c)
-        for x in range(bx - 1, bx + bw + 1):  # timber edging, lit on top
-            cv.set(x, by - 1, WOOD[4]); cv.set(x, by + bh, WOOD[1])
-        for y in range(by, by + bh):
-            cv.set(bx - 1, y, WOOD[3]); cv.set(bx + bw, y, WOOD[1])
+    beds = [(18, 452, 60, 24, 'cabbage'), (90, 448, 44, 30, 'beans'), (20, 492, 40, 28, 'marrow'),
+            (68, 496, 66, 22, 'sprouts'), (186, 450, 60, 26, 'beans'), (256, 456, 48, 22, 'cabbage'),
+            (190, 496, 46, 30, 'marrow'), (246, 494, 58, 26, 'sprouts')]
+    for (bx, by, bw, bh, crop) in beds:
+        allot_bed(cv, bx, by, bw, bh, crop, blocked)
+    picket_fence(cv, blocked, 8, 314, 438, 556, gate=(142, 178))
     objects = [
         # warehouses either side of the lane at the top
-        ('wh-1', 'workshop_round', 20, 22), ('wh-2', 'workshop', 204, 18),
+        ('wh-1', 'workshop_round', 20, 22), ('wh-2', 'workshop_f2', 200, 34),
         ('lamp-1', 'gas_lamp', 124, 96), ('lamp-2', 'gas_lamp', 184, 96),
         # the north towpath: the crane and the moored boat
         ('crane', 'canal_crane', 70, 112), ('boat', 'narrowboat', 8, 186), ('trunk-1', 'steamer_trunk', 30, 150),
@@ -251,15 +278,85 @@ def canal(frame: int = 0):
         ('foundry', 'foundry', 0, 296), ('puff-f1', 'steam_puff', 16, 278), ('puff-f2', 'steam_puff', 112, 284),
         ('station', 'tube_station', 196, 300), ('car', 'atmos_car', 252, 318),
         # the allotments
-        ('pipe-a1', 'pipe_run', 8, 548), ('pipe-a2', 'pipe_run', 72, 548), ('pipe-a3', 'pipe_run', 184, 548),
-        ('pipe-a4', 'pipe_run', 248, 548),
-        ('gardener', 'automaton', 140, 476), ('cloche-1', 'cloche', 30, 460), ('cloche-2', 'cloche', 48, 508),
-        ('cloche-3', 'cloche', 100, 462), ('cloche-4', 'cloche', 270, 510), ('cloche-5', 'cloche', 206, 458),
-        ('bench-a', 'iron_bench', 186, 418), ('lamp-5', 'gas_lamp', 248, 410), ('kiosk-a', 'tea_kiosk', 270, 396),
+        ('gardener', 'automaton', 140, 476), ('cloche-1', 'cloche', 80, 502), ('cloche-2', 'cloche', 262, 500),
+        ('compost', 'gear_pile', 284, 528), ('bench-a', 'iron_bench', 186, 404), ('lamp-5', 'gas_lamp', 248, 400),
     ]
     stands = {'junction': (160, 6), 'bridge': (160, 210), 'boat': (60, 166), 'lock': (264, 150),
               'foundry': (72, 418), 'terminus': (236, 384), 'allotments': (162, 520)}
     return cv, objects, stands, blocked
+
+
+def allot_bed(cv: Canvas, bx: int, by: int, bw: int, bh: int, crop: str, blocked: set):
+    """A raised bed: dark tilled earth, its board edging lit on top with the front
+    board's face seen below, and a crop of its own."""
+    SOIL = ['#22180F', '#2E2117', '#3A2A1E', '#4A3626']
+    for y in range(by, by + bh):
+        for x in range(bx, bx + bw):
+            c = SOIL[2] if (y - by) % 5 else SOIL[1]
+            if noise2(x, y, 520) > 0.9:
+                c = SOIL[3]
+            cv.set(x, y, c)
+            blocked.add((x, y))
+    for x in range(bx - 1, bx + bw + 1):
+        cv.set(x, by - 1, WOOD[4])
+        cv.set(x, by + bh, WOOD[3]); cv.set(x, by + bh + 1, WOOD[2]); cv.set(x, by + bh + 2, WOOD[1])
+        blocked |= {(x, by + bh), (x, by + bh + 1), (x, by + bh + 2)}
+    for y in range(by - 1, by + bh + 3):
+        cv.set(bx - 1, y, WOOD[3]); cv.set(bx + bw, y, WOOD[1])
+    G_ = ['#2A4A2E', '#3E6A3C', '#5A8C4A', '#86B262']
+    if crop == 'cabbage':
+        for ry in range(by + 4, by + bh - 2, 8):
+            for rx_ in range(bx + 5 + (ry // 8) % 2 * 4, bx + bw - 3, 9):
+                for (x, y) in disc(rx_, ry, 3.2):
+                    cv.set(x, y, G_[3] if (x - rx_) + (y - ry) < -1 else G_[2] if (x - rx_) + (y - ry) < 2 else G_[1])
+                cv.set(rx_, ry, '#C8DCA0')
+    elif crop == 'beans':
+        for k, rx_ in enumerate(range(bx + 6, bx + bw - 4, 12)):
+            for t in range(16):  # a wigwam of canes, leaves climbing it
+                for side in (-1, 1):
+                    x, y = rx_ + side * (t // 4), by + bh - 3 - t
+                    cv.set(x, y, '#C8A870' if t % 5 else '#9A7A48')
+                    if t % 3 == 1 and t > 3:
+                        cv.set(x + side, y, G_[2] if side < 0 else G_[1])
+            cv.set(rx_, by + bh - 19, '#9A7A48')
+            for (x, y) in ((rx_ - 2, by + bh - 8), (rx_ + 3, by + bh - 11)):
+                cv.set(x, y, '#E05A4A')  # a red flower
+    elif crop == 'marrow':
+        for k in range(3):
+            lx, ly = bx + 8 + k * (bw - 14) // 2, by + 8 + (k % 2) * 8
+            for (x, y) in oval(lx, ly, 7, 5):
+                if bx <= x < bx + bw and by <= y < by + bh:
+                    cv.set(x, y, G_[2] if (x - lx) + (y - ly) < 0 else G_[1])
+            for (x, y) in oval(lx + 3, ly + 4, 3.5, 2):
+                if bx <= x < bx + bw and by <= y < by + bh:
+                    cv.set(x, y, '#E8C24A' if x < lx + 3 else '#B8902A')
+    else:  # sprouts in rows
+        for ry in range(by + 3, by + bh - 1, 5):
+            for rx_ in range(bx + 3, bx + bw - 2, 4):
+                if noise2(rx_, ry, 521) < 0.85:
+                    cv.set(rx_, ry, G_[3]); cv.set(rx_ + 1, ry, G_[2]); cv.set(rx_, ry + 1, G_[1])
+
+
+def picket_fence(cv: Canvas, blocked: set, x0: int, x1: int, y0: int, y1: int, gate):
+    """A low picket fence round three sides of a plot (the fourth is the zone's edge),
+    painted pickets lit on their left, two rails behind, open at the gate."""
+    def picket(x, y):
+        for d in range(6):
+            cv.set(x, y - d, '#E8E2D4' if d < 5 else '#FFFFFF'); cv.set(x + 1, y - d, '#B8B0A0')
+        cv.set(x, y + 1, '#5E5848'); cv.set(x + 1, y + 1, '#5E5848')
+        blocked.update({(x, y), (x + 1, y), (x, y - 1), (x + 1, y - 1)})
+    for x in range(x0, x1, 4):
+        if gate[0] <= x < gate[1]:
+            continue
+        cv.set(x, y0 - 3, '#9A9282'); cv.set(x + 1, y0 - 3, '#9A9282'); cv.set(x + 2, y0 - 3, '#9A9282')
+        cv.set(x + 3, y0 - 3, '#9A9282')
+        picket(x, y0)
+    for y in range(y0 + 4, y1 - 2, 4):
+        picket(x0, y); picket(x1 - 2, y)
+    for gx in gate:  # gateposts
+        for d in range(9):
+            cv.set(gx - (2 if gx == gate[0] else 0), y0 - d, WOOD[3] if d < 8 else WOOD[4])
+            cv.set(gx - (1 if gx == gate[0] else -1), y0 - d, WOOD[1])
 
 
 def neon_city(frame: int = 0):
