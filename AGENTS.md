@@ -24,9 +24,18 @@ The source of truth is `rempemat-eng/appify` on GitHub. The Bilt editor and its 
 - Decorative interactions do not add rewards, costs or chores. Do not change existing game rules as part of an art or HUD pass.
 - Motion should anticipate, act and settle. Effects are finite, respect reduced motion and stop when their screen is inactive. Interrupted walks must not trigger stale navigation or naps.
 
+## Keep it portable to iOS and Android
+
+NapAttack is a web app now and is meant to become a phone app later (Matt, 19 Oct: not yet, but nothing should stand in the way). Follow `docs/native-readiness.md`:
+
+- **Browser objects** (`window.*`, `document.*`, `navigator.*`, `localStorage`) go only behind `Platform.OS === 'web'`, or in a `.web.tsx` file with a native sibling. `typeof window` is not a guard, because React Native defines `window`. Record each new use in `scripts/native-safe.json`; `npm run check:native` enforces it.
+- **Packages:** add them with `npx expo install`, and don't use DOM-based libraries outside `.web` files.
+- **Assets:** bundle art and sound with `import`. `public/` exists only on the web.
+- **Interaction and layout:** touch first (taps, 44-point targets, nothing hover-only), and layout from `useWindowDimensions` and safe-area insets.
+
 ## Verify the exact result
 
-- Run `npm run verify` on the final source and check the matching GitHub Actions result before marking the PR ready. It checks TypeScript, lint, core rules, the game store, companion profiles, garden regressions and the web export. Keep lint clean. Claude removed the earlier inherited warnings.
+- Run `npm run verify` on the final source and check the matching GitHub Actions result before marking the PR ready. It checks TypeScript, lint, core rules, the game store, companion profiles, garden regressions, native readiness, the web export and the iOS bundle. Keep lint clean. Claude removed the earlier inherited warnings.
 - The garden harness substitutes React, timers, platform and animation boundaries. It verifies emitted plans and source geometry, not real React scheduling, native lifecycle or visual quality.
 - Play-test the current PR preview in a disposable local profile. Keep the same preview origin when testing saved progress. Check normal and reduced motion, day/night, interrupted walks, overlapping props and HUD actions.
 - Do not claim phone, native, multiplayer or device-usage testing from a desktop browser or a source harness. Record any missing coverage plainly.
