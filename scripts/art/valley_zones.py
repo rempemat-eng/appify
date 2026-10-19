@@ -750,11 +750,15 @@ def headland(frame: int = 0):
         cv.set(x, y, STONE[1] if (x, y + 1) not in view else STONE[4] if (x, y - 1) not in view else STONE[2])
     # the sheep fold: a dry stone wall round a rough field on the down, open at a stile
     fold = blob(214, 122, 84, 56, seed=996, rough=0.12)
-    wall = drystone_loop(cv, fold, gap=(136, 146, 8), seed=997)
+    posts = []
+    wall = drystone_loop(cv, fold, gap=(136, 146, 8), seed=997, ends=posts)
     objects = [
         ('tower', 'lookout_tower', 198, 300),
         ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 210, 150),
         ('sheep-4', 'sheep_left', 262, 92),
+        # the fold's gateway: a squared pier either side of the gap, where the spur path
+        # from the cliff path comes in (its foot a pixel below the wall's, in front of it)
+        *[(f'gatepost-{k}', 'drystone_gatepost', x - 5, y + 6 - 26) for k, (x, y) in enumerate(posts)],
         ('hive-1', 'beehive', 150, 186), ('hive-2', 'beehive', 172, 194),
         ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
@@ -766,11 +770,13 @@ def headland(frame: int = 0):
     return cv, objects, stands, blocked
 
 
-def drystone_loop(cv: Canvas, field: set, gap=(0, 0), seed: int = 0) -> set:
+def drystone_loop(cv: Canvas, field: set, gap=(0, 0), seed: int = 0, ends=None) -> set:
     """A dry stone wall round a field: rough stones of every size laid in two courses
     with a row of upright coping stones, lit on their tops, dark in the joints, lichen
     here and there, the turf growing up against its foot; `gap` is the stretch of its
-    length (in px, from its westmost point, clockwise) left open as a stile."""
+    length (in px, from its westmost point, clockwise) left open as a stile. If `ends`
+    is a list, the wall's two points either side of the gap are appended to it (for the
+    gateposts that stand there)."""
     ring = edge_of(field)
     cx = sum(x for x, _ in ring) / len(ring)
     cy = sum(y for _, y in ring) / len(ring)
@@ -780,6 +786,8 @@ def drystone_loop(cv: Canvas, field: set, gap=(0, 0), seed: int = 0) -> set:
     if len(gap) == 3:  # (x, y, half-width): the gap where the wall passes nearest that point
         gi = min(range(len(order)), key=lambda i: math.hypot(order[i][0] - gap[0], order[i][1] - gap[1]))
         line = [p for i, p in enumerate(order) if min(abs(i - gi), len(order) - abs(i - gi)) > gap[2]]
+        if ends is not None:
+            ends += [order[(gi - gap[2] - 1) % len(order)], order[(gi + gap[2] + 1) % len(order)]]
     else:
         line = [p for i, p in enumerate(order) if not (gap[0] <= i < gap[1])]
     top = set()
@@ -918,7 +926,7 @@ def riverside(frame: int = 0):
         # old trees on the east bank, running on into the forest beyond
         ('pine-e2', 'pine', 280, 470), ('tree-e3', 'tree_autumn', 260, 226),
         ('bush-e4', 'bush', 286, 540),
-        ('hay-1', 'haystack', 176, 84), ('hay-2', 'haystack', 228, 122), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
+        ('bale-1', 'round_bale', 170, 78), ('bale-2', 'round_bale_side', 222, 116), ('bale-3', 'round_bale', 238, 82), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
     ]
     blocked = ((river | bluff | race) - stones - deck - towpath) | fold_wall
     stands = {'garden-north': (8, 222), 'garden-south': (8, 402), 'mill': (190, mt - 14), 'stones': (46, (ys[0] + ys[-1]) // 2),
