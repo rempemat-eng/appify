@@ -624,7 +624,7 @@ render();
 pendingNap[1].fn();
 check(sleeps === 0, 'queued old nap callback remains invalid after refocus');
 
-// The hut is walked into: up to its door, then the room inside (app/world.tsx).
+// The hut is walked into: up to its door, then the room inside (app/(tabs)/world.tsx).
 worldTree = setup();
 allElements(worldTree)
   .find((element) => element.type === 'Pressable' && element.key === 'hut')

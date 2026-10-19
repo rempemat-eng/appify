@@ -11,14 +11,14 @@ Until phase 1 the home was two screens that took turns.
 | Screen     | Route                                        | Renderer                                                         | Camera                                               | HUD                                                         |
 | ---------- | -------------------------------------------- | ---------------------------------------------------------------- | ---------------------------------------------------- | ----------------------------------------------------------- |
 | The garden | the Home tab, `app/(tabs)/index.tsx`         | `GardenWorld` (`components/garden-world.tsx`), the garden only   | its own, clamped to the garden's 320×576 map         | the floating HUD and the tab bar (`app/(tabs)/_layout.tsx`) |
-| The world  | a stack route over the tabs, `app/world.tsx` | `AtlasWalk` (`components/atlas-walk.tsx`), a region zone by zone | its own, clamped to the region's land, `focusY` 0.55 | a header ("◀ GARDEN", region and zone, MAP) and place cards |
+| The world  | a stack route over the tabs, `app/(tabs)/world.tsx` | `AtlasWalk` (`components/atlas-walk.tsx`), a region zone by zone | its own, clamped to the region's land, `focusY` 0.55 | a header ("◀ GARDEN", region and zone, MAP) and place cards |
 
 Both drew the garden: `GardenWorld` from its own pictures, and `AtlasWalk` as the valley's `garden` tile (`tileDrawables`, `t.id === 'garden'`), with still water at slightly different places and no beds, orchard, keepsakes or night pools.
 
 The handoff:
 
 1. **Out.** Walking to a garden exit (`gardenExitToward`, `atGardenExit` in `lib/garden-path.ts`) ends in `leave()` (garden-world.tsx), which sets `useUi.worldLink` and calls `router.push('/world')`. The world reads the link once, starts at the same spot in the valley's copy of the garden (`exitWalk`) and walks on through the gap.
-2. **Back.** Every step in the world runs `homeward()` (app/world.tsx). When the companion is inside the garden's yard (`inGardenYard`), it sets `useUi.homeArrival` and calls `router.replace('/')`. The garden puts the companion there and fades up from black (`veil`).
+2. **Back.** Every step in the world runs `homeward()` (app/(tabs)/world.tsx). When the companion is inside the garden's yard (`inGardenYard`), it sets `useUi.homeArrival` and calls `router.replace('/')`. The garden puts the companion there and fades up from black (`veil`).
 
 What the player saw at each crossing:
 
@@ -66,7 +66,7 @@ The world screen has two smaller pops of its own, which the hub would inherit:
 
 - `GardenWorld` has a hub mode (the Home tab: a camera window, not napping). The nap screen's small window keeps the old scene for now.
 - `AtlasWalk` gains the follow mode, the `scene` and `hits` slots, companion details (emote, pose, grumpy, sleepy), an `active` switch, one camera function shared by drawing and taps, eased `focusY` and `padBottom`, instant walks with reduced motion, zone mounting by what the camera can see (with hysteresis), and a zone name with hysteresis.
-- The world screen (`app/world.tsx`) remains for the hut's inside and the other regions. When it would open in the valley (a place link from the Shop or Missions tab, a saved spot), it hands over to the hub at that spot. Journeys from the halt or the jetty play on the world screen and land back in the hub.
+- The world screen (`app/(tabs)/world.tsx`) remains for the hut's inside and the other regions. When it would open in the valley (a place link from the Shop or Missions tab, a saved spot), it hands over to the hub at that spot. Journeys from the halt or the jetty play on the world screen and land back in the hub.
 - Checks: `lib/home-hub.test.ts` (the moved grid, the handoff routing, hysteresis, view mounting) and a hub block in `scripts/check-garden.cjs` (no navigation across the yard's edge, hotspot actions, the hut door, interrupted walks).
 
 How phase 1 is built, for whoever works on it next:

@@ -865,7 +865,7 @@ export function GardenWorld({
     busy.current = false;
     if (action) act(action);
     else if (exit === 'door') {
-      // in at the hut's door: the room inside picks up there (app/world.tsx)
+      // in at the hut's door: the room inside picks up there (app/(tabs)/world.tsx)
       if (Math.hypot(point.x - HUT_DOOR.x, point.y - HUT_DOOR.y) <= 12)
         if (!leaving.current) {
           leaving.current = true;
@@ -886,7 +886,7 @@ export function GardenWorld({
   }
 
   // Walking out: the valley picks up at this very spot and the companion walks on
-  // through the gap (app/world.tsx); walking back in returns here.
+  // through the gap (app/(tabs)/world.tsx); walking back in returns here.
   function leave(exit: GardenExit, at: Point) {
     if (hub || napping || !activeRef.current || leaving.current) return;
     leaving.current = true;
@@ -2173,7 +2173,7 @@ export function GardenWorld({
                       if (!activeRef.current || !route.length) return;
                       gameFeedback('select');
                       // the journey plays on the world screen; one back to the valley lands
-                      // here again (app/world.tsx)
+                      // here again (app/(tabs)/world.tsx)
                       useUi.setState({
                         worldLink: { trip: { from: here, to: route[route.length - 1] } },
                       });
@@ -2243,7 +2243,7 @@ export function GardenWorld({
         )}
         {camera && (
           // past the gate the valley goes on: the top of the town lane, where walking
-          // out of the gate leads (app/world.tsx)
+          // out of the gate leads (app/(tabs)/world.tsx)
           <Image
             source={townTop}
             resizeMode="stretch"

@@ -299,7 +299,10 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
     const route = state.routes[index];
     if (!route) return null;
     const meta = tabs[route.name] ?? { label: route.name.toUpperCase(), icon: 'home' as const };
-    const focused = state.index === index;
+    // (the world beyond the valley is part of HOME: its tab stays lit there)
+    const focused =
+      state.index === index ||
+      (route.name === 'index' && state.routes[state.index]?.name === 'world');
     return (
       <Pressable
         key={route.key}

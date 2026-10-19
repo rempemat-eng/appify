@@ -947,7 +947,7 @@ export const gameStore = create<Game>((set, get) => ({
     const before = s.world;
     set({ world: next });
     // (a place walked for the first time leaves its keepsake in the hut's chest; the
-    // world screen says so quietly, app/world.tsx)
+    // world screen says so quietly, app/(tabs)/world.tsx)
     // write when a zone is first seen or the region changes; positions ride along
     if (
       settle ||

@@ -18,7 +18,7 @@ import type { Point } from '@/lib/garden-path';
 /**
  * What happens where the companion stands out in the world: a place's card (a mission's
  * start, the stall, the ring, a station, a resident's hello, the hut's doors). Shared by
- * the world screen (app/world.tsx) and the home hub (components/garden-world.tsx). Pure,
+ * the world screen (app/(tabs)/world.tsx) and the home hub (components/garden-world.tsx). Pure,
  * so it can be tested (lib/home-hub.test.ts).
  */
 export type Card =

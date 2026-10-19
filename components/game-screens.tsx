@@ -72,7 +72,7 @@ export function HomeScreen() {
   const memories = useGame((s) => s.companionMemories);
   const sheet = useUi((s) => s.sheet);
   const paused = usePlayPaused();
-  // walked back in from the valley (app/world.tsx): where, in garden pixels
+  // walked back in from the valley (app/(tabs)/world.tsx): where, in garden pixels
   const arrival = useUi((s) => s.homeArrival);
   // Decorating the garden (C12), come out from the hut's keepsake chest: the keepsakes
   // found, the one in hand and where it was last tapped
