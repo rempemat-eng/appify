@@ -217,6 +217,8 @@ export type SceneExtra = {
   w: number;
   h: number;
   z: number;
+  /** drawn mirrored (a keepsake turned to face the other way) */
+  flip?: boolean;
 };
 
 type Drawable = {
@@ -228,6 +230,7 @@ type Drawable = {
   w: number;
   h: number;
   z: number;
+  flip?: boolean;
 };
 
 // Things afloat ride the water: up and down by one art pixel, each on its own phase.
@@ -1193,6 +1196,7 @@ export function AtlasWalk({
               width: snap(d.w * u),
               height: snap(d.h * u),
               zIndex: d.z,
+              transform: d.flip ? [{ scaleX: -1 }] : undefined,
             }}
           />
         ),
@@ -1516,6 +1520,7 @@ export function AtlasWalk({
                   width: snap(preview.w * u),
                   height: snap(preview.h * u),
                   opacity: 0.8,
+                  transform: preview.flip ? [{ scaleX: -1 }] : undefined,
                 }}
               />
             </View>

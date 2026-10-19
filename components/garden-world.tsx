@@ -309,7 +309,7 @@ function DecorPreview({
   snapRect,
   unit,
 }: {
-  preview: { item: string; x: number; y: number; ok: boolean };
+  preview: { item: string; x: number; y: number; ok: boolean; flip?: boolean };
   proj: ReturnType<typeof makeProjection>;
   snapRect: (r: Rect) => Rect;
   unit: number;
@@ -618,7 +618,7 @@ export function GardenWorld({
    */
   decorate?: {
     onTap: (at: Point) => boolean | Point | void;
-    preview: { item: string; x: number; y: number; ok: boolean } | null;
+    preview: { item: string; x: number; y: number; ok: boolean; flip?: boolean } | null;
   } | null;
 }) {
   const reduced = useReducedMotion();
@@ -1608,6 +1608,7 @@ export function GardenWorld({
             w: b.w,
             h: b.h,
             z: v.y + oz,
+            flip: !!v.flip,
             ok: v.ok,
             foot: { ...f, x: f.x + gardenOrigin.x, y: f.y + gardenOrigin.y },
           };

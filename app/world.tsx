@@ -41,6 +41,8 @@ import {
   decorBox,
   decorFootprint,
   tapToDecorate,
+  turnHand,
+  decorDepth,
   foundKeepsakes,
   hutWalk,
   keepsakes,
@@ -370,7 +372,8 @@ export default function World() {
       y: b.top,
       w: b.w,
       h: b.h,
-      z: hand.at.y,
+      z: decorDepth({ item: hand.item, x: hand.at.x, y: hand.at.y }),
+      flip: !!hand.flip,
       ok: !!handCheck?.ok,
       foot: decorFootprint(hand.item, hand.at.x, hand.at.y),
     };
@@ -492,10 +495,12 @@ export default function World() {
                     placed={decor}
                     selected={hand?.item ?? null}
                     check={handCheck}
+                    flipped={!!hand?.flip}
+                    onFlip={() => hand && setHand(turnHand(hand))}
                     onSelect={(item) => setHand(item ? { item, at: null } : null)}
                     onPlace={() => {
                       if (!hand?.at) return;
-                      if (placeDecor(hand.item, hand.at.x, hand.at.y).ok) {
+                      if (placeDecor(hand.item, hand.at.x, hand.at.y, undefined, !!hand.flip).ok) {
                         feedback('select');
                         setHand(null);
                       }

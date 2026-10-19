@@ -30,7 +30,7 @@ import { WorldWindow } from '@/components/atlas-walk';
 import { missionPlaces, regionPoint, rings } from '@/lib/world-places';
 import { GardenWorld } from '@/components/garden-world';
 import { DecoratePanel } from '@/components/decorate-panel';
-import { checkDecor, foundKeepsakes, tapToDecorate, type DecorHand } from '@/lib/decor';
+import { checkDecor, foundKeepsakes, tapToDecorate, turnHand, type DecorHand } from '@/lib/decor';
 import { MissionDeparture } from '@/components/mission-departure';
 import { openSheet, useUi } from '@/lib/ui';
 import { useAmbience } from '@/lib/sound';
@@ -190,7 +190,13 @@ export function HomeScreen() {
                     return r.walk ?? undefined;
                   },
                   preview: hand?.at
-                    ? { item: hand.item, x: hand.at.x, y: hand.at.y, ok: !!handCheck?.ok }
+                    ? {
+                        item: hand.item,
+                        x: hand.at.x,
+                        y: hand.at.y,
+                        ok: !!handCheck?.ok,
+                        flip: !!hand.flip,
+                      }
                     : null,
                 }
               : null
@@ -247,10 +253,12 @@ export function HomeScreen() {
                 placed={decor}
                 selected={hand?.item ?? null}
                 check={handCheck}
+                flipped={!!hand?.flip}
+                onFlip={() => hand && setHand(turnHand(hand))}
                 onSelect={(item) => setHand(item ? { item, at: null } : null)}
                 onPlace={() => {
                   if (!hand?.at) return;
-                  if (placeDecor(hand.item, hand.at.x, hand.at.y, 'garden').ok) {
+                  if (placeDecor(hand.item, hand.at.x, hand.at.y, 'garden', !!hand.flip).ok) {
                     feedback('select');
                     setHand(null);
                   }
