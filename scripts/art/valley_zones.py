@@ -318,7 +318,7 @@ def town(frame: int = 0):
     road |= west | {(x, y) for (x0, y) in west if x0 == 0 for x in range(-12, 0)}
     # the road south to Driftwood Harbour, the same width and x as the harbour's road
     south = worlds.thick([(160, 340), (156, 470), (160, 560)], 15, seed=6) | worlds.thick([(160, 552), (160, H + 4)], 18)
-    south |= worlds.thick([(150, 400), (110, 452)], 9, seed=7)  # a side path to the ring
+    south |= worlds.thick([(150, 400), (104, 436), (78, 456)], 7, seed=7)  # a side path to the ring's opening (a grade-2 branch off the road)
     # the town grows down the road toward the harbour: lanes to the houses' doors
     south |= worlds.thick([(160, 424), (230, 426), (276, 424)], 6, seed=71)
     south |= worlds.thick([(160, 524), (200, 526), (228, 522)], 6, seed=72)
@@ -352,6 +352,23 @@ def town(frame: int = 0):
     for k in range(26):
         a = 2 * math.pi * k / 26
         detail.pebble(cv, int(rcx + 54 * math.cos(a)), int(rcy + 26 * math.sin(a)), STONE, big=k % 2 == 0)
+    # a rope run from post to post round the ring (posts placed by zones.ring_fence),
+    # sagging between them at about knee height, open at the north where the path comes in
+    posts = []
+    for k in range(20):
+        a = 2 * math.pi * k / 20
+        posts.append(None if abs(a - 1.5 * math.pi) < 0.35 else (int(rcx + 58 * math.cos(a)), int(rcy + 28 * math.sin(a))))
+    for p0, p1 in zip(posts, posts[1:] + posts[:1]):
+        if p0 is None or p1 is None:
+            continue
+        (x0, y0), (x1, y1) = p0, p1
+        n = max(abs(x1 - x0), abs(y1 - y0), 1)
+        for i in range(n + 1):
+            t = i / n
+            x = round(x0 + (x1 - x0) * t)
+            y = round(y0 + (y1 - y0) * t - 9 + 2.5 * math.sin(math.pi * t))  # 9 px up its posts, sagging
+            cv.set(x, y, '#D9C9A0')
+            cv.set(x, y + 1, '#8E7650')
     for fb in ((258, 196, 40, 16, 2),):  # a planter by the red house's door
         meadow.flower_planter(cv, *fb)
     objects = [
@@ -829,7 +846,8 @@ def headland(frame: int = 0):
     path |= worlds.thick([(118, 280), (100, 340), (112, 404), (120, 430)], 6, seed=23)
     path |= worlds.thick([(54, 168), (100, 162), (146, 146)], 5, seed=998)  # a spur from the path to the fold's gate
     lay_road(cv, (path - river) | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)}, seed=76,
-             avoid=river | sea_px | face | set(blob(214, 122, 88, 60, seed=996, rough=0.12)),
+             avoid=river | sea_px | face | {(x + a, y + b) for (x, y) in poly_field([(142, 76), (280, 58), (294, 168), (152, 188)], seed=996)
+                                             for (a, b) in ((0, 0), (-3, 0), (3, 0), (0, -3), (0, 4))},
              doors=[door_front('lookout_tower', 198, 300)])
     bspan = [x for (x, y) in river if y == 110]
     bridge = stone_bridge(cv, 0, max(bspan) + 8, 103, 118, river)  # the cliff path's bridge over the river
@@ -838,9 +856,10 @@ def headland(frame: int = 0):
     for (x, y) in edge_of(view):
         cv.set(x, y, STONE[1] if (x, y + 1) not in view else STONE[4] if (x, y - 1) not in view else STONE[2])
     # the sheep fold: a dry stone wall round a rough field on the down, open at a stile
-    fold = blob(214, 122, 84, 56, seed=996, rough=0.12)
+    # (a four-sided fold walled along the lie of the down, not a compass ellipse)
+    fold = poly_field([(142, 76), (280, 58), (294, 168), (152, 188)], seed=996)
     posts = []
-    wall = drystone_loop(cv, fold, gap=(136, 146, 8), seed=997, ends=posts)
+    wall = drystone_loop(cv, fold, gap=(146, 146, 8), seed=997, ends=posts)
     objects = [
         ('tower', 'lookout_tower', 198, 300),
         ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 210, 150),
@@ -848,7 +867,7 @@ def headland(frame: int = 0):
         # the fold's gateway: a squared pier either side of the gap, where the spur path
         # from the cliff path comes in (its foot a pixel below the wall's, in front of it)
         *[(f'gatepost-{k}', 'drystone_gatepost', x - 5, y + 6 - 26) for k, (x, y) in enumerate(posts)],
-        ('hive-1', 'beehive', 150, 186), ('hive-2', 'beehive', 172, 194),
+        ('hive-1', 'beehive', 108, 194), ('hive-2', 'beehive', 128, 202),
         ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
         # the down falls to trees on the east, running on into the woods beyond
@@ -1130,9 +1149,19 @@ def ridge(frame: int = 0):
     def rim(x):
         return 210 + int(math.sin(x / 27) * 8 + noise2(x // 6, 0, 442) * 6)
     FACE_H = 24
+
+    def face_h(x):
+        # the face tapers out toward the west edge: Fir Hollow beyond lies at the
+        # meadow's level, so the rock foot sinks and a snow bank runs down to the grass
+        # instead of ending in a cut at the seam (Claude A's review, 15:54)
+        t = min(1.0, max(0.0, (x - 10) / 44))
+        return int((FACE_H - 1) * (t * t * (3 - 2 * t)))
     for x in range(W):
         r = rim(x)
-        for y in range(0, r):  # snow: soft drifts, wind ripples, blue in the hollows
+        bank_to = r + (FACE_H - 1 - face_h(x))  # the snow bank's foot where the face is low
+        for y in range(0, bank_to):  # snow: soft drifts, wind ripples, blue in the hollows
+            if y >= r and smooth_noise(x, y, 5, 449) > 0.82 and y > bank_to - 3:
+                continue  # the bank's lower edge frays into the turf
             n = smooth_noise(x, y, 18, 443)
             c = SNOWm[3] if n > 0.4 else SNOWm[2] if n > 0.22 or (x + y) % 2 else SNOWm[1]
             rip = (y * 2 + int(math.sin(x / 13 + y / 31) * 4)) % 9
@@ -1141,7 +1170,7 @@ def ridge(frame: int = 0):
             elif rip == 1 and n > 0.3:
                 c = SNOWm[3]
             cv.set(x, y, c)
-        for d in range(3):
+        for d in range(3 if face_h(x) >= 3 else 0):
             if (x + d) % 2 or d == 0:
                 style.darken(cv, x, r + FACE_H + d)
     for i in range(26):  # rocks poking through the snow, each with snow on its top
@@ -1154,7 +1183,8 @@ def ridge(frame: int = 0):
     shoulder = shoulders(cv, 'ridge')
     # the terrace's face: stacked blocks with lit ledges and snow on them, not bands
     snow_lip = [SNOWm[0], SNOWm[0], SNOWm[1], SNOWm[2], SNOWm[3]]
-    cliff(cv, {x: rim(x) + 1 for x in range(W)}, {x: FACE_H - 1 for x in range(W)}, seed=446, lip=snow_lip)
+    tall = [x for x in range(W) if face_h(x) >= 3]
+    cliff(cv, {x: rim(x) + FACE_H - face_h(x) for x in tall}, {x: face_h(x) for x in tall}, seed=446, lip=snow_lip)
     for x in range(W):  # snow lying on the ledges
         for k in range(2, FACE_H - 4):
             y = rim(x) + 1 + k
@@ -1252,7 +1282,7 @@ def ridge(frame: int = 0):
         ('marmot', 'marmot_rock', 220, 470),
         ('cotton-1', 'cotton_grass', 196, 380), ('cotton-2', 'cotton_grass', 270, 398), ('cotton-3', 'cotton_grass', 210, 418),
     ]
-    face = {(x, y) for x in range(W) for y in range(rim(x), rim(x) + FACE_H)}
+    face = {(x, y) for x in range(W) for y in range(rim(x) + FACE_H - face_h(x) - 1, rim(x) + FACE_H) if face_h(x) >= 3}
     stands = {'garden': (206, H - 8), 'tarn': (186, 424), 'cabin': (200, 176), 'campfire': (146, 204),
               'saddle': (204, 6), 'hollow': (4, 348)}
     return cv, objects, stands, (face - steps) | shoulder | tarn
@@ -1806,10 +1836,14 @@ def halt(frame: int = 0):
         return math.exp(-((x - c) / w) ** 2)
     htop = {x: min(558, int(550 - 28 * hb(0, 26, x) + 10 * hb(78, 26, x) - 16 * hb(134, 15, x) + 10 * hb(216, 30, x)
                          + math.sin(x / 41 + 0.7) * 3 + (smooth_noise(x, 0, 13, 455) - 0.5) * 8)) for x in range(W)}
+    # at the east the coast turns south to the valley's corner, so the halt's sea meets
+    # Driftwood's west shore there and the town's ground stays land (no sea against the
+    # town at the seam)
+    htop = {x: t + int(max(0, x - 250) ** 2 / 110) for x, t in htop.items()}
     hh = {x: 11 + int(smooth_noise(x, 1, 9, 456) * 5) for x in range(W)}
     hsea = {(x, y) for x in range(W) for y in range(htop[x] + hh[x], H)}
     sea(cv, hsea, seed=457, open_edges='s')
-    hface = cliff(cv, htop, hh, seed=458)
+    hface = cliff(cv, {x: t for x, t in htop.items() if t < H}, {x: min(hh[x], H - htop[x]) for x in range(W) if htop[x] < H}, seed=458)
     track = worlds.thick([(298, 300), (304, 360), (300, 440), (292, 492), (262, 526)], 8, seed=33)
     # the farmyard: trodden earth from the track's end along the front of the barn, so its
     # doors open onto the yard (they face south, toward the cliff top)
