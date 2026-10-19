@@ -66,7 +66,7 @@ def water_mill(turn: float = 0.0) -> Canvas:
     """The watermill, 112 x 96 (its wheel `turn` radians round; six frames a 24th of a
     turn apart loop, since paddles and spokes repeat every quarter turn): a stone mill house with a thatched-look tarred roof seen
     from above, a timber upper floor, warm windows, and a big wooden wheel on its east
-    side with buckets, turning in the race."""
+    wall, seen nearly edge-on because its axle runs into that wall, turning in the race."""
     w, h = 112, 96
     cv = Canvas(w, h, pad=PAD)
     ridge, apex_y, eave_y, wall_top, wall_bottom = 38.5, 16, 40, 40, 86
@@ -81,28 +81,79 @@ def water_mill(turn: float = 0.0) -> Canvas:
     for (x, y) in door:
         cv.set(x, y, WOOD[2] if (x - 30) % 4 else WOOD[1])
     detail.overhang_shadow(cv, 7, 71, wall_top, lambda x: 3, k=2, cap=1)
-    # the wheel, side on: two rims joined by paddles, spokes to an iron hub
-    wcx, wcy, r = 92, 62, 18
-    for k in range(96):
-        a = 2 * math.pi * k / 96
-        for t in (r, r - 1, r - 2):
-            lit = math.sin(a) < 0 and math.cos(a) < 0.3
-            cv.set(int(round(wcx + t * math.cos(a))), int(round(wcy + t * math.sin(a))),
-                   WOOD[4] if lit and t == r else WOOD[3] if lit else WOOD[1] if t == r else WOOD[2])
-    for k in range(16):  # paddles standing out past the rim
-        a = 2 * math.pi * k / 16 + turn
-        for t in range(r - 2, r + 4):
-            for o in (0, 1):
-                x = int(round(wcx + t * math.cos(a) - o * math.sin(a)))
-                y = int(round(wcy + t * math.sin(a) + o * math.cos(a)))
-                cv.set(x, y, WOOD[3] if o == 0 else WOOD[1])
-    for k in range(8):
-        a = 2 * math.pi * k / 8 + 0.2 + turn
-        for t in range(3, r - 2):
-            cv.set(int(round(wcx + t * math.cos(a))), int(round(wcy + t * math.sin(a))), WOOD[2])
-    for (x, y) in disc(wcx, wcy, 3.2):
-        cv.set(x, y, '#727A8A' if x < wcx else '#3C404C')
+    _mill_wheel(cv, turn)
     return cv
+
+
+def _mill_wheel(cv: Canvas, turn: float):
+    """The undershot wheel on the mill's east wall, seen nearly edge-on (Claude E, after
+    Claude A's review: its axle runs into the east wall, so in the three-quarter view the
+    wheel's plane runs north-south and we look along it): two rims and the paddles between
+    them make a tall narrow ellipse beside the wall, the near (south) half over the far,
+    spokes and an iron hub on its east face, the axle running into the wall. Drawn in 3D and
+    projected with the view's foreshortening and a small skew, each surface lit by its
+    normal against the light from the upper left, so the turn reads as paddles rising over
+    the top and coming down the near side."""
+    X0, r, half = 80.0, 18.0, 3.5  # the wheel's mid-plane, radius, half its width along the axle
+    sx0, sy0, sq, skew = 0.0, 62.0, 0.5, 0.42
+    light = (-0.55, 0.35, 0.76)  # from the upper left (west), a little from the front, above
+    toward = (0.0, 0.64, 0.77)  # toward the camera (south and up), for depth
+    zbuf = {}
+
+    def put(x, y, z, c):  # a 3D point (x east, y south, z up from the axle) onto the screen
+        px, py = int(round(x + skew * y + sx0)), int(round(sy0 + y * sq - z))
+        d = y * toward[1] + z * toward[2] + x * 0.001
+        if d >= zbuf.get((px, py), -1e9):
+            zbuf[(px, py)] = d
+            cv.set(px, py, c)
+
+    def tone(n, ramp=WOOD, lo=1):
+        k = max(0.0, n[0] * light[0] + n[1] * light[1] + n[2] * light[2])
+        return ramp[min(len(ramp) - 1, lo + int(k * (len(ramp) - lo) * 0.999))]
+
+    steps = 220
+    # the axle from the wall to the hub, an iron cylinder
+    for i in range(0, 41):
+        x = 71 + i * (X0 + half + 1 - 71) / 40
+        for k in range(12):
+            a = 2 * math.pi * k / 12
+            n = (0.0, math.cos(a), math.sin(a))
+            put(x, 1.6 * math.cos(a), 1.6 * math.sin(a), tone(n, MATERIALS['iron'], 0))
+    # the two rims: rings 2 px deep, their outer faces (east and west) and the tread round them
+    for side in (-1, 1):
+        xf = X0 + side * half
+        for i in range(steps * 2):
+            a = 2 * math.pi * i / (steps * 2)
+            ca, sa = math.cos(a), math.sin(a)
+            for t in (r - 2, r - 1.5, r - 1, r - 0.5, r):
+                put(xf, t * ca, t * sa, tone((float(side), 0.0, 0.0)) if side > 0 else WOOD[3])
+            for dx in (0.0, 0.5, 1.0):
+                put(xf - side * dx, r * ca, r * sa, tone((0.0, ca, sa), WOOD, 1))
+    # the spokes, eight on each face, to the hub
+    for side in (-1, 1):
+        xf = X0 + side * (half - 0.5)
+        for k in range(8):
+            a = 2 * math.pi * k / 8 + 0.2 + turn
+            for i in range(0, 60):
+                t = 2 + i * (r - 4) / 60
+                put(xf, t * math.cos(a), t * math.sin(a), WOOD[2] if side > 0 else WOOD[1])
+    # the paddles: boards across between the rims, standing out past them
+    for k in range(16):
+        a = 2 * math.pi * k / 16 + turn
+        ca, sa = math.cos(a), math.sin(a)
+        n = (0.0, -sa, ca)  # the board's face, square to its radius
+        if n[1] * toward[1] + n[2] * toward[2] < 0:
+            n = (0.0, sa, -ca)
+        for i in range(0, 17):
+            x = X0 - half + i * (2 * half) / 16
+            for j in range(0, 11):
+                t = r - 2 + j * 0.5
+                put(x, t * ca, t * sa, WOOD[1] if i in (0, 16) else tone(n, WOOD, 1) if j < 10 else WOOD[4])
+    # the iron hub on the east face, and the strap round it
+    for i in range(48):
+        a = 2 * math.pi * i / 48
+        for t in (0.5, 1.2, 2.0, 2.8):
+            put(X0 + half + 0.6, t * math.cos(a), t * math.sin(a), '#727A8A' if t < 1.5 and math.sin(a) > 0 else '#3C404C')
 
 
 def heron() -> Canvas:
