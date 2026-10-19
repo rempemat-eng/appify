@@ -318,7 +318,7 @@ def gulch(frame: int = 0):
         n = smooth_noise(x, y, 5, 216)
         cv.set(x, y, DESERT[1] if n > 0.6 else DESERT[2] if n > 0.25 else ADOBE[2])
     objects = [
-        ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 118, 178), ('poster', 'poster_board', 150, 86),
+        ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 66, 178), ('poster', 'poster_board', 150, 86),
         ('store', 'store', 6, 210), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
         ('tower', 'water_tower', 168, 200), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 176, 300),
         ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
@@ -888,13 +888,21 @@ def caldera(frame: int = 0):
         cp_hex(cv, hex_px[0], hex_px[1], 5)
     objects = [
         ('forge', 'forge', 20, 320), ('shrine', 'ember_shrine', 150, 360), ('vent-1', 'cooling_vent', 40, 460),
-        ('cols-1', 'basalt_columns', 4, 96), ('cols-2', 'basalt_columns_low', 70, 120), ('cols-3', 'basalt_columns', 250, 120),
-        ('cols-4', 'basalt_columns_low', 262, 220), ('cols-5', 'basalt_columns', 0, 500),
-        ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 238, 326), ('obs-3', 'obsidian', 262, 556 - 26),
-        ('obs-4', 'obsidian_small', 60, 230), ('vent-2', 'cooling_vent', 214, 196), ('vent-3', 'cooling_vent', 280, 360),
-        ('scree-1', 'scree', 92, 176), ('scree-2', 'scree_small', 206, 90), ('scree-3', 'scree_b', 170, 430),
-        ('scree-4', 'scree_small', 176, 546), ('scree-5', 'scree_small', 6, 486),
-        ('snag-1', 'charred_snag', 290, 236), ('snag-2', 'charred_snag', 14, 120 + 64), ('snag-3', 'charred_snag', 270, 466),
+        # basalt columns where the lava once cooled slowly: a stepped formation under the
+        # crater rim in the north-west, and another against the west wall by the tunnel
+        ('cols-1', 'basalt_columns', 4, 96), ('cols-2', 'basalt_columns_low', 36, 110), ('cols-6', 'basalt_columns_low', 66, 126),
+        ('cols-3', 'basalt_columns', 266, 106), ('cols-4', 'basalt_columns_low', 236, 124),
+        ('cols-5', 'basalt_columns', 0, 500),
+        # obsidian where lava met the air and froze glassy: on the river's banks
+        ('obs-1', 'obsidian', 110, 204), ('obs-2', 'obsidian_small', 238, 340), ('obs-3', 'obsidian', 258, 452),
+        ('obs-4', 'obsidian_small', 140, 236),
+        # the vents steam on the upper slope under the rim
+        ('vent-2', 'cooling_vent', 214, 168), ('vent-3', 'cooling_vent', 262, 196),
+        # scree fallen from the rim, at the foot of the columns
+        ('scree-1', 'scree', 92, 170), ('scree-2', 'scree_small', 206, 92), ('scree-3', 'scree_b', 170, 430),
+        ('scree-4', 'scree_small', 176, 546), ('scree-5', 'scree_small', 30, 486),
+        # a stand of trees the old flows burnt, together on the south-east slope
+        ('snag-1', 'charred_snag', 268, 380), ('snag-2', 'charred_snag', 290, 404), ('snag-3', 'charred_snag', 262, 418),
         ('tub', 'ore_tub', CART_STOP - 34, 282),  # a tub waiting at the buffer
     ]
     # the bridge is part of the ground (walkable), drawn across the river
@@ -1190,14 +1198,18 @@ def scorch(frame: int = 0):
     deck, parapet = stone_bridge(cv, 84, 372, 36, 24, vertical=False)
     objects = [
         ('skull', 'cow_skull', 20, 430), ('weed-1', 'tumbleweed', 14, 320), ('cactus-1', 'saguaro_small', 2, 470),
-        ('pear-1', 'prickly_pear', 4, 548), ('snag-1', 'charred_snag', 200, 250), ('snag-2', 'charred_snag', 270, 420),
-        ('snag-3', 'charred_snag', 110, 140), ('obs-1', 'obsidian', 224, 470), ('obs-2', 'obsidian_small', 120, 300),
-        ('cols-1', 'basalt_columns', 262, 40), ('cols-2', 'basalt_columns_low', 218, 70), ('scree-1', 'scree', 250, 220),
+        ('pear-1', 'prickly_pear', 4, 548),
+        # the last trees on the way up, burnt where the flows passed: one stand of them
+        ('snag-1', 'charred_snag', 226, 236), ('snag-2', 'charred_snag', 252, 250), ('snag-3', 'charred_snag', 236, 268),
+        # obsidian at the drain's banks
+        ('obs-1', 'obsidian', 96, 230), ('obs-2', 'obsidian_small', 120, 300),
+        # basalt columns in one outcrop on the high ground in the north-east, scree below
+        ('cols-1', 'basalt_columns', 262, 40), ('cols-2', 'basalt_columns_low', 236, 60), ('scree-1', 'scree', 244, 112),
         ('scree-2', 'scree_small', 196, 410), ('lantern-1', 'stone_lantern', 182, 300), ('lantern-2', 'stone_lantern', 150, 150),
-        ('vent-1', 'cooling_vent', 284, 500),
-        # the scrub belt between the sand and the ash
-        ('scrub-1', 'desert_scrub', 14, 238), ('scrub-2', 'desert_scrub_b', 18, 452), ('scrub-3', 'desert_scrub', 8, 120),
-        ('scrub-4', 'desert_scrub_b', 22, 512),
+        ('vent-1', 'cooling_vent', 270, 470),
+        # the scrub belt between the sand and the ash, in clumps, never in a line
+        ('scrub-1', 'desert_scrub', 26, 236), ('scrub-2', 'desert_scrub_b', 4, 456), ('scrub-3', 'desert_scrub', 30, 142),
+        ('scrub-4', 'desert_scrub_b', 44, 520), ('scrub-5', 'desert_scrub', 10, 262),
     ]
     blocked = ((hot - deck) | parapet)
     stands = {'gulch': (8, 384), 'track': (48, 384), 'bridge': (102, 384), 'castle': (160, 8), 'climb': (170, 250),

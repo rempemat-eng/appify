@@ -29,6 +29,20 @@ Matt, 19 Oct 00:24 and 00:36: "it just looks attached together but not seamlessl
 | 21  | Clock tower               | Front view only, with a step pasted on the paving and no shadow or footing.                                                                                                                                                                       |
 | 22  | Kiosk                     | A box with a lid, seen from a different angle from everything round it, with no detail.                                                                                                                                                           |
 
+| 23 | Cogsworth allotments | Beds are flat dark rectangles on grey noise, each with the same cloche; a pipe rail stands in for a fence. |
+| 24 | Skyport gates | Ticket gates are a row of white blocks; the holo pad is a dithered blob. |
+| 25 | Skyport lift | The tether is a glowing line with a capsule pasted on; planters sit on the deck with no reason. |
+| 26 | Skyport planter | A box floating over a dark disc. |
+| 27 | Neon towers | Every facade is the same grid of windows and one vertical sign: no depth, no rooftops, no street life. |
+| 28 | Neon street | A billboard on a pole over a flat container stack. |
+| 29 | Neon corner | Puddles, vending machines and a lamp scattered with no street to belong to. |
+| 30–31 | Sunstone Reach | The ground has not drawn (dark green under floating props). Sandstone outcrops are stacked in a column down a tile seam. |
+| 32 | Dust Gulch | The hitching rail runs through the companion; scale and footing do not agree. |
+| 33 | Scorched Pass, caldera | Spikes, basalt columns and snags scattered at random, with no composition or reason. |
+| 34–38 | Lumen, the moon | Crystals are pale striped pentagons. The sparring ring is a crater ringed with crystals. Alien plants grow on open regolith (no air, water or shelter). The lander and the UFO-like shuttle do not read. The dome's "holes" show stars through the ground. |
+
+Matt, 19 Oct 00:44 and 00:49: some places are "just an unnecessary grid", not natural. Wants a bigger bustling city with high buildings and verticality, a real connection between the places on the map, every new prop and place "really detailed … essentially perfect from the get go" (to the level of the Cainos village pack), better animations, and the moon and space to make sense for anything living there.
+
 Also from Matt: the home hub pops in and out (walking between the garden screen and the world).
 
 ## The rules
@@ -42,7 +56,10 @@ Also from Matt: the home hub pops in and out (walking between the garden screen 
 7. **Water is logical.** It has a source and an outlet, and banks of the right material. It is crossed only on a bridge with dry ends. Sea runs on to the horizon or meets land, never forest canopy.
 8. **No repeats in a row.** No column or grid of the same prop, unless people made it so: fences, crop rows, a vine line.
 9. **Detail at the right density.** No large flat fills. Every surface has its material: bark, shingle, courses, leaf clusters, ground dressing. The Cainos target, within the mobile limits in `art-style.md`.
-10. **World edges.** The camera does not show large areas outside the world. A region's outer edge is a natural limit drawn inside its edge zones (coast, mountains, a forest two or three trees deep). Any empty cell in a region's grid is real scenery that you cannot walk on, drawn with the same care. It is never a filler pattern.
+10. **Life needs what it needs.** Plants and people on the moon or in orbit live inside pressurised, shielded habitats with airlocks, water, light and power. Nothing grows on open regolith, and it never rains on a station.
+11. **Detailed from the start.** A new prop or place is drawn to the Cainos village pack's density at once: material, form, light, contact shadow, small story props. "Placeholder now, detail later" is not allowed.
+12. **No grids in nature.** Placements read as grown or built for a reason: clusters, paths of use, variation in spacing and size. Nothing falls in rows or columns unless people set it out that way.
+13. **World edges.** The camera does not show large areas outside the world. A region's outer edge is a natural limit drawn inside its edge zones (coast, mountains, a forest two or three trees deep). Any empty cell in a region's grid is real scenery that you cannot walk on, drawn with the same care. It is never a filler pattern.
 
 ## Checks that catch these
 

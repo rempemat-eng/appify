@@ -38,10 +38,10 @@ Matt, 18 Oct 22:21: "really make sure that the world comes to life as Codex mapp
 | hearthold/scorch      | (no seam)  | open land | the lava and the moat; the long bridge     |
 | caldera/hearthold     | (no seam)  | open land | the lava and the moat; the postern bridge  |
 | caldera/springs       | 264–320    | open land | nothing: open ash                          |
-| rainforest/headwaters | 224–280    | 120–168   | jungle frame (owner to review)             |
-| rainforest/landing    | 128–184    | 172–228   | jungle frame (owner to review)             |
-| headwaters/cove       | 192–248    | 192–248   | jungle frame (owner to review)             |
-| landing/cove          | 352–408    | 352–408   | jungle frame (owner to review)             |
+| rainforest/headwaters | 224–280    | 224–280   | the escarpment; the gorge switchback       |
+| rainforest/landing    | 128–184    | 128–184   | the escarpment; the broad stair            |
+| headwaters/cove       | 192–248    | 192–248   | basalt; the first stair of the descent     |
+| landing/cove          | 352–408    | 352–408   | the basalt headland; the shore path        |
 
 Sunstone Reach is one walking region (Codex's concept map draws it as one land), but it keeps Claude's arrangement that `gameplay-logic.md` asks for: the walk through the Scorched Pass to Hearthold's long south bridge, the postern to the caldera, the mine cart from Dust Gulch to the caldera.
 
@@ -49,7 +49,7 @@ Sunstone Reach is one walking region (Codex's concept map draws it as one land),
 
 These need redrawing, not only closing:
 
-1. **Tidebloom Isles.** One island in open sea with an organic coast. Lagoon Landing is a sheltered lagoon with a mangrove fringe and the ferry pier. The Rainforest is a stream valley. The Headwaters are an upland, tier 2, with a waterfall gorge; the path skirts the falls. Black-sand Cove is an exposed basalt coast reached by a two-tier terraced descent. Fresh water drains Headwaters → Rainforest → Lagoon, apart from the path. Outer islets and reef are scenery. Today the island is a rectangle of turf.
+1. **Tidebloom Isles** (redrawn by Claude C, 18 Oct: I1 the shape and water, I2 the heights; I3, the detail pass, is still to come). The island is drawn whole in island coordinates (`isle_zones.island()`) and cut per zone. Coast, lagoon, mangroves, the stream valley, the black-sand cove, the outer islets and the reef follow Codex's section 10. The tiers are basalt escarpments along the zone borders: Landing 0, Rainforest 1, Headwaters 2, Cove 0, with a terrace (tier 1) between the Headwaters and the Cove. The ways through are a broad stair (landing/rainforest), a switchback beside the waterfall gorge (rainforest/headwaters), and two stairs round the east shoulder (headwaters, terrace, cove). Footbridges cross the river on dry abutments above the falls' lip. The landing/cove border is the basalt headland.
 2. **Frostline Highlands.** Redrawn 18 Oct as one landscape in the valley's coordinates (`frost_zones.py`). Fir Hollow is a sheltered fir bowl with snow patches growing up the slope, closed by the escarpment above the Woodland. Snowmelt Lake is a cirque. Its outflow crosses under the shore path's footbridge, runs south through the hollow, falls over the escarpment and feeds the Woodland's spring, the garden's stream. That route differs from Codex's (via the ridge); the water reaches the valley river either way. The Saddle is a broad treeless shoulder with a switchback through stepped rock shoulders to the cabin. The Lookout is a flagged terrace at the end of a short broad path. Steep ground is drawn as rock buttresses and gullies, plainly not walkable.
 3. **The valley's water.** The river rises below the ridge, crosses the garden's lower terrace, turns south through Riverside and the Park and reaches the sea at Driftwood's estuary. Today the Riverside river runs off east and the Park has a pond.
 4. **Driftwood's ferry pier.** It should be a named pier with the boat moored, linked to the harbour lane (play-test finding 15).
