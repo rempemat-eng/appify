@@ -3,76 +3,292 @@
 import type { ImageSourcePropType } from 'react-native';
 import residentGardener0 from '@/assets/residents/gardener-0.png';
 import residentGardener1 from '@/assets/residents/gardener-1.png';
+import residentGardenerEast0 from '@/assets/residents/gardener-east-0.png';
+import residentGardenerEast1 from '@/assets/residents/gardener-east-1.png';
+import residentGardenerWest0 from '@/assets/residents/gardener-west-0.png';
+import residentGardenerWest1 from '@/assets/residents/gardener-west-1.png';
+import residentGardenerBack0 from '@/assets/residents/gardener-back-0.png';
+import residentGardenerBack1 from '@/assets/residents/gardener-back-1.png';
 import residentBaker0 from '@/assets/residents/baker-0.png';
 import residentBaker1 from '@/assets/residents/baker-1.png';
+import residentBakerEast0 from '@/assets/residents/baker-east-0.png';
+import residentBakerEast1 from '@/assets/residents/baker-east-1.png';
+import residentBakerWest0 from '@/assets/residents/baker-west-0.png';
+import residentBakerWest1 from '@/assets/residents/baker-west-1.png';
+import residentBakerBack0 from '@/assets/residents/baker-back-0.png';
+import residentBakerBack1 from '@/assets/residents/baker-back-1.png';
 import residentFisher0 from '@/assets/residents/fisher-0.png';
 import residentFisher1 from '@/assets/residents/fisher-1.png';
+import residentFisherEast0 from '@/assets/residents/fisher-east-0.png';
+import residentFisherEast1 from '@/assets/residents/fisher-east-1.png';
+import residentFisherWest0 from '@/assets/residents/fisher-west-0.png';
+import residentFisherWest1 from '@/assets/residents/fisher-west-1.png';
+import residentFisherBack0 from '@/assets/residents/fisher-back-0.png';
+import residentFisherBack1 from '@/assets/residents/fisher-back-1.png';
 import residentKeeper0 from '@/assets/residents/keeper-0.png';
 import residentKeeper1 from '@/assets/residents/keeper-1.png';
+import residentKeeperEast0 from '@/assets/residents/keeper-east-0.png';
+import residentKeeperEast1 from '@/assets/residents/keeper-east-1.png';
+import residentKeeperWest0 from '@/assets/residents/keeper-west-0.png';
+import residentKeeperWest1 from '@/assets/residents/keeper-west-1.png';
+import residentKeeperBack0 from '@/assets/residents/keeper-back-0.png';
+import residentKeeperBack1 from '@/assets/residents/keeper-back-1.png';
 import residentSteward0 from '@/assets/residents/steward-0.png';
 import residentSteward1 from '@/assets/residents/steward-1.png';
+import residentStewardEast0 from '@/assets/residents/steward-east-0.png';
+import residentStewardEast1 from '@/assets/residents/steward-east-1.png';
+import residentStewardWest0 from '@/assets/residents/steward-west-0.png';
+import residentStewardWest1 from '@/assets/residents/steward-west-1.png';
+import residentStewardBack0 from '@/assets/residents/steward-back-0.png';
+import residentStewardBack1 from '@/assets/residents/steward-back-1.png';
 import residentTinkerer0 from '@/assets/residents/tinkerer-0.png';
 import residentTinkerer1 from '@/assets/residents/tinkerer-1.png';
+import residentTinkererEast0 from '@/assets/residents/tinkerer-east-0.png';
+import residentTinkererEast1 from '@/assets/residents/tinkerer-east-1.png';
+import residentTinkererWest0 from '@/assets/residents/tinkerer-west-0.png';
+import residentTinkererWest1 from '@/assets/residents/tinkerer-west-1.png';
+import residentTinkererBack0 from '@/assets/residents/tinkerer-back-0.png';
+import residentTinkererBack1 from '@/assets/residents/tinkerer-back-1.png';
 import residentBoatwoman0 from '@/assets/residents/boatwoman-0.png';
 import residentBoatwoman1 from '@/assets/residents/boatwoman-1.png';
+import residentBoatwomanEast0 from '@/assets/residents/boatwoman-east-0.png';
+import residentBoatwomanEast1 from '@/assets/residents/boatwoman-east-1.png';
+import residentBoatwomanWest0 from '@/assets/residents/boatwoman-west-0.png';
+import residentBoatwomanWest1 from '@/assets/residents/boatwoman-west-1.png';
+import residentBoatwomanBack0 from '@/assets/residents/boatwoman-back-0.png';
+import residentBoatwomanBack1 from '@/assets/residents/boatwoman-back-1.png';
 import residentCowhand0 from '@/assets/residents/cowhand-0.png';
 import residentCowhand1 from '@/assets/residents/cowhand-1.png';
+import residentCowhandEast0 from '@/assets/residents/cowhand-east-0.png';
+import residentCowhandEast1 from '@/assets/residents/cowhand-east-1.png';
+import residentCowhandWest0 from '@/assets/residents/cowhand-west-0.png';
+import residentCowhandWest1 from '@/assets/residents/cowhand-west-1.png';
+import residentCowhandBack0 from '@/assets/residents/cowhand-back-0.png';
+import residentCowhandBack1 from '@/assets/residents/cowhand-back-1.png';
 import residentSaloon0 from '@/assets/residents/saloon-0.png';
 import residentSaloon1 from '@/assets/residents/saloon-1.png';
+import residentSaloonEast0 from '@/assets/residents/saloon-east-0.png';
+import residentSaloonEast1 from '@/assets/residents/saloon-east-1.png';
+import residentSaloonWest0 from '@/assets/residents/saloon-west-0.png';
+import residentSaloonWest1 from '@/assets/residents/saloon-west-1.png';
+import residentSaloonBack0 from '@/assets/residents/saloon-back-0.png';
+import residentSaloonBack1 from '@/assets/residents/saloon-back-1.png';
 import residentTrader0 from '@/assets/residents/trader-0.png';
 import residentTrader1 from '@/assets/residents/trader-1.png';
+import residentTraderEast0 from '@/assets/residents/trader-east-0.png';
+import residentTraderEast1 from '@/assets/residents/trader-east-1.png';
+import residentTraderWest0 from '@/assets/residents/trader-west-0.png';
+import residentTraderWest1 from '@/assets/residents/trader-west-1.png';
+import residentTraderBack0 from '@/assets/residents/trader-back-0.png';
+import residentTraderBack1 from '@/assets/residents/trader-back-1.png';
 import residentProspector0 from '@/assets/residents/prospector-0.png';
 import residentProspector1 from '@/assets/residents/prospector-1.png';
+import residentProspectorEast0 from '@/assets/residents/prospector-east-0.png';
+import residentProspectorEast1 from '@/assets/residents/prospector-east-1.png';
+import residentProspectorWest0 from '@/assets/residents/prospector-west-0.png';
+import residentProspectorWest1 from '@/assets/residents/prospector-west-1.png';
+import residentProspectorBack0 from '@/assets/residents/prospector-back-0.png';
+import residentProspectorBack1 from '@/assets/residents/prospector-back-1.png';
 import residentSmith0 from '@/assets/residents/smith-0.png';
 import residentSmith1 from '@/assets/residents/smith-1.png';
+import residentSmithEast0 from '@/assets/residents/smith-east-0.png';
+import residentSmithEast1 from '@/assets/residents/smith-east-1.png';
+import residentSmithWest0 from '@/assets/residents/smith-west-0.png';
+import residentSmithWest1 from '@/assets/residents/smith-west-1.png';
+import residentSmithBack0 from '@/assets/residents/smith-back-0.png';
+import residentSmithBack1 from '@/assets/residents/smith-back-1.png';
 import residentAttendant0 from '@/assets/residents/attendant-0.png';
 import residentAttendant1 from '@/assets/residents/attendant-1.png';
+import residentAttendantEast0 from '@/assets/residents/attendant-east-0.png';
+import residentAttendantEast1 from '@/assets/residents/attendant-east-1.png';
+import residentAttendantWest0 from '@/assets/residents/attendant-west-0.png';
+import residentAttendantWest1 from '@/assets/residents/attendant-west-1.png';
+import residentAttendantBack0 from '@/assets/residents/attendant-back-0.png';
+import residentAttendantBack1 from '@/assets/residents/attendant-back-1.png';
 import residentVendor0 from '@/assets/residents/vendor-0.png';
 import residentVendor1 from '@/assets/residents/vendor-1.png';
+import residentVendorEast0 from '@/assets/residents/vendor-east-0.png';
+import residentVendorEast1 from '@/assets/residents/vendor-east-1.png';
+import residentVendorWest0 from '@/assets/residents/vendor-west-0.png';
+import residentVendorWest1 from '@/assets/residents/vendor-west-1.png';
+import residentVendorBack0 from '@/assets/residents/vendor-back-0.png';
+import residentVendorBack1 from '@/assets/residents/vendor-back-1.png';
 import residentCourier0 from '@/assets/residents/courier-0.png';
 import residentCourier1 from '@/assets/residents/courier-1.png';
+import residentCourierEast0 from '@/assets/residents/courier-east-0.png';
+import residentCourierEast1 from '@/assets/residents/courier-east-1.png';
+import residentCourierWest0 from '@/assets/residents/courier-west-0.png';
+import residentCourierWest1 from '@/assets/residents/courier-west-1.png';
+import residentCourierBack0 from '@/assets/residents/courier-back-0.png';
+import residentCourierBack1 from '@/assets/residents/courier-back-1.png';
 import residentPorter0 from '@/assets/residents/porter-0.png';
 import residentPorter1 from '@/assets/residents/porter-1.png';
+import residentPorterEast0 from '@/assets/residents/porter-east-0.png';
+import residentPorterEast1 from '@/assets/residents/porter-east-1.png';
+import residentPorterWest0 from '@/assets/residents/porter-west-0.png';
+import residentPorterWest1 from '@/assets/residents/porter-west-1.png';
+import residentPorterBack0 from '@/assets/residents/porter-back-0.png';
+import residentPorterBack1 from '@/assets/residents/porter-back-1.png';
 import residentSeller0 from '@/assets/residents/seller-0.png';
 import residentSeller1 from '@/assets/residents/seller-1.png';
+import residentSellerEast0 from '@/assets/residents/seller-east-0.png';
+import residentSellerEast1 from '@/assets/residents/seller-east-1.png';
+import residentSellerWest0 from '@/assets/residents/seller-west-0.png';
+import residentSellerWest1 from '@/assets/residents/seller-west-1.png';
+import residentSellerBack0 from '@/assets/residents/seller-back-0.png';
+import residentSellerBack1 from '@/assets/residents/seller-back-1.png';
 import residentStallholder0 from '@/assets/residents/stallholder-0.png';
 import residentStallholder1 from '@/assets/residents/stallholder-1.png';
+import residentStallholderEast0 from '@/assets/residents/stallholder-east-0.png';
+import residentStallholderEast1 from '@/assets/residents/stallholder-east-1.png';
+import residentStallholderWest0 from '@/assets/residents/stallholder-west-0.png';
+import residentStallholderWest1 from '@/assets/residents/stallholder-west-1.png';
+import residentStallholderBack0 from '@/assets/residents/stallholder-back-0.png';
+import residentStallholderBack1 from '@/assets/residents/stallholder-back-1.png';
 import residentSweeper0 from '@/assets/residents/sweeper-0.png';
 import residentSweeper1 from '@/assets/residents/sweeper-1.png';
+import residentSweeperEast0 from '@/assets/residents/sweeper-east-0.png';
+import residentSweeperEast1 from '@/assets/residents/sweeper-east-1.png';
+import residentSweeperWest0 from '@/assets/residents/sweeper-west-0.png';
+import residentSweeperWest1 from '@/assets/residents/sweeper-west-1.png';
+import residentSweeperBack0 from '@/assets/residents/sweeper-back-0.png';
+import residentSweeperBack1 from '@/assets/residents/sweeper-back-1.png';
 import residentParker0 from '@/assets/residents/parker-0.png';
 import residentParker1 from '@/assets/residents/parker-1.png';
+import residentParkerEast0 from '@/assets/residents/parker-east-0.png';
+import residentParkerEast1 from '@/assets/residents/parker-east-1.png';
+import residentParkerWest0 from '@/assets/residents/parker-west-0.png';
+import residentParkerWest1 from '@/assets/residents/parker-west-1.png';
+import residentParkerBack0 from '@/assets/residents/parker-back-0.png';
+import residentParkerBack1 from '@/assets/residents/parker-back-1.png';
 import residentCook0 from '@/assets/residents/cook-0.png';
 import residentCook1 from '@/assets/residents/cook-1.png';
+import residentCookEast0 from '@/assets/residents/cook-east-0.png';
+import residentCookEast1 from '@/assets/residents/cook-east-1.png';
+import residentCookWest0 from '@/assets/residents/cook-west-0.png';
+import residentCookWest1 from '@/assets/residents/cook-west-1.png';
+import residentCookBack0 from '@/assets/residents/cook-back-0.png';
+import residentCookBack1 from '@/assets/residents/cook-back-1.png';
 import residentDocker0 from '@/assets/residents/docker-0.png';
 import residentDocker1 from '@/assets/residents/docker-1.png';
+import residentDockerEast0 from '@/assets/residents/docker-east-0.png';
+import residentDockerEast1 from '@/assets/residents/docker-east-1.png';
+import residentDockerWest0 from '@/assets/residents/docker-west-0.png';
+import residentDockerWest1 from '@/assets/residents/docker-west-1.png';
+import residentDockerBack0 from '@/assets/residents/docker-back-0.png';
+import residentDockerBack1 from '@/assets/residents/docker-back-1.png';
 import residentStroller0 from '@/assets/residents/stroller-0.png';
 import residentStroller1 from '@/assets/residents/stroller-1.png';
+import residentStrollerEast0 from '@/assets/residents/stroller-east-0.png';
+import residentStrollerEast1 from '@/assets/residents/stroller-east-1.png';
+import residentStrollerWest0 from '@/assets/residents/stroller-west-0.png';
+import residentStrollerWest1 from '@/assets/residents/stroller-west-1.png';
+import residentStrollerBack0 from '@/assets/residents/stroller-back-0.png';
+import residentStrollerBack1 from '@/assets/residents/stroller-back-1.png';
 import residentFarmer0 from '@/assets/residents/farmer-0.png';
 import residentFarmer1 from '@/assets/residents/farmer-1.png';
+import residentFarmerEast0 from '@/assets/residents/farmer-east-0.png';
+import residentFarmerEast1 from '@/assets/residents/farmer-east-1.png';
+import residentFarmerWest0 from '@/assets/residents/farmer-west-0.png';
+import residentFarmerWest1 from '@/assets/residents/farmer-west-1.png';
+import residentFarmerBack0 from '@/assets/residents/farmer-back-0.png';
+import residentFarmerBack1 from '@/assets/residents/farmer-back-1.png';
 import residentHiker0 from '@/assets/residents/hiker-0.png';
 import residentHiker1 from '@/assets/residents/hiker-1.png';
+import residentHikerEast0 from '@/assets/residents/hiker-east-0.png';
+import residentHikerEast1 from '@/assets/residents/hiker-east-1.png';
+import residentHikerWest0 from '@/assets/residents/hiker-west-0.png';
+import residentHikerWest1 from '@/assets/residents/hiker-west-1.png';
+import residentHikerBack0 from '@/assets/residents/hiker-back-0.png';
+import residentHikerBack1 from '@/assets/residents/hiker-back-1.png';
 import residentForager0 from '@/assets/residents/forager-0.png';
 import residentForager1 from '@/assets/residents/forager-1.png';
+import residentForagerEast0 from '@/assets/residents/forager-east-0.png';
+import residentForagerEast1 from '@/assets/residents/forager-east-1.png';
+import residentForagerWest0 from '@/assets/residents/forager-west-0.png';
+import residentForagerWest1 from '@/assets/residents/forager-west-1.png';
+import residentForagerBack0 from '@/assets/residents/forager-back-0.png';
+import residentForagerBack1 from '@/assets/residents/forager-back-1.png';
 import residentPicnicker0 from '@/assets/residents/picnicker-0.png';
 import residentPicnicker1 from '@/assets/residents/picnicker-1.png';
+import residentPicnickerEast0 from '@/assets/residents/picnicker-east-0.png';
+import residentPicnickerEast1 from '@/assets/residents/picnicker-east-1.png';
+import residentPicnickerWest0 from '@/assets/residents/picnicker-west-0.png';
+import residentPicnickerWest1 from '@/assets/residents/picnicker-west-1.png';
+import residentPicnickerBack0 from '@/assets/residents/picnicker-back-0.png';
+import residentPicnickerBack1 from '@/assets/residents/picnicker-back-1.png';
 import residentMiller0 from '@/assets/residents/miller-0.png';
 import residentMiller1 from '@/assets/residents/miller-1.png';
+import residentMillerEast0 from '@/assets/residents/miller-east-0.png';
+import residentMillerEast1 from '@/assets/residents/miller-east-1.png';
+import residentMillerWest0 from '@/assets/residents/miller-west-0.png';
+import residentMillerWest1 from '@/assets/residents/miller-west-1.png';
+import residentMillerBack0 from '@/assets/residents/miller-back-0.png';
+import residentMillerBack1 from '@/assets/residents/miller-back-1.png';
 import residentAngler0 from '@/assets/residents/angler-0.png';
 import residentAngler1 from '@/assets/residents/angler-1.png';
+import residentAnglerEast0 from '@/assets/residents/angler-east-0.png';
+import residentAnglerEast1 from '@/assets/residents/angler-east-1.png';
+import residentAnglerWest0 from '@/assets/residents/angler-west-0.png';
+import residentAnglerWest1 from '@/assets/residents/angler-west-1.png';
+import residentAnglerBack0 from '@/assets/residents/angler-back-0.png';
+import residentAnglerBack1 from '@/assets/residents/angler-back-1.png';
 import residentBotanist0 from '@/assets/residents/botanist-0.png';
 import residentBotanist1 from '@/assets/residents/botanist-1.png';
+import residentBotanistEast0 from '@/assets/residents/botanist-east-0.png';
+import residentBotanistEast1 from '@/assets/residents/botanist-east-1.png';
+import residentBotanistWest0 from '@/assets/residents/botanist-west-0.png';
+import residentBotanistWest1 from '@/assets/residents/botanist-west-1.png';
+import residentBotanistBack0 from '@/assets/residents/botanist-back-0.png';
+import residentBotanistBack1 from '@/assets/residents/botanist-back-1.png';
 import residentStargazer0 from '@/assets/residents/stargazer-0.png';
 import residentStargazer1 from '@/assets/residents/stargazer-1.png';
+import residentStargazerEast0 from '@/assets/residents/stargazer-east-0.png';
+import residentStargazerEast1 from '@/assets/residents/stargazer-east-1.png';
+import residentStargazerWest0 from '@/assets/residents/stargazer-west-0.png';
+import residentStargazerWest1 from '@/assets/residents/stargazer-west-1.png';
+import residentStargazerBack0 from '@/assets/residents/stargazer-back-0.png';
+import residentStargazerBack1 from '@/assets/residents/stargazer-back-1.png';
 import residentWarden0 from '@/assets/residents/warden-0.png';
 import residentWarden1 from '@/assets/residents/warden-1.png';
+import residentWardenEast0 from '@/assets/residents/warden-east-0.png';
+import residentWardenEast1 from '@/assets/residents/warden-east-1.png';
+import residentWardenWest0 from '@/assets/residents/warden-west-0.png';
+import residentWardenWest1 from '@/assets/residents/warden-west-1.png';
+import residentWardenBack0 from '@/assets/residents/warden-back-0.png';
+import residentWardenBack1 from '@/assets/residents/warden-back-1.png';
 import residentSkater0 from '@/assets/residents/skater-0.png';
 import residentSkater1 from '@/assets/residents/skater-1.png';
+import residentSkaterEast0 from '@/assets/residents/skater-east-0.png';
+import residentSkaterEast1 from '@/assets/residents/skater-east-1.png';
+import residentSkaterWest0 from '@/assets/residents/skater-west-0.png';
+import residentSkaterWest1 from '@/assets/residents/skater-west-1.png';
+import residentSkaterBack0 from '@/assets/residents/skater-back-0.png';
+import residentSkaterBack1 from '@/assets/residents/skater-back-1.png';
 import residentFerryman0 from '@/assets/residents/ferryman-0.png';
 import residentFerryman1 from '@/assets/residents/ferryman-1.png';
+import residentFerrymanEast0 from '@/assets/residents/ferryman-east-0.png';
+import residentFerrymanEast1 from '@/assets/residents/ferryman-east-1.png';
+import residentFerrymanWest0 from '@/assets/residents/ferryman-west-0.png';
+import residentFerrymanWest1 from '@/assets/residents/ferryman-west-1.png';
+import residentFerrymanBack0 from '@/assets/residents/ferryman-back-0.png';
+import residentFerrymanBack1 from '@/assets/residents/ferryman-back-1.png';
 import residentNaturalist0 from '@/assets/residents/naturalist-0.png';
 import residentNaturalist1 from '@/assets/residents/naturalist-1.png';
+import residentNaturalistEast0 from '@/assets/residents/naturalist-east-0.png';
+import residentNaturalistEast1 from '@/assets/residents/naturalist-east-1.png';
+import residentNaturalistWest0 from '@/assets/residents/naturalist-west-0.png';
+import residentNaturalistWest1 from '@/assets/residents/naturalist-west-1.png';
+import residentNaturalistBack0 from '@/assets/residents/naturalist-back-0.png';
+import residentNaturalistBack1 from '@/assets/residents/naturalist-back-1.png';
 import residentBeachcomber0 from '@/assets/residents/beachcomber-0.png';
 import residentBeachcomber1 from '@/assets/residents/beachcomber-1.png';
+import residentBeachcomberEast0 from '@/assets/residents/beachcomber-east-0.png';
+import residentBeachcomberEast1 from '@/assets/residents/beachcomber-east-1.png';
+import residentBeachcomberWest0 from '@/assets/residents/beachcomber-west-0.png';
+import residentBeachcomberWest1 from '@/assets/residents/beachcomber-west-1.png';
+import residentBeachcomberBack0 from '@/assets/residents/beachcomber-back-0.png';
+import residentBeachcomberBack1 from '@/assets/residents/beachcomber-back-1.png';
 
 /** Two walking frames for each resident. */
 export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
@@ -112,4 +328,199 @@ export const residentFrames: Record<string, readonly ImageSourcePropType[]> = {
   ferryman: [residentFerryman0, residentFerryman1],
   naturalist: [residentNaturalist0, residentNaturalist1],
   beachcomber: [residentBeachcomber0, residentBeachcomber1],
+};
+
+/**
+ * Walk pairs for the other three ways a resident can face: east and west in profile
+ * (each drawn, not mirrored, so the light stays upper left) and back, walking away.
+ * Same box and anchor as the front frames, so a route can swap them freely.
+ */
+export const residentFacingFrames: Record<
+  string,
+  {
+    east: readonly ImageSourcePropType[];
+    west: readonly ImageSourcePropType[];
+    back: readonly ImageSourcePropType[];
+  }
+> = {
+  gardener: {
+    east: [residentGardenerEast0, residentGardenerEast1],
+    west: [residentGardenerWest0, residentGardenerWest1],
+    back: [residentGardenerBack0, residentGardenerBack1],
+  },
+  baker: {
+    east: [residentBakerEast0, residentBakerEast1],
+    west: [residentBakerWest0, residentBakerWest1],
+    back: [residentBakerBack0, residentBakerBack1],
+  },
+  fisher: {
+    east: [residentFisherEast0, residentFisherEast1],
+    west: [residentFisherWest0, residentFisherWest1],
+    back: [residentFisherBack0, residentFisherBack1],
+  },
+  keeper: {
+    east: [residentKeeperEast0, residentKeeperEast1],
+    west: [residentKeeperWest0, residentKeeperWest1],
+    back: [residentKeeperBack0, residentKeeperBack1],
+  },
+  steward: {
+    east: [residentStewardEast0, residentStewardEast1],
+    west: [residentStewardWest0, residentStewardWest1],
+    back: [residentStewardBack0, residentStewardBack1],
+  },
+  tinkerer: {
+    east: [residentTinkererEast0, residentTinkererEast1],
+    west: [residentTinkererWest0, residentTinkererWest1],
+    back: [residentTinkererBack0, residentTinkererBack1],
+  },
+  boatwoman: {
+    east: [residentBoatwomanEast0, residentBoatwomanEast1],
+    west: [residentBoatwomanWest0, residentBoatwomanWest1],
+    back: [residentBoatwomanBack0, residentBoatwomanBack1],
+  },
+  cowhand: {
+    east: [residentCowhandEast0, residentCowhandEast1],
+    west: [residentCowhandWest0, residentCowhandWest1],
+    back: [residentCowhandBack0, residentCowhandBack1],
+  },
+  saloon: {
+    east: [residentSaloonEast0, residentSaloonEast1],
+    west: [residentSaloonWest0, residentSaloonWest1],
+    back: [residentSaloonBack0, residentSaloonBack1],
+  },
+  trader: {
+    east: [residentTraderEast0, residentTraderEast1],
+    west: [residentTraderWest0, residentTraderWest1],
+    back: [residentTraderBack0, residentTraderBack1],
+  },
+  prospector: {
+    east: [residentProspectorEast0, residentProspectorEast1],
+    west: [residentProspectorWest0, residentProspectorWest1],
+    back: [residentProspectorBack0, residentProspectorBack1],
+  },
+  smith: {
+    east: [residentSmithEast0, residentSmithEast1],
+    west: [residentSmithWest0, residentSmithWest1],
+    back: [residentSmithBack0, residentSmithBack1],
+  },
+  attendant: {
+    east: [residentAttendantEast0, residentAttendantEast1],
+    west: [residentAttendantWest0, residentAttendantWest1],
+    back: [residentAttendantBack0, residentAttendantBack1],
+  },
+  vendor: {
+    east: [residentVendorEast0, residentVendorEast1],
+    west: [residentVendorWest0, residentVendorWest1],
+    back: [residentVendorBack0, residentVendorBack1],
+  },
+  courier: {
+    east: [residentCourierEast0, residentCourierEast1],
+    west: [residentCourierWest0, residentCourierWest1],
+    back: [residentCourierBack0, residentCourierBack1],
+  },
+  porter: {
+    east: [residentPorterEast0, residentPorterEast1],
+    west: [residentPorterWest0, residentPorterWest1],
+    back: [residentPorterBack0, residentPorterBack1],
+  },
+  seller: {
+    east: [residentSellerEast0, residentSellerEast1],
+    west: [residentSellerWest0, residentSellerWest1],
+    back: [residentSellerBack0, residentSellerBack1],
+  },
+  stallholder: {
+    east: [residentStallholderEast0, residentStallholderEast1],
+    west: [residentStallholderWest0, residentStallholderWest1],
+    back: [residentStallholderBack0, residentStallholderBack1],
+  },
+  sweeper: {
+    east: [residentSweeperEast0, residentSweeperEast1],
+    west: [residentSweeperWest0, residentSweeperWest1],
+    back: [residentSweeperBack0, residentSweeperBack1],
+  },
+  parker: {
+    east: [residentParkerEast0, residentParkerEast1],
+    west: [residentParkerWest0, residentParkerWest1],
+    back: [residentParkerBack0, residentParkerBack1],
+  },
+  cook: {
+    east: [residentCookEast0, residentCookEast1],
+    west: [residentCookWest0, residentCookWest1],
+    back: [residentCookBack0, residentCookBack1],
+  },
+  docker: {
+    east: [residentDockerEast0, residentDockerEast1],
+    west: [residentDockerWest0, residentDockerWest1],
+    back: [residentDockerBack0, residentDockerBack1],
+  },
+  stroller: {
+    east: [residentStrollerEast0, residentStrollerEast1],
+    west: [residentStrollerWest0, residentStrollerWest1],
+    back: [residentStrollerBack0, residentStrollerBack1],
+  },
+  farmer: {
+    east: [residentFarmerEast0, residentFarmerEast1],
+    west: [residentFarmerWest0, residentFarmerWest1],
+    back: [residentFarmerBack0, residentFarmerBack1],
+  },
+  hiker: {
+    east: [residentHikerEast0, residentHikerEast1],
+    west: [residentHikerWest0, residentHikerWest1],
+    back: [residentHikerBack0, residentHikerBack1],
+  },
+  forager: {
+    east: [residentForagerEast0, residentForagerEast1],
+    west: [residentForagerWest0, residentForagerWest1],
+    back: [residentForagerBack0, residentForagerBack1],
+  },
+  picnicker: {
+    east: [residentPicnickerEast0, residentPicnickerEast1],
+    west: [residentPicnickerWest0, residentPicnickerWest1],
+    back: [residentPicnickerBack0, residentPicnickerBack1],
+  },
+  miller: {
+    east: [residentMillerEast0, residentMillerEast1],
+    west: [residentMillerWest0, residentMillerWest1],
+    back: [residentMillerBack0, residentMillerBack1],
+  },
+  angler: {
+    east: [residentAnglerEast0, residentAnglerEast1],
+    west: [residentAnglerWest0, residentAnglerWest1],
+    back: [residentAnglerBack0, residentAnglerBack1],
+  },
+  botanist: {
+    east: [residentBotanistEast0, residentBotanistEast1],
+    west: [residentBotanistWest0, residentBotanistWest1],
+    back: [residentBotanistBack0, residentBotanistBack1],
+  },
+  stargazer: {
+    east: [residentStargazerEast0, residentStargazerEast1],
+    west: [residentStargazerWest0, residentStargazerWest1],
+    back: [residentStargazerBack0, residentStargazerBack1],
+  },
+  warden: {
+    east: [residentWardenEast0, residentWardenEast1],
+    west: [residentWardenWest0, residentWardenWest1],
+    back: [residentWardenBack0, residentWardenBack1],
+  },
+  skater: {
+    east: [residentSkaterEast0, residentSkaterEast1],
+    west: [residentSkaterWest0, residentSkaterWest1],
+    back: [residentSkaterBack0, residentSkaterBack1],
+  },
+  ferryman: {
+    east: [residentFerrymanEast0, residentFerrymanEast1],
+    west: [residentFerrymanWest0, residentFerrymanWest1],
+    back: [residentFerrymanBack0, residentFerrymanBack1],
+  },
+  naturalist: {
+    east: [residentNaturalistEast0, residentNaturalistEast1],
+    west: [residentNaturalistWest0, residentNaturalistWest1],
+    back: [residentNaturalistBack0, residentNaturalistBack1],
+  },
+  beachcomber: {
+    east: [residentBeachcomberEast0, residentBeachcomberEast1],
+    west: [residentBeachcomberWest0, residentBeachcomberWest1],
+    back: [residentBeachcomberBack0, residentBeachcomberBack1],
+  },
 };
