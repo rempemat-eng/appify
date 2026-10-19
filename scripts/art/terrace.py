@@ -1,0 +1,1544 @@
+"""The terrace toolkit: ground at several heights on the soft 8 px grid.
+
+docs/vision/verticality.md, 4a (the toolkit) and 4f (grid-led terrain, "Side faces"). Every
+region's generator calls this instead of drawing its own cliffs; owners adopt it zone by zone.
+
+The model. A zone gives a tier map on the 8 px grid: one integer per cell (40 x 72 for a
+zone), the tier whose top surface the camera sees there. Tiers are ground, not walk levels:
+where a higher tier ends to the south its face hangs below the rim, carved from the lower
+ground (32 px per level by default, 40 in the city), so the map is what the camera sees and
+the tops are drawn already offset by their height. `from_plan()` converts a plan height map
+(where each tier stands on the ground) into that screen map.
+
+What `build()` paints on the ground canvas:
+- corners rounded by one cell (the grid mask closed, then opened, with a small disc), so
+  straight runs stay exactly on grid lines; all roughness lives inside the edge cells;
+- south faces in a material (earth, stone, concrete, timber, sandstone), each lit from the
+  upper left, with a lip (a scalloped grass overhang of 1 to 3 px on earth, a coping on
+  built faces), a dark damp foot and tall grass along it;
+- side faces (anything facing west or east) as a narrow strip of the face seen nearly edge
+  on: the lip wraps the corner and runs down the side; the strip is the face's material cut
+  narrow, lit when it faces west and in the two darkest tones when it faces east; outer
+  corners wrap the face's lumps or courses round the radius, narrowing; inner corners meet
+  in a shaded crease; a strip always ends on ground;
+- cast shadows down and to the right (8 px, stepped: 2 strong, 3 medium, 3 dithered), so
+  an east-facing strip throws a stepped shadow on the lower ground east of it and a
+  west-facing one keeps a 1 px contact line;
+- stairs cut through a face (timber or stone; 40 px open between 4 px cheeks, 4 px risers,
+  8 px landings, the west cheek lit and the east cheek dark), ramps built against a face
+  (rise 1 in 3, at least 24 wide), and streams that fall straight down a face into a pool.
+
+What it returns (`Terrace`): the walk blocking (face bands and strips blocked, stairs and
+ramps open, a hidden drop behind each back rim blocked), the per-4 px-cell tier map for the
+renderer and lint (`zoneTier`: digits for tiers, `f` a face, `s` a stair or ramp), the
+links between levels, the water pixels (the falls included, so water_flow.py animates
+them), and rail runs for built rims. `check()` runs the toolkit's own lint on the result.
+
+Everything is deterministic (hash noise from pixel.py, no randomness), so art-repro holds.
+
+Run: python3 scripts/art/terrace.py --sheet OUT.png   (the test zone at 1x, 3x, night, walk)
+     python3 scripts/art/terrace.py --check            (build the test zone and lint it)
+"""
+from __future__ import annotations
+
+import math
+import os
+import sys
+from collections import deque
+from dataclasses import dataclass, field
+
+import numpy as np
+from PIL import Image
+
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from materials import INK, MATERIALS  # noqa: E402
+from pixel import Canvas, hex_rgba, noise2, smooth_noise  # noqa: E402
+
+GRID = 8          # the terrain grid (zone px)
+CELL = 4          # the walk grid
+FACE = 32         # a tier's face (valley, isles, west, garden yard)
+FACE_CITY = 40
+STRIP = 4         # a side sliver: its lip and the face seen edge on, from the rim line out (2 to 4)
+SHADOW = 8        # cast shadow: constant whatever the height; 3 strong, 3 medium, 2 dithered
+HEIGHTS = (12, 16, 32, 40)   # the only face heights: a low step or a tier (soft-grid research 6.1)
+STAIR_W = 40      # open width between the cheeks
+CHEEK = 4
+RISER = 4
+LANDING = 8
+RAMP_W = 24
+ROUND = 6         # corner radius: one cell
+ROUND_IN = 4      # inner corners: a tighter crease
+
+# what each pixel is
+TOP, FACE_K, STRIP_K, STAIR_K, CHEEK_K, RAMP_K, FALL_K = range(7)
+FACE_LIKE = (FACE_K, STRIP_K, CHEEK_K, FALL_K)
+
+RAMPS = {
+    'earth': MATERIALS['soil'],        # 6 tones
+    'stone': MATERIALS['ashlar'],      # 6
+    'concrete': MATERIALS['ash'],      # 5
+    'timber': MATERIALS['wood'],       # 5
+    'sandstone': MATERIALS['desert'],  # 6
+}
+MATS = list(RAMPS)
+GRASS = MATERIALS['grass']             # dark .. light
+LEAF = MATERIALS['leaf']
+SOIL = MATERIALS['soil']
+STONE = MATERIALS['stone']
+WOOD = MATERIALS['wood']
+PATH = MATERIALS['path']
+WTR = MATERIALS['water']
+FOAM = MATERIALS['snow'][3]
+
+STRONG = (0.56, 0.60, 0.72)
+MEDIUM = (0.70, 0.74, 0.83)
+
+
+def rgb(c) -> tuple:
+    return hex_rgba(c)[:3] if isinstance(c, str) else tuple(int(v) for v in c[:3])
+
+
+def lerp(a, b, t):
+    a, b = rgb(a), rgb(b)
+    return tuple(int(round(a[i] + (b[i] - a[i]) * t)) for i in range(3))
+
+
+def grass_ramp(level: int):
+    """Each tier its own tone: an upper tier a step lighter and warmer (verticality 4c)."""
+    return [lerp(c, '#E8EBA0', 0.09 * level) for c in GRASS]
+
+
+# ---- the spec -----------------------------------------------------------------------------
+
+@dataclass
+class Stair:
+    """Steps cut through a face. `x` is the west edge of the west cheek and `rim` the rim
+    row they cut (both on the grid); `w` the open width between the cheeks."""
+    x: int
+    rim: int
+    w: int = STAIR_W
+    material: str = 'timber'   # 'timber' | 'stone'
+    cheek: int = CHEEK
+
+
+@dataclass
+class Ramp:
+    """A ramp built against a south face: it leaves the upper tier at its high end and runs
+    down along the face to the lower ground (rise 1 in 3), `w` px deep (the walk width)."""
+    x0: int
+    x1: int
+    rim: int
+    w: int = RAMP_W
+    down: str = 'east'         # the end it runs down to
+    material: str = 'earth'
+
+
+@dataclass
+class Edge:
+    """An override for the faces under part of the map: the cells (c0, r0, c1, r1) hold the
+    upper tier's top just above or beside the face."""
+    rect: tuple
+    material: str | None = None
+    face: int | None = None
+
+
+@dataclass
+class Terrace:
+    width: int
+    height: int
+    level: np.ndarray            # per px: the tier of the ground under it
+    kind: np.ndarray             # per px: TOP, FACE_K, ...
+    walk: list                   # per 4 px cell: '.' open, '#' blocked
+    tiers: list                  # per 4 px cell: '0'..'9' a tier top, 'f' a face, 's' a stair or ramp
+    blocked: set                 # px of the blocked cells (zones.build's blocked_ground)
+    water: set                   # px of water, falls included (zones.WATER_MASKS, water_flow)
+    falls: list                  # (x0, y0, x1, y1) of each fall down a face
+    links: list                  # {'kind', 'top': (x, y), 'bottom': (x, y), 'from', 'to'}
+    rails: list                  # (x0, x1, y): built rims that want railing props, stairs left open
+    faces: list                  # (x0, x1, rim, height, top, material): south face runs
+    stairs: list = field(default_factory=list)
+    ramps: list = field(default_factory=list)
+
+
+def from_plan(plan, face=FACE):
+    """A plan height map (each cell: the height of the ground standing there) to the screen
+    tier map build() takes. Each cell is drawn `face` px per level higher up the screen;
+    where several land on one screen cell the nearest (southmost) wins, hiding the ground
+    behind a tier; the rows a tier leaves below its south edge take the level of the ground
+    in front, and build() carves its face out of them."""
+    plan = np.array(plan, dtype=np.int16)
+    rows, cols = plan.shape
+    fh = face if isinstance(face, int) else face.get(1, FACE)
+    k = fh // GRID
+    out = np.full((rows, cols), -1, np.int16)
+    for c in range(cols):
+        for r in range(rows):              # north to south: nearer ground is drawn over
+            h = int(plan[r, c])
+            sr = r - h * k
+            if 0 <= sr < rows:
+                out[sr, c] = h
+            elif sr < 0:
+                pass
+        for r in range(rows - 2, -1, -1):  # a face's rows: the ground in front of it
+            if out[r, c] < 0:
+                out[r, c] = out[r + 1, c]
+        if out[rows - 1, c] < 0:
+            out[rows - 1, c] = plan[rows - 1, c]
+        for r in range(rows - 2, -1, -1):
+            if out[r, c] < 0:
+                out[r, c] = out[r + 1, c]
+    return out.tolist()
+
+
+def rects_map(cols: int, rows: int, rects, base: int = 0):
+    """A tier map from rectangles of cells (c0, r0, c1, r1, tier), later ones on top."""
+    m = [[base] * cols for _ in range(rows)]
+    for (c0, r0, c1, r1, t) in rects:
+        for r in range(max(0, r0), min(rows, r1)):
+            for c in range(max(0, c0), min(cols, c1)):
+                m[r][c] = t
+    return m
+
+
+# ---- masks --------------------------------------------------------------------------------
+
+def _disc(r):
+    return [(dx, dy) for dy in range(-r, r + 1) for dx in range(-r, r + 1) if dx * dx + dy * dy <= r * r + r * 0.6]
+
+
+def _shift(m, dx, dy, fill=False):
+    """m moved by (dx, dy): out[y, x] = m[y - dy, x - dx], `fill` beyond the edge."""
+    h, w = m.shape
+    out = np.full_like(m, fill)
+    ys, yd = (slice(0, h - dy), slice(dy, h)) if dy >= 0 else (slice(-dy, h), slice(0, h + dy))
+    xs, xd = (slice(0, w - dx), slice(dx, w)) if dx >= 0 else (slice(-dx, w), slice(0, w + dx))
+    out[yd, xd] = m[ys, xs]
+    return out
+
+
+def _dilate(m, r):
+    out = np.zeros_like(m)
+    for dx, dy in _disc(r):
+        out |= _shift(m, dx, dy)
+    return out
+
+
+def rounded(m, r=ROUND, r_in=None):
+    """Round a grid-led mask's corners by about one cell: close (fills inner corners, by
+    `r_in`, tighter so a notch keeps a crisp crease), then open (rounds outer corners by
+    `r`). Straight runs stay exactly on the grid; edges at the zone border run on straight
+    (the mask is padded with its own edge)."""
+    r_in = r if r_in is None else r_in
+    if r <= 0 and r_in <= 0:
+        return m.copy()
+    p = max(r, r_in) + 2
+    big = np.pad(m, p, mode='edge')
+    if r_in > 0:
+        big = ~_dilate(~_dilate(big, r_in), r_in)
+    if r > 0:
+        big = _dilate(~_dilate(~big, r), r)
+    return big[p:-p, p:-p]
+
+
+def _shift_edge(m, dx, dy):
+    """m moved by (dx, dy), the zone's edge rows and columns carried on beyond it."""
+    h, w = m.shape
+    p = max(abs(dx), abs(dy)) + 1
+    big = np.pad(m, p, mode='edge')
+    return big[p - dy:p - dy + h, p - dx:p - dx + w]
+
+
+# ---- lumps, blocks and courses: the face's own structure -----------------------------------
+
+def _lump(u: float, y: int, seed: int):
+    """Which earth lump a face pixel belongs to: the nearest of seeds jittered on a 13 x 9
+    lattice, distances stretched sideways, so lumps are wide, rounded and irregular (the
+    rock face of valley_zones.cliff(), in soil)."""
+    gx, gy = int(u // 13), y // 9
+    best, bd = None, 1e9
+    for ox in (-1, 0, 1):
+        for oy in (-1, 0, 1):
+            cx, cy = gx + ox, gy + oy
+            sx = cx * 13 + noise2(cx, cy, seed + 1) * 11
+            sy = cy * 9 + noise2(cx, cy, seed + 2) * 7
+            d = ((u - sx) / 1.6) ** 2 + (y - sy) ** 2
+            if d < bd:
+                best, bd = (cx, cy), d
+    return best
+
+
+def _block(u: float, d: int, course_h: int, seed: int, base: int = 14, var: int = 6):
+    """Dressed blocks in courses: (course, block) for a face pixel; block lengths vary per
+    course, joints offset course to course."""
+    ci = d // course_h
+    p = u + noise2(ci, 3, seed) * 23
+    bi = int(p // base)
+    start = bi * base + int(noise2(bi, ci, seed + 5) * var) - var // 2
+    if p < start:
+        bi -= 1
+    return ci, bi
+
+
+def _bay(u: float, seed: int, lo: int = 16, hi: int = 24):
+    """Irregular bays along a face (timber posts, concrete joints): (bay index, px into it).
+    Bay widths vary between lo and hi so nothing repeats on a fixed period."""
+    p, i = -96, 0
+    while True:
+        w = lo + int(noise2(i, 9, seed) * (hi - lo + 1))
+        if u < p + w:
+            return i, int(u - p)
+        p += w
+        i += 1
+
+
+def _strata(d: int, seed: int, x: int = 0):
+    """Sandstone strata of 3 to 7 px from the rim down: (stratum index, row in it, its height)."""
+    y, i = 0, 0
+    while True:
+        t = 3 + int(noise2(i, 7, seed) * 5)
+        if d < y + t:
+            return i, d - y, t
+        y += t
+        i += 1
+
+
+# ---- the build ----------------------------------------------------------------------------
+
+def build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), stairs=(), ramps=(),
+          water=(), tops=True, seed=0, round_r=ROUND, round_in=ROUND_IN) -> Terrace:
+    """Paint terraced ground on `cv` (a zone's ground canvas, or None for the maps alone) and
+    return its walk blocking and maps.
+
+    tiers     the tier map, rows of cells (8 px), screen space (see the module docstring)
+    face      px per level: an int, or {level: px}
+    material  the face material: a name, or {level: name}; `edges` override parts
+    stairs    [Stair], ramps [Ramp]
+    water     cells of water: [(c0, r0, c1, r1)] or a bool map of cells; where a channel on a
+              tier reaches a rim it falls straight down the face (into a pool the map gives)
+    tops      True paints the tier tops as grass (a step lighter per tier); False keeps what
+              the canvas holds (the generator painted its own ground); or a callable
+              (x, y, level) -> colour
+    """
+    lv_cells = np.array(tiers, dtype=np.int16)
+    rows, cols = lv_cells.shape
+    H, W = rows * GRID, cols * GRID
+    top_lv = int(lv_cells.max())
+    edges = list(edges)
+
+    def edge_at(x, y):
+        cx, cy = x // GRID, y // GRID
+        for e in reversed(edges):
+            c0, r0, c1, r1 = e.rect
+            if c0 <= cx < c1 and r0 <= cy < r1:
+                return e
+        return None
+
+    def face_px(level, x, y):
+        e = edge_at(x, y)
+        if e and e.face:
+            return e.face
+        return face if isinstance(face, int) else face.get(level, FACE)
+
+    for h in ([face] if isinstance(face, int) else list(face.values())) + [e.face for e in edges if e.face]:
+        if h not in HEIGHTS:
+            raise ValueError(f'terrace: a face of {h} px; faces come from {HEIGHTS}')
+
+    def mat_of(level, x, y):
+        e = edge_at(x, y)
+        if e and e.material:
+            return e.material
+        return material if isinstance(material, str) else material.get(level, 'earth')
+
+    # 1. the rounded tier masks, and the level of the ground at each pixel
+    lvl = np.zeros((H, W), np.int16)
+    for L in range(1, top_lv + 1):
+        m = np.kron(lv_cells >= L, np.ones((GRID, GRID), bool))
+        lvl += rounded(m, round_r, round_in)
+
+    kind = np.full((H, W), TOP, np.uint8)
+    rim = np.full((H, W), -1, np.int16)      # face: the rim row of its column
+    ftop = np.zeros((H, W), np.int16)        # face: the tier it drops from
+    fh = np.zeros((H, W), np.int16)          # face: its height in this column
+    fmat = np.full((H, W), -1, np.int8)      # face/strip/cheek: material index
+    face_runs = []
+
+    # 2. south faces: below each rim, carved from the lower ground
+    for x in range(W):
+        col = lvl[:, x]
+        y = 1
+        while y < H:
+            a = int(col[y - 1])
+            if a > col[y] and kind[y, x] == TOP:
+                d = 0
+                while y + d < H:
+                    b = int(col[y + d])
+                    if b >= a:
+                        break
+                    need = sum(face_px(L, x, y - 1) for L in range(b + 1, a + 1))
+                    if d >= need:
+                        break
+                    d += 1
+                mi = MATS.index(mat_of(a, x, y - 1))
+                kind[y:y + d, x] = FACE_K
+                rim[y:y + d, x] = y
+                ftop[y:y + d, x] = a
+                fh[y:y + d, x] = d
+                fmat[y:y + d, x] = mi
+                y += max(1, d)
+            else:
+                y += 1
+    # runs of south face per rim (for rails, lint and the report)
+    for y in range(H):
+        x = 0
+        while x < W:
+            if kind[y, x] == FACE_K and rim[y, x] == y:
+                x0 = x
+                while x < W and kind[y, x] == FACE_K and rim[y, x] == y:
+                    x += 1
+                face_runs.append((x0, x, y, int(fh[y, x0]), int(ftop[y, x0]), MATS[fmat[y, x0]]))
+            else:
+                x += 1
+
+    ramp_h = np.zeros((H, W), np.int16)     # ramp: the height of its surface above the lower ground
+    links = []
+
+    # 3. ramps built against a face
+    for rp in ramps:
+        xs = range(rp.x0, rp.x1)
+        cx = (rp.x0 + rp.x1) // 2
+        hgt = int(fh[rp.rim, cx]) if kind[rp.rim, cx] == FACE_K else face_px(1, cx, rp.rim - 1)
+        foot = rp.rim + hgt
+        a = int(ftop[rp.rim, cx]) or 1
+        mi = MATS.index(rp.material)
+        run = rp.x1 - rp.x0
+        for x in xs:
+            t = (rp.x1 - 1 - x) if rp.down == 'east' else (x - rp.x0)
+            h = int(round(hgt * t / max(1, run - 1)))
+            s0 = foot - h
+            for y in range(max(0, s0), min(H, s0 + rp.w)):
+                kind[y, x] = RAMP_K
+                ramp_h[y, x] = max(1, h)
+                lvl[y, x] = a - 1
+            for y in range(s0 + rp.w, min(H, foot + rp.w)):
+                kind[y, x] = FACE_K
+                rim[y, x] = s0 + rp.w
+                ftop[y, x] = a
+                fh[y, x] = h
+                fmat[y, x] = mi
+                lvl[y, x] = a - 1
+        hi_x = rp.x0 + 6 if rp.down == 'east' else rp.x1 - 6
+        lo_x = rp.x1 + 6 if rp.down == 'east' else rp.x0 - 6
+        links.append({'kind': 'ramp', 'top': (hi_x, rp.rim - 4), 'bottom': (lo_x, foot + rp.w // 2),
+                      'from': a - 1, 'to': a})
+
+    # 4. stairs cut through a face
+    stair_id = np.full((H, W), -1, np.int16)
+    for si, st in enumerate(stairs):
+        cx = st.x + st.cheek + st.w // 2
+        hgt = int(fh[st.rim, cx]) if kind[st.rim, cx] == FACE_K else FACE
+        a = int(ftop[st.rim, cx]) or 1
+        x1 = st.x + 2 * st.cheek + st.w
+        mi = MATS.index('stone' if st.material == 'stone' else 'timber')
+        for y in range(st.rim, min(H, st.rim + hgt)):
+            for x in range(st.x, min(W, x1)):
+                cheek = x < st.x + st.cheek or x >= x1 - st.cheek
+                kind[y, x] = CHEEK_K if cheek else STAIR_K
+                stair_id[y, x] = si
+                ftop[y, x] = a
+                rim[y, x] = st.rim
+                fh[y, x] = hgt
+                fmat[y, x] = mi
+        links.append({'kind': 'stair', 'top': (cx, st.rim - 4), 'bottom': (cx, st.rim + hgt + 4),
+                      'from': a - 1, 'to': a})
+
+    # 5. water: grid-led channels; a channel reaching a rim falls straight down the face
+    wm_cells = np.zeros((rows, cols), bool)
+    if isinstance(water, np.ndarray) or (water and isinstance(water[0], (list, np.ndarray))):
+        wm_cells = np.array(water, bool)
+    else:
+        for (c0, r0, c1, r1) in water:
+            wm_cells[max(0, r0):r1, max(0, c0):c1] = True
+    wet = rounded(np.kron(wm_cells, np.ones((GRID, GRID), bool)), 4) if wm_cells.any() else np.zeros((H, W), bool)
+    falls = []
+    fall = np.zeros((H, W), bool)
+    for x in range(W):
+        for y in range(1, H):
+            if kind[y, x] == FACE_K and rim[y, x] == y and wet[y - 1, x] and kind[y - 1, x] == TOP:
+                fall[y:y + fh[y, x], x] = True
+                kind[y:y + fh[y, x], x] = FALL_K
+    ys, xs = np.nonzero(fall)
+    if len(xs):
+        lab = _components(fall)
+        for k in range(1, lab.max() + 1):
+            yy, xx = np.nonzero(lab == k)
+            falls.append((int(xx.min()), int(yy.min()), int(xx.max()) + 1, int(yy.max()) + 1))
+    wet &= (kind == TOP)
+    wet |= fall
+
+    # 6. side strips: the face seen from the side, on the lower ground beside a higher tier
+    sk = np.zeros((H, W), np.int8)          # 1..STRIP from the rim line out
+    sdir = np.zeros((H, W), np.int8)        # +1 faces east (the tier is to the west), -1 faces west
+    sreg = np.zeros((H, W), np.int8)        # 1 beside the face (the corner wrap), 0 beside the top
+    slev = np.zeros((H, W), np.int16)
+    for L in range(top_lv, 0, -1):
+        solid_top = (kind == TOP) & (lvl >= L) & ~wet
+        solid_face = ((kind == FACE_K) | (kind == FALL_K) | (kind == CHEEK_K)) & (ftop >= L)
+        solid_face |= (kind == RAMP_K) & (ramp_h >= 8) & (lvl + 1 >= L)
+        solid = solid_top | solid_face
+        recv_top = (kind == TOP) & (lvl < L)
+        recv_face = (kind == FACE_K) & (ftop == L)   # an inner corner: the strip meets a face behind it
+        depth = np.where(recv_face, np.arange(H)[:, None] - rim, 999)
+        hh = np.where(recv_face, fh, FACE)
+        for dirn in (1, -1):
+            prev = None
+            for k in range(1, STRIP + 1):
+                src = _shift(solid, dirn * k, 0)
+                src_top = _shift(solid_top, dirn * k, 0)
+                src_face = _shift(solid_face, dirn * k, 0)
+                cand = (sk == 0) & ((recv_top & src) | (recv_face & src_top))
+                if prev is not None:
+                    cand &= _shift(prev, dirn, 0)      # continuous out from the rim line
+                    # the side face is a narrow parallelogram: its far end is cut on the
+                    # diagonal by the ground behind (one strip px per face/STRIP rows)
+                    lift = int(round((k - 1) * (face if isinstance(face, int) else face.get(L, FACE)) / STRIP))
+                    cand &= _shift_edge(solid, dirn * k, lift)
+                # inner corner: the strip shows only where it stands in front of the face
+                # behind it (a diagonal crease, one strip px per face/STRIP rows)
+                cand &= ~recv_face | (depth * STRIP >= hh * (k - 1))
+                sk[cand] = k
+                sdir[cand] = dirn
+                sreg[cand & src_face] = 1
+                slev[cand] = L
+                kind[cand] = STRIP_K
+                prev = cand
+    # the strip's material and its anchor rim (the south face it wraps into)
+    for y in range(H):
+        for x in range(W):
+            if kind[y, x] != STRIP_K:
+                continue
+            qx = int(x) - int(sdir[y, x]) * int(sk[y, x])
+            if 0 <= qx < W and kind[y, qx] in (FACE_K, FALL_K, CHEEK_K):
+                fmat[y, x] = fmat[y, qx]
+                rim[y, x] = rim[y, qx]
+                fh[y, x] = fh[y, qx]
+            else:
+                fmat[y, x] = MATS.index(mat_of(int(slev[y, x]), max(0, min(W - 1, qx)), y))
+                fh[y, x] = face_px(int(slev[y, x]), max(0, min(W - 1, qx)), y)
+            ftop[y, x] = slev[y, x]
+    # anchor rims for the side strips above a corner: carried up each strip from its face
+    for x in range(W):
+        cur = -1
+        for y in range(H - 1, -1, -1):
+            if kind[y, x] == STRIP_K:
+                if rim[y, x] >= 0 and sreg[y, x]:
+                    cur = rim[y, x]
+                elif cur >= 0:
+                    rim[y, x] = cur
+            else:
+                cur = -1
+
+    res_kind = kind
+    # 7. paint
+    if cv is not None:
+        img = np.array(cv.img.convert('RGB'))[cv.pad:cv.pad + H, cv.pad:cv.pad + W].copy() \
+            if cv.pad else np.array(cv.img.convert('RGB'))[:H, :W].copy()
+        P = _Painter(img, lvl, kind, rim, ftop, fh, fmat, sk, sdir, sreg, ramp_h, stair_id, wet, fall,
+                     stairs, ramps, seed)
+        if tops is True:
+            P.tops()
+        elif callable(tops):
+            for y in range(H):
+                for x in range(W):
+                    c = tops(x, y, int(lvl[y, x]))
+                    if c is not None:
+                        img[y, x] = rgb(c)
+        P.back_rims()
+        P.landings()
+        P.water()
+        P.shadows()
+        P.foot_grass()
+        P.faces()
+        P.strips()
+        P.lips()
+        P.stairs_paint()
+        P.ramps_paint()
+        P.falls_paint()
+        out = Image.fromarray(img, 'RGB').convert('RGBA')
+        if cv.pad:
+            cv.img.paste(out, (cv.pad, cv.pad))
+        else:
+            cv.img.paste(out, (0, 0))
+
+    # 8. the walk grid and the tier map (4 px cells)
+    crow, ccol = H // CELL, W // CELL
+    bank = _banks(wet, kind)
+    cells = []
+    walk = []
+    for r in range(crow):
+        trow, wrow = '', ''
+        for c in range(ccol):
+            sl = (slice(r * CELL, r * CELL + CELL), slice(c * CELL, c * CELL + CELL))
+            k = kind[sl]
+            n_face = int(np.isin(k, FACE_LIKE).sum())
+            n_stair = int(np.isin(k, (STAIR_K, RAMP_K)).sum())
+            n_wet = int((wet[sl] | bank[sl]).sum())
+            if n_face * 2 >= CELL * CELL:
+                trow += 'f'
+                wrow += '#'
+            elif n_stair * 2 >= CELL * CELL:
+                trow += 's'
+                wrow += '.'
+            else:
+                v = np.bincount(lvl[sl].ravel().clip(0, 9)).argmax()
+                trow += str(int(v))
+                wrow += '#' if n_wet * 2 >= CELL * CELL else '.'
+        cells.append(trow)
+        walk.append(wrow)
+    # a drop with no face shown (a back rim, a strip's top end) is blocked on its lower side
+    walk = [list(rw) for rw in walk]
+    for r in range(crow):
+        for c in range(ccol):
+            if walk[r][c] == '#' or not cells[r][c].isdigit():
+                continue
+            for (dr, dc) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                rr, cc = r + dr, c + dc
+                if 0 <= rr < crow and 0 <= cc < ccol and walk[rr][cc] != '#' and cells[rr][cc].isdigit():
+                    if int(cells[rr][cc]) > int(cells[r][c]):
+                        walk[r][c] = '#'
+    walk = [''.join(rw) for rw in walk]
+    blocked = {(c * CELL + dx, r * CELL + dy) for r in range(crow) for c in range(ccol) if walk[r][c] == '#'
+               for dx in range(CELL) for dy in range(CELL)}
+    water_px = {(int(x), int(y)) for (y, x) in zip(*np.nonzero(wet))}
+    rails = []
+    face_runs = [f for f in face_runs if f[1] - f[0] >= GRID]   # (not a corner's rounding)
+    for (x0, x1, y, h, t, m) in face_runs:
+        if m == 'earth' or x1 - x0 < 2 * GRID:
+            continue
+        segs, cur = [], x0
+        for st in stairs:
+            sx0, sx1 = st.x - 2, st.x + 2 * st.cheek + st.w + 2
+            if st.rim == y and sx0 < x1 and sx1 > x0:
+                if sx0 > cur:
+                    segs.append((cur, sx0, y))
+                cur = max(cur, sx1)
+        if cur < x1:
+            segs.append((cur, x1, y))
+        rails += [sg for sg in segs if sg[1] - sg[0] >= 4]
+    return Terrace(W, H, lvl, res_kind, walk, cells, blocked, water_px, falls, links, rails, face_runs,
+                   list(stairs), list(ramps))
+
+
+def _components(m):
+    """4-connected components of a bool mask (labels 1..n)."""
+    lab = np.zeros(m.shape, np.int32)
+    n = 0
+    H, W = m.shape
+    for y0, x0 in zip(*np.nonzero(m)):
+        if lab[y0, x0]:
+            continue
+        n += 1
+        q = deque([(y0, x0)])
+        lab[y0, x0] = n
+        while q:
+            y, x = q.popleft()
+            for dy, dx in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                yy, xx = y + dy, x + dx
+                if 0 <= yy < H and 0 <= xx < W and m[yy, xx] and not lab[yy, xx]:
+                    lab[yy, xx] = n
+                    q.append((yy, xx))
+    return lab
+
+
+def _banks(wet, kind):
+    """The earth banks round water on a tier top: 3 px above the water (its north bank seen
+    as a little face), 2 px at the sides, 1 px lit lip below."""
+    top = kind == TOP
+    above = np.zeros_like(wet)
+    for d in (1, 2, 3):
+        above |= _shift(wet, 0, -d)
+    side = _shift(wet, 1, 0) | _shift(wet, -1, 0) | _shift(wet, 2, 0) | _shift(wet, -2, 0)
+    below = _shift(wet, 0, 1)
+    return (above | side | below) & top & ~wet
+
+
+# ---- painting -----------------------------------------------------------------------------
+
+class _Painter:
+    def __init__(self, img, lvl, kind, rim, ftop, fh, fmat, sk, sdir, sreg, ramp_h, stair_id, wet, fall,
+                 stairs, ramps, seed):
+        self.img, self.lvl, self.kind, self.rim, self.ftop, self.fh = img, lvl, kind, rim, ftop, fh
+        self.fmat, self.sk, self.sdir, self.sreg, self.ramp_h = fmat, sk, sdir, sreg, ramp_h
+        self.stair_id, self.wet, self.fall, self.stairs, self.ramps, self.seed = stair_id, wet, fall, stairs, ramps, seed
+        self.H, self.W = kind.shape
+        self.foot_blades = []
+
+    # helpers
+    def put(self, x, y, c):
+        if 0 <= x < self.W and 0 <= y < self.H:
+            self.img[y, x] = rgb(c)
+
+    def mul(self, x, y, k):
+        if 0 <= x < self.W and 0 <= y < self.H:
+            self.img[y, x] = (self.img[y, x] * np.array(k)).astype(np.uint8)
+
+    def n(self, x, y, s):
+        return noise2(x, y, self.seed * 101 + s)
+
+    # tops: grass in broad patches, each tier a step lighter, tufts and the odd flower
+    def tops(self):
+        H, W, s = self.H, self.W, self.seed
+        for y in range(H):
+            for x in range(W):
+                g = grass_ramp(int(self.lvl[y, x]))
+                v = smooth_noise(x, y, 18, s * 7 + 501)
+                c = g[3] if v > 0.55 else g[2]
+                if smooth_noise(x, y, 7, s * 7 + 503) > 0.8:
+                    c = g[3] if c == g[2] else lerp(g[3], g[4], 0.4)
+                self.img[y, x] = c
+        for k in range(int(W * H / 140)):
+            x, y = int(self.n(k, 1, 511) * W), int(self.n(k, 2, 511) * H)
+            if not (2 <= y < H - 1 and 1 <= x < W - 1) or self.kind[y, x] != TOP:
+                continue
+            g = grass_ramp(int(self.lvl[y, x]))
+            kd = self.n(k, 3, 511)
+            if kd < 0.75:   # a tuft: dark roots, light tips
+                self.put(x, y, g[1]); self.put(x - 1, y - 1, g[4]); self.put(x + 1, y - 1, g[4])
+                if kd < 0.3:
+                    self.put(x, y - 1, g[1]); self.put(x, y - 2, g[4])
+            elif kd < 0.86:
+                self.put(x, y, ['#F2E6C8', '#E8B4C8', '#F0D060', '#B8C8F0'][k % 4]); self.put(x, y + 1, g[1])
+
+    def back_rims(self):
+        """Where a tier's top meets lower ground behind it (north) there is no face, only a
+        crease inside the top: a dark line, then a lit one (the lower ground shows beyond)."""
+        lvl, kind = self.lvl, self.kind
+        for y in range(1, self.H - 1):
+            for x in range(self.W):
+                if kind[y, x] == TOP and kind[y - 1, x] == TOP and lvl[y, x] > lvl[y - 1, x] and not self.wet[y, x]:
+                    g = grass_ramp(int(lvl[y, x]))
+                    self.img[y, x] = lerp(g[1], INK, 0.35)
+                    if kind[y + 1, x] == TOP:
+                        self.put(x, y + 1, g[4] if (x * 7 + y) % 9 else g[3])
+
+    def landings(self):
+        """Worn ground on the stairs' landings: 8 px at the head, 8 px at the foot."""
+        for si, st in enumerate(self.stairs):
+            x0, x1 = st.x + st.cheek, st.x + st.cheek + st.w
+            hgt = int(self.fh[st.rim, x0 + 1])
+            for (y0, y1) in ((st.rim - LANDING, st.rim), (st.rim + hgt, st.rim + hgt + LANDING)):
+                for y in range(y0, y1):
+                    for x in range(x0 - 2, x1 + 2):
+                        if not (0 <= x < self.W and 0 <= y < self.H) or self.kind[y, x] != TOP:
+                            continue
+                        edge = min(x - x0 + 2, x1 + 1 - x, (y - y0) if y0 > st.rim else (y1 - 1 - y))
+                        if edge <= 2 and self.n(x, y, 521) > 0.3 + 0.2 * edge:
+                            continue                 # grass breaks over the worn edge
+                        if st.material == 'stone':
+                            bx = _bay(x + (y - y0) // 4 * 7, self.seed + 522, 9, 14)
+                            j = bx[1] == 0 or (y - y0) % 4 == 3
+                            c = STONE[1] if j else (STONE[2] if self.n(bx[0], (y - y0) // 4, 522) > 0.5 else STONE[3])
+                            c = lerp(c, self.img[y, x], 0.25)
+                        else:
+                            v = self.n(x // 3, y // 2, 523)
+                            c = PATH[2] if v > 0.5 else PATH[3]
+                            if smooth_noise(x, y, 5, 524) > 0.7:
+                                c = PATH[1]
+                        self.put(x, y, c)
+
+    def water(self):
+        wet, kind = self.wet, self.kind
+        for y in range(self.H):
+            for x in range(self.W):
+                if not wet[y, x] or self.fall[y, x]:
+                    continue
+                v = smooth_noise(x, y, 6, 531)
+                c = WTR[2] if v > 0.45 else WTR[1]
+                up1 = y > 0 and not wet[y - 1, x]
+                up2 = y > 1 and not wet[y - 2, x]
+                if up1 or up2:
+                    c = WTR[0]                      # the shade under the north bank
+                elif (y * 3 + x // 4) % 11 == 0 and v > 0.4:
+                    c = WTR[3]                      # a flowing highlight
+                self.img[y, x] = rgb(c)
+        bank = _banks(wet, kind)
+        for y in range(self.H):
+            for x in range(self.W):
+                if not bank[y, x]:
+                    continue
+                g = grass_ramp(int(self.lvl[y, x]))
+                d_dn = next((d for d in (1, 2, 3) if y + d < self.H and wet[y + d, x]), 0)
+                if d_dn:   # the north bank: earth seen from the front, lit lip on top
+                    c = SOIL[1] if d_dn == 1 else SOIL[3] if d_dn == 2 else g[4]
+                    if d_dn == 3 and self.n(x, y, 532) > 0.6:
+                        c = g[3]
+                elif y > 0 and wet[y - 1, x]:
+                    c = g[4] if x % 3 else lerp(g[4], '#FFFFFF', 0.15)   # the south bank's lit lip
+                elif x + 1 < self.W and (wet[y, x + 1] or (x + 2 < self.W and wet[y, x + 2])):
+                    c = SOIL[1] if x + 1 < self.W and wet[y, x + 1] else g[1]   # west bank faces east: dark
+                else:
+                    c = SOIL[3] if x > 0 and wet[y, x - 1] else g[4]            # east bank faces west: lit
+                self.put(x, y, c)
+
+    def shadows(self):
+        """Cast shadows down and to the right of every face, strip and cheek onto the ground
+        lower than it, 8 px whatever the face's height (Schlitter: "No matter how tall the
+        rock wall all shadows are the same length"): 3 px strong, 3 medium, 2 dithered."""
+        kind, H, W = self.kind, self.H, self.W
+        caster_lv = np.where(np.isin(kind, (FACE_K, STRIP_K, CHEEK_K)), self.ftop, 0)
+        caster_lv = np.where(kind == FALL_K, self.ftop, caster_lv)
+        dist = np.full((H, W), 99, np.int16)
+        recv_kind = np.isin(kind, (TOP, STAIR_K, RAMP_K))
+        for L in range(1, int(caster_lv.max()) + 1):
+            C = caster_lv >= L
+            recv = recv_kind & (self.lvl < L)
+            # treads only take the west cheek's shadow; the ground under the face takes all
+            for t in range(1, SHADOW + 1):
+                hit = _shift(C, t, t) & recv & (dist > t)
+                dist[hit] = t
+        for y, x in zip(*np.nonzero(dist <= SHADOW)):
+            t = dist[y, x]
+            if t <= 3:
+                self.mul(x, y, STRONG)
+            elif t <= 6:
+                self.mul(x, y, MEDIUM)
+            elif (x + y) % 2:
+                self.mul(x, y, MEDIUM)
+
+    def foot_grass(self):
+        """Tall grass gathers at the foot of each face and strip, carried round the corners."""
+        kind = self.kind
+        H, W = self.H, self.W
+        for y in range(1, H - 1):
+            for x in range(W):
+                if kind[y, x] != TOP or self.wet[y, x]:
+                    continue
+                above = kind[y - 1, x] in (FACE_K, STRIP_K)
+                if not above:
+                    continue
+                if self.n(x // 3, y, 541) < 0.55:
+                    continue
+                g = grass_ramp(int(self.lvl[y, x]))
+                h = 3 + int(self.n(x, y, 542) * 3)
+                for t in range(h):
+                    yy = y + 1 - t
+                    if 0 <= yy < H:
+                        self.foot_blades.append((x + (1 if t > h - 2 and x % 2 else 0), yy,
+                                                 g[1] if t < 2 else g[3] if t < h - 1 else g[4]))
+
+    # the faces
+    def _u_map(self):
+        """Per face pixel: a horizontal coordinate that runs on round the corners (compressed
+        over the last 8 px of a run, so lumps and courses narrow as they turn) and the facing:
+        -1 turning west (lit) .. 0 south .. +1 turning east (dark)."""
+        H, W = self.H, self.W
+        kind, sreg = self.kind, self.sreg
+        u = np.zeros((H, W), np.float32)
+        phi = np.zeros((H, W), np.float32)
+        member = np.isin(kind, (FACE_K, FALL_K, CHEEK_K, STAIR_K)) | ((kind == STRIP_K) & (sreg == 1))
+        for y in range(H):
+            x = 0
+            while x < W:
+                if not member[y, x]:
+                    x += 1
+                    continue
+                a = x
+                while x < W and member[y, x]:
+                    x += 1
+                b = x - 1
+                # a run turns only where it ends against lower ground (an outer corner);
+                # against a side strip (an inner corner) or the zone's edge it runs on flat
+                t_e = b < W - 1 and kind[y, b + 1] == TOP and not self.wet[y, b + 1]
+                t_w = a > 0 and kind[y, a - 1] == TOP and not self.wet[y, a - 1]
+                for xx in range(a, b + 1):
+                    de, dw = b - xx, xx - a
+                    uu = float(xx)
+                    p = 0.0
+                    if de < 8 and t_e:
+                        uu += (8 - de)
+                        p = max(0.0, 1 - de / 7)
+                    if dw < 8 and t_w:
+                        uu -= (8 - dw)
+                        p = min(p, -max(0.0, 1 - dw / 7)) if p == 0 else p
+                    if kind[y, xx] == STRIP_K:
+                        p = float(self.sdir[y, xx])
+                    u[y, xx] = uu
+                    phi[y, xx] = p
+        return u, phi
+
+    def faces(self):
+        H, W, kind = self.H, self.W, self.kind
+        u, phi = self._u_map()
+        self.u, self.phi = u, phi
+        sel = (kind == FACE_K) | ((kind == STRIP_K) & (self.sreg == 1)) | (kind == FALL_K)
+        ids = {}
+        for y, x in zip(*np.nonzero(sel)):
+            m = MATS[self.fmat[y, x]]
+            d = max(0, int(y - self.rim[y, x]))
+            ids[(x, y)] = self._struct(m, float(u[y, x]), y, d, x)
+        for y, x in zip(*np.nonzero(sel)):
+            if kind[y, x] == FALL_K:
+                continue
+            m = MATS[self.fmat[y, x]]
+            d = max(0, int(y - self.rim[y, x]))
+            hgt = int(self.fh[y, x])
+            c = self._shade(m, x, y, d, hgt, float(phi[y, x]), ids)
+            self.put(x, y, c)
+
+    def _struct(self, m, u, y, d, x):
+        s = self.seed * 31
+        if m == 'earth':
+            return _lump(u, y, s + 600)
+        if m == 'stone':
+            if d < 4:
+                return ('cope',)
+            return _block(u, d - 4, 6, s + 610, 14, 8)
+        if m == 'concrete':
+            if d < 4:
+                return ('cope',)
+            ci = (d - 4) // 8
+            return (ci, _bay(u + ci * 11, s + 625, 16, 26)[0])
+        if m == 'timber':
+            if d < 3:
+                return ('cap',)
+            return ((d - 3) // 4,)
+        if m == 'sandstone':
+            return _strata(d, s + 620)[0]
+        return 0
+
+    def _shade(self, m, x, y, d, hgt, phi, ids):
+        R = RAMPS[m]
+        top = len(R) - 1
+        me = ids.get((x, y))
+        up, dn = ids.get((x, y - 1)), ids.get((x, y + 1))
+        rt, lf = ids.get((x + 1, y)), ids.get((x - 1, y))
+        foot = hgt - d                       # rows to the foot (1 = the last row)
+        turn = -1 if phi > 0.3 else 0
+        turn += -1 if phi > 0.75 else 0
+        turn += 1 if phi < -0.4 else 0
+        n = lambda a, b, s: noise2(a, b, self.seed * 101 + s)  # noqa: E731
+        if m == 'earth':
+            t = 3 if n(*me, 601) > 0.45 else 2
+            if n(*me, 602) > 0.88:
+                t = 4
+            if up != me:
+                i = t + 1 if phi <= 0.5 else t  # each lump's lit top (dimmed as it turns away)
+            elif dn != me and dn is not None:
+                i = 0                           # the crevice under it
+            elif rt != me and rt is not None:
+                i = 1                           # and down its right side
+            elif lf != me and lf is not None and t < 4:
+                i = t + 1 if (x + y) % 2 else t
+            else:
+                i = t
+                if n(x, y, 603) > 0.94:
+                    i = max(1, t - 1)
+            if i:
+                i = max(1, min(top, i + turn))
+            if 2 <= d <= 4 and i > 1:
+                i -= 1                          # the start row, in the lip's shade
+            if up != me and n(*me, 604) > 0.9 and phi > -0.5 and phi < 0.5:
+                return GRASS[2] if (x + y) % 2 else LEAF[2]      # moss on a lump
+            if foot <= 4:
+                i = min(i, 1) if foot <= 2 else max(0, min(i, 2) - (1 if phi > 0.3 else 0))
+                if foot <= 2 and n(x, y, 605) > 0.75:
+                    return LEAF[1]                                  # weed in the damp foot
+            return R[i]
+        if m == 'stone':
+            if me == ('cope',):
+                i = [5, 4, 3, 1][min(3, d)]
+                if d == 1 and n(x // 9, 0, 611) > 0.8:
+                    i = 3                        # a chipped coping
+                return R[max(0, min(top, i + turn))]
+            ci, bi = me
+            t = 3 if n(ci, bi, 612) > 0.4 else 2
+            if n(ci, bi, 613) > 0.9:
+                t = 4
+            if dn != me and dn is not None and dn != ('cope',):
+                i = 1                            # the bed joint
+            elif lf != me and lf is not None and lf != ('cope',):
+                i = 1                            # the head joint
+            elif up != me:
+                i = t + 1                        # the block's lit arris
+            elif rt != me and rt is not None:
+                i = max(1, t - 1)                # shade at its right end
+            else:
+                i = t
+            i = max(0, min(top, i + turn)) if i > 1 else max(0, i + min(0, turn))
+            if foot <= 4:
+                i = max(0, min(i, 2) - (1 if foot <= 2 else 0))
+                if foot <= 3 and n(x, y, 614) > 0.7:
+                    return LEAF[1] if (x + y) % 2 else LEAF[2]   # moss in the lower joints
+            return R[i]
+        if m == 'concrete':
+            if me == ('cope',):
+                return R[max(0, min(top, [4, 3, 2, 0][min(3, d)] + turn))]
+            ci, pi = me
+            if (dn != me and dn is not None) or (lf != me and lf is not None):
+                i = 1
+            else:
+                i = 3 if smooth_noise(x, y, 9, 621) > 0.5 else 2
+                if n(x // 2, 0, 622) > 0.8 and (d - 4) < 4 + int(n(x // 2, 1, 623) * 14):
+                    i = max(1, i - 1)            # rain streaks from the coping
+            i = max(0, min(top, i + turn))
+            if foot <= 4:
+                i = min(i, 1)
+                if foot <= 2 and n(x, y, 624) > 0.6:
+                    return LEAF[1]
+            return R[i]
+        if m == 'timber':
+            if me == ('cap',):
+                return R[max(0, min(top, [4, 3, 0][min(2, d)] + turn))]
+            pl = me[0]
+            r = (d - 3) % 4
+            t = 3 if n(pl, x // 37, 631) > 0.4 else 2
+            i = [t + 1, t, t, 0][r]
+            post = _bay(float(self.u[y, x]), self.seed * 31 + 632, 16, 24)[1]
+            if post < 3 or abs(phi) > 0.6:
+                i = [4, 3, 1][min(2, post)] if abs(phi) <= 0.6 else (4 if phi < 0 else 1)
+                if r == 1 and post == 1:
+                    return STONE[4]              # a nail head
+            if foot <= 2:
+                i = min(i, 1)
+            if i:
+                i = max(1, min(top, i + turn))
+            return R[i]
+        if m == 'sandstone':
+            si, rr, th = _strata(d, self.seed * 31 + 620)
+            t = 2 + si % 3
+            i = t + 1 if rr == 0 else (1 if rr == th - 1 and n(si, x // 6, 641) > 0.5 else t)
+            if n(x // 3, y, 642) > 0.95:
+                i = max(1, t - 1)                 # a pit
+            i = max(0, min(top, i + turn))
+            if foot <= 3:
+                i = min(i, 2)
+            return R[i]
+        return R[2]
+
+    def strips(self):
+        """The side region of each strip (beside a tier's top, above its corner): the face seen
+        nearly edge on. Across the strip runs the face's height (the lip at the rim line, the
+        foot at its outer edge), down it runs the face's length."""
+        kind, sreg = self.kind, self.sreg
+        for y, x in zip(*np.nonzero((kind == STRIP_K) & (sreg == 0))):
+            k, dr = int(self.sk[y, x]), int(self.sdir[y, x])
+            m = MATS[self.fmat[y, x]]
+            R = RAMPS[m]
+            top = len(R) - 1
+            ex = x - dr * k                       # the rim line's column (outside the strip)
+            lit = dr < 0
+            n = lambda a, b, s: noise2(a, b, self.seed * 101 + s)  # noqa: E731
+            # lumps / blocks along the strip: boundaries every 5 to 9 px
+            seg = self._seg(ex, y)
+            pos, ln, sid = seg
+            split = n(sid, ex, 651) > 0.6 and k >= 3
+            if m == 'earth':
+                body = 4 if lit else 1
+                if n(sid, ex, 652) > 0.6:
+                    body += -1 if lit else 1
+                if pos == ln - 1 or (split and k == 3):
+                    i = 3 if lit else 0           # the crevice under each lump
+                elif pos == 0:
+                    i = body + 1                  # the lump's lit top
+                else:
+                    i = body
+                if k == STRIP:                    # its outer edge, where it meets the ground
+                    i = (4 if pos not in (0, ln - 1) else 3) if lit else 0
+                self.put(x, y, R[max(0, min(top, i))])
+                if lit and k == STRIP:            # a west face keeps only a contact line
+                    self.mul(x - 1, y, MEDIUM)
+            elif m in ('stone', 'concrete'):
+                if k == 1:
+                    i = 4 if lit else 2           # the coping's side
+                elif k == STRIP:
+                    i = 2 if lit else 0
+                else:
+                    joint = pos == ln - 1
+                    i = (2 if lit else 0) if joint else ((4 if lit else 2) if pos == 0 and m == 'stone' else (3 if lit else 1))
+                self.put(x, y, R[max(0, min(top, i))])
+                if lit and k == STRIP:
+                    self.mul(x - 1, y, MEDIUM)
+            elif m == 'timber':
+                if k == STRIP:
+                    i = 1 if lit else 0
+                elif pos == 0 and sid % 3 == 0:
+                    i = 4 if lit else 2
+                else:
+                    i = (3 if k % 2 else 4) if lit else (1 if k % 2 else 2)   # planks seen end on
+                self.put(x, y, R[max(0, min(top, i))])
+            else:  # sandstone: strata run down the strip
+                i = (4 if lit else 2) - (k % 2)
+                if k == STRIP:
+                    i = 1 if lit else 0
+                self.put(x, y, R[max(0, min(top, i))])
+
+    def _seg(self, ex, y):
+        """Where y lies in the strip's run of lumps: (row in the lump, its length, its id)."""
+        key = ex
+        cache = self.__dict__.setdefault('_segs', {})
+        if key not in cache:
+            bounds, b, i = [], -20, 0
+            while b < self.H + 20:
+                bounds.append(b)
+                b += 5 + int(noise2(i, ex, self.seed * 101 + 653) * 5)
+                i += 1
+            cache[key] = bounds
+        bounds = cache[key]
+        lo = 0
+        for i, b in enumerate(bounds):
+            if b <= y:
+                lo = i
+            else:
+                break
+        a = bounds[lo]
+        z = bounds[lo + 1] if lo + 1 < len(bounds) else a + 8
+        return y - a, z - a, lo
+
+    def _dtop(self, L):
+        """Px from each pixel to the nearest top of tier L or higher (1 = touching), up to 6."""
+        cache = self.__dict__.setdefault('_dtops', {})
+        if L not in cache:
+            top = (self.kind == TOP) & (self.lvl >= L) & ~self.wet
+            dist = np.full(top.shape, 99, np.int16)
+            for r in range(1, 7):
+                ring = [(dx, dy) for dy in range(-r, r + 1) for dx in range(-r, r + 1)
+                        if math.ceil(math.hypot(dx, dy) - 0.25) == r]
+                hit = np.zeros_like(top)
+                for dx, dy in ring:
+                    hit |= _shift(top, dx, dy)
+                dist[hit & (dist > r)] = r
+            cache[L] = dist
+        return cache[L]
+
+    def lips(self):
+        """The rim: on earth a grass lip overhanging the face in scallops of 1 to 3 px, lit on
+        top and dark under, wrapping round the corners and down the side strips; on built
+        faces the coping is the lip and grass only breaks over it here and there."""
+        kind, H, W = self.kind, self.H, self.W
+        for y, x in zip(*np.nonzero(np.isin(kind, (FACE_K, STRIP_K)))):
+            m = MATS[self.fmat[y, x]]
+            L = int(self.ftop[y, x])
+            g = grass_ramp(L)
+            if kind[y, x] == FACE_K or (kind[y, x] == STRIP_K and self.sreg[y, x] == 1):
+                r0 = int(self.rim[y, x])
+                if r0 < 0:
+                    continue
+                if self.ramp_h[max(0, r0 - 1), x]:
+                    continue                         # a ramp's front: no grass lip
+                # how far below the top's edge, measured round the corner's curve, so the
+                # lip wraps an outer corner instead of stopping at the rim row
+                d = min(y - r0, int(self._dtop(L)[y, x]) - 1)
+                sc = (x + int(noise2(x // 7, r0, self.seed + 553) * 4)) % 7
+                k = 1 + (2 if sc in (2, 3, 4) else 1 if sc in (1, 5) else 0)
+                if kind[y, x] == STRIP_K:
+                    k = max(1, k - 1)
+                if m == 'earth' or m == 'sandstone':
+                    if m == 'sandstone':
+                        k = max(1, k - 1)
+                    if d < k:
+                        c = g[3] if d == 0 else g[2] if d < k - 1 else g[1]
+                        self.put(x, y, c)
+                    elif d == k:
+                        self.put(x, y, SOIL[0] if m == 'earth' else RAMPS[m][1])
+                    if d == 0 and y > 0 and kind[y - 1, x] == TOP:
+                        self.put(x, y - 1, g[4] if x % 3 else g[3])
+                else:
+                    tuftk = noise2(x // 3, r0, self.seed + 554)
+                    if tuftk > 0.72 and d < (2 if tuftk > 0.86 else 1):
+                        self.put(x, y, g[2] if d == 0 else g[1])
+                    if d == 0 and y > 0 and kind[y - 1, x] == TOP:
+                        self.put(x, y - 1, g[4] if x % 3 else g[3])
+            else:
+                k = int(self.sk[y, x])
+                dr = int(self.sdir[y, x])
+                lit = dr < 0
+                ex = x - dr * k
+                sc = (y + int(noise2(y // 6, ex, self.seed + 555) * 4)) % 6
+                kk = (1 if sc in (1, 2, 3) else 0) if lit else 1 + (1 if sc in (2, 3) else 0)
+                if m in ('earth', 'sandstone'):
+                    if k <= kk:
+                        self.put(x, y, g[3] if lit else (g[2] if k == 1 else g[1]))
+                    elif k == kk + 1 and m == 'earth' and not lit:
+                        self.put(x, y, SOIL[0])
+                    if k == 1:
+                        tx = x + dr
+                        if 0 <= tx < W and kind[y, tx] == TOP:
+                            self.put(tx, y, g[4] if lit else g[3])
+                else:
+                    if k == 1 and noise2(y // 3, ex, self.seed + 556) > 0.75:
+                        self.put(x, y, g[2])
+        # roots hanging from earth lips, stones set in the faces
+        for y, x in zip(*np.nonzero((kind == FACE_K))):
+            if MATS[self.fmat[y, x]] != 'earth' or y != self.rim[y, x] or self.fh[y, x] < 20:
+                continue
+            if noise2(x, y, self.seed + 561) > 0.9 and abs(self.phi[y, x]) < 0.3:
+                ln = 4 + int(noise2(x, y, self.seed + 562) * 9)
+                for t in range(ln):
+                    xx, yy = x + (t // 5) * (1 if x % 2 else -1), y + 3 + t
+                    if 0 <= xx < W and 0 <= yy < H and kind[yy, xx] == FACE_K:
+                        self.put(xx, yy, SOIL[0] if t % 3 else '#4A3022')
+            if x % 6 == 0 and noise2(x // 6, y, self.seed + 563) > 0.82:
+                sy = y + 8 + int(noise2(x // 6, y, self.seed + 564) * (self.fh[y, x] - 18))
+                for dx in range(5):
+                    for dy in range(4):
+                        xx, yy = x + dx, sy + dy
+                        if 0 <= xx < W and 0 <= yy < H and kind[yy, xx] == FACE_K and abs(self.phi[yy, xx]) < 0.3:
+                            c = STONE[3] if dy == 0 and dx < 4 else STONE[2] if dx == 0 else lerp(STONE[2], SOIL[2], 0.4) if dx < 4 else STONE[1]
+                            if dy == 3:
+                                c = STONE[1]
+                            self.put(xx, yy, c)
+        for (x, y, c) in self.foot_blades:   # tall grass at the feet, over the face's foot
+            if 0 <= x < W and 0 <= y < H and kind[y, x] in (TOP, FACE_K, STRIP_K):
+                self.put(x, y, c)
+
+    def stairs_paint(self):
+        for si, st in enumerate(self.stairs):
+            x0 = st.x
+            x1 = st.x + 2 * st.cheek + st.w
+            hgt = int(self.fh[st.rim, x0 + st.cheek + 1])
+            stone = st.material == 'stone'
+            R = RAMPS['stone'] if stone else WOOD
+            for y in range(st.rim, min(self.H, st.rim + hgt)):
+                d = y - st.rim
+                r = d % RISER
+                step = d // RISER
+                for x in range(x0, x1):
+                    k = self.kind[y, x]
+                    if k == CHEEK_K:
+                        west = x < x0 + st.cheek
+                        c0 = (x - x0) if west else (x - (x1 - st.cheek))
+                        if stone:
+                            tones = [5, 4, 4, 2] if west else [3, 1, 1, 0]
+                            i = tones[c0]
+                            if d < 3:
+                                i = 5 if west else 3        # the cheek's coping
+                                if d == 2:
+                                    i = 2 if west else 1
+                            elif (d - 3) % 6 == 5:
+                                i = max(0, i - 2)           # its courses
+                            self.put(x, y, R[i])
+                        else:
+                            tones = [4, 3, 3, 1] if west else [2, 1, 1, 0]
+                            i = tones[c0]
+                            if d < 2:
+                                i = 4 if west else 2        # the post cap
+                            self.put(x, y, R[i])
+                    elif k == STAIR_K:
+                        xi = x - x0 - st.cheek
+                        worn = st.w * 0.3 < xi < st.w * 0.7
+                        if stone:
+                            j = (xi + step * 7) % 13 == 0
+                            i = [5 if worn else 4, 3, 3 if not j else 1, 1][r]
+                            if r == 3:
+                                i = 0 if j else 1
+                        else:
+                            i = [4, 3, 2, 0][r]
+                            if r in (1, 2) and xi % 12 == 6:
+                                i = 1                       # the stake holding each tread
+                            if r == 0 and worn:
+                                self.put(x, y, '#D8B87C')
+                                continue
+                        self.put(x, y, R[i])
+            # the west cheek shades the first treads (cast shadow takes the rest)
+            for y in range(st.rim, min(self.H, st.rim + hgt)):
+                for t in (0, 1, 2):
+                    x = x0 + st.cheek + t
+                    if self.kind[y, x] == STAIR_K and (t < 2 or (x + y) % 2):
+                        self.mul(x, y, STRONG if t == 0 else MEDIUM)
+
+    def ramps_paint(self):
+        for rp in self.ramps:
+            for x in range(rp.x0, rp.x1):
+                ys = [y for y in range(self.H) if self.kind[y, x] == RAMP_K and self.ramp_h[y, x] and
+                      rp.rim - 2 <= y]
+                if not ys:
+                    continue
+                y0, y1 = min(ys), max(ys)
+                for y in ys:
+                    if rp.material == 'stone':
+                        c = STONE[3] if (x // 10 + (y - y0) // 6) % 2 else lerp(STONE[3], STONE[4], 0.3)
+                        if (x % 10 == 0) or (y - y0) % 6 == 5:
+                            c = STONE[2]
+                    else:
+                        v = noise2(x // 3, y // 2, self.seed + 571)
+                        c = PATH[2] if v > 0.5 else PATH[3]
+                        if smooth_noise(x, y, 5, 572) > 0.72:
+                            c = PATH[1]
+                    if y == y0:
+                        c = lerp(c, INK, 0.45)        # the crease against the face above
+                    elif y == y0 + 1:
+                        c = lerp(c, INK, 0.2)
+                    elif y == y1:
+                        c = PATH[4] if rp.material != 'stone' else STONE[4]   # the lit kerb
+                    self.put(x, y, c)
+
+    def falls_paint(self):
+        """A fall drops straight down the face as wide as its channel, white where it tips
+        over the lip, spray on the face beside it, foam where it lands."""
+        fall, H, W = self.fall, self.H, self.W
+        lab = _components(fall)
+        for k in range(1, lab.max() + 1):
+            yy, xx = np.nonzero(lab == k)
+            fx0, fx1, fy0, fy1 = xx.min(), xx.max() + 1, yy.min(), yy.max() + 1
+            for y in range(fy0, fy1):
+                for x in range(fx0, fx1):
+                    if not fall[y, x]:
+                        continue
+                    kx = x - fx0
+                    streak = (kx * 7 + y) % 5
+                    c = FOAM if streak == 0 else WTR[4] if streak in (1, 2) else WTR[3]
+                    if kx in (0, fx1 - fx0 - 1):
+                        c = WTR[2]
+                    if y < fy0 + 2:
+                        c = FOAM if (x + y) % 2 else WTR[4]
+                    self.put(x, y, c)
+            for y in range(fy0, fy1):   # wet face beside it, and spray
+                for x in (fx0 - 1, fx0 - 2, fx1, fx1 + 1):
+                    if 0 <= x < W and self.kind[y, x] == FACE_K:
+                        self.mul(x, y, (0.8, 0.84, 0.92))
+                for side, x in ((0, fx0 - 2 - int(noise2(y, 0, self.seed + 583) * 2)),
+                                (1, fx1 + 1 + int(noise2(y, 1, self.seed + 583) * 2))):
+                    if noise2(y, side, self.seed + 584) > 0.72 and 0 <= x < W and self.kind[y, x] == FACE_K:
+                        self.put(x, y, WTR[4])   # spray, irregular
+            cx = (fx0 + fx1) / 2
+            half = (fx1 - fx0) / 2 + 6
+            for y in range(fy1, fy1 + 10):
+                for x in range(int(fx0) - 6, int(fx1) + 6):
+                    if not (0 <= x < W and 0 <= y < H) or not self.wet[y, x]:
+                        continue
+                    dd = abs(x + 0.5 - cx) / half + (y - fy1) / 9
+                    if dd < 1 and noise2(x, y, self.seed + 581) > dd * 0.7:
+                        self.put(x, y, FOAM if (x + y) % 2 else WTR[4])
+            for (rx, ry) in ((cx - 9, fy1 + 13), (cx + 8, fy1 + 11)):   # rings spreading out
+                for a in range(0, 360, 30):
+                    x = int(rx + 5 * math.cos(math.radians(a)))
+                    y = int(ry + 2 * math.sin(math.radians(a)))
+                    if 0 <= x < W and 0 <= y < H and self.wet[y, x] and not self.fall[y, x]:
+                        self.put(x, y, WTR[3])
+
+
+# ---- the toolkit's own lint ---------------------------------------------------------------
+
+def check(t: Terrace, stands: dict | None = None, start: str | None = None) -> list:
+    """verticality.md's tier checks on a built terrace: tier-step (walkable neighbours on
+    different tiers only through stair or ramp cells), stair-width (open width at least 34),
+    face-height (at least 24, or 12 to 16 for a low step), rim-on-grid (straight rim rows and
+    side columns on the 8 px grid), stair-ends (both landings open), and, given stands,
+    that every stand is reachable from `start` (a name, or names: the stream splits the test zone)."""
+    out = []
+    rows, cols = len(t.walk), len(t.walk[0])
+    for r in range(rows):
+        for c in range(cols):
+            if t.walk[r][c] == '#' or not t.tiers[r][c].isdigit():
+                continue
+            for (dr, dc) in ((1, 0), (0, 1)):
+                rr, cc = r + dr, c + dc
+                if rr < rows and cc < cols and t.walk[rr][cc] != '#' and t.tiers[rr][cc].isdigit() \
+                        and t.tiers[rr][cc] != t.tiers[r][c]:
+                    out.append(f'tier-step: cells ({c},{r}) and ({cc},{rr}) change tier with no stair')
+    for st in t.stairs:
+        if st.w < 34:
+            out.append(f'stair-width: the stair at x {st.x} is {st.w} px open (< 34)')
+    for (x0, x1, y, h, top, m) in t.faces:
+        if x1 - x0 >= 16 and h % 4 == 0 and not any(h == a + b for a in (0,) + HEIGHTS for b in HEIGHTS):
+            out.append(f'face-height: the face at ({x0}..{x1}, {y}) is {h} px')
+        if x1 - x0 >= 24 and y % GRID:
+            out.append(f'rim-on-grid: the rim at ({x0}..{x1}) runs on row {y}')
+    kind = t.kind
+    sides = {}
+    for y in range(t.height):     # side columns: the rim line beside a strip's straight run
+        for x in range(1, t.width - 1):
+            if kind[y, x] != STRIP_K:
+                continue
+            if kind[y, x - 1] == TOP and t.level[y, x - 1] > t.level[y, x] and kind[y, x + 1] == STRIP_K:
+                sides.setdefault(x, []).append(y)          # faces east: the line is at x
+            elif kind[y, x + 1] == TOP and t.level[y, x + 1] > t.level[y, x] and kind[y, x - 1] == STRIP_K:
+                sides.setdefault(x + 1, []).append(y)      # faces west: the line is at x + 1
+    for x, ys in sides.items():
+        if len(ys) >= 24 and x % GRID:
+            out.append(f'rim-on-grid: a side runs on column {x} ({len(ys)} px)')
+    for ln in t.links:
+        for end in ('top', 'bottom'):
+            x, y = ln[end]
+            if not (0 <= y < t.height and 0 <= x < t.width) or t.walk[y // CELL][x // CELL] == '#':
+                out.append(f'stair-ends: the {ln["kind"]} {end} at {ln[end]} is blocked')
+    if stands:
+        starts = [start] if isinstance(start, str) else list(start or [next(iter(stands))])
+        seen = set()
+        for k in starts:
+            seen |= reach(t.walk, stands[k])
+        lost = [k for k, (x, y) in stands.items() if (y // CELL, x // CELL) not in seen]
+        if lost:
+            out.append(f'reach: not reachable on foot: {lost}')
+    return out
+
+
+def tier_at(t: Terrace, x: int, y: int) -> str:
+    """The tier map at a zone px: a digit, 'f' (face) or 's' (stair or ramp)."""
+    return t.tiers[y // CELL][x // CELL]
+
+
+def one_tier(t: Terrace, x0: int, y0: int, x1: int, y1: int):
+    """The tier a prop's foot box stands on, or None if it straddles tiers, faces or stairs
+    (verticality 4a `one-tier`; soft-grid research 6.5 `prop-footprint`)."""
+    seen = {t.tiers[r][c] for r in range(y0 // CELL, (y1 - 1) // CELL + 1)
+            for c in range(x0 // CELL, (x1 - 1) // CELL + 1)}
+    return next(iter(seen)) if len(seen) == 1 and next(iter(seen)).isdigit() else None
+
+
+def reach(walk, start):
+    s = (start[1] // CELL, start[0] // CELL)
+    seen, q = {s}, deque([s])
+    while q:
+        r, c = q.popleft()
+        for dr, dc in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (r + dr, c + dc)
+            if 0 <= n[0] < len(walk) and 0 <= n[1] < len(walk[0]) and n not in seen and walk[n[0]][n[1]] != '#':
+                seen.add(n)
+                q.append(n)
+    return seen
+
+
+def rle(rows) -> list:
+    """Run-length encode cell rows as zone-maps.ts does ('12.3#')."""
+    out = []
+    for row in rows:
+        s, i = '', 0
+        while i < len(row):
+            j = i
+            while j < len(row) and row[j] == row[i]:
+                j += 1
+            s += f'{j - i}{row[i]}'
+            i = j
+        out.append(s)
+    return out
+
+
+# ---- the test sheet -----------------------------------------------------------------------
+
+def test_zone():
+    """One 320 x 576 zone with every case the side-face rules name (verticality 4f, Check):
+    a free-standing earth tier with all four outer corners and a timber stair; an L-shaped
+    tier in dressed stone with an inner corner and a stone stair; a long middle tier with a
+    notch (two inner corners), a second tier on it with a ramp, and a stream falling down
+    its face into a pool; and a row of low samples (timber low step, concrete, sandstone)."""
+    cols, rows = 40, 72
+    rects = [
+        (2, 2, 17, 11, 1),                          # A: four outer corners (earth)
+        (21, 0, 38, 7, 1), (29, 7, 38, 14, 1),      # B: an L (stone), reaching the north edge
+        (0, 22, 37, 46, 1),                         # C: the middle tier, to the west edge
+        (0, 22, 20, 30, 2),                         # D: a second tier on C
+        (20, 36, 26, 46, 0),                        # the notch in C
+        (2, 56, 10, 62, 1),                         # E: a timber low step
+        (12, 55, 20, 61, 1),                        # F: concrete (a city face, 40)
+        (22, 57, 28, 63, 1),                        # G: sandstone
+    ]
+    tiers = rects_map(cols, rows, rects)
+    edges = [Edge((21, 0, 38, 17), material='stone'),
+             Edge((2, 56, 10, 62), material='timber', face=16),
+             Edge((12, 55, 20, 61), material='concrete', face=FACE_CITY),
+             Edge((22, 57, 28, 63), material='sandstone')]
+    stairs = [Stair(x=7 * GRID, rim=11 * GRID, material='timber'),
+              Stair(x=30 * GRID, rim=14 * GRID, material='stone'),
+              Stair(x=11 * GRID, rim=46 * GRID, material='timber')]
+    ramps = [Ramp(x0=4 * GRID, x1=16 * GRID, rim=30 * GRID, down='east')]
+    water = [(30, 22, 33, 46),       # the stream on C, from its north edge
+             (29, 50, 34, 53),       # the pool under the fall
+             (30, 53, 33, 72)]       # flowing on south to the zone's edge
+    return dict(tiers=tiers, edges=edges, stairs=stairs, ramps=ramps, water=water)
+
+
+def _sprite_img(sp, size=32):
+    im = Image.new('RGBA', (size, size), (0, 0, 0, 0))
+    for (x, y), c in sp.c.items():
+        im.putpixel((x, y), hex_rgba(c))
+    return im
+
+
+def _resident(root, name):
+    p = os.path.join(root, 'assets', 'residents', f'{name}-0.png')
+    im = Image.open(p).convert('RGBA')
+    return im.resize((im.width // 4, im.height // 4), Image.NEAREST)
+
+
+def sheet(out: str):
+    root = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
+    spec = test_zone()
+    cv = Canvas(320, 576)
+    t = build(cv, spec['tiers'], edges=spec['edges'], stairs=spec['stairs'], ramps=spec['ramps'],
+              water=spec['water'], seed=3)
+    base = cv.img.copy()
+    import pets
+    sp, _h, _e = pets.mossling(2, 'open')
+    pet = _sprite_img(sp)
+    actors = [  # (image, foot x, foot y): residents (A = 25) and the companion beside the cases
+        (pet, 80, 88), (_resident(root, 'hiker'), 112, 156), (_resident(root, 'forager'), 270, 196),
+        (_resident(root, 'naturalist'), 40, 232), (pet, 196, 342), (_resident(root, 'gardener'), 300, 412),
+        (_resident(root, 'stroller'), 60, 466), (pet, 150, 560), (_resident(root, 'botanist'), 180, 300),
+    ]
+    img = base.copy()
+    for (im, fx, fy) in sorted(actors, key=lambda a: a[2]):
+        x, y = fx - im.width // 2, fy - im.height
+        sh = Image.new('RGBA', img.size, (0, 0, 0, 0))
+        for xx in range(x + 4, x + im.width - 2):
+            for yy in (fy - 1, fy, fy + 1):
+                if 0 <= xx < img.width and 0 <= yy < img.height:
+                    sh.putpixel((xx, yy), (16, 20, 30, 90))
+        img.alpha_composite(sh)
+        img.alpha_composite(im, (x, y))
+    stem = out[:-4] if out.endswith('.png') else out
+    img.save(stem + '.png')
+    big = img.resize((img.width * 3, img.height * 3), Image.NEAREST)
+    big.save(stem + '-3x.png')
+    night = img.copy()
+    night.alpha_composite(Image.new('RGBA', img.size, (22, 28, 66, int(0.42 * 255))))
+    night.resize((img.width * 3, img.height * 3), Image.NEAREST).save(stem + '-night-3x.png')
+    walk = img.copy()
+    lay = Image.new('RGBA', img.size, (0, 0, 0, 0))
+    lp = lay.load()
+    tints = {'0': (40, 200, 90, 60), '1': (40, 160, 230, 70), '2': (180, 90, 230, 80)}
+    for r, row in enumerate(t.walk):
+        for c, ch in enumerate(row):
+            tr = t.tiers[r][c]
+            col = (220, 40, 40, 110) if ch == '#' else (250, 210, 40, 150) if tr == 's' else tints.get(tr, (255, 255, 255, 60))
+            for dy in range(CELL):
+                for dx in range(CELL):
+                    lp[c * CELL + dx, r * CELL + dy] = (0, 0, 0, 70) if dx == CELL - 1 or dy == CELL - 1 else col
+    walk.alpha_composite(lay)
+    walk.resize((img.width * 2, img.height * 2), Image.NEAREST).save(stem + '-walk-2x.png')
+    # the falls move: water_flow's frames for this ground
+    import water_flow
+    fl = water_flow.sheet(base, t.water, set())
+    if fl:
+        fl[0].save(stem + '-flow.png')
+    return t
+
+
+def _stands():
+    return {'corridor': (308, 300), 'A top': (80, 60), 'A stair foot': (80, 140), 'B top': (264, 40),
+            'B stair foot': (264, 164), 'C west': (40, 340), 'notch floor': (184, 344), 'D top': (60, 200),
+            'ramp foot': (140, 290), 'C stair foot': (120, 412), 'south west': (60, 572)}
+
+
+def main(argv):
+    if '--sheet' in argv:
+        i = argv.index('--sheet')
+        out = argv[i + 1] if i + 1 < len(argv) else 'terrace-sheet.png'
+        t = sheet(out)
+        probs = check(t, _stands(), ('corridor', 'south west'))
+        print('\n'.join(probs) if probs else 'terrace: clean')
+        return 0
+    if '--check' in argv:
+        spec = test_zone()
+        a = build(Canvas(320, 576), seed=3, **spec)
+        b = build(Canvas(320, 576), seed=3, **spec)
+        probs = check(a, _stands(), ('corridor', 'south west'))
+        if a.walk != b.walk or a.tiers != b.tiers:
+            probs.append('determinism: two builds differ')
+        print('\n'.join(probs) if probs else 'terrace: clean')
+        return 1 if probs else 0
+    print(__doc__)
+    return 0
+
+
+if __name__ == '__main__':
+    sys.exit(main(sys.argv[1:]))
