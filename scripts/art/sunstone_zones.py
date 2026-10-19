@@ -13,7 +13,7 @@ from zones import *  # noqa: F401,F403  (zones.py registers itself under that na
 from zones import _decal, _rgb  # noqa: F401
 
 __all__ = ['GULCH_STREET', 'sand_share', 'desert_edge', 'scarp_line', 'north_scarp', 'GULCH_CREEK', 'wagon_ruts', 'gulch_sand', 'buffer_stop', 'gulch', 'oasis', 'SPRINGS_PATH',
-           'FIRE_OFF', 'LAVA_RIVER', 'LAVA_DRAIN', 'BASIN', 'ISLE', 'MOAT', 'PLINTH', 'fire_lava', 'lava_px', 'paint_lava',
+           'FIRE_OFF', 'LAVA_RIVER', 'LAVA_DRAIN', 'DRAIN_BRIDGE', 'drain_bridge', 'BASIN', 'ISLE', 'MOAT', 'PLINTH', 'fire_lava', 'lava_px', 'paint_lava',
            'caldera_rim', 'cooled_flow', 'caldera', 'springs', 'SCORCH_ROAD', 'GULCH_PASS', 'scorch', 'basalt_flags',
            'ash_flags', 'stone_bridge', 'springs_bridge', 'postern_bridge', 'castle', 'beyond_dunes', 'beyond_ash']
 
@@ -684,8 +684,16 @@ SPRINGS_PATH = [(-6, 300), (40, 316), (52, 380), (56, 436), (78, 457), (124, 458
 FIRE_OFF = {'caldera': (0, 0), 'springs': (W, 0), 'hearthold': (0, H), 'scorch': (0, 2 * H)}
 LAVA_RIVER = [(170, 60), (178, 140), (160, 230), (200, 320), (236, 400), (234, 470), (228, 540),
               (226, H + 30), (218, H + 66)]                       # the caldera into the moat
-LAVA_DRAIN = [(48, H + 396), (44, H + 470), (50, H + 540), (52, 2 * H + 10), (56, 2 * H + 110),
-              (80, 2 * H + 250), (98, 2 * H + 372), (110, 2 * H + 444)]  # the moat into the basin
+# the moat into the basin: (x, y, half-width). It meanders the way a lava channel does on
+# a gentle slope, swinging from side to side and widest on the outside of each bend,
+# where it has eaten into the bank; it runs straight and narrow only where the road's
+# bridge crosses it, which is where the builders would have put the bridge (note
+# to-d-after-61, 19 Oct)
+LAVA_DRAIN = [(48, H + 396, 11), (40, H + 440, 12), (56, H + 498, 13), (46, H + 552, 11),
+              (52, 2 * H + 10, 11), (66, 2 * H + 58, 13), (50, 2 * H + 112, 15), (60, 2 * H + 162, 11),
+              (86, 2 * H + 206, 14), (80, 2 * H + 252, 11), (66, 2 * H + 294, 14), (88, 2 * H + 338, 10),
+              (99, 2 * H + 364, 9), (101, 2 * H + 404, 9), (114, 2 * H + 430, 12), (110, 2 * H + 444, 11)]
+DRAIN_BRIDGE = (372, 22)           # the road's bridge over the drain in the Scorched Pass: its top row and depth
 BASIN = (138, 2 * H + 496, 64, 40)  # the crusted basin in the Scorched Pass: centre and radii
 ISLE = (160, 254, 116, 150)        # Hearthold's isle in the lava (its own coordinates)
 MOAT = (152, 250, 138, 192)        # the moat's outer edge
@@ -699,6 +707,21 @@ def _course(points, radius: float, seed: int) -> set:
             t = i / steps
             cx, cy = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
             r = radius + (smooth_noise(cx, cy, 9, seed) - 0.5) * 2.4
+            pts |= disc(cx, cy, r)
+    return pts
+
+
+def _course_w(points, seed: int) -> set:
+    """_course with its own half-width at each point, eased between them, so a channel
+    can widen on a bend and narrow on a straight."""
+    pts = set()
+    for (x0, y0, r0), (x1, y1, r1) in zip(points, points[1:]):
+        steps = int(max(abs(x1 - x0), abs(y1 - y0))) + 1
+        for i in range(steps + 1):
+            t = i / steps
+            e = t * t * (3 - 2 * t)
+            cx, cy = x0 + (x1 - x0) * t, y0 + (y1 - y0) * t
+            r = r0 + (r1 - r0) * e + (smooth_noise(cx, cy, 9, seed) - 0.5) * 2.4
             pts |= disc(cx, cy, r)
     return pts
 
@@ -731,7 +754,7 @@ def fire_lava():
                 crust.add((x, y))
     isle = {(x, y + H) for x in range(W) for y in range(H)
             if _superellipse(x, y, ix, iy, irx + PLINTH, iry + PLINTH, 4) <= 1}
-    river = (_course(LAVA_RIVER, 12, 14) | _course(LAVA_DRAIN, 11, 734)) - isle
+    river = (_course(LAVA_RIVER, 12, 14) | _course_w(LAVA_DRAIN, 734)) - isle
     pour = _course([(110, 2 * H + 444), (bx - 8, by - 6)], 9, 735) - isle
     return frozenset(river | moat | core | pour), frozenset(crust - pour - core)
 
@@ -1453,7 +1476,7 @@ def scorch(frame: int = 0):
     road_edges(cv, {(x, y) for (x, y) in road if 0 <= x < W and 0 <= y < H and (x, y) not in channel}, channel)
     for (lx, ly) in ((182, 300), (150, 150), (136, 388)):  # the road's lanterns throw a warm pool
         light_pool(cv, lx + 6, ly + 26, 18, 8, '#F2A048', channel)
-    deck, parapet = stone_bridge(cv, 84, 372, 36, 24, vertical=False)
+    deck, parapet = drain_bridge(cv, *DRAIN_BRIDGE, channel)
     objects = [
         ('skull', 'cow_skull', 20, 430), ('weed-1', 'tumbleweed', 14, 320), ('cactus-1', 'saguaro_small', 2, 470),
         ('pear-1', 'prickly_pear', 4, 548),
@@ -1573,6 +1596,91 @@ def stone_bridge(cv: Canvas, x0: int, y0: int, w: int, h: int, vertical: bool = 
                 if 0 <= y0 + h - 1 + d < H:
                     style.darken(cv, x, y0 + h - 1 + d)
     return deck, parapet
+
+
+def drain_bridge(cv: Canvas, y0: int, h: int, lava: set):
+    """The road's bridge over the drain in the Scorched Pass (note to-d-after-61, 19 Oct:
+    "draw a stone bridge with dry ends, parapets, lit lip"), east-west across a channel
+    running south, in the three-quarter view: a deck of the road's own flags between two
+    parapets with lit copings and a squared post standing proud at each corner; below the
+    south parapet the bridge's face toward the viewer: coursed stone that splays out at
+    both ends into abutments standing on dry ash (with their foot shadow), and one arch
+    over the lava, dark inside, its soffit lit orange by the lava running beneath and its
+    rim catching the glow. Its shadow falls on the lava below and to the right. It spans
+    the channel's widest row with ten px of footing on each bank. Returns the deck
+    (walkable) and the stonework (not)."""
+    ASHL, BASALT, LAVA = csp.STONE_R, MATERIALS['basalt'], MATERIALS['lava']
+    F = 11  # the face's height below the deck
+    rows = range(y0 - 1, y0 + h + F + 2)
+    xs = [x for (x, y) in lava if y in rows]
+    lx0, lx1 = min(xs), max(xs)
+    xa, xb = lx0 - 10, lx1 + 10
+    deck, walls = set(), set()
+    for y in range(y0, y0 + h):
+        r = y - y0
+        for x in range(xa, xb + 1):
+            if 4 <= r < h - 4:
+                deck.add((x, y))
+                ash_flags(cv, x, y, 754)  # the road's own flags, carried over
+                if r == 4 or (r == 5 and x % 2):
+                    style.darken(cv, x, y)  # the north parapet's shadow on the deck
+                continue
+            walls.add((x, y))
+            cap = (x - xa) % 9 == 0
+            if r < 4:  # the north parapet: its back edge, the lit coping, its face to the deck
+                c = [ASHL[2], ASHL[5], ASHL[4], ASHL[3]][r]
+            else:  # the south parapet: its coping, lit, then its top course
+                c = [ASHL[4], ASHL[5], ASHL[3], ASHL[2]][r - (h - 4)]
+            if cap and r in (1, 2, h - 3, h - 2):
+                c = ASHL[1]  # the joint between two coping stones
+            cv.set(x, y, c)
+    # the face: coursed stone, splaying out at the ends into the abutments
+    ac, aw = (lx0 + lx1) / 2, (lx1 - lx0) / 2 + 1.5
+    for k in range(F):
+        y = y0 + h + k
+        sp = k * 4 // F  # how far the abutments splay out at this course
+        for x in range(xa - sp, xb + sp + 1):
+            u = (x - ac) / aw
+            top = F + 1 if abs(u) >= 1 else 2 + round((F - 3) * (1 - math.sqrt(1 - u * u)))
+            walls.add((x, y))
+            if k >= top:  # through the arch: dark under the deck, the lava's light below
+                c = BASALT[0] if k < top + 2 else LAVA[0] if k < F - 3 else LAVA[1] if k < F - 1 else LAVA[3]
+                if k == top:
+                    c = LAVA[2] if (x + k) % 2 else LAVA[1]  # the soffit, lit from below
+            elif k == top - 1 and abs(u) < 1:
+                c = LAVA[3] if abs(u) > 0.8 else LAVA[2] if x % 2 else ASHL[4]  # the arch's rim in the glow
+            else:
+                course = k // 3
+                joint = k % 3 == 2 or (x + course * 4) % 8 == 0
+                c = ASHL[1] if joint else ASHL[3] if x <= xa - sp + 1 else ASHL[2]
+                if k == 0:
+                    c = ASHL[1]  # the string course under the parapet, in its shade
+            cv.set(x, y, c)
+    for x in range(xa - 4, xb + 6):  # the abutments' foot on the ash, in their own shadow
+        for d in (0, 1, 2):
+            y = y0 + h + F + d
+            if (x, y) not in lava and 0 <= x < W and 0 <= y < H and (d < 2 or x % 2):
+                style.darken(cv, x, y)
+    for (px, py) in ((xa, y0 - 3), (xb - 5, y0 - 3), (xa, y0 + h - 6), (xb - 5, y0 + h - 6)):
+        for y in range(py, py + 9):  # the posts: a block standing proud, lit on top and west
+            for x in range(px, px + 6):
+                walls.add((x, y))
+                r = y - py
+                c = ASHL[5] if r < 3 and x < px + 5 else ASHL[2] if r < 3 else ASHL[4] if x == px else ASHL[3] if x < px + 5 else ASHL[1]
+                if r == 2:
+                    c = ASHL[3] if x < px + 5 else ASHL[1]  # the cap's lower edge
+                cv.set(x, y, c)
+        for y in range(py + 1, py + 9):  # its shadow on whatever lies to its right
+            if (px + 6, y) not in walls:
+                style.darken(cv, px + 6, y)
+    for x in range(xa, xb + 1):  # the lava's light on the north parapet's back edge
+        if (x, y0 - 1) in lava and x % 3 == 0:
+            cv.set(x, y0, LAVA[1])
+    for y in range(y0 + h + F, y0 + h + F + 4):  # the bridge's shadow on the lava, down and right
+        for x in range(lx0 + 2 + (y - y0 - h - F), xb + 3):
+            if (x, y) in lava:
+                style.darken(cv, x, y)
+    return deck, walls - deck
 
 
 def postern_bridge(cv: Canvas, x0: int, y0: int, y1: int, lava: set):
