@@ -95,7 +95,22 @@ export const keepsakes: readonly Keepsake[] = [
     zones: ['caldera', 'springs', 'scorch'],
   },
   { id: 'dragon_plush', name: 'Dragon plush', from: 'Hearthold Castle', zones: ['hearthold'] },
-  { id: 'neon_sign', name: 'Little neon sign', from: 'Neon Harbour', zones: ['neon', 'skyport'] },
+  {
+    id: 'neon_sign',
+    name: 'Little neon sign',
+    from: 'Neon Harbour',
+    zones: [
+      'neon',
+      'skyport',
+      'market',
+      'downtown',
+      'heights',
+      'plaza',
+      'waterfront',
+      'docks',
+      'point',
+    ],
+  },
   { id: 'star_globe', name: 'Star globe', from: 'Halcyon Station', zones: ['station'] },
   { id: 'moon_crystal', name: 'Moon crystal', from: 'Lumen', zones: ['lumen'] },
 ];

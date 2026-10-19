@@ -215,8 +215,16 @@ const ZONE_EXTRAS: Partial<Record<ZoneId, Emitter[]>> = {
     { kind: 'puff', x: 238, y: 300, seed: 31 },
     { kind: 'puff', x: 66, y: 440, seed: 32 },
   ],
-  // the same rain carries on over the Skyport (the weather does not stop at a border)
+  // the same rain carries on over the Skyport and the whole city (the weather does not
+  // stop at a border), a little lighter inland
   skyport: rainOver(70),
+  market: rainOver(80),
+  downtown: rainOver(80),
+  docks: rainOver(80),
+  point: rainOver(70),
+  heights: rainOver(60),
+  plaza: rainOver(70),
+  waterfront: rainOver(70),
 };
 
 /** What is out in a zone; at night the butterflies give way to fireflies. */
