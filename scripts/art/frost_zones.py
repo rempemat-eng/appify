@@ -9,6 +9,7 @@ import math  # noqa: F401
 
 from zones import *  # noqa: F401,F403  (zones.py registers itself under that name)
 from zones import _decal, _rgb  # noqa: F401
+import ground
 
 __all__ = ['RIDGE_COL', 'HOLLOW_COL', 'LAKE_PORT', 'SUMMIT_COL', 'HOLLOW_PORT', 'FACE_H', 'FALLS_X', 'SHOULDER', 'ICE', 'origin', 'snow_px', 'high_slope_px', 'high_band', 'snow_trail', 'peak_row', 'steep_px', 'lip', 'gthick', 'cover', 'turf_or_snow', 'water', 'foot_bridge', 'shoulders', 'hollow', 'snowmelt', 'saddle', 'summit']
 
@@ -215,7 +216,7 @@ def cover(gx: int, gy: int) -> bool:
 def turf_or_snow(cv: Canvas, zone: str, frame: int):
     """The hollow's ground: alpine turf, with snow lying in patches up the slope."""
     ox, oy = origin(zone)
-    worlds.grass(cv, frame, ALPINE)
+    ground.valley(cv, zone, frame)
     for y in range(H):
         for x in range(W):
             if cover(x + ox, y + oy):
