@@ -2,6 +2,14 @@ name: Native readiness
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'app.config.ts'
+      - 'eas.json'
+      - 'public/icons/**'
+      - '.github/workflows/native-readiness.yml'
   workflow_dispatch:
 
 permissions:
@@ -13,6 +21,8 @@ concurrency:
 
 jobs:
   prebuild:
+    # drafts wait until they are marked ready (ready_for_review starts the run)
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     timeout-minutes: 15
     env:
@@ -30,7 +40,7 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.19.0'
-          package-manager-cache: false
+          cache: npm
       - name: Install dependencies
         run: npm ci
       - name: Check Expo project health

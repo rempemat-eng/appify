@@ -689,6 +689,7 @@ def build(name: str, fn, start: str):
 DOORS = {k: 0.5 for k in ('house_blue', 'house_red', 'cabin', 'cafe', 'library', 'workshop', 'workshop_round',
                           'station_house', 'barn', 'bathhouse', 'foundry', 'tube_station', 'cottage', 'cottage_b',
                           'saloon', 'store', 'mine_portal', 'clock_tower', 'lookout_tower')}
+DOORS.update({'cottage_c': 0.5, 'cottage_d': 0.4})  # Claude B's B6 (#45): cottage_d's door is off-centre
 
 
 # Where each zone sits on its region's grid (column, row), in zone-sized steps. The
@@ -854,6 +855,18 @@ def export(built: dict):
     beyond_peaks().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-peaks.png'), worlds.SCALE)
     beyond_sea().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-sea.png'), worlds.SCALE)
     beyond_regolith().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-regolith.png'), worlds.SCALE)
+    # the land past the walkable world, cell by cell (scenery.py; art-faults.md rule 13)
+    import scenery
+    scen_dir = os.path.join(worlds.ROOT, 'assets', 'zones', 'scenery')
+    os.makedirs(scen_dir, exist_ok=True)
+    for old in os.listdir(scen_dir):
+        os.remove(os.path.join(scen_dir, old))
+    scenery_keys = []
+    for region in LAYOUT:
+        for (c, r), cv in sorted(scenery.cells(LAYOUT[region], region).items()):
+            name = f'{region}_{c}_{r}'.replace('-', 'm')
+            cv.save(os.path.join(scen_dir, f'{name}.png'), worlds.SCALE)
+            scenery_keys.append((f'{region}:{c}:{r}', name))
     used = {}
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
@@ -956,6 +969,12 @@ def export(built: dict):
         'export const zoneBeyondPeaks: ImageSourcePropType = beyondPeaksImage;',
         '/** The moon\'s plain: what lies round Lumen below its horizon. */',
         'export const zoneBeyondRegolith: ImageSourcePropType = beyondRegolithImage;',
+        *[f"import scenery{ident(n)} from '@/assets/zones/scenery/{n}.png';" for _k, n in scenery_keys],
+        '/** The land past the walkable world, one picture per cell round a region and in its',
+        ' *  grid\'s gaps, painted in the region\'s coordinates (scripts/art/scenery.py). */',
+        'export const zoneScenery: Record<string, ImageSourcePropType> = {',
+        *[f"  '{k}': scenery{ident(n)}," for k, n in scenery_keys],
+        '};',
         f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
