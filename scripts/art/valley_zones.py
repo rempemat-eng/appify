@@ -1020,12 +1020,36 @@ def riverside(frame: int = 0):
     # flags along its front, where its door opens, joining the lane from the garden
     mx = 218
     mt = top.get(mx, 300)
-    race = {(x, y) for x in range(mx - 6, mx + 16) for y in range(mt - 34, mt + 2)}
+    # the mill's water (Claude A after #73, Claude B's edge-on wheel #77): a brook comes
+    # down off the wooded slope in the north-east into a small millpond behind the mill;
+    # a stone-lined headrace leaves the pond by a sluice and drops into the wheel pit's
+    # north end at about axle height (breastshot, the wheel turning north side down); the
+    # pit runs south between coursed stone walls and its tailrace spills into the river
+    brook = worlds.thick([(302, -6), (298, 50), (288, 118), (270, 178), (248, 202)], 2.5, seed=1410)
+    pond = blob(236, 206, 19, 9, seed=1411, rough=0.18)
+    lead = {(x, y) for x in range(mx - 2, mx + 12) for y in range(212, mt - 30)}
+    millwater = (brook | pond) - lead
+    bank(cv, millwater, seed=1412)
+    water_body(cv, millwater, set(pond), seed=1413, glints=8)
+    race = {(x, y) for x in range(mx - 6, mx + 16) for y in range(214, mt + 2)}
     for (x, y) in race:
-        c = WTR[2] if mx - 4 <= x < mx + 14 else STONE[3] if x < mx - 4 else STONE[1]
-        if mx - 4 <= x < mx + 14 and (y + x // 3) % 5 == 0:
-            c = WTR[3]
+        inner = mx - 3 <= x < mx + 13
+        if not inner:  # its walls: coursed stone, lit on the west face's top, dark joints
+            k = (y + (x // 3) * 2) % 4
+            c = STONE[1] if k == 0 else STONE[3] if x < mx else STONE[2]
+            if x in (mx - 6, mx + 15):
+                c = STONE[0]
+        else:  # the water: running south in streaks, white where it falls off the wheel
+            streak = (y * 2 - x // 2 + int(noise2(x, y // 4, 1414) * 6)) % 9
+            c = WTR[3] if streak == 0 else WTR[1] if streak in (4, 5) else WTR[2]
+            if mt - 8 <= y < mt - 2 and noise2(x, y, 1415) > 0.55:
+                c = '#E8F0F2'  # foam at the wheel's foot
         cv.set(x, y, c)
+    for x in range(mx - 3, mx + 13):  # the sluice board across the headrace by the pond
+        cv.set(x, 222, WOOD[2]); cv.set(x, 223, WOOD[0])
+    for y in range(219, 226):
+        cv.set(mx - 4, y, WOOD[1]); cv.set(mx + 13, y, WOOD[1])
+    race |= millwater
     towpath = {(x, y) for x in range(118, mx - 6) for y in range(mt - 20, mt - 6)}
     # the lane to the mill, in from the garden's footpath at the same rows and width at
     # the seam (garden rows 112-119, Claude B's #75), then down the meadow to the mill yard
@@ -1092,7 +1116,7 @@ def riverside(frame: int = 0):
     objects = [
         ('mill', 'water_mill', 140, mt - 104), ('willow-1', 'willow', 176, 300), ('willow-2', 'willow', 96, 470),
         ('heron', 'heron', heron_x, heron_y),  # wading in the shallows at the outer bank
-        ('tree-1', 'tree', 2, 280), ('tree-2', 'tree_small', 272, 150), ('bush-1', 'bush', 40, 500),
+        ('tree-1', 'tree', 2, 280), ('bush-1', 'bush', 40, 500),
         ('bench', 'bench', 168, 472),  # on the bank above the bend, looking down onto the water ('sack-1', 'sack', 146, mt - 28), ('barrel-m', 'barrel', 200, mt - 32),
         # old trees on the east bank, running on into the forest beyond
         ('pine-e2', 'pine', 280, 470), ('tree-e3', 'tree_autumn', 260, 226),
