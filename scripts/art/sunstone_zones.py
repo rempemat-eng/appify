@@ -953,9 +953,9 @@ def caldera(frame: int = 0):
         x, y = int(noise2(i, 0, 262) * W), int(noise2(i, 1, 262) * H)
         detail.pebble(cv, x, y, BASALT, big=i % 4 == 0)
     # old flows, cooled flat on the ash between the newer things
-    for (pts, r, sd) in (([(226, 80), (256, 96), (284, 104)], 13, 601),
-                         ([(4, 182), (36, 196), (70, 206)], 14, 602),
-                         ([(152, 446), (170, 486), (186, 520)], 12, 604)):
+    # (review 19 Oct: the two tongues lying west of the cart line and south of the shrine
+    # read as grey worms, so only the one under the rim, where the lake once overflowed, stays)
+    for (pts, r, sd) in (([(226, 80), (256, 96), (284, 104)], 13, 601),):
         cooled_flow(cv, pts, r, sd)
     # the crater: a lava lake at the top behind a ragged basalt rim
     rim = caldera_rim
@@ -1010,8 +1010,11 @@ def caldera(frame: int = 0):
             cv.set(px, y, MATERIALS['wood'][3]); cv.set(px + 1, y, MATERIALS['wood'][1])
     cv.hline(3, 270, 26, MATERIALS['wood'][4]); cv.hline(3, 271, 26, MATERIALS['wood'][2])
     buffer_stop(cv, CART_STOP, 284, heap=BASALT)
-    # the forge yard: flagstones of basalt
-    yard = worlds.thick([(40, 400), (110, 400)], 30)
+    # the forge yard: a laid apron of basalt flags in front of the smithy, square to its
+    # front and as wide as it, its outer edge ragged where flags have sunk or gone (review
+    # 19 Oct: not a rounded blob)
+    yard = {(x, y) for x in range(14, 128) for y in range(396, 428)
+            if not ((x < 18 or x > 123 or y > 423) and noise2(x // 5, y // 4, 268) > 0.45)}
     for (x, y) in yard:
         if (x, y) in river:
             continue
@@ -1020,6 +1023,16 @@ def caldera(frame: int = 0):
         if (x + (y // 8) % 2 * 5) % 10 == 0 or y % 8 == 0:
             c = BASALT[0]
         cv.set(x, y, c)
+    # the forge's shadow, down and to the right of it (forge sprite at 20, 320, 96 x 80)
+    for y in range(338, 404):
+        for x in range(116, 116 + min(9, (y - 330) // 4)):
+            if (x, y) not in river:
+                style.darken(cv, x, y)
+                if x < 116 + min(5, (y - 330) // 6):
+                    style.darken(cv, x, y)  # deeper near the wall
+    for x in range(20, 126):  # and its foot's shadow along the yard below the step
+        for y in (400, 401):
+            style.darken(cv, x + (y - 400) + 2, y)
     # flagstones on from the bridge's east end to Cinder Springs
     east_path = worlds.thick([(232, 300), (W - 2, 300)], 8) | thick_from(SPRINGS_PATH, 8, 43, W)
     for (x, y) in east_path:
