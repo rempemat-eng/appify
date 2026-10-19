@@ -2,8 +2,49 @@ name: Art reproducibility
 
 on:
   pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    paths:
+      - 'scripts/**'
+      - 'assets/**'
+      - 'art/**'
+      - 'public/**'
+      # the generated files it compares, and the lib files the generators read
+      - 'lib/zone-*.ts'
+      - 'lib/garden-*.ts'
+      - 'lib/decor*.ts'
+      - 'lib/world-maps.ts'
+      - 'lib/journey*.ts'
+      - 'lib/*-assets.ts'
+      - 'lib/*-sprites.ts'
+      - 'lib/icon-art.ts'
+      - 'lib/mission-map.ts'
+      - 'lib/resident-routes.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.oxfmtrc.json'
+      - '.github/workflows/art-reproducibility.yml'
   push:
     branches: [main]
+    paths:
+      - 'scripts/**'
+      - 'assets/**'
+      - 'art/**'
+      - 'public/**'
+      # the generated files it compares, and the lib files the generators read
+      - 'lib/zone-*.ts'
+      - 'lib/garden-*.ts'
+      - 'lib/decor*.ts'
+      - 'lib/world-maps.ts'
+      - 'lib/journey*.ts'
+      - 'lib/*-assets.ts'
+      - 'lib/*-sprites.ts'
+      - 'lib/icon-art.ts'
+      - 'lib/mission-map.ts'
+      - 'lib/resident-routes.ts'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.oxfmtrc.json'
+      - '.github/workflows/art-reproducibility.yml'
   workflow_dispatch:
 
 permissions:
@@ -15,6 +56,8 @@ concurrency:
 
 jobs:
   art-reproducibility:
+    # drafts wait until they are marked ready (ready_for_review starts the run)
+    if: github.event_name != 'pull_request' || !github.event.pull_request.draft
     runs-on: ubuntu-latest
     timeout-minutes: 20
     env:
@@ -29,7 +72,7 @@ jobs:
         uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: '24.19.0'
-          package-manager-cache: false
+          cache: npm
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
         with:
