@@ -69,10 +69,22 @@ export const keepsakes: readonly Keepsake[] = [
   { id: 'pinecone_jar', name: 'Jar of pine cones', from: 'the Woodland', zones: ['woodland'] },
   { id: 'cairn', name: 'Little cairn', from: 'the Snowy Ridge', zones: ['ridge'] },
   {
+    id: 'brass_telescope',
+    name: 'Brass telescope',
+    from: 'the Frostline',
+    zones: ['hollow', 'snowmelt', 'saddle', 'summit'],
+  },
+  {
     id: 'shell_bowl',
     name: 'Bowl of shells',
     from: 'Driftwood Harbour',
     zones: ['harbour', 'headland'],
+  },
+  {
+    id: 'orchid_pot',
+    name: 'Potted orchid',
+    from: 'the Tidebloom Isles',
+    zones: ['landing', 'rainforest', 'headwaters', 'cove'],
   },
   { id: 'cog_clock', name: 'Cog clock', from: 'Cogsworth', zones: ['junction', 'canal'] },
   { id: 'cactus_pot', name: 'Potted cactus', from: 'Dust Gulch', zones: ['gulch', 'oasis'] },

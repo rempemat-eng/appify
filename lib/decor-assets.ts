@@ -15,6 +15,8 @@ import decorEmberLamp from '@/assets/decor/ember_lamp.png';
 import decorDragonPlush from '@/assets/decor/dragon_plush.png';
 import decorStarGlobe from '@/assets/decor/star_globe.png';
 import decorMoonCrystal from '@/assets/decor/moon_crystal.png';
+import decorBrassTelescope from '@/assets/decor/brass_telescope.png';
+import decorOrchidPot from '@/assets/decor/orchid_pot.png';
 
 /** Each keepsake's image (its size and footprint: lib/decor-sizes.ts). */
 export const decorImages: Record<string, ImageSourcePropType> = {
@@ -33,4 +35,6 @@ export const decorImages: Record<string, ImageSourcePropType> = {
   dragon_plush: decorDragonPlush,
   star_globe: decorStarGlobe,
   moon_crystal: decorMoonCrystal,
+  brass_telescope: decorBrassTelescope,
+  orchid_pot: decorOrchidPot,
 };
