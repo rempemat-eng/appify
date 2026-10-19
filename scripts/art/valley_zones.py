@@ -218,6 +218,77 @@ SAND_R = MATERIALS['sand']
 SOIL_R = MATERIALS['soil']  # (earth banks: kept off the path colours, so the lint reads them as ground)
 
 
+def door_front(key: str, x: int, y: int):
+    """Where a building's door meets the ground, in zone px, for a building placed at
+    (x, y) as in a zone's objects (the same reckoning build() uses for its door check)."""
+    sp = sprites()[key]
+    return x + sp.ox + int(sp.w * DOORS[key]), y + sp.oy + sp.h
+
+
+def _disc(r: int):
+    return [(dx, dy) for dx in range(-r, r + 1) for dy in range(-r, r + 1) if dx * dx + dy * dy <= r * r + r]
+
+
+def lay_road(cv: Canvas, mask, seed: int = 0, avoid=frozenset(), doors=(), worn: float = 1.0) -> set:
+    """Paint a path the way paths wear (research/placement-paths-verticality.md, section
+    2.2, steps 5 and 6) and return the pixels it covers:
+    - door aprons: where a door's front lies within reach of the path, the path widens
+      into a small trodden apron before it, because people stop at a door;
+    - junction fillets: inside corners where paths meet are worn round (a closing of the
+      mask), so a T or a Y reads as feet cutting the corner, not a ruled join;
+    - worn verges: a band of trampled, paler grass up to six pixels wide along the
+      edges (about a walk cell or two), patchy, heaviest at the junctions and the aprons.
+    `avoid` are pixels the path must not spread onto (water, walls, fields)."""
+    mask = set(mask)
+    avoid = set(avoid)
+    aprons = set()
+    for k, (dx, dy) in enumerate(doors):
+        if any((dx + i, dy + j) in mask for i in range(-10, 11) for j in range(-2, 18)):
+            aprons |= {(x, y) for (x, y) in blob(dx, dy + 5, 10, 5, seed=seed + 31 + k, rough=0.14)
+                       if y >= dy - 1 and (x, y) not in avoid}
+    mask |= aprons
+    grown = {(x + a, y + b) for (x, y) in mask for (a, b) in _disc(5)}
+    closed = {p for p in grown if all((p[0] + a, p[1] + b) in grown for (a, b) in _disc(5))}
+    fillets = {(x, y) for (x, y) in closed - mask if (x, y) not in avoid and 0 <= x < W and 0 <= y < H}
+    mask |= fillets
+    paint_road(cv, mask)
+    if worn <= 0:
+        return mask
+    hot = fillets | aprons
+    near_hot = {(x + a, y + b) for (x, y) in hot for (a, b) in _disc(5)}
+    WORN = (0xB4, 0xAA, 0x78)  # trodden, dried grass: never one of the path's own colours
+    ring = {}
+    frontier = set(mask)
+    for d in range(1, 7):
+        nxt = set()
+        for (x, y) in frontier:
+            for (a, b) in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                q = (x + a, y + b)
+                if q not in mask and q not in ring and q not in avoid and 0 <= q[0] < W and 0 <= q[1] < H:
+                    ring[q] = d
+                    nxt.add(q)
+        frontier = nxt
+    for (x, y), d in ring.items():
+        if d == 1 and (x, y - 1) in mask:
+            continue  # the turf's lit lip under the path stays
+        t = (0.5, 0.42, 0.34, 0.25, 0.16, 0.1)[d - 1] * worn
+        if (x, y) in near_hot:
+            t += 0.18
+        n = smooth_noise(x, y, 5, seed + 977)
+        if n < 0.42 - 0.08 * (d == 1):
+            continue
+        c = cv.get(x, y)
+        if c is None or (len(c) > 3 and c[3] == 0):
+            continue
+        t = min(0.7, t * (0.6 + n))
+        rgb = tuple(int(c[i] + (WORN[i] - c[i]) * t) for i in range(3))
+        hexc = '#%02X%02X%02X' % rgb
+        if hexc.upper() in {p.upper() for p in P}:
+            continue
+        cv.set(x, y, hexc)
+    return mask
+
+
 def reeds(cv: Canvas, x: int, y: int, seed: int = 0, n: int = 6):
     """A clump of reeds standing in the shallows: blades of different heights, lit on
     the left, two brown seed heads."""
@@ -239,12 +310,12 @@ def town(frame: int = 0):
     # the road from the garden gate, then cobbled streets and the paved square
     # the garden's main path (36 px wide, centred on x = 160) crosses the border unchanged
     road = worlds.thick([(160, -4), (160, 24)], 18, seed=0) | worlds.thick([(160, 20), (158, 60), (164, 130), (160, 240)], 15, seed=5)
-    paint_road(cv, road | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)})
+    road |= {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
     square = {(x, y) for (x, y) in oval(SQUARE[0], SQUARE[1], 118, 62)}
     east = worlds.thick([(250, 300), (W + 4, 300)], 13)
     # the lane west to the Valley Halt, at the same height and width as the halt's lane
     west = worlds.thick([(-12, 300), (12, 300)], 11) | worlds.thick([(10, 300), (76, 296)], 11, seed=8)
-    paint_road(cv, west | {(x, y) for (x0, y) in west if x0 == 0 for x in range(-12, 0)})
+    road |= west | {(x, y) for (x0, y) in west if x0 == 0 for x in range(-12, 0)}
     # the road south to Driftwood Harbour, the same width and x as the harbour's road
     south = worlds.thick([(160, 340), (156, 470), (160, 560)], 15, seed=6) | worlds.thick([(160, 552), (160, H + 4)], 18)
     south |= worlds.thick([(150, 400), (110, 452)], 9, seed=7)  # a side path to the ring
@@ -252,7 +323,12 @@ def town(frame: int = 0):
     south |= worlds.thick([(160, 424), (230, 426), (276, 424)], 6, seed=71)
     south |= worlds.thick([(160, 524), (200, 526), (228, 522)], 6, seed=72)
     south |= worlds.thick([(236, 244), (250, 222), (254, 204)], 6, seed=73)  # to the red house's door
-    paint_road(cv, south | {(x, y) for (x, y0) in south if y0 == H - 1 for y in range(H, H + 12)})
+    road |= south | {(x, y) for (x, y0) in south if y0 == H - 1 for y in range(H, H + 12)}
+    # one network, laid as it wears: aprons at the doors, worn corners, trodden verges
+    rcx, rcy = 76, 486
+    doors = [door_front(k, x, y) for (k, x, y) in (('library', 6, 130), ('house_red', 214, 124), ('house_blue', 236, 344),
+                                                   ('house_red', 188, 444), ('cafe', 200, 318))]
+    lay_road(cv, road, seed=70, avoid=set(oval(rcx, rcy, 56, 28)), doors=doors)
     worlds.paint_paving(cv, square | east, seed=3)
     # a ring of darker setts around the well, and a kerb where the square meets the lawn
     for (x, y) in square:
@@ -376,7 +452,7 @@ def coast_height(gx: int) -> int:
     return 22 + int(smooth_noise(gx, 1, 18, 953) * 14)
 
 
-BREAKWATER = [(166, 478), (186, 472), (210, 464), (234, 450), (254, 432), (270, 412), (282, 390)]
+BREAKWATER = [(166, 478), (186, 472), (210, 464), (234, 450), (254, 432), (270, 412), (284, 390), (296, 370), (306, 352)]
 
 
 @functools.lru_cache(maxsize=1)
@@ -615,7 +691,7 @@ def harbour(frame: int = 0):
             cv.set(x, y, '#F2EEE2'); cv.set(x + 1, y, SAND_R[0])  # a shell
     # rock pools left by the tide, each a ring of stones round still water
     pools = set()
-    for (px, py, rx, ry, sd) in ((44, 336, 10, 5, 1), (58, 402, 8, 4, 2), (32, 438, 9, 4, 3)):
+    for (px, py, rx, ry, sd) in ((44, 336, 10, 5, 1), (12, 438, 7, 4, 3)):
         pool = blob(px, py, rx, ry, seed=978 + sd, rough=0.25)
         for (x, y) in pool:
             cv.set(x, y, WTR[0] if (x, y - 1) not in pool else WTR[2] if (x + y) % 5 else WTR[3])
@@ -665,8 +741,12 @@ def harbour(frame: int = 0):
     for (x, y) in point:
         n = smooth_noise(x, y, 9, 984)
         cv.set(x, y, G[2] if n > 0.45 else G[1])
-    knoll = outcrop(cv, [(50, 530, 46, 20), (52, 488, 30, 20), (64, 512, 26, 22), (48, 540, 34, 24), (70, 560, 28, 20),
-                         (30, 474, 22, 14), (40, 572, 30, 16), (8, 478, 18, 12)], seed=985, moss=True)
+    # the lighthouse's round plinth (Claude B's #58) stands on the knoll's crown; the keeper's
+    # path comes down the neck west of the tower and round to its door on the south side
+    knoll = outcrop(cv, [(52, 510, 24, 11), (70, 560, 28, 20), (40, 574, 30, 14), (6, 484, 14, 10), (76, 500, 10, 14),
+                         (14, 556, 14, 12)], seed=985, moss=True)
+    lpath = worlds.thick([(40, 372), (28, 392), (24, 452), (24, 500), (30, 530), (52, 532)], 5, seed=986)
+    lpath = {(x, y) for (x, y) in lpath if (x, y) not in water and (x, y) not in knoll and (x, y) not in west_rocks and (x, y) not in pools}
     for (x, y) in point:
         if y < 470 and (x, y) not in knoll and noise2(x, y, 986) > 0.92:
             detail.grass_tuft(cv, x, y, int(noise2(x, y, 987) * 6), G, 2)
@@ -680,11 +760,17 @@ def harbour(frame: int = 0):
     # the road down from the town, the lanes to the cottages, the cliff path east
     road = worlds.thick([(160, -4), (160, 24)], 18) | worlds.thick([(160, 20), (152, 120), (166, 230)], 14, seed=16)
     road |= worlds.thick([(154, 120), (110, 118), (76, 108)], 8, seed=17)  # to cottage 1's door (a T off the road)
-    road |= worlds.thick([(160, 176), (116, 208), (86, 226), (84, 220)], 7, seed=18)  # down to cottage 3's door and the beach
+    d3x, d3y = door_front('cottage_c', 44, 150)
+    road |= worlds.thick([(160, 176), (128, 206), (d3x + 10, d3y + 6), (d3x, d3y + 3)], 7, seed=18)  # down to cottage 3's door
+    road |= worlds.thick([(d3x + 6, d3y + 6), (92, 228)], 6, seed=21)  # and on down to the beach
     road |= worlds.thick([(156, 70), (196, 96), (240, 104), (290, 104), (W + 6, 110)], 8, seed=19)  # past cottage 2: the cliff path, a Y off the road above the T
     road |= worlds.thick([(164, 212), (230, 224), (262, 222)], 7, seed=20)  # to cottage 4's door
-    paint_road(cv, (road - quay) | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
-               | {(x, y) for (x0, y) in road if x0 == W - 1 for x in range(W, W + 12)})
+    hdoors = [door_front(k, x, y) for (k, x, y) in (('cottage', 42, 26), ('cottage_b', 210, 26), ('cottage_c', 44, 150),
+                                                    ('cottage_d', 224, 140))]
+    lay_road(cv, (road - quay) | {(x, y) for (x, y0) in road if y0 == 0 for y in range(-12, 0)}
+             | {(x, y) for (x0, y) in road if x0 == W - 1 for x in range(W, W + 12)},
+             seed=75, avoid=quay | water | beach | point, doors=hdoors)
+    paint_road(cv, lpath)  # the keeper's path over the sand and the point
     objects = [
         # four households, four cottages: a net on the wall, shutters, a porch, a net shed
         ('cottage-1', 'cottage', 42, 26), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage_c', 44, 150),
@@ -695,8 +781,8 @@ def harbour(frame: int = 0):
         ('market', 'fish_stall', 104, 226), ('pots-1', 'lobster_pots', 196, 236), ('pots-2', 'lobster_pots', 238, 246),
         ('anchor', 'anchor', 248, 228), ('bollard-1', 'bollard', 132, 284), ('bollard-2', 'bollard', 250, 284),
         # the beach: nets drying, boats hauled up, chairs, driftwood
-        ('nets-1', 'net_rack', 16, 236), ('nets-2', 'net_rack', 16, 290), ('upturned', 'upturned_boat', 18, 386),
-        ('chair-1', 'deck_chair', 30, 344), ('chair-2', 'deck_chair_b', 50, 352), ('drift', 'driftwood', 40, 452),
+        ('nets-1', 'net_rack', 16, 236), ('nets-2', 'net_rack', 16, 290), 
+        ('chair-1', 'deck_chair', 30, 344), ('chair-2', 'deck_chair_b', 50, 352),
         # the boats: each at a jetty's end, one on its buoy in the basin, a sail beyond
         ('boat-1', 'boat_blue', 83, 318), ('boat-2', 'boat_red', 248, 348), ('boat-3', 'boat_blue', 150, 430),
         # the ferry to Lagoon Landing, moored port side to the pier's head, and its ladder
@@ -707,7 +793,8 @@ def harbour(frame: int = 0):
     ]
     quay_face = {(x, y) for x in range(QX0, QX1) for y in range(QY1, QY1 + 9)}
     blocked = (water | face | rocks | spur | bw | knoll | pools | west_rocks | quay_face) - decks
-    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (196, 408), 'beach': (34, 380), 'castle': (300, 116)}
+    stands = {'town': (160, 18), 'market': (150, 288), 'jetty': (196, 408), 'beach': (34, 380), 'castle': (300, 116),
+              'lighthouse': (52, 532)}
     return cv, objects, stands, blocked
 
 
@@ -741,7 +828,9 @@ def headland(frame: int = 0):
         [(56, 112), (66, 150), (80, 222), (140, 300), (176, 372), (198, 428), (226, 430)], 8, seed=19)
     path |= worlds.thick([(118, 280), (100, 340), (112, 404), (120, 430)], 6, seed=23)
     path |= worlds.thick([(54, 168), (100, 162), (146, 146)], 5, seed=998)  # a spur from the path to the fold's gate
-    paint_road(cv, (path - river) | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)})
+    lay_road(cv, (path - river) | {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)}, seed=76,
+             avoid=river | sea_px | face | set(blob(214, 122, 88, 60, seed=996, rough=0.12)),
+             doors=[door_front('lookout_tower', 198, 300)])
     bspan = [x for (x, y) in river if y == 110]
     bridge = stone_bridge(cv, 0, max(bspan) + 8, 103, 118, river)  # the cliff path's bridge over the river
     view = blob(122, 440, 20, 9, seed=994, rough=0.1)  # the viewpoint: flags laid on the cliff top
@@ -886,7 +975,12 @@ def riverside(frame: int = 0):
     path = worlds.thick([(22, 224), (70, 230), (118, mt - 11)], 8, seed=21)  # the lane to the mill (the garden has no path at this edge)
     deck_x = min(x for (x, y) in river if y == 432) - 6
     path |= worlds.thick([(8, 402), (60, 398), (110, 418), (200, 430), (deck_x + 2, 432)], 8, seed=22)  # the west bank walk
-    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff})
+    path |= blob(110, 280, 22, 8, seed=1406, rough=0.15)  # the mill yard by the sacks, where the lane comes in
+    path |= worlds.thick([(46, ys[0] - 2), (44, 262), (40, 230)], 5, seed=23)  # the stepping stones' path up to the lane
+    path |= worlds.thick([(46, ys[-1] + 2), (46, 360), (40, 398)], 5, seed=24)  # and down to the bank walk
+    path |= worlds.thick([(180, 430), (186, 470)], 5, seed=25)  # to the bench on the bank above the bend
+    lay_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff}, seed=77,
+             avoid=river | bluff | race | towpath | stones)
     worlds.paint_paving(cv, towpath, seed=1405)
     for x in range(118, mx - 6):
         cv.set(x, mt - 6, STONE[1]); cv.set(x, mt - 5, STONE[0])  # its kerb above the water
@@ -901,7 +995,7 @@ def riverside(frame: int = 0):
         cv.set(x, y, col); cv.set(x, y + 1, '#447A50')
     # the hay meadow above the mill: mown in long swathes that follow the slope, the cut
     # grass lying in rows to dry, two stacks already made; the bees work the uncut margin
-    hay = field_mask(124, 58, 276, 166, seed=1201)
+    hay = poly_field([(130, 72), (246, 50), (276, 132), (150, 164)], seed=1201)
     for (x, y) in hay:
         sw = (y + int(math.sin(x / 31) * 6)) % 12
         if sw < 7:
@@ -909,20 +1003,19 @@ def riverside(frame: int = 0):
             if sw == 6 and x % 3:
                 cv.set(x, y, '#C9B66A')  # a windrow of drying hay
                 cv.set(x, y + 1, '#9E8A48')
-    for (x, y) in edge_of(hay):  # the mower's last pass: a darker cut line at the edge
-        cv.set(x, y, G[1] if (x + y) % 3 else G[2])
-    margin(cv, hay, seed=1203)  # and the uncut margin outside it
-    fold_wall = set()
+    margin(cv, hay, seed=1203)  # the uncut margin under the hedge
+    # its hedge, with a gateway on the south-west toward the mill (a hedgerow tree in its corner)
+    fold_wall = hedgerow(cv, hay, gap=(142, 150, 9), seed=1204)
     lc = [(x, y) for (x, y, h) in line]
     # the heron's feet in the edge of the water at the outer bend (the sprite's feet are
     # 9 px in and at its foot row), a stride inside the bank's lip
-    heron_x, heron_y = next((x - 19, y - 30) for y in range(330, 360) for x in range(300, 240, -1)
+    heron_x, heron_y = next((x - 24, y - 30) for y in range(330, 360) for x in range(300, 240, -1)
                             if (x, y) in river and (x + 1, y) not in river)
     objects = [
         ('mill', 'water_mill', 140, mt - 104), ('willow-1', 'willow', 176, 300), ('willow-2', 'willow', 96, 470),
         ('heron', 'heron', heron_x, heron_y),  # wading in the shallows at the outer bank
-        ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 266, 100), ('bush-1', 'bush', 40, 500),
-        ('bench', 'bench', 196, 446), ('sack-1', 'sack', 124, mt - 30), ('barrel-m', 'barrel', 104, mt - 34),
+        ('tree-1', 'tree', 10, 120), ('tree-2', 'tree_small', 272, 150), ('bush-1', 'bush', 40, 500),
+        ('bench', 'bench', 168, 472),  # on the bank above the bend, looking down onto the water ('sack-1', 'sack', 146, mt - 28), ('barrel-m', 'barrel', 200, mt - 32),
         # old trees on the east bank, running on into the forest beyond
         ('pine-e2', 'pine', 280, 470), ('tree-e3', 'tree_autumn', 260, 226),
         ('bush-e4', 'bush', 286, 540),
@@ -1006,7 +1099,7 @@ def park(frame: int = 0):
         # the willow on the east bank, leaning out over the water; the mallards in the
         # slack water off the platform, where people stop and bread comes their way
         ('willow', 'willow', 70, 466),
-        ('duck-1', 'duck', dx - 22, deck_y + 2), ('duck-2', 'duck', on(deck_y + 18) - 4, deck_y + 9), ('heron', 'heron', on(520) + 10, 494),
+        ('duck-1', 'duck', dx - 22, deck_y + 2), ('duck-2', 'duck', on(deck_y + 18) - 4, deck_y + 9), ('heron', 'heron', max(x for (x, y) in river if y == 524) - 15, 494),  # wading, its feet in the shallows
         # trees in clumps round the lawns, thickest on the east
         ('tree-1', 'tree', 230, 10), ('tree-1b', 'tree_small', 196, 24), ('tree-2', 'tree_autumn', 260, 200),
         ('tree-3', 'tree', 4, 110), ('tree-4', 'tree_small', 275, 420), ('tree-5', 'tree', 260, 470),
@@ -1092,7 +1185,8 @@ def ridge(frame: int = 0):
     trail |= gthick('ridge', [(150, -386), (236, -392), (262, -456), (258, -514), (204, -546), (204, -586)], 8)
     trail |= gthick('ridge', [(132, -240), (60, -228), (-10, -228)], 8)
     on_terrace = {(x, y) for (x, y) in trail if y < rim(x)}
-    paint_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)})
+    lay_road(cv, {(x, y) for (x, y) in trail if y >= rim(x) + FACE_H} | {(x, y) for (x0, y) in trail if y == H - 1 for x in [x0] for y in range(H, H + 12)},
+             seed=78, avoid={(x, y) for x in range(W) for y in range(0, rim(x) + FACE_H)})
     # the bottom: the forest floor in the shade of the two clumps of pines either side of
     # the trail, darkest under their crowns, with a ragged edge, deepening toward the
     # garden's treeline below (no ruled band)
@@ -1421,6 +1515,62 @@ def stone_bridge(cv: Canvas, x0: int, x1: int, y0: int, y1: int, water: set, hor
     return deck
 
 
+def poly_field(pts, seed: int = 0) -> set:
+    """A field laid out by hand along the lie of the land: a four-sided plot whose sides
+    run at their own angles (fields are rarely square to anything), each side wandering a
+    pixel or two with the ground (point-in-polygon on a slightly jittered point)."""
+    xs, ys = [p[0] for p in pts], [p[1] for p in pts]
+    out = set()
+    for y in range(min(ys) - 3, max(ys) + 4):
+        for x in range(min(xs) - 3, max(xs) + 4):
+            jx = x + (smooth_noise(x, y, 11, seed) - 0.5) * 4
+            jy = y + (smooth_noise(x, y, 11, seed + 1) - 0.5) * 4
+            inside = False
+            for (ax, ay), (bx, by) in zip(pts, pts[1:] + pts[:1]):
+                if (ay > jy) != (by > jy) and jx < ax + (jy - ay) * (bx - ax) / (by - ay):
+                    inside = not inside
+            if inside:
+                out.add((x, y))
+    return out
+
+
+def hedgerow(cv: Canvas, mask: set, gap=None, seed: int = 0, sides=None) -> set:
+    """A hedge laid round a field (the field edge Claude A asked for after #56/#59): a band
+    of hawthorn and hazel five to seven pixels deep along the field's edge, bumpy on top,
+    lit from the upper left and dark under its south face, with its shadow on the grass.
+    `gap` (x, y, r) leaves a gateway open; `sides` limits it to edge pixels for which
+    sides(x, y) is true. Returns the hedge's pixels (they block a walk)."""
+    LEAFR = ['#24402A', '#33552F', '#4A6E38', '#628A42', '#80A552']
+    edge = [p for p in edge_of(mask) if (sides is None or sides(*p))]
+    if gap is not None:
+        edge = [(x, y) for (x, y) in edge if math.hypot(x - gap[0], y - gap[1]) > gap[2]]
+    hedge = set()
+    for (x, y) in edge:
+        for (a, b) in _disc(3):
+            hedge.add((x + a, y + b - 2))
+    for (x, y) in sorted(hedge, key=lambda p: p[1]):
+        n = noise2(x // 2, y // 2, seed)
+        up, down = (x, y - 1) not in hedge, (x, y + 1) not in hedge
+        left = (x - 1, y) not in hedge
+        c = LEAFR[3] if n > 0.5 else LEAFR[2]
+        if up:
+            c = LEAFR[4] if n > 0.35 else LEAFR[3]
+        elif left and n > 0.4:
+            c = LEAFR[3]
+        if down:
+            c = LEAFR[0]
+        elif (x, y + 2) not in hedge:
+            c = LEAFR[1]
+        if noise2(x, y, seed + 1) > 0.96:
+            c = '#E8E2D0'  # a may blossom
+        cv.set(x, y, c)
+    shade = {(x + 1, y + k) for (x, y) in hedge for k in (1, 2)} - hedge - mask
+    for q in shade:
+        if 0 <= q[0] < W and 0 <= q[1] < H:
+            style.darken(cv, *q)
+    return hedge
+
+
 def field_mask(x0: int, y0: int, x1: int, y1: int, seed: int = 0) -> set:
     """A worked field: a plot set out by hand, roughly rectangular, with corners rounded
     where the plough turned and sides that wander a pixel or two with the ground."""
@@ -1610,7 +1760,7 @@ def halt(frame: int = 0):
     ground.valley(cv, 'halt', frame)  # one turf across the valley (ground.py)
     # (the woodland's forest floor reaches down over the top: ground.py blends it)
     lane = worlds.thick([(W + 12, 300), (W - 12, 300)], 11) | worlds.thick([(W - 10, 300), (230, 296), (190, 290)], 11, seed=31)
-    paint_road(cv, lane | {(x, y) for (x0, y) in lane if x0 == W - 1 for x in range(W, W + 12)})
+    lane |= {(x, y) for (x0, y) in lane if x0 == W - 1 for x in range(W, W + 12)}
     # the platform: dressed slabs with a white edge over the line
     plat = {(x, y) for x in range(64, 236) for y in range(282, 318)}
     worlds.paint_paving(cv, plat, seed=13)
@@ -1665,13 +1815,14 @@ def halt(frame: int = 0):
     # doors open onto the yard (they face south, toward the cliff top)
     yard = blob(236, 526, 64, 14, seed=459, rough=0.15) | blob(196, 532, 52, 9, seed=460, rough=0.12)
     yard = {(x, y) for (x, y) in yard if y < htop[x] - 1}
-    paint_road(cv, track | yard)
     # the fields behind the fence: worked plots with softened corners, their rows set out
     # east-west by hand; a margin of long grass round each, where the plough turned
     SOILm = MATERIALS['soil']
-    cabbage = field_mask(14, 372, 142, 468, seed=81)
-    wheat = field_mask(160, 372, 282, 444, seed=82)
-    patch = field_mask(16, 482, 112, 538, seed=83)
+    # (each plot set out along the lie of the land, not square to the map: Claude A's
+    # review after #56/#59)
+    cabbage = poly_field([(16, 378), (138, 370), (144, 462), (12, 470)], seed=81)
+    wheat = poly_field([(162, 376), (280, 368), (284, 428), (166, 442)], seed=82)
+    patch = poly_field([(20, 486), (106, 480), (112, 528), (22, 522)], seed=83)
     tilled(cv, cabbage, row=9, seed=84)
     tilled(cv, patch, row=11, seed=85, ridged=False)
     for (cx, cy, k) in rows_of(cabbage, row=9, step=8, seed=86):
@@ -1680,10 +1831,16 @@ def halt(frame: int = 0):
     pumpkin_patch(cv, patch, seed=89)
     for mask in (cabbage, wheat, patch):
         margin(cv, mask, seed=90)
+    # a hedge between the line and the fields, where the fence was: it keeps stock and
+    # people off the rails, and ends at the farm track and at the cutting
+    lineside = hedgerow(cv, cabbage | wheat, seed=94, sides=lambda x, y: y < 384)
     # the windmill grinds the farm's wheat: a cart track up from the lane to its door,
     # and a cobbled apron round its foot
     mill_track = worlds.thick([(266, 294), (272, 240), (256, 182)], 6, seed=91)
-    paint_road(cv, mill_track)
+    # the lane, the farm track and the mill track as one network (the platform stays paved)
+    lay_road(cv, (lane | track | yard | mill_track) - plat, seed=80,
+             avoid=plat | cabbage | wheat | patch | lineside | hface | hsea | {(x, y) for x in range(W) for y in range(310, 344)},
+             doors=[door_front('barn', 150, 438)])
     apron = blob(252, 172, 26, 9, seed=92, rough=0.12)
     worlds.paint_paving(cv, apron, seed=93)
     for (x, y) in edge_of(apron):
@@ -1702,7 +1859,7 @@ def halt(frame: int = 0):
     rails = {(x, y) for x in range(0, 246) for y in range(319, 338)}
     stands = {'town': (312, 300), 'platform': (130, 300), 'station': (118, 292), 'mill': (258, 186),
               'farm': (262, 530)}
-    return cv, objects, stands, rails | cut | cabbage | wheat | patch | hsea | hface
+    return cv, objects, stands, rails | cut | cabbage | wheat | patch | hsea | hface | lineside
 
 
 def footbridge(cv: Canvas, x0: int, w: int, y0: int, y1: int, water: set):
@@ -1829,8 +1986,8 @@ def woodland(frame: int = 0):
         if noise2(x // 2, y // 2, 667) > 0.45:
             cv.set(x, y, FOREST_FLOOR[2])
     spur = worlds.thick([(152, 386), (118, 408)], 5, seed=27)  # to the stone circle
-    paint_road(cv, spur)
-    paint_road(cv, {(x, y) for (x, y) in path if (x, y) not in water} | {(x, y) for (x0, y) in path if x0 == W - 1 for x in range(W, W + 12)})
+    lay_road(cv, spur | {(x, y) for (x, y) in path if (x, y) not in water} | {(x, y) for (x0, y) in path if x0 == W - 1 for x in range(W, W + 12)},
+             seed=79, avoid=set(water))
     # the garden's bluff on the north bank runs on and sinks into the ground upstream
     for x in range(150, W):
         bh = int((7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)) * min(1.0, (x - 150) / 150))
