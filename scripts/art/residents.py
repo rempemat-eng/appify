@@ -343,7 +343,7 @@ def person_back(look: dict, frame: int) -> Canvas:
         for y in range(18, 24 - lift):
             cv.set(lx, y, tone(legs, lx)); cv.set(lx + 1, y, shade(legs, 0.75))
         cv.hline(lx, 24 - lift, 2, shoes)
-        cv.set(lx, 24 - lift, shade(shoes, 1.35))  # the heel catching the light
+        cv.set(lx, 23 - lift, shade(shoes, 1.35))  # the heel's counter catching the light (the sole stays dark on the ground row)
     if look.get('skirt'):
         sk = look['skirt']
         for y in range(16, 21):
@@ -375,15 +375,17 @@ def person_back(look: dict, frame: int) -> Canvas:
             cv.set(ax, y + (dd if y > 13 else 0), shade(top, 0.9) if ax < cx else shade(top, 0.7))
         cv.set(ax, 16 + dd, skin if ax < cx else skin_dark)
     if carry:
+        # seen from behind, the hand that carries (the viewer's right in the front frames)
+        # is on the viewer's left
         kind, col = carry
         if kind == 'basket':
-            _carried(cv, kind, col, cx + 5, 15 + sw, 1)
+            _carried(cv, kind, col, cx - 5, 15 - sw, -1)
         elif kind == 'lantern':
-            _carried(cv, kind, col, cx + 4, 16 + sw, 1)
+            _carried(cv, kind, col, cx - 5, 16 - sw, -1)
         elif kind == 'plant':
-            # cradled in front: the leaves show over the right shoulder
-            for (x, y) in disc(cx + 3.5, 9.5, 1.8):
-                cv.set(x, y, shade(col, 0.85) if x > cx + 3 else col)
+            # cradled in front: the leaves show over the left shoulder
+            for (x, y) in disc(cx - 4.5, 9.5, 1.8):
+                cv.set(x, y, col if x < cx - 4 else shade(col, 0.85))
     # the back of the head: hair over almost all of it, ears and the nape below
     hair = HAIR[look.get('hair', 'dark')]
     for (x, y) in disc(cx, 6, 3.6):

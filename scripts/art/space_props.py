@@ -24,11 +24,15 @@ def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
 
 
-def garden_pod() -> Canvas:
+def garden_pod(variant: int = 0) -> Canvas:
     """A hydroponic garden pod, 64 x 56: a glass dome seen from above with plants in
-    rings under it, a reflection arc on the glass, and a hull collar with status lights."""
+    rings under it, a reflection arc on the glass, and a hull collar with status lights.
+    variant 1 (review 19 Oct: not two the same) grows a dwarf citrus tree in its middle
+    with oranges on it over a ring of strawberries, and its lights run amber."""
     w, h = 64, 56
     cv = Canvas(w, h, pad=PAD)
+    if variant:
+        return _pod_citrus(cv, w, h)
     for (x, y) in oval(32, 40, 30, 12):  # the collar
         cv.set(x, y, HULL[3] if y < 40 else HULL[2])
     for (x, y) in oval(32, 28, 26, 22):  # dark soil under the dome
@@ -53,6 +57,36 @@ def garden_pod() -> Canvas:
             cv.set(x, y, HULL[4])
     for k, lx in enumerate(range(12, 54, 10)):
         cv.set(lx, 46, (CYAN[3], GOLD[3], CYAN[3], RED[3], CYAN[3])[k % 5])
+    return cv
+
+
+def _pod_citrus(cv: Canvas, w: int, h: int) -> Canvas:
+    for (x, y) in oval(32, 40, 30, 12):  # the collar
+        cv.set(x, y, HULL[3] if y < 40 else HULL[2])
+    for (x, y) in oval(32, 28, 26, 22):  # dark soil under the dome
+        if y < 44:
+            cv.set(x, y, '#3A2A24' if (x + y) % 3 else '#4A362C')
+    for k in range(16):  # a ring of strawberries, white flowers and red fruit
+        a = 2 * math.pi * k / 16
+        px, py = 32 + math.cos(a) * 20, 30 + math.sin(a) * 11
+        for (x, y) in disc(px, py, 2.0):
+            if y < 44:
+                cv.set(x, y, LEAF[3] if (x - px) + (y - py) < 0 else LEAF[2])
+        cv.set(int(px), int(py) + 1, RED[3] if k % 2 else '#F4F0E8')
+    for (x, y) in disc(32, 24, 10.5):  # the dwarf citrus: a round crown, lit upper left
+        k = (x - 32) + (y - 24)
+        cv.set(x, y, LEAF[4] if k < -6 else LEAF[3] if k < 4 else LEAF[2])
+    for (ox, oy) in ((27, 20), (36, 22), (30, 28), (38, 27), (25, 26)):
+        cv.set(ox, oy, GOLD[4]); cv.set(ox + 1, oy, GOLD[3])  # oranges
+    cv.vline(32, 33, 5, '#6A4A32')  # its stem
+    for (x, y) in oval(32, 28, 26, 22):
+        if y < 44 and math.hypot((x - 22) / 18, (y - 18) / 12) < 1 and math.hypot((x - 24) / 18, (y - 21) / 12) > 1:
+            cv.set(x, y, '#E6F2FF')  # the glass's reflection arc
+    for (x, y) in oval(32, 28, 26, 22):
+        if y < 44 and (math.hypot((x - 32) / 25, (y - 28) / 21) > 1):
+            cv.set(x, y, HULL[4])
+    for k, lx in enumerate(range(12, 54, 10)):
+        cv.set(lx, 46, GOLD[3] if k % 2 else GOLD[2])
     return cv
 
 
@@ -203,20 +237,46 @@ def dream_pool(seed: int = 0) -> Canvas:
             cv.set(x, y, GLOW[1] if (x + y) % 2 else GLOW[2])
     return cv
 
-def hydro_trough() -> Canvas:
-    """A hydroponic trough, 56 x 30: a white tank of leafy greens in rows (lettuce and
-    herbs, lit from above), a violet grow-light bar on two arms, a drip line."""
-    w, h = 56, 30
+def hydro_trough(crop: str = 'greens', length: int = 56) -> Canvas:
+    """A hydroponic trough, `length` x 30: a white tank of plants in rows lit from above, a
+    violet grow-light bar on two arms, a drip line. `crop` (review 19 Oct: not four the
+    same): 'greens' (heads of lettuce), 'tomato' (vines on canes with red fruit), 'herbs'
+    (feathery dill and basil, purple flowers) or 'sprouts' (seedling trays, young and
+    pale)."""
+    w, h = length, 30
     cv = Canvas(w, h, pad=PAD)
     for y in range(14, 28):
         for x in range(2, w - 2):
             c = HULL[5] if y == 14 else HULL[4] if y < 20 else HULL[3] if x < w - 6 else HULL[2]
             cv.set(x, y, c)
-    for k in range(9):  # heads of greens in two rows
-        for row in (0, 1):
-            cx, cy = 7 + k * 5 + row * 2, 13 + row * 3
-            for (x, y) in disc(cx, cy, 2.6):
-                cv.set(x, y, LEAF[4] if x + y < cx + cy - 1 else LEAF[3] if (x + y) % 2 else LEAF[2])
+    n = (w - 10) // 5
+    if crop == 'greens':
+        for k in range(n):  # heads of greens in two rows
+            for row in (0, 1):
+                cx, cy = 7 + k * 5 + row * 2, 13 + row * 3
+                for (x, y) in disc(cx, cy, 2.6):
+                    cv.set(x, y, LEAF[4] if x + y < cx + cy - 1 else LEAF[3] if (x + y) % 2 else LEAF[2])
+    elif crop == 'tomato':
+        for k in range(0, n, 2):  # vines up thin canes, leaves and red fruit
+            cx = 8 + k * 5
+            cv.vline(cx, 6, 9, '#C8B48A')
+            for y in range(7, 16):
+                for dx in (-2, -1, 1, 2):
+                    if noise2(cx + dx, y, 391) > 0.45:
+                        cv.set(cx + dx, y, LEAF[3] if dx < 0 else LEAF[2])
+            for (fx, fy) in ((cx - 2, 10), (cx + 2, 13), (cx + 1, 8)):
+                cv.set(fx, fy, RED[3]); cv.set(fx, fy + 1, RED[2])
+    elif crop == 'herbs':
+        for k in range(n * 2):  # feathery fronds, a few purple flowers
+            cx, cy = 5 + k * 2 + (k % 3), 10 + (k * 7) % 6
+            for t in range(4):
+                cv.set(cx + (t % 2), cy + t, LEAF[4] if t < 2 else LEAF[3])
+            if k % 5 == 2:
+                cv.set(cx, cy - 1, NAP[4])
+    else:  # sprouts: seedling trays, young and pale
+        for k in range(n * 2):
+            cx, cy = 5 + k * 2 + (k % 2), 12 + (k % 3) * 2
+            cv.set(cx, cy, LEAF[4]); cv.set(cx, cy + 1, '#C8D8A0')
     for px in (4, w - 6):
         cv.vline(px, 2, 12, HULL[3]); cv.vline(px + 1, 2, 12, HULL[1])
     for x in range(4, w - 4):
@@ -637,7 +697,7 @@ def shuttle() -> Canvas:
     return cv
 
 
-def solar_array(width: int = 64, seed: int = 0) -> Canvas:
+def solar_array(width: int = 64, seed: int = 0, tilt: int = 4) -> Canvas:
     """A solar array on its mast, `width` x 44: a wing of cells tilted up toward the
     sun in the upper left, its cells dark blue in a lit silver frame with one long glint,
     on a mast with a sun tracker and a foot plate, its cable running off along the dust."""
@@ -654,7 +714,7 @@ def solar_array(width: int = 64, seed: int = 0) -> Canvas:
     panel = set()
     for y in range(2, 20):
         t = (y - 2) / 17
-        xa, xb = int(2 + t * 4), int(w - 6 + t * 3)  # tilted: the top edge set back
+        xa, xb = int(2 + t * tilt), int(w - 6 + t * (tilt - 1))  # tilted: the top edge set back
         for x in range(xa, xb):
             panel.add((x, y))
     for (x, y) in panel:
@@ -1047,6 +1107,12 @@ def airlock_module() -> Canvas:
                 c = WHITE[1]
             cv.set(x, y, c)
     cv.set(w - 9, 33, '#4AD07A'); cv.set(w - 8, 33, '#2A9A5A')  # the status light
+    for y in range(h - 9, h - 5):  # the collar where it meets the dome's sill, clamped
+        for x in range(0, w):
+            c = WHITE[4] if y == h - 9 else WHITE[2] if x < w - 6 else WHITE[1]
+            if y == h - 7 and x % 6 == 2:
+                c = '#E8C04A'
+            cv.set(x, y, c)
     return cv
 
 
@@ -1054,8 +1120,9 @@ def glass_dome() -> Canvas:
     """The greenhouse dome, 240 x 208, glazed all over (the review: "glaze the whole
     dome, plants inside"): panes of tinted glass in a frame of struts, meridians and
     rings, the sun's reflection on the upper left, the glass only faintly tinted so the
-    plants and the people inside show through it, on a cast sill, with a collar where
-    the airlock joins it at the back. Drawn over everything inside it."""
+    plants and the people inside show through it, on a cast sill. The back half is a
+    little denser, so the airlock that joins it at the back reads as behind the glass
+    (review 19 Oct). Drawn over everything inside it."""
     cx, cy, rx, ry, dh = DOME
     w, h = 2 * cx, cy + ry + 4
     cv = Canvas(w, h, pad=PAD)
@@ -1076,14 +1143,19 @@ def glass_dome() -> Canvas:
             continue
         # a frame of meridians and rings, thin (a strut is a few centimetres across), the
         # meridians stopping at the top ring so they do not crowd into the crown
-        mer = ph < 1.15 and abs(th * 8 / math.pi - round(th * 8 / math.pi)) * (1 + 2.5 * ph) < 0.07
-        ring = abs(ph * 8 / math.pi - round(ph * 8 / math.pi)) < 0.035 and ph > 0.05
+        # (review 19 Oct: the small ring at the crown and the struts' ends there read as
+        # a cable over the top, so the frame stops at the second ring and the crown is a
+        # single clear pane)
+        mer = ph < 0.79 and abs(th * 8 / math.pi - round(th * 8 / math.pi)) * (1 + 2.5 * ph) < 0.07
+        ring = abs(ph * 8 / math.pi - round(ph * 8 / math.pi)) < 0.035 and 0.05 < ph < 0.9
         if mer or ring:
             lit = math.cos(th - 2.4) * math.cos(ph) + math.sin(ph) * 0.6
             c = (236, 240, 248, 255) if lit > 0.3 else (176, 184, 200, 255) if lit > -0.3 else (120, 128, 148, 255)
+            if not front:  # the far struts, seen through the glass: faint, so they never read as cables over it
+                c = (150, 160, 182, 96)
         else:
             # glass: a cool tint, a little stronger on the back half (seen through twice)
-            a = 54 if front else 70
+            a = 54 if front else 104  # the back half denser: what stands behind the dome reads as behind glass
             c = (150, 196, 228, a)
             u = math.cos(th - 2.2) * math.cos(ph) + math.sin(ph) * 0.5
             if front and 0.55 < u < 0.95 and (x + y) % 2 == 0:
@@ -1091,17 +1163,6 @@ def glass_dome() -> Canvas:
             elif front and u > 0.95:
                 c = (255, 255, 255, 190)
         cv.set(x, y, c)
-    # the collar where the airlock from the corridor joins the glass at the back (review
-    # 19 Oct): a white frame round the opening, lit on its top and left, clamped to the sill
-    ax0, ax1, ay0, ay1 = 89, 139, cy - ry - 10, cy - ry + 8
-    for y in range(ay0, ay1):
-        for x in range(ax0, ax1):
-            edge = min(x - ax0, ax1 - 1 - x, y - ay0, ay1 - 1 - y)
-            if edge < 4:
-                c = (238, 240, 246, 255) if (y - ay0 < 2 or x - ax0 < 2) else (178, 182, 198, 255) if edge < 3 else (124, 128, 148, 255)
-                if edge == 1 and (x + y) % 6 == 0:
-                    c = (232, 192, 74, 255)  # its clamps
-                cv.set(x, y, c)
     for i in range(0, 721):  # the sill: a cast ring the glass stands on, its front lit
         th = 2 * math.pi * i / 720
         for k in range(4):
@@ -1112,9 +1173,9 @@ def glass_dome() -> Canvas:
 
 
 def props_station() -> dict[str, Canvas]:
-    return {'garden_pod': garden_pod(), 'viewport': viewport(18, 8), 'viewport_b': viewport(112, 8),
+    return {'garden_pod': garden_pod(), 'garden_pod_b': garden_pod(1), 'viewport': viewport(18, 8), 'viewport_b': viewport(112, 8),
             'viewport_c': viewport(206, 8), 'sleep_pod': sleep_pod(), 'airlock': airlock(),
-            'console': console(), 'hydro_trough': hydro_trough(), 'galley_table': galley_table(),
+            'console': console(), 'hydro_trough': hydro_trough(), 'hydro_trough_tomato': hydro_trough('tomato', 52), 'hydro_trough_herbs': hydro_trough('herbs', 48), 'hydro_trough_sprouts': hydro_trough('sprouts', 56), 'galley_table': galley_table(),
             'bookshelf': bookshelf(), 'telescope': telescope(), 'lounge_bench': lounge_bench(), 'lockers': lockers(),
             'tea_dispenser': tea_dispenser(), 'aquarium_column': aquarium_column(), 'cargo_crates': cargo_crates(),
             'floor_cushions': floor_cushions()}
@@ -1124,7 +1185,7 @@ def props_lumen() -> dict[str, Canvas]:
     return {'shuttle': shuttle(), 'dream_pool': dream_pool(), 'dream_pool_b': dream_pool(4), 'moon_tree': moon_tree(), 'hammock': hammock(),
             'moon_rock': moon_rock(True), 'moon_rock_small': moon_rock(False), 'moon_rock_b': moon_rock(True, 3),
             'moon_rock_small_b': moon_rock(False, 5), 'glow_caps': glow_caps(), 'old_lander': old_lander(),
-            'solar_array': solar_array(64, 0), 'solar_array_b': solar_array(52, 1), 'radiator': radiator(),
+            'solar_array': solar_array(64, 0), 'solar_array_b': solar_array(52, 1, 6), 'solar_array_c': solar_array(58, 2, 2), 'radiator': radiator(),
             'ice_rig': ice_rig(), 'comm_mast': comm_mast(), 'grow_lamp': grow_lamp(), 'pressure_tube': pressure_tube(), 'pressure_tube_dock': pressure_tube(78, dock=True), 'hab_hub': hab_hub(),
             'airlock_module': airlock_module(), 'glass_dome': glass_dome()}
 

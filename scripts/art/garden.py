@@ -435,12 +435,7 @@ OBJECTS = [
     # the forest along the top edge, behind the HUD
     # (two pines stand back to let the ridge trail through the trees)
     *[(f'pine-{i}', 'pine', x, y, None) for i, (x, y) in meadow.TREELINE.items()],
-    ('tree-0', 'tree', -24, -62, None),
-    ('tree-1', 'tree_small', 36, -42, None),
-    ('tree-2', 'tree', 104, -64, None),
-    ('tree-3', 'tree_small', 228, -44, None),
-    ('tree-4', 'tree_autumn', 236, -60, None),
-    ('tree-5', 'tree', 286, -50, None),
+    # (no broadleaf trees in the band: the ridge's edge here is pines and open meadow)
     # the clearing
     ('hut', 'hut', 16, 28, 'nap'),
     ('bed', 'bed', 128, 98, 'nap'),

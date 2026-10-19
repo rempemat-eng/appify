@@ -133,7 +133,7 @@ def station(frame: int = 0):
         ('shelf', 'bookshelf', 22, 104), ('bench-1', 'lounge_bench', 74, 120), ('bench-2', 'lounge_bench', 194, 120),
         ('scope', 'telescope', 262, 98),
         # the atrium and its gardens
-        ('pod-1', 'garden_pod', 128, 180), ('pod-2', 'garden_pod', 178, 372),
+        ('pod-1', 'garden_pod', 128, 180), ('pod-2', 'garden_pod_b', 178, 372),
         # the sleep bay
         ('sleep-1', 'sleep_pod', 24, 186), ('sleep-2', 'sleep_pod', 24, 246), ('sleep-3', 'sleep_pod', 24, 306),
         ('sleep-4', 'sleep_pod', 64, 186), ('lockers', 'lockers', 30, 410),
@@ -142,8 +142,9 @@ def station(frame: int = 0):
         ('lock-shuttle', 'airlock', 262, 330), ('console-1', 'console', 226, 440), ('console-2', 'console', 268, 440),
         # the arrival hall: hydroponics either side
         ('aquarium', 'aquarium_column', 110, 380), ('crates', 'cargo_crates', 196, 330), ('cushions', 'floor_cushions', 68, 360),
-        ('trough-1', 'hydro_trough', 22, 492), ('trough-2', 'hydro_trough', 22, 530), ('trough-3', 'hydro_trough', 242, 492),
-        ('trough-4', 'hydro_trough', 242, 530), ('lock-lift', 'airlock', 132, 516),
+        # (review 19 Oct: four different crops, not two identical blocks)
+        ('trough-1', 'hydro_trough', 20, 488), ('trough-2', 'hydro_trough_herbs', 34, 532),
+        ('trough-3', 'hydro_trough_tomato', 248, 494), ('trough-4', 'hydro_trough_sprouts', 236, 536), ('lock-lift', 'airlock', 132, 516),
     ]
     stands = {'lift': (160, 500), 'atrium': (160, 300), 'viewport': (160, 144), 'sleep': (84, 280),
               'galley': (256, 296), 'shuttle': (290, 392)}
@@ -398,9 +399,24 @@ def lumen(frame: int = 0):
     for (rx, ry0) in ((254, 230), (286, 236)):  # the drops from each radiator's manifold
         for y in range(ry0, 240):
             cv.set(rx, y, '#E8ECF2'); cv.set(rx + 1, y, '#8A93A8')
-    for (sx, sy) in ((40, 238), (48, 292), (42, 344)):
-        for x in range(sx, hx0):
-            cv.set(x, sy + (x // 11) % 2, '#22222C')
+    # the solar arrays, staggered across the dust at three tilts (review 19 Oct: not three
+    # the same in a column): each casts its shadow down and to the right on the regolith,
+    # and its cable runs on low pegs from its foot to the hub's west end
+    ARRAYS = [('solar-1', 'solar_array', 4, 188, 64), ('solar-2', 'solar_array_b', 30, 252, 52),
+              ('solar-3', 'solar_array_c', 2, 316, 58)]
+    for (_n, _k, ax, ay, aw) in ARRAYS:
+        for r in range(9):
+            for x in range(ax + 8 + r, ax + aw + 2 + r):
+                y = ay + 31 + r
+                if (x, y) not in walk and 0 <= x < W:
+                    style.darken(cv, x, y)
+    for (a, b) in (((68, 230), (hx0 + 4, 236)), ((82, 294), (hx0 + 4, 286)), ((60, 358), (hx0 + 14, 300))):
+        n = int(max(abs(b[0] - a[0]), abs(b[1] - a[1])))
+        for t in range(n + 1):
+            x, y = int(a[0] + (b[0] - a[0]) * t / n), int(a[1] + (b[1] - a[1]) * t / n)
+            cv.set(x, y, '#8A93A8'); cv.set(x, y + 1, '#3A3C4A')
+            if t % 10 == 5:
+                cv.set(x, y + 2, HULL[1])  # a peg
     walls |= {(x, y) for x in range(W) for y in range(H)} - walk
     # the regolith's cool greys would read as water to the lint's colour test; Lumen has
     # no open water at all (the pools are props on the greenhouse floor), so it says so
@@ -408,7 +424,7 @@ def lumen(frame: int = 0):
     objects = [
         ('shuttle', 'shuttle', 120, 54),
         # outside, on the dust: power, heat, the mast, the ice rig, the old lander
-        ('solar-1', 'solar_array', 2, 196), ('solar-2', 'solar_array_b', 10, 250), ('solar-3', 'solar_array', 0, 302),
+        *[(n, k, ax, ay) for (n, k, ax, ay, _w) in ARRAYS],
         ('rad-1', 'radiator', 238, 192), ('rad-2', 'radiator', 270, 200), ('mast', 'comm_mast', 288, 132),
         ('rig', 'ice_rig', 188, 306), ('lander', 'old_lander', 268, 520),
         ('rock-1', 'moon_rock', 20, 164), ('rock-2', 'moon_rock_small_b', 52, 176), ('rock-3', 'moon_rock_b', 290, 412),

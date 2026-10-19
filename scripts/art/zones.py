@@ -41,6 +41,7 @@ import castle_props as csp  # noqa: E402
 import space_props as spp  # noqa: E402
 import home_props as hp  # noqa: E402
 import frost_props as fp  # noqa: E402
+import water_flow  # noqa: E402
 import isle_props as ip  # noqa: E402
 
 # Each prop module may declare how its props meet the ground, so its owner registers a
@@ -677,6 +678,34 @@ def build(name: str, fn, start: str):
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
     GROUND_TONE[name] = ground_tone(cv)
+    # moving water and lava (water_flow.py): an overlay of only the pixels that change
+    import water_flow
+    terrain = world_lint.classify(cv.img, blocked_ground, wet if fn.__name__ in WATER_MASKS else None)
+    wet_px, hot_px = set(), set()
+    for r, row in enumerate(terrain):
+        for c, ch in enumerate(row):
+            if ch not in '~!':
+                continue
+            for y in range(r * CELL - 1, r * CELL + CELL + 1):  # (a pixel into each neighbour)
+                for x in range(c * CELL - 1, c * CELL + CELL + 1):
+                    if not (0 <= x < W and 0 <= y < H):
+                        continue
+                    if fn.__name__ in WATER_MASKS:
+                        if ch == '~' and (x, y) in wet:
+                            wet_px.add((x, y))
+                        continue
+                    px = cv.get(x, y)[:3]
+                    if ch == '~' and world_lint._bluish(*px):
+                        wet_px.add((x, y))
+                    elif ch == '!' and world_lint._lava(*px):
+                        hot_px.add((x, y))
+    flow = water_flow.sheet(cv.img, wet_px, hot_px)
+    flow_path = os.path.join(out, 'flow.png')
+    if flow:
+        flow[0].save(flow_path, optimize=True)  # native scale: the renderer draws it pixelated
+        FLOW_RECT[name] = flow[1]
+    elif os.path.exists(flow_path):
+        os.remove(flow_path)
     if name == 'town':
         # the lane past the garden gate, drawn below the garden screen's fence, so the
         # garden's south edge shows the valley going on (components/garden-world.tsx)
@@ -907,6 +936,7 @@ def beyond_peaks() -> Canvas:
 
 
 GROUND_TONE: dict = {}
+FLOW_RECT: dict = {}  # zone -> (x, y, w, h) of its moving water's box (water_flow.py)
 
 
 def ground_tone(cv) -> str:
@@ -1008,6 +1038,13 @@ def export(built: dict):
         '  walk: readonly string[];',
         "  connectors: readonly { kind: 'stair' | 'ramp' | 'lift'; bottom: readonly [number, number]; top: readonly [number, number] }[];",
         '};',
+        '/** Moving water and lava (scripts/art/water_flow.py): the box round a zone\'s water, in zone px; its',
+        f' *  picture holds {water_flow.FRAMES} frames stacked top to bottom, shown {water_flow.FRAME_MS} ms apart. */',
+        f'export const FLOW_FRAMES = {water_flow.FRAMES};',
+        f'export const FLOW_FRAME_MS = {water_flow.FRAME_MS};',
+        'export const zoneFlow: Partial<Record<ZoneId, readonly [number, number, number, number]>> = {',
+        *[f'  {z}: {list(FLOW_RECT[z])},' for z in built if z in FLOW_RECT],
+        '};',
         'export const zoneDecks: Partial<Record<ZoneId, ZoneDeck>> = {',
         *[f"  {zid}: {{ height: {d['height']}, walk: {json.dumps([rle(r) for r in d['walk']])}.map(unrle), connectors: {json.dumps(d['connectors'])} }}," for zid, d in decks.items()],
         '};',
@@ -1075,6 +1112,11 @@ def export(built: dict):
         ' *  street darkened under it with its shadow. Zone-sized, at the zone\'s origin. */',
         'export const zoneDeckArt: Partial<Record<ZoneId, { deck: ImageSourcePropType; shadow: ImageSourcePropType }>> = {',
         *[f'  {z}: {{ deck: deck{ident(z)}, shadow: deckShadow{ident(z)} }},' for z in decked],
+        '};',
+        *[f"import flow{ident(z)} from '@/assets/zones/{z}/flow.png';" for z in built if z in FLOW_RECT],
+        '/** Each zone\'s moving water, frames stacked (scripts/art/water_flow.py; boxes in zone-maps.ts). */',
+        'export const zoneFlowArt: Partial<Record<ZoneId, ImageSourcePropType>> = {',
+        *[f'  {z}: flow{ident(z)},' for z in built if z in FLOW_RECT],
         '};',
         f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
