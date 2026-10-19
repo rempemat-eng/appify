@@ -50,6 +50,7 @@ import propCabin from '@/assets/zones/props/cabin.png';
 import propCafe from '@/assets/zones/props/cafe.png';
 import propCairn from '@/assets/zones/props/cairn.png';
 import propCamel from '@/assets/zones/props/camel.png';
+import propCamelString from '@/assets/zones/props/camel_string.png';
 import propCampfire from '@/assets/zones/props/campfire.png';
 import propCanalCrane from '@/assets/zones/props/canal_crane.png';
 import propCanoe from '@/assets/zones/props/canoe.png';
@@ -196,6 +197,8 @@ import propKitchen from '@/assets/zones/props/kitchen.png';
 import propLamp from '@/assets/zones/props/lamp.png';
 import propLibrary from '@/assets/zones/props/library.png';
 import propLighthouse from '@/assets/zones/props/lighthouse.png';
+import propLizardRock from '@/assets/zones/props/lizard_rock.png';
+import propLizardRockB from '@/assets/zones/props/lizard_rock_b.png';
 import propLobsterPots from '@/assets/zones/props/lobster_pots.png';
 import propLockers from '@/assets/zones/props/lockers.png';
 import propLocomotive from '@/assets/zones/props/locomotive.png';
@@ -248,7 +251,6 @@ import propSailboat from '@/assets/zones/props/sailboat.png';
 import propSaloon from '@/assets/zones/props/saloon.png';
 import propSandstoneArch from '@/assets/zones/props/sandstone_arch.png';
 import propSandstoneOutcrop from '@/assets/zones/props/sandstone_outcrop.png';
-import propSandstoneOutcropB from '@/assets/zones/props/sandstone_outcrop_b.png';
 import propScarecrow from '@/assets/zones/props/scarecrow.png';
 import propScree from '@/assets/zones/props/scree.png';
 import propScreeB from '@/assets/zones/props/scree_b.png';
@@ -271,6 +273,7 @@ import propSkybridge1 from '@/assets/zones/props/skybridge_1.png';
 import propSkybridge2 from '@/assets/zones/props/skybridge_2.png';
 import propSled from '@/assets/zones/props/sled.png';
 import propSleepPod from '@/assets/zones/props/sleep_pod.png';
+import propSnagVultures from '@/assets/zones/props/snag_vultures.png';
 import propSnowman from '@/assets/zones/props/snowman.png';
 import propSnowyPine from '@/assets/zones/props/snowy_pine.png';
 import propSolarArray from '@/assets/zones/props/solar_array.png';
@@ -697,6 +700,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   cafe: propCafe,
   cairn: propCairn,
   camel: propCamel,
+  camel_string: propCamelString,
   campfire: propCampfire,
   canal_crane: propCanalCrane,
   canoe: propCanoe,
@@ -843,6 +847,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lamp: propLamp,
   library: propLibrary,
   lighthouse: propLighthouse,
+  lizard_rock: propLizardRock,
+  lizard_rock_b: propLizardRockB,
   lobster_pots: propLobsterPots,
   lockers: propLockers,
   locomotive: propLocomotive,
@@ -895,7 +901,6 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   saloon: propSaloon,
   sandstone_arch: propSandstoneArch,
   sandstone_outcrop: propSandstoneOutcrop,
-  sandstone_outcrop_b: propSandstoneOutcropB,
   scarecrow: propScarecrow,
   scree: propScree,
   scree_b: propScreeB,
@@ -918,6 +923,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   skybridge_2: propSkybridge2,
   sled: propSled,
   sleep_pod: propSleepPod,
+  snag_vultures: propSnagVultures,
   snowman: propSnowman,
   snowy_pine: propSnowyPine,
   solar_array: propSolarArray,

@@ -14,6 +14,7 @@ export const residentSprites: Record<string, { zone: ZoneId; w: number; h: numbe
   cowhand: { zone: 'gulch', w: 20, h: 28 },
   saloon: { zone: 'gulch', w: 20, h: 28 },
   trader: { zone: 'oasis', w: 20, h: 28 },
+  prospector: { zone: 'gulch', w: 20, h: 28 },
   smith: { zone: 'caldera', w: 20, h: 28 },
   attendant: { zone: 'springs', w: 20, h: 28 },
   vendor: { zone: 'neon', w: 20, h: 28 },

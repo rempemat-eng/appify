@@ -813,6 +813,157 @@ def prickly_pear() -> Canvas:
     return cv
 
 
+# Sunstone's life (S5): animals where they would really be, each drawn alone in the one
+# view and light, its shadow left to the zone. A lizard basks on sun-warmed rock in the
+# morning; vultures wait on a dead tree near a skull (they perch when there is no thermal
+# to ride); a string of laden camels stands tethered nose to tail at the caravan camp.
+def _lizard(cv: Canvas, x: int, y: int, facing: int = 1):
+    """A small lizard basking flat on a rock, 12 x 5: a lit, banded back, its tail
+    curving behind it, its legs splayed, its head raised toward the sun."""
+    LIZ = ['#3A3020', '#6A5A34', '#8E7A44', '#B8A060']
+    for t in range(8):  # the body and tail, a gentle curve
+        bx = x + facing * t
+        by = y + (1 if 2 < t < 6 else 0)
+        cv.set(bx, by, LIZ[3] if t < 4 else LIZ[2])
+        if t < 5:
+            cv.set(bx, by + 1, LIZ[1] if t % 2 else LIZ[2])  # its bands
+    for t in range(4):  # the tail tip, thin
+        cv.set(x - facing * (t + 1), y + 1 + t // 2, LIZ[2] if t < 2 else LIZ[1])
+    cv.set(x + facing * 8, y - 1, LIZ[3]); cv.set(x + facing * 9, y - 1, LIZ[2])  # the raised head
+    cv.set(x + facing * 9, y - 2, LIZ[0])  # its eye
+    for (lx, d) in ((1, 1), (5, 1)):  # splayed legs
+        cv.set(x + facing * lx, y + 2, LIZ[1]); cv.set(x + facing * (lx - 1), y + 3, LIZ[0])
+
+
+def lizard_rock(seed: int = 0) -> Canvas:
+    """A sandstone outcrop with a lizard basking on its sunlit top, 40 x 26."""
+    base = sandstone_outcrop(seed)
+    cv = Canvas(40, 26, pad=PAD)
+    cv.paste(base, 0, 2)
+    _lizard(cv, 10, 5, 1)
+    return cv
+
+
+VULTURE = ['#1C1618', '#2E2628', '#4A3E3C', '#6A5A54', '#C8A890']
+
+
+def _vulture(cv: Canvas, x: int, y: int, facing: int = 1):
+    """A vulture perched, about 12 x 15: its dark wings folded and hunched round it like
+    a cloak, their upper edges lit grey-brown, the long primaries crossing below its tail,
+    a pale ruff, and a bare pinkish head with a hooked beak, sunk into its shoulders."""
+    for yy in range(y, y + 11):
+        t = (yy - y) / 10
+        hw = 3 + int(2 * math.sin(t * math.pi))
+        for xx in range(x - hw, x + hw + 1):
+            k = (xx - (x - hw)) / (2 * hw)
+            c = VULTURE[3] if (k < 0.3 and yy < y + 7) else VULTURE[2] if k < 0.65 else VULTURE[1]
+            if yy == y or (yy == y + 1 and k < 0.6):
+                c = VULTURE[3]
+            if yy > y + 3 and abs(xx - x) == 1 and yy % 3 == 0:
+                c = VULTURE[1]  # the folded feathers
+            cv.set(xx, yy, c)
+    for d in range(3):  # the primaries, crossed below the tail
+        cv.set(x - facing * (1 + d), y + 11 + d // 2, VULTURE[0])
+    for xx in range(x - 2, x + 3):
+        cv.set(xx, y - 1, VULTURE[4])  # the ruff
+    hx = x + facing
+    for (px, py, c) in ((hx, y - 2, '#C88878'), (hx + facing, y - 2, '#B07060'), (hx, y - 3, '#D89888'),
+                        (hx + facing * 2, y - 2, '#E8DCC8'), (hx + facing * 2, y - 1, '#E8DCC8')):
+        cv.set(px, py, c)  # the bare head, the hooked pale beak
+    cv.set(hx, y - 3, '#D89888'); cv.set(hx + facing, y - 3, VULTURE[0])  # an eye
+    cv.set(x - 1, y + 11, '#4A3A2A'); cv.set(x + 1, y + 11, '#4A3A2A')  # feet on the branch
+
+
+def snag_vultures() -> Canvas:
+    """A dead mesquite, bleached grey, 40 x 58, with two vultures perched on its
+    branches, hunched and waiting: the trunk split and lit along its left, bare limbs
+    reaching up, its roots in the sand."""
+    w, h = 40, 58
+    cv = Canvas(w, h, pad=PAD)
+    DRY = ['#4A4038', '#6E6458', '#948A7A', '#B8AE9C', '#D8D0BE']
+    cx = 18
+    for y in range(22, h - 1):  # the trunk
+        half = 2 + (1 if y > h - 10 else 0) + (1 if y > h - 4 else 0)
+        for x in range(cx - half, cx + half + 1):
+            k = (x - (cx - half)) / (2 * half)
+            c = DRY[3] if k < 0.35 else DRY[2] if k < 0.7 else DRY[1]
+            if (y + x) % 7 == 0 and 0.2 < k < 0.8:
+                c = DRY[1]  # cracks in the dead wood
+            cv.set(x, y, c)
+    for (x0, y0, dx, n) in ((cx - 2, 30, -1, 14), (cx + 2, 26, 1, 16), (cx, 24, -1, 8), (cx + 1, 36, 1, 9)):
+        for t in range(n):  # bare limbs, lit on top
+            x, y = x0 + dx * t, y0 - int(t * 0.7)
+            cv.set(x, y, DRY[3] if dx < 0 else DRY[2]); cv.set(x, y + 1, DRY[1])
+    for x in range(cx - 6, cx + 7):  # the roots in the sand
+        cv.set(x, h - 1, DESERT[2] if x < cx else DESERT[1])
+    _vulture(cv, 8, 10, -1)   # on the west limb
+    _vulture(cv, 31, 6, 1)   # on the east limb, higher
+    return cv
+
+
+def camel_string() -> Canvas:
+    """Three camels standing tethered nose to tail at the caravan camp, 120 x 52, seen
+    from the side like the resting one: each laden (bales and water skins lashed across
+    a saddle), legs long and knobbly, necks curved, a lead rope from each head to the
+    next saddle, and the first tied to a stake in the sand."""
+    w, h = 120, 52
+    cv = Canvas(w, h, pad=PAD)
+
+    def standing(ox: int, load: int):
+        """One camel standing, facing east: a deep barrel of a body under a single
+        hump, long thin legs with knobbly knees and broad pads, the neck dipping
+        forward then rising in an S to a long drowsy head."""
+        body = oval(ox + 17, 24, 13, 6) | oval(ox + 16, 17, 6, 5)  # the barrel and the hump
+        for (x, y) in body:
+            k = (x - ox - 4) / 26 + (y - 11) / 18
+            cv.set(x, y, CAMEL[4] if k < 0.5 else CAMEL[3] if k < 0.9 else CAMEL[2] if k < 1.25 else CAMEL[1])
+        for (lx, back) in ((ox + 7, True), (ox + 10, False), (ox + 23, True), (ox + 26, False)):  # legs
+            for y in range(28, h - 2):
+                thin = 1 if y > 32 else 2
+                c = CAMEL[2] if not back else CAMEL[1]
+                if y in (38, 39):
+                    c = CAMEL[3] if not back else CAMEL[2]  # the knobbly knee, catching the light
+                for d in range(thin):
+                    cv.set(lx + d, y, c if d == 0 else CAMEL[1])
+            cv.hline(lx - 1, h - 2, 3, CAMEL[1])  # the broad pad
+            cv.set(lx - 1, h - 1, '#2A2026'); cv.set(lx + 1, h - 1, '#2A2026')
+        for t in range(20):  # the neck: forward and down from the chest, then up
+            u = t / 19
+            x = ox + 29 + t * 0.55
+            y = 22 + math.sin(u * math.pi) * 3 - u * 14
+            for d in range(-1, 2):
+                cv.set(int(x), int(y + d), CAMEL[3] if d < 0 else CAMEL[2] if d == 0 else CAMEL[1])
+        hx, hy = ox + 40, 8
+        for (x, y) in oval(hx + 1, hy, 4, 2):  # the long head
+            cv.set(x, y, CAMEL[3] if y < hy else CAMEL[2])
+        cv.set(hx + 4, hy + 1, CAMEL[0]); cv.set(hx, hy - 1, CAMEL[0])  # the muzzle, a drowsy eye
+        cv.set(hx - 2, hy - 2, CAMEL[2]); cv.set(hx - 1, hy - 3, CAMEL[2])  # an ear
+        for t in range(6):  # the tail
+            cv.set(ox + 4 - t // 3, 22 + t, CAMEL[1])
+        # the load lashed across the hump: a bale on the near side, a water skin behind
+        for (x, y) in oval(ox + 14, 17, 5, 4):
+            cv.set(x, y, '#C8B48A' if x < ox + 14 else '#A8946A')
+            if (x + y) % 5 == 0:
+                cv.set(x, y, '#8E7A54')  # its weave
+        for (x, y) in oval(ox + 21, 17, 4, 4):
+            cv.set(x, y, ('#8E3A2E' if load % 2 else '#3E6A8A') if x < ox + 21 else ('#6E2A22' if load % 2 else '#2E506A'))
+        cv.hline(ox + 9, 14, 17, '#5A3A24')  # the lashing over it
+        for y in range(15, 23):
+            cv.set(ox + 18, y, '#5A3A24')
+    for k, ox in enumerate((76, 38, 0)):  # back to front: the last camel first
+        standing(ox, k)
+    for hx in (44, 82):  # a lead rope from each head, sagging, to the next one's saddle
+        for t in range(11):
+            cv.set(hx + t // 2, 10 + int(math.sin(t / 10 * math.pi) * 4) + t // 3, '#5A3A24')
+    sx = 118  # the first one's rope down to a stake driven into the sand
+    for t in range(16):
+        cv.set(sx - 2 + t // 8, 10 + t * 2, '#5A3A24')
+    for y in range(h - 10, h - 1):
+        cv.set(sx, y, WOOD[3]); cv.set(sx + 1, y, WOOD[1])
+    cv.set(sx, h - 11, WOOD[4])
+    return cv
+
+
 def props() -> dict[str, Canvas]:
     return {
         'saloon': false_front(104, 0, RED, 'saloon'), 'store': false_front(88, 3, WTR, 'store'),
@@ -827,6 +978,8 @@ def props() -> dict[str, Canvas]:
         'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
         'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
         'horse': horse(), 'prickly_pear': prickly_pear(), 'ore_tub': ore_tub(),
+        'lizard_rock': lizard_rock(0), 'lizard_rock_b': lizard_rock(5), 'snag_vultures': snag_vultures(),
+        'camel_string': camel_string(),
     }
 
 
