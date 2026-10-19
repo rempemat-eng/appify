@@ -9749,6 +9749,38 @@ export const regionLayout = {
 } as const;
 /** Where neighbouring zones meet (scripts/art/frames.py, Codex's connected-world contract): for each
  *  shared edge, "west|east" or "north|south", the open span along it in art px; null = closed throughout. */
+export const zoneTone: Record<string, string> = {
+  town: '#7E9F50',
+  riverside: '#7E9F50',
+  woodland: '#577A44',
+  park: '#7E9F50',
+  ridge: '#6A9468',
+  hollow: '#6A9468',
+  snowmelt: '#F7FAFC',
+  saddle: '#F7FAFC',
+  summit: '#C2CFDC',
+  landing: '#5A9A46',
+  rainforest: '#34492E',
+  headwaters: '#5A9A46',
+  cove: '#5A9A46',
+  halt: '#7E9F50',
+  junction: '#565D70',
+  canal: '#5C6E4C',
+  neon: '#1C192B',
+  skyport: '#8A94AC',
+  gulch: '#E0B583',
+  oasis: '#F1D2A4',
+  caldera: '#716A64',
+  springs: '#716A64',
+  harbour: '#7E9F50',
+  headland: '#7E9F50',
+  hearthold: '#716A64',
+  scorch: '#716A64',
+  station: '#424C62',
+  lumen: '#77708E',
+  home: '#5E3D2E',
+  garden: '#7E9F50',
+};
 export const zonePorts: Record<string, { span: readonly [number, number] | null; frame: string }> =
   {
     'woodland|garden': { span: [0, 576], frame: 'open' },

@@ -657,6 +657,7 @@ def build(name: str, fn, start: str):
     out = os.path.join(worlds.ROOT, 'assets', 'zones', name)
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
+    GROUND_TONE[name] = ground_tone(cv)
     if name == 'town':
         # the lane past the garden gate, drawn below the garden screen's fence, so the
         # garden's south edge shows the valley going on (components/garden-world.tsx)
@@ -823,6 +824,23 @@ def beyond_peaks() -> Canvas:
     return cv
 
 
+GROUND_TONE: dict = {}
+
+
+def ground_tone(cv) -> str:
+    """The colour most of a zone's ground is, which the renderer lays under the ground's
+    picture: if a phone drops the decoded picture (iOS Safari does under memory pressure)
+    or it has not loaded yet, the place still shows its own ground rather than the
+    region's backdrop (fault 30)."""
+    count = {}
+    for y in range(0, H, 4):
+        for x in range(0, W, 4):
+            c = cv.get(x, y)[:3]
+            count[c] = count.get(c, 0) + 1
+    r, g_, b = max(count, key=count.get)
+    return f'#{r:02X}{g_:02X}{b:02X}'
+
+
 def export(built: dict):
     """Write the props every zone uses and lib/zone-maps.ts (objects, walk grids,
     stands, the region layout and static image imports)."""
@@ -899,6 +917,7 @@ def export(built: dict):
         f'export const regionLayout = {json.dumps({r: {z: list(p) for z, p in zs.items()} for r, zs in LAYOUT.items()})} as const;',
         '/** Where neighbouring zones meet (scripts/art/frames.py, Codex\'s connected-world contract): for each',
         ' *  shared edge, "west|east" or "north|south", the open span along it in art px; null = closed throughout. */',
+        f'export const zoneTone: Record<string, string> = {json.dumps({**{z: GROUND_TONE[z] for z in built if z in GROUND_TONE}, 'garden': __import__('ground').MEADOW[2]})};',
         f'export const zonePorts: Record<string, {{ span: readonly [number, number] | null; frame: string }}> = {json.dumps(__import__("frames").export())};',
         '',
     ]

@@ -41,7 +41,7 @@ import {
   type RegionTile,
   type TileId,
 } from '@/lib/region-walk';
-import { zoneFrames, zoneMaps, zoneOverhead, zoneWindows } from '@/lib/zone-maps';
+import { zoneFrames, zoneMaps, zoneOverhead, zoneTone, zoneWindows } from '@/lib/zone-maps';
 import {
   BEYOND_SPILL,
   zoneBeyond,
@@ -1008,7 +1008,15 @@ export function AtlasWalk({
             return (
               <View
                 key={`ground-${t.id}`}
-                style={{ position: 'absolute', left, top, width: w, height: h }}
+                style={{
+                  position: 'absolute',
+                  left,
+                  top,
+                  width: w,
+                  height: h,
+                  // the ground's own colour under its picture, in case a phone drops it
+                  backgroundColor: zoneTone[t.id],
+                }}
               >
                 <Image
                   source={t.id === 'garden' ? gardenGround : zoneGrounds[t.id]}
