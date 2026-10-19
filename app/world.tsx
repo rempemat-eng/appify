@@ -326,7 +326,7 @@ export default function World() {
     : !card
       ? 0
       : card.kind === 'travel'
-        ? Math.min(420, height * 0.5)
+        ? Math.min(380, height * 0.42)
         : Math.min(260, height * 0.36);
   const viewH = height;
 
@@ -368,6 +368,9 @@ export default function World() {
   // on the floor is where it would go, and the companion carries it there.
   const placeDecor = useGame((s) => s.placeDecor);
   const storeDecor = useGame((s) => s.storeDecor);
+  const putCardAway = () => {
+    setCard(null);
+  };
   const decorTap = (at: Point): boolean | Point | void => {
     const r = tapToDecorate(decor, 'hut', hand, at);
     if (r.hand?.item !== hand?.item) feedback('select');
@@ -475,7 +478,8 @@ export default function World() {
               walk={spawn.region === 'home' ? homeWalk : undefined}
               extras={spawn.region === 'home' ? homeExtras : undefined}
               preview={decorating ? preview : undefined}
-              onTap={decorating ? decorTap : undefined}
+              // (a tap on the scene while a card is open puts the card away and walks there)
+              onTap={decorating ? decorTap : card ? putCardAway : undefined}
             />
           </Animated.View>
         )}
@@ -594,7 +598,8 @@ export default function World() {
             >
               {regionNames[spawn.region]}
             </BodyText>
-            {zone && (
+            {/* (a place named like its region, the hut, is named once) */}
+            {zone && zoneNames[zone].toLowerCase() !== regionNames[spawn.region].toLowerCase() && (
               <BodyText numberOfLines={1} style={{ fontSize: 11, lineHeight: 13 }}>
                 {zoneNames[zone]}
               </BodyText>

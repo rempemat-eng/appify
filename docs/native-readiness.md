@@ -48,7 +48,7 @@ NapAttack runs as a web app today. Matt wants it to become an iPhone and Android
 
 None of these runs the app on a phone. Now and then (Matt asked for this), check the content on a phone:
 
-- **Phone-sized screens:** open the dev server in the iPhone simulator's Safari. For example, `/world?station=pier` jumps to Driftwood.
+- **Phone-sized screens:** open the dev server in the iPhone simulator's Safari. For example, `/world?station=pier` jumps to Driftwood. Stations open with `?station=` and named places with `?place=`; a station given as `?place=` falls back to the saved spot.
 - **The real app:** run the simulator development build (below) against the same dev server.
 
 ## Making a build (only when someone asks for one)
