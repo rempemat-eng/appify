@@ -131,7 +131,8 @@ def check_props(name, terrain, objects, sprites, overhead):
 NATURAL = ('tree', 'pine', 'willow', 'acacia', 'palm', 'snag', 'bush', 'hedge', 'fern', 'shrub',
            'boulder', 'rock', 'stone', 'scree', 'stump', 'log', 'cactus', 'saguaro', 'prickly',
            'monstera', 'pandanus', 'hibiscus', 'bird_of_paradise', 'banana', 'reeds', 'papyrus',
-           'fireweed', 'cotton_grass', 'mushroom', 'crystal', 'obsidian', 'outcrop')
+           'fireweed', 'cotton_grass', 'mushroom', 'crystal', 'obsidian', 'outcrop',
+           'potted', 'planter', 'pumpkin', 'hay_bale', 'haystack')
 # ...except the ones people put there on purpose
 NATURAL_OK = ('standing_stone', 'stone_bench', 'stone_lantern', 'milestone', 'stepping')
 # Buildings with a door in the middle of their front: something must be walkable in front

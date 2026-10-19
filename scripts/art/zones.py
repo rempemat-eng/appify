@@ -689,6 +689,7 @@ def build(name: str, fn, start: str):
 DOORS = {k: 0.5 for k in ('house_blue', 'house_red', 'cabin', 'cafe', 'library', 'workshop', 'workshop_round',
                           'station_house', 'barn', 'bathhouse', 'foundry', 'tube_station', 'cottage', 'cottage_b',
                           'saloon', 'store', 'mine_portal', 'clock_tower', 'lookout_tower')}
+DOORS.update({'cottage_c': 0.5, 'cottage_d': 0.4})  # Claude B's B6 (#45): cottage_d's door is off-centre
 
 
 # Where each zone sits on its region's grid (column, row), in zone-sized steps. The

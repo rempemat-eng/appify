@@ -88,7 +88,9 @@ VALLEY_COAST = [(-960, 1690), (-560, 1700), (-320, 1716), (0, 1721), (640, 1531)
                 (1000, 1420), (1280, 1400)]
 # The river that leaves the riverside at its east edge (region y 1-576 band 295-350)
 # runs on east through the old forest (its centre line by region x, and its width).
-VALLEY_RIVER = [(640, 322), (720, 330), (800, 352), (880, 344), (960, 320), (1100, 300)]
+# (none since 19 Oct: Claude E's V2 turns the valley's river south inside the valley, so
+# nothing leaves the riverside's east edge; kept as a hook for a river that does)
+VALLEY_RIVER: list = []
 RIVER_HALF = 26
 
 
@@ -101,8 +103,11 @@ def valley_fields(X, Y):
     away = np.clip(np.minimum(np.abs(X - 0), np.abs(X - 640)) / 80, 0, 1)
     coast = coast + away * 46 * (vnoise(X, 0 * X, 70, 933) - 0.5) + away * 12 * (vnoise(X, 0 * X, 18, 934) - 0.5)
     sea = Y > coast
-    rc = _lerp_points(X, VALLEY_RIVER) + 10 * (vnoise(X, 0 * X, 40, 935) - 0.5) * np.clip((X - 640) / 60, 0, 1)
-    river = (np.abs(Y - rc) < RIVER_HALF) & (X >= 640) & (Y > -60) & (Y < 600)
+    if VALLEY_RIVER:
+        rc = _lerp_points(X, VALLEY_RIVER) + 10 * (vnoise(X, 0 * X, 40, 935) - 0.5) * np.clip((X - 640) / 60, 0, 1)
+        river = (np.abs(Y - rc) < RIVER_HALF) & (X >= 640) & (Y > -60) & (Y < 600)
+    else:
+        rc, river = np.zeros(np.shape(X)), np.zeros(np.shape(X), dtype=bool)
     return alt, sea, river, coast, rc
 
 
@@ -324,6 +329,46 @@ def _peaks(col: int, row: int, alt_at, free):
     return sorted(out)
 
 
+# The valley's railway leaves the halt's west edge in its cutting (halt rows 306-333) and
+# runs on west to a tunnel portal in the wooded hillside, so the line visibly goes
+# somewhere (the 19 Oct merge review: it ran straight into the canopy).
+RAIL = {'zone': 'halt', 'cell': (-1, 1), 'y0': 306, 'y1': 334, 'portal_in': 150}
+
+
+@functools.lru_cache(maxsize=4)
+def _zone_ground(zone: str) -> np.ndarray:
+    import os
+    path = os.path.join(os.path.dirname(__file__), '..', '..', 'assets', 'zones', zone, 'ground.png')
+    return np.array(Image.open(path).convert('RGB').resize((W, H), Image.NEAREST))
+
+
+@functools.lru_cache(maxsize=2)
+def _portal(w: int = 44, h: int = 46) -> Image.Image:
+    """A railway tunnel's portal in the three-quarter view: a face of coursed stone with
+    a lit upper-left edge, a round-headed arch over the track with a keystone, the dark
+    of the tunnel inside, and a bank of earth over its top."""
+    yy, xx = np.mgrid[0:h, 0:w]
+    rgb = _pick(ST, np.where(((yy // 4) % 2 == 0) ^ (((xx + (yy // 4) * 3) // 7) % 2 == 0), 2, 3))
+    rgb = np.where(((yy % 4) == 3)[..., None], _pick(ST, np.full(xx.shape, 1)), rgb)
+    cx, top, half = w / 2, h - 30, 11
+    arch = ((np.abs(xx + 0.5 - cx) <= half) & (yy >= top + half)) | (np.hypot(xx + 0.5 - cx, yy + 0.5 - (top + half)) <= half)
+    ring = (((np.abs(xx + 0.5 - cx) <= half + 3) & (yy >= top + half)) | (np.hypot(xx + 0.5 - cx, yy + 0.5 - (top + half)) <= half + 3)) & ~arch
+    rgb = np.where(ring[..., None], _pick(ST, np.where(xx < cx, 4, 2)), rgb)
+    key = (np.abs(xx + 0.5 - cx) <= 2) & (yy >= top - 3) & (yy < top + 1)
+    rgb = np.where(key[..., None], _pick(ST, np.full(xx.shape, 4)), rgb)
+    rgb = np.where(arch[..., None], np.array(_rgb('#14131A'), dtype=np.uint8), rgb)
+    inner = arch & (np.abs(xx + 0.5 - cx) > half - 2)
+    rgb = np.where(inner[..., None], np.array(_rgb('#2A2733'), dtype=np.uint8), rgb)
+    bank = yy < 6
+    rgb = np.where(bank[..., None], _pick(FOREST_FLOOR, np.where(yy < 3, 1, 2)), rgb)
+    lit = (xx < 2) & ~bank
+    rgb = np.where(lit[..., None], _pick(ST, np.full(xx.shape, 4)), rgb)
+    a = np.zeros((h, w, 4), dtype=np.uint8)
+    a[..., :3] = rgb
+    a[..., 3] = 255
+    return Image.fromarray(a, 'RGBA')
+
+
 def valley_cell(col: int, row: int, zone_at) -> Canvas:
     """One cell of scenery in the valley. `zone_at(col, row)` names the zone there, if any.
 
@@ -349,6 +394,18 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
     ground = np.where((river & ~sea)[..., None], _river_rgb(X, Y, rc), ground)
     inside = np.zeros((CH, CW), dtype=bool)
     inside[S:S + H, S:S + W] = True
+    # the railway: the halt's cutting (its walls, ballast, sleepers and rails) carried on
+    # west from its edge, column for column, to the portal
+    rc_, rr_ = RAIL['cell']
+    ry0, ry1 = rr_ * H + RAIL['y0'], rr_ * H + RAIL['y1']
+    rx_end = rc_ * W                       # the halt's west edge, in region x
+    rx_portal = rx_end - RAIL['portal_in']
+    track = (Y >= ry0) & (Y < ry1) & (X >= rx_portal) & (X < rx_end)
+    if track.any() and zone_at(rc_, rr_) == RAIL['zone']:
+        hg = _zone_ground(RAIL['zone'])
+        lx = 1 + np.mod(X - rx_end, 7)
+        ly = np.clip(Y - rr_ * H, 0, H - 1)
+        ground = np.where(track[..., None], hg[ly, lx], ground)
     _paint(cv, ground, inside)
 
     def field(x, y):
@@ -374,13 +431,16 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
         a, s1, r1, _c, _r = valley_fields(GX, GY)
         zone = np.vectorize(lambda x, y: bool(zone_px(x, y)))(GX, GY)
         beach = GY > _lerp_points(GX, VALLEY_COAST) - 34
-        return np.where(s1 | r1 | zone | (a > 0.6), None,
+        rail = (GY > ry0 - 14) & (GY < ry1 + 22) & (GX > rx_portal - 6) & (GX < rx_end)
+        return np.where(s1 | r1 | zone | rail | (a > 0.6), None,
                         np.where(a > 0.12, 'pine', np.where(beach, None, 'crown')))
 
     # mountains and trees together, back to front
     things = [(by, 'peak', (left, top, w, h, seed, snow)) for (by, left, top, w, h, seed, snow)
               in _peaks(col, row, lambda x, y: field(x, y)[0], free)]
     things += [(gy, what, (gx, rx, k)) for (gy, gx, what, rx, k) in _trees('valley', col, row, kind_at)]
+    if track.any() and zone_at(rc_, rr_) == RAIL['zone']:
+        things.append((ry1, 'portal', None))
     pine = _pine()
     for (by, what, d) in sorted(things, key=lambda t: t[0]):
         if what == 'peak':
@@ -392,6 +452,9 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
             cx1, cy1 = min(CW, px + w), min(CH, py + h)
             if cx1 > cx0 and cy1 > cy0:
                 cv.img.alpha_composite(sp.crop((cx0 - px, cy0 - py, cx1 - px, cy1 - py)), (cx0, cy0))
+        elif what == 'portal':
+            pi = _portal()
+            _stamp(cv, pi, int(rx_portal - x0 - pi.width + 6), int(ry1 - y0 - pi.height))
         elif what == 'crown':
             gx, rx, k = d
             X0, Y0 = gx - x0, by - y0

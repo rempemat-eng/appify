@@ -80,7 +80,7 @@ jobs:
       - name: Install dependencies
         run: |
           npm ci
-          python -m pip install 'Pillow==12.3.0'
+          python -m pip install 'Pillow==12.3.0' 'numpy==2.5.3'
       - name: Test the reproducibility guard
         run: npm run check:art-repro-test
       - name: Regenerate, compare bytes and check sprite outlines
