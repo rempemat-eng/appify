@@ -68,8 +68,12 @@ async function prepare(page: Page, screen: Screen) {
       break;
     case 'garden':
     case 'hotbar':
+      // the home hub (#47): the garden is walked by the world's renderer, whose tap layer
+      // names the place the companion is in
       await expect(
-        page.getByLabel('Your garden. Tap to walk DOZEBUD around.', { exact: true }),
+        page
+          .getByLabel(/^(Your garden\. Tap to walk DOZEBUD around\.|Walk around home garden\. Tap where to go\.)$/)
+          .first(),
       ).toBeVisible();
       break;
     case 'menu':
