@@ -1193,7 +1193,7 @@ def scorch(frame: int = 0):
             continue
         cv.set(x, y, c)
     road_edges(cv, {(x, y) for (x, y) in road if x >= 116}, channel)
-    for (lx, ly) in ((182, 300), (150, 150)):  # the road's lanterns throw a warm pool
+    for (lx, ly) in ((182, 300), (150, 150), (136, 388)):  # the road's lanterns throw a warm pool
         light_pool(cv, lx + 6, ly + 26, 18, 8, '#F2A048', channel)
     deck, parapet = stone_bridge(cv, 84, 372, 36, 24, vertical=False)
     objects = [
@@ -1206,6 +1206,7 @@ def scorch(frame: int = 0):
         # basalt columns in one outcrop on the high ground in the north-east, scree below
         ('cols-1', 'basalt_columns', 262, 40), ('cols-2', 'basalt_columns_low', 236, 60), ('scree-1', 'scree', 244, 112),
         ('scree-2', 'scree_small', 196, 410), ('lantern-1', 'stone_lantern', 182, 300), ('lantern-2', 'stone_lantern', 150, 150),
+        ('lantern-3', 'stone_lantern', 136, 388),  # at the bend past the bridge: the first of the lights up to the castle
         ('vent-1', 'cooling_vent', 270, 470),
         # the scrub belt between the sand and the ash, in clumps, never in a line
         ('scrub-1', 'desert_scrub', 26, 236), ('scrub-2', 'desert_scrub_b', 4, 456), ('scrub-3', 'desert_scrub', 30, 142),
