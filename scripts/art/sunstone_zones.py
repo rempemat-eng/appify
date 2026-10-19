@@ -62,7 +62,7 @@ def buffer_stop(cv: Canvas, x0: int, y0: int, vertical: bool = True, heap=None):
         cv.vline(px, y0 + 4, 4, WOODm[1]); cv.vline(px + 1, y0 + 4, 4, WOODm[0])
 
 
-GULCH_CREEK = [(-14, 342), (40, 336), (96, 326), (120, 320), (176, 312), (230, 336), (246, 360)]
+GULCH_CREEK = [(-14, 342), (40, 336), (96, 326), (120, 322), (176, 324), (230, 344), (246, 364)]
 
 
 def wagon_ruts(cv: Canvas, road: set, xs, ramp):
@@ -270,13 +270,21 @@ def gulch(frame: int = 0):
         if y % 7 == 0:
             cv.set(mid + (2 if (y // 7) % 2 else -2), y, DESERT[0])  # hoof prints
     # boardwalks in front of the buildings, out to the street
-    for (x0, y0, w0) in ((6, 186, 108), (150, 296, 88)):
+    for (x0, y0, w0) in ((6, 186, 108), (150, 286, 88)):
         for y in range(y0, y0 + 8):
             for x in range(x0, x0 + w0):
                 cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
         cv.hline(x0, y0, w0, BLEACHED[5]); cv.hline(x0, y0 + 8, w0, BLEACHED[0])
+    # worn ground where feet leave the boardwalks: before the saloon's door, and off the
+    # boardwalk's east end onto the street (review 19 Oct: the door had no way to the road)
+    for (cx, cy, rx, ry) in ((58, 198, 16, 6), (116, 192, 12, 8)):
+        for (x, y) in oval(cx, cy, rx, ry):
+            if (x, y) not in street and smooth_noise(x, y, 3, 231) > 0.3:
+                cv.set(x, y, DESERT[2] if (x + y) % 3 else DESERT[1])
+    for t in range(10):  # boot prints from the door
+        cv.set(54 + (t % 2) * 6, 196 + t, DESERT[1])
     # the plank bridge where the street crosses the dry bed
-    for y in range(296, 334):
+    for y in range(296, 346):
         for x in range(116, 152):
             if (x, y) in creek or (x, y - 3) in creek:
                 cv.set(x, y, BLEACHED[3] if (y // 4) % 2 else BLEACHED[2])
@@ -429,14 +437,14 @@ def gulch(frame: int = 0):
         cv.set(x, y, DESERT[1] if n > 0.6 else DESERT[2] if n > 0.25 else ADOBE[2])
     objects = [
         ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 66, 178), ('poster', 'poster_board', 150, 86),
-        ('store', 'store', 150, 204), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
+        ('store', 'store', 150, 194), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
         ('tower', 'water_tower', 250, 196), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 14, 224),
         ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
         ('dyn-1', 'dynamite_crate', CART_X + 20, MINE_Y + 8),
         ('dyn-2', 'dynamite_crate', CART_X + 26, MINE_Y + 30), ('tub', 'ore_tub', CART_X - 5, MINE_Y + 10),
         ('keg-f', 'keg', MESA_X0 - 30, 100), ('sack-f', 'hay_bale', 60, 60),
         ('corral-n', 'corral_rail', ccx - 46, ccy - 36), ('corral-s', 'corral_rail', ccx - 46, ccy + 22),
-        ('corral-w', 'corral_side', ccx - 52, ccy - 22),
+        ('corral-w', 'corral_side', ccx - 52, ccy - 22), ('corral-e', 'corral_gate', ccx + 14, ccy - 22),
         ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
         ('cactus-4', 'saguaro_small', 286, 540), ('cactus-5', 'saguaro', 276, 4),
         ('cactus-7', 'saguaro', 244, 330), ('weed-1', 'tumbleweed', 170, 380),
@@ -655,7 +663,7 @@ def oasis(frame: int = 0):
         # the railway's water crane, fed from the spring
         ('crane', 'water_crane', 84, 52),
         # the caravan camp where the track ends
-        ('tent', 'tent', 238, 420), ('camel-1', 'camel', 214, 482), ('camel-2', 'camel', 266, 486),
+        ('tent', 'tent', 238, 420), ('camel-1', 'camel', 212, 480), ('camel-2', 'camel_b', 268, 498),
         ('fire', 'fire_pit', 260, 460), ('awning', 'awning', 240, 360), ('jar-3', 'water_jar', 228, 386),
         # the older town
         ('arch', 'sandstone_arch', 26, 450), ('col-1', 'column_stump', 92, 470), ('col-2', 'column_stump_b', 92, 500),
@@ -668,7 +676,7 @@ def oasis(frame: int = 0):
         ('rocks-2', 'lizard_rock_b', 256, 170),
         # a string of laden camels near the water, tethered nose to tail to a stake on open
         # sand below the grove (review 19 Oct: no palm inside the string)
-        ('camels', 'camel_string', 2, 384),
+        ('camels', 'camel_string', 4, 370),
     ]
     stands = {'gulch': (312, 524), 'pool': (130, 352), 'camp': (250, 500), 'arch': (58, 500),
               'crane': (110, 76), 'dunes': (200, 140)}
@@ -1018,13 +1026,8 @@ def caldera(frame: int = 0):
     yard = {(x, y) for x in range(14, 128) for y in range(396, 428)
             if not ((x < 18 or x > 123 or y > 423) and noise2(x // 5, y // 4, 268) > 0.45)}
     for (x, y) in yard:
-        if (x, y) in river:
-            continue
-        sx = (x + (y // 8) % 2 * 5) // 10
-        c = BASALT[3] if noise2(sx, y // 8, 269) > 0.4 else BASALT[2]
-        if (x + (y // 8) % 2 * 5) % 10 == 0 or y % 8 == 0:
-            c = BASALT[0]
-        cv.set(x, y, c)
+        if (x, y) not in river:
+            basalt_flags(cv, x, y, 269)
     # the forge's shadow, down and to the right of it (forge sprite at 20, 320, 96 x 80)
     for y in range(338, 404):
         for x in range(116, 116 + min(9, (y - 330) // 4)):
@@ -1061,7 +1064,12 @@ def caldera(frame: int = 0):
                  | {(x, y) for (x, y) in oval(120, 500, 60, 32)}, 793, 110, *FIRE_OFF['caldera'])
     # the sparring ring: crust floor in a circle of short columns
     ccx, ccy = 120, 500
-    for (x, y) in oval(ccx, ccy, 46, 22):
+    def in_ring(x, y):  # the crust floor's outline: worn and slumped, not drawn with compasses
+        a = math.atan2((y - ccy) / 22, (x - ccx) / 46)
+        r = 1 + 0.09 * math.sin(3 * a + 0.7) + 0.06 * math.sin(5 * a + 2.1) + (smooth_noise(a * 12, 0, 6, 276) - 0.5) * 0.14
+        return math.hypot((x - ccx) / 46, (y - ccy) / 22) < r
+    ring_floor = {(x, y) for y in range(ccy - 28, ccy + 29) for x in range(ccx - 56, ccx + 57) if in_ring(x, y)}
+    for (x, y) in ring_floor:
         cv.set(x, y, ASH[1] if not cracked(x, y, 9, 5) else LAVA[1])
     posts = []
     for k in range(14):  # short columns set round it, each its own height, a gap left at the south for the path
@@ -1514,12 +1522,18 @@ def scorch(frame: int = 0):
 
 
 def basalt_flags(cv: Canvas, x: int, y: int, seed: int):
-    """One pixel of dark basalt flagstones (the caldera's yards and the way to the springs)."""
+    """One pixel of dark basalt flagstones seen from above (the caldera's landing, the
+    forge's apron and the lanes from it; review 19 Oct: not wall courses): irregular
+    flags of different sizes laid edge to edge, each its own tone, dark joints between
+    them, each flag's upper-left lip catching the light."""
     BASALT = MATERIALS['basalt']
-    sx = (x + (y // 7) % 2 * 5) // 10
-    c = BASALT[3] if noise2(sx, y // 7, seed) > 0.4 else BASALT[2]
-    if (x + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
+    cid, edge, dx, dy = _cell(x, y, 9, seed % 97)
+    t = noise2(cid[0], cid[1], seed)
+    c = BASALT[3] if t > 0.55 else BASALT[2] if t > 0.15 else BASALT[1]
+    if edge < 1.0:
         c = BASALT[0]
+    elif edge < 2.0 and dx + dy > 0:
+        c = BASALT[4] if c != BASALT[1] else BASALT[3]  # the lit lip on its upper left
     cv.set(x, y, c)
 
 

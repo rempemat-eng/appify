@@ -531,12 +531,16 @@ def water_jar() -> Canvas:
 CAMEL = ['#4E3222', '#7E5638', '#A87C52', '#C9A06E', '#E0C08E']
 
 
-def camel() -> Canvas:
+def camel(variant: int = 0) -> Canvas:
     """A camel resting with its legs folded under it, 48 x 36, seen from the side: the
     hump lit from the upper left, a striped saddle blanket, the long neck curving up to
-    a drowsy head, the folded knees in the sand."""
+    a drowsy head, the folded knees in the sand. variant 1 (review 19 Oct: not two the
+    same side by side) is a darker animal under a blue blanket, its neck stretched low
+    along the sand with its chin resting on it, asleep."""
     w, h = 48, 36
     cv = Canvas(w, h, pad=PAD)
+    if variant:
+        return _camel_asleep(cv)
     body = oval(20, 24, 16, 8) | oval(18, 15, 8, 6)  # body and hump
     for (x, y) in body:
         k = (x - 4) / 32 + (y - 8) / 22
@@ -561,6 +565,54 @@ def camel() -> Canvas:
             cv.set(x, y, CAMEL[2] if x < kx else CAMEL[1])
     for x in range(4, 8):  # the tail
         cv.set(x - 2, 22 + (x - 4), CAMEL[1])
+    return cv
+
+
+def _camel_asleep(cv: Canvas) -> Canvas:
+    DARK = ['#3A2418', '#5E3E28', '#80583A', '#A27650', '#BE9468']
+    body = oval(20, 25, 16, 7.5) | oval(17, 17, 8, 5.5)
+    for (x, y) in body:
+        k = (x - 4) / 32 + (y - 9) / 22
+        cv.set(x, y, DARK[4] if k < 0.55 else DARK[3] if k < 0.95 else DARK[2] if k < 1.3 else DARK[1])
+    for y in range(13, 24):  # a plain blue blanket with a pale stripe
+        for x in range(10, 26):
+            if (x, y) in body:
+                cv.set(x, y, '#E8DCC0' if y in (16, 17) else '#3E6A8A' if x < 18 else '#2E506A')
+    cv.hline(10, 24, 16, '#24405A')
+    for t in range(16):  # the neck stretched low and forward along the sand
+        x, y = 33 + t * 0.7, 25 + t * 0.32
+        for d in range(-1, 2):
+            cv.set(int(x), int(y + d), DARK[3] if d < 0 else DARK[2] if d == 0 else DARK[1])
+    for (x, y) in oval(45, 30, 3.6, 2.2):  # the head, chin on the sand, eyes shut
+        cv.set(x, y, DARK[3] if y < 30 else DARK[2])
+    cv.hline(43, 29, 2, DARK[0])  # the shut eye
+    cv.set(41, 27, DARK[2]); cv.set(40, 26, DARK[2])  # an ear laid back
+    for (kx, ky) in ((8, 31), (27, 32)):  # the folded knees
+        for (x, y) in oval(kx, ky, 4, 2):
+            cv.set(x, y, DARK[2] if x < kx else DARK[1])
+    for t in range(5):  # the tail curled round
+        cv.set(3 + t // 2, 24 + t, DARK[1])
+    return cv
+
+
+def corral_gate() -> Canvas:
+    """The east side of the corral with its gate, 18 x 60, seen end on like the west side:
+    a stout gate post at each end and a middle run of rails, and a gate of four boards
+    on iron strap hinges, swung open outward against its post so a hand can lead a horse
+    through, a rope loop on its latch post."""
+    cv = Canvas(18, 60, pad=PAD)
+    for y0 in (0, 44):
+        gp.post(cv, 4, y0, y0 + 15, w=3, ramp=BLEACHED)
+    gp.post(cv, 4, 30, 44, w=3, ramp=BLEACHED)  # the latch post
+    for y in list(range(0, 18)) + list(range(30, 60)):
+        cv.set(3, y, BLEACHED[2]); cv.set(8, y, BLEACHED[1])
+    for t in range(13):  # the gate, swung open outward (east) from the hinge post at the top
+        x, y = 8 + int(t * 0.62), 16 + t
+        for k in range(4):
+            cv.set(x + k // 2, y - k * 2 + 6, BLEACHED[4] if k % 2 == 0 else BLEACHED[2])
+        cv.set(x, y + 1, BLEACHED[1])
+    cv.set(7, 17, IRON[3]); cv.set(7, 21, IRON[3])  # the strap hinges
+    cv.set(4, 33, '#8A6A40'); cv.set(5, 34, '#8A6A40'); cv.set(4, 35, '#6A4A28')  # the rope loop
     return cv
 
 
@@ -846,6 +898,12 @@ def horse_tied() -> Canvas:
         cv.set(13, y, GREY[0])  # the mane falling on its off side
     for (x, y) in ((8, 3), (7, 2), (6, 1), (5, 1), (4, 2), (4, 3), (5, 4)):  # the rein looped round the rail
         cv.set(x, y, '#2E1E14')
+    # the rail's beam passes in front of its neck (review 19 Oct): the stretch of the
+    # hitching rail at the horse's height, the same rows and tones as hitching_rail, so it
+    # meets the rail drawn behind (rows 2-4 here are its rows 5-7 at the rail's y 178, the
+    # horse's 181); the muzzle shows above it, over the beam
+    for x in range(0, w):
+        cv.set(x, 2, BLEACHED[4]); cv.set(x, 3, BLEACHED[2]); cv.set(x, 4, BLEACHED[1])
     for y in range(15, 23):  # the striped blanket under the saddle, showing at the sides
         hw = half(y + 0.5) - 0.5
         for x in range(int(cx - hw), int(cx + hw) + 1):
@@ -1089,9 +1147,9 @@ def props() -> dict[str, Canvas]:
         'tumbleweed': tumbleweed(), 'wagon': wagon(), 'windpump': windpump(), 'trough': trough(),
         'cow_skull': cow_skull(), 'mine_portal': mine_portal(), 'dry_well': dry_well(), 'keg': keg(),
         'hay_bale': hay_bale(), 'dynamite_crate': dynamite_crate(), 'hitching_rail': hitching_rail(),
-        'poster_board': poster_board(), 'corral_side': corral_side(), 'corral_rail': corral_rail(),
+        'poster_board': poster_board(), 'corral_side': corral_side(), 'corral_gate': corral_gate(), 'corral_rail': corral_rail(),
         'palm': palm(True), 'palm_small': palm(False), 'sandstone_arch': sandstone_arch(), 'awning': awning(),
-        'water_jar': water_jar(), 'camel': camel(), 'tent': tent(), 'fire_pit': fire_pit(),
+        'water_jar': water_jar(), 'camel': camel(), 'camel_b': camel(1), 'tent': tent(), 'fire_pit': fire_pit(),
         'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
         'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
         'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
