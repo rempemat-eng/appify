@@ -390,6 +390,47 @@ def washing_line() -> Canvas:
     return cv
 
 
+def harbour_ferry() -> Canvas:
+    """The little island ferry tied up at Driftwood's jetty, 92 x 46, bow to the left: the
+    same boat Claude C draws moored at Lagoon Landing (isle_props.ferry_moored), since one
+    ferry plies the route, here under the harbour's own key (the harbour uses harbour
+    props only)."""
+    import isle_props
+    return isle_props.ferry_moored()
+
+
+def pier_ladder() -> Canvas:
+    """A ladder down from a jetty's end into the water, 10 x 24, in the three-quarter view
+    (art-faults.md rule 5: a jetty ends at a boat or a ladder): two wooden rails lit on the
+    left with rungs between, iron straps at the top where it is bolted to the jetty's edge,
+    weed on the rungs just above the waterline, the lower rungs dim and green under the
+    water, and small ripples where the rails go in."""
+    w, h = 10, 24
+    cv = Canvas(w, h, pad=PAD)
+    IRON = MATERIALS['iron']
+    water = 15  # the waterline
+    under = ('#3E5A4A', '#2E4438', '#24362C')
+    for y in range(h):
+        for (x, lit) in ((1, True), (7, False)):
+            if y > water:
+                c, edge = (under[0] if lit else under[1]), under[2]
+            elif y > water - 4:
+                c = LEAF[2] if (x + y) % 2 else (WOOD[2] if lit else WOOD[1])  # weed at the tide line
+                edge = WOOD[1]
+            else:
+                c, edge = (WOOD[3] if lit else WOOD[2]), WOOD[1]
+            cv.set(x, y, c); cv.set(x + 1, y, edge)
+    for y in range(3, h - 1, 4):  # the rungs
+        for x in range(3, 7):
+            above = y <= water
+            cv.set(x, y, WOOD[4] if above else under[0]); cv.set(x, y + 1, WOOD[1] if above else under[2])
+    for x in (1, 2, 7, 8):  # iron straps where it is bolted to the jetty's edge
+        cv.set(x, 0, IRON[3]); cv.set(x, 1, IRON[1])
+    for x in (0, 3, 6, 9):  # small ripples round the rails at the waterline
+        cv.set(x, water + 1, WTR[4] if x in (0, 6) else WTR[3])
+    return cv
+
+
 def buoy() -> Canvas:
     """A mooring buoy bobbing in the basin, 14 x 12, red with a white band."""
     cv = Canvas(14, 12, pad=PAD)
@@ -469,6 +510,7 @@ def props() -> dict[str, Canvas]:
         'boat_blue': fishing_boat(64, WTR), 'boat_red': fishing_boat(56, RED), 'net_rack': net_rack(),
         'lobster_pots': lobster_pots(), 'fish_stall': fish_stall(), 'bollard': bollard(), 'anchor': anchor(),
         'upturned_boat': upturned_boat(), 'washing_line': washing_line(), 'buoy': buoy(),
+        'harbour_ferry': harbour_ferry(), 'pier_ladder': pier_ladder(),
         'deck_chair': deck_chair(RED), 'deck_chair_b': deck_chair(WTR), 'driftwood': driftwood(), 'sailboat': sailboat(),
     }
 
