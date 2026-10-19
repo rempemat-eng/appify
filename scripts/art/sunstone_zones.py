@@ -436,8 +436,8 @@ def gulch(frame: int = 0):
         n = smooth_noise(x, y, 5, 216)
         cv.set(x, y, DESERT[1] if n > 0.6 else DESERT[2] if n > 0.25 else ADOBE[2])
     objects = [
-        ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 66, 178), ('poster', 'poster_board', 150, 86),
-        ('store', 'store', 150, 194), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
+        ('saloon', 'saloon', 6, 78), ('hitch-1', 'hitching_rail', 66, 178), ('poster', 'poster_board', 150, 86),
+        ('store', 'store', 150, 178), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
         ('tower', 'water_tower', 250, 196), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 14, 224),
         ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
         ('dyn-1', 'dynamite_crate', CART_X + 20, MINE_Y + 8),
@@ -1990,7 +1990,7 @@ def castle(frame: int = 0):
     objects = [
         # the north wall stands on its footing line (the bridge passes behind it to the
         # postern's arch, which opens onto the yard at the wall's foot)
-        ('tower-nw', 'round_tower', 40, 46), ('postern', 'postern', 86, 82), ('wall-n1', 'wall_run', 114, 82),
+        ('tower-nw', 'round_tower', 40, 46), ('postern', 'postern', 86, 70), ('wall-n1', 'wall_run', 114, 82),
         ('tower-ne', 'round_tower', 226, 46),
         ('keep', 'keep', 148, 156), ('bell', 'bell_tower', 54, 168),
         ('well', 'castle_well', 110, 300), ('dummy-1', 'training_dummy', 200, 300), ('rack', 'weapon_rack', 212, 336),
