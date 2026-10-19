@@ -241,6 +241,26 @@ def gulch(frame: int = 0):
         for d in range(5, 9):
             if (d + y) % 2 or d < 7:
                 style.darken(cv, MESA_X1 + d, y)
+    for x in range(MESA_X0, MESA_X1):  # desert varnish: dark streaks run down from the rim
+        if noise2(x // 3, 0, 232) > 0.62:
+            top = rim(x)
+            for k in range(2, 4 + int(noise2(x // 3, 1, 232) * 14)):
+                if (x + k) % 3:
+                    cv.set(x, top + k, MESA[1] if k < 10 else MESA[0])
+    for i in range(7):  # a few cracks down the face, lit on their left
+        x = MESA_X0 + 6 + int(noise2(i, 0, 233) * (MESA_X1 - MESA_X0 - 12))
+        if abs(x - CART_X - 5) < 20:
+            continue
+        top = rim(x)
+        for k in range(2, FACE_H - 2):
+            xx = x + (k // 7) % 2
+            cv.set(xx, top + k, MESA[0]); cv.set(xx - 1, top + k, MESA[3])
+    for i in range(16):  # blocks fallen from the face, lying in its shadow
+        x = MESA_X0 + int(noise2(i, 0, 234) * (MESA_X1 - MESA_X0))
+        if abs(x - CART_X - 5) < 24:
+            continue
+        y = rim(x) + FACE_H + 2 + int(noise2(i, 1, 234) * 7)
+        detail.pebble(cv, x, y, MESA, big=i % 3 == 0)
     for i in range(30):  # scrub on the mesa top
         x, y = MESA_X0 + 6 + int(noise2(i, 0, 231) * (MESA_X1 - MESA_X0 - 12)), int(noise2(i, 1, 231) * (MESA_RIM - 10))
         detail.grass_tuft(cv, x, y, i % 6, ['#5A4A2A', '#7A6436', '#9A8044', '#B89A58', '#D2B672'], 2)
@@ -298,12 +318,13 @@ def gulch(frame: int = 0):
         n = smooth_noise(x, y, 5, 216)
         cv.set(x, y, DESERT[1] if n > 0.6 else DESERT[2] if n > 0.25 else ADOBE[2])
     objects = [
-        ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 118, 178), ('poster', 'poster_board', 150, 86),
+        ('saloon', 'saloon', 6, 94), ('hitch-1', 'hitching_rail', 66, 178), ('poster', 'poster_board', 150, 86),
         ('store', 'store', 6, 210), ('keg-1', 'keg', 100, 290), ('keg-2', 'keg', 104, 280),
         ('tower', 'water_tower', 168, 200), ('pump', 'windpump', 30, 226 + 100), ('trough', 'trough', 176, 300),
         ('well', 'dry_well', 58, 360), ('wagon', 'wagon', 16, 470), ('hay-1', 'hay_bale', 122, 524), ('hay-2', 'hay_bale', 108, 538),
         ('dyn-1', 'dynamite_crate', CART_X + 20, MINE_Y + 8),
-        ('dyn-2', 'dynamite_crate', CART_X + 26, MINE_Y + 30),
+        ('dyn-2', 'dynamite_crate', CART_X + 26, MINE_Y + 30), ('tub', 'ore_tub', CART_X - 5, MINE_Y + 10),
+        ('keg-f', 'keg', MESA_X0 - 30, 100), ('sack-f', 'hay_bale', MESA_X0 - 52, 104),
         ('corral-n', 'corral_rail', ccx - 46, ccy - 36), ('corral-s', 'corral_rail', ccx - 46, ccy + 22),
         ('corral-w', 'corral_side', ccx - 52, ccy - 22),
         ('cactus-1', 'saguaro', 10, 380), ('cactus-2', 'saguaro_small', 224, 400), ('cactus-3', 'saguaro', 150, 520),
@@ -607,10 +628,10 @@ def fire_ash(X: int, Y: int) -> str:
     ASH, BASALT = MATERIALS['ash'], MATERIALS['basalt']
     n = smooth_noise(X, Y, 30, 261)
     c = ASH[2] if n > 0.3 or (n > 0.26 and (X + Y) % 2) else ASH[1]
-    g = noise2(X, Y, 270)
-    if g > 0.93:
+    g = noise2(X // 2, Y, 270)  # two pixels wide, so they hold up at the phone's scale
+    if g > 0.965:
         c = BASALT[2]  # a cinder
-    elif g > 0.9:
+    elif g > 0.95:
         c = ASH[3]
     return c
 
@@ -855,6 +876,8 @@ def caldera(frame: int = 0):
         if (x, y) in river or not (0 <= x < W and 0 <= y < H):
             continue
         ash_flags(cv, x, y, 505)
+    ash_dressing(cv, glow_skip | yard | landing | east_path | down | {(x, y) for y in range(270, 320) for x in range(0, CART_STOP + 30)}
+                 | {(x, y) for (x, y) in oval(120, 500, 60, 32)}, 793, 110, *FIRE_OFF['caldera'])
     # the sparring ring: crust floor in a circle of short columns
     ccx, ccy = 120, 500
     for (x, y) in oval(ccx, ccy, 46, 22):
@@ -865,13 +888,22 @@ def caldera(frame: int = 0):
         cp_hex(cv, hex_px[0], hex_px[1], 5)
     objects = [
         ('forge', 'forge', 20, 320), ('shrine', 'ember_shrine', 150, 360), ('vent-1', 'cooling_vent', 40, 460),
-        ('cols-1', 'basalt_columns', 4, 96), ('cols-2', 'basalt_columns_low', 70, 120), ('cols-3', 'basalt_columns', 250, 120),
-        ('cols-4', 'basalt_columns_low', 262, 220), ('cols-5', 'basalt_columns', 0, 500),
-        ('obs-1', 'obsidian', 110, 200), ('obs-2', 'obsidian_small', 238, 326), ('obs-3', 'obsidian', 262, 556 - 26),
-        ('obs-4', 'obsidian_small', 60, 230), ('vent-2', 'cooling_vent', 214, 196), ('vent-3', 'cooling_vent', 280, 360),
-        ('scree-1', 'scree', 92, 176), ('scree-2', 'scree_small', 206, 90), ('scree-3', 'scree_b', 170, 430),
-        ('scree-4', 'scree_small', 176, 546), ('scree-5', 'scree_small', 6, 486),
-        ('snag-1', 'charred_snag', 290, 236), ('snag-2', 'charred_snag', 14, 120 + 64), ('snag-3', 'charred_snag', 270, 466),
+        # basalt columns where the lava once cooled slowly: a stepped formation under the
+        # crater rim in the north-west, and another against the west wall by the tunnel
+        ('cols-1', 'basalt_columns', 4, 96), ('cols-2', 'basalt_columns_low', 36, 110), ('cols-6', 'basalt_columns_low', 66, 126),
+        ('cols-3', 'basalt_columns', 266, 106), ('cols-4', 'basalt_columns_low', 236, 124),
+        ('cols-5', 'basalt_columns', 0, 500),
+        # obsidian where lava met the air and froze glassy: on the river's banks
+        ('obs-1', 'obsidian', 110, 204), ('obs-2', 'obsidian_small', 238, 340), ('obs-3', 'obsidian', 258, 452),
+        ('obs-4', 'obsidian_small', 140, 236),
+        # the vents steam on the upper slope under the rim
+        ('vent-2', 'cooling_vent', 214, 168), ('vent-3', 'cooling_vent', 262, 196),
+        # scree fallen from the rim, at the foot of the columns
+        ('scree-1', 'scree', 92, 170), ('scree-2', 'scree_small', 206, 92), ('scree-3', 'scree_b', 170, 430),
+        ('scree-4', 'scree_small', 176, 546), ('scree-5', 'scree_small', 30, 486),
+        # a stand of trees the old flows burnt, together on the south-east slope
+        ('snag-1', 'charred_snag', 268, 380), ('snag-2', 'charred_snag', 290, 404), ('snag-3', 'charred_snag', 262, 418),
+        ('tub', 'ore_tub', CART_STOP - 34, 282),  # a tub waiting at the buffer
     ]
     # the bridge is part of the ground (walkable), drawn across the river
     deck = style.finalize(cdp.basalt_bridge(), name='basalt_bridge')
@@ -1032,6 +1064,7 @@ def springs(frame: int = 0):
     for (x, y) in stream:  # the path crosses the stream on stepping stones
         if (x, y) in path:
             blocked.discard((x, y))
+    ash_dressing(cv, blocked | lake | sinter | path, 794, 70, *FIRE_OFF['springs'])
     for (lx, ly) in ((52, 330), (60, 420), (150, 466), (214, 478)):
         light_pool(cv, lx, ly + 22, 18, 8, '#F2A048', glow_skip)
     objects = [
@@ -1137,9 +1170,11 @@ def scorch(frame: int = 0):
             for k in range(5):
                 cv.set(x + k, y + (k * 7 // 5) % 2, LAVA[1] if k % 2 else BASALT[1])
     channel = paint_lava(cv, 'scorch', frame)
+    road = worlds.thick(SCORCH_ROAD, 9, seed=752)
+    ash_dressing(cv, channel | road | {(x, y) for y in range(H) for x in range(W) if dist[y][x] < 14 or x < 40},
+                 791, 120, *FIRE_OFF['scorch'])
     # the road: the gulch's rutted track over the sand, trodden pale through the scrub
     # and ash to the bridge, then flagged as it climbs to Hearthold
-    road = worlds.thick(SCORCH_ROAD, 9, seed=752)
     for (x, y) in road:
         if not (0 <= x < W and 0 <= y < H) or (x, y) in channel:
             continue
@@ -1157,17 +1192,24 @@ def scorch(frame: int = 0):
             ash_flags(cv, x, y, 754)
             continue
         cv.set(x, y, c)
+    road_edges(cv, {(x, y) for (x, y) in road if x >= 116}, channel)
+    for (lx, ly) in ((182, 300), (150, 150)):  # the road's lanterns throw a warm pool
+        light_pool(cv, lx + 6, ly + 26, 18, 8, '#F2A048', channel)
     deck, parapet = stone_bridge(cv, 84, 372, 36, 24, vertical=False)
     objects = [
         ('skull', 'cow_skull', 20, 430), ('weed-1', 'tumbleweed', 14, 320), ('cactus-1', 'saguaro_small', 2, 470),
-        ('pear-1', 'prickly_pear', 4, 548), ('snag-1', 'charred_snag', 200, 250), ('snag-2', 'charred_snag', 270, 420),
-        ('snag-3', 'charred_snag', 110, 140), ('obs-1', 'obsidian', 224, 470), ('obs-2', 'obsidian_small', 120, 300),
-        ('cols-1', 'basalt_columns', 262, 40), ('cols-2', 'basalt_columns_low', 218, 70), ('scree-1', 'scree', 250, 220),
+        ('pear-1', 'prickly_pear', 4, 548),
+        # the last trees on the way up, burnt where the flows passed: one stand of them
+        ('snag-1', 'charred_snag', 226, 236), ('snag-2', 'charred_snag', 252, 250), ('snag-3', 'charred_snag', 236, 268),
+        # obsidian at the drain's banks
+        ('obs-1', 'obsidian', 96, 230), ('obs-2', 'obsidian_small', 120, 300),
+        # basalt columns in one outcrop on the high ground in the north-east, scree below
+        ('cols-1', 'basalt_columns', 262, 40), ('cols-2', 'basalt_columns_low', 236, 60), ('scree-1', 'scree', 244, 112),
         ('scree-2', 'scree_small', 196, 410), ('lantern-1', 'stone_lantern', 182, 300), ('lantern-2', 'stone_lantern', 150, 150),
-        ('vent-1', 'cooling_vent', 284, 500),
-        # the scrub belt between the sand and the ash
-        ('scrub-1', 'desert_scrub', 14, 238), ('scrub-2', 'desert_scrub_b', 18, 452), ('scrub-3', 'desert_scrub', 8, 120),
-        ('scrub-4', 'desert_scrub_b', 22, 512),
+        ('vent-1', 'cooling_vent', 270, 470),
+        # the scrub belt between the sand and the ash, in clumps, never in a line
+        ('scrub-1', 'desert_scrub', 26, 236), ('scrub-2', 'desert_scrub_b', 4, 456), ('scrub-3', 'desert_scrub', 30, 142),
+        ('scrub-4', 'desert_scrub_b', 44, 520), ('scrub-5', 'desert_scrub', 10, 262),
     ]
     blocked = ((hot - deck) | parapet)
     stands = {'gulch': (8, 384), 'track': (48, 384), 'bridge': (102, 384), 'castle': (160, 8), 'climb': (170, 250),
@@ -1183,6 +1225,46 @@ def basalt_flags(cv: Canvas, x: int, y: int, seed: int):
     if (x + (y // 7) % 2 * 5) % 10 == 0 or y % 7 == 0:
         c = BASALT[0]
     cv.set(x, y, c)
+
+
+def ash_dressing(cv: Canvas, skip, seed: int, count: int = 90, ox: int = 0, oy: int = 0):
+    """Small things lying on the fire country's ash (art-style.md, "ground that is never
+    flat", in clusters of two or more pixels so they hold up on a phone): little heaps
+    of basalt rubble, each stone lit on its upper left, and short wind drifts of pale
+    ash with a shaded lee. `skip`: pixels to leave alone (lava, paths, walls). Placed
+    in the fire country's coordinates (ox, oy: this zone's offset), so the pattern
+    never repeats from one zone to the next."""
+    BASALT, ASH = MATERIALS['basalt'], MATERIALS['ash']
+    for i in range(count):
+        X, Y = int(noise2(i, ox // 7 + oy // 11, seed) * W), int(noise2(i, 5 + ox // 7 + oy // 11, seed) * H)
+        if any((X + dx, Y + dy) in skip for dx in (-4, 0, 6) for dy in (-3, 0, 3)):
+            continue
+        if i % 3:  # rubble: two to four stones
+            for k in range(2 + i % 3):
+                sx = X + int((noise2(i, k, seed + 1) - 0.5) * 9)
+                sy = Y + int((noise2(i, k, seed + 2) - 0.5) * 5)
+                detail.pebble(cv, sx, sy, BASALT, big=(k == 0 and i % 4 == 1))
+        else:  # a drift: a pale crest with its shaded lee below
+            n = 4 + i % 4
+            for k in range(n):
+                cv.set(X + k, Y, ASH[3] if k % 3 else ASH[4])
+                if 0 < k < n - 1:
+                    cv.set(X + k + 1, Y + 1, ASH[1])
+
+
+def road_edges(cv: Canvas, road: set, skip=frozenset()):
+    """Where a flagged road meets the ash: a lit kerb on its upper left and a soft
+    shadow on its lower right, so the road reads as laid, not painted."""
+    BASALT, ASH = MATERIALS['basalt'], MATERIALS['ash']
+    for (x, y) in road:
+        if (x, y) in skip:
+            continue
+        for (dx, dy, c) in ((-1, 0, ASH[4]), (0, -1, ASH[4]), (1, 0, BASALT[3]), (0, 1, BASALT[3])):
+            q = (x + dx, y + dy)
+            if q not in road and q not in skip and 0 <= q[0] < W and 0 <= q[1] < H:
+                cv.set(*q, c)
+                if c == BASALT[3]:
+                    style.darken(cv, q[0] + dx, q[1] + dy)
 
 
 def ash_flags(cv: Canvas, x: int, y: int, seed: int):
@@ -1235,6 +1317,23 @@ def stone_bridge(cv: Canvas, x0: int, y0: int, w: int, h: int, vertical: bool = 
     return deck, parapet
 
 
+def _cell(x: int, y: int, cell: int, seed: int):
+    """The jittered cell (Voronoi) a pixel falls in: its id, the distance to the next
+    cell's edge, and which side of the cell's centre the pixel lies (for lit lips)."""
+    best, second, bid, bc = 1e9, 1e9, None, (0, 0)
+    gx, gy = x // cell, y // cell
+    for j in (-1, 0, 1):
+        for i in (-1, 0, 1):
+            cx = (gx + i) * cell + noise2(gx + i, gy + j, 240 + seed) * cell
+            cy = (gy + j) * cell + noise2(gx + i, gy + j, 241 + seed) * cell
+            d = (x - cx) ** 2 + (y - cy) ** 2
+            if d < best:
+                best, second, bid, bc = d, best, (gx + i, gy + j), (cx, cy)
+            elif d < second:
+                second = d
+    return bid, math.sqrt(second) - math.sqrt(best), bc[0] - x, bc[1] - y
+
+
 # Hearthold's curtain wall: the band of the isle (as a fraction of its radius) between
 # the flagged yard and the cliff, and the two ways through it (x spans).
 WALL_IN, WALL_OUT, WALL_FACE = 0.875, 0.965, 10
@@ -1253,7 +1352,7 @@ def castle(frame: int = 0):
     steward's training yard. Nothing green grows this close to the lava: the courtyard
     is flagged, the old herb garden long gone."""
     LAVA, BASALT, ASH = MATERIALS['lava'], MATERIALS['basalt'], MATERIALS['ash']
-    ASHLAR = MATERIALS['ashlar']
+    ASHLAR = csp.STONE_R  # the same dressed stone as the keep and the towers
     cv = Canvas(W, H)
     for y in range(H):  # the fire country's ash, running on from the caldera and the Scorch
         for x in range(W):
@@ -1276,18 +1375,20 @@ def castle(frame: int = 0):
         if rr(x, y) > 0.99 and y > iy:
             c = LAVA[1] if (x + y) % 3 else BASALT[1]
         cv.set(x, y, c)
-    for (x, y) in yard:  # square flags, each its own tone, lit on top and left (no moss here)
-        SL = ['#8C8574', '#A9A28F', '#C2B9A2', '#D4CBB3', '#E6DEC8']
-        row = y // 9
-        cx, cy = (x + (row % 2) * 6) % 12, y % 9
-        t = 3 if noise2((x + (row % 2) * 6) // 12, row, 797) > 0.35 else 2 if noise2((x + (row % 2) * 6) // 12, row, 797) > 0.1 else 4
-        c = SL[t]
-        if cx == 11 or cy == 8:
-            c = SL[0]
-        elif cx == 0 or cy == 0:
-            c = SL[min(4, t + 1)]
-        elif cx == 10 or cy == 7:
-            c = SL[t - 1]
+    # the yard: big irregular flagstones, dusty and worn, each its own tone, the joints
+    # soft, a lit lip on the upper left of each stone; calmer than the walls so the
+    # buildings stand off it. No moss this close to the lava.
+    FLAG = ['#6E6862', '#857E75', '#968F84', '#A49C90', '#B4AC9E']
+    for (x, y) in yard:
+        cid, edge, dx, dy = _cell(x, y, 13, 797)
+        t = noise2(cid[0], cid[1], 798)
+        c = FLAG[3] if t > 0.6 else FLAG[2] if t > 0.2 else FLAG[1]
+        if edge < 1.2:
+            c = FLAG[0]  # the joint
+        elif edge < 2.4 and dx + dy > 0:
+            c = FLAG[4] if c != FLAG[1] else FLAG[3]  # the lit lip toward the light
+        elif noise2(x // 2, y // 2, 799) > 0.94:
+            c = FLAG[1]  # a scuff
         cv.set(x, y, c)
     # the wall walk: a lit coping, merlons standing proud along the outer edge
     for (x, y) in wall:
@@ -1335,10 +1436,20 @@ def castle(frame: int = 0):
     # down to the north bridge
     road = worlds.thick([(160, H + 8), (160, H - 40), (162, 452)], 10, seed=737)
     north = worlds.thick([(130, -8), (124, 24), (101, 52)], 8, seed=738)
+    ash_dressing(cv, lava | isle | road | north | {(x, y) for x in range(130, 196) for y in range(456, 520)},
+                 792, 70, *FIRE_OFF['hearthold'])
     for (x, y) in (road | north):
         if (x, y) in lava or not (0 <= x < W and 0 <= y < H):
             continue
         ash_flags(cv, x, y, 739)
+    road_edges(cv, {(x, y) for (x, y) in road | north if (x, y) not in lava}, lava)
+    light_pool(cv, 156, 32, 18, 8, '#F2A048', lava)  # the lantern by the postern path
+    # the way most walked across the yard, gate to keep door: the flags worn smooth and
+    # paler down its middle
+    for (x, y) in worlds.thick([(161, 384), (162, 330), (200, 290)], 9, seed=740):
+        if (x, y) in yard and (x, y) not in face and noise2(x // 3, y // 3, 741) > 0.25:
+            r, g, b, _a = cv.get(x, y)
+            cv.set(x, y, (min(255, r + 10), min(255, g + 9), min(255, b + 7), 255))
     # the bridges: the long one from the south bank to the gatehouse, the postern bridge
     south_deck, south_par = stone_bridge(cv, 146, 392, 30, 66)
     north_deck, north_par = stone_bridge(cv, 89, 50, 24, 70)
@@ -1346,9 +1457,10 @@ def castle(frame: int = 0):
         ('tower-nw', 'round_tower', 46, 66), ('wall-n1', 'wall_run', 114, 104), ('tower-ne', 'round_tower', 226, 66),
         ('keep', 'keep', 148, 156), ('bell', 'bell_tower', 54, 168),
         ('well', 'castle_well', 110, 300), ('dummy-1', 'training_dummy', 200, 300), ('rack', 'weapon_rack', 212, 336),
-        ('tower-sw', 'round_tower', 50, 232), ('gate', 'gatehouse', 102, 322),
+        ('tower-sw', 'round_tower', 50, 232), ('gate', 'gatehouse', 102, 320),
         ('pole-1', 'banner_pole', 128, 466), ('pole-2', 'banner_pole', 180, 466),
         ('lantern-n', 'stone_lantern', 150, 6),
+        ('bench-1', 'stone_bench', 64, 336), ('bench-2', 'stone_bench', 226, 266),
         ('dragon', 'dragon', 196, 132),  # perched on the keep (it flies when motion is on)
     ]
     blocked = ((lava | rim | wall | face) - south_deck - north_deck) | south_par | north_par
