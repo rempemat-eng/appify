@@ -111,3 +111,79 @@ export function tileAt(region: RegionId, x: number, y: number): RegionTile | und
   const row = Math.floor(y / TILE.height) + b.minRow;
   return regionTiles(region).find((t) => t.col === col && t.row === row);
 }
+
+/** How far (region pixels) the companion must be over a zone's edge before it counts as in
+ *  the next zone, so walking along a border does not flick the name or the sound. */
+export const ZONE_HYSTERESIS = 12;
+
+/**
+ * The zone a point is in, keeping the previous zone while the point is still within
+ * `margin` pixels of it (docs/vision/home-hub.md: no ping-pong at an edge).
+ */
+export function tileWithHysteresis(
+  region: RegionId,
+  prev: TileId | undefined,
+  x: number,
+  y: number,
+  margin = ZONE_HYSTERESIS,
+): RegionTile | undefined {
+  const tile = tileAt(region, x, y);
+  if (!prev || tile?.id === prev) return tile;
+  const old = regionTiles(region).find((t) => t.id === prev);
+  if (!old) return tile;
+  const o = tileOrigin(region, old);
+  const inside =
+    x >= o.x - margin &&
+    x < o.x + TILE.width + margin &&
+    y >= o.y - margin &&
+    y < o.y + TILE.height + margin;
+  return inside ? old : tile;
+}
+
+/** A rectangle in region pixels (the part of the region the camera shows). */
+export type RegionRect = { x0: number; y0: number; x1: number; y1: number };
+
+/** Every grid cell (zone-sized, inside the region or past its edge) that a rectangle
+ *  grown by `margin` touches. */
+export function cellsNear(region: RegionId, view: RegionRect, margin: number) {
+  const b = regionBounds(region);
+  const c0 = Math.floor((view.x0 - margin) / TILE.width) + b.minCol;
+  const c1 = Math.floor((view.x1 + margin - 1) / TILE.width) + b.minCol;
+  const r0 = Math.floor((view.y0 - margin) / TILE.height) + b.minRow;
+  const r1 = Math.floor((view.y1 + margin - 1) / TILE.height) + b.minRow;
+  const out: { col: number; row: number }[] = [];
+  for (let col = c0; col <= c1; col++) for (let row = r0; row <= r1; row++) out.push({ col, row });
+  return out;
+}
+
+/** How far past the camera's view a zone is mounted, and how far it may drift before it
+ *  is let go (twice this). Small, because a phone sees most of one zone: the region's
+ *  pictures are fetched ahead (zone-prefetch.ts) so a zone mounting at the margin draws at
+ *  once, and the doubled margin stops a zone at the edge mounting and unmounting as the
+ *  companion turns. */
+export const MOUNT_MARGIN = 24;
+
+/**
+ * The zones to mount for a view: those within MOUNT_MARGIN of it, plus any already
+ * mounted that are still within twice that. Mounting what the camera can see (not every
+ * neighbour of the zone the companion stands in) keeps a phone's memory to a few zones
+ * and stops a border from changing the mounted set as the companion steps over it.
+ */
+export function zonesToMount(
+  region: RegionId,
+  view: RegionRect,
+  mounted: readonly TileId[] = [],
+  margin = MOUNT_MARGIN,
+): TileId[] {
+  const tiles = regionTiles(region);
+  const near = (m: number) =>
+    new Set(cellsNear(region, view, m).map(({ col, row }) => `${col},${row}`));
+  const close = near(margin);
+  const kept = near(margin * 2);
+  return tiles
+    .filter(
+      (t) =>
+        close.has(`${t.col},${t.row}`) || (mounted.includes(t.id) && kept.has(`${t.col},${t.row}`)),
+    )
+    .map((t) => t.id);
+}
