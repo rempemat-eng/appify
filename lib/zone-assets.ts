@@ -106,6 +106,7 @@ import propCityQuayBollard from '@/assets/zones/props/city_quay_bollard.png';
 import propCityStreetTree from '@/assets/zones/props/city_street_tree.png';
 import propCityStreetTreeB from '@/assets/zones/props/city_street_tree_b.png';
 import propCityTramStop from '@/assets/zones/props/city_tram_stop.png';
+import propCityTreePlanted from '@/assets/zones/props/city_tree_planted.png';
 import propCityVendingBox from '@/assets/zones/props/city_vending_box.png';
 import propCityVendingBoxB from '@/assets/zones/props/city_vending_box_b.png';
 import propCityWaterTaxi from '@/assets/zones/props/city_water_taxi.png';
@@ -169,6 +170,7 @@ import propGasLamp from '@/assets/zones/props/gas_lamp.png';
 import propGatehouse from '@/assets/zones/props/gatehouse.png';
 import propGearPile from '@/assets/zones/props/gear_pile.png';
 import propGlassDome from '@/assets/zones/props/glass_dome.png';
+import propGlassScreen from '@/assets/zones/props/glass_screen.png';
 import propGlowCaps from '@/assets/zones/props/glow_caps.png';
 import propGrowLamp from '@/assets/zones/props/grow_lamp.png';
 import propHabHub from '@/assets/zones/props/hab_hub.png';
@@ -180,6 +182,7 @@ import propHeron from '@/assets/zones/props/heron.png';
 import propHibiscus from '@/assets/zones/props/hibiscus.png';
 import propHitchingRail from '@/assets/zones/props/hitching_rail.png';
 import propHollowTree from '@/assets/zones/props/hollow_tree.png';
+import propHoloMap from '@/assets/zones/props/holo_map.png';
 import propHorse from '@/assets/zones/props/horse.png';
 import propHouseBlue from '@/assets/zones/props/house_blue.png';
 import propHouseRed from '@/assets/zones/props/house_red.png';
@@ -759,6 +762,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   city_street_tree: propCityStreetTree,
   city_street_tree_b: propCityStreetTreeB,
   city_tram_stop: propCityTramStop,
+  city_tree_planted: propCityTreePlanted,
   city_vending_box: propCityVendingBox,
   city_vending_box_b: propCityVendingBoxB,
   city_water_taxi: propCityWaterTaxi,
@@ -822,6 +826,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   gatehouse: propGatehouse,
   gear_pile: propGearPile,
   glass_dome: propGlassDome,
+  glass_screen: propGlassScreen,
   glow_caps: propGlowCaps,
   grow_lamp: propGrowLamp,
   hab_hub: propHabHub,
@@ -833,6 +838,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   hibiscus: propHibiscus,
   hitching_rail: propHitchingRail,
   hollow_tree: propHollowTree,
+  holo_map: propHoloMap,
   horse: propHorse,
   house_blue: propHouseBlue,
   house_red: propHouseRed,
