@@ -1288,7 +1288,7 @@ STANDS = {
 LANDMARKS = [
     # the landing: the boathouse above the lagoon, the ferry at the pier, a canoe hauled
     # up on the sand, a heron fishing the river's mouth, a banana patch behind the boathouse
-    ('boathouse', 'boathouse', 184, 918), ('ferry', 'island_ferry', 174, 1049), ('canoe', 'canoe', 222, 974),
+    ('boathouse', 'boathouse', 184, 920), ('ferry', 'island_ferry', 174, 1049), ('canoe', 'canoe', 222, 974),
     ('heron', 'heron', 60, 905), ('banana-1', 'banana', 236, 906), ('banana-2', 'banana', 234, 892),
     # the rainforest: a fallen giant across the floor by the pool in the bend, its stump
     ('log', 'mossy_log', 106, 474),

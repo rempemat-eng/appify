@@ -30,6 +30,8 @@ import propBasaltStumpsB from '@/assets/zones/props/basalt_stumps_b.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBed from '@/assets/zones/props/bed.png';
 import propBeehive from '@/assets/zones/props/beehive.png';
+import propBeehiveF1 from '@/assets/zones/props/beehive_f1.png';
+import propBeehiveF2 from '@/assets/zones/props/beehive_f2.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
 import propBirdOfParadise from '@/assets/zones/props/bird_of_paradise.png';
@@ -99,6 +101,8 @@ import propCityCarC from '@/assets/zones/props/city_car_c.png';
 import propCityCarD from '@/assets/zones/props/city_car_d.png';
 import propCityCarE from '@/assets/zones/props/city_car_e.png';
 import propCityCargoShip from '@/assets/zones/props/city_cargo_ship.png';
+import propCityCat from '@/assets/zones/props/city_cat.png';
+import propCityCatC from '@/assets/zones/props/city_cat_c.png';
 import propCityContainerStack from '@/assets/zones/props/city_container_stack.png';
 import propCityContainerStackB from '@/assets/zones/props/city_container_stack_b.png';
 import propCityContainerStackD from '@/assets/zones/props/city_container_stack_d.png';
@@ -768,6 +772,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bathhouse: propBathhouse,
   bed: propBed,
   beehive: propBeehive,
+  beehive_f1: propBeehiveF1,
+  beehive_f2: propBeehiveF2,
   bell_tower: propBellTower,
   bench: propBench,
   bird_of_paradise: propBirdOfParadise,
@@ -837,6 +843,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   city_car_d: propCityCarD,
   city_car_e: propCityCarE,
   city_cargo_ship: propCityCargoShip,
+  city_cat: propCityCat,
+  city_cat_c: propCityCatC,
   city_container_stack: propCityContainerStack,
   city_container_stack_b: propCityContainerStackB,
   city_container_stack_d: propCityContainerStackD,
