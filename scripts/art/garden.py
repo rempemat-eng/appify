@@ -28,7 +28,7 @@ TOP = meadow.TOP  # forest band above y = 0
 SCALE = 4
 
 # ---- palette -------------------------------------------------------------
-from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK, PLASTER  # noqa: E402
+from materials import G, P, WTR, SAND, WOOD, STONE, LEAF, NAP, RED, CREAM, GOLD, INK, PLASTER, SOIL  # noqa: E402
 
 
 # ---- terrain masks (native pixels) ----------------------------------------
@@ -136,19 +136,26 @@ POND_C, POND_R = (70, 214), (44, 24)
 POND_BOX = (22, 186, 96, 56)
 
 
+POND_RECT = (30, 194, 110, 234, 9)  # x0, y0, x1, y1, corner radius: on the soft grid (verticality.md 4f)
+
+
 def _pond_reach(x: float, y: float) -> float:
-    """How far the pond reaches toward (x, y), as a share of its oval: a rim with a few
-    soft bays and a shallow point or two, never bulging past the oval (so it stays in
-    its box), never a clean ellipse (art-faults.md rule 3)."""
-    a = math.atan2((y - POND_C[1]) / POND_R[1], (x - POND_C[0]) / POND_R[0])
-    k = (0.90 + 0.05 * math.sin(2 * a + 0.8) + 0.035 * math.sin(3 * a + 2.1) + 0.025 * math.sin(5 * a + 0.4)
-         + (smooth_noise(x, y, 7, 5) - 0.5) * 0.12)
-    return min(k, 0.965)
+    """How far inside the pond's rounded rectangle (x, y) lies, in px (negative outside),
+    the edge roughened within about 2 px so it reads as a natural bank on a made shape
+    (Matt, 19 Oct 22:40, B11: not an ellipse with an even rim). The south-east corner,
+    where it spills, reaches a little further and lies lower."""
+    x0, y0, x1, y1, r = POND_RECT
+    cx = min(max(x, x0 + r), x1 - r)
+    cy = min(max(y, y0 + r), y1 - r)
+    d = r - math.hypot(x - cx, y - cy) if (cx != x and cy != y) else min(x - x0, x1 - x, y - y0, y1 - y)
+    d += (smooth_noise(x, y, 6, 5) - 0.5) * 3.2
+    if x > 82 and y > 222:
+        d += 1.2  # the spill
+    return d
 
 
-POND = {(x, y) for (x, y) in oval(POND_C[0], POND_C[1], POND_R[0], POND_R[1])
-        if ((x + 0.5 - POND_C[0]) / POND_R[0]) ** 2 + ((y + 0.5 - POND_C[1]) / POND_R[1]) ** 2
-        <= _pond_reach(x + 0.5, y + 0.5) ** 2}
+POND = {(x, y) for y in range(POND_RECT[1] - 3, POND_RECT[3] + 4) for x in range(POND_RECT[0] - 3, POND_RECT[2] + 4)
+        if _pond_reach(x + 0.5, y + 0.5) >= 0}
 BANK = set()
 for (x, y) in POND:
     for dx in range(-3, 4):
@@ -206,49 +213,59 @@ RILL, RILL_BANK = _rill_points()
 
 # Raised flower planters# Raised flower planters beside the stall path (decorative, watered by the can).
 FLOWER_BEDS = [(222, 142, 46, 18), (222, 168, 46, 18)]  # x, y, w, h: a matched pair by the lantern
-LILY_PADS = [(44, 208), (82, 224), (64, 200), (52, 220)]
+LILY_PADS = [(44, 208), (49, 212), (40, 213), (52, 205), (96, 220), (100, 216)]  # in two clusters, the frog on the first
 FROG_PAD = LILY_PADS[0]
 
 
 def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
     cv = Canvas(W, H)
     phase = frame % 4
-    # Broad, close-valued grass masses with soft, dithered edges, then many small
-    # tufts of blades (dark roots, lit tips) in a few shapes, denser toward the edges
-    # and around props, sparse in the trodden clearing (coherence plan, 6c).
+    # The turf is the valley's one ground (A5, Matt 19 Oct 22:40: "hard cut offs between
+    # sections"): ground.valley paints it from the valley's own coordinates, so its patches,
+    # tufts and blades run on across the garden's edges into the Woodland and the Riverside
+    # (and blend to the forest floor there once Claude A drops ground.FIXED). The garden then
+    # adds its own small flowers and clover, fewer in the trodden clearing.
     import detail
-    for y in range(H):
-        for x in range(W):
-            n = smooth_noise(x, y, 30, 11)
-            light = n > 0.66 or (n > 0.62 and (x + y) % 2 == 0) or (n > 0.6 and (x + 2 * y) % 4 == 0)
-            cv.set(x, y, G[3] if light else G[2])
+    import ground
+    ground.valley(cv, 'garden', frame)
     for ty in range(0, H, 6):
         for tx in range(0, W, 6):
             x = tx + int(noise2(tx, ty, 4) * 6)
             y = ty + int(noise2(tx, ty, 5) * 6)
             clearing = ((x - PLAZA[0]) / 70) ** 2 + ((y - PLAZA[1] + 40) / 70) ** 2 < 1
-            edge = min(x, W - x, y, H - y) < 26
-            cluster = smooth_noise(x, y, 34, 63) > 0.58
-            density = 0.05 if clearing else 0.5 if edge else 0.36 if cluster else 0.14
-            if noise2(tx, ty, 3) < density:
-                ground = 3 if cv.get(x, y)[:3] == tuple(int(G[3][k:k + 2], 16) for k in (1, 3, 5)) else 2
-                kind = int(noise2(tx, ty, 8) * 6) if not clearing else 3
-                detail.grass_tuft(cv, x, y, kind, G, ground)
-            elif noise2(tx, ty, 7) < 0.07:
+            if clearing or not (0 <= x < W - 1 and 0 <= y < H - 1):
+                continue
+            if noise2(tx, ty, 7) < 0.07:
                 cv.set(x, y, '#E9E4CF')  # a tiny white flower
                 cv.set(x, y + 1, G[1])
             elif noise2(tx, ty, 9) < 0.05:  # clover: three leaves, lit on the left
                 cv.set(x, y, G[4]); cv.set(x + 1, y, G[3]); cv.set(x, y + 1, G[3]); cv.set(x + 1, y + 1, G[1])
 
-    # pond bank (sand) then water
+    # The pond's bank, by side (B11): damp earth and mud on the low south side, a chain of
+    # rounded stones along the west shore doubled at the corner, a mossy boulder pile at the
+    # north-west corner, grass coming down to the water on the east (the viewing edge);
+    # the far north bank shows its earth face in the water drawing below.
     for (x, y) in BANK:
-        if 0 <= x < W and 0 <= y < H:
-            cv.set(x, y, SAND[1] if noise2(x, y, 21) < 0.8 else SAND[2])
+        if not (0 <= x < W and 0 <= y < H):
+            continue
+        south = y > POND_C[1] + 6
+        west = x < POND_C[0] - 30
+        c = SOIL[2] if south and noise2(x, y, 21) < 0.7 else P[1] if noise2(x, y, 22) < 0.6 else G[1]
+        if west or (x < 46 and y < 200):
+            c = STONE[2] if noise2(x // 2, y // 2, 23) > 0.35 else STONE[1]
+        elif x > POND_C[0] + 30 and not south:
+            c = G[2] if noise2(x, y, 24) > 0.3 else G[1]
+        cv.set(x, y, c)
     for (x, y) in BANK:
-        if (x, y + 1) not in BANK and (x, y + 1) not in POND:
-            cv.set(x, y, SAND[0])
-        if (x, y - 1) not in BANK and (x, y - 1) not in POND:
+        if (x, y - 1) not in BANK and (x, y - 1) not in POND and 0 <= x < W:
             cv.set(x, y - 1, G[1])  # turf lip over the bank
+    for (sx, sy, big) in ((27, 200, True), (31, 195, False), (26, 207, False), (27, 214, False), (26, 221, False),
+                          (29, 228, False), (36, 192, False)):  # the stone chain and the corner pile
+        for (x, y) in oval(sx, sy, 3.2 if big else 2.2, 2.2 if big else 1.6):
+            lit = (x - sx) + (y - sy) < -0.5
+            cv.set(x, y, STONE[4] if lit else STONE[3] if (x - sx) + (y - sy) < 1 else STONE[1])
+        if big:
+            cv.set(sx - 1, sy - 2, LEAF[3]); cv.set(sx, sy - 2, LEAF[2]); cv.set(sx + 1, sy - 2, LEAF[3])  # moss
     for (x, y) in POND:
         dd = POND_DEPTH[(x, y)]
         col = WTR[1] if dd > 7 or (dd == 7 and (x + y) % 2) else WTR[2]  # deep water follows the rim
@@ -342,7 +359,13 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
     for (x, y) in sorted(RILL):
         if (x, y + 1) not in RILL and (x, y + 1) in meadow.STREAM:
             cv.set(x, y + 1, WTR[4]); cv.set(x - 1, y + 2, WTR[3]); cv.set(x + 1, y + 2, WTR[3])  # foam below the fall
-    for (sx, sy) in ((87, 232), (95, 233)):  # the stones the pond spills between
+    for (x, y) in sorted(RILL):  # where the rill drops through the earth bank: a stone lip
+        if y == meadow.STREAM_TOP.get(x, 999) - meadow.BLUFF_H.get(x, 0) + 1:
+            for dx in (-3, -2, 2, 3):
+                cv.set(x + dx, y - 1, STONE[4] if dx < 0 else STONE[3]); cv.set(x + dx, y, STONE[2] if dx < 0 else STONE[1])
+                cv.set(x + dx, y + 1, STONE[1] if dx < 0 else STONE[0])
+            cv.hline(x - 1, y + 1, 3, STONE[3])  # the flat lip stone the water pours over
+    for (sx, sy) in ((87, 235), (96, 236)):  # the stones the pond spills between
         cv.hline(sx, sy, 3, STONE[2]); cv.set(sx, sy - 1, STONE[4]); cv.set(sx + 1, sy - 1, STONE[3]); cv.set(sx + 2, sy, STONE[1])
     for (px, py) in ((92, 247), (88, 266)):
         if (px, py) in RILL:
@@ -469,10 +492,9 @@ OBJECTS = [
     ('fence-l', 'fence_l', 0, meadow.FENCE_Y, None),
     ('fence-r', 'fence_r', meadow.GATE_X + meadow.GATE_W, meadow.FENCE_Y, None),
     ('gate', 'gate', meadow.GATE_X, meadow.GATE_Y, 'arena'),
-    ('tree-8', 'tree', -26, 498, None),
-    ('tree-9', 'tree', 282, 500, None),
-    ('pine-low-0', 'pine', 70, 504, None),
-    ('pine-low-1', 'pine', 216, 506, None),
+    ('tree-8', 'tree', -32, 428, None),  # B9: off the fence line, inside it
+    ('tree-9', 'tree_small', 280, 446, None),  # B9: inside the fence by its east strainer, off its line
+    # (B9: the two low pines that stood on the fence line came out; the meadow stays open to the fence)
 ]
 
 # Where the companion stands for each place, and named points the app draws from.
@@ -504,7 +526,7 @@ def flower_points():
 ANCHORS = {
     'start': {'x': meadow.PATH_X, 'y': 196},
     'bed': {'x': 143, 'y': 110},
-    'chimney': {'x': 16 + 75, 'y': 28 + 13},  # the top-down hut's chimney cap
+    'chimney': {'x': 16 + 75, 'y': 28 + 9},  # the top-down hut's chimney cap
     'book': {'x': 150 + 32, 'y': 46 + 11},
     'frogPad': {'x': FROG_PAD[0], 'y': FROG_PAD[1]},
     'pondRipple': {'x': POND_C[0] - 26, 'y': POND_C[1] + 2},
@@ -525,8 +547,8 @@ ANCHORS = {
         {'id': 'lantern-pool', 'kind': 'lantern', 'x': 183, 'y': 124, 'w': 44, 'h': 22},
         {'id': 'lantern-halo', 'kind': 'lantern', 'x': 199, 'y': 102, 'w': 18, 'h': 18},
         {'id': 'hut-pool', 'kind': 'night', 'x': 30, 'y': 112, 'w': 76, 'h': 18},
-        {'id': 'hut-window-l', 'kind': 'night', 'x': 36, 'y': 92, 'w': 14, 'h': 11},
-        {'id': 'hut-window-r', 'kind': 'night', 'x': 86, 'y': 92, 'w': 14, 'h': 11},
+        {'id': 'hut-window-l', 'kind': 'night', 'x': 36, 'y': 82, 'w': 14, 'h': 16},
+        {'id': 'hut-window-r', 'kind': 'night', 'x': 86, 'y': 82, 'w': 14, 'h': 16},
         {'id': 'stall-glow', 'kind': 'night', 'x': 224, 'y': 56, 'w': 76, 'h': 22},
         {'id': 'stall-pool', 'kind': 'night', 'x': 218, 'y': 98, 'w': 88, 'h': 16},
     ],
@@ -602,8 +624,8 @@ def hut_look(door: str, boxes: str) -> Canvas:
 def main():
     sprites = props.props()
     sprites['hut'] = hut_look(*HUT_DEFAULT)
-    sprites['fence_l'] = props.fence_h(meadow.GATE_X)
-    sprites['fence_r'] = props.fence_h(W - meadow.GATE_X - meadow.GATE_W)
+    sprites['fence_l'] = props.fence_h(meadow.GATE_X, strainer='w')  # B9: each run ends on a braced post
+    sprites['fence_r'] = props.fence_h(W - meadow.GATE_X - meadow.GATE_W, strainer='e')
     # Flat, walkable things (the bridge deck) are part of the ground, not objects:
     # baked into every ground frame, characters always draw on top of them.
     bx, by, bw, bh = meadow.BRIDGE

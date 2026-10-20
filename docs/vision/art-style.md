@@ -53,6 +53,15 @@ Matt pointed at Cainos' *Pixel Art Top Down - Village* (Unity Asset Store and it
 - **Light baked in, few live layers.** Pools of light are drawn into the ground and props; at most a handful of live glows per screen, finite and still with reduced motion (AGENTS.md).
 - **Memory.** A zone's ground is one image; more detail must not mean more layers or larger files per zone. (The images are saved at 4x for crisp native scaling; a 1x save with nearest-neighbour scaling on the web would cut decoded memory sixteenfold, and is worth a test.)
 
+## Eastward's level of detail is required (Matt, 20 Oct 01:19 and 01:24)
+
+"eastward level of detail is what you should be aiming for", then: "Eastward level of detail should not just ne a nice to have but it has to be reached". This is an acceptance bar, not a direction:
+
+- **Nothing new is drawn below it.** Every prop, building, face, edge and patch of ground that is drawn or redrawn is compared side by side with official Eastward screenshots (and Sea of Stars, CrossCode or Chained Echoes where Eastward has no match) at the same character height before it is handed on. The references are fetched with `scripts/refs/fetch_references.py` (research/world-references.md); they never go into the repository.
+- **Measured, not felt.** The comparison counts, per 16 x 16 px patch at the same character height, the distinct tones, the distinct shapes (lumps, stones, tufts, planks, leaves) and the dressing pieces, in ours and in the reference. Ours must reach the reference's count for that kind of surface; the soft-grid toolkit (`scripts/art/terrace.py`) reports these numbers and a check will enforce them once the baselines are set.
+- **Every PR that changes art says what it was compared with**, shows the side-by-side crop, and gives the counts. Claude A does not merge art that misses the bar; it goes back with the crops that fall short.
+- **Phone limits still hold** (above): detail in clusters of two or more pixels, quiet ground where you walk, few live layers. Eastward manages its density on a 640 x 360 screen; ours is about the same width in art pixels, so the bar is reachable.
+
 ## The rules
 
 1. **Outlines.** Every object gets a 1 px outline in `outline` from `art/materials.json` (`#1E1917`, a warm near-black). Do not outline ground textures such as grass and dirt.

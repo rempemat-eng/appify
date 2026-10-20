@@ -69,6 +69,10 @@ def meadow_path(thick_path):
                       (PATH_X, 530), (PATH_X, H + 12)], 18.5, 7)
     pts |= thick_path([(PATH_X + 10, 432), (YARD[0] + 4, 432)], 9.5, 8)   # into the kitchen garden
     pts |= thick_path([(PATH_X - 10, ORCHARD_WALK_Y), (-12, ORCHARD_WALK_Y)], 8.5, 9)  # along the orchard, on into the Woodland
+    # B10 (Matt, 19 Oct 22:40): the Riverside's west bank walk arrives at x 319 on rows
+    # 394-410 (valley_zones riverside, thick((8, 402), 8)); it carries on into the kitchen
+    # garden's pad here at the same row and width, square to the edge
+    pts |= {(x, y) for x in range(YARD[0] + YARD[2] - 12, W + 12) for y in range(394, 411)}
     yx, yy, yw, yh = YARD
     r = 10
     for y in range(yy, yy + yh):
@@ -80,51 +84,76 @@ def meadow_path(thick_path):
     return pts
 
 
+BANK_ABUTMENT = (BRIDGE[0] - 6, BRIDGE[0] + BRIDGE[2] + 6)  # the only masonry on the bank: the bridge's
+
+
 def draw_bluff(cv: Canvas):
-    """The north bank's face (Matt's references, 17 Oct): a lit grass lip with turf
-    hanging over the edge, then a face of stacked stones, each lit on its left and top
-    and dark on its right, in dark joints, wet and darkest at the foot, with foam where
-    it meets the water."""
+    """The north bank's face: a natural earth bank, one treatment for the whole river
+    (Matt, 19 Oct 22:40: "why is there a stone path on one side but not the other"; B12,
+    agreed with Claude E for the woodland and the riverside). A grass lip that hangs over
+    the edge in scallops, roots trailing from it, a face of earth in lumps lit on their
+    upper left with the odd stone bedded in it, wet and darkest at the foot where foam
+    lies. Only where people use the bank, at the bridge, is it built: dressed stone
+    abutments in courses either side of the deck."""
     for x in range(-2, W + 2):
-        if x not in STREAM_TOP:
+        if x not in STREAM_TOP or not (0 <= x < W):
             continue
         h = BLUFF_H[x]
         top = STREAM_TOP[x] - h
-        col = (x + int(noise2(x // 6, 1, 95) * 6)) % 6  # the stone's column within its run
-        sw = 6
-        si = (x + int(noise2(x // 6, 1, 95) * 6)) // sw
+        built = BANK_ABUTMENT[0] <= x < BANK_ABUTMENT[1]
+        lip = 2 + (1 if noise2(x // 3, 11, 94) > 0.55 else 0) + (1 if noise2(x, 12, 94) > 0.9 else 0)
+        root = noise2(x, 13, 94) > 0.86 and not built
+        stone = noise2(x // 4, 14, 94) > 0.78 and not built
         for k in range(h):
             y = top + k
-            if not (0 <= x < W):
-                continue
             if k == 0:
                 c = G[3]
-            elif k == 1:
-                c = G[2] if (x // 2 + int(noise2(x // 3, 2, 96) * 2)) % 3 else G[1]
-            else:
-                row = (k - 2 + (si % 2) * 2) // 4  # courses of stone, staggered per column
-                r = (k - 2 + (si % 2) * 2) % 4
+            elif k < lip and not built:
+                c = G[2] if k == 1 else G[1]  # the turf hanging over the edge
+            elif built:
+                sw = 6
+                si = (x + int(noise2(x // 6, 1, 95) * 6)) // sw
+                col = (x + int(noise2(x // 6, 1, 95) * 6)) % sw
+                row, r = divmod(k - 2 + (si % 2) * 2, 4)
                 base = 3 if noise2(si, row, 97) > 0.45 else 2
-                if col == sw - 1 or r == 3:
-                    c = STONE[0]  # the joint
-                elif col == 0 or r == 0:
-                    c = STONE[base + 1]
-                elif col == sw - 2:
-                    c = STONE[base - 1]
-                else:
-                    c = STONE[base]
-                if k == h - 1:
-                    c = STONE[1] if col != sw - 1 else STONE[0]  # wet at the foot
+                c = STONE[0] if col == sw - 1 or r == 3 else STONE[base + 1] if col == 0 or r == 0 else \
+                    STONE[base - 1] if col == sw - 2 else STONE[base]
+                if k == 1:
+                    c = STONE[4]  # the abutment's lit coping
+            else:
+                lx, ly = x + int(noise2(x // 5, k // 3, 99) * 3), k
+                cell = (lx // 5, (ly + (lx // 5) % 2) // 3)
+                u, v = lx % 5, (ly + (lx // 5) % 2) % 3
+                t = 2 if noise2(*cell, 98) > 0.5 else 1
+                if u == 0 or v == 0:
+                    t += 1  # each lump lit on its upper left
+                if u == 4 and noise2(*cell, 96) > 0.4:
+                    t = 0  # the crease beside it
+                c = P[t]
+                if k == lip:
+                    c = P[0]  # the shadow under the hanging turf
+                if stone and 3 <= k <= 5:
+                    c = STONE[3] if k == 3 else STONE[2] if k == 4 else STONE[1]
+                if root and lip <= k < lip + 3:
+                    c = WOOD[1] if k < lip + 2 else WOOD[2]
+            if k >= h - 2 and not built:
+                c = SOIL[1] if k == h - 1 else SOIL[2]  # wet earth at the waterline
+            elif k == h - 1:
+                c = STONE[1]
             cv.set(x, y, c)
 
 
 def draw_stream(cv: Canvas, phase: int):
-    for (x, y) in STREAM_BANK:
+    for (x, y) in STREAM_BANK:  # the low south bank: damp earth shelving into the water, pebbles
         if 0 <= x < W and (x, y) not in BLUFF:
-            cv.set(x, y, SAND[1] if noise2(x, y, 23) < 0.82 else SAND[2])
+            wet = (x, y - 1) in STREAM or (x, y - 2) in STREAM
+            c = SOIL[2] if wet else P[1] if noise2(x, y, 23) < 0.7 else G[1]
+            if noise2(x, y, 24) > 0.8:
+                c = STONE[3] if (x, y - 1) in STREAM else STONE[2]  # a pebble
+            cv.set(x, y, c)
     for (x, y) in STREAM_BANK:
-        if (x, y - 1) in STREAM and (x, y + 1) not in STREAM:
-            cv.set(x, y, SAND[0])  # wet lower lip
+        if (x, y - 1) in STREAM and (x, y + 1) not in STREAM and 0 <= x < W:
+            cv.set(x, y + 1, G[1] if noise2(x, y, 25) > 0.3 else P[0])  # the turf's lip over the mud
     draw_bluff(cv)
     for (x, y) in STREAM:
         if not (0 <= x < W):
@@ -136,7 +165,7 @@ def draw_stream(cv: Canvas, phase: int):
         elif (x, y - 3) not in STREAM:
             col = WTR[1]
         cv.set(x, y, col)
-    for x in range(0, W):  # foam where the water meets the stone face
+    for x in range(0, W):  # foam where the water meets the bank's foot
         if x in STREAM_TOP and (x // 2 + int(noise2(x // 4, 7, 98) * 3)) % 3 and (x, STREAM_TOP[x]) in STREAM:
             cv.set(x, STREAM_TOP[x], WTR[4] if x % 5 else WTR[3])
     # Flowing highlights drift two pixels east per frame along the current.
@@ -151,13 +180,20 @@ def draw_stream(cv: Canvas, phase: int):
         if i % 5 == 0 and (x + 1, y - 1) in STREAM:
             cv.set(x + 1, y - 1, WTR[4])
     # Stones and reeds where the water meets the meadow.
-    for sx in (14, 62, 104, 214, 262, 300):
+    for sx in (14, 62, 104, 214, 262, 300):  # stones at the waterline, each with a foam ring
         y = int(stream_centre(sx)) + 9
         cv.hline(sx, y, 4, STONE[1]); cv.hline(sx + 1, y - 1, 3, STONE[3]); cv.set(sx + 1, y - 2, STONE[4])
-    for rx in (8, 40, 86, 120, 204, 246, 292, 312):
-        y = int(stream_centre(rx)) + 16
-        cv.vline(rx, y - 4, 5, LEAF[1]); cv.vline(rx + 2, y - 3, 4, LEAF[2])
-        cv.set(rx - 1, y - 4, LEAF[3]); cv.set(rx + 1, y - 1, LEAF[3])
+        cv.set(sx - 1, y, WTR[4]); cv.set(sx + 4, y - 1, WTR[3])
+    for ci, rx in enumerate((10, 84, 120, 206, 250, 296)):  # reeds in clumps of three to five in the shallows
+        y = int(stream_centre(rx)) + 8
+        for b in range(3 + ci % 3):
+            bx = rx + b * 2 - (b % 2)
+            hgt = 5 + int(noise2(bx, y, 44) * 4)
+            for kk in range(hgt):
+                cv.set(bx + (1 if kk > hgt - 2 and b % 2 else 0), y - kk, LEAF[3] if kk > hgt // 2 else LEAF[1] if kk < 2 else LEAF[2])
+            cv.set(bx - 1, y + 1, WTR[4])  # a ripple at its stem
+            if b == 1 and hgt > 6:
+                cv.set(bx, y - hgt, WOOD[2]); cv.set(bx, y - hgt + 1, WOOD[1])  # a cattail head
 
 
 def planter(cv: Canvas, bx: int, by: int, w: int = PLOT_W, h: int = PLOT_H):

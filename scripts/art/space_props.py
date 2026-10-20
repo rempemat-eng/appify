@@ -169,21 +169,22 @@ def sleep_pod() -> Canvas:
 
 
 def airlock() -> Canvas:
-    """The space elevator's arrival hatch, 56 x 50: a round door with a lit rim, warning
-    chevrons and a status panel."""
-    cv = Canvas(56, 50, pad=PAD)
-    for (x, y) in rect_set(2, 4, 52, 44):
+    """The space elevator's arrival hatch, 56 x 60: a round door 32 across in a lit rim
+    (verticality.md 5: a door 32 tall for an adult of 25), warning chevrons at its sill
+    and a status panel."""
+    cv = Canvas(56, 60, pad=PAD)
+    for (x, y) in rect_set(2, 4, 52, 54):
         cv.set(x, y, HULL[3] if y < 8 else HULL[2])
-    for (x, y) in disc(28, 28, 16):
-        cv.set(x, y, HULL[4] if (x - 28) + (y - 28) < -10 else HULL[1])
-    for (x, y) in disc(28, 28, 13):
+    for (x, y) in disc(28, 33, 19):
+        cv.set(x, y, HULL[4] if (x - 28) + (y - 33) < -12 else HULL[1])
+    for (x, y) in disc(28, 33, 16):
         cv.set(x, y, HULL[3] if x < 28 else HULL[2])
-    cv.vline(28, 15, 27, HULL[0])
+    cv.vline(28, 17, 33, HULL[0])
     for x in range(4, 52, 6):
         for t in range(3):
-            cv.set(x + t, 44 + t % 2, GOLD[3])
-            cv.set(x + t + 3, 44 + t % 2, VOID[2])
-    cv.rect(44, 10, 6, 8, VOID[1]); cv.set(46, 12, CYAN[3]); cv.set(46, 15, GOLD[3])
+            cv.set(x + t, 54 + t % 2, GOLD[3])
+            cv.set(x + t + 3, 54 + t % 2, VOID[2])
+    cv.rect(46, 10, 6, 8, VOID[1]); cv.set(48, 12, CYAN[3]); cv.set(48, 15, GOLD[3])
     return cv
 
 
@@ -1087,26 +1088,26 @@ def airlock_module() -> Canvas:
     status light that is green (both doors may open: the dome is at pressure)."""
     w, h = 46, 58
     cv = Canvas(w, h, pad=PAD)
-    for y in range(0, 30):  # its roof, ribbed
+    for y in range(0, 20):  # its roof, ribbed
         for x in range(2, w - 2):
             k = (x - 2) / (w - 4)
             c = WHITE[5] if k < 0.2 else WHITE[4] if k < 0.7 else WHITE[2]
             if y % 9 == 0:
                 c = WHITE[2] if k < 0.7 else WHITE[1]
             cv.set(x, y, c)
-    for y in range(30, h - 1):  # its front face with the inner hatch
+    for y in range(20, h - 1):  # its front face with the inner hatch (32 tall: verticality.md 5)
         for x in range(2, w - 2):
             c = WHITE[3] if x < w - 6 else WHITE[1]
             if y > h - 5:
                 c = '#E8C04A' if ((x + y) // 3) % 2 else '#2A2630'
             cv.set(x, y, c)
-    for y in range(34, h - 5):
+    for y in range(h - 41, h - 9):
         for x in range(12, w - 12):
-            c = '#CFE8C8' if y < 40 else '#7FA878' if (x + y) % 4 else '#6E9868'  # the greenhouse's green light
+            c = '#CFE8C8' if y < h - 34 else '#7FA878' if (x + y) % 4 else '#6E9868'  # the greenhouse's green light
             if x in (12, w - 13):
                 c = WHITE[1]
             cv.set(x, y, c)
-    cv.set(w - 9, 33, '#4AD07A'); cv.set(w - 8, 33, '#2A9A5A')  # the status light
+    cv.set(w - 9, h - 40, '#4AD07A'); cv.set(w - 8, h - 40, '#2A9A5A')  # the status light
     for y in range(h - 9, h - 5):  # the collar where it meets the dome's sill, clamped
         for x in range(0, w):
             c = WHITE[4] if y == h - 9 else WHITE[2] if x < w - 6 else WHITE[1]
