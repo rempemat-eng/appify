@@ -1402,7 +1402,7 @@ def scree_fan(p: Plot, apex, length, spread=0.9, seed=0, m=None, snowy=None, wal
     dx, dy = p.x + 0.5 - ax, p.y + 0.5 - ay
     r = np.hypot(dx, dy * 1.35)
     ang = np.arctan2(dx, np.maximum(dy, 0.01))
-    wid = spread * (0.3 + 0.7 * np.clip(r / length, 0, 1) ** 0.6)
+    wid = spread * (0.25 + 0.75 * np.clip(r / length, 0, 1) ** 0.45)
     wid = wid + 0.35 * (fbm(p.x, p.y, 11, seed + 1) - 0.5)
     lim = length * (0.75 + 0.4 * fbm(p.x, p.y, 15, seed)) * (1 - 0.3 * np.clip(np.abs(ang) / np.maximum(wid, 0.1), 0, 1) ** 2)
     fan = (dy > -2) & (r < lim) & (np.abs(ang) < wid)
@@ -1418,7 +1418,8 @@ def scree_fan(p: Plot, apex, length, spread=0.9, seed=0, m=None, snowy=None, wal
         if not core[y, x] and hash01(x, y, seed + 4) < 0.45:
             continue
         w = 2 + int((hash01(x, y, seed + 5) ** 1.5) * (2 + tt * 7))
-        stone(p, x - w // 2, y - 1, w, max(2, int(w * 0.65)), seed + i, snow_cap=bool(sn[y, x]) and w >= 4)
+        stone(p, x - w // 2, y - 1, w, max(2, int(w * 0.65)), seed + i,
+              snow_cap=bool(sn[y, x]) and w >= 5 and not core[y, x])
     # outliers: stones run out past the fan's toe
     out = (r >= lim) & (r < lim * 1.3) & (np.abs(ang) < wid * 1.1) & (dy > 0) & ~p.solid
     if m is not None:
@@ -2101,9 +2102,9 @@ def trail(p: Plot, pts, width=16, seed=0, kind='earth', m=None):
         despeckle(p, tm)
     else:
         tm &= ~(tm & (np.abs(ch.n) > hw + wob - 2) & (hash01(p.x // 2, p.y // 2, seed + 1) < 0.5))
-        p.put(tm, 'snow_cool', 3)
-        packed = tm & (np.abs(ch.n) < hw * 0.5) & (fbm(p.x, p.y, 8, seed + 2) > 0.45)
-        p.t[packed] = 2
+        p.put(tm, 'snow_cool', 2)
+        packed = tm & (np.abs(ch.n) < hw * 0.45) & (fbm(p.x, p.y, 8, seed + 2) > 0.4)
+        p.t[packed] = 3
         nwall = tm & ~shift(tm, 0, 1, False)
         p.t[nwall] = 1
         p.t[shift(nwall, 0, -1, False) & tm] = 2
@@ -2817,12 +2818,12 @@ def pilot(seed=1):
         paste(p, b, x, y, shadow=bs, block=b.m & (b.y > b.fy - 5))
         if sn:
             drift(p, x + w // 2, y, max(4, w // 3), seed + 90 + i)
-    for i, (x, y) in enumerate(((396, 476), (420, 548), (420, 690), (340, 892), (448, 1000))):
+    for i, (x, y) in enumerate(((418, 474), (420, 548), (420, 690), (340, 892), (448, 1000))):
         c, cs = cairn(seed + 100 + i, None, snow=y < 720)
         paste(p, c, x + 18, y, shadow=cs)
-    fire_ring(p, 434, 500, seed + 110)
+    fire_ring(p, 440, 504, seed + 110)
     sl, sls = sledge(seed)
-    paste(p, sl, 412, 528, shadow=sls)
+    paste(p, sl, 456, 530, shadow=sls)
     # firs: thinning out with height, none above the hut's bench
     fir_spots = [(40, 1140, 84), (96, 1136, 70), (560, 1130, 80), (608, 1120, 66), (520, 1100, 58),
                  (140, 1100, 60), (600, 1000, 54), (64, 1040, 50), (256, 940, 52), (520, 940, 48),
@@ -2941,7 +2942,7 @@ def pilot_preview(p, scale=2, people=True):
     img = p.image().convert('RGBA')
     if people:
         for name, (x, y) in (('hiker', (372, 836)), ('warden', (262, 798)), ('porter', (300, 960)),
-                             ('naturalist', (412, 520)), ('forager', (470, 1080))):
+                             ('naturalist', (410, 508)), ('forager', (470, 1080))):
             path = os.path.join(ROOT, 'assets', 'residents', f'{name}-0.png')
             if os.path.exists(path):
                 r = Image.open(path).convert('RGBA')
@@ -3050,10 +3051,20 @@ def pieces():
     q = Plot(128, 96, 'snow', 3)
     meadow(q, q.mask(), 16)
     out.append(('ground', 'hay meadow below the treeline', q, [((10, 10, 120, 88), 'ground')]))
-    q = Plot(160, 112, 'snow', 3)
-    snowfield(q, q.mask(), 17)
-    scree_fan(q, (80, 6), 90, 0.8, 18, snowy=q.mask())
-    out.append(('ground', 'a scree fan spreading onto the snow', q, [((52, 30, 108, 86), 'foot')]))
+    q, R = _cliff_tile(17, True, ['00000000000000000000',
+                                  '00000000000000000000',
+                                  '00000000000000000000',
+                                  '00000000000000000000',
+                                  '00000000000000000000',
+                                  '00000000000000000000',
+                                  '00000000000000000000',
+                                  '00000000000000000000',
+                                  '00000000000000000000',
+                                  '11111111001111111111',
+                                  '11111111001111111111',
+                                  '11111111001111111111'])
+    scree_fan(q, (72, 57), 52, 1.15, 18, m=~R.face, snowy=~R.face & ~q.solid)
+    out.append(('ground', 'a scree fan below a gully, spreading onto the snow', q, [((44, 60, 104, 96), 'foot')]))
     q = Plot(176, 112, 'snow', 3)
     snowfield(q, q.mask(), 19)
     tm = rrect(q, 16, 16, 160, 92, 12, 20, 2.0)
