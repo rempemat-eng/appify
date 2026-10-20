@@ -5142,7 +5142,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
   caldera: {
     objects: [
       ['forge', 'forge', 22, 319, 92, 76],
-      ['shrine', 'ember_shrine', 152, 365, 26, 43],
+      ['shrine', 'ember_shrine', 150, 360, 30, 50],
       ['vent-1', 'cooling_vent', 41, 460, 28, 22],
       ['cols-1', 'basalt_steps', 4, 102, 77, 55],
       ['cols-2', 'basalt_stumps', 76, 141, 45, 24],
@@ -5266,9 +5266,9 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       '6.22#25.9#18.',
       '6.22#26.8#18.',
       '55.8#17.',
-      '38.6#12.6#18.',
-      '38.6#11.8#17.',
-      '56.7#17.',
+      '56.6#18.',
+      '38.7#10.8#17.',
+      '38.7#11.7#17.',
       '55.7#5.6#7.',
       '55.8#4.6#7.',
       '55.7#5.6#7.',

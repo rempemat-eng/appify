@@ -434,19 +434,75 @@ def basalt_bridge(length: int = 64) -> Canvas:
 
 
 def ember_shrine() -> Canvas:
-    """A shrine of stacked basalt with a brazier on top, 30 x 50: the keeper's warning
-    to rest before you burn out."""
-    cv = Canvas(30, 50, pad=PAD)
-    for k, (y0, wd) in enumerate(((38, 26), (28, 20), (20, 14))):
-        for y in range(y0, y0 + 10):
-            for x in range(15 - wd // 2, 15 + wd // 2):
-                cv.set(x, y, BASALT[3] if y == y0 else BASALT[2] if x < 15 else BASALT[1])
-    for (x, y) in oval(15, 18, 7, 2.5):
-        cv.set(x, y, IRON[3] if y < 18 else IRON[1])
-    for (x, y) in oval(15, 12, 4, 6):
-        if y < 18:
-            d = abs(x - 15) + (y - 12) * 0.3
-            cv.set(x, y, LAVA[5] if d < 1.2 else LAVA[4] if d < 2.5 else LAVA[3])
+    """The ember shrine, 30 x 50: the keeper's warning to rest before you burn out, built
+    of what the caldera gives. Three columns of the caldera's own basalt, cut from the
+    flow (their joints and hexagonal tops as in the formations): a tall one in the
+    middle carrying an iron brazier on three legs, its embers low and banked, and two
+    shorter ones either side holding offerings (a clay cup, a folded paper weighed with a
+    pebble). A straw rope with paper tags is tied between the short columns across the
+    tall one's front, sagging; a flame mark is cut in the tall column's face and the heat
+    has sooted the stone under the bowl. Ash lies swept round the foot, and an iron poker
+    leans on the east column. Lit by the sky on the upper left and by its own embers;
+    the brazier declares its glow to the night tint as before."""
+    w, h = 30, 50
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in oval(15, 46, 14, 3.2):  # the swept ash bed the columns stand in
+        n = noise2(x, y, 4361)
+        cv.set(x, y, ASH[1] if y > 46 else ASH[2] if n < 0.6 else ASH[3])
+    _column(cv, 5.5, 33, 46, 4.6, 4362, False)              # the west column, shorter
+    _column(cv, 24.5, 31, 46, 4.6, 4363, False, broken=True)  # the east one, chipped
+    _column(cv, 15, 18, 47, 6.4, 4364, False)                # the tall middle column
+    for (x, y) in ((14, 28), (15, 27), (15, 28), (16, 28), (14, 30), (15, 29), (16, 30),
+                   (15, 30), (15, 31), (14, 31), (16, 31), (15, 32)):
+        cv.set(x, y, LAVA[1])                                # the flame mark cut in its face
+    cv.set(15, 27, LAVA[2]); cv.set(15, 29, LAVA[3])        # a glint of embers caught in the cut
+    for x in range(13, 18):
+        cv.set(x, 33, BASALT[4] if x < 15 else BASALT[3])   # the cut's lit lower lip
+    # the brazier: a shallow iron bowl on three short legs on the column's top
+    for (lx, ly0) in ((10, 15), (15, 17), (20, 15)):
+        for y in range(ly0, ly0 + 3):
+            cv.set(lx, y, IRON[3] if lx < 15 else IRON[1])
+    for (x, y) in oval(15, 13, 7, 2.6):
+        cv.set(x, y, IRON[4] if y < 12 else IRON[3] if x < 13 else IRON[2] if x < 19 else IRON[1])
+    for x in range(9, 22):  # the bowl's belly below its rim, in shade
+        for y in range(14, 16):
+            if abs(x - 15) < 7 - (y - 14):
+                cv.set(x, y, IRON[2] if x < 13 else IRON[1] if x < 19 else IRON[0])
+    for (x, y) in oval(15, 12, 5, 1.6):  # the banked embers inside, glowing through grey ash
+        n = noise2(x, y, 4365)
+        cv.set(x, y, ASH[3] if n > 0.72 else LAVA[5] if n < 0.18 else LAVA[4] if n < 0.42 else LAVA[3])
+    for (x, y, c) in ((14, 9, LAVA[3]), (15, 8, LAVA[4]), (15, 9, LAVA[5]), (16, 9, LAVA[4]),
+                      (15, 7, LAVA[3]), (13, 10, LAVA[3]), (17, 10, LAVA[3]), (16, 6, LAVA[2])):
+        cv.set(x, y, c)                                      # a low flame over them
+    for (x, y) in ((11, 3), (19, 1), (13, 0)):
+        cv.set(x, y, LAVA[4])                                # sparks rising
+    for (x, y) in ((8, 13), (22, 13)):
+        cv.set(x, y, IRON[4] if x < 15 else IRON[2])        # the rim's ring handles
+        cv.set(x, y + 1, IRON[1])
+    # offerings on the short columns: a clay cup with a lit rim, a folded paper and pebble
+    for (x, y, c) in ((4, 31, '#B0643A'), (5, 31, '#C8784A'), (6, 31, '#8A4A2A'), (4, 32, '#8A4A2A'),
+                      (5, 32, '#8A4A2A'), (6, 32, '#5E3220'), (5, 30, '#E8A070')):
+        cv.set(x, y, c)
+    for (x, y, c) in ((23, 29, '#F2EADC'), (24, 29, '#E2D8C6'), (25, 29, '#C8BCA8'), (24, 28, ASH[3]),
+                      (25, 28, ASH[2]), (26, 29, '#B0A48E')):
+        cv.set(x, y, c)
+    # the straw rope, sagging from the west column's top to the east one's across the front
+    for x in range(8, 23):
+        t = (x - 8) / 14
+        y = int(round(35 + 4.0 * 4 * t * (1 - t)))
+        cv.set(x, y, '#D8BC7A' if x % 3 else '#A8884A')     # its twist
+        cv.set(x, y + 1, '#8A6A34')
+        if x in (11, 15, 19):  # paper tags hanging from it, folded in zigzags
+            for d, c in enumerate(('#F2EEE4', '#D8D2C4', '#F2EEE4', '#C8C0B0')):
+                cv.set(x + (d % 2), y + 2 + d, c)
+    # the poker leaning on the east column, its tip in the ash
+    for k in range(13):
+        cv.set(28 - k // 6, 34 + k, IRON[4] if k < 3 else IRON[3])
+    cv.set(28, 33, IRON[4])
+    for x in range(10, 21):  # soot under the bowl, where the heat has blackened the column's front
+        for y in range(20, 24):
+            if noise2(x, y, 4366) < 0.55 - (y - 20) * 0.12:
+                cv.set(x, y, BASALT[0])
     return cv
 
 

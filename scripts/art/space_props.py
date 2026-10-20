@@ -1196,7 +1196,7 @@ def hab_hub() -> Canvas:
             elif u < 0.84:
                 v = -1.9 + 0.4 * west - (u - term) * 1.0    # the front, past the terminator
             else:
-                v = -3.6                                    # the underside, near black
+                v = -2.9 - (u - 0.84) * 6                    # the underside, falling to near black
             c = rd.step(tint, v)
             px = (x - X0) % 20
             if px == 0:
@@ -1209,9 +1209,9 @@ def hab_hub() -> Canvas:
                 c = rd.step(c, -1.4)                        # the long seams between plates
             if 0.7 < u < 0.745:
                 c = rd.mix(c, '#3E78B8' if u < 0.725 else '#E8A43A', 0.7)   # the ID band
-            elif u < 0.84 and ((y - Y0) % 9 == 0 or (x - X0) % 10 == 0):
+            elif (y - Y0) % 9 == 0 or (x - X0) % 10 == 0:
                 c = rd.step(c, -1.0)                        # the joints between the small plates
-            elif u < 0.84 and ((y - Y0) % 9 == 1 or (x - X0) % 10 == 1):
+            elif (y - Y0) % 9 == 1 or (x - X0) % 10 == 1:
                 c = rd.step(c, 0.5)
             if 0.7 < u < 0.84 and rd.smooth_noise(x, y, 4, 1180) < 0.35 + (u - 0.7) * 2:
                 c = rd.mix(c, REG[2], 0.45)                 # dust thrown up onto the lower plates
@@ -1303,19 +1303,54 @@ def hab_hub() -> Canvas:
         rd.put(cv, x, y, '#F2F2EE' if y == Y0 + 2 or x == 40 else '#5E6476' if x == 49 or y == Y0 + 7 else '#9AA0B0')
     for x in range(41, 52):
         rd.put(cv, x, Y0 + 8, rd.step(cv.get(x, Y0 + 8), -2.4))   # its hard shadow on the shell
-    for cx_ in (32, 118):  # the cradles under the shell, on broad footpads in the dust
-        for y in range(Y1 - 2, Y1 + 6):
-            for x in range(cx_ - 7, cx_ + 8):
-                rd.put(cv, x, y, '#8A90A2' if x < cx_ else '#4E5466')
-        for y in range(Y1 + 6, h - 8):
-            for (dx, c) in ((-5, '#B8BECC'), (-4, '#6A7084'), (4, '#8A90A2'), (5, '#3E4252')):
-                rd.put(cv, cx_ + dx, y, c)
-        for y in range(h - 8, h - 5):
-            for x in range(cx_ - 9, cx_ + 10):
-                c = '#C8CCD8' if y == h - 8 else '#6A7084' if x < cx_ + 4 else '#3E4252'
+    # D13 follow-up (Claude A, 20 Oct 12:10: "the two stands read as tables"): the shell
+    # rests in a base ring, a steel beam run the module's length just under its belly with
+    # a curved saddle rising to the shell at every ring frame, and the ring stands on
+    # short footings braced to each other, each on a broad pad dug into the dust
+    by = Y1 + 3
+    for x in range(X0 + 8, X1 + 2):
+        if 58 <= x <= 90:
+            continue                                         # the docking porch stands there
+        for (d, c) in ((0, '#D8DCE4'), (1, '#9AA0B0'), (2, '#6A7084'), (3, '#3A3E4C')):
+            rd.put(cv, x, by + d, c)
+        if (x - X0) % 20 in (12, 13, 14, 15, 16):            # the saddles up to the shell, over the footings
+            for y in range(Y1 - 3, by):
+                k = (x - X0) % 20 - 12
+                rd.put(cv, x, y, '#B8BECC' if k == 0 else '#3A3E4C' if k == 4 else '#7A8094')
+        if (x - X0) % 10 == 3:
+            rd.put(cv, x, by + 1, '#4E5466')                 # a bolt through the beam
+    feet = [X0 + 14, X0 + 34, X0 + 88, X0 + 108]
+    for fx in feet:
+        for y in range(by + 4, h - 8):  # a short footing, a box section lit on its west face
+            for (dx, c) in ((-2, '#C8CCD8'), (-1, '#8A90A2'), (0, '#6A7084'), (1, '#4E5466'), (2, '#2E3240')):
+                rd.put(cv, fx + dx, y, c)
+        for y in range(h - 8, h - 5):  # its pad, wider, half sunk in the dust
+            for x in range(fx - 5, fx + 6):
+                c = '#C8CCD8' if y == h - 8 else '#6A7084' if x < fx + 2 else '#3E4252'
                 if y == h - 6 and rd.smooth_noise(x, y, 2, 1181) < 0.5:
-                    c = REG[3]                              # dust kicked over the pad
+                    c = REG[3]                               # dust kicked over the pad
                 rd.put(cv, x, y, c)
+    for fx in feet:
+        for (x, y, c) in ((fx - 4, h - 7, '#E8ECF2'), (fx + 4, h - 7, '#9AA0B0'), (fx - 1, by + 5, '#E8ECF2'),
+                          (fx - 1, by + 6, '#3A3E4C'), (fx, h - 10, '#E8C04A'), (fx, h - 11, '#E8C04A')):
+            rd.put(cv, x, y, c)                              # pad bolts, a weld plate, a yellow load mark
+        for y in range(h - 14, h - 8):
+            for x in range(fx - 2, fx + 3):
+                if rd.smooth_noise(x, y, 2, 1184) < 0.25 + (y - h + 14) * 0.1:
+                    rd.put(cv, x, y, rd.mix(cv.get(x, y), REG[3], 0.5))   # dust risen up the footing
+    for (ha, hb) in ((X0 + 18, X0 + 30), (X0 + 92, X0 + 104)):  # a service hose looping under the beam
+        for x in range(ha, hb):
+            t = (x - ha) / (hb - ha - 1)
+            y = by + 4 + int(round(5 * 4 * t * (1 - t)))
+            rd.put(cv, x, y, '#2E3240'); rd.put(cv, x, y - 1, '#5E6476' if x < (ha + hb) / 2 else '#4E5466')
+    for (fa, fb) in zip(feet, feet[1:]):  # cross bracing between neighbouring footings
+        if fb - fa > 24:
+            continue
+        top, bot = by + 5, h - 10
+        for i in range(fa + 3, fb - 2):
+            t = (i - fa - 3) / max(1, fb - fa - 6)
+            for yy in (int(top + (bot - top) * t), int(bot - (bot - top) * t)):
+                rd.put(cv, i, yy, '#8A90A2' if yy < (top + bot) / 2 else '#5E6476')
     # the EVA airlock at the west end: a box, its framed hatch with a round window, steps
     ex0, ex1, ey0, ey1 = 0, 22, 52, 96
     for y in range(ey0, ey1 + 1):
@@ -1356,12 +1391,55 @@ def hab_hub() -> Canvas:
             if y > pfoot - 4:
                 c = '#E8C04A' if ((x + y) // 3) % 2 else '#2A2630'  # hazard stripes on the sill
             cv.set(x, y, c)
-    for y in range(ptop + 12, pfoot - 3):  # the open hatch: the lock beyond, lit warm
-        for x in range(px0 + 5, px0 + pw - 5):
-            c = '#F2C890' if y < ptop + 18 else '#C89060' if (x + y) % 5 else '#B07A50'
-            if x in (px0 + 5, px0 + pw - 6):
-                c = WHITE[1]
-            cv.set(x, y, c)
+    porch_face = rect_set(px0, ptop + 8, pw - 3, pfoot - 4 - ptop - 8)
+    rd.panels(cv, porch_face, ('#D4D8E2', '#E4DCC8', '#C8CCD6', '#DADCE0'), seed=1073, pw=9, ph=8, light_x=0.1,
+              grime=(120, 112, 112), rust=(150, 120, 96), scuffs=0.2)
+    for (x, y, c) in ((px0 + 2, ptop + 14, '#4AD07A'), (px0 + 2, ptop + 15, '#2A7A4A'),     # the port's status light
+                      (px0 + 2, ptop + 18, '#E8C04A'), (px0 + 2, ptop + 19, '#9A7A2A')):
+        cv.set(x, y, c)
+    for (x, y) in rect_set(px0 + pw - 3, ptop + 20, 2, 6):  # a pressure gauge box on its east post
+        cv.set(x, y, '#3A3E4C' if y in (ptop + 20, ptop + 25) else '#E8ECF2' if x == px0 + pw - 3 else '#9AA0B0')
+    # the docking port where the corridor tube to the greenhouse leaves (pressure on both
+    # sides, so not an airlock: the one airlock to the vacuum is the EVA lock at the west
+    # end). Its inner hatch is a metal pressure door in a heavy frame: plates lit along the
+    # west, a stiffener across, a round window lit warm from the hub inside, the dogging
+    # lever and the hinge pins on the east (D13 follow-up: no wood hatching)
+    hx0, hx1, hy0, hy1 = px0 + 5, px0 + pw - 6, ptop + 12, pfoot - 4
+    for y in range(hy0, hy1):
+        for x in range(hx0, hx1 + 1):
+            k = (x - hx0) / (hx1 - hx0)
+            c = '#C8CCD8' if k < 0.12 else '#9AA0B0' if k < 0.55 else '#868CA0' if k < 0.88 else '#5E6476'
+            if y > hy0 + 17:
+                c = rd.step(c, -0.5)                         # the lower plate, a shade down from the sky
+            if x in (hx0, hx1) or y == hy0:
+                c = '#3A3E4C'                                # the gasket round it
+            elif y == hy0 + 1:
+                c = '#D8DCE4'                                # its lit top edge
+            elif y in (hy0 + 15, hy0 + 16):
+                c = '#E8ECF2' if y == hy0 + 15 else '#5E6476'  # the stiffener across it
+            elif x == hx0 + 1:
+                c = '#E8ECF2'
+            elif y in (hy0 + 14, hy0 + 17) and (x - hx0) % 3 == 1:
+                c = '#4E5466'                                # rivets along the stiffener
+            elif (x, y) in ((hx0 + 3, hy0 + 25), (hx0 + 4, hy0 + 25), (hx0 + 5, hy0 + 25), (hx0 + 3, hy0 + 26),
+                            (hx0 + 7, hy0 + 25), (hx0 + 7, hy0 + 26), (hx0 + 8, hy0 + 26)):
+                c = '#3E4252'                                # a stencilled lock number
+            elif y > hy0 + 17 and (x * 7 + y * 3) % 23 == 0:
+                c = '#B8BECC'                                # scuffs from boots and carts
+            if y > hy1 - 4 and rd.smooth_noise(x, y, 3, 1072) < 0.45:
+                c = rd.mix(c, REG[3], 0.5)                   # dust tracked in on its foot
+            rd.put(cv, x, y, c)
+    wx, wy = (hx0 + hx1) // 2, hy0 + 8
+    for (x, y) in disc(wx, wy, 3.6):
+        cv.set(x, y, '#3A3E4C')                              # the window's ring
+    for (x, y) in disc(wx, wy, 2.6):
+        cv.set(x, y, '#FFDC92' if y >= wy else '#FFF0C0')    # lit from inside
+    cv.set(wx - 1, wy - 1, '#FFFFFF'); cv.set(wx + 1, wy + 1, '#E8A44A')
+    for x in range(wx - 3, wx + 1):  # the dogging lever, its hub lit
+        cv.set(x, hy0 + 20, '#E8C04A' if x < wx - 1 else '#9A7A2A')
+    cv.set(wx, hy0 + 20, '#E8ECF2'); cv.set(wx, hy0 + 21, '#3A3E4C')
+    for y in (hy0 + 4, hy1 - 6):  # the hinge pins on its east edge
+        cv.set(hx1 - 1, y, '#E8ECF2'); cv.set(hx1 - 1, y + 1, '#3A3E4C')
     for (x, y) in oval(px0 + pw / 2, ptop + 11, 9, 2.4):  # the hatch's rounded head
         if y <= ptop + 11 and (x, y) not in ():
             cv.set(x, y, WHITE[2])
@@ -1486,38 +1564,86 @@ def glass_dome() -> Canvas:
         # (review 19 Oct: the small ring at the crown and the struts' ends there read as
         # a cable over the top, so the frame stops at the second ring and the crown is a
         # single clear pane)
-        mer = ph < 0.79 and abs(th * 8 / math.pi - round(th * 8 / math.pi)) * (1 + 2.5 * ph) < 0.07
-        ring = abs(ph * 8 / math.pi - round(ph * 8 / math.pi)) < 0.035 and 0.05 < ph < 0.9
-        if mer or ring:
+        # D13 follow-up (Claude A, 20 Oct 12:10: "carry the ribs over the crown with
+        # panes"): below the top ring sixteen meridians; over the crown every other one
+        # runs on to a small ring round the crown's vent cap, with a ring between, so the
+        # crown is glazed in panes like the rest and nothing reads as one flat sheet
+        crown = ph >= 0.79
+        div = 4 if crown else 8
+        mer = ph < 1.42 and abs(th * div / math.pi - round(th * div / math.pi)) * (1 + 2.5 * min(ph, 0.79)) < (0.05 if crown else 0.07)
+        ring = (abs(ph * 8 / math.pi - round(ph * 8 / math.pi)) < 0.035 and 0.05 < ph < 1.3) or abs(ph - 1.42) < 0.03
+        cap = ph > 1.44
+        if cap:
+            # the crown's vent cap, a low drum lit from the upper left, its rim bolted
+            lit = (cx - x) / 10 + (cy - dh - y) / 6
+            c = (226, 230, 238, 255) if lit > 0.6 else (168, 174, 190, 255) if lit > -0.5 else (112, 118, 138, 255)
+            if (x + y) % 5 == 0 and ph < 1.47:
+                c = (90, 96, 118, 255)
+        elif mer or ring:
             lit = math.cos(th - 2.4) * math.cos(ph) + math.sin(ph) * 0.6
+            if crown:  # over the crown the struts are lit by where they face on screen
+                lit = (cx - x) / (0.5 * rx) + (cy - dh - y) / (0.8 * ry) * 0.4
             c = (236, 240, 248, 255) if lit > 0.3 else (176, 184, 200, 255) if lit > -0.3 else (120, 128, 148, 255)
             if mer and ring and front:
                 c = (255, 230, 170, 255) if lit > 0 else (90, 96, 118, 255)   # a node where struts meet, its bolt cap
-            if not front:  # the far struts, seen through the glass: faint, so they never read as cables over it
+            if not front and not crown:  # the far struts, seen through the glass: faint, so they never read as cables over it
                 c = (150, 160, 182, 96)
         else:
             # glass: a cool tint, a little stronger on the back half (seen through twice)
             a = 54 if front else 104  # the back half denser: what stands behind the dome reads as behind glass
             # D13 (audit: glazing lines only): every pane catches the sky a little differently,
-            # some bluer, some greener or violet, the panes facing up brightest
-            # (each pane is the cell between two meridians and two rings, so its tint stops
-            # at the struts; above the top ring, where the meridians stop, the crown is one
-            # clear pane with one tint)
-            pane = (int(th * 8 / math.pi), int(ph * 8 / math.pi)) if ph < 0.79 else (0, 99)
+            # some bluer, some greener or violet, the panes facing up brightest (each pane
+            # is the cell between two meridians and two rings, so its tint stops at the struts)
+            pane = (int(th * div / math.pi), int(ph * 8 / math.pi) + (10 if crown else 0))
             pv = noise2(*pane, 1181)
             tint = (150, 196, 228) if pv < 0.4 else (140, 206, 210) if pv < 0.65 else (170, 180, 230) if pv < 0.85 else (196, 214, 236)
             c = (*tint, a + (14 if front and ph > 0.55 else 0))
-            if ph >= 0.79:  # the crown, one curved pane: the sky's tint deepening toward its top, its edge brighter
-                k = min(1.0, (ph - 0.79) / 0.78)
-                c = (int(196 - 50 * k), int(214 - 24 * k), int(236 - 6 * k), min(120, a + 14 + int(26 * (1 - k))))
+            if crown:  # the crown's panes face the black sky: darker, each its own tint
+                k = min(1.0, (ph - 0.79) / 0.63)
+                c = (int(tint[0] - 40 * k), int(tint[1] - 34 * k), int(tint[2] - 20 * k), 92 + int(28 * pv))
+                f = (ph * 8 / math.pi) % 1
+                if f > 0.78:
+                    c = (min(255, c[0] + 34), min(255, c[1] + 30), min(255, c[2] + 18), c[3] + 26)   # each pane's upper edge catching the sky
+                elif f < 0.16 and (th * div / math.pi) % 1 > 0.5:
+                    c = (c[0] - 18, c[1] - 18, c[2] - 12, c[3] + 20)   # the strut's shadow on the pane below it
             u = math.cos(th - 2.2) * math.cos(ph) + math.sin(ph) * 0.5
             if front and 0.55 < u < 0.95:
                 c = (240, 248, 255, int(70 + 120 * (u - 0.55)))  # the sun's reflection, high on the upper left, soft
             elif front and u > 0.95:
                 c = (255, 255, 255, 200)
-            if front and 0.05 < (th * 8 / math.pi) % 1 < 0.12 and 0.15 < ph < 0.7 and pv > 0.5:
+            if crown:
+                # the highlight band: the sun caught along the crown's upper-left shoulder,
+                # one hard-edged band, brighter where it crosses a pane's middle
+                b = math.cos(th - 2.3) * math.cos(ph) * 3.2
+                if 0.9 < b < 1.5:
+                    c = (236, 244, 255, 170 if 1.05 < b < 1.35 else 120)
+                elif 0.55 < b < 0.62:
+                    c = (220, 232, 250, 96)                   # its thin second reflection
+                # the Earth and the hub caught in the panes facing them: a small blue-white
+                # smear in two panes toward the back, a warm one from the hub's ports
+                if pane in ((5, 12), (6, 12)) and 0.2 < (th * div / math.pi) % 1 < 0.6 and 0.84 < ph < 1.0 and (x - y) % 6 < 2:
+                    c = (150, 190, 236, 150) if pane == (5, 12) else (255, 214, 150, 120)
+            if front and 0.05 < (th * div / math.pi) % 1 < 0.12 and 0.15 < ph < 1.3 and pv > 0.5:
                 c = (255, 255, 255, 120)  # a glint along a pane's edge
         cv.set(x, y, c)
+    # the crown's vent cap, a low drum over the top ring: its top lit from the upper left,
+    # its south face in shade, bolts round its rim (drawn whole, over the crown's struts)
+    tx, ty = cx, cy - dh
+    crx, cry = rx * math.cos(1.44) + 1.5, ry * math.cos(1.44) + 1.5
+    for y in range(int(ty - cry) - 1, int(ty + cry) + 4):
+        for x in range(int(tx - crx) - 1, int(tx + crx) + 2):
+            e = ((x - tx) / crx) ** 2 + ((y - ty) / cry) ** 2
+            e2 = ((x - tx) / crx) ** 2 + ((y - ty - 2) / cry) ** 2
+            if e <= 1.0:
+                lit = (tx - x) / crx + (ty - y) / cry * 0.6
+                c = (232, 236, 244, 255) if lit > 0.5 else (196, 202, 216, 255) if lit > -0.3 else (160, 166, 184, 255)
+                if 0.62 < e <= 1.0 and (x * 3 + y) % 7 == 0:
+                    c = (98, 104, 126, 255)                  # a bolt in its rim
+                if 0.58 < e < 0.7 and lit > 0.2:
+                    c = (250, 252, 255, 255)                 # the rim's lit lip
+                cv.set(x, y, c)
+            elif e2 <= 1.0 and y > ty:
+                cv.set(x, y, (112, 118, 138, 255) if x > tx - crx * 0.4 else (150, 156, 176, 255))  # its side, in shade
     for i in range(0, 721):  # the sill: a cast ring the glass stands on, its front lit
         th = 2 * math.pi * i / 720
         for k in range(4):
