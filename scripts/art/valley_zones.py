@@ -459,7 +459,7 @@ def town(frame: int = 0):
         ('pot-lib-1', 'potted_plant', 28, 214), ('pot-lib-2', 'potted_plant', 112, 214),
         # the square
         ('well', 'well', 144, 262), ('board', 'notice_board', 230, 252),
-        ('lamp-s1', 'lamp', 60, 300), ('lamp-s2', 'lamp', 262, 316),
+        ('lamp-s1', 'lamp', 60, 300), ('lamp-s2', 'lamp', 270, 248),  # on the square's north-east corner, clear of the blue house's roof (A after #98)
         ('bench-s1', 'bench_east', 100, 272), ('cafe-1', 'cafe', 200, 318),  # the bench turned to face the well (E3)
         # Moss's stall on the square's south-west corner, with its stock
         ('stall', 'stall', 2, 338), ('crate-1', 'crate', 92, 386), ('barrel-1', 'barrel', 108, 384),
@@ -921,8 +921,10 @@ def harbour(frame: int = 0):
         cv.set(x, QY0, STONE[1]); cv.set(x, QY0 + 1, STONE[4])
     # cottage 4's back yard (E10): a post-and-rail fence round the grass behind it, the
     # washing hung east-west across it in the sun, a basket of pegged-out washing below
-    yard_fence = rail_fence(cv, [(226, 150), (214, 150), (214, 117), (316, 117), (316, 150)], seed=990)
-    for (x, y, c) in ((292, 136, None),):
+    # (A after #98: the taller roof covers the ground behind the house, so the drying green
+    # is beside it, on the west, the line run from a post to the house's west wall)
+    yard_fence = rail_fence(cv, [(222, 142), (180, 142), (180, 198), (222, 198)], seed=990)
+    for (x, y, c) in ((186, 186, None),):
         for i in range(8):
             for j in range(5):
                 cv.set(x + i, y + j, WOOD[3] if j == 0 else WOOD[2] if (i + j) % 2 else WOOD[1])
@@ -976,7 +978,7 @@ def harbour(frame: int = 0):
         ('cottage-1', 'cottage', 42, 26), ('cottage-2', 'cottage_b', 210, 26), ('cottage-3', 'cottage_c', 44, 140),
         ('cottage-4', 'cottage_d', 224, 140),
         # the washing line across cottage 4's back yard, east-west, in the sun
-        ('washing', 'washing_line', 236, 104),
+        ('washing', 'washing_line', 178, 150),
         # the net rack before cottage 4's net shed, where the nets are mended (E10)
         ('nets-1', 'net_rack', 266, 186),
         # the quay: the fish market, pots and the spare anchor by the chandler's corner
@@ -1085,7 +1087,7 @@ def headland(frame: int = 0):
     objects = [
         ('tower', 'lookout_tower', 198, 300),
         ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep_lying', 188, 132), ('lamb-1', 'lamb_left', 254, 136),  # inside, off the gate (E15)
-        ('sheep-4', 'sheep_left', 262, 92),
+        ('sheep-4', 'sheep_left', 236, 96),  # inside, off the east wall (A after #98)
         # the gate (Claude B's low field gate, #82) hung on the west pier and shut against
         # the east one, its row 11 on the piers' foot row
         *([('fold-gate', 'field_gate_low', min(posts)[0] + 2, min(posts)[1] + 8 - 11)] if posts else []),
