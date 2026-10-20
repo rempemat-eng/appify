@@ -6433,7 +6433,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['rock-7', 'moon_rock_small_b', 233, 103, 16, 12],
       ['rock-8', 'moon_rock', 77, 94, 28, 19],
       ['gangway', 'pressure_tube_dock', 147, 117, 28, 80],
-      ['hub', 'hab_hub', 85, 186, 150, 116],
+      ['hub', 'hab_hub', 85, 179, 143, 123],
       ['corridor', 'pressure_tube', 147, 299, 28, 68],
       ['lock', 'airlock_module', 136, 359, 48, 59],
       ['dome', 'glass_dome', 46, 372, 241, 167],

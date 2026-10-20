@@ -1074,40 +1074,6 @@ DOME = (120, 140, 118, 64, 74)  # the dome sprite's base centre, radii and heigh
 REG = ['#2A2838', '#3E3A50', '#585270', '#77708E', '#9C96B2', '#C8C2DA']  # regolith (materials)
 
 
-def _bags(cv: Canvas, x: int, y: int, lit: float, seed: int = 0):
-    """One pixel of a berm of regolith bags laid in courses: each bag a soft pillow 10 x 5,
-    its ends rounded into the gaps, a highlight along the middle of its top where it
-    bulges, its lower half in shade; the courses wander a little so they never line up
-    like brick. `lit` (-1..1) shades the berm as a form under the upper-left sun."""
-    row = y // 5
-    off = (row % 2) * 5 + int(noise2(row, 0, 407 + seed) * 3)
-    u, v = (x + off) % 10, y % 5
-    t = noise2((x + off) // 10, row, 401 + seed)
-    base = 3 + (1 if t > 0.7 else -1 if t < 0.15 else 0) + round(lit)
-    base = max(1, min(4, base))
-    c = REG[base]
-    end = u in (0, 9)
-    if (end and v in (0, 4)) or (u == 0 and v in (1, 3)):
-        c = REG[max(0, base - 2)]  # the gap between two bags, where their rounded ends meet
-    elif v == 4:
-        c = REG[max(0, base - 2)] if not end else REG[max(0, base - 1)]  # the shadow under the bag
-    elif v == 0 and 2 <= u <= 7:
-        c = REG[min(5, base + 1)]  # the bulge of its top catching the light
-    elif v == 3 or end:
-        c = REG[max(1, base - 1)]
-    # D13: each bag its own cloth (older bags faded, newer ones bluer or sandier), a seam
-    # stitched along some, a tie at the odd end
-    bag = (x + off) // 10
-    fam = int(noise2(bag, row, 409 + seed) * 5)
-    cloth = (None, (168, 156, 160), (118, 128, 168), (176, 164, 140), (140, 132, 150))[fam]
-    out = rd.mix(c, cloth, 0.36) if cloth else rd.rgb(c)
-    if v == 2 and 2 <= u <= 7 and u % 2 == 0 and noise2(bag, row, 411 + seed) < 0.4:
-        out = rd.step(out, -0.9)                               # a stitched seam
-    if u == 8 and v in (1, 2) and noise2(bag, row, 413 + seed) < 0.25:
-        out = (176, 150, 104)                                  # a tie
-    rd.put(cv, x, y, out)
-
-
 def pressure_tube(length: int = TUBE_L, dock: bool = False) -> Canvas:
     """A closed pressurised tube between two modules, running north-south, 28 x `length`:
     a white hull seen from above, rounded (lit on the left, falling into shade on the
@@ -1175,64 +1141,193 @@ def pressure_tube(length: int = TUBE_L, dock: bool = False) -> Canvas:
 
 
 def hab_hub() -> Canvas:
-    """The hub, 148 x 122: a vaulted habitat buried under a berm of regolith bags (a
-    metre or two of moon dust stops the radiation and the micrometeorites), seen from
-    above: the roof as smooth dust heaped over the vault and lit from the upper left,
-    breaking at a clear edge over the front wall of bags laid in courses in its shade
-    (review 19 Oct: no brick all over, no diagonal seam, no face); a flat service hatch
-    and a vent mast on the roof; at the front, a white entrance porch with its hatch open
-    into the warm-lit lock and a lamp over it, where the tube to the greenhouse leaves.
-    No door to the surface: nobody goes out."""
+    """The hub, 148 x 122 (Matt, 20 Oct 10:15: "looks flat and its hard to tell what it is
+    supposed to be"; a lunar habitat reads at a glance as a pressurised module): a long
+    cylindrical module lying east-west on three cradles, seen from the front and above.
+    Its curved shell is white plates in rings, with ring frames, rivets and long seams; in
+    airless light its upper surface is lit from the upper left and the shade begins at a
+    hard terminator, with no ambient fill, the underside near black. The west end cap
+    faces the sun, the east cap is dark. A row of small round viewports glows warm along
+    its front, an ID band runs below them, dust has climbed the lower plates. On top: the
+    docking collar where the gangway tube from the shuttle arrives, a mast with a dish
+    and a red beacon, a whip antenna and a vent box. The cradles stand on broad footpads
+    in the dust. At the west end an EVA airlock: a box with a framed hatch and a round
+    window, steps down to the regolith and a handrail. A power cable runs from the east
+    cap down to the ground. At the front centre, the docking porch where the tube to the
+    greenhouse leaves, its hatch open into the warm-lit lock."""
     w, h = 148, 122
     cv = Canvas(w, h, pad=PAD)
-    cx = w / 2
-    berm = set()
-    for x in range(0, w):
-        d = abs(x - cx) / (w / 2)
-        top = int(8 + 30 * d ** 2.4 + (smooth_noise(x, 0, 9, 402) - 0.5) * 4)
-        for y in range(top, h - 2 - int(10 * d ** 3)):  # its toe rounding off at the ends
-            berm.add((x, y))
-    def crest(x):  # where the roof's slope breaks over into the bagged front wall
-        return int(70 - abs(x - cx) / (w / 2) * 10 + (smooth_noise(x, 1, 11, 405) - 0.5) * 3)
-    for (x, y) in berm:
-        k = (x - cx) / (w / 2)
-        if y < crest(x):  # the roof: bags in courses over the vault too (audit: no noise), lit from the upper left
-            # smooth dust heaped over the vault (review 19 Oct: no brick all over), lit from the
-            # upper left in soft bands, with wind ripples, warmer and cooler drifts and a few
-            # stones lying on it (audit 20 Oct: not noise)
-            n = smooth_noise(x, y, 12, 403)
-            lit = 1.0 - (k + 1) * 0.6 - (y - 10) / 60 + (n - 0.5) * 0.9
-            c = rd.step(REG[3], lit * 1.3)
-            d = smooth_noise(x, y, 7, 404)
-            c = rd.mix(c, (178, 160, 160) if d > 0.5 else (112, 120, 168), abs(d - 0.5) * 0.9)
-            rip = (y + 3 * math.sin(x / 9 + y / 23) + 2 * smooth_noise(x, y, 10, 408)) % 7
-            if rip < 1:
-                c = rd.step(c, 0.8)               # a ripple's lit crest
-            elif rip < 2:
-                c = rd.step(c, -0.7)              # its lee
-            if noise2(x // 3, y // 2, 406) > 0.975 and k < 0.8 and x % 3 != 2:
-                c = rd.step(REG[4], 0.6) if y % 2 == 0 else rd.step(REG[2], -0.4)   # a stone: lit top, shaded foot
+    X0, X1, Y0, Y1 = 14, 134, 14, 92       # the shell's cylinder (its axis east-west)
+    # the shell's plates: white beta cloth, greyer shielding, tan where the cloth has aged
+    # in the sun, the odd panel of gold foil
+    tints = ((226, 226, 222), (200, 210, 226), (224, 208, 180), (192, 194, 200), (214, 220, 212), (200, 172, 104))
+    term = 0.44                             # the terminator: lit above, shade below
+    for y in range(Y0, Y1 + 1):
+        u = (y - Y0) / (Y1 - Y0)
+        for x in range(X0, X1 + 1):
+            ring, band = (x - X0) // 20, int(u * 3)
+            col, row = (x - X0) // 10, (y - Y0) // 9            # each ring is clad in small plates
+            pick = int(noise2(col, row, 1179) * 13)
+            tint = tints[5] if pick == 12 and row < 6 else tints[pick % 5]
+            tint = rd.step(tint, (noise2(col, row, 1178) - 0.5) * 1.2)
+            west = 1 - (x - X0) / (X1 - X0)
+            if u < 0.06:
+                v = 1.4                                     # the crest catching the sun
+            elif u < term + 0.03 * math.sin(x / 7):
+                v = 0.6 - u * 1.0 + 0.6 * west              # the upper surface, lit
+            elif u < 0.84:
+                v = -1.9 + 0.4 * west - (u - term) * 1.0    # the front, past the terminator
+            else:
+                v = -3.6                                    # the underside, near black
+            c = rd.step(tint, v)
+            px = (x - X0) % 20
+            if px == 0:
+                c = rd.step(c, -2.0)                        # a ring frame
+            elif px == 1:
+                c = rd.step(c, 0.9 if u < term else 0.4)
+            elif px in (3, 17) and int(u * 40) % 4 == 1 and u < 0.84:
+                c = rd.step(c, -1.8)                        # rivets down the ring
+            if abs(u - 0.24) < 0.012 or abs(u - 0.62) < 0.012:
+                c = rd.step(c, -1.4)                        # the long seams between plates
+            if 0.7 < u < 0.745:
+                c = rd.mix(c, '#3E78B8' if u < 0.725 else '#E8A43A', 0.7)   # the ID band
+            elif u < 0.84 and ((y - Y0) % 9 == 0 or (x - X0) % 10 == 0):
+                c = rd.step(c, -1.0)                        # the joints between the small plates
+            elif u < 0.84 and ((y - Y0) % 9 == 1 or (x - X0) % 10 == 1):
+                c = rd.step(c, 0.5)
+            if 0.7 < u < 0.84 and rd.smooth_noise(x, y, 4, 1180) < 0.35 + (u - 0.7) * 2:
+                c = rd.mix(c, REG[2], 0.45)                 # dust thrown up onto the lower plates
             rd.put(cv, x, y, c)
-        else:  # the front wall: regolith bags in courses, in the shade of the roof's edge
-            _bags(cv, x, y, -0.7 - max(0, k) * 0.4, seed=1)
-    for (x, y) in berm:  # the break between roof and wall: a lit lip, the shadow under it
-        cy = crest(x)
-        if y == cy - 1:
-            cv.set(x, y, REG[5] if x < cx + 30 else REG[4])
-        elif y in (cy, cy + 1):
-            cv.set(x, y, REG[0] if y == cy else REG[1])
-    for (x, y) in berm:  # its edge against the dust beyond, its toe in shadow
-        if (x, y - 1) not in berm:
-            cv.set(x, y, REG[5] if x < cx + 30 else REG[4])
-        elif (x, y + 1) not in berm:
-            cv.set(x, y, REG[0])
-    for (x, y) in rect_set(36, 24, 12, 6):  # one flat service hatch on the roof, white, its rim lit
-        cv.set(x, y, WHITE[4] if y == 24 or x == 36 else WHITE[2] if x < 47 else WHITE[1])
-    cv.hline(37, 30, 11, REG[1])  # its shadow on the dust
-    cv.vline(122, 8, 30, WHITE[3]); cv.vline(123, 8, 30, WHITE[1])  # the vent mast
-    cv.set(122, 7, RED[3]); cv.set(123, 7, RED[2])
-    cv.hline(124, 38, 3, REG[1])
-    # the entrance porch at the front: a white box with its hatch open into the lit lock
+    shell = rect_set(X0, Y0, X1 - X0 + 1, int((Y1 - Y0) * 0.84))
+    rd.weather(cv, shell, seed=1182, chips=0.0, streaks=0.0, scuffs=0.12)
+    for ring in range(6):  # EVA handrails along the top, yellow, on standoffs, and a grapple pin
+        x0r = X0 + ring * 20 + 4
+        for x in range(x0r, x0r + 13):
+            rd.put(cv, x, Y0 + 8, '#F2C84A' if x < x0r + 9 else '#C8962A')
+            if (x - x0r) % 6 == 0:
+                rd.put(cv, x, Y0 + 9, '#8A90A2'); rd.put(cv, x, Y0 + 10, rd.step(cv.get(x, Y0 + 10), -1.8))
+        if ring in (1, 4):
+            for (x, y) in rect_set(x0r + 4, Y0 + 20, 6, 4):   # an access panel, lit on its top and west
+                rd.put(cv, x, y, rd.step(cv.get(x, y), 1.0 if (y == Y0 + 20 or x == x0r + 4) else -1.4 if (y == Y0 + 23 or x == x0r + 9) else 0))
+            rd.put(cv, x0r + 7, Y0 + 21, '#3E4252'); rd.put(cv, x0r + 8, Y0 + 21, '#3E4252')
+    for x in range(X0 + 2, X1 - 1):  # two pipes along the front under the band, on brackets
+        if 56 <= x <= 92:
+            continue
+        py = Y0 + int((Y1 - Y0) * 0.79)
+        rd.put(cv, x, py, '#E8ECF2'); rd.put(cv, x, py + 1, '#8A93A8')
+        rd.put(cv, x, py + 2, MATERIALS['brass'][4]); rd.put(cv, x, py + 3, MATERIALS['brass'][2])
+        if x % 9 == 0:
+            for d in range(4):
+                rd.put(cv, x, py + d, '#4E5466')
+    for (sx0, sx1) in ((X0 + 22, X0 + 38), (X0 + 82, X0 + 98)):  # strips of solar cells on the top, in their frames
+        for y in range(Y0 + 12, Y0 + 19):
+            for x in range(sx0, sx1):
+                edge = y in (Y0 + 12, Y0 + 18) or x in (sx0, sx1 - 1)
+                cell = ((x - sx0) // 3 + (y - Y0) // 3) % 2
+                c = '#C8CCD8' if edge else ('#2E4A7A' if cell else '#3A5A90')
+                if not edge and (x - sx0) % 3 == 0:
+                    c = '#5878A8'                           # the cells' bus bars catching the light
+                if not edge and y == Y0 + 13 and x < sx0 + 8:
+                    c = '#8AA8D0'                           # the sky's glint on the glass
+                rd.put(cv, x, y, c)
+    cy_ = Y0 + int((Y1 - Y0) * 0.36)
+    for x in range(X0 + 3, X1 - 2):  # a cable bundle along the shell's shoulder, clipped at each ring
+        rd.put(cv, x, cy_, '#C8443A'); rd.put(cv, x, cy_ + 1, '#3E78B8'); rd.put(cv, x, cy_ + 2, '#5E6476')
+        if (x - X0) % 20 == 10:
+            for d in range(-1, 4):
+                rd.put(cv, x, cy_ + d, '#E8ECF2' if d < 1 else '#8A93A8')
+    for k in range(6):  # status lights beside each ring's viewport, green and amber
+        lx, ly = X0 + 15 + k * 20, Y0 + int((Y1 - Y0) * 0.55) + 3
+        if abs(lx - 74) < 20:
+            continue
+        rd.put(cv, lx, ly, '#4AD07A'); rd.put(cv, lx, ly + 1, '#2A7A4A')
+        rd.put(cv, lx + 2, ly, '#F2A048'); rd.put(cv, lx + 2, ly + 1, '#9A5A20')
+    for (mx, my) in ((X0 + 23, Y0 + 30), (X0 + 63, Y0 + 30), (X0 + 103, Y0 + 30)):  # stencilled marks by the rings
+        for k in range(4):
+            rd.put(cv, mx + k, my, '#3A3E4C' if k != 2 else '#E8A43A')
+    for y in range(Y0, Y1 + 1):  # the end caps: the west one faces the sun, the east one is dark
+        u = (y - Y0) / (Y1 - Y0)
+        half = 6 * math.sqrt(max(0.0, 1 - (2 * u - 1) ** 2))
+        for x in range(int(X0 - half), X0):
+            rd.put(cv, x, y, rd.step((236, 236, 232), 1.2 - 0.6 * u if u < 0.84 else -2.6))
+        for x in range(X1 + 1, int(X1 + 1 + half)):
+            rd.put(cv, x, y, rd.step((220, 222, 226), -2.4 - u))
+        if 0.1 < u < 0.84:
+            rd.put(cv, int(X0 - half * 0.5), y, rd.step((236, 236, 232), 0.2))   # the cap's bolted rim
+            rd.put(cv, int(X1 + 1 + half * 0.5), y, rd.step((220, 222, 226), -3.4))
+    for k in range(6):  # the viewports: round, deep, warm inside, along the front
+        vx, vy = X0 + 10 + k * 20, Y0 + int((Y1 - Y0) * 0.55)
+        if abs(vx - 74) < 18:
+            continue  # the porch stands there
+        for (x, y) in disc(vx, vy, 2.6):
+            rd.put(cv, x, y, '#5E6476')
+        for (x, y) in disc(vx, vy, 1.6):
+            rd.put(cv, x, y, '#FFDC92' if (x, y) != (vx + 1, vy + 1) else '#E8A44A')
+        rd.put(cv, vx - 1, vy - 1, '#FFF4D0')
+    for (cx_, collar) in ((75, True),):  # the docking collar on top, where the gangway arrives
+        for y in range(Y0 - 4, Y0 + 6):
+            for x in range(cx_ - 14, cx_ + 15):
+                k = (x - cx_ + 14) / 28
+                c = rd.step((232, 232, 228), 1.0 - 2.2 * k)
+                if y in (Y0 - 4, Y0 + 5):
+                    c = rd.step(c, -1.6)
+                if y == Y0 and (x - cx_) % 5 == 0:
+                    c = '#E8C04A'                           # its clamps
+                rd.put(cv, x, y, c)
+    for y in range(0, Y0 + 8):  # the mast with its dish and beacon, on the east of the top
+        rd.put(cv, 118, y, '#D8DCE4'); rd.put(cv, 119, y, '#7A8094')
+    for (x, y) in oval(115, 6, 5, 2.4):
+        rd.put(cv, x, y, '#F0F2F6' if x < 115 else '#B8BECC' if x < 118 else '#7A8094')
+    rd.put(cv, 115, 6, '#4A5064'); rd.put(cv, 118, 0, RED[3]); rd.put(cv, 119, 0, RED[1])
+    for y in range(2, Y0 + 6):  # a whip antenna on the west of the top
+        rd.put(cv, 30, y, '#C8CCD4' if y % 4 else '#7A8094')
+    for (x, y) in rect_set(40, Y0 + 2, 10, 6):  # a vent box, lit on its top and west
+        rd.put(cv, x, y, '#F2F2EE' if y == Y0 + 2 or x == 40 else '#5E6476' if x == 49 or y == Y0 + 7 else '#9AA0B0')
+    for x in range(41, 52):
+        rd.put(cv, x, Y0 + 8, rd.step(cv.get(x, Y0 + 8), -2.4))   # its hard shadow on the shell
+    for cx_ in (32, 118):  # the cradles under the shell, on broad footpads in the dust
+        for y in range(Y1 - 2, Y1 + 6):
+            for x in range(cx_ - 7, cx_ + 8):
+                rd.put(cv, x, y, '#8A90A2' if x < cx_ else '#4E5466')
+        for y in range(Y1 + 6, h - 8):
+            for (dx, c) in ((-5, '#B8BECC'), (-4, '#6A7084'), (4, '#8A90A2'), (5, '#3E4252')):
+                rd.put(cv, cx_ + dx, y, c)
+        for y in range(h - 8, h - 5):
+            for x in range(cx_ - 9, cx_ + 10):
+                c = '#C8CCD8' if y == h - 8 else '#6A7084' if x < cx_ + 4 else '#3E4252'
+                if y == h - 6 and rd.smooth_noise(x, y, 2, 1181) < 0.5:
+                    c = REG[3]                              # dust kicked over the pad
+                rd.put(cv, x, y, c)
+    # the EVA airlock at the west end: a box, its framed hatch with a round window, steps
+    ex0, ex1, ey0, ey1 = 0, 22, 52, 96
+    for y in range(ey0, ey1 + 1):
+        for x in range(ex0, ex1 + 1):
+            if y < ey0 + 5:
+                c = rd.step((236, 236, 232), 1.2 - (x - ex0) / 30)     # its roof, lit
+            else:
+                c = rd.step((228, 228, 226), -0.9 - (x - ex0) / 40)      # its front
+                if x in (ex0, ex1):
+                    c = rd.step(c, -1.2)
+            if y == ey0 + 5:
+                c = rd.step((228, 228, 226), -2.4)
+            rd.put(cv, x, y, c)
+    for y in range(ey0 + 10, ey1 - 1):  # the hatch in its frame
+        for x in range(ex0 + 5, ex1 - 4):
+            frame = x in (ex0 + 5, ex1 - 5) or y in (ey0 + 10, ey1 - 2)
+            c = '#E8C04A' if frame and (x + y) % 4 < 2 else '#3A3E4C' if frame else rd.step('#9AA0B0', -0.4 * (x > ex0 + 11))
+            rd.put(cv, x, y, c)
+    for (x, y) in disc(ex0 + 11, ey0 + 18, 2.4):
+        rd.put(cv, x, y, '#FFDC92' if y > ey0 + 17 else '#FFF0C0')     # its window, lit from inside
+    rd.put(cv, ex0 + 15, ey0 + 26, '#E8E4DC'); rd.put(cv, ex0 + 15, ey0 + 27, '#5E6476')   # the handle
+    for k in range(3):  # the steps down to the regolith, each tread lit, each riser in shade
+        y = ey1 + 1 + k * 4
+        for x in range(ex0 + 3 - k, ex1 - 2 - k):
+            rd.put(cv, x, y, '#D8DCE4'); rd.put(cv, x, y + 1, '#9AA0B0')
+            rd.put(cv, x, y + 2, '#4E5466'); rd.put(cv, x, y + 3, '#3A3E4C')
+    for y in range(ey1 - 4, ey1 + 12):  # the handrail
+        rd.put(cv, ex1 - 1 - (y - ey1) // 4, y, '#E8C04A' if y % 3 else '#9A7A2A')
+    for y in range(66, h - 10):  # the power cable from the east cap down to the dust
+        rd.put(cv, X1 + 4, y, '#3A3C4A'); rd.put(cv, X1 + 5, y, '#8A93A8' if y % 5 else '#3A3C4A')
     px0, pw, ptop, pfoot = 60, 28, 76, h - 1
     for y in range(ptop, ptop + 8):  # its roof
         for x in range(px0, px0 + pw):
