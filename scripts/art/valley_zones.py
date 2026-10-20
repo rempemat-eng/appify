@@ -171,7 +171,7 @@ def water_body(cv: Canvas, water: set, deep=None, seed: int = 0, glints: int = 4
             c = WTR[2]
         if (x, y - 1) not in water or (x, y - 2) not in water:
             c = WTR[0]
-        elif (x, y - 3) not in water and (x + y) % 2:
+        elif (x, y - 3) not in water:
             c = WTR[1]
         cv.set(x, y, c)
     for (x, y) in water:
@@ -184,6 +184,75 @@ def water_body(cv: Canvas, water: set, deep=None, seed: int = 0, glints: int = 4
             cv.hline(x, y, 3 + (i % 2), WTR[3])
             if i % 3 == 0:
                 cv.set(x + 1, y, WTR[4])
+    water_detail(cv, water, seed)
+
+
+def _mix(a, b, t):
+    a, b = _rgb(a), _rgb(b)
+    return '#%02X%02X%02X' % tuple(int(a[i] + (b[i] - a[i]) * t) for i in range(3))
+
+
+def water_detail(cv: Canvas, water: set, seed: int = 0):
+    """The water's detail at Eastward's bar (art-style.md, 20 Oct; detail_bar 'water'),
+    always in clusters of two or more pixels, never speckle: the near bank mirrored dark
+    and green in a broken band under it; the body in clumps of four depths between the
+    ramp's tones; the current drawn as short lit streaks each over its own shadow; small
+    bright glints in pairs; and in the shallows by the far bank, a paler band where the
+    bottom shows, with stones lying under the water."""
+    inside = {(x, y) for (x, y) in water if 0 <= x < W and 0 <= y < H}
+    depth = {}
+    for (x, y) in inside:
+        up = next((k for k in range(1, 9) if (x, y - k) not in water), 9)
+        dn = next((k for k in range(1, 9) if (x, y + k) not in water), 9)
+        depth[(x, y)] = (up, dn)
+    MID = [_mix(WTR[1], WTR[2], 0.35), _mix(WTR[1], WTR[2], 0.7), _mix(WTR[2], WTR[3], 0.3)]
+    REFL = [_mix(WTR[0], G[1], 0.3), _mix(WTR[1], G[2], 0.22), _mix(WTR[0], SOIL_R[2], 0.25)]
+    SHALLOW = [_mix(WTR[2], SOIL_R[4], 0.22), _mix(WTR[3], SOIL_R[4], 0.18)]
+    for (x, y), (up, dn) in depth.items():
+        cell = smooth_noise(x, y * 3, 14, seed + 901)  # long soft bands lying with the flow
+        if up <= 4 and up >= 2:  # the bank's reflection, broken in clumps
+            if noise2(x // 8, 0, seed + 902) > 0.3:
+                cv.set(x, y, REFL[0] if up == 2 else REFL[1] if noise2(x // 11, 1, seed + 903) > 0.4 else REFL[2])
+        elif dn <= 2 and up > 4:  # the shallows by the far bank, the bottom showing
+            cv.set(x, y, SHALLOW[0] if dn == 2 else SHALLOW[1])
+        elif up > 4 and dn > 2:
+            if cell > 0.72:
+                cv.set(x, y, MID[2] if dn > 4 else MID[1])
+            elif cell < 0.22:
+                cv.set(x, y, MID[0] if up < 7 or dn < 7 else _mix(WTR[0], WTR[1], 0.55))  # darkest where it is deepest
+            elif up > 6 and dn > 6 and smooth_noise(x, y * 2, 10, seed + 908) > 0.7:
+                cv.set(x, y, _mix(WTR[1], WTR[2], 0.5))  # a slow eddy turning in the deep water
+    # stones lying on the bottom in the shallows, two or three pixels each
+    for (x, y), (up, dn) in depth.items():
+        if dn in (3, 4) and up > 5 and noise2(x // 2, y // 2, seed + 904) > 0.96 and x % 2 == 0 and y % 2 == 0:
+            for (a, b) in ((0, 0), (1, 0), (0, 1)):
+                if (x + a, y + b) in inside:
+                    cv.set(x + a, y + b, _mix(WTR[2], STONE[2], 0.45) if (a, b) != (0, 0) else _mix(WTR[3], STONE[3], 0.4))
+    # the current: short streaks lit on top with their own shadow under them
+    for (x, y), (up, dn) in depth.items():
+        if up > 4 and dn > 3 and noise2(x // 6, y // 3, seed + 905) > 0.9 and (x + y * 3) % 9 == 0:
+            n = 4 + int(noise2(x, y, seed + 906) * 4)
+            if all((x + t, y) in inside and (x + t, y + 1) in inside for t in range(n)):
+                for t in range(n):
+                    cv.set(x + t, y, WTR[3] if 0 < t < n - 1 else MID[2])
+                    cv.set(x + t, y + 1, WTR[1])
+    # glints in pairs where the light catches it
+    for (x, y), (up, dn) in depth.items():
+        if up > 5 and dn > 3 and noise2(x, y, seed + 907) > 0.993 and (x + 1, y) in inside:
+            cv.set(x, y, WTR[4]); cv.set(x + 1, y, _mix(WTR[3], WTR[4], 0.5))
+    # no lone pixels (detail comes in clusters): a pixel unlike all four neighbours takes
+    # the colour most of them share
+    for _ in range(2):
+        fix = {}
+        for (x, y) in inside:
+            c = cv.get(x, y)[:3]
+            nb = [cv.get(x + a, y + b)[:3] for (a, b) in ((1, 0), (-1, 0), (0, 1), (0, -1)) if (x + a, y + b) in inside]
+            if len(nb) == 4 and all(n != c for n in nb):
+                best = max(set(nb), key=nb.count)
+                if nb.count(best) >= 2:
+                    fix[(x, y)] = best
+        for (x, y), c in fix.items():
+            cv.set(x, y, '#%02X%02X%02X' % c)
 
 
 def bank(cv: Canvas, water: set, keep=frozenset(), seed: int = 0, sandy: bool = False):
@@ -1247,17 +1316,18 @@ def riverside(frame: int = 0):
     # (Claude A after #86: not out of the world's edge) the brook rises at a spring in the
     # zone's north-east corner, welling up into a small pool at the foot of a heap of
     # mossy boulders, and runs down wide enough to read
-    spring_pool = blob(294, 50, 8, 4, seed=1409, rough=0.2)
-    brook = worlds.thick([(294, 52), (292, 84), (286, 118), (270, 178), (248, 202)], 3.5, seed=1410)
+    # (A after #109: further in from the world's edge, its pool a cell or two across)
+    spring_pool = blob(282, 76, 12, 6, seed=1409, rough=0.2)
+    brook = worlds.thick([(284, 80), (288, 98), (286, 118), (270, 178), (248, 202)], 3.5, seed=1410)
     pond = blob(236, 206, 19, 9, seed=1411, rough=0.18)
     lead = {(x, y) for x in range(mx - 2, mx + 12) for y in range(212, mt - 30)}
     millwater = (brook | pond | spring_pool) - lead
     bank(cv, millwater, seed=1412)
     water_body(cv, millwater, set(pond) | set(spring_pool), seed=1413, glints=10)
-    spring_rocks = outcrop(cv, [(282, 46, 16, 12), (306, 46, 18, 13), (294, 40, 20, 14), (300, 30, 14, 10), (284, 34, 12, 9)],
+    spring_rocks = outcrop(cv, [(270, 70, 16, 12), (298, 72, 18, 13), (284, 66, 22, 14), (292, 56, 14, 10), (274, 58, 12, 9)],
                            seed=1408, moss=True)
-    for k in range(4):  # the water welling out from under the stones
-        cv.set(291 + k * 2, 47, WTR[4] if k % 2 else '#E8F0F2')
+    for k in range(5):  # the water welling out from under the stones
+        cv.set(278 + k * 2, 71, WTR[4] if k % 2 else '#E8F0F2')
     race = {(x, y) for x in range(mx - 6, mx + 16) for y in range(214, mt + 2)}
     for (x, y) in race:
         inner = mx - 3 <= x < mx + 13
@@ -1289,7 +1359,7 @@ def riverside(frame: int = 0):
     path |= blob(110, 280, 22, 8, seed=1406, rough=0.15)  # the mill yard by the sacks, where the lane comes in
     path |= worlds.thick([(46, ys[0] - 2), (46, 262), (48, 240), (56, 224), (68, 216)], 7, seed=23)  # the stepping stones' path up to the lane
     path |= worlds.thick([(46, ys[-1] + 2), (46, 360), (40, 398)], 5, seed=24)  # and down to the bank walk
-    path |= worlds.thick([(204, 432), (230, 458), (236, 488), (232, 502)], 5, seed=25)  # to the bench's front, between it and the bend (E3)
+    path |= worlds.thick([(204, 432), (230, 458), (236, 486)], 5, seed=25) | blob(236, 490, 8, 6, seed=1416, rough=0.2)  # to a trodden patch at the bench's front, between it and the bend (E3; A after #109)
     path |= worlds.thick([(58, 186), (88, 184), (122, 178), (156, 172), (176, 166)], 6, seed=26)  # the cart track up to the hay field's gateway
     path |= {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)}  # runs on across the seam
     lay_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff}, seed=77,
@@ -2465,8 +2535,11 @@ def woodland(frame: int = 0):
         return meadow.stream_centre(x + OFF)
 
     def half(x):
+        # (Claude A after #109: the garden's own width at the seam, not 3 px wider) a
+        # trickle of 3 px at the spring widening to the garden stream's half-width
         full = 9 + (smooth_noise(x + OFF, 0, 13, 91) - 0.5) * 2.4
-        return full * min(1.0, max(0.0, (x - 96) / 120)) + 3 * (x >= 96)
+        t = min(1.0, max(0.0, (x - 96) / 120))
+        return (full * t + 3 * (1 - t)) * (x >= 96)
 
     spring_x = 96
     cy = int(centre(spring_x))
@@ -2531,11 +2604,13 @@ def woodland(frame: int = 0):
              seed=79, avoid=set(water))
     # the garden's bluff on the north bank runs on and sinks into the ground upstream
     # (in Claude B's natural earth, B12 and E19, so the bank runs on unchanged at the seam)
+    nbank, bank_band = set(), set()
     for x in range(150, W):
         bh = int((7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)) * min(1.0, (x - 150) / 150))
         top = int(centre(x) - half(x))
         if bh > 0:
-            earth_bluff(cv, x, top - bh, bh, x + OFF)
+            nbank |= earth_bluff(cv, x, top - bh, bh, x + OFF)
+        bank_band |= {(x, y) for y in range(top - bh - 26, top)}  # the turf just above the bank stays out of the sun pools
     # the stone circle in its own small clearing: a ring of reddish trodden earth round
     # muted grass, the stones standing in it (the reference Matt chose as the bar)
     SX, SY, SRX, SRY = 78, 410, 44, 24
@@ -2558,7 +2633,7 @@ def woodland(frame: int = 0):
             cv.set(x, y, '#76984A')
     # where the canopy closes in at the outer edges the floor goes into shade: two calm
     # steps of shadow in broad soft-edged pools (no checker), darkest in the far corner
-    keep = set(path) | water | rock | glade | ring_out
+    keep = set(path) | water | rock | glade | ring_out | nbank
     for y in range(H):
         for x in range(W):
             if (x, y) in keep:
@@ -2572,7 +2647,7 @@ def woodland(frame: int = 0):
     # dappled light through the canopy, and the glade in full sun
     for i in range(10):
         lx, ly = 20 + int(noise2(i, 0, 426) * 290), 170 + int(noise2(i, 1, 426) * 380)
-        light_pool(cv, lx, ly, 10 + i % 3 * 4, 5 + i % 2 * 3, GOLDm[2], water | rock | path)
+        light_pool(cv, lx, ly, 10 + i % 3 * 4, 5 + i % 2 * 3, GOLDm[2], water | rock | path | nbank | bank_band)  # (never on the bank's face: A after #109)
     sun = blob(108, 128, 40, 24, seed=72, rough=0.3)  # the sun on the glade, in a ragged patch
     for (x, y) in sun - path:
         if smooth_noise(x, y, 6, 673) > 0.35 or (x + y) % 2 == 0:
