@@ -19,7 +19,7 @@ One standard for every pixel the player sees, on the walkable land and beyond it
 Two checks enforce it:
 
 - **The asset ledger** (`asset-ledger.md`, `npm run check:assets`, on `claude-a/asset-ledger`) grades every existing asset KEEP, REWORK or RETIRE. A rebuilt region may use only KEEP assets or finished REWORKs.
-- **The whole-world audit** (`npm run check:world`, on `claude-a/world-audit`) measures every 32 px cell of the world against the standard and draws a heat map. A region is marked rebuilt only when every one of its cells is green, and from then on the check fails if any cell slips.
+- **The whole-world audit** (`npm run check:world-audit`, PR #145) measures every 32 px cell of the world against the standard and draws a heat map. A region is marked rebuilt only when every one of its cells is green, and from then on the check fails if any cell slips.
 
 ## 2. Every square has an owner
 
