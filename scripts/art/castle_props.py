@@ -399,6 +399,34 @@ def postern() -> Canvas:
     masonry(cv, rect_set(0, 12, w, 42), 59, lambda x, y: 0.3 - x / w * 0.5 - max(0, y - 46) / 10, soot=4)
     for x in range(w):
         _shade(cv, x, 12)
+    # the way in from the north (review 20 Oct 15:53, finding 4: the bridge read as
+    # landing on the battlements): where the postern bridge meets the tower its two
+    # parapets rise on as the passage's piers, 4 px above the merlons, and between them
+    # the bridge runs on into the dark of the passage under the wall walk, under a
+    # raised portcullis whose iron teeth hang from the passage's head. The passage
+    # comes out at the arch on the yard side below, on the same level.
+    ASH = MATERIALS['ash']
+    for y in range(0, 12):
+        for a in range(24):
+            x = 4 + a
+            if a < 4 or a >= 20:  # the piers, coursed, lit on the west and shaded on the east
+                west = a < 4
+                c = ([STONE_R[1], STONE_R[5], STONE_R[4], STONE_R[2]][a] if west
+                     else [STONE_R[4], STONE_R[3], STONE_R[2], STONE_R[1]][a - 20])
+                if y < 2:
+                    c = (STONE_R[5] if y == 0 else STONE_R[4]) if west else (STONE_R[4] if y == 0 else STONE_R[3])
+                elif y % 4 == 1 and a not in (0, 23):
+                    c = MORTAR
+                cv.set(x, y, c)
+            elif y >= 4:  # the passage: flags going into the dark
+                c = ['#3A2C2A', '#2A1E20', '#241A1C', '#1C1418', '#1C1418', '#1C1418', '#241A1C', '#2A1E20'][y - 4]
+                if y == 11 and a % 4 == 1:
+                    c = ASH[1]  # a flag's lit edge, far in, where the yard's light reaches
+                if y == 4:
+                    c = IRON[2] if a % 3 else IRON[3]  # the portcullis's bottom rail
+                elif y in (5, 6) and a % 3 == 0:
+                    c = IRON[2] if y == 5 else IRON[1]  # its teeth
+                cv.set(x, y, c)
     ax0, ax1, spring = 8, 24, 32  # the opening: its sides, and where the arch springs
     cxa, ra = (ax0 + ax1 - 1) / 2, (ax1 - ax0) / 2
     arch = {(x, y) for x in range(ax0, ax1) for y in range(16, h)
