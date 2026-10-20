@@ -469,10 +469,9 @@ OBJECTS = [
     ('fence-l', 'fence_l', 0, meadow.FENCE_Y, None),
     ('fence-r', 'fence_r', meadow.GATE_X + meadow.GATE_W, meadow.FENCE_Y, None),
     ('gate', 'gate', meadow.GATE_X, meadow.GATE_Y, 'arena'),
-    ('tree-8', 'tree', -26, 498, None),
-    ('tree-9', 'tree', 282, 500, None),
-    ('pine-low-0', 'pine', 70, 504, None),
-    ('pine-low-1', 'pine', 216, 506, None),
+    ('tree-8', 'tree', -32, 428, None),  # B9: off the fence line, inside it
+    ('tree-9', 'tree_small', 280, 446, None),  # B9: inside the fence by its east strainer, off its line
+    # (B9: the two low pines that stood on the fence line came out; the meadow stays open to the fence)
 ]
 
 # Where the companion stands for each place, and named points the app draws from.
@@ -602,8 +601,8 @@ def hut_look(door: str, boxes: str) -> Canvas:
 def main():
     sprites = props.props()
     sprites['hut'] = hut_look(*HUT_DEFAULT)
-    sprites['fence_l'] = props.fence_h(meadow.GATE_X)
-    sprites['fence_r'] = props.fence_h(W - meadow.GATE_X - meadow.GATE_W)
+    sprites['fence_l'] = props.fence_h(meadow.GATE_X, strainer='w')  # B9: each run ends on a braced post
+    sprites['fence_r'] = props.fence_h(W - meadow.GATE_X - meadow.GATE_W, strainer='e')
     # Flat, walkable things (the bridge deck) are part of the ground, not objects:
     # baked into every ground frame, characters always draw on top of them.
     bx, by, bw, bh = meadow.BRIDGE

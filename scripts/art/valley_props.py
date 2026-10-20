@@ -1224,7 +1224,8 @@ def pumpkins() -> Canvas:
 # drawn; everything else is hidden behind them, as it would be (one camera, world-rules
 # 2a). The stones of every face and top are laid by a jittered Voronoi, so no two are
 # alike and no joint runs on along a line.
-WALL_H = 6
+WALL_H = 9  # with its 3 to 4 px coping, 12 to 13 high: the scale table's field wall (verticality.md 5)
+WALL_PAD = 8  # room above the nominal box for the taller wall
 
 
 def _stone_at(u: float, v: float, su: float, sv: float, seed: int):
@@ -1267,36 +1268,66 @@ def _stone_px(sid, joint: float, du: float, dv: float, su: float, sv: float, bas
 
 def _drystone(cv: Canvas, body: set, coping: dict, dirs: dict, seed: int):
     """Raise a dry stone wall on `body` (ground pixels), WALL_H high, with its coping on
-    the `coping` pixels (each pixel's height above the body); `dirs` gives the way the
-    wall runs at each pixel ('ew' or 'ns'), which way its coping stones lie across."""
+    the `coping` pixels (each pixel's height above the body, 0 where a coping stone has
+    fallen); `dirs` gives the way the wall runs at each pixel ('ew' or 'ns'), which way its
+    coping stones lie across. The face is laid in rough courses, darker and mossy low down
+    where the damp sits, with a through-stone every so often standing proud of the face
+    and casting a line of shadow, chipped corners on the lit stones, and grass and the odd
+    fern growing against its foot (Eastward's walls: built, not filled)."""
     ys = sorted({y for (_, y) in body})
     for y in ys:
         for x in sorted(x for (x, yy) in body if yy == y):
             if (x, y + 1) not in body:  # a face toward the viewer
+                through = noise2(x // 9, y // 5, seed + 7) > 0.74  # a through-stone in this stretch
                 for z in range(WALL_H):
                     sid, j, du, dv = _stone_at(x, z, 7.5, 3.3, seed)
                     c = _stone_px(sid, j, du, dv, 7.5, 3.3, 2, seed)
+                    if z <= 2 and c in (STONE[0], STONE[1]) and noise2(x, z, seed + 8) > 0.45:
+                        c = LEAF[1] if noise2(x, z, seed + 9) > 0.5 else LEAF[2]  # moss in the damp low joints
+                    elif z <= 1 and c not in (STONE[0], STONE[1]):
+                        c = STONE[max(1, STONE.index(c) - 1)] if c in STONE else c  # damp at the foot
+                    if through and z in (5, 6):
+                        c = STONE[4] if z == 6 else STONE[3]  # its lit top and face
+                    elif through and z == 4:
+                        c = STONE[0]  # the shadow it casts on the stones below
+                    if c == STONE[4] and j < 1.6 and noise2(x, z, seed + 11) > 0.8:
+                        c = STONE[2]  # a chipped corner
                     if z == 0:
-                        c = STONE[1] if c not in (STONE[0], STONE[1]) else STONE[0]  # where it meets the ground
+                        c = STONE[1] if c not in (STONE[0], STONE[1], LEAF[1], LEAF[2]) else STONE[0]
                     cv.set(x, y - z, c)
-            if (x, y) not in coping:  # the body's top, a ledge either side of the coping
+                if noise2(x, y, seed + 12) > 0.62:  # grass and the odd fern at the foot
+                    k = int(noise2(x, 3, seed + 13) * 3)
+                    cv.set(x, y, LEAF[2]); cv.set(x, y - 1, LEAF[3] if k else LEAF[2])
+                    if k == 2:
+                        cv.set(x, y - 2, LEAF[3]); cv.set(x + 1, y - 2, LEAF[4])
+            if (x, y) not in coping or coping[(x, y)] == 0:  # the body's top, a ledge beside the coping
                 sid, j, du, dv = _stone_at(x, y, 6.0, 2.6, seed + 10)
-                cv.set(x, y - WALL_H, _stone_px(sid, j, du, -dv, 6.0, 2.6, 3, seed + 10))
+                c = _stone_px(sid, j, du, -dv, 6.0, 2.6, 3, seed + 10)
+                if noise2(x, y, seed + 14) > 0.86:
+                    c = LEAF[3]  # moss on the ledge
+                cv.set(x, y - WALL_H, c)
         for x in sorted(x for (x, yy) in coping if yy == y):
             hc, ns = coping[(x, y)], dirs.get((x, y)) == 'ns'
+            if hc == 0:
+                continue
             su, sv = (8.0, 3.4) if ns else (3.4, 6.0)
             if (x, y + 1) not in coping:  # the coping stones' edges toward the viewer
                 for z in range(hc):
                     sid, j, du, dv = _stone_at(x, z + WALL_H, 3.4, 9.0, seed + 20)
                     c = _stone_px(sid, j, du, dv, 3.4, 9.0, 3, seed + 20)
+                    if not ns and j < 1.05:
+                        c = STONE[0]  # the dark gap between two upright stones
                     cv.set(x, y - WALL_H - z, c)
             sid, j, du, dv = _stone_at(x, y, su, sv, seed + 30)
-            cv.set(x, y - WALL_H - hc, _stone_px(sid, j, du, -dv, su, sv, 4, seed + 30))
+            c = _stone_px(sid, j, du, -dv, su, sv, 4, seed + 30)
+            if noise2(*sid, seed + 15) > 0.85 and c != STONE[0]:
+                c = LICHEN
+            cv.set(x, y - WALL_H - hc, c)
 
 
 def _coping(body: set, dirs: dict, seed: int) -> dict:
-    """The coping stands on the body inset a pixel from each side, a little ragged in
-    height, stone by stone (2 or 3 px)."""
+    """The coping stands on the body inset a pixel from each side: upright stones of two
+    heights in turn (3 or 4 px, cock and hen), and now and then a gap where one fell."""
     out = {}
     for (x, y) in body:
         ns = dirs.get((x, y)) == 'ns'
@@ -1307,7 +1338,8 @@ def _coping(body: set, dirs: dict, seed: int) -> dict:
             inner = inner and (x - 1, y) in body and (x + 1, y) in body
         if inner:
             sid = _stone_at(x, y, *((8.0, 3.4) if ns else (3.4, 6.0)), seed + 30)[0]
-            out[(x, y)] = 2 + (noise2(*sid, seed + 40) > 0.55)
+            n = noise2(*sid, seed + 40)
+            out[(x, y)] = 0 if n > 0.93 else 3 + (n > 0.5)  # upright stones of two heights, one fallen now and then
     return out
 
 
@@ -1316,7 +1348,7 @@ def drystone_wall(length: int = 64) -> Canvas:
     of every size laid without mortar, dark in the joints and lit on their upper left, a
     ledge along its top and a ragged coping of stones set on edge."""
     w, h = length, 14
-    cv = Canvas(w, h, pad=PAD)
+    cv = Canvas(w, h, pad=WALL_PAD)
     body = {(x, y) for x in range(w) for y in range(h - 4, h)}
     dirs = {p: 'ew' for p in body}
     _drystone(cv, body, _coping(body, dirs, 71), dirs, 71)
@@ -1327,7 +1359,7 @@ def drystone_wall_ns(length: int = 40) -> Canvas:
     """A dry stone wall running away from the viewer, 10 x 50: from the camera its long top
     with the coping stones laid across it, and its end's face toward the viewer."""
     w, h = 10, length + 10
-    cv = Canvas(w, h, pad=PAD)
+    cv = Canvas(w, h, pad=WALL_PAD)
     body = {(x, y) for x in range(1, 9) for y in range(10, h)}
     dirs = {p: 'ns' for p in body}
     _drystone(cv, body, _coping(body, dirs, 72), dirs, 72)
@@ -1339,7 +1371,7 @@ def drystone_corner(side: str = 'w') -> Canvas:
     at its west end (side 'w') or its east end ('e'), the coping running round the turn,
     the two ways of laying its stones meeting at the corner."""
     w, h = 36, 40
-    cv = Canvas(w, h, pad=PAD)
+    cv = Canvas(w, h, pad=WALL_PAD)
     r0 = 10
     arm = range(0, 8) if side == 'w' else range(w - 8, w)
     body = {(x, y) for x in range(w) for y in range(r0, r0 + 4)} | {(x, y) for x in arm for y in range(r0, h)}

@@ -69,6 +69,10 @@ def meadow_path(thick_path):
                       (PATH_X, 530), (PATH_X, H + 12)], 18.5, 7)
     pts |= thick_path([(PATH_X + 10, 432), (YARD[0] + 4, 432)], 9.5, 8)   # into the kitchen garden
     pts |= thick_path([(PATH_X - 10, ORCHARD_WALK_Y), (-12, ORCHARD_WALK_Y)], 8.5, 9)  # along the orchard, on into the Woodland
+    # B10 (Matt, 19 Oct 22:40): the Riverside's west bank walk arrives at x 319 on rows
+    # 394-410 (valley_zones riverside, thick((8, 402), 8)); it carries on into the kitchen
+    # garden's pad here at the same row and width, square to the edge
+    pts |= {(x, y) for x in range(YARD[0] + YARD[2] - 12, W + 12) for y in range(394, 411)}
     yx, yy, yw, yh = YARD
     r = 10
     for y in range(yy, yy + yh):

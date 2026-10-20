@@ -953,30 +953,69 @@ def meadow_sign() -> Canvas:
     return cv
 
 
-def fence_h(length: int) -> Canvas:
-    """A split-rail fence segment, 18 tall: round posts every 10 pixels with lit caps,
-    rails that show a lit top and a dark underside, and the rails' shadows on the posts."""
+def fence_h(length: int, strainer: str | None = None) -> Canvas:
+    """A post-and-rail fence segment, 18 tall: round posts lit on the left with cut tops,
+    every 10 pixels, two rails that show a lit top and a dark underside with grain, a
+    knot now and then and a nail head where each rail meets a post, the rails' shadows on
+    the posts, lichen low on a few posts and bindweed climbing two of them. `strainer`
+    ('w' or 'e') ends the run at that end on a stout strainer post with a diagonal brace,
+    so a fence never just stops in the grass (Matt, 19 Oct 22:40, B9; world-references 3)."""
     h = 18
     cv = Canvas(length, h, pad=PAD)
     for ry in (5, 11):
-        cv.hline(0, ry, length, WOOD[4]); cv.hline(0, ry + 1, length, WOOD[3]); cv.hline(0, ry + 2, length, WOOD[1])
-        for x in range(0, length, 7):
-            cv.set(x + 3, ry + 1, WOOD[2])  # grain
-    for x in range(1, length - 4, 10):
+        for x in range(length):
+            sag = 1 if 0.3 < noise2(x // 10, ry, 931) < 0.4 and x % 10 in (4, 5, 6) else 0
+            cv.set(x, ry + sag, WOOD[4]); cv.set(x, ry + 1 + sag, WOOD[3]); cv.set(x, ry + 2 + sag, WOOD[1])
+            if noise2(x // 3, ry, 932) > 0.78:
+                cv.set(x, ry + 1 + sag, WOOD[2])  # grain
+        for x in range(6, length, 23):
+            cv.set(x, ry + 1, WOOD[1]); cv.set(x + 1, ry + 1, WOOD[2])  # a knot
+    posts = list(range(1, length - 4, 10))
+    if strainer == 'e':
+        posts = [p for p in posts if p < length - 12]
+    if strainer == 'w':
+        posts = [p for p in posts if p > 8]
+    for x in posts:
         for y in range(1, 17):
             for i in range(5):
                 t = 3 if i == 0 else 4 if i == 1 else 3 if i == 2 else 2 if i == 3 else 1
+                if i == 2 and noise2(x, y // 3, 933) > 0.8:
+                    t = 2  # a split in the post
                 cv.set(x + i, y, WOOD[t])
         cv.hline(x, 1, 5, WOOD[4]); cv.set(x + 4, 1, WOOD[3]); cv.hline(x + 1, 2, 3, WOOD[2])  # cut top
         for ry in (8, 14):
             cv.hline(x + 1, ry, 4, WOOD[1])  # the rail's shadow on the post
+        for ry in (6, 12):
+            cv.set(x + 2, ry, SLATE[1])  # the nail head
         cv.hline(x, 16, 5, WOOD[1])
+        if noise2(x, 7, 934) > 0.6:
+            cv.set(x + 1, 14, LICHEN_G); cv.set(x + 2, 15, LICHEN_G)  # lichen low on the post
+    if strainer:  # the stout end post, taller than the rest, braced back to its neighbour
+        sx = length - 7 if strainer == 'e' else 0
+        for y in range(-2, 17):
+            for i in range(7):
+                t = 3 if i == 0 else 4 if i in (1, 2) else 3 if i == 3 else 2 if i < 6 else 1
+                cv.set(sx + i, y, WOOD[t])
+        cv.hline(sx, -2, 7, WOOD[4]); cv.hline(sx + 1, -1, 5, WOOD[2]); cv.set(sx + 6, -2, WOOD[3])
+        for y in range(2, 16, 4):
+            cv.set(sx + 4, y, WOOD[2])  # its grain
+        cv.hline(sx, 16, 7, WOOD[1])
+        for ry in (6, 12):
+            cv.set(sx + 3, ry, SLATE[1])
+        for k in range(10):
+            bx = sx - 1 - k if strainer == 'e' else sx + 7 + k
+            by = 2 + int(k * 1.3)
+            cv.set(bx, by, WOOD[4]); cv.set(bx, by + 1, WOOD[2])
+        cv.set(sx + 1, 15, LICHEN_G); cv.set(sx + 2, 14, LEAF[2])
     for x in (16, length - 24):
         cv.vline(x, 7, 9, LEAF[1])
         for dx, y in ((-1, 8), (1, 10), (-1, 12), (1, 14)):
             cv.hline(x + dx, y, 2, LEAF[2]); cv.set(x + dx, y - 1, LEAF[3])
         cv.set(x + 1, 6, NAP[4])
     return cv
+
+
+LICHEN_G = '#9EA86A'  # grey-green lichen on old timber
 
 
 def gate() -> Canvas:

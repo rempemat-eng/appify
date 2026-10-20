@@ -1635,8 +1635,8 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
   },
   summit: {
     objects: [
-      ['wall-1', 'drystone_wall', 87, 323, 66, 14],
-      ['wall-2', 'drystone_wall', 151, 319, 66, 14],
+      ['wall-1', 'drystone_wall', 87, 319, 66, 18],
+      ['wall-2', 'drystone_wall', 151, 315, 66, 18],
       ['scope', 'telescope', 152, 344, 21, 33],
       ['bench', 'forest_bench', 200, 381, 32, 11],
       ['cairn', 'cairn', 84, 361, 20, 32],
