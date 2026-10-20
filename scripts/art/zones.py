@@ -699,7 +699,7 @@ def build(name: str, fn, start: str):
                         wet_px.add((x, y))
                     elif ch == '!' and world_lint._lava(*px):
                         hot_px.add((x, y))
-    flow = water_flow.sheet(cv.img, wet_px, hot_px)
+    flow = water_flow.sheet(cv.img, wet_px, hot_px, FLOW_WEST.get(fn.__name__))
     flow_path = os.path.join(out, 'flow.png')
     if flow:
         flow[0].save(flow_path, optimize=True)  # native scale: the renderer draws it pixelated
@@ -834,6 +834,9 @@ def rle(row: str) -> str:
 # Water a zone declares outright (world-rules.md, section 1: the semantic layer), for
 # zones whose night palettes the lint cannot read by colour; others are read by colour.
 WATER_MASKS: dict[str, set] = {}
+# level water whose current runs west (water_flow.py): a zone's stream crossing toward a
+# fall at its west end declares those pixels here
+FLOW_WEST: dict[str, set] = {}
 
 BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
 

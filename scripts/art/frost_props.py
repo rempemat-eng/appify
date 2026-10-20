@@ -169,10 +169,107 @@ def ibex() -> Canvas:
     return cv
 
 
+# ---- firs (art-faults A2: Fir Hollow's old wood) --------------------------------------------
+# A second conifer beside the garden's pine, so a clump mixes shapes: a spruce-like fir whose
+# branch shelves droop to ragged tips, in a cooler, bluer green. Three ages (an old fir about
+# 4 adults tall, a young one about 2, a sapling under 1.2), each with a snowy variant for the
+# upper slope. Seen from the south and a little above: each shelf's hem overhangs the shelf
+# below with a dark underside, lit on the upper left, the east flank in shade.
+FIR = ['#14221E', '#1F362D', '#2C4D3C', '#3E654C', '#5F8762', '#86A97A']
+
+
+def _fir(w: int, h: int, trunk_h: int, layers: int, trunk_w: int, seed: int) -> Canvas:
+    cv = Canvas(w, h, pad=PAD)
+    cx = w / 2 - 0.5 + (noise2(seed, 1, 970) - 0.5) * 1.5
+    crown_b = h - trunk_h + 2          # the lowest shelf's hem hides the trunk's top
+    tx = int(round(cx - trunk_w / 2 + 0.5))
+    style.trunk(cv, tx, crown_b - 6, h, trunk_w, WOOD)
+    hw_max = w / 2 - 1.5
+    shelves = []
+    span_y = crown_b - 1
+    for i in range(layers):           # shelf i: top row, depth, half width at its hem
+        t0 = 1 + int(span_y * (i / layers) ** 1.12)
+        depth = max(4, int(span_y / layers * 1.75))
+        hw = max(2.0, hw_max * ((i + 1) / layers) ** 0.9 + (noise2(i, seed, 971) - 0.5) * 2.2)
+        shelves.append((t0, depth, hw, i))
+    for (t0, depth, hw, i) in reversed(shelves):   # the lowest first: each hem overhangs the next
+        lean = (noise2(i, seed, 972) - 0.5) * 1.6
+        px = {}
+        for y in range(t0, min(crown_b + 2, t0 + depth + 4)):
+            frac = (y - t0 + 1) / depth
+            if frac > 1.35:
+                break
+            span = hw * (0.22 + 0.78 * min(1.0, frac))
+            for x in range(int(cx + lean - span) - 1, int(cx + lean + span) + 2):
+                if not (0 <= x < w):
+                    continue
+                s = (x + 0.5 - cx - lean) / max(1.0, span)
+                if abs(s) > 1:
+                    continue
+                # the hem: drooping to the tips, ragged, a branch tip hanging here and there
+                hem = depth + int(2.2 * abs(s) ** 1.5) + (1 if noise2(x, i, seed + 973) > 0.62 else 0)
+                hem += 2 if noise2(x, i, seed + 974) > 0.9 and abs(s) > 0.4 else 0
+                if y - t0 >= hem:
+                    continue
+                lv = -0.9 * s - 0.55 * (frac - 0.35) + (noise2(x // 2, y // 2, seed + 975) - 0.5) * 0.35
+                tone = 4 if lv > 0.75 else 3 if lv > 0.3 else 2 if lv > -0.2 else 1 if lv > -0.75 else 0
+                if y - t0 >= hem - 2:
+                    tone = max(0, min(tone, 2) - 1)      # the hem's dark underside
+                px[(x, y)] = tone
+        for (x, y), tone in px.items():
+            cv.set(x, y, FIR[tone])
+        # needle clumps on the lit flank: a bright dash over a dark one
+        for k in range(2 + i):
+            yy = t0 + 2 + int(noise2(k, i, seed + 976) * max(1, depth - 3))
+            xx = int(cx - hw * (0.15 + 0.7 * noise2(k, i, seed + 977)))
+            if (xx, yy) in px and (xx + 2, yy) in px and px[(xx, yy)] >= 2:
+                cv.hline(xx, yy, 2 + (k % 2), FIR[5] if px[(xx, yy)] >= 3 else FIR[4])
+                cv.hline(xx, yy + 1, 3, FIR[1])
+    cv.set(int(cx), 0, FIR[3])
+    cv.set(int(cx), 1, FIR[2])
+    return cv
+
+
+def _snowed(cv: Canvas, trunk_h: int) -> Canvas:
+    """Snow lying on every shelf top open to the sky (as valley_props.snowy_pine): lit on
+    the west, blue in shade on the east, a second row where the shelf is deep."""
+    lum = lambda c: c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11  # noqa: E731
+    snow = []
+    for y in range(-cv.pad + 1, cv.h - trunk_h):
+        for x in range(-cv.pad, cv.w + cv.pad):
+            c, above = cv.get(x, y), cv.get(x, y - 1)
+            if c[3] and (not above[3] or lum(c) - lum(above) > 30):
+                snow.append((x, y))
+    for (x, y) in snow:
+        lit = x < cv.w / 2
+        cv.set(x, y, SNOW[3] if lit else SNOW[1])
+        if noise2(x, y, 978) > 0.4 and cv.get(x, y + 1)[3]:
+            cv.set(x, y + 1, SNOW[2] if lit else SNOW[0])
+    return cv
+
+
+def fir_old() -> Canvas:
+    """An old fir, 46 x 102: nine drooping shelves to a narrow spire, a trunk with root flare."""
+    return _fir(46, 102, 16, 9, 6, 1)
+
+
+def fir_young() -> Canvas:
+    """A young fir, 30 x 60: six shelves, still dense to the ground."""
+    return _fir(30, 60, 9, 6, 4, 2)
+
+
+def fir_sapling() -> Canvas:
+    """A fir sapling, 16 x 28, about knee to shoulder height on an adult."""
+    return _fir(16, 28, 5, 4, 2, 3)
+
+
 def props() -> dict[str, Canvas]:
     return {
         'bothy': bothy(), 'telescope': telescope(), 'trail_post': trail_post(),
         'windsock': windsock(), 'ibex': ibex(),
+        'fir_old': fir_old(), 'fir_young': fir_young(), 'fir_sapling': fir_sapling(),
+        'fir_old_snow': _snowed(fir_old(), 16), 'fir_young_snow': _snowed(fir_young(), 9),
+        'fir_sapling_snow': _snowed(fir_sapling(), 5),
     }
 
 

@@ -164,6 +164,12 @@ import propEmberShrine from '@/assets/zones/props/ember_shrine.png';
 import propEngineTank from '@/assets/zones/props/engine_tank.png';
 import propFern from '@/assets/zones/props/fern.png';
 import propFieldGate from '@/assets/zones/props/field_gate.png';
+import propFirOld from '@/assets/zones/props/fir_old.png';
+import propFirOldSnow from '@/assets/zones/props/fir_old_snow.png';
+import propFirSapling from '@/assets/zones/props/fir_sapling.png';
+import propFirSaplingSnow from '@/assets/zones/props/fir_sapling_snow.png';
+import propFirYoung from '@/assets/zones/props/fir_young.png';
+import propFirYoungSnow from '@/assets/zones/props/fir_young_snow.png';
 import propFirePit from '@/assets/zones/props/fire_pit.png';
 import propFireplace from '@/assets/zones/props/fireplace.png';
 import propFireplaceF1 from '@/assets/zones/props/fireplace_f1.png';
@@ -901,6 +907,12 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   engine_tank: propEngineTank,
   fern: propFern,
   field_gate: propFieldGate,
+  fir_old: propFirOld,
+  fir_old_snow: propFirOldSnow,
+  fir_sapling: propFirSapling,
+  fir_sapling_snow: propFirSaplingSnow,
+  fir_young: propFirYoung,
+  fir_young_snow: propFirYoungSnow,
   fire_pit: propFirePit,
   fireplace: propFireplace,
   fireplace_f1: propFireplaceF1,
