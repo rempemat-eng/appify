@@ -2,6 +2,8 @@
 
 The target is a clean, modern top-down pixel style with clear outlines and confident shading: the "cosy RPG tileset" look of the references below. Detail comes from form and light, not from noise.
 
+**House style (20 Oct, proposed):** [house-style.md](house-style.md) makes every region one game at Eastward's level of detail: one palette made by one rule (warm lamplight, dusk-violet shade), the outline in each material's own edge tone, light from the upper left, parts and clusters instead of noise, shadows as ramp steps, a recipe per material, and what each setting may change. Once Matt approves it, it wins where it and this file differ.
+
 ## References
 
 Matt shared these as the bar ("it should be at least like this"). The images are third-party art, so they are described here rather than copied into the repo.
