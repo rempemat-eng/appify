@@ -585,6 +585,16 @@ import sceneryValley20 from '@/assets/zones/scenery/valley_2_0.png';
 import sceneryValley21 from '@/assets/zones/scenery/valley_2_1.png';
 import sceneryValley22 from '@/assets/zones/scenery/valley_2_2.png';
 import sceneryValley23 from '@/assets/zones/scenery/valley_2_3.png';
+import scenerySteamM1M1 from '@/assets/zones/scenery/steam_m1_m1.png';
+import scenerySteamM10 from '@/assets/zones/scenery/steam_m1_0.png';
+import scenerySteamM11 from '@/assets/zones/scenery/steam_m1_1.png';
+import scenerySteamM12 from '@/assets/zones/scenery/steam_m1_2.png';
+import scenerySteam0M1 from '@/assets/zones/scenery/steam_0_m1.png';
+import scenerySteam02 from '@/assets/zones/scenery/steam_0_2.png';
+import scenerySteam1M1 from '@/assets/zones/scenery/steam_1_m1.png';
+import scenerySteam10 from '@/assets/zones/scenery/steam_1_0.png';
+import scenerySteam11 from '@/assets/zones/scenery/steam_1_1.png';
+import scenerySteam12 from '@/assets/zones/scenery/steam_1_2.png';
 import sceneryWestM2M3 from '@/assets/zones/scenery/west_m2_m3.png';
 import sceneryWestM2M2 from '@/assets/zones/scenery/west_m2_m2.png';
 import sceneryWestM2M1 from '@/assets/zones/scenery/west_m2_m1.png';
@@ -656,6 +666,16 @@ export const zoneScenery: Record<string, ImageSourcePropType> = {
   'valley:2:1': sceneryValley21,
   'valley:2:2': sceneryValley22,
   'valley:2:3': sceneryValley23,
+  'steam:-1:-1': scenerySteamM1M1,
+  'steam:-1:0': scenerySteamM10,
+  'steam:-1:1': scenerySteamM11,
+  'steam:-1:2': scenerySteamM12,
+  'steam:0:-1': scenerySteam0M1,
+  'steam:0:2': scenerySteam02,
+  'steam:1:-1': scenerySteam1M1,
+  'steam:1:0': scenerySteam10,
+  'steam:1:1': scenerySteam11,
+  'steam:1:2': scenerySteam12,
   'west:-2:-3': sceneryWestM2M3,
   'west:-2:-2': sceneryWestM2M2,
   'west:-2:-1': sceneryWestM2M1,

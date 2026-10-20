@@ -78,9 +78,9 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
       env,
       encoding: 'utf8',
       maxBuffer: 8 * 1024 * 1024,
-      // zones.py paints the scenery past the world (scripts/art/scenery.py) and then cuts the
-      // world canvas into world tiles (scripts/art/world_canvas.py): about 6 min on a 2-core
-      // machine, longer when another build runs alongside: allow 15 min
+      // zones.py paints the scenery past the world (scripts/art/scenery.py, Cogsworth's since
+      // 20 Oct) and then cuts the world canvas into world tiles (scripts/art/world_canvas.py):
+      // about 6 min on a 2-core machine, longer when another build runs alongside: allow 15 min
       timeout: 900_000,
     });
     if (result.stdout) log(result.stdout.trimEnd());

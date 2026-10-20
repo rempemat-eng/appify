@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "5c0162e",
+ "main": "6e71fa5",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -42252,6 +42252,321 @@
     "checker": 0.0
    },
    "checked": "2026-10-20"
+  },
+  "scenery/steam_0_2": {
+   "files": [
+    "assets/zones/scenery/steam_0_2.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_0_2",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "dither",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_0_2.png",
+    "px": 184320,
+    "colours": 73,
+    "on_today": 0.01,
+    "isolated": 0.231,
+    "checker": 0.0209
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_0_m1": {
+   "files": [
+    "assets/zones/scenery/steam_0_m1.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_0_m1",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "dither",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_0_m1.png",
+    "px": 184320,
+    "colours": 280,
+    "on_today": 0.463,
+    "isolated": 0.063,
+    "checker": 0.006
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_1_0": {
+   "files": [
+    "assets/zones/scenery/steam_1_0.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_1_0",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "dither",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_1_0.png",
+    "px": 184320,
+    "colours": 226,
+    "on_today": 0.299,
+    "isolated": 0.135,
+    "checker": 0.0055
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_1_1": {
+   "files": [
+    "assets/zones/scenery/steam_1_1.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_1_1",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_1_1.png",
+    "px": 184320,
+    "colours": 240,
+    "on_today": 0.213,
+    "isolated": 0.111,
+    "checker": 0.004
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_1_2": {
+   "files": [
+    "assets/zones/scenery/steam_1_2.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_1_2",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "dither",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_1_2.png",
+    "px": 184320,
+    "colours": 74,
+    "on_today": 0.009,
+    "isolated": 0.195,
+    "checker": 0.0057
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_1_m1": {
+   "files": [
+    "assets/zones/scenery/steam_1_m1.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_1_m1",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_1_m1.png",
+    "px": 184320,
+    "colours": 279,
+    "on_today": 0.445,
+    "isolated": 0.058,
+    "checker": 0.0024
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_m1_0": {
+   "files": [
+    "assets/zones/scenery/steam_m1_0.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_m1_0",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "dither",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_m1_0.png",
+    "px": 184320,
+    "colours": 281,
+    "on_today": 0.33,
+    "isolated": 0.124,
+    "checker": 0.0083
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_m1_1": {
+   "files": [
+    "assets/zones/scenery/steam_m1_1.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_m1_1",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_m1_1.png",
+    "px": 184320,
+    "colours": 415,
+    "on_today": 0.227,
+    "isolated": 0.106,
+    "checker": 0.0013
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_m1_2": {
+   "files": [
+    "assets/zones/scenery/steam_m1_2.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_m1_2",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "dither",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_m1_2.png",
+    "px": 184320,
+    "colours": 85,
+    "on_today": 0.011,
+    "isolated": 0.257,
+    "checker": 0.0317
+   },
+   "checked": "2026-10-21"
+  },
+  "scenery/steam_m1_m1": {
+   "files": [
+    "assets/zones/scenery/steam_m1_m1.png"
+   ],
+   "cls": "scenery",
+   "name": "steam_m1_m1",
+   "module": "scenery",
+   "generator": "scripts/art/scenery.py",
+   "owner": "A",
+   "owner_note": "generator not in the lane table: Claude A by default",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: scenery past the walked zones, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits",
+   "fails": [
+    "soft grid",
+    "speckle",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 616,
+    "w": 360,
+    "measured_file": "assets/zones/scenery/steam_m1_m1.png",
+    "px": 184320,
+    "colours": 288,
+    "on_today": 0.453,
+    "isolated": 0.065,
+    "checker": 0.0041
+   },
+   "checked": "2026-10-21"
   },
   "scenery/valley_0_3": {
    "files": [
