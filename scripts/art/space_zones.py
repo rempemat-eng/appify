@@ -139,12 +139,12 @@ def station(frame: int = 0):
         ('sleep-4', 'sleep_pod', 64, 186), ('lockers', 'lockers', 30, 410),
         # the galley, the shuttle hatch and the navigation consoles
         ('table', 'galley_table', 236, 240), ('tea', 'tea_dispenser', 280, 186), ('trough-g', 'hydro_trough', 226, 186),
-        ('lock-shuttle', 'airlock', 262, 330), ('console-1', 'console', 226, 440), ('console-2', 'console', 268, 440),
+        ('lock-shuttle', 'airlock', 262, 316), ('console-1', 'console', 226, 440), ('console-2', 'console', 268, 440),
         # the arrival hall: hydroponics either side
         ('aquarium', 'aquarium_column', 110, 380), ('crates', 'cargo_crates', 196, 330), ('cushions', 'floor_cushions', 68, 360),
         # (review 19 Oct: four different crops, not two identical blocks)
         ('trough-1', 'hydro_trough', 20, 488), ('trough-2', 'hydro_trough_herbs', 34, 532),
-        ('trough-3', 'hydro_trough_tomato', 248, 494), ('trough-4', 'hydro_trough_sprouts', 236, 536), ('lock-lift', 'airlock', 132, 516),
+        ('trough-3', 'hydro_trough_tomato', 248, 494), ('trough-4', 'hydro_trough_sprouts', 236, 536), ('lock-lift', 'airlock', 132, 502),
     ]
     stands = {'lift': (160, 500), 'atrium': (160, 300), 'viewport': (160, 144), 'sleep': (84, 280),
               'galley': (256, 296), 'shuttle': (290, 392)}

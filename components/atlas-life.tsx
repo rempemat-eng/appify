@@ -81,7 +81,7 @@ const SOURCES: Record<string, { kind: Kind; dx: number; dy: number }[]> = {
   cottage_b: [{ kind: 'puff', dx: 16, dy: 2 }],
   water_mill: [{ kind: 'puff', dx: 92, dy: 60 }],
   narrowboat: [{ kind: 'puff', dx: 48, dy: 0 }],
-  noodle_stall: [{ kind: 'puff', dx: 52, dy: 16 }],
+  noodle_stall: [{ kind: 'puff', dx: 52, dy: 22 }],
   foundry: [
     { kind: 'puff', dx: 27, dy: 0 },
     { kind: 'puff', dx: 123, dy: 6 },

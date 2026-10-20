@@ -606,7 +606,8 @@ def _terrace(zone: str):
     snow = (col[:, 2] >= col[:, 0]) & (col.sum(axis=1) > 450)
     green = (col[:, 1] > col[:, 0] + 10) & (col[:, 1] >= col[:, 2])
     for y in range(150, H - 60):
-        if snow[y - 12:y].all() and not snow[y] and not snow[y + 1]:
+        # (the snow's last row may be a broken cornice: a drift pixel hangs below its lip)
+        if snow[y - 12:y].sum() >= 11 and not snow[y] and snow[y:y + 4].sum() <= 1:
             for f in range(y + 4, y + 44):
                 if green[f:f + 3].all():
                     return y, f - y
@@ -664,6 +665,26 @@ def _zone_dist(X, Y, rects):
         dy = np.maximum(np.maximum(b - Y, Y - (e - 1)), 0)
         d = np.minimum(d, np.hypot(dx, dy))
     return d
+
+
+# Zone sides that keep their own wood up to the edge (Claude E's Woodland, E18: belts of
+# trees two or three deep along its west edge). There the forest closes up to the zone's
+# trees instead of leaving a meadow and a front row before them, which read as a ride
+# between two tree lines. cells() resolves them to (zone col, zone row, side) per region.
+WOODED = {'valley': {('woodland', 'w')}}
+_wooded: list = []
+
+
+def _wooded_k(X, Y):
+    """How much a point lies before a wooded zone side (1 along it, easing to 0 over the
+    last 60 px toward its corners and 120 px out from it)."""
+    k = np.zeros(np.shape(X))
+    for (zc, zr, side) in _wooded:
+        a, b = (Y - zr * H, (zr + 1) * H - Y) if side in 'we' else (X - zc * W, (zc + 1) * W - X)
+        along = np.clip(np.minimum(a, b) / 60, 0, 1)
+        out = {'w': zc * W - X, 'e': X - (zc + 1) * W, 'n': zr * H - Y, 's': Y - (zr + 1) * H}[side]
+        k = np.maximum(k, along * np.clip((120 - out) / 40, 0, 1) * (out > -60))
+    return k
 
 
 def _margin(X, Y):
@@ -729,6 +750,8 @@ def _front_row(col: int, row: int, zone_at, rects, rail):
         for side, (nx, ny) in (('w', (-1, 0)), ('e', (1, 0)), ('n', (0, -1)), ('s', (0, 1))):
             if zone_at(zc + nx, zr + ny):
                 continue  # that edge meets another zone, not the land beyond
+            if (zc, zr, side) in _wooded:
+                continue  # the zone's own trees stand along it
             vertical = side in 'we'
             span = H if vertical else W
             ex = a - 1 if side == 'w' else c
@@ -847,7 +870,9 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
     19 Oct 22:40): the ridge's snow terrace and its rock face run on into the cell and
     die out (A4); the Halt's sea cliff runs on west along the coast (A3); and the forest
     stops short of every zone and shore, behind a meadow with a front row of single trees
-    of mixed kinds, saplings and bushes, and its shade lying out over the grass (A11)."""
+    of mixed kinds, saplings and bushes, and its shade lying out over the grass (A11);
+    before a zone side that keeps its own wood (WOODED) the zone's trees are the front
+    row, and the canopy comes up to the meadow and leans over it."""
     import ground as vground
     import valley_zones as vz  # (the face and cliff painters the zones use; loaded by zones.py)
     CW, CH = W + 2 * S, H + 2 * S
@@ -1140,7 +1165,8 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
     def kind_at(GX, GY):
         # what grows at each candidate point (arrays): nothing in water, in a zone, on the
         # rails or above the treeline; pines below it (not on the carried snow); crowns at
-        # the valley's level, well inside the forest's edge
+        # the valley's level, well inside the forest's edge (up to it before a zone's own
+        # wood, where they may lean over its edge by the spill)
         a, s1, r1, c1, _r = valley_fields(GX, GY)
         zone = _zone_dist(GX, GY, rects) == 0
         f = _front(GX, GY, rects, c1)
@@ -1150,12 +1176,13 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
             snow = (GY < t_foot + 6) & (GX >= col * W - 4) & (GX - col * W < 330)
         return np.where(s1 | r1 | zone | rail(GX, GY) | (a > 0.6), None,
                         np.where(a > 0.12, np.where(snow | (c1 - GY < 40), None, 'pine'),
-                                 np.where(f > 22, 'crown', None)))
+                                 np.where(f > 22 - 18 * _wooded_k(GX, GY), 'crown', None)))
 
     def room(GX, GY):
-        # (a crown of the canopy keeps clear of the front row's own crowns, so it reads)
+        # (a crown of the canopy keeps clear of the front row's own crowns, so it reads;
+        # before a zone's own wood there is no front row, and it may lean over the edge)
         _a, _s, _r, c1, _rc = valley_fields(GX, GY)
-        return _front(GX, GY, rects, c1) - 12
+        return _front(GX, GY, rects, c1) - 12 + 28 * _wooded_k(GX, GY)
 
     zone_sides = {s for s, (dc, dr) in {'w': (-1, 0), 'e': (1, 0), 'n': (0, -1), 's': (0, 1)}.items()
                   if zone_at(col + dc, row + dr)}
@@ -1483,6 +1510,7 @@ def cells(layout: dict, region: str, ring: int = 1):
     rows = [r for _c, r in layout.values()]
     taken = {tuple(v): k for k, v in layout.items()}
     zone_at = lambda c, r: taken.get((c, r))  # noqa: E731
+    _wooded[:] = [(*layout[z], side) for (z, side) in sorted(WOODED.get(region, ())) if z in layout]
     out = {}
     for row in range(min(rows) - ring, max(rows) + ring + 1):
         for col in range(min(cols) - ring, max(cols) + ring + 1):

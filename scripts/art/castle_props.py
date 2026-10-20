@@ -361,18 +361,20 @@ def wall_run(length: int = 96) -> Canvas:
 
 
 def postern() -> Canvas:
-    """The postern in the north curtain wall, 28 x 44, the wall run's height so the two
-    meet: merlons along the walk, coursed stone, a round arch in dressed voussoirs over a
-    passage you walk through, the lava's glow showing at its far end, the oak door swung
-    back against the west reveal (iron straps, a ring), and a lantern on an iron bracket
-    beside it, lit."""
-    w, h = 28, 44
+    """The postern in the north curtain wall, 28 x 56: a short gate tower standing a
+    course of merlons above the wall run on either side (so its foot meets theirs), with
+    merlons along its top, coursed stone, a round arch in dressed voussoirs over a
+    passage you walk through, 16 x 32 at the people's scale (verticality.md 5: a single
+    door 32 tall for an adult of 25), the lava's glow showing at its far end, the oak door
+    swung back against the west reveal (iron straps, a ring), and a lantern on an iron
+    bracket beside it, lit."""
+    w, h = 28, 56
     cv = Canvas(w, h, pad=PAD)
     battlements(cv, 0, w, 4, 57)
-    masonry(cv, rect_set(0, 12, w, 30), 59, lambda x, y: 0.3 - x / w * 0.5 - max(0, y - 34) / 10, soot=4)
+    masonry(cv, rect_set(0, 12, w, 42), 59, lambda x, y: 0.3 - x / w * 0.5 - max(0, y - 46) / 10, soot=4)
     for x in range(w):
         _shade(cv, x, 12)
-    ax0, ax1, spring = 8, 24, 27  # the opening: its sides, and where the arch springs
+    ax0, ax1, spring = 8, 24, 32  # the opening: its sides, and where the arch springs
     cxa, ra = (ax0 + ax1 - 1) / 2, (ax1 - ax0) / 2
     arch = {(x, y) for x in range(ax0, ax1) for y in range(16, h)
             if y >= spring or (x + 0.5 - cxa) ** 2 + ((y - spring) * 1.0) ** 2 <= ra ** 2}
@@ -384,7 +386,7 @@ def postern() -> Canvas:
     for (x, y) in arch:  # the voussoirs: wedge stones round the arch, alternately lit
         for (ax, ay) in ((-2, 0), (2, 0), (0, -2), (-1, -2), (1, -2)):
             q = (x + ax, y + ay)
-            if q not in arch and 0 <= q[0] < w and 12 <= q[1] < spring + 2:
+            if q not in arch and 0 <= q[0] < w and 14 <= q[1] < spring + 2:
                 v = int((math.atan2(q[1] - spring, q[0] - cxa) + math.pi) * 3)
                 lit = q[0] < cxa
                 cv.set(*q, (STONE_R[5] if v % 2 else STONE_R[4]) if lit else (STONE_R[3] if v % 2 else STONE_R[2]))
@@ -398,16 +400,16 @@ def postern() -> Canvas:
     for x in range(ax0 + 3, ax1):  # the threshold, worn
         cv.set(x, h - 2, STONE_R[3] if x % 4 else STONE_R[2])
     # the lantern on its bracket, east of the arch: an iron arm, a cage of glass, a glow
-    cv.hline(ax1 + 1, 17, 3, IRON[2]); cv.set(ax1 + 1, 18, IRON[1])
-    cv.vline(ax1 + 2, 18, 1, IRON[1])
-    for y in range(19, 25):
+    cv.hline(ax1 + 1, 29, 3, IRON[2]); cv.set(ax1 + 1, 30, IRON[1])
+    cv.vline(ax1 + 2, 30, 1, IRON[1])
+    for y in range(31, 37):
         for x in range(ax1 + 1, ax1 + 4):
-            c = GLASS_L[3] if x == ax1 + 2 and 20 <= y <= 22 else GLASS_L[2]
-            if y in (19, 24):
+            c = GLASS_L[3] if x == ax1 + 2 and 32 <= y <= 34 else GLASS_L[2]
+            if y in (31, 36):
                 c = IRON[1]
             cv.set(x, y, c)
-    cv.set(ax1 + 2, 25, IRON[2])
-    for (x, y) in ((ax1, 22), (ax1 + 4, 21), (ax1 + 4, 23), (ax1 + 2, 26)):  # its light on the stone round it
+    cv.set(ax1 + 2, 37, IRON[2])
+    for (x, y) in ((ax1, 34), (ax1 + 4, 33), (ax1 + 4, 35), (ax1 + 2, 38)):  # its light on the stone round it
         r, g, b, a = cv.get(x, y)
         if a:
             cv.set(x, y, (min(255, r + 40), min(255, g + 24), b, a))
