@@ -492,7 +492,7 @@ def dress_ground(cv: Canvas, mask, *, near=None, turf=None, seed=0) -> None:
 
 def _build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), stairs=(), ramps=(),
            water=(), tops=True, seed=0, round_r=ROUND, round_in=ROUND_IN, dress=True,
-           bank='earth') -> Terrace:
+           bank='earth', water_round=4, wobble=0) -> Terrace:
     """Paint terraced ground on `cv` (a zone's ground canvas, or None for the maps alone) and
     return its walk blocking and maps.
 
@@ -502,7 +502,11 @@ def _build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), s
     stairs    [Stair], ramps [Ramp]
     water     cells of water: [(c0, r0, c1, r1)] or a bool map of cells; where a channel on a
               tier reaches a rim it falls straight down the face (into a pool the map gives)
-    bank      the banks of water on a tier top: 'earth' (default) or 'stone'
+    bank      the banks of water on a tier top: 'earth' (default; stony stretches come and
+              go along it) or 'stone' (dressed coping)
+    water_round  the radius of a channel's bends (4; 8 for a stream that bends softly)
+    wobble    px the water line may wander inside its banks (0 default; 1 or 2: verticality 4f
+              allows 2); it costs a little cleanliness in the water bar, so a zone opts in
     dress     edge dressing, on by default: tall grass breaking rims, corners and feet,
               rocks at the feet, soft shade pooled along feet and in inner corners
     tops      True paints the tier tops as grass (a step lighter per tier); False keeps what
@@ -654,14 +658,20 @@ def _build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), s
         for (c0, r0, c1, r1) in water:
             wm_cells[max(0, r0):r1, max(0, c0):c1] = True
     sq = np.kron(wm_cells, np.ones((GRID, GRID), bool))
-    wet = rounded(sq, 4) if wm_cells.any() else np.zeros((H, W), bool)
+    if not wm_cells.any():
+        wet = np.zeros((H, W), bool)
+    elif water_round > 4:
+        wet = _soft_corners(wm_cells, water_round)
+    else:
+        wet = rounded(sq, water_round)
     falls = []
     fall = np.zeros((H, W), bool)
     for x in range(W):
         for y in range(1, H):
             if kind[y, x] == FACE_K and rim[y, x] == y and sq[y - 1, x] and kind[y - 1, x] == TOP:
                 # a channel goes over the lip square, as wide as it runs: no rounding there
-                wet[max(0, y - 6):y, x] |= sq[max(0, y - 6):y, x]
+                k_ = max(6, water_round + 2)
+                wet[max(0, y - k_):y, x] |= sq[max(0, y - k_):y, x]
                 fall[y:y + fh[y, x], x] = True
                 kind[y:y + fh[y, x], x] = FALL_K
     ys, xs = np.nonzero(fall)
@@ -671,6 +681,23 @@ def _build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), s
             yy, xx = np.nonzero(lab == k)
             falls.append((int(xx.min()), int(yy.min()), int(xx.max()) + 1, int(yy.max()) + 1))
     wet &= (kind == TOP)
+    if wobble and wet.any():
+        # the water line wanders a px or two inside its banks (a bank bulges in, then out),
+        # on long runs only: not at the lip, the zone's edge or a bend's corner
+        sides = [(_shift(wet, 1, 0), 0), (_shift(wet, -1, 0), 1), (_shift(wet, 0, 1), 2), (_shift(wet, 0, -1), 3)]
+        lip = np.zeros((H, W), bool)
+        ys_, xs_ = np.nonzero(fall)
+        for (y_, x_) in zip(ys_, xs_):
+            lip[max(0, y_ - 10):y_ + 1, max(0, x_ - 2):x_ + 3] = True
+        for d in range(wobble):
+            edge = wet & ~(sides[0][0] & sides[1][0] & sides[2][0] & sides[3][0])
+            for y, x in zip(*np.nonzero(edge & ~lip)):
+                if x < 2 or y < 2 or x >= W - 2 or y >= H - 2:
+                    continue
+                vert = not (wet[y, x - 1] and wet[y, x + 1])       # a west or east bank
+                v = smooth_noise(x if not vert else y, d * 31, 12, seed + 541 + (x if vert else y) // 64)
+                if v > 0.6 - 0.08 * d:
+                    wet[y, x] = False
     wet |= fall
 
     # 6. side strips: the face seen from the side, on the lower ground beside a higher tier
@@ -824,6 +851,49 @@ def _build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), s
         rails += [sg for sg in segs if sg[1] - sg[0] >= 4]
     return Terrace(W, H, lvl, res_kind, walk, cells, blocked, water_px, falls, links, rails, face_runs,
                    list(stairs), list(ramps))
+
+
+def _soft_corners(cells, R, grid=GRID):
+    """A cell mask at px resolution with every corner rounded by R px, which may be more
+    than half the channel's width (an opening that large would erase a 16 px channel):
+    each convex corner is carved to a quarter circle, each concave one filled with a
+    fillet. Corners on the zone's edge stay square, so a channel runs on at a seam."""
+    rows, cols = cells.shape
+    cells = np.asarray(cells, bool)
+    m = np.kron(cells, np.ones((grid, grid), bool))
+    H, W = m.shape
+
+    def at(r, c):
+        return True if not (0 <= r < rows and 0 <= c < cols) else bool(cells[r, c])
+    for r in range(rows):
+        for c in range(cols):
+            for dr in (-1, 1):
+                for dc in (-1, 1):
+                    a, b, d = at(r + dr, c), at(r, c + dc), at(r + dr, c + dc)
+                    if cells[r, c] and not a and not b:
+                        val = False                      # a convex corner of the water
+                    elif not cells[r, c] and a and b and d:
+                        val = True                       # a concave corner: a fillet
+                    else:
+                        continue
+                    X = c * grid + (grid if dc > 0 else 0)
+                    Y = r * grid + (grid if dr > 0 else 0)
+                    ccx, ccy = X - dc * R, Y - dr * R
+                    for y in range(min(Y, ccy), max(Y, ccy)):
+                        for x in range(min(X, ccx), max(X, ccx)):
+                            if 0 <= x < W and 0 <= y < H and (x + 0.5 - ccx) ** 2 + (y + 0.5 - ccy) ** 2 > R * R:
+                                m[y, x] = val
+    return m
+
+
+def soft_rects(rects, width, height, R, grid=CELL):
+    """A path or plaza as a px mask from rectangles on the `grid` (zone px, may run past the
+    zone's edge), every turn rounded by R px however narrow the run (a 16 px path can turn
+    on a 12 px radius): soft, not a pipe's elbow."""
+    cells = np.zeros((height // grid, width // grid), bool)
+    for (x0, y0, x1, y1) in rects:
+        cells[max(0, y0 // grid):max(0, min(height, y1) // grid), max(0, x0 // grid):max(0, min(width, x1) // grid)] = True
+    return _soft_corners(cells, R, grid)
 
 
 def _components(m):
@@ -1194,6 +1264,11 @@ class _Painter:
         bank = _banks(wet, kind)
         stone = getattr(self, 'bank', 'earth') == 'stone'
         R = RAMPS['stone']
+        # earth banks are not one material all along: stony stretches come and go
+        stony = np.zeros((H, W), bool)
+        if not stone:
+            for y, x in zip(*np.nonzero(bank)):
+                stony[y, x] = smooth_noise(x, y, 18, self.seed + 535) > 0.6
         for y, x in zip(*np.nonzero(bank)):
             g = grass_ramp(int(self.lvl[y, x]))
             d_dn = next((d for d in (1, 2, 3) if y + d < H and wet[y + d, x]), 0)
@@ -1204,14 +1279,21 @@ class _Painter:
                     c = [None, SOIL[1], SOIL[3], g[1]][d_dn]
                     if d_dn == 2 and noise2(x // 3, y, self.seed + 533) > 0.75:
                         c = ROCK[3]                          # a stone in the bank
+                    if d_dn <= 2 and stony[y, x]:
+                        j = (x + int(noise2(y, x // 5, self.seed + 536) * 3)) % 5 == 0
+                        c = R[1] if j or d_dn == 1 else R[4] if (x // 5) % 2 else R[3]
             elif y > 0 and wet[y - 1, x]:
                 c = (R[4] if stone else g[4]) if (x // 3) % 3 else (R[5] if stone else lerp(g[4], '#FFFFFF', 0.15))
             elif any(x + d < W and wet[y, x + d] for d in (1, 2, 3)):
                 d = next(d for d in (1, 2, 3) if x + d < W and wet[y, x + d])   # the west bank faces east: dark
                 c = [None, R[1], R[2], R[3]][d] if stone else [None, SOIL[1], SOIL[2], g[1]][d]
+                if not stone and stony[y, x] and d <= 2:
+                    c = R[1] if (y + int(noise2(x, y // 4, self.seed + 537) * 2)) % 4 == 0 else R[2]
             else:
                 d = next((d for d in (1, 2, 3) if x - d >= 0 and wet[y, x - d]), 3)   # the east bank faces west: lit
                 c = [None, R[4], R[3], R[5]][d] if stone else [None, SOIL[4], SOIL[3], g[4]][d]
+                if not stone and stony[y, x] and d <= 2:
+                    c = R[1] if (y + int(noise2(x, y // 4, self.seed + 537) * 2)) % 4 == 0 else R[4] if d == 1 else R[3]
             if not stone and not d_dn and noise2(x, y // 4, self.seed + 534) > 0.85 and y + 1 < H and bank[y + 1, x]:
                 c = ROCK[3]
                 self.put(x, y + 1, ROCK[2])
