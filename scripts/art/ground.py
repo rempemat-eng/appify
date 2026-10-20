@@ -16,9 +16,8 @@ import garden as g
 from pixel import noise2, smooth_noise
 
 W, H = 320, 576
-# zones whose ground is drawn elsewhere and does not blend toward its neighbours yet
-# (the garden: garden.py, Claude B's)
-FIXED = {'garden'}
+# (the garden paints its turf with valley() too since Claude B's #108, so every zone,
+# the garden included, blends with its neighbours the same way)
 BLEND = 64  # half the width of the band where one kind of ground gives way to the next
 
 MEADOW = g.G
@@ -58,8 +57,6 @@ def kind_at(gx: int, gy: int):
         if w <= 0:
             continue
         ramp = VALLEY_GROUND.get(z, MEADOW)
-        if z in FIXED:
-            w *= 6  # (its own drawing does not blend back: its neighbours meet it whole)
         weights[id(ramp)] = (weights.get(id(ramp), (ramp, 0.0))[0], weights.get(id(ramp), (ramp, 0.0))[1] + w)
     if not weights:
         return MEADOW

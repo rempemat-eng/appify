@@ -14,7 +14,7 @@ sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
 import garden_props as gp  # noqa: E402
-from materials import MATERIALS, WOOD, STONE, RED, WTR, PLASTER, SLATE, GOLD, LEAF  # noqa: E402
+from materials import G, MATERIALS, WOOD, STONE, RED, WTR, PLASTER, SLATE, GOLD, LEAF  # noqa: E402
 
 TAR = MATERIALS['tar']  # tarred roof boards
 SAILCLOTH = MATERIALS['sailcloth']
@@ -359,23 +359,53 @@ def fishing_boat(length: int = 64, hull=WTR) -> Canvas:
     return cv
 
 
+CORK = ['#6A4A2A', '#9A7046', '#C49A62', '#E0BE86']
+
+
 def net_rack() -> Canvas:
-    """Nets drying on a rack of poles, 52 x 40: rope mesh sagging between posts, floats."""
-    w, h = 52, 40
+    """Nets drying on a rack (B8: the old checker read as cloth), 44 wide and 28 tall,
+    about a man's height: two posts and a rail, the nets thrown over it in loose drapes
+    that hang in swags of open diamond mesh (each strand a line, the ground showing
+    through, darker where the folds bunch), a line of cork floats along the head rope on
+    the rail and lead weights along the foot rope at each swag's lowest point, a heap of
+    net on the ground with a float or two, contact shadows. Re-seated in the old 52 x 40
+    box (keep_foot)."""
+    w, h = 44, 28
     cv = Canvas(w, h, pad=PAD)
-    for px in (2, 25, 48):
-        gp.post(cv, px, 4, h - 1, w=3, ramp=WOOD)
-    cv.hline(2, 5, 49, WOOD[3])
-    for seg in ((4, 25), (27, 48)):
-        for x in range(seg[0], seg[1]):
-            sag = int(math.sin((x - seg[0]) / (seg[1] - seg[0]) * math.pi) * 6)
-            for y in range(6, 24 + sag):
-                if (x + y) % 3 == 0 or (x - y) % 3 == 0:
-                    cv.set(x, y, ROPE[2] if y < 14 else ROPE[1])
-            if (x - seg[0]) % 5 == 2:
-                for (fx, fy) in disc(x, 24 + sag, 1.5):
-                    cv.set(fx, fy, RED[3] if fx <= x else RED[2])
-    return cv
+    foot = h - 1
+    for px in (2, 39):
+        for y in range(2, h):
+            cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[2]); cv.set(px + 2, y, WOOD[1])
+        cv.hline(px - 1, foot, 5, SHADE_A)
+    cv.hline(1, 3, 42, WOOD[4]); cv.hline(1, 4, 42, WOOD[2])  # the rail
+    swags = ((5, 21, 13), (20, 38, 16))  # x0, x1, depth at the lowest point
+    for (x0, x1, depth) in swags:
+        for x in range(x0, x1):
+            t = (x - x0) / (x1 - x0)
+            bottom = 5 + int(depth * math.sin(math.pi * t) ** 0.8) + (1 if (x * 7) % 5 == 0 else 0)
+            fold = int(t * 7) % 2  # the drape falls in folds: lit and shaded bands
+            for y in range(5, bottom + 1):
+                # the drape's body, darker in each fold, with the diamond mesh drawn over it
+                # in lit strands that loosen as they hang
+                bunch = abs(t - 0.5) > 0.38  # the folds bunch at each end of a swag
+                base = 0 if bunch or fold else 1
+                c = ROPE[base]
+                d1 = (x + y + int(t * 3)) % 4 == 0
+                d2 = (x - y) % 4 == 0
+                if d1 or d2:
+                    c = ROPE[min(len(ROPE) - 1, base + 2 + (1 if y < 10 and not fold else 0))]
+                cv.set(x, y, c)
+            cv.set(x, bottom, ROPE[0])  # the foot rope
+        low = x0 + (x1 - x0) // 2
+        lb = 5 + depth
+        cv.set(low, lb + 1, SLATE[1]); cv.set(low + 1, lb + 1, SLATE[2])  # a lead weight
+    for x in range(4, 39, 4):  # cork floats along the head rope
+        cv.set(x, 5, CORK[3]); cv.set(x + 1, 5, CORK[2]); cv.set(x, 6, CORK[1])
+    for (fx, fy) in ((10, foot - 2), (31, foot - 1)):  # a heap of net on the ground, floats in it
+        for (x, y) in oval(fx, fy, 5, 2):
+            cv.set(x, y, ROPE[2] if (x + y) % 3 == 0 else ROPE[1] if y <= fy else ROPE[0])
+        cv.set(fx + 2, fy - 1, CORK[3]); cv.set(fx - 3, fy, RED[3])
+    return gp.keep_foot(cv, 52, 39)
 
 
 def lobster_pots() -> Canvas:
@@ -521,62 +551,123 @@ def upturned_boat() -> Canvas:
     return cv
 
 
-def washing_line() -> Canvas:
-    """A washing line in a cottage yard, 52 x 34, in the three-quarter view (Matt, 19 Oct,
-    fault 08: "the sheets are flat squares and the posts are uneven"): two even posts
-    with crosstrees, set in the ground, the line sagging between them, and on it a sheet
-    with folds and a hem, a shirt with its sleeves hanging, a striped towel and a pair of
-    socks, each pegged, lit on the left and shaded where it folds."""
-    w, h = 52, 34
+SHEET = ['#8A8478', '#B8B0A0', '#DCD6C8', '#F0EBE0', '#FBF8F2']
+DENIM = ['#28324A', '#3A4A6A', '#506690', '#6A82AC', '#90A6C8']
+WICKER = ['#5A3E26', '#7E5A36', '#A47A48', '#C49A62', '#DCBC84']
+SHADE_A = (14, 18, 40, 84)  # a contact shadow over whatever ground it stands on
+
+
+def washing_line(wall: bool = False) -> Canvas:
+    """A washing line in a cottage's own yard, 54 wide (Matt, 19 Oct 22:40: "think about
+    where clothes would be hung up to dry"; B8): the line strung from a T-post with a
+    crosstree (east) to a second post, or with `wall` to an iron hook on the house's wall
+    (west end, so it stands with that end against a cottage's east wall), sagging under
+    its load and held up in the middle by a forked prop pole; on it, pegged, a sheet with
+    folds that billow at the hem, a shirt with its sleeves hanging and a collar, a pair of
+    trousers, a striped towel and socks, each lit on its left and shaded where it folds;
+    a wicker basket of folded washing on the ground below, contact shadows."""
+    w, h = 54, 34
     cv = Canvas(w, h, pad=PAD)
-    for px in (3, 47):  # the posts, the same height, with crosstrees
-        for y in range(5, h):
+    foot = h - 1
+    posts = [49] if wall else [3, 49]
+    for px in posts:  # T-posts with crosstrees, set in the ground
+        for y in range(4, h):
             cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[1])
-        cv.hline(px - 2, 5, 6, WOOD[4]); cv.hline(px - 2, 6, 6, WOOD[2])
-        cv.set(px - 1, h - 1, WOOD[1]); cv.set(px + 2, h - 1, WOOD[1])  # where it goes into the ground
+            if noise2(px, y // 3, 461) > 0.8:
+                cv.set(px, y, WOOD[2])  # grain
+        cv.hline(px - 3, 4, 8, WOOD[4]); cv.hline(px - 3, 5, 8, WOOD[2])
+        cv.set(px - 3, 6, WOOD[1]); cv.set(px + 4, 6, WOOD[1])
+        cv.hline(px - 1, foot, 5, SHADE_A); cv.set(px - 1, foot, G[1]); cv.set(px + 2, foot, G[2])  # tufts at its foot
+    x_a = 1 if wall else 5
+    if wall:  # the iron hook in the wall, its plate lit
+        cv.set(0, 5, SLATE[3]); cv.set(0, 6, SLATE[1]); cv.set(1, 6, SLATE[2]); cv.set(1, 7, SLATE[1])
+    span = 49 - x_a
 
     def line_y(x):
-        return 6 + int(round(4 * math.sin(math.pi * (x - 5) / 42)))
+        return 6 + int(round(5 * math.sin(math.pi * (x - x_a) / span)))
 
-    for x in range(5, 47):
-        cv.set(x, line_y(x), ROPE[3])
+    mid = x_a + span // 2
+    for x in range(x_a, 49):
+        cv.set(x, line_y(x), ROPE[3] if x < mid else ROPE[2])
+    for k in range(foot - line_y(mid) + 1):  # the forked prop pole, leaning a little
+        x = mid + 2 - k // 9
+        y = foot - k
+        cv.set(x, y, WOOD[3]); cv.set(x + 1, y, WOOD[1])
+    cv.set(mid, line_y(mid) - 1, WOOD[3]); cv.set(mid + 3, line_y(mid) - 1, WOOD[2])  # its fork
+    cv.hline(mid, foot, 4, SHADE_A)
 
-    def hang(x0, x1, length, ramp, kind):
+    def peg(x):
+        cv.set(x, line_y(x) - 1, WOOD[4]); cv.set(x, line_y(x), WOOD[2])
+
+    def hang(x0, x1, length, ramp, stripe=None, billow=True):
         for x in range(x0, x1):
             top = line_y(x) + 1
-            hem = top + length + (1 if (x - x0) % 5 == 2 else 0)
+            wave = int(round(math.sin((x - x0) * 1.3) * 1.2)) if billow else 0
+            hem = top + length + wave
             for y in range(top, hem):
-                fold = (x - x0) % 4
+                fold = (x - x0 + (y - top) // 6) % 4
                 c = ramp[2] if fold == 0 else ramp[4] if fold == 1 else ramp[3]
-                if kind == 'stripe' and (y - top) in (3, 4):
-                    c = RED[3]
+                if stripe and (y - top) in (3, 4, 8):
+                    c = stripe[3] if fold else stripe[2]
                 if x == x1 - 1:
                     c = ramp[1]  # its shaded edge
                 cv.set(x, y, c)
             cv.set(x, hem, ramp[1])  # the hem
-        for x in (x0, x1 - 1):
-            cv.set(x, line_y(x), WOOD[4])  # pegs
+        peg(x0); peg(x1 - 1)
 
-    SHEET = ['#8A8478', '#B8B0A0', '#DCD6C8', '#F0EBE0', '#FBF8F2']
-    hang(8, 21, 16, SHEET, 'plain')
-    for x in range(24, 32):  # the shirt: its body, collar and sleeves hanging
-        top = line_y(x) + 1
-        for y in range(top, top + 11):
-            cv.set(x, y, RED[4] if x < 26 else RED[3] if x < 30 else RED[2])
-        cv.set(x, top + 11, RED[1])
-    for (sx, lit) in ((23, True), (32, False)):
+    x = x_a + 4
+    hang(x, x + 13, 15, SHEET)  # the sheet
+    x += 15
+    for xx in range(x + 1, x + 8):  # the shirt: body, shoulders, collar, sleeves, folds
+        top = line_y(xx) + 1
+        for y in range(top, top + 10):
+            c = RED[4] if xx < x + 3 else RED[3] if xx < x + 6 else RED[2]
+            if (xx - x) == 4 and y > top + 2:
+                c = RED[2]  # the placket's fold
+            cv.set(xx, y, c)
+        cv.set(xx, top + 10, RED[1])
+    for (sx, lit) in ((x, True), (x + 8, False)):
         top = line_y(sx) + 2
         for y in range(top, top + 7):
-            cv.set(sx, y, RED[3] if lit else RED[2])
-    cv.set(27, line_y(27) + 1, '#F0EBE0'); cv.set(28, line_y(28) + 1, '#F0EBE0')  # the collar
+            cv.set(sx, y, RED[3] if lit else RED[1])
+    cv.set(x + 3, line_y(x + 3) + 1, SHEET[4]); cv.set(x + 5, line_y(x + 5) + 1, SHEET[4])  # the collar
     for y in (4, 6, 8):
-        cv.set(28, line_y(28) + y, '#F0EBE0')  # buttons
-    hang(34, 40, 9, WTR[:1] + WTR[:4] if len(WTR) < 5 else WTR, 'stripe')
-    for (sx, col) in ((42, GOLD), (44, GOLD)):  # a pair of socks
+        cv.set(x + 4, line_y(x + 4) + y, SHEET[4])  # buttons
+    peg(x + 1); peg(x + 7)
+    x += 10
+    for leg, xx0 in enumerate((x, x + 3)):  # the trousers, hung by their hems, two legs
+        for xx in range(xx0, xx0 + 3):
+            top = line_y(xx) + 1
+            for y in range(top, top + 12):
+                cv.set(xx, y, DENIM[3] if xx == xx0 and leg == 0 else DENIM[2] if xx < xx0 + 2 else DENIM[1])
+        peg(xx0)
+    for xx in range(x, x + 6):
+        cv.set(xx, line_y(xx) + 12, DENIM[0])  # the waistband
+    x += 8
+    if x + 6 < 47:
+        hang(x, x + 5, 8, WTR, stripe=GOLD, billow=False)  # a striped towel
+        x += 6
+    for (sx, col) in ((x, GOLD), (x + 3, RED)):  # a pair of socks
+        if sx + 2 >= 48:
+            break
         top = line_y(sx) + 1
-        for y in range(top, top + 6):
+        for y in range(top, top + 5):
             cv.set(sx, y, col[3]); cv.set(sx + 1, y, col[2])
-        cv.set(sx + 2, top + 5, col[2]); cv.set(sx + 2, top + 6, col[1])
+        cv.set(sx + 2, top + 4, col[2]); cv.set(sx + 2, top + 5, col[1])
+    # the wicker basket of folded washing on the ground, toward the post
+    bx, by = 36, foot - 6
+    for xx in range(bx - 1, bx + 12):
+        cv.set(xx, foot, SHADE_A)
+    for yy in range(by + 2, foot):
+        for xx in range(bx, bx + 11):
+            t = 3 if xx < bx + 3 else 2 if xx < bx + 8 else 1
+            if (xx + yy) % 2 == 0:
+                t -= 1  # the weave
+            cv.set(xx, yy, WICKER[max(0, t)])
+    cv.hline(bx, by + 2, 11, WICKER[4]); cv.hline(bx, by + 1, 11, WICKER[3])  # the rim
+    for xx in range(bx + 1, bx + 10):  # folded washing in it
+        cv.set(xx, by, SHEET[4] if xx < bx + 5 else DENIM[3] if xx < bx + 8 else RED[3])
+        cv.set(xx, by + 1, SHEET[3] if xx < bx + 5 else DENIM[2] if xx < bx + 8 else RED[2])
     return cv
 
 
@@ -962,7 +1053,7 @@ def props() -> dict[str, Canvas]:
         'cottage_d': cottage(76, 3, door=GOLD, shutters=WTR, shed=20, net=''), 'lighthouse': lighthouse(),
         'boat_blue': fishing_boat(64, WTR), 'boat_red': fishing_boat(56, RED), 'net_rack': net_rack(),
         'lobster_pots': lobster_pots(), 'fish_stall': fish_stall(), 'bollard': bollard(), 'anchor': anchor(),
-        'upturned_boat': upturned_boat(), 'washing_line': washing_line(), 'buoy': buoy(),
+        'upturned_boat': upturned_boat(), 'washing_line': washing_line(), 'washing_line_wall': washing_line(wall=True), 'buoy': buoy(),
         'harbour_ferry': harbour_ferry(), 'pier_ladder': pier_ladder(),
         'deck_chair': deck_chair(RED), 'deck_chair_b': deck_chair(WTR), 'driftwood': driftwood(), 'sailboat': sailboat(),
     }
