@@ -159,7 +159,8 @@ def sleeper_stack(cv: Canvas, blocked: set, x0: int, y0: int, n: int = 4):
 def junction(frame: int = 0):
     """Cogsworth Junction: the train from the valley stands at the platform, the
     square below has the clock tower and the tinkerers' workshops, pipes and steam
-    vents, and the gear ring at the bottom. The rails run on east toward Dust Gulch."""
+    vents (sparring happens on the square), and south of it the airship mast with a path
+    to its cage lift. The rails run on east toward Dust Gulch."""
     cv = Canvas(W, H)
     worlds.grass(cv, frame, ['#2B3B2E', '#46583F', '#5C6E4C', '#6B7C55', '#8E9C6E'])  # sooty grass
     # north of the line: the engine yard, cinders and ballast, a siding ending at its
@@ -174,6 +175,9 @@ def junction(frame: int = 0):
     # the platform: stone slabs with a painted edge
     plat = {(x, y) for x in range(W) for y in range(100, 134)}
     worlds.paint_paving(cv, plat, seed=7)
+    for y in range(102, 134):  # the paving runs on past both seams: no lawn edge on its end columns
+        cv.set(0, y, cv.get(12, y)); cv.set(1, y, cv.get(13, y))
+        cv.set(W - 1, y, cv.get(W - 13, y)); cv.set(W - 2, y, cv.get(W - 14, y))
     cv.hline(0, 100, W, '#E8C860'); cv.hline(0, 101, W, '#B8962E')
     for x in range(0, W):
         cv.set(x, 134, STONE[1]); cv.set(x, 135, STONE[2])
@@ -184,7 +188,9 @@ def junction(frame: int = 0):
         return 420 + int(math.sin(x / 41) * 5 + smooth_noise(x, 0, 23, 152) * 10 - side * 14)
     square = {(x, y) for x in range(W) for y in range(136, 436) if y < square_edge(x)}
     lane = worlds.thick([(160, 430), (160, 468)], 16)
-    spur = worlds.thick([(150, 504), (128, 506)], 7)  # the short way off the lane into the ring
+    # the way to the airship mast's foot (Matt's World Logic answer 7): off the lane east
+    # along the lawn's south side to the cage lift
+    spur = worlds.thick([(176, 552), (230, 554), (284, 560)], 7)
     paint_fan(cv, square | lane, seed=1)
     # a ring of dark granite setts round the clock tower, and a gutter down the lane
     for (x, y) in square:
@@ -205,21 +211,33 @@ def junction(frame: int = 0):
         grate(cv, gx, gy)
     # the lane on south through the gap in the pipe wall, down to the canal
     south = {(x, y) for x in range(144, 176) for y in range(460, H + 4)}
-    worlds.paint_cobbles(cv, south | spur)
+    cog_setts(cv, south | spur)
+    # the mast's compound: a bed of cinders round its foot, the path running in to the cage
+    for (x, y) in oval(282, 560, 30, 10):
+        if 0 <= x < W and 0 <= y < H and (x, y) not in spur:
+            n = noise2(x // 2, y // 2, 1812)
+            c = '#3A3634' if n > 0.66 else '#4A4440' if n > 0.33 else '#2E2A2A'
+            if noise2(x // 3, y // 2, 1813) > 0.9:
+                c = '#4E6A3E'
+            cv.set(x, y, c)
     for y in range(460, H):
-        if not (498 <= y <= 512):
-            cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1])
-        cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
-    # the sparring ring beside the lane, not across it (art-faults.md, fault 19): an iron
-    # floor with a toothed brass rim, ringed by short posts with a rope between them
-    gear_ring(cv, 80, 508, 50, 21)
-    ring_posts(cv, 80, 508, 50, 21)
-    # the moored airship's shadow on the meadow, cast down and right of the ship
-    for (x, y) in oval(268, 538, 34, 8):
+        cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1])
+        if not (544 <= y <= 562):
+            cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
+    for (x, y) in spur:  # the path's kerbs where it meets the lawn
+        if (x, y - 1) not in spur and (x, y - 1) not in south and x > 178:
+            cv.set(x, y, STONE[3])
+        if (x, y + 1) not in spur and (x, y + 1) not in south and x > 178 and y + 1 < H:
+            cv.set(x, y + 1, STONE[1])
+    # (the sparring ring is gone, Matt's World Logic answer 6: sparring happens on the
+    # square, by the stand 'ring' below)
+    # the moored airship's shadow on the meadow: the ship rides high, so its shadow falls
+    # well south of it and a little east, a long soft oval with the gondola's darker core
+    for (x, y) in oval(214, 548, 52, 9):
         if 0 <= x < W and 0 <= y < H:
-            k = ((x - 268) / 34) ** 2 + ((y - 538) / 8) ** 2
+            k = ((x - 214) / 52) ** 2 + ((y - 548) / 9) ** 2
             style.darken(cv, x, y)
-            if k < 0.55:
+            if k < 0.35:
                 style.darken(cv, x, y)
     objects = [
         # beside the running line: the signal box at the west end, the water tower east
@@ -237,16 +255,16 @@ def junction(frame: int = 0):
         ('ws-left', 'workshop', 4, 142), ('ws-right', 'house_slate', 226, 136),
         ('tower', 'clock_tower', 136, 152),
         ('lamp-s1', 'gas_lamp', 112, 280), ('lamp-s2', 'gas_lamp', 196, 280),
-        ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 214, 420),
+        ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 24, 412),
         ('puff-c1', 'steam_puff', 66, 124),
         ('ws-low', 'shop_ashlar', 2, 274), ('coal-1', 'coal_cart', 100, 384),
-        ('trunk-2', 'steamer_trunk', 280, 396),
+        ('trunk-2', 'steamer_trunk', 96, 404),
         ('puff-v3', 'steam_puff', 206, 352), ('kiosk', 'tea_kiosk', 250, 300),
         # round the ring
-        ('lamp-r1', 'gas_lamp', 128, 466), ('bench-r', 'iron_bench', 52, 446),
-        ('mast', 'airship_mast', 206, 392),
+        ('lamp-r1', 'gas_lamp', 128, 466), ('bench-r', 'iron_bench', 196, 524),
+        ('mast', 'airship_mast', 156, 378),
     ]
-    stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (80, 508), 'workshop': (52, 248),
+    stands = {'platform': (160, 120), 'tower': (160, 322), 'ring': (100, 345), 'workshop': (52, 248),
               'canal': (160, 568)}
     return cv, objects, stands, blocked
 
@@ -268,7 +286,7 @@ def canal(frame: int = 0):
     # towpaths of setts either side of the canal, and the lane
     towpath = {(x, y) for x in range(W) for y in range(126, CY0)} | {(x, y) for x in range(W) for y in range(CY1, 292)}
     lane = {(x, y) for x in range(144, 176) for y in range(-4, 430)}
-    worlds.paint_cobbles(cv, (towpath | lane) - {(x, y) for x in range(W) for y in range(CY0, CY1)})
+    cog_setts(cv, (towpath | lane) - {(x, y) for x in range(W) for y in range(CY0, CY1)})
     for y in range(0, 126):  # the lane's kerbs, as in the junction
         cv.set(143, y, STONE[3]); cv.set(142, y, STONE[1]); cv.set(176, y, STONE[1]); cv.set(177, y, STONE[3])
     for y in range(292, 430):
@@ -298,39 +316,18 @@ def canal(frame: int = 0):
         for y in range(CY0 + 10, CY1 - 2, 2):
             if noise2(lx, y // 2, 496) > 0.35:
                 cv.hline(lx - 2 + int((noise2(y, lx, 497) - 0.5) * 4), y, 4, '#C99A3C' if y % 4 else '#9E6C26')
-    # the lock: the chamber's water stands higher (lighter) between two pairs of mitre gates
-    for x in range(236, 296):
-        for y in range(CY0 + 6, CY1):
-            c = cv.get(x, y)
-            cv.set(x, y, tuple(min(255, v + 14) for v in c[:3]) + (255,))
-    for gx in (234, 296):
-        for t in range(CY1 - CY0 - 6):  # gates meeting in a V that points upstream (east)
-            y = CY0 + 6 + t
-            off = int(abs(t - (CY1 - CY0 - 6) / 2) * 0.35)
-            for d in range(4):
-                cv.set(gx + off + d, y, WOOD[3] if d < 2 else WOOD[1])
-        cv.hline(gx, CY0 + 6, 4, WOOD[4])
-        for (by, side) in ((CY0 - 30, -1), (CY1 + 6, 1)):  # balance beams on the towpaths, black and white
-            for x in range(gx - 26, gx + 4):
-                for y in range(by + (0 if side < 0 else 0), by + 5):
-                    c = '#F2F0EA' if ((x - gx) // 6) % 2 else '#1E1C22'
-                    if y == by:
-                        c = '#FFFFFF' if c == '#F2F0EA' else '#3A3840'
-                    cv.set(x, y, c)
-                    blocked.add((x, y))
-    # the iron bridge carrying the lane over the water
-    for y in range(CY0 - 2, CY1 + 2):
-        for x in range(138, 182):
-            if x < 142 or x >= 178:
-                c = IRON[3] if x in (138, 178) else IRON[1]  # the girders
-                if (y - CY0) % 8 == 0:
-                    c = BRASS[3]  # rivet plates
-            else:
-                c = WOOD[3] if (y // 3) % 2 else WOOD[2]
-                if (x - 142) % 12 == 0:
-                    c = WOOD[1]
+    canal_lock(cv, blocked, CY0, CY1, ASHLAR)
+    humpback_bridge(cv, blocked, CY0, CY1, ASHLAR)
+    # the tube's bed: a strip of cinders under its trestles, weeds coming through, a drain
+    for x in range(268, W):
+        for y in range(354, 374):
+            n = noise2(x // 2, y // 2, 1800)
+            c = '#3A3634' if n > 0.66 else '#4A4440' if n > 0.33 else '#2E2A2A'
+            if noise2(x // 3, y // 2, 1801) > 0.88:
+                c = '#4E6A3E' if (y // 2) % 2 else '#3A5230'  # weeds through the cinders, in tufts
+            if y == 373:
+                c = '#2B3B2E'
             cv.set(x, y, c)
-            blocked.discard((x, y))
     # the atmospheric railway's brass tube, east from the terminus on iron trestles
     for x in range(272, W):
         for y in range(340, 356):
@@ -345,6 +342,13 @@ def canal(frame: int = 0):
                 cv.set(x, y, IRON[3]); cv.set(x + 1, y, IRON[1])
                 blocked.add((x, y))
         cv.set(x, 372, '#2B3B2E')
+    # the terminus's forecourt: setts from the lane to its door step, so the door has a way to it
+    station_court = {(x, y) for x in range(176, 262) for y in range(362, 378)}
+    cog_setts(cv, station_court, seed=2)
+    for x in range(178, 262):
+        cv.set(x, 361, STONE[3]); cv.set(x, 378, STONE[3]); cv.set(x, 379, STONE[1])
+    for y in range(362, 378):
+        cv.set(262, y, STONE[1])
     # the forecourt before the foundry's door: setts black with spilt slag, lit orange
     fore = {(x, y) for x in range(24, 144) for y in range(404, 430)}
     paint_fan(cv, fore, seed=2)
@@ -385,26 +389,345 @@ def canal(frame: int = 0):
     for (bx, by, bw, bh, crop) in beds:
         allot_bed(cv, bx, by, bw, bh, crop, blocked)
     picket_fence(cv, blocked, 8, 314, 438, 556, gate=(142, 178))
+    # the plot's south side: a low wall of brown brick under a stone coping, toward the
+    # lane and fields past the town's edge (review 07:53)
+    for x in range(6, 316):
+        for y in range(552, 562):
+            k = y - 552
+            if k < 2:
+                c = ASHLAR[5] if k == 0 and (x // 9) % 2 else ASHLAR[4] if k == 0 else ASHLAR[2]
+            else:
+                row = (k - 2) // 2
+                brick = (x + (row % 2) * 3) // 6
+                n = noise2(brick, row, 1770)
+                c = BRICK[3] if n > 0.6 else BRICK[2] if n > 0.2 else BRICK[1]
+                if (k - 2) % 2 == 1 or (x + (row % 2) * 3) % 6 == 0:
+                    c = BRICK[0]
+            cv.set(x, y, c)
+            blocked.add((x, y))
+    for x in range(6, 316):  # a damp, dark foot where it meets the grass
+        cv.set(x, 562, '#2B3B2E')
     objects = [
         # warehouses either side of the lane at the top
         ('wh-1', 'warehouse', 14, -8), ('wh-2', 'workshop_round', 206, 16),
         ('lamp-1', 'gas_lamp', 124, 96), ('lamp-2', 'gas_lamp', 184, 96),
         # the north towpath: the crane and the moored boat
-        ('crane', 'canal_crane', 70, 112), ('boat', 'narrowboat', 8, 186), ('trunk-1', 'steamer_trunk', 30, 150),
-        ('coal-1', 'coal_cart', 112, 140), ('lamp-3', 'gas_lamp', 290, 130),
+        ('crane', 'canal_crane', 10, 108), ('boat', 'narrowboat', 8, 186), ('trunk-1', 'steamer_trunk', 70, 146),
+        ('coal-1', 'coal_cart', 112, 140), ('lamp-3', 'gas_lamp', 246, 130), ('lock-hut', 'lock_hut', 266, 104),
         # the south towpath
-        ('bench-t', 'iron_bench', 60, 262), ('lamp-4', 'gas_lamp', 124, 252), ('gears-t', 'gear_pile', 290, 256),
+        ('bench-t', 'iron_bench', 60, 262), ('lamp-4', 'gas_lamp', 124, 252), ('gears-t', 'gear_pile', 92, 268),
         # the foundry and the terminus
         ('foundry', 'foundry', 0, 296), ('puff-f1', 'steam_puff', 16, 278), ('puff-f2', 'steam_puff', 112, 284),
-        ('station', 'tube_station', 196, 284), ('car', 'atmos_car', 252, 318),
+        ('station', 'tube_station', 194, 280), ('car', 'atmos_car', 274, 337),
         # the allotments
         ('gardener', 'automaton', 140, 476), ('cloche-1', 'cloche', 80, 502), ('cloche-2', 'cloche', 262, 500),
         ('compost', 'gear_pile', 284, 528), ('bench-a', 'iron_bench', 186, 404), ('lamp-5', 'gas_lamp', 248, 400),
     ]
-    stands = {'junction': (160, 6), 'bridge': (160, 210), 'boat': (60, 166), 'lock': (264, 150),
+    stands = {'junction': (160, 6), 'bridge': (160, 210), 'boat': (60, 166), 'lock': (232, 166),
               'foundry': (72, 418), 'terminus': (236, 384), 'allotments': (162, 520)}
     return cv, objects, stands, blocked
 
+
+LOCK_X0, LOCK_X1 = 200, 304  # the lock's tail (lower) and head (upper) gates, canal px: a chamber 104 long for the 100 px narrowboat
+LOCK_SIDE = 205  # the lock side's south coping row: the chamber lies south of it
+
+
+def canal_lock(cv: Canvas, blocked: set, CY0: int, CY1: int, ASHLAR):
+    """A real lock (Matt's World Logic answer 9; size guide: chamber 24 to 32 wide, a step
+    of 8 to 16 in the water, mitre gates with balance beams on the towpath). How it works:
+    the canal narrows into a stone chamber 28 wide along its south bank, closed by a pair
+    of mitre gates at each end, the pair's V pointing upstream (east) so the higher water
+    presses it shut. The north half of the canal there is the lock side, paved at towpath
+    level, with a bywash culvert under an iron grate carrying the spill from the upper
+    pound round the gates. The upper pound (east) stands 4 px higher than the lower; the
+    chamber is drawn emptied, its north wall showing 10 px of wet face and weed, water
+    leaking white through the head gates. Each gate leaf is swung by a timber balance
+    beam lying on the bank behind its heel post, its end painted white so it is seen at
+    dusk (the old black-and-white stripes on the towpaths are gone)."""
+    x0, x1 = 182, W  # the lock side, from the bridge to the world's edge (the head's beams lie at its end)
+    ch0, ch1 = LOCK_SIDE + 12, CY1  # the chamber's water rows
+    # the lock side: setts at towpath level over the north half of the canal
+    side = {(x, y) for x in range(x0, x1) for y in range(CY0 - 1, LOCK_SIDE)}
+    cog_setts(cv, side, seed=1)
+    for (x, y) in side:
+        blocked.discard((x, y))
+    for x in range(x0, x1):  # its coping over the chamber, dressed stone, worn where feet cross
+        worn = LOCK_X0 - 4 < x < LOCK_X0 + 4 or LOCK_X1 - 4 < x < LOCK_X1 + 4
+        n = noise2(x // 9, 0, 1784)
+        ramp = GRANITE if n > 0.5 else ASHLAR
+        cv.set(x, LOCK_SIDE, ramp[5] if (x // 9) % 2 and not worn else ramp[4])
+        cv.set(x, LOCK_SIDE + 1, ramp[3] if x % 9 else ramp[1])
+        if n < 0.2 and x % 9 > 5:
+            cv.set(x, LOCK_SIDE + 1, '#5A6A3E')  # lichen on the coping's face
+    for y in range(CY0 - 1, LOCK_SIDE + 2):  # its ends over the pounds, coped
+        cv.set(x0, y, ASHLAR[4]); cv.set(x0 + 1, y, ASHLAR[2])
+        cv.set(x1 - 1, y, ASHLAR[3]); cv.set(x1 - 2, y, ASHLAR[5])
+    for x in range(x0, LOCK_X1 + 4):  # the chamber's north wall face: 10 px of wet stone, weed at the waterline
+        for y in range(LOCK_SIDE + 2, ch0):
+            k = y - LOCK_SIDE - 2
+            row = k // 3
+            blk = (x + row * 4) // 8
+            n = noise2(blk, row, 1780)
+            ramp = GRANITE if n > 0.55 else ASHLAR
+            c = ramp[2] if n % 0.3 > 0.15 else ramp[1]
+            if (x + row * 4) % 8 == 0 or k % 3 == 2:
+                c = ASHLAR[0]  # the joints
+            elif k % 3 == 0 and (x + row * 4) % 8 < 4:
+                c = ramp[3]  # each block's lit top arris
+            if k >= 5:  # wet below the high-water line, the weed thick at the waterline
+                w = noise2(x // 2, k, 1781)
+                c = '#2A3A30' if w > 0.55 else '#33483A' if w > 0.25 else '#22302A'
+                if k >= 7 and w > 0.4:
+                    c = '#3E5A36' if (x // 2) % 3 else '#2E4A2C'
+            if k >= 9:
+                c = '#1C2C24'
+            cv.set(x, y, c)
+            blocked.add((x, y))
+    for lx in (LOCK_X0 + 46,):  # an iron ladder let into the wall, its rungs lit
+        for y in range(LOCK_SIDE + 1, ch0 + 4):
+            cv.set(lx, y, IRON[3]); cv.set(lx + 5, y, IRON[1])
+            if (y - LOCK_SIDE) % 3 == 0:
+                cv.hline(lx + 1, y, 4, IRON[4] if y < ch0 else IRON[2])
+    # the chamber's water, low and dark, its far side lit by the sky, the gates mirrored in it
+    for x in range(LOCK_X0, LOCK_X1):
+        for y in range(ch0, ch1):
+            n = smooth_noise(x, y, 7, 498)
+            c = '#1E3830' if n > 0.75 else '#183028' if n > 0.55 else '#142822' if n > 0.25 else '#10221C'
+            if y < ch0 + 3:
+                c = '#0C1A16'  # the wall's shadow
+            elif y == ch0 + 3 and (x // 3) % 4 == 0:
+                c = '#3A4A3E'  # the weed's reflection under the wall
+            if y >= ch1 - 3 and (x // 5) % 3 == 0:
+                c = '#244A3E'
+            if (y - ch0) % 5 == 3 and noise2(x // 4, y, 1782) > 0.55:
+                c = '#2C5246' if (x // 2) % 2 else '#22443A'  # a ripple's lit back, two px at a time
+            cv.set(x, y, c)
+            blocked.add((x, y))
+    for gx in (LOCK_X0 + 6, LOCK_X1 - 8):  # the gates' dark reflections
+        for y in range(ch0 + 4, ch1 - 1):
+            if (y // 2) % 2:
+                cv.hline(gx, y, 3, '#2A2018' if gx < 250 else '#30261C')
+    for (lx, ly) in ((LOCK_X0 + 24, ch0 + 9), (LOCK_X0 + 61, ch0 + 17), (LOCK_X0 + 83, ch0 + 6)):  # leaves afloat
+        cv.set(lx, ly, '#9A7A2A'); cv.set(lx + 1, ly, '#7A5A1E'); cv.set(lx, ly + 1, '#6A4A1A')
+    # above the head gates the upper pound stands 4 px higher: a shallower wall face, lighter water
+    for x in range(LOCK_X1 + 4, W):
+        for y in range(LOCK_SIDE + 2, CY1):
+            k = y - LOCK_SIDE - 2
+            if k < 6:
+                c = ASHLAR[2] if ((x + (k // 3) * 4) // 8) % 2 else ASHLAR[1]
+                if k >= 4:
+                    c = '#2A3A30'
+            else:
+                n = smooth_noise(x, y, 8, 494)
+                c = '#3A5E54' if n > 0.6 else '#2E5048' if n > 0.3 else '#264640'
+                if k < 9:
+                    c = '#1A3430'
+            cv.set(x, y, c)
+            blocked.add((x, y))
+    # the bywash: a culvert under the lock side, an iron grate at each end over dark running water
+    for gx in (x0 + 4, x1 - 14):
+        for y in range(CY0 + 6, CY0 + 14):
+            for x in range(gx, gx + 10):
+                edge = x in (gx, gx + 9) or y in (CY0 + 6, CY0 + 13)
+                c = (IRON[3] if x == gx or y == CY0 + 6 else IRON[1]) if edge else ('#0C1A16' if (x - gx) % 2 else IRON[2])
+                cv.set(x, y, c)
+    # the gates: a mitre pair at each end, a planked walkway on top with a handrail, the V upstream
+    half = (ch1 - ch0) / 2
+    for gx in (LOCK_X0, LOCK_X1):
+        for t in range(ch1 - ch0 + 1):
+            y = ch0 + t
+            off = int((half - abs(t - half)) * 0.35)  # the V's point lies east, mid-chamber
+            for d in range(4):
+                c = WOOD[4] if d == 0 else WOOD[3] if d == 1 else WOOD[2] if d == 2 else WOOD[1]
+                if t % 6 == 0 and d > 0:
+                    c = IRON[2] if d < 3 else IRON[1]  # the iron straps across the planks
+                elif d == 2 and noise2(t // 3, gx, 1783) > 0.6:
+                    c = WOOD[3]  # a plank of its own tone
+                cv.set(gx + off + d, y, c)
+            if t % 4 == 2:
+                cv.set(gx + off + 4, y, IRON[1])  # the handrail's stanchions, on the downstream side
+            elif t % 4 == 0:
+                cv.set(gx + off + 4, y, IRON[3])
+        for (hy, toward) in ((ch0 - 1, -1), (ch1 + 1, 1)):  # heel posts in the walls, capped
+            cv.rect(gx - 1, hy - 1, 5, 3, WOOD[2]); cv.hline(gx - 1, hy - 1, 5, WOOD[4])
+            cv.set(gx, hy - 1, BRASS[4]); cv.set(gx + 1, hy - 1, BRASS[3])  # the brass cap on the heel post
+        if gx == LOCK_X1:  # water leaking through the head gates, white over the cill
+            for y in range(ch0 + 1, ch1 - 1):
+                for d in range(1, 5):
+                    if noise2(y // 2, d, 1740) > 0.45 - d * 0.08:
+                        cv.set(gx - d, y, '#F0F6F2' if d < 2 else '#C8DCD4' if d < 3 else '#8FB5AA')
+        else:  # the tail gates hold the chamber's water back from the lower pound: a ripple below them
+            for y in range(ch0 + 2, ch1 - 2, 3):
+                cv.hline(gx - 4, y, 2, '#3E6A5E')
+    lbx, lby = LOCK_X0 + 58, LOCK_SIDE + 3  # a lifebuoy on the chamber wall, by the ladder
+    for (x, y) in disc(lbx, lby + 3, 3.2):
+        d = math.hypot(x - lbx, y - lby - 3)
+        if d > 1.4:
+            quarter = (x >= lbx) ^ (y >= lby + 3)
+            c = ('#E8E2D6' if y < lby + 3 else '#B8B0A4') if quarter else ('#D0402E' if y < lby + 3 else '#9A2A20')
+            cv.set(x, y, c)
+    # the paddle gear by each gate on the lock side: an iron post with a rack and a pinion,
+    # wound with the keeper's windlass to let water through the culverts; mooring rings
+    for gx in (LOCK_X0 + 6, LOCK_X1 - 10):
+        for y in range(LOCK_SIDE - 12, LOCK_SIDE - 2):
+            for x in range(gx, gx + 4):
+                c = IRON[3] if x == gx else IRON[2] if x < gx + 3 else IRON[1]
+                if y == LOCK_SIDE - 12:
+                    c = IRON[4]
+                cv.set(x, y, c)
+                blocked.add((x, y))
+        for y in range(LOCK_SIDE - 18, LOCK_SIDE - 11):  # the rack, raised
+            cv.set(gx + 1, y, IRON[3] if y % 2 else IRON[1])
+        sp.gear(cv, gx + 5, LOCK_SIDE - 9, 2, BRASS, teeth=6)
+        cv.hline(gx - 1, LOCK_SIDE - 2, 6, STONE[1])  # its shadow on the setts
+    for rx in (LOCK_X0 + 30, LOCK_X0 + 74):  # iron mooring rings on the coping
+        cv.set(rx, LOCK_SIDE - 1, IRON[4]); cv.set(rx + 1, LOCK_SIDE - 1, IRON[2])
+        cv.set(rx, LOCK_SIDE + 1, IRON[2]); cv.set(rx + 1, LOCK_SIDE + 1, IRON[1])
+    # the balance beams: on the lock side and on the south towpath, from each heel post back
+    # along the bank, away from the chamber; a white-painted end, a worn arc where it is pushed
+    beams = ((LOCK_X0, LOCK_SIDE - 3, -1, -1), (LOCK_X1, LOCK_SIDE - 3, 1, -1),
+             (LOCK_X0, CY1 + 3, -1, 1), (LOCK_X1, CY1 + 3, 1, 1))
+    for (gx, by, d, up) in beams:
+        L = 16  # swung out at about 35 degrees off the bank, away from the chamber
+        pts = []
+        for t in range(L):
+            pts.append((gx + 1 + d * round(t * 0.82), by + up * round(t * 0.57)))
+        for i, (x, y) in enumerate(pts):
+            for k in range(4):  # a squared baulk: lit top, side, shadow on the setts
+                c = WOOD[4] if k == 0 else WOOD[3] if k == 1 else WOOD[2] if k == 2 else STONE[1]
+                if i >= L - 4 and k < 3:
+                    c = '#F4F2EC' if k < 2 else '#B8B4AC'  # the end painted white, to be seen at dusk
+                cv.set(x, y + k, c)
+                if k < 3:
+                    blocked.add((x, y + k))
+        hx, hy = pts[L - 6]
+        cv.set(hx, hy - 1, IRON[3]); cv.set(hx + d, hy - 1, IRON[1])  # the iron handhold
+        cv.rect(gx - 1, by - 1, 4, 4, IRON[2]); cv.set(gx - 1, by - 1, IRON[4])  # the heel post's cap
+
+
+def humpback_bridge(cv: Canvas, blocked: set, CY0: int, CY1: int, ASHLAR):
+    """A brick humpback bridge carrying the lane over the canal (Matt's World Logic answer
+    8; size guide: rises 12 to 16 at the crown, 24 clear over the water). In the world's
+    view a raised point is drawn its height higher, so the deck is drawn lifted by its rise:
+    the north ramp, facing away, is short on screen and lit; the south ramp falls toward
+    us, long and in the bridge's own shade. The lane ramps up to it across each towpath
+    between wing walls; brick parapets in English bond, each brick its own fired tone,
+    under worn coping stones; the deck in setts with a gutter each side; the arch's dark
+    mouth and its shadow on the water east and west of it."""
+    x0, x1 = 140, 180  # the parapets' outer faces
+    r0, r1 = CY0 - 30, CY1 + 30  # the ramps' feet on the towpaths, north and south
+    crown = (CY0 + CY1) // 2
+    RISE = 14
+
+    def z(y):  # the deck's height over the ground at ground row y
+        if y <= r0 or y >= r1:
+            return 0
+        t = (y - r0) / (crown - r0) if y < crown else (r1 - y) / (r1 - crown)
+        return round(RISE * math.sin(t * math.pi / 2))
+    # the bridge's shadow on the water, cast down-right and as far out as the deck is high
+    for gy in range(CY0 + 6, CY1):
+        reach = 3 + z(gy)
+        for x in range(x1, x1 + reach):
+            c = cv.get(x, gy)
+            k = 0.55 if x < x1 + reach - 2 else 0.75
+            cv.set(x, gy, tuple(int(v * k) for v in c[:3]) + (255,))
+    rows = {gy: gy - z(gy) for gy in range(r0 - 1, r1 + 2)}
+    P = 4  # the parapets' width: a coping stone over a brick wall
+    for gy in range(r0 - 1, r1 + 1):
+        sy0, sy1 = rows[gy], rows[gy + 1]
+        dz = z(gy + 1) - z(gy)
+        for sy in range(min(sy0, sy1), max(sy0, sy1) + 1):
+            for x in range(x0 + P, x1 - P):
+                gx = x - x0 - P
+                wide = x1 - x0 - 2 * P
+                # the deck: setts laid in courses across it; the north ramp faces the light,
+                # the crown catches it, the south ramp falls away into the bridge's own shade
+                row = gy // 4
+                g4 = row * 4 + 2  # one tone a course of setts: the slope there against the light
+                slope = (z(g4 + 3) - z(g4 - 3)) / 6 / (RISE * math.pi / 2 / (crown - r0))
+                tone = max(1, min(4, round(3 + 1.4 * slope)))
+                row = gy // 4
+                sett = (gx + (row % 2) * 4) // 8
+                n = noise2(sett, row, 1745)
+                SAND_SETT = ['#4A4438', '#6A6252', '#8C8574', '#A9A28F', '#C2B9A2', '#D4CBB3']
+                ramp = GRANITE if n > 0.6 else SAND_SETT if n < 0.3 else STONE  # setts from three quarries
+                tt = tone + (1 if ramp is GRANITE else 0)
+                c = ramp[tt]
+                if (gx + (row % 2) * 4) % 8 == 0 or gy % 4 == 0:
+                    c = STONE[max(0, tone - 2)]  # the joints
+                elif n < 0.18:
+                    c = ramp[max(0, tt - 1)]  # setts of their own tone
+                elif gy % 4 == 1 and (gx + (row % 2) * 4) % 8 < 5:
+                    c = ramp[min(len(ramp) - 1, tt + 1)]  # each sett's lit top edge
+                elif gy % 4 == 3 and (gx + (row % 2) * 4) % 8 > 4:
+                    c = ramp[max(0, tt - 1)]  # and its shaded foot
+                if ((gx + (row % 2) * 4) % 8 == 0 or gy % 4 == 0) and noise2(gx // 2, gy // 2, 1746) > 0.8:
+                    c = '#4E5E3A' if (gx // 2) % 2 else '#3E4E30'  # moss in the joints, by the gutters most
+                if gx in (0, wide - 1):
+                    c = STONE[0]  # the gutters along the parapets
+                cv.set(x, sy, c)
+            for x in range(x0, x1):
+                blocked.discard((x, gy))
+    for gy in range(r0, r1):  # the parapets: worn coping stones, lit on their top and west arris
+        sy = rows[gy]
+        h = 6 if z(gy) > 2 else 3 + z(gy)
+        for (px, west) in ((x0, True), (x1 - P, False)):
+            stone = (gy - r0) // 7
+            n = noise2(stone, px, 1749)
+            for dx in range(P):
+                c = ASHLAR[4] if n > 0.5 else ASHLAR[3]
+                if dx == 0:
+                    c = ASHLAR[5]
+                elif dx == P - 1:
+                    c = ASHLAR[1]
+                if (gy - r0) % 7 == 0:
+                    c = ASHLAR[1]  # the joint between two coping stones
+                cv.set(px + dx, sy - h, c)
+                for k in range(1, h):  # under the coping, the brick wall seen at its top course
+                    if k == 1:
+                        cv.set(px + dx, sy - h + k, BRICK[1] if dx in (0, P - 1) else BRICK[2])
+                    else:
+                        cv.set(px + dx, sy - h + k, cv.get(px + dx, sy - h + k) if False else (BRICK[2] if (gy + dx) % 4 else BRICK[0]))
+                blocked.add((px + dx, gy))
+    for gy in (r0, r1 - 1):  # a pier at each end of each parapet, its south face in brick, a stone cap
+        sy = rows[gy]
+        for px in (x0 - 1, x1 - P - 1):
+            for y in range(sy - 7, sy + 1):
+                for x in range(px, px + P + 2):
+                    k = y - (sy - 7)
+                    c = BRICK[3] if (x + (k // 2) * 2) % 4 else BRICK[1]
+                    if k % 2 == 1:
+                        c = BRICK[0]
+                    if x == px + P + 1:
+                        c = BRICK[1]
+                    cv.set(x, y, c)
+            cv.hline(px, sy - 8, P + 2, ASHLAR[5]); cv.hline(px, sy - 7, P + 2, ASHLAR[3])
+
+
+def cog_setts(cv: Canvas, mask: set, seed: int = 0):
+    """Cogsworth's setts: granite, sandstone and grey whin from three quarries, each sett
+    its own tone with a lit top edge and a shaded foot, dark joints with moss in the odd
+    one, worn paler where the most feet go (the towpaths, the lane, the lock side)."""
+    SAND_SETT = ['#4A4438', '#6A6252', '#8C8574', '#A9A28F', '#C2B9A2', '#D4CBB3']
+    for (x, y) in mask:
+        row = y // 6
+        off = (row % 2) * 5
+        sett = (x + off) // 10
+        n = noise2(sett, row, 1810 + seed)
+        ramp = GRANITE if n > 0.62 else SAND_SETT if n < 0.3 else STONE
+        t = 3 if ramp is not STONE else 2
+        if 0.45 < n < 0.55:
+            t -= 1
+        cx_, cy_ = (x + off) % 10, y % 6
+        if cx_ == 0 or cy_ == 0:
+            c = STONE[0] if noise2(x // 2, y // 2, 1811 + seed) < 0.86 else ('#4E5E3A' if (x // 2 + y // 2) % 2 else '#3E4E30')
+        elif cy_ in (1, 2) and 1 <= cx_ < 7 and not (cy_ == 2 and cx_ > 4):
+            c = ramp[min(len(ramp) - 1, t + 1)]  # the sett's lit top edge
+        elif cy_ == 5 and cx_ >= 4:
+            c = ramp[max(0, t - 1)]  # its shaded foot
+        else:
+            c = ramp[t]
+        cv.set(x, y, c)
 
 def allot_bed(cv: Canvas, bx: int, by: int, bw: int, bh: int, crop: str, blocked: set):
     """A raised bed: dark tilled earth, its board edging lit on top with the front

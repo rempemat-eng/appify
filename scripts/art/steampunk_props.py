@@ -18,6 +18,8 @@ import garden_props as gp  # noqa: E402
 from materials import MATERIALS, WOOD, STONE, GOLD, NAP, RED, SNOW  # noqa: E402
 
 BRASS, COPPER, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'copper', 'iron', 'brick'))
+ASHLAR = MATERIALS['ashlar']
+RUST = ['#3A1E14', '#5E3020', '#84482C', '#A8643C']  # rust and red-oxide primer on old iron
 PAD = 4
 WARM = MATERIALS['lamplight']
 
@@ -392,51 +394,207 @@ def coal_cart() -> Canvas:
 
 
 def airship_mast() -> Canvas:
-    """The airship mast, 104 x 168: a tall iron lattice tower with a lit lamp, and a
-    small airship moored to its top by a line, riding high in the air (its shadow
-    falls on the ground beside the mast, drawn by the zone): a lit ochre envelope with
-    panel seams, a gondola with warm windows and a turning propeller."""
-    w, h = 104, 168
+    """The airship mast, 160 x 184 (size guide: a mast 64 to 120 wide and 128 to 192 tall
+    with a stair or cage lift, a path to its foot; an airship's envelope 32 to 48 across
+    and 96 to 160 long; Matt's World Logic answer 7: scenery but reachable). How it is
+    built: a square lattice tower of four riveted iron legs on stone pads, tapering from
+    28 px at the foot to 12 at the head, girts every storey and X-bracing in every panel
+    (the back legs seen behind the front ones, darker); at its head a railed platform and
+    the mooring cone, the airship's nose coupled into it so the ship weathervanes
+    downwind to the west. A cage lift runs up the tower's front between two guide rails,
+    its cage (lattice sides, a lamp inside, the gate folded open) waiting at the foot by
+    the path; its rope runs over a sheave at the head down to a steam winch in an iron
+    house at the foot, whose chimney and flywheel are seen. The airship: an envelope
+    112 x 36 of doped panels between ribs, lit on its upper-left, fins at the tail, the
+    gondola slung under it on rigging, its windows lit, a propeller at its stern."""
+    w, h = 160, 184
     cv = Canvas(w, h, pad=PAD)
-    # the envelope, seen from above and a little from the side
-    env = oval(46, 30, 42, 17)
+    foot = h - 4
+    mc = 126  # the tower's centre line
+    head = 34  # the platform's row
+    def half(y):  # the tower's half-width at row y
+        return 6 + (14 - 6) * (y - head) / (foot - head)
+    # the back legs, seen behind the front ones (up and to the right), darker
+    for y in range(head + 4, foot - 4):
+        for side in (-1, 1):
+            x = round(mc + side * half(y)) + 5
+            cv.set(x, y - 5, IRON[1])
+    for y in range(head + 4, foot - 4, 16):
+        for x in range(round(mc - half(y)) + 5, round(mc + half(y)) + 6):
+            cv.set(x, y - 5, IRON[1])
+    # the front face: girts every storey, an X in each panel, the legs lit on their west side
+    girts = list(range(head + 4, foot - 2, 16))
+    for i in range(len(girts) - 1):
+        ya, yb = girts[i], girts[i + 1]
+        for t in range(yb - ya + 1):
+            y = ya + t
+            l, r = mc - half(y), mc + half(y)
+            f = t / (yb - ya)
+            xa_, xb_ = round(l + (r - l) * f), round(r - (r - l) * f)
+            cv.set(xa_ - 1, y, IRON[3]); cv.set(xa_, y, IRON[3]); cv.set(xa_ + 1, y, IRON[1])  # one diagonal, an angle iron
+            cv.set(xb_ + 1, y, IRON[1]); cv.set(xb_, y, IRON[2]); cv.set(xb_ - 1, y, IRON[2])  # and the other
+    for y in girts:
+        for x in range(round(mc - half(y)), round(mc + half(y)) + 1):
+            cv.set(x, y, IRON[3]); cv.set(x, y + 1, IRON[1])
+        cv.set(round(mc - half(y)), y, BRASS[3]); cv.set(round(mc + half(y)), y, BRASS[2])  # the gussets
+    for y in range(head, foot - 2):  # the legs: riveted angles, red-oxide primer showing where the black has worn
+        lx, rx = round(mc - half(y)), round(mc + half(y))
+        worn = noise2(y // 3, 0, 1795) > 0.62 and y > head + 30
+        cv.set(lx - 2, y, IRON[4] if not worn else RUST[3]); cv.set(lx - 1, y, IRON[3] if not worn else RUST[2]); cv.set(lx, y, IRON[2])
+        cv.set(rx, y, IRON[2]); cv.set(rx + 1, y, IRON[1] if not worn else RUST[1]); cv.set(rx + 2, y, IRON[0])
+        if y % 12 == 0:
+            cv.set(lx - 1, y, BRASS[2]); cv.set(lx - 1, y + 1, BRASS[1])  # rivet heads down the legs
+    for (x, y) in rect_set(mc - 13, foot - 40, 7, 5):  # an enamel plate on the leg: its owner and its load
+        cv.set(x, y, '#E8E2D0' if 0 < x - (mc - 13) < 6 and 0 < y - (foot - 40) < 4 else '#2E4A7A')
+    cv.hline(mc - 12, foot - 38, 5, '#2E4A7A')
+    for side in (-1, 1):  # the legs' stone pads
+        x0 = round(mc + side * half(foot - 2)) - 3
+        for y in range(foot - 3, foot + 2):
+            for x in range(x0, x0 + 7):
+                c = STONE[4] if y == foot - 3 else STONE[2] if x < x0 + 5 else STONE[1]
+                cv.set(x, y, c)
+    # the cage lift: two guide rails up the front, the rope, the cage at the foot
+    for y in range(head + 2, foot - 2):
+        cv.set(mc - 5, y, IRON[4]); cv.set(mc - 4, y, IRON[2]); cv.set(mc + 5, y, IRON[2]); cv.set(mc + 6, y, IRON[0])
+        cv.set(mc, y, MATERIALS['rope'][2])
+    cg0, cg1 = foot - 24, foot - 2
+    for y in range(cg0, cg1):
+        for x in range(mc - 6, mc + 7):
+            k = y - cg0
+            inside = mc - 5 < x < mc + 5 and cg0 + 2 < y < cg1 - 1
+            if inside:
+                c = WARM[3] if k < 8 else WARM[2]  # the lamp inside lights its floor and back
+                if x in (mc - 2, mc + 2) and k > 3:
+                    c = IRON[1]  # the back lattice, seen through
+                if mc - 3 <= x <= mc - 1 and k >= 9:
+                    c = '#3A4258' if k < 16 else '#2A2A34'  # someone riding up, a coat and boots
+                if x == mc - 2 and 6 <= k < 9:
+                    c = '#E0A882'
+            else:
+                c = BRASS[4] if y == cg0 else IRON[3] if x == mc - 6 else IRON[1] if x == mc + 6 else IRON[2]
+                if y == cg1 - 1:
+                    c = WOOD[2]  # the cage's floor sill
+            cv.set(x, y, c)
+    for y in range(cg0 + 3, cg1 - 1, 3):  # its gate folded open to the west, a stack of lattice
+        cv.set(mc - 8, y, IRON[3]); cv.set(mc - 7, y + 1, IRON[2])
+    cv.hline(mc - 2, cg0 - 2, 5, BRASS[3]); cv.set(mc, cg0 - 1, IRON[3])  # the rope's shackle on its roof
+    # the winch house at the foot, east of the tower: iron sheets, a flywheel, a chimney
+    hx0, hy0 = mc + 14, foot - 18
+    for y in range(hy0, foot):
+        for x in range(hx0, hx0 + 16):
+            k = y - hy0
+            c = IRON[3] if k < 3 else IRON[2] if (x - hx0) % 4 else IRON[1]
+            if k == 0:
+                c = IRON[4]
+            cv.set(x, y, c)
+    for (x, y) in rect_set(hx0 + 3, hy0 + 6, 5, 8):  # its door ajar on the lit engine
+        cv.set(x, y, WARM[2] if x < hx0 + 6 else IRON[0])
+    gear(cv, hx0 + 12, hy0 + 9, 3.2, BRASS, teeth=6)
+    for (x, y) in rect_set(hx0 + 2, hy0 + 5, 7, 2):  # the door's red-painted frame and lintel
+        cv.set(x, y, '#B8382C' if y == hy0 + 5 else '#8A2A22')
+    for (x, y) in rect_set(hx0 + 9, hy0 + 13, 6, 4):  # a copper boiler's end showing through the louvres
+        cv.set(x, y, COPPER[3] if y < hy0 + 15 else COPPER[1])
+    for y in range(hy0 - 10, hy0):  # the chimney
+        cv.set(hx0 + 13, y, IRON[3]); cv.set(hx0 + 14, y, IRON[1])
+    cv.hline(hx0 + 12, hy0 - 11, 4, IRON[4])
+    for t in range(14):  # the winch rope from the house up to the tower
+        cv.set(hx0 - t, hy0 + 2 - t // 3, MATERIALS['rope'][1])
+    for y in range(head + 2, head + 34):  # the top storeys banded red and white, to be seen from the air
+        if ((y - head - 2) // 8) % 2 == 0:
+            lx, rx = round(mc - half(y)), round(mc + half(y))
+            for x in (lx - 2, lx - 1, rx + 1, rx + 2):
+                cv.set(x, y, '#E8E2D6' if x < mc else '#B8B0A4')
+        else:
+            lx, rx = round(mc - half(y)), round(mc + half(y))
+            for x in (lx - 2, lx - 1, rx + 1, rx + 2):
+                cv.set(x, y, RED[3] if x < mc else RED[1])
+    # the head: a railed platform, the mooring cone, a sheave, a lamp
+    for x in range(mc - 10, mc + 11):
+        cv.set(x, head, IRON[4]); cv.set(x, head + 1, IRON[2]); cv.set(x, head + 2, IRON[1])
+        if (x - mc) % 4 == 0:
+            for y in range(head - 6, head):
+                cv.set(x, y, IRON[3])
+    cv.hline(mc - 10, head - 6, 21, IRON[4])
+    for y in range(head - 16, head - 1):  # the mooring cone, narrowing up to its cup
+        hw = 1 + (y - (head - 16)) // 4
+        for x in range(mc - hw, mc + hw + 1):
+            cv.set(x, y, IRON[4] if x < mc else IRON[2])
+    for (x, y) in disc(mc, head - 18, 2.4):  # the lamp on its top, warm
+        cv.set(x, y, '#FFE7A6' if x < mc else '#F0B85A')
+    # the airship, its nose in the cone's cup, lying off to the west downwind
+    ex, ey, rx, ry = 62, head - 12, 56, 18
+    env = oval(ex, ey, rx, ry)
+    DOPE = ['#5E4318', '#7A5A22', '#8E6A2C', '#A47C36', '#B88E3E', '#CCA24C', '#D9B25A', '#E8C66A', '#F2D27A']
     for (x, y) in env:
-        k = ((x - 46) / 42) * 0.6 + ((y - 30) / 17) * 0.8
-        c = '#F2D27A' if k < -0.55 else '#D9B25A' if k < -0.1 else '#B88E3E' if k < 0.45 else '#8E6A2C'
-        if (x - 4) % 12 == 0:
-            c = '#7A5A22'
+        u, v = (x - ex) / rx, (y - ey) / ry
+        k = u * 0.45 + v * 0.9
+        i = 8 if k < -0.55 else 6 if k < -0.1 else 4 if k < 0.45 else 2
+        gore = (x - ex + 3) // 14
+        g = noise2(gore, 0, 1796)
+        i += 1 if g > 0.7 else -1 if g < 0.3 else 0  # each gore of doped linen weathered its own way
+        if noise2(x // 5, y // 3, 1797) > 0.86:
+            i -= 1  # a patch sewn over a tear
+        m = noise2(x // 2, y // 2, 1799)
+        if m > 0.8:
+            i += 2 if m > 0.93 else 1  # the doped linen mottled where the weather has worked on it
+        elif m < 0.15:
+            i -= 2 if m < 0.05 else 1
+        KHAKI = ['#3E3A24', '#4E4A30', '#6A6440', '#857E52', '#A09A66', '#BAB47E', '#C8C28A', '#D0CA96', '#DCD6A4']
+        c = (KHAKI if noise2(gore, 1, 1805) > 0.62 else DOPE)[max(1, min(8, i))]  # gores renewed in a paler cloth
+        rib = abs((x - ex + 3) % 14) < 1
+        if rib:
+            c = '#7A5A22' if k > -0.55 else '#C49A48'
+        elif (y - ey) % 6 == 0 and v < -0.2 and (x + (y // 6) * 3) % 6 < 2:
+            c = DOPE[max(0, min(8, i) - 2)]  # the rigging net over its top, a diamond mesh
+        if v > 0.82:
+            c = '#5E4318'
+        if abs(v + 0.25) < 0.04 and u < 0.85:
+            c = '#E8C86A' if k < 0 else '#A07A34'  # the girth line the rigging hangs from
+        if 0.05 < v < 0.25 and -0.75 < u < 0.7:
+            c = RED[3] if k < 0 else RED[2]  # the company's band painted round it
+            if abs(v - 0.05) < 0.06 or abs(v - 0.25) < 0.06:
+                c = GOLD[3] if k < 0 else GOLD[2]
         cv.set(x, y, c)
     for (x, y) in env:
         if (x, y + 1) not in env:
-            cv.set(x, y, '#5E4318')
-    for fx, fy in ((86, 22), (86, 38)):  # tail fins
-        for t in range(6):
-            cv.hline(fx, fy - t // 2 + (t if fy > 30 else 0) // 3, 8 - t, RED[3] if t < 3 else RED[2])
-    # the gondola under it
-    for (x, y) in rect_set(30, 48, 28, 10):
-        cv.set(x, y, WOOD[3] if y < 51 else WOOD[2])
-    cv.hline(30, 48, 28, WOOD[4])
-    for gx in (34, 42, 50):
-        porthole(cv, gx, 53, 2.6)
-    for t in range(4):
-        cv.set(34 + t * 7, 47 - t % 2, IRON[2])
-    for (x, y) in rect_set(58, 50, 2, 6):
-        cv.set(x, y, IRON[2])
-    cv.vline(61, 47, 12, '#D8D4C8')  # the propeller, caught mid-turn
-    # the mast: a tapering lattice tower on the right with a lamp on top
-    mx = 76
-    for y in range(40, h - 2):
-        t = (y - 40) / (h - 42)
-        lx, rx = int(mx - 2 - t * 8), int(mx + 2 + t * 8)
-        cv.set(lx, y, IRON[3]); cv.set(rx, y, IRON[1])
-        if (y - 40) % 14 == 0 and y < h - 14:
-            cv.hline(lx, y, rx - lx + 1, IRON[2])
-            for k in range(rx - lx):
-                cv.set(lx + k, y + min(13, k * 14 // max(1, rx - lx)), IRON[2])
-    for (x, y) in disc(mx, 38, 3):
-        cv.set(x, y, '#FFE7A6' if x < mx else '#F0B85A')
-    cv.hline(60, 40, mx - 60, IRON[2])  # the mooring line
-    cv.rect(mx - 12, h - 4, 25, 4, STONE[3]); cv.hline(mx - 12, h - 4, 25, STONE[4])
+            cv.set(x, y, '#4E3612')
+    for t in range(9):  # the nose cap, coupled into the cone
+        cv.set(ex + rx - 2 + t // 3, ey - 1 + t % 3, IRON[3] if t % 3 else IRON[4])
+    for (fy, d) in ((ey - 10, -1), (ey + 10, 1)):  # the tail fins, in red doped cloth on a frame
+        for t in range(10):
+            for k in range(12 - t):
+                y = fy + d * (t // 2)
+                cv.set(ex - rx + 2 + k - t // 2, y, RED[3] if d < 0 else RED[2])
+        cv.hline(ex - rx - 2, fy, 14, WOOD[3])
+    gx0, gy0 = ex - 18, ey + ry + 6  # the gondola, slung on rigging
+    for (x, y) in rect_set(gx0, gy0, 34, 9):
+        c = WOOD[4] if y == gy0 else WOOD[3] if y < gy0 + 4 else WOOD[2]
+        if y == gy0 + 8:
+            c = WOOD[1]
+        cv.set(x, y, c)
+    for k in range(5):
+        porthole(cv, gx0 + 5 + k * 6, gy0 + 4, 2.2)
+    for k in range(5):  # the rigging, from the girth line down to the gondola's rail
+        x_top = ex - 30 + k * 15
+        for t in range(10):
+            f = t / 9
+            cv.set(round(x_top + (gx0 + 2 + k * 7.5 - x_top) * f), round(ey + 9 + (gy0 - ey - 9) * f), '#6E5A3A')
+    for k, bx in enumerate((gx0 + 6, gx0 + 16, gx0 + 26)):  # ballast bags slung under the gondola
+        for (x, y) in rect_set(bx, gy0 + 10, 3, 3):
+            cv.set(x, y, '#C8B488' if x == bx else '#9A8660')
+        cv.set(bx + 1, gy0 + 9, MATERIALS['rope'][1])
+    for (nx, d) in ((gx0 - 8, -1), (gx0 + 36, 1)):  # an engine nacelle on an outrigger each side
+        cv.hline(min(nx, gx0 + 34) if d > 0 else nx + 4, gy0 + 3, 6, IRON[2])
+        for (x, y) in rect_set(nx, gy0 + 1, 6, 5):
+            cv.set(x, y, BRASS[4] if y == gy0 + 1 else BRASS[3] if y < gy0 + 4 else BRASS[1])
+        cv.set(nx + (0 if d < 0 else 5), gy0 + 3, IRON[0])
+    for (sx, sy) in ((ex - 30, ey - 6), (ex - 26, ey - 6), (ex - 22, ey - 6)):  # the ship's number stencilled on its side
+        for t in range(4):
+            cv.set(sx, sy + t, '#F2ECDA'); cv.set(sx + 1, sy + t, '#D8D0BC')
+    cv.hline(ex - 30, ey - 6, 10, '#F2ECDA')
+    for y in range(gy0 + 1, gy0 + 8):  # the propeller at its stern (west), a blur caught mid-turn
+        cv.set(gx0 - 3, y, '#D8D4C8' if y % 3 else '#8E8A80')
+    cv.hline(gx0 - 2, gy0 + 4, 2, IRON[2])
     return cv
 
 
@@ -491,71 +649,214 @@ BOAT_GREEN = ['#12261E', '#1E3E30', '#2C5A44', '#3E7A5A', '#5A9A72']
 
 
 def narrowboat() -> Canvas:
-    """A steam narrowboat moored on the canal, 112 x 34, side on and a little from
-    above: a long bottle-green hull with a red and gold rubbing strake, a cabin roof
-    with a brass funnel (its steam comes from the zone's life layer), round warm
-    portholes, a painted panel of abstract flowers, coal heaped in the open bow, a
-    tiller at the stern and a coil of rope."""
-    w, h = 112, 34
+    """A steam narrowboat moored on the canal, 100 x 34 (size guide: 96 to 144 long, so it
+    fits the lock's 104 px chamber), side on and a little from above. How it is built: a
+    riveted steel hull, black below the waterline band, bottle green above, a red and gold
+    rubbing strake; the open fore-hold with its coal heaped under the crane, cratch boards
+    at the bow; the cabin with a planked roof seen from above (a water can, a mop, the
+    brass funnel of its steam engine), round portholes in brass, a side hatch, a panel of
+    painted flowers; at the stern the brass swan-neck tiller and a coiled rope; rope
+    fenders hung over the side; the mooring line from the bow's T-stud up to the quay. It
+    rides the water on the renderer's float bob (components/atlas-walk.tsx FLOATS)."""
+    w, h = 100, 34
     cv = Canvas(w, h, pad=PAD)
-    for x in range(4, w - 4):
-        bow = max(0, 18 - x) ** 2 // 30 + max(0, x - (w - 10)) ** 2 // 10
-        for y in range(18 + bow // 3, 30):
-            c = BOAT_GREEN[3] if y < 21 else BOAT_GREEN[2] if y < 26 else BOAT_GREEN[1]
+    G = BOAT_GREEN
+    hull_top, water = 18, 30
+    for x in range(2, w - 2):
+        bow = max(0, 14 - x) ** 2 // 18  # the bow sweeps up, the stern rounds off
+        stern = max(0, x - (w - 8)) ** 2 // 6
+        top = hull_top + bow // 4 + stern // 3
+        for y in range(top, water):
+            k = y - top
+            c = G[3] if k < 2 else G[2] if y < 25 else G[1]
+            if y == top:
+                c = G[4]  # the gunwale, lit
             if y in (22, 23):
-                c = RED[3] if y == 22 else GOLD[3]
+                c = RED[3] if y == 22 else GOLD[3]  # the rubbing strake
+            if y >= 27:
+                c = '#14141A' if y < 29 else '#0C0C10'  # the black below the waterline band
+            if (x - 4) % 9 == 0 and 24 <= y < 27:
+                c = G[0]  # the plates' seams
+            if (x - 8) % 9 == 0 and y == 25:
+                c = G[3]  # a rivet head catching the light
             cv.set(x, y, c)
-        cv.set(x, 30, BOAT_GREEN[0])
-    for x in range(30, w - 16):  # the cabin
-        for y in range(8, 18):
-            c = BOAT_GREEN[4] if y < 10 else BOAT_GREEN[3] if y < 14 else BOAT_GREEN[2]
+        cv.set(x, water, '#0C1A16')
+    for x in range(12, w - 12, 13):  # rust run down from a rivet, and the hull's scuffs
+        for y in range(24, 28):
+            cv.set(x, y, RUST[2] if y < 26 else RUST[1])
+    for (x, y) in rect_set(18, 19, 10, 3):  # the boat's name panel on the bow, abstract strokes on cream
+        cv.set(x, y, '#E8D8B8' if (x + y) % 4 else RED[2])
+    cv.hline(18, 18, 10, GOLD[4])
+    # the fore-hold: open, its coal heaped high, the cratch's triangle of boards at the bow
+    for (x, y) in oval(16, 18, 9, 3.4):
+        n = noise2(x, y, 1750)
+        cv.set(x, y, IRON[2] if n > 0.7 else IRON[1] if n > 0.3 else IRON[0])
+    for t in range(6):
+        cv.hline(5 + t, 12 + t, 2, WOOD[4] if t < 2 else WOOD[3])
+    cv.vline(5, 12, 7, WOOD[2])
+    cx0, cy0 = 10, 8  # a crate on the coal, the canal crane's sling round it (canal_crane)
+    for y in range(cy0, cy0 + 10):
+        for x in range(cx0, cx0 + 12):
+            if y < cy0 + 3:
+                c = WOOD[4] if (x - cx0) % 4 else WOOD[3]  # the slatted lid, seen from above
+            else:
+                c = WOOD[3] if (y - cy0) % 4 else WOOD[1]
+                if x in (cx0, cx0 + 11):
+                    c = WOOD[2]
+                if (x - cx0) == (y - cy0) + 1:
+                    c = WOOD[2]  # the brace across its front
             cv.set(x, y, c)
-        cv.set(x, 8, WOOD[4] if x % 2 else WOOD[3])  # the planked roof's edge
-    for px in range(40, w - 22, 14):
-        porthole(cv, px, 13, 2.6)
-    for y in range(10, 17):  # the painted panel
-        for x in range(78, 92):
-            c = RED[3] if (x - 85) ** 2 + (y - 13) ** 2 < 6 else GOLD[3] if (x + y) % 5 == 0 else '#E8D8B8'
+    cv.hline(cx0, cy0 + 3, 12, WOOD[1])
+    # the cabin: its side with portholes, a hatch and the painted panel; its roof from above
+    c0, c1 = 30, w - 14
+    for x in range(c0, c1):
+        for y in range(9, hull_top):
+            c = G[3] if y < 12 else G[2] if y < 16 else G[1]
+            if x == c0:
+                c = G[4]
+            elif x == c1 - 1:
+                c = G[1]
             cv.set(x, y, c)
-    for y in range(0, 9):  # the funnel
-        for x in range(46, 51):
-            cv.set(x, y, BRASS[4] if x < 48 else BRASS[2])
-    cv.hline(45, 0, 7, BRASS[5])
-    for (x, y) in oval(14, 18, 8, 3):  # coal in the bow
-        cv.set(x, y, IRON[1] if (x + y) % 2 else IRON[0])
-    for t in range(10):  # the tiller
-        cv.set(w - 10 + t // 2, 16 - t // 2, WOOD[3])
-    for (x, y) in oval(w - 22, 17, 3, 1.5):
-        cv.set(x, y, MATERIALS['rope'][2] if (x + y) % 2 else MATERIALS['rope'][3])
+        for y in (6, 7, 8):  # the planked roof seen from above, a lit edge
+            c = WOOD[4] if y == 8 else WOOD[3] if (x // 7 + y) % 2 else WOOD[2]
+            cv.set(x, y, c)
+        cv.set(x, 9, GOLD[2] if (x // 3) % 2 else GOLD[3])  # the coach line under the roof
+    for (p0, p1) in ((32, 56), (67, 77), (87, w - 15)):  # the cabin's panels, lined out in gold and red
+        for x in range(p0, p1):
+            cv.set(x, 10, GOLD[3]); cv.set(x, 16, RED[2])
+        for y in range(10, 17):
+            cv.set(p0, y, GOLD[3]); cv.set(p1 - 1, y, RED[2])
+    for px in (38, 50, 74):
+        porthole(cv, px, 13, 2.4)
+    for y in range(11, 17):  # a side hatch, its double doors
+        for x in range(57, 66):
+            c = G[1] if x in (57, 61, 65) else G[3] if y < 13 else G[2]
+            cv.set(x, y, c)
+    cv.set(60, 14, BRASS[4]); cv.set(62, 14, BRASS[4])
+    for y in range(11, 17):  # the painted panel: a rose and leaves on cream, in clusters
+        for x in range(78, 86):
+            c = '#E8D8B8' if y in (11, 16) or x in (78, 85) else '#D8C49A'
+            if (x - 81.5) ** 2 + (y - 13.5) ** 2 < 3:
+                c = RED[3] if y < 14 else RED[2]
+            elif (x, y) in ((79, 14), (80, 15), (84, 12), (83, 12)):
+                c = '#4A7A3A'
+            cv.set(x, y, c)
+    for (x, y) in ((34, 5), (35, 5), (34, 4), (35, 4)):  # a water can on the roof
+        cv.set(x, y, RED[3] if x == 34 else RED[2])
+    cv.set(36, 4, RED[2])
+    for t in range(9):  # a mop lying along the roof
+        cv.set(64 + t, 6, WOOD[4])
+    cv.set(73, 6, '#D8D0C0'); cv.set(74, 6, '#B8B0A0'); cv.set(73, 5, '#D8D0C0')
+    for y in range(0, 7):  # the funnel of its steam engine, with a brass band
+        for x in range(45, 49):
+            c = IRON[3] if x < 47 else IRON[1]
+            if y == 2:
+                c = BRASS[4] if x < 47 else BRASS[2]
+            cv.set(x, y, c)
+    cv.hline(44, 0, 6, IRON[4])
+    # the stern: a brass swan-neck and the tiller bar, a coil of rope on the counter
+    for t in range(7):
+        cv.set(w - 10 + t // 3, 16 - t, BRASS[4] if t < 4 else BRASS[3])
+    cv.hline(w - 12, 9, 7, WOOD[3]); cv.set(w - 12, 9, WOOD[4])
+    for (x, y) in oval(w - 18, 17, 3, 1.4):
+        cv.set(x, y, MATERIALS['rope'][3] if (x + y) % 2 else MATERIALS['rope'][1])
+    for fx in (24, 52, 70, 88):  # rope fenders over the side
+        for y in range(19, 25):
+            cv.set(fx, y, MATERIALS['rope'][2] if y % 2 else MATERIALS['rope'][1])
+            cv.set(fx + 1, y, MATERIALS['rope'][1])
+        cv.set(fx, 18, MATERIALS['rope'][3])
+    # the mooring line: from the T-stud on the bow, slack, up to the ring on the quay (north)
+    cv.set(9, 17, IRON[4]); cv.set(10, 17, IRON[3])
+    for t in range(12):
+        cv.set(9 - t // 3, 16 - t, MATERIALS['rope'][3] if t % 3 else MATERIALS['rope'][2])
     return cv
 
 
 def canal_crane() -> Canvas:
-    """A hand-cranked iron jib crane on a brick plinth, 52 x 66: a lattice jib swung out
-    over the water with a hook and a crate on its chain, a geared winch drum lit in
-    brass."""
-    w, h = 52, 66
+    """A hand-cranked jib crane on the canal's quay, 52 x 90 of which 68 stand over the
+    quay and the rest is its chain down to the boat (size guide 24 to 64 by 40 to 72; Matt's World Logic answer 10: the jib turned out over the narrowboat). How it is
+    built: a cast-iron post on a dressed-stone pier at the quay's edge, a slewing ring at
+    its head, a riveted lattice jib reaching south and a little west out over the water,
+    held by a tie rod from the post's finial; a winch with its brass gear and crank on the
+    post at hand height, the chain run up the post, over the jib's head sheave and down
+    to the hook; the hook let down into the boat's fore-hold, slung round the crate it is lifting (the crate is drawn with the boat). In
+    the world's view a reach out toward us is drawn lower on screen: the jib's head stands
+    46 px over a point 26 px south of the post's foot, so it is drawn 20 px above the
+    foot's row and 22 px west of the post."""
+    w, h = 52, 90
     cv = Canvas(w, h, pad=PAD)
-    brick_wall(cv, 4, 50, 22, 14, seed=12)
-    cv.hline(4, 50, 22, STONE[4])
-    for y in range(14, 50):  # the post
-        for x in range(12, 18):
-            cv.set(x, y, IRON[4] if x == 12 else IRON[3] if x < 15 else IRON[1])
-    for t in range(36):  # the jib, a lattice out to the right
-        x = 15 + t
-        top, bot = 12 + t // 6, 18 - t // 8
-        cv.set(x, top, IRON[4]); cv.set(x, top + 1, IRON[2])
-        if t < 30:
-            cv.set(x, bot + t // 3, IRON[2])
-        if t % 6 == 0:
-            for k in range(bot + t // 3 - top):
-                cv.set(x + k // 3, top + k, IRON[2])
-    for y in range(20, 40):
-        cv.set(48, y, IRON[1])
-    for (x, y) in rect_set(43, 40, 11, 9):
-        cv.set(x, y, WOOD[4] if y == 40 else WOOD[3] if x < 47 else WOOD[2])
-    cv.vline(48, 41, 7, WOOD[1])
-    gear(cv, 20, 34, 5, BRASS, teeth=8)
+    px = 36  # the post's centre
+    foot = 66  # the pier's foot on the quay; below it only the chain hangs, down to the boat
+    GRANITE_ = ['#3A3A42', '#55555E', '#73737A', '#93918F', '#B4B0A8', '#D2CDC2']
+    for y in range(foot - 8, foot + 1):  # the pier: dressed stone from two quarries, coped, its face in shade
+        for x in range(px - 6, px + 7):
+            k = y - (foot - 8)
+            blk = (x + (k // 3) * 3) // 6
+            st = GRANITE_ if noise2(blk, k // 3, 1798) > 0.5 else ASHLAR
+            c = st[4] if k < 2 else st[2] if (x + (k // 3) * 3) % 6 else st[1]
+            if k >= 2 and (x + (k // 3) * 3) % 6 in (1, 2) and k % 3 == 2:
+                c = st[3]
+            if k == 0:
+                c = ASHLAR[5]
+            if x == px + 6:
+                c = ASHLAR[1]
+            cv.set(x, y, c)
+    top = foot - 52  # the post's head (46 px over the quay plus the pier)
+    PAINT = ['#16261E', '#22382C', '#30503C', '#44684E', '#5E8466']  # the canal company's green, on cast iron
+    for y in range(top, foot - 8):  # the post, tapering, lit on its west side, its paint worn to the iron
+        half = 2 if y < top + 20 else 3
+        for x in range(px - half, px + half + 1):
+            ramp = IRON if noise2(x // 2, y // 3, 1802) > 0.78 else PAINT
+            c = ramp[4] if x == px - half else ramp[3] if x < px else ramp[2] if x == px else ramp[1]
+            cv.set(x, y, c)
+        if (y - top) % 12 == 6:
+            cv.hline(px - half - 1, y, 2 * half + 3, IRON[2])  # the casting's bands
+    for (x, y) in disc(px, top - 3, 2):  # the finial
+        cv.set(x, y, IRON[4] if x < px else IRON[2])
+    cv.hline(px - 4, top, 9, BRASS[3]); cv.hline(px - 4, top + 1, 9, BRASS[1])  # the slewing ring
+    jx, jy = px - 22, top + 16  # the jib's head, drawn down-left of the post (rising a little toward it)
+    steps = 26
+    for t in range(steps + 1):  # the jib: two chords and a lattice between, from the ring to the head
+        f = t / steps
+        x = round(px - 3 + (jx - (px - 3)) * f)
+        yu = round(top + 1 + (jy - 3 - (top + 1)) * f)
+        yl = round(top + 6 + (jy - (top + 6)) * f)
+        cv.set(x, yu, IRON[4]); cv.set(x, yl, IRON[2])
+        if t % 4 == 0:
+            for yy in range(yu + 1, yl):
+                cv.set(x, yy, IRON[3])
+        elif t % 4 == 2:
+            cv.set(x, (yu + yl) // 2, IRON[2])
+    for t in range(30):  # the tie rod from the finial to the head
+        f = t / 29
+        cv.set(round(px - 1 + (jx - px + 1) * f), round(top - 3 + (jy - 3 - top + 3) * f), IRON[3])
+    for (x, y) in disc(jx, jy - 1, 2):  # the head sheave
+        cv.set(x, y, IRON[4] if x <= jx else IRON[1])
+    cv.set(jx, jy - 1, BRASS[4])
+    for (ry0, rx0) in ((top + 24, px - 2), (top + 33, px + 1), (top + 41, px - 1)):  # rust where the paint has gone
+        for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1), (0, 2)):
+            cv.set(rx0 + dx, ry0 + dy, RUST[2] if dx == 0 else RUST[1])
+    for (x, y) in rect_set(px - 2, top + 28, 4, 3):  # the maker's plate, cast in brass
+        cv.set(x, y, BRASS[4] if y == top + 28 else BRASS[2])
+    cv.set(px - 4, top + 12, IRON[3]); cv.hline(px - 6, top + 12, 2, IRON[3])  # a lantern on a hook
+    for (x, y) in rect_set(px - 7, top + 13, 3, 4):
+        cv.set(x, y, WARM[3] if y < top + 15 else WARM[2])
+    cv.hline(px - 7, top + 17, 3, IRON[1])
+    for (x, y) in oval(px - 13, foot - 2, 4, 1.8):  # a coil of rope on the quay by the pier, its turns lit on top
+        cv.set(x, y, MATERIALS['rope'][3] if y < foot - 2 else MATERIALS['rope'][1] if x > px - 12 else MATERIALS['rope'][2])
+    gear(cv, px + 6, foot - 20, 4, BRASS, teeth=8)  # the winch, at hand height on the post's east
+    for (x, y) in ((px + 12, foot - 22), (px + 12, foot - 21), (px + 13, foot - 22), (px + 13, foot - 21)):
+        cv.set(x, y, '#B8382C' if y == foot - 22 else '#8A2A22')  # the crank's red-painted handle
+    cv.hline(px + 6, foot - 15, 6, IRON[3]); cv.set(px + 11, foot - 16, WOOD[4]); cv.set(px + 11, foot - 15, WOOD[3])
+    for y in range(top + 6, foot - 22):  # the chain up the post, its links two rows long
+        cv.set(px + 3, y, IRON[2] if (y // 2) % 2 else IRON[4])
+    hook_y = jy + 52  # the hook let down over the fore-hold, its sling round the crate in the boat
+    for y in range(jy + 1, hook_y):  # the chain down from the sheave, its links two rows long
+        cv.set(jx, y, IRON[1] if (y // 2) % 2 else IRON[3])
+    cv.set(jx, hook_y, IRON[4]); cv.set(jx - 1, hook_y + 1, IRON[3]); cv.set(jx + 1, hook_y + 1, IRON[2])
+    for t in range(4):  # the sling's two legs, taut, to the crate's corners (the crate is the boat's)
+        cv.set(jx - 1 - t, hook_y + 2 + t, MATERIALS['rope'][3])
+        cv.set(jx + 1 + t, hook_y + 2 + t, MATERIALS['rope'][2])
     return cv
 
 
@@ -616,69 +917,212 @@ def foundry() -> Canvas:
 
 
 def tube_station() -> Canvas:
-    """The atmospheric railway's terminus, 80 x 86: Cogsworth's end of the maglev from
-    Neon Harbour, built the Cogsworth way. A glass-and-brass dome over a round booking
-    hall, ribbed in brass, warm inside; the brass tube leaves from its east side. Its
-    drum stands a storey and more high (42 px) round a 14 x 32 door, the scale table's."""
-    w, h = 80, 86
-    D = 16  # the drum's extra height over the first drawing
+    """The atmospheric railway's terminus, 84 x 92: Cogsworth's end of the line from Neon
+    Harbour, built the Victorian way (Matt's World Logic answer 11: keep it, detail it).
+    How it is built: a round booking hall, its drum of red brick between dressed-stone
+    pilasters on a stone plinth, a cornice round its top; over it a cast-iron dome, ribs
+    and rings holding glass panes that show the dusk sky high up and the hall's warm light
+    lower down, a lantern and finial at its crown. Its door in a stone surround with a
+    fanlight and a clock over it, arched windows lit either side, a step down to the
+    forecourt. The brass tube the capsules run in leaves from its east side through a
+    bolted collar. Its drum stands a storey and more (42 px) round a 14 x 32 door."""
+    w, h = 84, 92
     cv = Canvas(w, h, pad=PAD)
-    cx = 38
-    for y in range(4, 36):  # the dome
-        half = int(math.sqrt(max(0, 1 - ((36 - y) / 32) ** 2)) * 30)
+    cx, R = 38, 30  # the drum's centre and radius
+    dome_top, drum_top, drum_bot = 8, 40, 82
+    # the dome: ribs every 8 px, rings every 8, panes between; sky high up, the hall's light low
+    for y in range(dome_top, drum_top):
+        t = (drum_top - y) / (drum_top - dome_top)
+        half = int(math.sqrt(max(0.0, 1 - t ** 2)) * R)
         for x in range(cx - half, cx + half + 1):
-            rib = (x - cx) % 8 == 0 or (y - 4) % 9 == 0
             k = (x - cx) / max(1, half)
-            c = BRASS[3] if rib and k < 0 else BRASS[1] if rib else (WARM[3] if k < -0.5 else WARM[2] if k < 0.3 else WARM[1])
-            if not rib and y < 12:
-                c = SNOW[2] if k < 0 else SNOW[1]  # the glass catches the sky near the top
+            rib = round((x - cx) / max(1, half) * 4) != round((x + 1 - cx) / max(1, half) * 4) or (y - dome_top) % 8 == 0
+            if rib and (y - dome_top) % 8 == 0:
+                c = BRASS[4] if k < -0.3 else BRASS[3] if k < 0.3 else BRASS[1]  # the rings, brass
+            elif rib:
+                c = IRON[4] if k < -0.3 else IRON[3] if k < 0.3 else IRON[1]  # the ribs, cast iron
+            elif t > 0.55:
+                SKY = ['#3E5872', '#4A6680', '#6E92A8', '#86AABE', '#9FC2D2', '#B8D6E2']
+                pane = noise2(round((x - cx) / max(1, half) * 4), (y - dome_top) // 8, 1792)
+                i = 4 if k < -0.2 else 2 if k < 0.4 else 1
+                c = SKY[min(5, max(0, i + (1 if pane > 0.66 else -1 if pane < 0.33 else 0)))]  # each pane its own sky
+                if (x + y) % 11 == 0 and k < 0:
+                    c = '#D8ECF2'  # a glint
+            else:
+                pane = noise2(round((x - cx) / max(1, half) * 4), (y - dome_top) // 8, 1793)
+                c = WARM[3] if k < -0.3 else WARM[2] if k < 0.4 else WARM[1]  # the hall's light through the low panes
+                if pane > 0.7 and k < 0.4:
+                    c = '#E8B860'  # a pane with a lamp close behind it
+                elif pane < 0.2:
+                    c = '#C08838'
+                if (y - dome_top) % 8 == 7:
+                    c = '#A06A28'  # the panes' lower glazing bars
             cv.set(x, y, c)
-    cv.vline(cx, 0, 5, BRASS[4]); cv.set(cx, 0, BRASS[5])
-    for y in range(36, 62 + D):  # the drum wall
-        for x in range(cx - 30, cx + 31):
-            k = (x - cx) / 30
-            c = BRASS[4] if k < -0.7 else BRASS[3] if k < 0 else BRASS[2] if k < 0.7 else BRASS[1]
-            if y in (36, 37):
-                c = BRASS[5] if y == 36 else IRON[1]
+    for y in range(0, dome_top + 2):  # the lantern and its finial
+        hw = 1 if y < 4 else 3
+        for x in range(cx - hw, cx + hw + 1):
+            c = BRASS[5] if y == 0 else BRASS[4] if x < cx else BRASS[2]
+            if 4 <= y < dome_top and abs(x - cx) < 2:
+                c = WARM[3]
             cv.set(x, y, c)
-    cv.hline(cx - 30, 52, 61, BRASS[5]); cv.hline(cx - 30, 53, 61, BRASS[1])  # a band between the tiers
-    for px in (cx - 18, cx + 18):
-        porthole(cv, px, 45, 4)
-        for (x, y) in rect_set(px - 3, 60, 7, 12):  # a tall window either side of the door
-            cv.set(x, y, WARM[3] if y < 64 else WARM[2])
-        cv.vline(px, 60, 12, BRASS[2]); cv.hline(px - 4, 72, 9, BRASS[4])
-    dy0 = 62 + D - 32
-    for (x, y) in rect_set(cx - 7, dy0, 14, 32):  # the door
-        c = IRON[2] if x < cx else IRON[1]
-        if 3 <= y - dy0 < 14 and x not in (cx - 7, cx - 1, cx, cx + 6):
-            c = WARM[3]  # its glazed upper panels
+    # the cornice over the drum
+    for x in range(cx - R - 1, cx + R + 2):
+        k = (x - cx) / R
+        cv.set(x, drum_top, ASHLAR[5] if k < 0.3 else ASHLAR[3])
+        cv.set(x, drum_top + 1, ASHLAR[3] if k < 0.3 else ASHLAR[1])
+        cv.set(x, drum_top + 2, ASHLAR[0])
+    for (bx, d) in ((cx - 22, 1), (cx + 9, -1)):  # pigeons on the cornice
+        cv.set(bx, drum_top - 2, '#8A8E9A'); cv.set(bx + d, drum_top - 2, '#6A6E7A'); cv.set(bx, drum_top - 1, '#5A5E6A'); cv.set(bx + d, drum_top - 1, '#5A5E6A')
+        cv.set(bx - d, drum_top - 3, '#9EA2AE')
+    # the drum: brick in courses, curving away (lit on its west, darker east), pilasters every 12
+    for y in range(drum_top + 3, drum_bot):
+        for x in range(cx - R, cx + R + 1):
+            k = (x - cx) / R
+            shade = 0 if k < -0.6 else 1 if k < 0.1 else 2 if k < 0.65 else 3
+            row = (y - drum_top) // 3
+            brick = (x + (row % 2) * 3) // 6
+            n = noise2(brick, row, 1760)
+            ramp = BRICK if n < 0.7 else ['#3A1C14', '#5E2C1E', '#844230', '#A85A40', '#C87A58']  # a hotter-fired brick here and there
+            c = ramp[max(0, 4 - shade - (1 if 0.45 < n < 0.7 else 0))]
+            if noise2(x // 2, 0, 1761) > 0.85 and y > drum_top + 6:
+                c = ramp[max(0, 3 - shade - 1)]  # a soot streak down from the cornice
+            if (y - drum_top) % 3 == 0 or (x + (row % 2) * 3) % 6 == 0:
+                c = ramp[max(0, 1 - shade // 2)]  # the mortar, dark with soot
+            p = (x - cx + 60) % 14
+            if p < 3:  # a stone pilaster
+                c = ASHLAR[max(1, 4 - shade - (1 if p == 2 else 0))]
+                if (y - drum_top) % 6 == 0:
+                    c = ASHLAR[max(0, 3 - shade)]
+            cv.set(x, y, c)
+    for x in range(cx - R, cx + R + 1):  # a string course between the tiers
+        k = (x - cx) / R
+        cv.set(x, 56, ASHLAR[4] if k < 0.2 else ASHLAR[2]); cv.set(x, 57, ASHLAR[1])
+    for (bx, cols) in ((cx - 29, ('#E8DCC0', '#B83A2E')), (cx + 23, ('#D8D4C4', '#2E4A7A'))):  # bills pasted on the drum
+        for (x, y) in rect_set(bx, 62, 5, 8):
+            c = cols[0] if (y - 62) % 3 else cols[1]
+            if x == bx + 4 or y == 69:
+                c = '#9A9078'  # its curling edge
+            cv.set(x, y, c)
+    for lx in (cx - 12, cx + 12):  # gas lamps on brackets either side of the door
+        cv.hline(lx - 1, 58, 3, IRON[3])
+        for (x, y) in rect_set(lx - 1, 59, 3, 4):
+            cv.set(x, y, WARM[3] if y < 61 else WARM[2])
+        cv.hline(lx - 1, 63, 3, IRON[1]); cv.set(lx, 57, IRON[4])
+    for px in (cx - 19, cx + 17):  # arched windows, lit, a glazing bar, a stone sill
+        for y in range(60, 76):
+            for x in range(px - 3, px + 4):
+                if y < 63 and abs(x - px) > (y - 59):
+                    continue
+                c = WARM[3] if y < 66 else WARM[2]
+                if x == px or y == 68:
+                    c = '#3A2A1A'
+                cv.set(x, y, c)
+        cv.hline(px - 4, 76, 9, ASHLAR[4]); cv.hline(px - 4, 77, 9, ASHLAR[1])
+        for (x, y) in ((px - 4, 61), (px + 4, 61), (px, 58)):
+            cv.set(x, y, ASHLAR[4])  # the arch's keystone and springers
+    for (fx, col) in ((cx - 20, '#3A4258'), (cx + 16, '#5A2A24')):  # someone inside each window, against the lamplight
+        for (x, y) in rect_set(fx, 66, 2, 6):
+            cv.set(x, y, col)
+        cv.set(fx, 64, '#E0A882'); cv.set(fx + 1, 64, '#B07858'); cv.set(fx, 65, '#B07858'); cv.set(fx + 1, 65, '#B07858')
+    for px in (cx - 19, cx + 17):  # round windows in the upper tier
+        porthole(cv, px, 48, 3.4)
+    dy0 = drum_bot - 32
+    for (x, y) in rect_set(cx - 9, dy0 - 3, 18, 35):  # the door's stone surround
+        cv.set(x, y, ASHLAR[4] if x < cx else ASHLAR[3])
+    for (x, y) in rect_set(cx - 7, dy0, 14, 32):  # the door: a fanlight, glazed panels, panels below
+        c = '#2C3E4C' if x < cx else '#1E2A34'
+        if y < dy0 + 5:
+            c = WARM[3] if (x + y) % 3 else '#E8E2D2'
+        elif 7 <= y - dy0 < 16 and x not in (cx - 7, cx - 1, cx, cx + 6):
+            c = WARM[3] if y - dy0 < 11 else WARM[2]
+        elif y - dy0 in (19, 26) and x not in (cx - 7, cx - 1, cx, cx + 6):
+            c = '#3E566A'
         cv.set(x, y, c)
-    cv.hline(cx - 8, dy0 - 1, 16, BRASS[5])
-    for y in range(40 + D, 56 + D):  # the tube leaving east, where the line meets it
-        for x in range(cx + 30, w - 1):
-            k = (y - 40 - D) / 16
-            cv.set(x, y, BRASS[4] if k < 0.2 else BRASS[3] if k < 0.5 else BRASS[2] if k < 0.85 else BRASS[1])
+    cv.set(cx - 2, dy0 + 19, BRASS[5]); cv.set(cx + 1, dy0 + 19, BRASS[5])  # the handles
+    for (x, y) in rect_set(cx + 11, drum_bot - 11, 4, 11):  # a red pillar box by the door, its cap and slot
+        c = '#C83A2C' if x < cx + 13 else '#8E2620'
+        if y < drum_bot - 9:
+            c = '#E25A44' if x < cx + 13 else '#A83226'
+        if y == drum_bot - 7:
+            c = '#2A1210'
+        cv.set(x, y, c)
+    for (x, y) in disc(cx, dy0 - 8, 3.6):  # the clock over the door
+        cv.set(x, y, BRASS[3] if (x - cx) + (y - dy0 + 8) < 0 else BRASS[1])
+    for (x, y) in disc(cx, dy0 - 8, 2.4):
+        cv.set(x, y, '#F2ECDA')
+    cv.set(cx, dy0 - 10, IRON[0]); cv.set(cx, dy0 - 9, IRON[0]); cv.set(cx + 1, dy0 - 8, IRON[0])
+    # the tube's collar on the east side, bolted, and the tube going on east
+    ty0, ty1 = 56, 72
+    for y in range(ty0, ty1):
+        for x in range(cx + R - 2, w - 1):
+            k = (y - ty0) / (ty1 - ty0)
+            c = BRASS[4] if k < 0.2 else BRASS[3] if k < 0.5 else BRASS[2] if k < 0.85 else BRASS[1]
             if (x - cx) % 10 == 0:
-                cv.set(x, y, IRON[1])  # its flanges
-    detail.stones(cv, cx - 32, 62 + D, 64, 6, STONE, seed=29, course=3)
+                c = IRON[1]
+            cv.set(x, y, c)
+    for y in range(ty0 - 3, ty1 + 3):  # the collar
+        for x in range(cx + R - 3, cx + R + 3):
+            c = IRON[3] if x < cx + R else IRON[1]
+            if (y - ty0) % 4 == 0 and x == cx + R - 1:
+                c = BRASS[5]  # its bolts
+            cv.set(x, y, c)
+    IVY = ['#1E3422', '#2E4A2E', '#3E6438', '#5A8046']
+    for y in range(drum_top + 6, drum_bot):  # ivy up the drum's west side, in leaf clusters
+        reach = 4 + int(noise2(y // 3, 1, 1803) * 5)
+        for x in range(cx - R, cx - R + reach):
+            n = noise2(x // 2, y // 2, 1804)
+            if n > 0.35:
+                cv.set(x, y, IVY[3] if n > 0.82 else IVY[2] if n > 0.6 else IVY[1] if n > 0.45 else IVY[0])
+    detail.stones(cv, cx - R - 2, drum_bot, 2 * R + 5, 6, STONE, seed=29, course=3)
+    for (x, y) in rect_set(cx - 10, drum_bot, 20, 3):  # the step before the door
+        cv.set(x, y, STONE[4] if y == drum_bot else STONE[2])
     return cv
 
 
 def atmos_car() -> Canvas:
-    """A capsule car on the atmospheric line, 64 x 26: a riveted brass shell with
-    portholes, riding on top of its tube."""
-    w, h = 64, 26
+    """The tube's glazed inspection length by the terminus, 44 x 22 (Matt's World Logic
+    answer 11). Why: the capsules run inside the tube, driven by the air pumped out ahead
+    of them, so one is never seen riding on top of it; here a length of the tube is glazed
+    between brass hoops, and a capsule waiting to leave shows inside, its portholes lit,
+    its riveted brass shell lit from the station's side."""
+    w, h = 44, 22
     cv = Canvas(w, h, pad=PAD)
-    for (x, y) in oval(32, 12, 29, 9):
-        k = (y - 3) / 18
-        c = BRASS[5] if k < 0.15 else BRASS[4] if k < 0.4 else BRASS[3] if k < 0.7 else BRASS[2]
-        if (x % 9 == 0) and k > 0.2:
+    t0, t1 = 3, 19  # the tube's top and bottom rows (it lies 16 px across, as the zone's)
+    for x in range(0, w):
+        for y in range(t0, t1):
+            k = (y - t0) / (t1 - t0)
+            c = '#5E7C8A' if k < 0.2 else '#3E5662' if k < 0.6 else '#2C3E48'  # the glass, the dusk in it
+            cv.set(x, y, c)
+    for (x, y) in oval(22, 11, 16, 5.5):  # the capsule inside
+        k = (y - 5) / 11
+        c = BRASS[4] if k < 0.3 else BRASS[3] if k < 0.6 else BRASS[2]
+        if x % 6 == 0 and k > 0.25:
             c = BRASS[1]
         cv.set(x, y, c)
-    for px in range(14, 56, 9):
-        porthole(cv, px, 11, 2.4)
-    for x in range(6, 58):
-        cv.set(x, 21, IRON[1]); cv.set(x, 22, IRON[2] if x % 4 else IRON[3])
+    for x in range(8, 37):  # a red band round the capsule, lined in gold
+        for y in range(13, 15):
+            if (x, y) in oval(22, 11, 16, 5.5):
+                cv.set(x, y, RED[3] if y == 13 else RED[2])
+        if (x, 15) in oval(22, 11, 16, 5.5):
+            cv.set(x, 15, GOLD[3])
+    for px in (14, 20, 26, 32):
+        porthole(cv, px, 10, 1.8)
+    for x in range(1, w):  # the trestle's saddle under each hoop, and the glass's reflections
+        if x % 11 in (4, 5, 6):
+            cv.set(x, t1, IRON[2] if x % 11 == 4 else IRON[1])
+    for x in range(3, w, 11):
+        for d in range(4):
+            cv.set(x + d, t0 + 3 + d, '#7E9CAA'); cv.set(x + d + 1, t0 + 3 + d, '#7E9CAA')  # a streak of light across the curved glass
+    for x in range(0, w, 11):  # the hoops holding the glass, flanged and bolted
+        for y in range(t0 - 1, t1 + 1):
+            cv.set(x, y, BRASS[4] if y < t0 + 4 else BRASS[2])
+            cv.set(x + 1, y, BRASS[1])
+    for x in range(0, w):  # the glass's sheen along its top, its seam along the bottom
+        if x % 11 > 1:
+            cv.set(x, t0, '#C8DCE4' if (x // 3) % 2 else '#9AB4C0')
+            if (x - 3) % 11 < 4:
+                cv.set(x, t0 + 1, '#B0C8D2')
+        cv.set(x, t1 - 1, BRASS[1])
     return cv
 
 
@@ -879,6 +1323,72 @@ def townhouse(width: int = 88, storeys: int = 2, roof=None, wall: str = 'brown',
     detail.cast(cv, proud, 1, 1, k=1, on=ramp, reach=2)
     detail.overhang_shadow(cv, 7, w - 7, wall_top, lambda x: 3, k=2, cap=1)
     detail.stones(cv, 5, wall_bottom, w - 10, 8, STONE, seed=37 + seed, course=4)
+    return cv
+
+
+def lock_hut() -> Canvas:
+    """The lock-keeper's hut on the towpath by the lock, 44 x 68 (size guide 32 to 48 by
+    48 to 72; Matt's World Logic answer 9). One room of brown brick under a slate gable,
+    its door toward the lock with a step, a window lit beside it, a stack with a pot (a
+    stove inside), the windlass the keeper winds the paddles with hung on a hook by the
+    door, a lamp on a bracket over it, a board of tolls, a water butt at the corner."""
+    w = 44
+    apex_y, eave_y = 12, 28
+    wall_top, wall_bottom = eave_y, eave_y + 34
+    h = wall_bottom + 6
+    cv = Canvas(w, h, pad=PAD)
+    ridge = (w - 1) / 2
+    sx = int(ridge + w * 0.22) - 3
+    stack = rect_set(sx, 0, 7, apex_y + 2)
+    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, hole=stack, seed=95, moss=None, barge=WOOD)
+    brick_stack(cv, sx, 4, apex_y + 2, w=7, pots=1)
+    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2),
+                     6, w - 7, apex_y, wall_top, ['#B8AE9C', '#CFC6B2', '#E2DACB', '#EEE8DA', '#F6F2E8'], boards=False)
+    detail.bricks(cv, 6, wall_top, w - 12, wall_bottom - wall_top, BROWN, seed=41, base=3)
+    for x in range(6, w - 6):  # soot and damp low on the wall
+        for y in range(wall_bottom - 3, wall_bottom):
+            detail.shade(cv, x, y, 1)
+    proud = set()
+    porthole(cv, ridge, 21, 2.6, warm=True)  # a round vent in the gable
+    proud |= panel_door(cv, 9, wall_bottom - 1, 12, 28, paint=['#1E2A20', '#2C4232', '#3E5C46', '#5A7C62'])
+    proud |= sash(cv, 26, wall_bottom - 24, 10, 14, lit=True)
+    for (x, y) in ((24, wall_bottom - 18), (24, wall_bottom - 17)):  # the windlass on its hook
+        cv.set(x, y, IRON[3])
+    for t in range(6):
+        cv.set(23 + t // 3, wall_bottom - 16 + t, IRON[2] if t % 2 else IRON[4])
+    cv.hline(22, wall_bottom - 11, 4, IRON[2])
+    cv.hline(14, wall_top + 2, 6, IRON[2])  # the lamp's bracket over the door, and the lamp
+    for (x, y) in rect_set(18, wall_top + 3, 3, 4):
+        cv.set(x, y, WARM[3] if y < wall_top + 5 else WARM[2])
+    cv.hline(17, wall_top + 2, 5, IRON[1])
+    for (x, y) in rect_set(27, wall_top + 3, 9, 6):  # the board of tolls, its lines of figures
+        c = '#2A3A30' if 0 < x - 27 < 8 and 0 < y - wall_top - 3 < 5 else WOOD[3]
+        if c == '#2A3A30' and (x % 3) and (y - wall_top) % 2 == 0:
+            c = '#D8D0B8'
+        cv.set(x, y, c)
+    proud |= rect_set(27, wall_top + 3, 9, 6)
+    for (x, y) in rect_set(w - 9, wall_bottom - 10, 7, 10):  # the water butt, hooped
+        c = WOOD[3] if x < w - 6 else WOOD[2]
+        if y in (wall_bottom - 8, wall_bottom - 3):
+            c = IRON[2]
+        if y == wall_bottom - 10:
+            c = '#24343A'
+        cv.set(x, y, c)
+    proud |= rect_set(w - 9, wall_bottom - 10, 7, 10)
+    IVY = ['#1E3422', '#2E4A2E', '#3E6438', '#5A8046']
+    for y in range(wall_top + 2, wall_bottom):  # ivy up the west corner, in leaf clusters
+        reach = 3 + int(noise2(y // 3, 0, 1790) * 4) - max(0, (wall_top + 12 - y) // 3)
+        for x in range(6, 6 + max(0, reach)):
+            n = noise2(x // 2, y // 2, 1791)
+            if n > 0.3:
+                cv.set(x, y, IVY[3] if n > 0.8 else IVY[2] if n > 0.55 else IVY[1])
+    for (x, y) in rect_set(22, wall_bottom - 4, 4, 4):  # a pot of geraniums by the door
+        cv.set(x, y, '#B8603C' if x < 24 else '#8A4428')
+    for (x, y) in ((22, wall_bottom - 6), (23, wall_bottom - 7), (25, wall_bottom - 6), (24, wall_bottom - 5)):
+        cv.set(x, y, '#D23A30' if (x + y) % 2 else '#3E6438')
+    detail.cast(cv, proud, 1, 1, k=1, on=BROWN, reach=2)
+    detail.overhang_shadow(cv, 6, w - 6, wall_top, lambda x: 3, k=2, cap=1)
+    detail.stones(cv, 4, wall_bottom, w - 8, 6, STONE, seed=43, course=3)
     return cv
 
 
@@ -1145,7 +1655,7 @@ def props() -> dict[str, Canvas]:
         'warehouse': warehouse(), 'engine_tank': water_tower(), 'signal_box': signal_box(), 'gas_lamp': gas_lamp(), 'steam_puff': steam_puff(), 'pipe_run': pipe_run(),
         'gear_pile': gear_pile(), 'iron_bench': iron_bench(), 'steamer_trunk': steamer_trunk(),
         'coal_cart': coal_cart(), 'airship_mast': airship_mast(), 'tea_kiosk': tea_kiosk(),
-        'narrowboat': narrowboat(), 'canal_crane': canal_crane(), 'foundry': foundry(), 'tube_station': tube_station(),
+        'narrowboat': narrowboat(), 'canal_crane': canal_crane(), 'lock_hut': lock_hut(), 'foundry': foundry(), 'tube_station': tube_station(),
         'atmos_car': atmos_car(), 'automaton': automaton(), 'cloche': cloche(),
     }
 
