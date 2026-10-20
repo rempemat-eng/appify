@@ -211,7 +211,7 @@ def _rill_points():
 
 RILL, RILL_BANK = _rill_points()
 
-# Raised flower planters# Raised flower planters beside the stall path (decorative, watered by the can).
+# Raised flower planters beside the stall path (decorative, watered by the can).
 FLOWER_BEDS = [(222, 142, 46, 18), (222, 168, 46, 18)]  # x, y, w, h: a matched pair by the lantern
 LILY_PADS = [(44, 208), (49, 212), (40, 213), (52, 205), (96, 220), (100, 216)]  # in two clusters, the frog on the first
 FROG_PAD = LILY_PADS[0]
@@ -223,7 +223,7 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
     # The turf is the valley's one ground (A5, Matt 19 Oct 22:40: "hard cut offs between
     # sections"): ground.valley paints it from the valley's own coordinates, so its patches,
     # tufts and blades run on across the garden's edges into the Woodland and the Riverside
-    # (and blend to the forest floor there once Claude A drops ground.FIXED). The garden then
+    # and blend to the forest floor there like every valley zone's. The garden then
     # adds its own small flowers and clover, fewer in the trodden clearing.
     import detail
     import ground
@@ -570,6 +570,10 @@ def light_pool(w: int, h: int) -> Canvas:
     return cv
 
 
+# Things whose cast shadow would be a ruled line: they keep only their contact shade.
+LINE_CASTERS = ('fence_l', 'fence_r', 'gate')
+
+
 def bake_shadows(terrain: Canvas, sprites: dict):
     """Cast shadows (coherence plan, 6c): every standing object throws its own silhouette
     down and to the right (light from the upper left), so height reads from the ground.
@@ -581,7 +585,13 @@ def bake_shadows(terrain: Canvas, sprites: dict):
         s = sprites[key]
         if _id.startswith(('pine-', 'tree-')) and y + s.oy + s.h < 34:
             continue  # the treeline's shade is its crowns' lobes below (crown_shade), not flat smears
+        if key in LINE_CASTERS:
+            continue  # a fence or gate: its rails would throw a ruled line across the turf and the path
         shade |= detail.silhouette_shadow(s, x + s.ox, y + s.oy)
+    # A shadow is a pool, never a pencil line: the low sun squeezes thin parts (a post, a
+    # rail, a crown's lower edge) into one-pixel rows that read as dark streaks across the
+    # grass (Claude A, 20 Oct 03:50), so a shaded pixel with no shade above or below it goes.
+    shade = {(sx, sy) for (sx, sy) in shade if (sx, sy - 1) in shade or (sx, sy + 1) in shade}
     for (sx, sy) in shade:
         style.darken(terrain, sx, sy)
     # Contact shade: the ground darkens along each base, two pixels deep under the
@@ -592,7 +602,8 @@ def bake_shadows(terrain: Canvas, sprites: dict):
         for xx in range(s.w):
             if s.get(xx, s.h - 1)[3]:
                 style.darken(terrain, x + s.ox + xx, foot)
-                style.darken(terrain, x + s.ox + xx + 1, foot + 1)
+                if key not in LINE_CASTERS:  # a fence's posts would leave a dashed rule
+                    style.darken(terrain, x + s.ox + xx + 1, foot + 1)
     # The forest's shade spills into the clearing: the ridge's forest floor runs on across
     # the seam and thins out (garden_meadow.forest_edge_shade, the ridge's own field), and
     # each pine of the treeline casts its lobe (garden_meadow.crown_shade), raggedly,

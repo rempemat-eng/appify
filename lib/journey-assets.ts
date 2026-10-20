@@ -57,7 +57,7 @@ export const journeyLayers: Record<
   lava: { sky: lavaSky, far: lavaFar, near: lavaNear, above: '#2A0E0A', below: '#3A3634' },
   neon: { sky: neonSky, far: neonFar, near: neonNear, above: '#140E28', below: '#100E1A' },
   space: { sky: spaceSky, far: spaceFar, near: spaceNear, above: '#05060C', below: '#05060C' },
-  moon: { sky: moonSky, far: moonFar, near: moonNear, above: '#05060C', below: '#2A2838' },
+  moon: { sky: moonSky, far: moonFar, near: moonNear, above: '#05060C', below: '#141312' },
   isles: { sky: islesSky, far: islesFar, near: islesNear, above: '#5EB4E8', below: '#2C3C58' },
   pier: { sky: pierSky, far: pierFar, near: pierNear, above: '#7FB4E6', below: '#2C3C58' },
 };

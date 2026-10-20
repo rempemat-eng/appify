@@ -478,37 +478,68 @@ def airship_mast() -> Canvas:
     for y in range(cg0 + 3, cg1 - 1, 3):  # its gate folded open to the west, a stack of lattice
         cv.set(mc - 8, y, IRON[3]); cv.set(mc - 7, y + 1, IRON[2])
     cv.hline(mc - 2, cg0 - 2, 5, BRASS[3]); cv.set(mc, cg0 - 1, IRON[3])  # the rope's shackle on its roof
-    # the winch house at the foot, east of the tower: iron sheets, a flywheel, a chimney
-    hx0, hy0 = mc + 14, foot - 18
-    for y in range(hy0, foot):
-        for x in range(hx0, hx0 + 16):
-            k = y - hy0
-            c = IRON[3] if k < 3 else IRON[2] if (x - hx0) % 4 else IRON[1]
-            if k == 0:
-                c = IRON[4]
+    # the winch house at the foot, east of the tower: a brick engine house under a
+    # corrugated iron roof, its door open on the lit engine and flywheel, a stack for the boiler
+    hx0, hy0 = mc + 14, foot - 22
+    hw_ = 18
+    for y in range(hy0, hy0 + 6):  # the roof: corrugated sheets, lit on top, the gutter in verdigris copper
+        k = y - hy0
+        for x in range(hx0 - 1 + (5 - k) // 2, hx0 + hw_ + 1):
+            c = IRON[4] if k < 2 else IRON[3]
+            if ((x - hx0) // 2) % 2:
+                c = IRON[3] if k < 2 else IRON[2]  # the corrugations, 2 px a sheet's rib
+            if k == 5:
+                c = COPPER[3] if x < hx0 + 8 else COPPER[2]
             cv.set(x, y, c)
-    for (x, y) in rect_set(hx0 + 3, hy0 + 6, 5, 8):  # its door ajar on the lit engine
-        cv.set(x, y, WARM[2] if x < hx0 + 6 else IRON[0])
-    gear(cv, hx0 + 12, hy0 + 9, 3.2, BRASS, teeth=6)
-    for (x, y) in rect_set(hx0 + 2, hy0 + 5, 7, 2):  # the door's red-painted frame and lintel
-        cv.set(x, y, '#B8382C' if y == hy0 + 5 else '#8A2A22')
-    for (x, y) in rect_set(hx0 + 9, hy0 + 13, 6, 4):  # a copper boiler's end showing through the louvres
-        cv.set(x, y, COPPER[3] if y < hy0 + 15 else COPPER[1])
-    for y in range(hy0 - 10, hy0):  # the chimney
-        cv.set(hx0 + 13, y, IRON[3]); cv.set(hx0 + 14, y, IRON[1])
-    cv.hline(hx0 + 12, hy0 - 11, 4, IRON[4])
+    for (x, y) in ((hx0 + 9, hy0 + 2), (hx0 + 10, hy0 + 2), (hx0 + 10, hy0 + 3)):
+        cv.set(x, y, RUST[2])  # a rust bloom round a roofing bolt
+    for y in range(hy0 + 6, foot):  # the walls: brick in courses on a stone plinth
+        k = y - (hy0 + 6)
+        for x in range(hx0, hx0 + hw_):
+            row = k // 3
+            n = noise2((x + (row % 2) * 3) // 6, row, 1807)
+            c = BRICK[3] if n > 0.4 else BRICK[2]
+            if x > hx0 + hw_ - 4:
+                c = BRICK[2] if n > 0.4 else BRICK[1]  # the east end in shade
+            if k % 3 == 2 or (x + (row % 2) * 3) % 6 == 0:
+                c = BRICK[1] if x <= hx0 + hw_ - 4 else BRICK[0]  # the mortar, sooty
+            if y >= foot - 3:
+                c = ASHLAR[3] if y == foot - 3 else ASHLAR[2] if x < hx0 + hw_ - 3 else ASHLAR[1]  # the plinth
+            cv.set(x, y, c)
+    dx0, dy0_ = hx0 + 2, hy0 + 8  # the door, open on the engine: the flywheel's rim crossing the lamplight
+    for (x, y) in rect_set(dx0, dy0_, 7, foot - 3 - dy0_):
+        c = WARM[2] if y < dy0_ + 5 else WARM[1]
+        cv.set(x, y, c)
+    fx, fy = dx0 + 4, dy0_ + 7
+    for (x, y) in disc(fx, fy, 4.6):
+        if math.hypot(x - fx, y - fy) > 3.2 and dx0 <= x < dx0 + 7 and y < foot - 3:
+            cv.set(x, y, IRON[1] if (x - fx) + (y - fy) > -2 else IRON[3])  # the flywheel's rim, lit by the lamp
+    for y in range(dy0_, foot - 3):  # the door leaf folded back, planked and painted red
+        cv.set(dx0 - 1, y, '#8A2A22')
+    cv.hline(dx0 - 1, dy0_ - 1, 9, ASHLAR[4]); cv.hline(dx0 - 1, dy0_ - 2, 9, ASHLAR[3])  # the stone lintel
+    wx0 = hx0 + 11  # a small window, lit, its glazing bar and a stone sill
+    for (x, y) in rect_set(wx0, hy0 + 9, 5, 5):
+        c = WARM[3] if y < hy0 + 11 else WARM[2]
+        if x == wx0 + 2 or y == hy0 + 11:
+            c = '#3A2A1A'
+        cv.set(x, y, c)
+    cv.hline(wx0 - 1, hy0 + 14, 7, ASHLAR[4])
+    for y in range(hy0 - 10, hy0 + 2):  # the boiler's stack, brick, sooted at its cap
+        for x in range(hx0 + 13, hx0 + 16):
+            c = BRICK[3] if x == hx0 + 13 else BRICK[2] if x == hx0 + 14 else BRICK[1]
+            if (y - hy0) % 3 == 0:
+                c = BRICK[1]
+            if y < hy0 - 7:
+                c = IRON[2] if x < hx0 + 15 else IRON[0]  # the soot at its cap
+            cv.set(x, y, c)
+    cv.hline(hx0 + 12, hy0 - 10, 5, IRON[3])
     for (x, y) in oval(hx0 - 4, foot - 2, 4, 2):  # the coal for its boiler, heaped by the door
         n = noise2(x // 2, y, 1806)
         cv.set(x, y, IRON[2] if n > 0.6 else IRON[1] if n > 0.25 else IRON[0])
-    for (x, y) in rect_set(hx0 + 16, foot - 7, 4, 7):  # a water barrel, hooped
-        c = WOOD[3] if x < hx0 + 18 else WOOD[1]
-        if y in (foot - 6, foot - 2):
-            c = IRON[2]
-        if y == foot - 7:
-            c = '#24343A'
-        cv.set(x, y, c)
+    for (x, y) in ((hx0 - 6, foot - 3), (hx0 - 5, foot - 3), (hx0 - 3, foot - 4), (hx0 - 2, foot - 4)):
+        cv.set(x, y, IRON[3])  # lumps catching the light
     for t in range(14):  # the winch rope from the house up to the tower
-        cv.set(hx0 - t, hy0 + 2 - t // 3, MATERIALS['rope'][1])
+        cv.set(hx0 - t, hy0 + 7 - t // 3, MATERIALS['rope'][1])
     for y in range(head + 2, head + 34):  # the top storeys banded red and white, to be seen from the air
         if ((y - head - 2) // 8) % 2 == 0:
             lx, rx = round(mc - half(y)), round(mc + half(y))
@@ -542,13 +573,17 @@ def airship_mast() -> Canvas:
         gore = (x - ex + 3) // 14
         g = noise2(gore, 0, 1796)
         i += 1 if g > 0.7 else -1 if g < 0.3 else 0  # each gore of doped linen weathered its own way
-        if noise2(x // 5, y // 3, 1797) > 0.86:
-            i -= 1  # a patch sewn over a tear
-        m = noise2(x // 2, y // 2, 1799)
-        if m > 0.8:
-            i += 2 if m > 0.93 else 1  # the doped linen mottled where the weather has worked on it
-        elif m < 0.15:
-            i -= 2 if m < 0.05 else 1
+        gx_ = (x - ex + 3) % 14  # where in its gore: the cloth bellies out between the seams
+        if gx_ in (1, 2) and k < 0.3:
+            i += 1  # the gore's lit edge where it swells from the seam
+        elif gx_ in (12, 13) and k > -0.3:
+            i -= 1  # and its shaded edge as it draws back in to the next seam
+        if noise2(gore, (y - ey + 40) // 7, 1797) > 0.82 and 3 <= gx_ <= 10 and -0.6 < v < 0.7:
+            i -= 1  # a panel let into the gore over a tear, in cloth that has weathered less
+        if v > 0.5 and noise2(x // 3, y // 2, 1799) > 0.7:
+            i -= 1  # weather stains gathered low on the envelope, where rain runs off
+        if 0.62 < v < 0.8 and abs(u) < 0.62:
+            i += 2  # the lit belly: light thrown back up from the ground
         KHAKI = ['#3E3A24', '#4E4A30', '#6A6440', '#857E52', '#A09A66', '#BAB47E', '#C8C28A', '#D0CA96', '#DCD6A4']
         c = (KHAKI if noise2(gore, 1, 1805) > 0.62 else DOPE)[max(1, min(8, i))]  # gores renewed in a paler cloth
         rib = abs((x - ex + 3) % 14) < 1
@@ -613,10 +648,18 @@ def airship_mast() -> Canvas:
         for (x, y) in rect_set(nx, gy0 + 1, 6, 5):
             cv.set(x, y, BRASS[4] if y == gy0 + 1 else BRASS[3] if y < gy0 + 4 else BRASS[1])
         cv.set(nx + (0 if d < 0 else 5), gy0 + 3, IRON[0])
-    for (sx, sy) in ((ex - 30, ey - 6), (ex - 26, ey - 6), (ex - 22, ey - 6)):  # the ship's number stencilled on its side
+    GLYPH = {'C': ('###', '#..', '#..', '#..', '###'), '7': ('###', '..#', '.#.', '.#.', '.#.')}
+    for n_, ch in enumerate('C7'):  # the ship's letters stencilled on its side, in white lead
+        for r, line in enumerate(GLYPH[ch]):
+            for q, on in enumerate(line):
+                if on == '#':
+                    cv.set(ex - 32 + n_ * 5 + q, ey - 8 + r, '#F2ECDA' if r < 3 else '#D8D0BC')
+    for (sx, sy, ln) in ((ex - 20, ey - ry + 4, 6), (ex + 14, ey - ry + 4, 5)):  # streaks run down from the valves
+        for t in range(ln):
+            cv.set(sx + 1, sy + t, DOPE[2]); cv.set(sx + 2, sy + t, DOPE[3])
+    for (fx0, fy0) in ((ex - rx + 8, ey - 5), (ex - rx + 10, ey + 3), (ex - rx + 7, ey + 8)):  # slack folds toward the tail
         for t in range(4):
-            cv.set(sx, sy + t, '#F2ECDA'); cv.set(sx + 1, sy + t, '#D8D0BC')
-    cv.hline(ex - 30, ey - 6, 10, '#F2ECDA')
+            cv.set(fx0 + t, fy0 + t // 2, DOPE[2]); cv.set(fx0 + t, fy0 + t // 2 - 1, DOPE[6])
     for y in range(gy0 + 1, gy0 + 8):  # the propeller at its stern (west), a blur caught mid-turn
         cv.set(gx0 - 3, y, '#D8D4C8' if y % 3 else '#8E8A80')
     cv.hline(gx0 - 2, gy0 + 4, 2, IRON[2])
@@ -813,22 +856,36 @@ def canal_crane() -> Canvas:
     px = 36  # the post's centre
     foot = 66  # the pier's foot on the quay; below it only the chain hangs, down to the boat
     GRANITE_ = ['#3A3A42', '#55555E', '#73737A', '#93918F', '#B4B0A8', '#D2CDC2']
-    for y in range(foot - 8, foot + 1):  # the pier: dressed stone from two quarries, coped, its face in shade
-        for x in range(px - 6, px + 7):
-            k = y - (foot - 8)
-            blk = (x + (k // 3) * 3) // 6
-            st = GRANITE_ if noise2(blk, k // 3, 1798) > 0.5 else ASHLAR
-            c = st[4] if k < 2 else st[2] if (x + (k // 3) * 3) % 6 else st[1]
-            if k >= 2 and (x + (k // 3) * 3) % 6 in (1, 2) and k % 3 == 2:
-                c = st[3]
-            if k == 0:
-                c = ASHLAR[5]
-            if x == px + 6:
-                c = ASHLAR[1]
+    for y in range(foot - 10, foot + 1):  # the pier: dressed stone from two quarries, coped, its face in shade
+        for x in range(px - 8, px + 9):
+            k = y - (foot - 10)
+            course = (k - 3) // 4
+            blk = (x + (course % 2) * 4) // 8
+            st = GRANITE_ if noise2(blk, course, 1798) > 0.5 else ASHLAR
+            c = st[3] if x < px - 3 else st[2]  # each block lit on the west, a step into shade east
+            if k >= 3 and (k - 3) % 4 == 3:
+                c = st[1]  # the bed joints
+            elif k >= 3 and (x + (course % 2) * 4) % 8 == 0:
+                c = st[1]  # the perpends
+            elif k >= 3 and (k - 3) % 4 == 0 and x < px + 2:
+                c = st[4]  # the blocks' lit top arris
+            if k < 3:  # the coping, a slab overhanging the face, lit on top
+                c = ASHLAR[5] if k == 0 else ASHLAR[4] if x < px + 4 else ASHLAR[3]
+                if k == 2:
+                    c = ASHLAR[1]
+            if x >= px + 7 and k >= 3:
+                c = ASHLAR[1] if x == px + 7 else ASHLAR[0]  # the pier's east side, in shade
             cv.set(x, y, c)
+    for (x, y) in ((px - 7, foot - 4), (px - 6, foot - 4), (px - 7, foot - 3), (px - 6, foot - 1),
+                   (px - 5, foot - 1), (px + 4, foot - 2), (px + 5, foot - 2), (px + 5, foot - 1)):
+        cv.set(x, y, '#3E5A30' if y < foot - 2 else '#2E4426')  # moss in the damp joints at the pier's foot
+    for (x, y) in rect_set(px - 5, foot - 12, 11, 2):  # the post's cast base flange, bolted to the coping
+        cv.set(x, y, IRON[3] if y == foot - 12 else IRON[1])
+    for bx in (px - 4, px + 3):
+        cv.set(bx, foot - 12, BRASS[4]); cv.set(bx + 1, foot - 12, BRASS[2])
     top = foot - 52  # the post's head (46 px over the quay plus the pier)
     PAINT = ['#16261E', '#22382C', '#30503C', '#44684E', '#5E8466']  # the canal company's green, on cast iron
-    for y in range(top, foot - 8):  # the post, tapering, lit on its west side, its paint worn to the iron
+    for y in range(top, foot - 12):  # the post, tapering, lit on its west side, its paint worn to the iron
         half = 2 if y < top + 20 else 3
         for x in range(px - half, px + half + 1):
             ramp = IRON if noise2(x // 2, y // 3, 1802) > 0.78 else PAINT
@@ -863,11 +920,50 @@ def canal_crane() -> Canvas:
             cv.set(rx0 + dx, ry0 + dy, RUST[2] if dy < 2 else RUST[1])
     for (x, y) in oval(px - 13, foot - 2, 4, 1.8):  # a coil of rope on the quay by the pier, its turns lit on top
         cv.set(x, y, MATERIALS['rope'][3] if y < foot - 2 else MATERIALS['rope'][1] if x > px - 12 else MATERIALS['rope'][2])
-    gear(cv, px + 6, foot - 20, 4, BRASS, teeth=8)  # the winch, at hand height on the post's east
-    for (x, y) in ((px + 12, foot - 22), (px + 12, foot - 21), (px + 13, foot - 22), (px + 13, foot - 21)):
-        cv.set(x, y, '#B8382C' if y == foot - 22 else '#8A2A22')  # the crank's red-painted handle
-    cv.hline(px + 6, foot - 15, 6, IRON[3]); cv.set(px + 11, foot - 16, WOOD[4]); cv.set(px + 11, foot - 15, WOOD[3])
-    for y in range(top + 6, foot - 22):  # the chain up the post, its links two rows long
+    # the winch, bolted to the post at hand height: two cast side frames, a chain barrel
+    # between them, a big spur wheel driven by a pinion on the crank shaft, a ratchet and pawl
+    wy0, wy1 = foot - 30, foot - 13
+    for y in range(wy0, wy1):  # the side frame facing us, an A of cast iron in the company's green
+        k = y - wy0
+        x0, x1 = px + 3, px + 8 + k // 3
+        for x in range(x0, min(w - 1, x1 + 1)):
+            c = PAINT[3] if k < 2 else PAINT[2] if x < x0 + 3 else PAINT[1]
+            if x == x1:
+                c = PAINT[0]
+            if k == 0:
+                c = PAINT[4]
+            cv.set(x, y, c)
+    for (x, y) in ((px + 4, wy0 + 3), (px + 4, wy1 - 3), (px + 9, wy1 - 3)):  # its bolts
+        cv.set(x, y, BRASS[3]); cv.set(x + 1, y, BRASS[1])
+    for y in range(wy0 + 3, wy0 + 9):  # the chain barrel, wound with chain, between the frames
+        for x in range(px + 4, px + 11):
+            k = y - (wy0 + 3)
+            c = IRON[3] if k < 2 else IRON[2] if k < 4 else IRON[1]
+            if (x + y) % 3 == 0:
+                c = IRON[4] if k < 3 else IRON[2]  # the chain's links lying round it
+            cv.set(x, y, c)
+    gx, gy = px + 9, wy0 + 10
+    for (x, y) in disc(gx, gy, 5.2):  # the spur wheel: a lit rim, a dark web, four spokes, its teeth
+        d = math.hypot(x - gx, y - gy)
+        if d > 4.0:
+            c = IRON[4] if (x - gx) + (y - gy) < -2 else IRON[3] if (x - gx) + (y - gy) < 3 else IRON[2]
+            if round(math.atan2(y - gy, x - gx) / (math.pi / 8)) % 2 == 0 and d > 4.6:
+                c = IRON[1]  # the gaps between its teeth
+        elif x == gx or y == gy:
+            c = IRON[3] if (x - gx) + (y - gy) < 0 else IRON[2]  # the spokes
+        else:
+            c = PAINT[2] if (x - gx) + (y - gy) < 0 else PAINT[1]
+        cv.set(x, y, c)
+    for (x, y) in disc(gx, gy, 1.2):
+        cv.set(x, y, BRASS[4] if x <= gx and y <= gy else BRASS[2])  # its boss
+    for (x, y) in disc(gx - 5, gy + 4, 1.6):  # the pinion on the crank shaft, brass
+        cv.set(x, y, BRASS[4] if x < gx - 5 else BRASS[2])
+    for t in range(5):  # the crank arm, from the shaft out to the handle
+        cv.set(gx - 5 - t, gy + 4 + t // 2, IRON[3]); cv.set(gx - 5 - t, gy + 5 + t // 2, IRON[1])
+    for (x, y) in rect_set(gx - 11, gy + 6, 2, 3):
+        cv.set(x, y, '#B8382C' if y == gy + 6 else '#8A2A22')  # the crank's red-painted handle, worn by hands
+    cv.set(gx - 1, wy0 + 2, IRON[4]); cv.set(gx, wy0 + 2, IRON[4]); cv.set(gx, wy0 + 1, IRON[2])  # the pawl on its ratchet
+    for y in range(top + 6, foot - 27):  # the chain up the post, to the barrel, its links two rows long
         cv.set(px + 3, y, IRON[2] if (y // 2) % 2 else IRON[4])
     hook_y = jy + 52  # the hook let down over the fore-hold, its sling round the crate in the boat
     for y in range(jy + 1, hook_y):  # the chain down from the sheave, its links two rows long
