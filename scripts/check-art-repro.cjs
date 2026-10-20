@@ -34,6 +34,9 @@ const generatedTypescript = [
   'lib/resident-assets.ts',
   'lib/decor-assets.ts',
   'lib/decor-sizes.ts',
+  // the region canvases (scripts/art/regions.py), written at the end of zones.py's run
+  'lib/region-canvas.ts',
+  'lib/region-canvas-assets.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
@@ -72,7 +75,9 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
       env,
       encoding: 'utf8',
       maxBuffer: 8 * 1024 * 1024,
-      timeout: 300_000, // zones.py paints the scenery past the world too (scripts/art/scenery.py)
+      // zones.py paints the scenery past the world (scripts/art/scenery.py) and then cuts the
+      // region canvases into world tiles (scripts/art/regions.py): about 4.5 minutes here
+      timeout: 600_000,
     });
     if (result.stdout) log(result.stdout.trimEnd());
     if (result.stderr) log(result.stderr.trimEnd());

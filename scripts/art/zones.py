@@ -1193,6 +1193,8 @@ def main():
     import map_tiles  # the world map's tiles, drawn from the same reading of each zone
     map_tiles.write_all(built, world_lint.garden_zone(), set(DOORS))
     export(built)
+    import regions  # the same places as region canvases cut into world tiles (step 1: not read yet)
+    regions.build_all(built)
 
 
 if __name__ == '__main__':
