@@ -1059,6 +1059,108 @@ def beehive(variant: str = 'a', bees: int = 0) -> Canvas:
     return gp.keep_foot(cv, 22, 30)
 
 
+# Wild woodland trees and understory (Claude E's E18: "no apple trees in a wood"; sized to
+# the scale table, a broadleaf 65 to 125 and the adult 25)
+OAK_LEAF = ['#22351F', '#34502C', '#4A6A36', '#628642', '#86A456']
+BEECH_LEAF = ['#263C24', '#3C5A30', '#56783C', '#73964A', '#9EBA62']
+BIRCH_LEAF = ['#33482A', '#4E6A36', '#6E8C44', '#90AE58', '#BCD27A']
+HOLLY_LEAF = ['#142418', '#1E3624', '#2C4A30', '#3E6240', '#5E8458']
+BEECH_BARK = ['#3C3E40', '#5E6266', '#80868A', '#A2A8AC', '#C4C8CA']
+BIRCH_BARK = ['#3A3634', '#8E8A84', '#C8C4BA', '#E4E0D6', '#F6F4EE']
+
+
+def wild_tree(kind: str = 'oak') -> Canvas:
+    """A wild broadleaf for the woods, no fruit: 'oak' (about 72 tall, a broad spreading
+    crown of dark lobes over a short, thick, gnarled trunk with a low limb), 'beech'
+    (about 78, a tall rounded crown in fresher green over a smooth grey trunk), 'birch'
+    (about 60, slender: a narrow, airy crown of small light lobes, its white trunk marked
+    with dark lenticels and a darker foot). Lit from the upper left, crowns in leaf masses
+    with the sun's yellow on the outer leaves (gp.canopy), roots flaring into the ground."""
+    if kind == 'oak':
+        w, h, tw, ramp, bark = 64, 72, 10, OAK_LEAF, WOOD
+        k = 1.0
+        lobes = [(14, 26, 13), (50, 25, 13), (24, 14, 13), (42, 13, 13), (32, 8, 11),
+                 (12, 36, 11), (52, 36, 11), (24, 31, 13), (40, 31, 13), (32, 22, 13)]
+        trunk_top = h - 26
+    elif kind == 'beech':
+        w, h, tw, ramp, bark = 52, 78, 8, BEECH_LEAF, BEECH_BARK
+        lobes = [(16, 26, 12), (36, 24, 12), (26, 12, 12), (14, 42, 12), (38, 40, 12),
+                 (26, 30, 13), (26, 46, 11)]
+        trunk_top = h - 26
+    else:  # birch
+        w, h, tw, ramp, bark = 32, 60, 5, BIRCH_LEAF, BIRCH_BARK
+        lobes = [(12, 14, 7), (20, 10, 7), (16, 5, 6), (10, 24, 7), (22, 22, 7), (16, 30, 7), (15, 18, 8)]
+        trunk_top = h - 24
+    cv = Canvas(w, h, pad=12)
+    cx = w / 2
+    tx = int(cx - tw / 2)
+    style.trunk(cv, tx, trunk_top - 8, h, tw, bark)
+    if kind == 'oak':  # a low limb reaching out to the lit side, gnarled
+        for i in range(10):
+            cv.set(tx - i, trunk_top - 2 - i // 2, WOOD[3]); cv.set(tx - i, trunk_top - 1 - i // 2, WOOD[1])
+    shape = gp.canopy(cv, lobes, ramp, seed={'oak': 71, 'beech': 72}.get(kind, 73), clumps=True)
+    style.trunk(cv, tx, trunk_top, h, tw, bark, shape)
+    if kind == 'birch':  # lenticels: short dark dashes across the white bark, a dark foot
+        for i, y in enumerate(range(trunk_top + 2, h - 4, 3)):
+            x = tx + (i * 2) % (tw - 1)
+            cv.set(x, y, BIRCH_BARK[0]); cv.set(x + 1, y, BIRCH_BARK[1])
+        for y in range(h - 6, h - 1):
+            for x in range(tx, tx + tw):
+                if noise2(x, y, 974) > 0.4:
+                    cv.set(x, y, BIRCH_BARK[1] if x < tx + 2 else BIRCH_BARK[0])
+    elif kind == 'beech':  # smooth grey bark: a few eyes where branches fell
+        for (x, y) in ((tx + 2, trunk_top + 6), (tx + 5, trunk_top + 13)):
+            cv.set(x, y, BEECH_BARK[0]); cv.set(x + 1, y, BEECH_BARK[1]); cv.set(x, y - 1, BEECH_BARK[3])
+    return cv
+
+
+def sapling() -> Canvas:
+    """A young broadleaf, 24 tall: a thin whippy stem, a few small leaf masses lit from the
+    upper left, a tuft at its foot (beside the old trees, E18)."""
+    cv = Canvas(18, 24, pad=12)
+    for y in range(9, 24):
+        cv.set(8, y, WOOD[3] if y < 20 else WOOD[2]); cv.set(9, y, WOOD[1])
+    cv.set(7, 14, WOOD[3]); cv.set(6, 13, WOOD[3])  # a side shoot
+    gp.canopy(cv, [(6, 10, 4), (12, 9, 4), (9, 5, 4.5)], BEECH_LEAF, seed=75)
+    for x in (5, 7, 11, 12):
+        cv.set(x, 23, G[2]); cv.set(x, 22, G[3])
+    return cv
+
+
+def holly() -> Canvas:
+    """A holly bush, 26 x 22: dense dark glossy leaves in clumps, each leaf's spiny edge
+    catching a hard highlight, red berries in small clusters on the lit side."""
+    cv = Canvas(26, 22, pad=12)
+    shape = gp.canopy(cv, [(8, 12, 7), (18, 12, 7), (13, 6, 7), (13, 14, 8)], HOLLY_LEAF, seed=76)
+    for (x, y) in shape:  # glossy: a white-green glint on a lit leaf now and then
+        if noise2(x, y, 977) > 0.9 and cv.get(x, y)[:3] in ((0x3E, 0x62, 0x40), (0x5E, 0x84, 0x58)):
+            cv.set(x, y, '#A8C8A0')
+    for (bx, by) in ((6, 8), (8, 9), (11, 4), (5, 13), (14, 9), (16, 7)):
+        cv.set(bx, by, RED[4]); cv.set(bx + 1, by, RED[2])
+    for x in range(5, 21):
+        cv.set(x, 21, HOLLY_LEAF[0])
+    return cv
+
+
+def bramble() -> Canvas:
+    """A bramble clump, 30 x 20: arching canes in dark red-brown with thorns, low mounds of
+    leaves, white flowers and berries ripening from red to black."""
+    cv = Canvas(30, 20, pad=12)
+    gp.canopy(cv, [(8, 13, 6), (20, 13, 6), (14, 10, 6), (26, 15, 4), (3, 15, 4)], OAK_LEAF, seed=78)
+    for (x0, x1, top) in ((2, 16, 3), (12, 28, 5), (6, 22, 1)):  # arching canes over the mound
+        for x in range(x0, x1):
+            t = (x - x0) / (x1 - x0)
+            y = int(top + (1 - math.sin(math.pi * t)) * 10)
+            cv.set(x, y, '#6A3A30' if t < 0.5 else '#4A2824')
+            if x % 4 == 0:
+                cv.set(x, y - 1, '#8A5A48')  # a thorn
+    for (bx, by, c) in ((7, 9, '#1E1820'), (9, 10, '#1E1820'), (17, 8, '#8A2A30'), (22, 11, '#1E1820'), (13, 7, '#B84040')):
+        cv.set(bx, by, c); cv.set(bx + 1, by, c)
+    for (fx, fy) in ((5, 11), (19, 9), (25, 13)):
+        cv.set(fx, fy, '#F4EEF0'); cv.set(fx + 1, fy, '#E8C8D0')
+    return cv
+
+
 MEGALITH = ['#3A3446', '#585068', '#787088', '#9A92A8', '#C2BACC']  # grey-purple standing stone
 
 
@@ -1740,6 +1842,8 @@ def props() -> dict[str, Canvas]:
         'wattle_hurdle': wattle_hurdle(), 'field_gate_low': field_gate(0.0, low=True),
         'field_gate_low_open': field_gate(0.8, low=True), 'wattle_hurdle_low': wattle_hurdle(low=True), 'marmot_rock': marmot_rock(), 'cotton_grass': cotton_grass(),
         'lookout_tower': lookout_tower(),
+        'oak': wild_tree('oak'), 'beech': wild_tree('beech'), 'birch': wild_tree('birch'), 'sapling': sapling(),
+        'holly': holly(), 'bramble': bramble(),
     }
 
 

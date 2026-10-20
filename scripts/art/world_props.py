@@ -447,21 +447,47 @@ def cabin() -> Canvas:
     chim = rect_set(66, 6, 10, 16)
     left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 96, WOOD, hole=chim, seed=61, moss=None)
     slope = (eave_y - apex_y) / (ridge - 3)
-    for (x, y) in left | right:  # snow lies on the upper roof, rounded over its edge
-        depth = 14 + int(noise2(x // 4, 1, 62) * 4)
+    # B2 (Matt, 19 Oct 22:40: the roof's snow was one flat white, the snowfield's own tone,
+    # and read hollow): snow on two planes, the left lit warm white, the right in cool
+    # blue-grey shade, lying in soft drifts with a glint here and there; shingles showing
+    # along the ridge and the verges where the wind clears it; at the eaves a thick lip of
+    # snow over a dark drip edge, icicles hanging from it; the chimney's cool shadow on it.
+    SNOW_SHADE = ['#7E8EA6', '#98A8BE', '#B4C2D4']  # snow in shade, cooler and bluer than the field
+    rx = int(ridge)
+    for (x, y) in left | right:
         top = 1 + abs(x + 0.5 - ridge) * slope
-        if y < top + depth:
-            col = SNOW[3] if x < ridge else SNOW[2]
-            if y + 1 >= top + depth:
-                col = SNOW[1]
-            elif y < top + 2:
-                col = SNOW[3]
-            cv.set(x, y, col)
-        elif y < top + depth + 2:
-            detail.shade(cv, x, y, 2)
+        bottom = edge_y(x)
+        if abs(x + 0.5 - ridge) < 2.5 or x <= 4 or x >= 95:
+            continue  # the ridge and the verges stay clear: shingles show
+        if y < top + 1 or y > bottom - 2:
+            continue
+        lit = x < ridge
+        drift = noise2(x // 5, int(y - top) // 3, 64)
+        if lit:
+            col = SNOW[3] if drift > 0.35 else SNOW[2]
+            if noise2(x, y, 65) > 0.96:
+                col = '#FFFFFF'  # a glint
+        else:
+            col = SNOW_SHADE[2] if drift > 0.35 else SNOW_SHADE[1]
+        if y > bottom - 5:  # the lip of snow over the eave, rounded and thick
+            col = (SNOW[3] if y == int(bottom) - 4 else SNOW[2]) if lit else (SNOW_SHADE[2] if y == int(bottom) - 4 else SNOW_SHADE[1])
+        cv.set(x, y, col)
+    for x in range(5, 95):  # the drip edge under the lip, and icicles
+        if abs(x + 0.5 - ridge) < 2.5:
+            continue
+        ey = int(edge_y(x)) - 2
+        cv.set(x, ey, SNOW_SHADE[0] if x > ridge else SNOW[0])
+        if noise2(x, 3, 66) > 0.9 and (x < 30 or x > 70):
+            n = 2 + int(noise2(x, 4, 66) * 3)
+            for k in range(n):
+                cv.set(x, ey + 3 + k, '#DDEAF4' if k < n - 1 else '#F7FAFC')
     detail.stones(cv, 66, 10, 10, 12, STONE, seed=63, course=3)
     cv.vline(66, 10, 12, STONE[3]); cv.vline(75, 10, 12, STONE[1])
-    cv.rect(65, 6, 12, 4, SNOW[2]); cv.hline(65, 6, 12, SNOW[3]); cv.rect(68, 7, 6, 2, NAP[0])
+    cv.rect(65, 6, 12, 4, SNOW[2]); cv.hline(65, 5, 12, SNOW[3]); cv.hline(66, 4, 10, SNOW[3]); cv.rect(68, 7, 6, 2, NAP[0])  # its snow cap
+    for x in range(77, 83):  # the chimney's cool shadow on the snow, down and to the right
+        for y in range(12, 24):
+            if (x, y) in right and cv.get(x, y)[:3] != (0, 0, 0):
+                detail.shade(cv, x, y, 1)
     topdown_gable(cv, edge_y, 8, 91, apex_y, wall_top, WOOD)
     for i, y in enumerate(range(wall_top, wall_bottom, 5)):
         for x in range(8, 92):
@@ -476,7 +502,7 @@ def cabin() -> Canvas:
             for (lx, ly) in disc(x + 1.5, y + 2.5, 2.6):
                 cv.set(lx, ly, WOOD[4] if lx + ly < x + y + 3.5 else WOOD[3])
             cv.set(x + 1, y + 2, WOOD[1]); cv.set(x + 2, y + 2, WOOD[2])
-    arched_door(cv, 42, 52, 16, 28, porthole=False)
+    arched_door(cv, 42, 48, 16, 32, porthole=False)  # 32 px, the scale table's door
     window(cv, 16, 56, 16, 12, warm=True)
     window(cv, 68, 56, 16, 12, warm=True)
     detail.overhang_shadow(cv, 8, 92, wall_top, lambda x: 3 + (x - 8) // 30, k=2, cap=1)
