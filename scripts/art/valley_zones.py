@@ -1391,7 +1391,9 @@ def riverside(frame: int = 0):
         cv.set(px + 4, mt + 7, '#E8F0F2'); cv.set(px + 5, mt + 8, WTR[4])  # the water breaking past it
     towpath |= landing
     # the fishing platform at the end of the bank walk, out over the slack water
-    deck = dipping_deck(cv, deck_x, 424, 16, 14, river)  # out to mid-stream, not across it
+    # (review 07:53: out over the water it read as half a bridge) the fishing stage lies
+    # along the bank instead, its planks running with the flow, on two piles, with a rail
+    deck = bank_stage(cv, deck_x + 2, 420, 10, 24, river)
     for (rx, ry, n) in ((deck_x - 18, 460, 6), (300, 330, 5), (250, 520, 7), (120, 310, 5), (180, 318, 4)):
         if (rx, ry) in river or any((rx + d, ry) in river for d in (-3, 3)):
             reeds(cv, rx, ry, seed=rx, n=n)
@@ -1460,8 +1462,45 @@ def riverside(frame: int = 0):
     blocked = ((river | bluff | race) - stones - deck - towpath) | fold_wall
     blocked |= {(x, y) for x in range(gate_posts[0][0], gate_posts[1][0]) for y in range(GY - 3, GY + 2)}  # the gate, shut
     stands = {'garden-north': (8, 116), 'garden-south': (8, 402), 'mill': (190, mt - 14), 'hayfield': (GX, GY + 12), 'stones': (46, (ys[0] + ys[-1]) // 2),
-              'willows': (120, 426), 'platform': (deck_x + 8, 430)}
+              'willows': (120, 426), 'platform': (deck_x + 6, 432)}
     return cv, objects, stands, blocked
+
+
+def bank_stage(cv: Canvas, x0: int, y0: int, w: int, h: int, water: set) -> set:
+    """A fishing stage laid along a river's bank: planks running with the flow (down the
+    view), each lit on its left edge and shaded on its right, nail heads at its bearers;
+    its water side carried on two piles standing in rings of ripples, a rail on posts along
+    that side, and its shadow on the water. Returns the deck (walkable)."""
+    BL = MATERIALS['bleached']
+    deck = {(x, y) for x in range(x0, x0 + w) for y in range(y0, y0 + h)}
+    for (x, y) in deck:
+        r = (x - x0) % 3
+        pk = (x - x0) // 3
+        t = 4 + (1 if noise2(pk, y // 8, 1621) > 0.8 else -1 if noise2(pk, y // 8, 1621) < 0.2 else 0)
+        c = detail.tone(BL, t + 1) if r == 0 else detail.tone(BL, t) if r == 1 else BL[1]
+        if y in (y0 + 3, y0 + h - 4) and r == 1:
+            c = STONE[1]  # the nails over the bearers
+        if y == y0:
+            c = BL[5]
+        cv.set(x, y, c)
+    for x in range(x0, x0 + w):  # the stage's front edge, then the water below it
+        cv.set(x, y0 + h, WOOD[2]); cv.set(x, y0 + h + 1, WOOD[1])
+    xe = x0 + w - 1
+    for py in (y0 + 5, y0 + h - 5):  # the piles on the water side
+        for k in range(0, 5):
+            if (xe + 1, py + k) in water:
+                cv.set(xe + 1, py + k, WOOD[0] if k else WOOD[1])
+        cv.hline(xe, py + 5, 4, WTR[4])
+    for y in range(y0, y0 + h + 2):  # its shadow on the water, to the right
+        for x in range(xe + 2, xe + 5):
+            if (x, y) in water:
+                style.darken(cv, x, y)
+    for py in (y0 + 1, y0 + h // 2, y0 + h - 2):  # the rail on its posts along the water side
+        for k in range(1, 7):
+            cv.set(xe, py - k, WOOD[2] if k < 6 else WOOD[3])
+    for y in range(y0 - 6, y0 + h - 7):
+        cv.set(xe, y, WOOD[3]); cv.set(xe + 1, y, WOOD[1])
+    return deck
 
 
 def dipping_deck(cv: Canvas, x0: int, y0: int, w: int, h: int, water: set) -> set:
@@ -1580,20 +1619,17 @@ def ridge(frame: int = 0):
         # instead of ending in a cut at the seam (Claude A's review, 15:54)
         t = min(1.0, max(0.0, (x - 10) / 44))
         return int((FACE_H - 1) * (t * t * (3 - 2 * t)))
+    import frost_zones
+    RX0, RY0 = frost_zones.origin('ridge')
     for x in range(W):
         r = rim(x)
         bank_to = r + (FACE_H - 1 - face_h(x))  # the snow bank's foot where the face is low
         for y in range(0, bank_to):  # snow: soft drifts, wind ripples, blue in the hollows
             if y >= r and smooth_noise(x, y, 5, 449) > 0.82 and y > bank_to - 3:
                 continue  # the bank's lower edge frays into the turf
-            n = smooth_noise(x, y, 18, 443)
-            c = SNOWm[3] if n > 0.4 else SNOWm[2] if n > 0.22 or (x + y) % 2 else SNOWm[1]
-            rip = (y * 2 + int(math.sin(x / 13 + y / 31) * 4)) % 9
-            if rip == 0 and n > 0.3:
-                c = SNOWm[2]  # sastrugi: the wind's ripples
-            elif rip == 1 and n > 0.3:
-                c = SNOWm[3]
-            cv.set(x, y, c)
+            # one snow field with Fir Hollow's (review 07:53: the texture switched at the
+            # seam): frost_zones.snow_px in the valley's own coordinates, the hollow's seed
+            cv.set(x, y, frost_zones.snow_px(x + RX0, y + RY0, 852))
         for d in range(3 if face_h(x) >= 3 else 0):
             if (x + d) % 2 or d == 0:
                 style.darken(cv, x, r + FACE_H + d)
@@ -2581,6 +2617,44 @@ def woodland(frame: int = 0):
         cv.set(fx - 3 - (k % 3), cy - 36 + k * 4, LEAF[3] if k % 2 else LEAF[2])
         cv.set(fx + 6 + (k % 2), cy - 34 + k * 4, LEAF[1])
     water = water | {p for p in brook if p not in rock}
+    # under the Hollow's escarpment along the top edge (review 07:53): a band of talus
+    # the cliff has shed, so its face stands on ground: scree in drifts, fallen boulders
+    # lying in it, biggest nearest the face, ferns in the damp between them
+    talus = set()
+    tdepth = {x: 20 + int(smooth_noise(x, 0, 23, 1611) * 20) for x in range(W)}
+    for x in range(W):
+        for y in range(0, tdepth[x]):
+            if (x, y) in water:
+                continue
+            t = y / tdepth[x]
+            n = noise2(x // 2, y // 2, 1612)
+            if n > 0.4 + t * 0.4:  # scree, thinning away from the face
+                cv.set(x, y, STONE[3] if noise2(x // 2, y, 1613) > 0.55 else STONE[2])
+                if (x, y + 1) not in water and noise2(x // 2, (y + 1) // 2, 1612) <= 0.4 + t * 0.4:
+                    cv.set(x, y + 1, STONE[1])  # the drift's shaded foot
+            elif n < 0.18:
+                cv.set(x, y, SOIL_R[3] if noise2(x // 2, y, 1618) > 0.5 else SOIL_R[2])  # bare earth between the stones
+    for i in range(int(W * 1.6)):  # stones of every size lying in it, lit on top, dark below
+        x = int(noise2(i, 0, 1619) * W)
+        y = 2 + int(noise2(i, 1, 1619) * max(1, tdepth[min(x, W - 1)] - 2))
+        if (x, y) not in water and (x + 2, y + 2) not in water:
+            detail.pebble(cv, x, y, STONE if i % 3 else SHORE_STONES[2], big=noise2(i, 2, 1619) > 0.55)
+    for i in range(40):  # moss and grass catching in it
+        x = int(noise2(i, 0, 1620) * W)
+        y = 4 + int(noise2(i, 1, 1620) * max(1, tdepth[min(x, W - 1)] - 4))
+        if (x, y) not in water:
+            detail.grass_tuft(cv, x, y, int(noise2(i, 2, 1620) * 6), G, 2)
+    for i, bx in enumerate(range(6, W - 6, 10)):
+        bx += int((noise2(i, 0, 1614) - 0.5) * 8)
+        base = 6 + int(noise2(i, 1, 1614) * (tdepth[min(max(bx, 0), W - 1)] - 6))
+        if any((bx + a, base - b) in water for a in range(-8, 9, 2) for b in range(0, 10, 2)):
+            continue
+        w = 10 + int(noise2(i, 2, 1614) * 10) - int(base / 6)
+        talus |= boulder(cv, bx, base, max(6, w), max(5, int(w * 0.7)), 1615 + i, moss=noise2(i, 3, 1614) > 0.5)
+    for i in range(12):
+        fx_, fy_ = 10 + int(noise2(i, 0, 1616) * 300), 14 + int(noise2(i, 1, 1616) * 22)
+        if not any((fx_ + a, fy_ + b) in water | talus for a in range(-10, 11, 2) for b in range(-8, 3, 2)):
+            fern(cv, fx_, fy_, seed=1617 + i, size=0.9)
     # the path from the garden's west side into the trees and the glade
     # (the garden's orchard walk runs on across the border at the same height and width)
     path = worlds.thick([(W + 12, meadow.ORCHARD_WALK_Y), (250, meadow.ORCHARD_WALK_Y)], 8.5) | worlds.thick([(254, meadow.ORCHARD_WALK_Y), (190, 420), (150, 380), (130, 330)], 9, seed=25)
@@ -2729,7 +2803,7 @@ def woodland(frame: int = 0):
     # wild broadleaves, #108, none of them in fruit)
     objects = [swap(o, 'oak') if o[1] == 'tree' else swap(o, ('birch', 'beech')[i % 2]) if o[1] == 'tree_small' else o
                for i, o in enumerate(objects)]
-    clear = set(path) | water | set(rock) | set(glade) | set(ring_out) | plank | set(spur)
+    clear = set(path) | water | set(rock) | set(glade) | set(ring_out) | plank | set(spur) | talus
     clear = {(x + a, y + b) for (x, y) in clear for (a, b) in ((0, 0), (6, 0), (-6, 0), (0, 5), (0, -4))}
     feet = []
     for (_, k, x, y) in objects:
@@ -2771,4 +2845,6 @@ def woodland(frame: int = 0):
             feet.append((fx, fy))
             wood.append((f'wood-{len(wood) + 1}', key, x, y))
     objects += wood
-    return cv, objects, stands, (water | rock) - plank
+    # (the boulders right at the top edge stay out of the blocked set: lying on the
+    # escarpment's foot, they would read to the seam check as water against the hollow)
+    return cv, objects, stands, ((water | rock) - plank) | {(x, y) for (x, y) in talus if y >= 12}
