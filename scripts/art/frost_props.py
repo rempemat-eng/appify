@@ -17,7 +17,8 @@ sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
 import style  # noqa: E402
-from garden_props import PAD, rect_set, topdown_gable, topdown_roof  # noqa: E402
+from garden_props import PAD, keep_foot as gp_keep_foot, rect_set, topdown_gable, topdown_roof  # noqa: E402
+PLASTER5 = '#FFF7E6'  # whitewash in sun
 from materials import MATERIALS, WOOD, STONE, SNOW, GOLD, RED, NAP, SLATE  # noqa: E402
 
 BRASS = MATERIALS['brass']
@@ -114,27 +115,84 @@ def trail_post() -> Canvas:
 
 
 def windsock() -> Canvas:
-    """A windsock on a pole, 34 x 44, its striped sock streaming east on the saddle's wind."""
-    cv = Canvas(34, 44, pad=PAD)
-    for y in range(4, 44):
-        cv.set(5, y, MATERIALS['iron'][3]); cv.set(6, y, MATERIALS['iron'][1])
-    cv.rect(4, 3, 4, 2, MATERIALS['iron'][4])
-    for t in range(26):
-        x = 7 + t
-        sag = int(t * t * 0.006)
-        half = 4.5 - t * 0.09
+    """The saddle's windsock and the airship route's beacon beside it (Matt, World Logic,
+    20 Oct: "it serves the airship route over the peaks: add a small landing mark or
+    beacon beside it"), 56 x 44 drawn, re-seated so the windsock's pole stays where the
+    zone places it:
+    - the windsock: an iron pole stepped in a squared stone block and held by two guy
+      wires to pegs in the snow; a hoop frame at the sock's mouth on a swivel; the sock in
+      orange and white bands, filled by the wind and streaming east, lit along its top,
+      its underside in shade, a fold where it narrows, sagging a little at its tail;
+    - the beacon: a timber post on a footing of stones piled against the wind, iron rungs
+      to climb it, an iron lamp cage with amber glass under a hood (unlit by day; the pilot
+      reads the sock and the lamp together), and a whitewashed marker stone at its foot;
+    - snow drifted against the lee (east) side of both footings."""
+    IRON = MATERIALS['iron']
+    SOCK = ('#7A2E1C', '#C4512E', '#E8783E', '#F6A066')  # orange sailcloth, shade to sun
+    CLOTH = ('#A89C88', '#D8D0C0', '#F3EEE2', '#FFFFFF')
+    cv = Canvas(56, 44, pad=28)  # wider than the old 34 x 44 box it is re-seated in
+    foot = 41
+    # the windsock's stone block and its drift
+    for y in range(foot - 4, foot + 1):
+        for x in range(2, 10):
+            cv.set(x, y, STONE[4] if y == foot - 4 and x < 7 else STONE[3] if x < 6 else STONE[2] if x < 9 else STONE[1])
+    cv.hline(2, foot, 8, STONE[1])
+    for (x, y) in oval(11, foot, 4, 1.6):
+        cv.set(x, y, SNOW[3] if y < foot else SNOW[2])  # drift in the lee
+    # the pole, two pixels: lit west, dark east; a cap and the swivel
+    for y in range(5, foot - 4):
+        cv.set(5, y, IRON[3]); cv.set(6, y, IRON[1])
+    cv.hline(4, 3, 4, IRON[4]); cv.hline(4, 4, 4, IRON[2])
+    for (x0, x1) in ((5, 0), (6, 13)):  # the guy wires to their pegs
+        steps = foot - 12
+        for i in range(steps):
+            y = 12 + i
+            x = int(round(x0 + (x1 - x0) * i / steps))
+            cv.set(x, y, IRON[2] if x1 < x0 else IRON[1])
+    cv.hline(0, foot, 2, WOOD[2]); cv.hline(12, foot, 2, WOOD[1])
+    # the hoop at the sock's mouth
+    for y in range(4, 14):
+        cv.set(7, y, IRON[3] if y < 9 else IRON[1])
+    # the sock: streaming east, banded, lit on top, a fold where it narrows
+    for t in range(25):
+        x = 8 + t
+        sag = int(t * t * 0.007)
+        half = 4.6 - t * 0.1
+        band = (t // 5) % 2
+        ramp = SOCK if band == 0 else CLOTH
         for dy in range(-int(half), int(half) + 1):
-            y = 8 + sag + dy
-            stripe = (t // 5) % 2
-            c = RED[3] if stripe else '#F3E9D2'
-            if dy == -int(half):
-                c = RED[4] if stripe else '#FFFFFF'
-            elif dy == int(half):
-                c = RED[1] if stripe else '#BFAA86'
-            cv.set(x, y, c)
-    for (x, y) in oval(6, 43, 5, 1.4):
-        cv.set(x, y, SNOW[2])
-    return cv
+            y = 9 + sag + dy
+            k = 3 if dy == -int(half) else 0 if dy == int(half) else 1 if dy > 0 else 2
+            if t in (11, 12) and dy > -int(half):
+                k = max(0, k - 1)  # a fold where the wind lets it narrow
+            cv.set(x, y, ramp[k])
+    # the beacon: footing of piled stones, the post, rungs, the lamp cage and its hood
+    bx = 44
+    for (sx, sy, rx, ry) in ((bx - 3, foot - 1, 3.4, 2.2), (bx + 4, foot - 1, 3, 2), (bx + 1, foot - 4, 3, 2)):
+        for (x, y) in oval(sx, sy, rx, ry):
+            lit = (x - sx) + (y - sy) * 1.3 < -0.5
+            cv.set(x, y, STONE[4] if lit else STONE[3] if (x - sx) < 1.5 else STONE[1])
+    for (x, y) in oval(bx + 8, foot, 3.5, 1.4):
+        cv.set(x, y, SNOW[3] if y < foot else SNOW[2])
+    for y in range(13, foot - 4):
+        cv.set(bx, y, WOOD[3]); cv.set(bx + 1, y, WOOD[1])
+    for y in range(17, foot - 6, 4):
+        cv.hline(bx + 2, y, 2, IRON[2])  # rungs
+    cv.hline(bx - 3, 5, 8, IRON[3]); cv.hline(bx - 2, 4, 6, IRON[4])  # the hood
+    for y in range(6, 13):  # the cage: iron bars, amber glass
+        for x in range(bx - 2, bx + 4):
+            bar = x in (bx - 2, bx + 3) or y in (6, 12)
+            cv.set(x, y, (IRON[3] if x < bx + 1 else IRON[1]) if bar else ('#C8862E' if x < bx + 1 else '#8E5A22'))
+    cv.hline(bx - 1, 8, 2, '#F0C070')  # a gleam on the glass
+    cv.hline(bx, 2, 2, IRON[2]); cv.set(bx - 1, 3, IRON[2]); cv.set(bx + 2, 3, IRON[2])  # the handle
+    for y in range(foot - 4, foot + 1):  # the whitewashed marker stone
+        cv.hline(bx - 9, y, 3, PLASTER5 if y < foot - 2 else '#D8D2C6')
+    cv.hline(bx - 9, foot + 1, 3, STONE[1])
+    for x in range(0, 56):
+        if cv.get(x, foot)[3] == 0:
+            continue
+        cv.set(x, foot + 1, (20, 26, 40, 90))  # the contact shade on the snow
+    return gp_keep_foot(cv, 34, 44, dx=0)
 
 
 def ibex() -> Canvas:

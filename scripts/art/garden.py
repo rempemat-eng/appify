@@ -136,25 +136,29 @@ POND_C, POND_R = (70, 214), (44, 24)
 POND_BOX = (22, 186, 96, 56)
 
 
-POND_RECT = (30, 194, 110, 234, 9)  # x0, y0, x1, y1, corner radius: on the soft grid (verticality.md 4f)
+# The garden pond (World Logic, Matt 20 Oct: "could be a garden pond if the garden really
+# looks like a garden"; review 07:53: no rounded rectangle with straight long sides, and a
+# source feeding it). A dug and lined pond, so its plan is a made one: a kidney of three
+# overlapping lobes (west, middle, the east lobe where it spills), its rim kept within the
+# soft grid's 8 px cells but never a straight run, edged in flat coping stones.
+POND_LOBES = ((44, 208, 16, 13), (68, 214, 28, 17), (95, 221, 15, 11))  # cx, cy, rx, ry
 
 
 def _pond_reach(x: float, y: float) -> float:
-    """How far inside the pond's rounded rectangle (x, y) lies, in px (negative outside),
-    the edge roughened within about 2 px so it reads as a natural bank on a made shape
-    (Matt, 19 Oct 22:40, B11: not an ellipse with an even rim). The south-east corner,
-    where it spills, reaches a little further and lies lower."""
-    x0, y0, x1, y1, r = POND_RECT
-    cx = min(max(x, x0 + r), x1 - r)
-    cy = min(max(y, y0 + r), y1 - r)
-    d = r - math.hypot(x - cx, y - cy) if (cx != x and cy != y) else min(x - x0, x1 - x, y - y0, y1 - y)
-    d += (smooth_noise(x, y, 6, 5) - 0.5) * 3.2
-    if x > 82 and y > 222:
-        d += 1.2  # the spill
-    return d
+    """How far inside the pond's kidney (x, y) lies, in px (negative outside): the
+    strongest of its three lobes, the rim roughened within about 1.5 px where the coping
+    stones sit unevenly. The east lobe, where it spills, reaches a little further."""
+    best = -99.0
+    for (cx, cy, rx, ry) in POND_LOBES:
+        r = math.hypot((x - cx) / rx, (y - cy) / ry)
+        best = max(best, (1 - r) * min(rx, ry))
+    best += (smooth_noise(x, y, 5, 5) - 0.5) * 2.0
+    if x > 84 and y > 224:
+        best += 1.0  # the spill
+    return best
 
 
-POND = {(x, y) for y in range(POND_RECT[1] - 3, POND_RECT[3] + 4) for x in range(POND_RECT[0] - 3, POND_RECT[2] + 4)
+POND = {(x, y) for y in range(186, 242) for x in range(22, 118)
         if _pond_reach(x + 0.5, y + 0.5) >= 0}
 BANK = set()
 for (x, y) in POND:
@@ -211,7 +215,7 @@ def _rill_points():
 
 RILL, RILL_BANK = _rill_points()
 
-# Raised flower planters# Raised flower planters beside the stall path (decorative, watered by the can).
+# Raised flower planters beside the stall path (decorative, watered by the can).
 FLOWER_BEDS = [(222, 142, 46, 18), (222, 168, 46, 18)]  # x, y, w, h: a matched pair by the lantern
 LILY_PADS = [(44, 208), (49, 212), (40, 213), (52, 205), (96, 220), (100, 216)]  # in two clusters, the frog on the first
 FROG_PAD = LILY_PADS[0]
@@ -223,7 +227,7 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
     # The turf is the valley's one ground (A5, Matt 19 Oct 22:40: "hard cut offs between
     # sections"): ground.valley paints it from the valley's own coordinates, so its patches,
     # tufts and blades run on across the garden's edges into the Woodland and the Riverside
-    # (and blend to the forest floor there once Claude A drops ground.FIXED). The garden then
+    # and blend to the forest floor there like every valley zone's. The garden then
     # adds its own small flowers and clover, fewer in the trodden clearing.
     import detail
     import ground
@@ -241,31 +245,37 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
             elif noise2(tx, ty, 9) < 0.05:  # clover: three leaves, lit on the left
                 cv.set(x, y, G[4]); cv.set(x + 1, y, G[3]); cv.set(x, y + 1, G[3]); cv.set(x + 1, y + 1, G[1])
 
-    # The pond's bank, by side (B11): damp earth and mud on the low south side, a chain of
-    # rounded stones along the west shore doubled at the corner, a mossy boulder pile at the
-    # north-west corner, grass coming down to the water on the east (the viewing edge);
-    # the far north bank shows its earth face in the water drawing below.
+    # The pond's coping (World Logic, 20 Oct: a garden pond with a lined edge): flat
+    # stones laid round the rim in courses of three rows, each slab 6 long with a
+    # dark joint, lit along its top on the north and west (toward the light), its outer
+    # face in shade on the south; moss in some joints; at the spill on the south-east the
+    # coping stops and the water runs out between two stones over a muddy lip.
+    spill = lambda x, y: 84 <= x <= 97 and y > 226
     for (x, y) in BANK:
         if not (0 <= x < W and 0 <= y < H):
             continue
-        south = y > POND_C[1] + 6
-        west = x < POND_C[0] - 30
-        c = SOIL[2] if south and noise2(x, y, 21) < 0.7 else P[1] if noise2(x, y, 22) < 0.6 else G[1]
-        if west or (x < 46 and y < 200):
-            c = STONE[2] if noise2(x // 2, y // 2, 23) > 0.35 else STONE[1]
-        elif x > POND_C[0] + 30 and not south:
-            c = G[2] if noise2(x, y, 24) > 0.3 else G[1]
-        cv.set(x, y, c)
+        if spill(x, y):
+            cv.set(x, y, SOIL[2] if noise2(x // 2, y, 21) < 0.6 else P[0])
+            continue
+        south = y > POND_C[1] + 4
+        row = y // 3
+        off = (row * 4) % 7
+        joint = (x + off) % 7 == 0
+        lit = x < POND_C[0] + 10 and not south
+        t = 3 if lit else 2
+        if y % 3 == 0 and not south:
+            t += 1  # the slab's top edge catches the light
+        if joint:
+            t = 1
+            if noise2(x, row, 23) > 0.75:
+                cv.set(x, y, LEAF[2]); continue  # moss in the joint
+        out = any((x + dx, y + dy) not in BANK and (x + dx, y + dy) not in POND for dx, dy in ((0, 1), (1, 0), (-1, 0)))
+        if out and south:
+            t = 1  # the coping's outer face, in its own shade
+        cv.set(x, y, STONE[max(0, min(4, t))])
     for (x, y) in BANK:
-        if (x, y - 1) not in BANK and (x, y - 1) not in POND and 0 <= x < W:
-            cv.set(x, y - 1, G[1])  # turf lip over the bank
-    for (sx, sy, big) in ((27, 200, True), (31, 195, False), (26, 207, False), (27, 214, False), (26, 221, False),
-                          (29, 228, False), (36, 192, False)):  # the stone chain and the corner pile
-        for (x, y) in oval(sx, sy, 3.2 if big else 2.2, 2.2 if big else 1.6):
-            lit = (x - sx) + (y - sy) < -0.5
-            cv.set(x, y, STONE[4] if lit else STONE[3] if (x - sx) + (y - sy) < 1 else STONE[1])
-        if big:
-            cv.set(sx - 1, sy - 2, LEAF[3]); cv.set(sx, sy - 2, LEAF[2]); cv.set(sx + 1, sy - 2, LEAF[3])  # moss
+        if (x, y - 1) not in BANK and (x, y - 1) not in POND and 0 <= x < W and not spill(x, y):
+            cv.set(x, y - 1, G[1])  # the lawn's lip against the coping
     for (x, y) in POND:
         dd = POND_DEPTH[(x, y)]
         col = WTR[1] if dd > 7 or (dd == 7 and (x + y) % 2) else WTR[2]  # deep water follows the rim
@@ -306,6 +316,18 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
         cv.hline(lx - 2, ly, 3, LEAF[1])
         cv.set(lx - 1, ly - 1, LEAF[4])
     cv.set(LILY_PADS[1][0], LILY_PADS[1][1] - 2, RED[4]); cv.set(LILY_PADS[1][0] + 1, LILY_PADS[1][1] - 2, RED[3])  # a water flower
+    # The source: a spring piped up through a stone spout in a little rockery on the
+    # north-west rim, the water falling into the pond in a lit thread with a ring of
+    # ripples where it lands.
+    for (sx, sy, rx, ry) in ((31, 193, 4, 3), (38, 189, 3.5, 2.6), (27, 199, 3, 2.2)):
+        for (x, y) in oval(sx, sy, rx, ry):
+            lit = (x - sx) + (y - sy) * 1.3 < -0.5
+            cv.set(x, y, STONE[4] if lit else STONE[3] if (x - sx) + (y - sy) < 1.5 else STONE[1])
+    cv.hline(30, 190, 3, LEAF[3]); cv.hline(36, 187, 2, LEAF[2])  # moss on the rockery
+    cv.hline(34, 194, 3, STONE[2]); cv.hline(34, 195, 3, STONE[1])  # the spout's lip
+    for y in range(196, 201):
+        cv.set(35, y, WTR[4] if y % 2 else WTR[3])  # the thread of water falling
+    cv.hline(33, 201, 2, WTR[4]); cv.hline(37, 201, 2, WTR[4])  # its ring of ripples
     # Reeds make the bank belong to the water: they grow in clumps along the shaded side
     # (the south and east rim, away from the light), thinning out round to the west and
     # leaving the viewing edge east of the pond and the outlet open.
@@ -320,6 +342,21 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
         if all(abs(x - cx) + abs(y - cy) > 9 for (cx, cy) in clumps) and noise2(x, y, 41) < (0.5 if a < 110 else 0.2):
             clumps.append((x, y))
     for ci, (cx, cy) in enumerate(clumps):
+        if ci % 3 == 1:  # a clump of flag iris: broad sword leaves, a purple flower or two
+            for b, hgt in enumerate((6, 8, 7, 5)):
+                bx = cx - 2 + b + (b // 2)
+                for k in range(hgt):
+                    cv.set(bx, cy - k, LEAF[3] if b < 2 and k > 1 else LEAF[2] if k > 1 else LEAF[1])
+            for (fx, fy) in ((cx - 1, cy - 8), (cx + 3, cy - 7)):
+                cv.hline(fx, fy, 2, NAP[3]); cv.hline(fx, fy + 1, 2, NAP[2])
+            cv.hline(cx - 2, cy + 1, 6, WTR[0])
+            continue
+        if ci % 3 == 2:  # marsh marigolds: a low mound of round leaves, yellow cups on it
+            for (x, y) in oval(cx, cy - 1, 3.2, 2):
+                cv.set(x, y, LEAF[3] if y < cy - 1 and x < cx + 1 else LEAF[2])
+            cv.hline(cx - 2, cy - 2, 2, GOLD[3]); cv.hline(cx + 1, cy - 1, 2, GOLD[4])
+            cv.hline(cx - 3, cy + 1, 7, WTR[0])
+            continue
         for b in range(3 + ci % 3):
             bx = cx - 2 + b * 2 - (ci % 2)
             hgt = 5 + int(noise2(bx, cy, 42) * 5)
@@ -336,6 +373,16 @@ def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
         cv.hline(sx + 1, sy - 1, 3, STONE[3])
         cv.set(sx + 1, sy - 2, STONE[4])
 
+    # Stepping stones across the lawn from the garden path to the pond's open east side,
+    # where people come to look: flat stones set in the turf, lit on the upper left, the
+    # grass worn a little round them.
+    for (sx, sy) in ((138, 219), (131, 223), (124, 219), (117, 223)):
+        for (x, y) in oval(sx, sy, 3.2, 2.1):
+            cv.set(x, y, G[1])
+        for (x, y) in oval(sx, sy - 0.3, 2.6, 1.6):
+            lit = (x - sx) + (y - sy) * 1.4 < -0.4
+            cv.set(x, y, STONE[4] if lit else STONE[3] if (x - sx) < 1.5 else STONE[2])
+        cv.hline(sx - 1, sy + 2, 3, STONE[1])
     meadow.draw_stream(cv, phase)
     # The pond's overflow trickling down to the stream: wet earth banks with a turf lip,
     # the water lit on its left, a few pebbles in its bed, and a little fall where it
@@ -570,6 +617,10 @@ def light_pool(w: int, h: int) -> Canvas:
     return cv
 
 
+# Things whose cast shadow would be a ruled line: they keep only their contact shade.
+LINE_CASTERS = ('fence_l', 'fence_r', 'gate')
+
+
 def bake_shadows(terrain: Canvas, sprites: dict):
     """Cast shadows (coherence plan, 6c): every standing object throws its own silhouette
     down and to the right (light from the upper left), so height reads from the ground.
@@ -581,7 +632,13 @@ def bake_shadows(terrain: Canvas, sprites: dict):
         s = sprites[key]
         if _id.startswith(('pine-', 'tree-')) and y + s.oy + s.h < 34:
             continue  # the treeline's shade is its crowns' lobes below (crown_shade), not flat smears
+        if key in LINE_CASTERS:
+            continue  # a fence or gate: its rails would throw a ruled line across the turf and the path
         shade |= detail.silhouette_shadow(s, x + s.ox, y + s.oy)
+    # A shadow is a pool, never a pencil line: the low sun squeezes thin parts (a post, a
+    # rail, a crown's lower edge) into one-pixel rows that read as dark streaks across the
+    # grass (Claude A, 20 Oct 03:50), so a shaded pixel with no shade above or below it goes.
+    shade = {(sx, sy) for (sx, sy) in shade if (sx, sy - 1) in shade or (sx, sy + 1) in shade}
     for (sx, sy) in shade:
         style.darken(terrain, sx, sy)
     # Contact shade: the ground darkens along each base, two pixels deep under the
@@ -592,7 +649,8 @@ def bake_shadows(terrain: Canvas, sprites: dict):
         for xx in range(s.w):
             if s.get(xx, s.h - 1)[3]:
                 style.darken(terrain, x + s.ox + xx, foot)
-                style.darken(terrain, x + s.ox + xx + 1, foot + 1)
+                if key not in LINE_CASTERS:  # a fence's posts would leave a dashed rule
+                    style.darken(terrain, x + s.ox + xx + 1, foot + 1)
     # The forest's shade spills into the clearing: the ridge's forest floor runs on across
     # the seam and thins out (garden_meadow.forest_edge_shade, the ridge's own field), and
     # each pine of the treeline casts its lobe (garden_meadow.crown_shade), raggedly,
@@ -740,12 +798,27 @@ def main():
         foot_h = 22 if key in ('hut', 'stall') else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 7
         for yy in range(y + s.h - foot_h, y + s.h):
             for xx in range(x + 3, x + s.w - 3):
+                if key in ('fence_l', 'fence_r'):
+                    continue  # the fence's footing is blocked with the walk's edge rows below
+                if key == 'gate' and x + 9 <= xx < x + s.w - 9:
+                    continue  # the gate's way through, between its pillars
                 blocked.add((xx // cell, yy // cell))
     walk = []
     for r in range(rows):
         row = ''
         for c in range(cols):
-            edge = r * cell < 40 or r * cell >= meadow.FENCE_Y - 2
+            # the lower fence blocks only its own footing (review 07:53: the whole strip
+            # from the fence to the bottom edge was blocked, invisible walls at its ends
+            # and lawn under the rails): the posts' feet and the rails' line, a cell under
+            # and over it, across the full width (the runs end on strainer posts at both
+            # seams); the gate between its pillars stays open
+            y = r * cell
+            in_gate = meadow.GATE_X + 8 <= c * cell < meadow.GATE_X + meadow.GATE_W - 8
+            edge = y < 40 or (meadow.FENCE_Y + 10 <= y < meadow.FENCE_Y + 18 and not in_gate)
+            # the lawn outside the fence is open, but the garden still meets the town only
+            # at the gate's port (frames.PORTS 'garden|town' 144-176): its last row is closed
+            # either side of it
+            edge = edge or (y >= H - cell and not in_gate)
             row += '.' if ((c, r) not in blocked and not edge) else '#'
         walk.append(row)
     # Keep only cells the companion can reach from home (same bounds and moves

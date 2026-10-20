@@ -362,61 +362,135 @@ def fishing_boat(length: int = 64, hull=WTR) -> Canvas:
 CORK = ['#6A4A2A', '#9A7046', '#C49A62', '#E0BE86']
 
 
+NET_TAN = ['#3E2E1C', '#5A4428', '#8A6A3E', '#B8945A', '#D8B87C']  # a tanned cotton net
+NET_GREEN = ['#1C3934', '#2B5A50', '#437F6E', '#62A68F', '#98CDB6']  # a green twine net
+
+
+def _net_drape(cv: Canvas, x0: int, x1: int, top: int, depth: int, ramp, seed: int):
+    """One net thrown over the rail, hanging in a swag: it falls in vertical folds 4 to 6
+    pixels wide (each fold a lit band on its left and its body in shade on its right, light
+    from the upper left), bunched solid under the rail, and opening lower down into mesh whose
+    diamonds are drawn as holes two pixels square (the ground shows through them), so it
+    reads as knotted twine and never as a one-pixel checker. A dark foot rope along the
+    hem, and the hem itself ragged where the folds hang lower."""
+    folds = []
+    x = x0
+    while x < x1:  # fold widths 4 to 6, so no two folds line up
+        fw = 4 + int(noise2(x, seed, 371) * 3)
+        folds.append((x, min(x1, x + fw)))
+        x += fw
+    for (f0, f1) in folds:
+        drop = int(noise2(f0, seed, 372) * 3)  # each fold hangs a little lower or higher
+        for x in range(f0, f1):
+            t = (x - x0) / max(1, x1 - x0)
+            bottom = top + int(depth * math.sin(math.pi * t) ** 0.8) + drop
+            u = (x - f0) / max(1, f1 - f0 - 1)  # across the fold, 0 its lit left, 1 its shaded right
+            shift = 1 if noise2(f0, seed, 373) > 0.7 else -1 if noise2(f0, seed, 373) < 0.25 else 0
+            for y in range(top, bottom + 1):
+                k = 3 if u < 0.4 else 2
+                k = max(0, min(4, k + (shift if y - top > 2 else 0)))
+                if y - top < 3:
+                    k = max(1, k - (1 if y - top == 2 else 0))  # bunched and shadowed under the rail
+                open_mesh = y - top >= 4 and y < bottom - 1
+                if open_mesh:
+                    # the diamonds: holes two pixels wide on a staggered lattice, smaller
+                    # where the fold turns away (its shaded right)
+                    row = (y - top) // 4
+                    hx = (x + (2 if row % 2 else 0) + seed) % 4
+                    if (y - top) % 4 in (1, 2) and hx in (0, 1) and u < 0.9:
+                        continue  # the ground shows through a mesh two pixels square
+                cv.set(x, y, ramp[k])
+            cv.set(x, bottom, ramp[0])  # the foot rope along the hem
+
+
 def net_rack() -> Canvas:
-    """Nets drying on a rack (B8: the old checker read as cloth), 44 wide and 28 tall,
-    about a man's height: two posts and a rail, the nets thrown over it in loose drapes
-    that hang in swags of open diamond mesh (each strand a line, the ground showing
-    through, darker where the folds bunch), a line of cork floats along the head rope on
-    the rail and lead weights along the foot rope at each swag's lowest point, a heap of
-    net on the ground with a float or two, contact shadows. Re-seated in the old 52 x 40
-    box (keep_foot)."""
+    """Nets drying on a rack (B8; Claude A, 20 Oct 03:50: the drapes still read as a
+    checker at 2x), 44 wide and 28 tall, about a man's height: two posts and a rail, a
+    tanned net and a green one thrown over it, each hanging in a swag of loose vertical
+    folds lit on their left, bunched under the rail and opening lower down into mesh
+    with diamond holes two pixels across that the ground shows through (_net_drape); a
+    line of cork floats along the head rope on the rail, lead weights at each swag's
+    lowest point, a heap of net on the ground with a float in it, contact shadows.
+    Re-seated in the old 52 x 40 box (keep_foot)."""
     w, h = 44, 28
     cv = Canvas(w, h, pad=PAD)
     foot = h - 1
+    for (fx, fy, ramp) in ((10, foot - 2, NET_TAN), (32, foot - 1, NET_GREEN)):  # heaps of net
+        for (x, y) in oval(fx, fy, 5.5, 2.2):
+            k = 3 if (x - fx) + (y - fy) * 2 < -2 else 2 if y <= fy else 1
+            if noise2(x // 2, y, 381) > 0.7:
+                k -= 1  # a fold in the heap
+            cv.set(x, y, ramp[k])
+        cv.hline(fx - 5, fy + 2, 11, SHADE_A)
     for px in (2, 39):
         for y in range(2, h):
             cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[2]); cv.set(px + 2, y, WOOD[1])
+        cv.set(px, 2, WOOD[4]); cv.set(px + 1, 2, WOOD[3])  # the post's lit top
         cv.hline(px - 1, foot, 5, SHADE_A)
+    for px in (2, 39):  # grain and a knot down each post
+        for y in range(6, h - 1, 5):
+            cv.set(px + 1, y, WOOD[1]); cv.set(px + 1, y + 1, WOOD[1])
+        cv.set(px + 2, 14, WOOD[0]); cv.set(px + 2, 15, WOOD[0])
     cv.hline(1, 3, 42, WOOD[4]); cv.hline(1, 4, 42, WOOD[2])  # the rail
-    swags = ((5, 21, 13), (20, 38, 16))  # x0, x1, depth at the lowest point
-    for (x0, x1, depth) in swags:
-        for x in range(x0, x1):
-            t = (x - x0) / (x1 - x0)
-            bottom = 5 + int(depth * math.sin(math.pi * t) ** 0.8) + (1 if (x * 7) % 5 == 0 else 0)
-            fold = int(t * 7) % 2  # the drape falls in folds: lit and shaded bands
-            for y in range(5, bottom + 1):
-                # the drape's body, darker in each fold, with the diamond mesh drawn over it
-                # in lit strands that loosen as they hang
-                bunch = abs(t - 0.5) > 0.38  # the folds bunch at each end of a swag
-                base = 0 if bunch or fold else 1
-                c = ROPE[base]
-                d1 = (x + y + int(t * 3)) % 4 == 0
-                d2 = (x - y) % 4 == 0
-                if d1 or d2:
-                    c = ROPE[min(len(ROPE) - 1, base + 2 + (1 if y < 10 and not fold else 0))]
-                cv.set(x, y, c)
-            cv.set(x, bottom, ROPE[0])  # the foot rope
+    for x in range(1, 43, 6):
+        cv.set(x, 3, WOOD[3]); cv.set(x + 1, 3, WOOD[3])  # the rail's grain
+    for px in (2, 39):  # rope lashings where the rail sits on the posts
+        cv.hline(px, 3, 3, ROPE[2]); cv.hline(px, 5, 3, ROPE[1])
+    _net_drape(cv, 5, 21, 5, 13, NET_TAN, 1)
+    _net_drape(cv, 21, 38, 5, 16, NET_GREEN, 2)
+    for (x0, x1, depth) in ((5, 21, 13), (21, 38, 16)):
         low = x0 + (x1 - x0) // 2
         lb = 5 + depth
-        cv.set(low, lb + 1, SLATE[1]); cv.set(low + 1, lb + 1, SLATE[2])  # a lead weight
-    for x in range(4, 39, 4):  # cork floats along the head rope
-        cv.set(x, 5, CORK[3]); cv.set(x + 1, 5, CORK[2]); cv.set(x, 6, CORK[1])
-    for (fx, fy) in ((10, foot - 2), (31, foot - 1)):  # a heap of net on the ground, floats in it
-        for (x, y) in oval(fx, fy, 5, 2):
-            cv.set(x, y, ROPE[2] if (x + y) % 3 == 0 else ROPE[1] if y <= fy else ROPE[0])
-        cv.set(fx + 2, fy - 1, CORK[3]); cv.set(fx - 3, fy, RED[3])
-    return gp.keep_foot(cv, 52, 39)
+        cv.hline(low, lb + 2, 2, SLATE[2]); cv.hline(low, lb + 3, 2, SLATE[0])  # a lead weight, lit on top
+    for x in range(5, 38, 4):  # cork floats along the head rope, each lit on its top
+        cv.hline(x, 5, 2, CORK[3]); cv.hline(x, 6, 2, CORK[1])
+    cv.hline(12, foot - 4, 2, CORK[3])  # a float in the tanned heap
+    cv.hline(29, foot - 3, 2, RED[3]); cv.hline(29, foot - 2, 2, RED[1])  # a red buoy in the green
+    return gp.keep_foot(gp.despeckle(cv), 52, 39)
+
+
+def _creel(cv: Canvas, bx: int, by: int, w: int = 14, h: int = 10, seed: int = 0):
+    """One lobster creel seen from its side, its top-left at (bx, by): a D-shaped frame of
+    bent hazel hoops (lit on the west) on a base board, netting of tarred twine strung
+    between the hoops in rows (the dark of the pot's inside showing between), the funnel
+    entrance's rope ring on its near end, and a stone lashed in the base as ballast."""
+    INSIDE = ('#241E1A', '#322A24')
+    for x in range(w):
+        u = (x + 0.5) / w
+        top = by + int(round((h - 3) * (1 - math.sqrt(max(0.0, 1 - (2 * u - 1) ** 2)))))
+        for y in range(top, by + h - 2):
+            c = INSIDE[0] if x > w * 0.55 else INSIDE[1]
+            if (y - by) % 4 == 1:
+                c = ROPE[2] if x < w * 0.6 else ROPE[1]  # a row of twine
+            if x % 5 == 1:
+                c = WOOD[3] if x < w * 0.5 else WOOD[2]  # a hoop
+            if y == top:
+                c = WOOD[4] if x < w * 0.6 else WOOD[3]  # the hoop's lit crown, bound with twine
+            cv.set(bx + x, y, c)
+    cv.hline(bx, by + h - 2, w, WOOD[3]); cv.hline(bx, by + h - 1, w, WOOD[1])  # the base board
+    cv.hline(bx + w - 5, by + h - 5, 2, ROPE[3]); cv.hline(bx + w - 5, by + h - 4, 2, ROPE[1])  # the funnel's ring
+    cv.hline(bx + 2, by + h - 3, 3, STONE[2])  # the ballast stone
 
 
 def lobster_pots() -> Canvas:
-    """Three lobster pots stacked by a coil of rope, 34 x 24."""
+    """Lobster creels stacked on the quay to dry (the prop audit's REDRAW: they were three
+    flat boxes of stripes), 34 x 24: two creels side by side and a third laid across their
+    tops, each a D of bent hoops on a base board with tarred netting between and the rope
+    ring of its entrance (_creel); a coil of the pot line on the ground beside them with a
+    cork marker buoy on its stick, and their contact shade."""
     cv = Canvas(34, 24, pad=PAD)
-    for (bx, by) in ((2, 10), (16, 10), (9, 1)):
-        for (x, y) in rect_set(bx, by, 14, 12):
-            top = y < by + 3
-            cv.set(x, y, (WOOD[4] if top else WOOD[2]) if (x - bx) % 4 == 0 or top or y == by + 11 else '#2A2420')
-        for x in range(bx, bx + 14, 2):
-            cv.vline(x, by + 3, 8, ROPE[1])
+    for x in range(1, 33):
+        cv.set(x, 23, SHADE_A)
+    _creel(cv, 1, 13, 15, 10, 0)
+    _creel(cv, 16, 13, 14, 10, 1)
+    _creel(cv, 7, 4, 16, 10, 2)
+    for (x, y) in oval(30, 21, 3.4, 1.6):  # the pot line coiled on the ground, lit on its upper left
+        r = math.hypot((x + 0.5 - 30) / 3.4, (y + 0.5 - 21) / 1.6)
+        cv.set(x, y, '#2A2420' if r < 0.45 else ROPE[3] if (y < 21 and x < 31) else ROPE[2] if r < 0.8 else ROPE[1])
+    for y in range(9, 21):  # the marker buoy's stick, the buoy and its flag
+        cv.set(31, y, WOOD[2])
+    cv.hline(30, 14, 3, CORK[3]); cv.hline(30, 15, 3, CORK[2]); cv.hline(30, 16, 3, CORK[1])
+    cv.hline(32, 9, 2, RED[3]); cv.hline(32, 10, 2, RED[2])
     return cv
 
 
@@ -1004,46 +1078,141 @@ def deck_chair(stripe=RED) -> Canvas:
 
 
 def driftwood() -> Canvas:
-    """A bleached driftwood branch half in the sand, 34 x 12."""
-    w, h = 34, 12
+    """A bleached driftwood trunk thrown up on the beach (the prop audit's REDRAW: it was
+    a striped wavy line), 34 x 12 drawn as 38 x 14 and re-seated: a stripped trunk tapering
+    to its broken top, its root ball at the west end with knotted roots, the wood silver
+    and worn smooth, lit along its top, its grain in long lines, a split along it and two
+    snapped branch stubs; a hank of dried wrack caught round it, and the sand blown up
+    against its lee side."""
+    BONE = ['#5E544C', '#8A8076', '#B2A898', '#D6CEC0', '#EEE8DC']
+    SAND_ = MATERIALS['sand']
+    w, h = 38, 14
     cv = Canvas(w, h, pad=PAD)
-    BONE = ['#6E625A', '#9A8E82', '#C2B8AA', '#E2DACE']
-    for x in range(2, w - 4):
-        y = 6 + int(math.sin(x / 6) * 1.5)
-        cv.set(x, y - 1, BONE[3]); cv.set(x, y, BONE[2]); cv.set(x, y + 1, BONE[1])
-    for (x0, dx, n) in ((10, 1, 6), (22, 1, 5)):  # snapped side branches
-        for t in range(n):
-            cv.set(x0 + dx * t, 5 - t // 2, BONE[2]); cv.set(x0 + dx * t, 6 - t // 2, BONE[1])
-    cv.hline(4, 9, 20, '#C8A878')  # sand drifted along its foot
-    return cv
+    for x in range(3, w - 2):  # the contact shade
+        cv.set(x, 12, SHADE_A)
+    for x in range(6, w - 3):  # the trunk, tapering east
+        t = (x - 6) / (w - 9)
+        r = 2.6 - t * 1.4
+        cy = 8 + math.sin(x / 7) * 0.8
+        for y in range(int(round(cy - r)), int(round(cy + r)) + 1):
+            v = (y - (cy - r)) / (2 * r)
+            k = 4 if v < 0.22 else 3 if v < 0.5 else 2 if v < 0.8 else 1
+            if (x // 5 + y) % 4 == 0 and 0.25 < v < 0.9 and x % 7 > 1:
+                k = max(1, k - 1)  # the grain, in long runs
+            cv.set(x, y, BONE[k])
+    for x in range(14, 22):
+        cv.set(x, 8 + int(math.sin(x / 7) * 0.8), BONE[0])  # the split
+    for (kx, ky) in ((11, 8), (30, 8)):  # a knot, its dark heart and lit rim
+        cv.hline(kx, ky, 2, BONE[1]); cv.hline(kx, ky - 1, 2, BONE[4])
+    for (bx_, by_) in ((24, 9), (25, 9), (26, 9), (25, 10), (26, 10), (8, 10), (9, 10)):
+        cv.set(bx_, by_, '#6A5040')  # a last patch of bark on its underside
+    for (sx, sy, n) in ((16, 6, 4), (27, 7, 3)):  # snapped branch stubs, lit on the west
+        for i in range(n):
+            cv.hline(sx + i // 2, sy - i, 2, BONE[3] if i % 2 == 0 else BONE[2])
+    for (rx, ry, ln, dx, dy) in ((5, 7, 5, -1, -1), (5, 9, 5, -1, 1), (5, 8, 6, -1, 0), (6, 5, 4, 0, -1)):  # the root ball
+        for i in range(ln):
+            cv.hline(rx + dx * i, ry + dy * (i // 2), 2, BONE[3] if dy <= 0 else BONE[1])
+    for (x, y) in oval(5, 8, 2.6, 2.6):
+        cv.set(x, y, BONE[2] if x < 5 else BONE[1])
+    for (x, y) in ((22, 6), (23, 6), (22, 7), (24, 7), (23, 8), (24, 8), (23, 9), (24, 10)):
+        cv.set(x, y, '#4E4A2C' if y < 8 else '#3A3820')  # dried wrack caught round it
+    for x in range(8, w - 4):  # sand blown up against its lee side
+        if noise2(x // 3, 0, 1051) > 0.3:
+            cv.set(x, 11, SAND_[1]); cv.set(x, 10, SAND_[2])
+    return gp.keep_foot(cv, 34, 12)
 
 
 def sailboat() -> Canvas:
-    """A small sailboat out past the breakwater, 40 x 52: a white hull lit on its port
-    side, a mast and a cream sail bellied by the wind, its shadow on the water."""
-    w, h = 40, 52
+    """A sailing dinghy out past the breakwater at the size guide's sailboat (the prop
+    audit and size check: it was 46 tall, under 56 to 96), drawn 52 x 76 and re-seated
+    so its waterline stays where the zone placed it: a clinker hull seen from a little
+    above and abeam, its white topsides lit on the west and turning into shade under the
+    gunwale, a blue sheer strake, the planks' lands as lines along it, the varnished
+    thwart and the tiller at the transom; a mast stepped through the thwart with its
+    forestay and shroud, a mainsail bellied by the wind with its seams and two battens,
+    the boom along its foot and the sheet to the stern, a small jib forward; the water
+    dark along the hull, the bow wave lit and the wake behind it."""
+    w, h = 52, 76
     cv = Canvas(w, h, pad=PAD)
-    hull = set()
-    for x in range(4, w - 4):
-        t = (x - 4) / (w - 8)
-        half = 5 * (1 - abs(t - 0.4) ** 1.6 * 1.6) if t < 0.95 else 1
-        for y in range(int(h - 10 - half), int(h - 10 + half) + 1):
-            hull.add((x, y))
-    for (x, y) in hull:
-        cv.set(x, y, PLASTER[5] if y < h - 10 else PLASTER[3])
-        if (x, y + 1) not in hull:
-            cv.set(x, y, WTR[1])
-    cv.hline(8, h - 10, w - 18, WOOD[3])  # the deck
-    for y in range(4, h - 11):
-        cv.set(18, y, WOOD[1])
-    for y in range(6, h - 14):  # the sail, bellied out to the right
-        span = int((y - 6) * 0.42 + 2 + math.sin((y - 6) / (h - 20) * math.pi) * 3)
-        for x in range(19, 19 + span):
-            cv.set(x, y, SAILCLOTH[4] if x < 19 + span - 3 else SAILCLOTH[3])
-    cv.hline(19, h - 14, 16, WOOD[2])  # the boom
-    for x in range(6, w - 4, 3):
-        cv.set(x, h - 3, '#E6EEF6')  # its wake
-    return cv
+    HULL = MATERIALS['hull']
+    wl = h - 9  # the waterline
+    bow, stern = w - 5, 6
+    for x in range(stern, bow + 1):  # the hull: the far gunwale and the inside, then the near side
+        t = (x - stern) / (bow - stern)
+        sheer = wl - 8 + int(round((t - 0.55) ** 2 * 8))
+        far = sheer - 4 + int(round(t ** 3 * 4))  # the far gunwale, closing to the stem
+        keel = wl + (2 if t < 0.85 else 1)
+        for y in range(far, sheer):  # the inside of the hull: varnished planking, the floor in shade
+            d = y - far
+            cv.set(x, y, WOOD[3] if d == 0 else WOOD[2] if d < 2 else WOOD[1])
+        if t < 0.92:
+            cv.set(x, far, WOOD[4] if t < 0.6 else WOOD[3])  # the far gunwale's lit rail
+        for y in range(sheer, keel + 1):
+            if t > 0.9 and y > sheer + (t - 0.9) * 50:
+                continue  # the bow's rake
+            d = y - sheer
+            c = PLASTER[5] if d < 3 else PLASTER[4] if d < 5 else PLASTER[3] if y < wl else HULL[2]
+            if d in (1, 2):
+                c = HULL[4] if t < 0.6 else HULL[3]  # the blue sheer strake
+            if d == 5 and y < wl:
+                c = PLASTER[2]  # a plank's land
+            if t > 0.7 and y < wl and d > 2:
+                c = PLASTER[3] if d != 5 else PLASTER[2]  # the bow quarter turning from the light
+            if y >= wl:
+                c = HULL[2] if t < 0.6 else HULL[1]  # the antifouling below the waterline
+            cv.set(x, y, c)
+        if x < bow - 2:
+            cv.set(x, sheer, WOOD[3] if t < 0.7 else WOOD[2])  # the near gunwale's varnished rail
+    for y in range(wl - 8, wl + 2):  # the transom
+        cv.set(stern - 1, y, PLASTER[3] if y < wl else HULL[1])
+    cv.hline(stern + 6, wl - 10, 8, WOOD[4]); cv.hline(stern + 6, wl - 9, 8, WOOD[2])  # the thwart
+    for i in range(6):  # the tiller over the transom
+        cv.set(stern + i, wl - 11 - i // 3, WOOD[3])
+    mx = stern + 20
+    top = 3
+    for y in range(top, wl - 9):  # the mast
+        cv.set(mx, y, WOOD[3]); cv.set(mx + 1, y, WOOD[1])
+    cv.hline(mx - 1, top - 1, 3, SLATE[2])
+    n = wl - 9 - top
+    for i in range(n):  # the forestay from the masthead to the stemhead
+        fy = top + 1 + i
+        fx = mx + 2 + int(i * (bow - 3 - mx - 2) / n)
+        cv.set(fx, fy, SLATE[3])
+    boom_y = wl - 17
+    for y in range(top + 2, boom_y):  # the mainsail, bellied to the east, aft of the mast
+        f = (y - top - 2) / (boom_y - top - 2)
+        span = int(2 + f * 20 + math.sin(f * math.pi) * 4)
+        for x in range(mx - span, mx):
+            u = (mx - x) / max(1, span)
+            k = 4 if 0.22 <= u < 0.62 else 3 if u < 0.86 else 2  # the belly lit, the leech falling into shade
+            if u >= 0.5 and (x - mx + (boom_y - y) // 2) % 8 in (0, 1):
+                k = max(1, k - 1)  # a fold running up from the clew where the cloth sags
+            if (y - top) % 9 == 0:
+                k = 2 if (x // 2) % 2 else 3  # a seam, its stitching
+            if y in (top + 20, top + 38) and u < 0.5:
+                k = 1  # a batten pocket
+            if y == boom_y - 7:
+                k = 2  # the reef band
+            cv.set(x, y, SAILCLOTH[k])
+        cv.set(mx - span - 1, y, SAILCLOTH[1])  # the leech, in shade
+        cv.set(mx - 1, y, ROPE[2] if y % 4 else ROPE[1])  # the bolt rope along the luff
+    for x in range(mx - 21, mx - 1, 4):  # reef points tied under the reef band
+        cv.vline(x, boom_y - 6, 3, ROPE[2])
+    cv.hline(mx - 23, boom_y - 1, 23, ROPE[1])  # the bolt rope along the foot
+    cv.hline(mx - 24, boom_y, 25, WOOD[2]); cv.hline(mx - 24, boom_y + 1, 25, WOOD[1])  # the boom
+    for i in range(6):
+        cv.set(mx - 22 + i // 2, boom_y + 2 + i, ROPE[2])  # the mainsheet to the stern
+    for y in range(top + 14, wl - 12):  # the jib forward of the mast
+        f = (y - top - 14) / (wl - 12 - top - 14)
+        span = int(f * 10)
+        for x in range(mx + 2, mx + 2 + span):
+            cv.set(x, y, SAILCLOTH[3] if x < mx + 2 + span - 2 else SAILCLOTH[2])
+    for x in range(stern - 1, bow + 2):  # the dark water hugging the hull, the bow wave, the wake
+        cv.set(x, wl + 3, (30, 46, 72, 150))
+    cv.hline(bow - 4, wl + 1, 4, '#E6EEF6'); cv.hline(bow - 2, wl + 2, 3, '#C6DDEE')
+    for (x0, y0, n) in ((stern - 8, wl + 2, 6), (stern - 14, wl + 4, 5), (stern - 4, wl + 5, 4)):
+        cv.hline(x0, y0, n, (230, 238, 246, 170))
+    return gp.keep_foot(cv, 40, 52, dx=-6)
 
 
 def props() -> dict[str, Canvas]:
