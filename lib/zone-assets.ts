@@ -30,6 +30,8 @@ import propBasaltStumpsB from '@/assets/zones/props/basalt_stumps_b.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBed from '@/assets/zones/props/bed.png';
 import propBeehive from '@/assets/zones/props/beehive.png';
+import propBeehiveF1 from '@/assets/zones/props/beehive_f1.png';
+import propBeehiveF2 from '@/assets/zones/props/beehive_f2.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
 import propBirdOfParadise from '@/assets/zones/props/bird_of_paradise.png';
@@ -770,6 +772,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bathhouse: propBathhouse,
   bed: propBed,
   beehive: propBeehive,
+  beehive_f1: propBeehiveF1,
+  beehive_f2: propBeehiveF2,
   bell_tower: propBellTower,
   bench: propBench,
   bird_of_paradise: propBirdOfParadise,
