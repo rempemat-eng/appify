@@ -385,8 +385,30 @@ export function areasNear(region: string, view: RegionBox, margin: number) {
 
 // ---- mounting tiles ------------------------------------------------------------------------
 
-/** How far past the camera's view a tile is mounted; it is let go at twice this. */
+/** How far past the camera's view a tile is mounted before it is seen; a mounted tile is
+ *  let go only past twice this. */
 export const TILE_MOUNT_MARGIN = 24;
+
+/**
+ * The most the mounted tiles may hold at once, cold or warm (whatever was mounted before),
+ * at every tested window size (lib/world-walk.test.ts, 320 x 568 to 1440 x 900): a count,
+ * and their decoded pictures and moving water (bytes, as mountedBytes counts them).
+ *
+ * It is the largest tested view's own need: at every tested size a view touches at most
+ * 12 tiles (3 x 4 on a phone, 4 x 3 on a laptop), and the worst such block today, at the
+ * isles, holds 24.77 MiB. So the view's own tiles always fit, and the margin takes what is
+ * left. The check works out every set of tiles a view can touch at every tested size; if
+ * the art grows past the budget it fails, and the budget is raised to that need (never a
+ * tile in view left out). A window larger than every tested size can need more (16 tiles
+ * at 1920 x 1080, 20 and 32.77 MiB at 2560 x 1440): all of its view's tiles mount, and
+ * nothing past them.
+ */
+export const TILE_BUDGET = { tiles: 12, bytes: 25 * 1024 * 1024 } as const;
+
+/** The camera is drawn at a whole CSS px, so what shows may sit up to half a CSS px (half
+ *  an art px at the tested sizes) off the view the tiles are chosen for: a tile this close
+ *  to the view counts as in it. */
+const VIEW_SLACK = 1;
 
 /** The world tiles of a region's plane (with a picture or something on them) that a region
  *  box grown by `margin` touches, as 'col,row'. */
@@ -403,18 +425,62 @@ export function tileKeysNear(region: string, view: RegionBox, margin: number): s
   return out;
 }
 
-/** The tiles to mount for a view: those within the margin, and any already mounted still
- *  within twice it (so a tile at the edge does not mount and unmount as the camera turns). */
+/** How far a tile lies outside a region box, in px along each axis (0 where they overlap). */
+function tileGap(region: string, key: string, view: RegionBox): [number, number] {
+  const [ox, oy] = chunkFor(region).origin;
+  const [c, r] = key.split(',').map(Number);
+  return [
+    Math.max(0, c * S - (view.x1 + ox), view.x0 + ox - (c + 1) * S),
+    Math.max(0, r * S - (view.y1 + oy), view.y0 + oy - (r + 1) * S),
+  ];
+}
+
+/**
+ * The tiles to mount for a view, within TILE_BUDGET:
+ * - every tile the view touches, always (so the view is never missing a piece);
+ * - then, while the budget lasts, the nearest of those within the margin and of those
+ *   already mounted within twice it. An already mounted tile counts as a margin nearer
+ *   than it is, so one tile gives way to another only when the other is a margin nearer:
+ *   walking to and fro across a tile edge does not mount and unmount on every step.
+ * A tile the budget has no room for is passed over and a smaller one further out may
+ * still fit, so the farthest go first. Where the view alone fills the budget (or, past
+ * the tested sizes, needs more), its own tiles are all that mount. Sorted, as 'col,row'.
+ */
 export function tilesToMount(
   region: string,
   view: RegionBox,
   mounted: readonly string[] = [],
   margin = TILE_MOUNT_MARGIN,
+  budget: { tiles: number; bytes: number } = TILE_BUDGET,
 ): string[] {
-  const close = new Set(tileKeysNear(region, view, margin));
-  const kept = new Set(tileKeysNear(region, view, margin * 2));
-  for (const k of mounted) if (kept.has(k)) close.add(k);
-  return [...close].sort();
+  const was = new Set(mounted);
+  const near = new Set(tileKeysNear(region, view, margin * 2 + VIEW_SLACK));
+  const seen: string[] = [];
+  const more: { key: string; score: number; kept: boolean }[] = [];
+  for (const key of near) {
+    const [gx, gy] = tileGap(region, key, view);
+    const gap = Math.max(gx, gy);
+    const kept = was.has(key);
+    if (gap < VIEW_SLACK) seen.push(key);
+    else if (gap < (kept ? margin * 2 : margin))
+      more.push({ key, score: Math.hypot(gx, gy) - (kept ? margin : 0), kept });
+  }
+  more.sort(
+    (a, b) =>
+      a.score - b.score ||
+      Number(b.kept) - Number(a.kept) ||
+      (a.key < b.key ? -1 : a.key > b.key ? 1 : 0),
+  );
+  const out = [...seen];
+  let bytes = mountedBytes(region, seen);
+  for (const { key } of more) {
+    if (out.length >= budget.tiles) break;
+    const b = mountedBytes(region, [key]);
+    if (bytes + b > budget.bytes) continue;
+    out.push(key);
+    bytes += b;
+  }
+  return out.sort();
 }
 
 /** A tile's top-left in region px. */

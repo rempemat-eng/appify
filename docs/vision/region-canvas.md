@@ -201,8 +201,12 @@ Step 2 is built behind **`WORLD_CANVAS`**, which is **off by default**. The defa
 
 **The renderer** (`components/atlas-walk.tsx`, with the switch on):
 
-- **World tiles, not zones.** `tilesToMount` (`lib/world-walk.ts`) mounts the tiles the camera sees plus a 24 px margin, and lets a tile go only past twice the margin.
-  - A phone mounts at most 12 tiles.
+- **World tiles, not zones.** `tilesToMount` (`lib/world-walk.ts`) always mounts every tile the camera sees. Then, while the budget lasts, it mounts the nearest of the tiles within a 24 px margin and of those already mounted within twice the margin. An already mounted tile counts as 24 px nearer than it is, so a camera turning at a tile edge does not mount and unmount.
+  - **The budget** (`TILE_BUDGET`): at most 12 tiles and 25 MiB of tile pictures and moving water at 2x, cold or warm, at every tested window size (320 x 568 to 1440 x 900).
+  - **It is the largest tested view's own need.** At every tested size a view touches at most 12 tiles (3 x 4 on a phone, 4 x 3 on a laptop), and the worst such block today, at the isles, holds 24.77 MiB. The margin takes what the view leaves; where the view needs all 12, nothing is kept past it.
+  - **If the art grows past it,** the check fails. Raise the budget to the largest tested view's need; never leave a tile in view unmounted.
+  - **Past the tested sizes,** a desktop window can need more for its view alone: 16 tiles at 1920 x 1080, and 20 tiles and 32.77 MiB at 2560 x 1440. Every tile in its view still mounts, and nothing past them.
+  - Before this budget (#126 review), a warm camera could keep the old margin's row while the new margin's row mounted: 15 tiles and 30.23 MiB on a 430 x 932 phone at the isles.
   - Each tile is a `View` at its world tile position, snapped to whole device px, inside the camera's `data-pixel` view. It holds:
     - its picture at 2x, or its `fill` colour for a one-colour tile;
     - its moving water (`FlowBox`), stepped on the same clock as before, which stops with reduced motion or an inactive screen.
@@ -232,9 +236,14 @@ Step 2 is built behind **`WORLD_CANVAS`**, which is **off by default**. The defa
   - **Reading the tiles:** the tiles' walk is the zones' join, apart from the seam cells, and a cell reads the same one at a time as in a window.
   - **Windowed search:** 685 walks between stands and random open ground, searched in windows, end where the whole-region search ends.
   - **Route graph:** 104 of those walks, forced onto the route graph, still arrive.
-  - **Mounting:** in 14,484 camera positions at 9 window sizes (320 x 568 to 1440 x 900), the mounted tiles cover the view.
-    - Every prop whose picture reaches the view draws.
-    - A phone mounts at most 12 tiles, using at most 24.8 MiB of tile pictures and moving water at 2x, the tiles kept for the margin included.
+  - **Mounting:** in 303,565 camera positions at 10 window sizes (320 x 568 to 1440 x 900), the mounted tiles cover the view and stay within the budget, the tiles kept for the margin included. The most mounted is 12 tiles and 24.79 MiB at 2x. The positions:
+    - the camera crossing each region in 56 px steps (every prop whose picture reaches the view draws);
+    - sweeps along both axes, one way and back, through every place where a tile enters or leaves the view, the margin or twice the margin;
+    - a seeded random walk of 1,500 steps per size and region, with turns and jumps;
+    - the warm camera from the #126 review (430 x 932, the isles, from y 279 to 302).
+  - **The view alone:** all 36,336 distinct sets of tiles a view can touch at the tested sizes fit the budget. The largest is 12 tiles and 24.77 MiB.
+  - **To and fro:** a camera swinging up to 11 px either way across a tile edge settles after its first swing (1,920 swings).
+  - **Past the tested sizes:** at 1920 x 1080 and 2560 x 1440 the view is covered. Where its own tiles reach the budget, they are all that mount.
   - **No gaps:** tiles meet with no gap at every pixel scale, and each tile edge sits on a device pixel.
   - **Area names:** the area under each stand is its zone, and the name holds within the margin along an edge.
 - **`npm run check:world-canvas`** and the rest of `npm run verify` still pass with the switch off. The game is unchanged.
