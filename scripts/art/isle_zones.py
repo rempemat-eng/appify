@@ -1277,7 +1277,7 @@ def _kind(cv: Canvas, x: int, y: int) -> str:
 # Where the companion and the residents stop, per zone (zone px). The entries named after a
 # neighbour stand on the trail near the shared edge; the others at the place's node.
 STANDS = {
-    'landing': {'pier': (112, 440), 'rainforest': (188, 10), 'cove': (314, 366), 'boathouse': (184, 352)},
+    'landing': {'pier': (112, 440), 'rainforest': (188, 10), 'cove': (314, 366), 'boathouse': (298, 404)},
     'rainforest': {'landing': (188, 568), 'bridge': (226, 348), 'headwaters': (314, 167), 'notch': (276, 252)},
     'headwaters': {'rainforest': (6, 162), 'pool': (172, 166), 'cove': (188, 520)},
     'cove': {'headwaters': (196, 26), 'landing': (6, 367), 'beach': (150, 390)},
@@ -1286,9 +1286,10 @@ STANDS = {
 # The props each place is built round, by hand (key, the foot's centre in island px).
 # Everything else grows in groves (GROVES) or along the edges (EDGES), placed by rule.
 LANDMARKS = [
-    # the landing: the boathouse above the lagoon, the ferry at the pier, a canoe hauled
-    # up on the sand, a heron fishing the river's mouth, a banana patch behind the boathouse
-    ('boathouse', 'boathouse', 184, 920), ('ferry', 'island_ferry', 174, 1049), ('canoe', 'canoe', 222, 974),
+    # the landing: the boathouse at the lagoon's edge, its boat end over the water on piles and
+    # its slipway running down into the lagoon (Matt's World Logic answer 16), the ferry at
+    # the pier, a canoe hauled up on the sand, a heron fishing the river's mouth, a banana patch behind the boathouse
+    ('boathouse', 'boathouse', 248, 1040), ('ferry', 'island_ferry', 174, 1049), ('canoe', 'canoe', 178, 964),
     ('heron', 'heron', 60, 905), ('banana-1', 'banana', 236, 906), ('banana-2', 'banana', 234, 892),
     # the rainforest: a fallen giant across the floor by the pool in the bend, its stump
     ('log', 'mossy_log', 106, 474),
@@ -1456,8 +1457,8 @@ def _island_props() -> list:
         out.append((oid, key, fx, fy))
 
     for (oid, key, fx, fy) in LANDMARKS:
-        if key in ('island_ferry',):
-            put(oid, key, fx, fy)  # (it floats; drawn at the pier)
+        if key in ('island_ferry', 'boathouse'):
+            put(oid, key, fx, fy)  # (the ferry floats at the pier; the boathouse stands on its piles at the water's edge)
             continue
         if not clear(key, fx, fy, None, landmark=True):
             near = min(((abs(dx) + abs(dy), fx + dx, fy + dy) for dx in range(-30, 31, 2) for dy in range(-30, 31, 2)
