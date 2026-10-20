@@ -1184,13 +1184,21 @@ def sailboat() -> Canvas:
         span = int(2 + f * 20 + math.sin(f * math.pi) * 4)
         for x in range(mx - span, mx):
             u = (mx - x) / max(1, span)
-            k = 4 if u < 0.3 else 3 if u < 0.75 else 2
+            k = 4 if 0.22 <= u < 0.62 else 3 if u < 0.86 else 2  # the belly lit, the leech falling into shade
+            if u >= 0.5 and (x - mx + (boom_y - y) // 2) % 8 in (0, 1):
+                k = max(1, k - 1)  # a fold running up from the clew where the cloth sags
             if (y - top) % 9 == 0:
-                k = 2  # a seam
+                k = 2 if (x // 2) % 2 else 3  # a seam, its stitching
             if y in (top + 20, top + 38) and u < 0.5:
                 k = 1  # a batten pocket
+            if y == boom_y - 7:
+                k = 2  # the reef band
             cv.set(x, y, SAILCLOTH[k])
         cv.set(mx - span - 1, y, SAILCLOTH[1])  # the leech, in shade
+        cv.set(mx - 1, y, ROPE[2] if y % 4 else ROPE[1])  # the bolt rope along the luff
+    for x in range(mx - 21, mx - 1, 4):  # reef points tied under the reef band
+        cv.vline(x, boom_y - 6, 3, ROPE[2])
+    cv.hline(mx - 23, boom_y - 1, 23, ROPE[1])  # the bolt rope along the foot
     cv.hline(mx - 24, boom_y, 25, WOOD[2]); cv.hline(mx - 24, boom_y + 1, 25, WOOD[1])  # the boom
     for i in range(6):
         cv.set(mx - 22 + i // 2, boom_y + 2 + i, ROPE[2])  # the mainsheet to the stern
