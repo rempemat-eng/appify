@@ -10,6 +10,7 @@ than the companion, benches and tables at companion height.
 from __future__ import annotations
 
 import detail
+from garden_props import keep_foot as gp_keep_foot
 from garden_props import PAD, arched_door, canopy, plane, planks, post, rect_set, stone_blocks, topdown_gable, topdown_roof
 from garden_props import window as shuttered_window
 from materials import CREAM, GOLD, LEAF, MATERIALS, NAP, PLASTER, RED, ROOF, SLATE, SNOW, STONE, WOOD, WTR
@@ -84,30 +85,110 @@ def fountain() -> Canvas:
     return cv
 
 
-def bench() -> Canvas:
-    """A park bench, 44 x 28: slats that show a lit top and a darker face between round
-    cast-iron ends."""
-    cv = Canvas(44, 28, pad=PAD)
-    for y in (2, 7):
-        cv.hline(2, y, 40, WOOD[4]); cv.hline(2, y + 1, 40, WOOD[3]); cv.hline(2, y + 2, 40, WOOD[2])
-        cv.hline(2, y + 3, 40, WOOD[1])
-    for y in range(14, 19):
-        cv.hline(1, y, 42, WOOD[4] if y % 2 == 0 else WOOD[3])
-    for x in range(1, 43):
-        detail.shade(cv, x, 14, 1)
-    cv.hline(1, 19, 42, WOOD[2]); cv.hline(1, 20, 42, WOOD[0])
-    for x in (1, 39):
-        post(cv, x, 1, 27, w=4, ramp=SLATE)
-    cv.hline(12, 4, 4, WOOD[1]); cv.hline(26, 16, 5, WOOD[2])
-    return cv
+def _slat(cv: Canvas, x0: int, y: int, length: int, top: bool, seed: int, vertical: bool = False):
+    """One timber slat with grain: a lit face (top) or a darker edge, a streak of grain
+    now and then, and a nail head near each end."""
+    for i in range(length):
+        x, yy = (x0, y + i) if vertical else (x0 + i, y)
+        c = WOOD[4] if top else WOOD[2]
+        if noise2(i // 3, y + x0, seed) > 0.72:
+            c = WOOD[3] if top else WOOD[1]  # grain
+        cv.set(x, yy, c)
+    for i in (2, length - 3):
+        x, yy = (x0, y + i) if vertical else (x0 + i, y)
+        cv.set(x, yy, SLATE[1])
+
+
+SHADE = (20, 26, 22, 96)  # a contact shadow under a seat, laid over whatever ground it stands on
+
+
+def bench(facing: str = 'south') -> Canvas:
+    """A park bench at the scale table's size (verticality.md 5: seat 7, back 13, length 32),
+    timber slats with grain and nail heads on cast-iron ends, a contact shadow under the
+    seat. facing 'south' looks at the camera; 'east' or 'west' turns it side-on to face a
+    view (its length runs up the screen, foreshortened to 20 px, the back on the far side).
+    Each is re-seated in the old 44 x 28 box (keep_foot), so its foot stays put."""
+    if facing == 'south':
+        cv = Canvas(32, 14, pad=PAD)
+        for y in (0, 3):  # the back: two rails between the iron back posts
+            _slat(cv, 2, y, 28, True, 31 + y)
+            _slat(cv, 2, y + 1, 28, False, 41 + y)
+        for y, top in ((5, True), (6, True), (7, False)):  # the seat seen from above, its front edge
+            _slat(cv, 1, y, 30, top, 51 + y)
+        cv.hline(1, 6, 30, WOOD[3]); cv.hline(1, 8, 30, WOOD[1])
+        for x in range(2, 30):  # a contact shadow under the seat
+            for y in (12, 13):
+                cv.set(x, y, SHADE)
+        for x0 in (1, 28):  # cast-iron ends: back post, arm scroll, front leg, foot
+            lit = x0 == 1
+            for y in range(0, 14):
+                if y < 5:
+                    cv.set(x0 + 1, y, SLATE[3] if lit else SLATE[2])
+                elif y == 5:
+                    cv.hline(x0, y, 3, SLATE[4] if lit else SLATE[3])  # the arm
+                else:
+                    cv.set(x0, y, SLATE[3] if lit else SLATE[1]); cv.set(x0 + 2, y, SLATE[2] if lit else SLATE[0])
+            cv.set(x0 + 1, 9, SLATE[1]); cv.set(x0 + 1, 10, SLATE[2])  # the stretcher between the legs
+            cv.hline(x0 - 1, 13, 5, SLATE[1])
+        return gp_keep_foot(cv, 44, 27)
+    # side-on: the bench runs up the screen (32 foreshortened to 20), so the seat shows as a
+    # strip of slats seen from above, the back as a thin rail rising on the far side, and the
+    # near cast-iron end faces the camera in profile: back post, arm scroll, seat, front leg
+    flip = facing == 'west'
+    cv = Canvas(12, 34, pad=PAD)
+    for y in range(28, 34):  # the contact shadow under the seat, east of the frame
+        for x in range(4, 11):
+            cv.set(x, y, SHADE)
+    for y in range(13, 28):
+        for x in (9, 10):
+            cv.set(x, y, SHADE)
+    for i, x in enumerate(range(4, 10)):  # the seat seen from above, slats running its length
+        _slat(cv, x, 6, 20, i % 2 == 0, 61 + i, vertical=True)
+    cv.hline(4, 6, 6, WOOD[4])
+    cv.hline(4, 26, 6, WOOD[2]); cv.hline(4, 27, 6, WOOD[1])  # the near end's edge
+    for i, x in enumerate((2, 3)):  # the back's rail, standing up behind the seat
+        _slat(cv, x, 0, 21, i == 0, 71 + i, vertical=True)
+    for y in (4, 12):
+        cv.set(1, y, SLATE[3]); cv.set(1, y + 1, SLATE[2])  # the back's far stays
+    for y in range(20, 34):  # the near iron end in profile
+        cv.set(1 + (y > 27), y, SLATE[3])  # the back post, kinking back at the seat
+    for x in range(1, 10):
+        cv.set(x, 22, SLATE[4] if x < 5 else SLATE[3])  # the arm
+    cv.set(10, 22, SLATE[2]); cv.set(10, 23, SLATE[2]); cv.set(9, 24, SLATE[1])  # its scroll
+    for y in range(24, 34):
+        cv.set(9, y, SLATE[2])  # the front leg
+        if y > 28:
+            cv.set(10, y, SLATE[0])
+    for x in range(2, 10, 2):
+        cv.set(x, 30, SLATE[1])  # the stretcher
+    cv.hline(0, 33, 4, SLATE[1]); cv.hline(8, 33, 4, SLATE[1])  # the feet
+    if flip:
+        out = Canvas(12, 34, pad=PAD)
+        src = cv.img.load(); p = cv.pad
+        for y in range(cv.h + 2 * p):
+            for x in range(cv.w + 2 * p):
+                c = src[x, y]
+                if c[3]:
+                    out.set(cv.w - 1 - (x - p), y - p, c)
+        cv = out
+    return gp_keep_foot(cv, 44, 27)
 
 
 def lamp() -> Canvas:
-    """A street lamp, 14 x 44: a round iron post, a glowing lantern with its frame and a
-    cap that shows its top."""
-    cv = Canvas(14, 44, pad=PAD)
-    post(cv, 6, 12, 41, w=3, ramp=SLATE)
-    cv.rect(3, 40, 9, 3, SLATE[2]); cv.hline(3, 40, 9, SLATE[4]); cv.hline(3, 42, 9, SLATE[0])
+    """A street lamp at the scale table's size (verticality.md 5: 56 tall): a fluted iron
+    post on a stepped plinth, a collar and a ladder bar under the lantern, a glowing
+    lantern with its frame, and a cap that shows its top. The lantern keeps its place at
+    the sprite's top (the renderer's light, LAMPS.lamp, is measured from there); the post
+    reaches 12 px further down, re-seated in the old 14 x 44 box (keep_foot)."""
+    cv = Canvas(14, 56, pad=PAD)
+    post(cv, 6, 12, 50, w=3, ramp=SLATE)
+    for y in range(16, 48, 4):
+        cv.set(7, y, SLATE[2])  # the post's fluting
+    cv.rect(5, 19, 5, 2, SLATE[3]); cv.hline(5, 19, 5, SLATE[4]); cv.hline(5, 21, 5, SLATE[1])  # a collar
+    cv.hline(2, 14, 11, SLATE[2]); cv.set(2, 15, SLATE[1]); cv.set(12, 15, SLATE[1])  # the ladder bar
+    cv.rect(4, 47, 7, 3, SLATE[2]); cv.hline(4, 47, 7, SLATE[4]); cv.vline(10, 47, 3, SLATE[0])
+    cv.rect(3, 50, 9, 3, SLATE[2]); cv.hline(3, 50, 9, SLATE[3]); cv.hline(3, 52, 9, SLATE[1])
+    cv.rect(2, 53, 11, 3, STONE[2]); cv.hline(2, 53, 11, STONE[4]); cv.hline(2, 55, 11, STONE[1])  # the stone plinth
     cv.rect(2, 2, 11, 10, SLATE[1]); cv.vline(2, 2, 10, SLATE[2])
     for (x, y) in rect_set(4, 4, 7, 6):
         d = abs(x - 6.5) + abs(y - 7)
@@ -115,7 +196,7 @@ def lamp() -> Canvas:
     cv.vline(7, 4, 6, SLATE[0]); cv.set(5, 5, PLASTER[5])
     cv.hline(1, 1, 13, SLATE[2]); cv.hline(1, 2, 13, SLATE[0]); cv.hline(4, 0, 7, SLATE[3])
     cv.hline(3, 12, 9, SLATE[1])
-    return cv
+    return gp_keep_foot(cv, 14, 42)
 
 
 def hedge(w: int) -> Canvas:
@@ -189,50 +270,75 @@ def library() -> Canvas:
 
 
 def house(roof=None, sign: bool = False) -> Canvas:
-    """A town house, 80 x 76, in the steep top-down view (the hut's rule): a slate roof
-    seen from above, a board gable, painted siding in the overhang's shadow, a recessed
-    arched door, windows with flower boxes, a stone chimney showing its cap and a
-    fieldstone footing."""
+    """A town house at the scale table's size (verticality.md 5: walls 44 to the eaves, a
+    32 px door, 16 x 12 windows, about 96 to the ridge), 80 wide, in the steep top-down
+    view (the hut's rule): a slate roof seen from above, a board gable with a round vent
+    (or the bindery's book plaque), painted siding in the overhang's shadow between corner
+    boards, a recessed arched door on a stone step with a boot scraper, windows with
+    flower boxes, a lamp bracket, a stone chimney showing its cap and a fieldstone
+    footing. Its foot stays where the old 76 px house stood (keep_foot)."""
     roof = roof or ROOF
-    w, h = 80, 76
+    w, h = 80, 98
     cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = 39.5, 20, 44, 44, 68
-    chim = rect_set(56, 8, 9, 13)
+    ridge, apex_y, eave_y, wall_top, wall_bottom = 39.5, 18, 46, 46, 90
+    chim = rect_set(56, 6, 9, 13)
     left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 2, 77, roof, hole=chim,
-                                       offset=lambda x, y: -1 if 65 <= x <= 68 and 10 <= y <= 24 else 0,
+                                       offset=lambda x, y: -1 if 65 <= x <= 68 and 8 <= y <= 22 else 0,
                                        seed=51 if sign else 53)
-    detail.stones(cv, 56, 12, 9, 9, STONE, seed=54, course=3)
-    cv.vline(56, 12, 9, STONE[3]); cv.vline(64, 12, 9, STONE[1])
-    cv.rect(55, 8, 11, 4, STONE[3]); cv.hline(55, 8, 11, STONE[4]); cv.rect(58, 9, 5, 2, NAP[0])
+    detail.stones(cv, 56, 10, 9, 9, STONE, seed=54, course=3)
+    cv.vline(56, 10, 9, STONE[3]); cv.vline(64, 10, 9, STONE[1])
+    cv.rect(55, 6, 11, 4, STONE[3]); cv.hline(55, 6, 11, STONE[4]); cv.rect(58, 7, 5, 2, NAP[0])
     gable = topdown_gable(cv, edge_y, 7, 72, apex_y, wall_top, WOOD if not sign else PLASTER, boards=not sign)
     if sign:  # the bindery: a little book plaque in the gable
         cv.rect(30, 30, 20, 9, WOOD[2]); cv.hline(30, 30, 20, WOOD[4]); cv.hline(30, 38, 20, WOOD[1])
         cv.rect(33, 32, 14, 5, PLASTER[5]); cv.vline(40, 32, 5, PLASTER[2]); cv.vline(43, 36, 3, NAP[3])
+        for (x, y) in gable:
+            if (x, y - 2) in gable and noise2(x // 2, y // 2, 61) > 0.62 and not (29 <= x <= 50 and 29 <= y <= 39):
+                cv.set(x, y, PLASTER[3] if x < ridge else PLASTER[2])
     else:
-        for (x, y) in disc(ridge, 33, 3.4):
-            cv.set(x, y, WOOD[4] if x + y < ridge + 32 else WOOD[1])
-        for (x, y) in disc(ridge, 33, 2.3):
+        for (x, y) in disc(ridge, 34, 3.4):
+            cv.set(x, y, WOOD[4] if x + y < ridge + 33 else WOOD[1])
+        for (x, y) in disc(ridge, 34, 2.3):
             cv.set(x, y, WTR[2] if x < ridge else WTR[1])
     detail.boards(cv, rect_set(7, wall_top, 66, wall_bottom - wall_top), PLASTER, 4, wall_top, seed=11, joints=False)
+    for (x, y) in rect_set(10, wall_bottom - 5, 60, 5):  # rain splash and grime above the footing
+        if noise2(x // 2, y, 62) > 0.4 + (wall_bottom - y) * 0.08:
+            detail.shade(cv, x, y, 1)
     proud = set()
     for x0 in (7, 70):
         for y in range(wall_top - 4, wall_bottom):
             if (x0, y) in gable or y >= wall_top:
                 cv.set(x0, y, WOOD[3]); cv.set(x0 + 1, y, WOOD[4]); cv.set(x0 + 2, y, WOOD[2] if x0 == 7 else WOOD[1])
                 proud |= {(x0 + i, y) for i in range(3)}
-    proud |= arched_door(cv, 32, 40, 16, 28)
+    for y in range(wall_top + 2, wall_bottom - 1):  # a downpipe beside the east corner board
+        cv.set(68, y, SLATE[2]); cv.set(69, y, SLATE[1])
+        if (y - wall_top) % 12 == 3:
+            cv.hline(67, y, 3, SLATE[3])
+        proud |= {(68, y), (69, y)}
+    proud |= arched_door(cv, 32, wall_bottom - 32, 16, 32)
+    cv.rect(29, wall_bottom, 22, 2, STONE[3]); cv.hline(29, wall_bottom, 22, STONE[4])  # the step
+    cv.hline(52, wall_bottom - 3, 3, SLATE[1]); cv.set(52, wall_bottom - 2, SLATE[2]); cv.set(54, wall_bottom - 2, SLATE[0])  # boot scraper
+    lx = 25  # a lamp on a bracket left of the door
+    cv.hline(lx, wall_bottom - 30, 4, SLATE[1]); cv.set(lx + 3, wall_bottom - 29, SLATE[1])
+    cv.rect(lx + 2, wall_bottom - 28, 3, 4, GOLD[3]); cv.set(lx + 2, wall_bottom - 28, GOLD[4])
+    cv.hline(lx + 2, wall_bottom - 29, 3, SLATE[2]); cv.hline(lx + 2, wall_bottom - 24, 3, SLATE[1])
+    proud |= rect_set(lx, wall_bottom - 30, 5, 7)
     family = NAP if sign else RED
     for wx in (13, 55):
-        shuttered_window(cv, wx, 49, 12, 10, shutters=None, warm=sign, sill=False)
-        cv.rect(wx - 1, 59, 14, 3, WOOD[2]); cv.hline(wx - 1, 59, 14, WOOD[4]); cv.hline(wx - 1, 61, 14, WOOD[1])
+        wy = wall_top + 8
+        shuttered_window(cv, wx, wy, 12, 16, shutters=None, warm=sign, sill=False)
+        cv.rect(wx - 1, wy - 2, 14, 2, WOOD[3]); cv.hline(wx - 1, wy - 2, 14, WOOD[4])  # the head trim
+        by = wy + 16
+        cv.rect(wx - 1, by, 14, 3, WOOD[2]); cv.hline(wx - 1, by, 14, WOOD[4]); cv.hline(wx - 1, by + 2, 14, WOOD[1])
         for i, x in enumerate(range(wx, wx + 12, 3)):
-            cv.set(x, 58, LEAF[3]); cv.set(x + 1, 58, LEAF[2])
-            cv.set(x, 57, family[3] if i % 2 else GOLD[3]); cv.set(x + 1, 57, family[4])
-        proud |= rect_set(wx - 1, 59, 14, 3)
+            cv.set(x, by - 1, LEAF[3]); cv.set(x + 1, by - 1, LEAF[2])
+            cv.set(x, by - 2, family[3] if i % 2 else GOLD[3]); cv.set(x + 1, by - 2, family[4])
+            cv.set(x + 1, by + 3, LEAF[2] if i % 2 else LEAF[1])  # trailing leaves
+        proud |= rect_set(wx - 1, by, 14, 3) | rect_set(wx - 1, wy - 2, 14, 2)
     detail.cast(cv, proud, 1, 1, k=2, on=PLASTER, reach=2)
     detail.overhang_shadow(cv, 7, 73, wall_top, lambda x: (4 if x < 13 or x > 66 else 2) + (x - 7) // 40, k=2, cap=1)
     detail.stones(cv, 5, wall_bottom, 70, 6, STONE, seed=13, course=3, moss=LEAF)
-    return cv
+    return gp_keep_foot(cv, 80, 76)
 
 
 def cafe_table() -> Canvas:
@@ -396,7 +502,7 @@ def props() -> dict[str, Canvas]:
     import garden_props as gp
     return {
         'tree': gp.tree(True), 'tree_small': gp.tree(False), 'tree_autumn': gp.tree(True, True),
-        'pine': gp.pine(), 'bush': gp.bush(), 'fountain': fountain(), 'bench': bench(), 'lamp': lamp(),
+        'pine': gp.pine(), 'bush': gp.bush(), 'fountain': fountain(), 'bench': bench(), 'bench_east': bench('east'), 'bench_west': bench('west'), 'lamp': lamp(),
         'hedge': hedge(96), 'library': library(), 'house_red': house(ROOF),
         'house_blue': house(BLUE_ROOF, sign=True), 'cafe': cafe_table(), 'cart': book_cart(),
         'cabin': cabin(), 'campfire': campfire(), 'boulder': boulder(True), 'stone': boulder(False),
