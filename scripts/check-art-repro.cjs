@@ -72,7 +72,7 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
       env,
       encoding: 'utf8',
       maxBuffer: 8 * 1024 * 1024,
-      timeout: 300_000, // zones.py paints the scenery past the world too (scripts/art/scenery.py)
+      timeout: 600_000, // zones.py paints the scenery past the world too (scripts/art/scenery.py), Cogsworth's since 20 Oct
     });
     if (result.stdout) log(result.stdout.trimEnd());
     if (result.stderr) log(result.stderr.trimEnd());
