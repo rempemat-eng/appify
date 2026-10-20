@@ -798,12 +798,27 @@ def main():
         foot_h = 22 if key in ('hut', 'stall') else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 7
         for yy in range(y + s.h - foot_h, y + s.h):
             for xx in range(x + 3, x + s.w - 3):
+                if key in ('fence_l', 'fence_r'):
+                    continue  # the fence's footing is blocked with the walk's edge rows below
+                if key == 'gate' and x + 9 <= xx < x + s.w - 9:
+                    continue  # the gate's way through, between its pillars
                 blocked.add((xx // cell, yy // cell))
     walk = []
     for r in range(rows):
         row = ''
         for c in range(cols):
-            edge = r * cell < 40 or r * cell >= meadow.FENCE_Y - 2
+            # the lower fence blocks only its own footing (review 07:53: the whole strip
+            # from the fence to the bottom edge was blocked, invisible walls at its ends
+            # and lawn under the rails): the posts' feet and the rails' line, a cell under
+            # and over it, across the full width (the runs end on strainer posts at both
+            # seams); the gate between its pillars stays open
+            y = r * cell
+            in_gate = meadow.GATE_X + 8 <= c * cell < meadow.GATE_X + meadow.GATE_W - 8
+            edge = y < 40 or (meadow.FENCE_Y + 10 <= y < meadow.FENCE_Y + 18 and not in_gate)
+            # the lawn outside the fence is open, but the garden still meets the town only
+            # at the gate's port (frames.PORTS 'garden|town' 144-176): its last row is closed
+            # either side of it
+            edge = edge or (y >= H - cell and not in_gate)
             row += '.' if ((c, r) not in blocked and not edge) else '#'
         walk.append(row)
     # Keep only cells the companion can reach from home (same bounds and moves
