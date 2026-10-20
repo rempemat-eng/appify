@@ -32,6 +32,42 @@ def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
 
 
+def despeckle(cv: Canvas, keep=frozenset(), passes: int = 2) -> Canvas:
+    """Detail comes in clusters of two or more pixels, never single-pixel noise (art-style.md,
+    the detail bar's cleanliness counts): a drawn pixel whose colour differs from all four
+    of its drawn neighbours takes the commonest of theirs. Pixels in `keep` (an eye, a
+    glint) stay as drawn; edge pixels with fewer than three drawn neighbours are left, so
+    silhouettes keep their tips."""
+    p = cv.pad
+    for _ in range(passes):
+        changed = []
+        for y in range(-p, cv.h + p):
+            for x in range(-p, cv.w + p):
+                c = cv.get(x, y)
+                if not c[3] or (x, y) in keep:
+                    continue
+                ns = [cv.get(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1))]
+                ns = [n for n in ns if n[3]]
+                if len(ns) >= 3 and all(n != c for n in ns):
+                    changed.append((x, y, max(ns, key=ns.count)))
+        for (x, y, c) in changed:
+            cv.set(x, y, c)
+        if not changed:
+            break
+    return cv
+
+
+def draw_rows(cv: Canvas, rows, inks: dict, x0: int = 0, y0: int = 0, flip: bool = False):
+    """Hand-placed pixel art: each character of `rows` is one pixel, '.' left clear and
+    any other character the colour `inks` gives it, drawn with its top-left at (x0, y0)
+    (mirrored east to west when `flip`). Small props drawn this way keep every mark a
+    cluster of two or more pixels, as the detail bar's cleanliness counts ask."""
+    for y, row in enumerate(rows):
+        for x, ch in enumerate(row[::-1] if flip else row):
+            if ch != '.':
+                cv.set(x0 + x, y0 + y, inks[ch])
+
+
 def keep_foot(cv: Canvas, w: int, h: int, dx: int | None = None) -> Canvas:
     """Re-seat a prop drawn at its true size (verticality.md 5, the scale table) in the
     nominal w x h box it had before, so its foot stays where the zones place it: the

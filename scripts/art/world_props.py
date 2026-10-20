@@ -10,7 +10,7 @@ than the companion, benches and tables at companion height.
 from __future__ import annotations
 
 import detail
-from garden_props import keep_foot as gp_keep_foot
+from garden_props import despeckle, draw_rows as gp_draw_rows, keep_foot as gp_keep_foot
 from garden_props import LEAF_SUN, G
 from garden_props import PAD, arched_door, canopy, plane, planks, post, rect_set, stone_blocks, topdown_gable, topdown_roof
 from garden_props import window as shuttered_window
@@ -437,6 +437,65 @@ def book_cart() -> Canvas:
     return cv
 
 
+# Snow ramps for roofs, darkest first: in sun (lilac-blue creases up to warm white crests
+# and a glint) and in cool shade. Each step is far enough from the next to stay its own
+# tone on screen.
+SNOW_SUN = ['#8494B4', '#98A8C6', '#ACBCD6', '#BECCE2', '#D0DCEC', '#E0E8F2', '#ECF1F6', '#F6F4EE', '#FFFFFF']
+SNOW_COOL = ['#526080', '#617092', '#7282A4', '#8292B4', '#92A2C2', '#A2B2CE', '#B2C2DA', '#C4D2E4']
+# the same steps a little lilac: every other pillow takes these, as drifts catch the sky
+SNOW_SUN_B = ['#8C8CB0', '#A0A0C4', '#B4B4D4', '#C6C8E0', '#D6DAEA', '#E4E8F4', '#EEF0FA', '#F8F8FC', '#FFFFFF']
+SNOW_COOL_B = ['#5A5A84', '#6A6A96', '#7A7CA8', '#8A8EB8', '#9A9EC6', '#AAB0D2', '#BAC0DE', '#CACEEA']
+# and a third family: warm cream where the low sun lies on a drift, sea-green in the shade
+SNOW_SUN_C = ['#9098A8', '#A4ACBA', '#B8BEC8', '#CACED4', '#DCDEDE', '#E8E8E2', '#F2F0E6', '#FCF8EC', '#FFFFFF']
+SNOW_COOL_C = ['#4E6478', '#5E768A', '#6E889C', '#7E98AA', '#8EA8B8', '#9EB6C4', '#AEC4D0', '#C0D2DC']
+
+
+def snow_pillows(cv: Canvas, pts, ramp, ridge: float, slope: float, seed: int = 0, ramp_b=None, ramp_c=None,
+                 bias: float = 0.62, pillow: float = 1.0):
+    """Snow lying on a roof plane seen steeply from above, as pillows drifted along the
+    plane's courses rather than one flat fill: the plane is split into small rounded cells
+    (jittered seeds, longer along the courses than down the slope), each shaded as a soft
+    mound lit on its upper left (so its tone runs through the ramp from a lit crest to a
+    blue-lilac crease where it meets the next pillow), each pillow a step lighter or darker
+    than its neighbours, and a glint on the odd crest. Every tone comes in clusters, never
+    single pixels."""
+    n = len(ramp)
+    seeds = []
+    for iu in range(-1, 30):
+        for js in range(-1, 20):
+            u = (iu * 5 + 2 * (js % 2) + int(noise2(iu, js, seed) * 3)) * pillow
+            s = (js * 4 + int(noise2(iu, js, seed + 1) * 2)) * pillow
+            seeds.append((u, s, iu, js))
+
+    for (x, y) in pts:
+        u = abs(x + 0.5 - ridge)
+        s = y - u * slope
+        near = sorted(((du / 3.0) ** 2 + (ds / 2.4) ** 2, du, ds, iu, js)
+                      for (su, ss, iu, js) in seeds
+                      for du, ds in ((u - su, s - ss),) if abs(du) < 9 and abs(ds) < 8)
+        if not near:
+            continue
+        d0, du, ds, iu, js = near[0]
+        gap = near[1][0] - d0 if len(near) > 1 else 9
+        sx = -du if x < ridge else du  # screen offset from the pillow's centre
+        lit = -(sx / 3.0 + (ds + du * slope) / 2.4) - 0.35 * d0  # a mound: crest lit, flanks fall away
+        t = (n - 2) * bias + lit * 1.5 + (noise2(iu, js, seed + 3) - 0.5) * 2.6
+        if gap < 0.35 and lit < 0.3:
+            t = min(t, 1.4 if gap > 0.12 else 0.4)  # the crease under a pillow's shaded side
+        t = int(max(0, min(n - 2, round(t))))
+        if t >= n - 3 and lit > 0.9 and noise2(iu, js, seed + 2) > 0.55:
+            t = n - 1  # a glint on a crest
+        pick = noise2(iu, js, seed + 4)
+        r = ramp_c if ramp_c and pick > 0.67 else ramp_b if ramp_b and pick > 0.34 else ramp
+        cv.set(x, y, r[min(t, len(r) - 1)])
+    for _ in range(2):  # no lone pixels: one that differs from all four neighbours takes the
+        for (x, y) in sorted(pts):  # commonest of them (detail comes in clusters)
+            c = cv.get(x, y)
+            ns = [cv.get(x + dx, y + dy) for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)) if (x + dx, y + dy) in pts]
+            if len(ns) >= 3 and all(v != c for v in ns):
+                cv.set(x, y, max(ns, key=ns.count))
+
+
 def cabin() -> Canvas:
     """The mountain cabin, 100 x 86, in the steep top-down view: a shingled roof under
     snow seen from above, a board gable, round logs with ringed ends at the corners,
@@ -447,40 +506,36 @@ def cabin() -> Canvas:
     chim = rect_set(66, 6, 10, 16)
     left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 96, WOOD, hole=chim, seed=61, moss=None)
     slope = (eave_y - apex_y) / (ridge - 3)
-    # B2 (Matt, 19 Oct 22:40: the roof's snow was one flat white, the snowfield's own tone,
-    # and read hollow): snow on two planes, the left lit warm white, the right in cool
-    # blue-grey shade, lying in soft drifts with a glint here and there; shingles showing
-    # along the ridge and the verges where the wind clears it; at the eaves a thick lip of
-    # snow over a dark drip edge, icicles hanging from it; the chimney's cool shadow on it.
-    SNOW_SHADE = ['#7E8EA6', '#98A8BE', '#B4C2D4']  # snow in shade, cooler and bluer than the field
-    rx = int(ridge)
-    for (x, y) in left | right:
-        top = 1 + abs(x + 0.5 - ridge) * slope
-        bottom = edge_y(x)
-        if abs(x + 0.5 - ridge) < 2.5 or x <= 4 or x >= 95:
-            continue  # the ridge and the verges stay clear: shingles show
-        if y < top + 1 or y > bottom - 2:
-            continue
-        lit = x < ridge
-        drift = noise2(x // 5, int(y - top) // 3, 64)
-        if lit:
-            col = SNOW[3] if drift > 0.35 else SNOW[2]
-            if noise2(x, y, 65) > 0.96:
-                col = '#FFFFFF'  # a glint
-        else:
-            col = SNOW_SHADE[2] if drift > 0.35 else SNOW_SHADE[1]
-        if y > bottom - 5:  # the lip of snow over the eave, rounded and thick
-            col = (SNOW[3] if y == int(bottom) - 4 else SNOW[2]) if lit else (SNOW_SHADE[2] if y == int(bottom) - 4 else SNOW_SHADE[1])
-        cv.set(x, y, col)
-    for x in range(5, 95):  # the drip edge under the lip, and icicles
-        if abs(x + 0.5 - ridge) < 2.5:
-            continue
-        ey = int(edge_y(x)) - 2
-        cv.set(x, ey, SNOW_SHADE[0] if x > ridge else SNOW[0])
-        if noise2(x, 3, 66) > 0.9 and (x < 30 or x > 70):
-            n = 2 + int(noise2(x, 4, 66) * 3)
-            for k in range(n):
-                cv.set(x, ey + 3 + k, '#DDEAF4' if k < n - 1 else '#F7FAFC')
+    # B2 (Matt, 19 Oct 22:40: the roof's snow was one flat white) and Claude A, 20 Oct
+    # 03:50 (the planes still had large flat areas and faint icicles): the snow lies in
+    # pillows drifted along the roof's courses, each lit on its upper left with a cool
+    # crease where it meets the next (snow_pillows); the left plane in warm white sun, the
+    # right in blue-grey shade; shingles show along the ridge, at the verges and in a few
+    # thin patches where the snow has slid; a line of bird tracks crosses the sunlit plane;
+    # at the front a thick rounded lip over a dark drip edge with icicles hanging from it;
+    # the chimney's cool shadow on the snow.
+    snowy = {(x, y) for (x, y) in left | right
+             if abs(x + 0.5 - ridge) >= 2.5 and 4 < x < 95
+             and 2 + abs(x + 0.5 - ridge) * slope <= y <= edge_y(x) - 2}
+    thin = {(x, y) for (x, y) in snowy  # where the snow has slid: the shingles show through
+            if noise2(int(x + 0.5 - ridge) // 7, int(y - abs(x + 0.5 - ridge) * slope) // 4, 67) > 0.93
+            and edge_y(x) - y > 6}
+    snow_pillows(cv, {p for p in snowy if p[0] < ridge} - thin, SNOW_SUN, ridge, slope, seed=68, ramp_b=SNOW_SUN_B, ramp_c=SNOW_SUN_C,
+                 bias=0.68, pillow=0.85)
+    snow_pillows(cv, {p for p in snowy if p[0] > ridge} - thin, SNOW_COOL, ridge, slope, seed=69, ramp_b=SNOW_COOL_B, ramp_c=SNOW_COOL_C,
+                 bias=0.74)
+    for (x, y) in thin:  # a thin crust on the exposed shingles' upper edges
+        if (x, y - 1) in snowy and (x, y - 1) not in thin:
+            cv.set(x, y, SNOW_SUN[4] if x < ridge else SNOW_COOL[4])
+    for (x, y) in sorted(snowy):  # the lip of snow over the front verge, rounded and thick
+        d = edge_y(x) - 2 - y
+        if d < 3 and (x, y) not in thin:
+            r = SNOW_SUN if x < ridge else SNOW_COOL
+            cv.set(x, y, r[-2] if d == 2 else r[-4] if d == 1 else r[2])
+    for i in range(7):  # a bird's tracks across the sunlit plane, in pairs
+        tx, ty = 14 + i * 4, int(16 + i * 4 * slope * 0.35) + 6
+        if (tx, ty) in snowy and (tx + 1, ty + 1) in snowy:
+            cv.set(tx, ty, SNOW_SUN[2]); cv.set(tx + 1, ty + 1, SNOW_SUN[2])
     detail.stones(cv, 66, 10, 10, 12, STONE, seed=63, course=3)
     cv.vline(66, 10, 12, STONE[3]); cv.vline(75, 10, 12, STONE[1])
     cv.rect(65, 6, 12, 4, SNOW[2]); cv.hline(65, 5, 12, SNOW[3]); cv.hline(66, 4, 10, SNOW[3]); cv.rect(68, 7, 6, 2, NAP[0])  # its snow cap
@@ -489,6 +544,18 @@ def cabin() -> Canvas:
             if (x, y) in right and cv.get(x, y)[:3] != (0, 0, 0):
                 detail.shade(cv, x, y, 1)
     topdown_gable(cv, edge_y, 8, 91, apex_y, wall_top, WOOD)
+    for x in range(5, 95):  # the drip edge under the lip, and icicles
+        if abs(x + 0.5 - ridge) < 2.5:
+            continue
+        ey = int(edge_y(x)) - 2
+        cv.set(x, ey + 1, SNOW_COOL[1] if x > ridge else SNOW[1])  # the lip hangs over the barge
+        cv.set(x, ey + 2, SNOW_COOL[0] if x > ridge else SNOW[0])
+        if noise2(x // 2, 3, 66) > 0.72 and x % 2 == 0:
+            n = 2 + int(noise2(x, 4, 66) * 4)
+            for k in range(n):
+                cv.set(x, ey + 4 + k, '#F7FAFC' if k == 0 else '#C8DCEC' if k < n - 1 else '#9FB8D0')
+                if k < n - 2:
+                    cv.set(x + 1, ey + 4 + k, '#9FB8D0' if x < ridge else '#7E8EA6')
     for i, y in enumerate(range(wall_top, wall_bottom, 5)):
         for x in range(8, 92):
             for r, t in enumerate((4, 3, 3, 2, 1)):
@@ -541,31 +608,126 @@ def boulder(big: bool = True) -> Canvas:
     return cv
 
 
-def cairn() -> Canvas:
-    """A trail cairn, 20 x 34: stacked stones and a little lilac flag."""
+LICHEN = ['#8E9A4E', '#B8C070', '#D8A050']  # grey-green and yellow lichen, an orange crust
+
+
+def _cairn_stone(cv: Canvas, cx: float, base: int, rw: float, rh: float, seed: int):
+    """One flat field stone in a cairn, seen a little from above: an irregular slab (its
+    outline nudged per column), its top face lit, its front a step down, its east end in
+    shade and its underside dark where it beds on the stone below; a crack, and lichen in
+    clusters of two on its top."""
+    pts = set()
+    for x in range(int(cx - rw), int(cx + rw) + 1):
+        u = (x + 0.5 - cx) / rw
+        if abs(u) > 1:
+            continue
+        hh = rh * (1 - u * u) ** 0.35
+        top = base - hh - int(noise2(x // 2, seed, 401) * 1.6)
+        for y in range(int(round(top)), base + 1):
+            pts.add((x, y))
+    if not pts:
+        return set()
+    ys = [y for _, y in pts]
+    y0 = min(ys)
+    for (x, y) in pts:
+        u = (x + 0.5 - cx) / rw
+        col_top = min(yy for (xx, yy) in pts if xx == x)
+        d = y - col_top
+        if d <= 1:
+            t = 4 if u < 0.2 and d == 0 else 3  # the top face, lit
+        elif y >= base:
+            t = 0  # bedded on the stone below
+        else:
+            t = 2 if u < 0.45 else 1  # the front, its east end in shade
+        if u > 0.75 and d > 1:
+            t = max(0, t - 1)
+        if 0 < t < 4 and y < base:  # the stone's grain: blotches two pixels across, a tone up or down
+            m = noise2((x + seed) // 2, y // 2, 404)
+            t += 1 if m > 0.78 and t < 3 else -1 if m < 0.2 else 0
+        cv.set(x, y, STONE[t])
+    cx_i = int(cx + rw * 0.2)
+    if (cx_i, base - 1) in pts and (cx_i + 1, base - 2) in pts:  # a crack in the front
+        cv.set(cx_i, base - 1, STONE[1]); cv.set(cx_i + 1, base - 2, STONE[1])
+    for i in range(3):  # lichen on the top face and front, in pairs
+        lx = int(cx - rw * 0.6 + noise2(i, seed, 402) * rw)
+        col = [yy for (xx, yy) in pts if xx == lx]
+        if col and (lx + 1, min(col)) in pts:
+            c = LICHEN[int(noise2(i, seed, 403) * 3)]
+            cv.set(lx, min(col), c); cv.set(lx + 1, min(col), c)
+    return pts
+
+
+def cairn(variant: str = 'a') -> Canvas:
+    """A trail cairn (it was a cone of identical slabs), 20 x 34: field stones of three
+    sizes stacked by walkers, each a different slab lying a little askew (_cairn_stone),
+    lit on its top and shaded at its east end, dark where it beds on the one below, with
+    lichen on the older, lower stones; a weathered ribbon on a stick wedged in the top as
+    the trail's marker, and loose stones at its foot. Variant 'b' is a younger, lower
+    cairn of four stones and no ribbon, for a side path."""
     cv = Canvas(20, 34, pad=PAD)
-    y = 32
-    for (rw, rh) in ((18, 6), (14, 5), (11, 5), (8, 4), (6, 4)):
-        stone = oval(10, y - rh / 2, rw / 2, rh / 2)
-        for (x, yy) in stone:
-            nx = (x + 0.5 - 10) / (rw / 2)
-            ny = (yy + 0.5 - (y - rh / 2)) / (rh / 2)
-            cv.set(x, yy, STONE[4] if -0.6 * nx - 0.8 * ny > 0.6 else STONE[3] if ny < 0.3 else STONE[2])
-        y -= rh - 1
-    plane(cv, rect_set(10, 2, 1, 10), WOOD, 1)
-    plane(cv, rect_set(11, 2, 6, 4), NAP, 3)
-    return cv
+    foot = 31
+    if variant == 'b':
+        layers = ((10, 8.5, 3.5), (9.5, 6, 3), (11, 4.5, 2.5), (10, 3, 2))
+    else:
+        layers = ((10, 8.5, 3.5), (9, 7.5, 3), (11, 6, 3), (9.5, 5, 2.5), (10.5, 4, 2.5), (10, 2.5, 2))
+    for x in range(2, 18):  # its contact shade
+        cv.set(x, foot + 1, (20, 26, 22, 110))
+    y = foot
+    for i, (cx, rw, rh) in enumerate(layers):
+        _cairn_stone(cv, cx, y, rw, rh, seed=i * 7 + (3 if variant == 'b' else 0))
+        y -= int(rh) + 1
+    top = y + 1
+    for (px, py, r) in ((3, foot, 1.5), (16, foot, 1.2), (14, foot + 1, 1)):  # loose stones at the foot
+        for (x, yy) in disc(px, py - 0.5, r):
+            cv.set(x, yy, STONE[3] if x < px else STONE[2])
+    for (gx, kind) in ((2, 3), (5, 0), (13, 5), (17, 1)):  # grass grown up round its foot
+        detail.grass_tuft(cv, gx, foot, kind, MATERIALS['grass'], 2)
+    for (mx, my) in ((4, foot - 1), (6, foot - 2), (16, foot - 1)):  # moss on the bottom stone
+        cv.set(mx, my, LEAF[2]); cv.set(mx + 1, my, LEAF[3] if mx < 10 else LEAF[1])
+    if variant != 'b':  # the marker: a stick wedged in the top, a faded ribbon on it
+        for yy in range(top - 9, top + 1):
+            cv.set(11, yy, WOOD[3] if yy < top - 1 else WOOD[2])
+        cv.set(12, top - 9, NAP[3]); cv.set(13, top - 9, NAP[3]); cv.set(14, top - 8, NAP[2]); cv.set(15, top - 8, NAP[2])
+        cv.set(12, top - 8, NAP[2]); cv.set(13, top - 8, NAP[2]); cv.set(14, top - 7, NAP[1]); cv.set(15, top - 7, NAP[1])
+    return despeckle(cv)
+
+
+# A mallard drake facing east on the water, drawn pixel by pixel at its true size (about
+# a third of a 25 px adult's height), every mark a cluster of two or more pixels but the
+# eye (to-b-1210). G/g the bottle-green head, its sheen on the crown, e the eye, Y/y the
+# bill lit and shaded, w the white collar, C/c the chestnut breast, b/B/d the grey flank
+# lit to shade, W the folded wing, p the blue speculum, K/k the black tail and its curl,
+# and r a ring of its wake at the stern; the outline is its waterline.
+DUCK_ROWS = (
+    '.......GG....',
+    '......gGGG...',
+    '......ggeGYY.',
+    '......ggggyy.',
+    '......www....',
+    'KK.bbbbbCCC..',
+    'kKbWWWbbbCCc.',
+    'kkbWppbbbbcc.',
+    'rrddBBBBBBddd',
+)
+DUCK_INKS = {
+    'g': LEAF[0], 'G': LEAF[1], 'y': GOLD[2], 'Y': GOLD[3],
+    'e': '#141018', 'w': CREAM[3], 'c': WOOD[1], 'C': WOOD[2], 'b': STONE[4], 'B': STONE[3],
+    'd': STONE[2], 'W': CREAM[0], 'p': NAP[2], 'k': SLATE[0], 'K': STONE[1],
+    'r': (198, 221, 238, 150),
+}
 
 
 def duck() -> Canvas:
-    """The park's duck, 14 x 10."""
+    """The park's duck (A9: it was a white blob): a mallard drake at its true size, about
+    a third of an adult's height, sitting on the water facing east, drawn pixel by pixel
+    (DUCK_ROWS) in the old 14 x 10 box, so the park's placement and walk grid stay as they
+    were: a bottle-green head with a sheen on its crown, a yellow bill, the white collar,
+    a chestnut breast, grey flanks lit from the upper left, the folded wing with its blue
+    speculum, a black tail with its curl and a ring of its wake at the stern; drawn a
+    pixel in from the box's edge so its outline fills the box. Claude A's animal frames
+    paddle and preen it."""
     cv = Canvas(14, 10, pad=PAD)
-    for (x, y) in oval(6.5, 6.5, 5.5, 3):
-        cv.set(x, y, CREAM[3] if y < 6 else CREAM[2])
-    for (x, y) in disc(10.5, 3, 2.3):
-        cv.set(x, y, LEAF[2] if y < 3 else LEAF[1])
-    cv.set(13, 3, GOLD[3]); cv.set(11, 2, STONE[0])
-    cv.hline(3, 6, 4, CREAM[1])
+    gp_draw_rows(cv, DUCK_ROWS, DUCK_INKS, 1, 1)
     return cv
 
 
@@ -588,7 +750,7 @@ def props() -> dict[str, Canvas]:
         'hedge': hedge(96), 'library': library(), 'house_red': house(ROOF),
         'house_blue': house(BLUE_ROOF, sign=True), 'cafe': cafe_table(), 'cart': book_cart(),
         'cabin': cabin(), 'campfire': campfire(), 'boulder': boulder(True), 'stone': boulder(False),
-        'cairn': cairn(), 'duck': duck(),
+        'cairn': cairn(), 'cairn_b': cairn('b'), 'duck': duck(),
         'crate': gp.crate(), 'barrel': gp.barrel(), 'potted_plant': gp.potted_plant(), 'sack': gp.sack(),
     }
 

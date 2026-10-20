@@ -256,17 +256,74 @@ def mossy_log() -> Canvas:
     return cv
 
 
+CAP_RED = [RED[0], RED[1], RED[2], RED[3], RED[4]]
+CAP_BROWN = ['#3E2618', '#6A4026', '#94603A', '#B8844E', '#D8AA70']  # a penny bun's cap
+STEM = ['#8A7E6A', '#BFB49C', '#E6DECA', '#F6F1E4']
+
+
+# The fairy ring's mushrooms, drawn pixel by pixel so every mark is a cluster (to-b-1210:
+# no lone specks). a/R/d a fly agaric's cap lit to shade, W its white warts (pairs), b/B/e
+# a penny bun's cap, g the gills' shadow under a cap, c a penny bun's pale sponge, s/S a
+# stem lit and shaded.
+SHROOMS = {
+    'agaric': ('.aaRR.',
+               'aaWWRd',
+               'WWRRdd',
+               '.gggg.',
+               '..sS..',
+               '..sS..'),
+    'agaric_s': ('.aRR.',
+                 'aaRdd',
+                 '.ggg.',
+                 '..sS.',
+                 '..sS.'),
+    'bun': ('.bbBB.',
+            'bbBBBe',
+            'BBBBee',
+            '.cccc.',
+            '..sS..',
+            '.ssSS.'),
+    'bun_s': ('.bBB.',
+              'bbBee',
+              '.ccc.',
+              '..sS.',
+              '..sS.'),
+}
+SHROOM_INKS = {'a': RED[3], 'R': RED[2], 'd': RED[1], 'W': '#F6F1E4', 'b': '#D8AA70', 'B': '#B8844E',
+               'e': '#94603A', 'g': '#5A4A3A', 'c': '#E6DECA', 's': '#E6DECA', 'S': '#BFB49C'}
+
+
 def mushroom_ring() -> Canvas:
-    """A fairy ring of red-capped toadstools, 40 x 20, white spots lit on the caps."""
+    """A fairy ring (fault 04: it was a grid of one mushroom; to-b-1210: no lone specks),
+    40 x 20: the ring of richer, darker grass the fungus feeds under the turf, an oval
+    seen at the three-quarter view, and the fruiting bodies standing on it in clumps as
+    they really come up: fly agaric (red caps with white warts in pairs, lit on the upper
+    left, the gills' shadow under the cap) in a clump of three at the west and two at the
+    back, penny buns (brown caps over pale sponge on fat stems) in a clump of three at the
+    east and two strays at the front, each with its own small shade down-right, and two
+    fallen leaves. Drawn back to front so the near ones overlap the far."""
     cv = Canvas(40, 20, pad=PAD)
-    for k in range(9):
-        a = 2 * math.pi * k / 9
-        mx, my = int(20 + 16 * math.cos(a)), int(10 + 7 * math.sin(a))
-        cv.vline(mx, my, 4, '#EEE6D0')
-        for (x, y) in oval(mx, my, 2.6, 1.8):
-            if y <= my:
-                cv.set(x, y, RED[3] if x < mx else RED[2])
-        cv.set(mx - 1, my - 1, '#FFFFFF')
+    cx, cy, rx, ry = 20, 12, 16.5, 5.5
+    for (x, y) in oval(cx, cy, rx + 1.5, ry + 1.5):  # the ring of darker grass, in 2 x 2 clumps
+        rr = math.hypot((x + 0.5 - cx) / (rx + 1.5), (y + 0.5 - cy) / (ry + 1.5))
+        inner = math.hypot((x + 0.5 - cx) / (rx - 2.5), (y + 0.5 - cy) / (ry - 2))
+        if inner > 1 and rr <= 1 and noise2(x // 3, y // 2, 291) > 0.2:
+            cv.set(x, y, (40, 64, 40, 115))
+    # (kind, x, top) back to front: the foot of each is its top plus its height
+    clumps = (('agaric_s', 13, 3), ('agaric', 16, 1),  # two at the back
+              ('bun_s', 27, 3),
+              ('agaric', 2, 6), ('agaric_s', 7, 8), ('agaric', 5, 10),  # the west clump
+              ('bun', 31, 7), ('bun_s', 36, 9), ('bun', 33, 11),  # the east clump
+              ('bun_s', 14, 14), ('bun', 21, 13))  # two at the front
+    for (kind, x, top) in clumps:
+        rows = SHROOMS[kind]
+        foot = top + len(rows)
+        stem = rows[-1].index('s')
+        for dx in range(stem, stem + 3):  # its own small shade, down-right of the stem
+            cv.set(x + dx, foot, (20, 26, 22, 90))
+        gp.draw_rows(cv, rows, SHROOM_INKS, x, top)
+    for (x, y, c0, c1) in ((10, 17, GOLD[3], GOLD[2]), (28, 17, RED[3], RED[2])):  # fallen leaves, lit end west
+        cv.hline(x, y, 2, c0); cv.hline(x + 2, y, 2, c1)
     return cv
 
 
@@ -294,18 +351,79 @@ def hollow_tree() -> Canvas:
     return cv
 
 
-def fern() -> Canvas:
-    """A fern, 26 x 18: arching fronds with paired leaflets, lit along their tops."""
+FERN_TIP = '#D2DC86'  # the sun on a frond's tip (garden_props.LEAF_SUN of the leaf's lightest)
+FERN_INKS = LEAF + [FERN_TIP]
+
+
+def _frond_rib(bx: int, by: int, p1, p2, k: float) -> list[tuple[int, int]]:
+    """A frond's rib from the crown (bx, by) through the bend p1 to the tip p2, scaled by k,
+    as a 4-connected run of pixels (a diagonal step would leave its pixels touching only
+    at their corners, which reads as speckle)."""
+    path: list[tuple[int, int]] = []
+    for i in range(200):
+        t = i / 199
+        u = 1 - t
+        p = (int(round(bx + (2 * u * t * p1[0] + t * t * p2[0]) * k)),
+             int(round(by + (2 * u * t * p1[1] + t * t * p2[1]) * k)))
+        if path and p == path[-1]:
+            continue
+        if path and abs(p[0] - path[-1][0]) + abs(p[1] - path[-1][1]) == 2:
+            path.append((p[0], path[-1][1]) if abs(p2[1]) > abs(p2[0]) else (path[-1][0], p[1]))
+        path.append(p)
+    return path
+
+
+def fern(small: bool = False) -> Canvas:
+    """A clump of fern (fault 03: it was a flat triangle of strokes; to-b-1210: no lone
+    specks), 26 x 18, or a young one (`small`) about two thirds the size, within the size
+    guide's fern (8 to 16 px tall). Seven fronds fan out of a dark crown, each a lit rib
+    with its leaflets as short runs across it: on the side facing the upper-left light
+    the leaflets stand apart in a lighter green, alternate steps along the rib, with the
+    outline's dark between them (the feather that says fern); on the shaded side they
+    overlap into one darker edge, and toward the tip they shorten and catch the sun. The
+    two fronds at the back stand in the clump's own shade and read as solid dark blades,
+    the low front ones are the lightest. Its foot stays on the old 26 x 18 box's bottom
+    row."""
     cv = Canvas(26, 18, pad=PAD)
-    for k in range(7):
-        a = math.pi * (0.1 + 0.8 * k / 6)
-        for t in range(12):
-            x = int(13 - math.cos(a) * t)
-            y = int(16 - math.sin(a) * t * 0.9 + (t * t) * 0.03)
-            cv.set(x, y, LEAF[3] if t % 2 else LEAF[2])
-            if t % 2 == 0 and t > 2:
-                cv.set(x, y - 1, LEAF[4])
-    return cv
+    k = 0.62 if small else 0.86
+    bx, by = 13, 16
+    # (bend, tip, base tone, leaflet length near the crown), back to front
+    fronds = (((5, -10), (11, -13), 1, 2), ((-5, -10), (-11, -13), 1, 2),
+              ((9, -6), (14, -5), 2, 3), ((-9, -6), (-14, -5), 3, 3),
+              ((1, -9), (2, -15), 2, 3),
+              ((5, -2), (11, 0), 2, 2), ((-5, -2), (-11, 0), 3, 2))
+    for fi, (p1, p2, base, ll0) in enumerate(fronds):
+        path = _frond_rib(bx, by, p1, p2, k)
+        n = len(path)
+        for i, (x, y) in enumerate(path):
+            if i < 2:
+                continue
+            t = i / (n - 1)
+            j1, j0 = min(n - 1, i + 1), max(0, i - 1)
+            vertical = abs(path[j1][1] - path[j0][1]) >= abs(path[j1][0] - path[j0][0])
+            if fi < 2:  # a back frond, in shade: a solid blade three pixels wide
+                for sd in (1, -1):
+                    ox, oy = (sd, 0) if vertical else (0, sd)
+                    if t < 0.9:
+                        cv.set(x + ox, y + oy, FERN_INKS[base + (1 if (ox < 0 or oy < 0) and t > 0.4 else 0)])
+                continue
+            side = 1 if (i + fi) % 2 else -1
+            ll = ll0 if t < 0.45 else max(2, ll0 - 1) if t < 0.85 else 1
+            if t > 0.92:
+                ll = 0
+            ox, oy = (side, 0) if vertical else (0, side)  # a leaflet: a straight run across the rib
+            lit = ox < 0 or oy < 0
+            tone = base + 1 + (1 if t > 0.6 else 0) if lit else base
+            for m in range(1, ll + 1):
+                cv.set(x + ox * m, y + oy * m, FERN_INKS[min(5, tone)])
+            if lit and t < 0.85:  # the shaded side's leaflets overlap into one darker edge
+                for m in range(1, max(1, ll - 1) + 1):
+                    cv.set(x - ox * m, y - oy * m, FERN_INKS[base])
+        for (x, y) in path:
+            cv.set(x, y, FERN_INKS[base])
+    for (x, y) in oval(bx, by, 3.0, 1.2):  # the dark crown the fronds rise from
+        cv.set(x, y, LEAF[0])
+    return gp.despeckle(cv, passes=3)
 
 
 def forest_bench() -> Canvas:
@@ -1831,7 +1949,7 @@ def props() -> dict[str, Canvas]:
         'skep': beehive('skep'), 'skep_f1': beehive('skep', 1), 'skep_f2': beehive('skep', 2),
         'willow': willow(), 'reeds': reeds(), 'water_mill': water_mill(),
         **{f'water_mill_f{n}': water_mill(n * math.pi / 24) for n in range(1, 6)}, 'heron': heron(), 'lily_pads': lily_pads(),
-        'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(),
+        'mossy_log': mossy_log(), 'mushroom_ring': mushroom_ring(), 'hollow_tree': hollow_tree(), 'fern': fern(), 'fern_small': fern(small=True),
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
         'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(), 'station_house': station_house(),
         'semaphore': semaphore(), 'standing_stone': standing_stone(0, True), 'standing_stone_b': standing_stone(3, True),
