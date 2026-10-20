@@ -2,7 +2,18 @@
 
 Matt, 20 Oct 01:05: "i want players to progressively unlock more of the world through tasks that ask the user to not use their phone or via in game currency etc."
 
-**Status: a proposal for Matt to review.** Nothing here is built. This file designs the mechanism and its economy. Where each gate stands in the redrawn world is `world-plan.md` (written alongside this); the ways listed below are drawn from today's world and get matched to that plan's gates when it lands. Once Matt approves, this replaces two earlier lines: "Gates are soft and use rules that exist … any new kind of gate waits for Matt" (`living-world-plan.md`) and "no fares, waiting schedules or travel unlocks" (Codex's connected-world proposal, draft #23).
+**Status: approved in principle by Matt (20 Oct, about 01:25); four decisions are recorded under "Decided" below and the rest stay open.** Nothing here is built yet. This file designs the mechanism and its economy. Where each gate stands in the redrawn world is `world-plan.md` (written alongside this); the ways listed below are drawn from today's world and get matched to that plan's gates when it lands. Matt's approval replaces two earlier lines: "Gates are soft and use rules that exist … any new kind of gate waits for Matt" (`living-world-plan.md`, now updated) and "no fares, waiting schedules or travel unlocks" (Codex's connected-world proposal, draft #23).
+
+## Decided (Matt, 20 Oct, about 01:25)
+
+From his answers to the open questions in section 7 (questions 1, 2, 4 and 8; question 4 is the pace question):
+
+1. **Either route opens each way** (question 2). A rest task or GRASS opens every way on the road; GRASS chipped in comes back if the task opens the way first; shortcuts and comforts are GRASS only.
+2. **At most one way opens a day** (question 4, the pace question).
+3. **Rests run in real time when unlocks ship** (question 1). Demo speed stays as a developer switch for testing.
+4. **C9 comes first** (question 8). GRASS must be impossible to lose in raids (C9, draft #18) before ways ship to players.
+
+Still open: questions 3, 5, 6, 7, 9, 10 and 11.
 
 This is a new game rule, not an art or HUD pass. It is kept in its own module, its own save field and its own store actions so it can be reviewed, tested and switched off on its own (AGENTS.md: decorative interactions stay free, existing rules stay unchanged).
 
@@ -296,16 +307,16 @@ Where the player meets ways, all in the pixel frames, the pixel font and the HUD
 - Keys, items, combat or puzzles at gates.
 - Where exactly each barrier is drawn (that is `world-plan.md` and the region owners' art).
 
-## 7. Open questions for Matt
+## 7. Questions for Matt (1, 2, 4 and 8 decided on 20 Oct)
 
-1. **Real time or demo time?** The game counts one real second as a minute. Ways at demo speed would all open within an hour of play. _Recommendation:_ build ways on one time constant, test at demo speed, and ship them to players only with real-duration rests (the next item in `break-experience.md`), keeping demo speed as a developer switch.
-2. **Either route, or tasks for regions and GRASS for comforts?** _Recommendation:_ either route opens every way on the road, GRASS chipped in comes back if the task wins, and shortcuts and comforts are GRASS only.
+1. **Real time or demo time?** _Decided 20 Oct: real time when unlocks ship, demo speed as a developer switch._ The game counts one real second as a minute. Ways at demo speed would all open within an hour of play. _Recommendation:_ build ways on one time constant, test at demo speed, and ship them to players only with real-duration rests (the next item in `break-experience.md`), keeping demo speed as a developer switch.
+2. **Either route, or tasks for regions and GRASS for comforts?** _Decided 20 Oct: either route, refunds if the task wins, shortcuts and comforts GRASS only._ _Recommendation:_ either route opens every way on the road, GRASS chipped in comes back if the task wins, and shortcuts and comforts are GRASS only.
 3. **Should paid work finish at the end of the next rest?** _Recommendation:_ yes (a rest of 10 minutes or more), so GRASS never unlocks while the player watches the screen and every opening happens while they are away.
-4. **One way a day at most?** _Recommendation:_ yes. It costs nobody anything and keeps each opening an event for committed players (all nine in about 17 days instead of about 8).
+4. **One way a day at most?** _Decided 20 Oct: yes._ _Recommendation:_ yes. It costs nobody anything and keeps each opening an event for committed players (all nine in about 17 days instead of about 8).
 5. **Which ways, in which order?** _Recommendation:_ the nine above, matched to the gates in `world-plan.md`, with the valley's heart (eight places) always open so day one is generous.
 6. **A gentle pace setting?** _Recommendation:_ yes, in the guide, halving every target and price, with no mark of it anywhere in the world.
 7. **Evenings by the clock or by the daily rhythm?** `lib/daily-rhythm.ts` is planning only and says it never awards anything. _Recommendation:_ evening means 18:00 to midnight by the clock for now; using the player's Rest window would make the rhythm a game rule, so it waits for your yes.
-8. **Ship after C9?** A lost raid still takes GRASS today, which could empty savings meant for a way (what is chipped in is safe). _Recommendation:_ build the module now, ship it to players after C9 makes GRASS impossible to lose.
+8. **Ship after C9?** _Decided 20 Oct: yes, C9 first._ A lost raid still takes GRASS today, which could empty savings meant for a way (what is chipped in is safe). _Recommendation:_ build the module now, ship it to players after C9 makes GRASS impossible to lose.
 9. **What does native screen-time data add, when it comes?** _Recommendation:_ nothing mechanical. If the player grants it, the companion can say "phone untouched, nice" after a rest, but ways open at the same pace for everyone, so web players and people who decline are never behind.
 10. **Existing players and testers.** _Recommendation:_ keep every place they have walked open (and the route to it), close the rest, and add a developer switch that opens every way, so play-testing the far regions does not need days of rest.
 11. **Lumen by GRASS too?** It is the end of the journey and the deepest rest. _Recommendation:_ keep both routes, for players who cannot take long rests.
@@ -314,7 +325,7 @@ Where the player meets ways, all in the pixel frames, the pixel font and the HUD
 
 | Order | What                                                                                                      | Owner                                                                    | Files                                                                                                                                                    |
 | ----- | --------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0     | Matt answers section 7; `world-plan.md` fixes where each barrier stands                                   | Matt, Claude A                                                           | this file, `world-plan.md`                                                                                                                               |
+| 0     | Matt answers the open questions; `world-plan.md` fixes where each barrier stands                          | Matt, Claude A                                                           | this file, `world-plan.md`                                                                                                                               |
 | 1     | The catalogue as data, the walk and travel helpers, `world-ways.test.ts`                                  | Claude A                                                                 | `lib/world-ways.ts`, `lib/world-places.ts`, `lib/region-walk.ts`, `lib/world-save.test.ts`                                                               |
 | 2     | Progress, settlement, chip-in, refunds, migration; `check:ways`                                           | Codex                                                                    | `lib/way-progress.ts` and its test, `lib/save-data.ts` (the `ways` shape)                                                                                |
 | 3     | Store actions and settlement in `tick()`/`wake()`; `WelcomeReward.ways`; the time constant                | Codex                                                                    | `lib/game.ts`, `lib/visitors.ts` (the reward type), `lib/game.integration.test.ts`                                                                       |
@@ -323,4 +334,4 @@ Where the player meets ways, all in the pixel frames, the pixel font and the HUD
 | 6     | The hub: way cards and walking in the valley, the NAP sheet's line, welcome back, the companion's lines   | Claude B                                                                 | `components/garden-world.tsx` and the hub layer; the NAP sheet and welcome back after checking their owner on the crew board                             |
 | 7     | Play-test at demo speed with the developer switch; then at real time once rests are real                  | Claude A                                                                 | the PR preview                                                                                                                                           |
 
-Steps 1 and 2 can run side by side once Matt has answered; step 3 waits for 2, step 5 for 1 and 3, step 6 for 3. Each step is its own PR, and none ships to players before open questions 1 and 8 are settled.
+C9 (no GRASS lost in raids, draft #18) comes before all of this (Matt, 20 Oct). Codex's steps are queued as C29 to C32 in `coherence-plan.md`. Steps 1 and 2 can run side by side; step 3 waits for 2, step 5 for 1 and 3, step 6 for 3. Each step is its own PR, and none ships to players before rests run in real time and C9 is merged.
