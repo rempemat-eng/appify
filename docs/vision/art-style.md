@@ -62,6 +62,18 @@ Matt pointed at Cainos' *Pixel Art Top Down - Village* (Unity Asset Store and it
 - **Every PR that changes art says what it was compared with**, shows the side-by-side crop, and gives the counts. Claude A does not merge art that misses the bar; it goes back with the crops that fall short.
 - **Phone limits still hold** (above): detail in clusters of two or more pixels, quiet ground where you walk, few live layers. Eastward manages its density on a 640 x 360 screen; ours is about the same width in art pixels, so the bar is reachable.
 
+## Eastward sets the detail, the setting sets the style (Matt, 20 Oct 10:15)
+
+"the level of detail here is fairly good but don't let eastward guide all of the stylistic parts (you have to consider the setting eastward is set in vs mine)". Eastward is the bar for craft: how much detail per patch, clean clusters, light and shade, lived-in density. It is not the source of forms, materials or palette. Eastward is a post-apocalyptic, worn, earthbound world; ours runs from a cosy valley through a steampunk junction, a frontier desert town, a castle and a fire country, a neon city and a space station to the moon. Each place takes its forms from its own setting, from real-world and genre references:
+
+- **The valley and the isles:** a cosy rural and coastal setting: dry stone, thatch and slate, hedgerows, clean, cared-for, bright.
+- **Cogsworth:** Victorian industry: brick, cast iron, rivets, glass roofs, soot, steam.
+- **Sunstone Reach:** a frontier town in the desert: sun-bleached timber, false fronts, adobe, corrugated iron, dust; Hearthold is a castle in dressed stone; the fire country is basalt, ash and glowing seams.
+- **Neon Harbour:** a dense harbour city at night: concrete, glass, signage, cables, steam from vents, wet reflections.
+- **Halcyon Station and Lumen (the moon):** engineered for vacuum: pressure shells and modules with panel seams, airlocks with frames, radiators, antennas, cable runs and footings; no brick or timber. The moon's ground is regolith (grey to brown-grey, no plants, no water), craters of every size with raised rims and lit and shadowed walls, ejecta and boulders, bootprints and rover tracks, hard-edged black shadows with no ambient fill, and a black sky past the horizon.
+
+And in every place, the drawing itself must make sense (Matt's 10:15 review of the first detail passes): a lit window is a window lit from inside, never a coloured slab laid over a facade; a doorway exists only where something meets it; banners hang where they read whole, not behind a roof that cuts them; posts and beams run unbroken and windows sit between them; a structure reads at a glance as what it is.
+
 ## The rules
 
 1. **Outlines.** Every object gets a 1 px outline in `outline` from `art/materials.json` (`#1E1917`, a warm near-black). Do not outline ground textures such as grass and dirt.
