@@ -55,16 +55,37 @@ Heights follow the size guide (an adult is 25 px). Every folk is drawn at more d
 | **Nix**, courier android in a hooded reflective jacket and a boxy delivery pack, a cracked face-screen showing a sleep glyph, 25 px                      | Neon Harbour's 3 a.m. courier who brought Dave his parcels; the night he sleeps, her route ends at his bench (she is the atlas's existing courier)         | Ward. **Do Not Disturb:** a still turn mutes the foe's next trick (a card's extra effect); two in a row reflect it                                      | Dave's story                           | "phone in another room"         | with Neon Harbour     |
 | **Mote**, a star of Dream Dust in a nightcap, floats, 15 px                                                                                              | Lumen's Dream Grove, the journey's end                                                                                                                     | Wildcard, never the strongest. **Dream:** once a fight, borrow your familiar's special early at half charge                                             | the end of the journey (Lumen)         | "lights out"                    | last                  |
 
-**How many, and in what order (Matt, 23:12: "start out with the simpler characters and then unlock those sorts of characters later on").** Ten folk in all, drawn from three roster sizes, graded independently (7, 10, 13; graded 44, 48 and 33 of 60). Games where each character has its own kit carry four to eight (Sea of Stars six, Octopath Traveler eight, Slay the Spire four or five); ten fits a long, slow game whose collection of creatures is already the visitors. The order goes from small nature folk to made ones:
+**Fourteen folk, and what the number means (Matt, 23:26: "i think 14 is a good number of total characters. maybe tie that number into the game").** Two independent drafts (the sky, the world) and two independent graders chose this together; both drafts arrived at the same symbol on their own.
 
-1. Launch, the simple valley folk: Bramble, Puffcap, Velvet.
-2. Cairn, the golem (the valley's own story, so early).
-3. Pendle, the steampunk automaton (Cogsworth).
-4. Puddle (the Lull), 5. Mirra (Sunstone), 6. Ashe (the fire country).
-5. Nix, the cyberpunk android (Neon Harbour).
-6. Mote, the journey's end.
+- **The symbol.** Fourteen nights take the moon from new to full. Each folk you meet lights one of fourteen stones in the woodland circle and one night of Lumen's moon; the fourteenth makes it full. It counts friends, never days: it never wanes, never times out, follows no real calendar and pays nothing.
+- **Where it shows (cheap, no chores):** the select screen is the circle of fourteen stones round a moon, unmet folk dark with a hint ("someone waits at the bothy"); the journal's cast page; on Lumen, fourteen crystal spires round the Dream Grove, lit one by one. No half-moon gate, no moon in every region's sky.
+- **One folk for each place on the journey,** simple nature folk first, then the woken and the made:
 
-A player resting daily meets about five in the first month (the starter, Cairn, Pendle and the other valley folk through the circle), then about one a month as regions open. If art time runs short, the cast stops at seven (the three starters, Cairn, Pendle, Nix, Mote), which keeps the golem and both machines. A second golem, **Mesa** (Dust Gulch's creek-bed adobe, woken when the creek runs again; heals only), is the only later addition considered. Golems are woken by places, machines are built by people: no golem on the Frostline or stacking pebbles (CAIRNLET), none glowing (GLIMMOTH).
+| Night  | Folk                                         | Home                |
+| ------ | -------------------------------------------- | ------------------- |
+| 1 to 3 | Bramble, Puffcap, Velvet (starters)          | the valley          |
+| 4      | Tally                                        | the Brackens        |
+| 5      | Tam                                          | the Frostline       |
+| 6      | Puddle                                       | the Lull            |
+| 7      | Cairn, the half moon: the first folk to wake | the woodland circle |
+| 8      | Pendle, the steampunk automaton              | Cogsworth           |
+| 9      | Mirra                                        | Sunstone            |
+| 10     | Ashe                                         | the fire country    |
+| 11     | Tuff, the second golem                       | the Tidebloom Isles |
+| 12     | Nix, the cyberpunk android                   | Neon Harbour        |
+| 13     | Bunk, the station robot                      | Halcyon Station     |
+| 14     | Mote, the full moon                          | Lumen               |
+
+The number is a label, never a gate: each folk joins when their region's story ends, in whatever order the player rests there. With every region built, a daily rester meets about six in the first month and all fourteen in about two months; in practice each ships with its region's rebuild.
+
+The four added folk:
+
+- **Tally**, lamb of the sheep-folk in a knitted fleece cardigan with a tally stick and a fold bell, 20 px; the drover's apprentice on the Brackens (bringing the flock in at dusk). Herder. **Counting Sheep:** each still turn a sheep hops into the fold (up to 3); next turn each adds a card to her hand (never energy).
+- **Tam**, marmot-folk in a bobble hat with a dented kettle on her rucksack, 19 px; the Snow Saddle hut warden's apprentice ("the bothy is always open"). Keeper. **Bothy:** still turns bank Warmth (up to 3); once a fight, a blow that would knock her out finds her curled up at 1 HP, healed by her Warmth. No one else survives a knockout.
+- **Tuff**, basalt golem of the isles' dormant volcano, drawn low and wide (about 22 px tall, 30 wide): glossy hexagonal columns, a fringe of sea thrift, a turtle asleep on his back, no moss (that is Cairn's). The naturalist has watched a boulder by the cove move an inch a year. Grower. **Overgrow:** each still turn grows a layer (thrift, frond, flower), each a small lasting boost; a heavy hit knocks the top one off.
+- **Bunk**, a barrel-shaped white station robot with magnetic boots, a sleeping bag rolled on its back and a slow-blinking visor, 22 px; built for Halcyon's sleep bay, unlocked by the sleep-bay keeper's story. Cycler. **Sleep Cycle:** a two-stage dial: deep gives a small heal, dream echoes the next card at half; a still turn holds the stage.
+
+Golems are woken by places (Cairn, Tuff); machines are built by people (Pendle, Nix, Bunk). Not folk: the allotments' clockwork gardener (a resident; TICKWREN and Pendle already carry clockwork), a second screen-faced android in Neon (its story folds into Nix's chapter). Cost: about 1,920 frames for all fourteen plus the familiar's perches; if art time runs short, the order above is also the order to stop in, and seven (the starters, Cairn, Pendle, Nix, Mote) still keep the golem and both machine styles.
 
 Three effects that weaken the foe's next card stay apart: Velvet softens damage, Puddle raises cost, Nix mutes tricks, each with its own icon. What a still turn can bank is capped and simulated before numbers are set.
 
@@ -83,7 +104,7 @@ Three effects that weaken the foe's next card stay apart: Velvet softens damage,
 | One folk                          | about 134 frames (110 body: four directions with west drawn, idle, walk, nap, react, hit, faint, victory, attack, cast; 24 effects), a portrait, a select card, four cards, a passive, card variants, lines |
 | The familiar on the shoulder      | about 40 frames for the three Grasslings, more as visitors are drawn for it                                                                                                                                 |
 | Launch (Bramble, Puffcap, Velvet) | about 440 frames; all three exist as exploration art Matt liked; no region story needed                                                                                                                     |
-| Everything else                   | Cairn, then one folk with each region's rebuild, Mote last: about 940 frames more (about 1,380 in all)                                                                                                      |
+| Everything else                   | one folk with each region's rebuild, Mote last: about 1,480 frames more (about 1,920 in all)                                                                                                                |
 
 What a folk earns: a new way to fight, a reason to finish a region's story (the apprentice), a face for a town, and a reason to choose where to rest. What it does not do: open places, pay more, or need daily play.
 
