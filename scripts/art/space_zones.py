@@ -18,8 +18,8 @@ def station(frame: int = 0):
     """Halcyon Station: the space elevator arrives through the airlock at the bottom into
     a hall of hydroponic troughs; through a bulkhead door the corridor runs up past the
     low-gravity ring and the garden pods of the atrium; the crew's sleep pods and
-    lockers stand on soft carpet in the west bay, the galley (warm deck boards, a round
-    table, tea) and the navigation consoles in the east, with the shuttle hatch to
+    lockers stand on soft carpet in the west bay, the galley (cream composite tiles, a
+    table bolted to the deck, tea) and the navigation consoles in the east, with the shuttle hatch to
     Lumen in the east wall; through the last bulkhead, the lounge under the long
     viewports, with benches, books and a telescope on the planet turning below. The
     hull is closed: Lumen is reached by shuttle, never on foot. It is a pressure vessel:
@@ -85,14 +85,20 @@ def station(frame: int = 0):
             cv.set(x, y, NAPm[1] if n > 0.5 else '#3E3560')
             if x == 103:
                 cv.set(x, y, NAPm[3])
-    # the galley: warm deck boards
+    # the galley: no timber on a space station (Claude A, 20 Oct 11:05), but warm cream
+    # composite deck tiles, easy to wipe, each lit along its top and west edge, with a
+    # teal trim where the galley meets the corridor
+    CREAMm = MATERIALS['cream']
     for y in range(180, 320):
         for x in range(216, W - 18):
-            c = WOODm[3] if (y // 6) % 2 else WOODm[2]
-            if y % 6 == 0 or (x + (y // 6) * 13) % 37 == 0:
-                c = WOODm[1]
-            if x == 216:
-                c = WOODm[4]
+            tx, ty = (x - 216) % 12, (y - 180) % 12
+            c = CREAMm[1] if noise2((x - 216) // 12, (y - 180) // 12, 354) > 0.3 else CREAMm[2]
+            if tx == 0 or ty == 0:
+                c = CREAMm[0]
+            elif tx == 1 or ty == 1:
+                c = CREAMm[3] if ty == 1 else CREAMm[2]
+            if x in (216, 217):
+                c = CYAN[2] if x == 216 else CYAN[1]
             cv.set(x, y, c)
     # bulkheads between the rooms, each with a lit doorway
     for by in (160, 470):
@@ -130,7 +136,7 @@ def station(frame: int = 0):
     objects = [
         ('view-1', 'viewport', 18, 8), ('view-2', 'viewport_b', 112, 8), ('view-3', 'viewport_c', 206, 8),
         # the lounge
-        ('shelf', 'bookshelf', 22, 104), ('bench-1', 'lounge_bench', 74, 120), ('bench-2', 'lounge_bench', 194, 120),
+        ('shelf', 'bookshelf', 24, 114), ('bench-1', 'lounge_bench', 83, 120), ('bench-2', 'lounge_bench', 203, 120),
         ('scope', 'telescope', 262, 98),
         # the atrium and its gardens
         ('pod-1', 'garden_pod', 128, 180), ('pod-2', 'garden_pod_b', 178, 372),
@@ -159,11 +165,10 @@ OPENINGS.update({'pressure_tube': (0, 28), 'pressure_tube_dock': (0, 28), 'hab_h
 
 # Lumen's base (M1). The moon has no air, no water on the surface and nights two weeks
 # long, so the companion and everyone with it live and walk only inside: a gangway from
-# the shuttle, a hub dug in under a berm of regolith (shielding from radiation and
-# micrometeorites), a corridor and an airlock, and the greenhouse dome where the plants
+# the shuttle, a hub (a pressure shell of plates on cradles), a corridor and an airlock, and the greenhouse dome where the plants
 # grow under lamps, watered from ice dug out of a crater in permanent shadow and powered
 # by solar arrays. Every pressurised volume is closed: the tubes and the airlock have
-# hulls, the hub a roof under its berm, the dome glass all over, so the plants and the
+# hulls, the hub its shell, the dome glass all over, so the plants and the
 # companion are seen through it (art-faults.md, faults 34 to 38, rule 10; Claude A's
 # review, 19 Oct 14:20). The floors under them are drawn too, for the walk.
 LUMEN_HUB = (90, 200, 230, 300)        # outer x0, y0, x1, y1 of the hub's berm
@@ -225,7 +230,7 @@ def lumen(frame: int = 0):
     melt water and a hammock under grow lamps. Outside, nothing grows: solar arrays
     turned to the sun, radiators, a mast, the ice rig at a crater whose floor never sees
     the sun, the old lander, boulders and craters."""
-    R, GLOWm, VOID = MATERIALS['regolith'], MATERIALS['glowflora'], MATERIALS['void']
+    R, GLOWm, VOID = spp.LUNAR, MATERIALS['glowflora'], MATERIALS['void']
     HULL, CYAN, NAPm = MATERIALS['hull'], MATERIALS['neon_cyan'], MATERIALS['nap']
     cv = Canvas(W, H)
     for y in range(H):  # the regolith: two tones of dust, fine bright grains
@@ -274,7 +279,7 @@ def lumen(frame: int = 0):
             else:  # the floor, half in the rim's hard shadow (no air, so no light fills it)
                 v = 0 if (dx + dy) * d < 0.25 else 2.6
             c = R[max(0, min(5, int(v)))]
-            cv.set(x, y, '#0C0B12' if v == 0 else c)
+            cv.set(x, y, '#0E0D0C' if v == 0 else c)
     # the rille: a winding collapsed lava tube across the south-west
     rille = worlds.thick([(-6, 392), (24, 420), (34, 470), (14, 520), (30, 560), (22, H + 6)], 6, seed=367)
     for (x, y) in rille:
@@ -306,7 +311,7 @@ def lumen(frame: int = 0):
                 if d > 0.85:
                     cv.set(x, y, R[4] if a > 0 else R[2])           # the rim: lit far side, near side in shade
                 elif a < -r * 0.2 and r >= 3:
-                    cv.set(x, y, '#0C0B12')                        # the shadow inside the near rim
+                    cv.set(x, y, '#0E0D0C')                        # the shadow inside the near rim
                 else:
                     cv.set(x, y, R[3])                             # the lit far wall
     # the shadowed crater in the east: its floor never sees the sun, so ice has lasted
@@ -459,7 +464,7 @@ def lumen(frame: int = 0):
             for side in (-3.5, 3.5):
                 for k in (0, 1):
                     px, py = int(round(x + nx * (side + k))), int(round(y + ny * (side + k)))
-                    if 0 <= px < W and 0 <= py < H and (px, py) not in walk and cv.get(px, py)[:3] != (12, 11, 18):
+                    if 0 <= px < W and 0 <= py < H and (px, py) not in walk and cv.get(px, py)[:3] != (14, 13, 12):
                         cv.set(px, py, R[1] if (i + k) % 3 == 0 else R[2])
     # bootprints from the EVA airlock's steps out to the solar arrays and back
     for i, (x, y, dx, dy) in enumerate(polyline([(98, 296), (74, 310), (50, 336), (36, 352)])):
@@ -480,7 +485,7 @@ def lumen(frame: int = 0):
     for (x, y) in hub_shadow - walk:
         if 0 <= x < W and 0 <= y < H:
             c = cv.get(x, y)
-            cv.set(x, y, (int(c[0] * 0.22) + 4, int(c[1] * 0.22) + 4, int(c[2] * 0.25) + 8, 255))
+            cv.set(x, y, (int(c[0] * 0.2) + 6, int(c[1] * 0.2) + 6, int(c[2] * 0.2) + 6, 255))
     walls |= {(x, y) for x in range(W) for y in range(H)} - walk
     # the regolith's cool greys would read as water to the lint's colour test; Lumen has
     # no open water at all (the pools are props on the greenhouse floor), so it says so
@@ -514,7 +519,7 @@ def beyond_regolith() -> Canvas:
     """What lies round Lumen below its horizon: the moon's grey plain running on, soft
     dust in two tones, small craters lit on their far rims, a few stones."""
     S = BEYOND_SPILL
-    R = MATERIALS['regolith']
+    R = spp.LUNAR
     cv = Canvas(W + 2 * S, H + 2 * S)
     for y in range(S, H + S):
         for x in range(S, W + S):

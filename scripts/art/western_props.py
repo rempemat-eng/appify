@@ -476,13 +476,15 @@ def ore_tub() -> Canvas:
 
 
 def dynamite_crate() -> Canvas:
-    """A mining crate with red sticks peeking out and a stencilled band, 22 x 18."""
-    cv = Canvas(22, 18, pad=PAD)
-    detail.boards(cv, rect_set(1, 5, 20, 13), BLEACHED, 2, 5, board=4, seed=7)
-    cv.hline(1, 5, 20, BLEACHED[5])
-    for x in range(3, 19, 3):
-        cv.vline(x, 1, 5, RED[3]); cv.vline(x + 1, 1, 5, RED[2]); cv.set(x, 0, '#E8DEC8')
-    cv.hline(1, 11, 20, RED[2])
+    """A mining crate, 16 x 13 (size guide: a crate 9 to 13 tall), boards with a lit top
+    edge and corner battens, red sticks peeking out of the open top, a stencilled band."""
+    cv = Canvas(16, 13, pad=PAD)
+    detail.boards(cv, rect_set(1, 4, 14, 9), BLEACHED, 2, 4, board=3, seed=7)
+    cv.hline(1, 4, 14, BLEACHED[5])
+    for x in range(3, 13, 3):
+        cv.vline(x, 1, 3, RED[3]); cv.vline(x + 1, 1, 3, RED[2]); cv.set(x, 0, '#E8DEC8')
+    cv.hline(1, 8, 14, RED[2])
+    cv.vline(1, 4, 9, BLEACHED[4]); cv.vline(14, 4, 9, BLEACHED[1])   # the corner battens
     return cv
 
 
@@ -1315,8 +1317,13 @@ def camel_string() -> Canvas:
     return cv
 
 
+def _budget(items: dict) -> dict:
+    """Every sprite held to the house colour budget (rd.limit_colours)."""
+    return {k: rd.limit_colours(v) for k, v in items.items()}
+
+
 def props() -> dict[str, Canvas]:
-    return {
+    return _budget({
         'saloon': false_front(104, 0, RED, 'saloon'), 'store': false_front(88, 3, WTR, 'store'),
         'water_tower': water_tower(), 'saguaro': saguaro(True), 'saguaro_small': saguaro(False),
         'tumbleweed': tumbleweed(), 'wagon': wagon(), 'windpump': windpump(), 'trough': trough(),
@@ -1331,7 +1338,7 @@ def props() -> dict[str, Canvas]:
         'horse': horse(), 'horse_tied': horse_tied(), 'prickly_pear': prickly_pear(), 'ore_tub': ore_tub(),
         'lizard_rock': lizard_rock(0), 'lizard_rock_b': lizard_rock(5), 'snag_vultures': snag_vultures(),
         'camel_string': camel_string(),
-    }
+    })
 
 
 if __name__ == '__main__':

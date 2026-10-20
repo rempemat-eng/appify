@@ -617,8 +617,13 @@ def _ore_tub() -> Canvas:
     return western_props.ore_tub()
 
 
+def _budget(items: dict) -> dict:
+    """Every sprite held to the house colour budget (rd.limit_colours)."""
+    return {k: rd.limit_colours(v) for k, v in items.items()}
+
+
 def props() -> dict[str, Canvas]:
-    return {
+    return _budget({
         'basalt_columns': basalt_columns(5, 0), 'basalt_columns_low': basalt_columns(3, 7),
         'basalt_columns_b': basalt_columns(4, 13), 'basalt_steps': basalt_steps(), 'basalt_stack': basalt_stack(),
         'basalt_stumps': basalt_stumps(0), 'basalt_stumps_b': basalt_stumps(5), 'basalt_fallen': basalt_fallen(),
@@ -629,7 +634,7 @@ def props() -> dict[str, Canvas]:
         'stone_lantern': stone_lantern(), 'scree': scree(True, 0), 'scree_small': scree(False, 3),
         'scree_b': scree(True, 5), 'charred_snag': charred_snag(),
         'ore_tub': _ore_tub(),  # the mine line's tub, the same as Dust Gulch's
-    }
+    })
 
 
 if __name__ == '__main__':

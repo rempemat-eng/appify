@@ -17,7 +17,11 @@ import detail  # noqa: E402
 import reach_detail as rd  # noqa: E402
 from materials import MATERIALS, LEAF, NAP, GOLD, RED, WTR, WOOD  # noqa: E402
 
-HULL, VOID, REGOLITH, GLOW = (MATERIALS[k] for k in ('hull', 'void', 'regolith', 'glowflora'))
+HULL, VOID, GLOW = (MATERIALS[k] for k in ('hull', 'void', 'glowflora'))
+# Lumen's regolith, grey to brown-grey and airless (Matt, 20 Oct ~11:00: never lavender);
+# the shared ramp in art/materials.json, until the house palette recolours it
+LUNAR = MATERIALS['regolith']
+REGOLITH = LUNAR
 CYAN = MATERIALS['neon_cyan']
 PAD = 4
 
@@ -443,32 +447,40 @@ def galley_table() -> Canvas:
 
 
 def bookshelf() -> Canvas:
-    """A curved bookshelf, 44 x 46, its shelves held by elastic straps against zero g:
-    spines in soft colours, a plant trailing from the top."""
-    w, h = 44, 46
+    """A bookshelf, 40 x 36 (size guide: a cupboard is 28 to 38 tall), its three shelves
+    held by elastic straps against the station's low gravity: spines of different heights
+    and colours, each lit on its west edge, the odd one leaning, a plant trailing from the
+    top. Its carcass is hull panelling, lit on the west, in shade on the east."""
+    w, h = 40, 36
     cv = Canvas(w, h, pad=PAD)
-    for y in range(8, h - 2):
+    for y in range(6, h - 1):
         for x in range(2, w - 2):
-            cv.set(x, y, HULL[3] if x < 5 else HULL[2] if x < w - 5 else HULL[1])
-    cols = [RED[3], GOLD[3], NAP[3], LEAF[3], WTR[3], '#E8D8B8', RED[2], NAP[2]]
+            cv.set(x, y, HULL[4] if x < 4 else HULL[3] if x < w - 5 else HULL[1])
+    cv.hline(2, 6, w - 4, HULL[5]); cv.hline(2, h - 2, w - 4, HULL[1])
+    cols = [RED, GOLD, NAP, LEAF, WTR, RED, NAP, GOLD]
     for shelf in range(3):
-        y0 = 11 + shelf * 11
-        x = 6
-        k = shelf * 3
-        while x < w - 7:
-            bw = 2 + (k * 7) % 3
-            bh = 7 + (k * 5) % 3
-            for yy in range(y0 + 9 - bh, y0 + 9):
+        y0 = 8 + shelf * 9
+        for (x, y) in rect_set(5, y0, w - 10, 8):
+            cv.set(x, y, HULL[0] if y < y0 + 2 else HULL[1])     # the shelf's shadowed back
+        x, k = 6, shelf * 3
+        while x < w - 8:
+            bw = 2 + (k * 7) % 2
+            bh = 5 + (k * 5) % 3
+            ramp = cols[k % len(cols)]
+            for yy in range(y0 + 7 - bh, y0 + 7):
                 for xx in range(x, min(x + bw, w - 6)):
-                    cv.set(xx, yy, cols[k % len(cols)] if xx > x else HULL[0])
-            x += bw + 1
+                    cv.set(xx, yy, ramp[3] if xx == x else ramp[2])
+            cv.set(x, y0 + 7 - bh, ramp[4])                       # the spine's lit top
+            if k % 3 == 1:
+                cv.set(x + bw, y0 + 7 - bh + 1, ramp[2])           # a band on the spine
+            x += bw + (1 if k % 4 else 2)
             k += 1
-        cv.hline(5, y0 + 9, w - 10, HULL[4])
-        cv.hline(5, y0 + 5, w - 10, CYAN[1])  # the strap
-    for (x, y) in disc(12, 6, 5):  # the plant on top, trailing down the side
-        cv.set(x, y, LEAF[4] if x + y < 16 else LEAF[2])
-    for t in range(14):
-        cv.set(4 + (t % 2), 8 + t, LEAF[3] if t % 3 else LEAF[1])
+        cv.hline(5, y0 + 7, w - 10, HULL[4]); cv.hline(5, y0 + 8, w - 10, HULL[2])   # the shelf board
+        cv.hline(5, y0 + 4, w - 10, CYAN[1]); cv.set(5, y0 + 4, CYAN[3])             # the strap and its buckle
+    for (x, y) in disc(11, 4, 4):  # the plant on top, trailing down the side
+        cv.set(x, y, LEAF[4] if x + y < 13 else LEAF[3] if x < 13 else LEAF[2])
+    for t in range(12):
+        cv.set(3 + (t % 2), 6 + t, LEAF[3] if t % 3 else LEAF[1])
     return cv
 
 
@@ -489,16 +501,22 @@ def telescope() -> Canvas:
 
 
 def lounge_bench() -> Canvas:
-    """A low padded bench, 52 x 18, cushions in soft violet, for watching the planet."""
-    w, h = 52, 18
+    """A low padded bench, 34 x 18 (audit and size guide: 32 long, seat 7), two cushions
+    in soft violet buttoned and lit on their upper left, on a hull frame with its feet,
+    for watching the planet."""
+    w, h = 34, 18
     cv = Canvas(w, h, pad=PAD)
-    for y in range(6, 14):
+    for y in range(7, 13):
         for x in range(2, w - 2):
-            cv.set(x, y, HULL[3] if y > 11 else NAP[3] if y < 8 else NAP[2])
-    for cx in (10, 26, 42):
-        for (x, y) in oval(cx, 6, 6, 3):
-            cv.set(x, y, NAP[4] if x < cx else NAP[3])
-    cv.hline(2, 14, w - 4, HULL[1])
+            cv.set(x, y, HULL[3] if y > 10 else NAP[2] if x < w - 4 else NAP[1])
+    for cx in (10, 24):
+        for (x, y) in oval(cx, 6, 7, 3):
+            cv.set(x, y, NAP[4] if x < cx - 1 and y < 6 else NAP[3] if x < cx + 3 else NAP[2])
+        cv.set(cx, 6, NAP[1]); cv.set(cx - 3, 5, NAP[4])       # its button and a sheen
+    cv.hline(2, 11, w - 4, HULL[4])
+    for fx in (4, w - 6):
+        cv.vline(fx, 13, 3, HULL[2]); cv.vline(fx + 1, 13, 3, HULL[1])
+    cv.hline(2, 13, w - 4, HULL[1])
     return cv
 
 
@@ -1071,7 +1089,7 @@ def moon_rock(big: bool = True, seed: int = 0) -> Canvas:
 # through (the Ghost), the way it walks behind a roof.
 TUBE_W, TUBE_L = 28, 66
 DOME = (120, 140, 118, 64, 74)  # the dome sprite's base centre, radii and height
-REG = ['#2A2838', '#3E3A50', '#585270', '#77708E', '#9C96B2', '#C8C2DA']  # regolith (materials)
+REG = LUNAR  # Lumen's regolith
 
 
 def pressure_tube(length: int = TUBE_L, dock: bool = False) -> Canvas:
@@ -1489,6 +1507,9 @@ def glass_dome() -> Canvas:
             pv = noise2(*pane, 1181)
             tint = (150, 196, 228) if pv < 0.4 else (140, 206, 210) if pv < 0.65 else (170, 180, 230) if pv < 0.85 else (196, 214, 236)
             c = (*tint, a + (14 if front and ph > 0.55 else 0))
+            if ph >= 0.79:  # the crown, one curved pane: the sky's tint deepening toward its top, its edge brighter
+                k = min(1.0, (ph - 0.79) / 0.78)
+                c = (int(196 - 50 * k), int(214 - 24 * k), int(236 - 6 * k), min(120, a + 14 + int(26 * (1 - k))))
             u = math.cos(th - 2.2) * math.cos(ph) + math.sin(ph) * 0.5
             if front and 0.55 < u < 0.95:
                 c = (240, 248, 255, int(70 + 120 * (u - 0.55)))  # the sun's reflection, high on the upper left, soft
@@ -1531,8 +1552,15 @@ def props_lumen() -> dict[str, Canvas]:
             'airlock_module': airlock_module(), 'glass_dome': glass_dome()}
 
 
+# The station's white shells lose Eastward's tone count when cut to the house colour
+# budget (house-style.md: "white shells need more parts in accent families"), so until
+# the house kit's station modules land they keep their colours; everything else is held
+# to the budget (rd.limit_colours).
+OVER_BUDGET = {'hab_hub', 'airlock', 'airlock_module', 'pressure_tube', 'pressure_tube_dock', 'galley_table'}
+
+
 def props() -> dict[str, Canvas]:
-    return {**props_station(), **props_lumen()}
+    return {k: v if k in OVER_BUDGET else rd.limit_colours(v) for k, v in {**props_station(), **props_lumen()}.items()}
 
 
 if __name__ == '__main__':

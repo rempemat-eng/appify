@@ -310,3 +310,29 @@ def weather(cv: Canvas, pts, seed: int = 0, dust=None, foot: int | None = None, 
             if smooth_noise(x, y, 4, seed + 65) < 0.2 + 0.55 * k:
                 out = mix(out, dust, 0.25 + 0.35 * k)
         put(cv, x, y, out)
+
+
+def limit_colours(cv: Canvas, n: int | None = None) -> Canvas:
+    """Hold a sprite to the house style's colour budget (docs/vision/house-style.md, draft:
+    at most 64 colours for a prop, 128 for a building over 2,500 px): the opaque pixels
+    are reduced by median cut without dithering, so the parts keep their tones and no
+    speckle is added. Translucent pixels (glass, glows) are left as they are."""
+    from PIL import Image
+    img = cv.img
+    px = img.load()
+    W, H = img.size
+    opaque = [(x, y) for y in range(H) for x in range(W) if px[x, y][3] == 255]
+    if n is None:
+        n = 128 if len(opaque) > 2500 else 64
+    colours = {px[x, y][:3] for (x, y) in opaque}
+    if len(colours) <= n:
+        return cv
+    strip = Image.new('RGB', (len(opaque), 1))
+    sp = strip.load()
+    for i, (x, y) in enumerate(opaque):
+        sp[i, 0] = px[x, y][:3]
+    q = strip.quantize(colors=n, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
+    qp = q.load()
+    for i, (x, y) in enumerate(opaque):
+        px[x, y] = (*qp[i, 0], 255)
+    return cv
