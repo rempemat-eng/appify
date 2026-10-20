@@ -482,38 +482,49 @@ def sw_stone():
 
 
 def bricks(cv: Canvas, x0, y0, w, h, seed, soot_rows=0, moss_rows=0, base=3, bw=8, ch=4):
-    """True brick in stretcher bond: rectangular bricks 7 x 3 with 1 px joints, each course
-    shifted half a brick. Each brick is one of clay's three ramps, the odd one a tone off; its
-    top row is lit towards the left, its bottom row a tone down. Bed joints are lime mortar
-    with a lit top edge (the joint's lower lip catches the light), head joints a tone darker
-    (vertical recesses). The odd corner is chipped back to the mortar. Soot settles in
-    clusters in the top `soot_rows` courses; moss creeps along the joints of the lowest
-    `moss_rows`."""
+    """True brick in stretcher bond, drawn as a wall of objects rather than a pattern
+    (Matt, 20 Oct: the first brick read as scales, the second as a flat grid). Bricks 7 x 3
+    with 1 px joints, each course shifted half a brick.
+
+    - Each brick stands a little proud of recessed mortar: its top row lit towards the left,
+      its east end a tone down, the bed joint under it cool and dark (in the brick's shadow),
+      the head joints darker still. So the grid recedes and the bricks come forward.
+    - Colour comes in firing batches, not per brick: broad patches of clay's warm or cool
+      ramp; within a patch a brick is the odd tone up or down. A few over-fired bricks are
+      dark purple-brown, a few under-fired ones pale, as in any real wall.
+    - The odd brick has spalled: its face fell away, so it sits back in shade with a lit
+      lower lip. Soot settles in clusters in the top `soot_rows` courses; damp moss in the
+      joints of the lowest `moss_rows`."""
     courses_n = max(1, h // ch)
     for (x, y) in sorted(rect(x0, y0, w, h)):
         ci, r = divmod(y - y0, ch)
         bi, c = divmod(x - x0 + (bw // 2 if ci % 2 else 0), bw)
         if r == ch - 1:
-            col = T('stone', 3) if c < bw - 1 else T('stone', 2)      # the bed joint, lit on top
+            col = T('stone_cool', 2) if c < bw - 1 else T('stone_cool', 1)   # the bed joint, in the brick's shadow
         elif c == bw - 1:
-            col = T('stone', 1)                                      # a head joint, in shade
+            col = T('stone_cool', 1)                                         # a head joint, deeper
         else:
+            bx = bi * bw - (bw // 2 if ci % 2 else 0)                        # the brick's own x, for its batch
+            batch = smooth_noise(x0 + bx, y0 + ci * ch, 13, seed + 11)
             n = noise2(ci, bi, seed)
-            k = base + (1 if n > 0.88 else -1 if n < 0.14 else 0)
+            k = base + (1 if n > 0.86 else -1 if n < 0.16 else 0)
             fam = 'clay'
-            from_top = ci
-            if from_top < soot_rows and smooth_noise(x, y, 2.5, seed + 3) > 0.42 + 0.14 * from_top:
-                fam = 'soot'                                          # soot in clusters
-            rp = sib(fam, noise2(ci, bi, seed + 2), 0.33)
-            if r == 0:
-                k += 1 if c < bw - 3 else 0
-            elif r == ch - 2:
-                k -= 1
-            chip = noise2(ci, bi, seed + 5)
-            if (chip < 0.10 and r == 0 and c == 0) or (chip > 0.92 and r == ch - 2 and c == bw - 2):
-                col = T('stone', 2)                                   # a chipped corner
-            else:
-                col = T(rp, k)
+            odd = noise2(ci, bi, seed + 9)
+            if ci < soot_rows and smooth_noise(x0 + bx + 3, y0 + ci * ch, 5, seed + 3) > 0.40 + 0.12 * ci:
+                fam = 'soot'                                                 # soot takes whole bricks, in drifts
+            rp = sib(fam, batch, 0.36)
+            if fam == 'clay' and odd < 0.05:
+                rp, k = 'clay_cool', base - 2                                # over-fired: dark purple-brown
+            elif fam == 'clay' and odd > 0.96:
+                rp, k = 'clay_warm', base + 1                                # under-fired: pale
+            spall = noise2(ci, bi, seed + 13) < 0.025 and fam == 'clay'
+            if spall:
+                k = base - 2 if r < ch - 2 else base + 1                     # sits back; its lower lip lit
+            elif r == 0:
+                k += 1 if c < bw - 3 else 0                                  # the lit top, towards the left
+            if c == bw - 2 and not spall:
+                k -= 1                                                       # its east end, in shade
+            col = T(rp, k)
         cv.set(x, y, col)
         if moss_rows and ci >= courses_n - moss_rows and (r == ch - 1 or (r == ch - 2 and c < bw - 1)):
             if smooth_noise(x, y, 2.2, seed + 7) > 0.66:
