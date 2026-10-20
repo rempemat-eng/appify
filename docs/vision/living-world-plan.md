@@ -39,7 +39,7 @@ Matt: "create a sort of small open world … with small biomes where you reach t
 - **Crossroads Town lies through the garden gate, south of the garden,** with Moss's stall (the Shop), the library and the sparring ring. The missions map becomes the region map: the same selection, START and guards, plus travel to zones already visited.
 - **Exploring costs nothing extra.** Matt: "there should not be a cost to exploring beyond the general rules established before … the only cost is being on your phone in general, especially during sleep hours". No steps, stamina or daily visits; world health (L3) is the only pressure.
 - **Missions are unchanged:** the companion travels while the player is away. Walking to a place is optional scenery and residents, never a shortcut to rewards.
-- **Gates are soft and use rules that exist** (the mountain's level 2 gate). Any new kind of gate waits for Matt.
+- **Gates:** Matt approved world unlocks on 20 Oct (01:05 and 01:25): the world opens progressively, way by way, through rest tasks or GRASS, at most one way a day, never closing again ([world-unlocks.md](world-unlocks.md)). The mountain outing's level 2 gate stays as it is.
 - **Pokémon-like pieces, in NapAttack's terms:** residents to befriend in each zone (the visitor system), one sparring ring per biome with a resident rival and its own backdrop, keepsakes from each zone as decor at home, the region map with fast travel.
 
 **The region, laid out so it makes sense** (height runs north, water runs south and east, and every exit matches the garden as it is drawn today):
