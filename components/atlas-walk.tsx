@@ -75,6 +75,7 @@ import {
 } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
+import { Animal, isAnimal } from '@/components/atlas-animals';
 import { Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelFrame, frameTones } from '@/components/pixel-frame';
@@ -243,6 +244,9 @@ type Drawable = {
   h: number;
   z: number;
   flip?: boolean;
+  /** the zone and object id of a placed prop (an animal's own loop is planned from them) */
+  zone?: TileId;
+  oid?: string;
 };
 
 // Things afloat ride the water: up and down by one art pixel, each on its own phase.
@@ -617,6 +621,8 @@ function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourceProp
   const props = zoneMaps[tile.id].objects.map(([id, sprite, x, y, w, h]) => ({
     key: `${tile.id}-${id}`,
     sprite,
+    zone: tile.id,
+    oid: id,
     src: zoneProps[sprite],
     x: o.x + x,
     y: o.y + y,
@@ -1301,7 +1307,7 @@ export function AtlasWalk({
   }
   // (the same scene while the mounted zones and keepsakes are the same, so a re-render
   // as the feet move does not rebuild every prop)
-  const drawables = useMemo(
+  const drawables = useMemo<Drawable[]>(
     () => [
       ...near.flatMap((t) => tileDrawables(region, t, hutImages[hutImageKey(hutLook)])),
       ...(extras ?? []).map((e) => ({ ...e, sprite: `extra:${e.key}` })),
@@ -1344,7 +1350,19 @@ export function AtlasWalk({
   const props = useMemo(
     () =>
       drawables.map((d) =>
-        FLYERS[d.sprite] && active && !reduced ? (
+        // animals live on the same clock (atlas-animals.tsx); still with it stopped
+        isAnimal(d.sprite) && d.zone && d.zone !== 'garden' && d.oid ? (
+          <Animal
+            key={d.key}
+            d={d}
+            zone={d.zone}
+            oid={d.oid}
+            clock={bob}
+            running={active && !reduced}
+            u={u}
+            snap={snap}
+          />
+        ) : FLYERS[d.sprite] && active && !reduced ? (
           <Flyer key={d.key} d={d} clock={bob} u={u} snap={snap} />
         ) : FLOATS[d.sprite] && active && !reduced ? (
           <Floating key={d.key} d={d} clock={bob} u={u} snap={snap} />
