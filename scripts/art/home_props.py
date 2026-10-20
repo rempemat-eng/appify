@@ -46,7 +46,7 @@ def _mix(a: str, b: str, t: float) -> str:
     return '#%02X%02X%02X' % tuple(int(ra[i] + (rb[i] - ra[i]) * t) for i in range(3))
 
 
-def grain(cv: Canvas, ramp=WOOD, seed: int = 0, vertical: bool = False) -> Canvas:
+def grain(cv: Canvas, ramp=WOOD, seed: int = 0, vertical: bool = False, sparse: bool = False) -> Canvas:
     """Wood grain over a finished piece (to-b-1810: the bar measured on the sprite itself):
     every face drawn in the ramp's middle tones gets the figure of the timber in runs of
     three to five pixels along the grain, a half step lighter where the grain rises to the
@@ -66,6 +66,8 @@ def grain(cv: Canvas, ramp=WOOD, seed: int = 0, vertical: bool = False) -> Canva
                 continue
             u, v = (y, x) if vertical else (x, y)
             n = noise2(u // 4, v, seed + 811)
+            if sparse:  # narrow members (a bookcase's frame): longer runs, fewer of them
+                n = noise2(u // 6, v // 2, seed + 811)
             if n > 0.8:
                 cv.set(x, y, _mix(ramp[i], ramp[i + 1], 0.5))
             elif n < 0.18:
@@ -81,12 +83,12 @@ def grain(cv: Canvas, ramp=WOOD, seed: int = 0, vertical: bool = False) -> Canva
 
 def bed() -> Canvas:
     """A double bed against the bedroom's back wall at the size guide's bed (44 deep with
-    a headboard 16; it was 72 tall, over 36 to 50), 42 x 48 in a 64 x 48 box placed where
+    a headboard 16; it was 72 tall, over 36 to 50), 38 x 48 in a 64 x 48 box placed where
     the old one was, so its headboard still stands against the back wall: a panelled headboard with turned posts lit on
     the west, two pillows dented where heads lay, the sheet folded back over a patchwork
     quilt in nap violet and cream with its stitching, the quilt falling into shade down
     its east side, a knitted throw at the foot, the footboard, and its contact shade."""
-    w, h = 42, 48
+    w, h = 38, 48  # 40 wide with its outline: five whole 8 px cells of floor
     cv = Canvas(w, h, pad=8)
     for x in range(1, w):
         cv.set(x, h - 1, SHADE_IN)
@@ -107,6 +109,14 @@ def bed() -> Canvas:
                     c = WOOD[3]
             cv.set(x, y, c)
     cv.hline(0, 3, w, WOOD[1])
+    for x in range(4, w - 4):  # a stringing of pale holly inlaid along the rail's face
+        if x % 4 != 3:
+            cv.set(x, 4, '#E0C89A' if x < w // 2 else '#C8B080')
+    for x in range(3, w - 3):  # the spindles' turned beads catching the light
+        if (x - 3) % 5 == 0:
+            cv.set(x, 8, WOOD[4]); cv.set(x + 1, 8, '#D8B080'); cv.set(x, 11, WOOD[4])
+    for rx in (8, w // 2 - 1, w - 10):  # carved rosettes on the top rail
+        cv.hline(rx, 1, 3, WOOD[2]); cv.set(rx + 1, 2, WOOD[1]); cv.set(rx + 1, 0, WOOD[4])
     for y in range(16, h - 6):  # the bed: pillows, sheet, quilt
         for x in range(2, w - 2):
             east = x >= w - 6
@@ -117,23 +127,57 @@ def bed() -> Canvas:
             else:
                 patch = ((x - 2) // 6 + 2 * ((y - 27) // 6)) % 5
                 c = (NAP[3], CREAM[3], NAP[2], GOLD[3], LEAF[3])[patch]  # scraps of five old dresses
+                px_, py_ = (x - 2) % 6, (y - 27) % 6
+                if py_ in (2, 3) and px_ in (2, 3):  # each scrap's own print: sprigs, dots and checks
+                    c = (CREAM_HI, NAP[1], CREAM[3], RED[3], CREAM_HI)[patch]
                 if (x - 2) % 6 == 0 or (y - 27) % 6 == 0:
                     c = NAP[1]  # the stitching
                 if east:
                     c = NAP[1] if c in (NAP[3], NAP[2], CREAM[3]) else GOLD[1] if c == GOLD[3] else LEAF[1] if c == LEAF[3] else NAP[0]
             cv.set(x, y, c)
-    for px in (11, 30):  # two pillows, dented where heads lay
+    for px in (10, 27):  # two pillows, dented where heads lay
         for (x, y) in oval(px, 20, 8, 3.6):
             lit = (x - px) + (y - 20) * 1.6 < 0
             cv.set(x, y, '#FFFFFF' if lit else CREAM_HI if (x - px) < 4 else CREAM[3])
         cv.hline(px - 2, 20, 4, CREAM[3])
         cv.hline(px - 7, 23, 15, CREAM[2])  # the pillow's shade on the sheet
-    for y in range(h - 13, h - 7):  # the knitted throw over the foot
+        for x in range(px - 6, px + 7, 2):  # the pillowcase's embroidered hem
+            cv.set(x, 17, NAP[3] if x < px else NAP[2])
+    for (x, y) in oval(18.5, 22, 3.2, 2.4):  # an embroidered cushion between the pillows
+        cv.set(x, y, LEAF[3] if x < 20 else LEAF[2])
+    cv.hline(17, 22, 3, GOLD[4])  # its embroidered flower
+    BEAR = ('#5A3A24', '#8A5A36', '#B07848', '#D0A070')  # an old teddy on the east pillow, its fur rubbed thin
+    for (x, y) in oval(30, 18, 2.6, 2.2):
+        cv.set(x, y, BEAR[2] if x < 30 else BEAR[1])
+    for (x, y) in oval(30, 22, 3.2, 2.6):
+        cv.set(x, y, BEAR[2] if x < 30 else BEAR[1])
+    cv.hline(28, 16, 1, BEAR[1]); cv.hline(32, 16, 1, BEAR[0])  # its ears
+    cv.hline(29, 19, 2, BEAR[3]); cv.set(30, 18, BEAR[0])  # its muzzle and nose
+    cv.hline(29, 22, 2, BEAR[3])  # the worn patch on its tummy
+    for y in range(32, 36):  # a book left open on the quilt, its pages and spine
+        for x in range(24, 32):
+            cv.set(x, y, CREAM_HI if x < 28 else CREAM[3])
+        cv.set(28, y, WOOD[1])
+    cv.hline(25, 33, 2, CREAM[1]); cv.hline(29, 34, 2, CREAM[1])  # lines of print
+    cv.hline(25, 31, 2, GOLD[3]); cv.hline(28, 31, 2, GOLD[3]); cv.set(27, 31, GOLD[1])  # spectacles on it
+    for y in range(36, 39):  # a hot-water bottle in its knitted cover, at the foot
+        cv.hline(8, y, 5, RED[3] if y == 36 else RED[2])
+    cv.hline(9, 35, 2, '#C8C0B0')  # its stopper
+    for (fx0, fy0) in ((10, 30), (24, 33), (16, 38)):  # folds in the quilt where it drapes
+        for i in range(6):
+            x, y = fx0 + i, fy0 + i // 2
+            if 2 <= x < w - 2 and y < h - 13:
+                cv.set(x, y, NAP[1] if i % 3 else CREAM[2])
+    for y in range(h - 13, h - 7):  # the knitted throw over the foot: a cable band between plain rows
         for x in range(4, w - 4):
             c = GOLD[3] if (x // 2 + y) % 2 else GOLD[2]
+            if y in (h - 11, h - 10):
+                c = RED[3] if (x // 3) % 2 else CREAM_HI  # its cable band
             if x >= w - 8:
-                c = GOLD[1]
+                c = GOLD[1] if y not in (h - 11, h - 10) else RED[1]
             cv.set(x, y, c)
+    for x in range(5, w - 5, 4):  # tassels hanging over the footboard
+        cv.vline(x, h - 7, 1, GOLD[2])
     cv.hline(4, h - 13, w - 8, GOLD[4])
     for y in range(h - 6, h - 1):  # the footboard and its posts
         for x in range(0, w):
@@ -203,11 +247,24 @@ def wardrobe() -> Canvas:
                     cv.set(x, y, c)
     cv.hline(11, 18, 2, GOLD[4]); cv.hline(17, 18, 2, GOLD[4])  # the knobs
     cv.vline(13, 21, 2, WOOD[0])  # the keyhole
+    cv.hline(12, 20, 3, GOLD[2]); cv.set(12, 21, GOLD[1]); cv.set(14, 21, GOLD[1])  # its brass escutcheon
+    cv.hline(12, 23, 2, RED[3]); cv.hline(12, 24, 2, RED[2])  # the key's red tassel
+    for y in range(8, 16):  # a mirror let into the west door's upper panel, the room in it
+        for x in range(5, 11):
+            c = '#B8C8D4' if x + y < 19 else '#8EA4B4' if x + y < 23 else '#6E8496'
+            cv.set(x, y, c)
+    cv.set(6, 9, '#E8F0F4'); cv.set(7, 9, '#E8F0F4'); cv.set(6, 10, '#E8F0F4')  # its gleam
+    for hy_ in (7, 29):  # brass hinges on the west stile
+        cv.hline(1, hy_, 2, GOLD[3]); cv.hline(1, hy_ + 1, 2, GOLD[2])
     for y in range(h - 3, h - 1):  # the plinth
         cv.hline(0, y, w, WOOD[3] if y == h - 3 else WOOD[1])
     for x in (1, 2, w - 3, w - 2):
         cv.set(x, h - 1, WOOD[0])
-    grain(cv, seed=3, vertical=True)
+    for y in range(19, 27):  # a striped scarf hung over the east knob
+        c = (NAP[3], CREAM_HI, NAP[3], LEAF[3])[(y - 19) // 2 % 4]
+        cv.set(18, y, c); cv.set(19, y, NAP[1] if c == NAP[3] else CREAM[2] if c == CREAM_HI else LEAF[1])
+    cv.hline(18, 27, 2, NAP[2])  # its fringe
+    grain(cv, seed=3, vertical=True, sparse=True)
     return keep_foot(cv, 40, 60)
 
 
@@ -259,7 +316,7 @@ def armchair() -> Canvas:
     """A deep armchair at the size guide's armchair (seat 7, back 20; it was 35 x 34),
     24 x 23 re-seated in the old 40 x 40 box: a buttoned back in faded red, rolled arms
     lit along their tops, a plump seat cushion, a skirt to the floor and turned feet, a
-    cream plaid blanket over the east arm."""
+    cream plaid blanket over the west arm."""
     w, h = 24, 23
     cv = Canvas(w, h, pad=8)
     cv.hline(1, h - 1, w - 1, SHADE_IN)
@@ -289,8 +346,8 @@ def armchair() -> Canvas:
             cv.set(x, y, RED[2] if x < w - 4 else RED[1])
     for x in (2, 3, w - 4, w - 3):
         cv.vline(x, h - 2, 2, WOOD[1])
-    for y in range(6, 16):  # the plaid blanket over the east arm
-        for x in range(w - 6, w):
+    for y in range(6, 16):  # the plaid blanket over the west arm, where the light falls
+        for x in range(0, 6):
             c = CREAM_HI if (x + y // 2) % 3 else CREAM[2]
             if (y - 6) % 4 == 0:
                 c = NAP[2]
@@ -446,7 +503,7 @@ def bookcase() -> Canvas:
     for y in range(h - 2, h):
         cv.hline(0, y, w, WOOD[2] if y == h - 2 else WOOD[1])
     cv.hline(20, 0, 6, '#7E9CB8'); cv.hline(20, 1, 6, '#5A7A98')  # a box of letters on top
-    grain(cv, seed=4, vertical=True)
+    grain(cv, seed=4, vertical=True, sparse=True)
     return keep_foot(cv, 40, 54)
 
 
@@ -471,17 +528,17 @@ def plant_tall() -> Canvas:
 
 def rug_chest() -> Canvas:
     """The painted chest for keepsakes at the size guide's chest (16 to 28 wide; it was
-    34), 26 x 18 re-seated in the old 36 x 26 box: a blue lid seen from above with flowers
+    34), 22 x 18 re-seated in the old 36 x 26 box: a blue lid seen from above with flowers
     painted on it, the front with iron straps and a brass lock plate, a lit lid edge and
     its shade, and little bracket feet."""
-    w, h = 26, 18
+    w, h = 22, 18  # 24 wide with its outline: three whole 8 px cells
     BL = ['#2A3A5A', '#3E5478', '#56709A', '#7290BA', '#94B0D4']
     cv = Canvas(w, h, pad=8)
     cv.hline(1, h - 1, w - 1, SHADE_IN)
     for y in range(0, 6):  # the lid
         for x in range(0, w):
             cv.set(x, y, BL[4] if y == 0 else BL[3] if x < w - 3 else BL[2])
-    for (fx, c, c2) in ((6, RED[3], RED[2]), (12, GOLD[3], GOLD[2]), (18, CREAM_HI, CREAM[3])):  # painted flowers
+    for (fx, c, c2) in ((5, RED[3], RED[2]), (10, GOLD[3], GOLD[2]), (15, CREAM_HI, CREAM[3])):  # painted flowers
         cv.hline(fx, 2, 2, c); cv.hline(fx, 3, 2, c2)
         cv.hline(fx + 2, 3, 2, LEAF[3])
     cv.hline(0, 6, w, BL[1])
@@ -491,7 +548,7 @@ def rug_chest() -> Canvas:
     IRON_ = MATERIALS['iron']
     for x0 in (3, w - 5):  # iron straps over lid and front
         cv.vline(x0, 0, h - 2, IRON_[2]); cv.vline(x0 + 1, 0, h - 2, IRON_[1])
-    cv.hline(11, 8, 4, GOLD[3]); cv.hline(11, 9, 4, GOLD[2]); cv.hline(12, 10, 2, WOOD[0])  # the lock plate
+    cv.hline(9, 8, 4, GOLD[3]); cv.hline(9, 9, 4, GOLD[2]); cv.hline(10, 10, 2, WOOD[0])  # the lock plate
     for x in (1, 2, w - 3, w - 2):
         cv.vline(x, h - 2, 2, BL[0])
     grain(cv, ramp=BL, seed=6)
@@ -515,8 +572,9 @@ def window_seat() -> Canvas:
 def desk() -> Canvas:
     """A writing desk under the bedroom window, 44 x 34: its top seen from above with the
     grain running along it, letters and an open notebook, an inkpot with a pen in it and
-    a little lamp lit warm; the front with three drawers and their brass pulls, the legs
-    lit on the west, and a round stool tucked in front."""
+    a little lamp lit warm, two books, a mug of tea, a pen and a succulent in a pot; the
+    front with three drawers and their brass pulls, the legs lit on the west, and a
+    ladder-back chair tucked in with its rush seat worn pale where it is sat on."""
     w, h = 44, 34
     cv = Canvas(w, h, pad=PAD)
     for x in range(3, w - 1):
@@ -545,10 +603,23 @@ def desk() -> Canvas:
         cv.hline((d0 + d1) // 2 - 1, 18, 2, GOLD[4])
     for x in (3, 4, w - 5, w - 4):  # legs
         cv.vline(x, 24, 3, WOOD[3] if x < 10 else WOOD[1])
-    for (x, y) in oval(22, 29, 6, 2.4):  # the stool's seat, then its legs
-        cv.set(x, y, WOOD[4] if y < 29 and x < 22 else WOOD[3] if x < 25 else WOOD[2])
-    for x in (18, 26):
-        cv.vline(x, 31, 2, WOOD[1])
+    cv.hline(11, 7, 5, RED[3]); cv.hline(11, 8, 5, RED[1])  # a closed book on the letters
+    cv.hline(12, 6, 3, LEAF[3]); cv.hline(12, 5, 3, LEAF[2])  # a second book on it
+    cv.hline(32, 10, 3, CREAM[3]); cv.hline(32, 11, 3, CREAM[1]); cv.hline(32, 9, 2, '#6A4026')  # a mug of tea
+    cv.hline(40, 12, 2, '#C8743E'); cv.hline(40, 11, 2, LEAF[3]); cv.set(41, 10, LEAF[4])  # a succulent in a pot
+    cv.hline(23, 12, 4, '#2E3A48')  # a pen lying across the notebook
+    # the chair: a ladder back with two rails, the rush seat worn pale where it is sat on
+    for y in range(22, 31):
+        cv.set(17, y, WOOD[3]); cv.set(18, y, WOOD[2]); cv.set(27, y, WOOD[2]); cv.set(28, y, WOOD[1])
+    for ry in (23, 26):
+        cv.hline(19, ry, 8, WOOD[3]); cv.hline(19, ry + 1, 8, WOOD[1])
+    for y in range(29, 32):
+        for x in range(16, 30):
+            worn = 19 <= x <= 25 and y == 30
+            cv.set(x, y, '#D8C08A' if worn else '#B89A5E' if (x // 2 + y) % 2 else '#9A7E48')  # the rush, woven in pairs
+    cv.hline(16, 32, 14, WOOD[1])
+    for x in (16, 17, 28, 29):
+        cv.vline(x, 33, 1, WOOD[1])
     grain(cv, seed=7)
     return cv
 
