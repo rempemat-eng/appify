@@ -30,78 +30,143 @@ def rect_set(x, y, w, h):
 
 def cottage(width: int = 80, seed: int = 0, door=None, shutters=None, porch: bool = False,
             shed: int = 0, net: str = 'right') -> Canvas:
-    """A fisher's cottage, `width` x 74 (plus a lean-to `shed` px wide on its east side): a
-    steep roof of tarred boards seen from above with a whitewashed chimney, thick
-    whitewashed walls with small deep windows, a painted door (`door`, a colour ramp),
-    painted `shutters` or none, a little timber `porch` over the door or none, a net hung
-    to dry on the wall (`net`: 'left', 'right' or none) and stone footings. The variants
-    keep Driftwood's four houses from being one sprite (rule 8; Claude A's review, 19 Oct)."""
+    """A fisher's cottage at the scale table's size (verticality.md 5: a 25 px adult, walls
+    44 to the eaves, a 32 x 14 door, 16 x 12 windows, about 96 to the ridge), `width` wide
+    (plus a lean-to `shed` px wide on its east side): a steep roof of tarred boards seen
+    from above with a whitewashed chimney, thick whitewashed walls over rough stone with
+    quoins at the corners, damp low down and streaks under the sills, small deep windows
+    under stone lintels, a painted plank door (`door`, a colour ramp) with strap hinges
+    and a step, painted `shutters` or none, a little timber `porch` over the door or none,
+    a net hung to dry on the wall (`net`: 'left', 'right' or none), a downpipe, a wall
+    lantern and stone footings. The foot stays where the old 74 px cottage stood
+    (keep_foot), so the zones place it unchanged; it rises 22 px higher."""
     door = door or WTR
     house = width
-    w, h = width + shed, 74
+    w, h = width + shed, 96
     cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = (house - 1) / 2, 18, 40, 40, 66
+    ridge, apex_y, eave_y, wall_top, wall_bottom = (house - 1) / 2, 16, 44, 44, 88
     if shed:  # the lean-to first: the house's roof overlaps its top
         sx0 = house - 6
-        for y in range(28, wall_bottom):
+        roof0, roof1 = wall_bottom - 40, wall_bottom - 24
+        for y in range(roof0, wall_bottom):
             for x in range(sx0, w - 2):
-                if y < 44:  # its single slope of tarred boards, falling east
+                if y < roof1:  # its single slope of tarred boards, falling east
                     c = TAR[3] if (x - sx0) % 5 else TAR[2]
-                    if y == 28:
+                    if y == roof0:
                         c = TAR[4]
                     if x >= w - 4:
                         c = TAR[1]
                 elif x < w - 3:  # its plank wall, open at the front where the nets hang
                     c = WOOD[2] if (x - sx0) % 4 else WOOD[1]
-                    if y > 50 and sx0 + 6 < x < w - 7:
+                    if y > roof1 + 4 and sx0 + 6 < x < w - 7:
                         c = '#3E332C' if (x + y) % 5 else '#4A3D34'  # the open front, dim inside
                 else:
                     c = WOOD[1]
                 cv.set(x, y, c)
         for x in range(sx0, w - 2):
-            cv.set(x, 44, TAR[1])  # the eave's shadow line
-        for t in range(12):  # a net hanging in the open front
+            cv.set(x, roof1, TAR[1]); cv.set(x, roof1 + 1, WOOD[0])  # the eave's shadow line
+        for t in range(14):  # a net hanging in the open front
             for k in range(6):
-                x, y = sx0 + 8 + k * 2 + (t % 2), 52 + t
+                x, y = sx0 + 8 + k * 2 + (t % 2), roof1 + 6 + t
                 if x < w - 7 and (x + y) % 3 == 0:
-                    cv.set(x, y, ROPE[-1] if t < 6 else ROPE[-2])
-        for t in range(22):  # two oars leaning on the wall
+                    cv.set(x, y, ROPE[-1] if t < 7 else ROPE[-2])
+        for t in range(26):  # two oars leaning on the wall
             for (ox, col) in ((w - 6, WOOD[4]), (w - 9, WOOD[3])):
-                x, y = ox + t // 6, 44 + t
+                x, y = ox + t // 7, roof1 + t - 2
                 cv.set(x, y, col)
-            if t > 17:
-                cv.set(w - 6 + t // 6 - 1, 44 + t, WOOD[3])
-    chim = rect_set(12, 6, 10, 14)
+            if t > 21:
+                cv.set(w - 6 + t // 7 - 1, roof1 + t - 2, WOOD[3])
+    chim = rect_set(12, 4, 10, 14)
     gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, house - 3, TAR, hole=chim, seed=71 + seed, moss=None)
-    for (x, y) in rect_set(12, 6, 10, 14):
+    for (x, y) in chim:
         cv.set(x, y, PLASTER[4] if x < 16 else PLASTER[3])
-    cv.rect(11, 5, 12, 3, PLASTER[5]); cv.rect(14, 6, 6, 2, '#2A2420')
-    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7, house - 8,
-                     apex_y, wall_top, PLASTER, boards=False)
-    for (x, y) in rect_set(7, wall_top, house - 14, wall_bottom - wall_top):  # whitewash over rough stone
+    cv.rect(11, 3, 12, 3, PLASTER[5]); cv.rect(14, 4, 6, 2, '#2A2420')
+    gable = gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7,
+                             house - 8, apex_y, wall_top, PLASTER, boards=False)
+    for (x, y) in gable:  # the gable's whitewash, rough like the walls, a step darker right of the ridge
+        if (x, y - 1) in gable and (x, y - 2) in gable and noise2(x // 2, y // 2, 284 + seed) > 0.6:
+            cv.set(x, y, PLASTER[4] if x < ridge else PLASTER[2])
+    lx0, ly0 = int(ridge) - 3, apex_y + 12  # a small loft hatch under the ridge
+    for (x, y) in rect_set(lx0, ly0, 7, 8):
+        cv.set(x, y, WOOD[2] if (x - lx0) % 3 else WOOD[1])
+    cv.hline(lx0 - 1, ly0 - 1, 9, STONE[4]); cv.hline(lx0, ly0 + 8, 7, STONE[2]); cv.set(lx0 + 5, ly0 + 4, SLATE[3])
+    detail.recess(cv, rect_set(lx0, ly0, 7, 8), depth=1, k=1)
+    wall = rect_set(7, wall_top, house - 14, wall_bottom - wall_top)
+    for (x, y) in wall:  # whitewash over rough stone, damp rising from the footing
         n = noise2(x // 2, y // 2, 281 + seed)
-        cv.set(x, y, PLASTER[5] if n > 0.55 else PLASTER[4])
-        if noise2(x, y, 282 + seed) > 0.94:
+        c = PLASTER[5] if n > 0.55 else PLASTER[4]
+        damp = wall_bottom - y
+        if damp < 5 or (damp < 9 and noise2(x // 3, y // 2, 283 + seed) > 0.45):
+            c = PLASTER[3] if damp > 2 or (x + y) % 3 else PLASTER[2]
+        cv.set(x, y, c)
+        if noise2(x, y, 282 + seed) > 0.95:
             cv.set(x, y, PLASTER[2])  # a chip showing the stone
+            cv.set(x + 1, y, PLASTER[3])
+    for x0, lit in ((7, True), (house - 11, False)):  # quoins: dressed stones at the corners
+        for i, y in enumerate(range(wall_top + 1, wall_bottom - 1, 5)):
+            qw = 4 if i % 2 == 0 else 3
+            qx = x0 if lit else x0 + 4 - qw
+            for yy in range(y, min(y + 4, wall_bottom)):
+                for xx in range(qx, qx + qw):
+                    cv.set(xx, yy, STONE[3] if lit else STONE[2])
+                cv.set(qx + (0 if lit else qw - 1), yy, STONE[4] if lit else STONE[1])
+            cv.hline(qx, y, qw, STONE[4] if lit else STONE[3])
     proud = set()
     dx = int(ridge) - 7
-    for (x, y) in rect_set(dx, wall_bottom - 20, 14, 20):  # the painted door, its boards
-        cv.set(x, y, door[2] if (x - dx) % 4 else door[1])
-    cv.hline(dx, wall_bottom - 20, 14, door[3]); cv.set(dx + 11, wall_bottom - 10, GOLD[4])
-    proud |= rect_set(dx - 1, wall_bottom - 21, 16, 1)
-    for wx in (13, house - 25):
-        gp.window(cv, wx, wall_top + 6, 12, 10, shutters=shutters, sill=True, warm=seed % 2 == 0)
-    if net:  # a net drying on the wall: a diamond mesh of rope
+    dtop = wall_bottom - 32
+    for (x, y) in rect_set(dx - 2, dtop - 3, 18, 3):  # the stone lintel
+        cv.set(x, y, STONE[4] if y == dtop - 3 else STONE[3] if x < dx + 12 else STONE[2])
+    cv.set(dx + 6, dtop - 2, STONE[1]); cv.set(dx + 7, dtop - 2, STONE[1])  # the keystone's joints
+    proud |= rect_set(dx - 2, dtop - 3, 18, 3)
+    for (x, y) in rect_set(dx, dtop, 14, 32):  # the painted door, its boards
+        k = (x - dx) % 4
+        cv.set(x, y, door[3] if k == 1 else door[2] if k else door[1])
+    detail.recess(cv, rect_set(dx, dtop, 14, 32), depth=2, k=1)
+    for (x, y) in rect_set(dx + 4, dtop + 5, 6, 5):  # a small light in the door
+        cv.set(x, y, WTR[2] if y < dtop + 7 else WTR[1])
+    cv.rect(dx + 3, dtop + 4, 8, 1, door[4]); cv.set(dx + 5, dtop + 6, WTR[4])
+    for hy in (dtop + 6, dtop + 24):  # strap hinges
+        cv.hline(dx + 1, hy, 7, SLATE[1]); cv.set(dx + 1, hy, SLATE[3]); cv.set(dx + 7, hy, SLATE[2])
+    cv.set(dx + 11, dtop + 17, GOLD[4]); cv.set(dx + 11, dtop + 18, GOLD[2])  # the latch
+    cv.rect(dx - 2, wall_bottom, 18, 2, STONE[3]); cv.hline(dx - 2, wall_bottom, 18, STONE[4])  # the step
+    for wx in (14, house - 26):
+        wy = wall_top + 8
+        gp.window(cv, wx, wy, 12, 16, shutters=shutters, sill=True, warm=seed % 2 == 0)
+        for (x, y) in rect_set(wx - 1, wy - 3, 14, 3):  # its lintel
+            cv.set(x, y, STONE[4] if y == wy - 3 else STONE[3] if x < wx + 9 else STONE[2])
+        proud |= rect_set(wx - 1, wy - 3, 14, 3)
+        for sx in range(wx + 1, wx + 11, 3):  # rain streaks under the sill
+            for yy in range(wy + 19, wy + 19 + 3 + (sx * 7 + seed) % 5):
+                if cv.get(sx, yy)[:3] != (0, 0, 0):
+                    cv.set(sx, yy, PLASTER[3])
+    if net:  # a net drying on the wall: a diamond mesh of rope, hung from two pegs
         nx = house - 22 if net == 'right' else 10
-        for k in range(10):
-            for t in range(8):
-                x, y = nx + (k + t) % 10 + (t // 2), wall_top + 2 + t
-                if 7 < x < house - 7 and (x + y) % 3 == 0:
-                    cv.set(x, y, ROPE[2])
+        for k in range(12):
+            for t in range(11):
+                x, y = nx + (k + t) % 12 + (t // 2) - 1, wall_top + 3 + t
+                if 7 < x < house - 7 and (x + y) % 3 == 0 and not (wall_top + 8 <= y and (14 <= x < 26 or house - 26 <= x < house - 14)):
+                    cv.set(x, y, ROPE[2] if t % 3 else ROPE[3])
+        for px in (nx, nx + 11):
+            cv.set(px, wall_top + 2, WOOD[1])
+        cv.set(nx + 6, wall_top + 13, '#C8B060'); cv.set(nx + 2, wall_top + 12, '#C8B060')  # cork floats
+    # a downpipe at the corner away from the light, and a wall lantern by the door
+    pipe_x = house - 9 if not shed else 8
+    for y in range(wall_top + 1, wall_bottom):
+        cv.set(pipe_x, y, SLATE[2]); cv.set(pipe_x + 1, y, SLATE[1])
+        if (y - wall_top) % 11 == 0:
+            cv.set(pipe_x, y, SLATE[3]); cv.set(pipe_x + 1, y, SLATE[2]); cv.set(pipe_x - 1, y, SLATE[1])
+    cv.hline(pipe_x - 1, wall_bottom - 1, 3, SLATE[2])
+    proud |= {(pipe_x, y) for y in range(wall_top + 1, wall_bottom)} | {(pipe_x + 1, y) for y in range(wall_top + 1, wall_bottom)}
+    lx = dx + 17 if not porch else dx - 9
+    cv.hline(lx - 1, dtop + 2, 3, SLATE[1])  # the bracket
+    cv.vline(lx, dtop + 3, 1, SLATE[1])
+    cv.rect(lx - 1, dtop + 4, 3, 4, GOLD[3]); cv.set(lx - 1, dtop + 4, GOLD[4]); cv.hline(lx - 1, dtop + 8, 3, SLATE[1])
+    cv.hline(lx - 1, dtop + 3, 3, SLATE[2])
+    proud |= rect_set(lx - 1, dtop + 2, 3, 7)
     detail.cast(cv, proud, 1, 1, k=1, on=PLASTER, reach=2)
     detail.overhang_shadow(cv, 7, house - 7, wall_top, lambda x: 3, k=2, cap=1)
     if porch:  # a little porch: a pitched canopy seen from above, on two posts
-        px0, px1, py = dx - 4, dx + 18, wall_bottom - 27
+        px0, px1, py = dx - 4, dx + 18, wall_bottom - 43
         mid = (px0 + px1 - 1) / 2
         for y in range(py, py + 7):
             half = 5 + (y - py) * 1.1  # the canopy widens from its ridge to its eave
@@ -122,7 +187,7 @@ def cottage(width: int = 80, seed: int = 0, door=None, shutters=None, porch: boo
         for x in range(px0 - 1, px1 + 1):
             cv.set(x, wall_bottom + 2, STONE[4]); cv.set(x, wall_bottom + 3, STONE[2])  # the step
     detail.stones(cv, 5, wall_bottom, house - 10, 8, STONE, seed=19 + seed, course=4, moss=LEAF)
-    return cv
+    return gp.keep_foot(cv, w, 74, dx=0)
 
 
 def lighthouse() -> Canvas:
@@ -325,36 +390,67 @@ def lobster_pots() -> Canvas:
     return cv
 
 
+def _fish(cv: Canvas, x: int, y: int, kind: int, flip: bool = False):
+    """A fish 8 px long lying on ice, lit along its back: 0 a mackerel (striped back),
+    1 a red bream, 2 a silver herring. Its tail forks, its eye is a dark dot."""
+    back, belly, mark = (('#4E7A86', '#C8D4D8', '#24414E'), ('#C0503C', '#E8A890', '#8A3028'),
+                         ('#8A9AAC', '#DCE4EA', '#5E6E82'))[kind]
+    for t in range(7):
+        xx = x + (6 - t if flip else t)
+        thick = 0 if t in (0, 6) else 1
+        cv.set(xx, y, back if t < 6 else mark)
+        if thick:
+            cv.set(xx, y + 1, belly)
+        if kind == 0 and t % 2 and 0 < t < 6:
+            cv.set(xx, y, mark)  # the mackerel's bars
+    tx = x - 1 if flip else x + 7
+    cv.set(tx, y - 1, mark); cv.set(tx, y + 1, mark)  # the forked tail
+    cv.set(x + (5 if flip else 1), y, '#1E2028')  # the eye
+
+
 def fish_stall() -> Canvas:
-    """The fish market stall, 76 x 56: a blue and white canvas awning from above, a
-    sloping counter of ice with fish laid in rows, a scale and a chalk price board
-    (marks only, no words)."""
-    w, h = 76, 56
+    """The fish market stall at the scale table's size (verticality.md 5: 48 wide, the
+    counter 13 above the ground, the canopy's top 40): a blue and white canvas awning seen
+    from above, a counter of crushed ice sloping toward the buyer with mackerel, bream and
+    herring laid head to tail, a hanging scale, a chalk price board (marks only, no words),
+    a planked front with a drip of meltwater and a fish box at its foot. It is re-seated in
+    the old 76 x 56 box (keep_foot), so its foot stays where it was."""
+    w, h = 48, 48
     cv = Canvas(w, h, pad=PAD)
-    for y in range(4, 20):
-        for x in range(2, w - 2):
-            stripe = (x // 8) % 2
-            c = (WTR[2] if stripe else SAILCLOTH[4]) if y < 16 else (WTR[1] if stripe else SAILCLOTH[2])
-            cv.set(x, y, c)
-    for x in range(2, w - 2):
-        cv.set(x, 20 + (x // 4) % 2, WTR[1] if (x // 8) % 2 else SAILCLOTH[1])
-    for px in (4, w - 7):
-        gp.post(cv, px, 20, h - 2, w=3, ramp=WOOD)
-    for y in range(26, 40):  # ice
-        for x in range(6, w - 6):
-            cv.set(x, y, '#E6F2F6' if (x + y) % 4 else '#C6DDEE')
-    for row, y in enumerate((28, 33)):
-        for x in range(9, w - 12, 9):
-            for t in range(7):
-                cv.set(x + t, y + (1 if t in (0, 6) else 0), '#9AA8B8' if t < 5 else '#6E7E92')
-            cv.set(x, y, '#2A2D36')
-            cv.set(x + 6, y - 1, '#6E7E92'); cv.set(x + 6, y + 2, '#6E7E92')
-    detail.boards(cv, rect_set(6, 40, w - 12, 12), WOOD, 2, 40, board=4, vertical=True, x0=6)
-    cv.hline(6, 40, w - 12, WOOD[4])
-    for (x, y) in rect_set(w - 20, 22, 12, 6):
+    foot = h - 1
+    ctop = foot - 13
+    for px in (1, 44):  # posts
+        for y in range(18, foot):
+            cv.set(px, y, WOOD[3]); cv.set(px + 1, y, WOOD[4]); cv.set(px + 2, y, WOOD[1])
+    for y in range(20, ctop):  # the dim back of the stall under the awning
+        for x in range(4, 44):
+            cv.set(x, y, WOOD[1] if (x - 4) % 5 else WOOD[0])
+    for y in range(ctop - 8, ctop + 2):  # the ice, sloping toward the buyer
+        for x in range(2, 46):
+            n = noise2(x, y, 331)
+            cv.set(x, y, '#F0F8FA' if n > 0.7 else '#DCEBF2' if n > 0.3 else '#BCD4E2')
+    cv.hline(2, ctop - 9, 44, WOOD[4]); cv.hline(2, ctop + 2, 44, WOOD[4]); cv.hline(2, ctop + 3, 44, WOOD[2])
+    for row, y in enumerate((ctop - 6, ctop - 2)):
+        for i, x in enumerate(range(5 + row * 4, 40, 10)):
+            _fish(cv, x, y, (i + row) % 3, flip=bool((i + row) % 2))
+    cv.set(40, ctop - 6, '#6AA050'); cv.set(41, ctop - 7, '#6AA050'); cv.set(41, ctop - 6, '#8AC06A')  # parsley
+    detail.boards(cv, rect_set(2, ctop + 4, 44, foot - ctop - 4), WOOD, 2, ctop + 4, board=5, vertical=True, x0=2,
+                  grain=0.06, joints=False)
+    for x in range(2, 46):
+        detail.shade(cv, x, ctop + 4, 2)
+    for y in range(ctop + 5, foot - 1, 3):  # meltwater dripping down one board
+        cv.set(23, y, '#9EC4D6')
+    cv.hline(2, foot, 44, WOOD[0])
+    # a fish box at the foot, a hanging scale and the price board
+    cv.rect(33, foot - 5, 12, 5, WOOD[2]); cv.hline(33, foot - 5, 12, WOOD[4]); cv.vline(44, foot - 4, 4, WOOD[0])
+    cv.hline(34, foot - 6, 10, '#DCEBF2'); _fish(cv, 35, foot - 7, 2)
+    cv.vline(10, 20, 4, SLATE[2]); cv.rect(8, 24, 5, 3, SLATE[3]); cv.hline(8, 24, 5, SLATE[4]); cv.set(10, 25, RED[3])
+    cv.hline(7, 28, 7, SLATE[2]); cv.set(7, 27, SLATE[2]); cv.set(13, 27, SLATE[2])  # the scale's pan
+    for (x, y) in rect_set(30, 20, 11, 7):
         cv.set(x, y, '#2A2D36')
-    cv.hline(w - 18, 24, 8, '#E6E2D0'); cv.hline(w - 18, 26, 5, '#E6E2D0')
-    return cv
+    cv.rect(29, 19, 13, 1, WOOD[3]); cv.hline(32, 22, 6, '#E6E2D0'); cv.hline(32, 24, 4, '#E6E2D0')
+    gp.awning(cv, -1, 50, 7, 10, 3, WTR, SAILCLOTH)
+    return gp.keep_foot(cv, 76, 55)
 
 
 def bollard() -> Canvas:

@@ -32,6 +32,30 @@ def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
 
 
+def keep_foot(cv: Canvas, w: int, h: int, dx: int | None = None) -> Canvas:
+    """Re-seat a prop drawn at its true size (verticality.md 5, the scale table) in the
+    nominal w x h box it had before, so its foot stays where the zones place it: the
+    drawing's bottom row lands on the box's bottom row, centred (or moved right by dx).
+    A taller prop rises above the box into the padding, a smaller one sits inside it;
+    style.finalize trims it either way and placement adds the offset. Window panes
+    recorded for the drawing (WINDOWS) move with it."""
+    sx = (w - cv.w) // 2 if dx is None else dx
+    sy = h - cv.h
+    pad = max(cv.pad, cv.pad - sy + 2, cv.pad + abs(sx) + 2)
+    out = Canvas(w, h, pad=pad)
+    p = cv.pad
+    src = cv.img.load()
+    for y in range(cv.h + 2 * p):
+        for x in range(cv.w + 2 * p):
+            c = src[x, y]
+            if c[3]:
+                out.set(x - p + sx, y - p + sy, c)
+    for i, (c, (gx, gy, gw, gh)) in enumerate(WINDOWS):
+        if c is cv:
+            WINDOWS[i] = (out, (gx + sx, gy + sy, gw, gh))
+    return out
+
+
 # the warm yellow-green the sun leaves on the outermost leaves (Cainos' and Eastward's
 # trees: a highlight hue, not just a lighter green); per leaf ramp
 LEAF_SUN = {'#A1C068': '#D2DC86', '#E8B575': '#F6D99A'}
@@ -381,18 +405,20 @@ def window_box(cv: Canvas, x0: int, y0: int, planting: str, seed: int, shift: in
 
 def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
     """The nap hut in the steep top-down view (Matt's references, 17 Oct), 104 x 92: a
-    big slate roof seen from above whose ridge runs back from a timber front gable, the
-    lit left plane and the shaded right plane, a stone chimney showing its cap, a short
-    painted front with a recessed round-topped door (16 x 28), shuttered windows and a
-    fieldstone footing. `door` is the door's paint (HUT_DOORS) and `sills` what sits
+    slate roof seen from above whose ridge runs back from a timber front gable, the lit
+    left plane and the shaded right plane, a stone chimney showing its cap, a painted
+    front 44 px to the eaves with a recessed round-topped door 16 x 32 (the scale table,
+    verticality.md 5: a 25 px adult walks through it), shuttered windows 16 tall, a
+    lantern by the door, ivy on the lit corner and a fieldstone footing. The sprite keeps
+    its 104 x 92 box and its foot: the walls grew into the roof's old depth. `door` is the door's paint (HUT_DOORS) and `sills` what sits
     under the left and the right window: a plain sill or a box of flowers or herbs."""
     w, h = 104, 92
     cv = Canvas(w, h, pad=PAD)
     paint, tone0 = HUT_DOORS[door]
     ridge = 51.5
-    apex_y, eave_y = 30, 60  # the front gable's apex, and the eaves at the roof's front corners
+    apex_y, eave_y = 16, 40  # the front gable's apex, and the eaves at the roof's front corners
     left_x, right_x = 5, 98  # the roof's side eaves (it overhangs the walls)
-    wall_l, wall_r, wall_top, wall_bottom = 12, 91, 60, 84
+    wall_l, wall_r, wall_top, wall_bottom = 12, 91, 40, 84
     slope = (eave_y - apex_y) / (ridge - left_x)
 
     def edge_y(x):  # the bargeboards' line at column x
@@ -408,11 +434,11 @@ def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
     for (x, y) in gable:  # shaded under the bargeboards
         if (x, y - 1) not in gable or (x, y - 2) not in gable:
             detail.shade(cv, x, y, 2 if (x, y - 1) not in gable else 1)
-    for (x, y) in oval(ridge, 44, 5.5, 4.4):  # an oval vent in a lit frame, the crescent sign
-        cv.set(x, y, WOOD[4] if x + 0.4 * y < ridge + 17.5 else WOOD[1])
-    for (x, y) in oval(ridge, 44, 4.2, 3.2):
+    for (x, y) in oval(ridge, 29, 5.5, 4.4):  # an oval vent in a lit frame, the crescent sign
+        cv.set(x, y, WOOD[4] if x + 0.4 * y < ridge + 11.5 else WOOD[1])
+    for (x, y) in oval(ridge, 29, 4.2, 3.2):
         cv.set(x, y, NAP[0])
-    for (x, y) in disc(ridge - 0.7, 43.6, 2.2) - disc(ridge + 0.6, 43.0, 1.8):
+    for (x, y) in disc(ridge - 0.7, 28.6, 2.2) - disc(ridge + 0.6, 28.0, 1.8):
         cv.set(x, y, GOLD[3])
     detail.boards(cv, rect_set(wall_l, wall_top, wall_r - wall_l + 1, wall_bottom - wall_top), PLASTER, 4,
                   wall_top, seed=4, joints=False)
@@ -422,8 +448,8 @@ def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
             if (x0, y) in gable or y >= wall_top:
                 cv.set(x0, y, WOOD[3]); cv.set(x0 + 1, y, WOOD[4]); cv.set(x0 + 2, y, WOOD[2] if x0 == wall_l else WOOD[1])
                 posts |= {(x0, y), (x0 + 1, y), (x0 + 2, y)}
-    # door: 16 x 28, round top, recessed in a stone arch; it rises into the gable
-    dx0, dy0, dw, dh = 44, 56, 16, 28
+    # door: 16 x 32, round top, recessed in a stone arch
+    dx0, dy0, dw, dh = 44, 52, 16, 32
     door = {(x, y) for (x, y) in disc(dx0 + dw / 2, dy0 + dw / 2, dw / 2) if y < dy0 + dh}
     door |= rect_set(dx0, dy0 + dw // 2, dw, dh - dw // 2)
     arch = set()
@@ -439,7 +465,7 @@ def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
         if (x - 1, y) not in arch and (x, y - 1) not in arch:
             cv.set(x, y, STONE[4])
     detail.boards(cv, door, paint, tone0, dy0, board=4, vertical=True, x0=dx0, joints=False, grain=0.06)
-    for sy in (dy0 + 13, dy0 + 23):
+    for sy in (dy0 + 14, dy0 + 27):
         cv.hline(dx0 + 1, sy, 9, SLATE[1]); cv.hline(dx0 + 1, sy - 1, 9, SLATE[2])
         cv.set(dx0 + 3, sy - 1, SLATE[4]); cv.set(dx0 + 7, sy - 1, SLATE[4])
     for (x, y) in disc(dx0 + dw / 2, dy0 + 7, 2.8):
@@ -448,15 +474,25 @@ def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
         cv.set(x, y, WTR[2])
     cv.set(dx0 + 7, dy0 + 6, WTR[4])
     detail.recess(cv, door, depth=2, k=1)
-    cv.set(dx0 + 12, dy0 + 17, GOLD[4]); cv.set(dx0 + 12, dy0 + 18, GOLD[2]); cv.set(dx0 + 13, dy0 + 18, GOLD[1])
-    proud = posts | arch | rect_set(16, 66, 4, 11) | rect_set(34, 66, 4, 11) | rect_set(66, 66, 4, 11)
-    proud |= rect_set(84, 66, 4, 11)
+    cv.set(dx0 + 12, dy0 + 20, GOLD[4]); cv.set(dx0 + 12, dy0 + 21, GOLD[2]); cv.set(dx0 + 13, dy0 + 21, GOLD[1])
+    WY, WH = 56, 16  # the windows' top and height
+    proud = posts | arch | rect_set(16, WY, 4, WH) | rect_set(34, WY, 4, WH) | rect_set(66, WY, 4, WH)
+    proud |= rect_set(84, WY, 4, WH)
     for wx, sill in zip((20, 70), sills):
-        window(cv, wx, 66, 14, 11, sill=sill == 'sill')
-        proud |= rect_set(wx - 1, 77, 16, 2) if sill == 'sill' else rect_set(wx - 2, 77, 18, 4)
+        window(cv, wx, WY, 14, WH, sill=sill == 'sill')
+        for (x, y) in rect_set(wx - 5, WY - 3, 24, 3):  # the head board over window and shutters
+            cv.set(x, y, WOOD[4] if y == WY - 3 else WOOD[3] if y == WY - 2 else WOOD[1])
+        proud |= rect_set(wx - 5, WY - 3, 24, 3)
+        proud |= rect_set(wx - 1, WY + WH, 16, 2) if sill == 'sill' else rect_set(wx - 2, WY + WH, 18, 4)
     for i, (wx, sill) in enumerate(zip((20, 70), sills)):
         if sill != 'sill':
-            window_box(cv, wx - 2, 77, sill, seed=8 if i else 7, shift=0 if i else 3)
+            window_box(cv, wx - 2, WY + WH, sill, seed=8 if i else 7, shift=0 if i else 3)
+    # a lantern on a bracket right of the door, and a horseshoe over it for luck
+    cv.hline(62, 54, 4, SLATE[1]); cv.set(65, 55, SLATE[1])
+    cv.rect(64, 56, 3, 5, GOLD[3]); cv.set(64, 56, GOLD[4]); cv.hline(64, 55, 3, SLATE[2]); cv.hline(64, 61, 3, SLATE[1])
+    proud |= rect_set(62, 54, 5, 8)
+    for (x, y) in ((50, 48), (51, 47), (52, 47), (53, 47), (54, 48)):
+        cv.set(x, y, SLATE[3] if x < 52 else SLATE[2])
     detail.cast(cv, proud, 1, 1, k=2, on=PLASTER, reach=2)
     for y in range(wall_top, wall_bottom):
         detail.shade(cv, wall_l + 3, y, 1); detail.shade(cv, wall_r - 3, y, 1)
@@ -464,10 +500,10 @@ def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
         detail.shade(cv, x, wall_bottom - 1, 1)
     # the roof: two slate planes seen from above, the right one turned from the light;
     # the chimney's shadow falls on the right plane
-    chim = rect_set(70, 14, 10, 16)
+    chim = rect_set(70, 10, 10, 14)
 
     def roof_shadow(x, y):
-        return -1 if 80 <= x <= 84 and 16 <= y <= 34 else 0
+        return -1 if 80 <= x <= 84 and 12 <= y <= 28 else 0
 
     left = {(x, y) for x in range(left_x, int(ridge) + 1) for y in range(0, eave_y + 1)
             if back_y(x) <= y <= edge_y(x)}
@@ -498,15 +534,15 @@ def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
         cv.set(x, ey + 2, WOOD[1])
     cv.vline(51, apex_y - 4, 4, WOOD[3]); cv.set(52, apex_y - 4, WOOD[2]); cv.set(51, apex_y - 5, WOOD[4])
     # the chimney: a cap seen from above, its stone face, standing on the right plane
-    detail.stones(cv, 70, 18, 10, 12, STONE, seed=33, course=4)
-    cv.vline(70, 18, 12, STONE[3]); cv.vline(79, 18, 12, STONE[1])
-    cv.rect(69, 13, 12, 5, STONE[3]); cv.hline(69, 13, 12, STONE[4]); cv.vline(69, 13, 5, STONE[4])
-    cv.rect(72, 14, 6, 3, NAP[0]); cv.hline(69, 17, 12, STONE[1])
+    detail.stones(cv, 70, 14, 10, 10, STONE, seed=33, course=4)
+    cv.vline(70, 14, 10, STONE[3]); cv.vline(79, 14, 10, STONE[1])
+    cv.rect(69, 9, 12, 5, STONE[3]); cv.hline(69, 9, 12, STONE[4]); cv.vline(69, 9, 5, STONE[4])
+    cv.rect(72, 10, 6, 3, NAP[0]); cv.hline(69, 13, 12, STONE[1])
     # eave shadows on the front: under the side eaves at the wall's top corners
     detail.overhang_shadow(cv, wall_l, wall_r + 1, wall_top,
                            lambda x: (4 if x < wall_l + 6 or x > wall_r - 6 else 2) + (x - wall_l) // 40, k=2, cap=1)
     # ivy on the lit corner, and the footing with a step and a mat
-    for (ix, iy) in ((13, 62), (15, 66), (13, 70), (15, 74), (14, 78)):
+    for (ix, iy) in ((14, 46), (13, 50), (15, 54), (13, 58), (15, 62), (13, 66), (15, 70), (13, 74), (14, 78)):
         cv.vline(ix + 1, iy, 4, LEAF[1])
         cv.set(ix, iy, LEAF[4]); cv.set(ix + 1, iy, LEAF[3]); cv.set(ix, iy + 1, LEAF[3]); cv.set(ix + 2, iy + 2, LEAF[2])
     detail.stones(cv, 10, wall_bottom, 84, 6, STONE, seed=9, course=3, moss=LEAF)
@@ -518,100 +554,106 @@ def hut(door: str = 'oak', sills: tuple = ('sill', 'flowers')) -> Canvas:
 
 
 # ---- Moss's stall ----------------------------------------------------------
-def stall() -> Canvas:
-    """Moss's hat stall, 88 x 72: a striped awning with rounded folds over a deep, shaded
-    recess with a shelf of hats, and a planked counter at companion height whose top
-    shows its thickness (coherence plan, 6c)."""
-    w, h = 88, 72
-    cv = Canvas(w, h, pad=PAD)
-    # the recess under the awning: a back wall of dark boards, darkest under the awning
-    detail.boards(cv, rect_set(8, 28, 72, 18), WOOD, 1, 28, board=6, vertical=True, x0=8, joints=False)
-    for x in range(8, 80):
-        for y in range(28, 35):
-            detail.shade(cv, x, y, 2 if y < 32 else 1)
-    cv.hline(8, 44, 72, WOOD[3]); cv.hline(8, 45, 72, WOOD[1])  # the shelf, lit along its edge
-    # a cap, a top hat, a straw hat, a crown, each in its own material
-    for (x, y) in oval(18, 42, 7, 3) | rect_set(12, 37, 12, 5):
-        cv.set(x, y, WTR[2] if y < 41 else WTR[1])
-    cv.hline(12, 37, 10, WTR[3]); cv.set(12, 38, WTR[4]); cv.hline(14, 43, 12, WTR[1])
-    for y in range(30, 43):
-        cv.hline(30, y, 9, STONE[1] if y < 41 else STONE[0])
-    cv.vline(30, 30, 11, STONE[2]); cv.vline(31, 31, 8, STONE[3]); cv.hline(30, 38, 9, RED[2])
-    cv.hline(27, 43, 15, STONE[0]); cv.hline(28, 42, 13, STONE[1])
-    for (x, y) in oval(51, 41, 8, 3):
-        cv.set(x, y, SAND[2] if y < 41 else SAND[1])
-    for (x, y) in oval(51, 38, 4, 3):
-        cv.set(x, y, SAND[2] if x < 51 else SAND[1])
-    cv.set(49, 36, CREAM[3]); cv.hline(47, 39, 9, RED[3]); cv.hline(47, 40, 9, RED[1])
-    for i, x in enumerate(range(62, 71)):
-        top = 34 if i % 4 == 0 else 36
-        cv.vline(x, top, 43 - top, GOLD[4] if x < 64 else GOLD[3] if x < 68 else GOLD[2])
-    cv.hline(62, 43, 9, GOLD[1]); cv.set(62, 34, GOLD[4]); cv.set(66, 39, RED[3]); cv.set(66, 38, RED[4])
-    # posts: round, lit from the left, standing in front of the recess
-    posts = set()
-    for x in (4, 80):
-        for y in range(16, 68):
-            cv.set(x, y, WOOD[3]); cv.set(x + 1, y, WOOD[4]); cv.set(x + 2, y, WOOD[2]); cv.set(x + 3, y, WOOD[1])
-            posts |= {(x + i, y) for i in range(4)}
-    detail.cast(cv, posts, 1, 1, k=1, on=WOOD, reach=2)
-    # counter: a lit top that shows its thickness, a planked front shaded under the lip
-    cv.rect(2, 46, 84, 2, WOOD[4]); cv.hline(2, 48, 84, WOOD[3]); cv.hline(2, 49, 84, WOOD[2])
-    cv.set(2, 46, WOOD[3])
-    detail.boards(cv, rect_set(2, 50, 84, 16), WOOD, 2, 50, board=7, vertical=True, x0=2, grain=0.05, joints=False)
-    for x in range(2, 86):
-        detail.shade(cv, x, 50, 2); detail.shade(cv, x, 51, 1)
-    for x in range(76, 86):
-        for y in range(52, 66):
-            detail.shade(cv, x, y, 1)  # the counter's end turns from the light
-    cv.hline(2, 66, 84, WOOD[0]); cv.hline(2, 65, 84, WOOD[1])
-    # ledger and a potted seedling on the counter
-    cv.rect(52, 44, 12, 3, NAP[1]); cv.hline(53, 44, 10, CREAM[3]); cv.vline(58, 44, 2, CREAM[1])
-    cv.rect(16, 42, 6, 5, RED[2]); cv.hline(16, 42, 6, RED[3]); cv.vline(21, 43, 4, RED[1]); cv.set(16, 43, RED[4])
-    cv.set(18, 40, LEAF[3]); cv.set(19, 39, LEAF[4]); cv.set(17, 41, LEAF[2]); cv.set(20, 41, LEAF[2])
-    # bolts of fabric by the base, rolled: lit along the top
-    for (bx, ramp) in ((8, NAP), (66, WTR)):
-        cv.rect(bx, 67, 14, 4, ramp[2]); cv.hline(bx, 67, 14, ramp[4]); cv.hline(bx, 68, 14, ramp[3])
-        cv.hline(bx, 70, 14, ramp[1]); cv.vline(bx, 67, 4, ramp[1]); cv.set(bx, 68, ramp[2])
-    # awning: a lit top slope, then a valance of rounded folds (each stripe lit on its
-    # left, shaded on its right) with a scalloped hem, casting a deep shadow below
-    # In the steep top-down view the awning's canvas top is seen from above: a big
-    # sloped plane (rows 2 to 18) whose stripes run down the slope, each stripe
-    # sagging between the ribs (lit on its left, shaded on its right), lit along the
-    # back edge; then the valance of rounded folds and its scalloped hem.
-    for y in range(2, 29):
-        for x in range(0, w):
-            stripe = (x // 8) % 2 == 0
-            f = x % 8
-            ramp = LEAF if stripe else PLASTER
+def awning(cv: Canvas, x0: int, w: int, y0: int, slope: int, valance: int, ramp_a, ramp_b, stripe: int = 8):
+    """A striped canvas awning in the steep top-down view: the sloped top seen from above
+    (`slope` rows from y0), each stripe sagging between ribs, lit on its left and along the
+    back edge; then a valance of rounded folds (`valance` rows) with a scalloped hem. The
+    two stripe colours are ramps."""
+    for y in range(y0, y0 + slope + valance):
+        for x in range(x0, x0 + w):
+            f = (x - x0) % stripe
+            ramp = ramp_a if ((x - x0) // stripe) % 2 == 0 else ramp_b
             top = len(ramp) - 1
-            if y < 19:
-                t = top if f in (1, 2) else top - 1 if f < 6 else top - 2
-                if y > 12:
+            if y < y0 + slope:
+                t = top if f in (1, 2) else top - 1 if f < stripe - 2 else top - 2
+                if y > y0 + slope * 2 // 3:
                     t -= 1  # the slope turns slightly from the light toward its front
-                if f == 7:
+                if f == stripe - 1:
                     t = top - 3  # the rib between two stripes
             else:
                 t = top - 1 if f in (1, 2) else top - 2 if f in (0, 3, 4) else top - 3
-                if y > 25:
+                if y > y0 + slope + valance - 3:
                     t -= 1
             cv.set(x, y, ramp[max(0, t)])
-    cv.hline(0, 2, w, LEAF[2]); cv.hline(0, 19, w, LEAF[1])
-    for x in range(0, w):
-        cv.set(x, 3, LEAF[4] if (x // 8) % 2 == 0 else PLASTER[5])
-        cv.set(x, 18, LEAF[2] if (x // 8) % 2 == 0 else PLASTER[2])  # the eave's rolled edge
-    for x in range(0, w):  # the valance's scalloped hem
-        f = x % 8
-        ramp = LEAF if (x // 8) % 2 == 0 else PLASTER
+    for x in range(x0, x0 + w):
+        a = ((x - x0) // stripe) % 2 == 0
+        cv.set(x, y0, (ramp_a if a else ramp_b)[-1])
+        cv.set(x, y0 + slope - 1, (ramp_a if a else ramp_b)[1])  # the eave's rolled edge
+        f = (x - x0) % stripe
+        ramp = ramp_a if a else ramp_b
         top = len(ramp) - 1
-        if 1 <= f <= 6:
-            cv.set(x, 29, ramp[top - 2] if f < 4 else ramp[top - 3])
-        if 2 <= f <= 5:
-            cv.set(x, 30, ramp[top - 3])
-    # hanging sign with a little hat
-    cv.rect(30, -6, 28, 8, WOOD[3]); cv.hline(30, -6, 28, WOOD[4]); cv.hline(30, 1, 28, WOOD[1])
-    cv.vline(30, -6, 8, WOOD[4]); cv.vline(57, -5, 6, WOOD[2])
-    cv.rect(39, -4, 10, 3, NAP[3]); cv.hline(37, -1, 14, NAP[1]); cv.hline(39, -4, 10, NAP[4])
-    return cv
+        hy = y0 + slope + valance
+        if 1 <= f <= stripe - 2:
+            cv.set(x, hy, ramp[top - 2] if f < stripe // 2 else ramp[top - 3])
+        if 2 <= f <= stripe - 3:
+            cv.set(x, hy + 1, ramp[top - 3])
+
+
+def stall() -> Canvas:
+    """Moss's hat stall at the scale table's size (verticality.md 5: 48 wide, the counter top
+    13 above the ground, the canopy's top 40): a striped awning seen from above over a
+    shaded recess with a shelf of hats, round posts lit from the left, a planked counter
+    whose top shows its thickness with a ledger, a hat stand and a seedling on it, bolts of
+    fabric and a crate at its foot and a little sign with a hat on the awning's ridge. It is
+    re-seated in the old 88 x 72 box (keep_foot), so its foot stays where it was."""
+    w, h = 48, 48
+    cv = Canvas(w, h, pad=PAD)
+    foot = h - 1
+    ctop = foot - 13  # the counter's top
+    # the recess under the awning: dark boards, darkest under the awning, and a shelf
+    detail.boards(cv, rect_set(4, 22, 40, ctop - 22), WOOD, 1, 22, board=5, vertical=True, x0=4, joints=False)
+    for x in range(4, 44):
+        for y in range(22, 27):
+            detail.shade(cv, x, y, 2 if y < 25 else 1)
+    cv.hline(4, 29, 40, WOOD[3]); cv.hline(4, 30, 40, WOOD[1])  # the shelf, lit along its edge
+    # on the shelf: a cap, a top hat, a straw hat
+    for (x, y) in oval(11, 28, 4, 1.6) | rect_set(8, 25, 6, 3):
+        cv.set(x, y, WTR[2] if y < 27 else WTR[1])
+    cv.hline(8, 25, 5, WTR[3]); cv.hline(9, 29, 6, WTR[0])
+    for y in range(23, 29):
+        cv.hline(20, y, 5, STONE[1] if y < 28 else STONE[0])
+    cv.vline(20, 23, 5, STONE[2]); cv.hline(20, 27, 5, RED[2]); cv.hline(18, 28, 9, STONE[0])
+    for (x, y) in oval(33, 28, 5, 1.6):
+        cv.set(x, y, SAND[2] if y < 28 else SAND[1])
+    for (x, y) in oval(33, 26.5, 2.5, 1.8):
+        cv.set(x, y, SAND[2] if x < 33 else SAND[1])
+    cv.hline(31, 27, 5, RED[3])
+    # posts: round, lit from the left, standing in front of the recess
+    posts = set()
+    for x in (1, 44):
+        for y in range(18, foot):
+            cv.set(x, y, WOOD[3]); cv.set(x + 1, y, WOOD[4]); cv.set(x + 2, y, WOOD[1])
+            posts |= {(x + i, y) for i in range(3)}
+    detail.cast(cv, posts, 1, 1, k=1, on=WOOD, reach=2)
+    # counter: a lit top that shows its thickness, a planked front shaded under the lip
+    cv.rect(0, ctop, 48, 2, WOOD[4]); cv.hline(0, ctop + 2, 48, WOOD[2])
+    cv.set(0, ctop, WOOD[3])
+    detail.boards(cv, rect_set(1, ctop + 3, 46, foot - ctop - 3), WOOD, 2, ctop + 3, board=6, vertical=True, x0=1,
+                  grain=0.06, joints=False)
+    for x in range(1, 47):
+        detail.shade(cv, x, ctop + 3, 2); detail.shade(cv, x, ctop + 4, 1)
+        if x % 6 == 2 and x < 44:
+            cv.set(x, ctop + 4, SLATE[1])  # nail heads along the top board
+    cv.hline(1, foot, 46, WOOD[0]); cv.hline(1, foot - 1, 46, WOOD[1])
+    # on the counter: a ledger, a hat on a stand, a seedling
+    cv.rect(28, ctop - 2, 8, 2, NAP[1]); cv.hline(29, ctop - 2, 6, CREAM[3]); cv.set(32, ctop - 2, CREAM[1])
+    cv.vline(15, ctop - 5, 5, WOOD[2]); cv.hline(13, ctop - 1, 5, WOOD[1])
+    for (x, y) in oval(15, ctop - 6, 4, 1.5):
+        cv.set(x, y, NAP[3] if x < 15 else NAP[2])
+    cv.rect(14, ctop - 9, 3, 3, NAP[3]); cv.set(14, ctop - 9, NAP[4]); cv.hline(14, ctop - 7, 3, GOLD[3])
+    cv.rect(40, ctop - 4, 4, 4, RED[2]); cv.hline(40, ctop - 4, 4, RED[3]); cv.set(43, ctop - 3, RED[1])
+    cv.set(41, ctop - 6, LEAF[3]); cv.set(42, ctop - 7, LEAF[4]); cv.set(40, ctop - 5, LEAF[2]); cv.set(43, ctop - 5, LEAF[2])
+    # bolts of fabric leaning at the counter's foot
+    for (bx, ramp) in ((4, NAP), (12, WTR)):
+        cv.rect(bx, foot - 4, 7, 4, ramp[2]); cv.hline(bx, foot - 4, 7, ramp[4]); cv.hline(bx, foot - 3, 7, ramp[3])
+        cv.hline(bx, foot - 1, 7, ramp[1]); cv.vline(bx, foot - 4, 4, ramp[1])
+    awning(cv, -1, 50, 7, 11, 4, LEAF, PLASTER)
+    # a little sign on the awning's ridge, with a hat painted on it
+    cv.rect(16, 0, 16, 6, WOOD[3]); cv.hline(16, 0, 16, WOOD[4]); cv.hline(16, 5, 16, WOOD[1])
+    cv.vline(16, 0, 6, WOOD[4]); cv.vline(31, 1, 5, WOOD[2])
+    cv.rect(21, 1, 6, 2, NAP[3]); cv.hline(19, 3, 10, NAP[1]); cv.hline(21, 1, 6, NAP[4])
+    cv.vline(18, 6, 2, WOOD[1]); cv.vline(29, 6, 2, WOOD[1])
+    return keep_foot(cv, 88, 72)
 
 
 # ---- trees -------------------------------------------------------------------
@@ -1013,43 +1055,57 @@ def bridge(w: int, h: int) -> Canvas:
 
 # ---- clutter: small things that sit against walls (Matt's references) -------
 def crate() -> Canvas:
-    """A wooden crate, 16 x 16, seen steeply from above: a lit lid of boards over a
-    darker front face braced with an X."""
-    cv = Canvas(16, 16, pad=PAD)
-    for y in range(0, 6):  # the lid, seen from above
-        for x in range(16):
-            cv.set(x, y, WOOD[4] if y in (0, 3) else WOOD[3] if y not in (2, 5) else WOOD[2])
-    for y in range(6, 16):  # the front face
-        for x in range(16):
-            cv.set(x, y, WOOD[2])
-    cv.rect(0, 6, 16, 2, WOOD[1]); cv.rect(0, 14, 16, 2, WOOD[1])
-    cv.vline(0, 6, 10, WOOD[3]); cv.vline(15, 6, 10, WOOD[1])
-    for i in range(6):  # the X brace, lit on its upper edges
-        cv.set(2 + i * 2, 8 + i, WOOD[3]); cv.set(3 + i * 2, 8 + i, WOOD[3])
-        cv.set(13 - i * 2, 8 + i, WOOD[3]); cv.set(12 - i * 2, 8 + i, WOOD[3])
-    return cv
+    """A wooden crate at the scale table's size (verticality.md 5: 11 tall, 12 wide), seen
+    steeply from above: a lid of three boards lit from the upper left, a front face of
+    planks with grain between corner battens, nail heads, and the right side turned from
+    the light. Re-seated in the old 16 x 16 box (keep_foot)."""
+    cv = Canvas(12, 11, pad=PAD)
+    for y in range(0, 4):  # the lid, seen from above: three boards with gaps
+        for x in range(12):
+            cv.set(x, y, WOOD[4] if y == 0 else WOOD[3] if y != 2 else WOOD[2])
+    cv.set(3, 1, WOOD[2]); cv.set(8, 3, WOOD[2])  # grain on the lid
+    for y in range(4, 11):  # the front face: two planks
+        for x in range(12):
+            cv.set(x, y, WOOD[2] if y < 7 or y > 7 else WOOD[1])
+    cv.hline(0, 4, 12, WOOD[1])  # the lid's shadow line
+    for x in (0, 1):
+        cv.vline(x, 4, 7, WOOD[3] if x == 0 else WOOD[2])  # the lit corner batten
+    for x in (10, 11):
+        cv.vline(x, 4, 7, WOOD[1] if x == 10 else WOOD[0])  # the batten turned from the light
+    cv.set(5, 5, WOOD[1]); cv.set(6, 5, WOOD[1]); cv.set(7, 9, WOOD[3])  # grain
+    for (x, y) in ((1, 5), (1, 9), (10, 5), (10, 9), (1, 1), (10, 1)):
+        cv.set(x, y, SLATE[1])  # nail heads
+    cv.hline(0, 10, 12, WOOD[0])
+    return keep_foot(cv, 16, 17)
 
 
 def barrel() -> Canvas:
-    """A barrel, 14 x 18: a lid seen from above, rounded staves lit on the left, two
-    iron hoops."""
-    cv = Canvas(14, 18, pad=PAD)
-    body = {(x, y) for y in range(3, 18) for x in range(14)
-            if abs(x + 0.5 - 7) <= 6 + (0.6 if 6 <= y <= 13 else 0)}
+    """A barrel at the scale table's size (verticality.md 5: 14 tall, 11 wide): a lid of
+    boards seen from above inside its rim, bellied staves lit on the left with their
+    joints, two iron hoops that catch the light, a darker bottom chime. Re-seated in the
+    old 14 x 18 box (keep_foot)."""
+    cv = Canvas(11, 14, pad=PAD)
+    body = {(x, y) for y in range(3, 14) for x in range(11)
+            if abs(x + 0.5 - 5.5) <= 5 + (0.5 if 5 <= y <= 10 else 0)}
     for (x, y) in body:
-        t = 3 if x < 4 else 4 if x == 4 else 2 if x < 10 else 1
-        if x % 3 == 0:
+        t = 3 if x < 3 else 4 if x == 3 else 2 if x < 8 else 1
+        if x % 3 == 1:
             t -= 1  # the joints between staves
         cv.set(x, y, WOOD[max(0, t)])
-    for hy in (6, 13):
-        for x in range(14):
+    for hy in (5, 11):
+        for x in range(11):
             if (x, hy) in body:
-                cv.set(x, hy, SLATE[3] if x < 5 else SLATE[2] if x < 10 else SLATE[1])
-    for (x, y) in oval(7, 3.5, 6.5, 3):
-        cv.set(x, y, WOOD[3] if (x + y) % 3 else WOOD[4])
-    for (x, y) in oval(7, 3.5, 4.5, 2):
-        cv.set(x, y, WOOD[2] if y > 3 else WOOD[3])
-    return cv
+                cv.set(x, hy, SLATE[3] if x < 4 else SLATE[2] if x < 8 else SLATE[1])
+        cv.set(2, hy, SLATE[4])  # a glint on the hoop
+    for x in range(11):
+        if (x, 13) in body:
+            cv.set(x, 13, WOOD[0])
+    for (x, y) in oval(5.5, 2.5, 5.5, 2.5):
+        cv.set(x, y, WOOD[3])
+    for (x, y) in oval(5.5, 2.5, 4, 1.6):
+        cv.set(x, y, WOOD[2] if (x + 1) % 3 else WOOD[1])  # the lid's boards
+    cv.hline(3, 1, 5, WOOD[4])  # the lit back of the rim
+    return keep_foot(cv, 14, 19)
 
 
 def potted_plant() -> Canvas:

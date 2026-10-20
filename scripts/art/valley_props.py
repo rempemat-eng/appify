@@ -260,16 +260,33 @@ def fern() -> Canvas:
 
 
 def forest_bench() -> Canvas:
-    """A hidden bench made from a split log on two stumps, 40 x 20."""
-    cv = Canvas(40, 20, pad=PAD)
-    for sx in (6, 30):
-        for (x, y) in rect_set(sx, 10, 7, 9):
-            cv.set(x, y, WOOD[2] if x < sx + 3 else WOOD[1])
-        for (x, y) in oval(sx + 3, 10, 3.5, 1.5):
-            cv.set(x, y, WOOD[4])
-    for x in range(2, 39):
-        cv.set(x, 7, WOOD[4]); cv.set(x, 8, WOOD[3]); cv.set(x, 9, WOOD[2]); cv.set(x, 10, WOOD[1])
-    return cv
+    """A hidden bench made from a split log on two stumps, at the scale table's size
+    (verticality.md 5: 32 long, the seat 7 above the ground): the split face lit and
+    grained along the log with a crack and a knot, the round bark side below it, the
+    stumps' cut rings showing between, moss on the bark and a contact shadow. Re-seated in
+    the old 40 x 20 box (keep_foot)."""
+    cv = Canvas(32, 10, pad=PAD)
+    for x in range(3, 29):  # a contact shadow under the seat
+        cv.set(x, 9, (20, 26, 22, 96))
+    for sx in (4, 22):  # the stumps: bark, lit on the left, a cut ring showing under the log
+        for (x, y) in rect_set(sx, 4, 6, 6):
+            cv.set(x, y, WOOD[2] if x < sx + 2 else WOOD[1] if x < sx + 5 else WOOD[0])
+        for y in range(5, 10, 2):
+            cv.set(sx + 3, y, WOOD[0])  # bark furrows
+        cv.hline(sx - 1, 9, 8, WOOD[0])
+    for x in range(1, 31):  # the split log: its flat face seen from above, then its bark
+        g = noise2(x // 4, 0, 271) > 0.6
+        cv.set(x, 0, WOOD[4]); cv.set(x, 1, WOOD[3] if g else WOOD[4]); cv.set(x, 2, WOOD[3])
+        cv.set(x, 3, WOOD[1]); cv.set(x, 4, WOOD[2] if x < 16 else WOOD[1]); cv.set(x, 5, WOOD[0])
+    for x in range(9, 15):
+        cv.set(x, 1, WOOD[2])  # a crack along the grain
+    cv.set(20, 2, WOOD[1]); cv.set(21, 2, WOOD[2])  # a knot
+    for (x, y) in ((1, 1), (1, 2), (30, 1), (30, 2)):
+        cv.set(x, y, '#C9A273')  # the pale cut ends
+    for x in (5, 6, 12, 25, 26):
+        cv.set(x, 4, LEAF[2])  # moss on the bark
+    cv.set(6, 5, LEAF[1]); cv.set(26, 5, LEAF[3])
+    return gp.keep_foot(cv, 40, 20)
 
 
 def _cone_roof(cv, cx, apex_y, eave_y, rx, ry, panels, ramp_a, ramp_b, trim):
@@ -458,32 +475,50 @@ def frozen_tarn() -> Canvas:
 
 
 def station_house() -> Canvas:
-    """The valley's railway halt, 104 x 84: a stone building with a slate roof seen from
+    """The valley's railway halt, 104 wide, at the scale table's size (verticality.md 5:
+    walls 44 to the eaves, a 32 px double door, 16 px windows): a stone building with a slate roof seen from
     above, a deep canopy over the platform side held on cast brackets, a round clock
-    under the gable, a ticket window lit warm and a painted name board (no letters)."""
-    w, h = 104, 84
+    under the gable, a ticket window lit warm and a painted name board (no letters). Its
+    foot stays where the old 84 px halt stood (keep_foot); it rises 12 px higher."""
+    w, h = 104, 96
     cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = (w - 1) / 2, 16, 38, 38, 76
+    ridge, apex_y, eave_y, wall_top, wall_bottom = (w - 1) / 2, 20, 44, 44, 88
     gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, seed=91, moss=LEAF)
-    gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7, w - 8,
-                     apex_y, wall_top, PLASTER, boards=False)
-    for (x, y) in disc(ridge, 29, 5):  # the clock
-        cv.set(x, y, '#F7EEDC' if (x - ridge) + (y - 29) < 3 else '#E3D3B4')
-    for (x, y) in disc(ridge, 29, 5):
-        if (x - ridge) ** 2 + (y - 29) ** 2 > 16:
+    gable = gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7,
+                             w - 8, apex_y, wall_top, PLASTER, boards=False)
+    for (x, y) in gable:  # rough render on the gable, a step darker right of the ridge
+        if (x, y - 2) in gable and noise2(x // 2, y // 2, 93) > 0.6:
+            cv.set(x, y, PLASTER[3] if x < ridge else PLASTER[2])
+    for (x, y) in disc(ridge, 33, 5):  # the clock
+        cv.set(x, y, '#F7EEDC' if (x - ridge) + (y - 33) < 3 else '#E3D3B4')
+    for (x, y) in disc(ridge, 33, 5):
+        if (x - ridge) ** 2 + (y - 33) ** 2 > 16:
             cv.set(x, y, WOOD[1])
-    cv.vline(int(ridge), 25, 4, '#2A2D36'); cv.hline(int(ridge), 29, 3, '#2A2D36')
+    cv.vline(int(ridge), 29, 4, '#2A2D36'); cv.hline(int(ridge), 33, 3, '#2A2D36')
     detail.stones(cv, 7, wall_top, w - 14, wall_bottom - wall_top, STONE, seed=33, course=5, moss=LEAF)
     for (x, y) in rect_set(18, wall_top + 6, w - 36, 6):  # the name board
         cv.set(x, y, '#3E6A4A' if y > wall_top + 6 else '#5E8A62')
     for k in range(9):
         cv.hline(24 + k * 7, wall_top + 8, 4, '#F4E6C8')
-    gp.window(cv, 14, wall_top + 16, 14, 12, shutters=None, sill=True, warm=True)
-    for (x, y) in rect_set(int(ridge) - 9, wall_bottom - 24, 18, 24):  # the door
-        cv.set(x, y, '#3E6A4A' if (x - int(ridge)) % 6 else '#2E5038')
-    for (x, y) in rect_set(w - 32, wall_top + 16, 16, 12):  # the ticket window
-        cv.set(x, y, '#FFE7A6' if y < wall_top + 20 else '#F0B85A')
-    cv.hline(w - 33, wall_top + 28, 18, WOOD[4])
+    gp.window(cv, 14, wall_top + 18, 12, 16, shutters=None, sill=True, warm=True)
+    dx0, dy0 = int(ridge) - 9, wall_bottom - 32
+    for (x, y) in rect_set(dx0 - 2, dy0 - 3, 22, 3):  # the door's stone head
+        cv.set(x, y, STONE[4] if y == dy0 - 3 else STONE[3] if x < dx0 + 15 else STONE[2])
+    for (x, y) in rect_set(dx0, dy0, 18, 32):  # the double door: panelled leaves, glazed above
+        k = (x - dx0) % 9
+        c = '#3E6A4A' if k not in (0, 8) else '#2E5038'
+        if 2 <= k <= 6 and dy0 + 3 <= y < dy0 + 12:
+            c = WTR[2] if y < dy0 + 6 else WTR[1]
+        elif 2 <= k <= 6 and (y in (dy0 + 16, dy0 + 27)):
+            c = '#2E5038'
+        cv.set(x, y, c)
+    cv.vline(dx0 + 9, dy0, 32, '#24402E'); cv.set(dx0 + 7, dy0 + 18, GOLD[4]); cv.set(dx0 + 11, dy0 + 18, GOLD[4])
+    detail.recess(cv, rect_set(dx0, dy0, 18, 32), depth=2, k=1)
+    cv.rect(dx0 - 3, wall_bottom, 24, 2, STONE[3]); cv.hline(dx0 - 3, wall_bottom, 24, STONE[4])
+    for (x, y) in rect_set(w - 32, wall_top + 18, 16, 16):  # the ticket window
+        cv.set(x, y, '#FFE7A6' if y < wall_top + 23 else '#F0B85A')
+    cv.vline(w - 24, wall_top + 18, 16, WOOD[2]); cv.hline(w - 32, wall_top + 25, 16, WOOD[2])
+    cv.hline(w - 33, wall_top + 34, 18, WOOD[4]); cv.hline(w - 33, wall_top + 35, 18, WOOD[1])
     # the platform canopy along the front, on brackets
     for y in range(wall_top + 2, wall_top + 6):
         for x in range(0, w):
@@ -491,9 +526,9 @@ def station_house() -> Canvas:
     for x in range(0, w, 6):
         cv.set(x, wall_top + 6, '#3E6A4A')  # a fretted valance
     for bx in (4, w - 6):
-        cv.vline(bx, wall_top + 6, 34, '#2A2D36')
+        cv.vline(bx, wall_top + 6, 38, '#2A2D36')
     detail.overhang_shadow(cv, 7, w - 7, wall_top + 7, lambda x: 3, k=2, cap=1)
-    return cv
+    return gp.keep_foot(cv, w, 83)
 
 
 def lookout_tower() -> Canvas:
@@ -501,7 +536,7 @@ def lookout_tower() -> Canvas:
     top above the sea), 60 x 120: a square shaft of coursed stone with moss in its lower
     joints and a slit window, a jettied timber watch room on carved brackets with a
     window on the sea, a steep slate roof seen from above with a lantern finial, an oak
-    door up two stone steps, and a lean-to log store against its lit side."""
+    door (32 px, the scale table's) up two stone steps, and a lean-to log store against its lit side."""
     w, h = 60, 120
     cv = Canvas(w, h, pad=PAD)
     cx = (w - 1) / 2
@@ -535,10 +570,10 @@ def lookout_tower() -> Canvas:
         if (y // 6) % 2 and y > shaft_bottom - 20:
             cv.set(shaft_x0 + 1 + (y % 5), y, LEAF[2])  # moss in the low joints
     detail.overhang_shadow(cv, shaft_x0, shaft_x1, shaft_top, lambda x: 3, k=2, cap=1)
-    for y in range(shaft_top + 12, shaft_top + 22):  # a slit window
+    for y in range(shaft_top + 4, shaft_top + 12):  # a slit window
         cv.set(int(cx), y, '#2A2D36'); cv.set(int(cx) - 1, y, STONE[1])
     # the door: oak boards under a round head, up two steps
-    dw, dh = 14, 20
+    dw, dh = 14, 32  # the scale table's single door (verticality.md 5)
     dx0, dy0 = int(cx) - dw // 2, shaft_bottom - dh
     for y in range(dy0, shaft_bottom):
         for x in range(dx0, dx0 + dw):
@@ -546,7 +581,9 @@ def lookout_tower() -> Canvas:
             if top < 4 and abs(x + 0.5 - (dx0 + dw / 2)) > (dw / 2) * math.sqrt(max(0, 1 - ((4 - top) / 4) ** 2)):
                 continue
             cv.set(x, y, WOOD[2] if (x - dx0) % 4 else WOOD[1])
-    cv.set(dx0 + dw - 4, dy0 + 11, GOLD[3])  # the ring handle
+    for hy in (dy0 + 9, dy0 + 25):  # strap hinges
+        cv.hline(dx0 + 1, hy, 7, SLATE[1]); cv.set(dx0 + 1, hy, SLATE[3])
+    cv.set(dx0 + dw - 4, dy0 + 17, GOLD[3]); cv.set(dx0 + dw - 4, dy0 + 18, GOLD[2])  # the ring handle
     for k, (sx0, sw) in enumerate(((dx0 - 3, dw + 6), (dx0 - 6, dw + 12))):  # the steps
         y0 = shaft_bottom + k * 4
         for y in range(y0, y0 + 4):

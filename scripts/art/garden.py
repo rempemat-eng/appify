@@ -504,7 +504,7 @@ def flower_points():
 ANCHORS = {
     'start': {'x': meadow.PATH_X, 'y': 196},
     'bed': {'x': 143, 'y': 110},
-    'chimney': {'x': 16 + 75, 'y': 28 + 13},  # the top-down hut's chimney cap
+    'chimney': {'x': 16 + 75, 'y': 28 + 9},  # the top-down hut's chimney cap
     'book': {'x': 150 + 32, 'y': 46 + 11},
     'frogPad': {'x': FROG_PAD[0], 'y': FROG_PAD[1]},
     'pondRipple': {'x': POND_C[0] - 26, 'y': POND_C[1] + 2},
@@ -525,8 +525,8 @@ ANCHORS = {
         {'id': 'lantern-pool', 'kind': 'lantern', 'x': 183, 'y': 124, 'w': 44, 'h': 22},
         {'id': 'lantern-halo', 'kind': 'lantern', 'x': 199, 'y': 102, 'w': 18, 'h': 18},
         {'id': 'hut-pool', 'kind': 'night', 'x': 30, 'y': 112, 'w': 76, 'h': 18},
-        {'id': 'hut-window-l', 'kind': 'night', 'x': 36, 'y': 92, 'w': 14, 'h': 11},
-        {'id': 'hut-window-r', 'kind': 'night', 'x': 86, 'y': 92, 'w': 14, 'h': 11},
+        {'id': 'hut-window-l', 'kind': 'night', 'x': 36, 'y': 82, 'w': 14, 'h': 16},
+        {'id': 'hut-window-r', 'kind': 'night', 'x': 86, 'y': 82, 'w': 14, 'h': 16},
         {'id': 'stall-glow', 'kind': 'night', 'x': 224, 'y': 56, 'w': 76, 'h': 22},
         {'id': 'stall-pool', 'kind': 'night', 'x': 218, 'y': 98, 'w': 88, 'h': 16},
     ],
