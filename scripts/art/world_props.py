@@ -10,7 +10,7 @@ than the companion, benches and tables at companion height.
 from __future__ import annotations
 
 import detail
-from garden_props import despeckle, keep_foot as gp_keep_foot
+from garden_props import despeckle, draw_rows as gp_draw_rows, keep_foot as gp_keep_foot
 from garden_props import LEAF_SUN, G
 from garden_props import PAD, arched_door, canopy, plane, planks, post, rect_set, stone_blocks, topdown_gable, topdown_roof
 from garden_props import window as shuttered_window
@@ -665,74 +665,70 @@ def cairn(variant: str = 'a') -> Canvas:
     the trail's marker, and loose stones at its foot. Variant 'b' is a younger, lower
     cairn of four stones and no ribbon, for a side path."""
     cv = Canvas(20, 34, pad=PAD)
-    foot = 32
+    foot = 31
     if variant == 'b':
         layers = ((10, 8.5, 3.5), (9.5, 6, 3), (11, 4.5, 2.5), (10, 3, 2))
     else:
-        layers = ((10, 9.5, 3.5), (8.5, 7.5, 3), (11.5, 6.5, 3), (9, 5, 2.5), (11, 4, 2.5), (10, 2.5, 2))
-    for x in range(1, 20):  # its contact shade
+        layers = ((10, 8.5, 3.5), (9, 7.5, 3), (11, 6, 3), (9.5, 5, 2.5), (10.5, 4, 2.5), (10, 2.5, 2))
+    for x in range(2, 18):  # its contact shade
         cv.set(x, foot + 1, (20, 26, 22, 110))
     y = foot
     for i, (cx, rw, rh) in enumerate(layers):
         _cairn_stone(cv, cx, y, rw, rh, seed=i * 7 + (3 if variant == 'b' else 0))
         y -= int(rh) + 1
     top = y + 1
-    for (px, py, r) in ((2, foot, 1.5), (17, foot, 1.2), (15, foot + 1, 1)):  # loose stones at the foot
+    for (px, py, r) in ((3, foot, 1.5), (16, foot, 1.2), (14, foot + 1, 1)):  # loose stones at the foot
         for (x, yy) in disc(px, py - 0.5, r):
             cv.set(x, yy, STONE[3] if x < px else STONE[2])
-    for (gx, kind) in ((0, 3), (5, 0), (13, 5), (19, 1)):  # grass grown up round its foot
+    for (gx, kind) in ((2, 3), (5, 0), (13, 5), (17, 1)):  # grass grown up round its foot
         detail.grass_tuft(cv, gx, foot, kind, MATERIALS['grass'], 2)
     for (mx, my) in ((4, foot - 1), (6, foot - 2), (16, foot - 1)):  # moss on the bottom stone
         cv.set(mx, my, LEAF[2]); cv.set(mx + 1, my, LEAF[3] if mx < 10 else LEAF[1])
     if variant != 'b':  # the marker: a stick wedged in the top, a faded ribbon on it
-        for yy in range(top - 7, top + 1):
+        for yy in range(top - 9, top + 1):
             cv.set(11, yy, WOOD[3] if yy < top - 1 else WOOD[2])
-        cv.set(12, top - 7, NAP[3]); cv.set(13, top - 7, NAP[3]); cv.set(14, top - 6, NAP[2])
-        cv.set(12, top - 6, NAP[2]); cv.set(13, top - 6, NAP[1]); cv.set(15, top - 5, NAP[1])
+        cv.set(12, top - 9, NAP[3]); cv.set(13, top - 9, NAP[3]); cv.set(14, top - 8, NAP[2]); cv.set(15, top - 8, NAP[2])
+        cv.set(12, top - 8, NAP[2]); cv.set(13, top - 8, NAP[2]); cv.set(14, top - 7, NAP[1]); cv.set(15, top - 7, NAP[1])
     return despeckle(cv)
 
 
 # A mallard drake facing east on the water, drawn pixel by pixel at its true size (about
-# a third of a 25 px adult's height). g/G/h the bottle-green head and its sheen, y/Y the
-# bill, e the eye, w the white collar, c/C the chestnut breast, b/B/d the grey flank lit
-# to shade, W the folded wing, p the blue speculum, k/K the black tail and its curl, R the
-# dark water hugging the waterline, r the lit rings of the wake.
+# a third of a 25 px adult's height), every mark a cluster of two or more pixels but the
+# eye (to-b-1210). G/g the bottle-green head, its sheen on the crown, e the eye, Y/y the
+# bill lit and shaded, w the white collar, C/c the chestnut breast, b/B/d the grey flank
+# lit to shade, W the folded wing, p the blue speculum, K/k the black tail and its curl,
+# and r a ring of its wake at the stern; the outline is its waterline.
 DUCK_ROWS = (
-    '.........GG.....',
-    '........gGhG....',
-    '........ggeGyy..',
-    '........gggYyyy.',
-    '..K.....www.....',
-    '.kKbbbbbbCCc....',
-    '.kkbWWWbbbCCc...',
-    '.kdbWpWWbbbcc...',
-    '..ddBBBBBBdcc...',
-    '...RRRRRRRRRR...',
-    'rr..........rr..',
-    '..rrr....rrr....',
+    '.......GG....',
+    '......gGGG...',
+    '......ggeGYY.',
+    '......ggggyy.',
+    '......www....',
+    'KK.bbbbbCCC..',
+    'kKbWWWbbbCCc.',
+    'kkbWppbbbbcc.',
+    'rrddBBBBBBddd',
 )
 DUCK_INKS = {
-    'g': LEAF[0], 'G': LEAF[1], 'h': MATERIALS['copper'][3], 'y': GOLD[3], 'Y': GOLD[2],
+    'g': LEAF[0], 'G': LEAF[1], 'y': GOLD[2], 'Y': GOLD[3],
     'e': '#141018', 'w': CREAM[3], 'c': WOOD[1], 'C': WOOD[2], 'b': STONE[4], 'B': STONE[3],
     'd': STONE[2], 'W': CREAM[0], 'p': NAP[2], 'k': SLATE[0], 'K': STONE[1],
-    'R': (44, 60, 88, 150), 'r': (198, 221, 238, 150),
+    'r': (198, 221, 238, 150),
 }
 
 
 def duck() -> Canvas:
     """The park's duck (A9: it was a white blob): a mallard drake at its true size, about
     a third of an adult's height, sitting on the water facing east, drawn pixel by pixel
-    (DUCK_ROWS): a bottle-green head with a sheen on its crown, a yellow bill, the white
-    collar, a chestnut breast, grey flanks lit from the upper left, the folded wing with
-    its blue speculum, a black tail with its curl, the dark water along its waterline and
-    the lit rings of its wake behind it. Re-seated in the old 14 x 10 box (keep_foot);
-    Claude A's animal frames paddle and preen it."""
-    cv = Canvas(16, len(DUCK_ROWS), pad=PAD)
-    for y, row in enumerate(DUCK_ROWS):
-        for x, ch in enumerate(row):
-            if ch != '.':
-                cv.set(x, y, DUCK_INKS[ch])
-    return gp_keep_foot(cv, 14, 10)
+    (DUCK_ROWS) in the old 14 x 10 box, so the park's placement and walk grid stay as they
+    were: a bottle-green head with a sheen on its crown, a yellow bill, the white collar,
+    a chestnut breast, grey flanks lit from the upper left, the folded wing with its blue
+    speculum, a black tail with its curl and a ring of its wake at the stern; drawn a
+    pixel in from the box's edge so its outline fills the box. Claude A's animal frames
+    paddle and preen it."""
+    cv = Canvas(14, 10, pad=PAD)
+    gp_draw_rows(cv, DUCK_ROWS, DUCK_INKS, 1, 1)
+    return cv
 
 
 def bridge(w: int, h: int) -> Canvas:

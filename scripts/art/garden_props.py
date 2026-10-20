@@ -57,6 +57,17 @@ def despeckle(cv: Canvas, keep=frozenset(), passes: int = 2) -> Canvas:
     return cv
 
 
+def draw_rows(cv: Canvas, rows, inks: dict, x0: int = 0, y0: int = 0, flip: bool = False):
+    """Hand-placed pixel art: each character of `rows` is one pixel, '.' left clear and
+    any other character the colour `inks` gives it, drawn with its top-left at (x0, y0)
+    (mirrored east to west when `flip`). Small props drawn this way keep every mark a
+    cluster of two or more pixels, as the detail bar's cleanliness counts ask."""
+    for y, row in enumerate(rows):
+        for x, ch in enumerate(row[::-1] if flip else row):
+            if ch != '.':
+                cv.set(x0 + x, y0 + y, inks[ch])
+
+
 def keep_foot(cv: Canvas, w: int, h: int, dx: int | None = None) -> Canvas:
     """Re-seat a prop drawn at its true size (verticality.md 5, the scale table) in the
     nominal w x h box it had before, so its foot stays where the zones place it: the

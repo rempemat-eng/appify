@@ -367,16 +367,16 @@ NET_GREEN = ['#1C3934', '#2B5A50', '#437F6E', '#62A68F', '#98CDB6']  # a green t
 
 
 def _net_drape(cv: Canvas, x0: int, x1: int, top: int, depth: int, ramp, seed: int):
-    """One net thrown over the rail, hanging in a swag: it falls in vertical folds (each
-    fold a lit band on its left, a body and a shaded band on its right, light from the
-    upper left), bunched solid under the rail, and opening lower down into mesh whose
-    diamonds are drawn as holes two pixels across (the ground shows through them), so it
+    """One net thrown over the rail, hanging in a swag: it falls in vertical folds 4 to 6
+    pixels wide (each fold a lit band on its left and its body in shade on its right, light
+    from the upper left), bunched solid under the rail, and opening lower down into mesh whose
+    diamonds are drawn as holes two pixels square (the ground shows through them), so it
     reads as knotted twine and never as a one-pixel checker. A dark foot rope along the
     hem, and the hem itself ragged where the folds hang lower."""
     folds = []
     x = x0
-    while x < x1:  # fold widths 3 to 5, so no two folds line up
-        fw = 2 + int(noise2(x, seed, 371) * 3)
+    while x < x1:  # fold widths 4 to 6, so no two folds line up
+        fw = 4 + int(noise2(x, seed, 371) * 3)
         folds.append((x, min(x1, x + fw)))
         x += fw
     for (f0, f1) in folds:
@@ -387,7 +387,7 @@ def _net_drape(cv: Canvas, x0: int, x1: int, top: int, depth: int, ramp, seed: i
             u = (x - f0) / max(1, f1 - f0 - 1)  # across the fold, 0 its lit left, 1 its shaded right
             shift = 1 if noise2(f0, seed, 373) > 0.7 else -1 if noise2(f0, seed, 373) < 0.25 else 0
             for y in range(top, bottom + 1):
-                k = 3 if u < 0.34 else 2 if u < 0.75 else 1
+                k = 3 if u < 0.4 else 2
                 k = max(0, min(4, k + (shift if y - top > 2 else 0)))
                 if y - top < 3:
                     k = max(1, k - (1 if y - top == 2 else 0))  # bunched and shadowed under the rail
@@ -395,16 +395,12 @@ def _net_drape(cv: Canvas, x0: int, x1: int, top: int, depth: int, ramp, seed: i
                 if open_mesh:
                     # the diamonds: holes two pixels wide on a staggered lattice, smaller
                     # where the fold turns away (its shaded right)
-                    row = (y - top) // 3
+                    row = (y - top) // 4
                     hx = (x + (2 if row % 2 else 0) + seed) % 4
-                    if (y - top) % 3 == 1 and hx in (0, 1) and u < 0.9:
-                        continue  # the ground shows through
-                    if (y - top) % 3 == 1 and hx == 2:
-                        k = max(0, k - 1)  # the knot's shade beside the hole
+                    if (y - top) % 4 in (1, 2) and hx in (0, 1) and u < 0.9:
+                        continue  # the ground shows through a mesh two pixels square
                 cv.set(x, y, ramp[k])
             cv.set(x, bottom, ramp[0])  # the foot rope along the hem
-            if (x - f0) == 0 and bottom - top > 4:
-                cv.set(x, bottom - 1, ramp[4])  # a lit knot where the fold's edge meets the hem
 
 
 def net_rack() -> Canvas:
@@ -439,19 +435,17 @@ def net_rack() -> Canvas:
     for x in range(1, 43, 6):
         cv.set(x, 3, WOOD[3]); cv.set(x + 1, 3, WOOD[3])  # the rail's grain
     for px in (2, 39):  # rope lashings where the rail sits on the posts
-        for x in range(px, px + 3):
-            cv.set(x, 3, ROPE[3] if x == px else ROPE[2]); cv.set(x, 5, ROPE[1])
+        cv.hline(px, 3, 3, ROPE[2]); cv.hline(px, 5, 3, ROPE[1])
     _net_drape(cv, 5, 21, 5, 13, NET_TAN, 1)
     _net_drape(cv, 21, 38, 5, 16, NET_GREEN, 2)
     for (x0, x1, depth) in ((5, 21, 13), (21, 38, 16)):
         low = x0 + (x1 - x0) // 2
         lb = 5 + depth
-        cv.set(low, lb + 2, SLATE[1]); cv.set(low + 1, lb + 2, SLATE[2])  # a lead weight
-        cv.set(low, lb + 3, SLATE[0]); cv.set(low + 1, lb + 3, SLATE[1])
-    for x in range(5, 38, 4):  # cork floats along the head rope, each lit on its left
-        cv.set(x, 5, CORK[3]); cv.set(x + 1, 5, CORK[2]); cv.set(x, 6, CORK[2]); cv.set(x + 1, 6, CORK[1])
-    cv.set(12, foot - 4, CORK[3]); cv.set(13, foot - 4, CORK[2])  # a float in the tanned heap
-    cv.set(29, foot - 3, RED[3]); cv.set(30, foot - 3, RED[2])  # a red buoy in the green
+        cv.hline(low, lb + 2, 2, SLATE[2]); cv.hline(low, lb + 3, 2, SLATE[0])  # a lead weight, lit on top
+    for x in range(5, 38, 4):  # cork floats along the head rope, each lit on its top
+        cv.hline(x, 5, 2, CORK[3]); cv.hline(x, 6, 2, CORK[1])
+    cv.hline(12, foot - 4, 2, CORK[3])  # a float in the tanned heap
+    cv.hline(29, foot - 3, 2, RED[3]); cv.hline(29, foot - 2, 2, RED[1])  # a red buoy in the green
     return gp.keep_foot(gp.despeckle(cv), 52, 39)
 
 

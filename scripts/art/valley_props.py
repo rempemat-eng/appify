@@ -261,77 +261,70 @@ CAP_BROWN = ['#3E2618', '#6A4026', '#94603A', '#B8844E', '#D8AA70']  # a penny b
 STEM = ['#8A7E6A', '#BFB49C', '#E6DECA', '#F6F1E4']
 
 
-def _toadstool(cv: Canvas, x: int, foot: int, r: float, tall: int, cap, spots: bool, tilt: int = 0):
-    """One mushroom standing at (x, foot): a stem lit on its left, a domed cap of radius
-    r lit on its upper left with a darker rim and the gills' shadow under it, white
-    flecks on a fly agaric's cap (`spots`); `tilt` leans the cap a pixel."""
-    top = foot - tall
-    for y in range(top + 1, foot + 1):  # the stem
-        cv.set(x, y, STEM[2] if y < foot else STEM[1])
-        if r >= 2:
-            cv.set(x + 1, y, STEM[1] if y < foot else STEM[0])
-    if r >= 2:
-        cv.set(x, top + 2, STEM[3])  # the ring on the stem
-    cx = x + (0.5 if r >= 2 else 0) + tilt
-    cap_pts = {(px, py) for (px, py) in oval(cx + 0.5, top + 0.5, r + 0.3, r * 0.95 + 0.3) if py <= top}
-    for (px, py) in cap_pts:
-        nx, ny = (px + 0.5 - cx) / (r + 0.3), (py + 0.5 - top) / (r * 0.95 + 0.3)
-        lit = -nx * 0.7 - ny * 0.9
-        t = 4 if lit > 0.95 else 3 if lit > 0.35 else 2 if lit > -0.25 else 1
-        if py == top:
-            t = max(1, t - 1)  # the rim, a step into its own shadow
-        cv.set(px, py, cap[t])
-    for px in range(int(cx - r), int(cx + r) + 1):  # the gills' shadow under the cap
-        if (px, top) in cap_pts and r >= 2:
-            cv.set(px, top + 1, cap[0] if px > x else STEM[0])
-    if spots and r >= 2:
-        for (sx, sy) in ((-1, -1), (1, -2), (2, 0)):
-            if (int(cx) + sx, top + sy) in cap_pts:
-                cv.set(int(cx) + sx, top + sy, STEM[3])
+# The fairy ring's mushrooms, drawn pixel by pixel so every mark is a cluster (to-b-1210:
+# no lone specks). a/R/d a fly agaric's cap lit to shade, W its white warts (pairs), b/B/e
+# a penny bun's cap, g the gills' shadow under a cap, c a penny bun's pale sponge, s/S a
+# stem lit and shaded.
+SHROOMS = {
+    'agaric': ('.aaRR.',
+               'aaWWRd',
+               'WWRRdd',
+               '.gggg.',
+               '..sS..',
+               '..sS..'),
+    'agaric_s': ('.aRR.',
+                 'aaRdd',
+                 '.ggg.',
+                 '..sS.',
+                 '..sS.'),
+    'bun': ('.bbBB.',
+            'bbBBBe',
+            'BBBBee',
+            '.cccc.',
+            '..sS..',
+            '.ssSS.'),
+    'bun_s': ('.bBB.',
+              'bbBee',
+              '.ccc.',
+              '..sS.',
+              '..sS.'),
+}
+SHROOM_INKS = {'a': RED[3], 'R': RED[2], 'd': RED[1], 'W': '#F6F1E4', 'b': '#D8AA70', 'B': '#B8844E',
+               'e': '#94603A', 'g': '#5A4A3A', 'c': '#E6DECA', 's': '#E6DECA', 'S': '#BFB49C'}
 
 
 def mushroom_ring() -> Canvas:
-    """A fairy ring round an old stump (fault 04: it was a grid of one mushroom), 40 x 20:
-    a mossy stump with its cut rings at the back; fly agarics (red caps with white flecks)
-    in a cluster of three against it and a pair further round, penny buns (brown caps on
-    pale stems) in a cluster of five and two strays, small and large, each lit from the
-    upper left with its gills in shadow, the ring's grass a step darker and a few fallen
-    leaves; drawn back to front."""
+    """A fairy ring (fault 04: it was a grid of one mushroom; to-b-1210: no lone specks),
+    40 x 20: the ring of richer, darker grass the fungus feeds under the turf, an oval
+    seen at the three-quarter view, and the fruiting bodies standing on it in clumps as
+    they really come up: fly agaric (red caps with white warts in pairs, lit on the upper
+    left, the gills' shadow under the cap) in a clump of three at the west and two at the
+    back, penny buns (brown caps over pale sponge on fat stems) in a clump of three at the
+    east and two strays at the front, each with its own small shade down-right, and two
+    fallen leaves. Drawn back to front so the near ones overlap the far."""
     cv = Canvas(40, 20, pad=PAD)
-    for (x, y) in oval(20, 13, 17, 5.5):  # the ring's richer grass, darker where it is
-        rr = ((x + 0.5 - 20) / 17) ** 2 + ((y + 0.5 - 13) / 5.5) ** 2
-        if rr > 0.55 and noise2(x // 2, y, 291) > 0.35:
-            cv.set(x, y, (40, 62, 42, 120))
-    # the stump at the back, a little left of the middle
-    sx, st, sb = 14, 4, 11
-    for y in range(st + 2, sb + 1):
-        for x in range(sx, sx + 8):
-            u = (x - sx) / 7
-            cv.set(x, y, WOOD[3] if u < 0.25 else WOOD[2] if u < 0.65 else WOOD[1])
-        cv.set(sx + 3, y, WOOD[1] if y % 3 else WOOD[2])  # bark furrows
-        cv.set(sx + 6, y, WOOD[0])
-    for (x, y) in oval(sx + 4, st + 2, 4.2, 2):  # the cut top and its rings
-        r = math.hypot((x + 0.5 - sx - 4) / 4.2, (y + 0.5 - st - 2) / 2)
-        cv.set(x, y, '#C9A273' if r > 0.7 else '#A8804E' if r > 0.4 else '#C9A273')
-    cv.set(sx + 4, st + 2, WOOD[2])  # the heart
-    for x in (sx, sx + 1, sx + 7):
-        cv.set(x, st + 4, LEAF[2]); cv.set(x, st + 5, LEAF[1])  # moss on the bark
-    for x in range(sx - 1, sx + 9):
-        cv.set(x, sb + 1, (20, 26, 22, 110))  # its contact shade
-    # the mushrooms, back to front: (x, foot, cap radius, height, species, tilt)
-    caps = ((29, 8, 1.5, 3, 'r', 0), (33, 9, 2, 4, 'r', 1),  # a pair at the back, right
-            (6, 10, 1.5, 2, 'b', 0),  # a stray at the back, left
-            (11, 12, 2.5, 5, 'r', -1), (14, 13, 1.5, 3, 'r', 0), (9, 14, 2, 3, 'r', 0),  # against the stump
-            (26, 14, 1.5, 3, 'b', 0), (29, 15, 2.5, 4, 'b', 1), (32, 16, 1.5, 3, 'b', 0),
-            (25, 17, 2, 3, 'b', -1), (28, 18, 1.5, 2, 'b', 0),  # five penny buns at the front right
-            (17, 18, 1.5, 2, 'r', 0))  # a little one at the front
-    for (x, f, r, tall, sp, tilt) in caps:
-        for dx in range(-1, 3):
-            cv.set(x + dx, f + 1, (20, 26, 22, 70))  # each one's own small shade
-        _toadstool(cv, x, f, r, tall, CAP_RED if sp == 'r' else CAP_BROWN, sp == 'r', tilt)
-    for (x, y, c) in ((7, 12, GOLD[2]), (8, 12, GOLD[1]), (37, 13, RED[2]), (38, 13, RED[1])):
-        cv.set(x, y, c)  # fallen leaves
-    return gp.despeckle(cv)
+    cx, cy, rx, ry = 20, 12, 16.5, 5.5
+    for (x, y) in oval(cx, cy, rx + 1.5, ry + 1.5):  # the ring of darker grass, in 2 x 2 clumps
+        rr = math.hypot((x + 0.5 - cx) / (rx + 1.5), (y + 0.5 - cy) / (ry + 1.5))
+        inner = math.hypot((x + 0.5 - cx) / (rx - 2.5), (y + 0.5 - cy) / (ry - 2))
+        if inner > 1 and rr <= 1 and noise2(x // 3, y // 2, 291) > 0.2:
+            cv.set(x, y, (40, 64, 40, 115))
+    # (kind, x, top) back to front: the foot of each is its top plus its height
+    clumps = (('agaric_s', 13, 3), ('agaric', 16, 1),  # two at the back
+              ('bun_s', 27, 3),
+              ('agaric', 2, 6), ('agaric_s', 7, 8), ('agaric', 5, 10),  # the west clump
+              ('bun', 31, 7), ('bun_s', 36, 9), ('bun', 33, 11),  # the east clump
+              ('bun_s', 14, 14), ('bun', 21, 13))  # two at the front
+    for (kind, x, top) in clumps:
+        rows = SHROOMS[kind]
+        foot = top + len(rows)
+        stem = rows[-1].index('s')
+        for dx in range(stem, stem + 3):  # its own small shade, down-right of the stem
+            cv.set(x + dx, foot, (20, 26, 22, 90))
+        gp.draw_rows(cv, rows, SHROOM_INKS, x, top)
+    for (x, y, c0, c1) in ((10, 17, GOLD[3], GOLD[2]), (28, 17, RED[3], RED[2])):  # fallen leaves, lit end west
+        cv.hline(x, y, 2, c0); cv.hline(x + 2, y, 2, c1)
+    return cv
 
 
 def hollow_tree() -> Canvas:
@@ -359,70 +352,78 @@ def hollow_tree() -> Canvas:
 
 
 FERN_TIP = '#D2DC86'  # the sun on a frond's tip (garden_props.LEAF_SUN of the leaf's lightest)
+FERN_INKS = LEAF + [FERN_TIP]
+
+
+def _frond_rib(bx: int, by: int, p1, p2, k: float) -> list[tuple[int, int]]:
+    """A frond's rib from the crown (bx, by) through the bend p1 to the tip p2, scaled by k,
+    as a 4-connected run of pixels (a diagonal step would leave its pixels touching only
+    at their corners, which reads as speckle)."""
+    path: list[tuple[int, int]] = []
+    for i in range(200):
+        t = i / 199
+        u = 1 - t
+        p = (int(round(bx + (2 * u * t * p1[0] + t * t * p2[0]) * k)),
+             int(round(by + (2 * u * t * p1[1] + t * t * p2[1]) * k)))
+        if path and p == path[-1]:
+            continue
+        if path and abs(p[0] - path[-1][0]) + abs(p[1] - path[-1][1]) == 2:
+            path.append((p[0], path[-1][1]) if abs(p2[1]) > abs(p2[0]) else (path[-1][0], p[1]))
+        path.append(p)
+    return path
 
 
 def fern(small: bool = False) -> Canvas:
-    """A clump of fern (fault 03: it was a flat triangle of strokes), 26 x 18, or a young
-    one (`small`) about two thirds the size: fronds arching out of a dark crown and
-    drooping at their tips, each a lit stem with paired leaflets that shorten toward the
-    tip; the fronds at the back in shade, the front ones lighter, the ones leaning west
-    (into the light from the upper left) a step lighter again, the upper side of each
-    leaflet lit and the lower in shade, sun on the tips, and a curled fiddlehead coming
-    up from the crown. Its foot stays on the old 26 x 18 box's bottom row."""
-    w, h = 26, 18
-    cv = Canvas(w, h, pad=PAD)
-    k = 0.66 if small else 1.0
+    """A clump of fern (fault 03: it was a flat triangle of strokes; to-b-1210: no lone
+    specks), 26 x 18, or a young one (`small`) about two thirds the size, within the size
+    guide's fern (8 to 16 px tall). Seven fronds fan out of a dark crown, each a lit rib
+    with its leaflets as short runs across it: on the side facing the upper-left light
+    the leaflets stand apart in a lighter green, alternate steps along the rib, with the
+    outline's dark between them (the feather that says fern); on the shaded side they
+    overlap into one darker edge, and toward the tip they shorten and catch the sun. The
+    two fronds at the back stand in the clump's own shade and read as solid dark blades,
+    the low front ones are the lightest. Its foot stays on the old 26 x 18 box's bottom
+    row."""
+    cv = Canvas(26, 18, pad=PAD)
+    k = 0.62 if small else 0.86
     bx, by = 13, 16
-    # (angle in degrees from east, counter-clockwise; length; layer 0 back .. 2 front)
-    # Each frond a curve from the crown through a bend to its tip, and its layer (0 at the
-    # back). Drawn back to front as a ladder: the stem, and at every other step a leaflet
-    # each side (the side facing the upper left lit, the other in shade, the longer ones
-    # near the crown swept toward the tip), with a dark notch between leaflets, so each
-    # frond reads as a feather of leaflets and never as a blob.
-    fronds = (((1, 0), (5, -11), (10, -13), 0), ((-1, 0), (-5, -11), (-10, -13), 0),
-              ((0, 0), (0, -11), (1, -16), 1), ((1, 0), (8, -6), (13, -3), 1),
-              ((-1, 0), (-8, -6), (-13, -3), 2))
-    notches = set()
-    for (p0, p1, p2, layer) in fronds:
-        def at(t, p0=p0, p1=p1, p2=p2):
-            u = 1 - t
-            return (bx + (u * u * p0[0] + 2 * u * t * p1[0] + t * t * p2[0]) * k,
-                    by + (u * u * p0[1] + 2 * u * t * p1[1] + t * t * p2[1]) * k)
-        lift = 1 if p2[0] < -2 else -1 if p2[0] > 2 else 0
-        stem = []
-        for i in range(60):
-            p = tuple(int(round(v)) for v in at(i / 59))
-            if not stem or p != stem[-1]:
-                stem.append(p)
-        n = len(stem)
-        for i, (x, y) in enumerate(stem):
-            t = i / max(1, n - 1)
-            nx_, ny_ = stem[min(n - 1, i + 1)][0] - stem[max(0, i - 1)][0], stem[min(n - 1, i + 1)][1] - stem[max(0, i - 1)][1]
-            dl = math.hypot(nx_, ny_) or 1
-            dx, dy = nx_ / dl, ny_ / dl
-            base = 2 + min(1, layer) + lift
-            for s in (1, -1):
-                px, py = -dy * s, dx * s  # across the frond
-                upper = py < -0.3 or (abs(py) <= 0.3 and px < 0)
-                if t < 0.12 or t > 0.96:
-                    continue
-                if i % 4 in (0, 1):  # a leaflet, two pixels thick along the stem
-                    ll = 3 if t < 0.35 else 2 if t < 0.7 else 1
-                    tone = max(0, min(4, base + (1 if upper else -1)))
-                    for j in range(1, ll + 1):
-                        lx, ly = int(round(x + px * j + dx * 0.4 * (j - 1))), int(round(y + py * j + dy * 0.4 * (j - 1)))
-                        tt = min(4, tone + 1) if (j == ll and upper) else tone
-                        cv.set(lx, ly, FERN_TIP if tt == 4 and t > 0.5 else LEAF[tt])
-                else:  # the gap between leaflets: left open, the outline darkens it into a notch
-                    notches.add((int(round(x + px)), int(round(y + py))))
-            cv.set(x, y, LEAF[max(0, min(4, base - (0 if t > 0.85 else 1)))])
-    for (x, y) in oval(bx, by, 3 * k + 0.5, 1.5):  # the dark crown the fronds rise from
-        cv.set(x, y, LEAF[0] if y >= by else LEAF[1])
-    fx, fy = bx + 1, by - int(4 * k)  # a fiddlehead uncurling
-    for (x, y) in ((fx, fy + 3), (fx, fy + 2), (fx, fy + 1), (fx + 1, fy), (fx + 2, fy + 1), (fx + 1, fy + 1)):
-        cv.set(x, y, LEAF[3] if y <= fy + 1 else LEAF[2])
-    cv.set(fx + 1, fy, FERN_TIP)
-    return gp.despeckle(cv, keep=notches)
+    # (bend, tip, base tone, leaflet length near the crown), back to front
+    fronds = (((5, -10), (11, -13), 1, 2), ((-5, -10), (-11, -13), 1, 2),
+              ((9, -6), (14, -5), 2, 3), ((-9, -6), (-14, -5), 3, 3),
+              ((1, -9), (2, -15), 2, 3),
+              ((5, -2), (11, 0), 2, 2), ((-5, -2), (-11, 0), 3, 2))
+    for fi, (p1, p2, base, ll0) in enumerate(fronds):
+        path = _frond_rib(bx, by, p1, p2, k)
+        n = len(path)
+        for i, (x, y) in enumerate(path):
+            if i < 2:
+                continue
+            t = i / (n - 1)
+            j1, j0 = min(n - 1, i + 1), max(0, i - 1)
+            vertical = abs(path[j1][1] - path[j0][1]) >= abs(path[j1][0] - path[j0][0])
+            if fi < 2:  # a back frond, in shade: a solid blade three pixels wide
+                for sd in (1, -1):
+                    ox, oy = (sd, 0) if vertical else (0, sd)
+                    if t < 0.9:
+                        cv.set(x + ox, y + oy, FERN_INKS[base + (1 if (ox < 0 or oy < 0) and t > 0.4 else 0)])
+                continue
+            side = 1 if (i + fi) % 2 else -1
+            ll = ll0 if t < 0.45 else max(2, ll0 - 1) if t < 0.85 else 1
+            if t > 0.92:
+                ll = 0
+            ox, oy = (side, 0) if vertical else (0, side)  # a leaflet: a straight run across the rib
+            lit = ox < 0 or oy < 0
+            tone = base + 1 + (1 if t > 0.6 else 0) if lit else base
+            for m in range(1, ll + 1):
+                cv.set(x + ox * m, y + oy * m, FERN_INKS[min(5, tone)])
+            if lit and t < 0.85:  # the shaded side's leaflets overlap into one darker edge
+                for m in range(1, max(1, ll - 1) + 1):
+                    cv.set(x - ox * m, y - oy * m, FERN_INKS[base])
+        for (x, y) in path:
+            cv.set(x, y, FERN_INKS[base])
+    for (x, y) in oval(bx, by, 3.0, 1.2):  # the dark crown the fronds rise from
+        cv.set(x, y, LEAF[0])
+    return gp.despeckle(cv, passes=3)
 
 
 def forest_bench() -> Canvas:
