@@ -14,6 +14,7 @@ from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
 import garden_props as gp  # noqa: E402
 import style  # noqa: E402
+import millrace_props  # noqa: E402  the Millrace water wheel, built from the house kit
 from materials import MATERIALS, WOOD, STONE, LEAF, RED, WTR, PLASTER, GOLD, NAP, SLATE, G, SNOW  # noqa: E402
 
 ROPE, TAR = MATERIALS['rope'], MATERIALS['tar']
@@ -63,116 +64,8 @@ def reeds() -> Canvas:
 
 
 def water_mill(turn: float = 0.0) -> Canvas:
-    """The watermill, 112 x 96 (its wheel `turn` radians round; six frames a 24th of a
-    turn apart loop, since paddles and spokes repeat every quarter turn): a stone mill house with a thatched-look tarred roof seen
-    from above, a timber upper floor, warm windows, and a big wooden wheel on its east
-    wall, seen nearly edge-on because its axle runs into that wall, turning in the race."""
-    w, h = 112, 96
-    cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = 38.5, 16, 40, 40, 86
-    gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, 75, TAR, seed=77, moss=LEAF)
-    gable = gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2), 7, 70,
-                             apex_y, wall_top, WOOD, boards=True)
-    detail.boards(cv, rect_set(7, wall_top, 64, 18), WOOD, 2, wall_top, board=4, seed=12)
-    detail.stones(cv, 7, wall_top + 18, 64, wall_bottom - wall_top - 18, STONE, seed=31, course=5, moss=LEAF)
-    for wx in (14, 50):
-        gp.window(cv, wx, wall_top + 4, 12, 10, shutters=None, sill=False, warm=True)
-    door = rect_set(30, wall_bottom - 32, 16, 32)  # the scale table's door (verticality.md 5)
-    for (x, y) in door:
-        cv.set(x, y, WOOD[2] if (x - 30) % 4 else WOOD[1])
-    cv.hline(29, wall_bottom - 33, 18, WOOD[4]); cv.hline(29, wall_bottom - 34, 18, WOOD[3])  # its lintel
-    for hy in (wall_bottom - 26, wall_bottom - 8):
-        cv.hline(31, hy, 8, SLATE[1]); cv.set(31, hy, SLATE[3])  # strap hinges
-    cv.set(43, wall_bottom - 16, GOLD[4])
-    detail.recess(cv, door, depth=2, k=1)
-    detail.overhang_shadow(cv, 7, 71, wall_top, lambda x: 3, k=2, cap=1)
-    _mill_wheel(cv, turn)
-    # water spilling off the paddles as they rise out of the race, and the white water
-    # churning under the wheel (B7: the turn has to read, not just the spokes), placed by
-    # the frame so the drips fall and the foam shifts from frame to frame
-    phase = int(round(turn / (math.pi / 24))) % 6
-    for i in range(5):
-        x = 74 + i * 4 + (phase + i) % 2
-        y0 = 54 + (phase * 4 + i * 7) % 18
-        for k in range(3):
-            cv.set(x, y0 + k, WTR[4] if k == 0 else WTR[3])
-        cv.set(x - 1, y0 + 3, WTR[2])
-    for x in range(70, 96):
-        f = (x + phase * 3) % 7
-        if f in (0, 1, 3):
-            cv.set(x, 81 + (x + phase) % 2, WTR[4] if f == 0 else '#E8F2F6')
-    return cv
-
-
-def _mill_wheel(cv: Canvas, turn: float):
-    """The undershot wheel on the mill's east wall, seen nearly edge-on (Claude E, after
-    Claude A's review: its axle runs into the east wall, so in the three-quarter view the
-    wheel's plane runs north-south and we look along it): two rims and the paddles between
-    them make a tall narrow ellipse beside the wall, the near (south) half over the far,
-    spokes and an iron hub on its east face, the axle running into the wall. Drawn in 3D and
-    projected with the view's foreshortening and a small skew, each surface lit by its
-    normal against the light from the upper left, so the turn reads as paddles rising over
-    the top and coming down the near side."""
-    X0, r, half = 80.0, 18.0, 3.5  # the wheel's mid-plane, radius, half its width along the axle
-    sx0, sy0, sq, skew = 0.0, 62.0, 0.5, 0.42
-    light = (-0.55, 0.35, 0.76)  # from the upper left (west), a little from the front, above
-    toward = (0.0, 0.64, 0.77)  # toward the camera (south and up), for depth
-    zbuf = {}
-
-    def put(x, y, z, c):  # a 3D point (x east, y south, z up from the axle) onto the screen
-        px, py = int(round(x + skew * y + sx0)), int(round(sy0 + y * sq - z))
-        d = y * toward[1] + z * toward[2] + x * 0.001
-        if d >= zbuf.get((px, py), -1e9):
-            zbuf[(px, py)] = d
-            cv.set(px, py, c)
-
-    def tone(n, ramp=WOOD, lo=1):
-        k = max(0.0, n[0] * light[0] + n[1] * light[1] + n[2] * light[2])
-        return ramp[min(len(ramp) - 1, lo + int(k * (len(ramp) - lo) * 0.999))]
-
-    steps = 220
-    # the axle from the wall to the hub, an iron cylinder
-    for i in range(0, 41):
-        x = 71 + i * (X0 + half + 1 - 71) / 40
-        for k in range(12):
-            a = 2 * math.pi * k / 12
-            n = (0.0, math.cos(a), math.sin(a))
-            put(x, 1.6 * math.cos(a), 1.6 * math.sin(a), tone(n, MATERIALS['iron'], 0))
-    # the two rims: rings 2 px deep, their outer faces (east and west) and the tread round them
-    for side in (-1, 1):
-        xf = X0 + side * half
-        for i in range(steps * 2):
-            a = 2 * math.pi * i / (steps * 2)
-            ca, sa = math.cos(a), math.sin(a)
-            for t in (r - 2, r - 1.5, r - 1, r - 0.5, r):
-                put(xf, t * ca, t * sa, tone((float(side), 0.0, 0.0)) if side > 0 else WOOD[3])
-            for dx in (0.0, 0.5, 1.0):
-                put(xf - side * dx, r * ca, r * sa, tone((0.0, ca, sa), WOOD, 1))
-    # the spokes, eight on each face, to the hub
-    for side in (-1, 1):
-        xf = X0 + side * (half - 0.5)
-        for k in range(8):
-            a = 2 * math.pi * k / 8 + 0.2 + turn
-            for i in range(0, 60):
-                t = 2 + i * (r - 4) / 60
-                put(xf, t * math.cos(a), t * math.sin(a), WOOD[2] if side > 0 else WOOD[1])
-    # the paddles: boards across between the rims, standing out past them
-    for k in range(16):
-        a = 2 * math.pi * k / 16 + turn
-        ca, sa = math.cos(a), math.sin(a)
-        n = (0.0, -sa, ca)  # the board's face, square to its radius
-        if n[1] * toward[1] + n[2] * toward[2] < 0:
-            n = (0.0, sa, -ca)
-        for i in range(0, 17):
-            x = X0 - half + i * (2 * half) / 16
-            for j in range(0, 11):
-                t = r - 2 + j * 0.5
-                put(x, t * ca, t * sa, WOOD[1] if i in (0, 16) else tone(n, WOOD, 1) if j < 10 else WOOD[4])
-    # the iron hub on the east face, and the strap round it
-    for i in range(48):
-        a = 2 * math.pi * i / 48
-        for t in (0.5, 1.2, 2.0, 2.8):
-            put(X0 + half + 0.6, t * math.cos(a), t * math.sin(a), '#727A8A' if t < 1.5 and math.sin(a) > 0 else '#3C404C')
+    """The Millrace water wheel, redrawn from the house kit (millrace_props.py, wave 1)."""
+    return millrace_props.water_mill(turn)
 
 
 HERON = ['#3A4048', '#5A6270', '#7A8492', '#9AA4B0', '#C4CCD4']  # grey heron plumage, flight feathers to lit coverts

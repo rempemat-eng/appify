@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "d1072e3",
+ "main": "d091820",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -36488,38 +36488,31 @@
    "module": "valley_props",
    "generator": "scripts/art/valley_props.py",
    "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: detailed, wheel turns; door about 24); foot line 86 px: not whole 8 px cells (kind foot 14 x 7); 88 x 95 px (under) against water_mill 104-144 x 96-128; bar tones LOW, dressing LOW as facade; style: speckle, outline-double",
-   "fails": [
-    "logic",
-    "size",
-    "grid",
-    "bar",
-    "speckle",
-    "outline-double"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 88,
-    "w": 95,
+    "h": 123,
+    "w": 96,
     "style": {
-     "colours": 46,
-     "on_house": 0.951,
-     "on_today": 0.959,
+     "colours": 106,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.995,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.144,
-     "west_east": 3.158,
-     "isolated": 0.062,
+     "double": 0.076,
+     "west_east": 5.13,
+     "isolated": 0.049,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 86,
-     "cells": 10.75,
+     "foot_px": 95,
+     "cells": 11.88,
      "kind_foot": "14 x 7",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "water_mill",
@@ -36531,7 +36524,7 @@
       96,
       128
      ],
-     "status": "under"
+     "status": "ok"
     },
     "last_change": {
      "sha": "ea7bdca",
@@ -36543,46 +36536,45 @@
      "why": "detailed, wheel turns; door about 24",
      "fix": "door 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: detailed, wheel turns; door about 24)",
+    "logic": "fixed by eye: fixed: redrawn from the house kit (Claude B, wave 1): door 32 x 14 by the scale table, a 44 px ground storey under a weatherboarded loft, the wheel on the east wall turning in its race, panes registered for night light",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "facade",
      "box": [
-      8,
-      24,
-      70,
-      86
+      3,
+      43,
+      75,
+      115
      ],
-     "patches": 9,
+     "patches": 16,
      "tones_at": 0.85,
      "tones": [
-      11.89,
+      25.75,
       25.57
      ],
      "shapes": [
-      32.67,
+      42.31,
       33.87
      ],
      "dressing": [
-      23.89,
+      36.44,
       28.56
      ],
      "isolated": [
-      0.112,
+      0.148,
       0.25
      ],
      "cluster": [
-      3.98,
+      3.07,
       2.62
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "riverside": 1
+   },
+   "eye": {
+    "logic": "fixed: redrawn from the house kit (Claude B, wave 1): door 32 x 14 by the scale table, a 44 px ground storey under a weatherboarded loft, the wheel on the east wall turning in its race, panes registered for night light"
    },
    "checked": "2026-10-20"
   },
