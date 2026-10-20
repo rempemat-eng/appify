@@ -813,10 +813,13 @@ def desert_edge(GX: int, GY: int, heat: float = 0.0) -> str:
     dithered where they meet, so no change lines up with a border (art-faults rule 1)."""
     s = sand_share(GX, GY, heat)
     grain = smooth_noise(GX, GY, 3, 746)  # small soft patches where they meet, not a checker
-    if s + (grain - 0.5) * 0.16 > 0.62:
+    # sand and ash interleave in clumps over a broad band rather than meeting along one
+    # front (review 20 Oct 07:53: the Gulch|Scorch seam at y 448-512 stepped by 25)
+    clump = smooth_noise(GX, GY, 9, 747) * 0.7 + smooth_noise(GX, GY, 4, 749) * 0.3
+    if s + (clump - 0.5) * 0.5 + (grain - 0.5) * 0.12 > 0.62:
         return gulch_sand(GX, GY)
     if s > 0.3:  # the belt: drifts of sand lying in the ash, thinning toward the fire country
-        drift = smooth_noise(GX, GY, 7, 744) + (s - 0.3) * 1.4 + (grain - 0.5) * 0.12
+        drift = smooth_noise(GX, GY, 7, 744) + (s - 0.3) * 2.6 + (grain - 0.5) * 0.12  # sand thins out across the belt
         if drift > 0.9:
             return gulch_sand(GX, GY)
         if drift > 0.8:
