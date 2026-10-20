@@ -223,6 +223,9 @@ class Plot:
         self.lava = np.zeros((h, w), bool)     # open lava and glowing cracks (water_flow's lava)
         self.solid = np.zeros((h, w), bool)    # what stands up (outlined, never re-textured)
         self.walk = np.ones((h, w), bool)      # walkable on foot
+        # Barriers no ordinary paint may reopen (water, young lava): a stair, trail or wash
+        # never makes them walkable; only an explicit crossing (a causeway) clears them.
+        self.hazard = np.zeros((h, w), bool)
         self.tier = np.zeros((h, w), np.int8)  # the tier whose top is seen here (-1: a face)
         self.vents = []                        # (x, y, size) of steam sources
         self.y, self.x = np.mgrid[0:h, 0:w]
@@ -251,13 +254,13 @@ class Plot:
         return np.ones((self.h, self.w), bool)
 
     def snap(self):
-        return (self.f.copy(), self.t.copy(), self.solid.copy(), self.walk.copy())
+        return (self.f.copy(), self.t.copy(), self.solid.copy(), self.walk.copy(), self.hazard.copy())
 
     def restore(self, s, m=None):
         if m is None:
-            self.f[:], self.t[:], self.solid[:], self.walk[:] = s
+            self.f[:], self.t[:], self.solid[:], self.walk[:], self.hazard[:] = s
         else:
-            for a, v in zip(('f', 't', 'solid', 'walk'), s):
+            for a, v in zip(('f', 't', 'solid', 'walk', 'hazard'), s):
                 getattr(self, a)[m] = v[m]
 
 
@@ -981,7 +984,7 @@ def wash(p: Plot, pts, width=48, seed=9, logs=2):
         sp, sh = log(seed + 30 + i)
         paste(p, sp, int(cx + (hash01(i, 0, seed) - 0.5) * width * 0.4), int(cy), shadow=sh)
     despeckle(p, bed)
-    p.walk[bed] = True
+    p.walk[bed & ~p.hazard] = True
     return ch, bed
 
 
@@ -1774,7 +1777,7 @@ def stair(p: Plot, L: Layout, x0, width=40, seed=0, ramp='adobe', k=None):
     """A stair cut through a face (soft grid: 40 px open between 4 px cheeks, 4 px risers):
     the treads lit along their nose, each riser a dark line, worn in the middle, the west
     cheek lit and the east cheek dark. Its column is opened to a walker."""
-    col = (p.x >= x0) & (p.x < x0 + width + 8) & L.face
+    col = (p.x >= x0) & (p.x < x0 + width + 8) & L.face & ~p.hazard
     if k is not None:
         col &= L.kf == k
     if not col.any():
@@ -1813,7 +1816,7 @@ def stair(p: Plot, L: Layout, x0, width=40, seed=0, ramp='adobe', k=None):
     # open the back rim above the stair and the bands round its head
     head = (p.x >= x0 + 4) & (p.x < x0 + width + 4) & ~L.face
     for dd in range(1, 6):
-        p.walk |= head & shift(run & (L.depth == 0), 0, -dd, False)
+        p.walk |= head & shift(run & (L.depth == 0), 0, -dd, False) & ~p.hazard
     return run
 
 
@@ -1867,7 +1870,7 @@ def trail(p: Plot, pts, width=16, seed=0, ramp='path'):
     ch = Channel(p, pts, reach=width)
     hw = width / 2
     wob = (fbm(ch.s, np.sign(ch.n), 14, seed) - 0.5) * 4
-    m = ch.near & (np.abs(ch.n) <= hw + wob) & ~p.solid & ~dilate(p.wet, 3)
+    m = ch.near & (np.abs(ch.n) <= hw + wob) & ~p.solid & ~dilate(p.wet, 3) & ~p.hazard
     edge = m & (np.abs(ch.n) > hw + wob - 2.5)
     rag = edge & (hash01(p.x // 2, p.y // 2, seed + 1) < 0.45)
     m &= ~rag
@@ -1880,7 +1883,7 @@ def trail(p: Plot, pts, width=16, seed=0, ramp='path'):
     for (x, y) in _scatter(edge & m, 40, seed + 6, margin=0):
         pebble(p, x, y, ('stone', 'adobe_cool', 'stone_warm')[(x + y) % 3], 2, 2, k=1)
     despeckle(p, m)
-    p.walk |= m & ~p.solid
+    p.walk |= m & ~p.solid & ~p.hazard
     return ch, m
 
 
@@ -1943,6 +1946,7 @@ def pool(p: Plot, cx, cy, rx, ry, seed=0, bank=3):
     sky = dilate(erode(sky, 1), 1) & water & ~weed
     p.put(sky, 'water_warm', 3)
     p.wet |= water
+    p.hazard |= water
     p.walk &= ~w
     p.solid |= face
     return w
@@ -1970,6 +1974,7 @@ def ditch(p: Plot, pts, seed=0, width=6, lining='adobe'):
     st = water & ((ch.s.astype(int) + seed) % 9 < 2) & (np.abs(ch.n) < 1)
     p.step(st, 2)
     p.wet |= water
+    p.hazard |= water
     p.walk &= ~water
     return ch, water
 
@@ -2044,10 +2049,15 @@ def blend(p: Plot, m, t, paint_a, paint_b, seed=40, warp=0.75, outliers=0.18):
     paint_b(b, m)
     for attr in ('f', 't'):
         getattr(p, attr)[m] = np.where(sel, getattr(b, attr), getattr(a, attr))[m]
-    for attr in ('solid', 'walk'):
+    for attr in ('solid', 'walk', 'hazard'):
         av, bv = getattr(a, attr), getattr(b, attr)
         cur = getattr(p, attr)
-        cur[m] = np.where(sel, bv, av)[m] if attr == 'solid' else (cur & np.where(sel, bv, av))[m]
+        if attr == 'solid':
+            cur[m] = np.where(sel, bv, av)[m]
+        elif attr == 'walk':
+            cur[m] = (cur & np.where(sel, bv, av))[m]
+        else:
+            cur[m] = (cur | np.where(sel, bv, av))[m]
     seam = m & dilate(sel, 2) & ~erode(sel, 2) & ~p.solid
     spill = seam & (hash01(p.x // 2, p.y // 2, seed + 4) < 0.35)
     src_b = spill & ~sel & ~b.solid
@@ -2275,6 +2285,7 @@ def young_flow(p: Plot, m, seed=0, channel=None, width=28, crust=6):
     p.put(edge & (hash01(p.x // 2, p.y // 2, seed + 8) < 0.6), 'ash_cool', 2)
     p.solid |= m
     p.walk &= ~m
+    p.hazard |= m
     return ch
 
 
@@ -2386,6 +2397,7 @@ def causeway(p: Plot, pts, width=24, seed=0, edge=4):
     p.lava &= ~(m | side)
     p.solid &= ~m
     p.solid |= side
+    p.hazard &= ~m                         # the explicit crossing: the one thing that clears a barrier
     p.walk |= m
     p.walk &= ~side
     return m
@@ -2522,6 +2534,7 @@ def hot_spring(p: Plot, x, y, seed=0, n=4, w=56):
         gl = water & (ed > 2) & (hash01(p.x // 2, p.y // 2, seed + 10 + i) < 0.06) & (p.x % 2 == 0)
         p.t[gl | (shift(gl, 1, 0, False) & water)] = 5
         p.wet |= water
+        p.hazard |= water
         p.walk &= ~water
         p.solid |= face
         whole |= dam | face
@@ -3058,6 +3071,35 @@ def check() -> list:
     causeway(q, [(60, -10), (64, 48), (66, 110)], 24, 3)
     if not _reaches(q.walk, (64, 8), (64, 90)):
         faults.append('the causeway does not cross the young flow')
+    # Paint order (Codex review on #137): a stair, trail or wash painted after a young flow
+    # must not reopen it; only a causeway does. Both orders, on a cliff with a flow below.
+    for order in ('flow first', 'stair first'):
+        r = Plot(128, 128)
+        T = np.zeros((128, 128), np.int8)
+        T[:32, :] = 1
+        Lr = Layout(T, F=40)
+        draw_faces(r, Lr, seed=1)
+        draw_bands(r, Lr, seed=1)
+        young = (r.y >= 42) & (r.y < 58)
+        if order == 'stair first':
+            stair(r, Lr, 40, width=40, seed=2)
+            young_flow(r, young, seed=3)
+        else:
+            young_flow(r, young, seed=3)
+            stair(r, Lr, 40, width=40, seed=2)
+        trail(r, [(64, -10), (64, 140)], 16, seed=5)
+        wash(r, [(-10, 50), (140, 50)], 30, seed=6, logs=0)
+        if (r.walk & young).any() or (r.walk & r.lava).any() or _reaches(r.walk, (64, 16), (64, 112)):
+            faults.append(f'{order}: a stair, trail or wash reopened the young flow without a causeway')
+        causeway(r, [(64, -24), (64, 152)], width=24, seed=4)
+        if not _reaches(r.walk, (64, 16), (64, 112)):
+            faults.append(f'{order}: the causeway does not restore the crossing over stair and flow')
+        w2 = Plot(128, 96)
+        pool(w2, 64, 48, 40, 24, seed=7)
+        trail(w2, [(64, -10), (64, 110)], 16, seed=8)
+        wash(w2, [(64, -10), (64, 110)], 30, seed=9, logs=0)
+        if (w2.walk & w2.wet).any():
+            faults.append('a trail or wash painted over a pool made its water walkable')
     s, parts = sample()
     a, b = (300, 6), (500, 570)
     if not _reaches(s.walk, a, b):
