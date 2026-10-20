@@ -14,6 +14,7 @@ const generators = [
   'mission_map',
   'zones',
   'journey',
+  'rocket',
   'residents',
   'decor',
 ];
@@ -30,6 +31,8 @@ const generatedTypescript = [
   'lib/zone-maps.ts',
   'lib/zone-assets.ts',
   'lib/journey-assets.ts',
+  'lib/rocket-sizes.ts',
+  'lib/rocket-assets.ts',
   'lib/resident-sprites.ts',
   'lib/resident-assets.ts',
   'lib/decor-assets.ts',

@@ -79,7 +79,7 @@ const doorAt = (region: RegionId, at: Point): Point | null =>
 
 /**
  * The world beyond the valley (living-world plan W1/W2): the inside of the hut, and the
- * regions the journeys reach (the train, maglev, elevator, shuttle and ferry between
+ * regions the journeys reach (the train, maglev, rocket, shuttle and ferry between
  * their stations). The valley and the garden are the home hub's (the Home tab,
  * docs/vision/home-hub.md): a way in that would open in the valley hands over to it, and
  * a journey back to the valley lands there. Rings open their screen. Walking and

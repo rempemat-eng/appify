@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "d1072e3",
+ "main": "5c0162e",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -3632,33 +3632,154 @@
    },
    "checked": "2026-10-20"
   },
-  "journey/capsule": {
+  "journey/arm0": {
    "files": [
-    "assets/journeys/capsule.png"
+    "assets/journeys/rocket/arm0.png"
    ],
    "cls": "sprite",
-   "name": "capsule",
+   "name": "arm0",
    "module": "journey",
    "generator": "scripts/art/journey.py",
    "owner": "A",
-   "grade": "RETIRE",
-   "fix": "none",
-   "why": "the space elevator's capsule: the rocket replaces the space elevator (PR #131)",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
    "fails": [
-    "palette"
+    "logic",
+    "detail unverified",
+    "speckle"
    ],
    "measured": {
-    "scale": 4,
-    "h": 58,
-    "w": 42,
-    "measured_file": "assets/journeys/capsule.png",
-    "px": 1780,
-    "colours": 13,
-    "on_today": 0.034,
-    "isolated": 0.001,
-    "checker": 0.0
+    "scale": 2,
+    "h": 79,
+    "w": 36,
+    "style": {
+     "colours": 15,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.075,
+     "west_east": 27.069,
+     "isolated": 0.063,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
+  },
+  "journey/arm1": {
+   "files": [
+    "assets/journeys/rocket/arm1.png"
+   ],
+   "cls": "sprite",
+   "name": "arm1",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 78,
+    "w": 38,
+    "style": {
+     "colours": 11,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.089,
+     "west_east": 0.833,
+     "isolated": 0.131,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/booster": {
+   "files": [
+    "assets/journeys/rocket/booster.png"
+   ],
+   "cls": "sprite",
+   "name": "booster",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 98,
+    "w": 52,
+    "style": {
+     "colours": 100,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.075,
+     "west_east": 14.136,
+     "isolated": 0.054,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
   },
   "journey/carriage": {
    "files": [
@@ -3760,6 +3881,110 @@
    },
    "checked": "2026-10-20"
   },
+  "journey/clouds-high": {
+   "files": [
+    "assets/journeys/rocket/clouds-high.png"
+   ],
+   "cls": "picture",
+   "name": "clouds-high",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 60,
+    "w": 256,
+    "measured_file": "assets/journeys/rocket/clouds-high.png",
+    "px": 3517,
+    "colours": 14,
+    "on_today": 0.0,
+    "isolated": 0.014,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/clouds-low": {
+   "files": [
+    "assets/journeys/rocket/clouds-low.png"
+   ],
+   "cls": "picture",
+   "name": "clouds-low",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 72,
+    "w": 256,
+    "measured_file": "assets/journeys/rocket/clouds-low.png",
+    "px": 2336,
+    "colours": 14,
+    "on_today": 0.0,
+    "isolated": 0.022,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/deck": {
+   "files": [
+    "assets/journeys/rocket/deck.png"
+   ],
+   "cls": "sprite",
+   "name": "deck",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 96,
+    "w": 256,
+    "style": {
+     "colours": 19,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "west_east": 1.516,
+     "isolated": 0.001,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
   "journey/engine": {
    "files": [
     "assets/journeys/engine.png"
@@ -3860,6 +4085,93 @@
    },
    "checked": "2026-10-20"
   },
+  "journey/flame-booster": {
+   "files": [
+    "assets/journeys/rocket/flame-booster.png"
+   ],
+   "cls": "picture",
+   "name": "flame-booster",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 276,
+    "w": 42,
+    "measured_file": "assets/journeys/rocket/flame-booster.png",
+    "px": 3990,
+    "colours": 6,
+    "on_today": 0.0,
+    "isolated": 0.0,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/flame-lander": {
+   "files": [
+    "assets/journeys/rocket/flame-lander.png"
+   ],
+   "cls": "picture",
+   "name": "flame-lander",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 144,
+    "w": 20,
+    "measured_file": "assets/journeys/rocket/flame-lander.png",
+    "px": 722,
+    "colours": 6,
+    "on_today": 0.0,
+    "isolated": 0.002,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/flame-upper": {
+   "files": [
+    "assets/journeys/rocket/flame-upper.png"
+   ],
+   "cls": "picture",
+   "name": "flame-upper",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 144,
+    "w": 20,
+    "measured_file": "assets/journeys/rocket/flame-upper.png",
+    "px": 722,
+    "colours": 6,
+    "on_today": 0.0,
+    "isolated": 0.002,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
   "journey/isles-far": {
    "files": [
     "assets/journeys/isles-far.png"
@@ -3949,6 +4261,235 @@
     "checker": 0.0468
    },
    "checked": "2026-10-20"
+  },
+  "journey/lander-shadow": {
+   "files": [
+    "assets/journeys/rocket/lander-shadow.png"
+   ],
+   "cls": "picture",
+   "name": "lander-shadow",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 9,
+    "w": 52,
+    "measured_file": "assets/journeys/rocket/lander-shadow.png",
+    "px": 298,
+    "colours": 1,
+    "on_today": 0.0,
+    "isolated": 0.0,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/lander0": {
+   "files": [
+    "assets/journeys/rocket/lander0.png"
+   ],
+   "cls": "sprite",
+   "name": "lander0",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 72,
+    "w": 77,
+    "style": {
+     "colours": 64,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.074,
+     "west_east": 16.491,
+     "isolated": 0.07,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/lander1": {
+   "files": [
+    "assets/journeys/rocket/lander1.png"
+   ],
+   "cls": "sprite",
+   "name": "lander1",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 72,
+    "w": 77,
+    "style": {
+     "colours": 64,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.074,
+     "west_east": 16.491,
+     "isolated": 0.07,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/lander2": {
+   "files": [
+    "assets/journeys/rocket/lander2.png"
+   ],
+   "cls": "sprite",
+   "name": "lander2",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 69,
+    "w": 77,
+    "style": {
+     "colours": 64,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.076,
+     "west_east": 16.222,
+     "isolated": 0.075,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/lander3": {
+   "files": [
+    "assets/journeys/rocket/lander3.png"
+   ],
+   "cls": "sprite",
+   "name": "lander3",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 70,
+    "w": 77,
+    "style": {
+     "colours": 64,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.078,
+     "west_east": 16.164,
+     "isolated": 0.071,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
   },
   "journey/lava-far": {
    "files": [
@@ -4066,6 +4607,35 @@
    },
    "checked": "2026-10-20"
   },
+  "journey/lumen-pad": {
+   "files": [
+    "assets/journeys/rocket/lumen-pad.png"
+   ],
+   "cls": "picture",
+   "name": "lumen-pad",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 26,
+    "w": 98,
+    "measured_file": "assets/journeys/rocket/lumen-pad.png",
+    "px": 1977,
+    "colours": 9,
+    "on_today": 0.0,
+    "isolated": 0.0,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
   "journey/maglev": {
    "files": [
     "assets/journeys/maglev.png"
@@ -4144,6 +4714,35 @@
     "checker": 0.0
    },
    "checked": "2026-10-20"
+  },
+  "journey/moon-ground": {
+   "files": [
+    "assets/journeys/rocket/moon-ground.png"
+   ],
+   "cls": "picture",
+   "name": "moon-ground",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 120,
+    "w": 256,
+    "measured_file": "assets/journeys/rocket/moon-ground.png",
+    "px": 30720,
+    "colours": 12,
+    "on_today": 0.0,
+    "isolated": 0.002,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
   },
   "journey/moon-near": {
    "files": [
@@ -4232,6 +4831,55 @@
     "checker": 0.0
    },
    "checked": "2026-10-20"
+  },
+  "journey/mount": {
+   "files": [
+    "assets/journeys/rocket/mount.png"
+   ],
+   "cls": "sprite",
+   "name": "mount",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 28,
+    "w": 86,
+    "style": {
+     "colours": 24,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.073,
+     "west_east": 7.675,
+     "isolated": 0.007,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
   },
   "journey/neon-far": {
    "files": [
@@ -4440,37 +5088,37 @@
    },
    "checked": "2026-10-20"
   },
-  "journey/shuttle": {
+  "journey/planet": {
    "files": [
-    "assets/journeys/shuttle.png"
+    "assets/journeys/rocket/planet.png"
    ],
    "cls": "sprite",
-   "name": "shuttle",
+   "name": "planet",
    "module": "journey",
    "generator": "scripts/art/journey.py",
    "owner": "A",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "not audited; detail not measurable and not checked by eye since the bar; style: palette",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: outline-light",
    "fails": [
     "logic",
     "detail unverified",
-    "palette"
+    "outline-light"
    ],
    "measured": {
-    "scale": 4,
-    "h": 75,
-    "w": 84,
+    "scale": 2,
+    "h": 47,
+    "w": 47,
     "style": {
-     "colours": 26,
-     "on_house": 0.865,
-     "on_today": 0.003,
-     "palette": "off",
-     "outline_dark": 1.0,
+     "colours": 7,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.0,
      "flat_ink": 0.0,
-     "double": 0.052,
-     "west_east": 18.887,
-     "isolated": 0.025,
+     "double": 0.0,
+     "west_east": 14.309,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "side view",
@@ -4478,9 +5126,9 @@
      "status": "no kind"
     },
     "last_change": {
-     "sha": "adca48c",
-     "date": "2026-10-19T11:36",
-     "subject": "Lumen and Halcyon made livable (M1; Matt, 19 Oct: \"think about the logic of the moon and space and what is required for "
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
     },
     "logic": "not audited",
     "bar": {
@@ -4488,7 +5136,240 @@
      "why": "no reference kind for this subject (house-style 7: by eye)"
     }
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
+  },
+  "journey/puff-fire": {
+   "files": [
+    "assets/journeys/rocket/puff-fire.png"
+   ],
+   "cls": "picture",
+   "name": "puff-fire",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 440,
+    "w": 44,
+    "measured_file": "assets/journeys/rocket/puff-fire.png",
+    "px": 3601,
+    "colours": 18,
+    "on_today": 0.0,
+    "isolated": 0.041,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/puff-smoke": {
+   "files": [
+    "assets/journeys/rocket/puff-smoke.png"
+   ],
+   "cls": "picture",
+   "name": "puff-smoke",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 440,
+    "w": 44,
+    "measured_file": "assets/journeys/rocket/puff-smoke.png",
+    "px": 3937,
+    "colours": 16,
+    "on_today": 0.0,
+    "isolated": 0.043,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/puff-steam": {
+   "files": [
+    "assets/journeys/rocket/puff-steam.png"
+   ],
+   "cls": "picture",
+   "name": "puff-steam",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
+   "fails": [
+    "house style",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 440,
+    "w": 44,
+    "measured_file": "assets/journeys/rocket/puff-steam.png",
+    "px": 3908,
+    "colours": 31,
+    "on_today": 0.0,
+    "isolated": 0.052,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/rcs": {
+   "files": [
+    "assets/journeys/rocket/rcs.png"
+   ],
+   "cls": "sprite",
+   "name": "rcs",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 19,
+    "w": 9,
+    "style": {
+     "colours": 4,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "west_east": 0.0,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/sky": {
+   "files": [
+    "assets/journeys/rocket/sky.png"
+   ],
+   "cls": "sprite",
+   "name": "sky",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle, dither, palette",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle",
+    "dither",
+    "palette"
+   ],
+   "measured": {
+    "scale": 1,
+    "h": 1600,
+    "w": 64,
+    "style": {
+     "colours": 9,
+     "on_house": 0.518,
+     "on_today": 0.0,
+     "palette": "off",
+     "west_east": 0.0,
+     "isolated": 0.38,
+     "checker": 0.375
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/skyline": {
+   "files": [
+    "assets/journeys/rocket/skyline.png"
+   ],
+   "cls": "sprite",
+   "name": "skyline",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: light-west, outline-light",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "light-west",
+    "outline-light"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 164,
+    "w": 256,
+    "style": {
+     "colours": 30,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.693,
+     "flat_ink": 0.0,
+     "double": 0.004,
+     "west_east": -1.803,
+     "isolated": 0.043,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
   },
   "journey/space-far": {
    "files": [
@@ -4578,6 +5459,102 @@
     "checker": 0.0455
    },
    "checked": "2026-10-20"
+  },
+  "journey/stars": {
+   "files": [
+    "assets/journeys/rocket/stars.png"
+   ],
+   "cls": "sprite",
+   "name": "stars",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 251,
+    "w": 256,
+    "style": {
+     "colours": 6,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "west_east": 0.0,
+     "isolated": 1.0,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/station": {
+   "files": [
+    "assets/journeys/rocket/station.png"
+   ],
+   "cls": "sprite",
+   "name": "station",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar",
+   "fails": [
+    "logic",
+    "detail unverified"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 98,
+    "w": 362,
+    "style": {
+     "colours": 97,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.997,
+     "flat_ink": 0.0,
+     "double": 0.096,
+     "west_east": 1.976,
+     "isolated": 0.041,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
   },
   "journey/steam-far": {
    "files": [
@@ -4697,6 +5674,257 @@
     "checker": 0.0004
    },
    "checked": "2026-10-20"
+  },
+  "journey/tower": {
+   "files": [
+    "assets/journeys/rocket/tower.png"
+   ],
+   "cls": "sprite",
+   "name": "tower",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle, outline-double",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle",
+    "outline-double"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 194,
+    "w": 30,
+    "style": {
+     "colours": 27,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.199,
+     "west_east": 12.113,
+     "isolated": 0.12,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "2e6dd37",
+     "date": "2026-10-20T15:49",
+     "subject": "The rocket replaces the space elevator; the lander lands (Matt, 20 Oct)"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/upper0": {
+   "files": [
+    "assets/journeys/rocket/upper0.png"
+   ],
+   "cls": "sprite",
+   "name": "upper0",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 72,
+    "w": 42,
+    "style": {
+     "colours": 62,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.99,
+     "flat_ink": 0.0,
+     "double": 0.087,
+     "west_east": 15.348,
+     "isolated": 0.067,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/upper1": {
+   "files": [
+    "assets/journeys/rocket/upper1.png"
+   ],
+   "cls": "sprite",
+   "name": "upper1",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 72,
+    "w": 54,
+    "style": {
+     "colours": 62,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.992,
+     "flat_ink": 0.0,
+     "double": 0.084,
+     "west_east": 13.803,
+     "isolated": 0.084,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/upper2": {
+   "files": [
+    "assets/journeys/rocket/upper2.png"
+   ],
+   "cls": "sprite",
+   "name": "upper2",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 76,
+    "w": 64,
+    "style": {
+     "colours": 62,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.993,
+     "flat_ink": 0.0,
+     "double": 0.082,
+     "west_east": 14.866,
+     "isolated": 0.087,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
+  },
+  "journey/upper3": {
+   "files": [
+    "assets/journeys/rocket/upper3.png"
+   ],
+   "cls": "sprite",
+   "name": "upper3",
+   "module": "journey",
+   "generator": "scripts/art/journey.py",
+   "owner": "A",
+   "grade": "REWORK",
+   "fix": "redraw",
+   "why": "not audited; detail not measurable and not checked by eye since the bar; style: speckle",
+   "fails": [
+    "logic",
+    "detail unverified",
+    "speckle"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 72,
+    "w": 64,
+    "style": {
+     "colours": 62,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 0.993,
+     "flat_ink": 0.0,
+     "double": 0.096,
+     "west_east": 14.255,
+     "isolated": 0.086,
+     "checker": 0.0
+    },
+    "grid": "side view",
+    "size": {
+     "status": "no kind"
+    },
+    "last_change": {
+     "sha": "48132d7",
+     "date": "2026-10-20T16:41",
+     "subject": "Rocket art polish: every mark a thing"
+    },
+    "logic": "not audited",
+    "bar": {
+     "status": "by eye",
+     "why": "no reference kind for this subject (house-style 7: by eye)"
+    }
+   },
+   "checked": "2026-10-21"
   },
   "journey/valley-far": {
    "files": [
@@ -42565,6 +43793,341 @@
     "checker": 0.0343
    },
    "checked": "2026-10-20"
+  },
+  "world-canvas/continent": {
+   "files": [
+    "assets/world/continent/f_0_11.png",
+    "assets/world/continent/f_0_2.png",
+    "assets/world/continent/f_0_3.png",
+    "assets/world/continent/f_0_4.png",
+    "assets/world/continent/f_0_5.png",
+    "assets/world/continent/f_0_6.png",
+    "assets/world/continent/f_0_7.png",
+    "assets/world/continent/f_10_0.png",
+    "assets/world/continent/f_10_1.png",
+    "assets/world/continent/f_10_2.png",
+    "assets/world/continent/f_10_3.png",
+    "assets/world/continent/f_10_6.png",
+    "assets/world/continent/f_11_0.png",
+    "assets/world/continent/f_11_1.png",
+    "assets/world/continent/f_11_2.png",
+    "assets/world/continent/f_13_0.png",
+    "assets/world/continent/f_13_1.png",
+    "assets/world/continent/f_13_2.png",
+    "assets/world/continent/f_13_3.png",
+    "assets/world/continent/f_13_4.png",
+    "assets/world/continent/f_14_0.png",
+    "assets/world/continent/f_14_1.png",
+    "assets/world/continent/f_14_3.png",
+    "assets/world/continent/f_14_4.png",
+    "assets/world/continent/f_15_0.png",
+    "assets/world/continent/f_15_1.png",
+    "assets/world/continent/f_15_2.png",
+    "assets/world/continent/f_15_3.png",
+    "assets/world/continent/f_15_4.png",
+    "assets/world/continent/f_17_6.png",
+    "assets/world/continent/f_18_6.png",
+    "assets/world/continent/f_19_6.png",
+    "assets/world/continent/f_1_11.png",
+    "assets/world/continent/f_1_12.png",
+    "assets/world/continent/f_1_13.png",
+    "assets/world/continent/f_1_2.png",
+    "assets/world/continent/f_1_3.png",
+    "assets/world/continent/f_1_4.png",
+    "assets/world/continent/f_1_5.png",
+    "assets/world/continent/f_1_6.png",
+    "assets/world/continent/f_1_7.png",
+    "assets/world/continent/f_20_0.png",
+    "assets/world/continent/f_20_1.png",
+    "assets/world/continent/f_20_2.png",
+    "assets/world/continent/f_20_3.png",
+    "assets/world/continent/f_20_4.png",
+    "assets/world/continent/f_20_5.png",
+    "assets/world/continent/f_20_6.png",
+    "assets/world/continent/f_2_10.png",
+    "assets/world/continent/f_2_11.png",
+    "assets/world/continent/f_2_12.png",
+    "assets/world/continent/f_2_13.png",
+    "assets/world/continent/f_2_6.png",
+    "assets/world/continent/f_2_7.png",
+    "assets/world/continent/f_2_8.png",
+    "assets/world/continent/f_2_9.png",
+    "assets/world/continent/f_3_13.png",
+    "assets/world/continent/f_3_7.png",
+    "assets/world/continent/f_3_8.png",
+    "assets/world/continent/f_3_9.png",
+    "assets/world/continent/f_5_2.png",
+    "assets/world/continent/f_5_3.png",
+    "assets/world/continent/f_6_3.png",
+    "assets/world/continent/f_7_5.png",
+    "assets/world/continent/f_9_0.png",
+    "assets/world/continent/f_9_2.png",
+    "assets/world/continent/f_9_3.png",
+    "assets/world/continent/f_9_4.png",
+    "assets/world/continent/f_9_5.png",
+    "assets/world/continent/f_9_6.png",
+    "assets/world/continent/t_0_10.png",
+    "assets/world/continent/t_0_11.png",
+    "assets/world/continent/t_0_2.png",
+    "assets/world/continent/t_0_3.png",
+    "assets/world/continent/t_0_4.png",
+    "assets/world/continent/t_0_5.png",
+    "assets/world/continent/t_0_6.png",
+    "assets/world/continent/t_0_7.png",
+    "assets/world/continent/t_0_8.png",
+    "assets/world/continent/t_0_9.png",
+    "assets/world/continent/t_10_0.png",
+    "assets/world/continent/t_10_1.png",
+    "assets/world/continent/t_10_2.png",
+    "assets/world/continent/t_10_3.png",
+    "assets/world/continent/t_10_4.png",
+    "assets/world/continent/t_10_5.png",
+    "assets/world/continent/t_10_6.png",
+    "assets/world/continent/t_11_0.png",
+    "assets/world/continent/t_11_1.png",
+    "assets/world/continent/t_11_2.png",
+    "assets/world/continent/t_13_0.png",
+    "assets/world/continent/t_13_1.png",
+    "assets/world/continent/t_13_2.png",
+    "assets/world/continent/t_13_3.png",
+    "assets/world/continent/t_13_4.png",
+    "assets/world/continent/t_14_0.png",
+    "assets/world/continent/t_14_1.png",
+    "assets/world/continent/t_14_2.png",
+    "assets/world/continent/t_14_3.png",
+    "assets/world/continent/t_14_4.png",
+    "assets/world/continent/t_15_0.png",
+    "assets/world/continent/t_15_1.png",
+    "assets/world/continent/t_15_2.png",
+    "assets/world/continent/t_15_3.png",
+    "assets/world/continent/t_15_4.png",
+    "assets/world/continent/t_17_0.png",
+    "assets/world/continent/t_17_1.png",
+    "assets/world/continent/t_17_2.png",
+    "assets/world/continent/t_17_3.png",
+    "assets/world/continent/t_17_4.png",
+    "assets/world/continent/t_17_5.png",
+    "assets/world/continent/t_17_6.png",
+    "assets/world/continent/t_18_0.png",
+    "assets/world/continent/t_18_1.png",
+    "assets/world/continent/t_18_2.png",
+    "assets/world/continent/t_18_3.png",
+    "assets/world/continent/t_18_4.png",
+    "assets/world/continent/t_18_5.png",
+    "assets/world/continent/t_18_6.png",
+    "assets/world/continent/t_19_0.png",
+    "assets/world/continent/t_19_1.png",
+    "assets/world/continent/t_19_2.png",
+    "assets/world/continent/t_19_3.png",
+    "assets/world/continent/t_19_4.png",
+    "assets/world/continent/t_19_5.png",
+    "assets/world/continent/t_19_6.png",
+    "assets/world/continent/t_1_0.png",
+    "assets/world/continent/t_1_1.png",
+    "assets/world/continent/t_1_10.png",
+    "assets/world/continent/t_1_11.png",
+    "assets/world/continent/t_1_12.png",
+    "assets/world/continent/t_1_13.png",
+    "assets/world/continent/t_1_2.png",
+    "assets/world/continent/t_1_3.png",
+    "assets/world/continent/t_1_4.png",
+    "assets/world/continent/t_1_5.png",
+    "assets/world/continent/t_1_6.png",
+    "assets/world/continent/t_1_7.png",
+    "assets/world/continent/t_1_8.png",
+    "assets/world/continent/t_1_9.png",
+    "assets/world/continent/t_20_0.png",
+    "assets/world/continent/t_20_1.png",
+    "assets/world/continent/t_20_2.png",
+    "assets/world/continent/t_20_3.png",
+    "assets/world/continent/t_20_4.png",
+    "assets/world/continent/t_20_5.png",
+    "assets/world/continent/t_20_6.png",
+    "assets/world/continent/t_2_0.png",
+    "assets/world/continent/t_2_1.png",
+    "assets/world/continent/t_2_10.png",
+    "assets/world/continent/t_2_11.png",
+    "assets/world/continent/t_2_12.png",
+    "assets/world/continent/t_2_13.png",
+    "assets/world/continent/t_2_2.png",
+    "assets/world/continent/t_2_3.png",
+    "assets/world/continent/t_2_4.png",
+    "assets/world/continent/t_2_5.png",
+    "assets/world/continent/t_2_6.png",
+    "assets/world/continent/t_2_7.png",
+    "assets/world/continent/t_2_8.png",
+    "assets/world/continent/t_2_9.png",
+    "assets/world/continent/t_3_10.png",
+    "assets/world/continent/t_3_11.png",
+    "assets/world/continent/t_3_12.png",
+    "assets/world/continent/t_3_13.png",
+    "assets/world/continent/t_3_6.png",
+    "assets/world/continent/t_3_7.png",
+    "assets/world/continent/t_3_8.png",
+    "assets/world/continent/t_3_9.png",
+    "assets/world/continent/t_5_0.png",
+    "assets/world/continent/t_5_1.png",
+    "assets/world/continent/t_5_2.png",
+    "assets/world/continent/t_5_3.png",
+    "assets/world/continent/t_5_4.png",
+    "assets/world/continent/t_6_0.png",
+    "assets/world/continent/t_6_1.png",
+    "assets/world/continent/t_6_2.png",
+    "assets/world/continent/t_6_3.png",
+    "assets/world/continent/t_6_4.png",
+    "assets/world/continent/t_7_4.png",
+    "assets/world/continent/t_7_5.png",
+    "assets/world/continent/t_7_6.png",
+    "assets/world/continent/t_8_4.png",
+    "assets/world/continent/t_8_5.png",
+    "assets/world/continent/t_8_6.png",
+    "assets/world/continent/t_9_0.png",
+    "assets/world/continent/t_9_1.png",
+    "assets/world/continent/t_9_2.png",
+    "assets/world/continent/t_9_3.png",
+    "assets/world/continent/t_9_4.png",
+    "assets/world/continent/t_9_5.png",
+    "assets/world/continent/t_9_6.png"
+   ],
+   "cls": "zone",
+   "name": "continent",
+   "module": "world_canvas",
+   "generator": "scripts/art/world_canvas.py",
+   "owner": "A",
+   "place": "tiles of the old grounds",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits. The place: tiles of the old grounds",
+   "fails": [
+    "soft grid",
+    "palette"
+   ],
+   "measured": {
+    "scale": 1,
+    "h": 280,
+    "w": 256,
+    "measured_file": "assets/world/continent/f_0_11.png",
+    "px": 1623,
+    "colours": 14,
+    "on_today": 0.0,
+    "isolated": 0.0,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "world-canvas/hut": {
+   "files": [
+    "assets/world/hut/f_0_0.png",
+    "assets/world/hut/f_0_1.png",
+    "assets/world/hut/f_1_0.png",
+    "assets/world/hut/t_0_0.png",
+    "assets/world/hut/t_0_1.png",
+    "assets/world/hut/t_0_2.png",
+    "assets/world/hut/t_1_0.png",
+    "assets/world/hut/t_1_1.png",
+    "assets/world/hut/t_1_2.png"
+   ],
+   "cls": "zone",
+   "name": "hut",
+   "module": "world_canvas",
+   "generator": "scripts/art/world_canvas.py",
+   "owner": "A",
+   "place": "tiles of the old grounds",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits. The place: tiles of the old grounds",
+   "fails": [
+    "soft grid",
+    "palette"
+   ],
+   "measured": {
+    "scale": 1,
+    "h": 328,
+    "w": 174,
+    "measured_file": "assets/world/hut/f_0_0.png",
+    "px": 830,
+    "colours": 2,
+    "on_today": 0.0,
+    "isolated": 0.0,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
+  },
+  "world-canvas/moon": {
+   "files": [
+    "assets/world/moon/t_0_0.png",
+    "assets/world/moon/t_0_1.png",
+    "assets/world/moon/t_0_2.png",
+    "assets/world/moon/t_1_0.png",
+    "assets/world/moon/t_1_1.png",
+    "assets/world/moon/t_1_2.png"
+   ],
+   "cls": "zone",
+   "name": "moon",
+   "module": "world_canvas",
+   "generator": "scripts/art/world_canvas.py",
+   "owner": "A",
+   "place": "tiles of the old grounds",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits. The place: tiles of the old grounds",
+   "fails": [
+    "soft grid",
+    "palette"
+   ],
+   "measured": {
+    "scale": 2,
+    "h": 256,
+    "w": 256,
+    "measured_file": "assets/world/moon/t_0_0.png",
+    "px": 65536,
+    "colours": 65,
+    "on_today": 0.87,
+    "isolated": 0.008,
+    "checker": 0.0009
+   },
+   "checked": "2026-10-21"
+  },
+  "world-canvas/orbit": {
+   "files": [
+    "assets/world/orbit/f_0_0.png",
+    "assets/world/orbit/f_0_1.png",
+    "assets/world/orbit/f_0_2.png",
+    "assets/world/orbit/f_1_0.png",
+    "assets/world/orbit/f_1_1.png",
+    "assets/world/orbit/f_1_2.png",
+    "assets/world/orbit/t_0_0.png",
+    "assets/world/orbit/t_0_1.png",
+    "assets/world/orbit/t_0_2.png",
+    "assets/world/orbit/t_1_0.png",
+    "assets/world/orbit/t_1_1.png",
+    "assets/world/orbit/t_1_2.png"
+   ],
+   "cls": "zone",
+   "name": "orbit",
+   "module": "world_canvas",
+   "generator": "scripts/art/world_canvas.py",
+   "owner": "A",
+   "place": "tiles of the old grounds",
+   "grade": "RETIRE",
+   "fix": "none",
+   "why": "by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); the regions are rebuilt on the soft grid from docs/vision/regions/ with the kits. The place: tiles of the old grounds",
+   "fails": [
+    "soft grid",
+    "palette"
+   ],
+   "measured": {
+    "scale": 1,
+    "h": 2048,
+    "w": 256,
+    "measured_file": "assets/world/orbit/f_0_0.png",
+    "px": 3154,
+    "colours": 41,
+    "on_today": 0.0,
+    "isolated": 0.06,
+    "checker": 0.0
+   },
+   "checked": "2026-10-21"
   },
   "zone/caldera": {
    "files": [
