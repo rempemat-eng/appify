@@ -101,16 +101,27 @@ TOP, FACE_K, STRIP_K, STAIR_K, CHEEK_K, RAMP_K, FALL_K = range(7)
 FACE_LIKE = (FACE_K, STRIP_K, CHEEK_K, FALL_K)
 
 RAMPS = {
-    'earth': MATERIALS['soil'],        # 6 tones
+    'earth': None,                     # 6 tones: SOIL below
     'stone': MATERIALS['ashlar'],      # 6
     'concrete': MATERIALS['ash'],      # 5
     'timber': MATERIALS['wood'],       # 5
     'sandstone': MATERIALS['desert'],  # 6
 }
 MATS = list(RAMPS)
-GRASS = MATERIALS['grass']             # dark .. light
+# The palette measured on Eastward (20 Oct): its earth is olive-brown and less saturated
+# (hue 27 to 42, saturation 0.21 to 0.26, purple-grey darks) and its grass a lighter, cleaner
+# green (hue 78 to 97, lightness about 0.59 in the mids). Proposed for art/materials.json
+# ('grass' and 'soil'); drawn by the terrace toolkit only until that is agreed, because those
+# two ramps also colour battle, garden, garden_meadow, garden_props, icons, journey,
+# mission_map, prop_sheet, sunstone_zones, valley_props, valley_zones, world_props and zones.
+# Set TERRACE_PALETTE = False to draw with the shared ramps.
+TERRACE_PALETTE = True
+PROPOSED_GRASS = ['#3A4E36', '#5E7E48', '#86A85A', '#9CC068', '#BAD486']
+PROPOSED_SOIL = ['#2A2026', '#3E2F33', '#54443E', '#6B5A48', '#857254', '#A08C66']
+GRASS = PROPOSED_GRASS if TERRACE_PALETTE else MATERIALS['grass']   # dark .. light
 LEAF = MATERIALS['leaf']
-SOIL = MATERIALS['soil']
+SOIL = PROPOSED_SOIL if TERRACE_PALETTE else MATERIALS['soil']
+RAMPS['earth'] = SOIL
 STONE = MATERIALS['stone']
 WOOD = MATERIALS['wood']
 PATH = MATERIALS['path']
@@ -1906,23 +1917,25 @@ class _Painter:
             c = self.img[y, x]
             hgt = max(1, int(self.fh[y, x]))
             f = (y - int(self.rim[y, x])) / hgt if self.rim[y, x] >= 0 else 0.5
-            mo = smooth_noise(x, y, 4.5 if kind[y, x] != STAIR_K else 7, sd)
+            mo = smooth_noise(x, y, 8 if kind[y, x] != STAIR_K else 7, sd)
             if mo > 0.66:
                 c = lerp(c, '#6E6252', 0.16)               # warm grime
             elif mo < 0.3:
                 c = lerp(c, '#98A0AC', 0.14)               # cool, rain-washed
             n = noise2(x // 2, y, sd + 1) if kind[y, x] != STAIR_K else 0.5
-            if n > 0.94:
+            if n > 0.97:
                 c = lerp(c, R[1], 0.4)                     # a pit (2 px)
-            elif n < 0.03:
+            elif n < 0.02:
                 c = lerp(c, R[-1], 0.45)                   # a light fleck (2 px)
             col = noise2(x, 0, sd + 2)
-            if kind[y, x] == FACE_K and col > 0.72 and 0.12 < f < 0.12 + col * 0.6:
+            if kind[y, x] == FACE_K and col > 0.8 and 0.12 < f < 0.12 + col * 0.6:
                 c = lerp(c, '#3E3A40', 0.18)               # a rain streak from the coping
             moss = smooth_noise(x, y, 3.2, sd + 3)
-            if kind[y, x] != STAIR_K and ((f > 0.6 and moss > 0.66) or moss > 0.8):
-                up = smooth_noise(x, y - 1, 3.2, sd + 3)
-                c = LEAF[3] if up < moss - 0.03 else LEAF[2]   # moss cushions, lit on top
+            def mossy(yy, ff):
+                mv = smooth_noise(x, yy, 3.2, sd + 3)
+                return (ff > 0.6 and mv > 0.66) or mv > 0.8
+            if kind[y, x] != STAIR_K and mossy(y, f):
+                c = LEAF[3] if not mossy(y - 1, f - 1 / hgt) else LEAF[2]   # moss cushions, lit on top
             self.img[y, x] = rgb(c)
         # timber and sandstone faces: grain, knots and bleaching; holes, chips and varnish
         for y, x in zip(*np.nonzero(np.isin(self.fmat, (MATS.index('timber'), MATS.index('sandstone'))) &
