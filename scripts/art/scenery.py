@@ -28,7 +28,7 @@ import detail
 import garden_props
 import style
 from materials import MATERIALS
-from pixel import Canvas, noise2, smooth_noise
+from pixel import Canvas, disc, noise2, oval, smooth_noise
 
 W, H = 320, 576
 S = 20  # BEYOND_SPILL in zones.py
@@ -103,9 +103,18 @@ def _lerp_points(x, pts):
 # x -32..0, Driftwood's west rocks begin at its top), so the cells south and south-west
 # of the Halt are open sea and the world's edge there is sea and cliff, never forest
 # (art-faults.md A3). East of the valley it meets the headland's sea at its east edge
-# (y 1531); under the zones the sea starts at their bottom edge.
+# (y 1531); under the zones the sea starts at their bottom edge. Past the Headland's
+# east side the land runs on down beside it, and the coast comes round under its corner
+# as the Headland's own sea cliff (HEADLAND_CLIFF), then away north-east (world review
+# 20 Oct 07:53, finding 2: the Headland's grass was cut straight against open sea).
 VALLEY_COAST = [(-960, 1108), (-640, 1112), (-320, 1115), (-36, 1140), (-14, 1158), (-1, 1158),
-                (0, 1721), (640, 1531), (760, 1490), (1000, 1420), (1280, 1400)]
+                (0, 1721), (300, 1662), (560, 1650), (640, 1792), (662, 1810), (692, 1818), (732, 1802),
+                (790, 1748), (870, 1592), (1000, 1420), (1280, 1400)]
+# Region x over which the coast is the Headland's sea cliff: its foot (valley_zones'
+# coast_top and coast_height, the Headland's row) up to its east side, then carried on
+# round its corner, the face sinking into the beach by the east end.
+HEADLAND_CLIFF = (560, 820)
+HEADLAND_ROW = 2
 # where the coast meets a zone's own shore it must not wander (region x)
 COAST_ANCHORS = (-320, 0, 640)
 # west of this x the coast is a low sea cliff, carried on from the Halt's (no beach)
@@ -118,6 +127,19 @@ VALLEY_RIVER: list = []
 RIVER_HALF = 26
 
 
+@functools.lru_cache(maxsize=1)
+def _headland_line():
+    """The Headland's sea cliff in region px, over HEADLAND_CLIFF: (x, the foot's y
+    up to its east side, the face's height). Past its east side the face's height runs
+    on and sinks to nothing over the last 80 px."""
+    import valley_zones as vz  # (loaded by zones.py)
+    xs = np.arange(HEADLAND_CLIFF[0], HEADLAND_CLIFF[1] + 1)
+    foot = np.array([HEADLAND_ROW * H + vz.coast_top(int(x)) + vz.coast_height(int(x)) for x in xs], dtype=float)
+    hts = np.array([vz.coast_height(int(x)) for x in xs], dtype=float)
+    hts = np.where(xs > 640, hts * np.clip((HEADLAND_CLIFF[1] - xs) / 80, 0, 1), hts)
+    return xs, foot, hts
+
+
 def valley_fields(X, Y):
     """The valley's land at region pixels: altitude (in rows of 576 px, rising north),
     sea mask and river mask."""
@@ -128,6 +150,10 @@ def valley_fields(X, Y):
     # (under the Halt it stays put, so the cell south of it is sea from its top row)
     away = np.where((X > COAST_ANCHORS[0]) & (X < COAST_ANCHORS[1]), 0, away)
     coast = coast + away * 46 * (vnoise(X, 0 * X, 70, 933) - 0.5) + away * 12 * (vnoise(X, 0 * X, 18, 934) - 0.5)
+    # (beside the Headland the shore is its own cliff's foot, to the pixel)
+    hx, hfoot, _hh = _headland_line()
+    under = (X >= HEADLAND_CLIFF[0]) & (X <= 640)
+    coast = np.where(under, np.interp(X, hx, hfoot), coast)
     sea = Y > coast
     if VALLEY_RIVER:
         rc = _lerp_points(X, VALLEY_RIVER) + 10 * (vnoise(X, 0 * X, 40, 935) - 0.5) * np.clip((X - 640) / 60, 0, 1)
@@ -978,7 +1004,9 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
         ci = np.where(rim & ~lit_edge, 0, ci)
         ground = np.where(cap[..., None], _pick(ST, ci), ground)
         sea = sea & ~cap
-    sand = (X > CLIFF_COAST_X) & coast_free & ~sea & (Y - coast > -10)
+    hx, _hf, hh = _headland_line()
+    h_face = np.where((X >= HEADLAND_CLIFF[0]) & (X <= HEADLAND_CLIFF[1]), np.interp(X, hx, hh), 0)
+    sand = (X > CLIFF_COAST_X) & coast_free & ~sea & (Y - coast > -10) & (h_face < 3)
     sand_rgb = _pick(SAND, np.where(Y - coast > -4, 0, np.where(vnoise(X, Y, 3, 964) > 0.5, 2, 1)))
     ground = np.where(sand[..., None], sand_rgb, ground)
     ground = np.where((river & ~sea)[..., None], _river_rgb(X, Y, rc), ground)
@@ -1144,6 +1172,27 @@ def valley_cell(col: int, row: int, zone_at) -> Canvas:
                 tops[Xc - zox], hts[Xc - zox] = top - zoy, h
         if tops:
             vz.cliff(_Shift(cv, zox - x0, zoy - y0), tops, hts, seed=458)
+    if zone_at(1, HEADLAND_ROW) == 'headland' and x0 < HEADLAND_CLIFF[1] and x0 + CW > HEADLAND_CLIFF[0]:
+        # the Headland's sea cliff runs on out of its bottom edge and round its corner,
+        # drawn as the zone draws it (its seed, in its own px), so the face's blocks run
+        # on across the seam; only the part in this cell is kept
+        zox, zoy = W, HEADLAND_ROW * H
+        tops, hts = {}, {}
+        for cx in range(CW):
+            Xc = x0 + cx
+            h = int(round(float(h_face[0, cx])))
+            if h < 3:
+                continue
+            sea_top = int(math.floor(coast[0, cx])) + 1
+            tops[Xc - zox], hts[Xc - zox] = sea_top - h - zoy, h
+        if tops:
+            tmp = Canvas(CW, CH)
+            vz.cliff(_Shift(tmp, zox - x0, zoy - y0), tops, hts, seed=982)
+            a = np.array(tmp.img)
+            keep = (a[..., 3] > 0) & inside
+            arr = np.array(cv.img)
+            arr[keep] = a[keep]
+            cv.img.paste(Image.fromarray(arr, 'RGBA'))
 
     def field(x, y):
         a1, s1, r1, _c, _r = valley_fields(np.array([[x]]), np.array([[y]]))
@@ -1498,7 +1547,1373 @@ def moon_cell(col: int, row: int, zone_at) -> Canvas:
     return cv
 
 
-CELL_PAINTERS = {'valley': None, 'west': west_cell, 'isles': isles_cell, 'moon': moon_cell}
+# ---- Cogsworth's surroundings (world review 20 Oct 07:53, finding 1) -------------------
+# The steam town's land past its edges, in its own style. The main line runs on east and
+# west in brick cuttings to a tunnel portal each side, telegraph poles along it. Behind
+# the engine yard a brick yard wall with bills on it, the terraces' back yards and their
+# backs, a street, the fronts of the next row, the works' chimneys over the roofs. The
+# square's setts run on as pavements and streets between houses and warehouses. The
+# canal runs on west past a row of warehouses, down through a lock and under a road
+# bridge, and east to a basin fed from the north by a culverted feeder; the atmospheric
+# tube runs on east on its trestles into its pumping house. South of the town a hedged
+# lane and soot-darkened fields. Everything is laid out in region px (the Junction's own,
+# the Canal's plus 576 down), so the ground at every seam is the zone's own drawing
+# carried on (city_zones.junction and canal: the cinder yard, the rails, the setts, the
+# towpaths, the canal's water and walls, the sooty grass), and everything that stands
+# is placed in the region and drawn by every cell it reaches.
+SOOT_G = ['#2B3B2E', '#46583F', '#5C6E4C', '#6B7C55', '#8E9C6E']   # city_zones' sooty grass
+GRANITE = ['#3A3A42', '#55555E', '#73737A', '#93918F', '#B4B0A8', '#D2CDC2']
+SL = ['#8C8574', '#A9A28F', '#C2B9A2', '#D4CBB3', '#E6DEC8']       # worlds.paint_paving's slabs
+IRON, BRICK, ASHLAR_, SLATE_ = MATERIALS['iron'], MATERIALS['brick'], MATERIALS['ashlar'], MATERIALS['slate']
+BROWN = ['#2A1A16', '#46302A', '#5E4236', '#7A5846', '#98725A']   # steampunk_props' darker brick
+TAR_, SOIL, BRASS = MATERIALS['tar'], MATERIALS['soil'], MATERIALS['brass']
+HEDGE = ['#141F18', '#1E2E22', '#2A3F2C', '#3A5236', '#4E6644']    # a hedge dulled by the smoke
+# more bricks and slates, so a wall or a roof is laid from several kilns and quarries
+# (Eastward's walls and roofs carry many close tones; one ramp a surface reads flat)
+BLUE_BRICK = ['#22202A', '#34303E', '#4A4456', '#605A6E', '#7A7488']   # engineering brick
+RED_BRICK = ['#3A1C14', '#5E2C1E', '#844230', '#A85A40', '#C87A58']    # a hotter-fired brick
+OCHRE_BRICK = ['#3A2A18', '#5A4224', '#7A5A32', '#9A7444', '#B89058']  # a yellow stock brick
+WELSH = ['#2E2A38', '#46405A', '#5E5874', '#7C7692', '#A49EB6']        # purple Welsh slate
+GREEN_SLATE = ['#2E3A34', '#46564C', '#5E7064', '#7A8C80', '#9AAAA0']  # green Lakeland slate
+LICHEN = ['#4E5432', '#6E7444', '#8E9450', '#B0B060']
+RIDGE = MATERIALS['roof']                                              # red clay ridge tiles
+CURTAIN = (('#6E2A24', '#9A3E30'), ('#2E4A34', '#46684A'), ('#C8BC98', '#E2D8B8'), ('#3A3E6A', '#545A8E'))
+for _ramp in (BLUE_BRICK, RED_BRICK, OCHRE_BRICK, WELSH, GREEN_SLATE, LICHEN):
+    for _i, _c in enumerate(_ramp):  # (so detail.shade steps these along their own ramps too)
+        detail._LOOKUP.setdefault(_rgb(_c), (_ramp, _i))
+CANAL_Y = 576                  # the Canal zone's top, region px
+RAIL_Y0 = 82                   # city_zones.junction: paint_rails(cv, 82)
+STEAM_RAIL = (RAIL_Y0 - 3, RAIL_Y0 + 16)
+CY0, CY1 = CANAL_Y + 176, CANAL_Y + 244     # the canal's water between its walls (canal: CY0, CY1)
+TOW_N = (CANAL_Y + 126, CY0)                # the towpaths of setts
+TOW_S = (CY1 + 2, CANAL_Y + 292)
+TUBE = (CANAL_Y + 340, CANAL_Y + 356, CANAL_Y + 372)   # the brass tube, and its trestles' foot
+PORTAL_W, PORTAL_E = -136, W + 150          # the main line's tunnel portals (centre x)
+LOCK = (-122, -66)                          # the lock west of the town: its chamber (x)
+BRIDGE = (-240, -198)                       # the road over the canal west (x), parapets included
+BASIN = (404, 596, CANAL_Y + 150, CANAL_Y + 270)   # the basin east: x0, x1, its water's y0, y1
+FEEDER = (566, 580, CANAL_Y + 54)           # the feeder channel's x span, its culvert's foot
+ENGINE_X = 456                              # the tube's pumping house (its west wall)
+LANE = (1172, 1192)                         # the hedged lane south of the town
+# the rows of terraces behind the yard wall: (foot, back or front), their yards, streets
+ROWS = ((-84, True), (-224, False), (-372, True), (-512, False))
+YARDS = ((-84, -56), (-372, -330))
+STREETS = ((-224, -190), (-512, -478))
+
+
+def _sgrid(col, row):
+    x0, y0 = col * W - S, row * H - S
+    X, Y = np.meshgrid(np.arange(x0, x0 + W + 2 * S), np.arange(y0, y0 + H + 2 * S))
+    return x0, y0, X, Y
+
+
+def _smooth(t):
+    t = np.clip(t, 0, 1)
+    return t * t * (3 - 2 * t)
+
+
+def _steam_d(X):
+    """How far past the town's west or east edge a point lies (0 inside its columns)."""
+    return np.maximum(np.maximum(-X, X - (W - 1)), 0)
+
+
+def _cut_h(X):
+    """The height of the main line's cutting wall: none by the town, rising to 22 px."""
+    return np.round(22 * _smooth((_steam_d(X) - 16) / 56)).astype(int)
+
+
+def _frame_y(X, Y):
+    """The zone frame a point's grass reads its noise in: the Junction's (region y) above
+    a line that wanders away from the zones, the Canal's (y - 576) below it."""
+    k = np.clip(_steam_d(X) / 60, 0, 1)
+    line = CANAL_Y + k * 34 * (vnoise(X, 0 * X, 47, 1801) - 0.5)
+    return np.where(Y >= line, Y - CANAL_Y, Y)
+
+
+def _const(c, shape):
+    return np.broadcast_to(np.array(_rgb(c), dtype=np.uint8), tuple(shape) + (3,))
+
+
+def _soot_grass(X, Y):
+    """city_zones' sooty grass (worlds.grass in the zones' ramp): two close tones in broad
+    patches with two-pixel blades, read in the frame of the zone it runs on from."""
+    fy = _frame_y(X, Y)
+    n = vnoise(X, fy, 22, 11)
+    tone = np.where(n < 0.62, 2, 3)
+    out = _pick(SOOT_G, tone)
+    blade = _hash(X, fy, 9) <= 0.055
+    below = np.roll(tone, -1, axis=0) == tone
+    for (sel, top, root) in ((tone == 3, 4, 2), (tone == 2, 3, 1)):
+        b = blade & below & sel
+        out = np.where(b[..., None], _pick(SOOT_G, np.full(X.shape, top)), out)
+        out = np.where(np.roll(b, 1, axis=0)[..., None], _pick(SOOT_G, np.full(X.shape, root)), out)
+    return out, tone
+
+
+def _cinders(X, Y, seed=1):
+    """city_zones.cinder_yard, in region px: cinders and ballast in small lumps, oil-dark
+    where engines stood, sooty grass in the corners."""
+    n = _hash(X // 3, Y // 2, 1720 + seed)
+    k = (X // 3 + (Y // 2) * 7) % 5
+    idx = np.where(n > 0.8, 3, np.where(n > 0.45, 2, np.where(n > 0.15, 5, 1)))
+    pal = np.array([_rgb(c) for c in IRON] + [_rgb(ST[1])], dtype=np.uint8)
+    joint = ((X % 3 == 0) | (Y % 2 == 0)) & (k != 0)
+    idx = np.where(joint, np.where(idx == 1, 0, 1), idx)
+    oil = vnoise(X, Y, 18, 1721 + seed) > 0.76
+    idx = np.where(oil, np.where((X + Y) % 2 == 1, 0, 1), idx)
+    out = pal[idx]
+    weed = (vnoise(X, Y, 11, 1722 + seed) < 0.16) & ((X + Y) % 3 != 0)
+    return np.where(weed[..., None], np.where(((X + Y) % 2 == 1)[..., None], _const('#46583F', X.shape),
+                                              _const('#5C6E4C', X.shape)), out)
+
+
+def _fan(X, Y, seed=1, R=15):
+    """city_zones.paint_fan, in region px: setts laid in fans, each lit on its top edge."""
+    sh = np.where((Y // R) % 2 == 1, R, 0)
+    col = (X + sh) // (2 * R)
+    u = X + sh - col * 2 * R - R
+    yy = Y + R - np.sqrt(np.maximum(0.0, R * R - u * u)) * 0.85
+    row = (yy // 4).astype(int)
+    along = X + row * 3
+    stone = along // 5
+    r, a = yy.astype(int) % 4, along % 5
+    t = _hash(stone, row, 1701 + seed)
+    base = np.where(t > 0.78, 4, np.where(t > 0.3, 3, 2))
+    idx = np.where((r == 0) | (a == 0), 1, np.where(r == 1, np.where(t > 0.78, 5, 4),
+                   np.where((r == 3) | (a == 4), np.where(base != 2, 2, 1), base)))
+    return _pick(GRANITE, idx)
+
+
+def _cobbles(X, Y):
+    """worlds.paint_cobbles, in region px: rounded cobbles, a lit top left and a dark gap."""
+    cx = X % 10
+    cy = (Y + (X // 10) % 2 * 4) % 8
+    n = _hash(X // 10, (Y + (X // 10) % 2 * 4) // 8, 81)
+    pal = np.array([_rgb(c) for c in SLATE_] + [_rgb('#A7A291')], dtype=np.uint8)
+    base = np.where(n < 0.5, 3, 5)
+    idx = np.where((cx == 0) | (cy == 0), 1, np.where((cx <= 2) & (cy <= 2), 4,
+                   np.where((cx >= 8) | (cy >= 6), 2, base)))
+    return pal[idx]
+
+
+def _bricks_np(X, Y, ramp=BRICK, seed=0, base=2):
+    """detail.bricks in region px: bricks three rows tall and six wide, staggered, each
+    with a lit top edge and its own tone, laid from several kilns (the main brick, a
+    darker, a hotter-fired and the odd blue engineering brick), the mortar lit where the
+    light catches its joint."""
+    ci, r = Y // 3, Y % 3
+    shift = np.where(ci % 2 == 1, 3, 0)
+    bi, c = (X + shift) // 6, (X + shift) % 6
+    h = _hash(ci, bi, 1811 + seed)
+    t = base + np.where(h > 0.78, 1, np.where(h < 0.18, -1, 0))
+    idx = np.clip(np.where((r == 0) & (h > 0.45), t + 1, t), 0, 4)
+    k = _hash(ci, bi, 1813 + seed)
+    out = _pick(ramp, idx)
+    for (lo, hi, alt) in ((0.0, 0.22, BROWN if ramp is not BROWN else BRICK), (0.22, 0.34, RED_BRICK), (0.34, 0.4, BLUE_BRICK)):
+        out = np.where(((k >= lo) & (k < hi))[..., None], _pick(alt, idx), out)
+    return np.where(((r == 2) | (c == 5))[..., None], _const('#2A2622', X.shape), out)
+
+
+def _canal_water(X, Y, face=6, top=CY0):
+    """city_zones.canal's water, in region px: the north wall's face in ashlar (`face`
+    rows, taller where the water lies lower), murky green water, the wall's shadow on
+    it, and ripples, read in the Canal's frame."""
+    yl = Y - CANAL_Y
+    k = Y - top
+    wall = np.where(((X // 7 + k // 3) % 2) == 1, 1, 2)
+    wall = np.where(k == 0, 4, wall)
+    n = vnoise(X, yl, 8, 494)
+    wat = np.where(n > 0.6, 0, np.where(n > 0.3, 1, 2))
+    wpal = np.array([_rgb(c) for c in ('#2C4A44', '#22403A', '#1A3430', '#14281F', '#3E6A5E')], dtype=np.uint8)
+    wat = np.where(k < face + 3, 3, wat)
+    rip = ((Y - top) % 6 == 2) & (_hash(X // 7, yl, 495) > 0.62) & (k >= face + 3)
+    wat = np.where(rip, 4, wat)
+    out = wpal[wat]
+    return np.where((k < face)[..., None], _pick(ASHLAR_, wall), out)
+
+
+def _rails_np(X, Y):
+    """paint_rails in region px: ballast, sleepers lit on top, two rails with a bright
+    running edge (the sleepers keep the zone's seven-pixel spacing)."""
+    y0 = RAIL_Y0
+    n = _hash(X, Y, 141)
+    out = _pick(ST, np.where(n > 0.55, 2, np.where(n > 0.15, 1, 3)))
+    sx = (X - 1) % 7
+    sl = (sx < 4) & (Y >= y0) & (Y < y0 + 13)
+    sl_i = np.where(sx == 0, np.where(Y == y0, 3, 2), np.where(sx == 1, 2, np.where(sx == 2, 1, np.where(Y > y0, 1, 2))))
+    out = np.where(sl[..., None], _pick(WOOD, sl_i), out)
+    for ry in (y0 + 2, y0 + 9):
+        for (dy, i) in ((0, 4), (1, 2), (2, 0)):
+            out = np.where((Y == ry + dy)[..., None], _pick(IRON, np.full(X.shape, i)), out)
+    return out
+
+
+def _field_kind(X, Y):
+    """Which field a point south of the lane lies in, and what grows there: 0 ploughed,
+    1 cabbages, 2 stubble, 3 rough pasture. The hedges between them wander."""
+    fx = np.floor_divide(X + 420 + (vnoise(0 * X, Y, 90, 1844) * 36).astype(int), 260)
+    fy = np.floor_divide(Y - LANE[1] - 14 + (vnoise(X, 0 * X, 110, 1845) * 30).astype(int), 190)
+    return (fx * 5 + fy * 3 + 7) % 4, fx, fy
+
+
+def _fields(X, Y):
+    """The fields: ploughed earth in furrows lying across the slope (each field its own
+    way), cabbages in rows on dark soil, pale stubble in drill lines, rough pasture; all
+    dulled by the works' smoke, with soot-dark patches where the wind drops it."""
+    kind, fx, fy = _field_kind(X, Y)
+    tilt = ((fx * 3 + fy) % 3 - 1) * 0.18
+    yy = Y + (X * tilt).astype(int) + (vnoise(X, 0 * X, 40, 1846) * 4).astype(int)
+    f = yy % 5
+    DIRT = ['#1E1714', '#2C221C', '#3A2E25', '#4A3B2F', '#5E4C3C']   # soil darkened by the smoke
+    plough = _pick(DIRT, np.where(f == 0, 4, np.where(f == 1, 3, np.where(f == 4, 1, 2))))
+    red = _hash(X // 9, yy // 5, 1974) > 0.6   # each run of furrow its own earth, some redder
+    plough = np.where((red & (f > 0))[..., None], _pick(['#2A1A14', '#3A241C', '#4E3226', '#644030', '#7A5240'],
+                                                         np.where(f == 1, 3, np.where(f == 4, 1, 2))), plough)
+    clod = (_hash(X // 2, yy // 2, 1847) > 0.88) & (f > 1)
+    plough = np.where(clod[..., None], _pick(DIRT, np.full(X.shape, 4)), plough)
+    r6 = yy % 7
+    cx = (X + (yy // 7) % 2 * 3) % 6
+    gone = _hash((X + (yy // 7) % 2 * 3) // 6, yy // 7, 1852) < 0.14   # a head lifted, a gap in the row
+    big = _hash((X + (yy // 7) % 2 * 3) // 6, yy // 7, 1853) > 0.6
+    head = (r6 >= 1 - big) & (r6 <= 4) & (cx >= 1 - big) & (cx <= 4 + big) & ~gone
+    ci = np.where((r6 <= 1) | (cx <= 1), 3, np.where((r6 == 4) | (cx >= 4), 1, 2))
+    cab = np.where(head[..., None], _pick(['#22301F', '#344A2C', '#4C6338', '#647A48'], ci),
+                   _pick(['#1E1714', '#2C221C', '#3A2E25', '#4A3B2F'], np.where(r6 == 0, 1, 2)))
+    st_ = _pick(['#4A4436', '#5E5644', '#746A52', '#8A7E62', '#A09474'],
+                np.where(f == 0, 1, np.where((f == 2) & ((X + yy // 5) % 3 == 0), 4, np.where(f == 3, 2, 3))))
+    past, _t = _soot_grass(X, Y)
+    out = np.where((kind == 0)[..., None], plough, np.where((kind == 1)[..., None], cab,
+                   np.where((kind == 2)[..., None], st_, past)))
+    soot = (vnoise(X, Y, 30, 1848) > 0.72) & ((X + Y) % 2 == 0)
+    return np.where(soot[..., None], (out * 0.82).astype(np.uint8), out), kind
+
+
+def _steam_masks(X, Y):
+    """What ground lies at each region point round Cogsworth, one mask a kind."""
+    d = _steam_d(X)
+    west, east = X < 0, X >= W
+    side = west | east
+    hw = _cut_h(X)
+    on_line = (west & (X > PORTAL_W)) | (east & (X < PORTAL_E))
+    m = {'d': d, 'side': side}
+    m['track'] = on_line & (Y >= STEAM_RAIL[0]) & (Y < STEAM_RAIL[1])
+    m['wall'] = on_line & (Y >= STEAM_RAIL[0] - hw) & (Y < STEAM_RAIL[0]) & (hw > 0)
+    m['coping'] = on_line & (Y >= STEAM_RAIL[0] - hw - 2) & (Y < STEAM_RAIL[0] - hw) & (hw > 0)
+    m['scoping'] = on_line & (d > 26) & (Y >= STEAM_RAIL[1]) & (Y < STEAM_RAIL[1] + 4)
+    rag = (vnoise(X, Y, 14, 1803) - 0.5) * 26 + (vnoise(X, Y, 3, 1804) - 0.5) * 5   # a ragged edge onto grass
+    hill = ((west & (X < PORTAL_W + 24 + rag)) | (east & (X > PORTAL_E - 24 - rag))) & (Y > -16 + rag * 0.6)
+    m['yard'] = ((Y >= -34) & (Y < 0) & ~hill) | (side & on_line & ~hill & (Y >= 0) & (Y < STEAM_RAIL[0] - hw - 2)) | \
+        (west & (X > BRIDGE[1] + 6 + rag) & (Y >= 286) & (Y < 404) & (d >= 14)) | \
+        (east & (Y >= 348) & (Y < 476) & (d >= 14) & (X < 500 + rag))
+    edge = 406 + (np.sin(X / 41) * 5 + vnoise(X, 0 * X, 23, 152) * 10).astype(int)
+    street = (west & (Y >= 232) & (Y < 286)) | (east & (Y >= 300) & (Y < 348))
+    road = (X >= BRIDGE[0] + 4) & (X < BRIDGE[1] - 4) & (Y >= 232) & (Y < LANE[0])
+    m['setts'] = side & (((d < 14) & (Y >= 136) & (Y < edge)) | street | road
+                         | ((d > 26) & (Y >= STEAM_RAIL[1] + 4) & (Y < 136)))
+    near = np.roll(m['setts'], 1, axis=0) | np.roll(m['setts'], -1, axis=0) | np.roll(m['setts'], 1, axis=1) | np.roll(m['setts'], -1, axis=1)
+    m['kerb'] = side & ~m['setts'] & near
+    m['ncob'] = Y < -56          # behind the yard wall: streets, ginnels and yards
+    for (a, b) in STREETS:
+        m['ncob'] |= (Y >= a) & (Y < b)
+    m['ash'] = np.zeros(X.shape, dtype=bool)
+    for (a, b) in YARDS:
+        m['ash'] |= (Y >= a) & (Y < b)
+    m['towpath'] = side & (((Y >= TOW_N[0]) & (Y < TOW_N[1])) | ((Y >= TOW_S[0]) & (Y < TOW_S[1])))
+    m['canal'] = side & (Y >= CY0) & (Y < CY1) & ~((X >= BASIN[0]) & (X < BASIN[1]))
+    m['basin'] = (X >= BASIN[0]) & (X < BASIN[1]) & (Y >= BASIN[2]) & (Y < BASIN[3])
+    m['quay'] = east & (X >= BASIN[0] - 14) & (X < BASIN[1] + 18) & (Y >= BASIN[2] - 34) & (Y < BASIN[3] + 26) & ~m['basin']
+    m['feeder'] = (X >= FEEDER[0]) & (X < FEEDER[1]) & (Y >= FEEDER[2]) & (Y < BASIN[2] - 1)
+    wob = (vnoise(X, 0 * X, 80, 1841) * 6).astype(int)
+    m['lane'] = (Y >= LANE[0] + wob) & (Y < LANE[1] + wob)
+    m['field'] = Y >= LANE[1] + wob + 14
+    return m
+
+
+def _rich(X, Y):
+    """How far a point lies from the town (0 at its edge, 1 from 50 px out): the ground
+    is the zone's own at the seam and gathers its own dressing further out."""
+    dx = np.maximum(np.maximum(-X, X - (W - 1)), 0)
+    dy = np.maximum(np.maximum(-Y, Y - (2 * H - 1)), 0)
+    return np.clip((np.hypot(dx, dy) - 10) / 40, 0, 1)
+
+
+def _dressing(X, Y, out, m, grass, rich):
+    """The ground's dressing away from the town (Eastward's ground is never one texture):
+    on the grass, soft patches of shade and light, ragwort and willowherb, bare cinder
+    where it is worn; on cinders, rust stains, ash and spilt coal; on the water, scum,
+    leaves, an oily sheen and the light on the ripples; on setts, puddles and moss in the
+    joints; in the fields, stones and weeds."""
+    def col(c):
+        return _const(c, X.shape)
+
+    def put(mask, rgb):
+        nonlocal out
+        out = np.where(mask[..., None], rgb, out)
+    chk = (X + Y) % 2 == 0
+    r1 = _hash(X // 7, Y // 7, 1950) < 0.09 * rich          # one weed in a 7 px cell, now and then
+    cx, cy = X % 7, Y % 7
+    g = grass & (rich > 0)
+    shade = g & ((vnoise(X, Y, 16, 1951) > 0.72) | ((vnoise(X, Y, 16, 1951) > 0.68) & chk)) & (rich > 0.3)
+    put(shade, np.where((out == _rgb(SOOT_G[3])).all(-1)[..., None], col(SOOT_G[2]), col(SOOT_G[1])))
+    lit = g & ((vnoise(X, Y, 19, 1952) > 0.76) | ((vnoise(X, Y, 19, 1952) > 0.72) & chk)) & (rich > 0.3)
+    put(lit & (out == _rgb(SOOT_G[2])).all(-1), col(SOOT_G[3]))
+    mott = g & (vnoise(X, Y, 3.5, 1970) > 0.64) & (rich > 0.15) & (vnoise(X, Y, 3.5, 1971) > 0.4)
+    put(mott, np.where((out == _rgb(SOOT_G[3])).all(-1)[..., None], col('#647550'), np.where((out == _rgb(SOOT_G[2])).all(-1)[..., None], col('#52653F'), out)))
+    clover = g & (vnoise(X, Y, 6, 1972) > 0.78) & (rich > 0.4)
+    put(clover, np.where(((X // 2 + Y // 2) % 3 == 0)[..., None], col('#728A5A'), col('#56704A')))
+    put(clover & (_hash(X // 3, Y // 3, 1973) > 0.9) & (X % 3 == 0) & (Y % 3 == 0), col('#E8E2D2'))
+    bare = g & (vnoise(X, Y, 20, 1953) > 0.86) & (rich > 0.6)   # worn to the earth
+    put(bare, _pick(['#2E2620', '#3E342A', '#4E4234', '#62543E'], np.where(vnoise(X, Y, 4, 1976) > 0.6, 3, np.where(vnoise(X, Y, 20, 1953) > 0.84, 1, 2))))
+    rag = g & r1 & (_hash(X // 7, Y // 7, 1960) > 0.5)
+    put(rag & (cx >= 2) & (cx <= 3) & (cy >= 2) & (cy <= 3), np.where((cy == 2)[..., None], col('#E8C860'), col('#C8A848')))
+    put(rag & (cx == 3) & (cy == 4), col(SOOT_G[1]))
+    herb = g & r1 & ~rag
+    put(herb & (cx == 3) & (cy >= 1) & (cy <= 3), np.where((cy == 1)[..., None], col('#D898B8'), col('#B87898')))
+    put(herb & (cx == 3) & (cy == 4), col(SOOT_G[1]))
+    cin = (m['yard'] | m['ash']) & (rich > 0)
+    put(cin & (vnoise(X, Y, 10, 1954) > 0.76) & chk, col('#6A4A30'))
+    put(cin & (vnoise(X, Y, 10, 1954) > 0.82), col('#8A5A38'))
+    put(cin & (vnoise(X, Y, 14, 1955) > 0.8) & ~chk, col('#8A8A90'))
+    put(cin & (vnoise(X, Y, 14, 1955) > 0.85), col('#A4A4AA'))
+    lump = cin & (_hash(X // 3, Y // 3, 1961) > 0.94) & (X % 3 < 2) & (Y % 3 < 2)
+    put(lump, np.where(((X % 3 == 0) & (Y % 3 == 0))[..., None], col('#45465A'), col('#14131A')))
+    wet = (m['canal'] | m['basin']) & (rich > 0) & ~((out == _rgb(ASHLAR_[1])).all(-1) | (out == _rgb(ASHLAR_[2])).all(-1) | (out == _rgb(ASHLAR_[4])).all(-1))
+    put(wet & (vnoise(X, Y, 16, 1956) > 0.74), col('#34503A'))   # scum drifting in rafts
+    put(wet & (vnoise(X, Y, 16, 1956) > 0.8), col('#4E6A44'))
+    put(wet & (vnoise(X, Y, 16, 1957) > 0.82), col('#3E4A64'))   # an oily sheen where the works drain
+    hi = wet & ((Y + X // 11) % 9 == 0) & (_hash(X // 6, Y, 1962) > 0.35)   # light on the ripples, 6 px
+    put(hi, col('#5E8A7E'))
+    put(hi & (X % 6 < 2), col('#86AAA0'))
+    leaf = wet & (_hash(X // 6, Y // 4, 1963) > 0.93) & (X % 6 < 3) & (Y % 4 < 2)
+    put(leaf, np.where((Y % 4 == 0)[..., None], col('#A07A42'), col('#6A4A2A')))
+    pave = (m['setts'] | m['ncob'] | m['towpath'] | m['quay']) & (rich > 0)
+    cob = (_hash(X // 10, (Y + (X // 10) % 2 * 4) // 8, 1978) * rich)
+    face = pave & ((out == _rgb(SLATE_[3])).all(-1) | (out == _rgb('#A7A291')).all(-1))   # a cobble's body only
+    put(face & (cob > 0.7), col('#8A7E6E'))   # a brown stone
+    put(face & (cob > 0.55) & (cob <= 0.7), col(GRANITE[3]))
+    pv = vnoise(X, Y, 11, 1958)
+    pud = pave & (pv > 0.82)   # puddles: dark with the sky in them, lit along their far edge
+    rim = pud & ~(np.roll(pud, 1, axis=0) & np.roll(pud, 1, axis=1))
+    put(pud, np.where((pv > 0.86)[..., None], col('#3A4650'), col('#4A5A66')))
+    put(rim, col('#7A8A94'))
+    joint = pave & ((out.astype(int).sum(-1)) < 200) & (vnoise(X, Y, 7, 1959) > 0.62)
+    put(joint, np.where(chk[..., None], col('#3A4A34'), col('#4C5E40')))
+    fld = m['field']
+    put(fld & (_hash(X // 4, Y // 3, 1964) > 0.95) & (X % 4 < 2) & (Y % 3 == 0), np.where((X % 4 == 0)[..., None], col(ST[3]), col(ST[2])))
+    put(fld & (_hash(X // 6, Y // 4, 1965) > 0.93) & (X % 6 == 2) & (Y % 4 < 2), np.where((Y % 4 == 0)[..., None], col(SOOT_G[3]), col(SOOT_G[1])))
+    poppy = fld & (_hash(X // 8, Y // 5, 1969) > 0.95) & (X % 8 < 2) & (Y % 5 == 1)
+    put(poppy, np.where((X % 8 == 0)[..., None], col('#C83A2E'), col('#8E2A22')))
+    put(fld & (vnoise(X, Y, 9, 1975) > 0.83) & ((X + Y) % 3 == 0), col('#4A5A66'))   # standing water in the furrows
+    return out
+
+
+def _steam_ground(X, Y):
+    """The ground round Cogsworth at region points: (rgb, grass tone or -1 where it is not
+    open grass (so tufts grow only there), the masks)."""
+    m = _steam_masks(X, Y)
+    out, tone = _soot_grass(X, Y)
+    grass = np.ones(X.shape, dtype=bool)
+
+    def put(mask, rgb):
+        nonlocal out, grass
+        out = np.where(mask[..., None], rgb, out)
+        grass &= ~mask
+    put(m['yard'], _cinders(X, Y))
+    # the lane: packed cinder and earth, two wheel ruts, grass down its crown, puddles
+    wob = (vnoise(X, 0 * X, 80, 1841) * 6).astype(int)
+    ly = Y - LANE[0] - wob
+    rut = (ly == 5) | (ly == 6) | (ly == 13) | (ly == 14)
+    lane = _pick(['#2E2620', '#3E342A', '#544636', '#6A5A44', '#84725A'],
+                 np.where(rut, 1, np.where(_hash(X // 3, ly // 2, 1842) > 0.7, 3, 2)))
+    lane = np.where((rut & (ly % 2 == 1))[..., None], _pick(IRON, np.full(X.shape, 1)), lane)
+    crown = (ly >= 8) & (ly <= 11) & (vnoise(X, Y, 9, 1849) > 0.45)
+    lane = np.where(crown[..., None], _pick(SOOT_G, np.where((X + ly) % 3 == 0, 3, 2)), lane)
+    puddle = rut & (vnoise(X, Y, 13, 1850) > 0.74)
+    lane = np.where(puddle[..., None], np.where(((X + Y) % 5 == 0)[..., None], _const('#6A7A84', X.shape),
+                                                _const('#3A4650', X.shape)), lane)
+    put(m['lane'], lane)
+    fields, _k = _fields(X, Y)
+    put(m['field'], fields)
+    fan = m['setts'] & ((m['d'] < 30) | ~(((Y >= 232) & (Y < 286)) | ((Y >= 300) & (Y < 348)) | ((X >= BRIDGE[0]) & (X < BRIDGE[1]))))
+    put(m['setts'] & ~fan, _cobbles(X, Y))
+    put(fan, _fan(X, Y))
+    put(m['setts'] & ((m['d'] == 30) | (m['d'] == 31)), _pick(GRANITE, np.where(m['d'] == 30, 4, 2)))
+    st_rows = ((Y >= 232) & (Y < 286)) | ((Y >= 300) & (Y < 348))
+    gut = m['setts'] & ~fan & st_rows & ((Y == 233) | (Y == 284) | (Y == 301) | (Y == 346))
+    put(gut, _pick(GRANITE, np.where(((X // 3) % 2 == 0), 1, 0)))
+    grate = m['setts'] & ~fan & st_rows & ((X % 44) < 6) & (((Y >= 280) & (Y < 284)) | ((Y >= 342) & (Y < 346)))
+    put(grate, np.where(((X % 2 == 0) & ((Y % 4) != 0))[..., None], _const(IRON[0], X.shape), _const(IRON[3], X.shape)))
+    cover = m['setts'] & ~fan & st_rows & (np.hypot((X % 70) - 35, (Y - (258 + 66 * (Y >= 300))) * 1.4) < 4)
+    put(cover, np.where((((X % 70) - 35 + (Y - 258)) < 0)[..., None], _const(IRON[3], X.shape), _const(IRON[1], X.shape)))
+    litter = m['setts'] & ~fan & (_hash(X // 4, Y // 3, 1967) > 0.985) & (X % 4 < 2) & (Y % 3 == 0)
+    put(litter, np.where((_hash(X // 3, Y // 2, 1968) > 0.5)[..., None], _const('#E8E2D2', X.shape), _const('#C8A848', X.shape)))
+    put(m['kerb'] & ~m['yard'], _pick(ST, np.where(np.roll(m['setts'], -1, axis=0), 3, 1)))
+    put(m['ncob'] | m['towpath'] | m['quay'], _cobbles(X, np.where(Y >= CANAL_Y, Y - CANAL_Y, Y)))
+    put(m['ash'], _cinders(X, Y, seed=4))
+    side = m['side']
+    for (ky, c) in ((TOW_N[0] - 1, ST[3]), (TOW_S[1], ST[3]), (TOW_S[1] + 1, ST[1])):
+        put(side & (Y == ky) & ~m['quay'], _const(c, X.shape))  # the towpaths' kerbs, as the zone's
+    put(m['track'], _rails_np(X, Y))
+    put(m['wall'], _bricks_np(X, Y, BRICK, seed=3, base=2))
+    put(m['coping'], _pick(ST, np.where(Y == STEAM_RAIL[0] - _cut_h(X) - 2, 4, 2)))
+    put(m['scoping'], _pick(ST, np.select([Y == STEAM_RAIL[1], Y == STEAM_RAIL[1] + 1, Y == STEAM_RAIL[1] + 2], [4, 3, 2], 1)))
+    # the canal west and east of the town, a step lower past the lock (a taller wall shows)
+    low = X < LOCK[1]
+    put(m['canal'], np.where(low[..., None], _canal_water(X, Y, face=10), _canal_water(X, Y)))
+    for (ky, c) in ((CY0 - 1, ASHLAR_[3]), (CY1, ASHLAR_[5]), (CY1 + 1, ASHLAR_[3])):
+        put((Y == ky) & side & ~((X >= BASIN[0]) & (X < BASIN[1])), _const(c, X.shape))
+    # the basin: the canal widened between quay walls, copings round it
+    put(m['basin'], _canal_water(X, Y, top=BASIN[2]))
+    for (ky, c) in ((BASIN[2] - 1, ASHLAR_[3]), (BASIN[2] - 2, ASHLAR_[5]), (BASIN[3], ASHLAR_[5]), (BASIN[3] + 1, ASHLAR_[3])):
+        put((Y == ky) & (X >= BASIN[0] - 2) & (X < BASIN[1] + 2), _const(c, X.shape))
+    for (kx, c) in ((BASIN[0] - 2, ASHLAR_[5]), (BASIN[0] - 1, ASHLAR_[3]), (BASIN[1], ASHLAR_[5]), (BASIN[1] + 1, ASHLAR_[3])):
+        open_ = (kx < BASIN[1]) & (Y >= CY0 - 1) & (Y < CY1 + 2)
+        put((X == kx) & (Y >= BASIN[2] - 2) & (Y < BASIN[3] + 2) & ~open_, _const(c, X.shape))
+    # the lock: its chamber narrower than the canal between broad stone copings, the
+    # water in it and below it a step down (its wall's face taller)
+    lk = (X >= LOCK[0]) & (X < LOCK[1])
+    nw, sw = CY0 + 12, CY1 - 12
+    put(lk & (Y >= CY0 - 3) & (Y < nw), _pick(ASHLAR_, np.where(Y == CY0 - 3, 5, np.where(((X // 9 + (Y - CY0) // 4) % 2) == 0, 4, 3))))
+    put(lk & (Y >= sw) & (Y < CY1 + 3), _pick(ASHLAR_, np.where(Y >= CY1 + 1, 2, np.where(((X // 9 + (Y - sw) // 4) % 2) == 0, 4, 3))))
+    put(lk & (Y >= nw) & (Y < sw), _canal_water(X, Y, face=12, top=nw))
+    put(lk & (Y == sw - 1), _pick(ASHLAR_, np.full(X.shape, 1)))
+    # the road over the canal west: a humpback deck of setts, lighter at its crown
+    deck = (X >= BRIDGE[0] + 4) & (X < BRIDGE[1] - 4) & (Y >= TOW_N[0] - 4) & (Y < TOW_S[1] + 4)
+    crown = 1 - np.abs(Y - (CY0 + CY1) / 2) / ((TOW_S[1] - TOW_N[0]) / 2 + 4)
+    put(deck, np.clip(_fan(X, Y).astype(int) * (0.86 + 0.18 * crown[..., None]), 0, 255).astype(np.uint8))
+    # the feeder: a narrow stone channel down from its culvert, stepping in small weirs
+    fx = X - FEEDER[0]
+    fw = FEEDER[1] - FEEDER[0]
+    feed = _pick(MATERIALS['water'], np.where((Y + fx // 2) % 6 == 0, 3, np.where(fx < 6, 2, 1)))
+    weir = ((Y - FEEDER[2]) % 24 < 2) & (Y > FEEDER[2] + 6)
+    feed = np.where(weir[..., None], _const('#EEF5F8', X.shape), feed)
+    feed = np.where((fx < 2)[..., None], _pick(ASHLAR_, np.where(fx == 0, 4, 3)), feed)
+    feed = np.where((fx >= fw - 2)[..., None], _pick(ASHLAR_, np.where(fx == fw - 1, 1, 2)), feed)
+    put(m['feeder'], feed)
+    out = _dressing(X, Y, out, m, grass, _rich(X, Y))
+    return out, np.where(grass, tone, -1), m
+
+
+# ---- what stands round Cogsworth ------------------------------------------------------
+def _mixed_bricks(cv, x0, y0, w, h, main=BRICK, seed=0):
+    """Bricks on a sprite, laid from several kilns as _bricks_np lays them."""
+    yy, xx = np.mgrid[y0:y0 + h, x0:x0 + w]
+    rgb = _bricks_np(xx, yy, main, seed=seed, base=2 if main is BROWN else 3)
+    for j in range(h):
+        for i in range(w):
+            cv.set(x0 + i, y0 + j, tuple(int(v) for v in rgb[j, i]) + (255,))
+HOUSE = 34          # one house of a terrace, party wall to party wall
+STOREYS = (42, 32)  # the ground storey and the one above (verticality.md, section 5)
+
+
+def _sp():
+    import steampunk_props
+    return steampunk_props
+
+
+@functools.lru_cache(maxsize=96)
+def _terrace_row(n: int, seed: int, back: bool, roof: int = 0):
+    """A terrace of n houses in the three-quarter view, as one sprite: (image, its foot
+    row). A roof whose ridge runs along the row (the far plane a lit sliver, the near
+    plane in courses of slates, a tone a slate, the odd one replaced, moss low down),
+    brick stacks with their pots on every other party wall, a gutter and the eaves'
+    shadow, brick walls (each house its own brick), a stone footing. `back` shows the
+    rear: a small sash, a plank back door, the scullery window, drainpipes, soot; else
+    the street front: sash windows with lintels and sills, panelled doors with fanlights
+    and steps. `roof` 0 slate, 1 tarred iron."""
+    sp = _sp()
+    R = (SLATE_, TAR_)[roof]
+    w = n * HOUSE + 2
+    stack_h, far, ridge, near = 16, 5, 2, 22
+    wall = sum(STOREYS)
+    ry = stack_h + far             # the ridge's row
+    ey = ry + ridge + near         # the eaves
+    foot = ey + wall + 4
+    cv = Canvas(w, foot + 2)
+
+    def rnd(a, b=0, c=0):
+        return noise2(seed * 31 + a, b, 1851 + c)
+    for x in range(1, w - 1):
+        for y in range(stack_h, ry):  # the far plane: it faces the light
+            c = R[4] if (y - stack_h) % 3 == 0 else R[3]
+            if (x + (y // 3) * 2) % 5 == 0:
+                c = R[2]
+            cv.set(x, y, c)
+        red = roof == 0 and seed % 3 == 0   # some rows have red clay ridge tiles
+        RR = RIDGE if red else R
+        cv.set(x, ry, RR[4] if x % 4 else RR[3]); cv.set(x, ry + 1, RR[2] if x % 4 else RR[1])
+        for y in range(ry + ridge, ey):  # the near plane, in courses of slates
+            k, r = divmod(y - ry - ridge, 3)
+            sx = (x + (k % 2) * 2) // 5
+            t = rnd(sx, k)
+            q = rnd(sx, k, 2)   # slates from three quarries, as a roof is patched over the years
+            Q = (WELSH if q > 0.62 else GREEN_SLATE if q < 0.1 else R) if roof == 0 else R
+            base = 3 if t > 0.86 else 1 if t < 0.16 else 2
+            c = Q[base + 1 if r == 0 and base < 4 else base]
+            if r == 2 or (x + (k % 2) * 2) % 5 == 0:
+                c = Q[0]
+            if roof == 1:   # corrugated iron sheets, tarred, the odd one new, rust where the tar has gone
+                sheet = (x // 12 + k // 3) % 5
+                c = R[3] if x % 3 == 0 else R[2] if x % 3 == 1 else R[1]
+                if sheet == 0:
+                    c = ('#8E8E99', '#64646F', '#474753')[x % 3]
+                if vnoise(np.array(x + seed * 50), np.array(y), 7, 1977) > 0.68:
+                    c = ('#8A5432', '#6A3E24', '#4A2A1A')[x % 3]
+                if r == 2 and k % 3 == 2:
+                    c = R[0]   # the sheets' overlap
+            if rnd(x // 3, k, 1) > 0.86 and r != 2 and y > ry + 6:
+                c = LICHEN[2 if r == 0 else 1] if rnd(x // 2, k, 3) > 0.4 else LICHEN[0]   # lichen on the slates
+            cv.set(x, y, c)
+        cv.set(x, ey, IRON[3]); cv.set(x, ey + 1, IRON[1])  # the gutter
+    for k in range(n):
+        hx = 1 + k * HOUSE
+        ramp = BROWN if rnd(k, 2) > 0.55 else OCHRE_BRICK if rnd(k, 14) > 0.85 else BRICK
+        _mixed_bricks(cv, hx, ey + 2, HOUSE, wall, ramp, seed=seed * 7 + k)
+        for x in range(hx, hx + HOUSE):  # soot low on the wall
+            for y in range(ey + wall - 2, ey + wall + 2):
+                detail.shade(cv, x, y, 1)
+        up, gr = ey + 2 + 8, ey + 2 + STOREYS[1] + 6
+        flip = (k + seed) % 2
+        if back:
+            sp.sash(cv, hx + (6 if flip else HOUSE - 18), up, 10, 14, lit=rnd(k, 3) > 0.6)
+            dx = hx + (HOUSE - 15 if flip else 4)
+            for y in range(ey + wall - 28, ey + wall + 2):
+                for x in range(dx, dx + 11):
+                    c = WOOD[2] if (x - dx) % 4 else WOOD[1]
+                    if x == dx:
+                        c = WOOD[3]
+                    if y in (ey + wall - 27, ey + wall - 12) and dx < x < dx + 10:
+                        c = WOOD[1]  # the ledges across the planks
+                    cv.set(x, y, c)
+            paint = (('#2E4A34', '#46684A', '#5E8460'), ('#6E2A24', '#9A3E30', '#B85A44'),
+                     ('#2C3E4C', '#3E566A', '#5A7690'), (WOOD[1], WOOD[2], WOOD[3]))[int(rnd(k, 15) * 4)]
+            for y in range(ey + wall - 27, ey + wall + 1):  # the back door painted, the paint worn
+                for x in range(dx + 1, dx + 10):
+                    if rnd(x, y, 16) > 0.18:
+                        cv.set(x, y, paint[1] if (x - dx) % 4 else paint[0])
+                cv.set(dx + 1, y, paint[2])
+            cv.set(dx + 8, ey + wall - 13, BRASS[4]); cv.set(dx + 8, ey + wall - 12, BRASS[1])
+            cv.hline(dx - 1, ey + wall - 29, 13, ST[3]); cv.hline(dx - 1, ey + wall - 28, 13, ST[1])
+            sp.sash(cv, hx + (17 if flip else 4), gr + 4, 10, 12, lit=rnd(k, 4) > 0.5)
+            if rnd(k, 17) > 0.5:  # a tin bath hung on a nail by the door
+                bx, by = hx + (8 if flip else HOUSE - 14), ey + wall - 36
+                for (x, y) in oval(bx + 3, by + 3, 4, 2.5):
+                    cv.set(x, y, IRON[4] if y < by + 2 else IRON[3] if x < bx + 4 else IRON[2])
+                cv.set(bx + 3, by - 1, IRON[1])
+        else:
+            for j, wx in enumerate((hx + 4, hx + HOUSE - 16)):
+                sp.sash(cv, wx, up, 12, 16, lit=rnd(k, 5 + j) > 0.45)
+            dx = hx + (3 if flip else HOUSE - 17)
+            paint = [['#1E2A34', '#2C3E4C', '#3E566A', '#5A7690'], ['#2A1C1A', '#4A2A24', '#6E3A2E', '#8E5040'],
+                     ['#1C2A22', '#2A4234', '#3A5A46', '#567A60']][int(rnd(k, 8) * 3)]
+            sp.panel_door(cv, dx, ey + wall + 1, 14, 30, paint)
+            wx = hx + (19 if flip else 4)
+            sp.sash(cv, wx, gr + 2, 12, 16, lit=rnd(k, 9) > 0.4)
+            if rnd(k, 18) > 0.45:  # a window box of geraniums on the sill
+                for x in range(wx - 1, wx + 13):
+                    cv.set(x, gr + 20, WOOD[3]); cv.set(x, gr + 21, WOOD[1])
+                    if (x + k) % 3:
+                        cv.set(x, gr + 19, '#3A5A30' if x % 2 else '#4E7A3A')
+                    if (x + k) % 4 == 0:
+                        cv.set(x, gr + 18, ('#D84A3A', '#E8C24A', '#E8E2D2')[(x + k) % 3])
+            cv.set(dx + 6, ey + wall - 24, BRASS[4]); cv.set(dx + 8, ey + wall - 24, BRASS[3])  # the number
+        px = hx + HOUSE - 2  # the drainpipe down the party wall, with its brackets, rusting
+        for y in range(ey + 1, ey + wall + 2):
+            cv.set(px, y, IRON[3]); cv.set(px + 1, y, IRON[1])
+            if (y - ey) % 9 == 0:
+                cv.hline(px - 1, y, 4, IRON[2])
+            elif (y - ey) % 9 in (1, 2) and rnd(k, y, 23) > 0.4:
+                cv.set(px, y, '#8A5432'); cv.set(px + 1, y, '#5A3420')
+        if back and rnd(k, 24) > 0.4:  # a pot on the scullery sill
+            sx_ = hx + (17 if flip else 4) + 3
+            sy_ = gr + 4 + 12 + 1
+            cv.set(sx_, sy_ - 1, '#B85A44'); cv.set(sx_ + 1, sy_ - 1, '#8E4030'); cv.set(sx_ + 2, sy_ - 1, '#B85A44')
+            cv.set(sx_ + 1, sy_ - 2, '#4E7A3A'); cv.set(sx_, sy_ - 3, '#3A5A30'); cv.set(sx_ + 2, sy_ - 3, '#5E8A44')
+        for t in range(2):  # soot streaks down from the eaves
+            sx = hx + 3 + int(rnd(k, 10 + t) * (HOUSE - 8))
+            for y in range(ey + 2, ey + 2 + 6 + int(rnd(k, 12 + t) * 14)):
+                if (sx + y) % 3:
+                    detail.shade(cv, sx, y, 1)
+                    detail.shade(cv, sx + 1, y, 1)
+    # curtains hung at the outer sides of the panes, each house its own colour
+    glass = {_rgb(SLATE_[2]), _rgb(SLATE_[1]), _rgb(MATERIALS['lamplight'][2]), _rgb(MATERIALS['lamplight'][3])}
+    warm = {_rgb(MATERIALS['lamplight'][2]), _rgb(MATERIALS['lamplight'][3])}
+    for k in range(n):
+        if rnd(k, 20) < 0.25:
+            continue  # (no curtains here)
+        cl = CURTAIN[int(rnd(k, 19) * 4)]
+        for y in range(ey + 2, ey + wall):
+            runs, x = [], 1 + k * HOUSE
+            while x < 1 + (k + 1) * HOUSE:
+                if cv.get(x, y)[:3] in glass:
+                    a_ = x
+                    while cv.get(x, y)[:3] in glass:
+                        x += 1
+                    runs.append((a_, x - 1))
+                x += 1
+            for i, (a_, b_) in enumerate(runs):
+                if i + 1 < len(runs) and runs[i + 1][0] - b_ == 2:      # the left pane of a sash
+                    pts = (a_, a_ + 1)
+                elif i > 0 and a_ - runs[i - 1][1] == 2:                 # the right pane
+                    pts = (b_ - 1, b_)
+                else:
+                    continue
+                for x in pts:
+                    lit = cv.get(x, y)[:3] in warm
+                    cv.set(x, y, cl[1] if lit else cl[0])
+    detail.overhang_shadow(cv, 1, w - 1, ey + 2, lambda x: 2, k=1)
+    detail.stones(cv, 0, ey + wall + 2, w, 3, ST, seed=seed + 3, course=3)
+    for k in range(n):  # a skylight in the odd roof: an iron frame, the glass catching the sky
+        if rnd(k, 21) > 0.62:
+            lx = 1 + k * HOUSE + 10 + int(rnd(k, 22) * 10)
+            for y in range(ry + 6, ry + 14):
+                for x in range(lx, lx + 8):
+                    edge = x in (lx, lx + 7) or y in (ry + 6, ry + 13)
+                    cv.set(x, y, IRON[1] if edge else ('#9AB4C8' if y < ry + 9 else '#5E7890'))
+            cv.hline(lx, ry + 14, 8, SLATE_[0])
+    for k in range(n):  # pigeons along the ridge, grey with a lit back
+        if rnd(k, 25) > 0.55:
+            px_ = 1 + k * HOUSE + 6 + int(rnd(k, 26) * 20)
+            cv.set(px_, ry - 2, '#9A9AA4'); cv.set(px_ + 1, ry - 2, '#B4B4BC'); cv.set(px_ + 2, ry - 1, '#6A6A74')
+            cv.set(px_, ry - 1, '#7A7A84'); cv.set(px_ + 1, ry - 1, '#8A8A94'); cv.set(px_ - 1, ry - 2, '#4A4A54')
+            cv.set(px_ + 1, ry, '#C8A040')
+    for k in range(0, n + 1, 2):  # the stacks, on every other party wall, lead flashed round
+        sx = min(w - 11, max(0, k * HOUSE - 4))
+        for x in range(sx - 2, sx + 12):
+            cv.set(x, ry + 3, '#7A8494' if x < sx + 5 else '#5A6474'); cv.set(x, ry + 4, '#5A6474')
+        sp.brick_stack(cv, sx, ry - 10, ry + 3, w=10, pots=2 + (k // 2) % 2)
+    style.close_outline(cv)
+    return cv.img, foot
+
+
+@functools.lru_cache(maxsize=4)
+def _mill(w: int = 186, seed: int = 1):
+    """A mill of four storeys: long brick walls with rows of tall windows under stone
+    arches, a stone string course under each floor, pilasters between the bays, a slate
+    roof with a glazed lantern along its ridge. (image, foot row)."""
+    floors, fh = 4, 26
+    roof_h = 30
+    wall_top = roof_h
+    foot = wall_top + floors * fh + 4
+    cv = Canvas(w, foot + 2)
+    for x in range(1, w - 1):
+        for y in range(6, roof_h):
+            if y < 11:
+                c = SLATE_[4] if (y - 6) % 3 == 0 else SLATE_[3]
+            elif y < 13:
+                c = SLATE_[4] if y == 11 else SLATE_[2]
+            else:
+                k, r = divmod(y - 13, 3)
+                c = SLATE_[2] if r else SLATE_[3]
+                if r == 2 or (x + k * 2) % 6 == 0:
+                    c = SLATE_[0]
+            cv.set(x, y, c)
+        cv.set(x, roof_h, IRON[3]); cv.set(x, roof_h + 1, IRON[1])
+    for x in range(w // 2 - 22, w // 2 + 22):  # the lantern
+        for y in range(1, 11):
+            c = '#E8E2D2' if y < 3 else ('#5A7690' if (x // 3) % 2 else '#3E566A') if y < 9 else SLATE_[1]
+            if x in (w // 2 - 22, w // 2 + 21):
+                c = IRON[1]
+            cv.set(x, y, c)
+    _mixed_bricks(cv, 1, wall_top + 2, w - 2, floors * fh, BRICK, seed=seed + 50)
+    for f in range(floors):
+        y0 = wall_top + 2 + f * fh
+        cv.hline(1, y0, w - 2, ST[4]); cv.hline(1, y0 + 1, w - 2, ST[2])
+        for wx in range(8, w - 12, 14):
+            lit = noise2(wx, f, 1901 + seed)
+            glass = (MATERIALS['lamplight'][2], MATERIALS['lamplight'][3]) if lit > 0.62 else \
+                ('#B8782E', '#F0B85A') if lit > 0.5 else ('#2C3E4C', '#3E566A') if lit > 0.2 else ('#1E2A34', '#5A7690')
+            for y in range(y0 + 6, y0 + 22):
+                for x in range(wx, wx + 8):
+                    c = (glass[0] if y > y0 + 13 else glass[1]) if (x - wx) % 4 else '#B8B0A0'
+                    if (x - wx) % 4 and noise2(x, y, 1902 + seed) > 0.95:
+                        c = '#14131A'  # a broken pane
+                    if y in (y0 + 6, y0 + 13):
+                        c = '#B8B0A0'
+                    cv.set(x, y, c)
+            cv.hline(wx - 1, y0 + 22, 10, ST[4]); cv.hline(wx - 1, y0 + 23, 10, ST[1])
+            for x in range(wx - 1, wx + 9):
+                cv.set(x, y0 + 5, ST[3] if x < wx + 4 else ST[2])
+    for y in range(wall_top + 2, foot - 2):
+        for bx in range(4, w - 4, 42):
+            cv.set(bx, y, BRICK[4]); cv.set(bx + 1, y, BRICK[3]); cv.set(bx + 2, y, BRICK[1])
+    for x in range(30, w - 30):  # the mill's name painted along the top floor
+        for y in range(wall_top + 3, wall_top + 7):
+            c = '#E8DCC0' if 0 < y - wall_top - 3 < 3 else '#2A1A16'
+            if c == '#E8DCC0' and y == wall_top + 4 and (x // 2) % 4 and 36 < x < w - 36:
+                c = '#6E2A24'
+            cv.set(x, y, c)
+    for dp in (2 + 42 * 2 - 6, w - 8):  # drainpipes, rusting; soot down from the gutter
+        for y in range(wall_top + 2, foot - 4):
+            cv.set(dp, y, IRON[3] if (y // 2) % 7 else '#8A5432'); cv.set(dp + 1, y, IRON[1] if (y // 2) % 7 else '#5A3420')
+    for i in range(9):
+        sx = 10 + int(noise2(i, 0, 1904) * (w - 20))
+        for y in range(wall_top + 2, wall_top + 8 + int(noise2(i, 1, 1904) * 30)):
+            if (sx + y) % 3:
+                detail.shade(cv, sx, y, 1); detail.shade(cv, sx + 1, y, 1)
+    for f in range(1, 4):
+        for bx in range(4, w - 4, 42):  # tie plates on the pilasters
+            cv.set(bx, wall_top + 2 + f * fh - 3, IRON[3]); cv.set(bx + 1, wall_top + 2 + f * fh - 3, IRON[1])
+    detail.stones(cv, 0, foot - 4, w, 4, ST, seed=seed + 51, course=4)
+    detail.overhang_shadow(cv, 1, w - 1, wall_top + 2, lambda x: 2, k=1)
+    style.close_outline(cv)
+    return cv.img, foot
+
+
+@functools.lru_cache(maxsize=16)
+def _works_chimney(h: int, seed: int):
+    """A mill or works chimney: a brick shaft on a stone plinth, tapering, lit on its
+    west face and dark on its east, banded in stone, a corbelled cap black with soot,
+    and smoke leaning away east. (image, foot x, foot y)."""
+    w = 44
+    top = 30
+    cv = Canvas(w, h + top + 1)
+    cx = 13
+    for y in range(top, top + h):
+        t = (y - top) / h
+        half = 4 + t * 3
+        for x in range(int(cx - half), int(cx + half) + 1):
+            u = (x - (cx - half)) / (2 * half)
+            c = BRICK[4] if u < 0.22 else BRICK[3] if u < 0.55 else BRICK[2] if u < 0.8 else BRICK[1]
+            if y % 3 == 2 and (x + (y // 3) * 3) % 6 != 0:
+                c = BRICK[2] if u < 0.55 else BRICK[0]
+            if (y - top) % 30 == 14:
+                c = ST[4] if u < 0.4 else ST[2]
+            if y < top + 12 and (x + y) % 3:
+                c = IRON[1] if u > 0.4 else BRICK[1]
+            cv.set(x, y, c)
+    for y in range(top - 4, top):
+        for x in range(cx - 6, cx + 7):
+            cv.set(x, y, IRON[3] if y == top - 4 else IRON[1] if x < cx else IRON[0])
+    for y in range(top + h - 9, top + h):
+        for x in range(cx - 8, cx + 9):
+            c = ST[3] if x < cx - 3 else ST[2] if x < cx + 5 else ST[1]
+            if y == top + h - 9:
+                c = ST[4]
+            cv.set(x, y, c)
+    puffs = [(cx + 2, top - 8, 4.5), (cx + 9, top - 13, 5.5), (cx + 17, top - 18, 6.2), (cx + 25, top - 21, 5.0)]
+    for i, (px, py, r) in enumerate(puffs):
+        ramp = ['#3A3A42', '#55555E', '#73737A', '#93918F'] if i < 2 else ['#55555E', '#73737A', '#93918F', '#B4B0A8']
+        for (x, y) in disc(px, py, r + noise2(seed, i, 1861)):
+            k = (x - px) + (y - py)
+            cv.set(x, y, ramp[3] if k < -r * 0.6 else ramp[2] if k < 0.5 else ramp[1])
+    style.close_outline(cv)
+    return cv.img, cx, top + h - 1
+
+
+@functools.lru_cache(maxsize=2)
+def _rail_portal():
+    """The main line's tunnel portal, in brick: a parapet with a stone coping, a stone
+    string course, brick pilasters lit on the west, a ring of stone voussoirs with a
+    keystone round the arch, a date stone, soot from the engines blackening the brick
+    over the arch, and the dark of the tunnel with the rails running into it.
+    (image, arch centre x, foot row)."""
+    w, h = 66, 56
+    cv = Canvas(w, h)
+    cx, half = w // 2, 13
+    spring = h - 24
+    _mixed_bricks(cv, 0, 4, w, h - 4, BRICK, seed=71)
+    for y in range(h - 9, h - 3):  # a plinth course of blue engineering brick
+        for x in range(w):
+            cv.set(x, y, BLUE_BRICK[3] if (y - h) % 3 == 0 else BLUE_BRICK[2] if (x + (y // 3) * 3) % 6 else BLUE_BRICK[0])
+    for y in range(0, 4):
+        for x in range(w):
+            cv.set(x, y, (ST[4], ST[3], ST[2], ST[1])[y])
+    for x in range(w):
+        cv.set(x, 9, ST[4]); cv.set(x, 10, ST[2])
+    for (px, lit) in ((0, True), (w - 7, False)):
+        for y in range(4, h):
+            for x in range(px, px + 7):
+                c = BRICK[4] if (lit and x < px + 2) else BRICK[3] if x < px + 5 else BRICK[1]
+                if y % 3 == 2:
+                    c = BRICK[1] if x < px + 5 else BRICK[0]
+                cv.set(x, y, c)
+        cv.hline(px, 4, 7, ST[4]); cv.hline(px, 5, 7, ST[2])
+    for y in range(11, spring):
+        for x in range(cx - half - 6, cx + half + 7):
+            k = abs(x - cx) / (half + 6) + (spring - y) / (spring - 11) * 0.8
+            if (k < 0.95 and (x + y) % 2 == 0) or k < 0.55:
+                detail.shade(cv, x, y, 1)
+    for y in range(spring - half - 4, h):
+        for x in range(cx - half - 4, cx + half + 5):
+            dx, dy = x + 0.5 - cx, y + 0.5 - spring
+            r = math.hypot(dx, dy) if dy < 0 else abs(dx)
+            if half <= r < half + 4:
+                a = math.atan2(dy, dx)
+                stone = int((a + math.pi) / math.pi * 11)
+                c = ST[4] if dx < 0 and r < half + 1.5 else ST[3] if stone % 2 else ST[2]
+                if dy >= 0:
+                    c = (ST[3] if dx < 0 else ST[1]) if (y - spring) % 5 != 4 else (ST[1] if dx < 0 else ST[0])
+                elif stone % 4 == 1:
+                    c = RED_BRICK[3] if dx < 0 else RED_BRICK[2]   # the ring banded in red brick and stone
+                cv.set(x, y, c)
+            elif r < half:
+                # the tunnel's brick lining going into the dark, lit only on its west side
+                if r > half - 5:
+                    lining = (BLUE_BRICK[1], BLUE_BRICK[0]) if dx < 0 else ('#1E1C26', '#14131A')
+                    c = lining[0] if (int(y) // 2 + int(r)) % 3 else lining[1]
+                    if dx < 0 and r > half - 2:
+                        c = BLUE_BRICK[2]
+                else:
+                    c = '#14131A' if r < half - 7 else '#1A1922'
+                cv.set(x, y, c)
+    for y in range(spring - half - 5, spring - half + 1):
+        for x in range(cx - 2, cx + 3):
+            cv.set(x, y, ST[4] if x < cx + 1 else ST[2])
+    for y in range(13, 18):
+        for x in range(cx - 7, cx + 8):
+            c = ST[3] if y == 13 else ST[2]
+            if y in (15, 16) and x % 2 and abs(x - cx) < 5:
+                c = ST[0]
+            cv.set(x, y, c)
+    for ry in (h - 15, h - 8):
+        for x in range(cx - half + 1, cx + half - 1):
+            cv.set(x, ry, IRON[3] if abs(x - cx) > half - 5 else IRON[2])
+    for x in range(w):  # moss along the coping's foot and weeds at the face's
+        if noise2(x // 2, 0, 1903) > 0.55:
+            cv.set(x, 4, LICHEN[1]); cv.set(x, 5, '#3A4632')
+        if (x < cx - half - 5 or x > cx + half + 5) and noise2(x // 2, 1, 1903) > 0.5:
+            cv.set(x, h - 2, '#46583F'); cv.set(x, h - 3, '#5C6E4C' if x % 2 else '#46583F')
+            if noise2(x, 2, 1903) > 0.6:
+                cv.set(x, h - 4, '#8E9C6E')
+    for y in range(14, h - 4):  # ivy climbing its west pilaster
+        for x in range(0, 6 - abs((y % 11) - 5) // 2):
+            if noise2(x // 2, y // 2, 1905) > 0.35:
+                cv.set(x, y, ('#22352C', '#3A5939', '#557A45', '#749A50')[int(noise2(x, y // 2, 1906) * 3.99)])
+    for y in range(5, 9):  # a cast-iron plate with the company's number
+        for x in range(w - 22, w - 10):
+            cv.set(x, y, IRON[1] if y in (5, 8) or x in (w - 22, w - 11) else ('#C8B48A' if (x + y) % 3 == 0 else IRON[2]))
+    for (lx, ly) in ((10, 24), (w - 16, 30)):  # streaks of rust and lime from the coping
+        for y in range(ly, ly + 10):
+            cv.set(lx, y, '#8A5432' if y % 3 else '#C6BDAE')
+    style.close_outline(cv)
+    return cv.img, cx, h - 1
+
+
+@functools.lru_cache(maxsize=16)
+def _heap(w: int, h: int, seed: int, kind: str):
+    """A heap of coal (black lumps with blue-lit edges) or slag (grey-brown clinker),
+    lit from the upper left, its lumps in clusters. (image, foot x, foot y)."""
+    ramp = ['#14131A', '#1E1E28', '#2C2C38', '#45465A', '#6A6E86'] if kind == 'coal' else \
+        ['#2A2420', '#3E3630', '#564C42', '#73675A', '#948775']
+    cv = Canvas(w + 4, h + 4)
+    cx, cy = w / 2 + 2, h + 1
+    for y in range(h + 4):
+        for x in range(w + 4):
+            dx, dy = (x + 0.5 - cx) / (w / 2), (y + 0.5 - cy) / h
+            jag = (noise2(x // 2, y // 2, 1871 + seed) - 0.5) * 0.2
+            if dx * dx + dy * dy <= 1 + jag and dy <= 0.02:
+                lit = -0.6 * dx - 0.5 * dy
+                lump = noise2(x // 2, y // 2, 1872 + seed)
+                i = 3 if lit > 0.35 else 2 if lit > 0.0 else 1
+                i = min(4, i + 1) if lump > 0.8 else max(0, i - 1) if lump < 0.18 else i
+                cv.set(x, y, ramp[i])
+    style.close_outline(cv)
+    return cv.img, int(cx), h + 1
+
+
+@functools.lru_cache(maxsize=4)
+def _privy(seed: int):
+    """A brick privy or coal house in a back yard: a lean-to slate roof falling toward
+    us, a plank door with a heart cut in it."""
+    w, h = 16, 26
+    cv = Canvas(w, h)
+    for y in range(0, 8):
+        for x in range(w):
+            c = SLATE_[3] if y % 3 == 0 else SLATE_[2]
+            if (x + (y // 3) * 2) % 5 == 0:
+                c = SLATE_[1]
+            cv.set(x, y, c)
+    cv.hline(0, 8, w, IRON[1])
+    detail.bricks(cv, 1, 9, w - 2, h - 9, BROWN if seed % 2 else BRICK, seed=seed, base=2)
+    for y in range(11, h):
+        for x in range(4, 12):
+            cv.set(x, y, WOOD[2] if (x - 4) % 3 else WOOD[1])
+    cv.set(7, 14, WOOD[0]); cv.set(8, 14, WOOD[0]); cv.set(7, 15, WOOD[0])
+    style.close_outline(cv)
+    return cv.img
+
+
+@functools.lru_cache(maxsize=8)
+def _hedge_blob(seed: int, r: int):
+    """One mass of a hedge, in the zones' leaf rule (style.leafy) in a sooty green."""
+    cv = Canvas(2 * r + 8, int(r * 1.6) + 8)
+    style.leafy(cv, cv.w / 2, cv.h / 2, r, r * 0.75, HEDGE, r=2.2, seed=seed, flat_bottom=0.85)
+    lit = {_rgb(HEDGE[3]), _rgb(HEDGE[4])}
+    for y in range(cv.h):
+        for x in range(cv.w):
+            if cv.get(x, y)[:3] in lit and noise2(x, y, 1966 + seed) > 0.93:
+                cv.set(x, y, '#E8E2D2' if seed % 2 else '#A83A2E')   # hawthorn: May blossom, or haws
+                if cv.get(x + 1, y)[3]:
+                    cv.set(x + 1, y, '#C8C0B0' if seed % 2 else '#7A2A22')
+    return cv.img
+
+
+@functools.lru_cache(maxsize=1)
+def _built():
+    """Buildings and things from the town's own set (steampunk_props), finalised once."""
+    sp = _sp()
+    return {
+        'house_a': style.finalize(sp.townhouse(88, 2, sp.SLATE, 'brown', door_x=18, chimney=1, seed=11), name='house_a'),
+        'house_b': style.finalize(sp.townhouse(92, 2, sp.TAR, 'brick', door_x=60, chimney=-1, seed=12), name='house_b'),
+        'shop_a': style.finalize(sp.townhouse(92, 2, sp.SLATE, 'ashlar', shop=True, chimney=1, seed=14), name='shop_a'),
+        'house_c': style.finalize(sp.townhouse(84, 2, sp.SLATE, 'brick', door_x=48, chimney=-1, seed=13), name='house_c'),
+        'warehouse': style.finalize(sp.warehouse(), name='warehouse'),
+        'engine_house': style.finalize(sp.townhouse(80, 2, sp.SLATE, 'ashlar', door_x=33, chimney=1, seed=15), name='engine_house'),
+        'lamp': style.finalize(sp.gas_lamp(), name='lamp'),
+        'boat': style.finalize(sp.narrowboat(), name='boat'),
+        'crane': style.finalize(sp.canal_crane(), name='crane'),
+        'cart': style.finalize(sp.coal_cart(), name='cart'),
+        'trunk': style.finalize(sp.steamer_trunk(), name='trunk'),
+        'bench': style.finalize(sp.iron_bench(), name='bench'),
+    }
+
+
+@functools.lru_cache(maxsize=1)
+def _steam_things():
+    """Everything that stands round the town, in region px: (foot y, kind, data), back to
+    front."""
+    out = []
+    b = _built()
+
+    def put(key, x, foot):
+        sp_ = b[key]
+        out.append((foot, 'sprite', (key, x + sp_.ox, foot - sp_.h + 2)))
+    # behind the yard wall: terraces in segments with ginnels between, their backs or
+    # their fronts, slate or tarred iron; a mill stands in the second row
+    mill_x = (336, 336 + 186)
+    for (ry, back) in ROWS:
+        x = -320 - 20
+        k = 0
+        while x < 640 + 20:
+            if not back and ry == ROWS[1][0] and mill_x[0] - 30 < x < mill_x[1]:
+                x = mill_x[1] + 10
+                continue
+            n = 2 + int(noise2(k, ry, 1881) * 4)
+            roof = 1 if noise2(k, ry, 1883) > 0.72 else 0
+            out.append((ry, 'terrace', (n, (ry * 7 + k * 13) % 997, back, roof, x)))
+            x += n * HOUSE + 2 + (8 if noise2(k, ry, 1882) > 0.5 else 14)
+            k += 1
+    out.append((ROWS[1][0], 'mill', (mill_x[0],)))
+    for (lx, foot) in ((-250, -226), (-80, -226), (90, -226), (270, -226), (-170, 236), (-40, 236), (360, 302), (480, 302),
+                       (590, 302), (-30, CY0 - 30), (-170, CY0 - 30), (380, CY0 - 30), (-90, TOW_S[1] - 4), (360, TOW_S[1] - 4)):
+        put('lamp', lx, foot)
+    for (cx, foot, h, seed) in ((-250, -250, 150, 1), (430, -238, 176, 2), (12, -398, 160, 3), (-90, 402, 132, 4),
+                                (ENGINE_X + 92, TUBE[2] + 12, 150, 5)):
+        out.append((foot, 'chimney', (cx, h, seed)))
+    put('house_a', -104, 230)
+    put('house_c', -196, 230)
+    put('house_b', -296, 230)
+    put('warehouse', -150, 402)
+    put('cart', -40, 398)
+    put('trunk', -62, 398)
+    put('shop_a', 336, 296)
+    put('house_a', 438, 296)
+    put('house_c', 536, 296)
+    put('warehouse', 386, 474)
+    put('cart', 504, 470)
+    put('warehouse', -132, TOW_N[0] - 1)
+    put('warehouse', -282, TOW_N[0] - 1)
+    put('warehouse', 336, TOW_N[0] - 1)
+    put('warehouse', 452, BASIN[2] - 36)
+    put('crane', 520, BASIN[2] - 4)
+    put('boat', 420, CY1 - 6)
+    put('bench', -60, TOW_S[1] - 2)
+    put('engine_house', ENGINE_X, TUBE[2] + 14)
+    for (cx, foot, w, h, seed, kind) in ((-70, 32, 34, 14, 1, 'coal'), (406, 42, 40, 16, 2, 'coal'),
+                                         (-250, 500, 64, 28, 3, 'slag'), (-90, 1040, 56, 22, 4, 'slag'),
+                                         (-150, -6, 30, 12, 6, 'coal'), (210, -4, 26, 11, 7, 'coal'),
+                                         (-190, 470, 40, 16, 8, 'slag'), (560, 40, 30, 12, 9, 'coal')):
+        out.append((foot, 'heap', (cx, w, h, seed, kind)))
+    # bushes in the rough grass: on the hills over the tunnels, by the fences and walls
+    for (bx, foot, sz, seed) in ((-196, 62, 8, 1), (-168, 34, 6, 2), (-262, 92, 9, 3), (-300, 40, 7, 4), (524, 52, 7, 5),
+                                 (566, 24, 8, 6), (612, 84, 9, 7), (-34, 474, 7, 8), (-128, 566, 8, 9), (-286, 446, 9, 10),
+                                 (352, 524, 8, 11), (452, 566, 7, 12), (604, 434, 9, 13), (-44, 904, 8, 14), (-164, 966, 7, 15),
+                                 (-286, 1124, 9, 16), (344, 1104, 7, 17), (602, 1084, 8, 18), (-300, 700, 7, 19), (626, 650, 7, 20)):
+        out.append((foot, 'bush', (bx, sz, seed)))
+    out.append((STEAM_RAIL[1] - 1, 'portal', (PORTAL_W,)))
+    out.append((STEAM_RAIL[1] - 1, 'portal', (PORTAL_E,)))
+    for x in range(-330, 650, 7):  # hedges along the lane and between the fields
+        wob = int(float(vnoise(np.array(x), np.array(0), 80, 1841)) * 6)
+        out.append((LANE[1] + wob + 10, 'hedge', (x, (x // 7) % 5 + 1, 6 + (x * 7) % 3)))
+        out.append((LANE[0] + wob - 2, 'hedge', (x, (x // 7) % 5 + 3, 5 + (x * 5) % 3)))
+    for gy in range(LANE[1] + 20, H * 3 + 10, 7):
+        _kind, fx, _fy = _field_kind(np.arange(-330, 650), np.full(980, gy))
+        for i in np.nonzero(np.diff(fx) != 0)[0]:
+            out.append((gy, 'hedge', (int(i) - 330, (gy // 7) % 5 + 2, 5 + (gy * 3) % 3)))
+    for (tx, ty, sz, seed) in ((-240, LANE[1] + 12, 15, 1), (90, LANE[1] + 13, 13, 2), (420, LANE[1] + 11, 16, 3),
+                               (250, LANE[0] - 2, 12, 4), (-60, LANE[0] - 3, 14, 5)):
+        out.append((ty, 'tree', (tx, sz, seed)))
+    return sorted(out, key=lambda t: (t[0], t[1]))
+
+
+class _RegionCv:
+    """A cell's canvas addressed in region px, drawing only inside the cell (each cell
+    draws everything that reaches it, so a thing across a cell edge is drawn whole)."""
+
+    def __init__(self, cv: Canvas, x0: int, y0: int):
+        self.cv, self.x0, self.y0 = cv, x0, y0
+        self.w, self.h = 10 ** 6, 10 ** 6
+
+    def ok(self, x, y):
+        return S <= x - self.x0 < S + W and S <= y - self.y0 < S + H
+
+    def set(self, x, y, c, alpha=None):
+        if self.ok(x, y):
+            self.cv.set(x - self.x0, y - self.y0, c, alpha)
+
+    def get(self, x, y):
+        return self.cv.get(x - self.x0, y - self.y0)
+
+    def hline(self, x, y, w, c):
+        for i in range(w):
+            self.set(x + i, y, c)
+
+    def vline(self, x, y, h, c):
+        for i in range(h):
+            self.set(x, y + i, c)
+
+    def rect(self, x, y, w, h, c, alpha=None):
+        for yy in range(y, y + h):
+            for xx in range(x, x + w):
+                self.set(xx, yy, c, alpha)
+
+    def darken(self, x, y):
+        if self.ok(x, y):
+            style.darken(self.cv, x - self.x0, y - self.y0)
+
+    def stamp(self, img, x, y):
+        """Composite an image at region (x, y), cut to the cell."""
+        cx0, cy0 = self.x0 + S, self.y0 + S
+        a0, b0 = max(x, cx0), max(y, cy0)
+        a1, b1 = min(x + img.width, cx0 + W), min(y + img.height, cy0 + H)
+        if a1 > a0 and b1 > b0:
+            self.cv.img.alpha_composite(img.crop((a0 - x, b0 - y, a1 - x, b1 - y)), (a0 - self.x0, b0 - self.y0))
+
+    def shadow(self, x, y, w, h, reach=3):
+        """A building's hard shadow on the ground beside it, down and to the right."""
+        for d in range(1, reach + 1):
+            for yy in range(y + d, y + h + d):
+                self.darken(x + w - 1 + d, yy)
+            for xx in range(x + d, x + w + d):
+                self.darken(xx, y + h - 1 + d)
+
+
+def _railings(rc, x, foot, h=7):
+    """One column of iron railings on a wall top: square bars two pixels wide every four,
+    lit on the west, with spear tips, a top and a bottom rail."""
+    if x % 4 in (0, 1):
+        for y in range(foot - h, foot):
+            rc.set(x, y, (IRON[4] if y == foot - h else IRON[3]) if x % 4 == 0 else IRON[1])
+    rc.set(x, foot - h + 1, IRON[2]); rc.set(x, foot - 2, IRON[2])
+
+
+def _pole(rc, x, foot):
+    """A telegraph pole: a creosoted post with two cross-arms and white insulators."""
+    for y in range(foot - 34, foot):
+        rc.set(x, y, WOOD[2]); rc.set(x + 1, y, WOOD[1])
+    for (ay, half) in ((foot - 32, 6), (foot - 27, 5)):
+        rc.hline(x - half, ay, 2 * half + 2, WOOD[3]); rc.hline(x - half, ay + 1, 2 * half + 2, WOOD[1])
+        for ix in (x - half, x - half // 2, x + half // 2 + 1, x + half + 1):
+            rc.set(ix, ay - 1, '#E8E2D2'); rc.set(ix, ay - 2, '#F6F2E8')
+    for d in range(1, 4):
+        rc.darken(x + 1 + d, foot - 1 + (d > 2))
+
+
+def _wire(rc, xa, xb, ya, sag=4.0):
+    n = abs(xb - xa)
+    for t in range(n + 1):
+        rc.set(xa + (xb - xa) * t // max(1, n), ya + int(round(sag * math.sin(math.pi * t / max(1, n)))), '#2A2630')
+
+
+def _bollard(rc, x, y):
+    """An iron mooring bollard on a coping: a squat post lit on the west, a cap."""
+    for yy in range(y - 4, y + 1):
+        rc.set(x, yy, IRON[4] if yy < y - 2 else IRON[3]); rc.set(x + 1, yy, IRON[2]); rc.set(x + 2, yy, IRON[1])
+    rc.hline(x - 1, y - 5, 5, IRON[3]); rc.set(x + 3, y - 5, IRON[1])
+    rc.darken(x + 3, y); rc.darken(x + 3, y - 1)
+
+
+def _fence(rc, xa, xb, y, seed=0):
+    """A boarded timber fence along y: weathered boards with lit tops, a tarred patch."""
+    for x in range(xa, xb):
+        tall = 10 + (1 if noise2(x // 3, y, 1911 + seed) > 0.7 else 0)
+        for k in range(tall):
+            c = WOOD[2] if (x % 3) else WOOD[1]
+            if k == tall - 1:
+                c = WOOD[4] if x % 3 else WOOD[2]
+            if noise2(x // 3, k // 4, 1912 + seed) > 0.93:
+                c = '#3A3A42'
+            rc.set(x, y - k, c)
+        rc.set(x, y - 4, WOOD[1])
+        rc.darken(x + 1, y + 1)
+
+
+LOCK_N, LOCK_S = CY0 + 12, CY1 - 12   # the chamber's water between its walls
+
+
+def _gates_and_beams(rc, gx, upper):
+    """A pair of mitre gates across the lock at x, meeting in a V that points upstream
+    (east): heavy timber leaves with a walkway rail along their tops, the water a step
+    lower below them (spouting through their seams on the lower side), and a balance
+    beam on each coping, dark timber with its end painted white."""
+    span = LOCK_S - LOCK_N
+    for t in range(span):
+        y = LOCK_N + t
+        x = gx - int(abs(t - span / 2) * 0.34)
+        for d in range(5):
+            rc.set(x + d, y, WOOD[4] if d == 0 else WOOD[3] if d == 1 else WOOD[2] if d < 4 else WOOD[0])
+        if t % 4 == 0:
+            rc.set(x + 2, y, IRON[2])  # the iron straps
+        rc.set(x - 1, y, '#3E6A5E' if upper else '#14281F')
+        if (t + gx) % 5 in (0, 1):  # water spouting through on the lower side
+            rc.set(x - 2, y, '#EEF5F8'); rc.set(x - 3, y, '#86AAD0')
+    for (ya_, yb_) in ((LOCK_N - 3, CY0 - 16), (LOCK_S + 1, CY1 + 12)):
+        # the beam runs from the leaf's heel out over the coping onto the towpath
+        n = 26
+        for t in range(n):
+            x, y = gx + 2 + t, ya_ + (yb_ - ya_) * t // n
+            tip = t > n - 6
+            for k in range(3):
+                c = (WOOD[3], WOOD[2], WOOD[0])[k] if not tip else ('#F2F0EA', '#C8C4BA', '#6A6660')[k]
+                rc.set(x, y + k, c)
+            rc.darken(x + 1, y + 3)
+        for y in range(ya_ - 2, ya_ + 4):
+            rc.set(gx + 2, y, IRON[3]); rc.set(gx + 3, y, IRON[1])
+
+
+def steam_cell(col: int, row: int, zone_at) -> Canvas:
+    """One cell of the land round Cogsworth (see the notes above SOOT_G)."""
+    import worlds
+    CW, CH = W + 2 * S, H + 2 * S
+    cv = Canvas(CW, CH)
+    x0, y0, X, Y = _sgrid(col, row)
+    inside = np.zeros((CH, CW), dtype=bool)
+    inside[S:S + H, S:S + W] = True
+    ground, tone, m = _steam_ground(X, Y)
+    _paint(cv, ground, inside)
+    rc = _RegionCv(cv, x0, y0)
+    xa, xb, ya, yb = col * W, (col + 1) * W, row * H, (row + 1) * H
+    # tufts on the open grass, on the zones' six-pixel grid, in clusters
+    for gy in range((ya // 6) * 6 - 6, yb + 6, 6):
+        for gx in range((xa // 6) * 6 - 6, xb + 6, 6):
+            tx, ty = gx + int(noise2(gx, gy, 4) * 6), gy + int(noise2(gx, gy, 5) * 6)
+            if not (xa <= tx < xb and ya <= ty < yb - 3):
+                continue
+            t = tone[ty - y0, tx - x0]
+            if t < 0 or tone[ty + 2 - y0, tx - x0] < 0:
+                continue
+            cluster = float(vnoise(np.array(tx), np.array(ty), 25, 63)) > 0.57
+            if noise2(gx, gy, 3) < (0.36 if cluster else 0.16) + 0.4 * float(_rich(np.array(tx), np.array(ty))):
+                detail.grass_tuft(rc, tx, ty + 2, int(noise2(gx, gy, 8) * 6), SOOT_G, int(t))
+    # out from the town the grass grows rougher: a second sowing of tufts between the first
+    for gy in range((ya // 6) * 6 - 3, yb + 6, 6):
+        for gx in range((xa // 6) * 6 - 3, xb + 6, 6):
+            tx, ty = gx + int(noise2(gx, gy, 14) * 6), gy + int(noise2(gx, gy, 15) * 6)
+            if not (xa <= tx < xb and ya <= ty < yb - 3):
+                continue
+            t = tone[ty - y0, tx - x0]
+            if t < 0 or tone[ty + 2 - y0, tx - x0] < 0:
+                continue
+            if noise2(gx, gy, 13) < 0.55 * float(_rich(np.array(tx), np.array(ty))) - 0.25:
+                detail.grass_tuft(rc, tx, ty + 2, int(noise2(gx, gy, 18) * 6), SOOT_G, int(t))
+    # the platform carried on to its ramp, in the zone's slabs, with its painted edge
+    for sgn, ex in ((-1, -1), (1, W)):
+        lo, hi = min(ex, ex + sgn * 26), max(ex, ex + sgn * 26)
+        if hi < xa or lo >= xb or ya > 136 or yb < 100:
+            continue
+        # (the slabs are laid a few columns into the zone too, so no lawn edge is drawn at the seam)
+        plat = {(x, y) for x in range(lo - 3 * (sgn > 0), hi + 1 + 3 * (sgn < 0)) for y in range(100, 134)}
+        worlds.paint_paving(rc, plat, seed=7, street=7)
+        for x in range(lo, hi + 1):
+            d = abs(x - ex)
+            rc.set(x, 100, '#E8C860' if d < 20 else ST[3]); rc.set(x, 101, '#B8962E' if d < 20 else ST[2])
+            rc.set(x, 134, ST[1]); rc.set(x, 135, ST[2])
+            if d >= 20:
+                for y in range(102, 134):
+                    if y - 102 < (d - 19) * 6:
+                        rc.set(x, y, SL[1] if (x + y) % 4 else SL[0])
+    # railings along the cutting's walls; telegraph poles and their wires on its north side
+    for (a, b_) in ((PORTAL_W + 34, -16), (W + 16, PORTAL_E - 34)):
+        for x in range(max(a, xa), min(b_, xb)):
+            hw = int(_cut_h(np.array(x)))
+            if hw >= 6:
+                _railings(rc, x, STEAM_RAIL[0] - hw - 2)
+            if abs(x - (-1 if b_ < 0 else W)) > 26:
+                _railings(rc, x, STEAM_RAIL[1] + 1)
+    poles = [x for x in range(-296, 640, 52) if (x < -40 or x > W + 40) and abs(x - PORTAL_W) > 40 and abs(x - PORTAL_E) > 40]
+    feet = {px: STEAM_RAIL[0] - int(_cut_h(np.array(px))) - 6 for px in poles}
+    for i, px in enumerate(poles):
+        if i + 1 < len(poles) and poles[i + 1] - px < 60:
+            for (k, ay) in enumerate((32, 27)):
+                _wire(rc, px, poles[i + 1], min(feet[px], feet[poles[i + 1]]) - ay - 1, sag=3 + k)
+    for px in poles:
+        _pole(rc, px, feet[px])
+    # the yard wall along the back of the town: brick in region px, piers lit on the
+    # west, a coping, bills pasted on it, some torn; its shadow and weeds at its foot
+    if ya < -30 and yb > -58:
+        for y in range(-56, -34):
+            for x in range(xa, xb):
+                if y < -54:
+                    rc.set(x, y, ST[4] if y == -56 else ST[2])
+                    continue
+                c = _bricks_np(np.array(x), np.array(y), BROWN, seed=9, base=2)
+                rc.set(x, y, tuple(int(v) for v in c) + (255,))
+                p = x % 48
+                if p < 4:
+                    rc.set(x, y, BROWN[4] if p == 0 else BROWN[3] if p < 3 else BROWN[1])
+                if y >= -36:
+                    rc.darken(x, y)
+        for i in range(-6, 14):
+            bx = i * 77 + int(noise2(i, 0, 1891) * 30)
+            if noise2(i, 1, 1891) < 0.45:
+                continue
+            cols = (('#C8B48A', '#9C3A2E'), ('#D8D0B8', '#2C3E4C'), ('#B89A5A', '#3A2A22'))[i % 3]
+            for y in range(-51, -40):
+                for x in range(bx, bx + 12):
+                    if (x - bx) + (y + 51) > 17 and noise2(x // 2, y // 2, 1892) > 0.4:
+                        continue  # (torn, in flakes of two or more)
+                    rc.set(x, y, cols[0] if (y + 51) % 4 or x in (bx, bx + 11) else cols[1])
+        for x in range(xa, xb):
+            rc.darken(x, -34)
+            if x % 2:
+                rc.darken(x + 1, -33)
+            if noise2(x // 2, 7, 1893) > 0.72:
+                detail.grass_tuft(rc, x, -32, int(noise2(x, 1, 1894) * 6), SOOT_G, 2)
+    # the back yards: walls between them, privies, washing hung across some
+    for (ry, back) in ROWS:
+        if not back or ry > yb + 40 or ry + 40 < ya:
+            continue
+        yard_to = -56 if ry == -84 else ry + 42
+        for i, x in enumerate(range(-320 - 20, 640 + 20, HOUSE)):
+            for y in range(ry - 2, yard_to):
+                rc.set(x, y, BROWN[3] if y > ry - 1 else BROWN[4]); rc.set(x + 1, y, BROWN[2]); rc.set(x + 2, y, BROWN[1])
+                rc.darken(x + 3, y)
+            if noise2(i, ry, 1895) > 0.4:
+                rc.stamp(_privy(i % 3), x + 5, yard_to - 26)
+            if noise2(i, ry, 1896) > 0.55:
+                for t in range(26):
+                    yy = ry + 6 + int(math.sin(math.pi * t / 26) * 2)
+                    rc.set(x + 4 + t, yy, '#D8D0B8')
+                    if 2 < t < 24 and (t // 5) % 2 == 0:
+                        cl = ['#E8E2D2', '#8E5040', '#5A7690', '#D8B87C'][(i + t // 5) % 4]
+                        for k in range(1, 5):
+                            rc.set(x + 4 + t, yy + k, cl if k < 4 or t % 5 else '#A8A090')
+    for (a, b_, fy) in ((-300, -18, 412), (W + 18, 620, 488)):  # timber fences
+        if a < xb and b_ > xa:
+            _fence(rc, a, b_, fy)
+    for x in list(range(-300, -10, 46)) + list(range(W + 20, BASIN[0] - 10, 46)) + list(range(BASIN[0] + 10, BASIN[1], 40)):
+        _bollard(rc, x, CY0 - 3 if x < BASIN[0] else BASIN[2] - 4)
+        if not (BASIN[0] <= x < BASIN[1]):
+            _bollard(rc, x + 20, CY1 + 6)
+    # the lock: gates at each end of its chamber, the chamber's copings proud of the paths
+    if xa < LOCK[1] + 40 and xb > LOCK[0] - 40:
+        _gates_and_beams(rc, LOCK[0] + 8, upper=False)
+        _gates_and_beams(rc, LOCK[1] - 2, upper=True)
+    # the road over the canal west: a deck of setts between brick parapets
+    if xa < BRIDGE[1] + 8 and xb > BRIDGE[0]:
+        for y in range(TOW_N[0] - 4, TOW_S[1] + 4):
+            for x in range(BRIDGE[0], BRIDGE[1]):
+                k = x - BRIDGE[0]
+                last = BRIDGE[1] - BRIDGE[0] - 5
+                if k < 5 or k >= last:
+                    j = k if k < 5 else k - last
+                    c = (ST[4], ST[3], BRICK[3], BRICK[2], BRICK[1])[j]  # coping, then the brick
+                    if j >= 2 and y % 3 == 2:
+                        c = BRICK[1] if j < 4 else BRICK[0]
+                    rc.set(x, y, c)
+            if CY0 <= y < CY1:
+                for d in range(1, 6):  # the span's shadow on the water, deeper to the east
+                    rc.darken(BRIDGE[1] - 1 + d, y)
+                rc.darken(BRIDGE[0] - 1, y)
+        for y in (TOW_N[0] - 5, TOW_S[1] + 4):
+            rc.hline(BRIDGE[0], y, BRIDGE[1] - BRIDGE[0], ST[4])
+    # the tube on east to its pumping house, on the zone's trestles
+    if xb > W and xa < ENGINE_X:
+        for x in range(max(W, xa), min(ENGINE_X + 14, xb)):
+            for y in range(TUBE[0], TUBE[1]):
+                k = (y - TUBE[0]) / 16
+                c = BRASS[4] if k < 0.2 else BRASS[3] if k < 0.5 else BRASS[2] if k < 0.85 else BRASS[1]
+                if (x - 38 - 196) % 10 == 0:
+                    c = IRON[1]
+                rc.set(x, y, c)
+            if x % 24 == 8:
+                for y in range(TUBE[1], TUBE[2]):
+                    rc.set(x, y, IRON[3]); rc.set(x + 1, y, IRON[1])
+            if x % 2:
+                rc.darken(x + 1, TUBE[2])
+            rc.set(x, TUBE[2], '#2B3B2E')
+    # the feeder's culvert: a brick face with an arched mouth and its iron grille
+    fcx = (FEEDER[0] + FEEDER[1]) // 2
+    if xa < fcx + 30 and xb > fcx - 30:
+        top = FEEDER[2] - 22
+        for y in range(top, FEEDER[2]):
+            for x in range(fcx - 26, fcx + 27):
+                c = tuple(int(v) for v in _bricks_np(np.array(x), np.array(y), BRICK, seed=21, base=2)) + (255,)
+                if y < top + 3:
+                    c = (ST[4], ST[3], ST[2])[y - top]
+                rc.set(x, y, c)
+        for y in range(FEEDER[2] - 13, FEEDER[2]):
+            for x in range(fcx - 9, fcx + 10):
+                dx, dy = x + 0.5 - fcx, y + 0.5 - (FEEDER[2] - 5)
+                r = math.hypot(dx, dy) if dy < 0 else abs(dx)
+                if r < 7:
+                    rc.set(x, y, '#14131A' if (x - fcx) % 3 else IRON[3])
+                elif r < 9.5:
+                    rc.set(x, y, ST[4] if dx < 0 else ST[2])
+    # what stands, back to front
+    b = _built()
+    for (foot, kind, data) in _steam_things():
+        if kind == 'terrace':
+            n, seed, back, roof, tx = data
+            img, f = _terrace_row(n, seed, back, roof)
+            if tx + img.width < xa or tx > xb or foot - f > yb or foot < ya:
+                continue
+            rc.stamp(img, tx, foot - f)
+            rc.shadow(tx, foot - f + 20, img.width, f - 20)
+        elif kind == 'mill':
+            (mx,) = data
+            img, f = _mill()
+            rc.stamp(img, mx, foot - f)
+            rc.shadow(mx, foot - f + 10, img.width, f - 10)
+        elif kind == 'sprite':
+            key, sx, sy = data
+            sp_ = b[key]
+            if sx > xb or sx + sp_.w < xa or sy > yb or sy + sp_.h < ya:
+                continue
+            rc.stamp(sp_.img, sx, sy)
+            if key not in ('lamp', 'boat', 'bench', 'trunk', 'cart'):
+                rc.shadow(sx, sy + sp_.h // 3, sp_.w, sp_.h - sp_.h // 3 - 1)
+        elif kind == 'chimney':
+            cx, h, seed = data
+            img, fx, fy = _works_chimney(h, seed)
+            rc.stamp(img, cx - fx, foot - fy)
+        elif kind == 'heap':
+            cx, w, h, seed, k = data
+            img, fx, fy = _heap(w, h, seed, k)
+            rc.stamp(img, cx - fx, foot - fy)
+            rc.shadow(cx - fx + 4, foot - h // 2, img.width - 8, h // 2, reach=2)
+        elif kind == 'portal':
+            (px,) = data
+            img, fx, fy = _rail_portal()
+            rc.stamp(img, px - fx, foot - fy)
+        elif kind == 'hedge':
+            hx, seed, r = data
+            img = _hedge_blob(seed, r)
+            rc.stamp(img, hx - img.width // 2, foot - img.height + 3)
+        elif kind == 'bush':
+            bx, sz, seed = data
+            img, ax, ay = _edge_tree('bush', sz, seed, 3)
+            rc.stamp(img, bx - ax, foot - ay)
+            rc.shadow(bx - sz // 2, foot - 3, sz, 3, reach=2)
+        elif kind == 'tree':
+            tx, sz, seed = data
+            img, ax, ay = _edge_tree('broad', sz, seed, 3)
+            rc.stamp(img, tx - ax, foot - ay)
+    return cv
+
+
+CELL_PAINTERS = {'valley': None, 'west': west_cell, 'isles': isles_cell, 'moon': moon_cell, 'steam': steam_cell}
 
 
 def cells(layout: dict, region: str, ring: int = 1):

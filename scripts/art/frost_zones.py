@@ -273,47 +273,95 @@ def foot_bridge(cv: Canvas, x0: int, y0: int, w: int, h: int, vertical: bool):
     return deck
 
 
-def shoulders(cv: Canvas, zone: str) -> set:
-    """The stepped rock shoulders between the Snow Saddle and the Ridge cabin's
-    terrace, one band across the border in the valley's coordinates: ledges of blocky
-    rock, each with snow drifted on it, stepping down, open only where the switchback
-    comes down (RIDGE_COL). Returns the blocked pixels in this zone."""
+STEP_LEDGE = 16       # one course of the Frostline's step (tier 4 down to tier 3)
+STEP_LOW = 2          # courses where the step is low: the lake's scarp, the shoulders' west end
+LAKE_GAP = (HOLLOW_COL[0] - 320, HOLLOW_COL[1] - 320)  # the scarp's opening for the switchback (gx)
+
+
+def step_rim(gx: int) -> int:
+    """The top of the Frostline's step from tier 4 down to tier 3, in the valley's
+    coordinates, one line across the Snowmelt and the Saddle (world review 20 Oct 07:53,
+    finding 3: the lake's low scarp and the saddle's tall face met on the seam at
+    different heights). Under the lake it falls toward the cirque's west wall; past the
+    seam it climbs over 90 px to the shoulders' own line, which rises toward the peak."""
+    lake = -632 - int(max(0, -gx) * 0.2) + int(smooth_noise(gx, 3, 14, 876) * 6)
+    if gx < 0:
+        return lake
+    shoulder = SHOULDER[0] + int(gx * 0.1) - 16 + int(smooth_noise(gx, 0, 22, 861) * 8)
+    t = min(1.0, gx / 90)
+    t = t * t * (3 - 2 * t)
+    return int(round(lake * (1 - t) + shoulder * t))
+
+
+def _ledge_end(k: int) -> int:
+    """Where course k of the shoulders begins (gx): the two top courses run on as the
+    lake's scarp; each lower one starts further east, so the face steps up course by
+    course from the scarp's height to the shoulders' instead of meeting it in a cut."""
+    return -10 ** 6 if k < STEP_LOW else 6 + (k - STEP_LOW) * 13 + int(noise2(k, 0, 869) * 7)
+
+
+def shoulders(cv: Canvas, zone: str, skip=frozenset()) -> set:
+    """The Frostline's step from tier 4 down to tier 3, one band in the valley's
+    coordinates across the Snowmelt, the Snow Saddle and the Ridge cabin's terrace:
+    ledges of blocky rock, each with snow drifted on it, stepping down. Under the lake it
+    is a low scarp of two courses, open where the switchback climbs from the hollow
+    (HOLLOW_COL); past the seam the same two courses run on and the shoulders' lower
+    courses begin one by one, each with a lit west end and snow on its corner, until the
+    face is the shoulders' full height, open where the switchback comes down (RIDGE_COL).
+    `skip` is water that goes over the step (drawn by the caller). Returns the blocked
+    pixels in this zone."""
     SN, ST = MATERIALS['snow'], MATERIALS['stone']
     ox, oy = origin(zone)
     blocked = set()
-    STEP = 16
-    for y in range(H):
-        gy = y + oy
-        if not (SHOULDER[0] - 24 <= gy < SHOULDER[1] + 24):
-            continue
-        for x in range(W):
-            gx = x + ox
-            tilt = int(gx * 0.1) - 16  # the shoulder falls a little toward the west
-            top = SHOULDER[0] + tilt + int(smooth_noise(gx, 0, 22, 861) * 8)
-            bottom = SHOULDER[1] - 4 + tilt + int(smooth_noise(gx, 9, 18, 862) * 8)
-            if gy < top or gy >= bottom:
+    STEP = STEP_LEDGE
+    for x in range(W):
+        gx = x + ox
+        top = step_rim(gx)
+        if gx < 0:
+            bottom = top + STEP * STEP_LOW + 6
+        else:
+            bottom = SHOULDER[1] - 4 + int(gx * 0.1) - 16 + int(smooth_noise(gx, 9, 18, 862) * 8)
+        lake_side = gx < 0
+        for gy in range(max(top, oy), min(bottom, oy + H)):
+            y = gy - oy
+            if (x, y) in skip:
                 continue
-            g0 = RIDGE_COL[0] + int(noise2(gy // 7, 1, 863) * 3)
-            g1 = RIDGE_COL[1] - int(noise2(gy // 7, 2, 863) * 3)
-            if g0 <= gx < g1:
-                cv.set(x, y, snow_px(gx, gy, 864))
-                continue
+            if lake_side:
+                g0, g1 = LAKE_GAP[0] - 2, LAKE_GAP[1] + 2
+                if g0 <= gx < g1:
+                    continue  # the switchback's way up from the hollow (the trail is drawn later)
+            else:
+                g0 = RIDGE_COL[0] + int(noise2(gy // 7, 1, 863) * 3)
+                g1 = RIDGE_COL[1] - int(noise2(gy // 7, 2, 863) * 3)
+                if g0 <= gx < g1:
+                    cv.set(x, y, snow_px(gx, gy, 864))
+                    continue
             # which ledge, and how far down its face: each ledge's edge wanders
-            k = (gy - top + int(smooth_noise(gx, 3, 14, 865) * 6)) // STEP
-            f = (gy - top + int(smooth_noise(gx, 3, 14, 865) * 6)) % STEP
+            w = int(smooth_noise(gx, 3, 14, 865) * 6)
+            k, f = divmod(gy - top + w, STEP)
+            end = _ledge_end(k)
+            if gx < end or (lake_side and k >= STEP_LOW):
+                continue  # this course has not begun yet: the tier below's own ground
             drift = 3 + int(smooth_noise(gx, k, 10, 866) * 4)  # snow on the ledge
             block = (gx + k * 7 + int(smooth_noise(gx, k, 30, 867) * 10)) // 15  # the blocks
             joint = (gx + k * 7 + int(smooth_noise(gx, k, 30, 867) * 10)) % 15 == 0
+            into = gx - end  # how far along the course from its west end
             if f < drift:
                 c = SN[3] if f == 0 or (gx + f) % 3 else SN[2]
+                if into < 2 and f == drift - 1:
+                    c = SN[2]  # the drift rounds over the course's corner
             elif f < STEP - 3:
                 c = ST[3] if noise2(block, k, 868) > 0.4 else ST[2]
                 if joint:
                     c = ST[1]
                 if f == drift:
                     c = ST[4] if not joint else ST[2]  # the lit lip under the snow
+                if into < 3:
+                    c = ST[4] if into == 0 else ST[3]  # the course's west end, facing the light
             else:
                 c = ST[1] if f < STEP - 1 else ST[0]  # the shade under the ledge
+                if into < 2:
+                    c = ST[2]
             near = min(abs(gx - g0), abs(gx - g1 + 1))
             if near < 2:
                 c = ST[3] if gx < g0 else ST[1]  # the gully's walls, lit on the west
@@ -481,24 +529,58 @@ def snowmelt(frame: int = 0):
     outflow = gthick('snowmelt', [(226 + ox, 236 + oy), (244 + ox, 292 + oy), (252 + ox, 380 + oy),
                                   (244 + ox, 470 + oy), (250 + ox, 586 + oy)], 5)
     outflow -= lake
+    # the scarp at the bottom: the step down to the hollow's tier, two courses of the one
+    # step that runs on as the saddle's shoulders (shoulders), open at the switchback; the
+    # outflow goes over it in a fall with a white lip, spray at its foot and a plunge pool
+    fx = sorted(x for (x, y) in outflow if y == step_rim(x + ox) - oy + 6)
+    fx0, fx1 = (fx[0], fx[-1]) if fx else (244, 254)
+    fcx = (fx0 + fx1) / 2
+    lip_y = step_rim(int(fcx) + ox) - oy
+    foot = lip_y + STEP_LEDGE * STEP_LOW - 2
+    prx, pry, pcy = (fx1 - fx0) / 2 + 9, 6.0, foot + 5
+    pool = oval(fcx + 1, pcy, prx, pry)
+    outflow |= {(x, y) for (x, y) in pool if 0 <= x < W and 0 <= y < H}
     water(cv, outflow, ox, oy)
-    # the scarp at the bottom: the step down to the hollow's tier, open at the switchback
-    def scarp_top(x):  # the step down to the hollow, rising toward the cirque's west wall
-        return 520 - int((W - x) * 0.2) + int(smooth_noise(x + ox, 3, 14, 876) * 6)
-    scarp = set()
-    for x in range(W):
-        if HOLLOW_COL[0] - 2 <= x < HOLLOW_COL[1] + 2:
+    scarp = shoulders(cv, 'snowmelt', skip={(x, y) for (x, y) in outflow if lip_y - 1 <= y < foot + 1})
+    FOAM = '#EEF5F8'
+    for (x, y) in outflow:
+        if not (lip_y - 1 <= y < foot + 1):
             continue
-        for y in range(scarp_top(x), min(H, scarp_top(x) + 28)):
-            k = y - scarp_top(x)
-            c = SN[3] if k == 0 else SN[1] if k == 1 else ST[3] if (k // 4 + x // 9) % 2 else ST[2]
-            if k > 24:
-                c = ST[1]
-            if (x, y) in outflow:
-                c = WTR[4] if (x + y) % 3 == 0 else WTR[3]
-            cv.set(x, y, c)
-            if (x, y) not in outflow:
-                scarp.add((x, y))
+        k = y - lip_y
+        side = min(x - fx0, fx1 - x)
+        if k < 2:
+            c = FOAM if k == 0 or (x + y) % 2 else ICE[2]  # the lip, where it tips over
+        else:
+            # falling water: long streaks down the fall line, darker at the sides
+            b = x // 2  # bands two pixels wide, each its own tone, broken by dashes
+            t = noise2(b, 0, 879)
+            c = FOAM if t > 0.66 else WTR[4] if t > 0.3 else WTR[3]
+            if (y + int(noise2(b, 1, 879) * 9)) % 9 < 2:
+                c = WTR[4] if c == FOAM else FOAM
+            if side <= 0:
+                c = WTR[2] if (y // 2) % 2 else WTR[3]
+        cv.set(x, y, c)
+    for (x, y) in pool:  # the pool: deep in the middle, white where the fall lands
+        d = math.hypot((x - fcx - 1) / prx, (y - pcy) / pry)
+        if d > 0.84:
+            cv.set(x, y, ICE[2] if noise2(x // 2, y, 881) > 0.35 else ICE[1])  # the icy rim
+        elif y <= foot + 2 and fx0 - 3 <= x <= fx1 + 3:
+            cv.set(x, y, FOAM if (x // 2 + y) % 3 else WTR[4])
+        elif y <= foot + 4 and fx0 - 5 <= x <= fx1 + 5 and (x // 2 + y) % 2:
+            cv.set(x, y, WTR[4])  # the rings spreading from it
+        else:
+            cv.set(x, y, WTR[0] if d < 0.42 else WTR[1] if d < 0.68 else WTR[2])
+    for i in range(7):  # stones round the pool, snow on their tops
+        a = math.pi * (0.1 + 0.8 * i / 6) if i % 2 else math.pi * (1.15 + 0.7 * i / 6)
+        sx, sy = int(fcx + 1 + math.cos(a) * (prx + 1)), int(pcy + math.sin(a) * (pry + 1))
+        if (sx, sy) not in outflow and noise2(i, 3, 883) > 0.25:
+            detail.pebble(cv, sx, sy, ST, big=i % 3 == 0)
+            cv.set(sx, sy - 1, SN[3])
+    for i in range(10):  # spray thrown up beside the fall's foot
+        sx = int(fcx + (noise2(i, 0, 882) - 0.5) * (fx1 - fx0 + 10))
+        sy = foot - int(noise2(i, 1, 882) * 5)
+        if (sx, sy) in outflow or (sx, sy) in scarp:
+            cv.set(sx, sy, FOAM)
     # the trail: up the switchback from the hollow, round the south shore, over the bridge
     # (the first point lies past the seam, so the trail meets the hollow's track with no gap)
     trail = gthick('snowmelt', [(-148, -566), (-148, -616), (-196, -664), (-134, -716), (-170, -760),
