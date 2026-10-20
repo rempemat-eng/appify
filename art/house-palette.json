@@ -1,0 +1,622 @@
+{
+  "about": "NapAttack house palette, proposed (docs/vision/house-style.md). Written by scripts/art/house_palette.py --write; edit BASES there, not this file.",
+  "ink": "#211A22",
+  "rule": {
+    "dusk_hue": 298.0,
+    "lamp_hue": 82.0,
+    "shade_hue_step": [10.0, 6.0, 3.0],
+    "light_hue_step": [5.0, 10.0],
+    "shade_tint": [0.03, 0.021, 0.011],
+    "light_tint": [0.012, 0.024],
+    "shade_dl": [-0.33, -0.215, -0.105],
+    "light_dl": [0.085, 0.16],
+    "l_floor": 0.21,
+    "l_ceil": 0.965,
+    "shade_c": [0.85, 0.95, 1.0],
+    "light_c": [0.92, 0.7],
+    "edge_to_ink": 0.62,
+    "shadow_steps": {
+      "default": 2,
+      "desert": 2,
+      "night": 1,
+      "moon": 3
+    },
+    "sibling_turn": 9.0,
+    "sibling_dl": [0.025, -0.03],
+    "sibling_c": [1.05, 0.92],
+    "airless_dl": [-0.47, -0.29, -0.13],
+    "airless_floor": 0.13
+  },
+  "bases": {
+    "grass": {
+      "kind": "core",
+      "body": "#86A458"
+    },
+    "leaf": {
+      "kind": "core",
+      "body": "#5C8A4C"
+    },
+    "earth": {
+      "kind": "core",
+      "body": "#7A6250"
+    },
+    "path": {
+      "kind": "core",
+      "body": "#A87C60"
+    },
+    "sand": {
+      "kind": "core",
+      "body": "#D4B488"
+    },
+    "water": {
+      "kind": "core",
+      "body": "#4C86B4"
+    },
+    "stone": {
+      "kind": "core",
+      "body": "#8E8782"
+    },
+    "slate": {
+      "kind": "core",
+      "body": "#6E7890"
+    },
+    "timber": {
+      "kind": "core",
+      "body": "#8E6242"
+    },
+    "plaster": {
+      "kind": "core",
+      "body": "#E0CCA6"
+    },
+    "clay": {
+      "kind": "core",
+      "body": "#AE5A42"
+    },
+    "iron": {
+      "kind": "core",
+      "body": "#565868"
+    },
+    "brass": {
+      "kind": "core",
+      "body": "#C2903C"
+    },
+    "berry": {
+      "kind": "core",
+      "body": "#B2465A"
+    },
+    "dusk": {
+      "kind": "core",
+      "body": "#7262A4"
+    },
+    "sky": {
+      "kind": "core",
+      "body": "#5E8EC0"
+    },
+    "snow": {
+      "kind": "core",
+      "body": "#D6DEEA"
+    },
+    "lagoon": {
+      "kind": "accent:isles",
+      "body": "#3CA6A4"
+    },
+    "basalt": {
+      "kind": "accent:isles,fire",
+      "body": "#4E4652"
+    },
+    "copper": {
+      "kind": "accent:cogsworth",
+      "body": "#4E9A84"
+    },
+    "soot": {
+      "kind": "accent:cogsworth",
+      "body": "#4A4448"
+    },
+    "bleached": {
+      "kind": "accent:reach",
+      "body": "#B4987C"
+    },
+    "adobe": {
+      "kind": "accent:reach",
+      "body": "#C08A5E"
+    },
+    "cactus": {
+      "kind": "accent:reach",
+      "body": "#5C8C58"
+    },
+    "ashlar": {
+      "kind": "accent:castle",
+      "body": "#A69C8E"
+    },
+    "ash": {
+      "kind": "accent:fire",
+      "body": "#7C746E"
+    },
+    "concrete": {
+      "kind": "accent:neon",
+      "body": "#6C6878"
+    },
+    "asphalt": {
+      "kind": "accent:neon",
+      "body": "#3E3C50"
+    },
+    "hull": {
+      "kind": "accent:station",
+      "body": "#C4C8D2"
+    },
+    "panel": {
+      "kind": "accent:station",
+      "body": "#7A8296"
+    },
+    "regolith": {
+      "kind": "accent:moon",
+      "body": "#8E877E"
+    },
+    "void": {
+      "kind": "accent:station,moon",
+      "body": "#2A2C44"
+    },
+    "lamp": {
+      "kind": "glow",
+      "body": "#F0B050"
+    },
+    "neon_pink": {
+      "kind": "glow",
+      "body": "#F04A9E"
+    },
+    "neon_cyan": {
+      "kind": "glow",
+      "body": "#2CC0D8"
+    },
+    "lava": {
+      "kind": "glow",
+      "body": "#F27222"
+    },
+    "glowflora": {
+      "kind": "glow",
+      "body": "#36D0B0"
+    }
+  },
+  "ramps": {
+    "grass": ["#234325", "#436333", "#648445", "#86A458", "#ACBC69", "#CFCF84"],
+    "grass_warm": ["#47420B", "#63641C", "#7E8733", "#99A94D", "#BFC060", "#DFD581"],
+    "grass_cool": ["#0F3C26", "#305D37", "#507D49", "#729D5C", "#99B56B", "#BEC883"],
+    "leaf": ["#002B1A", "#194B28", "#3A6B3A", "#5C8A4C", "#83A15A", "#A8B471"],
+    "leaf_warm": ["#093213", "#2B5120", "#4B712F", "#6D9041", "#93A751", "#B6BA6D"],
+    "leaf_cool": ["#01211A", "#02432C", "#25633D", "#488250", "#70995D", "#98AC70"],
+    "earth": ["#261118", "#432B2A", "#5F463D", "#7A6250", "#947B60", "#AA9373"],
+    "earth_warm": ["#271014", "#462D27", "#654A3B", "#826950", "#9C8261", "#B29A75"],
+    "earth_cool": ["#270F19", "#41272A", "#5B3F3A", "#73584A", "#8D715A", "#A3886B"],
+    "path": ["#441F23", "#673D37", "#885C4B", "#A87C60", "#C39771", "#D6B187"],
+    "path_warm": ["#4D2522", "#704334", "#926347", "#B1845C", "#CB9F6E", "#DEBA87"],
+    "path_cool": ["#3C1720", "#5F3434", "#805248", "#A0725D", "#BB8D6D", "#CEA681"],
+    "sand": ["#6F4E46", "#926F5A", "#B49271", "#D4B488", "#EFD09C", "#FFEBC8"],
+    "sand_warm": ["#765546", "#9A775A", "#BB9A6F", "#DBBD87", "#F8D79C", "#FFF2DB"],
+    "sand_cool": ["#684441", "#8C6556", "#AE866C", "#CEA883", "#E9C496", "#FEDEAF"],
+    "water": ["#0E2058", "#1E427A", "#336499", "#4C86B4", "#6BA2C2", "#92B8C5"],
+    "water_warm": ["#032A5E", "#084C84", "#226FA2", "#3E91BD", "#63ADCA", "#90C3CC"],
+    "water_cool": ["#12164E", "#233771", "#385990", "#507AAB", "#6C95BA", "#8FADBD"],
+    "stone": ["#332937", "#514850", "#70676A", "#8E8782", "#ABA194", "#C5B8A4"],
+    "stone_warm": ["#3B2F3B", "#5A4E54", "#796E6D", "#988E85", "#B5A897", "#CFC0A8"],
+    "stone_cool": ["#2D212F", "#4B3F48", "#695E60", "#877D78", "#A49689", "#BDAE99"],
+    "slate": ["#1F1A3C", "#38395A", "#535876", "#6E7890", "#8E91A1", "#ACA7AA"],
+    "slate_warm": ["#271F45", "#413E64", "#5C5E81", "#787E9C", "#9897AC", "#B6AEB5"],
+    "slate_cool": ["#1A1233", "#333051", "#4E4F6D", "#696E87", "#888697", "#A59DA1"],
+    "timber": ["#2E0A0D", "#50261D", "#70432F", "#8E6242", "#A87C52", "#BA9569"],
+    "timber_warm": ["#350F0A", "#572C18", "#774A29", "#966A3D", "#AF854F", "#C29E69"],
+    "timber_cool": ["#2F0912", "#4D2220", "#6B3D30", "#865840", "#A0724F", "#B38B64"],
+    "plaster": ["#7B635D", "#9E8675", "#C0A98D", "#E0CCA6", "#F7DFB3", "#FEF2DC"],
+    "plaster_warm": ["#866960", "#AA8C76", "#CCB08E", "#ECD3A7", "#FEE2B0", "#FFF2DB"],
+    "plaster_cool": ["#755956", "#987B6E", "#BA9D86", "#DAC09E", "#F3D9AF", "#FFF2DB"],
+    "clay": ["#3E0114", "#681921", "#8C3931", "#AE5A42", "#C8764F", "#D79466"],
+    "clay_warm": ["#49010D", "#721F15", "#974023", "#B96134", "#D27E43", "#E09C60"],
+    "clay_cool": ["#330216", "#5E1126", "#823137", "#A35148", "#BE6D54", "#CD8A67"],
+    "iron": ["#1A132D", "#2E2943", "#424056", "#565868", "#737078", "#8E8583"],
+    "iron_warm": ["#1C112F", "#322A47", "#48445D", "#5F5E72", "#7D7682", "#988C8C"],
+    "iron_cool": ["#1C122D", "#2D2640", "#3F3A51", "#504F60", "#6D6670", "#877C7A"],
+    "brass": ["#5D2D0A", "#814D15", "#A36E26", "#C2903C", "#DAAD54", "#EFC67A"],
+    "brass_warm": ["#663400", "#8A5504", "#AB7619", "#CA9933", "#E6B450", "#FACE7A"],
+    "brass_cool": ["#56220E", "#7B4119", "#9D622A", "#BD833E", "#D6A052", "#E6BB74"],
+    "berry": ["#34001F", "#630735", "#8E2348", "#B2465A", "#CE6364", "#DD8472"],
+    "berry_warm": ["#3E021E", "#70082F", "#9D243E", "#C1494E", "#DC6858", "#E98B6A"],
+    "berry_cool": ["#300123", "#5D013C", "#82204F", "#A34060", "#BF5C6A", "#CF7C75"],
+    "dusk": ["#210142", "#3D2167", "#584187", "#7262A4", "#927BB2", "#AF93B4"],
+    "dusk_warm": ["#28004F", "#442573", "#634492", "#8364AC", "#A37DB9", "#BE97BB"],
+    "dusk_cool": ["#210044", "#3A1F62", "#543C7E", "#6D5997", "#8D72A4", "#A88AA8"],
+    "sky": ["#1C2862", "#2F4A85", "#456CA5", "#5E8EC0", "#7BAACF", "#A0C2D2"],
+    "sky_warm": ["#14306C", "#245390", "#3976B0", "#5399CB", "#74B5D9", "#9ECCDB"],
+    "sky_cool": ["#1D1D58", "#323F7B", "#48609A", "#6182B6", "#7C9EC5", "#9DB6C9"],
+    "snow": ["#757390", "#9597B0", "#B6BBCE", "#D6DEEA", "#E6EAEC", "#F5F4EB"],
+    "snow_warm": ["#797B9B", "#999FBB", "#B9C3DA", "#D9E7F6", "#E5EFF3", "#F2F5ED"],
+    "snow_cool": ["#6D6A88", "#8D8DA8", "#ADB1C6", "#CDD4E2", "#E3E4E9", "#F9F2EC"],
+    "lagoon": ["#023D4E", "#0E606E", "#09848D", "#3CA6A4", "#6CC0B0", "#9FD4B9"],
+    "lagoon_warm": ["#064550", "#03696F", "#148D8B", "#39B0A3", "#6FCAAF", "#A5DDB9"],
+    "lagoon_cool": ["#003449", "#09566A", "#04798B", "#369BA3", "#64B5B0", "#96C9B7"],
+    "basalt": ["#1C122B", "#2D233A", "#3D3547", "#4E4652", "#695D61", "#82736C"],
+    "basalt_warm": ["#1E112C", "#31243D", "#45374C", "#584B5A", "#746269", "#8C7874"],
+    "basalt_cool": ["#1B122C", "#292139", "#362F43", "#443E4C", "#5F555B", "#786A66"],
+    "copper": ["#03353B", "#005857", "#2A796E", "#4E9A84", "#78B391", "#A3C69E"],
+    "copper_warm": ["#063D3D", "#056056", "#30826C", "#55A381", "#80BC8E", "#ACCF9E"],
+    "copper_cool": ["#002C36", "#064D53", "#1C6F6E", "#419084", "#6BA991", "#97BC9C"],
+    "soot": ["#1C1426", "#2C2433", "#3B343E", "#4A4448", "#655B57", "#7D7064"],
+    "soot_warm": ["#1E1227", "#302436", "#423643", "#54494F", "#6F605E", "#87766B"],
+    "soot_cool": ["#1C1328", "#292132", "#362E3B", "#423C42", "#5C5251", "#75675D"],
+    "bleached": ["#523738", "#74564E", "#957765", "#B4987C", "#CFB38F", "#E6CCA4"],
+    "bleached_warm": ["#5A3E39", "#7C5E4E", "#9D7F64", "#BCA17B", "#D7BD8F", "#EFD5A7"],
+    "bleached_cool": ["#4B2E33", "#6D4C49", "#8E6C5F", "#AD8D76", "#C8A888", "#DEC19C"],
+    "adobe": ["#592A26", "#7D4937", "#A06949", "#C08A5E", "#DAA670", "#ECC18B"],
+    "adobe_warm": ["#603122", "#855031", "#A77143", "#C79358", "#E0B06C", "#F2CB8A"],
+    "adobe_cool": ["#502125", "#753F37", "#985E4A", "#B87F5E", "#D29B6F", "#E4B687"],
+    "cactus": ["#022C21", "#1A4D32", "#3B6D45", "#5C8C58", "#83A366", "#A8B77B"],
+    "cactus_warm": ["#07341D", "#29542C", "#49743D", "#6B9350", "#91AA5F", "#B6BD78"],
+    "cactus_cool": ["#01231F", "#074433", "#286547", "#4A845A", "#729B67", "#99AE79"],
+    "ashlar": ["#483A43", "#685A5C", "#877B75", "#A69C8E", "#C3B6A1", "#DDCEB3"],
+    "ashlar_warm": ["#504146", "#70625F", "#908377", "#AFA490", "#CDBEA3", "#E8D6B7"],
+    "ashlar_cool": ["#41323B", "#615153", "#80716C", "#9F9284", "#BCAC96", "#D5C4A8"],
+    "ash": ["#241A26", "#41373E", "#5F5557", "#7C746E", "#988D7F", "#B2A48F"],
+    "ash_warm": ["#2B1F2A", "#493D42", "#675C5A", "#857B71", "#A19483", "#BAAC93"],
+    "ash_cool": ["#1F1420", "#3B3037", "#584D4E", "#756B65", "#918476", "#AA9A86"],
+    "concrete": ["#1B122D", "#362E47", "#514B60", "#6C6878", "#8A8088", "#A49793"],
+    "concrete_warm": ["#1E1432", "#3B304E", "#594E68", "#776D81", "#958691", "#AF9D9B"],
+    "concrete_cool": ["#1C122D", "#332B45", "#4B455B", "#645F70", "#817780", "#9C8D8B"],
+    "asphalt": ["#1C112F", "#281F3C", "#332D47", "#3E3C50", "#5A525F", "#736769"],
+    "asphalt_warm": ["#1C1032", "#2B2041", "#3A304E", "#484159", "#645868", "#7D6D71"],
+    "asphalt_cool": ["#1C1130", "#261C39", "#302841", "#393347", "#544956", "#6D5E5F"],
+    "hull": ["#64607A", "#848399", "#A4A5B7", "#C4C8D2", "#E0DEE0", "#FAF2E9"],
+    "hull_warm": ["#6C6685", "#8C89A5", "#ACACC3", "#CCCFDF", "#E4E1E8", "#FBF1ED"],
+    "hull_cool": ["#5C5773", "#7C7991", "#9C9CAF", "#BBBECA", "#DCD9DC", "#FAF1EA"],
+    "panel": ["#272342", "#424260", "#5E627C", "#7A8296", "#9A9BA7", "#B7B2B2"],
+    "panel_warm": ["#2F284B", "#4B476A", "#676787", "#8388A2", "#A3A1B3", "#C1B8BC"],
+    "panel_cool": ["#221B3A", "#3D3957", "#585873", "#74788D", "#93919E", "#B0A7A8"],
+    "regolith": ["#100C08", "#3C3630", "#686159", "#8E877E", "#ABA190", "#C5B8A1"],
+    "regolith_warm": ["#17110A", "#443D32", "#70695C", "#978F81", "#B5A993", "#CFC0A5"],
+    "regolith_cool": ["#0C0604", "#362E28", "#625850", "#877D74", "#A39686", "#BCAE96"],
+    "void": ["#1B1033", "#20193B", "#252340", "#2A2C44", "#454253", "#5F565B"],
+    "void_warm": ["#1D0D35", "#26193F", "#2D2448", "#34304E", "#4F465D", "#695B64"],
+    "void_cool": ["#1D0F33", "#201637", "#231C3A", "#26233B", "#403849", "#594C52"],
+    "lamp": ["#67450A", "#9B6912", "#CB8D26", "#F0B050", "#F5D49C", "#FFF6E6"],
+    "neon_pink": ["#50052E", "#8D0A56", "#C81C7D", "#F04A9E", "#FDA6C1", "#FFF4F6"],
+    "neon_cyan": ["#014751", "#0F7180", "#159BB0", "#2CC0D8", "#96DEE7", "#E3FDFE"],
+    "lava": ["#532000", "#8B3B01", "#C3570A", "#F27222", "#FCB68A", "#FFF5ED"],
+    "glowflora": ["#015243", "#077F69", "#21AA8F", "#36D0B0", "#9FE6CC", "#E6FEF2"]
+  },
+  "edges": {
+    "grass": "#242924",
+    "leaf": "#19211F",
+    "earth": "#23171E",
+    "path": "#2E1C23",
+    "sand": "#3D2D30",
+    "water": "#1B1E36",
+    "stone": "#28202A",
+    "slate": "#201A2C",
+    "timber": "#27151A",
+    "plaster": "#413438",
+    "clay": "#2D141D",
+    "iron": "#1E1826",
+    "brass": "#37221E",
+    "berry": "#291221",
+    "dusk": "#20142F",
+    "sky": "#20203A",
+    "snow": "#3F3949",
+    "lagoon": "#1D2732",
+    "basalt": "#1F1726",
+    "copper": "#1C242B",
+    "soot": "#1F1824",
+    "bleached": "#33252A",
+    "adobe": "#362124",
+    "cactus": "#1A2122",
+    "ashlar": "#2F262E",
+    "ash": "#221A24",
+    "concrete": "#1F1726",
+    "asphalt": "#1F1727",
+    "hull": "#393341",
+    "panel": "#231E2E",
+    "regolith": "#1A1518",
+    "void": "#1E1729"
+  },
+  "kinds": {
+    "grass": "core",
+    "grass_warm": "sibling:grass",
+    "grass_cool": "sibling:grass",
+    "leaf": "core",
+    "leaf_warm": "sibling:leaf",
+    "leaf_cool": "sibling:leaf",
+    "earth": "core",
+    "earth_warm": "sibling:earth",
+    "earth_cool": "sibling:earth",
+    "path": "core",
+    "path_warm": "sibling:path",
+    "path_cool": "sibling:path",
+    "sand": "core",
+    "sand_warm": "sibling:sand",
+    "sand_cool": "sibling:sand",
+    "water": "core",
+    "water_warm": "sibling:water",
+    "water_cool": "sibling:water",
+    "stone": "core",
+    "stone_warm": "sibling:stone",
+    "stone_cool": "sibling:stone",
+    "slate": "core",
+    "slate_warm": "sibling:slate",
+    "slate_cool": "sibling:slate",
+    "timber": "core",
+    "timber_warm": "sibling:timber",
+    "timber_cool": "sibling:timber",
+    "plaster": "core",
+    "plaster_warm": "sibling:plaster",
+    "plaster_cool": "sibling:plaster",
+    "clay": "core",
+    "clay_warm": "sibling:clay",
+    "clay_cool": "sibling:clay",
+    "iron": "core",
+    "iron_warm": "sibling:iron",
+    "iron_cool": "sibling:iron",
+    "brass": "core",
+    "brass_warm": "sibling:brass",
+    "brass_cool": "sibling:brass",
+    "berry": "core",
+    "berry_warm": "sibling:berry",
+    "berry_cool": "sibling:berry",
+    "dusk": "core",
+    "dusk_warm": "sibling:dusk",
+    "dusk_cool": "sibling:dusk",
+    "sky": "core",
+    "sky_warm": "sibling:sky",
+    "sky_cool": "sibling:sky",
+    "snow": "core",
+    "snow_warm": "sibling:snow",
+    "snow_cool": "sibling:snow",
+    "lagoon": "accent:isles",
+    "lagoon_warm": "sibling:lagoon",
+    "lagoon_cool": "sibling:lagoon",
+    "basalt": "accent:isles,fire",
+    "basalt_warm": "sibling:basalt",
+    "basalt_cool": "sibling:basalt",
+    "copper": "accent:cogsworth",
+    "copper_warm": "sibling:copper",
+    "copper_cool": "sibling:copper",
+    "soot": "accent:cogsworth",
+    "soot_warm": "sibling:soot",
+    "soot_cool": "sibling:soot",
+    "bleached": "accent:reach",
+    "bleached_warm": "sibling:bleached",
+    "bleached_cool": "sibling:bleached",
+    "adobe": "accent:reach",
+    "adobe_warm": "sibling:adobe",
+    "adobe_cool": "sibling:adobe",
+    "cactus": "accent:reach",
+    "cactus_warm": "sibling:cactus",
+    "cactus_cool": "sibling:cactus",
+    "ashlar": "accent:castle",
+    "ashlar_warm": "sibling:ashlar",
+    "ashlar_cool": "sibling:ashlar",
+    "ash": "accent:fire",
+    "ash_warm": "sibling:ash",
+    "ash_cool": "sibling:ash",
+    "concrete": "accent:neon",
+    "concrete_warm": "sibling:concrete",
+    "concrete_cool": "sibling:concrete",
+    "asphalt": "accent:neon",
+    "asphalt_warm": "sibling:asphalt",
+    "asphalt_cool": "sibling:asphalt",
+    "hull": "accent:station",
+    "hull_warm": "sibling:hull",
+    "hull_cool": "sibling:hull",
+    "panel": "accent:station",
+    "panel_warm": "sibling:panel",
+    "panel_cool": "sibling:panel",
+    "regolith": "accent:moon",
+    "regolith_warm": "sibling:regolith",
+    "regolith_cool": "sibling:regolith",
+    "void": "accent:station,moon",
+    "void_warm": "sibling:void",
+    "void_cool": "sibling:void",
+    "lamp": "glow",
+    "neon_pink": "glow",
+    "neon_cyan": "glow",
+    "lava": "glow",
+    "glowflora": "glow"
+  },
+  "from_materials": {
+    "grass": {
+      "to": "grass",
+      "tones": [0, 2, 3, 3, 5],
+      "drift": 0.031
+    },
+    "path": {
+      "to": "path",
+      "tones": [1, 2, 3, 4, 5],
+      "drift": 0.018
+    },
+    "water": {
+      "to": "water",
+      "tones": [1, 2, 3, 5, 5],
+      "drift": 0.055
+    },
+    "sand": {
+      "to": "sand",
+      "tones": [2, 3, 4],
+      "drift": 0.043
+    },
+    "wood": {
+      "to": "timber",
+      "tones": [1, 2, 3, 4, 5],
+      "drift": 0.035
+    },
+    "stone": {
+      "to": "stone",
+      "tones": [0, 1, 2, 4, 5],
+      "drift": 0.042
+    },
+    "leaf": {
+      "to": "leaf",
+      "tones": [0, 2, 3, 4, 5],
+      "drift": 0.047
+    },
+    "nap": {
+      "to": "dusk",
+      "tones": [1, 2, 3, 5, 5],
+      "drift": 0.052
+    },
+    "red": {
+      "to": "berry",
+      "tones": [1, 2, 3, 4, 5],
+      "drift": 0.06
+    },
+    "cream": {
+      "to": "plaster",
+      "tones": [0, 2, 3, 4],
+      "drift": 0.029
+    },
+    "gold": {
+      "to": "brass",
+      "tones": [0, 2, 3, 5, 5],
+      "drift": 0.04
+    },
+    "slate": {
+      "to": "slate",
+      "tones": [1, 2, 3, 5, 5],
+      "drift": 0.042
+    },
+    "roof": {
+      "to": "clay",
+      "tones": [1, 2, 3, 4, 5],
+      "drift": 0.042
+    },
+    "snow": {
+      "to": "snow",
+      "tones": [2, 3, 4, 5],
+      "drift": 0.032
+    },
+    "plaster": {
+      "to": "plaster",
+      "tones": [0, 1, 2, 3, 4, 5],
+      "drift": 0.048
+    },
+    "soil": {
+      "to": "earth",
+      "tones": [0, 1, 2, 2, 3, 4],
+      "drift": 0.039
+    },
+    "brass": {
+      "to": "brass",
+      "tones": [0, 1, 2, 3, 5, 5],
+      "drift": 0.045
+    },
+    "copper": {
+      "to": "copper",
+      "tones": [0, 1, 2, 3, 5],
+      "drift": 0.032
+    },
+    "iron": {
+      "to": "iron",
+      "tones": [0, 1, 2, 3, 5],
+      "drift": 0.034
+    },
+    "brick": {
+      "to": "clay",
+      "tones": [0, 1, 2, 3, 4],
+      "drift": 0.049
+    },
+    "night": {
+      "to": "asphalt",
+      "tones": [0, 0, 1, 3, 4, 5],
+      "drift": 0.041
+    },
+    "neon_pink": {
+      "to": "neon_pink",
+      "tones": [0, 1, 3, 4, 5],
+      "drift": 0.061
+    },
+    "neon_cyan": {
+      "to": "neon_cyan",
+      "tones": [0, 1, 3, 4, 5],
+      "drift": 0.03
+    },
+    "neon_amber": {
+      "to": "lamp",
+      "tones": [0, 1, 2, 4, 5],
+      "drift": 0.058
+    },
+    "desert": {
+      "to": "sand",
+      "tones": [0, 1, 2, 3, 4, 5],
+      "drift": 0.026
+    },
+    "cactus": {
+      "to": "cactus",
+      "tones": [1, 1, 2, 3, 5],
+      "drift": 0.046
+    },
+    "adobe": {
+      "to": "adobe",
+      "tones": [1, 1, 2, 3, 5],
+      "drift": 0.042
+    },
+    "lava": {
+      "to": "lava",
+      "tones": [0, 0, 2, 3, 4, 5],
+      "drift": 0.065
+    },
+    "basalt": {
+      "to": "basalt",
+      "tones": [0, 0, 1, 3, 4],
+      "drift": 0.032
+    },
+    "ash": {
+      "to": "ash",
+      "tones": [1, 2, 3, 4, 5],
+      "drift": 0.025
+    },
+    "bleached": {
+      "to": "bleached",
+      "tones": [0, 1, 2, 3, 4, 5],
+      "drift": 0.021
+    },
+    "tar": {
+      "to": "asphalt",
+      "tones": [0, 2, 3, 4, 5],
+      "drift": 0.038
+    },
+    "sailcloth": {
+      "to": "plaster",
+      "tones": [1, 2, 3, 4, 5],
+      "drift": 0.026
+    },
+    "rope": {
+      "to": "bleached",
+      "tones": [0, 2, 3, 4],
+      "drift": 0.047
+    },
+    "lamplight": {
+      "to": "lamp",
+      "tones": [0, 2, 3, 5],
+      "drift": 0.053
+    },
+    "ashlar": {
+      "to": "ashlar",
+      "tones": [0, 1, 2, 3, 4, 5],
+      "drift": 0.022
+    },
+    "hull": {
+      "to": "panel",
+      "tones": [0, 0, 1, 2, 4, 5],
+      "drift": 0.041
+    },
+    "void": {
+      "to": "void",
+      "tones": [0, 0, 0, 3],
+      "drift": 0.052
+    },
+    "regolith": {
+      "to": "regolith",
+      "tones": [1, 1, 2, 3, 4, 5],
+      "drift": 0.071
+    },
+    "glowflora": {
+      "to": "glowflora",
+      "tones": [0, 1, 2, 4, 5],
+      "drift": 0.047
+    }
+  }
+}
