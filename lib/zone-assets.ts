@@ -99,6 +99,8 @@ import propCityCarC from '@/assets/zones/props/city_car_c.png';
 import propCityCarD from '@/assets/zones/props/city_car_d.png';
 import propCityCarE from '@/assets/zones/props/city_car_e.png';
 import propCityCargoShip from '@/assets/zones/props/city_cargo_ship.png';
+import propCityCat from '@/assets/zones/props/city_cat.png';
+import propCityCatC from '@/assets/zones/props/city_cat_c.png';
 import propCityContainerStack from '@/assets/zones/props/city_container_stack.png';
 import propCityContainerStackB from '@/assets/zones/props/city_container_stack_b.png';
 import propCityContainerStackD from '@/assets/zones/props/city_container_stack_d.png';
@@ -836,6 +838,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   city_car_d: propCityCarD,
   city_car_e: propCityCarE,
   city_cargo_ship: propCityCargoShip,
+  city_cat: propCityCat,
+  city_cat_c: propCityCatC,
   city_container_stack: propCityContainerStack,
   city_container_stack_b: propCityContainerStackB,
   city_container_stack_d: propCityContainerStackD,

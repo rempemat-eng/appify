@@ -116,21 +116,37 @@ def hibiscus() -> Canvas:
 
 
 def boathouse() -> Canvas:
-    """The ferry's boathouse on the landing, 76 x 70: a timber shed on stilts at the
-    water's edge, a shingled roof, a wide door to the slipway and a lantern."""
-    w, h = 76, 70
+    """The ferry's boathouse on the landing, 76 x 88: a timber shed on stilts at the
+    water's edge, a shingled roof, a wide door to the slipway and a lantern. Its walls
+    stand a storey and a half (42 px) round a boat door 22 x 34 (verticality.md section 5:
+    a door clearly taller than the people walking through it), with a window beside it."""
+    w, h = 76, 88
     cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = 37.5, 14, 36, 36, 60
+    ridge, apex_y, eave_y, wall_top, wall_bottom = 37.5, 14, 36, 36, 78
     left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 72, SLATE, seed=901, moss=JUNGLE)
     topdown_gable(cv, edge_y, 6, 69, apex_y, wall_top, WOOD, boards=True)
     detail.boards(cv, rect_set(6, wall_top, 64, wall_bottom - wall_top), WOOD, 2, wall_top, board=4, seed=902)
-    for y in range(44, wall_bottom):  # the wide door, open on the dark inside
+    dtop = wall_bottom - 34
+    for y in range(dtop, wall_bottom):  # the wide door, open on the dark inside
         for x in range(24, 46):
             cv.set(x, y, WOOD[0] if x > 25 else WOOD[3])
+    cv.hline(23, dtop - 1, 24, WOOD[4]); cv.hline(23, dtop - 2, 24, WOOD[1])  # its lintel
+    for y in range(dtop + 4, wall_bottom - 2):  # the slipway's rails running in, and a hull in the dark
+        cv.set(30, y, WOOD[1]); cv.set(40, y, WOOD[1])
+    for (x, y) in oval(35, wall_bottom - 7, 6, 2.5):  # a dinghy's bow in the dark, on the slip
+        cv.set(x, y, '#E8E2D2' if y < wall_bottom - 7 else '#9A9284' if x > 36 else '#B8B0A0')
+    wx, wy = 55, wall_bottom - 28  # a window, lamplit
+    for y in range(wy, wy + 14):
+        for x in range(wx, wx + 11):
+            c = GOLD[3] if y < wy + 5 else GOLD[2]
+            if x in (wx, wx + 10) or y in (wy, wy + 13) or x == wx + 5 or y == wy + 6:
+                c = WOOD[4] if x == wx or y == wy else WOOD[1]
+            cv.set(x, y, c)
+    cv.hline(wx - 1, wy + 14, 13, WOOD[4])  # its sill
     for sx in (8, 22, 48, 66):  # stilts
         for y in range(wall_bottom, h):
             cv.set(sx, y, WOOD[2]); cv.set(sx + 1, y, WOOD[1])
-    cv.rect(52, 44, 4, 6, GOLD[4]); cv.set(53, 43, MATERIALS['iron'][2])
+    cv.rect(49, dtop + 2, 4, 6, GOLD[4]); cv.set(50, dtop + 1, MATERIALS['iron'][2])
     detail.overhang_shadow(cv, 6, 70, wall_top, lambda x: 3, k=2, cap=1)
     return cv
 
