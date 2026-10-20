@@ -44,7 +44,7 @@
     "barn": {"group": "buildings", "h": [88, 128], "w": [96, 144], "foot": "15 x 7", "reason": "a tall single volume: walls 56 to 64, a cart door 44 tall, hay loft above"},
     "shed": {"group": "buildings", "h": [40, 64], "w": [32, 56], "foot": "5 x 3", "reason": "a tool shed, hen house or privy: a door 30 to 32 under a low roof"},
     "water_mill": {"group": "buildings", "h": [104, 144], "w": [96, 128], "foot": "14 x 7", "reason": "two storeys and a loft with a hoist door; wheel 40 to 56 across"},
-    "windmill": {"group": "buildings", "h": [112, 160], "w": [56, 80], "foot": "7 x 7", "reason": "a tower mill: base 40 to 56 wide, door 32 with a step, sails 96 to 128 across"},
+    "windmill": {"group": "buildings", "h": [112, 160], "w": [56, 128], "foot": "7 x 7", "reason": "a tower mill: body 40 to 56 wide at the base, door 32 with a step; the sprite is as wide as its sails, 96 to 128 across"},
     "tower": {"group": "buildings", "h": [104, 176], "w": [32, 64], "foot": "6 x 6", "reason": "a lookout, lighthouse or bell tower: a door 32 at the foot, three to four storeys of 32"},
     "landmark_tower": {"group": "buildings", "h": [144, 224], "w": [40, 64], "foot": "7 x 7", "reason": "a clock tower or keep turret: seen from the area before (rule: landmark in the north third)"},
     "pavilion": {"group": "buildings", "h": [56, 96], "w": [48, 96], "foot": "8 x 8", "reason": "a bandstand or rain shelter: roof on posts, eaves at 40 to 48"},
