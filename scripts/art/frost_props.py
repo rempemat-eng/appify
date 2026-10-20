@@ -14,7 +14,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, noise2, oval  # noqa: E402
+from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
 import style  # noqa: E402
 from garden_props import PAD, rect_set, topdown_gable, topdown_roof  # noqa: E402
@@ -169,10 +169,148 @@ def ibex() -> Canvas:
     return cv
 
 
+# ---- firs (art-faults A2: Fir Hollow's old wood) --------------------------------------------
+# A second conifer beside the garden's pine, so a clump mixes shapes, drawn at Eastward's level
+# of detail (its pines in shots 13, 22 and 37 at our scale): tiers of rounded needle clumps,
+# each clump lit on its upper-left rim, a mid body with needle dashes, a dark underside that
+# reads as the gap to the tier below, ragged drooping tips; the clumps' hues vary a little
+# (teal, olive) so a crown is not one green; the east flank sits in shade. Four shapes and
+# sizes: an old broad fir (~4 adults), an old narrow one with a broken top, a young fir (~2)
+# and a sapling, each with a snowy variant for the upper slope (snow resting on each clump).
+FIR = ['#101B1D', '#18292A', '#203A33', '#2B4D3D', '#3A6347', '#4D7A51', '#67955E', '#8BB271', '#B1CD8B']
+FIR_TEAL = ['#0F1C20', '#172C2F', '#1F3D3A', '#295047', '#36665A', '#477D69', '#5F9878', '#83B58C', '#A9D0A2']
+FIR_OLIVE = ['#141C18', '#1F2B22', '#2C3D2C', '#3B5034', '#4F663C', '#668045', '#839C52', '#A6B868', '#C8D488']
+
+
+def _fir(w: int, h: int, trunk_h: int, layers: int, trunk_w: int, seed: int, narrow: float = 1.0,
+         broken: bool = False) -> Canvas:
+    cv = Canvas(w, h, pad=PAD)
+    cx = w / 2 - 0.5 + (noise2(seed, 1, 970) - 0.5) * 1.5
+    crown_b = h - trunk_h + 2          # the lowest tier's tips hide the trunk's top
+    tx = int(round(cx - trunk_w / 2 + 0.5))
+    style.trunk(cv, tx, crown_b - 6, h, trunk_w, WOOD)
+    hw_max = (w / 2 - 2) * narrow
+    top = 4 if broken else 1
+    span_y = crown_b - top - 2
+    clumps = []                        # (cx, cy, rx, ry, tier, ramp)
+    for i in range(layers):            # tier i from the top
+        f = (i + 0.6) / layers
+        ty = top + int(span_y * f ** 1.08)
+        hw = max(1.8, hw_max * (0.06 + 0.94 * f ** 0.95) + (noise2(i, seed, 971) - 0.5) * 2.0)
+        ry = max(1.8, min(4.2, span_y / layers * 0.78))
+        n = max(1, int(round(2 * hw / 8.0)))
+        for k in range(n):
+            u = (k + 0.5) / n * 2 - 1 if n > 1 else 0.0          # -1 west .. 1 east
+            u += (noise2(k, i, seed + 978) - 0.5) * 0.25 / n
+            ccx = cx + u * (hw - 2.5)
+            rx = max(2.2, min(7.0, hw / n * 1.15 + 0.8)) * (0.85 + 0.3 * noise2(k, i, seed + 979))
+            ccy = ty + abs(u) ** 1.4 * ry * 0.8                   # the outer sprays droop
+            r = noise2(k, i, seed + 980)
+            ramp = FIR_TEAL if r < 0.16 else FIR_OLIVE if r > 0.95 else FIR
+            sgn = 0 if n == 1 or abs(u) < 0.2 else (1 if u > 0 else -1)
+            clumps.append((ccx, ccy, rx, ry * (0.9 + 0.25 * noise2(k, i, seed + 981)), i, ramp, abs(u), sgn))
+    # the tip: a narrow spire of two little clumps (or a broken top: a bare snag)
+    if broken:
+        for y in range(0, top + 2):
+            cv.set(int(cx), y, WOOD[2] if y % 3 else WOOD[1])
+        cv.set(int(cx) + 1, 1, WOOD[1])
+    else:
+        clumps.insert(0, (cx, top + 1.5, 1.4, 2.4, -1, FIR, 0, 0))
+    # draw from the back: the centre of each tier first, then outward, lower tiers over upper
+    order = sorted(clumps, key=lambda c: (c[4], c[6]))
+    for (ccx, ccy, rx, ry, i, R, au, sgn) in order:
+        px = []
+        for y in range(int(ccy - ry) - 3, int(ccy + ry) + 6):
+            for x in range(int(ccx - rx) - 1, int(ccx + rx) + 2):
+                dx = (x + 0.5 - ccx) / rx
+                # a spray of needles sweeping down and out from the trunk (the centre sprays sag
+                # at both ends), so each tier reads as a shelf of branches, not a ball
+                bend = 0.9 * dx * sgn if sgn else 0.5 * dx * dx
+                dy = (y + 0.5 - ccy) / ry - bend * (rx / ry) * 0.35
+                rough = (noise2(x, y, seed + 982) - 0.5) * 0.35
+                if dy > 0:                                         # ragged, drooping tips below
+                    tip = noise2(x, i, seed + 983) > 0.55
+                    if dx * dx + (dy / (1.5 if tip else 1.0)) ** 2 > 1 + rough:
+                        continue
+                elif dx * dx + dy * dy > 1 + rough:
+                    continue
+                elif dx * dx + dy * dy > 0.62 and (x + int(ccy)) % 4 == 0 and dy < 0.2:
+                    continue                                      # needle tips: a serrated top edge
+                if 0 <= x < w and y >= 0:
+                    px.append((x, y, dx, dy))
+        S_ = set((x, y) for (x, y, _a, _b) in px)
+        east = (ccx - cx) / max(1.0, hw_max)                      # the crown's east flank in shade
+        for (x, y, dx, dy) in px:
+            lv = -0.55 * dx - 0.75 * dy - 0.45 * east + 0.1 - 0.08 * max(0, i) / max(1, layers)
+            lv += (smooth_noise(x, y, 3, seed + 984) - 0.5) * 0.3
+            t = 6 if lv > 0.7 else 4 if lv > -0.05 else 3 if lv > -0.45 else 1   # four broad bands: dense crowns stay clean
+            if (x, y + 1) not in S_ or dy > 0.7:
+                t = min(t, 2) if dy > 0.3 else t                  # the underside: dark, the gap below
+                if (x, y + 1) not in S_:
+                    t = 1 if dx > -0.3 else 2
+            if (x, y - 1) not in S_ and dx < 0.35 and dy < 0:
+                t = 7 if east < 0.2 else 6                        # the lit rim, upper left
+                if dx < -0.35 and noise2(x // 2, y, seed + 985) > 0.5:
+                    t = 8
+            cv.set(x, y, R[t])
+        # needle dashes in the body: a lit stroke over a dark one, two px each, sloping down
+        for k in range(int(rx * ry / 2.0)):
+            x = int(ccx - rx * 0.6 + noise2(k, i, seed + 986) * rx * 1.1)
+            y = int(ccy - ry * 0.2 + noise2(k, i, seed + 987) * ry * 0.8)
+            if (x, y) in S_ and (x + 1, y + 1) in S_ and (x, y + 2) in S_:
+                lit = x < ccx
+                c = R[6] if lit and east < 0.3 else R[5] if lit else R[3]
+                cv.set(x, y, c); cv.set(x + 1, y, c)
+                cv.set(x, y + 1, R[2]); cv.set(x + 1, y + 1, R[2])
+    return cv
+
+
+def _snowed(cv: Canvas, trunk_h: int) -> Canvas:
+    """Snow lying on every shelf top open to the sky (as valley_props.snowy_pine): lit on
+    the west, blue in shade on the east, a second row where the shelf is deep."""
+    lum = lambda c: c[0] * 0.3 + c[1] * 0.59 + c[2] * 0.11  # noqa: E731
+    snow = []
+    for y in range(-cv.pad + 1, cv.h - trunk_h):
+        for x in range(-cv.pad, cv.w + cv.pad):
+            c, above = cv.get(x, y), cv.get(x, y - 1)
+            if c[3] and (not above[3] or lum(c) - lum(above) > 30):
+                snow.append((x, y))
+    for (x, y) in snow:
+        lit = x < cv.w / 2
+        cv.set(x, y, SNOW[3] if lit else SNOW[1])
+        if noise2(x, y, 978) > 0.4 and cv.get(x, y + 1)[3]:
+            cv.set(x, y + 1, SNOW[2] if lit else SNOW[0])
+    return cv
+
+
+def fir_old() -> Canvas:
+    """An old fir, 46 x 102: broad, nine tiers of needle clumps, a trunk with root flare."""
+    return _fir(46, 102, 16, 9, 6, 1)
+
+
+def fir_tall() -> Canvas:
+    """An old fir, 38 x 108: narrow, ten tiers, its top broken off to a bare snag."""
+    return _fir(38, 108, 15, 10, 5, 4, narrow=0.88, broken=True)
+
+
+def fir_young() -> Canvas:
+    """A young fir, 30 x 60: six tiers, still dense to the ground."""
+    return _fir(30, 60, 9, 6, 4, 2)
+
+
+def fir_sapling() -> Canvas:
+    """A fir sapling, 16 x 28, about knee to shoulder height on an adult."""
+    return _fir(16, 28, 5, 4, 2, 3)
+
+
 def props() -> dict[str, Canvas]:
     return {
         'bothy': bothy(), 'telescope': telescope(), 'trail_post': trail_post(),
         'windsock': windsock(), 'ibex': ibex(),
+        'fir_old': fir_old(), 'fir_tall': fir_tall(), 'fir_young': fir_young(), 'fir_sapling': fir_sapling(),
+        'fir_old_snow': _snowed(fir_old(), 16), 'fir_tall_snow': _snowed(fir_tall(), 15),
+        'fir_young_snow': _snowed(fir_young(), 9),
+        'fir_sapling_snow': _snowed(fir_sapling(), 5),
     }
 
 

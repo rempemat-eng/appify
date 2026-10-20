@@ -61,9 +61,10 @@ def _depth(mask: np.ndarray, cap: int = 8) -> np.ndarray:
     return d
 
 
-def _flow(mask: np.ndarray):
+def _flow(mask: np.ndarray, west: np.ndarray | None = None):
     """Per pixel: the unit vector the current runs along, and how channel-like the water is
-    there (0 open water .. 1 a clear channel)."""
+    there (0 open water .. 1 a clear channel). `west` marks level water that runs west (a
+    stream crossing a zone toward a fall at its west end): there the level tie goes west."""
     m = _blur(mask.astype(np.float64), 2.0)
     gy, gx = np.gradient(m)
     jxx, jxy, jyy = _blur(gx * gx, 7.0), _blur(gx * gy, 7.0), _blur(gy * gy, 7.0)
@@ -77,7 +78,10 @@ def _flow(mask: np.ndarray):
     fx = np.rint(-np.sin(theta) * 256).astype(np.int64)
     fy = np.rint(np.cos(theta) * 256).astype(np.int64)
     # downhill: down the screen, and east where the channel runs level
-    flip = (fy < -64) | ((np.abs(fy) <= 64) & (fx < 0))
+    level = np.abs(fy) <= 64
+    flip = (fy < -64) | (level & (fx < 0))
+    if west is not None:
+        flip = np.where(west & level, fx > 0, flip)
     fx, fy = np.where(flip, -fx, fx), np.where(flip, -fy, fy)
     return fx, fy, np.rint(coherence * 1000).astype(np.int64)
 
@@ -91,8 +95,9 @@ def _hash(*v: np.ndarray) -> np.ndarray:
     return h
 
 
-def sheet(ground: Image.Image, water: set, lava: set):
-    """The overlay frames for one zone: (PIL image FRAMES boxes tall, (x, y, w, h)) or None."""
+def sheet(ground: Image.Image, water: set, lava: set, west: set | None = None):
+    """The overlay frames for one zone: (PIL image FRAMES boxes tall, (x, y, w, h)) or None.
+    `west`: pixels of level water whose current runs west (see _flow)."""
     w, h = ground.size
     base = np.asarray(ground.convert('RGBA'), dtype=np.float32)
     wm = np.zeros((h, w), dtype=bool)
@@ -103,6 +108,10 @@ def sheet(ground: Image.Image, water: set, lava: set):
     for (x, y) in lava:
         if 0 <= x < w and 0 <= y < h:
             lm[y, x] = True
+    wwest = np.zeros((h, w), dtype=bool)
+    for (x, y) in (west or ()):
+        if 0 <= x < w and 0 <= y < h:
+            wwest[y, x] = True
     if wm.sum() < 60 and lm.sum() < 60:
         return None
     ys, xs = np.mgrid[0:h, 0:w]
@@ -112,7 +121,7 @@ def sheet(ground: Image.Image, water: set, lava: set):
         if mask.sum() < 60:
             continue
         lava_pass = light is LAVA_LIGHT
-        fx, fy, coh = _flow(mask)
+        fx, fy, coh = _flow(mask, None if lava_pass else wwest)
         depth = _depth(mask)
         u = (xs * fx + ys * fy) // 256   # along the flow (whole px)
         v = (-xs * fy + ys * fx) // 256  # across it
