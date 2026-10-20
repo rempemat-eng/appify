@@ -60,6 +60,11 @@ HOWTO: a zone's terrain as a map
     # or let it paint grass (tops=True, the default)
     # then: t.blocked into the zone's blocked ground, t.water into WATER_MASKS,
     # t.tiers for zoneTier, terrace.one_tier(t, foot box) before placing a prop.
+    # A zone with its own grass (an alpine meadow, a dry steppe) passes turf=[5 tones,
+    # dark to light]: the lips, foot grass, banks, moss and tufts are drawn in it.
+    # Ground the zone painted itself takes the toolkit's growth with
+    # terrace.dress_ground(cv, mask, near=..., turf=...): tufts and long grass gathered at
+    # edges and where things stand (tree feet), the open calm (Fir Hollow does this).
 TEST_MAP below is a complete example.
 
 Run: python3 scripts/art/terrace.py --sheet OUT.png [--bar]   (the test zone at 1x, 3x, night,
@@ -133,6 +138,7 @@ SOFT = (0.90, 0.92, 0.96)      # the soft shade pooled along a face's foot
 
 MEDIUM = (0.70, 0.74, 0.83)
 GROWTH_REACH = 10   # px from an edge over which growth thins out to the calm open
+OPEN_CLUMPS = 0.8   # growth in the slow clumps out in the open (0..1)
 OPEN_TUFTS = 0.01  # the odd drawn tuft out in the open
 DRY, DRY_TONE = 0.73, '#B0A058'   # where the lawn dries to olive, and its tone
 LEAF_EDGE = 0.24   # how far the leafy edge between two grass tones reaches
@@ -152,9 +158,13 @@ OUTLINE = lerp(SOIL[0], '#241A2C', 0.5)  # the face's outer edge (Eastward's dar
 ROCK = MATERIALS['bleached']             # loose rocks at the feet: warm tan
 
 
+_TURF = None    # the zone's own grass ramp while build() or dress_ground() runs (turf=)
+
+
 def grass_ramp(level: int):
-    """Each tier its own tone: an upper tier a step lighter and warmer (verticality 4c)."""
-    return [lerp(c, '#E8EBA0', 0.13 * level) for c in GRASS]
+    """Each tier its own tone: an upper tier a step lighter and warmer (verticality 4c).
+    In the zone's turf when one is given (build(turf=...)), else the shared grass."""
+    return [lerp(c, '#E8EBA0', 0.13 * level) for c in (_TURF or GRASS)]
 
 
 # ---- the spec -----------------------------------------------------------------------------
@@ -442,9 +452,47 @@ def _strata(d: int, seed: int, x: int = 0):
 
 # ---- the build ----------------------------------------------------------------------------
 
-def build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), stairs=(), ramps=(),
-          water=(), tops=True, seed=0, round_r=ROUND, round_in=ROUND_IN, dress=True,
-          bank='earth') -> Terrace:
+def build(cv: Canvas | None, tiers, *, turf=None, **kw) -> Terrace:
+    """Paint terraced ground on `cv` and return its walk blocking and maps (_build below has
+    the arguments). turf: the zone's grass ramp, five tones dark to light (an alpine meadow,
+    a dry steppe); the tops, lips, foot grass, banks, moss and tufts are all drawn in it.
+    None draws the shared grass (materials.json 'grass')."""
+    global _TURF
+    prev, _TURF = _TURF, (list(turf) if turf else None)
+    try:
+        return _build(cv, tiers, **kw)
+    finally:
+        _TURF = prev
+
+
+def dress_ground(cv: Canvas, mask, *, near=None, turf=None, seed=0) -> None:
+    """The toolkit's growth on a zone's own ground, for ground build() did not paint
+    (tops=False): blade strokes, drawn tufts and long grass gathered within GROWTH_REACH px
+    of the mask's edges and of `near` (where things stand: tree feet, path edges, banks, rock
+    feet), thinning to calm in the open, with the odd big tuft and daisies in twos and
+    threes. mask: bool (H, W), True where the ground may be dressed (turf, not paths, water
+    or snow); near: bool (H, W) or None. turf as build()'s. Deterministic for a seed."""
+    global _TURF
+    m = np.asarray(mask, bool)
+    H, W = m.shape
+    img = np.array(cv.img.convert('RGB'))[cv.pad:cv.pad + H, cv.pad:cv.pad + W].copy()
+    z = np.zeros((H, W), np.int16)
+    kind = np.where(m, TOP, FACE_K).astype(np.uint8)
+    P = _Painter(img, z, kind, z, z, z, z.astype(np.int8), z.astype(np.int8), z.astype(np.int8), z.astype(np.int8),
+                 z, z, np.zeros((H, W), bool), np.zeros((H, W), bool), (), (), seed)
+    P.near_extra = None if near is None else np.asarray(near, bool)
+    prev, _TURF = _TURF, (list(turf) if turf else None)
+    try:
+        g = grass_ramp(0)
+        P.growth(np.ones((H, W), np.int8), {0: (lerp(g[2], g[1], 0.32), lerp(g[2], g[3], 0.45), lerp(g[3], g[4], 0.38))})
+    finally:
+        _TURF = prev
+    cv.img.paste(Image.fromarray(img, 'RGB').convert('RGBA'), (cv.pad, cv.pad))
+
+
+def _build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), stairs=(), ramps=(),
+           water=(), tops=True, seed=0, round_r=ROUND, round_in=ROUND_IN, dress=True,
+           bank='earth') -> Terrace:
     """Paint terraced ground on `cv` (a zone's ground canvas, or None for the maps alone) and
     return its walk blocking and maps.
 
@@ -605,12 +653,15 @@ def build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), st
     else:
         for (c0, r0, c1, r1) in water:
             wm_cells[max(0, r0):r1, max(0, c0):c1] = True
-    wet = rounded(np.kron(wm_cells, np.ones((GRID, GRID), bool)), 4) if wm_cells.any() else np.zeros((H, W), bool)
+    sq = np.kron(wm_cells, np.ones((GRID, GRID), bool))
+    wet = rounded(sq, 4) if wm_cells.any() else np.zeros((H, W), bool)
     falls = []
     fall = np.zeros((H, W), bool)
     for x in range(W):
         for y in range(1, H):
-            if kind[y, x] == FACE_K and rim[y, x] == y and wet[y - 1, x] and kind[y - 1, x] == TOP:
+            if kind[y, x] == FACE_K and rim[y, x] == y and sq[y - 1, x] and kind[y - 1, x] == TOP:
+                # a channel goes over the lip square, as wide as it runs: no rounding there
+                wet[max(0, y - 6):y, x] |= sq[max(0, y - 6):y, x]
                 fall[y:y + fh[y, x], x] = True
                 kind[y:y + fh[y, x], x] = FALL_K
     ys, xs = np.nonzero(fall)
@@ -871,8 +922,14 @@ class _Painter:
                 if dry > DRY:
                     c = lerp(c, DRY_TONE, 0.38 if dry < DRY + 0.06 else 0.5)
                 self.img[y, x] = tuple(min(255, int(v2 * lum)) for v2 in c)
-        gd = self._growth()
-        sd = s * 7 + 510
+        self.growth(tidx, tones)
+
+    def growth(self, tidx, tones):
+        """Growth over painted ground: strokes, tufts, long grass and flowers where
+        _growth() says, calm elsewhere."""
+        H, W, s = self.H, self.W, self.seed
+        self._growth()
+        gd = self._near * 0.95 + 0.06     # strokes only along edges, never a hatch over open clumps
         # the grain: short blade strokes (2 px, never one) a tone off the ground under them,
         # thicker where the clusters gather, thin in the calm
         sd = s * 7 + 510
@@ -960,10 +1017,20 @@ class _Painter:
             cur = cur | _shift(cur, 1, 0) | _shift(cur, -1, 0) | _shift(cur, 0, 1) | _shift(cur, 0, -1)
             dist[cur & (dist > d)] = d
         near = np.clip(1 - dist / float(GROWTH_REACH), 0, 1)
+        extra = getattr(self, 'near_extra', None)
+        if extra is not None:        # where things stand (dress_ground's `near`)
+            dist = np.full((H, W), GROWTH_REACH + 1, np.int16)
+            cur = extra.copy()
+            dist[cur] = 0
+            for d in range(1, GROWTH_REACH + 1):
+                cur = cur | _shift(cur, 1, 0) | _shift(cur, -1, 0) | _shift(cur, 0, 1) | _shift(cur, 0, -1)
+                dist[cur & (dist > d)] = d
+            near = np.maximum(near, np.clip(1 - dist / float(GROWTH_REACH), 0, 1))
         ys, xs = np.mgrid[0:H, 0:W]
         blob = np.vectorize(lambda x, y: smooth_noise(x, y, 38, self.seed + 901))(xs[::4, ::4], ys[::4, ::4])
         blob = np.kron(blob, np.ones((4, 4)))[:H, :W]
-        open_g = np.clip((blob - 0.52) * 2.6, 0, 0.8)
+        open_g = np.clip((blob - 0.52) * 2.6, 0, OPEN_CLUMPS)   # a few loose clumps
+        self._near = near                # edges only: the blade strokes keep to them
         self._gr = np.clip(np.maximum(near * 0.95, open_g) + 0.06, 0, 1)
         return self._gr
 
@@ -1396,7 +1463,7 @@ class _Painter:
             if 2 <= d <= 4 and i > 1:
                 i -= 1                          # the start row, in the lip's shade
             if up != me and n(*me, 604) > 0.9 and phi > -0.5 and phi < 0.5:
-                return GRASS[2] if (x + y) % 2 else LEAF[2]      # moss on a lump
+                return grass_ramp(0)[2] if (x + y) % 2 else LEAF[2]      # moss on a lump
             if foot <= 4:
                 i = min(i, 1) if foot <= 2 else max(0, min(i, 2) - (1 if phi > 0.3 else 0))
                 if foot <= 2 and n(x, y, 605) > 0.75:
