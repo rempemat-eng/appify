@@ -1,4 +1,4 @@
-# The world plan (v5.2): a window onto a larger continent
+# The world plan (v5.3): a window onto a larger continent
 
 Matt, 20 Oct:
 
@@ -39,8 +39,16 @@ v5 keeps v4's size, walk times, routes-and-shortcuts logic and the nine ways, an
 - **The plain** steps in three deliberate banks instead of many low tiers.
 - **The Lull** runs a belt of unequal bends.
 - **The west.** The western rivers follow the land and join. The Rift swings round two spurs of the Brackens and takes tributaries from both sides. The dry country wraps round the Brackens.
-- **The volcano.** The crater is breached, with a rift-zone fissure, an old crusted flow and a young one.
+- **The volcano.** The crater is breached by an old crusted flow, and a young flow comes from a vent on the flank (v5.3).
 - **The city.** The new town is a grown district, the Skyport a built place, the Heights' terraces are separate blocks, and the old quay a real waterfront.
+
+**v5.3** answers Claude A's review of v5.2 and keeps everything else:
+
+- **The Lull keeps a near-constant width** through its belt, a little wider at the bends and never bulbous. Its width changes only at the confluences, the braided reach and the delta. The beads came from bends tighter than the river is wide, so the bends are now looser, still unequal (4.3).
+- **The loops are irregular.** A pond, heap or outcrop is set off-centre. The path round it follows its shore at a varying distance, closer on one side, and joins the road by a spur that forks into a Y (5.6).
+- **The volcano's two flows start apart** (4.7). The old flow came out of the summit crater through a breach in its south-west rim. The young flow comes from a flank vent partway down the south-east side: a short fissure ending in a small spatter cone.
+
+The `-v52` images were regenerated with these fixes. The before and after crops, with v5.2 on the left (or top) and v5.3 on the right (or below), are `before-after-river-v53.png`, `before-after-loops-v53.png` and `before-after-volcano-v53.png`. The benchmark still passes all 21 checks, and the gate check passes at every step.
 
 It builds on, and does not repeat:
 
@@ -101,7 +109,7 @@ Matt's example maps (a fantasy city, a soft-grid tier map, all the Pokémon regi
 8. **Transitions are places (v5.1).** Each region change on a route has a threshold, a mixing band, a landmark and a beat: the Brackens gap, Drover's bridge, the Cinder Rise, the Millrace cutting, Lullford Bridge and more (5.2). Each region is pushed to its own colour, landform, vegetation and silhouette (5.3).
 9. **Verticality region by region (v5.1).** One tier is a 32 px face. Each region has its own vertical character and its own way up and down: the massif's switchbacks, the valley's terraces, the coal hills' benches and the Narrows gorge, the desert's mesas and canyon floors, the lava terraces and the crater rim, the city's terraces down to the quays, the coast's cliffs against the flat delta (5.4, `tier-map-v51.png`).
 10. **v5.1's numbers:** 123.6 walkable zone-areas. From the hut: Cogsworth 52 s (25 s by train), Neon 115 s (56 s), Dust Gulch 100 s (29 s), Hearthold 129 s (61 s, now inside its walls).
-11. **v5.2: compared with other games.** It passes all 21 checks of the benchmark (2.1). It has layered borders, filled biomes, obstacles with side paths, and a mixing band at every threshold. Numbers: 142.2 walkable zone-areas, up from 124 because the fade at the world's edges is walkable ground (sparse clumps on it); no place moved. From the hut: Cogsworth 52 s (25 s by train), Neon 116 s (56 s), Dust Gulch 101 s (30 s), Hearthold 130 s (51 s).
+11. **v5.2: compared with other games.** It passes all 21 checks of the benchmark (2.1). It has layered borders, filled biomes, obstacles with side paths, and a mixing band at every threshold. Numbers: 141.2 walkable zone-areas, up from 124 because the fade at the world's edges is walkable ground (sparse clumps on it); no place moved. From the hut: Cogsworth 52 s (25 s by train), Neon 115 s (53 s), Dust Gulch 101 s (30 s), Hearthold 130 s (51 s).
 
 ## 1. Sizing
 
@@ -247,7 +255,7 @@ The main rates it sets:
 | 5   | no secret or decoration gives a reward, cost or chore                                         | by design: markers and pockets carry no items                     | none                                                                                              | pass   |
 | 6   | invisible walls: frame cells touching the walk that are drawn as passable ground              | 0                                                                 | 0                                                                                                 | pass   |
 | 7   | border depth: share of frame within 64 px of the walk that is drawn as a blocker (two strata) | 100.0 %                                                           | 100 % (2-3 strata)                                                                                | pass   |
-| 8   | longest straight run of the walk-to-border edge                                               | 56 px                                                             | 96 px or less                                                                                     | pass   |
+| 8   | longest straight run of the walk-to-border edge                                               | 64 px                                                             | 96 px or less                                                                                     | pass   |
 | 9   | identical border material in a row (one prop = 3 cells)                                       | 3 props                                                           | 3 or fewer                                                                                        | pass   |
 | 10  | outer border edge with something seen beyond within 900 px                                    | 100.0 %                                                           | 100 %                                                                                             | pass   |
 | 11  | each region shows a place seen but not yet reached, reached later                             | 10/10 regions listed; all ways reach their places                 | all regions                                                                                       | pass   |
@@ -256,7 +264,7 @@ The main rates it sets:
 | 14  | ambience cross-fade at each threshold                                                         | 160 px (4 s)                                                      | 120 px (3 s) or more                                                                              | pass   |
 | 15  | each change radiates from a source                                                            | 15/15                                                             | all                                                                                               | pass   |
 | 16  | route bends or meets an obstacle every 200-300 px; longest straight run                       | longest gap 282 px (Foothill Road); straight 128 px (Shell Bar)   | gap 300 px or less; straight 240 px or less                                                       | pass   |
-| 17  | path width range; side paths per two screens of route                                         | 24-64 px; 1.93 per 2 screens                                      | 24-64 px; 1 or more                                                                               | pass   |
+| 17  | path width range; side paths per two screens of route                                         | 24-64 px; 1.89 per 2 screens                                      | 24-64 px; 1 or more                                                                               | pass   |
 | 18  | at least one loop in every region                                                             | 10/10                                                             | all                                                                                               | pass   |
 | 19  | dead ends end in a view, resident, bench or story detail                                      | 0 bare dead ends                                                  | 0                                                                                                 | pass   |
 | 20  | no one-way drops                                                                              | every tier change on a route is a stair, ramp or switchback (5.4) | none                                                                                              | pass   |
@@ -365,6 +373,8 @@ The map is a window. Three of its edges are land that goes on, and each has a bo
 
 **v5.2.** The belt runs along a longer arc east of the confluence, as a run of five unequal bends (sine-generated, two segments with different swing), so no one loop dominates.
 
+**v5.3.** Through the belt the river keeps a near-constant width: at most 6 % wider at the sharpest bends, never swelling into bulbs. Its width changes only where a tributary joins, over the gravel of the braided reach, at Lullford and in the delta. In v5.2 the bends were tighter than the river is wide (radii of 40 to 80 px against a width of about 100 px), so the channel filled in round them like beads. The belt now swings in six unequal bends with radii of 115 to 285 px. Real meanders bend at two to three channel widths, so this is still on the tight side, but it reads as a river.
+
 **Width grows with the water** (v5.1). The Lull is about 28 px at the glacier and grows with the Sorrel. It is pinched in the Narrows, gains with the Cog, and reaches about 110 to 130 px (14 to 16 cells) on the floodplain. Lullford's terraces narrow it to under 120 px. Widths change gradually, never in a jump.
 
 **The three landmark bridges.**
@@ -454,11 +464,12 @@ The massif closes the north of both the desert and the green land, so no range r
 
 The young flows, from the crater to the sea, are the barrier (W6), and they are not a line round the mountain but two tongues with side lobes.
 
-**v5.2: two eruptions, not an arch.**
+**v5.2 and v5.3: two eruptions from two places, not an arch.**
 
-- **The crater** is irregular, and the young flow pours through its south-east rim to the sea.
-- **The old flow** came from a flank vent at the end of a rift-zone fissure running south-west from the crater. It is crusted rubble, its edges grown over with fireweed and lava-stone scrub.
-- **The barrier (W6)** is the crater rim, the fissure, the old flow's crust, the young flow and the sea. The chasm bridge crosses the old flow; the crust causeway crosses the young one.
+- **The old flow** came out of the summit crater through a breach in its south-west rim. It is crusted rubble now, its edges grown over with fireweed and lava-stone scrub.
+- **The young flow** comes from a flank vent partway down the south-east side, about 500 px from the summit. A short fissure on the flank ends in a small spatter cone, glowing in its throat. The two heads are clearly apart.
+- **The upper cone** is loose cinder, too steep to climb, and never walked.
+- **The barrier (W6)** is the old flow's crust, the crater and its rim, the upper cone, the flank fissure and spatter cone, the young flow and the sea. The chasm bridge crosses the old flow; the crust causeway crosses the young one.
 
 ## 5. Transitions and verticality
 
@@ -576,11 +587,17 @@ A little side path leaves the road at a shallow Y about 300 px before the obstac
 
 **The roads themselves** bend irregularly: a short bend every 160 to 240 px riding on a long swing of 450 to 750 px, each of varying size, so no stretch reads as a regular S-ribbon.
 
+**Loops where the roads found no room** go round a spoil heap above Cogsworth, a dew pond in the valley, a willow thicket by the Lull and the Headland's rocks (v5.3):
+
+- the pond, heap or outcrop is irregular and set off-centre;
+- the path follows its shore at a varying distance, closer on one side;
+- it joins the nearest road by a spur that forks into a Y, or where the road itself runs into the loop; the willow thicket's loop, with no road near, is reached across the open floodplain.
+
 **Collapsed old bridges** stand beside four of the fords where routes cross the small rivers (the Sleepwater, the Amber, the Willow Run, the Brackens beck).
 
 They show on the route crops and on `content-map-v52.png` (red squares).
 
-**Counts** (`stats-v52.json`, `obstacles`): 23 obstacles: 9 thickets, 6 collapsed bridges, 2 ravines, a marshy pool, a fallen tree, a boulder field, a spoil heap, the Headland's rocks and a dew pond. 17 of them have a side path or a loop round them, and there are 30 secret pockets down dead-end paths. Side paths and pockets together come to 1.93 per 2 screens of route (check 17). Every region has at least one loop.
+**Counts** (`stats-v52.json`, `obstacles`): 22 obstacles: 8 thickets, 6 collapsed bridges, 2 ravines, a marshy pool, a fallen tree, a boulder field, a spoil heap, the Headland's rocks and a dew pond. 16 of them have a side path or a loop round them, and there are 30 secret pockets down dead-end paths. Side paths and pockets together come to 1.89 per 2 screens of route (check 17). Every region has at least one loop.
 
 ## 6. Paths first: routes, shortcuts and times
 
