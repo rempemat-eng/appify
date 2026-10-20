@@ -14,6 +14,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
+import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
 from materials import MATERIALS, WOOD, NAP, GOLD, SLATE, LEAF, RED  # noqa: E402
 
@@ -88,6 +89,29 @@ OAK = ['#3A261C', '#5A3B28', '#7C5434', '#9C6E44', '#BC8C5A', '#D6AC78']
 GLASS = ['#2C3440', '#46566A', '#F2B65A', '#FFDC92', '#FFF0C4']
 
 
+ROCKS = ((206, 178, 140), (124, 134, 156), (150, 150, 120), (176, 150, 150), None)
+
+
+def _weather(c, x: int, y: int, xa: int, xb: int, ya: int, yb: int, k: int, j: int, seed: int,
+             low: float):
+    """A block's own rock and its weather (D13, Eastward's level of detail): each block
+    leans to one of several rocks (warm sandstone, blue-grey, green-grey, rose, the plain
+    ashlar); moss creeps along the tops of blocks low on a wall and in its shade, lichen
+    spots a few, and a hairline crack runs down the odd one."""
+    if c == MORTAR:
+        return c
+    rock = ROCKS[int(noise2(k, j + 91, seed) * len(ROCKS))]
+    out = rd.mix(c, rock, 0.22) if rock else rd.rgb(c)
+    m = noise2(k, j + 93, seed)
+    if m < 0.08 + 0.2 * low and y in (ya, ya + 1) and xa + 1 <= x < min(xb - 1, xa + 3 + int(m * 30)):
+        out = (98, 124, 66) if y == ya else (64, 88, 54)          # moss on the block's top
+    elif m > 0.94 and y == ya + 2 and xa + 2 <= x <= xa + 3:
+        out = (198, 172, 96)                                       # a lichen spot
+    if 0.5 < m < 0.6 and xb - xa >= 8 and ya < y < yb - 1 and x == xa + 3 + (y - ya) // 2:
+        out = rd.step(out, -2.2)                                   # a hairline crack
+    return (*out, 255)
+
+
 def masonry(cv: Canvas, pts, seed: int = 0, light=None, course=(4, 6), block=(6, 12), soot: int = 0):
     """Lay dressed stone over `pts`: courses of varying height, blocks of varying
     length, each block its own tone. `light(x, y)` (-2..2) shades the wall as a form
@@ -120,12 +144,13 @@ def masonry(cv: Canvas, pts, seed: int = 0, light=None, course=(4, 6), block=(6,
                         c = MORTAR if base > 2 else STONE_R[max(0, base - 2)]
                     elif yy == ya or xx == xa:
                         c = STONE_R[min(5, base + 1)]
-                    elif noise2(xx, yy, seed + 7) > 0.975:
-                        c = STONE_R[max(1, base - 1)]  # the grain of the stone
-                    if t > 0.8 and (xx, yy) == (xb - 2, ya):
+                    elif noise2((xx - xa) // 3, yy, seed + 7 + j) > 0.96:
+                        c = STONE_R[max(1, base - 1)]  # the grain of the stone, in short runs
+                    if t > 0.8 and (xx, yy) in ((xb - 2, ya), (xb - 3, ya), (xb - 2, ya + 1)):
                         c = STONE_R[max(0, base - 1)]  # a chipped corner
-                    if soot and yy >= y1 - soot and (xx + yy) % 2 == 0:
+                    if soot and yy >= y1 - soot and rd.smooth_noise(xx, yy, 3, seed + 5) < 0.55:
                         c = STONE_R[max(0, STONE_R.index(c) - 1)] if c in STONE_R else c
+                    c = _weather(c, xx, yy, xa, xb, ya, yb, k, j, seed, (yy - y0) / max(1, y1 - y0))
                     cv.set(xx, yy, c)
             x, j = xb, j + 1
         y, k = yb, k + 1
@@ -178,7 +203,7 @@ def drum(cv: Canvas, x0: int, y0: int, w: int, h: int, seed: int, slits=(), soot
     def light(x, y):
         k = (x - x0) / max(1, w - 1)
         return 1.2 - 3.4 * abs(k - 0.28) if k < 0.28 else 1.2 - 3.6 * (k - 0.28)
-    masonry(cv, pts, seed, light, course=(4, 5), block=(5, 9), soot=soot)
+    masonry(cv, pts, seed, light, course=(4, 6), block=(6, 11), soot=soot)
     for (sx, sy) in slits:
         cv.rect(sx, sy, 2, 8, '#1C1820'); cv.set(sx - 1, sy, STONE_R[1]); cv.hline(sx - 1, sy + 8, 4, STONE_R[4])
     return pts
@@ -380,8 +405,9 @@ def postern() -> Canvas:
             if y >= spring or (x + 0.5 - cxa) ** 2 + ((y - spring) * 1.0) ** 2 <= ra ** 2}
     for (x, y) in arch:
         c = '#1C1418' if y < h - 6 else '#2A1E20'  # the passage, its floor a little lighter
-        if y < spring + 4 and (x + y) % 2 == 0:
-            c = '#5A2414'  # the lava's glow from the far end of the passage
+        if y < spring + 5:
+            g = (spring + 5 - y) / 9 + 0.25 * (1 - abs(x + 0.5 - cxa) / ra)
+            c = '#7A3418' if g > 0.75 else '#5A2414' if g > 0.45 else '#3A1C18' if g > 0.2 else c  # the lava's glow from the far end
         cv.set(x, y, c)
     for (x, y) in arch:  # the voussoirs: wedge stones round the arch, alternately lit
         for (ax, ay) in ((-2, 0), (2, 0), (0, -2), (-1, -2), (1, -2)):
@@ -393,9 +419,13 @@ def postern() -> Canvas:
     for y in range(spring - 1, h - 1):  # the door, swung back against the west reveal
         for k in range(3):
             c = OAK[4 - k] if (y // 5) % 2 else OAK[3 - k]
+            if noise2(k, y // 3, 67) < 0.25:
+                c = rd.step(c, -0.8)  # the oak's grain
             if (y - spring) % 9 == 3:
                 c = IRON[3] if k < 2 else IRON[1]  # an iron strap
-            cv.set(ax0 + k, y, c)
+            elif (y - spring) % 9 == 4:
+                c = rd.mix(c, (128, 74, 48), 0.5) if k < 2 else c  # rust bled under it
+            rd.put(cv, ax0 + k, y, c)
     cv.set(ax0 + 2, spring + 9, IRON[4]); cv.set(ax0 + 2, spring + 10, IRON[2])  # its ring
     for x in range(ax0 + 3, ax1):  # the threshold, worn
         cv.set(x, h - 2, STONE_R[3] if x % 4 else STONE_R[2])

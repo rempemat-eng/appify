@@ -13,6 +13,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
+import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
 from materials import MATERIALS, WOOD, STONE, RED, WTR, GOLD  # noqa: E402
 
@@ -24,6 +25,16 @@ PAD = 4
 
 def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
+
+
+def _glass(tones, x: int, y: int, w: int, h: int):
+    """Window glass seen from a sunlit street: dark under the porch's shadow at the top,
+    the room's dusk behind it, and two slanting streaks of reflected street light."""
+    c = tones[0] if y < 3 else tones[1] if y < h * 0.6 else tones[2]
+    t = x + y * 0.6
+    if 3 <= t % 17 < 6:
+        c = rd.mix(c, (210, 228, 236), 0.4)
+    return c
 
 
 def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'saloon') -> Canvas:
@@ -38,12 +49,23 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
     # the tin roof behind the facade, seen from above
     for y in range(2, 20):
         for x in range(10, w - 10):
-            cv.set(x, y, IRON[3] if (x // 4) % 2 else IRON[2])
+            c = rd.rgb(IRON[3] if (x // 4) % 2 else IRON[2])
+            if x % 4 == 0:
+                c = rd.step(c, 1.2)              # the lit crest of each corrugation
+            n = rd.smooth_noise(x, y, 5, seed + 41)
+            if n < 0.3:
+                c = rd.mix(c, (150, 88, 54), 0.5 if n < 0.18 else 0.3)   # rust in patches
+            elif n > 0.8:
+                c = rd.mix(c, (190, 176, 150), 0.25)                    # dust settled on it
+            rd.put(cv, x, y, c)
         cv.hline(10, 2, w - 20, IRON[4])
     # the facade: stepped top, clapboards
     face = {(x, y) for x in range(4, w - 4) for y in range(14, h - 6)}
     face |= {(x, y) for x in range(14, w - 14) for y in range(8, 14)}
-    detail.boards(cv, face, BLEACHED, 3, 8, board=4, seed=seed, grain=0.08)
+    # weathered boards of four woods and an old coat of the sign's paint, bleached most
+    # high up, dusty at the boardwalk (D13: Eastward's level of detail)
+    woods = ('#B39277', '#A69482', '#B88E66', '#A87C62', rd.mix(sign_ramp[2], '#B39277', 0.72))
+    rd.planks(cv, face, woods, seed=seed + 5, board=4, foot=h - 6)
     for (x, y) in face:
         if (x, y - 1) not in face:
             cv.set(x, y, BLEACHED[5])
@@ -51,9 +73,17 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
     cv.hline(4, 13, 10, BLEACHED[1]); cv.hline(w - 14, 13, 10, BLEACHED[1])
     # the sign board
     sx0, sx1, sy0, sy1 = 18, w - 18, 17, 29
+    # painted boards, the paint worn through to the wood in places
+    paint = (sign_ramp[2], rd.step(sign_ramp[2], 0.4), rd.mix(sign_ramp[2], '#B39277', 0.25))
+    rd.planks(cv, rect_set(sx0, sy0, sx1 - sx0, sy1 - sy0), paint, seed=seed + 9, board=4,
+              bleach=rd.mix(sign_ramp[3], '#E4CCB2', 0.4), bleach_top=0.3, gaps=0.0, length=(20, 40))
     for (x, y) in rect_set(sx0, sy0, sx1 - sx0, sy1 - sy0):
-        cv.set(x, y, sign_ramp[2] if y > sy0 else sign_ramp[3])
+        if rd.smooth_noise(x, y, 3, seed + 17) < 0.14:
+            rd.put(cv, x, y, '#A68266' if y % 4 else '#7E604C')     # paint flaked off
+    cv.hline(sx0, sy0, sx1 - sx0, sign_ramp[3])
     cv.hline(sx0, sy1, sx1 - sx0, sign_ramp[0])
+    for (nx, ny) in ((sx0 + 1, sy0 + 2), (sx1 - 2, sy0 + 2), (sx0 + 1, sy1 - 2), (sx1 - 2, sy1 - 2)):
+        cv.set(nx, ny, '#3E363C'); cv.set(nx, ny + 1, '#7C4E36')   # its nails, rust below
     ink = '#F4E6C8'
     # a pictogram, not lettering (letters at this size read as nonsense words): a frothy
     # mug for the saloon, a tied sack for the store, with small diamonds either side
@@ -79,7 +109,7 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
     for x in range(0, w):
         for y in range(py, py + 5):
             cv.set(x, y, BLEACHED[4] if y == py else BLEACHED[2] if y < py + 4 else BLEACHED[0])
-    detail.overhang_shadow(cv, 4, w - 4, py + 5, lambda x: 7, k=2, cap=2)
+    rd.shadow_band(cv, 4, w - 4, py + 5, lambda x: 6 + (x * 3) // w, k=2.2)
     for px in (2, w // 3 - 6, 2 * w // 3 + 4, w - 5):
         gp.post(cv, px, py + 5, h - 4, w=3, ramp=BLEACHED)
     # the ground storey: the doorway stands on the boardwalk, 32 px tall
@@ -104,27 +134,60 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
     else:
         dw = 16
         dx = w // 2 - dw // 2
+        glass = ((44, 58, 82), (62, 86, 118), (92, 122, 150))
         for (x, y) in rect_set(dx, top, dw, 32):  # a glazed door: a panel below, glass above
-            c = WOOD[2] if y > top + 18 else WTR[3] if y < top + 6 else WTR[1]
+            if y > top + 18:
+                c = rd.step(WOOD[2], 0.6 if (x - dx) in (2, 3) else -0.8 if (x - dx) == dw - 3 else 0)
+                if y in (top + 21, top + 29) and 2 <= x - dx < dw - 2:
+                    c = rd.step(WOOD[2], -1.4)            # the panel's mouldings
+            else:
+                c = _glass(glass, x - dx, y - top, dw, 18)
             if x in (dx, dx + dw - 1) or y in (top, top + 18):
-                c = WOOD[1]
-            cv.set(x, y, c)
-        cv.set(dx + dw - 4, top + 17, GOLD[3])  # its handle
+                c = rd.rgb(WOOD[1])
+            rd.put(cv, x, y, c)
+        cv.set(dx + dw - 4, top + 17, GOLD[3]); cv.set(dx + dw - 4, top + 18, GOLD[1])  # its handle
         for (x, y) in rect_set(dx - 2, top - 2, dw + 4, 2):
             cv.set(x, y, BLEACHED[1] if y == top - 1 else BLEACHED[4])
-        for (wx0, ww) in ((8, dx - 13), (dx + dw + 5, w - (dx + dw + 5) - 8)):  # the display windows
+        goods = ((GOLD, 'jar'), (RED, 'can'), (WTR, 'jar'), (ADOBE, 'sack'), (WOOD, 'box'))
+        for side, (wx0, ww) in enumerate(((8, dx - 13), (dx + dw + 5, w - (dx + dw + 5) - 8))):  # the display windows
             wy0 = top + 4
             for (x, y) in rect_set(wx0, wy0, ww, 20):
-                cv.set(x, y, WTR[3] if y < wy0 + 4 else WTR[1])
-            for k in range(max(1, ww // 9)):  # goods on the shelf behind the glass
-                cv.rect(wx0 + 2 + k * 9, wy0 + 12, 5, 6, (GOLD, RED, WTR, ADOBE)[(k + (wx0 > dx)) % 4][3])
+                rd.put(cv, x, y, _glass(glass, x - wx0, y - wy0, ww, 20))
+            # two shelves of goods behind the glass, each lit on its left
+            for sy, gh in ((wy0 + 9, 5), (wy0 + 17, 6)):
+                cv.hline(wx0, sy, ww, WOOD[1])
+                gx, k = wx0 + 1, side * 2 + (sy & 1)
+                while gx < wx0 + ww - 3:
+                    ramp, form = goods[k % len(goods)]
+                    gw = 3 if form in ('jar', 'can') else 4
+                    if gx + gw > wx0 + ww - 1:
+                        break
+                    for yy in range(sy - gh + (1 if form == 'can' else 0), sy):
+                        for xx in range(gx, gx + gw):
+                            c = ramp[3] if xx == gx else ramp[1] if xx == gx + gw - 1 else ramp[2]
+                            if yy == sy - gh + (1 if form == 'can' else 0):
+                                c = ramp[4] if form != 'sack' else ramp[3]   # a lid, a cap, a tied top
+                            if form == 'jar' and yy == sy - 3:
+                                c = '#E8DCC0'                              # its label
+                            cv.set(xx, yy, c)
+                    gx += gw + 1
+                    k += 1
+            # the glass's reflection over the goods: two slanting streaks of the bright street
+            for (x, y) in rect_set(wx0, wy0, ww, 20):
+                t = (x - wx0) + (y - wy0) * 0.6
+                if 3 <= t % 17 < 6:
+                    rd.put(cv, x, y, rd.mix(cv.get(x, y), (210, 228, 236), 0.45))
             cv.hline(wx0 - 1, wy0 + 20, ww + 2, BLEACHED[4])  # the sill
+            cv.hline(wx0 - 1, wy0 + 21, ww + 2, BLEACHED[1])
             cv.vline(wx0 - 1, wy0, 20, BLEACHED[1]); cv.vline(wx0 + ww, wy0, 20, BLEACHED[1])
+            cv.hline(wx0 - 1, wy0 - 1, ww + 2, BLEACHED[1])
     # the boardwalk at the foot
-    for y in range(h - 6, h):
-        for x in range(0, w):
-            cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
+    rd.planks(cv, rect_set(0, h - 6, w, 6), woods[:4], seed=seed + 7, board=5, vertical=True,
+              bleach_top=0.2, length=(9, 12), gaps=0.25, nails=False)
     cv.hline(0, h - 6, w, BLEACHED[5])
+    for x in range(0, w):
+        if rd.smooth_noise(x, 0, 3, seed + 51) < 0.35:
+            cv.set(x, h - 1, BLEACHED[1])   # the boards' worn front ends
     return cv
 
 
