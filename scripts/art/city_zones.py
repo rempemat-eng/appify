@@ -231,12 +231,15 @@ def junction(frame: int = 0):
         ('lamp-p1', 'gas_lamp', 40, 92), ('lamp-p2', 'gas_lamp', 264, 92), ('bench-p', 'iron_bench', 208, 104),
         ('trunk-p1', 'steamer_trunk', 14, 112), ('trunk-p2', 'steamer_trunk', 30, 118), ('coal-p', 'coal_cart', 284, 110),
         # the square: the tinkerers' workshop, the lodging house, the outfitter's shop
-        ('ws-left', 'workshop', 4, 150), ('ws-right', 'house_slate', 226, 152),
-        ('tower', 'clock_tower', 136, 176),
+        # (top-left corners: the scale pass, verticality.md section 5, made the lodging
+        # house, the clock tower and the shop taller, so their tops moved up and their
+        # feet stayed where they stood)
+        ('ws-left', 'workshop', 4, 142), ('ws-right', 'house_slate', 226, 136),
+        ('tower', 'clock_tower', 136, 152),
         ('lamp-s1', 'gas_lamp', 112, 280), ('lamp-s2', 'gas_lamp', 196, 280),
         ('gears-1', 'gear_pile', 96, 228), ('pipes-1', 'pipe_run', 214, 420),
-        ('puff-c1', 'steam_puff', 66, 132),
-        ('ws-low', 'shop_ashlar', 2, 296), ('coal-1', 'coal_cart', 100, 384),
+        ('puff-c1', 'steam_puff', 66, 124),
+        ('ws-low', 'shop_ashlar', 2, 274), ('coal-1', 'coal_cart', 100, 384),
         ('trunk-2', 'steamer_trunk', 280, 396),
         ('puff-v3', 'steam_puff', 206, 352), ('kiosk', 'tea_kiosk', 250, 300),
         # round the ring
@@ -384,7 +387,7 @@ def canal(frame: int = 0):
     picket_fence(cv, blocked, 8, 314, 438, 556, gate=(142, 178))
     objects = [
         # warehouses either side of the lane at the top
-        ('wh-1', 'warehouse', 14, -8), ('wh-2', 'workshop_round', 206, 24),
+        ('wh-1', 'warehouse', 14, -8), ('wh-2', 'workshop_round', 206, 16),
         ('lamp-1', 'gas_lamp', 124, 96), ('lamp-2', 'gas_lamp', 184, 96),
         # the north towpath: the crane and the moored boat
         ('crane', 'canal_crane', 70, 112), ('boat', 'narrowboat', 8, 186), ('trunk-1', 'steamer_trunk', 30, 150),
@@ -393,7 +396,7 @@ def canal(frame: int = 0):
         ('bench-t', 'iron_bench', 60, 262), ('lamp-4', 'gas_lamp', 124, 252), ('gears-t', 'gear_pile', 290, 256),
         # the foundry and the terminus
         ('foundry', 'foundry', 0, 296), ('puff-f1', 'steam_puff', 16, 278), ('puff-f2', 'steam_puff', 112, 284),
-        ('station', 'tube_station', 196, 300), ('car', 'atmos_car', 252, 318),
+        ('station', 'tube_station', 196, 284), ('car', 'atmos_car', 252, 318),
         # the allotments
         ('gardener', 'automaton', 140, 476), ('cloche-1', 'cloche', 80, 502), ('cloche-2', 'cloche', 262, 500),
         ('compost', 'gear_pile', 284, 528), ('bench-a', 'iron_bench', 186, 404), ('lamp-5', 'gas_lamp', 248, 400),
@@ -1395,11 +1398,11 @@ def _door_aprons() -> list:
     out = []
     for (key, (w, floors, style, seed, shop, setback, blade, *_rest), fx, fy) in city_buildings():
         x0 = fx - w // 2
-        if style == 'glass':
+        if style == 'glass' and shop != 'shop':  # (a lobby's revolving door is central)
             dx = fx
         else:
-            dx = x0 + 10 if noise2(seed, 1, 1920) > 0.5 else x0 + w - 10
-        out.append((dx - 12, fy - 2, dx + 12, fy + 16))
+            dx = x0 + 15 if noise2(seed, 1, 1920) > 0.5 else x0 + w - 15  # (the shop's double door, cyber_props._shopfront)
+        out.append((dx - 14, fy - 2, dx + 14, fy + 16))
     return out
 
 
@@ -1549,7 +1552,7 @@ def city_props_placed() -> list:
     for k, (key, spec, fx, fy) in enumerate(city_buildings()):
         w_, style_, seed_ = spec[0], spec[2], spec[3]
         x0 = fx - w_ // 2
-        dx = fx if style_ == 'glass' else (x0 + 10 if noise2(seed_, 1, 1920) > 0.5 else x0 + w_ - 10)
+        dx = fx if style_ == 'glass' and spec[4] != 'shop' else (x0 + 15 if noise2(seed_, 1, 1920) > 0.5 else x0 + w_ - 15)
         r = noise2(k, 7, 1980)
         if r > 0.78:
             put(f'steam-{n}', 'city_steam', (x0 + 8) if dx > fx else (x0 + w_ - 8), fy + 7, gap=1)

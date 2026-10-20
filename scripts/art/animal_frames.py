@@ -111,9 +111,39 @@ def move(pix: dict, sel, dx: int, dy: int, heal: bool = False) -> dict:
     return out
 
 
+def _bluish(c) -> bool:
+    return c[2] > c[0] + 20 and c[2] >= c[1]
+
+
+def _grassy(c) -> bool:
+    return c[1] > c[0] + 15 and c[1] > c[2] + 15
+
+
+def split_ground(pix: dict) -> tuple[dict, dict]:
+    """A still as (the animal, what it stands on): its own contact shadow (the translucent
+    pixels a lane draws under it), the water round a wader's feet (a bluish bottom row) and
+    the grass at a grazing mouth stay where they are while the animal moves above them."""
+    ground = {k: c for k, c in pix.items() if c[3] < 255 or _grassy(c)}
+    body = {k: c for k, c in pix.items() if k not in ground}
+    if body:
+        bottom = max(y for (_x, y) in body)
+        row = [k for k in body if k[1] == bottom]
+        if all(_bluish(body[k]) for k in row):
+            for k in row:
+                ground[k] = body.pop(k)
+    return body, ground
+
+
+def on_ground(pix: dict, ground: dict) -> dict:
+    """The animal drawn over what it stands on."""
+    return {**ground, **pix}
+
+
 def legs_of(pix: dict) -> tuple[int, list[list[int]]]:
     """The rows of a standing animal's legs and the columns of each leg: from the bottom
-    up, the rows that are only thin separate runs (two pixels or less) are legs."""
+    up, the rows that are only thin separate runs (two pixels or less) are legs. A run two
+    wide is a near and a far leg seen one behind the other (a sheep's pair, a heron's
+    two), and the legs may all be in one such run."""
     ys = sorted({y for (_x, y) in pix})
     bottom = ys[-1]
     top = bottom + 1
@@ -129,7 +159,7 @@ def legs_of(pix: dict) -> tuple[int, list[list[int]]]:
                 cur = [x]
         if cur:
             runs.append(cur)
-        if len(runs) < 2 or any(len(r) > 2 for r in runs):
+        if not runs or (len(runs) < 2 and len(runs[0]) < 2) or any(len(r) > 2 for r in runs):
             break
         top = y
         if y == bottom:
@@ -139,11 +169,27 @@ def legs_of(pix: dict) -> tuple[int, list[list[int]]]:
 
 def step(pix: dict, forward: int, first: bool) -> dict:
     """A walking step: alternate legs (the first and third, or the second and fourth)
-    swing a pixel forward and the others a pixel back, so the pairs open and close."""
+    swing a pixel forward and the others a pixel back, so the pairs open and close. Where
+    each pair is a near and a far leg one behind the other (two wide), one pair strides
+    on each step instead: the front pair on the first, the hind pair on the second, the
+    leading leg's lower part a pixel forward and the other's a pixel back, the upper leg
+    still under the body."""
     top, legs = legs_of(pix)
     if len(legs) < 2:
         return dict(pix)
     out = dict(pix)
+    if all(len(leg) == 2 for leg in legs):
+        legs = sorted(legs, key=lambda leg: leg[0] * forward)
+        pair = legs[-1] if first else legs[0]
+        bottom = max(y for (_x, y) in pix)
+        lead, trail = (pair[1], pair[0]) if forward > 0 else (pair[0], pair[1])
+        moved = {}
+        for (x, y), c in pix.items():
+            if y >= max(top + 1, bottom - 1) and x in pair:
+                out.pop((x, y), None)
+                moved[(x + (forward if x == lead else -forward), y)] = c
+        out.update(moved)
+        return out
     moved = {}
     for i, leg in enumerate(sorted(legs)):
         d = forward if (i % 2 == 0) == first else -forward
@@ -158,7 +204,7 @@ def step(pix: dict, forward: int, first: bool) -> dict:
 def lift_leg(pix: dict, which: int, forward: int) -> dict:
     """A wading step: one leg lifted, its foot drawn up and a pixel forward."""
     top, legs = legs_of(pix)
-    legs = sorted(legs)
+    legs = sorted([x] for leg in legs for x in leg)  # each column a leg (a near and a far)
     if which >= len(legs):
         return dict(pix)
     bottom = max(y for (_x, y) in pix)
@@ -211,40 +257,88 @@ def _bbox(pix):
     return min(xs), min(ys), max(xs), max(ys)
 
 
-def _sheep(cv: Canvas, facing: int) -> dict:
-    """A grazing sheep (its still has the head down): look up, chew, two steps."""
-    pix = pixels(cv)
-    x0, y0, x1, y1 = _bbox(pix)
+def _head_of(pix: dict, facing: int, reach: int = 6):
+    """The dark face of a pale-fleeced animal: the pixels at its front, above its legs,
+    darker than any of the fleece behind them."""
+    x0, _y0, x1, _y1 = _bbox(pix)
     top, _legs = legs_of(pix)
-    dark = min(_lum(c) for c in pix.values()) + 40
-    front = (lambda x: x >= x1 - 6) if facing > 0 else (lambda x: x <= x0 + 6)
+    front = (lambda x: x >= x1 - reach) if facing > 0 else (lambda x: x <= x0 + reach)
+    # (the fleece behind the face, leaving out the dark legs under it)
+    back = sorted(_lum(c) for (x, y), c in pix.items() if not front(x) and y < top)
+    fleece = [v for v in back if back and v > back[len(back) // 2] / 2]
+    dark = (min(fleece) if fleece else 255) - 4
+    face = {k for k, c in pix.items() if front(k[0]) and k[1] < top and _lum(c) < dark}
+    # and what only the face holds up (the tuft of wool on a lamb's poll), so nothing is
+    # left floating where the head was
+    for (x, y) in list(pix):
+        near = [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+        if (x, y) not in face and front(x) and any(n in face for n in near) and \
+                all(n in face or n not in pix for n in near):
+            face.add((x, y))
+    return lambda x, y, c: (x, y) in face
 
-    def head(x, y, c):
-        return front(x) and y < top and _lum(c) < dark
 
+def _sheep(cv: Canvas, facing: int) -> dict:
+    """A grazing sheep (its still has the head down in the grass): look up (the grass
+    bitten off), chew, and a stride of the front and then the hind legs. Its own contact
+    shadow and the grass stay on the ground."""
+    pix, ground = split_ground(pixels(cv))
+    head = _head_of(pix, facing)
+    if not any(head(x, y, c) for (x, y), c in pix.items()):
+        return {}
+    shadow = {k: c for k, c in ground.items() if c[3] < 255}
+    return {
+        'look': canvas_of(cv, on_ground(move(pix, head, facing, -3, heal=True), shadow)),
+        'chew': canvas_of(cv, {**on_ground(move(pix, head, 0, 1, heal=True), shadow),
+                               **{k: c for k, c in ground.items() if c[3] == 255}}),
+        'step1': canvas_of(cv, on_ground(step(pix, facing, True), ground)),
+        'step2': canvas_of(cv, on_ground(step(pix, facing, False), ground)),
+    }
+
+
+def _lying(cv: Canvas, facing: int) -> dict:
+    """A sheep lying down with its head up, chewing the cud: the jaw (the lower half of
+    the face) drops a pixel and comes up again; the body and its shadow stay."""
+    pix, ground = split_ground(pixels(cv))
+    _x0, y0, _x1, y1 = _bbox(pix)
+    head = _head_of(pix, facing, reach=5)
+    rows = sorted({y for (x, y), c in pix.items() if head(x, y, c)})
+    if not rows:
+        return {}
+    mid = (rows[0] + rows[-1] + 1) // 2
+    jaw = lambda x, y, c: head(x, y, c) and y >= mid  # noqa: E731
+    return {'chew': canvas_of(cv, on_ground(move(pix, jaw, 0, 1, heal=True), ground))}
+
+
+def _lamb(cv: Canvas, facing: int) -> dict:
+    """A lamb standing with its head up: it dips to nibble and lifts again, chews, and
+    trots on shorter legs."""
+    pix, ground = split_ground(pixels(cv))
+    head = _head_of(pix, facing, reach=4)
     if not any(head(x, y, c) for (x, y), c in pix.items()):
         return {}
     return {
-        'look': canvas_of(cv, move(pix, head, facing, -3, heal=True)),
-        'chew': canvas_of(cv, move(pix, head, 0, 1, heal=True)),
-        'step1': canvas_of(cv, step(pix, facing, True)),
-        'step2': canvas_of(cv, step(pix, facing, False)),
+        'dip': canvas_of(cv, on_ground(move(pix, head, facing, 2, heal=True), ground)),
+        'chew': canvas_of(cv, on_ground(move(pix, head, 0, 1, heal=True), ground)),
+        'step1': canvas_of(cv, on_ground(step(pix, facing, True), ground)),
+        'step2': canvas_of(cv, on_ground(step(pix, facing, False), ground)),
     }
 
 
 def _heron(cv: Canvas, facing: int) -> dict:
     """A heron standing in the shallows: preen (the head drawn down to the breast),
     strike (neck and bill thrust down and forward), and a wading step on each leg."""
-    pix = pixels(cv)
+    pix, ground = split_ground(pixels(cv))
     x0, y0, x1, y1 = _bbox(pix)
-    # the body is the first row from the top that is wide; above it are the neck and head
-    body = next(y for y in range(y0, y1 + 1) if sum(1 for (_x, yy) in pix if yy == y) >= 7)
+    # the body is the first wide row below the head (the bill makes the head's row wide
+    # too); above it are the neck and head
+    body = next(y for y in range(y0 + 3, y1 + 1) if sum(1 for (_x, yy) in pix if yy == y) >= 7)
     head = lambda x, y, c: y < y0 + (body - y0) // 2  # noqa: E731
     return {
-        'preen': canvas_of(cv, move(pix, head, -facing, 3)),
-        'strike': canvas_of(cv, move(pix, head, facing * 2, 2)),
-        'step1': canvas_of(cv, lift_leg(pix, 0, facing)),
-        'step2': canvas_of(cv, lift_leg(pix, 1, facing)),
+        'preen': canvas_of(cv, on_ground(move(pix, head, -facing, 3), ground)),
+        'strike': canvas_of(cv, on_ground(move(pix, head, facing * 2, 2), ground)),
+        'step1': canvas_of(cv, on_ground(lift_leg(pix, 0, facing), ground)),
+        'step2': canvas_of(cv, on_ground(lift_leg(pix, 1, facing), ground)),
     }
 
 
@@ -333,6 +427,17 @@ KINDS: dict[str, dict] = {
                         walk=[], moves='still', reach=0, speed=0, step_ms=0),
 }
 KINDS['sheep_left'] = KINDS['sheep']
+# Claude B's lying sheep chews the cud where it lies; its lamb trots in shorter steps and
+# keeps nearer home. The sheep and lambs draw their own contact shadow in the still
+# (valley_props.sheep), which walks with them, so they take no derived shadow (`own_shadow`).
+KINDS['sheep_lying'] = dict(east='sheep_lying', west='sheep_lying_left', idle=[['chew', 240, 4]], walk=[],
+                            moves='still', reach=0, speed=0, step_ms=0)
+KINDS['lamb'] = dict(east='lamb', west='lamb_left', idle=[['dip', 1300, 1], ['chew', 200, 3]],
+                     walk=['step1', 'step2'], moves='ground', reach=7, speed=4, step_ms=180)
+for _k in ('sheep', 'lamb'):
+    KINDS[_k]['own_shadow'] = True
+KINDS['sheep_lying_left'] = KINDS['sheep_lying']
+KINDS['lamb_left'] = KINDS['lamb']
 
 
 def roles(kind: dict) -> list[str]:
@@ -345,7 +450,8 @@ def bases(kind: dict) -> list[str]:
 
 def moving(key: str) -> bool:
     """An animal that walks or swims away from its home spot (its shadow goes with it,
-    so the zone does not paint one on the ground)."""
+    drawn in its still or derived by `shade`, so the zone does not paint one on the
+    ground)."""
     return key in KINDS and KINDS[key]['moves'] != 'still'
 
 
@@ -366,6 +472,8 @@ def frames(items: dict) -> dict:
         out['duck_w'] = relit_mirror(items['duck'])
     have = {**items, **out}
     for base, fn in (('sheep', lambda c: _sheep(c, 1)), ('sheep_left', lambda c: _sheep(c, -1)),
+                     ('sheep_lying', lambda c: _lying(c, 1)), ('sheep_lying_left', lambda c: _lying(c, -1)),
+                     ('lamb', lambda c: _lamb(c, 1)), ('lamb_left', lambda c: _lamb(c, -1)),
                      ('heron', lambda c: _heron(c, -1)), ('heron_e', lambda c: _heron(c, 1)),
                      ('duck', lambda c: _duck(c, 1)), ('duck_w', lambda c: _duck(c, -1)),
                      ('crab', _crab), ('horse', lambda c: _tail_and_head(c, -1, 'low')),
@@ -501,7 +609,7 @@ def export(built: dict, sm: dict, used: dict, grid_of) -> list[str]:
             'walk': [1 + len(kind['idle']) + i for i in range(len(kind['walk']))],
             'moves': kind['moves'], 'speed': kind['speed'], 'stepMs': kind['step_ms'],
         }
-        if kind['moves'] != 'still':
+        if kind['moves'] != 'still' and not kind.get('own_shadow'):
             sh = shade(base)
             if sh:
                 sk = f'{key}_shade'

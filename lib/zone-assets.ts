@@ -30,6 +30,8 @@ import propBasaltStumpsB from '@/assets/zones/props/basalt_stumps_b.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBed from '@/assets/zones/props/bed.png';
 import propBeehive from '@/assets/zones/props/beehive.png';
+import propBeehiveF1 from '@/assets/zones/props/beehive_f1.png';
+import propBeehiveF2 from '@/assets/zones/props/beehive_f2.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
 import propBirdOfParadise from '@/assets/zones/props/bird_of_paradise.png';
@@ -114,6 +116,8 @@ import propCityCarC from '@/assets/zones/props/city_car_c.png';
 import propCityCarD from '@/assets/zones/props/city_car_d.png';
 import propCityCarE from '@/assets/zones/props/city_car_e.png';
 import propCityCargoShip from '@/assets/zones/props/city_cargo_ship.png';
+import propCityCat from '@/assets/zones/props/city_cat.png';
+import propCityCatC from '@/assets/zones/props/city_cat_c.png';
 import propCityContainerStack from '@/assets/zones/props/city_container_stack.png';
 import propCityContainerStackB from '@/assets/zones/props/city_container_stack_b.png';
 import propCityContainerStackD from '@/assets/zones/props/city_container_stack_d.png';
@@ -193,6 +197,7 @@ import propEmberShrine from '@/assets/zones/props/ember_shrine.png';
 import propEngineTank from '@/assets/zones/props/engine_tank.png';
 import propFern from '@/assets/zones/props/fern.png';
 import propFieldGate from '@/assets/zones/props/field_gate.png';
+import propFieldGateLow from '@/assets/zones/props/field_gate_low.png';
 import propFirePit from '@/assets/zones/props/fire_pit.png';
 import propFireplace from '@/assets/zones/props/fireplace.png';
 import propFireplaceF1 from '@/assets/zones/props/fireplace_f1.png';
@@ -334,11 +339,9 @@ import propSheepChew from '@/assets/zones/props/sheep_chew.png';
 import propSheepLeft from '@/assets/zones/props/sheep_left.png';
 import propSheepLeftChew from '@/assets/zones/props/sheep_left_chew.png';
 import propSheepLeftLook from '@/assets/zones/props/sheep_left_look.png';
-import propSheepLeftShade from '@/assets/zones/props/sheep_left_shade.png';
 import propSheepLeftStep1 from '@/assets/zones/props/sheep_left_step1.png';
 import propSheepLeftStep2 from '@/assets/zones/props/sheep_left_step2.png';
 import propSheepLook from '@/assets/zones/props/sheep_look.png';
-import propSheepShade from '@/assets/zones/props/sheep_shade.png';
 import propSheepStep1 from '@/assets/zones/props/sheep_step1.png';
 import propSheepStep2 from '@/assets/zones/props/sheep_step2.png';
 import propShopAshlar from '@/assets/zones/props/shop_ashlar.png';
@@ -823,6 +826,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bathhouse: propBathhouse,
   bed: propBed,
   beehive: propBeehive,
+  beehive_f1: propBeehiveF1,
+  beehive_f2: propBeehiveF2,
   bell_tower: propBellTower,
   bench: propBench,
   bird_of_paradise: propBirdOfParadise,
@@ -907,6 +912,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   city_car_d: propCityCarD,
   city_car_e: propCityCarE,
   city_cargo_ship: propCityCargoShip,
+  city_cat: propCityCat,
+  city_cat_c: propCityCatC,
   city_container_stack: propCityContainerStack,
   city_container_stack_b: propCityContainerStackB,
   city_container_stack_d: propCityContainerStackD,
@@ -986,6 +993,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   engine_tank: propEngineTank,
   fern: propFern,
   field_gate: propFieldGate,
+  field_gate_low: propFieldGateLow,
   fire_pit: propFirePit,
   fireplace: propFireplace,
   fireplace_f1: propFireplaceF1,
@@ -1127,11 +1135,9 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   sheep_left: propSheepLeft,
   sheep_left_chew: propSheepLeftChew,
   sheep_left_look: propSheepLeftLook,
-  sheep_left_shade: propSheepLeftShade,
   sheep_left_step1: propSheepLeftStep1,
   sheep_left_step2: propSheepLeftStep2,
   sheep_look: propSheepLook,
-  sheep_shade: propSheepShade,
   sheep_step1: propSheepStep1,
   sheep_step2: propSheepStep2,
   shop_ashlar: propShopAshlar,

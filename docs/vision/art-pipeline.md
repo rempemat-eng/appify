@@ -21,7 +21,7 @@ How NapAttack's art is made, so it stays consistent and nothing gets cut off. Re
 - One art pixel is the game's shared pixel (`lib/pixel-scale.ts`): a whole number of device pixels, about 300 art pixels across a phone (4 device pixels, 1.33 CSS px, on a 3x phone). The world, the characters, the frames and the icons all use it.
 - The garden is exported at 4x (one image pixel per device pixel on a 3x phone). Other folders are still 6x until step 7 moves them.
 - Only animated parts animate: the garden ground is one still image; the stream and pond are small four-frame overlays (`gardenWater`).
-- Shadows and contact shading are baked into the ground, so depth costs nothing at runtime on a phone. An animal that wanders is the exception: its shadow is its own small picture (`<sprite>_shade`) that walks with it.
+- Shadows and contact shading are baked into the ground, so depth costs nothing at runtime on a phone. An animal that wanders is the exception: its shadow walks with it, either drawn into its still (the sheep and lambs' contact shadow, which the derived frames leave on the ground under the moving legs) or, for a still drawn without one, its own small picture (`<sprite>_shade`); never both.
 
 ## Animals that live
 
