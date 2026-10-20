@@ -72,7 +72,7 @@ def _bands(pts):
 def planks(cv: Canvas, pts, woods, seed: int = 0, board: int = 4, foot: int | None = None,
            bleach=(222, 210, 190), bleach_top: float = 0.45, nails: bool = True,
            gaps: float = 0.12, vertical: bool = False, light_x: float = 0.10,
-           length=(16, 34)):
+           length=(16, 34), gap_groups: bool = False):
     """Weathered boards over `pts`. `woods` are the base colours the boards are cut from
     (each board picks one, with a small value change of its own). Rows run along x (or
     along y with `vertical`). `foot` is the row the wall stands on (dust and grime rise
@@ -92,7 +92,9 @@ def planks(cv: Canvas, pts, woods, seed: int = 0, board: int = 4, foot: int | No
             while a <= span_a[1]:
                 ln = r.randint(*length)
                 cuts.append((a, a + ln, r.randrange(len(woods)), r.uniform(-0.4, 0.4),
-                             r.random() < 0.55, r.random() < gaps, r.random() < 0.35,
+                             r.random() < 0.55,
+                             r.random() < gaps and (not gap_groups or smooth_noise(a, bi * 4, 30, seed + 71) > 0.62),
+                             r.random() < 0.35,
                              r.randint(3, ln - 3) if ln > 7 else 3, r.random()))
                 a += ln
             rows[bi] = cuts
@@ -308,3 +310,29 @@ def weather(cv: Canvas, pts, seed: int = 0, dust=None, foot: int | None = None, 
             if smooth_noise(x, y, 4, seed + 65) < 0.2 + 0.55 * k:
                 out = mix(out, dust, 0.25 + 0.35 * k)
         put(cv, x, y, out)
+
+
+def limit_colours(cv: Canvas, n: int | None = None) -> Canvas:
+    """Hold a sprite to the house style's colour budget (docs/vision/house-style.md, draft:
+    at most 64 colours for a prop, 128 for a building over 2,500 px): the opaque pixels
+    are reduced by median cut without dithering, so the parts keep their tones and no
+    speckle is added. Translucent pixels (glass, glows) are left as they are."""
+    from PIL import Image
+    img = cv.img
+    px = img.load()
+    W, H = img.size
+    opaque = [(x, y) for y in range(H) for x in range(W) if px[x, y][3] == 255]
+    if n is None:
+        n = 128 if len(opaque) > 2500 else 64
+    colours = {px[x, y][:3] for (x, y) in opaque}
+    if len(colours) <= n:
+        return cv
+    strip = Image.new('RGB', (len(opaque), 1))
+    sp = strip.load()
+    for i, (x, y) in enumerate(opaque):
+        sp[i, 0] = px[x, y][:3]
+    q = strip.quantize(colors=n, method=Image.Quantize.MEDIANCUT, dither=Image.Dither.NONE).convert('RGB')
+    qp = q.load()
+    for i, (x, y) in enumerate(opaque):
+        px[x, y] = (*qp[i, 0], 255)
+    return cv
