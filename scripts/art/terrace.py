@@ -845,6 +845,20 @@ class _Painter:
                 c = lerp(c, '#D6C46E', 0.3 * (hue - 0.55)) if hue > 0.55 else lerp(c, '#4E8A78', 0.3 * (0.45 - hue)) \
                     if hue < 0.45 else c
                 self.img[y, x] = tuple(min(255, int(v2 * lum)) for v2 in c)
+        gd = self._growth()
+        sd = s * 7 + 510
+        # the weave: Eastward's open grass is a close, low-contrast scatter of little
+        # chevrons a step darker than the ground (here a 5 px cup, all one piece), calm
+        # because it is even and faint
+        for j, y in enumerate(range(2, H, 3)):
+            for i, x in enumerate(range((j % 2) * 2, W - 3, 4)):
+                xx = x + int(noise2(i, j, sd + 30) * 2)
+                if noise2(i, j, sd + 31) > 0.7 - 1.4 * float(gd[y, min(W - 1, xx + 1)]) or not self._open(xx, y - 1, xx + 3, y + 1):
+                    continue
+                base = tuple(int(v) for v in self.img[y, xx + 1])
+                c = lerp(base, '#2E4A30', 0.17)
+                for (dx, dy) in ((0, -1), (0, 0), (1, 0), (2, 0), (2, -1)):
+                    self.put(xx + dx, y + dy, c)
         # the grain: short blade strokes (2 px, never one) a tone off the ground under them,
         # thicker where the clusters gather, thin in the calm
         sd = s * 7 + 510
@@ -855,7 +869,7 @@ class _Painter:
                 if not self._open(xx, yy - 1, xx + 2, yy + 1):
                     continue
                 q = noise2(i, j, sd + 6)
-                if q > 0.28 + 0.4 * smooth_noise(xx, yy, 10, sd + 7):
+                if q > 0.62 - 0.35 * float(gd[yy, xx]):
                     continue
                 T = tones[int(self.lvl[yy, xx])]
                 base = tuple(int(v) for v in self.img[yy, xx])
@@ -871,19 +885,30 @@ class _Painter:
                     self.put(xx, yy, c); self.put(xx, yy - 1, c)             # upright
                 else:
                     self.put(xx, yy, c); self.put(xx + 1, yy - 1, c); self.put(xx + 1, yy, c)  # a little V
-        dens = lambda x, y: smooth_noise(x, y, 14, sd + 9)  # noqa: E731  (tufts gather in clusters)
-        for j, y in enumerate(range(3, H - 1, 4)):
-            for i, x in enumerate(range(2 + 2 * (j % 2), W - 3, 4)):
+        # growth gathers where Eastward puts it: by edges, feet, banks and stairs, and in a
+        # few slow clumps out in the open; the open stays calm
+        dens = self._growth()
+        for j, y in enumerate(range(3, H - 1, 3)):
+            for i, x in enumerate(range(2 + (j % 2) * 2, W - 3, 4)):
                 xx = x + int(noise2(i, j, sd + 1) * 3) - 1
                 yy = y + int(noise2(i, j, sd + 2) * 3) - 1
-                if not (4 <= yy < H - 1 and 3 <= xx < W - 3) or not self._open(xx - 2, yy - 4, xx + 3, yy + 1):
+                if not (6 <= yy < H - 1 and 4 <= xx < W - 4) or not self._open(xx - 3, yy - 6, xx + 4, yy + 1):
                     continue
                 k = noise2(i, j, sd)
                 L = int(self.lvl[yy, xx])
-                if k < 0.15 + 0.3 * dens(xx, yy):
-                    self._tuft(xx, yy, L, i * 131 + j)
-                elif k > 0.985:
+                dv = float(dens[yy, xx])
+                if k < 0.46 * dv ** 1.4:
+                    self._tuft(xx, yy, L, i * 131 + j, dv)
+                elif k > 0.988 - 0.02 * dv:
                     self._flower(xx, yy, (i * 7 + j) % 4)
+        for j, y in enumerate(range(10, H - 2, 22)):          # long grass: a few patches, one shape each
+            for i, x in enumerate(range(8 + (j % 2) * 20, W - 16, 40)):
+                xx = x + int(noise2(i, j, sd + 21) * 16) - 8
+                yy = y + int(noise2(i, j, sd + 22) * 10) - 5
+                w = 8 + int(noise2(i, j, sd + 23) * 9)
+                if 0 <= yy < H and 0 <= xx < W and dens[yy, xx] > 0.45 and noise2(i, j, sd + 24) > 0.35 and \
+                        self._open(xx - 1, yy - 7, xx + w + 1, yy + 1):
+                    self._long_grass(xx, yy, w, int(self.lvl[yy, xx]), i * 17 + j)
         for k in range(0):                         # (worn patches come with feet and landings)
             cx, cy = int(noise2(k, 1, sd + 3) * W), int(noise2(k, 2, sd + 3) * H)
             self._worn(cx, cy, 6 + int(noise2(k, 3, sd + 3) * 8), 3 + int(noise2(k, 4, sd + 3) * 3), k)
@@ -894,22 +919,75 @@ class _Painter:
             return False
         return bool(((self.kind[y0:y1, x0:x1] == TOP) & ~self.wet[y0:y1, x0:x1]).all())
 
-    def _tuft(self, x, y, L, k):
-        """A tuft: three to five blades, each one colour from root to tip (2 to 4 px), the
-        left ones lit, the right ones dark, on a dark root row; a soft shadow to the right."""
+    def _growth(self):
+        """0 (bare, calm) .. 1 (thick growth) per pixel: high within ~14 px of any edge (a
+        face, a band, water, a stair or ramp) and in slow clumps out in the open."""
+        if getattr(self, '_gr', None) is not None:
+            return self._gr
+        H, W = self.H, self.W
+        edge = (self.kind != TOP) | self.wet
+        dist = np.full((H, W), 15, np.int16)
+        cur = edge.copy()
+        for d in range(1, 15):
+            cur = cur | _shift(cur, 1, 0) | _shift(cur, -1, 0) | _shift(cur, 0, 1) | _shift(cur, 0, -1)
+            dist[cur & (dist > d)] = d
+        near = np.clip(1 - dist / 14.0, 0, 1)
+        ys, xs = np.mgrid[0:H, 0:W]
+        blob = np.vectorize(lambda x, y: smooth_noise(x, y, 38, self.seed + 901))(xs[::4, ::4], ys[::4, ::4])
+        blob = np.kron(blob, np.ones((4, 4)))[:H, :W]
+        open_g = np.clip((blob - 0.52) * 2.6, 0, 0.8)
+        self._gr = np.clip(np.maximum(near * 0.95, open_g) + 0.06, 0, 1)
+        return self._gr
+
+    TUFTS = [   # bottom row is the root's shadow; l lit, h highlight, m mid, d dark, y / Y dry
+        ['l.m', 'lmm', 'rrr'],
+        ['.l..m', '.l.mm', 'llmm.', 'rrrr.'],
+        ['..h..', '.lh.m', '.l..m', 'll.mm', 'lmmmm', '.rrr.'],
+        ['l..h..m', 'll.h.mm', '.lmmmm.', '.rrrrr.'],
+        ['Y...y', 'Y.y.y', 'YYyyy', '.yyy.', '.rrr.'],
+        ['.h.', 'lhm', 'lmm', 'rr.'],
+        ['h.....m', 'hl..mmm', '.ll.mm.', '..lmm..', '.rrrrr.'],
+    ]
+
+    def _tuft(self, x, y, L, k, dv=0.5):
+        """A tuft from a set of seven drawn shapes and sizes (bigger where growth is thick),
+        lit on its left, every part two pixels or more; its shadow falls to the right."""
         g = grass_ramp(L)
-        n = 3 + int(noise2(k, 1, self.seed + 871) * 3)
-        x0 = x - n // 2
-        for b in range(n):
-            self.put(x0 + b, y, lerp(g[1], g[2], 0.3))          # the root row
-        self.mul(x0 + n, y, MEDIUM)
-        for b in range(n):
-            if n > 3 and b % 2 == 1 and noise2(k, b, self.seed + 872) > 0.4:
-                continue                                         # gaps between blades
-            hgt = 2 + int(noise2(k, b + 9, self.seed + 873) * 2.5) + (1 if b == n // 2 else 0)
-            c = lerp(g[4], '#F4F2C4', 0.18) if b < n // 2 else g[3] if b == n // 2 else lerp(g[2], g[1], 0.5)
-            for t in range(1, hgt + 1):
-                self.put(x0 + b, y - t, c)
+        col = {'l': lerp(g[4], '#F4F2C4', 0.15), 'h': lerp(g[4], '#F4F2C4', 0.4), 'm': g[3],
+               'd': lerp(g[2], g[1], 0.5), 'r': lerp(g[1], g[2], 0.3),
+               'y': lerp(g[3], '#D8C070', 0.5), 'Y': lerp(g[4], '#F0DE90', 0.55)}
+        q = noise2(k, 1, self.seed + 871)
+        big = dv > 0.5 and noise2(k, 2, self.seed + 872) < dv
+        pick = [2, 3, 6] if big else [0, 1, 5]
+        if q > 0.86:
+            pick = [4]                                        # dry grass, here and there
+        pat = self.TUFTS[pick[int(noise2(k, 3, self.seed + 873) * len(pick)) % len(pick)]]
+        hgt, wid = len(pat), len(pat[0])
+        x0, y0 = x - wid // 2, y - hgt + 1
+        for j, row in enumerate(pat):
+            for i, ch in enumerate(row):
+                if ch != '.':
+                    self.put(x0 + i, y0 + j, col[ch])
+        self.mul(x0 + wid, y, MEDIUM); self.mul(x0 + wid, y - 1, MEDIUM)
+
+    def _long_grass(self, x, y, w, L, k):
+        """A patch of long grass drawn as one shape: strands two px wide rising 4 to 7 px,
+        a dark mass at the root, lit tips on the left, a ragged top, its shadow to the right."""
+        g = grass_ramp(L)
+        for i in range(0, w, 2):
+            h = 4 + int(3 * smooth_noise(x + i, y, 4, self.seed + 911) + noise2(k, i, self.seed + 912) * 1.5)
+            lit = i < w * 0.45
+            tip = lerp(g[4], '#F4F2C4', 0.2) if lit else g[3]
+            body = g[3] if lit else lerp(g[3], g[2], 0.5)
+            for dx in (0, 1):
+                if i + dx >= w:
+                    continue
+                hh = h - (1 if dx and noise2(k, i, self.seed + 913) > 0.5 else 0)
+                for t in range(hh):
+                    c = lerp(g[1], g[2], 0.4) if t < 2 else body if t < hh - 2 else tip
+                    self.put(x + i + dx, y - t, c)
+        for t in range(3):
+            self.mul(x + w + t // 2, y - t, MEDIUM)
 
     def _flower(self, x, y, k):
         petal = ['#F2E6C8', '#E8B4C8', '#F0D060', '#B8C8F0'][k]
@@ -1136,7 +1214,7 @@ class _Painter:
     def faces(self):
         H, W, kind = self.H, self.W, self.kind
         u, phi = self._u_map()
-        phi[kind == STRIP_K] = self.sdir[kind == STRIP_K]
+        phi[kind == STRIP_K] = 0.5 * self.sdir[kind == STRIP_K]   # a side turns one step from the light
         self.u, self.phi = u, phi
         sel = (kind == FACE_K) | ((kind == STRIP_K) & (self.sreg == 1)) | (kind == FALL_K)
         ids = {}
@@ -1207,7 +1285,8 @@ class _Painter:
                     lit = -(0.55 * nx + 0.85 * ny)
                     i2 = t + (1 if lit > 0.4 else 0) - (1 if lit < -0.45 else 0)
                     ph = float(self.phi[yy, xx])
-                    i2 += (-1 if ph > 0.3 else 0) + (-1 if ph > 0.75 else 0) + (1 if ph < -0.4 else 0)
+                    side_px = kind[yy, xx] == STRIP_K and self.sreg[yy, xx] == 0
+                    i2 += (0 if side_px else (-1 if ph > 0.3 else 0) + (-1 if ph > 0.75 else 0)) + (1 if ph < -0.4 else 0)
                     i2 -= 1 if f[yy, xx] > 0.82 else 0
                     i2 = max(1, min(5, i2))
                     if moss and lit > -0.1 and ph < 0.5:
@@ -1218,35 +1297,23 @@ class _Painter:
                     else:
                         c = R[i2] if tint is None else lerp(R[i2], tint[0], tint[1])
                     self.put(xx, yy, c)
-        # the side bands (beside a tier's top): a column of lumps the band's width, one per
-        # 4 to 9 px, lit when the band faces west, in the darkest tones facing east
-        for y, x in zip(*np.nonzero(side)):
-            k, dr = int(self.sk[y, x]), int(self.sdir[y, x])
-            lit = dr < 0
-            ex = x - dr * k
-            pos, ln, sid = self._seg(ex, y)
-            body = (3 if noise2(sid, ex, sd + 7) > 0.5 else 4) if lit else (1 if noise2(sid, ex, sd + 7) > 0.4 else 2)
-            split = noise2(sid, ex, sd + 8) > 0.62 and k == 3
-            if pos == ln - 1 or split:
-                c = R[2] if lit else CREV
-            elif pos == 0:
-                c = R[min(5, body + 1)]
-            elif lit and k == 2 and pos == 1:
-                c = R[5]                                   # the lump's sunlit shoulder
-            else:
-                c = R[body]
-            if k >= STRIP - 1 and pos in (0, ln - 1):
-                c = R[2] if lit else CREV                  # lumps round off at the outer edge
-            hue = noise2(sid, ex, sd + 9)
-            if hue > 0.8:
-                c = lerp(c, '#6A5A78', 0.25)
-            self.put(x, y, c)
+        # the side bands (beside a tier's top) carry on the same clods, turned one step
+        # (lighter facing west, darker facing east) and cut by the outline, so a long side
+        # reads as the same lumpy earth as the corner and the south face
         # the outline where the face meets the ground: the band's outer edge, the foot row
         for y, x in zip(ys, xs):
             outer = kind[y, x] == STRIP_K and self.sk[y, x] == STRIP
             foot = y + 1 < H and kind[y + 1, x] == TOP and not M[y + 1, x] and kind[y, x] == FACE_K
             if outer or foot:
                 self.put(x, y, OUTLINE if (self.sdir[y, x] > 0 or foot) else R[1])
+        # the band's outer edge bulges a pixel where a lump sits, as Eastward's banks do
+        for y, x in zip(*np.nonzero(side & (self.sk == STRIP))):
+            dr = int(self.sdir[y, x])
+            pos, ln, sid = self._seg(x - dr * STRIP, y)
+            ox = x + dr
+            if 0 < pos < ln - 1 and ln >= 5 and 0 <= ox < W and kind[y, ox] == TOP and not self.wet[y, ox]:
+                self.put(ox, y, OUTLINE if dr > 0 else R[1])
+                self.put(x, y, R[2] if dr > 0 else R[3])
 
     def _struct(self, m, u, y, d, x):
         s = self.seed * 31
@@ -1421,10 +1488,10 @@ class _Painter:
                 elif pos == ln - 1:
                     i = 1 if lit else 0           # the joint
                 elif pos == 0:
-                    i = top - 1 if lit else 2     # the block's lit top
+                    i = top - 1 if lit else 4     # the block's lit top
                 else:
                     body = noise2(sid, ex, self.seed + 657) > 0.5
-                    i = (3 if body else top - 2) if lit else (1 if body else 2)
+                    i = (3 if body else top - 2) if lit else 2
                     if m == 'concrete':
                         i = 3 if lit else 1
                 self.put(x, y, R[max(0, min(top, i))])
@@ -1779,7 +1846,7 @@ class _Painter:
             b, off = _bay(x * 1.0 + y * 11, self.seed + 806, 12, 30)
             if off in (5, 15) and noise2(b + off, y, self.seed + 807) > 0.25:
                 self._sprig(x, y + 5 + int(noise2(b, y, self.seed + 808) * 5), b)
-            elif off == 9 and noise2(b, y, self.seed + 809) > 0.5:
+            elif off in (9, 21) and noise2(b + off, y, self.seed + 809) > 0.35:
                 yy = y + 3 + int(noise2(b, y, self.seed + 810) * 4)
                 for (dx, c) in ((0, ROCK[3]), (1, ROCK[2])):
                     self.put(x + dx, yy, c)
@@ -1800,7 +1867,7 @@ class _Painter:
         # tall grass: clumps along feet, at corners, and leaning over rims from the top
         for (x, y, L) in feet:
             b, off = _bay(x * 1.0 + y * 5, self.seed + 821, 9, 22)
-            if off == 2 and noise2(b, y, self.seed + 822) > 0.25:
+            if off in (2, 13) and noise2(b + off, y, self.seed + 822) > 0.25:
                 self._clump(x, y + 1, L, 4 + int(noise2(b, y, self.seed + 823) * 4), b)
         for (x, y, dr) in corners:
             self._clump(x + dr, y + 1, int(self.lvl[min(H - 1, y), x]), 7, x * 13 + y)
@@ -1839,7 +1906,7 @@ class _Painter:
             c = self.img[y, x]
             hgt = max(1, int(self.fh[y, x]))
             f = (y - int(self.rim[y, x])) / hgt if self.rim[y, x] >= 0 else 0.5
-            mo = smooth_noise(x, y, 4.5, sd)
+            mo = smooth_noise(x, y, 4.5 if kind[y, x] != STAIR_K else 7, sd)
             if mo > 0.66:
                 c = lerp(c, '#6E6252', 0.16)               # warm grime
             elif mo < 0.3:
