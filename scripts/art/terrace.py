@@ -2494,6 +2494,7 @@ BAR_WINDOWS = {   # name: (kind, box), each box 2 px more than whole 16 px patch
     'ground': ('ground', (176, 416, 242, 450)),      # open ground on the lower tier
     'ground, upper tier': ('ground', (16, 180, 82, 214)),
     'water': ('water', (226, 398, 276, 448)),        # the pool under the fall and the stream leaving it
+    'stream': ('stream', (230, 440, 274, 576)),      # the stream below the pool, both banks in the box
     'notch': ('corner', (152, 288, 218, 354)),
     'stone face': ('face', (176, 54, 226, 88)),
     'stone band (east)': ('side', (286, 20, 320, 104)),

@@ -56,8 +56,22 @@ patch, because Eastward's sunlit lawn carries a faint two-tone leaf texture that
 as a low-contrast mottle at our scale, while its yards are flat with tufts; the bar is their
 mean. The old speckled grass (single-pixel blades, 19 Oct) still fails it as NOISY.
 
-Kinds with baselines: face, rim, side, corner, stair, foot, ground, water (ponds and
-channels with their banks), wood-front (plank walls, shop and false fronts), stone-wall
+The stream baselines are narrow running water with both banks in the box (20 Oct): an
+Eastward irrigation canal under a grass bank, and three reaches of a Sea of Stars river
+between rock banks with its foam line and current streaks (Eastward's shots hold only the
+one canal; Sea of Stars' adult measured at 150 px, the same 3 px pixel in every shot). A
+narrow stream cannot hold a pond's broad calm areas: its box is half bank, so its patches
+carry more edges and smaller clusters (stream cluster 4.7 against the ponds' 7.8). Judge a
+stream, channel or river up to about two adults across as 'stream', a pond, pool, lake or
+the sea as 'water'. Fir Hollow's stream, NOISY as 'water', passes as 'stream'; the first
+terrace sheet's stream between speckled banks (c99cc94) still fails it as NOISY, and the
+riverside's flat river from before PR #111 as LOW. There is no separate 'river' kind: the shots hold one river (Sea of Stars),
+and its numbers sit inside the stream's range. Eastward's swamp channel (Octopia, the
+diving hut) was left out: it is still water and measures like the ponds.
+
+Kinds with baselines: face, rim, side, corner, stair, foot, ground, water (ponds, pools
+and lakes with their banks), stream (narrow running water with both banks: streams,
+channels, canals, small rivers), wood-front (plank walls, shop and false fronts), stone-wall
 (stone footings and dressed walls), machinery (vehicles, hatches, metal), roof (tiles and
 slates), facade (town fronts with windows and signs), hedge, tree (crowns), paving.
 
@@ -86,8 +100,8 @@ STEP = 16           # quantisation step a channel (16 levels)
 TOLERANCE = 0.9     # ours must reach 90 % of the reference on every count
 ISOLATED_MARGIN = 0.02   # and be no noisier: at most 2 points more isolated pixels
 CLUSTER_SHARE = 0.9      # and clusters at least 90 % as large
-KINDS = ('face', 'rim', 'side', 'corner', 'stair', 'foot', 'ground', 'water', 'wood-front', 'stone-wall',
-         'machinery', 'roof', 'facade', 'hedge', 'tree', 'paving')
+KINDS = ('face', 'rim', 'side', 'corner', 'stair', 'foot', 'ground', 'water', 'stream', 'wood-front',
+         'stone-wall', 'machinery', 'roof', 'facade', 'hedge', 'tree', 'paving')
 
 
 def quantised(img: Image.Image) -> np.ndarray:

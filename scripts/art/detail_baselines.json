@@ -589,6 +589,82 @@
    "cluster": 5.38,
    "patches": 2,
    "jpeg_quality": 90
+  },
+  "eastward-13-canal": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_f5788b1d4ade71e0cdb1e0110debfad3b32ca51c.1920x1080.jpg",
+   "box": [
+    98,
+    860,
+    246,
+    1080
+   ],
+   "adult_px": 162.0,
+   "kind": "stream",
+   "tones": 16.0,
+   "shapes": 23.5,
+   "dressing": 18.0,
+   "isolated": 0.189,
+   "cluster": 3.32,
+   "patches": 2,
+   "jpeg_quality": 90
+  },
+  "seaofstars-26-river-east": {
+   "game": "Sea of Stars",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1244090/ss_dd8fbf1f96e8a67b57e854f12ff9f48d55f5ca73.1920x1080.jpg",
+   "box": [
+    1000,
+    280,
+    1220,
+    500
+   ],
+   "adult_px": 150.0,
+   "kind": "stream",
+   "tones": 11.5,
+   "shapes": 25.75,
+   "dressing": 16.75,
+   "isolated": 0.098,
+   "cluster": 5.71,
+   "patches": 4,
+   "jpeg_quality": 90
+  },
+  "seaofstars-26-river-north": {
+   "game": "Sea of Stars",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1244090/ss_dd8fbf1f96e8a67b57e854f12ff9f48d55f5ca73.1920x1080.jpg",
+   "box": [
+    560,
+    120,
+    900,
+    330
+   ],
+   "adult_px": 150.0,
+   "kind": "stream",
+   "tones": 10.83,
+   "shapes": 24.0,
+   "dressing": 17.33,
+   "isolated": 0.098,
+   "cluster": 4.89,
+   "patches": 6,
+   "jpeg_quality": 90
+  },
+  "seaofstars-26-river-west": {
+   "game": "Sea of Stars",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1244090/ss_dd8fbf1f96e8a67b57e854f12ff9f48d55f5ca73.1920x1080.jpg",
+   "box": [
+    232,
+    236,
+    396,
+    440
+   ],
+   "adult_px": 150.0,
+   "kind": "stream",
+   "tones": 14.5,
+   "shapes": 27.0,
+   "dressing": 21.0,
+   "isolated": 0.076,
+   "cluster": 4.83,
+   "patches": 2,
+   "jpeg_quality": 90
   }
  }
 }
