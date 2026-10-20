@@ -13,6 +13,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
+import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
 from materials import MATERIALS, WOOD  # noqa: E402
 
@@ -257,7 +258,7 @@ def forge() -> Canvas:
         cv.set(x, 6, SL[5] if x < 60 else SL[4]); cv.set(x, 7, SL[3])
     for x in range(3, w - 3):  # the eaves' lip, and their shadow on the wall
         cv.set(x, 25, SL[1]); cv.set(x, 26, SL[0])
-    detail.overhang_shadow(cv, 4, w - 4, 27, lambda x: 3, k=2, cap=2)
+    rd.shadow_band(cv, 4, w - 4, 27, lambda x: 3, k=2)   # the masonry is off the ramps (D13)
     # the chimney stack at the east end, standing through the roof
     stack = rect_set(70, 0, 11, 20)
     csp.masonry(cv, stack, seed=233, light=lambda x, y: 1 if x < 73 else -1 if x > 78 else 0, course=(3, 4), block=(4, 6))
@@ -345,7 +346,7 @@ def forge() -> Canvas:
             cv.set(x, y, OAK[3] if y == 37 else OAK[2] if y < 39 else OAK[1])
     for x in range(55, w - 4):
         for y in range(41, 45):
-            detail.shade(cv, x, y, 1 if y > 42 else 2)
+            rd.darken(cv, [(x, y)], 1.2 if y > 42 else 2.2)
     for px in (56, w - 8):
         for y in range(41, 70):
             cv.set(px, y, OAK[4]); cv.set(px + 1, y, OAK[3]); cv.set(px + 2, y, OAK[1])
