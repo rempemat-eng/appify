@@ -5873,7 +5873,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
   hearthold: {
     objects: [
       ['tower-nw', 'round_tower', 39, 47, 50, 96],
-      ['postern', 'postern', 85, 73, 30, 53],
+      ['postern', 'postern', 85, 69, 30, 57],
       ['wall-n1', 'wall_run', 113, 85, 98, 40],
       ['tower-ne', 'round_tower', 225, 47, 50, 96],
       ['keep', 'keep', 150, 155, 124, 116],
