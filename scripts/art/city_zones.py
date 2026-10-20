@@ -696,17 +696,8 @@ def skyport(frame: int = 0):
         for (x, y) in disc(bx, 460, 3):
             cv.set(x, y, NIGHT[4] if x < bx else NIGHT[2])
         cv.hline(bx - 2, 460, 5, AMBER[3])
-    # the ribbon above the car (to-c-after-65): a thin cable rising out of view, catching the
-    # light here and there, behind everything that stands on the concourse, fading upward
-    for y in range(200, AY + 6 - 64):
-        t = (y - 200) / (AY + 6 - 64 - 200)  # 0 far up, 1 at the car's grip
-        if t < 0.35 and y % 4:
-            continue
-        if t < 0.65 and y % 7 == 6:
-            continue
-        cv.set(AX, y, CYAN[3] if y % 9 else '#E8FBFF')
-        if t > 0.5:
-            cv.set(AX - 1, y, PORC[4] if y % 5 else PORC[5]); cv.set(AX + 1, y, PORC[2])
+    # (the ribbon above the car is drawn by the tether sprite only, fading out a few pixels
+    # above the grip: Matt's World Logic answer 18)
     # light thrown only where it reads (the dark road); the pale floor carries its own sheen
     light_pool(cv, LX, LY, 40, 24, AMBER[3], skip=frozenset(water - ring - pier))
     blocked |= water - ring - pier
@@ -723,7 +714,7 @@ def skyport(frame: int = 0):
         ('gates', 'ticket_gates', 207, 406), ('screen-w', 'glass_screen', 184, 410), ('screen-e', 'glass_screen', 289, 410),
         ('planter-1', 'sky_planter', 4, 414), ('bench-1', 'sky_bench', 14, 442),
         ('planter-2', 'sky_planter_b', 92, 414), ('bench-2', 'sky_bench', 102, 442),
-        ('bot-1', 'luggage_bot', 196, 380), ('bot-2', 'luggage_bot', 96, 352), ('tether', 'tether', AX - 28, AY + 6 - 272),
+        ('bot-1', 'luggage_bot', 196, 380), ('bot-2', 'luggage_bot', 96, 352), ('tether', 'tether', AX - 28, AY + 6 - 84),
         ('drone-1', 'drone', 120, 140), ('drone-2', 'drone', 290, 300),
         ('kiosk', 'flower_kiosk', 240, 108),
     ]
