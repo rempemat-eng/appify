@@ -3359,7 +3359,7 @@ def check() -> list:
     draw_faces(q2, L2r, seed=1)
     draw_bands(q2, L2r, seed=1)
     young_flow(q2, (q2.y >= 92) & (q2.y < 108), seed=3)
-    rt2 = ramp_along(q2, L2r, 48, 144, depth=16, seed=2)
+    ramp_along(q2, L2r, 48, 144, depth=16, seed=2)
     if (q2.walk & q2.lava).any():
         faults.append('a ramp reopened lava')
     s, parts = sample()
