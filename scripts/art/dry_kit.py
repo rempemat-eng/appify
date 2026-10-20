@@ -48,7 +48,8 @@ The pieces (each with a seed, all deterministic):
 - standing things: `palm()`, `saguaro()`, `barrel()`, `prickly_pear()`, `sage()`,
   `creosote()`, `rabbitbrush()`, `reeds()`, `boulder()`, `snag()`, `fireweed()`, `log()`.
 - height: `tiers()` (mesas and buttes with layered strata in stepped faces, canyon walls,
-  lava terraces), `talus()` at every foot, `stair()` cut through a face.
+  lava terraces), `talus()` at every foot, `stair()` cut through a face, `ramp_along()` a
+  ramp cut along a face from the floor to the top, with its side band.
 - water in the desert: `oasis()` a spring pool with reeds and palms, an adobe-lined
   irrigation channel, the green fading downstream.
 - the fire country: `ash()` ash ground thinning over what lies under it; `old_flow()`
@@ -1820,6 +1821,115 @@ def stair(p: Plot, L: Layout, x0, width=40, seed=0, ramp='adobe', k=None):
     return run
 
 
+def ramp_along(p: Plot, L: Layout, xa, xb, depth=16, seed=0, ramp='path', rising='east'):
+    """A ramp cut along a south face (the soft grid's ramp, open item on #137): a sloped way
+    notched `depth` px into the face, rising from the ground at one end to the tier's top at
+    the other (from xa to xb; 1 in 2.4 for a 40 px face over 96 px). Seen in the
+    three-quarter view, at each column the ramp's surface lies `e` px above the foot, so:
+    the cut's back wall rises behind it (the face's own beds, carried up, since the wall at
+    the back of the notch shows the same beds a ramp's height higher), the ramp's tread
+    below that, and under its outer edge the original face, `e` tall, as the ramp's own
+    side, with a lit lip and set kerb stones where the drop is more than a step. At the low
+    end the notch's end wall faces along the ramp, so the tier's top there ends in its
+    own 5 px side band (in the dark tones, as draw_bands draws a band facing east). The
+    tread is trodden earth with ridges across the slope, a worn track up its middle, shade
+    at the back wall's foot, grit and pebbles. Returns the ramp's tread (walkable)."""
+    f0, t0 = p.f.copy(), p.t.copy()
+    tread = np.zeros(p.f.shape, bool)
+    lip_m = np.zeros(p.f.shape, bool)
+    kerb_m = np.zeros(p.f.shape, bool)
+    band_m = np.zeros(p.f.shape, bool)
+    wall_m = np.zeros(p.f.shape, bool)
+    lo_x, hi_x = min(xa, xb), max(xa, xb)
+    run = hi_x - lo_x
+    for x in range(lo_x - STRIP, hi_x + STRIP):
+        if not 0 <= x < p.w:
+            continue
+        ys = np.nonzero(L.face[:, x])[0]
+        if not len(ys):
+            continue
+        R, yf = int(ys.min()), int(ys.max()) + 1
+        F = yf - R
+        low_end = x < lo_x if rising == 'east' else x >= hi_x
+        if low_end:                                   # the tier's side band over the notch's end
+            if (rising == 'east' and x >= lo_x - STRIP) or (rising == 'west' and x < hi_x + STRIP):
+                for y in range(max(0, R - depth), R):
+                    band_m[y, x] = True
+            continue
+        if not lo_x <= x < hi_x:
+            continue
+        u = (x - lo_x) / run if rising == 'east' else (hi_x - 1 - x) / run
+        e = int(round(F * u))
+        top_wall = R - depth
+        tread_top = yf - depth - e
+        for y in range(max(0, top_wall), max(0, tread_top)):      # the back wall: beds carried up
+            if y + depth < p.h:
+                p.f[y, x], p.t[y, x] = f0[y + depth, x], t0[y + depth, x]
+                wall_m[y, x] = True
+        for y in range(max(0, tread_top), max(0, yf - e)):
+            tread[y, x] = True
+        if yf - e - 1 >= 0:
+            lip_m[yf - e - 1, x] = True
+            if e > 6 and (x - lo_x + seed) % 7 < 3:
+                kerb_m[yf - e - 1, x] = True
+                if yf - e - 2 >= 0:
+                    kerb_m[yf - e - 2, x] = True
+    tread &= ~p.hazard
+    # the tread: trodden earth in three siblings, the slope turned to the light when it
+    # rises to the east (it faces west), a step down when it rises to the west
+    base_t = 3 if rising == 'east' else 2
+    sib = hash01(p.x // 4, p.y // 3, seed + 1)
+    fam = np.where(sib < 0.3, IDX[f'{ramp}_warm'], np.where(sib > 0.75, IDX[f'{ramp}_cool'], IDX[ramp]))
+    p.f[tread], p.t[tread] = fam[tread], base_t
+    rows_in = np.zeros(p.f.shape, np.int16)               # rows down from the tread's back edge
+    for x in range(lo_x, hi_x):
+        col = np.nonzero(tread[:, x])[0]
+        if len(col):
+            rows_in[col, x] = col - col.min()
+    mid = depth // 2
+    track = tread & (np.abs(rows_in - mid) <= 2)
+    ridge = tread & ~track & (((p.x - lo_x + (p.y // 5)) % 6) == 0)
+    p.t[ridge] = base_t + 1                               # a ridge pushed up by feet, lit
+    lee = shift(ridge, 1, 0, False) & tread & ~track
+    p.t[lee] = base_t - 1
+    p.f[track & (hash01(p.x // 3, p.y, seed + 2) < 0.5)] = IDX[f'{ramp}_warm']
+    p.t[track & (hash01(p.x // 2, p.y // 2, seed + 3) < 0.2)] = base_t + 1   # worn smooth and paler
+    foot = tread & (rows_in < 2)
+    p.t[foot] = np.maximum(0, p.t[foot] - 1)            # soft shade at the back wall's foot
+    for (x, y) in _scatter(tread & ~track, 30, seed + 4, margin=0):
+        pebble(p, x, y, ('stone', 'adobe_cool', 'basalt_warm')[(x + y) % 3], 2, 2, shadow=False, k=1)
+    grit = tread & (hash01(p.x, p.y, seed + 5) < 0.05)
+    p.f[grit] = IDX['sand_cool']
+    # the shadow of the notch's end wall falls along the low end of the tread
+    shade = tread & ((p.x - lo_x < 6) if rising == 'east' else (hi_x - 1 - p.x < 6)) & (rows_in < depth - 3)
+    p.step(shade, -1, lo=0)
+    # the outer lip, lit; kerb stones set along it where the drop is more than a step
+    p.t[lip_m & tread] = base_t + 2
+    under = shift(lip_m, 0, 1, False) & ~tread & ~kerb_m & L.face
+    p.step(under, -1, lo=0)                              # the lip's edge, a line of shade below it
+    p.put(kerb_m, 'stone', 2)
+    p.t[kerb_m & ~shift(kerb_m, 0, 1, False)] = 4       # each kerb stone's lit top
+    p.t[kerb_m & ~shift(kerb_m, -1, 0, False) & ~shift(kerb_m, 0, -1, False)] = 1   # its shaded east foot
+    # the side band at the low end: lumps in the top's own ground, in its two darkest tones
+    lump = ((p.y // 3 + p.x // 2) % 2 == 0)
+    p.t[band_m] = np.where(lump[band_m], 2, 1)
+    p.f[band_m & lump] = COOL[p.f[band_m & lump]]
+    edge = (shift(band_m, 1, 0, False) if rising == 'east' else shift(band_m, -1, 0, False)) & ~band_m & tread
+    p.t[edge] = 0
+    # who may stand where: the tread is the way; walls, band, kerbs and the drop are not
+    p.walk |= tread & ~kerb_m
+    p.solid &= ~tread
+    p.solid |= wall_m | band_m | kerb_m
+    p.walk &= ~(wall_m | band_m | kerb_m)
+    # the tread meets the ground at its low end and the top at its high end: open those
+    # rows (draw_bands closed the top's edge above a face)
+    hi_end = (p.x >= (hi_x - 6 if rising == 'east' else lo_x)) & (p.x < (hi_x if rising == 'east' else lo_x + 6))
+    head = hi_end & ~L.face & ~wall_m & ~band_m & ~p.hazard
+    for dd in range(1, 6):
+        p.walk |= head & shift(tread, 0, -dd, False)
+    return tread
+
+
 def rimrock(p: Plot, L: Layout, seed=0, reach=14):
     """Bare rock along every top's edge where it drops away (rims, side bands, back rims):
     the caprock shows through the thin soil there, so each tier reads by its pale rocky
@@ -2318,55 +2428,108 @@ def lava_frames(p: Plot):
 
 
 def columns(seed=0, size=11):
-    """Basalt columns (size guide: a crag 40 to 96 tall, columns 8 to 12 across): hexagonal
-    columns on a honeycomb, the back row standing tallest and the front rows stepping down
-    like a stair, so every top shows: each top a hexagon lit to the upper left with its
-    rim catching the light, each side in three facets (west lit, front body, east in
-    shade), cross-joints across the sides, lichen on a few tops."""
-    rows = ((3, 34, 44), (4, 20, 28), (3, 8, 14))
+    """Basalt columns (size guide: a crag 40 to 96 tall, columns 8 to 12 across), judged
+    by eye against a columnar-jointing reference (open item on #137): hexagonal columns
+    packed on a honeycomb, the back rank standing tallest and each rank in front a step
+    lower, so every top shows. Each top is a true hexagon in the three-quarter view (points
+    west and east, flat north and south edges), its north-west edges catching the light and
+    its south-east edges falling into shade, with a cooling crack across some and lichen or
+    blown ash on others. Below the top, the three faces that turn to us: the south-west face
+    lit, the south face in mid tone, the south-east face in shade, split by arrises (the
+    west one catching a lit line), with cross-joints that follow each face's slope, chips
+    out of the arrises, and a dark edge where a column stands in front of the next. Two
+    broken drums lie on their sides at the foot."""
+    half = size // 2                       # 5: the hexagon's points at dx -5 and +5
+
+    def upper(adx):                        # the top's north outline, rows below its crown
+        return max(0, adx - 2)
+
+    def lower(adx):                        # where the faces begin below the top
+        return 7 - upper(adx)
+
     cols = []
-    for gy, (n, lo, hi) in enumerate(rows):
-        for gx in range(n):
-            cx = 6 + gx * (size - 1) + (size // 2 if gy % 2 else 0) + gy * 2
-            hgt = lo + int(hash01(gx, gy, seed) * (hi - lo))
-            cols.append((cx, gy * 6, hgt))
-    W = 12 + 4 * size + size
-    H = max(c[1] + c[2] for c in cols) + 14
-    sp = Sprite(W, H, W // 2, H - 3)
-    base_y = H - 4 - 12
-    half = size // 2
+    for q in range(6):
+        for r in range(3):
+            cy = r * 6 + (q % 2) * 3
+            if (q, r) in ((0, 0), (5, 2)) or hash01(q, r, seed + 5) < 0.08:
+                continue                   # a ragged outline, not a block
+            hgt = 52 - cy * 3 - (3 if q in (0, 5) else 0) + int(hash01(q, r, seed) * 4)
+            cols.append((6 + q * 8, cy, max(6, hgt)))
+    W = 6 + 5 * 8 + size + 6
+    H = max(c[2] - c[1] for c in cols) + 18 + 14
+    sp = Sprite(W, H, W // 2, H - 4)
+    base_y = H - 4 - 18                    # the back rank's foot
     for (cx, cy, hgt) in sorted(cols, key=lambda c: (c[1], c[0])):
         foot = base_y + cy
         top = foot - hgt
-        for y in range(top + 4, foot + 1):
-            for dx in range(-half, half + 1):
-                if dx < -half + 3:
+        mine = np.zeros(sp.m.shape, bool)
+        for dx in range(-half, half + 1):
+            for y in range(top + upper(abs(dx)), foot + 1):
+                if 0 <= cx + dx < W and 0 <= y < H:
+                    mine[y, cx + dx] = True
+        # the dark edge where this column stands before the ones behind it
+        sp.put(dilate(mine, 1) & ~mine & sp.m, 'basalt_cool', 0)
+        joints = {int(4 + hash01(cx, j, seed + 3) * 4) + 8 * j for j in range(7)}
+        for dx in range(-half, half + 1):
+            adx = abs(dx)
+            for y in range(top + lower(adx), foot + 1):
+                d = y - top - lower(adx)      # depth below the face's top edge
+                if dx <= -3:
                     fam, k = 'basalt_warm', 3
-                elif dx < half - 2:
+                elif dx <= 2:
                     fam, k = 'basalt', 2
                 else:
                     fam, k = 'basalt_cool', 1
-                if (y - top + cx * 3) % 9 == 0 and -half < dx < half:
-                    k = max(0, k - 1)                     # a cross-joint
-                if dx in (-half + 3, half - 2):
-                    k = max(0, k - 1)                     # the arrises between facets
-                if y > foot - 2:
+                if d == 0 and dx <= -3:
+                    k = 4                     # the lit lip under the top's edge
+                if dx == -2:
+                    k = 3                     # the west arris catches a line of light
+                elif dx == 3:
+                    k = 0                     # the east arris, dark
+                if d in joints and -half < dx < half:
+                    k = 0                     # a cross-joint, following the face
+                elif d - 1 in joints and dx <= 2:
+                    k = min(4, k + 1)         # the drum's lit lip below the joint
+                if dx in (-2, 3) and hash01(cx + dx, y, seed + 6) < 0.12:
+                    k = max(0, k - 1)         # a chip out of the arris
+                if y >= foot - 1:
                     k = max(0, k - 1)
                 sp.px(cx + dx, y, fam, k)
-        for j in range(6):                                # the hexagonal top
-            inset = (3, 1, 0, 0, 1, 3)[j]
-            for dx in range(-half + inset, half + 1 - inset):
-                k = 3
-                if j <= 1 or dx <= -half + inset:
-                    k = 4
-                if (j == 0 or (j == 1 and dx <= -half + inset + 1)) and dx < 1:
-                    k = 5
-                if j == 5 or dx >= half - inset:
-                    k = 2
-                sp.px(cx + dx, top + j, 'ash_warm' if k >= 4 else 'basalt_warm', k)
-        if hash01(cx, cy, seed + 2) < 0.4:
-            for (dx, dy) in ((-1, 2), (0, 2), (0, 3)):
-                sp.px(cx + dx, top + dy, 'grass_cool', 4)
+            for j in range(upper(adx), lower(adx)):    # the hexagonal top
+                y = top + j
+                if j == upper(adx) and dx <= 1:
+                    fam, k = 'ash_warm', 5 if dx <= -1 else 4   # the north-west edges, lit
+                elif j == upper(adx):
+                    fam, k = 'ash', 4
+                elif j == lower(adx) - 1 and dx >= -1:
+                    fam, k = 'ash_cool', 2           # the south-east edges, in shade
+                elif j == lower(adx) - 1:
+                    fam, k = 'ash', 3
+                else:                                # the weathered face of the top, grey
+                    fam, k = ('ash', 4) if dx < -1 else ('ash', 3) if dx < 2 else ('ash_cool', 3)
+                sp.px(cx + dx, y, fam, k)
+        tag = hash01(cx, cy, seed + 2)
+        if tag < 0.3:                          # a cooling crack across the top
+            for (dx, dy) in ((-2, 2), (-1, 3), (0, 3), (1, 4)):
+                sp.px(cx + dx, top + dy, 'basalt', 1)
+        elif tag < 0.55:                       # lichen on the top
+            for (dx, dy) in ((-1, 2), (0, 2), (0, 3), (1, 3)):
+                sp.px(cx + dx, top + dy, 'grass_cool', 4 if dx < 1 else 3)
+        elif tag < 0.75:                       # ash blown into its hollow
+            for (dx, dy) in ((0, 3), (1, 3), (1, 4), (2, 4)):
+                sp.px(cx + dx, top + dy, 'ash', 3)
+    for i, (bx, lie) in enumerate(((W - 16, 1), (4, 1))):   # broken drums lying at the foot
+        by = base_y + 18 + 2 + (i % 2)
+        L = 7 if lie else 4
+        for y in range(by - 4, by + 1):
+            for x in range(bx, bx + L + 3):
+                if lie:                        # a drum on its side: its end a small hexagon, lit
+                    if x < bx + 3 and abs(y - (by - 2)) <= (1 if x == bx else 2):
+                        sp.px(x, y, 'ash_warm' if x == bx + 1 and y < by - 2 else 'basalt_warm', 4 if x == bx + 1 else 3)
+                    elif x >= bx + 3:
+                        sp.px(x, y, 'basalt' if y > by - 2 else 'basalt_warm', 1 if y == by else 2 if y > by - 2 else 3)
+                elif x < bx + L:               # a stump: its top and its face
+                    sp.px(x, y, 'basalt_warm' if y < by - 2 else 'basalt', 4 if y == by - 4 else 3 if y < by - 2 else 1 if x == bx + L - 1 else 2)
     block = sp.m & (sp.y > base_y - 8)
     return sp, sp.thrown(0.5), block
 
@@ -2404,44 +2567,90 @@ def causeway(p: Plot, pts, width=24, seed=0, edge=4):
 
 
 def cinder_cone(seed=0, w=None):
-    """A cinder cone (a parasitic cone on the north flank): a steep cone of loose red and
-    black cinders, lit on its west flank and shaded on its east in hard steps, gullies
-    raying down its sides, a crater at its top whose far inner wall catches the light."""
+    """A cinder cone (a parasitic cone on the north flank), judged by eye against cinder
+    cone references (open item on #137): straight, steep flanks of loose black and red
+    cinders at their angle of repose, slightly concave at the foot, lit on the west and
+    shaded on the east in hard steps. Rills run down the flanks from the rim, each a dark
+    groove with a lit west lip, converging toward the top; the cinder near the rim is
+    oxidised red, and streaks of it run down the rills. The crater is a wide bowl seen from
+    above: its far inner wall lit, its floor dark with old ash, and round it a darker rim of
+    spatter, its front lip catching the light. Bombs lie on the flanks and at the foot."""
     w = w or 70 + int(hash01(seed, 0, 40) * 30)
-    h = int(w * 0.42)
-    W, H = w + 6, h + 14
-    sp = Sprite(W, H, W // 2, H - 3)
-    cx = sp.fx
-    foot = sp.fy
-    u = (sp.x + 0.5 - cx) / (w / 2)
-    au = np.abs(u)
-    crater_w = 0.34
-    top_y = foot - h
-    yt = top_y + (np.clip(au - crater_w, 0, 1) / (1 - crater_w)) ** 0.7 * h * 0.95
-    yt = yt + (vnoise(sp.x, 0, 6, seed) - 0.5) * 2
-    yb = foot - 3 * np.sqrt(np.clip(1 - au * au, 0, 1))
-    shape = (au < 1) & (sp.y + 0.5 >= yt) & (sp.y + 0.5 <= yb + 3)
-    hgt01 = np.clip((foot - sp.y) / h, 0, 1)
-    red = (fbm(sp.x, sp.y, 7, seed + 1) + hgt01 * 0.45) > 0.78        # oxidised cinders near the top
-    fam = np.where(red, IDX['clay_cool'], np.where(fbm(sp.x, sp.y, 5, seed + 2) > 0.5, IDX['basalt_warm'],
-                                                     IDX['basalt']))
-    tone = np.where(u < -0.45, 4, np.where(u < 0.05, 3, np.where(u < 0.5, 2, 1)))
+    h = int(w * 0.40)
+    W, H = w + 6, h + 16
+    sp = Sprite(W, H, W // 2, H - 4)
+    cx, foot = sp.fx, sp.fy
+    crx = w * 0.21                         # the crater's half width, and its ellipse in the view
+    cry = max(3.0, crx * 0.36)
+    ccy = foot - h + cry                   # the crater's centre
+    X, Y = sp.x + 0.5, sp.y + 0.5
+    tt = np.clip((Y - ccy) / (foot - ccy), 0, 1)
+    hw = crx + 1.5 + (w / 2 - crx - 1.5) * tt ** 0.88                     # a flank's half width at a row
+    hw = hw + (vnoise(sp.y, 0, 3, seed) - 0.5) * 1.6 * (tt > 0.05)       # a ragged skyline of loose cinder
+    S = (X - cx) / hw                      # -1 west foot of the flank .. +1 east
+    front = foot + 3 * np.sqrt(np.clip(1 - S * S, 0, 1))
+    flank = (np.abs(S) <= 1) & (Y >= ccy) & (Y <= front)
+    ell = ((X - cx) / (crx + 1.5)) ** 2 + ((Y - ccy) / (cry + 1.2)) ** 2
+    shape = flank | (ell <= 1)
+    # the flanks: tone by which way they face, in hard steps; cinder families by noise
+    tone = np.where(S < -0.5, 5, np.where(S < -0.05, 4, np.where(S < 0.45, 3, 2)))
+    grain = fbm(sp.x, sp.y, 4, seed + 2)
+    fam = np.where(grain > 0.56, IDX['basalt_warm'], np.where(grain < 0.36, IDX['basalt_cool'], IDX['basalt']))
     sp.put(shape, fam, tone)
-    clumps = shape & (hash01(sp.x // 2, sp.y, seed + 8) < 0.22)
-    sp.f[clumps] = np.where(hash01(sp.x, sp.y, seed + 9)[clumps] < 0.5, WARM[sp.f[clumps]], COOL[sp.f[clumps]])
-    sp.step(clumps & (hash01(sp.x, sp.y // 2, seed + 10) < 0.3), -1, lo=1)
-    gul = shape & (np.abs((u * 6 + vnoise(sp.y, 0, 7, seed + 3) * 0.6) % 1.0 - 0.5) < 0.08) & (sp.y > top_y + 4)
-    sp.step(gul, -1, lo=1)
-    sp.step(shift(gul, -1, 0, False) & shape & ~gul, 1)
-    # the crater: an ellipse at the top; its south inner wall hidden, its north inner wall lit
-    cr = ((sp.x + 0.5 - cx) / (w * crater_w * 0.5)) ** 2 + ((sp.y + 0.5 - (top_y + 4)) / 4.5) ** 2 <= 1
-    sp.put(cr & shape | cr, 'basalt', 1)
-    far = cr & (sp.y + 0.5 < top_y + 3.5)
-    sp.put(far, 'clay_cool', 3)
-    sp.put(far & (sp.x < cx), 'clay_cool', 4)
-    rim = dilate(cr, 1) & ~cr & (sp.y + 0.5 > top_y + 4)
-    sp.put(rim & (sp.x < cx), 'basalt_warm', 4)
-    sp.put(rim & (sp.x >= cx), 'basalt_warm', 3)
+    red = shape & (((tt < 0.22) & (hash01(sp.x // 2, sp.y, seed + 1) < 0.65 - tt * 2)) |
+                   (fbm(sp.x, sp.y, 6, seed + 11) > 0.74))
+    sp.f[red] = IDX['clay_cool']
+    # the scree's grain: single cinders a step up or down, a few pale lapilli
+    clump = hash01(sp.x // 2, sp.y, seed + 8)
+    sp.step(shape & (clump < 0.06), 1, hi=5)
+    sp.step(shape & (clump > 0.93), -1, lo=1)
+    pale = shape & (hash01(sp.x // 2, sp.y, seed + 12) < 0.02) & (tt > 0.15)
+    sp.put(pale, 'ash', 4)
+    # the rills: grooves from the rim (or from part way down) to the foot, converging up
+    for i in range(12):
+        s0 = -0.92 + 1.84 * (i + hash01(i, 0, seed + 3) * 0.6) / 12
+        start = 0.02 + hash01(i, 1, seed + 3) * 0.35
+        for y in range(int(ccy), int(foot) + 2):
+            t = (y + 0.5 - ccy) / (foot - ccy)
+            if t < start:
+                continue
+            hwy = crx + 1.5 + (w / 2 - crx - 1.5) * max(t, 0) ** 0.88
+            x = int(round(cx - 0.5 + (s0 + 0.04 * math.sin(y * 0.45 + i)) * hwy))
+            if 0 < x < W - 1 and sp.m[y, x]:
+                sp.t[y, x] = max(1, sp.t[y, x] - 2)
+                if sp.m[y, x - 1]:
+                    sp.t[y, x - 1] = min(5, sp.t[y, x - 1] + 1)        # the groove's lit west lip
+                if t < 0.55 and hash01(i, y, seed + 13) < 0.5:
+                    sp.f[y, x] = IDX['clay_cool']                      # red cinder washed down it
+    # the crater: the far inner wall lit, the floor dark with old ash
+    inner = ((X - cx) / crx) ** 2 + ((Y - ccy) / cry) ** 2 <= 1
+    v = (Y - ccy) / cry
+    wall = inner & (v < -0.2 + 0.25 * np.abs((X - cx) / crx) ** 2)    # the far wall, deeper at the middle
+    sp.put(wall, 'clay_cool', np.where(X < cx - crx * 0.3, 3, np.where(X < cx + crx * 0.35, 2, 1)))
+    sp.put(wall & ~shift(wall, 0, 1, True), 'clay_cool', 4)             # the far rim's inner edge, lit
+    gully = np.abs(((X - cx) / crx * 3 + vnoise(sp.y, 0, 4, seed + 17) * 0.8) % 1 - 0.5) < 0.1
+    sp.step(wall & gully & (v > -0.8), -1, lo=1)                       # gullies down the far wall
+    floor = inner & ~wall
+    sp.put(floor, 'ash_cool', np.where(X < cx, 2, 1))
+    sp.put(floor & ~shift(floor, 0, 1, True), 'basalt', 0)                # the foot of the far wall, in shadow
+    sp.put(floor & (hash01(sp.x, sp.y, seed + 14) < 0.2), 'basalt', 1)
+    # the rim: a darker band of spatter round the bowl, its front lip lit on the west
+    rim = shape & ~inner & (ell <= 1)
+    sp.put(rim, 'basalt_cool', 1)
+    sp.put(rim & (hash01(sp.x // 2, sp.y, seed + 15) < 0.35), 'clay_cool', 1)
+    lip = rim & shift(inner, 0, 1, False) & (Y > ccy)                     # the rim's front lip, just below the bowl
+    sp.put(lip & (X < cx + crx * 0.2), 'basalt_warm', 4)
+    sp.put(lip & (X >= cx + crx * 0.2), 'basalt', 2)
+    sp.put(rim & (Y < ccy - cry * 0.6) & (X < cx), 'basalt_warm', 3)      # the far rim's crest, lit
+    # bombs: dark blocks with a lit corner, on the flanks and at the foot
+    for i in range(9):
+        t = 0.3 + hash01(i, 2, seed + 16) * 0.75
+        s0 = -0.85 + 1.7 * hash01(i, 3, seed + 16)
+        by = int(ccy + t * (foot - ccy))
+        hwy = crx + 1.5 + (w / 2 - crx - 1.5) * min(t, 1) ** 0.88
+        bx = int(cx + s0 * hwy)
+        for (dx, dy, k) in ((0, 0, 3), (1, 0, 1), (0, 1, 1), (1, 1, 0)):
+            sp.px(bx + dx, by + dy, 'basalt', k)
     block = shape & (sp.y > foot - 10)
     sh = blob(cx + w * 0.3, foot - 2, w * 0.55, 8, sp.m.shape, seed, wob=0.05) & (sp.x > cx - 4)
     return sp, sh, block
@@ -2663,6 +2872,41 @@ def _tier_tile(rows, F=FACE_MESA, seed=0, top=None, ground=None, stair_at=None, 
     return p, L
 
 
+RAMP = """
+000000000000000000000000
+000000000000000000000000
+111111111111111111111111
+111111111111111111111111
+111111111111111111111111
+111111111111111111111111
+000000000000000000000000
+000000000000000000000000
+000000000000000000000000
+000000000000000000000000
+000000000000000000000000
+000000000000000000000000
+000000000000000000000000
+000000000000000000000000
+"""
+
+
+def _ramp_tile(seed=21):
+    """A 40 px face with a ramp cut along it, rising east from the floor to the top."""
+    T = from_cells(RAMP, seed=seed)
+    L = Layout(T, FACE_MESA)
+    p = Plot(T.shape[1], T.shape[0])
+    scrub(p, L.top(0), seed + 1, every=1400)
+    hardpan_ground(p, L.top(1), seed + 2)
+    rimrock(p, L, seed + 6)
+    draw_faces(p, L, seed=seed + 3)
+    draw_bands(p, L, seed + 4)
+    tr = ramp_along(p, L, 48, 144, depth=16, seed=seed + 8)
+    tier_shadows(p, L)
+    talus(p, L, seed + 5)
+    p.walk |= tr & ~p.solid
+    return p, L, tr
+
+
 MESA = """
 00000000000000000000000
 00000333333333000000000
@@ -2766,6 +3010,10 @@ def pieces():
     ys, xs = np.nonzero(st)
     out.append(('height', '(the stair, measured)', p, (int(xs.min()), int(ys.min()) + 2, int(xs.min()) + 36,
                                                        int(ys.min()) + 38), 'stair'))
+    p, L, tr = _ramp_tile()
+    ys, xs = np.nonzero(tr)
+    out.append(('height', 'ramp along a face: rising from the floor to the top, its own side band', p,
+                (int(xs.min()) + 30, int(ys.min()) - 6, int(xs.min()) + 66, int(ys.min()) + 30), 'stair'))
     p = Plot(176, 112)
     badlands(p, p.mask(), 15, every=1500)
     out.append(('height', 'badlands: banded mounds, rills, aprons', p, _solid_box(p, 34), 'face'))
@@ -3100,6 +3348,20 @@ def check() -> list:
         wash(w2, [(64, -10), (64, 110)], 30, seed=9, logs=0)
         if (w2.walk & w2.wet).any():
             faults.append('a trail or wash painted over a pool made its water walkable')
+    rp, rL, rt = _ramp_tile()
+    if not _reaches(rp.walk, (170, 24), (30, 100)):
+        faults.append('the ramp along the face does not join the top to the floor')
+    if (rp.walk & rL.face & ~rt).any():
+        faults.append('face pixels beside the ramp are walkable')
+    q2 = Plot(192, 112)
+    T2 = from_cells(RAMP, seed=21)
+    L2r = Layout(T2, FACE_MESA)
+    draw_faces(q2, L2r, seed=1)
+    draw_bands(q2, L2r, seed=1)
+    young_flow(q2, (q2.y >= 92) & (q2.y < 108), seed=3)
+    rt2 = ramp_along(q2, L2r, 48, 144, depth=16, seed=2)
+    if (q2.walk & q2.lava).any():
+        faults.append('a ramp reopened lava')
     s, parts = sample()
     a, b = (300, 6), (500, 570)
     if not _reaches(s.walk, a, b):
