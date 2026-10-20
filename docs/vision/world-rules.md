@@ -77,7 +77,7 @@ Matt: "there cannot be anyone standing on water, neither should trees be in a pa
 
 - One light: from the upper left. Every prop has its lit faces up and left, its contact shadow down and right, and the same shadow length for the same height.
 - One camera: the three-quarter view (art-faults rule 4). Everything shows its top and its front, flat things are foreshortened to the same angle.
-- One scale: doors fit people and the companion; a cottage is a few doors wide; a tree is taller than a house's eaves; a bench seats two.
+- One scale: doors fit people and the companion; a cottage is a few doors wide; a tree is taller than a house's eaves; a bench seats two. Sizes are keyed to an adult resident (25 px): a door 32 tall, a storey 32, a shop storey 44, a counter 13, a lamp 56 (the table, its ranges and the `prop-scale` check are in [verticality.md](verticality.md), section 5).
 
 **Height**
 
