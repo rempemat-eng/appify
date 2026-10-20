@@ -497,6 +497,16 @@ def airship_mast() -> Canvas:
     for y in range(hy0 - 10, hy0):  # the chimney
         cv.set(hx0 + 13, y, IRON[3]); cv.set(hx0 + 14, y, IRON[1])
     cv.hline(hx0 + 12, hy0 - 11, 4, IRON[4])
+    for (x, y) in oval(hx0 - 4, foot - 2, 4, 2):  # the coal for its boiler, heaped by the door
+        n = noise2(x // 2, y, 1806)
+        cv.set(x, y, IRON[2] if n > 0.6 else IRON[1] if n > 0.25 else IRON[0])
+    for (x, y) in rect_set(hx0 + 16, foot - 7, 4, 7):  # a water barrel, hooped
+        c = WOOD[3] if x < hx0 + 18 else WOOD[1]
+        if y in (foot - 6, foot - 2):
+            c = IRON[2]
+        if y == foot - 7:
+            c = '#24343A'
+        cv.set(x, y, c)
     for t in range(14):  # the winch rope from the house up to the tower
         cv.set(hx0 - t, hy0 + 2 - t // 3, MATERIALS['rope'][1])
     for y in range(head + 2, head + 34):  # the top storeys banded red and white, to be seen from the air
@@ -555,6 +565,21 @@ def airship_mast() -> Canvas:
             if abs(v - 0.05) < 0.06 or abs(v - 0.25) < 0.06:
                 c = GOLD[3] if k < 0 else GOLD[2]
         cv.set(x, y, c)
+    ROPE = MATERIALS['rope']
+    for (x, y) in env:  # the cord net over the whole envelope, a diamond mesh, brass rings where it meets the girth
+        u, v = (x - ex) / rx, (y - ey) / ry
+        if v > 0.8 or u > 0.9:
+            continue
+        a, b = (x + 2 * y) % 16, (x - 2 * y) % 16
+        if a in (0, 1) or b in (0, 1):
+            k = u * 0.45 + v * 0.9
+            cv.set(x, y, ROPE[3] if k < -0.4 else ROPE[2] if k < 0.3 else ROPE[1])
+            if a in (0, 1) and b in (0, 1) and abs(v + 0.25) < 0.12:
+                cv.set(x, y, BRASS[4] if k < 0 else BRASS[2])
+    for (vx, vy) in ((ex - 20, ey - ry + 2), (ex + 14, ey - ry + 2)):  # gas valves on its back
+        for (x, y) in rect_set(vx, vy, 3, 2):
+            cv.set(x, y, IRON[3] if y == vy else IRON[1])
+        cv.set(vx + 1, vy - 1, BRASS[4])
     for (x, y) in env:
         if (x, y + 1) not in env:
             cv.set(x, y, '#4E3612')
@@ -833,15 +858,9 @@ def canal_crane() -> Canvas:
     for (x, y) in disc(jx, jy - 1, 2):  # the head sheave
         cv.set(x, y, IRON[4] if x <= jx else IRON[1])
     cv.set(jx, jy - 1, BRASS[4])
-    for (ry0, rx0) in ((top + 24, px - 2), (top + 33, px + 1), (top + 41, px - 1)):  # rust where the paint has gone
-        for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1), (0, 2)):
-            cv.set(rx0 + dx, ry0 + dy, RUST[2] if dx == 0 else RUST[1])
-    for (x, y) in rect_set(px - 2, top + 28, 4, 3):  # the maker's plate, cast in brass
-        cv.set(x, y, BRASS[4] if y == top + 28 else BRASS[2])
-    cv.set(px - 4, top + 12, IRON[3]); cv.hline(px - 6, top + 12, 2, IRON[3])  # a lantern on a hook
-    for (x, y) in rect_set(px - 7, top + 13, 3, 4):
-        cv.set(x, y, WARM[3] if y < top + 15 else WARM[2])
-    cv.hline(px - 7, top + 17, 3, IRON[1])
+    for (ry0, rx0) in ((top + 24, px - 2), (top + 38, px)):  # rust where the paint has gone, in patches
+        for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1), (0, 2), (1, 2), (0, 3)):
+            cv.set(rx0 + dx, ry0 + dy, RUST[2] if dy < 2 else RUST[1])
     for (x, y) in oval(px - 13, foot - 2, 4, 1.8):  # a coil of rope on the quay by the pier, its turns lit on top
         cv.set(x, y, MATERIALS['rope'][3] if y < foot - 2 else MATERIALS['rope'][1] if x > px - 12 else MATERIALS['rope'][2])
     gear(cv, px + 6, foot - 20, 4, BRASS, teeth=8)  # the winch, at hand height on the post's east
@@ -1039,6 +1058,15 @@ def tube_station() -> Canvas:
             c = '#3E566A'
         cv.set(x, y, c)
     cv.set(cx - 2, dy0 + 19, BRASS[5]); cv.set(cx + 1, dy0 + 19, BRASS[5])  # the handles
+    for tx in (cx - 16,):  # a tub of marigolds by the door, in a cast-iron planter
+        for (x, y) in rect_set(tx, drum_bot - 5, 6, 5):
+            cv.set(x, y, IRON[3] if y == drum_bot - 5 else IRON[2] if x < tx + 4 else IRON[1])
+        for (x, y) in ((tx, drum_bot - 7), (tx + 1, drum_bot - 7), (tx + 3, drum_bot - 8), (tx + 4, drum_bot - 8),
+                       (tx + 2, drum_bot - 6), (tx + 5, drum_bot - 6)):
+            cv.set(x, y, '#F0A020')
+        for (x, y) in ((tx + 1, drum_bot - 6), (tx + 2, drum_bot - 7), (tx + 4, drum_bot - 6), (tx + 3, drum_bot - 6)):
+            cv.set(x, y, '#3E6438')
+        cv.set(tx + 3, drum_bot - 9, '#C86A10'); cv.set(tx + 4, drum_bot - 9, '#C86A10')
     for (x, y) in rect_set(cx + 11, drum_bot - 11, 4, 11):  # a red pillar box by the door, its cap and slot
         c = '#C83A2C' if x < cx + 13 else '#8E2620'
         if y < drum_bot - 9:
@@ -1046,6 +1074,10 @@ def tube_station() -> Canvas:
         if y == drum_bot - 7:
             c = '#2A1210'
         cv.set(x, y, c)
+    for (x, y) in rect_set(cx - 13, dy0 - 3, 4, 3):  # gilt brackets either side of the door
+        cv.set(x, y, GOLD[3] if y == dy0 - 3 else GOLD[2])
+    for (x, y) in rect_set(cx + 10, dy0 - 3, 4, 3):
+        cv.set(x, y, GOLD[3] if y == dy0 - 3 else GOLD[2])
     for (x, y) in disc(cx, dy0 - 8, 3.6):  # the clock over the door
         cv.set(x, y, BRASS[3] if (x - cx) + (y - dy0 + 8) < 0 else BRASS[1])
     for (x, y) in disc(cx, dy0 - 8, 2.4):

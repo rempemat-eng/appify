@@ -26,7 +26,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   keeper: { zone: 'harbour', from: [22, 452], to: [22, 512], face: ['east', 'east'] },
   steward: { zone: 'hearthold', from: [146, 296], to: [196, 296], face: ['west', 'front'] },
   tinkerer: { zone: 'junction', from: [108, 372], to: [184, 372] },
-  boatwoman: { zone: 'canal', from: [136, 170], to: [224, 170] },
+  boatwoman: { zone: 'canal', from: [190, 182], to: [250, 182], face: ['front', 'front'] },
   cowhand: { zone: 'gulch', from: [132, 200], to: [132, 288], face: ['west', 'east'] },
   saloon: { zone: 'gulch', from: [102, 380], to: [190, 380], face: ['west', 'front'] },
   prospector: { zone: 'gulch', from: [186, 130], to: [214, 130], face: ['back', 'east'] },

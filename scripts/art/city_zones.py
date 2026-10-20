@@ -415,7 +415,7 @@ def canal(frame: int = 0):
         ('crane', 'canal_crane', 10, 108), ('boat', 'narrowboat', 8, 186), ('trunk-1', 'steamer_trunk', 70, 146),
         ('coal-1', 'coal_cart', 112, 140), ('lamp-3', 'gas_lamp', 246, 130), ('lock-hut', 'lock_hut', 266, 104),
         # the south towpath
-        ('bench-t', 'iron_bench', 60, 262), ('lamp-4', 'gas_lamp', 124, 252), ('gears-t', 'gear_pile', 92, 268),
+        ('bench-t', 'iron_bench', 60, 262), ('lamp-4', 'gas_lamp', 124, 252), ('gears-t', 'gear_pile', 288, 268),
         # the foundry and the terminus
         ('foundry', 'foundry', 0, 296), ('puff-f1', 'steam_puff', 16, 278), ('puff-f2', 'steam_puff', 112, 284),
         ('station', 'tube_station', 194, 280), ('car', 'atmos_car', 274, 337),
@@ -478,7 +478,7 @@ def canal_lock(cv: Canvas, blocked: set, CY0: int, CY1: int, ASHLAR):
                 w = noise2(x // 2, k, 1781)
                 c = '#2A3A30' if w > 0.55 else '#33483A' if w > 0.25 else '#22302A'
                 if k >= 7 and w > 0.4:
-                    c = '#3E5A36' if (x // 2) % 3 else '#2E4A2C'
+                    c = '#5A7A40' if w > 0.85 else '#3E5A36' if (x // 2) % 3 else '#2E4A2C'
             if k >= 9:
                 c = '#1C2C24'
             cv.set(x, y, c)
