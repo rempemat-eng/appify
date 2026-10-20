@@ -737,6 +737,72 @@ def tile_data(chunks: list, plane: str, c: int, r: int, sprite_map: dict) -> dic
     return out
 
 
+def portals(ch: Chunk) -> dict:
+    """The coarse route graph of a chunk, for walks too far for one search window
+    (docs/vision/region-canvas.md, step 2): its nodes are the stands and the gates, the
+    middle of each run of open cells where two areas meet; its edges join two nodes of one
+    area that a walk inside that area (and one cell round it) can reach, costed in px
+    (4-way steps; a plan, not the walk itself). Ways (#118) will close edges."""
+    from collections import deque
+    nodes: list = []  # (x, y) box px at a cell's middle
+    node_at: dict = {}
+    def add(c, r):
+        if (c, r) not in node_at:
+            node_at[(c, r)] = len(nodes)
+            nodes.append((c * CELL + CELL // 2, r * CELL + CELL // 2))
+        return node_at[(c, r)]
+    walk = ch.walk
+    open_ = lambda c, r: 0 <= r < ch.rows and 0 <= c < ch.cols and walk[r][c] == '.'  # noqa: E731
+    for s_ in sorted(ch.stands):
+        x, y = ch.stands[s_]
+        add(x // CELL, y // CELL)
+    rects = [(a['id'], *(v // CELL for v in a['rect'])) for a in ch.areas]
+    for (ia, ac, ar, aw, ah) in rects:
+        for (ib, bc, br, bw, bh) in rects:
+            if ia == ib:
+                continue
+            if bc == ac + aw:  # b east of a: the shared column pair
+                lo, hi = max(ar, br), min(ar + ah, br + bh)
+                pairs = [((ac + aw - 1, r), (bc, r)) for r in range(lo, hi)]
+            elif br == ar + ah:  # b south of a
+                lo, hi = max(ac, bc), min(ac + aw, bc + bw)
+                pairs = [((c, ar + ah - 1), (c, br)) for c in range(lo, hi)]
+            else:
+                continue
+            run: list = []
+            for pair in pairs + [None]:
+                if pair is not None and open_(*pair[0]) and open_(*pair[1]):
+                    run.append(pair[0])
+                    continue
+                if run:
+                    add(*run[len(run) // 2])
+                    run = []
+    edges = set()
+    for (_id, ac, ar, aw, ah) in rects:
+        inside = [i for i, (c, r) in enumerate((x // CELL, y // CELL) for (x, y) in nodes)
+                  if ac - 1 <= c <= ac + aw and ar - 1 <= r <= ar + ah]
+        for i in inside:
+            sc, sr = nodes[i][0] // CELL, nodes[i][1] // CELL
+            if not open_(sc, sr):
+                continue
+            dist = {(sc, sr): 0}
+            q = deque([(sc, sr)])
+            while q:
+                c, r = q.popleft()
+                d = dist[(c, r)]
+                for (nc, nr) in ((c + 1, r), (c - 1, r), (c, r + 1), (c, r - 1)):
+                    if (nc, nr) in dist or not (ac - 1 <= nc <= ac + aw and ar - 1 <= nr <= ar + ah) or not open_(nc, nr):
+                        continue
+                    dist[(nc, nr)] = d + 1
+                    q.append((nc, nr))
+            for j in inside:
+                if j > i:
+                    d = dist.get((nodes[j][0] // CELL, nodes[j][1] // CELL))
+                    if d is not None:
+                        edges.add((i, j, d * CELL))
+    return {'nodes': nodes, 'edges': sorted(edges)}
+
+
 def export_ts(chunks: list, result: dict, sprite_map: dict):
     index = result['index']
     planes = sorted({ch.plane for ch in chunks}, key=lambda p: ['continent', 'orbit', 'moon', 'hut'].index(p)
@@ -803,6 +869,11 @@ def export_ts(chunks: list, result: dict, sprite_map: dict):
         '/** The seams settled: [world col, world row, \'open\' | \'shut\'] where the walk over the whole chunk',
         ' *  (the zone rules, no seams) differs from the zones\' grids joined, and the world walk takes it. */',
         "export const worldSeams: Readonly<Record<string, readonly (readonly [number, number, 'open' | 'shut'])[]>> = " + json.dumps(seams) + ';',
+        '/** The coarse route graph per chunk (portals): nodes are stands and the gates where two areas meet,',
+        ' *  [x, y] in world px; edges [a, b, cost px] join two nodes of one area a walk inside it can reach. */',
+        'export const worldPortals: Readonly<Record<string, { nodes: readonly (readonly [number, number])[]; edges: readonly (readonly [number, number, number])[] }>> = ' + json.dumps(
+            {ch.id: (lambda g: {'nodes': [[x + ch.origin[0], y + ch.origin[1]] for (x, y) in g['nodes']], 'edges': [list(e) for e in g['edges']]})(portals(ch))
+             for ch in chunks}) + ';',
         '/** Decks (two-level-walk.md): their box, how high they are drawn and their connectors, in world px. */',
         "export type WorldDeck = { chunk: string; rect: readonly [number, number, number, number]; height: number; connectors: readonly { kind: 'stair' | 'ramp' | 'lift'; bottom: readonly [number, number]; top: readonly [number, number] }[] };",
         f'export const worldDecks: readonly WorldDeck[] = {json.dumps(decks)};',

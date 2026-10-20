@@ -1,4 +1,4 @@
-# The world canvas: the build (step 1 of 3)
+# The world canvas: the build (step 1 of 3) and the renderer (step 2)
 
 **What Matt decided:**
 
@@ -190,57 +190,92 @@ There are 22 cells, all `shut`: the walk over the whole chunk blocks them, and t
   - One cell on the Headland's west edge, where the step back from a cell read as lava in the Harbour is cut off at the zone's edge.
 - **Isles, 11:** the same north-edge foot bands, along the Rainforest's and the Headwaters' south edges, from props in the Landing and the Cove.
 
-## Step 2: the renderer and the walk on world tiles (Claude A, one PR)
+## Step 2: the renderer and the walk on world tiles (built, behind a switch)
 
-**The renderer** (`components/atlas-walk.tsx`):
+Step 2 is built behind **`WORLD_CANVAS`**, which is **off by default**. The default lives in `lib/world-flag-default.ts`.
 
-- **Mount world tiles, not zones.** `tilesToMount(plane, view)` gives the tiles the camera sees plus the 24 px margin: at most 12, usually 8. Tiles stay mounted out to twice the margin, as `zonesToMount` does today, so a walk along a tile edge does not churn.
-- **How each tile is drawn.** Each tile is a `View` at `col * 256`, `row * 256`, snapped to whole device px (256 art px are a whole number of device px at every scale `pixelScale` picks). It holds:
-  - its ground: an `Image` of `worldTileArt[art]`, or a plain coloured view for a `fill` tile;
-  - its moving water: the same `FlowLayer`, keyed by tile;
-  - its deck art.
-- **Pixel rendering.** On the web the tiles sit inside a `data-pixel` view. Native depends on the 1x question below.
-- **Props.** Props come from the mounted tiles' `objects`, sorted by foot across tiles. A tall prop whose foot is in an unmounted tile but whose body rises into the view must still draw. To support that, the build adds a per-tile list of props whose sprite reaches that tile (step 2 adds it to the export). That replaces `zoneReach` and the 48 px overhang rule.
-- **Backdrops.** `beyond()` gaps and `zoneScenery` are replaced by the chunks' own frame, and by `BACKDROP` past the last tile.
+- **Off:** the game draws and walks the world from its zones, exactly as before.
+- **On:** it draws and walks the world from the world tiles. Both paths work, so main can carry this before it is switched on.
+- **Trying it on the web:** add `?world=canvas` (or `?world=zones`) to the address. `lib/world-flag.web.ts` reads it. Native reads only the default.
+- The origins are still the placeholder row.
 
-**The walk** (`lib/region-walk.ts` becomes `lib/world-walk.ts`):
+**The renderer** (`components/atlas-walk.tsx`, with the switch on):
 
-- **One walk over the plane.** `cellAt(plane, wc, wr)` reads the tiles' walk rows, with decoded rows cached per tile. `walkWindow(plane, rect)` builds a `makeWalkGrid` over a window. `regionWalk`, `tileOrigin`, `GARDEN_OPENINGS` and the garden's edge spans go. The 22 seam cells are already settled in the data.
-- **Decks.** Decks carry over in world px: `worldDecks` and the tiles' `deck` rows feed `regionLevels`' two-level grid.
-- **Area names.** `areaAt(plane, x, y)` reads `worldAreas` and gives the area name under the HUD, with the same hysteresis (`ZONE_HYSTERESIS`). The map tiles are drawn per area.
-- **The garden** joins the valley's chunk. Its stream and pond overlays and its props stay drawn by the garden's renderer at the garden area's offset until the garden is painted into the chunk. The hub's moved grid (`lib/home-hub.ts`) becomes an offset.
+- **World tiles, not zones.** `tilesToMount` (`lib/world-walk.ts`) mounts the tiles the camera sees plus a 24 px margin, and lets a tile go only past twice the margin.
+  - A phone mounts at most 12 tiles.
+  - Each tile is a `View` at its world tile position, snapped to whole device px, inside the camera's `data-pixel` view. It holds:
+    - its picture at 2x, or its `fill` colour for a one-colour tile;
+    - its moving water (`FlowBox`), stepped on the same clock as before, which stops with reduced motion or an inactive screen.
+- **Props.** Props come from the tiles' lists in world px, through `propsFor`. A prop whose picture reaches a mounted tile draws even when its foot stands in a tile that is not mounted. On this path `zoneReach` and the overhang rule are not used.
+- **The garden.** The garden draws at its offset in the valley: its ground is in the tiles, and its props, stream and pond are drawn at the garden area's place. In the hub, the home layer draws its life as before.
+- **Places.** Residents, zone life and the hour's light still go by place. With the switch on, a place is an area the view reaches, and today the areas are the zones.
+- **Area names.** The area name replaces the zone name under the HUD (`areaWithHysteresis`, same margin).
+- **Backdrops.** The scenery past the world and the forest in the valley's corners are drawn as before (see "Memory, measured" below).
+- **Prefetch.** Prefetching loads the chunk's tile pictures, moving water and props.
+
+**The walk** (`lib/world-walk.ts`):
+
+- **Reading the walk.** `regionWalk` reads the tiles: the zones' grids joined, with the 22 seam cells settled. The hub's planner uses it unchanged.
+- **Tap-walks.** AtlasWalk's own walks go through `makeWorldWalk`:
+  1. A tap-walk is searched in a window: the box round the companion and the goal, plus 2 tiles (512 px).
+  2. If that fails, the window widens to 4 tiles.
+  3. If that fails too, the walk is planned on the **route graph** and walked leg by leg, each leg in its own window.
+- **The route graph** (`worldPortals`, built by `world_canvas.portals()`) has 257 nodes and 1,406 edges.
+  - The nodes are the stands, plus the gates in the middle of each run of open cells where two areas meet.
+  - The edges join two nodes of one area that a walk inside that area reaches, with their cost in px.
+  - The ways (#118) will close edges.
+- **Kept on the whole grid:** the hut with keepsakes (`walk` rows passed in) and regions with decks (none today).
 
 **Checks:**
 
-- The mounted set covers the view at every window size from 320 to 1440 px wide.
-- There is no gap between tiles at any scale.
-- The decoded memory per view stays under a budget: 25 MiB at 2x, ground and flow together (the worst view today is 24.8 MiB).
-- A tap-walk crossing a tile edge and a chunk edge works.
-- An interrupted walk triggers no stale navigation.
-- The harness covers both normal and reduced motion.
+- **`npm run check:world-walk`** (`lib/world-walk.test.ts`):
+  - **Reading the tiles:** the tiles' walk is the zones' join, apart from the seam cells, and a cell reads the same one at a time as in a window.
+  - **Windowed search:** 685 walks between stands and random open ground, searched in windows, end where the whole-region search ends.
+  - **Route graph:** 104 of those walks, forced onto the route graph, still arrive.
+  - **Mounting:** in 14,484 camera positions at 9 window sizes (320 x 568 to 1440 x 900), the mounted tiles cover the view.
+    - Every prop whose picture reaches the view draws.
+    - A phone mounts at most 12 tiles, using at most 24.8 MiB of tile pictures and moving water at 2x, the tiles kept for the margin included.
+  - **No gaps:** tiles meet with no gap at every pixel scale, and each tile edge sits on a device pixel.
+  - **Area names:** the area under each stand is its zone, and the name holds within the margin along an edge.
+- **`npm run check:world-canvas`** and the rest of `npm run verify` still pass with the switch off. The game is unchanged.
 
-### Open questions for step 2
+**Play-test** (headless Chromium at 402 x 874, DPR 3, disposable profile, both paths, screenshots compared side by side):
 
-1. **Native 1x crispness.** Should step 2 make 1x crisp on iOS and Android, or keep 2x and accept softness?
-   - React Native's `Image` filters linearly, so 1x and 2x pictures are soft on a phone. Only a picture matching the device px per art pixel (today's 4x on a 3x phone) is 1:1.
-   - **Skia:** draw the mounted tiles with `@shopify/react-native-skia` and `FilterMode.Nearest` in a `.native.tsx` file, keeping the web on `Image` with `data-pixel`. This adds a native dependency (`npx expo install`, part of the Expo SDK) and puts the tiles in one canvas.
-   - **A small native view:** set `layer.magnificationFilter = .nearest` on iOS and turn off bitmap filtering on Android. This needs a config plugin or a development build.
-   - **Fall back to building at 4x.** Mounted memory would go back up to about 45 MiB.
-   - **Decision needed:** test the Skia route on a device before choosing; until then, 2x.
-2. **The tap-walk's search window over a big world.**
-   - The continent at twice v3's size is about 2 million walk cells. That is too many to run a path search over on every tap on a phone, and too much to build as one grid.
-   - **Proposal:** search a window, the box round the companion and the tapped point plus 2 tiles (512 px) on every side, usually about 100,000 cells. If no path is found, widen once to 4 tiles. If there is still none, fall back to the route graph (question 3).
-   - The tapped point is always on screen, so nearly every walk ends inside the first window.
-   - **Open:** the margin, and whether to show the companion "looking for a way" on the fallback.
-3. **The coarse route graph for far walks.** Walks from the map, residents' routes, and "walk me to the harbour" cross many tiles.
-   - **Proposal:** the build exports a graph of **portals**: cells where a route chunk meets a region chunk, area exits and named stands. It also exports edges, each with the walk cost between two portals over the world walk, computed at build time.
-   - A far walk plans on the graph, then walks it leg by leg, with each leg searched in a window as in question 2.
-   - Ways (#118) become barriers on graph edges: a closed way removes its edges.
-   - **Open:** whether the graph is per area or per tile, and whether a train shortcut is a graph edge (proposal: yes, with its own cost and a ride).
-4. **Data size.**
-   - `lib/world-canvas.ts` is about 200 KB for today's 140 tiles. The continent at twice v3's size may hold 1,000 or more tiles, about 1.5 MB of literals that all bundle on native.
-   - **Proposal:** split it per plane and per chunk in step 2, and if it grows past about 1 MB, load the per-tile walk and terrain as JSON assets that are fetched with the tiles.
-5. **Placeholder origins.** Step 2 can ship on the placeholder row. The real origins come with v4, and moving a chunk only renames tiles.
+- **Places tried:**
+  - the hub, walked from the garden out through the gate into Crossroads Town (the garden/town seam);
+  - Dust Gulch east into the Scorched Pass (the gulch/scorch seam);
+  - Neon Harbour from the Skyport west and north across the old seams;
+  - the inside of the hut;
+  - a train journey from Cogsworth to Dust Gulch.
+- **What I saw:**
+  - **Drawing:** both paths draw the same scenes. The seams that used to be zone edges are invisible on both. The area name shows when crossing into the town.
+  - **An interrupted walk:** I tapped far west, then tapped east after 0.45 s. The walk ended where the second tap sent it and was still there 4 s later; walking west alone ends somewhere else. Both paths ended at the same spot.
+  - **An inactive screen mid-walk:** the walk stops where it is, with no stale arrival after the screen comes back, and the scene holds still while hidden.
+  - **Reduced motion:** a walk arrives at once and the world holds still. With motion on, the water moves.
+- **Errors:** none in the console.
+- **Native was not tried.** The tiles on native are React Native `Image`s at 2x, which iOS and Android scale with linear filtering. They will be slightly soft until question 1 below is settled. I am noting this, not claiming it was tested.
+
+**Memory, measured in the browser.** These are the decoded pictures in the page: every distinct ground, tile and moving-water picture in the DOM, width x height x 4, in MiB.
+
+| Scene (402 x 874, DPR 3)          | Zones: ground and water | World tiles: ground and water |
+| --------------------------------- | ----------------------- | ----------------------------- |
+| The hub, at the garden            | 78.2                    | 6.3                           |
+| The hub, walked out to the town   | 77.6                    | 9.0                           |
+| Dust Gulch into the Scorched Pass | 29.1                    | 6.6                           |
+| Neon Harbour, walked north        | 47.1                    | 8.0                           |
+| Inside the hut                    | 14.1                    | 6.2                           |
+| The isles, at Lagoon Landing      | 67.5                    | 15.5                          |
+| After the journey, at Dust Gulch  | 22.8                    | 8.3                           |
+
+**What remains costly is the scenery past the world.** The `zones/scenery` cells are saved at 4x: 1440 x 2464, 13.5 MiB each. At a region's edge, two to five of them are mounted (54 to 68 MiB at the gulch and the isles). This is the same on both paths. It goes when v4's chunks draw their own frame; until then, those cells could be saved at 2x for a quarter of the cost.
+
+### Still open
+
+1. **Native 1x crispness.** Should native draw the tiles with Skia's nearest filter (in a `.native.tsx`), use a small native view that sets the layer's magnification filter, or go back to 4x? This needs a device test before choosing. Until then, 2x.
+2. **The search window's margin.** It is 2 then 4 tiles today. Should the companion show it is "looking for a way" when a walk falls back to the route graph?
+3. **The route graph across chunks.** Routes and the land between will add portals where chunks meet. Should a train shortcut be an edge with its own cost and a ride? The ways close edges (with #118).
+4. **Data size.** `lib/world-canvas.ts` is about 240 KB with the route graph. Split it per plane and chunk, and load per-tile walk and terrain as JSON, once the continent grows past about 1 MB.
+5. **Decks on the canvas path.** They are drawn and walked by the whole-grid path; there are none today.
 
 ## Step 3: saves and tests (Claude A with Codex)
 
