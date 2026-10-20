@@ -815,6 +815,10 @@ def main():
             y = r * cell
             in_gate = meadow.GATE_X + 8 <= c * cell < meadow.GATE_X + meadow.GATE_W - 8
             edge = y < 40 or (meadow.FENCE_Y + 10 <= y < meadow.FENCE_Y + 18 and not in_gate)
+            # the lawn outside the fence is open, but the garden still meets the town only
+            # at the gate's port (frames.PORTS 'garden|town' 144-176): its last row is closed
+            # either side of it
+            edge = edge or (y >= H - cell and not in_gate)
             row += '.' if ((c, r) not in blocked and not edge) else '#'
         walk.append(row)
     # Keep only cells the companion can reach from home (same bounds and moves
