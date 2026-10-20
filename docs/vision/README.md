@@ -15,6 +15,7 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 | [home-hub.md](home-hub.md)                   | **The home hub (19 Oct):** the garden as a place in the one world, on one screen with the valley; why the old handoff popped, the design and its phases                                                                                                          |
 | [world-rules.md](world-rules.md)             | **The world's rulebook (v2, 20 Oct):** meaning, the soft grid, height, scale, setting and style, props, water, paths and places, natural boundaries and the world's edge, living things, the ways, the bug protocol, and a table of which check guards each rule |
 | [size-guide.md](size-guide.md)               | **The size guide (20 Oct):** how large everything is, from people and doors to buildings, furniture, nature, terrain, places and routes, per region; data in `scripts/art/size_guide.json`, checked by `scripts/art/size_check.py`                               |
+| [asset-ledger.md](asset-ledger.md)           | **The asset ledger (20 Oct):** which old pictures may go into the new world (KEEP), which are redone first (REWORK), which retire; `npm run check:assets`                                                                                                        |
 
 ## Matt's direction (October 2026)
 

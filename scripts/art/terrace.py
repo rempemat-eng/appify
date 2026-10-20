@@ -2418,7 +2418,7 @@ def _sprite_img(sp, size=32):
 
 
 def _resident(root, name):
-    p = os.path.join(root, 'assets', 'residents', f'{name}-0.png')
+    p = os.path.join(root, 'assets', 'residents', f'{name}-0.png')  # ledger: compare (resident line-up)
     im = Image.open(p).convert('RGBA')
     return im.resize((im.width // 4, im.height // 4), Image.NEAREST)
 
