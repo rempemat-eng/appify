@@ -65,8 +65,10 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
     face |= {(x, y) for x in range(14, w - 14) for y in range(8, 14)}
     # weathered boards of four woods and an old coat of the sign's paint, bleached most
     # high up, dusty at the boardwalk (D13: Eastward's level of detail)
-    woods = ('#B39277', '#A69482', '#B88E66', '#A87C62', rd.mix(sign_ramp[2], '#B39277', 0.72))
-    rd.planks(cv, face, woods, seed=seed + 5, board=4, foot=h - 6)
+    # (20 Oct, Claude A: one weathered timber, not a mix of pinkish, grey and tan boards;
+    # fewer gaps, and those in groups where the wall has worked loose)
+    woods = ('#AE9278', '#A88E76', '#B2967C', '#A48A72')
+    rd.planks(cv, face, woods, seed=seed + 5, board=4, foot=h - 6, gaps=0.5, gap_groups=True)
     for (x, y) in face:
         if (x, y - 1) not in face:
             cv.set(x, y, BLEACHED[5])
@@ -111,7 +113,12 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
         for y in range(py, py + 5):
             cv.set(x, y, BLEACHED[4] if y == py else BLEACHED[2] if y < py + 4 else BLEACHED[0])
     rd.shadow_band(cv, 4, w - 4, py + 5, lambda x: 6 + (x * 3) // w, k=2.2)
-    for px in (2, w // 3 - 6, 2 * w // 3 + 4, w - 5):
+    # the posts run unbroken from the porch roof to the boardwalk (Matt, 20 Oct 10:15); at
+    # the store they stand either side of the door, so the display windows sit between them
+    dw0 = 22 if kind == 'saloon' else 16
+    dx0 = w // 2 - dw0 // 2
+    posts = (2, w // 3 - 6, 2 * w // 3 + 4, w - 5) if kind == 'saloon' else (2, dx0 - 6, dx0 + dw0 + 3, w - 5)
+    for px in posts:
         gp.post(cv, px, py + 5, h - 4, w=3, ramp=BLEACHED)
     # the ground storey: the doorway stands on the boardwalk, 32 px tall
     foot = h - 6
@@ -150,8 +157,9 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
         for (x, y) in rect_set(dx - 2, top - 2, dw + 4, 2):
             cv.set(x, y, BLEACHED[1] if y == top - 1 else BLEACHED[4])
         goods = ((GOLD, 'jar'), (RED, 'can'), (WTR, 'jar'), (ADOBE, 'sack'), (WOOD, 'box'))
-        for side, (wx0, ww) in enumerate(((8, dx - 13), (dx + dw + 5, w - (dx + dw + 5) - 8))):  # the display windows
+        for side, (wx0, ww) in enumerate(((8, dx - 16), (dx + dw + 9, w - (dx + dw + 9) - 8))):  # the display windows, between the posts
             wy0 = top + 4
+            gp.WINDOWS.append((cv, (wx0, wy0, ww, 20)))  # its pane lights up at night (zoneWindows)
             for (x, y) in rect_set(wx0, wy0, ww, 20):
                 rd.put(cv, x, y, _glass(glass, x - wx0, y - wy0, ww, 20))
             # two shelves of goods behind the glass, each lit on its left
@@ -183,7 +191,7 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
             cv.vline(wx0 - 1, wy0, 20, BLEACHED[1]); cv.vline(wx0 + ww, wy0, 20, BLEACHED[1])
             cv.hline(wx0 - 1, wy0 - 1, ww + 2, BLEACHED[1])
     # the boardwalk at the foot
-    rd.planks(cv, rect_set(0, h - 6, w, 6), woods[:4], seed=seed + 7, board=5, vertical=True,
+    rd.planks(cv, rect_set(0, h - 6, w, 6), woods, seed=seed + 7, board=5, vertical=True,
               bleach_top=0.2, length=(9, 12), gaps=0.25, nails=False)
     cv.hline(0, h - 6, w, BLEACHED[5])
     for x in range(0, w):

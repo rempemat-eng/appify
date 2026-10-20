@@ -310,7 +310,7 @@ def keep() -> Canvas:
             cv.set(x, y, c)
         cv.hline(wx - 2, 75, 22, STONE_R[5]); cv.hline(wx - 2, 76, 22, STONE_R[2])  # the sill
     for bx in (40, w - 49):
-        banner(cv, bx, 44, 26)
+        banner(cv, bx, 44, 13)  # short enough to hang whole above the porch roof (Matt, 20 Oct 10:15)
     # the great door, under a porch roof on two oak posts
     door = rect_set(52, 76, 24, 26) | {(x, y) for y in range(66, 76) for x in range(52, 76) if abs(x - 63.5) < (y - 64) * 1.25}
     for (x, y) in door:
@@ -474,7 +474,7 @@ def gatehouse() -> Canvas:
         for y in range(60, 88):
             for k in range(3):
                 cv.set(gx + d * k, y, OAK[3 - k] if (y // 4) % 2 else OAK[2 - k // 2])
-    banner(cv, 56, 28, 12)
+    banner(cv, 56, 25, 13)  # hung from the parapet, whole above the arch's voussoirs (Matt, 20 Oct 10:15)
     for tx in (0, w - 48):
         tw = round_tower(80)
         for y in range(-tw.pad, tw.h):

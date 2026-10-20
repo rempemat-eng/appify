@@ -72,7 +72,7 @@ def _bands(pts):
 def planks(cv: Canvas, pts, woods, seed: int = 0, board: int = 4, foot: int | None = None,
            bleach=(222, 210, 190), bleach_top: float = 0.45, nails: bool = True,
            gaps: float = 0.12, vertical: bool = False, light_x: float = 0.10,
-           length=(16, 34)):
+           length=(16, 34), gap_groups: bool = False):
     """Weathered boards over `pts`. `woods` are the base colours the boards are cut from
     (each board picks one, with a small value change of its own). Rows run along x (or
     along y with `vertical`). `foot` is the row the wall stands on (dust and grime rise
@@ -92,7 +92,9 @@ def planks(cv: Canvas, pts, woods, seed: int = 0, board: int = 4, foot: int | No
             while a <= span_a[1]:
                 ln = r.randint(*length)
                 cuts.append((a, a + ln, r.randrange(len(woods)), r.uniform(-0.4, 0.4),
-                             r.random() < 0.55, r.random() < gaps, r.random() < 0.35,
+                             r.random() < 0.55,
+                             r.random() < gaps and (not gap_groups or smooth_noise(a, bi * 4, 30, seed + 71) > 0.62),
+                             r.random() < 0.35,
                              r.randint(3, ln - 3) if ln > 7 else 3, r.random()))
                 a += ln
             rows[bi] = cuts

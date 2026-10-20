@@ -158,7 +158,11 @@ export const zoneWindows: Record<string, readonly (readonly [number, number, num
   lookout_tower: [[24, 45, 12, 9]],
   saloon: [[47, 35, 12, 10]],
   station_house: [[17, 65, 8, 12]],
-  store: [[39, 35, 12, 10]],
+  store: [
+    [39, 35, 12, 10],
+    [9, 73, 20, 20],
+    [62, 73, 19, 20],
+  ],
   water_mill: [
     [16, 47, 8, 6],
     [52, 47, 8, 6],

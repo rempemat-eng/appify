@@ -1387,7 +1387,10 @@ def glass_dome() -> Canvas:
             a = 54 if front else 104  # the back half denser: what stands behind the dome reads as behind glass
             # D13 (audit: glazing lines only): every pane catches the sky a little differently,
             # some bluer, some greener or violet, the panes facing up brightest
-            pane = (int(th * 8 / math.pi), int(ph * 8 / math.pi))
+            # (each pane is the cell between two meridians and two rings, so its tint stops
+            # at the struts; above the top ring, where the meridians stop, the crown is one
+            # clear pane with one tint)
+            pane = (int(th * 8 / math.pi), int(ph * 8 / math.pi)) if ph < 0.79 else (0, 99)
             pv = noise2(*pane, 1181)
             tint = (150, 196, 228) if pv < 0.4 else (140, 206, 210) if pv < 0.65 else (170, 180, 230) if pv < 0.85 else (196, 214, 236)
             c = (*tint, a + (14 if front and ph > 0.55 else 0))
@@ -1396,7 +1399,7 @@ def glass_dome() -> Canvas:
                 c = (240, 248, 255, int(70 + 120 * (u - 0.55)))  # the sun's reflection, high on the upper left, soft
             elif front and u > 0.95:
                 c = (255, 255, 255, 200)
-            if front and 0.02 < (th * 8 / math.pi) % 1 < 0.1 and 0.15 < ph < 0.7 and pv > 0.5:
+            if front and 0.05 < (th * 8 / math.pi) % 1 < 0.12 and 0.15 < ph < 0.7 and pv > 0.5:
                 c = (255, 255, 255, 120)  # a glint along a pane's edge
         cv.set(x, y, c)
     for i in range(0, 721):  # the sill: a cast ring the glass stands on, its front lit
