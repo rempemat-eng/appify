@@ -49,6 +49,13 @@ ground against the numbers alone; the screenshots are only needed to add a basel
 4. FAIL with LOW means too little detail for that kind; NOISY means the detail is speckle
    (single pixels, tiny clusters): draw it as shapes of two or more pixels instead.
 
+The ground baselines are calm open lawn only (20 Oct: five boxes in three Eastward shots,
+no props, chosen with the cleanliness test on): a lawn in sun and shade with a few daisies,
+a yard with drawn tufts, a verge with soft bare patches. They range from 17 to 50 shapes a
+patch, because Eastward's sunlit lawn carries a faint two-tone leaf texture that comes out
+as a low-contrast mottle at our scale, while its yards are flat with tufts; the bar is their
+mean. The old speckled grass (single-pixel blades, 19 Oct) still fails it as NOISY.
+
 Kinds with baselines: face, rim, side, corner, stair, foot, ground, water (ponds and
 channels with their banks), wood-front (plank walls, shop and false fronts), stone-wall
 (stone footings and dressed walls), machinery (vehicles, hatches, metal), roof (tiles and

@@ -153,63 +153,6 @@
    "patches": 2,
    "jpeg_quality": 90
   },
-  "eastward-37-open-grass": {
-   "game": "Eastward: Octopia (official site)",
-   "url": "https://eastwardgame.com/wp-content/uploads/2024/06/Octopia-7_Fishing.jpg",
-   "box": [
-    1040,
-    680,
-    1400,
-    880
-   ],
-   "adult_px": 162.0,
-   "kind": "ground",
-   "tones": 9.33,
-   "shapes": 47.33,
-   "dressing": 32.33,
-   "isolated": 0.306,
-   "cluster": 1.89,
-   "patches": 3,
-   "jpeg_quality": 93
-  },
-  "eastward-12-yard-grass": {
-   "game": "Eastward - Octopia",
-   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_c3e35bbd8e25af924b3b9cbf087f1f0c77dcf68a.1920x1080.jpg",
-   "box": [
-    1160,
-    600,
-    1400,
-    760
-   ],
-   "adult_px": 162.0,
-   "kind": "ground",
-   "tones": 16.0,
-   "shapes": 21.0,
-   "dressing": 18.0,
-   "isolated": 0.119,
-   "cluster": 4.3,
-   "patches": 2,
-   "jpeg_quality": 90
-  },
-  "eastward-13-verge-grass": {
-   "game": "Eastward - Octopia",
-   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_f5788b1d4ade71e0cdb1e0110debfad3b32ca51c.1920x1080.jpg",
-   "box": [
-    130,
-    830,
-    250,
-    990
-   ],
-   "adult_px": 162.0,
-   "kind": "ground",
-   "tones": 6.0,
-   "shapes": 29.0,
-   "dressing": 16.0,
-   "isolated": 0.051,
-   "cluster": 5.22,
-   "patches": 1,
-   "jpeg_quality": 90
-  },
   "eastward-17-barn-front": {
    "game": "Eastward - Octopia",
    "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_95e7b57126bf6395b4bbe0adabf1b633c20e5245.1920x1080.jpg",
@@ -550,6 +493,101 @@
    "isolated": 0.131,
    "cluster": 3.39,
    "patches": 5,
+   "jpeg_quality": 90
+  },
+  "eastward-37-lawn-shade": {
+   "game": "Eastward: Octopia (official site)",
+   "url": "https://eastwardgame.com/wp-content/uploads/2024/06/Octopia-7_Fishing.jpg",
+   "box": [
+    480,
+    20,
+    780,
+    240
+   ],
+   "adult_px": 162.0,
+   "kind": "ground",
+   "tones": 15.5,
+   "shapes": 43.75,
+   "dressing": 35.0,
+   "isolated": 0.274,
+   "cluster": 2.02,
+   "patches": 4,
+   "jpeg_quality": 93
+  },
+  "eastward-37-lawn-open": {
+   "game": "Eastward: Octopia (official site)",
+   "url": "https://eastwardgame.com/wp-content/uploads/2024/06/Octopia-7_Fishing.jpg",
+   "box": [
+    1100,
+    720,
+    1400,
+    900
+   ],
+   "adult_px": 162.0,
+   "kind": "ground",
+   "tones": 5.5,
+   "shapes": 49.5,
+   "dressing": 32.0,
+   "isolated": 0.279,
+   "cluster": 1.95,
+   "patches": 2,
+   "jpeg_quality": 93
+  },
+  "eastward-37-lawn-flowers": {
+   "game": "Eastward: Octopia (official site)",
+   "url": "https://eastwardgame.com/wp-content/uploads/2024/06/Octopia-7_Fishing.jpg",
+   "box": [
+    330,
+    20,
+    560,
+    240
+   ],
+   "adult_px": 162.0,
+   "kind": "ground",
+   "tones": 13.0,
+   "shapes": 29.5,
+   "dressing": 22.75,
+   "isolated": 0.239,
+   "cluster": 2.77,
+   "patches": 4,
+   "jpeg_quality": 93
+  },
+  "eastward-12-yard-tufts": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_c3e35bbd8e25af924b3b9cbf087f1f0c77dcf68a.1920x1080.jpg",
+   "box": [
+    1290,
+    610,
+    1500,
+    760
+   ],
+   "adult_px": 162.0,
+   "kind": "ground",
+   "tones": 15.0,
+   "shapes": 20.0,
+   "dressing": 16.0,
+   "isolated": 0.211,
+   "cluster": 3.26,
+   "patches": 2,
+   "jpeg_quality": 90
+  },
+  "eastward-08-verge-patches": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_bf8d65929d363f1b62f632d934eda94ef5188049.1920x1080.jpg",
+   "box": [
+    420,
+    480,
+    700,
+    625
+   ],
+   "adult_px": 162.0,
+   "kind": "ground",
+   "tones": 14.0,
+   "shapes": 17.0,
+   "dressing": 14.5,
+   "isolated": 0.117,
+   "cluster": 5.38,
+   "patches": 2,
    "jpeg_quality": 90
   }
  }

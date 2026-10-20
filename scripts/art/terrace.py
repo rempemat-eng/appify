@@ -114,8 +114,8 @@ MATS = list(RAMPS)
 # ('grass' and 'soil'); drawn by the terrace toolkit only until that is agreed, because those
 # two ramps also colour battle, garden, garden_meadow, garden_props, icons, journey,
 # mission_map, prop_sheet, sunstone_zones, valley_props, valley_zones, world_props and zones.
-# Set TERRACE_PALETTE = False to draw with the shared ramps.
-TERRACE_PALETTE = True
+# Off by default until Matt chooses: TERRACE_PALETTE=1 in the environment draws with it.
+TERRACE_PALETTE = os.environ.get('TERRACE_PALETTE', '') == '1'
 PROPOSED_GRASS = ['#3A4E36', '#5E7E48', '#86A85A', '#9CC068', '#BAD486']
 PROPOSED_SOIL = ['#2A2026', '#3E2F33', '#54443E', '#6B5A48', '#857254', '#A08C66']
 GRASS = PROPOSED_GRASS if TERRACE_PALETTE else MATERIALS['grass']   # dark .. light
@@ -132,6 +132,10 @@ STRONG = (0.56, 0.60, 0.72)
 SOFT = (0.90, 0.92, 0.96)      # the soft shade pooled along a face's foot
 
 MEDIUM = (0.70, 0.74, 0.83)
+GROWTH_REACH = 10   # px from an edge over which growth thins out to the calm open
+OPEN_TUFTS = 0.01  # the odd drawn tuft out in the open
+DRY, DRY_TONE = 0.73, '#B0A058'   # where the lawn dries to olive, and its tone
+LEAF_EDGE = 0.24   # how far the leafy edge between two grass tones reaches
 
 
 def rgb(c) -> tuple:
@@ -831,10 +835,13 @@ class _Painter:
 
     # tops: grass in broad patches, each tier a step lighter, tufts and the odd flower
     def tops(self):
-        """Tier tops as grass in Eastward's manner: a calm base in three tones laid in large
-        soft patches; detail as drawn shapes of several pixels (tufts of blades lit on their
-        left, small flowers, worn dirt) gathered in loose clusters, never single-pixel
-        speckle. Darker grass gathering at feet and edges comes with the dressing."""
+        """Tier tops as grass in Eastward's manner, calm in the open: three tones laid in
+        large soft patches whose edges break into little upright leaves (the inside of a
+        patch stays flat), a few olive dry drifts, the odd drawn tuft and daisies in twos and
+        threes. Growth (blade strokes, tufts, long grass) gathers within GROWTH_REACH px of
+        edges, feet, banks and stairs and in a few slow clumps; there is no even texture laid
+        over the open (an even scatter of chevrons read as fabric, 20 Oct). Every mark is a
+        shape of two or more pixels, never single-pixel speckle."""
         H, W, s = self.H, self.W, self.seed
         tidx = np.zeros((H, W), np.int8)
         tones = {}
@@ -846,6 +853,9 @@ class _Painter:
                 T = tones[int(self.lvl[y, x])]
                 v = smooth_noise(x, y, 26, s * 7 + 501) + 0.42 * (smooth_noise(x, y, 8, s * 7 + 503) - 0.5) + \
                     0.16 * (smooth_noise(x, y, 3, s * 7 + 504) - 0.5)
+                # where two tones meet, the edge is drawn as little upright leaves (Eastward's
+                # lawn: the shade's edge breaks into blades, the inside stays flat)
+                v = 0.5 + 1.5 * (v - 0.5) + LEAF_EDGE * (self._leafv(x, y) - 0.5)
                 ti = 0 if v < 0.36 else 2 if v > 0.63 else 1
                 tidx[y, x] = ti
                 # light as a material (Eastward's painted light): a slow, soft swell of
@@ -855,21 +865,14 @@ class _Painter:
                 c = T[ti]
                 c = lerp(c, '#D6C46E', 0.3 * (hue - 0.55)) if hue > 0.55 else lerp(c, '#4E8A78', 0.3 * (0.45 - hue)) \
                     if hue < 0.45 else c
+                # dry patches (Eastward's olive drifts in a lawn): a few, large, leaf-edged
+                dry = smooth_noise(x, y, 34, s * 7 + 508) + 0.3 * (smooth_noise(x, y, 9, s * 7 + 509) - 0.5) + \
+                    LEAF_EDGE * 0.8 * (self._leafv(x + 3, y + 2) - 0.5)
+                if dry > DRY:
+                    c = lerp(c, DRY_TONE, 0.38 if dry < DRY + 0.06 else 0.5)
                 self.img[y, x] = tuple(min(255, int(v2 * lum)) for v2 in c)
         gd = self._growth()
         sd = s * 7 + 510
-        # the weave: Eastward's open grass is a close, low-contrast scatter of little
-        # chevrons a step darker than the ground (here a 5 px cup, all one piece), calm
-        # because it is even and faint
-        for j, y in enumerate(range(2, H, 3)):
-            for i, x in enumerate(range((j % 2) * 2, W - 3, 4)):
-                xx = x + int(noise2(i, j, sd + 30) * 2)
-                if noise2(i, j, sd + 31) > 0.7 - 1.4 * float(gd[y, min(W - 1, xx + 1)]) or not self._open(xx, y - 1, xx + 3, y + 1):
-                    continue
-                base = tuple(int(v) for v in self.img[y, xx + 1])
-                c = lerp(base, '#2E4A30', 0.17)
-                for (dx, dy) in ((0, -1), (0, 0), (1, 0), (2, 0), (2, -1)):
-                    self.put(xx + dx, y + dy, c)
         # the grain: short blade strokes (2 px, never one) a tone off the ground under them,
         # thicker where the clusters gather, thin in the calm
         sd = s * 7 + 510
@@ -880,7 +883,7 @@ class _Painter:
                 if not self._open(xx, yy - 1, xx + 2, yy + 1):
                     continue
                 q = noise2(i, j, sd + 6)
-                if q > 0.62 - 0.35 * float(gd[yy, xx]):
+                if q > 0.9 * (float(gd[yy, xx]) - 0.3):     # none in the open: it stays calm
                     continue
                 T = tones[int(self.lvl[yy, xx])]
                 base = tuple(int(v) for v in self.img[yy, xx])
@@ -908,10 +911,13 @@ class _Painter:
                 k = noise2(i, j, sd)
                 L = int(self.lvl[yy, xx])
                 dv = float(dens[yy, xx])
-                if k < 0.46 * dv ** 1.4:
+                if k < 0.46 * dv ** 1.4 + OPEN_TUFTS:
                     self._tuft(xx, yy, L, i * 131 + j, dv)
-                elif k > 0.988 - 0.02 * dv:
-                    self._flower(xx, yy, (i * 7 + j) % 4)
+                elif k > 0.993 - 0.01 * dv and self._open(xx - 1, yy - 3, xx + 7, yy + 6):
+                    # flowers come in threes, as Eastward draws its daisies
+                    f = (i * 7 + j) % 4
+                    for (dx, dy) in ((0, 0), (4, 1), (1, 4))[:2 + int(noise2(i, j, sd + 7) > 0.35)]:
+                        self._flower(xx + dx, yy + dy, f)
         for j, y in enumerate(range(10, H - 2, 22)):          # long grass: a few patches, one shape each
             for i, x in enumerate(range(8 + (j % 2) * 20, W - 16, 40)):
                 xx = x + int(noise2(i, j, sd + 21) * 16) - 8
@@ -924,6 +930,17 @@ class _Painter:
             cx, cy = int(noise2(k, 1, sd + 3) * W), int(noise2(k, 2, sd + 3) * H)
             self._worn(cx, cy, 6 + int(noise2(k, 3, sd + 3) * 8), 3 + int(noise2(k, 4, sd + 3) * 3), k)
 
+    def _leafv(self, x, y):
+        """1 inside a little upright leaf (a blade tip 2 px wide widening to 6 over 4 rows),
+        0 between leaves, 0.5 where a leaf is left out; rows of leaves offset irregularly so
+        no lattice shows."""
+        r, t = y // 4, y % 4
+        X = x + (r % 2) * 3 + int(noise2(r, 7, self.seed + 541) * 5)
+        c, u = X // 6, X % 6
+        if noise2(c, r, self.seed + 542) < 0.3:
+            return 0.5
+        return 1.0 if abs(u - 2.5) <= 0.5 + 0.8 * t else 0.0
+
     def _open(self, x0, y0, x1, y1):
         """Whether a box is all open tier top (no face, water, stair)."""
         if x0 < 0 or y0 < 0 or x1 > self.W or y1 > self.H:
@@ -931,18 +948,18 @@ class _Painter:
         return bool(((self.kind[y0:y1, x0:x1] == TOP) & ~self.wet[y0:y1, x0:x1]).all())
 
     def _growth(self):
-        """0 (bare, calm) .. 1 (thick growth) per pixel: high within ~14 px of any edge (a
+        """0 (bare, calm) .. 1 (thick growth) per pixel: high within GROWTH_REACH px of any edge (a
         face, a band, water, a stair or ramp) and in slow clumps out in the open."""
         if getattr(self, '_gr', None) is not None:
             return self._gr
         H, W = self.H, self.W
         edge = (self.kind != TOP) | self.wet
-        dist = np.full((H, W), 15, np.int16)
+        dist = np.full((H, W), GROWTH_REACH + 1, np.int16)
         cur = edge.copy()
-        for d in range(1, 15):
+        for d in range(1, GROWTH_REACH + 1):
             cur = cur | _shift(cur, 1, 0) | _shift(cur, -1, 0) | _shift(cur, 0, 1) | _shift(cur, 0, -1)
             dist[cur & (dist > d)] = d
-        near = np.clip(1 - dist / 14.0, 0, 1)
+        near = np.clip(1 - dist / float(GROWTH_REACH), 0, 1)
         ys, xs = np.mgrid[0:H, 0:W]
         blob = np.vectorize(lambda x, y: smooth_noise(x, y, 38, self.seed + 901))(xs[::4, ::4], ys[::4, ::4])
         blob = np.kron(blob, np.ones((4, 4)))[:H, :W]
@@ -968,7 +985,7 @@ class _Painter:
                'd': lerp(g[2], g[1], 0.5), 'r': lerp(g[1], g[2], 0.3),
                'y': lerp(g[3], '#D8C070', 0.5), 'Y': lerp(g[4], '#F0DE90', 0.55)}
         q = noise2(k, 1, self.seed + 871)
-        big = dv > 0.5 and noise2(k, 2, self.seed + 872) < dv
+        big = dv < 0.2 or (dv > 0.5 and noise2(k, 2, self.seed + 872) < dv)   # out in the open: a big one
         pick = [2, 3, 6] if big else [0, 1, 5]
         if q > 0.86:
             pick = [4]                                        # dry grass, here and there
