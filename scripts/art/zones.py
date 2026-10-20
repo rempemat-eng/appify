@@ -232,11 +232,24 @@ SPRITE_WINDOWS: dict = {}
 # Props with a way through them: (from, to) in sprite pixels.
 OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44), 'ticket_gates': (4, 80), 'moon_arch': (20, 44)}
 
+# Wide props that stand on a few feet rather than their whole width: (from, to, depth)
+# in sprite pixels, each a solid footing; the rest of the sprite's bottom is open ground.
+# The airship mast is 157 wide only because it carries the moored airship: what stands
+# on the ground is the tower's west leg pad, its east leg pad and the winch house
+# beside it; the cage lift between the legs is open, so the path walks into its door.
+FEET = {'airship_mast': ((106, 114, 8), (133, 156, 20))}
+
 
 def walk_grid(objects, sprite_map) -> list[str]:
     blocked = set()
     for (_id, key, x, y) in objects:
         sp = sprite_map[key]
+        if key in FEET:
+            for (fx0, fx1, depth) in FEET[key]:
+                for yy in range(y + sp.h - depth, y + sp.h):
+                    for xx in range(x + fx0, x + fx1):
+                        blocked.add((xx // CELL, yy // CELL))
+            continue
         foot = 20 if sp.w > 60 else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 6
         gap = OPENINGS.get(key)
         for yy in range(y + sp.h - foot, y + sp.h):
