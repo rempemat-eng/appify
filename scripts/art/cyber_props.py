@@ -15,6 +15,7 @@ import sys
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
+import facade as fc  # noqa: E402
 import garden_props as gp  # noqa: E402
 from materials import MATERIALS, STONE, WOOD  # noqa: E402
 
@@ -760,35 +761,7 @@ def _rooftop(cv: Canvas, x0: int, x1: int, y0: int, y1: int, seed: int, tall: bo
     kind = ('membrane', 'membrane', 'gravel', 'deck', 'green', 'solar')[int(noise2(seed, 0, 1902) * 6)]
     if y1 - y0 < 16 and kind in ('deck', 'solar'):
         kind = 'membrane'
-    strip = 10 + int(noise2(seed, 1, 1902) * 8)
-    for y in range(y0, y1):
-        for x in range(x0, x1):
-            if kind == 'membrane':
-                c = ramp[2] if smooth_noise(x, y, 9, 1900 + seed) > 0.42 else ramp[1]
-                if (x - x0) % strip == 0:
-                    c = ramp[1]  # the lapped seams
-            elif kind == 'gravel':
-                c = ramp[3] if (x * 7 + y * 13 + seed) % 5 == 0 else ramp[2]
-            elif kind == 'deck':
-                c = WOOD[2] if (y - y0) % 3 else WOOD[1]
-                if (x - x0 + (y - y0) // 3 * 7) % 23 == 0:
-                    c = WOOD[1]  # the board ends
-            elif kind == 'green':
-                n = smooth_noise(x, y, 2.5, 1903 + seed)
-                c = '#2A4A38' if n > 0.62 else '#3A6446' if n > 0.35 else '#4E6E44'
-                if (y - y0) % 14 == 7:
-                    c = ramp[2]  # a gravel path across the sedum
-            else:
-                c = ramp[2]
-            cv.set(x, y, c)
-    if kind == 'solar':  # rows of panels tilted to the south, a walkway between
-        for ry in range(y0 + 3, y1 - 6, 8):
-            for x in range(x0 + 3, x1 - 3):
-                for y in range(ry, ry + 5):
-                    c = '#1E3A6A' if (x - x0) % 6 else METAL[3]
-                    if y == ry:
-                        c = '#4A70A8' if (x - x0) % 6 else METAL[4]
-                    cv.set(x, y, c)
+    fc.roof(cv, x0, x1, y0, y1, kind, ramp, seed)
     if kind == 'membrane':  # drains
         for k in range(1 + (x1 - x0) // 40):
             dx = x0 + 6 + int(noise2(seed, 5 + k, 1902) * max(1, x1 - x0 - 12))
@@ -895,12 +868,15 @@ def _rooftop(cv: Canvas, x0: int, x1: int, y0: int, y1: int, seed: int, tall: bo
 
 def _facade(cv: Canvas, x0: int, x1: int, y0: int, y1: int, style: str, seed: int):
     """One stretch of facade, floor by floor (FLOOR px a floor, the scale table's upper
-    storey: about 1.3 people). glass: a curtain wall, its mullions and spandrels, panes
-    dark with the sky's reflection running down them on a slant, offices lit here and
-    there; flats: concrete with windows a person's height and more, balconies whose slabs
-    catch the light behind a waist-high rail, air conditioners, plants and washing; old:
-    glazed tile with framed sash windows, sills, and a fire escape zigzagging down."""
-    ramp = GLASS if style == 'glass' else TILE_C if style == 'old' else CONCRETE
+    storey: about 1.3 people), drawn to Eastward's level of detail (facade.py; art-style.md):
+    glass: a curtain wall, louvred spandrels, mullions lit on their west face, panes with the
+    sky, the street's skyline and a glint in them, or offices behind; flats: precast panels
+    with their board marks (or worn render), windows a person's height and more in stone
+    reveals with curtains, lamps and plants, balconies whose slabs catch the light behind a
+    waist-high rail, air conditioners dripping rust; old: brick in running bond or glazed
+    tile, soldier-course lintels, sash windows, a fire escape zigzagging down. Every floor's
+    ledge leaves its soot under it, a downpipe runs to the street, cables are clipped along,
+    and the east end of the front is a step darker than the west."""
     # each building its own rhythm and colour (rule 8; to-c-city-review 3): the mullion
     # spacing, the bay, the window's size and the cladding's tint come from its seed
     v = noise2(seed, 0, 1915)
@@ -915,155 +891,176 @@ def _facade(cv: Canvas, x0: int, x1: int, y0: int, y1: int, style: str, seed: in
     win_w = 11 + int(noise2(seed, 3, 1915) * 4)
     win_h = 14 + int(noise2(seed, 4, 1915) * 4)
     floors = (y1 - y0) // FLOOR
-    for y in range(y0, y1):
-        for x in range(x0, x1):
-            cv.set(x, y, ramp[2] if x > x0 + 1 else ramp[3])
+    restore = fc.guard(cv, x0, x1, y0, y1)
+    if style == 'glass':
+        fc.curtain_wall(cv, x0, x1, y0, y1, ramp, seed, FLOOR, mull)
+        restore()
+        fc.east_shade(cv, x0, x1, y0, y1)
+        return
+    kind = ('panel' if noise2(seed, 8, 1915) > 0.3 else 'render') if style == 'flats' else \
+        ('tile' if ramp is TILE_C else 'brick')
+    wall_r = list(ramp[1:]) if kind in ('panel', 'render') else list(ramp)
+    fc.wall(cv, x0, x1, y0, y1, kind, wall_r, seed)
+    frame = (['#2A2630', '#5A5460', '#9A949C', '#D8D2D0'], ['#1E2A26', '#2E4A40', '#4A7A64', '#8AB8A0'],
+             ['#2A1A14', '#5A3424', '#8A5434', '#C8925A'])[int(noise2(seed, 9, 1915) * 3)]
+    bay = max(bay_w, win_w + 6)
+    xs = list(range(x0 + 5, x1 - win_w - 2, bay))
+    gaps = [bx + win_w + (bay - win_w) // 2 for bx in xs[:-1]]
+    pipe = None
+    if gaps and noise2(seed, 10, 1915) > 0.25:
+        pipe = gaps[int(noise2(seed, 11, 1915) * len(gaps))]
+    elif x1 - (xs[-1] + win_w if xs else x0) >= 9:
+        pipe = x1 - 6
     for f in range(floors):
         fy = y1 - (f + 1) * FLOOR
-        if style == 'glass':
-            for x in range(x0, x1):
-                for y in range(fy, fy + FLOOR):
-                    r = y - fy
-                    col = (x - x0) % mull
-                    if r < 6:
-                        c = METAL[3] if r == 0 else METAL[1] if r == 5 else METAL[2]  # the spandrel
-                    elif col == 0:
-                        c = METAL[2] if x > x0 else METAL[4]  # the mullion
-                    else:
-                        refl = ((x - x0) + (y - y0) * 0.6 + seed * 13) % 37
-                        c = ramp[4] if refl < 3 else ramp[3] if refl < 9 else ramp[1] if r > 24 else ramp[2]
-                        n = noise2((x - x0) // mull, f, 1910 + seed)
-                        if n > 0.8:
-                            c = WARM_W[3] if r < 15 else WARM_W[2]
-                        elif n > 0.7:
-                            c = COOL_W[3] if r < 15 else COOL_W[2]
-                    cv.set(x, y, c)
-        else:
-            bay = max(bay_w, win_w + 6)
-            cv.hline(x0, fy, x1 - x0, ramp[4] if style == 'old' else ramp[3])  # the floor's ledge
-            cv.hline(x0, fy + 1, x1 - x0, ramp[1])
-            for k, bx in enumerate(range(x0 + 5, x1 - win_w - 2, bay)):
-                n = noise2(k, f, 1912 + seed)
-                lit = WARM_W if n > 0.62 else COOL_W if n > 0.5 else None
-                ww, wh = win_w, win_h
-                wx, wy = bx, fy + 7
-                for y in range(wy, wy + wh):
-                    for x in range(wx, wx + ww):
-                        if lit:
-                            c = lit[3] if y < wy + 6 else lit[2]
-                        else:
-                            c = NIGHT[1] if y > wy + 3 else NIGHT[2]
-                        if style == 'old' and (x == wx + ww // 2 or y == wy + wh // 2):
-                            c = ramp[5]  # the glazing bars of a sash
-                        cv.set(x, y, c)
-                cv.vline(wx, wy, wh, ramp[0])  # the reveal's shade on the window's west side
-                cv.hline(wx, wy, ww, ramp[0])
-                if lit and noise2(k, f, 1913 + seed) > 0.5:
-                    cv.hline(wx + 1, wy + 1, ww - 2, '#FFF6D8' if lit is WARM_W else '#E8FBFF')  # a lamp, a curtain
-                    cv.vline(wx + 1, wy + 2, wh // 2, '#FFF6D8' if lit is WARM_W else '#E8FBFF')
-                if style == 'old':
-                    cv.hline(wx - 1, wy - 1, ww + 2, ramp[5]); cv.hline(wx - 1, wy + wh, ww + 2, ramp[5])
-                    cv.hline(wx - 1, wy + wh + 1, ww + 2, ramp[1])
-                if style == 'flats' and noise2(k, f, 1914 + seed) > 0.55 and f > 0:
-                    # a balcony: its slab lit on top, its rail at a person's waist, its
-                    # shadow on the wall below
-                    for x in range(wx - 3, wx + ww + 3):
-                        cv.set(x, wy + wh, ramp[5]); cv.set(x, wy + wh + 1, ramp[3])
-                        cv.set(x, wy + wh + 2, ramp[0])
-                        if (x - wx) % 3 == 0:
-                            for d in range(1, 8):
-                                cv.set(x, wy + wh - d, METAL[4] if d > 5 else METAL[3])
-                    cv.hline(wx - 3, wy + wh - 8, ww + 6, METAL[5])
-                    cv.hline(wx - 3, wy + wh - 7, ww + 6, METAL[2])
-                    if noise2(k, f, 1915 + seed) > 0.5:  # a plant, or washing
-                        for d in range(1, 5):
-                            cv.set(wx + 1, wy + wh - d, '#4A8A5A' if d > 2 else '#2E5A40')
-                            cv.set(wx + 2, wy + wh - d - 1, '#4A8A5A')
-                    else:
-                        cv.hline(wx, wy + wh - 9, ww, '#C8C0B0')  # the line
-                        for d in range(3):
-                            for e in range(3):
-                                cv.set(wx + 1 + d * 4, wy + wh - 8 + e, ('#E8E2D2', '#C8463A', '#6FA8D8')[d])
-                elif noise2(k, f, 1916 + seed) > 0.6:  # an air conditioner under the window
-                    for x in range(wx + 1, wx + 9):
-                        cv.set(x, wy + wh + 1, METAL[4]); cv.set(x, wy + wh + 2, METAL[3])
-                        cv.set(x, wy + wh + 3, METAL[2]); cv.set(x, wy + wh + 4, ramp[0])
-                    cv.set(wx + 3, wy + wh + 2, METAL[1]); cv.set(wx + 4, wy + wh + 2, METAL[1])  # its grille
-                    cv.set(wx + 8, wy + wh + 5, '#5A78A8')  # a drip
+        fc.ledge(cv, x0, x1, fy, fc.STONE_T if kind != 'panel' else [ramp[0]] + list(ramp[1:]), seed + f)
+        for k, bx in enumerate(xs):
+            n = noise2(k, f, 1912 + seed)
+            lit = WARM_W if n > 0.62 else COOL_W if n > 0.5 else None
+            ws = seed * 31 + k * 7 + f * 131
+            wx, wy = bx, fy + 7
+            balcony = style == 'flats' and noise2(k, f, 1914 + seed) > 0.55 and f > 0
+            fc.window(cv, wx, wy, win_w, win_h, wall_r, lit, ws, frame=frame,
+                      bars='sash' if style == 'old' else ('casement' if k % 2 else 'none'),
+                      lintel='soldier' if kind == 'brick' else 'stone' if kind in ('tile', 'render') else 'none',
+                      extras=not balcony)
+            wh, ww = win_h, win_w
+            if balcony:
+                # a balcony: its slab lit on top, its rail at a person's waist, its
+                # shadow on the wall below
+                for x in range(wx - 3, wx + ww + 3):
+                    cv.set(x, wy + wh, ramp[5]); cv.set(x, wy + wh + 1, ramp[3])
+                    cv.set(x, wy + wh + 2, ramp[1])
+                    fc.darken(cv, x + 1, wy + wh + 3, 1.6); fc.darken(cv, x + 2, wy + wh + 4, 0.8)
+                    if (x - wx) % 3 == 0:
+                        for d in range(1, 8):
+                            cv.set(x, wy + wh - d, METAL[4] if d > 5 else METAL[3])
+                cv.hline(wx - 3, wy + wh - 8, ww + 6, METAL[5])
+                cv.hline(wx - 3, wy + wh - 7, ww + 6, METAL[2])
+                if noise2(k, f, 1915 + seed) > 0.5:  # a plant, or washing
+                    for d in range(1, 6):
+                        cv.set(wx + 1, wy + wh - d, fc.LEAF[3] if d > 2 else fc.LEAF[1])
+                        cv.set(wx + 2, wy + wh - d - 1, fc.LEAF[2])
+                        cv.set(wx + 3, wy + wh - d, '#6A3A24' if d < 3 else fc.LEAF[4])
+                else:
+                    cv.hline(wx, wy + wh - 9, ww, '#C8C0B0')  # the line
+                    for d in range(3):
+                        for e in range(3):
+                            c = ('#E8E2D2', '#C8463A', '#6FA8D8')[d]
+                            cv.set(wx + 1 + d * 4, wy + wh - 8 + e, c if e < 2 else fc.step(c, 1))
+                            cv.set(wx + 2 + d * 4, wy + wh - 8 + e, c if e < 2 else fc.step(c, 1))
+            elif noise2(k, f, 1916 + seed) > 0.55:  # an air conditioner under the window
+                fc.ac_unit(cv, wx + (1 if k % 2 else ww - 9), wy + wh + 3, METAL, seed + k)
+            elif noise2(k, f, 1917 + seed) > 0.7:
+                fc.vent(cv, wx + ww + 2, wy + wh - 4)
         if style == 'old' and f % 2 == 0:  # the fire escape: a landing a floor, stairs between
             ex = x1 - 22
             if ex > x0 + 8:
                 for x in range(ex, ex + 20):
-                    cv.set(x, fy + FLOOR - 1, IRON[3]); cv.set(x, fy + FLOOR - 2, IRON[2] if x % 2 else IRON[4])
+                    cv.set(x, fy + FLOOR - 1, IRON[3]); cv.set(x, fy + FLOOR - 2, IRON[2] if (x // 2) % 2 else IRON[4])
+                    fc.darken(cv, x + 1, fy + FLOOR, 1.5)
                     if x % 3 == 0:
                         for d in range(3, 9):
                             cv.set(x, fy + FLOOR - d, IRON[3])
                 cv.hline(ex, fy + FLOOR - 9, 20, IRON[4])  # its rail
+                cv.hline(ex, fy + FLOOR - 8, 20, IRON[1])
                 rise = FLOOR - 4
                 for t in range(rise):
-                    cv.set(ex + 2 + t * 16 // rise, fy + FLOOR - 2 - t, IRON[3])
-    for y in range(y0, y1):  # the lit west edge and the shaded east edge of the stretch
-        cv.set(x0, y, ramp[4]); cv.set(x1 - 1, y, ramp[0])
+                    sx = ex + 2 + t * 16 // rise
+                    cv.set(sx, fy + FLOOR - 2 - t, IRON[3]); cv.set(sx + 1, fy + FLOOR - 2 - t, IRON[1])
+        if f > 0 and noise2(seed, f, 1918) > 0.5:  # a cable run clipped along under the ledge
+            fc.cable(cv, x0 + 2, x1 - 2, fy + 4, 2, '#1A1820', seed + f)
+        if noise2(seed, f, 1919) > 0.7 and xs:  # pigeons on the ledge
+            bxp = xs[int(noise2(seed, f, 1920) * len(xs))] + 2
+            fc.bird(cv, bxp, fy - 1)
+    if pipe is not None:
+        fc.downpipe(cv, pipe, y0 + 1, y1, METAL, seed)
+    restore()
+    fc.east_shade(cv, x0, x1, y0, y1)
 
 
 def _shopfront(cv: Canvas, x0: int, x1: int, y0: int, y1: int, seed: int, kind: str):
     """The street floor (SHOPFRONT px, the scale table's shop storey less its cornice and
-    plinth): a lit shop window in its frame with goods on its shelves, a glazed double
-    door a head taller than the people going in, light under it, a half-drawn shutter, an
-    awning, and a signboard of glyphs over it (never real words); a lobby for a glass
-    tower, with a revolving door."""
+    plinth), to Eastward's level of detail: stone piers in courses at either end with the
+    things a street leaves on them (posters, a tag, a meter box); a signboard with depth over
+    the front, its tube frame and glyphs lit (never real words); a lit shop window in its
+    frame with goods on its shelves, a pendant lamp and a glint on the glass, over a tiled
+    stall riser; a glazed double door a head taller than the people going in, with its kick
+    plate, push bars and the light under it; an awning, or a roller shutter half down; a
+    lobby for a glass tower, with its desk, its plants and a revolving door."""
+    restore = fc.guard(cv, x0, x1, y0, y1)
     sign = SIGN_RAMPS[seed % 3]
-    for y in range(y0, y1):
-        for x in range(x0, x1):
-            cv.set(x, y, CONCRETE[1])
+    goods = (AMBER, PINK, CYAN, ['#2E5A40', '#447A50', '#62995E', '#8AC07A', '#C8E8B0'])[seed % 4]
+    pier = fc.STONE_T if noise2(seed, 5, 1920) > 0.4 else [fc.step(c, 0.4) for c in CONCRETE_SAND]
+    fc.wall(cv, x0, x1, y0, y1, 'ashlar', pier, seed + 77)
     dtop = y1 - 1 - DOOR_H  # the doors' head, a door's height above the step
+    sx0, sx1 = x0 + 2, x1 - 2  # the signboard over the whole front
     if kind == 'lobby':  # a glazed lobby: its hall lit warm behind the mullions, a desk,
-        # a plant, the revolving door under a canopy lit from beneath
+        # plants, the revolving door under a canopy lit from beneath
         mx = (x0 + x1) // 2
         for y in range(y0 + 6, y1):
             for x in range(x0 + 3, x1 - 3):
                 r = y - y0
-                c = WARM_W[2] if r > 18 else WARM_W[3] if r > 10 else WARM_W[1]
-                if (x - x0) % 10 == 3:
-                    c = METAL[3] if x < mx else METAL[2]
-                if 26 <= r < 31 and abs(x - mx) > 16 and (x // 14) % 3 == 1:
-                    c = WOOD[2] if r > 26 else WOOD[4]  # the desk
-                if r >= 18 and (x - x0) % 29 == 7:
-                    c = '#2E5A40' if r < 30 else WOOD[1]  # a plant in a pot
-                    cv.set(x + 1, y, '#4A8A5A' if r < 30 else WOOD[2])
+                c = WARM_W[3] if r < 9 else WARM_W[2] if r < 20 else fc.step(WARM_W[2], 0.7)
+                if r in (7, 8) and (x - x0) % 6 in (2, 3):
+                    c = WARM_W[4]  # the ceiling's lights
+                if r >= 31:
+                    c = '#C8B8A0' if ((x - x0) // 3 + r) % 2 else '#9A8A78'  # the stone floor
+                if (x - x0) % 10 in (3, 4):
+                    c = METAL[4] if (x - x0) % 10 == 3 else METAL[2]
+                if 25 <= r < 31 and abs(x - mx) > 16 and (x // 14) % 3 == 1:
+                    c = WOOD[4] if r == 25 else WOOD[2] if r < 29 else WOOD[1]  # the desk
+                if r >= 20 and (x - x0) % 29 in (7, 8, 9):
+                    c = (fc.LEAF[3] if (x + r) % 3 else fc.LEAF[2]) if r < 29 else (WOOD[2] if r < 31 else WOOD[1])
                 cv.set(x, y, c)
         for y in range(dtop, y1):
             for x in range(mx - 11, mx + 11):
-                c = METAL[3] if abs(x - mx) in (0, 10) or x == mx - 11 else METAL[1] if (x + y) % 5 == 0 else WARM_W[3]
+                c = METAL[4] if x == mx - 11 else METAL[2] if abs(x - mx) in (0, 10) else \
+                    METAL[3] if (x - mx + 11) % 7 in (0, 1) and y > dtop + 2 else WARM_W[3] if y < dtop + 12 else WARM_W[2]
                 cv.set(x, y, c)
         cv.hline(mx - 11, dtop, 22, METAL[4])
         for x in range(mx - 18, mx + 18):
-            cv.set(x, y0 + 3, METAL[5]); cv.set(x, y0 + 4, METAL[3]); cv.set(x, y0 + 5, WARM_W[4])
+            cv.set(x, y0 + 6, METAL[5]); cv.set(x, y0 + 7, METAL[3]); cv.set(x, y0 + 8, WARM_W[4])
+            fc.darken(cv, x + 1, y0 + 9, 1.2)
+        fc.sign_box(cv, sx0, y0, sx1, y0 + 6, sign, seed)
+        restore()
         return
     door_l = noise2(seed, 1, 1920) > 0.5
     dx = x0 + 4 if door_l else x1 - 4 - SHOP_DOOR_W
     wx0, wx1 = (dx + SHOP_DOOR_W + 4, x1 - 4) if door_l else (x0 + 4, dx - 4)
     shutter = noise2(seed, 2, 1920) > 0.6
-    goods = (AMBER, PINK, CYAN, ['#2E5A40', '#447A50', '#62995E', '#8AC07A', '#C8E8B0'])[seed % 4]
     wy0 = y0 + 12
     if wx1 - wx0 >= 8:
-        for y in range(wy0, y1 - 2):
+        riser = y1 - 7
+        for y in range(riser, y1 - 1):  # the stall riser, tiled
             for x in range(wx0, wx1):
-                c = WARM_W[3] if y < wy0 + 8 else WARM_W[2]
-                if (x - wx0) % 12 == 0 or x == wx1 - 1 or y == wy0:
-                    c = METAL[1]
-                if y >= y1 - 6:
-                    c = CONCRETE[3] if y == y1 - 6 else CONCRETE[2]  # the stall riser
-                if shutter and y < wy0 + 10:
-                    c = METAL[3] if (y - y0) % 2 else METAL[2]  # the roller shutter, half down
-                cv.set(x, y, c)
-            for shelf in (y1 - 16, y1 - 7):  # the goods on two shelves behind the glass
-                if y == shelf - 1 or y == shelf - 2:
-                    for gx in range(wx0 + 2, wx1 - 2, 3):
-                        if noise2(gx, shelf, 1922 + seed) > 0.3:
-                            cv.set(gx, y, goods[3] if y == shelf - 2 else goods[2])
-                if y == shelf:
-                    cv.hline(wx0 + 1, y, wx1 - wx0 - 2, METAL[4])
+                u = x - wx0
+                cv.set(x, y, '#3A3440' if y == riser else ('#6A5E70' if (u // 2 + (y - riser) // 2) % 2 else '#4E4458'))
+        fc.shop_window(cv, wx0 + 1, wy0 + 1, wx1 - 1, riser, seed, WARM_W)
+        for x in range(wx0, wx1):  # the frame and its mullions
+            cv.set(x, wy0, METAL[4])
+        for y in range(wy0, riser):
+            cv.set(wx0, y, METAL[4]); cv.set(wx1 - 1, y, METAL[1])
+            for x in range(wx0 + 12, wx1 - 4, 12):
+                cv.set(x, y, METAL[3])
+        if noise2(seed, 6, 1920) > 0.5:  # stickers on the glass
+            for (sx, sy, sc) in ((wx0 + 2, riser - 4, PINK[3]), (wx1 - 4, riser - 4, CYAN[3])):
+                cv.set(sx, sy, sc); cv.set(sx + 1, sy, sc); cv.set(sx, sy + 1, fc.step(sc, 1)); cv.set(sx + 1, sy + 1, fc.step(sc, 1))
+        if shutter:  # the roller shutter, half down, its box above
+            for y in range(wy0, wy0 + 11):
+                for x in range(wx0, wx1):
+                    c = METAL[4] if (y - wy0) % 2 == 0 else METAL[2]
+                    if y == wy0 + 10:
+                        c = METAL[1]
+                    cv.set(x, y, c)
+            fc.weather(cv, wx0, wx1, wy0, wy0 + 10, seed + 5, 1.5)
+            for k, tx in enumerate(range(wx0 + 3, wx1 - 10, 22)):  # tags and posters on it
+                if noise2(seed, k, 1927) > 0.5:
+                    fc.tag(cv, tx + int(noise2(seed, k, 1928) * 6), wy0 + 2, seed + k)
+                else:
+                    fc.poster(cv, tx + int(noise2(seed, k, 1928) * 6), wy0 + 1, 5, 7, seed + k)
+            for x in range(wx0, wx1):
+                fc.darken(cv, x, wy0 + 11, 1.4)
     for y in range(dtop, y1 - 1):  # the double door: two leaves glazed above, a frame round them
         for x in range(dx, dx + SHOP_DOOR_W):
             r, col = y - dtop, x - dx
@@ -1071,51 +1068,66 @@ def _shopfront(cv: Canvas, x0: int, x1: int, y0: int, y1: int, seed: int, kind: 
                 c = METAL[4] if col == 0 or r == 0 else METAL[2]
             elif col == SHOP_DOOR_W // 2:
                 c = METAL[2]  # the meeting stiles
-            elif 3 <= r < 20 and col not in (1, SHOP_DOOR_W - 2, SHOP_DOOR_W // 2 - 1, SHOP_DOOR_W // 2 + 1):
-                c = WARM_W[2] if r > 8 else WARM_W[3]  # the glass, the shop lit behind it
+            elif r >= DOOR_H - 5 and col not in (1, SHOP_DOOR_W - 2):
+                c = METAL[4] if r == DOOR_H - 5 else METAL[3] if (col + r) % 7 else METAL[5]  # the kick plates
+            elif r >= 23 and col not in (1, SHOP_DOOR_W - 2, SHOP_DOOR_W // 2 - 1, SHOP_DOOR_W // 2 + 1):
+                # a raised panel under the glass, lit on its top and west edges
+                lc = (col - 2) % (SHOP_DOOR_W // 2)
+                c = WOOD[4] if r == 23 or lc == 0 else WOOD[1] if r == DOOR_H - 6 or lc == SHOP_DOOR_W // 2 - 4 else WOOD[2]
+            elif 3 <= r < 22 and col not in (1, SHOP_DOOR_W - 2, SHOP_DOOR_W // 2 - 1, SHOP_DOOR_W // 2 + 1):
+                c = WARM_W[3] if r < 9 else WARM_W[2]  # the glass, the shop lit behind it
+                if (col + r) % 13 in (3, 4):
+                    c = WARM_W[4]
             else:
-                c = NIGHT[0] if col > 1 else METAL[3]
+                c = NIGHT[1] if col > 1 else METAL[3]
             cv.set(x, y, c)
-    cv.set(dx + SHOP_DOOR_W // 2 - 2, dtop + 21, AMBER[4]); cv.set(dx + SHOP_DOOR_W // 2 + 2, dtop + 21, AMBER[4])
+    for (l0, l1) in ((dx + 2, dx + SHOP_DOOR_W // 2 - 1), (dx + SHOP_DOOR_W // 2 + 2, dx + SHOP_DOOR_W - 2)):
+        fc.shop_window(cv, l0, dtop + 3, l1, dtop + 22, seed + l0, WARM_W)  # the shop through the glass
+    for side in (-1, 1):  # the push bars
+        bx = dx + SHOP_DOOR_W // 2 + side * 3 - (1 if side < 0 else 0)
+        cv.set(bx, dtop + 13, METAL[5]); cv.set(bx, dtop + 14, METAL[5]); cv.set(bx, dtop + 15, METAL[3])
+    if noise2(seed, 8, 1920) > 0.4:  # a notice taped inside the glass
+        px = dx + 3
+        for y in range(dtop + 5, dtop + 9):
+            for x in range(px, px + 4):
+                cv.set(x, y, '#E8E2D2' if (y - dtop) % 2 else '#B8B0A0')
+    if noise2(seed, 10, 1920) > 0.3:  # an open sign hung inside the door
+        ox = dx + SHOP_DOOR_W // 2 + 2
+        for y in range(dtop + 9, dtop + 12):
+            for x in range(ox, ox + 6):
+                cv.set(x, y, NIGHT[0] if y == dtop + 9 or x in (ox, ox + 5) else CYAN[3] if (x - ox) % 3 else CYAN[2])
+        cv.set(ox + 1, dtop + 8, METAL[1]); cv.set(ox + 4, dtop + 8, METAL[1])
     cv.hline(dx, y1 - 2, SHOP_DOOR_W, AMBER[3])  # the light under it
-    cv.hline(dx - 1, dtop - 1, SHOP_DOOR_W + 2, CONCRETE[4])  # the lintel
-    if noise2(seed, 3, 1920) > 0.45 and wx1 - wx0 >= 8:  # an awning, a plane sloping out toward us
-        aw = SIGN_RAMPS[(seed + 1) % 3]
-        for y in range(y0 + 6, y0 + 12):
-            for x in range(wx0 - 2, wx1 + 2):
-                st = ((x - wx0) // 5) % 2
-                c = (aw[2] if st else CONCRETE[4]) if y < y0 + 10 else (aw[1] if st else CONCRETE[2])
-                cv.set(x, y, c)
-        for x in range(wx0 - 2, wx1 + 2, 5):
-            cv.set(x + 2, y0 + 12, aw[1] if ((x - wx0) // 5) % 2 == 0 else CONCRETE[2])  # its valance
-    sx0, sx1 = x0 + 3, x1 - 3  # the signboard
-    tubes = set()
-    for x in range(sx0, sx1):
-        cv.set(x, y0, sign[1]); cv.set(x, y0 + 5, sign[1])
-        for y in range(y0 + 1, y0 + 5):
-            cv.set(x, y, NIGHT[0])
-    for k, gx in enumerate(range(sx0 + 3, sx1 - 5, 7)):
-        if noise2(seed, k, 1921) > 0.25:
-            tubes |= glyph(cv, gx, y0 + 1, seed * 7 + k, sign, size=4)
-    glow(cv, tubes, sign, r=1)
+    cv.hline(dx - 1, dtop - 1, SHOP_DOOR_W + 2, fc.STONE_T[5])  # the lintel
+    cv.hline(dx - 1, dtop - 2, SHOP_DOOR_W + 2, fc.STONE_T[3])
+    for y in range(dtop, y1 - 1):  # the door's reveal shades its frame's west side
+        fc.darken(cv, dx + SHOP_DOOR_W, y, 1.4)
+    # what the street leaves on the piers
+    piers = [(x0, min(dx, wx0)), (max(dx + SHOP_DOOR_W, wx1), x1)]
+    for (p0, p1) in piers:
+        if p1 - p0 >= 6 and noise2(seed, p0, 1925) > 0.35:
+            fc.poster(cv, p0 + 1, y0 + 14 + int(noise2(seed, p0, 1926) * 6), min(5, p1 - p0 - 2), 7, seed + p0)
+    wide = max(piers, key=lambda p: p[1] - p[0])
+    if wide[1] - wide[0] >= 5:  # a lamp over the door, or on the widest pier; the number by it
+        fc.wall_lamp(cv, (wide[0] + wide[1]) // 2 - 1, y0 + 10, fc.WARM if seed % 3 else fc.COOL)
+    else:
+        fc.wall_lamp(cv, dx + SHOP_DOOR_W // 2 - 1, dtop - 6, fc.WARM)
+    pl = piers[0] if piers[0][1] - piers[0][0] >= 7 else piers[1]
+    if pl[1] - pl[0] >= 7:
+        fc.plaque(cv, pl[0] + 1, y1 - 12, ('#2E5A9A', '#8A2A2A', '#2A6A4A')[seed % 3])
+    if noise2(seed, 9, 1920) > 0.55 and wx1 - wx0 >= 8:  # an awning, a plane sloping out toward us
+        fc.awning(cv, wx0 - 2, wx1 + 2, y0 + 7, SIGN_RAMPS[(seed + 1) % 3], 4)
+    fc.sign_box(cv, sx0, y0, sx1, y0 + 7, sign, seed, face=('#0E0C16', '#2A1A14', '#14202A')[seed % 3])
+    restore()
+    fc.east_shade(cv, x0, x1, y0 + 6, y1)
 
 
 def blade_sign(cv: Canvas, x: int, y0: int, y1: int, seed: int, ramp):
-    """A vertical neon sign on brackets, standing out from the wall: a dark box with a lit
-    frame and glyphs stacked down it, a halo round the tubes."""
-    tubes = set()
-    for y in range(y0, y1):
-        for xx in range(x, x + 9):
-            cv.set(xx, y, NIGHT[0])
-    for y in range(y0, y1):
-        cv.set(x, y, ramp[2]); cv.set(x + 8, y, ramp[1])
-        tubes |= {(x, y), (x + 8, y)}
-    cv.hline(x, y0, 9, ramp[3]); cv.hline(x, y1 - 1, 9, ramp[1])
-    for k, gy in enumerate(range(y0 + 3, y1 - 6, 8)):
-        tubes |= glyph(cv, x + 2, gy, seed * 11 + k, ramp)
+    """A vertical neon sign on brackets, standing out from the wall: a box with depth, a lit
+    frame and glyphs stacked down it, a halo on its face, its shadow on the wall."""
     for by in (y0 + 2, y1 - 3):  # its brackets to the wall
-        cv.hline(x - 3, by, 3, IRON[3])
-    glow(cv, tubes, ramp)
+        cv.hline(x - 3, by, 3, IRON[3]); cv.hline(x - 3, by + 1, 3, IRON[1])
+    fc.sign_box(cv, x, y0, x + 10, y1, ramp, seed, vertical=True)
 
 
 def _tiers(width: int, floors: int, depth: int, most: int, seed: int, style: str) -> list:
