@@ -312,7 +312,8 @@ def home(frame: int = 0):
     # ---- the things a lived-in room collects (Eastward-level dressing, each where it
     # would be): two little framed portraits and a calendar on the bedroom wall, copper
     # pans on hooks by the kitchen door, slippers by the bed, a book left by the reading
-    # chair, a ball of wool the companion has been at by its basket
+    # chair, a ball of wool the companion has been at by its basket, a wall shelf in the
+    # sunroom and a draught excluder pushed aside from the open front door
     CREAM_HI = '#FBF5E6'
 
     def frame(x0, y0, w, h, inside):
@@ -338,6 +339,17 @@ def home(frame: int = 0):
         for (x, y) in oval(px, 212, r, r):
             cv.set(x, y, '#D8945A' if x < px else '#9A5A2E' if x > px else '#B8743E')
         cv.hline(int(px - 1), 211, 2, '#F0C090')
+    cv.hline(96, 414, 32, WD[4]); cv.hline(96, 415, 32, WD[2])  # a wall shelf in the sunroom, on two brackets
+    for bxx in (99, 124):
+        cv.vline(bxx, 416, 3, WD[1])
+    for (ix, col, dark, hgt) in ((98, '#C8743E', '#A85A2E', 3), (104, LEAF[3], LEAF[2], 4), (110, CREAM_HI, CREAM[3], 3),
+                                 (115, NAP[3], NAP[2], 5), (117, RED[3], RED[2], 5), (121, '#C8743E', '#A85A2E', 3)):
+        for yy in range(414 - hgt, 414):  # a pot, a seedling, a cup, two books, a pot
+            cv.hline(ix, yy, 2, col if yy < 413 else dark)
+    for x in range(118, 136):  # a draught excluder pushed aside from the open door: a stuffed cloth snake
+        c = (RED[3], CREAM_HI, RED[3], NAP[2])[(x - 118) // 3 % 4]
+        cv.set(x, FRONT - 4, c); cv.set(x, FRONT - 3, RED[1] if c == RED[3] else CREAM[2] if c == CREAM_HI else NAP[1])
+        dim(x, FRONT - 2, 0.82)
     for (sx, sy) in ((120, 100), (126, 101)):  # slippers by the bed
         cv.hline(sx, sy, 4, NAP[3]); cv.hline(sx, sy + 1, 4, NAP[2]); cv.hline(sx + 3, sy, 1, CREAM_HI)
     cv.hline(124, 276, 6, RED[3]); cv.hline(124, 277, 6, RED[1]); cv.vline(127, 276, 2, CREAM_HI)  # a book left by the chair

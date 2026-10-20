@@ -40,6 +40,45 @@ def wood_box(cv, x0, y0, w, h, top_h, ramp=WOOD):
     cv.hline(x0, y0 + top_h, w, ramp[1])
 
 
+def _mix(a: str, b: str, t: float) -> str:
+    ra = [int(a[i:i + 2], 16) for i in (1, 3, 5)]
+    rb = [int(b[i:i + 2], 16) for i in (1, 3, 5)]
+    return '#%02X%02X%02X' % tuple(int(ra[i] + (rb[i] - ra[i]) * t) for i in range(3))
+
+
+def grain(cv: Canvas, ramp=WOOD, seed: int = 0, vertical: bool = False) -> Canvas:
+    """Wood grain over a finished piece (to-b-1810: the bar measured on the sprite itself):
+    every face drawn in the ramp's middle tones gets the figure of the timber in runs of
+    three to five pixels along the grain, a half step lighter where the grain rises to the
+    light and a half step darker in the late wood, so a door or a top reads as planks of
+    real oak and not as a flat fill. Edges and the lit and dark trims are left alone."""
+    p = cv.pad
+    hexes = {r.upper(): i for i, r in enumerate(ramp)}
+    src = cv.img.copy()
+    px = src.load()
+    for y in range(-p, cv.h + p):
+        for x in range(-p, cv.w + p):
+            r, g, b, a = px[x + p, y + p]
+            if not a:
+                continue
+            i = hexes.get('#%02X%02X%02X' % (r, g, b))
+            if i is None or i in (0, len(ramp) - 1):
+                continue
+            u, v = (y, x) if vertical else (x, y)
+            n = noise2(u // 4, v, seed + 811)
+            if n > 0.8:
+                cv.set(x, y, _mix(ramp[i], ramp[i + 1], 0.5))
+            elif n < 0.18:
+                cv.set(x, y, _mix(ramp[i], ramp[i - 1], 0.5))
+            elif noise2(u // 3, v // 2, seed + 812) > 0.9:
+                cv.set(x, y, _mix(ramp[i], ramp[i - 1], 0.3))  # a knot's ring
+            elif noise2(u // 5, v // 2, seed + 813) > 0.86:
+                cv.set(x, y, _mix(ramp[i], '#E8B868', 0.22))  # beeswax polish warming the face
+            elif noise2(u // 5, v // 2, seed + 814) > 0.88:
+                cv.set(x, y, _mix(ramp[i], '#8A8478', 0.25))  # worn grey where hands and feet rub
+    return cv
+
+
 def bed() -> Canvas:
     """A double bed against the bedroom's back wall at the size guide's bed (44 deep with
     a headboard 16; it was 72 tall, over 36 to 50), 42 x 48 in a 64 x 48 box placed where
@@ -76,12 +115,12 @@ def bed() -> Canvas:
             elif y < 27:
                 c = CREAM_HI if y == 24 else CREAM[3] if y == 25 else CREAM[1]  # the sheet folded back
             else:
-                patch = ((x - 2) // 6 + (y - 27) // 6) % 3
-                c = (NAP[3], CREAM[3], NAP[2])[patch]
+                patch = ((x - 2) // 6 + 2 * ((y - 27) // 6)) % 5
+                c = (NAP[3], CREAM[3], NAP[2], GOLD[3], LEAF[3])[patch]  # scraps of five old dresses
                 if (x - 2) % 6 == 0 or (y - 27) % 6 == 0:
                     c = NAP[1]  # the stitching
                 if east:
-                    c = NAP[1] if c != NAP[1] else NAP[0]
+                    c = NAP[1] if c in (NAP[3], NAP[2], CREAM[3]) else GOLD[1] if c == GOLD[3] else LEAF[1] if c == LEAF[3] else NAP[0]
             cv.set(x, y, c)
     for px in (11, 30):  # two pillows, dented where heads lay
         for (x, y) in oval(px, 20, 8, 3.6):
@@ -101,6 +140,7 @@ def bed() -> Canvas:
             post = x < 3 or x >= w - 3
             c = WOOD[4] if y == h - 6 else (WOOD[3] if post and x in (0, w - 3) else WOOD[2] if x < w - 6 else WOOD[1])
             cv.set(x, y, c)
+    grain(cv, seed=1, vertical=True)
     return keep_foot(cv, 64, 48)  # the headboard stays against the wall, the bed reaches less far into the room
 
 
@@ -134,6 +174,7 @@ def nightstand() -> Canvas:
     cv.hline(7, 15, 2, GOLD[4])  # its knob
     for x in (1, 2, w - 3, w - 2):  # feet
         cv.vline(x, h - 2, 2, WOOD[1])
+    grain(cv, seed=2)
     return keep_foot(cv, 22, 30)
 
 
@@ -166,6 +207,7 @@ def wardrobe() -> Canvas:
         cv.hline(0, y, w, WOOD[3] if y == h - 3 else WOOD[1])
     for x in (1, 2, w - 3, w - 2):
         cv.set(x, h - 1, WOOD[0])
+    grain(cv, seed=3, vertical=True)
     return keep_foot(cv, 40, 60)
 
 
@@ -209,6 +251,7 @@ def fireplace(flicker: int = 0) -> Canvas:
         cv.hline(x0, floor - 6, 6, WOOD[2]); cv.hline(x0, floor - 5, 6, WOOD[1])
     cv.vline(cx - 8, floor - 6, 2, MATERIALS['iron'][1]); cv.vline(cx + 7, floor - 6, 2, MATERIALS['iron'][1])
     detail.stones(cv, 0, floor - 3, w, 4, STONE, seed=62, course=2)  # the hearthstone flags
+    grain(cv, seed=5)
     return keep_foot(cv, 64, 56)
 
 
@@ -252,6 +295,7 @@ def armchair() -> Canvas:
             if (y - 6) % 4 == 0:
                 c = NAP[2]
             cv.set(x, y, c)
+    grain(cv, ramp=RED, seed=9)  # the velvet's nap, brushed this way and that
     return keep_foot(cv, 40, 40)
 
 
@@ -361,6 +405,7 @@ def kitchen() -> Canvas:
     for (x, y) in oval(86, 16, 6, 4):  # the kettle
         cv.set(x, y, '#C8803A' if x < 86 else '#9A5A28')
     cv.hline(90, 14, 3, '#9A5A28'); cv.hline(84, 12, 5, '#5E3A24')
+    grain(cv, seed=8)
     return cv
 
 
@@ -401,6 +446,7 @@ def bookcase() -> Canvas:
     for y in range(h - 2, h):
         cv.hline(0, y, w, WOOD[2] if y == h - 2 else WOOD[1])
     cv.hline(20, 0, 6, '#7E9CB8'); cv.hline(20, 1, 6, '#5A7A98')  # a box of letters on top
+    grain(cv, seed=4, vertical=True)
     return keep_foot(cv, 40, 54)
 
 
@@ -448,6 +494,7 @@ def rug_chest() -> Canvas:
     cv.hline(11, 8, 4, GOLD[3]); cv.hline(11, 9, 4, GOLD[2]); cv.hline(12, 10, 2, WOOD[0])  # the lock plate
     for x in (1, 2, w - 3, w - 2):
         cv.vline(x, h - 2, 2, BL[0])
+    grain(cv, ramp=BL, seed=6)
     return keep_foot(cv, 36, 26)
 
 
@@ -502,6 +549,7 @@ def desk() -> Canvas:
         cv.set(x, y, WOOD[4] if y < 29 and x < 22 else WOOD[3] if x < 25 else WOOD[2])
     for x in (18, 26):
         cv.vline(x, 31, 2, WOOD[1])
+    grain(cv, seed=7)
     return cv
 
 def coat_rack() -> Canvas:
