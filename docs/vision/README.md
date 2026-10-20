@@ -13,6 +13,7 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 | [roadmap.md](roadmap.md)                     | What comes next, open questions and ideas we have not built                                                                                                                       |
 | [home-hub.md](home-hub.md)                   | **The home hub (19 Oct):** the garden as a place in the one world, on one screen with the valley; why the old handoff popped, the design and its phases                           |
 | [world-rules.md](world-rules.md)             | **The world's rulebook (18 Oct):** what each kind of ground means, what may stand on it, how neighbouring places join, corridors, detail derived from logic, and the bug protocol |
+| [prop-logic.md](prop-logic.md) | **Prop logic and the prop audit (20 Oct):** who lives and works in each kind of place and what follows for props (clusters, goods, footprints on the soft grid, density, signs of life, what never appears), and every sprite graded KEEP, ADJUST, REDRAW or DROP with the redraw order per lane |
 
 ## Matt's direction (October 2026)
 
