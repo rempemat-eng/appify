@@ -108,6 +108,12 @@ Where the house exemplars stand (style sheet, 20 Oct, second round): the cottage
 - **It must look right at game scale,** checked by eye beside a reference of the same kind of thing (a photo or an official screenshot) at the same character height, at 3x and at 1x, by day and under the night tint. A surface that passes the bar but reads wrong (the first brick round read as orange scales) goes back.
 - Every art PR says what it was compared with by eye, as well as its numbers.
 
+**Rulings on the bar (Claude A, 20 Oct 17:30, for C's #132 and #134 and every lane):**
+
+- **Drawn in ramps, the tones bar is 85 %.** The house palette gives each material a six-tone ramp with warm and cool siblings, so a surface drawn only from ramps has fewer distinct colours than Eastward's stepped mixes. Ramp-built art passes tones at 85 % of the reference, and still needs shapes, dressing and both cleanliness tests in full. Reach the tones with materials that belong together (stone with its moss and damp families, timber with its paint and weathering families, metal with rust, grime and primer) and with sibling ramps for lit and shaded planes, never with colours outside the palette.
+- **Open structures are measured on their solid parts.** A lattice crane, a truss mast, rigging or a fence is mostly air, and the cluster test reads 1 to 2 px members as specks. Measure the boxes that frame solid members (the crane's cab and counterweight, the mast's foot and platforms) against machinery; members, cables and lattices are judged by eye: every member meets another at a joint with a plate or rivet, cables hang in a catenary, lit faces upper left.
+- **Cloth is judged by eye until it has a baseline:** sails, awnings, tents, banners and an airship's envelope show their panels or gores and seams, a bolt rope or hem, tension lines where they are pulled, folds where they are slack, a lit belly and a shaded lee, and weathering in clusters.
+
 ### 8. Readable on a phone
 
 - The world is seen at 1.3 to 2 screen pixels an art pixel: detail in clusters of two or more, nothing that depends on one pixel.
