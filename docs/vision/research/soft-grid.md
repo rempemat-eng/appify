@@ -185,8 +185,8 @@ Units are zone px. One cell = 8 px; one walk cell = 4 px (2 x 2 walk cells per g
 
 | Piece | Size | Notes |
 | --- | --- | --- |
-| West side strip (lit) | 2 to 4 wide, rim to lower ground | inside the edge column; the lit tones; lip continues round with 1 to 2 px scallops; 1 px contact line on the lower ground |
-| East side strip (dark) | 3 to 4 wide | the two darkest tones; casts the side shadow |
+| West side band (lit) | 5 wide (0.2 A, measured on Eastward 20 Oct; was 2 to 4), rim to lower ground | a column of lumps in the lit tones; lip continues round with 1 px scallops; outline on its outer edge; 1 px contact line on the lower ground |
+| East side band (dark) | 5 wide (0.2 A) | lumps in the two darkest tones, a dark outline on its outer edge; casts the side shadow |
 | Outer corner, SW (lit) and SE (dark) | 8 wide x face height | CrossCode's `WALL_END_WEST/EAST` [8]: face courses wrap and narrow over 8 px; foot band carried round |
 | Inner corner (notch) | 8 wide x face height | flat floor, shaded crease, east-side shadow across the floor |
 | Side cast shadow on lower ground | **8 constant**, stepped 3 strong, 3 medium, 2 dithered | constant length whatever the height, at most one cell [20]; replaces 4a's "3 px plus 1 per 3 rows" |
@@ -243,7 +243,7 @@ Existing from 4a and 4f, unchanged: `tier-step`, `one-tier`, `stair-ends`, `stai
 1. `prop-snap`: every non-`FREE` prop's foot line is on a grid row and its west edge or centre on a grid column.
 2. `prop-footprint`: footprints of non-`FREE` props do not overlap, lie on one tier, and avoid face cells and stair cells.
 3. `face-parts`: every rim column has lip, start, loops and foot; every face that ends at a side has an outer corner piece; every side strip ends on ground.
-4. `side-width`: no west or east strip is wider than 4 px (it is a sliver, never a second front).
+4. `side-width`: west and east bands are 4 to 6 px (0.2 A, Eastward's measure), never a second front.
 5. `side-light`: west strips and west cheeks use the material's two lightest tones, east ones the two darkest, and an 8 px shadow lies east of every east strip and cheek.
 6. `shadow-constant`: terrain cast shadows are 8 px (foot shadows 4 to 8) on every tier, whatever the face height.
 7. `edge-jitter`: along each grid-led boundary, the drawn edge stays within 4 px of its grid line.
