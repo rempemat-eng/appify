@@ -130,6 +130,32 @@ Desktop Chromium passed 32 existing screen checks at 320 day/normal and 402 nigh
 
 ## Handoff to Claude A
 
-Keep the candidate off until both platforms have acceptable crispness and profiler results. For #126, supply the mounted world tiles to `NativePixelTiles` in world art coordinates, with tile size 256 and the same snapped camera and `pixelScale` unit; use the generated `worldTileArt` imports once #123 is integrated. Remove the twelve copied specimens when the probe can read those imports directly. Use one canvas for the visible tile set, not one native canvas per tile.
+Keep the candidate off until both platforms have acceptable crispness and profiler results. Claude A supplied the adapter ownership boundary in [issue #149, comment 6302142768](https://github.com/rempemat-eng/appify/issues/149#issuecomment-6302142768), after the first verified spike. C34 now supplies that boundary in `components/pixel-image.tsx` and `components/pixel-image.native.tsx`; `NativePixelTiles` uses it. No existing Claude renderer component is edited.
+
+The shared contract is:
+
+```tsx
+type PixelImageProps = {
+  source: number; // bundled Metro asset, such as worldTileArt[t.art]
+  x: number;
+  y: number;
+  width: number;
+  height: number; // DIPs relative to the layer
+  nearest?: boolean; // native default true; web retains its existing CSS path
+  onError?: (error: Error) => void;
+};
+// ONE layer for the mounted ground set, not a layer per tile:
+<PixelImageLayer width={viewportWidth} height={viewportHeight}>
+  {mounted.map((tile) => (
+    <PixelImage key={tile.id} {...tileDipRect(tile)} />
+  ))}
+</PixelImageLayer>;
+```
+
+`PixelImageLayer` is one native Skia canvas. Each native `PixelImage` is a drawing node inside it, not a standalone native view. On the web the layer is a `View` with `data-pixel`, and each image keeps the existing `Image`, `resizeMode="stretch"`, absolute left/top and explicit width/height geometry. The adapter normalizes image errors to `Error` on both platforms.
+
+For #126, Claude A groups the mounted ground images under one viewport-sized layer and supplies snapped rectangles relative to that layer. **Do not replace each `Image` under its existing tile `View` independently:** Skia draw nodes must be under the shared canvas, and one canvas per tile defeats the surface budget. Keep flow, deck, prop and companion layering outside or explicitly inside that single drawing surface as appropriate; verify the complete composition before enabling it. The pinned renderer reviewed for this contract is #126 at `b38bbe27b7fbedfb0610f9f512be529a1b83eb0f`.
+
+The probe convenience component `NativePixelTiles` takes world art coordinates, tile size 256, the snapped camera and `pixelScale` unit, then converts rectangles to DIPs. Supply generated `worldTileArt` imports once #123 is integrated; remove the twelve copied specimens when the probe can read those imports directly. The substituted-boundary adapter check in `check:native-pixels` covers unchanged web geometry, default/linear native sampling, no mipmaps, error forwarding and one surface for twelve images. It is not native runtime evidence.
 
 Keep the web renderer's existing `Image` plus `data-pixel` path. Do not make the world dependent on this development route. Before enabling nearest rendering in the game, check fill tiles, image failure behavior, tile-mount hysteresis and memory retention, moving water/decks, props and tall scenery, clipping and layering, and inactivity/reduced-motion behavior in that complete renderer. A later 1× experiment must regenerate source tiles and repeat device measurements; C34's 2× comparison does not approve a 1× rollout.

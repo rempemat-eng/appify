@@ -49,7 +49,7 @@
     "check:journal": "node scripts/check-journal.cjs",
     "sound": "python3 scripts/audio/sounds.py && oxfmt --write lib/sound-assets.ts",
     "art:sheet": "python3 scripts/art/contact_sheet.py",
-    "check:native-pixels": "node --import tsx lib/native-pixels.test.ts"
+    "check:native-pixels": "node --import tsx lib/native-pixels.test.ts && node scripts/check-pixel-image.cjs"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",

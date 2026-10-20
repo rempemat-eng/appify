@@ -1,4 +1,4 @@
-import { Canvas, FilterMode, Image, MipmapMode, useImage } from '@shopify/react-native-skia';
+import { PixelImage, PixelImageLayer } from '@/components/pixel-image';
 import { tileLayout, type Point, type ProbeTile } from '@/lib/native-pixels';
 
 export type NativePixelTilesProps = {
@@ -22,20 +22,16 @@ function Tile({
 }: Pick<NativePixelTilesProps, 'camera' | 'pixel' | 'dpr' | 'nearest' | 'onError'> & {
   tile: ProbeTile;
 }) {
-  const image = useImage(tile.source, onError);
   const { left, top, width, height } = tileLayout(tile, camera, pixel, dpr);
   return (
-    <Image
-      image={image}
+    <PixelImage
+      source={tile.source}
       x={left}
       y={top}
       width={width}
       height={height}
-      fit="fill"
-      sampling={{
-        filter: nearest ? FilterMode.Nearest : FilterMode.Linear,
-        mipmap: MipmapMode.None,
-      }}
+      nearest={nearest}
+      onError={onError}
     />
   );
 }
@@ -54,7 +50,7 @@ export default function NativePixelTiles({
   onError,
 }: NativePixelTilesProps) {
   return (
-    <Canvas style={{ width, height }} pointerEvents="none">
+    <PixelImageLayer width={width} height={height}>
       {tiles.map((tile) => (
         <Tile
           key={tile.id}
@@ -66,6 +62,6 @@ export default function NativePixelTiles({
           onError={onError}
         />
       ))}
-    </Canvas>
+    </PixelImageLayer>
   );
 }
