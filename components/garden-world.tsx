@@ -1014,7 +1014,7 @@ export function GardenWorld({
               ? 'the bowl can wait. take a break first.'
               : p.mood >= 100
                 ? 'i am full. thank you though.'
-                : 'we need 5 GRASS for seeds.',
+                : 'we need 5 Dream Dust for seeds.',
           });
           setEmote('…');
         } else {
