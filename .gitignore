@@ -56,3 +56,6 @@ _project_metadata.jsonl
 # Generated Python caches are not source artwork.
 __pycache__/
 *.py[cod]
+
+# generator caches (scripts/art/world_canvas.py)
+.cache/

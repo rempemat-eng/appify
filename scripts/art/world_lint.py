@@ -52,15 +52,17 @@ def _lava(r, g, b):
     return r >= 170 and g <= 160 and b <= 90 and r - g >= 50
 
 
-def classify(ground: Image.Image, blocked: set, water_mask: set | None = None) -> list[str]:
+def classify(ground: Image.Image, blocked: set, water_mask: set | None = None,
+             cols: int = COLS, rows: int = ROWS) -> list[str]:
     """One character per walk cell: '~' water, '!' lava, '^' wall/cliff/other blocked,
     '=' path, '.' ground (the majority of the cell's pixels decides). A zone that declares
-    its water (`water_mask`) is read by that, not by colour."""
+    its water (`water_mask`) is read by that, not by colour. (`cols` and `rows` size a
+    region canvas, regions.py; a zone is COLS x ROWS.)"""
     px = ground.load()
-    rows = []
-    for cy in range(ROWS):
+    n_rows, rows = rows, []
+    for cy in range(n_rows):
         row = []
-        for cx in range(COLS):
+        for cx in range(cols):
             votes = {}
             for dy in range(CELL):
                 for dx in range(CELL):
