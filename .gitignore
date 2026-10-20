@@ -56,3 +56,6 @@ _project_metadata.jsonl
 # Generated Python caches are not source artwork.
 __pycache__/
 *.py[cod]
+
+# Other studios' screenshots fetched by scripts/refs/fetch_references.py (never commit them)
+refs-cache/
