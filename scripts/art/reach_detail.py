@@ -279,3 +279,32 @@ def darken(cv: Canvas, pts, k: float = 1.0):
         c = cv.get(x, y)
         if c[3]:
             put(cv, x, y, step(c, -k))
+
+
+def weather(cv: Canvas, pts, seed: int = 0, dust=None, foot: int | None = None, reach: int = 10,
+            chips: float = 0.08, chip=(92, 100, 118), streaks: float = 0.0, streak=(110, 96, 84),
+            scuffs: float = 0.1):
+    """Wear on a painted or plated surface already drawn over `pts`: paint chipped off in
+    two- and three-pixel flakes showing the primer (`chip`), scuffs in short lit runs,
+    stains streaking down from a few points, and `dust` settled from the `foot` up to
+    `reach` rows, in drifts rather than a band."""
+    pts = set(pts)
+    for (x, y) in sorted(pts):
+        c = cv.get(x, y)
+        if not c[3]:
+            continue
+        out = rgb(c)
+        n = noise2(x // 2, y // 2, seed + 61)
+        if n < chips and (x + 1, y) in pts:
+            out = rgb(chip) if noise2(x, y, seed + 62) < 0.7 else step(chip, -1.2)
+        elif n > 1 - scuffs and y % 3 == 0:
+            out = step(out, 1.0)
+        if streaks and noise2(x, 0, seed + 63) < streaks:
+            top = int(noise2(x, 1, seed + 64) * 40)
+            if (y + seed) % 47 >= top % 47 and (y - top) % 47 < 6 + (x % 3):
+                out = mix(out, streak, 0.35)
+        if dust is not None and foot is not None and 0 <= foot - y < reach:
+            k = (reach - (foot - y)) / reach
+            if smooth_noise(x, y, 4, seed + 65) < 0.2 + 0.55 * k:
+                out = mix(out, dust, 0.25 + 0.35 * k)
+        put(cv, x, y, out)
