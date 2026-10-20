@@ -1,4 +1,4 @@
-# The world plan (v5.1): a window onto a larger continent
+# The world plan (v5.2): a window onto a larger continent
 
 Matt, 20 Oct:
 
@@ -9,6 +9,7 @@ Matt, 20 Oct:
 - 12:25, on v4: "getting better but you need to make it more natural and think critically where each section fits in on the map and design the terrain around it to fit that. the mountains simply running in between desert and grass is not convincing yet. also is this supposed to be an island? i feel like the world map should be a piece of a larger continent with natural world borders with the island bit of the map on the bottom".
 - 12:36: "can u also create one intricate larger river flowing naturally with two or three larger bridges that cross the river and possibly smaller rivers/ canals elsewhere. also think critically where the volcano/ lava world fits and how far away other parts should be. having a harbour city similar to the first of the four screenshots provided earlier could be cool (but make sure the city building and placement make sense). more empty parts of the maps should first be planned out along natural footpaths or other sorts of paths and the terrain should be build around it (e.g. canyons in the desert parts, forests in the woodlands, the large river, a mountain passage etc.). perhaps there are little easter eggs dotted around the world (but that can be handled later".
 - About 14:45, on v5: "go with A more or less. this is starting to look really good. i do look the different regions. it is important that you get the transitions from one zone into the other right. while staying relatively realistic make them distinct and interesting from a game play perspective (i'm not trying to recreate earth but build a semi realistic game). also getting the verticality right in different parts of the map is super important".
+- 15:50, on v5.1: "this is slowly approaching what i want. make sure you get the transitions perfect. also there should be a decent amount of things in each of the major biomes. also make sure you hone in on the world boundaries, they need to be excellent as well. there could also be certain obstacles in the world that you need to traverse around and little paths. Compare with other games".
 
 **Status: a plan, partly decided.** These stand from earlier versions: v2's sizing table and decisions 1 to 7; v3's rocket, lander and one world canvas (decisions 8 and 9). Matt chose arrangement A at about 14:45 (decision 11). Everything else in section 16 is a recommendation.
 
@@ -21,6 +22,25 @@ v5 keeps v4's size, walk times, routes-and-shortcuts logic and the nine ways, an
 - **The west.** The dry-to-wet change follows the arc's rain shadow, so it no longer runs as north-south stripes. The Rift winds and has side canyons.
 - **No placeholders.** The Frostline is a cirque in the relief; Hearthold is a walled hill town; fields follow the roads; the massif has peaks and glaciers.
 - **Transitions are designed as places** (5.2), **each region has its own identity** (5.3), and **verticality is set out region by region on the soft grid's tiers** (5.4).
+
+**v5.2** answers Matt's note of 15:50 and Claude A's list. The block-out is measured against a benchmark of other games: ALTTP, Link's Awakening, Pokémon, Stardew and others (`research/world-benchmark.md`). It passes the benchmark's 21 checks (2.1).
+
+- **Every biome is filled:**
+  - named places;
+  - secret pockets down little dead-end paths;
+  - viewpoints, camps, ruins, wildlife and water;
+  - nine or ten noticeable things per screen of route, marked for the art lanes (6.4).
+- **The edges of the world are layered**, and drawn as land, not as a line:
+  - a walkable fade, with clumps of scrub, gorse or stones thickening outward;
+  - a wall of the ground's own blockers, 64 px deep or more, with the border proper behind it;
+  - beyond it, something drawn, never walked (5.5).
+- **Obstacles with little paths round them**: each side path leaves the road at a Y and rejoins at a Y, with at most one loop in any small area. There are loops in every region, and collapsed old bridges by the fords (5.6).
+- **Thresholds.** A mixing band about two screens long at every threshold, and a sheet showing each one (`transitions-v52.png`).
+- **The plain** steps in three deliberate banks instead of many low tiers.
+- **The Lull** runs a belt of unequal bends.
+- **The west.** The western rivers follow the land and join. The Rift swings round two spurs of the Brackens and takes tributaries from both sides. The dry country wraps round the Brackens.
+- **The volcano.** The crater is breached, with a rift-zone fissure, an old crusted flow and a young one.
+- **The city.** The new town is a grown district, the Skyport a built place, the Heights' terraces are separate blocks, and the old quay a real waterfront.
 
 It builds on, and does not repeat:
 
@@ -53,6 +73,20 @@ It builds on, and does not repeat:
 - `frostline-v51.png`, `hearthold-v51.png` and `delta-v51.png`: close crops;
 - `before-after-river.png`, `before-after-harbour-city.png` and `before-after-west.png`: v5 on the left, v5.1 on the right.
 
+**The v5.2 images** come from `geo52.py`, which builds on `geo51.py`. They carry the suffix `-v52`:
+
+- every v5.1 file, with the suffix;
+- `content-map-v52.png`: the named things, the pockets, obstacles and markers, with a count per biome;
+- `transitions-v52.png`: all fifteen thresholds, each a 1200 x 900 px crop with the threshold and the landmark seen on the approach;
+- `boundary-north-v52.png`, `boundary-west-v52.png`, `boundary-east-v52.png` and `boundary-south-v52.png`;
+- before and after, with v5.1 on the left and v5.2 on the right: `before-after-river-and-bridges-v52.png`, `before-after-harbour-city-v52.png`, `before-after-region-fire-country-v52.png`, `before-after-west-v52.png` and `before-after-tiers-v52.png`.
+
+`stats-v52.json` holds:
+
+- every named thing, pocket, obstacle and marker, with its position;
+- the mixing at each threshold;
+- the benchmark's results.
+
 Matt's example maps (a fantasy city, a soft-grid tier map, all the Pokémon regions joined, Stardew's map) are in `refs-matt/maps/`, for reference only.
 
 ## 0. In short
@@ -67,6 +101,7 @@ Matt's example maps (a fantasy city, a soft-grid tier map, all the Pokémon regi
 8. **Transitions are places (v5.1).** Each region change on a route has a threshold, a mixing band, a landmark and a beat: the Brackens gap, Drover's bridge, the Cinder Rise, the Millrace cutting, Lullford Bridge and more (5.2). Each region is pushed to its own colour, landform, vegetation and silhouette (5.3).
 9. **Verticality region by region (v5.1).** One tier is a 32 px face. Each region has its own vertical character and its own way up and down: the massif's switchbacks, the valley's terraces, the coal hills' benches and the Narrows gorge, the desert's mesas and canyon floors, the lava terraces and the crater rim, the city's terraces down to the quays, the coast's cliffs against the flat delta (5.4, `tier-map-v51.png`).
 10. **v5.1's numbers:** 123.6 walkable zone-areas. From the hut: Cogsworth 52 s (25 s by train), Neon 115 s (56 s), Dust Gulch 100 s (29 s), Hearthold 129 s (61 s, now inside its walls).
+11. **v5.2: compared with other games.** It passes all 21 checks of the benchmark (2.1). It has layered borders, filled biomes, obstacles with side paths, and a mixing band at every threshold. Numbers: 142.2 walkable zone-areas, up from 124 because the fade at the world's edges is walkable ground (sparse clumps on it); no place moved. From the hut: Cogsworth 52 s (25 s by train), Neon 116 s (56 s), Dust Gulch 101 s (30 s), Hearthold 130 s (51 s).
 
 ## 1. Sizing
 
@@ -190,6 +225,66 @@ Our sizes are built from the scale table's parts (doors, storeys, a cottage of a
 
 v1's full text, with every quotation and its source, is in this file's history (commit `7c96dae`); the sources are listed again at the end.
 
+### 2.1 Compared with other games (v5.2)
+
+Matt, 15:50: "Compare with other games". The benchmark is [research/world-benchmark.md](research/world-benchmark.md). It measures content density, borders, transitions and obstacles in A Link to the Past, Link's Awakening, Pokémon Gen 3 and Sword and Shield, Stardew, Sea of Stars, Tunic, Hyper Light Drifter and CrossCode, and turns them into 21 checks per 320 x 576 px screen.
+
+The main rates it sets:
+
+- Pokémon Emerald's Route 119 has about 2.3 things a screen and a landmark every 2 to 3 screens.
+- Link's Awakening has a district every 3.5 screens and a secret every 2 (GB).
+- ALTTP stacks its cliff rims two or three deep and jogs them every few tiles.
+- The Wild Area names every subarea and gives it its own weather.
+
+`geo52.py` measures the v5.2 block-out against those checks and writes the results to `stats-v52.json`. **21 of 21 pass.**
+
+| #   | Check                                                                                         | Measured on the block-out                                         | Target                                                                                            | Result |
+| --- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ------ |
+| 1   | interactables and story props per screen: routes (min over routes); settlements (min)         | routes 2.9 and 4.8; settlements 8.0 each                          | routes 2-3 and 3-5; settlements 6-10 each                                                         | pass   |
+| 2   | longest stretch of path with nothing to notice                                                | 170 px (Lode Track)                                               | 200 px or less                                                                                    | pass   |
+| 3   | landmark spacing along routes; seen from the screen before (within 900 px)                    | longest gap 767 px (High Fells); 82/82 seen                       | every 576-1152 px; all seen                                                                       | pass   |
+| 4   | each biome: named places, secret pockets, viewpoint, camp, ruin, 2 wildlife, water            | 10/10 biomes pass                                                 | all biomes                                                                                        | pass   |
+| 5   | no secret or decoration gives a reward, cost or chore                                         | by design: markers and pockets carry no items                     | none                                                                                              | pass   |
+| 6   | invisible walls: frame cells touching the walk that are drawn as passable ground              | 0                                                                 | 0                                                                                                 | pass   |
+| 7   | border depth: share of frame within 64 px of the walk that is drawn as a blocker (two strata) | 100.0 %                                                           | 100 % (2-3 strata)                                                                                | pass   |
+| 8   | longest straight run of the walk-to-border edge                                               | 56 px                                                             | 96 px or less                                                                                     | pass   |
+| 9   | identical border material in a row (one prop = 3 cells)                                       | 3 props                                                           | 3 or fewer                                                                                        | pass   |
+| 10  | outer border edge with something seen beyond within 900 px                                    | 100.0 %                                                           | 100 %                                                                                             | pass   |
+| 11  | each region shows a place seen but not yet reached, reached later                             | 10/10 regions listed; all ways reach their places                 | all regions                                                                                       | pass   |
+| 12  | mixing band 1400 px long at each threshold; ground kinds crossing each way                    | 15/15 pass                                                        | band 576 px or more; 3 elements each way (ground kinds here, plus the props and residents in 5.2) | pass   |
+| 13  | next region's landmark seen from the threshold (within 1200 px), hidden before it             | 15/15                                                             | all                                                                                               | pass   |
+| 14  | ambience cross-fade at each threshold                                                         | 160 px (4 s)                                                      | 120 px (3 s) or more                                                                              | pass   |
+| 15  | each change radiates from a source                                                            | 15/15                                                             | all                                                                                               | pass   |
+| 16  | route bends or meets an obstacle every 200-300 px; longest straight run                       | longest gap 282 px (Foothill Road); straight 128 px (Shell Bar)   | gap 300 px or less; straight 240 px or less                                                       | pass   |
+| 17  | path width range; side paths per two screens of route                                         | 24-64 px; 1.93 per 2 screens                                      | 24-64 px; 1 or more                                                                               | pass   |
+| 18  | at least one loop in every region                                                             | 10/10                                                             | all                                                                                               | pass   |
+| 19  | dead ends end in a view, resident, bench or story detail                                      | 0 bare dead ends                                                  | 0                                                                                                 | pass   |
+| 20  | no one-way drops                                                                              | every tier change on a route is a stair, ramp or switchback (5.4) | none                                                                                              | pass   |
+| 21  | every tier change uses a stair or ramp; obstacles 110 px or more from the path                | 184 tier changes, all stairs, ramps or switchbacks                | all                                                                                               | pass   |
+
+Some checks are rules for the next passes, not things a block-out can show:
+
+- Markers stand for props (1, 9).
+- Ambience is specified for the sound pass (14).
+- The no-reward rule holds by design (5).
+
+The art and sound lanes should hold the same numbers when they draw.
+
+Per biome (check 4; a screen here is 576 px of route):
+
+| Biome                        | Screens of route | Named places | Secret pockets | Viewpoint | Camp or hut | Ruin or story site | Wildlife kinds | Water |
+| ---------------------------- | ---------------- | ------------ | -------------- | --------- | ----------- | ------------------ | -------------- | ----- |
+| the home valley              | 3.5              | 14           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the massif and the Frostline | 3.2              | 11           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the coal hills               | 2.6              | 11           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the Lull plain               | 7.7              | 21           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the river belt and delta     | 1.8              | 8            | 3              | yes       | yes         | yes                | 2              | yes   |
+| Neon Harbour                 | 2.3              | 11           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the steppe and the Brackens  | 4.1              | 15           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the Sunstone basin           | 6.3              | 20           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the fire country             | 5.6              | 22           | 3              | yes       | yes         | yes                | 2              | yes   |
+| the coast and the isles      | 1.4              | 8            | 3              | yes       | yes         | yes                | 3              | yes   |
+
 ## 3. How Pokémon regions and Eastward's world hold together
 
 **Pokémon builds each region on a real land, so its geography arrives already explained.**
@@ -268,6 +363,8 @@ The map is a window. Three of its edges are land that goes on, and each has a bo
 7. **Lullford.** Gravel terraces close in on both banks, and an island sits mid-river. This is the lowest place it can be bridged, so the old road crosses here and the town grew round the bridge.
 8. **The delta.** Below Lullford it branches into a network of uneven arms: eight reaches from one apex, the widest about 70 px. Between them lie reed beds; in front, mudflats; at each mouth, a sandbar; and the delta builds a lobed front into the sea.
 
+**v5.2.** The belt runs along a longer arc east of the confluence, as a run of five unequal bends (sine-generated, two segments with different swing), so no one loop dominates.
+
 **Width grows with the water** (v5.1). The Lull is about 28 px at the glacier and grows with the Sorrel. It is pinched in the Narrows, gains with the Cog, and reaches about 110 to 130 px (14 to 16 cells) on the floodplain. Lullford's terraces narrow it to under 120 px. Widths change gradually, never in a jump.
 
 **The three landmark bridges.**
@@ -332,7 +429,14 @@ The places came first. Each needs something; the terrain was then shaped to give
 5. **The salt lake** where the Amber ends at the arc's foot.
 6. **Desert, then the dune sea** to the western edge, the dune ridges running off the map.
 
-The massif closes the north of both the desert and the green land, so no range runs between them. The arc's own seaward slope stays green (the windward side), so the Ash Coast is green until the volcano.
+The massif closes the north of both the desert and the green land, so no range runs between them.
+
+**v5.2: rivers with courses, and a boundary that wraps.**
+
+- **The Amber** bends round the spur below the Lode and round a mesa in its canyon.
+- **The Willow Run** winds past Palm Spring and joins the Amber in the canyon instead of running beside it.
+- **The Rift** swings 400 to 600 px from side to side. It hugs the Brackens' north-west foot, goes west round the tip of the Heather spur, comes back east into the bay below it, goes west again round the Fold spur, then round a mesa and the arc's last hills. It takes the Heather burn and the Brackens beck from the Brackens, the Sedgeburn from the piedmont to the west, and two dry forks.
+- **The dry-to-green change** runs further east south of the Brackens than north of them, so the steppe wraps round the hills' southern end. The Brackens catch their own rain, and the change is patchy where dry meets green. The Rift's green strip varies along it: a thread where it runs in its gorge, wide meadows in the bays and at each confluence. The arc's own seaward slope stays green (the windward side), so the Ash Coast is green until the volcano.
 
 ### 4.7 Where the volcano goes, and how far
 
@@ -349,6 +453,12 @@ The massif closes the north of both the desert and the green land, so no range r
 - hot springs and black sand on the seaward side.
 
 The young flows, from the crater to the sea, are the barrier (W6), and they are not a line round the mountain but two tongues with side lobes.
+
+**v5.2: two eruptions, not an arch.**
+
+- **The crater** is irregular, and the young flow pours through its south-east rim to the sea.
+- **The old flow** came from a flank vent at the end of a rift-zone fissure running south-west from the crater. It is crusted rubble, its edges grown over with fireweed and lava-stone scrub.
+- **The barrier (W6)** is the crater rim, the fissure, the old flow's crust, the young flow and the sea. The chasm bridge crosses the old flow; the crust causeway crosses the young one.
 
 ## 5. Transitions and verticality
 
@@ -434,6 +544,44 @@ Measured on the block-out (observations; a step is one 32 px tier):
 
 Every route's tier changes are counted in `stats-v51.json` (`route_tier_changes`): the Canyon Road 33, the High Fells 32, the Drover's Road 22, the Foothill Road 17, the Ash Coast 14, the Lull Road 13. The height field steps the gentle plain into many low tiers. The geography chunk (P1) should merge those into fewer, deliberate banks, so the plain reads flat and the hills read high.
 
+### 5.5 The world's edges, in layers (v5.2)
+
+Matt, 15:50: "make sure you hone in on the world boundaries, they need to be excellent as well". Every edge now has three layers, and each is drawn as the land itself, never as a line or a pattern.
+
+1. **The fade.** The ground goes on past the old edge, still walkable, with clumps of scrub, gorse, brambles, driftwood or stones scattered on it: few by the path, more and more outward. It is about 10 to 160 px deep, varying along the edge, and kept 200 px or more from rivers, lava and walls so it never opens a way round them.
+2. **The wall.** The clumps close into something you cannot pass, 64 to 180 px deep: thicket and old trees in woods, thorn scrub and boulders in dry country, scree and crags on the heights, meres and sinkholes in the fens. Each ground has a main blocker with two others mixed through it in patches of uneven size, never more than three of the same in a row. They take some of the ground's own colour, so the wall reads as that land grown thick. Beyond the wall the clumps thin out again over 160 to 400 px, so the wall is the thick middle of a broad, soft change and never a ribbon with a hard edge on both sides. Behind it the border proper (the massif, the dune sea, the fens and the old forest, the sea) goes on, drawn hazier.
+3. **What lies beyond**, drawn but never walked.
+
+Crops: `boundary-north-v52.png`, `boundary-west-v52.png`, `boundary-east-v52.png`, `boundary-south-v52.png`.
+
+| Edge  | At the walkable edge                                                                    | The border                                                 | Beyond (drawn, not walked)                                                              |
+| ----- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| North | scree and boulders on the High Fells and the Lode spur; crevasse fields on the glaciers | the massif's crags, icefalls and glaciers                  | peaks and valley glaciers to the top edge; river gorges running on north                |
+| West  | a dune wall where the basin's walkable ground meets the erg                             | the dune sea, with its dust haze thickening westward       | dune ridges and interdune flats; a far caravan route crossing them                      |
+| East  | sinkholes and meres at the fens' edge; thickets at the old forest's                     | the moss fens on the uplands, the old forest north of them | the forest's giant trees (a dark cathedral of canopy); the Glint coming out of the fens |
+| South | cliffs with surf on the headlands; beaches with surf elsewhere                          | the sea                                                    | the Tidebloom Isles, and far islands on the horizon                                     |
+
+### 5.6 Obstacles and little paths (v5.2)
+
+Matt, 15:50: "there could also be certain obstacles in the world that you need to traverse around and little paths".
+
+**Obstacles with side paths.** Beside the main routes, about one stretch of 900 px or more gets an obstacle, and never two within 800 px of each other, so there is at most one loop in any small area. Each is chosen by the ground it stands on:
+
+- a thicket or a fallen tree in woods;
+- boulders or a ravine in dry country;
+- scree on the heights;
+- a marshy pool on the floodplain.
+
+A little side path leaves the road at a shallow Y about 300 px before the obstacle, takes the easy line round its far side with two gentle bends, and rejoins at a Y after it. It never crosses the road between. Each one is a small loop and a small choice, with no one-way ledges (decision 19).
+
+**The roads themselves** bend irregularly: a short bend every 160 to 240 px riding on a long swing of 450 to 750 px, each of varying size, so no stretch reads as a regular S-ribbon.
+
+**Collapsed old bridges** stand beside four of the fords where routes cross the small rivers (the Sleepwater, the Amber, the Willow Run, the Brackens beck).
+
+They show on the route crops and on `content-map-v52.png` (red squares).
+
+**Counts** (`stats-v52.json`, `obstacles`): 23 obstacles: 9 thickets, 6 collapsed bridges, 2 ravines, a marshy pool, a fallen tree, a boulder field, a spoil heap, the Headland's rocks and a dew pond. 17 of them have a side path or a loop round them, and there are 30 secret pockets down dead-end paths. Side paths and pockets together come to 1.93 per 2 screens of route (check 17). Every region has at least one loop.
+
 ## 6. Paths first: routes, shortcuts and times
 
 ### 6.1 The routes, and the ground fitted to each
@@ -498,6 +646,42 @@ Walk times are measured end to end on the block-out at 40 px/s.
 | the Launch Cape                    | 147.1                   | 67.6               |
 
 The far places are 2 to 2.5 minutes on foot and under about a minute with the shortcuts, as in v4. The Frostline moved higher into the massif (40 s instead of 27 s), so that it reads as a high cirque.
+
+### 6.4 Things along the way (v5.2)
+
+Matt, 15:50: "there should be a decent amount of things in each of the major biomes". The block-out now places four kinds of thing. None gives a reward, a cost or a chore.
+
+1. **Named things**, 1.5 to 2 per screen of route, from each biome's own list:
+   - the valley's shrines, wells and beehives;
+   - the massif's cairns, shielings and echo cave;
+   - the coal hills' pit heads, charcoal camps and rail ruins;
+   - the plain's windmill, standing stones and heron pools;
+   - the delta's reed hides and stilt huts;
+   - the steppe's sheepfolds and barrow;
+   - the basin's caravan camp, rock arch and bone yard;
+   - the fire country's fumaroles, obsidian and lava tube;
+   - the coast's tide pools, seal rocks and sea cave.
+
+   Gaps along a route are filled with tors, lone trees and standing stones, so that a landmark stands at least every 1000 px.
+
+2. **Secret pockets** (30): a little dead-end path to a clearing that holds a view, a bench, a resident or a story detail.
+3. **Markers for the art lanes**, along every route at ten per screen: three to interact with (a bench, a signpost, a resident, a door), five story props (a cart with a broken wheel, a cairn, tracks, a mended fence) and two of the biome's own wildlife. In every settlement there are eight interactables and eight story props per screen. In all: 347 interactables, 442 story props, 92 ambient.
+4. **The easter-egg spots** (section 14) stay reserved.
+
+All of them are on `content-map-v52.png`.
+
+| Biome                        | Named things on its routes | Per screen of route |
+| ---------------------------- | -------------------------- | ------------------- |
+| the home valley              | 8                          | 1.89                |
+| the massif and the Frostline | 7                          | 1.71                |
+| the coal hills               | 6                          | 1.84                |
+| the Lull plain               | 18                         | 1.87                |
+| the river belt and delta     | 5                          | 2.22                |
+| Neon Harbour                 | 5                          | 1.67                |
+| the steppe and the Brackens  | 11                         | 2.03                |
+| the Sunstone basin           | 15                         | 1.9                 |
+| the fire country             | 13                         | 1.82                |
+| the coast and the isles      | 2                          | 1.12                |
 
 ## 7. Sunstone Reach: a journey into the heat
 
@@ -636,6 +820,13 @@ Between other places: the halt platform to the well 11.9 s, the ferry pier to th
 - **The new town:** a looser grid turned 14 degrees, towers round each block.
 - **The shore:** long piers along the docks, short jetties under the Heights, slipways at the Strand.
 
+**v5.2: a grown city.**
+
+- **The new town** grew out from the maglev station. Its blocks are of different sizes, split from the land along a grid turned 14 degrees, with towers clustered by the station. A planted boulevard runs east from the station, a covered arcade street north from the boulevard, and there are two squares: the station square and Neon Square.
+- **The Skyport** is a built place: a grass field with a terminal, aprons, two hangars and three mooring masts in their circles.
+- **The Heights** are separate terrace blocks on the contours, with a retaining wall under each, gardens between and lanes climbing between them.
+- **The old town's waterfront:** warehouses front the quay, cranes stand on its edge, and the fish market is at its south end.
+
 **Size and pace.** About 1450 x 1100 px with the ria, of which the ria is about a third. Inside: the old bridges 9 s, Quay Street from the market to the Strand 24 s, the Harbour Bridge 17 s, the Beacon Causeway 9 s, the Cape Road 18 s. Any district is within about 25 s of the market. The walkable ground stays near v2's 960 x 1280 canvas (decision 6): the ria and the terraces' gardens are frame between the streets.
 
 **Kept from v2.** The Skyport, the docks' cranes and ship, the old wet street (now in the Falls Rock), the elevated tram (on Quay Street), Claude C's facade detail (PR #116). **Changed:** the city wraps a ria instead of standing on a straight shore; one spine becomes the quay and the bridges.
@@ -744,6 +935,24 @@ Compared with Matt's four examples (the Final Falls city, the soft-grid tier map
 5. Where the map is crowded, the label placer drops some threshold names rather than overlap them.
 6. Pokémon's routes are orthogonal; ours curve with the ground. That is a choice.
 
+**Fixed in v5.2:**
+
+- the plain's many low tiers (now three banks);
+- the belt's one dominant loop;
+- the new town's grid and the plain Skyport;
+- the crater's arch;
+- dropped labels (thresholds and bridges now move out with a leader line);
+- the parallel western rivers and the vertical green band;
+- the Heights' stripes;
+- the old quay's missing waterfront.
+
+**Still to watch after v5.2:**
+
+1. The markers are a plan; the art lanes still have to draw the props at those rates.
+2. The block-out's border materials stand in for props, so the "no more than three identical props in a row" rule must be checked again on drawn art.
+3. The mixing bands are made of ground kinds; the props and residents that cross each threshold are listed in 5.2 but not yet placed.
+4. Our routes curve with the ground where Pokémon's are orthogonal; that is a choice.
+
 **v5's list** (kept for the record; v5.1 fixed items 1 to 7 and 9 below).
 
 1. The Rift runs almost straight north to south for its whole length and still reads, at 1x, as a dividing line. It should bend west round a spur of the basin's plateau, with a side canyon.
@@ -777,37 +986,41 @@ Spots are reserved and drawn as small rings on `continent-labelled.png`. They ho
 
 ## 16. Decisions for Matt
 
-| #   | Decision                                                                                                                    | Recommendation or decision                                                                                         |
-| --- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| 1   | Keep the zoom at 12 adults across                                                                                           | **Decided 20 Oct: keep.**                                                                                          |
-| 2   | Canvases streamed in tiles instead of the zone grid                                                                         | **Decided 20 Oct: yes.**                                                                                           |
-| 3   | Sizes from the sizing table; everyday places within 15 s of the hut                                                         | **Decided 20 Oct: yes.**                                                                                           |
-| 4   | The valley at 1280 x 2688 with a real village, a farmstead and Driftwood                                                    | **Decided 20 Oct: yes.**                                                                                           |
-| 5   | Cogsworth with Gasworks Hill and the Terminus                                                                               | **Decided 20 Oct: yes.**                                                                                           |
-| 6   | Neon's canvas a quarter smaller with more street                                                                            | **Decided 20 Oct: yes** (kept in 8.5: the ria is frame, the streets keep the size).                                |
-| 7   | Sunstone Reach as one continuous land                                                                                       | **Decided 20 Oct: yes.**                                                                                           |
-| 8   | A rocket from the Launch Cape replaces the space elevator; Halcyon's lander to Lumen                                        | **Decided 20 Oct (v3): yes.**                                                                                      |
-| 9   | One world canvas, authored in chunks and streamed in tiles                                                                  | **Decided 20 Oct (v3): yes.**                                                                                      |
-| 10  | The map as a window onto a larger continent: sea and isles only in the south, natural borders on the other three edges      | **Yes.** It is what Matt asked for at 12:25.                                                                       |
-| 11  | Arrangement A (section 4.4): the arc, its rain shadow, the river in the east                                                | **Decided 20 Oct (about 14:45): "go with A more or less".**                                                        |
-| 12  | About 125 zone-areas walked, with land beyond the corridors drawn but not walked                                            | **Yes.** v4's scale kept.                                                                                          |
-| 13  | The routes as paths first, with the ground fitted to each (section 6.1)                                                     | **Yes.**                                                                                                           |
-| 14  | Sunstone Reach entered from the valley over the Rift (section 7)                                                            | **Yes.** It replaces v4's pass over the spine.                                                                     |
-| 15  | The Sleepwater to Driftwood's cove (reverses v4's decision 14)                                                              | **Yes.** It restores v2's estuary and keeps the valley's river short and its own.                                  |
-| 16  | The Lull as the one great river, with Lullford Bridge, the Narrows Viaduct and the Harbour Bridge as its landmark bridges   | **Yes.**                                                                                                           |
-| 17  | Mount Ember on the arc, at the far south-west, with a buffer of ash, old flows, springs and a dead forest instead of a ring | **Yes.**                                                                                                           |
-| 18  | The ways at the barriers (section 10): W5 at the Rift, W6 at the young flows, W7 at Lullford's swing span                   | **Yes.**                                                                                                           |
-| 19  | The in-game map in the soft-grid style (example 2)                                                                          | **Yes** (Claude A's recommendation too).                                                                           |
-| 20  | The geography as data (height, wetness, warmth fields) that every chunk reads                                               | **Yes.**                                                                                                           |
-| 21  | Neon Harbour as the ria city of Matt's first example (8.5), not a separate city                                             | **Yes.** One port, two ages; the places and W7 stay.                                                               |
-| 22  | Easter-egg spots reserved now, designed later (section 14)                                                                  | **Yes, later.**                                                                                                    |
-| 23  | The coastal steamer (S3)                                                                                                    | **Yes, later.**                                                                                                    |
-| 24  | Ground pictures at 1x (or 2x)                                                                                               | **Test, then 1x if crisp.**                                                                                        |
-| 25  | Secret pockets hold no keepsakes; no one-way ledges for now; the companion stays 24 px                                      | **Yes** (from v2).                                                                                                 |
-| 26  | Every region change on a route is a designed threshold with a mixing band, a landmark and a beat (5.2)                      | **Yes** (v5.1).                                                                                                    |
-| 27  | Each region pushed to its own colour, landform, vegetation and silhouette (5.3)                                             | **Yes** (v5.1).                                                                                                    |
-| 28  | Verticality per region on the soft grid's tiers (5.4); the plain's many low tiers merged into a few deliberate banks        | **Yes** (v5.1).                                                                                                    |
-| 29  | Lifts: the Heights funicular as a shortcut inside Neon; the Narrows lift down to the river                                  | **Funicular yes; the Narrows lift a proposal** (it would be a new shortcut, so it waits for Matt and #95's rules). |
+| #   | Decision                                                                                                                                            | Recommendation or decision                                                                                         |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
+| 1   | Keep the zoom at 12 adults across                                                                                                                   | **Decided 20 Oct: keep.**                                                                                          |
+| 2   | Canvases streamed in tiles instead of the zone grid                                                                                                 | **Decided 20 Oct: yes.**                                                                                           |
+| 3   | Sizes from the sizing table; everyday places within 15 s of the hut                                                                                 | **Decided 20 Oct: yes.**                                                                                           |
+| 4   | The valley at 1280 x 2688 with a real village, a farmstead and Driftwood                                                                            | **Decided 20 Oct: yes.**                                                                                           |
+| 5   | Cogsworth with Gasworks Hill and the Terminus                                                                                                       | **Decided 20 Oct: yes.**                                                                                           |
+| 6   | Neon's canvas a quarter smaller with more street                                                                                                    | **Decided 20 Oct: yes** (kept in 8.5: the ria is frame, the streets keep the size).                                |
+| 7   | Sunstone Reach as one continuous land                                                                                                               | **Decided 20 Oct: yes.**                                                                                           |
+| 8   | A rocket from the Launch Cape replaces the space elevator; Halcyon's lander to Lumen                                                                | **Decided 20 Oct (v3): yes.**                                                                                      |
+| 9   | One world canvas, authored in chunks and streamed in tiles                                                                                          | **Decided 20 Oct (v3): yes.**                                                                                      |
+| 10  | The map as a window onto a larger continent: sea and isles only in the south, natural borders on the other three edges                              | **Yes.** It is what Matt asked for at 12:25.                                                                       |
+| 11  | Arrangement A (section 4.4): the arc, its rain shadow, the river in the east                                                                        | **Decided 20 Oct (about 14:45): "go with A more or less".**                                                        |
+| 12  | About 125 zone-areas walked, with land beyond the corridors drawn but not walked                                                                    | **Yes.** v4's scale kept.                                                                                          |
+| 13  | The routes as paths first, with the ground fitted to each (section 6.1)                                                                             | **Yes.**                                                                                                           |
+| 14  | Sunstone Reach entered from the valley over the Rift (section 7)                                                                                    | **Yes.** It replaces v4's pass over the spine.                                                                     |
+| 15  | The Sleepwater to Driftwood's cove (reverses v4's decision 14)                                                                                      | **Yes.** It restores v2's estuary and keeps the valley's river short and its own.                                  |
+| 16  | The Lull as the one great river, with Lullford Bridge, the Narrows Viaduct and the Harbour Bridge as its landmark bridges                           | **Yes.**                                                                                                           |
+| 17  | Mount Ember on the arc, at the far south-west, with a buffer of ash, old flows, springs and a dead forest instead of a ring                         | **Yes.**                                                                                                           |
+| 18  | The ways at the barriers (section 10): W5 at the Rift, W6 at the young flows, W7 at Lullford's swing span                                           | **Yes.**                                                                                                           |
+| 19  | The in-game map in the soft-grid style (example 2)                                                                                                  | **Yes** (Claude A's recommendation too).                                                                           |
+| 20  | The geography as data (height, wetness, warmth fields) that every chunk reads                                                                       | **Yes.**                                                                                                           |
+| 21  | Neon Harbour as the ria city of Matt's first example (8.5), not a separate city                                                                     | **Yes.** One port, two ages; the places and W7 stay.                                                               |
+| 22  | Easter-egg spots reserved now, designed later (section 14)                                                                                          | **Yes, later.**                                                                                                    |
+| 23  | The coastal steamer (S3)                                                                                                                            | **Yes, later.**                                                                                                    |
+| 24  | Ground pictures at 1x (or 2x)                                                                                                                       | **Test, then 1x if crisp.**                                                                                        |
+| 25  | Secret pockets hold no keepsakes; no one-way ledges for now; the companion stays 24 px                                                              | **Yes** (from v2).                                                                                                 |
+| 26  | Every region change on a route is a designed threshold with a mixing band, a landmark and a beat (5.2)                                              | **Yes** (v5.1).                                                                                                    |
+| 27  | Each region pushed to its own colour, landform, vegetation and silhouette (5.3)                                                                     | **Yes** (v5.1).                                                                                                    |
+| 28  | Verticality per region on the soft grid's tiers (5.4); the plain's many low tiers merged into a few deliberate banks                                | **Yes** (v5.1).                                                                                                    |
+| 29  | Lifts: the Heights funicular as a shortcut inside Neon; the Narrows lift down to the river                                                          | **Funicular yes; the Narrows lift a proposal** (it would be a new shortcut, so it waits for Matt and #95's rules). |
+| 30  | The benchmark's 21 checks as the bar for every map and region lane (2.1, `research/world-benchmark.md`)                                             | **Yes** (v5.2).                                                                                                    |
+| 31  | About ten noticeable things per screen of route, and at least three secret pockets in every biome, none giving a reward (6.4)                       | **Yes** (v5.2).                                                                                                    |
+| 32  | Layered world edges, drawn as the land itself: a walkable fade of scattered clumps, a wall of the ground's own blockers, and something beyond (5.5) | **Yes** (v5.2).                                                                                                    |
+| 33  | Obstacles with side paths that leave and rejoin the road at a Y, at most one loop in any small area, loops in every region; no one-way drops (5.6)  | **Yes** (v5.2).                                                                                                    |
 
 ## Sources
 
