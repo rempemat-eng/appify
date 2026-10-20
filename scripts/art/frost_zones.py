@@ -280,7 +280,7 @@ def foot_bridge(cv: Canvas, x0: int, y0: int, w: int, h: int, vertical: bool):
 
 # ---- the waterfall kit (art-faults A1; world-references.md 3, rule 1) -------------------------
 # Drawn over terrace.py's plain fall until the toolkit takes it in (see the PR: proposed for
-# terrace.py's falls_paint, with the 'rock' material and a zone turf ramp).
+# terrace.py's falls_paint, with the 'rock' material; the zone turf ramp is now build(turf=)).
 ROCK = ['#25242C', '#3B3740', '#57545D', '#78757B', '#9C999B', '#C6C4BE']
 
 
@@ -463,8 +463,8 @@ class _FallKit:
                 else:
                     below = y + 1 < H and not self.wet[y + 1, x]
                     c = T.WTR[3] if below else T.WTR[2]
-                    if below and n(x, y, 20) > 0.55:
-                        c = T.FOAM                  # the lit foam line at the waterline
+                    if below and n(x // 3, y, 20) > 0.45:
+                        c = T.FOAM                  # the lit foam line at the waterline, in runs
                 self.put(x, y, c)
             cx = (fx0 + fx1) / 2
             for y in range(fy1, min(H, fy1 + 6)):   # the foam band, wider than the sheet
@@ -491,8 +491,9 @@ class _FallKit:
                 for a in range(0, 360, 20):     # rings spreading out from the landing
                     x = int(rx + ra * math.cos(math.radians(a)))
                     y = int(ry + ra * 0.4 * math.sin(math.radians(a)))
-                    if 0 <= x < W and 0 <= y < H and pool[y, x] and dep[y, x] >= 1 and a % 60:
+                    if 0 <= x + 1 < W and 0 <= y < H and pool[y, x] and pool[y, x + 1] and dep[y, x] >= 1 and a % 60:
                         self.put(x, y, T.WTR[3])
+                        self.put(x + 1, y, T.WTR[3])        # (two px: never a lone dot)
             for i in range(6):                     # foam patches drifting off downstream
                 x = int(cx + (n(i, 9, 23) - 0.5) * (fw + 20))
                 y = fy1 + 6 + int(n(i, 10, 24) * 14)
@@ -680,28 +681,6 @@ def _hx(c) -> str:
     return '#%02X%02X%02X' % tuple(int(v) for v in c[:3])
 
 
-def _alpine_turf(cv, t):
-    """terrace.py draws its lips, banks, moss and foot grass in the valley's meadow grass;
-    Fir Hollow's turf is alpine. Every pixel the toolkit painted in that ramp near its faces
-    and water takes the matching alpine tone (proposed for terrace.py as a zone turf ramp)."""
-    near = np.isin(t.kind, (T.FACE_K, T.STRIP_K, T.CHEEK_K, T.FALL_K))
-    for (x, y) in t.water:
-        near[y, x] = True
-    for _ in range(8):
-        near = near | T._shift(near, 1, 0) | T._shift(near, -1, 0) | T._shift(near, 0, 1) | T._shift(near, 0, -1)
-    turf = {}
-    for L in (0, 1):
-        g = T.grass_ramp(L)
-        a = [T.lerp(c, '#E8EBA0', 0.09 * L) for c in ALPINE]
-        turf.update({T.rgb(g[i]): a[i] for i in range(5)})
-    img = np.array(cv.img.convert('RGB'))
-    for y, x in zip(*np.nonzero(near)):
-        p = tuple(int(v) for v in img[y, x])
-        if p in turf:
-            img[y, x] = turf[p]
-    cv.img.paste(Image.fromarray(img, 'RGB').convert('RGBA'), (0, 0))
-
-
 def _water_seams(cv, base, t, water):
     """Where the stream meets its neighbours' water off the grid: the lake's outflow crosses
     the north seam 10 px wide at x 244..253 (snowmelt), and the Woodland's brook comes in 7 px
@@ -826,8 +805,7 @@ def hollow(frame: int = 0):
     for r in range(HOLLOW_RIM // 8, H // 8):
         for c in range(HOLLOW_NOTCH // 8):
             tiers[r][c] = 0
-    t = T.build(cv, tiers, face=32, material='earth', water=wet_cells, tops=False, seed=17)
-    _alpine_turf(cv, t)
+    t = T.build(cv, tiers, face=32, material='earth', water=wet_cells, tops=False, seed=17, turf=ALPINE)
     water = set(t.water)
     _water_seams(cv, base, t, water)
     img = np.array(cv.img.convert('RGB'))
@@ -838,16 +816,6 @@ def hollow(frame: int = 0):
     # ---- the lower ground under the face: woodland floor in the escarpment's shade,
     # mossy stones round the pool, ferns in the damp
     pool_wet = {(x, y) for (x, y) in water if y >= HOLLOW_RIM + 32}
-    for y in range(HOLLOW_RIM + 32, H):
-        for x in range(HOLLOW_NOTCH):
-            if t.kind[y, x] != T.TOP or (x, y) in pool_wet:
-                continue
-            # the wood's floor below the face: shade deepening toward the trees of the Woodland
-            # (its top rows lie under the crowns closing the seam), leaf litter in drifts
-            k = 0.22 + 0.4 * (y - HOLLOW_RIM - 32) / 40
-            if smooth_noise(x, y, 9, 898) > 0.6:
-                k += 0.12
-            cv.set(x, y, _hx(T.lerp(cv.get(x, y), '#24382A', k)))
     for (x, y) in sorted(pool_wet):  # a chain of stones along the pool's low (south and side) shore
         for (dx, dy) in ((0, 1), (-1, 0), (1, 0)):
             q = (x + dx, y + dy)
@@ -857,6 +825,25 @@ def hollow(frame: int = 0):
                 cv.set(*q, ST[3] if dx <= 0 and dy == 0 else ST[2] if dy == 0 else ST[1])
                 if q[1] + 1 < H and (q[0], q[1] + 1) not in pool_wet:
                     cv.set(q[0], q[1] + 1, ST[1])
+    # tall grass and tufts gathered along the face's foot and round the pool, in the shade's tones
+    low = np.zeros((H, W), bool)
+    low[HOLLOW_RIM + 33:H, 0:HOLLOW_NOTCH] = True
+    low &= (t.kind == T.TOP)
+    for (x, y) in pool_wet:
+        low[max(0, y - 3):y + 4, max(0, x - 3):x + 4] = False
+    foot_band = np.zeros((H, W), bool)
+    foot_band[HOLLOW_RIM + 32:HOLLOW_RIM + 35, 0:HOLLOW_NOTCH] = True   # tall grass at the face's foot
+    T.dress_ground(cv, low, near=foot_band, turf=ALPINE, seed=29)
+    # then the wood's floor goes into the Woodland's canopy shade, as its top rows have it
+    # (valley_zones.woodland), so nothing changes at the seam (y 576)
+    for y in range(HOLLOW_RIM + 32, H):
+        for x in range(HOLLOW_NOTCH + 8):
+            if t.kind[y, x] not in (T.TOP, T.STRIP_K) or (x, y) in pool_wet:
+                continue
+            v = smooth_noise(x, y - H, 16, 431)
+            style.darken(cv, x, y)
+            if v > 0.62:                      # deeper pools under the crowns closing the seam
+                style.darken(cv, x, y, (0.86, 0.88, 0.9))
     for i in range(7):                # ferns on the lower ground, clumped near the water
         fx = 40 + int(noise2(i, 1, 900) * 200)
         fy = HOLLOW_RIM + 40 + int(noise2(i, 2, 900) * 28)
@@ -864,24 +851,41 @@ def hollow(frame: int = 0):
             continue
         if 0 <= fy < H and t.kind[fy, fx] == T.TOP:
             vz.fern(cv, fx, fy, seed=i)
-    # ---- the scree east of the notch, where the escarpment gives way to the ridge's slope
+    # ---- east of the notch, where the escarpment ends: the ridge's pine clump runs on over
+    # the seam (its forest-floor shade continued from the ridge's own field, valley_zones.ridge,
+    # so nothing changes at x 320), deepening toward the Woodland's shaded top edge (y 576);
+    # a fan of fallen stones at the face's end only, thinning out within 40 px of it (the
+    # old scree was a rectangle cut square at both seams: Claude A, 20 Oct)
     scree = set()
-    for x in range(HOLLOW_NOTCH, W):
+    for x in range(HOLLOW_NOTCH, W):              # (still steep ground: the walk is unchanged)
         top = 498 + int(noise2(x // 5, 1, 876) * 4) - max(0, (x - 296) // 3)
-        for y in range(top, H):
-            scree.add((x, y))
-            # rough ground: tussocks and loose stones, thickest against the face's end and
-            # thinning out to plain turf at the ridge's seam and the Woodland's (no cut edge)
-            fade = max(0.0, min(1.0, (W - 4 - x) / 30, (H - 2 - y) / 24))
-            v = noise2(x // 2, y // 2, 876)
-            if v > 1 - 0.16 * fade * (1.3 if x < HOLLOW_NOTCH + 24 else 1.0):
-                cv.set(x, y, ST[3] if (x // 2 + y // 2) % 2 else ST[2])
-                if y + 1 < H:
-                    cv.set(x, y + 1, ST[1])
-            elif smooth_noise(x, y, 5, 879) > 0.66 + (1 - fade) * 0.3:
-                cv.set(x, y, ALPINE[1] if (x + y) % 3 else ALPINE[2])     # tussocks
-            elif noise2(x, y, 878) > 0.9:
-                cv.set(x, y, ALPINE[4])
+        scree |= {(x, y) for y in range(top, H)}
+    ridge_clumps = [(16 + W, H - 120, 34, 36), (36 + W, H - 46, 64, 52)]   # valley_zones.ridge's, in our x
+    for y in range(HOLLOW_RIM - 70, H):
+        for x in range(HOLLOW_NOTCH - 8, W):
+            if t.kind[y, x] != T.TOP or (x, y) in water or (x, y) in trail:
+                continue
+            sh = max(1 - math.hypot((x - cx) / rx, (y - cy) / ry) for (cx, cy, rx, ry) in ridge_clumps)
+            sh += (smooth_noise(x - W, y, 8, 449) - 0.5) * 0.5 + max(0, (y - (H - 26)) / 26) * 0.6
+            sh = max(sh, (y - (H - 40)) / 40 * 0.7 + (smooth_noise(x, y, 9, 898) - 0.5) * 0.3)  # the Woodland's edge
+            if sh > 0.12:
+                style.darken(cv, x, y)
+            if sh > 0.55:
+                style.darken(cv, x, y, (0.78, 0.8, 0.84))
+    ends = [x for x in range(HOLLOW_NOTCH - 16, HOLLOW_NOTCH + 8) if t.kind[HOLLOW_RIM + 8, x] in (T.FACE_K, T.STRIP_K)]
+    end_x = max(ends) if ends else HOLLOW_NOTCH
+    for i in range(26):                  # the fan of fallen stones at the face's east end
+        r = noise2(i, 1, 876)
+        x = end_x + 2 + int(r * 34)
+        y = HOLLOW_RIM + 4 + int(noise2(i, 2, 876) * (60 - r * 36))
+        if 0 <= x < W - 6 and y < H - 6 and t.kind[y, x] == T.TOP and noise2(i, 3, 876) > r * 0.6:
+            detail.pebble(cv, x, y, ST, big=noise2(i, 4, 876) > 0.7 - (1 - r) * 0.3)
+    for i in range(10):                  # tufts at the face's end and along its side band's foot
+        x, y = end_x + 3 + int(noise2(i, 5, 876) * 26), HOLLOW_RIM + 10 + int(noise2(i, 6, 876) * 50)
+        if 0 <= x < W - 6 and y < H - 4 and t.kind[y, x] == T.TOP:
+            for k in range(3):
+                cv.set(x + k, y - (1 if k == 1 else 0), ALPINE[2 if k else 3])
+                cv.set(x + k, y + 1, ALPINE[1])
     # ---- the footbridges: the way in over the stream, the spur over it to the lookout
     deck = foot_bridge(cv, 234, 337, 28, 22, vertical=False)
     deck |= foot_bridge(cv, 133, 434, 22, 30, vertical=True)
@@ -972,6 +976,51 @@ def hollow(frame: int = 0):
         fx, fy = x + sp.ox + sp.w // 2, y + sp.oy + sp.h
         if not any((fx + dx, fy - dy) in walkway for dx in range(-sp.w // 2, sp.w // 2 + 1, 2) for dy in (0, 3, 6)):
             objects.append((oid, key, x, y))
+            feet.append((fx, fy, sp.w))
+    # ---- growth where Eastward puts it (terrace.dress_ground): tufts, long grass and blade
+    # strokes gathered at the firs' feet, along the paths, the banks and the snow's edge,
+    # the open turf between them calm
+    turf = np.zeros((H, W), bool)
+    for y in range(HOLLOW_RIM - 4):
+        for x in range(W):
+            turf[y, x] = t.kind[y, x] == T.TOP and not cover(x + ox, y + oy)
+    wet_px = np.zeros((H, W), bool)
+    for (x, y) in water:
+        if 0 <= x < W and 0 <= y < H:
+            wet_px[y, x] = True
+    bankside = wet_px | T._banks(wet_px, t.kind)
+    for _ in range(3):                                      # and the toolkit's own bank grass
+        bankside = bankside | T._shift(bankside, 1, 0) | T._shift(bankside, -1, 0) | T._shift(bankside, 0, 1)
+    turf &= ~bankside                                       # the water and its earth banks
+    for (x, y) in walkway | rocks | set(clearing):
+        if 0 <= x < W and 0 <= y < H:
+            turf[y, x] = False
+    turf[:, W - 6:] = False                                 # the ridge's own turf runs on over the seam
+    near = np.zeros((H, W), bool)
+    for (fx, fy, w) in feet:
+        near[max(0, fy - 2):min(H, fy + 2), max(0, fx - w // 4):min(W, fx + w // 4)] = True
+    T.dress_ground(cv, turf, near=near, turf=ALPINE, seed=23)
+    # the canopy's shade: the floor goes dark in pools under each clump of firs, broken by
+    # dapples of light (Eastward's woods: light as a material), deepest where crowns overlap;
+    # the open turf, the clearing and the stream stay in the sun
+    dark = np.zeros((H, W))
+    for (fx, fy, w) in feet:
+        if w < 14:
+            continue                                     # a sapling casts no pool
+        rx, ry = w * 0.8, w * 0.42                       # down and right of the foot (light upper left)
+        cx_, cy_ = fx + rx * 0.35, fy + ry * 0.2
+        for y in range(max(0, int(cy_ - ry)), min(HOLLOW_RIM, int(cy_ + ry) + 1)):
+            for x in range(max(0, int(cx_ - rx)), min(W, int(cx_ + rx) + 1)):
+                d = ((x - cx_) / rx) ** 2 + ((y - cy_) / ry) ** 2
+                if d < 1:
+                    dark[y, x] += 1 - d
+    for y in range(HOLLOW_RIM):
+        for x in range(W):
+            v = dark[y, x] + (smooth_noise(x, y, 7, 905) - 0.5) * 0.6
+            v *= min(1.0, (W - 1 - x) / 18)              # fading out before the ridge's seam
+            if v <= 0.35 or wet_px[y, x] or (x, y) in clearing or (x, y) in deck:
+                continue
+            style.darken(cv, x, y, (0.8, 0.84, 0.9) if v < 0.8 else (0.66, 0.72, 0.82))
     return cv, objects, stands, blocked
 
 
