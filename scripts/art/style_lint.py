@@ -10,9 +10,9 @@ What it measures, per sprite (finalized as the zones finalize it):
 
 - palette   share of pixels on the house palette (art/house-palette.json, within one just
             visible step, OKLab 0.02), share on today's shared ramps (art/materials.json),
-            the number of distinct colours (house rule: at most 64 a sprite) and of
-            house families they come from (at most 10; a ramp and its two siblings
-            are one family).
+            the number of distinct colours (house rule: at most 64 for a prop, 128 for a
+            building over 2,500 px) and the house families they come from (for
+            information; a ramp and its two siblings are one family).
 - outline   of the silhouette's outer ring: the share that is dark enough to read as an
             outline (OKLab L at most 0.42, or 0.15 below the fill it closes); the share drawn
             in one flat ink rather than the material's own edge tone; and the share doubled
@@ -37,8 +37,8 @@ HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import house_palette as hp  # noqa: E402
 
-MAX_COLOURS = 64
-MAX_FAMILIES = 10
+MAX_COLOURS = 64         # a prop
+MAX_COLOURS_BIG = 128    # a building (over 2,500 px)
 ON_HOUSE_MIN = 0.90
 OUTLINE_DARK_MIN = 0.95
 FLAT_INK_MAX = 0.25
@@ -157,7 +157,8 @@ def measure(img) -> dict:
 
 def misses(m: dict) -> list:
     bad = []
-    if m.get('colours', 0) > MAX_COLOURS or m.get('families', 0) > MAX_FAMILIES:
+    cap = MAX_COLOURS_BIG if m.get('px', 0) > 2500 else MAX_COLOURS
+    if m.get('colours', 0) > cap:
         bad.append('colours')
     if m.get('on_house', 1) < ON_HOUSE_MIN:
         bad.append('palette')

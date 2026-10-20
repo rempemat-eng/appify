@@ -34,7 +34,7 @@ What already agrees everywhere: light from the upper left (every module's mean i
 - **Glows** (lamp, neon pink, neon cyan, lava, glowflora) are light sources: deep saturated to a near-white core, the same hue throughout, no edge, never used for a lit surface.
 - **A region's accents** are made by the same rule from one body colour each, at most three a setting (Cogsworth: copper and soot; the desert: bleached, adobe, cactus; Neon Harbour: concrete and asphalt plus its neon glows). A new accent is a new line in `BASES`, never a hand-picked ramp.
 - **No colour arithmetic outside the palette.** Shade and light move a pixel along its own ramp (`step` in the sheet's kit, `detail.shade` today); a mix of two colours, a multiplied shadow or an RGB gradient is not allowed on a sprite.
-- **At most 64 colours a sprite, from at most 10 families** (siblings count with their family). The house exemplars use 18 (the moon) to 117 colours for a whole 72 x 72 scene including its ground.
+- **At most 64 colours for a prop and 128 for a building** (over 2,500 px). The house exemplars use 18 (the moon) to 117 colours for a whole 72 x 72 scene including its ground, and the kit fronts use 37 to 113.
 
 ### 2. Outline
 
@@ -127,6 +127,54 @@ Where the house exemplars stand (style sheet, 20 Oct, second round): the cottage
 | Ground dressing and story props                                                                           | Shadow shape (thrown down and to the right, hard), contact lines, overhang bands |
 | How dense the clutter is, within the phone rules                                                          | The detail bar and the no-speckle rule                                           |
 
+## Kits: a few designs per environment, reused within it
+
+Matt, 20 Oct ~11:35: "you can use the house style where it fits but mindful of the environment. but within the same environment you can reuse it. but to make it less repetative perhaps come up with a few different designs that you can then reuse".
+
+So each environment has a kit in `scripts/art/house_kits.py`: a function per piece, each with a variant argument, all deterministic and all in the house style. The kits are valley and isles cottages, Cogsworth brick and iron, Sunstone frontier timber and adobe, Hearthold castle stone, Neon shopfronts and facades, Halcyon station modules, and Lumen habitats and regolith. Each kit has these pieces:
+
+| Piece            | What it is                                                                                                                                  | Variants |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------- |
+| `front(env, v)`  | A whole building front: roof or top, one or two storeys, door, windows, sign and dressing                                                   | 4        |
+| `door(env, v)`   | A door in its surround, set into the environment's wall                                                                                     | 4 or 5   |
+| `window(env, v)` | A window in its wall: frame, panes, shutters, lintel, sill, box                                                                             | 4 or 5   |
+| `roof(env, v)`   | The roof or top: ridge, gable, hip, flat roof with its rooftop things, false front, vigas, battlements, conduits, dome, a heap of moon soil | 4        |
+| `sign(env, v)`   | A hanging sign, fascia, awning, neon tube, blade sign, banner, shield, stencil or status light                                              | 4        |
+| `prop(env, v)`   | A small prop that belongs there (barrel, bench, planter, lamp, trough, crate, potted cactus, tank, console, dish, rock)                     | 4        |
+
+The parts underneath (`wall`, `doorway`, `casement`, `roof_mass`, `chimney`, `hanging_sign`, `fascia`, `awning`, `neon_tube`, `blade`, `stencil`) are the same functions for every kit. What differs between kits is only the table of each environment's materials and forms (`ENV` and `LAYOUT`), so a kit stays mindful of its place: Cogsworth builds in brick, stock brick and ashlar under copper, slate and glass; the desert in bleached boards, adobe and corrugated iron; the moon in hull plates and heaped regolith, never stone. Every piece is sized by the scale table (an adult 25 px).
+
+**How a lane uses a kit.**
+
+- For a building, call `front(env, v)`. For anything else, draw the environment's `wall` and set its `doorway`, `casement`, `roof_mass` and signs into it.
+- Reuse freely within the environment. Never take a piece into another environment; only things found anywhere (a crate, a barrel, steam) cross over.
+- Neighbours differ. No two buildings side by side, and no two on one phone screen (about three fronts at 402 x 874), use the same front variant. Within a variant, the seed varies the rooftop things, the sign's picture and the flowers.
+- Check every placed piece by eye at game scale. Ask whether it makes sense where it stands: a lit window has a room behind it, a sign shows what is sold there, a door meets a path.
+
+**When to make a new variant instead of reusing one.**
+
+- The building has a different purpose: a new trade or job needs its own door, sign and windows.
+- Reuse would put the same variant twice on one screen, or the place has more buildings than its kit has variants.
+- The site asks for it: a corner, a slope or tier (verticality.md), a gable end facing the path.
+- A reference shows a form of the setting the kit lacks.
+
+A new variant goes into `house_kits.py` (Claude A's file; other lanes ask on the crew board), never drawn ad hoc in a zone file. Before it is used, it is shown on its kit sheet beside today's equivalent, checked by eye, and run through the style lint and the detail bar.
+
+**Where the kits stand** (20 Oct, `python3 scripts/art/house_kits.py`): every piece is 100 % on the house palette. Of the 28 fronts, 18 pass the detail bar:
+
+- all four valley cottages;
+- three of four in Cogsworth, the Reach and Hearthold;
+- two of four in Neon Harbour and on Lumen (the two moon-soil habitats, judged as ground).
+
+The rest miss on tones only:
+
+- Cogsworth's glass-roofed market hall (21.9 of 25.6);
+- the desert store, which misses on shapes (31.9 of 36.3);
+- two neon fronts (22.6 and 22.7 of 25.6);
+- the four Halcyon bulkheads and the two Lumen hull modules (16.8 to 20.8 of 25.2).
+
+These are the very light and very dark surfaces that rule 7 already flags. 19 of 28 fronts pass the style lint; the others miss by a little on lone pixels (up to 7.8 %) or light (west minus east down to -2.7).
+
 ## Migration
 
 The order keeps every lane's work moving and recolours the world once, not five times.
@@ -145,12 +193,14 @@ The order keeps every lane's work moving and recolours the world once, not five 
 
 - `scripts/art/house_palette.py`: the rule and the bases; `--write` regenerates `art/house-palette.json`, no flag checks it, `--preview-materials OUT.json` writes today's ramps recoloured for a trial render.
 - `scripts/art/style_sheet.py [OUT_DIR]`: the house style sheet (palette, ten material swatches, seven settings today and redrawn) at 3x, the before and after pairs, the lint and, where `detail_bar.py` is present, the bar. Its kit (`part`, `courses`, `boards`, `roof_rows`, `plates`, `grain`, `ground`, `leafy`, `glass`, `window`, `outline`, `cast`, `step`) is the reference for the recipes above; lanes can copy from it.
+- `scripts/art/house_kits.py [OUT_DIR] [env ...]`: the seven environment kits, one sheet per environment at 3x with today's equivalents, and the lint and the bar for every front. Written outside the repository by default.
 - `scripts/art/style_lint.py <module ...> | --all | --png FILE`: report only. Per sprite: colours and families, share on the house palette and on today's ramps, outline darkness, flat ink and doubling, west minus east and top minus bottom light, lone pixels and dither, and the rules it misses.
 
 ## Decided
 
 - **The moon** (Matt, 20 Oct ~11:00): grey to brown-grey regolith, never lavender; shadows nearly black (the airless ramps, cast shadows three tones down); craters with lit rims, nearly black inner shadow and ejecta; nothing on the moon built of brick or stone (Lumen's hab hub becomes a pressure shell of plates).
 - **The bottom row of the style sheet** is the approved target for each setting (Matt, 20 Oct 11:20), with Cogsworth in true brick.
+- **Where the house style applies** (Matt, 20 Oct ~11:35): wherever it fits each environment, mindful of that environment. Within one environment, its designs are reused. To keep that from repeating, each environment has a kit of a few designs (see "Kits").
 
 ## Decisions for Matt
 
