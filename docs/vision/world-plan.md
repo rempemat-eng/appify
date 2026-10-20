@@ -1,4 +1,4 @@
-# The world plan (v4): one land, designed from its geography
+# The world plan (v5): a window onto a larger continent
 
 Matt, 20 Oct:
 
@@ -6,13 +6,12 @@ Matt, 20 Oct:
 - 10:32: "really think deeply of the sizing of everything and the map".
 - 10:58: "work the whole world map out first and how everything connects (with as many physical connections as possible as well, with trains as short cuts) ... the world should feel expansive with natural looking boundaries and no abrupt cuts".
 - About 11:45, on v3: "make the world roughly twice that size and everything fits together nicely and is not just stitched together. with natural transitions and not just a line. look into pokemon world design or eastward". On Sunstone Reach: "make it immersive".
+- 12:25, on v4: "getting better but you need to make it more natural and think critically where each section fits in on the map and design the terrain around it to fit that. the mountains simply running in between desert and grass is not convincing yet. also is this supposed to be an island? i feel like the world map should be a piece of a larger continent with natural world borders with the island bit of the map on the bottom".
+- 12:36: "can u also create one intricate larger river flowing naturally with two or three larger bridges that cross the river and possibly smaller rivers/ canals elsewhere. also think critically where the volcano/ lava world fits and how far away other parts should be. having a harbour city similar to the first of the four screenshots provided earlier could be cool (but make sure the city building and placement make sense). more empty parts of the maps should first be planned out along natural footpaths or other sorts of paths and the terrain should be build around it (e.g. canyons in the desert parts, forests in the woodlands, the large river, a mountain passage etc.). perhaps there are little easter eggs dotted around the world (but that can be handled later".
 
-**Status: a plan, partly decided.** These stand from earlier versions:
+**Status: a plan, partly decided.** These stand from earlier versions: v2's sizing table and decisions 1 to 7; v3's rocket, lander and one world canvas (decisions 8 and 9). Everything else in section 16 is a recommendation.
 
-- v2's sizing table and decisions 1 to 7 (section 14).
-- v3's decided items: the rocket from a launch cape, Halcyon's lander, one world canvas.
-
-v4 replaces v3's continent with one land designed from physical logic first: a mountain spine, its rain shadow, one river system, a volcano, coasts and harbours where shelter is. The places people live sit where that land would put them. It is about twice v3's walkable ground, joined by routes along valleys, passes and coasts, with towns and hamlets along them in Pokémon's rhythm of town, route, town. Sunstone Reach is designed as a journey. The in-game map is proposed in the soft-grid style Matt sent.
+v5 keeps v4's size, walk times, routes-and-shortcuts logic and the nine ways, and redraws the land. The map is now a window onto a larger continent: the sea and the isles lie only along the south, and the land runs on past the other three edges behind natural borders. Each place was put first where people would live, and the terrain was then shaped to give it what it needs. One great river, the Lull, crosses the east of the map from a glacier to a delta. The harbour city, Neon Harbour, wraps round a deep ria east of the delta, after Matt's first example. The volcano stands where the geology puts it, on a coastal arc whose rain shadow makes the desert. The paths were laid first and the ground fitted round them.
 
 It builds on, and does not repeat:
 
@@ -23,42 +22,32 @@ It builds on, and does not repeat:
 - `world-rules.md`, `world-ports.md`, `world-atlas.md`.
 - `../research/2d-world-design.md` and `research/*.md`.
 
-**The images** are not in the repository. Claude A has them in its scratchpad (`worldplan4/`), drawn by a script (`geo.py`) from a height field, a wetness field and the designed features, at 1 px per 8 px cell:
+**The images** are not in the repository. Claude A has them in its scratchpad (`worldplan5/`), drawn by a script (`geo5.py`) from a height field, a wetness field, the rivers and the paths, at 1 px per 8 px cell:
 
-| File                                                                                                                                                                                                             | What it shows                                                                                                                           |
-| ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
-| `physical-map.png`                                                                                                                                                                                               | height and rivers only: the geography on its own                                                                                        |
-| `continent-1x.png`                                                                                                                                                                                               | the land with every kind of ground, hill-shaded from the upper left (1408 x 864)                                                        |
-| `continent-labelled.png`                                                                                                                                                                                         | the same at 2x with settlements, routes, rivers, shortcuts (dashed) and the ways (red); ground beyond the walked corridors drawn darker |
-| `overview-32px.png`                                                                                                                                                                                              | 1 px per 32 px (352 x 216)                                                                                                              |
-| `ingame-map-mock.png`                                                                                                                                                                                            | the in-game map in the soft-grid style (section 12)                                                                                     |
-| `region-valley-and-frostline.png`, `region-cogsworth-and-lullford.png`, `region-sunstone-reach.png`, `region-fire-country.png`, `region-neon-and-cape.png`, `region-isles.png`                                   | crops per region                                                                                                                        |
-| `route-foothill-road-high-fells.png`, `route-sunstone-gap.png`, `route-canyon-road-ember-way.png`, `route-ash-coast.png`, `route-lull-road-coast-path-towpath.png`, `route-shell-bar.png`, `route-cape-road.png` | crops per route                                                                                                                         |
-| `stats.json`                                                                                                                                                                                                     | sizes and walk times                                                                                                                    |
-| `gates.json`                                                                                                                                                                                                     | the gate check (section 10)                                                                                                             |
+| File                                                                                                                                                                                                                     | What it shows                                                                                                                                                         |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `thumbnails.png`                                                                                                                                                                                                         | three arrangements of the same places, sketched small (section 4.4); A is developed                                                                                   |
+| `physical-map.png`                                                                                                                                                                                                       | the land before people: ground, height tint and rivers, with the natural regions named                                                                                |
+| `continent-1x.png`                                                                                                                                                                                                       | the developed map with every kind of ground, hill-shaded from the upper left (1408 x 864); land beyond the walked corridors is a little hazier                        |
+| `continent-labelled.png`                                                                                                                                                                                                 | the same at 2x with settlements, routes, rivers, bridges, huts, shortcuts (dashed), the ways (red) and the reserved easter-egg spots (small rings); no labels overlap |
+| `overview-32px.png`                                                                                                                                                                                                      | 1 px per 32 px (352 x 216)                                                                                                                                            |
+| `ingame-map-mock.png`                                                                                                                                                                                                    | the in-game map in the soft-grid style (section 12)                                                                                                                   |
+| `river-and-bridges.png`, `harbour-city.png`                                                                                                                                                                              | the Lull from the Narrows to the delta with its three bridges; Neon Harbour round its ria                                                                             |
+| `region-valley-and-frostline.png`, `region-cogsworth-and-the-narrows.png`, `region-sunstone-basin.png`, `region-fire-country.png`, `region-isles.png`                                                                    | crops per region                                                                                                                                                      |
+| `route-drovers-road.png`, `route-ash-coast.png`, `route-canyon-road.png`, `route-lull-road-coast-path-towpath.png`, `route-high-fells-col-path-foothill-road.png`, `route-shell-bar-headland.png`, `route-cape-road.png` | crops per route                                                                                                                                                       |
+| `stats.json`, `gates.json`                                                                                                                                                                                               | sizes, walk times, the "why here" lines, the bridges, the egg spots; the gate check (section 10)                                                                      |
 
 Matt's example maps (a fantasy city, a soft-grid tier map, all the Pokémon regions joined, Stardew's map) are in `refs-matt/maps/`, for reference only.
 
 ## 0. In short
 
-1. **One geography.**
-   - _The Greyspine_: a mountain spine running from the north-east coast to _Mount Ember_, a volcano on the south-west coast.
-   - The wind comes off the southern sea, so the south-east side is wet (forest, meadow, farmland) and the north-west side lies in the rain shadow (_Sunstone Reach_: scrub, then desert, then a salt pan, then badlands at the far coast).
-   - _One river system, the Lull_, drains the wet side from the snowfields to the sea at Neon Harbour. Its tributaries are the Sleepwater (out of the Frostline, through the home valley) and the Cog (past Cogsworth).
-   - The _Tidebloom Isles_ are the volcanic chain that runs out to sea from Mount Ember.
-2. **Places where people would settle.**
-   - The home valley where the Sleepwater leaves the mountains.
-   - Driftwood in the sheltered bay below it.
-   - Cogsworth in the coal hills on the Cog.
-   - Lullford at the Lull's crossing on the plains.
-   - Neon Harbour at the Lull's mouth, with the Launch Cape on the eastern headland.
-   - Dust Gulch at the foot of the mine in the rain shadow; Hearthold on a rock above the lava at the volcano's flank.
-   - Hamlets along the routes: Fernhollow, Gullwick, Cinderwick, Palm Spring, the Gap Hut, the Lode.
-3. **About twice v3's walkable ground: 120 zone-areas** (v3: 52), on a world canvas of 11264 x 6912 px.
-   - Thirteen routes follow valleys, passes and coasts, from 8 to 93 s each.
-   - From the hut: the everyday places within 15 s, Cogsworth 58 s on foot (23 s by train), Neon 102 s (50 s), Dust Gulch 121 s (28 s), Hearthold 164 s (58 s).
-4. **No lines.** Every change of ground is a wide, irregular band from noise in the height and wetness, with scattered outliers. Coasts, the rim of the Frostline, the volcano's lava ring and the salt pan are rough shapes, not ellipses. Ground beyond the walked corridors is still drawn (hedged fields, old woods, high snow, deep dunes), so the land runs on to its natural edges.
-5. **The nine ways sit where routes cross the land's barriers**: the crest, the Cog, the Lull, the fire ring, the Frostline's rim and the sea. A flood fill on the block-out passes at every step of the road.
+1. **A window onto a continent.** The sea and the Tidebloom Isles lie only along the south. The other three edges are natural borders, and the land is drawn going on beyond each: the high massif and its glaciers in the north, an open dune sea in the west, and moss fens and old forest in the east.
+2. **One geology explains the land.** An ocean plate dives under the continent along the south coast. That raises a volcanic arc parallel to the coast (the Ember range), with Mount Ember the one cone still alive and the Tidebloom Isles its drowned eastern end. The arc takes the sea wind's rain, so the land behind it dries westward over some 6 km into the Sunstone basin. This is the Cascades and the dry plateaus east of them, with the Tarim Basin's oasis rivers along the mountain foot. Mountains no longer run between desert and grass: the massif closes the north of both, and the change from meadow to dune sea is a wide gradient.
+3. **One great river, the Lull.** It rises at a glacier in the north-east massif, takes the Sorrel, cuts the Narrows gorge through the coal hills with rapids, takes the Cog, braids round gravel islands, meanders across its floodplain past two oxbow lakes, narrows at Lullford and splits into a three-armed delta. It is 200 px (25 cells) wide at its mouth. Three landmark bridges: Lullford's old stone bridge with a swing span (W7), the Narrows Viaduct (the maglev) and the Harbour Bridge in the city.
+4. **Neon Harbour is the harbour city of Matt's first example**, on a deep ria east of the delta (clear of the river's silt), with the old town on a rock between two waterfalls, docks on the deep side, terraces on the Heights, a fishing strand, two islets and a long bridge.
+5. **Paths first.** Every stretch between places follows a path people would use (a drove road, a mule track, a canyon trail, a pass with switchbacks and a hut, a towpath), and the ground is fitted to it.
+6. **The same size and pace as v4:** 124.6 walkable zone-areas on an 11264 x 6912 px canvas. From the hut: Fernhollow 25 s, Driftwood and the Frostline 40 s, Cogsworth 52 s (28 s by train), Neon 115 s (56 s), Dust Gulch 99 s (29 s), Hearthold 133 s (53 s).
+7. **The ways sit at real barriers**: the Frostline's rim, the Cog, the Rift gorge, the lava flows, the Lull and the sea. The flood-fill check passes at every step.
 
 ## 1. Sizing
 
@@ -218,166 +207,239 @@ What the regions do with that land:
 
 ## 4. The geography
 
-### 4.1 The land, physically
+### 4.1 The frame: a piece of a larger continent
 
-| Feature                          | What it is                                                                                                                                                                                                                                                                | Why it is there                                           | What follows                                                                                                                                                                        |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **The Greyspine**                | a mountain spine about 9000 px long, from the north-east coast to Mount Ember on the south-west coast; an unbroken crest of peaks with one pass (the Sunstone Gap)                                                                                                        | a fold range along the edge of a plate                    | it divides the land into a wet south-east and a dry north-west; snowfields along its length feed every river                                                                        |
-| **Mount Ember**                  | a volcano at the spine's south-west end, on the coast, with a crater, a basalt core, lava running north round Hearthold's rock and south-east to the sea, and a ring of old lava fields round its flanks                                                                  | the end of the arc where the plate dives                  | ash darkens the land downwind; nothing green grows within its ring; the isles continue its arc out to sea                                                                           |
-| **The wind and the rain shadow** | the prevailing wind comes off the southern sea                                                                                                                                                                                                                            | wet air rises on the south-east slopes and drops its rain | forests on the wet side; on the lee side, heath close to the range, then scrub, then dune desert, then a salt pan where the desert's washes end, then red badlands at the far coast |
-| **The Lull**                     | one river system: the Lull rises in the snowfields north of Cogsworth and runs south across the plains to its estuary at Neon. The Cog joins it below Cogsworth; the Sleepwater rises in the Frostline's cirque, runs through the home valley and joins it below Lullford | rivers run downhill from snow to sea                      | Neon at the mouth; Lullford at the crossing; Cogsworth on the Cog; marshes at the estuary; the river valleys are the natural roads                                                  |
-| **The Brook**                    | a short coastal stream from the valley's southern hills to Driftwood's bay                                                                                                                                                                                                |                                                           | Driftwood's small estuary (v2's harbour keeps its look)                                                                                                                             |
-| **The Dry Wash**                 | a seasonal river on the lee side, from the range to the salt pan                                                                                                                                                                                                          | rain in the mountains, none below                         | the canyon the Canyon Road follows, dry most of the year (and in flood after a storm)                                                                                               |
-| **The Frostline**                | a cirque in the spine's south-east flank above the valley, with Snowmelt Lake, a cliff rim and two ways out                                                                                                                                                               | a glacier carved it                                       | the Sleepwater's source; v2's Frostline places inside it                                                                                                                            |
-| **The coast**                    | grid-led at the large scale, rough at the edge; sheltered bays at Driftwood (behind the Headland) and at the Lull's mouth; black sand within the volcano's reach, pale sand elsewhere                                                                                     |                                                           | harbours where there is shelter; cliffs and beaches elsewhere                                                                                                                       |
-| **The Headland**                 | a promontory off Driftwood's bay, joined by a narrow neck                                                                                                                                                                                                                 |                                                           | the stile (W1) on the neck; the Shell Bar runs from its tip                                                                                                                         |
-| **The Tidebloom Isles**          | a chain of five volcanic islands from the volcano eastward; the main island south of the Headland                                                                                                                                                                         | the volcanic arc continued under the sea                  | the isles' crater pool and black-sand cove (v2) make sense                                                                                                                          |
-| **The plains**                   | the low, wet land between the valley, Cogsworth and Neon; farmland round the settlements, copses, hedged fields beyond                                                                                                                                                    | the Lull's flood plain                                    | Pokémon's wild middle (Galar's Wild Area); the routes cross it                                                                                                                      |
+The map is a window. Three of its edges are land that goes on, and each has a border that explains why the walk stops there. The land beyond is drawn, not walked.
 
-### 4.2 Regions are where people settled
+| Edge  | Border                                                                                                                                                                               | Why you cannot go on                                                        | What is drawn beyond                                                      |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| North | the northern massif: a broad mass of peaks of varying height, snow above about 0.8 of the height range and glaciers above that, cut by the valleys of the Rift, the Cog and the Lull | glaciers, crags and icefalls; the rivers come out of gorges no path follows | peaks and ice to the top edge, river gorges running on north              |
+| West  | the dune sea: open erg at the far end of the Sunstone basin                                                                                                                          | no water at all; the oasis rivers die in the sand long before               | dune ridges running off the edge                                          |
+| East  | the moss fens (a raised bog with meres on the eastern uplands) and, north of them, the old forest                                                                                    | a bog that will not bear a cart; old forest with no paths                   | fens and meres, then forest, to the edge; the Glint comes out of the fens |
+| South | the southern sea, with a coast of coves, headlands, cliffs and a delta                                                                                                               | the sea                                                                     | the Tidebloom Isles, and open sea                                         |
 
-| Place                                               | Kind                                   | Why here                                                                                                 | Size (sizing table)                           |
-| --------------------------------------------------- | -------------------------------------- | -------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
-| The home valley (garden, Crossroads, the halt farm) | market village                         | where the Sleepwater leaves the mountains: water, a mill head, shelter, the first flat ground            | v2's 1280 x 2688 canvas, now part of the land |
-| Driftwood                                           | fishing harbour                        | the sheltered bay below the valley                                                                       | 544 x 352 harbour, 480 x 160 hamlet           |
-| Fernhollow                                          | timber hamlet                          | in the wet forest on the Foothill Road                                                                   | 320 x 240                                     |
-| Cogsworth                                           | railway and foundry town               | coal in the hills, iron from the range, the Cog for power and the canal                                  | 704 x 960 (decided)                           |
-| Lullford                                            | market town                            | the crossing of the Lull's plains: the Lull Road and the towpath meet                                    | 560 x 420                                     |
-| Gullwick                                            | fishing village                        | a cove on the Coast Path                                                                                 | 420 x 220                                     |
-| Neon Harbour                                        | the city                               | the Lull's mouth: a port for the whole river system                                                      | 960 x 1280 (decided)                          |
-| The Launch Cape                                     | spaceport                              | an eastern headland, launches over the open sea                                                          | 480 x 360                                     |
-| The Gap Hut                                         | a refuge                               | at the top of the only pass                                                                              | 120 x 100                                     |
-| Palm Spring                                         | the first oasis                        | a spring at the foot of the lee slope, where snowmelt surfaces                                           | 300 x 220                                     |
-| Dust Gulch                                          | frontier town                          | the railhead below the mine, the oasis's water piped in                                                  | 544 x 320 desert town                         |
-| The Lode                                            | mine                                   | iron and gold in the lee foothills                                                                       | 260 x 180                                     |
-| Hearthold                                           | castle                                 | a rock above the lava at the volcano's north flank: the only safe ground between the desert and the fire | 400 x 400 inside its moat                     |
-| The Ember Caldera forge, Cinder Springs             | forge, bathhouse                       | the volcano's heat and its hot springs                                                                   | as v2                                         |
-| Cinderwick                                          | charcoal and black-sand fishing hamlet | the Ash Coast                                                                                            | 340 x 200                                     |
-| Lagoon Landing                                      | island hamlet                          | the main isle's lagoon                                                                                   | as v2                                         |
+### 4.2 The land, physically
+
+| Feature                       | What it is                                                                                                                                                                                                                                          | Why it is there                                                                                    |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
+| **The northern massif**       | a broad range along the whole north, its front irregular, with spurs reaching south: the Brackens (a low wooded ridge west of the valley), the Fern hills (the valley's east wall), the coal hills (round Cogsworth and the Narrows), the Lode spur | the continent's old core, raised where it meets the arc's back                                     |
+| **The Ember range (the arc)** | a chain of worn volcanic hills along the south-west coast, highest at Mount Ember, low and broken east of it to the Rift                                                                                                                            | the ocean plate diving under the coast melts at depth and feeds a line of volcanoes parallel to it |
+| **Mount Ember**               | the one live cone: a small crater with a lava lake inside a crag rim, two young flows from the crater to the sea, old weathered flows and parasitic cones on its flanks, ash blown north by the sea wind                                            | the arc's youngest vent                                                                            |
+| **The Sunstone basin**        | a raised dry plain between the arc and the massif, falling to a salt lake at the arc's foot; dune sea in the far west                                                                                                                               | the arc takes the rain; the massif blocks the north; it is the farthest land from open sea         |
+| **The Rift**                  | a deep gorge cut by a river from the massif to the sea at the basin's eastern edge                                                                                                                                                                  | the basin stands higher than the plains, and the river cut down through its edge                   |
+| **The Lull**                  | the great river (4.3)                                                                                                                                                                                                                               | it drains the wet north-east                                                                       |
+| **The Sleepwater**            | a short river from the Frostline's tarn through the home valley to Driftwood's cove                                                                                                                                                                 | snowmelt from the cirque, the valley the glacier left                                              |
+| **The valley**                | a sheltered basin at the massif's foot between the Brackens and the Fern hills, open only to the sea                                                                                                                                                | worn out by the glacier that left the Frostline                                                    |
+| **The Frostline**             | a cirque high in the massif above the valley, with a tarn and a crag rim; the Sleepwater leaves over its lip                                                                                                                                        | a glacier carved it                                                                                |
+| **The Lull plain**            | the low, wet land between the valley, the coal hills and the Lull, with copses, fields and creeks                                                                                                                                                   | the river's old floodplain                                                                         |
+| **The eastern uplands**       | a low plateau east of the Lull, ending in a scarp at the coast; the moss fens on top, the Glint crossing it                                                                                                                                         | a block of older rock; the scarp is why the Glint falls into the sea                               |
+| **The coast**                 | coves (Driftwood, Gullwick, Cinderwick), the Headland on its neck, black cliffs where the arc meets the sea, the delta's lobe, the ria, the Launch Cape                                                                                             | shelter where there is shelter, cliffs where hills meet the sea                                    |
+| **The Tidebloom Isles**       | eight islands from the volcano eastward; the main isle's lagoon is a drowned crater breached on its south side                                                                                                                                      | the arc's drowned end                                                                              |
+
+### 4.3 The great river, its bridges and the smaller waters
+
+**The Lull's course**, from source to sea (`river-and-bridges.png`):
+
+1. **The glacier and the upper valley.** It rises at a glacier snout in the north-east massif and runs south down a high valley, 36 px wide.
+2. **The Sorrel joins** from the north-east, out of the old forest.
+3. **The Narrows.** The Lull cuts through the coal hills in a gorge about 1 km long, 44 px wide, white with rapids. The railway (now the maglev) crosses it on the Narrows Viaduct.
+4. **The Cog joins** below the gorge, fast and dark from the coal hills.
+5. **The braided reach.** Below the confluence the river spreads over gravel, up to about 170 px wide, round two shoal islands.
+6. **The meanders.** On the floodplain it swings in wide loops between water meadows with willows. Two old loops are cut off as oxbow lakes.
+7. **Lullford.** Gravel terraces close in on both banks, and an island sits mid-river. This is the lowest place it can be bridged, so the old road crosses here and the town grew round the bridge.
+8. **The delta.** Below Lullford it splits into a main channel and two arms, with marsh between, and builds a lobe of land into the sea. The mouth is 200 px (25 cells) wide.
+
+**The three landmark bridges.**
+
+| Bridge          | Where and why there                                                                                  | Character                                                                                                                      | Way                               |
+| --------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ | --------------------------------- |
+| Lullford Bridge | the lowest bridging point, where terraces narrow the floodplain and an island takes the middle piers | old stone arches from both banks to the island, and an iron swing span over the navigation channel for the barges              | **W7**: the swing span stuck open |
+| Narrows Viaduct | the gorge's narrowest point, where the railway had to cross from Cogsworth to the east bank          | tall piers on the gorge walls above the rapids; rail only, never a footway                                                     | the maglev opens with W7          |
+| Harbour Bridge  | the ria's middle, using Chapel Islet as a pier, between the Heights and the docks                    | two high arches, tall enough for masts, with the chapel on its islet beside the roadway; the city's landmark seen from the sea | inside W7                         |
+
+**The smaller waters.**
+
+- _The Cog's Millrace_: a leat off the Cog through Cogsworth's mills and back.
+- _The Lull Cut_: a canal with a towpath from Lullford's east bank to the canal basin under the Heights, so barges reach the port without going through the silted delta (Alexandria was fed by "a canal from the Nile", sited "removed from the silt thrown out by the Nile": [Wikipedia, History of Alexandria](https://en.wikipedia.org/wiki/History_of_Alexandria)).
+- _Irrigation channels_ from Palm Spring and Dust Gulch through their orchards, narrow enough to step over.
+- _The Glint_: out of the moss fens, across the uplands, splitting round the Falls Rock and falling into the head of the ria.
+- _The Amber and the Willow Run_: snowmelt rivers that die in the basin, the Amber in the salt lake, the Willow Run in the sand.
+- _Creeks_ drawn from the drainage of the height field: on the wet side only, fordable, never barriers.
+
+### 4.4 Three arrangements, and the one developed (`thumbnails.png`)
+
+| Option                                         | The arrangement                                                                                                                                                                                                     | For it                                                                                                                                                           | Against it                                                                                                          |
+| ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **A: the arc and its rain shadow (developed)** | massif across the north; a volcanic arc along the south-west coast with the dry basin behind it; the valley in the middle; the great river in the east to a delta; the city in a ria east of the delta; isles south | one cause explains the desert, the volcano and the isles; the desert sits beside the green land and fades into it; the river is the east's spine and its barrier | the volcano is far from the city (that suits the order of the ways)                                                 |
+| B: the river down the middle                   | the great river splits the land down the centre; the desert lies north beyond a broad pass in the massif; the volcano is an offshore hotspot island                                                                 | a strong central axis                                                                                                                                            | the desert is behind a wall again, which is what Matt found unconvincing; the hotspot leaves the isles unexplained  |
+| C: dry east behind its own coastal range       | the mirror of A: the basin in the east behind a coastal range, the city in the west at a river mouth                                                                                                                | same logic as A                                                                                                                                                  | the home valley's neighbours (Cogsworth, the city) swap sides, so every existing place moves; nothing gained over A |
+
+### 4.5 Why each place is where it is
+
+The places came first. Each needs something; the terrain was then shaped to give it that.
+
+| Place           | Why here                                                                                   | How the terrain gives it                                                                                                      | Size (sizing table)            |
+| --------------- | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| The home valley | a sheltered basin where the Sleepwater leaves the uplands: water, a mill head, flat ground | a basin worn into the massif's foot, the Brackens to the west, the Fern hills to the east, the Frostline above, the sea below | 1280 x 2688 (decided)          |
+| The Frostline   | the glacier's cirque above the valley, the Sleepwater's source                             | a bowl carved into a high shoulder of the massif, a crag rim, a lip over which the river leaves                               | as v2                          |
+| Driftwood       | the valley's landing place                                                                 | a cove at the Sleepwater's mouth, sheltered by the Headland to the east                                                       | 544 x 352 harbour              |
+| Fernhollow      | timber                                                                                     | the wet woods on the Fern hills' western slope, on the road to Cogsworth                                                      | 320 x 240                      |
+| Cogsworth       | coal and iron, power, a way out                                                            | the coal hills; the fast Cog with a fall for the Millrace; the valley floor below for the railway                             | 704 x 960 (decided)            |
+| Lullford        | the river crossing                                                                         | the lowest bridgeable point: terraces narrow the floodplain, an island takes the piers                                        | 560 x 420                      |
+| Gullwick        | fish                                                                                       | a cove on the open coast west of the delta                                                                                    | 420 x 220                      |
+| Neon Harbour    | a port for the whole river and the coast                                                   | a deep ria east of the delta, sheltered by the Heights and the islets, falls at its head (section 8.5)                        | about 1450 x 1100 with the ria |
+| The Launch Cape | rockets over open sea, away from people                                                    | an exposed headland south-east of the city                                                                                    | 480 x 360                      |
+| Palm Spring     | the first water in the dry country                                                         | the Willow Run sinks into its gravel fan and comes up again here                                                              | 300 x 220                      |
+| Dust Gulch      | water, the mine above, the railhead                                                        | where the Amber leaves the massif onto its fan; the desert line's terminus                                                    | 544 x 320 desert town          |
+| The Lode        | iron and copper                                                                            | the Lode spur in the massif's foothills, a mule track up                                                                      | 260 x 180                      |
+| Hearthold       | the only defensible ground on the volcano's seaward side                                   | a rock between the two young lava flows, below the crater                                                                     | 400 x 400 inside its walls     |
+| The Ember forge | the crater's heat                                                                          | the caldera's lip, inside the flows                                                                                           | as v2                          |
+| Cinder Springs  | hot springs                                                                                | where sea water seeps into the volcano's warm flank                                                                           | as v2                          |
+| Cinderwick      | charcoal and fish                                                                          | a black-sand cove between the flows                                                                                           | 340 x 200                      |
+| Lagoon Landing  | sheltered water                                                                            | the main isle's lagoon, a drowned crater breached to the sea                                                                  | as v2                          |
+
+### 4.6 The desert, made believable
+
+**The analogue.** The Cascades are a volcanic arc "produced by the subduction of the Juan de Fuca plate beneath the North American plate", and east of them "in the rain shadow of the Cascades, the climate of the Modoc Plateau is dry" ([LibreTexts, Geology of California 7](https://geo.libretexts.org/Bookshelves/Geology/Geology_of_California/07%3A_Cascade_Range_and_Modoc_Plateau)). The Ember range does the same to the Sunstone basin. The basin's water pattern follows the Tarim Basin (between the Tian Shan and the Kunlun), whose oasis towns sit where snowmelt rivers leave the mountains and whose rivers end in the desert ([Wikipedia, Tarim Basin](https://en.wikipedia.org/wiki/Tarim_Basin); not quoted here, the page could not be fetched).
+
+**How it opens up, east to west** (the developed map; widths are observations on the block-out):
+
+1. **Meadow to steppe** over the Rift country, about 1.5 km wide: grass thins, copses become single trees, the drove road's sheepfolds stand in short grass.
+2. **Steppe to scrub** across the Rift itself: the gorge does not divide wet from dry; both its rims are steppe and scrub.
+3. **Scrub with oases**: green corridors only along the Willow Run and the Amber, widening into fans where they leave the massif (Palm Spring, Dust Gulch); orchards and irrigation channels; scrub between.
+4. **Badlands and mesas** where the Amber and the Rift have cut down: banded slopes along the canyon, flat-topped mesas standing between the cuts.
+5. **The salt lake** where the Amber ends at the arc's foot.
+6. **Desert, then the dune sea** to the western edge, the dune ridges running off the map.
+
+The massif closes the north of both the desert and the green land, so no range runs between them. The arc's own seaward slope stays green (the windward side), so the Ash Coast is green until the volcano.
+
+### 4.7 Where the volcano goes, and how far
+
+**Geologically.** A volcano of this kind belongs to the arc, which lies parallel to the subducting coast, so it stands on the south-west coast in the arc's line, not in the middle of the land. A hotspot (option B) or a rift volcano would leave the dry basin and the isles unexplained.
+
+**In distance.** It is the last place of the land's road (W6) and the hottest, so it lies farthest from the home valley and beyond the desert. From the hut, about 4 km in a straight line and 133 s on foot to Hearthold (53 s with shortcuts). From Dust Gulch, 75 s down the Canyon Road. From Neon, the far end of the map, about 4 minutes on foot. No buildings stand within the young flows except the forge and the castle on their rock.
+
+**Its buffer, not a ring.** Round the cone, in this order and interleaving:
+
+- ash blown north by the sea wind, thinning from grey ground to a dusting in the scrub (dithered, so there is no edge);
+- old flows: weathered lava-stone tongues from flank vents, with scrub or fireweed on them;
+- parasitic cones and a fumarole field on the north flank;
+- a dead forest where the east flow ran through the coastal woods;
+- hot springs and black sand on the seaward side.
+
+The young flows, from the crater to the sea, are the barrier (W6), and they are not a line round the mountain but two tongues with side lobes.
 
 ## 5. Transitions: bands, not lines
 
-Every biome comes from fields: height, wetness and warmth, each with large and small noise. A change of ground is therefore a wide, irregular band where the two grounds interleave. A fine jitter puts outliers on either side: a pine in a meadow, a cactus in the scrub, a snow patch in a hollow below the snowline. Props follow the same fields, so ground cover and props change together (`prop-logic.md`).
+Every biome comes from fields: height, wetness and warmth, with large and small noise, and the wetness field is blurred over about 300 px and warped by up to 500 px before the thresholds. Snowline and treeline sit lower on north-facing slopes. Props follow the same fields (`prop-logic.md`).
 
-| Band                      | From and to                                                                                                         | Width                                     | Mixed ground and outliers                                                                       |
-| ------------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Up the wet side           | meadow and fields, then broadleaf copses, then mixed wood, then conifers, then alpine meadow, then snow, then peaks | about 900 px from the valley to the crest | copses out in the fields; pines standing alone in alpine meadow; snow patches in shaded hollows |
-| Over the crest to the lee | snow, then bare alpine, then dry heath, then scrub                                                                  | about 500 px                              | dwarf pines in the heath; the first cacti among the scrub                                       |
-| Across the desert         | heath, then scrub, then dune, then salt pan or badlands                                                             | 600 to 1500 px                            | scrub islands among dunes; salt crust patches; red outcrops (mesas) rising out of both          |
-| Into the fire country     | scrub or meadow, then grey ash, then basalt, then the crater                                                        | about 1300 px                             | fireweed and charred snags at the outer edge; nothing green inside the ring                     |
-| The plains                | farmland, then hedged pasture, then copse, then marsh at the estuary                                                | wide, patchy                              | fields as an irregular patchwork round each settlement, thinning into pasture                   |
-| Country to city           | fields, then market gardens, then allotments, then yards, then the city's quays                                     | about 800 px along the Lull Road          | glasshouses and sheds out among the fields                                                      |
-| Coast                     | grass, then dune or cliff, then sand or black sand, then shallows                                                   | 40 to 80 px                               | rocks and driftwood on the beach                                                                |
+| Band                  | From and to                                                                | Width (observed on the block-out)      | Mixed ground and outliers                                                     |
+| --------------------- | -------------------------------------------------------------------------- | -------------------------------------- | ----------------------------------------------------------------------------- |
+| Wet to dry            | meadow, steppe, scrub, desert, dune sea                                    | about 6 km from the valley to the edge | copses in steppe, scrub islands in dunes, green oasis strips across all of it |
+| Up the massif         | meadow, broadleaf, conifer, alpine, snow, glacier                          | 600 to 1200 px, by aspect              | pines alone in alpine meadow; snow patches in north-facing hollows; tarns     |
+| Into the fire country | scrub or meadow, ash dusting, ash, old flows, basalt, the crater           | about 1300 px, longer downwind         | fireweed on old flows; charred snags; fumaroles                               |
+| The floodplain        | fields, water meadow with willows, the river                               | 500 to 700 px each side                | oxbow lakes; shoals                                                           |
+| Country to city       | fields, then the canal and towpath, then the Heights' gardens and terraces | about 800 px along the Delta Road      | market gardens out among the fields                                           |
+| Coast                 | grass, then dune or cliff, then sand or black sand, then shallows          | 40 to 80 px                            | rocks and driftwood on the beach                                              |
 
-**Natural edges of the world:** the sea on every side, rough coasts with bays and headlands, the badlands on the far west coast, the Greyspine's peaks inside. Nowhere ends in a straight cut.
+**The walked corridors and the land beyond.** Land farther than about 470 px (plus or minus 200) from a route or a settlement is drawn but not walked. Its own edge stops the walk (a hedge, a wood's edge, a dune crest, a snowfield's lip).
 
-**The walked corridors and the land beyond.** The routes and settlements are walked. Land farther than about 500 to 700 px from them is still drawn but not walked: hedged fields, old woods, deep dunes, high snow, badlands. Each kind of land has its own edge that stops the walk naturally (a hedge, a wood's edge, a dune crest, a snowfield's lip). This keeps the walked world at about twice v3's, the art budget sane, and the views wide.
+**Views across the land** (scenery, never tap targets): from the Frostline, the whole plain and the Lull shining in the east; from Dust Gulch, the plume of Mount Ember beyond the salt lake; from the Lull Road, Neon's towers beyond the delta; from Driftwood, the isles and the rocket on its cape; from the Narrows Viaduct, the rapids below.
 
-**Views across the land** (scenery, never tap targets):
+## 6. Paths first: routes, shortcuts and times
 
-- From the Frostline and the Gap: Mount Ember's plume and the whole plains.
-- From the valley: the Greyspine's snow and the Frostline's rim.
-- From the Lull Road: Neon's towers across the river.
-- From Driftwood: the isles and the rocket on its cape.
-- From Dust Gulch: the range's wall and the volcano's plume.
-- From the Canyon Road: Hearthold on its rock above the lava.
-
-## 6. Settlements, routes and shortcuts
-
-### 6.1 The routes
+### 6.1 The routes, and the ground fitted to each
 
 Walk times are measured end to end on the block-out at 40 px/s.
 
-| Route         | From and to                                                               | Walk | Through                                                               | Rests and landmarks                                                         | Way                                                        |
-| ------------- | ------------------------------------------------------------------------- | ---- | --------------------------------------------------------------------- | --------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| Col Path      | the valley up to the Frostline                                            | 14 s | forest, then alpine                                                   | the col with its fallen pine                                                | **W2** at the rim                                          |
-| High Fells    | the Frostline along the flank to Cogsworth's hill                         | 41 s | alpine and snow                                                       | a cairn line; views down to the plains                                      | **W2** at the rim; **W3** at the Cog's head                |
-| Foothill Road | the valley east through Fernhollow to Cogsworth                           | 35 s | wet forest, then coal hills                                           | Fernhollow's sawmill; the Millrace gorge                                    | **W3** where it crosses the Cog                            |
-| Towpath       | Cogsworth down the Cog and the Lull to Lullford                           | 25 s | the canal beside the river                                            | locks, a lock-keeper's cottage, an aqueduct                                 | **W3** at the aqueduct over the Cog                        |
-| Sunstone Gap  | Cogsworth over the range to Palm Spring and Dust Gulch                    | 77 s | forest, alpine, snow, then the lee down to heath, scrub and the oasis | the Gap Hut; the first view of the desert and the plume                     | **W5**: an avalanche at the gap (and at the tunnel portal) |
-| Canyon Road   | Dust Gulch down the Dry Wash's canyon to Hearthold                        | 72 s | scrub, mesas, the canyon                                              | the Lode on the way, a wash bridge, the castle seen from the canyon's mouth | **W6**: the chasm bridge over the fire ring                |
-| Ember Way     | Hearthold to the caldera forge and Cinder Springs                         | 34 s | ash and basalt                                                        | the forge, the basalt ring, the springs' terraces                           | (inside W6)                                                |
-| Ash Coast     | the halt along the south-west coast through Cinderwick to the springs     | 93 s | farmland, then dunes, then black sand and ash                         | Cinderwick; the fresh lava flow at the ring                                 | **W6**: the crust causeway over the new flow               |
-| Lull Road     | the valley east across the plains through Lullford to Neon's swing bridge | 68 s | fields, copses, market gardens                                        | Lullford's market; the swing bridge with the city across                    | **W7**: the swing bridge                                   |
-| Coast Path    | Driftwood's lane east along the cliffs through Gullwick to the Lull Road  | 62 s | cliff top, coves                                                      | Gullwick's smokehouse; the Sleepwater's footbridge                          | (joins W7)                                                 |
-| Headland Lane | Driftwood to the Headland                                                 | 8 s  | the neck                                                              | the stile                                                                   | **W1**                                                     |
-| Shell Bar     | the Headland's tip to the main isle                                       | 10 s | a sandbar                                                             | tide pools, a tide post                                                     | **W4** (with the ferry)                                    |
-| Cape Road     | Neon to the Launch Cape                                                   | 9 s  | salt flats                                                            | the fuel farm, the pad                                                      | the pad is **W8**                                          |
+| Route                                                     | From and to                                                                             | Walk                 | The path and the ground built round it                                                                                | Way                                                            |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------- | -------------------- | --------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------- |
+| Col Path                                                  | the valley up to the Frostline                                                          | 28 s                 | a mountain passage: switchbacks up the cirque's step, the Col hut halfway                                             | **W2** at the lip                                              |
+| High Fells                                                | the Frostline along the massif's shoulder to Cogsworth                                  | 51 s                 | a ridge walk past tarns and cairns, down to the Cog                                                                   | **W2** at the rim; **W3** at the Cog                           |
+| Foothill Road                                             | the valley east through Fernhollow to Cogsworth                                         | 38 s                 | a woodland road: the trees close in on both sides as it climbs the Fern hills                                         | **W3** at the Millrace bridge                                  |
+| Towpath                                                   | Cogsworth down the Cog to Lullford                                                      | 48 s                 | the river path along the Cog, then the Lull's west bank past the water meadows                                        | **W3** where it crosses the Cog                                |
+| Lull Road                                                 | the valley across the plain through Lullford to Neon                                    | 87 s                 | the old road: fields, copses, water meadows, the bridge                                                               | **W7** at Lullford Bridge                                      |
+| Delta Road                                                | Lullford's east bank along the Lull Cut to the Heights                                  | 59 s                 | the canal towpath beside the delta's marsh                                                                            | (inside W7)                                                    |
+| Coast Path                                                | Driftwood along the cliffs and dunes through Gullwick to Lullford                       | 56 s                 | a cliff path, then dunes behind the beach                                                                             | (start)                                                        |
+| Headland Lane                                             | Driftwood to the Headland                                                               | 15 s                 | the neck, with a field wall across it                                                                                 | **W1** at the stile                                            |
+| Shell Bar                                                 | the Headland's tip to the main isle                                                     | 15 s                 | a sandbar by way of an islet                                                                                          | **W4**                                                         |
+| Drover's Road                                             | the valley halt west across the steppe to Palm Spring and Dust Gulch                    | 90 s                 | a drove road: sheepfolds and a well in the steppe, round the Brackens' southern end, over the Rift by Drover's bridge | **W5** at the Rift                                             |
+| Lode Track                                                | Dust Gulch up to the Lode                                                               | 18 s                 | a mule track in switchbacks up the spur                                                                               | (inside W5)                                                    |
+| Canyon Road                                               | Dust Gulch down the Amber's canyon, past the salt lake and the ash fields, to Hearthold | 75 s                 | a canyon trail on the canyon floor between banded walls and mesas, then across the ash on the volcano's west flank    | **W6** at the chasm bridge                                     |
+| Ash Coast                                                 | the valley halt along the coast to Cinderwick                                           | 91 s                 | the coastal shelf under the arc, green on its windward side, through the dead forest                                  | **W5** at the Rift's mouth ferry; **W6** at the crust crossing |
+| Ember Way, Forge Stair                                    | Hearthold to the forge, the springs and Cinderwick                                      | 20 s, 4 s            | ash and basalt between the flows                                                                                      | (inside W6)                                                    |
+| Old Bridges, Quay Street, Harbour Bridge, Beacon Causeway | inside Neon                                                                             | 9 s, 24 s, 17 s, 9 s | section 8.5                                                                                                           | (inside W7)                                                    |
+| Cape Road                                                 | the Skyport to the Launch Cape                                                          | 18 s                 | across the cape's grass to the pad                                                                                    | the pad is **W8**                                              |
 
-**Rhythm.** Town, route, town on every line: the valley, Fernhollow, Cogsworth, the Gap Hut, Palm Spring, Dust Gulch, the Lode, Hearthold. The valley, Lullford, Neon, the Cape. Driftwood, Gullwick, Neon. The halt, Cinderwick, the springs.
+**Rhythm.** Town, route, town on every line: the valley, Fernhollow, Cogsworth, Lullford, Neon, the Cape; the valley, Driftwood, Gullwick, Lullford; the halt, Palm Spring, Dust Gulch, the Lode; Dust Gulch, Hearthold, the springs, Cinderwick, the halt.
 
-**Loops:**
-
-- valley, Col Path, Frostline, High Fells, Cogsworth, Foothill Road, valley;
-- valley, Foothill Road, Cogsworth, Towpath, Lullford, Lull Road, valley;
-- valley, Lull Road, Neon, Coast Path, Driftwood, valley;
-- Cogsworth, the Gap, Dust Gulch, Canyon Road, Hearthold, Ember Way, the springs, Ash Coast, the valley, Foothill Road, Cogsworth (the grand loop round the range's south-west end).
+**Loops:** valley, Col Path, Frostline, High Fells, Cogsworth, Foothill Road, valley; valley, Foothill Road, Cogsworth, Towpath, Lullford, Lull Road, valley; valley, Lull Road, Lullford, Coast Path, Driftwood, valley; the grand loop: halt, Drover's Road, Dust Gulch, Canyon Road, Hearthold, Ember Way, Cinderwick, Ash Coast, halt.
 
 ### 6.2 Shortcuts (each opens with the way of the route it runs beside)
 
-| Shortcut                           | Between                                                                                       | Way      |
-| ---------------------------------- | --------------------------------------------------------------------------------------------- | -------- |
-| The valley train                   | the halt and Cogsworth's platform, through the Millrace gorge                                 | W3       |
-| The desert line                    | Cogsworth's platform and Dust Gulch, through a tunnel under the Gap                           | W5       |
-| The maglev                         | Cogsworth's terminus down the Lull's valley to Neon's Skyport (its own viaduct over the Lull) | W7       |
-| The ferry                          | Driftwood's pier and Lagoon Landing                                                           | W4       |
-| The mine cart (S1)                 | the Lode down the canyon to the caldera forge                                                 | after W6 |
-| The coastal steamer (S3, proposal) | Neon and Driftwood                                                                            | after W7 |
-| The rocket and the lander          | the Launch Cape to Halcyon, then Lumen                                                        | W8, W9   |
+| Shortcut                           | Between                                                                    | Way      |
+| ---------------------------------- | -------------------------------------------------------------------------- | -------- |
+| The valley train                   | the halt and Cogsworth's platform, up the valley floor                     | W3       |
+| The desert line                    | the halt and Dust Gulch, over the Rift on its own viaduct                  | W5       |
+| The maglev                         | Cogsworth's terminus over the Narrows Viaduct and down the uplands to Neon | W7       |
+| The ferry                          | Driftwood's pier and Lagoon Landing                                        | W4       |
+| The mine cart (S1)                 | the Lode down past the salt lake to the forge                              | after W6 |
+| The coastal steamer (S3, proposal) | Neon's steamer pier and Driftwood                                          | after W7 |
+| The rocket and the lander          | the Launch Cape to Halcyon, then Lumen                                     | W8, W9   |
 
 ### 6.3 Walk times from the hut (`stats.json`)
 
 | To                                 | On foot (s)             | With shortcuts (s) |
 | ---------------------------------- | ----------------------- | ------------------ |
 | the stall, the square, the library | 12 to 14 (v2)           | same               |
-| Fernhollow                         | 25.5                    | 25.5               |
-| the Frostline (Snowmelt Lake)      | 26.5                    | 26.5               |
-| Driftwood                          | 41.4                    | 41.4               |
-| Cogsworth                          | 57.9                    | 22.9               |
-| Lullford                           | 59.4                    | 59.4               |
-| the Gap Hut                        | 59.6                    | 50.2               |
-| Cinderwick                         | 63.2                    | 63.2               |
-| Gullwick                           | 73.7                    | 73.7               |
-| Palm Spring                        | 86.9                    | 57.5               |
-| Lagoon Landing                     | 92.0 (by the Shell Bar) | 53.8 (by ferry)    |
-| Neon Harbour                       | 102.0                   | 50.3               |
-| the Lode                           | 114.5                   | 39.8               |
-| Dust Gulch                         | 121.3                   | 27.9               |
-| the Launch Cape                    | 121.6                   | 61.9               |
-| Cinder Springs                     | 127.9                   | 64.6               |
-| the Ember Caldera forge            | 149.3                   | 42.8               |
-| Hearthold                          | 164.1                   | 57.6               |
+| Fernhollow                         | 25.2                    | 25.2               |
+| Driftwood                          | 40.0                    | 40.0               |
+| the Frostline                      | 40.1                    | 40.1               |
+| Cogsworth                          | 51.9                    | 27.9               |
+| Gullwick                           | 65.9                    | 65.9               |
+| Lullford                           | 69.1                    | 69.1               |
+| Palm Spring                        | 76.9                    | 43.9               |
+| Lagoon Landing                     | 81.1 (by the Shell Bar) | 47.9 (by ferry)    |
+| Dust Gulch                         | 98.7                    | 28.6               |
+| the Lode                           | 106.0                   | 42.5               |
+| Cinderwick                         | 111.5                   | 69.4               |
+| Neon Harbour (the market)          | 115.2                   | 56.3               |
+| Cinder Springs                     | 126.8                   | 60.8               |
+| the Ember forge                    | 129.2                   | 45.2               |
+| Hearthold                          | 132.7                   | 52.7               |
+| the Launch Cape                    | 147.1                   | 67.6               |
 
-The far places are 2 to 3 minutes on foot, a real journey, and under about a minute with the shortcuts. The everyday places stay within 15 s.
+The far places are 2 to 2.5 minutes on foot and under about a minute with the shortcuts, as in v4. The Frostline moved higher into the massif (40 s instead of 27 s), so that it reads as a high cirque.
 
 ## 7. Sunstone Reach: a journey into the heat
 
-Sunstone Reach is not a box west of the valley but the whole rain shadow of the Greyspine, entered over its only pass. It is designed as a sequence of places, each seen before it is reached.
+Sunstone Reach is the whole rain shadow of the arc, entered from the valley's halt across the steppe. Each place is seen before it is reached.
 
-1. **The climb.** From Cogsworth's platform the Sunstone Gap path climbs through wet conifer forest, mist and moss. Then come alpine meadow and snow at the Gap. The Gap Hut is a stone refuge with a stove and a bench, where W5 (the avalanche) is cleared.
-2. **The reveal at the Gap.** The wind turns warm and dry (a föhn: air falling down the lee side warms). The first view is of the whole lee: heath, then the yellow of the scrub, then the desert to the horizon, the white of the salt pan, and Mount Ember's plume far to the south-west.
-3. **The descent into the heat.** Snow gives way to bare rock, then dry heath with dwarf pines, then scrub with the first cacti. The light gets whiter and the shadows shorter, dust hangs in the air, and the ambient sound changes from wind to cicadas.
-4. **Palm Spring, the first oasis.** Snowmelt from the range surfaces at the foot of the slope: palms, a pool, a water-seller's awning, camels resting. It explains the desert's life: all its water comes from the mountains.
-5. **Dust Gulch, the frontier town.** One street of false fronts on boardwalks at the railhead, with the desert line's platform and water crane. The water tower is filled by a pipe from the spring. The corral and the saloon sit under the range's wall. The red mesas rise in the west.
-6. **The Lode.** The mine in the lee foothills: a tunnel mouth in the rock, ore tubs, a timber stack and the cart line's start. It is why the town exists.
-7. **The canyon.** The Canyon Road follows the Dry Wash down between mesas: a flood-cut gorge with layered red walls and a wash bridge, shaded and cooler. At its mouth the land opens and Hearthold stands on its rock across a lava chasm, the plume behind it.
-8. **Hearthold, the castle above the lava.** It is reached over the chasm bridge (W6), the only safe ground between desert and fire. The bell keeps the hours.
-9. **The fire country.** Ash, basalt and glowing seams: the caldera forge using the volcano's heat, the basalt sparring ring, and Cinder Springs' terraces where the fire country rests. From there the Ash Coast leads home along the black-sand shore, closing the grand loop.
+1. **The drove road.** From the halt the Drover's Road runs west round the Brackens' southern end into short grass: sheepfolds, a well, a stone ring on the ridge above (an egg spot). The grass gets thinner and yellower.
+2. **The Rift.** The land drops into a gorge with banded walls. Drover's bridge (W5) crosses it; the desert line's viaduct stands upstream.
+3. **The scrub.** Beyond the gorge, scrub with single trees, mesas on the skyline to the south-west and the plume of Mount Ember beyond.
+4. **Palm Spring, the first oasis.** The Willow Run comes out of its gravel: palms, a pool, orchards fed by channels, a water-seller's awning.
+5. **Dust Gulch, the frontier town.** On the Amber's fan below the massif: one street of false fronts, the desert line's platform and water crane, orchards, the mine track zigzagging up behind.
+6. **The Lode.** Up the mule track: the mine mouth, ore tubs and the cart line's start.
+7. **The canyon.** The Canyon Road follows the Amber down between banded walls and mesas, shaded and cooler, with a fossil in the wall (an egg spot).
+8. **The salt lake and the ash.** The canyon opens on the white salt lake, and the ground turns grey: ash dusting the scrub, then ash fields, the fumaroles steaming on the volcano's flank.
+9. **The chasm bridge.** On the west flank the young flow blocks the way; the chasm bridge (W6) crosses it, and Hearthold stands on its rock between the flows.
+10. **The fire country.** The forge at the caldera's lip, Cinder Springs on the seaward side, Cinderwick in its black-sand cove. The Ash Coast leads home along the green coastal shelf through the dead forest and over the Rift's mouth by ferry, closing the grand loop.
 
-**Its sizes.** Dust Gulch is a 544 x 320 desert town. Hearthold is 400 x 400 inside its moat. Palm Spring is 300 x 220. From the Gap to Dust Gulch is about 50 s on foot, and the Canyon Road to the castle about 72 s, with something to see every 5 s along the way: dunes, cacti, a windpump, a dead tree with vultures, a wagon wreck, mesa ledges, the wash bridge. v2's and Claude D's places (the gulch's street, the oasis, the castle, the caldera, the springs) keep their plans inside this layout. The mirror of v3 is dropped: Sunstone faces the range it lies behind.
+**Sizes.** Dust Gulch is a 544 x 320 desert town, Hearthold 400 x 400 inside its walls, Palm Spring 300 x 220. The Drover's Road is 90 s, the Canyon Road 75 s, with something every 5 s: folds, the well, the gorge, mesas, the oasis, windpumps, the canyon's ledges, the salt crust, the fumaroles. v2's and Claude D's places keep their plans inside this layout.
 
-## 8. The places inside the land (v2's plans, with v4's changes)
+## 8. The places inside the land (v2's plans, with v5's changes)
 
-### 8.1 What v4 changes from v2 and v3
+### 8.1 What v5 changes from v2 and v4
 
-- **The valley.** The Sleepwater now leaves the valley east to join the Lull; Driftwood's estuary is the Brook's. The Headland is a promontory on a neck, with the stile on the neck. The Frostline is a cirque with a cliff rim, left by the Col Path and the High Fells (both W2). The halt's line runs east along the foothills to Cogsworth, and the Ash Coast leaves from the halt.
-- **Cogsworth.** On the Cog, in the coal hills below the Gap. The platform faces the Gap, the towpath leaves south, the maglev's terminus is on the Lull side.
-- **Sunstone Reach** (section 7) replaces v2's 6.4 layout; its places keep their plans.
-- **Neon.** On the Lull's east bank at the mouth, with the swing bridge (W7) upstream, the estuary marshes to the west and the Launch Cape to the east.
-- **The isles.** The main island of a five-island chain, reached by the Shell Bar from the Headland or by ferry.
-- **Halcyon and Lumen** as v2, reached by the rocket and the lander.
+- **The valley.** The Sleepwater runs through the valley to Driftwood's cove again (v4 sent it to the Lull), so Driftwood's estuary is v2's. The Frostline is higher, carved into a shoulder of the massif. The halt's lines run east to Cogsworth (valley train) and west over the Rift (desert line).
+- **Cogsworth.** On the Cog's east bank in the coal hills, with the Millrace through the mills; the maglev's terminus faces the Narrows.
+- **Lullford.** At the Lull's lowest crossing, the bridge on its island.
+- **Sunstone Reach** (section 7) is entered from the valley over the Rift, not over a pass.
+- **Neon Harbour** (8.5) is redesigned as the ria city.
+- **The isles.** Eight islands; the main isle's lagoon is breached to the south.
 
-The sections below are v2's plans as decided; their internal walk times come from v2's block-outs, and where they mention v2's or v3's neighbours (an estuary, the line entering from the west, the elevator), 8.1 and sections 6 and 9 take precedence.
+The sections below are v2's plans as decided; their internal walk times come from v2's block-outs, and where they mention v2's or v4's neighbours, 8.1 and sections 6 and 9 take precedence.
 
 ### 8.2 The valley (home): garden, woodland, riverside, Crossroads, the park, the halt farm, Driftwood, the Headland and the Frostline
 
@@ -422,7 +484,7 @@ Between other places: the halt platform to the well 11.9 s, the ferry pier to th
 
 ### 8.3 Cogsworth
 
-**Size and shape.** 704 x 960 px (two of today's zones were 320 x 1152). The platform runs along the north edge with both lines entering from the west; the clock-tower square in front of the station; workshop rows west; Gasworks Hill one tier up to the east; the canal half a tier down across the middle; the foundry and allotments south-west; the terminus and the pump house south-east, where the maglev leaves east.
+**Size and shape.** 704 x 960 px (two of today's zones were 320 x 1152). In v5 it sits on the Cog's east bank in the coal hills, the Millrace running through the mills. The platform runs along the north edge with both lines entering from the west; the clock-tower square in front of the station; workshop rows west; Gasworks Hill one tier up to the east; the canal half a tier down across the middle; the foundry and allotments south-west; the terminus and the pump house south-east, where the maglev leaves east.
 
 | From the platform to     | s    |
 | ------------------------ | ---- |
@@ -453,24 +515,35 @@ Between other places: the halt platform to the well 11.9 s, the ferry pier to th
 
 **Kept, and why:** the island whole in island coordinates (`isle_zones.island()`, already a canvas), its four places, tiers, falls and loop; its size suits a day trip by ferry. **Changed:** stairs to 48 px, the landing's packing shed and pier as its node.
 
-### 8.5 Neon Harbour and the Skyport
+### 8.5 Neon Harbour: the city round the ria
 
-**Size and shape.** 960 x 1280 px (today 960 x 1728). The maglev arrives at the Skyport on the south shore; one spine, a 64 px boulevard under the elevated tram, runs north to the central plaza; cross streets at the market and at the old wet street; the Heights one 40 px tier up in the north-west with stair streets and the sunken plaza; downtown with Dave's tower in the middle; the docks along the east quay; the Point with the lighthouse; the pier south to the elevator's anchor (W8).
+**Is it Neon Harbour or a new city?** It is Neon Harbour. A coast this size has one great port, and Neon is already the city at the river's end with the Skyport, the maglev and W7 (#95, `world-places`). The harbour city of Matt's example and the neon city are the same place in two ages: the old stone town that grew at the falls, and the neon new town that grew round the railway and the Skyport. Keeping one city keeps the places, the gate and the decided canvas size (decision 6).
 
-| From the maglev platform to | s    |
-| --------------------------- | ---- |
-| the concourse               | 3.7  |
-| the ring court              | 5.6  |
-| the anchor (W8)             | 8.0  |
-| the arcade                  | 9.7  |
-| the Point's lighthouse      | 13.9 |
-| the market                  | 15.9 |
-| the cranes                  | 17.7 |
-| Dave's tower                | 21.6 |
-| the subway mouth (Heights)  | 27.1 |
-| the big screen (plaza)      | 29.8 |
+**Why the bay is deep and sheltered.** It is a ria: the Glint's old valley, cut when the sea stood lower and drowned when it rose, so its sides are steep and deep water runs close to the shore. The Heights headland and Beacon Isle shelter it from the south-west swell. It lies east of the delta, clear of the Lull's silt, as Alexandria was built "removed from the silt thrown out by the Nile" and fed by "a canal from the Nile" ([Wikipedia, History of Alexandria](https://en.wikipedia.org/wiki/History_of_Alexandria)); the Lull Cut is Neon's canal.
 
-**Why smaller.** At true scale a city block is 208 x 272 px with about eight buildings of three to six storeys; nine blocks hold about 40 buildings, each to Eastward's detail. Today's nine zones are mostly blocks of open concrete between free-standing buildings; the plan has less canvas and more street. **Kept:** the Skyport and its pier, the docks' cranes and ship, the old wet street with the ring court, the elevated tram, Claude C's facade detail (PR #116). **Changed:** streets of touching facades from the composer; one spine with cross streets; `waterfront` folds into the docks and `point` into the Skyport's shore.
+**Where the old town grew first.** On the Falls Rock, the rock between the Glint's two waterfalls at the head of the ria. It was defensible (water on three sides), it gave the first crossing (two short bridges over the falls instead of one long one), it was the head of navigation (ships could sail up to the foot of the falls), and the falls drove its mills. That is a fall-line town: rapids "stopped ocean-going ships, so goods had to be unloaded there", and the falling water "powered mills and factories" ([Virginia Places, the Fall Line](https://virginiaplaces.org/regions/fallcolonial.html)).
+
+**The districts** (`harbour-city.png`):
+
+| District        | Where                                                          | Why there                                                                   |
+| --------------- | -------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| The Falls Rock  | between the two falls at the ria's head                        | the first town: defence, crossing, head of navigation, mills                |
+| The market      | at the old bridges' east foot (a 352 x 248 plaza)              | where the roads, the canal's goods and the quay meet                        |
+| The docks       | along the ria's east side, piers out into the lee water        | deep water under the steep side, out of the swell                           |
+| The warehouses  | behind the docks                                               | goods between ship, rail and market                                         |
+| The Heights     | terraces on the west headland, gardens and stairs between rows | views and breeze, upwind of the docks: the rich quarter                     |
+| The canal basin | in a cove under the Heights                                    | where the Lull Cut meets the ria                                            |
+| Chapel Islet    | in the ria's middle, under the Harbour Bridge                  | the bridge's pier, the sailors' chapel                                      |
+| The Gull Strand | the beach at the ria's mouth on the east side                  | nearest the fishing grounds; boats hauled up on the sand                    |
+| Beacon Isle     | in the ria's mouth, reached by a causeway from the Strand      | the old lighthouse: the landmark on an island                               |
+| The new town    | the flat uplands east of the market, in blocks of 208 x 272    | flat land for a planned grid, round the maglev terminus; neon signs, towers |
+| The Skyport     | a flat field south of the new town, mooring masts              | open to the sea wind, beside the cape                                       |
+
+**How you arrive.** On foot by the Lull Road over Lullford Bridge and along the Delta Road (the canal's towpath) to the Heights, then over the Harbour Bridge or round by the old bridges at the falls. By the maglev into the new town's terminus. By the coastal steamer at the steamer pier on the docks. The Cape Road leaves past the Skyport.
+
+**Size and pace.** About 1450 x 1100 px with the ria, of which the ria is about a third. Inside: the old bridges 9 s, Quay Street from the market to the Strand 24 s, the Harbour Bridge 17 s, the Beacon Causeway 9 s, the Cape Road 18 s. Any district is within about 25 s of the market. The walkable ground stays near v2's 960 x 1280 canvas (decision 6): the ria and the terraces' gardens are frame between the streets.
+
+**Kept from v2.** The Skyport, the docks' cranes and ship, the old wet street (now in the Falls Rock), the elevated tram (on Quay Street), Claude C's facade detail (PR #116). **Changed:** the city wraps a ria instead of standing on a straight shore; one spine becomes the quay and the bridges.
 
 ### 8.6 Halcyon Station
 
@@ -482,7 +555,7 @@ Between other places: the halt platform to the well 11.9 s, the ferry pier to th
 
 ## 9. Space: the rocket (decided)
 
-**The launch site.** The Launch Cape: a flat cape of salt flats east of the city's Point, 8 s from the Skyport by the Cape Road. A real spaceport launches over the sea, away from towns, and this one does. Its parts:
+**The launch site.** The Launch Cape: an exposed headland south-east of the city, 18 s from the Skyport by the Cape Road. A real spaceport launches over the sea, away from towns, and this one does. Its parts:
 
 - a pad with a service tower;
 - a fuel farm (spherical tanks behind a blast wall);
@@ -503,28 +576,28 @@ Between other places: the halt platform to the well 11.9 s, the ferry pier to th
 
 ## 10. The ways on the land
 
-The nine ways (#95, decided) keep their names, order and tasks. Each one stands where a route crosses one of the land's barriers. A place with more than one way in has one way mending all of them.
+The nine ways (#95, decided) keep their names, order and tasks. Each stands where a route crosses one of the land's barriers. A place with more than one way in has one way mending all of them.
 
-| #   | Way                                      | Barrier and crossing                                                                                   | What is being mended                                                                      | In reach after (#95)                     |
-| --- | ---------------------------------------- | ------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------- | ---------------------------------------- |
-| W1  | The Headland stile                       | the sea round the Headland; the neck                                                                   | the stile's broken step                                                                   | the start                                |
-| W2  | The ridge col                            | the Frostline's rim; the Col Path and the High Fells                                                   | two pines from one storm                                                                  | the start                                |
-| W3  | The Millrace landslip                    | the Cog; the Foothill Road (the gorge), the High Fells (the Cog's head) and the Towpath (the aqueduct) | a landslip in the gorge; a rockfall at the head; a breach in the aqueduct, from one storm | the start                                |
-| W4  | The Shell Bar and the ferry              | the sea; the Shell Bar                                                                                 | a washed-out stretch; the ferry on the slip                                               | the start                                |
-| W5  | The Sunstone Gap                         | the Greyspine's crest; the Gap (and the desert line's tunnel portal)                                   | an avalanche                                                                              | W3 (you reach the Gap through Cogsworth) |
-| W6  | The chasm bridge and the Ash Coast crust | the fire ring; the Canyon Road's bridge and the Ash Coast's crossing                                   | the bridge's missing span; a crust causeway over the new flow                             | W5 (the masons come from Dust Gulch)     |
-| W7  | The Lull swing bridge                    | the Lull; the swing bridge (the Coast Path joins the Lull Road before it)                              | stuck open, waiting for a gear from Cogsworth's foundry                                   | W3                                       |
-| W8  | The rocket                               | (a journey) the Launch Cape's pad                                                                      | the launch not yet fuelled                                                                | W7                                       |
-| W9  | Halcyon's lander                         | (a journey) Halcyon's hatch                                                                            | under a cover                                                                             | W8                                       |
+| #   | Way                                     | Barrier and crossing                                                                        | What is being mended                                             | In reach after (#95)                                      |
+| --- | --------------------------------------- | ------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- | --------------------------------------------------------- |
+| W1  | The Headland stile                      | the field wall across the Headland's neck                                                   | the stile's broken step                                          | the start                                                 |
+| W2  | The ridge col                           | the Frostline's rim; the Col Path at the lip and the High Fells at the east col             | two pines from one storm                                         | the start                                                 |
+| W3  | The Millrace landslip                   | the Cog; the Foothill Road (the Millrace bridge), the High Fells and the Towpath            | a landslip at the Millrace; a rockfall; a breach, from one storm | the start                                                 |
+| W4  | The Shell Bar and the ferry             | the sea; the Shell Bar                                                                      | a washed-out stretch; the ferry on the slip                      | the start                                                 |
+| W5  | The Rift                                | the Rift gorge; Drover's bridge, the ferry at its mouth, the desert line's viaduct          | a flood took the bridge's deck and the ferry's rope              | W3 (by #95's day order; the land itself does not need it) |
+| W6  | The chasm bridge and the crust crossing | the two young lava flows; the Canyon Road's chasm bridge and the Ash Coast's crust crossing | the bridge's missing span; a crust causeway over the flow        | W5 (the masons come from Dust Gulch)                      |
+| W7  | Lullford's swing bridge and the maglev  | the Lull; Lullford Bridge's swing span (the only footway over the Lull and its delta)       | stuck open, waiting for a gear from Cogsworth's foundry          | W3                                                        |
+| W8  | The rocket                              | (a journey) the Launch Cape's pad                                                           | the launch not yet fuelled                                       | W7                                                        |
+| W9  | Halcyon's lander                        | (a journey) Halcyon's hatch                                                                 | under a cover                                                    | W8                                                        |
 
-**The gate check** (`gates.json`). The script finds every place a route crosses a barrier (the crest, the rim, the Cog, the Lull, the fire ring, the sea) and puts the way there. It reports any crossing with no way; there is none, apart from the Ember Way crossing the crest inside the fire country, which is already behind W6. With the ways opened one at a time in road order, a flood fill from the hut reached nothing behind a closed way and everything behind an open one, at every step.
+**The gate check** (`gates.json`). The script finds every place a route crosses a barrier (the rim, the Cog, the Rift, the lava flows, the Lull and its delta arms, the Headland's wall, the sea) and puts the way there. It reports any crossing with no way: there is none. Three crossings inside the city (the Harbour Bridge twice, the Beacon Causeway) are marked open because they lie behind W7. With the ways opened one at a time in road order, a flood fill from the hut reached nothing behind a closed way and everything behind an open one, at every step; Driftwood, Fernhollow, Lullford, Gullwick and the halt are reached from the start. The Narrows Viaduct is drawn as rail only, not a footway, so it is no way over the Lull.
 
 ## 11. The engine: one world canvas (decided)
 
 v3's design stands (decided by Matt). One world canvas is authored in chunks (each settlement, each route, and the land itself, which is now generated from the geography fields and then drawn over by hand) and cut into world tiles of 256 px. The numbers grow with the land:
 
-- **Canvas:** 11264 x 6912 px, 1408 x 864 cells. 63 % of it is land.
-- **Tiles:** 1188 render tiles. 413 are uniform (open sea, mostly) and share a few pictures; 483 hold walkable ground.
+- **Canvas:** 11264 x 6912 px, 1408 x 864 cells. 80 % of it is land (v4: 63 %; the sea now lies only to the south).
+- **Tiles:** 1188 render tiles. 248 are uniform (open sea, glacier, dune sea) and share a few pictures; 510 hold walkable ground.
 - **Memory:** unchanged: 9 to 12 tiles in view.
 - **Walk grid:** 4.9 million cells of 4 px. It is exported per tile and searched in a window round the companion, with a coarse route graph for far walks (v3).
 - **The geography as data.** The build keeps the height, wetness and warmth fields (at 8 px) as its own data. Each chunk's ground reads them, so a chunk's grass, its transition bands and its props agree with its neighbour's without seams. The terrace toolkit turns height into tiers on the soft grid; v2's sizing still decides every built thing.
@@ -551,53 +624,80 @@ Matt sent two styles: a soft-grid map of stepped, outlined plateaus with paths, 
 - It is drawn by the build from the same data (tiers from height, colours from ground), not painted by hand, so it never falls out of date.
 - It reads at phone size, and it can reveal only what has been walked, as the map does today (C22).
 
-The mock (`ingame-map-mock.png`) is drawn from the block-out. Tiers step at 32 px, each with a darker face on its south edge and a thin outline. Water is deep blue, paths pale, settlements are house icons with their names, and the ways are red dots. A finished version would add:
+The mock (`ingame-map-mock.png`) is drawn from the v5 block-out. Tiers step at 32 px, each with a darker face on its south edge and a thin outline. Water is deep blue, paths pale, settlements are house icons with their names, the ways are red dots, and the land beyond the walked corridors is hazier. A finished version would add the pixel frame and font from `interface.md`, the companion's marker, fog over places not yet walked, the journeys as dashed lines, and small pictures of each place's landmark, after Stardew's map.
 
-- the pixel frame and font from `interface.md`;
-- the companion's marker;
-- fog over places not yet walked;
-- the journeys as dashed lines;
-- small pictures of each place's landmark, after Stardew's map.
+## 13. Critique: what still looks artificial
 
-## 13. Order of work and owners
+Compared with Matt's four examples (the Final Falls city, the soft-grid tier map, the joined Pokémon regions, Stardew's map) and with v4.
 
-| Step | Lane | Work                                                                                                                                                                                                                               | Needs                     |
-| ---- | ---- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- |
-| P0   | A    | The toolkit lands (`terrace.py`, `scale.py`, tiers, the facade composer, `fore.png`)                                                                                                                                               |                           |
-| P1   | A    | **The geography chunk**: the height, wetness and warmth fields, the spine, the volcano, the Lull system, the coast, the isles, biome bands with noise; written as data for every other chunk                                       | Matt's yes to decision 20 |
-| P2   | A    | The world canvas build (11.1 plus P1) and the renderer streaming world tiles; saves in world coordinates (with Codex)                                                                                                              | P1                        |
-| P3   | A    | The in-game map from the build's data in the soft-grid style                                                                                                                                                                       | P1                        |
-| P4   | B    | Props to the scale table and #97, including the route props (sawmill, lock-keeper's cottage, aqueduct, Gap Hut, water-seller's awning, wagon wreck, wash bridge, smokehouse, charcoal kilns, tide post, fuel farm, the rocket)     | P0                        |
-| P5   | E    | The home valley in the land (v2's plan with 8.1's changes), Driftwood, the Headland, the Frostline's cirque with A                                                                                                                 | P2, P4                    |
-| P6   | A    | The routes' chunks: Col Path, High Fells, Foothill Road, Towpath, Lull Road, Coast Path, Headland Lane                                                                                                                             | P2                        |
-| P7   | D    | Sunstone Reach as a journey (section 7): the Gap, Palm Spring, Dust Gulch, the Lode, the canyon, Hearthold, the fire country, the Ash Coast and Cinderwick; then the Launch Cape, Halcyon and Lumen with the rocket and the lander | P2                        |
-| P8   | C    | Cogsworth on the Cog, Lullford, Fernhollow, Gullwick; Neon at the Lull's mouth; the isles' chain and the Shell Bar                                                                                                                 | P2                        |
-| P9   | A    | The ways on the land (#118 to world coordinates), the journeys as shortcuts, the gate check as a test                                                                                                                              | P2, #95's rules (Codex)   |
+**Fixed in v5.**
 
-## 14. Decisions for Matt
+- _It read as an island._ Now only the south is coast; the other edges are land with borders, drawn going on.
+- _Mountains ran between desert and grass._ The massif now closes the north of both, and the change from meadow to dune sea is a gradient about 6 km wide that crosses the Rift.
+- _Placeholder shapes._ Towns grow along their roads (houses in rows along the streets, fields in a patchwork round them) instead of filling ovals; the Frostline is a cirque in a high shoulder; the volcano has no ring, only two young flows, old flows, ash blown downwind and parasitic cones; the isles are noise-shaped, the main one a breached crater; the city follows its ria.
+- _Lines._ The basin's straight edge, a gorge-width step that drew straight lines across the coal hills, and creeks drawn as a grid of straight diagonals are gone: creeks are traced down the drainage and smoothed, and every threshold is softened by noise.
+- _Labels overlapped._ A placer now tries several positions per label and drops none on top of another.
 
-| #   | Decision                                                                                                                         | Recommendation or decision                                                                             |
-| --- | -------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| 1   | Keep the zoom at 12 adults across                                                                                                | **Decided 20 Oct: keep.**                                                                              |
-| 2   | Canvases streamed in tiles instead of the zone grid                                                                              | **Decided 20 Oct: yes.**                                                                               |
-| 3   | Sizes from the sizing table; everyday places within 15 s of the hut                                                              | **Decided 20 Oct: yes.**                                                                               |
-| 4   | The valley at 1280 x 2688 with a real village, a farmstead and Driftwood                                                         | **Decided 20 Oct: yes.**                                                                               |
-| 5   | Cogsworth with Gasworks Hill and the Terminus                                                                                    | **Decided 20 Oct: yes.**                                                                               |
-| 6   | Neon's canvas a quarter smaller with more street                                                                                 | **Decided 20 Oct: yes.**                                                                               |
-| 7   | Sunstone Reach as one continuous land                                                                                            | **Decided 20 Oct: yes.**                                                                               |
-| 8   | A rocket from the Launch Cape replaces the space elevator; Halcyon's lander to Lumen                                             | **Decided 20 Oct (v3): yes.**                                                                          |
-| 9   | One world canvas, authored in chunks and streamed in tiles                                                                       | **Decided 20 Oct (v3): yes.**                                                                          |
-| 10  | One land designed from its geography (section 4): the Greyspine, its rain shadow, the Lull system, Mount Ember, the isles' chain | **Yes.** It is what Matt asked for, and every place's position now has a reason.                       |
-| 11  | About twice v3's walkable ground (120 zone-areas), with land beyond the walked corridors drawn but not walked                    | **Yes.** Expansive views without an art budget that doubles again.                                     |
-| 12  | The thirteen routes and the hamlets on them (section 6)                                                                          | **Yes.** Town, route, town; four loops; far places 2 to 3 minutes on foot, under a minute by shortcut. |
-| 13  | Sunstone Reach as a journey over the Gap (section 7), not mirrored                                                               | **Yes.** Matt asked for it to be immersive; it now lies where a desert would.                          |
-| 14  | The valley's river joins the Lull; Driftwood's estuary is the Brook's                                                            | **Yes.** One river system, as asked.                                                                   |
-| 15  | The ways at the land's barriers (section 10); W5 at the Gap, W6 at the fire ring, W7 at the Lull                                 | **Yes.** Every gated place has every way in mended by its one way.                                     |
-| 16  | The in-game map in the soft-grid style (example 2)                                                                               | **Yes** (Claude A's recommendation too).                                                               |
-| 17  | The coastal steamer (S3)                                                                                                         | **Yes, later.**                                                                                        |
-| 18  | Ground pictures at 1x (or 2x)                                                                                                    | **Test, then 1x if crisp.**                                                                            |
-| 19  | Secret pockets hold no keepsakes; no one-way ledges for now; the companion stays 24 px                                           | **Yes** (from v2).                                                                                     |
-| 20  | The geography as data (height, wetness, warmth fields) that every chunk reads                                                    | **Yes.** It is what keeps the land from being stitched.                                                |
+**Still artificial, to fix in the geography chunk (P1).**
+
+1. The Rift runs almost straight north to south for its whole length and still reads, at 1x, as a dividing line. It should bend west round a spur of the basin's plateau, with a side canyon.
+2. The fields are axis-aligned rectangles. Stardew's are too, but real fields follow the river and the slope; they should turn with the ground.
+3. The dune sea is one texture. It needs star dunes, a few interdune flats and a dry river bed fading into it.
+4. The city's terraces read as concentric rings on the Heights' round hill at 1x; the hill needs two or three knolls so the terraces break into separate streets, as on Final Falls' headlands.
+5. The delta's arms are too even in width and spacing; a real delta has one dominant arm and several small ones that change.
+6. The massif's top is a continuous snow band; it needs separate peaks with valley glaciers running down between them.
+7. The in-game mock steps tiers from height alone, so the plains show few tiers and the city none. Matt's example 2 sets plateaus deliberately; the build should take the soft grid's authored tiers where a chunk has them.
+8. Pokémon's joined map (example 3) uses orthogonal routes; ours curve with the ground, closer to Stardew's and Final Falls'. That is a choice, not a fault, but it means the in-game map should straighten routes a little when it simplifies them.
+9. The two young lava flows are nearly symmetric about the crater; one should be older and narrower, or turn.
+
+## 14. Easter eggs (reserved, later)
+
+Spots are reserved and drawn as small rings on `continent-labelled.png`. They hold nothing yet and give no reward (rule 10): the stone ring on the Brackens, a wreck on the Shell Bar, a bell in the oxbow lake, a fossil in the Amber canyon, a hermit's tarn on the High Fells, a lone palm at the dune sea's edge, a steam cave on Mount Ember, the lighthouse keeper's door on Beacon Isle.
+
+## 15. Order of work and owners
+
+| Step | Lane | Work                                                                                                                                                                                                                                                   | Needs                   |
+| ---- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
+| P0   | A    | The toolkit lands (`terrace.py`, `scale.py`, tiers, the facade composer, `fore.png`)                                                                                                                                                                   |                         |
+| P1   | A    | **The geography chunk**: the height, wetness and warmth fields; the massif, the arc and Mount Ember, the basin, the Rift, the Lull with its braids, oxbows and delta, the coast, the ria, the isles; biome bands with noise; the critique's nine fixes | Matt's yes to 16 and 21 |
+| P2   | A    | The world canvas build (11.1 plus P1) and the renderer streaming world tiles; saves in world coordinates (with Codex)                                                                                                                                  | P1                      |
+| P3   | A    | The in-game map from the build's data in the soft-grid style                                                                                                                                                                                           | P1                      |
+| P4   | B    | Props to the scale table and #97, including the paths' props: the Col hut, cairns, sheepfolds and the well, the Millrace wheel, the swing span, the viaduct's piers, the Harbour Bridge's arches, windpumps, the chasm bridge, the rocket              | P0                      |
+| P5   | E    | The home valley in the land (v2's plan with 8.1's changes), Driftwood's cove, the Headland's wall, the Frostline's cirque with A                                                                                                                       | P2, P4                  |
+| P6   | A    | The routes' chunks, path first: Col Path, High Fells, Foothill Road, Towpath, Lull Road, Coast Path, Headland Lane, Delta Road                                                                                                                         | P2                      |
+| P7   | D    | Sunstone Reach as a journey (section 7): the Drover's Road and the Rift, Palm Spring, Dust Gulch, the Lode, the Amber canyon, the salt lake, Hearthold, the fire country, the Ash Coast and Cinderwick; then the Launch Cape, Halcyon and Lumen        | P2                      |
+| P8   | C    | Cogsworth on the Cog with the Millrace, Lullford and its bridge, Fernhollow, Gullwick; Neon Harbour round its ria (8.5); the isles and the Shell Bar                                                                                                   | P2                      |
+| P9   | A    | The ways on the land (#118 to world coordinates), the journeys as shortcuts, the gate check as a test                                                                                                                                                  | P2, #95's rules (Codex) |
+
+## 16. Decisions for Matt
+
+| #   | Decision                                                                                                                    | Recommendation or decision                                                                                   |
+| --- | --------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| 1   | Keep the zoom at 12 adults across                                                                                           | **Decided 20 Oct: keep.**                                                                                    |
+| 2   | Canvases streamed in tiles instead of the zone grid                                                                         | **Decided 20 Oct: yes.**                                                                                     |
+| 3   | Sizes from the sizing table; everyday places within 15 s of the hut                                                         | **Decided 20 Oct: yes.**                                                                                     |
+| 4   | The valley at 1280 x 2688 with a real village, a farmstead and Driftwood                                                    | **Decided 20 Oct: yes.**                                                                                     |
+| 5   | Cogsworth with Gasworks Hill and the Terminus                                                                               | **Decided 20 Oct: yes.**                                                                                     |
+| 6   | Neon's canvas a quarter smaller with more street                                                                            | **Decided 20 Oct: yes** (kept in 8.5: the ria is frame, the streets keep the size).                          |
+| 7   | Sunstone Reach as one continuous land                                                                                       | **Decided 20 Oct: yes.**                                                                                     |
+| 8   | A rocket from the Launch Cape replaces the space elevator; Halcyon's lander to Lumen                                        | **Decided 20 Oct (v3): yes.**                                                                                |
+| 9   | One world canvas, authored in chunks and streamed in tiles                                                                  | **Decided 20 Oct (v3): yes.**                                                                                |
+| 10  | The map as a window onto a larger continent: sea and isles only in the south, natural borders on the other three edges      | **Yes.** It is what Matt asked for at 12:25.                                                                 |
+| 11  | Arrangement A (section 4.4): the arc, its rain shadow, the river in the east                                                | **Yes.** One cause explains the desert, the volcano and the isles, and the desert fades into the green land. |
+| 12  | About 125 zone-areas walked, with land beyond the corridors drawn but not walked                                            | **Yes.** v4's scale kept.                                                                                    |
+| 13  | The routes as paths first, with the ground fitted to each (section 6.1)                                                     | **Yes.**                                                                                                     |
+| 14  | Sunstone Reach entered from the valley over the Rift (section 7)                                                            | **Yes.** It replaces v4's pass over the spine.                                                               |
+| 15  | The Sleepwater to Driftwood's cove (reverses v4's decision 14)                                                              | **Yes.** It restores v2's estuary and keeps the valley's river short and its own.                            |
+| 16  | The Lull as the one great river, with Lullford Bridge, the Narrows Viaduct and the Harbour Bridge as its landmark bridges   | **Yes.**                                                                                                     |
+| 17  | Mount Ember on the arc, at the far south-west, with a buffer of ash, old flows, springs and a dead forest instead of a ring | **Yes.**                                                                                                     |
+| 18  | The ways at the barriers (section 10): W5 at the Rift, W6 at the young flows, W7 at Lullford's swing span                   | **Yes.**                                                                                                     |
+| 19  | The in-game map in the soft-grid style (example 2)                                                                          | **Yes** (Claude A's recommendation too).                                                                     |
+| 20  | The geography as data (height, wetness, warmth fields) that every chunk reads                                               | **Yes.**                                                                                                     |
+| 21  | Neon Harbour as the ria city of Matt's first example (8.5), not a separate city                                             | **Yes.** One port, two ages; the places and W7 stay.                                                         |
+| 22  | Easter-egg spots reserved now, designed later (section 14)                                                                  | **Yes, later.**                                                                                              |
+| 23  | The coastal steamer (S3)                                                                                                    | **Yes, later.**                                                                                              |
+| 24  | Ground pictures at 1x (or 2x)                                                                                               | **Test, then 1x if crisp.**                                                                                  |
+| 25  | Secret pockets hold no keepsakes; no one-way ledges for now; the companion stays 24 px                                      | **Yes** (from v2).                                                                                           |
 
 ## Sources
 
@@ -631,7 +731,13 @@ Developer interviews, official pages and community-maintained references, read f
 - Bulbapedia, Galar: https://bulbapedia.bulbagarden.net/wiki/Galar
 - Bulbapedia, Paldea: https://bulbapedia.bulbagarden.net/wiki/Paldea
 - Game Developer, Road to the IGF: Pixpil's Eastward: https://www.gamedeveloper.com/disciplines/road-to-the-igf-pixpil-s-i-eastward-i-
+- LibreTexts, Geology of California, 7: Cascade Range and Modoc Plateau (v5): https://geo.libretexts.org/Bookshelves/Geology/Geology_of_California/07%3A_Cascade_Range_and_Modoc_Plateau
+- Virginia Places, How the Fall Line Shaped Colonial Settlement in Virginia (v5): https://virginiaplaces.org/regions/fallcolonial.html
+- Wikipedia, History of Alexandria (v5): https://en.wikipedia.org/wiki/History_of_Alexandria
+- Wikipedia, Tarim Basin (v5; named as the analogue, not quoted): https://en.wikipedia.org/wiki/Tarim_Basin
 
 **Gaps.** No developer source gives Stardew's, Eastward's or CrossCode's map sizes or walking speeds; the reference sizes here are measured on store screenshots by character height and are good to about a quarter of an adult. No castle or desert town appears in our reference shots, so those two sizes are built from parts. The walk-seconds are measured on block-outs, not on drawn art; the redraws will move them by a few seconds. The garden's walkable share in today's totals is an estimate.
 
 **Gaps (v4).** No developer interview found here explains how Game Freak lays out a region beyond the real place it is based on; the region facts are Bulbapedia's. No Pixpil interview found here describes how Eastward's maps join. The height, wetness and rain-shadow model is ours (standard physical geography), not a game's.
+
+**Gaps (v5).** The Tarim Basin page and NASA's Oregon rain-shadow page could not be fetched from here, so the Tarim analogue is named without a quotation. The geology is a design analogue, not a simulation: the height, wetness and drainage fields are ours, the widths and distances in sections 4 to 7 are observations on the block-out, and the city's internal times are measured on its block-out streets, not on drawn art.
