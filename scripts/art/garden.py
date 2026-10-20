@@ -220,28 +220,22 @@ FROG_PAD = LILY_PADS[0]
 def draw_terrain(frame: int, hut_path: str = 'earth') -> Canvas:
     cv = Canvas(W, H)
     phase = frame % 4
-    # Broad, close-valued grass masses with soft, dithered edges, then many small
-    # tufts of blades (dark roots, lit tips) in a few shapes, denser toward the edges
-    # and around props, sparse in the trodden clearing (coherence plan, 6c).
+    # The turf is the valley's one ground (A5, Matt 19 Oct 22:40: "hard cut offs between
+    # sections"): ground.valley paints it from the valley's own coordinates, so its patches,
+    # tufts and blades run on across the garden's edges into the Woodland and the Riverside
+    # (and blend to the forest floor there once Claude A drops ground.FIXED). The garden then
+    # adds its own small flowers and clover, fewer in the trodden clearing.
     import detail
-    for y in range(H):
-        for x in range(W):
-            n = smooth_noise(x, y, 30, 11)
-            light = n > 0.66 or (n > 0.62 and (x + y) % 2 == 0) or (n > 0.6 and (x + 2 * y) % 4 == 0)
-            cv.set(x, y, G[3] if light else G[2])
+    import ground
+    ground.valley(cv, 'garden', frame)
     for ty in range(0, H, 6):
         for tx in range(0, W, 6):
             x = tx + int(noise2(tx, ty, 4) * 6)
             y = ty + int(noise2(tx, ty, 5) * 6)
             clearing = ((x - PLAZA[0]) / 70) ** 2 + ((y - PLAZA[1] + 40) / 70) ** 2 < 1
-            edge = min(x, W - x, y, H - y) < 26
-            cluster = smooth_noise(x, y, 34, 63) > 0.58
-            density = 0.05 if clearing else 0.5 if edge else 0.36 if cluster else 0.14
-            if noise2(tx, ty, 3) < density:
-                ground = 3 if cv.get(x, y)[:3] == tuple(int(G[3][k:k + 2], 16) for k in (1, 3, 5)) else 2
-                kind = int(noise2(tx, ty, 8) * 6) if not clearing else 3
-                detail.grass_tuft(cv, x, y, kind, G, ground)
-            elif noise2(tx, ty, 7) < 0.07:
+            if clearing or not (0 <= x < W - 1 and 0 <= y < H - 1):
+                continue
+            if noise2(tx, ty, 7) < 0.07:
                 cv.set(x, y, '#E9E4CF')  # a tiny white flower
                 cv.set(x, y + 1, G[1])
             elif noise2(tx, ty, 9) < 0.05:  # clover: three leaves, lit on the left
