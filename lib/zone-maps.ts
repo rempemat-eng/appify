@@ -2832,7 +2832,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['kiosk', 'tea_kiosk', 250, 299, 41, 48],
       ['lamp-r1', 'gas_lamp', 130, 465, 13, 49],
       ['bench-r', 'iron_bench', 197, 526, 42, 25],
-      ['mast', 'airship_mast', 159, 381, 158, 180],
+      ['mast', 'airship_mast', 159, 381, 157, 180],
     ],
     walk: [
       '80.',
