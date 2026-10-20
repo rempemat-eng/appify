@@ -12,19 +12,23 @@ stacks of axis-aligned blocks ... the faces are uniform horizontal bands of the 
 texture"): the way top-down games build cliffs, a hand-drawn tileset laid by an autotiler,
 not texture computed per pixel.
 
-- The tileset is data, drawn pixel by pixel, in `mountain_tiles.py`: rock columns 8 to 24
+- The tileset is data, drawn pixel by pixel, in `mountain_tiles.py`: rock columns 6 to 32
   px wide in crowns, bodies and feet (so a column stacks to any face height and no run
   repeats), lips (a snow cornice, a turf lip, a bare coping, a mossy coping), side bands
   lit west and dark east with caps for the outer corners, feet with fallen stones, the
-  crisp snow edge, hanging grass and fern, the tarn's banks and seracs.
+  crisp snow edge, hanging grass and fern, the tarn's banks and seracs (tilted, leaning
+  and toppled blocks in four sizes).
 - The autotiler (`lattice`, `cliff_faces`, `lips`, `hangs`, `bands`, `feet`, `snow_edge`,
   `shore`, `icefall`) lays them along the tiers' outlines: the outlines are organic (lobes,
   bays, spurs, the walls receding in steps), kept on the 8 px grid as runs and 45 degree
   diagonals (a dual-grid corner autotiler: convex corners cut, concave corners filled by a
   4 px run), and a face under a diagonal rim is the same columns sheared. Each column is
-  stacked to its face's height from hashed pieces, each block one of the face ramps; a
-  stretch of face that turns west is lit, one that turns east shaded, from the outline's
-  own normal. Variants are picked by hash, never the same one twice running.
+  stacked to its face's height from hashed pieces, each block one of the face ramps;
+  columns are grouped into masses (closed fissures inside, a deep crack between, a
+  horizontal break with its overhang's shade); a stretch of face that turns west is lit,
+  one that turns east shaded, from the outline's own normal; the deepest shade is
+  violet-brown. Lips lie in clumps (moss, turf, snow) along bare rims. Variants are picked
+  by hash, never the same one twice running.
 
 Verticality is the soft grid's (verticality.md 4f, terrace.py on PR #90): a mountain is
 stacked tiers, not a painted triangle. A tier is one south face of 32 px (16 for a low step
@@ -81,8 +85,9 @@ writes OUT_DIR/pilot.png (the Col Path climbing in switchbacks past the Col hut 
 Frostline lip, the cirque with its tarn under the headwall, the icefall and the névé beyond,
 640 x 1152 at 1x), pilot-2x.png (with residents standing in it for scale), pilot-night.png,
 kit-sheet.png (every piece at 2x, labelled with its detail bar result), tileset.png (the
-tileset itself at 5x), compare.png (pilot crops beside Eastward and Sea of Stars mountain
-and cliff scenes at the same character height, when the screenshots are in REF_DIR), and
+tileset itself at 5x), compare.png (each pilot crop beside the Eastward or Sea of Stars scene it
+is meant to match, at the same character height; the screenshots are read from REF_DIR or
+napattack-refs in the temp folder, and without them compare.png is not written), and
 prints the bar for the measured boxes. Default OUT_DIR: napattack-mountain-kit in the
 system's temp folder, never the repository.
 """
@@ -755,10 +760,11 @@ SHORE_KEY.update({c: ('water_cool', i) for i, c in enumerate('ghijkl')})
 SHORE_KEY['K'] = ('stone', EDGE_T)
 ICE_KEY = {c: ('snow', i) for i, c in enumerate('abcdef')}
 ICE_KEY.update({c: ('sky', i) for i, c in enumerate('uvwxyz')})
-ICE_KEY.update({'X': ('water_cool', 0), 'Y': ('water_cool', 1)})
+ICE_KEY.update({'X': ('water_cool', 0), 'Y': ('water_cool', 1), 'g': ('snow_cool', 2), 'h': ('snow_cool', 3),
+                'i': ('snow_cool', 4)})
 ROCK_CHARS = set('012345ABCDEFPQRSTU')
-WIDTHS = (8, 10, 12, 14, 16, 20, 24)
-FACE_ROCKS = ('stone', 'stone', 'ashlar', 'stone_warm', 'ashlar_cool')   # each block one of these ramps
+WIDTHS = (6, 8, 10, 12, 14, 16, 20, 24, 28, 32)
+FACE_ROCKS = ('stone', 'stone', 'ashlar', 'stone_warm', 'ashlar_cool', 'ash', 'ashlar_warm')  # each block one of these
 
 
 def decode(ch, rock=None, cover='snow', key=None):
@@ -840,13 +846,18 @@ def column_rows(w, H, seed):
 
 
 def cliff_faces(p: Plot, R: Relief, seed=0, m=None, lam=None, cover=None):
-    """Every south face in m built from the tileset's rock columns: along each tier's faces
-    the autotiler lays columns of hashed widths (8 to 24 px), each one of the face ramps
-    and stacked to that face's height; a stretch of face that turns west to the light is a
-    tone lighter and on its warm sibling, one that turns east a tone darker on its cool
-    sibling; the lowest third a tone down. A face under a diagonal rim is the same columns
-    sheared (rows run with the rim, columns stay upright). `cover` names what lies on the
-    ledgelets per pixel ('snow' or 'grass_cool')."""
+    """Every south face in m built from the tileset's rock columns. Along each tier's faces
+    the autotiler lays columns of hashed widths (6 to 32 px), each stacked to that face's
+    height from its crown, bodies and foot, each block one of the face ramps. Columns are
+    grouped into masses of one to four: inside a mass the fissures close to shallow joints,
+    between masses a deep crack two px wide; a mass is lit along its west edge and falls
+    into shade along its east; most masses taller than 24 px carry a horizontal break (a
+    bedding joint with the block above lit along its lip and the shade of its overhang
+    under it). A stretch of face that turns west to the light is a tone lighter on its
+    warm sibling, one that turns east a tone darker; the lowest quarter a tone down; the
+    deepest shade violet-brown (earth_cool and basalt_warm), never a cold grey. A face
+    under a diagonal rim is the same columns sheared (rows run with the rim, columns stay
+    upright). `cover` names what lies on the ledgelets per pixel ('snow' or 'grass_cool')."""
     fc = R.face if m is None else (R.face & np.asarray(m, bool))
     if not fc.any():
         return
@@ -854,43 +865,83 @@ def cliff_faces(p: Plot, R: Relief, seed=0, m=None, lam=None, cover=None):
     for k in [int(v) for v in np.unique(R.kf[fc])]:
         sel = fc & (R.kf == k)
         xs = np.nonzero(sel.any(0))[0]
-        x = int(xs.min()) - int(hash01(k, 0, seed) * 24)
-        ci = 0
+        x = int(xs.min()) - int(hash01(k, 0, seed) * 32)
+        ci, mi = 0, 0
         while x <= xs.max():
-            w = WIDTHS[int(hash01(ci, k, seed + 1) ** 1.3 * len(WIDTHS))]
-            x0, x1 = max(0, x), max(0, x + w)
-            band = sel[:, x0:x1]
-            if band.any():
-                ys, bx = np.nonzero(band)
-                bx = bx + x0
-                cs = (ci * 131 + k * 7919 + seed) & 0xFFFF
-                rows, piece, foot = column_rows(w, int(R.fh[ys, bx].max()), cs)
-                # each piece of the column (its crown, each body) one of the face ramps: the
-                # stones of a column differ as granite does, block by block
-                fams = [IDX[FACE_ROCKS[int(hash01(cs, j, seed + 2) * len(FACE_ROCKS))]] for j in range(max(piece) + 1)]
-                fam = fams[0]
-                L = float(np.median(lam[ys, bx]))
-                shade = 1 if L > 0.4 else (-1 if L < -0.25 else 0)
-                swap = WARM if L > 0.4 else (COOL if L < -0.6 else None)
-                for y_, x_ in zip(ys, bx):
-                    d, fh = int(R.depth[y_, x_]), int(R.fh[y_, x_])
-                    ch = foot[d - (fh - 4)][x_ - x] if d >= fh - 4 else rows[d][x_ - x]
-                    fam = fams[piece[d]] if d < fh - 4 else fams[0]
-                    f_, t = decode(ch, fam, cover[y_, x_] if cover is not None else 'snow')
-                    if ch in ROCK_CHARS:
-                        t0 = t
-                        # a face turned into shade keeps its lit edges a tone up (the light
-                        # still catches the west side of each column)
-                        t = t + (shade if (shade > 0 or t0 <= 3) else 0) - (1 if d >= fh * 0.75 else 0)
-                        if swap is not None:
-                            f_ = int(swap[f_])
-                        t = max(t, min(t0, 1))        # the shade never swallows a stone's edge
-                        if t <= 0:
-                            f_ = IDX['stone_warm']
-                        t = int(np.clip(t, 0, 5))
-                    p.f[y_, x_], p.t[y_, x_] = f_, t
-            x += w
-            ci += 1
+            # a mass: one to four columns, its own break row
+            n = 1 + int(hash01(mi, k, seed + 3) ** 0.8 * 4)
+            widths = [WIDTHS[int(hash01(ci + j, k, seed + 1) ** 1.2 * len(WIDTHS))] for j in range(n)]
+            mw = sum(widths)
+            brk = hash01(mi, k, seed + 4)
+            mx0 = x
+            for j, w in enumerate(widths):
+                last = j == n - 1
+                x0, x1 = max(0, x), max(0, x + w)
+                band = sel[:, x0:x1]
+                if band.any():
+                    ys, bx = np.nonzero(band)
+                    bx = bx + x0
+                    cs = ((ci + j) * 131 + k * 7919 + seed) & 0xFFFF
+                    rows, piece, foot = column_rows(w, int(R.fh[ys, bx].max()), cs)
+                    fams = [IDX[FACE_ROCKS[int(hash01(cs, jj, seed + 2) * len(FACE_ROCKS))]] for jj in range(max(piece) + 1)]
+                    # a wide column's blocks are two stones side by side, each its own ramp
+                    fams2 = [IDX[FACE_ROCKS[int(hash01(cs, jj, seed + 9) * len(FACE_ROCKS))]] for jj in range(max(piece) + 1)]
+                    split = [int(w * (0.35 + 0.3 * hash01(cs, jj, seed + 8))) if w >= 16 else w for jj in range(max(piece) + 1)]
+                    L = float(np.median(lam[ys, bx]))
+                    shade = 1 if L > 0.4 else (-1 if L < -0.25 else 0)
+                    for y_, x_ in zip(ys, bx):
+                        d, fh = int(R.depth[y_, x_]), int(R.fh[y_, x_])
+                        lx = x_ - x
+                        ch = foot[d - (fh - 4)][lx] if d >= fh - 4 else rows[d][lx]
+                        pc = piece[d] if d < fh - 4 else 0
+                        fam = fams2[pc] if lx >= split[pc] else fams[pc]
+                        if ch == 'K' and lx == w - 1 and not last:
+                            ch = '1' if (d + lx) % 5 else '0'      # a closed fissure inside a mass
+                        if last and lx == w - 2 and ch in ROCK_CHARS:
+                            ch = '0'                                # the deep crack, two px
+                        f_, t = decode(ch, fam, cover[y_, x_] if cover is not None else 'snow')
+                        if ch in ROCK_CHARS:
+                            t0 = t
+                            u = (x_ - mx0 + 0.5) / mw
+                            t = t + (1 if 2 <= t0 <= 3 and shade <= 0 else 0)   # stones mid grey, joints dark
+                            # inside a mass the columns' own edges soften: one rock, not bars
+                            if j > 0 and lx <= 1 and t0 >= 4:
+                                t -= 1
+                            if not last and lx >= w - 3 and t0 <= 2 and ch != '0':
+                                t += 1
+                            t = t + (shade if (shade > 0 or t0 <= 3) else 0) - (1 if d >= fh * 0.8 else 0)
+                            t += 1 if (u < 0.18 and shade >= 0 and t0 >= 3) else (-1 if u > 0.88 else 0)
+                            hb = 8 + int(brk * max(1, fh - 18))
+                            if fh >= 24 and brk < 0.7:
+                                if d == hb:
+                                    t = 0
+                                elif d in (hb + 1, hb + 2):
+                                    t -= 3 - (d - hb)
+                                elif d == hb - 1:
+                                    t += 1
+                            if shade > 0:
+                                f_ = int(WARM[f_])
+                            elif d >= fh * 0.8:
+                                f_ = int(COOL[f_])              # the foot in the cool of the ground
+                            t = max(t, min(t0, 1))
+                            t = int(np.clip(t, 0, 5))
+                            if t == 0 and t0 <= 1:
+                                # a crevice: violet-black, brown-black where it is damp
+                                hz = hash01(x_ // 8, y_ // 6, seed + 11)
+                                f_, t = ((IDX['basalt_warm'], 1) if hz < 0.45 else
+                                         (IDX['ash'], 1) if hz < 0.75 else (IDX['earth_cool'], 1))
+                            elif t == 0:
+                                f_ = IDX['stone_warm']         # a stone fallen into shade
+                                t = 0 if hash01(cs, piece[min(d, len(piece) - 1)], 3) < 0.5 else 1
+                            elif t == 1:
+                                f_ = IDX['earth_cool'] if FAMILY[fam] == IDX['ashlar'] else IDX['stone_warm']
+                            elif t == 2 and shade < 0:
+                                f_ = IDX['ash_warm']
+                        p.f[y_, x_], p.t[y_, x_] = f_, t
+                x += w
+            ci += n
+            mi += 1
+    despeckle(p, fc & (hash01(p.x // 3, p.y // 3, seed + 6) < 0.5), passes=1)
     p.solid |= fc
     p.walk &= ~fc
 
@@ -928,7 +979,7 @@ def lips(p: Plot, R: Relief, kind, seed=0, m=None):
             p.f[yy, x], p.t[yy, x] = decode(ch, p.f[yy, x])
 
 
-def hangs(p: Plot, R: Relief, kind, seed=0, every=0.07):
+def hangs(p: Plot, R: Relief, kind, seed=0, every=0.05):
     """Grass and fern hanging over faces from turf lips, one now and then (by hash)."""
     for y, x in zip(*np.nonzero(R.rim)):
         if kind[y, x] != 'turf' or hash01(x // 6, y // 8, seed) > every or x % 6:
@@ -1420,14 +1471,14 @@ def tarn(p: Plot, m, seed=0, ice=None):
     p.f[ok] = COOL[sf[ok]]
     p.t[ok] = np.clip(st[ok] - 2, 1, 3)
     p.step(m & (from_n <= 1), -1, lo=0)
-    stamp(p, m & ~refl, 0.025, seed + 14, FLAT, swap='mix')
+    stamp(p, m & ~refl, 0.015, seed + 14, FLAT, swap='mix')
     # cat's paws: a patch where the wind ruffles the water, short lit arcs over shade
     paw = m & (d > 6) & (fbm(p.x, p.y, 22, seed + 13) > 0.62)
     arc = paw & (((p.x + 3 * ((p.y // 3) % 3)) % 9) < 4) & (p.y % 3 == 0)
     p.t[arc] = np.minimum(p.t[arc] + 1, 4)
     p.t[shift(arc, 0, 1, False) & paw & ~arc] = np.maximum(p.t[shift(arc, 0, 1, False) & paw & ~arc] - 1, 0)
     # streaks lying with the wind, each over its own shade, and glints in pairs
-    for i, (x, y) in enumerate(_scatter(m & (d > 4), 300, seed + 4)):
+    for i, (x, y) in enumerate(_scatter(m & (d > 4), 520, seed + 4)):
         L = 3 + int(hash01(x, y, seed + 5) * 4)
         for j in range(L):
             if x + j < p.w and y + 1 < p.h and m[y, x + j] and m[y + 1, x + j]:
@@ -1583,35 +1634,38 @@ def glacier(p: Plot, m, seed=0, bare=None, flow=(0.25, 1.0), crevasses=None):
 
 
 def icefall(p: Plot, m, seed=0, R=None):
-    """The glacier pouring over the headwall as a jumble of seracs (the north border): the
-    broken ice under and between them crevassed and in deep blue shade with snow bridges,
-    and over it blocks of ice from the tileset (SERACS) in staggered rows, each a lit cap
-    of old snow over a blue face lit west and dark east, the lower rows in front, more of
-    them where the ice falls over a face. Nothing walks here. Returns the mask."""
+    """The glacier breaking over the headwall (the north border): a jumble of seracs from
+    the tileset, tilted, leaning and toppled blocks in four sizes packed with dark crevasse
+    gaps between them, the biggest where the ice falls over a face; towards its head (the
+    névé) the blocks shrink and are buried in snow, so the icefall ends in a snow slope
+    with a few humps instead of running on over the flat. Nothing walks here. Returns the
+    mask."""
     m = np.asarray(m, bool)
     if not m.any():
         return m
-    # the broken surface: old snow and blue ice, crevasses across the flow in deep shade
-    n = fbm(p.x * 0.6, p.y, 14, seed)
-    p.put(m, 'snow_cool', 3)
-    p.put(m & (n > 0.56), 'snow', 4)
-    p.put(m & (n < 0.42), 'sky', 3)
-    p.put(m & (n < 0.32), 'sky', 2)
-    cv = m & (((p.y + (fbm(p.x, 0 * p.y, 12, seed + 6) * 8).astype(int)) % 9) == 0) & (hash01(p.x // 7, p.y // 9, seed + 7) < 0.6)
-    p.put(cv, 'water_cool', 1)
-    p.put(shift(cv, 0, 1, False) & m & ~cv, 'sky', 4)
-    sprites = [tile_sprite(s, ICE_KEY) for s in tiles.SERACS]
-    near = dilate(m, 3)
     ys, xs = np.nonzero(m)
-    y, row = int(ys.min()) - 8, 0
-    while y < ys.max() + 2:
-        x = int(xs.min()) - 10 + int(hash01(row, 0, seed) * 10)
-        while x < xs.max() + 2:
-            sp = sprites[int(hash01(x // 4, row, seed + 1) * len(sprites))]
-            fy = y + int(hash01(x // 4, row, seed + 2) * 4)
+    top, bot = int(ys.min()), int(ys.max())
+    head = np.clip((p.y - top) / max(1.0, bot - top), 0, 1)      # 0 at the névé, 1 at the foot
+    # the gaps between the blocks: deep crevasses in shade
+    n = fbm(p.x * 0.7, p.y, 8, seed)
+    p.put(m, 'water_cool', 1)
+    p.put(m & (n > 0.55), 'sky', 1)
+    sprites = [tile_sprite(s, ICE_KEY) for s in tiles.SERACS]
+    near = dilate(m, 2)
+    y, row = top - 4, 0
+    while y < bot + 4:
+        x = int(xs.min()) - 8 + int(hash01(row, 0, seed) * 8)
+        while x < xs.max() + 4:
+            fy = min(p.h - 1, y + int(hash01(x // 4, row, seed + 2) * 6))
+            hh = float(head[fy, min(p.w - 1, max(0, x))])
+            # bigger blocks lower down and over the faces, small ones near the head
+            on_face = R is not None and 0 <= x < p.w and R.face[fy, min(p.w - 1, max(0, x + 4))]
+            r = hash01(x // 4, row, seed + 1)
+            span = max(2, int(len(sprites) * (0.35 + 0.65 * hh)))
+            i = int(r * span) if not on_face else min(len(sprites) - 1, int(span * 0.5 + r * span * 0.5))
+            sp = sprites[i]
             fx = x + sp.w // 2
-            on_face = R is not None and 0 <= fy < p.h and 0 <= fx < p.w and R.face[fy, fx]
-            if 0 <= fy < p.h and 0 <= fx < p.w and m[fy, fx] and (on_face or hash01(fx, fy, seed + 3) < 0.35):
+            if 0 <= fx < p.w and m[fy, fx]:
                 oy, ox = fy - sp.fy, fx - sp.fx
                 sy, sx = np.nonzero(sp.m)
                 gy, gx = sy + oy, sx + ox
@@ -1620,9 +1674,16 @@ def icefall(p: Plot, m, seed=0, R=None):
                 ok = near[gy, gx]
                 p.f[gy[ok], gx[ok]] = sp.f[sy[ok], sx[ok]]
                 p.t[gy[ok], gx[ok]] = sp.t[sy[ok], sx[ok]]
-            x += sp.w + int(hash01(x, row, seed + 4) * 6) - 2
-        y += 11 + int(hash01(row, 1, seed + 5) * 7)
+            x += sp.w - 1 + int(hash01(x, row, seed + 4) * 3)
+        y += 7 + int(hash01(row, 1, seed + 5) * 5) + int(6 * float(np.median(head[min(p.h - 1, max(0, y)), xs])))
         row += 1
+    # the head buried in snow: drifts over the blocks, deeper towards the névé, humps where
+    # a block still shows through
+    bury = m & (fbm(p.x * 0.6, p.y, 10, seed + 6) > 0.25 + 0.75 * head)
+    bury = rounded(bury, 1)
+    snowfield(p, bury, seed + 7, swells=0.2, hollows=0.0)
+    p.put(bury & ~shift(bury, 0, -1, False) & m, 'snow_cool', 2)
+    p.t[bury & ~shift(bury, 0, 1, False)] = 5
     p.hazard |= m
     p.walk &= ~m
     p.solid |= m
@@ -1654,6 +1715,9 @@ def shore(p: Plot, water, seed=0):
             if ch == '.' or not 0 <= yy < p.h or (water[yy, x] if i >= 2 else land[yy, x]) or p.solid[yy, x]:
                 continue
             p.f[yy, x], p.t[yy, x] = decode(ch, key=SHORE_KEY)
+    # a thin rim of ice along the edge, broken
+    rim = water & ~erode(water, 1) & (hash01(p.x // 5, p.y // 3, seed + 10) < 0.55)
+    p.put(rim, 'snow_cool', 4)
     sides = (water & ~shift(water, 1, 0, False)) | (water & ~shift(water, -1, 0, False))
     ring = dilate(sides, 1) & land & ~p.solid
     p.put(ring & (hash01(p.x // 2, p.y // 2, seed + 9) < 0.6), 'stone', 2)
@@ -2335,29 +2399,38 @@ def _bench_tier(y):
 
 
 def wall_masses(seed=1):
-    """The masses of both walls (as HEADWALL's): stepping up north from their first row in
-    cliffs of 32 or 64 with narrow ledges; each mass ends towards the corridor further out
-    the higher it stands above the bench beside it (the wall recedes in steps, so every
-    mass shows its south face and its corner), jittered so no two line up."""
+    """The masses of both walls (as HEADWALL's, with a shear): stepping up north from their
+    first row in cliffs of 32 or 64 with ledges 12 to 56 px deep, so no rhythm repeats;
+    each mass ends towards the corridor further out the higher it stands above the bench
+    beside it, its end slanting back as it runs north (a face turned to the corridor, not
+    a long side band), jittered so no two line up. One mass on each wall is a tall face of
+    64 standing forward to the corridor over a deep ledge, the wall's one great cliff."""
     out = []
     for (side, edge, y, k) in WALLS:
         sd = seed + (side == 'e')
         ey = np.array([e[0] for e in edge][::-1], float)
         ex = np.array([e[1] for e in edge][::-1], float)
         i = 0
+        great = 3 if side == 'w' else 4
         while y > 200:
             above = max(0, k - _bench_tier(y) - 1)
             x_in = float(np.interp(y, ey, ex)) + (hash01(i, 1, sd) - 0.5) * 80
             x_in += (-1 if side == 'w' else 1) * min(above, 4) * 10
-            # the mass runs back north 140 to 260 px: further out the walls above it stand on
+            if i == great:
+                x_in = float(np.interp(y, ey, ex)) + (-1 if side == 'w' else 1) * 20
+            # the mass runs back north 72 to 152 px: further out the walls above it stand on
             # it; nearer the corridor it ends as a spur whose back meets the bench
             y_back = y - 72 - int(hash01(i, 4, sd) * 80)
-            out.append((-200, y_back, x_in, y, k) if side == 'w' else (x_in, y_back, 900, y, k))
-            two = hash01(i, 2, sd) < 0.45
-            y -= (64 if two else 32) + 12 + int(hash01(i, 3, sd) ** 1.5 * 34)
+            sh = 0.15 + 0.45 * hash01(i, 5, sd)
+            out.append(((-200, y_back, x_in, y, k) if side == 'w' else (x_in, y_back, 900, y, k), sh if side == 'w' else -sh))
+            two = i == great or (i != great - 1 and hash01(i, 2, sd) < 0.3)
+            ledge = 12 + int(hash01(i, 3, sd) ** 1.8 * 36)
+            if i == great - 1:
+                ledge = 44                       # the deep ledge the great cliff rises from
+            y -= (64 if two else 32) + ledge
             k += 2 if two else 1
             i += 1
-    return [(x0, y0, x1, y1, k, 36, 16, 48) for (x0, y0, x1, y1, k) in out]
+    return [(x0, y0, x1, y1, k, 36, 16, 48, s) for ((x0, y0, x1, y1, k), s) in out]
 
 
 def _nz(X, Y, scale, seed):
@@ -2380,9 +2453,11 @@ def pilot_cells(seed=1):
             g = g * (1 - wx * wy) + (y0 - Y) * wx * wy
         Cb = np.where(g > 0, np.maximum(Cb, k), Cb)
     C = Cb.copy()
-    for i, (x0, y0, x1, y1, k, r, lobe, size) in enumerate(list(HEADWALL) + wall_masses(seed)):
+    for i, mass in enumerate([tuple(h) + (0.0,) for h in HEADWALL] + wall_masses(seed)):
+        x0, y0, x1, y1, k, r, lobe, size, sh = mass
         Xw = X + _nz(X, Y, size, seed + 100 + 7 * i) * lobe
         Yw = Y + _nz(X, Y, size, seed + 103 + 7 * i) * lobe
+        Xw = Xw + sh * (y1 - Yw)            # the end slants back as the mass runs north
         dx = np.maximum(np.maximum(x0 + r - Xw, Xw - (x1 - r)), 0)
         dy = np.maximum(np.maximum(y0 + r - Yw, Yw - (y1 - r)), 0)
         C = np.where(dx * dx + dy * dy <= r * r, np.maximum(C, k), C)
@@ -2514,6 +2589,39 @@ def ledge_snow(p: Plot, R: Relief, m, seed=0, back=(4, 11), lip=(2, 4)):
 
 
 
+def shore_cells(m, seed=0, min_run=3):
+    """A water body's cells with a shore of smooth stepped curves: per column its north and
+    south edge, every run along them at least `min_run` cells and of varied length (short
+    runs merged into a neighbour), so the lattice steps at 45 degrees only at the corners
+    between runs, never in a sawtooth."""
+    m = np.asarray(m, bool)
+    cols = np.nonzero(m.any(0))[0]
+    out = np.zeros(m.shape, np.int16)
+    if not len(cols):
+        return out
+    top = np.array([np.nonzero(m[:, c])[0].min() for c in cols])
+    bot = np.array([np.nonzero(m[:, c])[0].max() for c in cols])
+    for r in (top, bot):
+        for _ in range(6):
+            i, changed = 0, False
+            while i < len(r):
+                j = i
+                while j + 1 < len(r) and r[j + 1] == r[i]:
+                    j += 1
+                need = min_run + int(hash01(i, int(r[i]), seed) * 2)
+                if j - i + 1 < need and 2 < i and j + 3 < len(r):
+                    left, right = r[i - 1], r[j + 1]
+                    r[i:j + 1] = left if abs(int(left) - int(r[i])) <= abs(int(right) - int(r[i])) else right
+                    changed = True
+                i = j + 1
+            if not changed:
+                break
+    for c, t, b in zip(cols, top, bot):
+        out[t:b + 1, c] = 1
+    # never more than a cell beyond the shape it smooths (the ends taper, never square)
+    return (out.astype(bool) & dilate(m, 1)).astype(np.int16)
+
+
 def _face_span(R, x0, x1, k):
     """The rows a tier's face spans over columns x0..x1: (top, bottom + 1), or None."""
     ys = np.nonzero((R.face[:, x0:x1] & (R.kf[:, x0:x1] == k)).any(1))[0]
@@ -2541,8 +2649,15 @@ def pilot(seed=1):
     alpine_turf(p, walk_tops & (T == 2), seed + 3, flowers=0.5)
     alpine_turf(p, walk_tops & (T == 3), seed + 4, flowers=0.3, stones=1.6)
     floor = walk_tops & (T == 4)
+    # a sliver of the cirque floor pinched between a wall and the stream is the wall's
+    # rubble, not a strip of snowfield
+    core = dilate(erode(floor, 7), 7) & floor
+    sliver = floor & ~core
+    frame = frame | sliver
+    walk_tops = tops & ~frame
+    floor = core
     snowfield(p, floor, seed + 5, swells=0.1, hollows=0.04)
-    low = frame & (T <= 4)                   # the walls' lowest ledges: turf and moss
+    low = frame & (T <= 4) & ~sliver         # the walls' lowest ledges: turf and moss
     alpine_turf(p, low, seed + 6, flowers=0.2, stones=2.0)
     # the névé: the high snowfield behind the headwall, its edge a natural shape
     neve_g = (220 + 50 * _nz(p.x * 0.5, 0 * p.y, 60, seed + 26)) - np.abs(p.x - 330.0) * 0.9 + (150 - p.y)
@@ -2573,7 +2688,13 @@ def pilot(seed=1):
     kind = np.full(p.f.shape, '', object)        # what lies at each top: lips and feet
     kind[tops & ~snow_all] = 'turf'
     kind[ledges & ~snow_all] = 'rock'
-    kind[ledges & ~snow_all & (T <= 7) & (hash01(p.x // 24, p.y // 24, seed + 18) < 0.35)] = 'moss'
+    # on bare ledges the lip is rock, with clumps of moss and turf low down and of snow
+    # high up (clumps 8 to 30 px along the rim, never an even lip)
+    clump = fbm(p.x, p.y // 8 * 8, 12, seed + 18)
+    bare = ledges & ~snow_all
+    kind[bare & (clump < 0.36) & (T <= 8)] = 'moss'
+    kind[bare & (clump > 0.68) & (T <= 6)] = 'turf'
+    kind[bare & (clump > 0.66) & (T > 6)] = 'snow'
     kind[snow_all] = 'snow'
     cover = np.where(T >= 5, 'snow', 'grass_cool').astype(object)
     cliff_faces(p, R, seed + 20, cover=cover)
@@ -2588,7 +2709,7 @@ def pilot(seed=1):
     X, Y = np.meshgrid(np.arange(cols) * GRID + 4.0, np.arange(rows) * GRID + 4.0)
     u, v = (X - 286) / 116.0, (Y - 466) / 44.0
     g = 1 - np.hypot(u, v) + _nz(X, Y, 40, seed + 29) * 0.16 + _nz(X, Y, 18, seed + 28) * 0.06
-    tarn_m = lattice((g > 0).astype(np.int16), PW, PH).astype(bool) & floor & ~shift(R.face, 0, -2, False)
+    tarn_m = lattice(shore_cells(g > 0, seed + 30), PW, PH).astype(bool) & floor & ~shift(R.face, 0, -2, False)
     # the moraine: a ridge of rubble damming the tarn, its crest lit, its south slope in
     # shade with old snow lying in it
     yc = 538 + 7 * np.sin(p.x / 41.0) + 5 * (fbm(p.x, 0 * p.y, 30, seed + 31) - 0.5) * 2
@@ -2610,12 +2731,20 @@ def pilot(seed=1):
         scree_fan(p, (ax, ay), ln, 0.7, seed + 40 + i, m=floor & ~tarn_m & ~tongue, snowy=floor)
     tarn(p, tarn_m, seed + 39, ice=9)
     shore(p, tarn_m, seed + 45)
+    # rocks breaking the shoreline, half in the water
+    for i, x in enumerate(range(200, 400, 46)):
+        col = np.nonzero(tarn_m[:, x + int(hash01(i, 0, seed + 46) * 20)])[0]
+        if len(col) and hash01(i, 1, seed + 46) < 0.7:
+            xx = x + int(hash01(i, 0, seed + 46) * 20)
+            yy = int(col.max()) - 1 if i % 2 else int(col.min()) + 3
+            w = 5 + int(hash01(i, 2, seed + 46) * 6)
+            stone(p, xx - w // 2, yy - 2, w, max(3, w * 2 // 3), seed + 47 + i, snow_cap=i % 3 == 0)
     channel(p, [(sx, sy), (sx - 10, sy + 6), (sx - 40, sy + 8)], 8, seed + 41)
     # the icefall: the glacier pouring over the headwall in the gully east of the buttress
     wob = (fbm(p.x * 0.3, p.y, 30, seed + 42) - 0.5) * 30
     half = np.interp(p.y, [130, 200, 300, 400], [56, 40, 32, 40]) + wob * 0.4
     ice = (np.abs(p.x - (474 + 10 * np.sin(p.y / 47.0) + wob)) < half) & (p.y > 130) & (p.y < 404)
-    ice = rounded(ice & (T >= 4), 3) & ~tongue
+    ice = rounded(ice & (T >= 4) & ~erode(neve, 10), 3) & ~tongue
     icefall(p, ice, seed + 43, R)
     # --- the stream: the tarn's outflow down the step in falls ---------------------------
     falls = ((4, 184, 200), (3, 176, 192), (2, 192, 208), (1, 208, 224))
@@ -2709,9 +2838,10 @@ def ref_image(url, box, adult):
     """An official screenshot's crop at our scale (an adult 25 px, each pixel the commonest
     colour of its block), from a local copy in REF_DIR named as the URL's file; or None."""
     import detail_bar as db
-    ref_dir = os.environ.get('REF_DIR', os.path.join(tempfile.gettempdir(), 'napattack-refs'))
-    path = os.path.join(ref_dir, url.rsplit('/', 1)[1].split('?')[0])
-    if not os.path.exists(path):
+    name = url.rsplit('/', 1)[1].split('?')[0]
+    dirs = [os.environ.get('REF_DIR', ''), os.path.join(tempfile.gettempdir(), 'napattack-refs')]
+    path = next((os.path.join(d, name) for d in dirs if d and os.path.exists(os.path.join(d, name))), None)
+    if path is None:
         return None
     im = Image.open(path).convert('RGB').crop(box)
     key = db.to_scale(im, adult)
@@ -2800,31 +2930,37 @@ def night(img):
     return Image.fromarray(a.astype(np.uint8))
 
 
+# Each pilot crop and the reference it is meant to stand beside (an index into REFS).
+COMPARE = (
+    ('ours: the west wall, its ledges and the falls', (40, 560, 240, 700), 1),
+    ('ours: the headwall, its buttress and the icefall', (330, 170, 530, 310), 0),
+    ('ours: the tarn, the moraine and the stair', (240, 420, 440, 560), 2),
+    ('ours: the Col hut under the wall, ramp B', (200, 690, 400, 830), 3),
+    ('ours: bench 1, ramp A and the east wall', (330, 900, 530, 1040), 4),
+)
+
+
 def compare_sheet(p, scale=3, size=(200, 140)):
-    """Pilot crops beside official Eastward and Sea of Stars mountain, cliff and snow scenes,
-    all at the same character height (an adult 25 px) and the same scale."""
+    """Pilot crops each beside the official Eastward or Sea of Stars scene it is meant to
+    match (COMPARE), all at the same character height (an adult 25 px) and scale. Raises
+    if a screenshot is missing, so a comparison without its references never passes."""
     ours = pilot_preview(p, 1)
-    crops = [('ours: the Col hut, ramp B and the wall', ours.crop((200, 690, 400, 830))),
-             ('ours: the headwall, its buttress and the icefall', ours.crop((330, 170, 530, 310))),
-             ('ours: the moraine stair, the lip and the tarn', ours.crop((240, 420, 440, 560))),
-             ('ours: the west wall and the falls', ours.crop((40, 560, 240, 700))),
-             ('ours: the east wall over bench 1', ours.crop((440, 860, 640, 1000)))]
-    refs = []
-    for (name, url, box, adult) in REFS:
-        im = ref_image(url, box, adult)
-        if im is not None:
-            refs.append((name, im.crop((0, 0, min(im.width, size[0]), min(im.height, size[1])))))
-    rows = max(len(crops), len(refs))
     cw, ch = size[0] * scale + 16, size[1] * scale + 30
-    sheet = Image.new('RGB', (2 * cw + 16, rows * ch + 40), (46, 40, 52))
-    _label(sheet, 'Ours (left) and official screenshots (right), all at an adult of 25 px, shown at 3x', (10, 10),
-           (250, 214, 140))
-    for i, (name, im) in enumerate(crops):
-        sheet.paste(im.convert('RGB').resize((im.width * scale, im.height * scale), Image.NEAREST), (10, 36 + i * ch))
+    sheet = Image.new('RGB', (2 * cw + 16, len(COMPARE) * ch + 40), (46, 40, 52))
+    _label(sheet, 'Ours (left) beside the official screenshot it is meant to match (right), '
+                  'both at an adult of 25 px, shown at 3x', (10, 10), (250, 214, 140))
+    for i, (name, box, ri) in enumerate(COMPARE):
+        rname, url, rbox, adult = REFS[ri]
+        ref = ref_image(url, rbox, adult)
+        if ref is None:
+            raise FileNotFoundError(f'reference screenshot missing for the comparison: {url.rsplit("/", 1)[1]} '
+                                    '(put the official screenshots in REF_DIR)')
+        ref = ref.crop((0, 0, min(ref.width, size[0]), min(ref.height, size[1])))
+        im = ours.crop(box).convert('RGB')
+        sheet.paste(im.resize((im.width * scale, im.height * scale), Image.NEAREST), (10, 36 + i * ch))
         _label(sheet, name, (10, 36 + i * ch + im.height * scale + 2))
-    for i, (name, im) in enumerate(refs):
-        sheet.paste(im.resize((im.width * scale, im.height * scale), Image.NEAREST), (cw + 16, 36 + i * ch))
-        _label(sheet, name, (cw + 16, 36 + i * ch + im.height * scale + 2))
+        sheet.paste(ref.resize((ref.width * scale, ref.height * scale), Image.NEAREST), (cw + 16, 36 + i * ch))
+        _label(sheet, rname, (cw + 16, 36 + i * ch + ref.height * scale + 2))
     return sheet
 
 
@@ -3176,8 +3312,10 @@ def main(argv):
     for box, kind, what in boxes + list(PILOT_BOXES):
         c, strict, ramp, line = bar_line(p.image(), box, kind)
         print(f'  {what:40s} {line}  isolated {c["isolated"]:.3f} cluster {c["cluster"]:.1f}')
-    cmp_ = compare_sheet(p)
-    cmp_.save(os.path.join(out, 'compare.png'))
+    try:
+        compare_sheet(p).save(os.path.join(out, 'compare.png'))
+    except FileNotFoundError as e:
+        print('compare.png not written:', e)
     items = pieces()
     sheet, rows = kit_sheet(items)
     sheet.save(os.path.join(out, 'kit-sheet.png'))
