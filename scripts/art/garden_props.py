@@ -1060,35 +1060,52 @@ def frog() -> Canvas:
 
 
 def bridge(w: int, h: int) -> Canvas:
-    """The bridge deck (a flat decal): planks across the stream with dark gaps, lit top
-    edges, grain and nail heads; side beams that show a lit top and a darker inner face;
-    capped posts; and the deck's thickness showing at its southern end."""
+    """The bridge deck (a flat decal) at Eastward's detail (world-references: uneven
+    planks, a lit deck edge and a dark front, posts set in the water): planks across the
+    stream of slightly different lengths whose ends stick out past the stringers, each
+    with a lit leading edge, grain, a knot now and then and two nail heads, a paler worn
+    track down the middle where feet go, dark gaps between; handrails on capped posts
+    that show their lit tops and darker inner faces, moss where the rails meet the posts;
+    and the deck's thickness at its southern end, where it rests on the bank."""
     cv = Canvas(w, h, pad=PAD)
-    deck = rect_set(5, 2, w - 10, h - 4)
-    for (x, y) in deck:
-        pi, r = divmod(y - 2, 4)
-        t = 2 + (1 if noise2(pi, 1, 41) > 0.8 else -1 if noise2(pi, 2, 41) < 0.15 else 0)
-        if r == 3:
-            t = 0  # the gap between planks
-        elif r == 0:
-            t += 1
-        elif noise2(x // 4, y, 42) < 0.06:
-            t -= 1
-        cv.set(x, y, WOOD[max(0, min(4, t))])
-    for y in range(3, h - 3, 4):
-        for nx in (8, w - 9):
-            cv.set(nx, y, STONE[4]); cv.set(nx, y + 1, WOOD[1])
-    for x in range(5, w - 5):
-        cv.set(x, h - 2, WOOD[1]); cv.set(x, h - 1, WOOD[0])  # the deck's southern edge
-    for x0, lit in ((1, True), (w - 5, False)):
+    for py in range(0, h - 4, 4):  # the planks, their ends ragged past the rails
+        pi = py // 4
+        ext_l = int(noise2(pi, 3, 43) * 3)
+        ext_r = int(noise2(pi, 4, 43) * 3)
+        for x in range(3 - ext_l, w - 3 + ext_r):
+            for r in range(4):
+                y = 2 + py + r
+                if y >= h - 2:
+                    continue
+                t = 2 + (1 if noise2(pi, 1, 41) > 0.8 else -1 if noise2(pi, 2, 41) < 0.15 else 0)
+                if r == 3:
+                    t = 0  # the gap between planks
+                elif r == 0:
+                    t += 1
+                elif noise2(x // 4, y, 42) < 0.08:
+                    t -= 1  # grain
+                if r in (1, 2) and abs(x - w / 2) < 9 + noise2(pi, 5, 43) * 3:
+                    t += 1  # the worn track down the middle
+                cv.set(x, y, WOOD[max(0, min(4, t))])
+        for nx in (7, w - 8):
+            cv.set(nx, 3 + py, STONE[4]); cv.set(nx, 4 + py, WOOD[1])  # nail heads over the stringers
+        if noise2(pi, 6, 43) > 0.75:
+            kx = 12 + int(noise2(pi, 7, 43) * (w - 24))
+            cv.set(kx, 3 + py, WOOD[1]); cv.set(kx + 1, 3 + py, WOOD[2])  # a knot
+    for x in range(3, w - 3):
+        cv.set(x, h - 2, WOOD[1]); cv.set(x, h - 1, WOOD[0])  # the deck's southern edge, its thickness
+    for x0, lit in ((1, True), (w - 5, False)):  # handrails along both sides
         for y in range(0, h):
             cv.set(x0, y, WOOD[3] if lit else WOOD[2]); cv.set(x0 + 1, y, WOOD[4] if lit else WOOD[3])
             cv.set(x0 + 2, y, WOOD[3] if lit else WOOD[2]); cv.set(x0 + 3, y, WOOD[1])
+            if noise2(x0, y // 3, 44) > 0.85:
+                cv.set(x0 + 2, y, WOOD[1])  # a crack along the rail
         for py in (0, h // 2 - 2, h - 4):
             cv.rect(x0 - 1, py, 6, 4, WOOD[3]); cv.hline(x0 - 1, py, 6, WOOD[4]); cv.hline(x0 - 1, py + 1, 6, WOOD[4])
             cv.set(x0 + 4, py, WOOD[3]); cv.hline(x0 - 1, py + 3, 6, WOOD[1])
-    for y in range(2, h - 2):  # the beams' shadow on the deck
-        detail.shade(cv, 5, y, 1)
+            cv.set(x0 - 1, py + 4, LEAF[2]); cv.set(x0, py + 4, LEAF[3])  # moss where the rail meets the post
+    for y in range(2, h - 2):  # the rails' shadow on the deck
+        detail.shade(cv, 5, y, 1); detail.shade(cv, w - 6, y, 1)
     return cv
 
 
