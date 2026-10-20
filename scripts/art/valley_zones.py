@@ -218,6 +218,58 @@ SAND_R = MATERIALS['sand']
 SOIL_R = MATERIALS['soil']  # (earth banks: kept off the path colours, so the lint reads them as ground)
 
 
+def earth_bluff(cv: Canvas, x: int, top: int, h: int, gx: int, built: bool = False) -> set:
+    """One column of the river's north bank in Claude B's natural earth treatment (B12,
+    garden_meadow.draw_bluff, agreed for the woodland and the riverside, E19): a turf lip
+    hanging over the edge in scallops, roots trailing from it, a face of earth in lumps
+    lit on their upper left with the odd stone bedded in it, wet and darkest at the foot.
+    `gx` is the garden's x for the same column, so the noise runs on across the seams;
+    the earth is drawn in the soil ramp (one step for each of the garden's path tones),
+    so the bank never reads as a path. `built` lays it in dressed courses instead, where
+    people use the bank. Returns the column's pixels."""
+    out = set()
+    lip = 2 + (1 if noise2(gx // 3, 11, 94) > 0.55 else 0) + (1 if noise2(gx, 12, 94) > 0.9 else 0)
+    root = noise2(gx, 13, 94) > 0.86 and not built
+    stone = noise2(gx // 4, 14, 94) > 0.78 and not built
+    for k in range(h):
+        y = top + k
+        if k == 0:
+            c = G[3]
+        elif k < lip and not built:
+            c = G[2] if k == 1 else G[1]
+        elif built:
+            si = (gx + int(noise2(gx // 6, 1, 95) * 6)) // 6
+            col = (gx + int(noise2(gx // 6, 1, 95) * 6)) % 6
+            row, r = divmod(k - 2 + (si % 2) * 2, 4)
+            base = 3 if noise2(si, row, 97) > 0.45 else 2
+            c = STONE[0] if col == 5 or r == 3 else STONE[base + 1] if col == 0 or r == 0 else STONE[base - 1] if col == 4 else STONE[base]
+            if k == 1:
+                c = STONE[4]
+        else:
+            lx = gx + int(noise2(gx // 5, k // 3, 99) * 3)
+            cell = (lx // 5, (k + (lx // 5) % 2) // 3)
+            u, v = lx % 5, (k + (lx // 5) % 2) % 3
+            t = 2 if noise2(*cell, 98) > 0.5 else 1
+            if u == 0 or v == 0:
+                t += 1
+            if u == 4 and noise2(*cell, 96) > 0.4:
+                t = 0
+            c = SOIL_R[t + 2]
+            if k == lip:
+                c = SOIL_R[2]  # the shadow under the hanging turf
+            if stone and 3 <= k <= 5:
+                c = STONE[3] if k == 3 else STONE[2] if k == 4 else STONE[1]
+            if root and lip <= k < lip + 3:
+                c = WOOD[1] if k < lip + 2 else WOOD[2]
+        if k >= h - 2 and not built:
+            c = SOIL_R[1] if k == h - 1 else SOIL_R[2]
+        elif k == h - 1:
+            c = STONE[1]
+        cv.set(x, y, c)
+        out.add((x, y))
+    return out
+
+
 def door_front(key: str, x: int, y: int):
     """Where a building's door meets the ground, in zone px, for a building placed at
     (x, y) as in a zone's objects (the same reckoning build() uses for its door check)."""
@@ -408,14 +460,14 @@ def town(frame: int = 0):
         # the square
         ('well', 'well', 144, 262), ('board', 'notice_board', 230, 252),
         ('lamp-s1', 'lamp', 60, 300), ('lamp-s2', 'lamp', 262, 316),
-        ('bench-s1', 'bench', 96, 330), ('cafe-1', 'cafe', 200, 318),
+        ('bench-s1', 'bench_east', 100, 272), ('cafe-1', 'cafe', 200, 318),  # the bench turned to face the well (E3)
         # Moss's stall on the square's south-west corner, with its stock
         ('stall', 'stall', 2, 338), ('crate-1', 'crate', 92, 386), ('barrel-1', 'barrel', 108, 384),
         ('sack-1', 'sack', 6, 398),
         # the second street of houses, east
         ('house-blue', 'house_blue', 236, 344), ('pot-hb', 'potted_plant', 288, 404),  # beside the door, off its lane
         # the ring and its spectators
-        ('bench-r1', 'bench', 100, 524), ('pole', 'pennant', 8, 430),
+        ('bench-r1', 'bench', 106, 424), ('pole', 'pennant', 8, 430),  # the bench on the ring's north side, looking onto it (E3)
         # trees framing the road south (no hedge along the border: open land runs on)
         ('tree-s1', 'tree_small', 20, 500), ('bush-s2', 'bush', 250, 540), ('tree-w1', 'tree', 2, 196),
         ('house-s1', 'house_red', 188, 444), ('pot-s1', 'potted_plant', 252, 504), ('tree-e1', 'tree', 280, 446),
@@ -1032,12 +1084,12 @@ def headland(frame: int = 0):
         wall |= pier
     objects = [
         ('tower', 'lookout_tower', 198, 300),
-        ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep', 188, 132),  # inside, off the gate (E15)
+        ('sheep-1', 'sheep', 176, 104), ('sheep-2', 'sheep_left', 236, 128), ('sheep-3', 'sheep_lying', 188, 132), ('lamb-1', 'lamb_left', 254, 136),  # inside, off the gate (E15)
         ('sheep-4', 'sheep_left', 262, 92),
         # the gate (Claude B's low field gate, #82) hung on the west pier and shut against
         # the east one, its row 11 on the piers' foot row
         *([('fold-gate', 'field_gate_low', min(posts)[0] + 2, min(posts)[1] + 8 - 11)] if posts else []),
-        ('hive-1', 'beehive', 100, 112), ('hive-2', 'beehive', 120, 106),  # in the lee of the fold's west wall
+        ('hive-1', 'beehive', 100, 112), ('hive-2', 'skep', 120, 106),  # in the lee of the fold's west wall
         ('bush-1', 'bush', 270, 230), ('bush-2', 'bush', 66, 262),
         ('bench', 'bench', 146, 418), ('stone-1', 'stone', 278, 400), ('stone-2', 'stone', 60, 380),
         # the down falls to trees on the east, running on into the woods beyond
@@ -1142,29 +1194,16 @@ def riverside(frame: int = 0):
     for (x, y) in river:
         if y < 360:
             top[x] = min(top.get(x, 999), y)
-    # the north bank's bluff, as in the garden, sinking into the meadow as the river
-    # turns away south
+    # the north bank, as in the garden: Claude B's natural earth bank (B12, E19), sinking
+    # into the meadow as the river turns away south; dressed stone only under the mill's
+    # towpath and landing, where people use the bank
     bluff = set()
     for x in range(0, 240):
         if x not in top:
             continue
         h = int((7 + int(smooth_noise(x + 320, 3, 9, 92) * 3)) * min(1.0, max(0.0, (240 - x) / 80)))
-        col = (x + 320 + int(noise2((x + 320) // 6, 1, 95) * 6)) % 6
-        si = (x + 320 + int(noise2((x + 320) // 6, 1, 95) * 6)) // 6
-        for k in range(h):
-            y = top[x] - h + k
-            bluff.add((x, y))
-            if k == 0:
-                c = G[3]
-            elif k == 1:
-                c = G[2] if (x // 2) % 3 else G[1]
-            else:
-                row, r = (k - 2 + (si % 2) * 2) // 4, (k - 2 + (si % 2) * 2) % 4
-                base = 3 if noise2(si, row, 97) > 0.45 else 2
-                c = STONE[0] if col == 5 or r == 3 else STONE[base + 1] if col == 0 or r == 0 else STONE[base - 1] if col == 4 else STONE[base]
-                if k == h - 1:
-                    c = STONE[1] if col != 5 else STONE[0]
-            cv.set(x, y, c)
+        if h > 0:
+            bluff |= earth_bluff(cv, x, top[x] - h, h, x + 320, built=112 <= x < 214)
     bank(cv, river, keep=bluff, seed=1402)
     water_body(cv, river, deep, seed=1403, glints=90)
     # the stepping stones where it is still narrow, steps cut down the bluff to them
@@ -1248,7 +1287,7 @@ def riverside(frame: int = 0):
     path |= blob(110, 280, 22, 8, seed=1406, rough=0.15)  # the mill yard by the sacks, where the lane comes in
     path |= worlds.thick([(46, ys[0] - 2), (46, 262), (48, 240), (56, 224), (68, 216)], 7, seed=23)  # the stepping stones' path up to the lane
     path |= worlds.thick([(46, ys[-1] + 2), (46, 360), (40, 398)], 5, seed=24)  # and down to the bank walk
-    path |= worlds.thick([(204, 432), (222, 462), (218, 496), (204, 506)], 5, seed=25)  # round to the bench's front, above the bend (E3)
+    path |= worlds.thick([(204, 432), (230, 458), (236, 488), (232, 502)], 5, seed=25)  # to the bench's front, between it and the bend (E3)
     path |= worlds.thick([(58, 186), (88, 184), (122, 178), (156, 172), (176, 166)], 6, seed=26)  # the cart track up to the hay field's gateway
     path |= {(x, y) for (x0, y) in path if x0 == 0 for x in range(-12, 0)}  # runs on across the seam
     lay_road(cv, {(x, y) for (x, y) in path if (x, y) not in river and (x, y) not in bluff}, seed=77,
@@ -1336,7 +1375,7 @@ def riverside(frame: int = 0):
         ('mill', 'water_mill', 140, mt - 104), ('willow-1', 'willow', 176, 300), ('willow-2', 'willow', 96, 470),
         ('heron', 'heron', heron_x, heron_y),  # wading in the shallows at the outer bank
         ('tree-1', 'tree', 66, 306), ('bush-1', 'bush', 40, 500),  # off the stepping stones, on the south bank
-        ('bench', 'bench', 168, 472),  # on the bank above the bend, looking down onto the water
+        ('bench', 'bench_east', 200, 472),  # on the bank above the bend, turned to look out over the water (E3)
         ('sack-1', 'sack', 146, mt - 28), ('barrel-m', 'barrel', 200, mt - 32),
         # old trees on the east bank, running on into the forest beyond
         ('pine-e2', 'pine', 280, 470), ('tree-e3', 'tree_autumn', 260, 226),
@@ -1344,7 +1383,7 @@ def riverside(frame: int = 0):
         # the bales lying on the windrows, where the baler dropped them along a row
         *[(f'bale-{k + 1}', key, bx, row(bx, n) - h) for k, (key, bx, n, h) in enumerate(
             (('round_bale', 160, 2, 26), ('round_bale_side', 210, 5, 21), ('round_bale', 236, 2, 26)))],
-        ('hay-gate', 'field_gate', gate_posts[0][0] + 1, gate_posts[0][1] - 24), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive', 66, 46),
+        ('hay-gate', 'field_gate', gate_posts[0][0] + 1, gate_posts[0][1] - 24), ('hive-1', 'beehive', 40, 40), ('hive-2', 'beehive_b', 66, 46),
     ]
     blocked = ((river | bluff | race) - stones - deck - towpath) | fold_wall
     blocked |= {(x, y) for x in range(gate_posts[0][0], gate_posts[1][0]) for y in range(GY - 3, GY + 2)}  # the gate, shut
@@ -2489,15 +2528,12 @@ def woodland(frame: int = 0):
     lay_road(cv, spur | {(x, y) for (x, y) in path if (x, y) not in water} | {(x, y) for (x0, y) in path if x0 == W - 1 for x in range(W, W + 12)},
              seed=79, avoid=set(water))
     # the garden's bluff on the north bank runs on and sinks into the ground upstream
+    # (in Claude B's natural earth, B12 and E19, so the bank runs on unchanged at the seam)
     for x in range(150, W):
         bh = int((7 + int(smooth_noise(x + OFF, 3, 9, 92) * 3)) * min(1.0, (x - 150) / 150))
         top = int(centre(x) - half(x))
-        for k in range(bh):
-            y = top - bh + k
-            c = G[3] if k == 0 else STONE[3] if (x // 6 + k // 4) % 2 else STONE[2]
-            if k == bh - 1:
-                c = STONE[1]
-            cv.set(x, y, c)
+        if bh > 0:
+            earth_bluff(cv, x, top - bh, bh, x + OFF)
     # the stone circle in its own small clearing: a ring of reddish trodden earth round
     # muted grass, the stones standing in it (the reference Matt chose as the bar)
     SX, SY, SRX, SRY = 78, 410, 44, 24
