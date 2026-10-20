@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import detail
 from garden_props import keep_foot as gp_keep_foot
+from garden_props import LEAF_SUN, G
 from garden_props import PAD, arched_door, canopy, plane, planks, post, rect_set, stone_blocks, topdown_gable, topdown_roof
 from garden_props import window as shuttered_window
 from materials import CREAM, GOLD, LEAF, MATERIALS, NAP, PLASTER, RED, ROOF, SLATE, SNOW, STONE, WOOD, WTR
@@ -199,18 +200,73 @@ def lamp() -> Canvas:
     return gp_keep_foot(cv, 14, 42)
 
 
+def _leaf_cluster(x: int, y: int, su: float, sv: float, seed: int):
+    """Which clump of leaves a point lies in (a jittered grid of sites about su x sv apart,
+    each row shifted, so no clump lines up with the next) and where in it: returns the
+    clump's id and the point's offset from its middle."""
+    best = None
+    gy = int(y // sv)
+    for j in (gy - 1, gy, gy + 1):
+        off = noise2(j, 1, seed) * su
+        gx = int((x - off) // su)
+        for i in (gx - 1, gx, gx + 1):
+            px = (i + 0.2 + noise2(i, j, seed + 1) * 0.6) * su + off
+            py = (j + 0.2 + noise2(i, j, seed + 2) * 0.6) * sv
+            d = (x - px) ** 2 + ((y - py) * su / sv) ** 2
+            if best is None or d < best[0]:
+                best = (d, (i, j), x - px, y - py)
+    return best[1], best[2], best[3]
+
+
 def hedge(w: int) -> Canvas:
-    """A clipped hedge, w x 22, as a box of leaves seen steeply from above: a top face of
-    round leaf clumps lit from the upper left, a front face of darker clumps in rows,
-    and a dark foot where it stands in the grass."""
+    """A clipped hedge, w x 22: a flat clipped top of leaf clumps lit from the upper left,
+    a front face of clumps in four tones that darkens toward the foot, dark pockets where
+    the twigs show through, rounded ends (the west end lit, the east end turned from the
+    light, verticality.md 4f), a few blossoms, and grass growing against its dark foot."""
     cv = Canvas(w, 22, pad=PAD)
-    front = canopy(cv, [(x, 15.5, 5.2) for x in range(4, w - 2, 7)], LEAF, seed=w + 1)
-    for (x, y) in front:  # the front face turns from the light
-        detail.shade(cv, x, y, 2)
-    for x in range(1, w - 1):
-        cv.set(x, 20, LEAF[0]); cv.set(x, 19, LEAF[0] if x % 3 else LEAF[1])
-    canopy(cv, [(x, 6, 6.2) for x in range(5, w - 3, 8)], LEAF, seed=w)
-    cv.hline(0, 21, w, LEAF[0])
+    top0, face0, foot = 1, 8, 21
+
+    def inside(x, y):
+        r = 3  # the rounded ends
+        if x < r:
+            return (r - x) ** 2 + max(0, top0 + r - y) ** 2 <= r * r + 1 or y >= top0 + r
+        if x > w - 1 - r:
+            return (x - (w - 1 - r)) ** 2 + max(0, top0 + r - y) ** 2 <= r * r + 1 or y >= top0 + r
+        return True
+
+    for y in range(top0, foot + 1):
+        for x in range(w):
+            if not inside(x, y):
+                continue
+            on_top = y < face0
+            cid, dx, dy = _leaf_cluster(x, y, 4.2 if on_top else 3.6, 2.4 if on_top else 3.0, 811 if on_top else 812)
+            lam = -dx * 0.5 - dy * 0.6  # lit on each clump's upper left
+            t = (3 if on_top else 2) + (1 if lam > 0.9 else -1 if lam < -0.9 else 0)
+            if noise2(*cid, 813) > 0.8:
+                t += 1  # a clump that catches more sun
+            if not on_top:
+                t -= (y - face0) // 5  # darker toward the foot
+                if noise2(*cid, 814) > 0.88 and lam < 0:
+                    t = 0  # a pocket where the twigs show
+            if x < 2:
+                t += 1  # the lit west end
+            elif x > w - 3:
+                t -= 1  # the east end, turned from the light
+            c = LEAF[max(0, min(4, t))]
+            if t >= 4 and on_top:
+                c = LEAF_SUN.get(LEAF[4], LEAF[4]) if noise2(x, y, 815) > 0.55 else LEAF[4]
+            cv.set(x, y, c)
+    for x in range(1, w - 1):  # the crease where the clipped top meets the face
+        if noise2(x, 0, 816) > 0.35:
+            cv.set(x, face0, LEAF[1])
+    for x in range(w):  # the dark foot, with grass against it
+        cv.set(x, foot, LEAF[0]); cv.set(x, foot - 1, LEAF[0] if noise2(x, 2, 817) > 0.4 else LEAF[1])
+        if noise2(x, 3, 818) > 0.7:
+            cv.set(x, foot, G[3]); cv.set(x, foot - 1, G[4] if x % 2 else G[3])
+    for k in range(w // 14):  # a few blossoms on the face
+        bx = 4 + int(noise2(k, 4, 819) * (w - 8))
+        by = face0 + 2 + int(noise2(k, 5, 819) * 6)
+        cv.set(bx, by, PLASTER[5]); cv.set(bx + 1, by, PLASTER[4] if k % 2 else RED[4])
     return cv
 
 
