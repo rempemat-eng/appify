@@ -10,6 +10,7 @@ on:
       - 'public/**'
       # the generated files it compares, and the lib files the generators read
       - 'lib/zone-*.ts'
+      - 'lib/world-canvas*.ts'
       - 'lib/garden-*.ts'
       - 'lib/decor*.ts'
       - 'lib/world-maps.ts'
@@ -32,6 +33,7 @@ on:
       - 'public/**'
       # the generated files it compares, and the lib files the generators read
       - 'lib/zone-*.ts'
+      - 'lib/world-canvas*.ts'
       - 'lib/garden-*.ts'
       - 'lib/decor*.ts'
       - 'lib/world-maps.ts'
