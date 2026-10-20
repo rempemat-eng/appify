@@ -120,28 +120,15 @@ def hibiscus() -> Canvas:
 PLACEMENT = {'boathouse': 'supported'}
 
 
-def boathouse() -> Canvas:
-    """The ferry's boathouse at the lagoon's edge, 88 x 116 (size guide: 64 to 112 wide,
-    80 to 112 tall, one storey and a loft, boat doors 40 wide at the water, a slipway 24 to
-    40 wide running at least 16 into the water; Matt's World Logic answer 16). How it is
-    built: a timber shed of upright boards on a timber frame, its back on the sand (the
-    keeper's door is in the back wall, toward the trail) and its boat end standing out over
-    the shallows on piles braced against each other; a shingled roof with its gable to the
-    water, a loft door in the gable under a hoist beam with its block; the boat doors
-    folded back against the front to open the boat bay 40 wide, the slip's two runners
-    going down inside past a dinghy on its cradle and a lamp; out of the doors the slipway,
-    28 wide, planked across its runners with cleats, running down at 1 in 3 into the
-    lagoon, its lower half under the water. Oars racked on the west wall, a net drying, a
-    lifebuoy, a lit window in the east bay, a ladder down to the water."""
-    w, h = 88, 116
-    cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = 43.5, 12, 34, 34, 76
-    SHINGLE = ['#2E2420', '#4A3A30', '#6A5444', '#8A7058', '#A88A6C']
-    left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 84, SHINGLE, seed=905, moss=None)
-    # re-lay its surface in whole shingles (calmer than single-pixel grain): courses 3 deep,
-    # shingles 4 wide from two timbers, each course's lower edge lit, the shade slope a step
-    # darker, moss in clusters near the eaves, the ridge capped with a board
-    SILVER_R = ['#3A3632', '#56504A', '#766E64', '#968C80', '#B4AA9C']
+SILVER_R = ['#3A3632', '#56504A', '#766E64', '#968C80', '#B4AA9C']  # timber silvered by sun and salt
+
+
+def relay_shingles(cv: Canvas, ridge: float, eave_y: int, w: int, SHINGLE):
+    """Re-lay a top-down roof's surface in whole hand-split shingles (the isles' roofs:
+    the boathouse, the rain shelter)."""
+    # courses 4 rows deep, each throwing a shadow row on the next; shingles 4 to 7 px wide
+    # from three timbers (old, silvered, new); splits, lichen and moss on whole shingles,
+    # the shade slope a step darker, the ridge capped with a board
     roof_px = [(x, y) for y in range(0, eave_y + 1) for x in range(0, w) if cv.get(x, y)[3]]
     roof_set = set(roof_px)
     FRESH = [WOOD[0], WOOD[1], WOOD[2], WOOD[3], WOOD[4]]  # shingles split new from the log, not yet silvered
@@ -180,6 +167,27 @@ def boathouse() -> Canvas:
         if abs(x - ridge) < 1.5:
             c = WOOD[4] if x < ridge else WOOD[2]  # the ridge board
         cv.set(x, y, c)
+
+
+def boathouse() -> Canvas:
+    """The ferry's boathouse at the lagoon's edge, 88 x 116 (size guide: 64 to 112 wide,
+    80 to 112 tall, one storey and a loft, boat doors 40 wide at the water, a slipway 24 to
+    40 wide running at least 16 into the water; Matt's World Logic answer 16). How it is
+    built: a timber shed of upright boards on a timber frame, its back on the sand (the
+    keeper's door is in the back wall, toward the trail) and its boat end standing out over
+    the shallows on piles braced against each other; a shingled roof with its gable to the
+    water, a loft door in the gable under a hoist beam with its block; the boat doors
+    folded back against the front to open the boat bay 40 wide, the slip's two runners
+    going down inside past a dinghy on its cradle and a lamp; out of the doors the slipway,
+    28 wide, planked across its runners with cleats, running down at 1 in 3 into the
+    lagoon, its lower half under the water. Oars racked on the west wall, a net drying, a
+    lifebuoy, a lit window in the east bay, a ladder down to the water."""
+    w, h = 88, 116
+    cv = Canvas(w, h, pad=PAD)
+    ridge, apex_y, eave_y, wall_top, wall_bottom = 43.5, 12, 34, 34, 76
+    SHINGLE = ['#2E2420', '#4A3A30', '#6A5444', '#8A7058', '#A88A6C']
+    left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 84, SHINGLE, seed=905, moss=None)
+    relay_shingles(cv, ridge, eave_y, w, SHINGLE)
     gable = topdown_gable(cv, edge_y, 6, 81, apex_y, wall_top, WOOD, boards=True)
     for (x, y) in sorted(gable):  # the gable's boards: some bleached silver, nailed to two rails, a knot here and there
         bd, q = (x - 6) // 5, (x - 6) % 5
@@ -680,29 +688,74 @@ def crab() -> Canvas:
 
 
 def rain_shelter() -> Canvas:
-    """A walkers' rain shelter on the upland, 60 x 56: four timber posts under a
-    shingled roof, a plank bench inside, a water jug on it. Modest and made here, not
-    borrowed from anyone's temple or resort."""
+    """A walkers' rain shelter on the upland, 60 x 56: four timber posts with knee braces
+    under a roof of hand-split shingles, a back rail with a board of the trails nailed to
+    it, a plank bench inside, a water jug and someone's pack left on it, a storm lantern
+    hung from the tie beam. Modest and made here, not borrowed from anyone's temple or
+    resort."""
     w, h = 60, 56
     cv = Canvas(w, h, pad=PAD)
     ridge, apex_y, eave_y = 29.5, 6, 26
-    topdown_roof(cv, ridge, apex_y, eave_y, 2, 58, SLATE, seed=911, moss=JUNGLE)
-    for y in range(eave_y + 1, h - 4):  # the dark under the roof
+    SHINGLE = ['#2E2420', '#4A3A30', '#6A5444', '#8A7058', '#A88A6C']
+    topdown_roof(cv, ridge, apex_y, eave_y, 2, 58, SHINGLE, seed=911, moss=None)
+    relay_shingles(cv, ridge, eave_y, w, SHINGLE)
+    under = topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2),
+                          5, 54, apex_y, eave_y + 1, WOOD, boards=False)
+    for (x, y) in under:  # the open gable: the roof's underside, its rafters and battens in the dark
+        c = '#1E1612' if (y - apex_y) % 3 else '#2A201A'  # the battens, row by row
+        if (x - 5) % 6 in (0, 1):
+            c = WOOD[1] if (x - 5) % 6 == 0 and x < ridge else '#3A2A20'  # a rafter, lit a little on the sunny side
+        if abs(x - ridge) < 1.5:
+            c = WOOD[1]  # the ridge beam
+        cv.set(x, y, c)
+    for y in range(eave_y + 1, h - 4):  # the dark under the roof, the far hillside seen between the posts
         for x in range(6, 54):
-            cv.set(x, y, WOOD[0] if y < eave_y + 5 else '#2A3A2A')
+            c = WOOD[0] if y < eave_y + 5 else '#2A3A2A' if y < h - 12 else '#34482E'
+            if y >= h - 12 and noise2(x // 2, y // 2, 925) > 0.6:
+                c = '#2A3A2A'  # the grass under the bench, in its shade
+            cv.set(x, y, c)
+    for x in range(6, 54):  # the tie beam under the eaves, and the back rail
+        cv.set(x, eave_y + 1, WOOD[3] if x < 30 else WOOD[2]); cv.set(x, eave_y + 2, WOOD[1])
+        cv.set(x, h - 26, WOOD[2]); cv.set(x, h - 25, WOOD[0])
+    for (x, y) in rect_set(18, h - 34, 14, 10):  # the board of the trails: its map burnt into the wood
+        c = WOOD[3] if x < 31 else WOOD[2]
+        if x in (18, 31) or y in (h - 34, h - 25):
+            c = WOOD[1]
+        cv.set(x, y, c)
+    for (x, y) in ((20, h - 31), (21, h - 31), (22, h - 30), (23, h - 30), (24, h - 29), (25, h - 29),
+                   (26, h - 30), (27, h - 31), (28, h - 31), (24, h - 28), (24, h - 27)):
+        cv.set(x, y, '#3A2418')  # the trails, burnt in
+    cv.set(26, h - 29, RED[3]); cv.set(27, h - 29, RED[3])  # you are here
+    for (x, y) in rect_set(46, eave_y + 3, 3, 4):  # a storm lantern on a hook from the tie beam
+        cv.set(x, y, GOLD[4] if y < eave_y + 5 else GOLD[3])
+    cv.hline(46, eave_y + 3, 3, MATERIALS['iron'][2]); cv.hline(46, eave_y + 7, 3, MATERIALS['iron'][1])
     for x in range(10, 50):  # the bench
         for y in range(h - 16, h - 12):
             cv.set(x, y, WOOD[4] if y == h - 16 else WOOD[3] if (x % 6) else WOOD[1])
         cv.set(x, h - 12, WOOD[1])
     for lx in (14, 44):
         for y in range(h - 12, h - 7):
-            cv.set(lx, y, WOOD[1])
+            cv.set(lx, y, WOOD[2]); cv.set(lx + 1, y, WOOD[1])
     for (x, y) in oval(38, h - 19, 2.5, 3):  # a water jug
         cv.set(x, y, '#B86A44' if x < 38 else '#8A4A30')
-    for px_ in (4, 54):  # posts, lit on their left
+    cv.set(37, h - 22, '#D88A5A'); cv.set(38, h - 22, '#B86A44')
+    for (x, y) in rect_set(20, h - 21, 7, 5):  # someone's pack, its flap and a rolled mat
+        c = '#4A6A3A' if x < 25 else '#3A5230'
+        if y == h - 21:
+            c = '#5A7C46'
+        if y == h - 18:
+            c = '#2A3A22'
+        cv.set(x, y, c)
+    cv.hline(20, h - 22, 7, '#C8B488'); cv.hline(21, h - 23, 5, '#D8C498')
+    for px_ in (4, 54):  # posts, lit on their left, with knee braces up to the tie beam
         for y in range(eave_y - 2, h - 2):
             cv.set(px_, y, WOOD[3]); cv.set(px_ + 1, y, WOOD[2]); cv.set(px_ + 2, y, WOOD[1])
+        d = 1 if px_ < 30 else -1
+        for t in range(5):
+            bx = px_ + 2 + t if d > 0 else px_ - t
+            cv.set(bx, eave_y + 7 - t, WOOD[2]); cv.set(bx, eave_y + 8 - t, WOOD[1])
         cv.rect(px_ - 1, h - 3, 5, 2, STONE[2])  # its stone footing
+        cv.hline(px_ - 1, h - 3, 5, STONE[3])
     detail.overhang_shadow(cv, 6, 54, eave_y + 1, lambda x: 3, k=2, cap=1)
     return cv
 
