@@ -16,11 +16,12 @@ What `build()` paints on the ground canvas:
 - south faces in a material (earth, stone, concrete, timber, sandstone), each lit from the
   upper left, with a lip (a scalloped grass overhang of 1 to 3 px on earth, a coping on
   built faces), a dark damp foot and tall grass along it;
-- side faces (anything facing west or east) as a narrow strip of the face seen nearly edge
-  on: the lip wraps the corner and runs down the side; the strip is the face's material cut
-  narrow, lit when it faces west and in the two darkest tones when it faces east; outer
-  corners wrap the face's lumps or courses round the radius, narrowing; inner corners meet
-  in a shaded crease; a strip always ends on ground;
+- side faces (anything facing west or east) as a band 5 px wide (0.2 of an adult, as
+  Eastward draws them: measured 0.17 to 0.21 A on its Strange Forest ledges): the lip wraps
+  the corner and runs down the side in small scallops; the band is a column of lumps, lit
+  when it faces west and in the two darkest tones when it faces east, with a dark outline
+  where it meets the ground; outer corners wrap the face's clods or courses round the
+  radius, narrowing; inner corners meet in a shaded crease; a band always ends on ground;
 - cast shadows down and to the right (8 px, stepped: 2 strong, 3 medium, 3 dithered), so
   an east-facing strip throws a stepped shadow on the lower ground east of it and a
   west-facing one keeps a 1 px contact line;
@@ -34,9 +35,35 @@ renderer and lint (`zoneTier`: digits for tiers, `f` a face, `s` a stair or ramp
 links between levels, the water pixels (the falls included, so water_flow.py animates
 them), and rail runs for built rims. `check()` runs the toolkit's own lint on the result.
 
+Edge dressing is on by default (dress=True), so any zone that uses the toolkit gets it: earth
+faces as packed clods (Eastward's cobbled banks) with mossy clods and embedded rocks, built
+faces weathered (grime, pits, rain streaks, cracks, moss low down), tall grass breaking
+rims, corners, feet and banks, loose rocks at the feet and corners, soft shade and worn
+ground pooled along every foot and deeper in inner corners. The detail bar (detail_bar.py,
+Matt 20 Oct: Eastward's level of detail "has to be reached") checks it: `--sheet OUT --bar`.
+
 Everything is deterministic (hash noise from pixel.py, no randomness), so art-repro holds.
 
-Run: python3 scripts/art/terrace.py --sheet OUT.png   (the test zone at 1x, 3x, night, walk)
+HOWTO: a zone's terrain as a map
+    MAP = '''
+    0000000000000000000000000000000000000000      one character per 8 px cell, 40 a row
+    0001111111111111000000000000000000000000      1: a tier one level up (its top as seen)
+    0001111111111111000000000000000000000000
+    000000SSSSSS0000000000000000000000000000      its face hangs in the 4 rows below its
+    000000SSSSSS0000000000000000000000000000      south edge (32 px); S cuts a timber stair
+    000000SSSSSS0000000000000000000000000000      through it (Z for stone), 6 cells wide
+    000000SSSSSS0000000000000000000000000000
+    ...                                           72 rows; ~ water; R / L a ramp
+    '''
+    ground = Canvas(320, 576)  # paint the zone's own ground first and pass tops=False,
+    t = terrace.build(ground, **terrace.from_ascii(MAP, MATERIALS, {'t': 16}), tops=False)
+    # or let it paint grass (tops=True, the default)
+    # then: t.blocked into the zone's blocked ground, t.water into WATER_MASKS,
+    # t.tiers for zoneTier, terrace.one_tier(t, foot box) before placing a prop.
+TEST_MAP below is a complete example.
+
+Run: python3 scripts/art/terrace.py --sheet OUT.png [--bar]   (the test zone at 1x, 3x, night,
+     walk; --bar judges it against the Eastward detail bar, detail_bar.py)
      python3 scripts/art/terrace.py --check            (build the test zone and lint it)
 """
 from __future__ import annotations
@@ -58,7 +85,7 @@ GRID = 8          # the terrain grid (zone px)
 CELL = 4          # the walk grid
 FACE = 32         # a tier's face (valley, isles, west, garden yard)
 FACE_CITY = 40
-STRIP = 4         # a side sliver: its lip and the face seen edge on, from the rim line out (2 to 4)
+STRIP = 5         # a side band, lip to outline: Eastward's measure 0.2 of an adult (A = 25)
 SHADOW = 8        # cast shadow: constant whatever the height; 3 strong, 3 medium, 2 dithered
 HEIGHTS = (12, 16, 32, 40)   # the only face heights: a low step or a tier (soft-grid research 6.1)
 STAIR_W = 40      # open width between the cheeks
@@ -91,6 +118,8 @@ WTR = MATERIALS['water']
 FOAM = MATERIALS['snow'][3]
 
 STRONG = (0.56, 0.60, 0.72)
+SOFT = (0.90, 0.92, 0.96)      # the soft shade pooled along a face's foot
+
 MEDIUM = (0.70, 0.74, 0.83)
 
 
@@ -103,9 +132,14 @@ def lerp(a, b, t):
     return tuple(int(round(a[i] + (b[i] - a[i]) * t)) for i in range(3))
 
 
+CREV = lerp(SOIL[0], '#2E2238', 0.4)     # the gaps between clods: dark, cool
+OUTLINE = lerp(SOIL[0], '#241A2C', 0.5)  # the face's outer edge (Eastward's dark outline)
+ROCK = MATERIALS['bleached']             # loose rocks at the feet: warm tan
+
+
 def grass_ramp(level: int):
     """Each tier its own tone: an upper tier a step lighter and warmer (verticality 4c)."""
-    return [lerp(c, '#E8EBA0', 0.09 * level) for c in GRASS]
+    return [lerp(c, '#E8EBA0', 0.13 * level) for c in GRASS]
 
 
 # ---- the spec -----------------------------------------------------------------------------
@@ -188,6 +222,91 @@ def from_plan(plan, face=FACE):
             if out[r, c] < 0:
                 out[r, c] = out[r + 1, c]
     return out.tolist()
+
+
+MAT_LETTERS = {'e': 'earth', 's': 'stone', 'c': 'concrete', 't': 'timber', 'a': 'sandstone'}
+
+
+def from_ascii(tiers: str, materials: str | None = None, heights: dict | None = None) -> dict:
+    """A zone's terrain from a readable map: one character per 8 px cell, one line per row
+    (40 x 72 for a zone). Returns the keyword arguments for build():
+    `build(cv, **from_ascii(MAP, MATS, {'t': 16}))`.
+
+    tiers      digits 0-9: the tier whose top the camera sees in that cell
+               S / Z: a timber / stone stair cut through a face (mark its whole cut: its
+                     cheeks and treads, from the rim row down the face's rows)
+               R / L: a ramp along a face, running down to the east / west (mark one row,
+                     the rim row, from its high end to its low end)
+               ~ / F: water (a channel, a pool, a fall: a channel that reaches a rim falls)
+               a marker's tier is the nearest digit in its row (the lower one on a tie)
+    materials  optional, the same shape: e earth, s stone, c concrete, t timber,
+               a sandstone, '.' or ' ' the default; it marks the cells of the upper tier
+               whose faces (below and beside) take that material
+    heights    optional face height per material letter, e.g. {'t': 16, 'c': 40}
+
+    Blank lines and lines starting with ';' are skipped; whitespace at the ends is ignored.
+    """
+    rows = [ln.strip() for ln in tiers.strip('\n').split('\n') if ln.strip() and not ln.strip().startswith(';')]
+    width = max(len(r) for r in rows)
+    rows = [r.ljust(width, r[-1]) for r in rows]
+    grid = [[0] * width for _ in rows]
+    water = [[False] * width for _ in rows]
+    marks = {}
+    for r, row in enumerate(rows):
+        for c, ch in enumerate(row):
+            if ch.isdigit():
+                grid[r][c] = int(ch)
+                continue
+            if ch not in 'SZRL~F':
+                raise ValueError(f'from_ascii: unknown cell {ch!r} at row {r}, column {c}')
+            left = next((int(row[k]) for k in range(c - 1, -1, -1) if row[k].isdigit()), None)
+            ld = next((c - k for k in range(c - 1, -1, -1) if row[k].isdigit()), 999)
+            right = next((int(row[k]) for k in range(c + 1, width) if row[k].isdigit()), None)
+            rd = next((k - c for k in range(c + 1, width) if row[k].isdigit()), 999)
+            near = [v for (v, d) in ((left, ld), (right, rd)) if v is not None and d == min(ld, rd)]
+            grid[r][c] = min(near) if near else 0
+            if ch in '~F':
+                water[r][c] = True
+            else:
+                marks.setdefault(ch, []).append((r, c))
+    stairs, ramps = [], []
+    for ch, cells in marks.items():
+        todo = set(cells)
+        while todo:          # each 4-connected group of one marker is one stair or ramp
+            st = [todo.pop()]
+            grp = set(st)
+            while st:
+                r, c = st.pop()
+                for n in ((r + 1, c), (r - 1, c), (r, c + 1), (r, c - 1)):
+                    if n in todo:
+                        todo.discard(n)
+                        grp.add(n)
+                        st.append(n)
+            r0 = min(r for r, _ in grp)
+            c0, c1 = min(c for _, c in grp), max(c for _, c in grp) + 1
+            if ch in 'SZ':
+                stairs.append(Stair(x=c0 * GRID, rim=r0 * GRID, w=(c1 - c0) * GRID - 2 * CHEEK,
+                                    material='stone' if ch == 'Z' else 'timber'))
+            else:
+                ramps.append(Ramp(x0=c0 * GRID, x1=c1 * GRID, rim=r0 * GRID, down='east' if ch == 'R' else 'west'))
+    edges = []
+    if materials:
+        mrows = [ln.strip() for ln in materials.strip('\n').split('\n') if ln.strip() and not ln.strip().startswith(';')]
+        heights = heights or {}
+        for r, row in enumerate(mrows):
+            c = 0
+            while c < len(row):
+                ch = row[c]
+                if ch in '. ':
+                    c += 1
+                    continue
+                c0 = c
+                while c < len(row) and row[c] == ch:
+                    c += 1
+                edges.append(Edge((c0, r, c, r + 1), material=MAT_LETTERS[ch], face=heights.get(ch)))
+    stairs.sort(key=lambda st: (st.rim, st.x))
+    ramps.sort(key=lambda rp: (rp.rim, rp.x0))
+    return dict(tiers=grid, stairs=stairs, ramps=ramps, water=water, edges=edges)
 
 
 def rects_map(cols: int, rows: int, rects, base: int = 0):
@@ -305,7 +424,7 @@ def _strata(d: int, seed: int, x: int = 0):
 # ---- the build ----------------------------------------------------------------------------
 
 def build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), stairs=(), ramps=(),
-          water=(), tops=True, seed=0, round_r=ROUND, round_in=ROUND_IN) -> Terrace:
+          water=(), tops=True, seed=0, round_r=ROUND, round_in=ROUND_IN, dress=True) -> Terrace:
     """Paint terraced ground on `cv` (a zone's ground canvas, or None for the maps alone) and
     return its walk blocking and maps.
 
@@ -315,6 +434,8 @@ def build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), st
     stairs    [Stair], ramps [Ramp]
     water     cells of water: [(c0, r0, c1, r1)] or a bool map of cells; where a channel on a
               tier reaches a rim it falls straight down the face (into a pool the map gives)
+    dress     edge dressing, on by default: tall grass breaking rims, corners and feet,
+              rocks at the feet, soft shade pooled along feet and in inner corners
     tops      True paints the tier tops as grass (a step lighter per tier); False keeps what
               the canvas holds (the generator painted its own ground); or a callable
               (x, y, level) -> colour
@@ -498,9 +619,9 @@ def build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), st
                 cand = (sk == 0) & ((recv_top & src) | (recv_face & src_top))
                 if prev is not None:
                     cand &= _shift(prev, dirn, 0)      # continuous out from the rim line
-                    # the side face is a narrow parallelogram: its far end is cut on the
-                    # diagonal by the ground behind (one strip px per face/STRIP rows)
-                    lift = int(round((k - 1) * (face if isinstance(face, int) else face.get(L, FACE)) / STRIP))
+                    # the band's far end is cut on a short diagonal by the ground behind
+                    # (3 rows a px), so it reads as a side, not as an outline round the top
+                    lift = 3 * (k - 1)
                     cand &= _shift_edge(solid, dirn * k, lift)
                 # inner corner: the strip shows only where it stands in front of the face
                 # behind it (a diagonal crease, one strip px per face/STRIP rows)
@@ -563,6 +684,9 @@ def build(cv: Canvas | None, tiers, *, face=FACE, material='earth', edges=(), st
         P.stairs_paint()
         P.ramps_paint()
         P.falls_paint()
+        if dress:
+            P.weather()
+            P.dress()
         out = Image.fromarray(img, 'RGB').convert('RGBA')
         if cv.pad:
             cv.img.paste(out, (cv.pad, cv.pad))
@@ -686,27 +810,67 @@ class _Painter:
 
     # tops: grass in broad patches, each tier a step lighter, tufts and the odd flower
     def tops(self):
+        """Tier tops as grass at Eastward's grain: three tones in broad patches with dithered
+        borders, then a dense scatter of blade marks (dark V's, strokes, lit ticks), small
+        dark clusters, and the odd flower, pebble or speck of dirt."""
         H, W, s = self.H, self.W, self.seed
+        tones = {}
+        for L in range(0, int(self.lvl.max()) + 1):
+            g = grass_ramp(L)
+            tones[L] = [lerp(g[2], g[1], 0.5), g[2], lerp(g[2], g[3], 0.5), g[3], lerp(g[3], g[4], 0.5),
+                        lerp(g[4], '#F0F0B8', 0.25)]
         for y in range(H):
             for x in range(W):
-                g = grass_ramp(int(self.lvl[y, x]))
-                v = smooth_noise(x, y, 18, s * 7 + 501)
-                c = g[3] if v > 0.55 else g[2]
-                if smooth_noise(x, y, 7, s * 7 + 503) > 0.8:
-                    c = g[3] if c == g[2] else lerp(g[3], g[4], 0.4)
+                T = tones[int(self.lvl[y, x])]
+                v = (smooth_noise(x, y, 18, s * 7 + 501) - 0.5) * 2.4 + \
+                    (smooth_noise(x, y, 4.5, s * 7 + 503) - 0.5) * 3.4 + \
+                    (smooth_noise(x, y, 1.9, s * 7 + 504) - 0.5) * 4.0
+                c = T[max(0, min(5, int(round(2.6 + v))))]
+                hue = smooth_noise(x, y, 6, s * 7 + 505)
+                if hue > 0.57:
+                    c = lerp(c, '#D8C878', 0.30 if hue > 0.68 else 0.16)   # sun-dried, yellow
+                elif hue < 0.43:
+                    c = lerp(c, '#5E9070', 0.24 if hue < 0.32 else 0.12)   # cooler, damper
                 self.img[y, x] = c
-        for k in range(int(W * H / 140)):
-            x, y = int(self.n(k, 1, 511) * W), int(self.n(k, 2, 511) * H)
-            if not (2 <= y < H - 1 and 1 <= x < W - 1) or self.kind[y, x] != TOP:
-                continue
-            g = grass_ramp(int(self.lvl[y, x]))
-            kd = self.n(k, 3, 511)
-            if kd < 0.75:   # a tuft: dark roots, light tips
-                self.put(x, y, g[1]); self.put(x - 1, y - 1, g[4]); self.put(x + 1, y - 1, g[4])
-                if kd < 0.3:
-                    self.put(x, y - 1, g[1]); self.put(x, y - 2, g[4])
-            elif kd < 0.86:
-                self.put(x, y, ['#F2E6C8', '#E8B4C8', '#F0D060', '#B8C8F0'][k % 4]); self.put(x, y + 1, g[1])
+        flowers = ['#F2E6C8', '#E8B4C8', '#F0D060', '#B8C8F0']
+        sd = s * 7 + 510
+        for j, y in enumerate(range(1, H - 1, 3)):
+            for i, x in enumerate(range(1 + (j % 2), W - 1, 3)):
+                k = noise2(i, j, sd)
+                xx = x + int(noise2(i, j, sd + 1) * 3) - 1
+                yy = y + int(noise2(i, j, sd + 2) * 3) - 1
+                if not (1 <= yy < H - 1 and 1 <= xx < W - 1) or self.kind[yy, xx] != TOP or self.wet[yy, xx]:
+                    continue
+                g = grass_ramp(int(self.lvl[yy, xx]))
+                if k < 0.30:      # a dark V: two blades from one root (warm or cool)
+                    d1 = g[1] if k < 0.15 else lerp(g[1], '#3E5E50', 0.4)
+                    self.put(xx, yy, d1); self.put(xx - 1, yy - 1, g[2]); self.put(xx + 1, yy - 1, lerp(g[2], g[1], 0.4))
+                elif k < 0.48:    # a stroke, lit at its tip
+                    dx = 1 if (i + j) % 2 else -1
+                    self.put(xx, yy, g[1]); self.put(xx + dx, yy - 1, g[2]); self.put(xx + dx, yy - 2, g[4])
+                elif k < 0.64:    # a lit tick
+                    self.put(xx, yy, g[4]); self.put(xx, yy - 1, lerp(g[4], '#F4F0C0', 0.3))
+                elif k < 0.74:    # a small dark cluster
+                    self.put(xx, yy, g[1]); self.put(xx + 1, yy, g[1])
+                elif k < 0.755:   # a flower
+                    self.put(xx, yy, flowers[(i * 7 + j) % 4]); self.put(xx, yy + 1, g[1])
+                elif k < 0.77:    # a pebble
+                    self.put(xx, yy, STONE[3]); self.put(xx + 1, yy, STONE[2])
+                elif k < 0.79:    # bare earth showing through
+                    self.put(xx, yy, PATH[2]); self.put(xx + 1, yy, PATH[1])
+                elif k < 0.90:    # a pale blade pair
+                    self.put(xx, yy, g[4]); self.put(xx + 1, yy - 1, lerp(g[3], g[4], 0.5))
+                else:             # a dry blade
+                    self.put(xx, yy, lerp(g[3], '#C8B070', 0.45)); self.put(xx, yy - 1, lerp(g[4], '#E0D090', 0.4))
+        for j, y in enumerate(range(6, H - 2, 9)):      # tufts of tall grass scattered over the open
+            for i, x in enumerate(range(4 + 5 * (j % 2), W - 4, 11)):
+                if noise2(i, j, sd + 5) > 0.5:
+                    continue
+                xx = x + int(noise2(i, j, sd + 6) * 7) - 3
+                yy = y + int(noise2(i, j, sd + 7) * 5) - 2
+                if 2 <= yy < H and 2 <= xx < W - 2 and self.kind[yy, xx] == TOP and not self.wet[yy, xx] and \
+                        self.kind[yy - 4, xx] == TOP:
+                    self._clump(xx, yy, int(self.lvl[yy, xx]), 3 + int(noise2(i, j, sd + 8) * 3), i * 97 + j, n=3)
 
     def back_rims(self):
         """Where a tier's top meets lower ground behind it (north) there is no face, only a
@@ -868,6 +1032,7 @@ class _Painter:
     def faces(self):
         H, W, kind = self.H, self.W, self.kind
         u, phi = self._u_map()
+        phi[kind == STRIP_K] = self.sdir[kind == STRIP_K]
         self.u, self.phi = u, phi
         sel = (kind == FACE_K) | ((kind == STRIP_K) & (self.sreg == 1)) | (kind == FALL_K)
         ids = {}
@@ -883,6 +1048,101 @@ class _Painter:
             hgt = int(self.fh[y, x])
             c = self._shade(m, x, y, d, hgt, float(phi[y, x]), ids)
             self.put(x, y, c)
+        self._earth_clods()
+
+    def _earth_clods(self):
+        """Earth faces as Eastward draws them: rounded clods packed like scales, each lit on
+        its upper left with a dark cool gap under it, lower clods overlapping upper ones;
+        the odd mossy clod or embedded rock; darker toward the foot; turned by the light
+        round corners and on the side bands; a dark outline where the face meets ground."""
+        kind, H, W = self.kind, self.H, self.W
+        earth = self.fmat == MATS.index('earth')
+        M = earth & np.isin(kind, (FACE_K, STRIP_K))
+        if not M.any():
+            return
+        ys, xs = np.nonzero(M)
+        for y, x in zip(ys, xs):
+            self.img[y, x] = rgb(CREV)
+        # how high up the face each pixel is (0 top .. 1 foot)
+        f = np.zeros((H, W), np.float32)
+        fm = M & (kind == FACE_K) | (M & (self.sreg == 1))
+        f[fm] = np.clip((np.arange(H)[:, None] - self.rim) / np.maximum(1, self.fh), 0, 1)[fm]
+        side = M & (kind == STRIP_K) & (self.sreg == 0)
+        f[side] = (self.sk[side] / STRIP)
+        R = RAMPS['earth']
+        y0, y1, x0, x1 = ys.min() - 4, ys.max() + 5, xs.min() - 6, xs.max() + 7
+        sd = self.seed * 101 + 700
+        clods = []
+        for j, cy in enumerate(range(y0, y1, 4)):
+            for i, cx in enumerate(range(x0 + (3 if j % 2 else 0), x1, 6)):
+                a = noise2(i, j, sd)
+                b = noise2(i, j, sd + 1)
+                rx = 2.4 + noise2(i, j, sd + 2) * 2.0
+                clods.append((cy + (b - 0.5) * 2.4, cx + (a - 0.5) * 3.0, rx, rx * (0.72 + 0.2 * b), i, j))
+        clods.sort()
+        for (cy, cx, rx, ry, i, j) in clods:
+            v = noise2(i, j, sd + 3)
+            t = 3 if v > 0.45 else 2
+            if v > 0.86:
+                t = 4
+            moss = noise2(i, j, sd + 4) > 0.9
+            rock = not moss and noise2(i, j, sd + 5) > 0.94
+            hue = noise2(i, j, sd + 6)
+            tint = ('#6A5A78', 0.28) if hue > 0.78 else ('#B08A58', 0.22) if hue < 0.16 else None
+            for yy in range(int(cy - ry) - 1, int(cy + ry) + 2):
+                for xx in range(int(cx - rx) - 1, int(cx + rx) + 2):
+                    if not (0 <= xx < W and 0 <= yy < H) or not M[yy, xx]:
+                        continue
+                    nx, ny = (xx + 0.5 - cx) / rx, (yy + 0.5 - cy) / ry
+                    e = nx * nx + ny * ny
+                    if e > 1:
+                        continue
+                    if e > 0.62 and 0.45 * nx + ny > 0.35:
+                        self.put(xx, yy, CREV)                 # its dark underside, the gap
+                        continue
+                    lit = -(0.55 * nx + 0.85 * ny)
+                    i2 = t + (1 if lit > 0.45 else 0) - (1 if lit < -0.35 else 0)
+                    ph = float(self.phi[yy, xx])
+                    i2 += (-1 if ph > 0.3 else 0) + (-1 if ph > 0.75 else 0) + (1 if ph < -0.4 else 0)
+                    i2 -= 1 if f[yy, xx] > 0.82 else 0
+                    i2 = max(1, min(5, i2))
+                    if moss and lit > -0.1 and ph < 0.5:
+                        g = grass_ramp(int(self.ftop[yy, xx]))
+                        c = g[3] if lit > 0.45 else g[2] if lit > 0.1 else g[1]
+                    elif rock:
+                        c = ROCK[min(5, i2 + 1)]
+                    else:
+                        c = R[i2] if tint is None else lerp(R[i2], tint[0], tint[1])
+                    self.put(xx, yy, c)
+        # the side bands (beside a tier's top): a column of lumps the band's width, one per
+        # 4 to 9 px, lit when the band faces west, in the darkest tones facing east
+        for y, x in zip(*np.nonzero(side)):
+            k, dr = int(self.sk[y, x]), int(self.sdir[y, x])
+            lit = dr < 0
+            ex = x - dr * k
+            pos, ln, sid = self._seg(ex, y)
+            body = (3 if noise2(sid, ex, sd + 7) > 0.5 else 4) if lit else (1 if noise2(sid, ex, sd + 7) > 0.4 else 2)
+            split = noise2(sid, ex, sd + 8) > 0.62 and k == 3
+            if pos == ln - 1 or split:
+                c = R[2] if lit else CREV
+            elif pos == 0:
+                c = R[min(5, body + 1)]
+            elif lit and k == 2 and pos == 1:
+                c = R[5]                                   # the lump's sunlit shoulder
+            else:
+                c = R[body]
+            if k >= STRIP - 1 and pos in (0, ln - 1):
+                c = R[2] if lit else CREV                  # lumps round off at the outer edge
+            hue = noise2(sid, ex, sd + 9)
+            if hue > 0.8:
+                c = lerp(c, '#6A5A78', 0.25)
+            self.put(x, y, c)
+        # the outline where the face meets the ground: the band's outer edge, the foot row
+        for y, x in zip(ys, xs):
+            outer = kind[y, x] == STRIP_K and self.sk[y, x] == STRIP
+            foot = y + 1 < H and kind[y + 1, x] == TOP and not M[y + 1, x] and kind[y, x] == FACE_K
+            if outer or foot:
+                self.put(x, y, OUTLINE if (self.sdir[y, x] > 0 or foot) else R[1])
 
     def _struct(self, m, u, y, d, x):
         s = self.seed * 31
@@ -1032,6 +1292,7 @@ class _Painter:
             pos, ln, sid = seg
             split = n(sid, ex, 651) > 0.6 and k >= 3
             if m == 'earth':
+                continue                          # (drawn as clods with the face)
                 body = 4 if lit else 1
                 if n(sid, ex, 652) > 0.6:
                     body += -1 if lit else 1
@@ -1134,11 +1395,14 @@ class _Painter:
                 if m == 'earth' or m == 'sandstone':
                     if m == 'sandstone':
                         k = max(1, k - 1)
-                    if d < k:
-                        c = g[3] if d == 0 else g[2] if d < k - 1 else g[1]
+                    if d < k:   # the lip: lit edge, body, dark underside
+                        c = (g[3] if x % 3 else lerp(g[3], g[4], 0.5)) if d == 0 else \
+                            (g[2] if (x + d) % 4 else lerp(g[2], '#C8C070', 0.3)) if d < k - 1 else g[1]
                         self.put(x, y, c)
                     elif d == k:
-                        self.put(x, y, SOIL[0] if m == 'earth' else RAMPS[m][1])
+                        self.put(x, y, CREV if m == 'earth' else RAMPS[m][1])
+                    elif d == k + 1 and m == 'earth' and kind[y, x] == FACE_K:
+                        self.mul(x, y, (0.78, 0.76, 0.84))   # the clods in the lip's shade
                     if d == 0 and y > 0 and kind[y - 1, x] == TOP:
                         self.put(x, y - 1, g[4] if x % 3 else g[3])
                 else:
@@ -1153,7 +1417,7 @@ class _Painter:
                 lit = dr < 0
                 ex = x - dr * k
                 sc = (y + int(noise2(y // 6, ex, self.seed + 555) * 4)) % 6
-                kk = (1 if sc in (1, 2, 3) else 0) if lit else 1 + (1 if sc in (2, 3) else 0)
+                kk = 1 if sc in (2, 3) else 0           # the lip wraps the side in small scallops
                 if m in ('earth', 'sandstone'):
                     if k <= kk:
                         self.put(x, y, g[3] if lit else (g[2] if k == 1 else g[1]))
@@ -1176,16 +1440,6 @@ class _Painter:
                     xx, yy = x + (t // 5) * (1 if x % 2 else -1), y + 3 + t
                     if 0 <= xx < W and 0 <= yy < H and kind[yy, xx] == FACE_K:
                         self.put(xx, yy, SOIL[0] if t % 3 else '#4A3022')
-            if x % 6 == 0 and noise2(x // 6, y, self.seed + 563) > 0.82:
-                sy = y + 8 + int(noise2(x // 6, y, self.seed + 564) * (self.fh[y, x] - 18))
-                for dx in range(5):
-                    for dy in range(4):
-                        xx, yy = x + dx, sy + dy
-                        if 0 <= xx < W and 0 <= yy < H and kind[yy, xx] == FACE_K and abs(self.phi[yy, xx]) < 0.3:
-                            c = STONE[3] if dy == 0 and dx < 4 else STONE[2] if dx == 0 else lerp(STONE[2], SOIL[2], 0.4) if dx < 4 else STONE[1]
-                            if dy == 3:
-                                c = STONE[1]
-                            self.put(xx, yy, c)
         for (x, y, c) in self.foot_blades:   # tall grass at the feet, over the face's foot
             if 0 <= x < W and 0 <= y < H and kind[y, x] in (TOP, FACE_K, STRIP_K):
                 self.put(x, y, c)
@@ -1316,6 +1570,187 @@ class _Painter:
                         self.put(x, y, WTR[3])
 
 
+    # ---- edge dressing ------------------------------------------------------------------
+    def dress(self):
+        """What makes Eastward's edges soft: shade pooled along every foot and in inner
+        corners, worn ground there, loose rocks at the feet and corners, and tall grass that
+        breaks every rim, corner and foot. Decoration only: the walk grid ignores it."""
+        kind, H, W = self.kind, self.H, self.W
+        wall = np.isin(kind, (FACE_K, STRIP_K, CHEEK_K))
+        ground = (kind == TOP) & ~self.wet
+        # 1. soft shade pooled down and right of every face and band (beyond the hard 8 px)
+        dist = np.full((H, W), 99, np.int16)
+        for t in range(1, 15):
+            hit = np.zeros((H, W), bool)
+            for dx in range(0, t + 1):
+                hit |= _shift(wall, dx, t)
+            hit |= _shift(wall, t, 0) | _shift(wall, t, t // 2)
+            dist[hit & ground & (dist > t)] = t
+        for y, x in zip(*np.nonzero(dist <= 14)):
+            t = int(dist[y, x])
+            if t <= 10 or (x + y) % 2:
+                self.mul(x, y, SOFT)
+            if t <= 3 and noise2(x // 2, y, self.seed + 801) > 0.62:
+                self.img[y, x] = lerp(self.img[y, x], PATH[1], 0.35)   # worn, damp ground
+        # inner corners: where a band and a face both shade the same ground, it pools deeper
+        band = (kind == STRIP_K)
+        near_band = np.zeros((H, W), bool)
+        near_face = np.zeros((H, W), bool)
+        for d in range(1, 9):
+            near_band |= _shift(band, d, 0) | _shift(band, -d, 0)
+            near_face |= _shift(kind == FACE_K, 0, d)
+        for y, x in zip(*np.nonzero(near_band & near_face & ground)):
+            self.mul(x, y, SOFT)
+        # 2. the feet: runs of ground directly under a face or beside a band's outer edge
+        feet = []
+        for y in range(1, H - 1):
+            for x in range(W):
+                if ground[y, x] and kind[y - 1, x] in (FACE_K, STRIP_K) and self.stair_id[y - 1, x] < 0:
+                    feet.append((x, y, int(self.lvl[y, x])))
+        corners = []
+        for y in range(1, H - 1):       # outer corners: the foot row's ends against a band
+            for x in range(1, W - 1):
+                if kind[y, x] == STRIP_K and kind[y + 1, x] == TOP and self.sk[y, x] >= STRIP - 1 and \
+                        kind[y, x - int(self.sdir[y, x])] in (FACE_K, STRIP_K):
+                    corners.append((x, y + 1, int(self.sdir[y, x])))
+        # rocks: a few per run, irregular bays; a bigger one at each outer corner
+        for (x, y, L) in feet:
+            b, off = _bay(x + y * 3, self.seed + 811, 18, 44)
+            if off == 6 and noise2(b, y, self.seed + 812) > 0.45:
+                self._rock(x, y + 1, 1.6 + noise2(b, y, self.seed + 813) * 2.2, b)
+        seen = set()
+        for (x, y, dr) in corners:
+            key = (x // 8, y // 8)
+            if key in seen:
+                continue
+            seen.add(key)
+            if noise2(*key, self.seed + 814) > 0.35:
+                self._rock(x + dr * 3, y + 1, 2.4 + noise2(*key, self.seed + 815) * 1.6, key[0] * 7 + key[1])
+        # tall grass: clumps along feet, at corners, and leaning over rims from the top
+        for (x, y, L) in feet:
+            b, off = _bay(x * 1.0 + y * 5, self.seed + 821, 9, 22)
+            if off == 2 and noise2(b, y, self.seed + 822) > 0.25:
+                self._clump(x, y + 1, L, 4 + int(noise2(b, y, self.seed + 823) * 4), b)
+        for (x, y, dr) in corners:
+            self._clump(x + dr, y + 1, int(self.lvl[min(H - 1, y), x]), 7, x * 13 + y)
+        # reeds and grass along the banks of streams and pools
+        bank = _banks(self.wet, kind)
+        for y, x in zip(*np.nonzero(bank)):
+            if y + 1 < H and (self.wet[y + 1, x] or (x + 1 < W and self.wet[y, x + 1]) or self.wet[y, x - 1]):
+                b, off = _bay(x * 1.0 + y * 7, self.seed + 861, 9, 20)
+                if off == 1 and noise2(b, y, self.seed + 862) > 0.45:
+                    self._clump(x, y + 1, int(self.lvl[y, x]), 4 + int(noise2(b, y, self.seed + 863) * 3), b)
+        for y in range(1, H - 1):      # rims: on the top, just behind the lip
+            for x in range(1, W - 1):
+                if kind[y, x] == TOP and kind[y + 1, x] == FACE_K and self.rim[y + 1, x] == y + 1 and \
+                        not self.wet[y, x] and self.stair_id[y + 1, x] < 0:
+                    b, off = _bay(x * 1.0, self.seed + 831 + y, 10, 26)
+                    if off == 3 and noise2(b, y, self.seed + 832) > 0.35:
+                        self._clump(x, y + 1, int(self.lvl[y, x]), 4 + int(noise2(b, y, self.seed + 833) * 3), b,
+                                    droop=True)
+                # beside a band's outer edge, on the lower ground: grass rising over its foot
+                beside = ground[y, x] and ((kind[y, x - 1] == STRIP_K and self.sdir[y, x - 1] > 0) or
+                                           (kind[y, x + 1] == STRIP_K and self.sdir[y, x + 1] < 0))
+                if beside and noise2(x, y // 11, self.seed + 834) > 0.8 and y % 11 == 5:
+                    self._clump(x, y + 3, int(self.lvl[y, x]), 4 + (y % 3), x * 31 + y)
+
+    def weather(self):
+        """Built faces and stone stairs weathered to the same grain as earth: mottled stone,
+        pits and light flecks, chipped arrises, rain streaks under the coping, the odd crack,
+        and moss gathering low on the face and in the joints."""
+        kind, H, W = self.kind, self.H, self.W
+        built = np.isin(self.fmat, (MATS.index('stone'), MATS.index('concrete')))
+        sel = built & np.isin(kind, (FACE_K, STRIP_K, CHEEK_K, STAIR_K))
+        sd = self.seed * 101 + 900
+        for y, x in zip(*np.nonzero(sel)):
+            m = MATS[self.fmat[y, x]]
+            R = RAMPS[m]
+            c = self.img[y, x]
+            hgt = max(1, int(self.fh[y, x]))
+            f = (y - int(self.rim[y, x])) / hgt if self.rim[y, x] >= 0 else 0.5
+            mo = smooth_noise(x, y, 2.2, sd)
+            if mo > 0.66:
+                c = lerp(c, '#6E6252', 0.16)               # warm grime
+            elif mo < 0.3:
+                c = lerp(c, '#98A0AC', 0.14)               # cool, rain-washed
+            n = noise2(x, y, sd + 1)
+            if n > 0.9:
+                c = lerp(c, R[1], 0.4)                     # a pit
+            elif n < 0.05:
+                c = lerp(c, R[-1], 0.45)                   # a light fleck
+            col = noise2(x, 0, sd + 2)
+            if kind[y, x] == FACE_K and col > 0.72 and 0.12 < f < 0.12 + col * 0.6:
+                c = lerp(c, '#3E3A40', 0.18)               # a rain streak from the coping
+            moss = smooth_noise(x, y, 3.2, sd + 3)
+            if kind[y, x] != STAIR_K and ((f > 0.6 and moss > 0.66) or moss > 0.8):
+                up = smooth_noise(x, y - 1, 3.2, sd + 3)
+                c = LEAF[3] if up < moss - 0.03 else LEAF[2]   # moss cushions, lit on top
+                if moss > 0.78 and noise2(x, y, sd + 7) > 0.6:
+                    c = LEAF[1]
+            self.img[y, x] = rgb(c)
+        # a few cracks: short zigzags down from a joint
+        for k in range(int(sel.sum() / 220)):
+            ys, xs = np.nonzero(sel & (kind == FACE_K))
+            if not len(xs):
+                break
+            i = int(noise2(k, 1, sd + 4) * len(xs))
+            x, y = int(xs[i]), int(ys[i])
+            for t in range(3 + int(noise2(k, 2, sd + 4) * 5)):
+                if 0 <= x < W and 0 <= y < H and sel[y, x] and kind[y, x] == FACE_K:
+                    self.img[y, x] = lerp(self.img[y, x], '#2A2630', 0.6)
+                y += 1
+                x += 1 if noise2(k, t, sd + 5) > 0.55 else (-1 if noise2(k, t, sd + 6) > 0.7 else 0)
+
+    def _rock(self, cx, by, r, k):
+        """A loose rock sitting on the ground, its base at row by: lit upper left, outlined,
+        a hard shadow down and right."""
+        rx, ry = r * 1.25, r
+        cy = by - ry + 0.5
+        pts = [(x, y) for y in range(int(cy - ry) - 1, int(cy + ry) + 2) for x in range(int(cx - rx) - 1, int(cx + rx) + 2)
+               if ((x + 0.5 - cx) / rx) ** 2 + ((y + 0.5 - cy) / ry) ** 2 <= 1]
+        if not pts:
+            return
+        ps = set(pts)
+        for (x, y) in pts:   # shadow first
+            self.mul(x + 2, y + 1, STRONG) if (x + 2, y + 1) not in ps else None
+        warm = noise2(k, 1, self.seed + 841) > 0.4
+        R = ROCK if warm else STONE
+        top = len(R) - 1
+        for (x, y) in pts:
+            nx, ny = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+            lit = -(0.6 * nx + 0.8 * ny)
+            i = 3 if lit > 0.35 else 2 if lit > -0.3 else 1
+            if lit > 0.75:
+                i = 4
+            self.put(x, y, R[min(top, i + (1 if warm else 0))])
+        for (x, y) in pts:
+            for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+                if (x + dx, y + dy) not in ps:
+                    self.put(x + dx, y + dy, OUTLINE) if dy >= 0 or dx > 0 else None
+
+    def _clump(self, x, y, L, h, k, droop=False, n=None):
+        """Tall grass: a clump of blades from (x, y) up, dark at the root, lit at the tips;
+        `droop` adds blades hanging forward over a lip."""
+        g = grass_ramp(L)
+        n = n or 4 + int(noise2(k, 3, self.seed + 851) * 4)
+        for b in range(n):
+            bx = x + b - n // 2 + (1 if b % 3 == 0 else 0)
+            bh = max(2, h - abs(b - n // 2) - int(noise2(k, b, self.seed + 852) * 2))
+            lean = (-1 if b < n // 2 else 1) if noise2(k, b, self.seed + 853) > 0.4 else 0
+            for t in range(bh):
+                xx = bx + (lean if t >= bh - 2 else 0)
+                yy = y - 1 - t
+                c = g[0] if t == 0 else g[1] if t < bh // 2 else g[3] if t < bh - 1 else g[4]
+                if 0 <= xx < self.W and 0 <= yy < self.H:
+                    self.put(xx, yy, c)
+        if droop:
+            for b in range(0, n, 2):
+                bx = x + b - n // 2
+                for t in range(1 + int(noise2(k, b, self.seed + 854) * 3)):
+                    if 0 <= bx < self.W and 0 <= y + t < self.H:
+                        self.put(bx, y + t, g[2] if t == 0 else g[1])
+
+
 # ---- the toolkit's own lint ---------------------------------------------------------------
 
 def check(t: Terrace, stands: dict | None = None, start: str | None = None) -> list:
@@ -1415,36 +1850,98 @@ def rle(rows) -> list:
 
 # ---- the test sheet -----------------------------------------------------------------------
 
+TEST_MAP = """
+; the terrace test zone: 40 x 72 cells of 8 px (from_ascii). A free-standing earth tier
+; with four outer corners and a timber stair (A); an L in stone with a stone stair (B); a
+; middle tier (C) with a second tier on it (D) and a ramp, a notch, a timber stair and a
+; stream falling down its face into a pool; low samples: timber, concrete, sandstone.
+0000000000000000000001111111111111111100
+0000000000000000000001111111111111111100
+0011111111111111100001111111111111111100
+0011111111111111100001111111111111111100
+0011111111111111100001111111111111111100
+0011111111111111100001111111111111111100
+0011111111111111100001111111111111111100
+0011111111111111100000000000011111111100
+0011111111111111100000000000011111111100
+0011111111111111100000000000011111111100
+0011111111111111100000000000011111111100
+0000000SSSSSS000000000000000011111111100
+0000000SSSSSS000000000000000011111111100
+0000000SSSSSS000000000000000011111111100
+0000000SSSSSS00000000000000000ZZZZZZ0000
+000000000000000000000000000000ZZZZZZ0000
+000000000000000000000000000000ZZZZZZ0000
+000000000000000000000000000000ZZZZZZ0000
+0000000000000000000000000000000000000000
+0000000000000000000000000000000000000000
+0000000000000000000000000000000000000000
+0000000000000000000000000000000000000000
+222222222222222222221111111111~~~1111000
+222222222222222222221111111111~~~1111000
+222222222222222222221111111111~~~1111000
+222222222222222222221111111111~~~1111000
+222222222222222222221111111111~~~1111000
+222222222222222222221111111111~~~1111000
+222222222222222222221111111111~~~1111000
+222222222222222222221111111111~~~1111000
+1111RRRRRRRRRRRR11111111111111~~~1111000
+111111111111111111111111111111~~~1111000
+111111111111111111111111111111~~~1111000
+111111111111111111111111111111~~~1111000
+111111111111111111111111111111~~~1111000
+111111111111111111111111111111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+111111111111111111110000001111~~~1111000
+00000000000SSSSSS00000000000000000000000
+00000000000SSSSSS00000000000000000000000
+00000000000SSSSSS00000000000000000000000
+00000000000SSSSSS00000000000000000000000
+00000000000000000000000000000~~~~~000000
+00000000000000000000000000000~~~~~000000
+00000000000000000000000000000~~~~~000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000111111110000000000~~~0000000
+001111111100111111110000000000~~~0000000
+001111111100111111110011111100~~~0000000
+001111111100111111110011111100~~~0000000
+001111111100111111110011111100~~~0000000
+001111111100111111110011111100~~~0000000
+001111111100000000000011111100~~~0000000
+000000000000000000000011111100~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+000000000000000000000000000000~~~0000000
+"""
+TEST_MATERIALS = "\n".join(['.....................sssssssssssssssss..'] * 17 + ['.' * 40] * 38 + [
+    '............cccccccc....................',
+    '..tttttttt..cccccccc....................',
+    '..tttttttt..cccccccc..aaaaaa............',
+    '..tttttttt..cccccccc..aaaaaa............',
+    '..tttttttt..cccccccc..aaaaaa............',
+    '..tttttttt..cccccccc..aaaaaa............',
+    '..tttttttt............aaaaaa............',
+    '......................aaaaaa............'])
+
+
 def test_zone():
-    """One 320 x 576 zone with every case the side-face rules name (verticality 4f, Check):
-    a free-standing earth tier with all four outer corners and a timber stair; an L-shaped
-    tier in dressed stone with an inner corner and a stone stair; a long middle tier with a
-    notch (two inner corners), a second tier on it with a ramp, and a stream falling down
-    its face into a pool; and a row of low samples (timber low step, concrete, sandstone)."""
-    cols, rows = 40, 72
-    rects = [
-        (2, 2, 17, 11, 1),                          # A: four outer corners (earth)
-        (21, 0, 38, 7, 1), (29, 7, 38, 14, 1),      # B: an L (stone), reaching the north edge
-        (0, 22, 37, 46, 1),                         # C: the middle tier, to the west edge
-        (0, 22, 20, 30, 2),                         # D: a second tier on C
-        (20, 36, 26, 46, 0),                        # the notch in C
-        (2, 56, 10, 62, 1),                         # E: a timber low step
-        (12, 55, 20, 61, 1),                        # F: concrete (a city face, 40)
-        (22, 57, 28, 63, 1),                        # G: sandstone
-    ]
-    tiers = rects_map(cols, rows, rects)
-    edges = [Edge((21, 0, 38, 17), material='stone'),
-             Edge((2, 56, 10, 62), material='timber', face=16),
-             Edge((12, 55, 20, 61), material='concrete', face=FACE_CITY),
-             Edge((22, 57, 28, 63), material='sandstone')]
-    stairs = [Stair(x=7 * GRID, rim=11 * GRID, material='timber'),
-              Stair(x=30 * GRID, rim=14 * GRID, material='stone'),
-              Stair(x=11 * GRID, rim=46 * GRID, material='timber')]
-    ramps = [Ramp(x0=4 * GRID, x1=16 * GRID, rim=30 * GRID, down='east')]
-    water = [(30, 22, 33, 46),       # the stream on C, from its north edge
-             (29, 50, 34, 53),       # the pool under the fall
-             (30, 53, 33, 72)]       # flowing on south to the zone's edge
-    return dict(tiers=tiers, edges=edges, stairs=stairs, ramps=ramps, water=water)
+    """The test zone (TEST_MAP), every case the side-face rules name (verticality 4f, Check)."""
+    return from_ascii(TEST_MAP, TEST_MATERIALS, {'t': 16, 'c': FACE_CITY})
 
 
 def _sprite_img(sp, size=32):
@@ -1519,6 +2016,30 @@ def _stands():
             'ramp foot': (140, 290), 'C stair foot': (120, 412), 'south west': (60, 572)}
 
 
+# where each kind of surface sits on the test sheet (zone px), for the detail bar
+BAR_WINDOWS = {
+    'face': (16, 368, 80, 400),      # C's south face, earth
+    'rim': (16, 352, 80, 384),       # C's lip and the face under it
+    'side': (120, 24, 152, 88),      # A's east band, its shadow and the ground beside
+    'corner': (112, 80, 144, 128),   # A's south-east corner, top to foot
+    'stair': (56, 80, 104, 128),     # A's timber stair and its landings
+    'foot': (16, 392, 80, 424),      # C's foot and the ground below
+    'ground': (176, 416, 240, 448),  # open ground on the lower tier
+}
+
+
+def bar_report(img: Image.Image) -> bool:
+    """The test sheet against the Eastward detail bar (detail_bar.py), kind by kind."""
+    import detail_bar
+    ok_all = True
+    for kind, box in BAR_WINDOWS.items():
+        ok, _ours, lines = detail_bar.check_image(img, box, kind)
+        ok_all &= ok
+        print(f'{kind:7s} ' + '; '.join(lines) + ('' if ok else '  <- below the bar'))
+    print('detail bar:', 'PASS' if ok_all else 'FAIL')
+    return ok_all
+
+
 def main(argv):
     if '--sheet' in argv:
         i = argv.index('--sheet')
@@ -1526,6 +2047,8 @@ def main(argv):
         t = sheet(out)
         probs = check(t, _stands(), ('corridor', 'south west'))
         print('\n'.join(probs) if probs else 'terrace: clean')
+        if '--bar' in argv:
+            bar_report(Image.open(out if out.endswith('.png') else out + '.png'))
         return 0
     if '--check' in argv:
         spec = test_zone()
