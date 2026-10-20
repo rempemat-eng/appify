@@ -122,6 +122,12 @@ Keep the captures outside the public repository if they contain device identifie
 
 No new browser-object uses were added, so `scripts/native-safe.json` needs no new entries. The animation callbacks are React Native APIs; the web sibling imports only the existing router.
 
+## Desktop validation
+
+Implementation commit `7474c3f` passed `EXPO_PUBLIC_NATIVE_PIXELS=1 npm run verify` (including iOS Hermes and zero lint warnings), the additional flagged Android export, `npm run check:art-repro` for all eleven generators, and the geometry/2× fixture checks in `check:native-pixels`. The flag-off iOS export also passed before the component boundary was tightened.
+
+Desktop Chromium passed 32 existing screen checks at 320 day/normal and 402 night/reduced. The final web export contains no probe, fixture or Skia code; a route smoke test redirects `/native-pixels` to Home without probe/Skia requests or page errors. The screen harness exercises the existing web game; it does not render the native probe. No native binary was compiled or run here.
+
 ## Handoff to Claude A
 
 Keep the candidate off until both platforms have acceptable crispness and profiler results. For #126, supply the mounted world tiles to `NativePixelTiles` in world art coordinates, with tile size 256 and the same snapped camera and `pixelScale` unit; use the generated `worldTileArt` imports once #123 is integrated. Remove the twelve copied specimens when the probe can read those imports directly. Use one canvas for the visible tile set, not one native canvas per tile.
