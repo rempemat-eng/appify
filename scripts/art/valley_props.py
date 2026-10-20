@@ -1013,6 +1013,19 @@ def windmill(turn: float = 0.0) -> Canvas:
                 cv.set(x, y, '#FFF2D8')
             elif t <= 1 and k > 0.9:
                 cv.set(x, y, '#5E5266')
+    for i in range(10):  # crazing: the old limewash cracked in short runs where it has dried and shrunk
+        y0 = ttop + 8 + int(noise2(i, 1, 974) * (tbot - ttop - 20))
+        x0 = int(cx - radius(y0) * 0.7 + noise2(i, 2, 974) * radius(y0) * 1.3)
+        x, y = x0, y0
+        for s in range(5):
+            c = cv.get(x, y)
+            hexc = '#%02X%02X%02X' % c[:3]
+            if hexc in PLASTER and PLASTER.index(hexc) > 1:
+                cv.set(x, y, PLASTER[PLASTER.index(hexc) - 2])
+            if s % 2:
+                x += 1 if noise2(i, s, 975) > 0.5 else -1
+            else:
+                y += 1
     # iron anchor plates where each floor's beams are tied through the wall, a pair to a floor
     IRON = MATERIALS['iron']
     for fy in (tbot - 64, tbot - 92):
@@ -1065,10 +1078,21 @@ def windmill(turn: float = 0.0) -> Canvas:
             elif not inside and (y < dtop + 4 or x in (dx0 - 1, dx0 - 2, dx0 + 14, dx0 + 15)):
                 cv.set(x, y, STONE[4] if x < dx0 + 4 else STONE[3] if x < dx0 + 12 else STONE[2])  # the surround
     cv.hline(dx0 + 10, dtop + 15, 2, GOLD[3])  # the latch
+    IRON_ = MATERIALS['iron']
+    for hy_ in (dtop + 6, dtop + 23):  # strap hinges across the boards from the west jamb
+        cv.hline(dx0, hy_, 8, IRON_[1]); cv.hline(dx0, hy_ + 1, 3, IRON_[0])
+        cv.set(dx0 + 7, hy_, IRON_[3])
+    for x in range(dx0 + 1, dx0 + 13):  # the bottom boards bleached and split where rain splashes
+        cv.set(x, tbot - 2, WOOD[4] if x < dx0 + 8 else WOOD[3]); cv.set(x, tbot - 3, WOOD[3] if (x - dx0) % 4 != 3 else WOOD[1])
+    cv.hline(dx0 + 9, dtop + 14, 3, WOOD[4])  # hands have worn the boards bright round the latch
     for y in range(tbot, foot - 1):  # the step, out from the footing under the door
         for x in range(dx0 - 1, dx0 + 15):
             cv.set(x, y, STONE[4] if y == tbot else STONE[3] if x < dx0 + 9 else STONE[2])
     cv.hline(dx0 - 1, foot - 1, 16, STONE[1])
+    cv.vline(dx0 + 16, tbot - 3, 3, IRON_[2]); cv.vline(dx0 + 19, tbot - 3, 3, IRON_[0])  # a boot scraper by the step
+    cv.hline(dx0 + 16, tbot - 2, 4, IRON_[3])
+    for (wx, wy) in ((dx0 - 2, tbot - 1), (dx0 + 14, tbot - 1)):  # weeds in the step's joints
+        cv.hline(wx, wy, 2, LEAF[3]); cv.set(wx, wy - 1, LEAF[2]); cv.set(wx + 1, wy - 1, LEAF[2])
     # the stage round the second floor: its deck seen from above, braces, a rail
     srx, sry = radius(stage) + 7, 3
     for x in range(int(cx - srx), int(cx + srx) + 1):
@@ -1109,6 +1133,11 @@ def windmill(turn: float = 0.0) -> Canvas:
             cv.set(x, y, SILVER[WOOD.index(c)])
         elif c in WOOD and x > cx + 2 and y > cap_eave - 5 and noise2(ci, si, 945) > 0.6:
             cv.set(x, y, LEAF[max(0, min(3, WOOD.index(c)))])
+    for (x, y) in pts:  # the tarred seam where the cap's boards meet at its crown course, lit below
+        if y == cap_top + 6:
+            cv.set(x, y, '#2A2624')
+        elif y == cap_top + 7 and x < cx:
+            cv.set(x, y, WOOD[4])
     for x in range(cx - crx - 1, cx + crx + 2):  # the eave, its curb and its shadow
         cv.set(x, cap_eave + 1, WOOD[1] if x > cx else WOOD[2]); cv.set(x, cap_eave + 2, WOOD[0])
         if abs(x + 0.5 - cx) <= radius(ttop):
@@ -1116,6 +1145,8 @@ def windmill(turn: float = 0.0) -> Canvas:
     cv.vline(cx, cap_top - 4, 3, GOLD[3]); cv.vline(cx + 1, cap_top - 4, 3, GOLD[2])  # the finial
     cv.hline(cx, cap_top - 5, 2, GOLD[4])
     # the sails: two stocks through the poll end, lattice frames, two clothed and two bare
+    wall = {(x, y) for y in range(ttop + 2, tbot) for x in range(int(cx - radius(y)), int(cx + radius(y)) + 1)}
+    before = {p: cv.get(*p) for p in wall}
     hx, hy = cx, cap_top + 10
     R = 48
     for k in range(4):
@@ -1138,9 +1169,20 @@ def windmill(turn: float = 0.0) -> Canvas:
             lit = (-px * 0.6 - py * 0.8) > 0
             cv.set(int(round(x)), int(round(y)), WOOD[2])  # the whip, two pixels thick
             cv.set(int(round(x - px)), int(round(y - py)), WOOD[3] if lit else WOOD[1])
-    for (x, y) in disc(hx, hy, 3.2):  # the poll end on the windshaft
-        cv.set(x, y, SLATE[1] if x > hx else SLATE[2])
-    cv.hline(hx - 1, hy - 2, 2, SLATE[3])
+    covered = {p for p in wall if cv.get(*p) != before[p]}
+    for (x, y) in sorted(covered):  # the sails' shadow on the tower, down and to the right of them
+        q = (x + 3, y + 5)
+        if q in wall and q not in covered:
+            r, g, b, a = cv.get(*q)
+            if a:
+                cv.set(q[0], q[1], (int(r * 0.8), int(g * 0.8), int(b * 0.86), a))
+    IRON = MATERIALS['iron']
+    cv.rect(hx - 3, hy - 3, 7, 7, IRON[1])  # the cast-iron poll end on the windshaft, the stocks through it
+    cv.hline(hx - 3, hy - 3, 6, IRON[3]); cv.vline(hx - 3, hy - 2, 5, IRON[2])  # lit on its top and west
+    cv.hline(hx - 3, hy + 3, 7, IRON[0]); cv.vline(hx + 3, hy - 2, 5, IRON[0])
+    for (bx_, by_) in ((hx - 2, hy - 2), (hx + 1, hy - 2), (hx - 2, hy + 1), (hx + 1, hy + 1)):
+        cv.hline(bx_, by_, 2, IRON[4])  # its bolt heads
+    cv.hline(hx - 1, hy - 4, 3, IRON[0])  # the windshaft's neck going in under the cap
     # re-seated in the old 64 x 104 box, its door on the same line, so the halt's track,
     # stand and walk grid still meet it (the taller tower rises above the box)
     return gp.keep_foot(cv, 64, 104, dx=-1)
