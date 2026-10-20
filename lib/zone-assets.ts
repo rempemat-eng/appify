@@ -30,10 +30,14 @@ import propBasaltStumpsB from '@/assets/zones/props/basalt_stumps_b.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBed from '@/assets/zones/props/bed.png';
 import propBeehive from '@/assets/zones/props/beehive.png';
+import propBeehiveB from '@/assets/zones/props/beehive_b.png';
+import propBeehiveBF1 from '@/assets/zones/props/beehive_b_f1.png';
+import propBeehiveBF2 from '@/assets/zones/props/beehive_b_f2.png';
 import propBeehiveF1 from '@/assets/zones/props/beehive_f1.png';
 import propBeehiveF2 from '@/assets/zones/props/beehive_f2.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
+import propBenchEast from '@/assets/zones/props/bench_east.png';
 import propBirdOfParadise from '@/assets/zones/props/bird_of_paradise.png';
 import propBlackRock from '@/assets/zones/props/black_rock.png';
 import propBlackRockSmall from '@/assets/zones/props/black_rock_small.png';
@@ -221,6 +225,7 @@ import propKeep from '@/assets/zones/props/keep.png';
 import propKeepsakeChest from '@/assets/zones/props/keepsake_chest.png';
 import propKeg from '@/assets/zones/props/keg.png';
 import propKitchen from '@/assets/zones/props/kitchen.png';
+import propLambLeft from '@/assets/zones/props/lamb_left.png';
 import propLamp from '@/assets/zones/props/lamp.png';
 import propLibrary from '@/assets/zones/props/library.png';
 import propLighthouse from '@/assets/zones/props/lighthouse.png';
@@ -290,11 +295,15 @@ import propSemaphore from '@/assets/zones/props/semaphore.png';
 import propShaduf from '@/assets/zones/props/shaduf.png';
 import propSheep from '@/assets/zones/props/sheep.png';
 import propSheepLeft from '@/assets/zones/props/sheep_left.png';
+import propSheepLying from '@/assets/zones/props/sheep_lying.png';
 import propShopAshlar from '@/assets/zones/props/shop_ashlar.png';
 import propShuttle from '@/assets/zones/props/shuttle.png';
 import propSideTable from '@/assets/zones/props/side_table.png';
 import propSignalBox from '@/assets/zones/props/signal_box.png';
 import propSignpost from '@/assets/zones/props/signpost.png';
+import propSkep from '@/assets/zones/props/skep.png';
+import propSkepF1 from '@/assets/zones/props/skep_f1.png';
+import propSkepF2 from '@/assets/zones/props/skep_f2.png';
 import propSkyBench from '@/assets/zones/props/sky_bench.png';
 import propSkyPlanter from '@/assets/zones/props/sky_planter.png';
 import propSkyPlanterB from '@/assets/zones/props/sky_planter_b.png';
@@ -772,10 +781,14 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bathhouse: propBathhouse,
   bed: propBed,
   beehive: propBeehive,
+  beehive_b: propBeehiveB,
+  beehive_b_f1: propBeehiveBF1,
+  beehive_b_f2: propBeehiveBF2,
   beehive_f1: propBeehiveF1,
   beehive_f2: propBeehiveF2,
   bell_tower: propBellTower,
   bench: propBench,
+  bench_east: propBenchEast,
   bird_of_paradise: propBirdOfParadise,
   black_rock: propBlackRock,
   black_rock_small: propBlackRockSmall,
@@ -963,6 +976,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   keepsake_chest: propKeepsakeChest,
   keg: propKeg,
   kitchen: propKitchen,
+  lamb_left: propLambLeft,
   lamp: propLamp,
   library: propLibrary,
   lighthouse: propLighthouse,
@@ -1032,11 +1046,15 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   shaduf: propShaduf,
   sheep: propSheep,
   sheep_left: propSheepLeft,
+  sheep_lying: propSheepLying,
   shop_ashlar: propShopAshlar,
   shuttle: propShuttle,
   side_table: propSideTable,
   signal_box: propSignalBox,
   signpost: propSignpost,
+  skep: propSkep,
+  skep_f1: propSkepF1,
+  skep_f2: propSkepF2,
   sky_bench: propSkyBench,
   sky_planter: propSkyPlanter,
   sky_planter_b: propSkyPlanterB,
