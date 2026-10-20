@@ -12,7 +12,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
+from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
 import garden_props as gp  # noqa: E402
 from materials import MATERIALS, WOOD, STONE, GOLD, NAP, RED, SNOW  # noqa: E402
@@ -28,157 +28,8 @@ def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
 
 
-HOT = ['#3A1C14', '#5E2C1E', '#844230', '#A85A40', '#C87A58']  # a hotter-fired brick, redder
-SOOTED = ['#1C1426', '#2C2433', '#3B343E', '#4A4448', '#655B57']  # a brick blackened by the town's smoke
-STOCK = MATERIALS['path']  # a buff stock brick, laid in a repair
-
-
-def weathered_bricks(cv: Canvas, x0: int, y0: int, w: int, h: int, ramp, seed: int = 0, base: int = 3):
-    """A Cogsworth brick wall in the house's ramps, weathered as old town brick is, whole
-    brick by whole brick (detail in clusters, never single pixels): detail.bricks' courses,
-    then here and there a hotter-fired brick, one blackened by smoke (more of them high up,
-    under the eaves the smoke rolls along), a patch rebuilt in buff stock brick, a stretch
-    repointed in pale lime mortar, salt blooming white on the bricks of the lowest courses
-    and moss in their joints where the wall stands in the damp."""
-    detail.bricks(cv, x0, y0, w, h, ramp, seed=seed, base=base)
-    courses = h // 3
-    for ci in range(courses + 1):
-        shift = 3 if ci % 2 else 0
-        high = 1 - ci / max(1, courses)  # 1 at the top course, 0 at the foot
-        low = ci >= courses - 2
-        for bi in range(-1, w // 6 + 2):
-            n = noise2(bi, ci, 1830 + seed)
-            fam = None
-            if n > 0.93:
-                fam = HOT if ramp is not HOT else BRICK
-            elif n < 0.05 + 0.12 * high:
-                fam = SOOTED
-            elif smooth_noise(bi * 6.0, ci * 3.0, 14, 1831 + seed) > 0.8:
-                fam = STOCK
-            repoint = smooth_noise(bi * 6.0, ci * 3.0, 12, 1832 + seed) < 0.2
-            salt = low and noise2(bi, ci, 1833 + seed) > 0.55
-            t = base + (1 if noise2(bi, ci, 1834 + seed) > 0.7 else 0)
-            if smooth_noise(bi * 6.0, ci * 3.0, 18, 1836 + seed) > 0.68:
-                t -= 1  # a damp stretch of wall, whole bricks a step darker
-            for r in range(3):
-                y = y0 + ci * 3 + r
-                if y >= y0 + h:
-                    continue
-                for c in range(6):
-                    x = x0 + bi * 6 + c - shift
-                    if not (x0 <= x < x0 + w):
-                        continue
-                    if r == 2 or c == 5:
-                        if repoint:
-                            cv.set(x, y, ASHLAR[2] if r == 2 else ASHLAR[1])  # fresh lime mortar
-                        elif low and r == 2 and noise2(bi, ci, 1835 + seed) > 0.6 and c < 4:
-                            cv.set(x, y, '#2E4426' if c % 2 else '#3E5A30')  # moss along the bed joint
-                        continue
-                    f_ = fam or ramp
-                    if fam is not None or t != base or (r == 1 and c == 4):
-                        k_ = t + 1 if r == 0 else t - 1 if c == 4 else t  # lit top, the body, its east end turned from the light
-                        cv.set(x, y, f_[max(0, min(len(f_) - 1, k_))])
-                    if salt and r == 1 and 1 <= c <= 3:
-                        cv.set(x, y, '#B8B0A0' if c < 3 else '#9A9284')  # salt dried out of the brick
-
-
-# ---- what a Cogsworth wall carries (the facade pass, 20 Oct): each a small built thing in
-# the house's ramps, lit from the upper left, in clusters of two or more pixels
-
-def pattress(cv: Canvas, x: int, y: int):
-    """A cast-iron tie plate, the end of a rod that holds the floor to the wall: a round
-    plate 4 px across, lit on its upper left, its nut in the middle."""
-    for (dx, dy) in ((1, 0), (2, 0), (0, 1), (1, 1), (2, 1), (3, 1), (0, 2), (1, 2), (2, 2), (3, 2), (1, 3), (2, 3)):
-        cv.set(x + dx, y + dy, IRON[4] if dx + dy < 2 else IRON[3] if dx + dy < 4 else IRON[1])
-    cv.set(x + 1, y + 1, IRON[0]); cv.set(x + 2, y + 1, IRON[0])
-
-
-def airbrick(cv: Canvas, x: int, y: int):
-    """A cast-iron air brick low in the wall, a brick's size: its frame and two slots."""
-    cv.hline(x, y, 5, IRON[3]); cv.hline(x, y + 2, 5, IRON[1])
-    cv.set(x, y + 1, IRON[2]); cv.set(x + 1, y + 1, IRON[0]); cv.set(x + 2, y + 1, IRON[0])
-    cv.set(x + 3, y + 1, IRON[0]); cv.set(x + 4, y + 1, IRON[2])
-
-
-def soot_over(cv: Canvas, x0: int, x1: int, y: int, rows: int = 4):
-    """Smoke has stained the bricks over an opening: darkest just above it, fading upward
-    and narrowing, a step darker on whatever ramp it lies on."""
-    for i in range(rows):
-        for x in range(x0 + i, x1 - i):
-            if noise2(x // 2, (y - i) // 2, 1840) > 0.25 + i * 0.12:
-                detail.shade(cv, x, y - 1 - i, 1)
-
-
-def bill(cv: Canvas, x: int, y: int, w: int = 5, h: int = 7, ink='#2E4A7A', paper='#E8DCC0'):
-    """A bill pasted to the wall: its paper, a heading in colour, lines of print, a corner
-    curling off in the damp."""
-    for (xx, yy) in rect_set(x, y, w, h):
-        c = paper if xx < x + w - 1 else '#B8AE94'
-        if yy - y in (1, 2) and x < xx < x + w - 1:
-            c = ink
-        elif (yy - y) % 2 == 0 and yy - y > 3 and x < xx < x + w - 2:
-            c = '#6A6458'
-        cv.set(xx, yy, c)
-    cv.set(x + w - 1, y + h - 1, '#9A9078')
-
-
-def window_box(cv: Canvas, x: int, y: int, w: int, flowers=('#D23A30', '#F0A020')):
-    """A timber box on two brackets under a sill: earth, leaves, flowers in pairs."""
-    for (xx, yy) in rect_set(x, y, w, 3):
-        cv.set(xx, yy, WOOD[3] if yy == y else WOOD[2] if xx < x + w - 2 else WOOD[1])
-    cv.set(x + 1, y + 3, IRON[2]); cv.set(x + w - 2, y + 3, IRON[2])
-    for k in range(0, w - 1, 2):
-        cv.set(x + k, y - 1, '#3E6438'); cv.set(x + k + 1, y - 1, '#2E4A2E')
-        if noise2(x + k, y, 1841) > 0.4:
-            col = flowers[(k // 2) % len(flowers)]
-            cv.set(x + k, y - 2, col); cv.set(x + k + 1, y - 2, col)
-        elif noise2(x + k, y, 1842) > 0.5:
-            cv.set(x + k, y - 2, '#5A8046')
-
-
-def fire_buckets(cv: Canvas, x: int, y: int, n: int = 3):
-    """A row of red fire buckets hung on a board, each lit on its rim."""
-    cv.hline(x - 1, y - 1, n * 4 + 1, WOOD[3]); cv.hline(x - 1, y, n * 4 + 1, WOOD[1])
-    for k in range(n):
-        bx = x + k * 4
-        for (xx, yy) in rect_set(bx, y + 1, 3, 3):
-            cv.set(xx, yy, RED[3] if yy == y + 1 else RED[2] if xx < bx + 2 else RED[1])
-        cv.set(bx + 1, y + 1, '#E8E2D0')  # the white of FIRE on its side
-
-
-def hopper(cv: Canvas, x: int, y: int, y1: int):
-    """A downpipe from a hopper head under the gutter, its clips, a shoe at the foot."""
-    for (xx, yy) in rect_set(x - 1, y, 5, 3):
-        cv.set(xx, yy, IRON[3] if yy == y else IRON[2] if xx < x + 2 else IRON[1])
-    for yy in range(y + 3, y1):
-        cv.set(x, yy, IRON[3]); cv.set(x + 1, yy, IRON[2]); cv.set(x + 2, yy, IRON[1])
-        if (yy - y) % 8 == 0:
-            cv.hline(x - 1, yy, 5, IRON[2])
-    cv.hline(x, y1, 4, IRON[2])
-
-
-def weathered_stone(cv: Canvas, x0: int, y0: int, w: int, h: int, ramp, seed: int = 0):
-    """Dressed stone as the town's smoke and damp have left it, after detail.stones: broad
-    patches blackened by soot where rain does not wash the face (thickest under the eaves),
-    green damp creeping up from the foot, and rust run down from an iron fixing here and
-    there, each in clusters, keeping every stone's lit and shaded edges."""
-    idx = {tuple(int(c[k:k + 2], 16) for k in (1, 3, 5)): i for i, c in enumerate(ramp)}
-    DAMP = ['#24301E', '#34442A', '#4A5A36', '#627044', '#7C8854', '#96A268']
-    STAINED = ['#2E2A2E', '#46403F', '#5E5753', '#78706A', '#948A80', '#B0A698']  # the stone a step greyer under its soot
-    for y in range(y0, y0 + h):
-        high = 1 - (y - y0) / max(1, h)
-        for x in range(x0, x0 + w):
-            i = idx.get(cv.get(x, y)[:3])
-            if i is None:
-                continue
-            if smooth_noise(x, y * 1.3, 9, 1845 + seed) > 0.78 - 0.18 * high:
-                cv.set(x, y, STAINED[max(0, min(5, i))])
-            elif y > y0 + h - 7 and smooth_noise(x, y, 4, 1846 + seed) > 0.55 - (y - (y0 + h - 7)) * 0.04:
-                cv.set(x, y, DAMP[max(0, min(5, i))])
-
-
 def brick_wall(cv: Canvas, x0: int, y0: int, w: int, h: int, seed: int = 0):
-    weathered_bricks(cv, x0, y0, w, h, BRICK, seed=seed, base=3)
+    detail.bricks(cv, x0, y0, w, h, BRICK, seed=seed, base=3)
     for x in range(x0, x0 + w):  # soot gathers low on the wall
         for y in range(y0 + h - 3, y0 + h):
             detail.shade(cv, x, y, 1)
@@ -256,7 +107,7 @@ def workshop(width: int = 96, sign: str = 'gear', turn: float = 0.0) -> Canvas:
             cv.hline(w - 27, y, 11, IRON[1])
     cv.rect(w - 28, 4, 13, 3, IRON[3]); cv.hline(w - 28, 4, 13, IRON[4]); cv.rect(w - 24, 5, 5, 1, IRON[0])
     gable = gp.topdown_gable(cv, edge_y, 7, w - 8, apex_y, wall_top, BRICK, boards=False)
-    weathered_bricks(cv, 7, apex_y, w - 14, wall_top - apex_y, BRICK, seed=3, base=3)
+    detail.bricks(cv, 7, apex_y, w - 14, wall_top - apex_y, BRICK, seed=3, base=3)
     for x in range(0, w):
         for y in range(0, wall_top):
             if (x, y) not in gable and cv.get(x, y)[:3] == tuple(int(BRICK[3][k:k + 2], 16) for k in (1, 3, 5)):
@@ -298,17 +149,6 @@ def workshop(width: int = 96, sign: str = 'gear', turn: float = 0.0) -> Canvas:
         proud |= disc(wx, wall_top + 13, 6)
     pipe_v(cv, w - 15, wall_top + 2, wall_bottom, BRASS)
     proud |= rect_set(w - 15, wall_top + 2, 3, wall_bottom - wall_top - 2)
-    soot_over(cv, dx0 - 1, dx0 + dw + 1, wall_bottom - dh - 2)  # the forge's smoke, out of the door
-    for wx in (20, w - 21):  # a box of flowers under each round window
-        window_box(cv, wx - 5, wall_top + 21, 11, flowers=('#F0A020', '#D23A30') if wx < ridge else ('#E8E2D0', '#D23A30'))
-        proud |= rect_set(wx - 5, wall_top + 18, 11, 6)
-    for px_ in (12, w - 22):  # the tie plates of the loft floor
-        pattress(cv, px_, wall_top + 2)
-        proud |= rect_set(px_, wall_top + 2, 4, 4)
-    for ax in (12, w - 25):
-        airbrick(cv, ax, wall_bottom - 6)
-    bill(cv, dx0 - 8, wall_bottom - 22, 5, 7, ink='#B83A2E')
-    proud |= rect_set(dx0 - 8, wall_bottom - 22, 5, 7)
     detail.cast(cv, proud, 1, 1, k=1, on=BRICK, reach=2)
     detail.overhang_shadow(cv, 7, w - 7, wall_top, lambda x: 3, k=2, cap=1)
     detail.stones(cv, 5, wall_bottom, w - 10, 8, STONE, seed=17, course=4)
@@ -1171,17 +1011,8 @@ def foundry() -> Canvas:
         if 50 < wx < 92:
             continue
         for (x, y) in rect_set(wx, 56, 8, 20) | {(x, y) for (x, y) in disc(wx + 4, 56, 4) if y < 56}:
-            c = WARM[3] if y < 62 else WARM[2] if y < 70 else '#C2380E'
-            pane = (x - wx) // 4, (y - 52) // 5
-            if noise2(pane[0] + wx, pane[1], 1849) > 0.82:
-                c = SOOTED[2] if y < 66 else SOOTED[1]  # a pane gone black with soot
-            elif noise2(pane[0] + wx, pane[1], 1850) < 0.12:
-                c = '#3A2A1A'  # a pane broken and boarded
-            if (y - 52) % 5 == 0:
-                c = IRON[1]  # the cast-iron glazing bars
-            cv.set(x, y, c)
+            cv.set(x, y, WARM[3] if y < 62 else WARM[2] if y < 70 else '#C2380E')
         cv.vline(wx + 4, 52, 24, IRON[1])
-        cv.hline(wx - 1, 76, 10, ASHLAR[4]); cv.hline(wx - 1, 77, 10, ASHLAR[1])  # a stone sill
     door = {(x, y) for (x, y) in disc(72, 70, 16) if y < 70} | rect_set(56, 70, 32, 28)
     for (x, y) in door:
         d = abs(x - 72) / 16 + (98 - y) / 50
@@ -1193,25 +1024,6 @@ def foundry() -> Canvas:
     for (x, y) in oval(72, 92, 6, 3):  # a crucible pouring
         cv.set(x, y, IRON[1])
     cv.hline(69, 90, 6, '#FFE9A0')
-    for (fx, sgn) in ((62, 1), (82, -1)):  # two founders against the glow, guiding the crucible's shank
-        for (x, y) in rect_set(fx, 80, 3, 10):
-            cv.set(x, y, '#2A1C1A' if y > 83 else '#3A2420')
-        for (x, y) in rect_set(fx, 77, 3, 3):
-            cv.set(x, y, '#1E1414')
-        cv.hline(fx + (3 if sgn > 0 else -3), 87, 3, IRON[1])
-    for (x, y) in ((66, 84), (67, 83), (77, 82), (78, 81), (70, 80), (74, 79)):  # sparks
-        cv.set(x, y, '#FFF4C8'); cv.set(x + 1, y, '#FFE9A0')
-    for wx in (14, 36, 102, 124):  # soot over each window, and thick over the furnace door
-        soot_over(cv, wx - 1, wx + 9, 52, rows=3)
-    soot_over(cv, 56, 88, 53, rows=5)
-    for px_ in (28, 50, 92, 114):  # the tie plates of the crane girder inside
-        pattress(cv, px_, 49)
-    fire_buckets(cv, 90, 80, 3)
-    bill(cv, 47, 62, 5, 7, ink='#2E4A7A')
-    bill(cv, 47, 72, 5, 6, ink='#B83A2E', paper='#D8D4C4')
-    for ax in (20, 132):
-        airbrick(cv, ax, 92)
-    detail.cast(cv, rect_set(89, 79, 13, 5) | rect_set(47, 62, 5, 16), 1, 1, k=1, on=BRICK, reach=2)
     detail.stones(cv, 4, 98, w - 8, 8, STONE, seed=23, course=4)
     for k, (mx, my) in enumerate(((108, 92), (116, 94), (124, 91))):  # moulds
         for (x, y) in oval(mx, my, 4, 2.5):
@@ -1577,9 +1389,8 @@ def townhouse(width: int = 88, storeys: int = 2, roof=None, wall: str = 'brown',
                      7, w - 8, apex_y, wall_top, ['#B8AE9C', '#CFC6B2', '#E2DACB', '#EEE8DA', '#F6F2E8'], boards=False)
     if wall == 'ashlar':
         detail.stones(cv, 7, wall_top, w - 14, wall_bottom - wall_top, ASHLAR, seed=31 + seed, course=5, base=3)
-        weathered_stone(cv, 7, wall_top, w - 14, wall_bottom - wall_top, ASHLAR, seed=31 + seed)
     else:
-        weathered_bricks(cv, 7, wall_top, w - 14, wall_bottom - wall_top, ramp, seed=33 + seed, base=3)
+        detail.bricks(cv, 7, wall_top, w - 14, wall_bottom - wall_top, ramp, seed=33 + seed, base=3)
     for x in range(7, w - 7):  # soot low on the wall
         for y in range(wall_bottom - 3, wall_bottom):
             detail.shade(cv, x, y, 1)
@@ -1605,30 +1416,12 @@ def townhouse(width: int = 88, storeys: int = 2, roof=None, wall: str = 'brown',
             if (x - fx0) % 9 == 0 or y in (fy0, fy1 - 1):
                 c = '#2C3E4C' if (x - fx0) % 9 == 0 else '#3E566A'
             cv.set(x, y, c)
-        GOODS = ((BRASS[4], BRASS[2]), (COPPER[4], COPPER[2]), (RED[3], RED[1]), ('#E8E2D0', '#B8B0A0'), (IRON[4], IRON[2]))
-        for (x, y) in rect_set(fx0, fy1 - 7, fx1 - fx0, 7):  # the stall riser under the glass: panels in green, a lit moulding
-            if dx - 1 <= x <= dx + 14:
-                continue
-            c = '#2C4232' if (x - fx0) % 9 in (0, 8) or y in (fy1 - 7, fy1 - 1) else '#3E5C46'
-            if y == fy1 - 7:
-                c = '#5A7C62'
-            cv.set(x, y, c)
-        for shelf in (fy1 - 9, fy1 - 18, fy1 - 27):  # the goods on their shelves: tins, jars, bottles and parcels
-            for gx in range(fx0 + 2, fx1 - 2, 3):
-                if dx - 2 <= gx <= dx + 15 or (gx - fx0) % 9 in (0, 8):
-                    continue
-                g = GOODS[int(noise2(gx, shelf, 1847) * len(GOODS))]
-                tall = 3 if noise2(gx, shelf, 1848) > 0.5 else 2
-                for t in range(tall):
-                    cv.set(gx, shelf - 1 - t, g[0]); cv.set(gx + 1, shelf - 1 - t, g[1])
-            cv.hline(fx0 + 1, shelf, fx1 - fx0 - 2, '#5A3A1E')  # the shelf
-        for k in range(3):  # the dusk sky caught across the glass, in two bars
-            gx0 = fx0 + 3 + k * 23
-            for t in range(6):
-                for d in (0, 1):
-                    x, y = gx0 + t + d, fy0 + 9 - t
-                    if fx0 < x < fx1 and not (dx - 1 <= x <= dx + 14) and (x - fx0) % 9:
-                        cv.set(x, y, '#F8E6B8')
+        for k, gx in enumerate(range(fx0 + 4, fx1 - 4, 9)):  # goods in the window
+            if gx < dx - 2 or gx > dx + 16:
+                for shelf in (fy1 - 3, fy1 - 14):
+                    cv.set(gx, shelf, BRASS[4] if k % 2 else COPPER[3]); cv.set(gx + 1, shelf, BRASS[2])
+                    cv.set(gx, shelf - 1, BRASS[3] if k % 2 else COPPER[4])
+                cv.hline(gx - 1, fy1 - 12, 4, '#3E566A')  # the shelf
         proud |= rect_set(fx0, fy0, fx1 - fx0, fy1 - fy0)
         ay = fy0 - 6  # the striped awning, a plane sloping out toward us
         for y in range(ay, fy0):
@@ -1650,31 +1443,6 @@ def townhouse(width: int = 88, storeys: int = 2, roof=None, wall: str = 'brown',
             if abs(wx - dx) > 15:
                 proud |= sash(cv, wx, wall_bottom - 27, 12, 16, lit=(k + seed) % 2 == 0)
     proud |= panel_door(cv, dx, wall_bottom - 1, 14, 32)
-    if not shop:
-        for k, wx in enumerate((12, w - 24)):  # boxes of flowers under the ground floor's windows
-            if abs(wx - dx) > 15:
-                window_box(cv, wx - 1, wall_bottom - 9, 14, flowers=(('#D23A30', '#F0A020'), ('#B8608A', '#E8E2D0'))[(k + seed) % 2])
-                proud |= rect_set(wx - 1, wall_bottom - 11, 14, 5)
-        for ax in (9, w - 20):
-            if abs(ax - dx) > 16:
-                airbrick(cv, ax, wall_bottom - 5)
-    if storeys > 1:
-        for px_ in (9, w - 17):  # the tie plates of the upper floor, on the string course's line
-            pattress(cv, px_, wall_top + storey - 5)
-            proud |= rect_set(px_, wall_top + storey - 5, 4, 4)
-    if shop:
-        bill(cv, 8, wall_bottom - 20, 4, 6, ink='#2E4A7A')
-        proud |= rect_set(8, wall_bottom - 20, 4, 6)
-    lx_ = (dx + 16 if dx + 22 < w - 12 else dx - 6) if not shop else -99  # a gas lamp on a bracket by the door, the house's number on enamel
-    if not shop:
-        cv.hline(lx_ - 1, wall_bottom - 36, 4, IRON[3])
-        for (x, y) in rect_set(lx_, wall_bottom - 35, 3, 4):
-            cv.set(x, y, WARM[3] if y < wall_bottom - 33 else WARM[2])
-        cv.hline(lx_, wall_bottom - 31, 3, IRON[1])
-        for (x, y) in rect_set(lx_, wall_bottom - 27, 4, 3):
-            cv.set(x, y, '#2E4A7A' if x in (lx_, lx_ + 3) or y != wall_bottom - 26 else '#E8E2D0')
-        proud |= rect_set(lx_ - 1, wall_bottom - 36, 5, 9)
-        cv.hline(dx - 4, wall_bottom - 2, 3, IRON[3]); cv.hline(dx - 4, wall_bottom - 1, 3, IRON[1])  # a boot scraper by the step
     for y in range(wall_top + 1, wall_bottom):  # the drainpipe down the corner
         cv.set(w - 11, y, IRON[3]); cv.set(w - 10, y, IRON[1])
         if y % 9 == 0:
@@ -1766,9 +1534,9 @@ def warehouse() -> Canvas:
     gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, seed=97, moss=None, barge=IRON)
     gp.topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2),
                      7, w - 8, apex_y, wall_top, BROWN, boards=False)
-    weathered_bricks(cv, 7, apex_y + 4, w - 14, wall_top - apex_y - 4, BROWN, seed=41, base=3)
+    detail.bricks(cv, 7, apex_y + 4, w - 14, wall_top - apex_y - 4, BROWN, seed=41, base=3)
     gp.topdown_roof(cv, ridge, apex_y, eave_y, 2, w - 3, SLATE, seed=97, moss=None, barge=IRON)
-    weathered_bricks(cv, 7, wall_top, w - 14, wall_bottom - wall_top, BROWN, seed=43, base=3)
+    detail.bricks(cv, 7, wall_top, w - 14, wall_bottom - wall_top, BROWN, seed=43, base=3)
     proud = set()
     for (x, y) in rect_set(18, wall_top + 3, w - 36, 6):  # the name band
         c = '#E8DCC0' if 0 < y - wall_top - 3 < 5 else '#2A1A16'
