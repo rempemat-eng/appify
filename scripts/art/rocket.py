@@ -12,8 +12,14 @@ regolith that falls straight back (no air, no billowing) and settles on its legs
 Everything is drawn here, in the house palette (docs/vision/house-style.md, PR #121): six
 tones a family from one body colour, shade towards dusk violet and light towards lamp
 yellow, each family's own edge tone for its outline (broken to tone 1 where a lit top or
-left edge is closed), light from the upper left, metal as plates with seams, rivets and a
-sheen, glows as light sources with no outline. Until #121's house_palette.py is on main,
+left edge is closed), light from the upper left, glows as light sources with no outline.
+Every mark is a thing (Claude A, 20 Oct, after Matt's "make sure the detail makes sense and
+looks right"): painted panels in rings with their seams, rivets only on the seams, a few
+stencils (a stage number, a hazard band, an arrow at a hatch), hinged hatches, valves,
+connector plates, handrails, lamps, each part seated with its shadow; frost, soot and
+scorching only where the real thing has them; clean skin where the real thing is clean.
+The vehicles and the station pass detail_bar's 'machinery' bar (counts and cleanliness) on
+their bodies. Until #121's house_palette.py is on main,
 the ramps used here are a snapshot of what it computes (HOUSE below); once it lands, read
 them from it. Sizes follow the size guide (#124): an adult is 25 px and a storey 32, so the
 rocket stands about five storeys (164 px) beside a gantry of six.
@@ -189,118 +195,6 @@ class Spr:
 
 
 # --- materials ------------------------------------------------------------------------
-def plates(s: Spr, x0, y0, w, h, fam, seed, pw=10, ph=8, round_x=None, other=None, rivets=True,
-           round_y=None, other_share=0.1, mask=None, stagger=True):
-    """Machined plates (house style, metal): each plate a sibling, the odd one in a second
-    family (primer), seams as a dark line with a lit line under it, rivets as a lit head
-    over its shadow, a slow sheen lighter at the upper left. `round_x` (cx, r) shades the
-    plates as a cylinder seen from the side: lit on the left third, dark at the right;
-    `round_y` (cy, r) as one lying down: lit along its top. `mask(x, y)` limits the plating to
-    a shape."""
-    for y in range(y0, y0 + h):
-        row = (y - y0) // ph
-        off = (row % 2) * (pw // 2) if stagger else 0   # (aligned: machined plates, never a bond)
-        for x in range(x0, x0 + w):
-            if mask and not mask(x, y):
-                continue
-            col = (x - x0 + off) // pw
-            n = noise2(col, row, seed)
-            name = sib(fam, n)
-            if other and noise2(col, row, seed + 7) > 1 - other_share:
-                name = sib(other, noise2(col, row, seed + 8))
-            tone = 3
-            if round_y:
-                cy, r = round_y
-                k = (y - (cy - r)) / max(1, 2 * r)   # 0 at the top .. 1 at the bottom
-                tone = 4 if k < 0.2 else 3 if k < 0.55 else 2 if k < 0.85 else 1
-                if 0.1 < k < 0.17 and (x - x0 + off) % pw not in (0, 1):
-                    tone = 5 if noise2(x // 3, y // 2, seed + 3) > 0.55 else 4
-            if round_x:
-                cx, r = round_x
-                k = (x - (cx - r)) / max(1, 2 * r)   # 0 at the left edge .. 1 at the right
-                tone = 4 if k < 0.16 else 3 if k < 0.55 else 2 if k < 0.86 else 1
-                if 0.08 < k < 0.14 and (y - y0) % ph not in (0, 1):
-                    tone = 5 if noise2(x // 2, y // 3, seed + 3) > 0.55 else 4   # the sheen band
-            jit = noise2(col, row, seed + 11)
-            if jit > 0.84:
-                tone = min(5, tone + 1)            # the odd plate a tone off
-            elif jit < 0.14:
-                tone = max(0, tone - 1)
-            py, pxx = (y - y0) % ph, (x - x0 + off) % pw
-            if py == 0:
-                tone = max(0, tone - 2)            # the seam
-            elif py == 1:
-                tone = min(5, tone + 1)            # its lit line
-            elif pxx == 0 and not round_x:
-                tone = max(0, tone - 2)
-            elif pxx == 1 and not round_x:
-                tone = min(5, tone + 1)
-            elif pxx == 0 and round_x and noise2(col, row, seed + 1) > 0.35:
-                tone = max(0, tone - 1)
-            s.set(x, y, name, tone)
-            if rivets and (py == 3 or (not stagger and py == ph - 2)) and pxx in (2, pw - 3) \
-                    and noise2(x, y, seed + 5) > 0.25:
-                # a steel rivet: its head lit, its shadow under it on the plate
-                s.set(x, y, 'iron', 5 if tone >= 3 else 4)
-                s.set(x, y + 1, name, max(0, tone - 2))
-
-
-def hatch(s: Spr, x, y, w, h, fam='hull', lit=True):
-    """A small access hatch set in the plating: a recessed frame (dark top and left), a lit
-    lower lip, a bolt at each corner, a handle."""
-    for yy in range(y, y + h):
-        for xx in range(x, x + w):
-            t = 1 if (yy == y or xx == x) else 4 if (yy == y + h - 1 or xx == x + w - 1) else (3 if lit else 2)
-            s.set(xx, yy, sib(fam, 0.5), t)
-    for (bx, by) in ((x + 1, y + 1), (x + w - 2, y + 1), (x + 1, y + h - 2), (x + w - 2, y + h - 2)):
-        s.set(bx, by, 'iron', 3)
-    if w > 5:
-        s.hline(x + 2, y + h // 2, w - 4, 'iron', 2)
-
-
-def decal(s: Spr, x, y, kind: str):
-    """Small painted markings: a hazard tag, a warning triangle, a stencilled number, a
-    status strip."""
-    if kind == 'tag':
-        s.rect(x, y, 4, 2, 'brass', 4); s.hline(x, y + 2, 4, 'brass', 2)
-        s.set(x + 1, y, 'iron', 1)
-    elif kind == 'warn':
-        for k in range(3):
-            s.hline(x + 2 - k, y + k, 1 + 2 * k, 'brass', 4 - (k == 2))
-        s.set(x + 2, y + 1, 'iron', 0)
-    elif kind == 'stencil':
-        for k in range(4):
-            s.set(x, y + k, 'iron', 1); s.set(x + 2, y + k, 'iron', 1)
-        s.set(x + 1, y, 'iron', 1); s.set(x + 1, y + 3, 'iron', 1)
-    elif kind == 'strip':
-        s.hline(x, y, 5, 'berry', 4); s.hline(x, y + 1, 5, 'berry', 2)
-
-
-def rail(s: Spr, x0, x1, y, fam='brass'):
-    """A grab rail on stand-offs: the bar lit on top, its posts, their shadows."""
-    s.hline(x0, y, x1 - x0, fam, 4)
-    s.hline(x0, y + 1, x1 - x0, fam, 2)
-    for x in range(x0, x1, 6):
-        s.set(x, y + 2, 'iron', 2)
-
-
-def band(s: Spr, x0, y0, w, h, fam, cx, r, seed, chevrons=None):
-    """A painted livery band round a cylinder, lit like it; `chevrons` (fam2) paints hazard
-    stripes in two families."""
-    for y in range(y0, y0 + h):
-        for x in range(x0, x0 + w):
-            k = (x - (cx - r)) / max(1, 2 * r)
-            tone = 4 if k < 0.16 else 3 if k < 0.55 else 2 if k < 0.86 else 1
-            name = fam
-            if chevrons and ((x + (y - y0)) // 3) % 2:
-                name = chevrons
-            if y == y0:
-                tone = min(5, tone + 1)
-            if y == y0 + h - 1:
-                tone = max(0, tone - 1)
-            s.set(x, y, sib(name, noise2(x // 4, y, seed), 0.2), tone)
-
-
 def cyl_tone(x, cx, r):
     k = (x - (cx - r)) / max(1, 2 * r)
     return 4 if k < 0.16 else 3 if k < 0.55 else 2 if k < 0.86 else 1
@@ -312,125 +206,421 @@ STAGE1_H = 96    # the booster, from its engine bells' foot to its top
 STAGE2_H = 68    # the upper stage with its crew capsule and nose
 
 
+def skin(s: Spr, x0, y0, w, y1, cx, r, fam, seed, rings, seams=(), paint=None, rivets=True):
+    """A painted cylinder's skin between rows y0 and y1, as a real one is built: rings of
+    panels (each panel one sibling of the paint, so a ring reads as panels, not noise), a ring
+    seam as a dark line with a lit lip under it and a row of rivets on that lip, a vertical
+    seam or two a tone down, and the cylinder's light: a lit left third with a one-pixel
+    sheen line, the body, the shade, the dark limb. `paint` maps a row to another family
+    (a livery band) or None."""
+    edges = sorted(set([y0] + list(rings) + [y1]))
+    for y in range(y0, y1):
+        ring = max(i for i, e in enumerate(edges) if e <= y)
+        top = edges[ring]
+        fam_y = (paint(y) if paint else None) or fam
+        for x in range(x0, x0 + w):
+            k = (x - (cx - r) + 0.5) / (2 * r)
+            t = 4 if k < 0.3 else 3 if k < 0.6 else 2 if k < 0.85 else 1
+            if 0.11 < k < 0.16:
+                t = 5                                                        # the sheen
+            if k > 0.93:
+                t = 2                                                        # light thrown back on the limb
+            sx = cx + (seams[ring % len(seams)] if seams else 99)
+            side = 0 if x < sx else 1 if x < sx + 11 else 2                  # (three panels round the ring)
+            name = sib(fam_y, noise2(ring, side, seed), 0.34)
+            if y == top and y != y0:
+                t = max(0, t - 2)                                            # the ring seam
+            elif y == top + 1 and y != y0 + 1:
+                t = min(5, t + 1)                                            # its lit lip
+            elif seams and x in (sx, sx + 11):
+                t = max(0, t - 1)                                            # the vertical seams
+            s.set(x, y, name, t)
+            if rivets and y == top + 1 and top != y0 and (x - x0) % 3 == 1 and 0.06 < k < 0.94:
+                s.set(x, y, 'iron', 4 if k < 0.6 else 3)                     # rivets, on the seam only
+
+
+def stencil(s: Spr, x, y, glyph: str, fam='iron', tone=1):
+    """A stencilled glyph, 3 x 5 px: '1', '2', or an arrow '>' / '<'."""
+    rows = {'1': ('.#.', '##.', '.#.', '.#.', '###'), '2': ('##.', '..#', '.#.', '#..', '###'),
+            '>': ('#..', '##.', '###', '##.', '#..'), '<': ('..#', '.##', '###', '.##', '..#')}[glyph]
+    for j, row in enumerate(rows):
+        for i, ch in enumerate(row):
+            if ch == '#':
+                s.set(x + i, y + j, fam, tone)
+
+
+def hinged_hatch(s: Spr, x, y, w, h, fam='hull', lit=True, hinge_left=True):
+    """An access hatch: a recessed frame (its top and left edges dark, its bottom and right
+    lit), the door a tone off the skin, two hinge knuckles on one side, a handle on the other,
+    and a lit lower lip."""
+    for yy in range(y, y + h):
+        for xx in range(x, x + w):
+            edge_dark = yy == y or xx == x
+            edge_lit = yy == y + h - 1 or xx == x + w - 1
+            t = 1 if edge_dark else 4 if edge_lit else (3 if lit else 2)
+            s.set(xx, yy, sib(fam, 0.5), t)
+    hx = x if hinge_left else x + w - 1
+    for hy in (y + 1, y + h - 3):
+        s.set(hx, hy, 'iron', 4); s.set(hx, hy + 1, 'iron', 2)                  # hinges
+    gx = x + w - 3 if hinge_left else x + 2
+    s.set(gx, y + h // 2 - 1, 'iron', 4); s.set(gx, y + h // 2, 'iron', 2)      # the handle
+
+
+# --- parts: what every mark on the vehicles and the station is -------------------------
+def hskin(s: Spr, x0, x1, cy, r, fam, seed, rings, seams=(), paint=None, rivets=True, taper=(0, 0)):
+    """A cylinder lying on its side, seen side on (the station's modules), built like skin():
+    lit along its top third with a one-pixel sheen line, the body, the shade, the limb lit back
+    from below; ring seams across it (a dark line, a lit lip on its right, rivets on the lip
+    only), one seam along each ring, each panel one sibling of the paint. `paint(x, y)` gives
+    a livery band its family; `taper` (left, right) narrows the ends into end cones."""
+    edges = sorted(set([x0] + list(rings) + [x1]))
+    for x in range(x0, x1):
+        ring = max(i for i, e in enumerate(edges) if e <= x)
+        left = edges[ring]
+        rr = r - max(0, taper[0] - (x - x0)) - max(0, taper[1] - (x1 - 1 - x))
+        sy = cy + (seams[ring % len(seams)] if seams else 99)
+        for y in range(cy - rr, cy + rr):
+            k = (y - (cy - rr) + 0.5) / (2 * rr)
+            t = 4 if k < 0.3 else 3 if k < 0.6 else 2 if k < 0.85 else 1
+            if 0.11 < k < 0.16:
+                t = 5                                                        # the sheen
+            if k > 0.93:
+                t = 2                                                        # light thrown back on the limb
+            fam_y = (paint(x, y) if paint else None) or fam
+            name = sib(fam_y, noise2(ring, 0 if y < sy else 1, seed), 0.34)
+            if x == left and x != x0:
+                t = max(0, t - 2)                                            # the ring seam
+            elif x == left + 1 and left != x0:
+                t = min(5, t + 1)                                            # its lit lip
+            elif y == sy:
+                t = max(0, t - 1)                                            # the seam along it
+            s.set(x, y, name, t)
+            if rivets and x == left + 1 and left != x0 and (y - cy) % 3 == 1 and 0.06 < k < 0.94:
+                s.set(x, y, 'iron', 4 if k < 0.6 else 3)                     # rivets, on the seam only
+
+
+def collar(s: Spr, x0, w, cy, r, fam='panel'):
+    """A berthing collar between two modules: a ring a little proud of them, lit along its top,
+    its left face catching the light, its right face in shade, bolts round it."""
+    for x in range(x0, x0 + w):
+        for y in range(cy - r, cy + r):
+            k = (y - (cy - r) + 0.5) / (2 * r)
+            t = 4 if k < 0.3 else 3 if k < 0.6 else 2 if k < 0.85 else 1
+            if x == x0:
+                t = min(5, t + 1)
+            elif x == x0 + w - 1:
+                t = max(0, t - 2)
+            s.set(x, y, fam, t)
+        if 0 < x - x0 < w - 1:
+            for y in range(cy - r + 3, cy + r - 2, 5):
+                s.set(x, y, 'iron', 4 if y < cy else 3)                       # its bolts
+
+
+def porthole(s: Spr, px_, py, rad=3):
+    """A round window lit from inside: a warm pane brighter where the cabin lamp pools low, a
+    glint at its upper left, its steel frame lit on the upper left and dark on the lower right."""
+    for y in range(py - rad - 2, py + rad + 3):
+        for x in range(px_ - rad - 2, px_ + rad + 3):
+            d = (x - px_) ** 2 + (y - py) ** 2
+            if d <= rad * rad:
+                s.set(x, y, 'lamp', 2 if y < py - 1 else 3 if y <= py + 1 else 4)
+            elif d <= (rad + 1.5) ** 2:
+                s.set(x, y, 'iron', 4 if (x - px_) + (y - py) < 0 else 1)
+    s.set(px_ - 2, py - 2, 'lamp', 5); s.set(px_ - 1, py - 2, 'lamp', 5)
+
+
+def grapple(s: Spr, x, y):
+    """A grapple fixture for the station's arm: a square base plate lit on its upper left and
+    dark on its lower right, the pin standing proud in the middle, a white target bar."""
+    s.rect(x, y, 7, 7, 'panel', 3); s.hline(x, y, 7, 'panel', 4); s.vline(x, y, 7, 'panel', 4)
+    s.hline(x, y + 6, 7, 'panel', 1); s.vline(x + 6, y, 7, 'panel', 1)
+    s.rect(x + 2, y + 2, 3, 3, 'iron', 2); s.hline(x + 2, y + 2, 3, 'iron', 4); s.hline(x + 2, y + 4, 3, 'iron', 1)
+    s.vline(x + 5, y + 1, 3, 'hull', 5)
+
+
+def connectors(s: Spr, x, y, caps):
+    """A connector plate: lit along its top, dark along its foot, a row of 2 x 2 connectors,
+    each capped in its own colour (lit on top, in shade under)."""
+    w = 3 * len(caps) + 1
+    s.rect(x, y, w, 5, 'panel', 3); s.hline(x, y, w, 'panel', 4); s.hline(x, y + 4, w, 'panel', 1)
+    for i, fam in enumerate(caps):
+        s.hline(x + 1 + 3 * i, y + 1, 2, fam, 4); s.hline(x + 1 + 3 * i, y + 2, 2, fam, 2)
+
+
+def pipe(s: Spr, x0, x1, y, fam, clamp=9):
+    """A fluid line along a module: lit on top, in shade under, held by clamps."""
+    s.hline(x0, y, x1 - x0, fam, 4); s.hline(x0, y + 1, x1 - x0, fam, 2)
+    for x in range(x0 + 3, x1 - 1, clamp):
+        s.vline(x, y - 1, 3, 'iron', 3); s.set(x + 1, y + 1, 'iron', 1)
+
+
+def placard(s: Spr, x, y, w=7):
+    """A white label plate with two stencilled lines of text."""
+    s.rect(x, y, w, 5, 'hull', 5); s.hline(x, y + 4, w, 'hull', 2)
+    s.hline(x + 1, y + 1, w - 3, 'iron', 1); s.hline(x + 1, y + 3, w - 4, 'iron', 2)
+
+
+def floodlight(s: Spr, x, y, face=1):
+    """An external floodlight: a steel housing lit on top, its lamp face shining (a glow)."""
+    s.rect(x, y, 5, 3, 'iron', 2); s.hline(x, y, 5, 'iron', 4); s.hline(x, y + 2, 5, 'iron', 1)
+    s.hline(x + 1, y + face, 3, 'lamp', 5)
+
+
+def seat(s: Spr, x, y, w, h):
+    """Seat a part on the skin: its shadow, one tone down, on the skin just right of it and
+    under it (the light comes from the upper left)."""
+    for (xx, yy) in [(x + w, y + j) for j in range(1, h + 1)] + [(x + i, y + h) for i in range(1, w + 1)]:
+        p = s.get(xx, yy)
+        if p and fam_of(p[0]) in ('hull', 'snow', 'berry'):
+            s.step(xx, yy, -1)
+
+
+def vrail(s: Spr, x, y0, y1):
+    """A handrail standing upright on the skin: the bar lit on its left, its stand-offs."""
+    s.vline(x, y0, y1 - y0, 'brass', 4); s.vline(x + 1, y0, y1 - y0, 'brass', 2)
+    s.set(x + 2, y0, 'iron', 2); s.set(x + 2, y1 - 1, 'iron', 2)
+
+
+def valve_box(s: Spr, x, y):
+    """A coolant valve on a fluid line: a brass box lit on top, its hand wheel."""
+    s.rect(x, y, 5, 4, 'brass', 3); s.hline(x, y, 5, 'brass', 5); s.hline(x, y + 3, 5, 'brass', 1)
+    s.hline(x + 1, y - 1, 3, 'iron', 3)
+
+
 def booster() -> Spr:
-    """The first stage, four storeys of it: white plates (the odd one in primer), a forward
-    skirt in hazard-ochre and iron chevrons, the nap moon on its shoulder, a rescue-red
-    livery band, a frost band where the cold tank sweats in the night air, a signal-blue roll
-    pattern on the thrust section, a cable raceway with its clamps, access hatches and vent
-    grilles, four swept fins (the near two in full, the far one edge-on), and two engine
-    bells under a sooted heat shield with their turbopump plumbing."""
+    """The first stage, four storeys: built as one is. Top down: the interstage's hazard band;
+    the forward panels with the nap-moon roundel; a rescue-red livery band; the stage number
+    stencilled on a white panel; the cryogenic tank sweating a band of white rime with a crisp
+    lower edge and its vent valve; the ribbed intertank; the fuel tank with a signal-blue
+    stripe and an access hatch (hinged, an arrow at it); the darker thrust section with the
+    cable raceway; the engine skirt, sooted at its foot; two nozzle bells. Four fins of solid
+    signal-blue metal (the near two, their faces lit or in shade, a dark trailing edge sooted)."""
     w, h = RW + 20, STAGE1_H
     s = Spr(w, h)
     cx, r = w // 2, RW // 2
     x0 = cx - r
-    body_top, body_bot = 7, h - 14
-    plates(s, x0, body_top, RW, body_bot - body_top, 'hull', 11, pw=11, ph=10, round_x=(cx, r), other='panel',
-           other_share=0.3)
-    band(s, x0, 0, RW, 6, 'brass', cx, r, 12, chevrons='iron')                       # the forward skirt
+    # the interstage: hazard chevrons, clean diagonals 3 px wide, lit like the cylinder
+    for y in range(0, 6):
+        for x in range(x0, x0 + RW):
+            t = cyl_tone(x, cx, r) + (1 if y == 0 else 0)
+            s.set(x, y, 'brass' if ((x + y) // 3) % 2 else 'iron', min(5, t))
     for x in range(x0, x0 + RW):
         s.set(x, 6, 'iron', 1)
-        s.set(x, 7, 'hull', min(5, cyl_tone(x, cx, r) + 1))                           # its lit lip
-    # the nap moon on the shoulder: a dusk crescent on a white roundel
-    mx, my = cx - 6, 15
-    for y in range(my - 4, my + 5):
-        for x in range(mx - 4, mx + 5):
+    red = lambda y: 'berry' if 16 <= y < 22 else 'sky' if y in (34, 35, 61, 62) else None   # noqa: E731
+    skin(s, x0, 7, RW, 36, cx, r, 'hull', 11, rings=(14, 22, 29), seams=(5, -6, 7), paint=red)
+    # the nap-moon roundel on the forward panels: a dusk disc, a lamp-yellow crescent
+    mx, my = cx - 6, 10
+    for y in range(my - 3, my + 4):
+        for x in range(mx - 3, mx + 4):
             d = (x - mx) ** 2 + (y - my) ** 2
-            if d <= 16:
-                s.set(x, y, 'hull', 5 if x + y < mx + my - 2 else 4)
-            if d <= 9 and (x - mx - 2) ** 2 + (y - my + 1) ** 2 > 6:
-                s.set(x, y, 'dusk', 3 if x < mx else 2)
-    band(s, x0, 28, RW, 7, 'berry', cx, r, 13)                                      # the livery band
+            if d <= 11:
+                s.set(x, y, 'dusk', 3 if x + y < mx + my else 2)
+                if d <= 6 and (x - mx - 1.5) ** 2 + (y - my + 1) ** 2 > 3.2:
+                    s.set(x, y, 'lamp', 4 if x < mx else 3)                       # the crescent
+    stencil(s, cx + 3, 23, '1')                                                # the stage number
+    hinged_hatch(s, x0 + 7, 28, 7, 6, hinge_left=False)                        # the LOX tank's manhole cover
+    for (tx, ty, n) in ((cx - 8, 24, 5), (cx - 8, 26, 3)):                     # a stencilled line of text
+        for i in range(n):
+            if i != 3:
+                s.set(tx + i, ty, 'iron', 1)
+    for x in range(cx - 3, cx + 9, 4):                                        # white dashes on the red band
+        s.hline(x, 19, 2, 'hull', 5)
+    # a camera pod on the forward panels, looking down the stage: its housing and glass lens
+    s.rect(cx + 7, 9, 5, 5, 'panel', 3)
+    s.hline(cx + 7, 9, 5, 'panel', 4); s.hline(cx + 7, 13, 5, 'panel', 1)
+    s.set(cx + 8, 11, 'slate', 1); s.set(cx + 9, 11, 'slate', 2); s.set(cx + 8, 12, 'slate', 2); s.set(cx + 9, 12, 'slate', 3)
+    s.set(cx + 8, 11, 'lamp', 4)                                               # a glint on the lens
+    # the cryogenic tank: white rime in horizontal streaks, lit like the tank, crisp scalloped edge
+    for y in range(36, 51):
+        for x in range(x0, x0 + RW):
+            t = cyl_tone(x, cx, r)
+            streak = (y - 36) // 3
+            name = sib('snow', noise2(streak, 0, 13), 0.34)
+            if (y - 36) % 3 == 0:
+                t = min(5, t + 1)                                              # each streak's lit top
+            s.set(x, y, name, t)
     for x in range(x0, x0 + RW):
-        s.set(x, 35, 'hull', max(0, cyl_tone(x, cx, r) - 2))                          # the band's shadow
-    # the frost band over the cold tank: snow siblings, crisp scalloped lower edge, sparkles in pairs
-    for y in range(44, 54):
+        drip = 1 if (x - x0) % 5 in (1, 2) else 0                              # the scalloped lower edge
+        for y in range(51, 51 + drip):
+            s.set(x, y, 'snow', max(1, cyl_tone(x, cx, r) - 1))
+        s.set(x, 51 + drip, 'hull', max(0, cyl_tone(x, cx, r) - 2))             # its shadow on the skin
+    s.rect(x0 + 4, 40, 5, 4, 'iron', 2)                                        # the fill coupling, frosted over
+    s.hline(x0 + 4, 40, 5, 'snow', 5); s.set(x0 + 5, 42, 'brass', 3); s.set(x0 + 7, 42, 'brass', 2)
+    s.rect(x0 - 3, 44, 3, 3, 'iron', 3)                                        # the vent valve, frosted
+    s.hline(x0 - 3, 44, 3, 'snow', 4); s.set(x0 - 3, 47, 'iron', 1)
+    # the umbilical plate where the gantry's lower arm meets the stage: two brass connectors
+    s.rect(x0 + RW - 8, 30, 7, 6, 'panel', 3)
+    s.hline(x0 + RW - 8, 30, 7, 'panel', 4); s.hline(x0 + RW - 8, 35, 7, 'panel', 1)
+    for ux in (x0 + RW - 7, x0 + RW - 4):
+        s.set(ux, 32, 'brass', 4); s.set(ux + 1, 32, 'brass', 3); s.set(ux, 33, 'brass', 2); s.set(ux + 1, 33, 'brass', 1)
+    # the intertank: ribbed (stringers), darker metal
+    for y in range(53, 59):
         for x in range(x0, x0 + RW):
-            if y == 53 and (x // 3) % 2:
-                continue
-            t = cyl_tone(x, cx, r) + (1 if y < 46 else 0)
-            s.set(x, y, sib('snow', noise2(x // 3, y // 2, 15), 0.35), min(5, t))
-    for (fx, fy) in ((x0 + 4, 46), (x0 + 9, 50), (x0 + 15, 47), (x0 + 22, 51)):
-        s.set(fx, fy, 'snow', 5); s.set(fx + 1, fy, 'snow', 5)
-    # the roll pattern on the thrust section: quarters of signal blue and white
-    for y in range(body_bot - 24, body_bot - 6):
-        for x in range(x0, x0 + RW):
-            q = ((x - x0) * 2 // RW + (y - (body_bot - 24)) // 9) % 2
-            if q:
-                s.set(x, y, sib('sky', noise2(x // 6, y // 9, 16), 0.2), cyl_tone(x, cx, r))
-    # a cable raceway down the left third, clamped every half storey
-    for y in range(9, body_bot - 2):
-        s.set(cx - 10, y, 'panel', 4)
-        s.set(cx - 9, y, 'panel', 2)
-        if y % 16 == 0:
-            s.set(cx - 11, y, 'iron', 2); s.set(cx - 8, y, 'iron', 1)
-    for (hx, hy) in ((cx + 2, 12), (cx - 4, 38), (cx + 5, 58)):                     # access hatches, bolted
-        s.rect(hx, hy, 6, 5, 'hull_cool', 2)
-        s.hline(hx, hy, 6, 'hull_cool', 1)
-        s.hline(hx, hy + 5, 6, 'hull', 4)
-        s.set(hx + 1, hy + 1, 'hull', 4); s.set(hx + 4, hy + 3, 'hull_cool', 1)
-    for k in range(3):                                                              # a vent grille
-        s.hline(cx + 6, 38 + k * 2, 6, 'iron', 1)
-        s.hline(cx + 6, 39 + k * 2, 6, 'hull', 2)
-    for (dx, dy, kind) in ((3, 64, 'warn'), (-12, 60, 'tag'), (4, 18, 'strip'), (-2, 76, 'tag')):
-        decal(s, cx + dx, dy, kind)                                                 # markings
-    for (fx, fy) in ((cx - 6, 23), (cx + 9, 31), (cx - 3, 57), (cx + 8, 70), (cx - 13, 74), (cx + 10, 49), (cx - 13, 40)):
-        s.set(fx, fy, 'brass', 4); s.set(fx + 1, fy, 'brass', 3)                    # brass fittings
-        s.set(fx, fy + 1, 'brass', 2); s.set(fx + 1, fy + 1, 'brass', 1)
-    for (tx, ty) in ((cx + 1, 52), (cx - 9, 14), (cx + 6, 78)):                    # signal-blue inspection tags
-        s.rect(tx, ty, 3, 2, 'sky', 4); s.hline(tx, ty + 2, 3, 'sky', 1)
-    for (lx, ly, g) in ((cx + 12, 9, 'glowflora'), (cx - 12, 66, 'neon_cyan')):
-        s.set(lx, ly, g, 4); s.set(lx, ly + 1, g, 2)                               # status lamps
-    for y in range(22, 27):                                                         # the stage number, stencilled
-        s.set(cx + 4, y, 'iron', 1)
-    s.set(cx + 3, 23, 'iron', 1)
-    # the heat shield, sooted, and the plumbing between it and the bells
-    s.rect(x0 - 1, body_bot, RW + 2, 4, 'iron', 2)
-    s.hline(x0 - 1, body_bot, RW + 2, 'iron', 4)
-    for x in range(x0 - 1, x0 + RW + 1):
-        if noise2(x, 3, 17) > 0.6:
-            s.set(x, body_bot + 2, 'iron', 1)
-    for (px_, fam) in ((cx - 3, 'brass'), (cx + 2, 'brass')):
-        s.vline(px_, body_bot + 4, 3, fam, 3)
-    for bx in (cx - 8, cx + 3):                                                     # two bells, lit left
-        for k in range(h - (body_bot + 4)):
-            y = body_bot + 4 + k
-            half = 2 + k * 4 // 9
+            t = cyl_tone(x, cx, r) - (1 if (x - x0) % 2 else 0)
+            if y in (53, 58):
+                t = cyl_tone(x, cx, r) - 2 if y == 53 else cyl_tone(x, cx, r) + 1
+            s.set(x, y, 'panel', max(0, min(5, t)))
+    s.rect(x0 + 8, 55, 2, 2, 'lava', 4); s.set(x0 + 8, 55, 'lava', 5)          # the range beacon, lit red
+    for lx in (x0 + 17, x0 + 20):                                              # the intertank's vent louvres
+        s.vline(lx, 54, 3, 'iron', 0); s.vline(lx + 1, 54, 3, 'panel', 4)
+    # the LOX fill line, from the umbilical plate down over the rime into the intertank, frosted
+    for y in range(36, 53):
+        fx_ = x0 + RW - 7
+        s.set(fx_, y, 'brass', 4); s.set(fx_ + 1, y, 'brass', 2)
+        if y % 5 == 1:
+            s.hline(fx_ - 1, y, 4, 'iron', 3); s.hline(fx_ - 1, y - 1, 4, 'snow', 5)   # a clamp, rime on it
+    # the fuel tank: white panels, a signal-blue stripe, an access hatch with its arrow
+    skin(s, x0, 59, RW, 75, cx, r, 'hull', 14, rings=(67,), seams=(4, -7), paint=red)
+    hinged_hatch(s, cx + 2, 65, 7, 7)
+    stencil(s, cx - 3, 66, '>')
+    for (nx, ny) in ((x0 + 2, 73), (x0 + RW - 9, 73)):                        # NO STEP marks above the fins
+        s.hline(nx, ny, 4, 'berry', 2)
+    # the ground umbilical plate: three connectors, one capped in rescue red
+    s.rect(x0 + 7, 62, 6, 5, 'panel', 3); s.hline(x0 + 7, 62, 6, 'panel', 4); s.hline(x0 + 7, 66, 6, 'panel', 1)
+    s.set(x0 + 8, 64, 'brass', 4); s.set(x0 + 10, 64, 'brass', 3); s.set(x0 + 12, 64, 'berry', 4)
+    # the nap flag decal: a dusk field with a lamp star
+    s.rect(cx + 9, 69, 5, 4, 'dusk', 3); s.hline(cx + 9, 69, 5, 'dusk', 4)
+    s.set(cx + 10, 70, 'lamp', 5); s.set(cx + 11, 71, 'lamp', 4)
+    # the thrust section: darker panels, the raceway, rivets on its seam, a warning triangle
+    skin(s, x0, 75, RW, 84, cx, r, 'panel', 15, rings=(79,), seams=(3,))
+    for k in range(3):
+        s.hline(cx - 1 - k, 76 + k, 1 + 2 * k, 'brass', 4 if k < 2 else 3)
+    s.set(cx - 1, 77, 'iron', 0)
+    # the drain valve plate on the fuel tank's foot
+    s.rect(cx - 10, 71, 4, 3, 'panel', 3); s.hline(cx - 10, 71, 4, 'panel', 4); s.set(cx - 9, 72, 'brass', 4)
+    # the external feed line on the right, on brackets, from the rime down to the skirt
+    for y in range(52, 84):
+        px_ = x0 + RW - 4
+        s.set(px_, y, 'hull', 4); s.set(px_ + 1, y, 'hull', 2); s.set(px_ + 2, y, 'hull_cool', 1)
+        if y % 7 == 3:
+            s.hline(px_ - 1, y, 4, 'iron', 2)                                # a bracket
+    for y in range(8, 84):                                                    # the cable raceway (not over the rime)
+        if 36 <= y <= 52:
+            continue
+        s.set(x0 + 4, y, 'panel', 4)
+        s.set(x0 + 5, y, 'panel', 2)
+        if y % 8 == 0:
+            s.set(x0 + 3, y, 'iron', 2); s.set(x0 + 6, y, 'iron', 1)            # its clamps
+    # the engine skirt, flaring a little, sooted toward its foot
+    for y in range(84, 88):
+        for x in range(x0 - 1, x0 + RW + 1):
+            t = cyl_tone(x, cx, r + 1)
+            name = 'iron' if y < 86 else 'iron_cool'
+            s.set(x, y, name, max(0, t - (y - 84)))
+    s.hline(x0 - 1, 84, RW + 2, 'iron', 4)
+    # two nozzle bells: a lit band on the left third, cooling rings, a sooted lip
+    for bx in (cx - 7, cx + 6):
+        for k in range(h - 88):
+            y = 88 + k
+            half = 2 + k * 3 // 7
             for x in range(bx - half, bx + half + 1):
-                t = 4 if x == bx - half + 1 else 3 if x < bx else 2 if x < bx + half - 1 else 1
-                s.set(x, y, sib('iron', noise2(x, 0, 18), 0.2), t)
-            s.set(bx - half, y, 'brass', 2)                                         # a sooted copper lip
-            if k % 3 == 1:
-                for x in range(bx - half + 1, bx + half):
-                    s.step(x, y, -1)                                                # the bell's cooling bands
-        for x in range(bx - 6, bx + 7):
-            s.set(x, h - 1, 'iron', 0)
-    # fins: swept trapezoids, root 20 px along the body, tip 9, span 9, a lit leading edge
+                kk = (x - (bx - half) + 0.5) / (2 * half + 1)
+                t = 4 if kk < 0.3 else 3 if kk < 0.6 else 2 if kk < 0.85 else 1
+                if k % 3 == 2:
+                    t = max(0, t - 1)                                         # a cooling ring
+                s.set(x, y, 'iron', t)
+        for x in range(bx - 5, bx + 6):
+            s.set(x, h - 1, 'iron', 0)                                        # the sooted lip
+        s.set(bx - 1, 88, 'brass', 4); s.set(bx, 88, 'brass', 3)               # the gimbal's brass
+    # fins: solid painted metal, root along the thrust section, swept, the lit face on the
+    # near-left fin, the shaded face on the near-right one, a dark trailing edge sooted
     for (side, fx) in ((-1, x0 - 1), (1, x0 + RW)):
         lit = side < 0
-        for k in range(20):
-            y = body_bot - 20 + k
-            reach = min(9, 1 + k * 9 // 11)
-            if k < 11 and reach < 1:
-                continue
-            for d in range(0, reach):
+        for k in range(22):
+            y = 62 + k
+            reach = min(9, 1 + k * 9 // 12)
+            for d in range(reach):
                 x = fx + side * d
-                t = (4 if lit else 2) if d < reach - 1 else (3 if lit else 1)
-                if k == min(19, 11 + (d * 8) // 9) or (k > 11 and d == reach - 1 and k == 19):
-                    t = 5 if lit else 3                                             # the leading edge
-                if k == 19:
-                    t = 2 if lit else 0
-                s.set(x, y, sib('sky', noise2(d // 3, k // 4, 21), 0.25), t)
-            s.set(fx, y, 'iron', 1 if lit else 0)                                    # the root fillet
-    for k in range(16):                                                             # the far fin, edge-on
-        s.set(cx + 1, body_bot - 16 + k, 'sky', 1 if k > 2 else 2)
+                face = 4 if lit else 2
+                if d == reach - 1:
+                    face = 5 if lit else 3                                     # the leading edge, lit
+                if k >= 20:
+                    face = 1 if lit else 0                                     # the trailing edge
+                    if d < reach - 2:
+                        s.set(x, y, 'iron', 1)                                 # soot on it
+                        continue
+                s.set(x, y, 'sky' if d % 4 else 'sky_cool', face)
+            s.set(fx, y, 'sky', 2 if lit else 1)                               # the root fillet
     return s
 
 
+def cone_skin(s: Spr, cx, y0, y1, r0, r1, fam, seed, rings, seams):
+    """A cut cone's skin (a capsule), built like skin(): rings of panels with a seam, a lit lip
+    and rivets on it, one vertical seam a ring, the cylinder's light across each row."""
+    edges = sorted(set([y0] + list(rings) + [y1]))
+    for y in range(y0, y1):
+        rr = r0 + ((y - y0) * (r1 - r0)) // max(1, y1 - y0 - 1)
+        ring = max(i for i, e in enumerate(edges) if e <= y)
+        top = edges[ring]
+        sx = cx + seams[ring % len(seams)]
+        for x in range(cx - rr, cx + rr):
+            k = (x - (cx - rr) + 0.5) / (2 * rr)
+            t = 4 if k < 0.3 else 3 if k < 0.6 else 2 if k < 0.85 else 1
+            if 0.11 < k < 0.16:
+                t = 5
+            if k > 0.93:
+                t = 2
+            name = sib(fam, noise2(ring, 0 if x < sx else 1, seed), 0.34)
+            if y == top and y != y0:
+                t = max(0, t - 2)
+            elif y == top + 1 and top != y0:
+                t = min(5, t + 1)
+            elif x == sx:
+                t = max(0, t - 1)
+            s.set(x, y, name, t)
+            if y == top + 1 and top != y0 and (x - (cx - rr)) % 3 == 1 and 0.06 < k < 0.94:
+                s.set(x, y, 'iron', 4 if k < 0.6 else 3)
+
+
+def nozzle(s: Spr, bx, y0, n, top_half=2, soot=True):
+    """An engine's nozzle bell: widening downwards, a lit band on its left third, cooling rings
+    every third row, a sooted lip, the gimbal's brass at its throat."""
+    for k in range(n):
+        y = y0 + k
+        half = top_half + k * 3 // 6
+        for x in range(bx - half, bx + half + 1):
+            kk = (x - (bx - half) + 0.5) / (2 * half + 1)
+            t = 4 if kk < 0.3 else 3 if kk < 0.6 else 2 if kk < 0.85 else 1
+            if k % 3 == 2:
+                t = max(0, t - 1)
+            if soot and k == n - 1:
+                t = 0
+            s.set(x, y, 'iron', t)
+    s.set(bx - 1, y0, 'brass', 4); s.set(bx, y0, 'brass', 3)
+
+
+def leg(s: Spr, hx, hy, fx, fy, side, sx, sy, pad=3):
+    """A landing leg out on its struts: the leg itself (two pixels, its outer face lit or in
+    shade), the shock strut from the skirt to its knee (a steel cylinder, its brass piston rod),
+    the footpad edge on (a disc: its top lit, a dark rim)."""
+    lit = side < 0
+    n = max(abs(fx - hx), abs(fy - hy), 1)
+    for k in range(n + 1):
+        x, y = hx + (fx - hx) * k // n, hy + (fy - hy) * k // n
+        s.set(x, y, 'panel', 4 if lit else 2)
+        s.set(x - side, y, 'panel', 2 if lit else 1)
+    kx, ky = hx + (fx - hx) * 2 // 3, hy + (fy - hy) * 2 // 3
+    m = max(abs(kx - sx), abs(ky - sy), 1)
+    for k in range(m + 1):
+        x, y = sx + (kx - sx) * k // m, sy + (ky - sy) * k // m
+        rod = k > m * 3 // 5
+        s.set(x, y, 'brass' if rod else 'iron', (4 if lit else 3) if rod else (3 if lit else 2))
+        s.set(x, y + 1, 'brass' if rod else 'iron', 2 if rod else 1)
+    for d in range(-pad, pad + 1):
+        s.set(fx + d, fy, 'panel', 4 if d < 0 else 3 if d < 2 else 2)
+        s.set(fx + d, fy + 1, 'panel', 1)
+    s.hline(fx - 1, fy - 1, 3, 'panel', 3); s.set(fx - 1, fy - 1, 'panel', 4)
+
+
 def upper_stage(legs: int = 0) -> Spr:
-    """The second stage and its crew capsule: plates under a signal-blue stripe, the capsule
-    with its lit porthole (the companion's silhouette inside), a hazard-ochre hatch frame,
-    RCS quads, the docking ring at the nose. `legs` 0 folded, 1 half out, 2 deployed,
-    3 compressed (touchdown): the way back lands it on them."""
+    """The second stage and its crew capsule, built as one is. The capsule: a cut cone of
+    white panels (ring seams, rivets on their lips), the docking ring at its nose with its
+    status lamps, a lamp-lit porthole with the companion's sleepy silhouette inside, the
+    side hatch (hinged, a stencilled arrow at it, where the gantry's crew arm meets it).
+    The stage: a signal-blue band, white panels with the stage number stencilled, a
+    rescue-red line, RCS quads at its shoulders, the landing legs folded along it, the
+    engine skirt and one nozzle bell. `legs` 0 folded, 1 half out, 2 deployed, 3 compressed
+    (touchdown): the way back lands it on them."""
     w, h = RW + 30, STAGE2_H + 10
     s = Spr(w, h)
     cx, r = w // 2, RW // 2
@@ -438,88 +628,81 @@ def upper_stage(legs: int = 0) -> Spr:
     nose_h, cap_h = 14, 22
     body_top = nose_h + cap_h
     body_bot = STAGE2_H - 6
-    # the docking ring and nose: a cut cone of plates, the ring at the very top
-    for y in range(0, nose_h + cap_h):
-        rr = 5 + (y * (r - 5)) // (nose_h + cap_h - 1)
-        for x in range(cx - rr, cx + rr):
-            name = sib('hull', noise2(x // 6, y // 7, 31), 0.3)
-            t = cyl_tone(x, cx, rr)
-            if y in (nose_h, nose_h + 1):
-                t = max(0, t - 2) if y == nose_h else min(5, t + 1)
-            s.set(x, y, name, t)
-    for x in range(cx - 6, cx + 6):                                                 # the docking ring
-        s.set(x, 0, 'iron', 3 if x < cx - 2 else 2)
-        s.set(x, 1, 'iron', 2 if x < cx else 1)
+    cone_skin(s, cx, 0, body_top, 5, r, 'hull', 31, rings=(3, nose_h, nose_h + 12), seams=(2, -3, 4, -6))
+    # the docking ring at the nose: steel, two-pixel status lamps round it, a brass seat
+    for x in range(cx - 5, cx + 5):
+        s.set(x, 0, 'iron', 4 if x < cx - 2 else 3 if x < cx + 2 else 2)
+        s.set(x, 1, 'neon_cyan', 4) if (x - cx + 5) % 4 < 2 else s.set(x, 1, 'iron', 1)
         s.set(x, 2, 'brass', 4 if x < cx - 2 else 3 if x < cx + 2 else 2)
-    for x in range(cx - 5, cx + 5, 2):
-        s.set(x, 1, 'neon_cyan', 4)                                                 # its status lamps
-    # the porthole: a recess, lamp-lit from inside, a small sleepy silhouette with ears
-    pcx, pcy = cx - 3, nose_h + 9
-    for y in range(pcy - 4, pcy + 5):
-        for x in range(pcx - 4, pcx + 5):
-            d = (x - pcx) ** 2 + (y - pcy) ** 2
-            if d <= 16:
-                s.set(x, y, 'lamp', 2 if y < pcy - 1 else 3 if y < pcy + 2 else 4)
-            elif d <= 26:
-                s.set(x, y, 'iron', 1 if (x > pcx or y > pcy) else 3)
-    for (x, y) in ((pcx - 2, pcy), (pcx - 1, pcy), (pcx, pcy), (pcx + 1, pcy), (pcx + 2, pcy),
-                   (pcx - 2, pcy + 1), (pcx + 2, pcy + 1), (pcx - 2, pcy - 1), (pcx + 2, pcy - 1),
-                   (pcx - 1, pcy + 1), (pcx, pcy + 1), (pcx + 1, pcy + 1), (pcx - 1, pcy + 2), (pcx + 1, pcy + 2)):
-        s.set(x, y + 1, 'iron', 1)                                                   # the companion's head and ears
-    s.set(pcx - 2, pcy - 3, 'lamp', 5); s.set(pcx - 1, pcy - 3, 'lamp', 5)          # a glint on the glass
-    # the hatch: a hazard-ochre frame with its handle, beside the porthole
-    hx, hy = cx + 3, nose_h + 4
-    s.rect(hx, hy, 7, 12, 'hull_cool', 2)
-    for y in range(hy, hy + 12):
-        s.set(hx, y, 'brass', 3 if (y // 2) % 2 else 1)
-        s.set(hx + 6, y, 'brass', 2 if (y // 2) % 2 else 0)
-    s.hline(hx, hy, 7, 'brass', 4)
-    s.hline(hx, hy + 11, 7, 'brass', 1)
-    s.set(hx + 4, hy + 6, 'iron', 3); s.set(hx + 4, hy + 7, 'iron', 1)
-    # RCS quads at the capsule's shoulders
-    for (qx, lit) in ((cx - r - 2, True), (cx + r, False)):
-        s.rect(qx, body_top - 4, 3, 5, 'panel', 3 if lit else 1)
-        s.set(qx + (0 if lit else 2), body_top - 2, 'iron', 0)
-    # the stage body, its stripe and its plates
-    plates(s, x0, body_top, RW, body_bot - body_top, 'hull', 33, pw=9, ph=8, round_x=(cx, r))
-    band(s, x0, body_top + 3, RW, 4, 'sky', cx, r, 34)
-    band(s, x0, body_bot - 6, RW, 2, 'berry', cx, r, 35)
-    # its engine: one bell under a short skirt
-    s.rect(x0 + 2, body_bot, RW - 4, 2, 'iron', 2)
-    s.hline(x0 + 2, body_bot, RW - 4, 'iron', 3)
-    for k in range(6):
-        half = 2 + k // 2
-        for x in range(cx - half, cx + half + 1):
-            s.set(x, body_bot + 2 + k, 'iron', 3 if x < cx - half + 2 else 1 if x > cx + half - 2 else 2)
-        s.set(cx - half, body_bot + 2 + k, 'brass', 1)
-    # the landing legs: folded flat along the body, or swung out on their struts
+    # the porthole, lamp-lit from the cabin
+    pcx, pcy = cx - 5, nose_h + 9
+    porthole(s, pcx, pcy, 3)
+    seat(s, pcx - 5, pcy - 5, 10, 10)
+    # the side hatch where the crew arm meets the capsule: hazard-ochre rescue markings round it,
+    # its own small window, an arrow stencilled at it
+    hx_, hy_ = cx + 1, nose_h + 2
+    s.rect(hx_ - 1, hy_ - 1, 9, 14, 'brass', 3)
+    for y in range(hy_ - 1, hy_ + 13):
+        for x in range(hx_ - 1, hx_ + 8):
+            if ((x + y) // 2) % 2:
+                s.set(x, y, 'iron', 1)
+    hinged_hatch(s, hx_, hy_, 7, 12, hinge_left=True)
+    s.rect(hx_ + 2, hy_ + 2, 3, 3, 'lamp', 3); s.set(hx_ + 2, hy_ + 2, 'lamp', 5); s.hline(hx_ + 2, hy_ + 5, 3, 'iron', 4)
+    seat(s, hx_ - 1, hy_ - 1, 9, 14)
+    stencil(s, cx + 9, nose_h + 9, '<', 'berry', 2)
+    s.rect(cx - 12, nose_h + 15, 5, 4, 'dusk', 3); s.hline(cx - 12, nose_h + 15, 5, 'dusk', 4)   # the nap flag
+    s.set(cx - 11, nose_h + 16, 'lamp', 5); s.set(cx - 10, nose_h + 17, 'lamp', 4)
+    seat(s, cx - 12, nose_h + 15, 5, 4)
+    # the stage: panels under a signal-blue band and a rescue-red line, its number stencilled
+    paint = lambda y: 'sky' if body_top + 2 <= y < body_top + 6 else 'berry' if y in (body_bot - 5, body_bot - 4) else None   # noqa: E731
+    skin(s, x0, body_top, RW, body_bot, cx, r, 'hull', 33, rings=(body_top + 8, body_top + 17), seams=(4, -6, 5), paint=paint)
+    stencil(s, cx + 3, body_top + 10, '2')
+    for x in range(x0 + 3, x0 + RW - 3, 5):                                    # white dashes on the blue band
+        s.hline(x, body_top + 4, 2, 'hull', 5)
+    hinged_hatch(s, cx + 8, body_top + 10, 6, 6, hinge_left=False)            # a service panel
+    seat(s, cx + 8, body_top + 10, 6, 6)
+    s.rect(x0 + 2, body_top + 10, 4, 5, 'panel', 3); s.hline(x0 + 2, body_top + 10, 4, 'panel', 4)   # the stage umbilical
+    s.hline(x0 + 2, body_top + 14, 4, 'panel', 1); s.set(x0 + 3, body_top + 12, 'brass', 4); s.set(x0 + 4, body_top + 12, 'berry', 4)
+    s.rect(x0 + 2, body_top + 7, 2, 2, 'glowflora', 3); s.set(x0 + 2, body_top + 7, 'glowflora', 5)   # its 'connected' lamp
+    s.rect(x0 + RW - 7, body_top + 1, 4, 3, 'brass', 3); s.hline(x0 + RW - 7, body_top + 1, 4, 'brass', 5)   # a relief valve
+    s.set(x0 + RW - 6, body_top + 3, 'iron', 0)
+    for (ra, rb) in ((x0 + 3, x0 + 12), (cx + 2, cx + 11)):                     # handrails, on stand-offs
+        s.hline(ra, body_top + 6, rb - ra, 'brass', 4 if ra < cx else 3); s.hline(ra, body_top + 7, rb - ra, 'brass', 2)
+        s.set(ra + 1, body_top + 8 - 0, 'iron', 2); s.set(rb - 2, body_top + 8, 'iron', 2)
+    placard(s, cx - 9, body_top + 10, 7); seat(s, cx - 9, body_top + 10, 7, 5)
+    connectors(s, x0 + 3, body_top + 19, ('brass', 'sky')); seat(s, x0 + 3, body_top + 19, 7, 5)
+    s.rect(cx + 6, body_top + 19, 5, 4, 'panel', 3); s.hline(cx + 6, body_top + 19, 5, 'panel', 4)   # a camera, looking down
+    s.hline(cx + 6, body_top + 22, 5, 'panel', 1); s.rect(cx + 7, body_top + 20, 2, 2, 'slate', 1)
+    s.set(cx + 7, body_top + 20, 'lamp', 5); seat(s, cx + 6, body_top + 19, 5, 4)
+    # RCS quads at the shoulders: a block lit on top, its nozzles out, up and down
+    for (qx, lit, out) in ((x0 - 3, True, x0 - 4), (x0 + RW, False, x0 + RW + 3)):
+        s.rect(qx, body_top - 4, 3, 5, 'panel', 3 if lit else 2)
+        s.hline(qx, body_top - 4, 3, 'panel', 4 if lit else 3); s.hline(qx, body_top, 3, 'panel', 1)
+        s.set(out, body_top - 2, 'iron', 2)                                     # the side nozzle
+        s.set(qx + 1, body_top - 5, 'iron', 3); s.set(qx + 1, body_top + 1, 'iron', 1)
+    # the engine: a short skirt, one bell
+    for y in (body_bot, body_bot + 1):
+        for x in range(x0 + 2, x0 + RW - 2):
+            s.set(x, y, 'iron', min(5, cyl_tone(x, cx, r - 2) + (1 if y == body_bot else -1)))
+    nozzle(s, cx, body_bot + 2, 6, 2)
+    # the landing legs: folded flat along the body, or out on their struts
     foot = STAGE2_H + 4 if legs == 2 else STAGE2_H + 2
+    hinge_y = body_bot - 18
     for side in (-1, 1):
-        hinge_x = cx + side * (r - 1)
-        hinge_y = body_bot - 18
         lit = side < 0
+        hx = cx + side * r if side > 0 else cx - r - 1
         if legs == 0:
             for y in range(hinge_y, body_bot + 2):
-                s.set(hinge_x + side * 1, y, 'panel', 3 if lit else 1)
-            s.set(hinge_x + side * 1, body_bot + 2, 'iron', 1)
+                s.set(hx, y, 'panel', 4 if lit else 2)
+                s.set(hx + side, y, 'panel', 2 if lit else 1)
+            s.rect(hx + (side if side < 0 else 0), body_bot + 1, 2, 2, 'panel', 3 if lit else 1)   # the folded pad
+            s.set(hx, hinge_y, 'brass', 4 if lit else 3)                              # the hinge pin
             continue
         spread = {1: 7, 2: 13, 3: 14}[legs]
-        fx, fy = hinge_x + side * spread, (body_bot + 4 if legs == 1 else foot if legs == 2 else foot - 2)
-        n = max(abs(fx - hinge_x), abs(fy - hinge_y))
-        for k in range(n + 1):
-            x = hinge_x + (fx - hinge_x) * k // n
-            y = hinge_y + (fy - hinge_y) * k // n
-            s.set(x, y, 'panel', 4 if lit else 2)
-            s.set(x + side, y, 'panel', 2 if lit else 1)
-        # the strut from the skirt to the leg's knee (shorter when compressed)
-        kx, ky = hinge_x + side * (spread * 2 // 3), hinge_y + (fy - hinge_y) * 2 // 3
-        sx_, sy_ = cx + side * (r - 3), body_bot
-        m = max(abs(kx - sx_), abs(ky - sy_), 1)
-        for k in range(m + 1):
-            s.set(sx_ + (kx - sx_) * k // m, sy_ + (ky - sy_) * k // m, 'iron', 3 if lit else 1)
-        for d in range(-2, 3):                                                       # the footpad
-            s.set(fx + d, fy, 'panel', 4 if d < 0 else 2)
-            s.set(fx + d, fy + 1, 'panel', 1)
+        fx = hx + side * spread
+        fy = body_bot + 4 if legs == 1 else foot if legs == 2 else foot - 2
+        leg(s, hx, hinge_y, fx, fy, side, hx - side, body_bot - 8, pad=2 if legs == 1 else 3)
+        s.set(hx, hinge_y, 'brass', 4 if lit else 3)
     return s
 
 
@@ -893,110 +1076,249 @@ def clouds(seed: int, h: int = 72) -> Canvas:
 
 # --- Halcyon from below, the moon, the lander --------------------------------------------
 def station_underside() -> Canvas:
-    """Halcyon seen from below and the side as a vehicle comes up to it: a long module of
-    white plates with a rescue-red livery band, the docking port in the middle (a collar
-    with hazard-ochre chevrons and a ring of cyan status lamps), a truss running off to
-    both sides with radiator panels and the dark blue cells of a solar wing."""
+    """Halcyon seen side on and a little from below as a vehicle comes up to it, built as a
+    station is: a Warren truss across the whole width (near diagonals lit, the far face's
+    seen through it, darker), a rotary joint on each side and beyond it a solar wing (two
+    blankets of dark cells on a mast, a glint across them); radiators hanging off the truss
+    inboard (white panels with their fluid lines, hinged); under the truss's middle three
+    modules joined by berthing collars: the lab (a science window, an experiment pallet), the
+    node (the nap-moon roundel, a closed berthing port, floodlights) and the hab (three lit
+    crew windows, the airlock hanging under it with its hinged hatch); yellow handrails on
+    stand-offs, one rescue-red livery line; an antenna dish and a beacon mast on the truss;
+    and under the node the docking adapter: a hazard-chevron collar, the ring of status lamps
+    (components/rocket-journey.tsx lights them), guide petals and a docking target beside it."""
     w, h = 360, 120
     s = Spr(w, h)
     cx = w // 2
-    # the truss, both ways
-    for x in range(0, w):
-        for y in (30, 38):
-            s.set(x, y, 'panel', 3 if y == 30 else 2)
-        z = x % 10
-        s.set(x, 31 + (z if z < 5 else 9 - z) * 6 // 5, 'panel_cool', 2)
-    # a solar wing on each side: cells in a frame, a lit diagonal glint
-    for (wx, ww) in ((6, 92), (w - 98, 92)):
-        for y in range(8, 30):
-            for x in range(wx, wx + ww):
-                fr = (x - wx) % 12 == 0 or (y - 8) % 7 == 0
-                name, tone = ('panel', 3) if fr else ('sky_cool', 1 if (x + y) % 9 else 2)
-                if not fr and (x - wx) - (y - 8) * 2 in range(10, 13):
-                    tone = 3                                               # the glint
-                s.set(x, y, name, tone)
-        for y in range(39, 52):                                            # radiator panels below the truss
-            for x in range(wx + 20, wx + ww - 20):
-                s.set(x, y, 'hull_cool', 4 if (x - wx) % 6 == 0 else 3 if y < 44 else 2)
-    # the module: a cylinder lying along the truss, seen side on: plates lit along the top,
-    # the odd one in panel primer, end rings, the livery band, portholes, hatches, rails,
-    # stencils, an antenna mast and a sensor pod
-    mx0, mx1 = cx - 70, cx + 70
-    plates(s, mx0, 18, mx1 - mx0, 56, 'hull', 101, pw=10, ph=7, round_y=(46, 28), other='panel', other_share=0.24,
-           stagger=False)
-    for x in range(mx0 + 2, mx1 - 2):                                      # a cable run with its clamps
-        s.set(x, 40, 'iron', 3 if x % 11 else 4)
-        s.set(x, 41, 'iron', 1)
-        if x % 11 == 0:
-            s.set(x, 39, 'iron', 2); s.set(x, 42, 'iron', 1)
-    for (qx, qy) in ((mx0 + 52, 20), (mx0 + 92, 22), (mx0 + 70, 58), (mx0 + 116, 30), (mx0 + 4, 26)):   # quilted blankets
-        for y in range(qy, qy + 8):
-            for x in range(qx, qx + 12):
-                t = 4 if (x - qx) % 4 == 1 and (y - qy) % 4 == 1 else 3 if (x + y) % 4 else 2
-                s.set(x, y, sib('snow', noise2(x // 4, y // 4, 105), 0.3), t)
-    for x in (mx0, mx0 + 1, mx1 - 2, mx1 - 1):                              # the end rings
-        for y in range(18, 74):
-            s.set(x, y, 'panel', 3 if x < cx else 1)
-    for x in range(mx0, mx1):                                              # the livery band
-        for y in range(44, 49):
-            s.set(x, y, sib('berry', noise2(x // 9, 0, 102), 0.2), 4 if y == 44 else 3 if y < 48 else 2)
-    for (px_, lit) in ((mx0 + 12, True), (mx0 + 40, True), (mx1 - 34, False), (mx1 - 20, False)):   # portholes, lamp-lit
-        for y in range(24, 34):
-            for x in range(px_ - 1, px_ + 9):
-                d = (x - px_ - 3.5) ** 2 + (y - 28.5) ** 2
-                if d <= 12:
-                    s.set(x, y, 'lamp', 2 if y < 28 else 3 if y < 30 else 4)
-                elif d <= 20:
-                    s.set(x, y, 'iron', 3 if (x < px_ + 3 and y < 29) else 1)
-        s.set(px_ + 2, 26, 'lamp', 5)
-    hatch(s, cx - 30, 52, 9, 12)
-    hatch(s, cx + 22, 52, 9, 12, lit=False)
-    hatch(s, mx0 + 26, 58, 6, 6)
-    hatch(s, mx1 - 30, 57, 6, 7, lit=False)
-    hatch(s, cx - 4, 22, 8, 6)
-    for (gx, lit) in ((mx0 + 6, True), (cx - 14, True), (cx + 6, False), (mx1 - 16, False)):   # vent grilles
-        for k in range(3):
-            s.hline(gx, 56 + k * 2, 6, 'iron', 1 if lit else 0)
-            s.hline(gx, 57 + k * 2, 6, 'hull', 3 if lit else 2)
-    rail(s, mx0 + 10, mx0 + 40, 68)
-    rail(s, mx1 - 44, mx1 - 12, 68)
-    for x in range(mx0 + 2, mx1 - 2):                                      # a thin signal-blue stripe
-        s.set(x, 50, 'sky', 3 if x < cx else 2)
-    for k, x in enumerate(range(mx0 + 9, mx1 - 6, 17)):                    # bolts along the band, placards
-        s.set(x, 46, 'iron', 4); s.set(x, 47, 'berry', 1)
-        if k % 2 == 0:
-            s.rect(x + 3, 34, 4, 3, 'snow', 4); s.hline(x + 3, 37, 4, 'snow', 1)
-            s.set(x + 4, 35, 'iron', 1); s.set(x + 5, 35, 'iron', 1)
-    for (lx, g) in ((mx0 + 8, 'glowflora'), (cx - 20, 'neon_cyan'), (cx + 34, 'glowflora'), (mx1 - 9, 'neon_pink')):
-        s.set(lx, 51, g, 4); s.set(lx, 52, g, 2)                              # status lamps
-    for (dx, dy, kind) in ((-62, 22, 'tag'), (-24, 30, 'strip'), (30, 24, 'stencil'), (34, 24, 'stencil'),
-                           (58, 30, 'warn'), (-40, 60, 'tag')):
-        decal(s, cx + dx, dy, kind)
-    rail(s, mx0 + 6, mx0 + 34, 37)
-    rail(s, mx1 - 46, mx1 - 8, 37)
-    for (dx, kind) in ((-50, 'stencil'), (-45, 'stencil'), (-8, 'warn'), (14, 'tag'), (36, 'strip'), (52, 'tag')):
-        decal(s, cx + dx, 66 if kind != 'warn' else 64, kind)
-    for y in range(4, 18):                                                 # an antenna mast and its dish
-        s.set(mx0 + 18, y, 'iron', 3); s.set(mx0 + 19, y, 'iron', 1)
-    for (x, y, t) in ((mx0 + 14, 5, 4), (mx0 + 15, 4, 4), (mx0 + 16, 3, 4), (mx0 + 17, 3, 3), (mx0 + 18, 3, 3),
-                      (mx0 + 19, 3, 2), (mx0 + 20, 4, 2), (mx0 + 21, 5, 1), (mx0 + 17, 4, 2), (mx0 + 18, 4, 2)):
-        s.set(x, y, 'hull', t)
-    s.set(mx0 + 18, 2, 'neon_cyan', 5)
-    s.rect(mx1 - 30, 12, 10, 6, 'panel', 3)                                # a sensor pod on the top
-    s.hline(mx1 - 30, 12, 10, 'panel', 4); s.hline(mx1 - 30, 17, 10, 'panel', 1)
-    s.set(mx1 - 27, 14, 'glowflora', 4); s.set(mx1 - 24, 14, 'neon_pink', 3)
-    # the docking port, hanging under the module's middle
-    for y in range(74, 96):
-        half = 16 if y < 80 else 12
-        for x in range(cx - half, cx + half):
-            tone = cyl_tone(x, cx, half)
+    TT, TB = 22, 33                                                     # the truss's chords
+
+    def zig(x, off):
+        z = (x + off) % 24
+        return TT + 2 + (z if z < 12 else 23 - z) * (TB - TT - 3) // 11
+
+    # the truss: the far face's diagonals seen through, the chords, the near diagonals, posts
+    for x in range(w):
+        y = zig(x, 12)
+        s.set(x, y, 'iron', 2); s.set(x, y + 1, 'iron', 1)
+    for x in range(w):
+        s.set(x, TT, 'panel', 4); s.set(x, TT + 1, 'panel', 2)
+        s.set(x, TB, 'panel', 3); s.set(x, TB + 1, 'panel', 1)
+    for x in range(w):
+        y = zig(x, 0)
+        s.set(x, y, 'panel', 3); s.set(x, y + 1, 'panel', 1)
+        if x % 24 == 0:
+            s.vline(x, TT + 2, TB - TT - 2, 'panel', 3); s.vline(x + 1, TT + 2, TB - TT - 2, 'panel', 1)
+    # the rail cart that runs along the truss's top: a box on the rails, its brass rollers
+    s.rect(148, 17, 14, 5, 'panel', 3); s.hline(148, 17, 14, 'panel', 4); s.vline(161, 17, 5, 'panel', 1)
+    for bx in (150, 158):
+        s.set(bx, 21, 'brass', 4); s.set(bx + 1, 21, 'brass', 2)
+    s.rect(152, 18, 4, 2, 'iron', 1); s.set(153, 18, 'glowflora', 4)
+    # a rotary joint on each side: a drum round the truss, its bearing rings in brass
+    for jx in (58, 294):
+        for x in range(jx, jx + 8):
+            for y in range(TT - 4, TB + 6):
+                t = cyl_tone(x, jx + 4, 4)
+                name = 'brass' if y in (TT - 3, TB + 4) else 'iron'
+                if y == TT - 4:
+                    t = min(5, t + 1)
+                s.set(x, y, name, t)
+    # the solar wings beyond the joints: a mast, two blankets of cells, a glint across them
+    for (wx0, wx1) in ((0, 52), (308, 360)):
+        mx = (wx0 + wx1) // 2
+        for (y0, y1) in ((0, 18), (39, 76)):
+            for y in range(y0, y1):
+                for x in range(wx0, wx1):
+                    if x in (mx - 1, mx, mx + 1):
+                        continue
+                    frame = (x - wx0) % 6 == 0 or (y - y0) % 5 == 0
+                    g = (x - wx0) + (y - y0) * 2
+                    glint = 30 <= g % 70 < 36
+                    s.set(x, y, 'sky_cool' if not frame else 'sky', (3 if glint else 1) if not frame else (4 if glint else 2))
+        for y in range(0, 76):                                           # the mast
+            s.set(mx - 1, y, 'iron', 4); s.set(mx, y, 'iron', 2); s.set(mx + 1, y, 'iron', 1)
+        for (by, bh) in ((18, 3), (36, 3)):                             # the blanket boxes at the roots
+            s.rect(wx0 + 4, by, wx1 - wx0 - 8, bh, 'hull', 3)
+            s.hline(wx0 + 4, by, wx1 - wx0 - 8, 'hull', 4); s.hline(wx0 + 4, by + bh - 1, wx1 - wx0 - 8, 'hull', 1)
+    # radiators hanging off the truss inboard of the joints: three white panels on hinges
+    for rx in (70, 258):
+        s.vline(rx + 15, TB + 2, 3, 'iron', 3); s.vline(rx + 16, TB + 2, 3, 'iron', 1)   # the stem
+        for i, py0 in enumerate((38, 53, 68)):
+            name = sib('snow', noise2(i, rx, 211), 0.34)
+            for y in range(py0, py0 + 13):
+                for x in range(rx, rx + 32):
+                    k = (x - rx) / 31
+                    t = 4 if k < 0.45 else 3
+                    if (y - py0) % 3 == 2:
+                        t -= 1                                           # a fluid line
+                    if y == py0:
+                        t = 5
+                    if x == rx:
+                        t = 5
+                    if x == rx + 31 or y == py0 + 12:
+                        t = 2
+                    s.set(x, y, name, t)
+            if i < 2:                                                    # the hinge to the next panel
+                s.hline(rx + 1, py0 + 13, 30, 'iron', 1)
+                for hx in (rx + 6, rx + 24):
+                    s.hline(hx, py0 + 13, 2, 'iron', 4)
+    # an antenna dish on a boom, and the beacon mast
+    s.vline(136, 7, TT - 7, 'iron', 4); s.vline(137, 7, TT - 7, 'iron', 2)
+    for x in range(129, 145):
+        for y in range(2, 8):
+            if ((x - 136.5) / 7.6) ** 2 + ((y - 2) / 5.4) ** 2 <= 1:
+                s.set(x, y, 'hull', 5 if y == 2 else 4 if x < 134 else 3 if x < 140 else 2)
+    s.vline(136, 0, 2, 'iron', 3); s.hline(135, 0, 3, 'brass', 4)              # the feed on its strut
+    s.vline(226, 10, TT - 10, 'iron', 4); s.vline(227, 10, TT - 10, 'iron', 2)
+    s.rect(226, 8, 2, 2, 'lava', 4); s.set(226, 8, 'lava', 5)                  # the beacon, lit red
+    # struts from the truss down to the lab and the hab
+    for sx in (116, 146, 214, 244):
+        s.vline(sx, TB + 2, 4, 'iron', 4); s.vline(sx + 1, TB + 2, 4, 'iron', 2)
+    # the modules: the lab, the node, the hab, joined by collars, one livery line across them
+    cy = 54
+    livery = lambda x, y: 'berry' if y in (59, 60) else None   # noqa: E731
+    hskin(s, 106, 156, cy, 15, 'hull', 201, rings=(121, 139), seams=(-5, 6, -5), paint=livery, taper=(4, 0))
+    cloth = lambda x, y: livery(x, y) or ('stone' if 173 <= x < 188 else None)   # noqa: E731
+    hskin(s, 160, 200, cy, 20, 'hull', 203, rings=(172, 188), seams=(-8, 7, -8), paint=cloth)
+    for y in range(cy - 20, cy + 20):                                          # the node's blanket, quilted
+        for x in range(174, 188):
+            p = s.get(x, y)
+            if p and fam_of(p[0]) == 'stone' and ((x - 174) % 4 == 3 or (y - cy) % 4 == 3):
+                s.step(x, y, -1)
+    hskin(s, 204, 254, cy, 15, 'hull', 205, rings=(220, 237), seams=(6, -5, 6), paint=livery, taper=(0, 4))
+    collar(s, 156, 4, cy, 17)
+    collar(s, 200, 4, cy, 17)
+    # the lab: a porthole at its end, the science window, an experiment pallet, a stencil
+    porthole(s, 115, 48, 3)
+    for y in range(43, 50):
+        for x in range(124, 135):
+            edge = y in (43, 49) or x in (124, 134)
+            s.set(x, y, 'iron', (4 if (y == 43 or x == 124) else 1) if edge else 0)
+            if not edge:
+                s.set(x, y, 'lamp', 2 if y < 46 else 3)
+    s.hline(125, 44, 3, 'lamp', 5)                                             # the glint on it
+    s.rect(129, 45, 2, 4, 'lamp', 1); s.vline(132, 45, 4, 'lamp', 1)           # racks inside, a screen lit
+    s.rect(126, 46, 2, 2, 'neon_cyan', 3)
+    s.rect(143, 42, 3, 3, 'brass', 3); s.hline(143, 42, 3, 'brass', 5); s.hline(143, 44, 3, 'brass', 1)   # sample canisters
+    s.rect(148, 43, 3, 2, 'sky', 3); s.hline(148, 43, 3, 'sky', 5)
+    s.rect(142, 45, 11, 8, 'panel', 3); s.hline(142, 45, 11, 'panel', 4)
+    s.vline(142, 45, 8, 'panel', 4); s.hline(142, 52, 11, 'panel', 1); s.vline(152, 45, 8, 'panel', 1)
+    s.rect(144, 47, 3, 3, 'slate', 1); s.set(144, 47, 'slate', 3)              # a sensor's lens
+    s.rect(148, 47, 3, 2, 'glowflora', 3); s.set(148, 47, 'glowflora', 5)      # its status lamp
+    s.hline(148, 50, 3, 'iron', 1)
+    stencil(s, 127, 52, '1')
+    # the node: the nap-moon roundel, a closed berthing port, floodlights under it
+    mx, my = 170, 45
+    for y in range(my - 4, my + 5):
+        for x in range(mx - 4, mx + 5):
+            d = (x - mx) ** 2 + (y - my) ** 2
+            if d <= 17:
+                s.set(x, y, 'dusk', 3 if x + y < mx + my else 2)
+                if d <= 9 and (x - mx - 1.5) ** 2 + (y - my + 1) ** 2 > 4.5:
+                    s.set(x, y, 'lamp', 4 if x < mx else 3)                       # the crescent
+    bx_, by_ = 188, 54
+    for y in range(by_ - 7, by_ + 8):
+        for x in range(bx_ - 7, bx_ + 8):
+            d = (x - bx_) ** 2 + (y - by_) ** 2
+            if 25 < d <= 49:
+                s.set(x, y, 'iron', 4 if (x - bx_) + (y - by_) < -2 else 2 if (x - bx_) + (y - by_) < 3 else 1)
+            elif d <= 25:
+                s.set(x, y, 'panel', 1 if (x - bx_) + (y - by_) < -4 else 3)   # the cover, its rim's shadow
+    for (ax, ay) in ((bx_ - 4, by_), (bx_ + 3, by_), (bx_, by_ - 4), (bx_, by_ + 3)):
+        s.set(ax, ay, 'iron', 4); s.set(ax + 1, ay, 'iron', 2)                 # its latches
+    for fx in (164, 194):                                                     # floodlights, aimed down
+        s.rect(fx, 72, 4, 2, 'iron', 2); s.hline(fx, 72, 4, 'iron', 3)
+        s.hline(fx, 74, 4, 'lamp', 5); s.hline(fx + 1, 75, 2, 'lamp', 4)
+    # the hab: three lit crew windows, handrails, its stencil
+    for wx in (211, 227, 244):
+        porthole(s, wx, 48, 3)
+    stencil(s, 230, 52, '2')
+    # the yellow handrails along the lab and the hab, on stand-offs
+    for (x0_, x1_) in ((110, 152), (208, 250)):
+        for y in (41, 66):
+            s.hline(x0_, y, x1_ - x0_, 'brass', 4 if y < cy else 3)
+            for x in range(x0_ + 2, x1_, 8):
+                s.set(x, y + 1, 'iron', 2)
+    # the working parts on the modules: grapple fixtures for the arm, connector plates, label
+    # plates, the coolant lines along their lower flanks, floodlights, a camera, a vent valve,
+    # the cable trays along their tops
+    for (part, x, y, w_, h_) in ((grapple, 111, 52, 7, 7), (grapple, 162, 60, 7, 7)):
+        part(s, x, y); seat(s, x, y, w_, h_)
+    placard(s, 131, 52); seat(s, 131, 52, 7, 5)
+    placard(s, 216, 53); seat(s, 216, 53, 7, 5)
+    connectors(s, 141, 54, ('brass', 'berry', 'sky')); seat(s, 141, 54, 10, 5)
+    connectors(s, 206, 53, ('sky', 'brass')); seat(s, 206, 53, 7, 5)
+    connectors(s, 161, 52, ('berry', 'brass')); seat(s, 161, 52, 7, 5)
+    s.rect(240, 53, 6, 5, 'panel', 3); s.hline(240, 53, 6, 'panel', 4); s.hline(240, 57, 6, 'panel', 1)
+    s.rect(241, 54, 2, 2, 'slate', 1); s.set(241, 54, 'lamp', 5); seat(s, 240, 53, 6, 5)   # a camera, its lens
+    for (x0_, x1_) in ((109, 155), (205, 252)):
+        pipe(s, x0_, x1_, 62, 'sky')
+        s.rect(x0_ + 1, 37, x1_ - x0_ - 2, 2, 'panel', 3); s.hline(x0_ + 1, 37, x1_ - x0_ - 2, 'panel', 4)
+        s.hline(x0_ + 1, 38, x1_ - x0_ - 2, 'panel', 1)
+    valve_box(s, 127, 61); valve_box(s, 223, 61)
+    floodlight(s, 150, 64)
+    floodlight(s, 207, 64)
+    s.rect(191, 65, 4, 3, 'brass', 3); s.hline(191, 65, 4, 'brass', 4); s.set(192, 67, 'iron', 0)   # a vent valve
+    # the node's name plate, and handrails either side of its berthing port and between windows
+    s.rect(174, 37, 13, 5, 'hull', 5); s.hline(174, 41, 13, 'hull', 2); seat(s, 174, 37, 13, 5)
+    for (tx, n) in ((175, 3), (179, 2), (182, 4)):
+        s.hline(tx, 39, n, 'dusk', 2)                                          # HALCYON, stencilled
+    for (vx, y0_, y1_) in ((177, 46, 62), (198, 46, 62), (219, 43, 53), (236, 43, 53), (137, 43, 52)):
+        vrail(s, vx, y0_, y1_)
+    s.hline(187, 54, 3, 'brass', 4); s.hline(187, 55, 3, 'brass', 2)          # the cover's handle
+    placard(s, 179, 63, 6); seat(s, 179, 63, 6, 5)
+    s.rect(177, 33, 9, 3, 'iron', 3); s.hline(177, 33, 9, 'iron', 4); s.hline(177, 35, 9, 'iron', 1)   # the truss fitting
+    s.set(178, 34, 'brass', 4); s.set(184, 34, 'brass', 4)
+    for (cx_, lit) in ((161, True), (192, False)):                             # cameras on the node's shoulders
+        s.rect(cx_, 38, 5, 4, 'panel', 3 if lit else 2); s.hline(cx_, 38, 5, 'panel', 4); s.hline(cx_, 41, 5, 'panel', 1)
+        s.rect(cx_ + 1, 39, 2, 2, 'slate', 1); s.set(cx_ + 1, 39, 'lamp', 5)
+        s.rect(cx_ + 3, 36, 2, 2, 'lamp', 4); s.set(cx_ + 3, 36, 'lamp', 5)     # and their lights
+        seat(s, cx_, 38, 5, 4)
+    s.rect(126, 35, 4, 2, 'sky', 2); s.hline(127, 34, 2, 'sky', 4); s.hline(126, 35, 2, 'sky', 4)   # a navigation antenna
+    for x in range(196, 208):                                                  # the coolant jumper over the collar
+        y = 66 + (1 if 199 <= x <= 204 else 0)
+        s.set(x, y, 'sky', 4); s.set(x, y + 1, 'sky', 2)
+    s.rect(195, 65, 2, 3, 'brass', 3); s.rect(207, 65, 2, 3, 'brass', 3)      # its quick-disconnects
+    for (lx, g) in ((184, 'glowflora'), (191, 'glowflora')):                  # the port's alignment lamps
+        s.rect(lx, 44, 2, 2, g, 3); s.set(lx, 44, g, 5)
+    for sx_ in (121, 134):                                                      # the science window's shutters, open
+        s.rect(sx_, 42, 2, 9, 'panel', 2); s.vline(sx_, 42, 9, 'panel', 4); s.hline(sx_, 50, 2, 'panel', 1)
+    # the airlock under the hab: a short upright can, its hazard ring, its hinged hatch, an arrow
+    for y in range(69, 84):
+        for x in range(229, 249):
+            t = cyl_tone(x, 239, 10)
             name = 'hull_cool'
-            if y in range(80, 86):
+            if y in (70, 71):
+                name = 'brass' if ((x + y) // 2) % 2 else 'iron'
+            if y == 83:
+                t = max(0, t - 2)
+            s.set(x, y, name, t)
+    hinged_hatch(s, 236, 73, 8, 9)
+    stencil(s, 231, 75, '>')
+    # the docking adapter under the node: a cone, the hazard collar, the lamp ring, guide petals
+    for y in range(74, 96):
+        half = 15 - (y - 74) // 3 if y < 80 else 12
+        for x in range(cx - half, cx + half):
+            t = cyl_tone(x, cx, half)
+            name = 'hull_cool'
+            if 80 <= y < 86:
                 name = 'brass' if ((x + y) // 3) % 2 else 'iron'           # hazard chevrons on the collar
-            s.set(x, y, name, tone)
+            if y == 77:
+                t = max(0, t - 2)
+            if y == 78:
+                t = min(5, t + 1)
+            if y in (91, 95):
+                name, t = 'iron', 1
+            if y in (93, 94):
+                name, t = 'iron', (3 if y == 93 else 2)
+            s.set(x, y, name, t)
     for x in range(cx - 12, cx + 12, 3):
         s.set(x, 92, 'neon_cyan', 4)                                         # the ring of status lamps
-    s.hline(cx - 12, 95, 24, 'iron', 1)
+    for px_ in (cx - 9, cx + 6):                                             # guide petals on the soft ring
+        s.hline(px_, 93, 3, 'brass', 4); s.set(px_ + 1, 94, 'brass', 3)
+    # the docking target beside it: a dark plate with a white cross on a standoff
+    s.rect(cx + 18, 75, 7, 7, 'iron', 0)
+    s.vline(cx + 21, 76, 5, 'hull', 5); s.hline(cx + 19, 78, 5, 'hull', 5)
+    s.set(cx + 21, 74, 'iron', 3)
     return s.render()
 
 
@@ -1069,102 +1391,121 @@ def lumen_pad() -> Spr:
 
 
 def lander(legs: int) -> Spr:
-    """The lander (Lumen's shuttle, the same craft drawn anew): a white cabin shaped like a
-    cut cone with two lamp-lit windows and its hatch, on an eight-sided descent stage with a
-    hazard-ochre band and rescue-red RCS quads, a dark engine bell, and four splayed legs
-    with round footpads. legs 0 extended (in flight), 1 touching, 2 compressed, 3 settled."""
+    """The lander (Lumen's shuttle, the same craft drawn anew), built as one is. The descent
+    stage: an eight-sided box seen across three faces (lit, front, shade), wrapped in gold foil
+    blankets, each blanket one sibling with its seams, a lit fold along its top and one crease
+    (a dark fold with its lit side); the front's lower blankets in black foil; the nap flag on
+    it, a label plate, rescue-red RCS quads at its corners, the ladder down the front. The
+    cabin: a cut cone of white panels (ring seams, rivets on their lips), the rescue-red livery,
+    two lamp-lit windows, the square front hatch (hinged, an arrow at it), the docking ring
+    on top with its lamps, a dish antenna on its boom. A nozzle bell under it, and four legs
+    (the far pair darker) with their struts and footpads. legs 0 extended (in flight),
+    1 touching, 2 compressed, 3 settled."""
     w, h = 76, 72
     s = Spr(w, h)
     cx = w // 2
-    # the legs behind first (the far pair, darker)
     extend = {0: 0, 1: 0, 2: -3, 3: -2}[legs]
-    for (x0, y0, x1, y1) in ((26, 44, 14, 66 + extend), (50, 44, 62, 66 + extend)):
-        n = max(abs(x1 - x0), abs(y1 - y0))
-        for t in range(n + 1):
-            s.set(x0 + (x1 - x0) * t // n, y0 + (y1 - y0) * t // n, 'panel', 1)
-    # the engine bell, sooted
-    for k in range(9):
-        half = 4 + k // 2
-        for x in range(cx - half, cx + half + 1):
-            s.set(x, 50 + k, 'iron', 3 if x < cx - half + 2 else 1 if x > cx + half - 2 else 2)
-        s.set(cx - half, 50 + k, 'brass', 1)
-    # the descent stage: an octagon in crinkled gold foil (brass siblings in 2 x 2 crinkles, each
-    # facet lit by its side), a hazard-ochre band of stencilled panels, its rim lit
+    # the far legs, behind, darker
+    for (hx, fx) in ((26, 14), (50, 62)):
+        n = max(abs(fx - hx), abs(66 + extend - 44))
+        for k in range(n + 1):
+            s.set(hx + (fx - hx) * k // n, 44 + (66 + extend - 44) * k // n, 'panel', 1)
+    nozzle(s, cx, 50, 9, 4)
+    # the descent stage: three faces of foil blankets
+    faces = ((8, cx - 14, 4), (cx - 14, cx + 14, 3), (cx + 14, w - 8, 2))   # (x from, to, light)
     for y in range(32, 52):
         inset = max(0, 3 - (y - 32)) + max(0, (y - 48))
         for x in range(8 + inset, w - 8 - inset):
-            facet = 0 if x < cx - 14 else 1 if x < cx + 14 else 2
-            base = (4, 3, 2)[facet]
-            n = noise2(x // 2, y // 2, 121)
-            t = base + (1 if n > 0.82 else -1 if n < 0.18 else 0)
-            if noise2(x // 3, y, 126) > 0.93:
-                t = max(0, base - 2)                                        # a crease in the foil
-            name = sib('brass', noise2(x // 2 + 3, y // 2, 124), 0.34)
+            fi = 0 if x < cx - 14 else 1 if x < cx + 14 else 2
+            fa, fb, base = faces[fi]
+            bw = 7 if fi != 1 else 9
+            col, row = (x - fa) // bw, (y - 34) // 8
+            black = fi == 1 and row == 1 and 2 <= col <= 2
+            name = 'iron' if black else ('brass', 'brass_warm', 'brass_cool')[(col + row + fi) % 3]
+            t = base - (1 if black else 0)
+            bx, by = (x - fa) % bw, (y - 34) % 8
             if y in (32, 33):
-                name, t = sib('hull', noise2(x // 6, 0, 125), 0.3), (5, 4, 3)[facet] if y == 32 else (4, 3, 2)[facet]
-            if x in (cx - 14, cx + 14):
-                t = max(0, base - 2)
-            if y in (40, 41, 42):
-                name = sib('hull', noise2(x // 5, 0, 122), 0.25)            # the panel band
-                t = (4, 3, 2)[facet] if y != 42 else 1
-            if y == 51:
-                name, t = 'iron', 1
-            s.set(x, y, name, max(0, min(5, t)))
-    for (dx, kind) in ((-24, 'stencil'), (-20, 'stencil'), (-6, 'warn'), (8, 'tag'), (18, 'strip')):
-        decal(s, cx + dx, 40 if kind != 'warn' else 39, kind)
-    hatch(s, 12, 44, 6, 5)
-    hatch(s, w - 18, 44, 6, 5, lit=False)
-    for (x0_, lit) in ((cx - 22, True), (cx + 16, False)):                  # vent grilles on the stage
-        for k in range(3):
-            s.hline(x0_, 35 + k * 2, 5, 'iron', 1 if lit else 0)
-    for (qx, lit) in ((4, True), (w - 9, False)):                           # rescue-red RCS quads
+                name, t = 'hull', (5, 4, 3)[fi] if y == 32 else (4, 3, 2)[fi]       # the deck's lit edge
+            elif y >= 50:
+                name, t = 'iron', 1 if y == 51 else 2                               # the underside
+            elif x == fa and fi:
+                t = max(0, base - 2)                                                # the corner between faces
+            elif by == 0 or bx == 0:
+                t = max(0, t - 2)                                                   # a seam between blankets
+            elif by == 1:
+                t = min(5, t + 1)                                                   # the blanket's lit fold
+            else:
+                c = (col * 5 + row * 3 + fi) % 4                                    # its one crease
+                if bx - 2 == (by - 2) * (1 if c % 2 else -1) + (1 if c % 2 else bw - 3) and 2 <= by <= 5:
+                    t = max(0, t - 1)
+                elif bx - 3 == (by - 2) * (1 if c % 2 else -1) + (1 if c % 2 else bw - 3) and 2 <= by <= 5:
+                    t = min(5, t + 1)
+            s.set(x, y, name, t)
+    # the nap flag on the front, a label plate, the RCS quads, the ladder
+    s.rect(cx - 10, 35, 7, 5, 'dusk', 3); s.hline(cx - 10, 35, 7, 'dusk', 4); s.hline(cx - 10, 39, 7, 'dusk', 2)
+    s.set(cx - 9, 36, 'lamp', 5); s.set(cx - 8, 36, 'lamp', 4); s.set(cx - 8, 37, 'lamp', 4)
+    placard(s, cx + 4, 35, 7)
+    for (qx, lit) in ((4, True), (w - 9, False)):
         s.rect(qx, 36, 5, 5, 'berry', 3 if lit else 2)
-        s.hline(qx, 36, 5, 'berry', 4 if lit else 3)
-        s.set(qx + (0 if lit else 4), 38, 'iron', 0)
-    # the cabin: a cut cone of machined plates, lit on its left third, rails and an antenna
-    def cone(x, y):
-        return 4 <= y < 32 and abs(x - cx + 0.5) < 12 + (y - 4) * 8 // 28
-    plates(s, cx - 20, 4, 40, 28, 'hull', 123, pw=8, ph=7, round_x=(cx, 17), other='panel', other_share=0.12, mask=cone)
-    rail(s, cx - 15, cx - 5, 18, 'brass')
-    rail(s, cx + 6, cx + 15, 18, 'brass')
-    for x in range(cx - 18, cx + 18):                                       # the cabin's rescue-red livery
-        if cone(x, 28):
-            s.set(x, 28, sib('berry', noise2(x // 5, 0, 127), 0.2), 4 if x < cx - 6 else 3 if x < cx + 8 else 2)
-            s.set(x, 29, 'berry', 2 if x < cx + 8 else 1)
-    for (lx, g) in ((cx - 9, 'glowflora'), (cx + 12, 'neon_cyan')):
-        s.set(lx, 24, g, 4); s.set(lx, 25, g, 2)                               # status lamps
-    for y in range(-2, 5):
-        s.set(cx + 9, y + 2, 'iron', 3)
-    s.set(cx + 9, 1, 'neon_pink', 4)
-    s.rect(cx - 4, 0, 8, 4, 'iron', 2)                                       # the docking ring on top
-    s.hline(cx - 4, 0, 8, 'iron', 4)
-    s.set(cx - 2, 1, 'neon_cyan', 4); s.set(cx + 1, 1, 'neon_cyan', 4)
-    for (wx, lit) in ((cx - 10, True), (cx + 3, False)):                     # two lamp-lit windows
-        for y in range(10, 16):
+        s.hline(qx, 36, 5, 'berry', 4 if lit else 3); s.hline(qx, 40, 5, 'berry', 1)
+        s.set(qx + (0 if lit else 4), 38, 'iron', 0)                               # the side nozzle
+        s.set(qx + 2, 35, 'iron', 3); s.set(qx + 2, 41, 'iron', 1)                 # up and down
+    for y in range(32, 50):                                                         # the ladder's rails and rungs
+        s.set(cx - 3, y, 'iron', 3); s.set(cx + 2, y, 'iron', 1)
+        if y % 3 == 1:
+            s.hline(cx - 2, y, 4, 'iron', 4 if y < 41 else 3)
+    # the cabin: a cut cone of white panels, its livery, windows, hatch, ring, dish
+    cone_skin(s, cx, 4, 32, 12, 20, 'hull', 123, rings=(12, 22), seams=(-5, 6, -7))
+    for x in range(cx - 19, cx + 19):                                               # the rescue-red livery
+        if s.has(x, 28):
+            t = 4 if x < cx - 6 else 3 if x < cx + 8 else 2
+            s.set(x, 28, 'berry', t); s.set(x, 29, 'berry', max(1, t - 1))
+    for (wx, lit) in ((cx - 11, True), (cx + 4, False)):                            # two lamp-lit windows
+        for y in range(13, 19):
             for x in range(wx, wx + 7):
-                edge = x in (wx, wx + 6) or y in (10, 15)
-                s.set(x, y, 'iron' if edge else 'lamp', (3 if lit else 1) if edge else (3 if y > 12 else 2))
-        s.set(wx + 1, 11, 'lamp', 5)
-    s.rect(cx - 3, 20, 7, 11, 'hull_cool', 2)                               # the hatch and its frame
-    s.vline(cx - 3, 20, 11, 'brass', 3); s.vline(cx + 3, 20, 11, 'brass', 1)
-    s.hline(cx - 3, 20, 7, 'brass', 4)
-    s.set(cx + 1, 25, 'iron', 3)
-    for y in range(31, 50, 3):                                               # its ladder down the stage
-        s.hline(cx - 2, y, 5, 'iron', 3 if y < 40 else 2)
-    # the near legs, in front
-    for (x0, y0, x1, y1, lit) in ((16, 48, 4, 68 + extend, True), (60, 48, 72, 68 + extend, False)):
-        n = max(abs(x1 - x0), abs(y1 - y0))
-        for t in range(n + 1):
-            x, y = x0 + (x1 - x0) * t // n, y0 + (y1 - y0) * t // n
+                edge = x in (wx, wx + 6) or y in (13, 18)
+                if edge:
+                    s.set(x, y, 'iron', (4 if (y == 13 or x == wx) else 1) if lit else (3 if (y == 13 or x == wx) else 0))
+                else:
+                    s.set(x, y, 'lamp', 2 if y < 16 else 3)
+        s.hline(wx + 1, 14, 2, 'lamp', 5)                                            # the glint
+        seat(s, wx, 13, 7, 6)
+    hinged_hatch(s, cx - 4, 20, 8, 8)                                               # the front hatch
+    seat(s, cx - 4, 20, 8, 8)
+    stencil(s, cx + 5, 21, '<', 'berry', 2)
+    vrail(s, cx - 7, 20, 28); vrail(s, cx + 9, 20, 28)                              # handrails at the hatch
+    connectors(s, cx + 2, 43, ('brass', 'sky')); seat(s, cx + 2, 43, 7, 5)          # the service connectors
+    s.rect(cx - 4, 0, 8, 4, 'iron', 2); s.hline(cx - 4, 0, 8, 'iron', 4)            # the docking ring on top
+    s.hline(cx - 3, 1, 2, 'neon_cyan', 4); s.hline(cx + 1, 1, 2, 'neon_cyan', 4)
+    s.hline(cx - 4, 3, 8, 'brass', 3)
+    s.vline(cx + 13, 0, 8, 'iron', 4); s.vline(cx + 14, 0, 8, 'iron', 2)            # the dish on its boom
+    for (x, y, t) in ((cx + 10, 1, 4), (cx + 11, 0, 5), (cx + 12, 0, 4), (cx + 13, 0, 3), (cx + 14, 0, 3),
+                      (cx + 15, 0, 2), (cx + 16, 1, 2), (cx + 11, 1, 3), (cx + 15, 1, 1)):
+        s.set(x, y, 'hull', t)
+    s.rect(cx - 17, 23, 4, 3, 'panel', 3); s.hline(cx - 17, 23, 4, 'panel', 4)       # a docking light
+    s.hline(cx - 16, 25, 2, 'lamp', 5)
+    # the near legs, in front: the leg, its struts to the stage's foot, the footpad
+    for (hx, hy, fx, side) in ((16, 44, 4, -1), (60, 44, 72, 1)):
+        lit = side < 0
+        fy = 68 + extend
+        n = max(abs(fx - hx), abs(fy - hy))
+        for k in range(n + 1):
+            x, y = hx + (fx - hx) * k // n, hy + (fy - hy) * k // n
             s.set(x, y, 'panel', 4 if lit else 2)
-            s.set(x + (1 if lit else -1), y, 'panel', 2 if lit else 1)
-        for d in range(-3, 4):                                               # the round footpad
-            s.set(x1 + d, y1, 'panel', 4 if d < 0 else 2)
-            s.set(x1 + d, y1 + 1, 'panel', 1)
-        # the shock strut, shorter when compressed
-        top_y = y0 - 6 if legs < 2 else y0 - 4
-        for y in range(top_y, y0):
-            s.set(x0 + (2 if lit else -2), y, 'iron', 3 if lit else 1)
+            s.set(x - side, y, 'panel', 2 if lit else 1)
+        kx, ky = hx + (fx - hx) * 3 // 5, hy + (fy - hy) * 3 // 5                   # the knee
+        sx_ = cx + side * 9
+        m = max(abs(kx - sx_), abs(ky - 51), 1)
+        for k in range(m + 1):                                                       # the shock strut, its piston
+            x, y = sx_ + (kx - sx_) * k // m, 51 + (ky - 51) * k // m
+            rod = k > m // 2 + (2 if legs >= 2 else 0)
+            s.set(x, y, 'brass' if rod else 'iron', (4 if lit else 3) if rod else (3 if lit else 2))
+            s.set(x, y + 1, 'brass' if rod else 'iron', 2 if rod else 1)
+        for d in range(-3, 4):                                                       # the round footpad
+            s.set(fx + d, fy, 'panel', 4 if d < 0 else 3 if d < 2 else 2)
+            s.set(fx + d, fy + 1, 'panel', 1)
+        s.hline(fx - 1, fy - 1, 3, 'panel', 3); s.set(fx - 1, fy - 1, 'panel', 4)
+        s.set(hx, hy, 'brass', 4 if lit else 3)                                      # the hinge
     return s
 
 

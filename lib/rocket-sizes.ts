@@ -37,7 +37,7 @@ export const rocketSizes = {
   stars: { w: 256, h: 256, top: 0, foot: 250 },
   'clouds-low': { w: 256, h: 72, top: 28, foot: 51 },
   'clouds-high': { w: 256, h: 60, top: 19, foot: 43 },
-  station: { w: 362, h: 122, top: 3, foot: 97, cx: 181, port: 96 },
+  station: { w: 362, h: 122, top: 0, foot: 97, cx: 181, port: 96 },
   'moon-ground': { w: 256, h: 120, top: 0, foot: 119 },
   'lumen-pad': { w: 98, h: 26, top: 1, foot: 25, cx: 49 },
   lander0: { w: 78, h: 74, top: 0, foot: 71, cx: 39 },
