@@ -1,6 +1,13 @@
 import assert from 'node:assert/strict';
 import { registerHooks } from 'node:module';
-import { fixtureNow, saveFixtures, currentSaveFixture } from './fixtures/save-fixtures';
+import {
+  fixtureNow,
+  saveFixtures,
+  currentSaveFixture,
+  layoutSaveFixtures,
+  keepsakeSaveFixture,
+  worldAccountFixture,
+} from './fixtures/save-fixtures';
 import { FutureSaveError, GAME_SAVE_KEY, readSave, SAVE_VERSION, writeSave } from './save-data';
 import { meadowSummary } from './garden-growth';
 import { startingDeck } from './cards';
@@ -183,6 +190,65 @@ async function main() {
       assert.equal(JSON.stringify(fixture.saved), raw, `${fixture.name}: fixture unchanged`);
       console.log(
         `PASS: ${fixture.name} (${fixture.sha.slice(0, 7)}) keeps progress across load/write/reload`,
+      );
+    }
+
+    // C26 exercises the actual store migration + persistence boundary, rather
+    // than substituting a test-only restoreWorld/restoreDecor implementation.
+    for (const fixture of layoutSaveFixtures) {
+      const raw = JSON.stringify(worldAccountFixture(fixture.world));
+      await load(raw);
+      assert.deepEqual(gameStore.getState().world, fixture.expected, fixture.name);
+      assert.deepEqual(record(disk().world), fixture.expected, `${fixture.name}: written layout`);
+      assert.equal(gameStore.getState().player!.grass, 437.125);
+      assert.equal(record(disk().player).grass, 437.125);
+      assert.deepEqual(disk().futureWorldNote, { kept: true });
+      assert.deepEqual(record(disk().player).futureTrait, { colour: 'violet' });
+      const migrated = disk();
+      await reload();
+      assert.deepEqual(disk(), migrated, `${fixture.name}: reload cannot migrate twice`);
+      assert.equal(
+        JSON.stringify(worldAccountFixture(fixture.world)),
+        raw,
+        'fixture input stays unchanged',
+      );
+      console.log(
+        `PASS: C26 ${fixture.name} survives actual load/write/reload without balance loss`,
+      );
+    }
+    {
+      const fixture = keepsakeSaveFixture;
+      const input = worldAccountFixture(fixture.world, fixture.decor);
+      const before = JSON.stringify(input);
+      await load(before);
+      assert.deepEqual(
+        gameStore.getState().decor,
+        fixture.expected,
+        'C26 valid hut/garden entries survive once each',
+      );
+      assert.equal(
+        gameStore.getState().decor.some((p) => p.item === 'dragon_plush'),
+        false,
+        'unfound dropped',
+      );
+      assert.equal(
+        gameStore.getState().decor.some((p) => p.item === 'town_lantern'),
+        false,
+        'no-fit dropped',
+      );
+      const stored = records(disk().decor);
+      assert.equal(stored.length, 2);
+      assert.deepEqual(stored.find((p) => p.item === 'stool')?.futurePatina, { colour: 'copper' });
+      assert.equal(stored.find((p) => p.item === 'cairn')?.futurePlaque, 'kept');
+      assert.equal(record(disk().player).grass, 437.125);
+      assert.deepEqual(disk().futureWorldNote, { kept: true });
+      const migrated = disk();
+      await reload();
+      assert.deepEqual(gameStore.getState().decor, fixture.expected);
+      assert.deepEqual(disk(), migrated, 'C26 decor cleanup is idempotent across reload');
+      assert.equal(JSON.stringify(input), before, 'C26 fixture object not mutated');
+      console.log(
+        'PASS: C26 hut/garden decor deduplicates, drops unfound/no-fit placements and keeps opaque fields',
       );
     }
 
