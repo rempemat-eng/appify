@@ -43,6 +43,8 @@ LIGHT_DL = (0.085, 0.16)             # tones 4..5
 L_FLOOR, L_CEIL = 0.21, 0.965        # offsets shrink to fit between these
 SHADE_C = (0.85, 0.95, 1.0)          # chroma relative to the body, tones 0..2
 LIGHT_C = (0.92, 0.70)               # tones 4..5
+AIRLESS_DL = (-0.47, -0.29, -0.13)   # the moon: tone 0 nearly black (Matt, 20 Oct)
+AIRLESS_FLOOR = 0.13
 SIBLING_TURN, SIBLING_DL, SIBLING_C = 9.0, (0.025, -0.03), (1.05, 0.92)   # warm, cool
 EDGE_TO_INK = 0.62                   # how far the edge tone is pulled from tone 0 to INK
 
@@ -171,16 +173,22 @@ def _tone(L, C, h, dl, cf, turn, tint, tint_hue):
     return rgb_hex(from_oklch(L + dl, math.hypot(a, b), math.degrees(math.atan2(b, a)) % 360))
 
 
-def ramp(body: str) -> list:
+def ramp(body: str, airless: bool = False) -> list:
     """Six tones, 0..5, from one body colour (tone 3): the same lightness steps for every
     material (squeezed only where they would pass the floor or ceiling), the hue turning a
     little towards DUSK in the shade and LAMP in the light, plus a small fixed tint of each,
-    so even a grey has violet shade and warm highlights."""
+    so even a grey has violet shade and warm highlights.
+
+    `airless` (the moon): the violet in shade is the sky's light, and the moon has no sky,
+    so its shade keeps its own hue (no turn, a tenth of the tint) and goes nearly black."""
     L, C, h = oklch(hex_rgb(body))
-    ks = min(1.0, (L - L_FLOOR) / -SHADE_DL[0])
+    dl = AIRLESS_DL if airless else SHADE_DL
+    floor = AIRLESS_FLOOR if airless else L_FLOOR
+    ks = min(1.0, (L - floor) / -dl[0])
     kl = min(1.0, (L_CEIL - L) / LIGHT_DL[1])
-    out = [_tone(L, C, h, SHADE_DL[i] * ks, SHADE_C[i], _toward(h, DUSK_HUE, SHADE_HUE_STEP[i]),
-                 SHADE_TINT[i], DUSK_HUE) for i in range(3)]
+    turn, tint = (0.0, 0.1) if airless else (1.0, 1.0)
+    out = [_tone(L, C, h, dl[i] * ks, SHADE_C[i], _toward(h, DUSK_HUE, SHADE_HUE_STEP[i] * turn),
+                 SHADE_TINT[i] * tint, DUSK_HUE) for i in range(3)]
     out.append(rgb_hex(hex_rgb(body)))
     out += [_tone(L, C, h, LIGHT_DL[i] * kl, LIGHT_C[i], _toward(h, LAMP_HUE, LIGHT_HUE_STEP[i]),
                   LIGHT_TINT[i], LAMP_HUE) for i in range(2)]
@@ -225,12 +233,13 @@ def build() -> dict:
             ramps[name] = glow_ramp(body)
             kinds[name] = kind
             continue
-        ramps[name] = ramp(body)
+        airless = kind == 'accent:moon'
+        ramps[name] = ramp(body, airless)
         edges[name] = edge(ramps[name])
         kinds[name] = kind
         warm, cool = siblings(body)
         for tag, b in (('warm', warm), ('cool', cool)):
-            ramps[f'{name}_{tag}'] = ramp(b)
+            ramps[f'{name}_{tag}'] = ramp(b, airless)
             kinds[f'{name}_{tag}'] = f'sibling:{name}'
     return {'ramps': ramps, 'edges': edges, 'kinds': kinds}
 
@@ -331,7 +340,7 @@ def main(argv) -> int:
             'shade_dl': SHADE_DL, 'light_dl': LIGHT_DL, 'l_floor': L_FLOOR, 'l_ceil': L_CEIL,
             'shade_c': SHADE_C, 'light_c': LIGHT_C,
             'edge_to_ink': EDGE_TO_INK, 'shadow_steps': SHADOW_STEPS, 'sibling_turn': SIBLING_TURN, 'sibling_dl': SIBLING_DL,
-            'sibling_c': SIBLING_C,
+            'sibling_c': SIBLING_C, 'airless_dl': AIRLESS_DL, 'airless_floor': AIRLESS_FLOOR,
         }
         data['bases'] = {k: {'kind': v[0], 'body': v[1]} for k, v in BASES.items()}
         data.update(built)

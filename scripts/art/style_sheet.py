@@ -481,18 +481,48 @@ def sw_stone():
     return cv
 
 
-def brick_pick(seed=7, soot_rows=0, base=3):
-    def pick(ci, si):
-        n = noise2(ci, si, seed)
-        soot = ci < soot_rows and noise2(ci, si, seed + 1) < 0.7 - ci * 0.2
-        return (sib('soot' if soot else 'clay', noise2(ci, si, seed + 2)),
-                base + (1 if n > 0.88 else -1 if n < 0.14 else 0))
-    return pick
+def bricks(cv: Canvas, x0, y0, w, h, seed, soot_rows=0, moss_rows=0, base=3, bw=8, ch=4):
+    """True brick in stretcher bond: rectangular bricks 7 x 3 with 1 px joints, each course
+    shifted half a brick. Each brick is one of clay's three ramps, the odd one a tone off; its
+    top row is lit towards the left, its bottom row a tone down. Bed joints are lime mortar
+    with a lit top edge (the joint's lower lip catches the light), head joints a tone darker
+    (vertical recesses). The odd corner is chipped back to the mortar. Soot settles in
+    clusters in the top `soot_rows` courses; moss creeps along the joints of the lowest
+    `moss_rows`."""
+    courses_n = max(1, h // ch)
+    for (x, y) in sorted(rect(x0, y0, w, h)):
+        ci, r = divmod(y - y0, ch)
+        bi, c = divmod(x - x0 + (bw // 2 if ci % 2 else 0), bw)
+        if r == ch - 1:
+            col = T('stone', 3) if c < bw - 1 else T('stone', 2)      # the bed joint, lit on top
+        elif c == bw - 1:
+            col = T('stone', 1)                                      # a head joint, in shade
+        else:
+            n = noise2(ci, bi, seed)
+            k = base + (1 if n > 0.88 else -1 if n < 0.14 else 0)
+            fam = 'clay'
+            from_top = ci
+            if from_top < soot_rows and smooth_noise(x, y, 2.5, seed + 3) > 0.42 + 0.14 * from_top:
+                fam = 'soot'                                          # soot in clusters
+            rp = sib(fam, noise2(ci, bi, seed + 2), 0.33)
+            if r == 0:
+                k += 1 if c < bw - 3 else 0
+            elif r == ch - 2:
+                k -= 1
+            chip = noise2(ci, bi, seed + 5)
+            if (chip < 0.10 and r == 0 and c == 0) or (chip > 0.92 and r == ch - 2 and c == bw - 2):
+                col = T('stone', 2)                                   # a chipped corner
+            else:
+                col = T(rp, k)
+        cv.set(x, y, col)
+        if moss_rows and ci >= courses_n - moss_rows and (r == ch - 1 or (r == ch - 2 and c < bw - 1)):
+            if smooth_noise(x, y, 2.2, seed + 7) > 0.66:
+                cv.set(x, y, T(sib('leaf', noise2(x, y, seed), 0.3), 3 if r == ch - 1 else 2))
 
 
 def sw_brick():
     cv = Canvas(SW, SW)
-    courses(cv, 0, 0, SW, SW, brick_pick(31, 3), course=4, lengths=(8, 8), seam=T('clay_cool', 1), seed=31)
+    bricks(cv, 0, 0, SW, SW, 31, soot_rows=3, moss_rows=2)
     return cv
 
 
@@ -656,31 +686,92 @@ def sw_water():
     return cv
 
 
-def drift(cv, cx, cy, rx, ry, ramp='snow'):
-    for y in range(int(cy - ry), int(cy + ry) + 1):
-        for x in range(int(cx - rx), int(cx + rx) + 1):
-            u, v = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
-            if u * u + v * v <= 1:
-                lv = -0.5 * u - 0.9 * v
-                cv.set(x, y, T(ramp, 5 if lv > 0.5 else 4 if lv > -0.15 else 2))
-    for x in range(int(cx - rx * 0.6), int(cx + rx * 0.9)):   # its shadow on the snow beyond
-        cv.set(x, int(cy + ry) + 1, T('snow_cool', 2))
+def snow_cap(cv, pts, depth=2, ramp='snow'):
+    """Snow lying on a thing: its top `depth` rows covered, lit (5) on the top row and on
+    the west, body 4, with a scalloped lower edge and a shade line (2) under each scallop."""
+    cols = {}
+    for (x, y) in pts:
+        cols.setdefault(x, []).append(y)
+    x0 = min(cols)
+    for x, ys in cols.items():
+        top = min(ys)
+        d = depth + (1 if (x - x0) % 4 in (1, 2) else 0)
+        for i in range(d):
+            if (x, top + i) in pts:
+                cv.set(x, top + i, T(ramp, 5 if i == 0 or x == x0 else 4))
+        if (x, top + d) in pts:
+            step(cv, x, top + d, -1)
 
 
 def sw_snow():
+    """Snow as snow: one calm, wide plane (tone 3 with broad lighter swells), a crisp
+    scalloped edge where it ends over the ground (a lit lip, the shaded south face under
+    it, the ground darkened beneath), blue-violet shade in hollows and on the south and
+    east sides of everything standing in it, drifts piled against a post and a stone on
+    their windward west side, a line of footprints, a few sparkles."""
     cv = Canvas(SW, SW)
-    ground(cv, 0, 0, SW, SW, 'snow', 3, seed=91, density=0.22, share=0.3, contrast=0.3)
-    for i, y in enumerate(range(4, SW - 2, 5)):   # a line of footprints, pressed in and shaded
-        x = 40 - i * 2 + (2 if i % 2 else 0)
-        cv.hline(x, y, 2, T('snow_cool', 1)); cv.hline(x, y + 1, 2, T('snow', 2))
-    for (x, y) in ((4, 8), (26, 44), (44, 20)):   # grass tips through the snow
-        cv.set(x, y, T('grass', 2)); cv.set(x + 2, y, T('grass', 2)); cv.set(x + 1, y + 1, T('grass', 1))
-    for d in ((14, 16, 12, 6), (34, 30, 13, 7), (12, 40, 9, 5)):
-        drift(cv, *d)
-    for (x, y) in ((30, 6), (40, 14), (6, 28)):  # stones through the snow
-        pebble(cv, x, y, 'stone', 2, big=True)
-    for (x, y) in ((22, 12), (38, 26), (18, 37)):  # sparkle pairs
-        cv.set(x, y, T('snow', 5)); cv.set(x + 1, y, T('snow', 5))
+    for (x, y) in rect(0, 0, SW, SW):
+        cv.set(x, y, T('snow', 3))
+    for (x, y) in rect(0, 0, SW, SW):   # broad swells, lit on their upper left
+        n = smooth_noise(x, y, 11, 92)
+        if n > 0.6:
+            cv.set(x, y, T('snow', 4))
+        elif n < 0.24:
+            cv.set(x, y, T('snow_cool', 3))
+    edge = {}
+    for x in range(SW):   # the scalloped edge, scallops 6 px across
+        u = (x % 6 - 2.5) / 3
+        edge[x] = 38 + int(round(2 * math.sqrt(max(0.0, 1 - u * u))))
+    ground(cv, 0, 38, SW, SW - 38, 'earth', 3, seed=93, scale=4)
+    for x in range(SW):
+        e = edge[x]
+        for y in range(36, e):
+            cv.set(x, y, T('snow', 3))
+        cv.set(x, e - 1, T('snow', 1))     # the snow's south face, in shade
+        cv.set(x, e - 2, T('snow', 2))
+        cv.set(x, e - 3, T('snow', 5) if (x % 6) in (1, 2, 3) else T('snow', 4))   # the lit lip
+        step(cv, x, e, -2); step(cv, x, e + 1, -1)                               # its shadow on the ground
+    for (x, y) in ((6, 44), (20, 43), (40, 45)):
+        pebble(cv, x, y, 'stone', 3)
+    # a fence post standing in the snow: a drift piled on its west (windward) side, a cap
+    # on top, its east side and the snow in its lee in blue-violet shade
+    post = rect(32, 8, 4, 21)
+    cylinder(cv, 32, 8, 4, 21, 'timber', 3)
+    outline(cv, post)
+    snow_cap(cv, post)
+    drift = {(x, y) for x in range(20, 32) for y in range(21, 30) if y >= 29 - (x - 20) * 0.75}
+    for (x, y) in drift:
+        top = (x, y - 1) not in drift
+        cv.set(x, y, T('snow', 5 if top else 4 if (x - 20) > (y - 21) else 3))
+    for x in range(20, 32):   # the drift's foot: a shade line where it meets the plane
+        cv.set(x, 30, T('snow', 2))
+    for (x, y) in rect(36, 22, 8, 8):   # the lee: blue-violet shade, widest at the foot
+        if (x - 36) <= (y - 22):
+            cv.set(x, y, T('snow', 1 if x - 36 < 1 else 2))
+    for x in range(36, 45):
+        cv.set(x, 30, T('snow', 2))
+    # a stone half buried: capped, shade to its south and east
+    stone = {(x, y) for (x, y) in disc(10, 17, 4.5) if y >= 14}
+    for (x, y) in stone:
+        lv = -(x + 0.5 - 10) - (y + 0.5 - 17)
+        cv.set(x, y, T('stone', 3 if lv > 0 else 2 if lv > -3 else 1))
+    outline(cv, stone)
+    snow_cap(cv, stone)
+    for (x, y) in rect(8, 21, 9, 3):
+        if x - 8 >= (y - 21) * 2:
+            cv.set(x, y, T('snow', 2 if y < 23 else 3))
+    # a hollow: its upper-left wall in shade, the far wall lit
+    for (x, y) in disc(14, 31, 5):
+        if abs(y + 0.5 - 31) <= 2.2:
+            lv = -(x + 0.5 - 14) * 0.5 - (y + 0.5 - 31)
+            cv.set(x, y, T('snow', 2 if lv > 0.6 else 5 if lv < -1.2 else 3))
+    # footprints: a trail from the lower left, each print pressed in (shade along its top)
+    for i in range(6):
+        x = 40 + (2 if i % 2 else 0) - i
+        y = 4 + i * 5
+        cv.hline(x, y, 2, T('snow', 1)); cv.hline(x, y + 1, 2, T('snow', 2)); cv.hline(x, y + 2, 2, T('snow', 2))
+    for (x, y) in ((22, 6), (16, 9), (44, 30)):   # sparkles, in pairs
+        cv.set(x, y, T('snow', 5)); cv.set(x + 1, y - 1, T('snow', 5))
     return cv
 
 
@@ -709,9 +800,9 @@ def crater(cv: Canvas, cx, cy, rx, ry, ramp='regolith', hard=True):
                 step(cv, x, y, -1)
 
 
-def regolith(cv, x0, y0, w, h, seed, contrast=0.2):
-    pts = ground(cv, x0, y0, w, h, 'regolith', 3, seed=seed, scale=7, density=0.2, share=0.3, contrast=contrast)
-    for i in range(int(w * h / 260)):   # grit and small stones, each with its hard shadow
+def regolith(cv, x0, y0, w, h, seed, contrast=0.1):
+    pts = ground(cv, x0, y0, w, h, 'regolith', 3, seed=seed, scale=9, density=0.18, share=0.3, contrast=contrast)
+    for i in range(int(w * h / 420)):   # grit and small stones, each with its hard shadow
         x = x0 + int(noise2(i, 5, seed) * (w - 4)); y = y0 + int(noise2(i, 6, seed) * (h - 4))
         pebble(cv, x, y, sib('regolith', noise2(i, 7, seed)), 3, big=noise2(i, 8, seed) < 0.25)
     return pts
@@ -719,7 +810,7 @@ def regolith(cv, x0, y0, w, h, seed, contrast=0.2):
 
 def sw_regolith():
     cv = Canvas(SW, SW)
-    regolith(cv, 0, 0, SW, SW, 81, contrast=0.3)
+    regolith(cv, 0, 0, SW, SW, 81)
     crater(cv, 26, 24, 13, 9)
     return cv
 
@@ -811,7 +902,7 @@ def ex_cogsworth():
             cv.set(x, y, T(sib('copper', smooth_noise(x, y, 5, 118)), k))
     for x in range(EX):
         cv.set(x, 12, T('copper', 1)); cv.set(x, 13, T('iron', 2))
-    courses(cv, 0, 14, EX, 44, brick_pick(112, 3), course=4, lengths=(8, 8), seam=T('clay_cool', 1), seed=112)
+    bricks(cv, 0, 14, EX, 44, 112, soot_rows=3, moss_rows=1)
     overhang(cv, 0, EX, 14, 3)
     wx, wy = 30, 22   # the sash window under a stone lintel
     part(cv, wx - 3, wy - 4, 20, 4, 'ashlar', 4)
@@ -1173,7 +1264,7 @@ def ex_moon():
         pts = disc(bx, by, r)
         for (x, y) in pts:
             lv = -(x + 0.5 - bx) - (y + 0.5 - by)
-            cv.set(x, y, T('stone_cool', 4 if lv > r * 0.6 else 3 if lv > -r * 0.4 else 1))
+            cv.set(x, y, T('regolith_warm', 4 if lv > r * 0.6 else 3 if lv > -r * 0.4 else 1))
         for (x, y) in pts:
             for k in (1, 2, 3):
                 if (x + k, y + 1) not in pts:
