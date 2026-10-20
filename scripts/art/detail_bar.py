@@ -13,8 +13,16 @@ out). Colours are quantised to 16 levels a channel. Then, per 16 x 16 px patch:
 - dressing  small regions (2 to 12 px) that are not the patch's main colour: tufts,
             pebbles, chips, flowers, highlights
 
-A surface passes when each mean is at least TOLERANCE of the reference's mean for the same
-kind of surface (face, rim, side, corner, stair, foot, ground).
+and two cleanliness counts (art-style.md: detail comes in clusters of two or more pixels,
+never single-pixel noise), so the bar cannot be met with speckle:
+
+- isolated  the share of pixels whose colour differs from all four neighbours
+- cluster   the mean size in px of the patch's one-colour regions
+
+A surface passes when tones, shapes and dressing each reach TOLERANCE of the reference's
+mean for the same kind of surface (face, rim, side, corner, stair, foot, ground), its
+isolated share is at most the reference's plus ISOLATED_MARGIN, and its mean cluster is
+at least CLUSTER_SHARE of the reference's.
 
 Fair to compression. The references are official JPEG screenshots, and JPEG ringing adds
 tones (a control: our own sheet blown up 6x and saved at quality 85 gains 5 tones a patch,
@@ -25,6 +33,26 @@ table, and brought back down.
 The reference baselines are numbers only, in detail_baselines.json, each with the official
 URL of its screenshot, its box and its adult's height there; the images stay out of the
 repo. `--measure` adds or refreshes one from a local copy of that screenshot.
+
+Measuring your own art without the reference images. Every lane can check a sprite or a
+ground against the numbers alone; the screenshots are only needed to add a baseline.
+
+1. Render the thing at 1x (an adult resident 25 px tall, as every generator draws). A
+   sprite on transparency: paste it on the ground it will stand on first, since a
+   transparent background would count as a colour.
+2. Pick a box that holds only the surface being judged, at least 34 px each way (two whole
+   16 px patches and the 2 px resampling rounds away); a box a little larger than a
+   multiple of 16 wastes nothing.
+3. Run `python3 scripts/art/detail_bar.py MINE.png --box X0 Y0 X1 Y1 --kind roof`.
+   The kinds and their reference values: `--list`. In a generator:
+   `ok, counts, lines = detail_bar.check_image(img, box, 'roof')`.
+4. FAIL with LOW means too little detail for that kind; NOISY means the detail is speckle
+   (single pixels, tiny clusters): draw it as shapes of two or more pixels instead.
+
+Kinds with baselines: face, rim, side, corner, stair, foot, ground, water (ponds and
+channels with their banks), wood-front (plank walls, shop and false fronts), stone-wall
+(stone footings and dressed walls), machinery (vehicles, hatches, metal), roof (tiles and
+slates), facade (town fronts with windows and signs), hedge, tree (crowns), paving.
 
 Run:
   python3 scripts/art/detail_bar.py OURS.png --box X0 Y0 X1 Y1 --kind face [--adult 25]
@@ -49,7 +77,10 @@ ADULT = 25          # our adult resident, feet to crown (verticality.md 5)
 PATCH = 16
 STEP = 16           # quantisation step a channel (16 levels)
 TOLERANCE = 0.9     # ours must reach 90 % of the reference on every count
-KINDS = ('face', 'rim', 'side', 'corner', 'stair', 'foot', 'ground', 'water')
+ISOLATED_MARGIN = 0.02   # and be no noisier: at most 2 points more isolated pixels
+CLUSTER_SHARE = 0.9      # and clusters at least 90 % as large
+KINDS = ('face', 'rim', 'side', 'corner', 'stair', 'foot', 'ground', 'water', 'wood-front', 'stone-wall',
+         'machinery', 'roof', 'facade', 'hedge', 'tree', 'paving')
 
 
 def quantised(img: Image.Image) -> np.ndarray:
@@ -101,8 +132,11 @@ def _regions(k: np.ndarray):
 
 def counts(key: np.ndarray) -> dict:
     """Mean tones, shapes and dressing per PATCH x PATCH square (whole patches only)."""
-    t, s, d = [], [], []
+    t, s, d, iso, cl = [], [], [], [], []
     h, w = key.shape
+    pad = np.pad(key, 1, mode='edge')
+    lone = (pad[1:-1, 1:-1] != pad[:-2, 1:-1]) & (pad[1:-1, 1:-1] != pad[2:, 1:-1]) & \
+        (pad[1:-1, 1:-1] != pad[1:-1, :-2]) & (pad[1:-1, 1:-1] != pad[1:-1, 2:])
     for y in range(0, h - PATCH + 1, PATCH):
         for x in range(0, w - PATCH + 1, PATCH):
             k = key[y:y + PATCH, x:x + PATCH]
@@ -112,10 +146,13 @@ def counts(key: np.ndarray) -> dict:
             regs = _regions(k)
             s.append(sum(1 for (_v, n) in regs if n >= 2))
             d.append(sum(1 for (v2, n) in regs if 2 <= n <= 12 and v2 != main))
+            iso.append(float(lone[y:y + PATCH, x:x + PATCH].mean()))
+            cl.append(PATCH * PATCH / len(regs))
     if not t:
         raise ValueError(f'detail_bar: the box is smaller than one {PATCH} px patch at our scale')
     return {'tones': round(float(np.mean(t)), 2), 'shapes': round(float(np.mean(s)), 2),
-            'dressing': round(float(np.mean(d)), 2), 'patches': len(t)}
+            'dressing': round(float(np.mean(d)), 2), 'isolated': round(float(np.mean(iso)), 3),
+            'cluster': round(float(np.mean(cl)), 2), 'patches': len(t)}
 
 
 def jpeg_quality(img: Image.Image) -> int | None:
@@ -168,7 +205,7 @@ def bar(kind: str, base: dict | None = None) -> dict:
     rows = [b for b in base['baselines'].values() if b['kind'] == kind]
     if not rows:
         raise KeyError(f'detail_bar: no baseline for {kind}')
-    out = {m: round(float(np.mean([b[m] for b in rows])), 2) for m in ('tones', 'shapes', 'dressing')}
+    out = {m: round(float(np.mean([b[m] for b in rows])), 3) for m in ('tones', 'shapes', 'dressing', 'isolated', 'cluster')}
     out['adult_px'] = float(np.mean([b['adult_px'] for b in rows]))
     qs = [b.get('jpeg_quality') for b in rows if b.get('jpeg_quality')]
     out['jpeg_quality'] = int(round(np.mean(qs))) if qs else None
@@ -181,6 +218,12 @@ def judge(ours: dict, ref: dict) -> tuple[bool, list]:
         good = ours[m] >= TOLERANCE * ref[m]
         ok &= good
         lines.append(f'{m} {ours[m]:5.1f} / {ref[m]:5.1f} {"ok" if good else "LOW"}')
+    good = ours['isolated'] <= ref['isolated'] + ISOLATED_MARGIN
+    ok &= good
+    lines.append(f'isolated {ours["isolated"]:.3f} / {ref["isolated"]:.3f} {"ok" if good else "NOISY"}')
+    good = ours['cluster'] >= CLUSTER_SHARE * ref['cluster']
+    ok &= good
+    lines.append(f'cluster {ours["cluster"]:4.1f} / {ref["cluster"]:4.1f} {"ok" if good else "NOISY"}')
     return ok, lines
 
 
@@ -200,7 +243,8 @@ def main(argv):
     if '--list' in argv:
         for k, b in load()['baselines'].items():
             print(f'{k:28s} {b["kind"]:7s} tones {b["tones"]:5.1f} shapes {b["shapes"]:5.1f} '
-                  f'dressing {b["dressing"]:5.1f}  {b["url"]}')
+                  f'dressing {b["dressing"]:5.1f} isolated {b.get("isolated", 0):.3f} '
+                  f'cluster {b.get("cluster", 0):4.1f}  {b["url"]}')
         return 0
     box = [int(v) for v in argv[argv.index('--box') + 1:argv.index('--box') + 5]]
     adult = float(argv[argv.index('--adult') + 1]) if '--adult' in argv else ADULT

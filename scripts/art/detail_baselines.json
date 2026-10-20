@@ -15,6 +15,8 @@
    "tones": 19.5,
    "shapes": 35.0,
    "dressing": 31.0,
+   "isolated": 0.217,
+   "cluster": 2.57,
    "patches": 2,
    "jpeg_quality": 90
   },
@@ -32,6 +34,8 @@
    "tones": 17.0,
    "shapes": 36.5,
    "dressing": 30.5,
+   "isolated": 0.15,
+   "cluster": 3.07,
    "patches": 2,
    "jpeg_quality": 90
   },
@@ -49,6 +53,8 @@
    "tones": 24.33,
    "shapes": 39.67,
    "dressing": 34.33,
+   "isolated": 0.277,
+   "cluster": 2.14,
    "patches": 3,
    "jpeg_quality": 90
   },
@@ -66,6 +72,8 @@
    "tones": 23.0,
    "shapes": 40.5,
    "dressing": 33.5,
+   "isolated": 0.225,
+   "cluster": 2.37,
    "patches": 2,
    "jpeg_quality": 90
   },
@@ -83,6 +91,8 @@
    "tones": 21.0,
    "shapes": 33.0,
    "dressing": 27.0,
+   "isolated": 0.223,
+   "cluster": 2.44,
    "patches": 1,
    "jpeg_quality": 90
   },
@@ -100,6 +110,8 @@
    "tones": 15.5,
    "shapes": 34.5,
    "dressing": 25.5,
+   "isolated": 0.156,
+   "cluster": 2.94,
    "patches": 2,
    "jpeg_quality": 90
   },
@@ -117,6 +129,8 @@
    "tones": 19.5,
    "shapes": 36.0,
    "dressing": 29.0,
+   "isolated": 0.232,
+   "cluster": 2.38,
    "patches": 2,
    "jpeg_quality": 90
   },
@@ -134,42 +148,409 @@
    "tones": 17.0,
    "shapes": 37.5,
    "dressing": 31.5,
+   "isolated": 0.178,
+   "cluster": 2.64,
    "patches": 2,
    "jpeg_quality": 90
   },
-  "eastward-13-grass": {
-   "game": "Eastward - Octopia",
-   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_f5788b1d4ade71e0cdb1e0110debfad3b32ca51c.1920x1080.jpg",
-   "box": [
-    0,
-    760,
-    330,
-    900
-   ],
-   "adult_px": 162.0,
-   "kind": "ground",
-   "tones": 22.67,
-   "shapes": 33.33,
-   "dressing": 28.33,
-   "patches": 3,
-   "jpeg_quality": 90
-  },
-  "eastward-37-grass": {
+  "eastward-37-open-grass": {
    "game": "Eastward: Octopia (official site)",
    "url": "https://eastwardgame.com/wp-content/uploads/2024/06/Octopia-7_Fishing.jpg",
    "box": [
-    1200,
-    700,
-    1800,
-    1040
+    1040,
+    680,
+    1400,
+    880
    ],
    "adult_px": 162.0,
    "kind": "ground",
-   "tones": 16.4,
-   "shapes": 38.67,
-   "dressing": 29.47,
+   "tones": 9.33,
+   "shapes": 47.33,
+   "dressing": 32.33,
+   "isolated": 0.306,
+   "cluster": 1.89,
+   "patches": 3,
+   "jpeg_quality": 93
+  },
+  "eastward-12-yard-grass": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_c3e35bbd8e25af924b3b9cbf087f1f0c77dcf68a.1920x1080.jpg",
+   "box": [
+    1160,
+    600,
+    1400,
+    760
+   ],
+   "adult_px": 162.0,
+   "kind": "ground",
+   "tones": 16.0,
+   "shapes": 21.0,
+   "dressing": 18.0,
+   "isolated": 0.119,
+   "cluster": 4.3,
+   "patches": 2,
+   "jpeg_quality": 90
+  },
+  "eastward-13-verge-grass": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_f5788b1d4ade71e0cdb1e0110debfad3b32ca51c.1920x1080.jpg",
+   "box": [
+    130,
+    830,
+    250,
+    990
+   ],
+   "adult_px": 162.0,
+   "kind": "ground",
+   "tones": 6.0,
+   "shapes": 29.0,
+   "dressing": 16.0,
+   "isolated": 0.051,
+   "cluster": 5.22,
+   "patches": 1,
+   "jpeg_quality": 90
+  },
+  "eastward-17-barn-front": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_95e7b57126bf6395b4bbe0adabf1b633c20e5245.1920x1080.jpg",
+   "box": [
+    500,
+    200,
+    990,
+    390
+   ],
+   "adult_px": 162.0,
+   "kind": "wood-front",
+   "tones": 27.25,
+   "shapes": 38.0,
+   "dressing": 32.5,
+   "isolated": 0.14,
+   "cluster": 3.93,
+   "patches": 4,
+   "jpeg_quality": 90
+  },
+  "eastward-10-shopfronts": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_29d7dd0891c88b08d699556ed62fcc37f1aea47f.1920x1080.jpg",
+   "box": [
+    40,
+    220,
+    680,
+    440
+   ],
+   "adult_px": 162.0,
+   "kind": "wood-front",
+   "tones": 20.75,
+   "shapes": 34.67,
+   "dressing": 28.58,
+   "isolated": 0.21,
+   "cluster": 2.87,
+   "patches": 12,
+   "jpeg_quality": 90
+  },
+  "eastward-10-stone-footing": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_29d7dd0891c88b08d699556ed62fcc37f1aea47f.1920x1080.jpg",
+   "box": [
+    20,
+    360,
+    680,
+    470
+   ],
+   "adult_px": 162.0,
+   "kind": "stone-wall",
+   "tones": 24.0,
+   "shapes": 30.83,
+   "dressing": 25.33,
+   "isolated": 0.231,
+   "cluster": 2.68,
+   "patches": 6,
+   "jpeg_quality": 90
+  },
+  "eastward-01-street-wall": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_5d50545b49db3a8502666b4195d2fabd0e31a29d.1920x1080.jpg",
+   "box": [
+    0,
+    610,
+    830,
+    800
+   ],
+   "adult_px": 162.0,
+   "kind": "stone-wall",
+   "tones": 13.12,
+   "shapes": 25.62,
+   "dressing": 19.38,
+   "isolated": 0.114,
+   "cluster": 4.59,
+   "patches": 8,
+   "jpeg_quality": 90
+  },
+  "eastward-37-bus": {
+   "game": "Eastward: official site",
+   "url": "https://eastwardgame.com/wp-content/uploads/2024/06/Octopia-7_Fishing.jpg",
+   "box": [
+    820,
+    250,
+    1490,
+    580
+   ],
+   "adult_px": 162.0,
+   "kind": "machinery",
+   "tones": 26.0,
+   "shapes": 31.44,
+   "dressing": 27.44,
+   "isolated": 0.182,
+   "cluster": 3.55,
+   "patches": 18,
+   "jpeg_quality": 93
+  },
+  "eastward-08-railcar": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_bf8d65929d363f1b62f632d934eda94ef5188049.1920x1080.jpg",
+   "box": [
+    0,
+    480,
+    300,
+    800
+   ],
+   "adult_px": 162.0,
+   "kind": "machinery",
+   "tones": 24.33,
+   "shapes": 32.83,
+   "dressing": 26.83,
+   "isolated": 0.133,
+   "cluster": 3.7,
+   "patches": 6,
+   "jpeg_quality": 90
+  },
+  "eastward-10-tile-roofs": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_29d7dd0891c88b08d699556ed62fcc37f1aea47f.1920x1080.jpg",
+   "box": [
+    600,
+    0,
+    1700,
+    200
+   ],
+   "adult_px": 162.0,
+   "kind": "roof",
+   "tones": 13.9,
+   "shapes": 37.8,
+   "dressing": 28.0,
+   "isolated": 0.143,
+   "cluster": 3.42,
+   "patches": 10,
+   "jpeg_quality": 90
+  },
+  "eastward-08-station-roof": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_bf8d65929d363f1b62f632d934eda94ef5188049.1920x1080.jpg",
+   "box": [
+    820,
+    30,
+    1400,
+    200
+   ],
+   "adult_px": 162.0,
+   "kind": "roof",
+   "tones": 24.2,
+   "shapes": 45.6,
+   "dressing": 38.6,
+   "isolated": 0.179,
+   "cluster": 2.59,
+   "patches": 5,
+   "jpeg_quality": 90
+  },
+  "eastward-01-facades": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_5d50545b49db3a8502666b4195d2fabd0e31a29d.1920x1080.jpg",
+   "box": [
+    0,
+    40,
+    860,
+    520
+   ],
+   "adult_px": 162.0,
+   "kind": "facade",
+   "tones": 25.56,
+   "shapes": 35.56,
+   "dressing": 30.62,
+   "isolated": 0.228,
+   "cluster": 2.76,
+   "patches": 32,
+   "jpeg_quality": 90
+  },
+  "eastward-01-subway-front": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_5d50545b49db3a8502666b4195d2fabd0e31a29d.1920x1080.jpg",
+   "box": [
+    1040,
+    180,
+    1420,
+    600
+   ],
+   "adult_px": 162.0,
+   "kind": "facade",
+   "tones": 25.58,
+   "shapes": 32.17,
+   "dressing": 26.5,
+   "isolated": 0.271,
+   "cluster": 2.49,
+   "patches": 12,
+   "jpeg_quality": 90
+  },
+  "eastward-17-bushes": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_95e7b57126bf6395b4bbe0adabf1b633c20e5245.1920x1080.jpg",
+   "box": [
+    1380,
+    480,
+    1920,
+    700
+   ],
+   "adult_px": 162.0,
+   "kind": "hedge",
+   "tones": 14.4,
+   "shapes": 27.1,
+   "dressing": 21.9,
+   "isolated": 0.145,
+   "cluster": 5.03,
+   "patches": 10,
+   "jpeg_quality": 90
+  },
+  "eastward-12-bush": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_c3e35bbd8e25af924b3b9cbf087f1f0c77dcf68a.1920x1080.jpg",
+   "box": [
+    1630,
+    590,
+    1770,
+    710
+   ],
+   "adult_px": 162.0,
+   "kind": "hedge",
+   "tones": 18.0,
+   "shapes": 25.0,
+   "dressing": 20.0,
+   "isolated": 0.281,
+   "cluster": 2.25,
+   "patches": 1,
+   "jpeg_quality": 90
+  },
+  "eastward-08-canopy": {
+   "game": "Eastward",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/977880/ss_bf8d65929d363f1b62f632d934eda94ef5188049.1920x1080.jpg",
+   "box": [
+    0,
+    40,
+    440,
+    420
+   ],
+   "adult_px": 162.0,
+   "kind": "tree",
+   "tones": 20.75,
+   "shapes": 34.5,
+   "dressing": 28.67,
+   "isolated": 0.314,
+   "cluster": 2.17,
+   "patches": 12,
+   "jpeg_quality": 90
+  },
+  "eastward-13-pine": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_f5788b1d4ade71e0cdb1e0110debfad3b32ca51c.1920x1080.jpg",
+   "box": [
+    520,
+    710,
+    700,
+    900
+   ],
+   "adult_px": 162.0,
+   "kind": "tree",
+   "tones": 20.0,
+   "shapes": 37.0,
+   "dressing": 30.0,
+   "isolated": 0.234,
+   "cluster": 2.42,
+   "patches": 1,
+   "jpeg_quality": 90
+  },
+  "eastward-37-pond": {
+   "game": "Eastward: official site",
+   "url": "https://eastwardgame.com/wp-content/uploads/2024/06/Octopia-7_Fishing.jpg",
+   "box": [
+    0,
+    220,
+    380,
+    760
+   ],
+   "adult_px": 162.0,
+   "kind": "water",
+   "tones": 14.93,
+   "shapes": 21.13,
+   "dressing": 17.0,
+   "isolated": 0.117,
+   "cluster": 8.94,
    "patches": 15,
    "jpeg_quality": 93
+  },
+  "eastward-17-pond": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_95e7b57126bf6395b4bbe0adabf1b633c20e5245.1920x1080.jpg",
+   "box": [
+    1400,
+    520,
+    1900,
+    1000
+   ],
+   "adult_px": 162.0,
+   "kind": "water",
+   "tones": 11.94,
+   "shapes": 21.44,
+   "dressing": 16.62,
+   "isolated": 0.114,
+   "cluster": 6.68,
+   "patches": 16,
+   "jpeg_quality": 90
+  },
+  "eastward-13-cobbles": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_f5788b1d4ade71e0cdb1e0110debfad3b32ca51c.1920x1080.jpg",
+   "box": [
+    780,
+    900,
+    960,
+    1080
+   ],
+   "adult_px": 162.0,
+   "kind": "paving",
+   "tones": 17.0,
+   "shapes": 30.0,
+   "dressing": 21.0,
+   "isolated": 0.262,
+   "cluster": 2.27,
+   "patches": 1,
+   "jpeg_quality": 90
+  },
+  "eastward-12-cobble-path": {
+   "game": "Eastward - Octopia",
+   "url": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2305370/ss_c3e35bbd8e25af924b3b9cbf087f1f0c77dcf68a.1920x1080.jpg",
+   "box": [
+    1100,
+    750,
+    1700,
+    860
+   ],
+   "adult_px": 162.0,
+   "kind": "paving",
+   "tones": 12.2,
+   "shapes": 33.8,
+   "dressing": 26.4,
+   "isolated": 0.131,
+   "cluster": 3.39,
+   "patches": 5,
+   "jpeg_quality": 90
   }
  }
 }
