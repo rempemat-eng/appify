@@ -101,7 +101,7 @@ export function PetalFall() {
     </View>
   );
 }
-export function GrassFlight({ toLeft = true }: { toLeft?: boolean }) {
+export function DreamDustFlight({ toLeft = true }: { toLeft?: boolean }) {
   const reduced = useReducedMotion();
   const progress = useSharedValue(0);
   useEffect(() => {
@@ -129,9 +129,9 @@ export function GrassFlight({ toLeft = true }: { toLeft?: boolean }) {
         motion,
       ]}
     >
-      <PixelIcon name="grass" size={16} />
-      <PixelIcon name="grass" size={24} />
-      <PixelIcon name="grass" size={16} />
+      <PixelIcon name="dreamDust" size={16} />
+      <PixelIcon name="dreamDust" size={24} />
+      <PixelIcon name="dreamDust" size={16} />
     </Animated.View>
   );
 }

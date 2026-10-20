@@ -24,6 +24,7 @@ function category(p) {
   if (p.startsWith('assets/garden/')) return 'Garden / prop sprites';
   if (p.startsWith('assets/worlds/props/')) return 'Worlds / shared prop sprites';
   if (p.startsWith('assets/worlds/')) return 'Worlds / ' + p.split('/')[2];
+  if (p.startsWith('assets/world/')) return 'World tiles / ' + p.split('/')[2];
   if (p.startsWith('assets/battle/')) return 'Battle';
   if (p.startsWith('assets/scenes/')) return 'Scene vignettes';
   if (p.startsWith('art/icons/')) return 'UI icons';

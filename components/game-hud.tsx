@@ -27,7 +27,7 @@ import {
 } from '@/lib/ui-tokens';
 import { PixelIcon, type IconName } from '@/components/pixel-icon';
 import { GuardianPet } from '@/components/guardian-pet';
-import { GrassRoll } from '@/components/pixel-feedback';
+import { DreamDustRoll } from '@/components/pixel-feedback';
 
 type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -118,7 +118,7 @@ function StatChip({
 
 /**
  * The floating heads-up display shared by every tab: who is with you, how the
- * garden's shield is doing, GRASS, the real-time play allowance and the menu.
+ * garden's shield is doing, Dream Dust, the real-time play allowance and the menu.
  * Symmetric: one inset on all four sides and between every control (coherence
  * plan, step 3), and every control is the same height.
  */
@@ -219,7 +219,7 @@ export function GameHud() {
             {shieldText}
           </Text>
         </StatChip>
-        <StatChip unit={u} icon="grass" accessibilityLabel={`${p.grass} grass`}>
+        <StatChip unit={u} icon="dreamDust" accessibilityLabel={`${p.grass} Dream Dust`}>
           {p.grass >= 10000 ? (
             <Text style={[type.label, { color: c.ink }]}>
               {new Intl.NumberFormat('en-GB', {
@@ -228,7 +228,7 @@ export function GameHud() {
               }).format(p.grass)}
             </Text>
           ) : (
-            <GrassRoll value={p.grass} size={12} />
+            <DreamDustRoll value={p.grass} size={12} />
           )}
         </StatChip>
         <StatChip

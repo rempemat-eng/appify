@@ -84,6 +84,8 @@ import {
   type CompanionMemoryOffer,
 } from '@/lib/companion-memories';
 
+// `grass` (and a raid's grass_amount) is the Dream Dust balance: the currency was renamed
+// from GRASS on 20 Oct, and the saved and database field names stay as they were.
 export type Player = Database['public']['Tables']['players']['Row'];
 export type Raid = Database['public']['Tables']['raids']['Row'];
 export const ink = '#4A3B35';
@@ -193,7 +195,7 @@ export type Saved = {
   tickAt: number;
   offStart: number;
   offDeck: CardId[] | null;
-  offGrass: number;
+  offGrass: number; // Dream Dust when the nap began (saved name kept)
   outgoing: Raid[];
   staged: Incoming[];
   applied: string[];
@@ -597,7 +599,8 @@ export function resolveTogetherSession(session: TogetherSession) {
         s.cardReward?.sessionId === session.id
           ? { ...s.cardReward, grass: s.cardReward.grass + bonus }
           : s.cardReward,
-      message: s.cardReward?.sessionId === session.id ? null : `TOGETHER! +${bonus} BONUS GRASS`,
+      message:
+        s.cardReward?.sessionId === session.id ? null : `TOGETHER! +${bonus} BONUS DREAM DUST`,
       voice: 'we touched grass together.',
     });
     feedback();
@@ -1783,8 +1786,8 @@ export const gameStore = create<Game>((set, get) => ({
     const p = get().player;
     if (!p || !get().battle) return;
     const day = get().rules.days[dayKey()] ?? emptyDay();
-    const practiceGrass = sparringReward(day, won);
-    const amount = raidGrass(won, target);
+    const practiceDreamDust = sparringReward(day, won);
+    const amount = raidDreamDust(won, target);
     const raid: Raid = {
       id: Crypto.randomUUID(),
       attacker_id: p.id,
@@ -1797,11 +1800,13 @@ export const gameStore = create<Game>((set, get) => ({
     set({
       rules: bumpDay(get().rules, dayKey(), {
         sparringWins: practice && won ? 1 : 0,
-        grass: practice ? practiceGrass : won ? amount : 0,
+        grass: practice ? practiceDreamDust : won ? amount : 0,
       }),
       player: {
         ...p,
-        grass: practice ? p.grass + practiceGrass : Math.max(0, p.grass + (won ? amount : -amount)),
+        grass: practice
+          ? p.grass + practiceDreamDust
+          : Math.max(0, p.grass + (won ? amount : -amount)),
       },
       outgoing: practice ? get().outgoing : [...get().outgoing, raid],
       battle: null,
@@ -1872,7 +1877,7 @@ gameStore.subscribe(() => {
   if (!accounting && eligiblePlay() !== playEligible) accountPlay();
 });
 export const useGame = gameStore;
-export function raidGrass(won: boolean, target: Player) {
+export function raidDreamDust(won: boolean, target: Player) {
   return won ? Math.min(target.grass, Math.max(10, Math.floor(target.grass * 0.3))) : 10;
 }
 export function bot(p: Player): Player {

@@ -9,6 +9,8 @@ import {
   type ZoneId,
 } from '@/lib/zone-maps';
 import type { Point } from '@/lib/garden-path';
+import { WORLD_CANVAS } from '@/lib/world-flag';
+import { worldRegionWalk } from '@/lib/world-walk';
 
 /**
  * One walk grid for a whole region (world-atlas.md, "Seamless travel"): each zone's
@@ -98,8 +100,11 @@ export function tileOrigin(region: RegionId, tile: RegionTile) {
   return { x: (tile.col - b.minCol) * TILE.width, y: (tile.row - b.minRow) * TILE.height };
 }
 
-/** The region's combined walk rows: '#' wherever no zone lies. */
+/** The region's combined walk rows: '#' wherever no zone lies. With the world canvas on
+ *  (lib/world-flag.ts), read from the world tiles: the same grids joined, the seams settled
+ *  by the walk over the whole chunk (docs/vision/region-canvas.md). */
 export function regionWalk(region: RegionId): string[] {
+  if (WORLD_CANVAS) return worldRegionWalk(region);
   const b = regionBounds(region);
   const grid = Array.from({ length: b.tileRows * ROWS }, () => Array(b.tileCols * COLS).fill('#'));
   for (const tile of regionTiles(region)) {

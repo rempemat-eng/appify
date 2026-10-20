@@ -1206,6 +1206,8 @@ def main():
     import map_tiles  # the world map's tiles, drawn from the same reading of each zone
     map_tiles.write_all(built, world_lint.garden_zone(), set(DOORS))
     export(built)
+    import world_canvas  # the same places as chunks of the world, cut into world tiles (step 1: not read yet)
+    world_canvas.build_all(built)
 
 
 if __name__ == '__main__':

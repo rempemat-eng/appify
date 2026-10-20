@@ -1,6 +1,6 @@
 # The garden grows
 
-Time away from the phone visibly changes the world. This is presentation only: it never adds GRASS, cards or stats, and nothing ever wilts or goes backwards.
+Time away from the phone visibly changes the world. This is presentation only: it never adds Dream Dust, cards or stats, and nothing ever wilts or goes backwards.
 
 ## The meadow
 
