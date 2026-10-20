@@ -1214,8 +1214,8 @@ def bank(p: Plot, L: Tiers, seed=70, steps=()):
     p.f[stone] = IDX['stone_warm']
     # grit and small stones in the crevices, pale root ends, clusters of moss on the clods
     crev = fc & ~inside
-    stamp(p, crev, 0.12, seed + 30, DOMINOES, ramp='stone', tone=3, same_family=False)
-    stamp(p, fc & inside, 0.06, seed + 31, SMALL[:4], dt=-1)
+    stamp(p, crev, 0.18, seed + 30, DOMINOES, ramp='stone', tone=3, same_family=False)
+    stamp(p, fc & inside, 0.08, seed + 31, SMALL[:4], dt=-1)
     stamp(p, fc & inside & (lv > 0.2), 0.05, seed + 32, DOMINOES, swap='mix')
     stamp(p, up & inside, 0.05, seed + 33, SMALL[:3], ramp='leaf', tone=3, same_family=False)
     # under the lip: its shadow; at the foot: damp
@@ -1242,6 +1242,37 @@ def bank(p: Plot, L: Tiers, seed=70, steps=()):
                 p.f[y + s, cur], p.t[y + s, cur] = IDX['timber_cool'], 3 if s < ln - 1 else 2
                 if cur + 1 < p.w and fc[y + s, cur + 1]:
                     p.f[y + s, cur + 1], p.t[y + s, cur + 1] = IDX['timber_cool'], 1
+    # buttresses: columns of the bank standing proud, lit on their west, the light catching
+    # them; between them the face falls back into shade, so it never reads as flat bands
+    wid = 15 + (hash01(p.x // 40, 2, seed + 39) * 12).astype(int)
+    seg = (p.x + (hash01(p.y // 9, 0, seed + 40) * 3).astype(int)) // wid
+    proud = fc & (hash01(seg, 1, seed + 41) < 0.45) & (L.depth > lipd + 1)
+    p.step(proud & inside & (lv > -0.3), 1, hi=4)
+    back = fc & ~proud & (L.depth > lipd + 1) & (L.depth < L.fh - 3)
+    p.step(back & inside & (hash01(cid, 3, seed + 42) < 0.6), -1, lo=1)
+    # fissures: dark vertical cracks between the buttresses, lit on their west lip
+    edge_x = proud & ~shift(proud, 1, 0, False)                  # a buttress's west edge
+    edge_x |= ~proud & fc & shift(proud, 1, 0, False)            # where one falls back east
+    a = lipd + 2 + (hash01(p.x, 7, seed + 43) * 8).astype(int)            # each crack's top
+    b = a + 5 + (hash01(p.x, 8, seed + 46) * 14).astype(int)               # and its foot
+    ys, xs = np.nonzero(edge_x & (L.depth >= a) & (L.depth <= b) & (hash01(seg, 9, seed + 47) < 0.55))
+    for (x, y) in zip(xs, ys):
+        if L.depth[y, x] < L.fh[y, x] - 2:
+            p.f[y, x], p.t[y, x] = IDX['earth_cool'], 0
+            if x - 1 >= 0 and fc[y, x - 1]:
+                p.f[y, x - 1], p.t[y, x - 1] = IDX['earth_warm'], 4
+    # overhangs: where the lip juts out its shadow is deeper and longer
+    jut = fc & (hash01(p.x // 7, 9, seed + 44) < 0.3) & (L.depth > lipd) & (L.depth <= lipd + 4)
+    p.step(jut, -1, lo=0)
+    # hanging plants: trails of ivy and moss from the lip, lit on their tops
+    ys, xs = np.nonzero(fc & (L.depth == lipd + 1) & (hash01(p.x // 2, 11, seed + 45) < 0.05))
+    for (x, y) in zip(xs, ys):
+        ln = 4 + int(hash01(x, 12, seed) * 9)
+        for s_ in range(ln):
+            for dx in (0, 1):
+                if 0 <= x + dx < p.w and 0 <= y + s_ < p.h and fc[y + s_, x + dx]:
+                    p.f[y + s_, x + dx] = IDX['leaf_cool' if (s_ // 3) % 2 else 'leaf']
+                    p.t[y + s_, x + dx] = (3 if dx == 0 else 2) if s_ < ln - 1 else 1
     p.walk &= ~fc
 
 
@@ -1392,6 +1423,23 @@ def strip(w=320, h=576, seed=90):
     return p, {'t_edge': t1, 't_old': t2, 'canopy': canopy, 'things': things}
 
 
+def organic_tier(W, H, seed=0, cell=8):
+    """The sample's upper wood as a tier on the 8 px grid with an organic outline (Claude A,
+    to-all-kits-organic: curving, lobed, with spurs and bays, snapped to the grid only as
+    stepped curves; never a straight face across a screen): a rim that wanders at two
+    scales, a spur pushing south into the lower wood in the east, a bay cut back in the west
+    where the bank turns, and its west end lobed."""
+    cols, rows = W // cell, H // cell
+    gy, gx = np.mgrid[0:rows, 0:cols]
+    px, py = gx * cell + cell / 2, gy * cell + cell / 2
+    rim = 146 + 26 * (fbm(px, np.zeros_like(px), 120, seed + 60) - 0.5) * 2 + 9 * np.sin(px / 47.0 + 0.7)
+    rim = rim + 44 * np.exp(-((px - 540) / 46.0) ** 2)          # a spur running south
+    rim = rim - 34 * np.exp(-((px - 196) / 40.0) ** 2)          # a bay cut back
+    west = 84 + 22 * (fbm(np.zeros_like(py), py, 60, seed + 61) - 0.5) * 2
+    T = ((py < rim) & (px > west)).astype(np.int8)
+    return np.kron(T, np.ones((cell, cell), np.int8))[:H, :W]
+
+
 # --- the sample: a woodland path from a meadow edge into a glade and up a slope ------------
 SAMPLE_W, SAMPLE_H = 640, 576
 PATH = [(128, 600), (150, 540), (196, 478), (238, 420), (262, 360), (290, 300), (330, 262), (368, 226),
@@ -1411,10 +1459,12 @@ def sample(seed=1):
     p = Plot(W, H)
     every = np.ones((H, W), bool)
     # the tier: the upper wood north of a wandering rim, ending in the west
-    rim = 150 + 14 * np.sin(p.x / 83.0) + 7 * np.sin(p.x / 31.0 + 1.3)
-    west_end = 92 + 16 * np.sin(p.y / 41.0)
-    T0 = ((p.y < rim) & (p.x > west_end)).astype(np.int8)
+    T0 = organic_tier(W, H, seed)
     L = Tiers(smooth(T0, seed, 6, 1.5))
+    rim = np.full(p.f.shape, 0.0)
+    for x in range(W):                       # the rim's row in each column (for planting)
+        col = np.nonzero(L.T[:, x] >= 1)[0]
+        rim[:, x] = col.max() if len(col) else -1
     upper = L.T >= 1
     # ground: the meadow in the south, the wood's floor, the glade, the upper wood's floor
     meadow_y = 452 + 22 * np.sin(p.x / 71.0) + 10 * np.sin(p.x / 23.0)
@@ -1464,6 +1514,7 @@ def sample(seed=1):
                 k = np.argmin((xs + max(0, q.x - 20) - q.x) ** 2 + (ys + max(0, q.y - 20) - q.y) ** 2)
                 tx, ty = xs[k] + max(0, q.x - 20) - q.x, ys[k] + max(0, q.y - 20) - q.y
                 roots(p, q.x, q.y, seed + i, toward=(tx, ty), n=2, reach=16)
+    no_runs(things + up_trees, WOODLAND + (('spruce', 1), ('pine', 1)))   # one front across both woods
     draw(p, things + up_trees + up_front)
     p.walk |= steps
     despeckle(p, ~p.solid)
