@@ -250,6 +250,8 @@ Grades:
 - **REDRAW:** lacks material detail, is drawn in the wrong view (pure side or pure top), or is so far off the table that its parts must be redesigned (city storeys at a third of scale, a counter at twice the height), so it needs a new drawing.
 - **DROP:** no owner or job in the world.
 
+**Against the Eastward bar** (art-style.md, "Eastward's level of detail is required", Matt 20 Oct 01:24). These grades were made by eye on the sheets, before that bar was written down as measured counts. KEEP therefore means "reusable without a new drawing", not "passes the bar": before a KEEP sprite is reused in a redrawn zone, it gets the same side-by-side comparison per 16 px patch as new art, and a sprite that falls short moves to ADJUST (more tones, shapes or dressing on the same form). The ADJUST and REDRAW fixes above are the minimum; each is drawn to that bar.
+
 ### b. Counts
 
 | Owner    | KEEP | ADJUST | REDRAW | DROP | Sprites |
