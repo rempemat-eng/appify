@@ -164,6 +164,7 @@ import propEmberShrine from '@/assets/zones/props/ember_shrine.png';
 import propEngineTank from '@/assets/zones/props/engine_tank.png';
 import propFern from '@/assets/zones/props/fern.png';
 import propFieldGate from '@/assets/zones/props/field_gate.png';
+import propFieldGateLow from '@/assets/zones/props/field_gate_low.png';
 import propFirePit from '@/assets/zones/props/fire_pit.png';
 import propFireplace from '@/assets/zones/props/fireplace.png';
 import propFireplaceF1 from '@/assets/zones/props/fireplace_f1.png';
@@ -901,6 +902,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   engine_tank: propEngineTank,
   fern: propFern,
   field_gate: propFieldGate,
+  field_gate_low: propFieldGateLow,
   fire_pit: propFirePit,
   fireplace: propFireplace,
   fireplace_f1: propFireplaceF1,
