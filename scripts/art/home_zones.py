@@ -51,7 +51,8 @@ def home(frame: int = 0):
             cv.set(x, y, (min(255, int(r * k)), min(255, int(g * k)), min(255, int(b * k)), 255))
 
     # ---- the floor: boards running across the room, each its own tone ----------------
-    tones = [blend(WD[2], WD[3], 0.4), blend(WD[2], WD[3], 0.6), blend(WD[2], WD[3], 0.8)]
+    tones = [blend(WD[2], WD[3], 0.25), blend(WD[2], WD[3], 0.45), blend(WD[2], WD[3], 0.6),
+             blend(WD[2], WD[3], 0.75), blend(WD[2], WD[3], 0.9)]  # five boards' worth of timber, from five trees
     lit = [blend(t, WD[4], 0.3) for t in tones]
     dark = [blend(t, WD[1], 0.25) for t in tones]
     seam = blend(WD[1], WD[2], 0.45)
@@ -60,7 +61,7 @@ def home(frame: int = 0):
         off = (row * 37) % 72
         for x in range(W):
             plank = (x + off) // 72
-            t = int(noise2(plank, row, 520) * 2.99)
+            t = int(noise2(plank, row, 520) * 4.99)
             c = tones[t]
             j = (x + off) % 72
             if k == 7:
@@ -71,10 +72,14 @@ def home(frame: int = 0):
                 c = seam  # a butt joint
             elif j == 1:
                 c = lit[t]
-            elif noise2((x + off) // 7, y, 523 + plank) > 0.95:
-                c = dark[t]  # a grain streak
-            if j in (3, 68) and k in (2, 5):
-                c = dark[t]  # nail heads
+            elif k in (2, 3, 5) and noise2((x + off) // 5, row * 8 + k, 523 + plank) > 0.8:
+                c = dark[t]  # the grain, in runs along the board
+            elif k in (1, 4) and noise2((x + off) // 4, row * 8 + k, 527 + plank) > 0.86:
+                c = lit[t]  # a sheen where the grain rises
+            if j in (3, 4, 67, 68) and k in (2, 5):
+                c = dark[t] if j in (3, 67) else seam  # nail heads, two pixels each
+            if 4 <= k <= 5 and noise2(x // 3, row, 528) > 0.93:
+                c = blend(c, '#2A2018', 0.35)  # a scuff where a chair was dragged
             cv.set(x, y, c)
         if k == 3 and noise2(row, 9, 524) > 0.55:  # a knot now and then
             kx = int(noise2(row, 10, 524) * (W - 20)) + 10
@@ -110,8 +115,8 @@ def home(frame: int = 0):
                     c = (WD[4], WD[3], WD[1])[k]  # the crown moulding
                 elif y < rail_y:
                     c = PL[3] if k < 5 else PL[4]  # plaster, shaded just under the crown
-                    if (x * 7 + y * 3) % 29 == 0:
-                        c = PL[3]
+                    if smooth_noise(x, y, 4, 531) > 0.68:
+                        c = PL[3]  # the lime plaster trowelled unevenly, in broad soft patches
                     if x in posts or x - 1 in posts or x - 2 in posts:
                         c = WD[3] if x in posts else WD[2] if x - 1 in posts else WD[1]  # timber posts
                 elif y < rail_y + 2:
@@ -125,6 +130,8 @@ def home(frame: int = 0):
                         c = WD[1]
                     elif 3 <= px <= 28 and 2 <= py <= ph - 3:
                         c = WD[1] if px == 3 or py == 2 else WD[3] if px == 28 or py == ph - 3 else WD[2]
+                        if c == WD[2] and noise2((x // 32) * 7 + px // 3, py, 534) > 0.8:
+                            c = blend(WD[2], WD[1], 0.5)  # the panel's figure, running across it
                 else:
                     c = (WD[4], WD[2], WD[2], WD[1])[y - (foot - 4)]  # the skirting board
                 cv.set(x, y, c)
@@ -301,6 +308,55 @@ def home(frame: int = 0):
             if x in (142, 177) and y % 2:
                 c = CREAM[3]  # the fringe
             cv.set(x, y, c)
+
+    # ---- the things a lived-in room collects (Eastward-level dressing, each where it
+    # would be): two little framed portraits and a calendar on the bedroom wall, copper
+    # pans on hooks by the kitchen door, slippers by the bed, a book left by the reading
+    # chair, a ball of wool the companion has been at by its basket, a wall shelf in the
+    # sunroom and a draught excluder pushed aside from the open front door
+    CREAM_HI = '#FBF5E6'
+
+    def frame(x0, y0, w, h, inside):
+        for y in range(y0, y0 + h):
+            for x in range(x0, x0 + w):
+                edge = x in (x0, x0 + w - 1) or y in (y0, y0 + h - 1)
+                c = (GOLD[3] if x == x0 or y == y0 else GOLD[1]) if edge else inside[(x - x0 + y - y0) % len(inside)]
+                cv.set(x, y, c)
+        for x in range(x0 + 1, x0 + w + 1):
+            dim(x, y0 + h, 0.82)  # its shadow on the plaster
+    frame(113, 13, 8, 10, (CREAM[3], NAP[2], NAP[2], CREAM[2]))
+    frame(123, 17, 7, 8, (LEAF[3], LEAF[2], CREAM[3]))
+    for y in range(13, 25):  # the calendar on its nail
+        for x in range(180, 189):
+            c = RED[3] if y < 16 else CREAM_HI if (x + y) % 4 else CREAM[2]
+            if y >= 17 and (x - 180) % 3 == 0 and (y - 17) % 3 == 0:
+                c = RED[2]  # a day crossed off
+            cv.set(x, y, c)
+    cv.hline(184, 12, 2, WD[1])
+    cv.hline(189, 205, 16, WD[1]); cv.hline(189, 204, 16, WD[3])  # the pan rail by the kitchen door
+    for (px, r) in ((193, 3), (201, 2.5)):  # copper pans on their hooks, lit on the west
+        cv.vline(px, 206, 3, MATERIALS['iron'][2])
+        for (x, y) in oval(px, 212, r, r):
+            cv.set(x, y, '#D8945A' if x < px else '#9A5A2E' if x > px else '#B8743E')
+        cv.hline(int(px - 1), 211, 2, '#F0C090')
+    cv.hline(96, 414, 32, WD[4]); cv.hline(96, 415, 32, WD[2])  # a wall shelf in the sunroom, on two brackets
+    for bxx in (99, 124):
+        cv.vline(bxx, 416, 3, WD[1])
+    for (ix, col, dark, hgt) in ((98, '#C8743E', '#A85A2E', 3), (104, LEAF[3], LEAF[2], 4), (110, CREAM_HI, CREAM[3], 3),
+                                 (115, NAP[3], NAP[2], 5), (117, RED[3], RED[2], 5), (121, '#C8743E', '#A85A2E', 3)):
+        for yy in range(414 - hgt, 414):  # a pot, a seedling, a cup, two books, a pot
+            cv.hline(ix, yy, 2, col if yy < 413 else dark)
+    for x in range(118, 136):  # a draught excluder pushed aside from the open door: a stuffed cloth snake
+        c = (RED[3], CREAM_HI, RED[3], NAP[2])[(x - 118) // 3 % 4]
+        cv.set(x, FRONT - 4, c); cv.set(x, FRONT - 3, RED[1] if c == RED[3] else CREAM[2] if c == CREAM_HI else NAP[1])
+        dim(x, FRONT - 2, 0.82)
+    for (sx, sy) in ((120, 100), (126, 101)):  # slippers by the bed
+        cv.hline(sx, sy, 4, NAP[3]); cv.hline(sx, sy + 1, 4, NAP[2]); cv.hline(sx + 3, sy, 1, CREAM_HI)
+    cv.hline(124, 276, 6, RED[3]); cv.hline(124, 277, 6, RED[1]); cv.vline(127, 276, 2, CREAM_HI)  # a book left by the chair
+    for (x, y) in oval(48, 270, 2.6, 2.2):  # a ball of wool by the basket, and its loose end
+        cv.set(x, y, NAP[3] if x + y < 318 else NAP[2])
+    for i in range(6):
+        cv.set(51 + i, 271 + (i % 2), NAP[2])
 
     objects = [
         # the bedroom: the bed between its nightstands against the back wall, the desk

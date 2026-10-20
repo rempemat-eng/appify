@@ -1487,15 +1487,16 @@ def snag_vultures() -> Canvas:
 
 
 def camel_string() -> Canvas:
-    """Three camels standing tethered nose to tail at the caravan camp, 150 x 66 (review
-    19 Oct: not three identical camels in a row): seen from the side like the resting one,
+    """Three camels standing tethered nose to tail at the caravan camp, 108 x 48 at the
+    single camel's scale (to-b-2040: they were half as big again; re-seated in the old
+    150 x 66 box) (review 19 Oct: not three identical camels in a row): seen from the side like the resting one,
     staggered along a gentle diagonal as a string stands when it has shuffled to a halt,
     each its own animal: the lead camel tall and pale with its head up, laden with a bale
     and a red water skin, roped to a stake; the second darker, its head lowered to nose
     the sand, carrying two clay jars in a net; the last a young one, smaller and sandy,
     under a striped saddle blanket only. Each wears a halter, and a lead rope sags from it
     to the saddle of the camel in front."""
-    w, h = 150, 66
+    w, h = 108, 48  # at the single camel's scale (hump about 29, head about 36): it was 66 tall
     cv = Canvas(w, h, pad=PAD)
     PALE = ['#5A3E2A', '#8E6A48', '#B8946A', '#D8B88C', '#ECD6AE']
     DARK = ['#3A2418', '#5E3E28', '#80583A', '#A27650', '#BE9468']
@@ -1570,9 +1571,9 @@ def camel_string() -> Canvas:
         return (hx + int(5 * s), hy + 1), P(10, 16)
 
     # back to front: the lead camel (furthest, highest) first, the young one nearest last
-    halter1, saddle1 = standing(96, 0, PALE, 'bale', 'up')
-    halter2, saddle2 = standing(50, 6, DARK, 'jars', 'down')
-    halter3, _ = standing(8, 18, CAMEL, 'blanket', 'up', 0.86)
+    halter1, saddle1 = standing(68, 6, PALE, 'bale', 'up', 0.72)
+    halter2, saddle2 = standing(36, 8, DARK, 'jars', 'down', 0.7)
+    halter3, _ = standing(6, 14, CAMEL, 'blanket', 'up', 0.62)
 
     def rope(a, b, sag):
         (x0, y0), (x1, y1) = a, b
@@ -1587,7 +1588,7 @@ def camel_string() -> Canvas:
     for y in range(h - 12, h - 1):
         cv.set(sx, y, WOOD[3]); cv.set(sx + 1, y, WOOD[1])
     cv.set(sx, h - 13, WOOD[4])
-    return cv
+    return gp.keep_foot(cv, 150, 66)  # its foot stays where the oasis places it (Claude D re-places the string)
 
 
 def _budget(items: dict) -> dict:

@@ -236,6 +236,7 @@ import propLighthouse from '@/assets/zones/props/lighthouse.png';
 import propLizardRock from '@/assets/zones/props/lizard_rock.png';
 import propLizardRockB from '@/assets/zones/props/lizard_rock_b.png';
 import propLobsterPots from '@/assets/zones/props/lobster_pots.png';
+import propLockHut from '@/assets/zones/props/lock_hut.png';
 import propLockers from '@/assets/zones/props/lockers.png';
 import propLocomotive from '@/assets/zones/props/locomotive.png';
 import propLookoutTower from '@/assets/zones/props/lookout_tower.png';
@@ -993,6 +994,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   lizard_rock: propLizardRock,
   lizard_rock_b: propLizardRockB,
   lobster_pots: propLobsterPots,
+  lock_hut: propLockHut,
   lockers: propLockers,
   locomotive: propLocomotive,
   lookout_tower: propLookoutTower,
