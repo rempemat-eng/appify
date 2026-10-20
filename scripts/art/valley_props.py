@@ -10,7 +10,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, noise2, oval  # noqa: E402
+from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
 import garden_props as gp  # noqa: E402
 import style  # noqa: E402
@@ -870,146 +870,280 @@ def scarecrow() -> Canvas:
     return cv
 
 
+def _mill_stones(cv: Canvas, x0: int, x1: int, y0: int, y1: int, cx: float, seed: int):
+    """Fieldstone laid in courses between columns x0..x1 and rows y0..y1 of a round
+    footing: stones 4 to 7 wide and 3 high with dark mortar joints, each stone lit along
+    its top, the whole course lit on the west and turning into shade on the east."""
+    for y in range(y0, y1 + 1):
+        course, r = divmod(y - y0, 3)
+        off = int(noise2(course, 0, seed) * 5)
+        for x in range(x0, x1 + 1):
+            k = (x - x0) / max(1, x1 - x0)
+            base = 3 if k < 0.3 else 2 if k < 0.7 else 1
+            stone = (x + off) // 6
+            width_cut = (x + off) % 6 == 0
+            t = base + (1 if noise2(stone, course, seed + 1) > 0.75 else 0)
+            if r == 0:
+                t = base - 1 if k > 0.3 else base  # the bed joint over the course below
+            elif width_cut:
+                t = base - 1  # a head joint
+            elif r == 1 and k < 0.7:
+                t = min(4, t + 1)  # the stone's lit top
+            cv.set(x, y, STONE[max(0, min(4, t))])
+
+
 def windmill(turn: float = 0.0) -> Canvas:
-    """A tower windmill in the valley's three-quarter view, 64 x 104 (Matt, 19 Oct, fault
-    05: "flat tower, thin sails that do not meet the cap, no base or ground contact"): a
-    round fieldstone footing, its top seen from above; a whitewashed tower over a stone
-    base course, rounded so it is lit on the left and turns into shade on the right; a
-    wooden stage round its waist; a door with a step and two small windows; a shingled cap
-    seen from a little above with a finial; and four lattice sails with canvas on stocks
-    that meet at the hub on the cap's front, `turn` radians round (three frames a sixth of
-    a turn apart loop)."""
-    w, h = 64, 104
-    cv = Canvas(w, h, pad=PAD)
-    cx = w // 2
-    CLOTH = ('#F2EEE6', '#DCD4C4')
-    # the footing (B6, Matt 19 Oct 22:40: "a flat grey ellipse"): a low octagonal plinth of
-    # dressed stone, its top seen from above in slabs, three of its faces toward us in two
-    # courses (the south-west face lit, the south face in half light, the south-east face
-    # turned away), a step up to the door and a damp, mossy foot
-    fy, frx, fry = h - 9, 21, 5
-    def edge(x):  # the octagon's front edge on the screen, at column x (its top's rim)
-        d = abs(x + 0.5 - cx)
-        return fy + (fry if d <= frx * 0.42 else fry - (d - frx * 0.42) / (frx * 0.58) * fry)
-    def back(x):
-        d = abs(x + 0.5 - cx)
-        return fy - (fry if d <= frx * 0.42 else fry - (d - frx * 0.42) / (frx * 0.58) * fry)
-    for x in range(cx - frx, cx + frx + 1):
-        for y in range(int(math.ceil(back(x))), int(edge(x))):  # the top, in slabs
-            slab = (int((x - cx + frx) // 7), int((y - fy) // 3))
-            c = STONE[4] if x < cx - 6 else STONE[3]
-            if (x - cx + frx) % 7 == 0 or noise2(*slab, 951) > 0.85:
-                c = STONE[2]
-            cv.set(x, y, c)
-        d = x + 0.5 - cx
-        face = 0 if d < -frx * 0.42 else 1 if d <= frx * 0.42 else 2
-        for k in range(5):  # the face, two courses
-            y = int(edge(x)) + k
-            c = (STONE[3], STONE[2], STONE[1])[face]
-            if k == 2 or k == 4:
-                c = STONE[0] if k == 4 else (STONE[1] if face < 2 else STONE[0])  # a bed joint, the foot
-            elif (x + (0 if k < 2 else 4)) % 7 == 0:
-                c = STONE[1] if face < 2 else STONE[0]  # a head joint
-            elif k in (0, 3) and face == 0:
-                c = STONE[4]  # each stone lit along its top on the lit face
-            if k == 3 and noise2(x, k, 952) > 0.72:
-                c = LEAF[2]  # moss low down
-            cv.set(x, y, c)
-    for x in range(cx - 6, cx + 6):  # the door step, standing out from the plinth's front
-        sy = int(edge(cx))
-        for y in range(sy, sy + 5):
-            cv.set(x, y, STONE[4] if y == sy else STONE[2] if x < cx + 4 else STONE[1] if y < sy + 4 else STONE[0])
-    # the tower: tapering, rounded, a stone base course under whitewash
-    top, bottom = 40, fy + 1
+    """The halt's tower windmill, a drainage mill (Matt, World Logic, 20 Oct: "the windmill
+    pumps and drains water for the farm's fields; the watermill grinds the grain"; "detail
+    and sizing need to be improved"), drawn to the size guide's tower mill: 72 x 136 with
+    the sails, the tower three storeys of 32 over a fieldstone footing, its base 46 wide,
+    a door 30 x 14 with its step, sails 96 across. Every part has a job:
+    - the footing of fieldstone in courses, as wide as the tower's foot (the old octagonal
+      plinth and the stair of stone in front of the door served nothing and are gone; the
+      farm track meets the one step);
+    - the tower whitewashed over brick, lit on the west and turning into shade on the
+      east, the limewash worn back to brick where rain splashes at the foot and where the
+      gallery drips; the floors read from outside by the windows, one to a storey,
+      deep set with a stone sill and a lintel;
+    - the stage (gallery) round the second floor, on braces, where the miller sets the
+      sail cloths and works the brake; its rail lit on its top;
+    - the cap a shingled boat shape with its finial (the miller winds it into the wind
+      from the stage);
+    - the sails four lattice frames on two stocks through the poll end, two clothed and
+      two bare (the cloth is set to the wind's strength), `turn` radians round;
+    - the scoop wheel's housing against the east side of the foot, a timber case over the
+      wheel the windshaft drives down the tower, lifting the field drains' water into the
+      outfall channel that leaves past the step: a sluice board, the water lit where it
+      tips over the board, and a stone lip to the channel."""
+    w, h = 72, 136
+    cv = Canvas(w, h, pad=40)  # the sails sweep wider than the box as they turn
+    cx = 33
+    foot = h - 3
+    CLOTH = ('#F2EEE6', '#DCD4C4', '#B8AE9C')
+    BRICK = MATERIALS['brick']
+    for x in range(cx - 25, cx + 34):  # the contact shade, longer to the east
+        cv.set(x, foot + 1, (20, 26, 22, 110))
+        if x > cx - 18:
+            cv.set(x, foot + 2, (20, 26, 22, 70))
+    # the scoop wheel's housing and its outfall, behind the tower's east side
+    hx0, hx1, htop = cx + 16, cx + 33, foot - 22
+    for y in range(htop, foot - 3):
+        for x in range(hx0, hx1 + 1):
+            hw = (hx1 - hx0) / 2
+            d = (x + 0.5 - (hx0 + hw)) / hw
+            if y < htop + 6 and (y - htop) < 6 * (1 - math.sqrt(max(0.0, 1 - d * d))):
+                continue  # the case's rounded top over the wheel
+            board = (x - hx0) // 4
+            t = 3 if y < htop + 7 else 2 if x < hx0 + 9 else 1
+            if (x - hx0) % 4 == 3:
+                t -= 1  # the joint between boards
+            if noise2(board, y // 5, 961) > 0.86:
+                t -= 1  # a weathered board
+            cv.set(x, y, WOOD[max(0, t)])
+    for x in range(hx0 + 2, hx1 - 1):  # the wheel's rim showing through its slot
+        cv.set(x, htop + 9, WOOD[0]); cv.set(x, htop + 10, WOOD[0])
+        if (x - hx0) % 3 == 0:
+            cv.set(x, htop + 9, WOOD[2])  # a scoop's edge
+    for y in range(htop + 4, foot - 2):  # the case's corner post, lit
+        cv.set(hx1, y, WOOD[2])
+    sy0 = foot - 6
+    for x in range(hx0 - 3, hx1 + 3):  # the outfall channel's stone lip, then the water
+        cv.set(x, sy0 + 2, STONE[3] if x < hx0 + 6 else STONE[2]); cv.set(x, sy0 + 3, STONE[1])
+    for x in range(hx0 + 1, hx1 + 2):
+        cv.set(x, sy0, WTR[3] if (x + int(turn * 7)) % 5 < 2 else WTR[2]); cv.set(x, sy0 + 1, WTR[1])
+    for y in range(sy0 - 4, sy0):  # the sluice board, and water lit where it tips over
+        cv.set(hx0 - 1, y, WOOD[1]); cv.set(hx0 - 2, y, WOOD[3])
+    cv.hline(hx0, sy0 - 1, 3, WTR[4])
+    # the footing: fieldstone in courses, as wide as the tower's foot
+    base_r, top_r = 23, 14
+    ftop = foot - 9
+    _mill_stones(cv, cx - base_r - 1, cx + base_r + 1, ftop, foot, cx, 963)
+    for x in range(cx - base_r - 1, cx + base_r + 2):  # grass grown against the footing
+        if noise2(x // 2, 0, 964) > 0.55:
+            cv.set(x, foot, LEAF[2] if x < cx else LEAF[1])
+            if noise2(x // 2, 1, 964) > 0.6:
+                cv.set(x, foot - 1, LEAF[3] if x < cx else LEAF[2])
+    # the tower: three storeys of 32 tapering from the footing to the cap
+    ttop, tbot = foot - 9 - 96, ftop
 
     def radius(y):
-        return 9 + (y - top) / (bottom - top) * 6
+        return top_r + (y - ttop) / (tbot - ttop) * (base_r - top_r)
 
-    stage = 70
-    for y in range(top, bottom):
+    stage = tbot - 34  # the stage at the second floor
+    for y in range(ttop, tbot):
         r = radius(y)
-        for x in range(int(cx - r), int(cx + r) + 1):
+        for x in range(int(round(cx - r)), int(round(cx + r)) + 1):
             k = (x + 0.5 - (cx - r)) / (2 * r)
-            if y > bottom - 13:  # the base course
-                c = STONE[3] if k < 0.25 else STONE[2] if k < 0.62 else STONE[1]
-                if (bottom - y) % 4 == 0 or (x + 3 * ((bottom - y) // 4 % 2)) % 6 == 0:
-                    c = STONE[1] if c != STONE[1] else STONE[0]
-            else:
-                c = PLASTER[4] if k < 0.18 else PLASTER[3] if k < 0.5 else PLASTER[2] if k < 0.8 else PLASTER[1]
-                if k < 0.5 and noise2(x, y // 3, 941) > 0.93:
-                    c = PLASTER[2]  # a weathered streak
-            if stage + 2 <= y <= stage + 4:
-                c = detail.tone(PLASTER, PLASTER.index(c) - 1) if c in PLASTER else c  # the stage's shadow
+            t = 4 if k < 0.16 else 3 if k < 0.45 else 2 if k < 0.78 else 1
+            c = PLASTER[t]
+            worn = (y > tbot - 9 and noise2(x // 3, y // 2, 965) > 0.3) or \
+                   (stage + 4 < y < stage + 12 and noise2(x // 3, y // 2, 966) > 0.6) or \
+                   smooth_noise(x, y, 5, 973) > 0.82  # where the limewash has flaked off in sheets
+            if worn:  # the limewash worn back to brick: courses of 2, headers staggered
+                bt = 3 if k < 0.35 else 2 if k < 0.75 else 1
+                if (y - tbot) % 3 == 0 or (x + 3 * ((y - tbot) // 3 % 2)) % 6 == 0:
+                    bt -= 1
+                c = BRICK[max(0, bt)]
+            elif noise2(x // 2, y // 6, 967) > 0.9:
+                c = PLASTER[t - 1]  # a rain streak down the limewash
+            elif noise2(x // 3, y // 2, 968) > 0.74:
+                c = PLASTER[t - 1] if t > 1 else PLASTER[t]  # the limewash laid on unevenly, coat over coat
+            elif noise2(x // 2, y // 2, 969) > 0.86 and t < 5:
+                c = PLASTER[t + 1]  # a fresher patch where it was touched up
+            if stage + 1 <= y <= stage + 3:
+                c = PLASTER[max(0, t - 2)] if not worn else BRICK[0]  # the stage's shadow
             cv.set(x, y, c)
-    for (wy, wx) in ((48, cx - 4), (59, cx + 1)):  # two small windows above the stage, deep set
-        for y in range(wy, wy + 7):
-            for x in range(wx, wx + 5):
-                cv.set(x, y, '#2E3A48' if (x, y) != (wx + 1, wy + 1) else '#7E96AE')
-        cv.hline(wx - 1, wy - 1, 7, WOOD[3]); cv.hline(wx - 1, wy + 7, 7, WOOD[4])
-    door_top = bottom - 15
-    for y in range(door_top, bottom - 1):  # the door, arched, in a stone surround
-        for x in range(cx - 4, cx + 4):
-            if y < door_top + 3 and abs(x + 0.5 - cx) > 4 - (y - door_top + 1):
+    # weather on the limewash, each from a cause: green algae where the east side and the
+    # foot stay damp, a warmer cream where the west face takes the sun all afternoon, a
+    # cool violet in the deepest shade at the east edge
+    ALGAE = ('#6E7466', '#8E9480', '#AEB098', '#C8C8AE')
+    for y in range(ttop, tbot):
+        r = radius(y)
+        for x in range(int(round(cx - r)), int(round(cx + r)) + 1):
+            c = cv.get(x, y)
+            hexc = '#%02X%02X%02X' % c[:3]
+            if hexc not in PLASTER:
                 continue
-            c = WOOD[3] if x < cx - 1 else WOOD[2] if x < cx + 2 else WOOD[1]
-            if (x - cx) % 3 == 0:
-                c = WOOD[1]
-            cv.set(x, y, c)
-    cv.set(cx + 2, door_top + 8, GOLD[4])
-    for x in range(cx - 6, cx + 6):  # the step on the footing
-        cv.set(x, bottom - 1, STONE[4] if x < cx else STONE[3]); cv.set(x, bottom, STONE[2])
-    # the stage round the tower's waist: its deck seen from above, a rail on the front
-    srx, sry = radius(stage) + 6, 3
+            t = PLASTER.index(hexc)
+            k = (x + 0.5 - (cx - r)) / (2 * r)
+            damp = (y > tbot - 14 or (stage + 3 < y < stage + 10)) and k > 0.45
+            if damp and noise2(x // 2, y // 2, 971) > 0.35:
+                cv.set(x, y, ALGAE[max(0, min(3, t - 1))])
+            elif k < 0.3 and t >= 4 and y < stage - 6 and noise2(x // 3, y // 3, 972) > 0.55:
+                cv.set(x, y, '#FFF2D8')
+            elif t <= 1 and k > 0.9:
+                cv.set(x, y, '#5E5266')
+    # iron anchor plates where each floor's beams are tied through the wall, a pair to a floor
+    IRON = MATERIALS['iron']
+    for fy in (tbot - 64, tbot - 92):
+        r = radius(fy)
+        for ax in (int(cx - r * 0.55), int(cx + r * 0.45)):
+            cv.hline(ax - 1, fy, 3, IRON[1]); cv.vline(ax, fy - 1, 3, IRON[1])
+            cv.set(ax, fy, IRON[3])
+            for y in range(fy + 2, fy + 8):  # rust run down from the plate
+                cv.set(ax, y, '#B07A55' if y < fy + 5 else '#C99A73')
+                if y < fy + 4:
+                    cv.set(ax + 1, y, '#C99A73')
+    # ivy up the damp west side from the footing to the stage, leaves in pairs on a stem
+    vy = tbot - 1
+    vx = cx - base_r + 3
+    while vy > stage + 5:
+        vx += 1 if noise2(vy // 3, 0, 970) > 0.6 else -1 if noise2(vy // 3, 0, 970) < 0.25 else 0
+        vx = max(int(cx - radius(vy)) + 1, min(vx, int(cx - radius(vy)) + 6))
+        cv.set(vx, vy, WOOD[1])
+        if vy % 3 == 0:
+            side = 1 if (vy // 3) % 2 else -1
+            lit = LEAF[3] if side < 0 else LEAF[2]
+            cv.hline(vx + (1 if side > 0 else -2), vy, 2, lit)
+            cv.hline(vx + (1 if side > 0 else -2), vy + 1, 2, LEAF[1])
+        vy -= 1
+    # the windows, one to a storey, deep set, with a sill and a lintel
+    for (wy, wx) in ((tbot - 62, cx - 6), (tbot - 88, cx - 3)):
+        for y in range(wy, wy + 8):
+            for x in range(wx, wx + 6):
+                c = '#26303C' if x > wx + 1 or y > wy + 1 else '#3C4A5A'  # the reveal's shade at the top and west
+                cv.set(x, y, c)
+        cv.hline(wx + 2, wy + 3, 2, '#6E869E'); cv.hline(wx + 2, wy + 4, 2, '#6E869E')  # sky in the far pane
+        cv.vline(wx + 3, wy, 8, WOOD[2])  # the glazing bar
+        cv.hline(wx - 1, wy - 1, 8, STONE[3]); cv.hline(wx - 1, wy - 2, 8, STONE[2])  # the lintel
+        cv.hline(wx - 1, wy + 8, 8, STONE[4]); cv.hline(wx - 1, wy + 9, 8, STONE[2])  # the sill
+        for y in range(wy + 10, wy + 16):  # rain off the sill has streaked the wash below it
+            cv.hline(wx + 1, y, 2, PLASTER[2] if y < wy + 14 else PLASTER[3])
+    # the door: 30 high and 14 wide under a stone arch, ledged boards, a step
+    dx0, dtop = cx - 7, tbot - 30
+    for y in range(dtop - 2, tbot):
+        for x in range(dx0 - 2, dx0 + 16):
+            inside = dx0 <= x < dx0 + 14 and y >= dtop
+            arch = y < dtop + 4 and abs(x + 0.5 - (dx0 + 7)) > 7 - (y - dtop + 1) * 1.6
+            if inside and not arch:
+                t = 3 if x < dx0 + 4 else 2 if x < dx0 + 10 else 1
+                if (x - dx0) % 4 == 3:
+                    t -= 1  # the joint between boards
+                if y in (dtop + 8, dtop + 21):
+                    t = 1  # a ledge across the boards
+                cv.set(x, y, WOOD[t])
+            elif not inside and (y < dtop + 4 or x in (dx0 - 1, dx0 - 2, dx0 + 14, dx0 + 15)):
+                cv.set(x, y, STONE[4] if x < dx0 + 4 else STONE[3] if x < dx0 + 12 else STONE[2])  # the surround
+    cv.hline(dx0 + 10, dtop + 15, 2, GOLD[3])  # the latch
+    for y in range(tbot, foot - 1):  # the step, out from the footing under the door
+        for x in range(dx0 - 1, dx0 + 15):
+            cv.set(x, y, STONE[4] if y == tbot else STONE[3] if x < dx0 + 9 else STONE[2])
+    cv.hline(dx0 - 1, foot - 1, 16, STONE[1])
+    # the stage round the second floor: its deck seen from above, braces, a rail
+    srx, sry = radius(stage) + 7, 3
     for x in range(int(cx - srx), int(cx + srx) + 1):
-        dx = (x + 0.5 - cx) / srx
-        if abs(dx) >= 1:
+        u = (x + 0.5 - cx) / srx
+        if abs(u) >= 1:
             continue
-        e = sry * math.sqrt(1 - dx * dx)
+        e = sry * math.sqrt(1 - u * u)
         for y in range(int(stage - e), int(stage + e) + 1):
             if abs(x + 0.5 - cx) < radius(y) - 1 and y < stage:
                 continue  # the tower stands through the deck's back half
-            cv.set(x, y, WOOD[4] if x < cx - 6 else WOOD[3])
-        fy2 = int(stage + e) + 1
-        cv.set(x, fy2, WOOD[2]); cv.set(x, fy2 + 1, WOOD[1])
-        if x % 4 == 0:  # the rail's posts
-            for d in range(1, 5):
-                cv.set(x, int(stage + e) - d, WOOD[2])
-        cv.set(x, int(stage + e) - 4, WOOD[3])
-    # the cap: a shingled dome seen from a little above, its eave and a finial
-    cap_top, cap_eave, crx = 24, 42, 13
+            cv.set(x, y, WOOD[4] if u < -0.3 else WOOD[3] if u < 0.4 else WOOD[2])
+        fy = int(stage + e) + 1
+        cv.set(x, fy, WOOD[2] if u < 0.3 else WOOD[1]); cv.set(x, fy + 1, WOOD[0])
+        if (x - int(cx - srx)) % 6 == 1:  # the rail's posts, two pixels thick
+            for d in range(1, 6):
+                cv.set(x, int(stage + e) - d, WOOD[2] if u < 0.3 else WOOD[1])
+                cv.set(x + 1, int(stage + e) - d, WOOD[1] if u < 0.3 else WOOD[0])
+        cv.set(x, int(stage + e) - 6, WOOD[4] if u < 0.2 else WOOD[3])  # the rail's lit top
+        cv.set(x, int(stage + e) - 5, WOOD[2])
+    for (bx, s) in ((cx - 13, -1), (cx + 12, 1)):  # braces from the tower to the deck's edge
+        for i in range(6):
+            cv.set(bx + s * i // 2, stage + 8 - i, WOOD[1]); cv.set(bx + s * i // 2 + 1, stage + 8 - i, WOOD[0])
+    # the cap: a shingled boat shape seen from a little above, its finial
+    cap_top, cap_eave, crx = ttop - 18, ttop + 1, top_r + 3
     pts = set()
     for y in range(cap_top, cap_eave + 1):
         hw = crx * math.sqrt(max(0.0, 1 - ((cap_eave - y) / (cap_eave - cap_top)) ** 2))
-        for x in range(int(cx - hw), int(cx + hw) + 1):
+        for x in range(int(round(cx - hw)), int(round(cx + hw)) + 1):
             pts.add((x, y))
-    detail.shingles(cv, pts, WOOD, 2, cap_top, course=3, width=5, seed=943,
-                    offset=lambda x, y: 1 if x < cx - 3 else -1 if x > cx + 4 else 0)
-    for x in range(cx - crx - 1, cx + crx + 2):
-        cv.set(x, cap_eave + 1, WOOD[1])
-        if abs(x - cx) <= radius(top):
-            cv.set(x, cap_eave + 2, PLASTER[1])  # the eave's shadow on the tower
-    cv.set(cx, cap_top - 2, GOLD[4]); cv.set(cx, cap_top - 1, GOLD[2]); cv.set(cx - 1, cap_top - 1, GOLD[3])
-    # the sails: stocks from the hub on the cap's front, lattice frames with canvas
-    hx, hy = cx, 36
+    detail.shingles(cv, pts, WOOD, 2, cap_top, course=3, width=6, seed=943,
+                    offset=lambda x, y: 1 if x < cx - 4 else -1 if x > cx + 5 else 0)
+    SILVER = ('#4A4640', '#6E6A62', '#8E8A80', '#ABA698', '#C8C2B2')  # oak shingles weathered grey
+    for (x, y) in pts:  # older shingles silvered by the weather, newer ones still brown; moss low on the shaded side
+        ci = (y - cap_top) // 3
+        si = (x + (3 if ci % 2 else 0)) // 6
+        c = '#%02X%02X%02X' % cv.get(x, y)[:3]
+        if c in WOOD and noise2(ci, si, 944) > 0.55:
+            cv.set(x, y, SILVER[WOOD.index(c)])
+        elif c in WOOD and x > cx + 2 and y > cap_eave - 5 and noise2(ci, si, 945) > 0.6:
+            cv.set(x, y, LEAF[max(0, min(3, WOOD.index(c)))])
+    for x in range(cx - crx - 1, cx + crx + 2):  # the eave, its curb and its shadow
+        cv.set(x, cap_eave + 1, WOOD[1] if x > cx else WOOD[2]); cv.set(x, cap_eave + 2, WOOD[0])
+        if abs(x + 0.5 - cx) <= radius(ttop):
+            cv.set(x, cap_eave + 3, PLASTER[1])
+    cv.vline(cx, cap_top - 4, 3, GOLD[3]); cv.vline(cx + 1, cap_top - 4, 3, GOLD[2])  # the finial
+    cv.hline(cx, cap_top - 5, 2, GOLD[4])
+    # the sails: two stocks through the poll end, lattice frames, two clothed and two bare
+    hx, hy = cx, cap_top + 10
+    R = 48
     for k in range(4):
         a = math.pi / 4 + k * math.pi / 2 + turn
         ux, uy = math.cos(a), math.sin(a)
         px, py = -uy, ux  # the sail's trailing side
-        for t10 in range(0, 330):
+        clothed = k % 2 == 0
+        for t10 in range(0, R * 10):
             t = t10 / 10
             x, y = hx + ux * t, hy + uy * t
-            if t >= 7:
-                for side10 in range(10, 75, 4):
+            if t >= 9:
+                for side10 in range(8, 85, 3):
                     side = side10 / 10
-                    sx, sy = x + px * side, y + py * side
-                    frame = side10 >= 70 or side10 <= 14 or t > 32.4 or t < 7.3 or int(t) % 4 == 0
-                    cv.set(int(sx), int(sy), WOOD[3] if frame else CLOTH[0] if side < 4.5 else CLOTH[1])
-            cv.set(int(x), int(y), WOOD[2])
-            cv.set(int(x - px), int(y - py), WOOD[3] if t > 2 else WOOD[2])
-    for (x, y) in disc(hx, hy, 3):
-        cv.set(x, y, WOOD[1])
-    cv.set(hx - 1, hy - 1, WOOD[3])
-    return cv
+                    sx, sy = int(round(x + px * side)), int(round(y + py * side))
+                    frame = side10 >= 80 or t > R - 1.5 or t < 9.6 or int(t) % 5 == 0
+                    if frame:
+                        cv.set(sx, sy, WOOD[3] if uy * 0.6 + ux * 0.4 < 0.3 else WOOD[2])
+                    elif clothed:
+                        cv.set(sx, sy, CLOTH[0] if side < 4.5 else CLOTH[1])
+            lit = (-px * 0.6 - py * 0.8) > 0
+            cv.set(int(round(x)), int(round(y)), WOOD[2])  # the whip, two pixels thick
+            cv.set(int(round(x - px)), int(round(y - py)), WOOD[3] if lit else WOOD[1])
+    for (x, y) in disc(hx, hy, 3.2):  # the poll end on the windshaft
+        cv.set(x, y, SLATE[1] if x > hx else SLATE[2])
+    cv.hline(hx - 1, hy - 2, 2, SLATE[3])
+    # re-seated in the old 64 x 104 box, its door on the same line, so the halt's track,
+    # stand and walk grid still meet it (the taller tower rises above the box)
+    return gp.keep_foot(cv, 64, 104, dx=-1)
 
 
 WOOL = ['#6E665E', '#A89E90', '#D2C9B8', '#EBE5D6', '#FBF8EF']  # fleece, shade to sunlit curl
@@ -1282,24 +1416,168 @@ def bramble() -> Canvas:
 MEGALITH = ['#3A3446', '#585068', '#787088', '#9A92A8', '#C2BACC']  # grey-purple standing stone
 
 
+LICHEN_S = ('#8E9466', '#B4B47C', '#D2CC96')  # crustose lichen on old stone, shade to sun
+
+
+def _stone_body(cv: Canvas, pts: set, ridge, seed: int, top_rows: int = 3):
+    """Shade a weathered stone whose silhouette is `pts`: the face west of `ridge(y)` (the
+    arris running down it) toward the light, the face east of it turned away and a step
+    darker, its last two columns darker again; the top rows lit as the worn crown; the
+    grain in 2 x 2 blotches a tone up or down, so it reads as rock and not as a fill."""
+    ys = [y for (_x, y) in pts]
+    y0 = min(ys)
+    for (x, y) in pts:
+        east = x >= ridge(y)
+        t = 2 if east else 3
+        if east and (x + 2, y) not in pts:
+            t = 1  # the flank turning away
+        if y - y0 < top_rows and (x, y - top_rows) not in pts:
+            t = 4 if not east else 3  # the worn crown, lit
+        n = noise2(x // 2, y // 2, seed)
+        if 0 < t < 4:
+            t += 1 if n > 0.88 and not east else -1 if n < 0.08 else 0
+        cv.set(x, y, MEGALITH[t])
+    for (x, y) in pts:  # the arris: a lit edge where the two faces meet, under the crown
+        if ridge(y) - 1 <= x < ridge(y) and y - y0 >= top_rows:
+            cv.set(x, y, MEGALITH[4] if (y // 3) % 3 else MEGALITH[3])
+
+
+def _lichen(cv: Canvas, pts: set, spots, seed: int):
+    """Crusts of lichen, each a clump of 3 to 5 pixels in two tones, on the stone at the
+    given (x, y) spots (only where the stone is)."""
+    for i, (lx, ly) in enumerate(spots):
+        for (dx, dy) in ((0, 0), (1, 0), (0, 1), (1, 1), (2, 0) if i % 2 else (-1, 1)):
+            if (lx + dx, ly + dy) in pts:
+                cv.set(lx + dx, ly + dy, LICHEN_S[2] if dy == 0 and dx < 2 else LICHEN_S[1])
+
+
 def standing_stone(seed: int = 0, tall: bool = True) -> Canvas:
-    """An old standing stone, 18 x 30 (or 16 x 22): a weathered grey-purple slab, its top
-    rounded and a little skewed, lit on its upper-left plane, shaded on its right flank,
-    with a moss cap that drips down its face (style.facet_stone, as in the references)."""
+    """An old standing stone of the woodland circle (Matt, World Logic, 20 Oct: "a cool
+    detail that could have a mechanic, something magic related perhaps"; no mechanic now),
+    18 x 30 (or 16 x 22 for the low ones), in the size guide's standing stone (1 to 1.4
+    adults): a rough-dressed slab a little out of true, wider at its foot where it is
+    bedded, its crown rounded by weather; the face west of its arris toward the light and
+    the east face turned away, the grain in blotches; a crack down its face and a pair of
+    pits where frost has spalled it; crusts of lichen on the lit face, moss on its crown
+    and where the shaded foot stays damp; on the 'b' stones a cup-and-ring mark pecked in
+    its face long ago; grass grown up round its foot."""
     w, h = (18, 30) if tall else (16, 22)
     cv = Canvas(w, h, pad=PAD)
-    lean = (noise2(seed, 0, 431) - 0.5) * 0.25
+    foot = h - 2
+    lean = (noise2(seed, 0, 431) - 0.5) * 0.22
     pts = set()
-    for y in range(2, h - 1):
-        f = (y - 2) / (h - 3)
-        half = (w / 2 - 3) * (0.5 + 0.5 * min(1.0, f * 1.4)) + (1 if y > h - 4 else 0)
-        cx = w / 2 + lean * (h - y)
-        for x in range(int(cx - half), int(cx + half) + 1):
-            if f < 0.18 and ((x - cx) / half) ** 2 + ((0.18 - f) / 0.18) ** 2 > 1:
-                continue  # the rounded top
+    for y in range(1, foot + 1):
+        f = (y - 1) / (foot - 1)
+        half = (w / 2 - 3.5) * (0.62 + 0.38 * min(1.0, f * 1.3)) + (0.5 if y > foot - 2 else 0)
+        half += (noise2(y // 3, seed, 432) - 0.5) * 1.2  # rough-dressed: its sides step in and out
+        cx = w / 2 + lean * (foot - y)
+        for x in range(int(round(cx - half)), int(round(cx + half)) + 1):
+            if f < 0.2 and ((x + 0.5 - cx) / half) ** 2 + ((0.2 - f) / 0.2) ** 2 > 1:
+                continue  # the rounded crown
             pts.add((x, y))
-    style.facet_stone(cv, pts, MEGALITH, moss=LEAF, seed=seed + 40)
-    cv.hline(int(w / 2 - 5), h - 1, 10, MATERIALS['leaf'][1])  # grass at its foot
+    ridge = lambda y: int(round(w / 2 + lean * (foot - y) + 1))
+    _stone_body(cv, pts, ridge, seed + 433)
+    cx0 = int(w / 2)
+    crack_x = cx0 - 2 + seed % 3
+    for i, y in enumerate(range(int(h * 0.35), int(h * 0.35) + 6)):  # a crack down the face
+        x = crack_x + (1 if i > 2 else 0)
+        if (x, y) in pts:
+            cv.set(x, y, MEGALITH[0])
+            if (x - 1, y) in pts:
+                cv.set(x - 1, y, MEGALITH[4] if i % 2 else MEGALITH[3])  # its lit lip
+    for (px, py) in ((cx0 + 2, int(h * 0.62)), (cx0 - 3, int(h * 0.75))):  # frost pits
+        if (px, py) in pts and (px + 1, py) in pts:
+            cv.hline(px, py, 2, MEGALITH[1])
+    if seed % 2:  # a cup-and-ring mark pecked in the west face
+        rx, ry = cx0 - 3, int(h * 0.48)
+        for (dx, dy) in ((1, 0), (2, 0), (0, 1), (3, 1), (0, 2), (3, 2), (1, 3), (2, 3)):
+            if (rx + dx, ry + dy) in pts:
+                cv.set(rx + dx, ry + dy, MEGALITH[1] if dy < 2 else MEGALITH[4])
+        cv.hline(rx + 1, ry + 1, 2, MEGALITH[2]); cv.hline(rx + 1, ry + 2, 2, MEGALITH[1])  # the cup
+    _lichen(cv, pts, ((cx0 - 4, int(h * 0.3)), (cx0 - 2, int(h * 0.82)), (cx0 + 1, int(h * 0.2))), seed)
+    for (x, y) in pts:  # moss on the crown, in clumps, and dripping a little down the face
+        if y < 1 + 3 and noise2(x // 2, y // 2, seed + 434) > 0.4:
+            cv.set(x, y, LEAF[3] if y < 2 or x < ridge(y) else LEAF[2])
+        if y > foot - 4 and x >= ridge(y) and noise2(x // 2, y // 2, seed + 435) > 0.35:
+            cv.set(x, y, LEAF[1] if y > foot - 2 else LEAF[2])  # damp at the shaded foot
+    for x in range(int(w / 2 - 6), int(w / 2 + 7)):  # its bedding: contact shade, grass over it
+        cv.set(x, foot + 1, (20, 26, 22, 110))
+    for (gx, kind) in ((int(w / 2) - 6, 3), (int(w / 2) - 2, 0), (int(w / 2) + 4, 5)):
+        detail.grass_tuft(cv, gx, foot, kind, MATERIALS['grass'], 2)
+    return cv
+
+
+def fallen_stone() -> Canvas:
+    """A stone of the circle that has fallen (to-b-1210: "worn ring, fallen stone, moss,
+    offerings"), 30 x 14: the slab lying on its side, half sunk where the turf has grown
+    over it, its long upper face lit and mossed, its broken foot showing the paler inside
+    of the stone at the east end, lichen on it and grass lapping its edge."""
+    w, h = 30, 14
+    cv = Canvas(w, h, pad=PAD)
+    pts = set()
+    for x in range(2, 28):
+        f = (x - 2) / 25
+        top = 3 + int(round((noise2(x // 3, 0, 441) - 0.5) * 1.6 + f * 1.5))
+        bot = 11 - (1 if x in (2, 27) else 0)
+        for y in range(top, bot + 1):
+            pts.add((x, y))
+    ys = {x: min(y for (xx, y) in pts if xx == x) for x in range(2, 28)}
+    for (x, y) in pts:
+        up = y - ys[x]
+        t = 4 if up == 0 and x < 20 else 3 if up < 4 else 2 if up < 6 else 1  # the long top, then its side
+        if x > 25:
+            t = 2 if up < 4 else 1  # the end turned away
+        n = noise2(x // 2, y // 2, 442)
+        t += 1 if n > 0.85 and t < 4 else -1 if n < 0.14 and t > 1 else 0
+        cv.set(x, y, MEGALITH[t])
+    for y in range(ys[26] + 1, 10):  # the broken foot: the paler inside of the stone
+        cv.hline(26, y, 2, MEGALITH[3] if y < ys[26] + 4 else MEGALITH[2])
+    for (x, y) in pts:  # moss along the top, in clumps
+        if y - ys[x] < 2 and noise2(x // 2, 0, 443) > 0.45 and 5 < x < 22:
+            cv.set(x, y, LEAF[3] if y == ys[x] else LEAF[2])
+    _lichen(cv, pts, ((8, ys[8] + 2), (17, ys[17] + 3)), 1)
+    for x in range(2, 28):  # turf grown over its lower edge
+        if noise2(x // 2, 1, 444) > 0.3:
+            cv.set(x, 11, LEAF[2] if x < 15 else LEAF[1]); cv.set(x, 10, LEAF[3] if x < 15 else LEAF[2])
+        cv.set(x, 12, (20, 26, 22, 100))
+    for (gx, kind) in ((1, 3), (12, 0), (22, 5), (28, 1)):
+        detail.grass_tuft(cv, gx, 11, kind, MATERIALS['grass'], 2)
+    return cv
+
+
+def offering_stone() -> Canvas:
+    """The low flat stone at the circle's heart where walkers leave offerings, 24 x 12:
+    a recumbent slab with a hollow worn in its top that holds rainwater, and on it a posy
+    of wildflowers tied with grass, three pebbles stacked as cairns are, and a shell
+    carried up from the shore; moss in its joints and grass round it. Decoration only:
+    it gives and takes nothing (no mechanic yet)."""
+    w, h = 24, 12
+    cv = Canvas(w, h, pad=PAD)
+    pts = {(x, y) for x in range(2, 22) for y in range(3, 10)
+           if not ((x in (2, 21)) and y < 5)}
+    for (x, y) in pts:
+        t = 4 if y == 3 and x < 15 else 3 if y < 7 and x < 16 else 2 if y < 7 else 1
+        if y >= 7:
+            t = 2 if x < 9 else 1  # its front edge, the side in the stone's own shade
+        n = noise2(x // 2, y // 2, 451)
+        t += 1 if n > 0.86 and t < 4 else -1 if n < 0.14 and t > 1 else 0
+        cv.set(x, y, MEGALITH[t])
+    for (x, y) in ((12, 4), (13, 4), (14, 4), (11, 5), (12, 5), (13, 5), (14, 5), (15, 5)):
+        cv.set(x, y, WTR[2] if y == 4 else WTR[1])  # the hollow and its rainwater
+    cv.hline(12, 4, 2, WTR[4])  # the sky in it
+    for (x, y, c) in ((4, 4, GOLD[3]), (5, 4, GOLD[3]), (4, 3, NAP[3]), (5, 3, NAP[3]),
+                      (6, 4, PLASTER[5]), (7, 4, PLASTER[5]), (5, 5, LEAF[3]), (6, 5, LEAF[3]), (7, 5, LEAF[2])):
+        cv.set(x, y, c)  # a posy: buttercups, harebells and daisies, the grass tie
+    for (y, x0, n, c0, c1) in ((5, 17, 3, STONE[4], STONE[2]), (4, 17, 2, STONE[3], STONE[3]), (3, 18, 1, STONE[4], STONE[4])):
+        cv.hline(x0, y, n, c0)  # three pebbles stacked
+    cv.set(18, 2, STONE[4]); cv.set(18, 3, STONE[3])
+    cv.hline(9, 6, 2, '#F0DCCB'); cv.hline(9, 7, 2, '#C8A894')  # a shell from the shore
+    for x in range(2, 22):
+        cv.set(x, 10, (20, 26, 22, 110))
+        if noise2(x // 2, 2, 452) > 0.4:
+            cv.set(x, 9, LEAF[2] if x < 12 else LEAF[1])  # grass round its foot
+    for (gx, kind) in ((1, 3), (21, 1)):
+        detail.grass_tuft(cv, gx, 9, kind, MATERIALS['grass'], 2)
     return cv
 
 
@@ -1953,7 +2231,7 @@ def props() -> dict[str, Canvas]:
         'forest_bench': forest_bench(), 'bandstand': bandstand(), 'ice_cream_cart': ice_cream_cart(),
         'snowy_pine': snowy_pine(), 'frozen_tarn': frozen_tarn(), 'station_house': station_house(),
         'semaphore': semaphore(), 'standing_stone': standing_stone(0, True), 'standing_stone_b': standing_stone(3, True),
-        'standing_stone_low': standing_stone(6, False), 'stump': stump(), 'woodpile': woodpile(), 'sled': sled(),
+        'standing_stone_low': standing_stone(6, False), 'fallen_stone': fallen_stone(), 'offering_stone': offering_stone(), 'stump': stump(), 'woodpile': woodpile(), 'sled': sled(),
         'snowman': snowman(), 'drystone_wall': drystone_wall(64), 'drystone_wall_short': drystone_wall(32),
         'drystone_wall_ns': drystone_wall_ns(40), 'drystone_corner_w': drystone_corner('w'), 'drystone_corner_e': drystone_corner('e'),
         'drystone_gatepost': drystone_gatepost(), 'field_gate': field_gate(0.0), 'field_gate_open': field_gate(0.8),
