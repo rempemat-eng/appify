@@ -349,27 +349,96 @@ def hydro_trough(crop: str = 'greens', length: int = 56) -> Canvas:
     return cv
 
 
+def _stool(cv: Canvas, cx: int, top: int, foot: int, seat=NAP):
+    """A galley stool bolted to the deck (audit 20 Oct: the old ring of ovals read as a
+    flying saucer): a padded round seat 7 px off the floor seen from the front and a
+    little above, lit on its upper left, on a steel post to a bolted floor plate."""
+    for (x, y) in oval(cx, top + 1.5, 4.5, 2):
+        rd.put(cv, x, y, seat[4] if x < cx - 1 and y <= top + 1 else seat[3] if x < cx + 2 else seat[2])
+    for x in range(cx - 4, cx + 5):
+        rd.put(cv, x, top + 3, seat[1])                      # the cushion's side
+    rd.put(cv, cx, top + 1, seat[1]); rd.put(cv, cx - 2, top + 1, seat[4])   # its button and a sheen
+    for y in range(top + 4, foot - 1):                       # the post
+        rd.put(cv, cx - 1, y, '#C8CCD8'); rd.put(cv, cx, y, '#8A90A2'); rd.put(cv, cx + 1, y, '#5E6476')
+    for x in range(cx - 3, cx + 4):                          # the floor plate and its bolts
+        rd.put(cv, x, foot - 1, '#9AA0B0' if x < cx else '#6A7084')
+    rd.put(cv, cx - 3, foot - 1, '#E2E6EE'); rd.put(cv, cx + 3, foot - 1, '#4A5064')
+    for x in range(cx - 2, cx + 5):
+        rd.put(cv, x, foot, rd.step(cv.get(x, foot), -1.2) if cv.get(x, foot)[3] else HULL[1])
+
+
 def galley_table() -> Canvas:
-    """The galley table, 52 x 34: a round white table with two mugs and a teapot, four
-    stools round it, the crew's one shared meal a day."""
+    """The galley table, 52 x 34 (audit 20 Oct, REDRAW: "reads as a flying saucer"): the
+    crew's one shared meal a day at a long table bolted to the deck, seen from the front
+    and above like everything else. Its top is a lit composite slab at counter height
+    (13 px, an adult is 25) with a teal edge trim, its front apron in shade, one steel
+    pedestal to a bolted foot plate; four stools bolted round it, two behind showing
+    above the far edge and two in front; on the top, two meal trays with compartments
+    (greens from the hydroponics, rice, a citrus half), mugs and the shared teapot."""
     w, h = 52, 34
     cv = Canvas(w, h, pad=PAD)
-    for (sx, sy) in ((6, 16), (46, 16), (26, 4), (26, 30)):
-        for (x, y) in oval(sx, sy, 5, 3):
-            cv.set(x, y, NAP[3] if y < sy else NAP[2])
-        cv.set(sx, sy + 3, HULL[1])
-    for (x, y) in oval(26, 16, 16, 9):
-        k = (x - 10) / 32 + (y - 7) / 18
-        cv.set(x, y, HULL[5] if k < 0.5 else HULL[4] if k < 1.0 else HULL[3])
-    for y in range(25, 28):
-        cv.hline(23, y, 6, HULL[1])
-    for (mx, my, c) in ((18, 14, RED[3]), (32, 18, GOLD[3])):
-        for (x, y) in disc(mx, my, 2):
-            cv.set(x, y, c)
-        cv.set(mx, my, '#5A3A24')
-    for (x, y) in oval(26, 13, 4, 3):
-        cv.set(x, y, WTR[3] if x < 26 else WTR[2])
-    cv.set(30, 12, WTR[2]); cv.set(26, 9, HULL[5])
+    foot = h - 1
+    for sx in (15, 37):  # the two stools behind the table, their seats showing over its far edge
+        _stool(cv, sx, 4, 13)
+    x0, x1, ty0, ty1 = 6, w - 6, 10, 19      # the top: front edge at foot - 13 = 20
+    for y in range(ty0, ty1 + 1):
+        for x in range(x0, x1):
+            k = (x - x0) / (x1 - x0)
+            c = rd.step('#D8DCE4', 0.9 - 1.4 * k - 0.04 * (y - ty0))
+            if y == ty0:
+                c = rd.step('#D8DCE4', 1.6 - k)               # the far edge catching the light
+            if 0.3 < (x - y * 0.8 - 6) % 23 < 2.2 and y > ty0 + 1:
+                c = rd.step(c, 0.7)                           # a wiped streak in the sheen
+            rd.put(cv, x, y, c)
+    for x in range(x0, x1):  # the trim and the apron, in shade under the top's lit edge
+        k = (x - x0) / (x1 - x0)
+        rd.put(cv, x, ty1 + 1, rd.step('#3E9AA0', 0.8 - k))
+        for y in range(ty1 + 2, ty1 + 5):
+            c = rd.step('#7A8094', -0.4 - 1.2 * k - 0.3 * (y - ty1 - 2))
+            if y == ty1 + 4 and x % 6 == 2:
+                c = '#3A3E4C'                                 # rivets along the apron's foot
+            rd.put(cv, x, y, c)
+    for x in (x0, x1 - 1):  # rounded corners
+        rd.put(cv, x, ty0, (0, 0, 0, 0)) if False else None
+    for y in range(ty1 + 5, foot - 1):  # the pedestal, a lit steel column
+        for (dx, c) in ((-2, '#D0D4DE'), (-1, '#A8AEBE'), (0, '#8A90A2'), (1, '#6A7084'), (2, '#4E5466')):
+            rd.put(cv, w // 2 + dx, y, c)
+    for x in range(w // 2 - 6, w // 2 + 7):
+        rd.put(cv, x, foot - 1, '#9AA0B0' if x < w // 2 else '#6A7084')
+        rd.put(cv, x, foot, '#3A3E4C')
+    rd.put(cv, w // 2 - 5, foot - 1, '#E2E6EE'); rd.put(cv, w // 2 + 5, foot - 1, '#4A5064')
+    # the trays: compartments of food, each tray lit on its upper left
+    for (tx, ty, tray) in ((10, 12, ('#E8A43A', '#B87420')), (31, 13, ('#4A8AC8', '#2E5E94'))):
+        for y in range(ty, ty + 6):
+            for x in range(tx, tx + 11):
+                c = tray[0] if (x == tx or y == ty) else tray[1] if (x == tx + 10 or y == ty + 5) else rd.step(tray[0], -0.4)
+                rd.put(cv, x, y, c)
+        for (fx, fy, fw, fh, ramp) in ((tx + 1, ty + 1, 5, 4, LEAF), (tx + 7, ty + 1, 3, 2, ['#B0A890', '#D8D0B8', '#EEE8D8', '#F8F4EA', '#FFFFFF']),
+                                       (tx + 7, ty + 3, 3, 2, GOLD)):
+            for y in range(fy, fy + fh):
+                for x in range(fx, fx + fw):
+                    n = noise2(x, y, 291)
+                    rd.put(cv, x, y, ramp[3] if n > 0.6 else ramp[2] if n > 0.25 else ramp[1])
+    for (mx, my, c) in ((24, 11, RED), (27, 16, WTR)):  # mugs, with the tea's dark surface
+        for (x, y) in ((mx, my), (mx + 1, my), (mx + 2, my)):
+            rd.put(cv, x, y, '#5A3A24')
+        for x in range(mx, mx + 3):
+            rd.put(cv, x, my + 1, c[3] if x == mx else c[2]); rd.put(cv, x, my + 2, c[2] if x == mx else c[1])
+        rd.put(cv, mx + 3, my + 1, c[1])
+    for (x, y) in oval(45 - 6, 12, 3.2, 2.2):  # the shared teapot at the far end, its lid and spout
+        rd.put(cv, x, y, '#F0EEE8' if x < 38 and y < 12 else '#C8C4BE' if x < 41 else '#8E8A86')
+    rd.put(cv, 39, 9, '#8E8A86'); rd.put(cv, 38, 9, '#F0EEE8'); rd.put(cv, 43, 11, '#C8C4BE'); rd.put(cv, 44, 10, '#C8C4BE')
+    for (nx, ny) in ((8, 18), (22, 18), (29, 19), (43, 17)):  # napkins and cutlery at each place
+        rd.put(cv, nx, ny, '#F4EEDC'); rd.put(cv, nx + 1, ny, '#F4EEDC'); rd.put(cv, nx + 1, ny + 1, '#C8BEA4')
+        rd.put(cv, nx + 2, ny, '#9AA0B0'); rd.put(cv, nx + 2, ny - 1, '#E2E6EE')
+    for (x, y) in ((20, 13), (20, 14), (21, 14)):  # a cup with a sprig from the hydroponics
+        rd.put(cv, x, y, '#E8E4DC' if y == 14 else '#B8B4AC')
+    rd.put(cv, 20, 12, LEAF[3]); rd.put(cv, 21, 11, LEAF[4]); rd.put(cv, 19, 11, LEAF[2])
+    rd.put(cv, 34, 10, '#C84A3A'); rd.put(cv, 34, 11, '#8E2E26'); rd.put(cv, 35, 11, '#6A2420'); rd.put(cv, 34, 9, '#E8E4DC')  # the hot sauce
+    for (x, y) in ((17, 18), (18, 18), (40, 19), (41, 19)):
+        rd.put(cv, x, y, rd.step(cv.get(x, y), -0.9))       # crumbs and rings where mugs stood
+    for sx in (13, 39):  # the two stools in front, pulled in under the table's edge
+        _stool(cv, sx, foot - 8, foot)
     return cv
 
 
