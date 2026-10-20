@@ -7,12 +7,14 @@ light is starlight and the plants' own glow. Run directly for a contact sheet.
 from __future__ import annotations
 
 import math
+import random
 import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
+import reach_detail as rd  # noqa: E402
 from materials import MATERIALS, LEAF, NAP, GOLD, RED, WTR, WOOD  # noqa: E402
 
 HULL, VOID, REGOLITH, GLOW = (MATERIALS[k] for k in ('hull', 'void', 'regolith', 'glowflora'))
@@ -168,23 +170,82 @@ def sleep_pod() -> Canvas:
     return cv
 
 
+HULL_METALS = ('#66728A', '#707684', '#5C6A86', '#78808C', '#6A6E7E')  # the station's plates (D13)
+
+
+def _conduit(cv: Canvas, x: int, y0: int, h: int):
+    """A pipe and a cable run down a bulkhead on brackets: the pipe brass, lit on its
+    left; the cable red beside it; a bracket every eight pixels, each with its shadow."""
+    brass = MATERIALS['brass']
+    for y in range(y0, y0 + h):
+        rd.put(cv, x, y, brass[4]); rd.put(cv, x + 1, y, brass[3]); rd.put(cv, x + 2, y, brass[1])
+        rd.put(cv, x + 3, y, RED[2] if y % 6 else RED[1]); rd.put(cv, x + 4, y, rd.step(cv.get(x + 4, y), -1.5))
+        if (y - y0) % 8 == 3:
+            for k in range(-1, 5):
+                rd.put(cv, x + k, y, HULL[4] if k < 2 else HULL[2])
+            rd.put(cv, x + 4, y + 1, HULL[0])
+
+
 def airlock() -> Canvas:
     """The space elevator's arrival hatch, 56 x 60: a round door 32 across in a lit rim
     (verticality.md 5: a door 32 tall for an adult of 25), warning chevrons at its sill
-    and a status panel."""
+    and a status panel. D13: the bulkhead in riveted plates of several alloys with scuffs,
+    grime and the odd rust run; the rim bolted; the door's two leaves panelled, their
+    meeting seam dark, a lit edge where the light from the upper left catches them."""
     cv = Canvas(56, 60, pad=PAD)
-    for (x, y) in rect_set(2, 4, 52, 54):
-        cv.set(x, y, HULL[3] if y < 8 else HULL[2])
-    for (x, y) in disc(28, 33, 19):
-        cv.set(x, y, HULL[4] if (x - 28) + (y - 33) < -12 else HULL[1])
-    for (x, y) in disc(28, 33, 16):
-        cv.set(x, y, HULL[3] if x < 28 else HULL[2])
-    cv.vline(28, 17, 33, HULL[0])
+    wall = rect_set(2, 4, 52, 54)
+    rd.panels(cv, wall, HULL_METALS, seed=171, pw=17, ph=12, foot=57, stagger=False)
+    for x in range(2, 54):
+        rd.put(cv, x, 4, HULL[4]); rd.put(cv, x, 5, HULL[3])   # the bulkhead's lit top lip
+    _conduit(cv, 5, 8, 46)                                     # a conduit down the west side
+    for (x, y) in rect_set(36, 8, 8, 3):                      # a stencilled band over the door
+        rd.put(cv, x, y, '#D89A3A' if (x // 2) % 2 == 0 else '#3A3440')
+    rim = disc(28, 33, 19)
+    door = set(disc(28, 33, 16))
+    for (x, y) in rim:
+        if (x, y) in door:
+            continue
+        a = math.atan2(y - 33, x - 28)
+        lit = -math.cos(a + math.pi / 4)                  # 1 at the upper left
+        c = rd.step(HULL[3], 1.6 * lit)
+        r = math.hypot(x - 28, y - 33)
+        if r > 18.2:
+            c = rd.step(c, -1.4)                          # the rim's outer bevel
+        elif r < 16.9:
+            c = rd.step(HULL[2], -0.6 if lit > 0 else -1.6)   # its inner reveal, in shade
+        if 17.2 < r < 18.2 and int((a + math.pi) / (2 * math.pi) * 16 + 0.5) % 2 == 0 \
+                and abs(((a + math.pi) / (2 * math.pi) * 16) % 1 - 0.5) > 0.38:
+            c = rd.step(HULL[4], 1) if lit > -0.2 else HULL[2]   # its bolts
+        rd.put(cv, x, y, c)
+    for (x, y) in door:
+        west = x < 28
+        c = rd.step('#7A8496' if west else '#5E687C', 0.9 * -((x - 28) + (y - 33)) / 22)
+        dx, dy = (x - 28), (y - 33)
+        if abs(dy) in (6, 7) and abs(dx) > 2:
+            c = rd.step(c, -1.6 if abs(dy) == 6 else 0.8)   # the leaves' panel lines
+        if abs(dx) in (5, 6) and abs(dy) < 6:
+            c = rd.step(c, -1.2 if abs(dx) == 6 else 0.6)
+        if dy > 9 and rd.smooth_noise(x, y, 3, 172) < 0.4:
+            c = rd.mix(c, (74, 64, 60), 0.4)               # grime where boots and carts pass
+        if math.hypot(dx, dy) > 15.2:
+            c = rd.step(c, -1.2 if dx + dy > 0 else 1.0)   # the leaves' edge
+        rd.put(cv, x, y, c)
+    for y in range(17, 50):
+        rd.put(cv, 28, y, HULL[0]); rd.put(cv, 27, y, rd.step('#7A8496', 1.4))   # the meeting seam
+    for (hx, hy) in ((24, 31), (24, 35), (31, 31), (31, 35)):  # the leaves' handles
+        rd.put(cv, hx, hy, '#C8CCD4'); rd.put(cv, hx + 1, hy, '#C8CCD4'); rd.put(cv, hx, hy + 1, HULL[1]); rd.put(cv, hx + 1, hy + 1, HULL[1])
     for x in range(4, 52, 6):
         for t in range(3):
             cv.set(x + t, 54 + t % 2, GOLD[3])
             cv.set(x + t + 3, 54 + t % 2, VOID[2])
-    cv.rect(46, 10, 6, 8, VOID[1]); cv.set(48, 12, CYAN[3]); cv.set(48, 15, GOLD[3])
+    for x in range(4, 52):  # the chevrons scuffed where feet cross the sill
+        if 18 <= x <= 38 and rd.smooth_noise(x, 54, 2, 173) < 0.45:
+            rd.put(cv, x, 54, rd.mix(cv.get(x, 54), (150, 140, 128), 0.5))
+    cv.rect(45, 9, 8, 10, HULL[0])
+    cv.rect(46, 10, 6, 8, VOID[1])
+    cv.hline(46, 10, 6, '#2C4A5A'); cv.hline(47, 13, 4, '#1E3A48'); cv.hline(47, 16, 3, '#1E3A48')   # its screen's lines
+    cv.set(48, 12, CYAN[3]); cv.set(49, 12, CYAN[2]); cv.set(48, 15, GOLD[3]); cv.set(49, 15, GOLD[2])
+    cv.hline(45, 19, 8, HULL[4])
     return cv
 
 
@@ -965,7 +1026,17 @@ def _bags(cv: Canvas, x: int, y: int, lit: float, seed: int = 0):
         c = REG[min(5, base + 1)]  # the bulge of its top catching the light
     elif v == 3 or end:
         c = REG[max(1, base - 1)]
-    cv.set(x, y, c)
+    # D13: each bag its own cloth (older bags faded, newer ones bluer or sandier), a seam
+    # stitched along some, a tie at the odd end
+    bag = (x + off) // 10
+    fam = int(noise2(bag, row, 409 + seed) * 5)
+    cloth = (None, (168, 156, 160), (118, 128, 168), (176, 164, 140), (140, 132, 150))[fam]
+    out = rd.mix(c, cloth, 0.36) if cloth else rd.rgb(c)
+    if v == 2 and 2 <= u <= 7 and u % 2 == 0 and noise2(bag, row, 411 + seed) < 0.4:
+        out = rd.step(out, -0.9)                               # a stitched seam
+    if u == 8 and v in (1, 2) and noise2(bag, row, 413 + seed) < 0.25:
+        out = (176, 150, 104)                                  # a tie
+    rd.put(cv, x, y, out)
 
 
 def pressure_tube(length: int = TUBE_L, dock: bool = False) -> Canvas:
@@ -975,20 +1046,41 @@ def pressure_tube(length: int = TUBE_L, dock: bool = False) -> Canvas:
     its crown, and saddles on short feet where it rests on the dust."""
     w, h = TUBE_W, length
     cv = Canvas(w, h, pad=PAD)
+    tints = ((242, 240, 232), (226, 232, 242), (214, 216, 222), (238, 230, 214))
+    seam = 3 + int((w - 7) * 0.62)
     for y in range(0, h):
+        sec, ring = divmod(y, 12)
+        rr = random.Random(971 * 31 + sec * 7 + length)
+        tint, hatch, marks = tints[rr.randrange(4)], rr.random() < 0.3, rr.random() < 0.5
         for x in range(3, w - 3):
             k = (x - 3) / (w - 7)
-            c = WHITE[5] if k < 0.18 else WHITE[4] if k < 0.45 else WHITE[3] if k < 0.75 else WHITE[2]
+            v = 1.0 if k < 0.12 else 0.4 if k < 0.3 else 0 if k < 0.5 else -0.9 if k < 0.7 else -1.9 if k < 0.84 else -3.0
             if k > 0.92:
-                c = WHITE[1]
-            ring = y % 12
+                v = -4.2
+            c = rd.step(tint, v)
             if ring == 0:
-                c = WHITE[1] if k > 0.45 else WHITE[2]  # a ring frame
+                c = rd.step(c, -2.2)                       # a ring frame
             elif ring == 1:
-                c = WHITE[5] if k < 0.75 else WHITE[3]  # its lit edge
+                c = rd.step(c, 0.9)                        # its lit edge
+            elif ring == 2 and x % 3 == 1 and 0.12 < k < 0.9:
+                c = rd.step(c, -2.4)                       # rivets along the frame
+            elif ring == 2 and x % 3 == 0 and 0.12 < k < 0.9:
+                c = rd.step(c, 0.6)
+            elif x == seam and ring > 1:
+                c = rd.step(c, -1.6)                       # the plates' long seam
+            elif x == seam + 1 and ring > 1:
+                c = rd.step(c, 0.7)
+            elif sec % 3 == 1 and ring in (8, 9) and x > 10:
+                c = rd.mix(c, '#3E78B8' if ring == 8 else '#E8A43A', 0.7)   # a section's ID band
+            elif hatch and 14 <= x <= 19 and 4 <= ring <= 9:
+                c = rd.step(c, -1.8 if x == 19 or ring == 9 else 1.2 if x == 14 or ring == 4 else -0.4)  # an inspection hatch
+                if (x, ring) == (16, 6):
+                    c = (64, 66, 80)                       # its latch
+            elif marks and ring in (4, 6) and 4 <= x <= 7 and (x + ring) % 4 != 0:
+                c = rd.step(c, -3.2)                       # a stencilled mark
             if x == 9 and ring in (5, 6):
                 c = '#FFDC92' if ring == 5 else '#F2A048'  # a small lit port on the crown
-            cv.set(x, y, c)
+            rd.put(cv, x, y, c)
     if dock:  # the docking collar at its north end, clamped to the shuttle's hatch
         for y in range(0, 6):
             for x in range(1, w - 1):
@@ -999,6 +1091,12 @@ def pressure_tube(length: int = TUBE_L, dock: bool = False) -> Canvas:
                 if y == 3 and x % 5 == 0:
                     c = '#E8C04A'  # the clamps
                 cv.set(x, y, c)
+    rd.weather(cv, rect_set(3, 0, w - 6, h), seed=971 + length, chips=0.05, chip=(118, 126, 146),
+               streaks=0.12, streak=(120, 112, 128), scuffs=0.08)
+    for y in range(0, h):  # dust settled on the tube's lower, shaded flank
+        for x in range(w - 9, w - 3):
+            if rd.smooth_noise(x, y, 4, 975) < 0.45:
+                rd.put(cv, x, y, rd.mix(cv.get(x, y), REG[3], 0.4))
     for y in range(6, h, 24):  # saddles on their feet, at the sides
         for (sx, d) in ((1, -1), (w - 3, 1)):
             for k in range(3):
@@ -1029,14 +1127,23 @@ def hab_hub() -> Canvas:
         return int(70 - abs(x - cx) / (w / 2) * 10 + (smooth_noise(x, 1, 11, 405) - 0.5) * 3)
     for (x, y) in berm:
         k = (x - cx) / (w / 2)
-        if y < crest(x):  # the roof: moon dust heaped over the vault, smooth, lit from the upper left
-            n = smooth_noise(x, y, 8, 403)
-            lit = 1.0 - (k + 1) * 0.35 + (n - 0.5) * 0.8
-            base = max(2, min(5, 3 + round(lit)))
-            c = REG[base] if (x + y) % 2 or n > 0.45 else REG[max(2, base - 1)]
-            if noise2(x, y, 406) > 0.97:
-                c = REG[5]  # a bright grain
-            cv.set(x, y, c)
+        if y < crest(x):  # the roof: bags in courses over the vault too (audit: no noise), lit from the upper left
+            # smooth dust heaped over the vault (review 19 Oct: no brick all over), lit from the
+            # upper left in soft bands, with wind ripples, warmer and cooler drifts and a few
+            # stones lying on it (audit 20 Oct: not noise)
+            n = smooth_noise(x, y, 12, 403)
+            lit = 1.0 - (k + 1) * 0.6 - (y - 10) / 60 + (n - 0.5) * 0.9
+            c = rd.step(REG[3], lit * 1.3)
+            d = smooth_noise(x, y, 7, 404)
+            c = rd.mix(c, (178, 160, 160) if d > 0.5 else (112, 120, 168), abs(d - 0.5) * 0.9)
+            rip = (y + 3 * math.sin(x / 9 + y / 23) + 2 * smooth_noise(x, y, 10, 408)) % 7
+            if rip < 1:
+                c = rd.step(c, 0.8)               # a ripple's lit crest
+            elif rip < 2:
+                c = rd.step(c, -0.7)              # its lee
+            if noise2(x // 3, y // 2, 406) > 0.975 and k < 0.8 and x % 3 != 2:
+                c = rd.step(REG[4], 0.6) if y % 2 == 0 else rd.step(REG[2], -0.4)   # a stone: lit top, shaded foot
+            rd.put(cv, x, y, c)
         else:  # the front wall: regolith bags in courses, in the shade of the roof's edge
             _bags(cv, x, y, -0.7 - max(0, k) * 0.4, seed=1)
     for (x, y) in berm:  # the break between roof and wall: a lit lip, the shadow under it
@@ -1078,7 +1185,33 @@ def hab_hub() -> Canvas:
             cv.set(x, y, WHITE[2])
     for x in range(px0 + 10, px0 + 18):  # the lamp over it
         cv.set(x, ptop + 9, '#FFE8B0')
+    for x in range(px0 + 3, px0 + pw - 3):  # the hatch's hood, standing out over the lamp
+        cv.set(x, ptop + 7, WHITE[5] if x < px0 + pw - 6 else WHITE[3])
+        cv.set(x, ptop + 8, WHITE[2] if x < px0 + pw - 6 else WHITE[1])
+    for x in range(px0 + 4, px0 + pw - 2):
+        rd.put(cv, x, ptop + 10, rd.step(cv.get(x, ptop + 10), -1.4))   # its shadow
+    frame = rect_set(px0, ptop, pw, pfoot - ptop - 4) - rect_set(px0 + 5, ptop + 11, pw - 10, pfoot - ptop - 14)
+    rd.weather(cv, frame, seed=1071, chips=0.06, chip=(120, 128, 150), dust=REG[3], foot=pfoot - 4, reach=8)
     return cv
+
+
+def _through_hatch(x: int, y: int, w: int, h: int):
+    """The greenhouse seen through the open inner hatch (D13): its glass bright overhead,
+    leafy beds either side of a grated walk running in, the light green and warm."""
+    if y < 6:
+        return rd.mix('#E4F2DC', '#CFE8C8', y / 6)            # the glazing overhead
+    side = min(x, w - 1 - x)
+    walk = side > 4 + (y - 6) // 6                           # the walk narrows into the distance
+    if walk:
+        c = rd.rgb('#9AA898' if y % 3 else '#7E8C80')         # the grating, lit, its bars
+        if y > h - 8:
+            c = rd.step(c, 0.6)
+        return c
+    n = rd.smooth_noise(x, y, 3, 1147)
+    leaf = LEAF[4] if n > 0.72 else LEAF[3] if n > 0.45 else LEAF[2] if n > 0.22 else LEAF[1]
+    if 0.62 < n < 0.65 and y > 12:
+        leaf = '#E89A4A'                                     # a ripening fruit among the leaves
+    return rd.step(leaf, 0.6 - y / h)
 
 
 def airlock_module() -> Canvas:
@@ -1095,18 +1228,42 @@ def airlock_module() -> Canvas:
             if y % 9 == 0:
                 c = WHITE[2] if k < 0.7 else WHITE[1]
             cv.set(x, y, c)
+    for y in range(0, 20):  # D13: the roof's plates of slightly different whites, riveted along the ribs
+        for x in range(2, w - 2):
+            t = ((214, 224, 240), (240, 228, 206), (196, 200, 212))[((x - 2) // 14 + y // 9) % 3]
+            c = cv.get(x, y)
+            out = rd.mix(c, t, 0.6)
+            if rd.smooth_noise(x, y, 4, 1146) < 0.3:
+                out = rd.mix(out, REG[4], 0.35)               # moon dust drifted onto the roof
+            if y % 9 == 1 and x % 3 == 0 and x < w - 6:
+                out = rd.step(out, -2.2)
+            elif y % 9 == 2 and x % 3 == 0 and x < w - 6:
+                out = rd.step(out, -0.8)
+            rd.put(cv, x, y, out)
+    for (x, y) in rect_set(8, 4, 9, 5):  # a vent box on the roof, lit on its top and west
+        rd.put(cv, x, y, '#F2F2EE' if y == 4 or x == 8 else '#5E6476' if x == 16 or y == 8 else
+               ('#8A90A2' if (x - 8) % 2 else '#B8BECC'))
+    for x in range(8, 18):
+        rd.put(cv, x, 9, rd.step(cv.get(x, 9), -1.6))       # its shadow
+    for y in range(2, 19):  # a cable tray along the roof's east side
+        rd.put(cv, w - 10, y, '#4A5064'); rd.put(cv, w - 9, y, RED[2] if y % 5 else RED[1]); rd.put(cv, w - 8, y, '#3E78B8')
+    face = rect_set(2, 20, w - 6, h - 25)
+    rd.panels(cv, face, ('#D4D8E2', '#E4DCC8', '#B8BECC', '#DADCE0', '#C4C0B8'), seed=1144, pw=14, ph=10, light_x=0.08,
+              grime=(120, 112, 112), rust=(150, 120, 96))
     for y in range(20, h - 1):  # its front face with the inner hatch (32 tall: verticality.md 5)
         for x in range(2, w - 2):
-            c = WHITE[3] if x < w - 6 else WHITE[1]
+            if x >= w - 6:
+                rd.put(cv, x, y, rd.step(WHITE[1], -0.6 if x == w - 3 else 0))   # its east side, in shade
             if y > h - 5:
-                c = '#E8C04A' if ((x + y) // 3) % 2 else '#2A2630'
-            cv.set(x, y, c)
+                cv.set(x, y, '#E8C04A' if ((x + y) // 3) % 2 else '#2A2630')
+    rd.weather(cv, rect_set(2, 0, w - 4, h - 5), seed=1145, chips=0.05, chip=(120, 128, 150), dust=REG[3],
+               foot=h - 5, reach=8, scuffs=0.06)
     for y in range(h - 41, h - 9):
         for x in range(12, w - 12):
-            c = '#CFE8C8' if y < h - 34 else '#7FA878' if (x + y) % 4 else '#6E9868'  # the greenhouse's green light
+            c = _through_hatch(x - 12, y - (h - 41), w - 24, 32)  # the greenhouse seen through the hatch
             if x in (12, w - 13):
                 c = WHITE[1]
-            cv.set(x, y, c)
+            rd.put(cv, x, y, c)
     cv.set(w - 9, h - 40, '#4AD07A'); cv.set(w - 8, h - 40, '#2A9A5A')  # the status light
     for y in range(h - 9, h - 5):  # the collar where it meets the dome's sill, clamped
         for x in range(0, w):
@@ -1152,24 +1309,40 @@ def glass_dome() -> Canvas:
         if mer or ring:
             lit = math.cos(th - 2.4) * math.cos(ph) + math.sin(ph) * 0.6
             c = (236, 240, 248, 255) if lit > 0.3 else (176, 184, 200, 255) if lit > -0.3 else (120, 128, 148, 255)
+            if mer and ring and front:
+                c = (255, 230, 170, 255) if lit > 0 else (90, 96, 118, 255)   # a node where struts meet, its bolt cap
             if not front:  # the far struts, seen through the glass: faint, so they never read as cables over it
                 c = (150, 160, 182, 96)
         else:
             # glass: a cool tint, a little stronger on the back half (seen through twice)
             a = 54 if front else 104  # the back half denser: what stands behind the dome reads as behind glass
-            c = (150, 196, 228, a)
+            # D13 (audit: glazing lines only): every pane catches the sky a little differently,
+            # some bluer, some greener or violet, the panes facing up brightest
+            pane = (int(th * 8 / math.pi), int(ph * 8 / math.pi))
+            pv = noise2(*pane, 1181)
+            tint = (150, 196, 228) if pv < 0.4 else (140, 206, 210) if pv < 0.65 else (170, 180, 230) if pv < 0.85 else (196, 214, 236)
+            c = (*tint, a + (14 if front and ph > 0.55 else 0))
             u = math.cos(th - 2.2) * math.cos(ph) + math.sin(ph) * 0.5
-            if front and 0.55 < u < 0.95 and (x + y) % 2 == 0:
-                c = (240, 248, 255, 150)  # the sun's reflection, high on the upper left
+            if front and 0.55 < u < 0.95:
+                c = (240, 248, 255, int(70 + 120 * (u - 0.55)))  # the sun's reflection, high on the upper left, soft
             elif front and u > 0.95:
-                c = (255, 255, 255, 190)
+                c = (255, 255, 255, 200)
+            if front and 0.02 < (th * 8 / math.pi) % 1 < 0.1 and 0.15 < ph < 0.7 and pv > 0.5:
+                c = (255, 255, 255, 120)  # a glint along a pane's edge
         cv.set(x, y, c)
     for i in range(0, 721):  # the sill: a cast ring the glass stands on, its front lit
         th = 2 * math.pi * i / 720
         for k in range(4):
             x, y = int(round(cx + (rx + 1) * math.cos(th))), int(round(cy - (ry + 1) * math.sin(th))) + k
             if math.sin(th) < 0.1 and 0 <= x < w and 0 <= y < h:
-                cv.set(x, y, (232, 228, 238, 255) if k == 0 else (184, 180, 200, 255) if k < 3 else (120, 116, 140, 255))
+                c = (232, 228, 238, 255) if k == 0 else (184, 180, 200, 255) if k < 3 else (120, 116, 140, 255)
+                if k == 1 and i % 24 < 2:
+                    c = (98, 96, 118, 255)            # a bolt in the sill's ring
+                elif k == 2 and i % 24 < 2:
+                    c = (210, 206, 220, 255)
+                elif k == 3 and rd.smooth_noise(x, y, 3, 1183) < 0.4:
+                    c = (*rd.mix(c, REG[3], 0.5), 255)  # moon dust against its foot
+                cv.set(x, y, c)
     return cv
 
 
