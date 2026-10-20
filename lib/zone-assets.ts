@@ -29,6 +29,7 @@ import propBasaltStumps from '@/assets/zones/props/basalt_stumps.png';
 import propBasaltStumpsB from '@/assets/zones/props/basalt_stumps_b.png';
 import propBathhouse from '@/assets/zones/props/bathhouse.png';
 import propBed from '@/assets/zones/props/bed.png';
+import propBeech from '@/assets/zones/props/beech.png';
 import propBeehive from '@/assets/zones/props/beehive.png';
 import propBeehiveB from '@/assets/zones/props/beehive_b.png';
 import propBeehiveBF1 from '@/assets/zones/props/beehive_b_f1.png';
@@ -38,6 +39,7 @@ import propBeehiveF2 from '@/assets/zones/props/beehive_f2.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
 import propBenchEast from '@/assets/zones/props/bench_east.png';
+import propBirch from '@/assets/zones/props/birch.png';
 import propBirdOfParadise from '@/assets/zones/props/bird_of_paradise.png';
 import propBlackRock from '@/assets/zones/props/black_rock.png';
 import propBlackRockSmall from '@/assets/zones/props/black_rock_small.png';
@@ -50,6 +52,7 @@ import propBookshelf from '@/assets/zones/props/bookshelf.png';
 import propBoots from '@/assets/zones/props/boots.png';
 import propBothy from '@/assets/zones/props/bothy.png';
 import propBoulder from '@/assets/zones/props/boulder.png';
+import propBramble from '@/assets/zones/props/bramble.png';
 import propBuoy from '@/assets/zones/props/buoy.png';
 import propBush from '@/assets/zones/props/bush.png';
 import propCabin from '@/assets/zones/props/cabin.png';
@@ -211,6 +214,7 @@ import propHeron from '@/assets/zones/props/heron.png';
 import propHibiscus from '@/assets/zones/props/hibiscus.png';
 import propHitchingRail from '@/assets/zones/props/hitching_rail.png';
 import propHollowTree from '@/assets/zones/props/hollow_tree.png';
+import propHolly from '@/assets/zones/props/holly.png';
 import propHoloMap from '@/assets/zones/props/holo_map.png';
 import propHorse from '@/assets/zones/props/horse.png';
 import propHorseTied from '@/assets/zones/props/horse_tied.png';
@@ -258,6 +262,7 @@ import propNetRack from '@/assets/zones/props/net_rack.png';
 import propNightstand from '@/assets/zones/props/nightstand.png';
 import propNoodleStall from '@/assets/zones/props/noodle_stall.png';
 import propNoticeBoard from '@/assets/zones/props/notice_board.png';
+import propOak from '@/assets/zones/props/oak.png';
 import propObsidian from '@/assets/zones/props/obsidian.png';
 import propObsidianSmall from '@/assets/zones/props/obsidian_small.png';
 import propOldLander from '@/assets/zones/props/old_lander.png';
@@ -292,6 +297,7 @@ import propSailboat from '@/assets/zones/props/sailboat.png';
 import propSaloon from '@/assets/zones/props/saloon.png';
 import propSandstoneArch from '@/assets/zones/props/sandstone_arch.png';
 import propSandstoneOutcrop from '@/assets/zones/props/sandstone_outcrop.png';
+import propSapling from '@/assets/zones/props/sapling.png';
 import propScarecrow from '@/assets/zones/props/scarecrow.png';
 import propScree from '@/assets/zones/props/scree.png';
 import propScreeB from '@/assets/zones/props/scree_b.png';
@@ -786,6 +792,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   basalt_stumps_b: propBasaltStumpsB,
   bathhouse: propBathhouse,
   bed: propBed,
+  beech: propBeech,
   beehive: propBeehive,
   beehive_b: propBeehiveB,
   beehive_b_f1: propBeehiveBF1,
@@ -795,6 +802,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bell_tower: propBellTower,
   bench: propBench,
   bench_east: propBenchEast,
+  birch: propBirch,
   bird_of_paradise: propBirdOfParadise,
   black_rock: propBlackRock,
   black_rock_small: propBlackRockSmall,
@@ -807,6 +815,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   boots: propBoots,
   bothy: propBothy,
   boulder: propBoulder,
+  bramble: propBramble,
   buoy: propBuoy,
   bush: propBush,
   cabin: propCabin,
@@ -968,6 +977,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   hibiscus: propHibiscus,
   hitching_rail: propHitchingRail,
   hollow_tree: propHollowTree,
+  holly: propHolly,
   holo_map: propHoloMap,
   horse: propHorse,
   horse_tied: propHorseTied,
@@ -1015,6 +1025,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   nightstand: propNightstand,
   noodle_stall: propNoodleStall,
   notice_board: propNoticeBoard,
+  oak: propOak,
   obsidian: propObsidian,
   obsidian_small: propObsidianSmall,
   old_lander: propOldLander,
@@ -1049,6 +1060,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   saloon: propSaloon,
   sandstone_arch: propSandstoneArch,
   sandstone_outcrop: propSandstoneOutcrop,
+  sapling: propSapling,
   scarecrow: propScarecrow,
   scree: propScree,
   scree_b: propScreeB,
