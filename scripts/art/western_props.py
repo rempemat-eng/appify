@@ -20,6 +20,7 @@ from materials import MATERIALS, WOOD, STONE, RED, WTR, GOLD  # noqa: E402
 DESERT, CACTUS, ADOBE = (MATERIALS[k] for k in ('desert', 'cactus', 'adobe'))
 IRON = MATERIALS['iron']
 BLEACHED = MATERIALS['bleached']  # sun-bleached boards
+ROPE = MATERIALS['rope']
 PAD = 4
 
 
@@ -705,44 +706,122 @@ def corral_gate() -> Canvas:
 
 
 def tent() -> Canvas:
-    """A caravan tent, 72 x 48: dark woven goat-hair cloth pitched on poles, seen from
-    above at the angle of the rest, its front panel rolled up to show the shade inside,
-    guy ropes pegged in the sand."""
+    """A caravan tent, 72 x 48 (audit 20 Oct, REDRAW: "reads as two grey rocks"): a ridge
+    tent of woven goat-hair cloth in long panels, dark brown with cream bands, pitched on
+    a ridge pole carried by two uprights whose tops stand proud of it. Seen from the
+    front and above like the rest: the front slope runs down from the ridge to the eave,
+    sagging a little between the poles; the west gable end, facing the light, is a lit
+    triangle, the east end falls into shade. The middle of the front is rolled up to the
+    eave on its ties, showing the shade inside with rugs and a cushion. Guy ropes run from
+    the eave's corners and the poles to pegs in the sand, each peg with its shadow."""
     w, h = 72, 48
     cv = Canvas(w, h, pad=PAD)
-    cloth = ['#2A2220', '#3E3330', '#56484A', '#6E5E5C', '#8A7A72']
+    cloth = ['#241C1A', '#36292A', '#4A3A38', '#5E4C48', '#76625A', '#8E7A6E']
+    band = ['#9A8A6E', '#C8B892', '#E2D4AE']
     poles = (22, 50)
-    for x in range(6, w - 6):
-        near = min(poles, key=lambda p: abs(x - p))
-        d = abs(x - near)
-        top = 4 + min(9, d * d // 22)  # the cloth sags between the poles
-        if x < 14 or x > w - 15:
-            top = max(top, 10 + abs(x - (14 if x < 14 else w - 15)))  # and falls away at the ends
-        for y in range(top, 30):
-            lit = x < near  # each peak's face towards the upper left catches the sun
-            c = cloth[4] if lit and d < 6 and y < top + 6 else cloth[3] if lit else cloth[2]
-            if y > 22:
-                c = cloth[2] if lit else cloth[1]
-            if (x * 2 + y * 3) % 13 == 0:
-                c = cloth[1] if c not in (cloth[1], cloth[0]) else cloth[0]  # the weave
-            if (x // 8) % 2 and y > top + 1 and (y - top) % 9 == 0:
-                c = cloth[0]  # seams between the woven strips
-            cv.set(x, y, c)
-        cv.set(x, top, cloth[4] if x < near else cloth[3])
-    for x in range(8, w - 8):  # the rolled front edge, white-striped
-        cv.set(x, 30, '#E8D8B8' if (x // 3) % 2 else cloth[3])
-        cv.set(x, 31, cloth[2])
-    for y in range(32, 42):  # the shade inside, rugs and a cushion
-        for x in range(12, w - 12):
-            c = '#1E1614' if y < 34 else ('#8A3A2A' if (x // 4 + y // 4) % 2 else '#B8693F')
-            cv.set(x, y, c)
-    for (x, y) in oval(24, 37, 4, 2):
-        cv.set(x, y, GOLD[3] if x < 24 else GOLD[2])
-    for px in (12, 36, w - 13):
-        gp.post(cv, px, 28, 42, w=1, ramp=WOOD)
-    for (x0, y0, x1, y1) in ((6, 12, 1, 4), (w - 7, 12, w - 2, 4), (6, 26, 1, 40), (w - 7, 26, w - 2, 40)):
-        for t in range(9):
-            cv.set(int(x0 + (x1 - x0) * t / 8), int(y0 + (y1 - y0) * t / 8), MATERIALS['rope'][2])
+    def ridge(x):  # the ridge sags between the two uprights and drops a little past them
+        if poles[0] <= x <= poles[1]:
+            return 9 + round(3 * (1 - ((x - 36) / 14) ** 2))
+        return 9 + (1 if min(abs(x - poles[0]), abs(x - poles[1])) > 8 else 0)
+    eave = 30
+    gx0, gx1 = 8, w - 8   # where the slope's ends meet the gables
+    # the west gable end: a triangle facing the light
+    for y in range(9, eave + 1):
+        xl = gx0 - (y - 9) * 6 // 21
+        for x in range(xl, gx0 + 1):
+            c = cloth[5] if x < xl + 2 else cloth[4]
+            if (y - 9) % 7 == 3:
+                c = band[1] if x > xl + 1 else band[2]
+            rd.put(cv, x, y, c)
+    # the east gable end, in shade
+    for y in range(9, eave + 1):
+        xr = gx1 + (y - 9) * 6 // 21
+        for x in range(gx1, xr + 1):
+            c = cloth[1] if x > xr - 2 else cloth[2]
+            if (y - 9) % 7 == 3:
+                c = band[0]
+            rd.put(cv, x, y, c)
+    # the front slope: panels running down from the ridge, banded, sagging between poles
+    for x in range(gx0, gx1 + 1):
+        top = ridge(x)
+        panel = (x - gx0) // 9
+        for y in range(top, eave + 1):
+            t = (y - top) / max(1, eave - top)
+            sag = abs(x - 36) < 10 and 0.3 < t < 0.7
+            k = 1.2 - 1.6 * t - (x - gx0) / (gx1 - gx0) * 0.8 - (0.5 if sag else 0)
+            c = rd.step(cloth[3], k + (0.2 if panel % 2 else -0.2))
+            yy = round(t * 21)                                  # bands follow the drape
+            if yy % 8 in (4, 5):
+                c = rd.step(band[1], k - 0.4)                   # the woven cream bands
+                if yy % 8 == 5:
+                    c = rd.step(band[0], k - 0.6)
+            if (x - gx0) % 9 == 0 and y > top:
+                c = rd.step(c, -1.4)                            # the seam between panels
+            elif (x - gx0) % 9 == 1 and y > top:
+                c = rd.step(c, 0.5)
+            if noise2((x + y) // 3, y, 645) < 0.08:
+                c = rd.step(c, -0.8)                            # the weave's coarse texture, in short runs
+            if t < 0.35 and rd.smooth_noise(x, y, 6, 646) > 0.55:
+                c = rd.mix(c, '#A89888', 0.3)                   # faded by the sun near the ridge
+            if t > 0.75 and rd.smooth_noise(x, y, 4, 647) < 0.4:
+                c = rd.mix(c, DESERT[3], 0.35)                  # sand blown up onto the hem
+            rd.put(cv, x, y, c)
+        rd.put(cv, x, top, rd.step(cloth[5], 0.8 - (x - gx0) / (gx1 - gx0) * 1.4))   # the ridge, lit along its crest
+    for (px0, py0, pw, ph) in ((14, 18, 5, 4), (52, 14, 4, 5)):  # patches sewn over worn cloth, their stitches
+        for y in range(py0, py0 + ph):
+            for x in range(px0, px0 + pw):
+                edge = x in (px0, px0 + pw - 1) or y in (py0, py0 + ph - 1)
+                rd.put(cv, x, y, rd.step('#7A6656', -0.6 * (x > 40)) if not edge else
+                       (band[1] if (x + y) % 2 else rd.step('#7A6656', -1)))
+    for px in poles:  # the uprights' tops standing proud of the ridge, a knob on each
+        for y in range(ridge(px) - 4, ridge(px) + 1):
+            rd.put(cv, px, y, WOOD[4]); rd.put(cv, px + 1, y, WOOD[2])
+        rd.put(cv, px, ridge(px) - 5, WOOD[4]); rd.put(cv, px + 1, ridge(px) - 5, WOOD[3])
+    # the hem along the eave and its shadow on the sand
+    for x in range(gx0 - 6, gx1 + 7):
+        rd.put(cv, x, eave + 1, cloth[1])
+        rd.put(cv, x, eave + 2, rd.step(DESERT[2], -1.6))
+    # the open front: rolled up to the eave on ties, the shade inside, rugs and a cushion
+    ox0, ox1 = 26, 47
+    for x in range(ox0 - 1, ox1 + 1):  # the roll: a cylinder of cloth, lit on top
+        rd.put(cv, x, eave - 3, band[2] if (x // 3) % 2 else cloth[4])
+        rd.put(cv, x, eave - 2, band[1] if (x // 3) % 2 else cloth[3])
+        rd.put(cv, x, eave - 1, cloth[1])
+    for tx in (ox0 + 2, ox1 - 3):
+        rd.put(cv, tx, eave - 3, ROPE[3]); rd.put(cv, tx, eave - 2, ROPE[2]); rd.put(cv, tx, eave - 1, ROPE[1])
+    for y in range(eave, h - 9):
+        for x in range(ox0, ox1):
+            if y < eave + 3:
+                c = (30, 22, 20) if x < ox1 - 4 else (40, 30, 28)     # the shade deep inside
+            else:
+                u, v = (x - ox0), (y - eave - 3)
+                rug = '#8A3A2A' if ((u // 4) + (v // 2)) % 2 else '#B8693F'
+                if v in (0, 5) or u in (0, ox1 - ox0 - 1):
+                    rug = '#E2C27A'                              # its border
+                if (u + v * 2) % 7 == 0 and 0 < v < 6:
+                    rug = '#2E4A6A'                              # a woven lozenge
+                c = rd.step(rug, -0.9 if y < eave + 6 else -0.3)
+            rd.put(cv, x, y, c)
+    for (x, y) in oval(32, eave + 5, 3.5, 2):
+        rd.put(cv, x, y, GOLD[4] if x < 31 and y < eave + 6 else GOLD[3] if x < 34 else GOLD[2])   # a cushion
+    # a lamp hung in the opening, a water skin on the post, saddle bags by the door
+    rd.put(cv, 40, eave, IRON[2]); rd.put(cv, 40, eave + 1, '#F2C87A'); rd.put(cv, 41, eave + 1, '#C88A3A'); rd.put(cv, 40, eave + 2, IRON[1])
+    for (x, y) in oval(ox1 + 2, eave + 5, 1.6, 2.6):
+        rd.put(cv, x, y, '#8A5A34' if x <= ox1 + 2 else '#5E3A22')
+    for (x, y) in oval(ox0 - 4, h - 9, 3, 2):
+        rd.put(cv, x, y, '#A8683A' if y < h - 9 else '#7A4A28')
+    rd.put(cv, ox0 - 5, h - 10, '#D8A868'); rd.put(cv, ox0 - 4, h - 11, ROPE[2])
+    for px in (ox0 - 1, ox1):
+        for y in range(eave - 1, h - 9):
+            rd.put(cv, px, y, WOOD[3] if px == ox0 - 1 else WOOD[1])
+    # the guy ropes and their pegs, from the eave's corners and the gable peaks
+    for (x0, y0, x1, y1) in ((gx0 - 6, eave, 1, h - 3), (gx1 + 6, eave, w - 2, h - 3),
+                             (gx0 - 1, 12, 0, 4), (gx1 + 1, 12, w - 1, 4)):
+        n = max(abs(x1 - x0), abs(y1 - y0))
+        for t in range(n + 1):
+            x, y = round(x0 + (x1 - x0) * t / n), round(y0 + (y1 - y0) * t / n)
+            rd.put(cv, x, y, ROPE[2] if t % 3 else ROPE[1])
+        rd.put(cv, x1, y1, WOOD[4]); rd.put(cv, x1, y1 + 1, WOOD[2]); rd.put(cv, x1 + 1, y1 + 1, rd.step(DESERT[2], -1.6))
     return cv
 
 
