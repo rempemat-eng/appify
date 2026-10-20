@@ -13,6 +13,7 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 | [roadmap.md](roadmap.md)                     | What comes next, open questions and ideas we have not built                                                                                                                       |
 | [home-hub.md](home-hub.md)                   | **The home hub (19 Oct):** the garden as a place in the one world, on one screen with the valley; why the old handoff popped, the design and its phases                           |
 | [world-rules.md](world-rules.md)             | **The world's rulebook (18 Oct):** what each kind of ground means, what may stand on it, how neighbouring places join, corridors, detail derived from logic, and the bug protocol |
+| [world-unlocks.md](world-unlocks.md)         | **Opening the world (proposal, 20 Oct):** ways (lines, areas, shortcuts, comforts) opened by time away or GRASS, pacing, save and store, open questions for Matt                  |
 
 ## Matt's direction (October 2026)
 
