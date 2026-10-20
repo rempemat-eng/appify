@@ -988,6 +988,8 @@ Spots are reserved and drawn as small rings on `continent-labelled.png`. They ho
 
 ## 15. Order of work and owners
 
+**The hand-over:** `regions/` holds one brief per region and owner, written from this plan: each region's footprint in world pixels, its places, transitions, tiers, content with coordinates, edges in layers, obstacles and loops, the benchmark checks to hold on drawn art, the kits to use and today's zones it replaces or keeps ([regions/README.md](regions/README.md)).
+
 | Step | Lane | Work                                                                                                                                                                                                                                                                                                                                       | Needs                   |
 | ---- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------- |
 | P0   | A    | The toolkit lands (`terrace.py`, `scale.py`, tiers, the facade composer, `fore.png`)                                                                                                                                                                                                                                                       |                         |
