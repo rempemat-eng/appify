@@ -5,6 +5,7 @@ others work on the rest of the world. It draws with zones.py's helpers; zones.py
 imports it just before main()."""
 from __future__ import annotations
 
+import functools
 import math  # noqa: F401
 
 import numpy as np
@@ -209,23 +210,104 @@ def gthick(zone: str, gpoints, radius: float) -> set:
     return {(x, y) for (x, y) in pts if 0 <= x < W and 0 <= y < H}
 
 
+# Fir Hollow's clumps of firs: (centre x, foot y, spread x, spread y, sizes from the back)
+HOLLOW_CLUMPS = [
+    (22, 120, 18, 26, 'old mid sap'), (300, 150, 16, 22, 'mid young sap'), (212, 104, 10, 10, 'young'),
+    (52, 222, 16, 14, 'mid young'), (206, 214, 16, 12, 'young sap'),
+    (24, 300, 22, 26, 'old young mid old sap'), (210, 300, 22, 22, 'old young mid sap'),
+    (296, 268, 20, 40, 'old mid young sap'), (28, 392, 24, 30, 'old young old mid young sap'),
+    (220, 410, 20, 16, 'old mid young'), (292, 440, 22, 40, 'mid old young mid sap'),
+    (36, 474, 30, 18, 'old mid young mid sap'), (204, 486, 44, 14, 'old mid young old mid sap'),
+    (84, 360, 10, 10, 'sap'), (64, 150, 10, 10, 'sap'), (268, 220, 8, 8, 'sap'),
+    (214, 172, 10, 10, 'young sap'), (78, 196, 10, 14, 'old sap'),
+    (60, 274, 10, 10, 'young'), (290, 360, 14, 10, 'young sap'), (8, 440, 6, 20, 'young mid'),
+]
+# hollows in the slope where snow lies late (centre x, y, half width, half height)
+HOLLOW_DRIFTS = [(150, 196, 22, 8), (98, 262, 16, 6), (262, 112, 14, 6)]
+
+
+def _scallop(gx: int) -> float:
+    """A snow edge's scallops: rounded bites 8 px apart, crisp (no noise)."""
+    return abs(math.sin(gx * math.pi / 8))
+
+
+@functools.lru_cache(maxsize=1)
+def _hollow_snow():
+    """Where snow lies in Fir Hollow (zone px): a snowfield over the top of the slope whose
+    edge comes down to the ridge's snow bank at the east seam, and drifts in the sheltered
+    places: on the north side of each fir clump and rock high on the slope (out of the sun,
+    behind them), and in a few hollows. Edges are scalloped and crisp, never noise."""
+    m = np.zeros((H, W), bool)
+    ox, oy = origin('hollow')
+    for x in range(W):
+        gx = x + ox
+        e = 62 + 44 * smooth_noise(gx, 0, 70, 851)                  # the snowfield's lower edge
+        e += (214 - e) * max(0.0, min(1.0, (x - 236) / 70)) ** 1.5    # down to the ridge's bank
+        e += 3 * _scallop(gx)
+        m[:max(0, int(e)), x] = True
+    shelters = [(cx, cy - ry * 0.6 - 3, rx * 0.9 + 8, 6 + ry * 0.2) for (cx, cy, rx, ry, _s) in HOLLOW_CLUMPS
+                if cy < 330 and 'old' in _s or cy < 250]
+    shelters += [(196, 40, 16, 5), (40, 98, 12, 5)]                  # behind the ibex's rock, the stone
+    shelters += [(x, y, a, b) for (x, y, a, b) in HOLLOW_DRIFTS]
+    for i, (cx, cy, rx, ry) in enumerate(shelters):
+        # a drift is two or three overlapping lobes, flat on top, never one pill
+        lobes = [(cx, cy, rx, ry * 0.7)]
+        for k in range(1 + int(noise2(i, 0, 853) * 2.5)):
+            lobes.append((cx + (noise2(i, k, 854) - 0.5) * rx * 1.2, cy + (noise2(i, k, 855) - 0.3) * ry,
+                          rx * (0.4 + 0.3 * noise2(i, k, 856)), ry * (0.6 + 0.4 * noise2(i, k, 857))))
+        for (lx, ly, lrx, lry) in lobes:
+            for y in range(int(ly - lry) - 3, int(ly + lry) + 4):
+                for x in range(int(lx - lrx) - 3, int(lx + lrx) + 4):
+                    if 0 <= x < W and 0 <= y < H:
+                        d = ((x - lx) / lrx) ** 2 + ((y - ly) / lry) ** 2
+                        if d < 1 + 0.35 * _scallop(x + ox) * (1 if y > ly else 0.3):
+                            m[y, x] = True
+    return m
+
+
 def cover(gx: int, gy: int) -> bool:
-    """Does snow lie here? Patches in the hollow's upper slope, more the higher it goes,
-    and everywhere above the hollow (the lake's tier and up)."""
+    """Does snow lie here? Everywhere above the hollow (the lake's tier and up); in the
+    hollow, the snowfield over the top of the slope and drifts in sheltered places
+    (_hollow_snow)."""
     if gy < -576:
         return True
-    a = (-gy) / 576  # 0 at the hollow's foot, 1 at its top
-    return smooth_noise(gx, gy, 26, 851) < (a - 0.38) * 1.7
+    ox, oy = origin('hollow')
+    x, y = gx - ox, gy - oy
+    if 0 <= x < W and 0 <= y < H:
+        return bool(_hollow_snow()[y, x])
+    return False
 
 
 def turf_or_snow(cv: Canvas, zone: str, frame: int):
     """The hollow's ground: alpine turf, with snow lying in patches up the slope."""
     ox, oy = origin(zone)
     ground.valley(cv, zone, frame)
+    m = _hollow_snow() if zone == 'hollow' else None
+    SN = MATERIALS['snow']
     for y in range(H):
         for x in range(W):
-            if cover(x + ox, y + oy):
-                cv.set(x, y, snow_px(x + ox, y + oy, 852))
+            if not (m[y, x] if m is not None else cover(x + ox, y + oy)):
+                continue
+            c = snow_px(x + ox, y + oy, 852)
+            if m is not None and y >= 40 + 40 * smooth_noise(x + ox, 0, 23, 858):
+                # below the lake's seam the lying snow is calm: two whites in broad soft
+                # patches, no blotches (the snowfield's top rows still match the lake's snow)
+                c = SN[3] if smooth_noise(x + ox, y + oy, 30, 859) > 0.38 else SN[2]
+            if m is not None:
+                # crisp edges: a lit rim on the north and west, a bluish shadow side to the
+                # south and east (the drift's face away from the light)
+                se = [k for k in (1, 2) if (y + k < H and not m[y + k, x]) or (x + k < W and not m[y, x + k])]
+                nw = (y > 0 and not m[y - 1, x]) or (x > 0 and not m[y, x - 1])
+                if se:
+                    c = SN[0] if se[0] == 1 else SN[1]
+                elif nw:
+                    c = '#FFFFFF' if (x + y) % 3 else SN[3]
+            cv.set(x, y, c)
+    if m is not None:      # the turf just below and east of a drift: a contact shadow
+        for y in range(1, H):
+            for x in range(1, W):
+                if not m[y, x] and (m[y - 1, x] or m[y, x - 1]):
+                    style.darken(cv, x, y)
 
 
 def water(cv: Canvas, pts: set, ox: int, oy: int, frozen_rim: bool = True):
@@ -668,13 +750,12 @@ HOLLOW_NOTCH = 256        # the lower ground under the face runs from the west e
 
 
 def _hollow_water():
-    """The hollow's stream on the soft grid, as cells for terrace.py: 16 px runs (two
-    cells) with rounded turns, down the east side, a jog round the rocks, west under the
-    trees to the notch, over the fall and into its pool. Its two ends meet water off the
-    grid and are drawn by _water_seams()."""
+    """The hollow's stream on the soft grid, as cells for terrace.py: a 16 px channel (two
+    cells) in three long reaches with two soft bends (terrace water_round 8): straight down
+    the east side from the lake's outflow, west under the trees to the notch, over the
+    fall and into its pool. Its two ends meet water off the grid (_water_seams())."""
     fc = HOLLOW_FALL[0] // 8
-    return [(30, 0, 32, 23), (30, 21, 34, 23), (32, 21, 34, 38), (30, 36, 34, 38), (30, 36, 32, 57),
-            (fc, 55, 32, 57), (fc, 55, fc + 2, 63), (fc - 2, 67, fc + 4, 70)]
+    return [(30, 0, 32, 38), (31, 36, 33, 57), (fc, 55, 33, 57), (fc, 55, fc + 2, 63), (fc - 2, 67, fc + 4, 70)]
 
 
 def _hx(c) -> str:
@@ -727,12 +808,64 @@ def _water_seams(cv, base, t, water):
                 cv.set(x, y, c)
 
 
+def _pool_rim(cv, t, water, pool):
+    """The plunge pool's rim (Claude A, 20 Oct: not a plain rounded rectangle): rounded
+    stones of different sizes set along its south and side shores, half in the water so the
+    water's edge is uneven, lit on their upper left with moss on some tops, a dark wet line
+    where each meets the water; packed earth between them. The fall's side (north) is the
+    face's foot; the outlet south is left open."""
+    ST, SO = MATERIALS['stone'], T.SOIL
+    ys = [y for (_x, y) in pool]
+    xs = [x for (x, _y) in pool]
+    py0, py1, px0, px1 = min(ys), max(ys), min(xs), max(xs)
+    edge = sorted((x, y) for (x, y) in pool if y > py0 + 3 and any((x + dx, y + dy) not in pool
+                  for (dx, dy) in ((1, 0), (-1, 0), (0, 1))))
+    cx, cy = (px0 + px1) / 2, (py0 + py1) / 2
+    edge.sort(key=lambda p: math.atan2(p[1] - cy, p[0] - cx))
+    k, placed = 0, []
+    while k < len(edge):
+        x, y = edge[k]
+        if 76 <= x <= 88 and y >= py1 - 2:                  # the outlet stays open
+            k += 3
+            continue
+        rx = 3.0 + noise2(k, 1, 906) * 2.2
+        ry = 2.0 + noise2(k, 2, 906) * 1.2
+        ox_ = 1 if x > cx + 4 else -1 if x < cx - 4 else 0
+        oy_ = 1 if y >= py1 - 1 else 0
+        sx, sy = x + ox_ * 1.0, y + oy_ * 1.0                 # half on the shore, half in the water
+        placed.append((sx, sy, rx, ry, k))
+        k += 5 + int(noise2(k, 3, 906) * 4)
+    # packed earth round the shore first, 1 to 2 px wide
+    for (x, y) in edge:
+        for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (2, 0), (-2, 0), (0, 2)):
+            q = (x + dx, y + dy)
+            if q in pool or not (0 <= q[0] < W and 0 <= q[1] < H) or t.kind[q[1], q[0]] != T.TOP:
+                continue
+            if abs(dx) == 2 or dy == 2:
+                if noise2(q[0] // 2, q[1], 907) > 0.5:
+                    continue
+            cv.set(*q, SO[2] if (q[0] + q[1]) % 3 else SO[1])
+    for (sx, sy, rx, ry, k) in placed:
+        pts = [(x, y) for y in range(int(sy - ry) - 1, int(sy + ry) + 2) for x in range(int(sx - rx) - 1, int(sx + rx) + 2)
+               if ((x + 0.5 - sx) / rx) ** 2 + ((y + 0.5 - sy) / ry) ** 2 <= 1 and 0 <= x < W and 0 <= y < H
+               and t.kind[y, x] == T.TOP]
+        P_ = set(pts)
+        for (x, y) in pts:
+            v = -((x + 0.5 - sx) / rx * 0.7 + (y + 0.5 - sy) / ry * 0.8)
+            c = ST[4] if v > 0.55 else ST[3] if v > 0 else ST[2] if v > -0.5 else ST[1]
+            if (x, y + 1) not in P_:
+                c = ST[0] if (x, y + 1) in pool else ST[1]   # wet where it meets the water
+            if (x, y - 1) not in P_ and v > 0 and noise2(k, x, 908) > 0.55:
+                c = ALPINE[2]                                # moss on its top
+            cv.set(x, y, c)
+            water.discard((x, y))
+            pool.discard((x, y))
+
+
 def _grid_path(T, rects, r=6):
-    """A path of orthogonal runs (rects in zone px), its corners rounded."""
-    m = np.zeros((H, W), bool)
-    for (x0, y0, x1, y1) in rects:
-        m[max(0, y0):min(H, y1), max(0, x0):min(W, x1)] = True
-    m = T.rounded(m, r, 4)
+    """A path of orthogonal runs (rects in zone px on the 4 px grid), its turns rounded by r
+    px (terrace.soft_rects: any radius, however narrow the run)."""
+    m = T.soft_rects(rects, W, H, r)
     return {(int(x), int(y)) for (y, x) in zip(*np.nonzero(m))}
 
 
@@ -756,12 +889,14 @@ def hollow(frame: int = 0):
     base = Canvas(W, H)
     base.paste(cv, 0, 0)
     # ---- the paths, on the grid (16 px footpaths, dog-legs with rounded turns)
-    way_in = _grid_path(T, [(168, 340, W + 8, 356), (168, 340, 184, 412), (136, 396, 184, 412)])
-    climb = _grid_path(T, [(136, 312, 152, 412), (96, 312, 152, 328), (96, 240, 112, 328), (96, 240, 160, 256),
-                           (144, 184, 160, 256), (112, 184, 160, 200), (112, 128, 128, 200), (112, 128, 180, 144),
-                           (164, -8, 180, 144)])
-    spur = _grid_path(T, [(136, 396, 152, 470)])
-    lookout = _grid_path(T, [(112, 464, 168, 500)], r=8)
+    # four runs from the ridge to the lake: west along the contour from the ridge's port,
+    # over the footbridge, to the foot of the slope; north up it under the firs; east along
+    # the snowfield's edge to the outflow's side; north to the lake. Turns are soft (12 px).
+    way_in = _grid_path(T, [(120, 340, W + 8, 356)], r=12)
+    climb = _grid_path(T, [(120, 144, 136, 356), (120, 144, 180, 160), (164, -8, 180, 160), (120, 340, 152, 356)], r=12)
+    # and one spur south from the junction through the clearing to the lookout by the fall
+    spur = _grid_path(T, [(136, 340, 152, 470)], r=12)
+    lookout = _grid_path(T, [(116, 468, 156, 496)], r=12)
     clearing = _grid_path(T, [(112, 380, 200, 428)], r=10)
     trail = way_in | climb | spur
     wet_cells = _hollow_water()
@@ -805,7 +940,8 @@ def hollow(frame: int = 0):
     for r in range(HOLLOW_RIM // 8, H // 8):
         for c in range(HOLLOW_NOTCH // 8):
             tiers[r][c] = 0
-    t = T.build(cv, tiers, face=32, material='earth', water=wet_cells, tops=False, seed=17, turf=ALPINE)
+    t = T.build(cv, tiers, face=32, material='earth', water=wet_cells, tops=False, seed=17, turf=ALPINE,
+                water_round=12, wobble=2)
     water = set(t.water)
     _water_seams(cv, base, t, water)
     img = np.array(cv.img.convert('RGB'))
@@ -816,15 +952,6 @@ def hollow(frame: int = 0):
     # ---- the lower ground under the face: woodland floor in the escarpment's shade,
     # mossy stones round the pool, ferns in the damp
     pool_wet = {(x, y) for (x, y) in water if y >= HOLLOW_RIM + 32}
-    for (x, y) in sorted(pool_wet):  # a chain of stones along the pool's low (south and side) shore
-        for (dx, dy) in ((0, 1), (-1, 0), (1, 0)):
-            q = (x + dx, y + dy)
-            if q in pool_wet or not (0 <= q[0] < W and 0 <= q[1] < H) or t.kind[q[1], q[0]] != T.TOP:
-                continue
-            if noise2(q[0] // 3, q[1] // 2, 899) > 0.35:
-                cv.set(*q, ST[3] if dx <= 0 and dy == 0 else ST[2] if dy == 0 else ST[1])
-                if q[1] + 1 < H and (q[0], q[1] + 1) not in pool_wet:
-                    cv.set(q[0], q[1] + 1, ST[1])
     # tall grass and tufts gathered along the face's foot and round the pool, in the shade's tones
     low = np.zeros((H, W), bool)
     low[HOLLOW_RIM + 33:H, 0:HOLLOW_NOTCH] = True
@@ -844,6 +971,7 @@ def hollow(frame: int = 0):
             style.darken(cv, x, y)
             if v > 0.62:                      # deeper pools under the crowns closing the seam
                 style.darken(cv, x, y, (0.86, 0.88, 0.9))
+    _pool_rim(cv, t, water, pool_wet)
     for i in range(7):                # ferns on the lower ground, clumped near the water
         fx = 40 + int(noise2(i, 1, 900) * 200)
         fy = HOLLOW_RIM + 40 + int(noise2(i, 2, 900) * 28)
@@ -887,7 +1015,7 @@ def hollow(frame: int = 0):
                 cv.set(x + k, y - (1 if k == 1 else 0), ALPINE[2 if k else 3])
                 cv.set(x + k, y + 1, ALPINE[1])
     # ---- the footbridges: the way in over the stream, the spur over it to the lookout
-    deck = foot_bridge(cv, 234, 337, 28, 22, vertical=False)
+    deck = foot_bridge(cv, 242, 337, 28, 22, vertical=False)
     deck |= foot_bridge(cv, 133, 434, 22, 30, vertical=True)
     open_cells = {(x // 4, y // 4) for (x, y) in deck if 136 <= x < 152 or 340 <= y < 356}
     blocked = set(t.blocked) | rocks
@@ -902,11 +1030,11 @@ def hollow(frame: int = 0):
     # ---- the firs: clumps of three to seven, crowns overlapping, two or three deep along
     # the west edge and the rim, thinning and snowier up the slope, saplings and stumps
     sm = Z.sprites()
-    stands = {'ridge': (316, 348), 'lake': (172, 6), 'clearing': (160, 404), 'falls': (128, 488)}
+    stands = {'ridge': (316, 348), 'lake': (172, 6), 'clearing': (160, 404), 'falls': (130, 484)}
     keep_clear = set(trail) | set(lookout) | set(clearing) | set(blocked) | deck
     for (sx, sy) in stands.values():
         keep_clear |= {(sx + dx, sy + dy) for dx in range(-14, 15) for dy in range(-12, 8)}
-    keep_clear |= {(x, y) for x in range(136, 164) for y in range(100, 128)}   # the trail post
+    keep_clear |= {(x, y) for x in range(182, 206) for y in range(126, 164)}   # the trail post
     keep_clear |= {(x, y) for x in range(190, 236) for y in range(36, 58)}     # the ibex's rock
     objects = []
     feet = []
@@ -933,23 +1061,12 @@ def hollow(frame: int = 0):
 
     def kind_at(fx, fy, size):
         snowy = cover(fx + ox, fy + oy) or fy < 210
-        base = {'old': 'fir_old', 'mid': 'pine', 'young': 'fir_young', 'sap': 'fir_sapling'}[size]
-        if snowy:
-            return {'pine': 'snowy_pine'}.get(base, base + '_snow')
-        return base
+        v = noise2(fx, fy, 903)
+        base = {'old': 'fir_tall' if v > 0.6 else 'fir_old', 'mid': 'fir_tall' if v > 0.5 else 'fir_young',
+                'young': 'fir_young', 'sap': 'fir_sapling'}[size]
+        return base + '_snow' if snowy else base
 
-    # (centre x, foot y, spread x, spread y, sizes): sizes from the back of the clump
-    clumps = [
-        (22, 120, 18, 26, 'old mid sap'), (300, 150, 16, 22, 'mid young sap'), (212, 104, 10, 10, 'young'),
-        (52, 222, 16, 14, 'mid young'), (206, 214, 16, 12, 'young sap'),
-        (24, 300, 22, 26, 'old young mid old sap'), (210, 300, 22, 22, 'old young mid sap'),
-        (296, 268, 20, 40, 'old mid young sap'), (28, 392, 24, 30, 'old young old mid young sap'),
-        (220, 410, 20, 16, 'old mid young'), (292, 440, 22, 40, 'mid old young mid sap'),
-        (36, 474, 30, 18, 'old mid young mid sap'), (204, 486, 44, 14, 'old mid young old mid sap'),
-        (84, 360, 10, 10, 'sap'), (64, 150, 10, 10, 'sap'), (268, 220, 8, 8, 'sap'),
-        (214, 172, 10, 10, 'young sap'), (78, 196, 10, 14, 'old sap'), (128, 300, 6, 6, 'young'),
-        (60, 274, 10, 10, 'young'), (290, 360, 14, 10, 'young sap'), (8, 440, 6, 20, 'young mid'),
-    ]
+    clumps = HOLLOW_CLUMPS
     n = 0
     for ci, (cx, cy, rx, ry, sizes) in enumerate(clumps):
         for k, size in enumerate(sizes.split()):
@@ -964,13 +1081,16 @@ def hollow(frame: int = 0):
     # stumps and a fallen trunk among them; the clearing's log, stump and toadstools
     extras = [('stump-1', 'stump', 60, 432), ('stump-2', 'stump', 222, 244), ('stump-3', 'stump', 18, 200),
               ('log', 'mossy_log', 74, 404), ('stump', 'stump', 190, 416), ('mush', 'mushroom_ring', 192, 366),
-              ('fern-1', 'fern', 64, 448), ('fern-2', 'fern', 176, 470), ('post', 'trail_post', 136, 88),
+              ('fern-1', 'fern', 64, 448), ('fern-2', 'fern', 176, 470), ('post', 'trail_post', 186, 126),
               ('ibex', 'ibex', 192, 14), ('stone-1', 'stone', 40, 104), ('cotton', 'cotton_grass', 44, 482),
-              ('stone-2', 'stone', 160, 484), ('stone-3', 'stone', 4, 486),
+              ('stone-3', 'stone', 4, 486),
               ('boulder-1', 'boulder', 244, 505), ('stone-4', 'stone', 282, 517), ('stone-5', 'stone', 300, 506)]
     # (nothing lower than y 530: the Woodland's trees rise over the hollow's last 44 px,
     # zones.check_overhangs)
     walkway = set(trail) | set(lookout) | deck
+    # the lookout's reason: a bench facing west to the fall and a cairn on the lip by the drop
+    objects.append(('lookout-bench', 'bench_west', 128, 462))
+    objects.append(('lookout-cairn', 'cairn', 150, 460))
     for (oid, key, x, y) in extras:
         sp = sm[key]
         fx, fy = x + sp.ox + sp.w // 2, y + sp.oy + sp.h

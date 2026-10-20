@@ -39,6 +39,7 @@ import propBeehiveF2 from '@/assets/zones/props/beehive_f2.png';
 import propBellTower from '@/assets/zones/props/bell_tower.png';
 import propBench from '@/assets/zones/props/bench.png';
 import propBenchEast from '@/assets/zones/props/bench_east.png';
+import propBenchWest from '@/assets/zones/props/bench_west.png';
 import propBirch from '@/assets/zones/props/birch.png';
 import propBirdOfParadise from '@/assets/zones/props/bird_of_paradise.png';
 import propBlackRock from '@/assets/zones/props/black_rock.png';
@@ -180,6 +181,8 @@ import propFirOld from '@/assets/zones/props/fir_old.png';
 import propFirOldSnow from '@/assets/zones/props/fir_old_snow.png';
 import propFirSapling from '@/assets/zones/props/fir_sapling.png';
 import propFirSaplingSnow from '@/assets/zones/props/fir_sapling_snow.png';
+import propFirTall from '@/assets/zones/props/fir_tall.png';
+import propFirTallSnow from '@/assets/zones/props/fir_tall_snow.png';
 import propFirYoung from '@/assets/zones/props/fir_young.png';
 import propFirYoungSnow from '@/assets/zones/props/fir_young_snow.png';
 import propFirePit from '@/assets/zones/props/fire_pit.png';
@@ -802,6 +805,7 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   bell_tower: propBellTower,
   bench: propBench,
   bench_east: propBenchEast,
+  bench_west: propBenchWest,
   birch: propBirch,
   bird_of_paradise: propBirdOfParadise,
   black_rock: propBlackRock,
@@ -943,6 +947,8 @@ export const zoneProps: Record<string, ImageSourcePropType> = {
   fir_old_snow: propFirOldSnow,
   fir_sapling: propFirSapling,
   fir_sapling_snow: propFirSaplingSnow,
+  fir_tall: propFirTall,
+  fir_tall_snow: propFirTallSnow,
   fir_young: propFirYoung,
   fir_young_snow: propFirYoungSnow,
   fire_pit: propFirePit,
