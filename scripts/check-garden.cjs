@@ -382,8 +382,14 @@ evaluate('components/garden-reactions.tsx', reactionsModule);
 deps['@/components/garden-reactions'] = reactionsModule.exports;
 // The home hub's real geometry (docs/vision/home-hub.md): the valley's zones and walk,
 // its places and cards, and the hub's conversions, evaluated from source.
+deps['./garden-path'] = pathModule.exports;
 for (const [name, ...ids] of [
   ['zone-maps', '@/lib/zone-maps', './zone-maps'],
+  // the world canvas switch and its walk (off here: the hub walks the zones' join)
+  ['world-flag-default', '@/lib/world-flag-default', './world-flag-default'],
+  ['world-flag', '@/lib/world-flag', './world-flag'],
+  ['world-canvas', '@/lib/world-canvas', './world-canvas'],
+  ['world-walk', '@/lib/world-walk', './world-walk'],
   ['region-walk', '@/lib/region-walk'],
   ['world-places', '@/lib/world-places'],
   ['resident-routes', '@/lib/resident-routes'],
