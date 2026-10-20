@@ -1203,12 +1203,20 @@ def riverside(frame: int = 0):
     # a stone-lined headrace leaves the pond by a sluice and drops into the wheel pit's
     # north end at about axle height (breastshot, the wheel turning north side down); the
     # pit runs south between coursed stone walls and its tailrace spills into the river
-    brook = worlds.thick([(302, -6), (298, 50), (288, 118), (270, 178), (248, 202)], 2.5, seed=1410)
+    # (Claude A after #86: not out of the world's edge) the brook rises at a spring in the
+    # zone's north-east corner, welling up into a small pool at the foot of a heap of
+    # mossy boulders, and runs down wide enough to read
+    spring_pool = blob(294, 50, 8, 4, seed=1409, rough=0.2)
+    brook = worlds.thick([(294, 52), (292, 84), (286, 118), (270, 178), (248, 202)], 3.5, seed=1410)
     pond = blob(236, 206, 19, 9, seed=1411, rough=0.18)
     lead = {(x, y) for x in range(mx - 2, mx + 12) for y in range(212, mt - 30)}
-    millwater = (brook | pond) - lead
+    millwater = (brook | pond | spring_pool) - lead
     bank(cv, millwater, seed=1412)
-    water_body(cv, millwater, set(pond), seed=1413, glints=8)
+    water_body(cv, millwater, set(pond) | set(spring_pool), seed=1413, glints=10)
+    spring_rocks = outcrop(cv, [(282, 46, 16, 12), (306, 46, 18, 13), (294, 40, 20, 14), (300, 30, 14, 10), (284, 34, 12, 9)],
+                           seed=1408, moss=True)
+    for k in range(4):  # the water welling out from under the stones
+        cv.set(291 + k * 2, 47, WTR[4] if k % 2 else '#E8F0F2')
     race = {(x, y) for x in range(mx - 6, mx + 16) for y in range(214, mt + 2)}
     for (x, y) in race:
         inner = mx - 3 <= x < mx + 13
@@ -1227,7 +1235,7 @@ def riverside(frame: int = 0):
         cv.set(x, 222, WOOD[2]); cv.set(x, 223, WOOD[0])
     for y in range(219, 226):
         cv.set(mx - 4, y, WOOD[1]); cv.set(mx + 13, y, WOOD[1])
-    race |= millwater
+    race |= millwater | spring_rocks
     towpath = {(x, y) for x in range(118, mx - 6) for y in range(mt - 20, mt - 6)}
     # the lane to the mill, in from the garden's footpath at the same rows and width at
     # the seam (garden rows 112-119, Claude B's #75), then down the meadow to the mill yard
