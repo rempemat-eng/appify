@@ -7,11 +7,13 @@ from __future__ import annotations
 
 import math  # noqa: F401
 
+import numpy as np
+
 from zones import *  # noqa: F401,F403  (zones.py registers itself under that name)
 from zones import _decal, _rgb  # noqa: F401
 import ground
 
-__all__ = ['RIDGE_COL', 'HOLLOW_COL', 'LAKE_PORT', 'SUMMIT_COL', 'HOLLOW_PORT', 'FACE_H', 'FALLS_X', 'SHOULDER', 'ICE', 'origin', 'snow_px', 'high_slope_px', 'high_band', 'snow_trail', 'peak_row', 'steep_px', 'lip', 'gthick', 'cover', 'turf_or_snow', 'water', 'foot_bridge', 'shoulders', 'hollow', 'snowmelt', 'saddle', 'summit']
+__all__ = ['RIDGE_COL', 'HOLLOW_COL', 'LAKE_PORT', 'SUMMIT_COL', 'HOLLOW_PORT', 'FACE_H', 'FALLS_X', 'SHOULDER', 'ICE', 'origin', 'snow_px', 'high_slope_px', 'high_band', 'snow_trail', 'peak_row', 'steep_px', 'lip', 'gthick', 'cover', 'turf_or_snow', 'water', 'foot_bridge', 'shoulders', 'hollow', 'snowmelt', 'saddle', 'summit', 'high_country', 'lookout_massif']
 
 
 # ---- the Frostline Highlands (Codex's connected world, PR #23: biome-extensions.json) ----
@@ -204,13 +206,46 @@ def gthick(zone: str, gpoints, radius: float) -> set:
     return {(x, y) for (x, y) in pts if 0 <= x < W and 0 <= y < H}
 
 
+def _ridge_rim(x: int) -> int:
+    """The Ridge's terrace edge (valley_zones.ridge's rim), in the Ridge's own x."""
+    return 210 + int(math.sin(x / 27) * 5 + math.sin(x / 61 + 0.4) * 9 + noise2(x // 6, 0, 442) * 6)
+
+
+def _ridge_face_h(x: int) -> int:
+    """The Ridge's terrace face's height (valley_zones.ridge's face_h), 0 at its west edge."""
+    t = min(1.0, max(0.0, (x - 10) / 44))
+    return int((FACE_H - 1) * (t * t * (3 - 2 * t)))
+
+
+SEAM_BLEND = 96   # px over which Fir Hollow's snow patches give way to the Ridge's snow line
+
+
 def cover(gx: int, gy: int) -> bool:
-    """Does snow lie here? Patches in the hollow's upper slope, more the higher it goes,
-    and everywhere above the hollow (the lake's tier and up)."""
+    """Does snow lie here? One mask in the valley's coordinates for Fir Hollow and the
+    Ridge (world review 20 Oct 15:53, finding 3: the snow line, the green patches and a
+    snow patch were cut at the seam): the Hollow's patches, more the higher up the slope;
+    the Ridge's terrace under snow down to its rim and the bank where its face dies out,
+    the bank's lower edge frayed (valley_zones.ridge paints its snow by that rule, and this
+    is the same rule at its pixels); over the last SEAM_BLEND px before the seam the
+    Hollow's patches give way to the Ridge's line; everything above the hollow is snow."""
     if gy < -576:
         return True
     a = (-gy) / 576  # 0 at the hollow's foot, 1 at its top
-    return smooth_noise(gx, gy, 26, 851) < (a - 0.38) * 1.7
+    s_h = (a - 0.38) * 1.7 - smooth_noise(gx, gy, 26, 851)
+    if gx < -SEAM_BLEND:
+        return s_h > 0
+    rox, roy = origin('ridge')
+    rx, ry = gx - rox, gy - roy
+    r = _ridge_rim(rx)
+    bank = r + (FACE_H - 1 - _ridge_face_h(rx))
+    s_r = (bank - ry) / 14
+    if ry >= r and smooth_noise(rx, ry, 5, 449) > 0.82 and ry > bank - 3:
+        s_r = min(s_r, -0.01)  # the bank's lower edge frays into the turf
+    if gx >= 0:
+        return s_r > 0
+    w = (gx + SEAM_BLEND) / SEAM_BLEND
+    w = w * w * (3 - 2 * w)
+    return (1 - w) * s_h + w * s_r > 0
 
 
 def turf_or_snow(cv: Canvas, zone: str, frame: int):
@@ -394,19 +429,47 @@ def hollow(frame: int = 0):
         # the slope is too steep and loose to walk wherever the old face stood: no way
         # down to the woodland or round onto the ridge here (the Ridge is the way up)
         steep_top = min(r, 524 + int(smooth_noise(x + ox, 0, 16, 871) * 10))
+        if x > 262:  # (the scree slope thins out toward the Ridge, so the seam meets turf)
+            steep_top = max(steep_top, 524 + int(((x - 262) / 52) ** 0.7 * (H - 524)))
+        if x > 262:  # (the toe's last stones: the border with the Woodland stays closed)
+            for y in range(H - 6, H):
+                scarp.add((x, y))
+                if noise2(x, y, 876) > 0.55 + (x - 262) / 120:
+                    cv.set(x, y, '#5A5A68' if noise2(x, y, 877) > 0.5 else '#464656')
         for y in range(steep_top, r):
             scarp.add((x, y))
             if noise2(x, y, 876) > 0.62:  # scree: loose stones over the turf, more lower down
                 cv.set(x, y, ST[3] if noise2(x, y, 877) > 0.5 else ST[2])
             elif noise2(x // 2, y // 2, 878) > 0.8:
                 cv.set(x, y, ST[4])
+        # the face's toe stands on the talus it has shed, above the seam, so the cliff
+        # meets the Woodland's band of scree on ground (review 15:53: it ran to the edge)
+        toe = H - 9 - int(smooth_noise(x + ox, 0, 17, 879) * 7)
         for y in range(r, H):
             k = y - r
+            if y >= toe:
+                # scree in drifts with bare earth and moss between, in the cliff's shade: the
+                # Woodland's band of talus begins here (valley_zones.woodland), in its tones
+                # (a shade warmer than its blue-greys, so the lint reads stone, not water)
+                n = noise2((x + ox) // 2, (y + oy) // 2, 1612)
+                m = noise2((x + ox) // 2, y + oy, 1613)
+                c = '#5A5A68' if m > 0.62 else '#464656'
+                if n < 0.12:
+                    c = '#3E2B20' if m > 0.5 else '#302019'   # bare earth
+                elif n < 0.22:
+                    c = '#2F472E'                             # moss
+                elif n < 0.36:
+                    c = '#2F313F'                             # the dark between the stones
+                if y == toe:
+                    c = ST[1]  # the face's foot in shade
+                cv.set(x, y, c)
+                scarp.add((x, y))
+                continue
             c = ST[3] if (k + int(noise2(x // 6, 1, 872) * 3)) // 5 % 2 else ST[2]
             if k < 2:
                 c = ST[4] if k == 0 else ST[3]
             elif k > 30:
-                c = ST[1] if (x + y) % 3 else '#2A3A30'  # the woodland's shade far below
+                c = ST[1] if (x + y) % 3 else '#2A3A30'  # the face's foot in its own shade
             if noise2(x // 3, y // 3, 873) > 0.8 and k < 30:
                 c = ALPINE[1]  # moss and fern in the face's cracks
             cv.set(x, y, c)
@@ -433,18 +496,41 @@ def hollow(frame: int = 0):
     bx1 = max(x for (x, _y) in cross) + 7
     by0 = min(y for (_x, y) in cross) - 3
     by1 = max(y for (_x, y) in cross) + 4
-    for (x, y) in trail:
-        if (x, y) in stream:
+    # a trodden earth track all the way up, laid as the Ridge lays its path (the shared
+    # valley_zones.lay_road: the same earth, pebbles, turf edge and worn verge), so its
+    # edge keeps one style across the seam (review 15:53); the snow melts off it first,
+    # and where it lies, slush at the track's edges and no worn grass beside it
+    import valley_zones
+    snowy = {(x, y) for x in range(W) for y in range(H) if cover(x + ox, y + oy)}
+    near = {(x + a, y + b) for (x, y) in trail for a in range(-8, 9) for b in range(-8, 9)}
+    # (the mask runs on past the east edge, as the Ridge's runs on past its foot, so no turf
+    # edge closes the track at the seam)
+    past = {(x, y) for (x0, y) in trail if x0 == W - 1 for x in range(W, W + 12)}
+    road = valley_zones.lay_road(cv, (trail - stream) | past, seed=79, avoid=stream | scarp | snowy)
+    road = {(x, y) for (x, y) in road if 0 <= x < W and 0 <= y < H}
+    for (x, y) in near & snowy:
+        if (x, y) in road or (x, y) in stream:
             continue
-        gx, gy = x + ox, y + oy
-        # a trodden earth track all the way up (the snow melts off it first), slush
-        # at its edges where the snow lies
-        edge = any((x + dx, y + dy) not in trail for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1)))
-        if edge and cover(gx, gy):
+        cv.set(x, y, snow_px(x + ox, y + oy, 852))   # (no turf edge drawn onto the snow)
+    for (x, y) in road & snowy:
+        if any((x + dx, y + dy) not in road for (dx, dy) in ((1, 0), (-1, 0), (0, 1), (0, -1))):
             cv.set(x, y, SN[1])
-        else:
-            cv.set(x, y, P[3] if smooth_noise(gx, gy, 7, 874) < 0.7 else P[4])
     deck = foot_bridge(cv, bx0, by0, bx1 - bx0, by1 - by0, vertical=False)
+    # the Ridge's shade under its pines carried on over the seam, fading out (it ended in a
+    # straight line on the seam: valley_zones.ridge, the same clumps and noise in its x)
+    clumps = [(16, H - 120, 34, 36), (36, H - 46, 64, 52)]
+    for y in range(H - 200, H):
+        for x in range(W - 56, W):
+            if (x, y) in scarp or (x, y) in trail or (x, y) in stream:
+                continue
+            rx = x - W
+            sh = max(1 - math.hypot((rx - cx_) / rx_, (y - cy_) / ry_) for (cx_, cy_, rx_, ry_) in clumps)
+            sh += (smooth_noise(rx, y, 8, 449) - 0.5) * 0.5 + max(0, (y - (H - 26)) / 26) * 0.6
+            sh -= (1 - (rx + 56) / 56) ** 2 * 1.2
+            if sh > 0.12:
+                style.darken(cv, x, y)
+            if sh > 0.55:
+                style.darken(cv, x, y, (0.78, 0.8, 0.84))
     # the clearing, sunlit turf in a ring of firs
     for (x, y) in oval(150, 404, 40, 24):
         if (x, y) not in trail and not cover(x + ox, y + oy):
@@ -626,6 +712,11 @@ def saddle(frame: int = 0):
         for x in range(W):
             cv.set(x, y, snow_px(x + ox, y + oy, 831))
     steep = set()
+    # the Lookout's slope comes down to the saddle's north edge in the scenery's high country,
+    # as the Summit's own ground is (summit, high_country)
+    import scenery as sc
+    NGX, NGY = np.meshgrid(np.arange(ox, ox + W), np.arange(oy, oy + 90))
+    north_rgb = sc._mountain_rgb(NGX, NGY, sc.valley_fields(NGX, NGY)[0])
     for y in range(H):
         e0 = 262 - int(math.sin((y + oy) / 70) * 16 + smooth_noise(0, y + oy, 20, 832) * 10)
         open_west = LAKE_PORT[0] - 30 <= y < LAKE_PORT[1] + 20
@@ -648,7 +739,17 @@ def saddle(frame: int = 0):
             x0 = 0
         for x in range(W):
             north = y < 70 - int(smooth_noise(x + ox, 0, 16, 834) * 14) and not (SUMMIT_COL[0] - 6 <= x < SUMMIT_COL[1] + 6)
-            if x >= e0 or x0 <= x < w1 or north:
+            # (the east rib too, up where it meets the Lookout's slope; it takes on its own
+            # rock below, the change in soft clumps over 28 rows)
+            high = north or (x >= e0 and y < 84 and smooth_noise(x + ox, y + oy, 5, 838) < (84 - y) / 28)
+            # (by the west edge the Snowmelt's cirque wall comes down to the seam in its own
+            # rock: the high country gives way to it over the first 60 px)
+            if high and smooth_noise(x + ox, y + oy, 5, 839) >= min(1.0, x / 60):
+                high = False
+            if high:
+                cv.set(x, y, (int(north_rgb[y, x, 0]), int(north_rgb[y, x, 1]), int(north_rgb[y, x, 2]), 255))
+                steep.add((x, y))
+            elif x >= e0 or x0 <= x < w1 or north:
                 cv.set(x, y, steep_px(x + ox, y + oy))
                 steep.add((x, y))
     shoulder = shoulders(cv, 'saddle')
@@ -672,46 +773,227 @@ def saddle(frame: int = 0):
     return cv, objects, stands, steep | shoulder
 
 
+# ---- the High Lookout's massif (world review 20 Oct 15:53, finding 2) ------------------
+# The Summit was drip-shaped blobs of rock in hatched snow, with no lit faces and no
+# ridgelines. Now it is drawn with scenery.py's tools for mountains: the high country's own
+# ground (scenery._mountain_rgb, so the zone's west, east and north edges carry on into the
+# scenery to the pixel), and over it one massif in the three-quarter view, as scenery's
+# peaks are drawn: a main peak above the lookout with a lower summit on each shoulder, each
+# split by its ridgeline into a lit west face and a shaded east face, gullies running down
+# the fall line with snow lying in them, a snow cap whose ragged lower edge reaches down the
+# gullies (snow only on what faces up), a lit rim along the west skyline. The lookout is a
+# ledge cut into the peak's south shoulder: a rock face where it was cut, the flagged
+# terrace, a retaining wall along its front with a lit lip. The trail from the Saddle climbs
+# the snow slope below to it in two switchbacks, each leg a shelf with a cut bank on its
+# uphill side and a lit lip on its downhill one.
+MASSIF_FOOT = 344                         # the massif's foot (zone y): the ledge is cut into it
+LEDGE_X = (48, 257)                       # the lookout's ledge: its west and east ends (zone x)
+LEDGE_BACK, LEDGE_FRONT_Y = 334, 426      # its back (cut into the shoulder) and the front of its curve
+LEDGE_FRONT = 10                          # the retaining wall's face, px
+CUT_H = 16                                # the rock face where the ledge was cut into the shoulder
+SWITCHBACKS = [(144, 590), (144, 558), (218, 526), (92, 480), (152, 440), (152, 420)]
+
+
+def high_country(cv: Canvas, zone: str, y_to: int = H):
+    """The scenery's high country (scenery._mountain_rgb) on a zone's ground in the
+    valley's coordinates, rows 0 to y_to: rock lit from the upper left, snow lying where it
+    can. Returns nothing; the caller decides what is walkable."""
+    import scenery as sc
+    ox, oy = origin(zone)
+    GX, GY = np.meshgrid(np.arange(ox, ox + W), np.arange(oy, oy + y_to))
+    rgb = sc._mountain_rgb(GX, GY, sc.valley_fields(GX, GY)[0])
+    for y in range(y_to):
+        for x in range(W):
+            cv.set(x, y, (int(rgb[y, x, 0]), int(rgb[y, x, 1]), int(rgb[y, x, 2]), 255))
+
+
+SKYLINE = ((-4, 262), (30, 178), (58, 134), (88, 160), (150, 22), (204, 130), (252, 106), (290, 172), (324, 246))
+MASSIF_RIDGES = (((150, 22), (158, 118), (146, 214), (152, 340)),    # the main peak's south spur (the lookout's shoulder)
+                 ((58, 134), (44, 230), (14, 340)),                  # the west summit's spur, splaying west
+                 ((252, 106), (270, 206), (304, 340)))               # the east summit's spur, splaying east
+
+
+def _poly_x(pts, y):
+    """A ridge's x at rows y (array), nan above its top."""
+    ys = np.array([p[1] for p in pts], dtype=float)
+    xs = np.array([p[0] for p in pts], dtype=float)
+    out = np.interp(y, ys, xs)
+    return np.where(y < ys[0], np.nan, out)
+
+
+def lookout_massif():
+    """The massif over the Summit's upper part, zone px: (rgb array MASSIF_FOOT x W x 3,
+    body mask). Faceted as a real mountain reads: a skyline through three summits and their
+    cols, ridges running down from each summit and col, every face lit or in shade by
+    which side of its ridge it lies (west lit, east in shade), the gullies where two faces
+    meet, a snow cap down to a ragged line, snow along the lit crests and lying in the
+    gullies, rock in beds dipping gently east, a lit rim along the west skyline."""
+    import scenery as sc
+    SN, ST = MATERIALS['snow'], MATERIALS['stone']
+    h = MASSIF_FOOT
+    yy, xx = np.mgrid[0:h, 0:W].astype(float)
+    seed = 1501
+    jag = (sc.vnoise(xx, 0 * yy, 6, seed + 1) - 0.5) * 5 + (sc.vnoise(xx, 0 * yy, 17, seed + 2) - 0.5) * 6
+    top = np.interp(xx[0], [p[0] for p in SKYLINE], [p[1] for p in SKYLINE])[None, :] + jag
+    foot = MASSIF_FOOT - 14 + 12 * sc.vnoise(xx, 0 * yy, 19, seed + 12)
+    body = (yy >= top) & (yy < foot)
+    # which ridge each point lies nearest, and how far to its west (< 0) or east (> 0)
+    wob = (sc.vnoise(0 * xx, yy, 11, seed + 3) - 0.5) * 6 + (sc.vnoise(0 * xx, yy, 37, seed + 14) - 0.5) * 14
+    ds = np.stack([xx - _poly_x(r, yy) - wob for r in MASSIF_RIDGES])
+    ad = np.where(np.isnan(ds), 1e9, np.abs(ds))
+    order = np.argsort(ad, axis=0)
+    near = np.take_along_axis(ds, order[:1], axis=0)[0]
+    near = np.where(np.isnan(near), xx - 150, near)
+    second = np.take_along_axis(ad, order[1:2], axis=0)[0]
+    lit = near < 0
+    depth = np.abs(near)
+    gully = np.abs(second - depth) < 2.2                     # where two faces meet
+    # rock: lit faces bright by their crest, shaded faces dark toward their gully
+    reach = depth / np.maximum(depth + second, 1.0)     # 0 on the crest .. 0.5 in the gully
+    ri = np.where(lit, np.where(reach < 0.08, 4, np.where(reach < 0.3, 3, 2)), np.where(reach < 0.22, 2, 1))
+    # buttresses: the rock steps down the faces in tiers, each tier's top a ledge that holds
+    # snow, its foot in shade (snow only where the ground faces up)
+    tier = (yy + sc.vnoise(xx, 0 * yy, 21, seed + 15) * 14 + np.where(lit, 0, 7)).astype(int) % 30
+    ri = np.where(tier >= 27, np.maximum(ri - 1, 0), ri)
+    beds = ((yy + xx * 0.14 + sc.vnoise(xx, 0 * yy, 23, seed + 4) * 7).astype(int) % 11 == 0) & \
+        (sc.vnoise(xx, yy, 14, seed + 11) > 0.42)
+    ri = np.where(beds, np.maximum(ri - 1, 0), ri)
+    crack = beds & (sc.vnoise(xx, yy, 5, seed + 5) > 0.62)
+    ri = np.where(crack, np.where(lit, 1, 0), ri)
+    ri = np.where(gully, 0, ri)
+    rgb = sc._pick(ST, ri)
+    # snow: a cap down to a ragged line, lower where it runs down a gully, on the lit crests,
+    # and lying in the gullies below the cap
+    cap = top + 44 + 34 * sc.vnoise(xx, 0 * yy, 9, seed + 6) + np.where(gully, 34, 0)
+    sn = yy < cap
+    crest = lit & (depth < 3) & (sc.vnoise(xx, yy, 7, seed + 7) > 0.35)
+    in_gully = (np.abs(second - depth) < 3.5 + 2.5 * sc.vnoise(xx, yy, 6, seed + 8)) & \
+        (sc.vnoise(0 * xx, yy, 40, seed + 9) + sc.vnoise(xx, 0 * yy, 30, seed + 10) * 0.6 > 0.62)
+    on_ledge = (tier < 2) & (sc.vnoise(xx, yy, 9, seed + 16) > 0.38) & ~gully
+    sn = sn | crest | in_gully | on_ledge
+    si = np.where(lit, np.where(depth < 12, 3, 2), np.where(depth < 10, 1, 0))
+    si = np.where(in_gully & ~(yy < cap), np.where(lit, 2, 1), si)
+    rgb = np.where(sn[..., None], sc._pick(SN, si), rgb)
+    # the snow's lower edge throws a blue shade on the rock under it
+    under = ~sn & np.roll(sn, 1, axis=0) & body
+    rgb = np.where(under[..., None], sc._pick(ST, np.full(xx.shape, 0)), rgb)
+    # the skyline: a lit rim on the west slopes, an outline over it all
+    rim = body & ~np.roll(body, 1, axis=0) & (np.roll(top, 1, axis=1) > top - 0.5)
+    rgb = np.where((rim & lit)[..., None], np.array(sc._rgb('#FFFFFF'), dtype=np.uint8), rgb)
+    sky = body & ~(np.roll(body, 1, 0)) & (yy < foot - 30)
+    rgb = np.where(sky[..., None], np.array(sc._rgb(sc.OUTLINE), dtype=np.uint8), rgb)
+    # the foot: the rock breaks up into talus lying in the snow, stones lit on their upper left
+    talus = body & (yy > foot - 18) & (sc.vnoise(xx, yy, 3, seed + 13) < 0.42 + (foot - 18 - yy) / 40)
+    body = body & ~talus
+    return rgb, body
+
+
+def _ledge_back(x: int) -> int:
+    return LEDGE_BACK + int(round(2 * math.sin(x / 23)))
+
+
+def _ledge_front(x: int) -> int:
+    cx, half = (LEDGE_X[0] + LEDGE_X[1]) / 2, (LEDGE_X[1] - LEDGE_X[0]) / 2
+    u = max(0.0, 1 - ((x + 0.5 - cx) / half) ** 2)
+    return LEDGE_BACK + 18 + int((LEDGE_FRONT_Y - LEDGE_BACK - 18) * math.sqrt(u))
+
+
 def summit(frame: int = 0):
-    """The High Lookout (tier 5): a short broad path up from the saddle ends on a flagged
-    terrace behind a low stone windbreak, with a bench and a brass viewing scope that
-    looks out over everything walked so far. The peaks beyond are scenery; nothing goes
-    on from here."""
+    """The High Lookout (tier 5): the trail climbs from the saddle in two switchbacks
+    across the snow slope under the massif to a ledge cut into the peak's south shoulder,
+    held up by a retaining wall; on it a flagged terrace behind a low stone windbreak, a
+    bench and a brass viewing scope that looks out over everything walked so far. The
+    peaks beyond are scenery; nothing goes on from here."""
     SN, ST, ASH = MATERIALS['snow'], MATERIALS['stone'], MATERIALS['ashlar']
     ox, oy = origin('summit')
     cv = Canvas(W, H)
-    for y in range(H):
-        for x in range(W):
-            cv.set(x, y, steep_px(x + ox, y + oy))
-    # the walkable ground: a snowy apron up from the saddle's gap to the terrace
-    def apron(x, y):
-        if y >= 440:
-            half = 44 + (y - 440) * 0.02
-            return abs(x - 144 - math.sin(y / 40) * 8) < half
-        return ((x - 152) / 112) ** 2 + ((y - 384) / 62) ** 2 < 1 + (smooth_noise(x + ox, y + oy, 18, 847) - 0.5) * 0.3
-    walk = {(x, y) for x in range(W) for y in range(H) if apron(x, y)}
-    for (x, y) in walk:
-        cv.set(x, y, snow_px(x + ox, y + oy, 841))
-    # the terrace: flagstones, lit on their upper-left edges
-    terrace = {(x, y) for (x, y) in oval(152, 372, 82, 34)}
-    for (x, y) in terrace:
-        row = y // 6
-        c = ASH[3] if noise2((x + row * 3) // 9, row, 848) > 0.45 else ASH[2]
-        if y % 6 == 0 or (x + row * 3) % 9 == 0:
-            c = ASH[1]
-        if (x, y - 1) not in terrace or (x - 1, y) not in terrace:
-            c = ASH[4]
-        cv.set(x, y, c)
-    trail = gthick('summit', [(144, -1142), (144, -1190), (130, -1240), (150, -1290), (152, -1340)], 8) & walk
+    high_country(cv, 'summit')
+    rgb, body = lookout_massif()
+    for y, x in zip(*np.nonzero(body)):
+        cv.set(int(x), int(y), (int(rgb[y, x, 0]), int(rgb[y, x, 1]), int(rgb[y, x, 2]), 255))
+    ledge = {(x, y) for x in range(*LEDGE_X) for y in range(_ledge_back(x), _ledge_front(x) + 1)}
+    top = {x: _ledge_back(x) for x in range(*LEDGE_X)}
+    bot = {x: _ledge_front(x) for x in range(*LEDGE_X)}
+    # the face where the ledge was cut into the shoulder: beds of rock under a lit lip,
+    # dark at its foot, snow lying along its top; lower toward the ledge's ends
+    for x, t in top.items():
+        h = CUT_H - int(max(0, min(x - LEDGE_X[0], LEDGE_X[1] - 1 - x) * -1 + 24) * 0.4)
+        for k in range(1, h + 1):
+            y = t - k
+            c = ST[2] if ((y // 3 + (x + (y // 3) * 5) // 9) % 2) else ST[3]
+            if y % 3 == 0:
+                c = ST[1]  # a bed's joint
+            if k == h:
+                c = SN[3]   # the snow on its top
+            elif k == h - 1:
+                c = ST[4]   # its lit lip
+            elif k <= 2:
+                c = ST[1] if k == 2 else ST[0]  # the shade at its foot
+            cv.set(x, y, c)
+    # the trail: two switchbacks up the slope, each leg a shelf of packed snow cut into it
+    trail = gthick('summit', [(x + ox, y + oy) for (x, y) in SWITCHBACKS], 8) - ledge
+    core = set(trail)
+    # the trailhead: the way in from the saddle is as wide as the saddle's gully (the port,
+    # SUMMIT_COL), narrowing to the trail over its first 26 px
+    for y in range(H - 26, H):
+        t = (y - (H - 26)) / 25
+        half = 8 + t * (SUMMIT_COL[1] - SUMMIT_COL[0] + 8 - 16) / 2
+        mid = (SUMMIT_COL[0] + SUMMIT_COL[1]) / 2
+        trail |= {(x, y) for x in range(int(mid - half - 1), int(mid + half + 1))}
     for (x, y) in trail:
-        if (x, y) not in terrace:
-            cv.set(x, y, SN[1] if (x + y) % 3 else SN[2])
-    steep = {(x, y) for x in range(W) for y in range(H)} - walk
-    lip(cv, walk, steep, ox, oy)
+        if (x, y) not in core:
+            cv.set(x, y, snow_px(x + ox, y + oy, 831))   # the saddle's lying snow, carried up to the trail
+            continue
+        cv.set(x, y, SN[1] if (x + y) % 3 else SN[2])
+        if noise2(x + ox, y + oy, 842) > 0.93:
+            cv.set(x, y, SN[0])  # boot prints
+    for (x, y) in trail:
+        if (x, y - 1) not in trail and (x, y - 1) not in ledge:
+            for k in (1, 2):   # the cut bank on its uphill side
+                q = (x, y - k)
+                if q not in trail and q not in ledge and 0 <= q[1]:
+                    cv.set(*q, ST[1] if k == 1 else ST[2])
+        if (x, y + 1) not in trail and (x, y + 1) not in ledge and y + 1 < H:
+            cv.set(x, y, '#FFFFFF' if (x + y) % 3 else SN[3])   # the shelf's lit lip
+            style.darken(cv, x, y + 1)                           # and its shadow on the slope below
+    # the ledge: packed snow round a flagged terrace, the flags lit on their upper-left edges
+    terrace = oval(152, 372, 82, 34)
+    for (x, y) in ledge:
+        if (x, y) in terrace:
+            row = y // 6
+            c = ASH[3] if noise2((x + row * 3) // 9, row, 848) > 0.45 else ASH[2]
+            if y % 6 == 0 or (x + row * 3) % 9 == 0:
+                c = ASH[1]
+            if (x, y - 1) not in terrace or (x - 1, y) not in terrace:
+                c = ASH[4]
+        else:
+            c = snow_px(x + ox, y + oy, 841)
+        cv.set(x, y, c)
+    # the retaining wall along its front: a lit lip, courses of dressed stone, its shadow;
+    # the trail comes up through it by four steps
+    steps = {x for (x, y) in trail if y > bot.get(x, -9) and y <= bot.get(x, -9) + LEDGE_FRONT + 2}
+    for x, b in bot.items():
+        cv.set(x, b, ASH[5] if x % 9 else ASH[4])
+        for k in range(1, LEDGE_FRONT + 1):
+            y = b + k
+            if x in steps:
+                c = ASH[4] if k % 2 else ASH[2]   # a step's lit tread and its riser
+            else:
+                course = (k - 1) // 3
+                c = ASH[3] if ((x + course * 5) // 8) % 2 else ASH[2]
+                if (k - 1) % 3 == 2 or (x + course * 5) % 8 == 0:
+                    c = ASH[1]
+            cv.set(x, y, c)
+        if x not in steps:
+            for k in (1, 2):
+                style.darken(cv, x, b + LEDGE_FRONT + k)
+    walk = ledge | trail | {(x, bot[x] + k) for x in steps if x in bot for k in range(1, LEDGE_FRONT + 1)}
     objects = [
         ('wall-1', 'drystone_wall', 88, 322), ('wall-2', 'drystone_wall', 152, 318),
         ('scope', 'telescope', 150, 340), ('bench', 'forest_bench', 196, 372), ('cairn', 'cairn', 84, 360),
-        ('post', 'trail_post', 172, 470), ('stone-1', 'stone', 100, 520),
+        ('post', 'trail_post', 214, 492), ('stone-1', 'stone', 100, 520),
     ]
     stands = {'saddle': (144, H - 6), 'scope': (162, 388), 'bench': (214, 402)}
+    steep = {(x, y) for x in range(W) for y in range(H)} - walk
     return cv, objects, stands, steep
+

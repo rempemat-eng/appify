@@ -1438,16 +1438,88 @@ def _free_of_zones(zone_at, left, top, w, h):
     return True
 
 
+# The fire country and the desert past Sunstone's zones (world review 20 Oct 15:53,
+# finding 1: dunes ran straight into Hearthold's ash on the zone's edge, a stone's throw
+# from the lava moat). Sand never meets lava country directly (world-rules 4): from the
+# fire zones out, the ground is the zones' own ash with basalt ridges in it, then cooled
+# crust, then scrub, and sand only toward the desert's zones. The grade follows how far a
+# point lies from the fire zones against how far from the desert's, so it bends round
+# every zone and never lies along a cell's edge.
+FIRE_ZONES = ('caldera', 'springs', 'hearthold', 'scorch')
+SAND_ZONES = ('gulch', 'oasis')
+FIRE_X, FIRE_Y = 320, 1152      # layout px to sunstone_zones' fire-country coordinates (the caldera's)
+SCRUB = ['#2A2E20', '#454A2E', '#62683C', '#80844E', '#A3A26A']   # dusty creosote and sage
+
+
+def _fire_ash_np(X, Y):
+    """sunstone_zones.fire_ash at layout px, vectorised (the same noise and thresholds),
+    so the ground carries on across a fire zone's edge with no change."""
+    FX, FY = X - FIRE_X, Y + FIRE_Y
+    n = vnoise(FX, FY, 30, 261)
+    i = np.where((n > 0.3) | ((n > 0.26) & ((FX + FY) % 2 == 1)), 2, 1)
+    rgb = _pick(ASH, i)
+    g = _hash(FX // 2, FY, 270)
+    rgb = np.where((g > 0.965)[..., None], _pick(BASALT, np.full(X.shape, 2)), rgb)
+    rgb = np.where(((g > 0.95) & (g <= 0.965))[..., None], _pick(ASH, np.full(X.shape, 3)), rgb)
+    return rgb
+
+
+def _plates(X, Y, size: float, seed: int):
+    """Cooled crust broken into plates: per point its plate's hash, the distance to the
+    plate's edge, and whether that edge lies up and to the left (a jittered Voronoi)."""
+    gx, gy = np.floor(X / size).astype(np.int64), np.floor(Y / size).astype(np.int64)
+    best = np.full(X.shape, 1e9)
+    second = np.full(X.shape, 1e9)
+    hid = np.zeros(X.shape)
+    bdx = np.zeros(X.shape)
+    bdy = np.zeros(X.shape)
+    for oy in (-1, 0, 1):
+        for ox in (-1, 0, 1):
+            cx, cy = gx + ox, gy + oy
+            px = (cx + 0.15 + 0.7 * _hash(cx, cy, seed)) * size
+            py = (cy + 0.15 + 0.7 * _hash(cx, cy, seed + 1)) * size
+            d = np.hypot(X - px, Y - py)
+            closer = d < best
+            second = np.where(closer, best, np.minimum(second, d))
+            hid = np.where(closer, _hash(cx, cy, seed + 2), hid)
+            bdx = np.where(closer, X - px, bdx)
+            bdy = np.where(closer, Y - py, bdy)
+            best = np.minimum(best, d)
+    return hid, second - best, (bdx + bdy) < 0
+
+
+def _sunstone_grade(X, Y, zone_at):
+    """0 at a fire zone's edge .. 1 at a desert zone's, wandering; and the distance to the
+    nearest fire zone (px)."""
+    c0, r0 = int(np.floor(X.min() / W)), int(np.floor(Y.min() / H))
+    c1, r1 = int(np.floor(X.max() / W)), int(np.floor(Y.max() / H))
+    fire, sand = [], []
+    for r in range(r0 - 3, r1 + 4):
+        for c in range(c0 - 3, c1 + 4):
+            z = zone_at(c, r)
+            if z in FIRE_ZONES:
+                fire.append((c * W, r * H, (c + 1) * W, (r + 1) * H))
+            elif z in SAND_ZONES:
+                sand.append((c * W, r * H, (c + 1) * W, (r + 1) * H))
+    df = _zone_dist(X, Y, fire) if fire else np.full(X.shape, 4000.0)
+    ds = _zone_dist(X, Y, sand) if sand else np.full(X.shape, 4000.0)
+    t = df / (df + ds + 1.0)
+    away = np.clip(np.minimum(df, ds) / 60, 0, 1)   # (the wander dies out at a zone's edge)
+    t = t + away * (0.16 * (wnoise(X, Y, 70, 1311) - 0.5) + 0.06 * (vnoise(X, Y, 14, 1312) - 0.5))
+    return t, df
+
+
 def west_cell(col: int, row: int, zone_at) -> Canvas:
-    """Sunstone Reach's surroundings: open desert of long dunes with sandstone buttes
-    round the gulch and the oasis, giving way (across the land, not at a line) to the
-    volcano's flank of basalt steps, drifted ash and cinder cones round the fire country."""
+    """Sunstone Reach's surroundings. Round the fire country: the zones' own grey ash
+    running on past their edges with its cinders, rubble and drifts, low basalt ridges lit
+    on their west, cinder cones; then the old flows cooled to a crust of dark plates with
+    ash in the cracks; then scrub (creosote and sage on gravelly sand, dry tufts); then
+    the open desert's long dunes and sandstone buttes round the gulch and the oasis."""
     CW, CH = W + 2 * S, H + 2 * S
     cv = Canvas(CW, CH)
     x0, y0 = col * W - S, row * H - S
     X, Y = np.meshgrid(np.arange(x0, x0 + CW), np.arange(y0, y0 + CH))
-    ashy = lambda c, r: 1.0 if (c >= 1 or (c >= 0 and r <= -2)) else 0.0  # noqa: E731
-    ash = _blend_cells(X, Y, ashy) > 0.5
+    t, df = _sunstone_grade(X, Y, zone_at)
     # dunes: a wandering crest line, light rising to the crest, the lee in shade
     lx = X + (vnoise(0 * X, Y, 60, 781) * 40).astype(int)
     k = (Y + (np.sin(lx / 23.0) * 9 + vnoise(X, 0 * Y, 50, 782) * 18).astype(int)) % 46
@@ -1456,33 +1528,114 @@ def west_cell(col: int, row: int, zone_at) -> Canvas:
     ripple = (Y + (np.sin(X / 8.0 + Y / 37.0) * 2).astype(int)) % 7
     di = np.where((ripple == 0) & (k > 14) & (k < 32), 4, di)
     sand = _pick(DESERT, di)
-    # the flank: basalt steps with lit lips, ash in the hollows, a few glowing cracks
-    off = (vnoise(X, 0 * Y, 40, 762) * 30).astype(int)
-    kk = (Y + off) % 22
-    bi = np.where(((Y + off) // 22) % 2 == 1, 2, 1)
-    bi = np.where(kk == 0, 4, np.where(kk < 3, 3, np.where(kk > 18, 0, bi)))
-    basalt = _pick(BASALT, bi)
-    drift = (vnoise(X, Y, 14, 763) > 0.6) & (kk > 3)
-    basalt = np.where(drift[..., None], _pick(ASH, np.where((X + Y) % 2 == 1, 1, 2)), basalt)
-    crack = (ridged(X, Y, 18, 767) > 0.97) & (vnoise(X, Y, 60, 768) > 0.55)
-    basalt = np.where(crack[..., None], _pick(LAVA, np.where((X + Y) % 3 == 0, 2, 1)), basalt)
-    # the shore of the two: sand blown over the first of the basalt
-    near = np.abs(_blend_cells(X, Y, ashy) - 0.5) < 0.04
-    ground = np.where(ash[..., None], basalt, sand)
-    ground = np.where((near & ash & ((X * 7 + Y * 3) % 5 < 2))[..., None], _pick(DESERT, np.full(X.shape, 2)), ground)
+    # scrub: gravelly sand in low, soft patches, grit lit on its upper left
+    gn = vnoise(X, Y, 16, 1321)
+    gravel = _pick(DESERT, np.where(gn > 0.62, 3, np.where(gn > 0.3, 2, 1)))
+    grit = _hash(X // 2, Y, 1322) > 0.94
+    gravel = np.where(grit[..., None], np.where((X % 2 == 0)[..., None], _pick(ASH, np.full(X.shape, 3)),
+                                                 _pick(ASH, np.full(X.shape, 1))), gravel)
+    # cooled crust: plates of old lava, each its own tone, lit on its upper-left lip, dark
+    # joints with ash blown into the widest of them
+    hid, edge, up_left = _plates(X, Y, 17.0, 1331)
+    ci = np.where(hid > 0.7, 3, 2)
+    crust = _pick(BASALT, ci)
+    dust = vnoise(X, Y, 12, 1333) > 0.58   # ash lying in soft patches on the plates
+    crust = np.where((dust & (hid < 0.7))[..., None], _pick(ASH, np.full(X.shape, 1)), crust)
+    crust = np.where((edge < 0.9)[..., None], _pick(BASALT, np.full(X.shape, 0)), crust)
+    crust = np.where(((edge >= 0.9) & (edge < 1.9) & up_left)[..., None], _pick(BASALT, np.full(X.shape, 4)), crust)
+    dusted = (edge < 0.9) & (vnoise(X, Y, 9, 1332) > 0.55)
+    crust = np.where(dusted[..., None], _pick(ASH, np.full(X.shape, 2)), crust)
+    # the fire country: the zones' ash, with outcrops of basalt standing out of it away
+    # from the zones' edges, seen in the three-quarter view: a top lit on its upper-left
+    # lip, a south face of columns in shade, a shadow cast down and right on the ash
+    ash = _fire_ash_np(X, Y)
+    FH = 5
+    top_at = lambda XX, YY: (wnoise(XX, YY, 34, 1341) > 0.79) & (_sunstone_grade(XX, YY, zone_at)[1] > 40)  # noqa: E731
+    XX = np.broadcast_to(np.arange(x0 - 2, x0 + CW)[None, :], (CH + FH + 2, CW + 2))
+    YY = np.broadcast_to(np.arange(y0 - FH - 2, y0 + CH)[:, None], (CH + FH + 2, CW + 2))
+    tops = top_at(XX, YY) & (_sunstone_grade(XX, YY, zone_at)[0] < 0.3)
+    top = tops[FH + 2:, 2:]
+    face = np.zeros(top.shape, dtype=bool)
+    for d in range(1, FH + 1):
+        face |= tops[FH + 2 - d:FH + 2 - d + CH, 2:]
+    face &= ~top
+    shadow = np.zeros(top.shape, dtype=bool)
+    for d in range(FH + 1, FH + 3):
+        shadow |= tops[FH + 2 - d:FH + 2 - d + CH, 1:CW + 1]
+    shadow &= ~top & ~face
+    lip = top & ~tops[FH + 1:FH + 1 + CH, 1:CW + 1]
+    ti = np.where(vnoise(X, Y, 6, 1343) > 0.55, 3, 2)
+    ash = np.where(shadow[..., None], _pick(ASH, np.full(X.shape, 0)), ash)
+    ash = np.where(top[..., None], _pick(BASALT, ti), ash)
+    ash = np.where(lip[..., None], _pick(BASALT, np.full(X.shape, 4)), ash)
+    col_i = np.where((X % 3) == 0, 0, np.where((X % 3) == 1, 1, 2))
+    ash = np.where(face[..., None], _pick(BASALT, col_i), ash)
+    # the bands, interleaved in clumps where they meet so no change runs along a line
+    clump = vnoise(X, Y, 7, 1351) * 0.7 + vnoise(X, Y, 3, 1352) * 0.3
+    tt = t + (clump - 0.5) * 0.08
+    ground = np.where((tt < 0.3)[..., None], ash, np.where((tt < 0.44)[..., None], crust,
+                                                          np.where((tt < 0.62)[..., None], gravel, sand)))
+    # drifts where one ground lies over the next: ash over the crust's edge, sand over the scrub's
+    drift_a = (tt >= 0.3) & (tt < 0.34) & (vnoise(X, Y, 5, 1353) > 0.55)
+    ground = np.where(drift_a[..., None], _pick(ASH, np.where((X + Y) % 3 == 0, 3, 2)), ground)
+    drift_s = (tt >= 0.56) & (tt < 0.62) & (vnoise(X, Y, 6, 1354) > 0.5)
+    ground = np.where(drift_s[..., None], _pick(DESERT, np.where(k < 12, 4, 3)), ground)
     inside = np.zeros((CH, CW), dtype=bool)
     inside[S:S + H, S:S + W] = True
     _paint(cv, ground, inside)
+    rc = _RegionCv(cv, x0, y0)
+    xa, xb, ya, yb = col * W, (col + 1) * W, row * H, (row + 1) * H
+
+    def t_at(px, py):
+        return float(_sunstone_grade(np.array([[float(px)]]), np.array([[float(py)]]), zone_at)[0][0, 0])
+
+    # what lies on the ash (as sunstone_zones.ash_dressing): rubble heaps and pale drifts
+    for i, j, bx, by in _scatter(col, row, 26, 22, 1361, margin=20):
+        if noise2(i, j, 1362) < 0.55:
+            continue
+        bx, by = int(bx), int(by)
+        if not (xa - 6 <= bx < xb + 6 and ya - 4 <= by < yb + 4):
+            continue
+        tv = t_at(bx, by)
+        if tv < 0.28:
+            if noise2(i, j, 1363) < 0.62:
+                for kk in range(2 + int(noise2(i, j, 1364) * 3)):
+                    detail.pebble(rc, bx + int((noise2(i, kk, 1365) - 0.5) * 9), by + int((noise2(i, kk, 1366) - 0.5) * 5),
+                                  BASALT, big=kk == 0 and noise2(i, j, 1367) > 0.6)
+            else:
+                n = 4 + int(noise2(i, j, 1368) * 4)
+                for kk in range(n):
+                    rc.set(bx + kk, by, ASH[3] if kk % 3 else ASH[4])
+                    if 0 < kk < n - 1:
+                        rc.set(bx + kk + 1, by + 1, ASH[1])
+        elif 0.44 <= tv < 0.64:
+            # a scrub bush: a rounded clump, lit on its upper left, its shadow on the sand
+            rx = 2 + int(noise2(i, j, 1369) * 3)
+            ry = max(1, rx - 1)
+            for yy in range(by - ry, by + ry + 1):
+                for xx in range(bx - rx, bx + rx + 1):
+                    u, v = (xx - bx) / (rx + 0.5), (yy - by) / (ry + 0.5)
+                    if u * u + v * v <= 1:
+                        s = u + v
+                        rc.set(xx, yy, SCRUB[3] if s < -0.5 else SCRUB[2] if s < 0.3 else SCRUB[1])
+            for xx in range(bx - rx + 1, bx + rx + 2):
+                rc.darken(xx, by + ry + 1)
+            rc.set(bx - 1, by - ry, SCRUB[4])
+        elif 0.62 <= tv < 0.7 and noise2(i, j, 1370) < 0.6:
+            # a dry tuft at the scrub's edge
+            for kk, (dx, dy) in enumerate(((0, 0), (-1, -1), (1, -1), (0, -2))):
+                rc.set(bx + dx, by + dy, '#B89A5E' if kk else '#8A6E42')
+    # landmarks: cinder cones in the fire country, buttes in the open desert, the change of
+    # ground between them left open
     things = []
     for i, j, bx, by in _scatter(col, row, 190, 150, 1301, margin=280):
-        # a few landmarks with open country between them, never a field of stamps
         if noise2(i, j, 1303) < 0.72:
             continue
-        fld = _blend_cells(np.array([[bx]]), np.array([[by]]), ashy)[0, 0]
-        if abs(fld - 0.5) < 0.12:
-            continue  # the change of ground stays open
+        tv = t_at(bx, by)
+        if 0.24 < tv < 0.7:
+            continue
         size = 0.5 + noise2(i, j, 1304) ** 2 * 1.1
-        if fld > 0.5:
+        if tv <= 0.24:
             w = int(80 + 110 * size) // 8 * 8
             h = int(w * (0.5 + noise2(i, j, 1306) * 0.2)) // 8 * 8
             img = ('cone', w, h, (i * 31 + j) % 17)
@@ -1684,6 +1837,37 @@ def _fan(X, Y, seed=1, R=15):
     return _pick(GRANITE, idx)
 
 
+# Claude C's lock in the Canal (#132): its north half is the lock side, paved at towpath
+# level from the bridge to the zone's east edge, and above its head gates the upper pound
+# stands higher (a shallower dry face, a wet band, lighter water). Where the Canal's own
+# ground shows that at its east edge, the scenery carries both on: the lock side runs on
+# LOCK_RUN px to a coped end, and the canal east of the town, the basin with it, is the
+# upper pound. (Read from the zone's picture, so either form of the Canal meets its land.)
+LOCK_SIDE_Z = 205      # city_zones.LOCK_SIDE: the lock side's coping row (canal px)
+LOCK_RUN = 28          # how far past the seam the lock side runs before its coped end
+
+
+@functools.lru_cache(maxsize=1)
+def _canal_lock_side() -> bool:
+    g = _zone_ground('canal').astype(int)
+    patch = g[180:200, W - 8]
+    return bool(patch.sum(axis=1).mean() > 240)   # setts there (mean ~330), not dark water (~160)
+
+
+def _upper_pound(X, Y, top):
+    """city_zones.canal_lock's upper pound in region px: a dry face of four courses, a wet
+    band, the wall's shadow on the water, the lighter water of the higher pound."""
+    k = Y - top
+    yl = Y - CANAL_Y
+    n = vnoise(X, yl, 8, 494)
+    out = np.where((n > 0.6)[..., None], _const('#3A5E54', X.shape),
+                   np.where((n > 0.3)[..., None], _const('#2E5048', X.shape), _const('#264640', X.shape)))
+    out = np.where((k < 9)[..., None], _const('#1A3430', X.shape), out)
+    out = np.where((k < 6)[..., None], _const('#2A3A30', X.shape), out)
+    dry = np.where((((X + (k // 3) * 4) // 8) % 2) == 1, 2, 1)
+    return np.where((k < 4)[..., None], _pick(ASHLAR_, dry), out)
+
+
 def _cobbles(X, Y):
     """worlds.paint_cobbles, in region px: rounded cobbles, a lit top left and a dark gap."""
     cx = X % 10
@@ -1820,6 +2004,9 @@ def _steam_masks(X, Y):
         m['ash'] |= (Y >= a) & (Y < b)
     m['towpath'] = side & (((Y >= TOW_N[0]) & (Y < TOW_N[1])) | ((Y >= TOW_S[0]) & (Y < TOW_S[1])))
     m['canal'] = side & (Y >= CY0) & (Y < CY1) & ~((X >= BASIN[0]) & (X < BASIN[1]))
+    # (the lock side over the canal's north half, past the seam, when the Canal has its lock)
+    m['lockside'] = (X >= W) & (X < W + LOCK_RUN) & (Y >= CY0 - 1) & (Y < CANAL_Y + LOCK_SIDE_Z + 2) & _canal_lock_side()
+    m['canal'] &= ~m['lockside']
     m['basin'] = (X >= BASIN[0]) & (X < BASIN[1]) & (Y >= BASIN[2]) & (Y < BASIN[3])
     m['quay'] = east & (X >= BASIN[0] - 14) & (X < BASIN[1] + 18) & (Y >= BASIN[2] - 34) & (Y < BASIN[3] + 26) & ~m['basin']
     m['feeder'] = (X >= FEEDER[0]) & (X < FEEDER[1]) & (Y >= FEEDER[2]) & (Y < BASIN[2] - 1)
@@ -1877,7 +2064,8 @@ def _dressing(X, Y, out, m, grass, rich):
     put(cin & (vnoise(X, Y, 14, 1955) > 0.85), col('#A4A4AA'))
     lump = cin & (_hash(X // 3, Y // 3, 1961) > 0.94) & (X % 3 < 2) & (Y % 3 < 2)
     put(lump, np.where(((X % 3 == 0) & (Y % 3 == 0))[..., None], col('#45465A'), col('#14131A')))
-    wet = (m['canal'] | m['basin']) & (rich > 0) & ~((out == _rgb(ASHLAR_[1])).all(-1) | (out == _rgb(ASHLAR_[2])).all(-1) | (out == _rgb(ASHLAR_[4])).all(-1))
+    wet = (m['canal'] | m['basin']) & (rich > 0) & ~((out == _rgb(ASHLAR_[1])).all(-1) | (out == _rgb(ASHLAR_[2])).all(-1) | (out == _rgb(ASHLAR_[4])).all(-1)
+                                                   | (out == _rgb('#2A3A30')).all(-1) | (out == _rgb('#1A3430')).all(-1))
     put(wet & (vnoise(X, Y, 16, 1956) > 0.74), col('#34503A'))   # scum drifting in rafts
     put(wet & (vnoise(X, Y, 16, 1956) > 0.8), col('#4E6A44'))
     put(wet & (vnoise(X, Y, 16, 1957) > 0.82), col('#3E4A64'))   # an oily sheen where the works drain
@@ -1886,7 +2074,7 @@ def _dressing(X, Y, out, m, grass, rich):
     put(hi & (X % 6 < 2), col('#86AAA0'))
     leaf = wet & (_hash(X // 6, Y // 4, 1963) > 0.93) & (X % 6 < 3) & (Y % 4 < 2)
     put(leaf, np.where((Y % 4 == 0)[..., None], col('#A07A42'), col('#6A4A2A')))
-    pave = (m['setts'] | m['ncob'] | m['towpath'] | m['quay']) & (rich > 0)
+    pave = (m['setts'] | m['ncob'] | m['towpath'] | m['quay'] | m['lockside']) & (rich > 0)
     cob = (_hash(X // 10, (Y + (X // 10) % 2 * 4) // 8, 1978) * rich)
     face = pave & ((out == _rgb(SLATE_[3])).all(-1) | (out == _rgb('#A7A291')).all(-1))   # a cobble's body only
     put(face & (cob > 0.7), col('#8A7E6E'))   # a brown stone
@@ -1959,11 +2147,29 @@ def _steam_ground(X, Y):
     put(m['scoping'], _pick(ST, np.select([Y == STEAM_RAIL[1], Y == STEAM_RAIL[1] + 1, Y == STEAM_RAIL[1] + 2], [4, 3, 2], 1)))
     # the canal west and east of the town, a step lower past the lock (a taller wall shows)
     low = X < LOCK[1]
-    put(m['canal'], np.where(low[..., None], _canal_water(X, Y, face=10), _canal_water(X, Y)))
+    upper = _canal_lock_side()
+    east_water = _upper_pound(X, Y, CY0) if upper else _canal_water(X, Y)
+    put(m['canal'], np.where(low[..., None], _canal_water(X, Y, face=10), east_water))
     for (ky, c) in ((CY0 - 1, ASHLAR_[3]), (CY1, ASHLAR_[5]), (CY1 + 1, ASHLAR_[3])):
         put((Y == ky) & side & ~((X >= BASIN[0]) & (X < BASIN[1])), _const(c, X.shape))
     # the basin: the canal widened between quay walls, copings round it
-    put(m['basin'], _canal_water(X, Y, top=BASIN[2]))
+    put(m['basin'], _upper_pound(X, Y, BASIN[2]) if upper else _canal_water(X, Y, top=BASIN[2]))
+    if upper:
+        # the lock side carried on past the seam: setts at towpath level over the canal's
+        # north half, its coping over the pound, its east end coped; the pound below it
+        ls = CANAL_Y + LOCK_SIDE_Z
+        run = (X >= W) & (X < W + LOCK_RUN)
+        put(run & (Y >= CY0 - 1) & (Y < ls), _cobbles(X, Y - CANAL_Y))
+        alt = (vnoise(X // 9 * 9, 0 * X, 9, 1784) > 0.5)
+        cope = np.where(((X // 9) % 2 == 1)[..., None], _pick(GRANITE, np.full(X.shape, 5)), _pick(GRANITE, np.full(X.shape, 4)))
+        cope = np.where(alt[..., None], cope, np.where(((X // 9) % 2 == 1)[..., None], _pick(ASHLAR_, np.full(X.shape, 5)),
+                                                         _pick(ASHLAR_, np.full(X.shape, 4))))
+        put(run & (Y == ls), cope)
+        put(run & (Y == ls + 1), np.where((X % 9 == 0)[..., None], _pick(ASHLAR_, np.full(X.shape, 1)), _pick(ASHLAR_, np.full(X.shape, 3))))
+        put(run & (Y >= ls + 2) & (Y < CY1), _upper_pound(X, Y, ls + 2))
+        end = W + LOCK_RUN
+        put((X == end - 2) & (Y >= CY0 - 1) & (Y < ls + 2), _pick(ASHLAR_, np.full(X.shape, 5)))
+        put((X == end - 1) & (Y >= CY0 - 1) & (Y < ls + 2), _pick(ASHLAR_, np.full(X.shape, 3)))
     for (ky, c) in ((BASIN[2] - 1, ASHLAR_[3]), (BASIN[2] - 2, ASHLAR_[5]), (BASIN[3], ASHLAR_[5]), (BASIN[3] + 1, ASHLAR_[3])):
         put((Y == ky) & (X >= BASIN[0] - 2) & (X < BASIN[1] + 2), _const(c, X.shape))
     for (kx, c) in ((BASIN[0] - 2, ASHLAR_[5]), (BASIN[0] - 1, ASHLAR_[3]), (BASIN[1], ASHLAR_[5]), (BASIN[1] + 1, ASHLAR_[3])):
