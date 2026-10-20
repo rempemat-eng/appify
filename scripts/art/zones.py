@@ -849,6 +849,12 @@ def rle(row: str) -> str:
 WATER_MASKS: dict[str, set] = {}
 
 BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
+# The land past the walkable world (scenery.py) is saved at 2x, not the zones' 4x: each cell
+# is 360 x 616 art px, 13.5 MiB decoded at 4x and 3.4 MiB at 2x, and a region's edge mounts
+# several. Scaled by nearest neighbour (the camera's data-pixel view on the web), every art
+# pixel is a block of identical source pixels at either scale, so the picture on screen is
+# the same; only the decoded memory changes.
+SCENERY_SCALE = 2
 
 
 @functools.lru_cache(maxsize=1)
@@ -989,7 +995,7 @@ def export(built: dict):
     for region in LAYOUT:
         for (c, r), cv in sorted(scenery.cells(LAYOUT[region], region).items()):
             name = f'{region}_{c}_{r}'.replace('-', 'm')
-            cv.save(os.path.join(scen_dir, f'{name}.png'), worlds.SCALE)
+            cv.save(os.path.join(scen_dir, f'{name}.png'), SCENERY_SCALE)
             scenery_keys.append((f'{region}:{c}:{r}', name))
     used = {}
     for z in built.values():
