@@ -1450,7 +1450,9 @@ def ridge(frame: int = 0):
     ground.valley(cv, 'ridge', frame)  # one turf across the valley (ground.py)
     # the terrace: everything above the face is high ground under snow
     def rim(x):
-        return 210 + int(math.sin(x / 27) * 8 + noise2(x // 6, 0, 442) * 6)
+        # (Claude A's E20: not an even garden wall) the terrace's edge comes forward and
+        # goes back in buttresses and bays
+        return 210 + int(math.sin(x / 27) * 5 + math.sin(x / 61 + 0.4) * 9 + noise2(x // 6, 0, 442) * 6)
     FACE_H = 24
 
     def face_h(x):
@@ -1487,7 +1489,25 @@ def ridge(frame: int = 0):
     # the terrace's face: stacked blocks with lit ledges and snow on them, not bands
     snow_lip = [SNOWm[0], SNOWm[0], SNOWm[1], SNOWm[2], SNOWm[3]]
     tall = [x for x in range(W) if face_h(x) >= 3]
-    cliff(cv, {x: rim(x) + FACE_H - face_h(x) for x in tall}, {x: face_h(x) for x in tall}, seed=446, lip=snow_lip)
+    # the face in strata: long beds of rock dipping gently east, not blocks laid as a wall
+    cliff(cv, {x: rim(x) + FACE_H - face_h(x) for x in tall}, {x: face_h(x) for x in tall}, seed=446, lip=snow_lip,
+          cw=26, ch=5, dip=0.09)
+    for x in tall:  # the snow's lip: a cornice hanging over the edge, deeper in some places
+        t0 = rim(x) + FACE_H - face_h(x)
+        hang = int(smooth_noise(x, 0, 7, 455) * 5) + (2 if noise2(x // 3, 1, 456) > 0.8 else 0)
+        for k in range(hang):
+            cv.set(x, t0 + k, SNOWm[3] if k < hang - 1 else SNOWm[1])
+        style.darken(cv, x, t0 + hang)  # the cornice's blue shadow on the rock
+    # scree: fans of broken stone below the face where it has come down
+    for (sx, sw) in ((40, 18), (96, 14), (236, 22), (300, 16)):
+        if sx not in tall:
+            continue
+        fy = rim(sx) + FACE_H
+        for i in range(34):
+            t = noise2(i, 0, 457 + sx)
+            px = sx + int((noise2(i, 1, 457 + sx) - 0.5) * sw * (0.3 + t))
+            py = fy + 1 + int(t * 12)
+            detail.pebble(cv, px, py, STONEm, big=noise2(i, 2, 457 + sx) > 0.75)
     for x in range(W):  # snow lying on the ledges
         for k in range(2, FACE_H - 4):
             y = rim(x) + 1 + k
@@ -1559,15 +1579,20 @@ def ridge(frame: int = 0):
             mid = (min(xs) + max(xs)) // 2 + (1 if (y // 6) % 2 else -2)
             cv.set(mid, y, '#7E8FA6'); cv.set(mid + 1, y, '#7E8FA6')
     # the steps cut into the face: treads lit, risers in shade, a cheek wall each side
+    # the stair up the face, a flight 34 px wide (E20: not a ladder), its treads level
+    # across its width
     steps = set()
     for (x, y) in trail:
         if rim(x) <= y < rim(x) + FACE_H + 1:
             steps.add((x, y))
+    SX = sorted(steps)[len(steps) // 2][0] if steps else 150
+    for x in range(SX - 17, SX + 18):
+        steps |= {(x, y) for y in range(min(rim(x), rim(SX)), rim(x) + FACE_H + 1)}
     sx = {}
     for (x, y) in steps:
         sx.setdefault(y, []).append(x)
     for (x, y) in steps:
-        k = (y - rim(x)) % 5
+        k = (y - rim(SX)) % 5
         c = STONEm[4] if k == 0 else STONEm[3] if k == 1 else STONEm[2] if k == 2 else STONEm[1]
         if k == 4:
             c = STONEm[0]
@@ -1684,30 +1709,33 @@ def sea(cv: Canvas, water: set, seed: int = 0, calm=frozenset(), surf: bool = Tr
     return dist
 
 
-def cliff(cv: Canvas, top: dict, height: dict, seed: int = 0, lip=None) -> set:
+def cliff(cv: Canvas, top: dict, height: dict, seed: int = 0, lip=None, cw: int = 11, ch: int = 7, dip: float = 0.0) -> set:
     """A rock face seen from the front, from its turf lip at `top[x]` down `height[x]`
     px: stacked irregular blocks, each with a lit ledge along its top, a dark crevice
     under it and down its right side, the odd one mossy or darker; wet and dark with
-    weed at its foot. The lip is turf breaking over the edge in tufts."""
+    weed at its foot. The lip is turf breaking over the edge in tufts. `cw` x `ch` is
+    the blocks' size; long low blocks with a `dip` lay the rock in tilted strata."""
     lip = lip or G
     face = {(x, y) for x, t in top.items() for y in range(t, t + height[x])}
     if not face:
         return face
     seeds = {}
-    for (x, y) in face:
-        gx, gy = x // 11, y // 7
-        if (gx, gy) not in seeds:
-            seeds[(gx, gy)] = (gx * 11 + noise2(gx, gy, seed) * 10, gy * 7 + noise2(gx, gy, seed + 1) * 6)
+
+    def cell(x, y):
+        return x // cw, int(y + dip * x) // ch
+
+    def seed_of(gx, gy):
+        return (gx * cw + noise2(gx, gy, seed) * (cw - 1), gy * ch + noise2(gx, gy, seed + 1) * (ch - 1))
     owner = {}
     for (x, y) in face:
-        gx, gy = x // 11, y // 7
+        gx, gy = cell(x, y)
         best, bd = None, 1e9
         for ox in (-1, 0, 1):
             for oy in (-1, 0, 1):
                 sd = seeds.get((gx + ox, gy + oy))
                 if sd is None:
-                    sd = ((gx + ox) * 11 + noise2(gx + ox, gy + oy, seed) * 10, (gy + oy) * 7 + noise2(gx + ox, gy + oy, seed + 1) * 6)
-                d = ((x - sd[0]) / 1.5) ** 2 + (y - sd[1]) ** 2
+                    sd = seeds[(gx + ox, gy + oy)] = seed_of(gx + ox, gy + oy)
+                d = ((x - sd[0]) / (1.5 * cw / 11)) ** 2 + (y + dip * x - sd[1]) ** 2
                 if d < bd:
                     best, bd = (gx + ox, gy + oy), d
         owner[(x, y)] = best
@@ -2566,4 +2594,52 @@ def woodland(frame: int = 0):
     footbridge(cv, 123, 14, by0, by1, water)
     stands = {'garden': (304, meadow.ORCHARD_WALK_Y), 'clearing': (110, 160), 'spring': (100, int(centre(96)) + 18),
               'stones': (SX, SY + 4)}
+    # (Claude A's E18: 17 trees is a parkland, not a wood) the wood itself: belts two or
+    # three trees deep along the north, west and south edges, clumps of three to seven
+    # standing in the middle ground, young trees and bushes between, about half the floor
+    # under crowns; the glade, the circle, the spring, the stream and the paths stay open
+    # (no fruit trees in the wild wood: pines and the small wild broadleaf for now)
+    spr = sprites()
+    objects = [(oid, 'tree_small', x + 7, y + 24) if k == 'tree' else (oid, k, x, y) for (oid, k, x, y) in objects]
+    clear = set(path) | water | set(rock) | set(glade) | set(ring_out) | plank | set(spur)
+    clear = {(x + a, y + b) for (x, y) in clear for (a, b) in ((0, 0), (6, 0), (-6, 0), (0, 5), (0, -4))}
+    feet = []
+    for (_, k, x, y) in objects:
+        sp = spr[k]
+        feet.append((x + sp.ox + sp.w / 2, y + sp.oy + sp.h))
+    wood = []
+    for gy in range(-36, H - 20, 12):
+        for gx in range(-14, 300, 12):
+            jx = gx + int((noise2(gx, gy, 1601) - 0.5) * 10)
+            jy = gy + int((noise2(gx, gy, 1602) - 0.5) * 8)
+            edge = min(jx + 20, jy + 50, H - jy)
+            clump = smooth_noise(jx, jy, 46, 1603)
+            if not (edge < 34 and noise2(jx, jy, 1604) > 0.3 or edge < 60 and noise2(jx, jy, 1604) > 0.72
+                    or clump > 0.74 and noise2(jx, jy, 1604) > 0.45):
+                continue
+            r = noise2(jx, jy, 1605)
+            key = 'pine' if r < 0.42 else 'tree_small' if r < 0.86 else 'bush' if r < 0.95 else 'stump'
+            sp = spr[key]
+            x, y = jx - sp.ox - sp.w // 2, jy - sp.oy - sp.h
+            fx, fy = jx, jy
+            if not (4 <= fx <= 296 and 8 <= fy < H - 2):
+                continue
+            if any((fx + a, fy + b) in clear for a in range(-8, 9, 4) for b in range(-6, 3, 3)):
+                continue
+            if any(math.hypot(fx - ax, fy - ay) < (12 if key in ('bush', 'stump') else 17) for (ax, ay) in feet):
+                continue
+            if any(math.hypot(fx - sx_, fy - sy_) < 22 for (sx_, sy_) in stands.values()):
+                continue
+            bx0, by0_, bx1, by1_ = x + sp.ox, y + sp.oy, x + sp.ox + sp.w, y + sp.oy + sp.h
+            # nothing stands in front of the ways, the water or the circle and hides them
+            seen = [(a, b) for a in range(bx0, bx1, 3) for b in range(by0_, by1_, 3)]
+            if sum((a, b) in clear for (a, b) in seen) > 0.06 * len(seen):
+                continue
+            if bx1 > 150 and bx0 < 244 and by1_ > 132 and by0_ < 182:
+                continue  # clear of the forager's round, so nobody walks behind a trunk
+            if fx > 250 and abs(fy - meadow.ORCHARD_WALK_Y) < 60:
+                continue  # the way in from the garden stays open
+            feet.append((fx, fy))
+            wood.append((f'wood-{len(wood) + 1}', key, x, y))
+    objects += wood
     return cv, objects, stands, (water | rock) - plank
