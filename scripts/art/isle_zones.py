@@ -1413,6 +1413,10 @@ def _island_props() -> list:
         box = (x0 - 3, y0 - 4, x1 + 3, y1 + 3)
         if any(box[0] < b[2] and box[2] > b[0] and box[1] < b[3] and box[3] > b[1] for b in feet):
             return False
+        # scatter never stands inside a landmark's picture (it would read as growing out of
+        # the roof or the hull), nor on the shore and slipway in front of the boathouse
+        if not landmark and any(x0 < b[2] and x1 > b[0] and y0 < b[3] and y1 > b[1] for b in held):
+            return False
         # where a sprite rises over a zone's north border, nothing in the zone behind may
         # stand under it (zones.check_overhangs)
         bx0, by0 = fx - sp.w // 2, fy - sp.h
@@ -1449,9 +1453,13 @@ def _island_props() -> list:
         return True
 
     boxes = []
+    held = []  # every landmark's sprite box, with the boathouse's shore and slipway
 
     def put(oid, key, fx, fy):
         sp = sm[key]
+        if any(oid == lid for (lid, _k, _x, _y) in LANDMARKS):
+            below = 18 if key == 'boathouse' else 2
+            held.append((fx - sp.w // 2 - 4, fy - sp.h - 2, fx + sp.w // 2 + 4, fy + below))
         boxes.append((fx - sp.w // 2, fy - sp.h, sp.w, sp.h, fx // W, (fy - 2) // H))
         feet.append(tuple(a + d for a, d in zip(_foot(key, fx, fy), (-3, -4, 3, 3))))
         out.append((oid, key, fx, fy))
