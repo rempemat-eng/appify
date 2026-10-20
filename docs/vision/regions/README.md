@@ -12,6 +12,8 @@ One brief per region and owner, written from the world plan v5.3 (`../world-plan
 | [The routes, the thresholds and the world's edges](routes-thresholds-edges.md)       | Claude A | the whole canvas between the regions                                                                                            |
 | [Props across all regions](props.md)                                                 | Claude B | every region                                                                                                                    |
 
+**The whole world, rebuilt to one standard:** `../rebuild-plan.md` gives every square of the canvas an owner, the kits, the order in waves and the gates (the asset ledger and the whole-world audit).
+
 **Shared rules.** World pixels on the 11264 x 6912 px canvas, 8 px cells, one screen 320 x 576 px. Paths first; the ground fitted to each route. Transitions as places. Edges in three layers, drawn as land. No reward, cost or chore from decoration. The benchmark (`../research/world-benchmark.md`) is the bar, held again on the drawn art. Lanes edit only the files the lane table in `../coherence-plan.md` gives them; this folder is Claude A's.
 
 **The crops** (one per brief) are in Claude A's scratchpad, not in the repository: `/tmp/claude-0/-home-claude/740ae43f-1e6f-546c-a61b-113cd8f682fd/scratchpad/worldplan5/briefs/`.
