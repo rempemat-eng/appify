@@ -27,11 +27,13 @@ def rect_set(x, y, w, h):
 
 
 def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'saloon') -> Canvas:
-    """A false-front building, 104 x 92: the tall square facade hides a pitched tin roof
-    (its top shows behind), bleached clapboards, a sign board with a pictogram
-    (a mug or a sack), an upper window, a porch roof on posts that throws a deep shadow, and
-    swinging half doors (a saloon) or a shop window (a store)."""
-    w, h = width, 92
+    """A false-front building, `width` x 108, at the people's scale (verticality.md 5: a
+    shop's ground storey about 44 px, its door 32 px tall, an adult 25): the tall square
+    facade hides a pitched tin roof (its top shows behind), bleached clapboards, a sign
+    board with a pictogram (a mug or a sack), an upper window, a porch roof on posts that
+    throws a deep shadow, and on the ground storey swinging half doors in a 22 x 32
+    doorway (a saloon) or a 16 x 32 glazed door between two display windows (a store)."""
+    w, h = width, 108
     cv = Canvas(w, h, pad=PAD)
     # the tin roof behind the facade, seen from above
     for y in range(2, 20):
@@ -70,31 +72,54 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
         if sx0 + 2 < mx + dx < sx1 - 2:
             x = mx + dx
             cv.set(x, 22, ink); cv.set(x - 1, 23, ink); cv.set(x + 1, 23, ink); cv.set(x, 24, ink)
-    # an upper window with a shutter
-    gp.window(cv, w // 2 - 8, 33, 16, 12, shutters=None, sill=True, warm=False)
+    # the upper storey's window with a sill (16 x 12, the table's window)
+    gp.window(cv, w // 2 - 8, 34, 16, 14, shutters=None, sill=True, warm=False)
     # the porch roof and its posts
-    py = 50
+    py = 58
     for x in range(0, w):
         for y in range(py, py + 5):
             cv.set(x, y, BLEACHED[4] if y == py else BLEACHED[2] if y < py + 4 else BLEACHED[0])
     detail.overhang_shadow(cv, 4, w - 4, py + 5, lambda x: 7, k=2, cap=2)
-    for px in (2, w // 3, 2 * w // 3, w - 5):
+    for px in (2, w // 3 - 6, 2 * w // 3 + 4, w - 5):
         gp.post(cv, px, py + 5, h - 4, w=3, ramp=BLEACHED)
-    # the ground floor
-    dx = w // 2 - 9
+    # the ground storey: the doorway stands on the boardwalk, 32 px tall
+    foot = h - 6
+    top = foot - 32
     if kind == 'saloon':
-        for (x, y) in rect_set(dx, 62, 18, 18):  # swinging half doors over a dark room
-            cv.set(x, y, '#2A1C16')
-        for half in (0, 9):
-            for (x, y) in rect_set(dx + half, 66, 9, 9):
+        dw = 22
+        dx = w // 2 - dw // 2
+        for (x, y) in rect_set(dx, top, dw, 32):  # the dark room inside
+            cv.set(x, y, '#2A1C16' if y > top + 2 else '#3A2820')
+        for (x, y) in rect_set(dx - 2, top - 2, dw + 4, 2):  # the lintel
+            cv.set(x, y, BLEACHED[1] if y == top - 1 else BLEACHED[4])
+        for y in range(top, foot):  # the jambs
+            cv.set(dx - 1, y, BLEACHED[4]); cv.set(dx + dw, y, BLEACHED[1])
+        for half in (0, dw // 2):  # the swinging half doors, hung at chest height
+            for (x, y) in rect_set(dx + half, top + 9, dw // 2, 13):
                 cv.set(x, y, WOOD[3] if (x - dx) % 3 else WOOD[2])
-            cv.hline(dx + half, 66, 9, WOOD[4])
+            cv.hline(dx + half, top + 9, dw // 2, WOOD[4]); cv.hline(dx + half, top + 21, dw // 2, WOOD[1])
+        for (x, y) in rect_set(dx + 2, top + 22, dw - 4, 10):
+            if (x + y) % 5 == 0:
+                cv.set(x, y, '#4A3228')  # the floor inside, glimpsed under the doors
     else:
-        for (x, y) in rect_set(dx - 14, 62, 46, 18):
-            cv.set(x, y, WTR[3] if y < 66 else WTR[1])
-        cv.vline(dx + 9, 62, 18, BLEACHED[2])
-        for k in range(4):
-            cv.rect(dx - 10 + k * 11, 72, 5, 6, (GOLD, RED, WTR, ADOBE)[k][3])
+        dw = 16
+        dx = w // 2 - dw // 2
+        for (x, y) in rect_set(dx, top, dw, 32):  # a glazed door: a panel below, glass above
+            c = WOOD[2] if y > top + 18 else WTR[3] if y < top + 6 else WTR[1]
+            if x in (dx, dx + dw - 1) or y in (top, top + 18):
+                c = WOOD[1]
+            cv.set(x, y, c)
+        cv.set(dx + dw - 4, top + 17, GOLD[3])  # its handle
+        for (x, y) in rect_set(dx - 2, top - 2, dw + 4, 2):
+            cv.set(x, y, BLEACHED[1] if y == top - 1 else BLEACHED[4])
+        for (wx0, ww) in ((8, dx - 13), (dx + dw + 5, w - (dx + dw + 5) - 8)):  # the display windows
+            wy0 = top + 4
+            for (x, y) in rect_set(wx0, wy0, ww, 20):
+                cv.set(x, y, WTR[3] if y < wy0 + 4 else WTR[1])
+            for k in range(max(1, ww // 9)):  # goods on the shelf behind the glass
+                cv.rect(wx0 + 2 + k * 9, wy0 + 12, 5, 6, (GOLD, RED, WTR, ADOBE)[(k + (wx0 > dx)) % 4][3])
+            cv.hline(wx0 - 1, wy0 + 20, ww + 2, BLEACHED[4])  # the sill
+            cv.vline(wx0 - 1, wy0, 20, BLEACHED[1]); cv.vline(wx0 + ww, wy0, 20, BLEACHED[1])
     # the boardwalk at the foot
     for y in range(h - 6, h):
         for x in range(0, w):
