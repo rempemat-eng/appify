@@ -1,26 +1,35 @@
-# The world plan (v2): sizes first, then the map
+# The world plan (v3): one continent
 
-Matt, 20 Oct 01:05: "All of these need redesigns pretty much, to fit the newly established soft grids. also consult the other games mentioned for world buildings how large parts of the maps should be and how they are attached together and how you can create interesting spaces." At 10:32, on v1 of this plan: "also dont just redesign the current map exactly, really think deeply of the sizing of everything and the map".
+Matt, 20 Oct 01:05: "All of these need redesigns pretty much, to fit the newly established soft grids. also consult the other games mentioned for world buildings how large parts of the maps should be and how they are attached together and how you can create interesting spaces." At 10:32, on v1: "also dont just redesign the current map exactly, really think deeply of the sizing of everything and the map". At 10:58, on v2's world map: "i like how you are creating one big map first here. work the whole world map out first and how everything connects (with as many physical connections as possible as well, with trains as short cuts). of course to reach the moon and such places you need an animation of a rocket ship of sorts. make sure you establish the sizing and soft grid for all regions ... the world should feel expansive with natural looking boundaries and no abrupt cuts".
 
-**Status: a plan, partly decided.** Matt decided decisions 1 to 7 on 20 Oct at about 10:50 (section 7); the rest are open. v1 redrew each region inside today's 320 x 576 tiles. v2 starts from the size of a person and works up: how big a cottage, a street, a farm, a harbour, a town, a castle and a city block must be at the true scale; what the phone shows; whether the zone grid should stay; and only then the shape of each region. It keeps v1's lessons from the reference games (section 2) and replaces v1's region plans.
+**Status: a plan, partly decided.** v2's sizing and its seven decided items stand (section 11). v3 adds the continent. The valley, Cogsworth, Sunstone Reach, Neon Harbour and the isles sit on one world map in world coordinates on the 8 px grid. Eight walkable routes join them, each a real place, and the trains, the ferry and the maglev become shortcuts over those routes. Space is reached by a rocket from a launch cape. The nine ways become things on the routes being mended, and the engine draws one world canvas. Sections 1 and 2 are v2's sizing and lessons, unchanged. Section 6 keeps v2's region plans and says what v3 changes in each.
 
 It builds on, and does not repeat:
 
-- `verticality.md` (branch `claude-a/verticality-study`): the 8 px soft grid (Matt decided it), the five rules, the terrace toolkit, and the scale table (an adult is 25 px, a door 32, a storey 32, a shop storey 44, a cottage about 96 to the ridge, a tree about 90).
-- `art-style.md` on main: Eastward's level of detail is required; each setting takes its forms and palette from its own world (Matt, 20 Oct 10:15).
-- `prop-logic.md` and the prop audit (draft PR #97): what each prop needs and which props are kept or redrawn. Section 4 here names each place's trade; #97 says what that means prop by prop.
-- `world-unlocks.md` (draft PR #95; decided: nine ways, one a day) and the ways catalogue `lib/world-ways.ts` (draft PR #118). Section 5 places the nine ways on the new map.
+- `verticality.md` (branch `claude-a/verticality-study`): the 8 px soft grid, the five rules, the terrace toolkit and the scale table.
+- `art-style.md` on main: Eastward's level of detail is required, and each setting takes its own forms and palette.
+- `prop-logic.md` and the prop audit (draft PR #97).
+- `world-unlocks.md` (draft PR #95; decided: nine ways, one a day) and the ways catalogue `lib/world-ways.ts` (draft PR #118).
 - `world-rules.md`, `world-ports.md` and `world-atlas.md` stay the rulebook.
 
-The block-out images that go with this file are drawn by a script (1 px per 8 px cell, flat colours per kind of ground, tiers shaded, walk distances measured on them). They are not in the repository; how to look at them is in section 4.
+**The images** are drawn by a script from the block-outs (1 px per 8 px cell, flat colours per kind of ground, tiers shaded, faces derived) and measured on them. They are not in the repository; Claude A has them in its scratchpad (`worldplan3/`):
+
+- `continent-1x.png`: the whole continent, 1 px per 8 px cell (1040 x 616).
+- `overview-32px.png`: the same at 1 px per 32 px (260 x 154).
+- `continent-labelled.png`: 2 px per cell, with places, routes (yellow), journeys (dashed), ways (red) and the landmarks on the routes.
+- One crop per region at 4 px per cell, each in its continental setting: `region-valley.png`, `region-cogsworth.png`, `region-sunstone.png`, `region-neon.png`, `region-isles.png`.
+- One crop per route at 4 px per cell: `route-canal-road.png`, `route-drovers-road.png`, `route-eastern-road-and-coast-path.png`, `route-hill-path.png`, `route-ember-pass.png`, `route-shell-bar.png`, `route-cape-road.png`.
+- `stats.json`: every walk from the hut, on foot and with shortcuts. `gates.json`: the gate check (section 8).
+- v2's per-region comparison sheets, today beside the plan, are in `worldplan2/`.
 
 ## 0. In short
 
-1. **Keep the zoom.** The phone shows 12 adults across, as Eastward (12.8) and Stardew (15) do, and about 19 adults between the HUD and the hotbar, more than twice their height. Our width is right for the scale table; the extra height means the world is composed along north and south.
-2. **Drop the zone grid as the unit of the world.** Draw each region as one continuous canvas of any size on the 8 px grid; the build cuts it into small square render tiles (256 px) that the renderer streams; "zones" become named areas of any shape, used for names, the map and saves. Seams between zones disappear, and the decoded memory on a phone falls from 24 to 47 MB to about 9 to 12 MB.
-3. **Size every place from the people in it.** A cottage plot is 128 x 176 px, a village square 240 x 176, a farm 384 x 288, a halt 256 x 160, a harbour 544 x 352, a castle 400 x 400, a city block 208 x 272. Everyday places stay within 15 seconds' walk of the hut's door.
-4. **The world grows by about a quarter in walkable ground (22 to 27 zone-areas), not in screens.** The valley gets a real village, farm and harbour village at true scale; Cogsworth nearly doubles and gains its hill and terminus; Neon shrinks its canvas by a quarter but gains walkable streets; Sunstone becomes one continuous land from the oasis to the springs; the isles, Halcyon and Lumen keep their size.
-5. **The nine ways stay where #95 and #118 put them**; on canvases they are cell sets, not zone seams.
+1. **One continent, west to east, as a journey.** The fire country and the desert lie in the far west. Then come the downs, Cogsworth's industry, and the home valley in the middle. To the east are orchards, the industrial edge and the neon city, with a launch cape beyond it. The isles lie off the south coast. The Northern Range closes the north; the sea closes the south, west and east.
+2. **Eight walkable routes join the regions**, 8 to 40 s each, every one a place with landmarks, a rest and a reason to exist: the Canal Road, the Drover's Road, the Eastern Road, the Coast Path, the Hill Path, the Ember Pass, the Shell Bar (a causeway to the isles) and the Cape Road. There are four loops, and every region has at least two ways in.
+3. **Journeys are shortcuts over routes.** The valley train runs beside the Canal Road, the desert line beside the Drover's Road, and the maglev on a sea viaduct along the coast. The ferry crosses the strait the Shell Bar walks. A way opens a route and its line together.
+4. **Space by rocket.** A rocket from the Launch Cape, east of the Skyport, replaces the space elevator (W8: "the launch not yet fuelled"). Halcyon's lander takes you on to Lumen (W9). Each has a launch and a landing animation.
+5. **Natural boundaries only.** Peaks, a wooded ridge (the Brackens), a flash-flood gorge (the Dry Wash), a river (the Neon), badlands, old forest and the sea close the world and make its chokepoints. Each biome blends into the next over 700 to 1200 px.
+6. **One world canvas** (8320 x 4928 px), authored in chunks (regions and routes), cut into 660 tiles of 256 px. 361 of those are uniform (sea, peaks, forest) and share a picture. The renderer streams 9 to 12 tiles, as v2 planned.
 
 ## 1. Sizing
 
@@ -144,79 +153,162 @@ Our sizes are built from the scale table's parts (doors, storeys, a cottage of a
 
 v1's full text, with every quotation and its source, is in this file's history (commit `7c96dae`); the sources are listed again at the end.
 
-## 3. The structure: from fixed zones to region canvases
+## 3. The continent
 
-### 3.1 What we have
+### 3.1 The map
 
-Every region is a fixed grid of 320 x 576 zones (`LAYOUT` in `scripts/art/zones.py`, exported as `regionLayout`). Each zone has its own ground picture (saved 4x: 1280 x 2304, **11.8 MB decoded**), its own walk grid in 4 px cells, its stands and props. `lib/region-walk.ts` lays the zones' walk grids side by side into one region grid; `zonesToMount` mounts whole zones round the camera (two to four at a time, **24 to 47 MB**); `frames.PORTS` and `world_lint.py` make borders match across seams; a prop may not cross a seam. The isles and the Frostline already draw their land whole and cut it into zones afterwards.
+World coordinates are px on the 8 px grid, with the origin at the north-west corner of the world canvas (8320 x 4928). The continent runs about 7600 px west to east (190 s of walking straight across) and 2700 px north to south, with the isles 900 px off the south coast.
 
-The grid made sense for the first prototype. It now costs us: every seam needs a port, a border check and a border painter; props cannot straddle a seam; areas have to be 320 x 576 whether a place needs a halt or a city; the 4x zone picture is the largest memory cost in the app. Matt (19 Oct): "the world does not need to be divided into screen sized sections".
+```
+ WEST                                                                                 EAST
+ +-------------------------------------------------------------------------------------+
+ | volcano     |      THE NORTHERN RANGE (peaks)       | Frost-  |   old forest (wild)   |
+ | springs     |  Ember Pass (W6)    Hill Path (W2,W3) | line    |                       |
+ | castle  W6  |  ===========  COGSWORTH  =========  B | (W2)    |  N                    |
+ | caldera     |        hill, junction,               r | garden  |  e   NEON HARBOUR     |
+ | chasm       |  D     canal, terminus (W5, W7)      a | Cross-  |  o   (W7 swing        |
+ | canyon      |  r  DOWNS: farm > heath > scrub      c | roads   |  n   bridge)  LAUNCH  |
+ | gulch oasis |  y     Drover's Road (W5 bridge)     k | halt    |      Skyport  CAPE    |
+ | badlands    |  Wash          Canal Road (W3 gorge) e | Drift-  | Eastern Road   (W8)   |
+ |             |                                      n | wood    | Coast Path            |
+ |             |                                      s | Headland (W1)                   |
+ +------------------------------- the sea ----------------------------------------------+
+                                                 Shell Bar (W4) | ferry (W4)
+                                                 TIDEBLOOM ISLES
+```
 
-### 3.2 The options
+| Place                                                       | World origin (x, y) | Size (px)   | Notes                                                                                                                                   |
+| ----------------------------------------------------------- | ------------------- | ----------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Sunstone Reach (with Hearthold and the fire country)        | (320, 640)          | 1280 x 1664 | **mirrored from v2**: its oasis and platform face east toward the downs, the castle and the springs lie in the west against the volcano |
+| Cogsworth                                                   | (2520, 1160)        | 704 x 960   | as v2                                                                                                                                   |
+| The valley (with Driftwood, the Headland and the Frostline) | (4120, 360)         | 1280 x 2688 | as v2                                                                                                                                   |
+| Neon Harbour and the Skyport                                | (6520, 1480)        | 960 x 1280  | as v2; its west edge is now the Neon river                                                                                              |
+| Tidebloom Isles                                             | (4920, 3420)        | 704 x 1152  | as v2; the Shell Bar lands on its north shore                                                                                           |
+| Launch Cape                                                 | (7480, 2400)        | 480 x 360   | new: the spaceport on a cape east of the Point                                                                                          |
 
-| Option                                 | What it is                                                                                                                          | For                                                                            | Against                                                                            |
-| -------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------- |
-| A. Keep 320 x 576 zones                | today                                                                                                                               | no work                                                                        | seams, ports and border painting stay; sizes forced to the tile; memory stays high |
-| B. Bigger zones (640 x 1152)           | four of today's zones in one                                                                                                        | fewer seams                                                                    | 47 MB per zone at 4x; still a fixed size; same seam machinery                      |
-| C. Smaller zones (160 x 288)           | a quarter of today's                                                                                                                | finer mounting                                                                 | four times the seams and ports                                                     |
-| **D. Region canvases, streamed tiles** | each region is one canvas of any size on the 8 px grid; the build cuts it into 256 x 256 render tiles; areas are named shapes on it | no seams inside a region; sizes follow the place; props anywhere; memory falls | the largest change: generators, exports, region walk, mounting, saves              |
+**Walkable ground on the continent: 51.6 zone-areas** (v2's regions alone had 27). Most of the new ground is countryside between the regions: downs, farmland, orchards and foothills, which the routes cross.
 
-### 3.3 The proposal (D)
+### 3.2 Why this arrangement
 
-**Authoring.** Each region generator draws one canvas (for example the valley at 1280 x 2688) in region coordinates, on the 8 px grid, with the terrace toolkit. It declares its **areas** as rectangles or cell masks on the canvas (`garden`, `town`, `harbour` and so on; names kept where they exist today), its stands, props, tiers, terrain and ways' barriers, all in region pixels. `LAYOUT` becomes `REGIONS = {id: (width, height)}` plus `AREAS`.
+- **The theme becomes geography.** The atlas's idea (a journey from rest to screens and back to sleep) now reads on the map. Home sits in the middle. Westward the land grows harder: industry, then drought, then fire. Eastward it grows louder: orchards, then yards, then the city, then the rocket to the quietest place of all.
+- **Water explains the land.** Snow in the Northern Range feeds the valley's river (v2), the canal and the Neon river. The Dry Wash is a flash-flood bed that runs only after storms (which is how it took the Drover's Road bridge). The sea closes the south.
+- **Cogsworth is the junction its name promises.** The valley line arrives from the east, the desert line leaves to the south-west, and the maglev leaves south-east for the coast viaduct. The canal links it to the valley's halt.
+- **Each region keeps its v2 plan.** Only Sunstone is mirrored, so that it faces the land it trades with.
 
-**Build.** `zones.py` keeps one build per region: the ground is cut into **256 x 256 px tiles** (32 x 32 cells), saved at 2x (512 x 512 PNG, 1 MB decoded each) or at 1x with nearest-neighbour scaling if that is crisp on iOS, Android and the web (a test; art-style.md already asks for it). Props stay sprites in region coordinates, sorted by foot. Exports per region: size, walk grid (one RLE grid in 4 px cells, as today), terrain, tiers, areas, stands, props, tiles, ways' cells.
+## 4. The routes
 
-**Renderer** (`components/atlas-walk.tsx`). The camera and taps already work in region pixels. Mounting changes from "zones the camera sees" to "tiles the camera sees plus a 24 px margin": at 301 x 655 art px that is at most 3 x 4 = 12 tiles, usually 9, so **9 to 12 MB at 2x (3 MB at 1x) against 24 to 47 MB today**. `zoneReach` and the 48 px overhang rule go: a tall prop is a sprite like any other. The zone name under the HUD becomes the area name, with the same hysteresis.
+Each route is a place: a corridor between natural edges, with landmarks every 5 to 10 s, a rest about halfway (rule 2), and a reason to exist (rule 13). The walk-seconds are the shortest walk between the route's ends on the block-out.
 
-**`lib/region-walk.ts`.** `regionWalk` reads the region's one grid instead of stitching zones; `tileAt` becomes `areaAt`; `zonesToMount` becomes `tilesToMount`; `tileOrigin`, `GARDEN_OPENINGS` and the garden's edge spans go (the garden is part of the valley's canvas, so the hub's moved grid in `lib/home-hub.ts` becomes an offset only). Decks (`regionLevels`, `deckAt`) carry over in region pixels.
+| Route                    | From and to                                                       | Walk | Reason (who uses it)                                                                                | Landmarks and rests                                                                                                                                                        | Its line (shortcut)                                 | Its way                                                                                               |
+| ------------------------ | ----------------------------------------------------------------- | ---- | --------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| **R1 the Canal Road**    | Cogsworth's canal to the valley's halt and coal wharf             | 28 s | barges bring coal to the valley and take flour and hay back; the towpath horses and the lock-keeper | the canal and its towpath; the lock-keeper's cottage; the brickworks kiln with its stacks of bricks; the Millrace gorge through the Brackens; the coal wharf at the halt   | the valley train                                    | **W3**: a landslip in the Millrace gorge buries the towpath and the line                              |
+| **R2 the Drover's Road** | Cogsworth's south-west to Dust Gulch                              | 29 s | drovers bring cattle from the gulch to Cogsworth's market and the railhead                          | hedged pasture, then heath, then scrub; the drovers' inn at the halfway well; the stock pens; the Dry Wash bridge; a windpump; the mesa ahead                              | the desert line                                     | **W5**: a flash flood took the Dry Wash bridge, carrying road and line                                |
+| **R3 the Eastern Road**  | the valley's park to Neon's swing bridge                          | 26 s | carts take fruit, vegetables and flowers to the city's markets; commuters                           | a cider orchard and its press; market gardens with glasshouses; allotments and sheds; a depot and gasworks yard; the swing bridge, with the city's towers across the river | (the maglev arrives along the coast)                | **W7**: the swing bridge is stuck open for want of a gear from Cogsworth                              |
+| **R4 the Coast Path**    | the valley's estuary lane along the cliffs to the bridgehead      | 30 s | fishers' path between the coves; walkers                                                            | Gullwick, a fishing hamlet with a smokehouse; a cliff bench over the sea viaduct; the city's breakwater ahead                                                              | the coastal steamer (S3, proposal)                  | shares W7's bridge                                                                                    |
+| **R5 the Hill Path**     | Snowmelt Lake down the foothills to Gasworks Hill                 | 36 s | shepherds and the lamplighter's gas-main walkers                                                    | a snow ledge out of the cirque; a long stair over the Brackens' head; a shepherd's bothy; cairns; the view down on Cogsworth's chimneys and airship                        | none                                                | **W2** to reach its top; **W3** (a rockfall at the stair's foot, from the same storm as the landslip) |
+| **R6 the Ember Pass**    | Cogsworth's west street up through the range to the caldera's rim | 39 s | ore carters before the mine line; pilgrims to the springs                                           | soot meadow, then heath, then bare rock, then ash; a stone refuge; the fumarole view over the desert; the caldera's rim                                                    | the mine cart (S1) from the gulch does the same job | **W6**: a rockfall on the pass (with the chasm bridge)                                                |
+| **R7 the Shell Bar**     | the Headland's cove to the isles' north shore                     | 11 s | a tombolo of sand and shell; cocklers at low tide                                                   | marram dunes, tide pools, a tide post, the island ahead                                                                                                                    | the ferry from Driftwood                            | **W4**: a storm washed out a stretch (and holed the ferry); W1 first, to reach the Headland's cove    |
+| **R8 the Cape Road**     | the Point to the launch pad                                       | 8 s  | spaceport workers                                                                                   | the cape's salt flats, the fuel farm, the pad and the rocket on it                                                                                                         | (the rocket is the journey)                         | **W8**: the launch not yet fuelled                                                                    |
 
-**What goes.** `frames.PORTS` and `zonePorts` inside a region (seams no longer exist; the ways' barriers become cell sets), the border-continuity lint (check 10), `beyond()` between a region's zones (the frame is part of the canvas). What remains between regions is the journey.
+**Loops.**
 
-**Saves.** A `WorldSpot` already holds a region and a point; `lib/world-layouts.ts` gains one layout version that maps each old zone to its area and each old stand to its new stand, so a saved spot lands at the same place. `visited` keeps its ids where an area keeps its name (most do) and maps the rest (`hill`, `terminus` are new; `waterfront` and `point` fold into `docks` and the Skyport). The ways catalogue (#118) changes from zone ids to area ids and barrier cells.
+- Valley, Canal Road, Cogsworth, Hill Path, Frostline, valley.
+- Valley, Eastern Road, Neon, Coast Path, valley.
+- Cogsworth, Drover's Road, Sunstone (through the canyon and over the chasm bridge), Ember Pass, Cogsworth.
+- Over the sea: Driftwood, ferry, the isles, Shell Bar, the Headland.
 
-**Checks.** `lib/region-walk.test.ts`, `lib/home-hub.test.ts`, `lib/world-ways.test.ts` and the hub block of `scripts/check-garden.cjs` move to region coordinates. New: every tile exists for every canvas cell; the mounted set covers the view at every window size; areas cover every walkable cell; memory per frame under a budget.
+**Shortcuts** (none is needed to reach a place; each saves a walk):
 
-**Cost and risk.**
+| Shortcut                                        | Between                                                    | Saves                                                                  | Opens with                             |
+| ----------------------------------------------- | ---------------------------------------------------------- | ---------------------------------------------------------------------- | -------------------------------------- |
+| The valley train                                | the halt and Cogsworth's platform                          | hut to Cogsworth's platform 69.5 s on foot, 22.9 s with it             | W3 (the line is cleared with the road) |
+| The desert line                                 | Cogsworth's platform and Dust Gulch's platform             | hut to the gulch 105.8 s on foot, 26.9 s with the trains               | W5                                     |
+| The maglev                                      | Cogsworth's terminus and the Skyport, on the coast viaduct | hut to the Skyport's maglev 67.6 s on foot, 48.4 s by train and maglev | W7                                     |
+| The ferry                                       | Driftwood's pier and Lagoon Landing                        | hut to the isles' pier 81.2 s on foot (Shell Bar), 40.4 s by ferry     | W4                                     |
+| The mine cart (S1)                              | Dust Gulch's mine mouth and the caldera's cart bay         | the gulch to the cart bay 53.5 s on foot, about 7 s with it            | after W6                               |
+| The coastal steamer (S3, proposal)              | the Skyport's pier and Driftwood                           | the way home from the city by sea                                      | after W7                               |
+| The millpond boat (S2), the ridge lanterns (S4) | comforts in the valley                                     |                                                                        | GRASS only                             |
 
-| Part                                          | Owner                                | Size                | Risk                                                                                                                     |
-| --------------------------------------------- | ------------------------------------ | ------------------- | ------------------------------------------------------------------------------------------------------------------------ |
-| Region build, tile cutting, exports           | A                                    | one PR              | build time and file count (the valley is 5 x 11 = 55 tiles); mitigated by building only changed regions                  |
-| Renderer mounting by tile, area names         | A                                    | one PR              | a seam between render tiles (sub-pixel gaps); tiles are whole art pixels and snapped to device pixels as zones are today |
-| Region walk, hub offset, saves, tests         | A, with Codex for `lib/save-data.ts` | one PR              | saved spots and visited lists; covered by the layout-version mapping and tests                                           |
-| Each region's generator in region coordinates | the region's lane                    | part of each redraw | none extra: the redraw happens anyway (isles and Frostline already work this way)                                        |
-| 1x pictures with nearest-neighbour scaling    | A                                    | a test              | blurry scaling on a native platform; fallback 2x                                                                         |
+**Walks from the hut's door** (selected; all are in `stats.json`):
 
-The redraws can start before the renderer lands: a generator draws its canvas and cuts it into today's zones (as the isles do) until the region build exists.
+| To                                 | On foot (s)             | With shortcuts (s) |
+| ---------------------------------- | ----------------------- | ------------------ |
+| the stall, the square, the library | 12 to 14                | same               |
+| the halt                           | 18.9                    | same               |
+| the ferry pier                     | 36.4                    | same               |
+| the Frostline's scope              | 30.7                    | same               |
+| Cogsworth's platform               | 69.5                    | 22.9               |
+| Gasworks Hill                      | 59.3 (by the Hill Path) | 33.1               |
+| the drovers' inn                   | 73.9                    | 49.4               |
+| Dust Gulch's platform              | 105.8                   | 26.9               |
+| Hearthold's keep                   | 133.6                   | 54.7               |
+| the caldera's forge                | 120.7                   | 43.1               |
+| the swing bridge                   | 51.0                    | same               |
+| Neon's market                      | 62.6                    | 59.8               |
+| Neon's big screen                  | 77.4                    | 69.9               |
+| the isles' pier                    | 81.2                    | 40.4               |
+| the launch pad                     | 88.0                    | 58.6               |
 
-## 4. The world
+At 40 px a second, the continent's far corners (the springs, the launch pad) are 1.5 to 2.3 minutes from the hut on foot and under a minute with the shortcuts. The everyday places stay within 15 s (v2's decided rule).
 
-**The images** (not committed; regenerate with `python3 -I worldplan2/blockout.py` from the scratchpad, or ask Claude A for them):
+## 5. Natural boundaries and transitions
 
-- `world-compare.png`: today's regions (left) and the plan (right) at the same scale, set where they lie, with the journeys.
-- One sheet per region, today beside the plan at 4 px per cell, with landmarks (yellow) and ways (red): `valley.png`, `cogsworth.png`, `sunstone.png`, `isles.png`, `neon.png`, `halcyon.png`, `lumen.png`; and each plan alone at 1 px per cell (`*-1x.png`).
-- `stats.json`: each canvas, its area and the measured walks.
+**The edges of the world:**
 
-The walk-seconds below are measured on the block-outs: shortest walks over walkable cells (eight directions, faces blocked, stairs and bridges open), at 40 px a second.
+- **North:** the Northern Range. Peaks with snow caps, drawn as frame, never walked. The volcano's black flank in the west.
+- **West:** badlands (red, cut, impassable) and the sea.
+- **South:** the sea, along a coast that runs in grid-led stretches with organic sand and rock edges (the soft grid at the large scale).
+- **East:** old forest over the hills north of the Eastern Road and north of the city; the sea beyond the Launch Cape.
 
-### 4.1 Today against the plan
+Nothing ends in a straight cut. Each edge is a thing you would also see in the real world.
 
-| Region                                                    | Today: zones (walkable, in zone-areas) | Plan: canvas (zone-areas)   | Plan: walkable | Change                                                                                   |
-| --------------------------------------------------------- | -------------------------------------- | --------------------------- | -------------- | ---------------------------------------------------------------------------------------- |
-| The valley with Driftwood, the Headland and the Frostline | 13 (8.9, the garden estimated)         | 1280 x 2688 (18.7)          | 10.3           | +16 % walkable; true-scale village, farm and harbour; frame of sea, peaks and old forest |
-| Cogsworth                                                 | 2 (1.6)                                | 704 x 960 (3.7)             | 2.4            | +48 %: the hill and the terminus                                                         |
-| Sunstone Reach and the fire country                       | 6 (4.7)                                | 1280 x 1664 (11.6)          | 5.9            | +26 %: one land, the canyon, the castle's two wards                                      |
-| Tidebloom Isles                                           | 4 (2.0)                                | 704 x 1152 (4.4)            | 2.3            | about the same                                                                           |
-| Neon Harbour and the Skyport                              | 9 (3.6)                                | 960 x 1280 (6.7)            | 4.5            | canvas -26 %, walkable +25 %: streets instead of building blocks on open concrete        |
-| Halcyon Station                                           | 1 (0.75)                               | 320 x 576 (1.0)             | 0.64           | the same                                                                                 |
-| Lumen                                                     | 1                                      | 384 x 704 (1.5)             | 1.3            | a little wider: the crater reads                                                         |
-| **The world**                                             | **36 zones (about 22 walkable)**       | **47 zone-areas of canvas** | **27**         | **+25 % walkable ground**                                                                |
+**The barriers that make the chokepoints** (inside the continent):
 
-**Towns, and their kinds.** Crossroads (a market village, about 14 buildings round a square); Driftwood (a fishing hamlet up one road above its quay); the halt farm (a farmstead with a windmill); Cogsworth (a railway and foundry town, about 18 buildings); Dust Gulch (a one-street frontier town, 9 buildings); Hearthold (a castle); Neon Harbour (the one city, about 40 buildings in nine blocks); Lagoon Landing (an island hamlet of three buildings); Halcyon (a station) and the Lumen habitat (an outpost). One of each kind; no region repeats another's.
+| Barrier                             | Where                                                                                             | What it closes                                           | The gap                                                                                           |
+| ----------------------------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| The Brackens                        | a wooded ridge from the range to the sea, between Cogsworth's outskirts and the valley's farmland | all ground between the valley and Cogsworth              | the Millrace gorge (the Canal Road and the line, W3); the stair over its head (the Hill Path, W3) |
+| The Dry Wash                        | a gorge from the range to the sea, west of the downs                                              | the desert from Cogsworth's side                         | the Drover's Road bridge (W5)                                                                     |
+| The volcano's foot and the mesa     | round the fire country                                                                            | the caldera and the castle from the desert and the downs | the chasm bridge and the Ember Pass, both W6                                                      |
+| The Neon river                      | the city's whole west side, from the hills to the sea                                             | the city                                                 | the swing bridge (W7); the maglev crosses on its own viaduct                                      |
+| The Headland's wall and the estuary | v2                                                                                                | the Headland                                             | the stile (W1)                                                                                    |
+| The rock rib and the col            | v2                                                                                                | the Frostline                                            | the two pines (W2)                                                                                |
+| The sea                             | round the isles                                                                                   | the isles                                                | the Shell Bar and the ferry (W4)                                                                  |
 
-**Where travel replaces walking.** Between every two regions, as today: the valley train (W3) from the halt to Cogsworth; the desert line (W5) from Cogsworth to Dust Gulch; the maglev (W7) from Cogsworth's terminus to the Skyport; the elevator (W8) and the shuttle (W9) upward; the ferry (W4) from Driftwood to the isles; the mine cart (S1) as a shortcut from the gulch to the caldera; the coastal steamer (S3, a proposal) from Neon back to Driftwood. Inside a region nothing replaces walking: no region is longer than about 75 s end to end.
+**Transitions** (each biome blends into the next over a wide band, its edges wandering and dithered, never at a seam):
 
-### 4.2 The valley (home): garden, woodland, riverside, Crossroads, the park, the halt farm, Driftwood, the Headland and the Frostline
+| Band                    | From and to                                                                                                                           | Width                                                  | Along                    |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------ |
+| Valley to the Frostline | garden meadow, then fir woodland (the hollow), then alpine meadow (the ridge), then snow patches, then snow (the saddle)              | about 1100 px (the garden's north fence to the saddle) | the ridge trail, the col |
+| The downs               | Cogsworth's farmland, then hedged pasture, then heath, then scrub, then the Dry Wash, then dune                                       | about 1000 px (250 each)                               | the Drover's Road        |
+| Cogsworth to the valley | soot meadow and slag, then brickfields and clay pits, then the Brackens' wood, then farmland                                          | about 900 px                                           | the Canal Road           |
+| The valley to the city  | the park, then cider orchards, then market gardens, then allotments and sheds, then depots and gas yards, then the river and the city | about 1000 px (370, 300, 200, 120)                     | the Eastern Road         |
+| The cliffs              | cliff-top grass, then gorse, then a fishing hamlet, then the breakwater                                                               | about 1300 px                                          | the Coast Path           |
+| Up to the fire country  | soot meadow, then heath, then bare rock, then ash (no green within 64 px of lava)                                                     | about 1200 px                                          | the Ember Pass           |
+| Down from the snow      | snow, then a rock ledge, then alpine heath, then soot meadow                                                                          | about 1000 px                                          | the Hill Path            |
+| To the isles            | Headland grass, then marram dunes, then sandbar and tide pools, then the island's beach                                               | about 450 px                                           | the Shell Bar            |
+
+**Views out, so the world feels larger than you have walked.** Distant landmarks are drawn as far-scale silhouettes where a sightline allows. They are scenery only, and none is a tap target.
+
+- From the High Lookout: the city's glow in the east, Cogsworth's airship and gasholder in the west, the volcano's smoke beyond.
+- From the halt and the Canal Road: the gasholder and the airship over the Brackens.
+- From Driftwood and the Headland: the maglev's sea viaduct across the bay, the isles' volcano, the rocket on its pad on clear days.
+- From the Eastern Road: Dave's tower and its screen across the river.
+- From the Drover's Road: the mesa and the volcano's smoke.
+- From the Ember Pass: the whole desert below.
+
+## 6. The places inside the continent (v2's plans, with v3's changes)
+
+### 6.1 What v3 changes
+
+v3 changes these from v2:
+
+- **Sunstone Reach** is mirrored east to west: the platform's line comes from the east (Cogsworth), the oasis faces the downs and the Drover's Road, and the canyon, the chasm and the castle lie to the west. The Ember Pass enters the caldera from the east.
+- **Cogsworth**: the valley line arrives at the platform from the east; the desert line leaves at the west end; the canal runs on east as the Canal Road's canal; the Hill Path enters Gasworks Hill from the east; the Ember Pass and the Drover's Road leave from the west street and the south-west fields.
+- **The valley**: the halt's line runs west beside the canal to Cogsworth, and the coal wharf is at the halt. The Eastern Road leaves the park eastward. The Coast Path leaves the estuary lane. A stair down the Headland's south cliff leads to the cove where the Shell Bar starts.
+- **Neon**: the river and the swing bridge close its west side; the maglev arrives on the coast viaduct; the elevator's anchor goes (the Skyport's pier becomes the steamer's); the Point leads to the Cape Road.
+- **The isles**: the Shell Bar lands on the north shore, with a stair up into the rainforest.
+
+### 6.2 The valley (home): garden, woodland, riverside, Crossroads, the park, the halt farm, Driftwood, the Headland and the Frostline
 
 **Size and shape.** 1280 x 2688 px. From north to south: the Frostline in the peaks (y 0 to 1040), the T2 terrace with the woodland, the garden and the riverside (to y 1616), the valley floor with the halt farm, Crossroads and the park (to y 2336), Driftwood's quay and the sea, with the Headland east of the estuary. Old forest frames the north-east; the sea frames the south and west.
 
@@ -257,7 +349,7 @@ Between other places: the halt platform to the well 11.9 s, the ferry pier to th
 
 **Kept from today, and why.** The garden's size and place (the hub, the harness and every save point depend on it); the order of places (ridge above the garden, woodland west, riverside east, town south, harbour on the coast), because players know it and the water already runs that way; the mill where PR #86 put it; the Frostline's four places and the col; the lighthouse, the ferry and the lookout tower. **Changed:** the town grows from one tile to a village at true scale with a square on the garden's axis; the halt becomes a farmstead with a goods yard; Driftwood becomes its own hamlet above a quay; the Headland gets its wall; the valley's empty corners become sea and old forest drawn as frame, not holes.
 
-### 4.3 Cogsworth
+### 6.3 Cogsworth
 
 **Size and shape.** 704 x 960 px (two of today's zones were 320 x 1152). The platform runs along the north edge with both lines entering from the west; the clock-tower square in front of the station; workshop rows west; Gasworks Hill one tier up to the east; the canal half a tier down across the middle; the foundry and allotments south-west; the terminus and the pump house south-east, where the maglev leaves east.
 
@@ -274,7 +366,7 @@ Between other places: the halt platform to the well 11.9 s, the ferry pier to th
 
 **Trade.** Coal and iron come in by rail and canal; the foundry casts gears, rails and pipes; the gasworks makes the gas for the lamps and the airship; the pump house drives the atmospheric line to the city. **Kept:** the square under the clock tower with the platform on its north, the canal with its lock, foundry and allotments (the region's best-reading pieces today). **Changed:** the hill and the terminus are new ground; the airship leaves the square for the hill; the canal sinks half a tier; streets of touching workshops.
 
-### 4.4 Sunstone Reach, Hearthold and the fire country
+### 6.4 Sunstone Reach, Hearthold and the fire country
 
 **Size and shape.** 1280 x 1664 px, one land. South: the oasis hollow (T0) in the dunes, Dust Gulch's one street east of the platform (the desert line enters from the west and ends at buffers), the corral, the mine mouth in the mesa's 40 px face. East: the Scorched Pass, where sand turns to scrub and ash, and a basalt canyon climbs north for about 10 s to its head. North of the canyon: the lava chasm, the chasm bridge (W6), and Hearthold on its rock in a lava moat, with an outer bailey (T3) and an inner ward (T4). North of the castle: the ledge, the postern, the Ember Caldera with its lava lake, forge and cart bay; the Cinder Springs' terraces in the north-east. The mesa and the volcano's flank are frame.
 
@@ -293,7 +385,7 @@ The caldera is 46 to 54 s on foot through the castle, which is why the mine cart
 
 **Trade.** Cattle and ore out by rail; water piped from the oasis to the water tower and the engine crane; ore by cart to the forge, ingots back; the castle supplied over the bridge from the gulch, its water from a cistern. **Kept:** the gulch's street from the platform, the oasis and its buried-outlet story, the castle in its lava moat with two bridges, the caldera's forge and the springs' terraces (Claude D's D13 detail work carries over). **Changed:** one continuous land instead of six tiles in an L; the long straight causeway becomes the canyon and a short bridge; the castle gains its inner ward.
 
-### 4.5 The Tidebloom Isles
+### 6.5 The Tidebloom Isles
 
 **Size and shape.** 704 x 1152 px including the sea round it. The headwaters (T2) in the north-east with the crater pool and the upper fall; the rainforest (T1) across the north; Lagoon Landing (T0) in the south-west round the lagoon and the pier; Black-sand Cove (T0) in the south-east with the basalt arm, the sea stack and the cave.
 
@@ -309,7 +401,7 @@ The caldera is 46 to 54 s on foot through the castle, which is why the mine cart
 
 **Kept, and why:** the island whole in island coordinates (`isle_zones.island()`, already a canvas), its four places, tiers, falls and loop; its size suits a day trip by ferry. **Changed:** stairs to 48 px, the landing's packing shed and pier as its node.
 
-### 4.6 Neon Harbour and the Skyport
+### 6.6 Neon Harbour and the Skyport
 
 **Size and shape.** 960 x 1280 px (today 960 x 1728). The maglev arrives at the Skyport on the south shore; one spine, a 64 px boulevard under the elevated tram, runs north to the central plaza; cross streets at the market and at the old wet street; the Heights one 40 px tier up in the north-west with stair streets and the sunken plaza; downtown with Dave's tower in the middle; the docks along the east quay; the Point with the lighthouse; the pier south to the elevator's anchor (W8).
 
@@ -328,66 +420,139 @@ The caldera is 46 to 54 s on foot through the castle, which is why the mine cart
 
 **Why smaller.** At true scale a city block is 208 x 272 px with about eight buildings of three to six storeys; nine blocks hold about 40 buildings, each to Eastward's detail. Today's nine zones are mostly blocks of open concrete between free-standing buildings; the plan has less canvas and more street. **Kept:** the Skyport and its pier, the docks' cranes and ship, the old wet street with the ring court, the elevated tram, Claude C's facade detail (PR #116). **Changed:** streets of touching facades from the composer; one spine with cross streets; `waterfront` folds into the docks and `point` into the Skyport's shore.
 
-### 4.7 Halcyon Station
+### 6.7 Halcyon Station
 
 320 x 576 px, unchanged: rooms in the order of the climb, from the elevator's airlock at the bottom through hydroponics, the galley, the atrium and the sleep bay, to the shuttle hatch (W9) and the lounge under the windows. From the airlock: hydroponics 3.4 s, the atrium 6.3, the hatch 10.7, the lounge window 12.2. A station is a building; one screen of rooms is enough.
 
-### 4.8 Lumen
+### 6.8 Lumen
 
 384 x 704 px (today 320 x 576): the pad on the crater's rim (T2), the habitat with its solar arrays and the ice rig in the shadowed crater (T1), the pressure tube down to the dome on the crater floor (T0), the moon tree and the hammock. From the pad: the habitat 8.5 s, the moon tree 13.9, the hammock 16.4. A little wider so the crater reads as a crater on a 300 px screen.
 
-## 5. Where the ways stand
+## 7. Space: the rocket
 
-Unchanged from #95 and #118 in what they are and in their order; on canvases each barrier is a set of cells and a stand.
+**The launch site.** The Launch Cape: a flat cape of salt flats east of the city's Point, 8 s from the Skyport by the Cape Road. A real spaceport launches over the sea, away from towns, and this one does. Its parts:
 
-| #   | Way                 | Where on the new map                                                                                         | It closes                                                                                       |
-| --- | ------------------- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| W1  | The Headland stile  | the gap in the wall across the Headland, valley (1148, 2232)                                                 | the only way onto the promontory (the estuary and the cliffs close the rest)                    |
-| W2  | The ridge col       | the col above the cabin (624, 640) and the gully trail through the rock rib (456, 824): one storm, two pines | both ways from the ridge into the Frostline; the escarpment closes the hollow from the woodland |
-| W3  | The valley train    | the engine shed at the halt (356, 1740)                                                                      | the line to Cogsworth                                                                           |
-| W4  | The Driftwood ferry | the slip on Driftwood's west quay (424, 2428)                                                                | the only crossing to the isles                                                                  |
-| W5  | The desert line     | a sand-caked wagon at Cogsworth's platform (640, 44)                                                         | the line to Dust Gulch                                                                          |
-| W6  | The chasm bridge    | the head of the Scorched Pass's canyon (1128, 836)                                                           | the only way over the chasm; S1 waits for it                                                    |
-| W7  | The maglev          | Cogsworth's terminus (632, 870)                                                                              | the line to Neon Harbour                                                                        |
-| W8  | The space elevator  | the anchor at the end of the Skyport's pier (616, 1240)                                                      | the only way up                                                                                 |
-| W9  | The shuttle         | Halcyon's hatch (240, 160)                                                                                   | the only way to Lumen                                                                           |
+- a pad with a service tower;
+- a fuel farm (spherical tanks behind a blast wall);
+- a low control bunker;
+- a visitors' bench behind the fence;
+- the rocket standing on the pad, visible from the Skyport and on clear days from Driftwood.
 
-Always open: the garden, the woodland, the riverside, Crossroads, the park, the halt farm, the ridge and its cabin, Driftwood's quay and jetties. Order (as #95): W1 to W4 from the start; W5 and W7 after W3; W6 after W5; W8 after W7; W9 after W8. With every way closed, a flood fill from the garden and every open stop must reach nothing behind them (the test in #118 moves to cells).
+**What replaces what.** The rocket replaces the space elevator: the elevator's anchor and ribbon go from the Skyport, and its pier serves the coastal steamer. Halcyon keeps a small lander for the last leg to Lumen, because a rocket from the ground to the moon by way of a station is how a real trip would go, and the station is where you change.
 
-## 6. Order of work and owners
+- **W8, the rocket:** while it is closed, the rocket stands on the pad under its service tower, the fuel farm's gauges read empty and a technician explains. Open, the tanks are full and frost forms on the rocket's skin (fuelled). Ride from the pad to Halcyon's docking ring.
+- **W9, Halcyon's lander:** as #95 ("under a cover, a star chart with a gap"). Ride from the station to Lumen's pad.
 
-| Step | Lane | Work                                                                                                                                                                                                                                                                                                            | Needs                        |
-| ---- | ---- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------- |
-| P0   | A    | The toolkit lands (`terrace.py`, `scale.py`, tiers, the facade composer, `fore.png`), as `verticality.md` 4e                                                                                                                                                                                                    |                              |
-| P1   | A    | **Region canvases**: `REGIONS` and `AREAS`, the region build and tile cutting, exports; at first the build also cuts canvases into today's zones so nothing else changes                                                                                                                                        | P0; Matt's yes to decision 2 |
-| P2   | A    | The renderer mounts tiles; region walk from one grid; areas for names and the map; the hub's offset; layout version and save mapping (with Codex for `lib/save-data.ts`); tests; the 1x-picture test                                                                                                            | P1                           |
-| P3   | B    | Props to the scale table and #97's audit: the valley's cottages, station house, bench, stall, lamp, crate, barrel; the new valley props (engine shed in two states, bakery, pump house, forester's yard, chandlery, harbour master's hut, the stile and the pines in two states); the garden on its raised yard | P0                           |
-| P4   | E    | The valley on its canvas (section 4.2): terraces, water, Crossroads, the halt farm, the riverside, the park, Driftwood and the Headland's wall                                                                                                                                                                  | P1, P3                       |
-| P5   | A    | The Frostline on the valley's canvas: the rock rib, the gully, the col's corridor, the spur                                                                                                                                                                                                                     | P1                           |
-| P6   | D    | Sunstone Reach as one canvas (4.4), then Halcyon and Lumen (4.7, 4.8)                                                                                                                                                                                                                                           | P1                           |
-| P7   | C    | Cogsworth's canvas (4.3), then Neon's (4.6) with the composer, then the isles' stairs (4.5)                                                                                                                                                                                                                     | P1, the Neon Heights pilot   |
-| P8   | A    | The ways wired on cells (#118 to areas and cells), the map's lines                                                                                                                                                                                                                                              | P2, #95's rules (Codex)      |
+**The animations** (journey scenes, like the train's; finite, skippable with one SKIP, and three stills with a cross-fade under reduced motion; AGENTS.md):
 
-The valley comes first among the regions: it is home, every player sees it first, and its props become the library the others copy. Lanes C and D can start their canvases as soon as P1 lands, because P1 cuts canvases back into zones until the renderer catches up.
+- _Launch, about 8 s._ The service arm swings back. Vapour vents from the tanks. A countdown on the bunker's board reads 3, 2, 1 as pictograms. Ignition: the flame, then a ground cloud billowing out over the pad. Lift-off is slow, then faster, and the camera follows. The cape and the coast shrink below, the city's lights show at night, and the sky darkens from blue through violet to black. Stage separation is a small spark and a falling stage. Then the curve of the planet, and Halcyon's ring growing ahead. Docking: the ring's arm meets the rocket's nose, and the airlock light turns green.
+- _The lander, about 6 s._ Undocking, a burn, Lumen growing ahead. Then the descent over the crater: a retro-burn with a dust plume, the legs touch, a settle bounce, the dust clears.
+- _Coming back._ The rocket lands upright on the cape's pad: a landing burn, its legs out, steam. The lander lifts off from Lumen's pad. The reverse journeys reuse the same frames, played backwards where that reads right.
 
-## 7. Decisions for Matt
+## 8. The ways on the routes
 
-**Decided (Matt, 20 Oct, about 10:50):** continuous region canvases on the 8 px grid, streamed in tiles (2); size everything from the sizing table, with everyday places within about 15 s of the hut (3); Cogsworth grows with Gasworks Hill and the Terminus, Neon's canvas a quarter smaller with more walkable street, and Sunstone Reach as one continuous land (5, 6, 7); the zoom stays at 12 adults across (1); the valley grows to a real village, a farmstead and Driftwood as its own hamlet, about a quarter more walkable ground overall (4). Decisions 8 to 12 are still open.
+The nine ways (#95, decided) keep their names, order and tasks. On the continent each one is a thing on a route being mended. Where a place has two ways in, one way mends both (as W2 already did).
 
-| #   | Decision                                                                                                                                    | Recommendation or decision                         | Why                                                                                                                         |
-| --- | ------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------- |
-| 1   | The zoom: keep 12 adults across (`ART_ACROSS` 300)?                                                                                         | **Decided 20 Oct: keep.**                          | It matches Eastward and Stardew across, keeps 44 px targets, and the extra height is room for north-south sightlines.       |
-| 2   | Replace the 320 x 576 zone grid with region canvases streamed in 256 px tiles, zones becoming named areas?                                  | **Decided 20 Oct: yes.**                           | No seams, sizes from the places, props anywhere, a third to a quarter of today's picture memory. The redraws happen anyway. |
-| 3   | Size places from the sizing table (section 1.4), with everyday places within 15 s of the hut?                                               | **Decided 20 Oct: yes.**                           | It is what the scale table implies; today's town tile cannot hold a true-scale village.                                     |
-| 4   | Let the valley grow to a 1280 x 2688 canvas (+16 % walkable), with a real village, a farmstead at the halt and Driftwood as its own hamlet? | **Decided 20 Oct: yes.**                           | Home is where players spend most time; this is the one place worth more ground.                                             |
-| 5   | Cogsworth to 704 x 960 with Gasworks Hill and the terminus?                                                                                 | **Decided 20 Oct: yes.**                           | Two tiles hold no loop and no place for the maglev; still smaller than a Kanto city.                                        |
-| 6   | Neon's canvas down by a quarter (960 x 1280), streets of touching facades, `waterfront` and `point` folded in?                              | **Decided 20 Oct: yes.**                           | About 40 buildings at true scale is already a large art budget; more streets, less empty concrete.                          |
-| 7   | Sunstone Reach as one continuous land with the canyon reveal and a short chasm bridge?                                                      | **Decided 20 Oct: yes.**                           | It keeps everything Claude D drew and removes the L of tiles and the long causeway.                                         |
-| 8   | Ground pictures at 1x with nearest-neighbour scaling (or 2x) instead of 4x?                                                                 | **Test, then 1x if crisp on all three platforms.** | Sixteen times less decoded memory; art-style.md already asks for the test.                                                  |
-| 9   | The coastal steamer (S3) from Neon to Driftwood once W7 is open?                                                                            | **Yes, later.**                                    | It closes the network into a loop and brings the player home from the screen city by sea.                                   |
-| 10  | Secret pockets hold a view, a resident or a story detail, never a keepsake?                                                                 | **Yes.**                                           | No rewards for decorative places (AGENTS.md).                                                                               |
-| 11  | No one-way hops down low steps; every change of height is a stair or a ramp?                                                                | **Yes, for now.**                                  | It keeps tap-walking predictable; ledges can come later as shortcuts.                                                       |
-| 12  | The companion stays 24 px tall, as tall as an adult (`verticality.md`, question 7)?                                                         | **Keep.**                                          | Every size here assumes it; a smaller pet would change every companion and visitor sprite and no place's size.              |
+| #   | Way                                 | What is being mended                                                                                         | Where               | In reach after (#95) | Why it waits (in the world)                                           |
+| --- | ----------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------- | -------------------- | --------------------------------------------------------------------- |
+| W1  | The Headland stile                  | the stile's broken step                                                                                      | the Headland's wall | the start            |                                                                       |
+| W2  | The ridge col                       | two pines from one storm, across the col and the gully                                                       | the Frostline       | the start            |                                                                       |
+| W3  | The Millrace landslip               | the gorge's towpath and line under a landslip, and a rockfall at the Hill Path's stair foot (the same storm) | the Brackens        | the start            |                                                                       |
+| W4  | The Shell Bar and the ferry         | a washed-out stretch of the causeway; the ferry holed on the slip                                            | the strait          | the start            |                                                                       |
+| W5  | The Dry Wash bridge                 | the bridge carrying the Drover's Road and the desert line                                                    | the downs           | W3                   | you reach it only through Cogsworth                                   |
+| W6  | The chasm bridge and the Ember Pass | the bridge's missing span; a rockfall on the pass                                                            | the fire country    | W5                   | the masons come from Dust Gulch                                       |
+| W7  | The swing bridge                    | stuck open; it needs a gear from Cogsworth's foundry (the maglev waits for the same power)                   | the Neon river      | W3                   | the gear is cast in Cogsworth, so the city waits for the valley train |
+| W8  | The rocket                          | the launch not yet fuelled                                                                                   | the Launch Cape     | W7                   | the cape lies past the city                                           |
+| W9  | Halcyon's lander                    | under a cover, the star chart incomplete                                                                     | Halcyon Station     | W8                   |                                                                       |
+
+**The gate check** (`gates.json`, from the block-out). With the ways opened one at a time in road order, a flood fill from the hut reached nothing behind a closed way, and everything behind an open one, at every step. The test `lib/world-ways.test.ts` (#118) should do the same on the real walk grid once the canvases exist.
+
+**What changes in #95 and #118.**
+
+- A line is no longer a way of its own: W3, W5 and W7 each open a route and its line together, and W4 opens the Shell Bar and the ferry.
+- W8 becomes the rocket (it was the space elevator).
+- The barriers become cell sets in world coordinates. The `plannedZones` (`hill`, `terminus`) become areas.
+- The order and the tasks are unchanged.
+
+## 9. The engine: one world canvas
+
+### 9.1 What v2 proposed (decided)
+
+v2 replaced the fixed 320 x 576 zones with region canvases streamed in 256 px tiles, and Matt decided it (decision 2). Its reasons stand: no seams inside a region, sizes that follow the places, props anywhere, and 9 to 12 MB of decoded pictures in view instead of 24 to 47 MB.
+
+### 9.2 Region canvases joined by routes, or one world canvas
+
+|                     | Region canvases joined by route canvases                                                           | **One world canvas, authored in chunks**                                                                                                           |
+| ------------------- | -------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Seams               | back at every region and route edge (ports, border painting, border lint, props that cannot cross) | none on the continent                                                                                                                              |
+| Transitions         | painted twice, on both sides of each seam                                                          | painted once, across the band                                                                                                                      |
+| Saves, map, walking | a region id plus a point; walking from a route into a region switches canvas                       | one point in world coordinates; one walk                                                                                                           |
+| Distant landmarks   | must be faked per canvas                                                                           | are simply there, drawn at the far scale where a sightline needs them                                                                              |
+| Build               | per canvas                                                                                         | per chunk (a region or a route with a margin for its transitions), composited onto world tiles; only the tiles a changed chunk touches are rebuilt |
+| Memory on a phone   | 9 to 12 tiles in view                                                                              | the same                                                                                                                                           |
+
+**Recommendation: one world canvas** for the continent. Halcyon, Lumen and the hut's inside stay canvases of their own, reached through a door or a journey.
+
+The numbers, from the block-out:
+
+- **Size:** 8320 x 4928 px, 1040 x 616 cells.
+- **Tiles:** 660 render tiles of 256 px. 361 are uniform (300 sea, 37 forest, the rest peaks, rock and basalt), so they share about seven pictures. That leaves about 300 drawn tiles, and 270 of them hold walkable ground. Today's 36 zones are about 100 tiles' worth of area, so the art to draw roughly triples. Most of the new ground is countryside; detail goes where the routes and their landmarks are (rule 2), and quiet countryside is drawn with the same care but fewer props.
+- **Memory:** unchanged from v2: 9 to 12 tiles in view, 9 to 12 MB at 2x, about 3 MB at 1x.
+- **Walk grid:** 2.56 million cells of 4 px in all. That is too large for one exported string, so the walk grid, the terrain and the tiers are exported per tile (64 x 64 cells each) and loaded with the tile. A tap walk searches a window round the companion (about 1024 px). A walk to a far place (the map) runs on a coarse graph of the routes, then refines in the window.
+- **Build:** a chunk is drawn in world coordinates inside its bounding box plus a 256 px margin for its transitions; the composite runs per tile. A full build is about six times today's ground area, so per-chunk caching is part of the first PR, not an afterthought.
+
+### 9.3 What the region-canvas builder (step 1, branch `claude-a/region-canvas`) should change
+
+1. **Give every canvas a world origin.** A region or route chunk is placed at a world (x, y) on the 8 px grid (section 3.1), not at (0, 0) of its own canvas.
+2. **Key tiles by world tile coordinates** (tx, ty) on one world grid of 256 px, so a region's edge can fall inside a tile and two chunks can share one. Composite the chunks onto the tiles.
+3. **Export walk, terrain, tiers and stands per tile**, not per region; keep areas (names, map, saves) as a separate small table of rectangles or masks in world coordinates.
+4. **Deduplicate uniform tiles** (sea, peaks, forest) to one picture each.
+5. **Cache per chunk**: rebuild only the tiles a changed chunk touches.
+6. **Keep the compatibility cut** into today's 320 x 576 zones for now, so the app runs unchanged until the renderer streams tiles.
+7. **Leave room for routes and transitions**: a chunk declares its bounding box and a margin band where it blends into its neighbour. The background (biomes between chunks) is a chunk of its own.
+
+## 10. Order of work and owners
+
+| Step | Lane | Work                                                                                                                                                                                                                             | Needs                         |
+| ---- | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| P0   | A    | The toolkit lands (`terrace.py`, `scale.py`, tiers, the facade composer, `fore.png`)                                                                                                                                             |                               |
+| P1   | A    | **The world canvas build**: chunks with world origins, world tiles, per-tile walk and terrain, dedupe, per-chunk cache, the compatibility cut into today's zones (section 9.3)                                                   | P0; Matt's yes to decision 13 |
+| P2   | A    | The renderer streams world tiles; a windowed walk with a coarse route graph; areas for names and the map; the hub as a window on the world; saves in world coordinates (with Codex for `lib/save-data.ts`); tests                | P1                            |
+| P3   | A    | The background chunk: the coast, the Northern Range, the Brackens, the Dry Wash, the Neon river, biome bands and their transitions; distant landmarks as far-scale silhouettes                                                   | P1                            |
+| P4   | B    | Props to the scale table and #97: the valley's library first, then the route props (lock-keeper's cottage, kiln, drovers' inn, windpump, stock pens, smokehouse, bothy, refuge, tide post, fuel farm, service tower, the rocket) | P0                            |
+| P5   | E    | The valley chunk (section 6.2 with the changes in 6.1)                                                                                                                                                                           | P1, P4                        |
+| P6   | A    | The Frostline, the Hill Path and the Canal Road (with the Brackens' gorge)                                                                                                                                                       | P3                            |
+| P7   | D    | Sunstone Reach mirrored (6.4), the Drover's Road and the Ember Pass; then Halcyon, Lumen and the Launch Cape with the rocket and lander scenes                                                                                   | P1                            |
+| P8   | C    | Cogsworth (6.3); Neon (6.6) with its river and swing bridge, the Eastern Road and the Coast Path; the isles with the Shell Bar (6.5)                                                                                             | P1                            |
+| P9   | A    | The ways on cells (#118 to world coordinates and areas), the journeys as shortcuts, the map                                                                                                                                      | P2, #95's rules (Codex)       |
+
+The valley goes first among the chunks, because it is home and its props become the library the others copy. The background chunk (P3) goes early, because every other chunk blends into it.
+
+## 11. Decisions for Matt
+
+**Decided (Matt, 20 Oct, about 10:50):** decisions 1 to 7 below (v2).
+
+| #   | Decision                                                                                                                                   | Recommendation or decision                         | Why                                                                                                                                                 |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------ | -------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | The zoom: keep 12 adults across (`ART_ACROSS` 300)?                                                                                        | **Decided 20 Oct: keep.**                          | It matches Eastward and Stardew across and keeps 44 px targets.                                                                                     |
+| 2   | Replace the 320 x 576 zone grid with canvases streamed in 256 px tiles, zones becoming named areas?                                        | **Decided 20 Oct: yes.**                           | No seams, sizes from the places, less memory.                                                                                                       |
+| 3   | Size places from the sizing table, with everyday places within 15 s of the hut?                                                            | **Decided 20 Oct: yes.**                           | What the scale table implies.                                                                                                                       |
+| 4   | The valley at 1280 x 2688 with a real village, a farmstead and Driftwood as its own hamlet?                                                | **Decided 20 Oct: yes.**                           | Home is worth the most ground.                                                                                                                      |
+| 5   | Cogsworth at 704 x 960 with Gasworks Hill and the Terminus?                                                                                | **Decided 20 Oct: yes.**                           | A loop, a second tier, a home for the maglev.                                                                                                       |
+| 6   | Neon's canvas a quarter smaller, with more walkable street?                                                                                | **Decided 20 Oct: yes.**                           | About 40 buildings at true scale is enough.                                                                                                         |
+| 7   | Sunstone Reach as one continuous land?                                                                                                     | **Decided 20 Oct: yes.**                           | It keeps Claude D's work and removes the L of tiles.                                                                                                |
+| 8   | One continent in world coordinates, as in section 3 (fire country and desert west, Cogsworth, the valley, the city east, the isles south)? | **Yes.**                                           | It is the map Matt asked to work out first; the theme reads as geography.                                                                           |
+| 9   | Mirror Sunstone Reach so its oasis faces the downs and its castle the volcano?                                                             | **Yes.**                                           | The region faces the land it trades with. The generator mirrors its layout, not its pictures: every prop and face is still lit from the upper left. |
+| 10  | The eight routes, 8 to 40 s each, with their barriers (the Brackens, the Dry Wash, the Neon river)?                                        | **Yes.**                                           | Every region has two ways in, four loops, and the ways stay at chokepoints.                                                                         |
+| 11  | Trains, the ferry and the maglev as shortcuts that open with their route's way?                                                            | **Yes.**                                           | Matt asked for trains as shortcuts; one way per route keeps #95's nine.                                                                             |
+| 12  | A rocket from the Launch Cape replaces the space elevator; Halcyon's lander takes you on to Lumen?                                         | **Yes.**                                           | Matt asked for a rocket; the station stays the place where you change.                                                                              |
+| 13  | One world canvas, authored in chunks and streamed in tiles, instead of region canvases joined by routes?                                   | **Yes.**                                           | No seams anywhere on the continent; the same memory; one coordinate system.                                                                         |
+| 14  | W7 stays in reach only after W3 (the swing bridge waits for a gear from Cogsworth), though you can walk up to it from the start?           | **Yes.**                                           | The screen city comes later, with a reason you can see; the bridge is a view of what is to come.                                                    |
+| 15  | The coastal steamer (S3) from the Skyport to Driftwood once W7 is open?                                                                    | **Yes, later.**                                    | It closes the sea loop: home from the city by sea.                                                                                                  |
+| 16  | Ground pictures at 1x (or 2x) instead of 4x?                                                                                               | **Test, then 1x if crisp on all three platforms.** | Sixteen times less decoded memory.                                                                                                                  |
+| 17  | Secret pockets hold a view, a resident or a story detail, never a keepsake?                                                                | **Yes.**                                           | No rewards for decorative places.                                                                                                                   |
+| 18  | No one-way hops down low steps for now?                                                                                                    | **Yes, for now.**                                  | Tap-walking stays predictable.                                                                                                                      |
+| 19  | The companion stays 24 px tall?                                                                                                            | **Keep.**                                          | Every size here assumes it.                                                                                                                         |
 
 ## Sources
 
