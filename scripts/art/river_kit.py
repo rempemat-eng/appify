@@ -47,7 +47,12 @@ The pieces (each with a variant/seed argument, all deterministic):
   shrubs, oaks, ferns and bluebells in their shade), and `blend()`, which mixes two grounds
   over a band with outliers on both sides, so a region change reads without a line.
 
+Water blocks a walker unless a crossing is declared: `river(ford_at=...)` marks its ford's
+shallows in `Plot.crossing`, and `track()` opens water only there, so painting a track over a
+river never makes a crossing by itself (`--check` holds the kit to this).
+
 Run:
+    python3 scripts/art/river_kit.py --check     (the crossing contract; exits non-zero on a fault)
     python3 scripts/art/river_kit.py [OUT_DIR]
 writes OUT_DIR/kit-sheet.png (every piece at 2x, labelled), OUT_DIR/sample.png (a bend of
 the Sleepwater with a ford, a meadow, a hedged field and the heath edge, 640 x 576, at 1x and
@@ -173,6 +178,7 @@ class Plot:
         self.wet = np.zeros((h, w), bool)      # water surface pixels (for water_flow)
         self.solid = np.zeros((h, w), bool)    # sprites: what stands up (outlined, blocks)
         self.walk = np.ones((h, w), bool)      # walkable on foot
+        self.crossing = np.zeros((h, w), bool)  # water declared crossable (a ford's shallows)
         self.y, self.x = np.mgrid[0:h, 0:w]
 
     def put(self, m, ramp, tone):
@@ -637,6 +643,7 @@ def river(p: Plot, pts, width=40, seed=3, ford_at=None, ford_width=28, stones_at
         p.f[lip], p.t[lip] = IDX['water_warm'], 5
     p.wet |= water
     p.walk &= ~(water & ~ford)
+    p.crossing |= water & ford
     if stones_at is not None:
         stepping_stones(p, ch, stones_at, hw, seed + 50)
     riffles(p, ch, water & ~ford, hw, seed + 60)
@@ -749,7 +756,8 @@ def stepping_stones(p: Plot, ch: Channel, at, hw, seed, gap=11):
                     k = max(1, k - 1)
                 p.f[y0 + yy, x0 + xx], p.t[y0 + yy, x0 + xx] = IDX[pick], k
                 p.wet[y0 + yy, x0 + xx] = False
-                p.walk[y0 + yy, x0 + xx] = True
+                p.walk[y0 + yy, x0 + xx] = True        # stepping stones are a declared crossing
+                p.crossing[y0 + yy, x0 + xx] = True
         # the stone's edge tone under it (it stands in the water) and its wake
         for xx in range(1, w - 1):
             p.f[y0 + h, x0 + xx], p.t[y0 + h, x0 + xx] = IDX['stone'], EDGE_T
@@ -909,11 +917,14 @@ def track(p: Plot, pts, width=24, seed=7, puddles=2, ch=None):
         pm = ch.near & (np.abs(ch.s - si) < 5 + 3 * hash01(i, 2, seed)) & (np.abs(ch.n - side * gauge) < 2.2)
         puddle(p, pm & m, seed + 20 + i)
     despeckle(p, m)
-    # where the track runs through a ford, its ruts show as darker lanes in the shallows
-    wr = under_water & (np.abs(np.abs(ch.n) - gauge) < 2.0)
+    # where the track runs through a declared crossing (a ford's shallows), its ruts show as
+    # darker lanes in the water and the way stays open; anywhere else the water keeps
+    # blocking: painting a track never makes a crossing by itself
+    ford_water = under_water & p.crossing
+    wr = ford_water & (np.abs(np.abs(ch.n) - gauge) < 2.0)
     p.step(wr, -1, lo=2)
-    p.walk |= m | under_water
-    ch.mask = m | under_water
+    p.walk |= m | ford_water
+    ch.mask = m | ford_water
     return ch
 
 
@@ -929,6 +940,7 @@ def puddle(p: Plot, m, seed=0):
     g = m & ~rim & (hash01(p.x // 2, p.y, seed) < 0.15)
     p.f[g], p.t[g] = IDX['sky'], 5
     p.wet |= m & ~rim
+    p.crossing |= m          # a puddle is walked through
 
 
 def hedgerow(p: Plot, pts, height=16, depth=10, seed=8, gaps=(), gate_at=None, gate_width=40):
@@ -996,7 +1008,7 @@ def hedgerow(p: Plot, pts, height=16, depth=10, seed=8, gaps=(), gate_at=None, g
     despeckle(p, body)
     outline_mask(p, body, seed)
     p.solid |= body
-    p.walk &= ~body
+    p.walk &= ~foot                  # a walker is stopped by the footprint, not the drawn height
     species_map = np.floor(p.x / 30).astype(int)
     # long grass along the foot where the hedge meets the field
     fringe = ~body & dilate(body, 3) & shift(dilate(body, 3), 0, -3, False) & ~p.wet & ~p.solid
@@ -1881,8 +1893,6 @@ def sample(seed=1):
     ford_s = best[1]
     ch = river(p, SLEEPWATER, width=40, seed=seed + 7, ford_at=ford_s, ford_width=30, stones_at=ford_s + 26)
     lane = track(p, LANE, 24, seed + 8, puddles=2)
-    # the lane runs through the ford: its ruts go on under the shallow water
-    p.wet |= ch.water
     hedge = hedgerow(p, FIELD_HEDGE, 16, 10, seed + 9, gaps=(), gate_at=200)
     hedgerow(p, FIELD_WEST, 15, 10, seed + 10, gaps=(150,))
     hedgerow(p, FIELD_EAST, 15, 10, seed + 19, gaps=(120,))
@@ -2179,7 +2189,60 @@ def sample_preview(p, scale=2, people=True):
     return img.resize((img.width * scale, img.height * scale), Image.NEAREST)
 
 
+def _reaches(walk, a, b):
+    """Whether a four-neighbour walk from a reaches b."""
+    seen = np.zeros(walk.shape, bool)
+    seen[a[1], a[0]] = walk[a[1], a[0]]
+    while True:
+        grown = dilate(seen, 1) & walk
+        if grown[b[1], b[0]]:
+            return True
+        if (grown == seen).all():
+            return False
+        seen = grown
+
+
+def check() -> list:
+    """The kit's crossing contract: water blocks a walker unless a crossing is declared.
+    A track painted over a plain river leaves it blocking; a ford opens it."""
+    faults = []
+    for ford_at in (None, 88):
+        p = Plot(128, 128)
+        river(p, [(-24, 64), (152, 64)], width=40, seed=3, ford_at=ford_at)
+        before_wet = p.wet.copy()
+        crossed_before = _reaches(p.walk, (64, 16), (64, 112))
+        track(p, [(64, -24), (64, 152)], width=24, puddles=0, seed=7)
+        crossed = _reaches(p.walk, (64, 16), (64, 112))
+        reopened = int((p.walk & before_wet & ~p.crossing).sum())
+        if ford_at is None:
+            if crossed_before or crossed:
+                faults.append('a plain river can be walked across (no ford declared)')
+            if reopened:
+                faults.append(f'a track over a plain river reopened {reopened} wet pixels')
+        else:
+            if not (crossed_before and crossed):
+                faults.append('the declared ford cannot be walked across')
+            if reopened:
+                faults.append(f'{reopened} wet pixels outside the ford became walkable')
+    # the sample: the lane crosses the Sleepwater only at its ford, and no other water opens
+    p, parts = sample()
+    lane = parts['lane']
+    a, b = [tuple(int(v) for v in lane.c[i]) for i in (60, lane.length - 80)]
+    if not _reaches(p.walk, a, b):
+        faults.append('the sample lane cannot be walked across its ford')
+    stray = int((p.walk & p.wet & ~p.crossing).sum())
+    if stray:
+        faults.append(f'{stray} wet pixels in the sample are walkable outside a declared crossing')
+    return faults
+
+
 def main(argv):
+    if '--check' in argv:
+        faults = check()
+        for f in faults:
+            print('FAULT:', f)
+        print('river_kit crossing check:', 'pass' if not faults else f'{len(faults)} faults')
+        return 1 if faults else 0
     out = argv[0] if argv else os.path.join(tempfile.gettempdir(), 'napattack-river-kit')
     os.makedirs(out, exist_ok=True)
     items = pieces()
