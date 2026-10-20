@@ -28,7 +28,7 @@ import {
   feedback,
   gameStore,
   useGame,
-  raidGrass,
+  raidDreamDust,
   type BattleRequest,
   type Player,
 } from '@/lib/game';
@@ -56,7 +56,7 @@ import { RaidGarden } from '@/components/pixel-scenes';
 import { useUi } from '@/lib/ui';
 import { guardianPlayer } from '@/lib/visitors';
 import { grasslingName, grasslings } from '@/lib/grasslings';
-import { GrassFlight } from '@/components/grassling-feedback';
+import { DreamDustFlight } from '@/components/grassling-feedback';
 import { BodyText, BattleIntro, Pulse } from '@/components/pixel-feedback';
 import { HabitCard } from '@/components/habit-cards';
 import { cardDetails, cards } from '@/lib/cards';
@@ -431,7 +431,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
   const finished = phase === 'end' && combat.result !== null;
   const reward = request.practice
     ? sparringReward(rules.days[dayKey()] ?? emptyDay(), Boolean(combat.result))
-    : raidGrass(Boolean(combat.result), target);
+    : raidDreamDust(Boolean(combat.result), target);
   useEffect(() => {
     if (finished && combat.result)
       void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -627,7 +627,7 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                 <PixelBurst />
               </View>
             )}
-            {finished && combat.result && !request.practice && <GrassFlight />}
+            {finished && combat.result && !request.practice && <DreamDustFlight />}
           </View>
           {showHistory && history.length > 1 && (
             <View style={{ gap: 6, padding: 12, backgroundColor: c.paper }}>
@@ -703,11 +703,11 @@ export function BattleScreen({ request }: { request: BattleRequest }) {
                 >
                   {request.practice
                     ? reward > 0
-                      ? `+${reward} GRASS`
-                      : 'NO GRASS EARNED'
+                      ? `+${reward} DREAM DUST`
+                      : 'NO DREAM DUST EARNED'
                     : combat.result
-                      ? `YOU STOLE ${reward} GRASS`
-                      : `-${reward} GRASS`}
+                      ? `YOU STOLE ${reward} DREAM DUST`
+                      : `-${reward} DREAM DUST`}
                 </BodyText>
                 {!request.practice && (
                   <PixelText style={{ textAlign: 'center' }}>

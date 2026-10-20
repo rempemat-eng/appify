@@ -22,7 +22,7 @@ import { collectionOf, guardianPlayer, visitorInfo, type Postcard } from '@/lib/
 import { GuardianPet } from '@/components/guardian-pet';
 import { MemoryReflection } from '@/components/companion-memories';
 import { Pet, PixelButton, PixelText } from '@/components/game-ui';
-import { BodyText, GrassRoll } from '@/components/pixel-feedback';
+import { BodyText, DreamDustRoll } from '@/components/pixel-feedback';
 import { CozySheet } from '@/components/cozy-ui';
 import { FrameFill } from '@/components/pixel-frame';
 import { LightSweep, PixelBurst } from '@/components/cozy-motion';
@@ -305,8 +305,8 @@ export function WelcomeBack() {
             style={{ flexDirection: 'row', gap: 8, justifyContent: 'center', alignItems: 'center' }}
           >
             <BodyText>+</BodyText>
-            <GrassRoll value={reward.grass} from={0} size={20} skip={skip} />
-            <BodyText>GRASS</BodyText>
+            <DreamDustRoll value={reward.grass} from={0} size={20} skip={skip} />
+            <BodyText>DREAM DUST</BodyText>
           </View>
           {togetherStatus === 'failed' && (
             <BodyText>Together ended early. Ordinary rewards kept.</BodyText>

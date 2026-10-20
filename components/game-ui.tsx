@@ -33,7 +33,8 @@ import { isVisitorId, visitorInfo } from '@/lib/visitors';
 import { GROUND_SHADOW, petPixels } from '@/lib/pet-art';
 import { grasslings, growthStage } from '@/lib/grasslings';
 import { gameColumn, gameLayout, hotbarClearance, hudClearance, touchReach } from '@/lib/layout';
-import { PixelIcon } from '@/components/pixel-icon';
+import { PixelIcon, type IconName } from '@/components/pixel-icon';
+import { iconSize } from '@/lib/ui-tokens';
 
 export function PixelText({ style, ...props }: TextProps) {
   const display = (StyleSheet.flatten(style)?.fontSize ?? 15) >= 16;
@@ -61,6 +62,8 @@ export function PixelButton({
   onLongPress,
   onDisabledPress,
   haptic = true,
+  icon,
+  spokenLabel,
 }: {
   label: string;
   onPress: () => void;
@@ -74,6 +77,10 @@ export function PixelButton({
   onLongPress?: () => void;
   onDisabledPress?: () => void;
   haptic?: boolean;
+  /** drawn after the label where a word would not fit, e.g. the Dream Dust vial after a price */
+  icon?: IconName;
+  /** what a screen reader hears when the icon carries part of the meaning */
+  spokenLabel?: string;
 }) {
   const u = usePixelUnit();
   const [pressed, setPressed] = useState(false);
@@ -82,10 +89,18 @@ export function PixelButton({
       disabled ? 'disabled' : danger ? 'danger' : gold ? 'gold' : light ? 'paper' : 'leaf'
     ];
   const depth = 2 * u;
+  const labelStyle = {
+    fontFamily: 'PixelifySans_700Bold',
+    color: disabled ? '#6E6457' : c.buttonInk,
+    fontSize: small ? 13 : 16,
+    lineHeight: small ? 16 : 20,
+    textAlign: 'center',
+    letterSpacing: 0.5,
+  } as const;
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={label}
+      accessibilityLabel={spokenLabel ?? label}
       accessibilityState={{ disabled }}
       aria-disabled={disabled}
       disabled={disabled && !onDisabledPress}
@@ -126,19 +141,18 @@ export function PixelButton({
         }}
       >
         <FrameShape tone={tone} unit={u} />
-        <Text
-          numberOfLines={2}
-          style={{
-            fontFamily: 'PixelifySans_700Bold',
-            color: disabled ? '#6E6457' : c.buttonInk,
-            fontSize: small ? 13 : 16,
-            lineHeight: small ? 16 : 20,
-            textAlign: 'center',
-            letterSpacing: 0.5,
-          }}
-        >
-          {label}
-        </Text>
+        {icon ? (
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: u }}>
+            <Text numberOfLines={2} style={[labelStyle, { flexShrink: 1 }]}>
+              {label}
+            </Text>
+            <PixelIcon name={icon} size={iconSize.small(u)} muted={disabled} />
+          </View>
+        ) : (
+          <Text numberOfLines={2} style={labelStyle}>
+            {label}
+          </Text>
+        )}
         {supportingText && (
           <Text
             style={{

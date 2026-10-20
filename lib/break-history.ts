@@ -6,7 +6,7 @@ export type RecentBreak = {
   mission: string | null;
   early: boolean;
   minutes: number;
-  grass: number;
+  grass: number; // Dream Dust the break paid (saved name kept from GRASS)
   cards: number;
   sessionId: string | null;
 };
