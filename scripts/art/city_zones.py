@@ -459,9 +459,9 @@ def canal_lock(cv: Canvas, blocked: set, CY0: int, CY1: int, ASHLAR):
         cv.set(x, LOCK_SIDE + 1, ramp[3] if x % 9 else ramp[1])
         if n < 0.2 and x % 9 > 5:
             cv.set(x, LOCK_SIDE + 1, '#5A6A3E')  # lichen on the coping's face
-    for y in range(CY0 - 1, LOCK_SIDE + 2):  # its ends over the pounds, coped
+    for y in range(CY0 - 1, LOCK_SIDE + 2):  # its west end over the lower pound, coped (the east
+        # end runs on past the seam: scenery.py carries the lock side to its own coped end)
         cv.set(x0, y, ASHLAR[4]); cv.set(x0 + 1, y, ASHLAR[2])
-        cv.set(x1 - 1, y, ASHLAR[3]); cv.set(x1 - 2, y, ASHLAR[5])
     for x in range(x0, LOCK_X1 + 4):  # the chamber's north wall face: 10 px of wet stone, weed at the waterline
         for y in range(LOCK_SIDE + 2, ch0):
             k = y - LOCK_SIDE - 2
@@ -600,6 +600,16 @@ def canal_lock(cv: Canvas, blocked: set, CY0: int, CY1: int, ASHLAR):
                 cv.set(x, y + k, c)
                 if k < 3:
                     blocked.add((x, y + k))
+        if d > 0:  # the head beams swing east to the zone's edge: the wedge of bank between
+            # a beam and the coping, shut in by the beam and the edge, is its sweep, not a
+            # place to stand (it would be a walk pocket no one can reach)
+            coping = LOCK_SIDE if up < 0 else CY1 + 1
+            for x in range(gx + 1, W):
+                t = min(L - 1, max(0, round((x - gx - 1) / 0.82)))
+                bey = by + up * round(t * 0.57)
+                ys = range(bey + 3, coping) if up < 0 else range(coping + 1, bey)
+                for y in ys:
+                    blocked.add((x, y))
         hx, hy = pts[L - 6]
         cv.set(hx, hy - 1, IRON[3]); cv.set(hx + d, hy - 1, IRON[1])  # the iron handhold
         cv.rect(gx - 1, by - 1, 4, 4, IRON[2]); cv.set(gx - 1, by - 1, IRON[4])  # the heel post's cap
