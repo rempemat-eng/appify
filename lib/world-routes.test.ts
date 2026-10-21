@@ -28,8 +28,6 @@ import { worldWays } from './world-ways';
 
 type Pt = readonly [number, number];
 const dist = (a: Pt, b: Pt) => Math.hypot(a[0] - b[0], a[1] - b[1]);
-const heading = (a: Pt, b: Pt) => (Math.atan2(b[1] - a[1], b[0] - a[0]) * 180) / Math.PI;
-const turn = (h0: number, h1: number) => ((((h1 - h0 + 180) % 360) + 360) % 360) - 180;
 const pts = (r: WorldRoute): Pt[] => r.points.map((p) => [p[0], p[1]] as const);
 
 function arclen(line: Pt[]): number[] {
@@ -192,33 +190,25 @@ for (const r of worldRoutes) {
     assert.ok(x.s >= 0 && x.s <= r.length, `${r.name}: ${x.name} within the route`);
   }
 
-  // --- check 16: no straight run over 240 px (built straight things aside) ---
-  if (r.kind !== 'bridge' && r.kind !== 'causeway' && r.length > 300) {
-    const built = r.crossings.map((x) => [x.s - x.span / 2 - 64, x.s + x.span / 2 + 64]);
-    const rs = resample(line, 8);
-    const hs: (number | null)[] = [];
-    for (let i = 0; i + 4 < rs.length; i++) {
-      const si = i * 8 + 16;
-      hs.push(built.some(([lo, hi]) => si >= lo && si <= hi) ? null : heading(rs[i], rs[i + 4]));
-    }
-    let best = 0;
-    for (let i = 0; i < hs.length; ) {
-      const h0 = hs[i];
-      if (h0 === null) {
-        i++;
-        continue;
-      }
-      let j = i;
-      for (;;) {
-        const next = j + 1 < hs.length ? hs[j + 1] : null;
-        if (next === null || Math.abs(turn(h0, next)) > 6) break;
-        j++;
-      }
-      best = Math.max(best, (j - i + 4) * 8);
-      i = j + 1;
-    }
-    assert.ok(best <= 240, `${r.name}: straight run of ${best} px (check 16: 240 at most)`);
+  // --- the grid shape (Matt, 21 Oct 11:44): runs along x or y only, except where a lane
+  // drew the line itself; the benchmark's 240 px straight-run limit is withdrawn ---
+  for (let i = 1; i < line.length; i++) {
+    const [a, b] = [line[i - 1], line[i]];
+    if (a[0] === b[0] || a[1] === b[1]) continue;
+    const mid = (s[i - 1] + s[i]) / 2;
+    assert.ok(
+      r.drawnBy.some((d) => mid >= d.from - 8 && mid <= d.to + 8),
+      `${r.name}: (${a[0]}, ${a[1]}) to (${b[0]}, ${b[1]}) runs along x or y`,
+    );
   }
+  for (const p of [...r.sidePaths, ...r.pockets])
+    for (let i = 1; i < p.points.length; i++) {
+      const [a, b] = [p.points[i - 1], p.points[i]];
+      assert.ok(
+        a[0] === b[0] || a[1] === b[1],
+        `${r.name}: its side and pocket paths run along x or y`,
+      );
+    }
 
   // --- side paths leave and rejoin the road at a Y, and go round the far side ---
   for (const p of r.sidePaths) {
