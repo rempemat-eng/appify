@@ -8,7 +8,17 @@ import {
   type PlayerPolicy,
   type Scenario,
 } from './economy-inputs';
-import { cappedPay, periodAt, qualifiesAsNight, simulate, total } from './economy-model';
+import {
+  cappedPay,
+  incomingRaidOutcome,
+  periodAt,
+  qualifiesAsNight,
+  realNapCredits,
+  simulate,
+  total,
+} from './economy-model';
+import { restRecognitionRules } from '../lib/rest-recognition';
+import { renderEconomyReport } from './economy-report';
 
 function fixtureInput(): EconomyInputs {
   const input = structuredClone(economyInputs);
@@ -38,6 +48,7 @@ function scenario(id: Scenario['id']): Scenario {
 const today = scenario('today');
 const l2 = scenario('l2');
 const g10 = scenario('g10');
+const tier0 = scenario('tier0');
 
 // Hand-calculated examples, independent of the eight-week report's totals.
 const night = fixturePlayer({ sessions: [{ days: [0], at: 23 * 60, minutes: 480 }] });
@@ -268,8 +279,8 @@ const mountainRun = simulate(
 );
 assert.deepEqual(
   mountainRun.freeHats,
-  ['CAP', 'SHADES', 'TOP HAT', 'CROWN'],
-  'deterministic unowned-hat order makes four free grants reproducible',
+  ['CROWN', 'CAP', 'SHADES', 'TOP HAT'],
+  'fixed seed samples unowned hats instead of always taking catalogue order',
 );
 assert.deepEqual(mountainRun.boughtHats, []);
 assert.equal(mountainRun.allHatsDay, 4);
@@ -366,6 +377,159 @@ assert.throws(
   'spending policies cannot exceed the existing play allowance',
 );
 
+// C40: independently calculated real-minute limits and foreground boundaries.
+assert.equal(
+  simulate(night, tier0, fixtureInput()).earned.naps,
+  480,
+  'eight real hours pay 480, not 28,800 demo units or L2 protected-hour pay',
+);
+const longNap = simulate(
+  fixturePlayer({ sessions: [{ days: [0], at: 0, minutes: 900 }] }),
+  tier0,
+  fixtureInput(),
+);
+assert.equal(longNap.earned.naps, 720, 'one 15-hour nap stops at 12 credited hours');
+assert.equal(longNap.creditedMinutes, 720, 'cards and mood use accepted credit too');
+assert.equal(longNap.cards, 48);
+assert.equal(longNap.rejectedCapMinutes, 180);
+const splitCap = simulate(
+  fixturePlayer({
+    sessions: [
+      { days: [0], at: 0, minutes: 600 },
+      { days: [0], at: 720, minutes: 600 },
+    ],
+  }),
+  tier0,
+  fixtureInput(),
+);
+assert.equal(splitCap.earned.naps, 960, 'two ten-hour naps share the sixteen-hour daily cap');
+assert.equal(splitCap.rejectedCapMinutes, 240);
+const cappedMidnight = simulate(
+  fixturePlayer({ sessions: [{ days: [0], at: 23 * 60, minutes: 900 }] }),
+  tier0,
+  fixtureInput(),
+);
+assert.equal(cappedMidnight.days[0].earned.naps, 60);
+assert.equal(cappedMidnight.days[1].earned.naps, 660);
+assert.equal(cappedMidnight.earned.naps, 720, 'midnight does not reset the ongoing nap cap');
+const resetDay = simulate(
+  fixturePlayer({
+    sessions: [
+      { days: [0], at: 0, minutes: 600 },
+      { days: [0], at: 650, minutes: 600 },
+      { days: [1], at: 0, minutes: 180 },
+    ],
+  }),
+  tier0,
+  fixtureInput(),
+);
+assert.equal(resetDay.days[0].earned.naps, 960);
+assert.equal(resetDay.days[1].earned.naps, 180, 'a new day restores daily room');
+for (const [foregroundMinutes, paid] of [
+  [0, 10],
+  [0.5, 10],
+  [1, 10],
+  [1.5, 9.5],
+  [10, 1],
+]) {
+  const r = simulate(
+    fixturePlayer({ sessions: [{ days: [0], at: 0, minutes: 10, foregroundMinutes }] }),
+    tier0,
+    fixtureInput(),
+  );
+  assert.equal(r.earned.naps, paid, `${foregroundMinutes} foreground minutes, one-minute grace`);
+  assert.equal(r.rejectedForegroundMinutes, 10 - paid);
+}
+const presetDays = [restRecognitionRules.maxDayMinutes - 5];
+const clipped = realNapCredits(0, 20, 10, presetDays, 1440);
+assert.equal(clipped.minutes, 5, 'foreground exclusion and daily room reconcile together');
+assert.equal(clipped.rejectedForeground, 9);
+assert.equal(clipped.rejectedCap, 6);
+assert.deepEqual(presetDays, [955], 'the real-minute adapter does not mutate prior-day credits');
+const tierMission = simulate(
+  fixturePlayer({
+    sessions: [{ days: [0], at: 0, minutes: 30, foregroundMinutes: 30, mission: 'book' }],
+  }),
+  tier0,
+  fixtureInput(),
+);
+assert.equal(tierMission.earned.outings, 60, 'tier-0 foreground rule does not change missions');
+assert.equal(tierMission.creditedMinutes, 30);
+assert.equal(tierMission.rejectedForegroundMinutes, 0);
+
+// Actual current local-button settlement: gains and losses are never shopping spend.
+for (const [balance, loss] of [
+  [0, 0],
+  [4, 4],
+  [10, 10],
+  [33, 10],
+  [34, 10],
+  [100, 30],
+  [101, 30],
+])
+  assert.deepEqual(incomingRaidOutcome(balance, true), { gain: 0, loss });
+assert.deepEqual(incomingRaidOutcome(100, false), { gain: 20, loss: 0 });
+const raidInput = fixtureInput();
+raidInput.initial.dust = 100;
+raidInput.hats = [];
+raidInput.incomingRaids.enabled = true;
+raidInput.incomingRaids.attemptsPerVisit = 10;
+raidInput.incomingRaids.attackerWinProbability = 1;
+const raided = simulate(fixturePlayer({ visitDays: [0], activeSeconds: 120 }), today, raidInput);
+assert.equal(raided.incomingAttempts, 2, 'recovery and active-visit length limit presses');
+assert.equal(raided.lostToRaids, 51, '100 loses 30, then 70 loses 21');
+assert.equal(raided.balance, 49);
+assert.equal(total(raided.spent), 0, 'raid losses are not spending');
+assert.equal(raided.days[0].lostToRaids, 51);
+raidInput.incomingRaids.attackerWinProbability = 0;
+const defended = simulate(fixturePlayer({ visitDays: [0], activeSeconds: 120 }), today, raidInput);
+assert.equal(defended.defendedRaids, 2);
+assert.equal(defended.earned.incomingDefense, 40);
+assert.equal(defended.balance, 140);
+raidInput.incomingRaids.enabled = false;
+assert.equal(
+  simulate(fixturePlayer({ visitDays: [0], activeSeconds: 120 }), today, raidInput)
+    .incomingAttempts,
+  0,
+  'default-off produces no attempts/gains/losses',
+);
+const hatsWithRaids = structuredClone(mountainInput);
+hatsWithRaids.incomingRaids.enabled = true;
+hatsWithRaids.hats = mountainInput.hats.map((hat) => ({ ...hat, cost: 1e9 }));
+const hatPolicy = fixturePlayer({
+  sessions: [{ days: [0, 1, 2, 3, 4], at: 18 * 60, minutes: 60, mission: 'mountain' }],
+  visitDays: [0, 1, 2, 3, 4],
+  activeSeconds: 60,
+});
+assert.deepEqual(
+  simulate(hatPolicy, tier0, hatsWithRaids).freeHats,
+  mountainRun.freeHats,
+  'independent raid stream does not consume Mountain hat draws',
+);
+const differentSeed = structuredClone(mountainInput);
+differentSeed.seeds.mountainHats++;
+assert.notDeepEqual(
+  simulate(
+    fixturePlayer({
+      sessions: [{ days: [0, 1, 2, 3], at: 18 * 60, minutes: 60, mission: 'mountain' }],
+    }),
+    l2,
+    differentSeed,
+  ).freeHats,
+  mountainRun.freeHats,
+  'a different seed can change hat order',
+);
+const milestonesInput = fixtureInput();
+milestonesInput.initial.dust = 10000;
+milestonesInput.weeks = 2;
+milestonesInput.hats = [];
+const milestones = simulate(
+  fixturePlayer({ visitDays: [0, 1, 2, 3, 4, 5, 6], targetLevel: 12 }),
+  tier0,
+  milestonesInput,
+);
+assert.deepEqual(milestones.levelDays, { 5: 4, 8: 7, 12: 11 }, 'first purchase day for each level');
+
 // Snapshot contracts read actual declarations without loading the native store.
 const source = ts.createSourceFile(
   'game.ts',
@@ -422,7 +586,7 @@ for (const player of economyInputs.players) {
     assert.equal(result.days.length, 56, 'eight weeks have 56 daily ledger entries');
     assert.equal(
       result.balance,
-      economyInputs.initial.dust + total(result.earned) - total(result.spent),
+      economyInputs.initial.dust + total(result.earned) - total(result.spent) - result.lostToRaids,
       'aggregate wallet reconciles with sources and spending',
     );
     assert.equal(
@@ -445,6 +609,33 @@ for (const player of economyInputs.players) {
       total(result.spent),
       'daily spending reconciles',
     );
+    const incoming = structuredClone(economyInputs);
+    incoming.incomingRaids.enabled = true;
+    const sensitivity = simulate(player, mode, incoming);
+    assert.deepEqual(sensitivity, simulate(player, mode, incoming), 'seeded raid run repeats');
+    assert.equal(
+      sensitivity.balance,
+      incoming.initial.dust +
+        total(sensitivity.earned) -
+        total(sensitivity.spent) -
+        sensitivity.lostToRaids,
+      'raid sensitivity reconciles',
+    );
+    assert.equal(sensitivity.balance, sensitivity.days.at(-1)?.balance);
+    assert.equal(
+      sensitivity.days.reduce((sum, day) => sum + day.lostToRaids, 0),
+      sensitivity.lostToRaids,
+      'daily raid losses reconcile',
+    );
+    assert.ok(sensitivity.days.every((day) => day.balance >= 0));
+    for (const level of [5, 8, 12] as const) {
+      const expectedDay = result.days.find((day) => day.level >= level);
+      assert.equal(
+        result.levelDays[level],
+        expectedDay ? expectedDay.day + 1 : null,
+        'milestones agree with independently scanned daily levels',
+      );
+    }
   }
 }
 assert.equal(
@@ -452,6 +643,15 @@ assert.equal(
   originalInput,
   'simulation never mutates the typed inputs',
 );
+const report = renderEconomyReport(
+  economyInputs,
+  economyInputs.scenarios.flatMap((mode) =>
+    economyInputs.players.map((player) => simulate(player, mode)),
+  ),
+);
+assert.match(report, /OFF by default/);
+assert.match(report, /Policy stops at L5/);
+assert.match(report, /TIER0 \/ Light/);
 console.log(
   'PASS: economy fixtures, production catalogue contracts, deterministic eight-week ledgers, and wallet reconciliation.',
 );
