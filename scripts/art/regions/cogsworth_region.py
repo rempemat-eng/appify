@@ -157,6 +157,18 @@ SIDE_TRODS = [
 ]
 # The pocket inside the town box, laid by the town's plan
 POCKETS_IN_TOWN = [('Towpath', 'a view down the Cog from the riverside quay', (8016, 2856))]
+# Prop clusters outside the town (Claude B's recipes, scripts/art/prop_clusters.py): where
+# each goes and why; the placer seats it beside its path, off the walk, and checks its
+# reasons. (recipe, near, radius, seed). Placed in order, each keeping its distance from the
+# ones before. The recipes name the coal hills 'coal-hills' (h-to-b-2110 asks for the biome
+# files' ids), so each entry carries any_biome until then.
+CLUSTER_SPOTS = [
+    ('canal_side', (8560, 3020), 160, 1),      # the bargee's bank at the Cog foot bridge
+    ('woodland_glade', (7300, 3260), 160, 1),  # Fernhollow's edge of the wet woods, south of the road
+    ('woodland_glade', (7380, 2900), 160, 1),  # the coal forest beside the Foothill Road
+    ('mine_yard', (7520, 1900), 200, 1),       # a prospector's adit in a bench face on the High Fells
+    ('moor_wayside', (7700, 1900), 160, 1),    # a waymark where the High Fells reach the footbridge
+]
 TIER_CHANGE_RUN = 64  # route px either side of a change where its tier may be either
 
 
@@ -552,7 +564,26 @@ def export_plan(L=None) -> dict:
     for m in out['markers']:
         if m.get('moved_from') == m['at']:
             m.pop('moved_from')
+    out['clusters'] = _clusters(out)
     return out
+
+
+def _clusters(out) -> list:
+    """CLUSTER_SPOTS seated by Claude B's placer on the finished plan, in order."""
+    import prop_clusters as pc
+    placed = []
+    # the set pieces stand where they stand: walls to the placer, as a plan's structures are
+    walls = [{'id': sp['piece'], 'kind': 'set_piece', 'rect': [sp['at'][0], sp['at'][1], sp['size'][0], sp['size'][1]]}
+             for sp in out['set_pieces']]
+    for recipe, near, radius, seed in CLUSTER_SPOTS:
+        e, faults = pc.place(dict(out, clusters=placed, structures=walls), recipe, near=near, seed=seed, others=placed,
+                             radius=radius)
+        if e is None:
+            raise SystemExit(f'cogsworth: {recipe} near {near} finds no place: {faults}')
+        e.pop('replaces', None)
+        e['any_biome'] = True
+        placed.append(e)
+    return placed
 
 
 def _route_tier_at(name, x, y):

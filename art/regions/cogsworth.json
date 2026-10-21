@@ -3024,5 +3024,876 @@
     "the Narrows": "gritstone walls, white water, ferns in the spray",
     "Fernhollow": "wet woodland floor, ferns, sawdust and log stores, a cottage garden each",
     "the town": "cogsworth_plan.py's ground kinds"
-  }
+  },
+  "clusters": [
+    {
+      "recipe": "canal_side",
+      "at": [8504, 3088],
+      "orient": "s",
+      "mirror": true,
+      "seed": 1,
+      "members": [
+        {
+          "role": "bollard_w",
+          "kind": "bollard",
+          "prop": "bollard",
+          "props": ["bollard", "city_quay_bollard"],
+          "foot": [8584, 3088, 8, 8],
+          "job": "a boat ties up to it",
+          "reason": ["by:water:16"],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [8588.0, 3096]
+        },
+        {
+          "role": "ring",
+          "kind": "bollard",
+          "prop": "mooring_ring",
+          "props": ["mooring_ring"],
+          "foot": [8552, 3088, 8, 8],
+          "job": "a ring in the coping for a short stop",
+          "reason": ["by:water:16"],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [8556.0, 3096]
+        },
+        {
+          "role": "rope",
+          "kind": "furniture_low",
+          "prop": "rope_coil",
+          "props": ["rope_coil"],
+          "foot": [8568, 3088, 8, 8],
+          "job": "rope coiled down off a boat",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [8572.0, 3096]
+        },
+        {
+          "role": "bollard_e",
+          "kind": "bollard",
+          "prop": "bollard",
+          "props": ["bollard", "city_quay_bollard"],
+          "foot": [8512, 3088, 8, 8],
+          "job": "a boat ties up to it",
+          "reason": ["by:water:16"],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [8516.0, 3096]
+        },
+        {
+          "role": "bench",
+          "kind": "bench",
+          "prop": "iron_bench",
+          "props": ["iron_bench", "bench"],
+          "foot": [8528, 3096, 32, 8],
+          "job": "the lock-keeper sits and waits for boats",
+          "reason": ["faces:path|view"],
+          "blocks": true,
+          "tap": true,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [8544.0, 3104],
+          "hit": [8527.0, 3070, 34, 34],
+          "stand": [
+            [8548.0, 3108.0],
+            [8540.0, 3108.0]
+          ]
+        },
+        {
+          "role": "mug",
+          "kind": "furniture_low",
+          "prop": "tin_mug",
+          "props": ["tin_mug"],
+          "foot": [8520, 3096, 8, 8],
+          "job": "the lock-keeper's tea",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [8524.0, 3104],
+          "story": true
+        }
+      ],
+      "clear": [
+        {
+          "why": "the bench's front",
+          "rect": [8528, 3104, 32, 16],
+          "front": true
+        }
+      ],
+      "lights": [],
+      "decals": [],
+      "dressing": [],
+      "any_biome": true
+    },
+    {
+      "recipe": "woodland_glade",
+      "at": [7216, 3200],
+      "orient": "n",
+      "mirror": false,
+      "seed": 1,
+      "members": [
+        {
+          "role": "tree_nw",
+          "kind": "broadleaf",
+          "prop": "oak",
+          "props": ["oak", "beech"],
+          "foot": [7296, 3264, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7300.0, 3272],
+          "crown": 24
+        },
+        {
+          "role": "tree_n",
+          "kind": "birch",
+          "prop": "birch",
+          "props": ["birch"],
+          "foot": [7256, 3272, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7260.0, 3280],
+          "crown": 20.0
+        },
+        {
+          "role": "tree_ne",
+          "kind": "broadleaf",
+          "prop": "beech",
+          "props": ["beech", "oak"],
+          "foot": [7224, 3256, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7228.0, 3264],
+          "crown": 24
+        },
+        {
+          "role": "tree_sw",
+          "kind": "young_tree",
+          "prop": "sapling",
+          "props": ["sapling", "tree_small"],
+          "foot": [7304, 3216, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7308.0, 3224],
+          "crown": 16
+        },
+        {
+          "role": "log",
+          "kind": "log",
+          "prop": "mossy_log",
+          "props": ["mossy_log"],
+          "foot": [7240, 3216, 40, 8],
+          "job": "a fallen trunk to sit on",
+          "reason": ["faces:path|view"],
+          "blocks": true,
+          "tap": true,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "KEEP",
+          "anchor": [7260.0, 3224],
+          "hit": [7243.0, 3190, 34, 34],
+          "stand": [
+            [7268.0, 3212.0],
+            [7260.0, 3212.0],
+            [7252.0, 3212.0]
+          ]
+        },
+        {
+          "role": "stump",
+          "kind": "stump",
+          "prop": "stump",
+          "props": ["stump"],
+          "foot": [7224, 3216, 8, 8],
+          "job": "what a woodcutter left",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7228.0, 3224]
+        },
+        {
+          "role": "ferns",
+          "kind": "fern",
+          "prop": "fern",
+          "props": ["fern", "fern_small"],
+          "foot": [7280, 3240, 16, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7288.0, 3248]
+        },
+        {
+          "role": "mushrooms",
+          "kind": "flowers",
+          "prop": "mushroom_ring",
+          "props": ["mushroom_ring", "agaric"],
+          "foot": [7240, 3232, 8, 8],
+          "job": "nature; the ring a story tells of",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7244.0, 3240],
+          "story": true
+        }
+      ],
+      "clear": [
+        {
+          "why": "the glade's open middle",
+          "rect": [7248, 3232, 40, 24]
+        },
+        {
+          "why": "the log's front",
+          "rect": [7240, 3200, 40, 16],
+          "front": true
+        }
+      ],
+      "lights": [
+        {
+          "kind": "sun_patch",
+          "at": [7268.0, 3244.0],
+          "r": 24,
+          "live": false
+        }
+      ],
+      "decals": [],
+      "dressing": [
+        {
+          "what": "bluebells",
+          "at": [7296, 3274],
+          "pieces": 2,
+          "of": "tree_nw"
+        },
+        {
+          "what": "bluebells",
+          "at": [7258, 3282],
+          "pieces": 3,
+          "of": "tree_n"
+        },
+        {
+          "what": "tuft_shade",
+          "at": [7224, 3266],
+          "pieces": 2,
+          "of": "tree_ne"
+        },
+        {
+          "what": "tuft_shade",
+          "at": [7308, 3226],
+          "pieces": 2,
+          "of": "tree_sw"
+        },
+        {
+          "what": "bluebells",
+          "at": [7244, 3226],
+          "pieces": 3,
+          "of": "log"
+        },
+        {
+          "what": "fern_small",
+          "at": [7268, 3226],
+          "pieces": 2,
+          "of": "log"
+        },
+        {
+          "what": "bluebells",
+          "at": [7224, 3226],
+          "pieces": 2,
+          "of": "stump"
+        },
+        {
+          "what": "bluebells",
+          "at": [7235, 3218],
+          "pieces": 2,
+          "of": "stump"
+        }
+      ],
+      "any_biome": true
+    },
+    {
+      "recipe": "woodland_glade",
+      "at": [7288, 2776],
+      "orient": "n",
+      "mirror": false,
+      "seed": 1,
+      "members": [
+        {
+          "role": "tree_nw",
+          "kind": "broadleaf",
+          "prop": "oak",
+          "props": ["oak", "beech"],
+          "foot": [7368, 2840, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7372.0, 2848],
+          "crown": 24
+        },
+        {
+          "role": "tree_n",
+          "kind": "birch",
+          "prop": "birch",
+          "props": ["birch"],
+          "foot": [7328, 2848, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7332.0, 2856],
+          "crown": 20.0
+        },
+        {
+          "role": "tree_ne",
+          "kind": "broadleaf",
+          "prop": "beech",
+          "props": ["beech", "oak"],
+          "foot": [7296, 2832, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7300.0, 2840],
+          "crown": 24
+        },
+        {
+          "role": "tree_sw",
+          "kind": "young_tree",
+          "prop": "sapling",
+          "props": ["sapling", "tree_small"],
+          "foot": [7376, 2792, 8, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "pool",
+          "grade": "REWORK",
+          "anchor": [7380.0, 2800],
+          "crown": 16
+        },
+        {
+          "role": "log",
+          "kind": "log",
+          "prop": "mossy_log",
+          "props": ["mossy_log"],
+          "foot": [7312, 2792, 40, 8],
+          "job": "a fallen trunk to sit on",
+          "reason": ["faces:path|view"],
+          "blocks": true,
+          "tap": true,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "KEEP",
+          "anchor": [7332.0, 2800],
+          "hit": [7315.0, 2766, 34, 34],
+          "stand": [
+            [7340.0, 2788.0],
+            [7332.0, 2788.0],
+            [7324.0, 2788.0]
+          ]
+        },
+        {
+          "role": "stump",
+          "kind": "stump",
+          "prop": "stump",
+          "props": ["stump"],
+          "foot": [7296, 2792, 8, 8],
+          "job": "what a woodcutter left",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7300.0, 2800]
+        },
+        {
+          "role": "ferns",
+          "kind": "fern",
+          "prop": "fern",
+          "props": ["fern", "fern_small"],
+          "foot": [7352, 2816, 16, 8],
+          "job": "nature",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7360.0, 2824]
+        },
+        {
+          "role": "mushrooms",
+          "kind": "flowers",
+          "prop": "mushroom_ring",
+          "props": ["mushroom_ring", "agaric"],
+          "foot": [7312, 2808, 8, 8],
+          "job": "nature; the ring a story tells of",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7316.0, 2816],
+          "story": true
+        }
+      ],
+      "clear": [
+        {
+          "why": "the glade's open middle",
+          "rect": [7320, 2808, 40, 24]
+        },
+        {
+          "why": "the log's front",
+          "rect": [7312, 2776, 40, 16],
+          "front": true
+        }
+      ],
+      "lights": [
+        {
+          "kind": "sun_patch",
+          "at": [7340.0, 2820.0],
+          "r": 24,
+          "live": false
+        }
+      ],
+      "decals": [],
+      "dressing": [
+        {
+          "what": "bluebells",
+          "at": [7368, 2850],
+          "pieces": 2,
+          "of": "tree_nw"
+        },
+        {
+          "what": "bluebells",
+          "at": [7330, 2858],
+          "pieces": 3,
+          "of": "tree_n"
+        },
+        {
+          "what": "tuft_shade",
+          "at": [7296, 2842],
+          "pieces": 2,
+          "of": "tree_ne"
+        },
+        {
+          "what": "tuft_shade",
+          "at": [7380, 2802],
+          "pieces": 2,
+          "of": "tree_sw"
+        },
+        {
+          "what": "bluebells",
+          "at": [7316, 2802],
+          "pieces": 3,
+          "of": "log"
+        },
+        {
+          "what": "fern_small",
+          "at": [7340, 2802],
+          "pieces": 2,
+          "of": "log"
+        },
+        {
+          "what": "bluebells",
+          "at": [7296, 2802],
+          "pieces": 2,
+          "of": "stump"
+        },
+        {
+          "what": "bluebells",
+          "at": [7307, 2794],
+          "pieces": 2,
+          "of": "stump"
+        }
+      ],
+      "any_biome": true
+    },
+    {
+      "recipe": "mine_yard",
+      "at": [7488, 1776],
+      "orient": "e",
+      "mirror": true,
+      "seed": 1,
+      "members": [
+        {
+          "role": "props",
+          "kind": "woodpile",
+          "prop": "pit_props",
+          "props": ["pit_props", "woodpile"],
+          "foot": [7488, 1776, 8, 32],
+          "job": "timber for the tunnel",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7492.0, 1808]
+        },
+        {
+          "role": "pick",
+          "kind": "furniture_low",
+          "prop": "pick",
+          "props": ["pick"],
+          "foot": [7488, 1808, 8, 8],
+          "job": "the prospector's pick",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7492.0, 1816],
+          "story": true
+        },
+        {
+          "role": "rails",
+          "kind": "track",
+          "prop": "rail_stub",
+          "props": ["rail_stub"],
+          "foot": [7504, 1776, 8, 64],
+          "job": "carries the tubs out of the mouth",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7508.0, 1840]
+        },
+        {
+          "role": "tub_a",
+          "kind": "tub",
+          "prop": "ore_tub",
+          "props": ["ore_tub", "coal_cart"],
+          "foot": [7504, 1792, 8, 16],
+          "job": "ore out of the mine",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7508.0, 1808]
+        },
+        {
+          "role": "tub_b",
+          "kind": "tub",
+          "prop": "ore_tub",
+          "props": ["ore_tub", "coal_cart"],
+          "foot": [7504, 1816, 8, 16],
+          "job": "an empty going back",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7508.0, 1832]
+        },
+        {
+          "role": "lamp",
+          "kind": "lamp",
+          "prop": "lamp",
+          "props": ["lamp", "lantern_post"],
+          "foot": [7488, 1840, 8, 8],
+          "job": "lights the mouth",
+          "reason": ["lights:path"],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7492.0, 1848],
+          "light": {
+            "glow": 40,
+            "live": true,
+            "colour": "lamp"
+          }
+        },
+        {
+          "role": "spoil",
+          "kind": "pile",
+          "prop": "spoil_heap",
+          "props": ["spoil_heap", "rubble"],
+          "foot": [7504, 1848, 8, 16],
+          "job": "waste rock tipped off the stub",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7508.0, 1864]
+        }
+      ],
+      "clear": [
+        {
+          "why": "the yard in front of the tubs",
+          "rect": [7512, 1776, 8, 72],
+          "front": true
+        }
+      ],
+      "lights": [
+        {
+          "glow": 40,
+          "live": true,
+          "colour": "lamp",
+          "at": [7492.0, 1848],
+          "of": "lamp"
+        }
+      ],
+      "decals": [],
+      "dressing": [
+        {
+          "what": "sage",
+          "at": [7485, 1790],
+          "pieces": 3,
+          "of": "props"
+        },
+        {
+          "what": "sage",
+          "at": [7488, 1810],
+          "pieces": 3,
+          "of": "props"
+        },
+        {
+          "what": "bunchgrass",
+          "at": [7499, 1788],
+          "pieces": 3,
+          "of": "props"
+        },
+        {
+          "what": "sage",
+          "at": [7490, 1850],
+          "pieces": 2,
+          "of": "lamp"
+        },
+        {
+          "what": "sage",
+          "at": [7501, 1858],
+          "pieces": 3,
+          "of": "spoil"
+        },
+        {
+          "what": "sage",
+          "at": [7515, 1854],
+          "pieces": 2,
+          "of": "spoil"
+        }
+      ],
+      "any_biome": true
+    },
+    {
+      "recipe": "moor_wayside",
+      "at": [7688, 1888],
+      "orient": "s",
+      "mirror": false,
+      "seed": 1,
+      "members": [
+        {
+          "role": "gorse",
+          "kind": "bush",
+          "prop": "gorse_a",
+          "props": ["gorse_a", "gorse_b", "bush"],
+          "foot": [7688, 1888, 24, 16],
+          "job": "nature; the wind's lee",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7700.0, 1904]
+        },
+        {
+          "role": "cairn",
+          "kind": "cairn",
+          "prop": "cairn_trail",
+          "props": ["cairn_trail", "cairn_tall", "cairn"],
+          "foot": [7712, 1896, 16, 16],
+          "job": "marks the way",
+          "reason": ["near:path:64"],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7720.0, 1912]
+        },
+        {
+          "role": "bench",
+          "kind": "bench",
+          "prop": "bench_stone",
+          "props": ["bench_stone", "bench_oak"],
+          "foot": [7728, 1904, 32, 8],
+          "job": "a rest out of the wind",
+          "reason": ["faces:path|view"],
+          "blocks": true,
+          "tap": true,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7744.0, 1912],
+          "hit": [7727.0, 1878, 34, 34],
+          "stand": [
+            [7740.0, 1916.0],
+            [7748.0, 1916.0]
+          ]
+        },
+        {
+          "role": "stone",
+          "kind": "standing_stone",
+          "prop": "standing_stone_low",
+          "props": ["standing_stone_low", "standing_stone"],
+          "foot": [7760, 1896, 16, 8],
+          "job": "an old marker",
+          "reason": [],
+          "blocks": true,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "REWORK",
+          "anchor": [7768.0, 1904]
+        },
+        {
+          "role": "sprig",
+          "kind": "flowers",
+          "prop": "heather_sprig",
+          "props": ["heather_sprig"],
+          "foot": [7768, 1904, 8, 8],
+          "job": "heather left on the stone",
+          "reason": [],
+          "blocks": false,
+          "tap": false,
+          "place": "ground",
+          "shadow": "cast",
+          "grade": "new",
+          "anchor": [7772.0, 1912],
+          "story": true
+        }
+      ],
+      "clear": [
+        {
+          "why": "the bench's front",
+          "rect": [7728, 1912, 32, 16]
+        }
+      ],
+      "lights": [],
+      "decals": [],
+      "dressing": [
+        {
+          "what": "bilberry",
+          "at": [7685, 1898],
+          "pieces": 3,
+          "of": "gorse"
+        },
+        {
+          "what": "tuft",
+          "at": [7698, 1906],
+          "pieces": 3,
+          "of": "gorse"
+        },
+        {
+          "what": "bilberry",
+          "at": [7715, 1894],
+          "pieces": 3,
+          "of": "gorse"
+        },
+        {
+          "what": "bilberry",
+          "at": [7709, 1910],
+          "pieces": 3,
+          "of": "cairn"
+        },
+        {
+          "what": "heather",
+          "at": [7724, 1914],
+          "pieces": 2,
+          "of": "cairn"
+        },
+        {
+          "what": "heather",
+          "at": [7731, 1896],
+          "pieces": 3,
+          "of": "cairn"
+        },
+        {
+          "what": "bilberry",
+          "at": [7763, 1906],
+          "pieces": 3,
+          "of": "bench"
+        },
+        {
+          "what": "heather",
+          "at": [7762, 1906],
+          "pieces": 3,
+          "of": "stone"
+        },
+        {
+          "what": "tuft",
+          "at": [7779, 1904],
+          "pieces": 3,
+          "of": "stone"
+        }
+      ],
+      "any_biome": true
+    }
+  ]
 }
