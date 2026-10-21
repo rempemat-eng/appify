@@ -32,6 +32,8 @@ Square brackets are the proposed **story links**: the way comes in reach only on
 
 **Rest spots** (#143 G1, a proposal this spine depends on): each region has three or four, found by walking past once. From then on the NAP sheet offers them as where the next rest happens and the companion goes there while the player is away; nobody walks back. Every spot pays the same Dust a minute.
 
+**Where the app opens** (proposed here; choices, item 13): after a rest, at the spot where it happened (the hut's bed by default, so usually home, with the welcome-back sheet); opened again without a rest, where the player left off.
+
 **Chapters** (proposed here): chapter 1 with the first rest at any of the region's spots; chapters 2 and 3 each with one more rest there that ends on a later day than the previous chapter or is a long rest (90 minutes, a night counts); one chapter per rest; at most one new chapter a day in all. Nothing waits on a date, nothing expires, nothing is lost. Chapter 3 leaves a lasting change in the world and the apprentice joins at once.
 
 **Why one chapter a day.** Without it the sim's Regular rester reads all eleven stories in three weeks, a new region every day and each story over in three days; with it, every welcome-back carries at most one story beat and the journey lasts five to six weeks for a daily rester however much they rest (the heavy rester is no faster than the regular one, which is the point: rest more and nothing races ahead). It matches the decided "one way a day" and costs nobody anything.

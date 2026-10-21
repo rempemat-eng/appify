@@ -32,6 +32,11 @@
     },
     "spots": {
       "about": "A rest spot is found by walking to it once (like a keepsake). From then on the NAP sheet and the map offer it as where the next rest happens; the companion goes there while the player is away, so nobody has to walk back. The hut's bed is the default. Every spot pays the same Dream Dust a minute (gameplay-regions G1 and G2, proposals)."
+    },
+    "reopen": {
+      "afterRest": "spot",
+      "otherwise": "left-off",
+      "about": "PROPOSAL (lane R 16:29; choices item 13): after a rest the app opens where that rest happened (the hut's bed by default, so usually home, with the welcome-back sheet); opened without a rest in between, it opens where the player left off. Today it always opens in the garden while save.world still names the last place; the saved spot follows whichever is decided."
     }
   },
   "start": {

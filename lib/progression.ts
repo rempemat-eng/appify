@@ -169,6 +169,8 @@ export type Spine = {
       perDay: number;
     };
     spots: { about: string };
+    /** where the app opens: after a rest, and when opened without one */
+    reopen: { afterRest: 'spot' | 'home'; otherwise: 'left-off' | 'home'; about: string };
   };
   start: {
     dust: number;
