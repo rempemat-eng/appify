@@ -88,6 +88,11 @@ import {
   zoneScenery,
 } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
+import { FolkFamiliar, FolkWalker } from '@/components/folk-walker';
+import { ART_DENSITY } from '@/lib/art-density-setting';
+import { daylight, hourOf } from '@/lib/daylight';
+import { zoneNative } from '@/lib/zone-native';
+import { zoneNativeArt } from '@/lib/zone-native-assets';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
 import { Animal, isAnimal } from '@/components/atlas-animals';
 import { Pet } from '@/components/game-ui';
@@ -324,6 +329,16 @@ function Floating({
   );
 }
 
+// A zone drawn by the kit at art density 2 (lib/zone-native.ts), shown where the game draws at
+// density 2 (`?density=2` on the web); its walk, stands and ports are the 1x zone's own, so
+// only the pictures change. Elsewhere, and at density 1, the 1x zone is drawn as before.
+function nativeOf(zone: TileId) {
+  if (ART_DENSITY !== 2 || zone === 'garden') return undefined;
+  const data = zoneNative[zone];
+  const art = zoneNativeArt[zone];
+  return data && art ? { data, art } : undefined;
+}
+
 // Moving water and lava (scripts/art/water_flow.py; Matt, 19 Oct: "water should have
 // flowing animations"): one picture per zone with its frames stacked, clipped to the box
 // round its water and stepped on the shared clock. The clock stops with reduced motion or
@@ -339,14 +354,22 @@ function FlowLayer({
   u: number;
   snap: (v: number) => number;
 }) {
-  const rect = zone === 'garden' ? undefined : zoneFlow[zone];
-  const art = zone === 'garden' ? undefined : zoneFlowArt[zone];
+  const native = nativeOf(zone);
+  const rect = zone === 'garden' ? undefined : native ? native.data.flow : zoneFlow[zone];
+  const art = zone === 'garden' ? undefined : native ? native.art.flow : zoneFlowArt[zone];
+  // a native zone packs its frames in a grid `cols` wide, row by row (zone-native.ts)
+  const cols = native ? native.data.flowCols : 1;
+  const rows = Math.ceil(FLOW_FRAMES / cols);
   const bh = rect ? snap(rect[3] * u) : 0;
-  const style = useAnimatedStyle(() => ({
-    transform: [{ translateY: -(Math.floor(clock.value / FLOW_FRAME_MS) % FLOW_FRAMES) * bh }],
-  }));
+  const bw = rect ? snap(rect[2] * u) : 0;
+  const style = useAnimatedStyle(() => {
+    const f = Math.floor(clock.value / FLOW_FRAME_MS) % FLOW_FRAMES;
+    return {
+      transform: [{ translateX: -(f % cols) * bw }, { translateY: -Math.floor(f / cols) * bh }],
+    };
+  });
   if (!rect || !art) return null;
-  const [x, y, w] = rect;
+  const [x, y] = rect;
   return (
     <View
       pointerEvents="none"
@@ -354,7 +377,7 @@ function FlowLayer({
         position: 'absolute',
         left: snap(x * u),
         top: snap(y * u),
-        width: snap(w * u),
+        width: bw,
         height: bh,
         overflow: 'hidden',
       }}
@@ -363,7 +386,7 @@ function FlowLayer({
         source={art}
         resizeMode="stretch"
         style={[
-          { position: 'absolute', left: 0, top: 0, width: snap(w * u), height: bh * FLOW_FRAMES },
+          { position: 'absolute', left: 0, top: 0, width: bw * cols, height: bh * rows },
           style,
         ]}
       />
@@ -687,18 +710,25 @@ function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourceProp
         z: o.y + g.y + g.h,
       }));
   }
-  const props = zoneMaps[tile.id].objects.map(([id, sprite, x, y, w, h]) => ({
-    key: `${tile.id}-${id}`,
-    sprite,
-    zone: tile.id,
-    oid: id,
-    src: zoneProps[sprite],
-    x: o.x + x,
-    y: o.y + y,
-    w,
-    h,
-    z: zoneOverhead.includes(sprite) ? 100000 : o.y + y + h,
-  }));
+  const native = nativeOf(tile.id);
+  const props = zoneMaps[tile.id].objects.map(([id, sprite, x, y, w, h]) => {
+    // a native zone draws its own picture of the object, its foot where the object's foot is
+    // (so it sorts as before): the box can be larger than the 1x sprite's
+    const nat = native?.data.objects[id];
+    const src = nat ? native?.art.sprites[nat[0]] : undefined;
+    return {
+      key: `${tile.id}-${id}`,
+      sprite,
+      zone: tile.id,
+      oid: id,
+      src: src ?? zoneProps[sprite],
+      x: o.x + (nat && src ? nat[1] : x),
+      y: o.y + (nat && src ? nat[2] : y),
+      w: nat && src ? nat[3] : w,
+      h: nat && src ? nat[4] : h,
+      z: zoneOverhead.includes(sprite) ? 100000 : o.y + y + h,
+    };
+  });
   // A deck (two-level-walk.md) sorts by its front foot among the street's props: what
   // stands on the street behind it is covered; what stands on it draws above it all.
   const deck = zoneDecks[tile.id];
@@ -963,17 +993,24 @@ export function AtlasWalk({
   const active = appActive && shown;
   const player = useGame((s) => s.player);
   const hutLook = useGame((s) => s.hutLook);
-  const hour = new Date(useGame((s) => s.now)).getHours();
+  const now = useGame((s) => s.now);
+  const hour = new Date(now).getHours();
   const night = hour < 6 || hour >= 21;
   // the light of the hour (as on the garden screen): blue at night, warm at dusk, a
   // soft gold at dawn; places that make their own light keep it
-  const tint = night
-    ? 'rgba(22,28,66,0.42)'
-    : hour >= 17
-      ? 'rgba(240,128,70,0.16)'
-      : hour < 9
-        ? 'rgba(255,200,150,0.12)'
-        : null;
+  // the light of the hour (as on the garden screen): blue at night, warm at dusk, a soft
+  // gold at dawn; places that make their own light keep it. At art density 2 the light is
+  // blended over real time (lib/daylight.ts; stepped with reduced motion)
+  const tint =
+    ART_DENSITY === 2
+      ? daylight(hourOf(now), reduced).tint
+      : night
+        ? 'rgba(22,28,66,0.42)'
+        : hour >= 17
+          ? 'rgba(240,128,70,0.16)'
+          : hour < 9
+            ? 'rgba(255,200,150,0.12)'
+            : null;
   const screen = useWindowDimensions();
   const dpr = PixelRatio.get();
   const u = pixelScale(screen.width, dpr);
@@ -1602,8 +1639,21 @@ export function AtlasWalk({
     walkTo(fromScreen(used ? used : at));
   };
 
+  // in a zone drawn at art density 2, the walker is the perfected folk (Bramble) with the
+  // Mossling a step behind (components/folk-walker.tsx); everywhere else it stays as before
+  const folkHere = here !== 'garden' && !!nativeOf(here);
   const pet = (shadow: boolean) =>
-    player ? (
+    folkHere ? (
+      <FolkWalker
+        px={px}
+        py={py}
+        u={u}
+        walking={walking && active}
+        active={active}
+        reduced={reduced}
+        ghost={!shadow}
+      />
+    ) : player ? (
       <GuardianPet
         player={player}
         size={petPx}
@@ -1688,7 +1738,11 @@ export function AtlasWalk({
                 }}
               >
                 <Image
-                  source={t.id === 'garden' ? gardenGround : zoneGrounds[t.id]}
+                  source={
+                    t.id === 'garden'
+                      ? gardenGround
+                      : (nativeOf(t.id)?.art.ground ?? zoneGrounds[t.id])
+                  }
                   resizeMode="stretch"
                   style={{ position: 'absolute', left: 0, top: 0, width: w, height: h }}
                 />
@@ -1899,6 +1953,18 @@ export function AtlasWalk({
             )}
             <Animated.View style={landStyle}>{pet(true)}</Animated.View>
           </Animated.View>
+          {folkHere && (
+            <FolkFamiliar
+              px={px}
+              py={py}
+              ox={ox}
+              oy={oy}
+              u={u}
+              walking={walking && active}
+              active={active}
+              reduced={reduced}
+            />
+          )}
           {preview && (
             // a keepsake about to be set down: its footprint lit green (it may stand
             // there) or red (not), the thing itself faint above it

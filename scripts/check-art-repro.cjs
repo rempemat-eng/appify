@@ -22,6 +22,8 @@ const generators = [
   'cliff_core',
   // the shared 2x kit's golden scenes (art/golden/, scripts/art/native/)
   'kit_golden',
+  // the zones the kit draws at density 2 and the 2x folk (art/scenes/, scripts/art/native/)
+  'native_zones',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -47,6 +49,10 @@ const generatedTypescript = [
   'lib/world-canvas-assets.ts',
   // the routes between the regions (scripts/art/world_routes.py, lane G)
   'lib/world-routes.ts',
+  // the zones drawn at density 2 and the 2x folk (scripts/art/native_zones.py)
+  'lib/zone-native.ts',
+  'lib/zone-native-assets.ts',
+  'lib/folk-sprites.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
