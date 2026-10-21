@@ -366,28 +366,48 @@
   "lull_cut": {
    "kind": "canal",
    "derived": true,
-   "towpath": "north",
-   "why": "plan 4.3: from Lullford's east bank to the canal basin under the Heights, clear of the delta's silt",
+   "towpath": "south and west",
+   "why": "plan 4.3: from Lullford's east bank to the canal basin under the Heights, clear of the delta's silt; laid in straight legs along the terrace edge, each under 96 px between a lock or a bend (a lock at x 9160 steps it 8 px), the towpath on its delta side",
    "points": [
     [
-     9060,
-     4392
+     9064,
+     4400
     ],
     [
-     9150,
-     4432
+     9160,
+     4400
     ],
     [
-     9250,
-     4500
+     9172,
+     4408
     ],
     [
-     9340,
-     4580
+     9256,
+     4408
+    ],
+    [
+     9296,
+     4436
+    ],
+    [
+     9312,
+     4488
+    ],
+    [
+     9312,
+     4560
+    ],
+    [
+     9336,
+     4600
+    ],
+    [
+     9384,
+     4616
     ],
     [
      9456,
-     4672
+     4616
     ]
    ],
    "width": 40
@@ -538,35 +558,47 @@
    "width": 24,
    "points": [
     [
-     9064,
-     4320
+     9070,
+     4328
     ],
     [
-     9120,
-     4400
-    ],
-    [
-     9200,
+     9080,
      4440
     ],
     [
-     9290,
-     4500
+     9160,
+     4452
     ],
     [
-     9376,
-     4568
+     9260,
+     4456
+    ],
+    [
+     9278,
+     4488
+    ],
+    [
+     9272,
+     4560
+    ],
+    [
+     9296,
+     4640
+    ],
+    [
+     9360,
+     4660
     ],
     [
      9456,
-     4640
+     4660
     ]
    ],
    "exits": [
     {
      "at": [
       9456,
-      4640
+      4660
      ],
      "to": "Neon Harbour, the Heights"
     }

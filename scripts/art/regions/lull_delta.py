@@ -52,6 +52,40 @@ def load_plan(path: str = PLAN_PATH) -> dict:
         return json.load(f)
 
 
+# --- working in windows (the kit's pieces allocate whole-canvas arrays; a chunk is millions of px) --
+
+def window(p: Plot, x0: int, y0: int, x1: int, y1: int) -> Plot:
+    """A view of part of a plot: the kit's pieces paint into it and the plot changes with it.
+    Coordinates (p.x, p.y) stay the plot's own, so noise and hashes run on across windows."""
+    x0, y0, x1, y1 = max(0, x0), max(0, y0), min(p.w, x1), min(p.h, y1)
+    q = Plot.__new__(Plot)
+    q.w, q.h = x1 - x0, y1 - y0
+    for a in ('f', 't', 'wet', 'solid', 'walk', 'crossing', 'x', 'y'):
+        setattr(q, a, getattr(p, a)[y0:y1, x0:x1])
+    q.origin = (x0, y0)
+    return q
+
+
+def tiled(p: Plot, fn, m, *args, size=256, **kw):
+    """Run a kit piece fn(plot, mask, ...) over the plot window by window."""
+    m = np.asarray(m, bool)
+    for y0 in range(0, p.h, size):
+        for x0 in range(0, p.w, size):
+            sub = m[y0:y0 + size, x0:x0 + size]
+            if sub.any():
+                fn(window(p, x0, y0, x0 + size, y0 + size), sub, *args, **kw)
+
+
+def paste(p: Plot, sp, x, y, outline=True, shadow=None, block=None):
+    """river_kit.paste in a window round the sprite (same result, a fraction of the work)."""
+    x0, y0 = x - sp.fx - 3, y - sp.fy - 3
+    q = window(p, x0, y0, x0 + sp.w + 6, y0 + sp.h + 6)
+    if q.w <= 0 or q.h <= 0:
+        return
+    qx, qy = q.origin
+    rk.paste(q, sp, x - qx, y - qy, outline=outline, shadow=shadow, block=block)
+
+
 # --- the soft grid ----------------------------------------------------------------------------
 
 def soft_snap(m: np.ndarray, cell: int = 2 * GRID) -> np.ndarray:
@@ -66,6 +100,64 @@ def soft_snap(m: np.ndarray, cell: int = 2 * GRID) -> np.ndarray:
     pad = np.zeros((H * cell, W * cell), bool)
     pad[:h, :w] = m
     c = pad.reshape(H, cell, W, cell).mean((1, 3)) >= 0.5
+    return np.repeat(np.repeat(c, cell, 0), cell, 1)[:h, :w]
+
+
+def _runs_1d(b: np.ndarray):
+    """(row, start, length) of every run of True along the last axis."""
+    out = []
+    for r in range(b.shape[0]):
+        row = np.concatenate([[False], b[r], [False]])
+        d = np.diff(row.astype(np.int8))
+        st, en = np.flatnonzero(d == 1), np.flatnonzero(d == -1)
+        out += [(r, a, e - a) for a, e in zip(st.tolist(), en.tolist())]
+    return out
+
+
+def jog(m: np.ndarray, cell: int = 2 * GRID, longest: int = 6, passes: int = 6) -> np.ndarray:
+    """No straight edge longer than `longest` cells (96 px; benchmark check 8, the audit's
+    straight-run): in the middle of every longer run of a grid-laid mask's edge, one cell
+    is given back to the other side, a 16 px jog, as a bank, a reed bed or a wood edge
+    would wander."""
+    h, w = m.shape
+    c = m[::cell, ::cell].copy()
+    for _ in range(passes):
+        hit = False
+        for axis in (0, 1):
+            a = c if axis == 0 else c.T
+            b = a[:-1] != a[1:]
+            for r, st, ln in _runs_1d(b):
+                if ln <= longest:
+                    continue
+                hit = True
+                for k in range(st + ln // 2, st + ln - 1, longest)[:1] or [st + ln // 2]:
+                    # give back the cell on the True side, so the mask only shrinks
+                    if a[r, k]:
+                        a[r, k] = False
+                    else:
+                        a[r + 1, k] = False
+        if not hit:
+            break
+    return np.repeat(np.repeat(c, cell, 0), cell, 1)[:h, :w]
+
+
+def bands(m: np.ndarray, cell: int = 2 * GRID, open_land: np.ndarray | None = None) -> np.ndarray:
+    """Blocked ground the audit would read as a face of a height the soft grid does not have
+    (a band 48 or 64 px tall with walkable ground above and below: world-audit `face-height`
+    allows 12, 16, 32 and 40): such a band is carried down to 80 px where the land below is
+    free, else cut back to 32."""
+    h, w = m.shape
+    c = m[::cell, ::cell].copy()
+    free = np.ones_like(c) if open_land is None else open_land[::cell, ::cell]
+    H = c.shape[0]
+    for x, st, ln in _runs_1d(c.T):
+        if ln not in (3, 4) or st == 0 or st + ln >= H:
+            continue
+        need = 5 - ln
+        if st + ln + need <= H and free[st + ln:st + ln + need, x].all():
+            c[st + ln:st + ln + need, x] = True
+        else:
+            c[st + 2:st + ln, x] = False
     return np.repeat(np.repeat(c, cell, 0), cell, 1)[:h, :w]
 
 
@@ -179,6 +271,30 @@ def flow_dirs(chs, shape):
     return tx, ty, n, s, best
 
 
+DASH = (('water_warm', 1), ('water_cool', 1), ('water', 1), ('water_warm', 0), ('water_cool', -1), ('water', -1),
+        ('water_warm', 2), ('water_cool', 0), ('water_warm', -1), ('water_cool', 2), ('water', 2), ('lagoon', 0))
+
+
+def dashes(p: Plot, m, seed, density=1.0, rows=2, seg=8, lmin=4, lspan=5):
+    """The surface of wide water as Eastward draws it: ripples as short horizontal strokes,
+    4 to 8 px, on every other row in segments of 8 px, each stroke one of twelve sibling
+    and tone shifts of what lies under it, taken in turn (not at random) so every 16 px patch
+    holds about a dozen tones in two dozen calm shapes, with no lone pixels. Tuned against the
+    detail bar's water baseline (tones 13.4, shapes 21.3, dressing 16.8, cluster 7.8)."""
+    on_row = (p.y % rows) == 0
+    off = (hash01(p.y, 0, seed) * seg).astype(int)
+    u = (p.x + off) // seg
+    pos = (p.x + off) % seg
+    ln = lmin + (hash01(u, p.y, seed + 1) * lspan).astype(int)
+    pick = (u * 5 + (p.y // rows) * 3) % len(DASH)
+    d = m & on_row & (hash01(u, p.y, seed + 3) < density) & (pos < ln)
+    d &= shift(m, 1, 0, False) & shift(m, -1, 0, False)
+    for i, (fam, dt) in enumerate(DASH):
+        sel = d & (pick == i)
+        p.f[sel] = IDX[fam]
+        p.t[sel] = np.clip(p.t[sel] + dt, 1, 5)
+
+
 def depth_map(m: np.ndarray, cap: int = 40) -> np.ndarray:
     """Px from each water pixel to the nearest bank (by repeated erosion, capped)."""
     d = np.zeros(m.shape, np.int16)
@@ -191,12 +307,13 @@ def depth_map(m: np.ndarray, cap: int = 40) -> np.ndarray:
     return d
 
 
-def paint_water(R: Region, plan: np.ndarray, hb: np.ndarray, chs, seed: int, still: np.ndarray | None = None):
+def paint_water(R: Region, plan: np.ndarray, hb: np.ndarray, chs, seed: int, still: np.ndarray | None = None,
+                soft: np.ndarray | None = None):
     """Water laid on the grid (`plan`, already snapped) and drawn: north banks show their
     face (earth clods, turf lip, roots, a dark wet foot) `hb` px tall, side bands 2 px, the
     south bank a darker lip with the water dark beneath it; the water in depth bands from the
-    banks, sibling patches along the flow, streaks of current, glints; still water (oxbows)
-    calm with a light waterline. Returns (water, face)."""
+    curved banks (shallow along the drawn edge), ripples as short strokes (`dashes`), the odd
+    floating leaf and glint, a light waterline under each north face. Returns (water, face)."""
     p = R.p
     drawn = soften(p, plan, seed)
     rows = np.arange(p.h)[:, None]
@@ -218,26 +335,17 @@ def paint_water(R: Region, plan: np.ndarray, hb: np.ndarray, chs, seed: int, sti
         j[y] = run - 1
     j = np.where(side, np.minimum(j, 1), j)
     rk._bank_face(p, face, j, np.maximum(hbx, 2), seed + 20, east_facing=west_land & side)
-    tx, ty, n, s, _d = flow_dirs(chs, p.f.shape)
-    dep = depth_map(water, 30)
-    tone = np.where(dep > 18, 1, np.where(dep > 8, 2, np.where(dep > 3, 3, 4)))
-    tone = np.where((dep > 3) & (fbm(p.x, p.y, 14, seed + 1) > 0.62), tone + 1, tone)
-    sibn = fbm(s / 3.0, n * 1.2, 7, seed + 2)
-    fam = np.where(sibn < 0.33, IDX['water_warm'], np.where(sibn > 0.68, IDX['water_cool'], IDX['water']))
-    p.f[water], p.t[water] = fam[water], np.clip(tone, 1, 4)[water]
-    run_w = water if still is None else water & ~still
-    lane = np.floor((n + 400) / 3).astype(int)
-    on = hash01(lane, 0, seed + 3) < 0.5
-    per = 24 + (hash01(lane, 1, seed + 4) * 16).astype(int)
-    pos = (s.astype(int) + (hash01(lane, 2, seed + 5) * 40).astype(int)) % per
-    ln = 3 + (hash01(lane, 3, seed + 6) * 3).astype(int)
-    centre = np.abs(n - (lane * 3 - 400 + 1.5)) < 0.75
-    streak = run_w & on & centre & (pos < ln) & (p.t <= 3)
-    p.step(shift(streak, 0, 1, False) & run_w & ~streak, -1, lo=1)
-    p.step(streak, 1)
-    g = water & (hash01(p.x // 2, p.y, seed + 7) < 0.010) & (p.t <= 2) & ~streak
-    gg = g | (shift(g, 1, 0, False) & water)
-    p.f[gg], p.t[gg] = IDX['water_warm'], 4
+    # depth: from the channel's own (curved) banks, so the bands curve inside the grid-laid
+    # edge, and shallow along the drawn edge itself; the thalweg wanders
+    edge_d = depth_map(water, 6)
+    dep = depth_map(soft if soft is not None else water, 40).astype(float)
+    dep += 8 * (fbm(p.x, p.y, 40, seed + 1) - 0.5)
+    tone = np.where(dep > 14, 2, 3)
+    tone = np.where(edge_d <= 2, 4, np.where(edge_d <= 4, 3, tone))
+    p.f[water], p.t[water] = IDX['water'], tone[water]
+    dashes(p, water, seed + 8)
+    leaf = water & (edge_d <= 8) & (hash01(p.x // 2, p.y // 2, seed + 10) < 0.006)
+    p.f[leaf], p.t[leaf] = IDX['leaf'], 3
     # the south (near) bank: the land's lip a tone darker, the water dark under it
     lip = land & shift(water, 0, 1, False)
     p.step(lip, -1)
@@ -302,16 +410,17 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     wm = near_river & ~river_plan
     carr_t = np.clip(((p.x + R.ox) - 9290 + 40 * (fbm(p.x, p.y, 70, seed + 2) - 0.5)) / 120.0, 0, 1) * \
         np.clip((4180 - (p.y + R.oy)) / 200.0, 0, 1)
-    delta_zone = (p.y + R.oy > 4560) & ~sea
-    west_plain = (p.x + R.ox < 8880) & (p.y + R.oy < 4560)
+    delta_line = 4620 + 70 * (fbm(p.x, 0 * p.x, 90, seed + 16) - 0.5) + 40 * np.sin((p.x + R.ox) / 61.0)
+    delta_zone = (p.y + R.oy > delta_line) & ~sea
+    west_plain = (p.x + R.ox < 8880) & ~delta_zone & ~sea
     dunes = (p.x + R.ox < 8600) & ~sea & (p.y > front - 150 - 40 * fbm(p.x, p.y, 40, seed + 3))
-    rk.pasture(p, every, seed + 1)
+    tiled(p, rk.pasture, every, seed + 1)
     meadows = field_cells(R, west_plain & ~near_river, (200, 150), seed + 4)
-    for k in np.unique(meadows[meadows >= 0])[:400]:
-        m = meadows == k
-        pick = hash01(int(k), 0, seed + 5)
-        if pick < 0.45:
-            rk.hay_meadow(p, m, seed + int(k) % 97)
+    hay = np.zeros(p.f.shape, bool)
+    for k in np.unique(meadows[meadows >= 0]):
+        if hash01(int(k), 0, seed + 5) < 0.45:
+            hay |= meadows == k
+    tiled(p, rk.hay_meadow, hay, seed + 6)
     t = time.time()
     # water meadows: the pasture greener and wetter near the river, rushes and marigolds
     p.sib(wm & (fbm(p.x, p.y, 18, seed + 6) > 0.55), 'cool')
@@ -319,11 +428,20 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     marsh = delta_zone & ~river_plan & ~flats & ~dunes
     p.sib(marsh, 'cool')
     p.step(marsh & (fbm(p.x, p.y, 10, seed + 7) > 0.6), -1, lo=2)
-    rk.sand(p, flats & ~dunes, None, seed + 8)
+    tiled(p, rk.sand, flats & ~dunes, None, seed + 8)
     p.sib(flats & ~dunes, 'cool')
     p.step(flats & (fbm(p.x, p.y, 16, seed + 9) > 0.55), -1, lo=2)
-    rk.sand(p, dunes, None, seed + 10)
-    rk.wood_floor(p, carr_t > 0.35, seed + 11)
+    tiled(p, rk.sand, dunes, None, seed + 10)
+    tiled(p, rk.wood_floor, carr_t > 0.35, seed + 11)
+    land = ~river_plan & ~sea
+    tiled(p, rk.texture, land & ~flats & ~dunes & ~hay, seed + 14, swaps=0.05, ups=0.02, downs=0.025)
+    shore = (flats | dunes) & land
+    tiled(p, rk.texture, shore, seed + 17, swaps=0.14, ups=0.05, downs=0.06)
+    tiled(p, rk.pebbles, shore & (fbm(p.x, p.y, 14, seed + 18) > 0.45), seed + 19, 0.03)
+    wrack = shore & (np.abs(p.y - (front - 18 - 10 * fbm(p.x, 0 * p.x, 30, seed + 20))) < 1.5) & \
+        (hash01(p.x // 4, 0, seed + 21) < 0.7)
+    p.f[wrack], p.t[wrack] = IDX['leaf_cool'], 1
+    tiled(p, rk.texture, marsh, seed + 22, swaps=0.12, ups=0.04, downs=0.05)
     log(f'  ground in {time.time() - t:.1f} s')
 
     # 4. reed beds (block, in whole cells): the inner delta and the silted oxbow
@@ -351,8 +469,10 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     # 6. lay everything that blocks on the grid
     deck_plan = soft_snap(deck)
     water_plan = soft_snap((river_plan | sea) & ~deck_plan) & ~deck_plan
-    reed_plan = soft_snap(reedbed) & ~water_plan
-    carr_plan = soft_snap((carr_t > 0.7) & ~roads) & ~water_plan
+    water_plan = jog(water_plan)
+    water_plan &= ~deck_plan
+    reed_plan = bands(jog(soft_snap(reedbed) & ~water_plan), open_land=~water_plan)
+    carr_plan = bands(jog(soft_snap((carr_t > 0.7) & ~roads) & ~water_plan), open_land=~water_plan)
     log(f'  grid laid in {time.time() - t0:.1f} s; short runs: water {short_runs(water_plan)}, '
         f'reeds {short_runs(reed_plan)}, carr {short_runs(carr_plan)}')
 
@@ -362,18 +482,26 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
         barm |= b
     barm &= ~water_plan & ~flats
     if barm.any():
-        rk.sand(p, barm, None, seed + 13)
+        tiled(p, rk.sand, barm, None, seed + 13)
     still = dilate(ox1[1], 2)
     sea_plan = soft_snap(sea)
     river_water = water_plan & ~sea_plan
-    paint_water(R, river_water, hb, chs + [ox1[0]], seed + 30, still=still)
+    paint_water(R, river_water, hb, chs + [ox1[0]], seed + 30, still=still, soft=river_plan & river_water)
     sea_m = water_plan & sea_plan
     paint_sea(R, sea_m, seed + 40)
     paint_canal(R, cut_ch, cut_plan, seed + 50)
-    for name, m in path_masks.items():
-        rk.base(p, m & ~water_plan & ~cut_plan, 'path', seed + 60, scale=6, light=0.66)
-        rk.texture(p, m & ~water_plan & ~cut_plan, seed + 61, swaps=0.12, ups=0.03, downs=0.02)
-        rk.pebbles(p, m & ~water_plan, seed + 62, 0.012)
+    for i, name in enumerate(('lull_road', 'towpath', 'coast_path', 'delta_road')):
+        r = routes[name]
+        tr = rk.track(p, R.pts(r['points']), r['width'], seed + 60 + i, puddles=3 if name == 'lull_road' else 1)
+        if name == 'lull_road':   # the old road: bare and wide, no grass crown, cobbled near the bridge
+            c = tr.mask & (np.abs(tr.n) < 5) & ~p.wet
+            rk.base(p, c, 'path', seed + 66, scale=6, light=0.66)
+            rk.texture(p, c, seed + 67, swaps=0.10, ups=0.02, downs=0.03)
+            rk.pebbles(p, c, seed + 68, 0.02)
+        path_masks[name] = tr.mask
+    roads = np.zeros(p.f.shape, bool)
+    for m in path_masks.values():
+        roads |= m
     fray(R, roads & ~water_plan & ~cut_plan, seed + 63)
     paint_boardwalk(R, board & ~water_plan, seed + 64)
     paint_bridge(R, br, seed + 70)
@@ -393,6 +521,7 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     walk |= deck_plan
     path_plan = soft_snap(roads | board) & walk
     R.water_plan, R.blocked_plan, R.walk_px, R.path_plan = water_plan | cut_plan, blocked_plan, walk, path_plan
+    R.reed_plan = reed_plan
     R.town = town
     R.stands = {}
     log(f'painted {R.id} {R.w} x {R.h} in {time.time() - t0:.1f} s')
@@ -400,17 +529,16 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
 
 
 def paint_sea(R: Region, m, seed):
-    """Open sea off the delta: deepening away from the shore in calm bands, swell lines, the
-    surf where the water meets the flats (white only where waves break)."""
+    """Open sea off the delta: deepening away from the shore in broad bands, the surface in
+    ripple strokes like the river's (`dashes`), long swell lines lit on top, the surf where
+    the water meets the flats (white only where waves break)."""
     p = R.p
-    dep = depth_map(m, 60)
-    tone = np.where(dep > 40, 1, np.where(dep > 16, 2, np.where(dep > 5, 3, 4)))
-    fam = np.where(fbm(p.x, p.y, 30, seed) < 0.4, IDX['water_cool'], IDX['water'])
-    p.f[m], p.t[m] = fam[m], tone[m]
-    swell = m & (((p.y + 6 * np.sin(p.x / 37.0)).astype(int) % 23) == 0) & (hash01(p.x // 5, p.y, seed) < 0.6) & (dep > 6)
-    p.step(swell, 1)
-    p.step(shift(swell, 0, 1, False) & m, -1, lo=1)
-    surf = m & (dep <= 2) & (hash01(p.x // 3, 0, seed + 1) < 0.7)
+    dep = depth_map(m, 60).astype(float) + 10 * (fbm(p.x, p.y, 50, seed + 2) - 0.5)
+    tone = np.where(dep > 14, 2, 3)
+    p.f[m], p.t[m] = IDX['water'], tone[m]   # one body ramp: its cool sibling breaks the ripples into specks
+    dashes(p, m, seed + 3)
+    edge_d = depth_map(m, 4)
+    surf = m & (edge_d <= 2) & (hash01(p.x // 3, p.y // 2, seed + 1) < 0.75)
     p.f[surf], p.t[surf] = IDX['water_warm'], 5
     rk.despeckle(p, m)
     p.wet |= m
@@ -430,6 +558,7 @@ def paint_canal(R: Region, ch, plan, seed):
     fam = np.where(sibn < 0.3, IDX['water_warm'], np.where(sibn > 0.7, IDX['water_cool'], IDX['water']))
     k = np.where(depth_map(m, 12) > 6, 2, 3)
     p.f[m], p.t[m] = fam[m], k[m]
+    dashes(p, m, seed + 4, seg=7, lmin=3)
     under = m & shift(cope, 0, -1, False)
     p.step(under | (m & shift(under, 0, -1, False)), -1, lo=1)
     wl = m & shift(face, 0, 1, False)
@@ -536,7 +665,7 @@ def paint_reedbeds(R: Region, m, seed):
     pts = rk._scatter(m & ~pools, 70, seed + 2, margin=2)
     for i, (x, y) in enumerate(pts):
         sp, sh = rk.reeds('mace' if hash01(x, y, seed + 3) < 0.25 else 'reed', seed + i, 4 + i % 3)
-        rk.paste(p, sp, x, y, shadow=sh)
+        paste(p, sp, x, y, shadow=sh)
 
 
 def paint_carr(R: Region, m, t, seed):
@@ -554,11 +683,11 @@ def paint_carr(R: Region, m, t, seed):
             sp, sh = rk.alder(seed + i)
         else:
             sp, sh = rk.shrub('bramble', seed + i)
-        rk.paste(p, sp, x, y, shadow=sh)
+        paste(p, sp, x, y, shadow=sh)
     fade = (t > 0.35) & ~m & ~p.solid
     for i, (x, y) in enumerate(rk._scatter(fade, 2600, seed + 2, margin=6)):
         sp, sh = rk.shrub('bramble' if i % 2 else 'hawthorn', seed + i)
-        rk.paste(p, sp, x, y, shadow=sh)
+        paste(p, sp, x, y, shadow=sh)
 
 
 def bank_trees(R: Region, water, paths, seed):
@@ -569,7 +698,7 @@ def bank_trees(R: Region, water, paths, seed):
     for i, (x, y) in enumerate(sorted(pts, key=lambda q: q[1])):
         mk = rk.willow if hash01(x, y, seed + 1) < 0.5 else rk.alder
         sp, sh = mk(i % 2, seed + i) if mk is rk.willow else mk(seed + i)
-        rk.paste(p, sp, x, y, shadow=sh)
+        paste(p, sp, x, y, shadow=sh)
 
 
 def kit_sprite(img: Image.Image) -> rk.Sprite:
@@ -622,12 +751,12 @@ def paint_lullford(R: Region, spec, roads, seed):
         foot = (x + sp.w // 2, yb)
         sh = np.zeros(sp.m.shape, bool)
         sh[:, 4:] = sp.m[:, :-4]
-        rk.paste(p, sp, foot[0], foot[1], outline=False, shadow=sh & ~sp.m)
+        paste(p, sp, foot[0], foot[1], outline=False, shadow=sh & ~sp.m)
         x0, y0 = foot[0] - sp.w // 2, yb - sp.h + 1
         b = np.zeros(p.f.shape, bool)
         b[max(0, y0 + 8):max(0, yb - 1), max(0, x0 + 2):max(0, x0 + sp.w - 2)] = True
         blocked |= b
-    return {'blocked': soft_snap(blocked) if blocked.any() else blocked}
+    return {'blocked': bands(jog(soft_snap(blocked))) if blocked.any() else blocked}
 
 
 # --- outputs ------------------------------------------------------------------------------------
