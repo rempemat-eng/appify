@@ -83,7 +83,7 @@ TIERS = [
 
 # --- water: (id, tier, course of world px points, width) ------------------------------------------
 WATER = [
-    ('cog-upper', 6, [(7688, 1696), (7688, 1968)], 40),          # under the High Fells' step (W3) at x 7696          # off the massif into the town's west side
+    ('cog-upper', 6, [(7664, 1696), (7664, 1968)], 40),          # under the High Fells' footbridge (W3, G #189) at x 7664          # off the massif into the town's west side
     # the Cog below the town and the Lull through the Narrows follow the block-out's rivers
     # (docs/vision/research/blockout, #187) on the grid: the Cog joins the Lull at about
     # (8880, 3112), past the Cog foot where the Towpath crosses it
@@ -111,7 +111,7 @@ ROUTES_FALLBACK = {
                 (8528, 3112, 40, 5), (8496, 3144, 32, 5), (8480, 3176, 40, 5), (8480, 3240, 32, 5)],
 }
 CROSSINGS = {'Foothill Road': [(7664, 2736, 80)], 'Towpath': [(8528, 3064, 64)],
-             'High Fells': [(7680, 1944, 64)]}   # the High Fells' Cog bridge (W3): asked G to add it (h-to-g-1130)
+             'High Fells': [(7664, 1944, 64)]}   # the High Fells' footbridge over the Cog (W3, G #189: g-to-h-cog-footbridge)
 TIER_CHANGE_RUN = 64  # route px either side of a change where its tier may be either
 
 
