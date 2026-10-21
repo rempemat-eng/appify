@@ -1820,7 +1820,7 @@
           "pose": "wind-up",
           "frames": 1,
           "beat": "windup",
-          "note": "anticipation, 150 ms"
+          "note": "anticipation, 100 ms (the impact frame shows within the 200 ms step of the battle screen; art/characters/animation-spec.json fightBeats)"
         },
         {
           "pose": "strike",

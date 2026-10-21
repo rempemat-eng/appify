@@ -112,7 +112,7 @@ All three touch no art and no Dream Dust (a draw pays nothing, as a loss pays no
 
 ## 6. For Claude J: what fights need from characters and animation
 
-As data in `fightAnimation` (lib/fight-content.ts). Per folk: 12 poses per facing, east and west drawn (ready x 2, wind-up, strike x 2 with the second the impact frame, guard, hit, cast x 2, sits down, cheer x 2); a lean set of 8; one 3-frame effect per signature card (56 in all); one pip or status icon. Per family on the shoulder: idle x 2, cling, cheer, cast x 2, each facing; three 6-frame specials. Rivals: west-facing poses and two effects. Shared: hit spark, NICE ring, tinted ground puff, doze glyph, bell ring, intent and pip icons. Beats the screen keys on: ready, windup, strike, impact, cast, guard, hit, heal, stack, special, doze, bell, sitDown, cheer, bow. Reduced motion: held stills of 300 ms, no flash or shake.
+As data in `fightAnimation` (lib/fight-content.ts). Per folk: 12 poses per facing, east and west drawn (ready x 2, wind-up (100 ms), strike x 2 with the second the impact frame, guard, hit, cast x 2, sits down, cheer x 2); a lean set of 8; one 3-frame effect per signature card (56 in all); one pip or status icon. Per family on the shoulder: idle x 2, cling, cheer, cast x 2, each facing; three 6-frame specials. Rivals: west-facing poses and two effects. Shared: hit spark, NICE ring, tinted ground puff, doze glyph, bell ring, intent and pip icons. Beats the screen keys on: ready, windup, strike, impact, cast, guard, hit, heal, stack, special, doze, bell, sitDown, cheer, bow. Reduced motion: held stills of 300 ms, no flash or shake.
 
 ## 7. Next (Codex tasks on issue #149)
 

@@ -1380,7 +1380,12 @@ export const fightAnimation = {
   folkPoses: {
     perFacing: [
       { pose: 'ready', frames: 2, beat: 'ready', note: 'breathing loop while you choose' },
-      { pose: 'wind-up', frames: 1, beat: 'windup', note: 'anticipation, 150 ms' },
+      {
+        pose: 'wind-up',
+        frames: 1,
+        beat: 'windup',
+        note: 'anticipation, 100 ms (the impact frame shows within the 200 ms step of the battle screen; art/characters/animation-spec.json fightBeats)',
+      },
       {
         pose: 'strike',
         frames: 2,
