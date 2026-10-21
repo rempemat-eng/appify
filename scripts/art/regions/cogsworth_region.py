@@ -24,9 +24,10 @@ What it holds, on the world's 8 px cells over the footprint (x 7000 to 9304, y 1
   and on south-east, the eel pond at Fernhollow; each a course of cells at its own tier,
   cut into the land (a cut's sides are faces where the land is higher to the north, side
   bands to the west and east).
-- ROUTES: Claude G's lines (lib/world-routes.ts, #175), read when the file is there, with a
-  copy of their vertices on lane H's land (ROUTES_FALLBACK, from #175 @ef8824f) otherwise;
-  each is laid at its tier, so the land under it agrees with it.
+- ROUTES: the High Fells, the Foothill Road and the Towpath inside the box, lane H's own
+  lines (inside a region's box its plan draws the routes: g-to-all-region-rule), meeting
+  Claude G's at the box edge (MEETS, route-meets.md), with their STAIRS, bridges, the
+  pockets' trods and a side trod; each is laid at its tier, so the land under it agrees.
 - SET PIECES: the named things with the prop or kit piece each needs and its footprint, the
   spoil heaps, the viaduct's piers, Fernhollow's cottages, sawpit and log stores, each a
   footprint of cells it blocks.
@@ -68,22 +69,25 @@ TOWN_TIER = {0: 6, 1: 6, 2: 7, 3: 8}      # the town plan's local tiers on the w
 BASE_TIER = 5
 TIERS = [
     # the Cog's valley and everything above the confluence's lowland
-    (6, [(7000, 1696, 9304, 3008), (7000, 3008, 8432, 3304)]),
-    # the plain's shelf west of the confluence and the hills' foot
+    (6, [(7000, 1696, 9304, 2984), (7000, 2984, 8432, 3304)]),
+    # the plain's shelf west of the confluence and the hills' foot; Fernhollow on the road
     (7, [(7000, 1696, 9304, 2920), (7000, 2920, 8432, 3304)]),
-    # the massif's foot across the north, the coal hills east of the town, the forest interior
-    # between the Foothill Road and the High Fells, the Fern hills' shoulder
-    (8, [(7000, 1696, 9304, 2008), (8336, 2008, 9304, 2776), (7000, 2008, 7616, 2768), (7104, 2768, 7592, 3304)]),
-    (9, [(7000, 1696, 7608, 1920), (7000, 1696, 9304, 1784), (7232, 2904, 7504, 3112), (8400, 2008, 9304, 2720)]),
-    (10, [(7000, 1696, 7480, 1864), (7000, 1696, 9304, 1736), (8560, 2072, 9304, 2688)]),
-    (11, [(7000, 1696, 7408, 1816)]),
-    (12, [(7000, 1696, 7360, 1760)]),
-    (13, [(7000, 1696, 7288, 1744)]),
+    # the massif's foot across the north, the coal hills east of the town, the coal forest
+    # between the Foothill Road and the High Fells, the Fern hills' shoulder above Fernhollow
+    # (the notch at x 7536 to 7616 is the road's way down to the Millrace bridge)
+    (8, [(7000, 1696, 9304, 2008), (8336, 2008, 9304, 2776), (7000, 2008, 7616, 2680), (7000, 2680, 7536, 3072)]),
+    # the massif's benches step down south-east, one per stair of the High Fells, each a face
+    # and a path's width apart (rims 56 px: a face plus more than a cell); the knoll on the
+    # shoulder; the coal hills
+    (9, [(7000, 1696, 7608, 1888), (7000, 1696, 9304, 1784), (7288, 2832, 7448, 2984), (8400, 2008, 9304, 2720)]),
+    (10, [(7000, 1696, 7480, 1832), (7000, 1696, 9304, 1736), (8560, 2072, 9304, 2688)]),
+    (11, [(7000, 1696, 7408, 1776)]),
+    (12, [(7000, 1696, 7360, 1720)]),
 ]
 
 # --- water: (id, tier, course of world px points, width) ------------------------------------------
 WATER = [
-    ('cog-upper', 6, [(7688, 1696), (7688, 1968)], 40),          # under the High Fells' step (W3) at x 7696          # off the massif into the town's west side
+    ('cog-upper', 6, [(7664, 1696), (7664, 1968)], 40),          # under the High Fells' footbridge (W3, G #189) at x 7664          # off the massif into the town's west side
     # the Cog below the town and the Lull through the Narrows follow the block-out's rivers
     # (docs/vision/research/blockout, #187) on the grid: the Cog joins the Lull at about
     # (8880, 3112), past the Cog foot where the Towpath crosses it
@@ -92,68 +96,90 @@ WATER = [
     ('lull-below', 4, [(8888, 3112), (8888, 3200), (8920, 3200), (8920, 3304)], 72),
     ('eel-pond', 7, [(7040, 3256), (7072, 3256)], 32),
 ]
+# where each water body comes from and goes (a stream leaving the box names where it goes)
+WATER_ENDS = {
+    'cog-upper': {'source': 'the massif: the Cog off the High Fells, north of the box (Claude G)', 'outlet': "the town's Cog (cogsworth_plan.py)"},
+    'cog-lower': {'source': "the town's Cog, leaving its south-east corner", 'outlet': 'lull-below, at the confluence (8888, 3112)'},
+    'lull-narrows': {'source': 'the Lull, from the old forest north of the box (Claude G)', 'outlet': 'lull-below, at the confluence (8888, 3112)'},
+    'lull-below': {'source': 'lull-narrows and cog-lower at the confluence', 'outlet': "the Lull belt, south of the box (Claude I's lull-delta)"},
+    'eel-pond': {'declared_closed': True, 'note': 'a spring-fed pond at Fernhollow'},
+}
 GORGE_RIM = 2         # tiers of wall each side of the Lull's cut stand at least this high
 
-# --- the routes on lane H's land (G's #175 @ef8824f, vertices [x, y, width, tier]) ---------------
-ROUTES_FALLBACK = {
-    'High Fells': [(7232, 1712, 32, 13), (7264, 1728, 32, 13), (7328, 1728, 32, 12), (7360, 1760, 32, 11),
-                   (7360, 1816, 32, 11), (7424, 1816, 24, 10), (7480, 1816, 32, 10), (7480, 1880, 32, 9),
-                   (7512, 1888, 24, 9), (7576, 1888, 32, 9), (7608, 1920, 32, 8), (7640, 1928, 24, 8),
-                   (7672, 1944, 32, 8), (7736, 1944, 24, 8), (7800, 1944, 32, 8), (7824, 1968, 40, 8)],
-    'Foothill Road': [(7024, 3192, 48, 7), (7088, 3192, 40, 7), (7136, 3192, 48, 8), (7136, 3144, 48, 8),
-                      (7200, 3144, 48, 8), (7232, 3112, 40, 9), (7264, 3080, 48, 9), (7312, 3080, 48, 9),
-                      (7312, 3024, 48, 9), (7376, 3024, 40, 9), (7416, 3024, 48, 9), (7416, 2960, 48, 9),
-                      (7480, 2960, 48, 9), (7496, 2928, 48, 9), (7496, 2880, 48, 8), (7560, 2880, 48, 8),
-                      (7560, 2816, 48, 8), (7592, 2792, 40, 8), (7616, 2760, 40, 7), (7648, 2736, 56, 7),
-                      (7712, 2736, 56, 7)],
-    'Towpath': [(8328, 2840, 48, 7), (8392, 2840, 40, 7), (8408, 2872, 40, 7), (8408, 2920, 40, 7),
-                (8464, 2920, 40, 6), (8464, 2984, 40, 6), (8496, 3016, 32, 5), (8528, 3048, 48, 5),
-                (8528, 3112, 40, 5), (8496, 3144, 32, 5), (8480, 3176, 40, 5), (8480, 3240, 32, 5)],
+# --- the routes inside the box: lane H's own lines -------------------------------------------
+# Claude A and Claude G, 21 Oct (crew board g-to-all-region-rule, a-to-gh-meets): inside a
+# region's box the region plan draws the route's line, its stairs and its width; lane G meets
+# it at the box edge (docs/vision/regions/route-meets.md on claude-g/blockout) and takes the
+# lines as drawn. So these are lane H's data, not a copy of lib/world-routes.ts. Every leg
+# runs along x or y (to-all-grid-2x); every change of tier is a stair on a north-south leg
+# rising northward, cutting a south face (eastward-edges 6.3, region_plan.py #194).
+# Vertices (x, y, width, tier); the tier changes between two vertices only on a stair leg.
+ROUTES = {
+    # off the massif at tier 12 down four benches, a stair at each face, east along each
+    # bench, over the Cog on the footbridge (W3) to the town's north gate at tier 8
+    'High Fells': [(7272, 1696, 24, 12), (7272, 1764, 24, 11), (7384, 1764, 24, 11), (7384, 1820, 24, 10),
+                   (7456, 1820, 24, 10), (7456, 1876, 24, 9), (7584, 1876, 24, 9), (7584, 1944, 24, 8),
+                   (7824, 1944, 24, 8), (7824, 1968, 24, 8)],
+    # from the home valley at tier 7 east past Fernhollow, up onto the Fern hills' shoulder,
+    # north through the coal forest beside the knoll, then down to the Millrace bridge and the
+    # town's west gate at tier 7
+    'Foothill Road': [(7000, 3192, 48, 7), (7240, 3192, 48, 7), (7240, 3048, 48, 8), (7480, 3048, 48, 8),
+                      (7480, 2808, 48, 8), (7512, 2808, 48, 8), (7512, 2648, 48, 8), (7576, 2648, 48, 8),
+                      (7576, 2736, 48, 7), (7624, 2736, 48, 7)],
+    # from the town's east gate on the riverside quay at tier 7 east, then south down two
+    # faces, over the Cog foot on its bridge, to the Lull belt at tier 5
+    'Towpath': [(8328, 2840, 32, 7), (8456, 2840, 32, 7), (8456, 2968, 32, 6), (8496, 2968, 32, 6),
+                (8496, 3200, 32, 5), (8480, 3200, 32, 5), (8480, 3296, 32, 5)],
 }
-CROSSINGS = {'Foothill Road': [(7664, 2736, 80)], 'Towpath': [(8528, 3064, 64)],
-             'High Fells': [(7680, 1944, 64)]}   # the High Fells' Cog bridge (W3): asked G to add it (h-to-g-1130)
+# Stairs: (route, x, y at the face, upper tier, lower tier, width). The upper tier is north.
+STAIRS = [
+    ('High Fells', 7272, 1736, 12, 11, 40), ('High Fells', 7384, 1792, 11, 10, 40),
+    ('High Fells', 7456, 1848, 10, 9, 40), ('High Fells', 7584, 1904, 9, 8, 40),
+    ('Foothill Road', 7240, 3088, 8, 7, 48), ('Foothill Road', 7576, 2696, 8, 7, 48),
+    ('Towpath', 8456, 2936, 7, 6, 40), ('Towpath', 8496, 3000, 6, 5, 40),
+]
+CROSSINGS = {'High Fells': [(7664, 1944, 64)],      # the footbridge over the Cog (W3: g-to-h-cog-footbridge)
+             'Foothill Road': [(7664, 2736, 80)],   # the Millrace bridge at the west gate (in the town)
+             'Towpath': [(8496, 3064, 64)]}         # the Cog foot bridge
+# Where lane G meets each route at the box edge (route-meets.md: cell, world px, tier, width)
+MEETS = {'High Fells': (7272, 1696, 12, 24), 'Foothill Road': (7000, 3192, 7, 48), 'Towpath': (8480, 3296, 5, 32)}
+# Dead-end trods to the secret pockets (lane G placed them; inside the box they are lane H's):
+# (route, holds, trod points from the route, clearing), each at the tier where it leaves.
+POCKET_TRODS = [
+    ('High Fells', 'a story detail: a buried bell', [(7536, 1876), (7536, 1800)], (7592, 1800)),
+    ('High Fells', 'a view down a gorge', [(7272, 1764), (7176, 1764)], (7176, 1764)),
+    ('Foothill Road', 'a resident fishing', [(7576, 2736), (7576, 2960), (7680, 2960)], (7696, 2960)),
+    ('Foothill Road', 'a story detail: a buried bell', [(7512, 2720), (7320, 2720), (7320, 2752)], (7216, 2752)),
+]
+# Side paths round an obstacle, inside the box (lane G's leave the box here)
+SIDE_TRODS = [
+    ('Towpath', 'a fallen tree: the way round, south to lane G', [(8496, 3168), (8448, 3168), (8448, 3296)]),
+]
+# The pocket inside the town box, laid by the town's plan
+POCKETS_IN_TOWN = [('Towpath', 'a view down the Cog from the riverside quay', (8016, 2856))]
 TIER_CHANGE_RUN = 64  # route px either side of a change where its tier may be either
 
 
 def load_routes():
-    """G's routes on this land: from lib/world-routes.ts when it is in the tree (read with
-    node, as world_audit reads generated data), else the copy above."""
-    path = os.path.join(ROOT, 'lib', 'world-routes.ts')
-    if os.path.exists(path):
-        try:
-            import subprocess
-            code = ("const m = await import('file://' + process.argv[1]); const d = m.worldRoutes ?? m.default?.worldRoutes;"
-                    "process.stdout.write(JSON.stringify(d));")
-            r = subprocess.run(['node', '--import', 'tsx', '--input-type=module', '-e', code, path],
-                               cwd=ROOT, capture_output=True, text=True, timeout=60)
-            if r.returncode == 0 and r.stdout:
-                out, cross = {}, {}
-                for rt in json.loads(r.stdout):
-                    if rt['name'] in ROUTES_FALLBACK:
-                        out[rt['name']] = [tuple(p) for p in rt['points']]
-                        cross[rt['name']] = [(c['at'][0], c['at'][1], c['span']) for c in rt['crossings']]
-                if out:
-                    return out, cross, 'lib/world-routes.ts'
-        except Exception:  # noqa: BLE001 (the copy stands in when node or tsx is missing)
-            pass
-    return ROUTES_FALLBACK, CROSSINGS, '#175 @ef8824f (copy)'
+    """The routes on this land: lane H's own lines (g-to-all-region-rule)."""
+    return ROUTES, CROSSINGS, 'lane H (inside the box)'
 
 
 # --- set pieces: (id, what, prop or kit piece, rect of cells it stands on, world px) ----------------
 SET_PIECES = [
     # named things (brief 5), each beside or a short way off its route
-    ('burners-camp', 'charcoal burners\' camp', 'charcoal_clamp, burners_hut, cordwood (B #163)', (7464, 2800, 7528, 2848)),
-    ('collapsed-adit', 'collapsed adit', 'a face piece of the cliff core', (7400, 2880, 7432, 2904)),
-    ('pit-head', 'pit head', 'pit_head (B #163)', (7256, 2936, 7304, 2992)),
-    ('windmill', 'windmill', 'windmill (B #172)', (7144, 3232, 7192, 3280)),
-    ('loops-view', 'a terrace edge over the loops', 'a bench at the shoulder\'s south rim', (7344, 3096, 7376, 3112)),
-    ('eel-camp', 'an eel-catcher\'s camp', 'traps, a smoking rack, a tarp (B queue)', (7088, 3240, 7128, 3272)),
-    ('tor', 'a tor', 'a set piece of the cliff core\'s highland rock', (7248, 1768, 7296, 1808)),
-    ('climbers-camp', 'fallen climber\'s camp', 'a tarp, a rope, a cold fire (B queue)', (7320, 1880, 7360, 1912)),
+    ('burners-camp', 'charcoal burners\' camp', 'charcoal_clamp, burners_hut, cordwood (B #163)', (7384, 2760, 7448, 2808)),
+    ('collapsed-adit', 'collapsed adit', 'a face piece of the cliff core', (7296, 3104, 7336, 3112)),
+    ('pit-head', 'pit head', 'pit_head (B #163)', (7224, 2952, 7272, 2992)),
+    ('windmill', 'windmill', 'windmill (B #172)', (7168, 3240, 7216, 3288)),
+    ('loops-view', 'a terrace edge over the loops', 'a bench at the shoulder\'s south rim', (7144, 3040, 7176, 3064)),
+    ('eel-camp', 'an eel-catcher\'s camp', 'traps, a smoking rack, a tarp (B queue)', (7104, 3240, 7144, 3272)),
+    ('tor', 'a tor', 'a set piece of the cliff core\'s highland rock', (7416, 1744, 7464, 1784)),
+    ('climbers-camp', 'fallen climber\'s camp', 'a tarp, a rope, a cold fire (B queue)', (7288, 1808, 7328, 1832)),
     ('echo-cave', 'echo cave', 'a face piece of the cliff core', (7576, 1840, 7616, 1864)),
     ('cairn', 'cairn', 'cairn (B, REWORK)', (7984, 1912, 8008, 1936)),
     ('crow-roost', 'a crow roost in a dead pine', 'a dead pine (forest kit) with crows', (7848, 1896, 7880, 1928)),
-    ('rail-ruin', 'rail ruin', 'rails, sleepers, a tipped wagon (B queue)', (8448, 2720, 8512, 2752)),
+    ('rail-ruin', 'rail ruin', 'rails, sleepers, a tipped wagon (B queue)', (8488, 2864, 8552, 2896)),
     ('tram-tipple', 'tram tipple', 'tram_tipple (B #163)', (8344, 2808, 8392, 2816)),
     ('narrows-lookout', 'lookout over the Narrows', 'narrows_lookout (B #163)', (8536, 2960, 8568, 2992)),
     # spoil heaps (brief 2), one with the loop round it above the town
@@ -167,11 +193,11 @@ SET_PIECES = [
     ('viaduct-pier-m', 'viaduct pier', "the viaduct's piers (B, P4)", (9040, 2312, 9056, 2344)),
     ('viaduct-pier-e', 'viaduct pier', "the viaduct's piers (B, P4)", (9096, 2312, 9112, 2344)),
     # Fernhollow: woodcutters' cottages along the Foothill Road, the sawpit and the log stores
-    ('fern-cottage-1', 'timber cottage', 'house kits: valley timber front', (7136, 3056, 7184, 3112)),
-    ('fern-cottage-2', 'timber cottage', 'house kits: valley timber front', (7208, 3000, 7272, 3048)),
-    ('fern-cottage-3', 'timber cottage', 'house kits: valley timber front', (7056, 3112, 7104, 3168)),
-    ('fern-sawpit', 'sawpit', 'a pit with its trestle, a log on it, sawdust (B queue)', (7344, 2952, 7384, 2984)),
-    ('fern-logs', 'log stores', 'log_store from the house kits, three stacks', (7448, 3048, 7496, 3080)),
+    ('fern-cottage-1', 'timber cottage', 'house kits: valley timber front', (7016, 3112, 7064, 3160)),
+    ('fern-cottage-2', 'timber cottage', 'house kits: valley timber front', (7088, 3112, 7136, 3160)),
+    ('fern-cottage-3', 'timber cottage', 'house kits: valley timber front', (7152, 3112, 7200, 3160)),
+    ('fern-sawpit', 'sawpit', 'a pit with its trestle, a log on it, sawdust (B queue)', (7312, 3224, 7352, 3256)),
+    ('fern-logs', 'log stores', 'log_store from the house kits, three stacks', (7376, 3224, 7424, 3256)),
 ]
 # The land's cover and its edges in layers (brief 6): (kind, what stands there, rect).
 # 'wall': the biome's three blockers in uneven patches, unwalkable; 'fade': walkable ground
@@ -189,7 +215,7 @@ COVER = [
     ('wood', "the Fern hills' wet woods round Fernhollow", (7000, 2744, 7104, 3152)),
 ]
 DOORS = {   # Fernhollow's doors: (piece, door x, door y) on the cottage's foot
-    'fern-cottage-1': (7160, 3112), 'fern-cottage-2': (7240, 3048), 'fern-cottage-3': (7080, 3168),
+    'fern-cottage-1': (7040, 3160), 'fern-cottage-2': (7112, 3160), 'fern-cottage-3': (7176, 3160),
 }
 NEAR = {    # named thing -> its route (brief 5)
     'burners-camp': 'Foothill Road', 'collapsed-adit': 'Foothill Road', 'pit-head': 'Foothill Road',
@@ -197,7 +223,16 @@ NEAR = {    # named thing -> its route (brief 5)
     'tor': 'High Fells', 'climbers-camp': 'High Fells', 'echo-cave': 'High Fells', 'cairn': 'High Fells',
     'crow-roost': 'High Fells', 'rail-ruin': 'Towpath', 'tram-tipple': 'Towpath', 'narrows-lookout': 'Towpath',
 }
-NEAR_PX = {'beside': 96, 'off': 240}   # Manhattan px from the nearest vertex (vertices every 32 px)
+NEAR_PX = {'beside': 96, 'off': 240}   # Manhattan px from the nearest point of the route's line
+
+
+def _along(pts, step=8):
+    """Points every `step` px along a route's line."""
+    out = []
+    for (ax, ay, *_), (bx, by, *_) in zip(pts[:-1], pts[1:]):
+        n = max(1, int(max(abs(bx - ax), abs(by - ay)) // step))
+        out += [(ax + (bx - ax) * i / n, ay + (by - ay) * i / n) for i in range(n + 1)]
+    return out
 
 
 # --- rasterizing ---------------------------------------------------------------------------
@@ -294,6 +329,41 @@ def check(L=None, verbose=True) -> list:
                 faults.append(f'{name}: vertex {(x, y)} stands on water')
             if tier[r, c] != t and not near_change and not on_bridge:
                 faults.append(f'{name}: vertex {(x, y)} at tier {t} on land of tier {tier[r, c]}')
+    # the routes: legs along x or y, the ends where lane G meets them, every change of tier a
+    # stair on a north-south leg with the upper tier to the north, on the face it cuts
+    for name, pts in L['routes'].items():
+        for (ax, ay, *_), (bx, by, *_) in zip(pts[:-1], pts[1:]):
+            if ax != bx and ay != by:
+                faults.append(f'{name}: leg {(ax, ay)} to {(bx, by)} runs off the grid (x or y only)')
+        mx, my, mt, mw = MEETS[name]
+        ends = [p for p in (pts[0], pts[-1]) if (p[0], p[1]) == (mx, my)]
+        if not ends:
+            faults.append(f'{name}: does not end at lane G\'s meet {(mx, my)}')
+        elif (ends[0][3], ends[0][2]) != (mt, mw):
+            faults.append(f'{name}: meets lane G at tier {ends[0][3]}, width {ends[0][2]} (route-meets.md: {mt}, {mw})')
+        changes = [(a, b) for a, b in zip(pts[:-1], pts[1:]) if a[3] != b[3]]
+        mine = [st for st in STAIRS if st[0] == name]
+        for a, b in changes:
+            for t in range(min(a[3], b[3]), max(a[3], b[3])):
+                hit = [st for st in mine if st[4] == t and st[3] == t + 1
+                       and min(a[0], b[0]) <= st[1] <= max(a[0], b[0]) and min(a[1], b[1]) <= st[2] <= max(a[1], b[1])]
+                if not hit:
+                    faults.append(f'{name}: tier {t + 1} to {t} between {a[:2]} and {b[:2]} has no stair')
+        for _, x, y, up, down, width in mine:
+            leg = [(a, b) for a, b in zip(pts[:-1], pts[1:]) if a[0] == b[0] == x and min(a[1], b[1]) <= y <= max(a[1], b[1])]
+            if not leg:
+                faults.append(f'{name}: stair at {(x, y)} is not on a north-south leg')
+            if width < 34:
+                faults.append(f'{name}: stair at {(x, y)} is {width} px (34 at least)')
+            r, c = cell(x, y)
+            ru, rd = cell(x, y - 20)[0], cell(x, y + 20)[0]   # the tops above and below the face's middle
+            if not (tier[max(0, ru), c] == up and tier[min(ROWS - 1, rd), c] == down):
+                faults.append(f'{name}: stair at {(x, y)} does not cut the face from tier {up} (north) to {down}')
+    # the town plan's copies of the named things are the middles of the set pieces here
+    mid = {p[0]: ((p[3][0] + p[3][2]) // 2, (p[3][1] + p[3][3]) // 2) for p in SET_PIECES}
+    for nm, _k, at, *_ in plan.NAMED:
+        if nm in mid and tuple(at) != mid[nm]:
+            faults.append(f'cogsworth_plan.NAMED {nm} at {tuple(at)}: the set piece\'s middle is {mid[nm]}')
     # set pieces: on the grid, on land, off routes, out of the town and on the land's top
     blocks = np.zeros(tier.shape, bool)
     for pid, what, piece, rect in SET_PIECES:
@@ -323,7 +393,7 @@ def check(L=None, verbose=True) -> list:
         rect = {p[0]: p[3] for p in SET_PIECES}[pid]
         cx, cy = (rect[0] + rect[2]) / 2, (rect[1] + rect[3]) / 2
         pts = L['routes'].get(rname, [])
-        d = min((abs(cx - x) + abs(cy - y) for x, y, *_ in pts), default=1e9)
+        d = min((abs(cx - x) + abs(cy - y) for x, y in _along(pts)), default=1e9)
         where = 'off' if pid in ('collapsed-adit', 'climbers-camp', 'cairn', 'rail-ruin', 'crow-roost') else 'beside'
         if d > NEAR_PX[where]:
             faults.append(f'{pid}: {d:.0f} px from the {rname} ({where} the path: {NEAR_PX[where]} px at most)')
@@ -408,47 +478,38 @@ def export_plan(L=None) -> dict:
         for i, (c0, r0, c1, r1) in enumerate(_rects(t == k)):
             x0, y0, x1, y1 = X0 + c0 * CELL, Y0 + r0 * CELL, X0 + c1 * CELL, Y0 + r1 * CELL
             tiers.append({'id': f't{k}_{i}', 'tier': k - BASE, 'outline': [[x0, y0], [x1, y0], [x1, y1], [x0, y1]]})
-    routes_raw = _routes_full()
     rid = {'High Fells': 'high_fells', 'Foothill Road': 'foothill_road', 'Towpath': 'towpath'}
-
-    def clip(pts):
-        x0, y0, w, h = BOX
-        return [[p[0], p[1]] for p in pts if x0 <= p[0] <= x0 + w and y0 <= p[1] <= y0 + h]
+    kind = {'High Fells': 'path', 'Foothill Road': 'road', 'Towpath': 'path'}
     routes, trods, stairs, pockets, town_pockets = [], [], [], [], []
-    tx, ty = plan.TOWN_ORIGIN
-    for r in routes_raw:
-        if r['name'] not in rid:
-            continue
-        pts = clip(r['points'])
-        if len(pts) < 2:
-            continue
-        routes.append({'id': rid[r['name']], 'kind': r['kind'], 'width': max(24, min(64, min(p[2] for p in r['points']))),
-                       'owner_note': "Claude G's route (#175, lib/world-routes.ts); drawn here to its line, width and tier",
-                       'points': pts})
-        for ch in r['changes']:
-            x, y = ch['at']
-            if BOX[0] <= x <= BOX[0] + BOX[2] and BOX[1] <= y <= BOX[1] + BOX[3]:
-                stairs.append({'id': f"{rid[r['name']]}_{ch['kind']}_{x}_{y}", 'on': rid[r['name']], 'at': [x - x % 4, y - y % 4],
-                               'from_tier': ch['from'] - BASE, 'to_tier': ch['to'] - BASE, 'width': 40, 'kind': ch['kind']})
-        for i, pk in enumerate(r['pockets']):
-            cx, cy = pk['clearing']
-            in_town = tx <= cx < tx + plan.TOWN_W and ty <= cy < ty + plan.TOWN_H
-            if in_town:
-                town_pockets.append({'holds': pk['holds'], 'at': [cx, cy], 'route': r['name'],
-                                     'note': "inside the town box: laid by the town's plan (asked G to end it on the riverside quay)"})
-            elif BOX[0] <= cx <= BOX[0] + BOX[2] and BOX[1] <= cy <= BOX[1] + BOX[3]:
-                tid = f"{rid[r['name']]}_pocket_{i}"
-                trods.append({'id': tid, 'why': f"Claude G's dead end to a secret pocket: {pk['holds']}", 'width': pk['width'],
-                              'points': clip(pk['points']) + [[cx, cy]], 'dead_end': 'view' if 'view' in pk['holds'] else 'story' if 'story' in pk['holds'] else 'resident'})
-                pockets.append({'holds': pk['holds'], 'at': [cx, cy], 'trod': tid})
+    for name, pts in ROUTES.items():
+        routes.append({'id': rid[name], 'kind': kind[name], 'width': max(24, min(64, min(p[2] for p in pts))),
+                       'owner_note': ("lane H's line inside its box (g-to-all-region-rule); lane G meets it at the box edge "
+                                      f"at {list(MEETS[name][:2])}, tier {MEETS[name][2]} (route-meets.md)"),
+                       'points': [[p[0], p[1]] for p in pts]})
+    for name, x, y, up, down, width in STAIRS:
+        stairs.append({'id': f'{rid[name]}_stair_{x}_{y}', 'on': rid[name], 'at': [x, y],
+                       'from_tier': up - BASE, 'to_tier': down - BASE, 'width': width, 'kind': 'stair'})
+    for i, (name, holds, pts, (cx, cy)) in enumerate(POCKET_TRODS):
+        tid = f'{rid[name]}_pocket_{i}'
+        trods.append({'id': tid, 'why': f'a dead end to a secret pocket: {holds}', 'width': 24,
+                      'points': [list(p) for p in pts] + [[cx, cy]],
+                      'dead_end': 'view' if 'view' in holds else 'story' if 'story' in holds else 'resident'})
+        pockets.append({'holds': holds, 'at': [cx, cy], 'trod': tid})
+    for i, (name, why, pts) in enumerate(SIDE_TRODS):
+        trods.append({'id': f'{rid[name]}_side_{i}', 'why': why, 'width': 24, 'points': [list(p) for p in pts]})
+    for name, holds, (cx, cy) in POCKETS_IN_TOWN:
+        town_pockets.append({'holds': holds, 'at': [cx, cy], 'route': name,
+                             'note': "inside the town box: laid by the town's plan on the riverside quay"})
     named = [{'thing': {'burners-camp': "charcoal burners' camp"}.get(n[0], n[0].replace('-', ' ')), 'kind': n[1], 'at': list(n[2]),
               'route': n[3], 'where': n[4], 'piece': n[5]} for n in plan.NAMED]
     markers = [{'t': k, 'what': what, 'at': list(at)} for route, pts in plan.MARKERS.items() for k, what, at in pts
                if not (plan.TOWN_ORIGIN[0] <= at[0] < plan.TOWN_ORIGIN[0] + plan.TOWN_W and plan.TOWN_ORIGIN[1] <= at[1] < plan.TOWN_ORIGIN[1] + plan.TOWN_H)
                and BOX[0] <= at[0] <= BOX[0] + BOX[2] and BOX[1] <= at[1] <= BOX[1] + BOX[3]]
-    water = [{'id': wid, 'kind': 'stream' if width < 64 else 'river', 'width': width, 'tier': wt - BASE,
-              'points': [list(p) for p in pts]} for wid, wt, pts, width in WATER]
-    set_pieces = [{'piece': pid, 'biome': 'coal-hills', 'at': [x0, y0], 'size': [x1 - x0, y1 - y0], 'what': what, 'kit': piece, 'seed': i + 1}
+    water = [dict({'id': wid, 'kind': 'stream' if width < 64 else 'river', 'width': width, 'tier': wt - BASE,
+                   'points': [list(p) for p in pts]}, **WATER_ENDS[wid]) for wid, wt, pts, width in WATER]
+    # none is in the cliff core's library yet: each is proposed, drawn by Claude B or the kit
+    set_pieces = [{'piece': pid, 'biome': 'gorge' if 'pier' in pid else 'coal_hills', 'at': [x0, y0], 'size': [x1 - x0, y1 - y0],
+                   'what': what, 'kit': piece, 'seed': i + 1, 'proposed': True}
                   for i, (pid, what, piece, (x0, y0, x1, y1)) in enumerate(SET_PIECES)]
     tx, ty = plan.TOWN_ORIGIN
     out = {
@@ -456,9 +517,9 @@ def export_plan(L=None) -> dict:
                    "schema (docs/vision/region-plans.md). Written by scripts/art/regions/cogsworth_region.py --export from "
                    "cogsworth_region.py and cogsworth_plan.py (the town); do not edit by hand. World px on the 11264 x 6912 "
                    "canvas; tiers are this plan's (world tier = tier + base_tier)."),
-        'id': 'cogsworth', 'owner': 'claude-h', 'biome': 'coal-hills', 'biomes': ['city', 'gorge', 'forest'],
+        'id': 'cogsworth', 'owner': 'claude-h', 'biome': 'coal_hills', 'biomes': ['mill_town', 'gorge', 'woodland'],   # scripts/art/biomes/ (#201); Fernhollow on the woodland
         'box': BOX,
-        'base_tier': {'value': BASE, 'provisional': False, 'from': "Claude G's tiers (lib/world-routes.ts, #175): the town's street 7, the Lull 4"},
+        'base_tier': {'value': BASE, 'provisional': False, 'from': "Claude G's tier numbers (route-meets.md): the town's street 7, the Lull 4"},
         'tiers': tiers,
         'routes': routes, 'trods': trods, 'stairs': stairs, 'water': water,
         'places': [{'id': p_['id'], 'kind': p_['kind'], 'at': list(p_['box'][:2]) if 'box' in p_ else list(p_['at']), 'why': p_['why']}
@@ -473,8 +534,8 @@ def export_plan(L=None) -> dict:
         'edges': [{'side': kind, 'what': what, 'rect': list(rect)} for kind, what, rect in COVER],
         'thresholds': [{'id': t_['id'], 'at': list(t_['at']), 'route': t_['route'], 'sides': list(t_['sides']), 'band': list(t_['band']),
                         'landmark': t_['landmark'], 'residents': t_['residents']} for t_ in plan.THRESHOLDS],
-        'residents': [{'who': 'woodcutter', 'at': [7240, 3060], 'note': 'Fernhollow'}, {'who': 'charcoal burner', 'at': [7496, 2824], 'note': "the burners' camp"},
-                      {'who': 'bargee', 'at': [8528, 3064], 'note': 'the Cog foot (threshold)'}],
+        'residents': [{'who': 'woodcutter', 'at': [7240, 3060], 'note': 'Fernhollow'}, {'who': 'charcoal burner', 'at': [7416, 2816], 'note': "the burners' camp"},
+                      {'who': 'bargee', 'at': [8528, 3024], 'note': 'the Cog foot (threshold), on the north bank by the bridge'}],
         'ground': {'_about': "Ground kinds by place; the coal hills' own colour is dark green and black spoil (world plan 5.3).",
                    'coal hills': 'rough sooty grass, heather out of flower, shale and spoil, dark conifers',
                    'the Narrows': 'gritstone walls, white water, ferns in the spray',
@@ -494,33 +555,20 @@ def export_plan(L=None) -> dict:
     return out
 
 
+def _route_tier_at(name, x, y):
+    """The tier of the route vertex nearest (x, y)."""
+    return min(ROUTES[name], key=lambda p: abs(p[0] - x) + abs(p[1] - y))[3]
+
+
 def _pocket_trods():
-    """G's dead-end trods to the secret pockets on this land, each at the tier of the route
+    """The dead-end trods to the pockets and the side trods, each at the tier of the route
     where it leaves."""
     out = {}
-    for r in _routes_full():
-        for pk in r.get('pockets', []):
-            lx, ly = pk['leaves']
-            t = min(r['points'], key=lambda p: abs(p[0] - lx) + abs(p[1] - ly))[3]
-            out.setdefault(r['name'], []).append(([tuple(p) for p in pk['points']] + [tuple(pk['clearing'])], t))
+    for name, holds, pts, clearing in POCKET_TRODS:
+        out.setdefault(name, []).append((list(pts) + [clearing], _route_tier_at(name, *pts[0])))
+    for name, why, pts in SIDE_TRODS:
+        out.setdefault(name, []).append((list(pts), _route_tier_at(name, *pts[0])))
     return out
-
-
-def _routes_full():
-    """G's whole route records when lib/world-routes.ts is readable, else the copies."""
-    path = os.path.join(ROOT, 'lib', 'world-routes.ts')
-    try:
-        import subprocess
-        code = ("const m = await import('file://' + process.argv[1]); const d = m.worldRoutes ?? m.default?.worldRoutes;"
-                "process.stdout.write(JSON.stringify(d));")
-        r = subprocess.run(['node', '--import', 'tsx', '--input-type=module', '-e', code, path],
-                           cwd=ROOT, capture_output=True, text=True, timeout=60)
-        if r.returncode == 0 and r.stdout:
-            return json.loads(r.stdout)
-    except Exception:  # noqa: BLE001
-        pass
-    return [{'name': n, 'kind': 'path', 'points': [list(p) for p in pts], 'changes': [], 'pockets': []}
-            for n, pts in ROUTES_FALLBACK.items()]
 
 
 def preview(L=None, scale=0.5):
