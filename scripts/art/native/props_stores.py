@@ -90,6 +90,10 @@ def _barrel(sp, cx=0.0, base=0.0, w=22.0, h=28.0, seed=0, z=1.0, tag=''):
     # the lid seen from above inside its rim: three boards, the rim lit at the back
     rim = g.ellipse(cx, top + lid_ry, rx + belly * 0.2, lid_ry)
     sp.add(f'rim{tag}', rim, 'timber', base=4, lo=2, hi=5, z=z + 0.3, flat=True)
+    # the rim's top edge as one lighter ring all round (A's sign-off note, 21 Oct), turned from
+    # the light only at its east end
+    ring = rim & ~g.ellipse(cx, top + lid_ry + 0.3, rx - 2.2, lid_ry - 1.1)
+    sp.mark(f'rim{tag}', ring & (g.X < cx + rx * 0.55), 1)
     lid = g.ellipse(cx, top + lid_ry + 0.3, rx - 2.2, lid_ry - 1.1)
     ln = f'lid{tag}'
     sp.add(ln, lid, 'timber_warm', base=3, lo=1, hi=4, z=z + 0.4, flat=True)
@@ -111,7 +115,7 @@ def _crate(sp, cx=0.0, base=0.0, w=24.0, h=22.0, seed=0, z=1.0, tag='', lid_frac
     # the front: two planks with a seam, grain, the bottom board darker
     fn = f'front{tag}'
     front = g.rect(x0, lid_b, x1, base)
-    p = sp.add(fn, front, 'timber', base=3, lo=0, hi=4, z=z, flat=True)
+    p = sp.add(fn, front, 'timber', base=2, lo=0, hi=3, z=z, flat=True)
     mid = (lid_b + base) / 2
     fam = np.where(g.Y < mid, WOOD[seed % 3], WOOD[(seed + 1) % 3]).astype(object)
     p.famarr = fam
@@ -124,23 +128,21 @@ def _crate(sp, cx=0.0, base=0.0, w=24.0, h=22.0, seed=0, z=1.0, tag='', lid_frac
         sp.mark(fn, g.rect(gx, gy, gx + rng.uniform(3, 6), gy + 0.8), -1)
     # corner battens: the west one lit, the east one turned from the light
     bw = max(2.2, w * 0.12)
-    sp.add(f'batW{tag}', g.rect(x0, lid_b, x0 + bw, base), 'timber', base=4, lo=2, hi=5, z=z + 0.1, flat=True)
-    sp.add(f'batE{tag}', g.rect(x1 - bw, lid_b, x1, base), 'timber_cool', base=2, lo=0, hi=3, z=z + 0.1, flat=True)
+    sp.add(f'batW{tag}', g.rect(x0, lid_b, x0 + bw, base), 'timber', base=3, lo=2, hi=4, z=z + 0.1, flat=True)
+    sp.add(f'batE{tag}', g.rect(x1 - bw, lid_b, x1, base), 'timber_cool', base=1, lo=0, hi=2, z=z + 0.1, flat=True)
     sp.mark(f'batE{tag}', g.rect(x1 - 0.9, lid_b, x1, base), -1)
-    # the lid: three boards with gaps, its front edge lit, grain
+    # the lid, a plane seen from above in our 3/4 view (A's sign-off note, 21 Oct: like the hut's
+    # table): lighter than the front, two boards running across with one seam, lit from the
+    # upper left (its west end and back edge brightest), its east end turned from the light
     ln = f'lidtop{tag}'
     lid = g.rect(x0, top, x1, lid_b)
-    p = sp.add(ln, lid, 'timber', base=4, lo=2, hi=5, z=z + 0.2, flat=True)
+    p = sp.add(ln, lid, 'timber_warm', base=4, lo=3, hi=5, z=z + 0.2, flat=True)
     lh = lid_b - top
-    fam = np.full(lid.shape, 'timber', dtype=object)
-    for k in range(3):
-        sel = (g.Y >= top + lh * k / 3) & (g.Y < top + lh * (k + 1) / 3)
-        fam[sel] = WOOD[(k + seed + 2) % 3]
+    fam = np.where(g.Y < top + lh / 2, 'timber_warm', WOOD[(seed + 2) % 3]).astype(object)
     p.famarr = fam
-    for k in (1, 2):
-        yy = top + lh * k / 3
-        sp.mark(ln, g.rect(x0, yy - 0.4, x1, yy + 0.4), -1)
-    sp.mark(ln, g.rect(x0, top, x1, top + 0.9), 1)
+    yy = top + lh / 2
+    sp.mark(ln, g.rect(x0 + 1, yy - 0.45, x1 - 1, yy + 0.45), -1)
+    sp.mark(ln, g.rect(x0, top, x1 - 4, top + 1.0) | g.rect(x0, top, x0 + w * 0.3, lid_b), 1)
     sp.mark(ln, g.rect(x1 - 4, top, x1, lid_b), -1)
     gx = rng.uniform(x0 + 3, x1 - 8)
     sp.mark(ln, g.rect(gx, top + lh * 0.45, gx + 4, top + lh * 0.45 + 0.7), -1)
@@ -214,6 +216,34 @@ def crate_stack4(d, seed=0):
 
 
 KINDS = {'barrel': barrel4, 'crate': crate4, 'sack': sack4, 'crate_stack': crate_stack4}
+
+# Each store keeps its pieces apart (A, 21 Oct: barrels, crates and sacks will likely break in
+# fights): every part is named by its piece, so a break can lift the lid, spring the hoops and
+# split the staves. `pieces` renders each piece alone on the same canvas (no frames yet).
+PIECES = {
+    'barrel': {'lid': ('lid', 'rim'), 'hoops': ('hoop',), 'staves': ('staves',)},
+    'crate': {'lid': ('lidtop',), 'front': ('front',), 'battens': ('batW', 'batE')},
+    'sack': {'neck': ('neck', 'cord'), 'body': ('sack',)},
+}
+_BUILD = {
+    'barrel': lambda d, seed: (_sprite(d, 34, 36, 17, 3), lambda sp: _barrel(sp, 0, 0, 22, 28, seed)),
+    'crate': lambda d, seed: (_sprite(d, 34, 30, 17, 3), lambda sp: _crate(sp, 0, 0, 24, 22, seed)),
+    'sack': lambda d, seed: (_sprite(d, 34, 30, 17, 3), lambda sp: _sack(sp, 0, 0, 24, 22, seed)),
+}
+
+
+def pieces(kind: str, d: float, seed: int = 0) -> dict:
+    """{piece: RGBA image} for one store, each piece drawn alone on the whole sprite's canvas
+    (same anchor), so the pieces lie exactly where the whole store has them."""
+    out = {}
+    for piece, prefixes in PIECES[kind].items():
+        sp, draw = _BUILD[kind](d, seed)
+        draw(sp)
+        keep = [pt for pt in sp.parts if pt.name.startswith(prefixes)]
+        sp.parts = keep
+        sp.inkmarks = []
+        out[piece] = sp.render()
+    return out
 
 
 # ------------------------------------------------------------------------------------------------
