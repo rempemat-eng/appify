@@ -320,32 +320,29 @@ SET_PIECES = [
 ]
 
 # --- where Claude B's prop clusters go (#188, scripts/art/prop_clusters.json). `shore` is the one
-# recipe on #188; the four isle recipes are on #203 (proposed until it lands)
+# and the four isle recipes are Claude B's (#188, #203); CLUSTERS below holds their placements
 CLUSTER_SLOTS = [
     {'recipe': 'shore', 'near': [6440, 6312], 'why': "the landing's beach by the pier: a boat drawn up, nets drying"},
     {'recipe': 'shore', 'near': [6976, 6520], 'why': "Black-sand Cove's head: a fisher's corner on the black sand"},
-    {'recipe': 'turtle_beach', 'proposed': True, 'near': [6400, 6640],
+    {'recipe': 'turtle_beach', 'near': [6400, 6640],
      'why': "the turtle beach kept clear above the tideline: a ring of shells round a nest, a warden's tally post, no boat"},
-    {'recipe': 'lagoon_hamlet', 'proposed': True, 'near': [6528, 6200],
+    {'recipe': 'lagoon_hamlet', 'near': [6528, 6200],
      'why': "Lagoon Landing's yard: the packing shed's door, crates of fruit, a hammock between two palms"},
-    {'recipe': 'rainforest_clearing', 'proposed': True, 'near': [6872, 6184],
+    {'recipe': 'rainforest_clearing', 'near': [6872, 6184],
      'why': "under the giant tree: a mossy log, tree ferns, a naturalist's specimen table"},
-    {'recipe': 'headwaters_shelter', 'proposed': True, 'near': [7064, 6320],
+    {'recipe': 'headwaters_shelter', 'near': [7064, 6320],
      'why': 'the rain shelter: a thatched roof on four posts, a rail, a bench, a water butt under the eave'},
 ]
-# Every slot's placement comes from #203's placer, which keeps boats and nets by water
-# (b-to-c-isles, 14:55). #188's rules (a shore's front within 48 px of a path) refuse the two shore
-# placements and #188 does not know the isle recipes, so `clusters` stays empty until #203 lands;
-# then the placements move into it (re-run `--place` on main to confirm).
-CLUSTERS = []
-PLACED_ON_203 = {
-    'shore@landing': {'at': [6464, 6336], 'orient': 's', 'mirror': False, 'seed': 0},
-    'shore@cove': {'at': [6944, 6576], 'orient': 's', 'mirror': False, 'seed': 0},
-    'turtle_beach': {'at': [6376, 6616], 'orient': 'w', 'mirror': True, 'seed': 0},
-    'lagoon_hamlet': {'at': [6384, 6224], 'orient': 's', 'mirror': False, 'seed': 0},
-    'rainforest_clearing': {'at': [6800, 6112], 'orient': 's', 'mirror': True, 'seed': 0},
-    'headwaters_shelter': {'at': [7024, 6296], 'orient': 's', 'mirror': False, 'seed': 0},
-}
+# Each slot placed by Claude B's placer on main (#203: boats and nets by water, fronts by paths):
+# python3 scripts/art/prop_clusters.py --place tidebloom RECIPE --near SLOT (seed 0)
+CLUSTERS = [
+    {'recipe': 'shore', 'at': [6464, 6336], 'orient': 's', 'mirror': False, 'seed': 0, 'slot': [6440, 6312]},
+    {'recipe': 'shore', 'at': [6944, 6576], 'orient': 's', 'mirror': False, 'seed': 0, 'slot': [6976, 6520]},
+    {'recipe': 'turtle_beach', 'at': [6376, 6616], 'orient': 'w', 'mirror': True, 'seed': 0, 'slot': [6400, 6640]},
+    {'recipe': 'lagoon_hamlet', 'at': [6440, 6224], 'orient': 's', 'mirror': True, 'seed': 0, 'slot': [6528, 6200]},
+    {'recipe': 'rainforest_clearing', 'at': [6800, 6112], 'orient': 's', 'mirror': True, 'seed': 0, 'slot': [6872, 6184]},
+    {'recipe': 'headwaters_shelter', 'at': [7024, 6296], 'orient': 's', 'mirror': False, 'seed': 0, 'slot': [7064, 6320]},
+]
 
 # --- rest spots and the story (Claude K's handoffs, #197: the naturalist, "an inch a year",
 # apprentice Tuff). Each spot is open, reachable ground beside a path with a stand where the
@@ -505,11 +502,6 @@ def isle_faults(p) -> list:
     return out
 
 
-def slot_key(c) -> str:
-    if c['recipe'] != 'shore':
-        return c['recipe']
-    return 'shore@cove' if c['near'][0] > 6800 else 'shore@landing'
-
 
 def plan() -> dict:
     p = {
@@ -573,7 +565,7 @@ def plan() -> dict:
                          'seed': 20 + i, 'stair': st['id']} for i, st in enumerate(STAIRS)],
         'areas': areas(),
         'clusters': CLUSTERS,
-        'cluster_slots': [dict(c, placement_203=PLACED_ON_203[slot_key(c)]) for c in CLUSTER_SLOTS],
+        'cluster_slots': CLUSTER_SLOTS,
         'rest_spots': REST_SPOTS,
         'story': STORY,
         'ring': RING,

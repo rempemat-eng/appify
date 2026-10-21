@@ -3058,7 +3058,92 @@
    "walkable": false
   }
  ],
- "clusters": [],
+ "clusters": [
+  {
+   "recipe": "shore",
+   "at": [
+    6464,
+    6336
+   ],
+   "orient": "s",
+   "mirror": false,
+   "seed": 0,
+   "slot": [
+    6440,
+    6312
+   ]
+  },
+  {
+   "recipe": "shore",
+   "at": [
+    6944,
+    6576
+   ],
+   "orient": "s",
+   "mirror": false,
+   "seed": 0,
+   "slot": [
+    6976,
+    6520
+   ]
+  },
+  {
+   "recipe": "turtle_beach",
+   "at": [
+    6376,
+    6616
+   ],
+   "orient": "w",
+   "mirror": true,
+   "seed": 0,
+   "slot": [
+    6400,
+    6640
+   ]
+  },
+  {
+   "recipe": "lagoon_hamlet",
+   "at": [
+    6440,
+    6224
+   ],
+   "orient": "s",
+   "mirror": true,
+   "seed": 0,
+   "slot": [
+    6528,
+    6200
+   ]
+  },
+  {
+   "recipe": "rainforest_clearing",
+   "at": [
+    6800,
+    6112
+   ],
+   "orient": "s",
+   "mirror": true,
+   "seed": 0,
+   "slot": [
+    6872,
+    6184
+   ]
+  },
+  {
+   "recipe": "headwaters_shelter",
+   "at": [
+    7024,
+    6296
+   ],
+   "orient": "s",
+   "mirror": false,
+   "seed": 0,
+   "slot": [
+    7064,
+    6320
+   ]
+  }
+ ],
  "cluster_slots": [
   {
    "recipe": "shore",
@@ -3066,16 +3151,7 @@
     6440,
     6312
    ],
-   "why": "the landing's beach by the pier: a boat drawn up, nets drying",
-   "placement_203": {
-    "at": [
-     6464,
-     6336
-    ],
-    "orient": "s",
-    "mirror": false,
-    "seed": 0
-   }
+   "why": "the landing's beach by the pier: a boat drawn up, nets drying"
   },
   {
    "recipe": "shore",
@@ -3083,88 +3159,39 @@
     6976,
     6520
    ],
-   "why": "Black-sand Cove's head: a fisher's corner on the black sand",
-   "placement_203": {
-    "at": [
-     6944,
-     6576
-    ],
-    "orient": "s",
-    "mirror": false,
-    "seed": 0
-   }
+   "why": "Black-sand Cove's head: a fisher's corner on the black sand"
   },
   {
    "recipe": "turtle_beach",
-   "proposed": true,
    "near": [
     6400,
     6640
    ],
-   "why": "the turtle beach kept clear above the tideline: a ring of shells round a nest, a warden's tally post, no boat",
-   "placement_203": {
-    "at": [
-     6376,
-     6616
-    ],
-    "orient": "w",
-    "mirror": true,
-    "seed": 0
-   }
+   "why": "the turtle beach kept clear above the tideline: a ring of shells round a nest, a warden's tally post, no boat"
   },
   {
    "recipe": "lagoon_hamlet",
-   "proposed": true,
    "near": [
     6528,
     6200
    ],
-   "why": "Lagoon Landing's yard: the packing shed's door, crates of fruit, a hammock between two palms",
-   "placement_203": {
-    "at": [
-     6384,
-     6224
-    ],
-    "orient": "s",
-    "mirror": false,
-    "seed": 0
-   }
+   "why": "Lagoon Landing's yard: the packing shed's door, crates of fruit, a hammock between two palms"
   },
   {
    "recipe": "rainforest_clearing",
-   "proposed": true,
    "near": [
     6872,
     6184
    ],
-   "why": "under the giant tree: a mossy log, tree ferns, a naturalist's specimen table",
-   "placement_203": {
-    "at": [
-     6800,
-     6112
-    ],
-    "orient": "s",
-    "mirror": true,
-    "seed": 0
-   }
+   "why": "under the giant tree: a mossy log, tree ferns, a naturalist's specimen table"
   },
   {
    "recipe": "headwaters_shelter",
-   "proposed": true,
    "near": [
     7064,
     6320
    ],
-   "why": "the rain shelter: a thatched roof on four posts, a rail, a bench, a water butt under the eave",
-   "placement_203": {
-    "at": [
-     7024,
-     6296
-    ],
-    "orient": "s",
-    "mirror": false,
-    "seed": 0
-   }
+   "why": "the rain shelter: a thatched roof on four posts, a rail, a bench, a water butt under the eave"
   }
  ],
  "rest_spots": [
