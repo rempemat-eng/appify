@@ -152,7 +152,7 @@ STRATA = {
                (5, 'crag_cool', 'pebble'), (9, 'crag', 'plain'), (6, 'crag_warm', 'lamina'),
                (10, 'crag', 'flute'), (7, 'crag_cool', 'plain')],
         spring=52, mass_w=(18, 46), split64=0.7, split32=0.1, plate=(9.0, 7.0), inset=0.35,
-        top='grass', top_sibs=(0.30, 0.06, 0.64), warm_lit=0.15, fringe='grass', fringe_len=(1, 5),
+        top='grass', top_sibs=(0.24, 0.02, 0.74), warm_lit=0.15, fringe='grass', fringe_len=(1, 5),
         ivy=0.14, cascade=0.12, crack_plants=0.5, scree=0.55, boulders=0.22, ferns=0.7,
         shrubs=0.006, trees=0.0015, flowers=0.05, snow_z=96, falls=0.5, tint=0),
     'coast': dict(
@@ -239,10 +239,67 @@ class World:
             if m is not None:
                 m = np.asarray(m, bool)
                 setattr(self, name, np.concatenate([m, np.repeat(m[-1:], extra, 0)], 0))
+        self.T = STRATA[self.table]
+        self._step_steep()
         self.flag = np.zeros(self.Z.shape, np.int8)       # 1 a stair
         for st in self.stairs:
             self._carve(st)
-        self.T = STRATA[self.table]
+
+    def _step_steep(self, chunk: int = 2 * GRID, steep: float = 1.3):
+        """Where a rim runs steeply (more than `steep` rows a column, about 52 degrees from
+        east-west), its face would be a thin slanted strip. Cap it instead as short stepped
+        faces: the rim is held level across each 8 px cell of the soft grid (at the row it has
+        in the cell's middle), so the run becomes a stair of short full-height faces with side
+        bands between them. Applied per tier level, lowest first; a higher tier is never cut."""
+        Z = self.Z
+        R, C = Z.shape
+        face = self.T['face']
+        for k in range(face, int(Z.max()) + 1, face):
+            M = Z >= k
+            edge = M[:-1] & ~M[1:]
+            rows = [np.nonzero(edge[:, x])[0] for x in range(C)]
+
+            def near_row(xx, r):
+                rr = rows[min(max(xx, 0), C - 1)]
+                if not len(rr):
+                    return None
+                j = int(np.argmin(np.abs(rr - r)))
+                return int(rr[j]) if abs(int(rr[j]) - r) <= 48 else None
+            moves = []
+            for x in range(C):
+                for r in rows[x]:
+                    r = int(r)
+                    a, b = near_row(x - 4, r), near_row(x + 4, r)
+                    if a is None or b is None or abs(b - a) / 8.0 <= steep:
+                        continue
+                    rc = near_row((x // chunk) * chunk + chunk // 2, r)
+                    if rc is not None and rc != r:
+                        moves.append((x, r, rc))
+            for x, r, rc in moves:
+                below = Z[min(r + 1, R - 1), x]
+                if rc > r:
+                    seg = Z[r + 1:rc + 1, x]
+                    Z[r + 1:rc + 1, x] = np.where(seg < k, k, seg)
+                else:
+                    seg = Z[rc + 1:r + 1, x]
+                    Z[rc + 1:r + 1, x] = np.where(seg == k, below, seg)
+            if not moves:
+                continue
+            # soften the steps' corners (no hard edges), only near the runs that were stepped
+            import terrace
+            near_cols = np.zeros(C, bool)
+            for x, _r, _rc in moves:
+                near_cols[max(0, x - 8):x + 9] = True
+            M0 = Z >= k
+            M1 = terrace.rounded(M0, 4, 3) & np.pad(M0, 0)
+            M1 |= terrace.rounded(M0, 4, 3) & ~M0
+            add = M1 & ~M0 & near_cols[None, :]
+            rem = M0 & ~M1 & near_cols[None, :] & (Z == k)
+            Z[add] = k
+            for r in range(R - 2, -1, -1):
+                row = rem[r]
+                if row.any():
+                    Z[r, row] = Z[r + 1, row]
 
     @property
     def width(self) -> int:
@@ -557,7 +614,7 @@ def paint_ground(fr: Frame, P: dict, world: World):
         fr.T[gm] = 3
         fr.tag[gm] = TAG['ground']
         if fam_name == 'grass':
-            _blades(fr, gm, fams, fi, hashu(seed, 12), density=0.9, warm_lit=T.get('warm_lit', 0.5))
+            _blades(fr, gm, fams, fi, hashu(seed, 12), density=1.5, warm_lit=T.get('warm_lit', 0.5))
         elif fam_name == 'stone':
             _setts(fr, gm, fams, seed)
         else:
@@ -577,34 +634,39 @@ def paint_ground(fr: Frame, P: dict, world: World):
 
 
 def _blades(fr, mask, fams, fi, seed, density=0.5, warm_lit=0.5):
-    """Short upright blade clusters: a 2 x 3 cell holds one, a domino 2 px tall or an L of 3;
-    some swap to a sibling at the same tone, some catch the light (a tone up), some sit in
-    shade (a tone down)."""
+    """Grass clusters (Eastward's ground: calm, with clumps rather than speckle): a 3 x 3 cell
+    holds one cluster of 2 to 4 px (an upright domino, an L, a 2 x 2 tuft, a stalk of 3);
+    most swap to a sibling at the same tone, some catch the light (a tone up), some sit in
+    shade (a tone down), a few are leaf. Thick in rough stretches, thin in calm ones."""
     X, Y = fr.X, fr.Y
-    cx, cy = X // 2, Y // 3
+    cx, cy = X // 3, Y // 3
     hh = h01(seed, cx, cy)
-    ox = (hashu(seed, cx, cy, 1) & np.uint32(1)).astype(np.int64)
+    ox = (hashu(seed, cx, cy, 1) % np.uint32(2)).astype(np.int64)
     oy = (hashu(seed, cx, cy, 2) % np.uint32(2)).astype(np.int64)
-    ry = Y - 3 * cy
-    ell = h01(seed, cx, cy, 5) < 0.35
-    col = (X - 2 * cx == ox) & ((ry == oy) | (ry == oy + 1))
-    foot = ell & (X - 2 * cx == 1 - ox) & (ry == oy + 1)
-    dens = density * (0.6 + 0.55 * vnoise2(X, Y, 11.0, hashu(seed, 9)))
-    on = mask & (hh < dens) & (col | foot)
+    dx, dy = X - 3 * cx - ox, Y - 3 * cy - oy
+    shape = (hashu(seed, cx, cy, 5) % np.uint32(4)).astype(np.int64)
+    inside = np.where(shape == 0, (dx == 0) & ((dy == 0) | (dy == 1)),
+                      np.where(shape == 1, ((dx == 0) & ((dy == 0) | (dy == 1))) | ((dx == 1) & (dy == 1)),
+                               np.where(shape == 2, ((dx == 0) | (dx == 1)) & ((dy == 0) | (dy == 1)),
+                                        (dx == 0) & (dy >= -1) & (dy <= 1))))
+    dens = density * (0.45 + 0.7 * vnoise2(X, Y, 13.0, hashu(seed, 9)))
+    on = mask & (hh < dens) & inside
     kind = h01(seed, cx, cy, 3)
-    swap = on & (kind < 0.42)
+    swap = on & (kind < 0.45)
     alt = (fi + 1 + (hashu(seed, cx, cy, 4) & np.uint32(1)).astype(np.int64)) % 3
     fr.F[swap] = fams[alt[swap]]
-    up = on & (kind >= 0.42) & (kind < 0.66)
+    up = on & (kind >= 0.45) & (kind < 0.66)
     fr.T[up] = np.minimum(4, fr.T[up] + 1)
     fr.F[up & (h01(seed, cx, cy, 6) < warm_lit)] = fams[1]
-    down = on & (kind >= 0.7) & (kind < 0.88)
+    fr.F[up & (h01(seed, cx, cy, 6) >= 0.6)] = fams[2]
+    down = on & (kind >= 0.66) & (kind < 0.86)
     fr.T[down] = np.maximum(1, fr.T[down] - 1)
     fr.F[down & (h01(seed, cx, cy, 7) < 0.5)] = fams[2]
-    leaf = on & (kind >= 0.88)
+    leaf = on & (kind >= 0.86)
     lf = sibs('leaf')
     fr.F[leaf] = lf[(hashu(seed, cx, cy, 8) % np.uint32(3)).astype(np.int64)[leaf]]
-    fr.T[leaf] = 3
+    lt = h01(seed, cx, cy, 10)
+    fr.T[leaf] = np.where(lt < 0.25, 2, np.where(lt > 0.7, 4, 3))[leaf]
 
 
 def _grains(fr, mask, fams, fi, seed):
@@ -832,7 +894,7 @@ def paint_faces(fr: Frame, P: dict, world: World):
     flute = (tex == 'flute') & (vnoise1(s, 2.5, hashu(seed, lid, 43)) > 0.74)
     # grain: short dashes along the plates, lit on a plate's upper half, shaded on its lower
     gcell = h01(seed, lid, np.floor((s + 7 * pj) / 3).astype(np.int64), np.floor(zc).astype(np.int64), 44)
-    dash = gcell < 0.04
+    dash = gcell < 0.03
     t = np.where(dash, np.where(zc > szs, t + 1, t - 1), t)
     # vertical fissures in the wide crags (the Sea of Stars columns)
     uc = 0.3 + 0.4 * h01(mass, 5)
@@ -854,7 +916,7 @@ def paint_faces(fr: Frame, P: dict, world: World):
     base_ids, bias = np.array(base_ids), np.array(bias)
     r = h01(pid, 8)
     si = (r > bias[band, 0]).astype(np.int64) + (r > bias[band, 1]).astype(np.int64)
-    swap = (h01(seed, lid, np.floor(s / 2).astype(np.int64), np.floor(zc / 2).astype(np.int64), 45) < 0.11) | flute
+    swap = (h01(seed, lid, np.floor(s / 2).astype(np.int64), np.floor(zc / 2).astype(np.int64), 45) < 0.08) | flute
     si = np.where(swap, (si + 1 + (h01(pid, 9) < 0.5)) % 3, si)
     fam = base_ids[band, si]
     # recesses: whatever of the face no crag covers (notches between rounded shoulders, insets
@@ -1029,7 +1091,15 @@ def fringe_len(world: World, lid, s, kind: str):
     u = (s + ph) / cw - c
     Lc = lo + (hi - lo + 0.999) * h01(world.seed, lid, c, 72)
     if kind == 'snow':
-        Lc = 1 + 2.999 * h01(world.seed, lid, c, 73)
+        # a wind-blown cornice: lobes 9 px long, 2 to 5 px deep, built out by the west wind so
+        # each lobe hangs deepest towards its east end
+        cw = 9.0
+        ph = h01(world.seed, lid, 74) * cw
+        c = np.floor((s + ph) / cw).astype(np.int64)
+        u = (s + ph) / cw - c
+        Lc = 2 + 3.999 * h01(world.seed, lid, c, 73)
+        prof = Lc * np.sqrt(np.clip(1 - (2 * u - 1) ** 2, 0, 1)) * (0.55 + 0.45 * u) + 0.5
+        return np.floor(prof), u
     prof = Lc * np.sqrt(np.clip(1 - (2 * u - 1) ** 2, 0, 1)) + 0.35
     return np.floor(prof), u
 
@@ -1292,7 +1362,7 @@ def dress_ground(fr: Frame, world: World):
         return dress_dry(fr, world)
     g = (fr.tag == TAG['ground']) & np.isin(fr.F, sibs('grass'))
     edge = near(~g & (fr.P['kind'] > 0), 5) & g
-    p = np.where(edge, 0.7, 0.4)
+    p = np.where(edge, 0.75, 0.6)
     gid = sibs('grass')
     for x, y, hh in zip(*candidates(fr, 6, hashu(seed, 101), p)):
         st = TUFTS[int(hh % np.uint32(len(TUFTS)))]
@@ -1303,12 +1373,15 @@ def dress_ground(fr: Frame, world: World):
         put_stamp(fr, CLOVER[int(hh % np.uint32(3))], x, y, int(lid[int(hashu(hh, 4) % np.uint32(3))]), allow=g)
     for x, y, hh in zip(*candidates(fr, 28, hashu(seed, 103), 0.22)):
         put_stamp(fr, MOUND[int(hh % np.uint32(2))], x, y, int(gid[2]), allow=g, anchor=(3, 2))
+    # flowers in patches: one kind to a clump, eight to fourteen heads round a centre
     fl = [FID['plaster'], FID['brass'], FID['dusk'], FID['berry'], FID['sky']]
-    for x, y, hh in zip(*candidates(fr, 18, hashu(seed, 104), T['flowers'] * 4)):
+    for x, y, hh in zip(*candidates(fr, 44, hashu(seed, 104), min(0.8, T['flowers'] * 10))):
         f = fl[int(hashu(hh, 5) % np.uint32(len(fl)))]
-        for j in range(3 + int(hashu(hh, 6) % np.uint32(3))):
-            ox = int(hashu(hh, 7, j) % np.uint32(9)) - 4
-            oy = int(hashu(hh, 8, j) % np.uint32(7)) - 3
+        for j in range(8 + int(hashu(hh, 6) % np.uint32(7))):
+            ox = int(round((h01(hh, 7, j) * 2 - 1) * 6))
+            oy = int(round((h01(hh, 8, j) * 2 - 1) * 4))
+            if ox * ox / 36 + oy * oy / 16 > 1:
+                continue
             put_stamp(fr, FLOWER[int(hashu(hh, 9, j) % np.uint32(3))], x + ox, y + oy, f, allow=g)
 
 
@@ -1330,11 +1403,11 @@ def dress_dry(fr: Frame, world: World):
 
 # ---- snow ---------------------------------------------------------------------------------------
 def paint_snow(fr: Frame, world: World):
-    """House snow: one calm plane (3) with broad swells a tone lighter, hollows shaded under
-    their upper-left rim and lit on the far wall, sparkles in pairs; where it ends on lower
-    ground a crisp edge: a lit lip (5) over the snow's shaded south face (2, then 1), the
-    ground below two tones down. At a rim the fringe draws a single cornice instead (no
-    doubled line)."""
+    """House snow, no grit: a calm plane (3) laid in large drifts. Each drift is a tone up on
+    its windward west and north, its crest lit, and soft blue-violet shade (the cool sibling,
+    tone 2) on its east and south sides and in its lee. Where the snow ends on lower ground a
+    crisp edge: a lit lip (5) over the snow's shaded south face (2, then 1), the ground below
+    two tones down. At a rim the fringe draws one wind-blown cornice (no doubled line)."""
     seed = world.seed
     K = fr.P['kind']
     sn = (K == TOP) & (fr.mat == MAT_SNOW) & (fr.P['ST'] == 0)
@@ -1342,31 +1415,34 @@ def paint_snow(fr: Frame, world: World):
         return
     X, Y = fr.X, fr.Y
     sf = sibs('snow')
-    fr.F[sn] = sf[np.where(vnoise2(X, Y, 19.0, hashu(seed, 121)) > 0.62, 1, np.where(vnoise2(X, Y, 23.0, hashu(seed, 122)) < 0.3, 2, 0))[sn]]
+    fr.F[sn] = sf[0]
     fr.T[sn] = 3
     fr.tag[sn] = TAG['snow']
-    # broad wind swells a tone up, hollows in blue shade under their upper-left rim, the far
-    # wall of a hollow lit
-    sw = fbm2(X, Y * 1.5, 26.0, hashu(seed, 123), 2)
-    swell = sn & (sw > 0.6)
-    fr.T[swell] = 4
-    hol = sn & (sw < 0.28)
-    fr.T[hol] = 2
-    far = hol & ~nb(hol, 2, 1)
-    fr.T[far] = 4
-    sp = sn & (h01(hashu(seed, 125), X // 2, Y) < 0.012) & ((X % 2) == 0)
-    sp = sp | (nb(sp, 0, -1) & sn)
-    fr.T[sp] = 5
+    n = fbm2(X, Y * 1.7, 38.0, hashu(seed, 123), 2)
+    D = sn & (n > 0.56)
+    fr.T[D] = 4
+    crest = D & (~nb(D, -1, 0) | ~nb(D, 0, -1)) & (n > 0.6)
+    fr.T[crest] = 5
+    shade = D & (~nb(D, 0, 1) | ~nb(D, 0, 2) | ~nb(D, 0, 3) | ~nb(D, 1, 0) | ~nb(D, 2, 0))
+    fr.F[shade] = sf[2]
+    fr.T[shade] = 2
+    lee = sn & ~D & (nb(D, 0, -1) | nb(D, 0, -2) | nb(D, -1, 0) | nb(D, -1, -1))
+    fr.F[lee] = sf[2]
+    fr.T[lee] = 2
+    calm = sn & ~D & ~lee & (vnoise2(X, Y * 1.5, 30.0, hashu(seed, 124)) < 0.3)
+    fr.F[calm] = sf[2]
     ground_below = nb((K == TOP) & ~sn & (fr.tag != TAG['side']), 1, 0)
     s1 = sn & ground_below
     s2 = sn & nb(s1, 1, 0) & ~s1
     s3 = sn & nb(s2, 1, 0) & ~s2 & ~s1
+    fr.F[s1 | s2] = sf[2]
     fr.T[s1] = 1
     fr.T[s2] = 2
     fr.T[s3] = 5
     west = sn & ~nb(sn, 0, -1) & ~s1 & ~s2
     fr.T[west] = np.maximum(fr.T[west], 4)
     east = sn & ~nb(sn, 0, 1) & ~s1 & ~s2 & ~s3
+    fr.F[east] = sf[2]
     fr.T[east] = 2
     below = (K == TOP) & ~sn & (nb(s1, -1, 0) | nb(s1, -2, 0)) & (fr.tag == TAG['ground'])
     fr.T[below] = np.maximum(0, fr.T[below] - 2)
@@ -1390,40 +1466,57 @@ def snow_extras(fr: Frame, world: World):
     if not foot.any():
         return
     ground = (fr.P['kind'] == TOP) & np.isin(fr.tag, (TAG['ground'], TAG['path']))
-    site = fr.X // 26
+    # a drift is a mound banked against the foot, 16 to 28 px long and up to 6 to 11 deep, one
+    # in two sites along the foot
+    site = fr.X // 44
     hs = hashu(seed, site, 132)
-    wv = 10 + 10 * h01(hs, 1)
-    dx = fr.X + 0.5 - (site * 26 + 13 + 4 * (h01(hs, 2) - 0.5))
-    L = np.where(h01(hs, 3) < 0.45, np.floor((3 + 4 * h01(hs, 4)) * np.sqrt(np.clip(1 - (2 * dx / wv) ** 2, 0, 1)) + 0.3), 0)
+    wv = 16 + 12 * h01(hs, 1)
+    dx = fr.X + 0.5 - (site * 44 + 22 + 10 * (h01(hs, 2) - 0.5))
+    shape = np.sqrt(np.clip(1 - (2 * dx / wv) ** 2, 0, 1))
+    L = np.where(h01(hs, 3) < 0.5, np.floor((6 + 5 * h01(hs, 4)) * shape * (0.85 + 0.15 * vnoise1(fr.X, 3.0, hashu(seed, 133))) + 0.3), 0)
     dist = np.zeros(fr.shape, np.int32)
-    for k in range(7, 0, -1):
+    for k in range(14, 0, -1):
         dist = np.where(nb(foot, -k, 0), k, dist)
     drift = ground & (dist > 0) & (dist <= L)
-    fr.F[drift] = FID['snow']
-    fr.T[drift] = np.where(dist[drift] == L[drift], 2, np.where(dist[drift] == 1, 3, 4))
-    fr.T[drift & (dist == 2) & (L >= 4) & (fr.X % 7 < 3)] = 5
+    sf = sibs('snow')
+    fr.F[drift] = sf[0]
+    t = np.where(dist <= np.maximum(2, L * 0.45), 4, 3)
+    t = np.where((dist == 2) & (dx < 0) & (L >= 5), 5, t)
+    face_s = (dist > L - 2) & (L >= 3)
+    t = np.where(face_s, np.where(dist == L, 1, 2), t)
+    east = dx > wv * 0.25
+    t = np.where(east & ~face_s & (t >= 3), 2, t)
+    fr.F[drift & (face_s | (east & (t <= 2)))] = sf[2]
+    fr.T[drift] = t[drift]
     fr.tag[drift] = TAG['snow']
     sh = ground & ~drift & (nb(drift, -1, 0) | nb(drift, -2, 0))
     fr.T[sh] = np.maximum(0, fr.T[sh] - 2)
+
+
+SNOW_ROCKS = [(3.6, 1.3, -0.45), (7.5, 0.45, 0.0), (2.8, 0.85, 0.15), (5.0, 0.95, 0.45)]   # (rx, ry / rx, lean)
 
 
 def _snow_rock(fr: Frame, x, y, hh, sn, rock):
     """A rock poking out of the snow: an irregular lump lit on its west, its foot lost in the
     snow (no outline there, a blue shade line along it), a snow cap on its lit top, a drift
     piled on its windward west and blue shade on its lee."""
-    rx = 3.0 + 5.0 * h01(hh, 1)
-    ry = rx * (0.7 + 0.2 * h01(hh, 2))
-    bx = _box(fr, int(x - rx - 5), int(y - ry - 3), int(x + rx + 6), int(y + ry + 4))
+    # four rocks: a tall one leaning west, a long flat slab, a small round one, a block
+    # leaning east; each scaled a little
+    rx0, ratio, lean = SNOW_ROCKS[int(hashu(hh, 9) % np.uint32(len(SNOW_ROCKS)))]
+    rx = rx0 * (0.85 + 0.3 * h01(hh, 1))
+    ry = rx * ratio
+    bx = _box(fr, int(x - rx - 7), int(y - ry - 4), int(x + rx + 8), int(y + ry + 4))
     if bx is None:
         return
     X, Y = fr.X[bx], fr.Y[bx]
     al = sn[bx]
-    q = ((X + 0.5 - x) / rx) ** 2 + ((Y + 0.5 - y) / ry) ** 2 + 0.35 * (vnoise2(X, Y, 2.0, hashu(hh, 3)) - 0.5)
+    xs = X + 0.5 - x - lean * (y - (Y + 0.5))
+    q = (xs / rx) ** 2 + ((Y + 0.5 - y) / ry) ** 2 + 0.3 * (vnoise2(X, Y, 2.0, hashu(hh, 3)) - 0.5)
     base = y + ry * (0.1 + 0.35 * vnoise1(X, 2.5, hashu(hh, 4)))
     m = (q <= 1.0) & (Y + 0.5 < base) & al
     if not m.any():
         return
-    I = -(X + 0.5 - x) / rx * 0.7 - (Y + 0.5 - y) / ry * 0.6
+    I = -xs / rx * 0.7 - (Y + 0.5 - y) / ry * 0.6
     t = np.where(I > 0.35, 3, np.where(I > -0.25, 2, 1))
     cap = m & (~nb(m, -1, 0) | ~nb(m, -2, 0)) & (I > -0.1 + 0.3 * h01(hh, 6))
     ids = sibs(rock)
@@ -1449,10 +1542,11 @@ def _snow_rock(fr: Frame, x, y, hh, sn, rock):
 
 # ---- stairs ---------------------------------------------------------------------------------------
 def paint_stairs(fr: Frame, world: World):
-    """Steps hewn from the cliff's own rock: each tread a slab in the rock's ramp (one sibling a
-    step), its nosing lit with a glint at its left end, a dark row under the nosing, the riser
-    in the rock's shade with joints; tread ends chipped and a worn dip in the middle. The
-    notch's walls are the side bands either side (the cheeks)."""
+    """Steps cut from the crag itself, not laid like boards: each step is a row of stones 4 to
+    10 px long in the rock's own ramp (one sibling a stone), each with a lit top-left and a
+    shaded lower-right; the nosing is irregular (a stone chipped back, another standing a row
+    proud), the centre of the flight is worn darker, moss gathers at the sides, the risers are
+    rock in shade with a dark row under each nosing, and rock cheeks overlap both sides."""
     P = fr.P
     st = P['ST'] == 1
     if not st.any():
@@ -1464,37 +1558,62 @@ def paint_stairs(fr: Frame, world: World):
     py = np.clip(P['PY'], 0, world.Z.shape[0] - 1)
     xw = np.clip(fr.X, 0, world.width - 1)
     zl = P['ZH']
-    stp = hashu(seed, zl, py // 8, 141)
-    fam = ids[(hashu(stp, 1) % np.uint32(3)).astype(np.int64)]
-    # distance to the stair's sides in plan, for the chipped ends
-    big = np.pad(flag, ((0, 0), (3, 3)))
-    wl = np.zeros(flag.shape, np.int8)
-    wr = np.zeros(flag.shape, np.int8)
-    for k in range(3, 0, -1):
-        wl = np.where(big[:, 3 - k:3 - k + flag.shape[1]] == 0, k, wl)
-        wr = np.where(big[:, 3 + k:3 + k + flag.shape[1]] == 0, k, wr)
-    a, b = wl[py, xw], wr[py, xw]
+    X, Y = fr.X, fr.Y
+    stp = hashu(seed, zl, py // 16, 141)
+    # distance (1 up) to the stair's west and east sides in plan
+    if getattr(world, '_stair_d', None) is None:
+        D = 64
+        big = np.pad(flag, ((0, 0), (D, D)))
+        wl = np.full(flag.shape, D, np.int16)
+        wr = np.full(flag.shape, D, np.int16)
+        for k in range(D, 0, -1):
+            wl = np.where(big[:, D - k:D - k + flag.shape[1]] == 0, k, wl)
+            wr = np.where(big[:, D + k:D + k + flag.shape[1]] == 0, k, wr)
+        world._stair_d = (wl, wr)
+    wl, wr = world._stair_d
+    a, b = wl[py, xw].astype(np.int64), wr[py, xw].astype(np.int64)
     tread = st & (K == TOP)
     riser = st & (K == FACEK)
     nose = tread & nb(riser, 1, 0)
-    back = tread & nb(riser, -1, 0) & ~nose
-    # each step is laid in two or three slabs, their joints staggered from step to step
-    q = fr.X + (hashu(stp, 2) % np.uint32(13)).astype(np.int64)
-    slab = q // 13
-    joint = (np.mod(q, 13) == 0)
-    sl = hashu(stp, slab, 5)
-    t = np.where(tread, 4, 3)
-    t = np.where(tread & (h01(sl, 1) < 0.25) & ~nb(nose, 1, 0), 3, t)
-    t = np.where(back, 3, t)
-    t = np.where(nose, 4, t)
-    t = np.where(nose & (a > 0) & (a <= 2), 5, t)
     under = riser & nb(nose, -1, 0)
-    t = np.where(riser & ~under, np.where(h01(sl, 3) < 0.6, 2, 3), t)
-    t = np.where(under, 1, t)
-    t = np.where(joint & riser & ~under, 1, t)
-    chip = (tread | riser) & (((a > 0) & (a <= 1 + (h01(stp, 3) < 0.5))) | ((b > 0) & (b <= 1 + (h01(stp, 4) < 0.5))))
-    t = np.where(chip, np.where(tread, 2, 0), t)
-    fam = np.where(tread, fam, np.where(h01(sl, 4) < 0.5, ids[2], ids[0]))
+    # stones along the step, their joints wandering
+    Ls = 6 + (hashu(stp, 8) % np.uint32(4)).astype(np.int64)
+    off = (hashu(stp, 2) % np.uint32(9)).astype(np.int64)
+    q = X + off
+    k0 = q // Ls
+    edge = lambda k: k * Ls + np.round(2.6 * (h01(stp, k, 3) - 0.5)).astype(np.int64)  # noqa: E731
+    kk = k0 - (q < edge(k0)) + (q >= edge(k0 + 1))
+    lo, hi = edge(kk), edge(kk + 1)
+    sh = hashu(stp, kk, 4)
+    first = q == lo
+    second = q == lo + 1
+    last = q == hi - 1
+    fam = ids[(hashu(sh, 1) % np.uint32(3)).astype(np.int64)]
+    # each stone is a block: its top is the tread, its front the riser, a joint either side
+    t = np.where(tread, 4, 2)
+    t = np.where(tread & last, 3, t)
+    t = np.where(tread & (h01(sh, 2) < 0.25), t - 1, t)
+    # the nosing: lit, with a glint at a stone's left; one stone chipped back, another proud
+    chipped = h01(sh, 5) < 0.22
+    proud = (h01(sh, 6) > 0.8) & ~chipped
+    t = np.where(nose, np.where(second, 5, 4), t)
+    t = np.where(nose & chipped, 2, t)
+    t = np.where(nb(nose & chipped, 1, 0) & tread, 4, t)
+    t = np.where(riser & ~under, np.where(h01(sh, 7) < 0.5, 2, 1), t)
+    t = np.where(riser & second & ~under, 3, t)
+    t = np.where(riser & last & ~under, 1, t)
+    t = np.where(under, np.where(proud, 3, 0), t)
+    t = np.where(first, np.where(tread, 1, 0), t)
+    # the worn centre of the flight, a tone darker on the treads
+    width = a + b
+    u = a / np.maximum(1, width)
+    worn = tread & ~nose & (np.abs(u - 0.5) < 0.16 + 0.06 * vnoise1(Y, 4.0, hashu(seed, 143)))
+    t = np.where(worn, np.maximum(2, t - 1), t)
+    # moss at the sides, where feet do not go
+    moss = (tread | riser) & (np.minimum(a, b) <= 6) & (h01(hashu(seed, 144), X // 2, Y // 2) < 0.55 - 0.07 * np.minimum(a, b))
+    fam = np.where(moss, sibs('leaf')[(hashu(seed, X // 2, Y // 2, 145) % np.uint32(3)).astype(np.int64)], fam)
+    t = np.where(moss, np.where(tread, 3, 2), t)
+    t = np.clip(t, 0, 5)
     fr.F[st] = fam[st]
     fr.T[st] = t[st]
     fr.tag[st] = TAG['stair']
@@ -1509,10 +1628,10 @@ def paint_stairs(fr: Frame, world: World):
             j = 0
             while yy < y_bot:
                 hh = hashu(seed, k, side, j, 142)
-                rx = 2.5 + 1.5 * h01(hh, 1)
-                ry = 2.4 + 1.3 * h01(hh, 2)
-                cx = xe + (-1 if side == 0 else 0) + (h01(hh, 3) - 0.5) * 2
-                boulder(fr, cx, yy + ry, rx, ry, hh, allow, world.T['rock'], tag=TAG['side'])
+                rx = 3.0 + 2.0 * h01(hh, 1)
+                ry = 3.0 + 1.8 * h01(hh, 2)
+                cx = xe + (-1.5 if side == 0 else 0.5) + (h01(hh, 3) - 0.5) * 2
+                boulder(fr, cx, yy + ry, rx, ry, hh, allow, world.T['rock'], moss=0.35, tag=TAG['side'])
                 yy += int(2 * ry + 1 + 2 * h01(hh, 4))
                 j += 1
 
@@ -1562,11 +1681,21 @@ def falls(world: World) -> list:
                     continue
                 if h01(seed, L, int(a), 152) >= T['falls']:
                     continue
-                w = 3 + int(hashu(seed, L, int(a), 153) % np.uint32(2))
+                w = 3
                 out.append(dict(x0=c - w // 2, x1=c - w // 2 + w, py=r, h=h, h2=h2, ztop=sz, kind='spring',
                                 id=int(hashu(seed, L, int(a), 154))))
+    for f in out:          # the kit's rule: a fall widens with its drop
+        w = max(f['x1'] - f['x0'], fall_width(f['ztop'] - f['h2']))
+        c = (f['x0'] + f['x1']) / 2
+        f['x0'], f['x1'] = int(round(c - w / 2)), int(round(c - w / 2)) + w
     world._falls = out
     return out
+
+
+def fall_width(drop: int) -> int:
+    """How wide a fall is for its drop: water speeds up and spreads as it falls, so a fall
+    is 2 px plus one for every 9 px of drop, 3 to 12 px (a 32 px drop 6, a 64 px drop 9)."""
+    return int(min(12, max(3, round(2 + drop / 9.0))))
 
 
 def paint_water(fr: Frame, world: World):
@@ -1646,15 +1775,29 @@ def _fall(fr: Frame, world: World, f: dict):
     beside = wet & ((X == fx0 - 1) | (X == fx1))
     fr.T[beside] = 0
     fr.tag[wet] = TAG['wet']
-    rel = (X - fx0) / np.maximum(1, fx1 - fx0)
-    t = np.where(rel < 0.34, 4, np.where(rel > 0.7, 2, 3))
-    streak = fall & (h01(hashu(f['id'], 3), X, (Y + 0 * X) // 5) < 0.4) & (np.mod(Y, 5) < 3 + (X % 2))
+    rel = (X + 0.5 - fx0) / np.maximum(1, fx1 - fx0)
+    # a lit west edge (5 then 4), the body in sheets (3 with 4 streaks), the shaded east edge
+    t = np.where(rel < 0.2, 4, np.where(rel > 0.8, 2, 3))
+    t = np.where(X == fx0, 5, t)
+    streak = fall & (rel > 0.15) & (rel < 0.85) & (h01(hashu(f['id'], 3), X, Y // 6) < 0.45) & (np.mod(Y + X * 3, 6) < 4)
     t = np.where(streak, np.minimum(5, t + 1), t)
-    roll = fall & (Y <= top_row + 1)
-    t = np.where(roll, np.where(Y == top_row, 5, 4), t)
+    gap = fall & (rel > 0.25) & (rel < 0.8) & (h01(hashu(f['id'], 5), X, Y // 4) < 0.12) & ~streak
+    t = np.where(gap, 2, t)
     fr.F[fall] = wf[0]
     fr.T[fall] = t[fall]
     fr.tag[fall] = TAG['water']
+    # foam at the lip: the water rolls over white
+    lip = fall & (Y <= top_row + 2)
+    fr.F[lip] = np.where((h01(hashu(f['id'], 6), X, Y) < 0.6)[lip], FID['snow'], wf[0])
+    fr.T[lip] = np.where(Y[lip] == top_row, 5, 4)
+    # mist where it lands: pale clusters rising over the rock and the pool's edge
+    cx = (f['x0'] + f['x1']) / 2
+    mq = ((X + 0.5 - cx) / (w0 / 2 + 7.0)) ** 2 + ((Y + 0.5 - foot_row) / 9.0) ** 2
+    mist = (mq <= 1.0) & ~fall & (Y <= foot_row + 3) & (h01(hashu(f["id"], 7), X // 2, Y // 2) < 0.65 * (1.2 - mq)) \
+        & np.isin(fr.tag, (TAG['rock'], TAG['recess'], TAG['wet'], TAG['ground'], TAG['leaf']))
+    fr.F[mist] = np.where(mq[mist] < 0.45, FID['snow'], FID['water'])
+    fr.T[mist] = np.where(mq[mist] < 0.45, 3, 5)
+    fr.tag[mist] = TAG['foam']
     # the spring: a seep of moss and leaves at the head of a spring fall
     if f['kind'] == 'spring':
         seep = (K == FACEK) & (P['PY'] == f['py']) & (np.abs(Y - top_row + 1) <= 1) & (X >= fx0 - 3) & (X < fx1 + 3) & ~fall
@@ -1673,41 +1816,51 @@ def _pool(fr: Frame, world: World, f: dict, foot_row: int, cx: float, w0: int):
     K = P['kind']
     X, Y = fr.X, fr.Y
     hh = f['id']
-    rx = w0 / 2 + 9 + 5 * h01(hh, 11)
-    ry = 6.5 + 2.5 * h01(hh, 12)
-    cy = foot_row + ry * 0.7
+    rx = w0 / 2 + 11 + 4 * h01(hh, 11)
+    ry = 8.0 + 3.0 * h01(hh, 12)
+    cy = foot_row + ry * 0.75
     q = ((X + 0.5 - cx) / rx) ** 2 + ((Y + 0.5 - cy) / ry) ** 2
-    q = q + 0.22 * (2 * vnoise2(X, Y, 5.0, hashu(hh, 13)) - 1)
+    q = q + 0.14 * (2 * vnoise2(X, Y, 5.0, hashu(hh, 13)) - 1)
     ground = (K == TOP) & (P['ZH'] == f['h2']) & (P['ST'] == 0)
     pool = ground & (q <= 1.0) & (Y > foot_row)
     if not pool.any():
         return
     wf = sibs('water')
-    t = np.where(q < 0.35, 1, np.where(q < 0.7, 2, 3))
+    t = np.where(q < 0.3, 1, np.where(q < 0.65, 2, 3))
     t = np.where(Y <= foot_row + 2, 1, t)
     lx, ly = cx, foot_row + 1.5
     rr = np.sqrt(((X + 0.5 - lx) / 2.0) ** 2 + (Y + 0.5 - ly) ** 2)
-    for i, r0 in enumerate((3.4, 6.6)):
+    for i, r0 in enumerate((4.0, 7.5)):
         broken = vnoise1((X + 0.5 - lx) + 40 * i, 3.0, hashu(hh, 19, i)) > 0.3
         ring = (rr >= r0) & (rr < r0 + 1.0) & (Y > ly + 1) & broken
         t = np.where(ring, 4, t)
         t = np.where((rr >= r0 + 1.0) & (rr < r0 + 2.0) & (Y > ly + 1) & broken & ~ring, np.maximum(1, t - 1), t)
-    foam = (np.abs(X + 0.5 - lx) <= w0 / 2 + 1.5 + (Y - foot_row) * 0.5) & (Y <= foot_row + 3) & (h01(hashu(hh, 14), X // 2, Y) < 0.75)
-    t = np.where(foam, 5, t)
-    gl = (h01(hashu(hh, 15), X // 2, Y) < 0.05) & (q < 0.8) & (q > 0.4)
+    # foam where the fall lands: white clumps in pairs, thinning outwards
+    fq = ((X + 0.5 - lx) / (w0 / 2 + 3.0)) ** 2 + ((Y + 0.5 - ly) / 3.5) ** 2
+    foam = (fq <= 1.0) & (h01(hashu(hh, 14), X // 2, Y) < 0.85 - 0.5 * fq)
+    t = np.where(foam, np.where(fq < 0.5, 5, 4), t)
+    gl = (h01(hashu(hh, 15), X // 2, Y) < 0.05) & (q < 0.8) & (q > 0.4) & ~foam
     t = np.where(gl, 5, t)
     fr.F[pool] = np.where(foam[pool], FID['snow'], wf[0])
     fr.T[pool] = t[pool]
     fr.tag[pool] = TAG['water']
-    bank = ground & ~pool & (q <= 1.45) & (Y > foot_row)
+    bank = ground & ~pool & (q <= 1.5) & (Y > foot_row)
     ef = sibs('earth')
     fr.F[bank] = ef[2]
     fr.T[bank] = np.where(q[bank] < 1.2, 2, 3)
     fr.tag[bank] = TAG['path']
-    stones = bank & (h01(hashu(hh, 16), X // 2, Y // 2) < 0.22)
-    sf = sibs('stone')
-    fr.F[stones] = sf[(hashu(hh, 17, X // 2) % np.uint32(3)).astype(np.int64)[stones]]
-    fr.T[stones] = np.where(nb(stones, -1, 0)[stones], 2, 4)
+    # a rim of stones round the pool's near side, each a small boulder
+    rim_ok = ground | (fr.tag == TAG['path'])
+    n = int(6 + rx / 2)
+    for i in range(n):
+        u = (i + 0.5 + 0.4 * (h01(hh, 20, i) - 0.5)) / n
+        ang = np.pi * (0.05 + 0.9 * u)
+        sx = cx + np.cos(ang) * rx * 1.08
+        sy = cy + np.sin(ang) * ry * 1.08
+        if sy <= foot_row + 1:
+            continue
+        r0 = 1.8 + 1.2 * h01(hh, 21, i)
+        boulder(fr, sx, sy, r0, r0 * 0.75, hashu(hh, 22, i), rim_ok, 'stone', moss=0.25)
     fr.pools = getattr(fr, 'pools', []) + [(cx, cy, rx, ry, f['h2'])]
 
 
