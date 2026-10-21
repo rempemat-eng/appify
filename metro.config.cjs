@@ -1,3 +1,4 @@
+const path = require('path');
 /** @type {import('expo/metro-config').MetroConfig} */
 const { getDefaultConfig } = require('expo/metro-config');
 const { withUniwindConfig } = require('uniwind/metro');
@@ -9,6 +10,14 @@ const unique = (values) => Array.from(new Set(values));
 // Expo already includes the common source and asset extensions. Keep only the
 // extra web-facing assets this template needs.
 config.resolver.assetExts = unique([...config.resolver.assetExts, 'woff', 'woff2', 'ico']);
+
+// prototypes/ holds archived fight prototypes (prototypes/README.md). They are standalone pages,
+// never part of the app: keep Metro from crawling or bundling anything in them.
+const escapeForRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const prototypesDir = new RegExp(
+  `^${escapeForRegExp(path.join(__dirname, 'prototypes'))}([\\\\/].*)?$`,
+);
+config.resolver.blockList = [...[config.resolver.blockList ?? []].flat(), prototypesDir];
 
 const firstHeaderValue = (value) => {
   if (!value) return undefined;
