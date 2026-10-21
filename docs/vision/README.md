@@ -18,6 +18,7 @@ This folder is the shared brief for anyone building NapAttack: Matt, Claude and 
 | [asset-ledger.md](asset-ledger.md)           | **The asset ledger (20 Oct):** which old pictures may go into the new world (KEEP), which are redone first (REWORK), which retire; `npm run check:assets`                                                                                                                                                          |
 | [world-audit.md](world-audit.md)             | **The whole-world audit (20 Oct):** every 32 px cell of the world measured against the standards (detail, soft grid, hard edges, style, size, ledger, benchmark) and the gate a rebuilt region must pass; `npm run check:world-audit`                                                                              |
 | [region-canvas.md](region-canvas.md)         | **The world canvas, step 1 (20 Oct):** the continent as chunks composited into 256 px world tiles (the station, the moon and the hut as planes); per-tile data, deduplication and the cache; how a lane paints a chunk; tile scale and memory; step 2's renderer and walk behind `WORLD_CANVAS` (measured); step 3 |
+| [fights.md](fights.md)                       | **Fights (decided 21 Oct 10:03):** fights stay Pokémon-style, on today's battle screen with turn-based cards; the folk fights with the Grassling as familiar; fight content waits until the world's look is settled; the in-world and real-time prototypes are archived in `prototypes/`                           |
 
 ## Matt's direction (October 2026)
 

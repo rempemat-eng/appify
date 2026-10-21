@@ -1,0 +1,1801 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#1b2a1c">
+<title>NapAttack Turns</title>
+<style>
+  :root { --bg: #1b2a1c; }
+  html, body { margin: 0; height: 100%; background: var(--bg); overflow: hidden; overscroll-behavior: none; }
+  body { touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+  canvas { display: block; position: fixed; inset: 0; image-rendering: pixelated; image-rendering: crisp-edges; }
+  #safe { position: fixed; visibility: hidden; pointer-events: none;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+  #boot { position: fixed; inset: 0; display: grid; place-items: center; color: #f3e6c8; font: 14px monospace; }
+</style>
+</head>
+<body>
+<canvas id="c" aria-label="NapAttack fight prototype: in-world turns"></canvas>
+<div id="safe"></div>
+<div id="boot">loading the woodland...</div>
+<script>
+'use strict';
+const A = __ASSETS__;
+
+/* ============================================================================================
+   NapAttack prototype: in-world, turn-based fights (MOCK). One file, canvas, touch first.
+   World art is drawn at 1 art px on an offscreen canvas, then scaled by a whole number of
+   device px (k) so the pixel grid never blurs. Interface is drawn in device px on top.
+   ============================================================================================ */
+
+// ---------- settings (per viewer, in browser storage, safe if storage is missing) -------------
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('napattack-turns:' + k); return v === null ? d : JSON.parse(v); } catch (e) { return d; } },
+  set(k, v) { try { localStorage.setItem('napattack-turns:' + k, JSON.stringify(v)); } catch (e) { /* private mode */ } },
+};
+const prefersReduced = (() => { try { return matchMedia('(prefers-reduced-motion: reduce)').matches; } catch (e) { return false; } })();
+const Q = new URLSearchParams(location.search);
+const settings = {
+  timing: store.get('timing', 'TAP'),            // TAP (160 ms), RELAXED (320 ms), OFF
+  shake: store.get('shake', !prefersReduced),
+  reduced: store.get('reduced', prefersReduced),
+};
+if (Q.get('reduced') === '1') settings.reduced = true;
+const saveSettings = () => { store.set('timing', settings.timing); store.set('shake', settings.shake); store.set('reduced', settings.reduced); };
+const WINDOW = { TAP: 160, RELAXED: 320, OFF: 0 };
+
+// ---------- random (seedable for tests) -----------------------------------------------------
+let seed = Number(Q.get('seed')) || (Date.now() % 100000) + 1;
+const rand = () => { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; };
+const ri = (a, b) => a + Math.floor(rand() * (b - a + 1));
+
+// ---------- canvas and layout --------------------------------------------------------------
+const cv = document.getElementById('c');
+const ctx = cv.getContext('2d');
+const art = document.createElement('canvas');
+const actx = art.getContext('2d');
+let dpr = 1, SW = 402, SH = 874, W = 402, H = 874;
+let safe = { t: 0, r: 0, b: 0, l: 0 };
+let U = 1;  // device px per frame unit (1.33 css px)
+function resize() {
+  dpr = Math.max(1, Math.min(3, window.devicePixelRatio || 1));
+  SW = window.innerWidth; SH = window.innerHeight;
+  W = Math.round(SW * dpr); H = Math.round(SH * dpr);
+  cv.width = W; cv.height = H; cv.style.width = SW + 'px'; cv.style.height = SH + 'px';
+  const cs = getComputedStyle(document.getElementById('safe'));
+  safe = { t: parseFloat(cs.paddingTop) || 0, r: parseFloat(cs.paddingRight) || 0, b: parseFloat(cs.paddingBottom) || 0, l: parseFloat(cs.paddingLeft) || 0 };
+  U = Math.max(1, Math.round(dpr * 4 / 3));
+  if (cam && !camAnim) cam.k = mode === 'walk' ? kWalk() : kFight();
+}
+const d = (v) => Math.round(v * dpr);           // css px -> device px
+const kWalk = () => Math.max(1, Math.ceil(H / 576), Math.ceil(W / 320));
+const kFight = () => Math.max(kWalk() + 1, Math.floor(W / 120));
+
+// ---------- images ---------------------------------------------------------------------------
+function loadImg(src) { return new Promise((res, rej) => { const i = new Image(); i.onload = () => res(i); i.onerror = rej; i.src = src; }); }
+const IMG = {};
+async function loadAll() {
+  const jobs = [['ground', A.ground], ['flow', A.flow], ['bramble', A.bramble.img], ['moss', A.moss.img],
+    ['glare', A.glare.img], ['storm', A.storm.img], ['icons', A.icons.img]];
+  for (const [k, v] of Object.entries(A.props)) jobs.push(['prop:' + k, v]);
+  await Promise.all(jobs.map(async ([k, s]) => { IMG[k] = await loadImg(s); }));
+  const fonts = [['PxBold', A.pxBold], ['PxMed', A.pxMed], ['PxDisplay', A.pxDisplay]];
+  await Promise.all(fonts.map(async ([n, s]) => { try { const f = new FontFace(n, `url(${s})`); await f.load(); document.fonts.add(f); } catch (e) { /* fallback font */ } }));
+  // a water mask from the ground's own blue pixels (for reflections)
+  const g = IMG.ground;
+  const m = document.createElement('canvas'); m.width = g.width; m.height = g.height;
+  const mc = m.getContext('2d'); mc.drawImage(g, 0, 0);
+  const id = mc.getImageData(0, 0, m.width, m.height);
+  for (let i = 0; i < id.data.length; i += 4) {
+    const r = id.data[i], gg = id.data[i + 1], b = id.data[i + 2];
+    const water = b > r + 40 && b > gg + 10;
+    id.data[i] = id.data[i + 1] = id.data[i + 2] = 255; id.data[i + 3] = water ? 255 : 0;
+  }
+  mc.putImageData(id, 0, 0);
+  IMG.waterMask = m;
+}
+
+// ---------- the walk grid (4 px cells) -------------------------------------------------------
+const GW = 80, GH = 144, CELL = 4;
+const walkable = (x, y) => { const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL); return cx >= 0 && cy >= 0 && cx < GW && cy < GH && A.walk[cy][cx] === '.'; };
+const isWater = (x, y) => { const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL); return cx >= 0 && cy >= 0 && cx < GW && cy < GH && A.water[cy][cx] === 'w'; };
+const BR = A.bridge;
+const onBridge = (x, y) => x >= BR[0] - 1 && x <= BR[2] + 1 && y >= BR[1] && y <= BR[3];
+function nearestOpen(x, y, maxR = 8) {
+  const cx = Math.floor(x / CELL), cy = Math.floor(y / CELL);
+  for (let r = 0; r <= maxR; r++) for (let dy = -r; dy <= r; dy++) for (let dx = -r; dx <= r; dx++) {
+    if (Math.max(Math.abs(dx), Math.abs(dy)) !== r) continue;
+    const X = cx + dx, Y = cy + dy;
+    if (X >= 0 && Y >= 0 && X < GW && Y < GH && A.walk[Y][X] === '.') return [X * CELL + 2, Y * CELL + 2];
+  }
+  return null;
+}
+function lineClear(x0, y0, x1, y1) {
+  const n = Math.ceil(Math.hypot(x1 - x0, y1 - y0) / 2);
+  for (let i = 0; i <= n; i++) { const t = n ? i / n : 0; if (!walkable(x0 + (x1 - x0) * t, y0 + (y1 - y0) * t)) return false; }
+  return true;
+}
+function findPath(sx, sy, tx, ty) {
+  const s = nearestOpen(sx, sy, 3), t = nearestOpen(tx, ty, 8);
+  if (!s || !t) return null;
+  const S = [Math.floor(s[0] / CELL), Math.floor(s[1] / CELL)], T = [Math.floor(t[0] / CELL), Math.floor(t[1] / CELL)];
+  const key = (x, y) => y * GW + x;
+  const g = new Map(), came = new Map(), open = [[0, S[0], S[1]]];
+  g.set(key(S[0], S[1]), 0);
+  const h = (x, y) => Math.hypot(x - T[0], y - T[1]);
+  let found = false, iter = 0;
+  while (open.length && iter++ < 20000) {
+    let bi = 0; for (let i = 1; i < open.length; i++) if (open[i][0] < open[bi][0]) bi = i;
+    const [, x, y] = open.splice(bi, 1)[0];
+    if (x === T[0] && y === T[1]) { found = true; break; }
+    for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+      if (!dx && !dy) continue;
+      const X = x + dx, Y = y + dy;
+      if (X < 0 || Y < 0 || X >= GW || Y >= GH || A.walk[Y][X] !== '.') continue;
+      if (dx && dy && (A.walk[y][X] !== '.' || A.walk[Y][x] !== '.')) continue;
+      const ng = g.get(key(x, y)) + (dx && dy ? 1.414 : 1);
+      if (ng < (g.get(key(X, Y)) ?? Infinity)) { g.set(key(X, Y), ng); came.set(key(X, Y), key(x, y)); open.push([ng + h(X, Y), X, Y]); }
+    }
+  }
+  if (!found) return null;
+  const pts = []; let k = key(T[0], T[1]);
+  while (k !== undefined) { pts.push([(k % GW) * CELL + 2, Math.floor(k / GW) * CELL + 2]); k = came.get(k); }
+  pts.reverse();
+  pts[pts.length - 1] = [t[0], t[1]];
+  // string pulling: keep only the turns the line of sight needs
+  const out = [pts[0]]; let i = 0;
+  while (i < pts.length - 1) {
+    let j = pts.length - 1;
+    while (j > i + 1 && !lineClear(pts[i][0], pts[i][1], pts[j][0], pts[j][1])) j--;
+    out.push(pts[j]); i = j;
+  }
+  return out.slice(1);
+}
+
+// ---------- clocks, timers, tweens ---------------------------------------------------------
+let gt = 0, hitStop = 0, lastReal = 0;
+const timers = [], tweens = [];
+const wait = (ms) => new Promise((r) => timers.push({ t: gt + ms, r }));
+const nowR = () => performance.now();
+function tween(ms, fn, ease = easeInOut) {
+  return new Promise((r) => { const tw = { t0: gt, ms: Math.max(1, ms), fn, ease, r }; tweens.push(tw); fn(0); });
+}
+const realWaiters = [];
+const waitReal = (ms) => new Promise((r) => realWaiters.push({ t: nowR() + ms, r }));
+const easeInOut = (t) => t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+const easeOut = (t) => 1 - Math.pow(1 - t, 3);
+const easeBack = (t) => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(t - 1, 3) + c1 * Math.pow(t - 1, 2); };
+const lerp = (a, b, t) => a + (b - a) * t;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+function step(dtReal) {
+  if (hitStop > 0) { hitStop -= dtReal; return; }
+  gt += dtReal;
+  for (let i = timers.length - 1; i >= 0; i--) if (timers[i].t <= gt) { const t = timers.splice(i, 1)[0]; t.r(); }
+  for (let i = tweens.length - 1; i >= 0; i--) {
+    const tw = tweens[i]; const p = Math.min(1, (gt - tw.t0) / tw.ms);
+    tw.fn(tw.ease(p)); if (p >= 1) { tweens.splice(i, 1); tw.r(); }
+  }
+}
+
+// ---------- characters ---------------------------------------------------------------------
+const BA = A.bramble;
+const bram = {
+  x: 126, y: 152, face: 'S', act: 'idle', t0: 0, loop: true, path: [], hp: 80, max: 80,
+  aim: 0, guard: false, energy: 1, hop: 0, sit: false, ox: 0, oy: 0,
+};
+function anim(ch, act, face, loop = false) {
+  ch.act = act; if (face) ch.face = face; ch.t0 = gt; ch.loop = loop;
+  if (loop) return Promise.resolve();
+  const ms = BA.actions[act].reduce((a, b) => a + b, 0);
+  return wait(ms);
+}
+function bramFrame() {
+  const ms = BA.actions[bram.act]; let n = 0;
+  if (settings.reduced && (bram.act === 'idle' || bram.act === 'sleep')) n = 0;
+  else {
+    const total = ms.reduce((a, b) => a + b, 0);
+    let t = gt - bram.t0; if (bram.loop) t %= total; else if (t >= total) t = total - 1;
+    let acc = 0; for (n = 0; n < ms.length; n++) { acc += ms[n]; if (t < acc) break; }
+    n = Math.min(n, ms.length - 1);
+  }
+  let face = bram.face;
+  const facings = { attack: 'EW', cast: 'EW', hit: 'EW', faint: 'EW', lie: 'EW', sleep: 'EW', wake: 'EW', happy: 'S', victory: 'S' }[bram.act];
+  if (facings && !facings.includes(face)) face = facings.includes('E') ? (face === 'W' ? 'W' : 'E') : 'S';
+  return `${bram.act}_${face}_${n}`;
+}
+const relFrame = (act, n) => BA.actions[act].slice(0, n).reduce((a, b) => a + b, 0);
+
+const moss = { x: 134, y: 150, face: 'E', moving: false, t0: 0, hop: 0, act: 'walk', mode: 'follow', tx: 0, ty: 0 };
+const trail = [];  // Bramble's recent foot points, for Moss to follow a step behind
+
+// foes: field Glares and the arena's Static Storm (its knot, then a core and two shards)
+let foes = [];
+function makeGlare() {
+  return { kind: 'glare', name: 'GLARE', x: 304, y: 270, hp: 48, max: 48, state: 'drift', route: glareRoute(), ri: 0,
+    linger: 0, alpha: 0, dx: 0, dy: 0, big: false, squint: 0, flash: 0, guard: false, intent: null, calm: false,
+    fold: 0, cool: 0, hoverH: 14, motes: [] };
+}
+function glareRoute() {
+  // drifts in from the east along the stream, lingers near the path, then drifts on west
+  return [[250, 276], [208, 282], [172, 278, 9000], [150, 274], [118, 282], [84, 286], [46, 290], [10, 286]];
+}
+
+// ---------- the world's markers --------------------------------------------------------------
+const RING = { cx: 80, cy: 410, rx: 30, ry: 16 };       // the stone ring's grass (the arena)
+const SIGN = { x: 163, y: 366 };
+let storm = null;  // set when the arena holds its special foe
+let stormBack = 0;
+function makeStorm() {
+  return { kind: 'knot', name: 'STATIC STORM', x: 66, y: 394, hp: 100, max: 100, state: 'wait', alpha: 1, dx: 0, dy: 0,
+    big: false, squint: 0, flash: 0, guard: false, intent: null, calm: false, fold: 0, hoverH: 16, phase: 1, cycle: 0, motes: [] };
+}
+
+// ---------- game state -----------------------------------------------------------------------
+let mode = 'boot';            // boot, walk, intro, fight, outro
+let fight = null;
+let ui = { hud: 1, fight: 0 };
+let overlay = null;            // 'howto' | 'settings' | null
+let toasts = [], pops = [], fx = [], banners = [];
+let nextGlareAt = 2500;
+let shake = { a: 0, t: 0 };
+let screenFlash = 0;
+const cam = { x: 160, y: 200, k: 5 };
+let camAnim = null;
+let ringSeen = false;
+const stats = { nice: 0, none: 0, missed: 0 };
+
+// ---------- input ----------------------------------------------------------------------------
+let buttons = [];            // rebuilt each frame: {id, x, y, w, h, on, fn}
+let pressed = null;          // {id, x, y}
+let downInfo = null;
+cv.addEventListener('pointerdown', (e) => {
+  e.preventDefault();
+  const x = e.clientX, y = e.clientY;
+  // a timed tap counts anywhere on screen, once, during a shot
+  if (fight && fight.timing && fight.timing.open && fight.timing.tap === null) { fight.timing.tap = nowR(); return; }
+  const b = hitButton(x, y);
+  pressed = b ? { id: b.id } : null;
+  downInfo = { x, y, t: nowR(), b };
+});
+cv.addEventListener('pointerup', (e) => {
+  e.preventDefault();
+  const x = e.clientX, y = e.clientY;
+  const di = downInfo; downInfo = null; pressed = null;
+  if (!di) return;
+  const b = hitButton(x, y);
+  if (di.b) { if (b && b.id === di.b.id && b.on) b.fn(); return; }
+  if (Math.hypot(x - di.x, y - di.y) > 18) return;
+  if (overlay) return;
+  worldTap(x, y);
+});
+cv.addEventListener('pointercancel', () => { pressed = null; downInfo = null; });
+function hitButton(x, y) {
+  for (let i = buttons.length - 1; i >= 0; i--) { const b = buttons[i]; if (x >= b.x && x <= b.x + b.w && y >= b.y && y <= b.y + b.h) return b; }
+  return null;
+}
+function btn(id, x, y, w, h, on, fn) { buttons.push({ id, x, y, w, h, on, fn }); return pressed && pressed.id === id && on; }
+
+// world <-> screen (css px)
+let view = { ix: 0, iy: 0, offX: 0, offY: 0, k: 5 };
+const toScreen = (x, y) => [((x - view.ix) * view.k + view.offX) / dpr, ((y - view.iy) * view.k + view.offY) / dpr];
+const toWorld = (sx, sy) => [(sx * dpr - view.offX) / view.k + view.ix, (sy * dpr - view.offY) / view.k + view.iy];
+
+function worldTap(sx, sy) {
+  const [wx, wy] = toWorld(sx, sy);
+  if (mode === 'walk') {
+    // a tap on a Glare or the Storm walks to meet it (hit area at least 44 css px)
+    const rad = Math.max(14, 24 / (view.k / dpr));
+    for (const f of foes) if (f.state === 'drift' && f.alpha > 0.5 && Math.hypot(wx - f.x, wy - f.y) < rad) { walkTo(f.x, f.y + f.hoverH); return; }
+    if (storm && storm.state === 'wait' && Math.hypot(wx - storm.x, wy - storm.y) < rad + 8) { walkTo(104, 414); return; }
+    walkTo(wx, wy, true);
+    return;
+  }
+  if (mode === 'fight' && fight && fight.awaiting) {
+    const rad = Math.max(12, 24 / (view.k / dpr));
+    // tap a foe to aim at it
+    for (const f of fight.foes) if (f.hp > 0 && Math.hypot(wx - f.x, wy - f.y) < rad + 4) { fight.target = f; return; }
+    // tap a marked standing spot to choose a step there
+    for (const s of fight.spots) if (Math.hypot(wx - s.x, wy - s.y) < rad) { fight.sel = { kind: 'step', spot: s }; return; }
+  }
+}
+function walkTo(x, y, mark) {
+  const p = findPath(bram.x, bram.y, x, y);
+  if (!p || !p.length) return;
+  bram.path = p;
+  if (mark) { const e = p[p.length - 1]; fx.push({ type: 'tapmark', x: e[0], y: e[1], t0: gt, ms: 500 }); }
+}
+
+// ---------- the update loop -------------------------------------------------------------------
+function update(dt) {
+  // Bramble walks his path
+  if (bram.path.length && (mode === 'walk' || bram.scripted)) {
+    const [tx, ty] = bram.path[0];
+    const dx = tx - bram.x, dy = ty - bram.y, dist = Math.hypot(dx, dy);
+    let remain = dist; for (let i = 1; i < bram.path.length; i++) remain += Math.hypot(bram.path[i][0] - bram.path[i - 1][0], bram.path[i][1] - bram.path[i - 1][1]);
+    const run = remain > 40;
+    const sp = (run ? 50 : 20) * dt / 1000;
+    const face = Math.abs(dx) > Math.abs(dy) * 0.9 ? (dx > 0 ? 'E' : 'W') : (dy > 0 ? 'S' : 'N');
+    const act = run ? 'run' : 'walk';
+    if (bram.act !== act) anim(bram, act, face, true); else bram.face = face;
+    if (dist <= sp) { bram.x = tx; bram.y = ty; bram.path.shift(); } else { bram.x += dx / dist * sp; bram.y += dy / dist * sp; }
+    if (!bram.path.length) anim(bram, 'idle', bram.face === 'N' ? 'N' : bram.face, true);
+  }
+  // Moss's trail
+  const last = trail[trail.length - 1];
+  if (!last || Math.hypot(last[0] - bram.x, last[1] - bram.y) >= 1) trail.push([bram.x, bram.y]);
+  if (trail.length > 200) trail.shift();
+  if (moss.mode === 'follow') {
+    let acc = 0, target = trail[0];
+    for (let i = trail.length - 1; i > 0; i--) { acc += Math.hypot(trail[i][0] - trail[i - 1][0], trail[i][1] - trail[i - 1][1]); if (acc >= 17) { target = trail[i - 1]; break; } }
+    if (acc < 17) target = null;
+    // a step behind and a little to the side, so Bramble never hides it
+    if (target) moveMoss(target[0] + 6, target[1] + 3, dt, 60);
+    else moss.moving = false;
+  } else if (moss.mode === 'place') {
+    moveMoss(moss.tx, moss.ty, dt, 40);
+  }
+  // foes drift
+  for (const f of foes) updateFoe(f, dt);
+  foes = foes.filter((f) => f.state !== 'gone');
+  if (mode === 'walk') {
+    if (gt > nextGlareAt && !foes.some((f) => f.kind === 'glare')) spawnGlare();
+    // meeting a Glare starts a fight right there
+    for (const f of foes) {
+      if (f.state === 'drift' && f.alpha > 0.8 && gt > f.cool && Math.hypot(bram.x - f.x, bram.y - (f.y + f.hoverH)) < 22) { startField(f); break; }
+    }
+    // the ring: step inside to spar with the Storm
+    if (mode === 'walk' && storm && storm.state === 'wait') {
+      const inRing = ((bram.x - RING.cx) / RING.rx) ** 2 + ((bram.y - RING.cy) / RING.ry) ** 2 < 1;
+      if (inRing) startArena();
+    }
+    if (!ringSeen && Math.hypot(bram.x - SIGN.x, bram.y - SIGN.y) < 60) {
+      ringSeen = true; banner('THE STONE RING', 'A STATIC STORM WAITS INSIDE. STEP IN TO SPAR, OR WALK ON.', 'night', 3600);
+    }
+    if (!storm && gt > stormBack) { storm = makeStorm(); }
+  }
+  if (storm && !foes.includes(storm)) foes.push(storm);
+  // camera
+  if (camAnim) {
+    const p = Math.min(1, (gt - camAnim.t0) / camAnim.ms), e = easeInOut(p);
+    cam.x = lerp(camAnim.from.x, camAnim.to.x, e); cam.y = lerp(camAnim.from.y, camAnim.to.y, e);
+    cam.k = Math.round(lerp(camAnim.from.k, camAnim.to.k, e));
+    if (p >= 1) { const r = camAnim.r; camAnim = null; r(); }
+  } else if (mode === 'walk') {
+    cam.k = kWalk();
+    const t = Math.min(1, dt * 0.006);
+    cam.x = lerp(cam.x, bram.x, t); cam.y = lerp(cam.y, bram.y - 12, t);
+  }
+  clampCam();
+  // ui slides
+  const uiT = Math.min(1, dt / (settings.reduced ? 1 : 220));
+  const hudWant = mode === 'walk' && !camAnim ? 1 : 0, fightWant = (mode === 'fight') ? 1 : 0;
+  ui.hud = settings.reduced ? hudWant : clamp(ui.hud + Math.sign(hudWant - ui.hud) * uiT, 0, 1);
+  ui.fight = settings.reduced ? fightWant : clamp(ui.fight + Math.sign(fightWant - ui.fight) * uiT, 0, 1);
+  if (shake.a > 0) shake.a = Math.max(0, shake.a - dt * 0.03);
+  if (screenFlash > 0) screenFlash = Math.max(0, screenFlash - dt / 160);
+}
+function clampCam() {
+  const vw = W / cam.k, vh = H / cam.k;
+  cam.x = vw >= 320 ? 160 : clamp(cam.x, vw / 2, 320 - vw / 2);
+  cam.y = vh >= 576 ? 288 : clamp(cam.y, vh / 2, 576 - vh / 2);
+}
+function camTo(x, y, k, ms) {
+  if (settings.reduced) ms = 1;
+  return new Promise((r) => { camAnim = { from: { x: cam.x, y: cam.y, k: cam.k }, to: { x, y, k }, t0: gt, ms, r }; });
+}
+function moveMoss(tx, ty, dt, speed) {
+  const dx = tx - moss.x, dy = ty - moss.y, dist = Math.hypot(dx, dy);
+  if (dist > 60) { moss.x = tx; moss.y = ty; return; }
+  if (dist < 0.6) { if (moss.moving) { moss.moving = false; } return; }
+  const sp = Math.min(dist, speed * dt / 1000 * (dist > 20 ? 1.6 : 1));
+  moss.x += dx / dist * sp; moss.y += dy / dist * sp;
+  if (Math.abs(dx) > 0.5) moss.face = dx > 0 ? 'E' : 'W';
+  if (!moss.moving) { moss.moving = true; moss.t0 = gt; }
+}
+
+function spawnGlare() {
+  const g = makeGlare();
+  foes.push(g);
+  banner('A GLARE DRIFTED IN FROM THE CITY', 'IT DRIFTS ALONG THE STREAM. MEET IT TO SPAR, OR WALK ON.', 'night', 3400);
+}
+function updateFoe(f, dt) {
+  if (f.kind === 'glare' && f.state === 'drift') {
+    f.alpha = Math.min(1, f.alpha + dt / 900);
+    const wp = f.route[f.ri];
+    if (!wp) { f.alpha -= dt / 600; if (f.alpha <= 0) { f.state = 'gone'; nextGlareAt = gt + 6000; } return; }
+    if (f.linger > 0) { f.linger -= dt; return; }
+    const dx = wp[0] - f.x, dy = wp[1] - f.y, dist = Math.hypot(dx, dy);
+    const sp = 14 * dt / 1000;
+    if (dist <= sp) { f.x = wp[0]; f.y = wp[1]; f.ri++; if (wp[2]) f.linger = wp[2]; } else { f.x += dx / dist * sp; f.y += dy / dist * sp; }
+  }
+  // drifting motes behind a moving glare
+  if (!settings.reduced && (f.state === 'drift' || f.state === 'home') && rand() < dt / 260) f.motes.push({ x: f.x + ri(4, 10), y: f.y + ri(-2, 8), t0: gt });
+  f.motes = f.motes.filter((m) => gt - m.t0 < 1100);
+}
+
+// ---------- banners, pops, effects ------------------------------------------------------------
+function banner(title, sub, tone = 'night', ms = 2400) { banners = banners.filter((b) => b.title !== title); banners.push({ title, sub, tone, t0: gt, ms }); }
+function pop(x, y, text, color = '#FFFDF5', size = 16, opt = {}) { pops.push({ x, y, text, color, size, t0: gt, ms: opt.ms || 900, rise: opt.rise ?? 14, kind: opt.kind || 'num' }); }
+function doShake(a) { if (settings.shake && !settings.reduced) shake.a = Math.max(shake.a, a); }
+function flashScreen(a) { if (!settings.reduced) screenFlash = Math.max(screenFlash, a); }
+
+/* ============================================================================================
+   THE FIGHT ENGINE: today's card engine kept simple (lib/battle.ts, lib/cards.ts)
+   energy +1 a turn (cap 3), a hand of 4 (level 2) drawn from a shuffled deck, one action a turn,
+   pass for energy, guard halves the next hit, the 12-turn limit. Bramble's Steady: end a turn
+   with energy left (or BE STILL, or TAKE COVER) for +1 Aim, at most one a turn, up to 3.
+   ============================================================================================ */
+const LEVEL = 2;
+const CARDS = {
+  loose: { name: 'LOOSE', cost: 1, power: 9, perAim: 4, arrow: true, icon: 'loose', line: '9 + 4 PER AIM' },
+  longshot: { name: 'LONG SHOT', cost: 2, power: 12, perAim: 5, arrow: true, pierce: true, icon: 'longshot', line: '12 + 5 PER AIM, IGNORES GUARD' },
+  cover: { name: 'TAKE COVER', cost: 1, guard: true, icon: 'cover', line: 'GUARD: HALVES THE NEXT HIT. +1 AIM' },
+  stretch: { name: 'STRETCH', cost: 0, power: 8, icon: 'stretch', line: '8, A GUST OF LIGHT' },
+};
+const DECK = ['loose', 'loose', 'loose', 'longshot', 'longshot', 'cover', 'cover', 'stretch', 'stretch'];
+function shuffle(a) { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(rand() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function drawHand(F) {
+  while (F.hand.length < 4) {
+    if (!F.draw.length) { if (!F.discard.length) break; F.draw = shuffle(F.discard); F.discard = []; }
+    F.hand.push(F.draw.pop());
+  }
+}
+const TERRAIN = {
+  bridge: { name: 'FOOTBRIDGE', short: 'BRIDGE', line: 'HIGH AND STEADY: ARROWS +3' },
+  shade: { name: 'TREE SHADE', short: 'SHADE', line: 'OUT OF ITS GLARE: ITS HITS -3' },
+  bank: { name: 'STREAM BANK', short: 'BANK', line: 'COOL WATER: +4 HP EACH TURN' },
+  stone: { name: "STONE'S LEE", short: 'LEE', line: 'IN THE STONE\'S SHELTER: ITS HITS -3' },
+  mark: { name: 'THE MARK', short: 'MARK', line: 'THE RING\'S OPEN GROUND' },
+};
+const TREE_KINDS = new Set(['oak', 'beech', 'birch', 'pine', 'willow', 'hollow_tree']);
+function terrainAt(x, y) {
+  if (fight && fight.kind === 'arena') { const s = fight.spotDefs.find((s) => Math.hypot(s.x - x, s.y - y) < 4); return s ? s.type : 'mark'; }
+  if (onBridge(x, y)) return 'bridge';
+  for (const o of A.objects) {
+    if (!TREE_KINDS.has(o[1])) continue;
+    const tx = o[2] + o[4] / 2, foot = o[3] + o[5];
+    if (Math.abs(x - tx) < 14 && y > foot - 10 && y < foot + 12) return 'shade';
+  }
+  for (let a = 0; a < 8; a++) { const ang = a * Math.PI / 4; if (isWater(x + Math.cos(ang) * 7, y + Math.sin(ang) * 6)) return 'bank'; }
+  return null;
+}
+
+function newFighter() {
+  return { hand: [], draw: shuffle(DECK), discard: [], energy: 1, nextEnergy: 0, banked: false };
+}
+
+// --------- foe intents --------------------------------------------------------------------
+function glareIntent(f) {
+  const r = rand();
+  if (!f.intent) return { type: 'hit', n: 7, name: 'DAZZLE', icon: 'sun' };
+  if (f.intent.type !== 'guard' && r < 0.2) return { type: 'guard', name: 'FLICKER', icon: 'cover', note: 'HALVES YOUR NEXT HIT' };
+  if (f.hp < f.max * 0.6 && !f.healed && r < 0.45) { f.healed = true; return { type: 'heal', n: 6, name: 'GLOW UP', icon: 'sun', note: '+6 BRIGHTNESS' }; }
+  return { type: 'hit', n: 7, name: 'DAZZLE', icon: 'sun' };
+}
+function stormIntent(f) {
+  if (f.kind === 'knot') {
+    const cyc = ['crackle', 'gather', 'sweep', 'shield'][f.cycle++ % 4];
+    if (cyc === 'crackle') return { type: 'hit', n: 6, name: 'CRACKLE', icon: 'sun' };
+    if (cyc === 'shield') return { type: 'guard', name: 'STATIC SHIELD', icon: 'cover', note: 'HALVES YOUR NEXT HIT' };
+    if (cyc === 'gather') return { type: 'gather', name: 'GATHER', icon: 'energy', note: 'A SWEEP COMES NEXT' };
+    return { type: 'sweep', n: 18, name: 'STORM SWEEP', icon: 'energy', big: true, note: 'STEP OUT OF THE LANE OR TAKE COVER' };
+  }
+  if (f.kind === 'core') {
+    const cyc = ['charge', 'charge', 'overload', 'crackle'][f.cycle++ % 4];
+    if (cyc === 'charge') { const left = f.cycle % 4 === 1 ? 2 : 1; return { type: 'charge', name: 'CHARGING', icon: 'energy', count: left, note: `OVERLOAD IN ${left + 1}`, big: true }; }
+    if (cyc === 'overload') return { type: 'hit', n: 20, name: 'OVERLOAD', icon: 'energy', big: true, note: 'TAKE COVER OR LET MOSS HUM' };
+    return { type: 'hit', n: 6, name: 'CRACKLE', icon: 'sun' };
+  }
+  return { type: 'hit', n: 4, name: 'ZAP', icon: 'sun' };  // a shard
+}
+const chooseIntent = (f) => (f.kind === 'glare' ? glareIntent(f) : stormIntent(f));
+function shielded(f) { return f.kind === 'core' && fight && fight.foes.some((s) => s.kind === 'shard' && s.hp > 0); }
+function incoming(f, it) {
+  if (!it || (it.type !== 'hit' && it.type !== 'sweep')) return null;
+  let n = it.n;
+  if (f.kind === 'glare' && isWater(f.x, f.y + f.hoverH)) n += 2;
+  const ter = terrainAt(bram.x, bram.y);
+  if (ter === 'shade' || ter === 'stone') n -= 3;
+  return Math.max(1, n);
+}
+
+function hitRange(cardId, target) {
+  const c = CARDS[cardId];
+  if (!c.power) return null;
+  let base = c.power + (c.perAim ? c.perAim * bram.aim : 0) + 2 * LEVEL;
+  if (c.arrow && terrainAt(bram.x, bram.y) === 'bridge') base += 3;
+  const halved = !c.pierce && target && (target.guard || shielded(target));
+  const m = halved ? 0.5 : 1;
+  return { lo: Math.max(1, Math.floor(base * m)), hi: Math.max(1, Math.floor((base + 3) * m)), halved };
+}
+
+/* ---------------------------------- starting fights ---------------------------------------- */
+function framingFor(points) {
+  const k = kFight();
+  const xs = points.map((p) => p[0]), ys = points.map((p) => p[1]);
+  const cx = (Math.min(...xs) + Math.max(...xs)) / 2, feet = (Math.min(...ys) + Math.max(...ys)) / 2;
+  const vh = H / k;
+  return { x: cx, y: feet + vh * (0.5 - 0.42), k };
+}
+function placeMossBehind() {
+  if (fight && fight.kind === 'arena') { moss.mode = 'place'; moss.tx = 132; moss.ty = 401; return; }
+  const dir = bram.face === 'W' ? 1 : -1;
+  const cands = [[dir * 18, 4], [dir * 17, -6], [dir * 20, 0], [dir * 14, 10], [dir * 12, -10], [-dir * 2, 13]];
+  for (const [dx, dy] of cands) if (walkable(bram.x + dx, bram.y + dy)) { moss.mode = 'place'; moss.tx = bram.x + dx; moss.ty = bram.y + dy; return; }
+  moss.mode = 'place'; moss.tx = bram.x + dir * 18; moss.ty = bram.y + 4;
+}
+function fieldSpots(foe) {
+  const here = terrainAt(bram.x, bram.y);
+  const found = {};
+  for (let dy = -32; dy <= 32; dy += 4) for (let dx = -34; dx <= 34; dx += 4) {
+    const x = Math.round(bram.x + dx), y = Math.round(bram.y + dy);
+    const dist = Math.hypot(dx, dy);
+    if (dist < 13 || dist > 36 || !walkable(x, y)) continue;
+    if (Math.hypot(x - foe.x, y - (foe.y + foe.hoverH)) < 22) continue;
+    if (!lineClear(bram.x, bram.y, x, y)) continue;
+    const t = terrainAt(x, y);
+    if (!t || t === here) continue;
+    if (!found[t] || dist < found[t].d) found[t] = { x, y, type: t, d: dist };
+  }
+  return Object.values(found).sort((a, b) => a.d - b.d).slice(0, 2);
+}
+
+async function startField(g) {
+  mode = 'intro';
+  bram.path = []; bram.scripted = false;
+  g.state = 'fight';
+  const dir = g.x >= bram.x ? 'E' : 'W';
+  anim(bram, 'idle', dir, true);
+  // anticipate: a "!" over Bramble, the walk has stopped
+  pop(bram.x, bram.y - 30, '!', '#3B2A14', 20, { kind: 'bang', ms: 700, rise: 0 });
+  await wait(settings.reduced ? 200 : 420);
+  // where the Glare hovers: beside Bramble, preferring the stream (its light doubles there)
+  let best = null;
+  for (const sx of [1, -1]) for (const ddx of [40, 46, 52]) for (let ddy = -14; ddy <= 14; ddy += 4) {
+    const gx = bram.x + sx * ddx, gy = bram.y + ddy;
+    if (gx < 20 || gx > 300) continue;
+    let score = (isWater(gx, gy) ? 3 : 0) + (sx === (dir === 'E' ? 1 : -1) ? 2 : 0) - Math.abs(ddy) / 10 - Math.abs(ddx - 44) / 10;
+    if (!best || score > best.score) best = { gx, gy, score };
+  }
+  const face = best.gx > bram.x ? 'E' : 'W';
+  anim(bram, 'idle', face, true);
+  fight = { kind: 'field', foes: [g], turn: 1, F: newFighter(), sel: null, spots: [], awaiting: false, target: g,
+    place: placeName(), timing: null, mossPips: 3, mossUsed: false, lane: null, log: '' };
+  bram.aim = 0; bram.guard = false; g.guard = false; g.intent = null;
+  placeMossBehind();
+  const fr = framingFor([[bram.x, bram.y], [best.gx, best.gy]]);
+  await Promise.all([
+    camTo(fr.x, fr.y, fr.k, 520),
+    tween(settings.reduced ? 1 : 600, (t) => { g.x = lerp(g.x, best.gx, t); g.y = lerp(g.y, best.gy - g.hoverH, t); }),
+  ]);
+  g.x = Math.round(best.gx); g.y = Math.round(best.gy - g.hoverH);
+  fight.spots = fieldSpots(g);
+  g.intent = chooseIntent(g);
+  mode = 'fight';
+  banner('YOUR MOVE FIRST', 'ITS NEXT MOVE SHOWS ABOVE ITS HEAD.', 'night', 2200);
+  runFight();
+}
+function placeName() {
+  if (onBridge(bram.x, bram.y) || Math.hypot(bram.x - 130, bram.y - 298) < 40) return 'WOODLAND PATH, BY THE FOOTBRIDGE';
+  if (bram.y < 260) return 'WOODLAND PATH, UNDER THE HOLLOW OAK';
+  return 'WOODLAND PATH, BY THE STREAM';
+}
+
+async function startArena() {
+  mode = 'intro';
+  bram.path = [];
+  const s = storm; s.state = 'fight';
+  pop(bram.x, bram.y - 30, '!', '#3B2A14', 20, { kind: 'bang', ms: 700, rise: 0 });
+  const spotDefs = [
+    { x: 104, y: 414, type: 'mark' },
+    { x: 100, y: 398, type: 'stone' },
+    { x: 98, y: 430, type: 'stone' },
+  ].map((s) => { const p = nearestOpen(s.x, s.y, 3) || [s.x, s.y]; return { x: p[0], y: p[1], type: s.type }; });
+  fight = { kind: 'arena', foes: [s], turn: 1, F: newFighter(), sel: null, spots: [], spotDefs, awaiting: false, target: s,
+    place: 'THE STONE RING, WOODLAND', timing: null, mossPips: 3, mossUsed: false, lane: null };
+  const fr = { x: RING.cx + 2, y: 0, k: kFight() };
+  fr.y = 410 + (H / fr.k) * (0.5 - 0.42);
+  const cp = camTo(fr.x, fr.y, fr.k, 650);
+  // Bramble walks to the mark, Moss behind him
+  bram.scripted = true;
+  bram.path = findPath(bram.x, bram.y, spotDefs[0].x, spotDefs[0].y) || [];
+  while (bram.path.length) await wait(30);
+  bram.scripted = false;
+  bram.x = spotDefs[0].x; bram.y = spotDefs[0].y;
+  anim(bram, 'idle', 'W', true);
+  placeMossBehind();
+  await cp;
+  bram.aim = 0; bram.guard = false; s.guard = false; s.intent = null; s.cycle = 0; s.phase = 1;
+  s.hp = s.max = 100;
+  await stormRoar(s);
+  s.intent = chooseIntent(s);
+  fight.spots = arenaSpots();
+  mode = 'fight';
+  runFight();
+}
+function arenaSpots() { return fight.spotDefs.filter((s) => Math.hypot(s.x - bram.x, s.y - bram.y) > 4); }
+async function stormRoar(s) {
+  banner('THE STATIC STORM', 'A KNOT OF GLARES. IT SPLITS WHEN HALF DIMMED.', 'danger', 2600);
+  s.big = true; doShake(4); flashScreen(0.25);
+  await wait(500); s.big = false; await wait(200);
+}
+
+/* ------------------------------------- the turn loop ----------------------------------------- */
+async function runFight() {
+  const F = fight.F;
+  while (true) {
+    // your turn begins: +1 energy (and anything carried), draw to 4, terrain
+    F.energy = Math.min(3, F.energy + 1 + F.nextEnergy); F.nextEnergy = 0; F.banked = false;
+    drawHand(F);
+    if (terrainAt(bram.x, bram.y) === 'bank' && bram.hp < bram.max) { const h = Math.min(4, bram.max - bram.hp); bram.hp += h; pop(bram.x, bram.y - 28, '+' + h, '#7FBF6A', 14); }
+    if (!fight.target || fight.target.hp <= 0) fight.target = defaultTarget();
+    fight.sel = null; fight.awaiting = true;
+    const action = await new Promise((r) => { fight.resolveAction = r; });
+    fight.awaiting = false; fight.resolveAction = null;
+    if (action.kind === 'leave') return endFight('leave');
+    await playerAct(action);
+    if (fight.over) return;
+    const res = await checkWin();
+    if (res === true) return;
+    if (res === 'split') { fight.turn++; continue; }
+    // Steady: energy left over banks one Aim
+    if (F.energy >= 1) bankAim('STEADY');
+    await wait(260);
+    // the foes' turn: each acts on the intent it showed
+    for (const f of fight.foes.slice()) {
+      if (f.hp <= 0 || fight.over) continue;
+      await foeAct(f);
+      if (bram.hp <= 0) return endFight('tired');
+      await wait(160);
+    }
+    for (const f of fight.foes) if (f.hp > 0) f.intent = chooseIntent(f);
+    fight.turn++;
+    if (fight.turn > 12) return endFight('draw');
+  }
+}
+function defaultTarget() {
+  const live = fight.foes.filter((f) => f.hp > 0);
+  return live.find((f) => f.kind === 'shard') || live[0];
+}
+function bankAim(why) {
+  const F = fight.F;
+  if (F.banked || bram.aim >= 3) return;
+  F.banked = true; bram.aim++;
+  pop(bram.x - 6, bram.y - 34, '+1 AIM' + (why ? ' ' + why : ''), '#F8DD8F', 10, { kind: 'label', ms: 1100 });
+}
+function submit(action) { if (fight && fight.awaiting && fight.resolveAction) fight.resolveAction(action); }
+
+async function playerAct(a) {
+  const F = fight.F;
+  if (a.kind === 'pass') {
+    F.energy = Math.min(3, F.energy + 1);
+    fx.push({ type: 'breath', x: bram.x, y: bram.y - 10, t0: gt, ms: 700 });
+    pop(bram.x + 6, bram.y - 34, '+1 ENERGY', '#A5D77F', 10, { kind: 'label', ms: 1000 });
+    await wait(260); bankAim('');
+    await wait(500);
+    return;
+  }
+  if (a.kind === 'moss') {
+    fight.mossUsed = true;
+    const heal = Math.min(8 * fight.mossPips, bram.max - bram.hp);
+    moss.hum = gt;
+    for (let i = 0; i < 5; i++) fx.push({ type: 'note', x: moss.x + ri(-4, 4), y: moss.y - 14, t0: gt + i * 140, ms: 1100, dx: ri(-6, 6) });
+    await wait(500);
+    bram.hp += heal; bram.guard = true;
+    pop(bram.x, bram.y - 30, '+' + heal, '#7FBF6A', 16);
+    fx.push({ type: 'shieldpop', t0: gt, ms: 300 });
+    await wait(700);
+    return;
+  }
+  if (a.kind === 'step') {
+    const s = a.spot;
+    bram.scripted = true; bram.path = [[s.x, s.y]];
+    while (bram.path.length) await wait(30);
+    bram.scripted = false;
+    const tgt = fight.target || fight.foes[0];
+    anim(bram, 'idle', tgt.x > bram.x ? 'E' : 'W', true);
+    placeMossBehind();
+    fight.spots = fight.kind === 'arena' ? arenaSpots() : fieldSpots(fight.foes[0]);
+    pop(bram.x, bram.y - 34, TERRAIN[terrainAt(bram.x, bram.y)]?.short || 'STEPPED', '#F3E6C8', 10, { kind: 'label', ms: 1100 });
+    await wait(300);
+    return;
+  }
+  // a card
+  const id = a.card, c = CARDS[id];
+  F.energy -= c.cost;
+  F.hand.splice(F.hand.indexOf(id), 1);
+  F.discard.push(id);
+  const tgt = fight.target && fight.target.hp > 0 ? fight.target : defaultTarget();
+  const face = tgt.x > bram.x ? 'E' : 'W';
+  if (c.guard) {
+    anim(bram, 'cast', face);
+    await wait(relFrame('cast', 3));
+    bram.guard = true; fx.push({ type: 'shieldpop', t0: gt, ms: 300 });
+    bankAim('');
+    await wait(500); anim(bram, 'idle', face, true);
+    return;
+  }
+  if (c.arrow) {
+    const aimUsed = bram.aim;
+    anim(bram, 'attack', face);
+    await wait(relFrame('attack', 4));  // anticipate: the draw, held a beat
+    const sx = bram.x + (face === 'E' ? 14 : -14), sy = bram.y - 17;
+    const nice = await flight({ kind: id === 'longshot' ? 'long' : 'arrow', sx, sy, tx: tgt.x, ty: tgt.y + 2, ms: id === 'longshot' ? 600 : 520, timed: settings.timing !== 'OFF', target: tgt });
+    bram.aim = 0;
+    await landHit(tgt, id, aimUsed, nice);
+    await wait(240); anim(bram, 'idle', face, true);
+    return;
+  }
+  // STRETCH: a cast, a gust of light
+  anim(bram, 'cast', face);
+  await wait(relFrame('cast', 5));
+  await flight({ kind: 'gust', sx: bram.x + (face === 'E' ? 12 : -12), sy: bram.y - 15, tx: tgt.x, ty: tgt.y + 2, ms: 420, timed: false, target: tgt });
+  await landHit(tgt, id, 0, false);
+  await wait(300); anim(bram, 'idle', face, true);
+}
+
+// the shot in flight, with the optional timed tap: a gold ring closes on the target
+async function flight(o) {
+  const shot = { ...o, p: 0 };
+  fx.push({ type: 'shot', shot, t0: gt, ms: 99999 });
+  const win = WINDOW[settings.timing] || 0;
+  const t0 = nowR(), impact = t0 + o.ms;
+  if (o.timed) fight.timing = { open: true, tap: null, impact, win, t0, target: o.target, ms: o.ms };
+  while (true) {
+    const p = (nowR() - t0) / o.ms;
+    shot.p = Math.min(1, p);
+    if (p >= 1) break;
+    await new Promise((r) => requestAnimationFrame(r));
+  }
+  shot.done = true;
+  fx = fx.filter((e) => e.shot !== shot);
+  if (!o.timed) return false;
+  // hold the impact (hit pause) while late taps still count
+  hitStop = Math.max(hitStop, Math.max(90, win / 2));
+  await waitReal(win / 2 + 4);
+  const tm = fight.timing; tm.open = false;
+  const nice = tm.tap !== null && Math.abs(tm.tap - impact) <= win / 2;
+  stats[nice ? 'nice' : tm.tap === null ? 'none' : 'missed']++;
+  tm.result = nice ? 'nice' : tm.tap === null ? 'none' : (tm.tap < impact ? 'early' : 'late');
+  fight.timing = null;
+  return nice;
+}
+async function landHit(f, id, aimUsed, nice) {
+  const c = CARDS[id];
+  let base = c.power + (c.perAim ? c.perAim * aimUsed : 0) + 2 * LEVEL + ri(0, 3);
+  if (c.arrow && terrainAt(bram.x, bram.y) === 'bridge') base += 3;
+  const halved = !c.pierce && (f.guard || shielded(f));
+  let n = Math.floor(base * (nice ? 1.25 : 1) * (halved ? 0.5 : 1));
+  n = Math.max(1, n);
+  if (f.guard && !c.pierce) f.guard = false;
+  f.hp = Math.max(f.kind === 'knot' && f.phase === 1 ? 1 : 0, f.hp - n);
+  f.squint = gt + 380; f.flash = gt + 70;
+  hitStop = Math.max(hitStop, 80);
+  doShake(nice ? 5 : 3);
+  fx.push({ type: 'spark', x: f.x, y: f.y + 2, t0: gt, ms: 320, big: nice });
+  tween(220, (t) => { f.dx = (bram.x < f.x ? 1 : -1) * Math.round(3 * (1 - t)); }, easeOut);
+  pop(f.x, f.y - 10, String(n), nice ? '#F8DD8F' : '#FFFDF5', nice ? 22 : 18);
+  if (nice) { pop(f.x, f.y - 26, 'NICE', '#F8DD8F', 13, { kind: 'stamp', ms: 900 }); moss.hop = gt; }
+  if (halved) pop(f.x + 2, f.y + 14, f.kind === 'core' ? 'SHARDS SHIELD IT' : 'HALVED', '#C9B8FF', 9, { kind: 'label', ms: 1000, rise: 6 });
+  if (c.pierce && (f.guard || shielded(f))) pop(f.x, f.y + 14, 'PIERCED', '#F8DD8F', 9, { kind: 'label', ms: 1000, rise: 6 });
+  if (!nice && fight.lastTiming) { /* reserved */ }
+  await wait(120);
+}
+
+async function checkWin() {
+  // the storm splits when half dimmed
+  for (const f of fight.foes) {
+    if (f.kind === 'knot' && f.phase === 1 && f.hp <= f.max / 2 && f.hp > 0) { await splitStorm(f); return 'split'; }
+  }
+  for (const f of fight.foes.slice()) if (f.hp <= 0 && !f.calm) await calmFoe(f);
+  const core = fight.foes.find((f) => f.kind === 'core' || f.kind === 'knot' || f.kind === 'glare');
+  if (core && core.hp <= 0) {
+    for (const f of fight.foes) if (f.hp > 0) { f.hp = 0; await calmFoe(f, true); }
+    await endFight('win');
+    return true;
+  }
+  return false;
+}
+async function calmFoe(f, quick) {
+  f.calm = true; f.intent = null; f.guard = false;
+  f.flash = gt + 120;
+  pop(f.x, f.y - 26, 'CALMED', '#FFD27A', 12, { kind: 'stamp', ms: 1000 });
+  await wait(quick ? 200 : 650);
+  // it folds into a spark and drifts home
+  f.fold = gt;
+  fx.push({ type: 'fold', x: f.x, y: f.y, t0: gt, ms: 1200 });
+  await wait(quick ? 150 : 350);
+  f.state = 'folded';
+}
+async function splitStorm(k) {
+  k.phase = 2; k.intent = null; fight.lane = null;
+  banner('IT SPLITS!', 'TWO SHARDS SHIELD THE CORE. CALM THEM, OR PIERCE WITH A LONG SHOT.', 'danger', 3000);
+  // anticipate: a shudder, then act: it bursts apart
+  for (let i = 0; i < 6; i++) { k.dx = (i % 2 ? 1 : -1); await wait(60); }
+  k.dx = 0; k.big = true; await wait(220);
+  flashScreen(0.45); doShake(6); hitStop = 100;
+  const core = { kind: 'core', name: 'CORE', x: k.x, y: k.y + 4, hp: 36, max: 36, state: 'fight', alpha: 1, dx: 0, dy: 0, big: false, squint: 0, flash: gt + 90,
+    guard: false, intent: null, calm: false, fold: 0, hoverH: 14, cycle: 0, motes: [] };
+  const sA = { kind: 'shard', name: 'SHARD', x: k.x, y: k.y, hp: 14, max: 14, state: 'fight', alpha: 1, dx: 0, dy: 0, big: false, squint: 0, flash: 0, guard: false, intent: null, calm: false, fold: 0, hoverH: 13, motes: [] };
+  const sB = { ...sA, motes: [] };
+  foes = foes.filter((f) => f !== k);
+  if (storm === k) storm = null;
+  foes.push(core, sA, sB);
+  fight.foes = [core, sA, sB];
+  fight.target = sA;
+  for (let i = 0; i < 6; i++) fx.push({ type: 'spark', x: k.x + ri(-12, 12), y: k.y + ri(-10, 10), t0: gt + i * 50, ms: 300 });
+  // settle: the shards swing out on an arc to their places
+  const A0 = [k.x, k.y], pa = [78, 386], pb = [76, 418], pc = [58, 402];
+  await tween(settings.reduced ? 1 : 520, (t) => {
+    sA.x = lerp(A0[0], pa[0], t); sA.y = lerp(A0[1], pa[1], t) - Math.sin(t * Math.PI) * 8;
+    sB.x = lerp(A0[0], pb[0], t); sB.y = lerp(A0[1], pb[1], t) + Math.sin(t * Math.PI) * 4;
+    core.x = lerp(A0[0], pc[0], t); core.y = lerp(A0[1] + 4, pc[1], t);
+  }, easeOut);
+  for (const f of [core, sA, sB]) { f.x = Math.round(f.x); f.y = Math.round(f.y); }
+  core.intent = chooseIntent(core); sA.intent = chooseIntent(sA); sB.intent = chooseIntent(sB);
+  storm = null;
+  await wait(300);
+}
+
+async function foeAct(f) {
+  const it = f.intent; if (!it) return;
+  const toward = bram.x > f.x ? 1 : -1;
+  const face = bram.x > f.x ? 'W' : 'E';
+  if (it.type === 'guard') {
+    f.big = true; await wait(220); f.big = false;
+    f.guard = true; fx.push({ type: 'flicker', f, t0: gt, ms: 500 });
+    pop(f.x, f.y - 26, it.name, '#C9B8FF', 10, { kind: 'label', ms: 1000 });
+    await wait(500); return;
+  }
+  if (it.type === 'heal') {
+    f.big = true; await wait(260); f.big = false;
+    const h = Math.min(it.n, f.max - f.hp); f.hp += h;
+    pop(f.x, f.y - 12, '+' + h, '#A6E2FF', 14);
+    await wait(500); return;
+  }
+  if (it.type === 'gather') {
+    f.big = true; doShake(2);
+    fight.lane = { y: bram.y, t0: gt };
+    banner('IT GATHERS STATIC', 'A SWEEP WILL CROSS THE LIT LANE. STEP OUT, OR TAKE COVER.', 'danger', 2600);
+    await wait(700); f.big = false; await wait(200); return;
+  }
+  if (it.type === 'charge') {
+    f.big = true; for (let i = 0; i < 3; i++) fx.push({ type: 'spark', x: f.x + ri(-8, 8), y: f.y + ri(-8, 8), t0: gt + i * 90, ms: 260 });
+    await wait(520); f.big = false; await wait(150); return;
+  }
+  // a hit (dazzle, crackle, zap, overload) or the sweep
+  let n = incoming(f, it);
+  // anticipate: it swells and rises
+  f.big = true;
+  await tween(settings.reduced ? 1 : 260, (t) => { f.dy = -Math.round(2 * t); });
+  // act: it lunges, light bursts
+  await tween(settings.reduced ? 1 : 90, (t) => { f.dx = Math.round(toward * 6 * t); });
+  let missed = false;
+  if (it.type === 'sweep') {
+    fx.push({ type: 'sweep', y: fight.lane ? fight.lane.y : bram.y, t0: gt, ms: 420 });
+    missed = !fight.lane || Math.abs(bram.y - fight.lane.y) > 7;
+    fight.lane = null;
+    await wait(200);
+  } else {
+    fx.push({ type: 'beam', x0: f.x, y0: f.y, x1: bram.x, y1: bram.y - 12, t0: gt, ms: 200, color: f.kind === 'glare' ? '#DDF5FF' : '#EEE6FF' });
+  }
+  if (missed) {
+    pop(bram.x, bram.y - 30, 'MISSED YOU', '#A5D77F', 12, { kind: 'stamp', ms: 1100 });
+    moss.hop = gt;
+  } else {
+    if (bram.guard) { n = Math.max(1, Math.floor(n / 2)); bram.guard = false; fx.push({ type: 'shieldbreak', t0: gt, ms: 300 }); pop(bram.x - 4, bram.y + 6, 'GUARDED', '#A5D77F', 9, { kind: 'label', ms: 1000, rise: 6 }); }
+    bram.hp = Math.max(0, bram.hp - n);
+    flashScreen(it.big ? 0.4 : 0.22); doShake(it.big ? 6 : 3); hitStop = Math.max(hitStop, it.big ? 110 : 70);
+    anim(bram, 'hit', face);
+    pop(bram.x, bram.y - 26, String(n), '#FF9A8C', it.big ? 20 : 17);
+    fx.push({ type: 'spark', x: bram.x, y: bram.y - 14, t0: gt, ms: 260, cold: true });
+  }
+  // settle
+  await tween(settings.reduced ? 1 : 220, (t) => { f.dx = Math.round(toward * 6 * (1 - t)); f.dy = -Math.round(2 * (1 - t)); });
+  f.big = false;
+  await wait(320);
+  if (bram.hp > 0) anim(bram, 'idle', face, true);
+}
+
+/* ------------------------------------ ending a fight ---------------------------------------- */
+async function endFight(how) {
+  fight.over = true; fight.awaiting = false;
+  const kind = fight.kind;
+  const glare = fight.foes.find((f) => f.kind === 'glare');
+  mode = 'outro';
+  fight.lane = null;
+  if (how === 'win') {
+    if (kind === 'arena') {
+      await wait(200);
+      anim(bram, 'victory', 'S');
+      moss.hop = gt; setTimeout(() => (moss.hop = gt), 500);
+      fx.push({ type: 'confetti', x: bram.x, y: bram.y - 20, t0: gt, ms: 1800, parts: confettiParts() });
+      banner('THE STATIC STORM CALMED', 'WHAT A SPAR. GOOD MATCH.', 'gold', 3600);
+      await wait(relFrame('victory', 8));
+      anim(bram, 'happy', 'S');
+      await wait(1300);
+      anim(bram, 'idle', 'S', true);
+      fight.done = 'arena';
+      await new Promise((r) => { fight.resolveWalkOn = r; });
+    } else {
+      banner('THE GLARE DIMMED AND DRIFTED HOME', 'GOOD MATCH.', 'leaf', 3000);
+      anim(bram, 'happy', 'S'); moss.hop = gt;
+      await wait(1400);
+      anim(bram, 'idle', 'S', true);
+      nextGlareAt = gt + 9000;
+    }
+  } else if (how === 'tired') {
+    banner('BRAMBLE LAY DOWN, TIRED', 'NOTHING LOST. A BREATHER, AND ON YOU GO.', 'nap', 3400);
+    anim(bram, 'lie', bram.face === 'W' ? 'W' : 'E');
+    await wait(relFrame('lie', 6));
+    anim(bram, 'sleep', bram.face, true);
+    for (const f of fight.foes) if (f.hp > 0) { f.intent = null; }
+    await wait(1800);
+    if (kind === 'field') driftAway(fight.foes);
+    anim(bram, 'wake', bram.face);
+    await wait(relFrame('wake', 8));
+    anim(bram, 'idle', bram.face, true);
+  } else if (how === 'draw') {
+    banner('A GOOD MATCH', kind === 'field' ? 'TWELVE TURNS. IT DRIFTED HOME ON ITS OWN.' : 'TWELVE TURNS. THE STORM GATHERS ITSELF AGAIN.', 'parchment', 3000);
+    if (kind === 'field') driftAway(fight.foes);
+    await wait(900);
+  } else {
+    banner('BRAMBLE STEPPED BACK', kind === 'field' ? 'NOTHING LOST. IT DRIFTS ON.' : 'NOTHING LOST. THE STORM WAITS IN THE RING.', 'parchment', 2400);
+    if (kind === 'field') driftAway(fight.foes);
+    await wait(500);
+  }
+  // reset: HP full again, stacks and deck reset (a spar stakes nothing)
+  bram.hp = bram.max; bram.aim = 0; bram.guard = false;
+  const ended = fight.foes;
+  foes = foes.filter((f) => !ended.includes(f) || f.state === 'home');
+  if (kind === 'arena') {
+    if (how === 'win') { storm = null; stormBack = gt + 15000; }
+    else {
+      // the storm gathers itself back into one knot in the ring
+      for (const f of ended) if (f.state !== 'folded') fx.push({ type: 'spark', x: f.x, y: f.y, t0: gt, ms: 300 });
+      storm = makeStorm(); storm.state = 'cool'; foes.push(storm);
+      const s = storm; setTimeout(() => { if (s.state === 'cool') s.state = 'wait'; }, 4000);
+    }
+  }
+  const leaveRing = kind === 'arena';
+  fight = null;
+  moss.mode = 'follow'; trail.length = 0; trail.push([bram.x, bram.y]);
+  await camTo(bram.x, bram.y - 12, kWalk(), 560);
+  mode = 'walk';
+  if (leaveRing) walkTo(132, 398);
+}
+function driftAway(list) {
+  for (const f of list) {
+    if (f.hp <= 0 || f.state === 'folded') continue;
+    f.state = 'home'; f.intent = null;
+    const dir = f.x > bram.x ? 1 : -1;
+    const x0 = f.x, y0 = f.y;
+    tween(1400, (t) => { f.x = x0 + dir * 60 * t; f.y = y0 - 14 * t; f.alpha = 1 - t; }).then(() => { f.state = 'gone'; });
+  }
+  nextGlareAt = gt + 8000;
+}
+function confettiParts() {
+  const cols = ['#F8DD8F', '#E6BC5C', '#A5D77F', '#6FB35E', '#FFFDF5', '#FFD27A', '#CBBDF0'];
+  return Array.from({ length: 34 }, () => ({ vx: (rand() - 0.5) * 70, vy: -40 - rand() * 60, c: cols[ri(0, cols.length - 1)], s: rand() < 0.3 ? 2 : 1 }));
+}
+
+/* ============================================================================================
+   DRAWING
+   ============================================================================================ */
+const TONES = {
+  paper: ['#FBF4E4', '#FFFDF5', '#E1D2B6', '#B8A586', '#1E1917'],
+  parchment: ['#F3E6C8', '#FFF7E2', '#DCC9A2', '#B39A70', '#1E1917'],
+  leaf: ['#6FB35E', '#A5D77F', '#4F8D45', '#2F5A2C', '#24361F'],
+  gold: ['#E6BC5C', '#F8DD8F', '#BF8F36', '#7F5B1E', '#3B2A14'],
+  nap: ['#9F8CD3', '#CBBDF0', '#7663B0', '#4C3F80', '#2A2244'],
+  danger: ['#D47A5C', '#F0A688', '#AE5A40', '#6E3424', '#3A1B13'],
+  night: ['#3C4168', '#5A608F', '#2B2F50', '#191B30', '#0F1020'],
+  inset: ['#F7EDD9', '#E1D2B6', '#FFFDF5', null, '#796650'],
+  disabled: ['#D9D1BF', '#ECE6D8', '#C1B7A2', '#9C927C', '#5E544A'],
+};
+const INK = '#4A3B35', BINK = '#2F251F', OUTL = '#1E1917';
+// a pixel frame (components/pixel-frame.tsx): notched corners, lit top-left, shaded bottom-right, a raised base
+function frame(x, y, w, h, tone = 'paper', depth = 1, down = false) {
+  x = Math.round(x); y = Math.round(y); w = Math.round(w); h = Math.round(h);
+  const [fill, light, dark, base, outl] = TONES[tone];
+  if (down) { y += depth * U; depth = 0; }
+  const R = (a, b, c, e, col) => { ctx.fillStyle = col; ctx.fillRect(a, b, c, e); };
+  if (depth && base) {
+    R(x + U, y + h, w - 2 * U, depth * U, base);
+    R(x + U, y + h + depth * U, w - 2 * U, U, outl);
+    R(x, y + h - U, U, depth * U + U, outl); R(x + w - U, y + h - U, U, depth * U + U, outl);
+  }
+  R(x + U, y, w - 2 * U, U, outl); R(x + U, y + h - U, w - 2 * U, U, outl);
+  R(x, y + U, U, h - 2 * U, outl); R(x + w - U, y + U, U, h - 2 * U, outl);
+  R(x + U, y + U, w - 2 * U, h - 2 * U, fill);
+  R(x + U, y + U, w - 2 * U, U, light); R(x + U, y + U, U, h - 2 * U, light);
+  R(x + U, y + h - 2 * U, w - 2 * U, U, dark); R(x + w - 2 * U, y + 2 * U, U, h - 3 * U, dark);
+  return down ? depth : 0;
+}
+const FONT = { b: 'PxBold', m: 'PxMed', d: 'PxDisplay' };
+function txt(s, x, y, size, kind = 'b', color = INK, align = 'left', base = 'top') {
+  ctx.font = `${Math.round(size * dpr)}px ${FONT[kind]}, monospace`;
+  ctx.textAlign = align; ctx.textBaseline = base; ctx.fillStyle = color;
+  ctx.fillText(String(s).replace(/f(?=[il])/g, 'f\u200C'), Math.round(x), Math.round(y));
+}
+function txtW(s, size, kind = 'b') { ctx.font = `${Math.round(size * dpr)}px ${FONT[kind]}, monospace`; return ctx.measureText(s).width; }
+function outlined(s, x, y, size, kind, color, outline = OUTL, align = 'center') {
+  const o = Math.max(1, Math.round(dpr * 1.2));
+  for (const [dx, dy] of [[-o, 0], [o, 0], [0, -o], [0, o], [o, o], [o * 2, o * 2]]) txt(s, x + dx, y + dy, size, kind, outline, align, 'middle');
+  txt(s, x, y, size, kind, color, align, 'middle');
+}
+function wrapLines(s, maxW, size, kind = 'm') {
+  const words = s.split(' '); const lines = []; let line = '';
+  for (const w of words) { const t = line ? line + ' ' + w : w; if (txtW(t, size, kind) > maxW && line) { lines.push(line); line = w; } else line = t; }
+  if (line) lines.push(line); return lines;
+}
+function icon(name, x, y, scale) {
+  const i = A.icons.idx[name]; if (i === undefined) return;
+  ctx.drawImage(IMG.icons, (i % 16) * 16, Math.floor(i / 16) * 16, 16, 16, Math.round(x), Math.round(y), 16 * scale, 16 * scale);
+}
+const iconScale = (css) => Math.max(1, Math.round(css * dpr / 16));
+function pips(x, y, n, of, size, on = '#E6BC5C', off = '#E1D2B6') {
+  const s = d(size), g = d(3);
+  for (let i = 0; i < of; i++) {
+    const px = Math.round(x + i * (s + g));
+    ctx.fillStyle = OUTL; ctx.fillRect(px, y, s, s);
+    ctx.fillStyle = i < n ? on : off; ctx.fillRect(px + U, y + U, s - 2 * U, s - 2 * U);
+    if (i < n) { ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.fillRect(px + U, y + U, s - 2 * U, U); }
+  }
+  return of * (s + g);
+}
+
+// ---------- the world at 1 art px ----------------------------------------------------------
+function drawWorld() {
+  const k = cam.k;
+  const vw = Math.ceil(W / k) + 2, vh = Math.ceil(H / k) + 2;
+  if (art.width !== vw || art.height !== vh) { art.width = vw; art.height = vh; }
+  const sx = shake.a > 0 ? Math.round((rand() - 0.5) * 2 * shake.a * dpr) : 0;
+  const sy = shake.a > 0 ? Math.round((rand() - 0.5) * 2 * shake.a * dpr) : 0;
+  const left = cam.x - W / (2 * k), top = cam.y - H / (2 * k);
+  const ix = Math.floor(left), iy = Math.floor(top);
+  view = { ix, iy, offX: Math.round((ix - left) * k) + sx, offY: Math.round((iy - top) * k) + sy, k };
+  const c = actx;
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.imageSmoothingEnabled = false;
+  c.fillStyle = '#2C4426'; c.fillRect(0, 0, vw, vh);
+  c.setTransform(1, 0, 0, 1, -ix, -iy);
+  c.drawImage(IMG.ground, 0, 0);
+  // the moving water (8 frames, 150 ms; held still with reduced motion)
+  const fr = A.flowRect, fi = settings.reduced ? 0 : Math.floor(gt / 150) % 8;
+  c.drawImage(IMG.flow, 0, fi * fr[3], fr[2], fr[3], fr[0], fr[1], fr[2], fr[3]);
+  // light thrown on the ground under each glare
+  for (const f of foes) if (f.state !== 'folded' && f.alpha > 0) groundGlow(c, f);
+  // the sweep's lane, telegraphed on the ground
+  if (fight && fight.lane) drawLane(c, fight.lane);
+  // standing spots
+  if (fight && mode === 'fight') for (const s of fight.spots) drawSpot(c, s, fight.sel && fight.sel.kind === 'step' && fight.sel.spot === s);
+  // tap marks
+  for (const e of fx) if (e.type === 'tapmark') { const p = (gt - e.t0) / e.ms; if (p < 1) ellipseRing(c, e.x, e.y, 3 + p * 3, 1.5 + p * 1.5, `rgba(255,253,245,${0.8 * (1 - p)})`); }
+  // shadows
+  shadow(c, bram.x, bram.y, bram.act === 'lie' || bram.act === 'sleep' ? 18 : 12);
+  shadow(c, moss.x, moss.y, 9);
+  // reflections of glares on the water
+  for (const f of foes) if (f.state !== 'folded' && f.alpha > 0) reflect(c, f);
+  // sprites in painter's order by their feet
+  const items = [];
+  for (const o of A.objects) items.push({ y: o[3] + o[5], draw: () => c.drawImage(IMG['prop:' + o[1]], o[2], o[3]) });
+  items.push({ y: bram.y, draw: () => drawBram(c) });
+  items.push({ y: moss.y, draw: () => drawMoss(c) });
+  for (const f of foes) if (f.state !== 'folded' && f.alpha > 0) items.push({ y: f.y + f.hoverH + 3, draw: () => drawFoe(c, f) });
+  items.sort((a, b) => a.y - b.y);
+  for (const it of items) it.draw();
+  // effects over everything
+  drawFx(c);
+  // scale up to the screen: whole device px per art px
+  ctx.imageSmoothingEnabled = false;
+  ctx.drawImage(art, view.offX, view.offY, vw * k, vh * k);
+}
+function shadow(c, x, y, w) {
+  x = Math.round(x); y = Math.round(y);
+  c.fillStyle = 'rgba(20,30,16,0.28)';
+  c.fillRect(x - w / 2 + 1, y - 1, w - 2, 1); c.fillRect(x - w / 2, y, w, 1); c.fillRect(x - w / 2 + 1, y + 1, w - 2, 1);
+}
+function ellipseFill(c, cx, cy, rx, ry, col) {
+  c.fillStyle = col;
+  for (let dy = -Math.floor(ry); dy <= Math.floor(ry); dy++) {
+    const half = Math.floor(rx * Math.sqrt(Math.max(0, 1 - (dy / ry) ** 2)));
+    c.fillRect(Math.round(cx) - half, Math.round(cy) + dy, half * 2 + 1, 1);
+  }
+}
+function ellipseRing(c, cx, cy, rx, ry, col, dashed = false, phase = 0) {
+  c.fillStyle = col;
+  const n = Math.max(16, Math.round(2 * Math.PI * Math.max(rx, ry) * 1.4));
+  const seen = new Set();
+  for (let i = 0; i < n; i++) {
+    if (dashed && (Math.floor(i * 10 / n + phase) % 2)) continue;
+    const a = 2 * Math.PI * i / n;
+    const x = Math.round(cx + rx * Math.cos(a)), y = Math.round(cy + ry * Math.sin(a));
+    const key = x * 9999 + y; if (seen.has(key)) continue; seen.add(key);
+    c.fillRect(x, y, 1, 1);
+  }
+}
+function groundGlow(c, f) {
+  const calm = f.calm || f.state === 'home' && f.calm;
+  const col = calm ? '255,210,122' : f.kind === 'glare' ? (f.hp < f.max / 2 ? '190,220,240' : '159,224,255') : '201,184,255';
+  const big = f.kind === 'knot' ? 1.6 : f.kind === 'shard' ? 0.8 : 1;
+  const gx = f.x, gy = f.y + f.hoverH + 1;
+  const pulse = settings.reduced ? 0 : Math.sin(gt / 300) * 0.04;
+  c.globalCompositeOperation = 'screen';
+  ellipseFill(c, gx, gy, 17 * big, 6 * big, `rgba(${col},${(0.16 + pulse) * f.alpha})`);
+  ellipseFill(c, gx, gy, 10 * big, 3.5 * big, `rgba(${col},${(0.2 + pulse) * f.alpha})`);
+  c.globalCompositeOperation = 'source-over';
+}
+const reflCanvas = document.createElement('canvas');
+function reflect(c, f) {
+  const gx = Math.round(f.x), gy = Math.round(f.y + f.hoverH);
+  if (!isWater(gx, gy + 2) && !isWater(gx, gy + 5)) return;
+  const isKnot = f.kind === 'knot';
+  const G = isKnot ? A.storm : A.glare;
+  const name = isKnot ? 'knotRefl' : f.calm ? 'reflCalm' : f.kind === 'core' ? 'reflCore' : f.kind === 'shard' ? 'reflShard' : (f.hp < f.max / 2 ? 'reflMid' : 'reflCold');
+  const i = G.idx[name], [cw, ch] = G.cell;
+  const rw = cw, rh = Math.ceil(ch / 2);
+  reflCanvas.width = rw; reflCanvas.height = rh;
+  const r = reflCanvas.getContext('2d'); r.imageSmoothingEnabled = false;
+  r.save(); r.translate(0, rh); r.scale(1, -1);
+  r.drawImage(isKnot ? IMG.storm : IMG.glare, (i % 16) * cw, Math.floor(i / 16) * ch, cw, ch, 0, 0, rw, rh);
+  r.restore();
+  const x0 = gx - G.center[0] + Math.round(f.dx), y0 = gy + 1;
+  r.globalCompositeOperation = 'destination-in';
+  r.drawImage(IMG.waterMask, x0, y0, rw, rh, 0, 0, rw, rh);
+  r.globalCompositeOperation = 'source-over';
+  c.globalAlpha = 0.4 * f.alpha;
+  c.drawImage(reflCanvas, x0 + (settings.reduced ? 0 : Math.round(Math.sin(gt / 240))), y0);
+  c.globalAlpha = 1;
+}
+function drawBram(c) {
+  const name = bramFrame();
+  const i = BA.idx[name]; if (i === undefined) return;
+  const x = Math.round(bram.x) - BA.anchor[0], y = Math.round(bram.y) - BA.anchor[1];
+  c.drawImage(IMG.bramble, (i % 16) * 48, Math.floor(i / 16) * 48, 48, 48, x, y, 48, 48);
+}
+function drawMoss(c) {
+  const MA = A.moss;
+  let name;
+  const face = (fight && mode !== 'walk') ? (fight.foes[0] && fight.foes[0].x > moss.x ? 'E' : 'W') : moss.face;
+  if (moss.hum && gt - moss.hum < 900) name = `perch_attack_${face}_${Math.min(3, Math.floor((gt - moss.hum) / 120) % 4)}`;
+  else if (moss.moving) name = `walk_${moss.face}_${Math.floor((gt - moss.t0) / 100) % 6}`;
+  else if (bram.act === 'sleep' && fight) name = `curl_${face}_${settings.reduced ? 0 : Math.floor(gt / 500) % 2}`;
+  else name = `perch_idle_${face}_${settings.reduced ? 0 : Math.floor(gt / 260) % 4}`;
+  const i = MA.idx[name]; if (i === undefined) return;
+  let hop = 0;
+  if (moss.hop && gt - moss.hop < 420 && !settings.reduced) { const t = (gt - moss.hop) / 420; hop = Math.round(Math.sin(t * Math.PI) * 4); }
+  c.drawImage(IMG.moss, (i % 16) * 24, Math.floor(i / 16) * 24, 24, 24, Math.round(moss.x) - 12, Math.round(moss.y) - 22 - hop, 24, 24);
+}
+function foeFrame(f) {
+  const sw = settings.reduced ? 0 : Math.floor(gt / 190);
+  if (f.kind === 'knot') {
+    if (f.calm) return 'knotCalm';
+    if (f.flash > gt) return 'knotFlash';
+    if (f.squint > gt) return 'knotSquint';
+    if (f.big) return 'knotBig';
+    return 'knot' + ([0, 1, 2, 3, 2, 1][sw % 6]);
+  }
+  if (f.calm || (f.state === 'home' && f.calm)) return (f.kind === 'shard' ? 'shardCalm' : 'calm') + (sw % 2);
+  if (f.kind === 'core' || f.kind === 'shard') {
+    if (f.flash > gt) return 'coldFlash';
+    if (f.squint > gt) return f.kind + 'Squint';
+    if (f.big) return f.kind + 'Big';
+    return f.kind + (sw % 2);
+  }
+  if (f.flash > gt) return 'coldFlash';
+  const dim = f.hp < f.max / 2;
+  if (f.squint > gt) return dim ? 'midSquint' : 'coldSquint';
+  if (f.big) return dim ? 'midBig' : 'coldBig';
+  return dim ? 'mid' + (sw % 2) : 'cold' + ([0, 1, 2, 3, 2, 1][sw % 6]);
+}
+function drawFoe(c, f) {
+  const isKnot = f.kind === 'knot';
+  const G = isKnot ? A.storm : A.glare, I = isKnot ? IMG.storm : IMG.glare;
+  const bob = settings.reduced ? 0 : Math.round(Math.sin(gt / 420 + f.x) * 1.4);
+  const x = Math.round(f.x + f.dx) - G.center[0], y = Math.round(f.y + f.dy + bob) - G.center[1];
+  // motes trailing a drifting glare
+  for (const m of f.motes) { const p = (gt - m.t0) / 1100; c.fillStyle = `rgba(221,245,255,${0.9 * (1 - p) * f.alpha})`; c.fillRect(Math.round(m.x + p * 6), Math.round(m.y - p * 5), 1, 1); }
+  if (f.fold) {
+    const p = Math.min(1, (gt - f.fold) / 300);
+    c.globalAlpha = f.alpha * (1 - p);
+  } else c.globalAlpha = f.alpha;
+  const name = foeFrame(f), i = G.idx[name], [cw, ch] = G.cell;
+  c.drawImage(I, (i % 16) * cw, Math.floor(i / 16) * ch, cw, ch, x, y, cw, ch);
+  c.globalAlpha = 1;
+  // a static shield round it (its guard, or the shards shielding the core)
+  if (!f.calm && (f.guard || shielded(f))) {
+    const r = isKnot ? 26 : 15;
+    ellipseRing(c, f.x + f.dx, f.y + f.dy + bob + 1, r, r - 2, f.guard ? 'rgba(238,230,255,0.85)' : 'rgba(201,184,255,0.7)', true, settings.reduced ? 0 : gt / 200);
+  }
+  // the chosen target: a small gold chevron above it
+  if (fight && mode === 'fight' && fight.awaiting && fight.target === f && fight.foes.filter((q) => q.hp > 0).length > 1) {
+    const ty = y - 3 - (settings.reduced ? 0 : Math.round((Math.sin(gt / 200) + 1)));
+    const tx = Math.round(f.x + f.dx);
+    c.fillStyle = OUTL; c.fillRect(tx - 3, ty - 1, 7, 1); c.fillRect(tx - 2, ty, 5, 1); c.fillRect(tx - 1, ty + 1, 3, 1); c.fillRect(tx, ty + 2, 1, 1);
+    c.fillStyle = '#F8DD8F'; c.fillRect(tx - 2, ty - 1, 5, 1); c.fillRect(tx - 1, ty, 3, 1); c.fillRect(tx, ty + 1, 1, 1);
+  }
+}
+function drawSpot(c, s, sel) {
+  const pulse = settings.reduced ? 0 : (Math.sin(gt / 260) + 1) / 2;
+  ellipseFill(c, s.x, s.y, 7, 3, sel ? 'rgba(248,221,143,0.45)' : `rgba(255,253,245,${0.12 + pulse * 0.1})`);
+  ellipseRing(c, s.x, s.y, 8, 3.5, sel ? '#F8DD8F' : 'rgba(255,253,245,0.9)', true, settings.reduced ? 0 : gt / 300);
+}
+function drawLane(c, lane) {
+  const x0 = 34, x1 = 124, y = Math.round(lane.y);
+  const a = settings.reduced ? 0.4 : 0.28 + 0.18 * Math.sin(gt / 140);
+  c.fillStyle = `rgba(240,166,136,${a})`;
+  for (let yy = y - 7; yy <= y + 7; yy++) for (let xx = x0; xx <= x1; xx += 1) if (((xx + yy + Math.floor(gt / (settings.reduced ? 1e9 : 90))) % 6) < 2) c.fillRect(xx, yy, 1, 1);
+  c.fillStyle = 'rgba(255,240,200,0.75)'; c.fillRect(x0, y - 8, x1 - x0, 1); c.fillRect(x0, y + 8, x1 - x0, 1);
+}
+function px(c, x, y, col) { c.fillStyle = col; c.fillRect(Math.round(x), Math.round(y), 1, 1); }
+function drawFx(c) {
+  for (const e of fx) {
+    const p = (gt - e.t0) / e.ms;
+    if (p < 0) continue;
+    if (e.type === 'shot') drawShot(c, e.shot);
+    else if (e.type === 'spark' && p < 1) {
+      const x = Math.round(e.x), y = Math.round(e.y), r = Math.max(1, Math.round((e.big ? 6 : 5) * (1 - p * 0.7)));
+      const gold = e.cold ? '#A6E2FF' : '#E6BC5C', light = e.cold ? '#DDF5FF' : '#F8DD8F';
+      c.fillStyle = OUTL; c.fillRect(x - r + 1, y + 1, 2 * r + 1, 1); c.fillRect(x + 1, y - r + 1, 1, 2 * r + 1);
+      for (let k = -r; k <= r; k++) { px(c, x + k, y, Math.abs(k) < 2 ? '#FFFDF5' : Math.abs(k) < r - 1 ? light : gold); px(c, x, y + k, Math.abs(k) < 2 ? '#FFFDF5' : Math.abs(k) < r - 1 ? light : gold); }
+      if (p < 0.5) for (const [a, b] of [[-2, -2], [2, -2], [-2, 2], [2, 2], [-3, -3], [3, 3], [3, -3], [-3, 3]]) px(c, x + a, y + b, Math.max(Math.abs(a), Math.abs(b)) === 3 ? gold : light);
+    } else if (e.type === 'beam' && p < 1) {
+      const n = Math.ceil(Math.hypot(e.x1 - e.x0, e.y1 - e.y0));
+      c.globalAlpha = 1 - p;
+      for (let i = 0; i <= n; i += 1) { if ((i + Math.floor(gt / 40)) % 3 === 0) continue; const t = i / n; px(c, lerp(e.x0, e.x1, t), lerp(e.y0, e.y1, t) + Math.round(Math.sin(i * 0.9) * 1), e.color); }
+      c.globalAlpha = 1;
+    } else if (e.type === 'sweep' && p < 1) {
+      const xx = lerp(30, 128, p);
+      for (let yy = e.y - 8; yy <= e.y + 8; yy++) for (let k = 0; k < 10; k++) px(c, xx - k * 2 + (yy % 2), yy, `rgba(238,230,255,${0.9 - k * 0.08})`);
+    } else if (e.type === 'breath' && p < 1) {
+      ellipseRing(c, e.x, e.y + 10, 6 + p * 10, 2.5 + p * 4, `rgba(203,189,240,${0.9 * (1 - p)})`);
+    } else if (e.type === 'note' && p < 1) {
+      const x = Math.round(e.x + e.dx * p + Math.sin(p * 6) * 2), y = Math.round(e.y - p * 16);
+      c.globalAlpha = 1 - p;
+      c.fillStyle = OUTL; c.fillRect(x - 1, y + 2, 3, 2); c.fillRect(x + 1, y - 3, 1, 5);
+      c.fillStyle = '#CBBDF0'; c.fillRect(x - 1, y + 2, 2, 1); c.fillRect(x + 1, y - 3, 2, 1);
+      c.globalAlpha = 1;
+    } else if (e.type === 'fold' && p < 1) {
+      // the calmed glare folds into a spark that drifts home
+      const x = Math.round(e.x + p * 24), y = Math.round(e.y - p * 34);
+      c.globalAlpha = p < 0.8 ? 1 : (1 - p) * 5;
+      const r = p < 0.15 ? 3 : 2;
+      for (let k = -r; k <= r; k++) { px(c, x + k, y, '#FFD27A'); px(c, x, y + k, '#FFD27A'); }
+      px(c, x, y, '#FFFBEA');
+      if (!settings.reduced) for (let t = 1; t < 5; t++) px(c, x - t * 3, y + t * 4, `rgba(255,210,122,${0.6 - t * 0.12})`);
+      c.globalAlpha = 1;
+    } else if (e.type === 'confetti' && p < 1) {
+      const T = (gt - e.t0) / 1000;
+      if (settings.reduced) { for (let i = 0; i < 10; i++) px(c, e.x + Math.cos(i) * 18, e.y + Math.sin(i * 1.7) * 10, '#F8DD8F'); continue; }
+      for (const q of e.parts) {
+        const x = e.x + q.vx * T, y = e.y + q.vy * T + 55 * T * T;
+        c.globalAlpha = p > 0.7 ? (1 - p) / 0.3 : 1;
+        c.fillStyle = q.c; c.fillRect(Math.round(x), Math.round(y), q.s, q.s);
+      }
+      c.globalAlpha = 1;
+    }
+  }
+  fx = fx.filter((e) => e.type === 'shot' ? !e.shot.done : gt - e.t0 < e.ms);
+  // Bramble's guard: a leaf-green shield arc in front of him
+  if (bram.guard) {
+    const dir = bram.face === 'W' ? -1 : 1;
+    const cx = Math.round(bram.x) + dir * 9, cy = Math.round(bram.y) - 12;
+    const a = settings.reduced ? 0.9 : 0.7 + 0.2 * Math.sin(gt / 200);
+    for (let k = -8; k <= 8; k++) { const xx = cx + dir * Math.round(2.5 * Math.cos(k / 8 * 1.4)); px(c, xx + dir, cy + k + 1, `rgba(36,54,31,${a})`); px(c, xx, cy + k, k < -5 ? `rgba(165,215,127,${a})` : `rgba(111,179,94,${a})`); }
+  }
+  // the timing ring: a gold ring closing on the target
+  if (fight && fight.timing && fight.timing.open) drawTiming(c, fight.timing);
+}
+function drawShot(c, s) {
+  const p = s.p;
+  const x = lerp(s.sx, s.tx, p), y = lerp(s.sy, s.ty, p) - Math.sin(p * Math.PI) * (s.kind === 'gust' ? 2 : 4);
+  const dir = s.tx > s.sx ? 1 : -1;
+  if (s.kind === 'gust') {
+    for (let t = 0; t < 6; t++) px(c, x - dir * t * 2, y + Math.round(Math.sin((gt / 60) + t)), `rgba(248,221,143,${1 - t * 0.15})`);
+    px(c, x, y - 1, '#FFFDF5'); px(c, x, y + 1, '#FFFDF5'); px(c, x + dir, y, '#FFFDF5');
+    return;
+  }
+  const L = s.kind === 'long' ? 10 : 8;
+  const X = Math.round(x), Y = Math.round(y);
+  for (let k = 1; k <= L; k++) { px(c, X - dir * k, Y + 1, OUTL); px(c, X - dir * k, Y, '#8F6A2A'); }
+  px(c, X, Y, '#C6C4BE'); px(c, X + dir, Y, '#78757B'); px(c, X, Y - 1, OUTL); px(c, X, Y + 1, OUTL); px(c, X + 2 * dir, Y, OUTL);
+  px(c, X - dir * L, Y - 1, '#86AAD0'); px(c, X - dir * (L - 1), Y - 1, '#86AAD0'); px(c, X - dir * L, Y + 2, '#5D86B6');
+  for (const k of [L + 5, L + 6, L + 10]) px(c, X - dir * k, Y, 'rgba(255,253,245,0.6)');
+  if (s.kind === 'long') for (const k of [L + 2, L + 3, L + 8, L + 13]) px(c, X - dir * k, Y - 1, 'rgba(248,221,143,0.7)');
+}
+function drawTiming(c, tm) {
+  const f = tm.target;
+  const now = nowR();
+  const p = clamp((now - tm.t0) / tm.ms, 0, 1);
+  const inWin = Math.abs(now - tm.impact) <= tm.win / 2;
+  const cx = f.x + f.dx, cy = f.y + 1;
+  // the white target ring
+  const R = f.kind === 'knot' ? 14 : 9;
+  if (settings.reduced) {  // the white target stays still; the gold ring shows only for the window
+    ellipseRing(c, cx, cy, R, R, 'rgba(255,253,245,0.95)');
+    if (inWin) { ellipseRing(c, cx, cy, R + 3, R + 3, '#7F5B1E'); ellipseRing(c, cx, cy, R + 2, R + 2, '#F8DD8F'); }
+    return;
+  }
+  ellipseRing(c, cx, cy + 1, R, R, 'rgba(30,25,23,0.6)');
+  ellipseRing(c, cx, cy, R, R, 'rgba(255,253,245,0.95)');
+  const r = lerp(R + 18, R, p);
+  ellipseRing(c, cx, cy + 1, r, r, '#7F5B1E', true, now / 90);
+  ellipseRing(c, cx, cy, r, r, inWin ? '#FFFDF5' : '#F8DD8F', true, now / 90);
+}
+
+// ---------- the interface (css px math, device px drawing) -----------------------------------
+function drawUI() {
+  buttons = [];
+  if (ui.fight > 0 || mode === 'fight' || mode === 'outro' || mode === 'intro') drawOverheads();
+  drawPops();
+  drawEdgeMarkers();
+  if (ui.hud > 0) drawWalkHud();
+  if (ui.fight > 0 && fight) drawFightUi();
+  if (fight && fight.done === 'arena') drawWalkOn();
+  drawBanners();
+  if (screenFlash > 0) { ctx.fillStyle = `rgba(255,253,245,${screenFlash * 0.6})`; ctx.fillRect(0, 0, W, H); }
+  if (overlay === 'howto') drawHowTo();
+  if (overlay === 'settings') drawSettings();
+}
+
+function drawWalkHud() {
+  const off = (1 - easeInOut(ui.hud));
+  // top bar
+  const y = safe.t + 8 - off * 90;
+  const x = 8 + safe.l, w = SW - 16 - safe.l - safe.r;
+  frame(d(x), d(y), d(w), d(52), 'paper', 1);
+  // Moss's little portrait
+  const MA = A.moss, i = MA.idx['perch_idle_E_0'];
+  ctx.imageSmoothingEnabled = false;
+  frame(d(x + 6), d(y + 6), d(40), d(40), 'inset', 0);
+  ctx.drawImage(IMG.moss, (i % 16) * 24 + 2, Math.floor(i / 16) * 24 + 2, 20, 20, d(x + 10), d(y + 8), d(32), d(32));
+  txt('BRAMBLE & MOSS', d(x + 54), d(y + 10), 11, 'b', BINK);
+  txt('WOODLAND · LEVEL 2', d(x + 54), d(y + 28), 10, 'm', INK);
+  const hd = btn('help', x + w - 102, y + 4, 44, 44, true, () => (overlay = 'howto'));
+  frame(d(x + w - 100), d(y + 6), d(44), d(40), 'paper', 1, hd);
+  txt('?', d(x + w - 78), d(y + 26) + (hd ? U : 0), 18, 'd', BINK, 'center', 'middle');
+  const sd = btn('settings', x + w - 52, y + 4, 44, 44, true, () => (overlay = 'settings'));
+  frame(d(x + w - 50), d(y + 6), d(44), d(40), 'paper', 1, sd);
+  icon('settings', d(x + w - 28) - 8 * iconScale(22), d(y + 26) - 8 * iconScale(22) + (sd ? U : 0), iconScale(22));
+  // the hotbar (only ARENA works in this prototype)
+  const hb = 66, by = SH - safe.b - 8 - hb + off * (hb + 30);
+  frame(d(x), d(by), d(w), d(hb), 'paper', 1);
+  const tabs = [['home', 'HOME'], ['missions', 'MISSIONS'], ['nap', 'NAP'], ['arena', 'ARENA'], ['shop', 'SHOP']];
+  const tw = w / 5;
+  tabs.forEach(([ic, label], i) => {
+    const tx = x + tw * i;
+    const isNap = ic === 'nap';
+    const on = true;
+    const dn = btn('tab-' + ic, tx, by, tw, hb, on, () => {
+      if (ic === 'arena') { if (storm) { walkTo(104, 414); banner('TO THE STONE RING', 'FOLLOW THE SIGNPOST SOUTH. STEP INSIDE TO SPAR.', 'night', 2200); } else banner('THE RING IS QUIET', 'THE STORM WILL GATHER AGAIN SOON.', 'night', 2000); }
+      else banner('NOT IN THIS PROTOTYPE', 'ONLY THE WALK AND THE FIGHTS ARE HERE.', 'parchment', 1600);
+    });
+    if (isNap) frame(d(tx + 6), d(by - 10), d(tw - 12), d(hb + 4), 'nap', 1, dn);
+    const s = iconScale(22);
+    icon(ic, d(tx + tw / 2) - 8 * s, d(by + (isNap ? 4 : 12)) + (dn ? U : 0), s);
+    txt(label, d(tx + tw / 2), d(by + (isNap ? 38 : 44)) + (dn ? U : 0), 9, 'b', isNap ? '#FFFDF5' : INK, 'center');
+  });
+}
+
+function drawEdgeMarkers() {
+  // a glare outside the view still shows at the screen's edge, so it is never a surprise
+  if (mode !== 'walk') return;
+  for (const f of foes) {
+    if (f.kind !== 'glare' || f.state !== 'drift' || f.alpha <= 0) continue;
+    const [sx, sy] = toScreen(f.x, f.y);
+    const m = 30, top = safe.t + 70, bot = SH - safe.b - 90;
+    if (sx > m && sx < SW - m && sy > top && sy < bot) continue;
+    const ex = clamp(sx, m, SW - m), ey = clamp(sy, top + 10, bot - 10);
+    btn('edge-glare', ex - 24, ey - 24, 48, 48, true, () => walkTo(f.x, f.y + f.hoverH));
+    frame(d(ex - 18), d(ey - 18), d(36), d(36), 'night', 0);
+    const i = A.glare.idx['cold0'];
+    ctx.drawImage(IMG.glare, (i % 16) * 28 + 2, Math.floor(i / 16) * 34 + 4, 24, 26, d(ex - 12), d(ey - 13), d(24), d(26));
+  }
+}
+
+function overheadAnchor(f) { const [x, y] = toScreen(f.x, f.y - (f.kind === 'knot' ? 22 : f.kind === 'shard' ? 13 : 17)); return [x, y - 4]; }
+function drawOverheads() {
+  if (!fight) return;
+  const alpha = ui.fight;
+  if (alpha <= 0) return;
+  ctx.globalAlpha = Math.min(1, alpha * 1.5);
+  const hdrBottom = safe.t + 8 + 56 + (terrainAt(bram.x, bram.y) && terrainAt(bram.x, bram.y) !== 'mark' ? 24 : 0) + (fight.foes.some((f) => f.kind === 'glare' && f.hp > 0 && isWater(f.x, f.y + f.hoverH)) ? 24 : 0);
+  const placed = [];
+  const place = (cx, bottom, w, h) => {
+    let x = clamp(cx - w / 2, 6, SW - 6 - w), y = Math.max(hdrBottom + 4, bottom - h);
+    for (let tries = 0; tries < 6; tries++) {
+      const hit = placed.find((p) => x < p.x + p.w + 4 && x + w + 4 > p.x && y < p.y + p.h + 2 && y + h + 2 > p.y);
+      if (!hit) break;
+      y = hit.y - h - 4;
+      if (y < hdrBottom + 4) { y = hit.y + hit.h + 4; x = hit.x + hit.w + 4 > SW - w - 6 ? hit.x - w - 4 : x; }
+    }
+    placed.push({ x, y, w, h }); return [x, y];
+  };
+  // Bramble's plate: name, HP, bar, Aim pips, guard
+  {
+    const [cx, top] = toScreen(bram.x, bram.y - 27);
+    const w = 108, h = 36;
+    const [x, y] = place(cx, top - 6, w, h + 18);
+    // aim chip on top
+    frame(d(x), d(y), d(74), d(18), 'paper', 0);
+    txt('AIM', d(x + 6), d(y + 9), 9, 'b', BINK, 'left', 'middle');
+    pips(d(x + 30), d(y + 4), bram.aim, 3, 10, '#5D86B6');
+    if (bram.guard) { frame(d(x + 78), d(y), d(30), d(18), 'leaf', 0); icon('cover', d(x + 85), d(y + 1), iconScale(16)); }
+    plate(x, y + 18, w, h, 'BRAMBLE', bram.hp, bram.max, 'paper');
+  }
+  for (const f of fight.foes) {
+    if (f.state === 'folded' || f.state === 'gone' || f.calm) continue;
+    const compact = f.kind === 'shard';
+    const coreF = fight.foes.find((q) => q.kind === 'core');
+    if (compact && !(coreF && f.y < coreF.y)) {
+      const [sx, sy] = toScreen(f.x, f.y + f.hoverH + 3);
+      const w = 76, h = 30, it = f.intent && !f.calm ? f.intent : null;
+      const x = clamp(sx - w / 2, 6, SW - 6 - w);
+      plate(x, sy, w, h, f.name, f.hp, f.max, 'night', true, f);
+      if (it) drawIntent(f, it, x + w / 2, sy + h + 4, true, true);
+      placed.push({ x, y: sy, w, h: h + 30 });
+      continue;
+    }
+    const [cx, top] = overheadAnchor(f);
+    const w = compact ? 76 : 112, h = compact ? 30 : 36;
+    const it = f.intent && !f.calm ? f.intent : null;
+    const bubbleH = it ? 26 : 0;
+    const [x, y] = place(cx, top, w, h + bubbleH + (it ? 4 : 0));
+    if (it) drawIntent(f, it, x + w / 2, y, compact);
+    plate(x, y + bubbleH + (it ? 4 : 0), w, h, f.name, f.hp, f.max, 'night', compact, f);
+  }
+  // the standing spots' names, under them
+  if (mode === 'fight' && fight.awaiting) for (const s of fight.spots) {
+    const [sx, sy] = toScreen(s.x, s.y + 4);
+    const label = TERRAIN[s.type].short;
+    const lw = txtW(label, 9, 'b') / dpr + 12;
+    const dn = btn('spot-' + s.x + '-' + s.y, sx - 26, sy - 34, 52, 52, true, () => (fight.sel = { kind: 'step', spot: s }));
+    frame(d(sx - lw / 2), d(sy + 2), d(lw), d(18), fight.sel && fight.sel.spot === s ? 'gold' : 'parchment', 0, dn);
+    txt(label, d(sx), d(sy + 11), 9, 'b', BINK, 'center', 'middle');
+  }
+  // foes are tappable to choose a target (44 px+)
+  if (mode === 'fight' && fight.awaiting && fight.foes.filter((f) => f.hp > 0).length > 1) for (const f of fight.foes) {
+    if (f.hp <= 0) continue;
+    const [sx, sy] = toScreen(f.x, f.y);
+    btn('foe-' + fight.foes.indexOf(f), sx - 28, sy - 30, 56, 60, true, () => (fight.target = f));
+  }
+  ctx.globalAlpha = 1;
+}
+function plate(x, y, w, h, name, hp, max, tone, compact, f) {
+  frame(d(x), d(y), d(w), d(h), tone, 0);
+  const ink = tone === 'night' ? '#DDF5FF' : BINK;
+  txt(name, d(x + 6), d(y + 5), compact ? 8 : 9, 'b', ink);
+  txt(`${hp}/${max}`, d(x + w - 6), d(y + 6), compact ? 6.5 : 7.5, 'd', ink, 'right');
+  const bx = d(x + 5), by = d(y + h - 12), bw = d(w - 10), bh = d(7);
+  ctx.fillStyle = tone === 'night' ? '#0F1020' : '#796650'; ctx.fillRect(bx, by, bw, bh);
+  ctx.fillStyle = tone === 'night' ? '#2B2F50' : '#E1D2B6'; ctx.fillRect(bx + U, by + U, bw - 2 * U, bh - 2 * U);
+  const fw = Math.round((bw - 2 * U) * hp / max);
+  let col = '#3E7D44', hi = '#7FBF6A';
+  if (tone === 'night') { col = f && f.kind !== 'glare' ? '#9C86F2' : '#64BDF2'; hi = '#DDF5FF'; }
+  else if (hp < max * 0.25) { col = '#973D35'; hi = '#F0A688'; } else if (hp < max * 0.5) { col = '#D8AF5E'; hi = '#F8DD8F'; }
+  ctx.fillStyle = col; ctx.fillRect(bx + U, by + U, fw, bh - 2 * U);
+  ctx.fillStyle = hi; ctx.fillRect(bx + U, by + U, fw, U);
+  if (f && f.kind === 'knot' && f.phase === 1) { ctx.fillStyle = '#F8DD8F'; ctx.fillRect(bx + Math.round(bw / 2), by - U, U, bh + 2 * U); }
+}
+function drawIntent(f, it, cx, y, compact, below) {
+  const n = incoming(f, it);
+  const big = it.big || it.type === 'gather' || it.type === 'charge';
+  let label = it.name + (n !== null ? ' ' + n : '');
+  if (it.type === 'charge') label = `OVERLOAD IN ${it.count + 1}`;
+  const w = Math.min(SW - 12, Math.max(compact ? 64 : 84, txtW(label, compact ? 9 : 10, 'b') / dpr + 34));
+  const x = clamp(cx - w / 2, 6, SW - 6 - w);
+  frame(d(x), d(y), d(w), d(26), big ? 'danger' : 'parchment', 0);
+  icon(it.icon, d(x + 5), d(y + 13) - 8 * iconScale(16), iconScale(16));
+  txt(label, d(x + 25), d(y + 13), compact ? 9 : 10, 'b', big ? '#FFF7E2' : BINK, 'left', 'middle');
+  // the tail of the speech frame
+  ctx.fillStyle = TONES[big ? 'danger' : 'parchment'][4];
+  if (below) { ctx.fillRect(d(cx) - U * 2, d(y) - U, U * 4, U * 2); ctx.fillRect(d(cx) - U, d(y) - 2 * U, U * 2, U); }
+  else { ctx.fillRect(d(cx) - U * 2, d(y + 26) - U, U * 4, U * 2); ctx.fillRect(d(cx) - U, d(y + 26) + U, U * 2, U); }
+}
+
+function controlsLayout() {
+  const by = SH - safe.b - 12;
+  const hub = { x: SW - safe.r - 12 - 86, y: by - 86, w: 86, h: 86 };
+  const hx = hub.x + hub.w / 2, hy = hub.y + hub.h / 2;
+  const r = Math.min(128, Math.max(108, (SW - 32) * 0.34));
+  const slots = [180, 210, 240, 270].map((a) => {
+    const t = a * Math.PI / 180;
+    return { cx: hx + r * Math.cos(t), cy: hy + r * Math.sin(t) };
+  });
+  const colX = 12 + safe.l, colW = Math.min(176, slots[0].cx - 29 - 8 - colX);
+  return { by, hub, slots, colX, colW, size: 58 };
+}
+
+function drawFightUi() {
+  const F = fight.F;
+  const off = 1 - easeOut(ui.fight);
+  // header: what happened, where, the turn, TIMING, LEAVE
+  const hy = safe.t + 8 - off * 90, hx = 8 + safe.l, hw = SW - 16 - safe.l - safe.r;
+  frame(d(hx), d(hy), d(hw), d(54), 'paper', 1);
+  const htitle = fight.kind === 'arena' ? 'THE STATIC STORM' : 'A GLARE DRIFTED IN';
+  txt(htitle, d(hx + 12), d(hy + 10), 9.5, 'd', BINK);
+  const ter = terrainAt(bram.x, bram.y);
+  const sub = `${fight.place.split(',')[0]} · TURN ${Math.min(fight.turn, 12)} OF 12`;
+  txt(sub, d(hx + 12), d(hy + 30), 10, 'm', INK);
+  const can = fight.awaiting;
+  const ld = btn('leave', hx + hw - 50, hy + 3, 46, 48, can, () => submit({ kind: 'leave' }));
+  frame(d(hx + hw - 50), d(hy + 5), d(44), d(42), can ? 'paper' : 'disabled', 1, ld);
+  icon('close', d(hx + hw - 28) - 8 * iconScale(20), d(hy + 26) - 8 * iconScale(20) + (ld ? U : 0), iconScale(20));
+  const tdn = btn('timing', hx + hw - 128, hy + 3, 74, 48, true, cycleTiming);
+  frame(d(hx + hw - 126), d(hy + 5), d(70), d(42), settings.timing === 'OFF' ? 'disabled' : 'gold', 1, tdn);
+  txt('TIMING', d(hx + hw - 91), d(hy + 16) + (tdn ? U : 0), 8, 'b', BINK, 'center', 'middle');
+  txt(settings.timing, d(hx + hw - 91), d(hy + 33) + (tdn ? U : 0), 10, 'b', BINK, 'center', 'middle');
+  // terrain chip under the header
+  if (ter && ter !== 'mark') {
+    const label = 'BRAMBLE: ' + TERRAIN[ter].name + ' · ' + TERRAIN[ter].line.split(': ')[1];
+    const tw = Math.min(hw, txtW(label, 9, 'b') / dpr + 16);
+    frame(d(hx), d(hy + 60), d(tw), d(20), 'leaf', 0);
+    txt(label, d(hx + 8), d(hy + 70), 9, 'b', '#FFFDF5', 'left', 'middle');
+  }
+  const foeOnWater = fight.foes.find((f) => f.kind === 'glare' && f.hp > 0 && isWater(f.x, f.y + f.hoverH));
+  if (foeOnWater) {
+    const label = 'GLARE OVER THE STREAM · ITS LIGHT DOUBLES: DAZZLE +2';
+    const tw = Math.min(hw, txtW(label, 9, 'b') / dpr + 16);
+    frame(d(hx), d(hy + (ter ? 84 : 60)), d(tw), d(20), 'night', 0);
+    txt(label, d(hx + 8), d(hy + (ter ? 94 : 70)), 9, 'b', '#DDF5FF', 'left', 'middle');
+  }
+
+  // the bottom: the command ring, the hub, the left column
+  const L = controlsLayout();
+  const dropY = off * 260;
+  ctx.save(); ctx.translate(0, d(dropY));
+  const myTurn = fight.awaiting;
+  // ring track
+  const hcx = L.hub.x + L.hub.w / 2, hcy = L.hub.y + L.hub.h / 2;
+  ctx.strokeStyle = 'rgba(30,25,23,0.35)'; ctx.lineWidth = d(10); ctx.beginPath();
+  ctx.arc(d(hcx), d(hcy), d(Math.hypot(L.slots[0].cx - hcx, L.slots[0].cy - hcy)), Math.PI * 0.97, Math.PI * 1.53); ctx.stroke();
+  const badges = [];
+  for (let i = 0; i < 4; i++) {
+    const id = F.hand[i];
+    const s = L.slots[i];
+    const x = s.cx - L.size / 2, y = s.cy - L.size / 2;
+    if (!id) { ctx.globalAlpha = 0.35; frame(d(x + 6), d(y + 6), d(L.size - 12), d(L.size - 12), 'inset', 0); ctx.globalAlpha = 1; continue; }
+    const c = CARDS[id];
+    const afford = F.energy >= c.cost;
+    const sel = fight.sel && fight.sel.kind === 'card' && fight.sel.idx === i;
+    const on = myTurn && afford;
+    const dn = btn('slot-' + i, x - 2, y - 2, L.size + 4, L.size + 4, myTurn, () => { fight.sel = { kind: 'card', idx: i, card: id }; });
+    const lift = sel ? -6 : 0;
+    frame(d(x), d(y + lift), d(L.size), d(L.size), !on ? 'disabled' : sel ? 'leaf' : 'paper', 1, dn);
+    const s2 = iconScale(26);
+    icon(c.icon, d(x + L.size / 2) - 8 * s2, d(y + lift + 7) + (dn ? U : 0), s2);
+    txt(c.name, d(x + L.size / 2), d(y + lift + L.size - 13) + (dn ? U : 0), c.name.length > 7 ? 7.5 : 8.5, 'b', sel ? '#FFFDF5' : BINK, 'center', 'middle');
+    badges.push([x - 6, y + lift - 8, afford, c.cost]);
+  }
+  // cost badges on top of every slot
+  for (const [bx, by2, afford, cost] of badges) {
+    frame(d(bx), d(by2), d(22), d(20), afford ? 'gold' : 'danger', 0);
+    txt(String(cost), d(bx + 11), d(by2 + 11), 8, 'd', BINK, 'center', 'middle');
+  }
+  // the hub: the chosen thing, TAP TO PLAY (never moves)
+  const sel = fight.sel;
+  let hubTone = 'parchment', hubTitle = 'BE STILL', hubSub = '+1 ENERGY +1 AIM', hubIcon = 'moon', playable = myTurn, action = { kind: 'pass' };
+  if (sel && sel.kind === 'card') {
+    const c = CARDS[sel.card];
+    const ok = F.energy >= c.cost;
+    hubTone = ok ? 'leaf' : 'disabled'; hubTitle = c.name; hubSub = ok ? 'TAP TO PLAY' : 'NEEDS ' + c.cost + ' ENERGY'; hubIcon = c.icon; playable = myTurn && ok; action = { kind: 'card', card: sel.card };
+  } else if (sel && sel.kind === 'step') {
+    hubTone = 'gold'; hubTitle = 'STEP'; hubSub = 'TO ' + TERRAIN[sel.spot.type].short; hubIcon = 'sprout'; action = { kind: 'step', spot: sel.spot };
+  } else if (sel && sel.kind === 'moss') {
+    hubTone = 'nap'; hubTitle = 'MOSS HUMS'; hubSub = 'TAP TO PLAY'; hubIcon = 'moon'; action = { kind: 'moss' };
+  }
+  if (!myTurn) { hubTone = 'disabled'; hubTitle = mode === 'fight' ? 'ITS TURN' : '...'; hubSub = ''; hubIcon = null; playable = false; }
+  const hdn = btn('hub', L.hub.x, L.hub.y, L.hub.w, L.hub.h, playable, () => { const a = action; fight.sel = null; submit(a); });
+  frame(d(L.hub.x), d(L.hub.y), d(L.hub.w), d(L.hub.h), hubTone, 2, hdn);
+  const hp = hdn ? 2 * U : 0;
+  const light = hubTone === 'leaf' || hubTone === 'nap';
+  if (hubIcon) icon(hubIcon, d(hcx) - 8 * iconScale(28), d(L.hub.y + 8) + hp, iconScale(28));
+  txt(hubTitle, d(hcx), d(L.hub.y + 50) + hp, hubTitle.length > 9 ? 9 : 11, 'b', light ? '#FFFDF5' : BINK, 'center', 'middle');
+  if (hubSub) txt(hubSub, d(hcx), d(L.hub.y + 67) + hp, 7.5, 'b', light ? '#E9F5DF' : INK, 'center', 'middle');
+
+  // left column: what the chosen thing does, energy; BE STILL; MOSS HUMS
+  const cx = L.colX, cw = L.colW;
+  const mossY = L.by - 50, stillY = mossY - 56, wellY = stillY - 108;
+  frame(d(cx), d(wellY), d(cw), d(100), 'inset', 0);
+  let title = myTurn ? 'YOUR TURN' : 'ITS TURN', lines = [];
+  if (myTurn && !sel) lines = ['CHOOSE A CARD ON THE RING, OR BE STILL.', fight.foes.filter((f) => f.hp > 0).length > 1 ? 'TAP A FOE TO AIM AT IT.' : (fight.spots.length ? 'OR TAP A MARKED SPOT TO STEP.' : '')];
+  if (sel && sel.kind === 'card') {
+    const c = CARDS[sel.card]; title = c.name;
+    const rg = hitRange(sel.card, fight.target);
+    lines = [c.line];
+    if (rg) lines.push(`HITS ${rg.lo}-${rg.hi}${c.perAim && bram.aim ? ' (AIM ' + bram.aim + ')' : ''}${rg.halved ? ', HALVED' : ''}`);
+    if (c.guard) lines = ['GUARD: HALVES THE NEXT HIT.', '+1 AIM. COSTS 1.'];
+  }
+  if (sel && sel.kind === 'step') { const t = TERRAIN[sel.spot.type]; title = 'STEP: ' + t.short; lines = [t.line, 'USES YOUR TURN.']; }
+  if (sel && sel.kind === 'moss') { title = 'MOSS HUMS'; lines = [`HEAL ${8 * fight.mossPips} AND GUARD.`, 'ONCE A FIGHT, FROM REST.']; }
+  if (!myTurn) lines = ['WATCH ITS MOVE.', fight.timing ? 'TAP AS THE RING CLOSES!' : ''];
+  if (fight.timing && fight.timing.open) { title = 'TAP NOW!'; lines = ['TAP ANYWHERE AS THE GOLD', 'RING MEETS THE WHITE.']; }
+  txt(title, d(cx + 8), d(wellY + 9), 10, 'b', BINK);
+  let ly = wellY + 27;
+  for (const l of lines) { if (!l) continue; for (const w of wrapLines(l, d(cw - 16), 8.5, 'm')) { txt(w, d(cx + 8), d(ly), 8.5, 'm', INK); ly += 12; } }
+  txt('ENERGY', d(cx + 8), d(wellY + 82), 9, 'b', BINK, 'left', 'middle');
+  pips(d(cx + 58), d(wellY + 76), F.energy, 3, 12);
+  // BE STILL
+  const sdn = btn('still', cx, stillY, cw, 50, myTurn, () => { fight.sel = null; submit({ kind: 'pass' }); });
+  frame(d(cx), d(stillY), d(cw), d(46), 'paper', 1, sdn);
+  const sp = sdn ? U : 0;
+  txt('BE STILL', d(cx + cw / 2), d(stillY + 15) + sp, 11, 'b', BINK, 'center', 'middle');
+  txt('+1 ENERGY · +1 AIM', d(cx + cw / 2), d(stillY + 32) + sp, 8.5, 'm', INK, 'center', 'middle');
+  // MOSS HUMS (the familiar's rested special)
+  const mOn = myTurn && !fight.mossUsed;
+  const mdn = btn('moss', cx, mossY, cw, 46, mOn, () => (fight.sel = { kind: 'moss' }));
+  frame(d(cx), d(mossY), d(cw), d(42), fight.mossUsed ? 'disabled' : 'nap', 1, mdn);
+  const mp = mdn ? U : 0;
+  icon('moon', d(cx + 6), d(mossY + 5) + mp, iconScale(16));
+  txt(fight.mossUsed ? 'MOSS IS RESTING' : 'MOSS HUMS', d(cx + 28), d(mossY + 13) + mp, 10, 'b', fight.mossUsed ? INK : '#FFFDF5', 'left', 'middle');
+  txt(fight.mossUsed ? 'USED THIS FIGHT' : 'RESTED', d(cx + 28), d(mossY + 29) + mp, 8, 'm', fight.mossUsed ? INK : '#E8E0FF', 'left', 'middle');
+  if (!fight.mossUsed) pips(d(cx + cw - 50), d(mossY + 23) + mp, fight.mossPips, 3, 11, '#F8DD8F', '#4C3F80');
+  ctx.restore();
+}
+function cycleTiming() {
+  settings.timing = settings.timing === 'TAP' ? 'RELAXED' : settings.timing === 'RELAXED' ? 'OFF' : 'TAP';
+  saveSettings();
+  banner('TIMING: ' + settings.timing, settings.timing === 'OFF' ? 'NO TAP. EVERY SHOT IS A PLAIN HIT.' : `TAP AS THE RING CLOSES FOR +25%. WINDOW ${WINDOW[settings.timing]} MS.`, 'parchment', 1800);
+}
+function drawWalkOn() {
+  const w = 180, h = 54, x = SW / 2 - w / 2, y = SH - safe.b - 120;
+  const dn = btn('walkon', x, y, w, h, true, () => { const r = fight.resolveWalkOn; fight.done = null; r && r(); });
+  frame(d(x), d(y), d(w), d(h), 'leaf', 2, dn);
+  txt('WALK ON', d(SW / 2), d(y + h / 2) + (dn ? 2 * U : 0), 13, 'b', '#FFFDF5', 'center', 'middle');
+}
+
+function drawPops() {
+  for (const p of pops) {
+    const t = (gt - p.t0) / p.ms;
+    if (t >= 1) continue;
+    const [sx, sy] = toScreen(p.x, p.y);
+    // anticipate (small), act (overshoot), settle (rest and rise)
+    const s = settings.reduced ? 1 : t < 0.18 ? easeBack(t / 0.18) : 1;
+    const rise = settings.reduced ? 0 : (t > 0.25 ? (t - 0.25) / 0.75 : 0) * p.rise;
+    ctx.globalAlpha = t > 0.75 ? (1 - t) / 0.25 : 1;
+    const size = p.size * Math.max(0.3, s);
+    if (p.kind === 'bang') {
+      const w = 28, h = 30;
+      frame(d(sx - w / 2), d(sy - h - rise), d(w), d(h), 'gold', 1);
+      txt('!', d(sx), d(sy - h / 2 - rise), 16, 'd', BINK, 'center', 'middle');
+    } else if (p.kind === 'stamp') {
+      const w = txtW(p.text, p.size, 'd') / dpr + 18;
+      frame(d(sx - w / 2), d(sy - 13 - rise), d(w), d(26), 'gold', 0);
+      txt(p.text, d(sx), d(sy - rise), p.size * Math.min(1, s), 'd', BINK, 'center', 'middle');
+    } else if (p.kind === 'label') {
+      outlined(p.text, d(sx), d(sy - rise), p.size, 'b', p.color);
+    } else {
+      outlined(p.text, d(sx), d(sy - rise), size, 'd', p.color);
+    }
+    ctx.globalAlpha = 1;
+  }
+  pops = pops.filter((p) => gt - p.t0 < p.ms);
+}
+function drawBanners() {
+  const now = gt;
+  banners = banners.filter((b) => now - b.t0 < b.ms);
+  const b = banners[banners.length - 1];
+  if (!b) return;
+  const t = now - b.t0;
+  const inT = settings.reduced ? 1 : Math.min(1, t / 220), outT = settings.reduced ? 1 : Math.min(1, (b.ms - t) / 220);
+  const w = Math.min(SW - 24, 360);
+  const lines = wrapLines(b.sub || '', d(w - 24), 9, 'm');
+  const h = 34 + lines.length * 13;
+  const x = SW / 2 - w / 2;
+  const baseY = (mode === 'walk' ? safe.t + 72 : safe.t + 8 + 60 + (fight && terrainAt(bram.x, bram.y) && terrainAt(bram.x, bram.y) !== 'mark' ? 24 : 0) + (fight && fight.foes.some((f) => f.kind === 'glare' && f.hp > 0 && isWater(f.x, f.y + f.hoverH)) ? 24 : 0));
+  const y = baseY - (1 - easeBack(Math.min(inT, outT))) * 30;
+  ctx.globalAlpha = Math.min(inT, outT);
+  frame(d(x), d(y), d(w), d(h), b.tone, 1);
+  const light = ['night', 'danger', 'leaf', 'nap'].includes(b.tone);
+  txt(b.title, d(SW / 2), d(y + 9), 9, 'd', light ? '#FFF7E2' : BINK, 'center');
+  lines.forEach((l, i) => txt(l, d(SW / 2), d(y + 26 + i * 13), 9, 'm', light ? '#E9E2D0' : INK, 'center'));
+  ctx.globalAlpha = 1;
+}
+
+function modalBox(h) {
+  ctx.fillStyle = 'rgba(15,16,32,0.62)'; ctx.fillRect(0, 0, W, H);
+  const w = Math.min(SW - 24, 378), x = SW / 2 - w / 2, y = Math.max(safe.t + 12, SH / 2 - h / 2);
+  frame(d(x), d(y), d(w), d(h), 'paper', 2);
+  return { x, y, w, h };
+}
+function drawHowTo() {
+  const B = modalBox(Math.min(SH - safe.t - safe.b - 24, 640));
+  btn('modal-bg', 0, 0, SW, SH, true, () => {});
+  txt('NAPATTACK · MOCK', d(B.x + 16), d(B.y + 16), 8, 'd', '#AE5A40');
+  txt('FIGHTS: IN-WORLD TURNS', d(B.x + 16), d(B.y + 32), 10, 'd', BINK);
+  const items = [
+    ['TAP THE GROUND TO WALK.', 'Bramble walks the woodland path; Moss follows a step behind.'],
+    ['A GLARE DRIFTS IN.', 'A wisp of screen light from the city, always visible first. Walk on and it lets you be. Meet it, or tap it, and you spar right there on the path.'],
+    ['CHOOSE, THEN PLAY.', 'Pick a card on the ring under your right thumb, then tap the big button. With nothing chosen, the button is BE STILL: +1 energy, +1 Aim.'],
+    ['AIM.', 'BE STILL, TAKE COVER or ending a turn with energy left banks Aim. LOOSE and LONG SHOT spend it for more.'],
+    ['TAP AS THE RING CLOSES.', 'During a shot, a tap anywhere as the gold ring meets the white adds a quarter. A miss is a plain hit. TIMING switches it off.'],
+    ['THE GROUND MATTERS.', 'Marked spots (bridge, shade, bank) are a step away; stepping uses your turn.'],
+    ['THE STONE RING.', 'Follow the signpost (or ARENA) to spar with the Static Storm. Nothing is lost if Bramble gets tired.'],
+  ];
+  let y = B.y + 58;
+  const maxY = B.y + B.h - 72;
+  for (const [h, body] of items) {
+    if (y > maxY) break;
+    txt(h, d(B.x + 16), d(y), 10, 'b', BINK); y += 15;
+    for (const l of wrapLines(body, d(B.w - 32), 9.5, 'm')) { if (y > maxY) break; txt(l, d(B.x + 16), d(y), 9.5, 'm', INK); y += 13; }
+    y += 7;
+  }
+  const bw = 200, bx = SW / 2 - bw / 2, by = B.y + B.h - 62;
+  const dn = btn('howto-go', bx, by, bw, 52, true, () => { overlay = null; store.set('seen', true); if (mode === 'boot') mode = 'walk'; });
+  frame(d(bx), d(by), d(bw), d(48), 'leaf', 2, dn);
+  txt("LET'S GO", d(SW / 2), d(by + 24) + (dn ? 2 * U : 0), 13, 'b', '#FFFDF5', 'center', 'middle');
+}
+function drawSettings() {
+  const B = modalBox(330);
+  btn('modal-bg', 0, 0, SW, SH, true, () => {});
+  txt('SETTINGS', d(B.x + 16), d(B.y + 16), 11, 'd', BINK);
+  const rows = [
+    ['TIMING (THE TAP DURING A SHOT)', ['TAP', 'RELAXED', 'OFF'], () => settings.timing, (v) => (settings.timing = v)],
+    ['SCREEN SHAKE', ['ON', 'OFF'], () => (settings.shake ? 'ON' : 'OFF'), (v) => (settings.shake = v === 'ON')],
+    ['MOTION', ['FULL', 'REDUCED'], () => (settings.reduced ? 'REDUCED' : 'FULL'), (v) => (settings.reduced = v === 'REDUCED')],
+  ];
+  let y = B.y + 44;
+  for (const [label, opts, get, set] of rows) {
+    txt(label, d(B.x + 16), d(y), 9.5, 'b', BINK); y += 16;
+    const ow = (B.w - 32 - (opts.length - 1) * 8) / opts.length;
+    opts.forEach((o, i) => {
+      const x = B.x + 16 + i * (ow + 8);
+      const on = get() === o;
+      const dn = btn('set-' + label + o, x, y, ow, 46, true, () => { set(o); saveSettings(); });
+      frame(d(x), d(y), d(ow), d(42), on ? 'gold' : 'paper', 1, dn);
+      txt(o, d(x + ow / 2), d(y + 21) + (dn ? U : 0), 10, 'b', BINK, 'center', 'middle');
+    });
+    y += 60;
+  }
+  txt(prefersReduced ? 'YOUR PHONE ASKS FOR REDUCED MOTION.' : 'REDUCED MOTION: NO SHAKE, NO CAMERA MOVES, STILL RINGS.', d(B.x + 16), d(y - 6), 8.5, 'm', INK);
+  const bw = 160, bx = SW / 2 - bw / 2, by = B.y + B.h - 60;
+  const dn = btn('settings-close', bx, by, bw, 50, true, () => (overlay = null));
+  frame(d(bx), d(by), d(bw), d(46), 'leaf', 2, dn);
+  txt('DONE', d(SW / 2), d(by + 23) + (dn ? 2 * U : 0), 12, 'b', '#FFFDF5', 'center', 'middle');
+}
+
+// ---------- main loop --------------------------------------------------------------------------
+function frameLoop(t) {
+  const dt = Math.min(50, lastReal ? t - lastReal : 16);
+  lastReal = t;
+  for (let i = realWaiters.length - 1; i >= 0; i--) if (realWaiters[i].t <= nowR()) realWaiters.splice(i, 1)[0].r();
+  if (!overlay) step(dt);
+  if (!overlay) update(hitStop > 0 ? 0 : dt);
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.imageSmoothingEnabled = false;
+  ctx.fillStyle = '#1b2a1c'; ctx.fillRect(0, 0, W, H);
+  drawWorld();
+  drawUI();
+  requestAnimationFrame(frameLoop);
+}
+document.addEventListener('visibilitychange', () => { lastReal = 0; });
+window.addEventListener('resize', resize);
+
+// test hooks (for the Playwright run): read-only views and a way to place things
+window.NA = {
+  get state() { return { mode, overlay, bram: { x: bram.x, y: bram.y, hp: bram.hp, aim: bram.aim, act: bram.act, face: bram.face, guard: bram.guard }, fight: fight && { kind: fight.kind, turn: fight.turn, awaiting: fight.awaiting, energy: fight.F.energy, hand: fight.F.hand.slice(), timingOpen: !!(fight.timing && fight.timing.open), timingIn: fight.timing ? fight.timing.impact - nowR() : null, sel: fight.sel && fight.sel.kind, over: !!fight.over, done: fight.done || null, mossUsed: fight.mossUsed, spots: fight.spots.map((s) => ({ ...s, screen: toScreen(s.x, s.y) })), foes: fight.foes.map((f) => ({ kind: f.kind, hp: f.hp, max: f.max, intent: f.intent && f.intent.name, x: f.x, y: f.y, screen: toScreen(f.x, f.y) })), lane: fight.lane }, foes: foes.map((f) => ({ kind: f.kind, x: f.x, y: f.y, state: f.state, screen: toScreen(f.x, f.y) })), cam: { ...cam }, buttons: buttons.map((b) => ({ id: b.id, x: b.x, y: b.y, w: b.w, h: b.h, on: b.on })), banners: banners.map((b) => b.title) }; },
+  toScreen, settings, stats,
+  teleport(x, y) { bram.x = x; bram.y = y; bram.path = []; trail.length = 0; moss.x = x - 10; moss.y = y; },
+  spawnNow() { nextGlareAt = 0; },
+  setHp(n) { bram.hp = n; },
+  foeHp(n) { if (fight) for (const f of fight.foes) f.hp = Math.min(f.hp, n); },
+  glareTo(x, y) { const g = foes.find((f) => f.kind === 'glare'); if (g) { g.x = x; g.y = y; g.alpha = 1; g.route = [[x, y, 60000]]; g.ri = 0; } },
+};
+
+(async function boot() {
+  resize();
+  await loadAll();
+  document.getElementById('boot').remove();
+  cam.x = bram.x; cam.y = bram.y; cam.k = kWalk(); clampCam();
+  trail.push([bram.x, bram.y]);
+  anim(bram, 'idle', 'S', true);
+  storm = makeStorm(); foes.push(storm);
+  if (store.get('seen', false) && Q.get('howto') !== '1') mode = 'walk'; else overlay = 'howto';
+  if (mode === 'boot') mode = 'walk';
+  requestAnimationFrame(frameLoop);
+})();
+</script>
+</body>
+</html>
