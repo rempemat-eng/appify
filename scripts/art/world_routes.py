@@ -181,7 +181,8 @@ ANCHORS = {
     'delta-road': [(9152, 4320), (9184, 4344), (9192, 4400), (9256, 4432), (9280, 4488), (9352, 4504), (9360, 4560), (9416, 4616), (9416, 4648), (9472, 4696), (9496, 4752), (9544, 4768), (9584, 4824), (9648, 4840), (9656, 4896), (9728, 4912), (9768, 4936), (9800, 4984)],
     'harbour-bridge': [(9800, 4984), (10440, 4992)],
     'old-bridges': [(9984, 4360), (10336, 4392)],
-    'quay-street': [(10336, 4400), (10376, 4720), (10440, 4992), (10448, 5320)],
+    # from the block-out's polyline (docs/vision/research/blockout, #187), simplified to 10 px
+    'quay-street': [(10336, 4400), (10368, 4520), (10440, 4624), (10464, 4704), (10464, 4928), (10480, 5080), (10440, 5232), (10448, 5320)],
     'beacon-causeway': [(10448, 5320), (10096, 5440)],
     'cape-road': [(10600, 4952), (10656, 5024), (10784, 5120), (10816, 5200), (10848, 5240), (10864, 5296), (10952, 5432), (10976, 5520)],
 }
@@ -263,7 +264,9 @@ CROSSINGS = [
     ('high-fells', 'step', 'the east col', (6560, 1640), 48, 'W2'),
     ('foothill-road', 'bridge', 'the Millrace bridge', (7664, 2736), 80, 'W3'),
     ('towpath', 'bridge', 'the Cog foot bridge', (8530, 3060), 64, 'W3'),
-    ('high-fells', 'step', 'the rockfall on the coal-hill bench', (7700, 1944), 48, 'W3'),
+    # the High Fells cross the Cog just north of Cogsworth's north gate, where Claude H's plan
+    # brings the Cog in (x 7624-7704); W3 is a rockfall on the footbridge
+    ('high-fells', 'bridge', 'the footbridge over the Cog, a rockfall on it', (7664, 1944), 64, 'W3'),
     ('shell-bar', 'bar', 'the Shell Bar', (6900, 5900), 160, 'W4'),
     ('drovers-road', 'bridge', "Drover's bridge", (4330, 3440), 128, 'W5'),
     ('ash-coast', 'ferry', 'the Rift ferry', (4180, 5240), 96, 'W5'),
@@ -271,7 +274,7 @@ CROSSINGS = [
     ('ash-coast', 'causeway', 'the crust causeway', (3300, 5560), 128, 'W6'),
     ('lull-road', 'bridge', 'Lullford Bridge and its swing span', (8960, 4310), 192, 'W7'),
     ('drovers-road', 'ford', 'the Willow Run ford', (3408, 2776), 48, None),
-    ('canyon-road', 'ford', 'the Amber ford', (2680, 2976), 48, None),
+    ('canyon-road', 'ford', 'the Amber ford', (2680, 3008), 96, None),
     ('harbour-bridge', 'bridge', 'the Harbour Bridge', (10060, 4988), 480, None),
     ('beacon-causeway', 'causeway', 'the Beacon Causeway', (10272, 5380), 300, None),
     ('old-bridges', 'bridge', 'the old bridges', (10160, 4376), 200, None),
@@ -913,6 +916,73 @@ def check(routes):
     return problems
 
 
+BLOCKOUT = os.path.join(worlds.ROOT, 'docs', 'vision', 'research', 'blockout', 'blockout-v52.json')
+# Where a lane's own plan draws the water (and so moves the block-out's rivers), a route's
+# crossings there are checked by that lane's plan, not against the block-out.
+WATER_PLANNED = [
+    ('claude-f', 'the Frostline and the Brackens (art/regions/*.json)', (4800, 1280, 6800, 4000)),
+    ('claude-h', "Cogsworth's town plan (scripts/art/regions/cogsworth_plan.py)", (7624, 1968, 8328, 2928)),
+    ('claude-i', 'the lull-delta chunk', (8304, 3296, 9456, 5888)),
+]
+
+
+def _seg_cross(p1, p2, p3, p4):
+    d = (p2[0] - p1[0]) * (p4[1] - p3[1]) - (p2[1] - p1[1]) * (p4[0] - p3[0])
+    if d == 0:
+        return None
+    t = ((p3[0] - p1[0]) * (p4[1] - p3[1]) - (p3[1] - p1[1]) * (p4[0] - p3[0])) / d
+    u = ((p3[0] - p1[0]) * (p2[1] - p1[1]) - (p3[1] - p1[1]) * (p2[0] - p1[0])) / d
+    if 0 <= t <= 1 and 0 <= u <= 1:
+        return (p1[0] + t * (p2[0] - p1[0]), p1[1] + t * (p2[1] - p1[1]))
+    return None
+
+
+def river_crossings(routes):
+    """Every place a route's line crosses a river or delta arm of the block-out (#187), with
+    the crossing that carries it (a ford, bridge or ferry within 96 px) or the lane plan
+    that draws the water there. A crossing with neither is a route walking through a river."""
+    with open(BLOCKOUT) as f:
+        bo = json.load(f)
+    waters = dict(bo['rivers'])
+    for i, arm in enumerate(bo['delta_arms']):
+        waters[f'delta arm {i + 1}'] = arm
+    out = []
+    for r in routes:
+        pts = [(p[0], p[1]) for p in r['points']]
+        for name, line in waters.items():
+            line = [tuple(q) for q in (line['polyline'] if isinstance(line, dict) else line)]
+            for a, b in zip(pts, pts[1:]):
+                for c, d in zip(line, line[1:]):
+                    x = _seg_cross(a, b, c, d)
+                    if not x:
+                        continue
+                    by = next((cr['name'] for cr in r['crossings']
+                               if cr['kind'] in ('ford', 'bridge', 'ferry', 'causeway')
+                               and math.dist(cr['at'], x) <= cr['span'] / 2 + 96), None)
+                    plan = next((why for lane, why, (x0, y0, x1, y1) in WATER_PLANNED
+                                 if x0 <= x[0] < x1 and y0 <= x[1] < y1), None)
+                    out.append({'route': r['id'], 'water': name, 'at': [round(x[0]), round(x[1])],
+                                'carriedBy': by, 'waterPlannedBy': plan})
+    return out
+
+
+def blockout_diff(routes):
+    """How far each route lies from the block-out's polyline (mean and largest, px)."""
+    with open(BLOCKOUT) as f:
+        bo = json.load(f)
+    rows = []
+    for r in routes:
+        b = bo['routes'].get(r['name'])
+        if not b:
+            continue
+        pl = [tuple(p) for p in b['polyline']]
+        pts = [(p[0], p[1]) for p in r['points']]
+        ds = [project(pl, arclen(pl), p)[1] for p in pts]
+        rows.append({'route': r['id'], 'mean': round(sum(ds) / len(ds)), 'max': round(max(ds)),
+                     'blockoutLength': round(arclen(pl)[-1]), 'blockoutWidth': b['width_px']})
+    return rows
+
+
 def gate_check(routes):
     """Open the ways in order (W1 to W8); at each step flood the route graph from the hut's
     valley and record which places are reached. A route is cut at each crossing that has a
@@ -1004,6 +1074,8 @@ def export_ts(routes, steps, path):
         '  sidePaths: readonly SidePath[]; pockets: readonly PocketPath[];',
         '  /** stretches a region lane drew itself (taken as drawn, not on the grid rule), by s */',
         '  drawnBy: readonly { from: number; to: number; lane: string; source: string }[];',
+        '  /** every place the line crosses a river of the block-out, and what carries it over */',
+        '  rivers: readonly { water: string; at: readonly [number, number]; carriedBy: string | null; waterPlannedBy: string | null }[];',
         '}',
         'export interface Threshold {',
         '  id: string; name: string; route: string; at: readonly [number, number]; s: number; brief: readonly [number, number];',
@@ -1077,6 +1149,22 @@ def export_md(routes, steps, path):
         bw = r['blockout']['walkS']
         L.append(f"| {r['name']} | {r['kind']} | {STOPS[r['from']][0]} | {STOPS[r['to']][0]} | {r['length']} | {r['walkS']} | {bw if bw is not None else '-'} | {len(r['changes'])} | {r['blockout']['tierChanges']} | {ways} |")
     L.append('')
+    L.append('## Against the block-out\n')
+    L.append('How far each route lies from the block-out\'s polyline (`docs/vision/research/blockout/blockout-v52.json`, #187), in px. The routes follow the brief\'s markers and the lanes\' plans and run on the grid, so a mean of 20 to 40 px is the grid\'s own turns; a large maximum is where a lane moved the line (Claude H\'s gates, Claude F\'s switchbacks).\n')
+    L.append('| Route | Mean | Largest | Block-out length | Ours | Block-out width |')
+    L.append('| ----- | ---- | ------- | ---------------- | ---- | --------------- |')
+    for row in blockout_diff(routes):
+        r = next(x for x in routes if x['id'] == row['route'])
+        L.append(f"| {r['name']} | {row['mean']} | {row['max']} | {row['blockoutLength']} | {r['length']} | {row['blockoutWidth']} |")
+    L.append('')
+    L.append('## Where the routes cross water\n')
+    L.append('Every place a route crosses a river or delta arm of the block-out, and what carries it over. Where a lane\'s plan draws its own water (Claude F\'s Sleepwater runs west of the Col Path, Claude I\'s Lull through its chunk), that plan holds the crossing.\n')
+    L.append('| Route | Water | At | Carried by | Water drawn by |')
+    L.append('| ----- | ----- | -- | ---------- | -------------- |')
+    for r in routes:
+        for x in r['rivers']:
+            L.append(f"| {r['name']} | {x['water']} | ({x['at'][0]}, {x['at'][1]}) | {x['carriedBy'] or '-'} | {x['waterPlannedBy'] or 'the block-out'} |")
+    L.append('')
     L.append('## The thresholds\n')
     L.append('| Threshold | Route | At | Sides | Object (lane G) |')
     L.append('| --------- | ----- | -- | ----- | --------------- |')
@@ -1140,6 +1228,13 @@ def build():
         del r['_scale']
         routes.append(r)
     problems = check(routes)
+    for x in river_crossings(routes):
+        r = next(r for r in routes if r['id'] == x['route'])
+        r.setdefault('rivers', []).append({k: v for k, v in x.items() if k != 'route'})
+        if not x['carriedBy'] and not x['waterPlannedBy']:
+            problems.append(f"{r['name']}: walks through {x['water']} at {tuple(x['at'])} (no ford, bridge or ferry)")
+    for r in routes:
+        r.setdefault('rivers', [])
     if problems:
         raise SystemExit('world_routes: ' + '\n  '.join(['problems:'] + problems))
     steps = gate_check(routes)

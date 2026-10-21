@@ -60,6 +60,13 @@ export interface WorldRoute {
   pockets: readonly PocketPath[];
   /** stretches a region lane drew itself (taken as drawn, not on the grid rule), by s */
   drawnBy: readonly { from: number; to: number; lane: string; source: string }[];
+  /** every place the line crosses a river of the block-out, and what carries it over */
+  rivers: readonly {
+    water: string;
+    at: readonly [number, number];
+    carriedBy: string | null;
+    waterPlannedBy: string | null;
+  }[];
 }
 export interface Threshold {
   id: string;
@@ -269,6 +276,62 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [
+      {
+        water: 'the Sleepwater',
+        at: [6229, 2288],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6229, 2224],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6232, 2152],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6232, 2152],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6232, 2152],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6232, 2152],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6235, 2077],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6235, 2051],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+      {
+        water: 'the Sleepwater',
+        at: [6205, 1896],
+        carriedBy: null,
+        waterPlannedBy: 'the Frostline and the Brackens (art/regions/*.json)',
+      },
+    ],
   },
   {
     id: 'high-fells',
@@ -383,12 +446,11 @@ export const worldRoutes: readonly WorldRoute[] = [
       [7544, 1888, 24, 9],
       [7576, 1888, 32, 9],
       [7608, 1888, 32, 9],
-      [7608, 1920, 32, 8],
-      [7608, 1928, 32, 8],
-      [7640, 1928, 24, 8],
-      [7672, 1928, 32, 8],
-      [7672, 1944, 32, 8],
-      [7704, 1944, 32, 8],
+      [7608, 1920, 24, 8],
+      [7608, 1944, 32, 8],
+      [7640, 1944, 32, 8],
+      [7672, 1944, 24, 8],
+      [7704, 1944, 24, 8],
       [7736, 1944, 24, 8],
       [7768, 1944, 24, 8],
       [7800, 1944, 32, 8],
@@ -411,12 +473,12 @@ export const worldRoutes: readonly WorldRoute[] = [
     crossings: [
       { kind: 'step', name: 'the east col', way: 'W2', at: [6568, 1632], s: 538, span: 48 },
       {
-        kind: 'step',
-        name: 'the rockfall on the coal-hill bench',
+        kind: 'bridge',
+        name: 'the footbridge over the Cog, a rockfall on it',
         way: 'W3',
-        at: [7696, 1944],
-        s: 2028,
-        span: 48,
+        at: [7664, 1944],
+        s: 1993,
+        span: 64,
       },
     ],
     drawnBy: [{ from: 0, to: 800, lane: 'claude-f', source: 'art/regions/frostline.json' }],
@@ -558,6 +620,14 @@ export const worldRoutes: readonly WorldRoute[] = [
         length: 272,
         width: 24,
         clearingRadius: 40,
+      },
+    ],
+    rivers: [
+      {
+        water: 'the Cog',
+        at: [7757, 1944],
+        carriedBy: 'the footbridge over the Cog, a rockfall on it',
+        waterPlannedBy: null,
       },
     ],
   },
@@ -759,6 +829,7 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [],
   },
   {
     id: 'towpath',
@@ -919,6 +990,14 @@ export const worldRoutes: readonly WorldRoute[] = [
         length: 384,
         width: 24,
         clearingRadius: 40,
+      },
+    ],
+    rivers: [
+      {
+        water: 'the Cog',
+        at: [8528, 3063],
+        carriedBy: 'the Cog foot bridge',
+        waterPlannedBy: null,
       },
     ],
   },
@@ -1201,6 +1280,14 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [
+      {
+        water: 'the Lull',
+        at: [8960, 4312],
+        carriedBy: 'Lullford Bridge and its swing span',
+        waterPlannedBy: 'the lull-delta chunk',
+      },
+    ],
   },
   {
     id: 'coast-path',
@@ -1436,6 +1523,7 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [],
   },
   {
     id: 'headland-lane',
@@ -1479,6 +1567,7 @@ export const worldRoutes: readonly WorldRoute[] = [
     drawnBy: [],
     sidePaths: [],
     pockets: [],
+    rivers: [],
   },
   {
     id: 'shell-bar',
@@ -1529,6 +1618,7 @@ export const worldRoutes: readonly WorldRoute[] = [
     drawnBy: [],
     sidePaths: [],
     pockets: [],
+    rivers: [],
   },
   {
     id: 'drovers-road',
@@ -1916,6 +2006,15 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [
+      { water: 'the Rift', at: [4324, 3440], carriedBy: "Drover's bridge", waterPlannedBy: null },
+      {
+        water: 'the Willow Run',
+        at: [3416, 2833],
+        carriedBy: 'the Willow Run ford',
+        waterPlannedBy: null,
+      },
+    ],
   },
   {
     id: 'lode-track',
@@ -1986,6 +2085,7 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [],
   },
   {
     id: 'canyon-road',
@@ -2011,17 +2111,17 @@ export const worldRoutes: readonly WorldRoute[] = [
       [2800, 2912, 40, 5],
       [2768, 2912, 32, 5],
       [2744, 2912, 40, 5],
-      [2744, 2944, 40, 5],
-      [2744, 2960, 40, 5],
-      [2712, 2960, 32, 5],
-      [2680, 2960, 40, 5],
-      [2680, 2992, 40, 5],
-      [2680, 3024, 32, 5],
-      [2680, 3056, 32, 5],
-      [2680, 3088, 32, 5],
-      [2680, 3120, 32, 5],
-      [2680, 3152, 32, 5],
-      [2680, 3184, 40, 5],
+      [2744, 2944, 32, 5],
+      [2744, 2968, 40, 5],
+      [2712, 2968, 32, 5],
+      [2680, 2968, 40, 5],
+      [2680, 3000, 40, 5],
+      [2680, 3032, 32, 5],
+      [2680, 3064, 32, 5],
+      [2680, 3096, 32, 5],
+      [2680, 3128, 32, 5],
+      [2680, 3160, 32, 5],
+      [2680, 3192, 40, 5],
       [2680, 3216, 40, 5],
       [2648, 3216, 32, 5],
       [2616, 3216, 40, 5],
@@ -2145,7 +2245,7 @@ export const worldRoutes: readonly WorldRoute[] = [
     ],
     crossings: [
       { kind: 'bridge', name: 'the chasm bridge', way: 'W6', at: [2176, 4920], s: 3397, span: 96 },
-      { kind: 'ford', name: 'the Amber ford', way: null, at: [2720, 2960], s: 478, span: 48 },
+      { kind: 'ford', name: 'the Amber ford', way: null, at: [2680, 3016], s: 580, span: 96 },
     ],
     drawnBy: [],
     sidePaths: [
@@ -2201,6 +2301,10 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [
+      { water: 'the Amber', at: [2680, 3009], carriedBy: 'the Amber ford', waterPlannedBy: null },
+      { water: 'the Amber', at: [2680, 3042], carriedBy: 'the Amber ford', waterPlannedBy: null },
+    ],
   },
   {
     id: 'forge-stair',
@@ -2229,6 +2333,7 @@ export const worldRoutes: readonly WorldRoute[] = [
     drawnBy: [],
     sidePaths: [],
     pockets: [],
+    rivers: [],
   },
   {
     id: 'ember-way',
@@ -2340,6 +2445,7 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [],
   },
   {
     id: 'ash-coast',
@@ -2587,6 +2693,9 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [
+      { water: 'the Rift', at: [4188, 5240], carriedBy: 'the Rift ferry', waterPlannedBy: null },
+    ],
   },
   {
     id: 'delta-road',
@@ -2676,6 +2785,7 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [],
   },
   {
     id: 'harbour-bridge',
@@ -2729,6 +2839,7 @@ export const worldRoutes: readonly WorldRoute[] = [
     drawnBy: [],
     sidePaths: [],
     pockets: [],
+    rivers: [],
   },
   {
     id: 'old-bridges',
@@ -2762,6 +2873,7 @@ export const worldRoutes: readonly WorldRoute[] = [
     drawnBy: [],
     sidePaths: [],
     pockets: [],
+    rivers: [],
   },
   {
     id: 'quay-street',
@@ -2776,43 +2888,41 @@ export const worldRoutes: readonly WorldRoute[] = [
       [10336, 4400, 56, 3],
       [10336, 4432, 56, 3],
       [10336, 4464, 40, 3],
-      [10336, 4496, 40, 3],
-      [10336, 4528, 40, 3],
-      [10336, 4560, 40, 3],
-      [10336, 4592, 40, 3],
-      [10336, 4624, 40, 3],
-      [10336, 4656, 40, 3],
-      [10336, 4688, 48, 3],
-      [10336, 4696, 48, 3],
-      [10368, 4696, 48, 3],
-      [10376, 4696, 48, 3],
-      [10376, 4728, 40, 3],
-      [10376, 4760, 40, 3],
-      [10376, 4792, 40, 3],
-      [10376, 4824, 40, 3],
-      [10376, 4856, 48, 3],
-      [10376, 4888, 48, 3],
-      [10408, 4888, 40, 3],
-      [10424, 4888, 48, 3],
-      [10424, 4920, 48, 3],
-      [10424, 4952, 40, 3],
-      [10424, 4984, 40, 3],
-      [10424, 5016, 40, 2],
-      [10424, 5048, 40, 2],
-      [10424, 5080, 40, 2],
-      [10424, 5112, 40, 2],
-      [10424, 5144, 40, 2],
-      [10424, 5176, 40, 2],
-      [10424, 5208, 40, 1],
-      [10424, 5240, 40, 1],
-      [10424, 5272, 40, 1],
-      [10424, 5304, 56, 1],
-      [10424, 5320, 56, 1],
+      [10336, 4496, 48, 3],
+      [10336, 4520, 48, 3],
+      [10368, 4520, 40, 3],
+      [10392, 4520, 48, 3],
+      [10392, 4552, 48, 3],
+      [10392, 4584, 48, 3],
+      [10392, 4616, 48, 3],
+      [10424, 4616, 40, 3],
+      [10448, 4616, 48, 3],
+      [10448, 4648, 48, 3],
+      [10448, 4680, 40, 3],
+      [10448, 4712, 40, 3],
+      [10448, 4744, 40, 3],
+      [10448, 4776, 40, 3],
+      [10448, 4808, 40, 3],
+      [10448, 4840, 40, 3],
+      [10448, 4872, 40, 3],
+      [10448, 4904, 40, 3],
+      [10448, 4936, 40, 3],
+      [10448, 4968, 40, 3],
+      [10448, 5000, 40, 2],
+      [10448, 5032, 40, 2],
+      [10448, 5064, 40, 2],
+      [10448, 5096, 40, 2],
+      [10448, 5128, 40, 2],
+      [10448, 5160, 40, 2],
+      [10448, 5192, 40, 1],
+      [10448, 5224, 40, 1],
+      [10448, 5256, 40, 1],
+      [10448, 5288, 56, 1],
       [10448, 5320, 56, 1],
     ],
     changes: [
-      { at: [10424, 4992], s: 683, kind: 'round-end', from: 3, to: 2, run: 64 },
-      { at: [10424, 5184], s: 869, kind: 'round-end', from: 2, to: 1, run: 64 },
+      { at: [10448, 4992], s: 703, kind: 'round-end', from: 3, to: 2, run: 64 },
+      { at: [10448, 5176], s: 891, kind: 'round-end', from: 2, to: 1, run: 64 },
     ],
     crossings: [],
     drawnBy: [],
@@ -2846,6 +2956,7 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [],
   },
   {
     id: 'beacon-causeway',
@@ -2889,6 +3000,7 @@ export const worldRoutes: readonly WorldRoute[] = [
     drawnBy: [],
     sidePaths: [],
     pockets: [],
+    rivers: [],
   },
   {
     id: 'cape-road',
@@ -2957,6 +3069,7 @@ export const worldRoutes: readonly WorldRoute[] = [
         clearingRadius: 40,
       },
     ],
+    rivers: [],
   },
 ];
 export const worldThresholds: readonly Threshold[] = [

@@ -81,6 +81,57 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Beacon Causeway | causeway | the Gull Strand                              | Beacon Isle                                     | 472         | 11.8     | -              | 0            | 0                  | -      |
 | Cape Road       | road     | the Skyport                                  | the Launch Cape                                 | 944         | 23.6     | 18             | 1            | 3                  | -      |
 
+## Against the block-out
+
+How far each route lies from the block-out's polyline (`docs/vision/research/blockout/blockout-v52.json`, #187), in px. The routes follow the brief's markers and the lanes' plans and run on the grid, so a mean of 20 to 40 px is the grid's own turns; a large maximum is where a lane moved the line (Claude H's gates, Claude F's switchbacks).
+
+| Route           | Mean | Largest | Block-out length | Ours | Block-out width |
+| --------------- | ---- | ------- | ---------------- | ---- | --------------- |
+| Col Path        | 26   | 75      | 1362             | 1467 | 24              |
+| High Fells      | 41   | 153     | 2043             | 2176 | 24              |
+| Foothill Road   | 21   | 68      | 1542             | 1616 | 40              |
+| Towpath         | 27   | 131     | 2046             | 1800 | 24              |
+| Lull Road       | 21   | 60      | 3486             | 3824 | 40              |
+| Coast Path      | 19   | 50      | 2456             | 2872 | 24              |
+| Headland Lane   | 20   | 42      | 544              | 664  | 24              |
+| Shell Bar       | 22   | 82      | 582              | 792  | 40              |
+| Drover's Road   | 26   | 81      | 3616             | 4341 | 40              |
+| Lode Track      | 21   | 54      | 947              | 840  | 24              |
+| Canyon Road     | 26   | 79      | 3160             | 3824 | 24              |
+| Forge Stair     | 5    | 8       | 140              | 152  | 24              |
+| Ember Way       | 23   | 63      | 977              | 1160 | 24              |
+| Ash Coast       | 19   | 56      | 3641             | 4512 | 24              |
+| Delta Road      | 17   | 47      | 948              | 1312 | 24              |
+| Harbour Bridge  | 5    | 7       | 670              | 648  | 40              |
+| Old Bridges     | 21   | 41      | 372              | 384  | 40              |
+| Quay Street     | 15   | 37      | 963              | 1032 | 40              |
+| Beacon Causeway | 27   | 60      | 374              | 472  | 40              |
+| Cape Road       | 18   | 44      | 703              | 944  | 40              |
+
+## Where the routes cross water
+
+Every place a route crosses a river or delta arm of the block-out, and what carries it over. Where a lane's plan draws its own water (Claude F's Sleepwater runs west of the Col Path, Claude I's Lull through its chunk), that plan holds the crossing.
+
+| Route         | Water          | At           | Carried by                                    | Water drawn by                                       |
+| ------------- | -------------- | ------------ | --------------------------------------------- | ---------------------------------------------------- |
+| Col Path      | the Sleepwater | (6229, 2288) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6229, 2224) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6235, 2077) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6235, 2051) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6205, 1896) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| High Fells    | the Cog        | (7757, 1944) | the footbridge over the Cog, a rockfall on it | the block-out                                        |
+| Towpath       | the Cog        | (8528, 3063) | the Cog foot bridge                           | the block-out                                        |
+| Lull Road     | the Lull       | (8960, 4312) | Lullford Bridge and its swing span            | the lull-delta chunk                                 |
+| Drover's Road | the Rift       | (4324, 3440) | Drover's bridge                               | the block-out                                        |
+| Drover's Road | the Willow Run | (3416, 2833) | the Willow Run ford                           | the block-out                                        |
+| Canyon Road   | the Amber      | (2680, 3009) | the Amber ford                                | the block-out                                        |
+| Canyon Road   | the Amber      | (2680, 3042) | the Amber ford                                | the block-out                                        |
+| Ash Coast     | the Rift       | (4188, 5240) | the Rift ferry                                | the block-out                                        |
+
 ## The thresholds
 
 | Threshold             | Route         | At           | Sides               | Object (lane G)                                                     |

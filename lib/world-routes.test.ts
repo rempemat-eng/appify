@@ -184,6 +184,14 @@ for (const r of worldRoutes) {
       `${r.name}: level all along`,
     );
 
+  // --- no route walks through a river: each crossing of the block-out's water is carried
+  // by a ford, bridge or ferry, or lies where a lane's own plan draws the water ---
+  for (const w of r.rivers)
+    assert.ok(
+      w.carriedBy || w.waterPlannedBy,
+      `${r.name}: crosses ${w.water} at (${w.at[0]}, ${w.at[1]}) on a crossing`,
+    );
+
   // --- crossings lie on the line ---
   for (const x of r.crossings) {
     assert.ok(nearest(line, x.at) <= ROUTE_GRID, `${r.name}: ${x.name} on the line`);
