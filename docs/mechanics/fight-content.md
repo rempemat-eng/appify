@@ -116,7 +116,7 @@ As data in `fightAnimation` (lib/fight-content.ts). Per folk: 12 poses per facin
 
 ## 7. Next (Codex tasks on issue #149)
 
-C38 tunes the failing rails (1, 2b, 6) with the content's numbers only; C39 adds intents (F2) to the engine and the sim; C40 checks the economy sim against the Dream Dust map ([dream-dust.md](dream-dust.md)). None of them changes `lib/battle.ts` before Matt decides.
+C38 tunes the failing rails (1, 2b, 6) with the content's numbers only; C39 adds intents (F2), an AUTO player and a first-move check to the sim; C40 brings C33's economy sim up to the Dream Dust map ([dream-dust.md](dream-dust.md)); C41 ports F5 and F4' (then F3) into the game, only once Matt has decided. None of C38 to C40 changes `lib/battle.ts`.
 
 ## Limits
 

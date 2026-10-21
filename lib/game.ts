@@ -59,6 +59,8 @@ import {
   type HutLook,
 } from '@/lib/decor';
 import type { RegionId } from '@/lib/region-walk';
+import { REST_RECOGNITION } from '@/lib/rest-flag';
+import { recogniseNap } from '@/lib/rest-recognition';
 import {
   addCard,
   daveDeck,
@@ -468,6 +470,8 @@ let loadGeneration = 0;
 let loadInFlight: Promise<void> | null = null;
 let unreadableSave: { raw: string; generation: number } | null = null;
 let active = true;
+/** When the game last came to the front, or a nap began (rest recognition's grace). */
+let foregroundSince = Date.now();
 let syncRequested = false;
 let battleGeneration = 0;
 let playAt = Date.now();
@@ -1252,11 +1256,25 @@ export const gameStore = create<Game>((set, get) => ({
       set({ tickAt: now });
       return;
     }
+    // Rest recognition (off by default): a clock set back re-anchors the nap, not freezes it.
+    if (REST_RECOGNITION && p.mode === 'screen_off' && now < s.tickAt) {
+      set({ tickAt: now });
+      return;
+    }
     const seconds = Math.floor((now - s.tickAt) / 1000);
     if (seconds < 1) return;
     if (p.mode !== 'awake') {
       const end = p.mode === 'mission' ? Math.min(now, p.mission_ends_at) : now;
-      const elapsed = Math.max(0, Math.floor((end - s.tickAt) / 1000));
+      const elapsed =
+        REST_RECOGNITION && p.mode === 'screen_off'
+          ? recogniseNap({
+              wallMs: end - s.tickAt,
+              foreground: active,
+              foregroundForMs: now - foregroundSince,
+              creditedThisNap: p.offline_seconds - s.offStart,
+              creditedToday: s.rules.days[dayKey(now)]?.offline ?? 0,
+            }).minutes
+          : Math.max(0, Math.floor((end - s.tickAt) / 1000));
       const completedMission =
         p.mode === 'mission' && now >= p.mission_ends_at ? (p.mission_id ?? undefined) : undefined;
       const rewardCards = offlineCards(
@@ -1548,6 +1566,7 @@ export const gameStore = create<Game>((set, get) => ({
     const m = missions.find((x) => x.id === mission);
     if (m && p.level < m.level) return;
     const now = Date.now();
+    foregroundSince = now;
     const breakId = m ? `${p.id}:${m.id}:${now + m.duration * 1000}` : `${p.id}:nap:${now}`;
     set({
       offStart: p.offline_seconds,
@@ -1916,6 +1935,7 @@ export function startGame() {
       battleGeneration += 1;
       void persist();
     } else {
+      foregroundSince = Date.now();
       const s = gameStore.getState();
       if (s.player?.mode === 'awake') {
         s.change({ care_until: launchCareUntil(s.player.care_until, s.lastActiveAt, Date.now()) });
@@ -1937,6 +1957,7 @@ export function startGame() {
       void persist();
     } else {
       active = true;
+      foregroundSince = Date.now();
       const s = gameStore.getState();
       if (s.player?.mode === 'awake') {
         gameStore.setState({ tickAt: Date.now() });
