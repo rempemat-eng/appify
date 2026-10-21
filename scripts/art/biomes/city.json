@@ -1,0 +1,334 @@
+{
+  "_about": "The city biome's brief as data (Claude C, lane C, 21 Oct): built ground, built edges and lit streets for the shared kit (rules-system.md 2 and 4; the harbour is the kit's second proof, for built edges). Palette intent names house ramps (art/house-palette.json) and tones 0 to 5, never RGB. Edge sets name the cliff core's EDGE_SETS or are marked proposed. to-all-clean holds: paving reads as calm fields with few, large joints, not a grid of pixels; detail sits at height changes and doors. Status 'brief' until Claude A's kit cut pins a version.",
+  "id": "city",
+  "status": "brief",
+  "owner": "claude-c",
+  "kit": null,
+  "used_by": {
+    "neon": "claude-i (variants old_town, new_town)",
+    "sunstone": "claude-d (variant adobe_town, with canyon)",
+    "fire-country": "claude-d (variant adobe_town: Hearthold's streets)"
+  },
+  "references": "Compare at the same character height with Eastward's town screens (edges and the soft grid: Eastward only, Matt 21 Oct 09:23). Never commit their screenshots.",
+  "families": [
+    "stone",
+    "stone_warm",
+    "stone_cool",
+    "ashlar",
+    "ashlar_warm",
+    "ashlar_cool",
+    "asphalt",
+    "asphalt_cool",
+    "asphalt_warm",
+    "plaster",
+    "plaster_warm",
+    "plaster_cool",
+    "slate",
+    "slate_cool",
+    "clay",
+    "clay_warm",
+    "timber",
+    "timber_warm",
+    "iron",
+    "iron_cool",
+    "brass",
+    "copper",
+    "soot",
+    "concrete",
+    "concrete_cool",
+    "lamp",
+    "neon_cyan",
+    "neon_pink",
+    "leaf",
+    "grass",
+    "berry",
+    "lagoon",
+    "water",
+    "dusk",
+    "leaf_cool",
+    "leaf_warm",
+    "earth_cool"
+  ],
+  "palette_intent": {
+    "setts": {
+      "families": ["stone", "stone_cool"],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "granite setts in courses of broken bond, a field of one tone with the courses as long soft lines; worn a tone paler down the middle of a lane"
+    },
+    "flags": {
+      "families": ["ashlar", "ashlar_warm"],
+      "body": 4,
+      "lit": 5,
+      "shade": 3,
+      "note": "pavement flags 9 to 15 long, joints a tone down (not ink), one cracked or sunk now and then, never every slab"
+    },
+    "asphalt": {
+      "families": ["asphalt", "asphalt_cool"],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "new town roads: calm patches, square repairs with a crisp edge, two wheel tracks a tone lighter"
+    },
+    "kerb": {
+      "families": ["stone", "stone_warm"],
+      "body": 4,
+      "lit": 5,
+      "shade": 2,
+      "note": "2 px of long granite: lit top, the face to the road a tone down, the gutter darker"
+    },
+    "ashlar_wall": {
+      "families": ["ashlar", "ashlar_warm", "ashlar_cool"],
+      "body": 3,
+      "lit": 4,
+      "shade": 1,
+      "note": "the cliff core's city bands: dressed courses under a coping (EDGE_SETS.city)"
+    },
+    "brick_wall": {
+      "families": ["clay", "clay_warm", "soot"],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "weathered town brick: soot high up, stock repairs, repointing, salt bloom low down, weep holes (weathered.py, on main)"
+    },
+    "plaster_front": {
+      "families": ["plaster", "plaster_warm", "plaster_cool"],
+      "body": 4,
+      "lit": 5,
+      "shade": 3,
+      "note": "house fronts: one calm colour per house, the light on the west jamb of every opening"
+    },
+    "roofs": {
+      "families": ["slate", "slate_cool", "clay_warm"],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "slate ridges for the old town, tile (clay) for adobe and warm towns; roofs run back from the fronts (to-all-volume 2)"
+    },
+    "iron": {
+      "families": ["iron", "iron_cool"],
+      "body": 1,
+      "lit": 3,
+      "shade": 0,
+      "note": "railings, lamp posts, covers, rails: thin, lit on the upper edge only"
+    },
+    "brass_copper": {
+      "families": ["brass", "copper"],
+      "body": 3,
+      "lit": 5,
+      "shade": 2,
+      "note": "brass fittings and verdigris copper domes (the old town's market hall and clock)"
+    },
+    "lamplight": {
+      "families": ["lamp"],
+      "note": "the warm point at night: windows and street lamps; pools of light on paving one tone up in lamp's ramp, finite in number per screen"
+    },
+    "neon": {
+      "families": ["neon_cyan", "neon_pink"],
+      "note": "new town signs only, a few per screen; glow is a one-cell halo, never a gradient fog"
+    },
+    "street_water": {
+      "families": ["lagoon", "water"],
+      "body": 2,
+      "lit": 4,
+      "shade": 1,
+      "note": "the Glint's channel and the ria at the quay: calm, darker in a band under walls where their reflection lies"
+    }
+  },
+  "ground": {
+    "_about": "Ground recipes by kind. Built ground is laid, so its pattern is the courses, kept long and calm; dressing is weeds in joints, litter by doors and under benches, never speckle.",
+    "street_setts": {
+      "body": "stone",
+      "blotches": [
+        ["stone_cool", 0.25],
+        ["stone_warm", 0.1]
+      ],
+      "dressing": [
+        "weeds in a few joints",
+        "a manhole or gully by the kerb",
+        "puddles after rain (finite)"
+      ]
+    },
+    "pavement": {
+      "body": "ashlar",
+      "blotches": [["ashlar_warm", 0.2]],
+      "dressing": ["a cracked flag", "tree pits with iron grilles", "a bench's litter"]
+    },
+    "road": {
+      "body": "asphalt",
+      "blotches": [["asphalt_cool", 0.3]],
+      "dressing": [
+        "repair patches",
+        "tar-sealed cracks",
+        "tram rails in a band of setts (old town lines)"
+      ]
+    },
+    "square": {
+      "body": "stone",
+      "material": "setts in a fan or flags round a fountain or statue",
+      "dressing": ["a lamp at each corner", "benches along the walls", "pigeons (animals)"]
+    },
+    "yard": {
+      "body": "earth_cool or setts",
+      "dressing": ["crates", "barrels", "a handcart", "washing lines"]
+    },
+    "garden": {
+      "body": "grass",
+      "dressing": ["clipped hedges", "a bed of flowers in clumps", "gravel paths"],
+      "note": "parks and the Heights' gardens: the meadow ground recipe inside a kerb"
+    }
+  },
+  "plants": [
+    {
+      "id": "joint_weeds",
+      "where": "setts' and flags' joints, wall feet",
+      "clump": [1, 3],
+      "families": ["grass", "leaf"],
+      "note": "in a few joints together, along walls more than mid-street"
+    },
+    {
+      "id": "street_tree",
+      "where": "tree pits along pavements, squares",
+      "families": ["leaf", "leaf_cool", "timber"],
+      "note": "plane or lime: a round crown casting a two-tone shadow on the paving"
+    },
+    {
+      "id": "ivy",
+      "where": "retaining walls and old fronts",
+      "families": ["leaf", "leaf_cool"],
+      "note": "the cliff core's ivy piece (BIOMES.city ivy 0.12)"
+    },
+    {
+      "id": "window_box",
+      "where": "old town sills",
+      "families": ["berry", "brass", "leaf"]
+    },
+    {
+      "id": "potted_palm",
+      "where": "harbour and new town fronts",
+      "families": ["leaf_warm", "clay"]
+    }
+  ],
+  "tiers": {
+    "height": 40,
+    "note": "the city's retaining walls are 40 high (cliff core BIOMES.city face 40); stair streets climb them in a few broad flights with landings; no ramps (eastward-edges 6.3)"
+  },
+  "edge_sets": {
+    "city": {
+      "status": "in cliff core",
+      "where": "retaining walls between town tiers",
+      "shapes": "dressed courses under a coping, a 2 px foot, a rock stair"
+    },
+    "brick_retaining": {
+      "status": "proposed",
+      "where": "old town walls where brick, not ashlar (the mill town's brick is its own edge set in mill_town.json)",
+      "shapes": "40 px weathered brick with pilasters every 64 to 96 px, coping, weep holes, soot and salt by height",
+      "port_from": "city_kit.brick_wall (#169) on weathered.py"
+    },
+    "railing_rim": {
+      "status": "proposed (rim dressing)",
+      "shapes": "an iron railing along a top's rim that stops walkers: rail lit on top, balusters every 3 px, a post every 18; its shadow a tone down on the coping"
+    },
+    "quay_wall": {
+      "status": "shared with coast.sea_wall",
+      "where": "where a town tier meets the water"
+    },
+    "kerb": {
+      "status": "proposed (flat edge)",
+      "shapes": "a 2 px granite line between pavement and road, no height change, no outline"
+    },
+    "channel": {
+      "status": "proposed (water edge)",
+      "shapes": "a stone-lined channel: lit copings on both banks, the channel walls' dark faces inside them",
+      "port_from": "city_kit.glint (#169)"
+    }
+  },
+  "water": {
+    "channel": "the Glint in its stone channel, quick: streaks along the flow, darker under the west wall",
+    "falls": "the cliff core's neutral fall down a wall: white only where it tips over the lip and churns at the foot, the wall beside it wet a tone down; no noise of streaks",
+    "harbour": "the ria at the quay: a calm plane in lagoon's deep tones, the wall's reflection as broken horizontal strokes",
+    "fountains": "a basin with a coping, a single jet as a few tone-5 pixels and rings on the water, finite"
+  },
+  "clusters": {
+    "have": ["town_square_corner (Claude B, #188)"],
+    "proposed": {
+      "shop_front": "a door with a step, a sandwich board, a crate of goods, a bike against the wall",
+      "tram_stop": "a shelter, a timetable board, a bench, a lamp",
+      "night_stall": "an awning, a lit lantern, a counter of bowls, two stools (variant new_town)"
+    }
+  },
+  "pieces": {
+    "library": ["stair", "ledge", "path"],
+    "proposed": [
+      "stair_street",
+      "fountain",
+      "statue",
+      "lamp_post",
+      "tram_rails",
+      "bridge_arch",
+      "funicular_track",
+      "house_front",
+      "roof_behind"
+    ]
+  },
+  "ambience": {
+    "day": ["footsteps on setts", "a tram bell (old town)", "gulls at the quay"],
+    "night": [
+      "lit windows, about one in three, never all",
+      "lamp pools on paving",
+      "neon hum only near signs (new town)",
+      "darker than the countryside between lamps"
+    ],
+    "light": "upper-left sun; fronts throw their shadow down and right across the street, two tones down on paving"
+  },
+  "transitions": {
+    "_about": "This biome's side of each meeting in the block-out, for Claude G's scripts/art/biomes/transitions.json.",
+    "coast": {
+      "edge": "the quay wall: setts on top, the sea below (coast.sea_wall)",
+      "where": "Neon Harbour, Gullwick (claude-i)"
+    },
+    "meadow": {
+      "middle": "town edge gardens: setts give way to a gravel lane, then a hedge and meadow over 120 px",
+      "where": "towns' edges toward the valley and the Lull plain (claude-e, claude-i, claude-h)"
+    },
+    "river": {
+      "edge": "the channel or a quay on the river; towpath gravel as the middle",
+      "where": "the Lull at Lullford and Neon (claude-i)"
+    },
+    "canyon": {
+      "middle": "packed dust and adobe rubble: the town's street runs into the canyon's track",
+      "where": "Sunstone's towns (claude-d)"
+    },
+    "ash": {
+      "middle": "cinder-dark setts and grit",
+      "where": "Hearthold (claude-d)"
+    },
+    "mill_town": {
+      "edge": "none in the block-out: Cogsworth's box has no city meeting (h-to-c-1445); if the Lull towns ever touch, the seam is a gravel lane between the two pavings",
+      "where": "(none yet)"
+    }
+  },
+  "variants": {
+    "_about": "One biome, several towns: the same edge sets and paving, each with its own mix of fronts, roofs and lights. Cogsworth's mill town is its own biome, mill_town.json (Claude H, #201), not a variant here: a brick edge set inside city would be the city's shapes in another colour, which check_biomes refuses.",
+    "old_town": {
+      "owner": "claude-i",
+      "ground": ["street_setts", "pavement", "square"],
+      "edges": ["city", "brick_retaining", "railing_rim", "quay_wall", "channel"],
+      "fronts": "plaster and ashlar, slate ridges, window boxes"
+    },
+    "new_town": {
+      "owner": "claude-i",
+      "ground": ["road", "pavement"],
+      "edges": ["city", "kerb", "railing_rim"],
+      "fronts": "concrete and panel, flat roofs with rooftop things, neon signs a few per screen"
+    },
+    "adobe_town": {
+      "owner": "claude-d",
+      "ground": ["yard", "square"],
+      "edges": ["city"],
+      "fronts": "adobe and clay tile, awnings, flat roofs with ladders"
+    }
+  },
+  "port_from": "city_kit.py (#169, frozen): see docs/vision/research/kit-ports-c.md"
+}
