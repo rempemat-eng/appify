@@ -640,7 +640,7 @@ function quietNapPresentation() {
           wakes === 0 &&
             visibleText(tree).includes('RETURN EARLY?') &&
             visibleText(tree).includes('Cards already earned stay yours.') &&
-            visibleText(tree).includes(mission.reward + ' GRASS'),
+            visibleText(tree).includes(mission.reward + ' Dream Dust'),
           label +
             ': wake first explains the completion rewards forfeited and preserves earned cards',
         );

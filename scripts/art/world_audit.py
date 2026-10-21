@@ -1851,7 +1851,47 @@ def selftest(root: str) -> list:
     for m in ('tones', 'shapes', 'dressing', 'isolated', 'cluster'):
         if abs(float(np.mean(pc[m])) - want[m]) > 0.01:
             fails.append(f'patch_counts {m} {float(np.mean(pc[m])):.3f} against detail_bar {want[m]}')
+    summary = markdown_summary({
+        'world': {'cells': 2, 'compliant_pct': 50, 'amber': 0, 'red': 1},
+        'regions': {
+            'a|b': {'status': 'rebuilt', 'compliant_pct': 50, 'red_pct': 50, 'cells': 2,
+                    'drawn_compliant_pct': 100, 'drawn_red_pct': 0},
+        },
+        'gate': {'rebuilt': ['a|b'], 'failing': ['a|b']},
+    }, 'zones', previews='cached')
+    if '| a\\|b | rebuilt | FAIL |' not in summary or 'Previews: cached.' not in summary:
+        fails.append('the CI Markdown summary does not preserve region rows and preview state')
     return fails
+
+
+def markdown_summary(rep: dict, source: str, previews: str) -> str:
+    """Compact GitHub summary, written before gate failure so every region stays visible."""
+    def cell(value):
+        return str(value).replace('|', '\\|').replace('\n', ' ')
+
+    rebuilt = set(rep.get('gate', {}).get('rebuilt', []))
+    failing = set(rep.get('gate', {}).get('failing', []))
+    rows = []
+    for region, value in rep['regions'].items():
+        gate = 'FAIL' if region in failing else 'PASS' if region in rebuilt else 'not gated'
+        rows.append(
+            f"| {cell(region)} | {cell(value['status'])} | {gate} | {value['compliant_pct']}% | "
+            f"{value['red_pct']}% | {value['drawn_compliant_pct']}% | {value['drawn_red_pct']}% | "
+            f"{value['cells']} |"
+        )
+    world = rep['world']
+    return '\n'.join([
+        '# Whole-world compliance audit',
+        '',
+        f"Source: `{cell(source)}`. Every region was audited; only regions marked `rebuilt` are blocking. Previews: {cell(previews)}.",
+        '',
+        f"World: **{world['compliant_pct']}% green**, {world['red']} red and {world['amber']} amber cells out of {world['cells']}.",
+        '',
+        '| Region | Status | Gate | Green | Red | Drawing green | Drawing red | Cells |',
+        '| --- | --- | --- | ---: | ---: | ---: | ---: | ---: |',
+        *rows,
+        '',
+    ])
 
 
 def main(argv=None) -> int:
@@ -1865,7 +1905,8 @@ def main(argv=None) -> int:
     ap.add_argument('--cells', help='every cell of every region as JSON')
     ap.add_argument('--ledger')
     ap.add_argument('--config', default=None)
-    ap.add_argument('--no-images', action='store_true')
+    ap.add_argument('--no-images', action='store_true',
+                    default=os.environ.get('WORLD_AUDIT_NO_IMAGES') == '1')
     ap.add_argument('--gate', action='store_true', help='fail if a region marked rebuilt is not 100 %% green')
     ap.add_argument('--selftest', action='store_true', help='run the checks on a made-up region with known faults')
     args = ap.parse_args(argv)
@@ -1886,9 +1927,9 @@ def main(argv=None) -> int:
     if args.gate:
         rebuilt = {r for r, s in cfg['regions'].items() if s == 'rebuilt'}
         if not rebuilt:
-            print('world audit gate: no region is marked "rebuilt" in art/world-audit-regions.json; nothing to hold yet')
-            return 0
-        only = (only or rebuilt) & rebuilt if only else rebuilt
+            print('world audit gate: no region is marked "rebuilt"; auditing every region for the report')
+        elif only:
+            only &= rebuilt
     t0 = time.time()
     regions = load_world(root, only) if source == 'world' else load_zones(root, only)
     ctx = make_context(root, args.ledger)
@@ -1940,6 +1981,10 @@ def main(argv=None) -> int:
     if not args.no_images:
         print(f'  images: {os.path.join(args.out, "world-audit.png")}, {os.path.join(args.out, "regions")}/, '
               f'{os.path.join(args.out, "worst")}/')
+    if os.environ.get('GITHUB_STEP_SUMMARY'):
+        previews = 'not rendered' if args.no_images else 'generated for these inputs'
+        with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
+            f.write(markdown_summary(rep, source, previews) + '\n')
     if args.gate:
         bad = rep['gate']['failing']
         if bad:
@@ -1951,7 +1996,10 @@ def main(argv=None) -> int:
                     print(f"  {p['severity']:5s} {p['check']:13s} {p['place']}: {p['cells']} cells at region px "
                           f"{p['box_region_px']}: {'; '.join(p['why'][:1])}")
             return 1
-        print('world audit gate: every rebuilt region is 100 % green')
+        if rep['gate']['rebuilt']:
+            print('world audit gate: every rebuilt region is 100 % green')
+        else:
+            print('world audit gate: no region is rebuilt yet; report only')
     return 0
 
 

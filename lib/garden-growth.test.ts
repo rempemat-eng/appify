@@ -47,7 +47,10 @@ assert.equal(full.fruiting, orchardSownAt.length);
 for (const m of [0, 12, 75, 260, 5000]) {
   const line = meadowLine(m);
   assert.ok(line.length > 10 && line.length < 110, line);
-  assert.ok(!/GRASS|reward|streak|lose|wilt/i.test(line), 'the meadow never nags or rewards');
+  assert.ok(
+    !/GRASS|DREAM DUST|reward|streak|lose|wilt/i.test(line),
+    'the meadow never nags or rewards',
+  );
 }
 
 // The generated map has a bed and a pit for every growth slot, and every stage has art.

@@ -30,6 +30,20 @@ import { gardenAnchors, gardenObjects } from '@/lib/garden-map';
 import { makeWalkGrid, type Point } from '@/lib/garden-path';
 import { pixelScale, snapToDevice } from '@/lib/pixel-scale';
 import { prefetchRegion } from '@/lib/zone-prefetch';
+import { WORLD_CANVAS } from '@/lib/world-flag';
+import { WORLD_TILE, worldTiles } from '@/lib/world-canvas';
+import { worldFlowArt, worldTileArt } from '@/lib/world-canvas-assets';
+import {
+  TILE_MOUNT_MARGIN,
+  areaAt,
+  areaWithHysteresis,
+  areasNear,
+  chunkFor,
+  makeWorldWalk,
+  propsFor,
+  tileOriginOf,
+  tilesToMount,
+} from '@/lib/world-walk';
 import { hiddenBehind } from '@/lib/occlusion';
 import { hutImageKey } from '@/lib/decor';
 import { hutImages } from '@/lib/garden-hut-assets';
@@ -41,10 +55,10 @@ import {
   regionTiles,
   regionLevels,
   regionWalk,
-  tileAt,
   tileOrigin,
   tileWithHysteresis,
   zonesToMount,
+  ZONE_HYSTERESIS,
   type RegionId,
   type RegionTile,
   type TileId,
@@ -75,6 +89,7 @@ import {
 } from '@/lib/zone-assets';
 import { GuardianPet } from '@/components/guardian-pet';
 import { ZoneLife, ZoneResidents } from '@/components/atlas-life';
+import { Animal, isAnimal } from '@/components/atlas-animals';
 import { Pet } from '@/components/game-ui';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelFrame, frameTones } from '@/components/pixel-frame';
@@ -175,6 +190,17 @@ export const zoneNames: Record<TileId, string> = {
   lumen: 'LUMEN',
 };
 
+const isTileId = (id: string | undefined): id is TileId => !!id && Object.hasOwn(zoneNames, id);
+/** The place under a point, its name kept along an edge: the zone (the zones' path) or the
+ *  area of the world canvas (lib/world-flag.ts; today the areas are the zones). */
+function placeAt(region: RegionId, prev: TileId | undefined, x: number, y: number) {
+  if (!WORLD_CANVAS) return tileWithHysteresis(region, prev, x, y)?.id;
+  const area = prev
+    ? areaWithHysteresis(region, prev, x, y, ZONE_HYSTERESIS)
+    : areaAt(region, x, y);
+  return isTileId(area?.id) ? area.id : undefined;
+}
+
 const SPEED = 40; // art pixels per second, a brisk walk
 const KEY_SPEED = 52; // walking by the keys: a purposeful trot
 /** Which way a leg of a walk faces; null for one that only goes up or down. */
@@ -243,6 +269,9 @@ type Drawable = {
   h: number;
   z: number;
   flip?: boolean;
+  /** the zone and object id of a placed prop (an animal's own loop is planned from them) */
+  zone?: TileId;
+  oid?: string;
 };
 
 // Things afloat ride the water: up and down by one art pixel, each on its own phase.
@@ -318,6 +347,50 @@ function FlowLayer({
   }));
   if (!rect || !art) return null;
   const [x, y, w] = rect;
+  return (
+    <View
+      pointerEvents="none"
+      style={{
+        position: 'absolute',
+        left: snap(x * u),
+        top: snap(y * u),
+        width: snap(w * u),
+        height: bh,
+        overflow: 'hidden',
+      }}
+    >
+      <Animated.Image
+        source={art}
+        resizeMode="stretch"
+        style={[
+          { position: 'absolute', left: 0, top: 0, width: snap(w * u), height: bh * FLOW_FRAMES },
+          style,
+        ]}
+      />
+    </View>
+  );
+}
+
+// The same moving water for one world tile (the world canvas): its box in tile pixels and
+// its frames' picture (lib/world-canvas.ts worldTiles[plane][key].flow).
+function FlowBox({
+  rect,
+  art,
+  clock,
+  u,
+  snap,
+}: {
+  rect: readonly [number, number, number, number];
+  art: ImageSourcePropType;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const [x, y, w, h] = rect;
+  const bh = snap(h * u);
+  const style = useAnimatedStyle(() => ({
+    transform: [{ translateY: -(Math.floor(clock.value / FLOW_FRAME_MS) % FLOW_FRAMES) * bh }],
+  }));
   return (
     <View
       pointerEvents="none"
@@ -617,6 +690,8 @@ function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourceProp
   const props = zoneMaps[tile.id].objects.map(([id, sprite, x, y, w, h]) => ({
     key: `${tile.id}-${id}`,
     sprite,
+    zone: tile.id,
+    oid: id,
     src: zoneProps[sprite],
     x: o.x + x,
     y: o.y + y,
@@ -645,6 +720,111 @@ function tileDrawables(region: RegionId, tile: RegionTile, hut?: ImageSourceProp
   ];
 }
 const DECK = 'deck';
+
+/** The props of the mounted world tiles (the world canvas): every prop whose picture
+ *  reaches one of them, in region pixels, and the garden's own when it is near. */
+function worldDrawables(
+  region: RegionId,
+  keys: readonly string[],
+  zones: readonly RegionTile[],
+  hut?: ImageSourcePropType,
+): Drawable[] {
+  const props: Drawable[] = propsFor(region, keys).map((p) => ({
+    key: `w-${p.id}`,
+    sprite: p.sprite,
+    src: zoneProps[p.sprite],
+    x: p.x,
+    y: p.y,
+    w: p.w,
+    h: p.h,
+    z: zoneOverhead.includes(p.sprite) ? 100000 : p.y + p.h,
+  }));
+  const garden = zones.find((t) => t.id === 'garden');
+  return garden ? [...tileDrawables(region, garden, hut), ...props] : props;
+}
+
+/** The world canvas's ground (lib/world-flag.ts): the mounted world tiles, each its picture
+ *  (or its one colour) and its moving water, and the garden's still water at the garden's
+ *  place when the home layer is not drawing it. In region pixels, inside the camera. */
+function WorldGround({
+  region,
+  keys,
+  garden,
+  clock,
+  u,
+  snap,
+}: {
+  region: RegionId;
+  keys: readonly string[];
+  garden: boolean;
+  clock: SharedValue<number>;
+  u: number;
+  snap: (v: number) => number;
+}) {
+  const plane = chunkFor(region).plane;
+  const size = snap(WORLD_TILE.size * u);
+  const g = regionTiles(region).find((t) => t.id === 'garden');
+  const go = g ? tileOrigin(region, g) : null;
+  return (
+    <>
+      {keys.map((k) => {
+        const t = worldTiles[plane][k];
+        if (!t) return null;
+        const o = tileOriginOf(region, k);
+        const flow = worldFlowArt[plane][k];
+        return (
+          <View
+            key={`tile-${k}`}
+            style={{
+              position: 'absolute',
+              left: snap(o.x * u),
+              top: snap(o.y * u),
+              width: size,
+              height: size,
+              // a tile of one colour (open sea, deep forest) needs no picture
+              backgroundColor: t.fill,
+            }}
+          >
+            {t.art && !t.fill && (
+              <Image
+                source={worldTileArt[t.art]}
+                resizeMode="stretch"
+                style={{ position: 'absolute', left: 0, top: 0, width: size, height: size }}
+              />
+            )}
+            {t.flow && flow && <FlowBox rect={t.flow} art={flow} clock={clock} u={u} snap={snap} />}
+          </View>
+        );
+      })}
+      {garden && go && (
+        <>
+          <Image
+            source={gStream}
+            resizeMode="stretch"
+            style={{
+              position: 'absolute',
+              left: snap(go.x * u),
+              top: snap(go.y * u) + snap(282 * u),
+              width: snap(TILE.width * u),
+              height: snap(38 * u),
+            }}
+          />
+          <Image
+            source={gPond}
+            resizeMode="stretch"
+            style={{
+              position: 'absolute',
+              left: snap(go.x * u) + snap(22 * u),
+              top: snap(go.y * u) + snap(186 * u),
+              width: snap(96 * u),
+              height: snap(56 * u),
+            }}
+          />
+        </>
+      )}
+    </>
+  );
+}
 
 /** A name tag in the world: a place you can pick or walk to. */
 /** Where the companion stands, as the parent hears it: the ground point (region pixels)
@@ -826,12 +1006,17 @@ export function AtlasWalk({
       start: drawn,
       startLogical: logical,
       levels,
-      walk: makeWalkGrid(walkRows ?? levels?.rows ?? regionWalk(region), {
-        cell: TILE.cell,
-        width: levels ? levels.width : bounds.width,
-        start: logical,
-        links: levels?.links,
-      }),
+      // the world canvas walks the tiles in search windows (lib/world-walk.ts); keepsakes
+      // in the hut and decks keep the whole grid
+      walk:
+        WORLD_CANVAS && !walkRows && !levels
+          ? makeWorldWalk(region, logical)
+          : makeWalkGrid(walkRows ?? levels?.rows ?? regionWalk(region), {
+              cell: TILE.cell,
+              width: levels ? levels.width : bounds.width,
+              start: logical,
+              links: levels?.links,
+            }),
     };
   }, [region, tiles, bounds.width, initial, walkRows]);
   // Where a walk point is drawn: a point on the deck level is drawn over the ground it
@@ -892,7 +1077,7 @@ export function AtlasWalk({
   const [ownFacing, setFacing] = useState<'left' | 'right'>('right');
   const facing = companion?.facing ?? ownFacing;
   const [here, setHere] = useState<TileId>(
-    tileAt(region, grid.start.x, grid.start.y)?.id ?? 'garden',
+    placeAt(region, undefined, grid.start.x, grid.start.y) ?? 'garden',
   );
   const [named, setNamed] = useState<TileId | null>(nameAtStart ? here : null);
 
@@ -917,7 +1102,7 @@ export function AtlasWalk({
   // Where the feet are now: the zone (kept until the companion is a few steps over a
   // border, lib/region-walk.ts) and the point the mounted zones are chosen round.
   const noteFeet = (x: number, y: number) => {
-    setHere((prev) => tileWithHysteresis(region, prev, x, y)?.id ?? prev);
+    setHere((prev) => placeAt(region, prev, x, y) ?? prev);
     const fx = Math.round(x);
     const fy = Math.round(y);
     setFeet((f) => (f.x === fx && f.y === fy ? f : { x: fx, y: fy }));
@@ -1059,8 +1244,8 @@ export function AtlasWalk({
       setFeet(end);
       settleSquash();
       const foot = spotOf(lastLogical);
-      const tile = tileAt(region, foot.x, foot.y);
-      if (tile) setHere((prev) => tileWithHysteresis(region, prev, foot.x, foot.y)?.id ?? prev);
+      if (placeAt(region, undefined, foot.x, foot.y))
+        setHere((prev) => placeAt(region, prev, foot.x, foot.y) ?? prev);
       calls.current.onSettle?.(foot);
       then?.();
     };
@@ -1269,13 +1454,29 @@ export function AtlasWalk({
     const c = cameraAt(feet.x, feet.y, focusY, padBottom);
     return { x0: c.x / u, y0: c.y / u, x1: (c.x + width) / u, y1: (c.y + height) / u };
   })();
-  const [mounted, setMounted] = useState<TileId[]>(() => zonesToMount(region, seen));
+  const [mounted, setMounted] = useState<TileId[]>(() =>
+    WORLD_CANVAS ? [] : zonesToMount(region, seen),
+  );
+  // the world canvas mounts world tiles instead (at most 12 on a phone, lib/world-walk.ts)
+  const [mountedTiles, setMountedTiles] = useState<string[]>(() =>
+    WORLD_CANVAS ? tilesToMount(region, seen) : [],
+  );
+  const wantTiles = WORLD_CANVAS ? tilesToMount(region, seen, mountedTiles) : mountedTiles;
+  if (wantTiles.length !== mountedTiles.length || wantTiles.some((k, i) => k !== mountedTiles[i]))
+    setMountedTiles(wantTiles);
+  const tilesKey = wantTiles.join(';');
   // the region's pictures load ahead of time, so a zone mounting at the edge of the view
   // draws at once (fetched, not decoded: only mounted zones take a phone's memory)
   useEffect(() => {
     prefetchRegion(region);
   }, [region]);
-  const want = zonesToMount(region, seen, mounted);
+  // (with the world canvas, the zones near are those whose areas the view reaches: their
+  // life, residents and light still go by zone)
+  const want = WORLD_CANVAS
+    ? areasNear(region, seen, TILE_MOUNT_MARGIN)
+        .map((a) => a.area.id)
+        .filter(isTileId)
+    : zonesToMount(region, seen, mounted);
   if (want.length !== mounted.length || want.some((id, i) => id !== mounted[i])) setMounted(want);
   const mountKey = want.join(',');
   const near = useMemo(
@@ -1301,12 +1502,19 @@ export function AtlasWalk({
   }
   // (the same scene while the mounted zones and keepsakes are the same, so a re-render
   // as the feet move does not rebuild every prop)
-  const drawables = useMemo(
+  const drawables = useMemo<Drawable[]>(
     () => [
-      ...near.flatMap((t) => tileDrawables(region, t, hutImages[hutImageKey(hutLook)])),
+      ...(WORLD_CANVAS
+        ? worldDrawables(
+            region,
+            tilesKey ? tilesKey.split(';') : [],
+            near,
+            hutImages[hutImageKey(hutLook)],
+          )
+        : near.flatMap((t) => tileDrawables(region, t, hutImages[hutImageKey(hutLook)]))),
       ...(extras ?? []).map((e) => ({ ...e, sprite: `extra:${e.key}` })),
     ],
-    [near, region, hutLook, extras],
+    [near, region, hutLook, extras, tilesKey],
   );
   // the home layer lights the garden itself (its lantern can be turned off)
   const lamps = drawables.filter(
@@ -1344,7 +1552,19 @@ export function AtlasWalk({
   const props = useMemo(
     () =>
       drawables.map((d) =>
-        FLYERS[d.sprite] && active && !reduced ? (
+        // animals live on the same clock (atlas-animals.tsx); still with it stopped
+        isAnimal(d.sprite) && d.zone && d.zone !== 'garden' && d.oid ? (
+          <Animal
+            key={d.key}
+            d={d}
+            zone={d.zone}
+            oid={d.oid}
+            clock={bob}
+            running={active && !reduced}
+            u={u}
+            snap={snap}
+          />
+        ) : FLYERS[d.sprite] && active && !reduced ? (
           <Flyer key={d.key} d={d} clock={bob} u={u} snap={snap} />
         ) : FLOATS[d.sprite] && active && !reduced ? (
           <Floating key={d.key} d={d} clock={bob} u={u} snap={snap} />
@@ -1438,7 +1658,17 @@ export function AtlasWalk({
               }}
             />
           ))}
-          {near.map((t) => {
+          {WORLD_CANVAS && (
+            <WorldGround
+              region={region}
+              keys={tilesKey ? tilesKey.split(';') : []}
+              garden={!homeLayer && near.some((t) => t.id === 'garden')}
+              clock={bob}
+              u={u}
+              snap={snap}
+            />
+          )}
+          {(WORLD_CANVAS ? [] : near).map((t) => {
             const o = tileOrigin(region, t);
             const left = snap(o.x * u);
             const tileTop = snap(o.y * u);

@@ -195,9 +195,61 @@ def windsock() -> Canvas:
     return gp_keep_foot(cv, 34, 44, dx=0)
 
 
-def ibex() -> Canvas:
-    """An ibex standing on a rock, 40 x 40, looking west: a stocky grey-brown goat with
-    long ridged horns swept back, lit on its left."""
+# The ibex on its rock (art-faults.md A9): a stocky grey-brown wild goat with a pale belly,
+# dark legs and a beard, its ridged horns swept back over its neck, drawn from masks
+# (animal_frames.paint_mask) so it is lit from the upper left whichever way it faces. It
+# keeps to its rock: it grazes the lichen, flicks its tail, lifts its head and turns to
+# look the other way (animal_frames.KINDS['ibex']).
+IBEX_INKS = {'b': ['#3E342C', '#5E4E40', '#7E6A56', '#A08A70', '#BEA88A'],
+             'l': ['#2E2622', '#463A30', '#5E4E40', '#7A6654', '#8E7A64'],
+             'w': ['#8E7E6A', '#B0A08A', '#CCBEA6', '#E0D4BE', '#EEE6D4'],
+             'e': '#1E1917', 'd': '#2E2622', 'm': '#4A3E34'}
+IBEX_HORN = ['#5A4A34', '#8F7A58', '#B09A74', '#C9B48E', '#E2D2AE']
+_IBEX_LEGS = [
+    '.....lbbwwwwwwwwwwbbbbl.',
+    '.....ll..........ll.ll..',
+    '.....ll..........l..l...',
+    '.....l.l.........l..l...',
+    '.....l.l........l...l...',
+    '....ll.ll......ll..ll...',
+]
+_IBEX_STAND = [
+    '........................',
+    '..b.....................',
+    '.bbb....................',
+    'bbbbb...................',
+    'bebbbb..................',
+    'mbbbbbb.................',
+    '.dbbbbbbbbbbbbbbbbb.....',
+    '.d..bbbbbbbbbbbbbbbbb...',
+    '....bbbbbbbbbbbbbbbbbb..',
+    '.....bbbbbbbbbbbbbbbbbb.',
+    '.....bbbbbbbbbbbbbbbbbb.',
+] + _IBEX_LEGS
+IBEX_POSES = {
+    # (rows, the head's top in the rows, where the horns grow from)
+    'stand': (_IBEX_STAND, (3, 12)),
+    'graze': (['........................'] * 5 + [
+        '..b.....................',
+        '.bbbbbbbbbbbbbbbbbb.....',
+        '.bbbbbbbbbbbbbbbbbbbb...',
+        'bebbbbbbbbbbbbbbbbbbbb..',
+        'mbbbbbbbbbbbbbbbbbbbbbb.',
+        '.d...bbbbbbbbbbbbbbbbbb.',
+    ] + ['.d' + _IBEX_LEGS[0][2:]] + _IBEX_LEGS[1:], (3, 16)),
+    'flick': (_IBEX_STAND[:6] + ['.dbbbbbbbbbbbbbbbbb.b...', '.d..bbbbbbbbbbbbbbbbbbb.'] + _IBEX_STAND[8:],
+              (3, 12)),
+    'look': (['........................', '...b....................', '..bbb...................',
+              '.bbbbb..................', '.bebbbb.................', '.mbbbbbb................']
+             + _IBEX_STAND[6:], (4, 12)),
+}
+_IBEX_ARC = [(0, 0), (0, -1), (1, -2), (2, -3), (3, -4), (4, -4), (5, -5), (6, -5), (7, -5), (8, -4),
+             (9, -4), (10, -3), (11, -2)]
+
+
+def ibex(pose: str = 'stand', west: bool = True) -> Canvas:
+    """An ibex standing on a rock, 40 x 40, in `pose` (IBEX_POSES), looking west (as
+    placed) or turned to look east."""
     cv = Canvas(40, 40, pad=PAD)
     rock = oval(20, 33, 17, 7) | oval(14, 34, 10, 6)
     rock = {(x, y) for (x, y) in rock if 0 <= y < 40}
@@ -205,25 +257,18 @@ def ibex() -> Canvas:
     for (x, y) in rock:
         if (x, y - 1) not in rock:
             cv.set(x, y, SNOW[3])
-    COAT = ['#4A3E34', '#6B5A4A', '#8C7762', '#AE977E']
-    body = oval(21, 19, 9, 5)
-    for (x, y) in body:
-        cv.set(x, y, COAT[3] if y < 17 and x < 22 else COAT[2] if y < 21 else COAT[1])
-    for (lx, top) in ((14, 22), (17, 22), (25, 22), (28, 22)):  # legs to the rock
-        for y in range(top, 29):
-            cv.set(lx, y, COAT[1] if lx > 20 else COAT[2])
-    head = oval(11, 14, 3.6, 3)
-    for (x, y) in head:
-        cv.set(x, y, COAT[3] if x < 11 else COAT[2])
-    for (x, y) in ((13, 16), (14, 17), (15, 17)):
-        cv.set(x, y, COAT[2])  # the neck
-    cv.set(9, 14, MATERIALS['iron'][0])
-    cv.set(8, 17, COAT[0]); cv.set(9, 18, COAT[0])  # the beard
-    for t in range(12):  # the horns: up and swept back in a long arc, ridged
-        a = t / 11
-        x, y = 12 + int(a * 9), 11 - int(math.sin(a * math.pi * 0.8) * 7)
-        c = '#C9B48E' if t % 3 else '#8F7A58'
-        cv.set(x, y, c); cv.set(x + 1, y, '#A8936C')
+    rows, (hx, hy) = IBEX_POSES[pose]
+    w = len(rows[0])
+    x0 = 7 if west else 40 - 7 - w
+    s = 1 if west else -1
+    hx = x0 + hx if west else x0 + w - 1 - hx
+    for t, (ax, ay) in enumerate(_IBEX_ARC):  # the horns: ridged, swept back over the neck
+        x, y = hx + ax * s, hy + ay
+        cv.set(x, y, IBEX_HORN[1] if t % 3 == 2 else IBEX_HORN[3])
+        if t < 10:
+            cv.set(x, y + 1, IBEX_HORN[2] if t % 3 != 2 else IBEX_HORN[1])
+    import animal_frames
+    animal_frames.paint_mask(cv, rows, IBEX_INKS, x0, 12, mirror=not west)
     return cv
 
 
@@ -231,6 +276,7 @@ def props() -> dict[str, Canvas]:
     return {
         'bothy': bothy(), 'telescope': telescope(), 'trail_post': trail_post(),
         'windsock': windsock(), 'ibex': ibex(),
+        **{f'ibex_{pose}': ibex(pose) for pose in IBEX_POSES if pose != 'stand'}, 'ibex_turn': ibex('stand', west=False),
     }
 
 

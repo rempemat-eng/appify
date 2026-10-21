@@ -476,24 +476,6 @@ def carriage() -> Canvas:
     return cv
 
 
-def capsule() -> Canvas:
-    """The space elevator's capsule, 48 x 56: a rounded white pod with a viewport ring
-    and the cable through its spine."""
-    w, h = 48, 56
-    cv = Canvas(w, h, pad=4)
-    for (x, y) in oval(24, 28, 20, 26):
-        k = (x - 4) / 40
-        cv.set(x, y, '#F4F6FA' if k < 0.35 else '#D2D8E4' if k < 0.7 else '#A9B2C4')
-    for (x, y) in oval(24, 26, 12, 8):
-        cv.set(x, y, '#5A8AC4' if y < 26 else '#2C4A78')
-    cv.set(19, 22, '#E6F2FF')
-    for y in range(0, h):
-        cv.set(24, y, M['hull'][2]) if not (2 < y < 54) else None
-    for y in (44, 46):
-        cv.hline(10, y, 28, M['neon_cyan'][3])
-    return cv
-
-
 YARDS = ('steam', 'neon', 'lava', 'moon')  # regions with a sparring ring of their own
 TOP, FOOT = 40, 40  # room added above (sky) and below (the nearest ground) the 160-high scene
 FULL_H = H + TOP + FOOT
@@ -644,7 +626,6 @@ def main():
                 for name in ('sky', 'far', 'near'):
                     sheet.paste(layers[name], k * W, i * FULL_H)
     import cyber_props as cyp
-    import space_props as spp
     from PIL import Image as _Image
     mag = style.finalize(cyp.maglev(), name='journey-maglev')
     mag_l = Canvas(mag.w, mag.h)  # mirrored: every vehicle leads to the left
@@ -657,26 +638,25 @@ def main():
         if k:
             carts.hline(k * 32 - 6, 16, 7, M['iron'][1])
     carts_f = style.finalize(carts, name='journey-carts')
-    ship = style.finalize(spp.shuttle(), name='journey-shuttle')
     import isle_props as ipp
     boat = style.finalize(ipp.ferry(), name='journey-ferry')
     boat.save(os.path.join(OUT, 'ferry.png'), SCALE)
     mag_l.save(os.path.join(OUT, 'maglev.png'), SCALE)
     carts_f.save(os.path.join(OUT, 'carts.png'), SCALE)
-    ship.save(os.path.join(OUT, 'shuttle.png'), SCALE)
     engine = style.finalize(sp.locomotive(), name='journey-engine')
     coach = style.finalize(carriage(), name='journey-carriage')
-    pod = style.finalize(capsule(), name='journey-capsule')
     engine.save(os.path.join(OUT, 'engine.png'), SCALE)
     coach.save(os.path.join(OUT, 'carriage.png'), SCALE)
-    pod.save(os.path.join(OUT, 'capsule.png'), SCALE)
+    # (the elevator's capsule and the shuttle fly in scripts/art/rocket.py now: the rocket
+    # replaced the elevator, Matt 20 Oct; the lander was redrawn there)
+    for gone in ('capsule.png', 'shuttle.png'):
+        if os.path.exists(os.path.join(OUT, gone)):
+            os.remove(os.path.join(OUT, gone))
     if sheet:
         for i in range(len(THEMES)):
             if list(THEMES)[i] not in ('space', 'moon'):  # the engine faces left and leads; the coach follows
                 sheet.paste(engine, 120, i * FULL_H + TOP + 72)
                 sheet.paste(coach, 226, i * FULL_H + TOP + 82)
-            else:
-                sheet.paste(pod, 140, i * FULL_H + TOP + 40)
         sheet.save(os.path.join(preview, 'journeys.png'), 2)
     ident = lambda k: k[0].upper() + k[1:]  # noqa: E731
     lines = [
@@ -686,10 +666,8 @@ def main():
         *[f"import {d}Yard from '@/assets/journeys/{d}-yard.png';" for d in YARDS],
         "import engine from '@/assets/journeys/engine.png';",
         "import carriage from '@/assets/journeys/carriage.png';",
-        "import capsule from '@/assets/journeys/capsule.png';",
         "import maglev from '@/assets/journeys/maglev.png';",
         "import carts from '@/assets/journeys/carts.png';",
-        "import shuttle from '@/assets/journeys/shuttle.png';",
         "import ferry from '@/assets/journeys/ferry.png';",
         f'export const JOURNEY = {{ width: {W}, height: {FULL_H}, rail: {TOP + 120} }} as const;',
         '/** Sky, far land and near land for the trip to each region; each loops across. `above` and',
@@ -706,10 +684,8 @@ def main():
         'export const journeyVehicles: Record<string, { source: ImageSourcePropType; w: number; h: number }> = {',
         f'  engine: {{ source: engine, w: {engine.w}, h: {engine.h} }},',
         f'  carriage: {{ source: carriage, w: {coach.w}, h: {coach.h} }},',
-        f'  capsule: {{ source: capsule, w: {pod.w}, h: {pod.h} }},',
         f'  maglev: {{ source: maglev, w: {mag_l.w}, h: {mag_l.h} }},',
         f'  carts: {{ source: carts, w: {carts_f.w}, h: {carts_f.h} }},',
-        f'  shuttle: {{ source: shuttle, w: {ship.w}, h: {ship.h} }},',
         f'  ferry: {{ source: ferry, w: {boat.w}, h: {boat.h} }},',
         '};',
         '',

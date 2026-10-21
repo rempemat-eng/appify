@@ -93,7 +93,7 @@ export function PlaceCardBody({
         <BodyText style={title}>{mission.name}</BodyText>
         <BodyText style={{ fontSize: 13 }}>{worldCatalogue[card.id].description}</BodyText>
         <BodyText style={{ fontSize: 13 }}>
-          {mission.duration} MIN · {mission.reward} GRASS ·{' '}
+          {mission.duration} MIN · {mission.reward} Dream Dust ·{' '}
           {mission.id === 'mountain' ? 'EPIC' : 'RARE'} card · postcard
         </BodyText>
         <PixelButton

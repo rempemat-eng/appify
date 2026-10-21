@@ -12,10 +12,13 @@ import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
 from pixel import Canvas, disc, noise2, oval  # noqa: E402
-import detail  # noqa: E402
 import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
-from materials import MATERIALS, WOOD  # noqa: E402
+import reach_house as rh  # noqa: E402
+from reach_house import T, part, rect, step, frame  # noqa: E402
+import style_sheet as ss  # noqa: E402
+from style_sheet import boards, roof_rows  # noqa: E402
+from materials import MATERIALS  # noqa: E402
 
 LAVA, BASALT, ASH, IRON = (MATERIALS[k] for k in ('lava', 'basalt', 'ash', 'iron'))
 PAD = 4
@@ -511,87 +514,193 @@ LANTERN = ['#7A3A12', '#C2621E', '#F2A048', '#FFE0A0']
 
 
 def bathhouse() -> Canvas:
-    """The bathhouse, 108 x 86: a low hall of charred cedar boards (dark, burnt to keep
-    them sound) under a broad roof of basalt slates seen from above, a wide eave with
-    lanterns hanging warm, sliding screens glowing, a deck of boards out front with
-    buckets and a stack of folded towels. The calm end of the fire country."""
-    w, h = 108, 86
+    """The bathhouse at Cinder Springs, 102 x 88 (asset ledger 20 Oct: redrawn on the house
+    ramps, its foot 13 whole cells; prop audit ADJUST "door 28" now 32, "steam from a roof
+    vent" now a louvred vent on the ridge for the steam to rise from). A low hall of charred
+    cedar boards (burnt dark to keep them sound, a silver sheen on the char) between timber
+    posts, on a basalt plinth, under a hipped roof of basalt slates seen from above, its
+    west hip lit and its east hip in shade, a ridge of round caps. Paper screens glow warm
+    from the lamps inside; the doorway is curtained with a split cloth printed with the
+    springs' sign, steam drifting in the dark behind it; paper lanterns hang on cords from
+    the eave. A boardwalk deck out front with buckets and a stack of folded towels."""
+    w, h = 102, 88
     cv = Canvas(w, h, pad=PAD)
-    ridge = (w - 1) / 2
-    for y in range(4, 40):  # the slate roof: a hipped slope, lit on the upper left
-        inset = max(0, 18 - y) * 2
-        for x in range(2 + inset, w - 2 - inset):
-            left = x < ridge
-            row = (y - 4) // 4
-            c = BASALT[3] if left else BASALT[2]
-            if y < 12:
-                c = BASALT[4] if left else BASALT[3]
-            if (x + row * 3) % 7 == 0 or (y - 4) % 4 == 0:
-                c = BASALT[1]
-            cv.set(x, y, c)
-    cv.hline(2, 40, w - 4, BASALT[4]); cv.hline(2, 41, w - 4, BASALT[0])
-    for y in range(42, 72):  # the charred board wall
-        for x in range(8, w - 8):
-            c = CHAR[2] if (x // 5) % 2 else CHAR[1]
-            if x % 5 == 0:
-                c = CHAR[0]
-            if (x * 3 + y) % 23 == 0:
-                c = CHAR[3]  # the char's silvery sheen
-            cv.set(x, y, c)
-    for y in range(42, 46):  # the eave's shadow
-        for x in range(8, w - 8):
-            if (x + y) % 2 or y < 44:
-                cv.set(x, y, CHAR[0])
-    for sx in (16, 40, 68, 90):  # sliding screens, warm behind a lattice
-        if sx == 40:
+    ridge_y, eave_y = 12, 42                      # the roof: from the ridge down to the eave
+    wall0, wall1 = eave_y + 3, 74                  # the wall below the eave, to the plinth
+    deck_y = 76
+    rx0, rx1 = 24, w - 25                          # the ridge's ends
+    roof = set()
+    for y in range(ridge_y, eave_y + 1):
+        t = (y - ridge_y) / (eave_y - ridge_y)
+        xl, xr = round(rx0 - t * (rx0 - 0)), round(rx1 + t * (w - 1 - rx1))
+        for x in range(xl, xr + 1):
+            roof.add((x, y))
+    roof_rows(cv, 0, ridge_y, w, eave_y - ridge_y + 1, 'basalt', 3, row=5, tile=(6, 8), seed=161, clip=roof,
+              moss=True)                           # moss in the slates' lower corners: the steam keeps them damp
+    for y in range(ridge_y, eave_y + 1):
+        t = (y - ridge_y) / (eave_y - ridge_y)
+        hw = round(rx0 - rx0 * t * 0.55)           # the west hip's line, leaning out from the ridge's end
+        he = round(rx1 + (w - 1 - rx1) * t * 0.55)
+        for x in range(0, hw):
+            if (x, y) in roof:
+                step(cv, x, y, 1)                  # the west hip faces the light
+        for x in range(he + 1, w):
+            if (x, y) in roof:
+                step(cv, x, y, -1)                 # the east hip turns away from it
+        if (hw, y) in roof:
+            cv.set(hw, y, T('basalt', 5)); cv.set(hw + 1, y, T('basalt', 2))   # the hip's capping, lit on its west
+        if (he, y) in roof:
+            cv.set(he, y, T('basalt', 4)); cv.set(he + 1, y, T('basalt', 1))
+    for x in range(rx0, rx1 + 1):                  # the ridge: a row of round caps
+        j = (x - rx0) % 4
+        cv.set(x, ridge_y - 1, T('basalt', 4 if j < 2 else 3) if j != 3 else T('basalt', 2))
+        cv.set(x, ridge_y, T('basalt', 2 if j != 3 else 1))
+    vx0, vx1 = w // 2 - 7, w // 2 + 7              # the louvred vent on the ridge, where the steam goes out
+    for y in range(ridge_y - 8, ridge_y - 1):
+        for x in range(vx0, vx1):
+            louvre = (y - (ridge_y - 8)) % 2 == 1 and 2 <= y - (ridge_y - 8) < 6
+            k = 4 if x == vx0 else 2 if x == vx1 - 1 else 3
+            cv.set(x, y, T('earth_cool', 0) if louvre and vx0 < x < vx1 - 1 else T('timber_cool', k))
+    for x in range(vx0 - 2, vx1 + 2):              # its little roof of slates
+        cv.set(x, ridge_y - 10, T('basalt', 4 if x < w // 2 else 3)); cv.set(x, ridge_y - 9, T('basalt', 2))
+    for x in range(0, w):                          # the fascia board along the eave
+        cv.set(x, eave_y + 1, T('timber_cool', 3)); cv.set(x, eave_y + 2, T('timber_cool', 1))
+    wall = rect(3, wall0, w - 6, wall1 - wall0)
+    char = lambda bi, si: (('soot', 'soot_warm', 'soot_cool')[int(noise2(bi, si, 162) * 3)],
+                           2 + (1 if noise2(bi, si, 163) > 0.8 else 0))
+    boards(cv, 3, wall0, w - 6, wall1 - wall0, char, board=4, seed=164, nails=False, grain=0.0)
+    ss.grain(cv, wall, 0.07, 165, shapes=rh.H_GRAIN, lit=lambda x, y: 0.8, swap=0.5, up=0.5, down=0.1)   # the char's silver sheen
+    rh.overhang(cv, 3, w - 3, wall0, 4)
+    posts = (3, 27, 41, 59, 73, w - 6)
+    bays = [(7, 27, 'screen'), (31, 41, 'screen'), (44, 58, 'door'), (63, 73, 'screen'), (77, w - 6, 'screen')]
+    for (bx0, bx1, kind) in bays:
+        top, bot = wall0 + 5, wall1 - 1
+        if kind == 'door':                         # the doorway, 32 tall, a split curtain over steam
+            dy = wall1 - 32
+            for (x, y) in rect(bx0, dy, bx1 - bx0, 32):
+                cv.set(x, y, T('earth_cool', 0 if y > dy + 3 else 1))
+            for (x, y) in rect(bx0, wall1 - 5, bx1 - bx0, 5):   # the wet stone floor inside, the lamps on it
+                cv.set(x, y, T('basalt', 1 if (x + (y % 2) * 3) % 6 else 0))
+            for (x, y) in ((bx0 + 3, wall1 - 3), (bx0 + 9, wall1 - 2)):
+                cv.set(x, y, T('lamp', 2)); cv.set(x + 1, y, T('lamp', 2))
+            for i, wx in enumerate((bx0 + 3, bx0 + 7, bx0 + 11)):   # wisps of steam rising past the curtain
+                for yy in range(dy + 13, wall1 - 6):
+                    xx = wx + round(1.3 * math.sin((yy + i * 5) / 3.0))
+                    if bx0 <= xx < bx1 - 1 and (yy + i * 2) % 9 < 6:
+                        cv.set(xx, yy, T('ash', 3 if yy < dy + 20 else 2)); cv.set(xx + 1, yy, T('ash', 2 if yy < dy + 20 else 1))
+            for (x, y) in rect(bx0, dy, bx1 - bx0, 13):   # the curtain in three panels, the sign across them
+                panel = (x - bx0) * 3 // (bx1 - bx0)
+                f = (x - bx0) % ((bx1 - bx0) // 3 + 1)
+                k = 4 if f == 0 else 3 if f < 3 else 2
+                if (x - bx0) * 3 % (bx1 - bx0) < 3 and x > bx0 and y > dy + 3:
+                    cv.set(x, y, T('earth_cool', 0)); continue   # the splits between panels
+                cv.set(x, y, T(('dusk', 'dusk_warm', 'dusk')[panel], k if y < dy + 12 else k - 1))
+            cx = (bx0 + bx1) // 2                    # the sign: three wavy lines of rising steam, in brass
+            for i, sx in enumerate((cx - 3, cx, cx + 3)):
+                for yy in range(dy + 3, dy + 9):
+                    cv.set(sx + (1 if (yy + i) % 4 < 2 else 0), yy, T('brass', 4 if yy < dy + 5 else 3))
+            for x in range(bx0 - 1, bx1 + 1):        # the lintel and the sill
+                cv.set(x, dy - 1, T('timber_cool', 4)); cv.set(x, dy - 2, T('timber_cool', 2))
             continue
-        for y in range(48, 68):
-            for x in range(sx, sx + 14 if sx != 68 else sx + 16):
-                lat = (x - sx) % 5 == 0 or (y - 48) % 5 == 0
-                cv.set(x, y, CHAR[3] if lat else LANTERN[3] if y < 56 else LANTERN[2])
-    for y in range(48, 72):  # the open door, steam within
-        for x in range(42, 62):
-            cv.set(x, y, '#2E2624' if (x + y) % 3 else '#4A403C')
-    for (lx) in (12, 34, 74, 96):  # lanterns on the eave
-        for (x, y) in oval(lx, 47, 3, 4):
-            cv.set(x, y, LANTERN[3] if x < lx else LANTERN[2] if y < 49 else LANTERN[1])
-        cv.set(lx, 42, CHAR[0]); cv.set(lx, 51, LANTERN[0])
-    for y in range(72, 84):  # the deck
-        for x in range(4, w - 4):
-            c = WOOD[3] if (y - 72) % 4 else WOOD[1]
-            if y == 72:
-                c = WOOD[4]
-            cv.set(x, y, c)
-    for (bx) in (14, 22):  # buckets
-        for (x, y) in oval(bx, 76, 3, 2.5):
-            cv.set(x, y, WOOD[4] if x < bx else WOOD[2])
-        cv.hline(bx - 3, 75, 7, IRON[3])
-    for k in range(4):  # folded towels
-        cv.hline(84, 80 - k * 2, 12, '#F2EEE6' if k % 2 else '#D8D2C6')
-        cv.hline(84, 79 - k * 2, 12, '#C8A0A0' if k == 3 else '#F2EEE6')
-    return cv
+        frame(cv, bx0, top, bx1 - bx0, bot - top, 'timber_cool', 3, t=1)   # a paper screen lit from inside
+        sx0, sy0, sw, sh = bx0 + 1, top + 1, bx1 - bx0 - 2, bot - top - 2
+        for (x, y) in rect(sx0, sy0, sw, sh):     # brighter low in the middle, nearer the lamps
+            fy = (y - sy0) / max(1, sh - 1)
+            mid = abs(x + 0.5 - (sx0 + sw / 2)) < sw * 0.3
+            cv.set(x, y, T('lamp', 2 if fy < 0.12 else 3 if fy < 0.45 else 4 if not (mid and fy > 0.7) else 5))
+        if bx0 in (7, 77):                        # someone inside, a shadow thrown on the paper by the lamp
+            fx = sx0 + (5 if bx0 == 7 else sw - 9)
+            for (x, y) in rh.ellipse(fx + 2.5, sy0 + 7.5, 2.2, 2.4) | rect(fx, sy0 + 10, 5, sh - 10) | rect(fx + 5 if bx0 == 7 else fx - 2, sy0 + 12, 2, 6):
+                if sx0 <= x < sx0 + sw and sy0 <= y < sy0 + sh:
+                    cv.set(x, y, T('lamp', 1 if (x - fx) > 1 else 2))
+        if bx0 == 63:                             # a shelf of tubs and a hanging dipper behind the paper
+            cv.hline(sx0, sy0 + 13, sw, T('lamp', 1))
+            for tx in range(sx0 + 1, sx0 + sw - 2, 4):
+                for (x, y) in rect(tx, sy0 + 10, 3, 3):
+                    cv.set(x, y, T('lamp', 2))
+        for x in range(sx0, sx0 + sw, 4):           # the lattice: bars lit on top and west, the light glowing through
+            for y in range(sy0, sy0 + sh):
+                if x > sx0:
+                    cv.set(x, y, T('timber_cool', 3 if (y - sy0) % 6 < 3 else 2))
+        for y in range(sy0 + 5, sy0 + sh, 6):
+            cv.hline(sx0, y, sw, T('timber_cool', 2))
+        for (cx, cy) in ((sx0 + 1 + 4 * int(noise2(bx0, 1, 169) * (sw // 4)), sy0 + 6 + 6 * int(noise2(bx0, 2, 169) * 2)),):
+            for (x, y) in rect(cx, cy, 3, 5):        # a pane of newer paper where one was mended, whiter
+                if rh.tone_at(cv, x, y) and rh.tone_at(cv, x, y)[0] == 'lamp':
+                    cv.set(x, y, T('plaster', 5 if y < cy + 2 else 4))
+        gp.WINDOWS.append((cv, (sx0, sy0, sw, sh)))   # it glows at night too (zoneWindows)
+    for px in posts:                               # posts from the plinth to the fascia, unbroken
+        rh.cylinder(cv, px, eave_y + 3, 3, wall1 - eave_y - 3, 'timber_cool', 3)
+    for (x, y) in rect(1, wall1, w - 2, deck_y - wall1):   # the basalt plinth in courses
+        cv.set(x, y, T('basalt', 2))
+    ss.courses(cv, 1, wall1, w - 2, deck_y - wall1, lambda ci, si: (('basalt', 'basalt_warm', 'basalt_cool')[si % 3], 3),
+               course=3, lengths=(6, 11), seam=T('basalt', 1), seed=168)
+    for x in range(0, w):                          # the deck: boards across, lit nosing, worn ends
+        for y in range(deck_y, h - 1):
+            cv.set(x, y, T(('timber', 'timber_warm')[(x // 7) % 2], 4 if y == deck_y else 3 if y < h - 2 else 2))
+        if x % 7 == 0:
+            for y in range(deck_y + 1, h - 1):
+                cv.set(x, y, T('timber', 1))
+        cv.set(x, h - 1, T('timber', 1))
+    for lx in (16, 35, 67, 86):                    # paper lanterns on cords from the eave, glowing
+        cv.set(lx, eave_y + 3, T('timber_cool', 1)); cv.set(lx, eave_y + 4, T('timber_cool', 1))
+        for (x, y) in rh.ellipse(lx + 0.5, eave_y + 8.5, 2.6, 3.4):
+            cv.set(x, y, T('lamp', 5 if x < lx and y < eave_y + 8 else 4 if x <= lx else 3))
+        cv.hline(lx - 1, eave_y + 5, 3, T('clay', 2)); cv.hline(lx - 1, eave_y + 12, 3, T('clay', 2))
+    for bx in (13, 21):                            # buckets on the deck, iron-hooped
+        part(cv, bx, deck_y - 3, 6, 6, 'timber_warm', 3)
+        cv.hline(bx, deck_y - 1, 6, T('iron', 2)); cv.set(bx + 1, deck_y - 1, T('iron', 4))
+        cv.hline(bx + 1, deck_y - 3, 4, T('timber_warm', 1))
+    for k in range(4):                             # a stack of folded towels
+        y = deck_y + 1 - k * 2
+        cv.hline(83, y, 12, T('plaster', 4 if k % 2 else 5)); cv.hline(83, y + 1, 12, T('plaster', 2 if k % 2 else 3))
+        cv.set(83, y, T('berry', 3)); cv.set(83, y + 1, T('berry', 2))
+    return rh.finish(cv)
 
 
 def fireweed(tall: bool = True) -> Canvas:
-    """Fireweed, 20 x 30 (or 16 x 22): the first plant back on burnt ground, tall stems
-    of pink-magenta flower spikes over narrow leaves."""
+    """Fireweed, 20 x 30 (or 16 x 22): the first plant back on burnt ground (asset ledger
+    20 Oct: redrawn on the house ramps, no speckle). A clump of slim stems from one root,
+    each with narrow leaves angled up in pairs of pixels and a flower spike at its top:
+    open magenta flowers below, closed buds paler and smaller towards the tip, seed pods
+    reddening under the flowers on the oldest stem. Lit on the west, the east side of each
+    spike and leaf a tone down; leaves on the west of a stem catch the light."""
     w, h = (20, 30) if tall else (16, 22)
     cv = Canvas(w, h, pad=PAD)
-    PINKS = ['#7A2A5A', '#B0407E', '#D86AA2', '#F2A0C8']
-    for k in range(4 if tall else 3):
-        bx = 3 + k * 4
-        top = 2 + (k * 7) % 6
-        for y in range(top, h - 1):
-            cv.set(bx + (1 if y > h - 8 and k % 2 else 0), y, '#447A50' if y > top + 8 else '#62995E')
-        for y in range(top, top + 9):
-            if (y + k) % 2 == 0:
-                cv.set(bx - 1, y, PINKS[3] if y < top + 3 else PINKS[2])
-                cv.set(bx + 1, y, PINKS[1])
+    stems = [(4, 4, -0.10), (8, 1, -0.03), (12, 3, 0.05), (15, 7, 0.12)] if tall else \
+            [(4, 3, -0.08), (8, 1, 0.0), (11, 5, 0.10)]
+    root = (w // 2, h - 1)
+    for i, (sx, top, lean) in enumerate(stems):
+        def at(y):
+            return int(round(sx + lean * (h - 1 - y) * 0.0 + (root[0] - sx) * ((y - top) / (h - 1 - top)) ** 2))
+        spike = 7 if tall else 6
+        for y in range(top + spike - 1, h):                     # the stem, reddish low down as fireweed is
+            x = at(y)
+            cv.set(x, y, T('cactus' if y < h - 6 else 'clay_cool', 3))
+        for y in range(top + spike + 1, h - 3, 3):              # leaves angled up, each two pixels long
+            x = at(y)
+            if (y // 3 + i) % 2 == 0:                           # west of the stem, in the light
+                cv.set(x - 1, y, T('leaf', 4)); cv.set(x - 2, y, T('leaf', 4))
             else:
-                cv.set(bx, y, PINKS[2])
-        for y in range(top + 11, h - 2, 4):  # narrow leaves
-            cv.set(bx - 1, y, '#2E5A40'); cv.set(bx + 1, y + 1, '#447A50')
-    return cv
+                cv.set(x + 1, y, T('leaf', 3)); cv.set(x + 2, y, T('leaf', 3))
+        x = at(top + spike)
+        for y in range(top, top + spike):                        # the spike: two pixels wide, lit on its west
+            u = (y - top) / spike
+            r = (y - top) // 2                                   # flowers come in pairs of rows
+            if u < 0.3:                                          # buds at the tip, pale
+                cv.set(x, y, T('dusk_warm', 5))
+                if y > top:
+                    cv.set(x + 1, y, T('dusk_warm', 4))
+            else:                                                # open flowers lower down
+                cv.set(x, y, T('berry_cool', 5 if r % 2 else 4))
+                cv.set(x + 1, y, T('berry_cool', 3))
+                if (r + i) % 2 == 0:
+                    cv.set(x - 1, y, T('dusk_warm', 5))          # a flower turned to the light
+        if i == 1 and tall:                                      # seed pods reddening under the oldest stem's flowers
+            cv.set(x + 1, top + spike, T('clay', 3)); cv.set(x + 1, top + spike + 1, T('clay', 3))
+    for x in range(root[0] - 2, root[0] + 3):                    # the root's crown in the ash
+        cv.set(x, h - 1, T('clay_cool', 3 if x > root[0] else 4))
+    return rh.finish(cv)
 
 
 def stone_lantern() -> Canvas:

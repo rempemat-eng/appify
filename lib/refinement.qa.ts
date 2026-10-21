@@ -122,7 +122,7 @@ export async function runRefinementChecks(): Promise<string[]> {
       first.player!.grass === 51 &&
         first.player!.offline_seconds === 31 &&
         first.cardReward?.cards.length === 2,
-      '31-MIN break across reload gives 31 GRASS and exactly 2 cards',
+      '31-MIN break across reload gives 31 Dream Dust and exactly 2 cards',
     );
     const settled = stableSnapshot({
       deck: first.player!.deck,
@@ -141,7 +141,7 @@ export async function runRefinementChecks(): Promise<string[]> {
     });
     check(
       restored === settled,
-      'Repeated reload/wake preserves cards, GRASS and visitor roll exactly once',
+      'Repeated reload/wake preserves cards, Dream Dust and visitor roll exactly once',
     );
     reset();
     gameStore.getState().sleep('park');
@@ -167,7 +167,7 @@ export async function runRefinementChecks(): Promise<string[]> {
         gameStore.getState().cardReward?.grass === 20 &&
         gameStore.getState().cardReward?.minutes === 15 &&
         gameStore.getState().cardReward?.cards.length === 2,
-      'Park at 15 real demo seconds gives 20 GRASS, 1 common + 1 rare, not 35 GRASS',
+      'Park at 15 real demo seconds gives 20 Dream Dust, 1 common + 1 rare, not 35 Dream Dust',
     );
     const park = stableSnapshot(gameStore.getState().cardReward);
     await reload();
@@ -177,7 +177,7 @@ export async function runRefinementChecks(): Promise<string[]> {
       postcardsOf(gameStore.getState().player!).length === 1 &&
         stableSnapshot(gameStore.getState().cardReward) === park &&
         gameStore.getState().player!.grass === 40,
-      'Completed Park resume adds no duplicate cards, postcard, visitor or GRASS',
+      'Completed Park resume adds no duplicate cards, postcard, visitor or Dream Dust',
     );
     reset();
     gameStore.getState().sleep('book');
@@ -188,7 +188,7 @@ export async function runRefinementChecks(): Promise<string[]> {
         gameStore.getState().cardReward?.cards.length === 1 &&
         gameStore.getState().cardReward?.early === true &&
         postcardsOf(gameStore.getState().player!).length === 0,
-      'Interrupted Book keeps offline common card, no mission GRASS/rare/postcard',
+      'Interrupted Book keeps offline common card, no mission Dream Dust/rare/postcard',
     );
     reset();
     gameStore.getState().sleep('book');
@@ -196,7 +196,7 @@ export async function runRefinementChecks(): Promise<string[]> {
     check(
       gameStore.getState().player!.grass === 80 &&
         gameStore.getState().cardReward?.cards.length === 3,
-      'Book completion gives 60 GRASS and 2 common + 1 rare',
+      'Book completion gives 60 Dream Dust and 2 common + 1 rare',
     );
     reset({ level: 2 });
     gameStore.getState().sleep('mountain');
@@ -205,14 +205,14 @@ export async function runRefinementChecks(): Promise<string[]> {
       gameStore.getState().player!.grass === 170 &&
         gameStore.getState().player!.owned_hats.length === 1 &&
         gameStore.getState().cardReward?.cards.length === 5,
-      'Mountain gives 150 GRASS, unowned hat, 4 common + 1 epic',
+      'Mountain gives 150 Dream Dust, unowned hat, 4 common + 1 epic',
     );
     reset({ level: 2, owned_hats: ['CAP', 'SHADES', 'TOP HAT', 'CROWN'] });
     gameStore.getState().sleep('mountain');
     advance(60);
     check(
       gameStore.getState().player!.grass === 220 && gameStore.getState().cardReward?.hat === null,
-      'Mountain all-hats fallback adds 50 GRASS',
+      'Mountain all-hats fallback adds 50 Dream Dust',
     );
     reset({ offline_seconds: 14 });
     gameStore.getState().sleep();
@@ -325,7 +325,7 @@ export async function runRefinementChecks(): Promise<string[]> {
     check(
       gameStore.getState().player!.grass === afterRaid &&
         gameStore.getState().applied.filter((id) => id === raidId).length === 1,
-      'Incoming raid settlement survives reload without duplicate GRASS',
+      'Incoming raid settlement survives reload without duplicate Dream Dust',
     );
     reset();
     const session: TogetherSession = {
@@ -346,7 +346,7 @@ export async function runRefinementChecks(): Promise<string[]> {
     resolveTogetherSession(session);
     check(
       gameStore.getState().player!.grass === 25 && gameStore.getState().rules.togetherBadges === 0,
-      'Together early return retains ordinary GRASS, no bonus',
+      'Together early return retains ordinary Dream Dust, no bonus',
     );
     gameStore.setState({
       cardReward: null,

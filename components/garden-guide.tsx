@@ -97,7 +97,7 @@ const sections = [
   ],
   [
     'Explore your garden',
-    'Tap an open patch to walk there. Visit the watering can to tend the flowers, the bench to share a page, the lantern to change its glow, or the pond to meet a little neighbour. Tap your companion for a pat. These are small moments to enjoy whenever you like; they do not cost GRASS or earn rewards. The hut, mailbox, stall, signpost and gate lead to the rest of your garden life.',
+    'Tap an open patch to walk there. Visit the watering can to tend the flowers, the bench to share a page, the lantern to change its glow, or the pond to meet a little neighbour. Tap your companion for a pat. These are small moments to enjoy whenever you like; they do not cost Dream Dust or earn rewards. The hut, mailbox, stall, signpost and gate lead to the rest of your garden life.',
   ],
   [
     'Demo clock',
@@ -113,7 +113,7 @@ const sections = [
   ],
   [
     'Missions',
-    'Park Patrol: 15 MIN, 20 GRASS. Book Club: 30 MIN, 60 GRASS. Mountain Retreat: 60 MIN, 150 GRASS at LV 2, plus an unowned hat or 50 GRASS if you own all hats. Common offline cards stack with a rare Park/Book card or epic Mountain card. Completed missions bring postcards. No per-minute GRASS on missions; returning early keeps common cards but not completion rewards.',
+    'Park Patrol: 15 MIN, 20 Dream Dust. Book Club: 30 MIN, 60 Dream Dust. Mountain Retreat: 60 MIN, 150 Dream Dust at LV 2, plus an unowned hat or 50 Dream Dust if you own all hats. Common offline cards stack with a rare Park/Book card or epic Mountain card. Completed missions bring postcards. No per-minute GRASS on missions; returning early keeps common cards but not completion rewards.',
   ],
   [
     'Real life and little keepsakes',
@@ -121,19 +121,19 @@ const sections = [
   ],
   [
     'Raids and sparring',
-    'Dave is available for local practice. Sparring pays 5 GRASS for each of your first 3 wins per day; losses pay nothing and never use raid allowance. Player raids require a connected multiplayer build: up to 3 per day, against exposed rivals only. If play time runs out during a fight, finish it and collect the result before taking a break.',
+    'Dave is available for local practice. Sparring pays 5 Dream Dust for each of your first 3 wins per day; losses pay nothing and never use raid allowance. Player raids require a connected multiplayer build: up to 3 per day, against exposed rivals only. If play time runs out during a fight, finish it and collect the result before taking a break.',
   ],
   [
     'Together',
-    'Together requires a connected multiplayer build. Invite a rival; both start the shared break on acceptance. Both must complete at least 10 simulated MIN for +50% GRASS and a Together badge. An early return keeps ordinary rewards, without the shared bonus. A lost connection keeps the wake report pending for retry.',
+    'Together requires a connected multiplayer build. Invite a rival; both start the shared break on acceptance. Both must complete at least 10 simulated MIN for +50% Dream Dust and a Together badge. An early return keeps ordinary rewards, without the shared bonus. A lost connection keeps the wake report pending for retry.',
   ],
   [
     'Visitors and guardians',
-    'Visitors arrive only after time away: your first one after any nap or mission of 10+ simulated MIN, then by chance on longer breaks (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN (10 real seconds in this demo) after you return to the garden. Preview any befriended companion before choosing them; all share your account level, GRASS, hats, deck and collection. Your original name and species stay saved. First meetings, dated postcards and kept memories live in the Field Journal.',
+    'Visitors arrive only after time away: your first one after any nap or mission of 10+ simulated MIN, then by chance on longer breaks (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN (10 real seconds in this demo) after you return to the garden. Preview any befriended companion before choosing them; all share your account level, Dream Dust, hats, deck and collection. Your original name and species stay saved. First meetings, dated postcards and kept memories live in the Field Journal.',
   ],
   [
     'Streak and growth',
-    '120 offline MIN qualifies today for the streak, with one missed day forgiven per week. Level-ups cost 50 × your current level in GRASS. LV 2 gives a 4-card hand; LV 3 adds Digital Sunset and BLOOM. Further levels increase battle HP and attack, not a new growth stage.',
+    '120 offline MIN qualifies today for the streak, with one missed day forgiven per week. Level-ups cost 50 × your current level in Dream Dust. LV 2 gives a 4-card hand; LV 3 adds Digital Sunset and BLOOM. Further levels increase battle HP and attack, not a new growth stage.',
   ],
 ] as const;
 export function GardenGuide({ onClose }: { onClose: () => void }) {

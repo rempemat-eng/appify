@@ -171,19 +171,63 @@ def bunting() -> Canvas:
     return cv
 
 
-def cat() -> Canvas:
-    """The town cat asleep in the sun, 16 x 10, curled with its tail round its nose."""
-    cv = Canvas(16, 10, pad=2)
-    for (x, y) in oval(8, 6, 6.5, 3.6):
-        cv.set(x, y, '#E8A04A' if (x - 8) + (y - 6) < -1 else '#C47A30' if x < 11 else '#9A5A22')
-    for (x, y) in disc(4, 4, 2.4):
-        cv.set(x, y, '#E8A04A' if x < 4 else '#C47A30')
-    cv.set(3, 1, '#C47A30'); cv.set(5, 1, '#C47A30')
-    cv.set(3, 4, '#5A3A1E'); cv.set(5, 4, '#5A3A1E')  # closed eyes
-    for t in range(6):
-        cv.set(9 + t, 9 - t // 3, '#9A5A22')
-    for k in range(4):
-        cv.set(6 + k * 2, 5, '#9A5A22')  # tabby stripes
+# The town cat (art-faults.md A9: "the cat washes and flicks its tail"): a ginger tabby
+# with a cream chest and socks, drawn from masks (animal_frames.paint_mask) so that facing
+# west it is drawn, not mirrored, and stays lit from the upper left. It sits on its corner;
+# animal_frames.KINDS['cat'] says when it washes, flicks its tail and twitches an ear, and
+# when it gets up and pads a few steps along the street.
+CAT_INKS = {'b': ['#7A3E1A', '#A85A24', '#CC7A34', '#E89C4C', '#F6C072'], 's': '#A0521E',
+            'w': ['#A88C70', '#CCB494', '#E8D6BC', '#F6ECDA', '#FFFAF0'], 'e': '#2E5A3A',
+            'k': '#241C1A', 'n': '#D8707A', 'p': '#E89A90'}
+_CAT_SIT = [
+    '.........b...b.',
+    '.........bb.bb.',
+    '.........bpbpb.',
+    '........bbbbbbb',
+    '........bbebbeb',
+    '.......sbbbbnbb',
+    '.......bbbwwww.',
+    '......bbsbwww..',
+    '.....bbbsbbww..',
+    '.....bsbbsbww..',
+    '....bbsbbsbwb..',
+    '....bbbbbbbwb..',
+    '..bbbbbbbbwbw..',
+    '.bb..bbbbbwbw..',
+    '..bbbbbbb......',
+]
+_CAT_WALK = [
+    '............b.b',
+    '............bbb',
+    'b..........bpbb',
+    'bb........bbebn',
+    '.bb.bbbbbbbbbbb',
+    '..bbsbsbsbbbww.',
+    '..bbbsbsbsbbw..',
+    '...bbbbbbbbbw..',
+]
+CAT_POSES = {
+    'sit': _CAT_SIT,
+    # a paw licked and drawn over the face, eyes shut
+    'wash': _CAT_SIT[:4] + ['........bbkbbkw', '.......sbbbbnww', '.......bbbwwwwb', '......bbsbwwwb.',
+                            '.....bbbsbbwb..', '.....bsbbsbbb..', '....bbsbbsbbb..', '....bbbbbbbbb..',
+                            '..bbbbbbbbbbw..'] + _CAT_SIT[13:],
+    # the tail's tip lifted off the ground and dropped again
+    'flick': _CAT_SIT[:11] + ['....bbbbbbbwb..', 'b...bbbbbbwbw..', 'bb..bbbbbbwbw..', '.bbbbbbbb......'],
+    # the far ear turned back
+    'ear': ['.........b....b', '.........bb.bbb'] + _CAT_SIT[2:],
+    'step1': _CAT_WALK + ['...wb.....bw...', '...w.b...b.w...', '..ww..w.w...ww.'],
+    'step2': _CAT_WALK + ['....wb...bw....', '....w.b.b.w....', '....ww.ww.ww...'],
+}
+
+
+def cat(pose: str = 'sit', west: bool = False) -> Canvas:
+    """The town cat, 16 x 10 at its feet (it sits up above that): `pose` one of
+    CAT_POSES, facing east, or drawn facing west."""
+    import animal_frames
+    rows = CAT_POSES[pose]
+    cv = Canvas(16, 10, pad=8)
+    animal_frames.paint_mask(cv, rows, CAT_INKS, 0, 10 - len(rows), mirror=west)
     return cv
 
 
@@ -203,7 +247,10 @@ def sprites() -> dict[str, Canvas]:
     items = wp.props()
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
                   'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant(),
-                  'bunting': bunting(), 'cat': cat()})
+                  'bunting': bunting()})
+    for west, base in ((False, 'cat'), (True, 'cat_w')):
+        for pose in CAT_POSES:
+            items[base if pose == 'sit' else f'{base}_{pose}'] = cat(pose, west)
     items.update(vp.props())
     items.update(sp.props())
     items.update(cp.props())
@@ -216,6 +263,8 @@ def sprites() -> dict[str, Canvas]:
     items.update(fp.props())
     items.update(ip.props())
     items['fence_c'] = gp.fence_h(60)
+    import animal_frames  # the animals' idle and walk frames (art-faults.md A9)
+    items.update(animal_frames.frames(items))
     out = {key: style.finalize(sp, name=key) for key, sp in items.items()}
     for key, raw in items.items():  # the window panes of each building, in sprite pixels
         fin = out[key]
@@ -633,8 +682,10 @@ def build(name: str, fn, start: str):
     objects = objects + frames.place(name, LAYOUT, sprite_map, allowed, objects, stands, pre, is_water)
     dress(cv, name, objects, sprite_map, blocked_ground)
     shade = set()
+    import animal_frames
     for (_id, key, x, y) in objects:
-        if key not in OVERHEAD:
+        # (an animal that wanders carries its own shadow: animal_frames.shade)
+        if key not in OVERHEAD and not animal_frames.moving(key):
             shade |= detail.silhouette_shadow(sprite_map[key], x, y)
     for (sx, sy) in shade:
         style.darken(cv, sx, sy)
@@ -712,7 +763,9 @@ def build(name: str, fn, start: str):
                         wet_px.add((x, y))
                     elif ch == '!' and world_lint._lava(*px):
                         hot_px.add((x, y))
-    flow = water_flow.sheet(cv.img, wet_px, hot_px)
+    still = {(x, y) for (x, y) in wet_px
+             if any(a <= x < c and b <= y < d for (a, b, c, d) in STILL_WATER.get(name, ()))}
+    flow = water_flow.sheet(cv.img, wet_px, hot_px, still)
     flow_path = os.path.join(out, 'flow.png')
     if flow:
         flow[0].save(flow_path, optimize=True)  # native scale: the renderer draws it pixelated
@@ -847,8 +900,23 @@ def rle(row: str) -> str:
 # Water a zone declares outright (world-rules.md, section 1: the semantic layer), for
 # zones whose night palettes the lint cannot read by colour; others are read by colour.
 WATER_MASKS: dict[str, set] = {}
+# Still water (water_flow.py): water that lies still gets glints and lapping at its edges,
+# never drifting streaks (a canal reads as a channel by its shape, but it has no current).
+# Boxes in zone px (x0, y0, x1, y1); build() passes the zone's water inside them to
+# water_flow.sheet. A zone's own module may declare more: STILL_WATER.setdefault(zone, []).
+STILL_WATER: dict[str, list] = {
+    'canal': [(0, 170, W, 250)],                               # Cogsworth's canal and its lock's pounds (city_zones.canal)
+    'ridge': [(188, 384, 278, 426)],                           # the alpine tarn under the terrace (valley_zones.ridge)
+    'riverside': [(212, 192, 260, 220), (266, 66, 298, 86)],   # the millpond and the spring's pool (valley_zones.riverside)
+}
 
 BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
+# The land past the walkable world (scenery.py) is saved at 2x, not the zones' 4x: each cell
+# is 360 x 616 art px, 13.5 MiB decoded at 4x and 3.4 MiB at 2x, and a region's edge mounts
+# several. Scaled by nearest neighbour (the camera's data-pixel view on the web), every art
+# pixel is a block of identical source pixels at either scale, so the picture on screen is
+# the same; only the decoded memory changes.
+SCENERY_SCALE = 2
 
 
 @functools.lru_cache(maxsize=1)
@@ -989,7 +1057,7 @@ def export(built: dict):
     for region in LAYOUT:
         for (c, r), cv in sorted(scenery.cells(LAYOUT[region], region).items()):
             name = f'{region}_{c}_{r}'.replace('-', 'm')
-            cv.save(os.path.join(scen_dir, f'{name}.png'), worlds.SCALE)
+            cv.save(os.path.join(scen_dir, f'{name}.png'), SCENERY_SCALE)
             scenery_keys.append((f'{region}:{c}:{r}', name))
     used = {}
     for z in built.values():
@@ -1008,6 +1076,11 @@ def export(built: dict):
     for key, fl in frames.items():
         for (fk, *_r) in fl:
             used[fk] = next(z['sprites'] for z in built.values())[fk]
+    # the animals' frames and shadows, and where each may wander (animal_frames.py)
+    import animal_frames
+    animal_lines = animal_frames.export(built, next(z['sprites'] for z in built.values()), used,
+                                        lambda objs: walk_grid([o for o in objs if o[1] not in OVERHEAD],
+                                                               next(z['sprites'] for z in built.values())))
     for key, sp in sorted(used.items()):
         sp.save(os.path.join(props_dir, f'{key}.png'), worlds.SCALE)
     ident = lambda k: ''.join(p.capitalize() for p in k.split('_'))  # noqa: E731
@@ -1024,6 +1097,7 @@ def export(built: dict):
         f'export const zoneOverhead: readonly string[] = {json.dumps(sorted(OVERHEAD))};',
         '/** Animation frames of a sprite: [frame sprite, dx, dy, w, h] from the sprite\'s own top-left. */',
         f'export const zoneFrames: Record<string, readonly (readonly [string, number, number, number, number])[]> = {json.dumps(frames)};',
+        *animal_lines,
         '/** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */',
         f'export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {json.dumps({k: [list(r) for r in v] for k, v in sorted(SPRITE_WINDOWS.items()) if k in used})};',
         '/** Walk rows are run-length encoded (\'12.3#\' = twelve open cells, three blocked). */',
