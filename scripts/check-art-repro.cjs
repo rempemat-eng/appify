@@ -17,6 +17,7 @@ const generators = [
   'rocket',
   'residents',
   'decor',
+  'world_routes',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -40,6 +41,8 @@ const generatedTypescript = [
   // the world canvas (scripts/art/world_canvas.py), written at the end of zones.py's run
   'lib/world-canvas.ts',
   'lib/world-canvas-assets.ts',
+  // the routes between the regions (scripts/art/world_routes.py, lane G)
+  'lib/world-routes.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
