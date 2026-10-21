@@ -1,0 +1,4026 @@
+{
+ "_about": "The Lull belt, Lullford and the delta as a plan (Claude I, lane I, 21 Oct): the chunk 'lull-delta' that scripts/art/regions/lull_delta.py paints, in Claude F's region-plan schema (scripts/art/region_plan.py, #174). From the brief docs/vision/regions/neon-harbour-delta.md (#96, v5.3; parsed in scripts/art/regions/neon_delta.json). World px on the 11264 x 6912 canvas. Routes are lane G's lines, widths and tiers (lib/world-routes.ts, #175). Tier outlines are in screen space; 'tier' is local, base_tier maps it to world tiers (local 0 = world 2, the delta and the coast strip). The Lull's course, the delta and the coast are derived from the brief until the v5.3 block-out is data. Named things and pockets moved to fit the ground keep the brief's point as moved_from.",
+ "id": "lull-delta",
+ "owner": "claude-i",
+ "biome": "river",
+ "biomes": [
+  "river",
+  "coast"
+ ],
+ "box": [
+  8304,
+  3296,
+  1152,
+  2592
+ ],
+ "base_tier": {
+  "value": 2,
+  "provisional": false,
+  "from": "Claude G, g-to-i-cells 21 Oct: Coast Path tier 2, Lull Road and Lullford Bridge tier 3, the plain 4 and 5"
+ },
+ "tiers": [
+  {
+   "id": "floodplain",
+   "tier": 1,
+   "why": "the Lull's floodplain (world tier 3): the belt's water meadows and willow carr on both banks, Lullford on its gravel terrace at the bridge, the east bank down along the Lull Cut; its south rim is the old terrace edge above the delta, dying out where the Lull and its arms cut through it",
+   "outline": [
+    [
+     8304,
+     3296
+    ],
+    [
+     9456,
+     3296
+    ],
+    [
+     9456,
+     4552
+    ],
+    [
+     9376,
+     4560
+    ],
+    [
+     9352,
+     4640
+    ],
+    [
+     9320,
+     4720
+    ],
+    [
+     9272,
+     4800
+    ],
+    [
+     9232,
+     4856
+    ],
+    [
+     9176,
+     4840
+    ],
+    [
+     9120,
+     4760
+    ],
+    [
+     9080,
+     4680
+    ],
+    [
+     9040,
+     4600
+    ],
+    [
+     9000,
+     4536
+    ],
+    [
+     8960,
+     4480
+    ],
+    [
+     8920,
+     4440
+    ],
+    [
+     8880,
+     4400
+    ],
+    [
+     8832,
+     4376
+    ],
+    [
+     8776,
+     4360
+    ],
+    [
+     8720,
+     4344
+    ],
+    [
+     8672,
+     4336
+    ],
+    [
+     8640,
+     4328
+    ],
+    [
+     8576,
+     4304
+    ],
+    [
+     8520,
+     4288
+    ],
+    [
+     8456,
+     4272
+    ],
+    [
+     8392,
+     4264
+    ],
+    [
+     8304,
+     4256
+    ]
+   ]
+  },
+  {
+   "id": "plain_terrace",
+   "tier": 2,
+   "why": "the plain's lower river terrace (world tier 4) west of the water meadows: hay meadows and hedged fields; the Towpath comes down off it round the end of its face at (8464, 3792), the Lull Road at (8464, 4200)",
+   "outline": [
+    [
+     8304,
+     3296
+    ],
+    [
+     8640,
+     3296
+    ],
+    [
+     8640,
+     3480
+    ],
+    [
+     8600,
+     3600
+    ],
+    [
+     8544,
+     3720
+    ],
+    [
+     8488,
+     3784
+    ],
+    [
+     8440,
+     3800
+    ],
+    [
+     8416,
+     3840
+    ],
+    [
+     8408,
+     3960
+    ],
+    [
+     8432,
+     4080
+    ],
+    [
+     8448,
+     4160
+    ],
+    [
+     8456,
+     4192
+    ],
+    [
+     8400,
+     4216
+    ],
+    [
+     8304,
+     4216
+    ]
+   ]
+  },
+  {
+   "id": "plain_upper",
+   "tier": 3,
+   "why": "the plain's upper terrace (world tier 5) in the north-west corner, where the Towpath enters from the Cog foot; it comes down round the end of its face at (8464, 3408)",
+   "outline": [
+    [
+     8304,
+     3296
+    ],
+    [
+     8576,
+     3296
+    ],
+    [
+     8576,
+     3352
+    ],
+    [
+     8520,
+     3384
+    ],
+    [
+     8480,
+     3400
+    ],
+    [
+     8304,
+     3400
+    ]
+   ]
+  },
+  {
+   "id": "embankment",
+   "tier": 2,
+   "why": "the canal embankment and the foot of the Heights (world tier 4): the Delta Road climbs onto it at (9376, 4568), and the Lull Cut climbs with it through a lock",
+   "outline": [
+    [
+     9368,
+     4552
+    ],
+    [
+     9456,
+     4544
+    ],
+    [
+     9456,
+     4960
+    ],
+    [
+     9392,
+     4960
+    ],
+    [
+     9368,
+     4880
+    ],
+    [
+     9376,
+     4800
+    ],
+    [
+     9360,
+     4720
+    ],
+    [
+     9352,
+     4640
+    ]
+   ]
+  }
+ ],
+ "faces": {
+  "_about": "River-meadow edges are the meadow's own (to-all-reuse-rule): turf banks as Eastward's low ledge where a terrace edge is low, the cliff core's meadow rock where a full 32 px face stands; river banks are the river kit's cut banks and point bars.",
+  "between_tiers": {
+   "height": 32,
+   "material": "turf over gravel (river terrace)"
+  }
+ },
+ "water": [
+  {
+   "id": "lull",
+   "kind": "river",
+   "width": 116,
+   "points": [
+    [
+     9064,
+     3296
+    ],
+    [
+     9150,
+     3372
+    ],
+    [
+     9290,
+     3452
+    ],
+    [
+     9330,
+     3560
+    ],
+    [
+     9228,
+     3650
+    ],
+    [
+     9070,
+     3712
+    ],
+    [
+     9010,
+     3812
+    ],
+    [
+     9080,
+     3900
+    ],
+    [
+     9250,
+     3950
+    ],
+    [
+     9318,
+     4040
+    ],
+    [
+     9246,
+     4126
+    ],
+    [
+     9090,
+     4170
+    ],
+    [
+     8990,
+     4236
+    ],
+    [
+     8962,
+     4320
+    ],
+    [
+     8975,
+     4420
+    ],
+    [
+     8992,
+     4488
+    ]
+   ],
+   "why": "six unequal bends (radii 115 to 285, width 110 to 130, plan 4.3) from the braided reach to Lullford Bridge at (8960, 4310), then the delta apex"
+  },
+  {
+   "id": "fresh_oxbow",
+   "kind": "oxbow",
+   "width": 52,
+   "points": [
+    [
+     9384,
+     3760
+    ],
+    [
+     9436,
+     3830
+    ],
+    [
+     9440,
+     3920
+    ],
+    [
+     9396,
+     3990
+    ],
+    [
+     9340,
+     4000
+    ]
+   ]
+  },
+  {
+   "id": "silted_oxbow",
+   "kind": "reed-oxbow",
+   "width": 44,
+   "points": [
+    [
+     8930,
+     3500
+    ],
+    [
+     8860,
+     3560
+    ],
+    [
+     8840,
+     3650
+    ],
+    [
+     8876,
+     3730
+    ],
+    [
+     8948,
+     3760
+    ]
+   ]
+  },
+  {
+   "id": "arm_west",
+   "kind": "distributary",
+   "width": 64,
+   "points": [
+    [
+     8992,
+     4488
+    ],
+    [
+     8936,
+     4600
+    ],
+    [
+     8840,
+     4740
+    ],
+    [
+     8772,
+     4900
+    ],
+    [
+     8740,
+     5080
+    ],
+    [
+     8720,
+     5260
+    ],
+    [
+     8700,
+     5400
+    ]
+   ]
+  },
+  {
+   "id": "arm_middle",
+   "kind": "distributary",
+   "width": 70,
+   "points": [
+    [
+     8992,
+     4488
+    ],
+    [
+     9024,
+     4640
+    ],
+    [
+     8996,
+     4820
+    ],
+    [
+     9032,
+     5000
+    ],
+    [
+     9010,
+     5180
+    ],
+    [
+     9044,
+     5340
+    ],
+    [
+     9060,
+     5460
+    ]
+   ]
+  },
+  {
+   "id": "arm_east",
+   "kind": "distributary",
+   "width": 52,
+   "points": [
+    [
+     9008,
+     4560
+    ],
+    [
+     9100,
+     4700
+    ],
+    [
+     9168,
+     4880
+    ],
+    [
+     9240,
+     5060
+    ],
+    [
+     9290,
+     5240
+    ],
+    [
+     9310,
+     5420
+    ]
+   ]
+  },
+  {
+   "id": "arm_west-2",
+   "kind": "distributary",
+   "width": 34,
+   "points": [
+    [
+     8840,
+     4740
+    ],
+    [
+     8720,
+     4840
+    ],
+    [
+     8640,
+     4980
+    ],
+    [
+     8590,
+     5160
+    ]
+   ]
+  },
+  {
+   "id": "arm_middle-2",
+   "kind": "distributary",
+   "width": 30,
+   "points": [
+    [
+     9032,
+     5000
+    ],
+    [
+     8930,
+     5110
+    ],
+    [
+     8880,
+     5260
+    ],
+    [
+     8860,
+     5410
+    ]
+   ]
+  },
+  {
+   "id": "arm_east-2",
+   "kind": "distributary",
+   "width": 30,
+   "points": [
+    [
+     9240,
+     5060
+    ],
+    [
+     9340,
+     5150
+    ],
+    [
+     9400,
+     5300
+    ],
+    [
+     9420,
+     5420
+    ]
+   ]
+  },
+  {
+   "id": "creek_west",
+   "kind": "tidal creek",
+   "width": 24,
+   "points": [
+    [
+     8560,
+     5400
+    ],
+    [
+     8536,
+     5200
+    ],
+    [
+     8504,
+     5000
+    ],
+    [
+     8480,
+     4840
+    ],
+    [
+     8464,
+     4720
+    ],
+    [
+     8448,
+     4624
+    ]
+   ],
+   "why": "a tidal creek up from the sea west of the delta; the fishing stage at its head, beside the Coast Path"
+  },
+  {
+   "id": "lull_cut",
+   "kind": "canal",
+   "width": 40,
+   "points": [
+    [
+     9072,
+     4392
+    ],
+    [
+     9176,
+     4432
+    ],
+    [
+     9216,
+     4472
+    ],
+    [
+     9256,
+     4512
+    ],
+    [
+     9312,
+     4544
+    ],
+    [
+     9360,
+     4624
+    ],
+    [
+     9392,
+     4688
+    ],
+    [
+     9456,
+     4752
+    ]
+   ],
+   "why": "plan 4.3: from Lullford's east bank to the canal basin under the Heights, clear of the delta's silt; it runs 48 px south-west of the Delta Road, which is its towpath",
+   "lock": [
+    9352,
+    4600
+   ]
+  },
+  {
+   "id": "sea",
+   "kind": "sea",
+   "closed": true,
+   "points": [
+    [
+     8304,
+     5232
+    ],
+    [
+     8420,
+     5300
+    ],
+    [
+     8540,
+     5390
+    ],
+    [
+     8640,
+     5470
+    ],
+    [
+     8760,
+     5440
+    ],
+    [
+     8880,
+     5500
+    ],
+    [
+     9000,
+     5520
+    ],
+    [
+     9120,
+     5490
+    ],
+    [
+     9240,
+     5510
+    ],
+    [
+     9360,
+     5480
+    ],
+    [
+     9456,
+     5470
+    ],
+    [
+     9456,
+     5888
+    ],
+    [
+     8304,
+     5888
+    ]
+   ],
+   "mudflats": 72,
+   "why": "the delta builds a lobed front into the sea; west of it the coast turns north-west to Gullwick"
+  }
+ ],
+ "routes": [
+  {
+   "id": "lull_road",
+   "kind": "road",
+   "width": 40,
+   "owner_note": "lane G's line, width and tier (lib/world-routes.ts, #175); Claude I paints it inside the chunk",
+   "points": [
+    [
+     8304,
+     4176
+    ],
+    [
+     8312,
+     4176
+    ],
+    [
+     8320,
+     4184
+    ],
+    [
+     8336,
+     4184
+    ],
+    [
+     8344,
+     4192
+    ],
+    [
+     8376,
+     4192
+    ],
+    [
+     8408,
+     4192
+    ],
+    [
+     8432,
+     4192
+    ],
+    [
+     8440,
+     4200
+    ],
+    [
+     8472,
+     4200
+    ],
+    [
+     8480,
+     4200
+    ],
+    [
+     8488,
+     4208
+    ],
+    [
+     8504,
+     4208
+    ],
+    [
+     8504,
+     4216
+    ],
+    [
+     8520,
+     4216
+    ],
+    [
+     8528,
+     4224
+    ],
+    [
+     8536,
+     4224
+    ],
+    [
+     8544,
+     4232
+    ],
+    [
+     8560,
+     4232
+    ],
+    [
+     8568,
+     4240
+    ],
+    [
+     8592,
+     4240
+    ],
+    [
+     8600,
+     4248
+    ],
+    [
+     8632,
+     4248
+    ],
+    [
+     8648,
+     4248
+    ],
+    [
+     8648,
+     4256
+    ],
+    [
+     8672,
+     4256
+    ],
+    [
+     8680,
+     4264
+    ],
+    [
+     8688,
+     4264
+    ],
+    [
+     8696,
+     4272
+    ],
+    [
+     8712,
+     4272
+    ],
+    [
+     8720,
+     4280
+    ],
+    [
+     8736,
+     4280
+    ],
+    [
+     8744,
+     4288
+    ],
+    [
+     8776,
+     4288
+    ],
+    [
+     8800,
+     4288
+    ],
+    [
+     8808,
+     4280
+    ],
+    [
+     8840,
+     4280
+    ],
+    [
+     8872,
+     4280
+    ],
+    [
+     8880,
+     4288
+    ],
+    [
+     8896,
+     4288
+    ],
+    [
+     8904,
+     4296
+    ],
+    [
+     8920,
+     4296
+    ],
+    [
+     8928,
+     4304
+    ],
+    [
+     8944,
+     4304
+    ],
+    [
+     8952,
+     4312
+    ],
+    [
+     8976,
+     4312
+    ],
+    [
+     8984,
+     4320
+    ],
+    [
+     9016,
+     4320
+    ],
+    [
+     9024,
+     4320
+    ],
+    [
+     9032,
+     4328
+    ],
+    [
+     9064,
+     4328
+    ],
+    [
+     9072,
+     4328
+    ],
+    [
+     9080,
+     4320
+    ],
+    [
+     9112,
+     4320
+    ],
+    [
+     9128,
+     4320
+    ],
+    [
+     9136,
+     4328
+    ],
+    [
+     9168,
+     4328
+    ],
+    [
+     9200,
+     4328
+    ],
+    [
+     9224,
+     4328
+    ],
+    [
+     9232,
+     4336
+    ],
+    [
+     9248,
+     4336
+    ],
+    [
+     9264,
+     4352
+    ],
+    [
+     9272,
+     4352
+    ],
+    [
+     9272,
+     4360
+    ],
+    [
+     9280,
+     4368
+    ],
+    [
+     9288,
+     4368
+    ],
+    [
+     9296,
+     4376
+    ],
+    [
+     9304,
+     4376
+    ],
+    [
+     9312,
+     4384
+    ],
+    [
+     9312,
+     4392
+    ],
+    [
+     9328,
+     4392
+    ],
+    [
+     9336,
+     4400
+    ],
+    [
+     9344,
+     4400
+    ],
+    [
+     9352,
+     4392
+    ],
+    [
+     9360,
+     4400
+    ],
+    [
+     9392,
+     4400
+    ],
+    [
+     9424,
+     4400
+    ],
+    [
+     9440,
+     4400
+    ],
+    [
+     9448,
+     4392
+    ]
+   ],
+   "widths": [
+    [
+     8304,
+     4176,
+     48
+    ],
+    [
+     8776,
+     4288,
+     48
+    ],
+    [
+     8944,
+     4304,
+     56
+    ],
+    [
+     8952,
+     4312,
+     56
+    ],
+    [
+     8976,
+     4312,
+     56
+    ],
+    [
+     8984,
+     4320,
+     56
+    ],
+    [
+     9016,
+     4320,
+     56
+    ],
+    [
+     9032,
+     4328,
+     48
+    ],
+    [
+     9064,
+     4328,
+     48
+    ],
+    [
+     9080,
+     4320,
+     48
+    ],
+    [
+     9112,
+     4320,
+     48
+    ],
+    [
+     9272,
+     4352,
+     48
+    ],
+    [
+     9280,
+     4368,
+     48
+    ],
+    [
+     9304,
+     4376,
+     48
+    ],
+    [
+     9312,
+     4392,
+     48
+    ],
+    [
+     9336,
+     4400,
+     48
+    ],
+    [
+     9344,
+     4400,
+     48
+    ],
+    [
+     9352,
+     4392,
+     48
+    ]
+   ],
+   "tiers_world": [
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3
+   ],
+   "exits": [
+    {
+     "at": [
+      8304,
+      4176
+     ],
+     "tier": 4,
+     "width": 48,
+     "to": "the land between"
+    },
+    {
+     "at": [
+      9456,
+      4392
+     ],
+     "tier": 3,
+     "width": 40,
+     "to": "Neon Harbour"
+    }
+   ]
+  },
+  {
+   "id": "towpath",
+   "kind": "path",
+   "width": 32,
+   "owner_note": "lane G's line, width and tier (lib/world-routes.ts, #175); Claude I paints it inside the chunk",
+   "points": [
+    [
+     8472,
+     3304
+    ],
+    [
+     8472,
+     3320
+    ],
+    [
+     8464,
+     3328
+    ],
+    [
+     8464,
+     3360
+    ],
+    [
+     8464,
+     3392
+    ],
+    [
+     8464,
+     3424
+    ],
+    [
+     8472,
+     3432
+    ],
+    [
+     8472,
+     3464
+    ],
+    [
+     8480,
+     3472
+    ],
+    [
+     8480,
+     3504
+    ],
+    [
+     8480,
+     3536
+    ],
+    [
+     8480,
+     3544
+    ],
+    [
+     8472,
+     3552
+    ],
+    [
+     8472,
+     3568
+    ],
+    [
+     8464,
+     3576
+    ],
+    [
+     8464,
+     3600
+    ],
+    [
+     8456,
+     3608
+    ],
+    [
+     8456,
+     3640
+    ],
+    [
+     8464,
+     3648
+    ],
+    [
+     8464,
+     3664
+    ],
+    [
+     8472,
+     3672
+    ],
+    [
+     8472,
+     3704
+    ],
+    [
+     8472,
+     3736
+    ],
+    [
+     8472,
+     3760
+    ],
+    [
+     8464,
+     3768
+    ],
+    [
+     8464,
+     3800
+    ],
+    [
+     8464,
+     3832
+    ],
+    [
+     8464,
+     3840
+    ],
+    [
+     8472,
+     3848
+    ],
+    [
+     8472,
+     3880
+    ],
+    [
+     8472,
+     3904
+    ],
+    [
+     8464,
+     3912
+    ],
+    [
+     8464,
+     3944
+    ],
+    [
+     8464,
+     3960
+    ],
+    [
+     8472,
+     3968
+    ],
+    [
+     8472,
+     4000
+    ],
+    [
+     8488,
+     4016
+    ],
+    [
+     8488,
+     4024
+    ],
+    [
+     8496,
+     4032
+    ],
+    [
+     8496,
+     4040
+    ],
+    [
+     8512,
+     4056
+    ],
+    [
+     8520,
+     4064
+    ],
+    [
+     8520,
+     4072
+    ],
+    [
+     8528,
+     4080
+    ],
+    [
+     8528,
+     4088
+    ],
+    [
+     8544,
+     4104
+    ],
+    [
+     8544,
+     4120
+    ],
+    [
+     8552,
+     4128
+    ],
+    [
+     8552,
+     4136
+    ],
+    [
+     8560,
+     4136
+    ],
+    [
+     8560,
+     4144
+    ],
+    [
+     8576,
+     4160
+    ],
+    [
+     8592,
+     4176
+    ],
+    [
+     8600,
+     4176
+    ],
+    [
+     8600,
+     4184
+    ],
+    [
+     8608,
+     4192
+    ],
+    [
+     8616,
+     4192
+    ],
+    [
+     8632,
+     4208
+    ],
+    [
+     8648,
+     4224
+    ]
+   ],
+   "widths": [
+    [
+     8472,
+     3304,
+     40
+    ],
+    [
+     8480,
+     3536,
+     40
+    ],
+    [
+     8456,
+     3608,
+     40
+    ],
+    [
+     8456,
+     3640,
+     40
+    ],
+    [
+     8464,
+     3832,
+     40
+    ],
+    [
+     8472,
+     3848,
+     40
+    ],
+    [
+     8472,
+     3880,
+     40
+    ],
+    [
+     8464,
+     3944,
+     40
+    ],
+    [
+     8552,
+     4128,
+     40
+    ],
+    [
+     8600,
+     4176,
+     40
+    ],
+    [
+     8608,
+     4192,
+     40
+    ],
+    [
+     8616,
+     4192,
+     48
+    ],
+    [
+     8632,
+     4208,
+     48
+    ],
+    [
+     8648,
+     4224,
+     48
+    ]
+   ],
+   "tiers_world": [
+    5,
+    5,
+    5,
+    5,
+    5,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3
+   ],
+   "exits": [
+    {
+     "at": [
+      8472,
+      3296
+     ],
+     "tier": 5,
+     "width": 40,
+     "to": "Cogsworth and the coal hills"
+    }
+   ]
+  },
+  {
+   "id": "coast_path",
+   "kind": "path",
+   "width": 32,
+   "owner_note": "lane G's line, width and tier (lib/world-routes.ts, #175); Claude I paints it inside the chunk",
+   "points": [
+    [
+     8304,
+     4632
+    ],
+    [
+     8304,
+     4624
+    ],
+    [
+     8312,
+     4616
+    ],
+    [
+     8312,
+     4608
+    ],
+    [
+     8320,
+     4600
+    ],
+    [
+     8320,
+     4592
+    ],
+    [
+     8328,
+     4592
+    ],
+    [
+     8344,
+     4576
+    ],
+    [
+     8360,
+     4576
+    ],
+    [
+     8368,
+     4568
+    ],
+    [
+     8376,
+     4568
+    ],
+    [
+     8384,
+     4560
+    ],
+    [
+     8392,
+     4560
+    ],
+    [
+     8392,
+     4552
+    ],
+    [
+     8400,
+     4552
+    ],
+    [
+     8408,
+     4544
+    ],
+    [
+     8416,
+     4544
+    ],
+    [
+     8424,
+     4536
+    ],
+    [
+     8432,
+     4536
+    ],
+    [
+     8432,
+     4528
+    ],
+    [
+     8440,
+     4528
+    ],
+    [
+     8448,
+     4520
+    ],
+    [
+     8456,
+     4520
+    ],
+    [
+     8472,
+     4504
+    ],
+    [
+     8480,
+     4504
+    ],
+    [
+     8496,
+     4488
+    ],
+    [
+     8504,
+     4488
+    ],
+    [
+     8512,
+     4480
+    ],
+    [
+     8520,
+     4480
+    ],
+    [
+     8528,
+     4472
+    ],
+    [
+     8536,
+     4472
+    ],
+    [
+     8544,
+     4464
+    ],
+    [
+     8552,
+     4464
+    ],
+    [
+     8568,
+     4448
+    ],
+    [
+     8576,
+     4440
+    ],
+    [
+     8576,
+     4432
+    ],
+    [
+     8584,
+     4432
+    ],
+    [
+     8592,
+     4424
+    ],
+    [
+     8592,
+     4408
+    ],
+    [
+     8600,
+     4400
+    ],
+    [
+     8600,
+     4392
+    ],
+    [
+     8608,
+     4384
+    ],
+    [
+     8608,
+     4376
+    ],
+    [
+     8616,
+     4376
+    ],
+    [
+     8616,
+     4368
+    ],
+    [
+     8624,
+     4360
+    ],
+    [
+     8624,
+     4352
+    ],
+    [
+     8632,
+     4344
+    ],
+    [
+     8632,
+     4336
+    ],
+    [
+     8640,
+     4328
+    ]
+   ],
+   "widths": [
+    [
+     8320,
+     4592,
+     40
+    ],
+    [
+     8568,
+     4448,
+     40
+    ],
+    [
+     8576,
+     4432,
+     40
+    ],
+    [
+     8584,
+     4432,
+     40
+    ],
+    [
+     8592,
+     4424,
+     40
+    ],
+    [
+     8624,
+     4360,
+     48
+    ],
+    [
+     8624,
+     4352,
+     48
+    ],
+    [
+     8632,
+     4344,
+     48
+    ],
+    [
+     8632,
+     4336,
+     48
+    ],
+    [
+     8640,
+     4328,
+     48
+    ]
+   ],
+   "tiers_world": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    2
+   ],
+   "exits": [
+    {
+     "at": [
+      8304,
+      4632
+     ],
+     "tier": 2,
+     "width": 32,
+     "to": "the land between"
+    }
+   ]
+  },
+  {
+   "id": "delta_road",
+   "kind": "path",
+   "width": 32,
+   "owner_note": "lane G's line, width and tier (lib/world-routes.ts, #175); Claude I paints it inside the chunk",
+   "points": [
+    [
+     9152,
+     4320
+    ],
+    [
+     9168,
+     4336
+    ],
+    [
+     9168,
+     4352
+    ],
+    [
+     9176,
+     4360
+    ],
+    [
+     9176,
+     4368
+    ],
+    [
+     9184,
+     4368
+    ],
+    [
+     9184,
+     4376
+    ],
+    [
+     9192,
+     4384
+    ],
+    [
+     9200,
+     4384
+    ],
+    [
+     9200,
+     4392
+    ],
+    [
+     9208,
+     4400
+    ],
+    [
+     9216,
+     4400
+    ],
+    [
+     9216,
+     4408
+    ],
+    [
+     9224,
+     4408
+    ],
+    [
+     9232,
+     4416
+    ],
+    [
+     9232,
+     4424
+    ],
+    [
+     9240,
+     4424
+    ],
+    [
+     9240,
+     4432
+    ],
+    [
+     9248,
+     4440
+    ],
+    [
+     9256,
+     4440
+    ],
+    [
+     9256,
+     4448
+    ],
+    [
+     9264,
+     4456
+    ],
+    [
+     9272,
+     4456
+    ],
+    [
+     9272,
+     4464
+    ],
+    [
+     9280,
+     4464
+    ],
+    [
+     9288,
+     4472
+    ],
+    [
+     9296,
+     4472
+    ],
+    [
+     9296,
+     4480
+    ],
+    [
+     9304,
+     4480
+    ],
+    [
+     9312,
+     4488
+    ],
+    [
+     9328,
+     4488
+    ],
+    [
+     9328,
+     4496
+    ],
+    [
+     9336,
+     4496
+    ],
+    [
+     9352,
+     4512
+    ],
+    [
+     9360,
+     4520
+    ],
+    [
+     9360,
+     4528
+    ],
+    [
+     9368,
+     4528
+    ],
+    [
+     9368,
+     4536
+    ],
+    [
+     9376,
+     4544
+    ],
+    [
+     9376,
+     4568
+    ],
+    [
+     9384,
+     4576
+    ],
+    [
+     9384,
+     4592
+    ],
+    [
+     9392,
+     4600
+    ],
+    [
+     9392,
+     4608
+    ],
+    [
+     9400,
+     4616
+    ],
+    [
+     9400,
+     4624
+    ],
+    [
+     9408,
+     4632
+    ],
+    [
+     9416,
+     4632
+    ],
+    [
+     9416,
+     4640
+    ],
+    [
+     9424,
+     4648
+    ],
+    [
+     9424,
+     4656
+    ],
+    [
+     9432,
+     4656
+    ],
+    [
+     9432,
+     4664
+    ],
+    [
+     9440,
+     4672
+    ],
+    [
+     9440,
+     4680
+    ],
+    [
+     9456,
+     4696
+    ],
+    [
+     9456,
+     4704
+    ]
+   ],
+   "widths": [
+    [
+     9152,
+     4320,
+     48
+    ],
+    [
+     9168,
+     4336,
+     48
+    ],
+    [
+     9168,
+     4352,
+     48
+    ],
+    [
+     9176,
+     4360,
+     40
+    ],
+    [
+     9200,
+     4384,
+     40
+    ],
+    [
+     9256,
+     4440,
+     40
+    ],
+    [
+     9304,
+     4480,
+     40
+    ],
+    [
+     9328,
+     4488,
+     40
+    ],
+    [
+     9352,
+     4512,
+     40
+    ],
+    [
+     9368,
+     4536,
+     40
+    ],
+    [
+     9400,
+     4624,
+     40
+    ],
+    [
+     9416,
+     4632,
+     40
+    ],
+    [
+     9424,
+     4648,
+     48
+    ],
+    [
+     9424,
+     4656,
+     48
+    ],
+    [
+     9432,
+     4656,
+     48
+    ],
+    [
+     9432,
+     4664,
+     48
+    ],
+    [
+     9440,
+     4672,
+     48
+    ],
+    [
+     9440,
+     4680,
+     48
+    ],
+    [
+     9456,
+     4696,
+     48
+    ],
+    [
+     9456,
+     4704,
+     48
+    ]
+   ],
+   "tiers_world": [
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    3,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4,
+    4
+   ],
+   "exits": [
+    {
+     "at": [
+      9456,
+      4696
+     ],
+     "tier": 4,
+     "width": 48,
+     "to": "Neon Harbour"
+    }
+   ]
+  }
+ ],
+ "trods": [
+  {
+   "id": "stage_trod",
+   "width": 24,
+   "why": "from the Towpath across the water meadows to the fishing stage on the Lull's west bank",
+   "points": [
+    [
+     8472,
+     3680
+    ],
+    [
+     8528,
+     3704
+    ],
+    [
+     8576,
+     3704
+    ],
+    [
+     8632,
+     3728
+    ],
+    [
+     8696,
+     3728
+    ],
+    [
+     8760,
+     3760
+    ],
+    [
+     8824,
+     3760
+    ],
+    [
+     8880,
+     3792
+    ],
+    [
+     8920,
+     3800
+    ]
+   ]
+  },
+  {
+   "id": "initials_pocket",
+   "width": 24,
+   "dead_end": "story",
+   "why": "brief pocket: initials cut in a stone, off the Towpath",
+   "points": [
+    [
+     8472,
+     3560
+    ],
+    [
+     8504,
+     3576
+    ],
+    [
+     8536,
+     3560
+    ],
+    [
+     8568,
+     3576
+    ],
+    [
+     8592,
+     3568
+    ]
+   ]
+  },
+  {
+   "id": "belt_view_pocket",
+   "width": 24,
+   "dead_end": "view",
+   "why": "brief pocket: a view over the land, off the Lull Road's side path, out over the fresh oxbow and the belt",
+   "points": [
+    [
+     9304,
+     4192
+    ],
+    [
+     9296,
+     4144
+    ],
+    [
+     9312,
+     4096
+    ],
+    [
+     9304,
+     4048
+    ],
+    [
+     9320,
+     4008
+    ]
+   ]
+  },
+  {
+   "id": "boardwalk",
+   "width": 24,
+   "dead_end": "view",
+   "why": "brief 4: the delta crossed on boardwalks; this one leaves the Coast Path to the reed hide over the channels",
+   "points": [
+    [
+     8584,
+     4456
+    ],
+    [
+     8640,
+     4504
+    ],
+    [
+     8664,
+     4560
+    ],
+    [
+     8712,
+     4600
+    ],
+    [
+     8728,
+     4664
+    ],
+    [
+     8768,
+     4704
+    ],
+    [
+     8768,
+     4768
+    ],
+    [
+     8792,
+     4808
+    ]
+   ]
+  },
+  {
+   "id": "north_lane",
+   "width": 24,
+   "why": "Lullford's back lane behind the high street, from the Towpath's end round to the bridge foot",
+   "points": [
+    [
+     8616,
+     4192
+    ],
+    [
+     8664,
+     4168
+    ],
+    [
+     8720,
+     4160
+    ],
+    [
+     8776,
+     4144
+    ],
+    [
+     8840,
+     4160
+    ],
+    [
+     8888,
+     4184
+    ],
+    [
+     8904,
+     4232
+    ],
+    [
+     8896,
+     4280
+    ]
+   ]
+  },
+  {
+   "id": "church_lane",
+   "width": 24,
+   "why": "a lane from the high street up to the back lane past the green and the pump",
+   "points": [
+    [
+     8744,
+     4280
+    ],
+    [
+     8752,
+     4240
+    ],
+    [
+     8744,
+     4200
+    ],
+    [
+     8752,
+     4160
+    ]
+   ]
+  },
+  {
+   "id": "quay_steps_lane",
+   "width": 24,
+   "why": "from the high street down to the quay on the Lull below the bridge",
+   "points": [
+    [
+     8856,
+     4296
+    ],
+    [
+     8864,
+     4328
+    ],
+    [
+     8888,
+     4352
+    ],
+    [
+     8912,
+     4384
+    ]
+   ]
+  },
+  {
+   "id": "eel_trod",
+   "width": 24,
+   "why": "from the Delta Road down to the eel traps and the stilt hut on the Lull's east bank",
+   "points": [
+    [
+     9216,
+     4408
+    ],
+    [
+     9168,
+     4472
+    ],
+    [
+     9128,
+     4520
+    ],
+    [
+     9104,
+     4568
+    ],
+    [
+     9096,
+     4616
+    ]
+   ]
+  },
+  {
+   "id": "delta_road_pocket",
+   "width": 24,
+   "dead_end": "resident",
+   "from_lane_g": true,
+   "points": [
+    [
+     9272,
+     4464
+    ],
+    [
+     9256,
+     4472
+    ],
+    [
+     9248,
+     4480
+    ],
+    [
+     9232,
+     4488
+    ],
+    [
+     9216,
+     4496
+    ],
+    [
+     9208,
+     4512
+    ],
+    [
+     9200,
+     4520
+    ],
+    [
+     9200,
+     4536
+    ],
+    [
+     9192,
+     4552
+    ],
+    [
+     9192,
+     4568
+    ],
+    [
+     9184,
+     4576
+    ]
+   ]
+  },
+  {
+   "id": "pool_round",
+   "width": 24,
+   "from_lane_g": true,
+   "why": "lane G's side path round the marshy pool (brief 7), the part inside the chunk",
+   "points": [
+    [
+     9096,
+     4320
+    ],
+    [
+     9136,
+     4296
+    ],
+    [
+     9176,
+     4264
+    ],
+    [
+     9236,
+     4236
+    ],
+    [
+     9216,
+     4240
+    ],
+    [
+     9256,
+     4216
+    ],
+    [
+     9304,
+     4192
+    ],
+    [
+     9352,
+     4184
+    ],
+    [
+     9400,
+     4192
+    ],
+    [
+     9448,
+     4192
+    ]
+   ]
+  },
+  {
+   "id": "fallen_tree_round",
+   "width": 24,
+   "from_lane_g": true,
+   "why": "lane G's side path round the fallen tree, the part inside the chunk",
+   "points": [
+    [
+     8360,
+     3296
+    ],
+    [
+     8328,
+     3352
+    ],
+    [
+     8312,
+     3408
+    ],
+    [
+     8312,
+     3464
+    ],
+    [
+     8304,
+     3520
+    ],
+    [
+     8304,
+     3576
+    ],
+    [
+     8344,
+     3632
+    ],
+    [
+     8384,
+     3664
+    ],
+    [
+     8432,
+     3712
+    ],
+    [
+     8472,
+     3744
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "id": "towpath_upper",
+   "on": "towpath",
+   "at": [
+    8464,
+    3408
+   ],
+   "from_tier": 3,
+   "to_tier": 2,
+   "width": 40,
+   "kind": "round-end",
+   "why": "lane G's round-end 5 -> 4"
+  },
+  {
+   "id": "towpath_lower",
+   "on": "towpath",
+   "at": [
+    8464,
+    3792
+   ],
+   "from_tier": 2,
+   "to_tier": 1,
+   "width": 40,
+   "kind": "round-end",
+   "why": "lane G's round-end 4 -> 3"
+  },
+  {
+   "id": "lull_road_west",
+   "on": "lull_road",
+   "at": [
+    8464,
+    4200
+   ],
+   "from_tier": 2,
+   "to_tier": 1,
+   "width": 40,
+   "kind": "round-end",
+   "why": "lane G's round-end 4 -> 3"
+  },
+  {
+   "id": "coast_stair",
+   "on": "coast_path",
+   "at": [
+    8632,
+    4336
+   ],
+   "from_tier": 0,
+   "to_tier": 1,
+   "width": 40,
+   "kind": "stone",
+   "why": "the Coast Path (world tier 2) climbs into Lullford (tier 3) up the terrace edge south of the town"
+  },
+  {
+   "id": "delta_road_embankment",
+   "on": "delta_road",
+   "at": [
+    9376,
+    4568
+   ],
+   "from_tier": 1,
+   "to_tier": 2,
+   "width": 40,
+   "kind": "round-end",
+   "why": "lane G's round-end 3 -> 4 onto the canal embankment"
+  },
+  {
+   "id": "boardwalk_steps",
+   "on": "boardwalk",
+   "at": [
+    8608,
+    4476
+   ],
+   "from_tier": 1,
+   "to_tier": 0,
+   "width": 40,
+   "kind": "timber",
+   "why": "the boardwalk steps down off the terrace edge into the delta"
+  },
+  {
+   "id": "stage_steps",
+   "on": "stage_trod",
+   "at": [
+    8576,
+    3704
+   ],
+   "from_tier": 2,
+   "to_tier": 1,
+   "width": 40,
+   "kind": "timber",
+   "why": "down off the plain terrace to the water meadows"
+  },
+  {
+   "id": "fallen_tree_steps",
+   "on": "fallen_tree_round",
+   "at": [
+    8312,
+    3416
+   ],
+   "from_tier": 3,
+   "to_tier": 2,
+   "width": 40,
+   "kind": "stone",
+   "why": "where lane G's side path round the fallen tree comes down the upper terrace's face"
+  },
+  {
+   "id": "quay_steps",
+   "on": "quay_steps_lane",
+   "at": [
+    8880,
+    4344
+   ],
+   "from_tier": 1,
+   "to_tier": 0,
+   "width": 40,
+   "kind": "stone",
+   "why": "down the terrace edge to the quay below the bridge"
+  },
+  {
+   "id": "eel_steps",
+   "on": "eel_trod",
+   "at": [
+    9100,
+    4592
+   ],
+   "from_tier": 1,
+   "to_tier": 0,
+   "width": 40,
+   "kind": "timber",
+   "why": "down the bank to the eel traps"
+  }
+ ],
+ "places": [
+  {
+   "id": "lullford",
+   "kind": "town",
+   "at": [
+    8720,
+    4296
+   ],
+   "rect": [
+    8480,
+    4120,
+    456,
+    216
+   ],
+   "why": "the lowest place the Lull can be bridged: gravel terraces narrow the floodplain and an island takes the piers"
+  },
+  {
+   "id": "lullford_bridge",
+   "kind": "bridge",
+   "at": [
+    8976,
+    4312
+   ],
+   "span": [
+    8880,
+    9072
+   ],
+   "island": [
+    8952,
+    4272,
+    56,
+    88
+   ],
+   "why": "old stone arches from the town to the island with the toll house, the iron swing span over the navigation channel (W7)"
+  },
+  {
+   "id": "lull_belt",
+   "kind": "river",
+   "at": [
+    9120,
+    3700
+   ],
+   "why": "six unequal bends with point bars, cut banks, a fresh and a silted oxbow"
+  },
+  {
+   "id": "delta",
+   "kind": "delta",
+   "at": [
+    8960,
+    5000
+   ],
+   "why": "arms from one apex below Lullford, reed beds between, mudflats and sandbars in front"
+  }
+ ],
+ "buildings": [
+  {
+   "id": "high_street_1",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    8488,
+    4200
+   ],
+   "w": 72,
+   "faces": "south",
+   "on": "lull_road"
+  },
+  {
+   "id": "high_street_2",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    8568,
+    4216
+   ],
+   "w": 72,
+   "faces": "south",
+   "on": "lull_road"
+  },
+  {
+   "id": "high_street_3",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    8648,
+    4232
+   ],
+   "w": 72,
+   "faces": "south",
+   "on": "lull_road"
+  },
+  {
+   "id": "high_street_4",
+   "kind": "inn",
+   "kit": "valley",
+   "foot": [
+    8776,
+    4256
+   ],
+   "w": 72,
+   "faces": "south",
+   "on": "lull_road",
+   "why": "the inn at the bridge foot, where the market carts stop"
+  },
+  {
+   "id": "back_lane_1",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    8648,
+    4136
+   ],
+   "w": 72,
+   "faces": "south",
+   "on": "north_lane"
+  },
+  {
+   "id": "back_lane_2",
+   "kind": "cottage",
+   "kit": "valley",
+   "foot": [
+    8784,
+    4120
+   ],
+   "w": 72,
+   "faces": "south",
+   "on": "north_lane"
+  },
+  {
+   "id": "toll_house",
+   "kind": "toll house",
+   "kit": "valley",
+   "foot": [
+    8960,
+    4296
+   ],
+   "w": 40,
+   "faces": "south",
+   "on": "lull_road",
+   "why": "on the island, the toll keeper at the bridge (brief 2); B draws it (props.md 1), until then a small kit front"
+  }
+ ],
+ "named": [
+  {
+   "thing": "hay barn",
+   "kind": "landmark",
+   "at": [
+    8520,
+    4448
+   ],
+   "route": "Coast Path",
+   "where": "beside the path",
+   "why": "the barn on the terrace edge where the Coast Path leaves Lullford",
+   "moved_from": [
+    8590,
+    4281
+   ]
+  },
+  {
+   "thing": "fishing stage",
+   "kind": "landmark",
+   "at": [
+    8936,
+    3840
+   ],
+   "route": "Towpath",
+   "where": "beside the path",
+   "why": "on the Lull's west bank at the stage trod's end",
+   "moved_from": [
+    8477,
+    4607
+   ]
+  },
+  {
+   "thing": "ferryman's hut",
+   "kind": "npc",
+   "at": [
+    9216,
+    4280
+   ],
+   "route": "Lull Road",
+   "where": "a short way off the path",
+   "why": "on the east bank by the bridge foot: the ferry the bridge replaced",
+   "moved_from": [
+    9422,
+    4256
+   ]
+  },
+  {
+   "thing": "wreck in the reeds",
+   "kind": "wreck",
+   "at": [
+    9360,
+    4648
+   ],
+   "route": "Delta Road",
+   "where": "beside the path",
+   "why": "a barge sunk in the reeds by the Cut",
+   "moved_from": [
+    9364,
+    4688
+   ]
+  },
+  {
+   "thing": "fishing stage",
+   "kind": "landmark",
+   "at": [
+    8440,
+    4584
+   ],
+   "route": "Coast Path",
+   "where": "beside the path",
+   "why": "at the head of the tidal creek west of the delta",
+   "moved_from": [
+    8573,
+    3953
+   ]
+  },
+  {
+   "thing": "stilt hut",
+   "kind": "npc",
+   "at": [
+    9128,
+    4624
+   ],
+   "route": "Lull Road",
+   "where": "a short way off the path",
+   "why": "on stilts over the Lull's east bank below the town, at the eel trod's foot",
+   "moved_from": [
+    9027,
+    4282
+   ]
+  },
+  {
+   "thing": "reed hide",
+   "kind": "wild",
+   "at": [
+    8748,
+    4728
+   ],
+   "route": "Lull Road",
+   "where": "a short way off the path",
+   "why": "at the boardwalk in the delta",
+   "moved_from": [
+    8768,
+    4352
+   ]
+  },
+  {
+   "thing": "a reed hide over the channels",
+   "kind": "view",
+   "at": [
+    8816,
+    4824
+   ],
+   "route": "Lull Road",
+   "where": "a short way off the path",
+   "why": "the boardwalk's end, over the channels",
+   "moved_from": [
+    8795,
+    4355
+   ]
+  },
+  {
+   "thing": "eel traps",
+   "kind": "prop",
+   "at": [
+    9064,
+    4600
+   ],
+   "route": "Lull Road",
+   "where": "a short way off the path",
+   "why": "willow traps in the Lull's shallows below the stilt hut",
+   "moved_from": [
+    9133,
+    4567
+   ]
+  }
+ ],
+ "pockets": [
+  {
+   "holds": "a story detail: initials cut in a stone",
+   "at": [
+    8592,
+    3568
+   ],
+   "trod": "initials_pocket",
+   "moved_from": [
+    9092,
+    3436
+   ]
+  },
+  {
+   "holds": "a view over the land",
+   "at": [
+    9320,
+    4008
+   ],
+   "trod": "belt_view_pocket",
+   "moved_from": [
+    9340,
+    3908
+   ]
+  },
+  {
+   "holds": "a resident fishing",
+   "at": [
+    9184,
+    4576
+   ],
+   "trod": "delta_road_pocket",
+   "from_lane_g": true
+  }
+ ],
+ "egg_spots": [
+  {
+   "what": "bell in the oxbow",
+   "at": [
+    9450,
+    3900
+   ],
+   "keep_clear_r": 32
+  }
+ ],
+ "markers": [
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    8370,
+    4621
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    8393,
+    4523
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    8472,
+    4564
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    8475,
+    4575
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    8480,
+    4472
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    8484,
+    4476
+   ]
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    8578,
+    4491
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    8544,
+    4400
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    8541,
+    4399
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    8638,
+    4391
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    9208,
+    4300
+   ],
+   "route": "Delta Road",
+   "moved_from": [
+    9209,
+    4329
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    9172,
+    4417
+   ],
+   "route": "Delta Road"
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    9272,
+    4416
+   ],
+   "route": "Delta Road"
+  },
+  {
+   "t": "A",
+   "what": "egrets",
+   "at": [
+    9263,
+    4510
+   ],
+   "route": "Delta Road"
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    9375,
+    4470
+   ],
+   "route": "Delta Road"
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    9342,
+    4578
+   ],
+   "route": "Delta Road"
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    9436,
+    4588
+   ],
+   "route": "Delta Road",
+   "moved_from": [
+    9440,
+    4589
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    9391,
+    4674
+   ],
+   "route": "Delta Road"
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    8327,
+    4215
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    8392,
+    4144
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8392,
+    4142
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    8440,
+    4232
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8439,
+    4229
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    8514,
+    4166
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    8519,
+    4262
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    8612,
+    4220
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8620,
+    4245
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    8600,
+    4348
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8622,
+    4339
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    8668,
+    4288
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8685,
+    4266
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    8767,
+    4320
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    8784,
+    4216
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8795,
+    4227
+   ]
+  },
+  {
+   "t": "A",
+   "what": "egrets",
+   "at": [
+    8877,
+    4231
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    8904,
+    4324
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8891,
+    4328
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    8980,
+    4284
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    8980,
+    4292
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    9020,
+    4292
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    9020,
+    4311
+   ]
+  },
+  {
+   "t": "A",
+   "what": "egrets",
+   "at": [
+    9084,
+    4372
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    9084,
+    4385
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    9102,
+    4292
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    9204,
+    4356
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    9178,
+    4352
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    9244,
+    4284
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    9246,
+    4285
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    9258,
+    4386
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    9350,
+    4348
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "A",
+   "what": "egrets",
+   "at": [
+    9388,
+    4448
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    9389,
+    4459
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    9433,
+    4352
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    8692,
+    4116
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8688,
+    4104
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    8576,
+    4112
+   ],
+   "route": "Lullford"
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    8604,
+    4120
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8608,
+    4120
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    8788,
+    4128
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8784,
+    4144
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    8620,
+    4164
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8616,
+    4184
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    8652,
+    4196
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8640,
+    4200
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    8560,
+    4204
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8560,
+    4208
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    8804,
+    4200
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8800,
+    4216
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    8784,
+    4232
+   ],
+   "route": "Lullford"
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    8724,
+    4248
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8720,
+    4264
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    8632,
+    4288
+   ],
+   "route": "Lullford"
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    8820,
+    4308
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8808,
+    4288
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    8912,
+    4352
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8896,
+    4352
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    8852,
+    4384
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8832,
+    4392
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    8640,
+    4424
+   ],
+   "route": "Lullford"
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    8664,
+    4512
+   ],
+   "route": "Lullford",
+   "moved_from": [
+    8656,
+    4512
+   ]
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    8416,
+    3960
+   ],
+   "route": "Towpath",
+   "moved_from": [
+    8416,
+    3962
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    8504,
+    4000
+   ],
+   "route": "Towpath",
+   "moved_from": [
+    8495,
+    4018
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    8480,
+    4096
+   ],
+   "route": "Towpath",
+   "moved_from": [
+    8459,
+    4108
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    8552,
+    4076
+   ],
+   "route": "Towpath",
+   "moved_from": [
+    8549,
+    4079
+   ]
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    8551,
+    4178
+   ],
+   "route": "Towpath"
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    8588,
+    4212
+   ],
+   "route": "Towpath",
+   "moved_from": [
+    8588,
+    4218
+   ]
+  }
+ ],
+ "obstacles": [
+  {
+   "kind": "marshy pool",
+   "at": [
+    9388,
+    4288
+   ],
+   "passed_by": "pool_round",
+   "why": "brief 7: a side path off the road at a Y, round the far side, back at a Y (lane G)"
+  },
+  {
+   "kind": "fallen tree",
+   "at": [
+    8384,
+    3465
+   ],
+   "passed_by": "fallen_tree_round",
+   "why": "lane G's obstacle on the Towpath"
+  }
+ ],
+ "edges": [
+  {
+   "side": "north-east",
+   "layers": "willow carr and fallen trees thickening into thicket (brief 6), the floodplain woods beyond (lane G draws past the box)",
+   "along": [
+    [
+     9296,
+     3296
+    ],
+    [
+     9456,
+     4200
+    ]
+   ]
+  },
+  {
+   "side": "south",
+   "layers": "none: the sea is the edge, the delta front with surf; lane G draws the open sea past the box",
+   "along": [
+    [
+     8304,
+     5480
+    ],
+    [
+     9456,
+     5480
+    ]
+   ]
+  }
+ ],
+ "thresholds": [
+  {
+   "id": "lullford_bridge",
+   "at": [
+    8976,
+    4312
+   ],
+   "route": "lull_road",
+   "sides": {
+    "west": "claude-i",
+    "east": "claude-i"
+   },
+   "band": "meadow, watermeadow, field -> watermeadow, reeds, garden",
+   "landmark": {
+    "what": "the swing span",
+    "at": [
+     9040,
+     4312
+    ]
+   },
+   "residents": [
+    "market carts bound for Neon",
+    "the toll keeper on the island",
+    "egrets in the shallows",
+    "barges waiting at the swing span"
+   ],
+   "radiates_from": "the Lull"
+  },
+  {
+   "id": "canal_embankment",
+   "at": [
+    9440,
+    4680
+   ],
+   "route": "delta_road",
+   "sides": {
+    "delta": "claude-i",
+    "city": "claude-i"
+   },
+   "band": "watermeadow, broadleaf, carr -> garden, meadow, broadleaf",
+   "landmark": {
+    "what": "the falls and the Harbour Bridge",
+    "at": [
+     10100,
+     4600
+    ]
+   },
+   "residents": [
+    "market gardeners taking produce in",
+    "a lock keeper",
+    "reed cutters with bundles",
+    "gulls following the canal inland"
+   ],
+   "radiates_from": "the city"
+  }
+ ],
+ "residents": [
+  {
+   "who": "the toll keeper",
+   "at": [
+    8984,
+    4296
+   ],
+   "note": "on the island by the toll house"
+  },
+  {
+   "who": "a resident fishing",
+   "at": [
+    9184,
+    4576
+   ],
+   "note": "the Delta Road's pocket"
+  },
+  {
+   "who": "an eel catcher",
+   "at": [
+    9072,
+    4616
+   ],
+   "note": "at the stilt hut"
+  },
+  {
+   "who": "a lock keeper",
+   "at": [
+    9368,
+    4592
+   ],
+   "note": "at the lock on the Cut"
+  }
+ ],
+ "ground": {
+  "_about": "Ground kinds by place, for the painter, in the river and meadow kit's terms; colours from the house ramps per terrain.",
+  "plain": "hay meadows and pasture in hedged fields, copses of oak and ash, a hay barn",
+  "water_meadows": "lush cool grass, rushes and marsh marigold in wet flushes along the Lull's banks, willows pollarded",
+  "carr": "willow and alder carr on wet wood floor, brambles, fallen trees",
+  "lullford": "cobbled lanes and setts at the bridge foot, cottage gardens behind stone walls, a green with the pump",
+  "delta": "reed beds between the arms, marsh, mudflats in front with sandbars at the mouths, boardwalks",
+  "coast": "dunes with marram behind a sand and shingle beach west of the delta"
+ }
+}

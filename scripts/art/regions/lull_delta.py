@@ -43,13 +43,29 @@ sys.path.insert(0, ART)
 import river_kit as rk  # noqa: E402
 from river_kit import IDX, Plot, dilate, erode, shift, hash01, fbm, vnoise  # noqa: E402
 
-PLAN_PATH = os.path.join(HERE, 'neon_delta.json')
+PLAN_PATH = os.path.join(ROOT, 'art', 'regions', 'lull-delta.json')
+BRIEF_PATH = os.path.join(HERE, 'neon_delta.json')
 GRID = 8
 
 
 def load_plan(path: str = PLAN_PATH) -> dict:
+    """The chunk's plan (art/regions/lull-delta.json, Claude F's region-plan schema) read into
+    what the painter uses: the box, the water by id (the delta's arms together), every route
+    and trod by id, Lullford's town and bridge."""
     with open(path) as f:
-        return json.load(f)
+        P = json.load(f)
+    W = {w['id']: w for w in P['water']}
+    W['delta_arms'] = {'arms': [dict(w, id=w['id'][4:]) for w in P['water'] if w['kind'] == 'distributary']}
+    sea = W['sea']
+    W['sea'] = dict(sea, front=sea['points'][:-2])
+    places = {p['id']: p for p in P['places']}
+    town, br = places['lullford'], places['lullford_bridge']
+    y = br['at'][1]
+    return dict(P, plan=P, water=W, chunks={'lull-delta': {'box': P['box']}},
+                routes={r['id']: r for r in P['routes'] + P['trods']},
+                lullford={'town': {'rect': town['rect']},
+                          'bridge': {'from': [br['span'][0], y], 'to': [br['span'][1], y], 'deck': 24,
+                                     'island': br['island']}})
 
 
 # --- working in windows (the kit's pieces allocate whole-canvas arrays; a chunk is millions of px) --
@@ -456,10 +472,16 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     for name in ('lull_road', 'delta_road', 'towpath', 'coast_path'):
         r = routes[name]
         path_masks[name] = polyline_mask(R, R.pts(r['points']), r['width'] / 2)
-    board = polyline_mask(R, R.pts(routes['boardwalk']['points']), routes['boardwalk']['width'] / 2)
     roads = np.zeros(p.f.shape, bool)
     for m in path_masks.values():
         roads |= m
+    board = np.zeros(p.f.shape, bool)
+    trods = [n for n, r in routes.items() if n not in path_masks]
+    for name in trods:
+        if name == 'boardwalk':
+            board |= polyline_mask(R, R.pts(routes[name]['points']), routes[name]['width'] / 2)
+        else:
+            roads |= polyline_mask(R, R.pts(routes[name]['points']), routes[name]['width'] / 2)
     br = plan['lullford']['bridge']
     bx0, by0 = R.xy(br['from'])
     bx1, _ = R.xy(br['to'])
@@ -467,6 +489,11 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     reedbed &= ~dilate(roads | board | cut_plan, 10)
 
     # 6. lay everything that blocks on the grid
+    ix, iy, iw, ih = br['island']
+    ix, iy = R.xy((ix, iy))
+    island = (p.x >= ix) & (p.x < ix + iw) & (p.y >= iy) & (p.y < iy + ih)
+    island = soft_snap(dilate(island, 2) & (fbm(p.x, p.y, 9, seed + 17) < 0.9))
+    river_plan &= ~island
     deck_plan = soft_snap(deck)
     water_plan = soft_snap((river_plan | sea) & ~deck_plan) & ~deck_plan
     water_plan = jog(water_plan)
@@ -490,8 +517,10 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     sea_m = water_plan & sea_plan
     paint_sea(R, sea_m, seed + 40)
     paint_canal(R, cut_ch, cut_plan, seed + 50)
-    for i, name in enumerate(('lull_road', 'towpath', 'coast_path', 'delta_road')):
+    for i, name in enumerate(('lull_road', 'towpath', 'coast_path', 'delta_road') + tuple(t for t in trods if t != 'boardwalk')):
         r = routes[name]
+        if len(r['points']) < 2:
+            continue
         tr = rk.track(p, R.pts(r['points']), r['width'], seed + 60 + i, puddles=3 if name == 'lull_road' else 1)
         if name == 'lull_road':   # the old road: bare and wide, no grass crown, cobbled near the bridge
             c = tr.mask & (np.abs(tr.n) < 5) & ~p.wet
@@ -511,7 +540,7 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     paint_reedbeds(R, reed_plan, seed + 80)
     paint_carr(R, carr_plan, carr_t, seed + 90)
     bank_trees(R, water_plan | cut_plan, roads | board, seed + 100)
-    town = paint_lullford(R, plan['lullford'], roads, seed + 110)
+    town = paint_lullford(R, plan, seed + 110)
     rk.despeckle(p)
     log(f'  standing things in {time.time() - t0:.1f} s')
 
@@ -718,44 +747,33 @@ def kit_sprite(img: Image.Image) -> rk.Sprite:
     return sp
 
 
-def paint_lullford(R: Region, spec, roads, seed):
-    """Lullford on the west bank: cottages of the valley kit (stone variants and colourways
-    picked by house_kits.street, so no two neighbours match) in rows along the Lull Road and
-    the lane to the bridge, gardens behind with a wall, the street cobbled at the bridge foot.
-    Each house blocks its whole footprint in grid cells. Returns {'blocked': mask}."""
+def paint_lullford(R: Region, plan: dict, seed):
+    """Lullford's buildings where the plan stands them (plan 'buildings': a foot line and a
+    width each): fronts of the valley house kit, variants and colourways picked by
+    house_kits.street so no two neighbours match, each casting its shade east. Each blocks its
+    whole footprint in grid cells, so nothing walks hidden behind it. Returns {'blocked': mask}."""
     import house_kits as hk
     p = R.p
     blocked = np.zeros(p.f.shape, bool)
-    tx, ty, tw, th = spec['town']['rect']
-    tx, ty = tx - R.ox, ty - R.oy
-    if tx + tw < 0 or ty + th < 0 or tx > R.w or ty > R.h:
-        return {'blocked': blocked}
-    road = roads
-    order = hk.street('valley', 12, seed)
-    # plots north of the road (fronts facing the road, south) along the town's width
-    slots = []
-    for i in range(6):
-        x = tx + 16 + i * 72
-        yroad = None
-        col = road[:, int(np.clip(x + 35, 0, R.w - 1))]
-        ys = np.nonzero(col[int(max(0, ty)):int(min(R.h, ty + th))])[0]
-        if len(ys):
-            yroad = int(ys[0] + max(0, ty))
-        if yroad is None:
-            continue
-        slots.append((x, yroad - 6))
-    for i, (x, yb) in enumerate(slots):
+    bl = plan.get('buildings', [])
+    order = hk.street('valley', max(1, len(bl)), seed)
+    for i, b in enumerate(bl):
         v, cw = order[i % len(order)]
         cv = hk.front('valley', v, cw)
-        sp = kit_sprite(cv.img)
-        foot = (x + sp.w // 2, yb)
+        img = cv.img
+        if b['w'] < img.width - 8:   # a small building (the toll house): the front cut down to its width
+            img = img.resize((b['w'], int(img.height * b['w'] / img.width)), Image.NEAREST)
+        sp = kit_sprite(img)
+        fx, fy = R.xy(b['foot'])
+        x0 = fx
+        if not (-sp.w < x0 < R.w and 0 < fy < R.h + sp.h):
+            continue
         sh = np.zeros(sp.m.shape, bool)
         sh[:, 4:] = sp.m[:, :-4]
-        paste(p, sp, foot[0], foot[1], outline=False, shadow=sh & ~sp.m)
-        x0, y0 = foot[0] - sp.w // 2, yb - sp.h + 1
-        b = np.zeros(p.f.shape, bool)
-        b[max(0, y0 + 8):max(0, yb - 1), max(0, x0 + 2):max(0, x0 + sp.w - 2)] = True
-        blocked |= b
+        paste(p, sp, x0 + sp.w // 2, fy, outline=False, shadow=sh & ~sp.m)
+        bm = np.zeros(p.f.shape, bool)
+        bm[max(0, fy - sp.h + 8):max(0, fy), max(0, x0 + 2):max(0, x0 + sp.w - 2)] = True
+        blocked |= bm
     return {'blocked': bands(jog(soft_snap(blocked))) if blocked.any() else blocked}
 
 
@@ -857,28 +875,24 @@ def previews(R: Region, out: str):
 
 
 def check_plan(plan: dict) -> list:
-    """The plan's own contract: boxes and chunks on the 8 px grid, chunks not overlapping, every
-    route exit on its chunk's edge, every named thing, pocket and marker with a point."""
+    """The plan's own contract. The full check is Claude F's region_plan.py (npm run
+    check:region-plans, #174) when it is in the tree; this keeps what the painter relies on:
+    the box in whole audit cells on the 8 px grid, the water and the routes it paints."""
     bad = []
-    for k, c in list(plan['boxes'].items()) + list(plan['chunks'].items()):
-        if any(v % GRID for v in c['box']):
-            bad.append(f'{k}: box off the {GRID} px grid {c["box"]}')
-    ch = plan['chunks']['lull-delta']['box']
-    for name, r in plan['routes'].items():
-        if name.startswith('_'):
-            continue
-        for e in r.get('exits', []):
-            x, y = e['at']
-            on = (x in (ch[0], ch[0] + ch[2]) and ch[1] <= y <= ch[1] + ch[3]) or \
-                 (y in (ch[1], ch[1] + ch[3]) and ch[0] <= x <= ch[0] + ch[2])
-            if not on:
-                bad.append(f'{name}: exit {e["at"]} is not on the chunk edge')
-    n = {'interactable': 0, 'story': 0, 'ambient': 0}
-    for m in plan['markers']:
-        n[m['type']] += 1
-    if (len(plan['named']), len(plan['pockets']), sum(n.values())) != (18, 7, 217):
-        bad.append(f'brief counts changed: {len(plan["named"])} named, {len(plan["pockets"])} pockets, {n}')
-    return bad
+    x0, y0, w, h = plan['box']
+    if x0 % GRID or y0 % GRID or w % 32 or h % 32:
+        bad.append(f'box {plan["box"]} is not whole 32 px cells on the {GRID} px grid')
+    for k in ('lull', 'fresh_oxbow', 'silted_oxbow', 'lull_cut', 'sea'):
+        if k not in plan['water']:
+            bad.append(f'no water {k}')
+    for k in ('lull_road', 'towpath', 'coast_path', 'delta_road'):
+        if k not in plan['routes']:
+            bad.append(f'no route {k}')
+    try:
+        import region_plan
+    except ImportError:
+        return bad
+    return bad + region_plan.check(plan['plan'])
 
 
 def main(argv):
