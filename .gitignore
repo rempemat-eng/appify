@@ -59,3 +59,4 @@ __pycache__/
 
 # generator caches (scripts/art/world_canvas.py)
 .cache/
+.char-views/

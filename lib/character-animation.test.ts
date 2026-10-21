@@ -146,7 +146,7 @@ for (const [id, cell] of Object.entries(ANIMATION.cells)) {
 }
 const sheetsOf = (kind: KindId): SetId[] => CHARACTER_SETS.filter((s) => kindSpec(kind).sets[s]);
 for (const d of DENSITIES) {
-  for (const cell of ['folk', 'folkSmall', 'folkLarge']) {
+  for (const cell of ['folk', 'folkSmall', 'folkSmallTall', 'folkLarge']) {
     for (const set of sheetsOf('folk')) {
       const s = sheetSize('folk', set, cell, d);
       assert.ok(
@@ -270,6 +270,8 @@ assert.deepEqual(
   'one folk a night, in cast.md order',
 );
 assert.equal(ANIMATION.cast.visitors.length, 9, 'nine visitors');
+for (const f of ANIMATION.cast.folk)
+  assert.ok(ANIMATION.cells[f.cell], `${f.name}: cell ${f.cell} exists`);
 
 console.log(
   `PASS: character animation spec: folk ${frameCount('folk')} frames, familiar ${frameCount('familiar')}, resident ${frameCount('resident')}, rival ${frameCount('rival')}; world screen ${(world / 1048576).toFixed(2)} MB, fight ${(fight / 1048576).toFixed(2)} MB at 2x; anticipate-act-settle, finite effects, reduced motion and the state machine hold.`,

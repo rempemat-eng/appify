@@ -1,0 +1,610 @@
+{
+  "id": "bramble",
+  "cell": [
+    64,
+    72
+  ],
+  "foot": [
+    32,
+    66
+  ],
+  "height_art_px": 48,
+  "question": "How much fox and how much folk, and how the cape and bow make the silhouette.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Capelet ranger: short shoulder cape, bow slung on the back",
+      "question_answered": "Folk first: an upright ranger whose fox reads from ears, ruff and a mid-size brush; the capelet widens the shoulders and the bow tips frame the body diagonally.",
+      "parts": [
+        "bow (timber, back layer 0, slung; changes S/E/W, attaches back; swaps to hand in fight wind-up/strike)",
+        "tail (clay+plaster tip, layer 1, swings opposite the hips in walk; S/E/W; attaches hip)",
+        "far leg / near leg (timber + timber_cool stocking, layer 2; walk 6-frame swing; attach hip)",
+        "jerkin with belt (timber, brass buckle, layer 3; breath 1 rig px; attaches hip)",
+        "arms + paws (clay, timber_cool paw, layer 4; walk swing, guard, cheer up; attach chest)",
+        "capelet (sky, layer 5; lags 1 frame in walk, flips up on react hop; attaches chest)",
+        "head (clay + plaster mask, layer 6; nap curl tucks it; attaches chest)",
+        "ears (clay, timber_cool tips, layer 7; flick in blink/fidget, flatten on hit; attach head)"
+      ],
+      "palette": [
+        "clay",
+        "plaster",
+        "sky",
+        "timber",
+        "brass"
+      ],
+      "pose": "Weight even, paws loose at the sides, ears up: a calm guide who has walked every path.",
+      "fidget": "Checks the bowstring: bow brought round to the left, a paw plucks the string, ears tilt, eyes narrow.",
+      "notes": [
+        "Reads as a person first: the capelet makes a clear triangle at the shoulders and the bow tips poke out on the diagonal.",
+        "Risk: the brush is mid-size and the bow mostly hides behind the body; at 2 device px the fox rests on the ears and ruff.",
+        "Compared with Eastward (eastward-04 market: John, Sam, the stall keepers) at 48 px: theirs use 3-4 tones a material, big flat clothing planes, 2 px eyes."
+      ],
+      "numbers": {
+        "S idle": {
+          "px": 1042,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.039,
+          "west_east": 5.6568,
+          "top_bottom": 12.5096,
+          "isolated": 0.0158,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 898,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0141,
+          "double": 0.0493,
+          "west_east": 10.1341,
+          "top_bottom": 15.4566,
+          "isolated": 0.0132,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 898,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0141,
+          "double": 0.0563,
+          "west_east": 1.9638,
+          "top_bottom": 13.6749,
+          "isolated": 0.0106,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1072,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0261,
+          "west_east": 1.387,
+          "top_bottom": 10.7813,
+          "isolated": 0.0239,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Hooded traveller: long hooded cape, bow carried in the hand",
+      "question_answered": "Cloak first: a sky hooded cape makes one big blue triangle; the fox shows as ears through the hood, the muzzle, and a tail tip under the hem; the bow is a tall arc at the side.",
+      "parts": [
+        "cape back panel (sky, layer 0, sways 1 rig px behind the walk; S/E/W; attaches chest)",
+        "tail tip (clay+plaster, layer 1, flicks under the hem; attaches hip)",
+        "legs (earth breeches, timber_cool stockings, layer 2; walk swing; attach hip)",
+        "tunic (earth, layer 3; attaches hip)",
+        "bow (timber + plaster string, layer 4 in W/S, layer 0 in E (far hand); attaches hand)",
+        "cape fronts (sky, layer 5; part on walk, fold round the body in nap curl; attach chest)",
+        "hood (sky, layer 6; falls back on cheer and react hop; attaches head)",
+        "head + ears (clay, plaster mask, layer 7; ears through the hood slits; attach head)"
+      ],
+      "palette": [
+        "sky",
+        "clay",
+        "plaster",
+        "timber",
+        "earth"
+      ],
+      "pose": "Bow held upright at the side like a staff, hood up: a quiet scout on the edge of the trees.",
+      "fidget": "Shades the eyes: lowers the bow, lifts a paw to the brow and squints along the path.",
+      "notes": [
+        "The strongest blue mass of the three: it reads against grass at a glance and gives the most distinct silhouette in the cast.",
+        "Risk: the cloak hides arms and legs, so walk and fight poses lose readable limbs; the fox depends on the ears alone from behind.",
+        "Compared with Eastward eastward-04 (Sam's long white hair as one mass, the robed stall keeper): one big shape, 3-4 bands, limbs only at the hem."
+      ],
+      "numbers": {
+        "S idle": {
+          "px": 1318,
+          "colours": 33,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0556,
+          "west_east": 6.143,
+          "top_bottom": 5.367,
+          "isolated": 0.0208,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1002,
+          "colours": 33,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.015,
+          "double": 0.0526,
+          "west_east": 22.5439,
+          "top_bottom": 9.9638,
+          "isolated": 0.0069,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1002,
+          "colours": 33,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.015,
+          "double": 0.0602,
+          "west_east": 0.483,
+          "top_bottom": 3.3067,
+          "isolated": 0.0138,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1296,
+          "colours": 34,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0482,
+          "west_east": 8.4931,
+          "top_bottom": 8.1823,
+          "isolated": 0.0168,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Fox scout: one-shoulder mantle, quiver, the big brush",
+      "question_answered": "Fox first: the brush rises as high as the head on one side and the quiver fletching on the other, so the silhouette is a fox from any distance; a sky mantle over one shoulder.",
+      "parts": [
+        "quiver + fletching (timber, sky and plaster fletch, layer 0; attaches back)",
+        "tail (clay, plaster tip, layer 1; the signature: sways in idle, counter-swings in walk, wraps in nap; attaches hip)",
+        "legs (clay shins, timber_cool stockings, layer 2; walk swing; attach hip)",
+        "tunic (leaf, layer 3; attaches hip)",
+        "arms (clay, layer 4; attach chest)",
+        "mantle (sky, layer 5, on the left shoulder; near in W, far in E; attaches chest)",
+        "short bow (timber + plaster string, layer 6 in E/S, layer 0 in W; attaches hand)",
+        "head + ears (clay, plaster mask, layer 7; attach head)"
+      ],
+      "palette": [
+        "clay",
+        "plaster",
+        "sky",
+        "leaf",
+        "timber"
+      ],
+      "pose": "Head up, short bow loose in one paw, brush high: alert and light on its feet.",
+      "fidget": "Sniffs the wind: eyes shut, muzzle lifted, the brush rises and flicks.",
+      "notes": [
+        "The tail makes this the most fox: two values give ears, cheek ruffs and a brush taller than the shoulders.",
+        "Risk: the sky mantle is smallest here and the leaf tunic sits close to grass; the tail adds width that crowds the familiar.",
+        "Compared with Eastward eastward-04 at the same height: one strong shape (Sam's hair, John's pack) outweighs interior detail at 2 device px."
+      ],
+      "numbers": {
+        "S idle": {
+          "px": 1168,
+          "colours": 37,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0508,
+          "west_east": 0.9804,
+          "top_bottom": 6.3667,
+          "isolated": 0.0161,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 891,
+          "colours": 34,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0118,
+          "double": 0.071,
+          "west_east": 5.1803,
+          "top_bottom": 15.0223,
+          "isolated": 0.0139,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 856,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0117,
+          "double": 0.0585,
+          "west_east": 3.9463,
+          "top_bottom": 13.2339,
+          "isolated": 0.0058,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1213,
+          "colours": 37,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0691,
+          "west_east": 2.4345,
+          "top_bottom": 6.1331,
+          "isolated": 0.0156,
+          "checker": 0.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "A",
+    "name": "A final: capelet ranger",
+    "grafts": [
+      "From B: a longer, fuller capelet with a back panel to the hip (S, E and W), open at the front; it swings with the pose.",
+      "From C: a taller, white-tipped brush, one layer, tip at mid back (not head height), clear of the familiar following 14 px behind.",
+      "The bow stays one slung part (limb on the back, string across the chest, upper limb over the left shoulder) and comes to the left hand only for wind-up, strike and cast."
+    ],
+    "palette": [
+      "clay",
+      "plaster",
+      "sky",
+      "timber",
+      "brass"
+    ],
+    "pose": "Weight even, paws loose, ears up: a calm guide who has walked every path. Fidget: hooks the slung bowstring with a paw and checks it, ears tilted, eyes narrowed.",
+    "parts": [
+      "bow (timber + plaster string; layer 0 slung on the back, upper limb over the LEFT shoulder; anchor back; changes S/E/W (near in W, far in E); to the LEFT hand (anchor hand) only in wind-up, strike, cast)",
+      "brush (clay, plaster tip; layer 1; anchor hip; S/E/W; one layer, counter-swings in walk, lifts on cheer, droops on hit, wraps the front in nap)",
+      "capelet back panel (sky; layer 2; anchor chest; S/E/W; to the hip, lags 1 frame in walk, flies on hit)",
+      "far leg / near leg (timber breeches, timber_cool stockings and paws; layer 3; anchor hip; S/E/W; walk 6-frame swing, wide stance in fights, out front in sit)",
+      "jerkin with belt and pouch (timber, brass buckle; layer 4; anchor hip; S/E/W; breath 1 rig px)",
+      "far arm (clay, timber_cool paw; layer 5 behind the jerkin; anchor chest; E/W; the LEFT (bow) arm in E)",
+      "capelet front (sky, timber toggle; layer 6; anchor chest; S/E/W; open at the front)",
+      "familiar perch (Mossling; layer 7; anchor perch on the back shoulder: left in E, right in W)",
+      "head (clay, plaster mask, ink eyes and nose; layer 8; anchor chest; S/E/W; nap tucks it on the paws)",
+      "ears (clay, timber_cool tips, plaster fluff; layer 9; anchor head; flick in blink, tilt in fidget, flat on hit)",
+      "near arm (clay, timber_cool paw; layer 10; anchor chest; E/W; the LEFT (bow) arm in W)"
+    ],
+    "notes": [
+      "Silhouette: the capelet makes a wide blue shoulder and hip shape, the ears and the white-tipped brush say fox at 2 device px; the limbs stay free for the rig.",
+      "Fur is combed in 3 px hooks that point out and down from each part; cloth in vertical fold bands; W is placed in its own coordinates with the near/far parts swapped (bow hand, bow limb, perch shoulder).",
+      "Compared with Eastward eastward-04 (John, Sam and the two stall keepers) cropped and scaled to 48 px: their 3-4 tones a material, flat cloth planes and 2 px eyes; ours match the tone count, with clustered fur instead of their flat hair masses."
+    ],
+    "perch_anchor": {
+      "E ready": [
+        22,
+        40
+      ],
+      "E strike": [
+        23,
+        40
+      ],
+      "E cast": [
+        21,
+        39
+      ],
+      "E hit": [
+        15,
+        40
+      ],
+      "E sit": [
+        21,
+        47
+      ],
+      "E cheer": [
+        21,
+        38
+      ],
+      "W ready": [
+        42,
+        40
+      ],
+      "W strike": [
+        41,
+        40
+      ]
+    },
+    "numbers": {
+      "S idle": {
+        "px": 1116,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0397,
+        "west_east": 6.965,
+        "top_bottom": 14.1871,
+        "isolated": 0.0228,
+        "checker": 0.0,
+        "bbox": [
+          17,
+          19,
+          52,
+          67
+        ]
+      },
+      "E idle": {
+        "px": 871,
+        "colours": 26,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0146,
+        "double": 0.0438,
+        "west_east": 13.2774,
+        "top_bottom": 10.8319,
+        "isolated": 0.0136,
+        "checker": 0.0,
+        "bbox": [
+          11,
+          18,
+          44,
+          67
+        ]
+      },
+      "W idle": {
+        "px": 871,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0146,
+        "double": 0.0511,
+        "west_east": 2.8002,
+        "top_bottom": 12.3926,
+        "isolated": 0.0054,
+        "checker": 0.0,
+        "bbox": [
+          20,
+          18,
+          53,
+          67
+        ]
+      },
+      "S fidget": {
+        "px": 1118,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0327,
+        "west_east": 6.9561,
+        "top_bottom": 14.3257,
+        "isolated": 0.0228,
+        "checker": 0.0,
+        "bbox": [
+          17,
+          19,
+          52,
+          67
+        ]
+      },
+      "nap S": {
+        "px": 736,
+        "colours": 30,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0095,
+        "west_east": 10.104,
+        "top_bottom": 0.7701,
+        "isolated": 0.0127,
+        "checker": 0.0,
+        "bbox": [
+          15,
+          47,
+          60,
+          67
+        ]
+      },
+      "E ready": {
+        "px": 1082,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.012,
+        "double": 0.1138,
+        "west_east": 8.9547,
+        "top_bottom": 7.889,
+        "isolated": 0.0087,
+        "checker": 0.0,
+        "bbox": [
+          11,
+          15,
+          45,
+          67
+        ]
+      },
+      "E strike": {
+        "px": 1254,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0085,
+        "double": 0.1017,
+        "west_east": 8.1471,
+        "top_bottom": 5.8354,
+        "isolated": 0.0069,
+        "checker": 0.0,
+        "bbox": [
+          11,
+          15,
+          52,
+          67
+        ]
+      },
+      "E cast": {
+        "px": 1269,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0095,
+        "double": 0.1185,
+        "west_east": 6.4352,
+        "top_bottom": 5.849,
+        "isolated": 0.0132,
+        "checker": 0.0,
+        "bbox": [
+          10,
+          14,
+          54,
+          67
+        ]
+      },
+      "E hit": {
+        "px": 1007,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0136,
+        "double": 0.0884,
+        "west_east": 4.7354,
+        "top_bottom": 12.4869,
+        "isolated": 0.0081,
+        "checker": 0.0,
+        "bbox": [
+          4,
+          15,
+          38,
+          67
+        ]
+      },
+      "E sit": {
+        "px": 1007,
+        "colours": 38,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0117,
+        "double": 0.0994,
+        "west_east": 12.6151,
+        "top_bottom": 8.4206,
+        "isolated": 0.0084,
+        "checker": 0.0,
+        "bbox": [
+          7,
+          22,
+          45,
+          67
+        ]
+      },
+      "E cheer": {
+        "px": 1200,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.076,
+        "west_east": 13.9335,
+        "top_bottom": 4.5825,
+        "isolated": 0.0117,
+        "checker": 0.0,
+        "bbox": [
+          10,
+          13,
+          49,
+          67
+        ]
+      },
+      "W ready": {
+        "px": 1082,
+        "colours": 37,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.012,
+        "double": 0.1257,
+        "west_east": 3.3742,
+        "top_bottom": 11.6734,
+        "isolated": 0.012,
+        "checker": 0.0,
+        "bbox": [
+          19,
+          15,
+          53,
+          67
+        ]
+      },
+      "W strike": {
+        "px": 1256,
+        "colours": 37,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1078,
+        "west_east": 2.3517,
+        "top_bottom": 8.8852,
+        "isolated": 0.0098,
+        "checker": 0.0,
+        "bbox": [
+          12,
+          15,
+          53,
+          67
+        ]
+      }
+    },
+    "eastward_compared": [
+      "eastward-04: John, Sam, the fishmonger and the stall keepers"
+    ]
+  }
+}

@@ -43,7 +43,13 @@
       "w": 28,
       "h": 30,
       "anchor": [14, 27],
-      "note": "Puffcap, Puddle and Mote (15 to 18 px), with room for a hop"
+      "note": "Puddle and Mote (15 to 18 px), with room for a hop"
+    },
+    "folkSmallTall": {
+      "w": 28,
+      "h": 36,
+      "anchor": [14, 33],
+      "note": "Puffcap: the familiar perches on her flat cap top (folk batch 1)"
     },
     "folkLarge": {
       "w": 40,
@@ -734,7 +740,7 @@
         "name": "Puffcap",
         "night": 2,
         "heightWorld": 17,
-        "cell": "folkSmall",
+        "cell": "folkSmallTall",
         "home": "the valley",
         "firstSix": true
       },

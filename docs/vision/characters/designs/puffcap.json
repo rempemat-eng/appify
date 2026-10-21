@@ -1,0 +1,625 @@
+{
+  "id": "puffcap",
+  "height_art_px": 34,
+  "cell": [
+    56,
+    60
+  ],
+  "foot": [
+    28,
+    54
+  ],
+  "options": [
+    {
+      "label": "A",
+      "name": "The cap is the nightcap",
+      "question": "The mushroom's own cap is the nightcap: a soft violet felt dome whose crown runs up into a drooping tip with a pale pompom; its rolled margin is the cuff; the face sits on the pale stem in the cap's shade.",
+      "parts": [
+        "feet x2: earth, layer 1 (back), all facings (E/W far foot a px behind), attach foot",
+        "stem body: plaster, layer 2, all facings, attach hip (breath squashes 1 px)",
+        "near/far arm nubs: plaster_warm, layer 3 (far arm hidden E/W), all facings, attach chest",
+        "face (eyes ink, cheeks berry, mouth): layer 4, S/E/W (none N), attach head",
+        "gill band: dusk_cool, layer 4, S/E/W, attach head",
+        "cap dome + rolled cuff: dusk, dusk_warm, layer 5, all facings, attach head",
+        "cone tip: dusk, layer 6, always flops west (over the shoulder in S, behind in E, over the brow in W), attach head; swings 1 frame late in walk",
+        "pompom: plaster_warm, layer 7, all facings, attach tip (secondary motion, settles last)"
+      ],
+      "palette": [
+        "dusk",
+        "plaster",
+        "earth",
+        "berry"
+      ],
+      "pose": "Stands with its cap tipped a little forward and the tip hanging over one shoulder: already half asleep, perfectly content.",
+      "notes": [
+        "Works: one shape for cap and hat, so the silhouette is a single soft teardrop with a tail; the tip and pompom give walk and hop a follow-through.",
+        "Risk: cone and pompom echo Mote (a star in a nightcap); here the cap is a dome on a stem with gills, the cuff is its own margin. The side arm is faint in E/W.",
+        "Compared with Eastward-04 (Sam and the stall keepers, scaled to 34 px): head a third to half, 2 px eyes, 4 tones a material."
+      ],
+      "glows": [],
+      "measure": {
+        "S idle": {
+          "px": 672,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0,
+          "west_east": 7.4249,
+          "top_bottom": -15.6572,
+          "isolated": 0.0106,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 632,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 4,
+          "outline_dark": 1.0,
+          "flat_ink": 0.03,
+          "double": 0.02,
+          "west_east": 12.8786,
+          "top_bottom": -8.9273,
+          "isolated": 0.0094,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 614,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0208,
+          "double": 0.0208,
+          "west_east": 7.779,
+          "top_bottom": -10.6341,
+          "isolated": 0.0154,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 647,
+          "colours": 34,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9714,
+          "flat_ink": 0.0,
+          "double": 0.019,
+          "west_east": 7.8741,
+          "top_bottom": -12.6627,
+          "isolated": 0.0554,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Button head in a sock cap",
+      "question": "A tan button-mushroom head (the face on its lower half) wearing a separate knitted violet sock cap whose long tail flops over and hangs to one side; the mushroom ring is a frilled collar.",
+      "parts": [
+        "feet x2: earth, layer 1, all facings, attach foot",
+        "stem body: plaster, layer 2, all facings, attach hip",
+        "ring collar (frill): plaster_warm, layer 3, all facings, attach chest (flutters on hop)",
+        "arm nubs: plaster, layer 4, all facings, attach chest (one rubs an eye in the fidget)",
+        "button head + gill lip: sand, sand_cool, layer 5, all facings, attach head (face S/E/W)",
+        "sock cap crown + cuff: dusk, dusk_warm, layer 6, all facings, attach head",
+        "tail (knit stripes): dusk, dusk_cool, layer 7, hangs E in S, flops behind in E/W",
+        "pompom: plaster_warm, layer 8, attach tail end (swings, settles last)"
+      ],
+      "palette": [
+        "dusk",
+        "sand",
+        "plaster",
+        "earth",
+        "berry"
+      ],
+      "pose": "Wide awake eyes under a cap pulled down snug: a child sent to bed who is not sleepy yet.",
+      "notes": [
+        "Works: hat and head are separate, so the cap can slip, be pulled down for nap, or be tugged in fight cheer.",
+        "Risk: a mushroom wearing a hat reads as a costume, closer to a generic toadstool kid; five families.",
+        "Compared with Eastward-04 (Sam: a big pale hair mass over a small body) at the same height."
+      ],
+      "glows": [],
+      "measure": {
+        "S idle": {
+          "px": 680,
+          "colours": 36,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0278,
+          "west_east": 5.6674,
+          "top_bottom": -17.6602,
+          "isolated": 0.0087,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 642,
+          "colours": 35,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0481,
+          "west_east": 7.1564,
+          "top_bottom": -18.6051,
+          "isolated": 0.0037,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 642,
+          "colours": 36,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0288,
+          "west_east": 4.1553,
+          "top_bottom": -16.5163,
+          "isolated": 0.0056,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 640,
+          "colours": 35,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0283,
+          "west_east": 3.8131,
+          "top_bottom": -17.8482,
+          "isolated": 0.0056,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Mat cap",
+      "question": "A stout pale stem under a wide flat violet cap quilted like a sleeping mat, piped round the rim; gills show under the front edge and a spore drifts from them.",
+      "parts": [
+        "feet x2: earth, layer 1, all facings, attach foot",
+        "stout stem: plaster (+ cool fibres), layer 2, all facings, attach hip",
+        "arm nubs: plaster_warm, layer 3, all facings, attach chest",
+        "face: ink, berry, layer 4, S/E/W, attach head",
+        "gills: dusk_cool, layer 5, S/E/W, attach head",
+        "mat cap (quilt, piping, tuft button): dusk, dusk_warm, dusk_cool, plaster_warm, layer 6, all facings, attach head; tilts as a unit",
+        "spores: glowflora glow, layer 7, effect (finite, reduced motion: none)"
+      ],
+      "palette": [
+        "dusk",
+        "plaster",
+        "earth",
+        "berry"
+      ],
+      "pose": "Squat and patient under its own bed, eyes heavy: it carries the soft spot with it.",
+      "notes": [
+        "Works: the widest silhouette in the cast (a T), and the ritual and nap read at once: it lies down and the cap is the mat.",
+        "Risk: the wide cap hides the arms in the S view at game scale and crowds props; quilting is fine detail.",
+        "Compared with Eastward-04 stall awnings (quilted cloth, seams) and Sam for face scale."
+      ],
+      "glows": [
+        "glowflora"
+      ],
+      "measure": {
+        "S idle": {
+          "px": 827,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9826,
+          "flat_ink": 0.0,
+          "double": 0.0348,
+          "west_east": 4.9064,
+          "top_bottom": -11.5387,
+          "isolated": 0.0056,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 779,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.981,
+          "flat_ink": 0.0,
+          "double": 0.0095,
+          "west_east": 9.511,
+          "top_bottom": -6.9356,
+          "isolated": 0.0045,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 779,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.981,
+          "flat_ink": 0.0,
+          "double": 0.0095,
+          "west_east": 2.8446,
+          "top_bottom": -6.7357,
+          "isolated": 0.003,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 778,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9561,
+          "flat_ink": 0.0,
+          "double": 0.0263,
+          "west_east": 4.3849,
+          "top_bottom": -9.9575,
+          "isolated": 0.0181,
+          "checker": 0.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "C",
+    "grafts": [
+      "From B: a bigger, clearer face (2 x 2 eyes under a heavy lid, 8 px apart in S; a brow in the cap shade) and, in profile, a cheek and muzzle step lit from the upper left",
+      "From B: arm nubs that reach past the stem and show below the brim in S and in every fight pose",
+      "From the graders: quilting as a few bold diamond seams (2 rows thick) meeting at 2 x 2 tufts, no fine lines; a lit gill fringe under the brim; stem fibres as cool vertical streaks",
+      "Cast-wide: cap in light dusk (dusk_warm, tones 3 to 5 lead), narrower (29 px) so it reads as a mat, not a plate",
+      "Perch on the cap top; small-folk cell for Puffcap raised to 56 x 72 (foot 28, 66)"
+    ],
+    "parts": [
+      "feet x2: earth, layer 1, anchor foot; S side by side, E/W far foot a px higher; sit: both forward",
+      "far arm: plaster_warm, layer 2 (behind the stem), anchor chest; E/W only",
+      "stem body + fibres: plaster, plaster_cool, layer 3, anchor hip; breath squashes 1 px",
+      "cheek/muzzle step: plaster, layer 4, anchor head; E/W only (on the facing side)",
+      "near arm (S: both): plaster_warm, layer 5, anchor chest; cheer: in front of the brim",
+      "face (eyes ink, lid, brow, cheeks berry, mouth): layer 6, anchor head; S/E/W, none in N",
+      "gill fringe + neck: dusk_cool, layer 7, anchor head; S/E/W",
+      "mat cap (quilt, tufts, bolster, piping): dusk_warm, dusk, dusk_cool, plaster_warm, layer 8, anchor head; one rigid part that tilts (strike forward, hit back) and sinks (nod, sit); nap: pulled over as a blanket",
+      "familiar perch: on the cap top at its back half (E: x smaller, W: x larger), layer 9, rides the cap",
+      "spores: glowflora glow, layer 10, effect (fidget, cast, strike impact); finite, none under reduced motion"
+    ],
+    "palette": [
+      "dusk",
+      "plaster",
+      "earth",
+      "berry"
+    ],
+    "glows": [
+      "glowflora (spores: finite, off under reduced motion)"
+    ],
+    "familiar_standin": [
+      "leaf",
+      "grass"
+    ],
+    "pose": "Squat and patient under its own bed, eyes heavy: it carries the soft spot with it, and its friend rides on top.",
+    "notes": [
+      "Cell: Puffcap needs 56 x 72 (foot 28, 66), not 56 x 60: the familiar sits on the flat cap top, which is 34 px above the foot.",
+      "Compared side by side with Eastward-04 (Sam, the fishmonger, scaled to the same height): head mass a third to half, 2 px eyes with a glint, 4-5 tones a material, quilted awnings for the cap seams.",
+      "Risk: raised arms meet the brim, so cast keeps the hands forward under it and cheer draws the arms in front of the brim.",
+      "Open: the spores are the only effect; the select screen should check the cap against Velvet (deep dusk) side by side."
+    ],
+    "cell": [
+      56,
+      72
+    ],
+    "foot": [
+      28,
+      66
+    ],
+    "height_art_px": 34,
+    "perch": {
+      "nap S": [
+        37,
+        53
+      ],
+      "E ready": [
+        23,
+        37
+      ],
+      "E strike": [
+        29,
+        37
+      ],
+      "E cast": [
+        23,
+        36
+      ],
+      "E hit": [
+        17,
+        36
+      ],
+      "E sit": [
+        23,
+        43
+      ],
+      "E cheer": [
+        23,
+        32
+      ],
+      "W ready": [
+        33,
+        37
+      ],
+      "W strike": [
+        27,
+        37
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 738,
+        "colours": 31,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0455,
+        "west_east": 4.8209,
+        "top_bottom": -9.4363,
+        "isolated": 0.0064,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          33,
+          43,
+          67
+        ]
+      },
+      "E idle": {
+        "px": 689,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0104,
+        "double": 0.0208,
+        "west_east": 10.3305,
+        "top_bottom": -6.3089,
+        "isolated": 0.0051,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          33,
+          43,
+          67
+        ]
+      },
+      "W idle": {
+        "px": 689,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0104,
+        "double": 0.0208,
+        "west_east": 5.2871,
+        "top_bottom": -5.3476,
+        "isolated": 0.0034,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          33,
+          43,
+          67
+        ]
+      },
+      "S fidget": {
+        "px": 682,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9615,
+        "flat_ink": 0.0,
+        "double": 0.0192,
+        "west_east": 4.9931,
+        "top_bottom": -12.3098,
+        "isolated": 0.0225,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          37,
+          43,
+          67
+        ]
+      },
+      "nap S": {
+        "px": 663,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0364,
+        "west_east": 13.5771,
+        "top_bottom": 9.0026,
+        "isolated": 0.0181,
+        "checker": 0.0,
+        "bbox": [
+          12,
+          36,
+          49,
+          67
+        ]
+      },
+      "E ready": {
+        "px": 960,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0074,
+        "double": 0.0441,
+        "west_east": 6.3247,
+        "top_bottom": -11.731,
+        "isolated": 0.0097,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          14,
+          43,
+          67
+        ]
+      },
+      "E strike": {
+        "px": 986,
+        "colours": 48,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.972,
+        "flat_ink": 0.007,
+        "double": 0.042,
+        "west_east": 8.6159,
+        "top_bottom": -16.1287,
+        "isolated": 0.0154,
+        "checker": 0.0,
+        "bbox": [
+          19,
+          14,
+          49,
+          67
+        ]
+      },
+      "E cast": {
+        "px": 991,
+        "colours": 47,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.958,
+        "flat_ink": 0.0,
+        "double": 0.049,
+        "west_east": 8.0009,
+        "top_bottom": -9.6843,
+        "isolated": 0.0118,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          13,
+          45,
+          67
+        ]
+      },
+      "E hit": {
+        "px": 991,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0072,
+        "double": 0.0576,
+        "west_east": 7.4568,
+        "top_bottom": -9.9047,
+        "isolated": 0.0188,
+        "checker": 0.0,
+        "bbox": [
+          7,
+          13,
+          37,
+          67
+        ]
+      },
+      "E sit": {
+        "px": 869,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0458,
+        "west_east": 9.4496,
+        "top_bottom": -6.9371,
+        "isolated": 0.0136,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          20,
+          43,
+          67
+        ]
+      },
+      "E cheer": {
+        "px": 1015,
+        "colours": 45,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0746,
+        "west_east": 8.4266,
+        "top_bottom": -12.935,
+        "isolated": 0.0148,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          9,
+          43,
+          63
+        ]
+      },
+      "W ready": {
+        "px": 960,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0074,
+        "double": 0.0441,
+        "west_east": 7.0699,
+        "top_bottom": -7.7357,
+        "isolated": 0.0097,
+        "checker": 0.0,
+        "bbox": [
+          13,
+          14,
+          43,
+          67
+        ]
+      },
+      "W strike": {
+        "px": 985,
+        "colours": 49,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.9714,
+        "flat_ink": 0.0071,
+        "double": 0.0571,
+        "west_east": 4.9363,
+        "top_bottom": -14.067,
+        "isolated": 0.0154,
+        "checker": 0.0,
+        "bbox": [
+          7,
+          14,
+          37,
+          67
+        ]
+      }
+    }
+  }
+}

@@ -65,7 +65,7 @@ A folk draws **75 frames** (51 world, 24 fight) and about 14 effect frames for i
 - **Units.** Sizes are in world px; art px are world px times the density. The rig authors at 2x: an adult is about 50 art px, a cell 16. Offsets are in rig px (2x art px) and are rounded at other densities.
 - **Cells (world px).**
   - folk: 32 x 36 (foot at 16, 33)
-  - small folk (Puffcap, Puddle, Mote): 28 x 30
+  - small folk (Puddle, Mote): 28 x 30; Puffcap 28 x 36, because the familiar perches on her cap
   - large folk (Cairn, Tuff): 40 x 40
   - familiar: 16 x 16 (a Grassling about 12 world px, 24 art px at 2x)
   - resident: 20 x 30
