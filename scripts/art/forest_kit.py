@@ -12,8 +12,10 @@ clusters, outline, cast shadows, `blend`), so the two kits meet without a seam, 
 house style (docs/vision/house-style.md): every pixel a tone of a house ramp or a family's edge
 tone, shade and light moving along the ramps, texture in clusters of two or more pixels,
 light from the upper left, cast shadows stepping the ground two tones down, walkable ground
-calm (body tone 3) with flowers in drifts rather than flecks (`drifts()`, `calm()`), and
-dither only as the 2 x 2 checker in a tier shadow's last 3 px, as the terrace toolkit does. Sizes follow docs/vision/size-guide.md (#124): a broadleaf 90 (78 to
+calm (body tone 3) with flowers in drifts rather than flecks (`drifts()`, `calm()`), and no
+dither. Edges follow docs/vision/eastward-edges.md where the kit draws them itself: a path's
+grass edge frays in tufts and bites with dark crumbs and no line (5.1), a tier's shadow is a
+two-tone core with a one-tone rim (7.2). The wooded bank waits for the shared cliff core. Sizes follow docs/vision/size-guide.md (#124): a broadleaf 90 (78 to
 125) with a crown 56 to 80, a pine or spruce 64 to 125 with a crown 28 to 48, a birch 64 to
 104, a veteran tree 88 to 160, a holly or young tree 40 to 80, a sapling 20 to 40, a bush 12
 to 28, a fern 8 to 16, a stump 8 to 16 tall and 12 to 22 wide, a fallen log 30 to 64 long,
@@ -808,6 +810,33 @@ def mushrooms(kind='brown', seed=0, n=3):
     return sp, sh
 
 
+def hazel(seed=0):
+    """A hazel at the wood's edge (bush 12 to 28, up to 42 wide): five to seven thin stems
+    fanning up from one stool, grey-brown and lit on the west, carrying a loose rounded crown
+    of lobes in the house recipe with gaps where the stems show."""
+    sp = Sprite(44, 42, 22, 39)
+    n = 5 + int(hash01(seed, 0, 31) * 3)
+    for i in range(n):
+        a = -0.75 + 1.5 * (i + 0.5) / n + (hash01(i, 1, seed) - 0.5) * 0.2
+        ln = 18 + int(hash01(i, 2, seed) * 8)
+        for (px, py) in line_px(sp.fx + (i - n // 2) // 2, sp.fy, sp.fx + math.sin(a) * ln, sp.fy - math.cos(a) * ln):
+            sput(sp, px, py, 'timber_warm', 3 if a < 0 else 2)
+    lobes = []
+    for i in range(7):
+        a = i * 2.4 + seed
+        fr = math.sqrt((i + 0.5) / 7)
+        lobes.append((22 + 13 * fr * math.cos(a), 19 + 9 * fr * math.sin(a), 7 + 5 * (1 - fr), 6 + 4 * (1 - fr)))
+    shape = np.zeros(sp.m.shape, bool)
+    for k, (lx, ly, rx_, ry_) in enumerate(sorted(lobes, key=lambda q: q[1])):
+        m, u, v = ellipse(sp.m.shape, lx, ly, rx_, ry_, seed + k, 0.2, 7)
+        m &= ~((hash01(sp.x // 3, sp.y // 3, seed + k) < 0.08) & (light(u, v) < -0.2))
+        sp.step(shape & ~m & shift(m, 0, -1, False), -1, lo=1)
+        foliage(sp, m, light(u, v) + 0.25 * light((sp.x - 22) / 16.0, (sp.y - 19) / 13.0), seed * 7 + k, 'grass', 2.2)
+        shape |= m
+    unspeck(sp, shape, 1)
+    return sp, rk.tree_shadow(sp, 24, 15, 4)
+
+
 def roots(p: Plot, x, y, seed=0, toward=None, n=3, reach=12):
     """Roots running out from a trunk's foot over the ground or across a path: two pixels
     thick, lit along the top, a dark underside and a pixel of shade below."""
@@ -865,7 +894,8 @@ def calm(p: Plot, m, share=0.6, seed=0):
     read as confetti): small flower clusters outside the denser drifts go back to the ground
     around them."""
     m = np.asarray(m, bool) & ~p.solid
-    fl = m & np.isin(FAMILY[p.f], [IDX[k] for k in FLOWER_FAMS])
+    fams = [IDX[k] for k in FLOWER_FAMS + ('sand',)]               # flowers and seed heads
+    fl = m & np.isin(FAMILY[p.f], fams)
     dense = rk.dilate(fl, 3)
     near = np.zeros(m.shape, np.int16)
     for dx in range(-4, 5, 2):
@@ -875,7 +905,7 @@ def calm(p: Plot, m, share=0.6, seed=0):
     for _ in range(3):
         for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (2, 0), (-2, 0)):
             src_f, src_t = shift(p.f, dx, dy, -1), shift(p.t, dx, dy, 0)
-            ok = lone & (src_f >= 0) & ~np.isin(FAMILY[np.clip(src_f, 0, None)], [IDX[k] for k in FLOWER_FAMS])
+            ok = lone & (src_f >= 0) & ~np.isin(FAMILY[np.clip(src_f, 0, None)], fams)
             p.f[ok], p.t[ok] = src_f[ok], src_t[ok]
             lone &= ~ok
     del dense
@@ -995,11 +1025,19 @@ def path(p: Plot, pts, width=20, seed=0, stones=True, puddle=True):
     wob = (fbm(p.x, p.y, 11, seed) - 0.5) * 5 + (fbm(p.x, p.y, 4, seed + 1) - 0.5) * 2
     m = d + wob < width / 2
     m = dilate(erode(m, 1), 1)
+    # the grass edge frays (eastward-edges.md 5.1): a tuft of the verge into the path or a
+    # bite of the path into the verge about every 16 px, 3 to 4 px deep, no line
+    edge_px = m & ~erode(m, 1)
+    for i, (x, y) in enumerate(rk._scatter(edge_px | (dilate(m, 1) & ~m), 256, seed + 20, 0)):
+        r = 1.6 + hash01(x, y, seed + 21) * 1.0
+        nub = blob(x + 0.5, y + 0.5, r, r * 0.8, m.shape, seed + i, 0.25, 5)
+        m = (m & ~nub) if hash01(x, y, seed + 22) < 0.5 else (m | (nub & dilate(m, 3)))
     rk.base(p, m, 'path', seed + 2, scale=6, warm=0.4, cool=0.8)
     mid = m & (d + wob * 0.5 < width * 0.22)
     p.step(mid & (fbm(p.x, p.y, 7, seed + 3) > 0.35), 1, hi=4)
     rim = m & ~erode(m, 3)
-    p.step(rim & (hash01(p.x // 2, p.y // 2, seed + 4) < 0.5), -1, lo=1)
+    crumbs = rim & ~erode(m, 1) & (hash01(p.x // 2, p.y, seed + 4) < 0.18)    # dark crumbs, no line
+    p.put(crumbs | (shift(crumbs, 1, 0, False) & rim), 'path_cool', 1)
     stamp(p, rim | (m & (d > width * 0.3)), 0.12, seed + 5, LEAVES, ramp='timber_warm', tone=3, same_family=False)
     stamp(p, rim, 0.06, seed + 6, LEAVES, ramp='brass_cool', tone=3, same_family=False)
     rk.texture(p, m, seed + 7, swaps=0.12, ups=0.02, downs=0.03)
@@ -1060,7 +1098,10 @@ def make(kind, seed=0, scale=1.0):
     elif kind == 'stump':
         sp, sh = stump(seed)
         return sp, sh, sp.m & (sp.y > sp.fy - 5)
-    elif kind in ('hawthorn', 'hazel'):
+    elif kind == 'hazel':
+        sp, sh = hazel(seed)
+        return sp, sh, None
+    elif kind == 'hawthorn':
         sp, sh = rk.shrub(kind, seed)
         return sp, sh, None
     else:
@@ -1414,8 +1455,10 @@ def side_bands(p: Plot, L: Tiers, seed=71):
 
 def tier_shadows(p: Plot, L: Tiers, throw=8):
     """A tier's cast shadow on the ground below: thrown down and to the right, so the ground
-    east of an east-facing band and under a face's foot steps down: 2 px two tones, 3 px one
-    tone, 3 px one tone on the 2 x 2 checker (the atmospheric fade's dither)."""
+    east of an east-facing band and under a face's foot steps down: the core 2 px two tones,
+    the outer 3 px one tone (eastward-edges.md 7.2: the house shadow softened at its rim; no
+    dither at a boundary, 5.4)."""
+    throw = min(throw, 5)
     low = ~L.face & ~L.west & ~L.east
     src = L.east | L.face
     for d in range(1, throw + 1):
@@ -1423,10 +1466,8 @@ def tier_shadows(p: Plot, L: Tiers, throw=8):
         reach &= L.T < np.maximum(shift(L.T, d, 0, 0), shift(L.kf, 0, d, 0))
         if d <= 2:
             p.step(reach, -2, lo=0)
-        elif d <= 5:
-            p.step(reach, -1, lo=1)
         else:
-            p.step(reach & (((p.x // 2) + (p.y // 2)) % 2 == 0), -1, lo=1)
+            p.step(reach, -1, lo=1)
         low &= ~reach
 
 
