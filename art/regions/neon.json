@@ -2312,20 +2312,24 @@
    "width": 40,
    "points": [
     [
-     10632,
-     3920
+     10584,
+     3904
+    ],
+    [
+     10584,
+     4064
     ],
     [
      10328,
-     3920
+     4064
     ],
     [
      10328,
-     4112
+     4160
     ],
     [
      10200,
-     4112
+     4160
     ],
     [
      10200,
@@ -2337,13 +2341,27 @@
      "what": "footbridge",
      "on": "rim_walk",
      "at": [
-      10600,
+      10584,
       3952
      ],
-     "span": 56
+     "span": 64
     }
    ],
-   "why": "the Glint off the moss fens (block-out, docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)) to the head of the ria"
+   "why": "the Glint off the moss fens (block-out, docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)) to the head of the ria",
+   "source": {
+    "from": "the north box edge, out of the moss fens (lane G's land)",
+    "at": [
+     10584,
+     3904
+    ]
+   },
+   "outlet": {
+    "to": "its two falls at the ria head",
+    "at": [
+     10200,
+     4240
+    ]
+   }
   },
   {
    "id": "glint_west_fall",
@@ -2379,7 +2397,21 @@
      "span": 64
     }
    ],
-   "why": "the Glint's western fall into the ria head; the old bridges cross its foot"
+   "why": "the Glint's western fall into the ria head; the old bridges cross its foot",
+   "source": {
+    "from": "the Glint",
+    "at": [
+     10200,
+     4240
+    ]
+   },
+   "outlet": {
+    "to": "the ria head",
+    "at": [
+     10112,
+     4480
+    ]
+   }
   },
   {
    "id": "glint_east_fall",
@@ -2415,7 +2447,21 @@
      "span": 64
     }
    ],
-   "why": "the Glint's eastern fall; the Falls Rock between the two, the first town"
+   "why": "the Glint's eastern fall; the Falls Rock between the two, the first town",
+   "source": {
+    "from": "the Glint",
+    "at": [
+     10200,
+     4240
+    ]
+   },
+   "outlet": {
+    "to": "the ria head",
+    "at": [
+     10232,
+     4480
+    ]
+   }
   },
   {
    "id": "lull_cut",
@@ -2459,7 +2505,18 @@
      4632
     ]
    ],
-   "why": "the Lull Cut from lull-delta along the foot of the Heights to the basin in the ria's western cove; a lock lets it down to the tide"
+   "why": "the Lull Cut from lull-delta along the foot of the Heights to the basin in the ria's western cove; a lock lets it down to the tide",
+   "source": {
+    "from": "lull-delta (9456, 4416)",
+    "what": "the Lull Cut"
+   },
+   "outlet": {
+    "to": "the canal basin in the ria's western cove, through the lock",
+    "at": [
+     9800,
+     4632
+    ]
+   }
   },
   {
    "id": "ria",
@@ -4123,7 +4180,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "declared_closed": "the ria and the sea"
   },
   {
    "id": "ria_2",
@@ -4308,7 +4366,8 @@
      5328
     ]
    ],
-   "islands": []
+   "islands": [],
+   "declared_closed": "the ria and the sea"
   }
  ],
  "routes": [
@@ -5476,6 +5535,25 @@
    ]
   },
   {
+   "id": "quay_stairs",
+   "width": 32,
+   "why": "from Quay Street down the street's south face to the docks' quays",
+   "points": [
+    [
+     10336,
+     4408
+    ],
+    [
+     10304,
+     4408
+    ],
+    [
+     10304,
+     4520
+    ]
+   ]
+  },
+  {
    "id": "warehouse_lane",
    "width": 32,
    "why": "behind the warehouses, parallel to Quay Street",
@@ -5888,6 +5966,19 @@
    ],
    "from_tier": 3,
    "to_tier": 4,
+   "width": 40,
+   "kind": "stone",
+   "why": "where the lane changes terrace: a flight of steps through the face"
+  },
+  {
+   "id": "quay_stairs_2_1_92",
+   "on": "quay_stairs",
+   "at": [
+    10304,
+    4452
+   ],
+   "from_tier": 2,
+   "to_tier": 1,
    "width": 40,
    "kind": "stone",
    "why": "where the lane changes terrace: a flight of steps through the face"
@@ -7067,13 +7158,9 @@
    "what": "marker stone",
    "at": [
     10360,
-    3948
-   ],
-   "route": "Neon Harbour",
-   "moved_from": [
-    10360,
     3920
-   ]
+   ],
+   "route": "Neon Harbour"
   },
   {
    "t": "S",
@@ -7088,8 +7175,8 @@
    "t": "I",
    "what": "door",
    "at": [
-    10508,
-    3972
+    10496,
+    3932
    ],
    "route": "Neon Harbour",
    "moved_from": [
@@ -7102,7 +7189,7 @@
    "what": "resident",
    "at": [
     10536,
-    3972
+    3932
    ],
    "route": "Neon Harbour",
    "moved_from": [
@@ -7658,8 +7745,8 @@
    "t": "I",
    "what": "resident",
    "at": [
-    10288,
-    4488
+    10256,
+    4492
    ],
    "route": "Neon Harbour",
    "moved_from": [
@@ -7671,7 +7758,7 @@
    "t": "S",
    "what": "mended fence",
    "at": [
-    10364,
+    10380,
     4528
    ],
    "route": "Neon Harbour",
@@ -7684,8 +7771,8 @@
    "t": "I",
    "what": "noticeboard",
    "at": [
-    10308,
-    4512
+    10364,
+    4528
    ],
    "route": "Neon Harbour",
    "moved_from": [

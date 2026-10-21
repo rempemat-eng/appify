@@ -897,6 +897,7 @@ def check_plan(plan: dict) -> list:
         import region_plan
     except ImportError:
         return bad
+    bad += reach(plan['plan'])
     return bad + region_plan.check(plan['plan'])
 
 
@@ -913,6 +914,86 @@ def _in_poly(p, poly):
         if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
             inside = not inside
     return inside
+
+
+def reach(P: dict) -> list:
+    """G0 reachability on the plan alone (rules-system.md 'G0'): a flood fill over the plan's
+    walkable ground at 4 px (tier tops, not faces, not water), moving between tiers only on a
+    stair, across water only on a bridge, causeway, jetty or boardwalk, from every route's ends.
+    Returns what it cannot reach: named things, pockets, markers, residents, egg spots."""
+    from collections import deque
+    from PIL import ImageDraw
+    import region_plan as RP
+    G = RP.Ground(P)
+    x0, y0, w, h = P['box']
+    c = G.s
+    H, W = G.tier.shape
+    wet = Image.new('L', (W, H), 0)
+    dr = ImageDraw.Draw(wet)
+
+    def px(p):
+        return ((p[0] - x0) / c, (p[1] - y0) / c)
+    for wt in P.get('water', []):
+        if wt.get('closed'):
+            dr.polygon([px(q) for q in wt['points']], fill=1)
+            for i in wt.get('islands', []):
+                dr.polygon([px(q) for q in i['outline']], fill=0)
+        else:
+            dr.line([px(q) for q in wt['points']], fill=1, width=max(1, int(wt['width'] / c)))
+    wet = np.asarray(wet).astype(bool)
+    deck = Image.new('L', (W, H), 0)
+    dd = ImageDraw.Draw(deck)
+    spans = ('bridge', 'causeway')
+    for pth in P.get('routes', []) + P.get('trods', []):
+        if pth.get('kind') in spans or pth['id'] in ('jetty', 'boardwalk', 'slipway'):
+            dd.line([px(q) for q in pth['points']], fill=1, width=max(1, int(pth['width'] / c)))
+    for pl in P.get('places', []):
+        if pl.get('span'):
+            a, b = pl['span']
+            dd.rectangle([px((a, pl['at'][1] - 16)), px((b, pl['at'][1] + 16))], fill=1)
+        if pl.get('island'):
+            ix, iy, iw, ih = pl['island']
+            dd.rectangle([px((ix, iy)), px((ix + iw, iy + ih))], fill=1)
+    for wt in P.get('water', []):
+        for b in wt.get('bridges', []):
+            dd.rectangle([px((b['at'][0] - b['span'] / 2, b['at'][1] - 16)), px((b['at'][0] + b['span'] / 2, b['at'][1] + 16))], fill=1)
+    deck = np.asarray(deck).astype(bool)
+    stair = np.zeros((H, W), bool)
+    yy, xx = np.mgrid[0:H, 0:W]
+    for st in P.get('stairs', []):
+        sx, sy = px(st['at'])
+        stair |= (np.abs(xx - sx) <= (st['width'] / 2 + 8) / c) & (np.abs(yy - sy) <= (32 + 16) / c)
+    walk = (~wet & ~G.face) | deck | stair
+    tier = G.tier
+    seen = np.zeros((H, W), bool)
+    q = deque()
+    for pth in P.get('routes', []):
+        for p in (pth['points'][0], pth['points'][-1]):
+            cx, cy = int((p[0] - x0) // c), int((p[1] - y0) // c)
+            cx, cy = min(max(cx, 0), W - 1), min(max(cy, 0), H - 1)
+            if walk[cy, cx] and not seen[cy, cx]:
+                seen[cy, cx] = True
+                q.append((cy, cx))
+    while q:
+        r, k = q.popleft()
+        for dr_, dk in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            r2, k2 = r + dr_, k + dk
+            if not (0 <= r2 < H and 0 <= k2 < W) or seen[r2, k2] or not walk[r2, k2]:
+                continue
+            if tier[r2, k2] != tier[r, k] and not (stair[r2, k2] or stair[r, k] or deck[r2, k2] or deck[r, k]):
+                continue
+            seen[r2, k2] = True
+            q.append((r2, k2))
+    bad = []
+    things = [(n['thing'], n['at']) for n in P.get('named', [])] + [(k['holds'], k['at']) for k in P.get('pockets', [])] + \
+        [(f"marker {m['what']}", m['at']) for m in P.get('markers', []) if not m.get('outside_box')] + \
+        [(r['who'], r['at']) for r in P.get('residents', [])] + [(e['what'], e['at']) for e in P.get('egg_spots', [])]
+    for what, at in things:
+        cx, cy = int((at[0] - x0) // c), int((at[1] - y0) // c)
+        r0, r1, k0, k1 = max(0, cy - 3), min(H, cy + 4), max(0, cx - 3), min(W, cx + 4)
+        if not seen[r0:r1, k0:k1].any():
+            bad.append(f'{what} at {tuple(at)} cannot be reached from the routes')
+    return bad
 
 
 def _on_bridge(P: dict, at) -> bool:

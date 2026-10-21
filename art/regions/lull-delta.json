@@ -1511,19 +1511,27 @@
      4480
     ]
    ],
-   "why": "the Lull from the block-out (docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)): one even channel through the belt's bends to Lullford Bridge at (8960, 4310) and the delta's apex at (8960, 4480); 110 to 130 px wide (plan 4.3); it enters the chunk at (8920, 3296) 72 px wide, as Claude H's Lull below the Cog leaves it (#184, h-to-i-1250), and widens to 116 px by y 3392",
+   "why": "the Lull from the block-out (docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)): one even channel through the belt's bends to Lullford Bridge at (8960, 4310) and the delta's apex at (8960, 4480); 110 to 130 px wide (plan 4.3); it enters the chunk at (8920, 3296) 72 px wide, as Claude H's Lull below the Cog leaves it (#184), and widens to 116 px by y 3392",
    "widths": [
     [
-     8928,
+     8920,
      3296,
      72
     ],
     [
-     8940,
+     8936,
      3392,
      116
     ]
-   ]
+   ],
+   "source": {
+    "from": "north box edge (8920, 3296)",
+    "what": "Claude H's Lull below the Cog (#184)"
+   },
+   "outlet": {
+    "to": "the delta apex (8960, 4480)",
+    "what": "the delta's arms"
+   }
   },
   {
    "id": "arm_1",
@@ -1539,7 +1547,21 @@
      4728
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     8960,
+     4480
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     8962,
+     4730
+    ]
+   }
   },
   {
    "id": "arm_2",
@@ -1559,7 +1581,21 @@
      4952
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     8962,
+     4730
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     8843,
+     4949
+    ]
+   }
   },
   {
    "id": "arm_3",
@@ -1587,7 +1623,21 @@
      5744
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     8843,
+     4949
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     8456,
+     5748
+    ]
+   }
   },
   {
    "id": "arm_4",
@@ -1607,7 +1657,21 @@
      5064
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     8962,
+     4730
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     9070,
+     5062
+    ]
+   }
   },
   {
    "id": "arm_5",
@@ -1635,7 +1699,21 @@
      5408
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     9070,
+     5062
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     9038,
+     5410
+    ]
+   }
   },
   {
    "id": "arm_6",
@@ -1655,7 +1733,21 @@
      5712
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     9038,
+     5410
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     9005,
+     5708
+    ]
+   }
   },
   {
    "id": "arm_7",
@@ -1687,7 +1779,21 @@
      5312
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     9070,
+     5062
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     9283,
+     5310
+    ]
+   }
   },
   {
    "id": "arm_8",
@@ -1723,7 +1829,21 @@
      5712
     ]
    ],
-   "why": "one of the delta's eight reaches from the block-out"
+   "why": "one of the delta's eight reaches from the block-out",
+   "source": {
+    "from": "the delta apex or its parent arm",
+    "at": [
+     9283,
+     5310
+    ]
+   },
+   "outlet": {
+    "to": "the sea",
+    "at": [
+     9275,
+     5708
+    ]
+   }
   },
   {
    "id": "fresh_oxbow",
@@ -1759,7 +1879,8 @@
      3992
     ]
    ],
-   "why": "a fresh oxbow east of the bend at (9376, 3630): a loop the Lull cut off; the bell in the oxbow is reserved at (9450, 3900)"
+   "why": "a fresh oxbow east of the bend at (9376, 3630): a loop the Lull cut off; the bell in the oxbow is reserved at (9450, 3900)",
+   "declared_closed": "an oxbow, cut off from the Lull; fed by floods and ground water"
   },
   {
    "id": "silted_oxbow",
@@ -1795,7 +1916,8 @@
      3880
     ]
    ],
-   "why": "an older loop on the west side, silted to reeds"
+   "why": "an older loop on the west side, silted to reeds",
+   "declared_closed": "an oxbow, cut off from the Lull; fed by floods and ground water"
   },
   {
    "id": "lull_cut",
@@ -1826,7 +1948,21 @@
      "span": 56
     }
    ],
-   "why": "the Lull Cut from Lullford's east bank toward the canal basin under the Heights (plan 4.3), between the Lull Road and the Delta Road; the Delta Road crosses it on a turnover bridge at (9248, 4440)"
+   "why": "the Lull Cut from Lullford's east bank toward the canal basin under the Heights (plan 4.3), between the Lull Road and the Delta Road; the Delta Road crosses it on a turnover bridge at (9248, 4440)",
+   "source": {
+    "from": "the Lull's east bank below the bridge",
+    "at": [
+     9088,
+     4440
+    ]
+   },
+   "outlet": {
+    "to": "Neon's canal basin through a lock",
+    "at": [
+     9456,
+     4416
+    ]
+   }
   },
   {
    "id": "sea",
@@ -2216,7 +2352,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "declared_closed": "the sea"
   },
   {
    "id": "sea_2",
@@ -2343,7 +2480,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "declared_closed": "the sea"
   },
   {
    "id": "sea_3",
@@ -2398,7 +2536,8 @@
       ]
      ]
     }
-   ]
+   ],
+   "declared_closed": "the sea"
   }
  ],
  "routes": [

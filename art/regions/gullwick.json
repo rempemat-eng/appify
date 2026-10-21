@@ -357,7 +357,8 @@
      5216
     ]
    ],
-   "islands": []
+   "islands": [],
+   "declared_closed": "the sea"
   },
   {
    "id": "heron_pools",
@@ -381,7 +382,8 @@
      8064,
      5024
     ]
-   ]
+   ],
+   "declared_closed": "rain-fed pools in a hollow"
   }
  ],
  "routes": [
