@@ -38,6 +38,8 @@ What already agrees everywhere: light from the upper left (every module's mean i
 
 ### 2. Outline
 
+**Terrain edges** (rims, lips, faces, feet, sides, corners, transitions, water's edge, stairs) follow [eastward-edges.md](eastward-edges.md): Eastward is the only reference for edges and the soft grid (Matt, 21 Oct 09:23), for their geometry and value structure, while the colours stay this palette's, one ramp per terrain (Matt, 21 Oct 09:31). On terrain, only a change of height is outlined (eastward-edges 4).
+
 - One pixel, outside the silhouette, in the **edge tone of the family it closes** (wood closes in deep brown, leaves in deep green, stone in violet grey). Never a flat ink round a light material, never a second dark ring inside the first.
 - **Lit break.** Where it closes a top or left edge whose fill is tone 4 or 5, it breaks to that family's tone 1, so the light seems to wrap round the form.
 - Interior lines (seams, mortar, frames) use tone 0 to 2 of the material, never ink. Ink is for eyes and the deepest gaps.
