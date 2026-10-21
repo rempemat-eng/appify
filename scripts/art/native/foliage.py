@@ -13,6 +13,7 @@ from __future__ import annotations
 import numpy as np
 from scipy import ndimage as ndi
 
+from . import ctx
 from . import raster as pk
 
 GREENS = ['grass', 'grass_cool', 'grass_warm', 'leaf']     # r5: no blue-teal leaf_cool, no leaf_warm
@@ -24,6 +25,12 @@ LEAF_PITCH = 1.75
 POCKET = 1.35
 LOCAL_SIGMA = 3.0
 LOCAL_CONTRAST = 1.9
+# r7 style (the biome's style.foliage): the clump field's share of the crown's tone field, the
+# leaf-jagged lit rim one tone down, lit leaves on the cool sibling (a touch cooler than the lawn)
+_FS = ctx.BIOME.get('style', {}).get('foliage', {})
+CLUMP_MIX = _FS.get('clump_mix', 0.7)
+LIT_RIM = _FS.get('lit_rim', True)
+COOL_LIT = _FS.get('cool_lit', True)
 EDGE_DARK = ('grass_cool', 0)
 
 # leaf stamps (art px); the big set at 2x, the small set at 1.5x, single tufts at 1x
@@ -112,14 +119,71 @@ def _luma_green(a):
     return float((0.299 * c[..., 0] + 0.587 * c[..., 1] + 0.114 * c[..., 2])[m].mean()) if m.any() else 0.0
 
 
-def paint(arr, d, seed=0, size=None, blossoms=True, legs=True, crease=True, crease_depth=1.0):
+def clump_field(fol, n, seed=0):
+    """r7: a tone field (at the master's 1x size) made of n readable clumps laid over the master's
+    silhouette: the silhouette's pixels are split into n clusters (k-means), each becomes a dome
+    lit from the upper left (a lit cap, the body, a shaded lower right, a dark rim along its
+    underside); clumps lower on the screen stand in front, and where a front clump rises over
+    the one behind, the back clump is in a dark pocket."""
+    ys, xs = np.nonzero(fol)
+    P_ = np.stack([xs, ys], 1).astype(float)
+    rng = np.random.default_rng(seed + 991)
+    # k-means with farthest-point seeding (deterministic)
+    cen = [P_[np.argmin(P_[:, 1])]]
+    for _ in range(1, n):
+        dmin = np.min([((P_ - c) ** 2).sum(1) for c in cen], 0)
+        cen.append(P_[np.argmax(dmin)])
+    cen = np.array(cen)
+    for _ in range(12):
+        lab = np.argmin(((P_[:, None, :] - cen[None]) ** 2).sum(2), 1)
+        cen = np.array([P_[lab == k].mean(0) if (lab == k).any() else cen[k] for k in range(n)])
+    rad = np.array([np.sqrt(max(1, (lab == k).sum()) / np.pi) * 1.18 for k in range(n)])
+    order = np.argsort(cen[:, 1])                        # back (higher) first
+    H, W = fol.shape
+    Y, X = np.mgrid[0:H, 0:W].astype(float)
+    owner = np.full((H, W), -1)
+    for k in order:
+        m = (((X - cen[k, 0]) / rad[k]) ** 2 + ((Y - cen[k, 1]) / (rad[k] * 0.92)) ** 2 <= 1.0) & fol
+        owner[m] = k
+    if (owner < 0).any():
+        miss = fol & (owner < 0)
+        yy, xx = np.nonzero(miss)
+        owner[yy, xx] = np.argmin((xx[:, None] - cen[None, :, 0]) ** 2 + (yy[:, None] - cen[None, :, 1]) ** 2, 1)
+    L = np.array([-0.55, -0.62, 0.56]); L = L / np.linalg.norm(L)
+    tone = np.full((H, W), 2.0)
+    for k in range(n):
+        m = owner == k
+        u = (X - cen[k, 0]) / rad[k]
+        v = (Y - cen[k, 1]) / (rad[k] * 0.92)
+        lam = u * L[0] + v * L[1] + np.sqrt(np.clip(1 - u * u - v * v, 0.02, 1)) * L[2]
+        t = np.full((H, W), 3.0)
+        t[lam > 0.80] = 4.0
+        t[lam < 0.52] = 2.0
+        t[lam < 0.25] = 1.0
+        tone[m] = t[m]
+    # dark rims and pockets where clumps meet: the back clump darkens along the front clump's edge
+    for k in range(n):
+        m = owner == k
+        ring = ndi.binary_dilation(m, iterations=1) & ~m & fol
+        tone[ring & (owner != k)] = np.minimum(tone[ring & (owner != k)], 0.5)
+    tone[~fol] = 2.0
+    return tone
+
+
+def _luma_green(a):
+    m = (a[..., 3] > 0) & (a[..., 1].astype(int) > a[..., 0].astype(int) + 4)
+    c = a[..., :3].astype(float)
+    return float((0.299 * c[..., 0] + 0.587 * c[..., 1] + 0.114 * c[..., 2])[m].mean()) if m.any() else 0.0
+
+
+def paint(arr, d, seed=0, size=None, blossoms=True, legs=True, crease=True, crease_depth=1.0, clumps=0):
     """Paint, then match the master's lightness: the foliage's mean luma is brought within
     about 2 points of the 1x master's by a small bias on the tone field."""
     target = _luma_green(arr) - 2.5
     bias = 0.0
     best = None
     for _ in range(9):
-        out, anc, info = _paint(arr, d, seed, size, blossoms, legs, bias, crease_depth)
+        out, anc, info = _paint(arr, d, seed, size, blossoms, legs, bias, crease_depth, clumps)
         diff = _luma_green(out) - target
         if best is None or abs(diff) < best[0]:
             best = (abs(diff), out, anc, info)
@@ -130,12 +194,14 @@ def paint(arr, d, seed=0, size=None, blossoms=True, legs=True, crease=True, crea
     return out, anc, info
 
 
-def _paint(arr, d, seed, size, blossoms, legs, bias, crease_depth=1.0):
+def _paint(arr, d, seed, size, blossoms, legs, bias, crease_depth=1.0, clumps=0):
     """Paint the master `arr` (1x RGBA) natively at density d. size=(w, h) in world px rescales
     the design (for the smaller c-tiles shrubs). Returns RGBA uint8 and the anchor (bottom
     centre of the master's box, in output px)."""
     H1, W1 = arr.shape[:2]
     tf, ff, fol, bl, wood = read_master(arr, crease_depth)
+    if clumps:
+        tf = CLUMP_MIX * clump_field(fol, clumps, seed) + (1 - CLUMP_MIX) * tf
     sx = d * (size[0] / W1 if size else 1.0)
     sy = d * (size[1] / H1 if size else 1.0)
     W, H = int(round(W1 * sx)), int(round(H1 * sy))
@@ -198,7 +264,7 @@ def _paint(arr, d, seed, size, blossoms, legs, bias, crease_depth=1.0):
         if rng.random() < 0.12:     # a sibling hue now and then, as a whole leaf
             fi = GREENS.index(['grass_cool', 'leaf', 'grass'][int(rng.integers(0, 3))]) if t < 4 \
                 else GREENS.index('grass')
-        famo[sub] = GREENS.index('grass_cool') if t >= 4 else fi   # r5: the brightest leaves at about 165
+        famo[sub] = GREENS.index('grass_cool') if (t >= 4 or (COOL_LIT and t == 3 and fi == GREENS.index('grass'))) else fi   # r5: the brightest leaves at about 165
         if kind != 'tiny':
             ul = sub & ~(np.roll(sub, 1, 0) & np.roll(sub, 1, 1))
             lr = sub & ~(np.roll(sub, -1, 0) & np.roll(sub, -1, 1))
@@ -267,6 +333,16 @@ def _paint(arr, d, seed, size, blossoms, legs, bias, crease_depth=1.0):
     # r5: on the lit side the leaf closes one tone down in its own green (not a dark line)
     for y, x in zip(*np.nonzero(lit_side)):
         out[y, x, :3] = pk.rgb(GREENS[famo[y, x]], int(max(1, min(2, tone[y, x] - 1))))
+    if kind != 'tiny' and LIT_RIM:
+        # r7: the lit side closes in a leaf-jagged rim one tone down: 1 to 2 px deep, in leaf-sized
+        # bumps (cells of 2 to 3 px), so the crown's sunny outline is leaves, not a traced line
+        dist, (iy, ix) = ndi.distance_transform_edt(painted, return_indices=True)
+        lit_dir = ((iy - yy) < 0) | ((ix - xx) < 0)
+        cell = (((yy // 2) * 73856093) ^ ((xx // 3) * 19349663)) & 0xff
+        deep = np.where(cell % 3 == 0, 2.5, np.where(cell % 3 == 1, 1.5, 1.0))
+        rim = painted & lit_dir & (dist <= deep) & ~edge & (tone >= 3)
+        for y, x in zip(*np.nonzero(rim)):
+            out[y, x, :3] = pk.rgb(GREENS[famo[y, x]], int(tone[y, x] - 1))
     # blossoms: the master's orange dots, 2 x 2 at 2x with one lit pixel
     if blossoms and bl.any() and size is None:
         for y1, x1 in zip(*np.nonzero(bl)):

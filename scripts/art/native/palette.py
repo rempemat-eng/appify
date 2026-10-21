@@ -2,7 +2,8 @@
 
 Every colour comes from art/house-palette.json, plus the kit's proposed accents in
 `accents.json` (each a ramp made by the house rule from one body colour, with its warm and
-cool siblings and its edge tone; to be folded into the house palette by Claude A). Painters
+cool siblings and its edge tone): its rulings ('decided': the meadow's crag #8A5048 wins over
+main's #8A5546) and its proposals, to be folded into the house palette by Claude A. Painters
 draw in (family, tone); colour is applied once, when a picture is written.
 
 Two views of the same palette:
@@ -45,8 +46,9 @@ def add_family(name: str, body: str):
     RAMPS[name + '_cool'] = hp.ramp(c)
 
 
-for _name, _body in ACCENTS['families'].items():
-    add_family(_name, _body)
+for _name, _body in list(ACCENTS.get('decided', {}).items()) + list(ACCENTS['families'].items()):
+    if not _name.startswith('_'):
+        add_family(_name, _body)
 for _name, _edge in ACCENTS['edges'].items():
     EDGES[_name] = _edge
 

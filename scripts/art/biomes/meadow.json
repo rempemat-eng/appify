@@ -2,7 +2,7 @@
  "_about": "The meadow biome: the perfected style scene's choices as data (rules-system.md 2). Painters read 'sheets', 'lawn' and 'shadow'; 'palette' is every colour the biome may use, as [family, tone] codes on the house ramps (tone 6 = the family's edge tone) or 'ink', and a finished picture is restricted to it; 'materials', 'plants' and 'edges' name the kit pieces the biome draws with, so a lane can see what is shared and what a new biome must supply.",
  "id": "meadow",
  "kit": "meadow@1",
- "golden": "art/golden/pilot (r6)",
+ "golden": "art/golden/pilot (r9)",
  "families": [
   "berry",
   "brass",
@@ -296,11 +296,11 @@
  },
  "edges": {
   "_about": "the meadow's edge set, all in the c-tiles painters (terrain/tiles.py, terrain/scene.py)",
-  "turf lip": "tiles.face fringe: one darker row on a 1 px wobble (PROF), a streak zone under it at 2x",
+  "turf lip": "tiles.face fringe: one darker row on a 1 px wobble (PROF), a streak zone under it at 2x; r7: an occasional tuft hangs over it (style.lip.tuft_every), no comb of blades; scene.soften_lip rounds right-angle steps in the plan's soften_lips boxes",
   "face foot": "toe stones straddling every straight foot run every 8 to 14 world px; contact shade 3 rows",
-  "side band": "tiles.top cut bands: a lit west band, a dark east band following the lumps",
-  "floor rim": "the ledge floor reaches a world px further in runs of 3 to 10 world px",
-  "water's edge": "earth bank lit south and east; waterline wobble where a face stands in the pool",
+  "side band": "tiles.top cut bands: a lit west band following the lumps; r7: the dark east band's outer edge a soft wave (no lump teeth)",
+  "floor rim": "r7: the ledge floor's rim and its lit row wander 0 to 3 art px in one-px steps (runs of 2 to 6 world px), the lit row broken now and then",
+  "water's edge": "earth bank lit south and east; waterline wobble where a face stands in the pool; r7: the pool's dark bands traced from its smoothed shoreline (scene.pool_bands, style.water), bank stones in overlapping runs half under the water (plan water.bank_runs), the brook's bank line in runs, its light lane on the outside of bends, shallows inside them, stones standing in it (plan water.brook_stones)",
   "path edge": "tiles.over('trail'): grass over the dirt 1 to 3 world px, tufts and bites, a damp row, crumbs"
  },
  "lawn": {
@@ -329,5 +329,70 @@
   "_about": "every cast shadow: the silhouette thrown east and down by (kx, ky) of its height in world units, two ramp tones down with a one-tone rim, a dappled rim under crowns, a contact line under every foot",
   "dapple_band": 3.2,
   "dapple_seed": 907
+ },
+ "style": {
+  "_about": "r7: the painters' style numbers as data (they read these, with the same values as defaults in code). stone: stone_paint's ramp thresholds on the light, the share of face boulders with moss, world px² of stone per texture mark, the radius (world px) above which a boulder may split into overlapping lumps (r8: 2 lumps, 3 when 6 world px larger still, with curved gaps 1.4 to 3 px wide; about a third of the larger boulders stay whole); the joint between two whole boulders (art px, on the boulder behind, a tone-1 shade beyond, a third of the pairs overlapping with shade only); the share of shade and body under a soft sibling-hue mottle. foliage: readable clumps per crown, the clump field's share of the tone field, the lit side's leaf-jagged rim one tone down, lit leaves on the cool sibling. lawn: the dressing tufts' size range, the calm untufted band round crowns, bushes and trunk bases (world px). lip: world px between the tufts hanging over a lip. water: the pool's shoreline smoothing, its dark bands [family, tone, inset in world px] under rock banks, the brook's half-width range and the run length of its bank line.",
+  "stone": {
+   "ramp": {
+    "cap": 0.86,
+    "body": 0.62,
+    "shade": 0.28
+   },
+   "moss": 0.16,
+   "texture": {
+    "bulge": 22,
+    "pit": 14,
+    "chip": 36,
+    "lichen": 45
+   },
+   "split": 6.0,
+   "joint_px": 2,
+   "mottle": 0.35
+  },
+  "foliage": {
+   "clumps": {
+    "oak": 6,
+    "tree": 5,
+    "bush": 3
+   },
+   "clump_mix": 0.7,
+   "lit_rim": true,
+   "cool_lit": true
+  },
+  "lawn": {
+   "tuft_sizes": [
+    0.8,
+    1.4
+   ],
+   "calm_band": 4.0
+  },
+  "lip": {
+   "tuft_every": 24.0
+  },
+  "water": {
+   "pool_soft": 3.0,
+   "pool_bands": [
+    [
+     "water",
+     0,
+     2.2
+    ],
+    [
+     "water_cool",
+     1,
+     4.2
+    ],
+    [
+     "water",
+     1,
+     6.2
+    ]
+   ],
+   "brook_half_width": [
+    2.5,
+    5.0
+   ],
+   "brook_bank_run": 3.0
+  }
  }
 }

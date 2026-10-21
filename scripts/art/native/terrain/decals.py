@@ -85,6 +85,24 @@ def lump_px(w, h, seed, fams=('crag', 'crag_warm', 'crag_cool'), outline=('crag'
     p = np.pad(m, 1)
     border = m & ~(p[:-2, 1:-1] & p[2:, 1:-1] & p[1:-1, :-2] & p[1:-1, 2:])
     lit = border & ((u + v) < -0.3)
+    if min(w, h) / 2 > _SH.STONE_SPLIT * _SH.D:
+        # r8: a big loose boulder stays whole, with one natural crack: from a notch in its upper
+        # edge, wandering down and across about half its height, a lit lip on its upper-left side
+        y_, x_ = int(h * rng.uniform(0.12, 0.2)), int(w * rng.uniform(0.42, 0.6))
+        while y_ < h and not m[y_, x_]:
+            y_ += 1
+        dx_ = rng.choice([-1, 1])
+        for s_ in range(int(h * rng.uniform(0.4, 0.55))):
+            if not (0 <= y_ < h and 0 <= x_ < w) or not m[y_, x_]:
+                break
+            code[y_, x_] = C('crag', 0)
+            if x_ - 1 >= 0 and m[y_, x_ - 1] and code[y_, x_ - 1] % 8 < 5:
+                code[y_, x_ - 1] += 1
+            y_ += 1
+            if rng.random() < 0.45:
+                x_ += dx_
+            if rng.random() < 0.12:
+                dx_ = -dx_
     code[border] = C(*outline)
     code[lit] = FI[fam] * 8 + 1
     return np.where(m, code, -1)
