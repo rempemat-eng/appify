@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { cozy as c } from '@/lib/cozy';
 import { artOutline } from '@/lib/art-direction';
-import { pixelScale } from '@/lib/pixel-scale';
+import { pixelGrid, pixelScale } from '@/lib/pixel-scale';
 import { switchKeys } from '@/lib/switch-keys';
 
 /**
@@ -139,11 +139,19 @@ export function toneFrom(fill: string, outline: string = artOutline): FrameTone 
 const resolveTone = (tone: FrameToneName | FrameTone) =>
   typeof tone === 'string' ? frameTones[tone] : tone;
 
-/** One garden pixel on screen: 2 on phones, 3 in the wider column. */
-/** One art pixel in CSS pixels: the game's shared grid (lib/pixel-scale.ts). */
+/** One world pixel in CSS pixels: the game's shared grid (lib/pixel-scale.ts). Frames,
+ *  icons, bars and the world are laid out in it at every art density. */
 export function usePixelUnit() {
   const { width } = useWindowDimensions();
   return pixelScale(width, PixelRatio.get());
+}
+
+/** The whole grid for the current window: the world unit, the texel and the density drawn
+ *  at. A frame or icon drawn finer than 1x takes `assetUnit(grid, density)` as its unit
+ *  (lib/pixel-scale.ts). */
+export function usePixelGrid() {
+  const { width } = useWindowDimensions();
+  return pixelGrid(width, PixelRatio.get());
 }
 
 const abs = (style: ViewStyle): ViewStyle => ({ position: 'absolute', ...style });

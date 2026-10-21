@@ -18,6 +18,9 @@ const generators = [
   'residents',
   'decor',
   'world_routes',
+  'world_land',
+  // the cliff core's demos and random-outline proofs (docs/vision/cliff-core/)
+  'cliff_core',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -43,6 +46,8 @@ const generatedTypescript = [
   'lib/world-canvas-assets.ts',
   // the routes between the regions (scripts/art/world_routes.py, lane G)
   'lib/world-routes.ts',
+  // the land between, the edges and the beyond (scripts/art/world_land.py, lane G)
+  'lib/world-land.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 

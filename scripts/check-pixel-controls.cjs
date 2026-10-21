@@ -51,6 +51,8 @@ vm.runInNewContext(
     module: pixelScaleModule,
     exports: pixelScaleModule.exports,
     require: (id) => {
+      // the art density at its default (lib/art-density.ts): one texel a world pixel
+      if (id === '@/lib/art-density-setting') return { ART_DENSITY: 1 };
       assert.equal(id, '@/lib/layout', `Unexpected pixel-scale boundary: ${id}`);
       return { gameLayout: { maxWidth: 576 } };
     },
