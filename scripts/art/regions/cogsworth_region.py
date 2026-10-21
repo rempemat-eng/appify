@@ -96,6 +96,14 @@ WATER = [
     ('lull-below', 4, [(8888, 3112), (8888, 3200), (8920, 3200), (8920, 3304)], 72),
     ('eel-pond', 7, [(7040, 3256), (7072, 3256)], 32),
 ]
+# where each water body comes from and goes (a stream leaving the box names where it goes)
+WATER_ENDS = {
+    'cog-upper': {'source': 'the massif: the Cog off the High Fells, north of the box (Claude G)', 'outlet': "the town's Cog (cogsworth_plan.py)"},
+    'cog-lower': {'source': "the town's Cog, leaving its south-east corner", 'outlet': 'lull-below, at the confluence (8888, 3112)'},
+    'lull-narrows': {'source': 'the Lull, from the old forest north of the box (Claude G)', 'outlet': 'lull-below, at the confluence (8888, 3112)'},
+    'lull-below': {'source': 'lull-narrows and cog-lower at the confluence', 'outlet': "the Lull belt, south of the box (Claude I's lull-delta)"},
+    'eel-pond': {'declared_closed': True, 'note': 'a spring-fed pond at Fernhollow'},
+}
 GORGE_RIM = 2         # tiers of wall each side of the Lull's cut stand at least this high
 
 # --- the routes inside the box: lane H's own lines -------------------------------------------
@@ -161,7 +169,7 @@ def load_routes():
 SET_PIECES = [
     # named things (brief 5), each beside or a short way off its route
     ('burners-camp', 'charcoal burners\' camp', 'charcoal_clamp, burners_hut, cordwood (B #163)', (7384, 2760, 7448, 2808)),
-    ('collapsed-adit', 'collapsed adit', 'a face piece of the cliff core', (7344, 2984, 7376, 3008)),
+    ('collapsed-adit', 'collapsed adit', 'a face piece of the cliff core', (7296, 3104, 7336, 3112)),
     ('pit-head', 'pit head', 'pit_head (B #163)', (7224, 2952, 7272, 2992)),
     ('windmill', 'windmill', 'windmill (B #172)', (7168, 3240, 7216, 3288)),
     ('loops-view', 'a terrace edge over the loops', 'a bench at the shoulder\'s south rim', (7144, 3040, 7176, 3064)),
@@ -171,7 +179,7 @@ SET_PIECES = [
     ('echo-cave', 'echo cave', 'a face piece of the cliff core', (7576, 1840, 7616, 1864)),
     ('cairn', 'cairn', 'cairn (B, REWORK)', (7984, 1912, 8008, 1936)),
     ('crow-roost', 'a crow roost in a dead pine', 'a dead pine (forest kit) with crows', (7848, 1896, 7880, 1928)),
-    ('rail-ruin', 'rail ruin', 'rails, sleepers, a tipped wagon (B queue)', (8448, 2720, 8512, 2752)),
+    ('rail-ruin', 'rail ruin', 'rails, sleepers, a tipped wagon (B queue)', (8488, 2864, 8552, 2896)),
     ('tram-tipple', 'tram tipple', 'tram_tipple (B #163)', (8344, 2808, 8392, 2816)),
     ('narrows-lookout', 'lookout over the Narrows', 'narrows_lookout (B #163)', (8536, 2960, 8568, 2992)),
     # spoil heaps (brief 2), one with the loop round it above the town
@@ -497,8 +505,8 @@ def export_plan(L=None) -> dict:
     markers = [{'t': k, 'what': what, 'at': list(at)} for route, pts in plan.MARKERS.items() for k, what, at in pts
                if not (plan.TOWN_ORIGIN[0] <= at[0] < plan.TOWN_ORIGIN[0] + plan.TOWN_W and plan.TOWN_ORIGIN[1] <= at[1] < plan.TOWN_ORIGIN[1] + plan.TOWN_H)
                and BOX[0] <= at[0] <= BOX[0] + BOX[2] and BOX[1] <= at[1] <= BOX[1] + BOX[3]]
-    water = [{'id': wid, 'kind': 'stream' if width < 64 else 'river', 'width': width, 'tier': wt - BASE,
-              'points': [list(p) for p in pts]} for wid, wt, pts, width in WATER]
+    water = [dict({'id': wid, 'kind': 'stream' if width < 64 else 'river', 'width': width, 'tier': wt - BASE,
+                   'points': [list(p) for p in pts]}, **WATER_ENDS[wid]) for wid, wt, pts, width in WATER]
     # none is in the cliff core's library yet: each is proposed, drawn by Claude B or the kit
     set_pieces = [{'piece': pid, 'biome': 'gorge' if 'pier' in pid else 'coal_hills', 'at': [x0, y0], 'size': [x1 - x0, y1 - y0],
                    'what': what, 'kit': piece, 'seed': i + 1, 'proposed': True}
@@ -526,8 +534,8 @@ def export_plan(L=None) -> dict:
         'edges': [{'side': kind, 'what': what, 'rect': list(rect)} for kind, what, rect in COVER],
         'thresholds': [{'id': t_['id'], 'at': list(t_['at']), 'route': t_['route'], 'sides': list(t_['sides']), 'band': list(t_['band']),
                         'landmark': t_['landmark'], 'residents': t_['residents']} for t_ in plan.THRESHOLDS],
-        'residents': [{'who': 'woodcutter', 'at': [7240, 3060], 'note': 'Fernhollow'}, {'who': 'charcoal burner', 'at': [7496, 2824], 'note': "the burners' camp"},
-                      {'who': 'bargee', 'at': [8528, 3064], 'note': 'the Cog foot (threshold)'}],
+        'residents': [{'who': 'woodcutter', 'at': [7240, 3060], 'note': 'Fernhollow'}, {'who': 'charcoal burner', 'at': [7416, 2816], 'note': "the burners' camp"},
+                      {'who': 'bargee', 'at': [8528, 3024], 'note': 'the Cog foot (threshold), on the north bank by the bridge'}],
         'ground': {'_about': "Ground kinds by place; the coal hills' own colour is dark green and black spoil (world plan 5.3).",
                    'coal hills': 'rough sooty grass, heather out of flower, shale and spoil, dark conifers',
                    'the Narrows': 'gritstone walls, white water, ferns in the spray',

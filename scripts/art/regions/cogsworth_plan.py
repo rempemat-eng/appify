@@ -78,7 +78,7 @@ SPOIL = [(7560, 2264), (8184, 1932), (8424, 3124), (7556, 2132), (8404, 2292)]
 # cogsworth_region.SET_PIECES, laid beside G's routes), route, where, the sprite or kit piece
 NAMED = [
     ('burners-camp', 'camp', (7416, 2784), 'Foothill Road', 'beside the path', 'charcoal_clamp + burners_hut (B, #163)'),
-    ('collapsed-adit', 'cave', (7360, 2996), 'Foothill Road', 'a short way off the path', 'cliff core face piece'),
+    ('collapsed-adit', 'cave', (7316, 3108), 'Foothill Road', 'a short way off the path', 'cliff core face piece'),
     ('pit-head', 'landmark', (7248, 2972), 'Foothill Road', 'beside the path', 'pit_head (B, #163)'),
     ('windmill', 'landmark', (7192, 3264), 'Foothill Road', 'beside the path', 'windmill (B, #172)'),
     ('loops-view', 'view', (7160, 3052), 'Foothill Road', 'beside the path', 'a terrace edge with a bench'),
@@ -88,7 +88,7 @@ NAMED = [
     ('echo-cave', 'cave', (7596, 1852), 'High Fells', 'beside the path', 'cliff core face piece'),
     ('cairn', 'landmark', (7996, 1924), 'High Fells', 'a short way off the path', 'cairn (B, REWORK)'),
     ('crow-roost', 'wild', (7864, 1912), 'High Fells', 'beside the path', 'a dead pine (forest kit) with crows'),
-    ('rail-ruin', 'ruin', (8480, 2736), 'Towpath', 'a short way off the path', 'to draw (B queue)'),
+    ('rail-ruin', 'ruin', (8520, 2880), 'Towpath', 'a short way off the path', 'to draw (B queue)'),
     ('tram-tipple', 'landmark', (8368, 2812), 'Towpath', 'beside the path', 'tram_tipple (B, #163)'),
     ('narrows-lookout', 'view', (8552, 2976), 'Towpath', 'beside the path', 'narrows_lookout (B, #163)'),
 ]
@@ -136,8 +136,8 @@ MARKERS = {
                    ('I', 'gate', (7032, 3176))],
     'Foothill Road': [('S', 'cold fire ring', (7005, 3203)), ('S', 'marker stone', (7052, 3139)), ('I', 'bench', (7107, 3206)),
                       ('S', 'cart with a broken wheel', (7162, 3122)), ('A', 'hares', (7242, 3173)), ('I', 'noticeboard', (7230, 3072)),
-                      ('S', 'mended fence', (7326, 3086)), ('S', 'old boot', (7321, 3020)), ('A', 'moths', (7409, 3031)),
-                      ('I', 'bench', (7437, 2937)), ('S', 'lost hat', (7525, 2982)), ('S', 'cart with a broken wheel', (7503, 2890)),
+                      ('S', 'mended fence', (7326, 3086)), ('S', 'old boot', (7321, 3020)), ('A', 'moths', (7548, 2900)),
+                      ('I', 'bench', (7520, 2900)), ('S', 'lost hat', (7525, 2982)), ('S', 'cart with a broken wheel', (7503, 2890)),
                       ('I', 'noticeboard', (7598, 2872)), ('S', 'tracks', (7551, 2793)), ('A', 'moths', (7631, 2770)),
                       ('I', 'gate', (7616, 2672)), ('S', 'cold fire ring', (7713, 2702)), ('S', 'marker stone', (7702, 2587)),
                       ('A', 'moths', (7816, 2651)), ('I', 'noticeboard', (7776, 2541)), ('S', 'cairn', (7817, 2487)),
@@ -150,9 +150,9 @@ MARKERS = {
                    ('S', 'cart with a broken wheel', (7829, 2248)), ('A', 'moths', (7818, 2379)), ('I', 'gate', (7918, 2328))],
     'Towpath': [('I', 'bench', (8080, 2585)), ('S', 'cairn', (8162, 2616)), ('S', 'tracks', (8145, 2656)), ('A', 'moths', (8196, 2686)),
                 ('I', 'door', (8246, 2722)), ('S', 'cold fire ring', (8196, 2825)), ('S', 'marker stone', (8234, 2867)),
-                ('I', 'bench', (8237, 2928)), ('S', 'cart with a broken wheel', (8352, 2923)), ('A', 'moths', (8363, 3020)),
+                ('I', 'bench', (8237, 2928)), ('S', 'cart with a broken wheel', (8424, 2872)), ('A', 'moths', (8363, 3020)),
                 ('I', 'noticeboard', (8433, 2952)), ('S', 'mended fence', (8504, 2962)), ('S', 'old boot', (8585, 3032)),
-                ('A', 'moths', (8481, 3082)), ('I', 'bench', (8528, 3164)), ('S', 'lost hat', (8432, 3189)),
+                ('A', 'moths', (8528, 3112)), ('I', 'bench', (8528, 3164)), ('S', 'lost hat', (8432, 3189)),
                 ('S', 'cart with a broken wheel', (8501, 3261))],
 }
 BRIEF_TOWN_MARKERS = 18   # the brief's Cogsworth slots, re-laid in TOWN_SLOTS

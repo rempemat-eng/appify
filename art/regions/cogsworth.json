@@ -1876,7 +1876,9 @@
       "points": [
         [7664, 1696],
         [7664, 1968]
-      ]
+      ],
+      "source": "the massif: the Cog off the High Fells, north of the box (Claude G)",
+      "outlet": "the town's Cog (cogsworth_plan.py)"
     },
     {
       "id": "cog-lower",
@@ -1890,7 +1892,9 @@
         [8632, 3064],
         [8632, 3112],
         [8888, 3112]
-      ]
+      ],
+      "source": "the town's Cog, leaving its south-east corner",
+      "outlet": "lull-below, at the confluence (8888, 3112)"
     },
     {
       "id": "lull-narrows",
@@ -1904,7 +1908,9 @@
         [8984, 2896],
         [8888, 2896],
         [8888, 3112]
-      ]
+      ],
+      "source": "the Lull, from the old forest north of the box (Claude G)",
+      "outlet": "lull-below, at the confluence (8888, 3112)"
     },
     {
       "id": "lull-below",
@@ -1916,7 +1922,9 @@
         [8888, 3200],
         [8920, 3200],
         [8920, 3304]
-      ]
+      ],
+      "source": "lull-narrows and cog-lower at the confluence",
+      "outlet": "the Lull belt, south of the box (Claude I's lull-delta)"
     },
     {
       "id": "eel-pond",
@@ -1926,7 +1934,9 @@
       "points": [
         [7040, 3256],
         [7072, 3256]
-      ]
+      ],
+      "declared_closed": true,
+      "note": "a spring-fed pond at Fernhollow"
     }
   ],
   "places": [
@@ -2203,11 +2213,10 @@
     {
       "thing": "collapsed adit",
       "kind": "cave",
-      "at": [7360, 2984],
+      "at": [7316, 3108],
       "route": "Foothill Road",
       "where": "a short way off the path",
-      "piece": "cliff core face piece",
-      "moved_from": [7360, 2996]
+      "piece": "cliff core face piece"
     },
     {
       "thing": "pit head",
@@ -2291,11 +2300,10 @@
     {
       "thing": "rail ruin",
       "kind": "ruin",
-      "at": [8480, 2720],
+      "at": [8520, 2880],
       "route": "Towpath",
       "where": "a short way off the path",
-      "piece": "to draw (B queue)",
-      "moved_from": [8480, 2736]
+      "piece": "to draw (B queue)"
     },
     {
       "thing": "tram tipple",
@@ -2499,13 +2507,12 @@
     {
       "t": "A",
       "what": "moths",
-      "at": [7432, 2984],
-      "moved_from": [7409, 3031]
+      "at": [7548, 2900]
     },
     {
       "t": "I",
       "what": "bench",
-      "at": [7437, 2937]
+      "at": [7520, 2900]
     },
     {
       "t": "S",
@@ -2515,7 +2522,7 @@
     {
       "t": "S",
       "what": "cart with a broken wheel",
-      "at": [7512, 2888],
+      "at": [7512, 2884],
       "moved_from": [7503, 2890]
     },
     {
@@ -2595,8 +2602,7 @@
     {
       "t": "S",
       "what": "cart with a broken wheel",
-      "at": [8352, 2880],
-      "moved_from": [8352, 2923]
+      "at": [8424, 2872]
     },
     {
       "t": "A",
@@ -2625,8 +2631,7 @@
     {
       "t": "A",
       "what": "moths",
-      "at": [8472, 3080],
-      "moved_from": [8481, 3082]
+      "at": [8528, 3112]
     },
     {
       "t": "I",
@@ -2661,8 +2666,8 @@
     {
       "piece": "collapsed-adit",
       "biome": "coal_hills",
-      "at": [7344, 2984],
-      "size": [32, 24],
+      "at": [7296, 3104],
+      "size": [40, 8],
       "what": "collapsed adit",
       "kit": "a face piece of the cliff core",
       "seed": 2,
@@ -2761,7 +2766,7 @@
     {
       "piece": "rail-ruin",
       "biome": "coal_hills",
-      "at": [8448, 2720],
+      "at": [8488, 2864],
       "size": [64, 32],
       "what": "rail ruin",
       "kit": "rails, sleepers, a tipped wagon (B queue)",
@@ -3004,13 +3009,13 @@
     },
     {
       "who": "charcoal burner",
-      "at": [7496, 2824],
+      "at": [7416, 2816],
       "note": "the burners' camp"
     },
     {
       "who": "bargee",
-      "at": [8528, 3064],
-      "note": "the Cog foot (threshold)"
+      "at": [8528, 3024],
+      "note": "the Cog foot (threshold), on the north bank by the bridge"
     }
   ],
   "ground": {
