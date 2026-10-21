@@ -15,9 +15,9 @@ docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.
   shape, to-all-grid-2x);
 - inside the box: every outline, route, place, named thing, pocket and marker, unless it is
   marked outside_box (a marker the brief lists just past the line);
-- paths: widths 24 to 64 (check 17); no straight run longer than 240 px and a bend at least
-  every 300 px along routes (check 16), except bridges and causeways (straight by construction,
-  and on their own deck tier, so the tier rule does not read them either); dead ends of 80 px or more end in a view, a resident, a
+- paths: widths 24 to 64 (check 17); every segment along x or y, turning at cell corners (the
+  grid shape, Matt 21 Oct 11:44, which replaces benchmark 16's bend every 240 to 300 px);
+  bridges and causeways are on their own deck tier, so the tier rule does not read them; dead ends of 80 px or more end in a view, a resident, a
   bench or a story detail (check 20);
 - tiers: a path that crosses from one tier to another does so on a stair at least 34 px wide
   within 24 px of the crossing (checks 19, 21; eastward 6.3: no ramps), and never walks along a
@@ -62,9 +62,6 @@ STAIR_MIN = 34
 NEAR_STAIR = 24
 BESIDE = 48
 OFF = 160
-STRAIGHT_MAX = 240
-BEND_EVERY = 300
-BEND_DEG = 12
 DEAD_MIN = 80
 OBSTACLE_GAP = 800
 DEAD_ENDS = {'view', 'resident', 'bench', 'story'}
@@ -119,22 +116,6 @@ def dist_to_line(p, pts) -> float:
         t = max(0.0, min(1.0, ((p[0] - ax) * dx + (p[1] - ay) * dy) / L2))
         best = min(best, math.hypot(p[0] - ax - t * dx, p[1] - ay - t * dy))
     return best
-
-
-def straight_runs(pts) -> list:
-    """Lengths of the runs between bends of BEND_DEG or more."""
-    runs, cur = [], 0.0
-    for i in range(len(pts) - 1):
-        cur += seg_len(pts[i], pts[i + 1])
-        if i + 2 < len(pts):
-            a = math.atan2(pts[i + 1][1] - pts[i][1], pts[i + 1][0] - pts[i][0])
-            b = math.atan2(pts[i + 2][1] - pts[i + 1][1], pts[i + 2][0] - pts[i + 1][0])
-            d = abs((math.degrees(b - a) + 180) % 360 - 180)
-            if d >= BEND_DEG:
-                runs.append(cur)
-                cur = 0.0
-    runs.append(cur)
-    return runs
 
 
 class Ground:
@@ -217,13 +198,14 @@ def check(plan: dict) -> list:
                 out.append(f'{pid}: {pth["id"]} width {wd} (24 to 64, whole cells)')
         for p in pts:
             inside(p, f'{pth["id"]} point')
-        if pth.get('kind') in SPANS:      # a bridge or causeway runs straight by construction,
-            continue                      # on its own deck tier (Claude I, i-to-f-1150)
-        runs = straight_runs(pts)
-        if max(runs) > STRAIGHT_MAX:
-            out.append(f'{pid}: {pth["id"]} runs straight for {max(runs):.0f} px (at most {STRAIGHT_MAX})')
-        if kind == 'route' and length(pts) > BEND_EVERY and max(runs) > BEND_EVERY:
-            out.append(f'{pid}: {pth["id"]} has no bend for {max(runs):.0f} px')
+        # the grid shape (Matt, 21 Oct 11:44, to-all-grid-2x): a path runs straight along x or y
+        # and turns only at cell corners; this replaces benchmark 16's bend every 240 to 300 px
+        for a, b in zip(pts, pts[1:]):
+            if a[0] != b[0] and a[1] != b[1]:
+                out.append(f'{pid}: {pth["id"]} segment {tuple(a)} to {tuple(b)} is not along x or y')
+                break
+        if pth.get('kind') in SPANS:      # a bridge or causeway: on its own deck tier
+            continue
         if pth.get('dead_end'):
             if pth['dead_end'] not in DEAD_ENDS:
                 out.append(f'{pid}: {pth["id"]} ends in {pth["dead_end"]} (not a view, resident, bench or story)')
@@ -401,6 +383,26 @@ def grid_shape(outline, seed=0) -> list:
     return keep
 
 
+def grid_path(pts, seed=0) -> list:
+    """A path turned into runs along x or y: each slanted segment becomes a step (along its
+    longer axis first), points snapped to the 8 px grid, repeats and mid-run points dropped."""
+    q = [[int(round(x / GRID)) * GRID, int(round(y / GRID)) * GRID] for x, y in pts]
+    out = [q[0]]
+    for a, b in zip(q, q[1:]):
+        if a[0] != b[0] and a[1] != b[1]:
+            out.append([b[0], a[1]] if abs(b[0] - a[0]) >= abs(b[1] - a[1]) else [a[0], b[1]])
+        out.append(b)
+    keep = [out[0]]
+    for i in range(1, len(out) - 1):
+        a, b, c = keep[-1], out[i], out[i + 1]
+        if b == a or (a[0] == b[0] == c[0]) or (a[1] == b[1] == c[1]):
+            continue
+        keep.append(b)
+    if out[-1] != keep[-1]:
+        keep.append(out[-1])
+    return keep
+
+
 def fix(plan: dict) -> list:
     """Move each marker, named thing and pocket that breaks a placement rule to the nearest
     point that keeps them all (walkable ground, beside its path but off it, off stairs, 16 px
@@ -510,6 +512,8 @@ def main(argv) -> int:
             if '--grid' in argv:
                 for t in p.get('tiers', []):
                     t['outline'] = grid_shape(t['outline'])
+                for r in p.get('routes', []) + p.get('trods', []):
+                    r['points'] = grid_path(r['points'])
             if '--dress' in argv:
                 for area, what, at in dress(p):
                     print(f'{pid}: dressed {area} with a {what} at {at}')
