@@ -194,13 +194,13 @@ def heath(p: Plot, m, seed=0):
     flower (a dull plum, never pink), bare peat where the path wears it; calm, so the trees and
     spoil standing on it read."""
     m = np.asarray(m, bool)
-    base(p, m, [('grass_cool', 0.55), ('leaf_cool', 0.25), ('grass', 0.2)], seed, 12, tone=2, light=0.7, dark=0.3)
-    texture(p, m, seed + 1, swaps=0.08, ups=0.02, downs=0.02)
-    heather = m & (fbm(p.x, p.y, 18, seed + 2) > 0.62)
-    stamp(p, heather, 0.18, seed + 3, SMALL, ramp='dusk_cool', tone=2, same_family=False)
+    base(p, m, [('grass_cool', 0.7), ('leaf_cool', 0.3)], seed, 24, tone=2, light=0.78, dark=0.18)
+    texture(p, m, seed + 1, swaps=0.03, ups=0.008, downs=0.01)
+    heather = m & (fbm(p.x, p.y, 22, seed + 2) > 0.7)
+    stamp(p, heather, 0.12, seed + 3, SMALL, ramp='dusk_cool', tone=2, same_family=False)
     peat = m & (fbm(p.x, p.y, 24, seed + 4) < 0.22)
     base(p, peat, [('earth_cool', 0.7), ('soot', 0.3)], seed + 5, 6, tone=2)
-    stamp(p, m & ~peat, 0.03, seed + 6, ck.SMALL, ramp='grass', tone=3, same_family=False)
+    stamp(p, m & ~peat & (fbm(p.x, p.y, 16, seed + 7) > 0.6), 0.04, seed + 6, ck.SMALL, ramp='grass', tone=3, same_family=False)
     p.walk |= m & ~p.hazard
 
 
@@ -629,6 +629,69 @@ PROPS = [
 ]
 
 
+def mast(seed=0):
+    """The airship mast on Gasworks Hill: a tapering lattice tower of riveted iron (two legs
+    seen from the south, braced in an X every 10 px, lit on the west leg), a stair winding up
+    inside it, a platform with a railing at the top and the mooring cone; the airship rides
+    at the cone, nose in, its envelope of doped cloth over ribs lit along its upper west
+    side, a gondola slung beneath with lit windows. Returns (sprite, its foot)."""
+    w, h = 96, 132
+    sp = Sprite(w, h, 18, h - 2)
+    yy, xx = sp.y, sp.x
+    top, foot = 30, h - 2
+    for leg, (xb, xt) in enumerate(((6, 13), (30, 23))):
+        for y in range(top, foot + 1):
+            x = round(xb + (xt - xb) * (foot - y) / (foot - top))
+            sp.put((xx >= x) & (xx < x + 3) & (yy == y), 'iron', 4 if leg == 0 else 2)
+            sp.px(x + (2 if leg == 0 else 0), y, 'iron', 2 if leg == 0 else 1)
+    for y0 in range(top + 4, foot - 4, 12):
+        for i in range(12):
+            y = y0 + i
+            xl = round(6 + 7 * (foot - y) / (foot - top)) + 2
+            xr = round(30 - 7 * (foot - y) / (foot - top))
+            xa = xl + (xr - xl) * i // 12
+            xb_ = xr - (xr - xl) * i // 12
+            sp.px(xa, y, 'iron', 3)
+            sp.px(xb_, y, 'iron_cool', 2)
+        sp.put((yy == y0) & (xx > round(6 + 7 * (foot - y0) / (foot - top)) + 2) & (xx < round(30 - 7 * (foot - y0) / (foot - top))), 'iron', 3)
+    for y in range(top + 6, foot - 2, 4):                       # the stair inside, a flight a storey
+        sp.px(17 + ((y // 4) % 2) * 2, y, 'timber', 3)
+        sp.px(18 + ((y // 4) % 2) * 2, y, 'timber', 4)
+    plat = (yy >= top - 3) & (yy < top) & (xx >= 9) & (xx < 30)
+    sp.put(plat, 'iron', 3)
+    sp.put(plat & (yy == top - 3), 'iron', 4)
+    sp.put((yy >= top - 9) & (yy < top - 3) & (xx >= 9) & (xx < 30) & (((xx - 9) % 3) == 0), 'iron', 2)
+    sp.put((yy == top - 9) & (xx >= 9) & (xx < 30), 'iron', 4)
+    cone = (yy >= top - 16) & (yy < top - 9) & (np.abs(xx - 19.5) <= (yy - (top - 16)) / 2.0 + 1)
+    sp.put(cone, 'brass', 3)
+    sp.put(cone & (xx < 19), 'brass', 4)
+    # the airship, moored nose-in at the cone, lying east
+    cx, cy, rx, ry = 60.0, top - 14.0, 32.0, 11.0
+    u, v = (xx + 0.5 - cx) / rx, (yy + 0.5 - cy) / ry
+    env = (u * u + v * v) <= 1
+    lit = -(u * 0.5) - v * 0.85
+    sp.put(env, 'plaster_cool', 3)
+    sp.t[env & (lit > 0.25)] = 4
+    sp.t[env & (lit > 0.75)] = 5
+    sp.t[env & (lit < -0.45)] = 2
+    sp.t[env & (lit < -0.85)] = 1
+    ribs = env & ((((xx - 30) % 9) == 0)) & (np.abs(u) < 0.92)
+    sp.t[ribs] = np.clip(sp.t[ribs] - 1, 0, 5)
+    band = env & (np.abs(xx - 66) < 2)
+    sp.put(band, 'berry_cool', 2)
+    fins = (xx >= 86) & (xx <= 93) & (np.abs(yy - cy) <= (xx - 84) * 0.9) & ~env & (np.abs(yy - cy) > 2)
+    sp.put(fins, 'berry_cool', 2)
+    sp.put(fins & (yy < cy), 'berry_cool', 3)
+    gond = (xx >= 50) & (xx < 70) & (yy >= cy + ry - 1) & (yy < cy + ry + 6)
+    sp.put(gond, 'timber', 3)
+    sp.put(gond & (yy == int(cy + ry - 1)), 'timber', 4)
+    win = gond & (yy == int(cy + ry + 2)) & (((xx - 50) % 4) < 2) & (xx > 51) & (xx < 68)
+    sp.put(win, 'lamp', 4)
+    for (ax, ay) in ((52, cy + ry - 2), (67, cy + ry - 2)):
+        sp.put((xx == ax) & (yy >= ay - 2) & (yy < ay + 1), 'iron', 2)
+    return sp
+
+
 def front(bid, lay, cw=None, w=None):
     """The house kits' front() at this building's width, with its layout, in Cogsworth's
     kit; and its logic check (hk.logic) on the way."""
@@ -769,6 +832,9 @@ def town(seed=1):
     paste(p, tsp, (tx0 + tx1) // 2, ty1, shadow=tsp.thrown(0.35), block=tsp.m & (tsp.y >= tsp.fy - 8))
     built['clock-tower'] = dict(h=tsp.h - 2, faults=tf, top=ty1 - tsp.h + 2)
     ring(p, *{l[0]: l for l in plan.LANDMARKS}['ring'][2], seed=seed + 97)
+    mx0, my0, mx1, my1 = {l[0]: l for l in plan.LANDMARKS}['airship-mast'][2]
+    ms = mast(seed + 99)
+    paste(p, ms, mx0 + ms.fx, my1, shadow=ms.thrown(0.3) & (ms.x < 40), block=ms.m & (ms.y >= ms.fy - 3) & (ms.x < 36))
     trees(p, seed + 98)
     placed = props(p, seed + 95)
     return p, dict(R=R, T=T, C=C, kind=kind, ways=ways, built=built, props=placed, bridge_face=bridge_face)
