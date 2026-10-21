@@ -115,23 +115,322 @@ def hibiscus() -> Canvas:
     return cv
 
 
+# The boathouse stands on piles at the lagoon's edge, its boat end over the water (Matt's
+# World Logic answer 16): its piles hold it up, not the ground in front of its boat doors.
+PLACEMENT = {'boathouse': 'supported'}
+
+
+SILVER_R = ['#3A3632', '#56504A', '#766E64', '#968C80', '#B4AA9C']  # timber silvered by sun and salt
+
+
+def relay_shingles(cv: Canvas, ridge: float, eave_y: int, w: int, SHINGLE):
+    """Re-lay a top-down roof's surface in whole hand-split shingles (the isles' roofs:
+    the boathouse, the rain shelter)."""
+    # courses 4 rows deep, each throwing a shadow row on the next; shingles 4 to 7 px wide
+    # from three timbers (old, silvered, new); splits, lichen and moss on whole shingles,
+    # the shade slope a step darker, the ridge capped with a board
+    roof_px = [(x, y) for y in range(0, eave_y + 1) for x in range(0, w) if cv.get(x, y)[3]]
+    roof_set = set(roof_px)
+    FRESH = [WOOD[0], WOOD[1], WOOD[2], WOOD[3], WOOD[4]]  # shingles split new from the log, not yet silvered
+    LICHEN = ['#7E8A70', '#A4AE90']  # grey-green lichen rosettes on the old shingles
+    cuts = {}  # shingles are split by hand, 4 to 7 px wide, so each course is laid in its own widths
+    for row in range(eave_y // 4 + 2):
+        x, sh, line = -int(noise2(row, 0, 916) * 5), 0, {}
+        while x < w:
+            wd = 4 + int(noise2(sh, row, 917) * 4)
+            for q in range(wd):
+                line[x + q] = (sh + row * 40, q, wd)
+            x, sh = x + wd, sh + 1
+        cuts[row] = line
+    for (x, y) in roof_px:
+        if (x - 1, y) not in roof_set or (x + 1, y) not in roof_set or (x, y - 1) not in roof_set:
+            continue  # (the roof's outline and verge stay as drawn)
+        shade = x > ridge
+        row, r = y // 4, y % 4
+        sh, q, wd = cuts[row][x]  # which shingle in the course, where across it, and how wide it is
+        n = noise2(sh, row, 910)
+        ramp = FRESH if n > 0.9 else SILVER_R if n > 0.6 else SHINGLE
+        t = (3 if n < 0.3 or n > 0.9 else 2) - (1 if shade else 0)
+        c = ramp[t]
+        if r == 3:
+            c = ramp[max(0, t - 2)]  # the shadow each course throws on the one below, whole across
+        elif q == wd - 1:
+            c = ramp[max(0, t - 1)]  # the gap between two shingles, three rows long
+        elif r == 0 and not shade:
+            c = ramp[min(4, t + 1)]  # the course's butt edge, lit along the sunny plane
+        elif r == 2 and q in (1, 2) and noise2(sh, row, 914) > 0.35:
+            c = ramp[max(0, t - 1)]  # a split weathered into the shingle's foot
+        if r in (1, 2) and q in (2, 3) and wd > 4 and ramp is not FRESH and noise2(sh, row, 915) > 0.66:
+            c = LICHEN[1 if not shade and r == 1 else 0]  # a lichen rosette, two by two
+        if y > eave_y - 9 and r in (1, 2) and q in (0, 1, 2) and noise2(sh, row, 911) > 0.6:
+            c = JUNGLE[3 if r == 1 and not shade else 2] if not shade else JUNGLE[1 if r == 2 else 2]  # moss in the damp near the eaves, on whole shingles
+        if abs(x - ridge) < 1.5:
+            c = WOOD[4] if x < ridge else WOOD[2]  # the ridge board
+        cv.set(x, y, c)
+
+
 def boathouse() -> Canvas:
-    """The ferry's boathouse on the landing, 76 x 70: a timber shed on stilts at the
-    water's edge, a shingled roof, a wide door to the slipway and a lantern."""
-    w, h = 76, 70
+    """The ferry's boathouse at the lagoon's edge, 88 x 116 (size guide: 64 to 112 wide,
+    80 to 112 tall, one storey and a loft, boat doors 40 wide at the water, a slipway 24 to
+    40 wide running at least 16 into the water; Matt's World Logic answer 16). How it is
+    built: a timber shed of upright boards on a timber frame, its back on the sand (the
+    keeper's door is in the back wall, toward the trail) and its boat end standing out over
+    the shallows on piles braced against each other; a shingled roof with its gable to the
+    water, a loft door in the gable under a hoist beam with its block; the boat doors
+    folded back against the front to open the boat bay 40 wide, the slip's two runners
+    going down inside past a dinghy on its cradle and a lamp; out of the doors the slipway,
+    28 wide, planked across its runners with cleats, running down at 1 in 3 into the
+    lagoon, its lower half under the water. Oars racked on the west wall, a net drying, a
+    lifebuoy, a lit window in the east bay, a ladder down to the water."""
+    w, h = 88, 116
     cv = Canvas(w, h, pad=PAD)
-    ridge, apex_y, eave_y, wall_top, wall_bottom = 37.5, 14, 36, 36, 60
-    left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 72, SLATE, seed=901, moss=JUNGLE)
-    topdown_gable(cv, edge_y, 6, 69, apex_y, wall_top, WOOD, boards=True)
-    detail.boards(cv, rect_set(6, wall_top, 64, wall_bottom - wall_top), WOOD, 2, wall_top, board=4, seed=902)
-    for y in range(44, wall_bottom):  # the wide door, open on the dark inside
-        for x in range(24, 46):
-            cv.set(x, y, WOOD[0] if x > 25 else WOOD[3])
-    for sx in (8, 22, 48, 66):  # stilts
-        for y in range(wall_bottom, h):
-            cv.set(sx, y, WOOD[2]); cv.set(sx + 1, y, WOOD[1])
-    cv.rect(52, 44, 4, 6, GOLD[4]); cv.set(53, 43, MATERIALS['iron'][2])
-    detail.overhang_shadow(cv, 6, 70, wall_top, lambda x: 3, k=2, cap=1)
+    ridge, apex_y, eave_y, wall_top, wall_bottom = 43.5, 12, 34, 34, 76
+    SHINGLE = ['#2E2420', '#4A3A30', '#6A5444', '#8A7058', '#A88A6C']
+    left, right, edge_y = topdown_roof(cv, ridge, apex_y, eave_y, 3, 84, SHINGLE, seed=905, moss=None)
+    relay_shingles(cv, ridge, eave_y, w, SHINGLE)
+    gable = topdown_gable(cv, edge_y, 6, 81, apex_y, wall_top, WOOD, boards=True)
+    for (x, y) in sorted(gable):  # the gable's boards: some bleached silver, nailed to two rails, a knot here and there
+        bd, q = (x - 6) // 5, (x - 6) % 5
+        if noise2(bd, 3, 918) > 0.6 and 0 < q < 4 and (x, y - 3) in gable:
+            c = cv.get(x, y)
+            lum = sum(c[:3]) / 3
+            cv.set(x, y, SILVER_R[min(4, max(1, int(lum // 40)))])
+        if q == 2 and y in (wall_top - 4, wall_top - 3, wall_top - 13, wall_top - 12) and (x, y - 2) in gable:
+            cv.set(x, y, MATERIALS['iron'][2] if y % 2 else MATERIALS['iron'][1])  # a nail's head and its rust
+        elif q in (1, 2) and y == wall_top - 8 and noise2(bd, 4, 919) > 0.55 and (x, y - 2) in gable:
+            cv.set(x, y, WOOD[0])  # a knot
+    SILVER = ['#3E3A36', '#5E5850', '#7E766A', '#A0968A', '#C0B6A8']  # boards bleached by sun and salt
+    for x in range(6, 82):  # upright boards, each its own timber, lit on its west edge, a gap between
+        bd = (x - 6) // 4
+        n = noise2(bd, 0, 907)
+        PAINTED = ['#22364A', '#34506A', '#4A6E8A', '#6A8EA8', '#90B0C4']  # boards once painted blue, peeling
+        ramp = SILVER if n > 0.62 else PAINTED if n < 0.16 else WOOD
+        t = 3 if n > 0.8 or 0.16 <= n < 0.3 else 2
+        for y in range(wall_top, wall_bottom):
+            c = ramp[t]
+            if (x - 6) % 4 == 0:
+                c = ramp[0]  # the gap
+            elif (x - 6) % 4 == 1:
+                c = ramp[min(4, t + 1)]
+            if y > wall_bottom - 8:
+                c = ramp[max(0, t - 1)] if (x - 6) % 4 else ramp[0]  # damp and dark low down, where the spray reaches
+            if y in (wall_top + 8, wall_bottom - 10) and (x - 6) % 4 == 2:
+                c = MATERIALS['iron'][2]  # nail heads on the rails behind
+            if noise2(x // 2, y // 3, 908) > 0.84 and (x - 6) % 4 > 1:
+                c = ramp[max(0, t - 1)]  # a knot, a stain
+            elif ramp is PAINTED and noise2(x // 2, y // 2, 912) > 0.7 and (x - 6) % 4 > 1:
+                c = WOOD[2]  # bare wood where the paint has flaked
+            elif y > wall_bottom - 14 and noise2(x // 2, y // 2, 913) > 0.86 and (x - 6) % 4 > 1:
+                c = '#D8D4C8'  # salt dried white where the spray reaches
+            cv.set(x, y, c)
+    # the loft door in the gable, the hoist beam over it with its block and rope
+    for (x, y) in rect_set(38, 20, 12, 12):
+        cv.set(x, y, WOOD[1] if 39 <= x <= 48 and y > 21 else WOOD[4] if y == 20 else WOOD[2])
+    cv.hline(40, 25, 8, WOOD[0])
+    for x in range(40, 50):
+        cv.set(x, 16, WOOD[4]); cv.set(x, 17, WOOD[2])
+    cv.set(48, 18, MATERIALS['iron'][3]); cv.set(48, 19, MATERIALS['iron'][2])
+    for y in range(20, 30):
+        cv.set(48, y, MATERIALS['rope'][2])
+    # the boat bay: 40 wide, open on the dark inside, the slip's runners going down past a dinghy
+    bx0, bx1, by0 = 24, 64, wall_bottom - 32
+    lx_, ly_ = 31, by0 + 7  # the lamp hung inside: its light falls off across the back wall and the floor
+    DUSK = ['#140E0C', '#1C1410', '#261C16', '#30241C', '#3E2E22']  # the boathouse's timber in its own dark
+    for y in range(by0, wall_bottom):
+        for x in range(bx0, bx1):
+            d = math.hypot((x - lx_) * 0.7, y - ly_)
+            lit = 4 if d < 6 else 3 if d < 11 else 2 if d < 17 else 1 if d < 26 else 0
+            c = DUSK[lit]
+            if (x - bx0) % 5 == 0 and y < by0 + 20:
+                c = DUSK[max(0, lit - 1)]  # the back wall's boards, their joints
+            elif (x - bx0) % 5 == 1 and y < by0 + 20 and lit >= 3:
+                c = WOOD[1]  # a board's edge catching the lamp
+            if y in (by0 + 9, by0 + 10) and lit >= 2:
+                c = WOOD[1] if y == by0 + 9 else DUSK[lit - 1]  # the rail the tools hang from
+            if y >= by0 + 20:
+                c = DUSK[max(0, lit - 1)] if (y - by0) % 3 else DUSK[max(0, lit - 2)]  # the floor's planks, going back
+            if x in (bx0 + 10, bx0 + 11, bx1 - 12, bx1 - 11) and y >= by0 + 18:
+                c = WOOD[2] if x in (bx0 + 10, bx1 - 12) and lit >= 1 else WOOD[1] if lit >= 1 else DUSK[2]  # the runners, lit on top
+            cv.set(x, y, c)
+    for (x, y) in rect_set(bx1 - 10, by0 + 11, 2, 7):  # a paddle on the rail, its blade down
+        cv.set(x, y, WOOD[2] if x == bx1 - 10 else WOOD[1])
+    for (x, y) in rect_set(bx1 - 11, by0 + 16, 4, 4):
+        cv.set(x, y, '#3A6A8A' if x < bx1 - 9 else '#2A4E68')
+    for (x, y) in oval(bx1 - 4, by0 + 14, 2.5, 2.5):  # a coil of rope hung on the back wall
+        cv.set(x, y, MATERIALS['rope'][2] if y < by0 + 14 else MATERIALS['rope'][1])
+    for (x, y) in ((bx1 - 4, by0 + 14), ):
+        cv.set(x, y, DUSK[1])
+    for k, fx_ in enumerate((bx1 - 17, bx1 - 15)):  # floats hung on a nail
+        for (x, y) in rect_set(fx_, by0 + 11, 2, 2):
+            cv.set(x, y, ('#E8962A' if k else '#C8463A') if y == by0 + 11 else ('#B86A1A' if k else '#9A3028'))
+    for (x, y) in rect_set(bx0 + 15, by0 + 11, 5, 2):  # a saw on two pegs
+        cv.set(x, y, STONE[3] if y == by0 + 11 else STONE[2])
+    cv.set(bx0 + 20, by0 + 11, WOOD[2]); cv.set(bx0 + 20, by0 + 12, WOOD[1])
+    for (x, y) in rect_set(bx0 + 2, by0 + 5, 2, 14):  # an oar leaning in the corner
+        cv.set(x, y, WOOD[3] if x == bx0 + 2 else WOOD[1])
+    for (x, y) in rect_set(bx0 + 4, by0 + 15, 6, 4):  # a pot of tar and a crate by the corner
+        cv.set(x, y, '#2A2420' if x < bx0 + 7 else (WOOD[2] if y == by0 + 15 else WOOD[1]))
+    cv.hline(bx0 + 4, by0 + 15, 3, '#5A4A3A')
+    hull_ = oval(44, wall_bottom - 8, 9, 3.5)
+    for (x, y) in hull_:  # the dinghy on its cradle: white hull, a blue sheer strake, its gunwale lit
+        top = y < wall_bottom - 8
+        c = CREAM[3] if top and x < 44 else CREAM[2] if top else CREAM[1]
+        if y == wall_bottom - 8:
+            c = '#3A6A8A' if x < 46 else '#2A4E68'
+        cv.set(x, y, c)
+    for (x, y) in oval(44, wall_bottom - 10, 6, 1.4):  # inside the boat, its bottom boards in shade
+        cv.set(x, y, WOOD[1] if x < 44 else DUSK[4])
+    cv.hline(42, wall_bottom - 10, 3, WOOD[3])  # the thwart
+    cv.hline(37, wall_bottom - 11, 15, WOOD[3])
+    for ox_ in (37, 51):
+        cv.set(ox_, wall_bottom - 12, MATERIALS['iron'][3])  # the rowlocks
+    for (x, y) in rect_set(38, wall_bottom - 4, 2, 4):  # the cradle's chocks under it
+        cv.set(x, y, WOOD[2] if x == 38 else WOOD[1])
+    for (x, y) in rect_set(49, wall_bottom - 4, 2, 4):
+        cv.set(x, y, WOOD[2] if x == 49 else WOOD[1])
+    for (x, y) in rect_set(lx_, ly_ - 1, 3, 4):  # the lamp, its glow on the beam above
+        cv.set(x, y, GOLD[4] if y < ly_ + 1 else GOLD[3])
+    cv.set(lx_ + 1, ly_ - 2, MATERIALS['iron'][2])
+    cv.hline(lx_ - 2, by0 + 3, 7, WOOD[2])
+    cv.hline(bx0 - 2, by0 - 2, bx1 - bx0 + 4, WOOD[4]); cv.hline(bx0 - 2, by0 - 1, bx1 - bx0 + 4, WOOD[1])  # its lintel
+    for (dx0, dx1) in ((bx0 - 12, bx0 - 2), (bx1 + 2, bx1 + 12)):  # the doors folded back against the front: ledged and braced
+        west = dx0 < bx0
+        for y in range(by0, wall_bottom):
+            for x in range(dx0, dx1):
+                bd = (x - dx0) // 5
+                n = noise2(bd + (0 if west else 7), 5, 920)
+                ramp = SILVER_R if n > 0.55 else WOOD
+                t = 3 if west else 2
+                c = ramp[t] if (x - dx0) % 5 else ramp[t - 2]  # each board its own timber, a dark joint between
+                if (x - dx0) % 5 == 1:
+                    c = ramp[min(4, t + 1)] if west else ramp[t]
+                if y in (by0 + 4, by0 + 5, wall_bottom - 6, wall_bottom - 5):
+                    c = WOOD[3 if y in (by0 + 4, wall_bottom - 6) else 1] if west else WOOD[2 if y in (by0 + 4, wall_bottom - 6) else 0]  # the ledges, lit along their tops
+                elif by0 + 5 < y < wall_bottom - 6 and abs((x - dx0) - (y - by0 - 6) * (dx1 - dx0 - 1) / (wall_bottom - by0 - 12)) < 1:
+                    c = WOOD[2] if west else WOOD[1]  # the brace, climbing to the hinge side
+                if y > wall_bottom - 9 and noise2(x // 2, y // 2, 921) > 0.72 and (x - dx0) % 5 > 1:
+                    c = '#D8D4C8'  # salt dried white low down
+                cv.set(x, y, c)
+        hx = dx1 - 3 if west else dx0
+        for hy in (by0 + 4, wall_bottom - 6):  # the strap hinges, iron, with their nail heads
+            cv.hline(hx, hy, 3, MATERIALS['iron'][3]); cv.hline(hx, hy + 1, 3, MATERIALS['iron'][1])
+    for k in range(4):  # a string of net floats hung on the west door, cork and painted glass
+        fx_, fy_ = bx0 - 11 + k * 2, by0 + 14 + k * 3
+        cv.set(fx_ + 1, fy_ - 1, MATERIALS['rope'][2])
+        for (x, y) in rect_set(fx_, fy_, 2, 2):
+            cv.set(x, y, (('#E8962A', '#B86A1A'), ('#C8463A', '#9A3028'), ('#D8D0BC', '#A89E88'), ('#5A9AB8', '#3A6A8A'))[k][0 if y == fy_ else 1])
+    tb0 = by0 + 12  # the ferry's times on a board nailed to the east door: cream, ruled in black
+    for (x, y) in rect_set(bx1 + 4, tb0, 7, 8):
+        c = '#E8DCC0' if x < bx1 + 10 else '#C8BC9C'
+        if y == tb0:
+            c = '#2E5A7A'
+        elif (y - tb0) % 2 == 0 and bx1 + 5 <= x <= bx1 + 8:
+            c = '#3A3028'
+        cv.set(x, y, c)
+    cv.set(bx1 + 4, tb0 + 8, WOOD[0]); cv.set(bx1 + 10, tb0 + 8, WOOD[0])
+
+    # the east bay's window, lamplit; oars racked and a net drying on the west
+    wx, wy = 72, wall_top + 8
+    for y in range(wy, wy + 12):
+        for x in range(wx, wx + 8):
+            c = GOLD[3] if y < wy + 5 else GOLD[2]
+            if x in (wx, wx + 7) or y in (wy, wy + 11) or y == wy + 5:
+                c = WOOD[4] if x == wx or y == wy else WOOD[1]
+            cv.set(x, y, c)
+    cv.hline(wx - 1, wy + 12, 10, WOOD[4])
+    for k, ox_ in enumerate((8, 11, 14)):  # oars, blades up
+        for y in range(wall_top + 6, wall_bottom - 4):
+            cv.set(ox_, y, WOOD[4] if k % 2 else WOOD[3])
+        for (x, y) in rect_set(ox_ - 1, wall_top + 3, 3, 4):
+            cv.set(x, y, '#3A6A8A' if k != 1 else '#C8463A')
+    for y in range(wall_top + 4, wall_top + 16):  # a net hung to dry, its floats
+        for x in range(16, 22):
+            if (x + y) % 3 == 0 or (x - y) % 3 == 0:
+                cv.set(x, y, '#C8BC98' if y < wall_top + 10 else '#A89A74')
+    for fx in (17, 20):
+        cv.set(fx, wall_top + 15, '#E8962A')
+    for (x, y) in disc(76, wall_bottom - 8, 3):  # a lifebuoy on the east wall
+        d = math.hypot(x - 76, y - wall_bottom + 8)
+        if d > 1.3:
+            q = (x >= 76) ^ (y >= wall_bottom - 8)
+            cv.set(x, y, ('#F2ECDE' if y < wall_bottom - 8 else '#C8C0B0') if q else (RED[3] if y < wall_bottom - 8 else RED[2]))
+    for x in list(range(6, bx0 - 1)) + list(range(bx1 + 1, 82)):  # green weed where the spray keeps the boards wet, in clumps
+        for y in range(wall_bottom - 4, wall_bottom):
+            n = noise2(x // 3, (y - wall_bottom) // 2, 922)
+            if n > 0.5 - (y - (wall_bottom - 4)) * 0.08:
+                cv.set(x, y, JUNGLE[2] if y < wall_bottom - 2 and n > 0.65 else JUNGLE[1])
+    cv.hline(74, wall_bottom - 4, 5, MATERIALS['iron'][3]); cv.hline(75, wall_bottom - 3, 3, MATERIALS['iron'][1])  # a cleat by the ladder
+    for (x, y) in oval(77, wall_bottom - 2, 3, 1.2):  # the mooring line coiled on it
+        cv.set(x, y, MATERIALS['rope'][3] if y < wall_bottom - 2 else MATERIALS['rope'][1])
+    for (x, y) in rect_set(17, wall_bottom - 6, 4, 5):  # a bailing bucket on the sill, hooped
+        c = WOOD[3] if x < 19 else WOOD[1]
+        if y in (wall_bottom - 5, wall_bottom - 2):
+            c = MATERIALS['iron'][2]
+        cv.set(x, y, c)
+    cv.hline(17, wall_bottom - 7, 4, '#24343A')
+    for (x, y) in rect_set(30, wall_top + 2, 28, 5):  # the ferry's name board over the bay, painted
+        c = '#2E5A7A' if 30 < x < 57 and wall_top + 2 < y < wall_top + 6 else '#E8DCC0'
+        if c == '#2E5A7A' and (x // 2) % 3 and y == wall_top + 4:
+            c = '#F2ECDA'  # its lettering, abstract strokes
+        cv.set(x, y, c)
+    for (x, y) in rect_set(66, wall_top + 2, 3, 4):  # a storm lantern on a bracket by the window
+        cv.set(x, y, GOLD[4] if y < wall_top + 4 else GOLD[3])
+    cv.hline(65, wall_top + 1, 5, MATERIALS['iron'][2])
+    detail.overhang_shadow(cv, 6, 82, wall_top, lambda x: 3, k=2, cap=1)
+    # the sill beam the front stands on, and the piles into the shallows, cross-braced
+    cv.hline(5, wall_bottom, 78, WOOD[4]); cv.hline(5, wall_bottom + 1, 78, WOOD[2]); cv.hline(5, wall_bottom + 2, 78, WOOD[0])
+    pile_bot = wall_bottom + 14
+    for sx in (7, 20, 66, 79):
+        for y in range(wall_bottom + 3, pile_bot):
+            cv.set(sx, y, WOOD[3]); cv.set(sx + 1, y, WOOD[2]); cv.set(sx + 2, y, WOOD[1])
+            if y > pile_bot - 4:
+                cv.set(sx, y, '#3A5A54'); cv.set(sx + 1, y, '#2A4A44'); cv.set(sx + 2, y, '#24403C')  # the wet, weeded foot
+            elif y > pile_bot - 7 and (y + sx) % 3 == 0:
+                cv.set(sx, y, '#D8D0BC'); cv.set(sx + 1, y, '#B8B0A0')  # barnacles above the waterline
+        for x in range(sx - 2, sx + 5):  # the ring the water makes round it
+            cv.set(x, pile_bot, '#8ACCC8' if x in (sx - 2, sx + 4) else '#5AA8A8')
+    for (a0, a1) in ((7, 20), (66, 79)):  # the braces between the piles
+        for t in range(a1 - a0):
+            cv.set(a0 + 2 + t, wall_bottom + 4 + t * 8 // (a1 - a0), WOOD[2])
+    for y in range(wall_bottom + 3, pile_bot):  # the dark under the floor, between the piles
+        for x in range(23, 66):
+            if cv.get(x, y)[3] == 0:
+                cv.set(x, y, '#13403E' if y < wall_bottom + 8 else '#1A5452')
+    for y in range(wall_bottom - 2, pile_bot + 2):  # a ladder down the east pile to the water
+        cv.set(83, y, WOOD[3]); cv.set(86, y, WOOD[1])
+        if (y - wall_bottom) % 3 == 0:
+            cv.hline(84, y, 2, WOOD[4])
+    # the slipway: 28 wide, planked across two runners, down out of the doors into the lagoon
+    s0, s1 = 30, 58
+    for y in range(wall_bottom + 1, h - 2):
+        k = (y - wall_bottom) / (h - 2 - wall_bottom)
+        for x in range(s0, s1):
+            pr = SILVER if noise2((y - wall_bottom) // 4, 1, 909) > 0.55 else WOOD
+            c = pr[3] if (y - wall_bottom) % 4 else pr[1]  # the planks, each its own timber, their joints
+            if (y - wall_bottom) % 4 == 1:
+                c = pr[4]
+            elif (y - wall_bottom) % 4 == 3:
+                c = pr[2]
+            if x in (s0 + 4, s0 + 5, s1 - 6, s1 - 5):
+                c = WOOD[2] if (y - wall_bottom) % 4 else WOOD[0]  # the runners
+            if x in (s0, s1 - 1):
+                c = WOOD[1]
+            if (y - wall_bottom) % 8 == 2 and x in (s0 + 13, s0 + 14):
+                c = MATERIALS['iron'][3]  # a cleat
+            if k > 0.45:  # under the water: the planks seen through the lagoon, green and dimmer as it deepens
+                deep = k > 0.75
+                SUNK = ('#5AAEA6', '#48A09C', '#3A9294') if not deep else ('#44A8A8', '#3A9EA0', '#329496')
+                c = SUNK[0] if (y - wall_bottom) % 4 == 1 else SUNK[2] if (y - wall_bottom) % 4 == 0 or x in (s0 + 4, s0 + 5, s1 - 6, s1 - 5) else SUNK[1]
+            cv.set(x, y, c)
+    for y in range(wall_bottom + int(0.45 * (h - 2 - wall_bottom)) + 2, h - 2, 3):  # ripples lapping along its sunk edges
+        for (x, d) in ((s0 - 1, -1), (s1, 1)):
+            cv.set(x, y, '#8ACCC8'); cv.set(x + d, y, '#5AA8A8')
+    for x in range(s0, s1):  # its far end fading into the lagoon
+        if (x // 3) % 2:
+            cv.set(x, h - 3, '#3A9EA0')
+    for x in range(s0 - 1, s1 + 1):  # where the slip goes under, a lip of foam
+        y = wall_bottom + int(0.45 * (h - 2 - wall_bottom)) + 1
+        cv.set(x, y, '#D8F0EC' if x % 3 else '#A8DCD8')
     return cv
 
 
@@ -389,29 +688,74 @@ def crab() -> Canvas:
 
 
 def rain_shelter() -> Canvas:
-    """A walkers' rain shelter on the upland, 60 x 56: four timber posts under a
-    shingled roof, a plank bench inside, a water jug on it. Modest and made here, not
-    borrowed from anyone's temple or resort."""
+    """A walkers' rain shelter on the upland, 60 x 56: four timber posts with knee braces
+    under a roof of hand-split shingles, a back rail with a board of the trails nailed to
+    it, a plank bench inside, a water jug and someone's pack left on it, a storm lantern
+    hung from the tie beam. Modest and made here, not borrowed from anyone's temple or
+    resort."""
     w, h = 60, 56
     cv = Canvas(w, h, pad=PAD)
     ridge, apex_y, eave_y = 29.5, 6, 26
-    topdown_roof(cv, ridge, apex_y, eave_y, 2, 58, SLATE, seed=911, moss=JUNGLE)
-    for y in range(eave_y + 1, h - 4):  # the dark under the roof
+    SHINGLE = ['#2E2420', '#4A3A30', '#6A5444', '#8A7058', '#A88A6C']
+    topdown_roof(cv, ridge, apex_y, eave_y, 2, 58, SHINGLE, seed=911, moss=None)
+    relay_shingles(cv, ridge, eave_y, w, SHINGLE)
+    under = topdown_gable(cv, lambda x: apex_y + abs(x + 0.5 - ridge) * (eave_y - apex_y) / (ridge - 2),
+                          5, 54, apex_y, eave_y + 1, WOOD, boards=False)
+    for (x, y) in under:  # the open gable: the roof's underside, its rafters and battens in the dark
+        c = '#1E1612' if (y - apex_y) % 3 else '#2A201A'  # the battens, row by row
+        if (x - 5) % 6 in (0, 1):
+            c = WOOD[1] if (x - 5) % 6 == 0 and x < ridge else '#3A2A20'  # a rafter, lit a little on the sunny side
+        if abs(x - ridge) < 1.5:
+            c = WOOD[1]  # the ridge beam
+        cv.set(x, y, c)
+    for y in range(eave_y + 1, h - 4):  # the dark under the roof, the far hillside seen between the posts
         for x in range(6, 54):
-            cv.set(x, y, WOOD[0] if y < eave_y + 5 else '#2A3A2A')
+            c = WOOD[0] if y < eave_y + 5 else '#2A3A2A' if y < h - 12 else '#34482E'
+            if y >= h - 12 and noise2(x // 2, y // 2, 925) > 0.6:
+                c = '#2A3A2A'  # the grass under the bench, in its shade
+            cv.set(x, y, c)
+    for x in range(6, 54):  # the tie beam under the eaves, and the back rail
+        cv.set(x, eave_y + 1, WOOD[3] if x < 30 else WOOD[2]); cv.set(x, eave_y + 2, WOOD[1])
+        cv.set(x, h - 26, WOOD[2]); cv.set(x, h - 25, WOOD[0])
+    for (x, y) in rect_set(18, h - 34, 14, 10):  # the board of the trails: its map burnt into the wood
+        c = WOOD[3] if x < 31 else WOOD[2]
+        if x in (18, 31) or y in (h - 34, h - 25):
+            c = WOOD[1]
+        cv.set(x, y, c)
+    for (x, y) in ((20, h - 31), (21, h - 31), (22, h - 30), (23, h - 30), (24, h - 29), (25, h - 29),
+                   (26, h - 30), (27, h - 31), (28, h - 31), (24, h - 28), (24, h - 27)):
+        cv.set(x, y, '#3A2418')  # the trails, burnt in
+    cv.set(26, h - 29, RED[3]); cv.set(27, h - 29, RED[3])  # you are here
+    for (x, y) in rect_set(46, eave_y + 3, 3, 4):  # a storm lantern on a hook from the tie beam
+        cv.set(x, y, GOLD[4] if y < eave_y + 5 else GOLD[3])
+    cv.hline(46, eave_y + 3, 3, MATERIALS['iron'][2]); cv.hline(46, eave_y + 7, 3, MATERIALS['iron'][1])
     for x in range(10, 50):  # the bench
         for y in range(h - 16, h - 12):
             cv.set(x, y, WOOD[4] if y == h - 16 else WOOD[3] if (x % 6) else WOOD[1])
         cv.set(x, h - 12, WOOD[1])
     for lx in (14, 44):
         for y in range(h - 12, h - 7):
-            cv.set(lx, y, WOOD[1])
+            cv.set(lx, y, WOOD[2]); cv.set(lx + 1, y, WOOD[1])
     for (x, y) in oval(38, h - 19, 2.5, 3):  # a water jug
         cv.set(x, y, '#B86A44' if x < 38 else '#8A4A30')
-    for px_ in (4, 54):  # posts, lit on their left
+    cv.set(37, h - 22, '#D88A5A'); cv.set(38, h - 22, '#B86A44')
+    for (x, y) in rect_set(20, h - 21, 7, 5):  # someone's pack, its flap and a rolled mat
+        c = '#4A6A3A' if x < 25 else '#3A5230'
+        if y == h - 21:
+            c = '#5A7C46'
+        if y == h - 18:
+            c = '#2A3A22'
+        cv.set(x, y, c)
+    cv.hline(20, h - 22, 7, '#C8B488'); cv.hline(21, h - 23, 5, '#D8C498')
+    for px_ in (4, 54):  # posts, lit on their left, with knee braces up to the tie beam
         for y in range(eave_y - 2, h - 2):
             cv.set(px_, y, WOOD[3]); cv.set(px_ + 1, y, WOOD[2]); cv.set(px_ + 2, y, WOOD[1])
+        d = 1 if px_ < 30 else -1
+        for t in range(5):
+            bx = px_ + 2 + t if d > 0 else px_ - t
+            cv.set(bx, eave_y + 7 - t, WOOD[2]); cv.set(bx, eave_y + 8 - t, WOOD[1])
         cv.rect(px_ - 1, h - 3, 5, 2, STONE[2])  # its stone footing
+        cv.hline(px_ - 1, h - 3, 5, STONE[3])
     detail.overhang_shadow(cv, 6, 54, eave_y + 1, lambda x: 3, k=2, cap=1)
     return cv
 

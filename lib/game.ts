@@ -46,6 +46,7 @@ import {
 } from '@/lib/break-history';
 import { launchCareUntil, isGardenTip, type GardenTipId } from '@/lib/first-session';
 import { moveTo, restoreWorld, type WorldSpot } from '@/lib/world-save';
+import { acknowledgeMapSeen, restoreMapSeen } from '@/lib/world-map';
 import {
   checkDecor,
   DEFAULT_HUT_LOOK,
@@ -83,6 +84,8 @@ import {
   type CompanionMemoryOffer,
 } from '@/lib/companion-memories';
 
+// `grass` (and a raid's grass_amount) is the Dream Dust balance: the currency was renamed
+// from GRASS on 20 Oct, and the saved and database field names stay as they were.
 export type Player = Database['public']['Tables']['players']['Row'];
 export type Raid = Database['public']['Tables']['raids']['Row'];
 export const ink = '#4A3B35';
@@ -192,7 +195,7 @@ export type Saved = {
   tickAt: number;
   offStart: number;
   offDeck: CardId[] | null;
-  offGrass: number;
+  offGrass: number; // Dream Dust when the nap began (saved name kept)
   outgoing: Raid[];
   staged: Incoming[];
   applied: string[];
@@ -202,6 +205,8 @@ export type Saved = {
   cardReward: WelcomeReward | null;
   /** where the companion is in the walkable world (none until it first walks out) */
   world?: WorldSpot | null;
+  /** Discoveries acknowledged when the map was opened; no reward or unlock. */
+  mapSeen?: string[];
   /** keepsakes set out in the nap hut (the rest wait in the chest; lib/decor.ts) */
   decor?: DecorPlacement[];
   /** the hut's door, window boxes and path, as chosen while decorating (lib/decor.ts) */
@@ -263,12 +268,15 @@ type Game = Saved & {
   dismissAlert: () => void;
   notify: (message: string, error?: boolean) => void;
   world: WorldSpot | null;
-  /** record where the companion stands in the world; walking grants nothing */
-  walkWorld: (region: RegionId, x: number, y: number, settle?: boolean) => void;
+  mapSeen: string[];
+  markWorldMapSeen: (capturedVisited: readonly string[]) => void;
+  /** record where the companion stands in the world (`level` 1: on a deck above x/y);
+   *  walking grants nothing */
+  walkWorld: (region: RegionId, x: number, y: number, settle?: boolean, level?: 1) => void;
   decor: DecorPlacement[];
   /** set a found keepsake on the hut's floor (or move it there); free, and refused if it
    *  would stand in the way */
-  placeDecor: (item: string, x: number, y: number, area?: DecorArea) => DecorCheck;
+  placeDecor: (item: string, x: number, y: number, area?: DecorArea, flip?: boolean) => DecorCheck;
   /** put a keepsake back in the chest */
   storeDecor: (item: string) => void;
   hutLook: HutLook;
@@ -357,7 +365,9 @@ function migrateSaved(value: unknown) {
   if (value.waitingVisitor === undefined) value.waitingVisitor = null;
   if (value.offDeck === undefined) value.offDeck = null;
   if (value.cardReward === undefined) value.cardReward = null;
-  value.world = restoreWorld(value.world);
+  const world = restoreWorld(value.world);
+  value.world = world;
+  value.mapSeen = restoreMapSeen(value.mapSeen, world);
   value.decor = restoreDecor(
     value.decor,
     isRecord(value.world) && isStringArray(value.world.visited) ? value.world.visited : [],
@@ -497,6 +507,7 @@ function emptyGarden(now: number): Saved & { recentBreaks: RecentBreak[]; breakI
     waitingVisitor: null,
     cardReward: null,
     world: null,
+    mapSeen: [],
     decor: [],
     hutLook: { ...DEFAULT_HUT_LOOK },
   };
@@ -588,7 +599,8 @@ export function resolveTogetherSession(session: TogetherSession) {
         s.cardReward?.sessionId === session.id
           ? { ...s.cardReward, grass: s.cardReward.grass + bonus }
           : s.cardReward,
-      message: s.cardReward?.sessionId === session.id ? null : `TOGETHER! +${bonus} BONUS GRASS`,
+      message:
+        s.cardReward?.sessionId === session.id ? null : `TOGETHER! +${bonus} BONUS DREAM DUST`,
       voice: 'we touched grass together.',
     });
     feedback();
@@ -639,6 +651,7 @@ function persist() {
     collectedCards: s.collectedCards,
     cardReward: s.cardReward,
     world: s.world,
+    mapSeen: s.mapSeen,
     decor: s.decor,
     hutLook: s.hutLook,
     waitingVisitor: s.waitingVisitor,
@@ -883,17 +896,28 @@ export const gameStore = create<Game>((set, get) => ({
   cardReward: null,
   waitingVisitor: null,
   world: null,
+  mapSeen: [],
+  markWorldMapSeen: (capturedVisited) => {
+    const s = get();
+    if (!saveWritable || !s.ready || !s.player) return;
+    const mapSeen = acknowledgeMapSeen(s.mapSeen, capturedVisited, s.world);
+    if (mapSeen.length === s.mapSeen.length && mapSeen.every((id, i) => id === s.mapSeen[i]))
+      return;
+    set({ mapSeen });
+    void persist();
+  },
   decor: [],
-  placeDecor: (item, x, y, area = 'hut') => {
+  placeDecor: (item, x, y, area = 'hut', flip = false) => {
     const s = get();
     if (!s.player || !foundKeepsakes(s.world?.visited ?? []).includes(item))
       return { ok: false, why: 'unknown' };
     const check = checkDecor(area, s.decor, item, x, y);
     if (!check.ok) return check;
+    const turned = flip ? { flip: true as const } : {};
     set({
       decor: [
         ...s.decor.filter((p) => p.item !== item),
-        area === 'garden' ? { item, x, y, area } : { item, x, y },
+        area === 'garden' ? { item, x, y, area, ...turned } : { item, x, y, ...turned },
       ],
     });
     void persist();
@@ -919,14 +943,14 @@ export const gameStore = create<Game>((set, get) => ({
     set({ hutLook: next });
     void persist();
   },
-  walkWorld: (region, x, y, settle = false) => {
+  walkWorld: (region, x, y, settle = false, level) => {
     const s = get();
     if (!s.player) return;
-    const next = moveTo(s.world, region, x, y);
+    const next = moveTo(s.world, region, x, y, level);
     const before = s.world;
     set({ world: next });
     // (a place walked for the first time leaves its keepsake in the hut's chest; the
-    // world screen says so quietly, app/world.tsx)
+    // world screen says so quietly, app/(tabs)/world.tsx)
     // write when a zone is first seen or the region changes; positions ride along
     if (
       settle ||
@@ -1762,8 +1786,8 @@ export const gameStore = create<Game>((set, get) => ({
     const p = get().player;
     if (!p || !get().battle) return;
     const day = get().rules.days[dayKey()] ?? emptyDay();
-    const practiceGrass = sparringReward(day, won);
-    const amount = raidGrass(won, target);
+    const practiceDreamDust = sparringReward(day, won);
+    const amount = raidDreamDust(won, target);
     const raid: Raid = {
       id: Crypto.randomUUID(),
       attacker_id: p.id,
@@ -1776,11 +1800,13 @@ export const gameStore = create<Game>((set, get) => ({
     set({
       rules: bumpDay(get().rules, dayKey(), {
         sparringWins: practice && won ? 1 : 0,
-        grass: practice ? practiceGrass : won ? amount : 0,
+        grass: practice ? practiceDreamDust : won ? amount : 0,
       }),
       player: {
         ...p,
-        grass: practice ? p.grass + practiceGrass : Math.max(0, p.grass + (won ? amount : -amount)),
+        grass: practice
+          ? p.grass + practiceDreamDust
+          : Math.max(0, p.grass + (won ? amount : -amount)),
       },
       outgoing: practice ? get().outgoing : [...get().outgoing, raid],
       battle: null,
@@ -1851,7 +1877,7 @@ gameStore.subscribe(() => {
   if (!accounting && eligiblePlay() !== playEligible) accountPlay();
 });
 export const useGame = gameStore;
-export function raidGrass(won: boolean, target: Player) {
+export function raidDreamDust(won: boolean, target: Player) {
   return won ? Math.min(target.grass, Math.max(10, Math.floor(target.grass * 0.3))) : 10;
 }
 export function bot(p: Player): Player {

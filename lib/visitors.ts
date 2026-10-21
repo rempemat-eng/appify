@@ -28,7 +28,7 @@ export type WelcomeReward = {
   cards: import('@/lib/cards').CardId[];
   minutes: number;
   mission: string | null;
-  grass: number;
+  grass: number; // Dream Dust (saved name kept from GRASS)
   visitor: VisitorId | null;
   postcard: Postcard | null;
   hat: string | null;

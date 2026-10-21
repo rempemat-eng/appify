@@ -5,24 +5,33 @@ import { createAudioPlayer, setAudioModeAsync, type AudioPlayer } from 'expo-aud
 import { create } from 'zustand';
 import { onFeedback, type FeedbackKind } from '@/lib/game';
 import { ambienceLoops, soundEffects, type AmbienceId, type SoundId } from '@/lib/sound-assets';
+import { cueAllowed, emptyHistory, played } from '@/lib/sound-rules';
 
 /**
  * Sound is decoration (docs/vision/sound.md). It never gates a rule or a
  * reward, every effect is short and finite, and only the garden ambience loops.
  * Loudness is baked into the files, so players always run at volume 1.
  */
-const keys = { effects: 'napattack-sound-effects', ambience: 'napattack-sound-ambience' };
+const keys = {
+  effects: 'napattack-sound-effects',
+  ambience: 'napattack-sound-ambience',
+  gentle: 'napattack-sound-gentle',
+};
 
 // This callable Zustand store is a Hook: the use-prefix keeps compiler calls unconditional.
 export const useSoundPreference = create<{
   effects: boolean;
   ambience: boolean;
+  /** Gentle sound, the reduced-stimulation setting (lib/sound-rules.ts): off by default */
+  gentle: boolean;
   loaded: boolean;
   setEffects: (on: boolean) => Promise<void>;
   setAmbience: (on: boolean) => Promise<void>;
+  setGentle: (on: boolean) => Promise<void>;
 }>((set) => ({
   effects: true,
   ambience: true,
+  gentle: false,
   loaded: false,
   setEffects: async (effects) => {
     await AsyncStorage.setItem(keys.effects, JSON.stringify(effects));
@@ -32,6 +41,10 @@ export const useSoundPreference = create<{
   setAmbience: async (ambience) => {
     await AsyncStorage.setItem(keys.ambience, JSON.stringify(ambience));
     set({ ambience });
+  },
+  setGentle: async (gentle) => {
+    await AsyncStorage.setItem(keys.gentle, JSON.stringify(gentle));
+    set({ gentle });
   },
 }));
 
@@ -53,21 +66,27 @@ export const feedbackSounds: Record<FeedbackKind, SoundId> = {
 export const REPEAT_MS = 90;
 
 // Browsers refuse to start audio before the page has had a user gesture, and
-// expo-audio's web play() does not catch that refusal, so wait for one.
+// expo-audio's web play() does not catch that refusal (an unhandled NotAllowedError),
+// so play nothing until the browser itself counts a gesture.
 let activated = Platform.OS !== 'web';
-function userActive() {
-  if (activated) return true;
+type Activation = { hasBeenActive: boolean };
+function browserActivation(): Activation | undefined {
   const nav =
     typeof navigator === 'undefined'
       ? undefined
-      : (navigator as Navigator & { userActivation?: { hasBeenActive: boolean } });
-  if (nav?.userActivation?.hasBeenActive) activated = true;
+      : (navigator as Navigator & { userActivation?: Activation });
+  return nav?.userActivation;
+}
+function userActive() {
+  if (activated) return true;
+  if (browserActivation()?.hasBeenActive) activated = true;
   return activated;
 }
 
 const effectPlayers = new Map<SoundId, AudioPlayer>();
 const lastPlayed = new Map<SoundId, number>();
 const effectRequests = new Map<SoundId, number>();
+let cueHistory = emptyHistory();
 let effectEpoch = 0;
 
 /** Mute and root cleanup invalidate rewinds as well as currently playing cues. */
@@ -96,6 +115,9 @@ export function playSound(id: SoundId) {
   if (!preference.loaded || !preference.effects || !userActive()) return;
   const now = Date.now();
   if (now - (lastPlayed.get(id) ?? Number.NEGATIVE_INFINITY) < REPEAT_MS) return;
+  // the playback rules: tiers, the flavour gap and Gentle sound (lib/sound-rules.ts)
+  if (!cueAllowed(id, now, cueHistory, preference.gentle)) return;
+  cueHistory = played(id, now, cueHistory);
   lastPlayed.set(id, now);
   const epoch = effectEpoch;
   const request = (effectRequests.get(id) ?? 0) + 1;
@@ -197,13 +219,16 @@ export function useZoneAmbience(zone: string | null) {
 const savedOn = (result: PromiseSettledResult<string | null>) =>
   result.status !== 'fulfilled' || result.value !== 'false';
 export async function loadSoundPreference() {
-  const [effects, ambience] = await Promise.allSettled([
+  const [effects, ambience, gentle] = await Promise.allSettled([
     AsyncStorage.getItem(keys.effects),
     AsyncStorage.getItem(keys.ambience),
+    AsyncStorage.getItem(keys.gentle),
   ]);
   useSoundPreference.setState({
     effects: savedOn(effects),
     ambience: savedOn(ambience),
+    // Gentle sound is opt-in: only a saved 'true' turns it on
+    gentle: gentle.status === 'fulfilled' && gentle.value === 'true',
     loaded: true,
   });
 }
@@ -222,23 +247,31 @@ export function startSound() {
   void loadSoundPreference();
   const stopFeedback = onFeedback((kind) => playSound(feedbackSounds[kind]));
   const stopPreference = useSoundPreference.subscribe(applyAmbience);
-  const markActive = () => {
+  // A gesture counts once the browser says so: a touch's pointerdown does not (activation
+  // comes with its pointerup or touchend), so starting audio there was refused. Browsers
+  // without navigator.userActivation get the same rule from the event itself.
+  const markActive = (event?: Event) => {
+    const browser = browserActivation();
+    if (browser) {
+      if (!browser.hasBeenActive) return;
+    } else if (
+      event?.type === 'pointerdown' &&
+      (event as Event & { pointerType?: string }).pointerType !== 'mouse'
+    )
+      return;
     activated = true;
     applyAmbience();
   };
+  const gestures = ['pointerdown', 'pointerup', 'touchend', 'keydown'] as const;
   const web = Platform.OS === 'web' && typeof window !== 'undefined';
-  if (web) {
-    window.addEventListener('pointerdown', markActive, { capture: true });
-    window.addEventListener('keydown', markActive, { capture: true });
-  }
+  if (web)
+    for (const type of gestures) window.addEventListener(type, markActive, { capture: true });
   return () => {
     stopFeedback();
     stopPreference();
     stopEffects();
-    if (web) {
-      window.removeEventListener('pointerdown', markActive, { capture: true });
-      window.removeEventListener('keydown', markActive, { capture: true });
-    }
+    if (web)
+      for (const type of gestures) window.removeEventListener(type, markActive, { capture: true });
     setAmbience(null);
   };
 }

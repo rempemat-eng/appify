@@ -1,4 +1,4 @@
-import { Pressable, Text, View, useWindowDimensions } from 'react-native';
+import { Platform, Pressable, Text, View, useWindowDimensions } from 'react-native';
 import type { ComponentProps, ReactNode } from 'react';
 import type { Tabs } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -27,7 +27,7 @@ import {
 } from '@/lib/ui-tokens';
 import { PixelIcon, type IconName } from '@/components/pixel-icon';
 import { GuardianPet } from '@/components/guardian-pet';
-import { GrassRoll } from '@/components/pixel-feedback';
+import { DreamDustRoll } from '@/components/pixel-feedback';
 
 type BottomTabBarProps = Parameters<NonNullable<ComponentProps<typeof Tabs>['tabBar']>>[0];
 
@@ -118,7 +118,7 @@ function StatChip({
 
 /**
  * The floating heads-up display shared by every tab: who is with you, how the
- * garden's shield is doing, GRASS, the real-time play allowance and the menu.
+ * garden's shield is doing, Dream Dust, the real-time play allowance and the menu.
  * Symmetric: one inset on all four sides and between every control (coherence
  * plan, step 3), and every control is the same height.
  */
@@ -141,13 +141,13 @@ export function GameHud() {
   const control = barControl(u);
   return (
     <View
-      pointerEvents="box-none"
       style={{
         position: 'absolute',
         top: insets.top + hudLayout.gap,
         left: side,
         right: side,
         zIndex: 40,
+        pointerEvents: 'box-none',
       }}
     >
       <PixelFrame
@@ -219,7 +219,7 @@ export function GameHud() {
             {shieldText}
           </Text>
         </StatChip>
-        <StatChip unit={u} icon="grass" accessibilityLabel={`${p.grass} grass`}>
+        <StatChip unit={u} icon="dreamDust" accessibilityLabel={`${p.grass} Dream Dust`}>
           {p.grass >= 10000 ? (
             <Text style={[type.label, { color: c.ink }]}>
               {new Intl.NumberFormat('en-GB', {
@@ -228,7 +228,7 @@ export function GameHud() {
               }).format(p.grass)}
             </Text>
           ) : (
-            <GrassRoll value={p.grass} size={12} />
+            <DreamDustRoll value={p.grass} size={12} />
           )}
         </StatChip>
         <StatChip
@@ -293,6 +293,9 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   const { width } = useWindowDimensions();
   const u = usePixelUnit();
   const awake = useGame((s) => s.player?.mode === 'awake');
+  // behind onboarding (no player yet) the hotbar is out of reach for touch, keyboard and
+  // screen readers: nothing it opens exists yet (C25, #141)
+  const away = useGame((s) => !s.player);
   const side = gameSideInset(width) - 8;
   const slotHeight = hotbarSlot(u);
   const slot = (index: number) => {
@@ -300,12 +303,15 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
     if (!route) return null;
     const meta = tabs[route.name] ?? { label: route.name.toUpperCase(), icon: 'home' as const };
     const focused = state.index === index;
+    // (the world beyond the valley is part of HOME: its tab stays lit there, and a tap
+    // on it goes back to the home hub)
+    const lit = focused || (route.name === 'index' && state.routes[state.index]?.name === 'world');
     return (
       <Pressable
         key={route.key}
         accessibilityRole="tab"
-        accessibilityState={{ selected: focused }}
-        aria-selected={focused}
+        accessibilityState={{ selected: lit }}
+        aria-selected={lit}
         accessibilityLabel={meta.label}
         onPress={() => {
           const event = navigation.emit({
@@ -326,7 +332,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
           gap: u,
         }}
       >
-        {focused ? (
+        {lit ? (
           <FrameShape tone={frameTones.leaf} unit={u} />
         ) : (
           <FrameFill fill={layers.well} outline={c.outline} inset />
@@ -334,10 +340,7 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
         <PixelIcon name={meta.icon} size={iconSize.medium(u)} />
         <Text
           numberOfLines={1}
-          style={[
-            type.label,
-            { fontSize: 10, lineHeight: 12, color: focused ? c.buttonInk : c.ink },
-          ]}
+          style={[type.label, { fontSize: 10, lineHeight: 12, color: lit ? c.buttonInk : c.ink }]}
         >
           {meta.label}
         </Text>
@@ -346,12 +349,16 @@ export function GameHotbar({ state, navigation }: BottomTabBarProps) {
   };
   return (
     <View
-      pointerEvents="box-none"
+      {...(Platform.OS === 'web' ? { inert: away } : {})}
+      aria-hidden={away}
+      accessibilityElementsHidden={away}
+      importantForAccessibility={away ? 'no-hide-descendants' : 'auto'}
       style={{
         position: 'absolute',
         left: side,
         right: side,
         bottom: insets.bottom + hudLayout.gap,
+        pointerEvents: away ? 'none' : 'box-none',
       }}
     >
       <PixelFrame

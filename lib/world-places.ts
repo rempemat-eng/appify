@@ -81,34 +81,39 @@ export const rings: (PlaceDef & { backdrop: string })[] = [
   { region: 'moon', zone: 'lumen', at: stand('lumen', 'sparring'), backdrop: 'moon' },
 ];
 
+/** Where the rocket to Halcyon stands (Matt, 20 Oct: the rocket replaces the space
+ *  elevator). The Skyport for now; world plan v5 moves it to the Launch Cape east of the
+ *  city, which is this one line (with that stop added to stopIds and travelPoints). */
+export const rocketPad: StopId = 'neon';
+
 /**
  * The lines between regions (world-atlas.md, "How you reach it"): the valley train to
  * Cogsworth; from there the line west to Dust Gulch and the maglev to Neon Harbour; the
- * mine cart from the gulch to the caldera; the space elevator from Neon Harbour to
- * Halcyon, and Halcyon's shuttle to Lumen. A tree rooted at the valley.
+ * mine cart from the gulch to the caldera; the rocket from its pad to Halcyon, and
+ * Halcyon's shuttle (the lander) to Lumen. A tree rooted at the valley.
  */
 export const travelLinks: readonly (readonly [StopId, StopId])[] = [
   ['valley', 'steam'],
   ['steam', 'west'],
   ['west', 'lava'],
   ['steam', 'neon'],
-  ['neon', 'space'],
+  [rocketPad, 'space'],
   ['space', 'moon'],
   ['pier', 'isles'],
 ];
 
 /** What runs on each line: the steam train in the valley and out west, the maglev to the
- * city, the mine carts to the caldera, the elevator capsule up to Halcyon, the shuttle on
+ * city, the mine carts to the caldera, the rocket up to Halcyon, the shuttle (a lander) on
  * to Lumen. */
 export function travelVehicle(
   a: StopId,
   b: StopId,
-): 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle' | 'ferry' {
+): 'train' | 'maglev' | 'carts' | 'rocket' | 'shuttle' | 'ferry' {
   const pair = new Set([a, b]);
   if (pair.has('isles')) return 'ferry';
   if (pair.has('lava')) return 'carts';
   if (pair.has('moon')) return 'shuttle';
-  if (pair.has('space')) return 'capsule';
+  if (pair.has('space')) return 'rocket';
   if (pair.has('neon')) return 'maglev';
   return 'train';
 }
@@ -142,7 +147,7 @@ export const travelBy: Record<StopId, string> = {
   west: 'THE DESERT LINE',
   lava: 'THE MINE CART',
   neon: 'THE MAGLEV',
-  space: 'THE SPACE ELEVATOR',
+  space: 'THE ROCKET',
   moon: 'THE SHUTTLE',
   pier: 'THE DRIFTWOOD FERRY',
   isles: 'THE LAGOON FERRY',
@@ -206,7 +211,7 @@ export function exitWalk(exit: ExitId, gx: number, gy: number): { start: Point; 
 type PassEnd = PlaceDef & { side: 'east' | 'west' };
 /**
  * Where one region's edge walks on into another's: crossing is a walk, not a journey;
- * the scene fades and the companion walks on (app/world.tsx). None today: the pass from
+ * the scene fades and the companion walks on (app/(tabs)/world.tsx). None today: the pass from
  * Dust Gulch into the Scorched Pass became an ordinary border when the desert and the
  * fire country became one walk (Matt, 18 Oct 19:07). Kept for a crossing that has to
  * join two regions.

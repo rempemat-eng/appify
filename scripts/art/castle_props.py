@@ -12,9 +12,15 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, noise2, oval  # noqa: E402
+from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
+import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
+import reach_house as rh  # noqa: E402
+from reach_house import T, part, rect, step, frame  # noqa: E402
+import style_sheet as ss  # noqa: E402
+from style_sheet import boards, roof_rows  # noqa: E402
+import house_kits as hk  # noqa: E402
 from materials import MATERIALS, WOOD, NAP, GOLD, SLATE, LEAF, RED  # noqa: E402
 
 ASHLAR, IRON = MATERIALS['ashlar'], MATERIALS['iron']
@@ -88,6 +94,29 @@ OAK = ['#3A261C', '#5A3B28', '#7C5434', '#9C6E44', '#BC8C5A', '#D6AC78']
 GLASS = ['#2C3440', '#46566A', '#F2B65A', '#FFDC92', '#FFF0C4']
 
 
+ROCKS = ((206, 178, 140), (124, 134, 156), (150, 150, 120), (176, 150, 150), None)
+
+
+def _weather(c, x: int, y: int, xa: int, xb: int, ya: int, yb: int, k: int, j: int, seed: int,
+             low: float):
+    """A block's own rock and its weather (D13, Eastward's level of detail): each block
+    leans to one of several rocks (warm sandstone, blue-grey, green-grey, rose, the plain
+    ashlar); moss creeps along the tops of blocks low on a wall and in its shade, lichen
+    spots a few, and a hairline crack runs down the odd one."""
+    if c == MORTAR:
+        return c
+    rock = ROCKS[int(noise2(k, j + 91, seed) * len(ROCKS))]
+    out = rd.mix(c, rock, 0.22) if rock else rd.rgb(c)
+    m = noise2(k, j + 93, seed)
+    if m < 0.08 + 0.2 * low and y in (ya, ya + 1) and xa + 1 <= x < min(xb - 1, xa + 3 + int(m * 30)):
+        out = (98, 124, 66) if y == ya else (64, 88, 54)          # moss on the block's top
+    elif m > 0.94 and y == ya + 2 and xa + 2 <= x <= xa + 3:
+        out = (198, 172, 96)                                       # a lichen spot
+    if 0.5 < m < 0.6 and xb - xa >= 8 and ya < y < yb - 1 and x == xa + 3 + (y - ya) // 2:
+        out = rd.step(out, -2.2)                                   # a hairline crack
+    return (*out, 255)
+
+
 def masonry(cv: Canvas, pts, seed: int = 0, light=None, course=(4, 6), block=(6, 12), soot: int = 0):
     """Lay dressed stone over `pts`: courses of varying height, blocks of varying
     length, each block its own tone. `light(x, y)` (-2..2) shades the wall as a form
@@ -120,12 +149,13 @@ def masonry(cv: Canvas, pts, seed: int = 0, light=None, course=(4, 6), block=(6,
                         c = MORTAR if base > 2 else STONE_R[max(0, base - 2)]
                     elif yy == ya or xx == xa:
                         c = STONE_R[min(5, base + 1)]
-                    elif noise2(xx, yy, seed + 7) > 0.975:
-                        c = STONE_R[max(1, base - 1)]  # the grain of the stone
-                    if t > 0.8 and (xx, yy) == (xb - 2, ya):
+                    elif noise2((xx - xa) // 3, yy, seed + 7 + j) > 0.96:
+                        c = STONE_R[max(1, base - 1)]  # the grain of the stone, in short runs
+                    if t > 0.8 and (xx, yy) in ((xb - 2, ya), (xb - 3, ya), (xb - 2, ya + 1)):
                         c = STONE_R[max(0, base - 1)]  # a chipped corner
-                    if soot and yy >= y1 - soot and (xx + yy) % 2 == 0:
+                    if soot and yy >= y1 - soot and rd.smooth_noise(xx, yy, 3, seed + 5) < 0.55:
                         c = STONE_R[max(0, STONE_R.index(c) - 1)] if c in STONE_R else c
+                    c = _weather(c, xx, yy, xa, xb, ya, yb, k, j, seed, (yy - y0) / max(1, y1 - y0))
                     cv.set(xx, yy, c)
             x, j = xb, j + 1
         y, k = yb, k + 1
@@ -178,7 +208,7 @@ def drum(cv: Canvas, x0: int, y0: int, w: int, h: int, seed: int, slits=(), soot
     def light(x, y):
         k = (x - x0) / max(1, w - 1)
         return 1.2 - 3.4 * abs(k - 0.28) if k < 0.28 else 1.2 - 3.6 * (k - 0.28)
-    masonry(cv, pts, seed, light, course=(4, 5), block=(5, 9), soot=soot)
+    masonry(cv, pts, seed, light, course=(4, 6), block=(6, 11), soot=soot)
     for (sx, sy) in slits:
         cv.rect(sx, sy, 2, 8, '#1C1820'); cv.set(sx - 1, sy, STONE_R[1]); cv.hline(sx - 1, sy + 8, 4, STONE_R[4])
     return pts
@@ -285,7 +315,7 @@ def keep() -> Canvas:
             cv.set(x, y, c)
         cv.hline(wx - 2, 75, 22, STONE_R[5]); cv.hline(wx - 2, 76, 22, STONE_R[2])  # the sill
     for bx in (40, w - 49):
-        banner(cv, bx, 44, 26)
+        banner(cv, bx, 44, 12)  # whole above the porch roof with 2 px clear (Matt, 20 Oct 10:15; Claude A 11:05)
     # the great door, under a porch roof on two oak posts
     door = rect_set(52, 76, 24, 26) | {(x, y) for y in range(66, 76) for x in range(52, 76) if abs(x - 63.5) < (y - 64) * 1.25}
     for (x, y) in door:
@@ -360,6 +390,98 @@ def wall_run(length: int = 96) -> Canvas:
     return cv
 
 
+def postern() -> Canvas:
+    """The postern in the north curtain wall, 28 x 56: a short gate tower standing a
+    course of merlons above the wall run on either side (so its foot meets theirs), with
+    merlons along its top, coursed stone, a round arch in dressed voussoirs over a
+    passage you walk through, 16 x 32 at the people's scale (verticality.md 5: a single
+    door 32 tall for an adult of 25), the lava's glow showing at its far end, the oak door
+    swung back against the west reveal (iron straps, a ring), and a lantern on an iron
+    bracket beside it, lit."""
+    w, h = 28, 56
+    cv = Canvas(w, h, pad=PAD)
+    battlements(cv, 0, w, 4, 57)
+    masonry(cv, rect_set(0, 12, w, 42), 59, lambda x, y: 0.3 - x / w * 0.5 - max(0, y - 46) / 10, soot=4)
+    for x in range(w):
+        _shade(cv, x, 12)
+    # the way in from the north (review 20 Oct 15:53, finding 4: the bridge read as
+    # landing on the battlements): where the postern bridge meets the tower its two
+    # parapets rise on as the passage's piers, 4 px above the merlons, and between them
+    # the bridge runs on into the dark of the passage under the wall walk, under a
+    # raised portcullis whose iron teeth hang from the passage's head. The passage
+    # comes out at the arch on the yard side below, on the same level.
+    ASH = MATERIALS['ash']
+    for y in range(0, 12):
+        for a in range(24):
+            x = 4 + a
+            if a < 4 or a >= 20:  # the piers, coursed, lit on the west and shaded on the east
+                west = a < 4
+                c = ([STONE_R[1], STONE_R[5], STONE_R[4], STONE_R[2]][a] if west
+                     else [STONE_R[4], STONE_R[3], STONE_R[2], STONE_R[1]][a - 20])
+                if y < 2:
+                    c = (STONE_R[5] if y == 0 else STONE_R[4]) if west else (STONE_R[4] if y == 0 else STONE_R[3])
+                elif y % 4 == 1 and a not in (0, 23):
+                    c = MORTAR
+                cv.set(x, y, c)
+            elif y >= 4:  # the passage: flags going into the dark
+                c = ['#3A2C2A', '#2A1E20', '#241A1C', '#1C1418', '#1C1418', '#1C1418', '#241A1C', '#2A1E20'][y - 4]
+                if y == 11 and a % 4 == 1:
+                    c = ASH[1]  # a flag's lit edge, far in, where the yard's light reaches
+                if y == 4:
+                    c = IRON[2] if a % 3 else IRON[3]  # the portcullis's bottom rail
+                elif y in (5, 6) and a % 3 == 0:
+                    c = IRON[2] if y == 5 else IRON[1]  # its teeth
+                cv.set(x, y, c)
+    ax0, ax1, spring = 8, 24, 32  # the opening: its sides, and where the arch springs
+    cxa, ra = (ax0 + ax1 - 1) / 2, (ax1 - ax0) / 2
+    arch = {(x, y) for x in range(ax0, ax1) for y in range(16, h)
+            if y >= spring or (x + 0.5 - cxa) ** 2 + ((y - spring) * 1.0) ** 2 <= ra ** 2}
+    for (x, y) in arch:
+        c = '#1C1418' if y < h - 6 else '#2A1E20'  # the passage, its floor a little lighter
+        if y < spring + 5:
+            g = (spring + 5 - y) / 9 + 0.25 * (1 - abs(x + 0.5 - cxa) / ra)
+            c = '#7A3418' if g > 0.75 else '#5A2414' if g > 0.45 else '#3A1C18' if g > 0.2 else c  # the lava's glow from the far end
+        cv.set(x, y, c)
+    for (x, y) in arch:  # the voussoirs: wedge stones round the arch, alternately lit
+        for (ax, ay) in ((-2, 0), (2, 0), (0, -2), (-1, -2), (1, -2)):
+            q = (x + ax, y + ay)
+            if q not in arch and 0 <= q[0] < w and 14 <= q[1] < spring + 2:
+                v = int((math.atan2(q[1] - spring, q[0] - cxa) + math.pi) * 3)
+                lit = q[0] < cxa
+                cv.set(*q, (STONE_R[5] if v % 2 else STONE_R[4]) if lit else (STONE_R[3] if v % 2 else STONE_R[2]))
+    for y in range(spring - 1, h - 1):  # the door, swung back against the west reveal
+        for k in range(3):
+            c = OAK[4 - k] if (y // 5) % 2 else OAK[3 - k]
+            if noise2(k, y // 3, 67) < 0.25:
+                c = rd.step(c, -0.8)  # the oak's grain
+            if (y - spring) % 9 == 3:
+                c = IRON[3] if k < 2 else IRON[1]  # an iron strap
+            elif (y - spring) % 9 == 4:
+                c = rd.mix(c, (128, 74, 48), 0.5) if k < 2 else c  # rust bled under it
+            rd.put(cv, ax0 + k, y, c)
+    cv.set(ax0 + 2, spring + 9, IRON[4]); cv.set(ax0 + 2, spring + 10, IRON[2])  # its ring
+    for x in range(ax0 + 3, ax1):  # the threshold, worn
+        cv.set(x, h - 2, STONE_R[3] if x % 4 else STONE_R[2])
+    # the lantern on its bracket, east of the arch: an iron arm, a cage of glass, a glow
+    cv.hline(ax1 + 1, 29, 3, IRON[2]); cv.set(ax1 + 1, 30, IRON[1])
+    cv.vline(ax1 + 2, 30, 1, IRON[1])
+    for y in range(31, 37):
+        for x in range(ax1 + 1, ax1 + 4):
+            c = GLASS_L[3] if x == ax1 + 2 and 32 <= y <= 34 else GLASS_L[2]
+            if y in (31, 36):
+                c = IRON[1]
+            cv.set(x, y, c)
+    cv.set(ax1 + 2, 37, IRON[2])
+    for (x, y) in ((ax1, 34), (ax1 + 4, 33), (ax1 + 4, 35), (ax1 + 2, 38)):  # its light on the stone round it
+        r, g, b, a = cv.get(x, y)
+        if a:
+            cv.set(x, y, (min(255, r + 40), min(255, g + 24), b, a))
+    return cv
+
+
+GLASS_L = ['#2C3440', '#7A3A12', '#F2A048', '#FFE0A0']
+
+
 def gatehouse() -> Canvas:
     """The gatehouse, 120 x 92: two drum towers with timber hoardings and slate cones
     flanking a battlemented gate, a pointed arch in dressed voussoirs, the portcullis
@@ -385,7 +507,7 @@ def gatehouse() -> Canvas:
         for y in range(60, 88):
             for k in range(3):
                 cv.set(gx + d * k, y, OAK[3 - k] if (y // 4) % 2 else OAK[2 - k // 2])
-    banner(cv, 56, 28, 12)
+    banner(cv, 56, 25, 13)  # hung from the parapet, whole above the arch's voussoirs (Matt, 20 Oct 10:15)
     for tx in (0, w - 48):
         tw = round_tower(80)
         for y in range(-tw.pad, tw.h):
@@ -397,54 +519,132 @@ def gatehouse() -> Canvas:
 
 
 def bell_tower() -> Canvas:
-    """The bedtime bell tower, 44 x 120: a square stone shaft, a timber belfry jettied
-    out on beam ends with louvred openings and the bronze bell inside, a pyramidal
-    slate roof with a moon weathervane, and a little oak door at its foot."""
-    w, h = 44, 120
+    """Hearthold's bedtime bell tower, 44 x 120 (asset ledger 20 Oct: redrawn on the house
+    ramps with the Hearthold kit's ashlar wall and arched door; prop audit ADJUST "doors
+    about 22" now 32; its foot 6 whole cells). A square shaft of coursed ashlar on a
+    plinth, an arrow slit under a lintel, a studded oak door 14 x 32 in a dressed arch on
+    its step; a timber belfry jettied out on beam ends, louvred both sides, the bronze bell
+    hung from its headstock in the shade behind; a pyramidal roof of slates, its west
+    face to the light, a moon weathervane on an iron rod."""
+    w, h = 44, 120                                     # the old sprite's box, so its foot stays where it stood
     cv = Canvas(w, h, pad=PAD)
-    roof = {(x, y) for y in range(6, 30) for x in range(int(22 - 2 - (y - 6) * 0.95), int(22 + 2 + (y - 6) * 0.95) + 1)}
-    slates(cv, roof, 71, lambda x, y: 1.0 if x < 21 else -0.8, row=3, tile=(3, 5))
-    cv.vline(22, 0, 7, IRON[2])
-    for (mx, my) in disc(22, 1, 2.4):
-        cv.set(mx, my, GOLD[4])
-    for (mx, my) in disc(23, 0, 1.8):
-        cv.set(mx, my, (0, 0, 0, 0))
-    cv.hline(0, 30, w, SLATE_R[0]); cv.hline(0, 31, w, OAK[0])  # the eave
-    # the belfry: oak frame, boards, louvres, the bell
-    for y in range(32, 58):
-        for x in range(1, w - 1):
-            k = (x - 1) / (w - 3)
-            c = OAK[4] if k < 0.3 else OAK[3] if k < 0.65 else OAK[2]
-            if (x - 1) % 4 == 0:
-                c = OAK[1]
-            cv.set(x, y, c)
-    for px in (1, w // 2 - 1, w - 4):
-        gp.post(cv, px, 32, 58, w=3, ramp=OAK)
-    cv.hline(1, 32, w - 2, OAK[5]); cv.hline(1, 57, w - 2, OAK[0])
-    for (ox_, ow) in ((6, 12), (25, 12)):  # the louvred openings, and the bell behind
-        cv.rect(ox_, 36, ow, 18, '#221A1C')
-        for y in range(37, 53, 3):
-            cv.hline(ox_, y, ow, OAK[2]); cv.hline(ox_, y + 1, ow, OAK[0])
-    for (x, y) in oval(22, 46, 6, 7):
-        if y > 40:
-            cv.set(x, y, '#D8A848' if x < 20 else '#A87428' if x < 25 else '#6E4718')
-    for x in range(2, w - 2, 5):  # beam ends under the jetty
-        cv.set(x, 58, OAK[4]); cv.set(x + 1, 58, OAK[2]); cv.set(x, 59, OAK[1])
-    shaft = rect_set(4, 59, w - 8, h - 61)
-    masonry(cv, shaft, 73, lambda x, y: 0.8 - (x - 4) / (w - 8) * 1.4, course=(4, 5), block=(5, 9), soot=5)
-    for x in range(4, w - 4):
-        _shade(cv, x, 59); _shade(cv, x, 60)
-    cv.rect(20, 72, 3, 9, '#1C1820'); cv.hline(19, 81, 5, STONE_R[4])
-    door = rect_set(15, h - 21, 14, 18) | {(x, y) for y in range(h - 25, h - 21) for x in range(15, 29) if abs(x - 21.5) < (y - (h - 26)) * 2.2}
-    for (x, y) in door:
-        cv.set(x, y, OAK[3] if x < 19 else OAK[2] if (x - 15) % 4 else OAK[1])
-    for (x, y) in door:
-        for (ax, ay) in ((-1, 0), (1, 0), (0, -1)):
-            q = (x + ax, y + ay)
-            if q not in door and q[1] < h - 3:
-                cv.set(*q, STONE_R[5] if q[0] < 22 else STONE_R[3])
-    cv.hline(20, h - 12, 3, IRON[3])
-    return cv
+    roof_top, eave = 7, 32
+    roof = set()
+    for y in range(roof_top, eave + 1):              # the pyramid: a hip to each corner
+        half = 2 + (y - roof_top) * (w / 2 - 1) / (eave - roof_top)
+        for x in range(round(w / 2 - half), round(w / 2 + half)):
+            roof.add((x, y))
+    roof_rows(cv, 0, roof_top, w, eave - roof_top + 1, 'slate', 3, row=4, tile=(4, 6), seed=301, clip=roof, moss=True)
+    for (x, y) in roof:
+        if x >= w // 2:
+            step(cv, x, y, -1)                         # the east face turns from the light
+    for y in range(roof_top, eave + 1):                # the hips' cappings
+        half = 2 + (y - roof_top) * (w / 2 - 1) / (eave - roof_top)
+        cv.set(round(w / 2 - half), y, T('slate', 4))
+    for y in range(0, roof_top + 1):                   # the iron rod and the moon vane
+        cv.set(w // 2, y, T('iron', 3)); cv.set(w // 2 + 1, y, T('iron', 1))
+    for (x, y) in rh.ellipse(w / 2 + 0.5, 2.5, 2.6, 2.6):
+        if (x - w / 2 - 1.5) ** 2 + (y - 1.5) ** 2 > 3.2:
+            cv.set(x, y, T('brass', 5 if x < w // 2 else 4))
+    for x in range(0, w):                              # the eave board
+        cv.set(x, eave + 1, T('timber', 3 if x < w // 2 else 2)); cv.set(x, eave + 2, T('timber', 1))
+    bel0, bel1 = eave + 3, 59                          # the belfry: an oak frame, boarded, louvred
+    boards(cv, 1, bel0, w - 2, bel1 - bel0, lambda bi, si: (('timber', 'timber_warm', 'timber_cool')[(bi + si) % 3], 3),
+           board=4, seed=302, nails=True)
+    rh.overhang(cv, 1, w - 1, bel0, 2)
+    for (ox, ow) in ((5, 10), (w - 15, 10)):           # louvred openings either side
+        for (x, y) in rect(ox, bel0 + 4, ow, 18):
+            cv.set(x, y, T('earth_cool', 0))
+        for y in range(bel0 + 5, bel0 + 21, 3):
+            for x in range(ox, ox + ow):
+                cv.set(x, y, T('timber', 4 if x < ox + ow // 2 else 3)); cv.set(x, y + 1, T('timber', 2))
+        frame(cv, ox - 1, bel0 + 3, ow + 2, 20, 'timber', 3, t=1)
+    bx0, bw = w // 2 - 6, 12                           # the open middle bay, the bell hung in it
+    for (x, y) in rect(bx0, bel0 + 4, bw, 18):
+        cv.set(x, y, T('earth_cool', 0 if y > bel0 + 6 else 1))
+    frame(cv, bx0 - 1, bel0 + 3, bw + 2, 20, 'timber', 3, t=1)
+    for x in range(bx0, bx0 + bw):                     # the headstock across the bay
+        cv.set(x, bel0 + 5, T('timber', 3)); cv.set(x, bel0 + 6, T('timber', 1))
+    cx = w / 2
+    for y in range(bel0 + 8, bel0 + 22):               # the bell: a rounded crown, a waist, a flared lip
+        t = (y - (bel0 + 8)) / 13
+        half = 2.4 + 1.6 * t + (1.6 if t > 0.85 else 0.6 if t > 0.7 else 0)
+        for x in range(round(cx - half), round(cx + half)):
+            u = (x + 0.5 - (cx - half)) / (2 * half)
+            k = 5 if u < 0.22 else 4 if u < 0.45 else 3 if u < 0.75 else 2
+            if y == bel0 + 8 and (u < 0.15 or u > 0.85):
+                continue
+            if t > 0.85:
+                k = max(2, k - 1) if y == bel0 + 21 else min(5, k + 1)   # the lip's lit upper edge, its dark rim
+            cv.set(x, y, T('brass', k))
+    cv.set(w // 2 - 1, bel0 + 22, T('iron', 2)); cv.set(w // 2, bel0 + 22, T('iron', 1))
+    for px in (1, w - 4):                              # the frame's corner posts
+        rh.cylinder(cv, px, bel0, 3, bel1 - bel0, 'timber', 3)
+    for x in range(2, w - 2, 5):                       # beam ends under the jetty
+        cv.set(x, bel1, T('timber', 4)); cv.set(x + 1, bel1, T('timber', 2))
+        cv.set(x, bel1 + 1, T('timber', 2)); cv.set(x + 1, bel1 + 1, T('timber', 1))
+    sx0, sw = 4, w - 8                                 # the shaft: coursed ashlar, a plinth at its foot
+    hk.wall(cv, sx0, bel1 + 2, sw, h - bel1 - 6, 'ashlar', seed=303)
+    for x in range(sx0, sx0 + sw):
+        step(cv, x, bel1 + 2, -2); step(cv, x, bel1 + 3, -1)   # the jetty's shadow on the stone
+    for x in range(sx0 + sw - 3, sx0 + sw):            # the shaft's east side turns away
+        for y in range(bel1 + 2, h - 4):
+            step(cv, x, y, -1)
+    ss.courses(cv, sx0 - 1, h - 4, sw + 2, 4, lambda ci, si: (('stone', 'stone_warm', 'stone_cool')[si % 3], 3),
+               course=4, lengths=(6, 10), seam=T('stone_cool', 1), seed=304)
+    for (x, y) in rect(w // 2 - 1, 70, 2, 9):          # an arrow slit under its lintel
+        cv.set(x, y, T('earth_cool', 0))
+    part(cv, w // 2 - 4, 68, 8, 2, 'ashlar', 4)
+    part(cv, w // 2 - 3, 79, 6, 2, 'ashlar', 3)
+    hk.doorway(cv, w // 2 - 7, h - 4, 14, 32, 'timber', 'studded', 'ashlar', seed=305, arch=True, step_fam='stone')
+    return rh.finish(cv)
+
+
+def ruined_watchtower() -> Canvas:
+    """A ruined watchtower (the brief names two, on the Ash Coast and the Canyon Road),
+    48 x 72, on the house ramps: the stump of a square tower of coursed ashlar, its upper
+    storeys long fallen, so its top breaks off in uneven steps of whole stones; an arched
+    doorway 14 x 32 open on the dark inside, a slit above it, the corner stones better kept
+    than the wall between; the fallen courses lie as a heap of rubble against its east foot,
+    soot from an old fire up one side, fireweed in the joints at its foot. Footing: 5 cells."""
+    w, h = 48, 72
+    cv = Canvas(w, h, pad=PAD)
+    x0, x1 = 5, 41
+    hk.wall(cv, x0, 8, x1 - x0, h - 12, 'ashlar', seed=311)
+    for x in range(x0, x1):                         # the broken top: whole stones gone, in steps
+        u = (x - x0) / (x1 - x0)
+        top = 8 + 6 * round((24 * u ** 1.2 + 4 * noise2((x - x0) // 7, 0, 315)) / 6)   # whole courses lost, stone by stone
+        for y in range(8, top):
+            rh.clear(cv, x, y)
+        cv.set(x, top, T('ashlar', 4 if u < 0.6 else 3))   # the broken course's top, lit
+    for x in range(x1 - 3, x1):                     # the east side turns from the light
+        for y in range(8, h - 4):
+            if cv.get(x, y)[3]:
+                step(cv, x, y, -1)
+    for y in range(26, h - 6):                      # soot from an old fire up the east side
+        for x in range(x1 - 8, x1 - 2):
+            if cv.get(x, y)[3] and smooth_noise(x, y, 3, 312) < 0.45 - (h - 6 - y) * 0.004:
+                step(cv, x, y, -2, 1)
+    for (x, y) in rect(w // 2 - 5, 40, 2, 8):       # a slit above the door, its sill
+        cv.set(x, y, T('earth_cool', 0))
+    part(cv, w // 2 - 7, 48, 6, 2, 'ashlar', 3)
+    hk.doorway(cv, 14, h - 4, 14, 32, 'earth_cool', 'plank', 'ashlar', seed=313, arch=True, step_fam='stone', knob=None)
+    for (x, y) in rect(14, h - 36, 14, 32):         # the door is long gone: the dark inside
+        hit = rh.tone_at(cv, x, y)
+        if cv.get(x, y)[3] and not (hit and hit[0].startswith('ashlar')):
+            cv.set(x, y, T('earth_cool', 0 if y < h - 10 else 1))
+    for i in range(14):                             # the heap of fallen stones against the east foot
+        cx = 36 + int(noise2(i, 0, 314) * 6)
+        cy = h - 3 - int(noise2(i, 1, 314) * 9)
+        sw, sh = 4 + int(noise2(i, 2, 314) * 3), 3
+        part(cv, cx - sw // 2, cy - sh, sw, sh, ('ashlar', 'stone', 'ashlar_cool')[i % 3], 3)
+    for (fx, fy) in ((8, h - 5), (30, h - 5)):      # fireweed in the joints at its foot
+        for yy in range(fy - 6, fy):
+            cv.set(fx, yy, T('cactus', 3))
+        for yy in range(fy - 9, fy - 6):
+            cv.set(fx, yy, T('berry_cool', 4)); cv.set(fx + 1, yy, T('berry_cool', 3))
+    part(cv, x0 - 1, h - 4, x1 - x0 + 2, 4, 'stone', 3)   # the plinth course
+    return rh.finish(cv)
 
 
 def herb_bed() -> Canvas:
@@ -723,15 +923,21 @@ def dragon(phase: int = 0) -> Canvas:
     return cv
 
 
+def _budget(items: dict) -> dict:
+    """Every sprite held to the house colour budget (rd.limit_colours)."""
+    return {k: rd.limit_colours(v) for k, v in items.items()}
+
+
 def props() -> dict[str, Canvas]:
-    return {
+    return _budget({
         'keep': keep(), 'round_tower': round_tower(), 'wall_run': wall_run(), 'gatehouse': gatehouse(),
-        'bell_tower': bell_tower(), 'herb_bed': herb_bed(), 'training_dummy': training_dummy(),
+        'postern': postern(),
+        'bell_tower': bell_tower(), 'ruined_watchtower': ruined_watchtower(), 'herb_bed': herb_bed(), 'training_dummy': training_dummy(),
         'castle_well': castle_well(), 'archery_butt': archery_butt(), 'weapon_rack': weapon_rack(),
         'stone_bench': stone_bench(), 'banner_pole': banner_pole(),
         'banner_pole_f1': banner_pole(1), 'banner_pole_f2': banner_pole(2),
         'dragon': dragon(0), 'dragon_f1': dragon(1), 'dragon_f2': dragon(2),
-    }
+    })
 
 
 if __name__ == '__main__':

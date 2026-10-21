@@ -1,0 +1,14 @@
+{
+ "_about": "Which regions the world audit holds to 100 % green (scripts/art/world_audit.py --gate, npm run check:world-audit; docs/vision/world-audit.md). A region is 'old' until its owner rebuilds it to the standard; mark it 'rebuilt' in the PR that does, and the gate fails on any cell of it that is not green. 'exempt' lists findings that are right as drawn: {\"region\", \"check\", \"rect\": [x, y, w, h] in region px, \"why\"}.",
+ "regions": {
+  "valley": "old",
+  "steam": "old",
+  "west": "old",
+  "isles": "old",
+  "neon": "old",
+  "space": "old",
+  "moon": "old",
+  "home": "old"
+ },
+ "exempt": []
+}

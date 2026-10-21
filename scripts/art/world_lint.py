@@ -14,6 +14,7 @@ from __future__ import annotations
 
 import json
 import os
+import re
 from collections import deque
 
 from PIL import Image, ImageDraw
@@ -33,7 +34,8 @@ STRICT = ('valley', 'steam', 'west', 'isles', 'neon', 'space', 'moon', 'home')
 OVERRIDES: dict = {}
 
 # Placement types (rules, section 2); anything not listed is a ground prop.
-FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'island_ferry', 'buoy', 'lily_pads', 'duck', 'swan'}
+FLOATING = {'boat_blue', 'boat_red', 'sailboat', 'narrowboat', 'ferry', 'island_ferry', 'buoy', 'lily_pads', 'duck', 'swan',
+            'city_water_taxi', 'city_cargo_ship'}
 WET = {'reeds', 'heron', 'net_rack', 'upturned_boat', 'driftwood', 'papyrus', 'water_crane', 'canal_crane'}
 SUPPORTED = {'lighthouse', 'water_mill', 'tether', 'shaduf', 'bridge', 'basalt_bridge', 'maglev'}
 _rgb = lambda c: tuple(int(c[k:k + 2], 16) for k in (1, 3, 5))  # noqa: E731
@@ -50,15 +52,17 @@ def _lava(r, g, b):
     return r >= 170 and g <= 160 and b <= 90 and r - g >= 50
 
 
-def classify(ground: Image.Image, blocked: set, water_mask: set | None = None) -> list[str]:
+def classify(ground: Image.Image, blocked: set, water_mask: set | None = None,
+             cols: int = COLS, rows: int = ROWS) -> list[str]:
     """One character per walk cell: '~' water, '!' lava, '^' wall/cliff/other blocked,
     '=' path, '.' ground (the majority of the cell's pixels decides). A zone that declares
-    its water (`water_mask`) is read by that, not by colour."""
+    its water (`water_mask`) is read by that, not by colour. (`cols` and `rows` size a
+    region canvas, regions.py; a zone is COLS x ROWS.)"""
     px = ground.load()
-    rows = []
-    for cy in range(ROWS):
+    n_rows, rows = rows, []
+    for cy in range(n_rows):
         row = []
-        for cx in range(COLS):
+        for cx in range(cols):
             votes = {}
             for dy in range(CELL):
                 for dx in range(CELL):
@@ -122,6 +126,58 @@ def check_props(name, terrain, objects, sprites, overhead):
         elif hot > 0.2:
             out.append((name, 'ground-on-lava', oid, box, f'{key} stands in lava'))
     return out
+
+
+# Things that grow or lie on the ground and never stand on a trodden path or a road
+# (Matt, 19 Oct: "neither should trees be in a path"): a path goes round a tree, a
+# rock or a bush, or the tree was felled for it.
+NATURAL = ('tree', 'pine', 'willow', 'acacia', 'palm', 'snag', 'bush', 'hedge', 'fern', 'shrub',
+           'boulder', 'rock', 'stone', 'scree', 'stump', 'log', 'cactus', 'saguaro', 'prickly',
+           'monstera', 'pandanus', 'hibiscus', 'bird_of_paradise', 'banana', 'reeds', 'papyrus',
+           'fireweed', 'cotton_grass', 'mushroom', 'crystal', 'obsidian', 'outcrop',
+           'potted', 'planter', 'pumpkin', 'hay_bale', 'haystack')
+# ...except the ones people put there on purpose
+NATURAL_OK = ('standing_stone', 'stone_bench', 'stone_lantern', 'milestone', 'stepping')
+# Buildings with a door in the middle of their front: something must be walkable in front
+# of it (a door opens onto a step, a path or ground, never onto a wall, water or a prop).
+DOORED = ('house', 'cottage', 'cabin', 'cafe', 'store', 'saloon', 'library', 'bothy', 'barn',
+          'station_house', 'boathouse', 'bathhouse', 'workshop', 'shelter', 'tea_kiosk', 'forge')
+
+
+def _is(key, words):
+    return any(w in key for w in words)
+
+
+def check_logic(name, terrain, walk, stands, objects, sprites, overhead):
+    """Common-sense placement (docs/vision/world-rules.md, "Placement logic"): nothing
+    natural stands on a path; a door opens onto somewhere you can stand; a stand (where
+    the companion or someone waits) is never in water, lava or a wall."""
+    out = []
+    for (oid, key, x, y) in objects:
+        if key in overhead or key in SUPPORTED or key in FLOATING or key in WET:
+            continue
+        sp = sprites[key]
+        box = (x, y, sp.w, sp.h)
+        if _is(key, NATURAL) and not _is(key, NATURAL_OK):
+            cells = _foot_cells(x, y, sp.w, sp.h, key)
+            if cells and sum(terrain[cy][cx] == '=' for (cx, cy) in cells) / len(cells) >= 0.25:
+                out.append((name, 'plant-on-path', oid, box, f'{key} stands on a path'))
+        if _is(key, DOORED) and sp.w >= 28 and not re.search(r'_f\d+$', key):
+            fy = (y + sp.h + 2) // CELL
+            xs = range((x + sp.w * 3 // 10) // CELL, (x + sp.w * 7 // 10) // CELL + 1)
+            if 0 <= fy < ROWS and not any(0 <= cx < COLS and walk[fy][cx] == '.' for cx in xs) \
+                    and not any(0 <= cx < COLS and fy + 1 < ROWS and walk[fy + 1][cx] == '.' for cx in xs):
+                out.append((name, 'door-shut-in', oid, box, f'nothing walkable in front of the {key}\'s door'))
+    for sid, (sx, sy) in stands.items():
+        cx, cy = sx // CELL, sy // CELL
+        if 0 <= cx < COLS and 0 <= cy < ROWS and terrain[cy][cx] in '~!':
+            out.append((name, 'stand-in-water', sid, (sx - 4, sy - 4, 8, 8), f'the stand {sid} is in water or lava'))
+    return out
+
+
+# Kinds of finding that are new and reported, not yet failing the build, until every
+# region is clear of them (then they join the strict check).
+REPORTED = {'plant-on-path', 'door-shut-in', 'stand-in-water'}
 
 
 def _edge(terrain, side, depth=3):
@@ -283,6 +339,38 @@ def garden_zone():
     return {'ground': g, 'terrain': classify(g, blocked)}
 
 
+def garden_objects() -> list:
+    """The garden's objects as lib/garden-map.ts lists them (garden.py writes it first):
+    (sprite, x, y, w, h) in the garden's px, the ones the valley walk draws."""
+    try:
+        with open(os.path.join(ROOT, 'lib', 'garden-map.ts')) as f:
+            src = f.read()
+    except FileNotFoundError:
+        return []
+    block = src[src.find('export const gardenObjects'):]
+    block = block[:block.find('] as const')]
+    out = []
+    # (as garden.py writes it, keys quoted, or as the formatter leaves it)
+    q = r'["\']?'
+    pat = (rf"{q}sprite{q}:\s*[\"'](\w+)[\"'],\s*{q}x{q}:\s*(-?\d+),\s*{q}y{q}:\s*(-?\d+),"
+           rf"\s*{q}w{q}:\s*(\d+),\s*{q}h{q}:\s*(\d+)")
+    for m in re.finditer(pat, block):
+        key = m.group(1)
+        if os.path.exists(os.path.join(ROOT, 'assets', 'garden', f'{key}.png')):
+            out.append((key, *(int(v) for v in m.groups()[1:])))
+    return out
+
+
+_GARDEN_SPRITES: dict = {}
+
+
+def _garden_sprite(key: str) -> Image.Image:
+    if key not in _GARDEN_SPRITES:
+        im = Image.open(os.path.join(ROOT, 'assets', 'garden', f'{key}.png')).convert('RGBA')
+        _GARDEN_SPRITES[key] = im.resize((im.width // 4, im.height // 4), Image.NEAREST)
+    return _GARDEN_SPRITES[key]
+
+
 def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None = None):
     zones = {}
     violations = []
@@ -293,6 +381,7 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
         z['terrain'] = terrain
         violations += check_props(name, terrain, z['objects'], z['sprites'], overhead)
         violations += check_paths(name, terrain, z['stands'], z['objects'], z['sprites'], None)
+        violations += check_logic(name, terrain, z['walk'], z['stands'], z['objects'], z['sprites'], overhead)
     zones['garden'] = garden_zone()
     for region, places in layout.items():
         violations += check_borders(region, places, zones)
@@ -309,7 +398,9 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
     print('world lint:', len(violations), 'findings', json.dumps(kinds), f'({len(used)} overridden)')
     # regions that have been fixed against the rules fail the build on a new finding
     # (world-rules.md, section 8: the valley first, then one region at a time)
-    strict = [v for v in violations if any(v[0] in layout[r] for r in STRICT)]
+    strict = [v for v in violations if any(v[0] in layout[r] for r in STRICT) and v[1] not in REPORTED]
+    for v in sorted(v for v in violations if v[1] in REPORTED):
+        print(f'world lint (reported): {v[0]} {v[1]} {v[2]} at {v[3][:2]}: {v[4]}')
     assert not strict, 'world lint (strict regions): ' + '; '.join(f'{v[0]} {v[1]} {v[2]}: {v[4]}' for v in strict)
     out = os.environ.get('LINT_OUT')
     if out:
@@ -317,21 +408,53 @@ def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None =
         with open(os.path.join(out, 'world-lint.txt'), 'w') as f:
             for v in sorted(violations):
                 f.write(f'{v[0]:10} {v[1]:18} {v[2]:16} {v[4]}\n')
-        if previews is not None:
-            _stitch(out, layout, previews, zones, violations)
+    # each region drawn whole (with ZONE_PREVIEW or LINT_OUT): reviews look at these
+    for folder in {d for d in (out, os.environ.get('ZONE_PREVIEW')) if d}:
+        os.makedirs(folder, exist_ok=True)
+        _stitch(folder, layout, previews or {}, zones, violations if folder == out else [], built, overhead)
     return violations
 
 
-def _stitch(out, layout, previews, zones, violations):
+def _stitch(out, layout, previews, zones, violations, built=None, overhead=()):
+    """A region drawn whole: every zone's ground, then every prop in region coordinates,
+    sorted by its foot across the whole region (overhead ones last), so a tower whose
+    body rises into the zone above is drawn whole, as the game draws it."""
     for region, places in layout.items():
         cols = [c for c, _r in places.values()]
         rows = [r for _c, r in places.values()]
         c0, r0 = min(cols), min(rows)
         img = Image.new('RGBA', ((max(cols) - c0 + 1) * W, (max(rows) - r0 + 1) * H), (30, 25, 23, 255))
+        props = []
         for z, (c, r) in places.items():
+            ox, oy = (c - c0) * W, (r - r0) * H
+            if built is not None and z in built:
+                img.alpha_composite(built[z]['ground_img'].convert('RGBA'), (ox, oy))
+                for (_oid, key, x, y) in built[z]['objects']:
+                    sp = built[z]['sprites'][key]
+                    props.append((oy + y + sp.h + (100000 if key in overhead else 0), ox + x, oy + y, sp))
+                continue
             src = previews.get(z) or (zones[z]['ground'] if z in zones else None)
             if src is not None:
-                img.alpha_composite(src.convert('RGBA'), ((c - c0) * W, (r - r0) * H))
+                img.alpha_composite(src.convert('RGBA'), (ox, oy))
+            if z == 'garden':
+                # the garden's objects as the walk draws them (atlas-walk.tsx, tileDrawables):
+                # its hut, fence, gate, trees and the rest, sorted with the zones' props
+                for (key, x, y, w, h) in garden_objects():
+                    props.append((oy + y + h, ox + x, oy + y, key))
+        for (_z, px, py, sp) in sorted(props, key=lambda p: p[0]):
+            if isinstance(sp, str):
+                spr = _garden_sprite(sp)
+                cx, cy = max(0, -px), max(0, -py)
+                if cx < spr.width and cy < spr.height and px < img.width and py < img.height:
+                    img.alpha_composite(spr, (px + cx, py + cy), (cx, cy))
+                continue
+            pad = getattr(sp, 'pad', 0)
+            spr = sp.img.crop((pad, pad, pad + sp.w, pad + sp.h)).convert('RGBA')
+            # (clipped to the region picture: a prop may reach past the region's edge)
+            cx, cy = max(0, -px), max(0, -py)
+            if cx >= sp.w or cy >= sp.h or px >= img.width or py >= img.height:
+                continue
+            img.alpha_composite(spr, (px + cx, py + cy), (cx, cy))
         d = ImageDraw.Draw(img)
         for (zone, kind, _oid, box, _msg) in violations:
             if zone not in places:

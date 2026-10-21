@@ -1,9 +1,11 @@
 """The people who live in the world's zones (world-atlas.md, "A world that feels
 alive", L6): one or two residents per place, each dressed for it, drawn in the shared
 rules (light from the upper left, material shading, a tinted outline) at the scale of
-the zone props. Two walking frames each; the atlas moves them along short routes.
+the zone props. Two walking frames each facing the viewer, and a walk pair each for
+east, west and away (B7), so a route can turn someone to their work when they pause;
+the atlas moves them along short routes.
 
-Writes assets/residents/<id>-<frame>.png, lib/resident-sprites.ts (data) and
+Writes assets/residents/<id>-<frame>.png and <id>-<east|west|back>-<frame>.png, lib/resident-sprites.ts (data) and
 lib/resident-assets.ts (images).
 Run: python3 scripts/art/residents.py
 """
@@ -142,6 +144,295 @@ def person(look: dict, frame: int) -> Canvas:
     return canvas
 
 
+def _lit(c: str, x: int, mid: float) -> str:
+    """Light from the upper left: the left of a form is lit, the right in shade."""
+    return shade(c, 1.15) if x <= mid - 2 else c if x <= mid + 1 else shade(c, 0.78)
+
+
+def _carried(cv, kind: str, col: str, hx: int, hy: int, d: int):
+    """What a resident carries, at the hand (hx, hy), the far side toward d."""
+    if kind == 'basket':
+        # wicker body with woven rows, a lit rim and a handle arching over the hand
+        for (x, y) in oval(hx + d * 1 + 0.5, hy + 2, 2.6, 1.9):
+            c = col if (x + y) % 2 else shade(col, 0.82)
+            cv.set(x, y, shade(c, 1.12) if x <= hx else shade(c, 0.85))
+        cv.hline(min(hx - 1, hx + d * 3), hy + 1, 4, shade(col, 1.2))
+        cv.set(hx, hy, shade(col, 0.7)); cv.set(hx + d * 2, hy, shade(col, 0.7)); cv.set(hx + d, hy - 1, shade(col, 0.7))
+        if col.upper() == '#C89C6A':
+            cv.set(hx + d, hy + 1, '#C2453A'); cv.set(hx + d * 2, hy + 1, '#7EA05A')  # something picked
+    elif kind == 'plant':
+        cv.set(hx, hy + 1, '#A8683E'); cv.set(hx + d, hy + 1, '#8A5434'); cv.set(hx, hy + 2, '#8A5434'); cv.set(hx + d, hy + 2, '#6E4026')
+        for (x, y) in disc(hx + d * 0.5 + 0.5, hy - 1, 1.9):
+            cv.set(x, y, shade(col, 1.18) if x <= hx and y <= hy - 1 else shade(col, 0.82) if y >= hy else col)
+    elif kind == 'lantern':
+        cv.set(hx, hy + 1, '#2A2026')
+        cv.set(hx, hy + 2, col); cv.set(hx + d, hy + 2, shade(col, 0.82))
+        cv.set(hx, hy + 3, shade(col, 0.9)); cv.set(hx + d, hy + 3, shade(col, 0.75))
+        cv.hline(min(hx, hx + d), hy + 4, 2, '#3E3238')
+    elif kind == 'tray':
+        cv.hline(min(hx - d, hx + d * 3), hy, 5, col)
+        cv.hline(min(hx - d, hx + d * 3), hy + 1, 5, shade(col, 0.72))
+        cv.set(hx + d, hy - 1, shade(col, 1.15)); cv.set(hx + d * 2, hy - 1, shade(col, 0.95))
+
+
+def person_side(look: dict, frame: int, d: int) -> Canvas:
+    """A resident seen from the side, walking toward d (+1 east, -1 west), in the same
+    20 x 28 box, scale and light as the front frames: the near leg forward on frame 0
+    and passing on frame 1, the near arm swinging against it, the face in profile
+    (eye, nose, ear) under hair or a hat seen from the side. The left of every form is
+    lit whichever way they walk, so the west frames are drawn, not mirrored."""
+    canvas = Canvas(W, H, pad=PAD)
+    cv = Shifted(canvas)
+    skin, skin_dark = SKIN[look.get('skin', 'a')]
+    top = look['top']
+    legs = look.get('legs', '#3E3A50')
+    shoes = look.get('shoes', '#2A2026')
+    bx = 9 if d > 0 else 8
+    F = lambda o: bx + d * o  # noqa: E731  a column o pixels ahead of the body's centre
+    tone = lambda c, x: _lit(c, x, bx)  # noqa: E731
+
+    def leg(foot: int, lift: int, far: bool):
+        for y in range(18, 24 - lift):
+            o = round(foot * (y - 17) / 6)
+            for k in (0, 1):
+                x = F(o) + k - (1 if d < 0 else 0)
+                c = tone(legs, x)
+                cv.set(x, y, shade(c, 0.72) if far else c)
+        o = foot
+        toe = F(o + 1)
+        heel = F(o) - (1 if d < 0 else 0)
+        y = 24 - lift
+        for x in range(min(heel, toe), max(heel, toe) + 1):
+            cv.set(x, y, shade(shoes, 0.8) if far else shoes)
+        cv.set(toe, y - 1, shade(shoes, 1.4) if not far else shoes)
+
+    # the far leg behind, then the near leg in front
+    if frame == 0:
+        leg(-2, 0, True); leg(2, 0, False)
+    else:
+        leg(0, 1, True); leg(0, 0, False)
+    if look.get('skirt'):
+        sk = look['skirt']
+        for y in range(16, 21):
+            hw = 2 + (y - 16) // 2
+            for x in range(bx - hw - (1 if y >= 18 else 0), bx + hw + 1):
+                cv.set(x, y, tone(sk, x))
+        cv.hline(bx - 4, 20, 8, shade(sk, 0.7))
+    # the far arm swings forward on frame 0, its hand just ahead of the chest
+    if frame == 0 and not look.get('carry'):
+        cv.set(F(3), 14, shade(top, 0.6)); cv.set(F(3), 15, skin_dark)
+    # the torso: back straight, chest a pixel forward
+    for y in range(10, 18):
+        for x in range(bx - 2, bx + 3):
+            cv.set(x, y, tone(top, x))
+    for y in (12, 13):
+        cv.set(F(3), y, tone(top, F(3)))
+    cv.set(F(-2), 10, shade(tone(top, F(-2)), 0.92))
+    if look.get('apron'):
+        ap = look['apron']
+        for y in range(12, 19):
+            for o in (1, 2, 3) if y >= 13 else (1, 2):
+                cv.set(F(o), y, tone(ap, F(o)))
+        cv.set(F(-3), 13, shade(ap, 0.8)); cv.set(F(-3), 14, shade(ap, 0.8))  # the bow at the back
+        cv.set(F(0), 11, shade(ap, 0.85))  # the neck strap
+    if look.get('trim'):
+        tr = look['trim']
+        cv.hline(bx - 2, 17, 5, tr); cv.vline(F(2), 10, 7, tr)
+    # the near arm: sleeve from the shoulder, swinging against the near leg
+    carry = look.get('carry')
+    reach = (1 if carry else (-2 if frame == 0 else 0))
+    hand = None
+    for y in range(11, 17):
+        o = round(reach * (y - 11) / 5)
+        x = F(o)
+        if y < 16:
+            cv.set(x, y, shade(tone(top, x), 0.84))
+        else:
+            cv.set(x, y, skin)
+            hand = (x, y)
+    cv.set(F(-1 if reach <= 0 else 0), 11, shade(tone(top, bx), 0.92))  # the shoulder's roundness
+    if carry:
+        kind, col = carry
+        hx, hy = hand
+        if kind == 'tray':
+            # carried level in front, both hands under it
+            _carried(cv, kind, col, F(3), 14, d)
+            cv.set(F(3), 15, skin)
+        elif kind == 'plant':
+            _carried(cv, kind, col, F(2), 13, d)
+        else:
+            _carried(cv, kind, col, hx, hy, d)
+    # the head in profile
+    hx = bx + d * 0.6 + 0.5
+    for (x, y) in disc(hx, 6, 3.5):
+        cv.set(x, y, skin if x <= bx else skin_dark)
+    cv.set(F(4), 7, skin if d < 0 else skin_dark)  # the nose
+    cv.set(F(2), 6, '#2A1E18')  # the eye
+    cv.set(F(3), 8, shade(skin_dark, 0.82))  # the mouth
+    cv.set(bx, 9, skin_dark); cv.set(bx - d, 9, shade(skin_dark, 0.9))  # the neck
+    hair = HAIR[look.get('hair', 'dark')]
+    for (x, y) in disc(hx - d * 0.8, 4.6, 3.3):
+        if y <= 3 or (x - bx) * d <= -1:
+            cv.set(x, y, hair if x <= bx else shade(hair, 0.8))
+    cv.set(F(-3), 8, shade(hair, 0.8))  # the nape
+    cv.set(F(0), 6, shade(skin_dark, 0.9)); cv.set(F(0), 7, skin_dark)  # the ear
+    hat = look.get('hat')
+    if hat:
+        kind, col = hat
+        lo = lambda o: min(F(o), F(-o))  # noqa: E731
+        if kind == 'straw':
+            cv.hline(bx - 5, 3, 11, col); cv.hline(lo(2) if d > 0 else F(2), 1, 6, col)
+            cv.hline(bx - 2, 2, 5, shade(col, 0.85)); cv.hline(bx - 2, 2, 2, shade(col, 1.1))
+            cv.set(F(-2), 2, '#8A5A3A'); cv.set(F(-1), 2, '#8A5A3A')  # the band
+            cv.set(bx - 5, 3, shade(col, 1.12)); cv.set(bx + 5, 3, shade(col, 0.8))
+        elif kind == 'cap':
+            for x in range(bx - 3, bx + 3):
+                cv.set(x, 2, tone(col, x)); cv.set(x, 3, tone(col, x))
+            cv.set(F(-3), 3, shade(col, 0.85))
+            cv.hline(min(F(3), F(5)), 4, 3, shade(col, 0.7))  # the peak, forward
+        elif kind == 'wide':
+            cv.hline(bx - 6, 3, 13, shade(col, 0.8)); cv.hline(bx - 6, 3, 3, col)
+            for y in (0, 1, 2):
+                for x in range(bx - 3, bx + 3):
+                    cv.set(x, y, tone(col, x))
+            cv.hline(bx - 3, 2, 6, shade(col, 0.62))  # the band
+        elif kind == 'goggles':
+            cv.hline(bx - 3, 3, 7, '#5E3D2E')
+            cv.set(F(2), 3, '#C99A3C'); cv.set(F(3), 3, '#C99A3C'); cv.set(F(2), 2, '#F2D88A')
+        elif kind == 'wrap':
+            for (x, y) in disc(hx - d * 0.8, 4.4, 3.7):
+                if y <= 4 or ((x - bx) * d <= -1 and y <= 7):
+                    cv.set(x, y, tone(col, x))
+            cv.vline(F(-4), 5, 6, shade(col, 0.78)); cv.vline(F(-3), 8, 3, shade(col, 0.9))
+        elif kind == 'hood':
+            for (x, y) in disc(hx - d * 0.5, 5.4, 4.3):
+                if (x - bx) * d <= 1 or y <= 2:
+                    cv.set(x, y, col if x <= bx else shade(col, 0.75))
+            cv.vline(F(2), 3, 6, shade(col, 0.62))  # the hood's opening round the face
+        elif kind == 'bowler':
+            cv.hline(bx - 4, 3, 9, col)
+            for y in (1, 2):
+                for x in range(bx - 2, bx + 3):
+                    cv.set(x, y, tone(col, x))
+            cv.set(bx - 2, 1, shade(col, 1.6))
+        elif kind == 'helmet':
+            for (x, y) in disc(hx, 4.8, 4.4):
+                if y <= 4:
+                    cv.set(x, y, '#DCE2EC' if x <= bx else '#B8C0D2')
+            cv.hline(min(F(2), F(5)), 5, 4, '#B8C0D2')  # the brim, forward
+            cv.set(bx - 2, 1, '#F7F9FC')
+    return canvas
+
+
+def person_back(look: dict, frame: int) -> Canvas:
+    """A resident seen from behind, walking away, in the same box, scale and light as the
+    front frames: legs and heels with the step, the back of the clothes (apron strings
+    tied at the waist, a collar), arms swinging, the back of the head under its hair or
+    hat. What they carry shows at their side."""
+    canvas = Canvas(W, H, pad=PAD)
+    cv = Shifted(canvas)
+    skin, skin_dark = SKIN[look.get('skin', 'a')]
+    top = look['top']
+    legs = look.get('legs', '#3E3A50')
+    shoes = look.get('shoes', '#2A2026')
+    cx = 8
+    tone = lambda c, x: _lit(c, x, cx - 1)  # noqa: E731
+    stride = 2 if frame == 0 else 0
+    # on frame 0 the right leg is the one stepping away (heel lifted), on frame 1 they pass
+    for (lx, lift) in ((cx - 2 - stride // 2, 0), (cx + 1 + stride // 2, 1 if frame == 0 else 0)):
+        for y in range(18, 24 - lift):
+            cv.set(lx, y, tone(legs, lx)); cv.set(lx + 1, y, shade(legs, 0.75))
+        cv.hline(lx, 24 - lift, 2, shoes)
+        cv.set(lx, 23 - lift, shade(shoes, 1.35))  # the heel's counter catching the light (the sole stays dark on the ground row)
+    if look.get('skirt'):
+        sk = look['skirt']
+        for y in range(16, 21):
+            hw = 3 + (y - 16) // 2
+            for x in range(cx - hw, cx + hw):
+                cv.set(x, y, tone(sk, x))
+        cv.set(cx - 1, 18, shade(sk, 0.8)); cv.set(cx - 1, 19, shade(sk, 0.8))  # a fold
+    carry = look.get('carry')
+    if carry and carry[0] == 'tray':
+        # held out in front: its ends show either side of the body
+        cv.hline(cx - 6, 13, 13, carry[1]); cv.hline(cx - 6, 14, 13, shade(carry[1], 0.72))
+    for y in range(10, 18):
+        for x in range(cx - 4, cx + 4):
+            cv.set(x, y, tone(top, x))
+    cv.vline(cx - 1, 11, 6, shade(tone(top, cx - 1), 0.9))  # the back seam
+    cv.hline(cx - 2, 10, 4, shade(top, 0.8))  # the collar
+    if look.get('apron'):
+        ap = look['apron']
+        cv.hline(cx - 4, 14, 8, ap)
+        cv.set(cx - 2, 15, ap); cv.set(cx, 15, shade(ap, 0.85)); cv.set(cx - 1, 15, shade(ap, 0.7))  # the bow
+        cv.set(cx - 2, 16, shade(ap, 0.9)); cv.set(cx, 16, shade(ap, 0.8))
+        cv.set(cx - 3, 10, ap); cv.set(cx + 2, 10, shade(ap, 0.85))  # the straps
+        cv.set(cx - 3, 11, ap); cv.set(cx + 2, 11, shade(ap, 0.85))
+    if look.get('trim'):
+        cv.hline(cx - 4, 17, 8, look['trim'])
+    sw = 1 if frame == 0 else -1
+    for (ax, dd) in ((cx - 5, -sw), (cx + 4, sw)):
+        for y in range(11, 16):
+            cv.set(ax, y + (dd if y > 13 else 0), shade(top, 0.9) if ax < cx else shade(top, 0.7))
+        cv.set(ax, 16 + dd, skin if ax < cx else skin_dark)
+    if carry:
+        # seen from behind, the hand that carries (the viewer's right in the front frames)
+        # is on the viewer's left
+        kind, col = carry
+        if kind == 'basket':
+            _carried(cv, kind, col, cx - 5, 15 - sw, -1)
+        elif kind == 'lantern':
+            _carried(cv, kind, col, cx - 5, 16 - sw, -1)
+        elif kind == 'plant':
+            # cradled in front: the leaves show over the left shoulder
+            for (x, y) in disc(cx - 4.5, 9.5, 1.8):
+                cv.set(x, y, col if x < cx - 4 else shade(col, 0.85))
+    # the back of the head: hair over almost all of it, ears and the nape below
+    hair = HAIR[look.get('hair', 'dark')]
+    for (x, y) in disc(cx, 6, 3.6):
+        cv.set(x, y, skin if x < cx else skin_dark)
+    for (x, y) in disc(cx, 5.6, 3.6):
+        if y <= 7:
+            cv.set(x, y, hair if x < cx - 1 else shade(hair, 0.82))
+    cv.set(cx - 2, 4, shade(hair, 1.25)); cv.set(cx - 1, 3, shade(hair, 1.25))  # the light on the crown
+    cv.set(cx - 4, 6, skin); cv.set(cx + 3, 6, skin_dark)  # the ears
+    cv.set(cx - 1, 9, skin_dark); cv.set(cx, 9, skin_dark)
+    hat = look.get('hat')
+    if hat:
+        kind, col = hat
+        if kind == 'straw':
+            cv.hline(cx - 5, 3, 11, col); cv.hline(cx - 3, 1, 6, col); cv.hline(cx - 3, 2, 6, shade(col, 0.85))
+            cv.hline(cx - 3, 2, 6, '#8A5A3A'); cv.set(cx - 5, 3, shade(col, 1.12))
+        elif kind == 'cap':
+            cv.hline(cx - 3, 2, 6, col); cv.hline(cx - 3, 3, 7, shade(col, 0.8))
+            cv.set(cx - 1, 4, shade(col, 0.6)); cv.set(cx, 4, shade(col, 0.6))  # the strap at the back
+        elif kind == 'wide':
+            cv.hline(cx - 6, 3, 13, shade(col, 0.8)); cv.hline(cx - 3, 0, 6, col); cv.hline(cx - 3, 1, 6, col)
+            cv.hline(cx - 3, 2, 6, shade(col, 0.62))
+        elif kind == 'goggles':
+            cv.hline(cx - 4, 4, 8, '#5E3D2E'); cv.set(cx - 1, 4, '#C99A3C')  # the buckle on the strap
+        elif kind == 'wrap':
+            for (x, y) in disc(cx - 0.5, 4.6, 3.8):
+                if y <= 6:
+                    cv.set(x, y, tone(col, x))
+            cv.vline(cx - 1, 6, 5, shade(col, 0.78)); cv.vline(cx, 7, 3, shade(col, 0.68))  # the tail
+        elif kind == 'hood':
+            for (x, y) in disc(cx - 0.5, 5.4, 4.3):
+                cv.set(x, y, col if x < cx - 1 else shade(col, 0.75))
+            cv.vline(cx - 1, 3, 6, shade(col, 0.85))  # the seam
+        elif kind == 'bowler':
+            cv.hline(cx - 4, 3, 9, col); cv.hline(cx - 2, 1, 5, col); cv.hline(cx - 2, 2, 5, shade(col, 0.8))
+        elif kind == 'helmet':
+            for (x, y) in disc(cx, 5, 4.6):
+                if y <= 5:
+                    cv.set(x, y, '#DCE2EC' if x < cx else '#B8C0D2')
+            cv.hline(cx - 3, 5, 6, '#9AA2B6')  # the harness at the back
+    return canvas
+
+
+FACINGS = {'east': lambda look, f: person_side(look, f, 1), 'west': lambda look, f: person_side(look, f, -1),
+           'back': person_back}
+
+
 # Who lives where, and what they wear (zone ids from scripts/art/zones.py).
 RESIDENTS = {
     'gardener': {'zone': 'town', 'skin': 'b', 'top': '#5E8A62', 'apron': '#C8A06A', 'hat': ('straw', '#E2BC5E'),
@@ -161,6 +452,9 @@ RESIDENTS = {
     'saloon': {'zone': 'gulch', 'skin': 'a', 'top': '#E8DCC8', 'trim': '#5E3A24', 'hat': ('bowler', '#2A2026'),
                'legs': '#2A2026'},
     'trader': {'zone': 'oasis', 'skin': 'd', 'top': '#E2D2B0', 'skirt': '#C8B48A', 'hat': ('wrap', '#3E6A8A')},
+    # the prospector by the old mine's landing, a lamp in hand for the drift (S5)
+    'prospector': {'zone': 'gulch', 'skin': 'b', 'top': '#7A5A3A', 'legs': '#3E4A6A', 'hat': ('wide', '#6A5040'),
+                   'carry': ('lantern', '#FFC766')},
     'smith': {'zone': 'caldera', 'skin': 'c', 'top': '#3E3A44', 'apron': '#6E4A2E', 'hair': 'black'},
     'attendant': {'zone': 'springs', 'skin': 'a', 'top': '#E8E2D8', 'trim': '#C2621E', 'hair': 'dark',
                   'carry': ('tray', '#F2EEE6')},
@@ -168,6 +462,12 @@ RESIDENTS = {
     'courier': {'zone': 'neon', 'skin': 'd', 'top': '#1FB5D0', 'legs': '#1C192B', 'hat': ('cap', '#1C192B')},
     'porter': {'zone': 'skyport', 'skin': 'b', 'top': '#DCE2EC', 'trim': '#1FB5D0', 'legs': '#5C6680',
                'hat': ('cap', '#5C6680')},
+    # the city's new quarters (N1, 19 Oct)
+    'seller': {'zone': 'market', 'skin': 'c', 'top': '#C8463A', 'apron': '#F2ECDE', 'hat': ('wrap', '#2A2640'),
+               'carry': ('tray', '#FFC766')},
+    'docker': {'zone': 'docks', 'skin': 'd', 'top': '#E8962A', 'legs': '#2C3E4C', 'hat': ('helmet', '#F2ECDE')},
+    'stroller': {'zone': 'waterfront', 'skin': 'a', 'top': '#3E566A', 'trim': '#6FE6F2', 'hair': 'grey',
+                 'legs': '#1C192B'},
     'farmer': {'zone': 'halt', 'skin': 'c', 'top': '#4A6A8A', 'apron': '#3E5468', 'hat': ('straw', '#E2BC5E'),
                'legs': '#5E4A3A'},
     'hiker': {'zone': 'ridge', 'skin': 'a', 'top': '#C2453A', 'legs': '#3E3A50', 'hat': ('cap', '#2E5A40'),
@@ -176,11 +476,15 @@ RESIDENTS = {
                 'carry': ('basket', '#A5764C')},
     'picnicker': {'zone': 'park', 'skin': 'e', 'top': '#E8A0BC', 'skirt': '#F2EEE6', 'hair': 'blond',
                   'carry': ('basket', '#C89C6A')},
+    'miller': {'zone': 'riverside', 'skin': 'd', 'top': '#8A7A5E', 'apron': '#F2EEE6', 'legs': '#5E4A3A',
+               'hat': ('cap', '#D8D0BE')},
     'angler': {'zone': 'riverside', 'skin': 'b', 'top': '#5A7A4A', 'legs': '#3E4A3A', 'hat': ('wide', '#7A6A4A')},
     'botanist': {'zone': 'station', 'skin': 'a', 'top': '#B8C2D6', 'trim': '#22B5A0', 'hair': 'blond',
                  'carry': ('plant', '#557A45')},
-    'stargazer': {'zone': 'lumen', 'skin': 'e', 'top': '#3E3A6A', 'trim': '#9AD2FF', 'legs': '#2A2838',
-                  'hat': ('helmet', '#C8C2DA'), 'carry': ('lantern', '#9AD2FF')},
+    # in Halcyon's lounge, under the long windows (Lumen's walkable rooms are all roofed
+    # now, so nobody walks in the open there; review 19 Oct 14:20)
+    'stargazer': {'zone': 'station', 'skin': 'e', 'top': '#3E3A6A', 'trim': '#9AD2FF', 'legs': '#2A2838',
+                  'hair': 'black'},
     # the Frostline Highlands and the Tidebloom Isles (18 Oct)
     'warden': {'zone': 'saddle', 'skin': 'b', 'top': '#B83A32', 'legs': '#3E3A50', 'hat': ('cap', '#E8DCC8'),
                'carry': ('lantern', '#FFC766')},
@@ -200,7 +504,7 @@ def main():
     os.makedirs(out, exist_ok=True)
     for old in os.listdir(out):
         os.remove(os.path.join(out, old))
-    entries, imports, sizes = [], [], {}
+    entries, facing_entries, imports, sizes = [], [], [], {}
     ident = lambda s: ''.join(p.capitalize() for p in s.replace('-', '_').split('_'))  # noqa: E731
     for rid, look in RESIDENTS.items():
         frames = []
@@ -212,6 +516,18 @@ def main():
             frames.append(name)
         entries.append(f"  {rid}: [{', '.join(frames)}],")
         sizes[rid] = (sp.w, sp.h)
+        sides = []
+        for facing, draw in FACINGS.items():
+            names = []
+            for f in (0, 1):
+                fp = style.finalize(draw(look, f), keep_size=True, name=f'{rid}-{facing}-{f}')
+                assert (fp.w, fp.h) == sizes[rid], f'{rid}-{facing}-{f}: box differs from the front frames'
+                fp.save(os.path.join(out, f'{rid}-{facing}-{f}.png'), SCALE)
+                name = f'resident{ident(rid)}{facing.capitalize()}{f}'
+                imports.append(f"import {name} from '@/assets/residents/{rid}-{facing}-{f}.png';")
+                names.append(name)
+            sides.append(f"{facing}: [{', '.join(names)}]")
+        facing_entries.append(f"  {rid}: {{ {', '.join(sides)} }},")
     data = [
         '// Generated by scripts/art/residents.py. Do not edit by hand.',
         '/* eslint-disable */',
@@ -234,6 +550,18 @@ def main():
         *entries,
         '};',
         '',
+        '/**',
+        ' * Walk pairs for the other three ways a resident can face: east and west in profile',
+        ' * (each drawn, not mirrored, so the light stays upper left) and back, walking away.',
+        ' * Same box and anchor as the front frames, so a route can swap them freely.',
+        ' */',
+        'export const residentFacingFrames: Record<',
+        '  string,',
+        '  { east: readonly ImageSourcePropType[]; west: readonly ImageSourcePropType[]; back: readonly ImageSourcePropType[] }',
+        '> = {',
+        *facing_entries,
+        '};',
+        '',
     ]
     paths = [os.path.join(ROOT, 'lib', 'resident-sprites.ts'), os.path.join(ROOT, 'lib', 'resident-assets.ts')]
     for path, body in zip(paths, (data, images)):
@@ -242,7 +570,8 @@ def main():
     subprocess.run(['npx', 'oxfmt', '--write', *paths], cwd=ROOT, check=True, capture_output=True)
     if os.environ.get('ZONE_PREVIEW'):
         from PIL import Image
-        ims = [Image.open(os.path.join(out, f'{rid}-{f}.png')) for rid in RESIDENTS for f in (0, 1)]
+        keys = ['0', '1'] + [f'{k}-{f}' for k in FACINGS for f in (0, 1)]
+        ims = [Image.open(os.path.join(out, f'{rid}-{k}.png')) for rid in RESIDENTS for k in keys]
         sheet = Image.new('RGBA', (sum(i.width + 8 for i in ims), max(i.height for i in ims)), (200, 190, 170, 255))
         x = 0
         for i in ims:

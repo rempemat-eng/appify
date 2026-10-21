@@ -1,0 +1,42 @@
+{
+  "app/_layout.tsx": {
+    "uses": 5,
+    "guard": "the page-title effect and the error-listener effect each return early unless Platform.OS === 'web'"
+  },
+  "components/InstallPrompt.tsx": {
+    "uses": 10,
+    "guard": "the install prompt is for the web app only: isEligibleBrowserContext() returns false unless Platform.OS === 'web', and the effect and the iOS hint only run after it"
+  },
+  "components/friend-code.tsx": {
+    "uses": 2,
+    "guard": "native shares through React Native's Share (Platform.OS !== 'web' branch); navigator.share is reached only on the web, after a typeof check"
+  },
+  "lib/app-active.ts": {
+    "uses": 1,
+    "guard": "document is read only when Platform.OS === 'web'; native uses AppState"
+  },
+  "lib/game.ts": {
+    "uses": 4,
+    "guard": "the visibility handler that reads document.hidden is added and removed only when Platform.OS === 'web'; native uses AppState"
+  },
+  "lib/keyboard-walk.ts": {
+    "uses": 6,
+    "guard": "the key listeners are added only after `Platform.OS !== 'web'` returns early (keyboard walking is a web extra)"
+  },
+  "lib/posthog.ts": {
+    "uses": 2,
+    "guard": "initPostHog returns early unless Platform.OS === 'web', and loads posthog-js with import() after it"
+  },
+  "lib/registerServiceWorker.ts": {
+    "uses": 2,
+    "guard": "returns early unless Platform.OS === 'web' (a service worker is a web-only offline cache)"
+  },
+  "lib/reportPreviewError.ts": {
+    "uses": 4,
+    "guard": "only typeof guards, so it does run on native: document is undefined there (getTargetOrigin returns '*'), window.parent is undefined so postMessage throws inside its try and is ignored. Harmless, but a Platform.OS === 'web' check would be clearer"
+  },
+  "lib/sound.ts": {
+    "uses": 2,
+    "guard": "the first-gesture listeners are added and removed only when Platform.OS === 'web' (browsers block audio until a gesture; native plays at once)"
+  }
+}

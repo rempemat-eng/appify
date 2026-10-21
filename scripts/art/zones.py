@@ -41,7 +41,22 @@ import castle_props as csp  # noqa: E402
 import space_props as spp  # noqa: E402
 import home_props as hp  # noqa: E402
 import frost_props as fp  # noqa: E402
+import water_flow  # noqa: E402
 import isle_props as ip  # noqa: E402
+
+# Each prop module may declare how its props meet the ground, so its owner registers a
+# boat or a ladder without editing the lint: PLACEMENT = {'harbour_ferry': 'floating',
+# 'pier_ladder': 'supported', 'reeds': 'wet'} (world-rules.md, section 2).
+def _register_placements():
+    import world_lint as _wl
+    kinds = {'floating': _wl.FLOATING, 'wet': _wl.WET, 'supported': _wl.SUPPORTED}
+    for mod in (gp, wp, vp, sp, cp, wsp, cdp, hbp, csp, spp, hp, fp, ip):
+        for key, kind in getattr(mod, 'PLACEMENT', {}).items():
+            assert kind in kinds, f'{mod.__name__}.PLACEMENT[{key!r}]: unknown kind {kind!r}'
+            kinds[kind].add(key)
+
+
+_register_placements()
 
 BRASS, IRON, BRICK = (MATERIALS[k] for k in ('brass', 'iron', 'brick'))
 IRONm, LEAFm = MATERIALS['iron'], MATERIALS['leaf']
@@ -156,19 +171,63 @@ def bunting() -> Canvas:
     return cv
 
 
-def cat() -> Canvas:
-    """The town cat asleep in the sun, 16 x 10, curled with its tail round its nose."""
-    cv = Canvas(16, 10, pad=2)
-    for (x, y) in oval(8, 6, 6.5, 3.6):
-        cv.set(x, y, '#E8A04A' if (x - 8) + (y - 6) < -1 else '#C47A30' if x < 11 else '#9A5A22')
-    for (x, y) in disc(4, 4, 2.4):
-        cv.set(x, y, '#E8A04A' if x < 4 else '#C47A30')
-    cv.set(3, 1, '#C47A30'); cv.set(5, 1, '#C47A30')
-    cv.set(3, 4, '#5A3A1E'); cv.set(5, 4, '#5A3A1E')  # closed eyes
-    for t in range(6):
-        cv.set(9 + t, 9 - t // 3, '#9A5A22')
-    for k in range(4):
-        cv.set(6 + k * 2, 5, '#9A5A22')  # tabby stripes
+# The town cat (art-faults.md A9: "the cat washes and flicks its tail"): a ginger tabby
+# with a cream chest and socks, drawn from masks (animal_frames.paint_mask) so that facing
+# west it is drawn, not mirrored, and stays lit from the upper left. It sits on its corner;
+# animal_frames.KINDS['cat'] says when it washes, flicks its tail and twitches an ear, and
+# when it gets up and pads a few steps along the street.
+CAT_INKS = {'b': ['#7A3E1A', '#A85A24', '#CC7A34', '#E89C4C', '#F6C072'], 's': '#A0521E',
+            'w': ['#A88C70', '#CCB494', '#E8D6BC', '#F6ECDA', '#FFFAF0'], 'e': '#2E5A3A',
+            'k': '#241C1A', 'n': '#D8707A', 'p': '#E89A90'}
+_CAT_SIT = [
+    '.........b...b.',
+    '.........bb.bb.',
+    '.........bpbpb.',
+    '........bbbbbbb',
+    '........bbebbeb',
+    '.......sbbbbnbb',
+    '.......bbbwwww.',
+    '......bbsbwww..',
+    '.....bbbsbbww..',
+    '.....bsbbsbww..',
+    '....bbsbbsbwb..',
+    '....bbbbbbbwb..',
+    '..bbbbbbbbwbw..',
+    '.bb..bbbbbwbw..',
+    '..bbbbbbb......',
+]
+_CAT_WALK = [
+    '............b.b',
+    '............bbb',
+    'b..........bpbb',
+    'bb........bbebn',
+    '.bb.bbbbbbbbbbb',
+    '..bbsbsbsbbbww.',
+    '..bbbsbsbsbbw..',
+    '...bbbbbbbbbw..',
+]
+CAT_POSES = {
+    'sit': _CAT_SIT,
+    # a paw licked and drawn over the face, eyes shut
+    'wash': _CAT_SIT[:4] + ['........bbkbbkw', '.......sbbbbnww', '.......bbbwwwwb', '......bbsbwwwb.',
+                            '.....bbbsbbwb..', '.....bsbbsbbb..', '....bbsbbsbbb..', '....bbbbbbbbb..',
+                            '..bbbbbbbbbbw..'] + _CAT_SIT[13:],
+    # the tail's tip lifted off the ground and dropped again
+    'flick': _CAT_SIT[:11] + ['....bbbbbbbwb..', 'b...bbbbbbwbw..', 'bb..bbbbbbwbw..', '.bbbbbbbb......'],
+    # the far ear turned back
+    'ear': ['.........b....b', '.........bb.bbb'] + _CAT_SIT[2:],
+    'step1': _CAT_WALK + ['...wb.....bw...', '...w.b...b.w...', '..ww..w.w...ww.'],
+    'step2': _CAT_WALK + ['....wb...bw....', '....w.b.b.w....', '....ww.ww.ww...'],
+}
+
+
+def cat(pose: str = 'sit', west: bool = False) -> Canvas:
+    """The town cat, 16 x 10 at its feet (it sits up above that): `pose` one of
+    CAT_POSES, facing east, or drawn facing west."""
+    import animal_frames
+    rows = CAT_POSES[pose]
+    cv = Canvas(16, 10, pad=8)
+    animal_frames.paint_mask(cv, rows, CAT_INKS, 0, 10 - len(rows), mirror=west)
     return cv
 
 
@@ -188,7 +247,10 @@ def sprites() -> dict[str, Canvas]:
     items = wp.props()
     items.update({'stall': gp.stall(), 'signpost': gp.signpost(), 'well': well(),
                   'notice_board': notice_board(), 'ring_post': ring_post(), 'pennant': pennant(),
-                  'bunting': bunting(), 'cat': cat()})
+                  'bunting': bunting()})
+    for west, base in ((False, 'cat'), (True, 'cat_w')):
+        for pose in CAT_POSES:
+            items[base if pose == 'sit' else f'{base}_{pose}'] = cat(pose, west)
     items.update(vp.props())
     items.update(sp.props())
     items.update(cp.props())
@@ -201,6 +263,8 @@ def sprites() -> dict[str, Canvas]:
     items.update(fp.props())
     items.update(ip.props())
     items['fence_c'] = gp.fence_h(60)
+    import animal_frames  # the animals' idle and walk frames (art-faults.md A9)
+    items.update(animal_frames.frames(items))
     out = {key: style.finalize(sp, name=key) for key, sp in items.items()}
     for key, raw in items.items():  # the window panes of each building, in sprite pixels
         fin = out[key]
@@ -217,11 +281,24 @@ SPRITE_WINDOWS: dict = {}
 # Props with a way through them: (from, to) in sprite pixels.
 OPENINGS = {'gatehouse': (50, 72), 'sandstone_arch': (20, 44), 'ticket_gates': (4, 80), 'moon_arch': (20, 44)}
 
+# Wide props that stand on a few feet rather than their whole width: (from, to, depth)
+# in sprite pixels, each a solid footing; the rest of the sprite's bottom is open ground.
+# The airship mast is 157 wide only because it carries the moored airship: what stands
+# on the ground is the tower's west leg pad, its east leg pad and the winch house
+# beside it; the cage lift between the legs is open, so the path walks into its door.
+FEET = {'airship_mast': ((106, 114, 8), (133, 156, 20))}
+
 
 def walk_grid(objects, sprite_map) -> list[str]:
     blocked = set()
     for (_id, key, x, y) in objects:
         sp = sprite_map[key]
+        if key in FEET:
+            for (fx0, fx1, depth) in FEET[key]:
+                for yy in range(y + sp.h - depth, y + sp.h):
+                    for xx in range(x + fx0, x + fx1):
+                        blocked.add((xx // CELL, yy // CELL))
+            continue
         foot = 20 if sp.w > 60 else 10 if key in ('tree', 'tree_small', 'tree_autumn', 'pine') else 6
         gap = OPENINGS.get(key)
         for yy in range(y + sp.h - foot, y + sp.h):
@@ -356,6 +433,7 @@ REGION_PROPS = {'junction': sp.props, 'canal': sp.props, 'springs': cdp.props, '
 SHARED_PROPS = {'steam_puff', 'drone', 'ring_post', 'fence_c'}
 # Things above head height: they cast no ground shadow, never block a walk, draw on top.
 OVERHEAD = {'steam_puff', 'drone', 'bunting', 'cables', 'dragon'}
+OVERHEAD |= {key for (key, *_rest) in cp.city_skybridges()}  # the city's decks, until they can be walked
 
 
 @functools.lru_cache(maxsize=None)
@@ -575,6 +653,10 @@ def build(name: str, fn, start: str):
     sprite_map = sprites()
     cv, objects, stands, *rest = fn()
     blocked_ground = rest[0] if rest else set()
+    # an upper walk level (docs/vision/two-level-walk.md): {'walk': pixels of the deck's
+    # surface in the coordinates of the ground it stands over, 'height': px it is drawn
+    # raised by, 'connectors': [{'kind', 'bottom': (x, y), 'top': (x, y)}]}
+    deck = rest[1] if len(rest) > 1 else None
     if name in REGION_PROPS:
         own = region_keys(name) | SHARED_PROPS
         foreign = sorted({k for (_i, k, _x, _y) in objects} - own)
@@ -600,8 +682,10 @@ def build(name: str, fn, start: str):
     objects = objects + frames.place(name, LAYOUT, sprite_map, allowed, objects, stands, pre, is_water)
     dress(cv, name, objects, sprite_map, blocked_ground)
     shade = set()
+    import animal_frames
     for (_id, key, x, y) in objects:
-        if key not in OVERHEAD:
+        # (an animal that wanders carries its own shadow: animal_frames.shade)
+        if key not in OVERHEAD and not animal_frames.moving(key):
             shade |= detail.silhouette_shadow(sprite_map[key], x, y)
     for (sx, sy) in shade:
         style.darken(cv, sx, sy)
@@ -658,6 +742,36 @@ def build(name: str, fn, start: str):
     os.makedirs(out, exist_ok=True)
     cv.save(os.path.join(out, 'ground.png'), worlds.SCALE)
     GROUND_TONE[name] = ground_tone(cv)
+    # moving water and lava (water_flow.py): an overlay of only the pixels that change
+    import water_flow
+    terrain = world_lint.classify(cv.img, blocked_ground, wet if fn.__name__ in WATER_MASKS else None)
+    wet_px, hot_px = set(), set()
+    for r, row in enumerate(terrain):
+        for c, ch in enumerate(row):
+            if ch not in '~!':
+                continue
+            for y in range(r * CELL - 1, r * CELL + CELL + 1):  # (a pixel into each neighbour)
+                for x in range(c * CELL - 1, c * CELL + CELL + 1):
+                    if not (0 <= x < W and 0 <= y < H):
+                        continue
+                    if fn.__name__ in WATER_MASKS:
+                        if ch == '~' and (x, y) in wet:
+                            wet_px.add((x, y))
+                        continue
+                    px = cv.get(x, y)[:3]
+                    if ch == '~' and world_lint._bluish(*px):
+                        wet_px.add((x, y))
+                    elif ch == '!' and world_lint._lava(*px):
+                        hot_px.add((x, y))
+    still = {(x, y) for (x, y) in wet_px
+             if any(a <= x < c and b <= y < d for (a, b, c, d) in STILL_WATER.get(name, ()))}
+    flow = water_flow.sheet(cv.img, wet_px, hot_px, still)
+    flow_path = os.path.join(out, 'flow.png')
+    if flow:
+        flow[0].save(flow_path, optimize=True)  # native scale: the renderer draws it pixelated
+        FLOW_RECT[name] = flow[1]
+    elif os.path.exists(flow_path):
+        os.remove(flow_path)
     if name == 'town':
         # the lane past the garden gate, drawn below the garden screen's fence, so the
         # garden's south edge shows the valley going on (components/garden-world.tsx)
@@ -668,6 +782,8 @@ def build(name: str, fn, start: str):
                 strip.paste(sprite_map[key], x, y)
         strip.save(os.path.join(out, 'top.png'), worlds.SCALE)
     preview = os.environ.get('ZONE_PREVIEW')
+    if preview:
+        os.makedirs(preview, exist_ok=True)
     prev = None
     if preview or os.environ.get('LINT_OUT'):
         prev = Canvas(W, H)
@@ -679,9 +795,66 @@ def build(name: str, fn, start: str):
         if preview:
             prev.save(os.path.join(preview, f'zone-{name}.png'), 2)
     print('ok zone', name, W, H)
-    return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map,
+    if deck:
+        import decks  # the deck drawn from its walk (two-level-walk.md)
+        top = min(y for (_x, y) in deck['walk']) - int(deck['height']) - decks.RAIL - 1
+        assert top >= 0, f'{name}: the deck is drawn off the top of the zone (raise its foot below y {-top + 1 + min(y for (_x, y) in deck["walk"])})'
+        # deck-occlusion (two-level-walk.md): a deck is narrow, so the street under it is
+        # hidden for 40 px at most, and no door on the street is drawn under it
+        cols = {}
+        for (x, y) in deck['walk']:
+            cols.setdefault(x, set()).add(y)
+        deep = [x for x, ys in cols.items() if max(ys) - min(ys) + 1 > 40]
+        assert not deep, f'{name}: the deck is deeper than 40 px over the street at x {deep[:3]}'
+        rail = int(deck['height']) + decks.RAIL
+        for (oid, key, x, y) in objects:
+            if key not in DOORS:
+                continue
+            sp = sprite_map[key]
+            dx, dy = x + int(sp.w * DOORS[key]), y + sp.h - 8
+            assert not any(fy - rail <= dy <= fy + decks.FACE for fy in cols.get(dx, ())), \
+                f'{name}: the door of {oid} is drawn under the deck'
+        art, under = decks.paint(deck, W, H)
+        art.save(os.path.join(out, 'deck.png'), worlds.SCALE)
+        under.save(os.path.join(out, 'deck-shadow.png'), worlds.SCALE)
+        deck = deck_grid(name, deck, walk)
+    else:
+        for f in ('deck.png', 'deck-shadow.png'):  # (a deck taken away takes its pictures)
+            if os.path.exists(os.path.join(out, f)):
+                os.remove(os.path.join(out, f))
+    return {'objects': objects, 'walk': walk, 'stands': stands, 'sprites': sprite_map, 'deck': deck,
             'ground_img': cv.img.copy(), 'blocked': blocked_ground, 'preview': prev.img if prev else None,
             'water': WATER_MASKS.get(fn.__name__)}
+
+
+def deck_grid(name: str, deck: dict, ground_walk: list) -> dict:
+    """A zone's deck as walk rows (a cell is open where most of its pixels are deck), its
+    height and its connectors, checked: every connector's bottom stands on open ground,
+    its top on the deck, and every open deck cell is reached from a connector's top."""
+    surface = deck['walk']
+    rows = []
+    for cy in range(H // CELL):
+        row = ''
+        for cx in range(W // CELL):
+            n = sum((cx * CELL + dx, cy * CELL + dy) in surface for dx in range(CELL) for dy in range(CELL))
+            row += '.' if n * 2 > CELL * CELL else '#'
+        rows.append(row)
+    conns = deck.get('connectors', [])
+    assert conns, f'{name}: a deck needs at least one stair, ramp or lift'
+    for c in conns:
+        assert c['kind'] in ('stair', 'ramp', 'lift'), f'{name}: unknown connector {c}'
+        bx, by = c['bottom']
+        tx, ty = c['top']
+        assert ground_walk[by // CELL][bx // CELL] == '.', f'{name}: a {c["kind"]} starts on blocked ground at {c["bottom"]}'
+        assert rows[ty // CELL][tx // CELL] == '.', f'{name}: a {c["kind"]} lands off the deck at {c["top"]}'
+    seen = set()
+    for c in conns:
+        tx, ty = c['top']
+        seen |= reachable(rows, (tx, ty))
+    stranded = [(cx, cy) for cy, row in enumerate(rows) for cx, ch in enumerate(row) if ch == '.' and (cy, cx) not in seen]
+    assert not stranded, f'{name}: {len(stranded)} deck cells reached by no stair or lift (first {stranded[:3]})'
+    return {'walk': rows, 'height': int(deck['height']),
+            'connectors': [{'kind': c['kind'], 'bottom': list(c['bottom']), 'top': list(c['top'])} for c in conns]}
 
 
 # Buildings whose door faces the viewer, and where the door sits across the sprite
@@ -689,6 +862,7 @@ def build(name: str, fn, start: str):
 DOORS = {k: 0.5 for k in ('house_blue', 'house_red', 'cabin', 'cafe', 'library', 'workshop', 'workshop_round',
                           'station_house', 'barn', 'bathhouse', 'foundry', 'tube_station', 'cottage', 'cottage_b',
                           'saloon', 'store', 'mine_portal', 'clock_tower', 'lookout_tower')}
+DOORS.update({'cottage_c': 0.5, 'cottage_d': 0.4})  # Claude B's B6 (#45): cottage_d's door is off-centre
 
 
 # Where each zone sits on its region's grid (column, row), in zone-sized steps. The
@@ -705,7 +879,10 @@ LAYOUT = {
              'caldera': (1, -2), 'springs': (2, -2)},
     # the Tidebloom Isles, by ferry from Driftwood's jetty (Matt, 18 Oct 19:07)
     'isles': {'rainforest': (0, 0), 'headwaters': (1, 0), 'landing': (0, 1), 'cove': (1, 1)},
-    'neon': {'neon': (0, 0), 'skyport': (1, 0)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)}, 'home': {'home': (0, 0)},
+    # the city (N1, Claude C): the old core and the Skyport keep their cells on the coast,
+    # the rest grows inland and along the east quay (city_zones.py)
+    'neon': {'neon': (0, 0), 'skyport': (1, 0), 'point': (2, 0), 'market': (0, -1), 'downtown': (1, -1),
+             'docks': (2, -1), 'heights': (0, -2), 'plaza': (1, -2), 'waterfront': (2, -2)}, 'space': {'station': (0, 0)}, 'moon': {'lumen': (0, 0)}, 'home': {'home': (0, 0)},
 }
 
 
@@ -723,8 +900,23 @@ def rle(row: str) -> str:
 # Water a zone declares outright (world-rules.md, section 1: the semantic layer), for
 # zones whose night palettes the lint cannot read by colour; others are read by colour.
 WATER_MASKS: dict[str, set] = {}
+# Still water (water_flow.py): water that lies still gets glints and lapping at its edges,
+# never drifting streaks (a canal reads as a channel by its shape, but it has no current).
+# Boxes in zone px (x0, y0, x1, y1); build() passes the zone's water inside them to
+# water_flow.sheet. A zone's own module may declare more: STILL_WATER.setdefault(zone, []).
+STILL_WATER: dict[str, list] = {
+    'canal': [(0, 170, W, 250)],                               # Cogsworth's canal and its lock's pounds (city_zones.canal)
+    'ridge': [(188, 384, 278, 426)],                           # the alpine tarn under the terrace (valley_zones.ridge)
+    'riverside': [(212, 192, 260, 220), (266, 66, 298, 86)],   # the millpond and the spring's pool (valley_zones.riverside)
+}
 
 BEYOND_SPILL = 20  # how far the forest's crowns spill over the zones beside it
+# The land past the walkable world (scenery.py) is saved at 2x, not the zones' 4x: each cell
+# is 360 x 616 art px, 13.5 MiB decoded at 4x and 3.4 MiB at 2x, and a region's edge mounts
+# several. Scaled by nearest neighbour (the camera's data-pixel view on the web), every art
+# pixel is a block of identical source pixels at either scale, so the picture on screen is
+# the same; only the decoded memory changes.
+SCENERY_SCALE = 2
 
 
 @functools.lru_cache(maxsize=1)
@@ -825,6 +1017,7 @@ def beyond_peaks() -> Canvas:
 
 
 GROUND_TONE: dict = {}
+FLOW_RECT: dict = {}  # zone -> (x, y, w, h) of its moving water's box (water_flow.py)
 
 
 def ground_tone(cv) -> str:
@@ -854,6 +1047,18 @@ def export(built: dict):
     beyond_peaks().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-peaks.png'), worlds.SCALE)
     beyond_sea().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-sea.png'), worlds.SCALE)
     beyond_regolith().save(os.path.join(worlds.ROOT, 'assets', 'zones', 'beyond-regolith.png'), worlds.SCALE)
+    # the land past the walkable world, cell by cell (scenery.py; art-faults.md rule 13)
+    import scenery
+    scen_dir = os.path.join(worlds.ROOT, 'assets', 'zones', 'scenery')
+    os.makedirs(scen_dir, exist_ok=True)
+    for old in os.listdir(scen_dir):
+        os.remove(os.path.join(scen_dir, old))
+    scenery_keys = []
+    for region in LAYOUT:
+        for (c, r), cv in sorted(scenery.cells(LAYOUT[region], region).items()):
+            name = f'{region}_{c}_{r}'.replace('-', 'm')
+            cv.save(os.path.join(scen_dir, f'{name}.png'), SCENERY_SCALE)
+            scenery_keys.append((f'{region}:{c}:{r}', name))
     used = {}
     for z in built.values():
         for (_i, k, _x, _y) in z['objects']:
@@ -871,6 +1076,11 @@ def export(built: dict):
     for key, fl in frames.items():
         for (fk, *_r) in fl:
             used[fk] = next(z['sprites'] for z in built.values())[fk]
+    # the animals' frames and shadows, and where each may wander (animal_frames.py)
+    import animal_frames
+    animal_lines = animal_frames.export(built, next(z['sprites'] for z in built.values()), used,
+                                        lambda objs: walk_grid([o for o in objs if o[1] not in OVERHEAD],
+                                                               next(z['sprites'] for z in built.values())))
     for key, sp in sorted(used.items()):
         sp.save(os.path.join(props_dir, f'{key}.png'), worlds.SCALE)
     ident = lambda k: ''.join(p.capitalize() for p in k.split('_'))  # noqa: E731
@@ -887,6 +1097,7 @@ def export(built: dict):
         f'export const zoneOverhead: readonly string[] = {json.dumps(sorted(OVERHEAD))};',
         '/** Animation frames of a sprite: [frame sprite, dx, dy, w, h] from the sprite\'s own top-left. */',
         f'export const zoneFrames: Record<string, readonly (readonly [string, number, number, number, number])[]> = {json.dumps(frames)};',
+        *animal_lines,
         '/** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */',
         f'export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {json.dumps({k: [list(r) for r in v] for k, v in sorted(SPRITE_WINDOWS.items()) if k in used})};',
         '/** Walk rows are run-length encoded (\'12.3#\' = twelve open cells, three blocked). */',
@@ -900,10 +1111,29 @@ def export(built: dict):
         lines.append(f"    walk: {json.dumps([rle(r) for r in z['walk']])}.map(unrle),")
         lines.append(f"    stands: {json.dumps({k: list(v) for k, v in z['stands'].items()})},")
         lines.append('  },')
+    decks = {zid: z['deck'] for zid, z in built.items() if z.get('deck')}
     import world_lint
     placement = {k: t for t, ks in (('floating', world_lint.FLOATING), ('wet', world_lint.WET),
                                      ('supported', world_lint.SUPPORTED), ('overhead', OVERHEAD)) for k in sorted(ks) if k in used}
     lines += [
+        '};',
+        '/** A zone\'s upper walk level (docs/vision/two-level-walk.md): its walk rows in the coordinates of the',
+        ' *  ground it stands over, how high it is drawn above that ground, and the stairs, ramps and lifts',
+        ' *  joining it to the ground (bottom on the ground\'s walk, top on the deck\'s). */',
+        'export type ZoneDeck = {',
+        '  height: number;',
+        '  walk: readonly string[];',
+        "  connectors: readonly { kind: 'stair' | 'ramp' | 'lift'; bottom: readonly [number, number]; top: readonly [number, number] }[];",
+        '};',
+        '/** Moving water and lava (scripts/art/water_flow.py): the box round a zone\'s water, in zone px; its',
+        f' *  picture holds {water_flow.FRAMES} frames stacked top to bottom, shown {water_flow.FRAME_MS} ms apart. */',
+        f'export const FLOW_FRAMES = {water_flow.FRAMES};',
+        f'export const FLOW_FRAME_MS = {water_flow.FRAME_MS};',
+        'export const zoneFlow: Partial<Record<ZoneId, readonly [number, number, number, number]>> = {',
+        *[f'  {z}: {list(FLOW_RECT[z])},' for z in built if z in FLOW_RECT],
+        '};',
+        'export const zoneDecks: Partial<Record<ZoneId, ZoneDeck>> = {',
+        *[f"  {zid}: {{ height: {d['height']}, walk: {json.dumps([rle(r) for r in d['walk']])}.map(unrle), connectors: {json.dumps(d['connectors'])} }}," for zid, d in decks.items()],
         '};',
         '/** What each walk cell of a zone is (docs/vision/world-rules.md, section 1): \'~\' water, \'!\' lava,',
         ' *  \'^\' wall or cliff, \'=\' path, \'.\' ground. Rows are run-length encoded like the walk rows. */',
@@ -921,6 +1151,7 @@ def export(built: dict):
         f'export const zonePorts: Record<string, {{ span: readonly [number, number] | null; frame: string }}> = {json.dumps(__import__("frames").export())};',
         '',
     ]
+    decked = [z for z in built if built[z].get('deck')]
     assets = [
         '// Generated by scripts/art/zones.py. Do not edit by hand.',
         '/* eslint-disable */',
@@ -956,6 +1187,24 @@ def export(built: dict):
         'export const zoneBeyondPeaks: ImageSourcePropType = beyondPeaksImage;',
         '/** The moon\'s plain: what lies round Lumen below its horizon. */',
         'export const zoneBeyondRegolith: ImageSourcePropType = beyondRegolithImage;',
+        *[f"import scenery{ident(n)} from '@/assets/zones/scenery/{n}.png';" for _k, n in scenery_keys],
+        '/** The land past the walkable world, one picture per cell round a region and in its',
+        ' *  grid\'s gaps, painted in the region\'s coordinates (scripts/art/scenery.py). */',
+        'export const zoneScenery: Record<string, ImageSourcePropType> = {',
+        *[f"  '{k}': scenery{ident(n)}," for k, n in scenery_keys],
+        '};',
+        *[f"import deck{ident(z)} from '@/assets/zones/{z}/deck.png';\nimport deckShadow{ident(z)} from '@/assets/zones/{z}/deck-shadow.png';"
+          for z in decked],
+        '/** Each deck drawn from its walk (scripts/art/decks.py): the raised deck, and the',
+        ' *  street darkened under it with its shadow. Zone-sized, at the zone\'s origin. */',
+        'export const zoneDeckArt: Partial<Record<ZoneId, { deck: ImageSourcePropType; shadow: ImageSourcePropType }>> = {',
+        *[f'  {z}: {{ deck: deck{ident(z)}, shadow: deckShadow{ident(z)} }},' for z in decked],
+        '};',
+        *[f"import flow{ident(z)} from '@/assets/zones/{z}/flow.png';" for z in built if z in FLOW_RECT],
+        '/** Each zone\'s moving water, frames stacked (scripts/art/water_flow.py; boxes in zone-maps.ts). */',
+        'export const zoneFlowArt: Partial<Record<ZoneId, ImageSourcePropType>> = {',
+        *[f'  {z}: flow{ident(z)},' for z in built if z in FLOW_RECT],
+        '};',
         f'export const BEYOND_SPILL = {BEYOND_SPILL};',
         'export const zoneProps: Record<string, ImageSourcePropType> = {',
         *[f'  {k}: prop{ident(k)},' for k in sorted(used)],
@@ -1000,8 +1249,15 @@ def main():
     built['halt'] = build('halt', halt, 'town')
     built['junction'] = build('junction', junction, 'platform')
     built['canal'] = build('canal', canal, 'junction')
-    built['neon'] = build('neon', neon_city, 'crossing')
+    built['neon'] = build('neon', city_neon, 'crossing')
     built['skyport'] = build('skyport', skyport, 'neon')
+    built['market'] = build('market', city_market, 'avenue')
+    built['downtown'] = build('downtown', city_downtown, 'towers')
+    built['heights'] = build('heights', city_heights, 'hill')
+    built['plaza'] = build('plaza', city_plaza, 'fountain')
+    built['waterfront'] = build('waterfront', city_waterfront, 'promenade')
+    built['docks'] = build('docks', city_docks, 'cranes')
+    built['point'] = build('point', city_point, 'quay')
     built['gulch'] = build('gulch', gulch, 'platform')
     built['oasis'] = build('oasis', oasis, 'gulch')
     built['caldera'] = build('caldera', caldera, 'tunnel')
@@ -1024,6 +1280,8 @@ def main():
     import map_tiles  # the world map's tiles, drawn from the same reading of each zone
     map_tiles.write_all(built, world_lint.garden_zone(), set(DOORS))
     export(built)
+    import world_canvas  # the same places as chunks of the world, cut into world tiles (step 1: not read yet)
+    world_canvas.build_all(built)
 
 
 if __name__ == '__main__':

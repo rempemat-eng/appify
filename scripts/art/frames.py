@@ -67,6 +67,12 @@ PORTS = {
     # Cogsworth, Neon
     ('junction', 'canal'): (OPEN, None),
     ('neon', 'skyport'): (OPEN, None),
+    # the city (Claude C): open streets and quays across every seam but one, where the
+    # Skyport terminal's back wall closes downtown's south edge
+    ('heights', 'plaza'): (OPEN, None), ('plaza', 'waterfront'): (OPEN, None),
+    ('market', 'downtown'): (OPEN, None), ('downtown', 'docks'): (OPEN, None), ('skyport', 'point'): (OPEN, None),
+    ('heights', 'market'): (OPEN, None), ('plaza', 'downtown'): (OPEN, None), ('waterfront', 'docks'): (OPEN, None),
+    ('market', 'neon'): (OPEN, None), ('downtown', 'skyport'): (None, None), ('docks', 'point'): (OPEN, None),
     # Sunstone Reach (Claude D's lines)
     # Sunstone Reach: the desert runs into the scrub and the ash as open land; only the
     # lava, the moat and Hearthold's walls stop you (Matt, 19 Oct)
@@ -75,11 +81,12 @@ PORTS = {
     ('hearthold', 'scorch'): (OPEN, None),
     ('caldera', 'hearthold'): (OPEN, None),
     ('caldera', 'springs'): (OPEN, None),
-    # the Tidebloom Isles: the escarpments and the gorge close what they close; the
-    # landing and the cove are both at sea level, so the land runs on between them
-    ('rainforest', 'headwaters'): ((224, 280), None),
-    ('rainforest', 'landing'): ((128, 184), None),
-    ('headwaters', 'cove'): ((192, 248), None),
+    # the Tidebloom Isles: the land runs on across every seam; the escarpments, which
+    # follow the contours and cross the seams where the land puts them, close what they
+    # close, and stairs carry the trails up them (isle_zones.py)
+    ('rainforest', 'headwaters'): (OPEN, None),
+    ('rainforest', 'landing'): (OPEN, None),
+    ('headwaters', 'cove'): (OPEN, None),
     ('landing', 'cove'): (OPEN, None),
 }
 

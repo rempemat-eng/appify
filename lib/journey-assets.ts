@@ -33,10 +33,8 @@ import lavaYard from '@/assets/journeys/lava-yard.png';
 import moonYard from '@/assets/journeys/moon-yard.png';
 import engine from '@/assets/journeys/engine.png';
 import carriage from '@/assets/journeys/carriage.png';
-import capsule from '@/assets/journeys/capsule.png';
 import maglev from '@/assets/journeys/maglev.png';
 import carts from '@/assets/journeys/carts.png';
-import shuttle from '@/assets/journeys/shuttle.png';
 import ferry from '@/assets/journeys/ferry.png';
 export const JOURNEY = { width: 320, height: 240, rail: 160 } as const;
 /** Sky, far land and near land for the trip to each region; each loops across. `above` and
@@ -57,7 +55,7 @@ export const journeyLayers: Record<
   lava: { sky: lavaSky, far: lavaFar, near: lavaNear, above: '#2A0E0A', below: '#3A3634' },
   neon: { sky: neonSky, far: neonFar, near: neonNear, above: '#140E28', below: '#100E1A' },
   space: { sky: spaceSky, far: spaceFar, near: spaceNear, above: '#05060C', below: '#05060C' },
-  moon: { sky: moonSky, far: moonFar, near: moonNear, above: '#05060C', below: '#2A2838' },
+  moon: { sky: moonSky, far: moonFar, near: moonNear, above: '#05060C', below: '#141312' },
   isles: { sky: islesSky, far: islesFar, near: islesNear, above: '#5EB4E8', below: '#2C3C58' },
   pier: { sky: pierSky, far: pierFar, near: pierNear, above: '#7FB4E6', below: '#2C3C58' },
 };
@@ -76,9 +74,7 @@ export const journeyVehicles: Record<
 > = {
   engine: { source: engine, w: 100, h: 50 },
   carriage: { source: carriage, w: 74, h: 38 },
-  capsule: { source: capsule, w: 42, h: 58 },
   maglev: { source: maglev, w: 130, h: 25 },
   carts: { source: carts, w: 90, h: 21 },
-  shuttle: { source: shuttle, w: 73, h: 42 },
   ferry: { source: ferry, w: 84, h: 36 },
 };

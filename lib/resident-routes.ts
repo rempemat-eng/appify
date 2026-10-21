@@ -7,40 +7,51 @@ import type { ZoneId } from './zone-maps';
  * are drawn above the props; checked in region-walk.test.ts).
  * Presentation only: residents never block the companion and grant nothing.
  */
+/** Which way someone faces: toward the viewer, away, or to a side (screen east or west). */
+export type Facing = 'front' | 'back' | 'east' | 'west';
+
 export type ResidentRoute = {
   zone: ZoneId;
   from: readonly [number, number];
   to: readonly [number, number];
+  /** which way they face while paused at `from` and at `to` (their work: an angler
+   *  toward the water, a miller toward the door); toward the viewer when not given */
+  face?: readonly [Facing, Facing];
 };
 
 export const residentRoutes: Record<string, ResidentRoute> = {
-  gardener: { zone: 'town', from: [72, 260], to: [160, 260] },
+  gardener: { zone: 'town', from: [264, 222], to: [296, 222], face: ['back', 'back'] },
   baker: { zone: 'town', from: [186, 212], to: [186, 300] },
-  fisher: { zone: 'harbour', from: [152, 290], to: [240, 290] },
-  keeper: { zone: 'harbour', from: [66, 276], to: [66, 364] },
-  steward: { zone: 'hearthold', from: [146, 296], to: [196, 296] },
-  tinkerer: { zone: 'junction', from: [96, 372], to: [184, 372] },
-  boatwoman: { zone: 'canal', from: [136, 170], to: [224, 170] },
-  cowhand: { zone: 'gulch', from: [132, 200], to: [132, 288] },
-  saloon: { zone: 'gulch', from: [102, 380], to: [190, 380] },
-  trader: { zone: 'oasis', from: [210, 546], to: [298, 546] },
-  smith: { zone: 'caldera', from: [18, 434], to: [106, 434] },
-  attendant: { zone: 'springs', from: [106, 516], to: [184, 516] },
+  fisher: { zone: 'harbour', from: [150, 408], to: [200, 408] },
+  keeper: { zone: 'harbour', from: [22, 452], to: [22, 512], face: ['east', 'east'] },
+  steward: { zone: 'hearthold', from: [146, 296], to: [196, 296], face: ['west', 'front'] },
+  tinkerer: { zone: 'junction', from: [108, 372], to: [184, 372] },
+  boatwoman: { zone: 'canal', from: [190, 182], to: [250, 182], face: ['front', 'front'] },
+  cowhand: { zone: 'gulch', from: [132, 200], to: [132, 288], face: ['west', 'east'] },
+  saloon: { zone: 'gulch', from: [102, 380], to: [190, 380], face: ['west', 'front'] },
+  prospector: { zone: 'gulch', from: [186, 130], to: [214, 130], face: ['back', 'east'] },
+  trader: { zone: 'oasis', from: [210, 546], to: [298, 546], face: ['back', 'back'] },
+  smith: { zone: 'caldera', from: [18, 434], to: [106, 434], face: ['back', 'back'] },
+  attendant: { zone: 'springs', from: [106, 516], to: [184, 516], face: ['west', 'front'] },
   vendor: { zone: 'neon', from: [70, 332], to: [158, 332] },
   courier: { zone: 'neon', from: [18, 184], to: [106, 184] },
   porter: { zone: 'skyport', from: [52, 240], to: [140, 240] },
-  farmer: { zone: 'halt', from: [202, 448], to: [262, 448] },
-  hiker: { zone: 'ridge', from: [130, 228], to: [130, 316] },
-  forager: { zone: 'woodland', from: [108, 278], to: [196, 278] },
-  picnicker: { zone: 'park', from: [18, 100], to: [106, 100] },
-  angler: { zone: 'riverside', from: [154, 362], to: [242, 362] },
-  botanist: { zone: 'station', from: [64, 330], to: [152, 330] },
-  stargazer: { zone: 'lumen', from: [176, 362], to: [264, 362] },
+  seller: { zone: 'market', from: [212, 314], to: [292, 314], face: ['back', 'back'] },
+  docker: { zone: 'docks', from: [176, 384], to: [176, 464] },
+  stroller: { zone: 'waterfront', from: [148, 218], to: [148, 298] },
+  farmer: { zone: 'halt', from: [151, 384], to: [151, 436], face: ['west', 'east'] },
+  hiker: { zone: 'ridge', from: [144, 320], to: [168, 286], face: ['front', 'east'] },
+  forager: { zone: 'woodland', from: [180, 172], to: [214, 168], face: ['west', 'front'] },
+  picnicker: { zone: 'park', from: [18, 100], to: [106, 100], face: ['front', 'east'] },
+  angler: { zone: 'riverside', from: [263, 426], to: [265, 438], face: ['east', 'east'] },
+  miller: { zone: 'riverside', from: [96, 280], to: [128, 282], face: ['front', 'east'] },
+  botanist: { zone: 'station', from: [64, 330], to: [152, 330], face: ['west', 'back'] },
+  stargazer: { zone: 'station', from: [44, 152], to: [128, 152], face: ['back', 'east'] },
   warden: { zone: 'saddle', from: [152, 240], to: [168, 330] },
   skater: { zone: 'snowmelt', from: [162, 300], to: [208, 292] },
-  ferryman: { zone: 'landing', from: [128, 360], to: [200, 364] },
-  naturalist: { zone: 'rainforest', from: [161, 436], to: [157, 526] },
-  beachcomber: { zone: 'cove', from: [160, 398], to: [250, 398] },
+  ferryman: { zone: 'landing', from: [128, 360], to: [184, 366], face: ['front', 'east'] },
+  naturalist: { zone: 'rainforest', from: [200, 440], to: [194, 520] },
+  beachcomber: { zone: 'cove', from: [130, 396], to: [206, 396] },
 };
 
 /** What each resident says when the companion stops beside them (decoration only). */
@@ -54,17 +65,22 @@ export const residentLines: Record<string, string> = {
   boatwoman: 'the lock takes its time. so do we.',
   cowhand: 'the cattle know when to rest. wish folks did.',
   saloon: 'lemonade on the house for anyone off their phone.',
+  prospector: 'the old drift is played out. i come for the quiet down there.',
   trader: 'the spring never runs dry. the dunes keep its secret.',
   smith: 'the forge cools at sunset. even fire needs a nap.',
   attendant: 'the top pool is the warmest. towels are by the door.',
   vendor: 'noodles, no notifications. best deal in the harbour.',
   courier: 'i deliver everything except screens. those can wait.',
   porter: 'mind the gap. the stars will still be there.',
+  seller: 'dumplings till the lamps go out. then home to bed.',
+  docker: 'the ship waits for the tide. so can you.',
+  stroller: 'i walk the quay at dusk. the sea does the thinking.',
   farmer: 'the pumpkins grow while you sleep. funny, that.',
   hiker: 'the view from the ridge is better with your phone away.',
   forager: 'mushrooms come up after rain. you just have to look down.',
   picnicker: 'there is always room on the blanket.',
   angler: 'i have not caught a thing all day. perfect.',
+  miller: 'the wheel turns whether i watch it or not. so mostly i sit.',
   botanist: 'plants in space still want the same thing: light and quiet.',
   stargazer: 'i count the stars until one of us falls asleep.',
   warden: 'the bothy is always open. the kettle is always on.',

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Pressable, ScrollView, View } from 'react-native';
 import { feedback } from '@/lib/game';
-import { useMotionPreference, useReducedMotion } from '@/lib/motion';
+import { useMotionPreference } from '@/lib/motion';
 import { PixelIcon } from '@/components/pixel-icon';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { gardenTips, type GardenTipId } from '@/lib/first-session';
@@ -97,7 +97,7 @@ const sections = [
   ],
   [
     'Explore your garden',
-    'Tap an open patch to walk there. Visit the watering can to tend the flowers, the bench to share a page, the lantern to change its glow, or the pond to meet a little neighbour. Tap your companion for a pat. These are small moments to enjoy whenever you like; they do not cost GRASS or earn rewards. The hut, mailbox, stall, signpost and gate lead to the rest of your garden life.',
+    'Tap an open patch to walk there. Visit the watering can to tend the flowers, the bench to share a page, the lantern to change its glow, or the pond to meet a little neighbour. Tap your companion for a pat. These are small moments to enjoy whenever you like; they do not cost Dream Dust or earn rewards. The hut, mailbox, stall, signpost and gate lead to the rest of your garden life.',
   ],
   [
     'Demo clock',
@@ -113,7 +113,7 @@ const sections = [
   ],
   [
     'Missions',
-    'Park Patrol: 15 MIN, 20 GRASS. Book Club: 30 MIN, 60 GRASS. Mountain Retreat: 60 MIN, 150 GRASS at LV 2, plus an unowned hat or 50 GRASS if you own all hats. Common offline cards stack with a rare Park/Book card or epic Mountain card. Completed missions bring postcards. No per-minute GRASS on missions; returning early keeps common cards but not completion rewards.',
+    'Park Patrol: 15 MIN, 20 Dream Dust. Book Club: 30 MIN, 60 Dream Dust. Mountain Retreat: 60 MIN, 150 Dream Dust at LV 2, plus an unowned hat or 50 Dream Dust if you own all hats. Common offline cards stack with a rare Park/Book card or epic Mountain card. Completed missions bring postcards. No per-minute GRASS on missions; returning early keeps common cards but not completion rewards.',
   ],
   [
     'Real life and little keepsakes',
@@ -121,19 +121,19 @@ const sections = [
   ],
   [
     'Raids and sparring',
-    'Dave is available for local practice. Sparring pays 5 GRASS for each of your first 3 wins per day; losses pay nothing and never use raid allowance. Player raids require a connected multiplayer build: up to 3 per day, against exposed rivals only. If play time runs out during a fight, finish it and collect the result before taking a break.',
+    'Dave is available for local practice. Sparring pays 5 Dream Dust for each of your first 3 wins per day; losses pay nothing and never use raid allowance. Player raids require a connected multiplayer build: up to 3 per day, against exposed rivals only. If play time runs out during a fight, finish it and collect the result before taking a break.',
   ],
   [
     'Together',
-    'Together requires a connected multiplayer build. Invite a rival; both start the shared break on acceptance. Both must complete at least 10 simulated MIN for +50% GRASS and a Together badge. An early return keeps ordinary rewards, without the shared bonus. A lost connection keeps the wake report pending for retry.',
+    'Together requires a connected multiplayer build. Invite a rival; both start the shared break on acceptance. Both must complete at least 10 simulated MIN for +50% Dream Dust and a Together badge. An early return keeps ordinary rewards, without the shared bonus. A lost connection keeps the wake report pending for retry.',
   ],
   [
     'Visitors and guardians',
-    'Visitors arrive only after time away: your first one after any nap or mission of 10+ simulated MIN, then by chance on longer breaks (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN (10 real seconds in this demo) after you return to the garden. Preview any befriended companion before choosing them; all share your account level, GRASS, hats, deck and collection. Your original name and species stay saved. First meetings, dated postcards and kept memories live in the Field Journal.',
+    'Visitors arrive only after time away: your first one after any nap or mission of 10+ simulated MIN, then by chance on longer breaks (hints in the Field Journal). Befriending is free. A visitor stays through WELCOME BACK and waits 10 simulated MIN (10 real seconds in this demo) after you return to the garden. Preview any befriended companion before choosing them; all share your account level, Dream Dust, hats, deck and collection. Your original name and species stay saved. First meetings, dated postcards and kept memories live in the Field Journal.',
   ],
   [
     'Streak and growth',
-    '120 offline MIN qualifies today for the streak, with one missed day forgiven per week. Level-ups cost 50 × your current level in GRASS. LV 2 gives a 4-card hand; LV 3 adds Digital Sunset and BLOOM. Further levels increase battle HP and attack, not a new growth stage.',
+    '120 offline MIN qualifies today for the streak, with one missed day forgiven per week. Level-ups cost 50 × your current level in Dream Dust. LV 2 gives a 4-card hand; LV 3 adds Digital Sunset and BLOOM. Further levels increase battle HP and attack, not a new growth stage.',
   ],
 ] as const;
 export function GardenGuide({ onClose }: { onClose: () => void }) {
@@ -193,10 +193,20 @@ export function GardenGuide({ onClose }: { onClose: () => void }) {
   );
 }
 
+/** What the reduce-motion row says: both the app's switch and the device's setting, since
+ *  either one reduces motion and the app can never turn the device's off (C25, #141). */
+export function motionNote(app: boolean, device: boolean) {
+  if (device && app) return 'Reduced by this switch and by your device setting.';
+  if (device)
+    return 'Reduced by your device setting (Reduce Motion), so this switch cannot turn it back on.';
+  if (app) return 'Reduced by this switch. Your device setting is off.';
+  return 'Normal decorative motion and text delays are on. Your device setting is off.';
+}
+
 /** The reduce-motion switch, shared by the guide and the menu's Settings page. */
 export function MotionSetting() {
   const preference = useMotionPreference((s) => s.reduced);
-  const reduced = useReducedMotion();
+  const system = useMotionPreference((s) => s.system);
   const [saving, setSaving] = useState(false);
   return (
     <View style={{ minHeight: 52, padding: 12, gap: 6 }}>
@@ -223,9 +233,7 @@ export function MotionSetting() {
         />
       </View>
       <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
-        {reduced
-          ? 'Motion reduced. Your device setting is also respected.'
-          : 'Normal decorative motion and text delays are on.'}
+        {motionNote(preference, system)}
       </BodyText>
     </View>
   );
@@ -235,6 +243,7 @@ export function MotionSetting() {
 export function SoundSettings() {
   const effects = useSoundPreference((s) => s.effects);
   const ambience = useSoundPreference((s) => s.ambience);
+  const gentle = useSoundPreference((s) => s.gentle);
   const [saving, setSaving] = useState(false);
   const save = (write: Promise<void>) => {
     setSaving(true);
@@ -268,9 +277,20 @@ export function SoundSettings() {
           onValueChange={(value) => save(useSoundPreference.getState().setAmbience(value))}
         />
       </View>
+      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+        <BodyText style={{ flex: 1, fontFamily: 'PixelifySans_700Bold' }}>
+          Gentle sound · {gentle ? 'ON' : 'OFF'}
+        </BodyText>
+        <PixelSwitch
+          accessibilityLabel="Gentle sound: fewer, calmer effects"
+          value={gentle}
+          disabled={saving || !effects}
+          onValueChange={(value) => save(useSoundPreference.getState().setGentle(value))}
+        />
+      </View>
       <BodyText style={{ fontFamily: 'PixelifySans_500Medium' }}>
-        Soft taps, chimes and birdsong in the garden. Sounds play alongside your own music, and on
-        iPhone the silent switch mutes them.
+        Soft taps, chimes and birdsong in the garden. Gentle sound keeps only the taps and the big
+        moments. Sounds play alongside your own music, and on iPhone the silent switch mutes them.
       </BodyText>
     </View>
   );

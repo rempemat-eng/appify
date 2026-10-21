@@ -1,0 +1,865 @@
+{
+  "_about": "The Brackens as a plan (Claude F, lane F, 21 Oct): what the chunk painter (scripts/art/brackens.py, next step) and the checks read. From the brief docs/vision/regions/home-valley-frostline-brackens.md (PR #96, v5.3). All points are world px on the 11264 x 6912 canvas; polylines run in the order given; polygons are closed. Tier outlines are in SCREEN space (what the camera sees, as terrace.py and the cliff core's walk_tiers give it): a raised tier's top is drawn where it is seen and its south face hangs below its south rim. 'tier' is local to this plan (0 = the Drover's Road at the gap); 'base_tier' maps it onto the world's tiers and is provisional until Claude A's geography chunk (world plan P1) fixes absolute heights. Checked by scripts/art/region_plan.py (npm run check:region-plans).",
+  "id": "brackens",
+  "owner": "claude-f",
+  "biome": "moor",
+  "box": [4800, 1280, 800, 2720],
+  "base_tier": {
+    "value": 4,
+    "provisional": false,
+    "from": "Claude G, g-to-f-plans 21 Oct 10:40: lib/world-routes.ts (#175)"
+  },
+  "tiers": [
+    {
+      "id": "ridge",
+      "tier": 1,
+      "why": "the Brackens' body: a low heather ridge, the massif's south-western spur, two spurs pushing the Rift west",
+      "outline": [
+        [4800, 1280],
+        [5560, 1280],
+        [5560, 1480],
+        [5544, 1480],
+        [5544, 1800],
+        [5528, 1800],
+        [5528, 2120],
+        [5512, 2120],
+        [5512, 2440],
+        [5496, 2440],
+        [5496, 2760],
+        [5480, 2760],
+        [5480, 3064],
+        [5448, 3064],
+        [5448, 3232],
+        [5344, 3232],
+        [5344, 3424],
+        [5280, 3424],
+        [5280, 3640],
+        [5200, 3640],
+        [5200, 3680],
+        [5080, 3680],
+        [5080, 3600],
+        [5024, 3600],
+        [5024, 3448],
+        [4920, 3448],
+        [4920, 3368],
+        [4800, 3368]
+      ]
+    },
+    {
+      "id": "crest",
+      "tier": 2,
+      "why": "the crest: heather and grey gritstone, seen from the valley; no route climbs it",
+      "outline": [
+        [4880, 1280],
+        [5400, 1280],
+        [5400, 1440],
+        [5384, 1440],
+        [5384, 1760],
+        [5368, 1760],
+        [5368, 1992],
+        [5320, 1992],
+        [5320, 2064],
+        [5384, 2064],
+        [5384, 2240],
+        [5360, 2240],
+        [5360, 2560],
+        [5344, 2560],
+        [5344, 2880],
+        [5296, 2880],
+        [5296, 3152],
+        [5208, 3152],
+        [5208, 3208],
+        [5096, 3208],
+        [5096, 3112],
+        [5072, 3112],
+        [5072, 2880],
+        [5056, 2880],
+        [5056, 2560],
+        [5032, 2560],
+        [5032, 2240],
+        [5008, 2240],
+        [5008, 1952],
+        [4920, 1952],
+        [4920, 1840],
+        [4880, 1840]
+      ]
+    },
+    {
+      "id": "north_tops",
+      "tier": 3,
+      "why": "where the ridge rises into the massif's front: boulders and scree thickening north (the north edge's fade)",
+      "outline": [
+        [4960, 1280],
+        [5336, 1280],
+        [5336, 1408],
+        [5312, 1408],
+        [5312, 1560],
+        [5184, 1560],
+        [5184, 1552],
+        [5040, 1552],
+        [5040, 1432],
+        [4960, 1432]
+      ]
+    },
+    {
+      "id": "north_bluff",
+      "tier": 2,
+      "why": "the gap's north bluff (landmark of the threshold, seen from the halt): gritstone on the ridge's south end",
+      "outline": [
+        [5216, 3536],
+        [5216, 3560],
+        [5240, 3560],
+        [5240, 3624],
+        [5136, 3624],
+        [5136, 3608],
+        [5080, 3608],
+        [5080, 3536]
+      ],
+      "face": "rock"
+    },
+    {
+      "id": "south_bluff",
+      "tier": 1,
+      "why": "the gap's south bluff: a heather knoll with a gritstone face over the road",
+      "outline": [
+        [5208, 3896],
+        [5208, 3904],
+        [5288, 3904],
+        [5288, 3960],
+        [5192, 3960],
+        [5192, 3952],
+        [5128, 3952],
+        [5128, 3896]
+      ],
+      "face": "rock"
+    }
+  ],
+  "faces": {
+    "_about": "Moor edges are the moor's own (to-all-reuse-rule): peat banks as Eastward's low ledge (eastward-edges 2.2) on 16 px steps inside a tier, and 32 px south faces of peat and turf between tiers; the two bluffs' faces are gritstone on the cliff core (PR #165) in the moor's dressing once it lands.",
+    "between_tiers": {
+      "height": 32,
+      "material": "peat"
+    },
+    "bluffs": {
+      "height": 32,
+      "material": "gritstone",
+      "kit": "cliff_core"
+    }
+  },
+  "routes": [
+    {
+      "id": "drovers_road",
+      "kind": "road",
+      "width": 32,
+      "owner_note": "the Drover's Road is a route (Claude G's chunks, P6; the steppe side is Claude D's). Its line through the Brackens' box is drawn here, path first, and handed to G as the cells where it enters and leaves.",
+      "points": [
+        [5600, 3944],
+        [5328, 3944],
+        [5328, 3864],
+        [5200, 3864],
+        [5200, 3776],
+        [5016, 3776],
+        [5016, 3536],
+        [4800, 3536]
+      ],
+      "widths": [[5200, 3776, 40]]
+    }
+  ],
+  "trods": [
+    {
+      "id": "thicket_round",
+      "why": "round the far side of the thicket (brief 7): off the road at a Y, back at a Y",
+      "width": 24,
+      "points": [
+        [5544, 3936],
+        [5544, 3824],
+        [5456, 3824],
+        [5456, 3800],
+        [5376, 3800],
+        [5376, 3896],
+        [5384, 3896]
+      ]
+    },
+    {
+      "id": "bell_pocket",
+      "why": "a secret pocket: the buried bell (story detail)",
+      "width": 24,
+      "dead_end": "story",
+      "points": [
+        [5456, 3800],
+        [5456, 3624],
+        [5448, 3624]
+      ]
+    },
+    {
+      "id": "well_trod",
+      "why": "up the north bluff's west shoulder to the drove well, then on to the stone ring",
+      "width": 24,
+      "points": [
+        [5000, 3536],
+        [5000, 3336],
+        [5088, 3336]
+      ]
+    },
+    {
+      "id": "hermit_pocket",
+      "why": "a secret pocket: a hermit at a fire, in a heather hollow on the ridge",
+      "width": 24,
+      "dead_end": "resident",
+      "points": [
+        [5000, 3400],
+        [5176, 3400],
+        [5176, 3416]
+      ]
+    },
+    {
+      "id": "ring_trod",
+      "why": "to the stone ring on the Fold spur (the egg spot: kept clear and reachable, nothing placed)",
+      "width": 24,
+      "dead_end": "view",
+      "points": [
+        [5088, 3336],
+        [5088, 3168],
+        [5008, 3168]
+      ]
+    },
+    {
+      "id": "east_trod",
+      "why": "a sheep trod from the valley's west side to the foot of the flank stair: with the road it closes the region's loop",
+      "width": 24,
+      "points": [
+        [5600, 3304],
+        [5440, 3304]
+      ]
+    },
+    {
+      "id": "ridge_link",
+      "width": 24,
+      "why": "from the top of the flank stair along the ridge to the drove well",
+      "points": [
+        [5440, 3232],
+        [5280, 3232],
+        [5280, 3360],
+        [5088, 3360],
+        [5088, 3336]
+      ]
+    },
+    {
+      "id": "flank_trod",
+      "why": "north along the ridge's east flank, up onto the crest by the flank stair, to the viewpoint over the Heather spur and the Rift",
+      "width": 24,
+      "points": [
+        [5440, 3304],
+        [5440, 2968],
+        [5432, 2968],
+        [5432, 2872],
+        [5464, 2872],
+        [5464, 2776],
+        [5416, 2776],
+        [5416, 2680],
+        [5440, 2680],
+        [5440, 2584],
+        [5408, 2584],
+        [5408, 2488],
+        [5432, 2488],
+        [5432, 2392],
+        [5400, 2392],
+        [5400, 2296],
+        [5424, 2296],
+        [5424, 2200],
+        [5392, 2200],
+        [5392, 2056],
+        [5352, 2056],
+        [5352, 1976],
+        [5008, 1976],
+        [5008, 1968]
+      ]
+    },
+    {
+      "id": "crest_trod",
+      "width": 24,
+      "why": "a sheep trod down the crest from the Heather spur's viewpoint to the drove well: with the flank trod and the east trod it makes the moor's loop",
+      "points": [
+        [5008, 1968],
+        [5056, 1968],
+        [5056, 2280],
+        [5104, 2280],
+        [5104, 2376],
+        [5088, 2376],
+        [5088, 2456],
+        [5120, 2456],
+        [5120, 2552],
+        [5104, 2552],
+        [5104, 3008],
+        [5168, 3008],
+        [5168, 3096],
+        [5144, 3096],
+        [5144, 3344],
+        [5160, 3344]
+      ]
+    }
+  ],
+  "stairs": [
+    {
+      "id": "well_stair",
+      "on": "well_trod",
+      "at": [5000, 3464],
+      "from_tier": 0,
+      "to_tier": 1,
+      "width": 40,
+      "kind": "stone"
+    },
+    {
+      "id": "flank_stair",
+      "on": "flank_trod",
+      "at": [5352, 2008],
+      "from_tier": 1,
+      "to_tier": 2,
+      "width": 40,
+      "kind": "stone"
+    },
+    {
+      "id": "spur_foot_stair",
+      "on": "flank_trod",
+      "at": [5440, 3248],
+      "from_tier": 0,
+      "to_tier": 1,
+      "width": 40,
+      "kind": "stone"
+    },
+    {
+      "id": "crest_stair",
+      "on": "crest_trod",
+      "at": [5144, 3228],
+      "from_tier": 2,
+      "to_tier": 1,
+      "width": 40,
+      "kind": "stone"
+    }
+  ],
+  "places": [
+    {
+      "id": "brackens_gap",
+      "kind": "threshold",
+      "at": [5200, 3760],
+      "why": "the Drover's Road leaves the valley between two bluffs"
+    },
+    {
+      "id": "drove_well",
+      "kind": "well",
+      "at": [5086, 3328],
+      "why": "the drovers water the flock before the dry steppe"
+    },
+    {
+      "id": "fold_spur",
+      "kind": "spur",
+      "at": [4930, 3220],
+      "why": "the ridge's southern spur, pushing the Rift west"
+    },
+    {
+      "id": "heather_spur",
+      "kind": "spur",
+      "at": [4990, 1960],
+      "why": "the ridge's northern spur over the Heather burn"
+    },
+    {
+      "id": "heather_spur_view",
+      "kind": "view",
+      "at": [5008, 1968],
+      "why": "where the flank and crest trods meet: the Heather spur, the Rift and the steppe beyond, hazier"
+    }
+  ],
+  "named": [
+    {
+      "thing": "drove well",
+      "kind": "well",
+      "at": [5064, 3316],
+      "route": "Drover's Road",
+      "where": "a short way off the path",
+      "moved_from": [5086, 3328]
+    },
+    {
+      "thing": "a broken sheepfold",
+      "kind": "ruin",
+      "at": [4856, 3584],
+      "route": "Drover's Road",
+      "where": "beside the path"
+    },
+    {
+      "thing": "shepherd's hut",
+      "kind": "npc",
+      "at": [5172, 3812],
+      "route": "Drover's Road",
+      "where": "beside the path",
+      "moved_from": [5168, 3808]
+    },
+    {
+      "thing": "sheepfold",
+      "kind": "landmark",
+      "at": [5456, 3872],
+      "route": "Drover's Road",
+      "where": "beside the path",
+      "moved_from": [5447, 3882]
+    }
+  ],
+  "pockets": [
+    {
+      "holds": "a hermit at a fire",
+      "at": [5183, 3416],
+      "trod": "hermit_pocket"
+    },
+    {
+      "holds": "a story detail: a buried bell",
+      "at": [5444, 3604],
+      "trod": "bell_pocket"
+    }
+  ],
+  "egg_spots": [
+    {
+      "what": "stone ring on the Brackens",
+      "at": [5000, 3150],
+      "keep_clear_r": 32
+    }
+  ],
+  "markers": [
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5428, 3880],
+      "moved_from": [5438, 3876]
+    },
+    {
+      "t": "S",
+      "what": "cart with a broken wheel",
+      "at": [5304, 3904],
+      "moved_from": [5343, 3886]
+    },
+    {
+      "t": "A",
+      "what": "sheep",
+      "at": [5396, 3820],
+      "moved_from": [5361, 3790]
+    },
+    {
+      "t": "I",
+      "what": "noticeboard",
+      "at": [5280, 3832],
+      "moved_from": [5273, 3830]
+    },
+    {
+      "t": "S",
+      "what": "mended fence",
+      "at": [5224, 3756],
+      "moved_from": [5240, 3738]
+    },
+    {
+      "t": "S",
+      "what": "old boot",
+      "at": [5161, 3800]
+    },
+    {
+      "t": "A",
+      "what": "sheep",
+      "at": [5152, 3736],
+      "moved_from": [5150, 3704]
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5064, 3700],
+      "moved_from": [5054, 3714]
+    },
+    {
+      "t": "S",
+      "what": "lost hat",
+      "at": [5040, 3600],
+      "moved_from": [5091, 3621]
+    },
+    {
+      "t": "S",
+      "what": "cart with a broken wheel",
+      "at": [5040, 3636],
+      "moved_from": [4991, 3620]
+    },
+    {
+      "t": "I",
+      "what": "noticeboard",
+      "at": [4964, 3512],
+      "moved_from": [4986, 3526]
+    },
+    {
+      "t": "S",
+      "what": "tracks",
+      "at": [4920, 3584],
+      "moved_from": [4923, 3597]
+    },
+    {
+      "t": "A",
+      "what": "sheep",
+      "at": [4848, 3512],
+      "moved_from": [4851, 3525]
+    },
+    {
+      "t": "S",
+      "what": "cold fire ring",
+      "at": [5508, 3920],
+      "moved_from": [5515, 3928]
+    },
+    {
+      "t": "S",
+      "what": "marker stone",
+      "at": [5440, 3920],
+      "moved_from": [5433, 3978]
+    },
+    {
+      "t": "A",
+      "what": "butterflies",
+      "at": [5622, 3929],
+      "outside_box": true
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5084, 1956],
+      "dress": true,
+      "moved_from": [5092, 1968]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [4980, 1952],
+      "dress": true,
+      "moved_from": [4980, 1968]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5008, 2068],
+      "dress": true,
+      "moved_from": [5004, 2068]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5036, 2176],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5072, 2300],
+      "dress": true,
+      "moved_from": [5072, 2288]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5452, 2296],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [5420, 2180],
+      "dress": true,
+      "moved_from": [5420, 2192]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5424, 2088],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5380, 2020],
+      "dress": true,
+      "moved_from": [5372, 2016]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5292, 1952],
+      "dress": true,
+      "moved_from": [5292, 1968]
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [5068, 2432],
+      "dress": true,
+      "moved_from": [5080, 2432]
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5076, 2536],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5124, 2640],
+      "dress": true,
+      "moved_from": [5108, 2640]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5084, 2736],
+      "dress": true,
+      "moved_from": [5092, 2736]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5124, 2840],
+      "dress": true,
+      "moved_from": [5120, 2840]
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5484, 2836],
+      "dress": true,
+      "moved_from": [5464, 2840]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5452, 2736],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5460, 2632],
+      "dress": true,
+      "moved_from": [5452, 2632]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5448, 2536],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5452, 2432],
+      "dress": true,
+      "moved_from": [5440, 2432]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5028, 3380],
+      "dress": true,
+      "moved_from": [5028, 3400]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5012, 3216],
+      "dress": true,
+      "moved_from": [5012, 3232]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5136, 2988],
+      "dress": true,
+      "moved_from": [5136, 3000]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5116, 3244],
+      "dress": true,
+      "moved_from": [5124, 3232]
+    },
+    {
+      "t": "I",
+      "what": "bench",
+      "at": [5480, 3280],
+      "dress": true,
+      "moved_from": [5480, 3284]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [5348, 3280],
+      "dress": true,
+      "moved_from": [5332, 3332]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5412, 3296],
+      "dress": true,
+      "moved_from": [5412, 3304]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5404, 3152],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5412, 3000],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5112, 3728],
+      "dress": true,
+      "moved_from": [5112, 3736]
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [4964, 3584],
+      "dress": true,
+      "moved_from": [4972, 3568]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [5040, 3584],
+      "dress": true,
+      "moved_from": [5028, 3568]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [5508, 3888],
+      "dress": true
+    }
+  ],
+  "obstacles": [
+    {
+      "kind": "thicket",
+      "at": [5491, 3829],
+      "passed_by": "thicket_round",
+      "why": "brief 7: a side path off the road at a Y, round the far side, back at a Y"
+    }
+  ],
+  "edges": [
+    {
+      "side": "west",
+      "layers": "heather and gorse clumps thickening into gorse and thicket (64 to 180 px deep), thinning again beyond; the steppe and the Rift country beyond, hazier",
+      "along": [
+        [4800, 1280],
+        [4800, 3360]
+      ],
+      "note": "the spurs leave the box westward: their land beyond x 4800 is Claude D's (the Rift and the steppe)"
+    },
+    {
+      "side": "north",
+      "layers": "scree and boulders thickening into crags and the massif's front",
+      "along": [
+        [4800, 1280],
+        [5600, 1280]
+      ]
+    }
+  ],
+  "thresholds": [
+    {
+      "id": "brackens_gap",
+      "at": [5200, 3760],
+      "route": "drovers_road",
+      "sides": {
+        "valley": "claude-f (was claude-e)",
+        "steppe": "claude-d"
+      },
+      "band": "meadow, field, field2 -> steppe, meadow, broadleaf",
+      "landmark": {
+        "what": "the bluffs",
+        "at": [5170, 3600]
+      },
+      "residents": [
+        "a drover with his flock going west",
+        "his dog ranging ahead",
+        "skylarks over the bluffs",
+        "a peat-cutter's cart coming in"
+      ],
+      "radiates_from": "the Brackens' heather"
+    }
+  ],
+  "residents": [
+    {
+      "who": "hermit",
+      "at": [5183, 3416],
+      "note": "the pocket's resident; a figure for B or the character helper"
+    },
+    {
+      "who": "shepherd",
+      "at": [5151, 3840],
+      "note": "lives at the shepherd's hut"
+    },
+    {
+      "who": "drover",
+      "at": [5040, 3712],
+      "note": "crosses the gap with the flock (threshold)"
+    }
+  ],
+  "ground": {
+    "_about": "Ground kinds by place, for the painter: the moor's own colour is heather purple-brown (world plan 5.3).",
+    "crest": "heather (ling and bell heather in drifts) over peat, grey gritstone outcrops, bilberry",
+    "flanks": "heather and bracken, gorse in clumps, birches and a few Scots pines in the gills",
+    "foot": "short sheep-grazed turf with heather drifts, rushes in wet flushes, drystone walls",
+    "gap": "short yellowing turf, the road worn into a hollow way, the first sheepfolds"
+  },
+  "north_beyond": {
+    "to_y": 1824,
+    "why": "the ridge's north end rises into the massif's front: crags, scree and boulders, drawn and never walked (the north edge's wall and beyond)"
+  },
+  "areas": [
+    {
+      "id": "brackens-north",
+      "rect": [4800, 1280, 800, 544],
+      "walkable": false
+    },
+    {
+      "id": "brackens-00",
+      "rect": [4800, 1824, 384, 544]
+    },
+    {
+      "id": "brackens-01",
+      "rect": [5184, 1824, 416, 544]
+    },
+    {
+      "id": "brackens-10",
+      "rect": [4800, 2368, 384, 544]
+    },
+    {
+      "id": "brackens-11",
+      "rect": [5184, 2368, 416, 544]
+    },
+    {
+      "id": "brackens-20",
+      "rect": [4800, 2912, 384, 544]
+    },
+    {
+      "id": "brackens-21",
+      "rect": [5184, 2912, 416, 544]
+    },
+    {
+      "id": "brackens-30",
+      "rect": [4800, 3456, 384, 544]
+    },
+    {
+      "id": "brackens-31",
+      "rect": [5184, 3456, 416, 544]
+    }
+  ],
+  "clusters": [
+    {"recipe": "sheepfold_corner", "at": [5408, 3832], "orient": "n", "mirror": false, "seed": 0, "replaces": [5456, 3872]},
+    {"recipe": "sheepfold_corner", "at": [4808, 3552], "orient": "n", "mirror": true, "seed": 0, "replaces": [4856, 3584]},
+    {"recipe": "moor_wayside", "at": [5120, 2632], "orient": "w", "mirror": true, "seed": 0}
+  ]
+}

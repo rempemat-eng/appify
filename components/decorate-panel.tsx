@@ -5,6 +5,7 @@ import { FrameShape, frameTones } from '@/components/pixel-frame';
 import {
   areaOf,
   hutBoxes,
+  placeOf,
   hutDoors,
   hutPaths,
   keepsake,
@@ -143,6 +144,8 @@ export function DecoratePanel({
   onPlace,
   onStore,
   onDone,
+  flipped = false,
+  onFlip,
 }: {
   /** where keepsakes are being set out now */
   area: DecorArea;
@@ -158,6 +161,10 @@ export function DecoratePanel({
   onPlace: () => void;
   onStore: () => void;
   onDone: () => void;
+  /** whether the keepsake in hand is turned to face the other way */
+  flipped?: boolean;
+  /** turn it (shown when the screen passes it) */
+  onFlip?: () => void;
 }) {
   const name = selected ? (keepsake(selected)?.name ?? selected).toLowerCase() : '';
   const isPlaced = !!selected && placed.some((p) => p.item === selected && areaOf(p) === area);
@@ -165,7 +172,9 @@ export function DecoratePanel({
   const status = !selected
     ? `${found.length} of ${keepsakes.length} keepsakes found. Choose one, or tap one ${area === 'hut' ? 'in the room' : 'in the garden'} to move it.`
     : !check
-      ? `Tap the ${WHERE[area].ground} where the ${name} goes.${elsewhere ? ` It comes from ${area === 'hut' ? 'the garden' : 'the hut'}.` : ''}`
+      ? area === 'hut' && placeOf(selected) === 'surface'
+        ? `Tap the floor, or the mantel, a sill, the bookcase, the counter or the table, where the ${name} goes.${elsewhere ? ' It comes from the garden.' : ''}`
+        : `Tap the ${WHERE[area].ground} where the ${name} goes.${elsewhere ? ` It comes from ${area === 'hut' ? 'the garden' : 'the hut'}.` : ''}`
       : check.ok
         ? `The ${name} fits here.`
         : WHY[area][check.why];
@@ -278,6 +287,11 @@ export function DecoratePanel({
               onPress={onPlace}
             />
           </View>
+          {onFlip && (
+            <View style={{ flex: 1 }}>
+              <PixelButton small light label={flipped ? 'TURN BACK' : 'TURN'} onPress={onFlip} />
+            </View>
+          )}
           {isPlaced && (
             <View style={{ flex: 1 }}>
               <PixelButton small light label="PUT AWAY" onPress={onStore} />

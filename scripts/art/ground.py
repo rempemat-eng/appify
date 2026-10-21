@@ -9,14 +9,15 @@ paths, water and buildings on top as before.
 garden.py can call it with zone 'garden' so the garden's meadow is the same meadow."""
 from __future__ import annotations
 
+import numpy as np
+
 import detail
 import garden as g
 from pixel import noise2, smooth_noise
 
 W, H = 320, 576
-# zones whose ground is drawn elsewhere and does not blend toward its neighbours yet
-# (the garden: garden.py, Claude B's)
-FIXED = {'garden'}
+# (the garden paints its turf with valley() too since Claude B's #108, so every zone,
+# the garden included, blends with its neighbours the same way)
 BLEND = 64  # half the width of the band where one kind of ground gives way to the next
 
 MEADOW = g.G
@@ -56,8 +57,6 @@ def kind_at(gx: int, gy: int):
         if w <= 0:
             continue
         ramp = VALLEY_GROUND.get(z, MEADOW)
-        if z in FIXED:
-            w *= 6  # (its own drawing does not blend back: its neighbours meet it whole)
         weights[id(ramp)] = (weights.get(id(ramp), (ramp, 0.0))[0], weights.get(id(ramp), (ramp, 0.0))[1] + w)
     if not weights:
         return MEADOW
@@ -71,18 +70,28 @@ def kind_at(gx: int, gy: int):
     return list(weights.values())[-1][0]
 
 
+def patches(X, Y):
+    """Where the turf is in its lit tone, at valley pixels (X, Y) (arrays): patches of a
+    noise on a 22 px lattice, its domain warped by one on a lattice that shares no period
+    with it, so no patch edge runs straight for more than a few pixels (art-faults.md A6:
+    the plain 22 px lattice showed as square blocks under the night tint). The scenery
+    beside a zone paints its meadow from the same field, so the two meet without a seam."""
+    import scenery
+    return scenery.wnoise(X, Y, 22, 11) >= 0.62
+
+
 def valley(cv, zone: str, frame: int = 0):
     """Paint this zone's turf from the valley's coordinates."""
     col, row = _layout()[zone]
     ox, oy = col * W, row * H
     ramps = {}
+    lit = patches(*np.meshgrid(np.arange(ox, ox + W), np.arange(oy, oy + H)))
     for y in range(H):
         for x in range(W):
             gx, gy = x + ox, y + oy
             G = kind_at(gx, gy)
             ramps[(x, y)] = G
-            n = smooth_noise(gx, gy, 22, 11)
-            cv.set(x, y, G[2] if n < 0.62 else G[3])
+            cv.set(x, y, G[3] if lit[y, x] else G[2])
     # tufts, in clusters that wander across the valley (never thicker at a tile's edge)
     for ty in range(0, H, 6):
         for tx in range(0, W, 6):

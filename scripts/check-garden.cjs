@@ -129,7 +129,13 @@ const game = {
   sleep() {
     sleeps++;
   },
+  // where the companion walked in the hub (the map's record; it grants nothing)
+  walkWorld(region, x, y, settle) {
+    walks.push({ region, x, y, settle: !!settle });
+  },
 };
+// spots the hub recorded with walkWorld (lib/game.ts)
+let walks = [];
 const react = {
   useState(init) {
     const i = index++;
@@ -190,6 +196,8 @@ const anim = {
     return ref.current;
   },
   useAnimatedStyle: (fn) => fn(),
+  // (the hub's bubbles follow AtlasWalk's camera; nothing to react to in this harness)
+  useAnimatedReaction() {},
   withTiming: (to, { duration }, callback) => ({ to, duration, callback }),
   withSequence: (...steps) => ({ steps }),
   cancelAnimation(value) {
@@ -254,7 +262,19 @@ const deps = {
   '@/lib/motion': { useReducedMotion: () => reduced },
   '@/lib/app-active': { useAppActive: () => appActive },
   '@/lib/sound': { playSound: (id) => sounds.push(id) },
-  '@/lib/game': { useGame, playPaused: () => false },
+  '@/lib/game': {
+    useGame,
+    playPaused: () => false,
+    feedback: () => {},
+    missions: [{ id: 'book', level: 1 }],
+  },
+  'react-native-safe-area-context': {
+    useSafeAreaInsets: () => ({ top: 0, bottom: 0, left: 0, right: 0 }),
+  },
+  // the hub's stage, card and keepsakes are leaf boundaries (their props are inspected)
+  '@/components/atlas-walk': { AtlasWalk: 'AtlasWalk' },
+  '@/components/place-card': { PlaceCardBody: 'PlaceCardBody' },
+  '@/components/scene-decor': { decorExtras: () => [] },
   '@/lib/garden-map': map,
   './garden-map': map,
   '@/components/guardian-pet': { GuardianPet: 'GuardianPet' },
@@ -263,6 +283,7 @@ const deps = {
   '@/components/pixel-feedback': { BodyText: 'BodyText' },
   '@/components/pixel-frame': {
     FrameShape: 'FrameShape',
+    PixelFrame: 'PixelFrame',
     PixelTail: 'PixelTail',
     frameTones: { gold: {}, paper: {} },
   },
@@ -314,7 +335,14 @@ for (const name of [
   evaluate(`lib/${name}.ts`, domainModule);
   deps[`@/lib/${name}`] = domainModule.exports;
 }
-deps['@/lib/layout'] = { gameLayout: { maxWidth: 640 } };
+deps['@/lib/layout'] = { gameLayout: { maxWidth: 640 }, hudClearance: (top) => top + 60 };
+// the art density (lib/art-density.ts): the native default, as the app reads it
+const densityModule = { exports: {} };
+evaluate('lib/art-density.ts', densityModule);
+deps['./art-density'] = densityModule.exports;
+const densitySettingModule = { exports: {} };
+evaluate('lib/art-density-setting.ts', densitySettingModule);
+deps['@/lib/art-density-setting'] = densitySettingModule.exports;
 const scaleModule = { exports: {} };
 evaluate('lib/pixel-scale.ts', scaleModule);
 deps['@/lib/pixel-scale'] = scaleModule.exports;
@@ -333,8 +361,12 @@ deps['@/lib/garden-path'] = pathModule.exports;
 deps['@/lib/decor'] = {
   areaOf: (p) => p.area ?? 'hut',
   decorBox: () => ({ left: 0, top: 0, w: 1, h: 1, flat: true, cells: [] }),
+  decorFootprint: () => ({ x: 0, y: 0, w: 4, h: 4 }),
   walkWithDecor: (rows) => rows,
   hutImageKey: (look) => `${look.door}-${look.boxes}`,
+  // no new places are walked in this harness, so no keepsake is ever found
+  newKeepsakes: () => [],
+  keepsake: (id) => ({ id, name: id }),
 };
 deps['@/lib/decor-assets'] = { decorImages: {} };
 deps['@/lib/garden-hut-assets'] = { hutImages: {}, hutPathImages: {} };
@@ -355,6 +387,27 @@ const flatPlace = (x, y, groundY = y) =>
   projectionModule.exports.lift(flatProjection, x, y, groundY);
 evaluate('components/garden-reactions.tsx', reactionsModule);
 deps['@/components/garden-reactions'] = reactionsModule.exports;
+// The home hub's real geometry (docs/vision/home-hub.md): the valley's zones and walk,
+// its places and cards, and the hub's conversions, evaluated from source.
+deps['./garden-path'] = pathModule.exports;
+for (const [name, ...ids] of [
+  ['zone-maps', '@/lib/zone-maps', './zone-maps'],
+  // the world canvas switch and its walk (off here: the hub walks the zones' join)
+  ['world-flag-default', '@/lib/world-flag-default', './world-flag-default'],
+  ['world-flag', '@/lib/world-flag', './world-flag'],
+  ['world-canvas', '@/lib/world-canvas', './world-canvas'],
+  ['world-walk', '@/lib/world-walk', './world-walk'],
+  ['region-walk', '@/lib/region-walk'],
+  ['world-places', '@/lib/world-places'],
+  ['resident-routes', '@/lib/resident-routes'],
+  ['world-cards', '@/lib/world-cards'],
+  ['home-hub', '@/lib/home-hub'],
+]) {
+  const hubModule = { exports: {} };
+  evaluate(`lib/${name}.ts`, hubModule);
+  for (const id of ids) deps[id] = hubModule.exports;
+}
+const hubLib = deps['@/lib/home-hub'];
 evaluate('components/garden-world.tsx', mod, '\nmodule.exports.Ambient = Ambient;');
 mod.exports.findPath = pathModule.exports.findPath;
 
@@ -379,6 +432,9 @@ function render(napping = false, options = {}) {
         feeds++;
       },
       onNap: options.onNap,
+      // a camera window: the Home tab's hub (docs/vision/home-hub.md)
+      viewportHeight: options.viewportHeight,
+      padBottom: options.padBottom ?? 0,
     });
     if (!dirty) effects.forEach((fn) => fn());
     if (++attempts > 5) throw new Error('Source render did not settle');
@@ -395,6 +451,7 @@ function setup(napping = false, options = {}) {
   sleeps = 0;
   feeds = 0;
   gameWrites = [];
+  walks = [];
   announcements = [];
   sounds = [];
   reduced = false;
@@ -434,6 +491,12 @@ const check = (condition, label) => {
   assert.ok(condition, label);
   count++;
 };
+// A node's pointer events, from the prop or (since C25 moved it there for react-native-web 0.21)
+// from its style, flattened the way React Native flattens style arrays.
+const flatStyle = (style) =>
+  Array.isArray(style) ? Object.assign({}, ...style.map(flatStyle)) : style || {};
+const pointerEventsOf = (element) =>
+  element.props.pointerEvents ?? flatStyle(element.props.style).pointerEvents;
 // Arrays from vm contexts have different prototypes; compare their plain data.
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -580,7 +643,7 @@ render();
 pendingNap[1].fn();
 check(sleeps === 0, 'queued old nap callback remains invalid after refocus');
 
-// The hut is walked into: up to its door, then the room inside (app/world.tsx).
+// The hut is walked into: up to its door, then the room inside (app/(tabs)/world.tsx).
 worldTree = setup();
 allElements(worldTree)
   .find((element) => element.type === 'Pressable' && element.key === 'hut')
@@ -701,7 +764,7 @@ for (const viewMode of ['flat', 'tilt']) {
         if (split)
           check(
             box.zIndex > map.GARDEN.fenceY - 4 &&
-              elements.find((element) => element.key === `${object.id}-art`).props.pointerEvents ===
+              pointerEventsOf(elements.find((element) => element.key === `${object.id}-art`)) ===
                 'none',
             `${platform}/${width}/${object.id}: hit area is above guardian while art stays passive`,
           );
@@ -1095,7 +1158,7 @@ for (const kind of ['read', 'water', 'pond', 'pat', 'lantern']) {
   resetChild();
   let child = renderReaction(reaction);
   check(
-    child.props.pointerEvents === 'none' &&
+    pointerEventsOf(child) === 'none' &&
       !allElements(child).some((element) => element.type === 'Pressable'),
     `${kind}: effect cannot intercept interaction`,
   );
@@ -1440,7 +1503,7 @@ for (const viewMode of ['flat', 'tilt']) {
         location.y + 16,
       );
       check(
-        ornament.props.pointerEvents === 'none' &&
+        pointerEventsOf(ornament) === 'none' &&
           ornament.props['aria-hidden'] === true &&
           ornament.props.accessibilityElementsHidden === true &&
           !allElements(ornament).some((node) => node.type === 'Pressable'),
@@ -1623,7 +1686,7 @@ for (const [identity, motifColor] of [
     signatureTree = renderReaction(identityReaction, true, projection);
     check(
       intervals.size === 0 &&
-        signatureTree.props.pointerEvents === 'none' &&
+        pointerEventsOf(signatureTree) === 'none' &&
         !allElements(signatureTree).some((node) => node.type === 'Pressable') &&
         allElements(signatureTree).some((node) => node.props.style?.backgroundColor === motifColor),
       `${signature.family}/${viewMode}: reduced motif remains visible and passive without a clock`,
@@ -1765,6 +1828,179 @@ for (const [routeIndex, [action, expectedRoute]] of placeRoutes.entries()) {
   );
 }
 const placeNavigationChecks = count - placeNavigationStart;
+
+// The home hub (docs/vision/home-hub.md): the Home tab's garden is a place in the valley,
+// drawn by AtlasWalk. The same journeys and actions run in garden pixels that carry on
+// past the garden's edges. Walking out of any way out of the yard and back must never
+// navigate (that swap was the pop), places keep their actions, and interrupted walks stay
+// dead. Uses the real valley grid, places and cards (lib/home-hub.ts and its imports).
+const hubCheckStart = count;
+const places = deps['@/lib/world-places'];
+function hubElements(tree) {
+  const out = [];
+  const visit = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) return node.forEach(visit);
+    out.push(node);
+    for (const key of ['children', 'scene', 'hits']) visit(node.props?.[key]);
+  };
+  visit(tree);
+  return out;
+}
+const hubSetup = (options = {}) => setup(false, { viewportHeight: 800, ...options });
+const hubRender = (options = {}) => render(false, { viewportHeight: 800, ...options });
+const stageOf = (tree) => hubElements(tree).find((element) => element.type === 'AtlasWalk');
+const labelled = (tree, label) =>
+  hubElements(tree).find(
+    (element) => element.type === 'Pressable' && element.props.accessibilityLabel === label,
+  );
+const at = () => ({ x: shared[0].value, y: shared[1].value });
+const tapValley = (tree, garden) => stageOf(tree).props.onTap(hubLib.toRegion(garden));
+const gardenPin = (tree) => (stageOf(tree).props.markers ?? []).some((m) => m.id === 'garden');
+
+worldTree = hubSetup();
+let stage = stageOf(worldTree);
+check(
+  stage?.props.region === 'valley' && stage.props.homeLayer === true,
+  'the Home tab draws the garden as a place in the valley (AtlasWalk), not as its own screen',
+);
+check(
+  stage.props.follow.px === shared[0] && stage.props.follow.py === shared[1],
+  'one companion: AtlasWalk follows the garden companion itself',
+);
+check(
+  !hubElements(worldTree).some((element) =>
+    element.props?.accessibilityLabel?.startsWith('Your garden. Tap to walk'),
+  ),
+  "the hub has one tap layer (AtlasWalk), not the garden screen's own ground",
+);
+check(!gardenPin(worldTree), 'at home the garden needs no pin of its own');
+
+// every way out of the yard, out and back in again, with no screen change
+const ways = {
+  gate: hubLib.GATE_OUT,
+  trail: { x: 200, y: -60 },
+  west: { x: -60, y: 300 },
+  east: { x: map.GARDEN.width + 60, y: 300 },
+};
+for (const [way, outside] of Object.entries(ways)) {
+  worldTree = hubSetup();
+  check(tapValley(worldTree, outside) === true, `${way}: the hub takes the tap`);
+  check(Boolean(shared[1].animation), `${way}: a walk out is planned on the valley's grid`);
+  finishTravel();
+  worldTree = hubRender();
+  const out = at();
+  check(
+    routes.length === 0,
+    `${way}: walking out of the garden opens no other screen (routes: ${routes.join()})`,
+  );
+  check(
+    hubLib.homeSide('home', out) === 'out' && Math.hypot(out.x - outside.x, out.y - outside.y) < 16,
+    `${way}: the companion walks on out into the valley (${Math.round(out.x)},${Math.round(out.y)})`,
+  );
+  check(gardenPin(worldTree), `${way}: out in the valley, the garden shows its pin`);
+  check(
+    walks.some((w) => w.settle && w.region === 'valley'),
+    `${way}: where it stopped is recorded for the map, as on the world screen`,
+  );
+  tapValley(worldTree, START);
+  finishTravel();
+  worldTree = hubRender();
+  check(routes.length === 0, `${way}: walking back into the yard opens no screen either`);
+  check(
+    Math.hypot(at().x - START.x, at().y - START.y) < 8 && !gardenPin(worldTree),
+    `${way}: home again, at the same spot, with no pin`,
+  );
+}
+
+// no ping-pong at the yard's edge: steps either side of it change nothing
+worldTree = hubSetup();
+const edge = { x: 160, y: places.GARDEN_YARD.maxY + hubLib.YARD_MARGIN / 2 };
+for (let i = 0; i < 3; i++) {
+  tapValley(worldTree, edge);
+  finishTravel();
+  worldTree = hubRender();
+  check(!gardenPin(worldTree), `edge ${i}: just over the yard's edge still counts as home`);
+  tapValley(worldTree, { x: 160, y: places.GARDEN_YARD.maxY - 8 });
+  finishTravel();
+  worldTree = hubRender();
+}
+check(routes.length === 0, "back and forth over the yard's edge never navigates");
+
+// the garden's places keep their actions in the hub
+worldTree = hubSetup();
+labelled(worldTree, map.gardenHotspots.mail.label).props.onPress();
+check(routes.length === 0, 'mail: nothing opens before the companion arrives');
+finishTravel();
+check(same(routes, ['/journal?tab=postcards']), 'mail: arriving opens the postcards, once');
+
+worldTree = hubSetup();
+labelled(worldTree, 'go inside the hut').props.onPress();
+finishTravel();
+check(same(routes, ['/world?from=hut']), 'the hut door still leads inside (a door is a real cut)');
+
+worldTree = hubSetup();
+labelled(worldTree, map.gardenHotspots.arena.label).props.onPress();
+finishTravel();
+check(routes.length === 0, 'the ring hotspot opens no screen: the valley is right there');
+check(Boolean(shared[1].animation), 'the ring hotspot walks on out through the gate');
+finishTravel();
+check(
+  Math.hypot(at().x - hubLib.GATE_OUT.x, at().y - hubLib.GATE_OUT.y) < 8,
+  'the ring hotspot ends in the town lane, where the world screen used to open',
+);
+
+// interrupted walks stay dead in the hub too
+worldTree = hubSetup();
+labelled(worldTree, 'go inside the hut').props.onPress();
+const hutArrival = end(shared[1].animation);
+hubRender({ active: false });
+hutArrival(true);
+worldTree = hubRender();
+hutArrival(true);
+check(routes.length === 0, 'a hut walk interrupted by a sheet or blur never opens the hut later');
+
+worldTree = hubSetup();
+labelled(worldTree, map.gardenHotspots.mail.label).props.onPress();
+const mailArrival = end(shared[1].animation);
+tapValley(worldTree, hubLib.GATE_OUT);
+mailArrival(true);
+check(routes.length === 0, 'a tap on the valley replaces a pending place visit');
+
+// a valley place shows its card where the companion stops; walking on closes it
+worldTree = hubSetup();
+const stall = hubLib.toGarden(places.regionPoint(places.missionPlaces.shop));
+tapValley(worldTree, stall);
+finishTravel();
+worldTree = hubRender();
+const card = hubElements(worldTree).find((element) => element.type === 'PlaceCardBody');
+check(card?.props.card.kind === 'shop', "at Moss's stall the hub shows the stall's card");
+check(
+  stageOf(worldTree).props.padBottom > 0 && stageOf(worldTree).props.focusY < 0.55,
+  'the camera keeps the companion above the card',
+);
+card.props.act.openShop();
+check(same(routes, ['/shop']), "the stall's card opens the shop, as on the world screen");
+routes = [];
+tapValley(worldTree, START);
+worldTree = hubRender();
+check(
+  !hubElements(worldTree).some((element) => element.type === 'PlaceCardBody'),
+  'walking on closes the card',
+);
+
+// reduced motion: walks are instant, and still never navigate
+worldTree = hubSetup();
+reduced = true;
+worldTree = hubRender();
+tapValley(worldTree, hubLib.GATE_OUT);
+check(
+  shared[1].animation === null &&
+    Math.hypot(at().x - hubLib.GATE_OUT.x, at().y - hubLib.GATE_OUT.y) < 8,
+  'reduced motion: the walk out of the gate is instant',
+);
+check(routes.length === 0, 'reduced motion: and opens no screen');
+const hubChecks = count - hubCheckStart;
 console.log(
-  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${backgroundChecks} background-state, ${lifeChecks} keepsake/identity, ${signatureChecks} signature-motion, ${homeNapChecks} Home-nap delegation, ${placeNavigationChecks} place-navigation (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
+  `${count} source assertions passed: ${originalChecks} movement/nap, ${activityChecks} activity/clock, ${geometryChecks} geometry, ${reachabilityChecks} reachability, ${cosmeticChecks} cosmetic/cancellation, ${childChecks} reaction-clock, ${groundChecks} ground-frame, ${coordinateChecks} event-coordinate, ${backgroundChecks} background-state, ${lifeChecks} keepsake/identity, ${signatureChecks} signature-motion, ${homeNapChecks} Home-nap delegation, ${placeNavigationChecks} place-navigation, ${hubChecks} home-hub (${walkableCount} connected actor-safe cells, ${Object.keys(map.gardenHotspots).length} hotspots).`,
 );

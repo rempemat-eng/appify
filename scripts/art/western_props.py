@@ -11,14 +11,20 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, noise2, oval  # noqa: E402
+from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
+import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
+import reach_house as rh  # noqa: E402
+from reach_house import T, sib, part, rect, step, frame  # noqa: E402
+import style_sheet as ss  # noqa: E402
+from style_sheet import boards, roof_rows, grain as ss_grain  # noqa: E402
 from materials import MATERIALS, WOOD, STONE, RED, WTR, GOLD  # noqa: E402
 
 DESERT, CACTUS, ADOBE = (MATERIALS[k] for k in ('desert', 'cactus', 'adobe'))
 IRON = MATERIALS['iron']
 BLEACHED = MATERIALS['bleached']  # sun-bleached boards
+ROPE = MATERIALS['rope']
 PAD = 4
 
 
@@ -26,22 +32,47 @@ def rect_set(x, y, w, h):
     return {(xx, yy) for yy in range(y, y + h) for xx in range(x, x + w)}
 
 
+def _glass(tones, x: int, y: int, w: int, h: int):
+    """Window glass seen from a sunlit street: dark under the porch's shadow at the top,
+    the room's dusk behind it, and two slanting streaks of reflected street light."""
+    c = tones[0] if y < 3 else tones[1] if y < h * 0.6 else tones[2]
+    t = x + y * 0.6
+    if 3 <= t % 17 < 6:
+        c = rd.mix(c, (210, 228, 236), 0.4)
+    return c
+
+
 def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'saloon') -> Canvas:
-    """A false-front building, 104 x 92: the tall square facade hides a pitched tin roof
-    (its top shows behind), bleached clapboards, a sign board with a pictogram
-    (a mug or a sack), an upper window, a porch roof on posts that throws a deep shadow, and
-    swinging half doors (a saloon) or a shop window (a store)."""
-    w, h = width, 92
+    """A false-front building, `width` x 108, at the people's scale (verticality.md 5: a
+    shop's ground storey about 44 px, its door 32 px tall, an adult 25): the tall square
+    facade hides a pitched tin roof (its top shows behind), bleached clapboards, a sign
+    board with a pictogram (a mug or a sack), an upper window, a porch roof on posts that
+    throws a deep shadow, and on the ground storey swinging half doors in a 22 x 32
+    doorway (a saloon) or a 16 x 32 glazed door between two display windows (a store)."""
+    w, h = width, 108
     cv = Canvas(w, h, pad=PAD)
     # the tin roof behind the facade, seen from above
     for y in range(2, 20):
         for x in range(10, w - 10):
-            cv.set(x, y, IRON[3] if (x // 4) % 2 else IRON[2])
+            c = rd.rgb(IRON[3] if (x // 4) % 2 else IRON[2])
+            if x % 4 == 0:
+                c = rd.step(c, 1.2)              # the lit crest of each corrugation
+            n = rd.smooth_noise(x, y, 5, seed + 41)
+            if n < 0.3:
+                c = rd.mix(c, (150, 88, 54), 0.5 if n < 0.18 else 0.3)   # rust in patches
+            elif n > 0.8:
+                c = rd.mix(c, (190, 176, 150), 0.25)                    # dust settled on it
+            rd.put(cv, x, y, c)
         cv.hline(10, 2, w - 20, IRON[4])
     # the facade: stepped top, clapboards
     face = {(x, y) for x in range(4, w - 4) for y in range(14, h - 6)}
     face |= {(x, y) for x in range(14, w - 14) for y in range(8, 14)}
-    detail.boards(cv, face, BLEACHED, 3, 8, board=4, seed=seed, grain=0.08)
+    # weathered boards of four woods and an old coat of the sign's paint, bleached most
+    # high up, dusty at the boardwalk (D13: Eastward's level of detail)
+    # (20 Oct, Claude A: one weathered timber, not a mix of pinkish, grey and tan boards;
+    # fewer gaps, and those in groups where the wall has worked loose)
+    woods = ('#AE9278', '#A88E76', '#B2967C', '#A48A72')
+    rd.planks(cv, face, woods, seed=seed + 5, board=4, foot=h - 6, gaps=0.5, gap_groups=True)
     for (x, y) in face:
         if (x, y - 1) not in face:
             cv.set(x, y, BLEACHED[5])
@@ -49,9 +80,17 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
     cv.hline(4, 13, 10, BLEACHED[1]); cv.hline(w - 14, 13, 10, BLEACHED[1])
     # the sign board
     sx0, sx1, sy0, sy1 = 18, w - 18, 17, 29
+    # painted boards, the paint worn through to the wood in places
+    paint = (sign_ramp[2], rd.step(sign_ramp[2], 0.4), rd.mix(sign_ramp[2], '#B39277', 0.25))
+    rd.planks(cv, rect_set(sx0, sy0, sx1 - sx0, sy1 - sy0), paint, seed=seed + 9, board=4,
+              bleach=rd.mix(sign_ramp[3], '#E4CCB2', 0.4), bleach_top=0.3, gaps=0.0, length=(20, 40))
     for (x, y) in rect_set(sx0, sy0, sx1 - sx0, sy1 - sy0):
-        cv.set(x, y, sign_ramp[2] if y > sy0 else sign_ramp[3])
+        if rd.smooth_noise(x, y, 3, seed + 17) < 0.14:
+            rd.put(cv, x, y, '#A68266' if y % 4 else '#7E604C')     # paint flaked off
+    cv.hline(sx0, sy0, sx1 - sx0, sign_ramp[3])
     cv.hline(sx0, sy1, sx1 - sx0, sign_ramp[0])
+    for (nx, ny) in ((sx0 + 1, sy0 + 2), (sx1 - 2, sy0 + 2), (sx0 + 1, sy1 - 2), (sx1 - 2, sy1 - 2)):
+        cv.set(nx, ny, '#3E363C'); cv.set(nx, ny + 1, '#7C4E36')   # its nails, rust below
     ink = '#F4E6C8'
     # a pictogram, not lettering (letters at this size read as nonsense words): a frothy
     # mug for the saloon, a tied sack for the store, with small diamonds either side
@@ -70,70 +109,429 @@ def false_front(width: int = 104, seed: int = 0, sign_ramp=RED, kind: str = 'sal
         if sx0 + 2 < mx + dx < sx1 - 2:
             x = mx + dx
             cv.set(x, 22, ink); cv.set(x - 1, 23, ink); cv.set(x + 1, 23, ink); cv.set(x, 24, ink)
-    # an upper window with a shutter
-    gp.window(cv, w // 2 - 8, 33, 16, 12, shutters=None, sill=True, warm=False)
+    # the upper storey's window with a sill (16 x 12, the table's window)
+    gp.window(cv, w // 2 - 8, 34, 16, 14, shutters=None, sill=True, warm=False)
     # the porch roof and its posts
-    py = 50
+    py = 58
     for x in range(0, w):
         for y in range(py, py + 5):
             cv.set(x, y, BLEACHED[4] if y == py else BLEACHED[2] if y < py + 4 else BLEACHED[0])
-    detail.overhang_shadow(cv, 4, w - 4, py + 5, lambda x: 7, k=2, cap=2)
-    for px in (2, w // 3, 2 * w // 3, w - 5):
+    rd.shadow_band(cv, 4, w - 4, py + 5, lambda x: 6 + (x * 3) // w, k=2.2)
+    # the posts run unbroken from the porch roof to the boardwalk (Matt, 20 Oct 10:15); at
+    # the store they stand either side of the door, so the display windows sit between them
+    dw0 = 22 if kind == 'saloon' else 16
+    dx0 = w // 2 - dw0 // 2
+    posts = (2, w // 3 - 6, 2 * w // 3 + 4, w - 5) if kind == 'saloon' else (2, dx0 - 6, dx0 + dw0 + 3, w - 5)
+    for px in posts:
         gp.post(cv, px, py + 5, h - 4, w=3, ramp=BLEACHED)
-    # the ground floor
-    dx = w // 2 - 9
+    # the ground storey: the doorway stands on the boardwalk, 32 px tall
+    foot = h - 6
+    top = foot - 32
     if kind == 'saloon':
-        for (x, y) in rect_set(dx, 62, 18, 18):  # swinging half doors over a dark room
-            cv.set(x, y, '#2A1C16')
-        for half in (0, 9):
-            for (x, y) in rect_set(dx + half, 66, 9, 9):
+        dw = 22
+        dx = w // 2 - dw // 2
+        for (x, y) in rect_set(dx, top, dw, 32):  # the dark room inside
+            cv.set(x, y, '#2A1C16' if y > top + 2 else '#3A2820')
+        for (x, y) in rect_set(dx - 2, top - 2, dw + 4, 2):  # the lintel
+            cv.set(x, y, BLEACHED[1] if y == top - 1 else BLEACHED[4])
+        for y in range(top, foot):  # the jambs
+            cv.set(dx - 1, y, BLEACHED[4]); cv.set(dx + dw, y, BLEACHED[1])
+        for half in (0, dw // 2):  # the swinging half doors, hung at chest height
+            for (x, y) in rect_set(dx + half, top + 9, dw // 2, 13):
                 cv.set(x, y, WOOD[3] if (x - dx) % 3 else WOOD[2])
-            cv.hline(dx + half, 66, 9, WOOD[4])
+            cv.hline(dx + half, top + 9, dw // 2, WOOD[4]); cv.hline(dx + half, top + 21, dw // 2, WOOD[1])
+        for (x, y) in rect_set(dx + 2, top + 22, dw - 4, 10):
+            if (x + y) % 5 == 0:
+                cv.set(x, y, '#4A3228')  # the floor inside, glimpsed under the doors
     else:
-        for (x, y) in rect_set(dx - 14, 62, 46, 18):
-            cv.set(x, y, WTR[3] if y < 66 else WTR[1])
-        cv.vline(dx + 9, 62, 18, BLEACHED[2])
-        for k in range(4):
-            cv.rect(dx - 10 + k * 11, 72, 5, 6, (GOLD, RED, WTR, ADOBE)[k][3])
+        dw = 16
+        dx = w // 2 - dw // 2
+        glass = ((44, 58, 82), (62, 86, 118), (92, 122, 150))
+        for (x, y) in rect_set(dx, top, dw, 32):  # a glazed door: a panel below, glass above
+            if y > top + 18:
+                c = rd.step(WOOD[2], 0.6 if (x - dx) in (2, 3) else -0.8 if (x - dx) == dw - 3 else 0)
+                if y in (top + 21, top + 29) and 2 <= x - dx < dw - 2:
+                    c = rd.step(WOOD[2], -1.4)            # the panel's mouldings
+            else:
+                c = _glass(glass, x - dx, y - top, dw, 18)
+            if x in (dx, dx + dw - 1) or y in (top, top + 18):
+                c = rd.rgb(WOOD[1])
+            rd.put(cv, x, y, c)
+        cv.set(dx + dw - 4, top + 17, GOLD[3]); cv.set(dx + dw - 4, top + 18, GOLD[1])  # its handle
+        for (x, y) in rect_set(dx - 2, top - 2, dw + 4, 2):
+            cv.set(x, y, BLEACHED[1] if y == top - 1 else BLEACHED[4])
+        goods = ((GOLD, 'jar'), (RED, 'can'), (WTR, 'jar'), (ADOBE, 'sack'), (WOOD, 'box'))
+        for side, (wx0, ww) in enumerate(((8, dx - 16), (dx + dw + 9, w - (dx + dw + 9) - 8))):  # the display windows, between the posts
+            wy0 = top + 4
+            gp.WINDOWS.append((cv, (wx0, wy0, ww, 20)))  # its pane lights up at night (zoneWindows)
+            for (x, y) in rect_set(wx0, wy0, ww, 20):
+                rd.put(cv, x, y, _glass(glass, x - wx0, y - wy0, ww, 20))
+            # two shelves of goods behind the glass, each lit on its left
+            for sy, gh in ((wy0 + 9, 5), (wy0 + 17, 6)):
+                cv.hline(wx0, sy, ww, WOOD[1])
+                gx, k = wx0 + 1, side * 2 + (sy & 1)
+                while gx < wx0 + ww - 3:
+                    ramp, form = goods[k % len(goods)]
+                    gw = 3 if form in ('jar', 'can') else 4
+                    if gx + gw > wx0 + ww - 1:
+                        break
+                    for yy in range(sy - gh + (1 if form == 'can' else 0), sy):
+                        for xx in range(gx, gx + gw):
+                            c = ramp[3] if xx == gx else ramp[1] if xx == gx + gw - 1 else ramp[2]
+                            if yy == sy - gh + (1 if form == 'can' else 0):
+                                c = ramp[4] if form != 'sack' else ramp[3]   # a lid, a cap, a tied top
+                            if form == 'jar' and yy == sy - 3:
+                                c = '#E8DCC0'                              # its label
+                            cv.set(xx, yy, c)
+                    gx += gw + 1
+                    k += 1
+            # the glass's reflection over the goods: two slanting streaks of the bright street
+            for (x, y) in rect_set(wx0, wy0, ww, 20):
+                t = (x - wx0) + (y - wy0) * 0.6
+                if 3 <= t % 17 < 6:
+                    rd.put(cv, x, y, rd.mix(cv.get(x, y), (210, 228, 236), 0.45))
+            cv.hline(wx0 - 1, wy0 + 20, ww + 2, BLEACHED[4])  # the sill
+            cv.hline(wx0 - 1, wy0 + 21, ww + 2, BLEACHED[1])
+            cv.vline(wx0 - 1, wy0, 20, BLEACHED[1]); cv.vline(wx0 + ww, wy0, 20, BLEACHED[1])
+            cv.hline(wx0 - 1, wy0 - 1, ww + 2, BLEACHED[1])
     # the boardwalk at the foot
-    for y in range(h - 6, h):
-        for x in range(0, w):
-            cv.set(x, y, BLEACHED[3] if (x // 6) % 2 else BLEACHED[2])
+    rd.planks(cv, rect_set(0, h - 6, w, 6), woods, seed=seed + 7, board=5, vertical=True,
+              bleach_top=0.2, length=(9, 12), gaps=0.25, nails=False)
     cv.hline(0, h - 6, w, BLEACHED[5])
+    for x in range(0, w):
+        if rd.smooth_noise(x, 0, 3, seed + 51) < 0.35:
+            cv.set(x, h - 1, BLEACHED[1])   # the boards' worn front ends
     return cv
+
+
+def _sack(cv: Canvas, mx: int):
+    """The store's pictogram: a tied sack, small diamonds either side."""
+    for (x, y) in rh.ellipse(mx + 0.5, 25.5, 4.5, 3.6):   # the sack pictogram
+        cv.set(x, y, T('plaster', 5 if x < mx + 1 else 4))
+    cv.hline(mx - 2, 21, 5, T('plaster', 5)); cv.hline(mx - 1, 22, 3, T('brass', 3))
+    for dx in (-14, -9, 9, 14):
+        x = mx + dx
+        for (ex, ey) in ((0, 0), (-1, 1), (1, 1), (0, 2)):
+            cv.set(x + ex, 23 + ey, T('plaster', 5))
+
+
+def _front_shell(w: int, h: int, paint, picto):
+    """The parts every Dust Gulch false front shares, on the house ramps: the tin roof
+    behind the facade, bleached boards of three siblings on the stepped front, a cornice on
+    each step, a sign board painted in `paint` (two sibling ramps) and worn back to the
+    wood, its nails rusting, a pictogram drawn by `picto(cv, mx)` (letters at this size
+    read as nonsense words), the upper window, the corrugated porch roof and the ground
+    storey's boards in its shade. Returns the canvas and the geometry the rest needs."""
+    cv = Canvas(w, h, pad=PAD)
+    foot = h - 6                                   # the boardwalk's top
+    for y in range(2, 16):                         # the tin roof behind the facade, seen from above
+        for x in range(12, w - 12):
+            j = x % 4
+            k = 4 if j == 0 else 3 if j == 1 else 2
+            if y == 2:
+                k = 5 if j == 0 else 4
+            rust = smooth_noise(x // 2, y, 4, 141) > 0.68 and 2 < y < 15
+            cv.set(x, y, T('clay_cool', k - 1) if rust else T('iron', k))
+    face = rect(4, 14, w - 8, foot - 14) | rect(14, 8, w - 28, 6)
+    woods = lambda bi, si: (('bleached', 'bleached_warm', 'bleached_cool')[int(noise2(bi, si, 143) * 3)],
+                            3 + (1 if bi < 4 else 0) - (1 if noise2(bi, si, 144) < 0.14 else 0))
+    boards(cv, 4, 8, w - 8, foot - 8, woods, board=4, seed=145, clip=face)
+    ss_grain(cv, {p for p in face if p[1] < 58}, 0.09, 146, shapes=rh.H_GRAIN, lit=lambda x, y: 1 - y / h)
+    for (x0, x1, y) in ((14, w - 14, 7), (4, 14, 13), (w - 14, w - 4, 13)):   # the cornice on each step
+        for x in range(x0 - 1, x1 + 1):
+            cv.set(x, y, T('timber', 4 if x < w // 2 else 3)); cv.set(x, y + 1, T('timber', 2))
+        rh.overhang(cv, x0, x1, y + 2, 1)
+    sx0, sx1, sy0, sy1 = 18, w - 18, 18, 30       # the sign board, its paint worn back to the wood
+    boards(cv, sx0, sy0, sx1 - sx0, sy1 - sy0, lambda b, si: (paint[si % 2], 3), board=4, seed=147,
+           nails=False, grain=0.04)
+    for (x, y) in rect(sx0, sy0, sx1 - sx0, sy1 - sy0):
+        if smooth_noise(x, y, 2.5, 148) > 0.78 and (y - sy0) % 4 in (1, 2):
+            cv.set(x, y, T('bleached', 4 if (y - sy0) % 4 == 1 else 3))
+    frame(cv, sx0 - 1, sy0 - 1, sx1 - sx0 + 2, sy1 - sy0 + 2, 'bleached', 2, t=1)
+    for (nx, ny) in ((sx0, sy0 + 1), (sx1 - 1, sy0 + 1), (sx0, sy1 - 2), (sx1 - 1, sy1 - 2)):
+        cv.set(nx, ny, T('iron', 1)); cv.set(nx, ny + 1, T('clay_cool', 2))   # its nails, rust run below
+    mx = w // 2
+    picto(cv, mx)
+    wx, wy = mx - 8, 36                           # the upper window, frame and sill
+    frame(cv, wx, wy, 16, 14, 'bleached', 3, t=2)
+    ss.glass(cv, wx + 2, wy + 2, 12, 10, False)
+    gp.WINDOWS.append((cv, (wx + 2, wy + 2, 12, 10)))   # a room upstairs: its pane lights up at night
+    cv.vline(mx - 1, wy + 2, 10, T('bleached', 2)); cv.hline(wx + 2, wy + 6, 12, T('bleached', 4))
+    part(cv, wx - 2, wy + 14, 20, 3, 'bleached', 4)
+    rh.overhang(cv, wx - 1, wx + 19, wy + 17, 2)
+    py = 58                                        # the porch roof: corrugated iron, rust, lit crests
+    for y in range(py, py + 6):
+        for x in range(w):
+            j = x % 4
+            k = 4 if j == 0 else 3 if j == 1 else 2
+            if y == py:
+                k = 5 if j == 0 else 4
+            if y == py + 5:
+                k = 1
+            rust = smooth_noise(x // 2, y, 5, 149) > 0.7 and py < y < py + 5
+            cv.set(x, y, T('clay_cool', k - 1) if rust else T('iron', k))
+    under = rect(4, py + 6, w - 8, foot - py - 6)  # the ground storey in the porch's shade
+    boards(cv, 4, py + 6, w - 8, foot - py - 6, lambda b, si: (('bleached', 'bleached_cool')[si % 2], 2),
+           board=4, seed=150, nails=False, grain=0.06)
+    ss_grain(cv, under, 0.09, 153, shapes=rh.H_GRAIN, lit=lambda x, y: 0.3)
+    rh.overhang(cv, 4, w - 4, py + 6, 3)
+    return cv, foot, py, mx, wx, wy, under
+
+
+def store() -> Canvas:
+    """Dust Gulch's general store, 88 x 108 (asset ledger 20 Oct: redrawn on the house
+    ramps; prop audit ADJUST "doors 25" now a shop's pair of doors 22 x 32). A false
+    front of bleached boards hides a tin roof (its rusty top shows behind); a cornice caps
+    the stepped parapet and throws a band; the sign board is painted faded blue with a
+    tied sack, the paint worn back to the wood; the upper window has its frame and sill.
+    A porch roof of corrugated iron on unbroken posts throws the ground storey into shade:
+    two display windows of goods on shelves either side of a pair of glazed doors under a
+    lintel, a stone step, sacks on the boardwalk against the bulkhead. Footing: the
+    boardwalk, 11 cells wide."""
+    w, h = 88, 108
+    cv, foot, py, mx, wx, wy, under = _front_shell(w, h, ('sky', 'sky_cool'), _sack)
+    dw, dtop = 22, foot - 32                       # the pair of glazed doors, 22 x 32
+    dx = mx - dw // 2
+    for (x, y) in rect(dx - 2, dtop - 2, dw + 4, 2):   # the lintel
+        cv.set(x, y, T('timber', 3 if y == dtop - 2 else 1))
+    for leaf in (0, 1):
+        lx = dx + leaf * (dw // 2)
+        frame(cv, lx, dtop, dw // 2, 32, 'timber', 2, t=1)
+        ss.glass(cv, lx + 1, dtop + 1, dw // 2 - 2, 17, False)
+        for (x, y) in rect(lx + 1, dtop + 19, dw // 2 - 2, 12):
+            cv.set(x, y, T('timber', 2))
+        part(cv, lx + 2, dtop + 21, dw // 2 - 4, 8, 'timber', 2)    # the raised panel
+        cv.hline(lx + 1, dtop + 18, dw // 2 - 2, T('timber', 3))
+    cv.set(mx - 2, dtop + 17, T('brass', 4)); cv.set(mx + 1, dtop + 17, T('brass', 4))   # the handles
+    cv.set(mx - 2, dtop + 18, T('brass', 2)); cv.set(mx + 1, dtop + 18, T('brass', 2))
+    part(cv, dx - 3, foot - 2, dw + 6, 3, 'stone', 3)  # the stone step
+    posts = (2, dx - 6, dx + dw + 3, w - 5)
+    goods = (('brass', 'jar'), ('clay', 'can'), ('sky', 'jar'), ('adobe', 'sack'), ('timber', 'box'))
+    for side, (wx0, ww) in enumerate(((8, dx - 6 - 10), (dx + dw + 9, w - 5 - (dx + dw + 9) - 3))):
+        wy0 = dtop + 4
+        frame(cv, wx0 - 1, wy0 - 1, ww + 2, 22, 'bleached', 2, t=1)
+        ss.glass(cv, wx0, wy0, ww, 20, False)
+        gp.WINDOWS.append((cv, (wx0, wy0, ww, 20)))   # its pane lights up at night (zoneWindows)
+        for sy, gh in ((wy0 + 9, 5), (wy0 + 17, 6)):   # two shelves of goods behind the glass
+            cv.hline(wx0, sy, ww, T('timber', 1))
+            gx, k = wx0 + 1, side * 2 + (sy & 1)
+            while True:
+                fam, form = goods[k % len(goods)]
+                gw = 3 if form in ('jar', 'can') else 4
+                if gx + gw > wx0 + ww - 1:
+                    break
+                y0 = sy - gh + (1 if form == 'can' else 0)
+                for yy in range(y0, sy):
+                    for xx in range(gx, gx + gw):
+                        t = 3 if xx == gx else 1 if xx == gx + gw - 1 else 2
+                        if yy == y0:
+                            t = 4 if form != 'sack' else 3
+                        if form == 'jar' and yy == sy - 3:
+                            cv.set(xx, yy, T('plaster', 4 if xx == gx else 3))   # its label
+                            continue
+                        cv.set(xx, yy, T(fam, t))
+                gx += gw + 1
+                k += 1
+        for i in range(3):                         # one glint across the pane, in two-pixel steps
+            cv.set(wx0 + 2 + i, wy0 + 6 - 2 * i, T('slate', 4)); cv.set(wx0 + 2 + i, wy0 + 5 - 2 * i, T('slate', 4))
+        part(cv, wx0 - 2, wy0 + 21, ww + 4, 2, 'bleached', 3)   # the sill
+    for (nx0, ny0, fam) in ((22, py + 12, 'plaster'), (63, py + 9, 'plaster_warm')):   # bills tacked to the wall
+        for (x, y) in rect(nx0, ny0, 4, 5):
+            cv.set(x, y, T(fam, 4 if y == ny0 else 3))
+        cv.hline(nx0 + 1, ny0 + 2, 2, T('clay', 2)); cv.hline(nx0 + 1, ny0 + 3, 2, T('soot', 3))
+        cv.set(nx0 + 1, ny0, T('iron', 1))
+    for px in posts:                               # the posts run unbroken from the porch roof to the boardwalk
+        rh.cylinder(cv, px, py + 6, 3, foot - py - 6, 'bleached', 3)
+    for (sx, sy, fam) in ((10, foot - 6, 'sand'), (15, foot - 5, 'sand_warm')):   # sacks against the bulkhead
+        for (x, y) in rh.ellipse(sx + 2.5, sy + 3, 2.6, 3.0):
+            cv.set(x, y, T(fam, 4 if x < sx + 2 else 3 if y < sy + 4 else 2))
+        cv.hline(sx + 1, sy, 3, T('brass', 3))
+    for x in range(w):                             # the boardwalk at the foot, boards across, worn ends
+        for y in range(foot, h - 1):
+            cv.set(x, y, T(('timber', 'timber_warm')[(x // 8) % 2], 4 if y == foot else 3 if y < h - 2 else 2))
+        if x % 8 == 0:
+            cv.set(x, foot + 1, T('timber', 1)); cv.set(x, foot + 2, T('timber', 1))
+        cv.set(x, h - 1, T('timber', 1 if smooth_noise(x, 0, 3, 151) < 0.4 else 2))
+    return rh.finish(cv)
+
+
+def _mug(cv: Canvas, mx: int):
+    """The saloon's pictogram: a frothy mug, small diamonds either side."""
+    for y in range(22, 29):                        # the mug, its froth on top, a handle to the east
+        for x in range(mx - 4, mx + 3):
+            cv.set(x, y, T('brass', 5 if x < mx - 2 else 4 if x < mx + 1 else 3))
+    for x in range(mx - 5, mx + 4):
+        cv.set(x, 21, T('plaster', 5)); cv.set(x, 20, T('plaster', 5) if (x - mx) % 3 else T('plaster', 4))
+    cv.vline(mx + 3, 23, 4, T('plaster', 4)); cv.vline(mx + 4, 23, 4, T('plaster', 4))
+    cv.vline(mx - 2, 23, 5, T('brass', 2))
+    for dx in (-18, -12, 12, 18):
+        x = mx + dx
+        for (ex, ey) in ((0, 0), (-1, 1), (1, 1), (0, 2)):
+            cv.set(x + ex, 23 + ey, T('plaster', 5))
+
+
+def saloon() -> Canvas:
+    """Dust Gulch's saloon, 104 x 108 (asset ledger 20 Oct: redrawn on the house ramps;
+    prop audit ADJUST "doors 25" now a doorway 22 x 32). The same false front as the store
+    (`_front_shell`), its sign painted a faded red with a frothy mug. Under the porch the
+    doorway stands open on the lamp-lit room, the swinging half doors hung at chest height
+    in it; two windows glow warm either side, bottles on a shelf and a curtain drawn to one
+    side; a barrel stands by the post and a bench under the east window. Footing: the
+    boardwalk, 13 cells wide."""
+    w, h = 104, 108
+    cv, foot, py, mx, wx, wy, under = _front_shell(w, h, ('berry', 'clay_cool'), _mug)
+    for sx in (wx - 7, wx + 17):                  # the upper window's shutters, painted to match the sign, open on their hinges
+        boards(cv, sx, wy, 6, 14, lambda b, si: (('berry', 'berry_cool')[b % 2], 3), board=3, seed=162 + sx, nails=False,
+               grain=0.0, joints=(40, 41))
+        frame(cv, sx, wy, 6, 14, 'berry', 3, t=1)
+        cv.set(sx + (5 if sx < wx else 0), wy + 3, T('iron', 1)); cv.set(sx + (5 if sx < wx else 0), wy + 10, T('iron', 1))
+    dw, dtop = 22, foot - 32
+    dx = mx - dw // 2
+    for (x, y) in rect(dx - 2, dtop - 2, dw + 4, 2):   # the lintel
+        cv.set(x, y, T('timber', 3 if y == dtop - 2 else 1))
+    frame(cv, dx - 1, dtop, dw + 2, 32, 'timber', 2, t=1)
+    for (x, y) in rect(dx, dtop, dw, 32):          # the room inside, lamp-lit towards the back
+        fy = (y - dtop) / 31
+        cv.set(x, y, T('lamp', 1) if 0.25 < fy < 0.6 and dx + 3 < x < dx + dw - 3 else T('earth_cool', 0 if fy < 0.25 else 1))
+    for (x, y) in rect(dx + 4, dtop + 9, 3, 6):     # a patron at the bar, against the lamp
+        cv.set(x, y, T('earth_cool', 0))
+    for half in (0, dw // 2):                      # the swinging half doors at chest height
+        hx = dx + half
+        boards(cv, hx, dtop + 10, dw // 2, 13, lambda b, si: ('bleached', 3), board=4, seed=160 + half, nails=False,
+               grain=0.0, joints=(40, 41))
+        cv.hline(hx, dtop + 10, dw // 2, T('bleached', 4))
+        cv.vline(hx + (dw // 2 - 1 if half == 0 else 0), dtop + 10, 13, T('bleached', 1))
+    for (x, y) in rect(dx + 1, dtop + 23, dw - 2, 9):   # the floor glimpsed under the doors
+        cv.set(x, y, T('timber', 1 if (x + y) % 6 else 2))
+    part(cv, dx - 3, foot - 2, dw + 6, 3, 'stone', 3)  # the step
+    posts = (2, dx - 6, dx + dw + 3, w - 5)
+    for side, (wx0, ww) in enumerate(((10, dx - 6 - 14), (dx + dw + 11, w - 5 - (dx + dw + 11) - 5))):
+        wy0 = dtop + 4                             # a window lit from inside, bottles on a shelf, a curtain
+        frame(cv, wx0 - 1, wy0 - 1, ww + 2, 20, 'bleached', 2, t=1)
+        ss.glass(cv, wx0, wy0, ww, 18, True)
+        gp.WINDOWS.append((cv, (wx0, wy0, ww, 18)))
+        cv.hline(wx0, wy0 + 11, ww, T('timber', 1))
+        for bx in range(wx0 + 2, wx0 + ww - 2, 3):  # bottles against the light
+            tall = 4 + (bx // 3) % 2
+            cv.vline(bx, wy0 + 11 - tall, tall, T('earth_cool', 1)); cv.set(bx, wy0 + 11 - tall - 1, T('earth_cool', 1))
+        cx0 = wx0 + (ww - 3 if side else 0)
+        for y in range(wy0, wy0 + 18):              # the curtain drawn to one side
+            cv.set(cx0, y, T('berry', 3)); cv.set(cx0 + 1, y, T('berry', 2)); cv.set(cx0 + 2, y, T('berry', 1 if side else 3))
+        cv.vline(wx0 + ww // 2, wy0, 18, T('bleached', 2))   # the glazing bar
+        part(cv, wx0 - 2, wy0 + 19, ww + 4, 2, 'bleached', 3)   # the sill
+    for (nx0, ny0, fam) in ((22, py + 10, 'plaster'),):   # a bill tacked by the door
+        for (x, y) in rect(nx0, ny0, 4, 5):
+            cv.set(x, y, T(fam, 4 if y == ny0 else 3))
+        cv.hline(nx0 + 1, ny0 + 2, 2, T('clay', 2)); cv.hline(nx0 + 1, ny0 + 3, 2, T('soot', 3))
+        cv.set(nx0 + 1, ny0, T('iron', 1))
+    for px in posts:                               # the posts run unbroken from the porch roof to the boardwalk
+        rh.cylinder(cv, px, py + 6, 3, foot - py - 6, 'bleached', 3)
+    bx0 = 5                                        # a barrel by the west post
+    part(cv, bx0, foot - 9, 7, 9, 'timber', 3)
+    for y in (foot - 7, foot - 3):
+        cv.hline(bx0, y, 7, T('iron', 2)); cv.set(bx0 + 1, y, T('iron', 4))
+    bx = dx + dw + 12                              # a bench under the east window
+    part(cv, bx, foot - 6, 18, 2, 'timber', 4)
+    for lx in (bx + 1, bx + 15):
+        cv.vline(lx, foot - 4, 4, T('timber', 2)); cv.vline(lx + 1, foot - 4, 4, T('timber', 1))
+    for x in range(w):                             # the boardwalk at the foot, boards across, worn ends
+        for y in range(foot, h - 1):
+            cv.set(x, y, T(('timber', 'timber_warm')[(x // 8) % 2], 4 if y == foot else 3 if y < h - 2 else 2))
+        if x % 8 == 0:
+            cv.set(x, foot + 1, T('timber', 1)); cv.set(x, foot + 2, T('timber', 1))
+        cv.set(x, h - 1, T('timber', 1 if smooth_noise(x, 0, 3, 161) < 0.4 else 2))
+    return rh.finish(cv)
 
 
 def water_tower() -> Canvas:
-    """A wooden water tank on a trestle, 48 x 96, with iron hoops and a spout."""
+    """The railhead's water tower, 48 x 96 (asset ledger 20 Oct: redrawn on the house ramps,
+    its foot 5 whole cells). A tank of bleached staves seen in three-quarter view, shaded
+    as a cylinder, its iron hoops bowing round it with a lug at each, damp streaks under
+    the hoops where the joints weep; a conical shingled lid with a vent cap; the spout arm
+    for the engines hinged on the east side with its chain; a trestle of four legs (the
+    back pair in shade behind), X braces bolted at their crossings, and a ladder up the
+    front to the tank's catwalk ledge."""
     w, h = 48, 96
     cv = Canvas(w, h, pad=PAD)
-    for (x, y) in oval(24, 8, 21, 6):  # the conical lid, seen from above
-        cv.set(x, y, BLEACHED[4] if x < 24 else BLEACHED[2])
-    cv.set(24, 2, BLEACHED[5])
-    tank = rect_set(4, 8, 40, 34)
-    detail.boards(cv, tank, BLEACHED, 3, 8, board=4, vertical=True, x0=4, grain=0.05)
-    for x in range(4, 44):
-        k = (x - 4) / 40
-        for y in range(8, 42):
-            if k > 0.62:
-                detail.shade(cv, x, y, 1)
-            if k < 0.12:
-                detail.shade(cv, x, y, -1)
-    for hy in (14, 26, 38):
-        cv.hline(4, hy, 40, IRON[3]); cv.hline(4, hy + 1, 40, IRON[1])
-    for (x, y) in oval(24, 42, 20, 3):
-        if y >= 42:
-            cv.set(x, y, BLEACHED[1])
-    for lx in (8, 20, 28, 40):  # the trestle
-        gp.post(cv, lx, 44, h - 2, w=3, ramp=BLEACHED)
-    for y0 in (56, 74):
-        for t in range(32):
-            cv.set(9 + t, y0 + t // 3 % 2, BLEACHED[2])
-        for t in range(32):
-            cv.set(9 + t, y0 + 10 - (t * 10 // 32), BLEACHED[1])
-    cv.rect(40, 30, 6, 3, IRON[2])
-    cv.vline(45, 33, 6, IRON[2])
-    return cv
+    tx0, tx1, ty0, ty1 = 4, 44, 12, 46            # the tank's box
+    cx = (tx0 + tx1) / 2
+    cone = set()
+    for y in range(2, ty0 + 1):                   # the conical lid, seen from above
+        half = 3 + (y - 2) * ((tx1 - tx0) / 2 + 1 - 3) / (ty0 - 2)
+        for x in range(round(cx - half), round(cx + half)):
+            cone.add((x, y))
+    roof_rows(cv, 0, 2, w, ty0 - 1, 'timber', 3, row=3, tile=(4, 6), seed=401, clip=cone)
+    for (x, y) in cone:
+        if x >= cx:
+            step(cv, x, y, -1)
+    for x in range(int(cx) - 2, int(cx) + 2):     # the vent cap
+        cv.set(x, 0, T('iron', 4 if x < cx else 2)); cv.set(x, 1, T('iron', 2))
+    for x in range(tx0, tx1):                     # the staves: a cylinder lit on its west
+        u = (x - tx0 + 0.5) / (tx1 - tx0)
+        sv = (x - tx0) // 4
+        fam = ('bleached', 'bleached_warm', 'bleached_cool')[sv % 3]
+        base = 4 if u < 0.2 else 3 if u < 0.6 else 2 if u < 0.85 else 1
+        if noise2(sv, 0, 403) < 0.3:
+            fam = ('timber', 'timber_warm')[sv % 2]    # a stave replaced, newer and still brown
+        bow = round(2.2 * math.sin(math.pi * u))
+        for y in range(ty0, ty1 + bow):
+            j = (x - tx0) % 4
+            k = base + (1 if j == 0 and base < 4 else 0) - (1 if j == 3 else 0)
+            cv.set(x, y, T(fam, max(1, min(5, k))))
+        for hy in (ty0 + 6, ty0 + 17, ty0 + 28):   # the hoops bow round the staves
+            yy = hy + bow
+            cv.set(x, yy, T('iron', 3 if u < 0.6 else 2)); cv.set(x, yy + 1, T('iron', 1))
+            if u > 0.15 and smooth_noise(x, hy, 2, 402) > 0.62:   # the joints weep below the hoop
+                for d in range(2, 5):
+                    step(cv, x, yy + d, -1, 1)
+        cv.set(x, ty1 + bow, T('bleached', 1))     # the tank's underside rim
+    tank = {(x, y) for x in range(tx0, tx1) for y in range(ty0, ty1 + 2) if cv.get(x, y)[3]}
+    ss_grain(cv, tank, 0.08, 404, shapes=rh.V_GRAIN, lit=lambda x, y: 1 - (x - tx0) / (tx1 - tx0), swap=0.6)
+    for (x, y) in rh.ellipse(cx - 0.5, ty0 + 12.5, 3.2, 3.6) | {(int(cx) - 1, ty0 + 8), (int(cx) - 1, ty0 + 9), (int(cx) - 2, ty0 + 10)}:
+        hit = rh.tone_at(cv, x, y)                 # the railway's drop, painted on the staves, faded
+        if hit:
+            cv.set(x, y, T('sky' if x < cx else 'sky_cool', max(2, min(4, hit[1] + 1))))
+    for hy in (ty0 + 6, ty0 + 17, ty0 + 28):      # rust bleeding from the hoops in runs
+        for x in range(tx0 + 2, tx1 - 2):
+            yy = hy + round(2.2 * math.sin(math.pi * (x - tx0 + 0.5) / (tx1 - tx0)))
+            if smooth_noise(x, hy, 1.5, 405) > 0.72:
+                cv.set(x, yy, T('clay_cool', 3)); cv.set(x, yy + 1, T('clay_cool', 1))
+    gx = tx1 - 9                                   # the float gauge: a board with marks, the pointer at the level
+    for y in range(ty0 + 3, ty1 - 2):
+        cv.set(gx, y, T('plaster', 4)); cv.set(gx + 1, y, T('plaster', 3))
+        if (y - ty0) % 4 == 0:
+            cv.set(gx + 1, y, T('soot', 3))
+    cv.set(gx - 1, ty0 + 14, T('clay', 4)); cv.set(gx + 2, ty0 + 14, T('clay', 3)); cv.set(gx + 3, ty0 + 14, T('clay', 2))
+    for hy in (ty0 + 6, ty0 + 17, ty0 + 28):      # a lug on each hoop, lit on top
+        cv.set(int(cx) - 1, hy + 2, T('iron', 4)); cv.set(int(cx), hy + 2, T('iron', 2))
+    for x in range(tx0 - 1, tx1 + 1):             # the catwalk ledge round the tank's foot
+        cv.set(x, ty1 + 3, T('timber', 4 if x < cx else 3)); cv.set(x, ty1 + 4, T('timber', 1))
+    legs_front, legs_back = (6, 39), (14, 31)
+    for lx in legs_back:                           # the back legs, in shade behind
+        rh.cylinder(cv, lx, ty1 + 5, 3, h - 6 - ty1 - 5, 'timber_cool', 2)
+    for (yb, yt) in ((h - 4, 70), (70, ty1 + 6)):  # X braces between the front legs, bolted at the crossing
+        for t in range(0, 100):
+            u = t / 99
+            x = round(9 + (39 - 9) * u)
+            cv.set(x, round(yt + (yb - yt) * u), T('timber', 3))
+            cv.set(x, round(yb + (yt - yb) * u), T('timber', 2))
+        cv.set(24, (yb + yt) // 2, T('iron', 4)); cv.set(24, (yb + yt) // 2 + 1, T('iron', 1))
+    cv.hline(9, 70, 30, T('timber', 4)); cv.hline(9, 71, 30, T('timber', 1))   # the girt
+    for lx in legs_front:                          # the front legs
+        rh.cylinder(cv, lx, ty1 + 5, 3, h - 1 - ty1 - 5, 'timber', 3)
+        part(cv, lx - 1, h - 3, 5, 3, 'stone', 3)  # each on a stone pad
+    for ly in range(ty1 + 5, h - 3):               # the ladder up the front
+        cv.set(19, ly, T('timber', 4)); cv.set(28, ly, T('timber', 2))
+        if (ly - ty1) % 4 == 0:
+            cv.hline(20, ly, 8, T('timber', 3))
+    for y in range(32, 36):                        # the spout arm on the east side, hinged, its chain
+        for x in range(tx1 - 1, tx1 + 3):
+            cv.set(x, y, T('iron', 3 if y == 32 else 2))
+    for y in range(36, 52):
+        cv.set(tx1 + 1, y, T('iron', 3)); cv.set(tx1 + 2, y, T('iron', 1))
+    for y in range(20, 32, 2):
+        cv.set(tx1 + 2, y, T('iron', 2))
+    return rh.finish(cv)
 
 
 def saguaro(tall: bool = True) -> Canvas:
@@ -187,58 +585,423 @@ def tumbleweed() -> Canvas:
 
 
 def wagon() -> Canvas:
-    """A covered wagon, 72 x 48: a canvas hood lit on its upper left, wooden bed, big
-    spoked wheels."""
+    """A covered wagon, 66 x 46, in three-quarter view (prop audit, ADJUST: "side view,
+    spoked wheels flat"; asset ledger 20 Oct). Seen from the south and above like every
+    prop: the canvas bonnet's top plane catches the light and its south side falls away in
+    panels between the hoops, flaring at both ends; the west end is drawn up on its
+    puckering string over a dark opening with a sack inside. The bed is lapped boards
+    between a lit top rail and a dark sill, held by wooden standards; the wheels are ellipses
+    (iron tyres, jointed felloes, spokes), the rear ones larger. A water barrel rides on
+    the south side, a jockey box at the front, the brake lever by the rear wheel, the
+    tongue out west. Footing: the four wheels; its foot line spans 8 cells.
+    All on the house ramps (bleached and timber boards, plaster canvas, iron)."""
     w, h = 72, 48
     cv = Canvas(w, h, pad=PAD)
-    for (x, y) in oval(34, 18, 28, 16):
-        if y < 26:
-            k = (x - 6) / 56
-            cv.set(x, y, '#F4ECD8' if k < 0.3 and y < 14 else '#E2D6BC' if k < 0.65 else '#BFB094')
-    for hx in (16, 34, 52):
-        for y in range(4, 26):
-            if cv.get(hx, y)[3]:
-                cv.set(hx, y, '#A99C82')
-    detail.boards(cv, rect_set(6, 26, 58, 10), WOOD, 2, 26, board=3, seed=4)
-    cv.hline(6, 26, 58, WOOD[4])
-    for (wx, r) in ((16, 9), (54, 9)):
-        for k in range(36):
-            a = 2 * math.pi * k / 36
-            cv.set(int(wx + r * math.cos(a)), int(38 + r * math.sin(a)), WOOD[1] if math.sin(a) > 0 else WOOD[3])
-        for k in range(8):
-            a = math.pi * k / 4
-            for t in range(1, r):
-                cv.set(int(round(wx + math.cos(a) * t)), int(round(38 + math.sin(a) * t)), WOOD[2])
-        cv.set(wx, 38, IRON[2])
-    cv.hline(64, 32, 8, WOOD[2])
+    x0, x1 = 9, 63                       # the bed, west to east
+    bed_top, bed_bot = 26, 35
+    # the bonnet: a long half cylinder over hoops, its ends flared up and out
+    hoops = [16, 24, 32, 40, 48, 56]
+    hx0, hx1 = x0 - 2, x1 + 2
+    hood, prof = set(), {}
+    for x in range(hx0, hx1 + 1):
+        u = (x - hx0) / (hx1 - hx0)
+        y_top = 7 + round(1.4 * math.sin(u * math.pi)) - round(4 * max(0.0, abs(u - 0.5) * 2 - 0.72) / 0.28)
+        end = min(x - hx0, hx1 - x)
+        if end < 2:
+            y_top += 2 - end                         # the rounded corner of each flared end
+        prof[x] = y_top
+        for y in range(y_top, bed_top):
+            hood.add((x, y))
+    for (x, y) in hood:
+        span = bed_top - prof[x]
+        u = (y - prof[x]) / span
+        k = 4 if u < 0.22 else 3 if u < 0.62 else 2 if u < 0.88 else 1
+        panel = sum(1 for hx in hoops if x >= hx)
+        fam = ('plaster', 'plaster_warm', 'plaster_cool')[(panel * 2 + 1) % 3]
+        hv = [x - hx for hx in hoops]
+        if 0 in hv and u > 0.18:
+            k += 1                                   # the hoop pushes the cloth out: a lit ridge
+        elif 1 in hv and 0.22 < u < 0.9:
+            k -= 1                                   # and its shade just east of it
+        if x >= hx1 - 1:
+            k -= 1                                   # the east end turns from the light
+        if u < 0.08 and x < hx0 + 24 and x not in hoops:
+            k = 5                                    # the crest's glint on the upper left
+        cv.set(x, y, T(fam, max(1, min(5, k))))
+    for x in range(hx0 + 3, hx1 - 2):              # the seam where two widths of canvas are sewn
+        y = prof[x] + round((bed_top - prof[x]) * 0.5)
+        if x % 4 < 2 and x not in hoops:
+            step(cv, x, y, -1)
+    for i, hx in enumerate(hoops[:-1]):           # tension: the cloth pulled taut from each hoop
+        for t in range(4 + i % 2):                 # down into the slack panel, as a crease
+            x, y = hx + 2 + t, prof[hx] + 6 + t + (i % 3)
+            if (x, y) in hood and (x, y + 1) in hood:
+                step(cv, x, y, -1, 1); step(cv, x, y + 1, 1)
+    ss_grain(cv, {p for p in hood if p[0] not in hoops}, 0.2, 33, shapes=rh.H_GRAIN,   # the weave, sun-faded in streaks
+             lit=lambda x, y: 1 - (y - 5) / 22, swap=0.8, up=0.18, down=0.14)
+    for i, x in enumerate(range(hx0 + 13, hx0 + 41)):   # a merchant's name painted along the side, faded
+        col = x - (hx0 + 13)
+        glyph = col % 6
+        if glyph == 5 or x in hoops:
+            continue
+        rows = (0b111, 0b101, 0b110, 0b011, 0b111)[(col // 6) % 5]
+        for r in range(3):
+            if rows >> r & 1 and noise2(col, r, 61) < 0.86:
+                y = 17 + r
+                if (x, y) in hood:
+                    cv.set(x, y, T('clay_cool' if glyph < 3 else 'clay_warm', 4 if y == 17 else 3))
+    for (px, py, fam) in ((49, 11, 'sand'), (25, 22, 'sand_warm')):   # patches over old tears, stitched round
+        for (x, y) in rect(px, py, 5, 3):
+            cv.set(x, y, T(sib(fam, noise2(x, y, 7), 0.3), 4 if y == py else 3 if fam == 'sand' else 2))
+        for (x, y) in ((px - 1, py), (px - 1, py + 2), (px + 5, py + 1), (px + 1, py + 3), (px + 3, py + 3)):
+            if (x, y) in hood:
+                cv.set(x, y, T(fam, 1))
+    for x in range(hx0 + 1, hx1):                  # trail dust kicked up onto the hem, water stains above it
+        for y in (bed_top - 3, bed_top - 2, bed_top - 1):
+            if smooth_noise(x, y // 2, 2.5, 31) > 0.5 - 0.08 * (y - bed_top + 3) and (x, y) in hood:
+                hit = rh.tone_at(cv, x, y)
+                cv.set(x, y, T('sand', hit[1] if hit else 2))
+    # the west (front) end drawn shut on its string: gathers fan out from a knot of cloth
+    kx, ky = hx0 + 2, 17
+    for k in range(11):
+        a = math.pi * (-0.62 + 1.24 * k / 10)
+        for t in range(1, 7):
+            px, py = round(kx + math.cos(a) * t * 0.9), round(ky + math.sin(a) * t * 1.25)
+            if (px, py) in hood:
+                cv.set(px, py, T(sib('plaster', noise2(k, 1, 3), 0.3), (4 if t < 4 else 3) if k % 2 == 0 else 2))
+    cv.set(kx, ky, T('sand', 2)); cv.set(kx, ky + 1, T('sand', 1)); cv.set(kx + 1, ky, T('sand', 3))
+    # the east (back) end drawn up on its string round an opening, the load inside in shade
+    ocx, ocy = hx1 - 4.0, 17.5
+    opening = rh.ellipse(ocx, ocy, 3.0, 5.6)
+    for (x, y) in opening:
+        cv.set(x, y, T('earth_cool', 0))
+    for (x, y) in rect(int(ocx) - 2, 18, 4, 3):     # a crate's lid in the light from the opening
+        cv.set(x, y, T('timber', 2 if y == 18 else 1))
+    for (x, y) in rh.ellipse(ocx - 1, 21.5, 1.8, 1.6):   # a flour sack
+        cv.set(x, y, T('sand', 2 if x < ocx - 1 else 1))
+    for (x, y) in opening:                           # the end hoop round the mouth, lit on its upper left
+        if (x - 1, y) not in opening and (x - 1, y) in hood:
+            cv.set(x - 1, y, T('timber', 4 if y < ocy else 2))
+    lx, ly = hx0 + 10, 21                            # a lantern hung on the front hoop, unlit by day
+    cv.set(lx, ly - 2, T('iron', 2)); cv.set(lx, ly - 1, T('iron', 4)); cv.set(lx + 1, ly - 1, T('iron', 2))
+    for (x, y) in rect(lx - 1, ly, 3, 3):
+        cv.set(x, y, T('sand', 5 if (x, y) == (lx - 1, ly) else 4 if x < lx + 1 else 2))   # horn panes
+    cv.hline(lx - 1, ly + 3, 3, T('iron', 1))
+    for x in range(hx1 - 4, hx1 + 1):               # the east end turns away from the light
+        for y in range(0, bed_top):
+            if (x, y) in hood:
+                step(cv, x, y, -1, 1)
+    # tie-downs from the hem to a cleat on the top rail at each hoop
+    for hx in hoops:
+        cv.set(hx, bed_top - 1, T('sand', 2)); cv.set(hx, bed_top - 2, T('sand', 4))
+    # the bed: lapped boards between the rails
+    woods = lambda bi, si: (('bleached', 'timber', 'timber_warm')[int(noise2(bi, si, 41) * 3)],
+                            3 - (1 if noise2(bi, si, 43) < 0.15 else 0))
+    boards(cv, x0, bed_top + 2, x1 - x0, bed_bot - bed_top - 2, woods, board=4, seed=44)
+    for x in range(x0, x1):
+        cv.set(x, bed_top, T('timber', 4 if x < x0 + 30 else 3))
+        cv.set(x, bed_top + 1, T('timber', 2))
+        cv.set(x, bed_bot, T('timber', 1))
+    for sx in (x0 + 1, 22, 44, x1 - 2):          # the bed's standards, capped in iron
+        for y in range(bed_top + 1, bed_bot + 1):
+            cv.set(sx, y, T('timber', 4 if y < bed_top + 4 else 3)); cv.set(sx + 1, y, T('timber', 1))
+        cv.set(sx, bed_top, T('iron', 4)); cv.set(sx + 1, bed_top, T('iron', 2))
+    # the shade under the bed and the running gear
+    for x in range(x0 + 2, x1 - 1):
+        cv.set(x, bed_bot + 1, T('earth_cool', 0)); cv.set(x, bed_bot + 2, T('earth_cool', 1) if (x // 3) % 2 else T('earth_cool', 0))
+    for x in range(x0 + 6, x1 - 4):                # the reach pole between the axles
+        cv.set(x, bed_bot + 3, T('timber', 2))
+    # the wheels: the rear pair larger, iron tyres, jointed felloes
+    rh.wheel(cv, 18.5, 39.5, 7.5, 6.6, spokes=10, seed=1)
+    rh.wheel(cv, 51.5, 38.0, 9.2, 8.2, spokes=12, seed=2)
+    # the water barrel lashed to the south side between the wheels
+    bx0, by0 = 31, 27
+    part(cv, bx0, by0, 8, 9, 'timber', 3)
+    for y in (by0 + 2, by0 + 6):
+        cv.hline(bx0, y, 8, T('iron', 2)); cv.set(bx0 + 1, y, T('iron', 4))
+    cv.vline(bx0 + 2, by0 + 3, 3, T('timber', 4))
+    # the jockey box at the front and the brake lever by the rear wheel
+    part(cv, x0 - 5, bed_top + 3, 7, 6, 'bleached', 3)
+    cv.hline(x0 - 5, bed_top + 2, 7, T('iron', 3))
+    for y in range(23, 33):                        # the brake lever, in front of the rear wheel
+        cv.set(40, y, T('iron', 3 if y < 28 else 2)); cv.set(41, y, T('iron', 1))
+    cv.set(40, 22, T('iron', 4)); cv.set(41, 22, T('iron', 3))
+    # the tongue out west to the doubletree
+    for x in range(1, x0 + 4):
+        cv.set(x, 37, T('timber', 4 if x < 6 else 3)); cv.set(x, 38, T('timber', 1))
+    for y in range(34, 41):
+        cv.set(2, y, T('timber', 3)); cv.set(3, y, T('timber', 1))
+    return rh.finish(cv)
+
+
+def wagon_wreck() -> Canvas:
+    """The brief's wagon wreck (two on the Canyon and Drover's Roads), 72 x 44, on the house
+    ramps: the same covered wagon long abandoned. Its front wheel is gone, so the bed has
+    dropped onto its axle and tilts down to the west; the canvas has rotted off, so you see
+    into the bed over its near side (the far side's inner boards in shade, the floor with
+    sand blown in) under the bare bows, one snapped, a rag on one; two near-side boards have
+    fallen out; the lost wheel lies flat in the sand in front, its spokes showing; sand has
+    drifted against the rear wheel. Footing: the sunk front, the rear wheel, the flat wheel."""
+    w, h = 72, 44
+    cv = Canvas(w, h, pad=PAD)
+    x0, x1 = 10, 62
+    def rim(x):                                    # the near side's top rail: the front (west) end has dropped
+        return round(25 + 6 * (x1 - x) / (x1 - x0))
+    for x in range(x0 + 1, x1 - 1):                # inside the bed: the far side's inner face, then the floor
+        r = rim(x)
+        for y in range(r - 7, r):
+            if y < r - 4:
+                cv.set(x, y, T('timber_cool', 2 if y > r - 7 else 1))   # the far side's boards, in shade
+            else:
+                sand = smooth_noise(x, y, 7, 721) > 0.5
+                cv.set(x, y, T('sand', 3) if sand else T('bleached', 2 if (x // 9) % 2 else 3))
+        cv.set(x, r - 8, T('bleached', 4))         # the far side's top rail, lit
+    for x in range(x0, x1):                        # the near side boards, sprung, two fallen out
+        r = rim(x)
+        cv.set(x, r, T('bleached', 5 if x < 30 else 4))
+        for y in range(r + 1, r + 9):
+            k = (y - r - 1) % 3
+            if (x // 9) % 4 == 2 and y >= r + 6:
+                cv.set(x, y, T('earth_cool', 0))   # the gap where two boards fell out
+                continue
+            fam = ('bleached', 'bleached_cool', 'bleached_warm')[((y - r) // 3 + x // 13) % 3]
+            cv.set(x, y, T(fam, (4 if k == 0 else 3) if x < 52 else (3 if k == 0 else 2)) if k < 2 else T(fam, 1))
+        cv.set(x, r + 9, T('earth_cool', 0))
+    for sx in (x0, 28, 52, x1 - 1):                # the standards that held the boards
+        r = rim(sx)
+        for y in range(r - 7, r + 9):
+            cv.set(sx, y, T('timber', 3 if y < r else 2))
+    rh.wheel(cv, 52.5, 37.0, 7.6, 6.8, spokes=8, seed=3)    # the rear wheel still on
+    for (x, y) in rh.ellipse(12, 34.5, 2.0, 2.0):    # the bare front axle end, dug into the sand
+        cv.set(x, y, T('iron', 2 if x < 12 else 1))
+    for (x, y) in rh.ellipse(24, 40.5, 10, 3.0):     # the lost wheel lying flat in front, spokes radiating
+        d = ((x + 0.5 - 24) / 10) ** 2 + ((y + 0.5 - 40.5) / 3.0) ** 2
+        ang = math.atan2((y + 0.5 - 40.5) * 3.3, x + 0.5 - 24)
+        spoke = abs(((ang / (2 * math.pi / 10)) % 1) - 0.5) > 0.36
+        if d > 0.62:
+            cv.set(x, y, T('iron', 4 if y < 40 else 2))
+        elif spoke or d < 0.08:
+            cv.set(x, y, T('timber', 4 if y < 40 else 3))
+        else:
+            cv.set(x, y, T('sand', 2))               # sand between the spokes
+    for x in range(42, 64):                         # sand drifted against the rear wheel's lee
+        depth = max(1, 4 - abs(x - 52) // 3)
+        for y in range(h - 1 - depth, h):
+            cv.set(x, y, T('sand', 4 if y == h - 1 - depth else 3))
+    rh.finish(cv)
+    for bx in (16, 26, 36, 46, 56):                  # the bare bows over it all, drawn after the outline: dark
+        r = rim(bx) - 8                              # enough to be their own edge, so air shows between them
+        snapped = bx == 36
+        top = r - (7 if snapped else 15)
+        prev = None
+        for k in range(0, 40):
+            a = math.pi * k / 39
+            if snapped and k > 19:
+                break
+            px = round(bx + 4 * math.cos(math.pi - a))
+            py = round(r - (r - top) * math.sin(a))
+            if (px, py) != prev:
+                cv.set(px, py, T('timber', 2 if k < 20 else 1))
+            prev = (px, py)
+        if bx == 26:
+            for y in range(top + 2, top + 8):        # a strip of rotten canvas still tied on
+                cv.set(bx + 4, y, T('plaster_cool', 1)); cv.set(bx + 5, y, T('plaster_cool', 1))
+    return cv
+
+
+def cliff_shrine() -> Canvas:
+    """A cliff shrine (the brief names two, on the Canyon and Drover's Roads), 32 x 40, on
+    the house ramps: a knuckle of bedded sandstone with a niche cut into its face under a
+    pointed arch, a little clay figure of a sleeper in it, two candle stubs and a cup in
+    front, a faded cloth strip tied round a peg above, pebbles left on the sill, sand at its
+    foot. A traveller would stop here to rest; it gives nothing and asks nothing."""
+    w, h = 32, 40
+    cv = Canvas(w, h, pad=PAD)
+    mask = set()
+    for y in range(3, h - 2):
+        for x in range(2, w - 2):
+            # a knuckle of rock, taller and steeper on the west where the cliff it broke from stood
+            top = 3 + round(10 * ((x - 2) / (w - 4)) ** 1.6) + round(3 * smooth_noise(x, 0, 4, 701))
+            edge = min(x - 2, w - 3 - x)
+            if y >= top + max(0, 4 - edge) * 2 and (edge > 0 or y > h - 12) and not (y >= h - 6 and not 4 <= x <= 27):
+                mask.add((x, y))                     # (the foot spans 3 cells: it sits on 24 px of ground)
+    ytop = min(y for _, y in mask)
+    for (x, y) in mask:                             # the beds of the rock, lit lips and undercuts
+        r = (y - ytop + 2 * smooth_noise(x, 0, 5, 702)) % 5
+        u = (x - 2) / (w - 4)
+        bed = int((y - ytop + 2 * smooth_noise(x, 0, 5, 702)) // 5)
+        fam = ('adobe', 'adobe_warm', 'sand_warm', 'adobe_cool')[bed % 4]
+        k = 4 if r < 1 else 3 if r < 3.8 else 1
+        if u > 0.78:
+            k -= 1 if u < 0.9 else 2
+        cv.set(x, y, T(fam, max(1, k)))
+    ss_grain(cv, mask, 0.12, 706, shapes=rh.H_GRAIN, lit=lambda x, y: 1 - x / w, swap=0.6)   # cross-bedding in the grain of the stone
+    for vx in range(5, w - 5, 4):                   # desert varnish run down from the crown in dark streaks
+        tops = [yy for (xx, yy) in mask if xx == vx]
+        if tops and noise2(vx, 0, 704) < 0.5:
+            for yy in range(min(tops) + 1, min(tops) + 3 + int(noise2(vx, 1, 705) * 5)):
+                if (vx, yy) in mask:
+                    cv.set(vx, yy, T('earth_cool', 2))
+    for (x, y) in ((24, 26), (25, 27), (25, 28), (26, 29), (26, 30)):   # a crack down the east flank
+        if (x, y) in mask:
+            cv.set(x, y, T('adobe', 1))
+    for (x, y) in ((5, 28), (6, 28), (5, 29), (23, 33), (24, 33)):   # orange lichen in the damp, shaded joints
+        if (x, y) in mask:
+            cv.set(x, y, T('clay', 3))
+    nx0, nw, ny0, nh = 10, 12, 13, 15                # the niche, pointed at the top
+    niche = set()
+    for y in range(ny0, ny0 + nh):
+        for x in range(nx0, nx0 + nw):
+            if y - ny0 < 5 and abs(x + 0.5 - (nx0 + nw / 2)) > (y - ny0 + 1) * 1.2:
+                continue
+            niche.add((x, y))
+    for (x, y) in niche:                            # its back in shade, darker deeper in, the chisel marks showing
+        k = 1 if y < ny0 + 6 or x > nx0 + nw - 4 else 2
+        if (x + y) % 5 == 0 and k == 2 and y > ny0 + 6:
+            k = 1
+        cv.set(x, y, T('adobe_cool', k))
+    for (x, y) in niche:                            # the cut edge: lit on the far (east) jamb, dark under the arch
+        if (x + 1, y) not in niche:
+            cv.set(x + 1, y, T('adobe', 4))
+        if (x, y - 1) not in niche:
+            cv.set(x, y - 1, T('adobe', 1))
+    for (x, y) in rect(nx0 - 1, ny0 + nh, nw + 2, 2):   # the sill
+        cv.set(x, y, T('adobe', 4 if y == ny0 + nh else 2))
+    cx = nx0 + nw // 2
+    for (x, y) in rh.ellipse(cx, ny0 + 11, 2.6, 2.4):   # the clay sleeper, curled
+        cv.set(x, y, T('clay', 4 if x < cx else 3))
+    cv.set(cx - 2, ny0 + 9, T('clay', 4)); cv.set(cx - 1, ny0 + 9, T('clay', 4))   # its head
+    for (bx, by) in ((nx0 + 1, ny0 + 11), (nx0 + nw - 2, ny0 + 10)):   # candle stubs, one still burning
+        for y in range(by, ny0 + nh):
+            cv.set(bx, y, T('plaster', 5 if y == by else 4))
+    cv.set(nx0 + nw - 2, ny0 + 9, T('lamp', 5)); cv.set(nx0 + nw - 2, ny0 + 8, T('lamp', 3))
+    cv.set(cx + 3, ny0 + nh - 1, T('brass', 4)); cv.set(cx + 4, ny0 + nh - 1, T('brass', 3))   # a cup
+    for (px, py) in ((nx0 + 1, ny0 + nh + 2), (nx0 + 4, ny0 + nh + 2), (nx0 + 8, ny0 + nh + 2)):
+        cv.set(px, py, T('stone', 4)); cv.set(px + 1, py, T('stone', 2))   # pebbles left on the sill's foot
+    cv.set(cx, ny0 - 3, T('timber', 3)); cv.set(cx + 1, ny0 - 3, T('timber', 1))   # a peg, a cloth strip tied round it
+    for i in range(6):
+        cv.set(cx + 1 + i // 2, ny0 - 2 + i, T('berry', 3 if i % 2 else 2))
+    for (x, y) in ((6, 16), (7, 15), (8, 16), (7, 17)):   # a sun carved west of the niche, a crescent east of it
+        cv.set(x, y, T('adobe', 1))
+    for (x, y) in ((25, 15), (25, 16), (24, 17), (26, 14)):
+        cv.set(x, y, T('adobe', 1))
+    for y in range(ny0 - 2, ny0 + 2):               # soot over the burning candle, up the arch
+        rh.step(cv, nx0 + nw - 2, y, -1, 1)
+    for (x, y, k) in ((4, h - 5, 3), (5, h - 6, 4), (4, h - 6, 4), (6, h - 5, 3)):   # a tuft of dry grass in the crack at the foot
+        cv.set(x, y, T('grass_warm', k))
+    for x in range(4, 28):                          # sand at its foot
+        top = h - 3 - (1 if smooth_noise(x, 0, 4, 703) > 0.55 else 0)
+        for y in range(top, h):
+            if (x, y) in mask or y >= h - 2:
+                cv.set(x, y, T('sand', 4 if y == top else 3))
+    return rh.finish(cv, keep=[(nx0 + nw - 2, ny0 + 9)])
+
+
+def bone_yard() -> Canvas:
+    """A bone yard (the brief names two, on the Canyon and Drover's Roads), 48 x 22, on the
+    house ramps: where a beast died of thirst long ago, its bleached bones lie half sunk in
+    the ground: the skull seen from the front with its horns, the arch of the ribcage on its
+    spine, a long bone and a few small ones, each lit on its upper left, its hollows dark.
+    Nothing to take; just the land telling you water matters."""
+    w, h = 48, 22
+    cv = Canvas(w, h, pad=PAD)
+    def put(x, y, k):
+        cv.set(x, y, T('bleached', k))
+    for (x, y) in rh.ellipse(11, 12, 4.6, 4.0):     # the skull, front view
+        put(x, y, 5 if x < 10 and y < 11 else 4 if x < 13 else 3)
+    for (x, y) in rect(9, 15, 5, 4):                # the long muzzle
+        put(x, y, 4 if x < 11 else 3)
+    for (x, y) in ((9, 11), (10, 11), (13, 11), (14, 11), (10, 17), (12, 17)):
+        cv.set(x, y, T('earth_cool', 0))             # eye holes and nostrils
+    for i in range(6):                              # the horns, curving out and up, two pixels deep
+        put(6 - i, 10 - (i * i) // 8, 5 if i < 3 else 4); put(6 - i, 11 - (i * i) // 8, 3)
+        put(16 + i, 10 - (i * i) // 8, 4 if i < 3 else 3); put(16 + i, 11 - (i * i) // 8, 3)
+    for x in range(22, 45):                         # the spine lying along the ground, two pixels deep
+        put(x, 16, 4 if x < 33 else 3); put(x, 17, 3)
+    for i in range(4):                              # the ribs arching up and over from it, curved bones with air between
+        rx = 23 + i * 6
+        for d in range(9):
+            yy = 15 - d
+            xx = rx + round(2.4 * (d / 8) ** 2)
+            put(xx, yy, 5 if d >= 6 else 4 if i < 2 else 3)
+            put(xx + 1, yy, 3)
+    for x in range(2, 15):                          # a long bone in front, knobbed at both ends
+        put(x, 19, 4 if x < 8 else 3); put(x, 20, 3)
+    for (x, y) in ((2, 18), (3, 18), (13, 18), (14, 18)):
+        put(x, y, 5)
+    for (x, y) in ((19, 19), (39, 20)):              # small bones
+        put(x, y, 4); put(x + 1, y, 4); put(x, y + 1, 3); put(x + 1, y + 1, 3)
+    rh.despeckle(cv, rh.solid(cv))                  # bleached bone is pale: its outline takes no lit break, or the break
+    rh.ss.outline(cv, lit_break=False)              # (a mid tone) would get a second ring outside it at finalize
+    rh.gaps(cv)
+    rh.tidy(cv)
     return cv
 
 
 def windpump() -> Canvas:
-    """A desert windpump, 40 x 88: a lattice tower, a fan of blades and a tail vane."""
+    """A desert windpump, 40 x 88 (asset ledger 20 Oct: redrawn on the house ramps, its
+    footing 4 whole cells). A tapering lattice tower of galvanised angle iron on four
+    concrete pads, girts and X braces riveted at every joint; a platform under the head; a
+    wheel of curved sheet-metal sails turned a little so it reads as an ellipse, lit on
+    its upper left, round a hub; the tail vane downwind with its faded red panel; the pump
+    rod down the middle to the pump head and its spout at the foot."""
     w, h = 40, 88
     cv = Canvas(w, h, pad=PAD)
-    for y in range(26, h - 2):
-        t = (y - 26) / (h - 28)
-        lx, rx = int(16 - t * 10), int(23 + t * 10)
-        cv.set(lx, y, IRON[3]); cv.set(rx, y, IRON[1])
-        if (y - 26) % 10 == 0:
-            for x in range(lx, rx + 1):
-                cv.set(x, y, IRON[2])
-            for k in range(rx - lx):
-                cv.set(lx + k, y + min(9, k * 10 // max(1, rx - lx)), IRON[2])
-    for k in range(12):
+    top, foot = 30, h - 3
+    def leg(t, side):   # x of a leg at height fraction t (0 at the top, 1 at the foot)
+        return round(17 - 11 * t) if side < 0 else round(22 + 11 * t)
+    for y in range(top, foot):                     # the four legs (the back pair hidden behind the front)
+        t = (y - top) / (foot - top)
+        lx, rx = leg(t, -1), leg(t, 1)
+        cv.set(lx, y, T('iron', 2)); cv.set(lx + 1, y, T('iron', 1))
+        cv.set(rx, y, T('iron', 2)); cv.set(rx + 1, y, T('iron', 1))
+    tiers = [top + 8, top + 22, top + 38, foot - 1]
+    prev = top
+    for ty in tiers:                               # girts and X braces, a rivet at each joint
+        t0, t1 = (prev - top) / (foot - top), (ty - top) / (foot - top)
+        a0, b0, a1, b1 = leg(t0, -1) + 1, leg(t0, 1), leg(t1, -1) + 1, leg(t1, 1)
+        for x in range(a1, b1 + 1):
+            cv.set(x, ty, T('iron', 2 if x < (a1 + b1) // 2 else 1))
+        n = max(abs(b1 - a0), ty - prev) * 2
+        for i in range(n + 1):
+            u = i / n
+            cv.set(round(a0 + (b1 - a0) * u), round(prev + (ty - prev) * u), T('iron', 2))
+            cv.set(round(b0 + (a1 - b0) * u), round(prev + (ty - prev) * u), T('iron', 1))
+        cv.set(leg(t1, -1), ty, T('iron', 2)); cv.set(leg(t1, 1), ty, T('iron', 2))
+        prev = ty
+    for (px, pw) in ((leg(1, -1) - 2, 5), (leg(1, 1) - 2, 5)):   # the concrete pads
+        part(cv, px, foot, pw, 3, 'concrete', 3)
+    for x in range(12, 28):                        # the platform under the head
+        cv.set(x, top - 1, T('timber', 4 if x < 20 else 3)); cv.set(x, top, T('timber', 1))
+    for y in range(top - 6, foot - 4):             # the pump rod down the middle
+        cv.set(19, y, T('iron', 2))
+    for (x, y) in rect(17, foot - 8, 6, 6):        # the pump head and its spout
+        cv.set(x, y, T('iron', 4 if x < 19 else 3 if x < 21 else 2))
+    for x in range(23, 28):
+        cv.set(x, foot - 7, T('iron', 3)); cv.set(x, foot - 6, T('iron', 1))
+    cv.set(27, foot - 5, T('iron', 2))
+    hx, hy = 18, 15                                # the wheel: sails round a hub, an ellipse turned to the west
+    for k in range(12):                            # twelve curved sails with air between them
         a = 2 * math.pi * k / 12
-        for t in range(3, 15):
-            x, y = int(round(19 + math.cos(a) * t)), int(round(16 + math.sin(a) * t * 0.9))
-            cv.set(x, y, '#D8D4C8' if math.cos(a) + math.sin(a) < 0 else '#A9A49A')
-    for (x, y) in disc(19, 16, 2.5):
-        cv.set(x, y, IRON[1])
-    for x in range(22, 38):
-        cv.set(x, 17, IRON[2])
-    for y in range(12, 22):
-        cv.hline(32, y, 6, RED[3] if y < 17 else RED[2])
-    return cv
+        lit = -math.cos(a + math.pi / 4)
+        for r in range(4, 14):
+            for dw in (0.0, 0.12):
+                x = round(hx + math.cos(a + dw + r * 0.01) * r * 0.72)
+                y = round(hy + math.sin(a + dw + r * 0.01) * r)
+                cv.set(x, y, T('iron', (3 if lit > 0.2 else 2) if dw == 0 else 1))
+    for k in range(48):                            # the rim holding the sails' tips
+        a = 2 * math.pi * k / 48
+        cv.set(round(hx + math.cos(a) * 14 * 0.72), round(hy + math.sin(a) * 14), T('iron', 2 if math.sin(a + math.pi / 4) < 0 else 1))
+    for (x, y) in rh.ellipse(hx + 0.5, hy + 0.5, 2.2, 2.4):   # the hub
+        cv.set(x, y, T('iron', 4 if x < hx else 2))
+    for x in range(hx - 15, hx - 1):               # the tail boom and its vane downwind, the panel's red faded
+        cv.set(x, hy + 1, T('iron', 2)); cv.set(x, hy + 2, T('iron', 1))
+    for (x, y) in rect(hx - 17, hy - 5, 6, 10):
+        cv.set(x, y, T('clay', 4 if y < hy - 2 else 3 if x < hx - 13 else 2))
+    for y in range(hy + 3, top - 1):               # the head's mast down to the platform
+        cv.set(hx, y, T('iron', 2)); cv.set(hx + 1, y, T('iron', 1))
+    rh.tidy(cv)
+    return cv   # open lattice: no outline drawn round it, the members are dark enough to be their own edge
 
 
 def trough() -> Canvas:
@@ -379,13 +1142,15 @@ def ore_tub() -> Canvas:
 
 
 def dynamite_crate() -> Canvas:
-    """A mining crate with red sticks peeking out and a stencilled band, 22 x 18."""
-    cv = Canvas(22, 18, pad=PAD)
-    detail.boards(cv, rect_set(1, 5, 20, 13), BLEACHED, 2, 5, board=4, seed=7)
-    cv.hline(1, 5, 20, BLEACHED[5])
-    for x in range(3, 19, 3):
-        cv.vline(x, 1, 5, RED[3]); cv.vline(x + 1, 1, 5, RED[2]); cv.set(x, 0, '#E8DEC8')
-    cv.hline(1, 11, 20, RED[2])
+    """A mining crate, 16 x 13 (size guide: a crate 9 to 13 tall), boards with a lit top
+    edge and corner battens, red sticks peeking out of the open top, a stencilled band."""
+    cv = Canvas(16, 13, pad=PAD)
+    detail.boards(cv, rect_set(1, 4, 14, 9), BLEACHED, 2, 4, board=3, seed=7)
+    cv.hline(1, 4, 14, BLEACHED[5])
+    for x in range(3, 13, 3):
+        cv.vline(x, 1, 3, RED[3]); cv.vline(x + 1, 1, 3, RED[2]); cv.set(x, 0, '#E8DEC8')
+    cv.hline(1, 8, 14, RED[2])
+    cv.vline(1, 4, 9, BLEACHED[4]); cv.vline(14, 4, 9, BLEACHED[1])   # the corner battens
     return cv
 
 
@@ -402,21 +1167,47 @@ def hitching_rail() -> Canvas:
 
 
 def poster_board() -> Canvas:
-    """A wanted-poster board, 30 x 38: a little shingled cap and pinned posters with an
-    abstract portrait (never real text)."""
-    cv = Canvas(30, 38, pad=PAD)
-    for px in (4, 23):
-        gp.post(cv, px, 8, 38, w=3, ramp=BLEACHED)
-    detail.boards(cv, rect_set(2, 8, 26, 18), BLEACHED, 2, 8, board=4, vertical=True, x0=2)
-    for y in range(3, 8):
-        cv.hline(1 + (7 - y) // 2, y, 28 - (7 - y), BLEACHED[4] if y < 6 else BLEACHED[1])
-    for (x0, y0) in ((5, 10), (16, 11)):
-        for (x, y) in rect_set(x0, y0, 9, 12):
-            cv.set(x, y, '#EAD9B2' if y > y0 else '#F4E6C8')
-        for (x, y) in disc(x0 + 4, y0 + 5, 2.4):
-            cv.set(x, y, '#6E5040')
-        cv.hline(x0 + 1, y0 + 9, 7, '#93725A'); cv.hline(x0 + 2, y0 + 1, 5, '#93725A')
-    return cv
+    """The town's notice board, 30 x 38 (asset ledger 20 Oct: redrawn on the house ramps).
+    Two posts carry a board of bleached planks under a little shingled cap that keeps the
+    rain off the bills; pinned to it a wanted bill with a portrait (never real text, just a
+    face and ruled lines), a notice of the next train with its timetable lines, and a torn
+    scrap; each bill pinned at its corners, the paper a little curled and sun-faded."""
+    w, h = 30, 38
+    cv = Canvas(w, h, pad=PAD)
+    for px in (4, 23):                             # the posts, down to the ground
+        rh.cylinder(cv, px, 8, 3, h - 8, 'timber', 3)
+    boards(cv, 2, 9, 26, 18, lambda bi, si: (('bleached', 'bleached_warm', 'bleached_cool')[(bi + si) % 3], 3),
+           board=3, seed=501, nails=False, grain=0.08)
+    frame(cv, 1, 8, 28, 20, 'timber', 3, t=1)
+    cap = set()
+    for y in range(2, 8):                          # the shingled cap, seen from above, its eave throwing a band
+        for x in range(1 + (7 - y) // 2, w - 1 - (7 - y) // 2):
+            cap.add((x, y))
+    roof_rows(cv, 0, 2, w, 6, 'timber', 3, row=3, tile=(3, 5), seed=502, clip=cap)
+    rh.overhang(cv, 2, 28, 9, 2)
+    # the wanted bill: a portrait in a frame of ruled lines
+    for (x, y) in rect(4, 11, 10, 13):
+        cv.set(x, y, T('plaster', 4 if y < 13 else 3))
+    cv.hline(5, 12, 8, T('earth', 2))              # its heading, a bar of heavy type
+    for (x, y) in rh.ellipse(9, 16.5, 2.4, 2.6):  # the face, a hat over it
+        cv.set(x, y, T('sand', 3 if x < 9 else 2))
+    cv.hline(6, 14, 6, T('earth', 1)); cv.hline(7, 13, 4, T('earth', 1))
+    cv.hline(7, 19, 4, T('earth', 2))             # a moustache's bar, the collar
+    for y in (21, 22):
+        cv.hline(5, y, 8, T('plaster', 2))         # the ruled lines of the reward
+    cv.set(13, 11, T('plaster', 2)); cv.set(13, 12, T('plaster', 2))   # its curled corner in shade
+    # the train notice: timetable lines, a little engine at its head
+    for (x, y) in rect(16, 12, 10, 11):
+        cv.set(x, y, T('plaster_warm', 4 if y < 14 else 3))
+    cv.hline(17, 13, 4, T('soot', 2)); cv.set(21, 12, T('soot', 2)); cv.set(18, 14, T('soot', 3)); cv.set(20, 14, T('soot', 3))
+    for y in range(16, 22, 2):
+        cv.hline(17, y, 3, T('plaster_warm', 1)); cv.hline(21, y, 4, T('plaster_warm', 2))
+    for (x, y) in rect(17, 23, 6, 3):              # a torn scrap of an older bill
+        if x + y < 42:
+            cv.set(x, y, T('plaster_cool', 3))
+    for (px, py) in ((4, 11), (13, 23), (16, 12), (25, 12), (25, 22)):   # the pins
+        cv.set(px, py, T('iron', 1))
+    return rh.finish(cv, keep=[(4, 11), (13, 23), (16, 12), (25, 12), (25, 22)])
 
 
 def corral_rail(length: int = 64) -> Canvas:
@@ -442,33 +1233,17 @@ def corral_side() -> Canvas:
 
 
 def palm(tall: bool = True) -> Canvas:
-    """A date palm, 56 x 84 (or 48 x 64): a ringed, gently curved trunk lit on the left,
-    a crown of long arching fronds lit on their upper faces, and a cluster of dates."""
+    """A date palm, 56 x 84 (or 48 x 64) (asset ledger 20 Oct: redrawn as the dry and fire
+    kit's palm, so a prop palm and a kit palm are one drawing on the house ramps): a leaning
+    trunk patterned by old leaf bases in offset rows, lit on the west; a crown of feathered
+    fronds radiating and drooping, the back ones in shade, the front ones lit on their upper
+    side; a skirt of dead fronds; dates hanging under the crown (the tall one). Its foot
+    stands where the old palm's did."""
+    import dry_kit as dk
     w, h = (56, 84) if tall else (48, 64)
-    cv = Canvas(w, h, pad=PAD)
-    cx = w // 2
-    top = 22 if tall else 18
-    for y in range(top, h - 1):
-        bend = int(math.sin((y - top) / (h - top) * 2.2) * 3)
-        for dx in range(-3, 3):
-            x = cx + bend + dx
-            c = WOOD[3] if dx < -1 else WOOD[2] if dx < 1 else WOOD[1]
-            if (y - top) % 4 == 0:
-                c = WOOD[1] if dx > -2 else WOOD[2]  # the rings
-            cv.set(x, y, c)
-    for k in range(12):  # fronds arching out and down from the crown
-        a = math.pi * (-0.05 + 1.1 * k / 11)
-        length = (24 if tall else 19) + (k % 2) * 3
-        for t in range(length):
-            x = cx + math.cos(a) * t * (1 if k % 2 else 0.95)
-            y = top + 6 - math.sin(a) * t * 0.85 + (t / length) ** 2 * 12
-            for side in (-1, 1):  # leaflets either side of the rib
-                lx, ly = int(x + side * 0.5), int(y + side * 1.2 + (1 if t % 3 == 0 else 0))
-                cv.set(lx, ly, CACTUS[3] if side < 0 else CACTUS[1])
-            cv.set(int(x), int(y), CACTUS[4] if t < length * 0.6 else CACTUS[2])
-    for (x, y) in disc(cx + 3, top + 4, 2.5):
-        cv.set(x, y, '#8A4A2A' if (x + y) % 2 else '#B8693F')
-    return cv
+    sp, _shadow = dk.palm(0 if tall else 1, seed=3 if tall else 5)
+    cv = rh.kit_sprite(sp, w, h, (w // 2 + 1, h - 2))
+    return rh.finish(cv)
 
 
 def sandstone_arch() -> Canvas:
@@ -531,12 +1306,16 @@ def water_jar() -> Canvas:
 CAMEL = ['#4E3222', '#7E5638', '#A87C52', '#C9A06E', '#E0C08E']
 
 
-def camel() -> Canvas:
+def camel(variant: int = 0) -> Canvas:
     """A camel resting with its legs folded under it, 48 x 36, seen from the side: the
     hump lit from the upper left, a striped saddle blanket, the long neck curving up to
-    a drowsy head, the folded knees in the sand."""
+    a drowsy head, the folded knees in the sand. variant 1 (review 19 Oct: not two the
+    same side by side) is a darker animal under a blue blanket, its neck stretched low
+    along the sand with its chin resting on it, asleep."""
     w, h = 48, 36
     cv = Canvas(w, h, pad=PAD)
+    if variant:
+        return _camel_asleep(cv)
     body = oval(20, 24, 16, 8) | oval(18, 15, 8, 6)  # body and hump
     for (x, y) in body:
         k = (x - 4) / 32 + (y - 8) / 22
@@ -564,63 +1343,213 @@ def camel() -> Canvas:
     return cv
 
 
+def _camel_asleep(cv: Canvas) -> Canvas:
+    DARK = ['#3A2418', '#5E3E28', '#80583A', '#A27650', '#BE9468']
+    body = oval(20, 25, 16, 7.5) | oval(17, 17, 8, 5.5)
+    for (x, y) in body:
+        k = (x - 4) / 32 + (y - 9) / 22
+        cv.set(x, y, DARK[4] if k < 0.55 else DARK[3] if k < 0.95 else DARK[2] if k < 1.3 else DARK[1])
+    for y in range(13, 24):  # a plain blue blanket with a pale stripe
+        for x in range(10, 26):
+            if (x, y) in body:
+                cv.set(x, y, '#E8DCC0' if y in (16, 17) else '#3E6A8A' if x < 18 else '#2E506A')
+    cv.hline(10, 24, 16, '#24405A')
+    for t in range(16):  # the neck stretched low and forward along the sand
+        x, y = 33 + t * 0.7, 25 + t * 0.32
+        for d in range(-1, 2):
+            cv.set(int(x), int(y + d), DARK[3] if d < 0 else DARK[2] if d == 0 else DARK[1])
+    for (x, y) in oval(45, 30, 3.6, 2.2):  # the head, chin on the sand, eyes shut
+        cv.set(x, y, DARK[3] if y < 30 else DARK[2])
+    cv.hline(43, 29, 2, DARK[0])  # the shut eye
+    cv.set(41, 27, DARK[2]); cv.set(40, 26, DARK[2])  # an ear laid back
+    for (kx, ky) in ((8, 31), (27, 32)):  # the folded knees
+        for (x, y) in oval(kx, ky, 4, 2):
+            cv.set(x, y, DARK[2] if x < kx else DARK[1])
+    for t in range(5):  # the tail curled round
+        cv.set(3 + t // 2, 24 + t, DARK[1])
+    return cv
+
+
+def corral_gate() -> Canvas:
+    """The east side of the corral with its gate, 18 x 60, seen end on like the west side:
+    a stout gate post at each end and a middle run of rails, and a gate of four boards
+    on iron strap hinges, swung open outward against its post so a hand can lead a horse
+    through, a rope loop on its latch post."""
+    cv = Canvas(18, 60, pad=PAD)
+    for y0 in (0, 44):
+        gp.post(cv, 4, y0, y0 + 15, w=3, ramp=BLEACHED)
+    gp.post(cv, 4, 30, 44, w=3, ramp=BLEACHED)  # the latch post
+    for y in list(range(0, 18)) + list(range(30, 60)):
+        cv.set(3, y, BLEACHED[2]); cv.set(8, y, BLEACHED[1])
+    for t in range(13):  # the gate, swung open outward (east) from the hinge post at the top
+        x, y = 8 + int(t * 0.62), 16 + t
+        for k in range(4):
+            cv.set(x + k // 2, y - k * 2 + 6, BLEACHED[4] if k % 2 == 0 else BLEACHED[2])
+        cv.set(x, y + 1, BLEACHED[1])
+    cv.set(7, 17, IRON[3]); cv.set(7, 21, IRON[3])  # the strap hinges
+    cv.set(4, 33, '#8A6A40'); cv.set(5, 34, '#8A6A40'); cv.set(4, 35, '#6A4A28')  # the rope loop
+    return cv
+
+
 def tent() -> Canvas:
-    """A caravan tent, 72 x 48: dark woven goat-hair cloth pitched on poles, seen from
-    above at the angle of the rest, its front panel rolled up to show the shade inside,
-    guy ropes pegged in the sand."""
+    """A caravan tent, 72 x 48 (prop audit, REDRAW: "reads as two grey rocks"; asset
+    ledger 20 Oct): a ridge tent of woven goat-hair cloth in long panels, dark brown with
+    cream bands, pitched on a ridge pole carried by two uprights whose tops stand proud of
+    it. Seen from the south and above like every prop: the front slope runs down from the
+    ridge to the eave in panels sewn edge to edge, taut over the poles and slack between
+    them; the west gable end, facing the light, is a lit triangle, the east end falls into
+    shade. The middle of the front is rolled up to the eave on its ties, showing the shade
+    inside with a rug, a cushion and a lamp. Guy ropes run from the eave's corners and the
+    gable peaks to pegs. All on the house ramps (earth for the goat hair, plaster bands,
+    berry and clay rugs, brass, timber, iron)."""
     w, h = 72, 48
     cv = Canvas(w, h, pad=PAD)
-    cloth = ['#2A2220', '#3E3330', '#56484A', '#6E5E5C', '#8A7A72']
     poles = (22, 50)
-    for x in range(6, w - 6):
-        near = min(poles, key=lambda p: abs(x - p))
-        d = abs(x - near)
-        top = 4 + min(9, d * d // 22)  # the cloth sags between the poles
-        if x < 14 or x > w - 15:
-            top = max(top, 10 + abs(x - (14 if x < 14 else w - 15)))  # and falls away at the ends
-        for y in range(top, 30):
-            lit = x < near  # each peak's face towards the upper left catches the sun
-            c = cloth[4] if lit and d < 6 and y < top + 6 else cloth[3] if lit else cloth[2]
-            if y > 22:
-                c = cloth[2] if lit else cloth[1]
-            if (x * 2 + y * 3) % 13 == 0:
-                c = cloth[1] if c not in (cloth[1], cloth[0]) else cloth[0]  # the weave
-            if (x // 8) % 2 and y > top + 1 and (y - top) % 9 == 0:
-                c = cloth[0]  # seams between the woven strips
-            cv.set(x, y, c)
-        cv.set(x, top, cloth[4] if x < near else cloth[3])
-    for x in range(8, w - 8):  # the rolled front edge, white-striped
-        cv.set(x, 30, '#E8D8B8' if (x // 3) % 2 else cloth[3])
-        cv.set(x, 31, cloth[2])
-    for y in range(32, 42):  # the shade inside, rugs and a cushion
-        for x in range(12, w - 12):
-            c = '#1E1614' if y < 34 else ('#8A3A2A' if (x // 4 + y // 4) % 2 else '#B8693F')
-            cv.set(x, y, c)
-    for (x, y) in oval(24, 37, 4, 2):
-        cv.set(x, y, GOLD[3] if x < 24 else GOLD[2])
-    for px in (12, 36, w - 13):
-        gp.post(cv, px, 28, 42, w=1, ramp=WOOD)
-    for (x0, y0, x1, y1) in ((6, 12, 1, 4), (w - 7, 12, w - 2, 4), (6, 26, 1, 40), (w - 7, 26, w - 2, 40)):
-        for t in range(9):
-            cv.set(int(x0 + (x1 - x0) * t / 8), int(y0 + (y1 - y0) * t / 8), MATERIALS['rope'][2])
-    return cv
+    rx0, rx1 = 13, 58          # the ridge pole's ends
+    ex0, ex1 = 3, 68           # the eave's ends: the cloth runs out to its corner pegs
+
+    def ridge(x):   # the ridge sags between the two uprights
+        if poles[0] <= x <= poles[1]:
+            return 9 + round(2.0 * (1 - ((x - 36) / 14) ** 2))
+        return 9
+
+    def eave_at(x):  # the hem lifts a little where the guys pull it, and sags between
+        pulls = (ex0, poles[0], poles[1], ex1)
+        d = min(abs(x - p) for p in pulls)
+        return 30 - (1 if d < 3 else 0) + (1 if d > 9 else 0)
+    eave = 30
+    slope = set()
+    for x in range(ex0, ex1 + 1):
+        top_line = ridge(min(max(x, rx0), rx1))
+        if x < rx0:
+            top_line = 9 + round((rx0 - x) * 21 / (rx0 - ex0))     # the west end slopes down to its corner
+        elif x > rx1:
+            top_line = 9 + round((x - rx1) * 21 / (ex1 - rx1))
+        bot = eave_at(x)
+        panel = (x - ex0) // 9
+        fam = ('earth', 'earth_warm', 'earth_cool')[panel % 3]
+        for y in range(top_line, bot + 1):
+            slope.add((x, y))
+            t = (y - ridge(min(max(x, rx0), rx1))) / max(1, bot - 9)
+            k = 4 if t < 0.12 else 3 if t < 0.42 else 2 if t < 0.8 else 1
+            if x < rx0:
+                k = min(4, k + 1)                               # the west end faces the light
+            elif x > rx1:
+                k = max(1, k - 1)                               # the east end falls into shade
+            sag = 2.0 * (1 - ((x - 36) / 14) ** 2) if poles[0] <= x <= poles[1] else 0
+            yb = y - sag
+            band = 17 <= yb < 19 or 24 <= yb < 25.5              # two woven cream bands, following the drape
+            j = (x - ex0) % 9
+            if band:
+                f2 = ('plaster', 'plaster_warm', 'plaster_cool')[panel % 3]
+                cv.set(x, y, T(f2, max(1, k - 1)))
+            else:
+                cv.set(x, y, T(fam, k))
+            if j == 0 and rx0 <= x <= rx1 and y > top_line:
+                cv.set(x, y, T(fam, max(0, k - 2)))             # the seam between two panels
+            elif j == 1 and rx0 <= x <= rx1 and y > top_line + 1 and not band:
+                cv.set(x, y, T(fam, min(4, k + 1)))             # the lapped edge catching the light
+        if rx0 <= x <= rx1:
+            cv.set(x, top_line, T('earth', 5 if x < 32 else 4))   # the ridge, lit along its crest
+    ss_grain(cv, {p for p in slope if (p[0] - ex0) % 9 > 1}, 0.12, 645, shapes=rh.V_GRAIN, swap=0.7,
+             up=0.15, down=0.25)                                # the weave, coarse, in short runs down the cloth
+    for x in range(ex0, ex1 + 1):                               # sand blown up onto the hem
+        for y in (eave_at(x) - 1, eave_at(x)):
+            if smooth_noise(x, 0, 3, 647) > 0.48 and (x, y) in slope:
+                cv.set(x, y, T('sand_cool', 1 if y == eave_at(x) else 2))
+    for (px0, py0, pw, ph) in ((13, 18, 5, 4), (53, 14, 4, 5)):   # patches sewn over worn cloth, stitched round
+        for y in range(py0, py0 + ph):
+            for x in range(px0, px0 + pw):
+                edge = x in (px0, px0 + pw - 1) or y in (py0, py0 + ph - 1)
+                cv.set(x, y, T('timber_cool', (2 if px0 < 40 else 1) if not edge else 1))
+        for x in range(px0, px0 + pw, 2):
+            cv.set(x, py0 - 1, T('plaster', 2))
+    for px in poles:   # the uprights' tops standing proud of the ridge, a knob on each
+        for y in range(ridge(px) - 4, ridge(px) + 1):
+            cv.set(px, y, T('timber', 4)); cv.set(px + 1, y, T('timber', 2))
+        cv.set(px, ridge(px) - 5, T('timber', 5)); cv.set(px + 1, ridge(px) - 5, T('timber', 3))
+    for x in range(ex0, ex1 + 1):        # the hem along the eave
+        cv.set(x, eave_at(x) + 1, T('earth', 1))
+    foot = 38                            # the ground line the side curtain hangs to
+    ox0, ox1 = 26, 47                    # the open front, rolled up to the eave
+    for x in range(ex0 + 2, ex1 - 1):    # the side curtain hung from the eave, in the eave's shade, in folds
+        if ox0 - 1 <= x <= ox1:
+            continue
+        for y in range(eave_at(x) + 2, foot):
+            f = (x - ex0) % 4
+            k = 2 if f == 0 else 1 if f == 3 else 1
+            if y == foot - 1:
+                k = 1
+            cv.set(x, y, T('earth_cool' if f in (1, 2) else 'earth', k + (1 if y > foot - 4 and f == 0 else 0)))
+        if smooth_noise(x, 1, 3, 648) > 0.5:
+            cv.set(x, foot - 1, T('sand_cool', 1))                 # sand banked against its foot
+    for x in range(ox0 - 1, ox1 + 1):   # the roll: a cylinder of cloth, lit on top
+        cream = (x // 3) % 2
+        cv.set(x, eave - 3, T('plaster' if cream else 'earth', 4))
+        cv.set(x, eave - 2, T('plaster' if cream else 'earth', 3))
+        cv.set(x, eave - 1, T('earth', 1))
+    for tx in (ox0 + 2, ox1 - 3):   # its ties
+        cv.set(tx, eave - 3, T('sand', 4)); cv.set(tx, eave - 2, T('sand', 3)); cv.set(tx, eave - 1, T('sand', 2))
+    for y in range(eave, foot):
+        for x in range(ox0, ox1):
+            if y < eave + 3:
+                cv.set(x, y, T('earth_cool', 0))                # the shade deep inside
+                continue
+            u, v = x - ox0, y - eave - 3
+            fam, k = ('berry', 2) if ((u // 4) + (v // 2)) % 2 else ('clay', 2)
+            if v == 0 or u in (0, ox1 - ox0 - 1):
+                fam, k = 'sand', 2                              # the rug's border
+            if (u + v * 2) % 7 == 0 and 0 < v and 0 < u < ox1 - ox0 - 1:
+                fam, k = 'brass', 2                             # a woven lozenge
+            if y < eave + 6:
+                k -= 1                                          # under the eave's shade
+            cv.set(x, y, T(fam, k))
+    for (x, y) in rh.ellipse(32.5, eave + 5.5, 3.5, 2.0):     # a cushion
+        cv.set(x, y, T('brass', 4 if x < 31 and y < eave + 5 else 3 if x < 34 else 2))
+    cv.set(40, eave, T('iron', 2)); cv.set(40, eave + 1, T('lamp', 4)); cv.set(41, eave + 1, T('lamp', 2))   # a lamp hung inside
+    cv.set(40, eave + 2, T('iron', 1))
+    for (x, y) in rh.ellipse(ox1 + 2.5, eave + 5.5, 1.6, 2.6):   # a water skin on the post
+        cv.set(x, y, T('timber_warm', 3 if x <= ox1 + 2 else 2))
+    for (x, y) in rh.ellipse(ox0 - 3.5, foot + 1.5, 3.0, 2.0):  # saddle bags by the door
+        cv.set(x, y, T('clay', 4 if y < foot + 1 else 3))
+    cv.set(ox0 - 5, foot, T('brass', 4)); cv.set(ox0 - 4, foot - 1, T('sand', 3))
+    for px in (ox0 - 1, ox1):   # the door posts
+        for y in range(eave - 1, foot):
+            cv.set(px, y, T('timber', 3 if px == ox0 - 1 else 1))
+    for (x0, y0, x1, y1) in ((ex0, eave, 1, foot + 4), (ex1, eave, w - 2, foot + 4),   # guy ropes to pegs
+                             (rx0, 9, 2, 13), (rx1, 9, w - 3, 13)):
+        rh.rope(cv, (x0, y0), (x1, y1), 0.0, 'sand', 2)
+        rh.peg(cv, min(x1, w - 3), y1)
+    return rh.finish(cv)
 
 
 def fire_pit() -> Canvas:
-    """A ring of stones round the embers of a small fire, 20 x 14, a teapot warming."""
+    """The caravan camp's fire, 20 x 14 (asset ledger 20 Oct: redrawn on the house ramps,
+    no speckle or dither): a ring of ten stones in three-quarter view, each lit on its
+    upper left, the far ones smaller; a bed of ash and charred sticks, the embers glowing
+    in its middle; a brass teapot warming on the west stones. Its foot spans 2 cells."""
     cv = Canvas(20, 14, pad=PAD)
-    for k in range(10):
-        a = 2 * math.pi * k / 10
-        x, y = 10 + math.cos(a) * 7, 8 + math.sin(a) * 4
-        for (sx, sy) in disc(x, y, 1.6):
-            cv.set(sx, sy, STONE[3] if sy < y else STONE[1])
-    for (x, y) in oval(10, 8, 4, 2):
-        cv.set(x, y, '#3A2A22' if (x + y) % 2 else '#7A1A08')
-    cv.set(9, 8, '#F2721E'); cv.set(11, 7, '#FFB648'); cv.set(10, 9, '#C2380E')
-    for (x, y) in oval(15, 4, 2.5, 2):
-        cv.set(x, y, MATERIALS['brass'][3] if x < 15 else MATERIALS['brass'][1])
-    cv.set(18, 3, MATERIALS['brass'][2])
-    return cv
+    for (x, y) in rh.ellipse(10, 8, 4.8, 2.6):    # the bed of ash
+        cv.set(x, y, T('ash', 1 if y > 8 else 2))
+    for (x0, y0, x1, y1) in ((6, 9, 11, 7), (9, 7, 14, 9)):   # two charred sticks crossed
+        for i in range(6):
+            cv.set(round(x0 + (x1 - x0) * i / 5), round(y0 + (y1 - y0) * i / 5), T('soot', 2 if i % 3 else 3))
+    for (x, y) in ((9, 8), (10, 8), (11, 8), (10, 7)):   # the embers
+        cv.set(x, y, T('lava', 4 if (x, y) != (10, 7) else 5))
+    cv.set(10, 9, T('lava', 3)); cv.set(9, 9, T('lava', 2))
+    ring_taken = set()
+    for k in range(8):                             # the ring of stones, the far ones smaller
+        a = 2 * math.pi * (k + 0.5) / 8
+        x, y = 10 + math.cos(a) * 6.4, 8 + math.sin(a) * 3.8
+        r = 1.3 if math.sin(a) < 0 else 1.7
+        for (sx, sy) in rh.ellipse(x, y, r + 0.3, r):
+            if (sx, sy) not in ring_taken:
+                cv.set(sx, sy, T(('stone', 'stone_warm', 'stone_cool')[k % 3], (5 if sx + sy < x + y - 1 else 4 if sy < y else 2) - (1 if math.cos(a) > 0.3 else 0)))
+        ring_taken |= rh.ellipse(x, y, r + 0.3, r)
+    for (x, y) in rh.ellipse(5.5, 4.5, 2.6, 2.0):   # the teapot on the west stones, its spout and lid knob
+        cv.set(x, y, T('brass', 5 if x < 5 else 4 if x < 7 else 3))
+    cv.set(8, 3, T('brass', 3)); cv.set(8, 4, T('brass', 2)); cv.set(5, 2, T('brass', 4))
+    return rh.finish(cv)
 
 
 def column_stump(seed: int = 0) -> Canvas:
@@ -749,22 +1678,65 @@ def desert_scrub(seed: int = 0) -> Canvas:
 
 
 def sandstone_outcrop(seed: int = 0) -> Canvas:
-    """Weathered sandstone blocks breaking out of the dune, 40 x 24: layered beds in
-    adobe tones (lit tops, shaded right flanks; style.facet_stone), sand piled at the foot."""
-    import style
+    """Weathered sandstone breaking out of the sand, 40 x 24 (asset ledger 20 Oct: redrawn
+    on the house ramps). Three rounded blocks of bedded sandstone, wind-worn into soft
+    lumps, never boxes: each bed is a band across its block with a lit upper lip and a dark
+    undercut where the softer layer under it wore back, the beds' edges wavering as they
+    weather; a crack or two splits the block, desert varnish streaks down from the crown,
+    orange lichen sits in the shade, and sand is blown up against the foot."""
     w, h = 40, 24
     cv = Canvas(w, h, pad=PAD)
-    for k, (cx, cy, rx, ry) in enumerate(((16, 12, 13, 9), (30, 15, 9, 7), (8, 18, 6, 4))):
-        pts = {(x, y) for y in range(cy - ry, cy + ry + 1) for x in range(cx - rx, cx + rx + 1)
-               if max(abs(x - cx) / rx, abs(y - cy) / ry) * 0.7 + math.hypot((x - cx) / rx, (y - cy) / ry) * 0.3 <= 1}
-        style.facet_stone(cv, pts, ADOBE, seed=seed + k)
-        for (x, y) in pts:  # the beds
-            if (y - cy + 40) % 4 == 0 and (x, y - 1) in pts and (x, y + 1) in pts:
-                cv.set(x, y, ADOBE[1] if x > cx else ADOBE[2])
-    for (x, y) in oval(20, h - 2, 18, 2.5):
-        if y >= h - 3:
-            cv.set(x, y, DESERT[4] if x < 20 else DESERT[3])
-    return cv
+    blocks = ((14, 11, 12, 8.5), (29, 14, 8, 6.5), (6, 17, 5.5, 4)) if seed % 2 == 0 else \
+             ((11, 13, 9, 7), (26, 11, 11, 8.5), (35, 17, 4.5, 3.5))
+    fams = ('adobe', 'adobe_warm', 'sand_warm', 'adobe_cool')
+    drawn = set()
+    for k, (cx, cy, rx, ry) in sorted(enumerate(blocks), key=lambda kb: kb[1][1] - kb[1][3]):
+        mask = set()
+        for y in range(int(cy - ry) - 1, int(cy + ry) + 2):
+            for x in range(int(cx - rx) - 2, int(cx + rx) + 2):
+                dx, dy = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+                wob = 0.12 * (smooth_noise(x, y, 3, seed + 610 + k) - 0.5)
+                if (abs(dx) ** 3 + abs(dy) ** 3) ** (1 / 3) <= 1 + wob and y < h - 1:
+                    mask.add((x, y))
+        if not mask:
+            continue
+        ytop = min(y for _, y in mask)
+        for (x, y) in mask:
+            col_top = min(yy for (xx, yy) in mask if xx == x)
+            bed = int((y - ytop + 2 * smooth_noise(x, 0, 6, seed + 620 + k)) // 4)
+            r = (y - ytop + 2 * smooth_noise(x, 0, 6, seed + 620 + k)) % 4
+            fam = fams[(k + bed) % len(fams)]
+            u = (x + 0.5 - (cx - rx)) / (2 * rx)
+            kk = 4 if y == col_top else 3 if r < 2.6 else 2
+            if r >= 3.2:
+                kk = 1                                           # the undercut under each bed
+            if u > 0.78:
+                kk -= 1 if u < 0.92 else 2                       # the east flank in shade
+            elif u < 0.2 and kk < 4:
+                kk += 1                                          # the west flank to the light
+            cv.set(x, y, T(fam, max(1, min(5, kk))))
+        for (x, y) in mask:                              # where this block stands in front of another, its edge
+            if any((x + dx, y + dy) in drawn and (x + dx, y + dy) not in mask for dx, dy in ((1, 0), (-1, 0), (0, -1))):
+                cv.set(x, y, rh.ss.EDGES['adobe'])
+        drawn |= mask
+        for vx in range(int(cx - rx) + 3, int(cx + rx) - 2, 5):  # desert varnish down from the crown
+            if noise2(k, vx, seed + 604) < 0.4:
+                tops = [yy for (xx, yy) in mask if xx == vx]
+                if tops:
+                    for yy in range(min(tops) + 1, min(tops) + 2 + int(noise2(vx, k, seed + 605) * 4)):
+                        if (vx, yy) in mask:
+                            cv.set(vx, yy, T('earth_cool', 2))
+        for (x, y) in ((int(cx + rx * 0.55), int(cy + ry * 0.45)), (int(cx + rx * 0.55) + 1, int(cy + ry * 0.45))):
+            if (x, y) in mask:
+                cv.set(x, y, T('clay', 3))                       # lichen in the shade
+    xs = [x for (x, y) in drawn]
+    lo, hi = min(xs) - 2, max(xs) + 2
+    for x in range(max(0, lo), min(w, hi + 1)):                 # sand drifted against the foot, deepest in the lee
+        edge = min(x - lo, hi - x)
+        depth = min(3, 1 + edge // 3) - (1 if smooth_noise(x, 0, 4, seed + 606) > 0.6 else 0)
+        for y in range(h - depth, h):
+            cv.set(x, y, T('sand', 4 if y == h - depth else 3))
+    return rh.finish(cv)
 
 
 def horse() -> Canvas:
@@ -798,6 +1770,76 @@ def horse() -> Canvas:
     return cv
 
 
+def horse_tied() -> Canvas:
+    """A saddled grey horse tied at the saloon's hitching rail, 24 x 44 (review 19 Oct:
+    face it to the rail with a rein, and make it another horse than the corral's bay):
+    it stands nose to the rail, so in the town's high three-quarter view we look down on
+    its back: the long head reaching north over the beam with the bridle on it and the
+    ears pricked at the poll, the neck widening to the shoulders, the barrel under a
+    leather saddle on a striped blanket (stirrups hanging either side), the hips and the
+    rounded rump toward the street with the tail falling over it, and the hind hooves
+    showing behind. A dappled grey coat lit along its left side; the rein looped round
+    the rail by its head."""
+    w, h = 24, 44
+    cv = Canvas(w, h, pad=PAD)
+    GREY = ['#34343A', '#5A5A62', '#83838A', '#A9A8AA', '#CFCCC6']
+    cx = 11.5
+
+    def half(y):  # the silhouette's half width down its length, from muzzle to rump
+        prof = [(0, 1.8), (3, 2.5), (7, 2.6), (9, 2.4), (11, 3.4), (14, 5.4), (17, 6.0), (21, 6.2),
+                (24, 7.4), (28, 7.8), (31, 7.0), (33, 5.0), (34, 0)]
+        for (y0, h0), (y1, h1) in zip(prof, prof[1:]):
+            if y0 <= y <= y1:
+                return h0 + (h1 - h0) * (y - y0) / (y1 - y0)
+        return 0
+
+    def coat(x, y, k):
+        c = GREY[4] if k < -0.55 else GREY[3] if k < 0.15 else GREY[2] if k < 0.65 else GREY[1]
+        if noise2(x // 2, y // 2, 811) > 0.78 and c in (GREY[3], GREY[2]):
+            c = GREY[min(4, GREY.index(c) + 1)]  # the dapples
+        return c
+    for lx in (5, 16):  # the hind legs below the rump, the hocks lit on the left, dark hooves
+        for y in range(31, 41):
+            cv.set(lx, y, GREY[3] if lx < 11 else GREY[2]); cv.set(lx + 1, y, GREY[2] if lx < 11 else GREY[1])
+            cv.set(lx + 2, y, GREY[1] if y < 36 else GREY[0]) if y > 31 else None
+        cv.hline(lx, 41, 3, '#2A2026'); cv.hline(lx - 1, 42, 4, '#2A2026')
+    for y in range(0, 34):
+        hw = half(y + 0.5)
+        for x in range(int(cx - hw), int(cx + hw) + 1):
+            if abs(x + 0.5 - cx) <= hw:
+                k = (x + 0.5 - cx) / max(hw, 1) + (0.35 if y > 29 else 0)
+                cv.set(x, y, coat(x, y, k))
+    cv.hline(10, 0, 3, GREY[1])  # the muzzle, darker
+    for (ex, c1, c2) in ((8, GREY[4], GREY[2]), (15, GREY[2], GREY[0])):  # the ears at the poll, pricked
+        cv.set(ex, 9, c1); cv.set(ex, 10, c2)
+    cv.hline(9, 8, 6, '#3A2618')  # the bridle's browband and cheek straps
+    cv.vline(9, 3, 5, '#3A2618'); cv.vline(14, 3, 5, '#3A2618')
+    for y in range(11, 18):
+        cv.set(13, y, GREY[0])  # the mane falling on its off side
+    for (x, y) in ((8, 3), (7, 2), (6, 1), (5, 1), (4, 2), (4, 3), (5, 4)):  # the rein looped round the rail
+        cv.set(x, y, '#2E1E14')
+    # the rail's beam passes in front of its neck (review 19 Oct): the stretch of the
+    # hitching rail at the horse's height, the same rows and tones as hitching_rail, so it
+    # meets the rail drawn behind (rows 2-4 here are its rows 5-7 at the rail's y 178, the
+    # horse's 181); the muzzle shows above it, over the beam
+    for x in range(0, w):
+        cv.set(x, 2, BLEACHED[4]); cv.set(x, 3, BLEACHED[2]); cv.set(x, 4, BLEACHED[1])
+    for y in range(15, 23):  # the striped blanket under the saddle, showing at the sides
+        hw = half(y + 0.5) - 0.5
+        for x in range(int(cx - hw), int(cx + hw) + 1):
+            if abs(x + 0.5 - cx) <= hw:
+                cv.set(x, y, '#E8DCC0' if y % 3 == 0 else '#A8382C' if x < cx else '#842A22')
+    for (x, y) in oval(cx, 19, 4.2, 3.4):  # the saddle: the seat, the pommel lit, the cantle behind
+        cv.set(x, y, '#8A5A34' if x < cx else '#6A4226')
+    cv.hline(10, 15, 4, '#B07C4C'); cv.hline(10, 22, 4, '#4E2E1A')
+    for (sx, lit) in ((4, True), (19, False)):  # the stirrups hanging either side
+        cv.vline(sx, 19, 5, '#3A2618'); cv.hline(sx - 1, 24, 2, '#C8A060' if lit else '#8A6A40')
+    cv.vline(11, 27, 6, GREY[1])  # the cleft of the rump
+    for y in range(28, 40):  # the tail falling over the rump between the hind legs
+        cv.set(11, y, GREY[0] if y % 3 else GREY[1]); cv.set(12, y, GREY[1])
+    return cv
+
+
 def prickly_pear() -> Canvas:
     """A prickly pear, 20 x 18: flat round pads lit upper left, spines, two red fruit."""
     w, h = 20, 18
@@ -813,21 +1855,239 @@ def prickly_pear() -> Canvas:
     return cv
 
 
+# Sunstone's life (S5): animals where they would really be, each drawn alone in the one
+# view and light, its shadow left to the zone. A lizard basks on sun-warmed rock in the
+# morning; vultures wait on a dead tree near a skull (they perch when there is no thermal
+# to ride); a string of laden camels stands tethered nose to tail at the caravan camp.
+def _lizard(cv: Canvas, x: int, y: int, facing: int = 1):
+    """A desert lizard basking flat on a rock, 14 x 6 (review 19 Oct: the first one read as
+    moss), on the house ramps: pale sand above with dark cross-bands, a dark rim so it reads
+    on the sandstone, the tail tapering behind it, four splayed legs, the head raised to the
+    sun with a dark eye, and its small shadow on the rock below and to the right."""
+    sil = set()
+    for t in range(12):                                 # head, body and tail along a gentle S
+        px = x + facing * t
+        py = y + (0 if t > 8 else 1 if t > 2 else 2)
+        sil.add((px, py))
+        if 3 <= t <= 9:
+            sil.add((px, py + 1))                       # the body two pixels deep
+    legs = [(x + facing * 4, y + 3), (x + facing * 8, y + 2), (x + facing * 3, y), (x + facing * 9, y - 1)]   # four short legs, splayed
+    for (bx, by) in sil | set(legs):                    # its shadow on the rock, down and right
+        if (bx + 1, by + 1) not in sil:
+            rh.step(cv, bx + 1, by + 1, -2, 1)
+    for (bx, by) in sorted(sil):                        # a dark chuckwalla, its back lit, pale bands across it
+        t = (bx - x) * facing
+        lower = (bx, by - 1) in sil
+        band = t in (4, 6, 8)
+        if lower:
+            cv.set(bx, by, T('earth', 1))
+        else:
+            cv.set(bx, by, T('sand', 4) if band else T('earth', 3 if t < 9 else 4))
+        if t < 3:
+            cv.set(bx, by, T('earth', 2))              # the tail, thinning
+    for (lx, ly) in legs:
+        cv.set(lx, ly, T('earth', 1))
+    cv.set(x + facing * 11, y - 1, T('earth', 4))      # the head raised to the sun
+    cv.set(x + facing * 10, y - 1, rh.ss.INK)          # its eye
+
+
+def lizard_rock(seed: int = 0) -> Canvas:
+    """A sandstone outcrop with a lizard basking on its sunlit top, 40 x 26 (the brief's
+    lizard rocks; redrawn with the outcrop on the house ramps)."""
+    base = sandstone_outcrop(seed)
+    cv = Canvas(40, 26, pad=PAD)
+    cv.paste(base, 0, 2)
+    top = min(y for y in range(cv.h) for x in range(8, 22) if cv.get(x, y)[3]) + 2
+    _lizard(cv, 9, top + 1, 1)
+    rh.tidy(cv, keep=[(20, top - 1)])
+    return cv
+
+
+VULTURE = ['#1C1618', '#2E2628', '#4A3E3C', '#6A5A54', '#C8A890']
+
+
+def _vulture(cv: Canvas, x: int, y: int, facing: int = 1):
+    """A vulture perched, about 12 x 15: its dark wings folded and hunched round it like
+    a cloak, their upper edges lit grey-brown, the long primaries crossing below its tail,
+    a pale ruff, and a bare pinkish head with a hooked beak, sunk into its shoulders."""
+    for yy in range(y, y + 11):
+        t = (yy - y) / 10
+        hw = 3 + int(2 * math.sin(t * math.pi))
+        for xx in range(x - hw, x + hw + 1):
+            k = (xx - (x - hw)) / (2 * hw)
+            c = VULTURE[3] if (k < 0.3 and yy < y + 7) else VULTURE[2] if k < 0.65 else VULTURE[1]
+            if yy == y or (yy == y + 1 and k < 0.6):
+                c = VULTURE[3]
+            if yy > y + 3 and abs(xx - x) == 1 and yy % 3 == 0:
+                c = VULTURE[1]  # the folded feathers
+            cv.set(xx, yy, c)
+    for d in range(3):  # the primaries, crossed below the tail
+        cv.set(x - facing * (1 + d), y + 11 + d // 2, VULTURE[0])
+    for xx in range(x - 2, x + 3):
+        cv.set(xx, y - 1, VULTURE[4])  # the ruff
+    hx = x + facing
+    for (px, py, c) in ((hx, y - 2, '#C88878'), (hx + facing, y - 2, '#B07060'), (hx, y - 3, '#D89888'),
+                        (hx + facing * 2, y - 2, '#E8DCC8'), (hx + facing * 2, y - 1, '#E8DCC8')):
+        cv.set(px, py, c)  # the bare head, the hooked pale beak
+    cv.set(hx, y - 3, '#D89888'); cv.set(hx + facing, y - 3, VULTURE[0])  # an eye
+    cv.set(x - 1, y + 11, '#4A3A2A'); cv.set(x + 1, y + 11, '#4A3A2A')  # feet on the branch
+
+
+def snag_vultures() -> Canvas:
+    """A dead mesquite, bleached grey, 40 x 58, with two vultures perched on its
+    branches, hunched and waiting: the trunk split and lit along its left, bare limbs
+    reaching up, its roots in the sand."""
+    w, h = 40, 58
+    cv = Canvas(w, h, pad=PAD)
+    DRY = ['#4A4038', '#6E6458', '#948A7A', '#B8AE9C', '#D8D0BE']
+    cx = 18
+    for y in range(22, h - 1):  # the trunk
+        half = 2 + (1 if y > h - 10 else 0) + (1 if y > h - 4 else 0)
+        for x in range(cx - half, cx + half + 1):
+            k = (x - (cx - half)) / (2 * half)
+            c = DRY[3] if k < 0.35 else DRY[2] if k < 0.7 else DRY[1]
+            if (y + x) % 7 == 0 and 0.2 < k < 0.8:
+                c = DRY[1]  # cracks in the dead wood
+            cv.set(x, y, c)
+    for (x0, y0, dx, n) in ((cx - 2, 30, -1, 14), (cx + 2, 26, 1, 16), (cx, 24, -1, 8), (cx + 1, 36, 1, 9)):
+        for t in range(n):  # bare limbs, lit on top
+            x, y = x0 + dx * t, y0 - int(t * 0.7)
+            cv.set(x, y, DRY[3] if dx < 0 else DRY[2]); cv.set(x, y + 1, DRY[1])
+    for x in range(cx - 6, cx + 7):  # the roots in the sand
+        cv.set(x, h - 1, DESERT[2] if x < cx else DESERT[1])
+    _vulture(cv, 8, 10, -1)   # on the west limb
+    _vulture(cv, 31, 6, 1)   # on the east limb, higher
+    return cv
+
+
+def camel_string() -> Canvas:
+    """Three camels standing tethered nose to tail at the caravan camp, 108 x 48 at the
+    single camel's scale (to-b-2040: they were half as big again; re-seated in the old
+    150 x 66 box) (review 19 Oct: not three identical camels in a row): seen from the side like the resting one,
+    staggered along a gentle diagonal as a string stands when it has shuffled to a halt,
+    each its own animal: the lead camel tall and pale with its head up, laden with a bale
+    and a red water skin, roped to a stake; the second darker, its head lowered to nose
+    the sand, carrying two clay jars in a net; the last a young one, smaller and sandy,
+    under a striped saddle blanket only. Each wears a halter, and a lead rope sags from it
+    to the saddle of the camel in front."""
+    w, h = 108, 48  # at the single camel's scale (hump about 29, head about 36): it was 66 tall
+    cv = Canvas(w, h, pad=PAD)
+    PALE = ['#5A3E2A', '#8E6A48', '#B8946A', '#D8B88C', '#ECD6AE']
+    DARK = ['#3A2418', '#5E3E28', '#80583A', '#A27650', '#BE9468']
+    ROPE = '#3E2818'
+
+    def standing(ox: int, oy: int, ramp, load: str, head: str, s: float = 1.0):
+        """One camel standing, facing east, its feet on row oy + 52 * s: a deep barrel
+        under a single hump, long legs with knobbly knees and broad pads, and the neck
+        in an S, the head up (`head` 'up') or lowered to the sand ('down'). Returns the
+        halter's position and the saddle's rear (where the next rope ties)."""
+        def P(x, y):
+            return ox + int(x * s), oy + int(y * s)
+        body = oval(*P(17, 24), 13 * s, 6 * s) | oval(*P(16, 17), 6 * s, 5 * s)
+        for (x, y) in body:
+            k = (x - ox - 4 * s) / (26 * s) + (y - oy - 11 * s) / (18 * s)
+            cv.set(x, y, ramp[4] if k < 0.5 else ramp[3] if k < 0.9 else ramp[2] if k < 1.25 else ramp[1])
+        foot = oy + int(52 * s)
+        for (lx, back) in ((7, True), (10, False), (23, True), (26, False)):
+            x0, _ = P(lx, 0)
+            for y in range(oy + int(28 * s), foot):
+                c = ramp[2] if not back else ramp[1]
+                if y in (oy + int(38 * s), oy + int(39 * s)):
+                    c = ramp[3] if not back else ramp[2]  # the knobbly knee
+                cv.set(x0, y, c)
+                cv.set(x0 + 1, y, ramp[1] if not back else ramp[0])  # two pixels thick, shaded behind
+                if y < oy + int(33 * s):
+                    cv.set(x0 - 1, y, c)  # the thigh, thicker
+            cv.hline(x0 - 1, foot, 3, ramp[1])  # the broad pad
+            cv.set(x0 - 1, foot + 1, '#2A2026'); cv.set(x0 + 1, foot + 1, '#2A2026')
+        if head == 'up':
+            hx, hy = P(40, 8)
+            for t in range(20):
+                u = t / 19
+                x, y = P(29 + t * 0.55, 22 + math.sin(u * math.pi) * 3 - u * 14)
+                for d in range(-2, 2):
+                    cv.set(x, y + d, ramp[3] if d < 0 else ramp[2] if d == 0 else ramp[1])
+        else:  # the neck reaching forward and down, the head low over the sand
+            hx, hy = P(42, 40)
+            for t in range(20):
+                u = t / 19
+                x, y = P(29 + t * 0.62, 20 + u * 19 - math.sin(u * math.pi) * 4)
+                for d in range(-1, 2):
+                    cv.set(x, y + d, ramp[3] if d < 0 else ramp[2] if d == 0 else ramp[1])
+                    cv.set(x + 1, y + d, ramp[2] if d < 1 else ramp[1])
+        for (x, y) in oval(hx + 1, hy, 4 * s, 2 * s):
+            cv.set(x, y, ramp[3] if y < hy else ramp[2])
+        cv.set(hx + int(4 * s), hy + 1, ramp[0]); cv.set(hx, hy - 1, ramp[0])  # the muzzle, a drowsy eye
+        cv.set(hx - 2, hy - 2, ramp[2]); cv.set(hx - 1, hy - 3, ramp[2])  # an ear
+        cv.vline(hx + 2, hy - 2, 4, ROPE); cv.hline(hx + 2, hy + 2, 3, ROPE)  # the halter
+        tx, ty = P(4, 22)
+        for t in range(int(6 * s)):  # the tail
+            cv.set(tx - t // 3, ty + t, ramp[1])
+        if load == 'bale':  # a bale on the near side, a red water skin behind, lashed over the hump
+            for (x, y) in oval(*P(14, 17), 5 * s, 4 * s):
+                cv.set(x, y, '#C8B48A' if x < ox + 14 * s else '#A8946A')
+                if (x + y) % 5 == 0:
+                    cv.set(x, y, '#8E7A54')
+            for (x, y) in oval(*P(21, 17), 4 * s, 4 * s):
+                cv.set(x, y, '#8E3A2E' if x < ox + 21 * s else '#6E2A22')
+            cv.hline(*P(9, 14), int(17 * s), ROPE)
+        elif load == 'jars':  # two clay jars hung either side in a rope net
+            for jx in (12, 22):
+                for (x, y) in oval(*P(jx, 19), 3.2 * s, 4.2 * s):
+                    cv.set(x, y, '#C8743E' if x < ox + jx * s else '#9A5230')
+                cv.hline(*P(jx - 2, 14), 5, '#E0A070')  # its lip
+                for y in range(oy + int(15 * s), oy + int(23 * s), 2):
+                    cv.hline(ox + int((jx - 3) * s), y, int(6 * s), ROPE) if y % 4 == 0 else None
+            cv.hline(*P(10, 13), int(15 * s), ROPE)
+        else:  # a striped saddle blanket only
+            for (x, y) in oval(*P(16, 19), 7 * s, 4 * s):
+                cv.set(x, y, '#E8DCC0' if (x // 2) % 3 == 0 else '#3E6A8A' if x < ox + 16 * s else '#2E506A')
+        return (hx + int(5 * s), hy + 1), P(10, 16)
+
+    # back to front: the lead camel (furthest, highest) first, the young one nearest last
+    halter1, saddle1 = standing(68, 6, PALE, 'bale', 'up', 0.72)
+    halter2, saddle2 = standing(36, 8, DARK, 'jars', 'down', 0.7)
+    halter3, _ = standing(6, 14, CAMEL, 'blanket', 'up', 0.62)
+
+    def rope(a, b, sag):
+        (x0, y0), (x1, y1) = a, b
+        n = max(abs(x1 - x0), abs(y1 - y0), 1) * 2
+        for t in range(n + 1):
+            u = t / n
+            cv.set(round(x0 + (x1 - x0) * u), round(y0 + (y1 - y0) * u + math.sin(u * math.pi) * sag), ROPE)
+    rope(halter2, saddle1, 4)  # the second's lead rope to the lead camel's saddle
+    rope(halter3, saddle2, 5)  # the young one's to the second's
+    sx = w - 4  # the lead camel's rope down to a stake driven into the sand
+    rope(halter1, (sx, h - 12), 3)
+    for y in range(h - 12, h - 1):
+        cv.set(sx, y, WOOD[3]); cv.set(sx + 1, y, WOOD[1])
+    cv.set(sx, h - 13, WOOD[4])
+    return gp.keep_foot(cv, 150, 66)  # its foot stays where the oasis places it (Claude D re-places the string)
+
+
+def _budget(items: dict) -> dict:
+    """Every sprite held to the house colour budget (rd.limit_colours)."""
+    return {k: rd.limit_colours(v) for k, v in items.items()}
+
+
 def props() -> dict[str, Canvas]:
-    return {
-        'saloon': false_front(104, 0, RED, 'saloon'), 'store': false_front(88, 3, WTR, 'store'),
+    return _budget({
+        'saloon': saloon(), 'store': store(),
         'water_tower': water_tower(), 'saguaro': saguaro(True), 'saguaro_small': saguaro(False),
         'tumbleweed': tumbleweed(), 'wagon': wagon(), 'windpump': windpump(), 'trough': trough(),
         'cow_skull': cow_skull(), 'mine_portal': mine_portal(), 'dry_well': dry_well(), 'keg': keg(),
         'hay_bale': hay_bale(), 'dynamite_crate': dynamite_crate(), 'hitching_rail': hitching_rail(),
-        'poster_board': poster_board(), 'corral_side': corral_side(), 'corral_rail': corral_rail(),
+        'poster_board': poster_board(), 'corral_side': corral_side(), 'corral_gate': corral_gate(), 'corral_rail': corral_rail(),
         'palm': palm(True), 'palm_small': palm(False), 'sandstone_arch': sandstone_arch(), 'awning': awning(),
-        'water_jar': water_jar(), 'camel': camel(), 'tent': tent(), 'fire_pit': fire_pit(),
+        'water_jar': water_jar(), 'camel': camel(), 'camel_b': camel(1), 'tent': tent(), 'fire_pit': fire_pit(),
         'column_stump': column_stump(0), 'column_stump_b': column_stump(2), 'papyrus': papyrus(), 'shaduf': shaduf(),
         'water_crane': water_crane(), 'acacia': acacia(), 'desert_scrub': desert_scrub(0),
         'desert_scrub_b': desert_scrub(4), 'sandstone_outcrop': sandstone_outcrop(0), 'sandstone_outcrop_b': sandstone_outcrop(5),
-        'horse': horse(), 'prickly_pear': prickly_pear(), 'ore_tub': ore_tub(),
-    }
+        'horse': horse(), 'horse_tied': horse_tied(), 'prickly_pear': prickly_pear(), 'ore_tub': ore_tub(),
+        'lizard_rock': lizard_rock(0), 'lizard_rock_b': lizard_rock(5), 'snag_vultures': snag_vultures(),
+        'camel_string': camel_string(),
+        'wagon_wreck': wagon_wreck(), 'cliff_shrine': cliff_shrine(), 'bone_yard': bone_yard(),
+    })
 
 
 if __name__ == '__main__':

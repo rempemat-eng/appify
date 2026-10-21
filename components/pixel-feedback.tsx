@@ -82,7 +82,7 @@ export function Dialogue({
     </Pressable>
   );
 }
-export function GrassRoll({
+export function DreamDustRoll({
   value,
   from = value,
   skip = false,
@@ -130,11 +130,13 @@ export function GrassRoll({
       >
         {reduced || skip ? value : roll.display}
       </Text>
-      {!reduced && !skip && roll.delta !== 0 && <GrassDelta key={roll.id} amount={roll.delta} />}
+      {!reduced && !skip && roll.delta !== 0 && (
+        <DreamDustDelta key={roll.id} amount={roll.delta} />
+      )}
     </View>
   );
 }
-function GrassDelta({ amount }: { amount: number }) {
+function DreamDustDelta({ amount }: { amount: number }) {
   const reduced = useReducedMotion();
   const y = useSharedValue(8);
   const opacity = useSharedValue(1);
@@ -148,7 +150,6 @@ function GrassDelta({ amount }: { amount: number }) {
   }));
   return (
     <Animated.View
-      pointerEvents="none"
       style={[
         {
           position: 'absolute',
@@ -161,13 +162,14 @@ function GrassDelta({ amount }: { amount: number }) {
           zIndex: 10,
         },
         motion,
+        { pointerEvents: 'none' },
       ]}
     >
       <BodyText style={{ color: amount > 0 ? c.moss : c.error }}>
         {amount > 0 ? '+' : ''}
         {amount}
       </BodyText>
-      <PixelIcon name="grass" size={16} />
+      <PixelIcon name="dreamDust" size={16} />
     </Animated.View>
   );
 }
@@ -182,8 +184,12 @@ export function PixelDissolve() {
   const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
     <Animated.View
-      pointerEvents="none"
-      style={[StyleSheet.absoluteFill, { backgroundColor: c.paper }, motion]}
+      style={[
+        StyleSheet.absoluteFill,
+        { backgroundColor: c.paper },
+        motion,
+        { pointerEvents: 'none' },
+      ]}
     />
   );
 }
@@ -219,11 +225,11 @@ export function Pulse({
   return (
     <View style={style}>
       <Animated.View
-        pointerEvents="none"
         style={[
           StyleSheet.absoluteFill,
           { borderRadius: style?.borderRadius ?? 14, backgroundColor: color ?? c.error },
           motion,
+          { pointerEvents: 'none' },
         ]}
       />
       {children}
@@ -239,8 +245,12 @@ export function BattleIntro({ skip = false }: { skip?: boolean }) {
   const motion = useAnimatedStyle(() => ({ opacity: opacity.value }));
   return (
     <Animated.View
-      pointerEvents="none"
-      style={[StyleSheet.absoluteFill, { backgroundColor: c.paper }, motion]}
+      style={[
+        StyleSheet.absoluteFill,
+        { backgroundColor: c.paper },
+        motion,
+        { pointerEvents: 'none' },
+      ]}
     />
   );
 }

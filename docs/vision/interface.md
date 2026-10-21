@@ -16,6 +16,7 @@
 └──────────────────────────────┘
 ```
 
+- Home is the home hub ([home-hub.md](home-hub.md)): the garden is a place in the valley, and walking out of the gate, up the trail or over the meadow's sides carries on into Crossroads Town, the ridge, the woodland and the riverside on the same screen. The HUD and the hotbar stay; a zone's name shows small under the HUD for a moment; a place out in the valley shows its card above the hotbar. Only doors (the hut) and journeys change screen.
 - Home never scrolls. Everything Home used to stack below the garden now lives in a sheet or in the world:
   - **Nap and break ideas:** the NAP sheet (from the hotbar or the bed).
   - **Companion:** the HUD portrait opens the companion sheet.
@@ -39,7 +40,9 @@
   - `PixelSwitch` replaces React Native's `Switch` and `PixelInput` replaces a bare `TextInput` (a recessed well with a gold focus ring). Do not use the native switch or a bordered text box.
   - `PixelTail` is the stepped speech-bubble tail.
   - `frameTones` are the colourways: paper, parchment, leaf, gold, nap, danger, night, glass, disabled, field and fieldFocus (inputs), and lantern (night panels with a gold rim).
-  - `usePixelUnit()` gives the size of one garden pixel on screen (2 on phones, 3 in the wide column), so frames share the world's pixel grid.
+  - `usePixelUnit()` gives the size of one interface pixel on screen: the density-1 grid's unit (4 device px on a 3x phone, 3 on a 2x iPhone SE, 2 on a desktop), at every art density.
+- **The interface at art density 2 (Claude M, 21 Oct; `interfaceGrid` in `lib/pixel-scale.ts`).** The world may draw finer (`?density=2`), and on some screens that makes a world pixel smaller in CSS px. The interface does not follow it: the HUD, hotbar, frames, sheets, cards and icons stay exactly the size they are at density 1 on every screen, so touch targets, one-hand reach and the fonts' fit never change with the art. Detail follows the screen instead, like an app's @2x icons: where an interface pixel splits into whole device pixels (3x phones, 1080 to 1440 px Androids and desktops), icons draw their 32x32 versions (`scripts/art/icons_2x.py`, compared in `icon-sheet-2x.png`) and frames fade their lit and shaded bands over an inner texel; elsewhere (a 2x iPhone SE, an S25 Ultra at QHD+) they draw the 16x16 set. There the interface texel is the world's texel, so the HUD and the world share one pixel size. `useInterfaceGrid()` gives the density drawn. Art drawn in the world (scenes, journeys, the battle field) takes the world unit, `pixelScale`.
+- 2x icons exist for the HUD and hotbar (home, missions, nap, arena, shop, shield, heart, Dream Dust, time, menu, companion); the rest draw their 16x16 version at every density until redrawn.
 - Every surface uses these frames: sheets, panels, cards, chips, toggles, inputs, the journal, the battle HUD, onboarding and the nap screen. The old `panelStyle` (a border with a soft shadow) is gone. Straight one-colour borders remain only around scene art and in-world details.
 - Inner tiles (choices, tabs, rhythm windows) use the softer `c.outline` brown; outer panels and buttons use the near-black outline. This keeps the hierarchy readable.
 - On the web, an absolutely positioned frame paints above unpositioned siblings. `public/index.html` therefore gives `svg`, `input` and `textarea` `position: relative`. Keep that rule, and wrap any other unpositioned content in a View.

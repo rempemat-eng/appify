@@ -30,7 +30,7 @@ import { WorldWindow } from '@/components/atlas-walk';
 import { missionPlaces, regionPoint, rings } from '@/lib/world-places';
 import { GardenWorld } from '@/components/garden-world';
 import { DecoratePanel } from '@/components/decorate-panel';
-import { checkDecor, foundKeepsakes, tapToDecorate, type DecorHand } from '@/lib/decor';
+import { checkDecor, foundKeepsakes, tapToDecorate, turnHand, type DecorHand } from '@/lib/decor';
 import { MissionDeparture } from '@/components/mission-departure';
 import { openSheet, useUi } from '@/lib/ui';
 import { useAmbience } from '@/lib/sound';
@@ -72,7 +72,7 @@ export function HomeScreen() {
   const memories = useGame((s) => s.companionMemories);
   const sheet = useUi((s) => s.sheet);
   const paused = usePlayPaused();
-  // walked back in from the valley (app/world.tsx): where, in garden pixels
+  // walked back in from the valley (app/(tabs)/world.tsx): where, in garden pixels
   const arrival = useUi((s) => s.homeArrival);
   // Decorating the garden (C12), come out from the hut's keepsake chest: the keepsakes
   // found, the one in hand and where it was last tapped
@@ -190,7 +190,13 @@ export function HomeScreen() {
                     return r.walk ?? undefined;
                   },
                   preview: hand?.at
-                    ? { item: hand.item, x: hand.at.x, y: hand.at.y, ok: !!handCheck?.ok }
+                    ? {
+                        item: hand.item,
+                        x: hand.at.x,
+                        y: hand.at.y,
+                        ok: !!handCheck?.ok,
+                        flip: !!hand.flip,
+                      }
                     : null,
                 }
               : null
@@ -208,13 +214,13 @@ export function HomeScreen() {
           }}
         />
         <View
-          pointerEvents="box-none"
           style={{
             position: 'absolute',
             left: 0,
             right: 0,
             bottom: hotbarClearance(insets.bottom),
             height: 140,
+            pointerEvents: 'box-none',
           }}
         >
           <GardenVisitor active={gardenActive} />
@@ -247,10 +253,12 @@ export function HomeScreen() {
                 placed={decor}
                 selected={hand?.item ?? null}
                 check={handCheck}
+                flipped={!!hand?.flip}
+                onFlip={() => hand && setHand(turnHand(hand))}
                 onSelect={(item) => setHand(item ? { item, at: null } : null)}
                 onPlace={() => {
                   if (!hand?.at) return;
-                  if (placeDecor(hand.item, hand.at.x, hand.at.y, 'garden').ok) {
+                  if (placeDecor(hand.item, hand.at.x, hand.at.y, 'garden', !!hand.flip).ok) {
                     feedback('select');
                     setHand(null);
                   }
@@ -315,8 +323,8 @@ export function ShopScreen() {
             paused
               ? 'TAKE A BREAK'
               : p.grass < preview.cost
-                ? `NEED ${preview.cost - p.grass} MORE GRASS`
-                : `LEVEL UP · ${50 * p.level} GRASS`
+                ? `NEED ${preview.cost - p.grass} MORE DREAM DUST`
+                : `LEVEL UP · ${50 * p.level} DREAM DUST`
           }
           disabled={paused || p.grass < p.level * 50}
           onDisabledPress={() => {
@@ -324,7 +332,7 @@ export function ShopScreen() {
               feedback('error');
               return;
             }
-            setMerchant('a few more GRASS for this one.');
+            setMerchant('a little more Dream Dust for this one.');
             feedback('error');
           }}
           onPress={() => {
@@ -364,6 +372,8 @@ export function ShopScreen() {
           const owned = p.owned_hats.includes(h.id);
           const equipped = p.hat === h.id;
           const short = h.cost - p.grass;
+          // a price chip is the number and the vial: the word does not fit two hats across
+          const price = !paused && !owned;
           return (
             <CozyPanel
               key={h.id}
@@ -376,23 +386,25 @@ export function ShopScreen() {
                 borderColor: equipped ? c.moss : undefined,
               }}
             >
-              {owned && (
-                <BodyText
-                  style={{
-                    position: 'absolute',
-                    top: 8,
-                    right: 8,
-                    fontSize: 10,
-                    paddingHorizontal: 6,
-                    borderRadius: 0,
-                    overflow: 'hidden',
-                    backgroundColor: equipped ? c.moss : c.body,
-                    color: equipped ? c.paper : c.ink,
-                  }}
-                >
-                  {equipped ? 'WEARING' : 'OWNED'}
-                </BodyText>
-              )}
+              {/* the badge has its own row above the companion, so it never covers an ear
+                  or a hat; every card keeps the row, so the companions line up */}
+              <View style={{ alignSelf: 'stretch', height: 16, alignItems: 'flex-end' }}>
+                {owned && (
+                  <BodyText
+                    style={{
+                      fontSize: 10,
+                      lineHeight: 16,
+                      paddingHorizontal: 6,
+                      borderRadius: 0,
+                      overflow: 'hidden',
+                      backgroundColor: equipped ? c.moss : c.body,
+                      color: equipped ? c.paper : c.ink,
+                    }}
+                  >
+                    {equipped ? 'WEARING' : 'OWNED'}
+                  </BodyText>
+                )}
+              </View>
               <GuardianPet player={p} hat={h.id} size={80} bob={false} decorative />
               <BodyText
                 style={{
@@ -408,6 +420,14 @@ export function ShopScreen() {
                 <PixelButton
                   small
                   light={!equipped && (owned || short > 0)}
+                  icon={price ? 'dreamDust' : undefined}
+                  spokenLabel={
+                    !price
+                      ? undefined
+                      : short > 0
+                        ? `NEED ${short} MORE Dream Dust`
+                        : `${h.cost} Dream Dust`
+                  }
                   label={
                     paused
                       ? 'TAKE A BREAK'
@@ -417,11 +437,11 @@ export function ShopScreen() {
                           ? 'WEAR'
                           : short > 0
                             ? `NEED ${short} MORE`
-                            : `${h.cost} GRASS`
+                            : String(h.cost)
                   }
                   disabled={paused || (!owned && short > 0)}
                   onDisabledPress={() => {
-                    if (!paused) setMerchant('a few more GRASS for this one.');
+                    if (!paused) setMerchant('a little more Dream Dust for this one.');
                     feedback('error');
                   }}
                   onPress={() => {
@@ -491,7 +511,7 @@ function RivalRow({
             {grasslings[p.species].habit}
           </BodyText>
           <BodyText style={{ fontSize: 12 }}>
-            LV {p.level} · {p.grass} GRASS
+            LV {p.level} · {p.grass} DREAM DUST
           </BodyText>
         </View>
       </View>
@@ -588,7 +608,7 @@ export function ArenaScreen() {
       </View>
       {wins >= 3 && <BodyText>Dave is tired. Come back tomorrow.</BodyText>}
       <PixelButton
-        label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
+        label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO DREAM DUST' : 'SPAR WITH DAVE'}
         disabled={paused}
         onPress={() => {
           // the spar happens where you are: a region's ring shows that region behind it

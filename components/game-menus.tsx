@@ -16,6 +16,8 @@ import { usePlayPaused } from '@/components/offline-garden';
 import { DailyRhythmCard } from '@/components/daily-rhythm';
 import { GameMenu } from '@/components/game-menu';
 import { GuardianPicker } from '@/components/visitors';
+import { WorldMap } from '@/components/world-map';
+import { mapRegionOrder, regionNames } from '@/lib/world-map';
 
 /** A bottom sheet in a transparent modal, framed like the rest of the game. */
 export function GameSheet({
@@ -123,11 +125,37 @@ export function NapSheet() {
         }}
       />
       <BodyText style={{ fontSize: 12, textAlign: 'center', color: c.shade }}>
-        Demo time: 1 real second = 1 simulated MIN. +1 GRASS per MIN.
+        Demo time: 1 real second = 1 simulated MIN. +1 Dream Dust per MIN.
       </BodyText>
     </GameSheet>
   );
 }
+
+/** The world map over everything, opened from the menu's Map page: where the companion
+ *  stands and the places it has walked (the same map as the world screen's). */
+function WorldMapSheet() {
+  const open = useUi((s) => s.sheet === 'map');
+  const world = useGame((s) => s.world);
+  const { width, height } = useWindowDimensions();
+  const insets = useSafeAreaInsets();
+  if (!open) return null;
+  return (
+    <Modal visible transparent animationType="none" onRequestClose={closeSheet}>
+      <WorldMap
+        regions={mapRegionOrder.map((id) => ({ id, name: regionNames[id] }))}
+        current={world?.region ?? 'valley'}
+        here={world ? { x: world.x, y: world.y } : null}
+        visited={world?.visited ?? noZones}
+        width={width}
+        height={height}
+        insetTop={insets.top}
+        insetBottom={insets.bottom}
+        onClose={closeSheet}
+      />
+    </Modal>
+  );
+}
+const noZones: readonly string[] = [];
 
 /** Every global sheet, mounted once beside the tabs. */
 export function GameMenus() {
@@ -138,6 +166,7 @@ export function GameMenus() {
     <>
       <NapSheet />
       <GameMenu />
+      <WorldMapSheet />
       <GuardianPicker
         player={p}
         open={sheet === 'companions'}

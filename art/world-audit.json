@@ -1,0 +1,7289 @@
+{
+ "about": "The whole-world audit (scripts/art/world_audit.py, docs/vision/world-audit.md): every 32 px cell of the world against the standards; a cell is green when every check measured there passes, amber on a soft finding (judged by eye, or pending a decision), red when it fails the standard. Regenerate with python3 scripts/art/world_audit.py.",
+ "source": "zones",
+ "ledger": "scripts/art/asset_ledger.json",
+ "world": {
+  "cells": 20700,
+  "green": 0,
+  "amber": 0,
+  "red": 20700,
+  "compliant_pct": 0.0,
+  "red_pct": 100.0,
+  "drawn_compliant_pct": 2.1,
+  "drawn_red_pct": 90.5,
+  "drawn_amber": 1542
+ },
+ "regions": {
+  "valley": {
+   "cells": 7200,
+   "green": 0,
+   "amber": 0,
+   "red": 7200,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.5,
+   "drawn_red_pct": 79.2,
+   "status": "old",
+   "plane": "continent",
+   "tier_map": false,
+   "notes": []
+  },
+  "steam": {
+   "cells": 2160,
+   "green": 0,
+   "amber": 0,
+   "red": 2160,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.1,
+   "drawn_red_pct": 92.4,
+   "status": "old",
+   "plane": "continent",
+   "tier_map": false,
+   "notes": []
+  },
+  "west": {
+   "cells": 5400,
+   "green": 0,
+   "amber": 0,
+   "red": 5400,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.7,
+   "drawn_red_pct": 95.4,
+   "status": "old",
+   "plane": "continent",
+   "tier_map": false,
+   "notes": []
+  },
+  "isles": {
+   "cells": 2880,
+   "green": 0,
+   "amber": 0,
+   "red": 2880,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "drawn_red_pct": 100.0,
+   "status": "old",
+   "plane": "continent",
+   "tier_map": false,
+   "notes": []
+  },
+  "neon": {
+   "cells": 1620,
+   "green": 0,
+   "amber": 0,
+   "red": 1620,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "drawn_red_pct": 97.5,
+   "status": "old",
+   "plane": "continent",
+   "tier_map": false,
+   "notes": []
+  },
+  "space": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "drawn_red_pct": 93.9,
+   "status": "old",
+   "plane": "orbit",
+   "tier_map": false,
+   "notes": []
+  },
+  "moon": {
+   "cells": 1080,
+   "green": 0,
+   "amber": 0,
+   "red": 1080,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.3,
+   "drawn_red_pct": 99.6,
+   "status": "old",
+   "plane": "moon",
+   "tier_map": false,
+   "notes": []
+  },
+  "home": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.1,
+   "drawn_red_pct": 95.0,
+   "status": "old",
+   "plane": "hut",
+   "tier_map": false,
+   "notes": []
+  }
+ },
+ "lanes": {
+  "A": {
+   "cells": 720,
+   "green": 0,
+   "amber": 0,
+   "red": 720,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "drawn_red_pct": 90.4
+  },
+  "A scenery": {
+   "cells": 14040,
+   "green": 0,
+   "amber": 0,
+   "red": 14040,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.9,
+   "drawn_red_pct": 87.7
+  },
+  "B": {
+   "cells": 360,
+   "green": 0,
+   "amber": 0,
+   "red": 360,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "drawn_red_pct": 97.5
+  },
+  "C": {
+   "cells": 2700,
+   "green": 0,
+   "amber": 0,
+   "red": 2700,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.4,
+   "drawn_red_pct": 97.7
+  },
+  "D": {
+   "cells": 1440,
+   "green": 0,
+   "amber": 0,
+   "red": 1440,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.7,
+   "drawn_red_pct": 95.4
+  },
+  "E": {
+   "cells": 1440,
+   "green": 0,
+   "amber": 0,
+   "red": 1440,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.2,
+   "drawn_red_pct": 97.4
+  }
+ },
+ "prop_lanes": {
+  "B": {
+   "sprites": 107,
+   "green": 8,
+   "amber": 0,
+   "red": 99,
+   "compliant_pct": 7.5
+  },
+  "A": {
+   "sprites": 10,
+   "green": 0,
+   "amber": 0,
+   "red": 10,
+   "compliant_pct": 0.0
+  },
+  "D": {
+   "sprites": 121,
+   "green": 31,
+   "amber": 0,
+   "red": 90,
+   "compliant_pct": 25.6
+  },
+  "?": {
+   "sprites": 12,
+   "green": 0,
+   "amber": 1,
+   "red": 11,
+   "compliant_pct": 0.0
+  },
+  "C": {
+   "sprites": 125,
+   "green": 2,
+   "amber": 0,
+   "red": 123,
+   "compliant_pct": 1.6
+  }
+ },
+ "checks": {
+  "detail": {
+   "family": "a detail",
+   "rule": "detail_bar by kind, cleanliness included (house rulings)",
+   "measured": 20700,
+   "amber": 1748,
+   "red": 17172
+  },
+  "grid-edges": {
+   "family": "b soft grid",
+   "rule": "structure boundaries in straight runs of 16 px or more (80 % a cell)",
+   "measured": 20700,
+   "amber": 0,
+   "red": 2170
+  },
+  "rim-on-grid": {
+   "family": "b soft grid",
+   "rule": "straight runs of 24 px or more on multiples of 8 px",
+   "measured": 20700,
+   "amber": 0,
+   "red": 1202
+  },
+  "face-height": {
+   "family": "b soft grid",
+   "rule": "faces 12, 16, 32 or 40 px tall",
+   "measured": 20340,
+   "amber": 0,
+   "red": 383
+  },
+  "tier-step": {
+   "family": "b soft grid",
+   "rule": "tiers change only at a stair or ramp (tier map)",
+   "measured": 0,
+   "amber": 0,
+   "red": 0
+  },
+  "north-face": {
+   "family": "b soft grid",
+   "rule": "faces only on south edges (tier map)",
+   "measured": 0,
+   "amber": 0,
+   "red": 0
+  },
+  "side-band": {
+   "family": "b soft grid",
+   "rule": "side bands 1 to 2 cells (5 px) wide (tier map)",
+   "measured": 0,
+   "amber": 0,
+   "red": 0
+  },
+  "straight-run": {
+   "family": "c hard edges",
+   "rule": "no straight boundary over 96 px (paths 240) without an 8 px jog",
+   "measured": 20340,
+   "amber": 0,
+   "red": 165
+  },
+  "ruler-edge": {
+   "family": "c hard edges",
+   "rule": "no pixel-straight contrast edge over 96 px",
+   "measured": 16560,
+   "amber": 0,
+   "red": 8
+  },
+  "seam": {
+   "family": "c hard edges",
+   "rule": "no cut, tone or terrain seam where zones, areas, scenery cells or chunks meet",
+   "measured": 20700,
+   "amber": 0,
+   "red": 979
+  },
+  "palette": {
+   "family": "d style",
+   "rule": "on the house palette (90 %); pending Matt, so amber",
+   "measured": 20700,
+   "amber": 9719,
+   "red": 0
+  },
+  "dither": {
+   "family": "d style",
+   "rule": "no checker dither on walkable ground",
+   "measured": 4788,
+   "amber": 0,
+   "red": 1060
+  },
+  "sprite-style": {
+   "family": "d style",
+   "rule": "style_lint on every placed sprite",
+   "measured": 2505,
+   "amber": 926,
+   "red": 1117
+  },
+  "size": {
+   "family": "e size",
+   "rule": "size_check range for every placed sprite",
+   "measured": 2400,
+   "amber": 36,
+   "red": 565
+  },
+  "ledger": {
+   "family": "f ledger",
+   "rule": "asset ledger KEEP for every placed asset",
+   "measured": 20700,
+   "amber": 0,
+   "red": 20700
+  },
+  "density": {
+   "family": "g benchmark",
+   "rule": "interactables and story props per screen (check 1)",
+   "measured": 6300,
+   "amber": 2340,
+   "red": 0
+  },
+  "empty-path": {
+   "family": "g benchmark",
+   "rule": "no 200 px of path without something to notice (check 2)",
+   "measured": 498,
+   "amber": 0,
+   "red": 0
+  },
+  "identical": {
+   "family": "g benchmark",
+   "rule": "no more than 3 identical props in a row (check 9)",
+   "measured": 20340,
+   "amber": 37,
+   "red": 0
+  },
+  "landmark": {
+   "family": "g benchmark",
+   "rule": "a landmark within a screen (check 3)",
+   "measured": 6300,
+   "amber": 1260,
+   "red": 0
+  }
+ },
+ "places": {
+  "valley/summit": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "A",
+   "module": "frost_zones"
+  },
+  "valley/snowmelt": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "A",
+   "module": "frost_zones"
+  },
+  "valley/saddle": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "A",
+   "module": "frost_zones"
+  },
+  "valley/hollow": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "A",
+   "module": "frost_zones"
+  },
+  "valley/ridge": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/woodland": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/garden": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "garden",
+   "lane": "B",
+   "module": "garden"
+  },
+  "valley/riverside": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.1,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/halt": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/town": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/park": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/harbour": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/headland": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "E",
+   "module": "valley_zones"
+  },
+  "valley/valley:-2,-4": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 9.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-1,-4": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 7.8,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:0,-4": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 9.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:1,-4": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 11.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,-4": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 6.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-2,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 10.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-1,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 10.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:1,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.8,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 9.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-2,-2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 8.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:1,-2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.2,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,-2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 5.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-2,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-2,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-2,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-2,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-1,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-2,3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:-1,3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:0,3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:1,3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "valley/valley:2,3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/junction": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "steam/canal": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 4.4,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "steam/steam:-1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:0,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 4.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.8,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:-1,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:-1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:-1,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:0,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "steam/steam:1,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/caldera": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "D",
+   "module": "sunstone_zones"
+  },
+  "west/springs": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 4.4,
+   "kind": "zone",
+   "lane": "D",
+   "module": "sunstone_zones"
+  },
+  "west/hearthold": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "D",
+   "module": "sunstone_zones"
+  },
+  "west/oasis": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "D",
+   "module": "sunstone_zones"
+  },
+  "west/gulch": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.1,
+   "kind": "zone",
+   "lane": "D",
+   "module": "sunstone_zones"
+  },
+  "west/scorch": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "D",
+   "module": "sunstone_zones"
+  },
+  "west/west:-2,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 11.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-1,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.3,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:0,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.3,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:1,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.2,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:2,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 5.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:3,-3": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-2,-2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 4.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-1,-2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 5.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:0,-2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.2,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:3,-2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.8,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-2,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:0,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.7,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:2,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:3,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 2.8,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-2,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:2,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 4.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:3,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 13.3,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-2,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:-1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:0,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.1,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 3.9,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:2,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 12.2,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "west/west:3,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 14.4,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/rainforest": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "isle_zones"
+  },
+  "isles/headwaters": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "isle_zones"
+  },
+  "isles/landing": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "isle_zones"
+  },
+  "isles/cove": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "isle_zones"
+  },
+  "isles/isles:-1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:0,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:1,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:2,-1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:-1,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:2,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:-1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:2,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:-1,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:0,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:1,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "isles/isles:2,2": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "neon/heights": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/plaza": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/waterfront": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/market": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/downtown": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/docks": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/neon": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/skyport": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "neon/point": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "C",
+   "module": "city_zones"
+  },
+  "space/station": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "D",
+   "module": "space_zones"
+  },
+  "moon/lumen": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "zone",
+   "lane": "D",
+   "module": "space_zones"
+  },
+  "moon/moon:-1,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "moon/moon:1,0": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.6,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "moon/moon:-1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "moon/moon:0,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.1,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "moon/moon:1,1": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 0.0,
+   "kind": "scenery",
+   "lane": "A",
+   "module": "scenery"
+  },
+  "home/home": {
+   "cells": 180,
+   "green": 0,
+   "amber": 0,
+   "red": 180,
+   "compliant_pct": 0.0,
+   "red_pct": 100.0,
+   "drawn_compliant_pct": 1.1,
+   "kind": "zone",
+   "lane": "B",
+   "module": "home_zones"
+  }
+ },
+ "tiles": {
+  "valley:-2,-3": 0.0,
+  "valley:-1,-3": 0.0,
+  "valley:0,-3": 0.0,
+  "valley:1,-3": 0.0,
+  "valley:2,-3": 0.0,
+  "valley:3,-3": 0.0,
+  "valley:4,-3": 0.0,
+  "valley:-2,-2": 0.0,
+  "valley:-1,-2": 0.0,
+  "valley:0,-2": 0.0,
+  "valley:1,-2": 0.0,
+  "valley:2,-2": 0.0,
+  "valley:3,-2": 0.0,
+  "valley:4,-2": 0.0,
+  "valley:-2,-1": 0.0,
+  "valley:-1,-1": 0.0,
+  "valley:0,-1": 0.0,
+  "valley:1,-1": 0.0,
+  "valley:2,-1": 0.0,
+  "valley:3,-1": 0.0,
+  "valley:4,-1": 0.0,
+  "valley:-2,0": 0.0,
+  "valley:-1,0": 0.0,
+  "valley:0,0": 0.0,
+  "valley:1,0": 0.0,
+  "valley:2,0": 0.0,
+  "valley:3,0": 0.0,
+  "valley:4,0": 0.0,
+  "valley:-2,1": 0.0,
+  "valley:-1,1": 0.0,
+  "valley:0,1": 0.0,
+  "valley:1,1": 0.0,
+  "valley:2,1": 0.0,
+  "valley:3,1": 0.0,
+  "valley:4,1": 0.0,
+  "valley:-2,2": 0.0,
+  "valley:-1,2": 0.0,
+  "valley:0,2": 0.0,
+  "valley:1,2": 0.0,
+  "valley:2,2": 0.0,
+  "valley:3,2": 0.0,
+  "valley:4,2": 0.0,
+  "valley:-2,3": 0.0,
+  "valley:-1,3": 0.0,
+  "valley:0,3": 0.0,
+  "valley:1,3": 0.0,
+  "valley:2,3": 0.0,
+  "valley:3,3": 0.0,
+  "valley:4,3": 0.0,
+  "valley:-2,4": 0.0,
+  "valley:-1,4": 0.0,
+  "valley:0,4": 0.0,
+  "valley:1,4": 0.0,
+  "valley:2,4": 0.0,
+  "valley:3,4": 0.0,
+  "valley:4,4": 0.0,
+  "valley:-2,5": 0.0,
+  "valley:-1,5": 0.0,
+  "valley:0,5": 0.0,
+  "valley:1,5": 0.0,
+  "valley:2,5": 0.0,
+  "valley:3,5": 0.0,
+  "valley:4,5": 0.0,
+  "valley:-2,6": 0.0,
+  "valley:-1,6": 0.0,
+  "valley:0,6": 0.0,
+  "valley:1,6": 0.0,
+  "valley:2,6": 0.0,
+  "valley:3,6": 0.0,
+  "valley:4,6": 0.0,
+  "valley:-2,7": 0.0,
+  "valley:-1,7": 0.0,
+  "valley:0,7": 0.0,
+  "valley:1,7": 0.0,
+  "valley:2,7": 0.0,
+  "valley:3,7": 0.0,
+  "valley:4,7": 0.0,
+  "valley:-2,8": 0.0,
+  "valley:-1,8": 0.0,
+  "valley:0,8": 0.0,
+  "valley:1,8": 0.0,
+  "valley:2,8": 0.0,
+  "valley:3,8": 0.0,
+  "valley:4,8": 0.0,
+  "valley:-2,9": 0.0,
+  "valley:-1,9": 0.0,
+  "valley:0,9": 0.0,
+  "valley:1,9": 0.0,
+  "valley:2,9": 0.0,
+  "valley:3,9": 0.0,
+  "valley:4,9": 0.0,
+  "valley:-2,10": 0.0,
+  "valley:-1,10": 0.0,
+  "valley:0,10": 0.0,
+  "valley:1,10": 0.0,
+  "valley:2,10": 0.0,
+  "valley:3,10": 0.0,
+  "valley:4,10": 0.0,
+  "valley:-2,11": 0.0,
+  "valley:-1,11": 0.0,
+  "valley:0,11": 0.0,
+  "valley:1,11": 0.0,
+  "valley:2,11": 0.0,
+  "valley:3,11": 0.0,
+  "valley:4,11": 0.0,
+  "valley:-2,12": 0.0,
+  "valley:-1,12": 0.0,
+  "valley:0,12": 0.0,
+  "valley:1,12": 0.0,
+  "valley:2,12": 0.0,
+  "valley:3,12": 0.0,
+  "valley:4,12": 0.0,
+  "valley:-2,13": 0.0,
+  "valley:-1,13": 0.0,
+  "valley:0,13": 0.0,
+  "valley:1,13": 0.0,
+  "valley:2,13": 0.0,
+  "valley:3,13": 0.0,
+  "valley:4,13": 0.0,
+  "valley:-2,14": 0.0,
+  "valley:-1,14": 0.0,
+  "valley:0,14": 0.0,
+  "valley:1,14": 0.0,
+  "valley:2,14": 0.0,
+  "valley:3,14": 0.0,
+  "valley:4,14": 0.0,
+  "valley:-2,15": 0.0,
+  "valley:-1,15": 0.0,
+  "valley:0,15": 0.0,
+  "valley:1,15": 0.0,
+  "valley:2,15": 0.0,
+  "valley:3,15": 0.0,
+  "valley:4,15": 0.0,
+  "steam:-2,-3": 0.0,
+  "steam:-1,-3": 0.0,
+  "steam:0,-3": 0.0,
+  "steam:1,-3": 0.0,
+  "steam:2,-3": 0.0,
+  "steam:-2,-2": 0.0,
+  "steam:-1,-2": 0.0,
+  "steam:0,-2": 0.0,
+  "steam:1,-2": 0.0,
+  "steam:2,-2": 0.0,
+  "steam:-2,-1": 0.0,
+  "steam:-1,-1": 0.0,
+  "steam:0,-1": 0.0,
+  "steam:1,-1": 0.0,
+  "steam:2,-1": 0.0,
+  "steam:-2,0": 0.0,
+  "steam:-1,0": 0.0,
+  "steam:0,0": 0.0,
+  "steam:1,0": 0.0,
+  "steam:2,0": 0.0,
+  "steam:-2,1": 0.0,
+  "steam:-1,1": 0.0,
+  "steam:0,1": 0.0,
+  "steam:1,1": 0.0,
+  "steam:2,1": 0.0,
+  "steam:-2,2": 0.0,
+  "steam:-1,2": 0.0,
+  "steam:0,2": 0.0,
+  "steam:1,2": 0.0,
+  "steam:2,2": 0.0,
+  "steam:-2,3": 0.0,
+  "steam:-1,3": 0.0,
+  "steam:0,3": 0.0,
+  "steam:1,3": 0.0,
+  "steam:2,3": 0.0,
+  "steam:-2,4": 0.0,
+  "steam:-1,4": 0.0,
+  "steam:0,4": 0.0,
+  "steam:1,4": 0.0,
+  "steam:2,4": 0.0,
+  "steam:-2,5": 0.0,
+  "steam:-1,5": 0.0,
+  "steam:0,5": 0.0,
+  "steam:1,5": 0.0,
+  "steam:2,5": 0.0,
+  "steam:-2,6": 0.0,
+  "steam:-1,6": 0.0,
+  "steam:0,6": 0.0,
+  "steam:1,6": 0.0,
+  "steam:2,6": 0.0,
+  "west:-2,-3": 0.0,
+  "west:-1,-3": 0.0,
+  "west:0,-3": 0.0,
+  "west:1,-3": 0.0,
+  "west:2,-3": 0.0,
+  "west:3,-3": 0.0,
+  "west:4,-3": 0.0,
+  "west:5,-3": 0.0,
+  "west:6,-3": 0.0,
+  "west:-2,-2": 0.0,
+  "west:-1,-2": 0.0,
+  "west:0,-2": 0.0,
+  "west:1,-2": 0.0,
+  "west:2,-2": 0.0,
+  "west:3,-2": 0.0,
+  "west:4,-2": 0.0,
+  "west:5,-2": 0.0,
+  "west:6,-2": 0.0,
+  "west:-2,-1": 0.0,
+  "west:-1,-1": 0.0,
+  "west:0,-1": 0.0,
+  "west:1,-1": 0.0,
+  "west:2,-1": 0.0,
+  "west:3,-1": 0.0,
+  "west:4,-1": 0.0,
+  "west:5,-1": 0.0,
+  "west:6,-1": 0.0,
+  "west:-2,0": 0.0,
+  "west:-1,0": 0.0,
+  "west:0,0": 0.0,
+  "west:1,0": 0.0,
+  "west:2,0": 0.0,
+  "west:3,0": 0.0,
+  "west:4,0": 0.0,
+  "west:5,0": 0.0,
+  "west:6,0": 0.0,
+  "west:-2,1": 0.0,
+  "west:-1,1": 0.0,
+  "west:0,1": 0.0,
+  "west:1,1": 0.0,
+  "west:2,1": 0.0,
+  "west:3,1": 0.0,
+  "west:4,1": 0.0,
+  "west:5,1": 0.0,
+  "west:6,1": 0.0,
+  "west:-2,2": 0.0,
+  "west:-1,2": 0.0,
+  "west:0,2": 0.0,
+  "west:1,2": 0.0,
+  "west:2,2": 0.0,
+  "west:3,2": 0.0,
+  "west:4,2": 0.0,
+  "west:5,2": 0.0,
+  "west:6,2": 0.0,
+  "west:-2,3": 0.0,
+  "west:-1,3": 0.0,
+  "west:0,3": 0.0,
+  "west:1,3": 0.0,
+  "west:2,3": 0.0,
+  "west:3,3": 0.0,
+  "west:4,3": 0.0,
+  "west:5,3": 0.0,
+  "west:6,3": 0.0,
+  "west:-2,4": 0.0,
+  "west:-1,4": 0.0,
+  "west:0,4": 0.0,
+  "west:1,4": 0.0,
+  "west:2,4": 0.0,
+  "west:3,4": 0.0,
+  "west:4,4": 0.0,
+  "west:5,4": 0.0,
+  "west:6,4": 0.0,
+  "west:-2,5": 0.0,
+  "west:-1,5": 0.0,
+  "west:0,5": 0.0,
+  "west:1,5": 0.0,
+  "west:2,5": 0.0,
+  "west:3,5": 0.0,
+  "west:4,5": 0.0,
+  "west:5,5": 0.0,
+  "west:6,5": 0.0,
+  "west:-2,6": 0.0,
+  "west:-1,6": 0.0,
+  "west:0,6": 0.0,
+  "west:1,6": 0.0,
+  "west:2,6": 0.0,
+  "west:3,6": 0.0,
+  "west:4,6": 0.0,
+  "west:5,6": 0.0,
+  "west:6,6": 0.0,
+  "west:-2,7": 0.0,
+  "west:-1,7": 0.0,
+  "west:0,7": 0.0,
+  "west:1,7": 0.0,
+  "west:2,7": 0.0,
+  "west:3,7": 0.0,
+  "west:4,7": 0.0,
+  "west:5,7": 0.0,
+  "west:6,7": 0.0,
+  "west:-2,8": 0.0,
+  "west:-1,8": 0.0,
+  "west:0,8": 0.0,
+  "west:1,8": 0.0,
+  "west:2,8": 0.0,
+  "west:3,8": 0.0,
+  "west:4,8": 0.0,
+  "west:5,8": 0.0,
+  "west:6,8": 0.0,
+  "isles:-2,-3": 0.0,
+  "isles:-1,-3": 0.0,
+  "isles:0,-3": 0.0,
+  "isles:1,-3": 0.0,
+  "isles:2,-3": 0.0,
+  "isles:3,-3": 0.0,
+  "isles:-2,-2": 0.0,
+  "isles:-1,-2": 0.0,
+  "isles:0,-2": 0.0,
+  "isles:1,-2": 0.0,
+  "isles:2,-2": 0.0,
+  "isles:3,-2": 0.0,
+  "isles:-2,-1": 0.0,
+  "isles:-1,-1": 0.0,
+  "isles:0,-1": 0.0,
+  "isles:1,-1": 0.0,
+  "isles:2,-1": 0.0,
+  "isles:3,-1": 0.0,
+  "isles:-2,0": 0.0,
+  "isles:-1,0": 0.0,
+  "isles:0,0": 0.0,
+  "isles:1,0": 0.0,
+  "isles:2,0": 0.0,
+  "isles:3,0": 0.0,
+  "isles:-2,1": 0.0,
+  "isles:-1,1": 0.0,
+  "isles:0,1": 0.0,
+  "isles:1,1": 0.0,
+  "isles:2,1": 0.0,
+  "isles:3,1": 0.0,
+  "isles:-2,2": 0.0,
+  "isles:-1,2": 0.0,
+  "isles:0,2": 0.0,
+  "isles:1,2": 0.0,
+  "isles:2,2": 0.0,
+  "isles:3,2": 0.0,
+  "isles:-2,3": 0.0,
+  "isles:-1,3": 0.0,
+  "isles:0,3": 0.0,
+  "isles:1,3": 0.0,
+  "isles:2,3": 0.0,
+  "isles:3,3": 0.0,
+  "isles:-2,4": 0.0,
+  "isles:-1,4": 0.0,
+  "isles:0,4": 0.0,
+  "isles:1,4": 0.0,
+  "isles:2,4": 0.0,
+  "isles:3,4": 0.0,
+  "isles:-2,5": 0.0,
+  "isles:-1,5": 0.0,
+  "isles:0,5": 0.0,
+  "isles:1,5": 0.0,
+  "isles:2,5": 0.0,
+  "isles:3,5": 0.0,
+  "isles:-2,6": 0.0,
+  "isles:-1,6": 0.0,
+  "isles:0,6": 0.0,
+  "isles:1,6": 0.0,
+  "isles:2,6": 0.0,
+  "isles:3,6": 0.0,
+  "neon:0,0": 0.0,
+  "neon:1,0": 0.0,
+  "neon:2,0": 0.0,
+  "neon:3,0": 0.0,
+  "neon:0,1": 0.0,
+  "neon:1,1": 0.0,
+  "neon:2,1": 0.0,
+  "neon:3,1": 0.0,
+  "neon:0,2": 0.0,
+  "neon:1,2": 0.0,
+  "neon:2,2": 0.0,
+  "neon:3,2": 0.0,
+  "neon:0,3": 0.0,
+  "neon:1,3": 0.0,
+  "neon:2,3": 0.0,
+  "neon:3,3": 0.0,
+  "neon:0,4": 0.0,
+  "neon:1,4": 0.0,
+  "neon:2,4": 0.0,
+  "neon:3,4": 0.0,
+  "neon:0,5": 0.0,
+  "neon:1,5": 0.0,
+  "neon:2,5": 0.0,
+  "neon:3,5": 0.0,
+  "neon:0,6": 0.0,
+  "neon:1,6": 0.0,
+  "neon:2,6": 0.0,
+  "neon:3,6": 0.0,
+  "space:0,0": 0.0,
+  "space:1,0": 0.0,
+  "space:0,1": 0.0,
+  "space:1,1": 0.0,
+  "space:0,2": 0.0,
+  "space:1,2": 0.0,
+  "moon:-2,0": 0.0,
+  "moon:-1,0": 0.0,
+  "moon:0,0": 0.0,
+  "moon:1,0": 0.0,
+  "moon:2,0": 0.0,
+  "moon:-2,1": 0.0,
+  "moon:-1,1": 0.0,
+  "moon:0,1": 0.0,
+  "moon:1,1": 0.0,
+  "moon:2,1": 0.0,
+  "moon:-2,2": 0.0,
+  "moon:-1,2": 0.0,
+  "moon:0,2": 0.0,
+  "moon:1,2": 0.0,
+  "moon:2,2": 0.0,
+  "moon:-2,3": 0.0,
+  "moon:-1,3": 0.0,
+  "moon:0,3": 0.0,
+  "moon:1,3": 0.0,
+  "moon:2,3": 0.0,
+  "moon:-2,4": 0.0,
+  "moon:-1,4": 0.0,
+  "moon:0,4": 0.0,
+  "moon:1,4": 0.0,
+  "moon:2,4": 0.0,
+  "home:0,0": 0.0,
+  "home:1,0": 0.0,
+  "home:0,1": 0.0,
+  "home:1,1": 0.0,
+  "home:0,2": 0.0,
+  "home:1,2": 0.0
+ },
+ "worst": [
+  {
+   "region": "isles",
+   "place": "rainforest",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "ground: lone 0.050 / 0.014 NOISY (2)",
+    "water: tones 10.2/13.4 LOW; shapes 11.2/21.3 LOW; dressing 7.8/16.8 LOW (1)",
+    "water: tones 4.5/13.4 LOW; shapes 5.5/21.3 LOW; dressing 2.2/16.8 LOW (1)"
+   ],
+   "reds_per_cell": 2.56
+  },
+  {
+   "region": "valley",
+   "place": "headland",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    2880,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    11
+   ],
+   "why": [
+    "ground: edges 0.228 / 0.148 BUSY; lone 0.082 / 0.014 NOISY (1)",
+    "stream: tones 8.8/13.2 LOW; shapes 14.8/25.1 LOW; dressing 9.0/18.3 LOW (1)",
+    "ground: tones   6.0 /  12.6 LOW; edges 0.239 / 0.148 BUSY; lone 0.100 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 1.82
+  },
+  {
+   "region": "neon",
+   "place": "plaza",
+   "lane": "C",
+   "scenery": false,
+   "check": "size",
+   "severity": "red",
+   "cells": 118,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "city_b2: city_building: h 263 over 84 to 232 (30)",
+    "city_b0: city_building: h 265 over 84 to 232, w 102 over 32 to 96 (26)",
+    "city_b1: city_building: h 263 over 84 to 232 (21)"
+   ],
+   "reds_per_cell": 2.2
+  },
+  {
+   "region": "neon",
+   "place": "downtown",
+   "lane": "C",
+   "scenery": false,
+   "check": "sprite-style",
+   "severity": "red",
+   "cells": 104,
+   "box_region_px": [
+    320,
+    576,
+    320,
+    544
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    544
+   ],
+   "tile": [
+    1,
+    2
+   ],
+   "why": [
+    "city_b14: light-west, colours, palette (23)",
+    "city_street_tree_b: speckle (16)",
+    "city_b20: speckle, colours, palette (14)"
+   ],
+   "reds_per_cell": 2.37
+  },
+  {
+   "region": "west",
+   "place": "gulch",
+   "lane": "D",
+   "scenery": false,
+   "check": "dither",
+   "severity": "red",
+   "cells": 95,
+   "box_region_px": [
+    320,
+    1184,
+    320,
+    544
+   ],
+   "box_place_px": [
+    0,
+    32,
+    320,
+    544
+   ],
+   "tile": [
+    1,
+    4
+   ],
+   "why": [
+    "1.3 % checker dither on walkable ground (4)",
+    "2.1 % checker dither on walkable ground (4)",
+    "1.5 % checker dither on walkable ground (3)"
+   ],
+   "reds_per_cell": 2.11
+  },
+  {
+   "region": "west",
+   "place": "hearthold",
+   "lane": "D",
+   "scenery": false,
+   "check": "grid-edges",
+   "severity": "red",
+   "cells": 88,
+   "box_region_px": [
+    640,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    2
+   ],
+   "why": [
+    "78 % of 9 boundary samples in straight runs of 16 px (3)",
+    "0 % of 13 boundary samples in straight runs of 16 px (3)",
+    "0 % of 17 boundary samples in straight runs of 16 px (3)"
+   ],
+   "reds_per_cell": 2.56
+  },
+  {
+   "region": "isles",
+   "place": "headwaters",
+   "lane": "C",
+   "scenery": false,
+   "check": "grid-edges",
+   "severity": "red",
+   "cells": 86,
+   "box_region_px": [
+    320,
+    0,
+    288,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    288,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "60 % of 10 boundary samples in straight runs of 16 px (4)",
+    "0 % of 9 boundary samples in straight runs of 16 px (3)",
+    "48 % of 23 boundary samples in straight runs of 16 px (3)"
+   ],
+   "reds_per_cell": 3.29
+  },
+  {
+   "region": "isles",
+   "place": "landing",
+   "lane": "C",
+   "scenery": false,
+   "check": "dither",
+   "severity": "red",
+   "cells": 70,
+   "box_region_px": [
+    0,
+    576,
+    320,
+    448
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    448
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "4.3 % checker dither on walkable ground (2)",
+    "2.8 % checker dither on walkable ground (2)",
+    "2.1 % checker dither on walkable ground (2)"
+   ],
+   "reds_per_cell": 2.99
+  },
+  {
+   "region": "neon",
+   "place": "market",
+   "lane": "C",
+   "scenery": false,
+   "check": "sprite-style",
+   "severity": "red",
+   "cells": 67,
+   "box_region_px": [
+    96,
+    576,
+    224,
+    576
+   ],
+   "box_place_px": [
+    96,
+    0,
+    224,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "city_b18: light-west, colours, palette (21)",
+    "city_street_tree_b: speckle (16)",
+    "city_street_tree: outline-double, speckle (14)"
+   ],
+   "reds_per_cell": 2.6
+  },
+  {
+   "region": "space",
+   "place": "station",
+   "lane": "D",
+   "scenery": false,
+   "check": "rim-on-grid",
+   "severity": "red",
+   "cells": 52,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "8 samples of straight runs off the 8 px lines (48)",
+    "2 samples of straight runs off the 8 px lines (4)"
+   ],
+   "reds_per_cell": 2.19
+  }
+ ],
+ "top_failures": [
+  {
+   "region": "isles",
+   "place": "rainforest",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "ground: lone 0.050 / 0.014 NOISY (2)",
+    "water: tones 10.2/13.4 LOW; shapes 11.2/21.3 LOW; dressing 7.8/16.8 LOW (1)",
+    "water: tones 4.5/13.4 LOW; shapes 5.5/21.3 LOW; dressing 2.2/16.8 LOW (1)"
+   ],
+   "reds_per_cell": 2.56
+  },
+  {
+   "region": "isles",
+   "place": "rainforest",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "assets/zones/rainforest/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 2.56
+  },
+  {
+   "region": "isles",
+   "place": "headwaters",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "assets/zones/headwaters/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 2.56
+  },
+  {
+   "region": "isles",
+   "place": "landing",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "assets/zones/landing/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 2.45
+  },
+  {
+   "region": "isles",
+   "place": "cove",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    2
+   ],
+   "why": [
+    "assets/zones/cove/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 2.41
+  },
+  {
+   "region": "valley",
+   "place": "harbour",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    2880,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    11
+   ],
+   "why": [
+    "assets/zones/harbour/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 2.04
+  },
+  {
+   "region": "neon",
+   "place": "downtown",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    2
+   ],
+   "why": [
+    "assets/zones/downtown/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.99
+  },
+  {
+   "region": "neon",
+   "place": "heights",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "assets/zones/heights/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.98
+  },
+  {
+   "region": "valley",
+   "place": "riverside",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    1728,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    6
+   ],
+   "why": [
+    "assets/zones/riverside/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.94
+  },
+  {
+   "region": "neon",
+   "place": "plaza",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "assets/zones/plaza/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.93
+  },
+  {
+   "region": "valley",
+   "place": "halt",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    9
+   ],
+   "why": [
+    "assets/zones/halt/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.92
+  },
+  {
+   "region": "west",
+   "place": "gulch",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    4
+   ],
+   "why": [
+    "assets/zones/gulch/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.91
+  },
+  {
+   "region": "valley",
+   "place": "headland",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    2880,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    11
+   ],
+   "why": [
+    "ground: edges 0.228 / 0.148 BUSY; lone 0.082 / 0.014 NOISY (1)",
+    "stream: tones 8.8/13.2 LOW; shapes 14.8/25.1 LOW; dressing 9.0/18.3 LOW (1)",
+    "ground: tones   6.0 /  12.6 LOW; edges 0.239 / 0.148 BUSY; lone 0.100 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 1.82
+  },
+  {
+   "region": "valley",
+   "place": "headland",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    2880,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    11
+   ],
+   "why": [
+    "assets/zones/headland/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.82
+  },
+  {
+   "region": "west",
+   "place": "hearthold",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    2
+   ],
+   "why": [
+    "assets/zones/hearthold/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.79
+  },
+  {
+   "region": "valley",
+   "place": "snowmelt",
+   "lane": "A",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "assets/zones/snowmelt/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.78
+  },
+  {
+   "region": "west",
+   "place": "scorch",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    4
+   ],
+   "why": [
+    "assets/zones/scorch/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.76
+  },
+  {
+   "region": "neon",
+   "place": "market",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "assets/zones/market/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.75
+  },
+  {
+   "region": "moon",
+   "place": "lumen",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "assets/zones/lumen/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.72
+  },
+  {
+   "region": "west",
+   "place": "springs",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    960,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    3,
+    0
+   ],
+   "why": [
+    "assets/zones/springs/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.72
+  },
+  {
+   "region": "valley",
+   "place": "woodland",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    1728,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    6
+   ],
+   "why": [
+    "assets/zones/woodland/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.71
+  },
+  {
+   "region": "steam",
+   "place": "canal",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "assets/zones/canal/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.64
+  },
+  {
+   "region": "valley",
+   "place": "garden",
+   "lane": "B",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    1728,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    6
+   ],
+   "why": [
+    "assets/garden/ground.png: REWORK: the home hub stays (its size, place, geometry and harness: home-valley brief 10), but its ground is not on the soft grid (180)"
+   ],
+   "reds_per_cell": 1.64
+  },
+  {
+   "region": "west",
+   "place": "oasis",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    4
+   ],
+   "why": [
+    "assets/zones/oasis/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.64
+  },
+  {
+   "region": "west",
+   "place": "caldera",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    0
+   ],
+   "why": [
+    "assets/zones/caldera/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.63
+  },
+  {
+   "region": "valley",
+   "place": "ridge",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    4
+   ],
+   "why": [
+    "assets/zones/ridge/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.61
+  },
+  {
+   "region": "valley",
+   "place": "hollow",
+   "lane": "A",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    4
+   ],
+   "why": [
+    "assets/zones/hollow/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.57
+  },
+  {
+   "region": "neon",
+   "place": "skyport",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    4
+   ],
+   "why": [
+    "assets/zones/skyport/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.54
+  },
+  {
+   "region": "neon",
+   "place": "waterfront",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    0
+   ],
+   "why": [
+    "assets/zones/waterfront/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.49
+  },
+  {
+   "region": "neon",
+   "place": "neon",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    4
+   ],
+   "why": [
+    "assets/zones/neon/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.48
+  },
+  {
+   "region": "valley",
+   "place": "town",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    9
+   ],
+   "why": [
+    "assets/zones/town/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.48
+  },
+  {
+   "region": "space",
+   "place": "station",
+   "lane": "D",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "assets/zones/station/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.44
+  },
+  {
+   "region": "valley",
+   "place": "summit",
+   "lane": "A",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "assets/zones/summit/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.43
+  },
+  {
+   "region": "neon",
+   "place": "docks",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    2
+   ],
+   "why": [
+    "assets/zones/docks/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.39
+  },
+  {
+   "region": "valley",
+   "place": "saddle",
+   "lane": "A",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    320,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    2
+   ],
+   "why": [
+    "assets/zones/saddle/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.37
+  },
+  {
+   "region": "valley",
+   "place": "park",
+   "lane": "E",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    9
+   ],
+   "why": [
+    "assets/zones/park/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.34
+  },
+  {
+   "region": "steam",
+   "place": "junction",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "assets/zones/junction/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.33
+  },
+  {
+   "region": "neon",
+   "place": "point",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    4
+   ],
+   "why": [
+    "paving: tones 3.0/14.6 LOW; shapes 4.0/31.9 LOW; dressing 1.0/23.7 LOW (3)",
+    "water: tones 5.2/13.4 LOW; shapes 10.8/21.3 LOW; dressing 6.8/16.8 LOW (2)",
+    "paving: tones 3.2/14.6 LOW; shapes 4.0/31.9 LOW; dressing 1.0/23.7 LOW (2)"
+   ],
+   "reds_per_cell": 1.32
+  },
+  {
+   "region": "neon",
+   "place": "point",
+   "lane": "C",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    640,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    4
+   ],
+   "why": [
+    "assets/zones/point/ground.png: RETIRE: by rule: an old zone's ground and its data pictures, painted before the soft grid (no tiers, south faces or side bands); (180)"
+   ],
+   "reds_per_cell": 1.32
+  },
+  {
+   "region": "home",
+   "place": "home",
+   "lane": "B",
+   "scenery": false,
+   "check": "ledger",
+   "severity": "red",
+   "cells": 180,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "assets/zones/home/ground.png: REWORK: the hut inside stays; its furniture is being redrawn to the size guide (PR #136) and the rooms have no indoor baseline f (180)"
+   ],
+   "reds_per_cell": 1.24
+  },
+  {
+   "region": "isles",
+   "place": "headwaters",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 179,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "tree: tones 7.8/20.4 LOW; shapes 9.5/35.8 LOW; dressing 5.5/29.3 LOW (1)",
+    "tree: tones 8.2/20.4 LOW; shapes 9.5/35.8 LOW; dressing 6.2/29.3 LOW (1)",
+    "tree: tones 7.8/20.4 LOW; shapes 9.0/35.8 LOW; dressing 5.8/29.3 LOW (1)"
+   ],
+   "reds_per_cell": 2.55
+  },
+  {
+   "region": "valley",
+   "place": "park",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 178,
+   "box_region_px": [
+    640,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    9
+   ],
+   "why": [
+    "ground: edges 0.225 / 0.148 BUSY; lone 0.101 / 0.014 NOISY (1)",
+    "ground: edges 0.267 / 0.148 BUSY; lone 0.140 / 0.014 NOISY (1)",
+    "ground: tones   6.0 /  12.6 LOW; edges 0.210 / 0.148 BUSY; lone 0.085 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 1.35
+  },
+  {
+   "region": "isles",
+   "place": "cove",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 177,
+   "box_region_px": [
+    320,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    2
+   ],
+   "why": [
+    "water: tones 7.5/13.4 LOW; shapes 12.8/21.3 LOW; dressing 9.5/16.8 LOW (2)",
+    "water: tones 3.2/13.4 LOW; shapes 4.8/21.3 LOW; dressing 2.2/16.8 LOW (2)",
+    "ground: edges 0.584 / 0.148 BUSY; lone 0.223 / 0.014 NOISY; top2 0.475 / 0.682 BUSY (1)"
+   ],
+   "reds_per_cell": 2.43
+  },
+  {
+   "region": "valley",
+   "place": "woodland",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 177,
+   "box_region_px": [
+    0,
+    1728,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    6
+   ],
+   "why": [
+    "tree: tones 10.2/20.4 LOW; shapes 20.2/35.8 LOW; dressing 13.8/29.3 LOW (1)",
+    "tree: tones 13.2/20.4 LOW; shapes 22.8/35.8 LOW; dressing 18.0/29.3 LOW (1)",
+    "ground: edges 0.444 / 0.148 BUSY; lone 0.118 / 0.014 NOISY; top2 0.419 / 0.682 BUSY; colours 17.000 / 10.400 BUSY (1)"
+   ],
+   "reds_per_cell": 1.71
+  },
+  {
+   "region": "isles",
+   "place": "landing",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 175,
+   "box_region_px": [
+    0,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    2
+   ],
+   "why": [
+    "ground: lone 0.051 / 0.014 NOISY (2)",
+    "ground: lone 0.058 / 0.014 NOISY (2)",
+    "water: tones 5.5/13.4 LOW; shapes 8.5/21.3 LOW; dressing 5.2/16.8 LOW (1)"
+   ],
+   "reds_per_cell": 2.45
+  },
+  {
+   "region": "valley",
+   "place": "riverside",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 172,
+   "box_region_px": [
+    640,
+    1728,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    6
+   ],
+   "why": [
+    "ground: edges 0.280 / 0.148 BUSY; lone 0.075 / 0.014 NOISY (1)",
+    "ground: edges 0.290 / 0.148 BUSY; lone 0.133 / 0.014 NOISY (1)",
+    "ground: tones   5.2 /  12.6 LOW; edges 0.243 / 0.148 BUSY; lone 0.105 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 1.95
+  },
+  {
+   "region": "valley",
+   "place": "garden",
+   "lane": "B",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 170,
+   "box_region_px": [
+    320,
+    1728,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    6
+   ],
+   "why": [
+    "ground: edges 0.393 / 0.148 BUSY; lone 0.115 / 0.014 NOISY; top2 0.573 / 0.682 BUSY; colours 14.500 / 10.400 BUSY (1)",
+    "ground: edges 0.383 / 0.148 BUSY; lone 0.104 / 0.014 NOISY; top2 0.558 / 0.682 BUSY; colours 14.250 / 10.400 BUSY (1)",
+    "ground: edges 0.470 / 0.148 BUSY; lone 0.154 / 0.014 NOISY; top2 0.496 / 0.682 BUSY; colours 16.000 / 10.400 BUSY (1)"
+   ],
+   "reds_per_cell": 1.64
+  },
+  {
+   "region": "west",
+   "place": "gulch",
+   "lane": "D",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 169,
+   "box_region_px": [
+    320,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    4
+   ],
+   "why": [
+    "wood-front: tones 19.5/24.0 LOW (2)",
+    "face: tones 9.2/18.2 LOW; shapes 22.2/36.8 LOW; dressing 15.0/30.2 LOW (1)",
+    "face: tones 8.0/18.2 LOW; shapes 11.2/36.8 LOW; dressing 7.5/30.2 LOW (1)"
+   ],
+   "reds_per_cell": 1.98
+  },
+  {
+   "region": "moon",
+   "place": "lumen",
+   "lane": "D",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 169,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "face: tones 2.2/18.2 LOW; shapes 3.5/36.8 LOW; dressing 2.0/30.2 LOW (2)",
+    "face: tones 2.2/18.2 LOW; shapes 4.0/36.8 LOW; dressing 2.8/30.2 LOW (1)",
+    "face: tones 2.8/18.2 LOW; shapes 4.2/36.8 LOW; dressing 2.8/30.2 LOW (1)"
+   ],
+   "reds_per_cell": 1.75
+  },
+  {
+   "region": "valley",
+   "place": "town",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 169,
+   "box_region_px": [
+    320,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    9
+   ],
+   "why": [
+    "ground: edges 0.299 / 0.148 BUSY; lone 0.073 / 0.014 NOISY (1)",
+    "ground: edges 0.293 / 0.148 BUSY; lone 0.099 / 0.014 NOISY (1)",
+    "tree: tones 9.2/20.4 LOW; shapes 12.2/35.8 LOW; dressing 8.5/29.3 LOW (1)"
+   ],
+   "reds_per_cell": 1.54
+  },
+  {
+   "region": "valley",
+   "place": "summit",
+   "lane": "A",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 168,
+   "box_region_px": [
+    320,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    0
+   ],
+   "why": [
+    "face: tones 5.2/18.2 LOW; shapes 5.5/36.8 LOW; dressing 3.0/30.2 LOW (2)",
+    "face: tones 3.8/18.2 LOW; shapes 3.2/36.8 LOW; dressing 1.2/30.2 LOW (2)",
+    "face: tones 5.8/18.2 LOW; shapes 6.8/36.8 LOW; dressing 3.5/30.2 LOW (2)"
+   ],
+   "reds_per_cell": 1.38
+  },
+  {
+   "region": "valley",
+   "place": "halt",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 167,
+   "box_region_px": [
+    0,
+    2304,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    9
+   ],
+   "why": [
+    "ground: edges 0.345 / 0.148 BUSY; lone 0.088 / 0.014 NOISY (1)",
+    "ground: edges 0.248 / 0.148 BUSY; lone 0.120 / 0.014 NOISY (1)",
+    "ground: edges 0.308 / 0.148 BUSY; lone 0.112 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 2.02
+  },
+  {
+   "region": "neon",
+   "place": "skyport",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 165,
+   "box_region_px": [
+    320,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    4
+   ],
+   "why": [
+    "paving: tones 4.0/14.6 LOW; shapes 8.0/31.9 LOW; dressing 0.8/23.7 LOW (2)",
+    "face: tones 4.5/18.2 LOW; shapes 6.5/36.8 LOW; dressing 3.0/30.2 LOW (2)",
+    "paving: tones 3.8/14.6 LOW; shapes 6.8/31.9 LOW; dressing 1.0/23.7 LOW (1)"
+   ],
+   "reds_per_cell": 1.59
+  },
+  {
+   "region": "west",
+   "place": "springs",
+   "lane": "D",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 164,
+   "box_region_px": [
+    960,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    3,
+    0
+   ],
+   "why": [
+    "ground: tones   4.2 /  12.6 LOW (6)",
+    "ground: tones   4.5 /  12.6 LOW (5)",
+    "ground: tones   5.2 /  12.6 LOW (4)"
+   ],
+   "reds_per_cell": 1.81
+  },
+  {
+   "region": "valley",
+   "place": "harbour",
+   "lane": "E",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 163,
+   "box_region_px": [
+    320,
+    2880,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    1,
+    11
+   ],
+   "why": [
+    "water: cluster 6.1/7.8 NOISY (2)",
+    "ground: edges 0.478 / 0.148 BUSY; lone 0.133 / 0.014 NOISY; top2 0.541 / 0.682 BUSY; colours 17.000 / 10.400 BUSY (1)",
+    "ground: edges 0.251 / 0.148 BUSY; lone 0.075 / 0.014 NOISY (1)"
+   ],
+   "reds_per_cell": 2.15
+  },
+  {
+   "region": "home",
+   "place": "home",
+   "lane": "B",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 162,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "paving: tones 3.0/14.6 LOW; shapes 3.0/31.9 LOW; dressing 0.0/23.7 LOW (3)",
+    "paving: tones 3.5/14.6 LOW; shapes 3.2/31.9 LOW; dressing 0.2/23.7 LOW (2)",
+    "face: tones 7.5/18.2 LOW; shapes 12.8/36.8 LOW; dressing 7.5/30.2 LOW (1)"
+   ],
+   "reds_per_cell": 1.31
+  },
+  {
+   "region": "west",
+   "place": "scorch",
+   "lane": "D",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 159,
+   "box_region_px": [
+    640,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    4
+   ],
+   "why": [
+    "ground: tones   4.0 /  12.6 LOW (7)",
+    "ground: tones   4.8 /  12.6 LOW (6)",
+    "ground: tones   5.8 /  12.6 LOW (4)"
+   ],
+   "reds_per_cell": 1.87
+  },
+  {
+   "region": "west",
+   "place": "oasis",
+   "lane": "D",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 158,
+   "box_region_px": [
+    0,
+    1152,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    4
+   ],
+   "why": [
+    "ground: tones   4.2 /  12.6 LOW (9)",
+    "ground: tones   5.2 /  12.6 LOW (6)",
+    "ground: tones   5.0 /  12.6 LOW (5)"
+   ],
+   "reds_per_cell": 1.8
+  },
+  {
+   "region": "neon",
+   "place": "docks",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 157,
+   "box_region_px": [
+    640,
+    576,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    2,
+    2
+   ],
+   "why": [
+    "paving: shapes 23.2/31.9 LOW; dressing 17.8/23.7 LOW (1)",
+    "paving: shapes 24.5/31.9 LOW; dressing 18.0/23.7 LOW (1)",
+    "paving: tones 11.8/14.6 LOW; shapes 19.2/31.9 LOW; dressing 11.2/23.7 LOW (1)"
+   ],
+   "reds_per_cell": 1.5
+  },
+  {
+   "region": "steam",
+   "place": "junction",
+   "lane": "C",
+   "scenery": false,
+   "check": "detail",
+   "severity": "red",
+   "cells": 157,
+   "box_region_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "box_place_px": [
+    0,
+    0,
+    320,
+    576
+   ],
+   "tile": [
+    0,
+    0
+   ],
+   "why": [
+    "facade: tones 13.5/25.6 LOW (3)",
+    "facade: tones 15.5/25.6 LOW (2)",
+    "facade: tones 15.2/25.6 LOW (2)"
+   ],
+   "reds_per_cell": 1.39
+  }
+ ],
+ "sprites_failing": {
+  "acacia": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "acacia",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "airlock": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "module",
+   "placed": 2,
+   "style": "speckle, colours",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: front panels only); foot line 52 px: not whole 8 px cells (kind foot 6 x 4); "
+  },
+  "airlock_module": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "module",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: front panels only); foot line 44 px: not whole 8 px cells (kind foot 6 x 4); "
+  },
+  "airship_mast": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "mast",
+   "placed": 1,
+   "style": "palette",
+   "size": "mast: w 157 over 64 to 120",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: side-on envelope (fault 18)); foot line 51 px: not whole 8 px cells (kind foo"
+  },
+  "anchor": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "anchor",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: lying loose with little form); detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "aquarium_column": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "tall_furniture",
+   "placed": 1,
+   "style": "speckle, dither, palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as machinery; style: speckle, dither, palette"
+  },
+  "armchair": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "armchair",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 35 tall (about 20)); bar tones LOW, cluster NOISY as wood-front; style: palet"
+  },
+  "atmos_car": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "railcar",
+   "placed": 1,
+   "style": "palette",
+   "size": "railcar: h 20 under 36 to 56, w 46 under 64 to 128",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat side-on capsule); foot line 46 px: not whole 8 px cells (kind foot 12 "
+  },
+  "automaton": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "figure",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette, outline-double"
+  },
+  "awning": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "banana": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "small_palm",
+   "placed": 4,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "bandstand": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "pavilion",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: canopy and rail good; no steps or footing); foot line 53 px: not whole 8 px cells (kind foot 8 x 8); bar "
+  },
+  "banner_pole": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "pole",
+   "placed": 2,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 3 px: not whole 8 px cells (kind foot 1 x 1); style: light-west, palette"
+  },
+  "barn": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "barn",
+   "placed": 1,
+   "style": "dither, palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: flat plank face, no side, no wear); foot line 92 px: not whole 8 px cells (kind foot 15 x 7); bar tones L"
+  },
+  "barrel": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "barrel",
+   "placed": 5,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: the same drawing as prop/barrel: re-check: changed since the audit (ADJUST: staves and hoops good; 19 tall (14)); foot l"
+  },
+  "bed": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "bed",
+   "placed": 2,
+   "style": "palette",
+   "size": "bed: h 17 under 36 to 50",
+   "ledger": "REWORK: 17 x 32 px (under) against bed 36-50 x 28-44; style: palette"
+  },
+  "beech": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "broadleaf",
+   "placed": 5,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
+  },
+  "beehive": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "beehive",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a plain box on legs (B5)); detail not measurable and not checked by eye since"
+  },
+  "beehive_b": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "beehive",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "beehive: h 25 over 13 to 22",
+   "ledger": "REWORK: not audited; 25 x 12 px (over) against beehive 13-22 x 10-16; detail not measurable and not checked by eye since the bar"
+  },
+  "bench": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "bench",
+   "placed": 5,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: 44 long, back 26, front only (B1)); detail not measurable and not checked by "
+  },
+  "bench_east": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "bench_side",
+   "placed": 2,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: not audited; foot line 14 px: not whole 8 px cells (kind foot 1 x 4); detail not measurable and not checked by eye since"
+  },
+  "birch": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "birch",
+   "placed": 8,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; bar tones LOW, shapes LOW, dressing LOW as tree; style: speckle, palette"
+  },
+  "bird_of_paradise": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "tall_plant",
+   "placed": 11,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "black_rock": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "boulder",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: fault (REDRAW: dark blobs with no facets); bar tones LOW, shapes LOW, dressing LOW as stone-wall"
+  },
+  "black_rock_small": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "rock",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: fault (REDRAW: dark blobs with no facets); detail not measurable and not checked by eye since the bar"
+  },
+  "boathouse": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "boathouse",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "boathouse: h 116 over 80 to 112",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door about 20); 116 x 86 px (over) against boathouse 80-112 x 64-112; style: "
+  },
+  "bollard": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "bollard",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "bookcase": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "cupboard",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 52 tall (about 32)); bar tones LOW as wood-front; style: palette"
+  },
+  "bookshelf": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "cupboard",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 37 px: not whole 8 px cells (kind foot 4 x 2); bar isolated NOISY, cluster NOISY as machinery"
+  },
+  "boots": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "furniture_low",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "bothy": {
+   "lane": "A",
+   "module": "frost_props",
+   "kind": "hut",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: good courses; door 23, roof snow one flat fill); bar tones LOW as wood-front"
+  },
+  "boulder": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "boulder",
+   "placed": 4,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as stone-wall"
+  },
+  "bowl": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "bramble": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "bush",
+   "placed": 8,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette"
+  },
+  "buoy": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "buoy",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 12 px: not whole 8 px cells (kind foot 1 x 1); style: palette"
+  },
+  "cabin": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "hut",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: log walls good; roof snow flat (B2), door 28); foot line 94 px: not whole 8 p"
+  },
+  "cafe": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "cafe_set",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a parasol table with no chairs); foot line 29 px: not whole 8 px cells (kind foot 4 x 4); detail not meas"
+  },
+  "cairn": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "cairn",
+   "placed": 7,
+   "style": "outline-double, palette",
+   "size": "cairn: h 32 over 12 to 28",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a cone of identical slabs); 32 x 20 px (over) against cairn 12-28 x 12-24; de"
+  },
+  "camel": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "camel",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: good forms; static); detail not measurable and not checked by eye since the bar; style: speckle, palette"
+  },
+  "camel_b": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "camel_lying",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: good forms; static); detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "camel_string": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, speckle, palette",
+   "size": "-",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good forms; static); detail not measurable and not checked by eye since the b"
+  },
+  "campfire": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "campfire",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: flame a flat cone, no logs); detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "canal_crane": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "crane",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "crane: h 81 over 40 to 72",
+   "ledger": "REWORK: foot line 11 px: not whole 8 px cells (kind foot 4 x 4); 81 x 42 px (over) against crane 40-72 x 24-64; detail not measu"
+  },
+  "canoe": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "canoe",
+   "placed": 2,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a flat brown ellipse); detail not measurable and not checked by eye since the bar; style: light-west, pal"
+  },
+  "cargo_crates": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "crate_stack",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "castle_well": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "well",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: foot line 21 px: not whole 8 px cells (kind foot 3 x 3)"
+  },
+  "cat": {
+   "lane": "A",
+   "module": "zones",
+   "kind": "small_animal",
+   "placed": 1,
+   "style": "light-west, speckle, palette",
+   "size": "small_animal: h 17 over 5 to 12",
+   "ledger": "REWORK: fault (ADJUST: flat orange shape, no frames (A9)); detail not measurable and not checked by eye since the bar; style: pa"
+  },
+  "charred_snag": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "snag",
+   "placed": 9,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle"
+  },
+  "city_b0": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "city_building: h 265 over 84 to 232, w 102 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 102 px:"
+  },
+  "city_b1": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "city_building: h 263 over 84 to 232",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 263 x 90 px (over"
+  },
+  "city_b10": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: colours, p"
+  },
+  "city_b11": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: h 516 over 84 to 232",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 516 x 50 px (over"
+  },
+  "city_b12": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: h 508 over 84 to 232, w 114 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 508 x 114 px (ove"
+  },
+  "city_b13": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: h 421 over 84 to 232",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 421 x 74 px (over"
+  },
+  "city_b14": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "light-west, colours, palette",
+   "size": "city_building: w 102 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 102 px:"
+  },
+  "city_b15": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: w 102 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 102 px:"
+  },
+  "city_b16": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: speckle, c"
+  },
+  "city_b17": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: colours, p"
+  },
+  "city_b18": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "light-west, colours, palette",
+   "size": "city_building: w 106 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 200 x 106 px (ove"
+  },
+  "city_b19": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: speckle, c"
+  },
+  "city_b2": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: h 263 over 84 to 232",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 263 x 90 px (over"
+  },
+  "city_b20": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as "
+  },
+  "city_b21": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 62 px: "
+  },
+  "city_b22": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "light-west, speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: speckle, l"
+  },
+  "city_b23": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as "
+  },
+  "city_b24": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "light-west, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 86 px: "
+  },
+  "city_b25": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 54 px: "
+  },
+  "city_b26": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "light-west, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as "
+  },
+  "city_b27": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "light-west, colours, palette",
+   "size": "city_building: w 122 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 89 x 122 px (over"
+  },
+  "city_b28": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: colours, p"
+  },
+  "city_b29": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 54 px: "
+  },
+  "city_b3": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "city_building: h 268 over 84 to 232",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 62 px: "
+  },
+  "city_b30": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: w 110 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 110 px:"
+  },
+  "city_b31": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: w 118 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 118 px:"
+  },
+  "city_b4": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: h 265 over 84 to 232",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 94 px: "
+  },
+  "city_b5": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "city_building: h 257 over 84 to 232, w 142 over 32 to 96",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 142 px:"
+  },
+  "city_b6": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as "
+  },
+  "city_b7": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 94 px: "
+  },
+  "city_b8": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "light-west, colours, palette",
+   "size": "city_building: h 259 over 84 to 232",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); 259 x 74 px (over"
+  },
+  "city_b9": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "city_building",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: speckle, c"
+  },
+  "city_bench": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "bench",
+   "placed": 6,
+   "style": "palette",
+   "size": "bench: h 18 over 12 to 14",
+   "ledger": "REWORK: foot line 27 px: not whole 8 px cells (kind foot 4 x 1); 18 x 32 px (over) against bench 12-14 x 28-36; style: palette"
+  },
+  "city_bike_rack": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "rail",
+   "placed": 6,
+   "style": "light-west, speckle, dither, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 44 px: not whole 8 px cells (kind foot 5 x 1); style: speckle, dither, light-west, palette"
+  },
+  "city_car": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "car",
+   "placed": 3,
+   "style": "light-west, palette",
+   "size": "car: w 36 under 56 to 64",
+   "ledger": "REWORK: fault (ADJUST: 36 long (about 60); five colour swaps); foot line 36 px: not whole 8 px cells (kind foot 8 x 4); 18 x 36 "
+  },
+  "city_car_b": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "car",
+   "placed": 3,
+   "style": "light-west",
+   "size": "car: w 36 under 56 to 64",
+   "ledger": "REWORK: fault (ADJUST: 36 long (about 60); five colour swaps); foot line 36 px: not whole 8 px cells (kind foot 8 x 4); 18 x 36 "
+  },
+  "city_car_c": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "car",
+   "placed": 4,
+   "style": "light-west",
+   "size": "car: w 36 under 56 to 64",
+   "ledger": "REWORK: fault (ADJUST: 36 long (about 60); five colour swaps); foot line 36 px: not whole 8 px cells (kind foot 8 x 4); 18 x 36 "
+  },
+  "city_car_d": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "car",
+   "placed": 4,
+   "style": "light-west, palette",
+   "size": "car: w 36 under 56 to 64",
+   "ledger": "REWORK: fault (ADJUST: 36 long (about 60); five colour swaps); foot line 36 px: not whole 8 px cells (kind foot 8 x 4); 18 x 36 "
+  },
+  "city_car_e": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "car",
+   "placed": 4,
+   "style": "light-west, palette",
+   "size": "car: w 36 under 56 to 64",
+   "ledger": "REWORK: fault (ADJUST: 36 long (about 60); five colour swaps); foot line 36 px: not whole 8 px cells (kind foot 8 x 4); 18 x 36 "
+  },
+  "city_cargo_ship": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: fault (ADJUST: pure top view); detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "city_cat": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "small_animal",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar"
+  },
+  "city_cat_c": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "small_animal",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette"
+  },
+  "city_container_stack": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "container_stack",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a container is 20 tall (about 37)); bar tones LOW, shapes LOW, dressing LOW as machinery; style: palette"
+  },
+  "city_container_stack_b": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "container_stack",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a container is 20 tall (about 37)); bar tones LOW, shapes LOW, dressing LOW as machinery; style: palette"
+  },
+  "city_container_stack_d": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "container_stack",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a container is 20 tall (about 37)); bar tones LOW, shapes LOW, dressing LOW as machinery; style: palette"
+  },
+  "city_food_kiosk": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "kiosk",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (REDRAW: a flat pink box (fault 22)); foot line 44 px: not whole 8 px cells (kind foot 5 x 3); bar tones LOW, shap"
+  },
+  "city_fountain": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "fountain",
+   "placed": 1,
+   "style": "outline-light, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 45 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, shapes LOW, dressing LOW as stone-wall; style: p"
+  },
+  "city_gantry_crane": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "gantry_crane",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a bare lattice); detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "city_lamp": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "lamp",
+   "placed": 39,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "city_lighthouse": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "tower",
+   "placed": 1,
+   "style": "outline-light, palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: small door); foot line 28 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, shapes LOW, dressing"
+  },
+  "city_market_stall": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "stall",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "city_market_stall_b": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "stall",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "city_market_stall_c": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "stall",
+   "placed": 2,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "city_market_stall_d": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "stall",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "city_quay_bollard": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "bollard",
+   "placed": 5,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "city_street_tree": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "young_tree",
+   "placed": 22,
+   "style": "outline-double, speckle",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, cluster NOISY as tree; style: speckle, outline-double"
+  },
+  "city_street_tree_b": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "young_tree",
+   "placed": 22,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, cluster NOISY as tree; style: speckle"
+  },
+  "city_telescope": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "telescope",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette, outline-double"
+  },
+  "city_tram": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "tram",
+   "placed": 1,
+   "style": "palette",
+   "size": "tram: h 40 under 44 to 58",
+   "ledger": "REWORK: fault (ADJUST: side view, 40 tall); 40 x 106 px (under) against tram 44-58 x 96-192; bar tones LOW, shapes LOW, dressing"
+  },
+  "city_tram_stop": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "shelter",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 3 px: not whole 8 px cells (kind foot 8 x 3); bar tones LOW, shapes LOW, dressing LOW as facade; style: palett"
+  },
+  "city_tree_planted": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "young_tree",
+   "placed": 4,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW as tree; style: speckle"
+  },
+  "city_vending_box": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "vending",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 35 tall (30)); foot line 21 px: not whole 8 px cells (kind foot 2 x 1); bar t"
+  },
+  "city_vending_box_b": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "vending",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 35 tall (30)); foot line 21 px: not whole 8 px cells (kind foot 2 x 1); bar t"
+  },
+  "city_water_taxi": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "launch",
+   "placed": 2,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "cloche": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "planter",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: one cloche repeated (fault 23)); foot line 14 px: not whole 8 px cells (kind foot 2 x 1); detail not meas"
+  },
+  "clock_tower": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "landmark_tower",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door 25, front only (fault 21)); bar tones LOW, shapes LOW, dressing LOW as f"
+  },
+  "coal_cart": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "tub",
+   "placed": 4,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 22 px: not whole 8 px cells (kind foot 3 x 2); style: speckle, palette"
+  },
+  "coat_rack": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "tall_furniture",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: 43 tall (about 30)); foot line 12 px: not whole 8 px cells (kind foot 2 x 2); detail not measurable and n"
+  },
+  "column_stump": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "standing_stone",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "column_stump_b": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "standing_stone",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "comm_mast": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "pole",
+   "placed": 1,
+   "style": "outline-light, speckle",
+   "size": "ok",
+   "ledger": "REWORK: foot line 19 px: not whole 8 px cells (kind foot 1 x 1); style: speckle, outline-light"
+  },
+  "console": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "furniture_low",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 38 px: not whole 8 px cells (kind foot 2 x 2); bar tones LOW, shapes LOW, dressing LOW as machinery; style: pa"
+  },
+  "corral_gate": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": null,
+   "placed": 1,
+   "style": "speckle",
+   "size": "-",
+   "ledger": "REWORK: fault (ADJUST: edge-on rails read as sticks); detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "corral_rail": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "fence",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: foot line 53 px: not whole 8 px cells (kind foot n x 1)"
+  },
+  "corral_side": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": null,
+   "placed": 1,
+   "style": "ok",
+   "size": "-",
+   "ledger": "REWORK: fault (ADJUST: edge-on rails read as sticks); detail not measurable and not checked by eye since the bar"
+  },
+  "cottage": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "cottage",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: fine walls and slates; doors 20 to 22, eaves 25; one template four times); ba"
+  },
+  "cottage_b": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "cottage",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: fine walls and slates; doors 20 to 22, eaves 25; one template four times); st"
+  },
+  "cottage_c": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "cottage",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: fine walls and slates; doors 20 to 22, eaves 25; one template four times); ba"
+  },
+  "cottage_d": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "cottage",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: fine walls and slates; doors 20 to 22, eaves 25; one template four times); fo"
+  },
+  "cotton_grass": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "flowers",
+   "placed": 4,
+   "style": "light-west, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, light-west, palette"
+  },
+  "cow_skull": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": null,
+   "placed": 3,
+   "style": "outline-double, palette",
+   "size": "-",
+   "ledger": "REWORK: style: palette, outline-double"
+  },
+  "crab": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "small_animal",
+   "placed": 3,
+   "style": "outline-light, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette, outline-light"
+  },
+  "crate": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "crate",
+   "placed": 3,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: the same drawing as prop/crate: re-check: changed since the audit (ADJUST: 18 tall (11); plain planks); foot line 13 px:"
+  },
+  "deck_chair": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "seat",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "deck_chair_b": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "seat",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "departure_pylon": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "tall_sign",
+   "placed": 3,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: foot line 22 px: not whole 8 px cells (kind foot 1 x 1); bar tones LOW, shapes LOW, dressing LOW as wood-front"
+  },
+  "desert_scrub": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "bush",
+   "placed": 5,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "desert_scrub_b": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "bush",
+   "placed": 5,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "desk": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "furniture_table",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat brown box 34 tall); bar cluster NOISY as wood-front; style: speckle, p"
+  },
+  "dining_table": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "furniture_table",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: 49 x 33, top far above a seat); foot line 4 px: not whole 8 px cells (kind foot 5 x 3); bar tones LOW, sh"
+  },
+  "dragon": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "-",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "dream_pool": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "speckle",
+   "size": "-",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "dream_pool_b": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "speckle",
+   "size": "-",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "driftwood": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "log",
+   "placed": 1,
+   "style": "outline-double, light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: a thin flat stick); detail not measurable and not checked by eye since the ba"
+  },
+  "drone": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "small_machine",
+   "placed": 2,
+   "style": "outline-double, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette, outline-double"
+  },
+  "dry_well": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "well",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: foot line 30 px: not whole 8 px cells (kind foot 3 x 3); style: speckle"
+  },
+  "drystone_wall": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "low_wall",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good courses; no ends or corners); detail not measurable and not checked by e"
+  },
+  "duck": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "small_animal",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a white blob, static); detail not measurable and not checked by eye since the"
+  },
+  "dynamite_crate": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "crate",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 20 tall (13)); detail not measurable and not checked by eye since the bar"
+  },
+  "engine_tank": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "water_tower",
+   "placed": 1,
+   "style": "outline-double",
+   "size": "ok",
+   "ledger": "REWORK: foot line 43 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, shapes LOW, dressing LOW as machinery; style: ou"
+  },
+  "fence_l": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "outline-double, speckle, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good rails; ends in open grass (B9)); detail not measurable and not checked b"
+  },
+  "fence_r": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "outline-double, light-west, speckle, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good rails; ends in open grass (B9)); detail not measurable and not checked b"
+  },
+  "fern": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "fern",
+   "placed": 40,
+   "style": "outline-double, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat triangle of strokes (fault 03), placed 40 times); detail not measurabl"
+  },
+  "field_gate": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "gate",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a gate with no posts); foot line 21 px: not whole 8 px cells (kind foot n x 1); detail not measurable and"
+  },
+  "field_gate_low": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "gate",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette"
+  },
+  "fireplace": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "fireplace",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good stone; 57 tall); bar tones LOW as stone-wall; style: light-west, palette"
+  },
+  "fish_stall": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "stall",
+   "placed": 1,
+   "style": "light-west, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: counter about 29 (13): a cabinet); bar isolated NOISY, cluster NOISY as wood-"
+  },
+  "floor_cushions": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "furniture_low",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 30 px: not whole 8 px cells (kind foot 2 x 2); style: palette"
+  },
+  "flower_kiosk": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "kiosk",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: foot line 44 px: not whole 8 px cells (kind foot 5 x 3); bar tones LOW, shapes LOW, dressing LOW as facade; style: speck"
+  },
+  "forest_bench": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "bench",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: a plank on legs, 39 long); detail not measurable and not checked by eye since"
+  },
+  "forge": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "smithy",
+   "placed": 1,
+   "style": "colours",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: detailed; arch about 22); bar tones LOW as wood-front; style: colours"
+  },
+  "foundry": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "industrial",
+   "placed": 1,
+   "style": "palette",
+   "size": "industrial: h 107 under 112 to 176",
+   "ledger": "REWORK: 107 x 138 px (under) against industrial 112-176 x 128-192; bar tones LOW, dressing LOW as machinery"
+  },
+  "fountain": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "fountain",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as stone-wall; style: palette"
+  },
+  "galley_table": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "furniture_table",
+   "placed": 1,
+   "style": "outline-double, speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: reads as a flying saucer); foot line 35 px: not whole 8 px cells (kind foot 5"
+  },
+  "garden_pod": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "grow_pod",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, dressing LOW, isolated NOISY, cluster NOISY as machinery; style: speckle, palette"
+  },
+  "garden_pod_b": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "grow_pod",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW, isolated NOISY, cluster NOISY as machinery; style: speckle, palette"
+  },
+  "gas_lamp": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "lamp",
+   "placed": 10,
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: 49 tall (56)); detail not measurable and not checked by eye since the bar; style: palette, outline-double"
+  },
+  "gate": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: style: palette"
+  },
+  "gatehouse": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "gatehouse",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: foot line 116 px: not whole 8 px cells (kind foot 14 x 6)"
+  },
+  "gear_pile": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "pile",
+   "placed": 3,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "glass_dome": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "dome",
+   "placed": 1,
+   "style": "ok",
+   "size": "dome: h 167 over 96 to 160",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: glazing lines only (fault 38)); 167 x 241 px (over) against dome 96-160 x 160"
+  },
+  "glass_screen": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 2,
+   "style": "ok",
+   "size": "-",
+   "ledger": "RETIRE: the prop audit dropped it: glass panels with no use"
+  },
+  "glow_caps": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "flowers",
+   "placed": 3,
+   "style": "outline-double, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: speckle, palette, outline-double"
+  },
+  "grow_lamp": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "tall_furniture",
+   "placed": 2,
+   "style": "light-west",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west"
+  },
+  "hab_hub": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "lunar_habitat",
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: regolith cover is noise); foot line 30 px: not whole 8 px cells (kind foot 18"
+  },
+  "hammock": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "hammock",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 69 px: not whole 8 px cells (kind foot 8 x 3); detail not measurable and not checked by eye since the bar; sty"
+  },
+  "harbour_ferry": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "ferry",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 116 px: not whole 8 px cells (kind foot 18 x 5); bar tones LOW, dressing LOW as machinery; style: palette"
+  },
+  "hay_bale": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "bale",
+   "placed": 4,
+   "style": "light-west, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, light-west, palette"
+  },
+  "haystack": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "haystack",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "heron": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "heron",
+   "placed": 3,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: flat grey (B4)); detail not measurable and not checked by eye since the bar; "
+  },
+  "hibiscus": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "bush",
+   "placed": 9,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "hollow_tree": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "veteran_tree",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
+  },
+  "holly": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "bush",
+   "placed": 6,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette"
+  },
+  "holo_map": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "sign",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 29 px: not whole 8 px cells (kind foot 1 x 1); style: speckle, palette"
+  },
+  "horse": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "horse",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: good forms; static); detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "horse_tied": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: style: palette"
+  },
+  "house_blue": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "cottage",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: fine roofs and walls; door 24, walls 30); bar tones LOW as facade; style: spe"
+  },
+  "house_red": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "cottage",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: same template as house_blue); bar tones LOW as facade; style: speckle"
+  },
+  "house_slate": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "town_house",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: storeys 27 to 30, door 22); bar tones LOW as facade; style: palette"
+  },
+  "hut": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: detailed; eaves 23, door 28); detail not measurable and not checked by eye si"
+  },
+  "hydro_trough": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "furniture_table",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 54 px: not whole 8 px cells (kind foot 5 x 3); style: speckle, palette"
+  },
+  "hydro_trough_herbs": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "furniture_table",
+   "placed": 1,
+   "style": "outline-double, light-west, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 46 px: not whole 8 px cells (kind foot 5 x 3); style: speckle, light-west, palette, outline-double"
+  },
+  "hydro_trough_sprouts": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "furniture_table",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 54 px: not whole 8 px cells (kind foot 5 x 3); style: palette, outline-double"
+  },
+  "hydro_trough_tomato": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "furniture_table",
+   "placed": 1,
+   "style": "outline-double, light-west, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, light-west, palette, outline-double"
+  },
+  "ibex": {
+   "lane": "A",
+   "module": "frost_props",
+   "kind": "ibex",
+   "placed": 3,
+   "style": "speckle",
+   "size": "ibex: h 34 over 18 to 26, w 36 over 20 to 30",
+   "ledger": "REWORK: fault (ADJUST: stands on a grey disc; static); 36 x 36 px (over) against ibex 18-26 x 20-30; detail not measurable and n"
+  },
+  "ice_cream_cart": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "cart_stall",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (REDRAW: side-view cart under a top-view parasol (fault 16)); foot line 30 px: not whole 8 px cells (kind foot 4 x"
+  },
+  "ice_rig": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "iron_bench": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "bench",
+   "placed": 4,
+   "style": "light-west, palette",
+   "size": "bench: h 25 over 12 to 14, w 42 over 28 to 36",
+   "ledger": "REWORK: fault (ADJUST: 42 long); 25 x 42 px (over) against bench 12-14 x 28-36; detail not measurable and not checked by eye sin"
+  },
+  "island_ferry": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "ferry",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "ferry: h 41 under 48 to 72, w 87 under 112 to 160",
+   "ledger": "REWORK: fault (ADJUST: plainer twin of harbour_ferry); 41 x 87 px (under) against ferry 48-72 x 112-160; bar tones LOW, shapes L"
+  },
+  "jungle_tree": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "veteran_tree",
+   "placed": 12,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
+  },
+  "keep": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "keep",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: foot line 70 px: not whole 8 px cells (kind foot 13 x 10)"
+  },
+  "keepsake_chest": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "chest",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 22 tall (16)); detail not measurable and not checked by eye since the bar; st"
+  },
+  "kitchen": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: flat counter 30 tall, empty); detail not measurable and not checked by eye si"
+  },
+  "lamb_left": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "lamb",
+   "placed": 1,
+   "style": "light-west, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, light-west, palette"
+  },
+  "lamp": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "lamp",
+   "placed": 9,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 44 tall (56); thin and plain); foot line 13 px: not whole 8 px cells (kind fo"
+  },
+  "lantern": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, speckle, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: style: speckle, light-west, palette"
+  },
+  "library": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "civic",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: columns, ashlar; double door 28); foot line 46 px: not whole 8 px cells (kind foot 16 x 8); bar tones LOW"
+  },
+  "lighthouse": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "tower",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: good tower; door about 12); bar tones LOW, shapes LOW, dressing LOW as facade; style: palette"
+  },
+  "lobster_pots": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "crate_stack",
+   "placed": 3,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: one block of pots); detail not measurable and not checked by eye since the ba"
+  },
+  "lock_hut": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "outline-double, light-west, speckle, colours, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, light-west, colours, palette, o"
+  },
+  "lockers": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "cupboard",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 45 px: not whole 8 px cells (kind foot 4 x 2); bar tones LOW, shapes LOW, dressing LOW as machinery; style: pa"
+  },
+  "locomotive": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "locomotive",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: pure side view (fault 20)); bar tones LOW, shapes LOW, dressing LOW as machinery; style: palette"
+  },
+  "lookout_tower": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "tower",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good stone and timber; door 20); foot line 28 px: not whole 8 px cells (kind "
+  },
+  "lounge_bench": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "bench",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 50 long); foot line 30 px: not whole 8 px cells (kind foot 4 x 1); detail not"
+  },
+  "luggage_bot": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "small_machine",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 12 px: not whole 8 px cells (kind foot 1 x 1); style: palette"
+  },
+  "maglev": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "tram",
+   "placed": 1,
+   "style": "palette",
+   "size": "tram: h 25 under 44 to 58",
+   "ledger": "REWORK: fault (ADJUST: pure side view); 25 x 130 px (under) against tram 44-58 x 96-192; bar tones LOW, shapes LOW, dressing LOW"
+  },
+  "mailbox": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: fault (ADJUST: box at head height, 33 tall); detail not measurable and not checked by eye since the bar; style: speckle,"
+  },
+  "marmot_rock": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "boulder",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: marmot static); detail not measurable and not checked by eye since the bar"
+  },
+  "meadow_sign": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "monstera": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "bush",
+   "placed": 20,
+   "style": "outline-double, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette, outline-double"
+  },
+  "moon_rock": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "boulder",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar"
+  },
+  "moon_rock_b": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "boulder",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar"
+  },
+  "moon_rock_small": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "rock",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar"
+  },
+  "moon_rock_small_b": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "rock",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar"
+  },
+  "moon_tree": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "veteran_tree",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: cloud crown, striped trunk; out of style); bar tones LOW, shapes LOW, dressin"
+  },
+  "mushroom_ring": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a grid of one mushroom (fault 04)); detail not measurable and not checked by "
+  },
+  "narrowboat": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "narrowboat",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as wood-front; style: light-west, palette"
+  },
+  "net_rack": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "net_rack",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: checker reads as cloth (B8)); detail not measurable and not checked by eye si"
+  },
+  "nightstand": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "furniture_low",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: 28 tall (about 14)); detail not measurable and not checked by eye since the b"
+  },
+  "noodle_stall": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "food_stall",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: counter 28 (13)); detail not measurable and not checked by eye since the bar;"
+  },
+  "notice_board": {
+   "lane": "A",
+   "module": "zones",
+   "kind": "sign",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "oak": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "broadleaf",
+   "placed": 14,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: not audited; bar tones LOW, shapes LOW, dressing LOW as tree"
+  },
+  "obsidian": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "boulder",
+   "placed": 4,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "obsidian_small": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "rock",
+   "placed": 4,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "old_lander": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "lander",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "ore_tub": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "tub",
+   "placed": 2,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: foot line 19 px: not whole 8 px cells (kind foot 3 x 2); style: speckle"
+  },
+  "pandanus": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "small_palm",
+   "placed": 8,
+   "style": "outline-light, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette, outline-light"
+  },
+  "papyrus": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "tall_plant",
+   "placed": 3,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "pennant": {
+   "lane": "A",
+   "module": "zones",
+   "kind": "pole",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: flat flag on a stick); foot line 4 px: not whole 8 px cells (kind foot 1 x 1); detail not measurable and "
+  },
+  "pet_bed": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "furniture_low",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "pier_ladder": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "-",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "pine": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "conifer",
+   "placed": 54,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
+  },
+  "pipe_run": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: fault (ADJUST: stands in for a fence (fault 23)); detail not measurable and not checked by eye since the bar; style: pal"
+  },
+  "plant_tall": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "tall_furniture",
+   "placed": 3,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 12 px: not whole 8 px cells (kind foot 2 x 2); style: speckle, palette"
+  },
+  "pod_tree": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "young_tree",
+   "placed": 2,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
+  },
+  "postern": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "postern",
+   "placed": 1,
+   "style": "colours, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: doors about 22); foot line 30 px: not whole 8 px cells (kind foot 4 x 2); sty"
+  },
+  "potted_plant": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "planter",
+   "placed": 6,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: the same drawing as prop/potted_plant: style: palette"
+  },
+  "pressure_tube": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "-",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: plain white cylinders); detail not measurable and not checked by eye since th"
+  },
+  "pressure_tube_dock": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "speckle, colours, palette",
+   "size": "-",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: plain white cylinders); detail not measurable and not checked by eye since th"
+  },
+  "prickly_pear": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "small_cactus",
+   "placed": 4,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "radiator": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "tall_furniture",
+   "placed": 2,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as machinery"
+  },
+  "rain_shelter": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "shelter",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as facade; style: palette"
+  },
+  "reading_nook": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: fault (ADJUST: a 44 long bench); detail not measurable and not checked by eye since the bar; style: light-west, palette"
+  },
+  "ring_post": {
+   "lane": "A",
+   "module": "zones",
+   "kind": "post",
+   "placed": 35,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: fault (REDRAW: a bare stick, placed 35 times in a ring); foot line 5 px: not whole 8 px cells (kind foot 1 x 1); detail "
+  },
+  "rock0": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 2,
+   "style": "ok",
+   "size": "no kind in the size guide",
+   "ledger": "REWORK: fault (ADJUST: plain grey, no facets); detail not measurable and not checked by eye since the bar"
+  },
+  "rock1": {
+   "lane": "?",
+   "module": null,
+   "kind": null,
+   "placed": 2,
+   "style": "ok",
+   "size": "no kind in the size guide",
+   "ledger": "KEEP"
+  },
+  "round_bale": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "bale",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "bale: h 26 over 8 to 22",
+   "ledger": "REWORK: fault (ADJUST: the round face is taller than wide); 26 x 19 px (over) against bale 8-22 x 12-26; detail not measurable a"
+  },
+  "round_bale_side": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "bale",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "round_tower": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "castle_tower",
+   "placed": 3,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: foot line 44 px: not whole 8 px cells (kind foot 6 x 6)"
+  },
+  "sack": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "sack",
+   "placed": 5,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: the same drawing as prop/sack: foot line 12 px: not whole 8 px cells (kind foot 1 x 1)"
+  },
+  "saguaro": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "cactus",
+   "placed": 4,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "saguaro_small": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "small_cactus",
+   "placed": 4,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "sandstone_arch": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: style: palette"
+  },
+  "sapling": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "sapling",
+   "placed": 6,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "scarecrow": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "scarecrow",
+   "placed": 1,
+   "style": "palette",
+   "size": "scarecrow: h 45 over 28 to 40",
+   "ledger": "REWORK: 45 x 30 px (over) against scarecrow 28-40 x 20-34; style: palette"
+  },
+  "scree": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "pile",
+   "placed": 3,
+   "style": "outline-flat-ink",
+   "size": "ok",
+   "ledger": "REWORK: style: outline-flat-ink"
+  },
+  "scree_b": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "pile",
+   "placed": 2,
+   "style": "outline-flat-ink",
+   "size": "ok",
+   "ledger": "REWORK: style: outline-flat-ink"
+  },
+  "scree_small": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "pile",
+   "placed": 7,
+   "style": "outline-flat-ink",
+   "size": "ok",
+   "ledger": "REWORK: foot line 22 px: not whole 8 px cells (kind foot 3 x 2); style: outline-flat-ink"
+  },
+  "sea_turtle": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "turtle",
+   "placed": 1,
+   "style": "palette",
+   "size": "turtle: h 21 over 8 to 14, w 28 over 16 to 24",
+   "ledger": "REWORK: fault (ADJUST: flat, static); 21 x 28 px (over) against turtle 8-14 x 16-24; detail not measurable and not checked by ey"
+  },
+  "semaphore": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "pole",
+   "placed": 1,
+   "style": "light-west",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: a thin pole, little detail); foot line 11 px: not whole 8 px cells (kind foot 1 x 1); detail not measurab"
+  },
+  "shaduf": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "crane",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "sheep": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "sheep",
+   "placed": 1,
+   "style": "speckle, dither, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: white oval with a black head, mirrored (B3)); detail not measurable and not c"
+  },
+  "sheep_left": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "sheep",
+   "placed": 2,
+   "style": "light-west, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: white oval with a black head, mirrored (B3)); detail not measurable and not c"
+  },
+  "sheep_lying": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "sheep",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette"
+  },
+  "shop_ashlar": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "shop",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door about 18); foot line 84 px: not whole 8 px cells (kind foot 8 x 5); bar "
+  },
+  "shuttle": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "shuttle",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 84 px: not whole 8 px cells (kind foot 12 x 8); bar tones LOW, shapes LOW, dressing LOW as machinery; style: p"
+  },
+  "side_table": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "furniture_low",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "signal_box": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "signal_box",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: small ground door); foot line 54 px: not whole 8 px cells (kind foot 6 x 4); bar tones LOW, dressing LOW "
+  },
+  "signpost": {
+   "lane": "B",
+   "module": "garden_props",
+   "kind": "sign",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: the same drawing as prop/signpost: foot line 13 px: not whole 8 px cells (kind foot 1 x 1); style: speckle, palette"
+  },
+  "skep": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "beehive",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: not audited; detail not measurable and not checked by eye since the bar; style: speckle, palette"
+  },
+  "sky_bench": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "bench",
+   "placed": 2,
+   "style": "speckle, palette",
+   "size": "bench: w 42 over 28 to 36",
+   "ledger": "REWORK: fault (ADJUST: 42 long); 12 x 42 px (over) against bench 12-14 x 28-36; detail not measurable and not checked by eye sin"
+  },
+  "sky_planter": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "planter",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 62 px: not whole 8 px cells (kind foot 2 x 1); bar tones LOW, shapes LOW as stone-wall; style: palette"
+  },
+  "sky_planter_b": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "planter",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 62 px: not whole 8 px cells (kind foot 2 x 1); bar tones LOW as stone-wall; style: palette"
+  },
+  "skybridge_0": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: light-west, palette"
+  },
+  "skybridge_1": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: light-west, palette"
+  },
+  "skybridge_2": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "skybridge_3": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: light-west, palette"
+  },
+  "skybridge_4": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: light-west, palette"
+  },
+  "sled": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "handcart",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette, outline-double"
+  },
+  "sleep_pod": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "tall_furniture",
+   "placed": 4,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 14 px: not whole 8 px cells (kind foot 2 x 2); bar tones LOW, shapes LOW, dressing LOW, isolated NOISY as mach"
+  },
+  "snag_vultures": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "snag",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle"
+  },
+  "snowy_pine": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "conifer",
+   "placed": 11,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: speckle, palette"
+  },
+  "solar_array": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: style: palette"
+  },
+  "solar_array_b": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "solar_array_c": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: style: palette"
+  },
+  "stall": {
+   "lane": "B",
+   "module": "garden_props",
+   "kind": "stall",
+   "placed": 2,
+   "style": "light-west, palette",
+   "size": "stall: h 49 over 38 to 46",
+   "ledger": "REWORK: the same drawing as prop/stall: re-check: changed since the audit (ADJUST: rich goods; counter 27, 90 wide); 49 x 52 px "
+  },
+  "standing_stone": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "standing_stone",
+   "placed": 2,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "standing_stone_b": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "standing_stone",
+   "placed": 2,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "standing_stone_low": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "standing_stone",
+   "placed": 3,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: detail not measurable and not checked by eye since the bar; style: speckle"
+  },
+  "station_house": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "station_building",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: good stone; door 23); bar tones LOW as facade; style: palette"
+  },
+  "steamer_trunk": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "chest",
+   "placed": 4,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "stone": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "rock",
+   "placed": 7,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "RETIRE: the prop audit dropped it: plain grey lump; boulder and rock1 do its job"
+  },
+  "stone_lantern": {
+   "lane": "D",
+   "module": "caldera_props",
+   "kind": "lantern_post",
+   "placed": 8,
+   "style": "outline-double",
+   "size": "ok",
+   "ledger": "REWORK: style: outline-double"
+  },
+  "street_light": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "lamp",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "stump": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "stump",
+   "placed": 7,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "tea_dispenser": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": "appliance",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 14 px: not whole 8 px cells (kind foot 2 x 1); style: palette"
+  },
+  "tea_kiosk": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "kiosk",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 37 px: not whole 8 px cells (kind foot 5 x 3); bar tones LOW, shapes LOW, dressing LOW as facade; style: palet"
+  },
+  "telescope": {
+   "lane": "A",
+   "module": "frost_props",
+   "kind": "telescope",
+   "placed": 2,
+   "style": "palette",
+   "size": "telescope: h 33 over 18 to 26",
+   "ledger": "REWORK: foot line 14 px: not whole 8 px cells (kind foot 2 x 1); 33 x 21 px (over) against telescope 18-26 x 10-24; style: palet"
+  },
+  "tether": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: capsule with no cable or anchor (fault 25)); detail not measurable and not ch"
+  },
+  "ticket_gates": {
+   "lane": "C",
+   "module": "cyber_props",
+   "kind": "barrier",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: white blocks (fault 24)); foot line 83 px: not whole 8 px cells (kind foot n x 1); detail not measurable "
+  },
+  "trail_post": {
+   "lane": "A",
+   "module": "frost_props",
+   "kind": "sign",
+   "placed": 4,
+   "style": "light-west",
+   "size": "ok",
+   "ledger": "REWORK: foot line 14 px: not whole 8 px cells (kind foot 1 x 1); style: light-west"
+  },
+  "training_dummy": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "figure",
+   "placed": 1,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "tree": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "broadleaf",
+   "placed": 13,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: the same drawing as prop/tree: fault (ADJUST: fine apple tree, but planted in woods (E18)); bar tones LOW, shapes LOW, d"
+  },
+  "tree_autumn": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "broadleaf",
+   "placed": 4,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
+  },
+  "tree_fern": {
+   "lane": "C",
+   "module": "isle_props",
+   "kind": "small_palm",
+   "placed": 31,
+   "style": "speckle, dither, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, dither, palette"
+  },
+  "tree_small": {
+   "lane": "B",
+   "module": "world_props",
+   "kind": "young_tree",
+   "placed": 9,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: the same drawing as prop/tree_small: bar tones LOW, shapes LOW, dressing LOW as tree"
+  },
+  "tube_station": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "station_building",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: door about 18); foot line 67 px: not whole 8 px cells (kind foot 11 x 6); bar"
+  },
+  "tumbleweed": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "flowers",
+   "placed": 5,
+   "style": "speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: speckle, palette"
+  },
+  "viewport": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "-",
+   "ledger": "REWORK: style: light-west, palette"
+  },
+  "viewport_b": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: style: palette"
+  },
+  "viewport_c": {
+   "lane": "D",
+   "module": "space_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: style: palette"
+  },
+  "wall_run": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "curtain_wall",
+   "placed": 1,
+   "style": "ok",
+   "size": "curtain_wall: h 40 under 56 to 88",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: straight cut ends); 40 x 98 px (under) against curtain_wall 56-88 x -; bar to"
+  },
+  "wardrobe": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "cupboard",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: a flat slab 58 tall); bar tones LOW as wood-front; style: palette"
+  },
+  "warehouse": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "warehouse",
+   "placed": 1,
+   "style": "ok",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: storeys about 25); bar tones LOW as facade"
+  },
+  "washing_line": {
+   "lane": "B",
+   "module": "harbour_props",
+   "kind": "washing_line",
+   "placed": 1,
+   "style": "speckle, dither, palette",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (REDRAW: flat sheets on a straight line (B8)); foot line 52 px: not whole 8 px cells ("
+  },
+  "water_crane": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "crane",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette"
+  },
+  "water_jar": {
+   "lane": "D",
+   "module": "western_props",
+   "kind": "jar",
+   "placed": 3,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 12 px: not whole 8 px cells (kind foot 1 x 1); style: palette"
+  },
+  "watering_can": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": "furniture_low",
+   "placed": 2,
+   "style": "outline-double, speckle, palette",
+   "size": "ok",
+   "ledger": "REWORK: foot line 11 px: not whole 8 px cells (kind foot 2 x 2); style: speckle, palette, outline-double"
+  },
+  "weapon_rack": {
+   "lane": "D",
+   "module": "castle_props",
+   "kind": "training",
+   "placed": 1,
+   "style": "outline-double, palette",
+   "size": "ok",
+   "ledger": "REWORK: style: palette, outline-double"
+  },
+  "well": {
+   "lane": "A",
+   "module": "zones",
+   "kind": "well",
+   "placed": 1,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: fault (REDRAW: plain ring and roof, no wear (A12)); detail not measurable and not checked by eye since the bar; style: p"
+  },
+  "willow": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "willow",
+   "placed": 4,
+   "style": "palette",
+   "size": "ok",
+   "ledger": "REWORK: bar tones LOW, shapes LOW, dressing LOW as tree; style: palette"
+  },
+  "window_seat": {
+   "lane": "B",
+   "module": "home_props",
+   "kind": null,
+   "placed": 1,
+   "style": "palette",
+   "size": "-",
+   "ledger": "REWORK: fault (ADJUST: a flat box); detail not measurable and not checked by eye since the bar; style: palette"
+  },
+  "windsock": {
+   "lane": "A",
+   "module": "frost_props",
+   "kind": "pole",
+   "placed": 1,
+   "style": "light-west, palette",
+   "size": "pole: w 57 over 6 to 40",
+   "ledger": "REWORK: 43 x 57 px (over) against pole 32-96 x 6-40; detail not measurable and not checked by eye since the bar; style: light-we"
+  },
+  "woodpile": {
+   "lane": "B",
+   "module": "valley_props",
+   "kind": "woodpile",
+   "placed": 2,
+   "style": "outline-double, light-west, speckle",
+   "size": "ok",
+   "ledger": "REWORK: fault (ADJUST: only a snow-capped version); detail not measurable and not checked by eye since the bar; style: speckle, "
+  },
+  "workshop": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "workshop",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: doors about 22; near twins); bar tones LOW as facade; style: speckle"
+  },
+  "workshop_round": {
+   "lane": "C",
+   "module": "steampunk_props",
+   "kind": "workshop",
+   "placed": 1,
+   "style": "speckle",
+   "size": "ok",
+   "ledger": "REWORK: re-check: changed since the audit (ADJUST: doors about 22; near twins); bar tones LOW as facade; style: speckle"
+  }
+ },
+ "gate": {
+  "rebuilt": [],
+  "failing": []
+ },
+ "exempted_cells": 0,
+ "seconds": {
+  "load": 4.0,
+  "compose": 2.1,
+  "kinds": 14.0,
+  "detail": 143.6,
+  "soft grid": 0.1,
+  "straight runs": 0.1,
+  "ruler edges": 3.3,
+  "seams": 0.6,
+  "style": 9.4,
+  "sprites": 10.6,
+  "benchmark": 0.1
+ }
+}

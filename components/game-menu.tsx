@@ -41,6 +41,8 @@ import {
   usePlayPaused,
 } from '@/components/offline-garden';
 import { DailyRhythmCard } from '@/components/daily-rhythm';
+import { regionNames } from '@/lib/world-map';
+import { zoneRegion } from '@/lib/region-walk';
 import { MotionSetting, SoundSettings } from '@/components/garden-guide';
 
 /**
@@ -54,6 +56,7 @@ const tabs: { id: MenuTab; label: string; title: string; icon: IconName }[] = [
   { id: 'bag', label: 'Bag', title: 'BAG', icon: 'bag' },
   { id: 'journal', label: 'Journal', title: 'JOURNAL', icon: 'journal' },
   { id: 'garden', label: 'Garden', title: 'GARDEN', icon: 'garden' },
+  { id: 'map', label: 'Map', title: 'MAP', icon: 'signpost' },
   { id: 'rhythm', label: 'Rhythm', title: 'RHYTHM', icon: 'rhythm' },
   { id: 'settings', label: 'Settings', title: 'SETTINGS', icon: 'settings' },
 ];
@@ -244,6 +247,8 @@ function MenuPage({ tab, player, unit }: { tab: MenuTab; player: Player; unit: n
       return <JournalPage player={player} unit={unit} />;
     case 'garden':
       return <GardenPage player={player} unit={unit} />;
+    case 'map':
+      return <MapPage />;
     case 'rhythm':
       return <RhythmPage />;
     default:
@@ -412,11 +417,11 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
         />
         <StatRow
           unit={u}
-          icon="grass"
+          icon="dreamDust"
           label={`GROWTH TO LEVEL ${next.next}`}
           value={p.grass}
           max={next.cost}
-          text={`${Math.min(p.grass, next.cost)}/${next.cost} GRASS`}
+          text={`${Math.min(p.grass, next.cost)}/${next.cost} DREAM DUST`}
           color={c.positive}
         />
         <StatRow
@@ -444,7 +449,9 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
         </View>
         <View style={{ flex: 1 }}>
           <PixelButton
-            label="FEED · 5 GRASS"
+            label="FEED · 5"
+            icon="dreamDust"
+            spokenLabel="FEED · 5 Dream Dust"
             small
             disabled={!canFeed}
             onPress={() => {
@@ -460,8 +467,8 @@ function CompanionPage({ player: p, unit: u }: { player: Player; unit: number })
           : p.mood >= 100
             ? `${guardian.pet_name} is full of good feelings.`
             : p.grass < 5
-              ? 'Feeding needs 5 GRASS and lifts mood.'
-              : 'Feeding uses 5 GRASS and lifts mood.'}
+              ? 'Feeding needs 5 Dream Dust and lifts mood.'
+              : 'Feeding uses 5 Dream Dust and lifts mood.'}
       </Text>
     </>
   );
@@ -600,7 +607,7 @@ function GardenPage({ player: p, unit: u }: { player: Player; unit: number }) {
         </Text>
         <Text style={[type.body, { color: c.ink }]}>
           Next common card in {15 - (p.offline_seconds % 15)} simulated MIN. Level {next.next} costs{' '}
-          {next.cost} GRASS: {next.unlock}.
+          {next.cost} Dream Dust: {next.unlock}.
         </Text>
       </Section>
       <GardenStreak />
@@ -615,6 +622,25 @@ function GardenPage({ player: p, unit: u }: { player: Player; unit: number }) {
         />
       </Section>
     </>
+  );
+}
+
+/** The map's page: where the companion is and how much of the world it has walked;
+ *  the map itself opens over everything (one map for the whole game, home-hub.md
+ *  phase 2). */
+function MapPage() {
+  const world = useGame((s) => s.world);
+  const unit = usePixelUnit();
+  const regionsSeen = new Set((world?.visited ?? []).map((z) => zoneRegion(z))).size;
+  return (
+    <Section label="THE WORLD" unit={unit}>
+      <Text style={[type.body, { color: c.ink }]}>
+        {world
+          ? `In ${regionNames[world.region].toLowerCase().replace(/(^|\s)\S/g, (m) => m.toUpperCase())}. ${world.visited.length} ${world.visited.length === 1 ? 'place' : 'places'} walked in ${regionsSeen} ${regionsSeen === 1 ? 'region' : 'regions'}.`
+          : 'Walk out of the garden gate and the map fills in as you go.'}
+      </Text>
+      <PixelButton label="OPEN THE MAP" small light onPress={() => openSheet('map')} />
+    </Section>
   );
 }
 

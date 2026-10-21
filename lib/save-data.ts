@@ -20,6 +20,8 @@ const list = (items: Shape, identityPaths?: string[]): Shape => ({
   identity: identityPaths,
 });
 const strings = list(true);
+// Every `grass` field below (and offGrass, grass_amount) holds Dream Dust: the currency was
+// renamed from GRASS on 20 Oct. The names stay as they are so old saves load unchanged.
 const companion = object({ key: true, name: true, species: true }, ['key']);
 const offerFields = {
   id: true,
@@ -39,7 +41,7 @@ const player = object(
     pet_name: true,
     species: true,
     level: true,
-    grass: true,
+    grass: true, // the Dream Dust balance (renamed from GRASS on 20 Oct)
     mood: true,
     hat: true,
     owned_hats: strings,
@@ -63,7 +65,7 @@ const raid = object({
   defender_id: true,
   created_at: true,
   attacker_won: true,
-  grass_amount: true,
+  grass_amount: true, // Dream Dust won or lost in the raid
   seen_by_defender: true,
 } satisfies Record<keyof Raid, Shape>);
 const incoming = list(object({ raid, attacker: player }), ['raid.id']);
@@ -80,7 +82,7 @@ const saveShape = object(
         mission: true,
         early: true,
         minutes: true,
-        grass: true,
+        grass: true, // Dream Dust the break paid
         cards: true,
         sessionId: true,
       }),
@@ -103,7 +105,7 @@ const saveShape = object(
         values: object({
           offline: true,
           cards: true,
-          grass: true,
+          grass: true, // Dream Dust earned that day
           blocked: true,
           raids: true,
           sparringWins: true,
@@ -122,7 +124,7 @@ const saveShape = object(
     tickAt: true,
     offStart: true,
     offDeck: strings,
-    offGrass: true,
+    offGrass: true, // the Dream Dust balance when the nap began
     outgoing: list(raid, ['id']),
     staged: incoming,
     applied: strings,
@@ -137,7 +139,7 @@ const saveShape = object(
         cards: strings,
         minutes: true,
         mission: true,
-        grass: true,
+        grass: true, // Dream Dust on the welcome-back reward
         visitor: true,
         postcard,
         hat: true,
@@ -146,7 +148,8 @@ const saveShape = object(
       ['settlementId'],
     ),
     world: object({ region: true, x: true, y: true, visited: strings, layout: true }),
-    decor: list(object({ item: true, x: true, y: true, area: true }), ['item']),
+    mapSeen: strings,
+    decor: list(object({ item: true, x: true, y: true, area: true, flip: true }), ['item']),
     hutLook: object({ door: true, boxes: true, path: true }),
   } satisfies Record<keyof Saved, Shape>,
   ['identity'],
