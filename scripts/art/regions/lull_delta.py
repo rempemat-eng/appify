@@ -888,11 +888,66 @@ def check_plan(plan: dict) -> list:
     for k in ('lull_road', 'towpath', 'coast_path', 'delta_road'):
         if k not in plan['routes']:
             bad.append(f'no route {k}')
+    bad += placement(plan['plan'])
     try:
         import region_plan
     except ImportError:
         return bad
     return bad + region_plan.check(plan['plan'])
+
+
+def _seg_d(p, a, b):
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    L2 = dx * dx + dy * dy or 1.0
+    t = max(0.0, min(1.0, ((p[0] - a[0]) * dx + (p[1] - a[1]) * dy) / L2))
+    return ((p[0] - a[0] - t * dx) ** 2 + (p[1] - a[1] - t * dy) ** 2) ** 0.5
+
+
+def _in_poly(p, poly):
+    x, y, inside = p[0], p[1], False
+    for (x1, y1), (x2, y2) in zip(poly, poly[1:] + poly[:1]):
+        if (y1 > y) != (y2 > y) and x < x1 + (y - y1) * (x2 - x1) / (y2 - y1):
+            inside = not inside
+    return inside
+
+
+def _on_bridge(P: dict, at) -> bool:
+    for b in P.get('places', []):
+        if b.get('span') and b['span'][0] <= at[0] <= b['span'][1] and abs(at[1] - b['at'][1]) <= 16:
+            return True
+        ix, iy, iw, ih = b.get('island', (0, 0, 0, 0))
+        if ix <= at[0] <= ix + iw and iy <= at[1] <= iy + ih:
+            return True
+    return False
+
+
+def placement(P: dict) -> list:
+    """What the shared check cannot see: nothing the plan places (named things, pockets,
+    markers, residents) stands in water (within half a channel's width and 6 px of its line,
+    or inside the sea) or inside a building's footprint."""
+    bad = []
+    things = [(n['thing'], n['at']) for n in P.get('named', [])] + \
+        [(k['holds'], k['at']) for k in P.get('pockets', [])] + \
+        [(f"marker {m['what']}", m['at']) for m in P.get('markers', []) if not m.get('outside_box')] + \
+        [(r['who'], r['at']) for r in P.get('residents', [])]
+    for what, at in things:
+        if _on_bridge(P, at):
+            continue
+        for w in P.get('water', []):
+            if w.get('closed'):
+                if _in_poly(at, w['points']):
+                    bad.append(f'{what} at {tuple(at)} stands in the {w["id"]}')
+            elif min(_seg_d(at, a, b) for a, b in zip(w['points'], w['points'][1:])) < w['width'] / 2 + 6:
+                if what.startswith('marker egrets') or what in ('eel traps', 'stilt hut', 'fishing stage'):
+                    continue   # they stand in the shallows or on stilts over the water by design
+                bad.append(f'{what} at {tuple(at)} stands in the {w["id"]}')
+        for b in P.get('buildings', []):
+            x, y = b['foot']
+            if what.startswith('marker door'):
+                break   # a door is where the building is
+            if x - 4 <= at[0] <= x + b['w'] + 4 and y - 80 <= at[1] <= y + 4:
+                bad.append(f'{what} at {tuple(at)} stands in the building {b["id"]}')
+    return bad
 
 
 def main(argv):

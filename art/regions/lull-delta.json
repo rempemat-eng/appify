@@ -227,15 +227,15 @@
   {
    "id": "embankment",
    "tier": 2,
-   "why": "the canal embankment and the foot of the Heights (world tier 4): the Delta Road climbs onto it at (9376, 4568), and the Lull Cut climbs with it through a lock",
+   "why": "the canal embankment and the foot of the Heights (world tier 4): the Delta Road climbs onto it at (9376, 4568); the Lull Cut stays on the floodplain north of it",
    "outline": [
     [
      9368,
-     4552
+     4592
     ],
     [
      9456,
-     4544
+     4592
     ],
     [
      9456,
@@ -606,42 +606,45 @@
    "width": 40,
    "points": [
     [
-     9072,
-     4392
+     9088,
+     4448
     ],
     [
-     9176,
+     9168,
+     4456
+    ],
+    [
+     9232,
+     4440
+    ],
+    [
+     9300,
      4432
     ],
     [
-     9216,
-     4472
+     9368,
+     4456
     ],
     [
-     9256,
-     4512
-    ],
-    [
-     9312,
-     4544
-    ],
-    [
-     9360,
-     4624
-    ],
-    [
-     9392,
-     4688
+     9420,
+     4500
     ],
     [
      9456,
-     4752
+     4544
     ]
    ],
-   "why": "plan 4.3: from Lullford's east bank to the canal basin under the Heights, clear of the delta's silt; it runs 48 px south-west of the Delta Road, which is its towpath",
-   "lock": [
-    9352,
-    4600
+   "why": "plan 4.3: from Lullford's east bank to the canal basin under the Heights, clear of the delta's silt. It runs on the floodplain (world tier 3) between the Lull Road and the Delta Road, which crosses it on a turnover bridge at (9240, 4440) and then runs as its towpath on the delta side; it leaves the chunk at (9456, 4544) for the basin, where a lock lets it down to the ria",
+   "bridges": [
+    {
+     "what": "turnover bridge",
+     "on": "delta_road",
+     "at": [
+      9240,
+      4440
+     ],
+     "span": 56
+    }
    ]
   },
   {
@@ -2423,24 +2426,20 @@
    "why": "brief pocket: a view over the land, off the Lull Road's side path, out over the fresh oxbow and the belt",
    "points": [
     [
-     9304,
+     9400,
      4192
     ],
     [
-     9296,
-     4144
+     9408,
+     4160
     ],
     [
-     9312,
-     4096
+     9424,
+     4136
     ],
     [
-     9304,
-     4048
-    ],
-    [
-     9320,
-     4008
+     9432,
+     4104
     ]
    ]
   },
@@ -2667,12 +2666,8 @@
      4264
     ],
     [
-     9236,
-     4236
-    ],
-    [
-     9216,
-     4240
+     9208,
+     4232
     ],
     [
      9256,
@@ -3129,8 +3124,8 @@
    "thing": "a reed hide over the channels",
    "kind": "view",
    "at": [
-    8816,
-    4824
+    8844,
+    4828
    ],
    "route": "Lull Road",
    "where": "a short way off the path",
@@ -3172,8 +3167,8 @@
   {
    "holds": "a view over the land",
    "at": [
-    9320,
-    4008
+    9432,
+    4104
    ],
    "trod": "belt_view_pocket",
    "moved_from": [
@@ -3304,9 +3299,13 @@
    "what": "tracks",
    "at": [
     9272,
-    4416
+    4408
    ],
-   "route": "Delta Road"
+   "route": "Delta Road",
+   "moved_from": [
+    9272,
+    4416
+   ]
   },
   {
    "t": "A",
@@ -3321,10 +3320,14 @@
    "t": "I",
    "what": "door",
    "at": [
+    9356,
+    4480
+   ],
+   "route": "Delta Road",
+   "moved_from": [
     9375,
     4470
-   ],
-   "route": "Delta Road"
+   ]
   },
   {
    "t": "S",
@@ -3396,10 +3399,14 @@
    "t": "S",
    "what": "cart with a broken wheel",
    "at": [
+    8480,
+    4164
+   ],
+   "route": "Lull Road",
+   "moved_from": [
     8514,
     4166
-   ],
-   "route": "Lull Road"
+   ]
   },
   {
    "t": "A",
@@ -3415,7 +3422,7 @@
    "what": "gate",
    "at": [
     8612,
-    4220
+    4276
    ],
    "route": "Lull Road",
    "moved_from": [
@@ -3462,7 +3469,7 @@
    "t": "S",
    "what": "marker stone",
    "at": [
-    8784,
+    8768,
     4216
    ],
    "route": "Lull Road",
@@ -3497,8 +3504,8 @@
    "t": "S",
    "what": "cairn",
    "at": [
-    8980,
-    4284
+    9008,
+    4280
    ],
    "route": "Lull Road",
    "moved_from": [
@@ -3510,8 +3517,8 @@
    "t": "S",
    "what": "tracks",
    "at": [
-    9020,
-    4292
+    9036,
+    4296
    ],
    "route": "Lull Road",
    "moved_from": [
@@ -3558,7 +3565,7 @@
    "t": "S",
    "what": "marker stone",
    "at": [
-    9244,
+    9240,
     4284
    ],
    "route": "Lull Road",
@@ -3612,7 +3619,7 @@
    "what": "cold fire ring",
    "at": [
     8692,
-    4116
+    4144
    ],
    "route": "Lullford",
    "moved_from": [
@@ -3659,8 +3666,8 @@
    "t": "S",
    "what": "lost hat",
    "at": [
-    8620,
-    4164
+    8616,
+    4132
    ],
    "route": "Lullford",
    "moved_from": [
@@ -3673,7 +3680,7 @@
    "what": "signpost",
    "at": [
     8652,
-    4196
+    4148
    ],
    "route": "Lullford",
    "moved_from": [
@@ -3685,8 +3692,8 @@
    "t": "I",
    "what": "water trough",
    "at": [
-    8560,
-    4204
+    8548,
+    4260
    ],
    "route": "Lullford",
    "moved_from": [
@@ -3699,7 +3706,7 @@
    "what": "bench",
    "at": [
     8804,
-    4200
+    4172
    ],
    "route": "Lullford",
    "moved_from": [
@@ -3755,8 +3762,8 @@
    "t": "I",
    "what": "water trough",
    "at": [
-    8912,
-    4352
+    8884,
+    4380
    ],
    "route": "Lullford",
    "moved_from": [
@@ -3855,17 +3862,21 @@
    "t": "A",
    "what": "hares",
    "at": [
+    8584,
+    4132
+   ],
+   "route": "Towpath",
+   "moved_from": [
     8551,
     4178
-   ],
-   "route": "Towpath"
+   ]
   },
   {
    "t": "I",
    "what": "gate",
    "at": [
-    8588,
-    4212
+    8580,
+    4268
    ],
    "route": "Towpath",
    "moved_from": [
@@ -3985,9 +3996,13 @@
    "who": "the toll keeper",
    "at": [
     8984,
-    4296
+    4304
    ],
-   "note": "on the island by the toll house"
+   "note": "on the island by the toll house",
+   "moved_from": [
+    8984,
+    4296
+   ]
   },
   {
    "who": "a resident fishing",
@@ -4000,18 +4015,26 @@
   {
    "who": "an eel catcher",
    "at": [
+    9080,
+    4608
+   ],
+   "note": "at the stilt hut",
+   "moved_from": [
     9072,
     4616
-   ],
-   "note": "at the stilt hut"
+   ]
   },
   {
-   "who": "a lock keeper",
+   "who": "a bargee",
    "at": [
-    9368,
-    4592
+    9304,
+    4404
    ],
-   "note": "at the lock on the Cut"
+   "note": "on the towpath at the turnover bridge",
+   "moved_from": [
+    9304,
+    4408
+   ]
   }
  ],
  "ground": {
