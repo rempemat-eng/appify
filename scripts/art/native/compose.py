@@ -22,12 +22,18 @@ from . import chars
 from . import ground as GR
 from . import foliage as F5
 from . import terrain as TER
-from .palette import FAMS
+from .palette import FAMS, C
 
 MASTERS = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'masters')
 
 FOLIAGE = ('bush', 'tree', 'oak')
 LEAVES_PER_TREE = 7     # r6: fallen leaves under each tree
+# r7 style (the biome's style.foliage and style.lawn): readable clumps per crown, the dressing
+# tufts' size range, the calm untufted lawn round crowns, bushes and trunk bases (world px)
+_ST = ctx.BIOME.get('style', {})
+CLUMPS = dict(_ST.get('foliage', {}).get('clumps', dict(oak=6, tree=5, bush=3)))
+TUFT_SIZES = tuple(_ST.get('lawn', {}).get('tuft_sizes', (0.8, 1.4)))
+CALM_BAND = _ST.get('lawn', {}).get('calm_band', 4.0)
 BUSH_MASTER = 'zones_props_bush.png'
 
 SHADOW = tuple(ctx.BIOME['shadow']['project'])   # one projection for every object, in world units
@@ -126,9 +132,10 @@ def foliage_sprite(kind, old, d, seed, ex):
     im, anc1, a1 = old_sprite(old, raw=True)
     A = np.asarray(im)
     if kind == 'bush':
-        out, _, (pad, sx, sy) = F5.paint(A, d, seed=seed, crease_depth=0.9)
+        out, _, (pad, sx, sy) = F5.paint(A, d, seed=seed, crease_depth=0.9, clumps=CLUMPS['bush'])
         return Image.fromarray(out), None, out[..., 3] > 0
-    out, _, (pad, sx, sy) = F5.paint(A, d, seed=seed, blossoms=False, legs=False, crease_depth=1.5)
+    out, _, (pad, sx, sy) = F5.paint(A, d, seed=seed, blossoms=False, legs=False, crease_depth=1.5,
+                                     clumps=CLUMPS['oak' if 'oak' in old else 'tree'])
     _, _, _, _, wood = F5.read_master(A)
     ys, xs = np.nonzero(wood)
     low = ys >= ys.max() - 6
@@ -288,12 +295,27 @@ def build(d: float, frame: int = 1):
     NOCONTACT.clear()    # ids are only meaningful within one build (CPython reuses them)
     codes, _items, _tufts = TER.canvas()
     LAST['codes'] = screen_crop(codes, d)
+    Hs, Ws = LAST['codes'].shape
+    # r7: the sprites first, so the lawn round crowns, bushes and trunk bases can be calmed
+    sprites = [sprite_for(pr['kind'], pr.get('master'), d, pr['seed'], pr.get('extra', {})) for pr in plan['props']]
+    pitems = list(plant_items())
+    bushes = {j: ctiles_bush(d, w, h, seed) for j, (kind, x, y, w, h, seed, extra) in enumerate(pitems) if kind == 'bush'}
+    sil = np.zeros((Hs, Ws), bool)
+    for pr, (img, anc, a) in zip(plan['props'], sprites):
+        if pr['kind'] in ('oak', 'tree', 'bush'):
+            _stamp(sil, a, anc, (pr['foot'][0] * d, pr['foot'][1] * d))
+    for j, (img, a) in bushes.items():
+        kind, x, y, w, h, seed, extra = pitems[j]
+        x0, y0, x1, y1 = _bbox(a)
+        _stamp(sil, a, ((x0 + x1) / 2, y1), ((x + w / 2) * d, (y + h) * d))
+    calm = calm_band(sil, d)
+    LAST['codes'] = calm_lawn(LAST['codes'], calm)
     G = ground_from_codes(LAST['codes'], d)
     W, H = G.w, G.h
     things, shadows, small_sh, tshadows = [], [], [], []
     for i, pr in enumerate(plan['props']):
         kind, (x, y), old, sh, ex = pr['kind'], pr['foot'], pr.get('master'), pr['shadow'], pr.get('extra', {})
-        img, anc, a = sprite_for(kind, old, d, pr['seed'], ex)
+        img, anc, a = sprites[i]
         at = (x * d, y * d)
         things.append((y, img, anc, at))
         if sh and kind in ('oak', 'tree'):
@@ -308,13 +330,11 @@ def build(d: float, frame: int = 1):
         elif sh and kind == 'lantern' and d != 1:
             # r4: a thin object's shadow is projected at 1x and scaled, so it covers the same
             # ground in world units at every level
+            # r7: the 1x silhouette (world units) is scaled up first and projected at this density,
+            # so the shadow covers the same ground at every level without 2 px stair-steps
             im1, anc1, a1 = old_sprite(old)
-            W1, H1 = int(round(W / d)), int(round(H / d))
-            m1 = shadow_mask(a1, anc1, 1.0, W1, H1, (x, y), *SHADOW)
-            mz = ndi.zoom(m1.astype(np.uint8), d, order=0).astype(bool)
-            m = np.zeros((H, W), bool)
-            m[:min(H, mz.shape[0]), :min(W, mz.shape[1])] = mz[:H, :W]
-            shadows.append(m)
+            az = ndi.zoom(a1.astype(np.uint8), d, order=0).astype(bool)
+            shadows.append(shadow_mask(az, (anc1[0] * d, anc1[1] * d), d, W, H, at, *SHADOW))
         elif sh:
             shadows.append(shadow_mask(a, anc, d, W, H, at, *SHADOW))
     if True:
@@ -323,9 +343,12 @@ def build(d: float, frame: int = 1):
         timg = GR.tuft(d, 4242, 1.0)
         NOCONTACT.add(id(timg))
         things.append((sy_ + 0.1, timg, (timg.width / 2, timg.height - max(1, int(round(d / 2)))), (sx_ * d, sy_ * d)))
-        for j, (kind, x, y, w, h, seed, extra) in enumerate(plant_items()):
+        for j, (kind, x, y, w, h, seed, extra) in enumerate(pitems):
+            fx_, fy_ = int((x + w / 2) * d), int((y + h) * d) - 1
+            if kind in ('tuft', 'flowers') and 0 <= fy_ < H and 0 <= fx_ < W and calm[fy_, fx_]:
+                continue                                    # r7: no tufts in the calm band
             if kind == 'bush':
-                img, a = ctiles_bush(d, w, h, seed)
+                img, a = bushes[j]
                 x0, y0, x1, y1 = _bbox(a)
                 anc = ((x0 + x1) / 2, y1)
                 shk = True
@@ -335,7 +358,7 @@ def build(d: float, frame: int = 1):
                 anc = ((x0 + x1) / 2, y1)
                 shk = True
             elif kind == 'tuft':
-                img = GR.tuft(d, seed * 7 + j, 1.15)
+                img = tuft_variant(d, seed * 7 + j)
                 anc = (img.width / 2, img.height - max(1, int(round(d / 2))))
                 a = np.asarray(img)[..., 3] > 0
                 shk = False
@@ -415,6 +438,60 @@ def build(d: float, frame: int = 1):
 # ------------------------------------------------------------------------------------------------
 # the screen, the ground canvas, shadows and contact (the pilot's settle helpers)
 # ------------------------------------------------------------------------------------------------
+def tuft_variant(d, seed):
+    """r7: a dressing tuft whose size, green and bloom vary with its seed (up close no two read
+    the same): sizes across TUFT_SIZES, one in five on the deep leaf green, one in five with a
+    small bloom at a blade tip."""
+    hv = (seed * 2654435761) >> 8
+    lo, hi = TUFT_SIZES
+    size = lo + (hi - lo) * ((hv % 97) / 96.0)
+    img = GR.tuft(d, seed, size, fam='leaf' if hv % 5 == 0 else 'grass')
+    if hv % 5 == 1:
+        a = np.asarray(img).copy()
+        ys, xs = np.nonzero(a[..., 3] > 0)
+        if len(ys):
+            k = int(np.argmin(ys + 0.01 * xs))
+            y, x = ys[k], xs[k]
+            q = max(1, int(round(d / 2)))
+            a[max(0, y - q):y + q, max(0, x - q):x + q, :3] = pk.rgb('snow', 5)
+            a[max(0, y - q):y + q, max(0, x - q):x + q, 3] = 255
+            a[y, x, :3] = pk.rgb('brass_warm', 4)
+            img = Image.fromarray(a)
+    return img
+
+
+def _stamp(m, alpha, anc, at):
+    """Or a sprite's alpha into a screen mask, placed by its anchor at `at`."""
+    ys, xs = np.nonzero(alpha)
+    Y = np.round(ys - anc[1] + at[1]).astype(int)
+    X = np.round(xs - anc[0] + at[0]).astype(int)
+    ok = (Y >= 0) & (Y < m.shape[0]) & (X >= 0) & (X < m.shape[1])
+    m[Y[ok], X[ok]] = True
+
+
+def calm_band(sil, d):
+    """r7: a band about CALM_BAND world px wide round the silhouettes, its outer edge wandering."""
+    if not sil.any():
+        return sil
+    rng = np.random.default_rng(4401)
+    nz = ndi.gaussian_filter(rng.random(sil.shape), 1.5 * d)
+    nz = (nz - nz.mean()) / (nz.std() + 1e-6)
+    dist = ndi.distance_transform_edt(~sil) / d
+    return (dist <= CALM_BAND + 0.9 * nz) & ~sil
+
+
+def calm_lawn(codes, calm):
+    """r7: in the calm band the lawn keeps its broad patches (the body and its cool sibling at
+    tone 3) and loses its marks and tufts."""
+    out = codes.copy()
+    fam = codes // 8
+    g, gc = FAMS.index('grass'), FAMS.index('grass_cool')
+    lawn = calm & (codes >= 0) & np.isin(fam, [g, gc, FAMS.index('grass_warm'), FAMS.index('leaf')]) & (codes % 8 < 6)
+    out[lawn & (fam == gc)] = C('grass_cool', 3)
+    out[lawn & (fam != gc)] = C('grass', 3)
+    return out
+
+
 def screen_crop(arr, d):
     scr = ctx.PLAN['screen']
     y0 = int(round(scr['canvas_dy'] * d))

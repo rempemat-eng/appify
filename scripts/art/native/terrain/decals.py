@@ -81,10 +81,19 @@ def lump_px(w, h, seed, fams=('crag', 'crag_warm', 'crag_cool'), outline=('crag'
     U, V = u / wob, v / wob
     fam = fams[int(rng.integers(0, len(fams)))]
     code = np.full((h, w), -1)
-    _SH.stone_paint(code, m, U, V, fam, rng, big=min(w, h) > 10)
+    sc = rim = None
+    if min(w, h) / 2 > _SH.STONE_SPLIT * _SH.D:
+        # r7: a big loose boulder is 2 to 4 lumps, as on the faces
+        sc, rim = _SH.split_boulder(code, m, U, V, fam, rng, w / 2, h / 2)
+    else:
+        _SH.stone_paint(code, m, U, V, fam, rng, big=min(w, h) > 10)
     p = np.pad(m, 1)
     border = m & ~(p[:-2, 1:-1] & p[2:, 1:-1] & p[1:-1, :-2] & p[1:-1, 2:])
     lit = border & ((u + v) < -0.3)
+    if sc is not None:
+        lr = rim & ~sc & ~border
+        code[lr] = np.where(code[lr] % 8 < 5, code[lr] + 1, code[lr])
+        code[sc & ~lit] = C(*outline)
     code[border] = C(*outline)
     code[lit] = FI[fam] * 8 + 1
     return np.where(m, code, -1)

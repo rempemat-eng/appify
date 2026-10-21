@@ -229,6 +229,15 @@
    [176.2, 199.5, 2.2, 1.7],
    [177.4, 205.0, 3.6, 2.6]
   ],
+  "soften_lips": [[204.0, 104.0, 234.0, 138.0]],
+  "soften_lips_about": "r7: boxes (canvas world px) where a lip's right-angle steps are rounded: the bay's east lip beside the fall",
+  "brook_stones": [34.0, 63.0, 101.0],
+  "brook_stones_about": "r7: stones standing in the brook, as arc lengths along its centre line (world px), each with foam upstream and a dark wake",
+  "bank_runs_about": "r7: bank stones in continuous overlapping runs, half under the waterline: [x0, y0, x1, y1, stones, water side nx, ny, seed] (canvas world px)",
+  "bank_runs": [
+   [222.4, 191.5, 221.6, 221.0, 7, -1, 0, 340],
+   [178.0, 196.0, 179.0, 208.5, 5, 1, 0, 360]
+  ],
   "stepping_stones": [
    [191.2, 233.8, 3.0, 2.0],
    [197.2, 231.0, 3.1, 2.1],

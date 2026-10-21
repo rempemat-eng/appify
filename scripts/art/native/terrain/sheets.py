@@ -15,8 +15,12 @@ from ..palette import C, FI, step
 from ..ctx import D, P
 
 # r6 style constants (the 2x kit reads these)
-STONE = dict(cap=0.86, body=0.62, shade=0.36)     # r6: stone_paint's tone thresholds on the light
-STONE_MOSS = 0.16      # r6: share of face boulders with a moss crown
+_SS = ctx.BIOME.get('style', {}).get('stone', {})
+STONE = dict(_SS.get('ramp', dict(cap=0.86, body=0.62, shade=0.36)))     # r6: stone_paint's tone thresholds on the light
+STONE_MOSS = _SS.get('moss', 0.16)      # r6: share of face boulders with a moss crown
+SHEET_TUFTS = []     # r4: world positions of the lawn's tuft clumps (for objects.json)
+STONE_TEX = dict(_SS.get('texture', dict(bulge=22, pit=14, chip=36, lichen=45)))    # r7: world px² of stone per texture mark
+STONE_SPLIT = _SS.get('split', 6.0)      # r7: boulders wider than this (world px radius) split into 2 to 4 lumps
 SHEET_TUFTS = []     # r4: world positions of the lawn's tuft clumps (for objects.json)
 BUSY = ctx.BIOME.get('lawn', {}).get('busy', 0.8)      # lawn mottle share in the busy half
 FINE = ctx.BIOME.get('lawn', {}).get('fine', 0.7)
@@ -247,7 +251,23 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
         return
     area = len(ys) / (D * D)
     # pits: a dark pair over a lit pixel, on the body and the lit side
-    for _ in range(int(area / 34)):
+    Y_, X_ = np.mgrid[0:H, 0:W]
+    # r7: secondary bulges: soft blobs a tone up on the lit side, a tone down in the shade, so
+    # no single tone covers a big field
+    for _ in range(int(area / STONE_TEX['bulge'])):
+        k = int(rng.integers(0, len(ys)))
+        y, x = ys[k], xs[k]
+        rb = rng.uniform(1.2, 2.6) * D
+        bb = ((Y_ - y) ** 2 + (X_ - x) ** 2 <= rb * rb) & m
+        dt = 1 if lam[y, x] > 0.6 else (-1 if lam[y, x] > STONE['shade'] + 0.1 else 1)   # deep shade: reflected light
+        sel = bb & (code // 8 == f)
+        code[sel] = f * 8 + np.clip(code[sel] % 8 + dt, 1, 5)
+        edge_b = bb & ~ndi.binary_erosion(bb) & (code // 8 == f)
+        if dt > 0:
+            lo = edge_b & (Y_ > y + rb * 0.4)
+            code[lo] = f * 8 + np.clip(code[lo] % 8 - 1, 1, 5)
+    # pits: a dark pair over a lit pixel, on the body and the lit side
+    for _ in range(int(area / STONE_TEX['pit'])):
         k = int(rng.integers(0, len(ys)))
         y, x = ys[k], xs[k]
         if t[y, x] < 2:
@@ -259,7 +279,7 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
     # chips: a small lit cluster near the lit rim
     rim_lit = m & (lam > 0.7) & ~ndi.binary_erosion(m, iterations=max(2, int(2.5 * D)))
     cy_, cx_ = np.nonzero(rim_lit)
-    for _ in range(int(area / 90) + 1 if len(cy_) else 0):
+    for _ in range(int(area / STONE_TEX['chip']) + 1 if len(cy_) else 0):
         k = int(rng.integers(0, len(cy_)))
         y, x = cy_[k], cx_[k]
         for (dy, dx) in ((0, 0), (0, 1), (1, 0)):
@@ -267,7 +287,7 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
             if 0 <= Y < H and 0 <= X < W and m[Y, X]:
                 code[Y, X] = f * 8 + min(5, t[Y, X] + 1)
     # lichen on the lit top, moss in the shade: small clumps
-    for _ in range(int(area / 70)):
+    for _ in range(int(area / STONE_TEX['lichen'])):
         k = int(rng.integers(0, len(ys)))
         y, x = ys[k], xs[k]
         lit = lam[y, x] > 0.72
@@ -278,6 +298,57 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
             Y, X = y + dy, x + dx
             if 0 <= Y < H and 0 <= X < W and m[Y, X]:
                 code[Y, X] = C('earth_warm', int(np.clip(t[Y, X], 2, 4))) if lit else C('leaf', 2 if t[Y, X] <= 1 else 3)
+
+
+def split_boulder(code, m, U, V, fam, rr, rx, ry):
+    """r7: a big boulder painted as 2 to 4 lumps: a flatter lit top shelf at the back, lumps in
+    front, dark crevices between them, a lit rim on each lower lump's top, a few chips bitten out
+    of its outline. Returns (crevice, lit rim) masks."""
+    H, W = m.shape
+    yy, xx = np.mgrid[0:H, 0:W].astype(float)
+    sub_crev = np.zeros((H, W), bool)
+    sub_rim = np.zeros((H, W), bool)
+    k = 2 + int(min(2, (min(rx, ry) / D - STONE_SPLIT) // 3))
+    cands = [(-0.05, -0.42, 0.62), (-0.40, 0.22, 0.55), (0.42, 0.25, 0.52), (0.05, 0.48, 0.45)]
+    subs = []
+    for j in range(k):
+        ox, oy, rf = cands[j]
+        subs.append((ox + rr.uniform(-0.08, 0.08), oy + rr.uniform(-0.06, 0.06), rf * rr.uniform(0.92, 1.08)))
+    # ownership: lower lumps stand in front
+    own = np.full((H, W), -1)
+    for j in sorted(range(k), key=lambda j_: subs[j_][1]):
+        ox, oy, rf = subs[j]
+        uu = (U - ox) / rf
+        vv = (V - oy) / (rf * 0.9)
+        mj = m & (uu * uu + vv * vv <= 1.15)
+        own[mj] = j
+    miss = m & (own < 0)
+    if miss.any():
+        dd = np.stack([((U - o) / r_) ** 2 + ((V - p) / r_) ** 2 for (o, p, r_) in subs])
+        own[miss] = np.argmin(dd[:, miss], 0)
+    for j in range(k):
+        ox, oy, rf = subs[j]
+        mj = own == j
+        uu = np.clip((U - ox) / rf, -1, 1)
+        vv = np.clip((V - oy) / (rf * 0.9), -1, 1)
+        if j == 0:
+            vv = vv * 0.6 - 0.25                      # the top shelf: flatter, facing up
+        stone_paint(code, mj, uu, vv, fam, rr, big=True, glint=(j == 0))
+    upj, lfj = np.roll(own, 1, 0), np.roll(own, 1, 1)
+    sc = m & (own >= 0) & (((upj != own) & (upj >= 0) & (np.roll(m, 1, 0))) | ((lfj != own) & (lfj >= 0) & np.roll(m, 1, 1)))
+    sub_crev |= sc
+    rimj = np.zeros_like(sc)
+    rimj[1:] = sc[:-1]
+    sub_rim |= rimj & m & ~sc
+    # a chipped outline: a few small bites into the boulder's rim, in crevice dark
+    edge = m & ~ndi.binary_erosion(m)
+    ey, ex = np.nonzero(edge)
+    for _ in range(int(rr.integers(3, 5))):
+        q = int(rr.integers(0, len(ey)))
+        rb = rr.uniform(0.8, 1.8) * D
+        bite = ((yy - ey[q]) ** 2 + (xx - ex[q]) ** 2 <= rb * rb) & m
+        sub_crev |= bite & ~ndi.binary_erosion(m, iterations=max(1, int(2 * D)))
+    return sub_crev, sub_rim
 
 
 def face_sheet_px(W, H, seed, rmin, rmax):
@@ -309,12 +380,20 @@ def face_sheet_px(W, H, seed, rmin, rmax):
     fams = ['crag', 'crag_warm', 'crag_cool']
     code = np.full((H, W), C('crag', 0))
     rr = np.random.default_rng(seed + 31)
+    sub_crev = np.zeros((H, W), bool)
+    sub_rim = np.zeros((H, W), bool)
     for i in range(n):
         m = bid == i
         if not m.any():
             continue
         fam = fams[int(bs[i][4] * 3) % 3]
-        stone_paint(code, m, U, V, fam, rr, big=min(bs[i][2], bs[i][3]) > 8 * D)
+        bx, by, rx, ry, a_ = bs[i]
+        if min(rx, ry) <= STONE_SPLIT * D:
+            stone_paint(code, m, U, V, fam, rr, big=min(rx, ry) > 8 * D)
+            continue
+        sc, rim = split_boulder(code, m, U, V, fam, rr, rx, ry)
+        sub_crev |= sc
+        sub_rim |= rim
     up, left = np.roll(bid, 1, 0), np.roll(bid, 1, 1)
     down, right = np.roll(bid, -1, 0), np.roll(bid, -1, 1)
     crev = (bid >= 0) & ((bid != up) | (bid != left))
@@ -324,6 +403,10 @@ def face_sheet_px(W, H, seed, rmin, rmax):
     under2 = np.roll(under, -1, 0) & (bid >= 0) & ~crev & ~under & (bid == np.roll(bid, -1, 0))
     code[under2] = np.where(code[under2] % 8 > 2, code[under2] - 1, code[under2])
     code[crev] = C('crag', 0)
+    code[sub_crev & ~crev] = C('crag', 0)
+    lit_rim = sub_rim & ~crev & ~sub_crev
+    code[lit_rim] = np.where(code[lit_rim] % 8 < 5, code[lit_rim] + 1, code[lit_rim])   # a lit rim on each lower lump's top
+    crev = crev | sub_crev
     # r6: a little moss on some boulders' crowns, in soft clumps (never single green dots)
     for i in range(n):
         if rr.random() > STONE_MOSS:

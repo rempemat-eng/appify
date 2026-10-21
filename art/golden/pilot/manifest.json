@@ -10,10 +10,10 @@
     600,
     1312
    ],
-   "inputs": "a689da9c92ba2f37c63a7c2633c980f748b1d74dfdefc6dafbeb72fae3f5fd9b",
+   "inputs": "60aa381e2aee16753347bf08eb11f1e16ed0e95014eeb8f8a152b4085c5e7b04",
    "lawn": {
-    "edge_share": 0.2261,
-    "lone_px": 0.0056
+    "edge_share": 0.2238,
+    "lone_px": 0.0055
    }
   }
  }
