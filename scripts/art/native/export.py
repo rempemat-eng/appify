@@ -50,9 +50,10 @@ class NativeCanvas(Canvas):
         self.hi.resize(size, Image.NEAREST).save(path, optimize=True)
 
 
-# the facings the perfected design draws today; N and a drawn W (SB-03) are the rig's next step
-FACINGS = ('S', 'E')
-FOLK = {'bramble': chars.bramble, 'mossling': chars.mossling}
+# the facings the perfected design draws today: W is the design's flipped placeholder until the
+# rig draws it (SB-03), and N is not drawn yet (the walker shows S for it)
+FACINGS = ('S', 'E', 'W')
+FOLK = {'bramble': (chars.bramble, chars.PAD), 'mossling': (chars.mossling, 3)}
 
 
 def characters(out_dir: str, density: float = 2.0) -> dict:
@@ -62,7 +63,7 @@ def characters(out_dir: str, density: float = 2.0) -> dict:
     os.makedirs(out_dir, exist_ok=True)
     meta = {}
     per = int(4 / density)
-    for name, fn in FOLK.items():
+    for name, (fn, pad) in FOLK.items():
         rows = [(f, a) for f in FACINGS for a in TIMING]
         cols = max(TIMING[a]['frames'] for a in TIMING)
         probe = fn(density, 'idle', 'S', 0)
@@ -74,8 +75,9 @@ def characters(out_dir: str, density: float = 2.0) -> dict:
         assert max(sheet.width, sheet.height) * per <= MAX_SIDE
         sheet.resize((sheet.width * per, sheet.height * per), Image.NEAREST).save(
             os.path.join(out_dir, f'{name}.png'), optimize=True)
-        meta[name] = dict(frame=[fw / density, fh / density], rows=[f'{f}_{a}' for f, a in rows],
-                          timing=TIMING, density=density)
+        foot = (fw / 2, fh - max(1, int(round(pad * density / 2))))
+        meta[name] = dict(frame=[fw / density, fh / density], foot=[foot[0] / density, foot[1] / density],
+                          rows=[f'{f}_{a}' for f, a in rows], timing=TIMING, density=density)
     with open(os.path.join(out_dir, 'meta.json'), 'w') as fh_:
         json.dump(meta, fh_, indent=1)
     return meta

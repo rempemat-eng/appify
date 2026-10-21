@@ -1,182 +1,230 @@
 {
-  "about": "The woodland biome: palette families per material, the plant set and the numbers the native library draws it with (scripts/art/native). A second biome is a copy of this file with its own families, plants and numbers, plus any piece it lacks. Every family is a house ramp (art/house-palette.json).",
-  "density": 2,
-  "cliff_core_biome": "woodland",
-  "ground": {
-    "floor": "moss",
-    "floor_tone": 3,
-    "damp": {
-      "family": "moss_cool",
-      "tone": 2,
-      "share": 0.12
-    },
-    "litter": {
-      "families": ["earth_warm", "timber_warm", "brass_cool"],
-      "tone": 3,
-      "rate": 0.01,
-      "near_trees": 22
-    },
-    "sun": {
-      "family": "moss_warm",
-      "tone": 4,
-      "fade_texels": 4
-    },
-    "canopy_shade": {
-      "steps": 1,
-      "fade_texels": 6
-    },
-    "lone_max": 0.02
+ "_about": "The woodland biome (the valley woodland at density 2): the meadow's lawn, sheets and shadow rule, and a recipe per object kind (which kit painter draws it, from which 1x master in art/masters/). 'palette' is every colour the woodland may use as [family, tone] codes or 'ink'; a finished picture is restricted to it. Replaces the first screen's draft (its moss and fox accents were never folded into the palette).",
+ "id": "woodland",
+ "kit": "woodland@1",
+ "families": ["berry", "brass", "brass_warm", "clay", "crag", "earth", "earth_warm", "grass", "grass_cool", "grass_warm", "iron", "leaf", "leaf_warm", "path", "path_cool", "path_warm", "plaster", "plaster_warm", "sand", "snow", "stone", "stone_cool", "stone_warm", "timber", "timber_cool", "timber_warm", "water", "water_cool"],
+ "palette": [
+  ["berry", 1],
+  ["berry", 2],
+  ["berry", 3],
+  ["berry", 4],
+  ["berry", 6],
+  ["brass", 2],
+  ["brass", 4],
+  ["brass_warm", 4],
+  ["clay", 1],
+  ["clay", 4],
+  ["clay", 5],
+  ["clay", 6],
+  ["crag", 0],
+  ["earth", 0],
+  ["earth", 1],
+  ["earth", 2],
+  ["earth_warm", 1],
+  ["earth_warm", 2],
+  ["earth_warm", 3],
+  ["earth_warm", 4],
+  ["grass", 0],
+  ["grass", 1],
+  ["grass", 2],
+  ["grass", 3],
+  ["grass", 4],
+  ["grass", 6],
+  ["grass_cool", 0],
+  ["grass_cool", 1],
+  ["grass_cool", 2],
+  ["grass_cool", 3],
+  ["grass_cool", 4],
+  ["grass_cool", 5],
+  ["grass_warm", 0],
+  ["grass_warm", 1],
+  ["grass_warm", 2],
+  ["grass_warm", 3],
+  ["grass_warm", 4],
+  ["grass_warm", 5],
+  ["iron", 1],
+  ["iron", 2],
+  ["iron", 3],
+  ["iron", 4],
+  ["iron", 5],
+  ["iron", 6],
+  ["leaf", 0],
+  ["leaf", 1],
+  ["leaf", 2],
+  ["leaf", 3],
+  ["leaf", 4],
+  ["leaf", 6],
+  ["leaf_warm", 0],
+  ["leaf_warm", 1],
+  ["leaf_warm", 2],
+  ["leaf_warm", 3],
+  ["leaf_warm", 4],
+  ["leaf_warm", 5],
+  ["path", 0],
+  ["path", 1],
+  ["path", 2],
+  ["path", 3],
+  ["path", 4],
+  ["path_cool", 0],
+  ["path_cool", 1],
+  ["path_cool", 2],
+  ["path_cool", 3],
+  ["path_cool", 4],
+  ["path_warm", 0],
+  ["path_warm", 1],
+  ["path_warm", 2],
+  ["path_warm", 3],
+  ["path_warm", 4],
+  ["plaster", 1],
+  ["plaster", 2],
+  ["plaster", 3],
+  ["plaster", 4],
+  ["plaster", 5],
+  ["plaster", 6],
+  ["plaster_warm", 1],
+  ["plaster_warm", 2],
+  ["plaster_warm", 3],
+  ["plaster_warm", 4],
+  ["sand", 5],
+  ["snow", 1],
+  ["snow", 2],
+  ["snow", 4],
+  ["snow", 5],
+  ["stone", 0],
+  ["stone", 1],
+  ["stone", 2],
+  ["stone", 3],
+  ["stone", 4],
+  ["stone", 5],
+  ["stone_cool", 0],
+  ["stone_cool", 1],
+  ["stone_cool", 2],
+  ["stone_cool", 3],
+  ["stone_cool", 4],
+  ["stone_cool", 5],
+  ["stone_warm", 0],
+  ["stone_warm", 1],
+  ["stone_warm", 2],
+  ["stone_warm", 3],
+  ["stone_warm", 4],
+  ["stone_warm", 5],
+  ["timber", 1],
+  ["timber", 2],
+  ["timber", 3],
+  ["timber", 4],
+  ["timber", 5],
+  ["timber", 6],
+  ["timber_cool", 0],
+  ["timber_cool", 2],
+  ["timber_cool", 3],
+  ["timber_cool", 4],
+  ["timber_cool", 5],
+  ["timber_warm", 1],
+  ["timber_warm", 2],
+  ["timber_warm", 3],
+  ["timber_warm", 4],
+  ["timber_warm", 5],
+  ["water", 0],
+  ["water", 1],
+  ["water", 2],
+  ["water", 3],
+  ["water", 4],
+  ["water", 5],
+  ["water_cool", 1]
+ ],
+ "recipes": {
+  "oak": {
+   "paint": "tree",
+   "master": "zones_props_oak.png"
   },
-  "flora": {
-    "oak": {
-      "body": "leaf",
-      "warm": "leaf_warm",
-      "cool": "leaf_cool"
-    },
-    "beech": {
-      "body": "leaf_warm",
-      "warm": "grass_warm",
-      "cool": "leaf"
-    },
-    "birch": {
-      "body": "grass",
-      "warm": "grass_warm",
-      "cool": "leaf_warm"
-    },
-    "sapling": {
-      "body": "grass",
-      "warm": "leaf_warm",
-      "cool": "grass_cool"
-    },
-    "pine": {
-      "body": "leaf_cool",
-      "warm": "leaf",
-      "cool": "leaf_cool",
-      "rim": "leaf_warm"
-    },
-    "bush": {
-      "body": "leaf",
-      "warm": "moss_warm",
-      "cool": "leaf_cool"
-    },
-    "holly": {
-      "body": "leaf_cool",
-      "warm": "leaf",
-      "cool": "leaf_cool",
-      "fruit": "berry"
-    },
-    "bramble": {
-      "body": "leaf",
-      "warm": "leaf_warm",
-      "cool": "moss_cool",
-      "fruit": "dusk"
-    },
-    "fern": {
-      "body": "leaf_warm",
-      "warm": "moss_warm",
-      "cool": "leaf"
-    },
-    "tuft": "moss",
-    "toadstool": "berry",
-    "trunk_oak": "timber_cool",
-    "trunk_beech": "stone_cool",
-    "trunk_birch": "plaster_cool",
-    "trunk_pine": "timber",
-    "flowers": {
-      "white": "plaster",
-      "yellow": "brass",
-      "violet": "dusk",
-      "red": "berry",
-      "blue": "sky"
-    }
+  "beech": {
+   "paint": "tree",
+   "master": "zones_props_beech.png"
   },
-  "materials": {
-    "stone": "stone",
-    "seat_stone": "stone_warm",
-    "wood": "timber",
-    "wood_cut": "plaster_warm",
-    "iron": "iron",
-    "glass_day": "slate",
-    "glass_lit": "lamp",
-    "earth": "earth",
-    "path": "path"
+  "pine": {
+   "paint": "tree",
+   "master": "zones_props_pine.png"
   },
-  "shadow": {
-    "kx": 0.6,
-    "ky": 0.12,
-    "core_steps": 2,
-    "rim_steps": 1,
-    "rim_world": 2,
-    "night_steps": 1,
-    "contact_tone": 1
+  "willow": {
+   "paint": "tree",
+   "master": "zones_props_willow.png"
   },
-  "rhythm": {
-    "tree_spacing_world": 18,
-    "clump_size": [3, 7],
-    "dressing_cluster": [2, 4],
-    "edge_dressing_every_world": 32
+  "hollow_tree": {
+   "paint": "tree",
+   "master": "zones_props_hollow_tree.png"
   },
-  "animation": {
-    "water": {
-      "frames": 8,
-      "ms": 150,
-      "grid_cols": 2,
-      "drift_texels_per_frame": 4
-    },
-    "fall": {
-      "frames": 8,
-      "ms": 150
-    },
-    "lantern": {
-      "frames": 4,
-      "ms": [400, 300, 500, 300]
-    }
+  "birch": {
+   "paint": "foliage",
+   "master": "zones_props_birch.png"
   },
-  "style": {
-    "_about": "How things are drawn (not what): the numbers the painters read, so a style verdict is a change here, not in code.",
-    "crown": {
-      "leaf_units": 2.4,
-      "clump_factor": 1.7,
-      "bump_units": 7.0,
-      "row_step": 1.45,
-      "col_step": 2.05,
-      "lit_cap_above": 0.35,
-      "deep_skip": -0.8,
-      "deep_thin": -0.4,
-      "shade_clump_below": -0.4,
-      "mass_k": 0.85,
-      "rim_family": "grass",
-      "sibling_swap": 0.4
-    },
-    "pine": {
-      "tiers": 7,
-      "needle_rate": 0.45,
-      "tip_droop_units": 2.6
-    },
-    "tuft": {
-      "blades": [4, 7],
-      "height_units": [9, 14],
-      "spread_units": 5.0,
-      "lean_units": 8.0
-    },
-    "dressing": {
-      "every_world": 26,
-      "skip": 0.25,
-      "flowers": 0.18,
-      "pebbles": 0.14,
-      "tufts": [2, 4],
-      "rim_every_world": 22,
-      "foot_every_world": 18,
-      "wood_edge": 0.6
-    },
-    "rock": {
-      "east_turn_world": 6,
-      "west_catch_world": 2,
-      "ao_world": 3
-    },
-    "litter": {
-      "rate": 0.01,
-      "radius_world": 22
-    }
+  "holly": {
+   "paint": "foliage",
+   "master": "zones_props_holly.png"
+  },
+  "sapling": {
+   "paint": "foliage",
+   "master": "zones_props_sapling.png"
+  },
+  "bramble": {
+   "paint": "foliage",
+   "master": "zones_props_bramble.png"
+  },
+  "bush": {
+   "paint": "foliage",
+   "master": "zones_props_bush.png"
+  },
+  "standing_stone": {
+   "paint": "boulder",
+   "size": [16, 29],
+   "fam": "stone"
+  },
+  "standing_stone_b": {
+   "paint": "boulder",
+   "size": [17, 29],
+   "fam": "stone"
+  },
+  "standing_stone_low": {
+   "paint": "boulder",
+   "size": [15, 21],
+   "fam": "stone"
+  },
+  "stump": {
+   "paint": "stump"
+  },
+  "mossy_log": {
+   "paint": "log",
+   "length": 54
+  },
+  "forest_bench": {
+   "paint": "bench"
+  },
+  "_about": "tree: the crown painted from the master with leaf stamps (foliage.py) on the kit's trunk (props.oak4); foliage: the whole master painted (a bush, or a thin-stemmed tree whose bark the trunk painter does not draw); boulder, stump, log, bench: the props painters"
+ },
+ "lawn": {
+  "busy": 0.8,
+  "fine": 0.7,
+  "tuft_spacing": 6.8,
+  "_about": "the 2x lawn: about half the field near flat, the mottle and tuft clumps gather in the other half (MEASURE.md bands)",
+  "measure": {
+   "edge_share": [0.2, 0.24],
+   "lone_px_max": 0.02,
+   "_about": "MEASURE.md (in this folder): the edge share over the lawn mask at 2x (Claude A, 21 Oct: Matt asked for more grass, the 1.5x amount, so the band moved from 0.17-0.21 to 0.20-0.24); lone px under the house ceiling"
   }
+ },
+ "sheets": {
+  "grass": 3,
+  "hgrass": 4,
+  "hgrass_density": 1.1,
+  "path": 11,
+  "trail": 12,
+  "snow": 5,
+  "face": 7,
+  "_about": "seeds of the canvas-sized fields and the face sheet the tiles are cut from"
+ },
+ "shadow": {
+  "project": [0.46, 0.22],
+  "_about": "every cast shadow: the silhouette thrown east and down by (kx, ky) of its height in world units, two ramp tones down with a one-tone rim, a dappled rim under crowns, a contact line under every foot",
+  "dapple_band": 3.2,
+  "dapple_seed": 907
+ }
 }

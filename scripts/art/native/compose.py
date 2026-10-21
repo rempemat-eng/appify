@@ -360,10 +360,24 @@ def build(d: float, frame: int = 1):
         at = (w['foot'][0] * d, w['foot'][1] * d)
         things.append((w['foot'][1], fr, anc, at))
         ovals.append(foot_shadow(fr, anc, W, H, at, d))
+    cast_shadows(G, shadows + small_sh + ovals, tshadows, things, d)
+    img = G.rgba()
+    things.sort(key=lambda t: t[0])
+    for (_, im, an, at_) in things:
+        paste(img, im, an, at_)
+    return img
+
+
+def cast_shadows(G, casts, tshadows, things, d):
+    """The one shadow rule, on a ground canvas in codes: every cast (a mask) solid, two tones
+    under the ground's own body tone with a one-tone rim (1 world px); a crown's shadow
+    (tshadows) with a dappled rim; a contact line (tone 1) under every thing's foot. Only
+    walkable ground takes them (not rock faces or water)."""
     # shadows: solid, two tones under the ground's own body tone, a one-tone rim (1 world px)
+    H, W = G.h, G.w
     ground_px = walkable_ground(G)
     core = np.zeros((H, W), bool)
-    for m in shadows + small_sh + ovals:
+    for m in casts:
         core |= m
     rim_w = max(1, int(round(d)))
     inner = ndi.binary_erosion(core, iterations=rim_w)
@@ -405,11 +419,6 @@ def build(d: float, frame: int = 1):
         if id(im) not in NOCONTACT:
             cm |= _contact(im, an, at_, W, H, d)
     G.tone[cm & ground_px] = np.minimum(G.tone[cm & ground_px], 1)
-    img = G.rgba()
-    things.sort(key=lambda t: t[0])
-    for (_, im, an, at_) in things:
-        paste(img, im, an, at_)
-    return img
 
 
 # ------------------------------------------------------------------------------------------------

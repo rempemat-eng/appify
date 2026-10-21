@@ -1,0 +1,84 @@
+{
+ "bramble": {
+  "frame": [
+   32.0,
+   30.0
+  ],
+  "foot": [
+   16.0,
+   28.0
+  ],
+  "rows": [
+   "S_idle",
+   "S_walk",
+   "E_idle",
+   "E_walk",
+   "W_idle",
+   "W_walk"
+  ],
+  "timing": {
+   "idle": {
+    "frames": 4,
+    "ms": [
+     420,
+     260,
+     420,
+     260
+    ]
+   },
+   "walk": {
+    "frames": 6,
+    "ms": [
+     110,
+     110,
+     110,
+     110,
+     110,
+     110
+    ]
+   }
+  },
+  "density": 2.0
+ },
+ "mossling": {
+  "frame": [
+   18.0,
+   17.0
+  ],
+  "foot": [
+   9.0,
+   15.5
+  ],
+  "rows": [
+   "S_idle",
+   "S_walk",
+   "E_idle",
+   "E_walk",
+   "W_idle",
+   "W_walk"
+  ],
+  "timing": {
+   "idle": {
+    "frames": 4,
+    "ms": [
+     420,
+     260,
+     420,
+     260
+    ]
+   },
+   "walk": {
+    "frames": 6,
+    "ms": [
+     110,
+     110,
+     110,
+     110,
+     110,
+     110
+    ]
+   }
+  },
+  "density": 2.0
+ }
+}

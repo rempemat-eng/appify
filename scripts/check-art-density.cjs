@@ -35,6 +35,7 @@ const { ART_DENSITIES, measureDensity } = load('lib/art-density.ts');
 /** Export scale (image px per world px) by picture: the generators' own constants. */
 function exportScale(file) {
   if (/^assets\/zones\/[^/]+\/flow\.png$/.test(file)) return 1; // zones.py: native, pixelated
+  if (/^assets\/zones\/[^/]+\/2x\/flow\.png$/.test(file)) return 2; // native_zones.py: a texel each
   if (/^assets\/world\/[^/]+\/f_/.test(file)) return 1; // world_canvas.py: moving water at 1x
   if (file.startsWith('assets/world/')) return 2; // WORLD_TILE.scale
   if (file.startsWith('assets/zones/scenery/')) return 2; // zones.py SCENERY_SCALE
