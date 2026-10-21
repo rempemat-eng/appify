@@ -145,6 +145,8 @@
   ],
   "snow_cells": [],
   "snow_cells_summit": [],
+  "tidy_edges": [[170.0, 120.0, 188.0, 178.0]],
+  "tidy_edges_about": "r8: boxes (canvas world px) where the ledge floor's straight east edge against the face walks 1 to 3 px and thick dark wedges take the rock beside them (the ledge's south-east corner)",
   "deep_lips": [
    {
     "tier": 4,
@@ -228,6 +230,16 @@
    [224.0, 219.6, 2.7, 2.0],
    [176.2, 199.5, 2.2, 1.7],
    [177.4, 205.0, 3.6, 2.6]
+  ],
+  "soften_lips": [[204.0, 104.0, 234.0, 138.0]],
+  "soften_lips_about": "r7: boxes (canvas world px) where a lip's right-angle steps are rounded: the bay's east lip beside the fall",
+  "brook_stones": [34.0, 63.0, 101.0],
+  "brook_stones_about": "r7: stones standing in the brook, as arc lengths along its centre line (world px), each with foam upstream and a dark wake",
+  "bank_runs_about": "r7/r9: bank stones in continuous overlapping runs of 5 to 7 (one large to two small), half under the waterline, a damp earth patch in the gap between two runs: [x0, y0, x1, y1, stones, water side nx, ny, seed] (canvas world px)",
+  "bank_runs": [
+   [222.6, 190.5, 222.0, 204.0, 6, -1, 0, 340],
+   [221.8, 209.5, 221.4, 221.5, 5, -1, 0, 350],
+   [178.0, 196.0, 179.0, 208.5, 6, 1, 0, 360]
   ],
   "stepping_stones": [
    [191.2, 233.8, 3.0, 2.0],

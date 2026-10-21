@@ -56,6 +56,7 @@ try {
     'residents',
     'decor',
     'world_routes',
+    'world_land',
     'cliff_core',
     'kit_golden',
   ]);

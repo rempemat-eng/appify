@@ -11,12 +11,20 @@ import numpy as np
 from scipy import ndimage as ndi
 
 from .. import ctx
-from ..palette import C, FI, step
+from ..palette import C, FI, FAMS as FAMS_, step
 from ..ctx import D, P
 
 # r6 style constants (the 2x kit reads these)
-STONE = dict(cap=0.86, body=0.62, shade=0.36)     # r6: stone_paint's tone thresholds on the light
-STONE_MOSS = 0.16      # r6: share of face boulders with a moss crown
+_SS = ctx.BIOME.get('style', {}).get('stone', {})
+STONE = dict(_SS.get('ramp', dict(cap=0.86, body=0.62, shade=0.36)))     # r6: stone_paint's tone thresholds on the light
+STONE_MOSS = _SS.get('moss', 0.16)      # r6: share of face boulders with a moss crown
+SHEET_TUFTS = []     # r4: world positions of the lawn's tuft clumps (for objects.json)
+FAMSIB = {'crag': 'crag_cool', 'crag_cool': 'crag', 'crag_warm': 'crag', 'stone': 'stone_cool',
+          'stone_cool': 'stone', 'stone_warm': 'stone'}   # r8: a stone's sibling hue for its shade
+STONE_TEX = dict(_SS.get('texture', dict(bulge=22, pit=14, chip=36, lichen=45)))    # r7: world px² of stone per texture mark
+STONE_MOTTLE = _SS.get('mottle', 0.35)      # r9: share of shade and body under a sibling-hue mottle
+JOINT_W = int(_SS.get('joint_px', 2))       # r9: art px of the joint between two whole boulders
+STONE_SPLIT = _SS.get('split', 6.0)      # r8: boulders wider than this (world px radius) may split into overlapping lumps
 SHEET_TUFTS = []     # r4: world positions of the lawn's tuft clumps (for objects.json)
 BUSY = ctx.BIOME.get('lawn', {}).get('busy', 0.8)      # lawn mottle share in the busy half
 FINE = ctx.BIOME.get('lawn', {}).get('fine', 0.7)
@@ -247,7 +255,38 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
         return
     area = len(ys) / (D * D)
     # pits: a dark pair over a lit pixel, on the body and the lit side
-    for _ in range(int(area / 34)):
+    Y_, X_ = np.mgrid[0:H, 0:W]
+    # r7: secondary bulges: soft blobs a tone up on the lit side, a tone down in the shade, so
+    # no single tone covers a big field
+    for _ in range(int(area / STONE_TEX['bulge'])):
+        k = int(rng.integers(0, len(ys)))
+        y, x = ys[k], xs[k]
+        rb = rng.uniform(1.2, 2.6) * D
+        bb = ((Y_ - y) ** 2 + (X_ - x) ** 2 <= rb * rb) & m
+        sel = bb & (code // 8 == f)
+        if lam[y, x] <= STONE['shade'] + 0.1:
+            # r8: in the deep shade a bulge is a sibling hue at the same tone (variety without
+            # lightening the shaded side, which read as light from the east)
+            sib_ = FAMSIB.get(FAMS_[f], FAMS_[f])
+            code[sel] = FI[sib_] * 8 + code[sel] % 8
+            continue
+        dt = 1 if lam[y, x] > 0.6 else -1
+        code[sel] = f * 8 + np.clip(code[sel] % 8 + dt, 1, 5)
+        edge_b = bb & ~ndi.binary_erosion(bb) & (code // 8 == f)
+        if dt > 0:
+            lo = edge_b & (Y_ > y + rb * 0.4)
+            code[lo] = f * 8 + np.clip(code[lo] % 8 - 1, 1, 5)
+    # r9: soft mottles of the sibling hue over the shade and the body (no new lines, no new
+    # tones), so no one colour covers a big field
+    if STONE_MOTTLE > 0:
+        mot = ndi.gaussian_filter(rng.random((H, W)), 1.3 * D)
+        sel_ = m & (code // 8 == f) & np.isin(code % 8, (1, 2, 3))
+        if sel_.any():
+            q_ = np.quantile(mot[sel_], 1 - STONE_MOTTLE)
+            sw = sel_ & (mot > q_)
+            code[sw] = FI[FAMSIB.get(FAMS_[f], FAMS_[f])] * 8 + code[sw] % 8
+    # pits: a dark pair over a lit pixel, on the body and the lit side
+    for _ in range(int(area / STONE_TEX['pit'])):
         k = int(rng.integers(0, len(ys)))
         y, x = ys[k], xs[k]
         if t[y, x] < 2:
@@ -259,7 +298,7 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
     # chips: a small lit cluster near the lit rim
     rim_lit = m & (lam > 0.7) & ~ndi.binary_erosion(m, iterations=max(2, int(2.5 * D)))
     cy_, cx_ = np.nonzero(rim_lit)
-    for _ in range(int(area / 90) + 1 if len(cy_) else 0):
+    for _ in range(int(area / STONE_TEX['chip']) + 1 if len(cy_) else 0):
         k = int(rng.integers(0, len(cy_)))
         y, x = cy_[k], cx_[k]
         for (dy, dx) in ((0, 0), (0, 1), (1, 0)):
@@ -267,7 +306,7 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
             if 0 <= Y < H and 0 <= X < W and m[Y, X]:
                 code[Y, X] = f * 8 + min(5, t[Y, X] + 1)
     # lichen on the lit top, moss in the shade: small clumps
-    for _ in range(int(area / 70)):
+    for _ in range(int(area / STONE_TEX['lichen'])):
         k = int(rng.integers(0, len(ys)))
         y, x = ys[k], xs[k]
         lit = lam[y, x] > 0.72
@@ -278,6 +317,65 @@ def stone_paint(code, m, U, V, fam, rng, big=True, glint=True):
             Y, X = y + dy, x + dx
             if 0 <= Y < H and 0 <= X < W and m[Y, X]:
                 code[Y, X] = C('earth_warm', int(np.clip(t[Y, X], 2, 4))) if lit else C('leaf', 2 if t[Y, X] <= 1 else 3)
+
+
+def split_boulder(code, m, U, V, fam, rr, rx, ry, k=2, theta=0.0):
+    """r8: a big boulder painted as k (2 or 3) overlapping lumps along an axis at angle theta:
+    each lump its own rounded mass (a wobbled ellipse, shaded by stone_paint), the lower lump in
+    front. Where a front lump overlaps the one behind, the gap is a curved crevice 1 to 3 px
+    wide following the front lump's outline (tone 0 at its core, a tone-1 shade beyond it), and
+    the front lump's top edge is lit. Returns (crevice core, crevice shade, lit rim) masks."""
+    H, W = m.shape
+    yy, xx = np.mgrid[0:H, 0:W].astype(float)
+    au, av = np.cos(theta), np.sin(theta) * 0.7
+    if k == 2:
+        offs, rfs = [-0.36, 0.38], [0.68, 0.60]
+    else:
+        offs, rfs = [-0.52, 0.04, 0.56], [0.56, 0.52, 0.48]
+    subs = []
+    for j in range(k):
+        subs.append((offs[j] * au + rr.uniform(-0.05, 0.05),
+                     offs[j] * av + rr.uniform(-0.05, 0.05) + (-0.14 if j == 0 else 0.06 * j),
+                     rfs[j] * rr.uniform(0.94, 1.06), rr.random() * 6.28))
+    order = sorted(range(k), key=lambda j_: subs[j_][1])       # back (higher) first
+    own = np.full((H, W), -1)
+    masks = {}
+    for j in order:
+        ox, oy, rf, ph = subs[j]
+        uu, vv = (U - ox) / rf, (V - oy) / (rf * 0.9)
+        th = np.arctan2(vv, uu)
+        wob = 1.0 + 0.025 * np.sin(2 * th + ph)              # r9: near-convex (S-shaped gaps read as pillows)
+        mj = m & (uu * uu + vv * vv <= (1.08 * wob) ** 2)
+        own[mj] = j
+        masks[j] = mj
+    miss = m & (own < 0)
+    if miss.any():
+        dd = np.stack([((U - o) / r_) ** 2 + ((V - p) / r_) ** 2 for (o, p, r_, _) in subs])
+        own[miss] = np.argmin(dd[:, miss], 0)
+    for j in range(k):
+        ox, oy, rf, _ = subs[j]
+        mj = own == j
+        uu, vv = (U - ox) / rf, (V - oy) / (rf * 0.9)
+        r_ = np.sqrt(uu * uu + vv * vv)
+        s_ = np.where(r_ > 0.98, 0.98 / np.maximum(r_, 1e-6), 1.0)     # round, not clipped square
+        stone_paint(code, mj, uu * s_, vv * s_, fam, rr, big=True, glint=(j == order[0]))
+    core = np.zeros((H, W), bool)
+    shade = np.zeros((H, W), bool)
+    rim = np.zeros((H, W), bool)
+    nz = ndi.gaussian_filter(rr.random((H, W)), 1.4 * D)
+    nz = (nz - nz.min()) / (np.ptp(nz) + 1e-6)
+    wv = 1.4 + 1.6 * nz                                              # 1.4 to 3 px, varying along the gap
+    for pos, j in enumerate(order[1:], 1):
+        front = own == j
+        behind = m & np.isin(own, order[:pos])
+        if not front.any() or not behind.any():
+            continue
+        dt = ndi.distance_transform_edt(~front)
+        core |= behind & (dt <= wv * 0.7)
+        shade |= behind & (dt > wv * 0.7) & (dt <= wv + 1.0)
+        P_ = np.pad(behind, 1)
+        rim |= front & (P_[:-2, 1:-1] | P_[1:-1, :-2]) & ~ndi.binary_erosion(front)
+    return core, shade, rim & ~core
 
 
 def face_sheet_px(W, H, seed, rmin, rmax):
@@ -309,21 +407,65 @@ def face_sheet_px(W, H, seed, rmin, rmax):
     fams = ['crag', 'crag_warm', 'crag_cool']
     code = np.full((H, W), C('crag', 0))
     rr = np.random.default_rng(seed + 31)
+    sub_crev = np.zeros((H, W), bool)
+    sub_rim = np.zeros((H, W), bool)
+    sub_shade = np.zeros((H, W), bool)
     for i in range(n):
         m = bid == i
         if not m.any():
             continue
         fam = fams[int(bs[i][4] * 3) % 3]
-        stone_paint(code, m, U, V, fam, rr, big=min(bs[i][2], bs[i][3]) > 8 * D)
+        bx, by, rx, ry, a_ = bs[i]
+        # r8: only the larger boulders split (2 lumps, 3 for the largest), about a third stay
+        # whole, and the split axis turns by the golden angle from boulder to boulder
+        rw = min(rx, ry) / D
+        hq = ((i * 2654435761) >> 7) % 3
+        if rw <= STONE_SPLIT or (rw <= STONE_SPLIT + 3 and hq == 0) or hq == 1 and rw <= STONE_SPLIT + 6:
+            stone_paint(code, m, U, V, fam, rr, big=min(rx, ry) > 8 * D)
+            continue
+        kk = 3 if rw > STONE_SPLIT + 6 else 2
+        sc, shd, rim = split_boulder(code, m, U, V, fam, rr, rx, ry, k=kk, theta=(i * 2.39996) % np.pi)
+        sub_crev |= sc
+        sub_shade |= shd
+        sub_rim |= rim
     up, left = np.roll(bid, 1, 0), np.roll(bid, 1, 1)
     down, right = np.roll(bid, -1, 0), np.roll(bid, -1, 1)
     crev = (bid >= 0) & ((bid != up) | (bid != left))
+    if JOINT_W > 1:
+        # r9: the joint between two whole boulders lies on the boulder behind, 2 px wide with a
+        # tone-1 shade beyond it; about a third of the pairs simply overlap (shade only, no line)
+        rank = np.zeros(n + 1, int)
+        for r_, i_ in enumerate(order):
+            rank[i_] = r_ + 1
+        rk = np.where(bid >= 0, rank[np.maximum(bid, 0)], 0)
+        dmin = np.full((H, W), 99)
+        pair = np.full((H, W), -1)
+        for k_ in range(1, JOINT_W + 2):
+            for ax_, sg in ((0, 1), (0, -1), (1, 1), (1, -1)):
+                nb_ = np.roll(bid, sg * k_, ax_)
+                nr_ = np.roll(rk, sg * k_, ax_)
+                hit = (bid >= 0) & (nb_ >= 0) & (nb_ != bid) & (nr_ > rk) & (dmin == 99)
+                dmin[hit] = k_
+                pair[hit] = (np.minimum(bid, nb_) * 131 + np.maximum(bid, nb_))[hit]
+        overlap_only = (((pair * 2654435761) >> 9) % 3 == 0) & (pair >= 0)
+        jcore = (dmin <= JOINT_W) & ~overlap_only
+        jshade = (dmin == JOINT_W + 1) | ((dmin <= JOINT_W) & overlap_only)
+        crev = ((bid >= 0) & ((up < 0) | (left < 0))) | jcore
     under = (bid >= 0) & ((bid != down) | (bid != right)) & ~crev
     code[under] = np.where(code[under] % 8 > 1, code[under] // 8 * 8 + 1, code[under])
     # the underside a second px dark at 2x, so each lump sits on the one below
     under2 = np.roll(under, -1, 0) & (bid >= 0) & ~crev & ~under & (bid == np.roll(bid, -1, 0))
     code[under2] = np.where(code[under2] % 8 > 2, code[under2] - 1, code[under2])
     code[crev] = C('crag', 0)
+    if JOINT_W > 1:
+        js_ = jshade & ~crev
+        code[js_] = np.where(code[js_] % 8 > 1, code[js_] - 1, code[js_])
+    code[sub_crev & ~crev] = C('crag', 0)
+    sh_ = sub_shade & ~crev & ~sub_crev
+    code[sh_] = np.where(code[sh_] % 8 > 1, code[sh_] // 8 * 8 + 1, code[sh_])   # the gap's shade on the lump behind
+    lit_rim = sub_rim & ~crev & ~sub_crev
+    code[lit_rim] = np.where(code[lit_rim] % 8 < 5, code[lit_rim] + 1, code[lit_rim])   # a lit rim on each lower lump's top
+    crev = crev | sub_crev
     # r6: a little moss on some boulders' crowns, in soft clumps (never single green dots)
     for i in range(n):
         if rr.random() > STONE_MOSS:
@@ -331,9 +473,12 @@ def face_sheet_px(W, H, seed, rmin, rmax):
         m = (bid == i) & (V < -0.55) & (np.abs(U) < 0.55) & ~crev
         if m.sum() < 10 * D * D:
             continue
-        nz = ndi.gaussian_filter(rr.random((H, W)), 1.2 * D)
-        q = np.quantile(nz[m], 0.45)
-        mm = m & (nz > q)
+        # r8: a cap that follows the lump's crown (an arc over its top), ragged below, never square
+        nz = ndi.gaussian_filter(rr.random((H, W)), 0.8 * D)
+        nz = (nz - nz[m].mean()) / (nz[m].std() + 1e-6)
+        u0 = rr.uniform(-0.2, 0.15)
+        cap = ((U - u0) / 0.34) ** 2 + ((V + 0.92) / 0.22) ** 2 <= 1.0 + 0.3 * nz
+        mm = m & cap
         mm = ndi.binary_opening(mm, iterations=1)
         code[mm] = np.where(U[mm] + V[mm] < -0.75, C('leaf', 4), C('leaf', 3))
         rim_ = np.zeros_like(mm)

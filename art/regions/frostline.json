@@ -1,9 +1,9 @@
 {
-  "_about": "The Frostline as a plan (Claude F, lane F, 21 Oct): the cirque above the home valley, its step and the massif's front above it, from the brief docs/vision/regions/home-valley-frostline-brackens.md (PR #96, v5.3). World px; polylines in order; polygons closed; tier outlines in SCREEN space (a tier's top where the camera sees it, its south face hanging 32 px a tier below its south rim: 64 px where two tiers drop at once, the lip and the escarpment). 'tier' is local (0 = the ground at the box's south edge, the Col hut's level); 'base_tier' is provisional until the geography chunk (world plan P1). Rock, faces, falls and snow are the cliff core's (PR #165): 'set_pieces' places its library's pieces as {piece, biome, at, seed} (the shape of Codex's C36 placement file); the piece names are provisional until the library lands and are renamed to it then. Eastward has no ramps (eastward-edges 6.3), so the brief's ramps on the Col Path are stairs on switchbacks. Checked by scripts/art/region_plan.py.",
+  "_about": "The Frostline as a plan (Claude F, lane F, 21 Oct): the cirque above the home valley, its step and the massif's front above it, from the brief docs/vision/regions/home-valley-frostline-brackens.md (PR #96, v5.3). World px; polylines in order; polygons closed; tier outlines in SCREEN space (a tier's top where the camera sees it, its south face hanging 32 px a tier below its south rim: 64 px where two tiers drop at once, the lip and the escarpment). 'tier' is local (0 = the ground at the box's south edge, the Col hut's level); 'base_tier' is provisional until the geography chunk (world plan P1). Rock, faces, falls and snow are the cliff core's (PR #165): 'set_pieces' places its library's pieces as {piece, biome, at, seed} (the shape of Codex's C36 placement file); the pieces are the library's on claude-a/cliff-core (e94813b): stair, ledge, path, spring, pond, snow_corner, boulders, scree, ivy; two marked proposed are not in it yet. Eastward has no ramps (eastward-edges 6.3), so the brief's ramps on the Col Path are stairs on switchbacks. Checked by scripts/art/region_plan.py.",
   "id": "frostline",
   "owner": "claude-f",
   "biome": "highland",
-  "biomes": ["highland", "snow"],
+  "biomes": ["highland"],
   "box": [5680, 1280, 1120, 1024],
   "base_tier": {
     "value": 7,
@@ -19,16 +19,12 @@
         [5680, 1280],
         [6800, 1280],
         [6800, 2216],
-        [6752, 2232],
-        [6688, 2224],
-        [6624, 2240],
-        [6560, 2232],
-        [6496, 2248],
-        [6432, 2240],
-        [6368, 2248],
-        [6320, 2240],
-        [6248, 2240],
-        [6176, 2240],
+        [6752, 2216],
+        [6752, 2224],
+        [6624, 2224],
+        [6624, 2232],
+        [6496, 2232],
+        [6496, 2240],
         [5680, 2240]
       ]
     },
@@ -40,25 +36,17 @@
         [5680, 1280],
         [6800, 1280],
         [6800, 2064],
-        [6736, 2080],
-        [6656, 2072],
-        [6576, 2088],
-        [6496, 2072],
-        [6416, 2080],
-        [6344, 2072],
-        [6336, 2096],
-        [6328, 2168],
+        [6736, 2064],
+        [6736, 2072],
+        [6336, 2072],
+        [6336, 2168],
         [6248, 2168],
-        [6176, 2176],
-        [6160, 2200],
-        [6152, 2240],
+        [6248, 2176],
+        [6160, 2176],
+        [6160, 2240],
         [6096, 2240],
-        [6040, 2232],
-        [5976, 2240],
-        [5904, 2232],
-        [5840, 2240],
-        [5768, 2232],
-        [5680, 2240]
+        [6096, 2232],
+        [5680, 2232]
       ]
     },
     {
@@ -69,9 +57,7 @@
         [6168, 2040],
         [6328, 2040],
         [6328, 2104],
-        [6248, 2104],
-        [6176, 2104],
-        [6168, 2072]
+        [6168, 2104]
       ]
     },
     {
@@ -79,14 +65,14 @@
       "tier": 3,
       "why": "the rock rib between Fir Hollow and the Col Path (gully trail behind it)",
       "outline": [
-        [6064, 2016],
         [6152, 2016],
-        [6160, 2064],
-        [6144, 2112],
-        [6136, 2128],
+        [6152, 2064],
+        [6144, 2064],
+        [6144, 2128],
         [6088, 2128],
-        [6072, 2096],
-        [6056, 2048]
+        [6088, 2096],
+        [6056, 2096],
+        [6056, 2016]
       ],
       "face": "rock"
     },
@@ -98,21 +84,20 @@
         [5680, 1280],
         [6800, 1280],
         [6800, 1952],
-        [6720, 1968],
-        [6640, 1960],
-        [6560, 1976],
-        [6480, 1960],
-        [6400, 1968],
-        [6336, 1976],
+        [6720, 1952],
+        [6720, 1960],
+        [6400, 1960],
+        [6400, 1976],
+        [6328, 1976],
         [6328, 2040],
-        [6168, 2040],
-        [6120, 2008],
-        [6064, 2016],
-        [6000, 2000],
-        [5936, 2008],
-        [5872, 1992],
-        [5800, 2000],
-        [5744, 1984],
+        [6120, 2040],
+        [6120, 2016],
+        [6000, 2016],
+        [6000, 2008],
+        [5872, 2008],
+        [5872, 2000],
+        [5744, 2000],
+        [5744, 1992],
         [5680, 1992]
       ],
       "face": "rock"
@@ -125,23 +110,16 @@
         [5680, 1280],
         [6800, 1280],
         [6800, 1720],
-        [6752, 1704],
-        [6688, 1720],
-        [6624, 1720],
-        [6560, 1720],
-        [6496, 1704],
-        [6432, 1712],
-        [6376, 1720],
-        [6328, 1712],
-        [6280, 1704],
-        [6200, 1680],
+        [6496, 1720],
+        [6496, 1712],
+        [6280, 1712],
+        [6280, 1680],
+        [6120, 1680],
         [6120, 1712],
-        [6056, 1712],
-        [6048, 1744],
-        [5968, 1728],
-        [5904, 1736],
-        [5840, 1752],
-        [5776, 1744],
+        [6048, 1712],
+        [6048, 1728],
+        [5904, 1728],
+        [5904, 1752],
         [5680, 1752]
       ],
       "face": "rock"
@@ -154,24 +132,18 @@
         [5680, 1280],
         [6800, 1280],
         [6800, 1560],
-        [6736, 1560],
-        [6672, 1560],
-        [6600, 1528],
-        [6528, 1560],
         [6464, 1560],
-        [6440, 1568],
-        [6376, 1552],
-        [6312, 1568],
+        [6464, 1568],
         [6248, 1568],
-        [6184, 1608],
-        [6120, 1560],
-        [6064, 1584],
-        [6048, 1664],
-        [5992, 1680],
-        [5928, 1688],
-        [5912, 1608],
-        [5840, 1584],
-        [5768, 1600],
+        [6248, 1608],
+        [6120, 1608],
+        [6120, 1584],
+        [6048, 1584],
+        [6048, 1680],
+        [5928, 1680],
+        [5928, 1608],
+        [5840, 1608],
+        [5840, 1600],
         [5680, 1600]
       ],
       "face": "rock",
@@ -186,22 +158,22 @@
         [6800, 1280],
         [6800, 1440],
         [6720, 1440],
-        [6640, 1456],
-        [6560, 1472],
-        [6480, 1440],
-        [6400, 1464],
-        [6320, 1456],
+        [6720, 1456],
+        [6560, 1456],
+        [6560, 1440],
+        [6400, 1440],
+        [6400, 1456],
         [6240, 1456],
-        [6160, 1440],
+        [6240, 1440],
+        [6080, 1440],
         [6080, 1472],
-        [6040, 1472],
-        [6032, 1624],
-        [5984, 1616],
-        [5936, 1576],
-        [5928, 1432],
-        [5840, 1456],
-        [5760, 1480],
-        [5680, 1456]
+        [6032, 1472],
+        [6032, 1616],
+        [5936, 1616],
+        [5936, 1432],
+        [5840, 1432],
+        [5840, 1480],
+        [5680, 1480]
       ],
       "face": "rock",
       "ground": "snow"
@@ -225,16 +197,15 @@
       "kind": "tarn",
       "closed": true,
       "points": [
-        [6056, 1744],
-        [6120, 1736],
-        [6200, 1744],
-        [6264, 1752],
-        [6272, 1792],
-        [6248, 1832],
-        [6176, 1848],
+        [6120, 1744],
+        [6264, 1744],
+        [6264, 1792],
+        [6248, 1792],
+        [6248, 1848],
         [6104, 1848],
-        [6064, 1816],
-        [6048, 1776]
+        [6104, 1816],
+        [6048, 1816],
+        [6048, 1744]
       ]
     },
     {
@@ -243,20 +214,17 @@
       "width": 16,
       "points": [
         [6096, 1848],
-        [6088, 1888],
-        [6064, 1928],
-        [6056, 1968],
-        [6048, 2008],
+        [6096, 2072],
         [6040, 2072],
-        [6008, 2112],
-        [5976, 2152],
+        [6040, 2200],
         [5952, 2200],
-        [5944, 2240],
+        [5952, 2304],
         [5944, 2304]
       ],
       "falls": [
-        [6048, 2008, 64],
-        [5944, 2240, 64]
+        [6096, 2036, 32],
+        [6040, 2072, 32],
+        [5952, 2268, 64]
       ],
       "why": "snowmelt from the lake over the lip into Fir Hollow, then over the escarpment into the woodland's spring pool (in the valley)"
     }
@@ -269,25 +237,18 @@
       "owner_note": "a route (Claude G's chunk, P6); its line through the box is drawn here, path first: four switchback legs up the step, W2 at the lip",
       "points": [
         [6288, 2304],
-        [6264, 2288],
-        [6208, 2288],
-        [6200, 2264],
-        [6204, 2232],
-        [6248, 2220],
+        [6288, 2288],
+        [6200, 2288],
+        [6200, 2224],
         [6304, 2224],
-        [6312, 2200],
-        [6304, 2168],
-        [6248, 2152],
+        [6304, 2152],
         [6192, 2152],
-        [6184, 2128],
-        [6192, 2104],
+        [6192, 2088],
         [6232, 2088],
-        [6240, 2064],
-        [6232, 2032],
-        [6216, 2000],
-        [6176, 1968],
-        [6168, 1944],
-        [6184, 1912],
+        [6232, 2008],
+        [6168, 2008],
+        [6168, 1912],
+        [6216, 1912],
         [6216, 1888]
       ]
     },
@@ -298,22 +259,10 @@
       "owner_note": "a route (Claude G's chunk, P6): from the tarn's east shore along the massif's shoulder to Cogsworth",
       "points": [
         [6216, 1888],
-        [6248, 1864],
-        [6280, 1824],
-        [6296, 1784],
-        [6312, 1752],
-        [6320, 1728],
-        [6328, 1704],
-        [6376, 1688],
-        [6416, 1664],
-        [6464, 1648],
-        [6496, 1624],
-        [6528, 1612],
-        [6568, 1632],
-        [6608, 1640],
-        [6656, 1624],
-        [6704, 1640],
-        [6752, 1624],
+        [6280, 1888],
+        [6280, 1704],
+        [6496, 1704],
+        [6496, 1616],
         [6800, 1616]
       ]
     }
@@ -326,10 +275,7 @@
       "why": "to the cabin on the meadow (the old Ridge's cabin, a resident's door)",
       "points": [
         [6304, 2224],
-        [6352, 2208],
-        [6400, 2208],
-        [6448, 2184],
-        [6504, 2184],
+        [6560, 2224],
         [6560, 2160]
       ]
     },
@@ -340,13 +286,9 @@
       "why": "behind the rock rib into Fir Hollow (the forager's clearing, W2's second pine)",
       "points": [
         [6192, 2152],
-        [6176, 2164],
-        [6144, 2176],
-        [6096, 2184],
-        [6040, 2176],
-        [5992, 2160],
-        [5952, 2176],
-        [5904, 2160]
+        [6176, 2152],
+        [6176, 2168],
+        [5904, 2168]
       ]
     },
     {
@@ -356,21 +298,11 @@
       "why": "over the Sleepwater's ford by the collapsed bridge, then the spur stair to the High Lookout",
       "points": [
         [6168, 1944],
-        [6120, 1928],
-        [6080, 1904],
-        [6040, 1872],
-        [6016, 1840],
-        [6008, 1808],
-        [6000, 1776],
-        [5996, 1744],
-        [5992, 1712],
-        [5992, 1680],
-        [5984, 1648],
-        [5984, 1624],
-        [5976, 1600],
+        [6016, 1944],
+        [6016, 1584],
         [5968, 1584]
       ],
-      "ford": [6078, 1904]
+      "ford": [6096, 1944]
     },
     {
       "id": "crevasse_trod",
@@ -378,9 +310,9 @@
       "dead_end": "view",
       "why": "to the crevasse viewpoint at the glacier's edge",
       "points": [
-        [6416, 1664],
-        [6384, 1648],
-        [6352, 1640],
+        [6400, 1704],
+        [6400, 1664],
+        [6336, 1664],
         [6336, 1624]
       ]
     },
@@ -389,11 +321,10 @@
       "width": 24,
       "why": "round the far side of the boulder field on the High Fells (brief 7)",
       "points": [
-        [6656, 1624],
-        [6688, 1608],
-        [6728, 1604],
-        [6768, 1608],
-        [6800, 1616]
+        [6656, 1616],
+        [6656, 1656],
+        [6776, 1656],
+        [6776, 1616]
       ]
     }
   ],
@@ -401,7 +332,7 @@
     {
       "id": "col_1",
       "on": "col_path",
-      "at": [6204, 2252],
+      "at": [6200, 2256],
       "from_tier": 0,
       "to_tier": 1,
       "width": 40,
@@ -410,7 +341,7 @@
     {
       "id": "col_2",
       "on": "col_path",
-      "at": [6308, 2188],
+      "at": [6304, 2184],
       "from_tier": 1,
       "to_tier": 2,
       "width": 40,
@@ -419,7 +350,7 @@
     {
       "id": "col_3",
       "on": "col_path",
-      "at": [6188, 2116],
+      "at": [6192, 2120],
       "from_tier": 2,
       "to_tier": 3,
       "width": 40,
@@ -428,7 +359,7 @@
     {
       "id": "col_lip",
       "on": "col_path",
-      "at": [6236, 2048],
+      "at": [6232, 2056],
       "from_tier": 3,
       "to_tier": 4,
       "width": 40,
@@ -437,7 +368,7 @@
     {
       "id": "fells_1",
       "on": "high_fells",
-      "at": [6316, 1740],
+      "at": [6280, 1728],
       "from_tier": 4,
       "to_tier": 5,
       "width": 40,
@@ -446,7 +377,7 @@
     {
       "id": "spur_1",
       "on": "lookout_trod",
-      "at": [5996, 1760],
+      "at": [6016, 1744],
       "from_tier": 4,
       "to_tier": 5,
       "width": 40,
@@ -455,7 +386,7 @@
     {
       "id": "spur_2",
       "on": "lookout_trod",
-      "at": [5992, 1696],
+      "at": [6016, 1696],
       "from_tier": 5,
       "to_tier": 6,
       "width": 40,
@@ -464,7 +395,7 @@
     {
       "id": "spur_3",
       "on": "lookout_trod",
-      "at": [5980, 1612],
+      "at": [6016, 1632],
       "from_tier": 6,
       "to_tier": 7,
       "width": 40,
@@ -518,7 +449,7 @@
     {
       "thing": "ibex rocks",
       "kind": "wild",
-      "at": [6132, 1952],
+      "at": [6132, 1964],
       "route": "Col Path",
       "where": "beside the path",
       "moved_from": [6136, 1949]
@@ -541,7 +472,7 @@
     {
       "thing": "herders' shieling",
       "kind": "camp",
-      "at": [6668, 1672],
+      "at": [6668, 1676],
       "route": "High Fells",
       "where": "beside the path",
       "moved_from": [6672, 1696]
@@ -567,19 +498,19 @@
     {
       "t": "S",
       "what": "cart with a broken wheel",
-      "at": [6192, 2300],
+      "at": [6180, 2300],
       "moved_from": [6213, 2282]
     },
     {
       "t": "I",
       "what": "noticeboard",
-      "at": [6236, 2204],
+      "at": [6236, 2172],
       "moved_from": [6248, 2205]
     },
     {
       "t": "S",
       "what": "tracks",
-      "at": [6208, 2172],
+      "at": [6212, 2172],
       "moved_from": [6210, 2141]
     },
     {
@@ -591,30 +522,31 @@
     {
       "t": "I",
       "what": "gate",
-      "at": [6200, 2076],
+      "at": [6172, 2092],
       "moved_from": [6203, 2067]
     },
     {
       "t": "S",
       "what": "cold fire ring",
-      "at": [6254, 1990]
+      "at": [6260, 1988],
+      "moved_from": [6254, 1990]
     },
     {
       "t": "S",
       "what": "marker stone",
-      "at": [6152, 1960],
+      "at": [6148, 1964],
       "moved_from": [6166, 1948]
     },
     {
       "t": "I",
       "what": "bench",
-      "at": [6308, 1704],
+      "at": [6308, 1684],
       "moved_from": [6328, 1706]
     },
     {
       "t": "S",
       "what": "cairn",
-      "at": [6404, 1716],
+      "at": [6420, 1684],
       "moved_from": [6404, 1764]
     },
     {
@@ -626,7 +558,7 @@
     {
       "t": "A",
       "what": "choughs",
-      "at": [6496, 1672],
+      "at": [6476, 1672],
       "moved_from": [6504, 1682]
     },
     {
@@ -644,7 +576,7 @@
     {
       "t": "S",
       "what": "marker stone",
-      "at": [6652, 1584],
+      "at": [6652, 1596],
       "moved_from": [6653, 1580]
     },
     {
@@ -658,170 +590,281 @@
       "what": "cart with a broken wheel",
       "at": [6796, 1596],
       "moved_from": [6755, 1605]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [6040, 1724],
+      "dress": true,
+      "moved_from": [6024, 1752]
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [5992, 1724],
+      "dress": true,
+      "moved_from": [6020, 1712]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [6036, 1672],
+      "dress": true,
+      "moved_from": [6016, 1672]
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5992, 1652],
+      "dress": true,
+      "moved_from": [6012, 1640]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [6036, 1600],
+      "dress": true,
+      "moved_from": [6004, 1600]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6364, 1684],
+      "dress": true,
+      "moved_from": [6364, 1676]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [6056, 2148],
+      "dress": true,
+      "moved_from": [6052, 2168]
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [5992, 2148],
+      "dress": true,
+      "moved_from": [6004, 2164]
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5952, 2148],
+      "dress": true,
+      "moved_from": [5956, 2168]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [6060, 1864],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [6040, 1824],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [6436, 2176],
+      "dress": true,
+      "moved_from": [6444, 2184]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6468, 2204],
+      "dress": true,
+      "moved_from": [6468, 2184]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6500, 2176],
+      "dress": true,
+      "moved_from": [6500, 2172]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6520, 2156],
+      "dress": true,
+      "moved_from": [6524, 2160]
+    },
+    {
+      "t": "I",
+      "what": "door",
+      "at": [6576, 2144],
+      "why": "the cabin on the meadow (the old Ridge's cabin): its door ends the cabin trod"
     }
   ],
   "obstacles": [
     {
       "kind": "boulder field",
-      "at": [6728, 1624],
+      "at": [6720, 1616],
       "passed_by": "fells_round",
       "why": "brief 7 names a thicket on the High Fells; above the tree line it is a boulder field (props.md 4: heights)"
     }
   ],
   "set_pieces": [
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6200, 2248],
       "seed": 1,
       "stair": "col_1"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6304, 2184],
       "seed": 2,
       "stair": "col_2"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6184, 2112],
       "seed": 3,
       "stair": "col_3"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6232, 2048],
       "seed": 4,
       "stair": "col_lip"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6312, 1736],
       "seed": 5,
       "stair": "fells_1"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [5992, 1760],
       "seed": 6,
       "stair": "spur_1"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [5992, 1696],
       "seed": 7,
       "stair": "spur_2"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [5976, 1608],
       "seed": 8,
       "stair": "spur_3"
     },
     {
-      "piece": "fall_pool",
+      "piece": "spring",
       "biome": "highland",
-      "at": [6048, 2008],
+      "at": [6096, 1848],
       "seed": 11,
-      "drop": 64,
-      "why": "the Sleepwater leaves the cirque over the lip"
+      "why": "the Sleepwater leaves the tarn: the cliff core draws a fall at every rim it crosses (the lip into Fir Hollow, Fir Hollow's escarpment) and a plunge pool under each"
     },
     {
-      "piece": "fall_pool",
-      "biome": "highland",
-      "at": [5944, 2240],
-      "seed": 12,
-      "drop": 64,
-      "why": "over Fir Hollow's escarpment into the woodland's spring pool"
-    },
-    {
-      "piece": "outcrop",
+      "piece": "ledge",
       "biome": "highland",
       "at": [6104, 2072],
       "seed": 13,
       "why": "the rock rib"
     },
     {
-      "piece": "outcrop",
+      "piece": "boulders",
       "biome": "highland",
       "at": [6128, 1936],
       "seed": 14,
-      "why": "ibex rocks"
+      "why": "ibex rocks",
+      "size": "l"
     },
     {
-      "piece": "outcrop",
+      "piece": "scree",
       "biome": "highland",
       "at": [6400, 2024],
       "seed": 15,
       "why": "the headwall seen from the Col hut"
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6200, 2280],
       "seed": 16
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6304, 2216],
       "seed": 17
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6184, 2144],
       "seed": 18
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6232, 2080],
       "seed": 19
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6200, 1576],
       "seed": 21
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6600, 1552],
       "seed": 22
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [5936, 1608],
       "seed": 23
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6040, 1456],
       "seed": 24
     },
     {
       "piece": "glacier_snout",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6248, 1608],
       "seed": 25,
-      "why": "the glacier above the tarn, meltwater into it"
+      "why": "the glacier above the tarn, meltwater into it(not in the cliff core library yet: proposed for the highland biome with snow)",
+      "proposed": true
     },
     {
       "piece": "crevasse_field",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6320, 1504],
-      "seed": 26
+      "seed": 26,
+      "proposed": true,
+      "why": "(not in the cliff core library yet: proposed for the highland biome with snow)"
+    },
+    {
+      "piece": "pond",
+      "biome": "highland",
+      "at": [6160, 1792],
+      "seed": 27,
+      "why": "Snowmelt Lake, the tarn in the cirque floor"
     }
   ],
   "edges": [
@@ -887,5 +930,31 @@
     "high_bench": "scree and alpine turf, cairns",
     "glacier": "snow and blue ice, crevasses",
     "tops": "crags and snow"
-  }
+  },
+  "areas": [
+    {
+      "id": "frostline-00",
+      "rect": [5680, 1280, 384, 512]
+    },
+    {
+      "id": "frostline-01",
+      "rect": [6064, 1280, 384, 512]
+    },
+    {
+      "id": "frostline-02",
+      "rect": [6448, 1280, 352, 512]
+    },
+    {
+      "id": "frostline-10",
+      "rect": [5680, 1792, 384, 512]
+    },
+    {
+      "id": "frostline-11",
+      "rect": [6064, 1792, 384, 512]
+    },
+    {
+      "id": "frostline-12",
+      "rect": [6448, 1792, 352, 512]
+    }
+  ]
 }

@@ -1,0 +1,83 @@
+{
+  "id": "highland",
+  "status": "brief",
+  "lane": "claude-f",
+  "regions": ["frostline", "the massif's front (north of the Brackens)"],
+  "kit": null,
+  "about": "The Frostline and the massif: an alpine cirque above the valley, crag over boulder faces, fir in the hollow, short turf and scree on the benches, a tarn, snow and a glacier on the top tiers. The cliff core's 'highland' biome and edge set (scripts/art/cliff_core.py) are the start; this brief adds what the Frostline needs on top of them, as data, for the kit owner (rules-system.md 4: the Frostline is the contrasting test region, built end to end on kit v1). Every family is a house ramp. 'kit' is pinned when kit v1 exists.",
+  "palette_intent": "Cool and clear above the valley: grey-blue crag (crag_cool, crag) with warm crag bands catching the light, fresh green turf going cooler and sparser with height, near-black fir, white-blue snow and pale blue ice. The tarn is the one deep blue. Warmth comes only from lit rock bands, the hut's timber and small clusters of alpine flowers.",
+  "families": {
+    "rock": ["crag", "crag_cool", "crag_warm"],
+    "loose": ["crag", "stone_cool"],
+    "turf": ["grass", "grass_cool", "grass_warm"],
+    "fir": ["leaf_cool", "grass_cool", "timber_cool"],
+    "moss_and_fern": ["leaf", "leaf_cool"],
+    "snow": ["snow", "snow_cool", "snow_warm"],
+    "ice": ["sky", "sky_cool", "water_cool"],
+    "water": ["water", "water_cool", "lagoon_cool"],
+    "track": ["path_cool", "stone"],
+    "flowers": ["plaster", "brass", "dusk", "berry", "sky"]
+  },
+  "cliff_core": {
+    "biome": "highland",
+    "edge_set": "highland",
+    "keep": "the boulder faces in absolute-height bands, the clean turf lip, the stony foot with scree, rock steps between boulder cheeks, brooks in a small earth bank",
+    "add": ["snow_z: the snow line by tier (below)", "falls > 0 where the Sleepwater crosses a face", "trees: fir only, in the hollow and on the lowest benches"]
+  },
+  "ground": {
+    "by_tier": [
+      {"tiers": "benches, step", "recipe": "alpine meadow: turf in broad patches, flower clusters, fir thinning upward, scree fans at the foot of faces"},
+      {"tiers": "fir_hollow", "recipe": "fir floor: needle litter on earth_cool, moss cushions, ferns along the stream"},
+      {"tiers": "cirque_floor", "recipe": "short cool turf, boulders in clusters, snow patches only in north-facing hollows (the cell north of a rim)"},
+      {"tiers": "high_bench", "recipe": "scree and turf in patches, cairns on the path"},
+      {"tiers": "glacier", "recipe": "snow with blue ice where it steepens; crevasses as dark-blue slots on the grid; never walked off the trod"},
+      {"tiers": "tops", "recipe": "crag and snow; not walkable"}
+    ],
+    "snow_line": {"patches_from_tier": 4, "cover_from_tier": 6, "corners": "snow_corner pieces on north-facing rims from tier 4"},
+    "calm": "as SB-05: snow and ice are the calmest grounds in the world, two tones and the odd lit drift edge; turf despeckled; scree is clusters of 2 or more texels, never single pixels"
+  },
+  "plants": [
+    {"id": "fir", "kind": "tree", "where": "Fir Hollow and the lowest benches, thinning upward; none above the cirque floor"},
+    {"id": "dwarf_pine", "kind": "shrub, blocks walking", "where": "the step and cirque floor rims, in twos and threes"},
+    {"id": "juniper", "kind": "low shrub", "where": "scree edges on the high bench"},
+    {"id": "fern", "kind": "ground cluster", "where": "the hollow's stream and the foot of shady faces"},
+    {"id": "moss_cushion", "kind": "ground cluster", "where": "boulder tops and the fir floor"},
+    {"id": "alpine_flowers", "kind": "turf flower", "where": "small clumps on the benches and cirque floor (gentian blue, saxifrage white, rock-rose yellow), never spread thin"}
+  ],
+  "clusters": [
+    {"id": "boulder_field", "of": ["boulders", "boulders", "moss_cushion", "fern"], "where": "the cirque floor and the High Fells' obstacle field; 800 px apart (benchmark 9)"},
+    {"id": "fir_stand", "of": ["fir", "fir", "fir", "fern"], "where": "the hollow and benches, a clearing kept round the cabin"},
+    {"id": "scree_fan", "of": ["scree", "juniper"], "where": "at the foot of a crag face, fanning downhill"},
+    {"id": "cairn_and_marker", "of": ["cairn", "marker stone"], "where": "the Col Path's bends and the High Fells"},
+    {"id": "tarn_margin", "of": ["moss_cushion", "alpine_flowers", "boulders"], "where": "Snowmelt Lake's shore, not on the outlet"}
+  ],
+  "tiers": {
+    "face_heights": [12, 16, 32, 40],
+    "notes": "the woodland has only 32 px: the Frostline adds 12 and 16 px rock steps on the benches and 40 px crag faces on the cirque headwall and the glacier's front (rules-system.md 4, the golden's gaps)"
+  },
+  "edges": {
+    "from_woodland": "Rock, not earth: boulder faces in bands fixed in absolute height, so one band runs through every face of the region; a clean turf lip one or two texels over, lit along its top; a stony foot with scree. Above the snow line the lip is a snow cornice (the cliff core's snow corner). Volume (to-all-volume): faces step in and out by whole cells as buttresses and gullies, lit top-left planes, crisp cast shadows on snow.",
+    "stair": "rock steps cut between boulder cheeks (cliff core 'rock'), on north-south legs only",
+    "bank": "small earth bank on the brooks; the tarn's shore is boulders and turf, no reeds; ice edges on the glacier's melt pools"
+  },
+  "water": {
+    "kinds": ["tarn", "brook", "falls", "plunge pool", "melt pool"],
+    "notes": "Snowmelt Lake is the Sleepwater's source; the stream falls where it crosses each face (falls with plunge pools, cliff core NEUTRAL 'fall'), runs through Fir Hollow and leaves over the escarpment into the woodland's spring pool"
+  },
+  "ambience": {
+    "animals": ["ibex on the scree and moraine", "choughs over the headwall", "marmots on the cirque floor"],
+    "sounds_for_m": ["meltwater", "falls", "wind on the col", "chough calls"],
+    "light": "colder and brighter than the valley: snow lifts the shadows a touch; dusk turns the snow warm (snow_warm) for a short time"
+  },
+  "pieces": {
+    "from_cliff_core": ["stair", "ledge", "path", "spring", "pond", "snow_corner", "boulders", "scree"],
+    "owned": ["glacier_snout", "crevasse_field", "cornice", "fir_stand", "tarn_margin"],
+    "proposed": ["glacier_snout", "crevasse_field", "cornice"]
+  },
+  "transitions": [
+    {"to": "woodland", "where": "the escarpment above the woodland's spring pool", "how": "fir thins into broadleaf on the valley side; the falls cross the line"},
+    {"to": "meadow", "where": "the Col hut and the benches", "how": "alpine meadow shares the turf families; flowers and fir mark the highland side"},
+    {"to": "moor", "where": "the massif's front north of the Brackens", "how": "scree and boulders thin into grit and heather (see moor.json)"}
+  ],
+  "sources": ["scripts/art/cliff_core.py (BIOMES and EDGE_SETS 'highland')", "art/regions/frostline.json", "docs/vision/regions/home-valley-frostline-brackens.md", "docs/vision/rules-system.md"]
+}
