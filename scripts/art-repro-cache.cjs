@@ -27,7 +27,8 @@ function trackedFiles(root) {
 }
 function toolFingerprint(root) {
   const hash = crypto.createHash('sha256'),
-    seen = new Set();
+    seen = new Set(),
+    chunk = Buffer.alloc(1024 * 1024);
   function walk(full) {
     const real = fs.realpathSync(full);
     hash.update(JSON.stringify([full, real]));
@@ -40,8 +41,7 @@ function toolFingerprint(root) {
         walk(path.join(real, name));
       }
     } else if (stat.isFile()) {
-      const fd = fs.openSync(real, 'r'),
-        chunk = Buffer.alloc(1024 * 1024);
+      const fd = fs.openSync(real, 'r');
       try {
         let n;
         while ((n = fs.readSync(fd, chunk)) > 0) hash.update(chunk.subarray(0, n));

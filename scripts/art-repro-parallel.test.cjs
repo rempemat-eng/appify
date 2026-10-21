@@ -37,9 +37,15 @@ async function main() {
     const scripts = new Map();
     for (const name of generators) {
       const script = `const fs = require('node:fs');\nfs.writeFileSync('assets/${name}.png', '${name}');\nfs.writeFileSync('shared.txt', 'stable\\n');\n`;
-      scripts.set(name, script);
+      const dependency =
+        name === 'garden'
+          ? "fs.mkdirSync('.cache', { recursive: true }); fs.writeFileSync('.cache/garden-derived', 'fresh');\n"
+          : name === 'zones'
+            ? "require('node:assert/strict').equal(fs.readFileSync('.cache/garden-derived', 'utf8'), 'fresh');\n"
+            : '';
+      scripts.set(name, script + dependency);
       write(`assets/${name}.png`, name);
-      write(`scripts/art/${name}.py`, script);
+      write(`scripts/art/${name}.py`, script + dependency);
     }
     git(['init', '-q']);
     git(['add', '--all']);
@@ -124,6 +130,19 @@ async function main() {
       write('node_modules/.bin/oxfmt', '#!/usr/bin/env node\n');
       write('scripts/check-sprites.cjs', '/* validation fixture */\n');
     }
+    const changedDuringCheck = await checkArtParallel({
+      ...options,
+      cold: true,
+      worker: async (fixtureRoot, selected, sprites) => {
+        const result = checkArtReproducibility({ root: fixtureRoot, selected, sprites, log() {} });
+        if (selected.includes('garden')) write('density.json', '{"density":3}\n');
+        return result;
+      },
+    });
+    assert.equal(changedDuringCheck.ok, false, 'a moving source cannot publish a successful check');
+    assert.ok(
+      changedDuringCheck.failures.some((message) => message.includes('changed during check')),
+    );
     const exception = await checkArtParallel({
       ...options,
       cold: true,
