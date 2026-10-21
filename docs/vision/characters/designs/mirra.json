@@ -1,0 +1,561 @@
+{
+  "id": "mirra",
+  "height_art_px": 44,
+  "cell": [
+    64,
+    72
+  ],
+  "foot": [
+    32,
+    66
+  ],
+  "question": "Gecko, hat and the dowsing rod's silhouette.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Sun-hat diviner: wide flat woven hat, linen smock, long Y-rod held forward",
+      "question": "A wide, flat woven sun hat with a chin cord; the long Y-rod held forward in both hands.",
+      "parts": [
+        "tail (adobe, banded): layer 0; hip; curls behind, sways 1 px against the walk, wraps her in the nap",
+        "legs x2 (adobe) and splayed feet with toe pads: layer 1; hip; 6-frame walk, tuck in hop and nap",
+        "smock (plaster, vertical folds, water hem band): layer 2; hip; breath 1 px, hem swings a frame late",
+        "flask (water, timber cork): layer 3; her left hip; near in E, behind her in W; poured in cast",
+        "sleeves and forearms x2 (plaster caps, adobe arms): layer 2 far / 4 near; chest; swing, wind-up, guard",
+        "Y-rod (timber): layer 5, always in front; both hands; level in idle and walk, dips in fidget, swung as a strike, raised in cheer",
+        "head (adobe, eye bumps, smile): layer 6; chest; tilts down in fidget, droops in nap",
+        "sun hat (bleached weave, water band, timber chin cord): layer 7; head; lifts on hop, tips over her face in nap"
+      ],
+      "palette": [
+        "adobe",
+        "bleached",
+        "plaster",
+        "timber",
+        "water"
+      ],
+      "pose": "Stands quite still, rod held out level in both hands, listening with her whole body for water.",
+      "notes": [
+        "Works: the widest, flattest top in the cast (28 px brim), and the rod is the only long level line out front.",
+        "Risk: the rod doubles her width in E/W and in walk frames; at the S view it must angle out to read.",
+        "Brim kept flat and on her head, a band and weave rows, so it reads as a sun hat, not Puddle's sou'wester.",
+        "Compared with eastward-05 (the townsfolk at this height): one hard shadow row under the brim, 3 px eyes, 4 tones a garment."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 883,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0174,
+          "double": 0.0988,
+          "west_east": 8.6909,
+          "top_bottom": 4.3174,
+          "isolated": 0.0211,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "E idle": {
+          "px": 842,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0769,
+          "west_east": 12.2966,
+          "top_bottom": 15.5371,
+          "isolated": 0.0124,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "W idle": {
+          "px": 838,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0769,
+          "west_east": 3.3799,
+          "top_bottom": 16.237,
+          "isolated": 0.0109,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "S fidget": {
+          "px": 874,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0119,
+          "double": 0.0893,
+          "west_east": 7.9728,
+          "top_bottom": 7.8689,
+          "isolated": 0.0198,
+          "checker": 0.0,
+          "height_px": 43
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Cone-hat pilgrim: conical woven hat, adobe wrap, forked twig and a big flask",
+      "question": "A conical woven hat; a short forked twig in one hand; a big water flask at the belly.",
+      "parts": [
+        "tail (cactus, banded): layer 0; hip; curls behind, the tip flicks in react and cheer",
+        "legs x2 (cactus) and splayed feet with toe pads: layer 1; hip; 6-frame walk, tuck in hop and nap",
+        "wrap (adobe, crossover fold, sand sash): layer 2; hip; breath 1 px",
+        "flask strap (timber): layer 3; chest; carries the flask in every facing",
+        "big flask (water, two-pixel glint, timber cork): layer 4, at the front in every facing; belly strap; lifted to sip in fidget, poured in cast",
+        "arms x2 (cactus): far arm layer 1, near arm layer 5; chest; swing, wind-up, guard",
+        "forked twig (timber): in her right hand (far in E, near in W); hand; twitches in idle, points in cast, a switch in strike",
+        "head (cactus, eye bumps, smile): layer 6; chest; tips back to sip",
+        "cone hat (sand, radial plaits, rolled rim, timber knot): layer 7; head; bobs on hop, covers her face in nap"
+      ],
+      "palette": [
+        "cactus",
+        "sand",
+        "adobe",
+        "timber",
+        "water"
+      ],
+      "pose": "Small and patient under her cone, twig raised like a question, the full flask held close.",
+      "notes": [
+        "Works: the cone is the only triangle-topped silhouette in the cast; the big blue flask is Seep at a glance.",
+        "Risk: cactus green sits near Puddle's and Tam's leaf greens; the twig is small at 2 device px.",
+        "The flask is centred on the belly so it keeps one anchor and layer in all facings.",
+        "Compared with eastward-05: a woven hat drawn as two planes, the shade side a tone down, with a dark rim row."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 842,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0184,
+          "double": 0.1166,
+          "west_east": 4.4102,
+          "top_bottom": 18.1731,
+          "isolated": 0.025,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "E idle": {
+          "px": 790,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0455,
+          "west_east": 13.5611,
+          "top_bottom": 24.5321,
+          "isolated": 0.022,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "W idle": {
+          "px": 788,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0461,
+          "west_east": 1.9518,
+          "top_bottom": 22.4107,
+          "isolated": 0.0173,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "S fidget": {
+          "px": 809,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0131,
+          "double": 0.1176,
+          "west_east": 4.1292,
+          "top_bottom": 19.4853,
+          "isolated": 0.0122,
+          "checker": 0.0,
+          "height_px": 45
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Dune traveller: long duster and scarf, hat on her back, rod slung over the shoulder",
+      "question": "Bare-headed; the flat sun hat hangs on her back and the Y-rod rides a strap, fork over the shoulder.",
+      "parts": [
+        "Y-rod (earth): layer 0, on her back; strap over her left shoulder; the fork twitches in fidget, comes to both hands for cast and strike",
+        "sun hat (bleached weave): layer 0, on her back; cord from the neck; swings a frame late in walk, a pillow in nap",
+        "tail (sand, banded): layer 1; hip; curls out under the coat",
+        "legs x2 (sand) and feet with toe pads: layer 1; hip; mostly hidden: the walk reads from the coat hem",
+        "duster (earth, vertical folds, adobe belt, front opening): layer 2; chest; the hem sways in walk and hit",
+        "flask (water, glint): layer 3; belt front; same in every facing; poured in cast",
+        "sleeves x2 (earth) with sand hands: far 1 tone back; chest; swing, guard, steadying the strap in fidget",
+        "head (sand, leopard spots, eye bumps, smile): layer 5; chest",
+        "scarf (adobe, wrap and a tail at her right front): layer 6; chest; the tail flutters in hit and cheer"
+      ],
+      "palette": [
+        "sand",
+        "earth",
+        "adobe",
+        "bleached",
+        "water"
+      ],
+      "pose": "Tall and unhurried, a long way from home and in no rush; the rod waits on her back until it twitches.",
+      "notes": [
+        "Works: the only lanky, bare-headed folk; the dark duster gives the strongest two-value read of the three.",
+        "Risk: no hat on her head loses the wide-hat cue; from the front the hat on her back reads as a pack.",
+        "Rod on her back keeps the hands free for the rig, but the dowsing reads only when it comes off her back.",
+        "Compared with eastward-05: the long coat as vertical fold bands with a 1 px placket, and the bare head with 3 px eyes."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 964,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0549,
+          "west_east": 9.7272,
+          "top_bottom": 12.5617,
+          "isolated": 0.01,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "E idle": {
+          "px": 802,
+          "colours": 29,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0709,
+          "west_east": 15.4976,
+          "top_bottom": 15.3555,
+          "isolated": 0.0182,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "W idle": {
+          "px": 809,
+          "colours": 29,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0576,
+          "west_east": 1.9085,
+          "top_bottom": 11.8277,
+          "isolated": 0.0164,
+          "checker": 0.0,
+          "height_px": 44
+        },
+        "S fidget": {
+          "px": 962,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0671,
+          "west_east": 10.2078,
+          "top_bottom": 10.3246,
+          "isolated": 0.0185,
+          "checker": 0.0,
+          "height_px": 43
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "B",
+    "name": "Cone-hat pilgrim (final): sand gecko, adobe wrap, big front flask, twig and Y-rod",
+    "grafts": [
+      "Skin moved from cactus green to warm sand (clear of Puddle, Tam and the green familiar); the cone moved from sand to bleached straw so skin, hat and wrap sit on three values.",
+      "Kept from B: the big front flask on its belly strap, her Seep signature, one anchor and the front layer in every facing.",
+      "From C: the tail curled tight round her heel (about 9 px behind it in E/W, at her ankle in S), clear of the familiar walking 28 px behind.",
+      "From A: the forked Y-rod as the strike and cast prop, in her right hand only in those poses (strike: held by the stem, the fork forward as a switch; cast: raised, fork up, two water drops); in idle it is the short twig.",
+      "From C (craft): the wrap in vertical fold bands (4 tones) with a scalloped hem.",
+      "Fixes: two solid rounded feet under the wrap, no toe clusters; the cone narrowed from 25 to 19 px so the back-shoulder perch and the familiar's eyes stay clear."
+    ],
+    "parts": [
+      "familiar perch: back shoulder (E: x smaller, W: x larger), behind her and the cone; layer 0; chest",
+      "tail (sand, banded): layer 1; hip; curled at the heel in every facing, tip flicks on react and cheer, wraps the front in nap",
+      "far leg / far arm (sand, a tone back): layer 2; hip / chest; all facings",
+      "right hand prop, twig or Y-rod (timber): her RIGHT hand in every facing (far in E, near in W, screen left in S); twig in idle/walk/ready/hit/sit/cheer, Y-rod in strike and cast",
+      "near leg with a solid foot (sand): layer 3; hip; 6-frame walk, tuck in hop, forward in sit",
+      "wrap (adobe, fold bands, scalloped hem, crossover, bleached sash): layer 4; hip; breath 1 px, hem sways a frame late",
+      "flask strap (timber) and big flask (water, 2 px glint, timber cork): layer 5, front in every facing; belly strap; lifted to sip in fidget, tipped to pour in cast",
+      "head (sand, eye bumps, smile, brow, cheek and snout step in profile): layer 6; chest; tips back to sip, droops in nap",
+      "cone hat (bleached, radial plaits, rolled rim, timber knot; 19 px wide): layer 7; head; bobs on hop, tips over her eyes in nap",
+      "near arm (sand): layer 8; chest; swing, guard, reach"
+    ],
+    "palette": [
+      "sand",
+      "adobe",
+      "bleached",
+      "timber",
+      "water",
+      "leaf"
+    ],
+    "pose": "Small and patient under her cone, a twig raised like a question, the full flask held close; she sips slowly when idle and pours, never guards, in a fight.",
+    "perch_anchor": {
+      "E ready": [
+        25,
+        45
+      ],
+      "E strike": [
+        28,
+        45
+      ],
+      "E cast": [
+        25,
+        44
+      ],
+      "E hit": [
+        22,
+        44
+      ],
+      "E sit": [
+        25,
+        50
+      ],
+      "E cheer": [
+        25,
+        40
+      ],
+      "W ready": [
+        39,
+        45
+      ],
+      "W strike": [
+        36,
+        45
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 734,
+        "colours": 27,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0219,
+        "double": 0.0876,
+        "west_east": 4.6989,
+        "top_bottom": -1.6386,
+        "isolated": 0.0151,
+        "checker": 0.0,
+        "height_px": 44
+      },
+      "E idle": {
+        "px": 644,
+        "colours": 25,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0877,
+        "west_east": 12.2073,
+        "top_bottom": 2.7649,
+        "isolated": 0.0113,
+        "checker": 0.0,
+        "height_px": 44
+      },
+      "W idle": {
+        "px": 641,
+        "colours": 27,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9914,
+        "flat_ink": 0.0,
+        "double": 0.069,
+        "west_east": 4.8023,
+        "top_bottom": 2.6326,
+        "isolated": 0.0095,
+        "checker": 0.0,
+        "height_px": 44
+      },
+      "S fidget": {
+        "px": 696,
+        "colours": 25,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9845,
+        "flat_ink": 0.0155,
+        "double": 0.093,
+        "west_east": 9.704,
+        "top_bottom": 1.999,
+        "isolated": 0.0265,
+        "checker": 0.0,
+        "height_px": 44
+      },
+      "nap S": {
+        "px": 550,
+        "colours": 30,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0108,
+        "west_east": 10.5952,
+        "top_bottom": 2.523,
+        "isolated": 0.0109,
+        "checker": 0.0,
+        "height_px": 20
+      },
+      "E ready": {
+        "px": 925,
+        "colours": 35,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0327,
+        "west_east": 6.0106,
+        "top_bottom": 3.417,
+        "isolated": 0.0181,
+        "checker": 0.0,
+        "height_px": 43
+      },
+      "E strike": {
+        "px": 981,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0515,
+        "west_east": 6.9951,
+        "top_bottom": 4.2389,
+        "isolated": 0.0114,
+        "checker": 0.0,
+        "height_px": 43
+      },
+      "E cast": {
+        "px": 998,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0426,
+        "west_east": 3.5838,
+        "top_bottom": 4.0917,
+        "isolated": 0.021,
+        "checker": 0.0,
+        "height_px": 45
+      },
+      "E hit": {
+        "px": 856,
+        "colours": 34,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0423,
+        "west_east": 6.563,
+        "top_bottom": 5.7963,
+        "isolated": 0.0098,
+        "checker": 0.0,
+        "height_px": 45
+      },
+      "E sit": {
+        "px": 875,
+        "colours": 34,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0253,
+        "west_east": 4.3806,
+        "top_bottom": -0.6103,
+        "isolated": 0.0112,
+        "checker": 0.0,
+        "height_px": 43
+      },
+      "E cheer": {
+        "px": 926,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9939,
+        "flat_ink": 0.0,
+        "double": 0.0545,
+        "west_east": 5.5655,
+        "top_bottom": 5.3961,
+        "isolated": 0.0171,
+        "checker": 0.0,
+        "height_px": 48
+      },
+      "W ready": {
+        "px": 915,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9932,
+        "flat_ink": 0.0,
+        "double": 0.034,
+        "west_east": 6.6533,
+        "top_bottom": 5.5577,
+        "isolated": 0.0208,
+        "checker": 0.0,
+        "height_px": 43
+      },
+      "W strike": {
+        "px": 979,
+        "colours": 37,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.043,
+        "west_east": 7.0667,
+        "top_bottom": 4.6037,
+        "isolated": 0.0139,
+        "checker": 0.0,
+        "height_px": 43
+      }
+    },
+    "notes": [
+      "Compared side by side with eastward-05 at the same character height: the townsfolk there (the curly-haired woman, the bearded man in the green coat): 3 px eyes with a glint, 4 tones a garment, cloth as vertical bands.",
+      "Works: the cone is the only triangle-topped folk; the blue flask is Seep at a glance; sand skin keeps the green Mossling readable on her shoulder.",
+      "Risk: the twig is small at 2 device px; the dowsing read leans on the Y-rod in strike and cast.",
+      "Palette: leaf is the stand-in familiar only.",
+      "Open for the art director: whether the cast should end with the flask poured (a water arc effect) or with the rod's drops alone; and whether the twig should be drawn longer in walk frames."
+    ]
+  }
+}

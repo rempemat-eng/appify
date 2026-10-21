@@ -1,9 +1,9 @@
 """One review sheet per batch of folk (Claude J): the chosen design for each, in every
 view the rig must serve, and the batch side by side at game scale on house grass.
 
-    python3 scripts/art/characters/review_sheet.py            # batch 1: the first six
+    python3 scripts/art/characters/review_sheet.py [1 2]      # one sheet per batch
 Reads the views each designs/<id>.py saved, and writes
-docs/vision/characters/review-batch-1.png. Review material only: production frames
+docs/vision/characters/review-batch-<n>.png. Review material only: production frames
 come from the shared rig.
 """
 from __future__ import annotations
@@ -19,7 +19,10 @@ from sheetkit import GRASS, PAPER, TEXT, _font  # noqa: E402
 
 from PIL import Image, ImageDraw  # noqa: E402
 
-BATCH1 = ['bramble', 'puffcap', 'velvet', 'tally', 'tam', 'puddle']
+BATCHES = {
+    1: ['bramble', 'puffcap', 'velvet', 'tally', 'tam', 'puddle'],
+    2: ['cairn', 'pendle', 'mirra', 'ashe', 'tuff', 'nix'],
+}
 VIEWS = ['S-idle', 'E-idle', 'W-idle', 'S-fidget', 'nap-S', 'E-ready', 'E-strike', 'E-cast', 'E-hit',
          'E-sit', 'E-cheer', 'W-ready', 'W-strike']
 DESIGNS = os.path.join(ROOT, 'docs', 'vision', 'characters', 'designs')
@@ -43,11 +46,13 @@ def on_grass(im: Image.Image, scale: int) -> Image.Image:
 def build(ids, out, title):
     f_t, f_h, f_b = _font(26), _font(16), _font(13)
     scale = 3
-    cell_w, cell_h = 64 * scale, 72 * scale
+    cw = max(load(c, v).width for c in ids for v in VIEWS)
+    ch = max(load(c, v).height for c in ids for v in VIEWS)
+    cell_w, cell_h = cw * scale, ch * scale
     pad = 14
     W = pad + len(VIEWS) * (cell_w + 6) + pad
     row_h = 30 + cell_h + 22 + 3 * 17 + pad
-    lineup_h = 72 * 2 + 70
+    lineup_h = ch * 2 + 70
     H = 70 + lineup_h + len(ids) * row_h + 40
     sheet = Image.new('RGB', (W, H), PAPER)
     d = ImageDraw.Draw(sheet)
@@ -65,7 +70,7 @@ def build(ids, out, title):
             sheet.paste(t, (x, y))
             x += t.width + 2
         x += 12
-    y += 72 * 2 + 40
+    y += ch * 2 + 40
     for cid in ids:
         meta = json.load(open(os.path.join(DESIGNS, f'{cid}.json')))
         fin = meta.get('final', {})
@@ -101,7 +106,11 @@ def build(ids, out, title):
     return sheet
 
 
+TITLES = {1: 'NapAttack folk, batch 1: the first six (Claude J, 21 Oct)',
+          2: 'NapAttack folk, batch 2: nights 7 to 12 (Claude J, 21 Oct)'}
+
 if __name__ == '__main__':
-    out = os.path.join(ROOT, 'docs', 'vision', 'characters', 'review-batch-1.png')
-    s = build(BATCH1, out, 'NapAttack folk, batch 1: the first six (Claude J, 21 Oct)')
-    print(out, s.size)
+    for n in ([int(a) for a in sys.argv[1:]] or sorted(BATCHES)):
+        out = os.path.join(ROOT, 'docs', 'vision', 'characters', f'review-batch-{n}.png')
+        s = build(BATCHES[n], out, TITLES[n])
+        print(out, s.size)
