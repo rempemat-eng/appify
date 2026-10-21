@@ -22,7 +22,15 @@ from PIL import Image, ImageDraw  # noqa: E402
 BATCHES = {
     1: ['bramble', 'puffcap', 'velvet', 'tally', 'tam', 'puddle'],
     2: ['cairn', 'pendle', 'mirra', 'ashe', 'tuff', 'nix'],
+    3: ['bunk', 'mote', 'mossling', 'roamling', 'pebbling'],
 }
+FAMILIARS = {'mossling', 'roamling', 'pebbling'}
+FAMILIAR_VIEWS = ['S-idle', 'E-idle', 'W-idle', 'hop-1', 'hop-2', 'hop-3', 'hop-4', 'S-react', 'S-nap',
+                  'E-perch', 'E-cling', 'E-cheer', 'E-special', 'W-perch', 'W-cling', 'W-cheer', 'W-special']
+
+
+def views_for(cid: str) -> list:
+    return FAMILIAR_VIEWS if cid in FAMILIARS else VIEWS
 VIEWS = ['S-idle', 'E-idle', 'W-idle', 'S-fidget', 'nap-S', 'E-ready', 'E-strike', 'E-cast', 'E-hit',
          'E-sit', 'E-cheer', 'W-ready', 'W-strike']
 DESIGNS = os.path.join(ROOT, 'docs', 'vision', 'characters', 'designs')
@@ -46,11 +54,15 @@ def on_grass(im: Image.Image, scale: int) -> Image.Image:
 def build(ids, out, title):
     f_t, f_h, f_b = _font(26), _font(16), _font(13)
     scale = 3
-    cw = max(load(c, v).width for c in ids for v in VIEWS)
-    ch = max(load(c, v).height for c in ids for v in VIEWS)
+    folk = [c for c in ids if c not in FAMILIARS] or ids
+    cw = max(load(c, v).width for c in folk for v in views_for(c))
+    ch = max(load(c, v).height for c in folk for v in views_for(c))
     cell_w, cell_h = cw * scale, ch * scale
+    ncols = max(len(views_for(c)) for c in ids)
     pad = 14
-    W = pad + len(VIEWS) * (cell_w + 6) + pad
+    fam_w = 32 * 6 + 6
+    W = pad + max(len(VIEWS) * (cell_w + 6), max((len(views_for(c)) * fam_w for c in ids if c in FAMILIARS), default=0)) + pad
+    del ncols
     row_h = 30 + cell_h + 22 + 3 * 17 + pad
     lineup_h = ch * 2 + 70
     H = 70 + lineup_h + len(ids) * row_h + 40
@@ -65,7 +77,7 @@ def build(ids, out, title):
     y += 24
     x = pad
     for cid in ids:
-        for v in ('S-idle', 'E-ready'):
+        for v in (('S-idle', 'E-perch') if cid in FAMILIARS else ('S-idle', 'E-ready')):
             t = on_grass(load(cid, v), 2)
             sheet.paste(t, (x, y))
             x += t.width + 2
@@ -81,13 +93,15 @@ def build(ids, out, title):
                fill=TEXT, font=f_h)
         y += 26
         x = pad
-        for v in VIEWS:
+        rs = 6 if cid in FAMILIARS else scale
+        step = 32 * 6 if cid in FAMILIARS else cell_w
+        for v in views_for(cid):
             im = load(cid, v)
-            t = on_grass(im, scale)
-            ox = x + (cell_w - t.width) // 2
+            t = on_grass(im, rs)
+            ox = x + (step - t.width) // 2
             sheet.paste(t, (ox, y + cell_h - t.height))
             d.text((x, y + cell_h + 2), v, fill=TEXT, font=f_b)
-            x += cell_w + 6
+            x += step + 6
         y += cell_h + 22
         pose = fin.get('pose', '')
         grafts = fin.get('grafts') or fin.get('grafts_applied') or ''
@@ -107,7 +121,8 @@ def build(ids, out, title):
 
 
 TITLES = {1: 'NapAttack folk, batch 1: the first six (Claude J, 21 Oct)',
-          2: 'NapAttack folk, batch 2: nights 7 to 12 (Claude J, 21 Oct)'}
+          2: 'NapAttack folk, batch 2: nights 7 to 12 (Claude J, 21 Oct)',
+          3: 'NapAttack folk and familiars, batch 3: Bunk, Mote and the three Grasslings (Claude J, 21 Oct)'}
 
 if __name__ == '__main__':
     for n in ([int(a) for a in sys.argv[1:]] or sorted(BATCHES)):

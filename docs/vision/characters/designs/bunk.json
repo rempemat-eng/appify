@@ -1,0 +1,577 @@
+{
+  "id": "bunk",
+  "height_art_px": 44,
+  "cell": [
+    64,
+    72
+  ],
+  "foot": [
+    32,
+    66
+  ],
+  "question": "Barrel body and the sleeping bag.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Upright barrel: domed white barrel, visor band, bedroll across the top of the back",
+      "question": "A tall white barrel with a wrap-round visor band; the sleeping bag is a big quilted roll strapped across the top of its back, showing past both shoulders and end-on (its spiral) in profile.",
+      "parts": [
+        "bedroll (path, quilted baffles, two panel straps; spiral end in E/W): layer 0; back; bobs 1 px a frame late on walk and hop, becomes the pillow in nap",
+        "boots x2 (panel, void magnet sole, cyan lock light): layer 1; foot; 6-frame clomp, lock light on at contact",
+        "legs x2 (panel pistons): layer 1; hip; short swing, tucked in hop and sit",
+        "barrel (hull_warm dome, hull body, hull_cool skirt, panel hoop): layer 2; hip; breath 1 px squash",
+        "visor band (void glass, lamp eyes): layer 3; chest; eyes swap per state (half-lid, closed + z, ! hit)",
+        "chest (seam, vent slots, lamp + cyan lights): layer 3; chest; lights pulse in cast",
+        "arms x2 (hull_warm, panel shoulder ball and mitten): layer 4; chest; swing, wind-up, strike, guard"
+      ],
+      "palette": [
+        "hull",
+        "panel",
+        "void",
+        "path"
+      ],
+      "glows": [
+        "lamp",
+        "neon_cyan"
+      ],
+      "pose": "Upright and patient as a night-light, arms at its sides: on call for whoever cannot sleep.",
+      "notes": [
+        "Works: the crossbar roll over a plain barrel is unlike any folk; the spiral end reads as \"sleeping bag\".",
+        "The slow blink is a lamp eye going from half-lid to a closed U and a small z on the visor.",
+        "Risk: very symmetric and static; the stubby arms limit strike poses, so fights lean on the boots.",
+        "Compared with Eastward 05: the white caravans and kiosks (pale plates, violet seams, lit upper-left rims)."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1288,
+          "colours": 41,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.121,
+          "west_east": 10.9107,
+          "top_bottom": 9.3738,
+          "isolated": 0.023,
+          "checker": 0.0,
+          "height_px": 46
+        },
+        "E idle": {
+          "px": 928,
+          "colours": 37,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1271,
+          "west_east": 16.1694,
+          "top_bottom": 8.8837,
+          "isolated": 0.0136,
+          "checker": 0.0,
+          "height_px": 46
+        },
+        "W idle": {
+          "px": 928,
+          "colours": 36,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1271,
+          "west_east": 16.0502,
+          "top_bottom": 14.6155,
+          "isolated": 0.0086,
+          "checker": 0.0,
+          "height_px": 46
+        },
+        "S fidget": {
+          "px": 1288,
+          "colours": 40,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.121,
+          "west_east": 9.6002,
+          "top_bottom": 9.3738,
+          "isolated": 0.0195,
+          "checker": 0.0,
+          "height_px": 46
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Squat capsule: porthole visor, antenna lamp, the bag worn as a cape with a rolled collar",
+      "question": "A wide egg-shaped capsule with a round porthole visor; the sleeping bag worn as a cape whose top is rolled into a thick collar, its quilted tail flaring past both sides.",
+      "parts": [
+        "cape (path quilt baffles, plaster lining turned down in the snuggle, scalloped hem): layer 0; chest (collar); sways 1 px late, wraps the body in nap",
+        "boots x2 (panel half-domes, void magnet sole, cyan light): layer 1; foot; waddle walk, no legs",
+        "capsule (hull dome, hull_cool skirt, seam, chest hatch): layer 2; hip; breath 1 px",
+        "porthole (panel bezel with 4 rivets, void glass, lamp eyes): layer 3; head; eyes swap per state",
+        "antenna (panel stalk, lamp tip): layer 3; head; springs back on hop and hit",
+        "collar roll (path and path_warm, quilted): layer 4; chest; the perch for the familiar",
+        "ball arms x2 (hull_warm, panel claws): layer 5; chest; swing, punch, hold the cape in guard"
+      ],
+      "palette": [
+        "hull",
+        "panel",
+        "void",
+        "path",
+        "plaster"
+      ],
+      "glows": [
+        "lamp",
+        "neon_cyan"
+      ],
+      "pose": "Squat and snug, wrapped up like it is always a little cold on the station.",
+      "notes": [
+        "Works: a bell shape with a collar is the cosiest read; the snuggle fidget is pure Bunk.",
+        "Risk: the porthole + antenna lean towards a generic toy robot; no legs makes the 6-frame walk a waddle.",
+        "The cape tail must not read as a skirt: hem scallops and quilt folds carry it.",
+        "Compared with Eastward 05: the white port-a-cabins (round port, bezel rivets) and the quilted jackets."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1195,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9664,
+          "flat_ink": 0.0,
+          "double": 0.1429,
+          "west_east": 12.6963,
+          "top_bottom": 8.9621,
+          "isolated": 0.0195,
+          "checker": 0.0,
+          "height_px": 45
+        },
+        "E idle": {
+          "px": 1073,
+          "colours": 33,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9655,
+          "flat_ink": 0.0,
+          "double": 0.1466,
+          "west_east": 16.0003,
+          "top_bottom": 14.2442,
+          "isolated": 0.0167,
+          "checker": 0.0,
+          "height_px": 45
+        },
+        "W idle": {
+          "px": 1073,
+          "colours": 33,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9569,
+          "flat_ink": 0.0,
+          "double": 0.1552,
+          "west_east": 4.6161,
+          "top_bottom": 4.6602,
+          "isolated": 0.0084,
+          "checker": 0.0,
+          "height_px": 45
+        },
+        "S fidget": {
+          "px": 1151,
+          "colours": 34,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.9664,
+          "flat_ink": 0.0,
+          "double": 0.1429,
+          "west_east": 10.5387,
+          "top_bottom": 9.87,
+          "isolated": 0.0116,
+          "checker": 0.0,
+          "height_px": 45
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Hooped barrel: helmet head with a half-moon visor, Sleep Cycle dial, bag roll at the hips",
+      "question": "A helmet head with a half-moon visor on a barrel torso with two panel hoops and the Sleep Cycle dial on the chest; the sleeping bag a roll strapped low across the back at the hips.",
+      "parts": [
+        "bag roll (path, quilted, plaster lining at the spiral end): layer 0; hip (back); unrolls as a flap in the fidget, spreads under it in nap",
+        "disc feet x2 (panel, void magnet sole, cyan light): layer 1; foot; heavy flat clomp",
+        "legs x2 (panel pistons): layer 1; hip; 6-frame swing",
+        "barrel torso (hull, two panel hoops with rivets): layer 2; hip; breath 1 px",
+        "dial (panel bezel, void face, lamp sector, needle): layer 3; chest; sector shows deep/dream stage",
+        "head (hull_warm helmet, brow, half-moon visor, lamp eyes, panel ear pods): layer 4; chest; tilts 1 px in idle, nods in the blink",
+        "arms x2 (hull + hull_cool segments, panel elbow and hand): layer 5; chest; full swing, strike, cast"
+      ],
+      "palette": [
+        "hull",
+        "panel",
+        "void",
+        "path",
+        "plaster"
+      ],
+      "glows": [
+        "lamp",
+        "neon_cyan"
+      ],
+      "pose": "Neat and attentive, head up and the dial showing: it keeps everyone's sleep on schedule.",
+      "notes": [
+        "Works: the most rig-friendly (separate head, real arms and legs) and the dial puts the mechanic on the body.",
+        "Risk: head + body + limbs is the most generic robot shape, closest to Pendle and Nix in outline.",
+        "The barrel reads from the hoops; the bag at the hips is less visible from the front.",
+        "Compared with Eastward 05: the trailer's white panels and its banded hoops/rails at the same height."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1110,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1173,
+          "west_east": 12.7735,
+          "top_bottom": 9.9362,
+          "isolated": 0.0253,
+          "checker": 0.0,
+          "height_px": 46
+        },
+        "E idle": {
+          "px": 881,
+          "colours": 36,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1615,
+          "west_east": 14.4312,
+          "top_bottom": 16.2374,
+          "isolated": 0.0173,
+          "checker": 0.0,
+          "height_px": 46
+        },
+        "W idle": {
+          "px": 881,
+          "colours": 36,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1769,
+          "west_east": 12.8459,
+          "top_bottom": 14.449,
+          "isolated": 0.0173,
+          "checker": 0.0,
+          "height_px": 46
+        },
+        "S fidget": {
+          "px": 1231,
+          "colours": 41,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.9883,
+          "flat_ink": 0.0,
+          "double": 0.1287,
+          "west_east": 14.4612,
+          "top_bottom": 5.0681,
+          "isolated": 0.0255,
+          "checker": 0.0,
+          "height_px": 46
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "A",
+    "name": "Upright barrel (final): one white cylinder, curved visor band, dial hatch, bedroll shelf",
+    "grafts": [
+      "From C: the Sleep Cycle dial on a recessed chest hatch: panel bezel, deep half lit lamp, dream half dark glass, needle at twelve; the halves swap in the dream stage (the fidget shows it), it brightens in a cast.",
+      "From B: the bag pulled round the front as the nap sit-down (lining turned down, mittens holding the edge, boot toes out under the hem); the cyan boot lock lights in every view.",
+      "Fix: one cylinder: warm lit band (hull_warm 4) with a sheen streak (5) in the left third, hull 3, then hull_cool 3, 2 and a violet east edge 1; no vertical chest seam; dome rim, visor band and hoop curve round the front.",
+      "Fix: the roll sits lower, behind the shoulders (top at the dome's third row); end on it is a quilted spiral with plaster lining, crossed by a panel strap and buckle: a roll, not an ear.",
+      "Fix: profiles as forms: the dome rim a brow, the visor glass a pixel proud, a lit sill as the chin step, the band's back end in shade as the cheek."
+    ],
+    "parts": [
+      "familiar perch: on top of the bedroll, the side away from the foe (E: x smaller, W: x larger); layer -1; back",
+      "bedroll (path quilt, path_cool end, plaster lining, panel straps and buckles): layer 0; back (shoulders); S: crossbar behind the shoulders; E/W: end on behind the dome; same anchor and layer every facing; unrolls round the front in the nap",
+      "far leg + boot / far arm (panel, hull_warm, a tone back): layer 1; hip / chest; E/W",
+      "barrel (one cylinder: hull_warm lit band and sheen, hull, hull_cool shade; curved rim seam, panel hoop): layer 2; hip; leans with the pose (shear), breath 1 px squash",
+      "visor band (void glass, lamp eyes per state: open, closed + z, focus, wide, squeeze, happy): layer 3; head (dome); the slow blink is the signature",
+      "chest hatch + Sleep Cycle dial (panel bezel, lamp/void halves, needle): layer 3; chest; stage swaps, brightens in cast; edge-on bezel proud of the front in E/W",
+      "near leg + magnetic boot (panel piston, panel boot, void magnet sole, cyan lock light): layer 4; hip; 6-frame clomp, tucked in cheer, forward in sit",
+      "near arm (panel shoulder ball, hull_warm arm, panel mitten; the forearm telescopes in the strike): layer 5; chest; swing, wind-up, strike at full reach, cast up, guard"
+    ],
+    "palette": [
+      "hull",
+      "panel",
+      "void",
+      "path",
+      "plaster"
+    ],
+    "glows": [
+      "lamp",
+      "neon_cyan"
+    ],
+    "pose": "Upright and patient as a night-light, arms at its sides: on call for whoever cannot sleep.",
+    "eyes": {
+      "idle": "open",
+      "ready": "open",
+      "strike": "focus",
+      "cast": "wide",
+      "hit": "squeeze",
+      "sit": "closed",
+      "cheer": "happy",
+      "fidget": "closed + z",
+      "nap": "closed + z Z"
+    },
+    "perch_anchor": {
+      "E ready": [
+        23,
+        23
+      ],
+      "E strike": [
+        27,
+        23
+      ],
+      "E cast": [
+        21,
+        22
+      ],
+      "E hit": [
+        16,
+        22
+      ],
+      "E sit": [
+        20,
+        28
+      ],
+      "E cheer": [
+        22,
+        17
+      ],
+      "W ready": [
+        41,
+        23
+      ],
+      "W strike": [
+        37,
+        23
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 1306,
+        "colours": 40,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1235,
+        "west_east": 12.6158,
+        "top_bottom": 13.2849,
+        "isolated": 0.0175,
+        "checker": 0.0,
+        "height_px": 46
+      },
+      "E idle": {
+        "px": 941,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1074,
+        "west_east": 17.7293,
+        "top_bottom": 10.6607,
+        "isolated": 0.011,
+        "checker": 0.0,
+        "height_px": 46
+      },
+      "W idle": {
+        "px": 940,
+        "colours": 37,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9917,
+        "flat_ink": 0.0,
+        "double": 0.1083,
+        "west_east": 13.3222,
+        "top_bottom": 16.9638,
+        "isolated": 0.011,
+        "checker": 0.0,
+        "height_px": 46
+      },
+      "S fidget": {
+        "px": 1306,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1235,
+        "west_east": 11.5214,
+        "top_bottom": 12.5099,
+        "isolated": 0.014,
+        "checker": 0.0,
+        "height_px": 46
+      },
+      "nap S": {
+        "px": 1112,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 0.964,
+        "flat_ink": 0.0,
+        "double": 0.1079,
+        "west_east": 10.9854,
+        "top_bottom": 19.5953,
+        "isolated": 0.0134,
+        "checker": 0.0,
+        "height_px": 36
+      },
+      "E ready": {
+        "px": 1235,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1118,
+        "west_east": 16.9306,
+        "top_bottom": 4.7223,
+        "isolated": 0.0121,
+        "checker": 0.0,
+        "height_px": 64
+      },
+      "E strike": {
+        "px": 1305,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1087,
+        "west_east": 15.5453,
+        "top_bottom": 5.1708,
+        "isolated": 0.0125,
+        "checker": 0.0,
+        "height_px": 64
+      },
+      "E cast": {
+        "px": 1243,
+        "colours": 45,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 0.9763,
+        "flat_ink": 0.0,
+        "double": 0.1183,
+        "west_east": 15.9287,
+        "top_bottom": 3.8879,
+        "isolated": 0.013,
+        "checker": 0.0,
+        "height_px": 65
+      },
+      "E hit": {
+        "px": 1238,
+        "colours": 45,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1124,
+        "west_east": 17.1965,
+        "top_bottom": 3.0577,
+        "isolated": 0.0122,
+        "checker": 0.0,
+        "height_px": 65
+      },
+      "E sit": {
+        "px": 1167,
+        "colours": 43,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0641,
+        "west_east": 20.1593,
+        "top_bottom": -0.3787,
+        "isolated": 0.0069,
+        "checker": 0.0,
+        "height_px": 58
+      },
+      "E cheer": {
+        "px": 1175,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 0.9933,
+        "flat_ink": 0.0,
+        "double": 0.08,
+        "west_east": 17.9606,
+        "top_bottom": 2.7954,
+        "isolated": 0.0059,
+        "checker": 0.0,
+        "height_px": 60
+      },
+      "W ready": {
+        "px": 1235,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1056,
+        "west_east": 11.4023,
+        "top_bottom": 13.2401,
+        "isolated": 0.0149,
+        "checker": 0.0,
+        "height_px": 64
+      },
+      "W strike": {
+        "px": 1304,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1027,
+        "west_east": 10.9148,
+        "top_bottom": 13.6562,
+        "isolated": 0.0134,
+        "checker": 0.0,
+        "height_px": 64
+      }
+    },
+    "notes": [
+      "Compared side by side with Eastward 05 at the same height: the white caravans and kiosks (one pale cylinder or plate lit in a band, violet seams, lit upper-left rims) and the quilted jackets of the townsfolk.",
+      "Works: a barrel under a bedroll crossbar is unlike every folk; the familiar sits on the roll as a shelf, clear of the visor, in every fight pose.",
+      "Risk: a rigid barrel; poses come from lean, the telescoping arm and the boots. The nap is a sit-down, not a lying barrel (cheaper and keeps the visor blink visible).",
+      "Open for Matt: amber lamp eyes, never cyan glyphs (Nix owns those); the familiar's size on the roll."
+    ]
+  }
+}
