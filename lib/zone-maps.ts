@@ -105,6 +105,382 @@ export const zoneFrames: Record<
     ['workshop_f2', 0, 0, 96, 95],
   ],
 };
+/** Animals that live (scripts/art/animal_frames.py): per placed sprite, its frames facing each way
+ *  ([frame sprite, dx, dy, w, h] from the placed sprite's top-left; index 0 is the still), which way
+ *  the placed still faces, the idle accents ([frame index, ms, times]), the two walk frames, where it may
+ *  go, its pace (px per second) and step (ms), and its own shadow when it moves. */
+export type AnimalFrame = readonly [string, number, number, number, number];
+export type AnimalKind = {
+  east: readonly AnimalFrame[];
+  west: readonly AnimalFrame[];
+  faces: 'east' | 'west';
+  idle: readonly (readonly [number, number, number])[];
+  walk: readonly number[];
+  moves: 'ground' | 'water' | 'wade' | 'still';
+  speed: number;
+  stepMs: number;
+  shade?: AnimalFrame;
+};
+export const zoneAnimals: Record<string, AnimalKind> = {
+  camel: {
+    east: [
+      ['camel', 0, 0, 48, 31],
+      ['camel_dip', 0, 1, 48, 30],
+      ['camel_swish', -1, 0, 49, 31],
+    ],
+    west: [
+      ['camel', 0, 0, 48, 31],
+      ['camel_dip', 0, 1, 48, 30],
+      ['camel_swish', -1, 0, 49, 31],
+    ],
+    faces: 'east',
+    idle: [
+      [1, 1400, 1],
+      [2, 260, 2],
+    ],
+    walk: [],
+    moves: 'still',
+    speed: 0,
+    stepMs: 0,
+  },
+  camel_b: {
+    east: [
+      ['camel_b', 0, 0, 47, 24],
+      ['camel_b_swish', -1, 0, 48, 24],
+    ],
+    west: [
+      ['camel_b', 0, 0, 47, 24],
+      ['camel_b_swish', -1, 0, 48, 24],
+    ],
+    faces: 'east',
+    idle: [[1, 260, 2]],
+    walk: [],
+    moves: 'still',
+    speed: 0,
+    stepMs: 0,
+  },
+  cat: {
+    east: [
+      ['cat', 0, 0, 16, 17],
+      ['cat_flick', -1, 0, 17, 17],
+      ['cat_wash', 0, 0, 16, 17],
+      ['cat_ear', 0, 0, 16, 17],
+      ['cat_step1', -1, 4, 17, 13],
+      ['cat_step2', -1, 4, 17, 13],
+    ],
+    west: [
+      ['cat_w', -1, 0, 16, 17],
+      ['cat_w_flick', -1, 0, 17, 17],
+      ['cat_w_wash', -1, 0, 16, 17],
+      ['cat_w_ear', -1, 0, 16, 17],
+      ['cat_w_step1', -1, 4, 17, 13],
+      ['cat_w_step2', -1, 4, 17, 13],
+    ],
+    faces: 'east',
+    idle: [
+      [1, 240, 2],
+      [2, 1800, 1],
+      [3, 200, 2],
+    ],
+    walk: [4, 5],
+    moves: 'ground',
+    speed: 12,
+    stepMs: 150,
+    shade: ['cat_shade', 1, 16, 22, 2],
+  },
+  crab: {
+    east: [
+      ['crab', 0, 0, 12, 8],
+      ['crab_claws', 0, 0, 12, 8],
+      ['crab_step1', -1, 0, 13, 8],
+      ['crab_step2', 0, 0, 13, 8],
+    ],
+    west: [
+      ['crab', 0, 0, 12, 8],
+      ['crab_claws', 0, 0, 12, 8],
+      ['crab_step1', -1, 0, 13, 8],
+      ['crab_step2', 0, 0, 13, 8],
+    ],
+    faces: 'east',
+    idle: [[1, 300, 2]],
+    walk: [2, 3],
+    moves: 'ground',
+    speed: 10,
+    stepMs: 120,
+    shade: ['crab_shade', 1, 7, 14, 1],
+  },
+  duck: {
+    east: [
+      ['duck', 0, 0, 15, 11],
+      ['duck_dabble', 0, 2, 15, 9],
+      ['duck_preen', 0, 1, 15, 10],
+      ['duck_step1', 0, 1, 15, 10],
+      ['duck_step2', 0, 0, 15, 11],
+    ],
+    west: [
+      ['duck_w', -1, 0, 15, 11],
+      ['duck_w_dabble', -1, 2, 15, 9],
+      ['duck_w_preen', -1, 1, 15, 10],
+      ['duck_w_step1', -1, 1, 15, 10],
+      ['duck_w_step2', -1, 0, 15, 11],
+    ],
+    faces: 'east',
+    idle: [
+      [1, 1100, 1],
+      [2, 900, 1],
+    ],
+    walk: [3, 4],
+    moves: 'water',
+    speed: 4,
+    stepMs: 400,
+    shade: ['duck_shade', 1, 10, 17, 2],
+  },
+  heron: {
+    east: [
+      ['heron_e', 2, 0, 14, 21],
+      ['heron_e_preen', 2, 3, 13, 18],
+      ['heron_e_strike', 2, 2, 16, 19],
+      ['heron_e_step1', 2, 0, 14, 21],
+      ['heron_e_step2', 2, 0, 14, 21],
+    ],
+    west: [
+      ['heron', 0, 0, 14, 21],
+      ['heron_preen', 1, 3, 13, 18],
+      ['heron_strike', -2, 2, 16, 19],
+      ['heron_step1', 0, 0, 14, 21],
+      ['heron_step2', 0, 0, 14, 21],
+    ],
+    faces: 'west',
+    idle: [
+      [1, 1400, 1],
+      [2, 420, 1],
+    ],
+    walk: [3, 4],
+    moves: 'wade',
+    speed: 3,
+    stepMs: 420,
+    shade: ['heron_shade', 6, 20, 15, 2],
+  },
+  horse: {
+    east: [
+      ['horse', 0, 0, 40, 26],
+      ['horse_swish', -1, 0, 41, 26],
+      ['horse_dip', 0, 0, 40, 26],
+    ],
+    west: [
+      ['horse', 0, 0, 40, 26],
+      ['horse_swish', -1, 0, 41, 26],
+      ['horse_dip', 0, 0, 40, 26],
+    ],
+    faces: 'east',
+    idle: [
+      [1, 260, 2],
+      [2, 1600, 1],
+    ],
+    walk: [],
+    moves: 'still',
+    speed: 0,
+    stepMs: 0,
+  },
+  ibex: {
+    east: [
+      ['ibex', 0, 0, 36, 34],
+      ['ibex_graze', 0, 4, 36, 30],
+      ['ibex_flick', 0, 0, 36, 34],
+      ['ibex_look', 0, 0, 36, 34],
+      ['ibex_turn', 0, 0, 36, 34],
+    ],
+    west: [
+      ['ibex', 0, 0, 36, 34],
+      ['ibex_graze', 0, 4, 36, 30],
+      ['ibex_flick', 0, 0, 36, 34],
+      ['ibex_look', 0, 0, 36, 34],
+      ['ibex_turn', 0, 0, 36, 34],
+    ],
+    faces: 'east',
+    idle: [
+      [1, 2200, 1],
+      [2, 180, 2],
+      [3, 1600, 1],
+      [4, 2600, 1],
+    ],
+    walk: [],
+    moves: 'still',
+    speed: 0,
+    stepMs: 0,
+  },
+  lamb_left: {
+    east: [
+      ['lamb', 0, 0, 14, 12],
+      ['lamb_dip', 0, 1, 15, 11],
+      ['lamb_chew', 0, 1, 14, 11],
+      ['lamb_step1', 0, 0, 14, 12],
+      ['lamb_step2', 0, 0, 14, 12],
+    ],
+    west: [
+      ['lamb_left', 0, 0, 14, 12],
+      ['lamb_left_dip', -1, 1, 15, 11],
+      ['lamb_left_chew', 0, 1, 14, 11],
+      ['lamb_left_step1', 0, 0, 14, 12],
+      ['lamb_left_step2', 0, 0, 14, 12],
+    ],
+    faces: 'west',
+    idle: [
+      [1, 1300, 1],
+      [2, 200, 3],
+    ],
+    walk: [3, 4],
+    moves: 'ground',
+    speed: 4,
+    stepMs: 180,
+  },
+  marmot_rock: {
+    east: [
+      ['marmot_rock', 0, 0, 26, 26],
+      ['marmot_rock_dip', 0, 1, 26, 25],
+    ],
+    west: [
+      ['marmot_rock', 0, 0, 26, 26],
+      ['marmot_rock_dip', 0, 1, 26, 25],
+    ],
+    faces: 'east',
+    idle: [[1, 1400, 1]],
+    walk: [],
+    moves: 'still',
+    speed: 0,
+    stepMs: 0,
+  },
+  sheep: {
+    east: [
+      ['sheep', 0, 0, 21, 14],
+      ['sheep_look', 0, 0, 21, 14],
+      ['sheep_chew', 0, 0, 21, 14],
+      ['sheep_step1', 0, 0, 21, 14],
+      ['sheep_step2', 0, 0, 21, 14],
+    ],
+    west: [
+      ['sheep_left', 0, 0, 21, 14],
+      ['sheep_left_look', 0, 0, 21, 14],
+      ['sheep_left_chew', 0, 0, 21, 14],
+      ['sheep_left_step1', 0, 0, 21, 14],
+      ['sheep_left_step2', 0, 0, 21, 14],
+    ],
+    faces: 'east',
+    idle: [
+      [1, 1600, 1],
+      [2, 220, 3],
+    ],
+    walk: [3, 4],
+    moves: 'ground',
+    speed: 5,
+    stepMs: 260,
+  },
+  sheep_left: {
+    east: [
+      ['sheep', 0, 0, 21, 14],
+      ['sheep_look', 0, 0, 21, 14],
+      ['sheep_chew', 0, 0, 21, 14],
+      ['sheep_step1', 0, 0, 21, 14],
+      ['sheep_step2', 0, 0, 21, 14],
+    ],
+    west: [
+      ['sheep_left', 0, 0, 21, 14],
+      ['sheep_left_look', 0, 0, 21, 14],
+      ['sheep_left_chew', 0, 0, 21, 14],
+      ['sheep_left_step1', 0, 0, 21, 14],
+      ['sheep_left_step2', 0, 0, 21, 14],
+    ],
+    faces: 'west',
+    idle: [
+      [1, 1600, 1],
+      [2, 220, 3],
+    ],
+    walk: [3, 4],
+    moves: 'ground',
+    speed: 5,
+    stepMs: 260,
+  },
+  sheep_lying: {
+    east: [
+      ['sheep_lying', 0, 0, 19, 13],
+      ['sheep_lying_chew', 0, 0, 19, 13],
+    ],
+    west: [
+      ['sheep_lying_left', 1, 0, 20, 13],
+      ['sheep_lying_left_chew', 1, 0, 20, 13],
+    ],
+    faces: 'east',
+    idle: [[1, 240, 4]],
+    walk: [],
+    moves: 'still',
+    speed: 0,
+    stepMs: 0,
+  },
+};
+/** Where each animal that moves may wander: [dx, dy] from where the zone placed it (its home), in
+ *  zone px; checked against props, water, walls and cliffs on the straight way there and back. */
+export const zoneAnimalSpots: Partial<
+  Record<ZoneId, Record<string, readonly (readonly [number, number])[]>>
+> = {
+  town: {
+    cat: [
+      [10, 0],
+      [6, 4],
+      [-10, 0],
+    ],
+  },
+  riverside: {
+    heron: [
+      [-6, 0],
+      [6, 0],
+    ],
+  },
+  park: {
+    'duck-1': [
+      [7, -4],
+      [-4, -5],
+    ],
+    heron: [[-6, 0]],
+  },
+  landing: {
+    heron: [
+      [-3, 2],
+      [6, 0],
+    ],
+    'crab-e2': [
+      [10, 0],
+      [6, 4],
+    ],
+  },
+  cove: {
+    'crab-e0': [
+      [7, -3],
+      [6, 4],
+      [-10, 0],
+    ],
+  },
+  headland: {
+    'sheep-1': [
+      [12, 0],
+      [8, 4],
+      [-12, 0],
+    ],
+    'sheep-2': [
+      [-12, 0],
+      [12, 0],
+    ],
+    'lamb-1': [
+      [-7, 0],
+      [7, 0],
+      [3, 3],
+    ],
+    'sheep-4': [
+      [-12, 0],
+      [12, 0],
+      [8, 4],
+    ],
+  },
+};
 /** Window panes [x, y, w, h] in sprite pixels, lit warm at night. */
 export const zoneWindows: Record<string, readonly (readonly [number, number, number, number])[]> = {
   barn: [
@@ -233,7 +609,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['bush-w4', 'bush', 182, 394, 32, 25],
       ['tree-x1', 'tree_small', -20, 116, 43, 69],
       ['tree-x2', 'tree', 287, 108, 57, 93],
-      ['cat', 'cat', 183, 352, 15, 11],
+      ['cat', 'cat', 182, 346, 16, 17],
       ['ring-post-0', 'ring_post', 133, 473, 6, 16],
       ['ring-post-1', 'ring_post', 132, 477, 6, 16],
       ['ring-post-2', 'ring_post', 130, 482, 6, 16],
@@ -1219,7 +1595,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['fern-1', 'fern', 100, 432, 27, 17],
       ['mush', 'mushroom_ring', 133, 420, 41, 20],
       ['post', 'trail_post', 113, 180, 24, 36],
-      ['ibex', 'ibex', 252, 64, 36, 36],
+      ['ibex', 'ibex', 252, 66, 36, 34],
       ['stone-1', 'stone', 39, 121, 21, 13],
       ['cotton', 'cotton_grass', 61, 499, 11, 16],
     ],
@@ -1381,7 +1757,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['post', 'trail_post', 197, 332, 24, 36],
       ['boulder-1', 'boulder', 52, 301, 36, 25],
       ['stone-1', 'stone', 279, 341, 21, 13],
-      ['ibex', 'ibex', 252, 44, 36, 36],
+      ['ibex', 'ibex', 252, 46, 36, 34],
       ['boulder-2', 'boulder', 40, 521, 36, 25],
       ['scree', 'scree_small', 285, 498, 22, 18],
     ],
@@ -1541,7 +1917,7 @@ export const zoneMaps: Record<ZoneId, ZoneMap> = {
       ['cairn-1', 'cairn', 226, 471, 20, 32],
       ['cairn-2', 'cairn', 110, 301, 20, 32],
       ['cairn-3', 'cairn', 176, 141, 20, 32],
-      ['ibex', 'ibex', 242, 204, 36, 36],
+      ['ibex', 'ibex', 242, 206, 36, 34],
       ['stone-1', 'stone', 79, 471, 21, 13],
       ['boulder-1', 'boulder', 216, 261, 36, 25],
     ],
@@ -6800,7 +7176,7 @@ export const zoneFlow: Partial<Record<ZoneId, readonly [number, number, number, 
   park: [28, 0, 153, 576],
   ridge: [191, 390, 77, 29],
   hollow: [78, 0, 197, 576],
-  snowmelt: [77, 79, 216, 497],
+  snowmelt: [77, 136, 180, 440],
   landing: [0, 0, 320, 576],
   rainforest: [0, 0, 320, 576],
   headwaters: [0, 0, 320, 576],
@@ -7725,7 +8101,7 @@ export const zoneTerrain: Record<ZoneId, readonly string[]> = {
     '80^',
     '80^',
     '80^',
-    '72^1~7^',
+    '80^',
     '80^',
     '80^',
     '80^',
