@@ -744,7 +744,9 @@ def bridge(w: int, h: int) -> Canvas:
 
 def props() -> dict[str, Canvas]:
     import garden_props as gp
+    import regional_named_props  # named things for the regions beyond the valley (Claude B, to-b-0120)
     return {
+        **regional_named_props.props(),
         'tree': gp.tree(True), 'tree_small': gp.tree(False), 'tree_autumn': gp.tree(True, True),
         'pine': gp.pine(), 'bush': gp.bush(), 'fountain': fountain(), 'bench': bench(), 'bench_east': bench('east'), 'bench_west': bench('west'), 'lamp': lamp(),
         'hedge': hedge(96), 'library': library(), 'house_red': house(ROOF),
