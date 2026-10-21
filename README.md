@@ -23,7 +23,7 @@ The repository includes `vercel.json` for an HTTPS web preview. Connect Vercel t
 
 Use the repository root, the **Other** framework preset and Node.js 24. The configuration installs with `npm ci`, builds with `npm run export:web`, serves `dist` and sends client routes back to the app so refreshing `/journal` works. Leave both Bilt backend variables unset for local garden testing.
 
-With the GitHub integration enabled, future branch pushes create updated preview deployments. Share the preview URL for browser testing. If access protection is enabled, use Vercel's sharing or sign-in flow to grant access. Keep using the branch URL in the same browser profile when checking saved progress: each different origin or browser has a separate local save.
+With the GitHub integration enabled, pushes to `main` and to unprefixed branches create deployments; agent lane branches (`claude-*/`, `codex/`, `review/`, `spinoff/`) are excluded in `vercel.json` to stay under the free tier's 100 deployments a day, so test those with a local `npm run export:web` build instead. Share the preview URL for browser testing. If access protection is enabled, use Vercel's sharing or sign-in flow to grant access. Keep using the branch URL in the same browser profile when checking saved progress: each different origin or browser has a separate local save.
 
 This preview covers the web experience, including layout, navigation, animations and game interactions. It does not verify native phone behaviour, screen-time monitoring or multiplayer. The existing accelerated demo time remains in effect.
 

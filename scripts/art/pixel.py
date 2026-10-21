@@ -26,8 +26,11 @@ class Canvas:
     the trimmed top-left from the nominal origin, which placement code adds.
     """
 
-    def __init__(self, w: int, h: int, pad: int = 0):
+    def __init__(self, w: int, h: int, pad: int = 0, density: float = 1):
         self.w, self.h = w, h
+        # Art density (lib/art-density.ts): texels per world pixel. w and h are in texels;
+        # a 2x picture of a 25 px adult is a 50 texel canvas. 1 for every picture today.
+        self.density = density
         self.pad = pad
         self.ox, self.oy = 0, 0
         self.img = Image.new('RGBA', (w + 2 * pad, h + 2 * pad), (0, 0, 0, 0))
@@ -100,9 +103,30 @@ class Canvas:
         for (x, y) in ring:
             self.set(x, y, color)
 
+    def _world(self, texels: int) -> float:
+        v = texels / self.density
+        return int(v) if v == int(v) else v
+
+    @property
+    def world_w(self) -> float:
+        """Width in world pixels, for manifests (positions and sizes are always world px)."""
+        return self._world(self.w)
+
+    @property
+    def world_h(self) -> float:
+        return self._world(self.h)
+
     def save(self, path: str, scale: int = 4):
+        """Save scaled by nearest neighbour to `scale` image px per WORLD pixel (the folder's
+        export scale), so a finer canvas keeps its folder's file size: a 2x canvas at scale 4
+        is 2 image px a texel. Each texel must be a whole number of image px, and no side may
+        pass 4096 px (the texture limit every phone supports)."""
         assert self.pad == 0, 'finalize a padded canvas before saving it'
-        self.img.resize((self.w * scale, self.h * scale), Image.NEAREST).save(path, optimize=True)
+        per = scale / self.density
+        assert per == int(per) and per >= 1, f'{scale}x is not whole image px a texel at {self.density}'
+        size = (self.w * int(per), self.h * int(per))
+        assert self.density == 1 or max(size) <= 4096, f'{path}: {size} passes 4096 px'
+        self.img.resize(size, Image.NEAREST).save(path, optimize=True)
 
 
 def shade_blob(cv: Canvas, pts: set[tuple[int, int]], dark: str, mid: str, light: str, hi: str,

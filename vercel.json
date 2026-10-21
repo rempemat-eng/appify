@@ -1,8 +1,17 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "buildCommand": "npm run export:web",
   "installCommand": "npm ci",
   "outputDirectory": "dist",
   "framework": null,
   "cleanUrls": true,
-  "rewrites": [{ "source": "/:path*", "destination": "/" }]
+  "rewrites": [{ "source": "/:path*", "destination": "/" }],
+  "git": {
+    "deploymentEnabled": {
+      "claude-*/**": false,
+      "codex/**": false,
+      "review/**": false,
+      "spinoff/**": false
+    }
+  }
 }
