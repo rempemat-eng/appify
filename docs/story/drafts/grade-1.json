@@ -1,0 +1,417 @@
+{
+  "lens": "player-voice",
+  "regions": {
+    "valley": {
+      "A": {
+        "scores": {
+          "a": 7,
+          "b": 6,
+          "c": 7,
+          "d": 6,
+          "e": 8
+        },
+        "total": 34,
+        "note": "tight can-on-a-nail arc and good jokes, but Cairn appears only in ch3 so his ask feels sudden"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 9
+        },
+        "total": 44,
+        "note": "Cairn watches from ch1 ('stones round up'), rain shelter beat is lovely; the strongest bond with the gardener"
+      },
+      "C": {
+        "scores": {
+          "a": 7,
+          "b": 6,
+          "c": 7,
+          "d": 5,
+          "e": 7
+        },
+        "total": 32,
+        "note": "warm grassling-on-the-moss opening, but Cairn never speaks before the ask and the gardener's two-line monologues feel formulaic"
+      },
+      "best": "B",
+      "graft": "A ch3, gardener: \"the beds did fine without me. a bit rude of them, really.\""
+    },
+    "brackens": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 6,
+          "e": 9
+        },
+        "total": 39,
+        "note": "dry, funny drover ('the dog's a terrible influence', 'show-offs'); Tally appears only in ch3"
+      },
+      "B": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 9,
+          "e": 8
+        },
+        "total": 41,
+        "note": "Tally counts from ch1 and brings the flock in herself, so her ask is clearly earned; the socks gag is sweet"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 6,
+          "e": 8
+        },
+        "total": 37,
+        "note": "great drover lines and a strong moonrise ending, but Tally is thin and the ask is generic"
+      },
+      "best": "B",
+      "graft": "C ch1, drover: \"can't stop, mind. a drover who stops is just a man standing in a field.\""
+    },
+    "lull": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 6,
+          "e": 9
+        },
+        "total": 38,
+        "note": "collar-on-a-peg arc is clean and 'tuesday's nice' is perfect; Puddle is a light presence"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 8,
+          "d": 8,
+          "e": 8
+        },
+        "total": 41,
+        "note": "Clover has a name, Puddle grows across all three chapters, and 'forty years on that rope and the sea was just over the hill' lands the theme"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 6,
+          "e": 8
+        },
+        "total": 37,
+        "note": "'a plant having a nap, not a carrot' charms, but Puddle gets one line before the ask"
+      },
+      "best": "B",
+      "graft": "A ch3, bargee: \"we'll go when she wakes. or tuesday. tuesday's nice.\""
+    },
+    "frostline": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 7,
+          "e": 8
+        },
+        "total": 38,
+        "note": "kettle moved to the cool side is a fine concrete step; 'hot was just showing off' is a highlight"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 9,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "Tam notices she never drinks a cup, makes her one, then keeps the bothy: the most personal ask in the set"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 6,
+          "e": 7
+        },
+        "total": 36,
+        "note": "the blanket over the grassling is warm, but 'always... up' and 'so am i, a bit' feel half-landed and Tam is thin"
+      },
+      "best": "B",
+      "graft": "A ch2, warden: \"it stays warm there. warm is plenty. hot was just showing off.\""
+    },
+    "cogsworth": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 8,
+          "e": 9
+        },
+        "total": 41,
+        "note": "watch in her hand, then lid shut, then on a nail: crisp, with Pendle's deadpan 'mostly quiet. some pigeons.'"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "Pendle kept the slow minute 'very well polished' and gives it back; 'i decided that a minute ago' is the best ask in the set"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 7,
+          "e": 9
+        },
+        "total": 39,
+        "note": "'i didn't time it. i did time it.' is very funny, but the ch1 grassling-found pattern repeats"
+      },
+      "best": "B",
+      "graft": "A ch3, Pendle: \"mostly quiet. some pigeons.\""
+    },
+    "isles": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 7,
+          "e": 9
+        },
+        "total": 39,
+        "note": "tally-book arc with a pleasing blank page; Tuff only arrives in ch3, though 'it hums in g' is lovely"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 7
+        },
+        "total": 42,
+        "note": "Tuff's ellipsis voice is distinctive and inches nearer each chapter; 'they're really just the one, aren't they' is the emotional peak"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 6,
+          "e": 8
+        },
+        "total": 37,
+        "note": "'one grassling. sleeping. noted.' is charming, but Tuff appears only at the end"
+      },
+      "best": "B",
+      "graft": "A ch3, Tuff: \"i've been listening for a few thousand years. it hums in g.\""
+    },
+    "sunstone": {
+      "A": {
+        "scores": {
+          "a": 7,
+          "b": 7,
+          "c": 7,
+          "d": 7,
+          "e": 7
+        },
+        "total": 35,
+        "note": "the outlet stone is a good image, but 'one scoop a day' reads like a routine chore and the trader's voice is generic salesman"
+      },
+      "B": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 8,
+          "e": 7
+        },
+        "total": 39,
+        "note": "the trader ladles faster 'so the pool wouldn't notice' and Mirra drives the discovery; clear and warm, a little earnest"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 6,
+          "e": 8
+        },
+        "total": 37,
+        "note": "the 'don't tell anyone' callback is charming; Mirra gets one line before her ask"
+      },
+      "best": "B",
+      "graft": "C ch3, trader: \"creek's running through the gulch. i'm not charging for it. don't tell anyone.\""
+    },
+    "fire": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 8,
+          "e": 9
+        },
+        "total": 40,
+        "note": "banked white to red, then asleep; Ashe's 'it's the best colour i go' is the warmest beat in the region"
+      },
+      "B": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 8,
+          "e": 7
+        },
+        "total": 39,
+        "note": "two bells is a strong opening and Ashe carrying the bell down is good, but the lines are a touch stiff ('by the bell, smith')"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 7,
+          "e": 8
+        },
+        "total": 38,
+        "note": "'banked one keeps' is a strong moral in plain words; the smith's opening glare is fun, but Ashe is thin"
+      },
+      "best": "A",
+      "graft": "B ch2, Ashe: \"she heard it. she put the hammer down. then picked it up. that is progress.\""
+    },
+    "neon": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 8,
+          "e": 9
+        },
+        "total": 40,
+        "note": "a likeable Dave ('weirdly okay?') and the blanket ordered two years ago is a great payoff"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 9,
+          "d": 9,
+          "e": 9
+        },
+        "total": 45,
+        "note": "Nix's 'status:' log voice is perfect, the parcel-to-blanket arc is cohesive, and 'oh. it's me. i'm quiet.' is the line of the set"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 7,
+          "e": 9
+        },
+        "total": 40,
+        "note": "'in this economy' is a great Dave line, but ch3's spot (the falls) clashes with his bench, and Nix is thin"
+      },
+      "best": "B",
+      "graft": "A ch2, Dave: \"it's like a feed, but it's all the same post. weirdly okay?\""
+    },
+    "halcyon": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 7,
+          "e": 8
+        },
+        "total": 38,
+        "note": "'tidiest bunk on the station. nobody's ever used it' is very good; Bunk's visor joke is muddled"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "'tucked in forty-one sleepers. zero keepers.' plus magnetic mugs: Bunk earns the ask"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 6,
+          "e": 9
+        },
+        "total": 38,
+        "note": "'who'd fluff the fluffer?' and 'i'd recommend it to me' are the funniest lines in the region; Bunk is thin"
+      },
+      "best": "B",
+      "graft": "C ch3, keeper: \"i tested a bunk myself. eight hours. very good. i'd recommend it to me.\""
+    },
+    "lumen": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 7,
+          "c": 8,
+          "d": 8,
+          "e": 8
+        },
+        "total": 40,
+        "note": "'it wasn't lost. it was asleep. you find it with your eyes shut' is a beautiful finale and Mote is 'keeping it warm'; Mote is late"
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 8,
+          "d": 9,
+          "e": 7
+        },
+        "total": 41,
+        "note": "Mote as the gap from ch1 with her 'mm' voice, and 'shall we finish it together?' gives the fourteenth folk the right weight"
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 8,
+          "e": 7
+        },
+        "total": 38,
+        "note": "'everyone we met is resting somewhere' is a moving journey's end, but two-line stargazer monologues again"
+      },
+      "best": "B",
+      "graft": "A ch1, stargazer: \"stars don't hide. they're terrible at it.\" (or A ch3's \"you find it with your eyes shut\")"
+    }
+  },
+  "totals": {
+    "A": 422,
+    "B": 461,
+    "C": 409
+  }
+}

@@ -1,0 +1,924 @@
+[
+  {
+    "id": "valley",
+    "title": "the watering can",
+    "theme": "the gardener never puts the can down; by the end it hangs in the shelter on the green, a fern in its spout, and she sits with the neighbours.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "the can that never sets down",
+        "spot": "the hut's bed",
+        "beat": "while you slept, the gardener watered the beds twice. it had rained in the night. the can was still dripping when she went round again.",
+        "lines": [
+          {
+            "who": "gardener",
+            "text": "rain's all very well. rain doesn't know where the beans are."
+          },
+          {
+            "who": "companion",
+            "text": "the beans looked very wet."
+          },
+          {
+            "who": "gardener",
+            "text": "wet isn't the same as watered. probably."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "a hook in the shelter",
+        "spot": "the millpond bench",
+        "beat": "the band was practising at the bandstand. the gardener stopped at the shelter by the green, hung her can on a nail there, and listened to a whole tune before she took it down.",
+        "lines": [
+          {
+            "who": "gardener",
+            "text": "only one tune. the can was heavy, that's all."
+          },
+          {
+            "who": "companion",
+            "text": "the tune was nice."
+          },
+          {
+            "who": "gardener",
+            "text": "it was. it went round twice, like me."
+          }
+        ],
+        "change": "a nail in the shelter on the green, with the watering can hanging from it"
+      },
+      {
+        "n": 3,
+        "title": "a fern in the spout",
+        "spot": "the spring pool in the woodland",
+        "beat": "the can stayed on its nail all week. a fern took root in the spout. the gardener sat in the shelter with the neighbours, and in the stone circle a stone sat up.",
+        "lines": [
+          {
+            "who": "gardener",
+            "text": "the beds did fine without me. a bit rude of them, really."
+          },
+          {
+            "who": "cairn",
+            "text": "the can was still so long i thought it was one of us."
+          },
+          {
+            "who": "companion",
+            "text": "the stone is talking. the stone has a fern."
+          }
+        ],
+        "change": "the watering can hangs in the shelter with a fern growing from its spout; the gardener sits on the shelter's bench among neighbours"
+      }
+    ],
+    "apprentice": {
+      "who": "Cairn",
+      "ask": "i've stood here a long time. i think i'd like to sit somewhere new. may i come?",
+      "joins": "Cairn steps out of the circle, leaving a mossy gap, and walks at your pace, which he says is a nice change from no pace at all."
+    },
+    "rival": null,
+    "artNeeds": [
+      "watering can on a nail in the green's shelter (ch2)",
+      "the same can with a small fern in its spout (ch3)",
+      "the gardener seated on the shelter bench with two neighbours (pose reuse)",
+      "a gap in the stone circle where Cairn stood"
+    ]
+  },
+  {
+    "id": "brackens",
+    "title": "the fold gate",
+    "theme": "the drover walks the road all day and all night; by the end the fold gate is latched at dusk and he sits on the hut step.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "the gate stands open",
+        "spot": "the shepherd's hut step",
+        "beat": "while you rested, the drover went past the shepherd's hut three times, the flock behind him and the dog ahead. the fold gate stood open. nobody went in.",
+        "lines": [
+          {
+            "who": "drover",
+            "text": "can't stop. sheep don't stop, road doesn't stop. why would i."
+          },
+          {
+            "who": "companion",
+            "text": "the dog looks like it wants to stop."
+          },
+          {
+            "who": "drover",
+            "text": "the dog's a terrible influence."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "half shut",
+        "spot": "the drove well",
+        "beat": "the drover drew water at the drove well and sat on its rim while the sheep drank. on his way past he pushed the fold gate half shut, as if trying the idea.",
+        "lines": [
+          {
+            "who": "drover",
+            "text": "half a gate. no harm in half a gate."
+          },
+          {
+            "who": "companion",
+            "text": "two sheep went in. they lay down at once."
+          },
+          {
+            "who": "drover",
+            "text": "show-offs."
+          }
+        ],
+        "change": "the sheepfold gate stands half shut, two sheep lying inside"
+      },
+      {
+        "n": 3,
+        "title": "latched at dusk",
+        "spot": "the bench below the Brackens gap",
+        "beat": "at dusk a small bell rang. the flock came off the road into the fold, the gate was latched, and the drover sat down on his hut step with the dog across his boots.",
+        "lines": [
+          {
+            "who": "drover",
+            "text": "road's still there in the morning. i checked. well, i'll check."
+          },
+          {
+            "who": "tally",
+            "text": "that's all of them. i counted twice. the second time i nearly fell asleep."
+          },
+          {
+            "who": "companion",
+            "text": "the dog is snoring. he's very good at it."
+          }
+        ],
+        "change": "the fold gate latched with the flock inside; the drover sits on the shepherd's hut step, the dog asleep on his boots"
+      }
+    ],
+    "apprentice": {
+      "who": "Tally",
+      "ask": "the flock's in and the drover's sitting. can i count some sheep somewhere else now?",
+      "joins": "Tally hangs the fold bell on the gate for the drover, tucks her tally stick in her cardigan and trots after you down the road."
+    },
+    "rival": null,
+    "artNeeds": [
+      "sheepfold gate in three states: open, half shut, latched (gate frame reused)",
+      "the drover seated on the hut step (new pose)",
+      "the dog curled asleep",
+      "a small fold bell on the gatepost (ch3)"
+    ]
+  },
+  {
+    "id": "lull",
+    "title": "the horse collar",
+    "theme": "the bargee's old horse wears its collar day and night; by the end the collar hangs on the quay and the horse sleeps in the water meadow.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "the collar stays on",
+        "spot": "Lullford's quay and mooring",
+        "beat": "while you rested, the barge came in to lullford and went straight out again. the old horse kept its collar on at the mooring. the bargee ate standing up.",
+        "lines": [
+          {
+            "who": "bargee",
+            "text": "tide waits for no one. this river hasn't got a tide, but still."
+          },
+          {
+            "who": "companion",
+            "text": "the horse is asleep with its eyes open."
+          },
+          {
+            "who": "bargee",
+            "text": "she's always done that. hasn't she?"
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "on a willow branch",
+        "spot": "the willows by the oxbow",
+        "beat": "the barge tied up by the oxbow. the bargee lifted the collar off and hung it on a willow branch, and the old horse rolled in the grass, legs in the air.",
+        "lines": [
+          {
+            "who": "bargee",
+            "text": "an hour. maybe two. the cargo's turnips. turnips can wait."
+          },
+          {
+            "who": "puddle",
+            "text": "i've never seen her roll. she looks like a beetle."
+          },
+          {
+            "who": "companion",
+            "text": "a very happy beetle."
+          }
+        ],
+        "change": "the horse collar hangs on a willow branch by the oxbow"
+      },
+      {
+        "n": 3,
+        "title": "a peg on the quay",
+        "spot": "a boat hauled up at Gullwick",
+        "beat": "the collar has a peg now, on lullford's quay. the old horse is asleep in the water meadow, properly, eyes shut. the bargee sat on an upturned boat and watched the river take its time.",
+        "lines": [
+          {
+            "who": "bargee",
+            "text": "we'll go when she wakes. or tuesday. tuesday's nice."
+          },
+          {
+            "who": "puddle",
+            "text": "she's resting and you're resting. there's nothing left to mind."
+          },
+          {
+            "who": "companion",
+            "text": "the river's resting too. it's very slow about it."
+          }
+        ],
+        "change": "the horse collar on a peg at Lullford's quay; the old horse asleep lying down in the water meadow beside the moored barge"
+      }
+    ],
+    "apprentice": {
+      "who": "Puddle",
+      "ask": "nothing here needs minding now. could i walk with you a while? i've got boots for it.",
+      "joins": "Puddle stamps her red wellies dry on the quay, waves to the horse, who doesn't wake, and falls in beside you."
+    },
+    "rival": null,
+    "artNeeds": [
+      "horse collar prop, hung on a willow branch and on a quay peg",
+      "the old horse rolling, then lying asleep (two poses)",
+      "the bargee seated on an upturned boat at Gullwick (pose)"
+    ]
+  },
+  {
+    "id": "frostline",
+    "title": "the kettle is always on",
+    "theme": "the hut warden keeps the bothy's kettle on for everyone and never sits; by the end the kettle is off the heat and she drinks the first cup herself.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "always on",
+        "spot": "the bothy's bunk",
+        "beat": "while you slept in the bunk, the warden swept the snow off the step four times. the kettle on the stove never stopped steaming.",
+        "lines": [
+          {
+            "who": "warden",
+            "text": "the bothy is always open. the kettle is always on."
+          },
+          {
+            "who": "companion",
+            "text": "are you always on?"
+          },
+          {
+            "who": "warden",
+            "text": "someone has to be. the kettle can't pour itself."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "pushed to the side",
+        "spot": "the Col hut bench",
+        "beat": "the warden walked down to the col hut for bread and sat on its bench to eat a crust. back at the bothy she moved the kettle to the stove's cool side.",
+        "lines": [
+          {
+            "who": "warden",
+            "text": "it stays warm there. warm is plenty. hot was just showing off."
+          },
+          {
+            "who": "tam",
+            "text": "she sat down. i timed it. nearly a whole crust."
+          },
+          {
+            "who": "companion",
+            "text": "the crust looked good."
+          }
+        ],
+        "change": "the bothy's kettle sits at the side of the stove, a thin wisp of steam instead of a cloud"
+      },
+      {
+        "n": 3,
+        "title": "the first cup",
+        "spot": "the tarn shore at Snowmelt Lake",
+        "beat": "the kettle is off the heat. the warden poured the first cup for herself and drank it on the tarn shore, watching the marmot on its rock do the same nothing she was.",
+        "lines": [
+          {
+            "who": "warden",
+            "text": "the door's still open. the kettle will keep. so will i."
+          },
+          {
+            "who": "tam",
+            "text": "she gave me the old dented one. she says it boils better on the move."
+          },
+          {
+            "who": "companion",
+            "text": "the marmot is very good at sitting."
+          }
+        ],
+        "change": "the kettle cold on the bothy shelf beside one cup; the warden sits on the bothy step, mug in both hands"
+      }
+    ],
+    "apprentice": {
+      "who": "Tam",
+      "ask": "the bothy's fine without me now. can my kettle and i see what's over the col?",
+      "joins": "Tam ties the dented kettle to her rucksack, pulls her bobble hat down and follows you out into the snow."
+    },
+    "rival": {
+      "who": "the hut warden",
+      "invite": "sit-down first, then a spar in the clearing, if you like. gently, mind. i've had tea."
+    },
+    "artNeeds": [
+      "stove kettle with steam in three states: full plume, a wisp, none (steam frames reused)",
+      "one mug on the bothy shelf (small prop)",
+      "the warden seated on the bothy step with a mug (pose)"
+    ]
+  },
+  {
+    "id": "cogsworth",
+    "title": "a minute slow",
+    "theme": "the tinkerer runs every clock to the second and never stops checking; by the end her pocket watch hangs on a nail and Pendle runs a minute behind on purpose.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "the watch in her hand",
+        "spot": "the clock room",
+        "beat": "while you slept in the clock room, the tinkerer checked forty clocks against her pocket watch, then her watch against the forty. it was open in her hand the whole night.",
+        "lines": [
+          {
+            "who": "tinkerer",
+            "text": "the 7:14 left at 7:14 and a hair. i'm looking into the hair."
+          },
+          {
+            "who": "companion",
+            "text": "the clocks sound like rain."
+          },
+          {
+            "who": "tinkerer",
+            "text": "rain is very badly timed. clocks are not."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "the lid shut",
+        "spot": "the allotments' bench warm from the foundry",
+        "beat": "the tinkerer sat on the allotment bench, the foundry wall warm at her back. her watch was in her waistcoat with the lid shut. a bean grew a little. nobody timed it.",
+        "lines": [
+          {
+            "who": "tinkerer",
+            "text": "it's still ticking. i can feel it. i'm choosing not to look."
+          },
+          {
+            "who": "pendle",
+            "text": "you have not looked for eleven minutes. i am not counting. i am a clock."
+          },
+          {
+            "who": "companion",
+            "text": "the beans are very slow. i like them."
+          }
+        ],
+        "change": "the tinkerer sits on the allotments' bench at dusk, hands in her lap"
+      },
+      {
+        "n": 3,
+        "title": "a nail in the clock room",
+        "spot": "the narrowboat's cabin",
+        "beat": "the pocket watch hangs on a nail in the clock room, run down. before she napped on the narrowboat, the tinkerer opened pendle's dial and set him a minute slow.",
+        "lines": [
+          {
+            "who": "tinkerer",
+            "text": "there. a minute's room. everyone ought to have a minute's room."
+          },
+          {
+            "who": "pendle",
+            "text": "the minute is very roomy. i keep finding things in it."
+          },
+          {
+            "who": "companion",
+            "text": "what kind of things?"
+          },
+          {
+            "who": "pendle",
+            "text": "mostly quiet. some pigeons."
+          }
+        ],
+        "change": "the run-down pocket watch on a nail in the clock room; the tinkerer dozing in the narrowboat's cabin doorway"
+      }
+    ],
+    "apprentice": {
+      "who": "Pendle",
+      "ask": "i arrive one minute after the train now. may i arrive one minute after you?",
+      "joins": "Pendle straightens his conductor's cap, swings his pendulum once and steps off the platform to follow you, exactly one step behind."
+    },
+    "rival": {
+      "who": "the tinkerer",
+      "invite": "a spar on the plaza? no clock on it. we'll stop when we stop."
+    },
+    "artNeeds": [
+      "pocket watch in hand, closed on a chain, hung on a nail (one small prop, three placements)",
+      "the tinkerer seated on the allotments' bench (pose)",
+      "the tinkerer dozing in the narrowboat's cabin doorway (pose)"
+    ]
+  },
+  {
+    "id": "isles",
+    "title": "the tally book",
+    "theme": "the naturalist counts everything and never just listens; by the end his tally book lies closed under his head on the black sand.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "every page full",
+        "spot": "a hammock at Lagoon Landing",
+        "beat": "while you swung in the hammock, the naturalist counted waves at the pier. four hundred and twelve. then the frogs. then the waves again, in case.",
+        "lines": [
+          {
+            "who": "naturalist",
+            "text": "four hundred and thirteen. no. fourteen. hold still, sea."
+          },
+          {
+            "who": "companion",
+            "text": "what does the sea sound like?"
+          },
+          {
+            "who": "naturalist",
+            "text": "like four hundred and fifteen."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "a page left blank",
+        "spot": "the rain shelter at the headwaters",
+        "beat": "the rain came. the naturalist sat in the rain shelter with his tally book open on his knee and wrote nothing on one whole page. he says he was listening.",
+        "lines": [
+          {
+            "who": "naturalist",
+            "text": "the rain was too many to count. so i didn't. odd feeling."
+          },
+          {
+            "who": "companion",
+            "text": "the blank page is my favourite page."
+          },
+          {
+            "who": "naturalist",
+            "text": "it's very well kept, i'll give it that."
+          }
+        ],
+        "change": "the naturalist's tally book lies open on the rain shelter's bench, one page blank"
+      },
+      {
+        "n": 3,
+        "title": "a pillow",
+        "spot": "the black sand of the cove",
+        "beat": "the tally book is shut. the naturalist lay down on the black sand with it under his head and fell asleep. the boulder by the cove, the one that moves an inch a year, moved two.",
+        "lines": [
+          {
+            "who": "naturalist",
+            "text": "didn't count a thing. heard everything, though. the sea hums."
+          },
+          {
+            "who": "tuff",
+            "text": "i've been listening for a few thousand years. it hums in g."
+          },
+          {
+            "who": "companion",
+            "text": "the boulder is talking. the turtle is not."
+          }
+        ],
+        "change": "the naturalist asleep on the black sand, the shut tally book under his head; an empty hollow where the boulder lay"
+      }
+    ],
+    "apprentice": {
+      "who": "Tuff",
+      "ask": "i moved two inches today. that's a lot for me. maybe i could keep going, with you.",
+      "joins": "Tuff rises slowly from the cove, thrift nodding, the turtle still asleep on his back, and follows you at a stately pace."
+    },
+    "rival": null,
+    "artNeeds": [
+      "tally book prop: open on a bench, shut under a head",
+      "the naturalist lying asleep on black sand (pose)",
+      "a shallow hollow in the sand where the boulder sat"
+    ]
+  },
+  {
+    "id": "sunstone",
+    "title": "the outlet stone",
+    "theme": "the oasis trader never stops trading while a dune buries the pool's outlet; slowly, a scoop at sunset, the outlet stone shows again and the creek runs to the gulch.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "under the dune",
+        "spot": "the palm shade at Palm Spring",
+        "beat": "while you rested in the palm shade, the trader sold dates, salt and three hats. behind the stall, the pool's outlet stone lay under a tongue of sand. the creek bed below was dry.",
+        "lines": [
+          {
+            "who": "trader",
+            "text": "no time to look back there, friend. the front's where the coins are."
+          },
+          {
+            "who": "companion",
+            "text": "the pool sounds like it wants to go somewhere."
+          },
+          {
+            "who": "trader",
+            "text": "everyone wants to go somewhere. that's good for business."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "the stone shows",
+        "spot": "the caravan camp under the stars",
+        "beat": "the trader shut the stall at sunset and dug one scoop of sand off the outlet, then sat with the caravans under the stars. the top of the stone shows now, dark and wet.",
+        "lines": [
+          {
+            "who": "trader",
+            "text": "one scoop a day. the sand took years. it can have the slow treatment."
+          },
+          {
+            "who": "mirra",
+            "text": "my rod dips there. the water's right under. it's patient."
+          },
+          {
+            "who": "companion",
+            "text": "the stone looks like it's waking up."
+          }
+        ],
+        "change": "the top of the outlet stone shows through the sand, darkened by damp; a shovel leans on the trader's stall"
+      },
+      {
+        "n": 3,
+        "title": "over the lip",
+        "spot": "the saloon's porch",
+        "beat": "water spills over the outlet stone and down the creek bed, a thin thread all the way to the gulch. the trader rode down after it and sat on the saloon porch with a glass of water.",
+        "lines": [
+          {
+            "who": "trader",
+            "text": "sold nothing today. drank a glass of water slowly. best trade i've made."
+          },
+          {
+            "who": "mirra",
+            "text": "i don't need the rod to find it now. it found itself."
+          },
+          {
+            "who": "companion",
+            "text": "the creek is talking. it says shhh."
+          }
+        ],
+        "change": "water over the outlet stone and a thin running creek; the trader seated on the saloon porch with a glass"
+      }
+    ],
+    "apprentice": {
+      "who": "Mirra",
+      "ask": "the water's home. my rod's twitching at the next place. may i follow it with you?",
+      "joins": "Mirra tips her wide hat to the trader, fills her flask at the outlet and walks out beside you with the rod held loose."
+    },
+    "rival": {
+      "who": "the cowhand",
+      "invite": "water's back, dust's down. a friendly round in the corral, if you fancy it?"
+    },
+    "artNeeds": [
+      "outlet stone in three states: buried, top showing and damp, water spilling (one stone, sand overlay)",
+      "a short running-water strip in the creek bed",
+      "a shovel leaning on the stall (ch2)",
+      "the trader seated on the saloon porch (pose)"
+    ]
+  },
+  {
+    "id": "fire",
+    "title": "the banked forge",
+    "theme": "the smith works the Ember forge white-hot through the night; by the end she banks it at sunset and the forge sleeps when she does.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "white all night",
+        "spot": "the bathhouse at Cinder Springs",
+        "beat": "while you soaked at the springs, the smith's hammer rang all night up at the forge. the fire stayed white. the sparks never once settled.",
+        "lines": [
+          {
+            "who": "smith",
+            "text": "iron doesn't sleep. why would the one who shapes it?"
+          },
+          {
+            "who": "companion",
+            "text": "iron doesn't do anything. it just sits there."
+          },
+          {
+            "who": "smith",
+            "text": "...don't tell it i said that."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "banked at sunset",
+        "spot": "Hearthold's herb garden",
+        "beat": "at sunset the bedtime bell rang in hearthold. the smith raked ash over the coals and the forge went from white to a low red. she sat in the herb garden and smelled the thyme.",
+        "lines": [
+          {
+            "who": "smith",
+            "text": "banked, not out. it'll be there in the morning. so will i, apparently."
+          },
+          {
+            "who": "ashe",
+            "text": "i rang the bell and she listened. she's never listened."
+          },
+          {
+            "who": "companion",
+            "text": "the thyme is very sleepy-smelling."
+          }
+        ],
+        "change": "the forge glows low red under ash at night; the smith's hammer rests on the anvil"
+      },
+      {
+        "n": 3,
+        "title": "a sleeping forge",
+        "spot": "Cinderwick's sand",
+        "beat": "the forge sleeps at night now, red under its ash. the smith walked down to cinderwick and fell asleep on the black sand. up on the walls, ashe's scales went quietly grey.",
+        "lines": [
+          {
+            "who": "smith",
+            "text": "made one good blade today instead of six bad ones. finished by supper."
+          },
+          {
+            "who": "ashe",
+            "text": "she banks the fire herself now. the bell's mine to carry again."
+          },
+          {
+            "who": "companion",
+            "text": "your scales are grey. is that bad?"
+          },
+          {
+            "who": "ashe",
+            "text": "it's the best colour i go."
+          }
+        ],
+        "change": "the forge banked red each night, hammer hung on its hook; the smith asleep on Cinderwick's sand"
+      }
+    ],
+    "apprentice": {
+      "who": "Ashe",
+      "ask": "hearthold's asleep and the forge with it. i'd like to ring my bell on the road, with you.",
+      "joins": "Ashe unhooks the bedtime bell from her belt, rings it once over the town, and clanks after you down the forge stair."
+    },
+    "rival": {
+      "who": "the smith",
+      "invite": "the ring's by the lava, and i'm rested for once. a friendly bout?"
+    },
+    "artNeeds": [
+      "forge fire in two night states: white blaze, banked red under ash (glow frames reused)",
+      "the hammer hung on a hook by the anvil (ch3)",
+      "the smith seated in the herb garden, then asleep on black sand (two poses)"
+    ]
+  },
+  {
+    "id": "neon",
+    "title": "face down",
+    "theme": "doomscroll dave never sleeps and never looks up from his phone; by the end the phone lies face down on the bench and dave is asleep beside it.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "the glow",
+        "spot": "a bench in the Heights gardens",
+        "beat": "while you rested in the heights gardens, dave scrolled on the next bench. his face was blue all night. nix brought him a parcel at three. he didn't look up.",
+        "lines": [
+          {
+            "who": "dave",
+            "text": "one more. then one more. it's a whole sport, really."
+          },
+          {
+            "who": "companion",
+            "text": "what are you looking at?"
+          },
+          {
+            "who": "dave",
+            "text": "no idea, buddy. that's the beauty of it."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "low battery",
+        "spot": "the gallery behind the falls",
+        "beat": "dave's phone hit one per cent behind the falls. he looked up, by accident, at the water. he watched it for four minutes and said nothing, which is a record.",
+        "lines": [
+          {
+            "who": "dave",
+            "text": "it's like a feed, but it's all the same post. weirdly okay?"
+          },
+          {
+            "who": "nix",
+            "text": "no parcel tonight. he didn't order anything. i stood here anyway."
+          },
+          {
+            "who": "companion",
+            "text": "the water doesn't need charging."
+          }
+        ],
+        "change": "dave stands at the gallery rail behind the falls, phone dark in his pocket"
+      },
+      {
+        "n": 3,
+        "title": "phone face down",
+        "spot": "the chapel on Chapel Islet",
+        "beat": "the bells on chapel islet rang at midnight. dave put his phone face down on his bench in the heights gardens and lay back. nix's route ended there. he is still asleep.",
+        "lines": [
+          {
+            "who": "dave",
+            "text": "five more minutes. or five more years. whatever's going."
+          },
+          {
+            "who": "nix",
+            "text": "last parcel delivered. it was a blanket. he ordered it two years ago."
+          },
+          {
+            "who": "companion",
+            "text": "he's smiling. i didn't know he could."
+          }
+        ],
+        "change": "dave asleep for good on his bench in the Heights gardens, the phone face down beside him under a blanket's corner"
+      }
+    ],
+    "apprentice": {
+      "who": "Nix",
+      "ask": "my route ends at his bench now. i'd like a route that ends somewhere quiet. got one?",
+      "joins": "Nix tucks the blanket's corner round dave, flips her face-screen to the sleep glyph and walks off beside you into the rain."
+    },
+    "rival": {
+      "who": "Dave",
+      "invite": "spar on the court? sure. right after i... no, actually, yeah, let's go."
+    },
+    "artNeeds": [
+      "dave's phone: glowing in hand, dark, face down on the bench (one small prop)",
+      "dave at the gallery rail (pose)",
+      "dave lying asleep on the bench under a blanket (pose, blanket new small prop)"
+    ]
+  },
+  {
+    "id": "halcyon",
+    "title": "the keeper's blanket",
+    "theme": "the sleep-bay keeper makes every bunk perfect for everyone else and never lies down; by the end her own blanket is turned down and she sleeps in her own bunk.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "folded square",
+        "spot": "the sleep bay",
+        "beat": "while you slept in the bay, the keeper smoothed your blanket twice and dimmed the lights a notch. her own bunk was made perfect too, blanket folded square, never touched.",
+        "lines": [
+          {
+            "who": "keeper",
+            "text": "sleep well. i'll be up. someone has to hear the hum change."
+          },
+          {
+            "who": "companion",
+            "text": "your bunk looks very tidy."
+          },
+          {
+            "who": "keeper",
+            "text": "it's the tidiest bunk on the station. nobody's ever used it."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "on the window seat",
+        "spot": "the lounge window seat",
+        "beat": "the keeper took her folded blanket to the lounge window seat and sat under it, watching the planet turn. she didn't sleep. she says she nearly did, twice.",
+        "lines": [
+          {
+            "who": "keeper",
+            "text": "the planet doesn't need me to watch it. it keeps going round anyway."
+          },
+          {
+            "who": "bunk",
+            "text": "her visor's blinking slower. i mean her eyes. she hasn't got a visor."
+          },
+          {
+            "who": "companion",
+            "text": "the planet is very blue tonight."
+          }
+        ],
+        "change": "the keeper's blanket left draped on the lounge window seat"
+      },
+      {
+        "n": 3,
+        "title": "turned down",
+        "spot": "the galley",
+        "beat": "the keeper drank her tea in the galley, then went to the sleep bay, turned her own blanket down and got in. the bay hummed the same as always. she slept through it.",
+        "lines": [
+          {
+            "who": "keeper",
+            "text": "the hum didn't change. i checked by not checking."
+          },
+          {
+            "who": "bunk",
+            "text": "i made her bunk. well, she unmade it. that's the good bit."
+          },
+          {
+            "who": "companion",
+            "text": "she's snoring a little. very neatly."
+          }
+        ],
+        "change": "the keeper asleep in her own bunk in the sleep bay, blanket turned down, a cup on the galley table"
+      }
+    ],
+    "apprentice": {
+      "who": "Bunk",
+      "ask": "the bay's got its keeper in it now. may i roll along with you and blink slowly elsewhere?",
+      "joins": "Bunk clamps its magnetic boots, checks its sleeping bag is rolled tight and clanks after you towards the shuttle hatch."
+    },
+    "rival": {
+      "who": "the station botanist",
+      "invite": "the padded ring's free. a soft little spar? nobody gets hurt, the walls are cushions."
+    },
+    "artNeeds": [
+      "the keeper's blanket folded square, draped on the window seat, turned down (one blanket, three states)",
+      "the keeper asleep in her bunk (pose)",
+      "one teacup on the galley table"
+    ]
+  },
+  {
+    "id": "lumen",
+    "title": "the star chart",
+    "theme": "the stargazer counts the stars on a chart with one gap and never closes their eyes; by the end the gap is filled with a small pencilled nightcap and the stargazer sleeps.",
+    "chapters": [
+      {
+        "n": 1,
+        "title": "the gap",
+        "spot": "the hammock under the moon tree in the Dream Grove",
+        "beat": "while you slept in the hammock, the stargazer counted the sky against their chart. every star was there but one. they counted again, eyes wide, all night.",
+        "lines": [
+          {
+            "who": "stargazer",
+            "text": "there's a gap. there's always been a gap. i'll find it if i keep looking."
+          },
+          {
+            "who": "companion",
+            "text": "maybe it's hiding."
+          },
+          {
+            "who": "stargazer",
+            "text": "stars don't hide. they're terrible at it."
+          }
+        ],
+        "change": null
+      },
+      {
+        "n": 2,
+        "title": "the chart rolled up",
+        "spot": "the habitat bunk",
+        "beat": "the stargazer rolled the chart up and laid it on the habitat bunk beside you, and lay down too, eyes still open. a small light drifted over the dome and wobbled.",
+        "lines": [
+          {
+            "who": "stargazer",
+            "text": "i'm not giving up. i'm lying down. it's a different thing."
+          },
+          {
+            "who": "companion",
+            "text": "that light has a hat on."
+          },
+          {
+            "who": "stargazer",
+            "text": "stars don't wear hats. do they?"
+          }
+        ],
+        "change": "the star chart lies rolled on the habitat bunk"
+      },
+      {
+        "n": 3,
+        "title": "eyes closed",
+        "spot": "the dream pools",
+        "beat": "by the dream pools the stargazer closed their eyes for the first time. the drifting light came down and settled on the chart's gap. they pencilled it in: a small star in a nightcap.",
+        "lines": [
+          {
+            "who": "stargazer",
+            "text": "it wasn't lost. it was asleep. you find it with your eyes shut. who knew."
+          },
+          {
+            "who": "mote",
+            "text": "sorry. i was napping. it's a lovely gap, i've been keeping it warm."
+          },
+          {
+            "who": "companion",
+            "text": "the chart is finished. the sky looks the same, but cosier."
+          }
+        ],
+        "change": "the star chart pinned open in the habitat, the gap filled by a pencilled star in a nightcap; the stargazer asleep by the dream pools"
+      }
+    ],
+    "apprentice": {
+      "who": "Mote",
+      "ask": "the chart's full and i'm drawn in. could i float along with you for a bit?",
+      "joins": "Mote tips her nightcap to the stargazer, who is asleep and doesn't see, and drifts after you, glowing softly."
+    },
+    "rival": {
+      "who": "the stargazer",
+      "invite": "a spar in the crater? i'll keep my eyes open for that one. only for that."
+    },
+    "artNeeds": [
+      "star chart: rolled on the bunk, pinned open with the gap filled (one prop, two states)",
+      "the stargazer lying with eyes closed by the dream pools (pose)"
+    ]
+  }
+]

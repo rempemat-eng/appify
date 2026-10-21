@@ -1,0 +1,1126 @@
+{
+  "_about": "NapAttack's progression spine as data (Claude K, story and progression stream, 21 Oct 2026). What unlocks when, from the first launch to the moon Lumen: the ways that open the world (world-unlocks.md, PR #95; re-sited by the world plan v5.3 and Claude G's routeGates in lib/world-routes.ts), the regions and their rest spots, the eleven resident stories (text in stories.json), the fourteen folk, the outings, the home base's hearth (PR #146) and the comforts. Read by lib/progression.ts (typed loader and cross-checks, npm run check:progression) and by scripts/sim-progression.ts, which plays three resters through it on top of the C33 economy sim and writes docs/story/pacing.md. A PROPOSAL: nothing here is read by the game or changes a rule until Matt decides (docs/story/choices-for-matt.md). Real minutes and Dream Dust throughout.",
+  "status": "proposal",
+  "decided": [
+    "Either route opens each way: a rest task or Dream Dust; Dust chipped in comes back if the task opens it first; shortcuts and comforts are Dust only (Matt, 20 Oct ~01:25, #95)",
+    "At most one way opens a calendar day (Matt, 20 Oct ~01:25, #95)",
+    "Rests run in real time when unlocks ship; demo speed stays a developer switch (Matt, 20 Oct ~01:25, #95)",
+    "C9 first: Dream Dust can never be lost in raids before ways ship (Matt, 20 Oct ~01:25, #95)",
+    "You play a folk with your Grassling as familiar; 14 folk; every folk after the three starters is an apprentice who joins when their region's resident story ends; nothing expires, costs Dust or needs a fight win; no folk gates a place (Matt, 20 Oct 23:20 and 23:26, cast.md)",
+    "The world is arrangement A of the world plan v5 (Matt, 20 Oct 14:45); the rocket at the Launch Cape replaces the space elevator and Halcyon's lander goes on to Lumen (world plan decision 8)",
+    "The currency is Dream Dust (Matt, 20 Oct 21:29)"
+  ],
+  "rules": {
+    "way": {
+      "oneOpeningPerDay": true,
+      "paidOpensAfterRestMinutes": 10,
+      "eveningFromHour": 18,
+      "eveningToHour": 24,
+      "restsSplitAtMidnight": true,
+      "refundIfTaskWins": true,
+      "storyLinks": {
+        "about": "PROPOSAL (choices page): a way marked storyLink comes in reach only once its story has reached the given chapter, so each region's story opens the road onward and a region is lived in before the next one opens. Off, the road is #95's as Matt approved it in principle. The pacing page plays both.",
+        "default": "linked"
+      }
+    },
+    "chapter": {
+      "about": "Chapter 1 comes with the first rest at any of the region's rest spots. Each later chapter needs one more rest at the region's spots that ends on a later calendar day than the previous chapter, or is a long rest. One chapter per rest, and (PROPOSAL, like the ways) at most one new chapter in all on any calendar day, so every welcome-back has at most one story beat and stories stay spaced out however much someone rests. A chapter never waits on a date, never expires and is never lost; it is shown in the next welcome-back and kept in the journal. Chapter 3 ends the story: the apprentice asks to come along and joins at once.",
+      "minRestMinutes": 1,
+      "longRestMinutes": 90,
+      "perRest": 1,
+      "perDay": 1
+    },
+    "spots": {
+      "about": "A rest spot is found by walking to it once (like a keepsake). From then on the NAP sheet and the map offer it as where the next rest happens; the companion goes there while the player is away, so nobody has to walk back. The hut's bed is the default. Every spot pays the same Dream Dust a minute (gameplay-regions G1 and G2, proposals)."
+    }
+  },
+  "start": {
+    "dust": 20,
+    "familiar": "a Grassling, hatched at the first launch",
+    "folkChoice": ["bramble", "puffcap", "velvet"],
+    "regionsOpen": ["valley", "brackens", "lull"],
+    "stopsOpen": [
+      "valley-halt",
+      "valley-east",
+      "valley-fern",
+      "valley-col",
+      "driftwood",
+      "headland-neck",
+      "fernhollow",
+      "lullford",
+      "gullwick"
+    ],
+    "othersJoin": {
+      "story": "valley",
+      "chapter": 3,
+      "about": "PROPOSAL (cast.md: the first pick sticks; the other two join later through the stone circle): when Cairn wakes and the valley story ends, the circle calls the two valley folk not chosen, and they join together."
+    }
+  },
+  "firstLaunch": [
+    {
+      "id": "hatch",
+      "what": "Hatch a Grassling (it keeps the type: REST, ROAM or FOCUS) and choose one of three valley folk: Bramble, Puffcap or Velvet. Their stone in the woodland circle lights; the other two valley folk join when Cairn wakes.",
+      "line": "hello. i'm small, but i'm very good at naps."
+    },
+    {
+      "id": "first-walk",
+      "what": "A short walk round the garden and the hut; the hut's bed is the first rest spot, and the valley's spots are found by walking past them (the spring pool, the millpond bench, the bandstand, the library, the ridge cabin).",
+      "line": "the bed's ours. want to see the village?"
+    },
+    {
+      "id": "first-rest",
+      "what": "The first rest (the NAP sheet suggests 10 minutes). It meets the first visitor (guaranteed, as today), meets W1's task (one rest of 10 minutes) so the Headland stile is mended, and brings the valley's chapter 1 (the gardener, and a mossy stone that turns to face the garden).",
+      "line": "while you were away, the shepherd mended the stile. and that stone moved. i'm sure of it."
+    },
+    {
+      "id": "first-week",
+      "what": "Day 2 onwards: one way a day at most. The Frostline (45 minutes of rest in all) and Cogsworth (one rest of 30 minutes) usually open on days 2 and 3. The Brackens and the Lull are open from the start, so the drover's and the bargee's chapters run alongside. The first apprentice usually joins in the first week: when the gardener's story ends Cairn wakes, and the stone circle calls the two valley folk not chosen at the start.",
+      "line": "the high path is clear. no rush. it'll still be there."
+    }
+  ],
+  "ways": [
+    {
+      "id": "W1",
+      "catalogueId": "headland",
+      "name": "the Headland stile",
+      "kind": "area",
+      "threshold": "headland-stile",
+      "after": [],
+      "task": {
+        "kind": "one-rest",
+        "minutes": 10
+      },
+      "dust": 25,
+      "opensStops": ["headland-tip"],
+      "opensRegions": [],
+      "resident": "the shepherd"
+    },
+    {
+      "id": "W2",
+      "catalogueId": "ridge-col",
+      "name": "the ridge col",
+      "kind": "area",
+      "threshold": "frostline-lip",
+      "after": [],
+      "task": {
+        "kind": "in-all",
+        "minutes": 45
+      },
+      "dust": 60,
+      "opensStops": ["frostline"],
+      "opensRegions": ["frostline"],
+      "resident": "the forester"
+    },
+    {
+      "id": "W3",
+      "catalogueId": "valley-train",
+      "name": "the Millrace landslip (the valley train runs with it)",
+      "kind": "area",
+      "threshold": "millrace-cutting",
+      "after": [],
+      "task": {
+        "kind": "one-rest",
+        "minutes": 30
+      },
+      "dust": 120,
+      "opensStops": ["cogsworth", "cogsworth-north", "cogsworth-west", "cogsworth-east"],
+      "opensRegions": ["cogsworth"],
+      "resident": "the porter"
+    },
+    {
+      "id": "W4",
+      "catalogueId": "ferry",
+      "name": "the Shell Bar and the Driftwood ferry",
+      "kind": "line",
+      "threshold": "shell-bar",
+      "after": [],
+      "task": {
+        "kind": "evening",
+        "minutes": 45
+      },
+      "dust": 150,
+      "opensStops": ["lagoon-landing"],
+      "opensRegions": ["isles"],
+      "resident": "the boatwoman"
+    },
+    {
+      "id": "W5",
+      "catalogueId": "desert-line",
+      "name": "the Rift: Drover's bridge, the Rift ferry and the desert line",
+      "kind": "area",
+      "threshold": "drovers-bridge",
+      "after": [],
+      "task": {
+        "kind": "days",
+        "days": 3,
+        "minutesEachDay": 60
+      },
+      "dust": 250,
+      "opensStops": ["dust-gulch", "palm-spring", "the-lode"],
+      "opensRegions": ["sunstone"],
+      "resident": "the ferryman at the Rift",
+      "storyLink": {
+        "story": "brackens",
+        "chapter": 2,
+        "why": "the drover tells how the spring flood took Drover's bridge's deck and the Rift ferry's rope; the ferryman starts splicing a new one"
+      }
+    },
+    {
+      "id": "W6",
+      "catalogueId": "chasm-bridge",
+      "name": "the chasm bridge and the crust causeway",
+      "kind": "area",
+      "threshold": "chasm-bridge",
+      "after": ["W5"],
+      "task": {
+        "kind": "in-all",
+        "minutes": 360
+      },
+      "dust": 350,
+      "opensStops": ["hearthold", "ember-forge", "cinderwick"],
+      "opensRegions": ["fire"],
+      "resident": "the masons from Dust Gulch",
+      "storyLink": {
+        "story": "sunstone",
+        "chapter": 3,
+        "why": "with the creek running again the masons of Dust Gulch stop hauling water, and go to mend the chasm bridge"
+      }
+    },
+    {
+      "id": "W7",
+      "catalogueId": "maglev",
+      "name": "Lullford's swing span (the maglev runs with it)",
+      "kind": "area",
+      "threshold": "lullford-bridge",
+      "after": ["W3"],
+      "task": {
+        "kind": "evening",
+        "minutes": 120
+      },
+      "dust": 450,
+      "opensStops": [
+        "lull-east-bank",
+        "neon-market",
+        "neon-docks",
+        "neon-heights",
+        "neon-quay",
+        "gull-strand",
+        "beacon-isle",
+        "skyport",
+        "launch-cape"
+      ],
+      "opensRegions": ["neon"],
+      "resident": "the toll keeper",
+      "storyLink": {
+        "story": "cogsworth",
+        "chapter": 2,
+        "why": "once the tinkerer stops re-timing every pour, the foundry casts the gear Lullford's swing span has waited for"
+      }
+    },
+    {
+      "id": "W8",
+      "catalogueId": "elevator",
+      "name": "the rocket at the Launch Cape",
+      "kind": "line",
+      "threshold": null,
+      "after": ["W7"],
+      "task": {
+        "kind": "days",
+        "days": 7,
+        "minutesEachDay": 60
+      },
+      "dust": 700,
+      "opensStops": [],
+      "opensRegions": ["halcyon"],
+      "resident": "the pad's porter",
+      "storyLink": {
+        "story": "neon",
+        "chapter": 3,
+        "why": "the night Dave sleeps, the city dims; the Launch Cape's crew gets a quiet night and fuels the rocket"
+      }
+    },
+    {
+      "id": "W9",
+      "catalogueId": "shuttle",
+      "name": "Halcyon's lander",
+      "kind": "line",
+      "threshold": null,
+      "after": ["W8"],
+      "task": {
+        "kind": "long",
+        "rests": 3,
+        "minutesEach": 300
+      },
+      "dust": 900,
+      "opensStops": [],
+      "opensRegions": ["lumen"],
+      "resident": "the station botanist",
+      "storyLink": {
+        "story": "halcyon",
+        "chapter": 3,
+        "why": "with the sleep-bay keeper resting, the station botanist has time to ready the lander"
+      }
+    }
+  ],
+  "regions": [
+    {
+      "id": "valley",
+      "name": "the home valley",
+      "opensWith": null,
+      "places": "the garden and hut, Crossroads, the park and bandstand, the woodland (spring pool, stone circle), the riverside (millpond, mill), the halt farm, Driftwood, the Headland (its tip behind W1), Fernhollow on the Foothill Road",
+      "plan": {
+        "file": null,
+        "owner": "claude-e",
+        "pr": null
+      },
+      "story": "valley",
+      "ring": {
+        "place": "the green in Crossroads",
+        "rival": "Doomscroll Dave, as the tutor (unchanged)"
+      },
+      "spots": [
+        {
+          "id": "hut-bed",
+          "name": "the hut's bed",
+          "night": true,
+          "default": true
+        },
+        {
+          "id": "spring-pool",
+          "name": "the spring pool in the woodland",
+          "night": false
+        },
+        {
+          "id": "millpond-bench",
+          "name": "the millpond bench",
+          "night": false
+        },
+        {
+          "id": "bandstand",
+          "name": "the bandstand in the park (Park Patrol)",
+          "night": false
+        },
+        {
+          "id": "library",
+          "name": "the library (Book Club)",
+          "night": false
+        },
+        {
+          "id": "ridge-cabin",
+          "name": "the ridge cabin (Mountain Retreat)",
+          "night": true
+        },
+        {
+          "id": "harbour-wall",
+          "name": "Driftwood's harbour wall",
+          "night": false
+        },
+        {
+          "id": "headland-tower",
+          "name": "the Headland's lookout tower",
+          "night": false,
+          "after": "W1"
+        }
+      ]
+    },
+    {
+      "id": "brackens",
+      "name": "the Brackens",
+      "opensWith": null,
+      "places": "the heather moor west of the valley: the Brackens gap, the drove well, the sheepfolds and the shepherd's hut on the Drover's Road, the Heather and Fold spurs (open up to the Rift, W5)",
+      "plan": {
+        "file": "art/regions/brackens.json",
+        "owner": "claude-f",
+        "pr": null
+      },
+      "story": "brackens",
+      "ring": null,
+      "spots": [
+        {
+          "id": "shepherds-hut",
+          "name": "the shepherd's hut step",
+          "night": true
+        },
+        {
+          "id": "drove-well",
+          "name": "the drove well",
+          "night": false
+        },
+        {
+          "id": "gap-bench",
+          "name": "the bench below the Brackens gap",
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "lull",
+      "name": "the Lull plain, Lullford and Gullwick",
+      "opensWith": null,
+      "places": "the Lull's west bank: water meadows, willow carr, the oxbows and the windmill; Lullford's old bridge, quay and toll house (the swing span is W7); Gullwick's cove",
+      "plan": {
+        "file": "art/regions/lull-delta.json",
+        "owner": "claude-i",
+        "pr": 177
+      },
+      "story": "lull",
+      "ring": null,
+      "spots": [
+        {
+          "id": "lullford-quay",
+          "name": "Lullford's quay and mooring",
+          "night": false
+        },
+        {
+          "id": "oxbow-willows",
+          "name": "the willows by the oxbow",
+          "night": false
+        },
+        {
+          "id": "gullwick-boat",
+          "name": "a boat hauled up at Gullwick",
+          "night": true
+        }
+      ]
+    },
+    {
+      "id": "frostline",
+      "name": "the Frostline",
+      "opensWith": "W2",
+      "places": "the Col Path and the Col hut, Fir Hollow, Snowmelt Lake, the Snow Saddle and its bothy, the High Lookout, the High Fells",
+      "plan": {
+        "file": "art/regions/frostline.json",
+        "owner": "claude-f",
+        "pr": null
+      },
+      "story": "frostline",
+      "ring": {
+        "place": "a snowy clearing by the bothy",
+        "rival": "the hut warden"
+      },
+      "spots": [
+        {
+          "id": "bothy-bunk",
+          "name": "the bothy's bunk",
+          "night": true
+        },
+        {
+          "id": "col-hut-bench",
+          "name": "the Col hut bench",
+          "night": false
+        },
+        {
+          "id": "tarn-shore",
+          "name": "the tarn shore at Snowmelt Lake",
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "cogsworth",
+      "name": "Cogsworth, the coal hills and the Narrows",
+      "opensWith": "W3",
+      "places": "the platform, the clock-tower square and plaza, Gasworks Hill and the mast, the canal with its lock and narrowboat, the foundry, the allotments, the terminus (the maglev, W7), the Narrows and the Cog foot",
+      "plan": {
+        "file": "art/regions/cogsworth.json",
+        "owner": "claude-h",
+        "pr": 184
+      },
+      "story": "cogsworth",
+      "ring": {
+        "place": "the plaza",
+        "rival": "the tinkerer"
+      },
+      "spots": [
+        {
+          "id": "allotments-bench",
+          "name": "the allotments' bench, warm from the foundry",
+          "night": false
+        },
+        {
+          "id": "narrowboat-cabin",
+          "name": "the narrowboat's cabin",
+          "night": true
+        },
+        {
+          "id": "clock-room",
+          "name": "the clock room",
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "isles",
+      "name": "the Tidebloom Isles",
+      "opensWith": "W4",
+      "places": "the Shell Bar from the Headland, Lagoon Landing, the rainforest, the headwaters, Black-sand Cove",
+      "plan": {
+        "file": null,
+        "owner": "claude-c",
+        "pr": null
+      },
+      "story": "isles",
+      "ring": null,
+      "spots": [
+        {
+          "id": "landing-hammock",
+          "name": "a hammock at Lagoon Landing",
+          "night": true
+        },
+        {
+          "id": "rain-shelter",
+          "name": "the rain shelter at the headwaters",
+          "night": false
+        },
+        {
+          "id": "black-sand",
+          "name": "the black sand of the cove",
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "sunstone",
+      "name": "the Sunstone basin",
+      "opensWith": "W5",
+      "places": "the steppe and the Rift, Palm Spring, Dust Gulch, the Lode, the Amber canyon, the salt lake, the caravan camp",
+      "plan": {
+        "file": null,
+        "owner": "claude-d",
+        "pr": null
+      },
+      "story": "sunstone",
+      "ring": {
+        "place": "the dusty corral in Dust Gulch",
+        "rival": "the cowhand"
+      },
+      "spots": [
+        {
+          "id": "palm-shade",
+          "name": "the palm shade at Palm Spring",
+          "night": false
+        },
+        {
+          "id": "caravan-camp",
+          "name": "the caravan camp under the stars",
+          "night": true
+        },
+        {
+          "id": "saloon-porch",
+          "name": "the saloon's porch",
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "fire",
+      "name": "the fire country",
+      "opensWith": "W6",
+      "places": "the Cinder Rise, the chasm bridge, Hearthold, the Ember forge and its shrine, Cinder Springs, Cinderwick",
+      "plan": {
+        "file": null,
+        "owner": "claude-d",
+        "pr": null
+      },
+      "story": "fire",
+      "ring": {
+        "place": "the basalt ring by the lava",
+        "rival": "the smith"
+      },
+      "spots": [
+        {
+          "id": "bathhouse",
+          "name": "the bathhouse at Cinder Springs",
+          "night": true
+        },
+        {
+          "id": "herb-garden",
+          "name": "Hearthold's herb garden",
+          "night": false
+        },
+        {
+          "id": "cinderwick-sand",
+          "name": "Cinderwick's sand",
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "neon",
+      "name": "Neon Harbour and the delta",
+      "opensWith": "W7",
+      "places": "the delta and the Lull Cut, Falls Rock old town, the market, the docks, the Heights and its gardens, Chapel Islet, the Gull Strand, Beacon Isle, the new town, the Skyport, the Launch Cape",
+      "plan": {
+        "file": "art/regions/neon.json",
+        "owner": "claude-i",
+        "pr": 177
+      },
+      "story": "neon",
+      "ring": {
+        "place": "the Neon court",
+        "rival": "Doomscroll Dave"
+      },
+      "spots": [
+        {
+          "id": "delta-hide",
+          "name": "a reed hide in the delta",
+          "night": false
+        },
+        {
+          "id": "falls-gallery",
+          "name": "the gallery behind the falls",
+          "night": false
+        },
+        {
+          "id": "heights-bench",
+          "name": "a bench in the Heights gardens",
+          "night": false
+        },
+        {
+          "id": "chapel",
+          "name": "the chapel on Chapel Islet",
+          "night": true
+        }
+      ]
+    },
+    {
+      "id": "halcyon",
+      "name": "Halcyon Station",
+      "opensWith": "W8",
+      "places": "the airlock, hydroponics, the galley, the atrium's low-gravity ring, the sleep bay, the lounge window, a padded ring, the lander hatch",
+      "plan": {
+        "file": null,
+        "owner": "claude-d",
+        "pr": null
+      },
+      "story": "halcyon",
+      "ring": {
+        "place": "the padded ring",
+        "rival": "the station botanist"
+      },
+      "spots": [
+        {
+          "id": "sleep-bay",
+          "name": "the sleep bay",
+          "night": true
+        },
+        {
+          "id": "galley",
+          "name": "the galley",
+          "night": false
+        },
+        {
+          "id": "lounge-window",
+          "name": "the lounge window seat",
+          "night": false
+        }
+      ]
+    },
+    {
+      "id": "lumen",
+      "name": "Lumen",
+      "opensWith": "W9",
+      "places": "the pad, the habitat, the ice rig, the tube corridor, the dome, the Dream Grove with the moon tree, the hammock, the dream pools, the sparring crater",
+      "plan": {
+        "file": null,
+        "owner": "claude-d",
+        "pr": null
+      },
+      "story": "lumen",
+      "ring": {
+        "place": "the sparring crater",
+        "rival": "the stargazer"
+      },
+      "spots": [
+        {
+          "id": "habitat-bunk",
+          "name": "the habitat bunk",
+          "night": true
+        },
+        {
+          "id": "dream-pools",
+          "name": "the dream pools",
+          "night": false
+        },
+        {
+          "id": "moon-hammock",
+          "name": "the hammock under the moon tree",
+          "night": true
+        }
+      ]
+    }
+  ],
+  "folk": [
+    {
+      "id": "bramble",
+      "name": "Bramble",
+      "night": 1,
+      "home": "valley",
+      "joins": {
+        "kind": "start"
+      }
+    },
+    {
+      "id": "puffcap",
+      "name": "Puffcap",
+      "night": 2,
+      "home": "valley",
+      "joins": {
+        "kind": "start"
+      }
+    },
+    {
+      "id": "velvet",
+      "name": "Velvet",
+      "night": 3,
+      "home": "valley",
+      "joins": {
+        "kind": "start"
+      }
+    },
+    {
+      "id": "tally",
+      "name": "Tally",
+      "night": 4,
+      "home": "brackens",
+      "joins": {
+        "kind": "story",
+        "story": "brackens"
+      }
+    },
+    {
+      "id": "tam",
+      "name": "Tam",
+      "night": 5,
+      "home": "frostline",
+      "joins": {
+        "kind": "story",
+        "story": "frostline"
+      }
+    },
+    {
+      "id": "puddle",
+      "name": "Puddle",
+      "night": 6,
+      "home": "lull",
+      "joins": {
+        "kind": "story",
+        "story": "lull"
+      }
+    },
+    {
+      "id": "cairn",
+      "name": "Cairn",
+      "night": 7,
+      "home": "valley",
+      "joins": {
+        "kind": "story",
+        "story": "valley"
+      }
+    },
+    {
+      "id": "pendle",
+      "name": "Pendle",
+      "night": 8,
+      "home": "cogsworth",
+      "joins": {
+        "kind": "story",
+        "story": "cogsworth"
+      }
+    },
+    {
+      "id": "mirra",
+      "name": "Mirra",
+      "night": 9,
+      "home": "sunstone",
+      "joins": {
+        "kind": "story",
+        "story": "sunstone"
+      }
+    },
+    {
+      "id": "ashe",
+      "name": "Ashe",
+      "night": 10,
+      "home": "fire",
+      "joins": {
+        "kind": "story",
+        "story": "fire"
+      }
+    },
+    {
+      "id": "tuff",
+      "name": "Tuff",
+      "night": 11,
+      "home": "isles",
+      "joins": {
+        "kind": "story",
+        "story": "isles"
+      }
+    },
+    {
+      "id": "nix",
+      "name": "Nix",
+      "night": 12,
+      "home": "neon",
+      "joins": {
+        "kind": "story",
+        "story": "neon"
+      }
+    },
+    {
+      "id": "bunk",
+      "name": "Bunk",
+      "night": 13,
+      "home": "halcyon",
+      "joins": {
+        "kind": "story",
+        "story": "halcyon"
+      }
+    },
+    {
+      "id": "mote",
+      "name": "Mote",
+      "night": 14,
+      "home": "lumen",
+      "joins": {
+        "kind": "story",
+        "story": "lumen"
+      }
+    }
+  ],
+  "outings": [
+    {
+      "id": "park",
+      "name": "PARK PATROL",
+      "region": "valley",
+      "spot": "bandstand",
+      "minutes": 15,
+      "dust": 20,
+      "status": "live"
+    },
+    {
+      "id": "book",
+      "name": "BOOK CLUB",
+      "region": "valley",
+      "spot": "library",
+      "minutes": 30,
+      "dust": 60,
+      "status": "live"
+    },
+    {
+      "id": "mountain",
+      "name": "MOUNTAIN RETREAT",
+      "region": "valley",
+      "spot": "ridge-cabin",
+      "minutes": 60,
+      "dust": 150,
+      "status": "live"
+    },
+    {
+      "id": "high-fells",
+      "name": "THE HIGH FELLS",
+      "region": "frostline",
+      "spot": "col-hut-bench",
+      "minutes": 90,
+      "dust": 180,
+      "status": "proposal"
+    },
+    {
+      "id": "slow-boat",
+      "name": "THE SLOW BOAT",
+      "region": "cogsworth",
+      "spot": "narrowboat-cabin",
+      "minutes": 45,
+      "dust": 90,
+      "status": "proposal"
+    },
+    {
+      "id": "isle-day",
+      "name": "A DAY ON THE ISLE",
+      "region": "isles",
+      "spot": "landing-hammock",
+      "minutes": 120,
+      "dust": 240,
+      "status": "proposal"
+    },
+    {
+      "id": "siesta",
+      "name": "SIESTA",
+      "region": "sunstone",
+      "spot": "palm-shade",
+      "minutes": 90,
+      "dust": 180,
+      "status": "proposal"
+    },
+    {
+      "id": "soak",
+      "name": "A SOAK",
+      "region": "fire",
+      "spot": "bathhouse",
+      "minutes": 60,
+      "dust": 120,
+      "status": "proposal"
+    },
+    {
+      "id": "lull-cut",
+      "name": "DOWN THE LULL CUT",
+      "region": "lull",
+      "spot": "lullford-quay",
+      "minutes": 60,
+      "dust": 120,
+      "status": "proposal",
+      "after": "W7"
+    },
+    {
+      "id": "evening-off",
+      "name": "AN EVENING OFF",
+      "region": "neon",
+      "spot": "heights-bench",
+      "minutes": 120,
+      "dust": 240,
+      "status": "proposal"
+    },
+    {
+      "id": "stargazing",
+      "name": "STARGAZING",
+      "region": "halcyon",
+      "spot": "lounge-window",
+      "minutes": 120,
+      "dust": 240,
+      "status": "proposal"
+    }
+  ],
+  "home": {
+    "about": "The home base from PR #146 (a proposal), in its Dream-Dust-only form (choices page, decision on materials): the hearth is the home's level and opens room to grow; a job is paid when queued and finishes after that many minutes of rest. Nothing is lost, nothing decays here, raids never touch it.",
+    "steps": [
+      {
+        "id": "hearth-2",
+        "name": "hearth 2: the copse cleared, the workshop",
+        "dust": 50,
+        "restMinutes": 15,
+        "after": null
+      },
+      {
+        "id": "cottage",
+        "name": "the nap hut becomes a cottage",
+        "dust": 200,
+        "restMinutes": 120,
+        "after": "hearth-2"
+      },
+      {
+        "id": "hearth-3",
+        "name": "hearth 3: the brook meadow, greenhouse, beehives, hammock grove",
+        "dust": 150,
+        "restMinutes": 60,
+        "after": "hearth-2"
+      },
+      {
+        "id": "home-of-its-own",
+        "name": "a home of its own kind (farmhouse, mill house, treehouse or tower cottage)",
+        "dust": 500,
+        "restMinutes": 300,
+        "after": "cottage"
+      },
+      {
+        "id": "hearth-4",
+        "name": "hearth 4: the bathhouse, the bird hide, the dock",
+        "dust": 250,
+        "restMinutes": 150,
+        "after": "hearth-3"
+      },
+      {
+        "id": "hearth-5",
+        "name": "hearth 5: the observatory, the first extension's room",
+        "dust": 350,
+        "restMinutes": 300,
+        "after": "hearth-4"
+      },
+      {
+        "id": "extension-1",
+        "name": "the first extension",
+        "dust": 250,
+        "restMinutes": 150,
+        "after": "hearth-5"
+      },
+      {
+        "id": "hearth-6",
+        "name": "hearth 6: the lookout step, every piece's last level",
+        "dust": 650,
+        "restMinutes": 450,
+        "after": "hearth-5"
+      },
+      {
+        "id": "extension-2",
+        "name": "the second extension",
+        "dust": 250,
+        "restMinutes": 150,
+        "after": "hearth-6"
+      }
+    ]
+  },
+  "comforts": [
+    {
+      "id": "S1",
+      "catalogueId": "mine-cart",
+      "name": "the mine cart from the Lode to the forge cart bay",
+      "kind": "shortcut",
+      "region": "sunstone",
+      "dust": 100,
+      "after": "W6"
+    },
+    {
+      "id": "S2",
+      "catalogueId": "millpond-boat",
+      "name": "a rowing boat on the millpond",
+      "kind": "comfort",
+      "region": "valley",
+      "dust": 60,
+      "after": null
+    },
+    {
+      "id": "S3",
+      "catalogueId": "coastal-steamer",
+      "name": "the coastal steamer, Neon to Driftwood (later)",
+      "kind": "shortcut",
+      "region": "neon",
+      "dust": null,
+      "after": "W7"
+    },
+    {
+      "id": "S4",
+      "catalogueId": "ridge-lanterns",
+      "name": "lanterns on the ridge trail",
+      "kind": "comfort",
+      "region": "valley",
+      "dust": 40,
+      "after": null
+    },
+    {
+      "id": "brackens-gate",
+      "name": "a mended sheepfold gate",
+      "kind": "comfort",
+      "region": "brackens",
+      "dust": 40,
+      "after": null
+    },
+    {
+      "id": "gap-top-bench",
+      "name": "a bench at the top of the gap",
+      "kind": "comfort",
+      "region": "brackens",
+      "dust": 40,
+      "after": null
+    },
+    {
+      "id": "stepping-stones",
+      "name": "stepping stones across a creek on the plain",
+      "kind": "comfort",
+      "region": "lull",
+      "dust": 50,
+      "after": null
+    },
+    {
+      "id": "lullford-flowers",
+      "name": "flower boxes on Lullford's bridge",
+      "kind": "comfort",
+      "region": "lull",
+      "dust": 40,
+      "after": null
+    },
+    {
+      "id": "tarn-bench",
+      "name": "a bench at the tarn",
+      "kind": "comfort",
+      "region": "frostline",
+      "dust": 40,
+      "after": "W2"
+    },
+    {
+      "id": "airship",
+      "name": "the airship from Cogsworth's mast to the saddle's beacon",
+      "kind": "shortcut",
+      "region": "frostline",
+      "dust": 150,
+      "after": "W3",
+      "afterStory": "frostline"
+    },
+    {
+      "id": "towpath-lamps",
+      "name": "gas lamps along the towpath",
+      "kind": "comfort",
+      "region": "cogsworth",
+      "dust": 60,
+      "after": "W3"
+    },
+    {
+      "id": "bridge-flowers",
+      "name": "flower boxes on the humpback bridge",
+      "kind": "comfort",
+      "region": "cogsworth",
+      "dust": 40,
+      "after": "W3"
+    },
+    {
+      "id": "rope-swing",
+      "name": "a rope swing over the lagoon",
+      "kind": "comfort",
+      "region": "isles",
+      "dust": 60,
+      "after": "W4"
+    },
+    {
+      "id": "pier-lanterns",
+      "name": "lanterns on the Lagoon pier",
+      "kind": "comfort",
+      "region": "isles",
+      "dust": 40,
+      "after": "W4"
+    },
+    {
+      "id": "shade-sails",
+      "name": "shade sails at Palm Spring",
+      "kind": "comfort",
+      "region": "sunstone",
+      "dust": 60,
+      "after": "W5"
+    },
+    {
+      "id": "forge-stair-lanterns",
+      "name": "lanterns on the Forge Stair",
+      "kind": "comfort",
+      "region": "fire",
+      "dust": 40,
+      "after": "W6"
+    },
+    {
+      "id": "heights-lanterns",
+      "name": "lanterns in the Heights gardens",
+      "kind": "comfort",
+      "region": "neon",
+      "dust": 60,
+      "after": "W7"
+    },
+    {
+      "id": "beacon-bench",
+      "name": "a bench on Beacon Isle",
+      "kind": "comfort",
+      "region": "neon",
+      "dust": 40,
+      "after": "W7"
+    },
+    {
+      "id": "window-seat",
+      "name": "a window seat in Halcyon's lounge",
+      "kind": "comfort",
+      "region": "halcyon",
+      "dust": 40,
+      "after": "W8"
+    }
+  ],
+  "journeyEnd": {
+    "story": "lumen",
+    "folk": "mote",
+    "what": "When the stargazer's story ends, Mote joins as the fourteenth folk: the fourteenth stone in the woodland circle and the last crystal spire round the Dream Grove light, and the moon is full. Nothing more is asked; stories, comforts and the home carry on at the player's pace, and later regions bring new ways."
+  }
+}
