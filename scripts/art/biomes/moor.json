@@ -1,0 +1,73 @@
+{
+  "id": "moor",
+  "status": "brief",
+  "lane": "claude-f",
+  "regions": ["brackens"],
+  "kit": null,
+  "about": "The Brackens' heather moor: a low ridge of peat and gritstone with ling, bilberry, bracken and gorse, sheep-bitten turf on the ways between, Scots pines on the crest. A brief as data (rules-system.md 4, 'Adding a biome'), from draft #182's moor_kit, which is frozen; the kit owner ports its techniques. Every family is a house ramp (art/house-palette.json). Numbers are shares of walkable ground unless named otherwise. 'kit' is pinned when kit v1 (woodland@1) exists.",
+  "palette_intent": "Purple-brown and olive, warmer and drier than the valley's meadow: heather reads as one dusky purple-brown from afar and as many small lit tufts up close; the turf yellows towards the gap and the steppe beyond; peat faces are dark cool brown with red-brown sphagnum; grit is pale grey. Flowers are rare and clustered (mauve ling tips, gorse yellow), never speckle.",
+  "families": {
+    "ground": ["grass", "grass_warm", "grass_cool", "sand_warm"],
+    "heather": ["earth", "earth_warm", "dusk_warm", "berry_cool"],
+    "bilberry": ["leaf"],
+    "bracken": ["grass_warm", "leaf_warm", "clay"],
+    "gorse": ["leaf_cool", "leaf", "brass", "brass_warm"],
+    "peat_face": ["earth_cool", "earth", "clay_cool"],
+    "grit": ["stone", "stone_cool", "stone_warm"],
+    "pine": ["timber_cool", "clay_cool", "leaf_cool", "grass_cool"],
+    "track": ["path", "path_cool", "earth_warm"],
+    "water": ["water", "water_cool", "sky_cool"]
+  },
+  "ground": {
+    "base": "turf: grass with warm and cool siblings in broad patches (scale about 7 texels at 1x), dry sand_warm patches growing towards the gap (yellow 0.25 inside the ridge, 0.5 at the gap)",
+    "drifts": [
+      {"name": "heather", "share": 0.62, "noise_scale": 46, "recipe": "clumped tufts 1.9 to 2.8 texels across on an earth base; half mauve (dusk_warm) and half brown (earth_warm), more mauve where the drift flowers; each tuft lit on its top left, a tone apart at most; berry_cool tips on a few lit crowns"},
+      {"name": "bracken", "share": 0.18, "noise_scale": 34, "recipe": "fronds in drifts on the deeper ground below the heather: grass_warm and leaf_warm, three-texel diagonal stamps, a few clay dead fronds"},
+      {"name": "grit", "share": 0.06, "noise_scale": 9, "recipe": "pale stone where the peat is thin, with sparse pebbles"}
+    ],
+    "inside_heather": {"bilberry": "a quarter of the tufts in shadier drifts turn leaf green"},
+    "calm": "despeckle after every pass; texture swaps at most 14 % within a drift and ups and downs of 2 to 3 %; no lone pixels (SB-05)"
+  },
+  "plants": [
+    {"id": "ling", "kind": "ground drift", "where": "everywhere on the ridge and bluff tops, thinning at the foot of faces"},
+    {"id": "bilberry", "kind": "inside the heather", "where": "shady drifts, north of rims"},
+    {"id": "bracken", "kind": "ground drift", "where": "deeper soil: the valley side, foot of the bluffs, hollows"},
+    {"id": "gorse", "kind": "shrub, blocks walking", "where": "clumps along the trods and on the west side, thickening into thicket at the edge", "sizes": "three, 28 x 20 texels the largest at 1x", "flowers": "clustered brass tips on the lit side only"},
+    {"id": "scots_pine", "kind": "tree", "where": "singly and in twos on the crest and the north bluff; never in a row"},
+    {"id": "cotton_grass", "kind": "flush plant", "where": "only in the wet flushes below springs and the drove well"},
+    {"id": "tormentil", "kind": "turf flower", "where": "in small drifts on the sheep's ways, yellow in pairs of texels"}
+  ],
+  "clusters": [
+    {"id": "gorse_brake", "of": ["gorse", "gorse", "gorse", "bracken"], "where": "beside a trod at a bend, the trod's side away from the drop", "spacing": "one per screen at most"},
+    {"id": "pine_pair", "of": ["scots_pine", "scots_pine", "gritstone"], "where": "crest and north bluff tops, on a rim cell, never on a path"},
+    {"id": "tor", "of": ["gritstone", "gritstone", "boulders"], "where": "ridge rims, the stone ring's ridge, the gap's bluffs"},
+    {"id": "fold_corner", "of": ["drystone wall", "gorse", "tormentil"], "where": "beside the sheepfolds along the Drover's Road"},
+    {"id": "flush", "of": ["cotton_grass", "rush", "water"], "where": "below the drove well and springs, down the slope"}
+  ],
+  "tiers": {
+    "face_heights": [16, 32],
+    "notes": "two or three tiers (the brief): 32 px peat-and-grit faces on the bluffs, 16 px turf banks on the ridge's terraces; rims kept a face plus a cell apart (no 64 px stacked faces)"
+  },
+  "edges": {
+    "from_woodland": "The face is peat over gritstone, not the woodland's earth bank: dark cool peat in hags with red-brown sphagnum in the upper third, grey gritstone courses showing at the foot of the taller bluffs. The lip is heather overhanging by one or two texels with a few hanging tufts, not a sod roll. The foot is grit and fallen peat crumbs, with bracken grown into it. Side bands step in by whole cells (to-all-grid-2x). Volume (to-all-volume): bluffs step in and out by whole cells as hags and buttresses, lit top-left planes, a cast shadow at the foot.",
+    "stair": "rough gritstone steps between heather cheeks; timber only at the sheepfolds",
+    "bank": "peat bank with cotton grass and rush on the drove well's flush; no reeds"
+  },
+  "water": {"kinds": ["well", "flush", "spring"], "notes": "the moor holds little open water: the drove well's trough and its flush, two springs on the north bluff's foot; no streams cross the ridge"},
+  "ambience": {
+    "animals": ["sheep", "the drover's dog", "skylarks over the bluffs", "red grouse in the heather"],
+    "sounds_for_m": ["wind over heather", "skylark song", "sheep bells along the road"],
+    "light": "the moor sits west of the valley: late light reaches it last, so dusk warms the heather"
+  },
+  "pieces": {
+    "from_cliff_core": ["stair", "path", "boulders", "spring", "scree", "pond"],
+    "owned": ["gorse_brake", "pine_pair", "tor", "peat_hag", "sheepfold"],
+    "proposed": ["peat_hag", "sheepfold"]
+  },
+  "transitions": [
+    {"to": "meadow", "where": "the valley side of the Brackens", "how": "heath blend: heather drifts break into tufts, then into turf with tormentil (river_kit.heath's idea)"},
+    {"to": "steppe", "where": "the gap, with Claude D", "how": "turf yellowing to sand_warm, then D's steppe band; gorse thins out"},
+    {"to": "highland", "where": "the north 544 px, the massif's front", "how": "grit share rising to scree and boulders under the first crag faces"}
+  ],
+  "sources": ["draft #182 (scripts/art/moor_kit.py, frozen)", "docs/vision/regions/home-valley-frostline-brackens.md", "docs/vision/rules-system.md"]
+}
