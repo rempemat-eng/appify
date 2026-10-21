@@ -84,10 +84,12 @@ TIERS = [
 # --- water: (id, tier, course of world px points, width) ------------------------------------------
 WATER = [
     ('cog-upper', 6, [(7688, 1696), (7688, 1968)], 40),          # under the High Fells' step (W3) at x 7696          # off the massif into the town's west side
-    ('cog-lower', 5, [(8328, 2904), (8368, 2904), (8368, 3064), (8600, 3064)], 48),
-    ('lull-narrows', 4, [(9128, 1696), (9128, 2168), (9064, 2168), (9064, 2328), (9032, 2328), (9032, 2576),
-                         (8984, 2576), (8984, 2896), (8888, 2896), (8888, 2992), (8616, 2992), (8616, 3064), (8600, 3064)], 44),
-    ('lull-below', 4, [(8600, 3064), (8600, 3120), (8800, 3120), (8800, 3200), (9064, 3200), (9064, 3304)], 72),
+    # the Cog below the town and the Lull through the Narrows follow the block-out's rivers
+    # (docs/vision/research/blockout, #187) on the grid: the Cog joins the Lull at about
+    # (8880, 3112), past the Cog foot where the Towpath crosses it
+    ('cog-lower', 5, [(8328, 2904), (8368, 2904), (8368, 3064), (8632, 3064), (8632, 3112), (8888, 3112)], 48),
+    ('lull-narrows', 4, [(9032, 1696), (9032, 2576), (8984, 2576), (8984, 2896), (8888, 2896), (8888, 3112)], 44),
+    ('lull-below', 4, [(8888, 3112), (8888, 3200), (8920, 3200), (8920, 3304)], 72),
     ('eel-pond', 7, [(7040, 3256), (7072, 3256)], 32),
 ]
 GORGE_RIM = 2         # tiers of wall each side of the Lull's cut stand at least this high
@@ -333,7 +335,7 @@ def check(L=None, verbose=True) -> list:
             notes.append(f'{pid}: its door at {(dx, dy)} needs a path to the road (a garden path, drawn with the hamlet)')
     # the gorge's water runs on from the north edge to the confluence
     lull = _course(WATER[2][2], WATER[2][3])
-    if not lull[0].any() or not lull[cell(8600, 3064)]:
+    if not lull[0].any() or not lull[cell(8888, 3112)]:
         faults.append('the Lull does not run from the north edge to the confluence')
     # the town's gates sit on the tiers G gives them
     for g, (gx, gy), e in plan.TOWN_GATES:
