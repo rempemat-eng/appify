@@ -1,0 +1,34 @@
+name: Map proposal contracts
+
+on:
+  pull_request:
+    paths:
+      - docs/codex/ideas/connected-world/**
+      - .github/workflows/map-design.yml
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  proposal:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.19.0'
+          package-manager-cache: false
+      - name: Validate design topology and negative controls
+        run: |
+          node docs/codex/ideas/connected-world/check-biomes.cjs
+          node docs/codex/ideas/connected-world/render-biome-contract.cjs
+          git diff --exit-code -- docs/codex/ideas/connected-world/biome-connections.svg

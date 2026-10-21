@@ -1,0 +1,125 @@
+{
+  "status": "proposal-not-runtime",
+  "authority": "The exact segment/transport contracts override incidental marks in the illustrative PNG. No drawn track may invent an edge or change mode mid-line.",
+  "networks": [
+    {
+      "id": "mainline",
+      "mode": "train",
+      "orderedStops": ["valley", "steam", "west"],
+      "connectionIds": ["valley-cogsworth", "cogsworth-gulch"],
+      "terminals": [
+        { "stop": "valley", "end": "buffer-stop" },
+        { "stop": "west", "end": "buffer-stop" }
+      ],
+      "throughStops": ["steam"],
+      "gauge": "standard-rail",
+      "physicalContinuity": "One unbroken sleeper-and-two-rail alignment Valley Halt -> Cogsworth railway platform -> Dust Gulch railway platform. Cogsworth is a through station, not a railway ending in a street."
+    },
+    {
+      "id": "mine-cart",
+      "mode": "carts",
+      "orderedStops": ["west", "lava"],
+      "connectionIds": ["gulch-caldera"],
+      "terminals": [
+        { "stop": "west", "end": "buffer-stop" },
+        { "stop": "lava", "end": "buffer-stop" }
+      ],
+      "throughStops": [],
+      "gauge": "narrow-mine-rail",
+      "physicalContinuity": "Separate narrow-gauge track and boarding bay at Gulch; both rails continue to the Caldera landing and end at a buffer. It never becomes the castle footbridge."
+    },
+    {
+      "id": "maglev",
+      "mode": "maglev",
+      "orderedStops": ["steam", "neon"],
+      "connectionIds": ["cogsworth-neon"],
+      "terminals": [
+        { "stop": "steam", "end": "guideway-buffer" },
+        { "stop": "neon", "end": "guideway-buffer" }
+      ],
+      "throughStops": [],
+      "gauge": "separate-elevated-guideway",
+      "physicalContinuity": "Dedicated Cogsworth platform -> supported coastal viaduct -> Skyport platform. No joins to the conventional or mine railway, no continuation as a footpath."
+    },
+    {
+      "id": "orbital-lift",
+      "mode": "capsule",
+      "orderedStops": ["neon", "space"],
+      "connectionIds": ["neon-halcyon"],
+      "terminals": [
+        { "stop": "neon", "end": "sealed-dock" },
+        { "stop": "space", "end": "sealed-dock" }
+      ],
+      "throughStops": [],
+      "gauge": "not-a-railway",
+      "physicalContinuity": "Explicit transfer from Skyport's maglev platform to the lift dock. Separate orbit inset, not railway tracks ascending into clouds."
+    },
+    {
+      "id": "lunar-shuttle",
+      "mode": "shuttle",
+      "orderedStops": ["space", "moon"],
+      "connectionIds": ["halcyon-lumen"],
+      "terminals": [
+        { "stop": "space", "end": "landing-pad" },
+        { "stop": "moon", "end": "landing-pad" }
+      ],
+      "throughStops": [],
+      "gauge": "not-a-railway",
+      "physicalContinuity": "Two explicit landing pads and a flight line in the inset, not a footpath or rail extension."
+    }
+  ],
+  "interchanges": [
+    {
+      "stop": "steam",
+      "networks": ["mainline", "maglev"],
+      "connection": "pedestrian-forecourt",
+      "trackJoin": false,
+      "rule": "Same existing service stop ID; distinct drawn railway and maglev platforms connected by a dry forecourt, not a gauge-changing rail junction."
+    },
+    {
+      "stop": "west",
+      "networks": ["mainline", "mine-cart"],
+      "connection": "pedestrian-forecourt",
+      "trackJoin": false,
+      "rule": "Train ends at buffers. Companion crosses dry station forecourt to a separate mine-cart bay; no vehicle changes mode while moving."
+    },
+    {
+      "stop": "neon",
+      "networks": ["maglev", "orbital-lift"],
+      "connection": "pedestrian-forecourt",
+      "trackJoin": false,
+      "rule": "Skyport handles both existing services; a platform-to-dock transfer is not an extension of the maglev track."
+    },
+    {
+      "stop": "space",
+      "networks": ["orbital-lift", "lunar-shuttle"],
+      "connection": "pedestrian-forecourt",
+      "trackJoin": false,
+      "rule": "Existing shared arrival identity, with separately drawn lift dock/shuttle pad joined by the station's dry corridor."
+    }
+  ],
+  "infrastructureRules": {
+    "railSurface": "Two continuous rails and sleepers to the station's explicit buffer or a declared through-platform. Never fade into dirt, paving or a general road.",
+    "railBranch": "Only a declared same-gauge switch can branch railway track. This design has no unlisted rail branches and no rail-to-maglev switches.",
+    "tunnels": "None are required by this exact schematic. If Claude introduces one for final relief: declare one tunnel ID, two portal anchors, same network/gauge, paired approach headings and a continuous hidden alignment. No lone dark hole standing in for a missing connection.",
+    "bridges": "Declare the carried mode, water/gap beneath, supported deck, abutments and dry approaches. A railway viaduct is not a pedestrian bridge unless it has a separately declared safe foot deck.",
+    "crossings": "Footpath and railway are distinct layers. Use a drawn underpass/overpass, or a separately declared level crossing with clear walk cells; never merge their surfaces. Water may pass beneath a bridge, never onto the walking/rail deck.",
+    "junctions": "Footpaths can join only on dry supported ground. One visible path cannot split into a station teleport or become a vehicle lane.",
+    "vehiclePresentation": "Existing journey rules remain unchanged. The infrastructure is an art/topology specification, not a timetable, fare, simulation or automatic boarding feature."
+  },
+  "sea": {
+    "connectionId": "harbour-isles",
+    "status": "proposed-only-not-existing-service",
+    "endpoints": ["harbour", "lagoon_landing"],
+    "terminalType": "pier-on-dry-reachable-shore",
+    "forbiddenEndpoints": ["black_sand", "headland", "neon"],
+    "geometryRule": "Entire intermediate route lies in open water. Start/end touch their named piers, never cut across rainforest, waterfall, reef, beach or a lighthouse rock. No track, road or walking continuation across the channel."
+  },
+  "acceptance": [
+    "Trace each named network end to end at full map scale and local scale; no missing segment, unpaired tunnel, free-floating bridge, unsupported cliff turn or unexplained terminus.",
+    "Read all junctions without labels: rails, footpaths, guideway and water remain distinct materials and supported layers.",
+    "Confirm every station platform joins a reachable dry walking node and every rail terminal has a buffer or its explicit non-rail dock type.",
+    "When final terrain requires a tunnel, bridge or level crossing, add its exact semantic anchors before drawing details. This graph does not certify those future pixels.",
+    "Do not send the illustrative PNG as a production-ready route mask. Final Claude art must pass a second route-continuity review against these contracts."
+  ]
+}
