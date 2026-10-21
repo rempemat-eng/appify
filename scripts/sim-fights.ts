@@ -10,7 +10,10 @@ import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { format, type FormatConfig } from 'oxfmt';
 import {
   families,
+  fightAnimation,
   folk,
+  noRing,
+  restedCharge,
   habitDeckAt,
   restedSpecials,
   rivals,
@@ -32,6 +35,28 @@ import {
 const root = new URL('../', import.meta.url);
 const inputs = ['lib/fight-content.ts', 'lib/fight-sim.ts', 'scripts/sim-fights.ts'];
 const REPORT = 'docs/mechanics/fight-sim.md';
+/** The fight data other streams read (J's animation, K's unlock table): generated from
+ *  lib/fight-content.ts so the two never drift. */
+const DATA = 'art/fights/fight-content.json';
+
+async function dataFile(config: FormatConfig) {
+  const json = JSON.stringify(
+    {
+      status: 'proposal: generated from lib/fight-content.ts by npm run sim:fights; do not edit',
+      folk,
+      restedCharge,
+      restedSpecials,
+      rivals,
+      noRing,
+      fightAnimation,
+    },
+    null,
+    2,
+  );
+  const out = await format(DATA, json, config);
+  assert.equal(out.errors.length, 0, 'the fight data formats cleanly');
+  return out.code;
+}
 
 function inputHash() {
   const h = createHash('sha256');
@@ -454,7 +479,13 @@ async function main() {
   const fast = process.argv.includes('--fast');
   const hash = inputHash();
   const path = new URL(REPORT, root);
+  const config: FormatConfig = JSON.parse(readFileSync(new URL('.oxfmtrc.json', root), 'utf8'));
   if (process.argv.includes('--check')) {
+    assert.equal(
+      readFileSync(new URL(DATA, root), 'utf8'),
+      await dataFile(config),
+      `${DATA} is stale; run npm run sim:fights`,
+    );
     const current = readFileSync(path, 'utf8');
     assert.ok(
       current.includes(`Input hash: \`${hash}\``),
@@ -478,11 +509,12 @@ async function main() {
     ...head,
     ...body,
   ].join('\n');
-  const config: FormatConfig = JSON.parse(readFileSync(new URL('.oxfmtrc.json', root), 'utf8'));
   const formatted = await format(REPORT, doc, config);
   assert.equal(formatted.errors.length, 0, 'the generated report formats cleanly');
   mkdirSync(new URL('docs/mechanics/', root), { recursive: true });
   writeFileSync(path, formatted.code);
+  mkdirSync(new URL('art/fights/', root), { recursive: true });
+  writeFileSync(new URL(DATA, root), await dataFile(config));
   console.log(head.join('\n'));
   console.log(`Wrote ${REPORT} in ${((Date.now() - t0) / 1000).toFixed(0)} s.`);
 }

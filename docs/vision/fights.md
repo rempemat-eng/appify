@@ -1,5 +1,7 @@
 # Fights: Pokémon-style, turn-based cards
 
+**Fight content as data (Claude L, 21 Oct, a proposal):** the folk, the familiar's specials, variants and ring rivals are in `lib/fight-content.ts` (exported for other streams as `art/fights/fight-content.json`), simulated by `npm run sim:fights`. Findings, options, grader scores and the F3 / F4' / F5 recommendation: [docs/mechanics/fight-content.md](../mechanics/fight-content.md). It supersedes the first-pass numbers in sections 4.4, 4.6 and 5 below where they differ.
+
 ## Decision (Matt, 21 Oct 10:03)
 
 Matt: "keep the pokémon style fighting system and build the rest of the content from that once you what the word looks like. i might want to create a spin off game, so save the live action combat system somewhere".
