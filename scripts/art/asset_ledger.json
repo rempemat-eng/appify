@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "9021247",
+ "main": "33fdf81",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -4533,20 +4533,21 @@
    "fix": "redraw",
    "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
    "fails": [
-    "house style"
+    "house style",
+    "palette"
    ],
    "measured": {
     "scale": 4,
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/lava-near.png",
-    "px": 31879,
-    "colours": 34,
-    "on_today": 0.975,
+    "px": 31649,
+    "colours": 70,
+    "on_today": 0.897,
     "isolated": 0.047,
     "checker": 0.0045
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/lava-sky": {
    "files": [
@@ -4592,20 +4593,21 @@
    "fix": "redraw",
    "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
    "fails": [
-    "house style"
+    "house style",
+    "palette"
    ],
    "measured": {
     "scale": 4,
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/lava-yard.png",
-    "px": 19079,
-    "colours": 27,
-    "on_today": 0.959,
-    "isolated": 0.013,
+    "px": 18849,
+    "colours": 62,
+    "on_today": 0.828,
+    "isolated": 0.012,
     "checker": 0.0004
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/lumen-pad": {
    "files": [
@@ -6066,13 +6068,13 @@
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/west-near.png",
-    "px": 32390,
-    "colours": 50,
-    "on_today": 0.954,
+    "px": 32433,
+    "colours": 71,
+    "on_today": 0.933,
     "isolated": 0.069,
     "checker": 0.0038
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/west-sky": {
    "files": [
@@ -9533,26 +9535,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 55,
-    "w": 38,
+    "h": 53,
+    "w": 33,
     "style": {
-     "colours": 6,
+     "colours": 41,
      "on_house": 1.0,
-     "on_today": 0.984,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.035,
-     "west_east": 9.027,
-     "isolated": 0.017,
+     "double": 0.012,
+     "west_east": 10.953,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9569,9 +9569,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9580,47 +9580,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      2,
-      10,
-      37,
-      45
+      6,
+      28,
+      28,
+      50
      ],
-     "patches": 4,
+     "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      5.75,
+      18.0,
       18.56
      ],
      "shapes": [
-      20.5,
+      47.0,
       28.23
      ],
      "dressing": [
-      15.5,
+      42.0,
       22.36
      ],
      "isolated": [
-      0.026,
+      0.055,
       0.17
      ],
      "cluster": [
-      8.14,
+      3.94,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_columns_b": {
    "files": [
@@ -9632,125 +9627,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 49,
-    "w": 50,
+    "h": 40,
+    "w": 35,
     "style": {
-     "colours": 6,
+     "colours": 37,
      "on_house": 1.0,
-     "on_today": 0.982,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 2.696,
-     "isolated": 0.019,
-     "checker": 0.001
-    },
-    "grid": "free",
-    "size": {
-     "kind": "crag",
-     "h_range": [
-      40,
-      96
-     ],
-     "w_range": [
-      32,
-      80
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
-    },
-    "audit": {
-     "grade": "KEEP",
-     "why": "lit hexagon tops, material shading",
-     "fix": "none"
-    },
-    "logic": "ok (KEEP in the audit)",
-    "bar": {
-     "status": "fail",
-     "kind": "stone-wall",
-     "box": [
-      15,
-      12,
-      48,
-      45
-     ],
-     "patches": 4,
-     "tones_at": 0.85,
-     "tones": [
-      5.25,
-      18.56
-     ],
-     "shapes": [
-      25.25,
-      28.23
-     ],
-     "dressing": [
-      17.75,
-      22.36
-     ],
-     "isolated": [
-      0.016,
-      0.17
-     ],
-     "cluster": [
-      7.98,
-      3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
-    }
-   },
-   "placed": {
-    "caldera": 1
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/basalt_columns_low": {
-   "files": [
-    "assets/zones/props/basalt_columns_low.png"
-   ],
-   "cls": "sprite",
-   "name": "basalt_columns_low",
-   "kind": "crag",
-   "module": "caldera_props",
-   "generator": "scripts/art/caldera_props.py",
-   "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 47,
-    "w": 53,
-    "style": {
-     "colours": 6,
-     "on_house": 1.0,
-     "on_today": 0.981,
-     "palette": "house",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": 4.992,
-     "isolated": 0.012,
+     "double": 0.007,
+     "west_east": 10.338,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9767,9 +9661,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9778,47 +9672,134 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
+     "kind": "stone-wall",
+     "box": [
+      1,
+      3,
+      24,
+      26
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      20.0,
+      18.56
+     ],
+     "shapes": [
+      51.0,
+      28.23
+     ],
+     "dressing": [
+      46.0,
+      22.36
+     ],
+     "isolated": [
+      0.07,
+      0.17
+     ],
+     "cluster": [
+      3.46,
+      3.63
+     ]
+    }
+   },
+   "placed": {
+    "caldera": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/basalt_columns_low": {
+   "files": [
+    "assets/zones/props/basalt_columns_low.png"
+   ],
+   "cls": "sprite",
+   "name": "basalt_columns_low",
+   "kind": "crag",
+   "module": "caldera_props",
+   "generator": "scripts/art/caldera_props.py",
+   "owner": "D",
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
+   "measured": {
+    "scale": 4,
+    "h": 40,
+    "w": 37,
+    "style": {
+     "colours": 39,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.007,
+     "west_east": 9.054,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "free",
+    "size": {
+     "kind": "crag",
+     "h_range": [
+      40,
+      96
+     ],
+     "w_range": [
+      32,
+      80
+     ],
+     "status": "ok"
+    },
+    "last_change": {
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
+    },
+    "audit": {
+     "grade": "KEEP",
+     "why": "lit hexagon tops, material shading",
+     "fix": "none"
+    },
+    "logic": "ok (KEEP in the audit)",
+    "bar": {
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       2,
-      9,
-      31,
+      16,
+      24,
       38
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      5.0,
+      17.0,
       18.56
      ],
      "shapes": [
-      23.0,
+      50.0,
       28.23
      ],
      "dressing": [
-      16.0,
+      39.0,
       22.36
      ],
      "isolated": [
-      0.008,
+      0.051,
       0.17
      ],
      "cluster": [
-      10.24,
+      3.76,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "scorch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_fallen": {
    "files": [
@@ -9830,27 +9811,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: a flat log of blocks); detail not measurable and not checked by eye since the bar",
-   "fails": [
-    "logic",
-    "detail unverified"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 17,
-    "w": 49,
+    "h": 13,
+    "w": 46,
     "style": {
-     "colours": 10,
+     "colours": 24,
      "on_house": 1.0,
-     "on_today": 0.824,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": 2.032,
-     "isolated": 0.01,
+     "double": 0.01,
+     "west_east": 9.383,
+     "isolated": 0.002,
      "checker": 0.0
     },
     "grid": "free",
@@ -9867,28 +9845,33 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "a flat log of blocks",
      "fix": "hexagonal end faces, broken ends"
     },
-    "logic": "fault (ADJUST: a flat log of blocks)",
+    "logic": "fixed by eye: fixed: reads as a basalt column lying where it fell, not a flat log of blocks: a hexagonal prism on its side (lit upper facet, mid front facet, shaded lower facet, a hexagonal west end to the light), broken at its joints into drums settled a little apart and askew, the east end a fresh stepped break, ash drifted against it in lobes (claude-d, 21 Oct)",
     "bar": {
      "status": "n/a",
      "kind": "wood-front",
-     "square": 13,
-     "why": "no solid 18 px square (largest 13): too small for a 16 px patch"
+     "square": 11,
+     "why": "no solid 18 px square (largest 11): too small for a 16 px patch",
+     "eye": "ok: drums on their own sibling ramps with recessed joints, stains a tone off in clusters, lichen on the lit facet, a crack, ash lobes and a dry tuft; its largest solid square is 12 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "scorch": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: reads as a basalt column lying where it fell, not a flat log of blocks: a hexagonal prism on its side (lit upper facet, mid front facet, shaded lower facet, a hexagonal west end to the light), broken at its joints into drums settled a little apart and askew, the east end a fresh stepped break, ash drifted against it in lobes (claude-d, 21 Oct)",
+    "bar": "ok: drums on their own sibling ramps with recessed joints, stains a tone off in clusters, lichen on the lit facet, a crack, ash lobes and a dry tuft; its largest solid square is 12 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/basalt_stack": {
    "files": [
@@ -9900,26 +9883,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 83,
-    "w": 36,
+    "h": 76,
+    "w": 35,
     "style": {
-     "colours": 6,
+     "colours": 42,
      "on_house": 1.0,
-     "on_today": 0.988,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.018,
-     "west_east": 6.161,
-     "isolated": 0.02,
+     "double": 0.004,
+     "west_east": 10.589,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9936,9 +9917,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9947,39 +9928,35 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      2,
-      23,
-      35,
-      56
+      1,
+      21,
+      28,
+      48
      ],
-     "patches": 4,
+     "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      6.0,
+      17.0,
       18.56
      ],
      "shapes": [
-      27.0,
+      48.0,
       28.23
      ],
      "dressing": [
-      18.25,
+      41.0,
       22.36
      ],
      "isolated": [
-      0.039,
+      0.051,
       0.17
      ],
      "cluster": [
-      6.86,
+      4.13,
       3.63
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
@@ -9987,7 +9964,7 @@
     "caldera": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_steps": {
    "files": [
@@ -9999,26 +9976,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 55,
-    "w": 77,
+    "h": 52,
+    "w": 66,
     "style": {
-     "colours": 6,
+     "colours": 41,
      "on_house": 1.0,
-     "on_today": 0.978,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.023,
-     "west_east": 9.112,
-     "isolated": 0.025,
+     "double": 0.028,
+     "west_east": 12.738,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -10035,9 +10010,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10046,26 +10021,26 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      39,
-      16,
-      68,
-      45
+      30,
+      18,
+      56,
+      44
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      6.0,
+      18.0,
       18.56
      ],
      "shapes": [
-      28.0,
+      47.0,
       28.23
      ],
      "dressing": [
-      20.0,
+      42.0,
       22.36
      ],
      "isolated": [
@@ -10073,19 +10048,15 @@
       0.17
      ],
      "cluster": [
-      5.95,
+      3.61,
       3.63
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_stumps": {
    "files": [
@@ -10097,27 +10068,25 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle",
-   "fails": [
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 24,
-    "w": 45,
+    "h": 22,
+    "w": 40,
     "style": {
-     "colours": 6,
+     "colours": 38,
      "on_house": 1.0,
-     "on_today": 0.944,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.0,
-     "west_east": 10.394,
-     "isolated": 0.073,
-     "checker": 0.002
+     "west_east": 13.793,
+     "isolated": 0.0,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -10133,9 +10102,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10146,16 +10115,19 @@
     "bar": {
      "status": "n/a",
      "kind": "stone-wall",
-     "square": 12,
-     "why": "no solid 18 px square (largest 12): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 10,
+     "why": "no solid 18 px square (largest 10): too small for a 16 px patch",
+     "eye": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "caldera": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/basalt_stumps_b": {
    "files": [
@@ -10173,18 +10145,18 @@
    "fails": [],
    "measured": {
     "scale": 4,
-    "h": 26,
-    "w": 45,
+    "h": 19,
+    "w": 44,
     "style": {
-     "colours": 6,
+     "colours": 29,
      "on_house": 1.0,
-     "on_today": 0.963,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 3.576,
-     "isolated": 0.052,
+     "double": 0.0,
+     "west_east": 8.129,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -10201,9 +10173,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10214,15 +10186,18 @@
     "bar": {
      "status": "n/a",
      "kind": "stone-wall",
-     "square": 17,
-     "why": "no solid 18 px square (largest 17): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 11,
+     "why": "no solid 18 px square (largest 11): too small for a 16 px patch",
+     "eye": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bathhouse": {
    "files": [
@@ -10234,37 +10209,31 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: door 28); foot line 102 px: not whole 8 px cells (kind foot 11 x 7); bar tones LOW, shapes LOW, dressing LOW as wood-front; style: light-west, palette",
-   "fails": [
-    "logic",
-    "grid",
-    "bar",
-    "light-west",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 81,
-    "w": 106,
+    "h": 87,
+    "w": 104,
     "style": {
-     "colours": 29,
-     "on_house": 0.887,
-     "on_today": 0.599,
-     "palette": "off",
+     "colours": 76,
+     "on_house": 0.998,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.014,
-     "west_east": -0.332,
-     "isolated": 0.035,
+     "double": 0.0,
+     "west_east": 0.186,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 102,
-     "cells": 12.75,
+     "foot_px": 103,
+     "cells": 12.88,
      "kind_foot": "11 x 7",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "smithy",
@@ -10288,49 +10257,47 @@
      "why": "door 28",
      "fix": "door 32; steam from a roof vent"
     },
-    "logic": "fault (ADJUST: door 28)",
+    "logic": "fixed by eye: fixed: the doorway 14 x 32, curtained; a louvred vent on the ridge for the steam to rise from (an animated steam_puff can be placed over it) (claude-d, 20 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      15,
-      7,
-      88,
-      80
+      19,
+      18,
+      85,
+      84
      ],
      "patches": 16,
-     "tones_at": 0.9,
+     "tones_at": 0.85,
      "tones": [
-      7.75,
+      20.75,
       24.0
      ],
      "shapes": [
-      18.38,
+      41.88,
       36.34
      ],
      "dressing": [
-      7.75,
+      36.31,
       30.54
      ],
      "isolated": [
-      0.087,
+      0.079,
       0.17
      ],
      "cluster": [
-      8.59,
+      4.05,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: the doorway 14 x 32, curtained; a louvred vent on the ridge for the steam to rise from (an animated steam_puff can be placed over it) (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bed": {
    "files": [
@@ -10688,35 +10655,31 @@
    "module": "castle_props",
    "generator": "scripts/art/castle_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: doors about 22); foot line 38 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW as stone-wall",
-   "fails": [
-    "logic",
-    "grid",
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 121,
-    "w": 49,
+    "w": 47,
     "style": {
-     "colours": 106,
-     "on_house": 0.916,
-     "on_today": 0.012,
+     "colours": 91,
+     "on_house": 0.998,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.014,
-     "west_east": 5.827,
-     "isolated": 0.023,
+     "double": 0.039,
+     "west_east": 5.864,
+     "isolated": 0.003,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 38,
-     "cells": 4.75,
+     "foot_px": 40,
+     "cells": 5.0,
      "kind_foot": "6 x 6",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "tower",
@@ -10731,56 +10694,56 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "b658fec",
-     "date": "2026-10-20T07:32",
-     "subject": "D13 batch 1: Sunstone's wood fronts and Hearthold's stone to Eastward's level of detail"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "doors about 22",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: doors about 22)",
+    "logic": "fixed by eye: fixed: a studded oak door 14 x 32 in a dressed ashlar arch on its step (was about 22); the bell hung in an open middle bay between two louvred ones, its headstock and clapper shown (claude-d, 21 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       6,
-      24,
+      62,
       42,
-      60
+      98
      ],
      "patches": 4,
      "tones_at": 0.85,
      "tones": [
-      11.0,
+      23.75,
       18.56
      ],
      "shapes": [
-      33.75,
+      48.5,
       28.23
      ],
      "dressing": [
-      24.75,
+      41.25,
       22.36
      ],
      "isolated": [
-      0.029,
+      0.092,
       0.17
      ],
      "cluster": [
-      7.35,
+      3.45,
       3.63
-     ],
-     "low": [
-      "tones"
      ]
     }
    },
    "placed": {
     "hearthold": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: a studded oak door 14 x 32 in a dressed ashlar arch on its step (was about 22); the bell hung in an open middle bay between two louvred ones, its headstock and clapper shown (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bench": {
    "files": [
@@ -11496,33 +11459,34 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: door about 20); foot line 61 px: not whole 8 px cells (kind foot 10 x 8); bar tones LOW, shapes LOW, dressing LOW as wood-front",
+   "why": "re-check: changed since the audit (ADJUST: door about 20); 116 x 86 px (over) against boathouse 80-112 x 64-112; style: palette, outline-double",
    "fails": [
     "logic",
-    "grid",
-    "bar"
+    "size",
+    "palette",
+    "outline-double"
    ],
    "measured": {
     "scale": 4,
-    "h": 90,
-    "w": 74,
+    "h": 116,
+    "w": 86,
     "style": {
-     "colours": 27,
-     "on_house": 0.965,
-     "on_today": 0.939,
-     "palette": "house",
+     "colours": 108,
+     "on_house": 0.819,
+     "on_today": 0.398,
+     "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.028,
-     "west_east": 3.586,
-     "isolated": 0.041,
+     "double": 0.104,
+     "west_east": 2.013,
+     "isolated": 0.045,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 61,
-     "cells": 7.62,
+     "foot_px": 34,
+     "cells": 4.25,
      "kind_foot": "10 x 8",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "boathouse",
@@ -11534,12 +11498,12 @@
       64,
       112
      ],
-     "status": "ok"
+     "status": "over"
     },
     "last_change": {
-     "sha": "9ce45c3",
-     "date": "2026-10-20T00:56",
-     "subject": "Scale pass for the city, Cogsworth and the isles: storeys, doors and shopfronts to the scale table"
+     "sha": "c0e43ea",
+     "date": "2026-10-20T15:34",
+     "subject": "Tidebloom Isles: the boathouse at the lagoon's edge, its boat doors over the water, a slipway into the lagoon"
     },
     "audit": {
      "grade": "ADJUST",
@@ -11548,47 +11512,42 @@
     },
     "logic": "re-check: changed since the audit (ADJUST: door about 20)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      8,
-      20,
-      65,
-      77
+      11,
+      19,
+      71,
+      79
      ],
      "patches": 9,
-     "tones_at": 0.85,
+     "tones_at": 0.9,
      "tones": [
-      10.0,
+      22.33,
       24.0
      ],
      "shapes": [
-      24.11,
+      41.0,
       36.34
      ],
      "dressing": [
-      16.56,
+      33.44,
       30.54
      ],
      "isolated": [
-      0.088,
+      0.148,
       0.17
      ],
      "cluster": [
-      10.67,
+      3.22,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "landing": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/bollard": {
    "files": [
@@ -14112,15 +14071,15 @@
     "h": 265,
     "w": 102,
     "style": {
-     "colours": 595,
+     "colours": 586,
      "on_house": 0.785,
      "on_today": 0.071,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.025,
-     "west_east": 2.45,
-     "isolated": 0.076,
+     "west_east": 2.528,
+     "isolated": 0.077,
      "checker": 0.0
     },
     "grid": {
@@ -14142,9 +14101,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14164,23 +14123,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      29.76,
+      29.6,
       25.57
      ],
      "shapes": [
-      45.76,
+      42.96,
       33.87
      ],
      "dressing": [
-      40.2,
+      37.4,
       28.56
      ],
      "isolated": [
-      0.175,
+      0.173,
       0.25
      ],
      "cluster": [
-      2.69,
+      2.86,
       2.62
      ]
     }
@@ -14188,7 +14147,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b1": {
    "files": [
@@ -14215,15 +14174,15 @@
     "h": 263,
     "w": 90,
     "style": {
-     "colours": 507,
-     "on_house": 0.706,
+     "colours": 495,
+     "on_house": 0.704,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.027,
-     "west_east": 4.573,
-     "isolated": 0.06,
+     "double": 0.029,
+     "west_east": 4.52,
+     "isolated": 0.062,
      "checker": 0.0
     },
     "grid": {
@@ -14245,9 +14204,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14267,23 +14226,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.2,
+      26.68,
       25.57
      ],
      "shapes": [
-      48.8,
+      46.24,
       33.87
      ],
      "dressing": [
-      42.12,
+      40.24,
       28.56
      ],
      "isolated": [
-      0.133,
+      0.131,
       0.25
      ],
      "cluster": [
-      2.96,
+      3.05,
       2.62
      ]
     }
@@ -14291,7 +14250,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b10": {
    "files": [
@@ -14316,15 +14275,15 @@
     "h": 215,
     "w": 82,
     "style": {
-     "colours": 502,
-     "on_house": 0.688,
+     "colours": 480,
+     "on_house": 0.685,
      "on_today": 0.09,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.024,
-     "west_east": 2.641,
-     "isolated": 0.051,
+     "double": 0.031,
+     "west_east": 2.948,
+     "isolated": 0.055,
      "checker": 0.0
     },
     "grid": {
@@ -14346,9 +14305,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14368,23 +14327,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      28.75,
+      27.56,
       25.57
      ],
      "shapes": [
-      47.69,
+      44.25,
       33.87
      ],
      "dressing": [
-      42.44,
+      38.62,
       28.56
      ],
      "isolated": [
-      0.141,
+      0.16,
       0.25
      ],
      "cluster": [
-      3.02,
+      2.96,
       2.62
      ]
     }
@@ -14392,7 +14351,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b11": {
    "files": [
@@ -14418,15 +14377,15 @@
     "h": 516,
     "w": 50,
     "style": {
-     "colours": 644,
-     "on_house": 0.663,
+     "colours": 634,
+     "on_house": 0.653,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.03,
-     "west_east": 1.9,
-     "isolated": 0.046,
+     "west_east": 2.112,
+     "isolated": 0.053,
      "checker": 0.002
     },
     "grid": {
@@ -14448,9 +14407,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14470,23 +14429,23 @@
      "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      24.75,
+      24.0,
       25.57
      ],
      "shapes": [
-      46.5,
+      46.75,
       33.87
      ],
      "dressing": [
-      40.25,
+      40.75,
       28.56
      ],
      "isolated": [
-      0.129,
+      0.11,
       0.25
      ],
      "cluster": [
-      2.96,
+      3.18,
       2.62
      ]
     }
@@ -14494,7 +14453,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b12": {
    "files": [
@@ -14521,15 +14480,15 @@
     "h": 508,
     "w": 114,
     "style": {
-     "colours": 770,
-     "on_house": 0.714,
-     "on_today": 0.051,
+     "colours": 748,
+     "on_house": 0.709,
+     "on_today": 0.052,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.017,
-     "west_east": 1.253,
-     "isolated": 0.039,
+     "double": 0.015,
+     "west_east": 1.048,
+     "isolated": 0.046,
      "checker": 0.001
     },
     "grid": {
@@ -14551,9 +14510,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14573,23 +14532,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      20.6,
+      19.72,
       25.57
      ],
      "shapes": [
-      51.08,
+      42.04,
       33.87
      ],
      "dressing": [
-      43.48,
+      32.48,
       28.56
      ],
      "isolated": [
-      0.114,
+      0.142,
       0.25
      ],
      "cluster": [
-      3.03,
+      3.15,
       2.62
      ],
      "low": [
@@ -14600,7 +14559,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b13": {
    "files": [
@@ -14627,15 +14586,15 @@
     "h": 421,
     "w": 74,
     "style": {
-     "colours": 653,
-     "on_house": 0.708,
+     "colours": 639,
+     "on_house": 0.698,
      "on_today": 0.058,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.016,
-     "west_east": 1.585,
-     "isolated": 0.04,
+     "double": 0.009,
+     "west_east": 1.642,
+     "isolated": 0.048,
      "checker": 0.002
     },
     "grid": {
@@ -14657,9 +14616,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14679,23 +14638,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      21.06,
+      19.06,
       25.57
      ],
      "shapes": [
-      66.94,
+      50.44,
       33.87
      ],
      "dressing": [
-      57.94,
+      43.0,
       28.56
      ],
      "isolated": [
-      0.138,
+      0.136,
       0.25
      ],
      "cluster": [
-      2.43,
+      2.89,
       2.62
      ],
      "low": [
@@ -14706,7 +14665,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b14": {
    "files": [
@@ -14734,14 +14693,14 @@
     "h": 215,
     "w": 102,
     "style": {
-     "colours": 545,
+     "colours": 542,
      "on_house": 0.661,
      "on_today": 0.056,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.011,
-     "west_east": -0.403,
+     "west_east": -0.413,
      "isolated": 0.052,
      "checker": 0.002
     },
@@ -14764,9 +14723,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14786,15 +14745,15 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.12,
+      26.16,
       25.57
      ],
      "shapes": [
-      43.88,
+      43.96,
       33.87
      ],
      "dressing": [
-      36.48,
+      36.56,
       28.56
      ],
      "isolated": [
@@ -14810,7 +14769,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b15": {
    "files": [
@@ -14837,15 +14796,15 @@
     "h": 220,
     "w": 102,
     "style": {
-     "colours": 648,
-     "on_house": 0.828,
+     "colours": 636,
+     "on_house": 0.829,
      "on_today": 0.054,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.014,
-     "west_east": 0.517,
-     "isolated": 0.058,
+     "west_east": 0.585,
+     "isolated": 0.059,
      "checker": 0.0
     },
     "grid": {
@@ -14867,9 +14826,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14889,15 +14848,15 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.52,
+      26.24,
       25.57
      ],
      "shapes": [
-      44.64,
+      43.12,
       33.87
      ],
      "dressing": [
-      37.64,
+      36.16,
       28.56
      ],
      "isolated": [
@@ -14905,7 +14864,7 @@
       0.25
      ],
      "cluster": [
-      3.13,
+      3.2,
       2.62
      ]
     }
@@ -14913,7 +14872,7 @@
    "placed": {
     "docks": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b16": {
    "files": [
@@ -14927,9 +14886,10 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: speckle, colours, palette",
    "fails": [
     "logic",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -14938,15 +14898,15 @@
     "h": 184,
     "w": 82,
     "style": {
-     "colours": 477,
-     "on_house": 0.65,
+     "colours": 471,
+     "on_house": 0.652,
      "on_today": 0.067,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.017,
-     "west_east": 1.922,
-     "isolated": 0.055,
+     "double": 0.015,
+     "west_east": 1.892,
+     "isolated": 0.065,
      "checker": 0.0
     },
     "grid": {
@@ -14968,9 +14928,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14990,23 +14950,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      25.5,
+      24.62,
       25.57
      ],
      "shapes": [
-      52.0,
+      44.5,
       33.87
      ],
      "dressing": [
-      44.5,
+      36.19,
       28.56
      ],
      "isolated": [
-      0.121,
+      0.153,
       0.25
      ],
      "cluster": [
-      3.05,
+      2.99,
       2.62
      ]
     }
@@ -15014,7 +14974,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b17": {
    "files": [
@@ -15039,14 +14999,14 @@
     "h": 191,
     "w": 50,
     "style": {
-     "colours": 419,
+     "colours": 410,
      "on_house": 0.795,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.013,
-     "west_east": 2.611,
+     "double": 0.011,
+     "west_east": 2.765,
      "isolated": 0.042,
      "checker": 0.0
     },
@@ -15069,9 +15029,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15091,23 +15051,23 @@
      "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      24.75,
+      24.25,
       25.57
      ],
      "shapes": [
-      45.5,
+      45.0,
       33.87
      ],
      "dressing": [
-      40.25,
+      39.75,
       28.56
      ],
      "isolated": [
-      0.161,
+      0.155,
       0.25
      ],
      "cluster": [
-      2.79,
+      2.85,
       2.62
      ]
     }
@@ -15115,7 +15075,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b18": {
    "files": [
@@ -15143,15 +15103,15 @@
     "h": 200,
     "w": 106,
     "style": {
-     "colours": 583,
-     "on_house": 0.744,
+     "colours": 577,
+     "on_house": 0.747,
      "on_today": 0.052,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.007,
-     "west_east": -0.842,
-     "isolated": 0.047,
+     "west_east": -0.595,
+     "isolated": 0.052,
      "checker": 0.0
     },
     "grid": {
@@ -15173,9 +15133,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15195,7 +15155,7 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      22.92,
+      22.68,
       25.57
      ],
      "shapes": [
@@ -15207,11 +15167,11 @@
       28.56
      ],
      "isolated": [
-      0.122,
+      0.12,
       0.25
      ],
      "cluster": [
-      3.54,
+      3.56,
       2.62
      ],
      "low": [
@@ -15222,7 +15182,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b19": {
    "files": [
@@ -15248,15 +15208,15 @@
     "h": 208,
     "w": 90,
     "style": {
-     "colours": 582,
+     "colours": 566,
      "on_house": 0.743,
      "on_today": 0.046,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.009,
-     "west_east": 1.084,
-     "isolated": 0.077,
+     "west_east": 0.984,
+     "isolated": 0.073,
      "checker": 0.0
     },
     "grid": {
@@ -15278,9 +15238,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15300,23 +15260,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      33.36,
+      32.88,
       25.57
      ],
      "shapes": [
-      45.88,
+      46.68,
       33.87
      ],
      "dressing": [
-      39.84,
+      40.68,
       28.56
      ],
      "isolated": [
-      0.22,
+      0.21,
       0.25
      ],
      "cluster": [
-      2.39,
+      2.43,
       2.62
      ]
     }
@@ -15324,7 +15284,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b2": {
    "files": [
@@ -15350,15 +15310,15 @@
     "h": 263,
     "w": 90,
     "style": {
-     "colours": 543,
-     "on_house": 0.639,
+     "colours": 534,
+     "on_house": 0.637,
      "on_today": 0.065,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.001,
-     "west_east": 0.954,
-     "isolated": 0.048,
+     "double": 0.003,
+     "west_east": 1.358,
+     "isolated": 0.054,
      "checker": 0.002
     },
     "grid": {
@@ -15380,9 +15340,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15402,23 +15362,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      28.12,
+      27.32,
       25.57
      ],
      "shapes": [
-      47.56,
+      41.16,
       33.87
      ],
      "dressing": [
-      41.12,
+      34.0,
       28.56
      ],
      "isolated": [
-      0.159,
+      0.177,
       0.25
      ],
      "cluster": [
-      2.83,
+      2.86,
       2.62
      ]
     }
@@ -15426,7 +15386,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b20": {
    "files": [
@@ -15440,10 +15400,11 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as facade; style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as facade; style: speckle, colours, palette",
    "fails": [
     "logic",
     "bar",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -15452,15 +15413,15 @@
     "h": 203,
     "w": 66,
     "style": {
-     "colours": 446,
-     "on_house": 0.733,
+     "colours": 439,
+     "on_house": 0.72,
      "on_today": 0.05,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.032,
-     "west_east": 2.452,
-     "isolated": 0.056,
+     "double": 0.025,
+     "west_east": 2.691,
+     "isolated": 0.061,
      "checker": 0.003
     },
     "grid": {
@@ -15482,9 +15443,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15504,23 +15465,23 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      21.44,
+      21.0,
       25.57
      ],
      "shapes": [
-      60.0,
+      50.33,
       33.87
      ],
      "dressing": [
-      53.67,
+      44.33,
       28.56
      ],
      "isolated": [
-      0.141,
+      0.139,
       0.25
      ],
      "cluster": [
-      2.58,
+      2.87,
       2.62
      ],
      "low": [
@@ -15531,7 +15492,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b21": {
    "files": [
@@ -15558,15 +15519,15 @@
     "h": 197,
     "w": 62,
     "style": {
-     "colours": 389,
-     "on_house": 0.773,
+     "colours": 382,
+     "on_house": 0.772,
      "on_today": 0.04,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.006,
-     "west_east": 3.344,
-     "isolated": 0.048,
+     "west_east": 3.3,
+     "isolated": 0.047,
      "checker": 0.0
     },
     "grid": {
@@ -15588,9 +15549,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15610,23 +15571,23 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      20.67,
+      20.11,
       25.57
      ],
      "shapes": [
-      41.11,
+      40.78,
       33.87
      ],
      "dressing": [
-      35.11,
+      34.67,
       28.56
      ],
      "isolated": [
-      0.128,
+      0.117,
       0.25
      ],
      "cluster": [
-      3.53,
+      3.68,
       2.62
      ],
      "low": [
@@ -15637,7 +15598,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b22": {
    "files": [
@@ -15664,14 +15625,14 @@
     "h": 194,
     "w": 66,
     "style": {
-     "colours": 547,
+     "colours": 545,
      "on_house": 0.745,
      "on_today": 0.09,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.031,
-     "west_east": -1.853,
+     "west_east": -1.891,
      "isolated": 0.088,
      "checker": 0.0
     },
@@ -15694,9 +15655,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15720,19 +15681,19 @@
       25.57
      ],
      "shapes": [
-      45.67,
+      45.22,
       33.87
      ],
      "dressing": [
-      41.11,
+      40.67,
       28.56
      ],
      "isolated": [
-      0.186,
+      0.185,
       0.25
      ],
      "cluster": [
-      2.68,
+      2.71,
       2.62
      ]
     }
@@ -15740,7 +15701,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b23": {
    "files": [
@@ -15766,15 +15727,15 @@
     "h": 174,
     "w": 50,
     "style": {
-     "colours": 419,
+     "colours": 417,
      "on_house": 0.827,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.005,
-     "west_east": 2.057,
-     "isolated": 0.056,
+     "west_east": 1.957,
+     "isolated": 0.055,
      "checker": 0.0
     },
     "grid": {
@@ -15796,9 +15757,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15822,11 +15783,11 @@
       25.57
      ],
      "shapes": [
-      42.25,
+      41.25,
       33.87
      ],
      "dressing": [
-      34.75,
+      34.0,
       28.56
      ],
      "isolated": [
@@ -15834,7 +15795,7 @@
       0.25
      ],
      "cluster": [
-      3.99,
+      4.06,
       2.62
      ],
      "low": [
@@ -15845,7 +15806,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b24": {
    "files": [
@@ -15872,15 +15833,15 @@
     "h": 170,
     "w": 86,
     "style": {
-     "colours": 483,
-     "on_house": 0.81,
+     "colours": 479,
+     "on_house": 0.809,
      "on_today": 0.084,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.002,
-     "west_east": -1.414,
-     "isolated": 0.044,
+     "west_east": -1.386,
+     "isolated": 0.043,
      "checker": 0.0
     },
     "grid": {
@@ -15902,9 +15863,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15924,23 +15885,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      24.48,
+      24.16,
       25.57
      ],
      "shapes": [
-      44.0,
+      43.84,
       33.87
      ],
      "dressing": [
-      37.04,
+      36.8,
       28.56
      ],
      "isolated": [
-      0.137,
+      0.134,
       0.25
      ],
      "cluster": [
-      3.26,
+      3.3,
       2.62
      ]
     }
@@ -15948,7 +15909,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b25": {
    "files": [
@@ -15962,11 +15923,12 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 54 px: not whole 8 px cells (kind foot 8 x 6); bar tones LOW as facade; style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 54 px: not whole 8 px cells (kind foot 8 x 6); bar tones LOW as facade; style: speckle, colours, palette",
    "fails": [
     "logic",
     "grid",
     "bar",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -15975,15 +15937,15 @@
     "h": 166,
     "w": 54,
     "style": {
-     "colours": 366,
-     "on_house": 0.741,
+     "colours": 361,
+     "on_house": 0.752,
      "on_today": 0.075,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.014,
-     "west_east": 2.718,
-     "isolated": 0.049,
+     "double": 0.007,
+     "west_east": 3.05,
+     "isolated": 0.062,
      "checker": 0.0
     },
     "grid": {
@@ -16005,9 +15967,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16027,23 +15989,23 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      17.56,
+      16.44,
       25.57
      ],
      "shapes": [
-      45.56,
+      35.44,
       33.87
      ],
      "dressing": [
-      38.44,
+      27.11,
       28.56
      ],
      "isolated": [
-      0.086,
+      0.14,
       0.25
      ],
      "cluster": [
-      3.89,
+      3.58,
       2.62
      ],
      "low": [
@@ -16054,7 +16016,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b26": {
    "files": [
@@ -16081,7 +16043,7 @@
     "h": 164,
     "w": 74,
     "style": {
-     "colours": 459,
+     "colours": 447,
      "on_house": 0.792,
      "on_today": 0.07,
      "palette": "off",
@@ -16089,7 +16051,7 @@
      "flat_ink": 0.0,
      "double": 0.011,
      "west_east": -0.09,
-     "isolated": 0.047,
+     "isolated": 0.046,
      "checker": 0.0
     },
     "grid": {
@@ -16111,9 +16073,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16133,7 +16095,7 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      22.56,
+      21.88,
       25.57
      ],
      "shapes": [
@@ -16141,15 +16103,15 @@
       33.87
      ],
      "dressing": [
-      37.0,
+      37.19,
       28.56
      ],
      "isolated": [
-      0.111,
+      0.103,
       0.25
      ],
      "cluster": [
-      3.63,
+      3.75,
       2.62
      ],
      "low": [
@@ -16160,7 +16122,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b27": {
    "files": [
@@ -16187,14 +16149,14 @@
     "h": 89,
     "w": 122,
     "style": {
-     "colours": 405,
+     "colours": 400,
      "on_house": 0.852,
      "on_today": 0.053,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.022,
-     "west_east": -1.75,
+     "west_east": -1.812,
      "isolated": 0.054,
      "checker": 0.0
     },
@@ -16217,9 +16179,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16239,23 +16201,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      24.76,
+      24.68,
       25.57
      ],
      "shapes": [
-      40.72,
+      40.68,
       33.87
      ],
      "dressing": [
-      35.28,
+      35.2,
       28.56
      ],
      "isolated": [
-      0.138,
+      0.137,
       0.25
      ],
      "cluster": [
-      3.24,
+      3.25,
       2.62
      ]
     }
@@ -16263,7 +16225,7 @@
    "placed": {
     "heights": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b28": {
    "files": [
@@ -16481,12 +16443,13 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 62 px: not whole 8 px cells (kind foot 8 x 6); 268 x 62 px (over) against city_building 84-232 x 32-96; bar tones LOW as facade; style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 62 px: not whole 8 px cells (kind foot 8 x 6); 268 x 62 px (over) against city_building 84-232 x 32-96; bar tones LOW as facade; style: speckle, colours, palette",
    "fails": [
     "logic",
     "size",
     "grid",
     "bar",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -16495,15 +16458,15 @@
     "h": 268,
     "w": 62,
     "style": {
-     "colours": 518,
-     "on_house": 0.802,
+     "colours": 502,
+     "on_house": 0.8,
      "on_today": 0.106,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.018,
-     "west_east": 2.693,
-     "isolated": 0.058,
+     "double": 0.014,
+     "west_east": 3.015,
+     "isolated": 0.063,
      "checker": 0.0
     },
     "grid": {
@@ -16525,9 +16488,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16551,19 +16514,19 @@
       25.57
      ],
      "shapes": [
-      57.56,
+      46.78,
       33.87
      ],
      "dressing": [
-      48.44,
+      37.89,
       28.56
      ],
      "isolated": [
-      0.115,
+      0.117,
       0.25
      ],
      "cluster": [
-      3.01,
+      3.48,
       2.62
      ],
      "low": [
@@ -16574,7 +16537,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b30": {
    "files": [
@@ -16601,15 +16564,15 @@
     "h": 134,
     "w": 110,
     "style": {
-     "colours": 477,
-     "on_house": 0.743,
+     "colours": 469,
+     "on_house": 0.741,
      "on_today": 0.059,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 0.166,
-     "isolated": 0.057,
+     "double": 0.019,
+     "west_east": 0.319,
+     "isolated": 0.059,
      "checker": 0.0
     },
     "grid": {
@@ -16631,9 +16594,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16653,15 +16616,15 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      28.76,
+      29.0,
       25.57
      ],
      "shapes": [
-      48.24,
+      46.12,
       33.87
      ],
      "dressing": [
-      43.16,
+      41.68,
       28.56
      ],
      "isolated": [
@@ -16669,7 +16632,7 @@
       0.25
      ],
      "cluster": [
-      2.88,
+      2.94,
       2.62
      ]
     }
@@ -16677,7 +16640,7 @@
    "placed": {
     "heights": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b31": {
    "files": [
@@ -16705,15 +16668,15 @@
     "h": 129,
     "w": 118,
     "style": {
-     "colours": 436,
-     "on_house": 0.824,
+     "colours": 430,
+     "on_house": 0.823,
      "on_today": 0.054,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.0,
-     "west_east": 1.783,
-     "isolated": 0.054,
+     "west_east": 1.66,
+     "isolated": 0.053,
      "checker": 0.0
     },
     "grid": {
@@ -16735,9 +16698,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16757,23 +16720,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      22.16,
+      21.68,
       25.57
      ],
      "shapes": [
-      38.24,
+      37.56,
       33.87
      ],
      "dressing": [
-      31.32,
+      30.68,
       28.56
      ],
      "isolated": [
-      0.098,
+      0.092,
       0.25
      ],
      "cluster": [
-      4.13,
+      4.29,
       2.62
      ],
      "low": [
@@ -16784,7 +16747,7 @@
    "placed": {
     "heights": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b4": {
    "files": [
@@ -16811,15 +16774,15 @@
     "h": 265,
     "w": 94,
     "style": {
-     "colours": 575,
-     "on_house": 0.702,
+     "colours": 568,
+     "on_house": 0.704,
      "on_today": 0.059,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.027,
-     "west_east": 0.744,
-     "isolated": 0.047,
+     "double": 0.021,
+     "west_east": 0.797,
+     "isolated": 0.056,
      "checker": 0.0
     },
     "grid": {
@@ -16841,9 +16804,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16863,23 +16826,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.28,
+      26.72,
       25.57
      ],
      "shapes": [
-      45.44,
+      42.24,
       33.87
      ],
      "dressing": [
-      40.12,
+      37.56,
       28.56
      ],
      "isolated": [
-      0.142,
+      0.143,
       0.25
      ],
      "cluster": [
-      3.1,
+      3.22,
       2.62
      ]
     }
@@ -16887,7 +16850,7 @@
    "placed": {
     "waterfront": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b5": {
    "files": [
@@ -16914,15 +16877,15 @@
     "h": 257,
     "w": 142,
     "style": {
-     "colours": 739,
+     "colours": 731,
      "on_house": 0.742,
      "on_today": 0.042,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.016,
-     "west_east": 1.373,
-     "isolated": 0.059,
+     "west_east": 1.39,
+     "isolated": 0.058,
      "checker": 0.0
     },
     "grid": {
@@ -16944,9 +16907,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16966,23 +16929,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      25.16,
+      24.96,
       25.57
      ],
      "shapes": [
-      39.08,
+      38.68,
       33.87
      ],
      "dressing": [
-      34.72,
+      34.44,
       28.56
      ],
      "isolated": [
-      0.111,
+      0.11,
       0.25
      ],
      "cluster": [
-      3.78,
+      3.82,
       2.62
      ]
     }
@@ -16990,7 +16953,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b6": {
    "files": [
@@ -17016,14 +16979,14 @@
     "h": 170,
     "w": 50,
     "style": {
-     "colours": 432,
-     "on_house": 0.803,
+     "colours": 428,
+     "on_house": 0.801,
      "on_today": 0.085,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.012,
-     "west_east": 4.806,
+     "west_east": 4.331,
      "isolated": 0.055,
      "checker": 0.0
     },
@@ -17046,9 +17009,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17068,23 +17031,23 @@
      "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      21.0,
+      23.0,
       25.57
      ],
      "shapes": [
-      51.75,
+      46.25,
       33.87
      ],
      "dressing": [
-      41.5,
+      37.25,
       28.56
      ],
      "isolated": [
-      0.128,
+      0.112,
       0.25
      ],
      "cluster": [
-      2.96,
+      3.31,
       2.62
      ],
      "low": [
@@ -17095,7 +17058,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b7": {
    "files": [
@@ -17122,15 +17085,15 @@
     "h": 194,
     "w": 94,
     "style": {
-     "colours": 520,
-     "on_house": 0.809,
+     "colours": 517,
+     "on_house": 0.808,
      "on_today": 0.06,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.007,
-     "west_east": 0.401,
-     "isolated": 0.066,
+     "west_east": 0.606,
+     "isolated": 0.067,
      "checker": 0.0
     },
     "grid": {
@@ -17152,9 +17115,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17174,23 +17137,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.12,
+      26.76,
       25.57
      ],
      "shapes": [
-      46.76,
+      44.28,
       33.87
      ],
      "dressing": [
-      40.28,
+      37.72,
       28.56
      ],
      "isolated": [
-      0.145,
+      0.137,
       0.25
      ],
      "cluster": [
-      3.02,
+      3.19,
       2.62
      ]
     }
@@ -17198,7 +17161,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b8": {
    "files": [
@@ -17226,15 +17189,15 @@
     "h": 259,
     "w": 74,
     "style": {
-     "colours": 512,
-     "on_house": 0.829,
+     "colours": 503,
+     "on_house": 0.824,
      "on_today": 0.064,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": -1.564,
-     "isolated": 0.051,
+     "double": 0.014,
+     "west_east": -1.431,
+     "isolated": 0.053,
      "checker": 0.0
     },
     "grid": {
@@ -17256,9 +17219,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17278,23 +17241,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      18.0,
+      20.12,
       25.57
      ],
      "shapes": [
-      56.75,
+      42.25,
       33.87
      ],
      "dressing": [
-      47.44,
+      34.75,
       28.56
      ],
      "isolated": [
-      0.117,
+      0.113,
       0.25
      ],
      "cluster": [
-      3.03,
+      3.71,
       2.62
      ],
      "low": [
@@ -17305,7 +17268,7 @@
    "placed": {
     "docks": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b9": {
    "files": [
@@ -17331,15 +17294,15 @@
     "h": 219,
     "w": 58,
     "style": {
-     "colours": 493,
-     "on_house": 0.741,
+     "colours": 486,
+     "on_house": 0.747,
      "on_today": 0.082,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.031,
-     "west_east": 3.907,
-     "isolated": 0.062,
+     "double": 0.026,
+     "west_east": 4.166,
+     "isolated": 0.069,
      "checker": 0.0
     },
     "grid": {
@@ -17361,9 +17324,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17383,19 +17346,19 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      28.56,
+      27.44,
       25.57
      ],
      "shapes": [
-      50.0,
+      46.11,
       33.87
      ],
      "dressing": [
-      42.56,
+      39.11,
       28.56
      ],
      "isolated": [
-      0.135,
+      0.15,
       0.25
      ],
      "cluster": [
@@ -17407,7 +17370,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_bench": {
    "files": [
@@ -23813,35 +23776,31 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 28 px: not whole 8 px cells (kind foot 3 x 3); detail not measurable and not checked by eye since the bar; style: speckle",
-   "fails": [
-    "grid",
-    "detail unverified",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 50,
-    "w": 30,
+    "h": 44,
+    "w": 27,
     "style": {
-     "colours": 45,
-     "on_house": 0.947,
-     "on_today": 0.847,
+     "colours": 43,
+     "on_house": 0.996,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.977,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 5.466,
-     "isolated": 0.12,
+     "double": 0.025,
+     "west_east": 3.319,
+     "isolated": 0.006,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 28,
-     "cells": 3.5,
+     "foot_px": 25,
+     "cells": 3.12,
      "kind_foot": "3 x 3",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "shrine",
@@ -23856,9 +23815,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "20deab5",
-     "date": "2026-10-20T14:08",
-     "subject": "Lumen hub and dome, ember shrine (Claude A's to-d-1210)"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -23867,16 +23826,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "n/a",
+     "status": "pass",
      "kind": "stone-wall",
-     "square": 17,
-     "why": "no solid 18 px square (largest 17): too small for a 16 px patch"
+     "box": [
+      2,
+      24,
+      20,
+      42
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      17.0,
+      18.56
+     ],
+     "shapes": [
+      34.0,
+      28.23
+     ],
+     "dressing": [
+      25.0,
+      22.36
+     ],
+     "isolated": [
+      0.051,
+      0.17
+     ],
+     "cluster": [
+      5.45,
+      3.63
+     ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/engine_tank": {
    "files": [
@@ -24218,32 +24203,29 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither",
-   "fails": [
-    "speckle",
-    "dither"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 13,
-    "w": 20,
+    "h": 14,
+    "w": 19,
     "style": {
-     "colours": 14,
-     "on_house": 0.947,
-     "on_today": 0.579,
+     "colours": 28,
+     "on_house": 0.963,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.978,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.022,
-     "west_east": 5.266,
-     "isolated": 0.229,
-     "checker": 0.014
+     "double": 0.065,
+     "west_east": 1.902,
+     "isolated": 0.021,
+     "checker": 0.0
     },
     "grid": {
-     "foot_px": 16,
-     "cells": 2.0,
+     "foot_px": 17,
+     "cells": 2.12,
      "kind_foot": "3 x 2",
      "ok": true
     },
@@ -24260,9 +24242,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -24273,13 +24255,16 @@
     "bar": {
      "status": "by eye",
      "why": "no reference kind for this subject (house-style 7: by eye)",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "eye": "ok: a ring of eight stones lit on their upper left (the far ones smaller), ash, two charred sticks, embers, a teapot on the west stones; compared at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: a ring of eight stones lit on their upper left (the far ones smaller), ash, two charred sticks, embers, a teapot on the west stones; compared at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/fireplace": {
    "files": [
@@ -24398,28 +24383,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, light-west, palette",
-   "fails": [
-    "speckle",
-    "light-west",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 29,
-    "w": 17,
+    "h": 31,
+    "w": 16,
     "style": {
-     "colours": 12,
-     "on_house": 0.571,
+     "colours": 22,
+     "on_house": 1.0,
      "on_today": 0.0,
-     "palette": "off",
-     "outline_dark": 0.987,
+     "palette": "house",
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.032,
-     "west_east": -0.288,
-     "isolated": 0.601,
+     "double": 0.025,
+     "west_east": 0.508,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -24449,15 +24430,18 @@
     "bar": {
      "status": "n/a",
      "kind": "tree",
-     "square": 7,
-     "why": "no solid 18 px square (largest 7): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 8,
+     "why": "no solid 18 px square (largest 8): too small for a 16 px patch",
+     "eye": "ok: stems, leaves in pairs of pixels, flower spikes with buds paler at the tip, lit on the west; compared at 3x and 1x beside Eastward's pine and verge (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 20 Oct)"
     }
    },
    "placed": {
     "springs": 6
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: stems, leaves in pairs of pixels, flower spikes with buds paler at the tip, lit on the west; compared at 3x and 1x beside Eastward's pine and verge (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/fireweed_small": {
    "files": [
@@ -24469,27 +24453,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, palette",
-   "fails": [
-    "speckle",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 21,
-    "w": 13,
+    "h": 23,
+    "w": 12,
     "style": {
-     "colours": 12,
-     "on_house": 0.582,
+     "colours": 21,
+     "on_house": 1.0,
      "on_today": 0.0,
-     "palette": "off",
-     "outline_dark": 0.987,
+     "palette": "house",
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.052,
-     "west_east": 2.344,
-     "isolated": 0.691,
+     "double": 0.038,
+     "west_east": 2.398,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -24521,13 +24502,16 @@
      "kind": "tree",
      "square": 7,
      "why": "no solid 18 px square (largest 7): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "eye": "ok: as fireweed, three stems; same comparison (claude-d, 20 Oct)"
     }
    },
    "placed": {
     "springs": 6
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: as fireweed, three stems; same comparison (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/fish_stall": {
    "files": [
@@ -30050,27 +30034,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar isolated NOISY, cluster NOISY as stone-wall; style: speckle",
-   "fails": [
-    "bar",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 41,
     "style": {
-     "colours": 22,
-     "on_house": 0.919,
-     "on_today": 0.736,
+     "colours": 34,
+     "on_house": 0.943,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 4.974,
-     "isolated": 0.067,
+     "double": 0.065,
+     "west_east": 7.165,
+     "isolated": 0.027,
      "checker": 0.0
     },
     "grid": "free",
@@ -30087,9 +30068,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62e1d1b",
-     "date": "2026-10-19T17:25",
-     "subject": "Review fixes after #62 and #63 (D8): Lumen's ice rig is remote, the gangway docks to the shuttle, a collar joins the air"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -30098,46 +30079,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       5,
-      2,
-      25,
-      22
+      4,
+      24,
+      23
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      16.0,
+      27.0,
       18.56
      ],
      "shapes": [
-      41.0,
+      34.0,
       28.23
      ],
      "dressing": [
-      36.0,
+      32.0,
       22.36
      ],
      "isolated": [
-      0.199,
+      0.066,
       0.17
      ],
      "cluster": [
-      2.56,
+      4.27,
       3.63
-     ],
-     "noisy": [
-      "isolated",
-      "cluster"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/lizard_rock_b": {
    "files": [
@@ -30149,27 +30126,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar isolated NOISY, cluster NOISY as stone-wall; style: speckle",
-   "fails": [
-    "bar",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 42,
     "style": {
-     "colours": 22,
-     "on_house": 0.919,
-     "on_today": 0.736,
+     "colours": 37,
+     "on_house": 0.936,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 5.358,
-     "isolated": 0.068,
+     "double": 0.086,
+     "west_east": 4.333,
+     "isolated": 0.026,
      "checker": 0.0
     },
     "grid": "free",
@@ -30186,9 +30160,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62e1d1b",
-     "date": "2026-10-19T17:25",
-     "subject": "Review fixes after #62 and #63 (D8): Lumen's ice rig is remote, the gangway docks to the shuttle, a collar joins the air"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -30197,46 +30171,20 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "n/a",
      "kind": "stone-wall",
-     "box": [
-      5,
-      2,
-      25,
-      22
-     ],
-     "patches": 1,
-     "tones_at": 0.85,
-     "tones": [
-      16.0,
-      18.56
-     ],
-     "shapes": [
-      45.0,
-      28.23
-     ],
-     "dressing": [
-      38.0,
-      22.36
-     ],
-     "isolated": [
-      0.195,
-      0.17
-     ],
-     "cluster": [
-      2.51,
-      3.63
-     ],
-     "noisy": [
-      "isolated",
-      "cluster"
-     ]
+     "square": 17,
+     "why": "no solid 18 px square (largest 17): too small for a 16 px patch",
+     "eye": "ok: rounded blocks of bedded sandstone (lit upper lips, undercuts, a seam where one block stands before another, varnish streaks, lichen in the shade, sand drifted in the lee) with a banded chuckwalla on top; its largest solid square is 17 px, so it was compared by eye at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: rounded blocks of bedded sandstone (lit upper lips, undercuts, a seam where one block stands before another, varnish streaks, lichen in the shade, sand drifted in the lee) with a banded chuckwalla on top; its largest solid square is 17 px, so it was compared by eye at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/lobster_pots": {
    "files": [
@@ -32446,29 +32394,25 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither, palette",
-   "fails": [
-    "speckle",
-    "dither",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 69,
-    "w": 56,
+    "h": 79,
+    "w": 46,
     "style": {
-     "colours": 15,
-     "on_house": 0.845,
-     "on_today": 0.699,
-     "palette": "off",
+     "colours": 49,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.068,
-     "west_east": 0.772,
-     "isolated": 0.251,
-     "checker": 0.006
+     "double": 0.019,
+     "west_east": 12.559,
+     "isolated": 0.004,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -32484,9 +32428,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -32495,19 +32439,44 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "n/a",
+     "status": "pass",
      "kind": "tree",
-     "square": 10,
-     "why": "no solid 18 px square (largest 10): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "box": [
+      12,
+      4,
+      30,
+      22
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      25.0,
+      20.38
+     ],
+     "shapes": [
+      49.0,
+      35.75
+     ],
+     "dressing": [
+      41.0,
+      29.34
+     ],
+     "isolated": [
+      0.129,
+      0.27
+     ],
+     "cluster": [
+      2.84,
+      2.29
+     ]
     }
    },
    "placed": {
     "cove": 6,
-    "landing": 3,
+    "landing": 1,
     "oasis": 4
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/palm_small": {
    "files": [
@@ -32519,29 +32488,25 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither, palette",
-   "fails": [
-    "speckle",
-    "dither",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 50,
-    "w": 45,
+    "h": 46,
+    "w": 31,
     "style": {
-     "colours": 15,
-     "on_house": 0.834,
-     "on_today": 0.695,
-     "palette": "off",
-     "outline_dark": 0.98,
+     "colours": 35,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.08,
-     "west_east": 2.894,
-     "isolated": 0.229,
-     "checker": 0.007
+     "double": 0.015,
+     "west_east": 11.891,
+     "isolated": 0.006,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -32557,9 +32522,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -32570,15 +32535,18 @@
     "bar": {
      "status": "n/a",
      "kind": "tree",
-     "square": 9,
-     "why": "no solid 18 px square (largest 9): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 13,
+     "why": "no solid 18 px square (largest 13): too small for a 16 px patch",
+     "eye": "ok: the dry and fire kit's small palm (#137): trunk of offset leaf bases lit on the west, feathered fronds radiating and drooping, back ones in shade, a dead-frond skirt; compared at 3x and 1x beside Eastward's pine (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 3
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: the dry and fire kit's small palm (#137): trunk of offset leaf bases lit on the west, feathered fronds radiating and drooping, back ones in shade, a dead-frond skirt; compared at 3x and 1x beside Eastward's pine (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/pandanus": {
    "files": [
@@ -33284,26 +33252,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as wood-front",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 37,
+    "h": 38,
     "w": 30,
     "style": {
-     "colours": 10,
-     "on_house": 0.978,
-     "on_today": 0.63,
+     "colours": 43,
+     "on_house": 0.998,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.037,
-     "west_east": 0.342,
-     "isolated": 0.003,
+     "double": 0.0,
+     "west_east": 1.451,
+     "isolated": 0.006,
      "checker": 0.0
     },
     "grid": {
@@ -33325,9 +33291,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -33336,47 +33302,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
       3,
       1,
-      26,
-      24
+      27,
+      25
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      9.0,
+      32.0,
       24.0
      ],
      "shapes": [
-      21.0,
+      46.0,
       36.34
      ],
      "dressing": [
-      15.0,
+      42.0,
       30.54
      ],
      "isolated": [
-      0.016,
+      0.086,
       0.17
      ],
      "cluster": [
-      9.48,
+      3.32,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/postern": {
    "files": [
@@ -33863,10 +33824,9 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as facade; style: speckle, palette",
+   "why": "bar tones LOW, shapes LOW, dressing LOW as facade; style: palette",
    "fails": [
     "bar",
-    "speckle",
     "palette"
    ],
    "measured": {
@@ -33874,15 +33834,15 @@
     "h": 57,
     "w": 61,
     "style": {
-     "colours": 23,
-     "on_house": 0.592,
-     "on_today": 0.525,
+     "colours": 49,
+     "on_house": 0.641,
+     "on_today": 0.357,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.024,
-     "west_east": 6.004,
-     "isolated": 0.071,
+     "double": 0.026,
+     "west_east": 3.513,
+     "isolated": 0.052,
      "checker": 0.0
     },
     "grid": {
@@ -33904,9 +33864,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "ab49e41",
-     "date": "2026-10-18T23:11",
-     "subject": "The Tidebloom Isles' detail pass: denser planting at the edges, ground detail, the headland's spine, new island plants a"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "KEEP",
@@ -33918,31 +33878,31 @@
      "status": "fail",
      "kind": "facade",
      "box": [
-      4,
-      29,
-      27,
+      10,
+      16,
+      46,
       52
      ],
-     "patches": 1,
+     "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      8.0,
+      13.75,
       25.57
      ],
      "shapes": [
-      12.0,
+      29.75,
       33.87
      ],
      "dressing": [
-      7.0,
+      20.75,
       28.56
      ],
      "isolated": [
-      0.008,
+      0.069,
       0.25
      ],
      "cluster": [
-      16.0,
+      5.25,
       2.62
      ],
      "low": [
@@ -33955,7 +33915,7 @@
    "placed": {
     "headwaters": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/ring_post": {
    "files": [
@@ -34599,28 +34559,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: storeys right; doors 25); style: speckle, colours",
-   "fails": [
-    "logic",
-    "speckle",
-    "colours"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 108,
     "w": 106,
     "style": {
-     "colours": 188,
-     "on_house": 0.911,
-     "on_today": 0.212,
+     "colours": 76,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.029,
-     "west_east": 1.451,
-     "isolated": 0.136,
+     "double": 0.01,
+     "west_east": 0.223,
+     "isolated": 0.001,
      "checker": 0.0
     },
     "grid": {
@@ -34642,33 +34598,33 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "e153a06",
-     "date": "2026-10-20T11:23",
-     "subject": "After Claude A's note on #120 (to-d-120-back): moon in grey brown-grey, galley off timber, banners clear, colour budget,"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "storeys right; doors 25",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: storeys right; doors 25)",
+    "logic": "fixed by eye: fixed: the doorway 22 x 32 under a lintel, the swinging half doors hung at chest height in it, the lamp-lit room behind; storeys as before under the false front; porch posts unbroken (claude-d, 21 Oct)",
     "bar": {
      "status": "pass",
      "kind": "wood-front",
      "box": [
-      6,
+      5,
       12,
-      100,
+      99,
       106
      ],
      "patches": 25,
      "tones_at": 0.85,
      "tones": [
-      22.24,
+      20.68,
       24.0
      ],
      "shapes": [
-      40.0,
+      39.52,
       36.34
      ],
      "dressing": [
@@ -34676,11 +34632,11 @@
       30.54
      ],
      "isolated": [
-      0.126,
+      0.061,
       0.17
      ],
      "cluster": [
-      3.58,
+      4.41,
       3.4
      ]
     }
@@ -34688,7 +34644,10 @@
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: the doorway 22 x 32 under a lintel, the swinging half doors hung at chest height in it, the lamp-lit room behind; storeys as before under the false front; porch posts unbroken (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/sandstone_arch": {
    "files": [
@@ -34758,26 +34717,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 41,
     "style": {
-     "colours": 14,
-     "on_house": 0.92,
-     "on_today": 0.814,
+     "colours": 31,
+     "on_house": 0.943,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 7.267,
-     "isolated": 0.031,
+     "double": 0.065,
+     "west_east": 7.384,
+     "isolated": 0.027,
      "checker": 0.0
     },
     "grid": "free",
@@ -34794,9 +34751,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "deafdc7",
-     "date": "2026-10-18T07:54",
-     "subject": "Detail in the open ground: cooled lava flows, scree and burnt snags in the fire country, a lander and a rock arch on Lum"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -34805,47 +34762,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       5,
-      2,
-      25,
-      22
+      4,
+      24,
+      23
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      10.0,
+      24.0,
       18.56
      ],
      "shapes": [
-      23.0,
+      29.0,
       28.23
      ],
      "dressing": [
-      15.0,
+      25.0,
       22.36
      ],
      "isolated": [
-      0.121,
+      0.035,
       0.17
      ],
      "cluster": [
-      4.34,
+      5.69,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/sapling": {
    "files": [
@@ -38666,29 +38618,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: storeys right; doors 25); style: speckle, colours, palette",
-   "fails": [
-    "logic",
-    "speckle",
-    "colours",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 108,
     "w": 90,
     "style": {
-     "colours": 180,
-     "on_house": 0.869,
-     "on_today": 0.256,
-     "palette": "off",
+     "colours": 82,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.026,
-     "west_east": 1.315,
-     "isolated": 0.135,
+     "double": 0.01,
+     "west_east": 0.86,
+     "isolated": 0.001,
      "checker": 0.0
     },
     "grid": {
@@ -38719,36 +38666,36 @@
      "why": "storeys right; doors 25",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: storeys right; doors 25)",
+    "logic": "fixed by eye: fixed: a shop's pair of glazed doors 22 x 32 under a lintel on a stone step; storeys as before under the false front; porch posts unbroken from roof to boardwalk (claude-d, 20 Oct)",
     "bar": {
      "status": "pass",
      "kind": "wood-front",
      "box": [
-      6,
+      5,
       12,
-      84,
-      90
+      85,
+      92
      ],
      "patches": 16,
-     "tones_at": 0.9,
+     "tones_at": 0.85,
      "tones": [
-      22.94,
+      21.0,
       24.0
      ],
      "shapes": [
-      38.38,
+      44.19,
       36.34
      ],
      "dressing": [
-      31.56,
+      37.25,
       30.54
      ],
      "isolated": [
-      0.145,
+      0.066,
       0.17
      ],
      "cluster": [
-      3.38,
+      4.01,
       3.4
      ]
     }
@@ -38756,7 +38703,10 @@
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: a shop's pair of glazed doors 22 x 32 under a lintel on a stone step; storeys as before under the false front; porch posts unbroken from roof to boardwalk (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/street_light": {
    "files": [
@@ -39172,35 +39122,29 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: reads as two grey rocks); detail not measurable and not checked by eye since the bar; style: speckle, colours, palette",
-   "fails": [
-    "logic",
-    "detail unverified",
-    "speckle",
-    "colours",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 45,
-    "w": 75,
+    "h": 42,
+    "w": 72,
     "style": {
-     "colours": 80,
-     "on_house": 0.885,
+     "colours": 55,
+     "on_house": 1.0,
      "on_today": 0.0,
-     "palette": "off",
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.052,
-     "west_east": 5.045,
-     "isolated": 0.2,
+     "double": 0.008,
+     "west_east": 4.791,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 73,
-     "cells": 9.12,
+     "foot_px": 72,
+     "cells": 9.0,
      "kind_foot": "8 x 4",
      "ok": true
     },
@@ -39226,16 +39170,21 @@
      "why": "reads as two grey rocks",
      "fix": "cloth panels on a ridge pole, guy ropes, pegs, an open flap with rugs"
     },
-    "logic": "re-check: changed since the audit (REDRAW: reads as two grey rocks)",
+    "logic": "fixed by eye: fixed: reads as a ridge tent of goat-hair cloth: panels on a ridge pole carried by two uprights, sloping ends, a side curtain to the ground, guy ropes to pegs, the front rolled up on ties over a rug (claude-d, 20 Oct)",
     "bar": {
      "status": "by eye",
-     "why": "no reference kind for this subject (house-style 7: by eye)"
+     "why": "no reference kind for this subject (house-style 7: by eye)",
+     "eye": "ok: cloth checklist (house-style 7): panels and seams, a hem, taut where the guys pull and slack between, a lit ridge and west end, the east end and the curtain in shade, weathering as patches and blown sand in clusters; compared at 3x and 1x beside Eastward's barn front and shopfronts (detail_baselines eastward-17-barn-front, eastward-10-shopfronts) at an adult of 25 px, by day and under the night tint (claude-d, 20 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: reads as a ridge tent of goat-hair cloth: panels on a ridge pole carried by two uprights, sloping ends, a side curtain to the ground, guy ropes to pegs, the front rolled up on ties over a rug (claude-d, 20 Oct)",
+    "bar": "ok: cloth checklist (house-style 7): panels and seams, a hem, taut where the guys pull and slack between, a lit ridge and west end, the east end and the curtain in shade, weathering as patches and blown sand in clusters; compared at 3x and 1x beside Eastward's barn front and shopfronts (detail_baselines eastward-17-barn-front, eastward-10-shopfronts) at an adult of 25 px, by day and under the night tint (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/tether": {
    "files": [
@@ -40334,36 +40283,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: side view, spoked wheels flat); foot line 53 px: not whole 8 px cells (kind foot 8 x 3); bar tones LOW, shapes LOW, dressing LOW as wood-front; style: palette",
-   "fails": [
-    "logic",
-    "grid",
-    "bar",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 47,
-    "w": 68,
+    "h": 45,
+    "w": 67,
     "style": {
-     "colours": 16,
-     "on_house": 0.88,
-     "on_today": 0.334,
-     "palette": "off",
+     "colours": 61,
+     "on_house": 0.991,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.052,
-     "west_east": 7.445,
-     "isolated": 0.022,
+     "double": 0.025,
+     "west_east": 9.476,
+     "isolated": 0.008,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 53,
-     "cells": 6.62,
+     "foot_px": 47,
+     "cells": 5.88,
      "kind_foot": "8 x 3",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "wagon",
@@ -40387,49 +40331,47 @@
      "why": "side view, spoked wheels flat",
      "fix": "bed in three-quarter view, lit canvas top, wheels as ellipses"
     },
-    "logic": "fault (ADJUST: side view, spoked wheels flat)",
+    "logic": "fixed by eye: fixed: three-quarter view (the bonnet's top plane lit, its south side in panels between six hoops, flared ends, the back drawn up round an opening), wheels as ellipses with iron tyres, jointed felloes and straight spokes, the rear pair larger (claude-d, 20 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      12,
-      4,
-      43,
-      35
+      8,
+      5,
+      40,
+      37
      ],
      "patches": 1,
-     "tones_at": 0.9,
+     "tones_at": 0.85,
      "tones": [
-      2.0,
+      21.0,
       24.0
      ],
      "shapes": [
-      2.0,
+      38.0,
       36.34
      ],
      "dressing": [
-      0.0,
+      28.0,
       30.54
      ],
      "isolated": [
-      0.0,
+      0.102,
       0.17
      ],
      "cluster": [
-      128.0,
+      3.61,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: three-quarter view (the bonnet's top plane lit, its south side in panels between six hoops, flared ends, the back drawn up round an opening), wheels as ellipses with iron tyres, jointed felloes and straight spokes, the rear pair larger (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/wall_run": {
    "files": [
@@ -40979,38 +40921,31 @@
    "module": "valley_props",
    "generator": "scripts/art/valley_props.py",
    "owner": "B",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: detailed, wheel turns; door about 24); foot line 86 px: not whole 8 px cells (kind foot 14 x 7); 88 x 95 px (under) against water_mill 104-144 x 96-128; bar tones LOW, dressing LOW as facade; style: speckle, outline-double",
-   "fails": [
-    "logic",
-    "size",
-    "grid",
-    "bar",
-    "speckle",
-    "outline-double"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 88,
-    "w": 95,
+    "h": 123,
+    "w": 96,
     "style": {
-     "colours": 46,
-     "on_house": 0.951,
-     "on_today": 0.959,
+     "colours": 106,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.995,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.144,
-     "west_east": 3.158,
-     "isolated": 0.062,
+     "double": 0.076,
+     "west_east": 5.13,
+     "isolated": 0.049,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 86,
-     "cells": 10.75,
+     "foot_px": 95,
+     "cells": 11.88,
      "kind_foot": "14 x 7",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "water_mill",
@@ -41022,7 +40957,7 @@
       96,
       128
      ],
-     "status": "under"
+     "status": "ok"
     },
     "last_change": {
      "sha": "ea7bdca",
@@ -41034,46 +40969,45 @@
      "why": "detailed, wheel turns; door about 24",
      "fix": "door 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: detailed, wheel turns; door about 24)",
+    "logic": "fixed by eye: fixed: redrawn from the house kit (Claude B, wave 1): door 32 x 14 by the scale table, a 44 px ground storey under a weatherboarded loft, the wheel on the east wall turning in its race, panes registered for night light",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "facade",
      "box": [
-      8,
-      24,
-      70,
-      86
+      3,
+      43,
+      75,
+      115
      ],
-     "patches": 9,
+     "patches": 16,
      "tones_at": 0.85,
      "tones": [
-      11.89,
+      25.75,
       25.57
      ],
      "shapes": [
-      32.67,
+      42.31,
       33.87
      ],
      "dressing": [
-      23.89,
+      36.44,
       28.56
      ],
      "isolated": [
-      0.112,
+      0.148,
       0.25
      ],
      "cluster": [
-      3.98,
+      3.07,
       2.62
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "riverside": 1
+   },
+   "eye": {
+    "logic": "fixed: redrawn from the house kit (Claude B, wave 1): door 32 x 14 by the scale table, a 44 px ground storey under a weatherboarded loft, the wheel on the east wall turning in its race, panes registered for night light"
    },
    "checked": "2026-10-20"
   },
@@ -41087,34 +41021,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 37 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, dressing LOW as machinery",
-   "fails": [
-    "grid",
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 94,
-    "w": 45,
+    "h": 98,
+    "w": 46,
     "style": {
-     "colours": 15,
-     "on_house": 0.994,
-     "on_today": 0.785,
+     "colours": 58,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.067,
-     "west_east": 7.313,
-     "isolated": 0.009,
+     "double": 0.008,
+     "west_east": 5.449,
+     "isolated": 0.003,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 37,
-     "cells": 4.62,
+     "foot_px": 40,
+     "cells": 5.0,
      "kind_foot": "6 x 6",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "water_tower",
@@ -41129,9 +41060,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -41140,46 +41071,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "machinery",
      "box": [
       3,
-      4,
-      41,
-      42
+      13,
+      42,
+      52
      ],
      "patches": 4,
      "tones_at": 0.85,
      "tones": [
-      8.5,
+      23.5,
       25.16
      ],
      "shapes": [
-      32.0,
+      45.5,
       32.13
      ],
      "dressing": [
-      23.0,
+      37.75,
       27.14
      ],
      "isolated": [
-      0.033,
+      0.091,
       0.16
      ],
      "cluster": [
-      6.3,
+      3.48,
       3.62
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/watering_can": {
    "files": [
@@ -41686,35 +41613,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 28 px: not whole 8 px cells (kind foot 4 x 4); style: speckle, palette",
-   "fails": [
-    "grid",
-    "speckle",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 85,
-    "w": 35,
+    "h": 88,
+    "w": 37,
     "style": {
-     "colours": 13,
-     "on_house": 0.673,
-     "on_today": 0.323,
-     "palette": "off",
+     "colours": 23,
+     "on_house": 0.993,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.05,
-     "west_east": 5.237,
-     "isolated": 0.079,
+     "double": 0.029,
+     "west_east": 16.365,
+     "isolated": 0.046,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 28,
-     "cells": 3.5,
+     "foot_px": 34,
+     "cells": 4.25,
      "kind_foot": "4 x 4",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "windpump",
@@ -41729,9 +41652,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -41742,15 +41665,18 @@
     "bar": {
      "status": "n/a",
      "kind": "machinery",
-     "square": 9,
-     "why": "no solid 18 px square (largest 9): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 6,
+     "why": "no solid 18 px square (largest 6): too small for a 16 px patch",
+     "eye": "ok: open structure (house-style 7 ruling): every member meets another at a riveted joint, the legs on concrete pads, the wheel's sails held by a rim, the vane downwind; no outline round the lattice so the air shows through; compared at 3x and 1x beside Eastward's barn-front yard (eastward-17-barn-front) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: open structure (house-style 7 ruling): every member meets another at a riveted joint, the legs on concrete pads, the wheel's sails held by a rim, the vane downwind; no outline round the lattice so the air shows through; compared at 3x and 1x beside Eastward's barn-front yard (eastward-17-barn-front) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/windsock": {
    "files": [
@@ -47733,12 +47659,12 @@
     "w": 320,
     "measured_file": "assets/zones/caldera/ground.png",
     "px": 184320,
-    "colours": 186,
-    "on_today": 0.876,
+    "colours": 185,
+    "on_today": 0.877,
     "isolated": 0.062,
     "checker": 0.0075
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/canal": {
    "files": [
@@ -48620,11 +48546,11 @@
     "measured_file": "assets/zones/scorch/ground.png",
     "px": 184320,
     "colours": 174,
-    "on_today": 0.897,
+    "on_today": 0.898,
     "isolated": 0.057,
     "checker": 0.0067
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/skyport": {
    "files": [
@@ -48718,12 +48644,12 @@
     "w": 320,
     "measured_file": "assets/zones/springs/ground.png",
     "px": 184320,
-    "colours": 95,
-    "on_today": 0.797,
+    "colours": 100,
+    "on_today": 0.798,
     "isolated": 0.063,
-    "checker": 0.0104
+    "checker": 0.0105
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/station": {
    "files": [

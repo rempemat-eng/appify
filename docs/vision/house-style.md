@@ -38,6 +38,8 @@ What already agrees everywhere: light from the upper left (every module's mean i
 
 ### 2. Outline
 
+**Terrain edges** (rims, lips, faces, feet, sides, corners, transitions, water's edge, stairs) follow [eastward-edges.md](eastward-edges.md): Eastward is the only reference for edges and the soft grid (Matt, 21 Oct 09:23), for their geometry and value structure, while the colours stay this palette's, one ramp per terrain (Matt, 21 Oct 09:31). On terrain, only a change of height is outlined (eastward-edges 4).
+
 - One pixel, outside the silhouette, in the **edge tone of the family it closes** (wood closes in deep brown, leaves in deep green, stone in violet grey). Never a flat ink round a light material, never a second dark ring inside the first.
 - **Lit break.** Where it closes a top or left edge whose fill is tone 4 or 5, it breaks to that family's tone 1, so the light seems to wrap round the form.
 - Interior lines (seams, mortar, frames) use tone 0 to 2 of the material, never ink. Ink is for eyes and the deepest gaps.
@@ -99,6 +101,8 @@ Every surface is measured with `scripts/art/detail_bar.py` (the terrace toolkit 
 | Ground     | 12.6  | 31.9   | 24.1     |
 
 Ours must reach 90 % of each, and be no noisier (lone pixels at most the reference's plus 2 points, clusters at least 90 % as large). The house way to reach it is more parts and more siblings, never more contrast or speckle.
+
+**Ground is judged for cleanliness** (Matt, 21 Oct 10:52: "your current renders are visually too noisy. compare with eastward. i want it to be cleaner, like eastward"): for `ground` the bar's shape and dressing minimums are replaced by Eastward's cleanliness at our scale (visible edges, lone pixels, the two main colours' share, colours a square; `eastward-edges.md` 5.5, `detail_bar.clean_counts`) and its tones minimum drops to half. A ground is a flat fill, a few large soft blotches a tone or two apart, and sparse clumped tufts and flowers placed by rule.
 
 Where the house exemplars stand (style sheet, 20 Oct, second round): the cottage front, Cogsworth's brick and iron (true brick: tones 30.0, shapes 48.8 against 25.6 and 33.9), the desert false front, the castle gate and the moon's ground pass; today's versions of the same subjects pass in two of seven (the castle gate and the neon shopfront). The neon shopfront (tones 20.9 of 25.6) and the station module (20.2 of 25.2) still fall short on tones only: very dark and very light surfaces lose tones in the bar's quantising, so night walls and white shells need more parts in accent families (posters, signs, primer plates, dust) than a mid-tone wall. Of the material swatches, wood, stone, foliage, water and regolith pass. Brick has no baseline of its own: against the stone-wall bar (big stones) its small bricks count as noisy, so brick is judged as a facade, where it passes. Metal is short on tones on its own. Snow is a calm plane by design (Matt: wide planes, a crisp edge) and is far below the lawn-based ground bar; it is judged by eye until there is a snow reference.
 

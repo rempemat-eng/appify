@@ -173,8 +173,18 @@ function references(text, ledger, allFiles) {
     const entries = ledger.byModule.get(mod);
     const names = new Set(entries.map((e) => e.name));
     const used = new Set();
+    let unresolvedPropsUse = false;
     lines.forEach((l, i) => {
       if (skip(i)) return;
+      const directProps = [
+        ...l.matchAll(new RegExp(`\\b${alias}\\.props\\(\\)\\[['"](\\w+)['"]\\]`, 'g')),
+      ];
+      const propsCalls = [...l.matchAll(new RegExp(`\\b${alias}\\.props\\(\\)`, 'g'))];
+      // Narrowing an old module to literal names is safe only when every props() call is a
+      // direct literal lookup. A dynamic key, or assigning the dictionary to an alias, must
+      // retain the conservative whole-module fallback. Otherwise one nearby KEEP lookup can
+      // hide an unresolved REWORK/RETIRE use.
+      if (propsCalls.length !== directProps.length) unresolvedPropsUse = true;
       for (const m of l.matchAll(
         new RegExp(`\\b${alias}\\.(?:props\\(\\)\\[['"](\\w+)['"]\\]|(\\w+)\\()`, 'g'),
       )) {
@@ -190,7 +200,7 @@ function references(text, ledger, allFiles) {
       }
     }
     const named = [...used].filter((n) => names.has(n));
-    if (named.length && named.length === used.size) {
+    if (named.length && named.length === used.size && !unresolvedPropsUse) {
       for (const n of named) {
         const files = entries.filter((e) => e.name === n).flatMap((e) => e.files);
         refs.push({ line, what: `${mod}: ${n}`, files });
@@ -259,6 +269,42 @@ function checkAssets({
     for (const [lane, c] of Object.entries(lanes).sort((x, y) => x[0].localeCompare(y[0]))) {
       log(`  lane ${lane}: KEEP ${c.KEEP}, REWORK ${c.REWORK}, RETIRE ${c.RETIRE}`);
     }
+    if (process.env.GITHUB_STEP_SUMMARY) {
+      const rows = Object.entries(lanes)
+        .sort((x, y) => x[0].localeCompare(y[0]))
+        .map(
+          ([lane, c]) =>
+            `| ${lane.replaceAll('|', '\\|')} | ${c.KEEP} | ${c.REWORK} | ${c.RETIRE} |`,
+        );
+      fs.appendFileSync(
+        process.env.GITHUB_STEP_SUMMARY,
+        [
+          '# Asset-ledger report',
+          '',
+          'Report-only current-tree scan. The negative-fixture self-test is blocking; this inventory is not yet a blocking gate.',
+          '',
+          `Status: **${errors.length ? `FAIL (${errors.length} problem${errors.length === 1 ? '' : 's'})` : 'PASS'}**`,
+          '',
+          '| Lane | KEEP | REWORK | RETIRE |',
+          '| --- | ---: | ---: | ---: |',
+          ...rows,
+          '',
+          `Pictures on disk: ${onDisk.length}; ledger entries: ${ledger.byFile.size}; checked uses: ${used}.`,
+          ...(errors.length
+            ? [
+                '',
+                '<details><summary>Problems</summary>',
+                '',
+                ...errors.map((e) => `- ${e}`),
+                '',
+                '</details>',
+                '',
+              ]
+            : ['']),
+          '',
+        ].join('\n'),
+      );
+    }
   }
   log(
     `asset ledger: ${onDisk.length} pictures under assets/, ${ledger.byFile.size} in the ledger; ` +
@@ -316,6 +362,20 @@ function selfTest() {
   errs = checkAssets({ root, log: quiet });
   if (!errs.some((x) => x.includes('prop/old REWORK')))
     throw new Error(`a REWORK sprite was missed: ${errs.join('; ')}`);
+  w(
+    'scripts/art/snow_kit.py',
+    "import castle_props as cp\nx = cp.props()['keepme']\nname = 'old'\ny = cp.props()[name]\n",
+  );
+  errs = checkAssets({ root, log: quiet });
+  if (!errs.some((x) => x.includes('prop/old REWORK')))
+    throw new Error(`a dynamic lookup beside a KEEP sprite was missed: ${errs.join('; ')}`);
+  w(
+    'scripts/art/snow_kit.py',
+    "import castle_props as cp\nx = cp.props()['keepme']\npool = cp.props()\ny = pool['old']\n",
+  );
+  errs = checkAssets({ root, log: quiet });
+  if (!errs.some((x) => x.includes('prop/old REWORK')))
+    throw new Error(`an aliased catalogue beside a KEEP sprite was missed: ${errs.join('; ')}`);
   w('scripts/art/snow_kit.py', 'import frost_zones\n');
   errs = checkAssets({ root, log: quiet });
   if (!errs.some((x) => x.includes('zone/hollow RETIRE')))
@@ -334,8 +394,23 @@ function selfTest() {
   errs = checkAssets({ root, log: quiet });
   if (!errs.some((x) => x.includes('lib/world-canvas-assets.ts:1')))
     throw new Error(`a canvas import was missed: ${errs.join('; ')}`);
+  fs.rmSync(path.join(root, 'lib/world-canvas-assets.ts'));
+  w('scripts/art/snow_kit.py', "import castle_props as cp\nx = cp.props()['keepme']\n");
+  const summaryPath = path.join(root, 'summary.md');
+  const priorSummary = process.env.GITHUB_STEP_SUMMARY;
+  process.env.GITHUB_STEP_SUMMARY = summaryPath;
+  try {
+    errs = checkAssets({ root, log: quiet, summary: true });
+  } finally {
+    if (priorSummary === undefined) delete process.env.GITHUB_STEP_SUMMARY;
+    else process.env.GITHUB_STEP_SUMMARY = priorSummary;
+  }
+  if (errs.length) throw new Error(`summary fixture should pass: ${errs.join('; ')}`);
+  const summary = fs.readFileSync(summaryPath, 'utf8');
+  if (!summary.includes('# Asset-ledger report') || !summary.includes('| A | 1 | 2 | 1 |'))
+    throw new Error('CI asset summary is missing its lane inventory');
   fs.rmSync(root, { recursive: true, force: true });
-  console.log('check-assets self-test passed (7 cases)');
+  console.log('check-assets self-test passed (10 cases)');
 }
 
 if (require.main === module) {
