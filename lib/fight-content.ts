@@ -1156,7 +1156,7 @@ export function pipsFor(restMinutesSinceLastSpar: number) {
 
 /** A ring rival: a resident with a fixed family, a deck of habit cards in their region's
  *  style and at most one passive from the folk list (cast.md: a quarter of a folk's cost).
- *  Names wait for Claude K's resident stories; roles are what the atlas gives. */
+ *  Rings and rivals follow Claude K's progression spine (art/story/progression.json, #197). */
 export type Rival = {
   id: string;
   region: string;
@@ -1187,9 +1187,9 @@ export function rivalDeck(level: number, swaps: [out: string, inn: string][] = [
 export const rivals: Rival[] = [
   {
     id: 'dave',
-    region: 'home valley',
-    ring: 'the green, Crossroads',
-    who: 'Doomscroll Dave, the tutor',
+    region: 'the home valley',
+    ring: 'the green in Crossroads',
+    who: 'Doomscroll Dave, as the tutor',
     family: 'mirror',
     level: 1,
     zen: 0,
@@ -1208,21 +1208,9 @@ export const rivals: Rival[] = [
     status: 'today',
   },
   {
-    id: 'harbour_master',
-    region: 'home valley',
-    ring: 'the jetty, Driftwood',
-    who: 'the harbour master',
-    family: 'ROAM',
-    level: 2,
-    zen: 0,
-    deck: rivalDeck(2),
-    passive: 'tide',
-    status: 'planned',
-  },
-  {
     id: 'hut_warden',
     region: 'the Frostline',
-    ring: 'the bothy yard, Snow Saddle',
+    ring: 'a snowy clearing by the bothy',
     who: 'the hut warden',
     family: 'REST',
     level: 3,
@@ -1234,7 +1222,7 @@ export const rivals: Rival[] = [
   {
     id: 'tinkerer',
     region: 'Cogsworth',
-    ring: 'the gear-floored ring in the square',
+    ring: 'the plaza',
     who: 'the tinkerer',
     family: 'FOCUS',
     level: 4,
@@ -1246,7 +1234,7 @@ export const rivals: Rival[] = [
   {
     id: 'cowhand',
     region: 'Sunstone Reach',
-    ring: 'the corral, Dust Gulch',
+    ring: 'the dusty corral in Dust Gulch',
     who: 'the cowhand',
     family: 'ROAM',
     level: 5,
@@ -1255,26 +1243,14 @@ export const rivals: Rival[] = [
       ['stretch', 'short_walk'],
       ['glass_of_water', 'deep_breath'],
     ]),
-    passive: 'bedrock',
-    status: 'planned',
-  },
-  {
-    id: 'castellan',
-    region: 'the fire country',
-    ring: 'the courtyard, Hearthold',
-    who: 'the castle keeper who rings bedtime',
-    family: 'REST',
-    level: 6,
-    zen: 0,
-    deck: rivalDeck(6, [['stretch', 'early_night']]),
-    passive: 'seep',
+    passive: 'countingSheep',
     status: 'planned',
   },
   {
     id: 'smith',
     region: 'the fire country',
-    ring: 'the basalt ring, Ember caldera',
-    who: 'the forge smith',
+    ring: 'the basalt ring by the lava',
+    who: 'the smith',
     family: 'FOCUS',
     level: 7,
     zen: 0,
@@ -1283,34 +1259,37 @@ export const rivals: Rival[] = [
     status: 'today',
   },
   {
-    id: 'streamer',
+    id: 'neon_dave',
     region: 'Neon Harbour',
-    ring: 'the rooftop court',
-    who: 'the all-night streamer',
-    family: 'ROAM',
-    level: 9,
+    ring: 'the Neon court',
+    who: "Doomscroll Dave, at home (his own deck, stronger than the tutor's)",
+    family: 'mirror',
+    level: 8,
     zen: 0,
-    deck: rivalDeck(9, [['deep_breath', 'morning_walk']]),
+    deck: rivalDeck(8, [
+      ['deep_breath', 'morning_walk'],
+      ['glass_of_water', 'short_walk'],
+    ]),
     passive: 'doNotDisturb',
     status: 'today',
   },
   {
-    id: 'bay_keeper',
+    id: 'botanist',
     region: 'Halcyon Station',
-    ring: 'the zero-g dome',
-    who: 'the sleep-bay keeper',
+    ring: 'the padded ring',
+    who: 'the station botanist',
     family: 'REST',
     level: 10,
     zen: 0,
     deck: rivalDeck(10, [['stretch', 'early_night']]),
-    passive: 'sleepCycle',
+    passive: 'overgrow',
     status: 'planned',
   },
   {
-    id: 'dreamwarden',
+    id: 'stargazer',
     region: 'Lumen',
     ring: 'the sparring crater',
-    who: 'the dream grove warden',
+    who: 'the stargazer',
     family: 'FOCUS',
     level: 12,
     zen: 0,
@@ -1323,6 +1302,10 @@ export const rivals: Rival[] = [
 /** Regions with no ring, by design (cast.md, world-atlas.md). */
 export const noRing = [
   { region: 'the Brackens', why: "the drover's story is a story, not a ring" },
+  {
+    region: 'Hearthold',
+    why: "the fire country's ring is the smith's, by the lava (Claude K's spine)",
+  },
   { region: 'the Lull', why: 'the bargee teaches rest; Puddle is his apprentice' },
   { region: 'the Tidebloom Isles', why: 'the quiet place with no ring' },
 ];

@@ -335,7 +335,7 @@ function run(n: number) {
   // Matchup options (the evidence for M1/M2).
   out.push('## 4. Families against fixed-family rivals: the matchup options\n');
   out.push(
-    "Every folk and family against the nine rivals with a fixed family. \"Spread\" is, at each ring, the best family's win % minus the worst family's, averaged over rings (and its largest). Today's 1.5 / 0.67 is in the first row.\n",
+    "Every folk and family against the rivals with a fixed family. \"Spread\" is, at each ring, the best family's win % minus the worst family's, averaged over rings (and its largest). Today's 1.5 / 0.67 is in the first row.\n",
   );
   out.push('| Option | REST | ROAM | FOCUS | Spread, mean | Spread, largest |');
   out.push('| --- | --: | --: | --: | --: | --: |');
