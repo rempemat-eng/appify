@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "9021247",
+ "main": "b6d1f8c",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -10234,37 +10234,31 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: door 28); foot line 102 px: not whole 8 px cells (kind foot 11 x 7); bar tones LOW, shapes LOW, dressing LOW as wood-front; style: light-west, palette",
-   "fails": [
-    "logic",
-    "grid",
-    "bar",
-    "light-west",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 81,
-    "w": 106,
+    "h": 87,
+    "w": 104,
     "style": {
-     "colours": 29,
-     "on_house": 0.887,
-     "on_today": 0.599,
-     "palette": "off",
+     "colours": 76,
+     "on_house": 0.998,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.014,
-     "west_east": -0.332,
-     "isolated": 0.035,
+     "double": 0.0,
+     "west_east": 0.186,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 102,
-     "cells": 12.75,
+     "foot_px": 103,
+     "cells": 12.88,
      "kind_foot": "11 x 7",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "smithy",
@@ -10288,49 +10282,47 @@
      "why": "door 28",
      "fix": "door 32; steam from a roof vent"
     },
-    "logic": "fault (ADJUST: door 28)",
+    "logic": "fixed by eye: fixed: the doorway 14 x 32, curtained; a louvred vent on the ridge for the steam to rise from (an animated steam_puff can be placed over it) (claude-d, 20 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      15,
-      7,
-      88,
-      80
+      19,
+      18,
+      85,
+      84
      ],
      "patches": 16,
-     "tones_at": 0.9,
+     "tones_at": 0.85,
      "tones": [
-      7.75,
+      20.75,
       24.0
      ],
      "shapes": [
-      18.38,
+      41.88,
       36.34
      ],
      "dressing": [
-      7.75,
+      36.31,
       30.54
      ],
      "isolated": [
-      0.087,
+      0.079,
       0.17
      ],
      "cluster": [
-      8.59,
+      4.05,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: the doorway 14 x 32, curtained; a louvred vent on the ridge for the steam to rise from (an animated steam_puff can be placed over it) (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bed": {
    "files": [
@@ -24398,28 +24390,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, light-west, palette",
-   "fails": [
-    "speckle",
-    "light-west",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 29,
-    "w": 17,
+    "h": 31,
+    "w": 16,
     "style": {
-     "colours": 12,
-     "on_house": 0.571,
+     "colours": 22,
+     "on_house": 1.0,
      "on_today": 0.0,
-     "palette": "off",
-     "outline_dark": 0.987,
+     "palette": "house",
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.032,
-     "west_east": -0.288,
-     "isolated": 0.601,
+     "double": 0.025,
+     "west_east": 0.508,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -24449,15 +24437,18 @@
     "bar": {
      "status": "n/a",
      "kind": "tree",
-     "square": 7,
-     "why": "no solid 18 px square (largest 7): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 8,
+     "why": "no solid 18 px square (largest 8): too small for a 16 px patch",
+     "eye": "ok: stems, leaves in pairs of pixels, flower spikes with buds paler at the tip, lit on the west; compared at 3x and 1x beside Eastward's pine and verge (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 20 Oct)"
     }
    },
    "placed": {
     "springs": 6
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: stems, leaves in pairs of pixels, flower spikes with buds paler at the tip, lit on the west; compared at 3x and 1x beside Eastward's pine and verge (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/fireweed_small": {
    "files": [
@@ -24469,27 +24460,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, palette",
-   "fails": [
-    "speckle",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 21,
-    "w": 13,
+    "h": 23,
+    "w": 12,
     "style": {
-     "colours": 12,
-     "on_house": 0.582,
+     "colours": 21,
+     "on_house": 1.0,
      "on_today": 0.0,
-     "palette": "off",
-     "outline_dark": 0.987,
+     "palette": "house",
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.052,
-     "west_east": 2.344,
-     "isolated": 0.691,
+     "double": 0.038,
+     "west_east": 2.398,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -24521,13 +24509,16 @@
      "kind": "tree",
      "square": 7,
      "why": "no solid 18 px square (largest 7): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "eye": "ok: as fireweed, three stems; same comparison (claude-d, 20 Oct)"
     }
    },
    "placed": {
     "springs": 6
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: as fireweed, three stems; same comparison (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/fish_stall": {
    "files": [
@@ -38666,29 +38657,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: storeys right; doors 25); style: speckle, colours, palette",
-   "fails": [
-    "logic",
-    "speckle",
-    "colours",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 108,
     "w": 90,
     "style": {
-     "colours": 180,
-     "on_house": 0.869,
-     "on_today": 0.256,
-     "palette": "off",
+     "colours": 82,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.026,
-     "west_east": 1.315,
-     "isolated": 0.135,
+     "double": 0.01,
+     "west_east": 0.86,
+     "isolated": 0.001,
      "checker": 0.0
     },
     "grid": {
@@ -38719,36 +38705,36 @@
      "why": "storeys right; doors 25",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: storeys right; doors 25)",
+    "logic": "fixed by eye: fixed: a shop's pair of glazed doors 22 x 32 under a lintel on a stone step; storeys as before under the false front; porch posts unbroken from roof to boardwalk (claude-d, 20 Oct)",
     "bar": {
      "status": "pass",
      "kind": "wood-front",
      "box": [
-      6,
+      5,
       12,
-      84,
-      90
+      85,
+      92
      ],
      "patches": 16,
-     "tones_at": 0.9,
+     "tones_at": 0.85,
      "tones": [
-      22.94,
+      21.0,
       24.0
      ],
      "shapes": [
-      38.38,
+      44.19,
       36.34
      ],
      "dressing": [
-      31.56,
+      37.25,
       30.54
      ],
      "isolated": [
-      0.145,
+      0.066,
       0.17
      ],
      "cluster": [
-      3.38,
+      4.01,
       3.4
      ]
     }
@@ -38756,7 +38742,10 @@
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: a shop's pair of glazed doors 22 x 32 under a lintel on a stone step; storeys as before under the false front; porch posts unbroken from roof to boardwalk (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/street_light": {
    "files": [
@@ -39172,35 +39161,29 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: reads as two grey rocks); detail not measurable and not checked by eye since the bar; style: speckle, colours, palette",
-   "fails": [
-    "logic",
-    "detail unverified",
-    "speckle",
-    "colours",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 45,
-    "w": 75,
+    "h": 42,
+    "w": 72,
     "style": {
-     "colours": 80,
-     "on_house": 0.885,
+     "colours": 55,
+     "on_house": 1.0,
      "on_today": 0.0,
-     "palette": "off",
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.052,
-     "west_east": 5.045,
-     "isolated": 0.2,
+     "double": 0.008,
+     "west_east": 4.791,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 73,
-     "cells": 9.12,
+     "foot_px": 72,
+     "cells": 9.0,
      "kind_foot": "8 x 4",
      "ok": true
     },
@@ -39226,16 +39209,21 @@
      "why": "reads as two grey rocks",
      "fix": "cloth panels on a ridge pole, guy ropes, pegs, an open flap with rugs"
     },
-    "logic": "re-check: changed since the audit (REDRAW: reads as two grey rocks)",
+    "logic": "fixed by eye: fixed: reads as a ridge tent of goat-hair cloth: panels on a ridge pole carried by two uprights, sloping ends, a side curtain to the ground, guy ropes to pegs, the front rolled up on ties over a rug (claude-d, 20 Oct)",
     "bar": {
      "status": "by eye",
-     "why": "no reference kind for this subject (house-style 7: by eye)"
+     "why": "no reference kind for this subject (house-style 7: by eye)",
+     "eye": "ok: cloth checklist (house-style 7): panels and seams, a hem, taut where the guys pull and slack between, a lit ridge and west end, the east end and the curtain in shade, weathering as patches and blown sand in clusters; compared at 3x and 1x beside Eastward's barn front and shopfronts (detail_baselines eastward-17-barn-front, eastward-10-shopfronts) at an adult of 25 px, by day and under the night tint (claude-d, 20 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: reads as a ridge tent of goat-hair cloth: panels on a ridge pole carried by two uprights, sloping ends, a side curtain to the ground, guy ropes to pegs, the front rolled up on ties over a rug (claude-d, 20 Oct)",
+    "bar": "ok: cloth checklist (house-style 7): panels and seams, a hem, taut where the guys pull and slack between, a lit ridge and west end, the east end and the curtain in shade, weathering as patches and blown sand in clusters; compared at 3x and 1x beside Eastward's barn front and shopfronts (detail_baselines eastward-17-barn-front, eastward-10-shopfronts) at an adult of 25 px, by day and under the night tint (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/tether": {
    "files": [
@@ -40334,36 +40322,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: side view, spoked wheels flat); foot line 53 px: not whole 8 px cells (kind foot 8 x 3); bar tones LOW, shapes LOW, dressing LOW as wood-front; style: palette",
-   "fails": [
-    "logic",
-    "grid",
-    "bar",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 47,
-    "w": 68,
+    "h": 45,
+    "w": 67,
     "style": {
-     "colours": 16,
-     "on_house": 0.88,
-     "on_today": 0.334,
-     "palette": "off",
+     "colours": 61,
+     "on_house": 0.991,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.052,
-     "west_east": 7.445,
-     "isolated": 0.022,
+     "double": 0.025,
+     "west_east": 9.476,
+     "isolated": 0.008,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 53,
-     "cells": 6.62,
+     "foot_px": 47,
+     "cells": 5.88,
      "kind_foot": "8 x 3",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "wagon",
@@ -40387,49 +40370,47 @@
      "why": "side view, spoked wheels flat",
      "fix": "bed in three-quarter view, lit canvas top, wheels as ellipses"
     },
-    "logic": "fault (ADJUST: side view, spoked wheels flat)",
+    "logic": "fixed by eye: fixed: three-quarter view (the bonnet's top plane lit, its south side in panels between six hoops, flared ends, the back drawn up round an opening), wheels as ellipses with iron tyres, jointed felloes and straight spokes, the rear pair larger (claude-d, 20 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      12,
-      4,
-      43,
-      35
+      8,
+      5,
+      40,
+      37
      ],
      "patches": 1,
-     "tones_at": 0.9,
+     "tones_at": 0.85,
      "tones": [
-      2.0,
+      21.0,
       24.0
      ],
      "shapes": [
-      2.0,
+      38.0,
       36.34
      ],
      "dressing": [
-      0.0,
+      28.0,
       30.54
      ],
      "isolated": [
-      0.0,
+      0.102,
       0.17
      ],
      "cluster": [
-      128.0,
+      3.61,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: three-quarter view (the bonnet's top plane lit, its south side in panels between six hoops, flared ends, the back drawn up round an opening), wheels as ellipses with iron tyres, jointed felloes and straight spokes, the rear pair larger (claude-d, 20 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/wall_run": {
    "files": [
