@@ -14,6 +14,7 @@ from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
 import garden_props as gp  # noqa: E402
 import style  # noqa: E402
+import wayside_props  # noqa: E402  the rebuilt valley's wayside kit (bench, fingerpost, gate, stile, trough, noticeboard, well)
 from materials import MATERIALS, WOOD, STONE, LEAF, RED, WTR, PLASTER, GOLD, NAP, SLATE, G, SNOW  # noqa: E402
 
 ROPE, TAR = MATERIALS['rope'], MATERIALS['tar']
@@ -2282,6 +2283,7 @@ def props() -> dict[str, Canvas]:
         'lookout_tower': lookout_tower(),
         'oak': wild_tree('oak'), 'beech': wild_tree('beech'), 'birch': wild_tree('birch'), 'sapling': sapling(),
         'holly': holly(), 'bramble': bramble(),
+        **wayside_props.props(),
     }
 
 
