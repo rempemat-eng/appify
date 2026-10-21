@@ -1462,21 +1462,40 @@ def outcrop(p: Plot, x, y, seed=0, rocks=SANDSTONE, n=None):
     tuft(p, x + 2, y + 4, seed + 6)
 
 
-def gorse(seed=0, w=None):
-    """A gorse bush on the cliff top (12 to 22 wide): a dome of dark spiny clumps lit on the
-    upper west, yellow flowers in pairs over the lit side, a dark skirt at its foot."""
-    w = w or 12 + int(hash01(seed, 0, 29) * 10)
-    h = int(w * 0.75)
-    sp = Sprite(w + 4, h + 4, (w + 4) // 2, h + 1)
+GORSE_FORMS = ('dome', 'low', 'tall', 'pair')
+
+
+def gorse(seed=0, w=None, form=None):
+    """A gorse bush on the cliff top: a mass of dark spiny clumps lit on the upper west,
+    yellow flowers in pairs over the lit side, a dark skirt at its foot. Four forms (a
+    dome, a low wind-pruned cushion leaning east, a tall clump, a pair of crowns grown
+    together) and sizes from 8 to 26 wide, so a cluster never repeats one bush."""
+    form = form or GORSE_FORMS[int(hash01(seed, 3, 29) * len(GORSE_FORMS))]
+    w = w or 8 + int(hash01(seed, 0, 29) * 18)
+    ratio = {'dome': 0.72, 'low': 0.45, 'tall': 1.0, 'pair': 0.62}[form]
+    h = max(6, int(w * ratio))
+    sp = Sprite(w + 6, h + 4, (w + 6) // 2, h + 1)
     cx, cy = sp.fx, sp.fy - h * 0.5
-    u, v = (sp.x + 0.5 - cx) / (w / 2), (sp.y + 0.5 - cy) / (h / 2)
     clump = (fbm(sp.x, sp.y, 3, seed) - 0.5) * 0.5
-    shape = (u * u + v * v <= 1 + clump) & (sp.y <= sp.fy)
-    lam = light_of(u, v, 0.3) + clump * 0.8
+    lobes = [(cx, cy, w / 2.0, h / 2.0)]
+    if form == 'low':
+        lobes = [(cx + w * 0.08, cy + h * 0.1, w / 2.0, h / 2.0)]
+    if form == 'pair':
+        lobes = [(cx - w * 0.2, cy + h * 0.05, w * 0.32, h * 0.5), (cx + w * 0.2, cy - h * 0.05, w * 0.34, h * 0.52)]
+    shape = np.zeros(sp.m.shape, bool)
+    lam = np.full(sp.m.shape, -9.0)
+    for (lx, ly, rx, ry) in lobes:
+        u, v = (sp.x + 0.5 - lx) / rx, (sp.y + 0.5 - ly) / ry
+        if form == 'low':
+            v = v + 0.25 * u                                  # pruned by the west wind: higher in the lee
+        inside = (u * u + v * v <= 1 + clump) & (sp.y <= sp.fy)
+        l_ = light_of(u, v, 0.3) + clump * 0.8
+        lam = np.where(inside & (l_ > lam), l_, lam)
+        shape |= inside
     tone = tone_of(lam, (0.45, 0.0, -0.4))
     fam = np.where(fbm(sp.x, sp.y, 4, seed + 1) > 0.5, IDX['leaf_cool'], IDX['leaf'])
     sp.put(shape, fam, np.maximum(1, tone - 1))
-    fl = shape & (tone >= 3) & (hash01(sp.x // 2, sp.y, seed + 2) < 0.22)
+    fl = shape & (tone >= 3) & (hash01(sp.x // 2, sp.y, seed + 2) < (0.3 if form != 'tall' else 0.16))
     sp.put(fl, 'grass_warm', 5)
     sp.put(shift(fl, 1, 0, False) & shape & ~fl, 'sand_warm', 4)
     sp.put(shape & (sp.y >= sp.fy - 1), 'leaf', 0)
@@ -1492,22 +1511,29 @@ def sea_turf(p: Plot, m, seed=0, thrift=1.0, heathy=0.35):
     base(p, m, [('grass_cool', 0.35), ('grass', 0.45), ('grass_warm', 0.2)], seed, 11, tone=3, light=0.76, dark=0.32)
     damp = m & (fbm(p.x, p.y, 34, seed + 11) < 0.36)
     p.step(damp, -1)
-    texture(p, m, seed + 1, swaps=0.05, ups=0.015, downs=0.02, shapes=FLAT)
+    texture(p, m, seed + 1, swaps=0.035, ups=0.012, downs=0.016, shapes=FLAT)
     if heathy:
         hm = m & (fbm(p.x, p.y, 28, seed + 12) > 1 - heathy * 0.5) & (edge_dist(m, 16) >= 16)
         heath(p, hm & (fbm(p.x, p.y, 6, seed + 13) > 0.42), seed + 14)
     near = m & (edge_dist(m, 12) < 12)
     for (x, y) in _scatter(near, 55, seed + 2):
         tuft(p, x, y, seed + 3, 'grass_warm' if (x + y) % 3 else 'grass')
-    for (x, y) in _scatter(m & ~near, 110, seed + 4):
-        tuft(p, x, y, seed + 5, 'grass_cool' if (x * 7 + y) % 3 else 'grass_warm')
+    for (x, y) in _scatter(m & ~near, 100, seed + 4):           # tufts in clumps, the open between them calm
+        for j in range(3 + int(hash01(x, y, seed + 20) * 4)):
+            tx = x + int((hash01(x, j, seed + 21) - 0.5) * 9)
+            ty = y + int((hash01(y, j, seed + 22) - 0.5) * 5)
+            if 0 <= tx < p.w and 0 <= ty < p.h and m[ty, tx]:
+                tuft(p, tx, ty, seed + 5 + j, 'grass_cool' if (tx * 7 + ty) % 3 else 'grass_warm')
     for (x, y) in _scatter(m & ~near, 150, seed + 17):          # bird's-foot trefoil and eyebright in pairs
         c = ('grass_warm', 5) if hash01(x, y, seed + 18) < 0.8 else ('snow', 4)
         if not p.solid[y, x]:
             p.put(_pt(p, x, y) | _pt(p, x + 1, y), *c)
             p.put(_pt(p, x, y + 1), 'grass_cool', 1)
     drift = m & (fbm(p.x, p.y, 30, seed + 6) > 0.55)
-    for (x, y) in _scatter(drift, int(140 / max(0.1, thrift)), seed + 7):
+    lip = m & (edge_dist(m, 24) < 24) & ~shift(m, 0, -24, True)      # the last 24 px before a southern rim
+    for (x, y) in _scatter(lip, int(60 / max(0.1, thrift)), seed + 19):
+        cushion(p, x, y, seed + 8, 'berry' if hash01(x, y, seed + 9) < 0.8 else 'snow')
+    for (x, y) in _scatter(drift & ~lip, int(260 / max(0.1, thrift)), seed + 7):
         cushion(p, x, y, seed + 8, 'berry' if hash01(x, y, seed + 9) < 0.75 else 'snow')
     despeckle(p, m)
     for (x, y) in _scatter(m & (edge_dist(m, 20) >= 20), 9000, seed + 15):
@@ -1612,9 +1638,10 @@ def beach(p: Plot, m, water, seed=0, wrack=1.0):
     p.step(dry & (fbm(p.x, p.y, 11, seed + 2) > 0.45), 1)
     damp = m & (d < 20 + (fbm(p.x, p.y, 14, seed + 3) - 0.5) * 8)
     p.f[damp & (FAMILY[p.f] == IDX['sand'])] = IDX['sand_cool']
+    p.step(damp & (d >= 7) & (d < 15 + (fbm(p.x, p.y, 10, seed + 16) - 0.5) * 6), -1)   # damp sand above the swash
     texture(p, m, seed + 4, swaps=0.12, ups=0.035, downs=0.035)
-    rip = dry & (((p.x * 0.3 + p.y + (fbm(p.x, p.y, 22, seed + 5) - 0.5) * 9).astype(int) % 7) == 0)
-    rip &= hash01(p.x // 6, p.y // 7, seed + 6) < 0.45
+    rip = dry & (((p.x * 0.3 + p.y + (fbm(p.x, p.y, 40, seed + 5) - 0.5) * 16).astype(int) % 9) == 0)
+    rip &= hash01(p.x // 34, p.y // 9, seed + 6) < 0.5
     p.step(rip, 1)
     p.step(shift(rip, 0, 1, False) & m & ~rip, -1)
     wl = 26 + (fbm(p.x, p.y, 40, seed + 7) - 0.5) * 8
@@ -1669,6 +1696,23 @@ def shingle(p: Plot, m, water, seed=0):
     despeckle(p, m)
     p.walk |= m & ~p.hazard
     p.solid &= ~m
+
+
+def grade(p: Plot, sand, shing, water, seed=0, reach=16):
+    """Where shingle meets sand: pebbles thrown out over the sand for `reach` px, thinning
+    with distance, smaller as they go, and sand blown into the shingle's last few px."""
+    sand, shing = np.asarray(sand, bool), np.asarray(shing, bool)
+    d = dist_to(shing, reach + 1)
+    stones = ('stone_warm', 'ashlar', 'bleached', 'stone', 'slate', 'ashlar_cool')
+    for (x, y) in _scatter(sand & (d <= reach), 10, seed, margin=0):
+        k = d[y, x] / float(reach)
+        if hash01(x, y, seed + 1) > (1 - k) ** 1.5 * 0.9:
+            continue
+        w = 2 + int((1 - k) * 2.5 * hash01(x, y, seed + 2) + 0.5)
+        pebble(p, x, y, stones[int(hash01(x, y, seed + 3) * len(stones))], w, max(2, w - 1), shadow=True, k=1)
+    din = dist_to(sand, 6)
+    blown = shing & (din <= 5) & (hash01(p.x // 2, p.y // 2, seed + 4) < (6 - din) / 7.0)
+    p.put(blown, 'sand_cool', 3)
 
 
 def platform(p: Plot, m, water, seed=0, rock='stone'):
@@ -1772,7 +1816,7 @@ def sea(p: Plot, m, land, seed=0, deep=1.0):
     d = dist_to(land, 160).astype(np.float64)
     dd = d * deep + (fbm(p.x, p.y, 26, seed) - 0.5) * 16
     bands = ((7, 'lagoon_warm', 4), (16, 'lagoon', 4), (30, 'lagoon', 3), (48, 'lagoon_cool', 2),
-             (72, 'water_warm', 2), (110, 'water_warm', 1), (1e9, 'water', 1))
+             (72, 'water', 2), (110, 'water_cool', 2), (1e9, 'water_cool', 1))
     lo = -1e9
     for hi, ramp, tone in bands:
         sel = m & (dd >= lo) & (dd < hi)
@@ -1792,16 +1836,16 @@ def sea(p: Plot, m, land, seed=0, deep=1.0):
     rip = shallow & (((p.x * 0.35 + p.y + (fbm(p.x, p.y, 12, seed + 2) - 0.5) * 8).astype(int) % 5) == 0)
     rip &= hash01(p.x // 5, p.y // 5, seed + 3) < 0.5
     p.step(rip, 1)
-    for (x, y) in _scatter(m & (dd > 6) & (dd < 90), 170, seed + 4):
-        s = blob(x, y, 2 + hash01(x, y, seed) * 4, 1.5 + hash01(x, y, seed + 1) * 2, p.f.shape, seed, wob=0.2) & m
-        p.put(s, 'lagoon_cool', 1)
-        p.step(s & ~shift(s, 0, 1, False) & ~shift(s, 1, 0, False), 2)
-    weed = m & (dd > 20) & (dd < 60) & (fbm(p.x, p.y, 16, seed + 5) > 0.66)
-    p.put(weed & (p.t >= 2), 'lagoon_cool', 1)
+    # a few soft patches of the floor (stones, weed) showing through the shallows only
+    for (x, y) in _scatter(m & (dd > 8) & (dd < 30), 900, seed + 4):
+        s = blob(x, y, 4 + hash01(x, y, seed) * 7, 2 + hash01(x, y, seed + 1) * 3, p.f.shape, seed, wob=0.25) & m
+        p.step(s, -1, lo=1)
+    weed = m & (dd > 12) & (dd < 30) & (fbm(p.x, p.y, 16, seed + 5) > 0.78)
+    p.step(weed, -1, lo=1)
     phase = dd + (fbm(p.x, p.y, 10, seed + 6) - 0.5) * 3
     k = np.floor(phase / 13.0).astype(int)
     crest = m & (dd > 18) & (k != shift(k, 0, 1, -99))
-    seg = hash01((p.x + k * 37) // 11, k, seed + 7) < 0.5
+    seg = hash01((p.x + k * 37) // 23, k, seed + 7) < 0.3
     crest &= seg
     p.step(crest, 1)
     p.step(shift(crest, 0, 1, False) & m & ~crest, -1, lo=0)
@@ -1811,7 +1855,7 @@ def sea(p: Plot, m, land, seed=0, deep=1.0):
     p.step(deepm & (swell < 0.3), -1, lo=0)
     gl = m & (dd > 50) & (hash01(p.x // 2, p.y, seed + 8) < 0.006)
     p.step(gl | (shift(gl, 1, 0, False) & m), 2)
-    ripples(p, m, seed + 9, every=75)
+    ripples(p, m, seed + 9, every=140)
     despeckle(p, m)
     p.wet |= m
     p.walk &= ~m
@@ -1882,11 +1926,14 @@ def reef(p: Plot, rocks, seed=0, ramp='basalt'):
         b = blob(x, y, rx, ry, p.f.shape, seed + i, wob=0.25, lobes=5)
         m |= b
         u, v = (p.x + 0.5 - x) / max(1, rx), (p.y + 0.5 - y) / max(1, ry)
-        tone = tone_of(light_of(u, v, 0.35), (0.4, -0.05, -0.5))
+        lump = (fbm(p.x, p.y, max(3, rx // 2), seed + i) - 0.5) * 0.9      # bulges across the rock
+        tone = tone_of(light_of(u, v, 0.45) + lump, (0.5, 0.05, -0.45))
         p.f[b] = IDX[ramp] if hash01(i, 0, seed) < 0.6 else IDX[f'{ramp}_warm']
         p.t[b] = tone[b]
+        p.put(b & (tone == 4) & (lump > 0.25), 'basalt_warm', 5)
         low = b & ~shift(b, 0, -2, False)
         p.put(low, 'leaf_cool', 1)
+        p.put(b & ~low & ~shift(b, 0, -4, False) & (hash01(p.x // 2, p.y, seed + i) < 0.3), 'bleached', 4)
     p.wet &= ~m
     p.hazard |= m
     p.walk &= ~m
@@ -1909,19 +1956,30 @@ def breakers(p: Plot, line_pts, seed=0, width=5):
     p.put(lace, 'snow_cool', 4)
 
 
-def far_isle(p: Plot, x, y, rx, ry, seed=0):
-    """An isle on the horizon (drawn, never walked): a low hazy mass, its top in the cool
-    greens, its cliff a band of pale cool rock, the surf a faint line; all in the middle
-    tones only, so it sits back behind the sea."""
-    b = blob(x, y, rx, ry, p.f.shape, seed, wob=0.2, lobes=4)
-    top = b & (p.y < y + ry * 0.35)
-    p.put(top, 'leaf_cool', 3)
-    stamp(p, top, 0.25, seed + 1, SMALL, dt=1)
-    cliff = b & ~top
-    p.put(cliff, 'stone_cool', 3)
-    p.put(cliff & ~shift(cliff, 0, -1, False), 'stone_cool', 4)
-    foam = dilate(b, 1) & ~b & p.wet
-    p.put(foam & (p.y > y), 'snow_cool', 3)
+def far_isle(p: Plot, x, y, rx, ry, seed=0, haze=0):
+    """An isle on the horizon (drawn, never walked): a silhouette with a ridge that rises
+    and falls, its lit top in the cool greens (lighter on its west), a small cliff face of
+    pale cool rock under its south rim with a darker foot, a faint line of surf; only the
+    middle tones, and `haze` (0, 1, 2) steps it back towards the horizon."""
+    h, w = p.f.shape
+    u = (p.x + 0.5 - x) / float(rx)
+    ridge = y - ry * np.clip(1 - u * u, 0, 1) ** 0.6 * (0.75 + 0.5 * fbm(p.x, 0 * p.y, 14, seed))
+    cliff_h = 3 + 3 * fbm(p.x, 0 * p.y, 9, seed + 1)
+    rim = y - 2 + (fbm(p.x, 0 * p.y, 11, seed + 2) - 0.5) * 3
+    inside = np.abs(u) < 1
+    top = inside & (p.y >= ridge) & (p.y < rim)
+    face = inside & (p.y >= rim) & (p.y < rim + cliff_h)
+    lift = haze
+    p.put(top, 'leaf_cool', min(4, 2 + lift))
+    p.put(top & (u < -0.15), 'leaf_cool', min(5, 3 + lift))
+    p.put(top & (p.y < ridge + 2) & (u < 0.3), 'grass_cool', min(5, 4 + lift))
+    stamp(p, top, 0.18, seed + 3, SMALL, dt=1)
+    p.put(face, 'stone_cool', min(4, 3 + lift))
+    p.put(face & (u > 0.2), 'stone_cool', min(4, 2 + lift))
+    p.put(face & (p.y >= rim + cliff_h - 1.5), 'stone_cool', min(3, 1 + lift))
+    b = top | face
+    foam = shift(face, 0, -1, False) & ~b & p.wet
+    p.put(foam & (hash01(p.x // 3, 0, seed + 4) < 0.7), 'snow_cool', 3 + min(1, lift))
     p.solid |= b
     p.walk &= ~b
     return b
@@ -1930,25 +1988,19 @@ def far_isle(p: Plot, x, y, rx, ry, seed=0):
 def south_edge(p: Plot, y0, seed=0, isles=None):
     """The layered south edge (plan 5.5; the brief: the sea is the edge, far islands beyond):
     the reef (`reef`, `breakers`, placed by the scene) holds the first layer; past it the
-    deep blue; then far isles on the horizon; the last rows lift towards the haze, families
-    turned to their cool siblings and the deepest tones raised, and in the final rows a
-    2 x 2 checker of the sea's pale body (the house style's one use of dither: an
-    atmospheric fade at a place's edge)."""
-    for i, (x, y, rx, ry) in enumerate(isles or ()):
-        far_isle(p, x, y, rx, ry, seed + 10 * i)
+    deep blue; then far isles on the horizon, the farther one hazier; towards the edge the
+    sea lifts in soft steps, its families turned to their cool siblings and its deepest
+    tones raised, so the world fades into haze instead of stopping."""
     depth = p.h - y0
     t = np.clip((p.y - y0 + (fbm(p.x, p.y, 18, seed) - 0.5) * 30) / float(depth), 0, 1)
-    m = t > 0
+    m = (t > 0) & p.wet
     lift = m & (p.t < EDGE_T)
     p.t[lift & (t > 0.35)] = np.maximum(p.t[lift & (t > 0.35)], 2)
     p.t[lift & (t > 0.7)] = np.maximum(p.t[lift & (t > 0.7)], 3)
     cool = m & (t > 0.2) & ~GLOW[p.f]
     p.f[cool] = COOL[p.f[cool]]
-    edge = m & (p.t == EDGE_T) & (t > 0.4)
-    p.t[edge] = 2
-    chk = ((p.x // 2) + (p.y // 2)) % 2 == 0
-    dth = m & chk & (p.y >= p.h - 10) & (p.t < 4)
-    p.put(dth, 'sky_cool', 4)
+    for i, (x, y, rx, ry) in enumerate(isles or ()):
+        far_isle(p, x, y, rx, ry, seed + 10 * i, haze=1 if i % 2 else 0)
 
 
 # --- built: the quay, its sea wall, a pier, a slipway --------------------------------------------
@@ -2001,12 +2053,22 @@ def masonry(p: Plot, R: Relief, m, seed=0, ramps=('ashlar', 'ashlar_warm', 'ashl
     r = d % course
     first = idx != shift(idx, 1, 0, -1)
     last = idx != shift(idx, -1, 0, -1)
-    body = np.where(hash01(idx, row, seed + 3) < 0.35, 2, 3)
+    hb = hash01(idx, row, seed + 3)
+    body = np.where(hb < 0.3, 2, np.where(hb > 0.85, 4, 3))
     t = np.where(r == 0, 4, np.where(r == course - 1, 1, body))
     t = np.where(first & (r < course - 1) & (r > 0), 4, t)
     t = np.where(last, 1, t)
     p.f[fc] = fam[fc]
     p.t[fc] = t[fc]
+    # weather: dark damp streaks run down from the coping in pairs of px, a few blocks
+    # spalled at their arris, a lighter patch where a block was renewed
+    streak = fc & (d >= 4) & (hash01(p.x // 2, 0, seed + 7) < 0.12) & \
+        (d < 4 + (hash01(p.x // 2, 1, seed + 8) * 18).astype(int))
+    p.put(streak & (p.t >= 2), 'slate_cool', 2)
+    spall = fc & first & (r == 1) & (hash01(idx, row, seed + 9) < 0.3)
+    p.put(spall | (shift(spall, 1, 0, False) & fc), 'ashlar_cool', 2)
+    new = fc & (hash01(idx, row, seed + 10) < 0.05) & ~last & (r > 0) & (r < course - 1)
+    p.put(new, 'ashlar_warm', 4)
     cop = fc & (d < 4)
     p.put(cop, 'ashlar_warm', 4)
     p.put(cop & (d == 0), 'ashlar_warm', 5)
@@ -2130,6 +2192,86 @@ def pier(p: Plot, x0, y0, x1, y1, seed=0, legs=14):
     return deck
 
 
+def stepped_tread(p: Plot, tread, rising='east', seed=0, step=6):
+    """A ramp's tread laid as low stone steps across its slope (every `step` px): each
+    step's riser faces down the slope, lit when it faces west and dark when it faces east,
+    its slab in the stone ramps with a worn middle; the cut's back wall throws its shadow
+    over the back of the tread, and grit gathers at the risers' feet."""
+    tread = np.asarray(tread, bool)
+    if not tread.any():
+        return
+    xs = np.nonzero(tread.any(0))[0]
+    x0, x1 = int(xs.min()), int(xs.max())
+    k = ((p.x - x0) // step) if rising == 'east' else ((x1 - p.x) // step)
+    pos = ((p.x - x0) % step) if rising == 'east' else ((x1 - p.x) % step)
+    fams = np.array([IDX['stone_warm'], IDX['ashlar'], IDX['stone'], IDX['ashlar_warm']])
+    fam = fams[(hash01(k, 0, seed) * len(fams)).astype(int)]
+    p.f[tread] = fam[tread]
+    p.t[tread] = 3
+    riser = tread & (pos == 0)
+    p.t[riser] = 4 if rising == 'east' else 1
+    p.t[tread & (pos == 1)] = 3 if rising == 'east' else 2
+    p.t[tread & (pos == step - 1)] = 2
+    top = np.full(p.f.shape, 10 ** 6)
+    for x in xs:
+        ys = np.nonzero(tread[:, x])[0]
+        top[:, x] = ys.min()
+    rows_in = p.y - top
+    shade = tread & (rows_in < 5) & ((rows_in < 3) | (hash01(p.x // 2, p.y, seed + 1) < 0.5))
+    p.step(shade, -1, lo=0)
+    worn = tread & (rows_in > 7) & (rows_in < 16) & (pos > 1) & (pos < step - 1) & (hash01(p.x // 2, p.y // 2, seed + 2) < 0.5)
+    p.step(worn, 1)
+    grit = tread & (pos == step - 2) & (hash01(p.x, p.y // 2, seed + 3) < 0.35)
+    p.put(grit, 'sand_cool', 2)
+
+
+def coil(seed=0):
+    """A coil of mooring rope on the quay: three turns of hemp lit on their upper west, the
+    end trailing out."""
+    sp = Sprite(12, 9, 6, 7)
+    cx, cy = 5.5, 4.0
+    for y in range(9):
+        for x in range(12):
+            r = math.hypot((x + 0.5 - cx) / 1.25, y + 0.5 - cy)
+            if r <= 4.0 and r >= 1.2:
+                turn = int(r) % 2
+                lit = (x < cx and y < cy + 1)
+                sp.px(x, y, 'sand_warm' if turn else 'timber_warm', (4 if lit else 2) if turn else (3 if lit else 1))
+    for x in range(9, 12):
+        sp.px(x, 7, 'sand_warm', 3)
+    return sp, sp.blob_shadow(4, 2)
+
+
+def fish_crate(seed=0):
+    """A fish box: slatted timber, lit on its top rim, the catch silver and blue inside."""
+    sp = Sprite(14, 10, 7, 9)
+    for y in range(2, 10):
+        for x in range(1, 13):
+            rim = y == 2 or x in (1, 12)
+            if rim:
+                sp.px(x, y, 'timber_warm', 4 if (y == 2 and x < 9) else 2)
+            elif y < 5:
+                sp.px(x, y, 'snow_cool' if (x + y + seed) % 3 else 'water', 4 if (x + y) % 2 else 3)
+            else:
+                sp.px(x, y, 'timber_warm', 3 if (y % 3) else 1)
+    return sp, sp.blob_shadow(6, 2)
+
+
+def net_heap(seed=0):
+    """A heap of drying net: green mesh in folds, cork floats along its rope."""
+    sp = Sprite(18, 9, 9, 8)
+    for y in range(1, 9):
+        for x in range(1, 17):
+            u, v = (x + 0.5 - 9) / 8.0, (y + 0.5 - 6) / 4.0
+            if u * u + v * v > 1:
+                continue
+            mesh = (x + y) % 2 == 0
+            sp.px(x, y, 'leaf_cool', (3 if v < 0 else 2) if mesh else 1)
+    for x in range(2, 16, 3):
+        sp.px(x, 4 + (x % 2), 'clay_warm', 4)
+    return sp, sp.blob_shadow(8, 2)
+
+
 def slipway(p: Plot, x0, x1, y0, y1, wl, seed=0):
     """A slipway running down the beach into the water (28 wide): big granite setts across
     it between two kerbs (the west lit, the east dark), slimed green and weedy towards the
@@ -2144,6 +2286,14 @@ def slipway(p: Plot, x0, x1, y0, y1, wl, seed=0):
     p.put(kw & (p.x == x0), 'ashlar_warm', 3)
     p.put(ke, 'ashlar_cool', 2)
     p.put(ke & (p.x == x1 - 1), 'ashlar_cool', 1)
+    down = (p.y - y0) / max(1.0, float(wl - y0))                    # dry and pale at its head, darker going down
+    p.step(inner & (down > 0.45), -1, lo=1)
+    rib = inner & (((p.y - y0) % 10) == 0) & (p.y < wl)                # raised ribs across it for a grip
+    p.put(rib, 'ashlar_warm', 4)
+    p.put(shift(rib, 0, 1, False) & inner & (p.y < wl), 'ashlar', 1)
+    apron = (np.abs(p.x - (x0 + x1) / 2.0) < (x1 - x0) / 2.0 + 6 - (p.y - (y0 - 10)) * 0.6) & (p.y >= y0 - 10) & \
+        (p.y < y0) & ~p.solid & ~p.wet
+    setts(p, apron & (hash01(p.x // 3, p.y // 2, seed + 5) < 0.85 - (y0 - p.y) * 0.05), seed + 6)
     slime = slip & (p.y >= wl - 14) & (p.y < wl) & (hash01(p.x // 2, p.y // 2, seed + 1) < (p.y - (wl - 14)) / 16.0)
     p.put(slime & (p.t >= 3), 'grass_cool', 3)
     p.put(slime & (p.t < 3), 'leaf_cool', 2)
@@ -2291,7 +2441,7 @@ def cove(seed=1):
     under = land0 & (p.x < 205)                                     # the headland's foot
     plat = under & (p.y > _curve([(0, 420), (100, 432), (200, 444)], p.x) + (fbm(p.x, p.y, 12, seed + 2) - 0.5) * 10)
     plat |= under & (p.x < 186)
-    sh_edge = 252 + 14 * np.sin(p.y / 23.0) + (fbm(p.x, p.y, 14, seed + 3) - 0.5) * 18
+    sh_edge = 228 + 0.22 * (p.y - 260) + 16 * np.sin(p.y / 31.0 + 1) + (fbm(p.x, p.y, 20, seed + 3) - 0.5) * 30
     shing = land0 & ~plat & (p.x < sh_edge)
     sand_m = land0 & ~plat & ~shing
     turf = tops & (T >= 2)
@@ -2302,6 +2452,7 @@ def cove(seed=1):
     setts(p, quay_top, seed + 6)
     beach(p, sand_m, water, seed + 7)
     shingle(p, shing, water, seed + 8)
+    grade(p, sand_m, shing, water, seed + 12)
     platform(p, plat, water, seed + 9, rock='bleached')
     p.walk |= turf & ~p.solid
     sea(p, water, ~water, seed + 10)
@@ -2329,8 +2480,11 @@ def cove(seed=1):
     path.append(trail(p, [(600, -8), (590, 30), (604, 62), (606, 80)], 16, seed + 30))
     ramp = ramp_along(p, R, 480, 604, 24, seed + 31, rising='east', k=3)
     ramp2 = ramp_along(p, R, 478, 602, 24, seed + 32, rising='west', k=2)
-    path.append(trail(p, [(612, 216), (580, 250), (520, 268), (476, 282), (466, 292)], 16, seed + 35, kind='sand',
-                      m=quay_top))
+    stepped_tread(p, ramp, 'east', seed + 36)
+    stepped_tread(p, ramp2, 'west', seed + 37)
+    ch = Channel(p, [(612, 216), (580, 250), (520, 268), (476, 282), (466, 292)], reach=12)
+    polished = ch.near & (np.abs(ch.n) < 6 + (fbm(ch.s, 0, 12, seed + 38) - 0.5) * 4) & quay_top & ~p.solid
+    p.step(polished & (p.t < 4), 1)                                 # setts polished by feet, not a dirt path
     st = stair(p, R, 444, 40, seed + 33, k=1)
     ramp = ramp | ramp2
     for x in range(448, 492):
@@ -2340,17 +2494,27 @@ def cove(seed=1):
     p.walk &= ~water
     # --- the pier and the slipway ----------------------------------------------------------
     pier_m = pier(p, 296, 448, 328, 556, seed + 40)
-    slip = slipway(p, 392, 420, 392, 476, int(shore_y[0, 406]), seed + 41)
+    wl = int(shore_y[0, 404])
+    slip = slipway(p, 386, 422, wl - 26, wl + 30, wl, seed + 41)
     # --- the reef, the deep and the far isles ----------------------------------------------
-    rocks = [(26, 584, 15, 6), (58, 596, 7, 3), (150, 578, 17, 7), (196, 600, 8, 4), (380, 590, 12, 5),
-             (452, 576, 19, 7), (494, 598, 7, 3), (604, 586, 14, 6), (252, 536, 8, 4), (528, 470, 10, 5)]
+    rocks = []
+    for ci, (cx, cy, n) in enumerate(((40, 588, 4), (170, 580, 3), (300, 600, 2), (470, 582, 5), (612, 596, 2),
+                                      (252, 534, 1), (532, 470, 2))):
+        for j in range(n):
+            r = 4 + hash01(ci, j, seed + 47) ** 1.6 * 14              # a 3x and more range of sizes
+            ox = (hash01(ci, j, seed + 48) - 0.5) * 34
+            oy = (hash01(ci, j, seed + 49) - 0.5) * 12
+            rocks.append((int(cx + ox), int(cy + oy), int(r), max(2, int(r * (0.38 + 0.1 * hash01(ci, j, 50))))))
     reef_m = reef(p, rocks, seed + 50, 'basalt')
     surf(p, p.wet & ~reef_m, seed + 51)
-    for i, (x, y, rx, ry) in enumerate(rocks[:8]):
-        if rx >= 12:      # the swell breaking on the big rocks' seaward side, in an arc
-            breakers(p, [(x - rx - 10, y + ry + 2), (x - rx // 2, y + ry + 7), (x + rx // 2, y + ry + 8),
-                         (x + rx + 12, y + ry + 3)], seed + 52 + i, width=3)
-    south_edge(p, 566, seed + 53, isles=((112, 634, 54, 12), (536, 638, 70, 14)))
+    for i, (x, y, rx, ry) in enumerate(rocks):
+        if rx >= 11 and 30 < x < p.w - 30:     # the swell breaking round the big rocks' seaward side, in arcs
+            span = 0.25 + hash01(i, 0, seed + 55) * 0.35
+            a0 = math.pi * (0.5 - span) + (hash01(i, 1, seed + 56) - 0.5) * 0.4
+            arc = [(x + (rx + 6) * math.cos(a0 + 2 * span * math.pi * t / 4.0),
+                    y + (ry + 5) * math.sin(a0 + 2 * span * math.pi * t / 4.0)) for t in range(5)]
+            breakers(p, arc, seed + 52 + i, width=2)
+    south_edge(p, 566, seed + 53, isles=((120, 634, 64, 20), (520, 636, 84, 18)))
     # --- things ----------------------------------------------------------------------------
     for i, (x, y, w, ramps, weed) in enumerate(((200, 478, 22, SANDSTONE, True), (226, 446, 16, SANDSTONE, False),
                                                  (52, 490, 26, BASALT, True), (176, 420, 18, SANDSTONE, False),
@@ -2360,11 +2524,16 @@ def cove(seed=1):
         b, bs = boulder(seed + 60 + i, w, None, ramps, weed)
         paste(p, b, x, y, shadow=bs, block=b.m & (b.y > b.fy - 5))
     footprints(p, [(468, 342), (440, 372), (396, 384), (352, 410), (322, 440), (314, 452)], seed + 75, m=sand_m)
-    for i, (x, y) in enumerate(((236, 140), (276, 112), (120, 248), (40, 210), (160, 40), (360, 90), (420, 60),
-                                (540, 158), (300, 30), (90, 120))):
-        if p.solid[y, x] or not turf[y, x]:
+    bushes = []
+    for ci, (cx, cy, n) in enumerate(((60, 210, 4), (250, 120, 3), (150, 40, 5), (380, 70, 3), (520, 40, 2),
+                                      (300, 22, 2), (100, 120, 2))):
+        for j in range(n):
+            bushes.append((int(cx + (hash01(ci, j, seed + 91) - 0.5) * 46), int(cy + (hash01(ci, j, seed + 92) - 0.5) * 22),
+                           seed + 93 + ci * 7 + j))
+    for (x, y, sd) in sorted(bushes, key=lambda b: b[1]):
+        if not (0 <= x < p.w and 0 <= y < p.h) or p.solid[y, x] or not turf[y, x] or not R.top(int(T[y, x]))[y, x]:
             continue
-        g, gs = gorse(seed + 90 + i)
+        g, gs = gorse(sd)
         paste(p, g, x, y, shadow=gs, block=g.m & (g.y > g.fy - 4))
     for i, (x, y) in enumerate(((356, 398), (262, 420), (330, 372))):
         if p.solid[y, x] or p.wet[y, x]:
@@ -2379,6 +2548,14 @@ def cove(seed=1):
     for x in (316,):
         b, bs = bollard(seed + 9)
         paste(p, b, x, 548, shadow=bs, block=b.m & (b.y > b.fy - 3))
+    for (mk, x, y, sd) in ((coil, 540, 290, 1), (fish_crate, 586, 296, 2), (fish_crate, 598, 302, 3), (net_heap, 620, 268, 4),
+                           (coil, 472, 300, 5)):
+        if p.solid[y, x] or not quay_top[y, x]:
+            continue
+        sp_, sh_ = mk(sd)
+        paste(p, sp_, x, y, shadow=sh_, block=sp_.m & (sp_.y > sp_.fy - 3))
+    moss = quay_top & (dist_to(~quay_top, 8) < 6) & (hash01(p.x // 2, p.y, seed + 81) < 0.08) & ~p.solid
+    p.put(moss, 'grass_cool', 3)
     ladder(p, R, 560, k=1, seed=seed + 80)
     for x in (512, 596, 624):
         ys = np.nonzero(R.face[:, x] & (R.kf[:, x] == 1))[0]
@@ -2753,7 +2930,7 @@ COVE_FACES = (
     ((200, 160, 430, 280), 'face', 'the bay\'s back: a cliff of 64 over the beach'),
 )
 COVE_BOXES = (
-    ((500, 300, 560, 334), 'stone-wall', 'the quay\'s sea wall in the water'),
+    ((540, 312, 600, 342), 'stone-wall', 'the quay\'s sea wall in the water'),
     ((480, 200, 560, 260), 'paving', 'the quay\'s setts'),
     ((272, 300, 352, 380), 'ground', 'the beach: dry sand, the wrack line'),
     ((196, 330, 246, 400), 'ground', 'shingle under the headland'),
@@ -2935,7 +3112,7 @@ def check(p=None, parts=None) -> list:
         p, parts = cove()
     R = parts['R']
     a = (600, 4)
-    for name, b in (('the pier\'s end', (312, 540)), ('the slipway', (406, 420)), ('the platform', (120, 500)),
+    for name, b in (('the pier\'s end', (312, 540)), ('the slipway', (404, 432)), ('the platform', (120, 500)),
                     ('the quay', (560, 250)), ('the shelf', (540, 150))):
         if not p.walk[a[1], a[0]] or not p.walk[b[1], b[0]]:
             faults.append(f'the path to {name}: an end is not walkable ({bool(p.walk[a[1], a[0]])}, '
