@@ -19,6 +19,7 @@ const generators = [
   'rocket',
   'residents',
   'decor',
+  'world_routes',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -42,6 +43,8 @@ const generatedTypescript = [
   // the world canvas (scripts/art/world_canvas.py), written at the end of zones.py's run
   'lib/world-canvas.ts',
   'lib/world-canvas-assets.ts',
+  // the routes between the regions (scripts/art/world_routes.py, lane G)
+  'lib/world-routes.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
@@ -168,18 +171,14 @@ function checkArtReproducibility({
 
 // Each group has its own copy and index: even a new/overlapping output cannot race.
 // Keep garden before zones because canvas generation reads its ground and walk data.
-const generatorGroups = [
-  ['garden', 'zones'],
-  ['pets'],
-  ['battle'],
-  ['worlds'],
-  ['vignettes'],
-  ['icons'],
-  ['mission_map'],
-  ['journey', 'rocket'],
-  ['residents'],
-  ['decor'],
-];
+// Derive singleton groups from the canonical manifest so newly integrated
+// generators cannot be omitted by a second hard-coded scheduling list.
+const generatorGroups = generators
+  .filter((name) => !['zones', 'rocket'].includes(name))
+  .map((name) =>
+    name === 'garden' ? ['garden', 'zones'] : name === 'journey' ? ['journey', 'rocket'] : [name],
+  );
+
 function groupWorker(root, selected, sprites, log) {
   return new Promise((resolve, reject) => {
     const child = fork(__filename, ['--worker'], {

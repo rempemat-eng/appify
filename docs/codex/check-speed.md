@@ -19,6 +19,10 @@ VERIFY_JOBS=1 npm run verify
 
 `--serial` is the original ordered regeneration guard in one disposable copy. `--cold` runs every isolated group without reading or publishing a certificate, avoiding installed-tool scanning. A normal cache miss scans tools before and after regeneration to seed a reusable certificate. Cache files are local and are not committed or restored by CI. With `CI=true`, the CLI always takes the full cold path, so fresh CI checkouts do not pay certificate overhead. `ART_REPRO_JOBS` and `VERIFY_JOBS` accept 1–32; neither changes the check list or production app.
 
+## Current-main integration
+
+Main subsequently added `world_routes.py`, `lib/world-routes.ts`, `check:world-routes` and `check:region-plans`. All are preserved. The scheduler derives singleton groups from the canonical generator manifest, with explicit garden→zones and journey→rocket pairs, so another appended generator cannot disappear from a separate hard-coded schedule. Route-output drift and failed-route-generator fixtures are included. The versioned measurements below precede this upstream addition; exact integrated-head validation is recorded on the linked PR checkpoint.
+
 ## Measured reference
 
 The table records the first fully validated implementation checkpoint, [`e9e645e`](https://github.com/rempemat-eng/appify/commit/e9e645e87ed10f17625c3f5a81eae0a5db149bc8), against main [`f88298f`](https://github.com/rempemat-eng/appify/commit/f88298fab4123f9a801151f58530f5b1619ec383). A subsequent change reuses the tool-hash read buffer and adds fresh-input/source-change fixtures. Exact final heads, updated measurements and CI outcomes are maintained in the [PR checkpoint](https://github.com/rempemat-eng/appify/pull/185#issuecomment-6314882656).
@@ -50,7 +54,7 @@ Use the same wrapper with `npm run check:art-repro -- --cold` for cold regenerat
 
 ## Regression coverage and limits
 
-- The original 2,913 guard assertions remain: checkout/index isolation, current unstaged tracked bytes, inherited Git context, output drift/deletions/additions, generator/formatter/sprite failures and cleanup.
+- The original 2,913 guard assertions are retained and extended for newly integrated generators: checkout/index isolation, current unstaged tracked bytes, inherited Git context, output drift/deletions/additions, generator/formatter/sprite failures and cleanup.
 - Real subprocess fixtures compare ordered-cold, parallel-cold and warm byte/mode digests; require every generator exactly once; exercise fresh garden data reaching zones; reject source changes during checks; invalidate on source/configuration/tool/density changes; and verify corrupt-certificate fallback and equivalent failure detection.
 - Installed-tool traversal fixtures change arbitrary Python packages, formatter binaries, npm/Git bytes and executable modes. They exercise the production traversal rather than merely changing a claimed version label.
 - Runner fixtures verify bounded concurrency, the entire canonical command list, spawn failures/timeouts/output limits, later checks after failure, and ordered exports after successful checks only.

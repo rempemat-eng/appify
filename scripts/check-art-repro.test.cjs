@@ -36,6 +36,7 @@ try {
     'lib/resident-assets.ts',
     'lib/decor-assets.ts',
     'lib/decor-sizes.ts',
+    'lib/world-routes.ts',
   ];
   for (const file of atlasModules) write(file, 'atlas fixture\n');
   write('assets/journeys/example.png', Buffer.from([6, 7, 8, 255]));
@@ -55,6 +56,7 @@ try {
     'rocket',
     'residents',
     'decor',
+    'world_routes',
   ]);
   checks++;
   for (const file of atlasModules) check(generatedTypescript.includes(file), 'formats ' + file);
@@ -141,6 +143,12 @@ try {
             fs.writeFileSync(path.join(snapshot, 'assets/zones/uncommitted.png'), 'new');
           if (mode === 'failed-zone')
             return { status: 1, stdout: '', stderr: 'synthetic zone failure' };
+        }
+        if (args[0] === 'scripts/art/world_routes.py') {
+          if (mode === 'changed-world-routes')
+            fs.writeFileSync(path.join(snapshot, 'lib/world-routes.ts'), 'drift');
+          if (mode === 'failed-world-routes')
+            return { status: 1, stdout: '', stderr: 'synthetic world routes failure' };
         }
         if (args[0] === 'scripts/art/journey.py') {
           fs.writeFileSync(
@@ -249,6 +257,8 @@ try {
     'failed-zone',
     'changed-zone-map',
     'changed-zone-assets',
+    'changed-world-routes',
+    'failed-world-routes',
     'changed-journey',
     'changed-journey-png',
     'new-journey',
@@ -267,6 +277,8 @@ try {
       'failed-zone': 'zones.py: exit 1',
       'changed-zone-map': 'Tracked output drift: lib/zone-maps.ts',
       'changed-zone-assets': 'Tracked output drift: lib/zone-assets.ts',
+      'changed-world-routes': 'Tracked output drift: lib/world-routes.ts',
+      'failed-world-routes': 'world_routes.py: exit 1',
       'changed-journey': 'Tracked output drift: lib/journey-assets.ts',
       'changed-journey-png': 'Tracked output drift: assets/journeys/example.png',
       'new-journey': 'Uncommitted generated files: assets/journeys/uncommitted.png',
