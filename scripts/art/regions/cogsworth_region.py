@@ -80,11 +80,11 @@ TIERS = [
 
 # --- water: (id, tier, course of world px points, width) ------------------------------------------
 WATER = [
-    ('cog-upper', 6, [(7664, 1696), (7664, 1968)], 56),          # off the massif into the town's west side
-    ('cog-lower', 5, [(8328, 2904), (8368, 2904), (8368, 3064), (8560, 3064)], 48),
+    ('cog-upper', 6, [(7688, 1696), (7688, 1968)], 40),          # under the High Fells' step (W3) at x 7696          # off the massif into the town's west side
+    ('cog-lower', 5, [(8328, 2904), (8368, 2904), (8368, 3064), (8600, 3064)], 48),
     ('lull-narrows', 4, [(9128, 1696), (9128, 2168), (9064, 2168), (9064, 2328), (9032, 2328), (9032, 2576),
-                         (8984, 2576), (8984, 2896), (8888, 2896), (8888, 2992), (8616, 2992), (8616, 3064), (8560, 3064)], 44),
-    ('lull-below', 4, [(8560, 3064), (8560, 3120), (8800, 3120), (8800, 3200), (9064, 3200), (9064, 3304)], 72),
+                         (8984, 2576), (8984, 2896), (8888, 2896), (8888, 2992), (8616, 2992), (8616, 3064), (8600, 3064)], 44),
+    ('lull-below', 4, [(8600, 3064), (8600, 3120), (8800, 3120), (8800, 3200), (9064, 3200), (9064, 3304)], 72),
     ('eel-pond', 7, [(7040, 3256), (7072, 3256)], 32),
 ]
 GORGE_RIM = 2         # tiers of wall each side of the Lull's cut stand at least this high
@@ -200,7 +200,7 @@ def _cells(rect):
     x0, y0, x1, y1 = rect
     c0, r0 = max(0, (x0 - X0) // CELL), max(0, (y0 - Y0) // CELL)
     c1, r1 = min(COLS, -(-(x1 - X0) // CELL)), min(ROWS, -(-(y1 - Y0) // CELL))
-    return slice(r0, r1), slice(c0, c1)
+    return slice(r0, max(r0, r1)), slice(c0, max(c0, c1))   # empty when the rect lies off the footprint
 
 
 def _course(points, width):
@@ -317,7 +317,7 @@ def check(L=None, verbose=True) -> list:
             notes.append(f'{pid}: its door at {(dx, dy)} needs a path to the road (a garden path, drawn with the hamlet)')
     # the gorge's water runs on from the north edge to the confluence
     lull = _course(WATER[2][2], WATER[2][3])
-    if not lull[0].any() or not lull[cell(8560, 3064)]:
+    if not lull[0].any() or not lull[cell(8600, 3064)]:
         faults.append('the Lull does not run from the north edge to the confluence')
     # the town's gates sit on the tiers G gives them
     for g, (gx, gy), e in plan.TOWN_GATES:

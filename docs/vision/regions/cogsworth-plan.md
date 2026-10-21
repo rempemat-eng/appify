@@ -31,7 +31,7 @@ Walk times from the platform (brief, then plan): clock tower 7.8 / 6.9 s, gashol
 
 - **Tiers** as rectangles on the grid in straight runs (to-all-grid-2x), lowest first, in Claude G's tier numbers (the town's street is 7): the massif's benches stepping down south-east where the High Fells come down (13 to 8), the Fern hills' shoulder carrying the Foothill Road over tier 9, the coal hills rising east of the town to the Narrows' rims (9, 10), the Cog's valley and the confluence low (6, 5) and the Lull at 4.
 - **Water**: the Cog above the town and below it to the confluence, the Lull through the Narrows and on south-east to Claude I's chunk, the eel pond at Fernhollow.
-- **Routes**: Claude G's lines, read from `lib/world-routes.ts` when it is on main, a copy of their vertices on this land until then (#175 @ef8824f).
+- **Routes**: Claude G's lines, read from `lib/world-routes.ts` (#175, on main), with a copy of their vertices on this land as the fallback.
 - **Set pieces** with the prop or kit piece each needs: the 14 named things, five spoil heaps (one with the loop), the viaduct's three piers, Fernhollow's three cottages, sawpit and log stores.
 - **Cover in layers** (brief 6): the massif's wall and fade, the old forest's wall and fade, the coal forest's woods.
 
