@@ -14,14 +14,14 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 
 | Route         | Crossing                            | Cell       | World px     | Tier | Width | Heading |
 | ------------- | ----------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Ash Coast     | the home valley to the fire country | (700, 552) | (5600, 4416) | 3    | 32    | 180     |
-| Drover's Road | the Brackens to the Sunstone basin  | (600, 442) | (4800, 3536) | 4    | 40    | 180     |
+| Ash Coast     | the home valley to the fire country | (700, 542) | (5600, 4336) | 3    | 40    | 180     |
+| Drover's Road | the Brackens to the Sunstone basin  | (600, 442) | (4800, 3536) | 4    | 32    | 180     |
 
 ## Lane E (the home valley)
 
 | Route         | Crossing                                        | Cell       | World px     | Tier | Width | Heading |
 | ------------- | ----------------------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Ash Coast     | the home valley to the fire country             | (700, 552) | (5600, 4416) | 3    | 32    | 180     |
+| Ash Coast     | the home valley to the fire country             | (700, 542) | (5600, 4336) | 3    | 40    | 180     |
 | Coast Path    | the home valley to the land between             | (875, 634) | (7000, 5072) | 3    | 32    | 0       |
 | Col Path      | the home valley to the Frostline                | (785, 287) | (6280, 2296) | 7    | 24    | -135    |
 | Drover's Road | the home valley to the Brackens                 | (700, 493) | (5600, 3944) | 4    | 32    | 180     |
@@ -35,7 +35,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | ------------- | ---------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
 | Col Path      | the home valley to the Frostline   | (785, 287) | (6280, 2296) | 7    | 24    | -135    |
 | Drover's Road | the home valley to the Brackens    | (700, 493) | (5600, 3944) | 4    | 32    | 180     |
-| Drover's Road | the Brackens to the Sunstone basin | (600, 442) | (4800, 3536) | 4    | 40    | 180     |
+| Drover's Road | the Brackens to the Sunstone basin | (600, 442) | (4800, 3536) | 4    | 32    | 180     |
 | High Fells    | the Frostline to the land between  | (850, 202) | (6800, 1616) | 12   | 24    | 0       |
 
 ## Lane H (Cogsworth and the coal hills)
@@ -43,16 +43,16 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Route         | Crossing                                                   | Cell        | World px     | Tier | Width | Heading |
 | ------------- | ---------------------------------------------------------- | ----------- | ------------ | ---- | ----- | ------- |
 | Foothill Road | the home valley to Cogsworth and the coal hills            | (875, 399)  | (7000, 3192) | 7    | 48    | 0       |
-| High Fells    | the land between to Cogsworth and the coal hills           | (904, 212)  | (7232, 1696) | 13   | 32    | 90      |
+| High Fells    | the land between to Cogsworth and the coal hills           | (909, 212)  | (7272, 1696) | 12   | 24    | 90      |
 | Towpath       | Cogsworth and the coal hills to the Lull belt and Lullford | (1060, 412) | (8480, 3296) | 5    | 32    | 90      |
 
 ## Lane I (Neon Harbour and the Lull belt)
 
 | Route      | Crossing                                                   | Cell        | World px     | Tier | Width | Heading |
 | ---------- | ---------------------------------------------------------- | ----------- | ------------ | ---- | ----- | ------- |
-| Coast Path | the land between to Gullwick                               | (956, 629)  | (7648, 5032) | 2    | 32    | 0       |
-| Coast Path | Gullwick to the land between                               | (1021, 606) | (8168, 4848) | 2    | 40    | -90     |
-| Coast Path | the land between to the Lull belt and Lullford             | (1038, 578) | (8304, 4624) | 2    | 40    | 0       |
+| Coast Path | the land between to Gullwick                               | (956, 629)  | (7648, 5032) | 3    | 32    | 0       |
+| Coast Path | Gullwick to the land between                               | (1021, 606) | (8168, 4848) | 3    | 40    | -90     |
+| Coast Path | the land between to the Lull belt and Lullford             | (1038, 578) | (8304, 4624) | 3    | 40    | 0       |
 | Lull Road  | the land between to the Lull belt and Lullford             | (1038, 518) | (8304, 4144) | 4    | 40    | 0       |
 | Towpath    | Cogsworth and the coal hills to the Lull belt and Lullford | (1060, 412) | (8480, 3296) | 5    | 32    | 90      |
 
@@ -61,16 +61,16 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Route           | Kind     | From                                         | To                                              | Length (px) | Walk (s) | Brief walk (s) | Tier changes | Brief tier changes | Ways   |
 | --------------- | -------- | -------------------------------------------- | ----------------------------------------------- | ----------- | -------- | -------------- | ------------ | ------------------ | ------ |
 | Col Path        | path     | the valley, Col Path foot                    | the Frostline                                   | 1467        | 36.7     | 28             | 6            | 7                  | W2     |
-| High Fells      | path     | the Frostline                                | Cogsworth's north gate                          | 2176        | 54.4     | 49             | 11           | 35                 | W2, W3 |
-| Foothill Road   | road     | the valley, Fern hills lane                  | Cogsworth's west gate, over the Millrace bridge | 1616        | 40.4     | 38             | 6            | 17                 | W3     |
+| High Fells      | path     | the Frostline                                | Cogsworth's north gate                          | 2176        | 54.4     | 49             | 5            | 35                 | W2, W3 |
+| Foothill Road   | road     | the valley, Fern hills lane                  | Cogsworth's west gate, over the Millrace bridge | 1528        | 38.2     | 38             | 6            | 17                 | W3     |
 | Towpath         | path     | Cogsworth's east gate, on the riverside quay | Lullford                                        | 1800        | 45.0     | 48             | 4            | 9                  | W3     |
-| Lull Road       | road     | the valley, east lane                        | Neon Harbour, the market                        | 3824        | 95.6     | 87             | 5            | 13                 | W7     |
-| Coast Path      | path     | Driftwood                                    | Lullford                                        | 2872        | 71.8     | 56             | 1            | 1                  | -      |
+| Lull Road       | road     | the valley, east lane                        | Neon Harbour, the market                        | 3824        | 95.6     | 87             | 1            | 13                 | W7     |
+| Coast Path      | path     | Driftwood                                    | Lullford                                        | 2872        | 71.8     | 56             | 0            | 1                  | -      |
 | Headland Lane   | path     | the Headland's neck, east of Driftwood       | the Headland tip                                | 664         | 16.6     | 14             | 0            | 0                  | W1     |
 | Shell Bar       | bar      | the Headland tip                             | Lagoon Landing                                  | 792         | 19.8     | 15             | 0            | 0                  | W4     |
 | Drover's Road   | road     | the valley halt                              | Dust Gulch                                      | 4341        | 108.5    | 90             | 4            | 22                 | W5     |
 | Lode Track      | path     | Dust Gulch                                   | the Lode                                        | 840         | 21.0     | 18             | 2            | 2                  | -      |
-| Canyon Road     | path     | Dust Gulch                                   | Hearthold                                       | 3824        | 95.6     | 75             | 10           | 28                 | W6     |
+| Canyon Road     | path     | Dust Gulch                                   | Hearthold                                       | 3776        | 94.4     | 75             | 10           | 28                 | W6     |
 | Forge Stair     | path     | Hearthold                                    | the Ember forge                                 | 152         | 3.8      | 4              | 3            | 3                  | -      |
 | Ember Way       | path     | Hearthold                                    | Cinderwick                                      | 1160        | 29.0     | 18             | 9            | 9                  | -      |
 | Ash Coast       | path     | the valley halt                              | Cinderwick                                      | 4512        | 112.8    | 91             | 3            | 7                  | W5, W6 |
@@ -81,13 +81,64 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Beacon Causeway | causeway | the Gull Strand                              | Beacon Isle                                     | 472         | 11.8     | -              | 0            | 0                  | -      |
 | Cape Road       | road     | the Skyport                                  | the Launch Cape                                 | 944         | 23.6     | 18             | 1            | 3                  | -      |
 
+## Against the block-out
+
+How far each route lies from the block-out's polyline (`docs/vision/research/blockout/blockout-v52.json`, #187), in px. The routes follow the brief's markers and the lanes' plans and run on the grid, so a mean of 20 to 40 px is the grid's own turns; a large maximum is where a lane moved the line (Claude H's gates, Claude F's switchbacks).
+
+| Route           | Mean | Largest | Block-out length | Ours | Block-out width |
+| --------------- | ---- | ------- | ---------------- | ---- | --------------- |
+| Col Path        | 26   | 75      | 1362             | 1467 | 24              |
+| High Fells      | 41   | 153     | 2043             | 2176 | 24              |
+| Foothill Road   | 20   | 56      | 1542             | 1528 | 40              |
+| Towpath         | 27   | 131     | 2046             | 1800 | 24              |
+| Lull Road       | 21   | 60      | 3486             | 3824 | 40              |
+| Coast Path      | 19   | 50      | 2456             | 2872 | 24              |
+| Headland Lane   | 20   | 42      | 544              | 664  | 24              |
+| Shell Bar       | 22   | 82      | 582              | 792  | 40              |
+| Drover's Road   | 28   | 81      | 3616             | 4341 | 40              |
+| Lode Track      | 21   | 54      | 947              | 840  | 24              |
+| Canyon Road     | 27   | 104     | 3160             | 3776 | 24              |
+| Forge Stair     | 5    | 8       | 140              | 152  | 24              |
+| Ember Way       | 23   | 63      | 977              | 1160 | 24              |
+| Ash Coast       | 19   | 56      | 3641             | 4512 | 24              |
+| Delta Road      | 18   | 60      | 948              | 1312 | 24              |
+| Harbour Bridge  | 5    | 7       | 670              | 648  | 40              |
+| Old Bridges     | 21   | 41      | 372              | 384  | 40              |
+| Quay Street     | 15   | 37      | 963              | 1032 | 40              |
+| Beacon Causeway | 27   | 60      | 374              | 472  | 40              |
+| Cape Road       | 18   | 44      | 703              | 944  | 40              |
+
+## Where the routes cross water
+
+Every place a route crosses a river or delta arm of the block-out, and what carries it over. Where a lane's plan draws its own water (Claude F's Sleepwater runs west of the Col Path, Claude I's Lull through its chunk), that plan holds the crossing.
+
+| Route         | Water          | At           | Carried by                                    | Water drawn by                                       |
+| ------------- | -------------- | ------------ | --------------------------------------------- | ---------------------------------------------------- |
+| Col Path      | the Sleepwater | (6229, 2288) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6229, 2224) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6232, 2152) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6235, 2077) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6235, 2051) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| Col Path      | the Sleepwater | (6205, 1896) | -                                             | the Frostline and the Brackens (art/regions/\*.json) |
+| High Fells    | the Cog        | (7757, 1944) | the footbridge over the Cog, a rockfall on it | the block-out                                        |
+| Towpath       | the Cog        | (8528, 3063) | the Cog foot bridge                           | the block-out                                        |
+| Lull Road     | the Lull       | (8960, 4312) | Lullford Bridge and its swing span            | the lull-delta chunk                                 |
+| Drover's Road | the Rift       | (4324, 3440) | Drover's bridge                               | the block-out                                        |
+| Drover's Road | the Willow Run | (3416, 2833) | the Willow Run ford                           | the block-out                                        |
+| Canyon Road   | the Amber      | (2680, 3009) | the Amber ford                                | the block-out                                        |
+| Canyon Road   | the Amber      | (2680, 3042) | the Amber ford                                | the block-out                                        |
+| Ash Coast     | the Rift       | (4188, 5240) | the Rift ferry                                | the block-out                                        |
+
 ## The thresholds
 
 | Threshold             | Route         | At           | Sides               | Object (lane G)                                                     |
 | --------------------- | ------------- | ------------ | ------------------- | ------------------------------------------------------------------- |
 | the Col hut           | Col Path      | (6280, 2352) | claude-e / claude-f | a stone hut with a bench and a water trough                         |
 | the Frostline lip     | Col Path      | (6232, 2040) | claude-f / claude-f | the lip's moraine step                                              |
-| the Millrace cutting  | Foothill Road | (7648, 2736) | claude-h / claude-h | a cutting through the bank, the Millrace bridge at its foot         |
+| the Millrace cutting  | Foothill Road | (7624, 2736) | claude-g / claude-h | a cutting through the bank, the Millrace bridge at its foot         |
 | the Cog foot          | Towpath       | (8528, 3064) | claude-h / claude-h | the towpath bridge over the Cog at the confluence                   |
 | Lullford Bridge       | Lull Road     | (8960, 4312) | claude-i / claude-i | stone arches on the river island, the toll house and the swing span |
 | the Headland stile    | Headland Lane | (6992, 5304) | claude-e / claude-e | the stile in the drystone wall across the neck                      |
@@ -99,7 +150,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | the chasm bridge      | Canyon Road   | (2176, 4920) | claude-d / claude-d | a bridge over the young flow's chasm                                |
 | the Rift ferry        | Ash Coast     | (4176, 5240) | claude-d / claude-d | the ferry landings and the ferryman's rope                          |
 | the crust causeway    | Ash Coast     | (3304, 5560) | claude-d / claude-d | a causeway of laid slabs over the crusted flow                      |
-| the canal embankment  | Delta Road    | (9456, 4680) | claude-i / claude-i | the raised towpath along the Lull Cut, with a lock                  |
+| the canal embankment  | Delta Road    | (9448, 4672) | claude-i / claude-i | the raised towpath along the Lull Cut, with a lock                  |
 
 ## The gate check
 
