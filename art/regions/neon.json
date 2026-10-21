@@ -2180,10 +2180,10 @@
       "id": "tower_1",
       "kind": "city_building",
       "kit": "neon",
-      "foot": [10672, 4408],
+      "foot": [10728, 4408],
       "w": 72,
       "faces": "south",
-      "why": "the towers clustered by the station (v5.2)"
+      "why": "the towers clustered by the station (v5.2); moved clear of the terminus (they overlapped)"
     },
     {
       "id": "tower_2",
@@ -2252,6 +2252,32 @@
       "at": [11040, 5144],
       "circle_r": 64,
       "why": "the Skyport: three mooring masts in their circles (plan 8.5)"
+    }
+  ],
+  "lines": [
+    {
+      "id": "maglev",
+      "kind": "guideway",
+      "elevated": true,
+      "width": 24,
+      "pier_every": 64,
+      "points": [
+        [10656, 3904],
+        [10656, 4336]
+      ],
+      "ends": {
+        "north": {
+          "at": [10656, 3904],
+          "to": "the Narrows Viaduct and Cogsworth's terminus (8240, 2790), lanes H and G draw it on past the box"
+        },
+        "south": {
+          "at": [10656, 4336],
+          "buffer": true,
+          "station": "maglev_terminus",
+          "why": "the line ends at buffers on the platform behind the terminus hall, never at an edge"
+        }
+      },
+      "why": "the maglev (block-out W7, 'Neon terminus' (10650, 4450)) on a white guideway on piers, over the scarp, the rim walk and the scarp lane; walkers pass under it between the piers. Lane R 21 Oct 16:29: the old Skyport's guideway ended on the zone seam; in the rebuilt city the line comes in from the north and stops at the terminus."
     }
   ],
   "places": [
@@ -3035,7 +3061,7 @@
     {
       "t": "I",
       "what": "resident",
-      "at": [10760, 4344],
+      "at": [10760, 4324],
       "route": "Neon Harbour",
       "moved_from": [10768, 4368]
     },
