@@ -251,16 +251,15 @@ def check(plan: dict) -> list:
             out.append(f'{pid}: stair {st["id"]} at {tuple(st["at"])} off the 4 px cells')
 
     all_lines = [p['points'] for p in paths.values()]
-    # every trod joins the ways: one of its ends lies on another path (or the box's edge)
+    # every trod joins the ways: it touches another path somewhere (an end on it, or a crossing),
+    # or one of its ends lies on the box's edge
     for t in plan.get('trods', []):
-        ends = (t['points'][0], t['points'][-1])
         others = [q['points'] for q in paths.values() if q is not t]
-
-        def joined(e):
-            on_edge = e[0] in (x0, x0 + w) or e[1] in (y0, y0 + h)
-            return on_edge or any(dist_to_line(e, ln) <= 8 for ln in others)
-        if not any(joined(e) for e in ends):
-            out.append(f'{pid}: trod {t["id"]} joins no other path at either end')
+        ends = (t['points'][0], t['points'][-1])
+        on_edge = any(e[0] in (x0, x0 + w) or e[1] in (y0, y0 + h) for e in ends)
+        touches = any(dist_to_line((x, y), ln) <= 8 for x, y, _ in sample(t['points'], 8) for ln in others)
+        if not (on_edge or touches):
+            out.append(f'{pid}: trod {t["id"]} touches no other path')
 
     def near_path(p):
         return min((dist_to_line(p, ln) for ln in all_lines), default=1e9)
