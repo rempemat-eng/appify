@@ -1,0 +1,216 @@
+{
+  "id": "roamling",
+  "kind": "familiar",
+  "template": "familiar",
+  "heightWorld": 12,
+  "cell": "familiar",
+  "design": "C, jerboa rambler",
+  "families": ["path", "plaster", "grass", "clay"],
+  "glows": ["glowflora"],
+  "signature": "a jerboa with round grass-lined ears, a three-blade crest, long feet and a leaf tail",
+  "parts": [
+    {
+      "name": "tail",
+      "families": ["path"],
+      "joint": "hip",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 9
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "curls up behind in E/W, out east and up in S, wraps the front in nap",
+      "painter": false
+    },
+    {
+      "name": "tail leaf tuft",
+      "families": ["grass"],
+      "joint": "tail",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 9
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "child of the tail tip; lags a frame on the hop",
+      "painter": false
+    },
+    {
+      "name": "far ear",
+      "families": ["path", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 0
+      },
+      "facings": ["E", "W"],
+      "motion": "a tone down",
+      "painter": false
+    },
+    {
+      "name": "far foot",
+      "families": ["path", "plaster"],
+      "joint": "foot",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 0
+      },
+      "facings": ["E", "W"],
+      "motion": "a tone down",
+      "painter": false
+    },
+    {
+      "name": "body and pale belly",
+      "families": ["path", "plaster"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "squash on crouch and land, stretch on rise; breath 1 px",
+      "painter": false
+    },
+    {
+      "name": "haunches and long hind feet",
+      "families": ["path", "plaster"],
+      "joint": "foot",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "splay (crouch, land), push (rise), dangle (air)",
+      "painter": false
+    },
+    {
+      "name": "head, cheek tufts and face step",
+      "families": ["path"],
+      "joint": "chest",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "brow, cheek, snout in E/W",
+      "painter": false
+    },
+    {
+      "name": "face block",
+      "families": ["plaster", "clay"],
+      "joint": "head",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 4
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "eyes open, wide, happy, tight, closed; muzzle and nose",
+      "painter": true
+    },
+    {
+      "name": "ears",
+      "families": ["path", "grass"],
+      "joint": "head",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "up, back (crouch, land), flare (air, react), folded (nap), flat (cling)",
+      "painter": false
+    },
+    {
+      "name": "forepaws",
+      "families": ["plaster"],
+      "joint": "chest",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "at the chest, flung up in react and cheer, gripping in cling",
+      "painter": false
+    },
+    {
+      "name": "head-top growth",
+      "families": ["grass"],
+      "joint": "head",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "three-blade crest; leans against the motion, flops in nap, stands tall in special",
+      "painter": false
+    },
+    {
+      "name": "special effect",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 9,
+        "N": 8
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "SECOND WIND glowflora breath in the chest; finite, none under reduced motion",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "holdOn": {
+      "E perch": [12, 22],
+      "E cling": [12, 22],
+      "E cheer": [12, 22],
+      "E special": [12, 22],
+      "W perch": [12, 22],
+      "W cling": [12, 22],
+      "W cheer": [12, 22],
+      "W special": [12, 22]
+    },
+    "growth": {
+      "S idle": [16, 9],
+      "E idle": [20, 8],
+      "W idle": [11, 8],
+      "hop 1": [16, 10],
+      "hop 2": [16, 8],
+      "hop 3": [16, 7],
+      "hop 4": [16, 10],
+      "S react": [16, 8],
+      "S nap": [11, 17],
+      "E perch": [14, 8],
+      "E cling": [15, 10],
+      "E cheer": [14, 8],
+      "E special": [14, 8],
+      "W perch": [8, 8],
+      "W cling": [7, 10],
+      "W cheer": [8, 8],
+      "W special": [8, 8]
+    }
+  },
+  "notes": [
+    "Growth stages: 1 three short blades, 2 longer blades and a tail-tip leaf, 3 a seed head; the crown joint never moves.",
+    "Perch: a 16 px profile redraw; ears shrink and the crest is 3 px."
+  ]
+}

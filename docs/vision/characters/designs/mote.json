@@ -1,0 +1,625 @@
+{
+  "id": "mote",
+  "height_art_px": 30,
+  "cell": [
+    56,
+    60
+  ],
+  "foot": [
+    28,
+    54
+  ],
+  "hover_art_px": 6,
+  "question": "How a star becomes a character.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Plump star: five cushion points, face in the middle, cap on the top point",
+      "question": "The star itself is the body: side points are stubby arms, lower points dangling feet, the face in the middle and the nightcap on the top point.",
+      "parts": [
+        "cap (slate, snow stripes, snow cuff): layer 4; head (top point); flops away from the facing, droops over the eyes in the yawn and nap",
+        "pompom (snow): layer 5; cap tip; swings a frame late in walk and hop",
+        "star body (plaster, sibling dust): layer 2; hover point (6 px over the foot); bobs 1 px a beat in idle and walk",
+        "arm points x2 (plaster): layer 1 (far) / 3 (near); body; swing in the walk, raised in cast and cheer, crossed for guard",
+        "foot points x2 (plaster): layer 1; body; dangle and kick in the 6-frame float-walk, tuck in hop and nap",
+        "core glow (lamp): layer 3; body; dims to tone 4 in nap and lights out, flares in cast",
+        "face (ink eyes, berry blush): layer 3; body; blink, sleepy lids, yawn mouth"
+      ],
+      "palette": [
+        "plaster",
+        "slate",
+        "snow",
+        "berry"
+      ],
+      "pose": "Drifts half-asleep with its arms out like a starfish floating on its back, lids low.",
+      "notes": [
+        "Works: a true five-pointed silhouette nobody in the cast has; it reads as a star at 2 px before any detail.",
+        "Risk: side views are a squeezed star, so the profile leans on the cheek step and one eye; the arm points",
+        "cannot hold props (fine: the Wildcard borrows the familiar's special, it carries nothing).",
+        "Compared with Eastward 05 (Sam, the small white-haired girl, about this height): big head mass, 2 x 3 eyes."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 468,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0096,
+          "west_east": 10.8828,
+          "top_bottom": -3.5618,
+          "isolated": 0.0137,
+          "checker": 0.0,
+          "rows": [
+            19,
+            47
+          ]
+        },
+        "E idle": {
+          "px": 435,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0588,
+          "west_east": 6.4896,
+          "top_bottom": -5.6901,
+          "isolated": 0.003,
+          "checker": 0.0,
+          "rows": [
+            19,
+            47
+          ]
+        },
+        "W idle": {
+          "px": 435,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.049,
+          "west_east": 9.2958,
+          "top_bottom": -3.1681,
+          "isolated": 0.015,
+          "checker": 0.0,
+          "rows": [
+            19,
+            47
+          ]
+        },
+        "S fidget": {
+          "px": 463,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9596,
+          "flat_ink": 0.0,
+          "double": 0.0707,
+          "west_east": 7.4457,
+          "top_bottom": -2.9304,
+          "isolated": 0.0027,
+          "checker": 0.0,
+          "rows": [
+            20,
+            47
+          ]
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Dust-ball: a round glowing ball, four short rays, a long cap trailing to the heel",
+      "question": "A ball of Dream Dust is the star: four short rays (two hands, two toes) round it, and the long nightcap makes the comet tail.",
+      "parts": [
+        "long cap (snow, regolith stripes and cuff): layer 0 behind the ball in E/W, 4 over the crown in S; head; trails a frame behind every move, wraps round in nap",
+        "pompom (regolith): layer 0/4; cap tip; swings at the heel, bounces on hop",
+        "ball body (plaster, sibling dust): layer 2; hover point; squash and stretch 1 px in hop and hit",
+        "hand rays x2 (plaster): layer 1/3; ball rim; wave in walk, thrust in strike, raised in cheer",
+        "toe rays x2 (plaster): layer 1; ball rim; paddle in the float-walk, tuck in nap",
+        "core glow (lamp): layer 3; ball; the twinkle and the cast spawn from it",
+        "face (ink eyes, berry blush): layer 3; ball; happy shut eyes in the twinkle"
+      ],
+      "palette": [
+        "plaster",
+        "regolith",
+        "snow",
+        "berry"
+      ],
+      "pose": "Round and contented, bobbing like a lantern, the long cap trailing behind like a comet.",
+      "notes": [
+        "Works: the comma of ball plus trailing cap is unique and the cap is a free secondary motion in every state.",
+        "Risk: a round body nears Puffcap's and Tuff's mass; the rays and the long cap must stay big enough to read.",
+        "The cap's stripes, cuff and pompom are regolith (moon ground), tying Lumen to its last folk.",
+        "Compared with Eastward 05 (Sam): a rounded mass with a lit cap and a dark crescent at this size."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 551,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0179,
+          "west_east": 10.7371,
+          "top_bottom": 11.4607,
+          "isolated": 0.0046,
+          "checker": 0.0,
+          "rows": [
+            20,
+            47
+          ]
+        },
+        "E idle": {
+          "px": 528,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.9909,
+          "flat_ink": 0.0,
+          "double": 0.0636,
+          "west_east": 5.2116,
+          "top_bottom": 7.9949,
+          "isolated": 0.0024,
+          "checker": 0.0,
+          "rows": [
+            20,
+            48
+          ]
+        },
+        "W idle": {
+          "px": 528,
+          "colours": 24,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9909,
+          "flat_ink": 0.0,
+          "double": 0.0545,
+          "west_east": 5.5788,
+          "top_bottom": 11.839,
+          "isolated": 0.0096,
+          "checker": 0.0,
+          "rows": [
+            20,
+            48
+          ]
+        },
+        "S fidget": {
+          "px": 559,
+          "colours": 22,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9649,
+          "flat_ink": 0.0,
+          "double": 0.0614,
+          "west_east": 11.5314,
+          "top_bottom": 11.2677,
+          "isolated": 0.0202,
+          "checker": 0.0,
+          "rows": [
+            19,
+            51
+          ]
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Star-sprite: a star head on a tiny slate nightgown, a dust wisp with a glowing heart for legs",
+      "question": "A star-shaped head on a tiny body: the head's lower points fall over the shoulders, the gown thins into a trail of dust.",
+      "parts": [
+        "cap (snow, slate stripes, slate cuff and pompom): layer 5; head (top point); curls back, the pompom is a pull cord in lights out",
+        "star head (plaster): layer 4; neck; tilts 1 px in idle, nods in nap",
+        "gown (slate, scalloped hem, one fold): layer 2; hover point; hem sways a frame late in walk",
+        "sleeves x2 (slate) with mitts (plaster): layer 1 (far) / 3 (near); shoulder; swing, wind-up, cast, guard",
+        "dust wisp (plaster dust, lamp-glow heart under the hem): layer 0; hem; curls behind the walk, sheds motes in cheer and lights out",
+        "face (ink eyes, berry blush): layer 4; head; shut eyes in lights out"
+      ],
+      "palette": [
+        "plaster",
+        "slate",
+        "snow",
+        "berry"
+      ],
+      "pose": "A small sleepy sprite in its nightgown, mitts folded, ready to pull the cord on the lights.",
+      "notes": [
+        "Works: the most humanlike, so every fight pose has arms and a body to act with; the star head is the read.",
+        "Risk: a star head over a dark gown is busier at 2 px than A; the head points must not read as ears.",
+        "The wisp's heart is the inner light (lamp glow), the dust round it an outlined plaster form.",
+        "Compared with Eastward 05 (Sam and the two kids): a body under a big head, a 3-tone gown with one fold."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 454,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9789,
+          "flat_ink": 0.0,
+          "double": 0.0526,
+          "west_east": 14.7207,
+          "top_bottom": 7.2742,
+          "isolated": 0.0139,
+          "checker": 0.0,
+          "rows": [
+            19,
+            48
+          ]
+        },
+        "E idle": {
+          "px": 399,
+          "colours": 24,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0588,
+          "west_east": 1.4421,
+          "top_bottom": 10.5565,
+          "isolated": 0.0159,
+          "checker": 0.0,
+          "rows": [
+            19,
+            48
+          ]
+        },
+        "W idle": {
+          "px": 402,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.092,
+          "west_east": 13.2421,
+          "top_bottom": 18.4144,
+          "isolated": 0.0222,
+          "checker": 0.0,
+          "rows": [
+            19,
+            48
+          ]
+        },
+        "S fidget": {
+          "px": 446,
+          "colours": 22,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9506,
+          "flat_ink": 0.0,
+          "double": 0.0494,
+          "west_east": 21.0135,
+          "top_bottom": 20.9245,
+          "isolated": 0.0274,
+          "checker": 0.0,
+          "rows": [
+            20,
+            48
+          ]
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "A",
+    "name": "Plump star that glows: lamp core, warm rim, a dust wisp, the comet cap in E/W",
+    "grafts": [
+      "From C: the dust wisp under the feet (outlined plaster dust with a glow at its heart): the float-walk is a 1 px bob and a wisp sway, and the fight poses stand on it.",
+      "From B: the long cap trailing like a comet behind the head in E and W idle; in fights it trails short, clear of the familiar.",
+      "Fixes: a stepped lamp core on the belly (tone 2 out to a near-white centre), a warm plaster tone-5 rim on the lit points, turned side views, and the familiar floating beside Mote instead of on a shoulder."
+    ],
+    "parts": [
+      "cap (slate, snow stripes, snow cuff): layer 6; head anchor on the top point; changes in S/E/W (front flop in S, comet tail in E/W idle, short tail in fights, flung on hit, droops over the eyes in yawn and nap)",
+      "pompom (snow): layer 6; cap tip; swings a frame late in walk, hop and strike",
+      "far arm point (plaster, a tone down): layer 1; body; E/W only (hidden in S); reaches forward in ready, thrusts in strike, up in cast and cheer",
+      "far foot point (plaster, a tone down): layer 1; body; E/W only; trails in strike, forward in sit",
+      "dust wisp (plaster dust, lamp mote): layer 2; hover point (6 px over the foot anchor); sways back in walk and strike, curls under in sit, absent in nap",
+      "star body with top point and near foot (plaster, warm rim): layer 3; hover point; bobs 1 px a beat; leans with the pose (rot)",
+      "core glow (lamp, 6 x 5 stepped): layer 4; body; normal, dim (hit, nap), flare (cast)",
+      "near arm point (plaster, own form, a darker joint where it lies over the body): layer 5; body; S: the side points; E/W: the back point in front of the body, swings back in strike, up in cast and cheer",
+      "face (ink eye(s), berry blush, brow and cheek step in E/W): layer 5; body; sleepy, open, fierce, shut, happy, wince",
+      "familiar (stand-in Mossling, 16 px, leaf): floats beside Mote at head height on the side away from the foe; perch anchor per fight pose; curled against Mote in the nap"
+    ],
+    "palette": [
+      "plaster",
+      "slate",
+      "snow",
+      "berry",
+      "leaf"
+    ],
+    "glow": "lamp",
+    "pose": "Drifts half-asleep with its points out like a starfish floating on its back, lids low, its heart-light glowing; in a fight it leans in with the far point and lets the familiar bob beside it.",
+    "perch_anchor": {
+      "E ready": [
+        9,
+        36
+      ],
+      "E strike": [
+        9,
+        36
+      ],
+      "E cast": [
+        9,
+        35
+      ],
+      "E hit": [
+        9,
+        36
+      ],
+      "E sit": [
+        9,
+        39
+      ],
+      "E cheer": [
+        9,
+        34
+      ],
+      "W ready": [
+        46,
+        36
+      ],
+      "W strike": [
+        46,
+        36
+      ]
+    },
+    "perch_note": "[x, y] in cell px: the familiar's foot point, floating beside Mote at head height on the side away from the foe (no shoulder perch).",
+    "measure": {
+      "S idle": {
+        "px": 455,
+        "colours": 26,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9811,
+        "flat_ink": 0.0,
+        "double": 0.0472,
+        "west_east": 9.8381,
+        "top_bottom": -0.4761,
+        "isolated": 0.0115,
+        "checker": 0.0,
+        "rows": [
+          19,
+          47
+        ]
+      },
+      "E idle": {
+        "px": 486,
+        "colours": 27,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9813,
+        "flat_ink": 0.0,
+        "double": 0.0374,
+        "west_east": 11.657,
+        "top_bottom": -5.4394,
+        "isolated": 0.0185,
+        "checker": 0.0,
+        "rows": [
+          18,
+          48
+        ]
+      },
+      "W idle": {
+        "px": 484,
+        "colours": 26,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.981,
+        "flat_ink": 0.0,
+        "double": 0.0381,
+        "west_east": 7.1293,
+        "top_bottom": -3.1062,
+        "isolated": 0.0132,
+        "checker": 0.0,
+        "rows": [
+          18,
+          48
+        ]
+      },
+      "S fidget": {
+        "px": 436,
+        "colours": 28,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9592,
+        "flat_ink": 0.0,
+        "double": 0.0612,
+        "west_east": 9.1518,
+        "top_bottom": -3.9137,
+        "isolated": 0.0118,
+        "checker": 0.0,
+        "rows": [
+          21,
+          47
+        ]
+      },
+      "nap S": {
+        "px": 471,
+        "colours": 27,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.03,
+        "west_east": 14.0108,
+        "top_bottom": 1.3972,
+        "isolated": 0.027,
+        "checker": 0.0,
+        "rows": [
+          27,
+          51
+        ]
+      },
+      "E ready": {
+        "px": 611,
+        "colours": 32,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0787,
+        "west_east": 5.032,
+        "top_bottom": 0.9598,
+        "isolated": 0.0103,
+        "checker": 0.0,
+        "rows": [
+          16,
+          48
+        ]
+      },
+      "E strike": {
+        "px": 613,
+        "colours": 32,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.9706,
+        "flat_ink": 0.0,
+        "double": 0.0662,
+        "west_east": 6.122,
+        "top_bottom": 3.0199,
+        "isolated": 0.0147,
+        "checker": 0.0,
+        "rows": [
+          16,
+          48
+        ]
+      },
+      "E cast": {
+        "px": 629,
+        "colours": 30,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.9704,
+        "flat_ink": 0.0,
+        "double": 0.0296,
+        "west_east": 4.6192,
+        "top_bottom": 1.0124,
+        "isolated": 0.0243,
+        "checker": 0.0,
+        "rows": [
+          16,
+          47
+        ]
+      },
+      "E hit": {
+        "px": 567,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.9912,
+        "flat_ink": 0.0,
+        "double": 0.0263,
+        "west_east": 3.97,
+        "top_bottom": 3.7249,
+        "isolated": 0.0331,
+        "checker": 0.0022,
+        "rows": [
+          18,
+          48
+        ]
+      },
+      "E sit": {
+        "px": 587,
+        "colours": 31,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0504,
+        "west_east": 3.043,
+        "top_bottom": -0.292,
+        "isolated": 0.0171,
+        "checker": 0.0,
+        "rows": [
+          20,
+          49
+        ]
+      },
+      "E cheer": {
+        "px": 619,
+        "colours": 31,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.9852,
+        "flat_ink": 0.0,
+        "double": 0.0296,
+        "west_east": 4.2198,
+        "top_bottom": 1.9583,
+        "isolated": 0.0165,
+        "checker": 0.0,
+        "rows": [
+          15,
+          46
+        ]
+      },
+      "W ready": {
+        "px": 615,
+        "colours": 31,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0551,
+        "west_east": 16.3647,
+        "top_bottom": 3.948,
+        "isolated": 0.0205,
+        "checker": 0.0,
+        "rows": [
+          16,
+          48
+        ]
+      },
+      "W strike": {
+        "px": 610,
+        "colours": 31,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.985,
+        "flat_ink": 0.0,
+        "double": 0.0451,
+        "west_east": 15.1252,
+        "top_bottom": 0.5873,
+        "isolated": 0.0189,
+        "checker": 0.0,
+        "rows": [
+          16,
+          48
+        ]
+      }
+    },
+    "notes": [
+      "Compared with Eastward 05 at Mote's height (Sam, the small white-haired girl, and the two kids): a big",
+      "head mass, 2 x 3 ink eyes with a glint, 3 to 4 tones a material, a dark closed outline, and a lit rim on hair.",
+      "Cast: the only star silhouette; plaster stays warm and the lamp core makes it a light, apart from Puffcap's cream.",
+      "Open: the 16 px familiar floats beside Mote (no shoulder); the fight layout needs this anchor per frame."
+    ]
+  }
+}

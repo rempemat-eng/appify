@@ -1,0 +1,183 @@
+{
+  "id": "ashe",
+  "kind": "folk",
+  "template": "biped",
+  "heightWorld": 26,
+  "cell": "folk",
+  "design": "B, half-plate drake",
+  "families": ["clay", "slate", "ashlar", "ash", "brass", "slate_cool", "ashlar_cool"],
+  "glows": ["lava"],
+  "signature": "ember-scaled drake in half plate: one pauldron, swept horns and the big brass bell",
+  "parts": [
+    {
+      "name": "tail",
+      "families": ["clay"],
+      "joint": "hip",
+      "layer": {
+        "S": 0,
+        "E": 0,
+        "W": 0,
+        "N": 8
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "curls up beside the legs; bobs a frame behind the breath; round the front in nap; lava tip dims as heat drops",
+      "painter": false
+    },
+    {
+      "name": "far arm",
+      "families": ["clay", "slate_cool"],
+      "joint": "chest",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["E", "W"],
+      "motion": "a tone back; E: her left, W: her right",
+      "painter": false
+    },
+    {
+      "name": "far leg",
+      "families": ["ashlar_cool", "slate", "slate_cool"],
+      "joint": "hip",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "6-frame walk, lunge in strike, forward in sit",
+      "painter": false
+    },
+    {
+      "name": "near leg",
+      "families": ["ashlar_cool", "slate", "slate_cool"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "6-frame walk, lunge in strike, forward in sit",
+      "painter": false
+    },
+    {
+      "name": "gambeson",
+      "families": ["ashlar"],
+      "joint": "hip",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 4
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "hem sways a frame behind",
+      "painter": false
+    },
+    {
+      "name": "belt and big bell",
+      "families": ["ash", "brass"],
+      "joint": "hip",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 0
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "bell at her left on the belt front; swings a frame behind, rings on the third heat (cast)",
+      "painter": false
+    },
+    {
+      "name": "breastplate",
+      "families": ["slate", "brass"],
+      "joint": "chest",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath 1 px",
+      "painter": false
+    },
+    {
+      "name": "familiar perch",
+      "families": [],
+      "joint": "chest",
+      "layer": {
+        "S": 6.5,
+        "E": 6.5,
+        "W": 6.5,
+        "N": 9
+      },
+      "facings": ["E", "W"],
+      "motion": "on the pauldron ledge in fight poses",
+      "painter": false
+    },
+    {
+      "name": "pauldron",
+      "families": ["slate"],
+      "joint": "chest",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 10
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "her left shoulder only; the perch ledge",
+      "painter": false
+    },
+    {
+      "name": "near arm",
+      "families": ["clay", "slate_cool", "ash"],
+      "joint": "chest",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "haymaker, guard, fan",
+      "painter": false
+    },
+    {
+      "name": "head",
+      "families": ["clay", "ash"],
+      "joint": "chest",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 9,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "ember breath at the snout tip in cast, smoke puff in fidget",
+      "painter": true
+    }
+  ],
+  "anchors": {
+    "perch": {
+      "E ready": [26, 33],
+      "E strike": [28, 33],
+      "E cast": [26, 32],
+      "E hit": [24, 33],
+      "E sit": [26, 40],
+      "E cheer": [26, 31],
+      "W ready": [37, 33],
+      "W strike": [35, 33]
+    }
+  },
+  "notes": [
+    "Open: whether the cast should ring the bell rather than breathe an ember.",
+    "The stand-in Mossling covers the back horn in fights (familiar size still open)."
+  ]
+}

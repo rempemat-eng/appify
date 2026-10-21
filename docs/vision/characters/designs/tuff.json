@@ -1,0 +1,579 @@
+{
+  "id": "tuff",
+  "height_art_px": 44,
+  "width_art_px": 60,
+  "cell": [
+    80,
+    80
+  ],
+  "foot": [
+    40,
+    74
+  ],
+  "question": "How hex columns make a low, wide body.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Causeway block: a squat cluster of short hex columns, the turtle on the flat middle top",
+      "question": "The body is the columns: a tall face column in the middle, shoulder columns either side, column-arms hanging at the ends and two stump legs; a stepped skyline silhouette.",
+      "parts": [
+        "legs x2 (basalt stump columns): layer 0; foot; 6-frame shuffle, each stump lifts 2 px, the body sways 1 px",
+        "shoulder columns x2 (basalt_cool): layer 1; hip; breath sinks them 1 px after the body",
+        "arm columns x2 (basalt): far layer 1, near 3; shoulder; swing 2 px in walk, raised as a block in guard, a slam in strike",
+        "face column (basalt_warm, ember eyes, broad top): layer 2; hip; breath 1 px, the head of every pose",
+        "thrift tufts (berry on leaf): layer 4; foot (base) and shoulder; grow one layer per still turn (Overgrow), one flies off on a heavy hit",
+        "turtle (lagoon_cool shell, lagoon_warm head and flippers): layer 5; back (the face column top); sleeps, wakes in the fidget, tucks in on hit"
+      ],
+      "palette": [
+        "basalt",
+        "berry",
+        "leaf",
+        "lagoon"
+      ],
+      "glow": "lava (eyes, light source only)",
+      "pose": "Planted like a headland, arms hanging, a patient bulwark that the sea has given up arguing with.",
+      "notes": [
+        "Works: a flat-topped stepped block reads at once as a giant's causeway and nothing else in the cast is rectangular and dark.",
+        "Risk: the face is on the body (no separate head), so the head-third rule is met by the face column, not a neck.",
+        "Compared with Eastward 05 (night camp), scaled to his height: trailers and crates carry a lit top plane, two side tones and a dark seam, as each column does here."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 2060,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0281,
+          "west_east": 2.2457,
+          "top_bottom": 8.1337,
+          "isolated": 0.009,
+          "checker": 0.0,
+          "height_px": 40,
+          "width_px": 66
+        },
+        "E idle": {
+          "px": 1593,
+          "colours": 38,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0382,
+          "west_east": 0.5119,
+          "top_bottom": 12.2412,
+          "isolated": 0.007,
+          "checker": 0.0,
+          "height_px": 41,
+          "width_px": 52
+        },
+        "W idle": {
+          "px": 1588,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9937,
+          "flat_ink": 0.0,
+          "double": 0.0253,
+          "west_east": 7.3868,
+          "top_bottom": 13.0863,
+          "isolated": 0.0098,
+          "checker": 0.0,
+          "height_px": 41,
+          "width_px": 52
+        },
+        "S fidget": {
+          "px": 2064,
+          "colours": 41,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0281,
+          "west_east": 2.6132,
+          "top_bottom": 8.3153,
+          "isolated": 0.0095,
+          "checker": 0.0,
+          "height_px": 40,
+          "width_px": 66
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Shell of columns: a tortoise-like dome of hex tops, a small boulder head poking out",
+      "question": "The body is a low dome made of a honeycomb of hex column tops, crouched on four stubby column legs, with a small round head at the front: turtle on a tortoise.",
+      "parts": [
+        "legs x4 (basalt stump columns, back pair one tone cooler): layer 0/2; foot; diagonal pairs step in the walk",
+        "dome (basalt honeycomb, three rows of columns): layer 1; hip; breath lifts the middle row 1 px",
+        "head (basalt_warm boulder, ember eyes): layer 3; chest; pokes out 2 px to strike, pulls in for guard and nap",
+        "thrift tufts (berry on leaf): layer 4; foot and dome rim; Overgrow layers sprout between the columns",
+        "turtle (lagoon_cool plated shell, sand skin): layer 5; back (the dome crown); turtle on a tortoise, it holds on in the walk"
+      ],
+      "palette": [
+        "basalt",
+        "berry",
+        "leaf",
+        "lagoon"
+      ],
+      "glow": "lava (eyes, light source only)",
+      "pose": "Crouched low and content, head barely out of the shell, as slow as a tide coming in.",
+      "notes": [
+        "Works: the honeycomb back is the clearest read of hex columns, and the dome is a silhouette no other folk has.",
+        "Risk: four legs and a head-out pose are a quadruped; fight poses must happen with the head and front legs.",
+        "Compared with Eastward 05: the cliff-edge rock clumps, a hard lit cap and dark crescent per lump, as on each hex top and the head."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 2119,
+          "colours": 38,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0402,
+          "west_east": 5.1564,
+          "top_bottom": 6.6966,
+          "isolated": 0.0068,
+          "checker": 0.0,
+          "height_px": 46,
+          "width_px": 65
+        },
+        "E idle": {
+          "px": 2133,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0363,
+          "west_east": 1.188,
+          "top_bottom": 9.229,
+          "isolated": 0.0072,
+          "checker": 0.0,
+          "height_px": 46,
+          "width_px": 69
+        },
+        "W idle": {
+          "px": 2141,
+          "colours": 38,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9948,
+          "flat_ink": 0.0,
+          "double": 0.0258,
+          "west_east": 4.8954,
+          "top_bottom": 10.6822,
+          "isolated": 0.0051,
+          "checker": 0.0,
+          "height_px": 46,
+          "width_px": 69
+        },
+        "S fidget": {
+          "px": 2133,
+          "colours": 40,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0365,
+          "west_east": 5.0198,
+          "top_bottom": 5.9699,
+          "isolated": 0.0067,
+          "checker": 0.0,
+          "height_px": 46,
+          "width_px": 65
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Boulder on stumps: one wide glossy boulder, column legs and arms, a crown of columns",
+      "question": "The body is a single glossy boulder; the columns are his stump legs, his arms and a crown at the back of the top, with the turtle nested in the crown's gap.",
+      "parts": [
+        "legs x2 (basalt stump columns): layer 0; foot; short waddle, the boulder rocks 1 px side to side",
+        "crown columns x4 (basalt, the outer pair cool): layer 1; back of the body; rattle a frame late on hops",
+        "boulder body (basalt_warm, brow, ember eyes): layer 2; hip; breath swells 1 px",
+        "arm columns x2 (basalt): layer 1 far / 3 near; shoulder; swing, punch, guard",
+        "thrift tufts (berry on leaf): layer 4; foot and shoulder; Overgrow layers",
+        "turtle (lagoon_cool plated shell, sand skin): layer 5; back (the crown nest); peers over the brow in the fidget"
+      ],
+      "palette": [
+        "basalt",
+        "berry",
+        "leaf",
+        "lagoon"
+      ],
+      "glow": "lava (eyes, light source only)",
+      "pose": "A round, heavy, gentle lump with his chin down, watching the tide line without blinking.",
+      "notes": [
+        "Works: the biggest, simplest silhouette; the gloss on one big boulder reads strongest at 2 px.",
+        "Risk: only the crown and limbs say \"hex columns\"; from the front it is closest to a generic rock golem.",
+        "Compared with Eastward 05: the folk there are about 32 native px with 2 x 2 eyes; his ember eyes match that read at 2 px."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 2096,
+          "colours": 38,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0245,
+          "west_east": 6.7084,
+          "top_bottom": 9.9703,
+          "isolated": 0.0048,
+          "checker": 0.0,
+          "height_px": 44,
+          "width_px": 64
+        },
+        "E idle": {
+          "px": 1750,
+          "colours": 38,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0057,
+          "west_east": 5.6616,
+          "top_bottom": 9.171,
+          "isolated": 0.0044,
+          "checker": 0.0,
+          "height_px": 44,
+          "width_px": 54
+        },
+        "W idle": {
+          "px": 1740,
+          "colours": 38,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0168,
+          "west_east": 10.1985,
+          "top_bottom": 10.7074,
+          "isolated": 0.0032,
+          "checker": 0.0,
+          "height_px": 44,
+          "width_px": 53
+        },
+        "S fidget": {
+          "px": 2086,
+          "colours": 40,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0338,
+          "west_east": 5.9161,
+          "top_bottom": 10.0359,
+          "isolated": 0.0064,
+          "checker": 0.0,
+          "height_px": 44,
+          "width_px": 64
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "A",
+    "name": "Causeway block with a boulder head: short glossy hex columns, the turtle on the middle top",
+    "grafts": [
+      "From B: a small round boulder head poking out at the front, low under the turtle's column, with the ember eyes; in profile a brow ledge, a cheek and a snout step, lit from the upper left.",
+      "From C: hex faceting on the shoulders; the back shoulder is a flat-topped column, the familiar's perch in every fight frame, apart from the turtle on the middle column.",
+      "Turtle redrawn: a pale sand head on a neck (it read as part of the shell in lagoon), a plated shell (three vertebral plates, notched marginal rim) with a lit cap and glint at the upper left, four flippers, a closed eye (open in the fidget, tucked in on a hit).",
+      "Thrift heads are 3 x 3 berry clusters (5 x 5 when one blooms in the cast)."
+    ],
+    "parts": [
+      "legs x2 (basalt stump columns, near one basalt_warm): layer 0 far / 3 near; foot; all facings; 6-frame shuffle, a stump lifts 2 px",
+      "back shoulder (basalt on the lit west in E, basalt_cool on the east in W; flat hex top = familiar perch): layer 1; chest; E/W swap sides (the shoulder away from the foe); breath 1 px late",
+      "flank column (basalt): layer 1; hip; all facings",
+      "turtle column (basalt_warm, broad hex top): layer 2; hip; all facings; breath 1 px",
+      "head (basalt_warm boulder, ember eyes in lava glow, brow, mouth seam): layer 4; chest; S front, E/W profile with snout step; pokes forward 2 px in strike",
+      "near arm (basalt column; a lying column with a hex end cap when thrust): layer 6; shoulder; hangs, thrusts in ready/strike, up in cast/cheer, back in hit",
+      "thrift tufts (berry 3 x 3 heads on leaf cushions): layer 5; foot and shoulder; Overgrow adds a layer per still turn, a hit throws the top one off",
+      "turtle (lagoon_cool plated shell, sand skin): layer 5; back (the turtle column top); sleeps; wakes in the fidget, cast and cheer; tucks in on hit",
+      "familiar (stand-in Mossling, 24 art px): layer 1.5; back shoulder top; fight poses only"
+    ],
+    "palette": [
+      "basalt",
+      "berry",
+      "leaf",
+      "lagoon",
+      "sand"
+    ],
+    "glow": "lava (eyes, light source only)",
+    "pose": "Planted like a headland, arms hanging, head low and patient: the sea gave up arguing with him long ago.",
+    "perch_anchor": {
+      "E idle": [
+        16,
+        46
+      ],
+      "W idle": [
+        64,
+        46
+      ],
+      "E ready": [
+        17,
+        47
+      ],
+      "E strike": [
+        19,
+        47
+      ],
+      "E cast": [
+        16,
+        46
+      ],
+      "E hit": [
+        14,
+        46
+      ],
+      "E sit": [
+        16,
+        51
+      ],
+      "E cheer": [
+        16,
+        43
+      ],
+      "W ready": [
+        63,
+        47
+      ],
+      "W strike": [
+        61,
+        47
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 2346,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0369,
+        "west_east": 5.5359,
+        "top_bottom": 7.1748,
+        "isolated": 0.0287,
+        "checker": 0.0,
+        "height_px": 44,
+        "width_px": 68
+      },
+      "E idle": {
+        "px": 1737,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0305,
+        "west_east": 0.5918,
+        "top_bottom": 10.7617,
+        "isolated": 0.0188,
+        "checker": 0.0,
+        "height_px": 43,
+        "width_px": 61
+      },
+      "W idle": {
+        "px": 1739,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0394,
+        "west_east": 10.5977,
+        "top_bottom": 9.7163,
+        "isolated": 0.0189,
+        "checker": 0.0,
+        "height_px": 43,
+        "width_px": 61
+      },
+      "S fidget": {
+        "px": 2348,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0046,
+        "double": 0.0415,
+        "west_east": 5.3348,
+        "top_bottom": 7.0509,
+        "isolated": 0.0286,
+        "checker": 0.0,
+        "height_px": 44,
+        "width_px": 68
+      },
+      "nap S": {
+        "px": 1641,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0299,
+        "west_east": 6.2444,
+        "top_bottom": 9.6673,
+        "isolated": 0.0163,
+        "checker": 0.0,
+        "height_px": 37,
+        "width_px": 65
+      },
+      "E ready": {
+        "px": 1960,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0341,
+        "west_east": 1.7838,
+        "top_bottom": 14.9627,
+        "isolated": 0.0188,
+        "checker": 0.0,
+        "height_px": 49,
+        "width_px": 64
+      },
+      "E strike": {
+        "px": 2039,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0278,
+        "west_east": 4.3041,
+        "top_bottom": 15.433,
+        "isolated": 0.0115,
+        "checker": 0.0,
+        "height_px": 49,
+        "width_px": 70
+      },
+      "E cast": {
+        "px": 2122,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0373,
+        "west_east": 7.1001,
+        "top_bottom": 11.7767,
+        "isolated": 0.0213,
+        "checker": 0.0,
+        "height_px": 57,
+        "width_px": 63
+      },
+      "E hit": {
+        "px": 1902,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0224,
+        "west_east": 4.3732,
+        "top_bottom": 12.0457,
+        "isolated": 0.0232,
+        "checker": 0.0,
+        "height_px": 50,
+        "width_px": 61
+      },
+      "E sit": {
+        "px": 1805,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0464,
+        "west_east": 2.7087,
+        "top_bottom": 14.4888,
+        "isolated": 0.0118,
+        "checker": 0.0,
+        "height_px": 45,
+        "width_px": 64
+      },
+      "E cheer": {
+        "px": 2073,
+        "colours": 38,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0458,
+        "west_east": 7.6852,
+        "top_bottom": 11.0343,
+        "isolated": 0.0175,
+        "checker": 0.0,
+        "height_px": 53,
+        "width_px": 63
+      },
+      "W ready": {
+        "px": 1962,
+        "colours": 47,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0385,
+        "west_east": 7.5275,
+        "top_bottom": 15.0355,
+        "isolated": 0.02,
+        "checker": 0.0,
+        "height_px": 49,
+        "width_px": 64
+      },
+      "W strike": {
+        "px": 2036,
+        "colours": 47,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.031,
+        "west_east": 5.3115,
+        "top_bottom": 16.8975,
+        "isolated": 0.011,
+        "checker": 0.0,
+        "height_px": 49,
+        "width_px": 70
+      }
+    },
+    "notes": [
+      "Works: the stepped block of glossy columns says \"basalt causeway\" and is nothing like Cairn's tall mossy slab; the head makes him a creature.",
+      "Fights: the near arm is the only moving limb (hang, thrust as a lying column, raised), so every key pose is a rigid offset of parts.",
+      "Width: E/W span about 60 px, so the back shoulder runs about 27 px behind the foot, a little over the 24 px follower margin.",
+      "Compared with Eastward 05 (night camp, about 32 native px folk): 2 x 2 eyes, lit top planes and dark seams; and with the camp's cliff-edge rock clumps for the lit cap and crescent on the head."
+    ]
+  }
+}

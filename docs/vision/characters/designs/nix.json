@@ -1,0 +1,576 @@
+{
+  "id": "nix",
+  "height_art_px": 50,
+  "cell": [
+    64,
+    72
+  ],
+  "foot": [
+    32,
+    66
+  ],
+  "question": "Hood, screen and pack silhouette.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Round-screen hood: big concrete hood, round screen-face, tall slate box on the back",
+      "question": "A big hood frames a round screen-face (the do-not-disturb crescent); the pack is a tall slate box that shows past both shoulders.",
+      "parts": [
+        "delivery box (slate, lid seam, stencil, neon-pink logo): layer 0 (back); back; bobs 1 px a step late, stays on her back in nap (she curls against it)",
+        "legs x2 (asphalt trousers, iron boots): layer 1; hip; 6-frame swing, tuck in hop and nap, forward in sit",
+        "jacket torso (concrete bands, zip, snow strip, slate straps): layer 2; hip; breath 1 px",
+        "far sleeve (concrete, a tone back, iron hand): layer 1 (E/W), 3 (S); chest; swing, guard",
+        "hood (concrete, lit lip, shaded lining): layer 4; chest; drapes 1 px late on hop, falls forward over the screen in nap",
+        "face-screen (asphalt glass, iron bezel, cyan glyph, crack): layer 5; head; glyph swaps per state (crescent idle, ! hit, ^ ^ cheer, z nap)",
+        "near sleeve (concrete, strip, iron hand): layer 6; chest; swing, wind-up, strike, cast, tap in fidget"
+      ],
+      "palette": [
+        "concrete",
+        "asphalt",
+        "slate",
+        "snow",
+        "iron"
+      ],
+      "glows": [
+        "neon_cyan",
+        "neon_pink"
+      ],
+      "pose": "Square and unhurried, hands loose, the box riding high: the last courier on the 3 a.m. round.",
+      "notes": [
+        "Works: a round hood on a tall box is a silhouette no other folk has; the crescent is the DND icon.",
+        "Screen: dark asphalt glass with a stepped upper-left sheen; the crack is dark with a lit west edge.",
+        "Risk: concrete hood and jacket are one value; the strip and box edges carry the read at 2 px.",
+        "Compared with Eastward 05: John's backpack (one big block, lit top edge) and jacket folds in 3 bands."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1088,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0,
+          "west_east": 8.108,
+          "top_bottom": 4.6579,
+          "isolated": 0.0215,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "E idle": {
+          "px": 928,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0,
+          "west_east": 11.853,
+          "top_bottom": 5.1343,
+          "isolated": 0.0087,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "W idle": {
+          "px": 928,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0,
+          "west_east": 4.1119,
+          "top_bottom": 3.72,
+          "isolated": 0.005,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "S fidget": {
+          "px": 1061,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0132,
+          "west_east": 9.3697,
+          "top_bottom": 2.0433,
+          "isolated": 0.0242,
+          "checker": 0.0,
+          "height_px": 50
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Antenna hood: snug asphalt hood with two bumps, visor screen, sling box at the hip",
+      "question": "A snug cropped hood with two antenna bumps and a wide visor screen (\"z z\"); the pack is a slim stencilled box slung at her right hip with a pink light strip.",
+      "parts": [
+        "sling box (concrete, stencil, pink strip and logo): layer 0 in W (far hip), 4 in S/E; hip (right); swings a frame behind on walk, bumps on hop",
+        "legs x2 (slate trousers, tall iron boots): layer 1; hip; long 6-frame stride",
+        "cropped jacket (asphalt bands, zip, rib waistband, snow strip, concrete strap): layer 2; hip; breath 1 px",
+        "far sleeve (asphalt, a tone back): layer 1/3; chest; swing, guard",
+        "hood with antenna bumps (asphalt): layer 5; chest; bumps twitch on hit and cheer (antenna = ears)",
+        "visor (iron bezel, asphalt glass, cyan \"z z\", crack): layer 6; head",
+        "near sleeve + wrist screen (asphalt, iron, cyan list): layer 7; chest; swing, strike, cast, fidget check"
+      ],
+      "palette": [
+        "asphalt",
+        "slate",
+        "concrete",
+        "snow",
+        "iron"
+      ],
+      "glows": [
+        "neon_cyan",
+        "neon_pink"
+      ],
+      "pose": "Leggy and alert, bumps up, weight ready to go: she has one more drop before dawn.",
+      "notes": [
+        "Works: bumps make a cat-eared hood that reads at 2 px; long legs and a high crop set her apart. The \"z Z\" is 4-5 px tall (a 3 px z reads as an I).",
+        "Wrist screen gives the fidget (checks the parcel list) and a natural cast pose.",
+        "Risk: an asphalt hood and jacket at night go very dark: the strip and the visor must carry it.",
+        "Compared with Eastward 05: John and the woman in teal (2-3 tone sleeves, a clear hem row)."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 981,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.012,
+          "west_east": 5.3444,
+          "top_bottom": -0.309,
+          "isolated": 0.0147,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "E idle": {
+          "px": 708,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0179,
+          "west_east": 4.3225,
+          "top_bottom": -0.7746,
+          "isolated": 0.0,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "W idle": {
+          "px": 747,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0259,
+          "west_east": 11.7778,
+          "top_bottom": -2.0433,
+          "isolated": 0.0016,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "S fidget": {
+          "px": 928,
+          "colours": 29,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0191,
+          "west_east": 5.7724,
+          "top_bottom": 1.2612,
+          "isolated": 0.0143,
+          "checker": 0.0,
+          "height_px": 49
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Long parka, TV head: hood down as a roll, iron TV head, box worn on the front",
+      "question": "A long reflective parka with the hood down as a thick roll; a boxy TV-shaped head; the delivery box worn on her front.",
+      "parts": [
+        "hood (asphalt, down: a quilted roll and a lump at the back): layer 0 (lump), 3 (roll); chest",
+        "legs x2 (asphalt, iron boots): layer 1; hip; short steps under the hem",
+        "parka (asphalt bands, open front, snow hem band): layer 2; hip; the hem sways 1 px after each step",
+        "delivery box on the chest (concrete, stencil, pink logo, neck straps): layer 4; chest; bobs with breath, held in both arms in the nap",
+        "TV head (iron casing, rivets, side vents, asphalt glass, cyan closed-eye arcs, crack): layer 5; chest; tilts in idle, flips its picture in the fidget",
+        "sleeves x2 (asphalt, strip, iron hands): layer 1/6; chest; swing, smack, strike, cast"
+      ],
+      "palette": [
+        "asphalt",
+        "iron",
+        "concrete",
+        "snow"
+      ],
+      "glows": [
+        "neon_cyan",
+        "neon_pink"
+      ],
+      "pose": "Patient, boxy and a little old-fashioned, parcel held to her chest like something precious.",
+      "notes": [
+        "Works: a square head over a bell parka is the most unlike the soft folk; the closed-eye arcs read at 2 px.",
+        "Risk: the hood down is the least hood-like; a 21 px TV is heavy and close to Bunk's robot look.",
+        "The box on the front blocks the chest in fights; strikes must come from the side.",
+        "Compared with Eastward 05: the woman in the purple cardigan (placket, a hem row) for the parka."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1204,
+          "colours": 24,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.014,
+          "west_east": 4.2079,
+          "top_bottom": -7.6344,
+          "isolated": 0.016,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "E idle": {
+          "px": 953,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0154,
+          "west_east": 2.951,
+          "top_bottom": -5.5755,
+          "isolated": 0.0122,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "W idle": {
+          "px": 953,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0231,
+          "west_east": 4.6825,
+          "top_bottom": -4.6767,
+          "isolated": 0.0109,
+          "checker": 0.0,
+          "height_px": 50
+        },
+        "S fidget": {
+          "px": 1245,
+          "colours": 24,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0125,
+          "west_east": 4.8026,
+          "top_bottom": -8.3175,
+          "isolated": 0.0147,
+          "checker": 0.0,
+          "height_px": 51
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "B",
+    "name": "Antenna hood (final): snug bumped hood, glyph visor, slim box at the back of the hip",
+    "grafts": [
+      "From A: a visor glyph per state: crescent (idle, ready), chevron (strike), ring (cast), X (hit), z (sit), heart (cheer), \"z Z\" (nap); the fidget dims it while she reads her wrist.",
+      "From A: the delivery box bigger (8-9 x 14) and readable: lit top edge and glint, lid seam, stencil, pink logo and a pink light strip; slim at the back of the right hip, one anchor and layer 0 in every facing.",
+      "From C (craft): the crack across the visor in every view, and fold bands on the jacket.",
+      "Fix: reflective strips with a lit top edge (snow 5-4) and a shaded lower edge (snow 3-2), the east end a step down.",
+      "Fix: the asphalt jacket in its full ramp (1 to 5) with a concrete yoke, rib waistband, rib cuffs and knee pads."
+    ],
+    "parts": [
+      "familiar perch: back shoulder (E: x smaller, W: x larger), behind the hood; layer -1; chest",
+      "delivery box (concrete, lid seam, stencil, pink logo and light strip): layer 0; back of the right hip; all facings the same anchor (S: screen left, E/W: behind the hip); swings a frame late on walk",
+      "far leg / far sleeve (slate / asphalt, a tone back, concrete knee pad and cuff): layer 1; hip / chest",
+      "near leg (slate, concrete knee pad, iron boot): layer 2; hip; long 6-frame stride, forward in sit, tucked in cheer",
+      "jacket (asphalt bands and folds, concrete yoke and rib, snow strip, sling strap): layer 3; hip; breath 1 px",
+      "hood with antenna bumps (asphalt, crown seam, brow over the visor, chin step): layer 4; chest; bumps lift 1 px on hit and cheer",
+      "visor (iron bezel, asphalt glass, crack, cyan glyph per state): layer 5; head; glyph swaps on state change",
+      "near sleeve + wrist screen (asphalt, snow band, concrete cuff, iron hand): layer 6; chest; swing, strike (full reach), cast (wrist up, a cyan ring), fidget check"
+    ],
+    "palette": [
+      "asphalt",
+      "concrete",
+      "slate",
+      "snow",
+      "iron"
+    ],
+    "glows": [
+      "neon_cyan",
+      "neon_pink"
+    ],
+    "pose": "Leggy and alert, bumps up, weight ready to go: one more drop before dawn.",
+    "glyphs": {
+      "idle": "crescent",
+      "ready": "crescent",
+      "strike": "chevron",
+      "cast": "ring",
+      "hit": "x",
+      "sit": "z",
+      "cheer": "heart",
+      "nap": "z Z",
+      "fidget": "dim crescent"
+    },
+    "perch_anchor": {
+      "E ready": [
+        27,
+        38
+      ],
+      "E strike": [
+        30,
+        38
+      ],
+      "E cast": [
+        27,
+        37
+      ],
+      "E hit": [
+        24,
+        37
+      ],
+      "E sit": [
+        25,
+        50
+      ],
+      "E cheer": [
+        27,
+        33
+      ],
+      "W ready": [
+        37,
+        38
+      ],
+      "W strike": [
+        34,
+        38
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 1046,
+        "colours": 30,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0235,
+        "west_east": 6.3521,
+        "top_bottom": -4.0058,
+        "isolated": 0.0137,
+        "checker": 0.0,
+        "height_px": 50
+      },
+      "E idle": {
+        "px": 826,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.048,
+        "west_east": 4.5138,
+        "top_bottom": -0.7856,
+        "isolated": 0.0057,
+        "checker": 0.0,
+        "height_px": 50
+      },
+      "W idle": {
+        "px": 827,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0078,
+        "west_east": 9.5117,
+        "top_bottom": -1.8288,
+        "isolated": 0.0043,
+        "checker": 0.0,
+        "height_px": 50
+      },
+      "S fidget": {
+        "px": 987,
+        "colours": 30,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0252,
+        "west_east": 6.329,
+        "top_bottom": -3.1932,
+        "isolated": 0.0121,
+        "checker": 0.0,
+        "height_px": 49
+      },
+      "nap S": {
+        "px": 793,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0,
+        "west_east": 7.3681,
+        "top_bottom": 3.7514,
+        "isolated": 0.0045,
+        "checker": 0.0,
+        "height_px": 25
+      },
+      "E ready": {
+        "px": 1054,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 10,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0545,
+        "west_east": 11.2108,
+        "top_bottom": 1.9639,
+        "isolated": 0.0112,
+        "checker": 0.0,
+        "height_px": 50
+      },
+      "E strike": {
+        "px": 1119,
+        "colours": 40,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 10,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0273,
+        "west_east": 8.7355,
+        "top_bottom": 0.5865,
+        "isolated": 0.0128,
+        "checker": 0.0,
+        "height_px": 50
+      },
+      "E cast": {
+        "px": 1101,
+        "colours": 40,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 0.9563,
+        "flat_ink": 0.0,
+        "double": 0.0383,
+        "west_east": 9.1433,
+        "top_bottom": -0.7502,
+        "isolated": 0.0131,
+        "checker": 0.0,
+        "height_px": 51
+      },
+      "E hit": {
+        "px": 958,
+        "colours": 37,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0368,
+        "west_east": 7.4316,
+        "top_bottom": -3.2723,
+        "isolated": 0.0164,
+        "checker": 0.0,
+        "height_px": 52
+      },
+      "E sit": {
+        "px": 884,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 10,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.032,
+        "west_east": 17.1611,
+        "top_bottom": -3.5049,
+        "isolated": 0.0079,
+        "checker": 0.0,
+        "height_px": 38
+      },
+      "E cheer": {
+        "px": 997,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0652,
+        "west_east": 10.4338,
+        "top_bottom": 0.4363,
+        "isolated": 0.0175,
+        "checker": 0.0,
+        "height_px": 45
+      },
+      "W ready": {
+        "px": 1052,
+        "colours": 38,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 10,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.018,
+        "west_east": 0.7862,
+        "top_bottom": 2.837,
+        "isolated": 0.0158,
+        "checker": 0.0,
+        "height_px": 50
+      },
+      "W strike": {
+        "px": 1118,
+        "colours": 40,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 10,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0109,
+        "west_east": 1.9863,
+        "top_bottom": 2.2527,
+        "isolated": 0.0086,
+        "checker": 0.0,
+        "height_px": 50
+      }
+    },
+    "notes": [
+      "Compared side by side with Eastward 05 at the same height: John (jacket in 3 fold bands, one big pack block with a lit top edge), the woman in teal and the woman in the purple cardigan (sleeves and hem rows).",
+      "Works: cat-eared hood and lit visor read at 2 px day or night; long legs give a clear stride; the box never blocks the perch.",
+      "Night: asphalt is dark; the yoke, strips, knee pads, visor and box carry the read. Keep Pendle's coat lighter than hers (cast clash).",
+      "Open: the bumps edge towards animal ears; they stay square-topped (antennae), never pointed."
+    ]
+  }
+}

@@ -1,0 +1,191 @@
+{
+ "id": "pebbling",
+ "cell": [
+  16,
+  16
+ ],
+ "foot": [
+  8,
+  14
+ ],
+ "perch_cell": [
+  12,
+  12
+ ],
+ "perch_foot": [
+  6,
+  11
+ ],
+ "views": {
+  "S-idle": {
+   "iou": 0.97,
+   "families_1x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 100,
+    "colours": 17,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 6,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.0312,
+    "west_east": 12.6039,
+    "top_bottom": 21.4007,
+    "isolated": 0.0147,
+    "checker": 0.0
+   }
+  },
+  "E-idle": {
+   "iou": 0.9556,
+   "families_1x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 90,
+    "colours": 18,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 6,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.0333,
+    "west_east": 3.6345,
+    "top_bottom": 20.0957,
+    "isolated": 0.0167,
+    "checker": 0.0
+   }
+  },
+  "W-idle": {
+   "iou": 0.9444,
+   "families_1x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 90,
+    "colours": 19,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 6,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.0333,
+    "west_east": 17.9495,
+    "top_bottom": 19.6388,
+    "isolated": 0.0167,
+    "checker": 0.0
+   }
+  },
+  "E-perch": {
+   "iou": 0.8696,
+   "families_1x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 46,
+    "colours": 16,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 6,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.15,
+    "west_east": 0.0,
+    "top_bottom": 0.0,
+    "isolated": 0.0,
+    "checker": 0.0
+   }
+  },
+  "W-perch": {
+   "iou": 0.8444,
+   "families_1x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "grass",
+    "leaf",
+    "slate",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 45,
+    "colours": 15,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 6,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.15,
+    "west_east": 0.0,
+    "top_bottom": 0.0,
+    "isolated": 0.0,
+    "checker": 0.0
+   }
+  }
+ },
+ "simplified": [
+  "Eyes: the 3 x 3 ink eye with a 2 px snow glint is a 1 x 2 ink eye at 1x (no glint) inside the brass rims.",
+  "Glasses: rims are a brass top row and side pixels with a brass-2 bridge (S) or temple (E, W); the snow glass shows only on the perch, as a 1 x 2 lens edge in front of the eye, which carries the snow family there.",
+  "Top-plane mineral clusters and the slate-0 mouth are dropped; the muzzle is a 2 x 2 snow patch in two tones.",
+  "The leaf stem is 1 px wide (2 tall on the perch)."
+ ],
+ "notes": [
+  "Perch W minus E reads 0.0: style_lint only averages rows with at least 8 inside pixels and the 8 px perch has none. Light is still drawn from the upper left (lit top plane and west face).",
+  "Families compared without ink; a colour two ramps share goes to the family the design names."
+ ]
+}

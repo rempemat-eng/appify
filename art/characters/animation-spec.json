@@ -43,7 +43,13 @@
       "w": 28,
       "h": 30,
       "anchor": [14, 27],
-      "note": "Puffcap, Puddle and Mote (15 to 18 px), with room for a hop"
+      "note": "Puddle and Mote (15 to 18 px), with room for a hop"
+    },
+    "folkSmallTall": {
+      "w": 28,
+      "h": 36,
+      "anchor": [14, 33],
+      "note": "Puffcap: the familiar perches on her flat cap top (folk batch 1)"
     },
     "folkLarge": {
       "w": 40,
@@ -62,6 +68,12 @@
       "h": 30,
       "anchor": [10, 27],
       "note": "adults 24 to 26 px; children fit too"
+    },
+    "familiarPerch": {
+      "w": 12,
+      "h": 12,
+      "anchor": [6, 11],
+      "note": "The familiar drawn small for the shoulder in fights: about 8 world px (16 art px at 2x). Used until Matt decides the perch size (folk-batch-1.md, decision 1; Claude A ruling, 21 Oct 14:40)."
     }
   },
   "sheet": {
@@ -78,7 +90,7 @@
       "hand anchor (effects spawn)",
       "perch anchor (familiar on the shoulder, fight set only)"
     ],
-    "shadow": "Not baked in. The renderer derives each frame's cast shadow from its silhouette (thrown down and to the right, house-style 6) and steps the ground two tones down under it, as the ground's own shadows do, plus the contact line. Open question for Claude A: a 1-bit shadow mask per frame in the sheet, or computed once at load."
+    "shadow": "Not stored in the sheet. Computed at load from each frame's silhouette by the same rule as the world's cast shadows: thrown east and down, the ground stepped two ramp tones, and a contact line (Claude A ruling, 21 Oct 14:40)."
   },
   "memoryBudgetBytes": {
     "worldScreen": 4194304,
@@ -136,7 +148,8 @@
     "hop_3": "familiar hop, airborne",
     "hop_4": "familiar hop, landing",
     "curl_a": "familiar curled against the folk, asleep",
-    "curl_b": "curled, breath in"
+    "curl_b": "curled, breath in",
+    "bow": "a small bow to the other fighter, GOOD MATCH (fights.md 4.7)"
   },
   "kinds": {
     "folk": {
@@ -146,101 +159,250 @@
             "facings": ["S", "N", "E", "W"],
             "loop": true,
             "frames": [
-              { "pose": "idle_a", "ms": 900, "phase": "hold" },
-              { "pose": "idle_b", "ms": 700, "phase": "hold" }
+              {
+                "pose": "idle_a",
+                "ms": 900,
+                "phase": "hold"
+              },
+              {
+                "pose": "idle_b",
+                "ms": 700,
+                "phase": "hold"
+              }
             ],
-            "reduced": { "hold": 0 }
+            "reduced": {
+              "hold": 0
+            }
           },
           "blink": {
             "facings": ["S", "E", "W"],
             "overlay": "idle",
             "everyMs": [3000, 5000],
-            "frames": [{ "pose": "blink", "ms": 140, "phase": "act" }],
+            "frames": [
+              {
+                "pose": "blink",
+                "ms": 140,
+                "phase": "act"
+              }
+            ],
             "next": "idle",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           },
           "fidget": {
             "facings": ["S"],
             "everyMs": [10000, 15000],
             "frames": [
-              { "pose": "fidget_a", "ms": 220, "phase": "anticipate" },
-              { "pose": "fidget_b", "ms": 260, "phase": "act" },
-              { "pose": "fidget_c", "ms": 300, "phase": "act" },
-              { "pose": "fidget_d", "ms": 220, "phase": "settle" }
+              {
+                "pose": "fidget_a",
+                "ms": 220,
+                "phase": "anticipate"
+              },
+              {
+                "pose": "fidget_b",
+                "ms": 260,
+                "phase": "act"
+              },
+              {
+                "pose": "fidget_c",
+                "ms": 300,
+                "phase": "act"
+              },
+              {
+                "pose": "fidget_d",
+                "ms": 220,
+                "phase": "settle"
+              }
             ],
             "next": "idle",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           },
           "walk_start": {
             "facings": ["S", "N", "E", "W"],
-            "frames": [{ "pose": "walk_1", "ms": 80, "phase": "anticipate", "dy": 1 }],
+            "frames": [
+              {
+                "pose": "walk_1",
+                "ms": 80,
+                "phase": "anticipate",
+                "dy": 1
+              }
+            ],
             "next": "walk",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           },
           "walk": {
             "facings": ["S", "N", "E", "W"],
             "loop": true,
             "speedSynced": true,
             "frames": [
-              { "pose": "walk_1", "ms": 100, "phase": "act" },
-              { "pose": "walk_2", "ms": 100, "phase": "act", "effect": "step_dust" },
-              { "pose": "walk_3", "ms": 100, "phase": "act" },
-              { "pose": "walk_4", "ms": 100, "phase": "act" },
-              { "pose": "walk_5", "ms": 100, "phase": "act", "effect": "step_dust" },
-              { "pose": "walk_6", "ms": 100, "phase": "act" }
+              {
+                "pose": "walk_1",
+                "ms": 100,
+                "phase": "act"
+              },
+              {
+                "pose": "walk_2",
+                "ms": 100,
+                "phase": "act",
+                "effect": "step_dust"
+              },
+              {
+                "pose": "walk_3",
+                "ms": 100,
+                "phase": "act"
+              },
+              {
+                "pose": "walk_4",
+                "ms": 100,
+                "phase": "act"
+              },
+              {
+                "pose": "walk_5",
+                "ms": 100,
+                "phase": "act",
+                "effect": "step_dust"
+              },
+              {
+                "pose": "walk_6",
+                "ms": 100,
+                "phase": "act"
+              }
             ],
-            "reduced": { "hold": 0, "pose": "idle_a" }
+            "reduced": {
+              "hold": 0,
+              "pose": "idle_a"
+            }
           },
           "walk_stop": {
             "facings": ["S", "N", "E", "W"],
             "frames": [
-              { "pose": "walk_4", "ms": 70, "phase": "settle", "dy": 1, "effect": "stop_dust" },
-              { "pose": "idle_a", "ms": 90, "phase": "settle" }
+              {
+                "pose": "walk_4",
+                "ms": 70,
+                "phase": "settle",
+                "dy": 1,
+                "effect": "stop_dust"
+              },
+              {
+                "pose": "idle_a",
+                "ms": 90,
+                "phase": "settle"
+              }
             ],
             "next": "idle",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           },
           "react": {
             "facings": ["S"],
             "frames": [
-              { "pose": "react_a", "ms": 110, "phase": "anticipate" },
-              { "pose": "react_b", "ms": 90, "phase": "act", "dy": -4 },
-              { "pose": "react_c", "ms": 160, "phase": "act", "dy": -6, "effect": "heart" },
-              { "pose": "react_d", "ms": 180, "phase": "settle" }
+              {
+                "pose": "react_a",
+                "ms": 110,
+                "phase": "anticipate"
+              },
+              {
+                "pose": "react_b",
+                "ms": 90,
+                "phase": "act",
+                "dy": -4
+              },
+              {
+                "pose": "react_c",
+                "ms": 160,
+                "phase": "act",
+                "dy": -6,
+                "effect": "heart"
+              },
+              {
+                "pose": "react_d",
+                "ms": 180,
+                "phase": "settle"
+              }
             ],
             "next": "idle",
-            "reduced": { "hold": 2, "ms": 400, "effect": "heart" }
+            "reduced": {
+              "hold": 2,
+              "ms": 400,
+              "effect": "heart"
+            }
           },
           "nap_down": {
             "facings": ["S"],
             "frames": [
-              { "pose": "nap_down_a", "ms": 180, "phase": "anticipate" },
-              { "pose": "nap_down_b", "ms": 140, "phase": "act" },
-              { "pose": "nap_down_c", "ms": 160, "phase": "settle" }
+              {
+                "pose": "nap_down_a",
+                "ms": 180,
+                "phase": "anticipate"
+              },
+              {
+                "pose": "nap_down_b",
+                "ms": 140,
+                "phase": "act"
+              },
+              {
+                "pose": "nap_down_c",
+                "ms": 160,
+                "phase": "settle"
+              }
             ],
             "next": "nap",
             "maxTotalMs": 500,
             "maxTotalReason": "garden-world's act('nap') calls onNap 500 ms after the tap; the sit-down must be done by then",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           },
           "nap": {
             "facings": ["S"],
             "loop": true,
             "frames": [
-              { "pose": "nap_a", "ms": 1400, "phase": "hold", "effect": "nap_z" },
-              { "pose": "nap_b", "ms": 1400, "phase": "hold" }
+              {
+                "pose": "nap_a",
+                "ms": 1400,
+                "phase": "hold",
+                "effect": "nap_z"
+              },
+              {
+                "pose": "nap_b",
+                "ms": 1400,
+                "phase": "hold"
+              }
             ],
-            "reduced": { "hold": 0, "effect": "nap_z" }
+            "reduced": {
+              "hold": 0,
+              "effect": "nap_z"
+            }
           },
           "nap_up": {
             "facings": ["S"],
             "frames": [
-              { "pose": "nap_up_a", "ms": 260, "phase": "anticipate" },
-              { "pose": "nap_up_b", "ms": 140, "phase": "act" },
-              { "pose": "nap_up_c", "ms": 300, "phase": "settle" }
+              {
+                "pose": "nap_up_a",
+                "ms": 260,
+                "phase": "anticipate"
+              },
+              {
+                "pose": "nap_up_b",
+                "ms": 140,
+                "phase": "act"
+              },
+              {
+                "pose": "nap_up_c",
+                "ms": 300,
+                "phase": "settle"
+              }
             ],
             "next": "idle",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           }
         },
         "fight": {
@@ -248,33 +410,73 @@
             "facings": ["E", "W"],
             "loop": true,
             "frames": [
-              { "pose": "ready_a", "ms": 520, "phase": "hold" },
-              { "pose": "ready_b", "ms": 480, "phase": "hold" }
+              {
+                "pose": "ready_a",
+                "ms": 520,
+                "phase": "hold"
+              },
+              {
+                "pose": "ready_b",
+                "ms": 480,
+                "phase": "hold"
+              }
             ],
-            "reduced": { "hold": 0 }
+            "reduced": {
+              "hold": 0
+            }
           },
           "attack": {
             "facings": ["E", "W"],
             "frames": [
-              { "pose": "windup", "ms": 100, "phase": "anticipate" },
-              { "pose": "strike_a", "ms": 60, "phase": "act", "dx": 4 },
-              { "pose": "strike_b", "ms": 200, "phase": "act", "dx": 8, "impact": true },
-              { "pose": "ready_a", "ms": 160, "phase": "settle", "dx": 2 }
+              {
+                "pose": "windup",
+                "ms": 100,
+                "phase": "anticipate"
+              },
+              {
+                "pose": "strike_a",
+                "ms": 60,
+                "phase": "act",
+                "dx": 4
+              },
+              {
+                "pose": "strike_b",
+                "ms": 200,
+                "phase": "act",
+                "dx": 8,
+                "impact": true
+              },
+              {
+                "pose": "ready_a",
+                "ms": 160,
+                "phase": "settle",
+                "dx": 2
+              }
             ],
             "next": "ready",
             "impactAtMs": 160,
             "impactReason": "game-battle.tsx resolves one impact every 200 ms after setAttack; the impact frame must be on screen before the hit lands",
             "reduced": {
               "stills": [
-                { "frame": 0, "ms": 160 },
-                { "frame": 2, "ms": 300 }
+                {
+                  "frame": 0,
+                  "ms": 160
+                },
+                {
+                  "frame": 2,
+                  "ms": 300
+                }
               ]
             }
           },
           "cast": {
             "facings": ["E", "W"],
             "frames": [
-              { "pose": "cast_a", "ms": 140, "phase": "anticipate" },
+              {
+                "pose": "cast_a",
+                "ms": 140,
+                "phase": "anticipate"
+              },
               {
                 "pose": "cast_b",
                 "ms": 260,
@@ -282,61 +484,207 @@
                 "impact": true,
                 "effect": "signature"
               },
-              { "pose": "ready_a", "ms": 160, "phase": "settle" }
+              {
+                "pose": "ready_a",
+                "ms": 160,
+                "phase": "settle"
+              }
             ],
             "next": "ready",
             "impactAtMs": 140,
             "reduced": {
               "stills": [
-                { "frame": 0, "ms": 140 },
-                { "frame": 1, "ms": 300 }
+                {
+                  "frame": 0,
+                  "ms": 140
+                },
+                {
+                  "frame": 1,
+                  "ms": 300
+                }
               ]
             }
           },
           "guard": {
             "facings": ["E", "W"],
             "frames": [
-              { "pose": "ready_a", "ms": 80, "phase": "anticipate", "dy": 1 },
-              { "pose": "guard", "ms": 360, "phase": "act", "effect": "braced" },
-              { "pose": "ready_a", "ms": 120, "phase": "settle" }
+              {
+                "pose": "ready_a",
+                "ms": 80,
+                "phase": "anticipate",
+                "dy": 1
+              },
+              {
+                "pose": "guard",
+                "ms": 360,
+                "phase": "act",
+                "effect": "braced"
+              },
+              {
+                "pose": "ready_a",
+                "ms": 120,
+                "phase": "settle"
+              }
             ],
             "next": "ready",
-            "reduced": { "stills": [{ "frame": 1, "ms": 300 }] }
+            "reduced": {
+              "stills": [
+                {
+                  "frame": 1,
+                  "ms": 300
+                }
+              ]
+            }
           },
           "hit": {
             "facings": ["E", "W"],
             "frames": [
-              { "pose": "hit", "ms": 220, "phase": "act", "dx": -4, "effect": "hit_spark" },
-              { "pose": "ready_a", "ms": 140, "phase": "settle", "dx": -1 }
+              {
+                "pose": "hit",
+                "ms": 220,
+                "phase": "act",
+                "dx": -4,
+                "effect": "hit_spark"
+              },
+              {
+                "pose": "ready_a",
+                "ms": 140,
+                "phase": "settle",
+                "dx": -1
+              }
             ],
             "next": "ready",
-            "reduced": { "stills": [{ "frame": 0, "ms": 300 }] }
+            "reduced": {
+              "stills": [
+                {
+                  "frame": 0,
+                  "ms": 300
+                }
+              ]
+            }
           },
           "faint": {
             "facings": ["E", "W"],
             "frames": [
-              { "pose": "hit", "ms": 180, "phase": "act", "dx": -2 },
-              { "pose": "sit", "ms": 0, "phase": "hold", "dy": 0 }
+              {
+                "pose": "hit",
+                "ms": 180,
+                "phase": "act",
+                "dx": -2
+              },
+              {
+                "pose": "sit",
+                "ms": 0,
+                "phase": "hold",
+                "dy": 0
+              }
             ],
-            "reduced": { "hold": 1 }
+            "reduced": {
+              "hold": 1
+            }
           },
           "victory": {
             "facings": ["E", "W"],
             "repeats": 2,
             "frames": [
-              { "pose": "ready_a", "ms": 120, "phase": "anticipate", "dy": 1 },
-              { "pose": "cheer_a", "ms": 160, "phase": "act", "dy": -3 },
-              { "pose": "cheer_b", "ms": 220, "phase": "act", "dy": -5 },
-              { "pose": "cheer_a", "ms": 160, "phase": "settle", "dy": -1 }
+              {
+                "pose": "ready_a",
+                "ms": 120,
+                "phase": "anticipate",
+                "dy": 1
+              },
+              {
+                "pose": "cheer_a",
+                "ms": 160,
+                "phase": "act",
+                "dy": -3
+              },
+              {
+                "pose": "cheer_b",
+                "ms": 220,
+                "phase": "act",
+                "dy": -5
+              },
+              {
+                "pose": "cheer_a",
+                "ms": 160,
+                "phase": "settle",
+                "dy": -1
+              }
             ],
             "next": "ready",
-            "reduced": { "hold": 2, "ms": 600 }
+            "reduced": {
+              "hold": 2,
+              "ms": 600
+            }
+          },
+          "still": {
+            "facings": ["E", "W"],
+            "frames": [
+              {
+                "pose": "ready_b",
+                "ms": 200,
+                "phase": "anticipate",
+                "dy": 1
+              },
+              {
+                "pose": "ready_a",
+                "ms": 300,
+                "phase": "act",
+                "effect": "stack_pip"
+              },
+              {
+                "pose": "ready_a",
+                "ms": 100,
+                "phase": "settle"
+              }
+            ],
+            "next": "ready",
+            "reduced": {
+              "stills": [
+                {
+                  "frame": 1,
+                  "ms": 300
+                }
+              ],
+              "effect": "stack_pip"
+            }
+          },
+          "bow": {
+            "facings": ["E", "W"],
+            "frames": [
+              {
+                "pose": "ready_a",
+                "ms": 120,
+                "phase": "anticipate",
+                "dy": 1
+              },
+              {
+                "pose": "bow",
+                "ms": 500,
+                "phase": "act"
+              },
+              {
+                "pose": "ready_a",
+                "ms": 200,
+                "phase": "settle"
+              }
+            ],
+            "next": "ready",
+            "reduced": {
+              "stills": [
+                {
+                  "frame": 1,
+                  "ms": 500
+                }
+              ]
+            }
           }
         }
       },
-      "framesPlanned": 75,
+      "framesPlanned": 77,
       "effectsPlanned": 14,
-      "budgetNote": "cast.md 5 planned about 110 body frames a folk; fights happen on the battle screen (fights.md, decided 21 Oct), so the world set needs no fight poses and the fight set needs only E and W: 51 world + 24 fight = 75. Effects: four signature cards at 3 to 4 frames each (fights.md 6)."
+      "budgetNote": "cast.md 5 planned about 110 body frames a folk; fights happen on the battle screen (fights.md, decided 21 Oct), so the world set needs no fight poses and the fight set needs only E and W: 51 world + 26 fight = 77 (fights.md's 12 a facing plus the bow). Effects: four signature cards at 3 to 4 frames each (fights.md 6)."
     },
     "familiar": {
       "sets": {
@@ -345,53 +693,128 @@
             "facings": ["S", "N", "E", "W"],
             "loop": true,
             "frames": [
-              { "pose": "idle_a", "ms": 1000, "phase": "hold" },
-              { "pose": "idle_b", "ms": 800, "phase": "hold" }
+              {
+                "pose": "idle_a",
+                "ms": 1000,
+                "phase": "hold"
+              },
+              {
+                "pose": "idle_b",
+                "ms": 800,
+                "phase": "hold"
+              }
             ],
-            "reduced": { "hold": 0 }
+            "reduced": {
+              "hold": 0
+            }
           },
           "walk_start": {
             "facings": ["S", "N", "E", "W"],
-            "frames": [{ "pose": "hop_1", "ms": 70, "phase": "anticipate" }],
+            "frames": [
+              {
+                "pose": "hop_1",
+                "ms": 70,
+                "phase": "anticipate"
+              }
+            ],
             "next": "walk",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           },
           "walk": {
             "facings": ["S", "N", "E", "W"],
             "loop": true,
             "speedSynced": true,
             "frames": [
-              { "pose": "hop_1", "ms": 100, "phase": "anticipate" },
-              { "pose": "hop_2", "ms": 100, "phase": "act", "dy": -2 },
-              { "pose": "hop_3", "ms": 100, "phase": "act", "dy": -4 },
-              { "pose": "hop_4", "ms": 100, "phase": "settle" }
+              {
+                "pose": "hop_1",
+                "ms": 100,
+                "phase": "anticipate"
+              },
+              {
+                "pose": "hop_2",
+                "ms": 100,
+                "phase": "act",
+                "dy": -2
+              },
+              {
+                "pose": "hop_3",
+                "ms": 100,
+                "phase": "act",
+                "dy": -4
+              },
+              {
+                "pose": "hop_4",
+                "ms": 100,
+                "phase": "settle"
+              }
             ],
-            "reduced": { "hold": 0, "pose": "idle_a" }
+            "reduced": {
+              "hold": 0,
+              "pose": "idle_a"
+            }
           },
           "walk_stop": {
             "facings": ["S", "N", "E", "W"],
-            "frames": [{ "pose": "hop_4", "ms": 90, "phase": "settle" }],
+            "frames": [
+              {
+                "pose": "hop_4",
+                "ms": 90,
+                "phase": "settle"
+              }
+            ],
             "next": "idle",
-            "reduced": { "skip": true }
+            "reduced": {
+              "skip": true
+            }
           },
           "react": {
             "facings": ["S"],
             "frames": [
-              { "pose": "react_a", "ms": 110, "phase": "anticipate" },
-              { "pose": "react_b", "ms": 200, "phase": "act", "dy": -4, "effect": "heart" },
-              { "pose": "react_c", "ms": 160, "phase": "settle" }
+              {
+                "pose": "react_a",
+                "ms": 110,
+                "phase": "anticipate"
+              },
+              {
+                "pose": "react_b",
+                "ms": 200,
+                "phase": "act",
+                "dy": -4,
+                "effect": "heart"
+              },
+              {
+                "pose": "react_c",
+                "ms": 160,
+                "phase": "settle"
+              }
             ],
             "next": "idle",
-            "reduced": { "hold": 1, "ms": 400, "effect": "heart" }
+            "reduced": {
+              "hold": 1,
+              "ms": 400,
+              "effect": "heart"
+            }
           },
           "nap": {
             "facings": ["S"],
             "loop": true,
             "frames": [
-              { "pose": "curl_a", "ms": 1600, "phase": "hold" },
-              { "pose": "curl_b", "ms": 1600, "phase": "hold" }
+              {
+                "pose": "curl_a",
+                "ms": 1600,
+                "phase": "hold"
+              },
+              {
+                "pose": "curl_b",
+                "ms": 1600,
+                "phase": "hold"
+              }
             ],
-            "reduced": { "hold": 0 }
+            "reduced": {
+              "hold": 0
+            }
           }
         },
         "fight": {
@@ -399,31 +822,79 @@
             "facings": ["E", "W"],
             "loop": true,
             "frames": [
-              { "pose": "perch_a", "ms": 600, "phase": "hold" },
-              { "pose": "perch_b", "ms": 600, "phase": "hold" }
+              {
+                "pose": "perch_a",
+                "ms": 600,
+                "phase": "hold"
+              },
+              {
+                "pose": "perch_b",
+                "ms": 600,
+                "phase": "hold"
+              }
             ],
-            "reduced": { "hold": 0 }
+            "reduced": {
+              "hold": 0
+            }
           },
           "cling": {
             "facings": ["E", "W"],
-            "frames": [{ "pose": "cling", "ms": 360, "phase": "act" }],
+            "frames": [
+              {
+                "pose": "cling",
+                "ms": 360,
+                "phase": "act"
+              }
+            ],
             "next": "perch",
-            "reduced": { "stills": [{ "frame": 0, "ms": 300 }] }
+            "reduced": {
+              "stills": [
+                {
+                  "frame": 0,
+                  "ms": 300
+                }
+              ]
+            }
           },
           "cheer": {
             "facings": ["E", "W"],
             "frames": [
-              { "pose": "perch_a", "ms": 100, "phase": "anticipate", "dy": 1 },
-              { "pose": "perch_cheer", "ms": 400, "phase": "act", "dy": -2 },
-              { "pose": "perch_a", "ms": 120, "phase": "settle" }
+              {
+                "pose": "perch_a",
+                "ms": 100,
+                "phase": "anticipate",
+                "dy": 1
+              },
+              {
+                "pose": "perch_cheer",
+                "ms": 400,
+                "phase": "act",
+                "dy": -2
+              },
+              {
+                "pose": "perch_a",
+                "ms": 120,
+                "phase": "settle"
+              }
             ],
             "next": "perch",
-            "reduced": { "stills": [{ "frame": 1, "ms": 400 }] }
+            "reduced": {
+              "stills": [
+                {
+                  "frame": 1,
+                  "ms": 400
+                }
+              ]
+            }
           },
           "special": {
             "facings": ["E", "W"],
             "frames": [
-              { "pose": "perch_cast_a", "ms": 200, "phase": "anticipate" },
+              {
+                "pose": "perch_cast_a",
+                "ms": 200,
+                "phase": "anticipate"
+              },
               {
                 "pose": "perch_cast_b",
                 "ms": 400,
@@ -431,10 +902,21 @@
                 "impact": true,
                 "effect": "special"
               },
-              { "pose": "perch_a", "ms": 160, "phase": "settle" }
+              {
+                "pose": "perch_a",
+                "ms": 160,
+                "phase": "settle"
+              }
             ],
             "next": "perch",
-            "reduced": { "stills": [{ "frame": 1, "ms": 400 }] }
+            "reduced": {
+              "stills": [
+                {
+                  "frame": 1,
+                  "ms": 400
+                }
+              ]
+            }
           }
         }
       },
@@ -444,10 +926,19 @@
         "lagMs": 250,
         "note": "A step behind (Eastward's John and Sam): it starts walking 250 ms after the folk and stops 14 world px behind, on the side away from the camera's view line."
       },
-      "growthStages": "The three growth stages are rig variants of the same poses (more leaves, a longer tail), never extra animation states. Only the current stage's sheet is loaded."
+      "growthStages": "The three growth stages are rig variants of the same poses (more leaves, a longer tail), never extra animation states. Only the current stage's sheet is loaded.",
+      "setCells": {
+        "world": "familiar",
+        "fight": "familiarPerch"
+      },
+      "perchNote": "In fights the familiar is a separate, smaller perch sprite on the folk's perch anchor (stored per frame in the folk's manifest), on the shoulder away from the foe."
     },
     "visitor": {
-      "inherit": [{ "kind": "familiar" }],
+      "inherit": [
+        {
+          "kind": "familiar"
+        }
+      ],
       "note": "A befriended visitor walking with you is drawn to the familiar's spec, so it can follow, nap and perch."
     },
     "resident": {
@@ -457,32 +948,72 @@
             "facings": ["S", "N", "E", "W"],
             "loop": true,
             "frames": [
-              { "pose": "idle_a", "ms": 1000, "phase": "hold" },
-              { "pose": "idle_b", "ms": 800, "phase": "hold" }
+              {
+                "pose": "idle_a",
+                "ms": 1000,
+                "phase": "hold"
+              },
+              {
+                "pose": "idle_b",
+                "ms": 800,
+                "phase": "hold"
+              }
             ],
-            "reduced": { "hold": 0 }
+            "reduced": {
+              "hold": 0
+            }
           },
           "walk": {
             "facings": ["S", "N", "E", "W"],
             "loop": true,
             "speedSynced": true,
             "frames": [
-              { "pose": "walk_1", "ms": 150, "phase": "act" },
-              { "pose": "walk_3", "ms": 150, "phase": "act" },
-              { "pose": "walk_4", "ms": 150, "phase": "act" },
-              { "pose": "walk_6", "ms": 150, "phase": "act" }
+              {
+                "pose": "walk_1",
+                "ms": 150,
+                "phase": "act"
+              },
+              {
+                "pose": "walk_3",
+                "ms": 150,
+                "phase": "act"
+              },
+              {
+                "pose": "walk_4",
+                "ms": 150,
+                "phase": "act"
+              },
+              {
+                "pose": "walk_6",
+                "ms": 150,
+                "phase": "act"
+              }
             ],
-            "reduced": { "hold": 0, "pose": "idle_a" }
+            "reduced": {
+              "hold": 0,
+              "pose": "idle_a"
+            }
           },
           "talk": {
             "facings": ["S"],
             "repeats": 2,
             "frames": [
-              { "pose": "talk_a", "ms": 300, "phase": "act" },
-              { "pose": "talk_b", "ms": 300, "phase": "act" }
+              {
+                "pose": "talk_a",
+                "ms": 300,
+                "phase": "act"
+              },
+              {
+                "pose": "talk_b",
+                "ms": 300,
+                "phase": "act"
+              }
             ],
             "next": "idle",
-            "reduced": { "hold": 0, "ms": 600 }
+            "reduced": {
+              "hold": 0,
+              "ms": 600
+            }
           }
         }
       },
@@ -490,8 +1021,17 @@
       "note": "Four walk frames a facing (today's residents.py draws two). Frame times are given at 40 px/s and stretch with the resident's own pace (speedSynced)."
     },
     "rival": {
-      "inherit": [{ "kind": "resident" }, { "kind": "folk", "set": "fight", "facings": ["W"] }],
-      "framesPlanned": 38,
+      "inherit": [
+        {
+          "kind": "resident"
+        },
+        {
+          "kind": "folk",
+          "set": "fight",
+          "facings": ["W"]
+        }
+      ],
+      "framesPlanned": 39,
       "note": "A rival is a resident with the folk fight set facing west only (fights.md: a quarter of a folk)."
     }
   },
@@ -588,6 +1128,33 @@
       "loop": false,
       "reduced": "static",
       "note": "One per family: SLEEP IT OFF, SECOND WIND, IN THE ZONE."
+    },
+    "stack_pip": {
+      "frames": 3,
+      "ms": [80, 100, 140],
+      "layer": "over",
+      "spawn": "head",
+      "loop": false,
+      "reduced": "static",
+      "note": "A still turn banks one point of the folk's stack (Aim, Dusk, Warmth, a sheep): the pip flies to the plate."
+    },
+    "doze_glyph": {
+      "frames": 3,
+      "ms": [200, 200, 400],
+      "layer": "over",
+      "spawn": "head",
+      "loop": false,
+      "reduced": "static",
+      "note": "Puffcap's Drowsy: the foe dozes through one action."
+    },
+    "bell_ring": {
+      "frames": 3,
+      "ms": [60, 80, 160],
+      "layer": "over",
+      "spawn": "hand",
+      "loop": false,
+      "reduced": "static",
+      "note": "Ashe's bell tolls at three heat."
     }
   },
   "machine": {
@@ -609,7 +1176,9 @@
       "WIN": "the fight ended in this fighter's favour",
       "FIGHT_EXIT": "the battle screen closed",
       "SCREEN_INACTIVE": "the screen lost focus, the app went to the background or the component unmounted",
-      "SCREEN_ACTIVE": "the screen is active again"
+      "SCREEN_ACTIVE": "the screen is active again",
+      "STILL_TURN": "a turn with no damaging card banks a stack (fights.md 4.2)",
+      "BOW": "the fight is over and both fighters bow (GOOD MATCH)"
     },
     "groups": {
       "world": [
@@ -638,7 +1207,9 @@
         "perch",
         "cling",
         "cheer",
-        "special"
+        "special",
+        "still",
+        "bow"
       ]
     },
     "initial": "idle",
@@ -649,7 +1220,11 @@
         "to": "walk",
         "note": "the game started a walk from a nap: no wake-up, so the feet never slide"
       },
-      { "from": "napping", "on": "NAP_END", "to": "nap_up" },
+      {
+        "from": "napping",
+        "on": "NAP_END",
+        "to": "nap_up"
+      },
       {
         "from": "napping",
         "on": ["REACT", "IDLE_BEAT", "ARRIVE", "NAP_START", "FACE"],
@@ -662,15 +1237,27 @@
         "to": "same",
         "note": "a new leg or a new target mid-walk keeps walking"
       },
-      { "from": "world", "on": "WALK_START", "to": "walk_start" },
+      {
+        "from": "world",
+        "on": "WALK_START",
+        "to": "walk_start"
+      },
       {
         "from": "moving",
         "on": "FACE",
         "to": "same",
         "note": "keeps the frame clock, changes the facing"
       },
-      { "from": "moving", "on": "ARRIVE", "to": "walk_stop" },
-      { "from": "moving", "on": "WALK_CANCEL", "to": "walk_stop" },
+      {
+        "from": "moving",
+        "on": "ARRIVE",
+        "to": "walk_stop"
+      },
+      {
+        "from": "moving",
+        "on": "WALK_CANCEL",
+        "to": "walk_stop"
+      },
       {
         "from": "moving",
         "on": ["NAP_START", "REACT", "IDLE_BEAT"],
@@ -683,20 +1270,95 @@
         "to": null,
         "note": "an arrival with no walk under way is stale"
       },
-      { "from": "world", "on": "FACE", "to": "same" },
-      { "from": "world", "on": "NAP_START", "to": "nap_down" },
-      { "from": "world", "on": "REACT", "to": "react" },
-      { "from": "world", "on": "IDLE_BEAT", "to": "fidget", "onlyFrom": ["idle"] },
-      { "from": "*", "on": "FIGHT_ENTER", "to": "ready" },
-      { "from": "fight", "on": "CARD_ATTACK", "to": "attack", "notFrom": ["faint"] },
-      { "from": "fight", "on": "CARD_CAST", "to": "cast", "notFrom": ["faint"] },
-      { "from": "fight", "on": "CARD_GUARD", "to": "guard", "notFrom": ["faint"] },
-      { "from": "fight", "on": "TAKE_HIT", "to": "hit", "notFrom": ["faint"] },
-      { "from": "fight", "on": "KNOCKED_OUT", "to": "faint", "notFrom": ["faint"] },
-      { "from": "fight", "on": "WIN", "to": "victory", "notFrom": ["faint"] },
-      { "from": "fight", "on": "FIGHT_EXIT", "to": "idle" },
-      { "from": "*", "on": "SCREEN_INACTIVE", "to": "paused" },
-      { "from": "*", "on": "SCREEN_ACTIVE", "to": "resumed" }
+      {
+        "from": "world",
+        "on": "FACE",
+        "to": "same"
+      },
+      {
+        "from": "world",
+        "on": "NAP_START",
+        "to": "nap_down"
+      },
+      {
+        "from": "world",
+        "on": "REACT",
+        "to": "react"
+      },
+      {
+        "from": "world",
+        "on": "IDLE_BEAT",
+        "to": "fidget",
+        "onlyFrom": ["idle"]
+      },
+      {
+        "from": "*",
+        "on": "FIGHT_ENTER",
+        "to": "ready"
+      },
+      {
+        "from": "fight",
+        "on": "CARD_ATTACK",
+        "to": "attack",
+        "notFrom": ["faint"]
+      },
+      {
+        "from": "fight",
+        "on": "CARD_CAST",
+        "to": "cast",
+        "notFrom": ["faint"]
+      },
+      {
+        "from": "fight",
+        "on": "CARD_GUARD",
+        "to": "guard",
+        "notFrom": ["faint"]
+      },
+      {
+        "from": "fight",
+        "on": "TAKE_HIT",
+        "to": "hit",
+        "notFrom": ["faint"]
+      },
+      {
+        "from": "fight",
+        "on": "STILL_TURN",
+        "to": "still",
+        "notFrom": ["faint"]
+      },
+      {
+        "from": "fight",
+        "on": "KNOCKED_OUT",
+        "to": "faint",
+        "notFrom": ["faint"]
+      },
+      {
+        "from": "fight",
+        "on": "WIN",
+        "to": "victory",
+        "notFrom": ["faint"]
+      },
+      {
+        "from": "fight",
+        "on": "BOW",
+        "to": "bow",
+        "note": "from sitting too: the loser stands for the bow"
+      },
+      {
+        "from": "fight",
+        "on": "FIGHT_EXIT",
+        "to": "idle"
+      },
+      {
+        "from": "*",
+        "on": "SCREEN_INACTIVE",
+        "to": "paused"
+      },
+      {
+        "from": "*",
+        "on": "SCREEN_ACTIVE",
+        "to": "resumed"
+      }
     ],
     "familiarMap": {
       "note": "The familiar receives the folk's events and maps them to its own states; walk events arrive lagMs later.",
@@ -715,7 +1377,9 @@
       "nap_up": "idle",
       "react": "react",
       "fidget": "idle",
-      "blink": "idle"
+      "blink": "idle",
+      "still": "perch",
+      "bow": "cheer"
     }
   },
   "cast": {
@@ -734,7 +1398,7 @@
         "name": "Puffcap",
         "night": 2,
         "heightWorld": 17,
-        "cell": "folkSmall",
+        "cell": "folkSmallTall",
         "home": "the valley",
         "firstSix": true
       },
@@ -813,7 +1477,9 @@
         "heightWorld": 22,
         "widthWorld": 30,
         "cell": "folkLarge",
-        "home": "the Tidebloom Isles"
+        "home": "the Tidebloom Isles",
+        "followBehindWorld": 22,
+        "followNote": "Tuff is 30 world px wide, so the familiar trails 22 px behind him instead of 14 (Claude A approved, 21 Oct 16:05)."
       },
       {
         "id": "nix",
@@ -875,5 +1541,62 @@
       "pagemoth",
       "lanternroot"
     ]
+  },
+  "fightBeats": {
+    "note": "Claude L's FightBeat names (lib/fight-content.ts, PR #195) mapped to this spec. The battle screen keys on these; the engine's timeline leads.",
+    "ready": {
+      "state": "ready"
+    },
+    "windup": {
+      "state": "attack",
+      "frame": 0
+    },
+    "strike": {
+      "state": "attack",
+      "frame": 1
+    },
+    "impact": {
+      "state": "attack",
+      "frame": 2
+    },
+    "cast": {
+      "state": "cast"
+    },
+    "guard": {
+      "state": "guard"
+    },
+    "hit": {
+      "state": "hit"
+    },
+    "heal": {
+      "state": "cast",
+      "effect": "signature"
+    },
+    "stack": {
+      "state": "still",
+      "effect": "stack_pip"
+    },
+    "special": {
+      "familiarState": "special",
+      "folkState": "ready"
+    },
+    "doze": {
+      "onFoe": true,
+      "effect": "doze_glyph"
+    },
+    "bell": {
+      "state": "cast",
+      "effect": "bell_ring",
+      "folk": "ashe"
+    },
+    "sitDown": {
+      "state": "faint"
+    },
+    "cheer": {
+      "state": "victory"
+    },
+    "bow": {
+      "state": "bow"
+    }
   }
 }

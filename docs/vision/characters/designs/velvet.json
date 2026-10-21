@@ -1,0 +1,605 @@
+{
+  "id": "velvet",
+  "name": "Velvet",
+  "height_art_px": 46,
+  "cell": [
+    64,
+    72
+  ],
+  "anchor": [
+    32,
+    66
+  ],
+  "question": "How the wings work as a cloak and where the shuttered lamp lives",
+  "options": [
+    {
+      "label": "A",
+      "name": "Hooded wing-cloak, lamp held low",
+      "question": "Wings folded round her into a hooded cloak with the plumes out of the hood; the shuttered lamp is held low in both paws where the wings part.",
+      "parts": [
+        "feet: iron, layer 1, change S/E/W, attach foot (walk swings them under the hem)",
+        "plume far: plaster_cool, layer 6, E/W only (over the hood crown), attach head",
+        "cloak (folded wings): dusk + dusk_warm margin, layer 3, S/E/W, attach chest; hem sways in walk, wraps her in nap",
+        "cloak parting/lining: dusk_cool, layer 4, S/E/W, attach chest (opens wider for cast)",
+        "hood: dusk, layer 5, S/E/W, attach head (falls back for victory)",
+        "face: plaster, layer 6, S/E/W, attach head; eyes ink (blink/sleep anchor)",
+        "chin fluff: plaster, layer 7, S/E/W, attach chest (breath lifts it 1 px)",
+        "plume near: plaster, layer 8, S/E/W, attach head (droops for nap, perks for react)",
+        "paws: plaster, layer 9, S/E/W, attach hand (strike = lamp swung out, guard = lamp raised)",
+        "lamp: iron + brass + lamp glow, layer 10, S/E/W, attach hand (glow slit 3 px, 1 px when dimmed)"
+      ],
+      "palette": [
+        "dusk",
+        "plaster",
+        "iron",
+        "brass",
+        "lamp"
+      ],
+      "pose": "Still and hushed, lamp carried low like a candle at a bedside; she never hurries.",
+      "notes": [
+        "Works: the calmest read, a dark bell with two pale plumes; the lamp glints low where the wings part.",
+        "Risk: closest to a generic hooded mage; the arms live inside the cloak so walk swing is only paws and hem.",
+        "Compared with Eastward's John (eastward-02, scaled to 46 px): 4 tones a material, cloth in fold bands, dark gaps at joints."
+      ],
+      "views": {
+        "S idle": {
+          "px": 1088,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0519,
+          "west_east": 8.5416,
+          "top_bottom": 18.1462,
+          "isolated": 0.0073,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "E idle": {
+          "px": 995,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0078,
+          "double": 0.0775,
+          "west_east": 0.6481,
+          "top_bottom": 17.8792,
+          "isolated": 0.0069,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "W idle": {
+          "px": 995,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0078,
+          "double": 0.0775,
+          "west_east": 10.7982,
+          "top_bottom": 16.8799,
+          "isolated": 0.0058,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "S fidget": {
+          "px": 1071,
+          "colours": 24,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0379,
+          "west_east": 7.5438,
+          "top_bottom": 18.2972,
+          "isolated": 0.0053,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Eye-spot capelet, lamp on a crook",
+      "question": "Wings as a short scalloped capelet of fore and hind lobes with eye-spots; the shuttered lamp hangs from a tall crook pole at head height.",
+      "parts": [
+        "legs and feet: iron, layer 1, S/E/W, attach foot",
+        "far wing lobe: dusk_cool, layer 2, E/W only, attach back",
+        "shift (body): dusk_cool, layer 3, S/E/W, attach hip; folds swing in walk",
+        "hind lobes: dusk_warm, layer 4, S/E/W, attach back",
+        "fore lobes with eye-spots: dusk + plaster spot, layer 5, S/E/W, attach back (open wide for cast and cheer)",
+        "ruff: plaster, layer 6, S/E/W, attach chest",
+        "head: plaster, layer 7, S/E/W, attach head; eyes ink",
+        "plumes: dusk_warm, layer 8, S/E/W, attach head",
+        "crook pole and hook: timber, layer 9, S/E/W, attach hand (left paw: S right of her, E ahead, W at the hip with the lamp trailing; planted in walk, swung for strike)",
+        "lamp: iron + brass + lamp glow, layer 10, attach crook tip (sways 1 px after a step)",
+        "paws: plaster, layer 11, S/E/W, attach hand"
+      ],
+      "palette": [
+        "dusk",
+        "plaster",
+        "timber",
+        "iron",
+        "brass",
+        "lamp"
+      ],
+      "pose": "A night-watch keeper leaning on her crook, lamp hung high but shuttered, head round and sleepy.",
+      "notes": [
+        "Works: the most distinct silhouette (a crook and hung lamp beside her), and the eye-spots read at game scale.",
+        "Risk: the crook widens the cell (x 15 to 55), must be redrawn in every fight pose, and swaps sides between E and W; the head is a plain blob.",
+        "Compared with John and the station folk in eastward-02/05 at 46 px: prop outlines a tone darker than the hand holding them."
+      ],
+      "views": {
+        "S idle": {
+          "px": 1201,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0386,
+          "west_east": 9.9516,
+          "top_bottom": 8.9729,
+          "isolated": 0.0124,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "E idle": {
+          "px": 1101,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0502,
+          "west_east": 12.1869,
+          "top_bottom": 17.7355,
+          "isolated": 0.0104,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "W idle": {
+          "px": 1023,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1,
+          "west_east": 11.5431,
+          "top_bottom": 13.6145,
+          "isolated": 0.0223,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "S fidget": {
+          "px": 1310,
+          "colours": 37,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0598,
+          "west_east": 10.2904,
+          "top_bottom": 13.0745,
+          "isolated": 0.0093,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Ruff and swallowtail coat, lamp at the hip",
+      "question": "A high fur ruff collar, wings closed like a long belted coat ending in two luna-moth tails; the shuttered lamp hangs at the hip on a short chain.",
+      "parts": [
+        "feet: iron, layer 1, S/E/W, attach foot",
+        "swallowtails: dusk_warm, layer 2, S/E/W, attach hip (trail and swing in walk)",
+        "coat (closed wings): dusk with dusk_warm chevron margins, layer 3, S/E/W, attach chest",
+        "belt: brass, layer 4, S/E/W, attach hip",
+        "collar back: snow_cool, layer 5, S/E/W, attach chest",
+        "plumes: plaster, layer 6, S/E/W, attach head",
+        "head: plaster, layer 7, S/E/W, attach head; eyes ink",
+        "ruff front: snow, layer 8, S/E/W, attach chest (puffs on breath); the chin throws a tone-1 shadow on it",
+        "lamp and chain: iron + brass + lamp glow, layer 9, S/E/W, attach hip (lifted to hand for cast)",
+        "paws: plaster, layer 10, S/E/W, attach hand"
+      ],
+      "palette": [
+        "dusk",
+        "plaster",
+        "snow",
+        "iron",
+        "brass",
+        "lamp"
+      ],
+      "pose": "Upright and gentle, a lamplighter off duty: paw resting on the lamp at her hip, chin sunk in the ruff.",
+      "notes": [
+        "Works: the ruff makes her the softest, most moth-like shape; the tails give a unique hem in walk.",
+        "Risk: snow ruff against plaster face needs the seam and chin shadow to stay apart; the hip lamp is small at game scale.",
+        "Compared with eastward-02's John at 46 px: our ruff tufts are 2 to 3 px clumps like his hair, no single-pixel noise."
+      ],
+      "views": {
+        "S idle": {
+          "px": 999,
+          "colours": 37,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0403,
+          "west_east": 3.3437,
+          "top_bottom": 28.2558,
+          "isolated": 0.0106,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "E idle": {
+          "px": 880,
+          "colours": 40,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0143,
+          "double": 0.0857,
+          "west_east": 10.9369,
+          "top_bottom": 31.227,
+          "isolated": 0.0135,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "W idle": {
+          "px": 880,
+          "colours": 39,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0143,
+          "double": 0.0786,
+          "west_east": 0.5377,
+          "top_bottom": 32.1822,
+          "isolated": 0.0149,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        },
+        "S fidget": {
+          "px": 955,
+          "colours": 37,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0414,
+          "west_east": 5.6678,
+          "top_bottom": 32.675,
+          "isolated": 0.0111,
+          "checker": 0.0,
+          "pass": true,
+          "misses": []
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "C",
+    "name": "Ruff and swallowtail coat, lamp at the right hip",
+    "grafts": [
+      "A: the closed-wing wrap for the nap (one bell silhouette)",
+      "B: faint wing eye-spots, only low on the coat tails"
+    ],
+    "parts": [
+      "feet: iron, layer 1, anchor foot, S/E/W (sit: thrust forward)",
+      "back swallowtail with faint eye-spot: dusk_warm deep + plaster_cool eye, layer 2, anchor hip, S/E/W (flares 2 px in hit and cheer)",
+      "lamp on her right hip (far side in W): iron + brass, lamp glow 2 px tone 2 at most, layer 3 in W (behind the coat), layer 9 in S/E; anchor hip; to the hand only for cast and the fidget",
+      "back wing flare: dusk_warm deep, layer 4, anchor back, E/W only (cast, cheer)",
+      "far arm-sleeve: dusk deep + plaster paw, layer 5, anchor hand, E/W (cheer)",
+      "coat (closed forewings): dusk, tones 1 to 3 lead, chevron margin dusk_warm, brass belt, front swallowtail; layer 6, anchor chest/hip, S/E/W",
+      "collar back: snow_cool deep, layer 7, anchor chest, S/E/W",
+      "familiar perch: on the collar shelf, shoulder away from the foe; layer 7.5 (behind the head)",
+      "far antenna: plaster_cool, layer 8, anchor head, E/W",
+      "head: plaster, brow, big ink eyes, muzzle step, cheek tufts; layer 8, anchor head (eyes anchor for blink/sleep), S/E/W",
+      "near antennae: plaster, combed and swept back, layer 9, anchor head, S/E/W (laid back in nap, flung back in hit)",
+      "ruff front: snow, downward fur strokes, chin shadow tone 2 in every facing, layer 10, anchor chest, S/E/W",
+      "front wing flare: dusk_warm deep, layer 11, anchor chest, E/W (strike: the wing buffet at full reach)",
+      "near arm-sleeve and paw: dusk deep + plaster, layer 12, anchor hand, S/E/W"
+    ],
+    "palette": [
+      "dusk",
+      "snow",
+      "plaster",
+      "iron",
+      "brass",
+      "lamp (glow, 2 px sliver at most)",
+      "grass (stand-in familiar only)"
+    ],
+    "pose": "Upright and hushed, chin sunk in her snow ruff, a paw on the shuttered lamp at her hip.",
+    "perch_anchor": {
+      "E ready": [
+        21,
+        39
+      ],
+      "E strike": [
+        22,
+        39
+      ],
+      "E cast": [
+        20,
+        38
+      ],
+      "E hit": [
+        18,
+        39
+      ],
+      "E sit": [
+        20,
+        45
+      ],
+      "E cheer": [
+        20,
+        37
+      ],
+      "W ready": [
+        43,
+        39
+      ],
+      "W strike": [
+        42,
+        39
+      ]
+    },
+    "views": {
+      "S idle": {
+        "px": 1030,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0925,
+        "west_east": 4.7336,
+        "top_bottom": 33.9528,
+        "isolated": 0.0163,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      },
+      "E idle": {
+        "px": 869,
+        "colours": 40,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1197,
+        "west_east": 10.7627,
+        "top_bottom": 32.6469,
+        "isolated": 0.0234,
+        "checker": 0.0,
+        "pass": true,
+        "misses": [
+          "outline-double"
+        ]
+      },
+      "W idle": {
+        "px": 911,
+        "colours": 35,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.069,
+        "west_east": 1.9732,
+        "top_bottom": 29.3041,
+        "isolated": 0.0196,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      },
+      "S fidget": {
+        "px": 968,
+        "colours": 38,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1287,
+        "west_east": 5.7613,
+        "top_bottom": 33.094,
+        "isolated": 0.0125,
+        "checker": 0.0,
+        "pass": true,
+        "misses": [
+          "outline-double"
+        ]
+      },
+      "nap S": {
+        "px": 1021,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0886,
+        "west_east": 13.4863,
+        "top_bottom": 24.2715,
+        "isolated": 0.0046,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      },
+      "E ready": {
+        "px": 1104,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1176,
+        "west_east": 5.1021,
+        "top_bottom": 21.2873,
+        "isolated": 0.02,
+        "checker": 0.0,
+        "pass": true,
+        "misses": [
+          "outline-double"
+        ]
+      },
+      "E strike": {
+        "px": 1293,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1012,
+        "west_east": 7.727,
+        "top_bottom": 18.7227,
+        "isolated": 0.0169,
+        "checker": 0.0,
+        "pass": true,
+        "misses": [
+          "outline-double"
+        ]
+      },
+      "E cast": {
+        "px": 1335,
+        "colours": 45,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1236,
+        "west_east": 1.5077,
+        "top_bottom": 24.3091,
+        "isolated": 0.0147,
+        "checker": 0.0,
+        "pass": true,
+        "misses": [
+          "outline-double"
+        ]
+      },
+      "E hit": {
+        "px": 1094,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0886,
+        "west_east": 5.1298,
+        "top_bottom": 22.5801,
+        "isolated": 0.016,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      },
+      "E sit": {
+        "px": 1042,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.08,
+        "west_east": 1.3491,
+        "top_bottom": 25.3583,
+        "isolated": 0.0191,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      },
+      "E cheer": {
+        "px": 1447,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0739,
+        "west_east": 7.6376,
+        "top_bottom": 19.6075,
+        "isolated": 0.0165,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      },
+      "W ready": {
+        "px": 1146,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0573,
+        "west_east": 6.0387,
+        "top_bottom": 26.1936,
+        "isolated": 0.0172,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      },
+      "W strike": {
+        "px": 1334,
+        "colours": 43,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0526,
+        "west_east": 2.8418,
+        "top_bottom": 22.469,
+        "isolated": 0.012,
+        "checker": 0.0,
+        "pass": true,
+        "misses": []
+      }
+    },
+    "notes": [
+      "Grafts: A's closed-wing wrap for the nap (one bell); B's eye-spots, faint and only on the coat tails.",
+      "Deep dusk (tones 1 to 3) leads the coat so she reads apart from Puffcap's light dusk; the ruff is snow with downward 1 x 2 fur strokes.",
+      "Lamp fixed to her right hip: S screen-left, E near side, W far side behind the coat; it reaches the paw only for cast and the fidget.",
+      "Compared by eye at 46 px with John and Sam in eastward-02 (head a third of the height, 4 to 5 tones a material, dark joints, clumped hair)."
+    ],
+    "eastward_compared": [
+      "John (eastward-02)",
+      "Sam (eastward-02)"
+    ]
+  }
+}

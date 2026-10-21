@@ -1,0 +1,538 @@
+{
+  "id": "tally",
+  "height_art_px": 40,
+  "cell": [
+    64,
+    72
+  ],
+  "foot": [
+    32,
+    66
+  ],
+  "question": "Lamb and cardigan: how the knit reads against natural fleece, and how she carries the tally stick and bell.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Crook-staff drover: fitted berry knit, fleece under the hem, bell on the crook",
+      "question": "The tally stick is a tall notched crook-staff; the fold bell hangs on its hook.",
+      "parts": [
+        "staff (timber, brass bell on berry cord): layer 0 in E (far hoof), 5 in S/W; hand; swings in walk, raised in cheer, a guard bar in fight",
+        "legs x2 (plaster, timber hooves): layer 1; hip; 6-frame swing, tuck in hop and nap",
+        "fleece hem (snow curls): layer 2; hip; bobs 1 px a step",
+        "cardigan torso (berry knit, rib hem, brass buttons): layer 3; hip; breath 1 px",
+        "sleeves x2 (berry, timber hooves): far 1 tone back, layer 2/4; chest; swing, wind-up, cast",
+        "head (plaster face, ears, snow crown): layer 6; chest; tilts in fidget, ears droop in nap",
+        "ears x2 (plaster, berry inner): layer 5; head; flop on hop and hit"
+      ],
+      "palette": [
+        "snow",
+        "plaster",
+        "berry",
+        "timber",
+        "brass"
+      ],
+      "pose": "Stands square by her staff like a shepherd on watch, chin up, already counting the dusk.",
+      "notes": [
+        "Works: the tall crook gives the cast its only vertical prop line, so she reads at 2 px even beside Tam and Puffcap.",
+        "Knit vs fleece: knit rows of 2 px dashes in berry, curls in snow at the crown, chest V and under the hem.",
+        "Risk: the staff doubles the cell width in fights and walk frames; E holds it behind, W at her back.",
+        "Compared with Eastward 05 (curly-haired woman, Sam): curls as 4-6 px lobes with lit caps, 3 tones a lobe."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 882,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0854,
+          "west_east": 20.7407,
+          "top_bottom": 21.2262,
+          "isolated": 0.019,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 681,
+          "colours": 29,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9859,
+          "flat_ink": 0.0,
+          "double": 0.0845,
+          "west_east": 22.7953,
+          "top_bottom": 18.8951,
+          "isolated": 0.0408,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 671,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.9921,
+          "flat_ink": 0.0,
+          "double": 0.0472,
+          "west_east": 22.0868,
+          "top_bottom": 16.7673,
+          "isolated": 0.0294,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 714,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0606,
+          "west_east": 16.3461,
+          "top_bottom": 14.0388,
+          "isolated": 0.0206,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Collar-bell puffball: black-faced lamb, cropped sky knit, round fleece belly",
+      "question": "A short tally stick tucked in a strap at her hip; the bell on a collar ribbon at her throat.",
+      "parts": [
+        "legs x2 (slate, thin, slate hooves): layer 1; hip; quick 6-frame trot, tucked in nap",
+        "fleece belly (snow curls, timber strap, brass buckle): layer 2; hip; squash 1 px on hop",
+        "tally stick (timber): layer 1 in E, 3 in S/W; hip strap; jiggles on walk, drawn as a blade in strike",
+        "bolero (sky knit, rib edge): layer 3; chest; breath",
+        "sleeves x2 (sky, slate hooves): layer 2/4; chest; count, wind-up, guard",
+        "bell (brass, sky ribbon): layer 5; chest; swings a step behind the body, rings in fidget and cast",
+        "head (slate face, pale lower eye rims, slate ears, snow crown): layer 6; chest"
+      ],
+      "palette": [
+        "snow",
+        "slate",
+        "sky",
+        "timber",
+        "brass"
+      ],
+      "pose": "A round, busy little lamb, hooves together, ready to trot off after a stray.",
+      "notes": [
+        "Works: the black face and legs against a white puffball read in two values at any size, and nobody else is round.",
+        "Knit vs fleece: the knit is only a short sky bolero, so most of the body is fleece; the two meet in one clear line.",
+        "Risk: on a black face the eyes need a pale lower rim and glint to read; the stick at the hip is small and hides in E.",
+        "Compared with Eastward 05: the curly-haired woman's hair mass, here scaled to the whole belly."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 708,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1017,
+          "west_east": 8.6322,
+          "top_bottom": 9.266,
+          "isolated": 0.0119,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 520,
+          "colours": 32,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.978,
+          "flat_ink": 0.0,
+          "double": 0.1099,
+          "west_east": 11.2949,
+          "top_bottom": 11.3627,
+          "isolated": 0.028,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 531,
+          "colours": 33,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1053,
+          "west_east": 7.0792,
+          "top_bottom": 18.0885,
+          "isolated": 0.0183,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 717,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.093,
+          "west_east": 9.9367,
+          "top_bottom": 10.6718,
+          "isolated": 0.0102,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Big-cardigan clerk: oversized clay knit to the knees, stick behind the ear",
+      "question": "The tally stick rides behind her ear like a pencil; the brass fold bell hangs on a cord from her pocket.",
+      "parts": [
+        "legs x2 (plaster stubs, timber hooves): layer 1; hip; short steps, the hem hides most of the swing",
+        "cardigan coat (clay knit, brass buttons, patch pockets): layer 2; hip; the hem sways 1 px after each step",
+        "bell (brass, on a timber cord from the pocket): layer 3; hip; swings and settles a frame late",
+        "sleeves x2 (clay, rolled rib cuffs, timber hooves): layer 2/4; chest; flap in cheer and cast",
+        "tally stick (timber): behind the ear, layer 5 (W), 0 (E); head; comes to the hoof in fidget and cast",
+        "head (plaster face, ears, snow crown): layer 6; chest"
+      ],
+      "palette": [
+        "snow",
+        "plaster",
+        "clay",
+        "timber",
+        "brass"
+      ],
+      "pose": "Swamped in a hand-me-down cardigan, sleeves rolled, a fussy little clerk of the flock.",
+      "notes": [
+        "Works: the A-line coat makes a triangle no other folk has, and the big brass buttons and pockets read at 2 px.",
+        "Knit vs fleece: a lot of knit, so the knit rows carry the material; fleece shows at the crown and the chest.",
+        "Risk: legs vanish under the hem, so the walk leans on the hem sway; clay knit must stay apart from Bramble's fox-clay fur.",
+        "Compared with Eastward 05: the woman in the purple cardigan (buttons, a placket line and a hem row at this height)."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 849,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0597,
+          "west_east": 10.1303,
+          "top_bottom": 23.1656,
+          "isolated": 0.014,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 589,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.049,
+          "west_east": 11.9529,
+          "top_bottom": 27.6151,
+          "isolated": 0.0287,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 596,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0476,
+          "west_east": 14.6548,
+          "top_bottom": 22.6595,
+          "isolated": 0.0143,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 758,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0738,
+          "west_east": 10.9027,
+          "top_bottom": 28.7751,
+          "isolated": 0.0173,
+          "checker": 0.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "B",
+    "name": "Collar-bell puffball (final): black-faced lamb, round berry cardigan, stick behind the ear",
+    "grafts": [
+      "From C: the tally stick tucked behind her left ear like a pencil, anchored to the head in every facing; it comes to the hoof only for the fidget and the cast.",
+      "From C: a real cardigan, round over the fleece, to mid-thigh, open down the front with a button band (three brass buttons) and a ribbed hem.",
+      "Cast-wide: the knit moves from sky (Bramble's) to berry, drawn as rib columns.",
+      "Eyes on the black face: ink 3 x 2 (2 x 2 in profile), a 2 px glint, a pale lower lid, a berry blush.",
+      "Kept from B: the collar bell at her throat, the round fleece silhouette, the thin slate legs."
+    ],
+    "parts": [
+      "familiar perch: back shoulder (E: x smaller, W: x larger), behind the head; layer 0; chest",
+      "far leg / far sleeve (slate / berry, a tone back): layer 1; hip / chest; all facings",
+      "near leg (slate, thin, slate hoof): layer 2; hip; 6-frame trot, tucked in hop and nap, forward in sit",
+      "cardigan body (berry rib, open front, brass buttons, rib hem) over the fleece belly (snow curls): layer 3; hip; breath 1 px, squash 1 px on hop; the opening moves to the front edge in E/W",
+      "head (slate face, pale lower lids, berry blush, slate ears, snow crown): layer 4; chest; leads the strike (a headbutt), tilts in the fidget, ears lift on hit and cheer",
+      "tally stick (timber, notched): layer 3.5 behind the LEFT ear (S: screen right; E: behind the head; W: over the near ear); head; to the near hoof in fidget and cast",
+      "collar bell (brass on a timber strap): layer 5; chest; a free pendulum a frame behind the body, rings in fidget and cast",
+      "near sleeve (berry rib, slate hoof): layer 6; chest; swing, guard, reach, raise"
+    ],
+    "palette": [
+      "snow",
+      "slate",
+      "berry",
+      "timber",
+      "brass"
+    ],
+    "pose": "A round, busy little lamb, hooves at her sides, ready to trot off after a stray; she headbutts in a fight.",
+    "perch_anchor": {
+      "E ready": [
+        27,
+        45
+      ],
+      "E strike": [
+        30,
+        45
+      ],
+      "E cast": [
+        27,
+        44
+      ],
+      "E hit": [
+        24,
+        44
+      ],
+      "E sit": [
+        27,
+        50
+      ],
+      "E cheer": [
+        27,
+        40
+      ],
+      "W ready": [
+        37,
+        45
+      ],
+      "W strike": [
+        34,
+        45
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 707,
+        "colours": 32,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0292,
+        "west_east": 12.1766,
+        "top_bottom": 18.915,
+        "isolated": 0.0105,
+        "checker": 0.0,
+        "height_px": 41
+      },
+      "E idle": {
+        "px": 532,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0606,
+        "west_east": 12.7322,
+        "top_bottom": 12.8008,
+        "isolated": 0.0162,
+        "checker": 0.0,
+        "height_px": 41
+      },
+      "W idle": {
+        "px": 537,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1089,
+        "west_east": 12.9655,
+        "top_bottom": 10.4001,
+        "isolated": 0.0321,
+        "checker": 0.0,
+        "height_px": 40
+      },
+      "S fidget": {
+        "px": 656,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0496,
+        "west_east": 8.7685,
+        "top_bottom": 20.1345,
+        "isolated": 0.0262,
+        "checker": 0.0,
+        "height_px": 39
+      },
+      "nap S": {
+        "px": 548,
+        "colours": 38,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0103,
+        "west_east": 7.1783,
+        "top_bottom": 24.1144,
+        "isolated": 0.0266,
+        "checker": 0.0,
+        "height_px": 20
+      },
+      "E ready": {
+        "px": 779,
+        "colours": 40,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0615,
+        "west_east": 8.2987,
+        "top_bottom": 10.9477,
+        "isolated": 0.02,
+        "checker": 0.0,
+        "height_px": 42
+      },
+      "E strike": {
+        "px": 796,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0333,
+        "west_east": 2.4087,
+        "top_bottom": 9.3578,
+        "isolated": 0.0139,
+        "checker": 0.0,
+        "height_px": 42
+      },
+      "E cast": {
+        "px": 804,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0467,
+        "west_east": 7.1693,
+        "top_bottom": 11.5236,
+        "isolated": 0.0183,
+        "checker": 0.0,
+        "height_px": 43
+      },
+      "E hit": {
+        "px": 701,
+        "colours": 38,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0331,
+        "west_east": 5.1751,
+        "top_bottom": 7.5118,
+        "isolated": 0.0121,
+        "checker": 0.0,
+        "height_px": 43
+      },
+      "E sit": {
+        "px": 751,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0565,
+        "west_east": 5.6515,
+        "top_bottom": 8.2985,
+        "isolated": 0.0175,
+        "checker": 0.0,
+        "height_px": 39
+      },
+      "E cheer": {
+        "px": 754,
+        "colours": 38,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0435,
+        "west_east": 3.5353,
+        "top_bottom": 10.1224,
+        "isolated": 0.0266,
+        "checker": 0.0,
+        "height_px": 41
+      },
+      "W ready": {
+        "px": 762,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0873,
+        "west_east": 10.0584,
+        "top_bottom": 10.2695,
+        "isolated": 0.022,
+        "checker": 0.0,
+        "height_px": 42
+      },
+      "W strike": {
+        "px": 793,
+        "colours": 42,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0672,
+        "west_east": 12.6148,
+        "top_bottom": 10.1965,
+        "isolated": 0.0379,
+        "checker": 0.0,
+        "height_px": 42
+      }
+    },
+    "notes": [
+      "Compared side by side with Eastward 05 at the same height: the curly-haired woman (curls as lobes with a lit cap and dark crescent) and the woman in the purple cardigan (placket, buttons, hem row).",
+      "Works: the black face and legs against a white crown and a round berry body read in two values; nobody else in the cast is round, and the stick on the head reads in every facing.",
+      "Strike is a headbutt (head leads, hooves back): sheep-like and keeps the stick out of the swing.",
+      "Open: whether the stick should also come to the hoof for strike, and the bell's ring effect frames."
+    ]
+  }
+}

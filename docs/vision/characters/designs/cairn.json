@@ -1,0 +1,542 @@
+{
+  "id": "cairn",
+  "height_art_px": 58,
+  "cell": [
+    80,
+    80
+  ],
+  "foot": [
+    40,
+    74
+  ],
+  "question": "How a standing stone becomes a body.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Menhir: one weathered slab is body and head, boulder hands and feet",
+      "question": "The standing stone stays one stone: the slab itself stands up, a face carved by weather in its top third and the circle's ring carved on its chest; the limbs are boulders that came with it.",
+      "parts": [
+        "familiar perch: the crown, on the moss cap (S/E/W the same anchor; the slab top is flat enough)",
+        "far foot / far fist (stone_cool / stone, a tone back): layer 0; hip / chest; E/W only",
+        "fern behind his LEFT ear (grass, two fronds): layer 1 in S and E (behind the slab), 4 in W (over the back of the head); head; sways a frame late on walk and hop",
+        "feet x2 (stone_cool boulders): layer 2; hip; 6-frame walk as a slow rock-and-shuffle, 1 px lift",
+        "slab (stone, lichen clusters, carved ring, cracks): layer 3; hip; breath 1 px, leans 1 px into the walk; bends only at the foot (hop is a 2 px rise and a dust puff)",
+        "face (brow ledge, glowflora eyes in ink sockets, nose ridge, crack mouth): painted on the slab; head; blink = glow off for 140 ms; looks by moving the glow in the socket",
+        "moss cap and drips (leaf lobes): layer 4; head; grows a tuft in the fidget",
+        "shoulder boulders x2 and fists x2 (stone siblings): layer 5; chest / hand; swing in walk, the fists raise to guard (Bedrock), the shoulder leads the special shoulder charge"
+      ],
+      "palette": [
+        "stone",
+        "leaf",
+        "grass",
+        "glowflora (glow: the eyes, 2 px each)"
+      ],
+      "pose": "Upright and patient as the stone he was, hands hanging, face kind; the fidget: a new moss tuft sprouts on his shoulder and he looks down at it, brows up, mouth a small o.",
+      "notes": [
+        "Works: the tallest, plainest silhouette in the cast, a tombstone with a fern, readable in two values at game scale; the slab face says \"standing stone\" before anything else.",
+        "Risk: one slab has no neck or waist, so walk and fight lean on the boulder limbs and 1 px leans; the face must stay in the top third or he reads as a sign post.",
+        "Compared with Eastward 05 (John, the heavy-set tallest figure, 3-4 tones a garment) and the mossy rocks of its world shots: lichen as 2-4 px clusters, a lit lip under every crack."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1608,
+          "colours": 32,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9825,
+          "flat_ink": 0.0,
+          "double": 0.0643,
+          "west_east": 7.5824,
+          "top_bottom": 3.3943,
+          "isolated": 0.0125,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1098,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0476,
+          "west_east": 8.104,
+          "top_bottom": 1.5434,
+          "isolated": 0.0105,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1108,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9797,
+          "flat_ink": 0.0,
+          "double": 0.0405,
+          "west_east": 12.3112,
+          "top_bottom": 6.0794,
+          "isolated": 0.0146,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1629,
+          "colours": 34,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9827,
+          "flat_ink": 0.0,
+          "double": 0.0751,
+          "west_east": 7.296,
+          "top_bottom": 1.6916,
+          "isolated": 0.0165,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Cairn stack: piled round stones under a wide capstone brim",
+      "question": "A woken cairn: each body part is a stone set on the one below (feet, hips, belly, chest, head), the capstone on top shades his eyes like a brim, the arms are three pebbles each.",
+      "parts": [
+        "familiar perch: on the capstone (a flat shelf, the best perch in the cast)",
+        "far foot and far arm pebbles (a tone back): layer 0; hip / chest; E/W only",
+        "fern behind his LEFT ear (grass): layer 1 under the capstone in S/E, 4 in W; head",
+        "feet x2 (flat stones): layer 2; hip; 6-frame walk as stepping stones",
+        "hip stone, belly stone, chest stone (stone siblings, moss in the joints): layers 3-5; hip / chest; each lags the one below by a frame in walk and hop (a gentle stack wobble), squash 1 px in breath",
+        "head stone (stone_warm, glowflora eyes under the brim shadow): layer 6; chest",
+        "capstone (stone_cool slab, moss cap, drip): layer 7; head; tilts 1 px in hit and cheer",
+        "arm pebbles x3 a side (the last one the fist): layer 6; chest / hand; a chain that swings, the fists close together in guard; the shoulder charge throws the chest stone first"
+      ],
+      "palette": [
+        "stone",
+        "leaf",
+        "grass",
+        "glowflora (glow: the eyes, 2 px each)"
+      ],
+      "pose": "Comfortable and heavy, belly stone forward, eyes glowing from under the brim; the fidget: he settles, every stone crunching a little lower, eyes shut, a pebble shaken loose.",
+      "notes": [
+        "Works: the capstone brim gives the cast a second hat shape (no hood, no nightcap) and a hard shadow over the eyes, so the glow reads; the stack shows \"built of a place\" at once.",
+        "Risk: many round parts make a lumpy outline; the stack wobble costs extra rig layers. Close to Tuff in spirit, so Tuff keeps hex columns and stays low and wide.",
+        "Compared with Eastward 05: the brim shadow on hats and the curly-haired woman's lobes (each stone a lobe with a lit cap and a dark crescent)."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1738,
+          "colours": 32,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9816,
+          "flat_ink": 0.0,
+          "double": 0.0829,
+          "west_east": 3.6212,
+          "top_bottom": -0.7727,
+          "isolated": 0.0158,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1185,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1139,
+          "west_east": 6.871,
+          "top_bottom": -2.6579,
+          "isolated": 0.0068,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1199,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9752,
+          "flat_ink": 0.0,
+          "double": 0.0807,
+          "west_east": 6.7896,
+          "top_bottom": 1.4935,
+          "isolated": 0.0087,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1714,
+          "colours": 30,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 4,
+          "outline_dark": 0.9825,
+          "flat_ink": 0.0,
+          "double": 0.0789,
+          "west_east": 3.2276,
+          "top_bottom": 0.0063,
+          "isolated": 0.0249,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Moss-mantled giant: broad boulder body, sunk head, long slab arms",
+      "question": "A stone that grew a body: a broad boulder with a smaller head sunk between the shoulders, a thick moss mantle over the shoulders, arms of stacked slabs hanging to the knee.",
+      "parts": [
+        "familiar perch: the near shoulder, in the moss mantle",
+        "far hand slab and far leg (a tone back): layer 0; chest / hip; E/W only",
+        "fern behind his LEFT ear (grass): layer 1 in S/E, 5 in W; head",
+        "legs x2 (stone_cool pillars) and feet (boulders): layer 2; hip; short 6-frame stomp",
+        "body boulder (stone, cracks, lichen): layer 3; hip; breath 1 px, sways into the walk",
+        "head (stone_warm, brow ledge, glowflora eyes, nose lump): layer 4; chest; sunk, turns 1 px",
+        "moss mantle (leaf lobes, drips): layer 5; chest; follows the body a frame late, tuft grows on rest",
+        "arms x2: upper, fore and hand slabs (stone siblings): layer 6; chest / hand; long swing, the two hand slabs cross as a wall in guard; the shoulder charge leads with the mantle shoulder",
+        "wren (earth, path): fidget prop only, lands on the near hand slab"
+      ],
+      "palette": [
+        "stone",
+        "leaf",
+        "grass",
+        "earth",
+        "path",
+        "glowflora (glow: the eyes, 2 px each)"
+      ],
+      "pose": "A gentle giant with his shoulders up and arms long, slow and careful; the fidget: a wren lands on his raised palm and he holds very still, eyes on it.",
+      "notes": [
+        "Works: the widest shoulders in the cast and arms that reach the knee give a gentle-giant read; the moss mantle is the most moss of the three and reads at 2 device px.",
+        "Risk: the mantle over the shoulders must never close over the head (Nix owns the hood); the head is small, so the face leans on the glow.",
+        "Compared with Eastward 05 (John: big shoulders, small head, long arms) for the mass, and the mossy world rocks for the moss lobes over stone."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1999,
+          "colours": 32,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9807,
+          "flat_ink": 0.0,
+          "double": 0.0435,
+          "west_east": 4.0297,
+          "top_bottom": 3.8359,
+          "isolated": 0.0078,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1167,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0946,
+          "west_east": 2.662,
+          "top_bottom": 5.5307,
+          "isolated": 0.0118,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1188,
+          "colours": 32,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9801,
+          "flat_ink": 0.0,
+          "double": 0.053,
+          "west_east": 11.6375,
+          "top_bottom": 10.7696,
+          "isolated": 0.0174,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1882,
+          "colours": 37,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 0.9849,
+          "flat_ink": 0.0,
+          "double": 0.0452,
+          "west_east": 4.6148,
+          "top_bottom": 1.977,
+          "isolated": 0.0089,
+          "checker": 0.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "C",
+    "name": "Moss-mantled giant (final): broad boulder, capstone brow, ring on the chest",
+    "grafts": [
+      "From A: the circle's ring carved on his chest; its lower groove is a faint glowflora that brightens in a cast (seen edge-on on the front plane in E/W).",
+      "From A: the brow set higher; the face now fills the head under the cap (eyes at y 24, not 25-26).",
+      "From B: a flat capstone on his head with its hard two-row shadow over the glowing eyes; moss only at its shaded back end with a 2 px drip, never a full cap (Tam's beanie).",
+      "E/W rebuilt with depth: the same broad boulder side-on (26 px deep), a side plane, a 4 px front plane split by one hard step (lit facing W, shaded facing E) and a lit shoulder top plane under the moss."
+    ],
+    "parts": [
+      "familiar perch: the back shoulder on the moss mantle (E: x smaller, W: x larger); layer 0.5; chest",
+      "far arm (upper, fore, hand slabs, a tone back): layer 0; chest / hand; E/W fight poses",
+      "far leg (stone_cool pillar, boulder foot, a tone back): layer 1; hip; all facings",
+      "near leg (pillar, boulder foot): layer 2; hip; short 6-frame stomp, forward in sit, lifted 2 px in hop",
+      "body boulder (stone; side plane plus front plane in E/W; cracks, lichen; the ring rune with a glowflora groove): layer 3; hip; breath 1 px, leans up to 3 px in strike and hit",
+      "fern behind his LEFT ear (grass): layer 3.5 (S, E: behind the head), 5.5 in W (over its back); head",
+      "head (stone_warm, nose lump, glowflora eyes in ink sockets, mouth line): layer 4; chest; blink = glow off 140 ms, looks by moving the glow",
+      "capstone (stone_cool slab, moss at the back end): layer 4.5; head; stays level in every pose",
+      "moss mantle (leaf lobes, drips): layer 5; chest; one painter, shifts with the body (no lag frames)",
+      "near arm (upper, fore, hand slabs, rotated per pose): layer 6; chest / hand; swing, guard (hand slab up), strike (full reach), cast (raised), cheer (both up); Bedrock shoulder charge leads with the mantle",
+      "wren (earth, path): fidget prop only, on the near hand slab"
+    ],
+    "palette": [
+      "stone",
+      "leaf",
+      "grass",
+      "earth",
+      "path",
+      "glowflora (glow: eyes, the ring groove)"
+    ],
+    "pose": "A gentle giant, shoulders up and arms long, slow and careful; a wren lands on his palm and he holds still. In a fight he plants and punches with the hand slab; his ring glows when he casts.",
+    "perch_anchor": {
+      "E ready": [
+        32,
+        32
+      ],
+      "E strike": [
+        34,
+        32
+      ],
+      "E cast": [
+        31,
+        31
+      ],
+      "E hit": [
+        28,
+        31
+      ],
+      "E sit": [
+        31,
+        39
+      ],
+      "E cheer": [
+        31,
+        29
+      ],
+      "W ready": [
+        48,
+        32
+      ],
+      "W strike": [
+        46,
+        32
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 2047,
+        "colours": 34,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 0.981,
+        "flat_ink": 0.0,
+        "double": 0.0571,
+        "west_east": 4.7263,
+        "top_bottom": 3.0609,
+        "isolated": 0.0131,
+        "checker": 0.0,
+        "height_px": 59
+      },
+      "E idle": {
+        "px": 1352,
+        "colours": 27,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0705,
+        "west_east": 6.0283,
+        "top_bottom": 1.3161,
+        "isolated": 0.0059,
+        "checker": 0.0,
+        "height_px": 59
+      },
+      "W idle": {
+        "px": 1364,
+        "colours": 30,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 0.9936,
+        "flat_ink": 0.0,
+        "double": 0.0573,
+        "west_east": 11.3606,
+        "top_bottom": 2.8326,
+        "isolated": 0.0075,
+        "checker": 0.0,
+        "height_px": 59
+      },
+      "S fidget": {
+        "px": 1930,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.9851,
+        "flat_ink": 0.0,
+        "double": 0.0594,
+        "west_east": 5.1824,
+        "top_bottom": 1.278,
+        "isolated": 0.0145,
+        "checker": 0.0,
+        "height_px": 59
+      },
+      "nap S": {
+        "px": 930,
+        "colours": 25,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 3,
+        "outline_dark": 0.991,
+        "flat_ink": 0.0,
+        "double": 0.018,
+        "west_east": 7.1851,
+        "top_bottom": 2.2839,
+        "isolated": 0.0061,
+        "checker": 0.0,
+        "height_px": 27
+      },
+      "E ready": {
+        "px": 1669,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0378,
+        "west_east": 6.3796,
+        "top_bottom": 4.5424,
+        "isolated": 0.0054,
+        "checker": 0.0,
+        "height_px": 65
+      },
+      "E strike": {
+        "px": 1769,
+        "colours": 30,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0457,
+        "west_east": 3.9028,
+        "top_bottom": 4.0819,
+        "isolated": 0.009,
+        "checker": 0.0,
+        "height_px": 65
+      },
+      "E cast": {
+        "px": 1774,
+        "colours": 29,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 4,
+        "outline_dark": 0.981,
+        "flat_ink": 0.0,
+        "double": 0.0474,
+        "west_east": 6.6245,
+        "top_bottom": 6.8927,
+        "isolated": 0.0064,
+        "checker": 0.0,
+        "height_px": 66
+      },
+      "E hit": {
+        "px": 1606,
+        "colours": 26,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 3,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0636,
+        "west_east": 6.3035,
+        "top_bottom": 1.9025,
+        "isolated": 0.0091,
+        "checker": 0.0,
+        "height_px": 66
+      },
+      "E sit": {
+        "px": 1570,
+        "colours": 28,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 4,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0617,
+        "west_east": 7.5511,
+        "top_bottom": 3.7498,
+        "isolated": 0.0085,
+        "checker": 0.0,
+        "height_px": 57
+      },
+      "E cheer": {
+        "px": 1610,
+        "colours": 26,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 3,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0636,
+        "west_east": 5.9938,
+        "top_bottom": 7.017,
+        "isolated": 0.009,
+        "checker": 0.0,
+        "height_px": 66
+      },
+      "W ready": {
+        "px": 1675,
+        "colours": 32,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0652,
+        "west_east": 11.5653,
+        "top_bottom": 5.4891,
+        "isolated": 0.008,
+        "checker": 0.0,
+        "height_px": 65
+      },
+      "W strike": {
+        "px": 1776,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0633,
+        "west_east": 13.9433,
+        "top_bottom": 6.0197,
+        "isolated": 0.009,
+        "checker": 0.0,
+        "height_px": 65
+      }
+    },
+    "notes": [
+      "Compared side by side with Eastward 05 at the same height: John (broad shoulders, a small head, long arms, 3-4 tones a material), the hard shadow under hat brims, and the mossy world rocks.",
+      "Apart from Tuff: Cairn is tall (58 px), grey and matte, upright, with moss and a fern; Tuff stays low, wide, black basalt hex columns, glossy, no moss.",
+      "Open: the capstone is the natural perch, but a 24 px familiar on it would leave the 80 px cell (stone top at y 17); it perches on the back shoulder until the familiar size is settled.",
+      "Lone pixels and W-E are within the gates in every view; the cheer stays inside the cell."
+    ]
+  }
+}

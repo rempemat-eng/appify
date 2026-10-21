@@ -1,0 +1,937 @@
+{
+  "id": "roamling",
+  "kind": "familiar",
+  "cell": [
+    32,
+    32
+  ],
+  "foot": [
+    16,
+    28
+  ],
+  "height_art_px": 24,
+  "perch_cell": [
+    24,
+    24
+  ],
+  "perch_foot": [
+    12,
+    22
+  ],
+  "perch_height_art_px": 16,
+  "question": "The small roaming critter's ears, tail and grassy features.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Field mouse: big round grass-lined ears, a long stem tail with a leaf sprig",
+      "question_answered": "Ears and tail carry the Grassling: two big round ears lined with grass (round, never fox-pointed) and a long thin grass stem for a tail that rises behind and ends in a two-leaf sprig.",
+      "parts": [
+        "tail stem + leaf sprig (grass, leaf; layer 0; behind in E/W, beside in S; sways, lags in hop, arcs over the back in nap; hip)",
+        "far ear (path, grass lining; layer 1; E/W only, a tone down; head)",
+        "far feet (plaster, a tone down; layer 2; walk alternates with the near feet; hip)",
+        "body + belly (path, plaster; layer 3; breath 1 px, squash on land, stretch in the air; foot)",
+        "haunch + near feet (path, plaster; layer 4; tuck in the hop, fold under in nap; hip)",
+        "forepaws (plaster; layer 5; at the chest in idle, out for cheer and guard; chest)",
+        "head + muzzle (path, plaster, clay nose; layer 6; rests on the paws in nap; chest)",
+        "near ears (path, grass lining; layer 7; flare in the hop, fold flat in nap and hit; head)",
+        "crown sprout (grass; layer 8; the growth slot for stages 2 and 3; head)",
+        "perch: 16 px redraw, a three-quarter sit (both eyes show), stem tail curled up behind; the folk's shoulder"
+      ],
+      "palette": [
+        "path",
+        "plaster",
+        "grass",
+        "leaf",
+        "clay"
+      ],
+      "pose": "Sits up, forepaws at the chest, ears wide: listening for where you go next.",
+      "fidget": "Hop: springs up, ears flared, tail flicked high, a grin.",
+      "notes": [
+        "Closest to today's Roamling (leaf ears, vine tail, sprout) moved onto path fur: tan reads off grass, green stays in lining and tail.",
+        "Risk: the 2 px stem tail can thin out on grass at game scale (the leaf sprig carries it); big ears crowd the folk's head on the perch.",
+        "Eastward eastward-04, Sam (about 18 art px) and John: one big shape (hair, pack), 2 px eyes, 3-4 tones. Ours: ears, 3x4 eyes, 4-5 tones."
+      ],
+      "numbers": {
+        "S idle": {
+          "px": 542,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.087,
+          "west_east": 4.6066,
+          "top_bottom": -2.7736,
+          "isolated": 0.0067,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 512,
+          "colours": 32,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0259,
+          "west_east": 2.1483,
+          "top_bottom": -13.1792,
+          "isolated": 0.0126,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 511,
+          "colours": 34,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0,
+          "west_east": 11.3275,
+          "top_bottom": -9.3312,
+          "isolated": 0.0,
+          "checker": 0.0
+        },
+        "S hop": {
+          "px": 565,
+          "colours": 26,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1275,
+          "west_east": 7.3356,
+          "top_bottom": -0.3311,
+          "isolated": 0.0151,
+          "checker": 0.0
+        },
+        "S nap": {
+          "px": 284,
+          "colours": 22,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0,
+          "west_east": 4.3316,
+          "top_bottom": 14.0386,
+          "isolated": 0.0,
+          "checker": 0.0
+        },
+        "E perch": {
+          "px": 265,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0758,
+          "west_east": 9.8371,
+          "top_bottom": -3.1442,
+          "isolated": 0.0201,
+          "checker": 0.0
+        },
+        "W perch": {
+          "px": 265,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0303,
+          "west_east": 4.1888,
+          "top_bottom": -7.8325,
+          "isolated": 0.0302,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Scruffy vole: a grass-tuft crest with a forelock, small round ears, a tasselled stub tail",
+      "question_answered": "The grass grows on the head: a five-blade tuft fans up from the crown with a forelock over the brow, ears are small rounds at the sides, cheeks scruffy, the tail a thick stub with a grass tassel.",
+      "parts": [
+        "tail stub + grass tassel (earth, grass; layer 0; tassel flicks in idle, trails in hop, tucks over the front in nap; hip)",
+        "far ear + far feet (earth, timber; layer 1, a tone down; E/W only; head / hip)",
+        "body + belly (earth, plaster; layer 2; breath 1 px, squash on land; foot)",
+        "haunch + near feet (earth, timber; layer 3; walk tucks; hip)",
+        "head + cheek tufts + muzzle (earth, plaster, clay nose; layer 4; chest)",
+        "near ears (earth, grass lining; layer 5; perk on react, flat on hit; head)",
+        "crest (grass, 5 blades, back two a tone down, forelock in front; layer 6; sways, sweeps back, flops in nap; growth slot; head)",
+        "perch: 16 px redraw, three-quarter sit, a four-blade crest, the tassel out behind; the folk's shoulder"
+      ],
+      "palette": [
+        "earth",
+        "plaster",
+        "grass",
+        "timber",
+        "clay"
+      ],
+      "pose": "Low and wide, feet planted, crest up: a scrappy rambler who has slept in every hedge.",
+      "fidget": "Hop: crest swept back, tassel up, a toothy grin.",
+      "notes": [
+        "The most distinct silhouette: a spiky crown no folk or familiar has; earth fur is darkest, far from Mossling green.",
+        "Risk: earth fur sits near the timber feet and tree shade on grass; swaying blades need care in the rig so they never read as noise.",
+        "Eastward eastward-04, Sam's hair and the spiky blue-haired stall keeper: a spiky top in 4-5 blades reads at game scale; strands would not."
+      ],
+      "numbers": {
+        "S idle": {
+          "px": 481,
+          "colours": 28,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0583,
+          "west_east": 10.717,
+          "top_bottom": -2.3685,
+          "isolated": 0.0317,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 450,
+          "colours": 31,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.9798,
+          "flat_ink": 0.0,
+          "double": 0.1313,
+          "west_east": 0.1213,
+          "top_bottom": -7.7681,
+          "isolated": 0.0228,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 450,
+          "colours": 32,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0505,
+          "west_east": 18.8305,
+          "top_bottom": -13.8835,
+          "isolated": 0.0285,
+          "checker": 0.0
+        },
+        "S hop": {
+          "px": 495,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 0.99,
+          "flat_ink": 0.0,
+          "double": 0.06,
+          "west_east": 5.3992,
+          "top_bottom": -3.5608,
+          "isolated": 0.0076,
+          "checker": 0.0
+        },
+        "S nap": {
+          "px": 297,
+          "colours": 17,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 0.9701,
+          "flat_ink": 0.0,
+          "double": 0.0597,
+          "west_east": 1.7157,
+          "top_bottom": 5.5373,
+          "isolated": 0.0043,
+          "checker": 0.0
+        },
+        "E perch": {
+          "px": 247,
+          "colours": 22,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1127,
+          "west_east": 10.372,
+          "top_bottom": -3.31,
+          "isolated": 0.0114,
+          "checker": 0.0
+        },
+        "W perch": {
+          "px": 247,
+          "colours": 21,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.1549,
+          "west_east": 13.3896,
+          "top_bottom": -12.0327,
+          "isolated": 0.0114,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Hedge hare: tall round-tipped ears with a leaf on each, pale eye rings, a cotton puff",
+      "question_answered": "Tall ears, round at the tip (not pointed), each with a leaf clipped at its base like a hat feather; a lean upright body on long hind feet, pale rings round big eyes, a plaster puff for a tail.",
+      "parts": [
+        "puff tail (plaster; layer 0; bobs on every hop; hip)",
+        "far ear (timber, plaster lining; layer 1, a tone down; E/W only; head)",
+        "far feet (plaster, a tone down; layer 2; hip)",
+        "body + belly (timber, plaster; layer 3; breath 1 px, stretches long in the hop; foot)",
+        "haunch + long hind feet (timber, plaster; layer 4; the hop walk pushes off them; hip)",
+        "front legs (timber; layer 5; straight down in idle, tucked in the air; chest)",
+        "head + eye rings + muzzle (timber, plaster, clay nose; layer 6; chest)",
+        "near ears (timber, plaster lining; layer 7; sweep back in the hop, lie along the back in nap; head)",
+        "ear leaves (leaf; layer 8; one per ear base, flap a frame behind the ear; growth buds here; ear)",
+        "perch: 16 px redraw, three-quarter sit, both ears and leaves up, eye rings kept; the folk's shoulder"
+      ],
+      "palette": [
+        "timber",
+        "plaster",
+        "leaf",
+        "clay"
+      ],
+      "pose": "Upright and lean on long feet, ears high, leaves out: a scout already looking down the road.",
+      "fidget": "Hop: a long spring, ears out, leaves flapping, a grin.",
+      "notes": [
+        "Leaves on the ears are two green flags at any distance; the eye rings give the clearest eyes of the three on dark fur.",
+        "Risk: ears push it to about 26 art px and toward a rabbit, away from the RAT species; timber is the darkest fur at game scale.",
+        "Eastward eastward-04 at Sam's height: faces rely on a light skin mask round 2 px eyes; the eye ring does that job on dark fur."
+      ],
+      "numbers": {
+        "S idle": {
+          "px": 412,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0449,
+          "west_east": 4.2943,
+          "top_bottom": -9.9386,
+          "isolated": 0.0,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 397,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0854,
+          "west_east": 8.3044,
+          "top_bottom": -14.3745,
+          "isolated": 0.0222,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 397,
+          "colours": 27,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0854,
+          "west_east": 11.126,
+          "top_bottom": -16.5395,
+          "isolated": 0.0159,
+          "checker": 0.0
+        },
+        "S hop": {
+          "px": 418,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0632,
+          "west_east": 4.2558,
+          "top_bottom": -7.9659,
+          "isolated": 0.0062,
+          "checker": 0.0
+        },
+        "S nap": {
+          "px": 249,
+          "colours": 20,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 5,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0,
+          "west_east": 19.3809,
+          "top_bottom": -4.0945,
+          "isolated": 0.0,
+          "checker": 0.0
+        },
+        "E perch": {
+          "px": 237,
+          "colours": 24,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0741,
+          "west_east": 4.2404,
+          "top_bottom": -12.3793,
+          "isolated": 0.0219,
+          "checker": 0.0
+        },
+        "W perch": {
+          "px": 237,
+          "colours": 25,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.037,
+          "west_east": 20.8606,
+          "top_bottom": -11.6837,
+          "isolated": 0.0328,
+          "checker": 0.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "C",
+    "name": "Jerboa rambler: round grass-lined ears, a three-blade crest, long feet, a curling leaf tail (final)",
+    "grafts": [
+      "Coordinator: C made into a jerboa (a hopping desert rodent, RAT species): C's long hind feet and the hop kept; the tall rabbit ears replaced by big ROUND mouse ears.",
+      "From A: grass-lined inner ears (green that belongs to the creature).",
+      "From B: a small three-blade grass crest on the crown: the head-top growth, the family mark.",
+      "Fixes: the clipped ear leaves are gone; the leaves now grow from the tail tip (stem runs on as the midrib); path fur with a plaster belly and face; family eyes 3 x 3 ink with a 2 px glint; 24 px idle, 16 px perch."
+    ],
+    "parts": [
+      "tail (path, a 2 px stem; layer 0; anchor hip; curls up behind in E/W, out east and up in S, wraps the front in nap; one painted curve per state, never past x 2 / x 29)",
+      "tail leaf tuft (grass, two leaves grown from the tip, the stem runs on as the midrib; child of the tail tip; lags a frame on the hop)",
+      "far ear + far foot (path / plaster, a tone down; layer 1; E/W only; anchor head / foot)",
+      "body + pale belly (path, plaster; layer 2; anchor hip; squash on crouch and land, stretch on rise; breath 1 px)",
+      "haunches + long hind feet (path, plaster; layer 3; anchor foot; the family foot line: feet fill row 27, perch row 21; splay (crouch, land), push (rise), dangle (air))",
+      "head + cheek tufts + face step (path; brow, cheek, snout in E/W; layer 4; anchor chest)",
+      "face block (eyes 3 x 3 ink, glint 2 px in the west column: open / wide / happy / tight / closed; plaster muzzle, clay nose; layer 5; anchor head; S/E/W)",
+      "ears (path, grass lining; layer 6; anchor head; up, back (crouch/land), flare (air/react), folded (nap), flat (cling))",
+      "forepaws (plaster; layer 7; anchor chest; at the chest, flung up in react and cheer, gripping in cling)",
+      "head-top growth: the three-blade crest (grass, back blade a tone down; layer 8; growthAnchor the crown joint; leans against the motion, flops in nap, stands tall in special)",
+      "special effect (SECOND WIND): a 2 x 2 glowflora breath in the chest, inside the silhouette; finite, none under reduced motion"
+    ],
+    "palette": [
+      "path",
+      "plaster",
+      "grass",
+      "clay"
+    ],
+    "glow": "glowflora (the SECOND WIND breath only)",
+    "pose": "A step behind and already up on its toes: big ears turning, tail curled like a question, ready to bound after you.",
+    "notes": [
+      "Walk: the spec's 4-frame hop (crouch, rise, air, land), long feet push and dangle; ears and crest lag the motion.",
+      "Growth stages (rig variants of the same poses): 1 three short blades; 2 longer blades and a third leaf on the tail tip; 3 a seed head on the middle blade. The crown joint never moves.",
+      "Perch: a 16 px redraw in profile, turned to the foe; the ears shrink and the crest is 3 px so it clears small folk; perchAnchor is the foot line centre (12, 22).",
+      "Kept apart: round ears and a thin leafy tail (not Bramble's pointed ears or brush); path fur, not Mossling green.",
+      "Compared with Eastward-04 at the same height (Sam about 18 art px, John, the market cats): one big shape (ears here, hair there), a glinting eye block, 3 to 4 tones a material, per-material outline."
+    ],
+    "growthAnchor": {
+      "S idle": [
+        16,
+        9
+      ],
+      "E idle": [
+        20,
+        8
+      ],
+      "W idle": [
+        11,
+        8
+      ],
+      "hop 1": [
+        16,
+        10
+      ],
+      "hop 2": [
+        16,
+        8
+      ],
+      "hop 3": [
+        16,
+        7
+      ],
+      "hop 4": [
+        16,
+        10
+      ],
+      "S react": [
+        16,
+        8
+      ],
+      "S nap": [
+        11,
+        17
+      ],
+      "E perch": [
+        14,
+        8
+      ],
+      "E cling": [
+        15,
+        10
+      ],
+      "E cheer": [
+        14,
+        8
+      ],
+      "E special": [
+        14,
+        8
+      ],
+      "W perch": [
+        8,
+        8
+      ],
+      "W cling": [
+        7,
+        10
+      ],
+      "W cheer": [
+        8,
+        8
+      ],
+      "W special": [
+        8,
+        8
+      ]
+    },
+    "eyeBlocks": {
+      "size": [
+        3,
+        3
+      ],
+      "glint": "2 px, the west column, top two rows (plaster 5)"
+    },
+    "footLine": {
+      "world": [
+        16,
+        27
+      ],
+      "perch": [
+        12,
+        21
+      ],
+      "note": "feet fill the row above the anchor; the outline lands on the anchor row"
+    },
+    "perchAnchor": {
+      "E perch": [
+        12,
+        22
+      ],
+      "E cling": [
+        12,
+        22
+      ],
+      "E cheer": [
+        12,
+        22
+      ],
+      "E special": [
+        12,
+        22
+      ],
+      "W perch": [
+        12,
+        22
+      ],
+      "W cling": [
+        12,
+        22
+      ],
+      "W cheer": [
+        12,
+        22
+      ],
+      "W special": [
+        12,
+        22
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 470,
+        "colours": 23,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0526,
+        "west_east": 12.431,
+        "top_bottom": 3.9143,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          4,
+          2,
+          30,
+          29
+        ],
+        "height_px": 25
+      },
+      "E idle": {
+        "px": 394,
+        "colours": 27,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0957,
+        "west_east": 6.6651,
+        "top_bottom": -7.6005,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          3,
+          2,
+          29,
+          29
+        ],
+        "height_px": 25
+      },
+      "W idle": {
+        "px": 394,
+        "colours": 24,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0957,
+        "west_east": 16.7983,
+        "top_bottom": -8.7538,
+        "isolated": 0.0267,
+        "checker": 0.0,
+        "bbox": [
+          3,
+          2,
+          29,
+          29
+        ],
+        "height_px": 25
+      },
+      "hop 1": {
+        "px": 429,
+        "colours": 23,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0778,
+        "west_east": 11.9281,
+        "top_bottom": 0.2707,
+        "isolated": 0.0088,
+        "checker": 0.0,
+        "bbox": [
+          5,
+          4,
+          30,
+          29
+        ],
+        "height_px": 23
+      },
+      "hop 2": {
+        "px": 485,
+        "colours": 24,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.086,
+        "west_east": 12.5853,
+        "top_bottom": 0.0136,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          4,
+          1,
+          30,
+          29
+        ],
+        "height_px": 26
+      },
+      "hop 3": {
+        "px": 491,
+        "colours": 22,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0625,
+        "west_east": 10.4004,
+        "top_bottom": -0.675,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          4,
+          0,
+          30,
+          27
+        ],
+        "height_px": 25
+      },
+      "hop 4": {
+        "px": 423,
+        "colours": 23,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1034,
+        "west_east": 10.6652,
+        "top_bottom": 0.8073,
+        "isolated": 0.0089,
+        "checker": 0.0,
+        "bbox": [
+          5,
+          5,
+          30,
+          29
+        ],
+        "height_px": 22
+      },
+      "S react": {
+        "px": 504,
+        "colours": 25,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0825,
+        "west_east": 10.7979,
+        "top_bottom": -0.7051,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          4,
+          1,
+          30,
+          29
+        ],
+        "height_px": 26
+      },
+      "S nap": {
+        "px": 254,
+        "colours": 19,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.037,
+        "west_east": 11.9232,
+        "top_bottom": 5.4367,
+        "isolated": 0.015,
+        "checker": 0.0,
+        "bbox": [
+          4,
+          13,
+          27,
+          29
+        ],
+        "height_px": 14
+      },
+      "E perch": {
+        "px": 227,
+        "colours": 20,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1045,
+        "west_east": 4.7569,
+        "top_bottom": -13.2579,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          2,
+          4,
+          21,
+          23
+        ],
+        "height_px": 17
+      },
+      "E cling": {
+        "px": 216,
+        "colours": 20,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1094,
+        "west_east": 2.7336,
+        "top_bottom": -8.1389,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          2,
+          6,
+          22,
+          23
+        ],
+        "height_px": 15
+      },
+      "E cheer": {
+        "px": 238,
+        "colours": 21,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0282,
+        "double": 0.0704,
+        "west_east": 5.5465,
+        "top_bottom": -9.5905,
+        "isolated": 0.0359,
+        "checker": 0.0,
+        "bbox": [
+          2,
+          4,
+          21,
+          23
+        ],
+        "height_px": 17
+      },
+      "E special": {
+        "px": 230,
+        "colours": 21,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0282,
+        "double": 0.0704,
+        "west_east": 2.3338,
+        "top_bottom": -11.6856,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "bbox": [
+          2,
+          4,
+          21,
+          23
+        ],
+        "height_px": 17
+      },
+      "W perch": {
+        "px": 227,
+        "colours": 23,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0746,
+        "west_east": 14.8602,
+        "top_bottom": -13.4521,
+        "isolated": 0.0125,
+        "checker": 0.0,
+        "bbox": [
+          3,
+          4,
+          22,
+          23
+        ],
+        "height_px": 17
+      },
+      "W cling": {
+        "px": 216,
+        "colours": 24,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0938,
+        "west_east": 15.7596,
+        "top_bottom": -24.4858,
+        "isolated": 0.0197,
+        "checker": 0.0,
+        "bbox": [
+          2,
+          6,
+          22,
+          23
+        ],
+        "height_px": 15
+      },
+      "W cheer": {
+        "px": 238,
+        "colours": 22,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0282,
+        "double": 0.0282,
+        "west_east": 13.4034,
+        "top_bottom": -9.8701,
+        "isolated": 0.0359,
+        "checker": 0.0,
+        "bbox": [
+          3,
+          4,
+          22,
+          23
+        ],
+        "height_px": 17
+      },
+      "W special": {
+        "px": 230,
+        "colours": 24,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0282,
+        "double": 0.0563,
+        "west_east": 16.2212,
+        "top_bottom": -16.2752,
+        "isolated": 0.0126,
+        "checker": 0.0,
+        "bbox": [
+          3,
+          4,
+          22,
+          23
+        ],
+        "height_px": 17
+      }
+    },
+    "eastward_compared": [
+      "eastward-04: Sam, John and the market cats, at the familiar's height"
+    ]
+  }
+}

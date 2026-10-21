@@ -1,0 +1,121 @@
+{
+ "id": "velvet",
+ "cell": [
+  32,
+  36
+ ],
+ "foot": [
+  16,
+  33
+ ],
+ "views": {
+  "S-idle": {
+   "iou": 0.8576,
+   "families_1x": [
+    "brass",
+    "dusk",
+    "iron",
+    "plaster",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "dusk",
+    "iron",
+    "plaster",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 295,
+    "colours": 31,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 7,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.038,
+    "west_east": 16.6597,
+    "top_bottom": 42.4333,
+    "isolated": 0.0463,
+    "checker": 0.0
+   }
+  },
+  "E-idle": {
+   "iou": 0.8314,
+   "families_1x": [
+    "brass",
+    "dusk",
+    "iron",
+    "plaster",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "dusk",
+    "iron",
+    "plaster",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 254,
+    "colours": 28,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 7,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.0312,
+    "west_east": 12.5009,
+    "top_bottom": 31.8507,
+    "isolated": 0.0421,
+    "checker": 0.0
+   }
+  },
+  "W-idle": {
+   "iou": 0.8388,
+   "families_1x": [
+    "brass",
+    "dusk",
+    "iron",
+    "plaster",
+    "snow"
+   ],
+   "families_2x": [
+    "brass",
+    "dusk",
+    "iron",
+    "plaster",
+    "snow"
+   ],
+   "families_match": true,
+   "measure": {
+    "px": 267,
+    "colours": 28,
+    "on_house": 1.0,
+    "on_today": 0.0,
+    "families": 6,
+    "outline_dark": 1.0,
+    "flat_ink": 0.0,
+    "double": 0.0606,
+    "west_east": 8.4034,
+    "top_bottom": 34.5572,
+    "isolated": 0.0249,
+    "checker": 0.0
+   }
+  }
+ },
+ "simplified": [
+  "Antennae: the combed 2x plumes become 1 px plaster arcs without comb teeth (plaster 5 on the lit one), the far one a short plaster_cool stroke in E/W.",
+  "Eyes: the big round 2x eyes become 2 x 2 ink with a 1 px snow glint; brow and cheek tufts are dropped; the muzzle is a lit 2 px step.",
+  "Ruff: the downward fur strokes become three snow tones with a scalloped hem (snow_cool pairs); the chin shadow stays.",
+  "Coat: the fold bands become 2 px dusk bands (lit left, deep right) either side of the dark front seam (S); the chevron margin and the faint eye-spot on the tails are dropped, the swallowtail tips stay as dusk_warm texels.",
+  "Lamp: shutter slats become an iron box with a brass cap, handle and foot and a single lamp-glow texel (S, E); in W it sits behind the coat with no glow."
+ ],
+ "notes": [
+  "Same design as the 2x final (option C): a pale moth head with two swept antennae and big eyes, a wide snow ruff, a narrow dusk swallowtail coat with a brass belt, the shuttered lamp at her right hip (screen left in S, in front in E, behind in W), iron feet.",
+  "W is drawn, not mirrored: the light stays at the upper left, and the lamp moves to the far side instead of reflecting.",
+  "Compared with Matt's 1x Bramble: three tones a material plus the edge tone, solid ink eyes, chunky clusters."
+ ]
+}

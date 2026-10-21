@@ -1,0 +1,634 @@
+{
+  "id": "tam",
+  "name": "Tam",
+  "cell": [
+    64,
+    72
+  ],
+  "anchor": [
+    32,
+    66
+  ],
+  "height_art_px": 38,
+  "question": "the rucksack and kettle silhouette against a round marmot body",
+  "options": [
+    {
+      "label": "A",
+      "name": "Bothy Pack (a timber-frame rucksack taller than her head)",
+      "question": "The pack is the silhouette: a square frame with the rolled mat as a roof over a round marmot, the kettle on one post and a lit lantern on the other, so she reads as a walking hut.",
+      "parts": [
+        "mat: plaster_cool, layer 0 (back), changes S/E/W (side roll vs end disc), on back (pack top)",
+        "pack frame + bag + flap: timber, layer 1, changes S/E/W, on back (chest anchor, bobs 1 px late in walk)",
+        "lantern: iron + lamp glow, layer 2, on her right post: shows in S and E, hidden in W; swings 1 px after each step",
+        "kettle: iron, layer 2, on her left post: shows in S and W, hidden in E; to her left paw in fidget and cast",
+        "tail: earth_cool, layer 3, E/W only, on hip (flicks in walk and hit)",
+        "legs x2: earth_cool, layer 4, all facings, on foot (6-frame walk swing, tuck in nap)",
+        "torso + belly: earth, layer 5, all facings, on hip (breath 1 px)",
+        "straps + chest strap: timber, layer 6, S (two) / E-W (near one), on chest",
+        "arms x2: earth, paws earth_cool, layer 7, on chest (swing in walk; wind-up/strike/guard/cheer)",
+        "ears x2: earth, layer 8, under hat cuff, on head",
+        "head + cheeks + muzzle + face: earth/plaster/ink, layer 9, all facings, on head (blink, sleep eyes)",
+        "bobble hat (dome, cuff, bobble): berry + plaster bobble, layer 10, on head (bobble lags in hop)"
+      ],
+      "palette": [
+        "earth",
+        "plaster",
+        "berry",
+        "iron",
+        "timber"
+      ],
+      "pose": "Feet planted under a load twice her size and smiling about it; the fidget unhooks the kettle and pours a cup for whoever is near.",
+      "notes": [
+        "Works: the only folk with a roofline; the frame reads at 2 device px as \"she carries the hut\".",
+        "Risk: 40 px wide with the mat, the widest folk; the pack must stay on in nap (she naps against it) and the fight poses need it trimmed.",
+        "Compared: Eastward-04 market crop (John, Sam, Masao, 28-34 art px): John's pack is a few big 3-4 tone shapes with one strap line; matched that, kept the frame posts 2 px."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1452,
+          "colours": 56,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0412,
+          "west_east": 4.3333,
+          "top_bottom": 15.1404,
+          "isolated": 0.0398,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1053,
+          "colours": 50,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0154,
+          "double": 0.0308,
+          "west_east": 5.5245,
+          "top_bottom": 7.51,
+          "isolated": 0.0282,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1067,
+          "colours": 51,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0149,
+          "double": 0.0299,
+          "west_east": 10.78,
+          "top_bottom": 10.1628,
+          "isolated": 0.0322,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1355,
+          "colours": 60,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 8,
+          "outline_dark": 0.9748,
+          "flat_ink": 0.0,
+          "double": 0.0314,
+          "west_east": 5.3672,
+          "top_bottom": 19.5275,
+          "isolated": 0.0393,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Kettle Cap (a daypack with the kettle riding on top)",
+      "question": "A compact pack carried high on her left shoulder, the kettle lashed on top so it rides beside the bobble like a second hat: a two-bump crown, lopsided on purpose.",
+      "parts": [
+        "daypack: berry, layer 0, changes S (behind left shoulder) / E-W (on back), on back",
+        "kettle: iron, layer 1, rides on the pack top (back anchor, wobbles 1 px after a hop), to hand in cast",
+        "tail: timber_cool, layer 2, E/W only, on hip",
+        "legs x2: timber_cool, layer 3, all facings, on foot",
+        "torso + belly: timber, layer 4, on hip (breath)",
+        "straps + chest strap: berry, layer 5, on chest",
+        "arms x2: timber, paws timber_cool, layer 6, on chest (raised to the cuff in fidget)",
+        "ears x2: timber, layer 7, on head",
+        "head + muzzle + face: timber/plaster/ink, layer 8, on head",
+        "bobble hat: sky, plaster bobble, layer 9, on head (cuff slides 3 px in fidget)"
+      ],
+      "palette": [
+        "timber",
+        "plaster",
+        "sky",
+        "iron",
+        "berry"
+      ],
+      "pose": "Round, a little lopsided under the kettle, chin up; the fidget pulls the sky cuff down over her ears and eyes against the cold.",
+      "notes": [
+        "Works: two bumps at the top (bobble, kettle) are her own crown; the kettle stays in view in every facing.",
+        "Risk: the asymmetry makes S lopsided and the kettle could read as a second head at 2 device px.",
+        "Compared: Eastward-04 (John carries a satchel high and slung, a single big lit shape): same economy."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 910,
+          "colours": 42,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.036,
+          "west_east": 14.3241,
+          "top_bottom": 8.4098,
+          "isolated": 0.035,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 940,
+          "colours": 48,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0163,
+          "double": 0.0244,
+          "west_east": 1.5628,
+          "top_bottom": 4.7791,
+          "isolated": 0.0343,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 940,
+          "colours": 46,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0163,
+          "double": 0.0244,
+          "west_east": 14.0271,
+          "top_bottom": 5.6362,
+          "isolated": 0.0367,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 864,
+          "colours": 41,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.028,
+          "west_east": 16.2627,
+          "top_bottom": 6.1067,
+          "isolated": 0.0383,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Hut Warden (scarf, stocking cap, kettle at the hip)",
+      "question": "No pack: a thick berry scarf makes broad shoulders, a long stocking cap flops its bobble to one side, and the kettle hangs from a belt at her hip, so she reads low and wide like a hut stove.",
+      "parts": [
+        "tail: path_cool, layer 0, E/W only, on hip",
+        "legs x2: path_cool, layer 1, all facings, on foot",
+        "torso + belly: path, layer 2, on hip (breath)",
+        "belt: iron_cool, layer 3, on hip",
+        "kettle: iron, layer 4 (S, E) / 6 (W, the far hip shown in front of the near arm), on hip; swings opposite the walk",
+        "scarf collar + tail: berry with sky stripes, layer 5, changes S/E/W, on chest (tail trails in walk and hit)",
+        "arms x2: path, paws path_cool, layer 6, on chest (hold the mug in fidget and cast)",
+        "ears x2: path, layer 7, on head",
+        "head + muzzle + face: path/plaster/ink, layer 8, on head (puffed cheeks in fidget)",
+        "stocking cap + flopped bobble: sky, plaster bobble, layer 9, on head (bobble swings in walk)"
+      ],
+      "palette": [
+        "path",
+        "plaster",
+        "berry",
+        "sky",
+        "iron"
+      ],
+      "pose": "Settled and low, scarf up to the chin; the fidget lifts an enamel mug in both paws and blows on it, eyes shut.",
+      "notes": [
+        "Works: the warmest read, and the lightest rig (no pack to re-time); the flopped bobble is her mark.",
+        "Risk: without a pack she loses the \"carries the bothy\" idea and nears Tally (knit, small, round).",
+        "Compared: Eastward-04 Masao (scarf-like collar, big round face): collar as one 3-tone band, not stripes everywhere."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 862,
+          "colours": 43,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0536,
+          "west_east": 13.2855,
+          "top_bottom": 7.9254,
+          "isolated": 0.0507,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 747,
+          "colours": 46,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0179,
+          "double": 0.0179,
+          "west_east": 10.3825,
+          "top_bottom": 11.7422,
+          "isolated": 0.0504,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 747,
+          "colours": 44,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 6,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0179,
+          "double": 0.0357,
+          "west_east": 7.5111,
+          "top_bottom": 10.4523,
+          "isolated": 0.0457,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 847,
+          "colours": 47,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0357,
+          "west_east": 12.7115,
+          "top_bottom": 6.9682,
+          "isolated": 0.049,
+          "checker": 0.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "label": "C final",
+    "name": "Bothy Keeper (knit beanie with ear flaps, scarf, kettle at the hip, mat at the back)",
+    "chosen": "C",
+    "grafts": [
+      "from A: a low rolled sleeping mat strapped across the small of her back (says \"she carries the bothy\" without blocking the shoulder perch)",
+      "from A: the dented iron kettle with a lit sheen, hung at her left hip"
+    ],
+    "dropped": [
+      "the hut-warden name (the Frostline's ring rival)",
+      "the stocking cap with a flopped bobble (Puffcap/Mote)",
+      "sky knit (Bramble's accent)"
+    ],
+    "parts": [
+      "familiar perch: grass Mossling (stand-in), layer 0 in fight poses, on chest (the shoulder away from the foe)",
+      "kettle: iron, anchor left hip (belt, back); layer 1 in E (far side, behind), 9 in W (near side, front), 3 in S (viewer right)",
+      "far arm: path_cool, layer 2, on chest (E/W fight poses only)",
+      "tail: path_cool, layer 3, on hip (E/W; wraps in nap)",
+      "legs x2: path_cool, layer 4, on foot (S, E, W; sit pushes them forward)",
+      "mat: plaster_cool (felt) + timber ties, layer 0 in S (behind, both ends) / 6 in E-W (end disc on her back), anchor hip-back; pillow in nap",
+      "torso + belly: path / path_warm, layer 5, on hip (breath 1 px)",
+      "belt: timber, layer 7, on hip (kettle hangs from it)",
+      "scarf collar: leaf ribs, layer 8, on chest; tail: leaf, her right chest (S viewer left, E front, W hidden), sways in strike/hit",
+      "head + cheek + snout + brow: path / plaster / ink, layer 10, on head (blink, shut, happy, squeeze eyes)",
+      "beanie dome + cuff + ear flaps + bobble: leaf ribs, plaster bobble, layer 11, on head (bobble lags 1 px in hop)",
+      "near arm: path, paw path_cool, layer 12, on chest (ready, strike reach, cast, hit, cheer)"
+    ],
+    "palette": [
+      "path",
+      "plaster",
+      "leaf",
+      "iron",
+      "timber"
+    ],
+    "pose": "Stout, square on her feet, scarf to the chin: dependable. The fidget lifts a tin mug in both paws and blows across it, eyes shut.",
+    "notes": [
+      "Works: round, low and stout; the green beanie with flaps plus the scarf is her own knit set; the kettle and mat say \"keeper of the bothy\" from every side.",
+      "Fixed anchors: kettle left hip, scarf tail right chest, mat small of back, so W shows the kettle and hides the tail, E the reverse.",
+      "Risk: the Mossling (24 px) on a 38 px folk is large; it sits behind her head on the back shoulder and the perch anchor is recorded per pose.",
+      "Compared: Eastward-04 crop (John, Sam, Masao at 28-34 art px): Masao's round head and collar, John's low slung kit as a few big 3-4 tone shapes.",
+      "Nap: the mat unrolls as her pillow and the kettle lies against her far hip (hidden by the curl); the Mossling curls at her belly."
+    ],
+    "perch_anchor": {
+      "E ready": [
+        23,
+        49
+      ],
+      "E strike": [
+        25,
+        49
+      ],
+      "E cast": [
+        23,
+        48
+      ],
+      "E hit": [
+        21,
+        48
+      ],
+      "E sit": [
+        23,
+        51
+      ],
+      "E cheer": [
+        23,
+        46
+      ],
+      "W ready": [
+        40,
+        49
+      ],
+      "W strike": [
+        38,
+        49
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 902,
+        "colours": 36,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0263,
+        "west_east": 6.4657,
+        "top_bottom": 10.0101,
+        "isolated": 0.0241,
+        "checker": 0.0,
+        "bbox": [
+          14,
+          29,
+          54,
+          67
+        ],
+        "height_px": 38
+      },
+      "E idle": {
+        "px": 719,
+        "colours": 35,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0102,
+        "double": 0.0204,
+        "west_east": 3.8326,
+        "top_bottom": 8.2924,
+        "isolated": 0.0177,
+        "checker": 0.0,
+        "bbox": [
+          14,
+          29,
+          45,
+          67
+        ],
+        "height_px": 38
+      },
+      "W idle": {
+        "px": 719,
+        "colours": 40,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0102,
+        "double": 0.0612,
+        "west_east": 12.7451,
+        "top_bottom": 6.7336,
+        "isolated": 0.0097,
+        "checker": 0.0,
+        "bbox": [
+          19,
+          29,
+          50,
+          67
+        ],
+        "height_px": 38
+      },
+      "S fidget": {
+        "px": 884,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0424,
+        "west_east": 9.3742,
+        "top_bottom": 9.7963,
+        "isolated": 0.0222,
+        "checker": 0.0,
+        "bbox": [
+          14,
+          29,
+          54,
+          67
+        ],
+        "height_px": 38
+      },
+      "nap S": {
+        "px": 539,
+        "colours": 33,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0345,
+        "west_east": 5.4786,
+        "top_bottom": 7.9912,
+        "isolated": 0.0111,
+        "checker": 0.0,
+        "bbox": [
+          12,
+          46,
+          50,
+          67
+        ],
+        "height_px": 21
+      },
+      "E ready": {
+        "px": 923,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0078,
+        "double": 0.0543,
+        "west_east": 9.5403,
+        "top_bottom": 9.6068,
+        "isolated": 0.0164,
+        "checker": 0.0,
+        "bbox": [
+          14,
+          25,
+          45,
+          67
+        ],
+        "height_px": 42
+      },
+      "E strike": {
+        "px": 983,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0073,
+        "double": 0.073,
+        "west_east": 8.1208,
+        "top_bottom": 9.5832,
+        "isolated": 0.0189,
+        "checker": 0.0,
+        "bbox": [
+          16,
+          25,
+          53,
+          67
+        ],
+        "height_px": 42
+      },
+      "E cast": {
+        "px": 939,
+        "colours": 45,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 0.9769,
+        "flat_ink": 0.0,
+        "double": 0.0538,
+        "west_east": 11.2185,
+        "top_bottom": 10.5445,
+        "isolated": 0.0235,
+        "checker": 0.0,
+        "bbox": [
+          14,
+          24,
+          46,
+          67
+        ],
+        "height_px": 43
+      },
+      "E hit": {
+        "px": 895,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0079,
+        "double": 0.0709,
+        "west_east": 10.0816,
+        "top_bottom": 12.2216,
+        "isolated": 0.0182,
+        "checker": 0.0,
+        "bbox": [
+          12,
+          24,
+          42,
+          67
+        ],
+        "height_px": 43
+      },
+      "E sit": {
+        "px": 881,
+        "colours": 44,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0079,
+        "double": 0.0709,
+        "west_east": 10.1479,
+        "top_bottom": 8.2109,
+        "isolated": 0.0146,
+        "checker": 0.0,
+        "bbox": [
+          14,
+          27,
+          45,
+          67
+        ],
+        "height_px": 40
+      },
+      "E cheer": {
+        "px": 904,
+        "colours": 45,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0079,
+        "double": 0.063,
+        "west_east": 10.2088,
+        "top_bottom": 10.019,
+        "isolated": 0.0232,
+        "checker": 0.0,
+        "bbox": [
+          14,
+          22,
+          45,
+          63
+        ],
+        "height_px": 41
+      },
+      "W ready": {
+        "px": 923,
+        "colours": 48,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0078,
+        "double": 0.0775,
+        "west_east": 3.8691,
+        "top_bottom": 9.9564,
+        "isolated": 0.0076,
+        "checker": 0.0,
+        "bbox": [
+          19,
+          25,
+          50,
+          67
+        ],
+        "height_px": 42
+      },
+      "W strike": {
+        "px": 983,
+        "colours": 46,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0073,
+        "double": 0.073,
+        "west_east": 4.7127,
+        "top_bottom": 9.8521,
+        "isolated": 0.0071,
+        "checker": 0.0,
+        "bbox": [
+          11,
+          25,
+          48,
+          67
+        ],
+        "height_px": 42
+      }
+    }
+  }
+}

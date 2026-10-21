@@ -1,0 +1,170 @@
+{
+  "id": "mossling",
+  "kind": "familiar",
+  "template": "familiar",
+  "heightWorld": 12,
+  "cell": "familiar",
+  "design": "A reconciled to Matt's 1x master (moss_sheet.png): green mochi under a red-brown mushroom cap",
+  "families": ["leaf", "clay", "plaster", "berry"],
+  "glows": ["glowflora"],
+  "signature": "the red-brown mushroom cap with cream spots and the two-leaf sprout on top",
+  "parts": [
+    {
+      "name": "far foot",
+      "families": ["leaf"],
+      "joint": "foot",
+      "layer": {
+        "S": 1,
+        "E": 1,
+        "W": 1,
+        "N": 1
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "splays on crouch and land, tucks in the air",
+      "painter": false
+    },
+    {
+      "name": "near foot",
+      "families": ["leaf"],
+      "joint": "foot",
+      "layer": {
+        "S": 2,
+        "E": 2,
+        "W": 2,
+        "N": 2
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "splays on crouch and land, tucks in the air",
+      "painter": false
+    },
+    {
+      "name": "mochi body",
+      "families": ["leaf"],
+      "joint": "hip",
+      "layer": {
+        "S": 3,
+        "E": 3,
+        "W": 3,
+        "N": 3
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "breath squashes 1 px; the cheek leads in E/W",
+      "painter": false
+    },
+    {
+      "name": "lit front",
+      "families": ["leaf"],
+      "joint": "hip",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 0
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "rides the body",
+      "painter": false
+    },
+    {
+      "name": "moss clusters",
+      "families": ["leaf"],
+      "joint": "hip",
+      "layer": {
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 5
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "fixed per facing, ride the squash",
+      "painter": false
+    },
+    {
+      "name": "face",
+      "families": ["berry", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 0
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "3x3 eyes: lid, open, wide, closed, happy, tight; blush",
+      "painter": true
+    },
+    {
+      "name": "cap shadow",
+      "families": ["leaf"],
+      "joint": "head",
+      "layer": {
+        "S": 6,
+        "E": 6,
+        "W": 6,
+        "N": 6
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "under the rim, follows the cap",
+      "painter": false
+    },
+    {
+      "name": "mushroom cap",
+      "families": ["clay", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 7,
+        "E": 7,
+        "W": 7,
+        "N": 7
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "rigid: presses on crouch, land and cling; lifts on react; tips back on cheer; tips forward over the eyes on nap and special",
+      "painter": false
+    },
+    {
+      "name": "sprout",
+      "families": ["leaf"],
+      "joint": "head",
+      "layer": {
+        "S": 8,
+        "E": 8,
+        "W": 8,
+        "N": 8
+      },
+      "facings": ["S", "E", "W", "N"],
+      "motion": "rides the cap; droops in the nap",
+      "painter": false
+    },
+    {
+      "name": "special motes",
+      "families": ["glowflora"],
+      "joint": "float",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 9,
+        "N": 9
+      },
+      "facings": ["E", "W"],
+      "motion": "finite, none under reduced motion",
+      "painter": false
+    }
+  ],
+  "anchors": {
+    "holdOn": {
+      "E perch": [12, 22],
+      "E cling": [12, 22],
+      "E cheer": [12, 22],
+      "E special": [12, 22],
+      "W perch": [12, 22],
+      "W cling": [12, 22],
+      "W cheer": [12, 22],
+      "W special": [12, 22]
+    },
+    "growth": [16, 5]
+  },
+  "notes": [
+    "Reconciled to Matt's 1x master on 21 Oct (1x is the master; one design per object across densities).",
+    "Idle is 28 px with the sprout; cap and body are 24."
+  ]
+}

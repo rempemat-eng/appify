@@ -1,0 +1,544 @@
+{
+  "id": "ashe",
+  "height_art_px": 52,
+  "cell": [
+    64,
+    72
+  ],
+  "foot": [
+    32,
+    66
+  ],
+  "question": "How much armour and how much dragon.",
+  "options": [
+    {
+      "label": "A",
+      "name": "Dented plate: visor up, wings folded, grey-tipped tail",
+      "question": "Mostly armour: a full harness, the dragon only at the snout, horns, wings and tail.",
+      "parts": [
+        "wings (clay_cool membrane, ash bone): layer 0; back; folded behind the pauldrons in S, one shape over the back in E/W; flick open 2 px on react and cheer",
+        "tail (clay scales, last third ash, one lava ember): layer 1; hip; behind the legs, sways a frame behind the walk, curls round her in the nap",
+        "far leg / near leg (slate cuisse, slate_warm knee cop, slate_cool greave, iron sabaton): layers 2/4; hip; 6-frame walk",
+        "tassets (slate_warm over iron, two lames a side) and belt (iron): layer 5; hip; squash on hop",
+        "cuirass (slate, centre ridge, two dents): layer 6; hip; breath 1 px",
+        "bell (brass, small) on an iron strap: layer 7; belt front, her left, in every facing; swings a frame behind; tolls at three heat (cast)",
+        "arms (slate vambraces, iron couter and gauntlet): layer 8; chest; swing, guard, wind-up",
+        "pauldrons (slate dome, slate_cool lame, dent, brass rivet): layer 9; chest; ride up in the fidget and guard",
+        "head (slate sallet with a raised slate_warm visor, ash horns, clay drake face): layer 10; chest; visor drops for guard (visor part), eyes blink in the face opening"
+      ],
+      "palette": [
+        "slate",
+        "iron",
+        "clay",
+        "ash",
+        "brass"
+      ],
+      "pose": "Square and planted, gauntlets loose at her sides, chin up under the raised visor: the night watch nobody has to remind. Fidget: rolls her left shoulder, eyes shut, plates clink.",
+      "notes": [
+        "Works: the most knightly silhouette (domed shoulders, horned helm, wings over the shoulders); reads as armour first at 2 device px.",
+        "Risk: little dragon shows (snout, horns, tail), and an all-metal body is cold beside the warm folk; the wings add a part to every frame.",
+        "Compared with Eastward 05 at the same height (John, Sam, the townsfolk): one dark outline, a lit cap and dark crescent per part, 4 to 5 tones a material, 2 x 3 eyes with a glint."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1372,
+          "colours": 45,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0271,
+          "west_east": 7.9999,
+          "top_bottom": 7.1713,
+          "isolated": 0.0313,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1060,
+          "colours": 46,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.067,
+          "west_east": 3.3681,
+          "top_bottom": 4.7959,
+          "isolated": 0.0204,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1060,
+          "colours": 46,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.096,
+          "west_east": 7.9617,
+          "top_bottom": 0.5226,
+          "isolated": 0.0181,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1385,
+          "colours": 45,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0221,
+          "west_east": 7.5849,
+          "top_bottom": 8.1015,
+          "isolated": 0.0362,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "B",
+      "name": "Half-plate drake: breastplate and one pauldron, bare scaly arms, big horns",
+      "question": "Half and half: a breastplate over a quilted gambeson, the dragon in the head, arms and tail.",
+      "parts": [
+        "tail (clay scales, lava ember at the tip, 2 px glow): layer 0; hip; long, sways behind the walk, wraps the nap; the ember dims as heat drops",
+        "far arm (clay, a tone back): layer 1; chest; swings opposite the near leg",
+        "legs (ashlar_cool breeches, slate greaves and boots): layers 2/3; hip; 6-frame walk",
+        "gambeson (ashlar, quilted, to mid-thigh): layer 4; hip; the hem sways a frame behind",
+        "belt (ash) and bell (brass): layer 5; belt front, her left; swings, tolls on cast",
+        "breastplate (slate, ridge, dent, brass rivets): layer 6; chest; breath 1 px",
+        "near arm (bare clay scales, slate bracer, ash claws; her left upper arm greying to ash): layer 7; chest; swing, haymaker strike, fan in the fidget",
+        "pauldron (slate, her left shoulder only, one lame): layer 8; chest; braces in guard",
+        "head (clay, swept ash horns, cheek frills, spine crest): layer 9; chest; smoke puff spawns at the snout (hand anchor for the fidget)"
+      ],
+      "palette": [
+        "clay",
+        "slate",
+        "ashlar",
+        "ash",
+        "brass"
+      ],
+      "pose": "A bruiser at ease, arms hanging heavy, weight back on her heels, horns high. Fidget: blows a tiny smoke puff and fans it away with a clawed hand.",
+      "notes": [
+        "Works: the most dragon for a 52 px knight: big horns and frills make a silhouette no other folk has, the bare arms say Bruiser, the one pauldron gives a lopsided read.",
+        "Risk: clay scales sit near Bramble's fox in hue; the ashlar gambeson and slate keep the mass grey-cool, and the horns must stay inside the 64 px cell in every pose.",
+        "Compared with Eastward 05 (John's bulk and backpack read as one block with a lit edge)."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1318,
+          "colours": 47,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.99,
+          "flat_ink": 0.0,
+          "double": 0.055,
+          "west_east": 6.7854,
+          "top_bottom": 5.1315,
+          "isolated": 0.0242,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1024,
+          "colours": 44,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0894,
+          "west_east": 6.121,
+          "top_bottom": 7.3944,
+          "isolated": 0.0166,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1052,
+          "colours": 49,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0829,
+          "west_east": 9.6919,
+          "top_bottom": 3.0985,
+          "isolated": 0.0138,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1425,
+          "colours": 48,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.9915,
+          "flat_ink": 0.0,
+          "double": 0.072,
+          "west_east": 8.295,
+          "top_bottom": 4.2675,
+          "isolated": 0.0202,
+          "checker": 0.0
+        }
+      }
+    },
+    {
+      "label": "C",
+      "name": "Hearth squire: kettle hat, quilted surcoat, big belt bell, ember-tipped tail",
+      "question": "Least armour: a squire's light kit, a big round drake head under a wide iron brim.",
+      "parts": [
+        "tail (clay scales, curled up behind the hip, lava ember tip): layer 0; hip; the tip bobs on the breath and lights brighter with heat",
+        "far arm (clay, a tone back): layer 1; chest",
+        "legs (ash breeches, timber boots with cuffs): layers 2/3; hip; 6-frame walk",
+        "surcoat (ash, quilted, clay hearth badge): layer 4; hip; hem sways",
+        "belt (timber) and big bell (brass, 9 px): layer 5; belt front, her left; swings wide on the walk, the hand rests on it in the fidget",
+        "near arm (clay scales, iron vambrace; her left upper arm greying): layer 6; chest",
+        "spaulders and gorget (iron, small, one dent): layer 7; chest",
+        "head (big round clay drake head, stubby ash horns): layer 8; chest",
+        "kettle hat (iron crown, wide iron brim with a hard shadow on the brow): layer 9; head; tips back on cheer, down over the eyes in the nap"
+      ],
+      "palette": [
+        "clay",
+        "ash",
+        "iron",
+        "brass",
+        "timber"
+      ],
+      "pose": "Earnest and a little sleepy, feet together, the bell kept still with a glance. Fidget: lays a hand on the big bell to quiet it, eyes lowered.",
+      "notes": [
+        "Works: the wide brim is a shape nobody else owns and reads instantly; the big bell is her signature at any size; cosiest of the three.",
+        "Risk: least knight and least Bruiser; the brim crowds the familiar perch on the shoulder.",
+        "Compared with Eastward 05 (Sam: a big head over a small body, hair as lobes; the brim shadow follows Eastward's hard shadow under hat brims)."
+      ],
+      "measure": {
+        "S idle": {
+          "px": 1201,
+          "colours": 35,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0613,
+          "west_east": 7.3918,
+          "top_bottom": 1.9095,
+          "isolated": 0.025,
+          "checker": 0.0
+        },
+        "E idle": {
+          "px": 1018,
+          "colours": 35,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.9889,
+          "flat_ink": 0.0,
+          "double": 0.0611,
+          "west_east": 7.9631,
+          "top_bottom": 7.966,
+          "isolated": 0.0155,
+          "checker": 0.0
+        },
+        "W idle": {
+          "px": 1017,
+          "colours": 34,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 0.989,
+          "flat_ink": 0.0,
+          "double": 0.0718,
+          "west_east": 10.3813,
+          "top_bottom": 8.8496,
+          "isolated": 0.0227,
+          "checker": 0.0
+        },
+        "S fidget": {
+          "px": 1160,
+          "colours": 35,
+          "on_house": 1.0,
+          "on_today": 0.0,
+          "families": 7,
+          "outline_dark": 1.0,
+          "flat_ink": 0.0,
+          "double": 0.0613,
+          "west_east": 7.2147,
+          "top_bottom": 2.1887,
+          "isolated": 0.0321,
+          "checker": 0.0
+        }
+      }
+    }
+  ],
+  "final": {
+    "chosen": "B",
+    "name": "Half-plate drake (final): ember scales, one pauldron as the perch, the big bedtime bell",
+    "grafts": [
+      "From C: the big brass bell (9 x 7 art px, lit rim, waist band, clapper) at the belt front on her left, the same anchor and layer in every facing; it reads at game scale.",
+      "From A: dents drawn as dents, a dark upper crescent with turned-down tips over a lit lower lip, one or two a plate, never mottling.",
+      "Scales moved off Bramble's fox orange: deep ember red-brown, clay tones 1 to 3 leading (4 only on the snout ridge and knuckles), the greying patch in ash on her left upper arm.",
+      "Tail cut short and curled up beside her legs, ember tip; never more than 10 art px behind her heel.",
+      "The one pauldron (her left shoulder) sits at the back of the shoulders in profile, a flat lit ledge: in fights it is the shoulder away from the foe and the familiar perches on it."
+    ],
+    "parts": [
+      "tail (clay ember scales, lava glow tip 2 px): layer 0; hip; curls up beside the legs in every facing (S: screen right; E/W: behind the heel, at most 10 px back); bobs a frame behind the breath; round the front in the nap; the tip dims as heat drops",
+      "far arm (clay, a tone back, slate_cool bracer): layer 1; chest; E: her left (greying), W: her right",
+      "far leg / near leg (ashlar_cool breeches, slate greave, slate_cool boot): layers 2/3; hip; 6-frame walk, lunge in strike, forward in sit",
+      "gambeson (ashlar, quilted channels, to mid-thigh): layer 4; hip; hem sways a frame behind",
+      "belt (ash) and big bell (brass 9 x 7): layer 5; belt front, her left, all facings; swings a frame behind, rings on the third heat (cast)",
+      "breastplate (slate, ridge, one dent, brass rivets): layer 6; chest; breath 1 px",
+      "familiar (stand-in Mossling, 24 px): layer 6.5; perched on the pauldron ledge in fight poses",
+      "pauldron (slate, her left shoulder only, lame, dent): layer 7; chest; S: screen right; E: far, back of the shoulders; W: near, back of the shoulders; the perch ledge (flat lit top)",
+      "near arm (bare clay scales, round shoulder, slate_cool bracer, fist with ash claws): layer 8; chest; E: her right with an ash strap over the bare shoulder, W: her left (greying); haymaker, guard, fan",
+      "head (clay, swept ash horns, brow ridge, cheek frill, snout step, spine crest): layer 9; chest; ember breath spawns at the snout tip (cast), smoke puff (fidget)"
+    ],
+    "palette": [
+      "clay",
+      "slate",
+      "ashlar",
+      "ash",
+      "brass"
+    ],
+    "pose": "A bruiser at ease, arms hanging heavy, weight back on her heels, horns high; she fights with her fists and breathes a banked ember to cast. Fidget: a tiny smoke puff, fanned away.",
+    "perch_anchor": {
+      "E ready": [
+        26,
+        33
+      ],
+      "E strike": [
+        28,
+        33
+      ],
+      "E cast": [
+        26,
+        32
+      ],
+      "E hit": [
+        24,
+        33
+      ],
+      "E sit": [
+        26,
+        40
+      ],
+      "E cheer": [
+        26,
+        31
+      ],
+      "W ready": [
+        37,
+        33
+      ],
+      "W strike": [
+        35,
+        33
+      ]
+    },
+    "measure": {
+      "S idle": {
+        "px": 1242,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9941,
+        "flat_ink": 0.0,
+        "double": 0.0592,
+        "west_east": 8.8407,
+        "top_bottom": 5.6226,
+        "isolated": 0.013,
+        "checker": 0.0,
+        "height_px": 54
+      },
+      "E idle": {
+        "px": 998,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.1176,
+        "west_east": 1.675,
+        "top_bottom": -0.6253,
+        "isolated": 0.0213,
+        "checker": 0.0,
+        "height_px": 54
+      },
+      "W idle": {
+        "px": 998,
+        "colours": 41,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.085,
+        "west_east": 15.0577,
+        "top_bottom": 1.4292,
+        "isolated": 0.0213,
+        "checker": 0.0,
+        "height_px": 54
+      },
+      "S fidget": {
+        "px": 1351,
+        "colours": 39,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9951,
+        "flat_ink": 0.0,
+        "double": 0.068,
+        "west_east": 12.0812,
+        "top_bottom": 5.5671,
+        "isolated": 0.0131,
+        "checker": 0.0,
+        "height_px": 54
+      },
+      "nap S": {
+        "px": 716,
+        "colours": 43,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 0.9916,
+        "flat_ink": 0.0,
+        "double": 0.0252,
+        "west_east": 15.0072,
+        "top_bottom": 9.7653,
+        "isolated": 0.0218,
+        "checker": 0.0,
+        "height_px": 21
+      },
+      "E ready": {
+        "px": 1276,
+        "colours": 49,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0977,
+        "west_east": 9.039,
+        "top_bottom": 5.3297,
+        "isolated": 0.02,
+        "checker": 0.0,
+        "height_px": 57
+      },
+      "E strike": {
+        "px": 1337,
+        "colours": 48,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0524,
+        "west_east": 9.2954,
+        "top_bottom": 4.181,
+        "isolated": 0.0201,
+        "checker": 0.0,
+        "height_px": 57
+      },
+      "E cast": {
+        "px": 1277,
+        "colours": 53,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 0.9704,
+        "flat_ink": 0.0,
+        "double": 0.0828,
+        "west_east": 8.6719,
+        "top_bottom": 3.7852,
+        "isolated": 0.0226,
+        "checker": 0.0,
+        "height_px": 57
+      },
+      "E hit": {
+        "px": 1175,
+        "colours": 47,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0886,
+        "west_east": 10.4941,
+        "top_bottom": 3.2397,
+        "isolated": 0.0157,
+        "checker": 0.0,
+        "height_px": 57
+      },
+      "E sit": {
+        "px": 1091,
+        "colours": 49,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0685,
+        "west_east": 10.943,
+        "top_bottom": 2.0816,
+        "isolated": 0.0296,
+        "checker": 0.0,
+        "height_px": 49
+      },
+      "E cheer": {
+        "px": 1335,
+        "colours": 49,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0599,
+        "west_east": 8.2933,
+        "top_bottom": 3.8834,
+        "isolated": 0.018,
+        "checker": 0.0,
+        "height_px": 59
+      },
+      "W ready": {
+        "px": 1275,
+        "colours": 49,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 9,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0914,
+        "west_east": 5.7973,
+        "top_bottom": 5.7885,
+        "isolated": 0.0191,
+        "checker": 0.0,
+        "height_px": 57
+      },
+      "W strike": {
+        "px": 1336,
+        "colours": 49,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 8,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0625,
+        "west_east": 4.0817,
+        "top_bottom": 3.4371,
+        "isolated": 0.0175,
+        "checker": 0.0,
+        "height_px": 57
+      }
+    },
+    "notes": [
+      "Compared side by side with Eastward 05 at the same character height (John, Sam and the townsfolk by the trailers): one dark outline per material, a lit cap and dark crescent per part, 4 to 5 tones a material, 2 x 3 eyes with a glint, John's bulk read as one block with a lit edge.",
+      "Ember red-brown scales against cool slate and pale ashlar keep her apart from Bramble's orange fox; horns, frills and the single pauldron make a silhouette no other folk has.",
+      "The perch is the pauldron at the back of the shoulders; the 24 px stand-in Mossling covers the back horn in fights (the familiar size is still open for Matt).",
+      "Open: whether the cast should ring the bell (her mechanic) rather than breathe an ember; the scale texture on bare arms is the costliest layer per frame."
+    ]
+  }
+}
