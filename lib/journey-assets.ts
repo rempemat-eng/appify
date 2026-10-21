@@ -33,10 +33,8 @@ import lavaYard from '@/assets/journeys/lava-yard.png';
 import moonYard from '@/assets/journeys/moon-yard.png';
 import engine from '@/assets/journeys/engine.png';
 import carriage from '@/assets/journeys/carriage.png';
-import capsule from '@/assets/journeys/capsule.png';
 import maglev from '@/assets/journeys/maglev.png';
 import carts from '@/assets/journeys/carts.png';
-import shuttle from '@/assets/journeys/shuttle.png';
 import ferry from '@/assets/journeys/ferry.png';
 export const JOURNEY = { width: 320, height: 240, rail: 160 } as const;
 /** Sky, far land and near land for the trip to each region; each loops across. `above` and
@@ -76,9 +74,7 @@ export const journeyVehicles: Record<
 > = {
   engine: { source: engine, w: 100, h: 50 },
   carriage: { source: carriage, w: 74, h: 38 },
-  capsule: { source: capsule, w: 42, h: 58 },
   maglev: { source: maglev, w: 130, h: 25 },
   carts: { source: carts, w: 90, h: 21 },
-  shuttle: { source: shuttle, w: 84, h: 75 },
   ferry: { source: ferry, w: 84, h: 36 },
 };

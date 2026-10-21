@@ -323,8 +323,8 @@ export function ShopScreen() {
             paused
               ? 'TAKE A BREAK'
               : p.grass < preview.cost
-                ? `NEED ${preview.cost - p.grass} MORE GRASS`
-                : `LEVEL UP · ${50 * p.level} GRASS`
+                ? `NEED ${preview.cost - p.grass} MORE DREAM DUST`
+                : `LEVEL UP · ${50 * p.level} DREAM DUST`
           }
           disabled={paused || p.grass < p.level * 50}
           onDisabledPress={() => {
@@ -332,7 +332,7 @@ export function ShopScreen() {
               feedback('error');
               return;
             }
-            setMerchant('a few more GRASS for this one.');
+            setMerchant('a little more Dream Dust for this one.');
             feedback('error');
           }}
           onPress={() => {
@@ -372,6 +372,8 @@ export function ShopScreen() {
           const owned = p.owned_hats.includes(h.id);
           const equipped = p.hat === h.id;
           const short = h.cost - p.grass;
+          // a price chip is the number and the vial: the word does not fit two hats across
+          const price = !paused && !owned;
           return (
             <CozyPanel
               key={h.id}
@@ -416,6 +418,14 @@ export function ShopScreen() {
                 <PixelButton
                   small
                   light={!equipped && (owned || short > 0)}
+                  icon={price ? 'dreamDust' : undefined}
+                  spokenLabel={
+                    !price
+                      ? undefined
+                      : short > 0
+                        ? `NEED ${short} MORE Dream Dust`
+                        : `${h.cost} Dream Dust`
+                  }
                   label={
                     paused
                       ? 'TAKE A BREAK'
@@ -425,11 +435,11 @@ export function ShopScreen() {
                           ? 'WEAR'
                           : short > 0
                             ? `NEED ${short} MORE`
-                            : `${h.cost} GRASS`
+                            : String(h.cost)
                   }
                   disabled={paused || (!owned && short > 0)}
                   onDisabledPress={() => {
-                    if (!paused) setMerchant('a few more GRASS for this one.');
+                    if (!paused) setMerchant('a little more Dream Dust for this one.');
                     feedback('error');
                   }}
                   onPress={() => {
@@ -499,7 +509,7 @@ function RivalRow({
             {grasslings[p.species].habit}
           </BodyText>
           <BodyText style={{ fontSize: 12 }}>
-            LV {p.level} · {p.grass} GRASS
+            LV {p.level} · {p.grass} DREAM DUST
           </BodyText>
         </View>
       </View>
@@ -596,7 +606,7 @@ export function ArenaScreen() {
       </View>
       {wins >= 3 && <BodyText>Dave is tired. Come back tomorrow.</BodyText>}
       <PixelButton
-        label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO GRASS' : 'SPAR WITH DAVE'}
+        label={paused ? 'TAKE A BREAK' : wins >= 3 ? 'SPAR · NO DREAM DUST' : 'SPAR WITH DAVE'}
         disabled={paused}
         onPress={() => {
           // the spar happens where you are: a region's ring shows that region behind it

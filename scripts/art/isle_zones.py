@@ -1277,7 +1277,7 @@ def _kind(cv: Canvas, x: int, y: int) -> str:
 # Where the companion and the residents stop, per zone (zone px). The entries named after a
 # neighbour stand on the trail near the shared edge; the others at the place's node.
 STANDS = {
-    'landing': {'pier': (112, 440), 'rainforest': (188, 10), 'cove': (314, 366), 'boathouse': (184, 352)},
+    'landing': {'pier': (112, 440), 'rainforest': (188, 10), 'cove': (314, 366), 'boathouse': (298, 404)},
     'rainforest': {'landing': (188, 568), 'bridge': (226, 348), 'headwaters': (314, 167), 'notch': (276, 252)},
     'headwaters': {'rainforest': (6, 162), 'pool': (172, 166), 'cove': (188, 520)},
     'cove': {'headwaters': (196, 26), 'landing': (6, 367), 'beach': (150, 390)},
@@ -1286,9 +1286,10 @@ STANDS = {
 # The props each place is built round, by hand (key, the foot's centre in island px).
 # Everything else grows in groves (GROVES) or along the edges (EDGES), placed by rule.
 LANDMARKS = [
-    # the landing: the boathouse above the lagoon, the ferry at the pier, a canoe hauled
-    # up on the sand, a heron fishing the river's mouth, a banana patch behind the boathouse
-    ('boathouse', 'boathouse', 184, 920), ('ferry', 'island_ferry', 174, 1049), ('canoe', 'canoe', 222, 974),
+    # the landing: the boathouse at the lagoon's edge, its boat end over the water on piles and
+    # its slipway running down into the lagoon (Matt's World Logic answer 16), the ferry at
+    # the pier, a canoe hauled up on the sand, a heron fishing the river's mouth, a banana patch behind the boathouse
+    ('boathouse', 'boathouse', 248, 1040), ('ferry', 'island_ferry', 174, 1049), ('canoe', 'canoe', 178, 964),
     ('heron', 'heron', 60, 905), ('banana-1', 'banana', 236, 906), ('banana-2', 'banana', 234, 892),
     # the rainforest: a fallen giant across the floor by the pool in the bend, its stump
     ('log', 'mossy_log', 106, 474),
@@ -1412,6 +1413,10 @@ def _island_props() -> list:
         box = (x0 - 3, y0 - 4, x1 + 3, y1 + 3)
         if any(box[0] < b[2] and box[2] > b[0] and box[1] < b[3] and box[3] > b[1] for b in feet):
             return False
+        # scatter never stands inside a landmark's picture (it would read as growing out of
+        # the roof or the hull), nor on the shore and slipway in front of the boathouse
+        if not landmark and any(x0 < b[2] and x1 > b[0] and y0 < b[3] and y1 > b[1] for b in held):
+            return False
         # where a sprite rises over a zone's north border, nothing in the zone behind may
         # stand under it (zones.check_overhangs)
         bx0, by0 = fx - sp.w // 2, fy - sp.h
@@ -1448,16 +1453,20 @@ def _island_props() -> list:
         return True
 
     boxes = []
+    held = []  # every landmark's sprite box, with the boathouse's shore and slipway
 
     def put(oid, key, fx, fy):
         sp = sm[key]
+        if any(oid == lid for (lid, _k, _x, _y) in LANDMARKS):
+            below = 18 if key == 'boathouse' else 2
+            held.append((fx - sp.w // 2 - 4, fy - sp.h - 2, fx + sp.w // 2 + 4, fy + below))
         boxes.append((fx - sp.w // 2, fy - sp.h, sp.w, sp.h, fx // W, (fy - 2) // H))
         feet.append(tuple(a + d for a, d in zip(_foot(key, fx, fy), (-3, -4, 3, 3))))
         out.append((oid, key, fx, fy))
 
     for (oid, key, fx, fy) in LANDMARKS:
-        if key in ('island_ferry',):
-            put(oid, key, fx, fy)  # (it floats; drawn at the pier)
+        if key in ('island_ferry', 'boathouse'):
+            put(oid, key, fx, fy)  # (the ferry floats at the pier; the boathouse stands on its piles at the water's edge)
             continue
         if not clear(key, fx, fy, None, landmark=True):
             near = min(((abs(dx) + abs(dy), fx + dx, fy + dy) for dx in range(-30, 31, 2) for dy in range(-30, 31, 2)

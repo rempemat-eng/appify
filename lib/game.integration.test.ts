@@ -111,7 +111,7 @@ async function main() {
     const identity = gameStore.getState().player!.id;
     check(
       gameStore.getState().player!.grass === 20 && gameStore.getState().player!.deck.length === 7,
-      'Actual hatch creates the original 20-GRASS, seven-card starter',
+      'Actual hatch creates the original 20 Dream Dust, seven-card starter',
     );
     gameStore.getState().sleep();
     now += 31_000;
@@ -184,7 +184,7 @@ async function main() {
       );
       check(
         isDeepStrictEqual({ ...after, guardian: before.guardian }, before),
-        `Switching to ${id} preserves all account progress and costs no GRASS`,
+        `Switching to ${id} preserves all account progress and costs no Dream Dust`,
       );
     }
     gameStore.getState().change({ mode: 'mission' });
@@ -261,7 +261,7 @@ async function main() {
       gameStore.getState().message === backendUnavailableMessage &&
         !gameStore.getState().battle &&
         gameStore.getState().player!.grass === 21,
-      'Player raid is blocked without spending GRASS or creating a battle',
+      'Player raid is blocked without spending Dream Dust or creating a battle',
     );
     await gameStore.getState().startBattle(rival, true);
     check(Boolean(gameStore.getState().battle?.practice), 'Local sparring can still start');
@@ -270,7 +270,7 @@ async function main() {
       gameStore.getState().player!.grass === 26 &&
         !gameStore.getState().battle &&
         gameStore.getState().outgoing.length === 0,
-      'Actual sparring win pays 5 GRASS and creates no player raid',
+      'Actual sparring win pays 5 Dream Dust and creates no player raid',
     );
     await flushGameSave();
     lines.push(...(await runRefinementChecks()));

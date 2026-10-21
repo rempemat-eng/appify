@@ -52,15 +52,17 @@ def _lava(r, g, b):
     return r >= 170 and g <= 160 and b <= 90 and r - g >= 50
 
 
-def classify(ground: Image.Image, blocked: set, water_mask: set | None = None) -> list[str]:
+def classify(ground: Image.Image, blocked: set, water_mask: set | None = None,
+             cols: int = COLS, rows: int = ROWS) -> list[str]:
     """One character per walk cell: '~' water, '!' lava, '^' wall/cliff/other blocked,
     '=' path, '.' ground (the majority of the cell's pixels decides). A zone that declares
-    its water (`water_mask`) is read by that, not by colour."""
+    its water (`water_mask`) is read by that, not by colour. (`cols` and `rows` size a
+    region canvas, regions.py; a zone is COLS x ROWS.)"""
     px = ground.load()
-    rows = []
-    for cy in range(ROWS):
+    n_rows, rows = rows, []
+    for cy in range(n_rows):
         row = []
-        for cx in range(COLS):
+        for cx in range(cols):
             votes = {}
             for dy in range(CELL):
                 for dx in range(CELL):
@@ -337,6 +339,38 @@ def garden_zone():
     return {'ground': g, 'terrain': classify(g, blocked)}
 
 
+def garden_objects() -> list:
+    """The garden's objects as lib/garden-map.ts lists them (garden.py writes it first):
+    (sprite, x, y, w, h) in the garden's px, the ones the valley walk draws."""
+    try:
+        with open(os.path.join(ROOT, 'lib', 'garden-map.ts')) as f:
+            src = f.read()
+    except FileNotFoundError:
+        return []
+    block = src[src.find('export const gardenObjects'):]
+    block = block[:block.find('] as const')]
+    out = []
+    # (as garden.py writes it, keys quoted, or as the formatter leaves it)
+    q = r'["\']?'
+    pat = (rf"{q}sprite{q}:\s*[\"'](\w+)[\"'],\s*{q}x{q}:\s*(-?\d+),\s*{q}y{q}:\s*(-?\d+),"
+           rf"\s*{q}w{q}:\s*(\d+),\s*{q}h{q}:\s*(\d+)")
+    for m in re.finditer(pat, block):
+        key = m.group(1)
+        if os.path.exists(os.path.join(ROOT, 'assets', 'garden', f'{key}.png')):
+            out.append((key, *(int(v) for v in m.groups()[1:])))
+    return out
+
+
+_GARDEN_SPRITES: dict = {}
+
+
+def _garden_sprite(key: str) -> Image.Image:
+    if key not in _GARDEN_SPRITES:
+        im = Image.open(os.path.join(ROOT, 'assets', 'garden', f'{key}.png')).convert('RGBA')
+        _GARDEN_SPRITES[key] = im.resize((im.width // 4, im.height // 4), Image.NEAREST)
+    return _GARDEN_SPRITES[key]
+
+
 def run(built: dict, layout: dict, sprites_of, overhead, previews: dict | None = None):
     zones = {}
     violations = []
@@ -402,7 +436,18 @@ def _stitch(out, layout, previews, zones, violations, built=None, overhead=()):
             src = previews.get(z) or (zones[z]['ground'] if z in zones else None)
             if src is not None:
                 img.alpha_composite(src.convert('RGBA'), (ox, oy))
+            if z == 'garden':
+                # the garden's objects as the walk draws them (atlas-walk.tsx, tileDrawables):
+                # its hut, fence, gate, trees and the rest, sorted with the zones' props
+                for (key, x, y, w, h) in garden_objects():
+                    props.append((oy + y + h, ox + x, oy + y, key))
         for (_z, px, py, sp) in sorted(props, key=lambda p: p[0]):
+            if isinstance(sp, str):
+                spr = _garden_sprite(sp)
+                cx, cy = max(0, -px), max(0, -py)
+                if cx < spr.width and cy < spr.height and px < img.width and py < img.height:
+                    img.alpha_composite(spr, (px + cx, py + cy), (cx, cy))
+                continue
             pad = getattr(sp, 'pad', 0)
             spr = sp.img.crop((pad, pad, pad + sp.w, pad + sp.h)).convert('RGBA')
             # (clipped to the region picture: a prop may reach past the region's edge)

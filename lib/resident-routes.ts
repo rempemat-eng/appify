@@ -26,7 +26,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   keeper: { zone: 'harbour', from: [22, 452], to: [22, 512], face: ['east', 'east'] },
   steward: { zone: 'hearthold', from: [146, 296], to: [196, 296], face: ['west', 'front'] },
   tinkerer: { zone: 'junction', from: [108, 372], to: [184, 372] },
-  boatwoman: { zone: 'canal', from: [136, 170], to: [224, 170] },
+  boatwoman: { zone: 'canal', from: [190, 182], to: [250, 182], face: ['front', 'front'] },
   cowhand: { zone: 'gulch', from: [132, 200], to: [132, 288], face: ['west', 'east'] },
   saloon: { zone: 'gulch', from: [102, 380], to: [190, 380], face: ['west', 'front'] },
   prospector: { zone: 'gulch', from: [186, 130], to: [214, 130], face: ['back', 'east'] },
@@ -49,7 +49,7 @@ export const residentRoutes: Record<string, ResidentRoute> = {
   stargazer: { zone: 'station', from: [44, 152], to: [128, 152], face: ['back', 'east'] },
   warden: { zone: 'saddle', from: [152, 240], to: [168, 330] },
   skater: { zone: 'snowmelt', from: [162, 300], to: [208, 292] },
-  ferryman: { zone: 'landing', from: [128, 360], to: [200, 364] },
+  ferryman: { zone: 'landing', from: [128, 360], to: [184, 366], face: ['front', 'east'] },
   naturalist: { zone: 'rainforest', from: [200, 440], to: [194, 520] },
   beachcomber: { zone: 'cove', from: [130, 396], to: [206, 396] },
 };

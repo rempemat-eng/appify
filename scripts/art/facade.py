@@ -766,13 +766,23 @@ def roof(cv: Canvas, x0: int, x1: int, y0: int, y1: int, kind: str, ramp, seed: 
                     c = mix(SKY[2], base, 0.35) if m > 0.79 and (u + v) % 7 not in (2, 3) else \
                         mix(SKY[3], base, 0.3) if m > 0.79 else step(base, 1.2)
             elif kind == 'gravel':
-                c = (r[2], r[3], mix(r[3], '#B0A890', 0.3), step(r[2], 0.7), mix(r[2], '#8A6A4A', 0.35))[int(n * 5)]
-                if v % 2 == 0 and noise2(cx, cy, 3604 + seed) > 0.6:
-                    c = step(c, -0.8)  # a stone's lit top
-                elif v % 2 == 1 and noise2(cx, cy, 3604 + seed) < 0.1:
-                    c = step(c, 1.2)  # one sunk in shadow
-                if 0.48 < noise2(cx // 2, cy, 3616 + seed) < 0.51:
-                    c = ('#7A7A3A', '#5A6A3A', '#9A8A5A')[cx % 3]  # moss in the damp
+                # pale gravel in broad soft patches a tone apart, stones in 2 px clusters, lit on
+                # top and shaded below, moss only in a damp clump here and there (calm, 20 Oct)
+                p_ = smooth_noise(u, v, 7, 3625 + seed)
+                c = step(r[2], 0.5) if p_ < 0.2 else r[2] if p_ < 0.45 else mix(r[2], r[3], 0.5) if p_ < 0.7 else r[3] if p_ < 0.88 else step(r[3], -0.5)
+                g = noise2(cx, cy, 3604 + seed)
+                if g > 0.86:
+                    c = mix(r[3], '#B0A890', 0.35) if v % 2 == 0 else step(r[2], 0.7)  # a pale stone: its lit top, its shaded foot
+                elif g > 0.78:
+                    c = mix(r[3], '#9AA0A8', 0.4) if v % 2 == 0 else step(r[2], 1.0)  # a grey flint
+                elif g < 0.08:
+                    c = mix(r[2], '#8A6A4A', 0.35) if v % 2 == 0 else step(r[2], 1.2)  # a brown one
+                elif g < 0.12:
+                    c = r[1] if v % 2 == 0 else r[0]  # a hollow where a stone has gone
+                elif g < 0.18:
+                    c = mix(r[3], '#C08A5A', 0.4) if v % 2 == 0 else mix(r[2], '#6A4A3A', 0.4)  # a rust-red pebble
+                if smooth_noise(u, v, 5, 3616 + seed) > 0.8 and noise2(cx, cy, 3626 + seed) > 0.4:
+                    c = '#5A6A3A' if v % 2 else '#7A7A3A'  # moss in a damp clump
             elif kind == 'deck':
                 row, rv = divmod(v, 3)
                 seg = (u + int(noise2(row, 0, 3605 + seed) * 20)) // 13
@@ -782,21 +792,28 @@ def roof(cv: Canvas, x0: int, x1: int, y0: int, y1: int, kind: str, ramp, seed: 
                     c = '#2A1A14'  # the gap between boards
                 elif rv == 0:
                     c = step(c, -0.7)  # the board's lit edge
-                elif noise2(u // 3, row, 3608 + seed) > 0.62:
+                elif noise2(u // 3, row, 3608 + seed) > 0.72:
                     c = step(c, 0.8)  # grain
                 elif noise2(u // 2, row, 3617 + seed) > 0.95:
                     c = '#3A2418'  # a knot
                 if rv < 2 and noise2(cx, row, 3618 + seed) > 0.88:
                     c = ('#9A7A3A', '#6A5A2A', '#7A3A2A')[int(noise2(cx, row, 3619) * 3)]  # leaves blown in
-                elif rv == 1 and (u + row * 3) % 11 == 4:
-                    c = '#C8B8A0' if u % 2 else '#8A7A68'  # a pair of nail heads
+                elif rv == 1 and (u + row * 3) % 11 in (4, 5):
+                    c = '#9A8A74'  # a pair of nail heads
                 if (u + int(noise2(row, 0, 3605 + seed) * 20)) % 13 in (0,) and rv < 2:
                     c = '#2A1A14'  # the board ends
             elif kind == 'green':
-                greens = ('#2A4A38', '#3A6446', '#4E6E44', '#6A8A4A', '#7A4A4A', '#5A7A3A')
-                c = greens[int(n * len(greens))]
-                if noise2(cx, cy, 3609 + seed) > 0.96:
-                    c = ('#C8A040', '#B8608A', '#C8C0B0')[int(noise2(cx, cy, 3610) * 3)]  # sedum in flower
+                # sedum in clumps a few px across, each a green a step from its neighbours,
+                # red sedum in its own clumps, rosettes lit on top, flowers as pairs (calm, 20 Oct)
+                greens = ('#2A4A38', '#3A6446', '#4E6E44', '#6A8A4A')
+                q_ = smooth_noise(u, v, 4, 3627 + seed)
+                c = greens[min(3, int(q_ * 4))]
+                if smooth_noise(u + 40, v, 5, 3628 + seed) > 0.74:
+                    c = '#7A4A4A' if q_ > 0.5 else '#5E3A3E'  # a clump of red sedum
+                elif noise2(cx, cy, 3609 + seed) > 0.66:
+                    c = greens[min(3, int(q_ * 4) + 1)] if v % 2 == 0 else greens[max(0, int(q_ * 4) - 1)]  # a rosette: lit top, shaded foot
+                if v % 2 == 0 and noise2(cx, cy, 3610 + seed) > 0.92:
+                    c = ('#C8A040', '#B8608A', '#C8C0B0')[int(noise2(cx, cy, 3611) * 3)]  # sedum in flower, a pair of heads
                 if v % 14 in (7, 8):
                     c = r[3] if v % 14 == 7 else r[2]  # a gravel path across the sedum
             elif kind == 'solar':
@@ -854,7 +871,7 @@ def roof_clutter(cv: Canvas, x0: int, x1: int, y0: int, y1: int, kind: str, r, s
             if (x - x0) % 9 == 4:
                 for d in (2, 3):
                     cv.set(x, py + d, '#7A7470'); cv.set(x + 1, py + d, '#5A5450')
-    for k in range(W * H // 400):
+    for k in range(max(1, W * H // 1000)):  # a few soil-stack vents, not a field of them
         vx = x0 + 3 + int(noise2(seed, k, 3621) * max(1, W - 8))
         vy = y0 + 2 + int(noise2(seed, k, 3622) * max(1, H - 7))
         mushroom_vent(cv, vx, vy)

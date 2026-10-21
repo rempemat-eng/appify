@@ -100,20 +100,28 @@ def paint_dirt(cv, mask):
             cv.set(x, y + 1, g.G[3])
 
 
-def paint_paving(cv, mask, seed=0):
+def paint_paving(cv, mask, seed=0, ox=0, oy=0, street=None):
     """Square paving slabs (Matt's references): each slab its own tone, lit along its
     top and left edges and dark along its bottom and right, chipped corners, moss in
-    the odd joint, and the lawn's ragged edge creeping over the border."""
+    the odd joint, and the lawn's ragged edge creeping over the border.
+
+    `ox, oy` (the zone's origin in its region, e.g. its layout cell times the zone size)
+    and `street` (one seed for the whole street) lay the slabs in region coordinates, so
+    a street that runs on from one zone into the next keeps its courses, joints and slab
+    tones across the seam (art-faults.md A7: the town's east street met the park's at
+    a vertical joint at region x 640). Left out, each zone lays its own, as before."""
     import detail
     SL = ['#8C8574', '#A9A28F', '#C2B9A2', '#D4CBB3', '#E6DEC8']
+    tones = 61 + (seed if street is None else street)
     for (x, y) in mask:
-        row = y // 9
-        sx = (x + (row % 2) * 6) // 12
-        cx, cy = (x + (row % 2) * 6) % 12, y % 9
-        n = noise2(sx, row, 61 + seed)
+        gx, gy = x + ox, y + oy
+        row = gy // 9
+        sx = (gx + (row % 2) * 6) // 12
+        cx, cy = (gx + (row % 2) * 6) % 12, gy % 9
+        n = noise2(sx, row, tones)
         t = 3 if n > 0.35 else 2 if n > 0.1 else 4
         if cx == 11 or cy == 8:
-            c = SL[0] if noise2(x, y, 62) > 0.12 else g.G[2]  # the joint, sometimes mossy
+            c = SL[0] if noise2(gx, gy, 62) > 0.12 else g.G[2]  # the joint, sometimes mossy
         elif (cx, cy) in ((0, 0), (10, 7)):
             c = SL[1]  # a chipped corner
         elif cx == 0 or cy == 0:
@@ -123,7 +131,13 @@ def paint_paving(cv, mask, seed=0):
         else:
             c = SL[t]
         cv.set(x, y, c)
-    edge = {(x, y) for (x, y) in mask if 0 <= x < W and 0 <= y < H}
+    if street is None and not (ox or oy):
+        edge = {(x, y) for (x, y) in mask if 0 <= x < W and 0 <= y < H}
+    else:
+        # (laid in region coordinates the street runs on past the zone's edge, so the
+        # lawn creeps over its border only where the street really ends, not along the
+        # zone's last column, and down the whole height of a valley zone)
+        edge = set(mask)
     detail.grass_edge(cv, edge, g.G, SL, seed=13 + seed)
 
 

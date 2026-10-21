@@ -247,9 +247,9 @@ export function MissionDeparture() {
                 </BodyText>
                 <BodyText style={{ fontSize: 13 }}>{placeDescription(selected)}</BodyText>
                 <BodyText style={{ fontSize: 13 }}>
-                  {mission.reward} GRASS · {mission.id === 'mountain' ? 'EPIC' : 'RARE'} card ·
+                  {mission.reward} Dream Dust · {mission.id === 'mountain' ? 'EPIC' : 'RARE'} card ·
                   postcard
-                  {mission.id === 'mountain' ? ' · new hat (or +50 GRASS if all owned)' : ''}
+                  {mission.id === 'mountain' ? ' · new hat (or +50 Dream Dust if all owned)' : ''}
                 </BodyText>
                 <BodyText style={{ fontSize: 12, color: c.shade }}>
                   Returning early keeps common cards, without completion rewards. No need to watch

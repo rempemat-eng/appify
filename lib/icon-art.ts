@@ -686,6 +686,24 @@ export const iconRows = {
     '.....AAAAAA.....',
     '................',
   ],
+  dreamDust: [
+    '.....LLL........',
+    '....LaaaL.T.....',
+    '....LORRL.......',
+    '...tuLLLut..V...',
+    '....ttttt..VWV..',
+    '....tuopt.VWIWV.',
+    '...ttopptt.VWV..',
+    '..tuoWttout.V...',
+    '..tuIooWopt.....',
+    '.tuooooooout..T.',
+    '.tuooWWWoopt....',
+    '.toWWITTWWpt....',
+    '..tTTTTTIXt.....',
+    '..tTXTITXXt.....',
+    '...ttTXXtt......',
+    '.....ttt........',
+  ],
 } as const;
 
 export type IconName = keyof typeof iconRows;

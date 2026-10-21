@@ -2181,7 +2181,7 @@ def sample_preview(p, scale=2, people=True):
     img = p.image().convert('RGBA')
     if people:
         for name, (x, y) in (('angler', (300, 250)), ('hiker', (180, 262)), ('gardener', (226, 248))):
-            path = os.path.join(ROOT, 'assets', 'residents', f'{name}-0.png')  # ledger: compare
+            path = os.path.join(ROOT, 'assets', 'residents', f'{name}-0.png')  # ledger: compare (scale figures)
             if os.path.exists(path):
                 r = Image.open(path).convert('RGBA')
                 r = r.resize((r.width // 4, r.height // 4), Image.NEAREST)
