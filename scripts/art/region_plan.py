@@ -164,9 +164,12 @@ def check(plan: dict) -> list:
         if not (x0 - slack <= p[0] <= x0 + w + slack and y0 - slack <= p[1] <= y0 + h + slack):
             out.append(f'{pid}: {what} at {tuple(p)} lies outside the box')
 
-    for v in (x0, y0, w, h):
+    for v in (x0, y0):
         if v % GRID:
             out.append(f'{pid}: box {plan["box"]} off the {GRID} px grid')
+    for v in (w, h):
+        if v % 32:
+            out.append(f'{pid}: box {plan["box"]} is not whole 32 px audit cells')
     for t in plan.get('tiers', []):
         for p in t['outline']:
             if p[0] % GRID or p[1] % GRID:

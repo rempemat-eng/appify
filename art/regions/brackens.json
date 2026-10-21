@@ -3,10 +3,11 @@
   "id": "brackens",
   "owner": "claude-f",
   "biome": "moor",
-  "box": [4800, 1296, 800, 2704],
+  "box": [4800, 1280, 800, 2720],
   "base_tier": {
-    "value": 3,
-    "provisional": true
+    "value": 4,
+    "provisional": false,
+    "from": "Claude G, g-to-f-plans 21 Oct 10:40: lib/world-routes.ts (#175)"
   },
   "tiers": [
     {
@@ -14,8 +15,8 @@
       "tier": 1,
       "why": "the Brackens' body: a low heather ridge, the massif's south-western spur, two spurs pushing the Rift west",
       "outline": [
-        [4800, 1296],
-        [5560, 1296],
+        [4800, 1280],
+        [5560, 1280],
         [5568, 1480],
         [5544, 1640],
         [5560, 1800],
@@ -49,8 +50,8 @@
       "tier": 2,
       "why": "the crest: heather and grey gritstone, seen from the valley; no route climbs it",
       "outline": [
-        [4880, 1296],
-        [5400, 1296],
+        [4880, 1280],
+        [5400, 1280],
         [5408, 1440],
         [5384, 1600],
         [5400, 1760],
@@ -87,8 +88,8 @@
       "tier": 3,
       "why": "where the ridge rises into the massif's front: boulders and scree thickening north (the north edge's fade)",
       "outline": [
-        [4960, 1296],
-        [5336, 1296],
+        [4960, 1280],
+        [5336, 1280],
         [5344, 1408],
         [5312, 1512],
         [5256, 1560],
@@ -510,7 +511,7 @@
       "side": "west",
       "layers": "heather and gorse clumps thickening into gorse and thicket (64 to 180 px deep), thinning again beyond; the steppe and the Rift country beyond, hazier",
       "along": [
-        [4800, 1296],
+        [4800, 1280],
         [4800, 3360]
       ],
       "note": "the spurs leave the box westward: their land beyond x 4800 is Claude D's (the Rift and the steppe)"
@@ -519,8 +520,8 @@
       "side": "north",
       "layers": "scree and boulders thickening into crags and the massif's front",
       "along": [
-        [4800, 1296],
-        [5600, 1296]
+        [4800, 1280],
+        [5600, 1280]
       ]
     }
   ],
