@@ -2991,11 +2991,11 @@ def compare_sheet(p, scale=3, size=(200, 140)):
     return sheet
 
 
-def kit_sheet(items, scale=2):
+def kit_sheet(items, scale=2, groups=None, titles=None):
     """Every piece at `scale`, grouped, each labelled with its detail bar result."""
     pad, lab = 10, 30
-    groups = ['rock', 'shore', 'water', 'built', 'things']
-    titles = {'rock': 'Sea cliffs from the tileset, laid by the autotiler: pillow columns, lips, side bands, feet, the wet foot',
+    groups = groups or ['rock', 'shore', 'water', 'built', 'things']
+    titles = titles or {'rock': 'Sea cliffs from the tileset, laid by the autotiler: pillow columns, lips, side bands, feet, the wet foot',
               'shore': 'The shore: sand with its wrack line and swash, shingle to its storm ridge, a platform with pools',
               'water': 'The sea: depth bands, the floor in the shallows, swell, surf; the layered south edge',
               'built': 'Built: a quay and its sea wall, a pier on piles, a slipway, the ways down',
