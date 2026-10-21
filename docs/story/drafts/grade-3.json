@@ -1,0 +1,456 @@
+{
+  "lens": "world-cost",
+  "regions": {
+    "valley": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 9,
+          "d": 9,
+          "e": 6
+        },
+        "total": 40,
+        "note": "one watering can carried through three states (nail, fern in spout); the shelter seed is used well; Cairn appears only in ch3.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 5,
+          "d": 8,
+          "e": 8
+        },
+        "total": 36,
+        "note": "Cairn present from ch1 and his ritual 'sit still till the moss grows' is used; but ch2 and ch3 each add two props (bench+kettle, trowel hook+lantern) plus a deckchair.",
+        "conflicts": [
+          "a deckchair at the park bandstand is not in the brief (deck chairs belong to Driftwood's beach)"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 7,
+          "e": 5
+        },
+        "total": 36,
+        "note": "cheap (pose, kneeling mat, hoe on post); ch3 is received at the hut's bed while all of it happens at the shelter; opens with the grassling-found-asleep device used in all 11 C stories.",
+        "conflicts": []
+      },
+      "best": "A"
+    },
+    "brackens": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 7,
+          "d": 6,
+          "e": 7
+        },
+        "total": 35,
+        "note": "fold gate in three states is cheap and readable; ch3's spot is the bench below the gap but the drover sits on the hut step.",
+        "conflicts": [
+          "Tally hangs her fold bell on the gate, giving away the item cast.md gives her"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "Tally brings the flock in herself at dusk, exactly cast.md's 'bringing the flock in at dusk' and her Counting Sheep mechanic; three cheap changes, every spot used as written.",
+        "conflicts": []
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 7,
+          "d": 8,
+          "e": 5
+        },
+        "total": 36,
+        "note": "solid and on-brief (bluffs, hurdle, sheepfold) but Tally has one line in the whole story; four art items.",
+        "conflicts": []
+      },
+      "best": "B"
+    },
+    "lull": {
+      "A": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 7,
+          "d": 7,
+          "e": 7
+        },
+        "total": 37,
+        "note": "horse collar on willow then quay peg; two horse poses; ch3 splits between Lullford and Gullwick.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 6,
+          "d": 9,
+          "e": 8
+        },
+        "total": 40,
+        "note": "Clover named; Puddle's 'river goes downhill on its own' is a real insight into his trade; three horse poses (willows, waves, meadow) and a drifting barge as a lasting change are the costliest of the three.",
+        "conflicts": []
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 6,
+          "d": 6,
+          "e": 5
+        },
+        "total": 33,
+        "note": "same arc as A (harness on mooring post); ch3's spot (a boat at Gullwick) is never mentioned in the beat; four art items incl. bargee on cabin roof.",
+        "conflicts": []
+      },
+      "best": "B"
+    },
+    "frostline": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 9,
+          "d": 9,
+          "e": 7
+        },
+        "total": 43,
+        "note": "the kettle in three steam states reuses steam frames; marmot on its rock and the clearing match the atlas; the cleanest art budget.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 7
+        },
+        "total": 42,
+        "note": "Tam's two mugs and 'i'm on kettle' make the apprentice the cause; ch3 change adds both a bench pose and a chair by the stove.",
+        "conflicts": []
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 9,
+          "c": 7,
+          "d": 9,
+          "e": 5
+        },
+        "total": 38,
+        "note": "warm and accurate (marmot's rock, clearing); four art items; grassling-asleep opening again.",
+        "conflicts": []
+      },
+      "best": "A"
+    },
+    "cogsworth": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 8,
+          "d": 9,
+          "e": 7
+        },
+        "total": 41,
+        "note": "pocket watch as one prop in three placements; tinkerer sets Pendle slow in ch3 as the brief says; 'some pigeons' fits the clockwork birds.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 6,
+          "d": 9,
+          "e": 9
+        },
+        "total": 42,
+        "note": "Pendle gives back the minute she gave it (matches cast.md's past-tense 'set it a minute slow'); but a tower clock 'one minute behind' is unreadable at pixel scale and redraws a landmark.",
+        "conflicts": []
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 8,
+          "e": 5
+        },
+        "total": 37,
+        "note": "cushion under the works, boat clock two seconds slow; fine and cheap but follows the C template.",
+        "conflicts": []
+      },
+      "best": "B"
+    },
+    "isles": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 9,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "tally book open then shut under his head; boulder moves two inches; Tuff 'hums in g' is a lovely beat; hollow in the sand is cheap.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 8,
+          "b": 5,
+          "c": 8,
+          "d": 8,
+          "e": 7
+        },
+        "total": 36,
+        "note": "good pencil-behind-ear image, but the boulder climbs to the headwaters rain shelter in ch2.",
+        "conflicts": [
+          "the inch-a-year boulder of Black-sand Cove is said to have come 'all the way up' to the headwaters (T2, ~27 s from the pier), contradicting cast.md and its own ch3 dent in the cove"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 8,
+          "e": 5
+        },
+        "total": 37,
+        "note": "accurate (rain shelter, black-sand cove, hollow); same device as every C story.",
+        "conflicts": []
+      },
+      "best": "A"
+    },
+    "sunstone": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 7,
+          "d": 9,
+          "e": 8
+        },
+        "total": 42,
+        "note": "outlet stone in three states matches the atlas's buried outlet; ch2 adds stone state plus a shovel; 'best trade i've made' lands.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "water-seller ladling fits the awning in the brief; moon pictogram on the pole fits the gulch's pictogram signs; Mirra finds the outlet, they dig together, as cast.md says.",
+        "conflicts": []
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 8,
+          "e": 5
+        },
+        "total": 37,
+        "note": "trader hears the water and finds the outlet herself; Mirra has one line; rug and creek strip are cheap.",
+        "conflicts": []
+      },
+      "best": "B"
+    },
+    "fire": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 7,
+          "c": 8,
+          "d": 9,
+          "e": 8
+        },
+        "total": 41,
+        "note": "white vs banked forge reuses glow frames; good bedtime-bell tie.",
+        "conflicts": [
+          "Ashe unhooks Hearthold's bedtime bell and takes it on the road, leaving the castle whose bell 'still rings bedtime' (world-atlas) without it"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 8,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "Ashe carries the bell to the forge and hands it to the smith, keeping a small bell on her belt (cast.md); chasm bridge exit is on the map; door/glow states reuse the forge.",
+        "conflicts": []
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 9,
+          "c": 8,
+          "d": 8,
+          "e": 5
+        },
+        "total": 38,
+        "note": "uses the existing stone bench behind the keep; 'never heard past the third stroke' is good; Ashe thin until ch3.",
+        "conflicts": []
+      },
+      "best": "B"
+    },
+    "neon": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 8,
+          "d": 7,
+          "e": 7
+        },
+        "total": 39,
+        "note": "blanket ordered two years ago is a strong ending; ch3's spot is the chapel but Dave falls asleep on the Heights bench.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 9,
+          "c": 9,
+          "d": 9,
+          "e": 9
+        },
+        "total": 45,
+        "note": "Nix's 'status:' voice is distinct; uses the delta reed hide and gallery; one billboard frame with a moon glyph is cheap and on-theme; same blanket ending as A.",
+        "conflicts": []
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 8,
+          "c": 8,
+          "d": 7,
+          "e": 6
+        },
+        "total": 37,
+        "note": "chapel with no signal is a good idea; ch3's spot is the gallery but the beat is on the Heights bench.",
+        "conflicts": []
+      },
+      "best": "B"
+    },
+    "halcyon": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 7,
+          "c": 9,
+          "d": 9,
+          "e": 7
+        },
+        "total": 41,
+        "note": "one blanket in three states is very cheap.",
+        "conflicts": [
+          "the keeper's own 'bunk' in the sleep bay: the atlas gives the bay floor cushions and lockers, no bunks"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 9,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "uses the bay's heap of floor cushions and the galley's round table from the atlas; Bunk keeps the bay so she can sleep; two small props total.",
+        "conflicts": [
+          "'forty-one sleepers' implies a station population nowhere in the docs (minor)"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 8,
+          "b": 7,
+          "c": 8,
+          "d": 8,
+          "e": 5
+        },
+        "total": 36,
+        "note": "viewport showing Lumen is a nice hand-off; tethered cup and floating slippers.",
+        "conflicts": ["bunk in the sleep bay, as A"]
+      },
+      "best": "B"
+    },
+    "lumen": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 9,
+          "d": 9,
+          "e": 8
+        },
+        "total": 43,
+        "note": "chart rolled then pinned with a pencilled nightcap; but no fourteenth spire or full-moon payoff that cast.md sets for Mote.",
+        "conflicts": []
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 8,
+          "c": 9,
+          "d": 9,
+          "e": 9
+        },
+        "total": 44,
+        "note": "Mote is the gap; ends in the hammock under the moon tree (the deepest rest) and lights the fourteenth spire.",
+        "conflicts": ["a telescope on Lumen: the atlas puts the telescope in Halcyon's lounge"]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 9,
+          "c": 9,
+          "d": 9,
+          "e": 7
+        },
+        "total": 44,
+        "note": "best whole-journey payoff ('everyone we met is resting somewhere', lamps/bell/forge seen from above, spire and home stone); Mote has only one line and none in ch3.",
+        "conflicts": []
+      },
+      "best": "B"
+    }
+  },
+  "totals": {
+    "A": 445,
+    "B": 457,
+    "C": 409
+  },
+  "crossSetNotes": {
+    "A": "one object per story carried through three states: cheapest and most placeable set; some companion lines repeat ('the X is talking').",
+    "B": "apprentices cause the change in most stories (Tally, Tam, Puddle, Mirra, Ashe, Nix, Bunk, Mote); most varied; a few chapters exceed one prop.",
+    "C": "every ch1 is 'the resident found your grassling asleep' and every join line ends 'an Nth stone lights' (numbering matches cast.md's table): coherent but repetitive across 11 stories; apprentices often have one line."
+  }
+}

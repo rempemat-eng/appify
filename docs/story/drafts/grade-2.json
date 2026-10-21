@@ -1,0 +1,505 @@
+{
+  "lens": "rules-cosy",
+  "tieBreak": "equal totals broken by a+c, then fewer violations",
+  "regions": {
+    "valley": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 6,
+          "e": 10
+        },
+        "total": 45,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"while you slept, the gardener watered the beds twice\" — claims the player slept (rule 7)",
+          "\"the can stayed on its nail all week\" — asserts a week passed; ch3 can arrive the next morning (honesty)"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 8,
+          "e": 10
+        },
+        "total": 47,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"the gardener weeded by lantern, then by moonlight, then by lantern again\" — ch1 fires on a rest of any length, possibly 5 minutes at noon",
+          "\"lighting the circle's seventh stone\" — fixed ordinal assumes a completion order the player may not follow"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 7,
+          "d": 9,
+          "e": 10
+        },
+        "total": 46,
+        "violations": [
+          "\"asleep? at this hour? the beans are up, the slugs are up, everyone's up.\" — resident questions the player's companion for resting, mild rest-shaming on the very first beat",
+          "\"weeds grow slow when nobody's looking. you could look away longer.\" — companion advising, edges toward a lecture",
+          "\"the half moon, the first folk to wake\" — Cairn is not necessarily the first folk (launch folk exist); ordering claim"
+        ]
+      },
+      "best": "B"
+    },
+    "brackens": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 9,
+          "e": 10
+        },
+        "total": 48,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"went out past the hut at dawn and came back past it at dusk\" — a full day implied for a ch1 rest of any length"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 9,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "\"a fourth stone lights in the woodland circle\" — fixed ordinal assumes completion order"
+        ]
+      },
+      "best": "C"
+    },
+    "lull": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"tide waits for no one\" — urgency idiom, in character and immediately undercut, noted only"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 9,
+          "d": 10,
+          "e": 10
+        },
+        "total": 48,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"she's listening. the water's saying slow down.\" — mild moral, edges toward lecture"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 9,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "\"a sixth stone lights in the woodland circle\" — fixed ordinal assumes completion order"
+        ]
+      },
+      "best": "C"
+    },
+    "frostline": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 6,
+          "e": 10
+        },
+        "total": 45,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"while you slept in the bunk\" — claims the player slept (rule 7)"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 9,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "\"a fifth stone lights in the woodland circle\" — fixed ordinal assumes completion order"
+        ]
+      },
+      "best": "C"
+    },
+    "cogsworth": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 6,
+          "e": 10
+        },
+        "total": 45,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"while you slept in the clock room ... it was open in her hand the whole night\" — claims the player slept, and a whole night for a ch1 rest of any length"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 8,
+          "e": 10
+        },
+        "total": 48,
+        "violations": [
+          "\"asleep forty-one minutes, twelve seconds\" — a fixed duration that will contradict the rest timer the welcome-back sheet shows",
+          "\"an eighth stone lights in the woodland circle\" — fixed ordinal"
+        ]
+      },
+      "best": "B"
+    },
+    "isles": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 9,
+          "e": 10
+        },
+        "total": 49,
+        "violations": ["\"an eleventh stone lights in the woodland circle\" — fixed ordinal"]
+      },
+      "best": "C"
+    },
+    "sunstone": {
+      "A": {
+        "scores": {
+          "a": 7,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 9
+        },
+        "total": 46,
+        "violations": [
+          "\"one scoop a day. the sand took years.\" — resolution is earned by daily digging labour, not rest; daily cadence echoes a login loop",
+          "theme: \"slowly, a scoop at sunset, the outlet stone shows again\" — balance restored by work",
+          "change: \"a shovel leans on the trader's stall\" — a tool prop reads as an invitation for the player to dig (implied chore)"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 7,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 47,
+        "violations": [
+          "\"the trader and mirra dug at the drift in the cool before dawn\" — fix by labour, not rest",
+          "\"water always knows the way. it just needs a hand sometimes.\" — can read as a nudge for the player to lend a hand"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 9,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "\"a ninth stone lights in the woodland circle\" — fixed ordinal (the trader's kneeling to find the outlet comes after resting, so rest stays the engine)"
+        ]
+      },
+      "best": "C"
+    },
+    "fire": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 9,
+          "d": 9,
+          "e": 10
+        },
+        "total": 47,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"the smith's hammer rang all night\" — ch1 fires on a rest of any length",
+          "\"made one good blade today instead of six bad ones\" — a productivity moral, faintly lecturing"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 9,
+          "d": 9,
+          "e": 9
+        },
+        "total": 46,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"the hammer kept ringing all night\" — ch1 any-length rest",
+          "\"she put the hammer down. then picked it up. that is progress.\" — slightly condescending, therapy-adjacent",
+          "rival: \"a friendly bout by the lava, before the bell?\" — puts a soft deadline on an optional spar"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 6,
+          "d": 9,
+          "e": 10
+        },
+        "total": 45,
+        "violations": [
+          "\"asleep in a bathhouse. some of us have had a forge going since last spring.\" — sarcasm aimed at the resting companion: shames the game's core act",
+          "\"a fire you stoke all night just eats itself. a banked one keeps.\" — moral stated outright, lecture-adjacent",
+          "\"a tenth stone lights in the woodland circle\" — fixed ordinal"
+        ]
+      },
+      "best": "A"
+    },
+    "neon": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 9,
+          "d": 9,
+          "e": 10
+        },
+        "total": 47,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"his face was blue all night. nix brought him a parcel at three.\" — a night implied for a ch1 rest of any length",
+          "\"the water doesn't need charging.\" — faint phone dig from the companion (borderline rule 6)"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 9,
+          "d": 9,
+          "e": 10
+        },
+        "total": 47,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"the city glowed all night ... at 3 a.m.\" — ch1 any-length rest",
+          "\"the water doesn't need to be filmed. it's doing fine.\" — faint phone-habit dig from the companion (borderline rule 6)"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 8,
+          "e": 10
+        },
+        "total": 48,
+        "violations": [
+          "ch3 spot is \"the gallery behind the falls\" but Dave sleeps on \"his bench in the heights gardens ... to the falls\" — place claim inconsistent",
+          "\"a twelfth stone lights in the woodland circle\" — fixed ordinal",
+          "(noted, not deducted) \"asleep? in this economy?\" — Dave's ribbing of a sleeper is the villain's joke and stays kind"
+        ]
+      },
+      "best": "C"
+    },
+    "halcyon": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 6,
+          "e": 10
+        },
+        "total": 45,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"while you slept in the bay\" — claims the player slept (rule 7)"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 10,
+          "e": 10
+        },
+        "total": 49,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 9,
+          "d": 8,
+          "e": 10
+        },
+        "total": 47,
+        "violations": [
+          "theme: \"finally tests her own bunk\" — 'finally' (not in-game, but the brief flags it)",
+          "\"i tested a bunk myself. eight hours.\" — a fixed duration that may exceed the player's actual away time",
+          "\"a thirteenth stone lights in the woodland circle\" — fixed ordinal"
+        ]
+      },
+      "best": "B"
+    },
+    "lumen": {
+      "A": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 5,
+          "e": 10
+        },
+        "total": 44,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"while you slept in the hammock ... eyes wide, all night\" — claims the player slept, and a night for an any-length rest"
+        ]
+      },
+      "B": {
+        "scores": {
+          "a": 9,
+          "b": 10,
+          "c": 10,
+          "d": 9,
+          "e": 10
+        },
+        "total": 48,
+        "violations": [
+          "(a) general: progress is told as the resident changing on their own; the player's rest is the trigger but never visibly the cause (minor, -1)",
+          "\"counted the stars over the dream grove all night\" — ch1 any-length rest"
+        ]
+      },
+      "C": {
+        "scores": {
+          "a": 10,
+          "b": 10,
+          "c": 10,
+          "d": 8,
+          "e": 10
+        },
+        "total": 48,
+        "violations": [
+          "\"everyone we met is resting somewhere. it's all one big quiet now.\" — assumes every other story is finished",
+          "\"the moon's full\" in ch3 — true only when the other thirteen folk are lit"
+        ]
+      },
+      "best": "C"
+    }
+  },
+  "totals": {
+    "A": 511,
+    "B": 527,
+    "C": 527
+  }
+}
