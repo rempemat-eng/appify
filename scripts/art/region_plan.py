@@ -12,7 +12,9 @@ What `check()` holds a plan to (the brief's rules that can be checked before any
 docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.md):
 - structure on the 8 px grid: every outline vertex, stair and route width (eastward 1.1, 1.2);
   tier outlines run along x or y only, turning at cell corners (Matt, 21 Oct 11:44: the grid
-  shape, to-all-grid-2x);
+  shape, to-all-grid-2x), with no tab or notch of 1 to 2 cells; corners are rounded by the kit
+  unless a tier is marked "corners": "square" (a built edge); a note (not a fault) where an
+  east-west edge runs a screen width without stepping in or out (a-to-f-grid, to-all-volume);
 - inside the box: every outline, route, place, named thing, pocket and marker, unless it is
   marked outside_box (a marker the brief lists just past the line);
 - paths: widths 24 to 64 (check 17); every segment along x or y, turning at cell corners (the
@@ -150,6 +152,97 @@ class Ground:
 
 # --- the checks ----------------------------------------------------------------------------
 
+TAB_MAX = 16                      # a tab or notch: an end edge of 1 to 2 cells between two like turns
+CORNERS = ('rounded', 'square')   # outline corners: rounded by the kit (cliff_core.grid_mask), or
+#                                   square for a built edge (a quay, a wall); rounded when unmarked
+VARIETY_RUN = 320                 # a face that runs a screen width without stepping (advisory)
+
+
+def tabs(outline) -> list:
+    """The tabs and notches of an outline along x or y: an edge of at most TAB_MAX px whose two
+    ends turn the same way, so it caps a 1 to 2 cell finger poking out or a slot cut in. (A
+    step, whose ends turn opposite ways, is a jog of the mass and is fine.)"""
+    o = [tuple(v) for v in outline]
+    n = len(o)
+    if n <= 4:
+        return []                                        # a rectangle has no finger to cut
+    area = sum(o[i][0] * o[(i + 1) % n][1] - o[(i + 1) % n][0] * o[i][1] for i in range(n))
+
+    def turn(a, b, c):
+        return (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0])
+    out = []
+    for i in range(n):
+        a, b, c, d = o[i - 1], o[i], o[(i + 1) % n], o[(i + 2) % n]
+        if a[0] != b[0] and a[1] != b[1]:
+            continue                                     # not yet on the grid: the edge rule speaks
+        ln = abs(c[0] - b[0]) + abs(c[1] - b[1])
+        t1, t2 = turn(a, b, c), turn(b, c, d)
+        if 0 < ln <= TAB_MAX and t1 and t2 and (t1 > 0) == (t2 > 0):
+            out.append((b, 'tab' if (t1 > 0) == (area > 0) else 'notch'))
+    return out
+
+
+def tidy(o) -> list:
+    """An outline without repeated vertices or vertices in the middle of a straight run."""
+    o = [list(v) for v in o]
+    changed = True
+    while changed and len(o) > 4:
+        changed = False
+        for i in range(len(o)):
+            a, b, c = o[i - 1], o[i], o[(i + 1) % len(o)]
+            if b == a or (a[0] == b[0] == c[0]) or (a[1] == b[1] == c[1]):
+                del o[i]
+                changed = True
+                break
+    return o
+
+
+def _area(o) -> float:
+    n = len(o)
+    return abs(sum(o[i][0] * o[(i + 1) % n][1] - o[(i + 1) % n][0] * o[i][1] for i in range(n))) / 2
+
+
+def detab(outline) -> list:
+    """The outline with its tabs and notches (see tabs) closed: the finger's two sides are cut
+    back to the shorter one, so the tip lands on the line it stood out from. A tab whose closing
+    would take more than a tenth of the shape (a tier only a cell or two wide) is left for a
+    person: the check still reports it."""
+    o = tidy(outline)
+    skip = set()
+    for _ in range(4 * len(o) + 8):
+        found = [f for f in tabs(o) if f[0] not in skip]
+        if not found:
+            break
+        n = len(o)
+        i = next(k for k in range(n) if tuple(o[k]) == found[0][0])
+        a, b, c, d = o[i - 1], o[i], o[(i + 1) % n], o[(i + 2) % n]
+        ab, cd = abs(b[0] - a[0]) + abs(b[1] - a[1]), abs(d[0] - c[0]) + abs(d[1] - c[1])
+        v = (a[0] - b[0], a[1] - b[1]) if ab <= cd else (d[0] - c[0], d[1] - c[1])
+        new = [list(q) for q in o]
+        new[i] = [b[0] + v[0], b[1] + v[1]]
+        new[(i + 1) % n] = [c[0] + v[0], c[1] + v[1]]
+        new = tidy(new)
+        if len(new) < 4 or abs(_area(new) - _area(o)) > 0.1 * _area(o):
+            skip.add(found[0][0])
+            continue
+        o = new
+    return o
+
+
+def variety(plan: dict) -> list:
+    """Advisory (a-to-f-grid): a tier's east-west edge that runs more than a screen width without
+    stepping in or out. Volume comes from masses that step (to-all-volume)."""
+    out = []
+    y0, y1 = plan['box'][1], plan['box'][1] + plan['box'][3]
+    for t in plan.get('tiers', []):
+        o = t['outline']
+        for a, b in zip(o, o[1:] + o[:1]):
+            if a[1] == b[1] and a[1] not in (y0, y1) and abs(b[0] - a[0]) > VARIETY_RUN:
+                out.append(f'{plan["id"]}: tier {t["id"]} runs {abs(b[0] - a[0])} px flat at y {a[1]} '
+                           f'from x {min(a[0], b[0])} (a step in or out every screen width)')
+    return out
+
+
 def check(plan: dict) -> list:
     out = []
     pid = plan['id']
@@ -177,6 +270,13 @@ def check(plan: dict) -> list:
                 out.append(f'{pid}: tier {t["id"]} edge {tuple(a)} to {tuple(b)} is not along x or y '
                            f'(the grid shape, to-all-grid-2x)')
                 break
+        for i, (u, why) in enumerate(tabs(o)):
+            out.append(f'{pid}: tier {t["id"]} has a {why} {tuple(u)} (a 1 to 2 cell {why}; masses step in '
+                       f'and out by more, to-all-grid-2x)')
+            if i == 2:
+                break
+        if t.get('corners', 'rounded') not in CORNERS:
+            out.append(f'{pid}: tier {t["id"]} corners {t["corners"]!r} (one of {", ".join(CORNERS)})')
         for p in t['outline']:
             if p[0] % GRID or p[1] % GRID:
                 out.append(f'{pid}: tier {t["id"]} vertex {tuple(p)} off the {GRID} px grid')
@@ -587,7 +687,7 @@ def main(argv) -> int:
             p = load(pid)
             if '--grid' in argv:
                 for t in p.get('tiers', []):
-                    t['outline'] = grid_shape(t['outline'])
+                    t['outline'] = detab(grid_shape(t['outline']))
                 for r in p.get('routes', []) + p.get('trods', []):
                     r['points'] = grid_path(r['points'])
                 for wtr in p.get('water', []):
@@ -609,6 +709,8 @@ def main(argv) -> int:
             p = load(pid)
             faults += check(p)
             print(summary(p))
+            for nt in variety(p):
+                print('note', nt)
         for f in faults:
             print('FAULT', f)
         print(f'{"ok" if not faults else "FAIL"} region plans: {len(plan_ids())} plans, {len(faults)} faults')
