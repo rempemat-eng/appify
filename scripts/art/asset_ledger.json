@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "bdaf9b2",
+ "main": "d53734c",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -11484,33 +11484,34 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: door about 20); foot line 61 px: not whole 8 px cells (kind foot 10 x 8); bar tones LOW, shapes LOW, dressing LOW as wood-front",
+   "why": "re-check: changed since the audit (ADJUST: door about 20); 116 x 86 px (over) against boathouse 80-112 x 64-112; style: palette, outline-double",
    "fails": [
     "logic",
-    "grid",
-    "bar"
+    "size",
+    "palette",
+    "outline-double"
    ],
    "measured": {
     "scale": 4,
-    "h": 90,
-    "w": 74,
+    "h": 116,
+    "w": 86,
     "style": {
-     "colours": 27,
-     "on_house": 0.965,
-     "on_today": 0.939,
-     "palette": "house",
+     "colours": 108,
+     "on_house": 0.819,
+     "on_today": 0.398,
+     "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.028,
-     "west_east": 3.586,
-     "isolated": 0.041,
+     "double": 0.104,
+     "west_east": 2.013,
+     "isolated": 0.045,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 61,
-     "cells": 7.62,
+     "foot_px": 34,
+     "cells": 4.25,
      "kind_foot": "10 x 8",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "boathouse",
@@ -11522,12 +11523,12 @@
       64,
       112
      ],
-     "status": "ok"
+     "status": "over"
     },
     "last_change": {
-     "sha": "9ce45c3",
-     "date": "2026-10-20T00:56",
-     "subject": "Scale pass for the city, Cogsworth and the isles: storeys, doors and shopfronts to the scale table"
+     "sha": "c0e43ea",
+     "date": "2026-10-20T15:34",
+     "subject": "Tidebloom Isles: the boathouse at the lagoon's edge, its boat doors over the water, a slipway into the lagoon"
     },
     "audit": {
      "grade": "ADJUST",
@@ -11536,47 +11537,42 @@
     },
     "logic": "re-check: changed since the audit (ADJUST: door about 20)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
-      8,
-      20,
-      65,
-      77
+      11,
+      19,
+      71,
+      79
      ],
      "patches": 9,
-     "tones_at": 0.85,
+     "tones_at": 0.9,
      "tones": [
-      10.0,
+      22.33,
       24.0
      ],
      "shapes": [
-      24.11,
+      41.0,
       36.34
      ],
      "dressing": [
-      16.56,
+      33.44,
       30.54
      ],
      "isolated": [
-      0.088,
+      0.148,
       0.17
      ],
      "cluster": [
-      10.67,
+      3.22,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "landing": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/bollard": {
    "files": [
@@ -14100,15 +14096,15 @@
     "h": 265,
     "w": 102,
     "style": {
-     "colours": 595,
+     "colours": 586,
      "on_house": 0.785,
      "on_today": 0.071,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.025,
-     "west_east": 2.45,
-     "isolated": 0.076,
+     "west_east": 2.528,
+     "isolated": 0.077,
      "checker": 0.0
     },
     "grid": {
@@ -14130,9 +14126,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14152,23 +14148,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      29.76,
+      29.6,
       25.57
      ],
      "shapes": [
-      45.76,
+      42.96,
       33.87
      ],
      "dressing": [
-      40.2,
+      37.4,
       28.56
      ],
      "isolated": [
-      0.175,
+      0.173,
       0.25
      ],
      "cluster": [
-      2.69,
+      2.86,
       2.62
      ]
     }
@@ -14176,7 +14172,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b1": {
    "files": [
@@ -14203,15 +14199,15 @@
     "h": 263,
     "w": 90,
     "style": {
-     "colours": 507,
-     "on_house": 0.706,
+     "colours": 495,
+     "on_house": 0.704,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.027,
-     "west_east": 4.573,
-     "isolated": 0.06,
+     "double": 0.029,
+     "west_east": 4.52,
+     "isolated": 0.062,
      "checker": 0.0
     },
     "grid": {
@@ -14233,9 +14229,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14255,23 +14251,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.2,
+      26.68,
       25.57
      ],
      "shapes": [
-      48.8,
+      46.24,
       33.87
      ],
      "dressing": [
-      42.12,
+      40.24,
       28.56
      ],
      "isolated": [
-      0.133,
+      0.131,
       0.25
      ],
      "cluster": [
-      2.96,
+      3.05,
       2.62
      ]
     }
@@ -14279,7 +14275,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b10": {
    "files": [
@@ -14304,15 +14300,15 @@
     "h": 215,
     "w": 82,
     "style": {
-     "colours": 502,
-     "on_house": 0.688,
+     "colours": 480,
+     "on_house": 0.685,
      "on_today": 0.09,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.024,
-     "west_east": 2.641,
-     "isolated": 0.051,
+     "double": 0.031,
+     "west_east": 2.948,
+     "isolated": 0.055,
      "checker": 0.0
     },
     "grid": {
@@ -14334,9 +14330,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14356,23 +14352,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      28.75,
+      27.56,
       25.57
      ],
      "shapes": [
-      47.69,
+      44.25,
       33.87
      ],
      "dressing": [
-      42.44,
+      38.62,
       28.56
      ],
      "isolated": [
-      0.141,
+      0.16,
       0.25
      ],
      "cluster": [
-      3.02,
+      2.96,
       2.62
      ]
     }
@@ -14380,7 +14376,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b11": {
    "files": [
@@ -14406,15 +14402,15 @@
     "h": 516,
     "w": 50,
     "style": {
-     "colours": 644,
-     "on_house": 0.663,
+     "colours": 634,
+     "on_house": 0.653,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.03,
-     "west_east": 1.9,
-     "isolated": 0.046,
+     "west_east": 2.112,
+     "isolated": 0.053,
      "checker": 0.002
     },
     "grid": {
@@ -14436,9 +14432,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14458,23 +14454,23 @@
      "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      24.75,
+      24.0,
       25.57
      ],
      "shapes": [
-      46.5,
+      46.75,
       33.87
      ],
      "dressing": [
-      40.25,
+      40.75,
       28.56
      ],
      "isolated": [
-      0.129,
+      0.11,
       0.25
      ],
      "cluster": [
-      2.96,
+      3.18,
       2.62
      ]
     }
@@ -14482,7 +14478,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b12": {
    "files": [
@@ -14509,15 +14505,15 @@
     "h": 508,
     "w": 114,
     "style": {
-     "colours": 770,
-     "on_house": 0.714,
-     "on_today": 0.051,
+     "colours": 748,
+     "on_house": 0.709,
+     "on_today": 0.052,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.017,
-     "west_east": 1.253,
-     "isolated": 0.039,
+     "double": 0.015,
+     "west_east": 1.048,
+     "isolated": 0.046,
      "checker": 0.001
     },
     "grid": {
@@ -14539,9 +14535,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14561,23 +14557,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      20.6,
+      19.72,
       25.57
      ],
      "shapes": [
-      51.08,
+      42.04,
       33.87
      ],
      "dressing": [
-      43.48,
+      32.48,
       28.56
      ],
      "isolated": [
-      0.114,
+      0.142,
       0.25
      ],
      "cluster": [
-      3.03,
+      3.15,
       2.62
      ],
      "low": [
@@ -14588,7 +14584,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b13": {
    "files": [
@@ -14615,15 +14611,15 @@
     "h": 421,
     "w": 74,
     "style": {
-     "colours": 653,
-     "on_house": 0.708,
+     "colours": 639,
+     "on_house": 0.698,
      "on_today": 0.058,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.016,
-     "west_east": 1.585,
-     "isolated": 0.04,
+     "double": 0.009,
+     "west_east": 1.642,
+     "isolated": 0.048,
      "checker": 0.002
     },
     "grid": {
@@ -14645,9 +14641,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14667,23 +14663,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      21.06,
+      19.06,
       25.57
      ],
      "shapes": [
-      66.94,
+      50.44,
       33.87
      ],
      "dressing": [
-      57.94,
+      43.0,
       28.56
      ],
      "isolated": [
-      0.138,
+      0.136,
       0.25
      ],
      "cluster": [
-      2.43,
+      2.89,
       2.62
      ],
      "low": [
@@ -14694,7 +14690,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b14": {
    "files": [
@@ -14722,14 +14718,14 @@
     "h": 215,
     "w": 102,
     "style": {
-     "colours": 545,
+     "colours": 542,
      "on_house": 0.661,
      "on_today": 0.056,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.011,
-     "west_east": -0.403,
+     "west_east": -0.413,
      "isolated": 0.052,
      "checker": 0.002
     },
@@ -14752,9 +14748,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14774,15 +14770,15 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.12,
+      26.16,
       25.57
      ],
      "shapes": [
-      43.88,
+      43.96,
       33.87
      ],
      "dressing": [
-      36.48,
+      36.56,
       28.56
      ],
      "isolated": [
@@ -14798,7 +14794,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b15": {
    "files": [
@@ -14825,15 +14821,15 @@
     "h": 220,
     "w": 102,
     "style": {
-     "colours": 648,
-     "on_house": 0.828,
+     "colours": 636,
+     "on_house": 0.829,
      "on_today": 0.054,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.014,
-     "west_east": 0.517,
-     "isolated": 0.058,
+     "west_east": 0.585,
+     "isolated": 0.059,
      "checker": 0.0
     },
     "grid": {
@@ -14855,9 +14851,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14877,15 +14873,15 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.52,
+      26.24,
       25.57
      ],
      "shapes": [
-      44.64,
+      43.12,
       33.87
      ],
      "dressing": [
-      37.64,
+      36.16,
       28.56
      ],
      "isolated": [
@@ -14893,7 +14889,7 @@
       0.25
      ],
      "cluster": [
-      3.13,
+      3.2,
       2.62
      ]
     }
@@ -14901,7 +14897,7 @@
    "placed": {
     "docks": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b16": {
    "files": [
@@ -14915,9 +14911,10 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); style: speckle, colours, palette",
    "fails": [
     "logic",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -14926,15 +14923,15 @@
     "h": 184,
     "w": 82,
     "style": {
-     "colours": 477,
-     "on_house": 0.65,
+     "colours": 471,
+     "on_house": 0.652,
      "on_today": 0.067,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.017,
-     "west_east": 1.922,
-     "isolated": 0.055,
+     "double": 0.015,
+     "west_east": 1.892,
+     "isolated": 0.065,
      "checker": 0.0
     },
     "grid": {
@@ -14956,9 +14953,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -14978,23 +14975,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      25.5,
+      24.62,
       25.57
      ],
      "shapes": [
-      52.0,
+      44.5,
       33.87
      ],
      "dressing": [
-      44.5,
+      36.19,
       28.56
      ],
      "isolated": [
-      0.121,
+      0.153,
       0.25
      ],
      "cluster": [
-      3.05,
+      2.99,
       2.62
      ]
     }
@@ -15002,7 +14999,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b17": {
    "files": [
@@ -15027,14 +15024,14 @@
     "h": 191,
     "w": 50,
     "style": {
-     "colours": 419,
+     "colours": 410,
      "on_house": 0.795,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.013,
-     "west_east": 2.611,
+     "double": 0.011,
+     "west_east": 2.765,
      "isolated": 0.042,
      "checker": 0.0
     },
@@ -15057,9 +15054,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15079,23 +15076,23 @@
      "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      24.75,
+      24.25,
       25.57
      ],
      "shapes": [
-      45.5,
+      45.0,
       33.87
      ],
      "dressing": [
-      40.25,
+      39.75,
       28.56
      ],
      "isolated": [
-      0.161,
+      0.155,
       0.25
      ],
      "cluster": [
-      2.79,
+      2.85,
       2.62
      ]
     }
@@ -15103,7 +15100,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b18": {
    "files": [
@@ -15131,15 +15128,15 @@
     "h": 200,
     "w": 106,
     "style": {
-     "colours": 583,
-     "on_house": 0.744,
+     "colours": 577,
+     "on_house": 0.747,
      "on_today": 0.052,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.007,
-     "west_east": -0.842,
-     "isolated": 0.047,
+     "west_east": -0.595,
+     "isolated": 0.052,
      "checker": 0.0
     },
     "grid": {
@@ -15161,9 +15158,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15183,7 +15180,7 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      22.92,
+      22.68,
       25.57
      ],
      "shapes": [
@@ -15195,11 +15192,11 @@
       28.56
      ],
      "isolated": [
-      0.122,
+      0.12,
       0.25
      ],
      "cluster": [
-      3.54,
+      3.56,
       2.62
      ],
      "low": [
@@ -15210,7 +15207,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b19": {
    "files": [
@@ -15236,15 +15233,15 @@
     "h": 208,
     "w": 90,
     "style": {
-     "colours": 582,
+     "colours": 566,
      "on_house": 0.743,
      "on_today": 0.046,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.009,
-     "west_east": 1.084,
-     "isolated": 0.077,
+     "west_east": 0.984,
+     "isolated": 0.073,
      "checker": 0.0
     },
     "grid": {
@@ -15266,9 +15263,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15288,23 +15285,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      33.36,
+      32.88,
       25.57
      ],
      "shapes": [
-      45.88,
+      46.68,
       33.87
      ],
      "dressing": [
-      39.84,
+      40.68,
       28.56
      ],
      "isolated": [
-      0.22,
+      0.21,
       0.25
      ],
      "cluster": [
-      2.39,
+      2.43,
       2.62
      ]
     }
@@ -15312,7 +15309,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b2": {
    "files": [
@@ -15338,15 +15335,15 @@
     "h": 263,
     "w": 90,
     "style": {
-     "colours": 543,
-     "on_house": 0.639,
+     "colours": 534,
+     "on_house": 0.637,
      "on_today": 0.065,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.001,
-     "west_east": 0.954,
-     "isolated": 0.048,
+     "double": 0.003,
+     "west_east": 1.358,
+     "isolated": 0.054,
      "checker": 0.002
     },
     "grid": {
@@ -15368,9 +15365,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15390,23 +15387,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      28.12,
+      27.32,
       25.57
      ],
      "shapes": [
-      47.56,
+      41.16,
       33.87
      ],
      "dressing": [
-      41.12,
+      34.0,
       28.56
      ],
      "isolated": [
-      0.159,
+      0.177,
       0.25
      ],
      "cluster": [
-      2.83,
+      2.86,
       2.62
      ]
     }
@@ -15414,7 +15411,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b20": {
    "files": [
@@ -15428,10 +15425,11 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as facade; style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); bar tones LOW as facade; style: speckle, colours, palette",
    "fails": [
     "logic",
     "bar",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -15440,15 +15438,15 @@
     "h": 203,
     "w": 66,
     "style": {
-     "colours": 446,
-     "on_house": 0.733,
+     "colours": 439,
+     "on_house": 0.72,
      "on_today": 0.05,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.032,
-     "west_east": 2.452,
-     "isolated": 0.056,
+     "double": 0.025,
+     "west_east": 2.691,
+     "isolated": 0.061,
      "checker": 0.003
     },
     "grid": {
@@ -15470,9 +15468,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15492,23 +15490,23 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      21.44,
+      21.0,
       25.57
      ],
      "shapes": [
-      60.0,
+      50.33,
       33.87
      ],
      "dressing": [
-      53.67,
+      44.33,
       28.56
      ],
      "isolated": [
-      0.141,
+      0.139,
       0.25
      ],
      "cluster": [
-      2.58,
+      2.87,
       2.62
      ],
      "low": [
@@ -15519,7 +15517,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b21": {
    "files": [
@@ -15546,15 +15544,15 @@
     "h": 197,
     "w": 62,
     "style": {
-     "colours": 389,
-     "on_house": 0.773,
+     "colours": 382,
+     "on_house": 0.772,
      "on_today": 0.04,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.006,
-     "west_east": 3.344,
-     "isolated": 0.048,
+     "west_east": 3.3,
+     "isolated": 0.047,
      "checker": 0.0
     },
     "grid": {
@@ -15576,9 +15574,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15598,23 +15596,23 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      20.67,
+      20.11,
       25.57
      ],
      "shapes": [
-      41.11,
+      40.78,
       33.87
      ],
      "dressing": [
-      35.11,
+      34.67,
       28.56
      ],
      "isolated": [
-      0.128,
+      0.117,
       0.25
      ],
      "cluster": [
-      3.53,
+      3.68,
       2.62
      ],
      "low": [
@@ -15625,7 +15623,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b22": {
    "files": [
@@ -15652,14 +15650,14 @@
     "h": 194,
     "w": 66,
     "style": {
-     "colours": 547,
+     "colours": 545,
      "on_house": 0.745,
      "on_today": 0.09,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.031,
-     "west_east": -1.853,
+     "west_east": -1.891,
      "isolated": 0.088,
      "checker": 0.0
     },
@@ -15682,9 +15680,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15708,19 +15706,19 @@
       25.57
      ],
      "shapes": [
-      45.67,
+      45.22,
       33.87
      ],
      "dressing": [
-      41.11,
+      40.67,
       28.56
      ],
      "isolated": [
-      0.186,
+      0.185,
       0.25
      ],
      "cluster": [
-      2.68,
+      2.71,
       2.62
      ]
     }
@@ -15728,7 +15726,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b23": {
    "files": [
@@ -15754,15 +15752,15 @@
     "h": 174,
     "w": 50,
     "style": {
-     "colours": 419,
+     "colours": 417,
      "on_house": 0.827,
      "on_today": 0.069,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.005,
-     "west_east": 2.057,
-     "isolated": 0.056,
+     "west_east": 1.957,
+     "isolated": 0.055,
      "checker": 0.0
     },
     "grid": {
@@ -15784,9 +15782,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15810,11 +15808,11 @@
       25.57
      ],
      "shapes": [
-      42.25,
+      41.25,
       33.87
      ],
      "dressing": [
-      34.75,
+      34.0,
       28.56
      ],
      "isolated": [
@@ -15822,7 +15820,7 @@
       0.25
      ],
      "cluster": [
-      3.99,
+      4.06,
       2.62
      ],
      "low": [
@@ -15833,7 +15831,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b24": {
    "files": [
@@ -15860,15 +15858,15 @@
     "h": 170,
     "w": 86,
     "style": {
-     "colours": 483,
-     "on_house": 0.81,
+     "colours": 479,
+     "on_house": 0.809,
      "on_today": 0.084,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.002,
-     "west_east": -1.414,
-     "isolated": 0.044,
+     "west_east": -1.386,
+     "isolated": 0.043,
      "checker": 0.0
     },
     "grid": {
@@ -15890,9 +15888,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -15912,23 +15910,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      24.48,
+      24.16,
       25.57
      ],
      "shapes": [
-      44.0,
+      43.84,
       33.87
      ],
      "dressing": [
-      37.04,
+      36.8,
       28.56
      ],
      "isolated": [
-      0.137,
+      0.134,
       0.25
      ],
      "cluster": [
-      3.26,
+      3.3,
       2.62
      ]
     }
@@ -15936,7 +15934,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b25": {
    "files": [
@@ -15950,11 +15948,12 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 54 px: not whole 8 px cells (kind foot 8 x 6); bar tones LOW as facade; style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 54 px: not whole 8 px cells (kind foot 8 x 6); bar tones LOW as facade; style: speckle, colours, palette",
    "fails": [
     "logic",
     "grid",
     "bar",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -15963,15 +15962,15 @@
     "h": 166,
     "w": 54,
     "style": {
-     "colours": 366,
-     "on_house": 0.741,
+     "colours": 361,
+     "on_house": 0.752,
      "on_today": 0.075,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.014,
-     "west_east": 2.718,
-     "isolated": 0.049,
+     "double": 0.007,
+     "west_east": 3.05,
+     "isolated": 0.062,
      "checker": 0.0
     },
     "grid": {
@@ -15993,9 +15992,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "72a9f09",
-     "date": "2026-10-20T13:51",
-     "subject": "Neon skybridges as built structures; no doorway bays on the facades; the Skyport ribbon fades just above the anchor"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16015,23 +16014,23 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      17.56,
+      16.44,
       25.57
      ],
      "shapes": [
-      45.56,
+      35.44,
       33.87
      ],
      "dressing": [
-      38.44,
+      27.11,
       28.56
      ],
      "isolated": [
-      0.086,
+      0.14,
       0.25
      ],
      "cluster": [
-      3.89,
+      3.58,
       2.62
      ],
      "low": [
@@ -16042,7 +16041,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b26": {
    "files": [
@@ -16069,7 +16068,7 @@
     "h": 164,
     "w": 74,
     "style": {
-     "colours": 459,
+     "colours": 447,
      "on_house": 0.792,
      "on_today": 0.07,
      "palette": "off",
@@ -16077,7 +16076,7 @@
      "flat_ink": 0.0,
      "double": 0.011,
      "west_east": -0.09,
-     "isolated": 0.047,
+     "isolated": 0.046,
      "checker": 0.0
     },
     "grid": {
@@ -16099,9 +16098,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16121,7 +16120,7 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      22.56,
+      21.88,
       25.57
      ],
      "shapes": [
@@ -16129,15 +16128,15 @@
       33.87
      ],
      "dressing": [
-      37.0,
+      37.19,
       28.56
      ],
      "isolated": [
-      0.111,
+      0.103,
       0.25
      ],
      "cluster": [
-      3.63,
+      3.75,
       2.62
      ],
      "low": [
@@ -16148,7 +16147,7 @@
    "placed": {
     "neon": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b27": {
    "files": [
@@ -16175,14 +16174,14 @@
     "h": 89,
     "w": 122,
     "style": {
-     "colours": 405,
+     "colours": 400,
      "on_house": 0.852,
      "on_today": 0.053,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.022,
-     "west_east": -1.75,
+     "west_east": -1.812,
      "isolated": 0.054,
      "checker": 0.0
     },
@@ -16205,9 +16204,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16227,23 +16226,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      24.76,
+      24.68,
       25.57
      ],
      "shapes": [
-      40.72,
+      40.68,
       33.87
      ],
      "dressing": [
-      35.28,
+      35.2,
       28.56
      ],
      "isolated": [
-      0.138,
+      0.137,
       0.25
      ],
      "cluster": [
-      3.24,
+      3.25,
       2.62
      ]
     }
@@ -16251,7 +16250,7 @@
    "placed": {
     "heights": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b28": {
    "files": [
@@ -16469,12 +16468,13 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 62 px: not whole 8 px cells (kind foot 8 x 6); 268 x 62 px (over) against city_building 84-232 x 32-96; bar tones LOW as facade; style: colours, palette",
+   "why": "re-check: changed since the audit (REDRAW: storeys 12 and doors 16: a third of scale (verticality 5)); foot line 62 px: not whole 8 px cells (kind foot 8 x 6); 268 x 62 px (over) against city_building 84-232 x 32-96; bar tones LOW as facade; style: speckle, colours, palette",
    "fails": [
     "logic",
     "size",
     "grid",
     "bar",
+    "speckle",
     "colours",
     "palette"
    ],
@@ -16483,15 +16483,15 @@
     "h": 268,
     "w": 62,
     "style": {
-     "colours": 518,
-     "on_house": 0.802,
+     "colours": 502,
+     "on_house": 0.8,
      "on_today": 0.106,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.018,
-     "west_east": 2.693,
-     "isolated": 0.058,
+     "double": 0.014,
+     "west_east": 3.015,
+     "isolated": 0.063,
      "checker": 0.0
     },
     "grid": {
@@ -16513,9 +16513,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16539,19 +16539,19 @@
       25.57
      ],
      "shapes": [
-      57.56,
+      46.78,
       33.87
      ],
      "dressing": [
-      48.44,
+      37.89,
       28.56
      ],
      "isolated": [
-      0.115,
+      0.117,
       0.25
      ],
      "cluster": [
-      3.01,
+      3.48,
       2.62
      ],
      "low": [
@@ -16562,7 +16562,7 @@
    "placed": {
     "plaza": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b30": {
    "files": [
@@ -16589,15 +16589,15 @@
     "h": 134,
     "w": 110,
     "style": {
-     "colours": 477,
-     "on_house": 0.743,
+     "colours": 469,
+     "on_house": 0.741,
      "on_today": 0.059,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 0.166,
-     "isolated": 0.057,
+     "double": 0.019,
+     "west_east": 0.319,
+     "isolated": 0.059,
      "checker": 0.0
     },
     "grid": {
@@ -16619,9 +16619,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16641,15 +16641,15 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      28.76,
+      29.0,
       25.57
      ],
      "shapes": [
-      48.24,
+      46.12,
       33.87
      ],
      "dressing": [
-      43.16,
+      41.68,
       28.56
      ],
      "isolated": [
@@ -16657,7 +16657,7 @@
       0.25
      ],
      "cluster": [
-      2.88,
+      2.94,
       2.62
      ]
     }
@@ -16665,7 +16665,7 @@
    "placed": {
     "heights": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b31": {
    "files": [
@@ -16693,15 +16693,15 @@
     "h": 129,
     "w": 118,
     "style": {
-     "colours": 436,
-     "on_house": 0.824,
+     "colours": 430,
+     "on_house": 0.823,
      "on_today": 0.054,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.0,
-     "west_east": 1.783,
-     "isolated": 0.054,
+     "west_east": 1.66,
+     "isolated": 0.053,
      "checker": 0.0
     },
     "grid": {
@@ -16723,9 +16723,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16745,23 +16745,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      22.16,
+      21.68,
       25.57
      ],
      "shapes": [
-      38.24,
+      37.56,
       33.87
      ],
      "dressing": [
-      31.32,
+      30.68,
       28.56
      ],
      "isolated": [
-      0.098,
+      0.092,
       0.25
      ],
      "cluster": [
-      4.13,
+      4.29,
       2.62
      ],
      "low": [
@@ -16772,7 +16772,7 @@
    "placed": {
     "heights": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b4": {
    "files": [
@@ -16799,15 +16799,15 @@
     "h": 265,
     "w": 94,
     "style": {
-     "colours": 575,
-     "on_house": 0.702,
+     "colours": 568,
+     "on_house": 0.704,
      "on_today": 0.059,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.027,
-     "west_east": 0.744,
-     "isolated": 0.047,
+     "double": 0.021,
+     "west_east": 0.797,
+     "isolated": 0.056,
      "checker": 0.0
     },
     "grid": {
@@ -16829,9 +16829,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16851,23 +16851,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.28,
+      26.72,
       25.57
      ],
      "shapes": [
-      45.44,
+      42.24,
       33.87
      ],
      "dressing": [
-      40.12,
+      37.56,
       28.56
      ],
      "isolated": [
-      0.142,
+      0.143,
       0.25
      ],
      "cluster": [
-      3.1,
+      3.22,
       2.62
      ]
     }
@@ -16875,7 +16875,7 @@
    "placed": {
     "waterfront": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b5": {
    "files": [
@@ -16902,15 +16902,15 @@
     "h": 257,
     "w": 142,
     "style": {
-     "colours": 739,
+     "colours": 731,
      "on_house": 0.742,
      "on_today": 0.042,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.016,
-     "west_east": 1.373,
-     "isolated": 0.059,
+     "west_east": 1.39,
+     "isolated": 0.058,
      "checker": 0.0
     },
     "grid": {
@@ -16932,9 +16932,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -16954,23 +16954,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      25.16,
+      24.96,
       25.57
      ],
      "shapes": [
-      39.08,
+      38.68,
       33.87
      ],
      "dressing": [
-      34.72,
+      34.44,
       28.56
      ],
      "isolated": [
-      0.111,
+      0.11,
       0.25
      ],
      "cluster": [
-      3.78,
+      3.82,
       2.62
      ]
     }
@@ -16978,7 +16978,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b6": {
    "files": [
@@ -17004,14 +17004,14 @@
     "h": 170,
     "w": 50,
     "style": {
-     "colours": 432,
-     "on_house": 0.803,
+     "colours": 428,
+     "on_house": 0.801,
      "on_today": 0.085,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.012,
-     "west_east": 4.806,
+     "west_east": 4.331,
      "isolated": 0.055,
      "checker": 0.0
     },
@@ -17034,9 +17034,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17056,23 +17056,23 @@
      "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      21.0,
+      23.0,
       25.57
      ],
      "shapes": [
-      51.75,
+      46.25,
       33.87
      ],
      "dressing": [
-      41.5,
+      37.25,
       28.56
      ],
      "isolated": [
-      0.128,
+      0.112,
       0.25
      ],
      "cluster": [
-      2.96,
+      3.31,
       2.62
      ],
      "low": [
@@ -17083,7 +17083,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b7": {
    "files": [
@@ -17110,15 +17110,15 @@
     "h": 194,
     "w": 94,
     "style": {
-     "colours": 520,
-     "on_house": 0.809,
+     "colours": 517,
+     "on_house": 0.808,
      "on_today": 0.06,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.007,
-     "west_east": 0.401,
-     "isolated": 0.066,
+     "west_east": 0.606,
+     "isolated": 0.067,
      "checker": 0.0
     },
     "grid": {
@@ -17140,9 +17140,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17162,23 +17162,23 @@
      "patches": 25,
      "tones_at": 0.9,
      "tones": [
-      26.12,
+      26.76,
       25.57
      ],
      "shapes": [
-      46.76,
+      44.28,
       33.87
      ],
      "dressing": [
-      40.28,
+      37.72,
       28.56
      ],
      "isolated": [
-      0.145,
+      0.137,
       0.25
      ],
      "cluster": [
-      3.02,
+      3.19,
       2.62
      ]
     }
@@ -17186,7 +17186,7 @@
    "placed": {
     "downtown": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b8": {
    "files": [
@@ -17214,15 +17214,15 @@
     "h": 259,
     "w": 74,
     "style": {
-     "colours": 512,
-     "on_house": 0.829,
+     "colours": 503,
+     "on_house": 0.824,
      "on_today": 0.064,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": -1.564,
-     "isolated": 0.051,
+     "double": 0.014,
+     "west_east": -1.431,
+     "isolated": 0.053,
      "checker": 0.0
     },
     "grid": {
@@ -17244,9 +17244,9 @@
      "status": "over"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17266,23 +17266,23 @@
      "patches": 16,
      "tones_at": 0.9,
      "tones": [
-      18.0,
+      20.12,
       25.57
      ],
      "shapes": [
-      56.75,
+      42.25,
       33.87
      ],
      "dressing": [
-      47.44,
+      34.75,
       28.56
      ],
      "isolated": [
-      0.117,
+      0.113,
       0.25
      ],
      "cluster": [
-      3.03,
+      3.71,
       2.62
      ],
      "low": [
@@ -17293,7 +17293,7 @@
    "placed": {
     "docks": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_b9": {
    "files": [
@@ -17319,15 +17319,15 @@
     "h": 219,
     "w": 58,
     "style": {
-     "colours": 493,
-     "on_house": 0.741,
+     "colours": 486,
+     "on_house": 0.747,
      "on_today": 0.082,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.031,
-     "west_east": 3.907,
-     "isolated": 0.062,
+     "double": 0.026,
+     "west_east": 4.166,
+     "isolated": 0.069,
      "checker": 0.0
     },
     "grid": {
@@ -17349,9 +17349,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62b2295",
-     "date": "2026-10-20T08:07",
-     "subject": "Neon Harbour: facades, shopfronts, signs and flat roofs drawn to the Eastward detail bar"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "REDRAW",
@@ -17371,19 +17371,19 @@
      "patches": 9,
      "tones_at": 0.9,
      "tones": [
-      28.56,
+      27.44,
       25.57
      ],
      "shapes": [
-      50.0,
+      46.11,
       33.87
      ],
      "dressing": [
-      42.56,
+      39.11,
       28.56
      ],
      "isolated": [
-      0.135,
+      0.15,
       0.25
      ],
      "cluster": [
@@ -17395,7 +17395,7 @@
    "placed": {
     "market": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/city_bench": {
    "files": [
@@ -32498,7 +32498,7 @@
    },
    "placed": {
     "cove": 6,
-    "landing": 3,
+    "landing": 1,
     "oasis": 4
    },
    "checked": "2026-10-21"
@@ -33849,10 +33849,9 @@
    "owner": "C",
    "grade": "REWORK",
    "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as facade; style: speckle, palette",
+   "why": "bar tones LOW, shapes LOW, dressing LOW as facade; style: palette",
    "fails": [
     "bar",
-    "speckle",
     "palette"
    ],
    "measured": {
@@ -33860,15 +33859,15 @@
     "h": 57,
     "w": 61,
     "style": {
-     "colours": 23,
-     "on_house": 0.592,
-     "on_today": 0.525,
+     "colours": 49,
+     "on_house": 0.641,
+     "on_today": 0.357,
      "palette": "off",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.024,
-     "west_east": 6.004,
-     "isolated": 0.071,
+     "double": 0.026,
+     "west_east": 3.513,
+     "isolated": 0.052,
      "checker": 0.0
     },
     "grid": {
@@ -33890,9 +33889,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "ab49e41",
-     "date": "2026-10-18T23:11",
-     "subject": "The Tidebloom Isles' detail pass: denser planting at the edges, ground detail, the headland's spine, new island plants a"
+     "sha": "ccefd8f",
+     "date": "2026-10-20T17:38",
+     "subject": "Batch 4, first step: calmer city roofs, Cogsworth brick and stone weathered whole brick by whole brick, the facades dres"
     },
     "audit": {
      "grade": "KEEP",
@@ -33904,31 +33903,31 @@
      "status": "fail",
      "kind": "facade",
      "box": [
-      4,
-      29,
-      27,
+      10,
+      16,
+      46,
       52
      ],
-     "patches": 1,
+     "patches": 4,
      "tones_at": 0.9,
      "tones": [
-      8.0,
+      13.75,
       25.57
      ],
      "shapes": [
-      12.0,
+      29.75,
       33.87
      ],
      "dressing": [
-      7.0,
+      20.75,
       28.56
      ],
      "isolated": [
-      0.008,
+      0.069,
       0.25
      ],
      "cluster": [
-      16.0,
+      5.25,
       2.62
      ],
      "low": [
@@ -33941,7 +33940,7 @@
    "placed": {
     "headwaters": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/ring_post": {
    "files": [
