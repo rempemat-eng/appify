@@ -10,7 +10,7 @@ The small part is the valley woodland at 2x, being built on `claude-a/first-scre
 
 **Merge order.** None of the foundations is on main, and #182 already edits `region_plan.py` while #174 is open, so they land in this order (Matt merges, or gives Claude A his word to):
 
-1. **#183, the density engine.** `ART_DENSITY_DEFAULT = 1`, so players see no change; safe first. It defines the export contract (section 5).
+1. **#183, the density engine.** `ART_DENSITY_DEFAULT = 1`, so players see no change; safe first. Merged; the density is decided: 2x (Matt, 21 Oct 18:17: "let's go with 2x. final decision.", [art-style.md](art-style.md) "Density 2"). It defines the export contract (section 5).
 2. **#165, the cliff core.** Heights, faces, rims on the soft grid, biomes with their own edge sets, set pieces with attach points and walk masks.
 3. **#174, then #182's plan data.** The region-plan schema and `region_plan.py --check`; then #182's plans and checker edits, rebased. Its painters fall under the freeze below.
 4. **#187, the block-out.**
@@ -151,7 +151,7 @@ All but water are proposals. Under reduced motion or on an inactive screen each 
 
 ## 8. Matt's looks
 
-1. **The golden screen with its kit sheet,** beside today's art at the same character height, with the 2x verdict. One yes freezes the rules.
+1. **The golden screen with its kit sheet,** beside today's art at the same character height. The density is already decided: 2x (Matt, 21 Oct 18:17). One yes freezes the rules.
 2. **All biome kit sheets and the palette board, in one batch,** a yes or a one-line note on each. A biome is then locked.
 3. **Regions in batches of three or four,** one page each: the three chosen screens beside the golden and a short walk GIF.
 

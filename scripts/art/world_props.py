@@ -15,6 +15,7 @@ from garden_props import LEAF_SUN, G
 from garden_props import PAD, arched_door, canopy, plane, planks, post, rect_set, stone_blocks, topdown_gable, topdown_roof
 from garden_props import window as shuttered_window
 from materials import CREAM, GOLD, LEAF, MATERIALS, NAP, PLASTER, RED, ROOF, SLATE, SNOW, STONE, WOOD, WTR
+from density import WorldCanvas, flip_x
 from pixel import Canvas, disc, noise2, oval
 import style
 
@@ -86,9 +87,9 @@ def fountain() -> Canvas:
     return cv
 
 
-def _slat(cv: Canvas, x0: int, y: int, length: int, top: bool, seed: int, vertical: bool = False):
+def _slat(cv: WorldCanvas, x0: int, y: int, length: int, top: bool, seed: int, vertical: bool = False):
     """One timber slat with grain: a lit face (top) or a darker edge, a streak of grain
-    now and then, and a nail head near each end."""
+    now and then, and a nail head near each end. World px (density.py)."""
     for i in range(length):
         x, yy = (x0, y + i) if vertical else (x0 + i, y)
         c = WOOD[4] if top else WOOD[2]
@@ -103,20 +104,21 @@ def _slat(cv: Canvas, x0: int, y: int, length: int, top: bool, seed: int, vertic
 SHADE = (20, 26, 22, 96)  # a contact shadow under a seat, laid over whatever ground it stands on
 
 
-def bench(facing: str = 'south') -> Canvas:
+def bench(facing: str = 'south', density: float = 1) -> Canvas:
     """A park bench at the scale table's size (verticality.md 5: seat 7, back 13, length 32),
     timber slats with grain and nail heads on cast-iron ends, a contact shadow under the
     seat. facing 'south' looks at the camera; 'east' or 'west' turns it side-on to face a
     view (its length runs up the screen, foreshortened to 20 px, the back on the far side).
-    Each is re-seated in the old 44 x 28 box (keep_foot), so its foot stays put."""
+    Each is re-seated in the old 44 x 28 box (keep_foot), so its foot stays put. Drawn in
+    world px at any density (density.py); the edges under the seat are one texel."""
     if facing == 'south':
-        cv = Canvas(32, 14, pad=PAD)
+        cv = WorldCanvas(32, 14, pad=PAD, density=density)
         for y in (0, 3):  # the back: two rails between the iron back posts
             _slat(cv, 2, y, 28, True, 31 + y)
             _slat(cv, 2, y + 1, 28, False, 41 + y)
         for y, top in ((5, True), (6, True), (7, False)):  # the seat seen from above, its front edge
             _slat(cv, 1, y, 30, top, 51 + y)
-        cv.hline(1, 6, 30, WOOD[3]); cv.hline(1, 8, 30, WOOD[1])
+        cv.hline(1, 6, 30, WOOD[3]); cv.hair_h(1, 8, 30, WOOD[1])
         for x in range(2, 30):  # a contact shadow under the seat
             for y in (12, 13):
                 cv.set(x, y, SHADE)
@@ -130,13 +132,13 @@ def bench(facing: str = 'south') -> Canvas:
                 else:
                     cv.set(x0, y, SLATE[3] if lit else SLATE[1]); cv.set(x0 + 2, y, SLATE[2] if lit else SLATE[0])
             cv.set(x0 + 1, 9, SLATE[1]); cv.set(x0 + 1, 10, SLATE[2])  # the stretcher between the legs
-            cv.hline(x0 - 1, 13, 5, SLATE[1])
-        return gp_keep_foot(cv, 44, 27)
+            cv.hair_h(x0 - 1, 13, 5, SLATE[1], bottom=True)
+        return gp_keep_foot(cv.tex, cv.t(44), cv.t(27))
     # side-on: the bench runs up the screen (32 foreshortened to 20), so the seat shows as a
     # strip of slats seen from above, the back as a thin rail rising on the far side, and the
     # near cast-iron end faces the camera in profile: back post, arm scroll, seat, front leg
     flip = facing == 'west'
-    cv = Canvas(12, 34, pad=PAD)
+    cv = WorldCanvas(12, 34, pad=PAD, density=density)
     for y in range(28, 34):  # the contact shadow under the seat, east of the frame
         for x in range(4, 11):
             cv.set(x, y, SHADE)
@@ -164,24 +166,18 @@ def bench(facing: str = 'south') -> Canvas:
         cv.set(x, 30, SLATE[1])  # the stretcher
     cv.hline(0, 33, 4, SLATE[1]); cv.hline(8, 33, 4, SLATE[1])  # the feet
     if flip:
-        out = Canvas(12, 34, pad=PAD)
-        src = cv.img.load(); p = cv.pad
-        for y in range(cv.h + 2 * p):
-            for x in range(cv.w + 2 * p):
-                c = src[x, y]
-                if c[3]:
-                    out.set(cv.w - 1 - (x - p), y - p, c)
-        cv = out
-    return gp_keep_foot(cv, 44, 27)
+        cv = flip_x(cv)
+    return gp_keep_foot(cv.tex, cv.t(44), cv.t(27))
 
 
-def lamp() -> Canvas:
+def lamp(density: float = 1) -> Canvas:
     """A street lamp at the scale table's size (verticality.md 5: 56 tall): a fluted iron
     post on a stepped plinth, a collar and a ladder bar under the lantern, a glowing
     lantern with its frame, and a cap that shows its top. The lantern keeps its place at
     the sprite's top (the renderer's light, LAMPS.lamp, is measured from there); the post
-    reaches 12 px further down, re-seated in the old 14 x 44 box (keep_foot)."""
-    cv = Canvas(14, 56, pad=PAD)
+    reaches 12 px further down, re-seated in the old 14 x 44 box (keep_foot). World px at
+    any density (density.py): the lantern's glow is rasterised per texel."""
+    cv = WorldCanvas(14, 56, pad=PAD, density=density)
     post(cv, 6, 12, 50, w=3, ramp=SLATE)
     for y in range(16, 48, 4):
         cv.set(7, y, SLATE[2])  # the post's fluting
@@ -191,13 +187,14 @@ def lamp() -> Canvas:
     cv.rect(3, 50, 9, 3, SLATE[2]); cv.hline(3, 50, 9, SLATE[3]); cv.hline(3, 52, 9, SLATE[1])
     cv.rect(2, 53, 11, 3, STONE[2]); cv.hline(2, 53, 11, STONE[4]); cv.hline(2, 55, 11, STONE[1])  # the stone plinth
     cv.rect(2, 2, 11, 10, SLATE[1]); cv.vline(2, 2, 10, SLATE[2])
-    for (x, y) in rect_set(4, 4, 7, 6):
+    def glow(x, y):
         d = abs(x - 6.5) + abs(y - 7)
-        cv.set(x, y, GOLD[4] if d < 2 else GOLD[3] if d < 4 else GOLD[2])
-    cv.vline(7, 4, 6, SLATE[0]); cv.set(5, 5, PLASTER[5])
+        return GOLD[4] if d < 2 else GOLD[3] if d < 4 else GOLD[2]
+    cv.paint(cv.box(4, 4, 7, 6), glow)
+    cv.hair_v(7, 4, 6, SLATE[0]); cv.set(5, 5, PLASTER[5])
     cv.hline(1, 1, 13, SLATE[2]); cv.hline(1, 2, 13, SLATE[0]); cv.hline(4, 0, 7, SLATE[3])
     cv.hline(3, 12, 9, SLATE[1])
-    return gp_keep_foot(cv, 14, 42)
+    return gp_keep_foot(cv.tex, cv.t(14), cv.t(42))
 
 
 def _leaf_cluster(x: int, y: int, su: float, sv: float, seed: int):
@@ -218,12 +215,14 @@ def _leaf_cluster(x: int, y: int, su: float, sv: float, seed: int):
     return best[1], best[2], best[3]
 
 
-def hedge(w: int) -> Canvas:
+def hedge(w: int, density: float = 1) -> Canvas:
     """A clipped hedge, w x 22: a flat clipped top of leaf clumps lit from the upper left,
     a front face of clumps in four tones that darkens toward the foot, dark pockets where
     the twigs show through, rounded ends (the west end lit, the east end turned from the
-    light, verticality.md 4f), a few blossoms, and grass growing against its dark foot."""
-    cv = Canvas(w, 22, pad=PAD)
+    light, verticality.md 4f), a few blossoms, and grass growing against its dark foot.
+    World px at any density (density.py): the clumps are shaded per texel, the crease is
+    one texel, sun flecks are looked up per world px."""
+    cv = WorldCanvas(w, 22, pad=PAD, density=density)
     top0, face0, foot = 1, 8, 21
 
     def inside(x, y):
@@ -234,31 +233,30 @@ def hedge(w: int) -> Canvas:
             return (x - (w - 1 - r)) ** 2 + max(0, top0 + r - y) ** 2 <= r * r + 1 or y >= top0 + r
         return True
 
-    for y in range(top0, foot + 1):
-        for x in range(w):
-            if not inside(x, y):
-                continue
-            on_top = y < face0
-            cid, dx, dy = _leaf_cluster(x, y, 4.2 if on_top else 3.6, 2.4 if on_top else 3.0, 811 if on_top else 812)
-            lam = -dx * 0.5 - dy * 0.6  # lit on each clump's upper left
-            t = (3 if on_top else 2) + (1 if lam > 0.9 else -1 if lam < -0.9 else 0)
-            if noise2(*cid, 813) > 0.8:
-                t += 1  # a clump that catches more sun
-            if not on_top:
-                t -= (y - face0) // 5  # darker toward the foot
-                if noise2(*cid, 814) > 0.88 and lam < 0:
-                    t = 0  # a pocket where the twigs show
-            if x < 2:
-                t += 1  # the lit west end
-            elif x > w - 3:
-                t -= 1  # the east end, turned from the light
-            c = LEAF[max(0, min(4, t))]
-            if t >= 4 and on_top:
-                c = LEAF_SUN.get(LEAF[4], LEAF[4]) if noise2(x, y, 815) > 0.55 else LEAF[4]
-            cv.set(x, y, c)
+    for tx, ty, x, y in cv.texels(0, top0, w, foot + 1 - top0):
+        if not inside(x, y):
+            continue
+        on_top = y < face0
+        cid, dx, dy = _leaf_cluster(x, y, 4.2 if on_top else 3.6, 2.4 if on_top else 3.0, 811 if on_top else 812)
+        lam = -dx * 0.5 - dy * 0.6  # lit on each clump's upper left
+        t = (3 if on_top else 2) + (1 if lam > 0.9 else -1 if lam < -0.9 else 0)
+        if noise2(*cid, 813) > 0.8:
+            t += 1  # a clump that catches more sun
+        if not on_top:
+            t -= int((y - face0) // 5)  # darker toward the foot
+            if noise2(*cid, 814) > 0.88 and lam < 0:
+                t = 0  # a pocket where the twigs show
+        if x < 2:
+            t += 1  # the lit west end
+        elif x > w - 3:
+            t -= 1  # the east end, turned from the light
+        c = LEAF[max(0, min(4, t))]
+        if t >= 4 and on_top:
+            c = LEAF_SUN.get(LEAF[4], LEAF[4]) if noise2(cv.wpx(tx), cv.wpx(ty), 815) > 0.55 else LEAF[4]
+        cv.put(tx, ty, c)
     for x in range(1, w - 1):  # the crease where the clipped top meets the face
         if noise2(x, 0, 816) > 0.35:
-            cv.set(x, face0, LEAF[1])
+            cv.hair_h(x, face0, 1, LEAF[1])
     for x in range(w):  # the dark foot, with grass against it
         cv.set(x, foot, LEAF[0]); cv.set(x, foot - 1, LEAF[0] if noise2(x, 2, 817) > 0.4 else LEAF[1])
         if noise2(x, 3, 818) > 0.7:
@@ -267,7 +265,7 @@ def hedge(w: int) -> Canvas:
         bx = 4 + int(noise2(k, 4, 819) * (w - 8))
         by = face0 + 2 + int(noise2(k, 5, 819) * 6)
         cv.set(bx, by, PLASTER[5]); cv.set(bx + 1, by, PLASTER[4] if k % 2 else RED[4])
-    return cv
+    return cv.tex
 
 
 def library() -> Canvas:
@@ -578,34 +576,40 @@ def cabin() -> Canvas:
     return cv
 
 
-def campfire() -> Canvas:
-    """A campfire, 26 x 22: a stone ring, crossed logs and a three-tone flame."""
-    cv = Canvas(26, 22, pad=PAD)
-    for (x, y) in oval(13, 17, 12, 4.4):
-        cv.set(x, y, STONE[3] if (x + y) % 4 else STONE[1])
-    for (x, y) in oval(13, 16.5, 8, 2.6):
-        cv.set(x, y, STONE[0])
-    plane(cv, rect_set(4, 14, 18, 3), WOOD, 2)
-    plane(cv, rect_set(7, 12, 12, 3), WOOD, 3)
+def campfire(density: float = 1) -> Canvas:
+    """A campfire, 26 x 22: a stone ring, crossed logs and a three-tone flame. World px at
+    any density (density.py): the ring, the logs and the flame are rasterised per texel."""
+    cv = WorldCanvas(26, 22, pad=PAD, density=density)
+    for (tx, ty) in cv.oval(13, 17, 12, 4.4):
+        cv.put(tx, ty, STONE[3] if (cv.wpx(tx) + cv.wpx(ty)) % 4 else STONE[1])
+    for (tx, ty) in cv.oval(13, 16.5, 8, 2.6):
+        cv.put(tx, ty, STONE[0])
+    plane(cv.tex, cv.box(4, 14, 18, 3), WOOD, 2)
+    plane(cv.tex, cv.box(7, 12, 12, 3), WOOD, 3)
     flame = set()
-    for y in range(1, 14):
+    for ty in cv.span(1, 13):
+        y = cv.world(ty)
         half = min(5.5, (y - 1) * 0.55 + 0.5)
-        for x in range(int(13 - half), int(13 + half) + 1):
-            flame.add((x, y))
-    for (x, y) in flame:
+        lo, hi = int(13 - half), int(13 + half) + 1
+        for tx in range(cv.t(lo) - 1, cv.t(hi) + 1):
+            if lo <= cv.world(tx) < hi:
+                flame.add((tx, ty))
+    for (tx, ty) in flame:
+        x, y = cv.world(tx), cv.world(ty)
         core = abs(x - 13) < 2 and y > 7
-        cv.set(x, y, GOLD[4] if core else GOLD[3] if y > 5 else RED[3])
-    return cv
+        cv.put(tx, ty, GOLD[4] if core else GOLD[3] if y > 5 else RED[3])
+    return cv.tex
 
 
-def boulder(big: bool = True) -> Canvas:
-    """A moss-capped boulder (36 x 26) or a field stone (20 x 14)."""
+def boulder(big: bool = True, density: float = 1) -> Canvas:
+    """A moss-capped boulder (36 x 26) or a field stone (20 x 14). World px at any density
+    (density.py): the outline mask is rasterised per texel and faceted natively."""
     w, h = (36, 26) if big else (20, 14)
-    cv = Canvas(w, h, pad=PAD)
-    pts = oval(w / 2, h / 2 + 1, w / 2 - 1, h / 2 - 1.4) | oval(w / 2 - 4, h / 2 + 2, w / 3, h / 2.6)
-    pts = {(x, y) for (x, y) in pts if 0 <= x < w and 0 <= y < h}
-    style.facet_stone(cv, pts, STONE, moss=LEAF if big else None, seed=w, outline=None)
-    return cv
+    cv = WorldCanvas(w, h, pad=PAD, density=density)
+    pts = cv.oval(w / 2, h / 2 + 1, w / 2 - 1, h / 2 - 1.4) | cv.oval(w / 2 - 4, h / 2 + 2, w / 3, h / 2.6)
+    pts = cv.clip(pts, 0, 0, w, h)
+    style.facet_stone(cv.tex, pts, STONE, moss=LEAF if big else None, seed=w, outline=None)
+    return cv.tex
 
 
 LICHEN = ['#8E9A4E', '#B8C070', '#D8A050']  # grey-green and yellow lichen, an orange crust
