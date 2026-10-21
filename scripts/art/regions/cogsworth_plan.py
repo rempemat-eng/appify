@@ -20,8 +20,7 @@ world_audit.py `tier_checks`). Faces are carved south of every higher top at the
 tiers differ by (12, 16, 32 or 40 px). `check()` holds the plan to the rules a plan can
 show (on the grid, inside its box, faces on south edges only and of a legal height, every
 tier change a stair or ramp at least 34 px wide, every stand and door reached from the
-platform, nothing more than 30 % farther from the platform than the brief's walk times (nearer is no fault: the decided town is denser than the block-out's), no edge segment over 96 px without a
-jog, the benchmark's density per settlement screen, the brief's counts) and exits non-zero
+platform, nothing more than 30 % farther from the platform than the brief's walk times (nearer is no fault: the decided town is denser than the block-out's), the benchmark's density per settlement screen, the brief's counts) and exits non-zero
 on a fault. Nothing in the game reads this yet; the painter (next step) does.
 
     python3 scripts/art/regions/cogsworth_plan.py --check
@@ -72,25 +71,26 @@ GORGE = {'centre': [(9128, 2168), (9064, 2272), (9032, 2328), (9008, 2440), (898
 COG_FOOT = (8528, 3064)
 MAGLEV = [(8328, 2648), (8520, 2600), (8760, 2480), (8936, 2360), (9032, 2328), (9160, 2304)]  # terminus to the viaduct, on piers
 
-# Spoil heaps (brief 2), the one inside the town moved out above it (MOVED).
-SPOIL = [(7560, 2288), (8184, 1936), (8248, 2976), (7560, 2136), (8400, 2304)]
+# Spoil heaps (brief 2): the middles of cogsworth_region's spoil pieces (MOVED).
+SPOIL = [(7560, 2264), (8184, 1932), (8424, 3124), (7556, 2132), (8404, 2292)]
 
-# Named things (brief 5): id, kind, at (world px), route, where, the sprite or kit piece
+# Named things (brief 5): id, kind, at (world px: the middle of its set piece in
+# cogsworth_region.SET_PIECES, laid beside G's routes), route, where, the sprite or kit piece
 NAMED = [
-    ('burners-camp', 'camp', (7568, 2808), 'Foothill Road', 'beside the path', 'charcoal_clamp + burners_hut (B, #163)'),
-    ('collapsed-adit', 'cave', (7808, 2952), 'Foothill Road', 'a short way off the path', 'cliff core face piece'),
-    ('pit-head', 'landmark', (7296, 2968), 'Foothill Road', 'beside the path', 'pit_head (B, #163)'),
-    ('windmill', 'landmark', (7104, 3208), 'Foothill Road', 'beside the path', 'windmill (B, #172)'),
-    ('loops-view', 'view', (7248, 3224), 'Foothill Road', 'beside the path', 'a terrace edge with a bench'),
-    ('eel-camp', 'camp', (7208, 3272), 'Foothill Road', 'beside the path', 'to draw (B queue)'),
-    ('tor', 'landmark', (7080, 1792), 'High Fells', 'beside the path', 'cliff core set piece'),
-    ('climbers-camp', 'camp', (7208, 1992), 'High Fells', 'a short way off the path', 'to draw (B queue)'),
-    ('echo-cave', 'cave', (7680, 1936), 'High Fells', 'beside the path', 'cliff core face piece'),
-    ('cairn', 'landmark', (8000, 1928), 'High Fells', 'a short way off the path', 'cairn (B, REWORK)'),
+    ('burners-camp', 'camp', (7496, 2824), 'Foothill Road', 'beside the path', 'charcoal_clamp + burners_hut (B, #163)'),
+    ('collapsed-adit', 'cave', (7416, 2892), 'Foothill Road', 'a short way off the path', 'cliff core face piece'),
+    ('pit-head', 'landmark', (7280, 2964), 'Foothill Road', 'beside the path', 'pit_head (B, #163)'),
+    ('windmill', 'landmark', (7168, 3256), 'Foothill Road', 'beside the path', 'windmill (B, #172)'),
+    ('loops-view', 'view', (7360, 3104), 'Foothill Road', 'beside the path', 'a terrace edge with a bench'),
+    ('eel-camp', 'camp', (7108, 3256), 'Foothill Road', 'beside the path', 'to draw (B queue)'),
+    ('tor', 'landmark', (7272, 1788), 'High Fells', 'beside the path', 'cliff core set piece'),
+    ('climbers-camp', 'camp', (7340, 1896), 'High Fells', 'a short way off the path', 'to draw (B queue)'),
+    ('echo-cave', 'cave', (7596, 1852), 'High Fells', 'beside the path', 'cliff core face piece'),
+    ('cairn', 'landmark', (7996, 1924), 'High Fells', 'a short way off the path', 'cairn (B, REWORK)'),
     ('crow-roost', 'wild', (7864, 1912), 'High Fells', 'beside the path', 'a dead pine (forest kit) with crows'),
-    ('rail-ruin', 'ruin', (8384, 2776), 'Towpath', 'a short way off the path', 'to draw (B queue)'),
-    ('tram-tipple', 'landmark', (8232, 2936), 'Towpath', 'beside the path', 'tram_tipple (B, #163)'),
-    ('narrows-lookout', 'view', (8592, 3008), 'Towpath', 'beside the path', 'narrows_lookout (B, #163)'),
+    ('rail-ruin', 'ruin', (8480, 2736), 'Towpath', 'a short way off the path', 'to draw (B queue)'),
+    ('tram-tipple', 'landmark', (8368, 2788), 'Towpath', 'beside the path', 'tram_tipple (B, #163)'),
+    ('narrows-lookout', 'view', (8552, 2976), 'Towpath', 'beside the path', 'narrows_lookout (B, #163)'),
 ]
 
 POCKETS = [   # holds, clearing at (world px), off the route
@@ -161,18 +161,18 @@ BRIEF_TOWN_MARKERS = 18   # the brief's Cogsworth slots, re-laid in TOWN_SLOTS
 MOVED = [
     ('Cogsworth platform stop', (7960, 2420), 'the platform on the town\'s north edge (box y 104 to 136)',
      'the plan puts the platform on the north edge (8.3) and the terminus 30 s away; the brief\'s point is the block-out town\'s centre'),
-    ('spoil heap with the loop', (8150, 2350), (8184, 1936), 'inside the decided town box; moved to the bench above the town (world plan: "a spoil heap above Cogsworth")'),
-    ('crow roost in a dead pine', (7915, 2392), (7864, 1912), 'inside the town box; moved up the High Fells to the bench above'),
-    ('cairn', (7957, 2094), (8000, 1928), 'on the station in the decided town box; moved up to the bench above the town'),
-    ('echo cave', (7645, 2078), (7680, 1936), 'in the Cog\'s bed in the town box; moved to the face of the bench where the High Fells come down'),
-    ('charcoal burners\' camp', (7687, 2585), (7568, 2808), 'in the mills; moved to the Cog\'s west bank beside the Foothill Road, before the Millrace bridge'),
-    ('rail ruin', (8279, 2482), (8384, 2776), 'on Gasworks Hill; moved a short way off the Towpath east of the town, under the maglev'),
-    ('spoil heaps', '(7700, 2300), (7700, 2150), (8250, 2650)', '(7560, 2288), (7560, 2136), (8248, 2976)',
-     'two in the Cog and the mills, one on the terminus; moved to the Cog\'s west bank and below the riverside'),
+    ('named things', 'the brief\'s points', 'NAMED (the middles of cogsworth_region.SET_PIECES)',
+     'the brief\'s points came from the block-out\'s routes and its smaller town; each now stands beside or a short way off '
+     'Claude G\'s line for its route (#175), off the road, out of the water and out of the town: the crow roost, the cairn '
+     'and the echo cave up on the bench and its face where the High Fells come down, the burners\' camp and the collapsed '
+     'adit beside the Foothill Road on the Fern hills\' shoulder, the rail ruin and the tram tipple on the coal hills\' '
+     'foot by the Towpath, the lookout above the Cog foot'),
+    ('spoil heaps', 'the brief\'s five', 'SPOIL (the middles of cogsworth_region\'s spoil pieces)',
+     'three stood in the decided town or the Cog; all five now stand on the hills round it, one above the town with the loop'),
     ('route markers inside the town box', '20 of the High Fells, Foothill Road and Towpath markers', 'the town\'s slots (TOWN_SLOTS)',
      'the block-out\'s routes ran on into a smaller town; inside the decided town they are town slots of the same kinds'),
     ('the routes\' ends', 'High Fells (7920, 2390), Foothill Road (7900, 2480), Towpath (8040, 2560)', 'the town\'s gates (TOWN_GATES)',
-     'the routes end at the town\'s edge, where Claude G\'s route chunks meet it; G posts the exact cells'),
+     'the routes end at the town\'s edge, where Claude G\'s routes meet it (agreed on the board)'),
 ]
 
 
@@ -184,8 +184,8 @@ TIER_PX = {0: -32, 1: -16, 2: 0, 3: 32}
 
 def jog(points, step=72, depth=8, seed=0, closed=True):
     """Break every edge longer than 96 px with a jog of `depth` px every `step` px or so, on
-    the grid: a built edge never runs ruled across a screen (benchmark 8; walls jog, buttress
-    and turn). Deterministic. Axis-aligned edges only (the plan's built edges)."""
+    the grid, where a wall buttresses or a wharf has its bays (a choice of the drawing since
+    Matt's 11:44 grid ruling, no longer a rule). Deterministic. Axis-aligned edges only."""
     out = []
     n = len(points)
     for i in range(n if closed else n - 1):
@@ -399,6 +399,26 @@ TOWN_SLOTS = [
 ]
 
 
+LANDMARK_IDS = {'station', 'clock-tower', 'gasholder', 'airship-mast', 'foundry', 'terminus', 'lock-gates', 'humpback-bridge'}
+
+
+def placements() -> list:
+    """The town's buildings and set pieces as placement data in world px (Claude A, a-to-h-
+    chunks: buildings are baked into the chunk's ground, and this list is what the audit reads
+    for density and landmarks): kind, box (x0, y0, x1, y1), foot (x, y) and whether it is a
+    landmark."""
+    ox, oy = TOWN_ORIGIN
+    out = []
+    for bid, env, kind, (x0, top, x1, foot), side, doors in BUILDINGS:
+        out.append({'id': bid, 'kind': kind, 'box': [x0 + ox, top + oy, x1 + ox, foot + oy],
+                    'foot': [(x0 + x1) // 2 + ox, foot + oy], 'doors': [[dx + ox, dy + oy] for dx, dy in doors],
+                    'landmark': bid in LANDMARK_IDS})
+    for lid, sprite, (x0, y0, x1, y1), why in LANDMARKS:
+        out.append({'id': lid, 'kind': sprite, 'box': [x0 + ox, y0 + oy, x1 + ox, y1 + oy],
+                    'foot': [(x0 + x1) // 2 + ox, y1 + oy], 'landmark': lid in LANDMARK_IDS, 'why': why})
+    return out
+
+
 # --- rasterizing ----------------------------------------------------------------------------
 KIND_IDS = {}
 
@@ -609,15 +629,14 @@ def check(R=None, verbose=True) -> list:
         for x, y in poly:
             if x % GRID or y % GRID or not (0 <= x <= TOWN_W and 0 <= y <= TOWN_H):
                 faults.append(f'ground {gid}: point {x, y} off the grid or outside the town box')
-        # a built or natural edge never runs on one line over 96 px (benchmark 8), except on
-        # the box's own edge (the neighbour chunk carries on) and the railway (rails are ruled)
         for (x0, y0), (x1, y1) in _segments(poly):
             L = abs(x1 - x0) + abs(y1 - y0)
             on_box = (x0 == x1 and x0 in (0, TOWN_W)) or (y0 == y1 and y0 in (0, TOWN_H))
-            if L > 96 and (x0 == x1 or y0 == y1) and not on_box and k not in ('rails', 'platform', 'setts', 'towpath', 'race', 'lock'):
-                faults.append(f'ground {gid}: a straight edge of {L} px from {x0, y0} to {x1, y1} (jog it: 96 px at most)')
-            elif L > 96 and (x0 == x1 or y0 == y1) and not on_box:
-                notes.append(f'ground {gid} ({k}): a {L} px straight edge, broken by kerbs, fronts and dressing in the art (check on the drawn ground)')
+            # Matt, 21 Oct 11:44 (to-all-grid-2x): outlines run straight along the grid, as
+            # Eastward's do; the old rule against straight runs over 96 px is withdrawn, so a
+            # long run is only reported
+            if L > 96 and (x0 == x1 or y0 == y1) and not on_box and verbose and os.environ.get('PLAN_RUNS'):
+                notes.append(f'ground {gid} ({k}): a {L} px straight edge')
     for b in BUILDINGS:
         x0, top, x1, foot = b[3]
         if x0 % GRID or x1 % GRID or foot % GRID:
