@@ -56,6 +56,7 @@ GROUNDS = {
     'coast': 'beach and dunes behind it, driftwood and marram (the coast kit)',
     'heights': 'scree, boulders and crags on the massif (the cliff core, highland)',
     'massif': "the massif's peaks, icefalls and valley glaciers, hazier (the mountain kit)",
+    'dune-sea': 'the dune sea: dune ridges and interdune flats, a far caravan route, dust haze thickening westward',
     'old-forest': "the old forest: thicket and old trees, then the giant trees' canopy",
     'fens': 'the moss fens: meres and sinkholes, the Glint coming out of them',
     'sea': 'the sea, with far islands on the horizon',
@@ -82,6 +83,7 @@ CORRIDORS = [
 # The beyond, by ground: lane G's cells outside every walkable area take the ground of the
 # first region here that holds them (boxes in world px).
 BEYOND = [
+    ('dune-sea', (0, 0, 1000, 5848)),         # the west: the dune sea past Sunstone's west wall
     ('sea', (0, 5100, 11264, 6912)),          # the south: open sea past the coasts and isles
     ('old-forest', (9300, 0, 11264, 2560)),   # the east, north part: the old forest
     ('fens', (9300, 2560, 11264, 3904)),      # the east, south part: the moss fens
@@ -89,15 +91,47 @@ BEYOND = [
     ('heights', (0, 0, 11264, 6912)),         # anything left over (the gap by the Brackens)
 ]
 
+# Claude D's wall lines (d-to-g-plans; scripts/art/regions/sunstone_plan.py on #193): the
+# walkable limit of Sunstone where it meets the massif (north) and the dune sea (west). D's
+# box reaches the canvas edge, so lane G's beyond is carved out of it from WALL[1] px past
+# each line (D's wall is up to that deep).
+SUNSTONE_NORTH = [(0, 1472), (512, 1472), (512, 1504), (1216, 1504), (1216, 1472), (1856, 1472), (1856, 1504),
+                  (2496, 1504), (2496, 1440), (2672, 1440), (2672, 1504), (2880, 1504), (2880, 1592), (3200, 1592),
+                  (3200, 1504), (3632, 1504), (3632, 1440), (3792, 1440), (3792, 1504), (4544, 1504), (4544, 1440),
+                  (4736, 1440), (4736, 1504), (4800, 1504)]
+SUNSTONE_WEST = [(640, 1472), (640, 2048), (608, 2048), (608, 2560), (656, 2560), (656, 3200), (608, 3200),
+                 (608, 3776), (672, 3776), (672, 4400), (640, 4400), (640, 5160), (720, 5160), (720, 5816)]
+
+
+def _step_y(x, line):
+    best = line[0][1]
+    for (ax, ay), (bx, by) in zip(line, line[1:]):
+        if ax <= x <= bx and ay == by:
+            best = ay
+    return best
+
+
+def _step_x(y, line):
+    best = line[0][0]
+    for (ax, ay), (bx, by) in zip(line, line[1:]):
+        if ay <= y <= by and ax == bx:
+            best = ax
+    return best
+
+
 # Edges: each side of a footprint (or of lane G's land) that meets the beyond. who draws
 # the fade and wall, the ground of the wall, and what is seen beyond. 'line' runs with
 # the walkable side on its left as you walk it (so the beyond is on the right).
 # Provisional lines (a lane has not drawn its wall) are marked.
 EDGES = [
     # north: the massif
-    {'id': 'sunstone-north', 'by': 'claude-d', 'line': [(0, 1504), (4800, 1504)], 'ground': 'heights',
-     'beyond': "the massif's peaks; the Amber and the Willow Run coming out of their gorges",
-     'provisional': True, 'why': "inside D's box: D draws its wall where the basin meets the massif; the line is a placeholder"},
+    {'id': 'sunstone-north', 'by': 'claude-d', 'line': SUNSTONE_NORTH, 'ground': 'heights',
+     'beyond': "the massif's peaks; the Amber, the Willow Run and the Rift coming out of their gorges",
+     'provisional': False,
+     'why': "D's plan (d-to-g-plans, #193: NORTH_WALL): D draws the fade south of the line and the crags' wall up to 180 px north of it; lane G the thin-out and the massif beyond"},
+    {'id': 'sunstone-west', 'by': 'claude-d', 'line': SUNSTONE_WEST, 'ground': 'dune-sea',
+     'beyond': 'the dune sea, its dust haze thickening westward, a far caravan route', 'provisional': False,
+     'why': "D's plan (#193: WEST_WALL): D draws the dune wall up to 180 px west of the line; lane G the dune sea beyond"},
     {'id': 'brackens-north', 'by': 'claude-f', 'line': [(4800, 1280), (5600, 1280)], 'ground': 'heights',
      'beyond': "the massif's front", 'provisional': False, 'why': "F's plan (brackens.json edges)"},
     {'id': 'gap-west', 'by': 'claude-f', 'line': [(5600, 1280), (5600, 2296)], 'ground': 'heights',
@@ -208,6 +242,16 @@ def _wobble(seed, n=4096):
 
 def build():
     own = _boxes_mask()
+    # Sunstone's beyond, past D's walls (D's box reaches the canvas edge)
+    xs = np.arange(W) * CELL + CELL // 2
+    ys = np.arange(H) * CELL + CELL // 2
+    north_y = np.array([_step_y(x, SUNSTONE_NORTH) for x in xs])
+    west_x = np.array([_step_x(max(y, 1472), SUNSTONE_WEST) if y <= 5816 else SUNSTONE_WEST[-1][0] for y in ys])
+    YY, XX = np.meshgrid(ys, xs, indexing='ij')
+    sun = (XX < 4800) & (YY < 5848)
+    beyond_n = (YY < north_y[None, :] - WALL[1]) & (YY < 4000)
+    beyond_w = XX < west_x[:, None] - WALL[1]
+    own[sun & (beyond_n | beyond_w)] = 0
     g = own == 0
     walk = np.zeros((H, W), bool)
     plain = _poly_mask(PLAIN)
@@ -263,9 +307,11 @@ def build():
 
 
 ROUTES = None
+BETWEEN_ = wr.BETWEEN
 
 
 def export(own, kind, ground, walk):
+    """Writes lib/world-land.ts; ownerRows hold 0 for lane G and 1 + the footprint's index."""
     names = list(GROUNDS)
     counts = {k: int((kind[own == 0] == i).sum()) for i, k in enumerate(KINDS) if k != 'lane'}
     by_ground = {g: int(((ground == i) & (own == 0)).sum()) for i, g in enumerate(names)}
@@ -293,6 +339,9 @@ def export(own, kind, ground, walk):
         'layers': {'fade': list(FADE), 'wall': list(WALL), 'thin': list(THIN)},
         'cells': counts, 'groundCells': by_ground,
         'kindRows': rle_rows(kind), 'groundRows': rle_rows(ground),
+        'owners': [BETWEEN_] + [who for who, _, _ in wr.FOOTPRINTS],
+        'ownerRows': rle_rows(own - 1),
+        'carved': [{'from': 'claude-d', 'why': "Sunstone's beyond past D's walls (more than 180 px north of NORTH_WALL, west of WEST_WALL)"}],
     }
     js = lambda v: json.dumps(v, ensure_ascii=False, separators=(',', ':'))
     lines = [
@@ -323,7 +372,7 @@ def preview(own, kind, ground, path):
     from PIL import Image, ImageDraw
     colours = {
         'meadow': (120, 160, 70), 'coast': (215, 196, 140), 'heights': (130, 120, 110),
-        'massif': (190, 200, 215), 'old-forest': (40, 75, 50), 'fens': (90, 110, 80), 'sea': (50, 90, 140),
+        'massif': (190, 200, 215), 'dune-sea': (222, 196, 130), 'old-forest': (40, 75, 50), 'fens': (90, 110, 80), 'sea': (50, 90, 140),
     }
     names = list(GROUNDS)
     img = np.zeros((H, W, 3), np.uint8)

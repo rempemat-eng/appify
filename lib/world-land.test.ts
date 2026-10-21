@@ -42,19 +42,26 @@ function ownerAt(px: number, py: number): string {
   return ROUTES_BETWEEN;
 }
 
-// --- a lane's cells are its own; lane G's cells are classified ---
+// --- a lane's cells are its own; lane G's cells are classified. The owner map is the
+// footprints, except Sunstone's beyond, carved out of D's box past D's walls ---
+const owner = unpack(worldLand.ownerRows);
+const ownerOf = (i: number) => worldLand.owners[owner[i] + 1];
 let laneG = 0;
 for (let y = 0; y < H; y++)
   for (let x = 0; x < W; x++) {
-    const own = ownerAt(x * cell + cell / 2, y * cell + cell / 2);
-    const k = kind[at(x, y)];
+    const i = at(x, y);
+    const byBox = ownerAt(x * cell + cell / 2, y * cell + cell / 2);
+    const own = ownerOf(i);
+    if (own !== byBox)
+      assert.ok(
+        byBox === 'claude-d' && own === ROUTES_BETWEEN,
+        `cell (${x}, ${y}) is ${byBox}'s by the footprints, ${own}'s here`,
+      );
+    const k = kind[i];
     if (own === ROUTES_BETWEEN) {
       laneG++;
       assert.notEqual(k, K.lane, `cell (${x}, ${y}) is lane G's and classified`);
-      assert.ok(
-        ground[at(x, y)] >= 0 && ground[at(x, y)] < grounds.length,
-        `cell (${x}, ${y}) has a ground`,
-      );
+      assert.ok(ground[i] >= 0 && ground[i] < grounds.length, `cell (${x}, ${y}) has a ground`);
     } else assert.equal(k, K.lane, `cell (${x}, ${y}) is ${own}'s, not lane G's`);
   }
 assert.ok(laneG > 0, 'lane G has land');
@@ -64,7 +71,7 @@ for (const r of worldRoutes)
   for (const [px, py] of r.points) {
     const cx = Math.min(W - 1, Math.floor(px / cell));
     const cy = Math.min(H - 1, Math.floor(py / cell));
-    if (ownerAt(cx * cell + cell / 2, cy * cell + cell / 2) !== ROUTES_BETWEEN) continue;
+    if (ownerOf(at(cx, cy)) !== ROUTES_BETWEEN) continue;
     assert.ok(walkable(kind[at(cx, cy)]), `${r.name}: (${px}, ${py}) on walkable land`);
   }
 
