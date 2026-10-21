@@ -1,5 +1,7 @@
 # The essence of NapAttack, and who you play as
 
+> **Superseded 21 Oct by [game-design.md](game-design.md)** in section 1 (the essence and the five rest pillars), the rest rituals and the turn-based mechanics (now its section 4.3); the roster, section 2's structure and the art notes still stand.
+
 Matt, 20 Oct (London): "think deeply what sort of world we are creating and how the could fit in. perhaps there could be different characters that fit the different towns ... make the make sense and give them functionality. think of the cost and benefit of each new character to the game. develop the essence of the game"; "think about what sorts of characters would fit into the world already built". Earlier the same evening: choose one of a few characters at the start, unlock more later, abilities in fights, ways to upgrade them, more detail than his reference sheet.
 
 **Status.** The structure (section 2) is decided: Matt chose it on 20 Oct, 23:20. The roster, mechanics and numbers are a proposal, built the way Matt asked for content questions: three independent drafts (regional folk; the residents you help become playable; a lean cast of town archetypes), scored by three independent graders (player experience, production and cost, world and story). Totals out of 180: the residents draft 136, the lean draft 135, the regional draft 112. This page is the residents draft as the base with the graders' best grafts from the other two. Nothing here changes a game rule until it is built and Matt has seen it; fights follow `fights.md` (in progress).

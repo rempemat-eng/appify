@@ -1,5 +1,7 @@
 # Fights: Pokémon-style, turn-based cards
 
+> **Superseded 21 Oct by [game-design.md](game-design.md).** Fights are now real-time action (its section 4) and arenas are redone (section 9); this page is kept as a record.
+
 ## Decision (Matt, 21 Oct 10:03)
 
 Matt: "keep the pokémon style fighting system and build the rest of the content from that once you what the word looks like. i might want to create a spin off game, so save the live action combat system somewhere".

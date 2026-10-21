@@ -1,5 +1,7 @@
 # The garden grows
 
+> **Superseded 21 Oct by [game-design.md](game-design.md).** Nothing grows from time away any more; the home grows into a village by what you build (its section 7).
+
 Time away from the phone visibly changes the world. This is presentation only: it never adds Dream Dust, cards or stats, and nothing ever wilts or goes backwards.
 
 ## The meadow

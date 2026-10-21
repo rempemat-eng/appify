@@ -1,5 +1,7 @@
 # World atlas: the places beyond the valley
 
+> **Superseded 21 Oct by [game-design.md](game-design.md)** in its theme ("a journey from rest to screens and back to sleep", now the starfall, its section 8) and its battle notes (section 9); the places, travel and world logic still stand.
+
 Matt, 17 Oct (20:22 and 20:23): more places ("cyber punk or steam punk, a desert/western town, lava themed, maybe out of space … a space station or another planet", "a castle or harbour like in the picture"), seamless transitions between places, and a world that feels alive. This file is the direction; the order of work is in `living-world-plan.md`. Everything here follows the world logic rules there and the art rules in `coherence-plan.md`.
 
 ## The idea that ties it together
