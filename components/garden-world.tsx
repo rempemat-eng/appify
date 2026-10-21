@@ -300,7 +300,7 @@ function DecorSprite({
   // a rug lies on the grass under everything; the rest stand at their feet
   const z = b.flat ? 3 : d.y;
   return (
-    <View pointerEvents="none" style={{ position: 'absolute', zIndex: z }}>
+    <View style={{ position: 'absolute', zIndex: z, pointerEvents: 'none' }}>
       <Sprite
         source={decorImages[d.item]}
         rect={snapRect(billboard(proj, b.left, b.top, b.w, b.h))}
@@ -331,7 +331,7 @@ function DecorPreview({
   );
   const art = snapRect(billboard(proj, b.left, b.top, b.w, b.h));
   return (
-    <View pointerEvents="none" style={{ position: 'absolute', zIndex: 969 }}>
+    <View style={{ position: 'absolute', zIndex: 969, pointerEvents: 'none' }}>
       <View
         style={{
           position: 'absolute',
@@ -439,8 +439,15 @@ function Ambient({
       : [];
   return (
     <View
-      pointerEvents="none"
-      style={{ position: 'absolute', left: 0, top: 0, width, height, zIndex: 950 }}
+      style={{
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        width,
+        height,
+        zIndex: 950,
+        pointerEvents: 'none',
+      }}
     >
       {drops.map((d) => {
         const q = place(d.x, d.y);
@@ -538,7 +545,6 @@ function GardenMarker({ action, scale, bob }: { action: Action; scale: number; b
   const w = 7 * u;
   return (
     <View
-      pointerEvents="none"
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
@@ -550,6 +556,7 @@ function GardenMarker({ action, scale, bob }: { action: Action; scale: number; b
         height: 9 * u,
         zIndex: 960,
         alignItems: 'center',
+        pointerEvents: 'none',
       }}
     >
       <FrameShape tone={frameTones.gold} unit={u} />
@@ -1468,7 +1475,6 @@ export function GardenWorld({
           const tagHeight = type.label.lineHeight + 2 * contentInset(ui);
           return (
             <View
-              pointerEvents="none"
               onLayout={(e) =>
                 setTagWidth({ text: tag.text, width: Math.round(e.nativeEvent.layout.width) })
               }
@@ -1479,6 +1485,7 @@ export function GardenWorld({
                 padding: contentInset(ui),
                 opacity: measured ? 1 : 0,
                 zIndex: 999,
+                pointerEvents: 'none',
               }}
             >
               <FrameShape tone={frameTones.paper} unit={ui} />
@@ -1514,8 +1521,11 @@ export function GardenWorld({
             </BodyText>
             {say.hint && <BodyText style={[type.caption, { color: c.shade }]}>{say.hint}</BodyText>}
             <Animated.View
-              pointerEvents="none"
-              style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailStyle]}
+              style={[
+                { position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 },
+                tailStyle,
+                { pointerEvents: 'none' },
+              ]}
             >
               <Animated.View
                 style={[{ position: 'absolute', left: 0, right: 0, top: 0, bottom: 0 }, tailDown]}
@@ -1544,7 +1554,6 @@ export function GardenWorld({
           const tail = Math.max(-reach, Math.min(reach, at.sx - left - w / 2));
           return (
             <View
-              pointerEvents="none"
               style={{
                 position: 'absolute',
                 left: Math.round(left),
@@ -1555,6 +1564,7 @@ export function GardenWorld({
                 ...(below
                   ? { top: Math.round(Math.min(height - 94, at.sy + 12)) }
                   : { bottom: Math.round(Math.min(height - 8, height - at.sy + 24)) }),
+                pointerEvents: 'none',
               }}
             >
               <FrameShape tone={frameTones.paper} unit={ui} />
@@ -1594,8 +1604,7 @@ export function GardenWorld({
     const at = (key: string, z: number, children: ReactNode) => (
       <View
         key={key}
-        pointerEvents="none"
-        style={{ position: 'absolute', left: OX, top: OY, zIndex: z }}
+        style={{ position: 'absolute', left: OX, top: OY, zIndex: z, pointerEvents: 'none' }}
       >
         {children}
       </View>
@@ -1879,8 +1888,14 @@ export function GardenWorld({
     // garden's own screen pixels (their depth only orders them among themselves)
     const hits = (
       <View
-        pointerEvents="box-none"
-        style={{ position: 'absolute', left: OX, top: OY, width: worldWidth, height }}
+        style={{
+          position: 'absolute',
+          left: OX,
+          top: OY,
+          width: worldWidth,
+          height,
+          pointerEvents: 'box-none',
+        }}
       >
         {!decorate && (
           <>
@@ -2073,12 +2088,17 @@ export function GardenWorld({
     );
     return (
       <View
-        pointerEvents={active ? 'auto' : 'none'}
         {...(Platform.OS === 'web' ? { inert: !active } : {})}
         aria-hidden={!active}
         accessibilityElementsHidden={!active}
         importantForAccessibility={active ? 'auto' : 'no-hide-descendants'}
-        style={{ width, height: viewHeight, overflow: 'hidden', backgroundColor: '#315C3B' }}
+        style={{
+          width,
+          height: viewHeight,
+          overflow: 'hidden',
+          backgroundColor: '#315C3B',
+          pointerEvents: active ? 'auto' : 'none',
+        }}
       >
         <AtlasWalk
           region={HUB_REGION}
@@ -2190,7 +2210,6 @@ export function GardenWorld({
           </View>
         )}
         <Animated.View
-          pointerEvents="none"
           style={[
             {
               position: 'absolute',
@@ -2202,6 +2221,7 @@ export function GardenWorld({
               zIndex: 2000,
             },
             veilStyle,
+            { pointerEvents: 'none' },
           ]}
         />
       </View>
@@ -2211,7 +2231,6 @@ export function GardenWorld({
     <View
       // @ts-expect-error dataSet is a react-native-web prop (sets data-pixel for crisp CSS scaling)
       dataSet={{ pixel: 'true' }}
-      pointerEvents={napping || !active ? 'none' : 'auto'}
       // A nap garden is scenery: pointer-events alone still allows web keyboard focus.
       {...(Platform.OS === 'web' ? { inert: napping || !active } : {})}
       aria-hidden={napping || !active}
@@ -2223,6 +2242,7 @@ export function GardenWorld({
         overflow: 'hidden',
         backgroundColor: '#315C3B',
         zIndex: 0,
+        pointerEvents: napping || !active ? 'none' : 'auto',
       }}
     >
       <Animated.View
@@ -2260,7 +2280,6 @@ export function GardenWorld({
           // the retired tilt view's far edge: a plain sky band (the battle backdrop
           // images are no longer loaded by the garden, which saves phone memory)
           <View
-            pointerEvents="none"
             style={{
               position: 'absolute',
               left: 0,
@@ -2268,11 +2287,11 @@ export function GardenWorld({
               width: worldWidth,
               height: Math.max(0, Math.round(proj.horizon)),
               backgroundColor: night ? '#1A2142' : '#A9D3E6',
+              pointerEvents: 'none',
             }}
           />
         )}
         <View
-          pointerEvents="none"
           style={[
             {
               position: 'absolute',
@@ -2285,6 +2304,7 @@ export function GardenWorld({
               transform: [{ perspective: proj.persp }, { rotateX: `${TILT_DEG}deg` }],
               transformOrigin: '50% 100%',
             },
+            { pointerEvents: 'none' },
           ]}
         >
           <Image
@@ -2416,8 +2436,7 @@ export function GardenWorld({
             return (
               <View
                 key={o.id}
-                pointerEvents="none"
-                style={{ position: 'absolute', zIndex: o.y + o.h }}
+                style={{ position: 'absolute', zIndex: o.y + o.h, pointerEvents: 'none' }}
               >
                 {sprite}
               </View>
@@ -2456,7 +2475,6 @@ export function GardenWorld({
               />
               {action === 'lantern' && !lanternOn && (
                 <View
-                  pointerEvents="none"
                   style={{
                     position: 'absolute',
                     left: imageLeft + snap(7 * px1),
@@ -2466,12 +2484,12 @@ export function GardenWorld({
                     backgroundColor: '#71817A',
                     borderLeftWidth: Math.max(1, Math.round(px1)),
                     borderLeftColor: '#A6B69E',
+                    pointerEvents: 'none',
                   }}
                 />
               )}
               {isNewInteraction && !napping && active && (
                 <View
-                  pointerEvents="none"
                   style={{
                     position: 'absolute',
                     left: imageLeft + Math.round((o.w / 2 - 2) * px1),
@@ -2481,6 +2499,7 @@ export function GardenWorld({
                     backgroundColor: '#FFF3CF',
                     borderWidth: Math.max(1, Math.round(px1)),
                     borderColor: '#647E46',
+                    pointerEvents: 'none',
                   }}
                 />
               )}
@@ -2491,8 +2510,13 @@ export function GardenWorld({
               {isNewInteraction && (
                 <View
                   key={`${o.id}-art`}
-                  pointerEvents="none"
-                  style={{ position: 'absolute', left: 0, top: 0, zIndex: o.y + o.h }}
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    zIndex: o.y + o.h,
+                    pointerEvents: 'none',
+                  }}
                 >
                   {artwork}
                 </View>
@@ -2653,11 +2677,10 @@ export function GardenWorld({
               <View
                 key={`keepsake-${intention}`}
                 testID={`garden-keepsake-${intention}`}
-                pointerEvents="none"
                 aria-hidden
                 accessibilityElementsHidden
                 importantForAccessibility="no-hide-descendants"
-                style={{ ...box, zIndex: location.y + 17 }}
+                style={{ ...box, zIndex: location.y + 17, pointerEvents: 'none' }}
               >
                 <GardenKeepsakeArt intention={intention} size={size} />
               </View>
@@ -2699,7 +2722,6 @@ export function GardenWorld({
         >
           {emote && (
             <View
-              pointerEvents="none"
               style={{
                 position: 'absolute',
                 top: -petPx * 0.35,
@@ -2711,6 +2733,7 @@ export function GardenWorld({
                 borderColor: c.outline,
                 backgroundColor: c.paper,
                 alignItems: 'center',
+                pointerEvents: 'none',
               }}
             >
               <BodyText style={{ fontSize: 13, lineHeight: 18 }}>{emote}</BodyText>
@@ -2738,7 +2761,6 @@ export function GardenWorld({
         </Animated.View>
         {hidden && (
           <Animated.View
-            pointerEvents="none"
             style={[
               {
                 position: 'absolute',
@@ -2751,6 +2773,7 @@ export function GardenWorld({
                 zIndex: 899,
               },
               ghostStyle,
+              { pointerEvents: 'none' },
             ]}
           >
             <GuardianPet
@@ -2821,7 +2844,6 @@ export function GardenWorld({
         )}
         {(night || dusk || dawn) && (
           <View
-            pointerEvents="none"
             style={{
               position: 'absolute',
               left: 0,
@@ -2834,10 +2856,11 @@ export function GardenWorld({
                 : dusk
                   ? 'rgba(240,128,70,0.16)'
                   : 'rgba(255,200,150,0.12)',
+              pointerEvents: 'none',
             }}
           />
         )}
-        <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, zIndex: 901 }}>
+        <View style={{ position: 'absolute', left: 0, top: 0, zIndex: 901, pointerEvents: 'none' }}>
           {gardenAnchors.lights
             .filter((light) => (light.kind === 'lantern' ? lanternOn : night))
             .map((light) => (
@@ -2868,12 +2891,12 @@ export function GardenWorld({
         />
         {napping && active && (
           <View
-            pointerEvents="none"
             style={{
               position: 'absolute',
               left: Math.round(project(proj, BED.x, BED.y).sx),
               top: Math.round(project(proj, BED.x, BED.y).sy - petPx * 1.1),
               zIndex: 990,
+              pointerEvents: 'none',
             }}
           >
             <FloatingZ />
@@ -2882,7 +2905,6 @@ export function GardenWorld({
         {bubbles}
       </Animated.View>
       <Animated.View
-        pointerEvents="none"
         style={[
           {
             position: 'absolute',
@@ -2894,6 +2916,7 @@ export function GardenWorld({
             zIndex: 2000,
           },
           veilStyle,
+          { pointerEvents: 'none' },
         ]}
       />
     </View>

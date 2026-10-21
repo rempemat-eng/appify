@@ -577,7 +577,6 @@ function World() {
       {foundNote && !trip && !mapOpen && (
         <Animated.View
           entering={reduced ? undefined : FadeIn.duration(240)}
-          pointerEvents="none"
           accessibilityLiveRegion="polite"
           style={{
             position: 'absolute',
@@ -585,6 +584,7 @@ function World() {
             left: Math.max(16, (width - 420) / 2),
             right: Math.max(16, (width - 420) / 2),
             alignItems: 'center',
+            pointerEvents: 'none',
           }}
         >
           <PixelFrame tone="paper" style={{ paddingVertical: 2 * u, paddingHorizontal: 4 * u }}>
