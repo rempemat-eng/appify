@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "55ae2f0",
+ "main": "0b24017",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -4533,20 +4533,21 @@
    "fix": "redraw",
    "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
    "fails": [
-    "house style"
+    "house style",
+    "palette"
    ],
    "measured": {
     "scale": 4,
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/lava-near.png",
-    "px": 31879,
-    "colours": 34,
-    "on_today": 0.975,
+    "px": 31649,
+    "colours": 70,
+    "on_today": 0.897,
     "isolated": 0.047,
     "checker": 0.0045
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/lava-sky": {
    "files": [
@@ -4592,20 +4593,21 @@
    "fix": "redraw",
    "why": "a journey picture: the journeys stay as shortcuts beside the routes (routes brief 9), but this layer was painted in the older style before the house style and the bar; redraw it in the house style at the bar (judged by eye: side views have no baseline)",
    "fails": [
-    "house style"
+    "house style",
+    "palette"
    ],
    "measured": {
     "scale": 4,
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/lava-yard.png",
-    "px": 19079,
-    "colours": 27,
-    "on_today": 0.959,
-    "isolated": 0.013,
+    "px": 18849,
+    "colours": 62,
+    "on_today": 0.828,
+    "isolated": 0.012,
     "checker": 0.0004
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/lumen-pad": {
    "files": [
@@ -6066,13 +6068,13 @@
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/west-near.png",
-    "px": 32390,
-    "colours": 50,
-    "on_today": 0.954,
+    "px": 32433,
+    "colours": 71,
+    "on_today": 0.933,
     "isolated": 0.069,
     "checker": 0.0038
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/west-sky": {
    "files": [
@@ -9533,26 +9535,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 55,
-    "w": 38,
+    "h": 53,
+    "w": 33,
     "style": {
-     "colours": 6,
+     "colours": 41,
      "on_house": 1.0,
-     "on_today": 0.984,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.035,
-     "west_east": 9.027,
-     "isolated": 0.017,
+     "double": 0.012,
+     "west_east": 10.953,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9569,9 +9569,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9580,47 +9580,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      2,
-      10,
-      37,
-      45
+      6,
+      28,
+      28,
+      50
      ],
-     "patches": 4,
+     "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      5.75,
+      18.0,
       18.56
      ],
      "shapes": [
-      20.5,
+      47.0,
       28.23
      ],
      "dressing": [
-      15.5,
+      42.0,
       22.36
      ],
      "isolated": [
-      0.026,
+      0.055,
       0.17
      ],
      "cluster": [
-      8.14,
+      3.94,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_columns_b": {
    "files": [
@@ -9632,125 +9627,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 49,
-    "w": 50,
+    "h": 40,
+    "w": 35,
     "style": {
-     "colours": 6,
+     "colours": 37,
      "on_house": 1.0,
-     "on_today": 0.982,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 2.696,
-     "isolated": 0.019,
-     "checker": 0.001
-    },
-    "grid": "free",
-    "size": {
-     "kind": "crag",
-     "h_range": [
-      40,
-      96
-     ],
-     "w_range": [
-      32,
-      80
-     ],
-     "status": "ok"
-    },
-    "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
-    },
-    "audit": {
-     "grade": "KEEP",
-     "why": "lit hexagon tops, material shading",
-     "fix": "none"
-    },
-    "logic": "ok (KEEP in the audit)",
-    "bar": {
-     "status": "fail",
-     "kind": "stone-wall",
-     "box": [
-      15,
-      12,
-      48,
-      45
-     ],
-     "patches": 4,
-     "tones_at": 0.85,
-     "tones": [
-      5.25,
-      18.56
-     ],
-     "shapes": [
-      25.25,
-      28.23
-     ],
-     "dressing": [
-      17.75,
-      22.36
-     ],
-     "isolated": [
-      0.016,
-      0.17
-     ],
-     "cluster": [
-      7.98,
-      3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
-     ]
-    }
-   },
-   "placed": {
-    "caldera": 1
-   },
-   "checked": "2026-10-20"
-  },
-  "prop/basalt_columns_low": {
-   "files": [
-    "assets/zones/props/basalt_columns_low.png"
-   ],
-   "cls": "sprite",
-   "name": "basalt_columns_low",
-   "kind": "crag",
-   "module": "caldera_props",
-   "generator": "scripts/art/caldera_props.py",
-   "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
-   "measured": {
-    "scale": 4,
-    "h": 47,
-    "w": 53,
-    "style": {
-     "colours": 6,
-     "on_house": 1.0,
-     "on_today": 0.981,
-     "palette": "house",
-     "outline_dark": 1.0,
-     "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": 4.992,
-     "isolated": 0.012,
+     "double": 0.007,
+     "west_east": 10.338,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9767,9 +9661,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9778,47 +9672,134 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
+     "kind": "stone-wall",
+     "box": [
+      1,
+      3,
+      24,
+      26
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      20.0,
+      18.56
+     ],
+     "shapes": [
+      51.0,
+      28.23
+     ],
+     "dressing": [
+      46.0,
+      22.36
+     ],
+     "isolated": [
+      0.07,
+      0.17
+     ],
+     "cluster": [
+      3.46,
+      3.63
+     ]
+    }
+   },
+   "placed": {
+    "caldera": 1
+   },
+   "checked": "2026-10-21"
+  },
+  "prop/basalt_columns_low": {
+   "files": [
+    "assets/zones/props/basalt_columns_low.png"
+   ],
+   "cls": "sprite",
+   "name": "basalt_columns_low",
+   "kind": "crag",
+   "module": "caldera_props",
+   "generator": "scripts/art/caldera_props.py",
+   "owner": "D",
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
+   "measured": {
+    "scale": 4,
+    "h": 40,
+    "w": 37,
+    "style": {
+     "colours": 39,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
+     "flat_ink": 0.0,
+     "double": 0.007,
+     "west_east": 9.054,
+     "isolated": 0.0,
+     "checker": 0.0
+    },
+    "grid": "free",
+    "size": {
+     "kind": "crag",
+     "h_range": [
+      40,
+      96
+     ],
+     "w_range": [
+      32,
+      80
+     ],
+     "status": "ok"
+    },
+    "last_change": {
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
+    },
+    "audit": {
+     "grade": "KEEP",
+     "why": "lit hexagon tops, material shading",
+     "fix": "none"
+    },
+    "logic": "ok (KEEP in the audit)",
+    "bar": {
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       2,
-      9,
-      31,
+      16,
+      24,
       38
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      5.0,
+      17.0,
       18.56
      ],
      "shapes": [
-      23.0,
+      50.0,
       28.23
      ],
      "dressing": [
-      16.0,
+      39.0,
       22.36
      ],
      "isolated": [
-      0.008,
+      0.051,
       0.17
      ],
      "cluster": [
-      10.24,
+      3.76,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "scorch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_fallen": {
    "files": [
@@ -9830,27 +9811,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "fault (ADJUST: a flat log of blocks); detail not measurable and not checked by eye since the bar",
-   "fails": [
-    "logic",
-    "detail unverified"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 17,
-    "w": 49,
+    "h": 13,
+    "w": 46,
     "style": {
-     "colours": 10,
+     "colours": 24,
      "on_house": 1.0,
-     "on_today": 0.824,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.006,
-     "west_east": 2.032,
-     "isolated": 0.01,
+     "double": 0.01,
+     "west_east": 9.383,
+     "isolated": 0.002,
      "checker": 0.0
     },
     "grid": "free",
@@ -9867,28 +9845,33 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "a flat log of blocks",
      "fix": "hexagonal end faces, broken ends"
     },
-    "logic": "fault (ADJUST: a flat log of blocks)",
+    "logic": "fixed by eye: fixed: reads as a basalt column lying where it fell, not a flat log of blocks: a hexagonal prism on its side (lit upper facet, mid front facet, shaded lower facet, a hexagonal west end to the light), broken at its joints into drums settled a little apart and askew, the east end a fresh stepped break, ash drifted against it in lobes (claude-d, 21 Oct)",
     "bar": {
      "status": "n/a",
      "kind": "wood-front",
-     "square": 13,
-     "why": "no solid 18 px square (largest 13): too small for a 16 px patch"
+     "square": 11,
+     "why": "no solid 18 px square (largest 11): too small for a 16 px patch",
+     "eye": "ok: drums on their own sibling ramps with recessed joints, stains a tone off in clusters, lichen on the lit facet, a crack, ash lobes and a dry tuft; its largest solid square is 12 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "scorch": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: reads as a basalt column lying where it fell, not a flat log of blocks: a hexagonal prism on its side (lit upper facet, mid front facet, shaded lower facet, a hexagonal west end to the light), broken at its joints into drums settled a little apart and askew, the east end a fresh stepped break, ash drifted against it in lobes (claude-d, 21 Oct)",
+    "bar": "ok: drums on their own sibling ramps with recessed joints, stains a tone off in clusters, lichen on the lit facet, a crack, ash lobes and a dry tuft; its largest solid square is 12 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/basalt_stack": {
    "files": [
@@ -9900,26 +9883,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 83,
-    "w": 36,
+    "h": 76,
+    "w": 35,
     "style": {
-     "colours": 6,
+     "colours": 42,
      "on_house": 1.0,
-     "on_today": 0.988,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.018,
-     "west_east": 6.161,
-     "isolated": 0.02,
+     "double": 0.004,
+     "west_east": 10.589,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -9936,9 +9917,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -9947,39 +9928,35 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      2,
-      23,
-      35,
-      56
+      1,
+      21,
+      28,
+      48
      ],
-     "patches": 4,
+     "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      6.0,
+      17.0,
       18.56
      ],
      "shapes": [
-      27.0,
+      48.0,
       28.23
      ],
      "dressing": [
-      18.25,
+      41.0,
       22.36
      ],
      "isolated": [
-      0.039,
+      0.051,
       0.17
      ],
      "cluster": [
-      6.86,
+      4.13,
       3.63
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
@@ -9987,7 +9964,7 @@
     "caldera": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_steps": {
    "files": [
@@ -9999,26 +9976,24 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 55,
-    "w": 77,
+    "h": 52,
+    "w": 66,
     "style": {
-     "colours": 6,
+     "colours": 41,
      "on_house": 1.0,
-     "on_today": 0.978,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.023,
-     "west_east": 9.112,
-     "isolated": 0.025,
+     "double": 0.028,
+     "west_east": 12.738,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -10035,9 +10010,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10046,26 +10021,26 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
-      39,
-      16,
-      68,
-      45
+      30,
+      18,
+      56,
+      44
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      6.0,
+      18.0,
       18.56
      ],
      "shapes": [
-      28.0,
+      47.0,
       28.23
      ],
      "dressing": [
-      20.0,
+      42.0,
       22.36
      ],
      "isolated": [
@@ -10073,19 +10048,15 @@
       0.17
      ],
      "cluster": [
-      5.95,
+      3.61,
       3.63
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/basalt_stumps": {
    "files": [
@@ -10097,27 +10068,25 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle",
-   "fails": [
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 24,
-    "w": 45,
+    "h": 22,
+    "w": 40,
     "style": {
-     "colours": 6,
+     "colours": 38,
      "on_house": 1.0,
-     "on_today": 0.944,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
      "double": 0.0,
-     "west_east": 10.394,
-     "isolated": 0.073,
-     "checker": 0.002
+     "west_east": 13.793,
+     "isolated": 0.0,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -10133,9 +10102,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10146,16 +10115,19 @@
     "bar": {
      "status": "n/a",
      "kind": "stone-wall",
-     "square": 12,
-     "why": "no solid 18 px square (largest 12): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 10,
+     "why": "no solid 18 px square (largest 10): too small for a 16 px patch",
+     "eye": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "caldera": 1,
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/basalt_stumps_b": {
    "files": [
@@ -10173,18 +10145,18 @@
    "fails": [],
    "measured": {
     "scale": 4,
-    "h": 26,
-    "w": 45,
+    "h": 19,
+    "w": 44,
     "style": {
-     "colours": 6,
+     "colours": 29,
      "on_house": 1.0,
-     "on_today": 0.963,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 3.576,
-     "isolated": 0.052,
+     "double": 0.0,
+     "west_east": 8.129,
+     "isolated": 0.0,
      "checker": 0.0
     },
     "grid": "free",
@@ -10201,9 +10173,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "4a37250",
-     "date": "2026-10-19T11:15",
-     "subject": "Sunstone's logic, second pass (review 19 Oct 08:04 finding 4 and the merged-review notes)"
+     "sha": "33fdf81",
+     "date": "2026-10-21T08:51",
+     "subject": "Lane D basalt family redrawn on the house ramps: columns, columns_b, columns_low, stack, steps, stumps, stumps_b, fallen"
     },
     "audit": {
      "grade": "KEEP",
@@ -10214,15 +10186,18 @@
     "bar": {
      "status": "n/a",
      "kind": "stone-wall",
-     "square": 17,
-     "why": "no solid 18 px square (largest 17): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 11,
+     "why": "no solid 18 px square (largest 11): too small for a 16 px patch",
+     "eye": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "springs": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: short basalt prisms broken at the top in stepped fresh fractures (darker than the weathered grey tops, lit on their lips), drums on sibling ramps with recessed joints and lit lips, stains, varnish, spalls and lichen, drums and chips fallen at the foot; its largest solid square is under 18 px, so it was compared at 3x and 1x beside Eastward Octopia's boulders (eastward-17), rock wall (eastward-12) and pillars (eastward-37) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bathhouse": {
    "files": [
@@ -10680,35 +10655,31 @@
    "module": "castle_props",
    "generator": "scripts/art/castle_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: doors about 22); foot line 38 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW as stone-wall",
-   "fails": [
-    "logic",
-    "grid",
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 121,
-    "w": 49,
+    "w": 47,
     "style": {
-     "colours": 106,
-     "on_house": 0.916,
-     "on_today": 0.012,
+     "colours": 91,
+     "on_house": 0.998,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.014,
-     "west_east": 5.827,
-     "isolated": 0.023,
+     "double": 0.039,
+     "west_east": 5.864,
+     "isolated": 0.003,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 38,
-     "cells": 4.75,
+     "foot_px": 40,
+     "cells": 5.0,
      "kind_foot": "6 x 6",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "tower",
@@ -10723,56 +10694,56 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "b658fec",
-     "date": "2026-10-20T07:32",
-     "subject": "D13 batch 1: Sunstone's wood fronts and Hearthold's stone to Eastward's level of detail"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "doors about 22",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: doors about 22)",
+    "logic": "fixed by eye: fixed: a studded oak door 14 x 32 in a dressed ashlar arch on its step (was about 22); the bell hung in an open middle bay between two louvred ones, its headstock and clapper shown (claude-d, 21 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       6,
-      24,
+      62,
       42,
-      60
+      98
      ],
      "patches": 4,
      "tones_at": 0.85,
      "tones": [
-      11.0,
+      23.75,
       18.56
      ],
      "shapes": [
-      33.75,
+      48.5,
       28.23
      ],
      "dressing": [
-      24.75,
+      41.25,
       22.36
      ],
      "isolated": [
-      0.029,
+      0.092,
       0.17
      ],
      "cluster": [
-      7.35,
+      3.45,
       3.63
-     ],
-     "low": [
-      "tones"
      ]
     }
    },
    "placed": {
     "hearthold": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: a studded oak door 14 x 32 in a dressed ashlar arch on its step (was about 22); the bell hung in an open middle bay between two louvred ones, its headstock and clapper shown (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bench": {
    "files": [
@@ -11312,9 +11283,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "eb23caa",
-     "date": "2026-10-19T02:39",
-     "subject": "Merge #32: Sunstone Reach's detail pass (S2)"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "ADJUST",
@@ -11412,9 +11383,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "eb23caa",
-     "date": "2026-10-19T02:39",
-     "subject": "Merge #32: Sunstone Reach's detail pass (S2)"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "ADJUST",
@@ -23792,35 +23763,31 @@
    "module": "caldera_props",
    "generator": "scripts/art/caldera_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 28 px: not whole 8 px cells (kind foot 3 x 3); detail not measurable and not checked by eye since the bar; style: speckle",
-   "fails": [
-    "grid",
-    "detail unverified",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 50,
-    "w": 30,
+    "h": 44,
+    "w": 27,
     "style": {
-     "colours": 45,
-     "on_house": 0.947,
-     "on_today": 0.847,
+     "colours": 43,
+     "on_house": 0.996,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.977,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.015,
-     "west_east": 5.466,
-     "isolated": 0.12,
+     "double": 0.025,
+     "west_east": 3.319,
+     "isolated": 0.006,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 28,
-     "cells": 3.5,
+     "foot_px": 25,
+     "cells": 3.12,
      "kind_foot": "3 x 3",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "shrine",
@@ -23835,9 +23802,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "20deab5",
-     "date": "2026-10-20T14:08",
-     "subject": "Lumen hub and dome, ember shrine (Claude A's to-d-1210)"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -23846,16 +23813,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "n/a",
+     "status": "pass",
      "kind": "stone-wall",
-     "square": 17,
-     "why": "no solid 18 px square (largest 17): too small for a 16 px patch"
+     "box": [
+      2,
+      24,
+      20,
+      42
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      17.0,
+      18.56
+     ],
+     "shapes": [
+      34.0,
+      28.23
+     ],
+     "dressing": [
+      25.0,
+      22.36
+     ],
+     "isolated": [
+      0.051,
+      0.17
+     ],
+     "cluster": [
+      5.45,
+      3.63
+     ]
     }
    },
    "placed": {
     "caldera": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/engine_tank": {
    "files": [
@@ -24197,32 +24190,29 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither",
-   "fails": [
-    "speckle",
-    "dither"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 13,
-    "w": 20,
+    "h": 14,
+    "w": 19,
     "style": {
-     "colours": 14,
-     "on_house": 0.947,
-     "on_today": 0.579,
+     "colours": 28,
+     "on_house": 0.963,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.978,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.022,
-     "west_east": 5.266,
-     "isolated": 0.229,
-     "checker": 0.014
+     "double": 0.065,
+     "west_east": 1.902,
+     "isolated": 0.021,
+     "checker": 0.0
     },
     "grid": {
-     "foot_px": 16,
-     "cells": 2.0,
+     "foot_px": 17,
+     "cells": 2.12,
      "kind_foot": "3 x 2",
      "ok": true
     },
@@ -24239,9 +24229,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -24252,13 +24242,16 @@
     "bar": {
      "status": "by eye",
      "why": "no reference kind for this subject (house-style 7: by eye)",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "eye": "ok: a ring of eight stones lit on their upper left (the far ones smaller), ash, two charred sticks, embers, a teapot on the west stones; compared at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: a ring of eight stones lit on their upper left (the far ones smaller), ash, two charred sticks, embers, a teapot on the west stones; compared at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/fireplace": {
    "files": [
@@ -30028,27 +30021,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar isolated NOISY, cluster NOISY as stone-wall; style: speckle",
-   "fails": [
-    "bar",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 41,
     "style": {
-     "colours": 22,
-     "on_house": 0.919,
-     "on_today": 0.736,
+     "colours": 34,
+     "on_house": 0.943,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 4.974,
-     "isolated": 0.067,
+     "double": 0.065,
+     "west_east": 7.165,
+     "isolated": 0.027,
      "checker": 0.0
     },
     "grid": "free",
@@ -30065,9 +30055,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62e1d1b",
-     "date": "2026-10-19T17:25",
-     "subject": "Review fixes after #62 and #63 (D8): Lumen's ice rig is remote, the gangway docks to the shuttle, a collar joins the air"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -30076,46 +30066,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       5,
-      2,
-      25,
-      22
+      4,
+      24,
+      23
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      16.0,
+      27.0,
       18.56
      ],
      "shapes": [
-      41.0,
+      34.0,
       28.23
      ],
      "dressing": [
-      36.0,
+      32.0,
       22.36
      ],
      "isolated": [
-      0.199,
+      0.066,
       0.17
      ],
      "cluster": [
-      2.56,
+      4.27,
       3.63
-     ],
-     "noisy": [
-      "isolated",
-      "cluster"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/lizard_rock_b": {
    "files": [
@@ -30127,27 +30113,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar isolated NOISY, cluster NOISY as stone-wall; style: speckle",
-   "fails": [
-    "bar",
-    "speckle"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 42,
     "style": {
-     "colours": 22,
-     "on_house": 0.919,
-     "on_today": 0.736,
+     "colours": 37,
+     "on_house": 0.936,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 5.358,
-     "isolated": 0.068,
+     "double": 0.086,
+     "west_east": 4.333,
+     "isolated": 0.026,
      "checker": 0.0
     },
     "grid": "free",
@@ -30164,9 +30147,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "62e1d1b",
-     "date": "2026-10-19T17:25",
-     "subject": "Review fixes after #62 and #63 (D8): Lumen's ice rig is remote, the gangway docks to the shuttle, a collar joins the air"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -30175,46 +30158,20 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "n/a",
      "kind": "stone-wall",
-     "box": [
-      5,
-      2,
-      25,
-      22
-     ],
-     "patches": 1,
-     "tones_at": 0.85,
-     "tones": [
-      16.0,
-      18.56
-     ],
-     "shapes": [
-      45.0,
-      28.23
-     ],
-     "dressing": [
-      38.0,
-      22.36
-     ],
-     "isolated": [
-      0.195,
-      0.17
-     ],
-     "cluster": [
-      2.51,
-      3.63
-     ],
-     "noisy": [
-      "isolated",
-      "cluster"
-     ]
+     "square": 17,
+     "why": "no solid 18 px square (largest 17): too small for a 16 px patch",
+     "eye": "ok: rounded blocks of bedded sandstone (lit upper lips, undercuts, a seam where one block stands before another, varnish streaks, lichen in the shade, sand drifted in the lee) with a banded chuckwalla on top; its largest solid square is 17 px, so it was compared by eye at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: rounded blocks of bedded sandstone (lit upper lips, undercuts, a seam where one block stands before another, varnish streaks, lichen in the shade, sand drifted in the lee) with a banded chuckwalla on top; its largest solid square is 17 px, so it was compared by eye at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/lobster_pots": {
    "files": [
@@ -32424,29 +32381,25 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither, palette",
-   "fails": [
-    "speckle",
-    "dither",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 69,
-    "w": 56,
+    "h": 79,
+    "w": 46,
     "style": {
-     "colours": 15,
-     "on_house": 0.845,
-     "on_today": 0.699,
-     "palette": "off",
+     "colours": 49,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.068,
-     "west_east": 0.772,
-     "isolated": 0.251,
-     "checker": 0.006
+     "double": 0.019,
+     "west_east": 12.559,
+     "isolated": 0.004,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -32462,9 +32415,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -32473,19 +32426,44 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "n/a",
+     "status": "pass",
      "kind": "tree",
-     "square": 10,
-     "why": "no solid 18 px square (largest 10): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "box": [
+      12,
+      4,
+      30,
+      22
+     ],
+     "patches": 1,
+     "tones_at": 0.85,
+     "tones": [
+      25.0,
+      20.38
+     ],
+     "shapes": [
+      49.0,
+      35.75
+     ],
+     "dressing": [
+      41.0,
+      29.34
+     ],
+     "isolated": [
+      0.129,
+      0.27
+     ],
+     "cluster": [
+      2.84,
+      2.29
+     ]
     }
    },
    "placed": {
     "cove": 6,
-    "landing": 3,
+    "landing": 1,
     "oasis": 4
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/palm_small": {
    "files": [
@@ -32497,29 +32475,25 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither, palette",
-   "fails": [
-    "speckle",
-    "dither",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 50,
-    "w": 45,
+    "h": 46,
+    "w": 31,
     "style": {
-     "colours": 15,
-     "on_house": 0.834,
-     "on_today": 0.695,
-     "palette": "off",
-     "outline_dark": 0.98,
+     "colours": 35,
+     "on_house": 1.0,
+     "on_today": 0.0,
+     "palette": "house",
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.08,
-     "west_east": 2.894,
-     "isolated": 0.229,
-     "checker": 0.007
+     "double": 0.015,
+     "west_east": 11.891,
+     "isolated": 0.006,
+     "checker": 0.0
     },
     "grid": "free",
     "size": {
@@ -32535,9 +32509,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -32548,15 +32522,18 @@
     "bar": {
      "status": "n/a",
      "kind": "tree",
-     "square": 9,
-     "why": "no solid 18 px square (largest 9): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 13,
+     "why": "no solid 18 px square (largest 13): too small for a 16 px patch",
+     "eye": "ok: the dry and fire kit's small palm (#137): trunk of offset leaf bases lit on the west, feathered fronds radiating and drooping, back ones in shade, a dead-frond skirt; compared at 3x and 1x beside Eastward's pine (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 3
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: the dry and fire kit's small palm (#137): trunk of offset leaf bases lit on the west, feathered fronds radiating and drooping, back ones in shade, a dead-frond skirt; compared at 3x and 1x beside Eastward's pine (eastward-13-pine) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/pandanus": {
    "files": [
@@ -33262,26 +33239,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as wood-front",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 37,
+    "h": 38,
     "w": 30,
     "style": {
-     "colours": 10,
-     "on_house": 0.978,
-     "on_today": 0.63,
+     "colours": 43,
+     "on_house": 0.998,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.037,
-     "west_east": 0.342,
-     "isolated": 0.003,
+     "double": 0.0,
+     "west_east": 1.451,
+     "isolated": 0.006,
      "checker": 0.0
     },
     "grid": {
@@ -33303,9 +33278,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -33314,47 +33289,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
       3,
       1,
-      26,
-      24
+      27,
+      25
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      9.0,
+      32.0,
       24.0
      ],
      "shapes": [
-      21.0,
+      46.0,
       36.34
      ],
      "dressing": [
-      15.0,
+      42.0,
       30.54
      ],
      "isolated": [
-      0.016,
+      0.086,
       0.17
      ],
      "cluster": [
-      9.48,
+      3.32,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/postern": {
    "files": [
@@ -34508,9 +34478,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "ca96683",
-     "date": "2026-10-20T15:43",
-     "subject": "Sailboat to Claude A's list (to-b-1500): the mainsail's belly lit and its leech in shade, folds up from the clew, stitch"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "REDRAW",
@@ -34545,28 +34515,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: storeys right; doors 25); style: speckle, colours",
-   "fails": [
-    "logic",
-    "speckle",
-    "colours"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 108,
     "w": 106,
     "style": {
-     "colours": 188,
-     "on_house": 0.911,
-     "on_today": 0.212,
+     "colours": 76,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.029,
-     "west_east": 1.451,
-     "isolated": 0.136,
+     "double": 0.01,
+     "west_east": 0.223,
+     "isolated": 0.001,
      "checker": 0.0
     },
     "grid": {
@@ -34588,33 +34554,33 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "e153a06",
-     "date": "2026-10-20T11:23",
-     "subject": "After Claude A's note on #120 (to-d-120-back): moon in grey brown-grey, galley off timber, banners clear, colour budget,"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "storeys right; doors 25",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: storeys right; doors 25)",
+    "logic": "fixed by eye: fixed: the doorway 22 x 32 under a lintel, the swinging half doors hung at chest height in it, the lamp-lit room behind; storeys as before under the false front; porch posts unbroken (claude-d, 21 Oct)",
     "bar": {
      "status": "pass",
      "kind": "wood-front",
      "box": [
-      6,
+      5,
       12,
-      100,
+      99,
       106
      ],
      "patches": 25,
      "tones_at": 0.85,
      "tones": [
-      22.24,
+      20.68,
       24.0
      ],
      "shapes": [
-      40.0,
+      39.52,
       36.34
      ],
      "dressing": [
@@ -34622,11 +34588,11 @@
       30.54
      ],
      "isolated": [
-      0.126,
+      0.061,
       0.17
      ],
      "cluster": [
-      3.58,
+      4.41,
       3.4
      ]
     }
@@ -34634,7 +34600,10 @@
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: the doorway 22 x 32 under a lintel, the swinging half doors hung at chest height in it, the lamp-lit room behind; storeys as before under the false front; porch posts unbroken (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/sandstone_arch": {
    "files": [
@@ -34704,26 +34673,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as stone-wall",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 23,
-    "w": 40,
+    "h": 25,
+    "w": 41,
     "style": {
-     "colours": 14,
-     "on_house": 0.92,
-     "on_today": 0.814,
+     "colours": 31,
+     "on_house": 0.943,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.0,
-     "west_east": 7.267,
-     "isolated": 0.031,
+     "double": 0.065,
+     "west_east": 7.384,
+     "isolated": 0.027,
      "checker": 0.0
     },
     "grid": "free",
@@ -34740,9 +34707,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "deafdc7",
-     "date": "2026-10-18T07:54",
-     "subject": "Detail in the open ground: cooled lava flows, scree and burnt snags in the fire country, a lander and a rock arch on Lum"
+     "sha": "6a264fb",
+     "date": "2026-10-21T01:34",
+     "subject": "Sunstone redraws batch 3: sandstone outcrop, both lizard rocks, the ember shrine and both palms on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -34751,47 +34718,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       5,
-      2,
-      25,
-      22
+      4,
+      24,
+      23
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      10.0,
+      24.0,
       18.56
      ],
      "shapes": [
-      23.0,
+      29.0,
       28.23
      ],
      "dressing": [
-      15.0,
+      25.0,
       22.36
      ],
      "isolated": [
-      0.121,
+      0.035,
       0.17
      ],
      "cluster": [
-      4.34,
+      5.69,
       3.63
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/sapling": {
    "files": [
@@ -41015,34 +40977,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 37 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, dressing LOW as machinery",
-   "fails": [
-    "grid",
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 94,
-    "w": 45,
+    "h": 98,
+    "w": 46,
     "style": {
-     "colours": 15,
-     "on_house": 0.994,
-     "on_today": 0.785,
+     "colours": 58,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.067,
-     "west_east": 7.313,
-     "isolated": 0.009,
+     "double": 0.008,
+     "west_east": 5.449,
+     "isolated": 0.003,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 37,
-     "cells": 4.62,
+     "foot_px": 40,
+     "cells": 5.0,
      "kind_foot": "6 x 6",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "water_tower",
@@ -41057,9 +41016,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -41068,46 +41027,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "machinery",
      "box": [
       3,
-      4,
-      41,
-      42
+      13,
+      42,
+      52
      ],
      "patches": 4,
      "tones_at": 0.85,
      "tones": [
-      8.5,
+      23.5,
       25.16
      ],
      "shapes": [
-      32.0,
+      45.5,
       32.13
      ],
      "dressing": [
-      23.0,
+      37.75,
       27.14
      ],
      "isolated": [
-      0.033,
+      0.091,
       0.16
      ],
      "cluster": [
-      6.3,
+      3.48,
       3.62
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/watering_can": {
    "files": [
@@ -41487,9 +41442,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "347296d",
-     "date": "2026-10-20T15:32",
-     "subject": "Windmill to Claude A's list (to-b-1500): crazing in the limewash, the sails' shadow on the tower, a cast-iron poll end w"
+     "sha": "55ae2f0",
+     "date": "2026-10-21T09:02",
+     "subject": "Named things batch 2 and wave 2: windmills, rowing boats and the dinghy redrawn new; burners' hut, lookout and tipple up"
     },
     "audit": {
      "grade": "ADJUST",
@@ -41607,35 +41562,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 28 px: not whole 8 px cells (kind foot 4 x 4); style: speckle, palette",
-   "fails": [
-    "grid",
-    "speckle",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 85,
-    "w": 35,
+    "h": 88,
+    "w": 37,
     "style": {
-     "colours": 13,
-     "on_house": 0.673,
-     "on_today": 0.323,
-     "palette": "off",
+     "colours": 23,
+     "on_house": 0.993,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.05,
-     "west_east": 5.237,
-     "isolated": 0.079,
+     "double": 0.029,
+     "west_east": 16.365,
+     "isolated": 0.046,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 28,
-     "cells": 3.5,
+     "foot_px": 34,
+     "cells": 4.25,
      "kind_foot": "4 x 4",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "windpump",
@@ -41650,9 +41601,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -41663,15 +41614,18 @@
     "bar": {
      "status": "n/a",
      "kind": "machinery",
-     "square": 9,
-     "why": "no solid 18 px square (largest 9): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 6,
+     "why": "no solid 18 px square (largest 6): too small for a 16 px patch",
+     "eye": "ok: open structure (house-style 7 ruling): every member meets another at a riveted joint, the legs on concrete pads, the wheel's sails held by a rim, the vane downwind; no outline round the lattice so the air shows through; compared at 3x and 1x beside Eastward's barn-front yard (eastward-17-barn-front) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: open structure (house-style 7 ruling): every member meets another at a riveted joint, the legs on concrete pads, the wheel's sails held by a rim, the vane downwind; no outline round the lattice so the air shows through; compared at 3x and 1x beside Eastward's barn-front yard (eastward-17-barn-front) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/windsock": {
    "files": [
@@ -47654,12 +47608,12 @@
     "w": 320,
     "measured_file": "assets/zones/caldera/ground.png",
     "px": 184320,
-    "colours": 186,
-    "on_today": 0.876,
+    "colours": 185,
+    "on_today": 0.877,
     "isolated": 0.062,
     "checker": 0.0075
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/canal": {
    "files": [
@@ -48541,11 +48495,11 @@
     "measured_file": "assets/zones/scorch/ground.png",
     "px": 184320,
     "colours": 174,
-    "on_today": 0.897,
+    "on_today": 0.898,
     "isolated": 0.057,
     "checker": 0.0067
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/skyport": {
    "files": [
@@ -48639,12 +48593,12 @@
     "w": 320,
     "measured_file": "assets/zones/springs/ground.png",
     "px": 184320,
-    "colours": 95,
-    "on_today": 0.797,
+    "colours": 100,
+    "on_today": 0.798,
     "isolated": 0.063,
-    "checker": 0.0104
+    "checker": 0.0105
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "zone/station": {
    "files": [

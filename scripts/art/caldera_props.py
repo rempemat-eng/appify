@@ -11,7 +11,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, noise2, oval  # noqa: E402
+from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
 import reach_house as rh  # noqa: E402
@@ -45,39 +45,9 @@ def hex_top(cv: Canvas, cx: float, cy: float, r: float, lit: int = 3):
     return pts
 
 
-def basalt_columns(n: int = 5, seed: int = 0) -> Canvas:
-    """A cluster of hexagonal basalt columns of different heights, 60 x 64: each column
-    shows two faces (the left lit by the sky, the right in shade) split by a dark edge,
-    horizontal joints every few pixels, a lit hexagonal top, and lava glow at the feet."""
-    w, h = 60, 64
-    cv = Canvas(w, h, pad=PAD)
-    cols = []
-    for k in range(n):
-        cx = 10 + int(noise2(k, 0, 251 + seed) * 40)
-        top = 8 + int(noise2(k, 1, 251 + seed) * 28)
-        cols.append((top, cx))
-    for top, cx in sorted(cols, key=lambda c: (c[1] * 0.2 + c[0])):
-        r = 9
-        joint0 = int(noise2(cx, top, 252) * 6)
-        for y in range(top, h - 2):
-            for x in range(int(cx - r + 1), int(cx + r)):
-                k = (x - cx) / r
-                c = BASALT[3] if k < -0.45 else BASALT[2] if k < 0.05 else BASALT[1]
-                if -0.12 < k < 0.05:
-                    c = BASALT[0]  # the edge between two faces
-                if (y - top + joint0) % 9 == 0:
-                    c = BASALT[0] if k > -0.45 else BASALT[1]  # a column joint
-                elif (y - top + joint0) % 9 == 1 and k < -0.45:
-                    c = BASALT[4]
-                if y > h - 9 and (x + y) % 2 == 0:
-                    c = LAVA[1] if y < h - 5 else LAVA[2]  # glow from the lava below
-                cv.set(x, y, c)
-        hex_top(cv, cx, top, r)
-    return cv
-
-
 def _column(cv: Canvas, cx: float, top: int, foot: int, r: float, seed: int, glow: bool, broken: bool = False):
-    """One hexagonal basalt column standing from `foot` up to `top`, seen in the three-
+    """The old column (on the old ramps), kept only for the retired Sunstone ground that
+    still draws with it (sunstone_zones); the props use `_prism` below. One hexagonal basalt column standing from `foot` up to `top`, seen in the three-
     quarter view: its top a hexagon foreshortened to the same angle as everything else
     (a vertex left and right, a flat edge front and back), three vertical faces below it
     (the left lit by the sky, the front mid, the right in shade) split by dark arrises,
@@ -139,96 +109,375 @@ def _column(cv: Canvas, cx: float, top: int, foot: int, r: float, seed: int, glo
     return pts
 
 
-def basalt_formation(cols, w: int, h: int, seed: int = 0, glow: bool = False) -> Canvas:
-    """A group of basalt columns, each (cx, top, foot, r, broken): drawn from the back
-    (highest foot) forward, so nearer columns overlap the ones behind them, with rubble
-    of fallen drums at the front."""
+# The basalt column family (asset ledger: all REWORK redraw but stumps_b), redrawn on the
+# house ramps and compared with Eastward at an adult of 25 px (the rounded, weathered rock
+# masses of eastward-17 and the stained concrete columns of eastward-37): columnar jointing
+# as it is, prisms packed on a honeycomb, each drum its own block, the stone stained and
+# lichened where weather and light reach it, the broken pieces lying where they fell.
+
+def _h(*a) -> float:
+    """Hash noise in [0, 1) on integers (pixel.noise2 with a seed folded in)."""
+    return noise2(a[0] * 7 + (a[2] if len(a) > 2 else 0) * 131, a[1] * 13 + (a[3] if len(a) > 3 else 0) * 17, 977)
+
+
+def _prism(cv: Canvas, cx: int, foot: int, height: int, half: int, seed: int, broken: bool = False) -> set:
+    """One basalt column, a hexagonal prism standing on `foot` (the foot of its south face),
+    `height` px from the foot to its top's south edge, `half` px from its axis to its west and
+    east points (columns are 8 to 13 across: size guide, crag), seen from the south and above
+    in the house three-quarter view.
+
+    Its top is a hexagon with points west and east and flat north and south edges: the north-
+    west edges lit (tone 5 glint), the face of the top a weathered grey-brown, the south-east
+    edges in shade, and on some a cooling crack, a rosette of orange lichen or blown ash in a
+    hollow. Below it the three faces that turn to us, split by arrises: the south-west face lit
+    (warm sibling, tone 3), the south face mid (2), the south-east face in shade (1); across
+    them the cross-joints of the column's drums at its own uneven spacing, each joint a recess
+    (darker than the drums it parts) with the lit lip of the drum below it. Each drum on each
+    face takes a sibling ramp of its own (warm, body or cool) so the column reads as stacked
+    blocks, not a striped tube. Weather on the faces: broad stains a tone off in clusters
+    (lighter on the lit faces, darker in the shade), desert varnish run down from the joints,
+    gas vesicles (a dark pit over a lit lower lip), orange and pale lichen high on the lit
+    faces, chips knocked out of the arrises. The face's last row is grit banked at the foot.
+    Returns the pixels it covers."""
+    flat = (half + 1) // 2                    # half the length of the flat north and south edges
+    r = (half - flat + 2) // 2                # the top's half depth: rows from the north edge to a point
+    depth = 2 * r + 1
+    top = foot - height - depth + 1           # the top's north edge, at its middle
+
+    def upper(dx):                            # the top's north outline below `top`: flat over the middle,
+        a = abs(dx)                           # then the slanting edges down to the west and east points
+        return 0 if a <= flat else round(r * (a - flat) / (half - flat))
+
+    def lower(dx):                            # its south outline: where the faces begin
+        return depth - upper(dx)
+
+    s = seed * 7919
+    mine = set()
+    # the drums: joints at the column's own uneven spacing, counted down from the face's top
+    joints, d = [], 3 + int(_h(s, 1) * 5)
+    while d < height - 2:
+        joints.append(d)
+        d += 4 + int(_h(s, d, 2) * 5)
+    face_fam = {'sw': ('basalt_warm', 'basalt', 'basalt_warm'), 's': ('basalt', 'basalt_warm', 'basalt_cool'),
+                'se': ('basalt_cool', 'basalt', 'basalt_cool')}
+    face_k = {'sw': 4, 's': 3, 'se': 1}
+    for dx in range(-half, half + 1):
+        x = cx + dx
+        face = 'sw' if dx < -flat else 'se' if dx > flat else 's'
+        y0 = top + lower(dx)
+        y1 = foot - (1 if abs(dx) == half else 0)   # the foot nearly level: it stands in its own grit
+        for y in range(y0, y1 + 1):
+            dd = y - y0                       # depth below the face's top edge
+            drum = sum(1 for j in joints if j <= dd)
+            fam = face_fam[face][int(_h(s, drum, ord(face[-1])) * 3)]
+            k = face_k[face]
+            if dd == 0 and face != 'se':
+                k += 1                        # the lit lip under the top's edge
+            if face == 's' and dx == -flat:
+                k = 3                         # the west arris, where the lit face turns
+                fam = 'basalt_warm'
+            elif face == 'se' and dx == flat + 1:
+                k = 0                         # the east arris, dark
+            if dd in joints:
+                k = max(0, k - 2) if face != 'sw' else 2      # a cross-joint, a recess
+            elif dd - 1 in joints and face != 'se':
+                k = min(5, k + 1)             # the drum's lit lip below the joint
+            else:
+                n = smooth_noise(x * 1.0, y * 0.7, 2.2, s + 11)
+                if n > 0.74:
+                    k = min(5 if face == 'sw' else 3 if face == 's' else 2, k + 1)   # a weathered stain, lighter
+                elif n < 0.2 and face != 'sw':
+                    k = max(0, k - 1)         # a damp stain, a tone darker in the shade
+                n2 = smooth_noise(x * 0.9, y * 1.0, 1.7, s + 13)
+                if n2 > 0.8:
+                    fam = 'ash_cool'          # dust caught on the rough stone
+                elif n2 < 0.13:
+                    fam, k = 'earth_cool', min(k, 2)   # iron weathering out of the basalt, rust-brown
+                for j in joints:              # desert varnish run down from a joint
+                    if 1 < dd - j < 2 + int(_h(x, j, s, 3) * 5) and _h(x, j, s, 4) < 0.22:
+                        k = max(0, k - 1)
+                        fam = 'basalt_cool'
+            if y >= y1:
+                fam, k = 'ash_cool', 1        # grit banked at the foot
+            elif y == y1 - 1:
+                k = max(0, k - 1)
+            cv.set(x, y, T(fam, k))
+            mine.add((x, y))
+        # the top, a hexagon
+        for j in range(upper(dx), lower(dx)):
+            y = top + j
+            if j == upper(dx):
+                fam, k = ('ash_warm', 5) if dx <= 0 else ('ash', 4)                # the north-west edges, lit
+            elif j == lower(dx) - 1:
+                fam, k = ('ash_cool', 2) if dx >= -1 else ('ash', 3)              # the south-east edges, in shade
+            else:
+                n = smooth_noise(x * 1.0, y * 1.0, 1.8, s + 5)
+                fam = 'ash_warm' if n > 0.62 else 'ash' if n > 0.3 else 'ash_cool'   # the weathered top, grey
+                k = 4 if dx < flat else 3
+            cv.set(x, y, T(fam, k))
+            mine.add((x, y))
+    # vesicles and lichen on the faces, chips out of the arrises
+    for dd in range(2, height - 2, 3):
+        for (dx0, face) in ((-half + 1, 'sw'), (-flat + 1, 's'), (0, 's')):
+            t = _h(s, dd, dx0 + 20, 6)
+            x = cx + dx0 + int(_h(s, dd, dx0, 7) * max(1, flat))
+            y = top + lower(x - cx) + dd
+            if (x, y) not in mine or (x + 1, y + 2) not in mine or dd in joints or dd + 1 in joints:
+                continue
+            if t < 0.08:                      # a gas vesicle: a dark pit over its lit lower lip
+                cv.set(x, y, T('basalt_cool', 0)); cv.set(x + 1, y, T('basalt_cool', 0))
+                cv.set(x, y + 1, T('basalt_warm', 4)); cv.set(x + 1, y + 1, T('basalt_warm', 4))
+            elif t < 0.24 and dd < height * 0.8:   # lichen, where the light and the dew are
+                fam = 'brass_cool' if _h(s, dd, 9) < 0.35 else 'ash_warm'
+                kk = 2 if fam == 'brass_cool' else 4
+                shape = (((0, 0), (1, 0), (1, 1)), ((0, 0), (1, 0), (1, 1), (2, 1)), ((1, 0), (0, 1), (1, 1), (2, 1)),
+                         ((0, 0), (0, 1), (1, 1)))[int(_h(s, dd, dx0, 12) * 4)]
+                for (ax, ay) in shape:        # a crust of irregular rosettes, lit on its upper left
+                    if (x + ax, y + ay) in mine:
+                        cv.set(x + ax, y + ay, T(fam, kk + (1 if ay == 0 and ax < 2 else 0)))
+    for j in joints:                          # spalls: where the weathered rind fell off a drum, the fresh
+        if _h(s, j, 14) < 0.4:                # stone shows darker under a lit broken lip
+            sx = cx - flat + 1 + int(_h(s, j, 15) * max(1, 2 * flat - 4))
+            sy = top + depth + j + 2 + int(_h(s, j, 16) * 2)
+            sw = 3 + int(_h(s, j, 17) * 2)
+            for ax in range(sw):
+                for ay in range(2 + (1 if 0 < ax < sw - 1 else 0)):
+                    if (sx + ax, sy + ay) in mine and (sx + ax, sy + ay + 1) in mine:
+                        cv.set(sx + ax, sy + ay, T('basalt_cool', 2) if ay else T('basalt_warm', 4 if ax < sw - 1 else 3))
+    for j in joints:                          # chips out of the arrises at some joints
+        if _h(s, j, 8) < 0.45:
+            x = cx - flat
+            y = top + lower(-flat) + j
+            for (ax, ay, fam, k) in ((0, -1, 'basalt_cool', 0), (0, 0, 'basalt_cool', 0), (-1, 0, 'basalt_cool', 1),
+                                     (0, 1, 'basalt_warm', 4), (-1, 1, 'basalt_warm', 4)):
+                if (x + ax, y + ay) in mine:
+                    cv.set(x + ax, y + ay, T(fam, k))
+    tag = _h(s, 0, 10)
+    ty = top + r
+    if broken:                                # the top broken off: the east of it gone in a stepped,
+        for dx in range(-flat, half + 1):     # fresh fracture, darker than the weathered top, lit on its lips
+            drop = min(depth + 1, 2 + (dx + flat) // 2)
+            col = sorted(y for (x, y) in mine if x == cx + dx)
+            if len(col) <= drop + 3:
+                continue
+            for y in col[:drop]:
+                rh.clear(cv, cx + dx, y)
+                mine.discard((cx + dx, y))
+            y = col[drop]
+            cv.set(cx + dx, y, T('basalt_warm', 4) if dx < 1 else T('basalt', 3))
+            cv.set(cx + dx, y + 1, T('basalt_cool', 2 if dx < flat else 1))
+    elif tag < 0.3:                           # a cooling crack across the top
+        for (dx, dy) in ((-2, -1), (-1, 0), (0, 0), (1, 1), (2, 1)):
+            if abs(dx) < half - 1:
+                cv.set(cx + dx, ty + dy, T('basalt', 1))
+    elif tag < 0.55:                          # orange lichen on the top
+        for (dx, dy, k) in ((-1, -1, 3), (0, -1, 2), (0, 0, 2), (1, 0, 1)):
+            cv.set(cx + dx, ty + dy, T('brass_cool', k))
+    elif tag < 0.75:                          # ash blown into a hollow of the top
+        for (dx, dy, k) in ((0, 0, 4), (1, 0, 4), (0, 1, 3), (1, 1, 3), (2, 1, 3)):
+            if abs(dx) < half:
+                cv.set(cx + dx, ty + dy, T('ash_warm', k))
+    return mine
+
+
+def _drum(cv: Canvas, x: int, y: int, w: int, seed: int):
+    """A drum fallen from a column, lying at its foot: a short hexagonal piece on its side,
+    its west end a small hexagon facing the light, its top lit, its south side in shade."""
+    hh = 4 if w > 3 else 3
+    for yy in range(y - hh + 1, y + 1):
+        t = yy - (y - hh + 1)
+        for xx in range(x, x + w + 2):
+            if xx < x + 2:                    # the end, toward the light
+                if t == 0 and xx == x:
+                    continue
+                cv.set(xx, yy, T('basalt_warm', 4 if t < 2 else 3))
+            else:
+                fam = ('basalt', 'basalt_warm', 'basalt_cool')[int(_h(x, xx, seed) * 3)] if t == 1 else 'basalt'
+                cv.set(xx, yy, T(fam, 4 if t == 0 else 3 if t == 1 else 1 if t == hh - 1 else 2))
+    if w > 4:
+        cv.set(x + 2 + w // 2, y - 1, T('basalt_cool', 0)); cv.set(x + 2 + w // 2, y - 2, T('basalt_cool', 0))
+
+
+def _tuft(cv: Canvas, x: int, y: int, seed: int):
+    """A tuft of dry bunchgrass rooted in a crack: five blades fanning from one root, the
+    west ones lit, the tips paler, the root in shade."""
+    for i, (dx, hgt) in enumerate(((-3, 4), (-1, 6), (1, 5), (3, 3))):
+        fam = ('sand_cool', 'earth_warm')[int(_h(seed, i, 27) * 2)]
+        for t in range(hgt):
+            xx = x + round(dx * t / max(1, hgt - 1))
+            k = 1 if t == 0 else 4 if t >= hgt - 2 and dx < 0 else 3 if dx < 0 or t >= hgt - 2 else 2
+            cv.set(xx, y - t, T(fam, k))
+
+
+def _talus(cv: Canvas, x0: int, x1: int, y: int, seed: int, drums: int = 2, tuft: bool = True):
+    """The foot of an outcrop (`x0` to `x1` its width): drums and chips fallen from it lying
+    against its foot, grit in pairs, and a tuft of dry grass in a crack (life where there is
+    shelter)."""
+    w = x1 - x0
+    for i in range(drums):                    # drums lie at the front, against the foot
+        L = 4 + int(_h(seed, i, 23) * 4)
+        fx = x0 - 2 + int((i + 0.3 + 0.4 * _h(seed, i, 21)) * (w - L) / max(1, drums))
+        _drum(cv, fx, y, L, seed + i)
+    for i in range(2 + w // 12):              # chips: small pieces, each lit on its top
+        fx = x0 + int(_h(seed, i, 24) * w)
+        if not cv.get(fx, y)[3] and not cv.get(fx + 1, y)[3]:
+            cv.set(fx, y - 1, T('basalt_warm', 4)); cv.set(fx + 1, y - 1, T('basalt', 3))
+            cv.set(fx, y, T('basalt', 2)); cv.set(fx + 1, y, T('basalt_cool', 1))
+    if tuft:
+        _tuft(cv, x0 + 3 + int(_h(seed, 0, 26) * (w - 6)), y, seed)
+
+
+def _outcrop(w: int, h: int, cols, seed: int, drums: int = 2, tuft: bool = True) -> Canvas:
+    """Columns `cols` [(cx, foot, height, half, broken)] drawn from the back (the highest
+    foot) forward, so the nearer overlap the farther and every top shows; where a column
+    stands before another, the farther one's edge beside it steps two tones down (the
+    recess between them, not a second outline). Then the talus at the front."""
     cv = Canvas(w, h, pad=PAD)
-    for i, (cx, top, foot, r, broken) in sorted(enumerate(cols), key=lambda c: (c[1][2], c[1][0])):
-        _column(cv, cx, top, foot, r, seed * 31 + i, glow, broken)
-    for i in range(3 + seed % 3):  # drums fallen from the tops, lying at the front
-        fx = 4 + int(noise2(i, seed, 258) * (w - 10))
-        fy = h - 3 - int(noise2(i, seed, 259) * 3)
-        rr = 2 + noise2(i, seed, 260) * 2
-        for (x, y) in oval(fx, fy, rr + 1, rr * 0.7):
-            if 0 <= x < w and 0 <= y < h and not cv.get(x, y)[3]:
-                cv.set(x, y, BASALT[3] if (x - fx) + (y - fy) < -1 else BASALT[2] if x < fx + 1 else BASALT[1])
-    return cv
+    drawn: set = set()
+    for i, (cx, foot, hgt, half, broken) in sorted(enumerate(cols), key=lambda c: (c[1][1], c[1][0])):
+        mine = _prism(cv, cx, foot, hgt, half, seed * 37 + i, broken)
+        for (x, y) in mine:
+            for (dx, dy) in ((1, 0), (-1, 0)):
+                q = (x + dx, y + dy)
+                if q in drawn and q not in mine:
+                    step(cv, q[0], q[1], -2)
+        drawn |= mine
+    xs = [x for (x, _y) in drawn]
+    front = max(c[1] for c in cols)
+    _talus(cv, min(xs), max(xs), min(h - 2, front + 1), seed, drums, tuft)
+    return rh.finish(cv)
 
 
-def basalt_columns(n: int = 5, seed: int = 0, glow: bool = False) -> Canvas:
-    """A cluster of hexagonal basalt columns of different heights and girths, 60 x 64,
-    standing where lava cooled slowly (`glow`: lit from below, for one standing in lava)."""
-    w, h = 60, 64
+def _honeycomb(ranks, x0: int, foot0: int, seed: int):
+    """Columns packed as they cool, on a honeycomb: `ranks` from the back, each a list of
+    (height, half, broken); each rank is set half a column east of the one behind it and a
+    step nearer (its foot lower), the columns in a rank touching, so the mass reads whole."""
     cols = []
-    for k in range(n):
-        cx = 10 + int(noise2(k, 0, 251 + seed) * 40)
-        top = 8 + int(noise2(k, 1, 251 + seed) * 28)
-        r = 7 + noise2(k, 3, 251 + seed) * 3.5
-        foot = h - 2 - int(noise2(k, 4, 251 + seed) * 5)
-        cols.append((cx, top, foot, r, noise2(k, 5, 251 + seed) > 0.75))
-    return basalt_formation(cols, w, h, seed, glow=glow)
+    for ri, rank in enumerate(ranks):
+        x = x0 + (ri % 2) * 5 + int(_h(seed, ri, 34) * 2)
+        foot = foot0 + ri * 4
+        for (hgt, half, broken) in rank:
+            x += half
+            cols.append((x, foot + int(_h(seed, x, 35) * 2), hgt, half, broken))
+            x += half
+    return cols
+
+
+def basalt_columns(n: int = 5, seed: int = 0) -> Canvas:
+    """A cluster of basalt columns where a flow cooled slowly, packed on a honeycomb: the
+    back rank standing tallest, the rank in front a step lower and some of it broken, so
+    every top shows; drums and chips fallen at the foot. n 5: 52 x 64; n 4: 48 x 56;
+    n 3 (the low one, a single rank): 44 x 58."""
+    w, h = {5: (52, 64), 4: (48, 56)}.get(n, (44, 58))
+    hh = h - 22
+
+    def hg(k, f):
+        return max(8, int(hh * f * (0.82 + 0.18 * _h(seed, k, 31))))
+    if n >= 5:
+        ranks = [[(hg(0, 0.86), 5, False), (hg(1, 1.0), 5, False), (hg(2, 0.78), 5, False)],
+                 [(hg(3, 0.62), 5, True), (hg(4, 0.5), 5, False)]]
+    elif n == 4:
+        ranks = [[(hg(0, 0.9), 5, False), (hg(1, 1.0), 6, False), (hg(2, 0.7), 5, True)], [(hg(3, 0.5), 5, False)]]
+    else:
+        ranks = [[(hg(0, 1.0), 6, False), (hg(1, 0.75), 5, True), (hg(2, 0.88), 6, False)]]
+    width = max(sum(2 * c[1] for c in r) + (i % 2) * 5 for i, r in enumerate(ranks))
+    cols = _honeycomb(ranks, (w - width) // 2 - 1, h - 6 - 4 * (len(ranks) - 1), seed)
+    return _outcrop(w, h, cols, seed + 1)
 
 
 def basalt_steps() -> Canvas:
-    """A stepped causeway of basalt, 88 x 70, the way cooled flows crack on a slope:
-    columns rising from short stumps at the front left to tall ones at the back right,
-    their hexagonal tops making a honeycomb of steps."""
+    """A stepped causeway of basalt, 80 x 64, the way a cooled flow cracks on a slope:
+    three ranks of columns on a honeycomb, short stumps at the front left rising to tall
+    columns at the back right, their hexagonal tops a stair of steps; some tops broken."""
+    w, h = 76, 62
     cols = []
-    for k in range(11):
-        row, i = divmod(k, 4)
-        cx = 10 + i * 17 + row * 9 + int(noise2(k, 0, 261) * 4)
-        foot = 66 - row * 7
-        height = 6 + i * 6 + row * 7 + int(noise2(k, 1, 261) * 5)
-        cols.append((cx, foot - height, foot, 8 + noise2(k, 2, 261) * 1.5, k in (2, 7)))
-    return basalt_formation(cols, 88, 70, 3)
+    for k in range(10):
+        row, i = divmod(k, 4) if k < 8 else (2, k - 7)
+        cx = 8 + i * 15 + row * 7 + int(_h(k, 0, 40) * 3)
+        foot = h - 5 - (2 - row) * 0 - row * 6
+        hgt = 6 + i * 7 + row * 6 + int(_h(k, 1, 40) * 4)
+        cols.append((cx, foot, hgt, 5 + int(_h(k, 2, 40) * 1.6), k in (1, 6)))
+    cols = [(cx, f, hg, hf, b) for (cx, f, hg, hf, b) in cols if cx + hf < w - 3]
+    return _outcrop(w, h, cols, 3, drums=3)
 
 
 def basalt_stack() -> Canvas:
-    """Three tall columns packed together with a shorter broken one in front, 40 x 88:
-    a stack left standing where the cliff round it fell away."""
-    return basalt_formation([(10, 16, 82, 8, False), (24, 9, 78, 9, False), (31, 28, 85, 7.5, False),
-                             (16, 54, 86, 7, True)], 40, 88, 5)
+    """A stack of columns left standing where the cliff round it fell away, 44 x 88: three
+    tall ones packed together on the honeycomb, the middle one tallest, and in front of
+    them two broken ones, their tops a step up to the others."""
+    ranks = [[(52, 5, False), (64, 6, False), (46, 5, True)], [(20, 5, True), (14, 5, True)]]
+    return _outcrop(44, 88, _honeycomb(ranks, 4, 78, 5), 5, drums=2)
 
 
 def basalt_stumps(seed: int = 0) -> Canvas:
-    """Short broken columns in a loose group, 48 x 30: what is left of an outcrop the
-    weather has taken down, the tops cracked and chipped, drums lying round them."""
+    """Short broken columns in a loose group, 44 x 28: what is left of an outcrop the
+    weather has taken down, the tops broken and chipped, drums lying round them."""
     cols = []
     for k in range(4):
-        cx = 7 + k * 11 + int(noise2(k, 0, 262 + seed) * 4)
-        foot = 26 - int(noise2(k, 1, 262 + seed) * 6)
-        top = foot - 7 - int(noise2(k, 2, 262 + seed) * 9)
-        cols.append((cx, top, foot, 6 + noise2(k, 3, 262 + seed) * 2.5, k != 1))
-    return basalt_formation(cols, 48, 30, 7 + seed)
+        cx = 7 + k * 10 + int(_h(seed, k, 50) * 3)
+        foot = 23 - int(_h(seed, k, 51) * 5)
+        cols.append((cx, foot, 6 + int(_h(seed, k, 52) * 7), 4 + int(_h(seed, k, 53) * 2), k != 1))
+    return _outcrop(46, 28, cols, 7 + seed, drums=1, tuft=seed == 0)
 
 
 def basalt_fallen() -> Canvas:
-    """A column lying on its side, 54 x 20, broken into drums at its joints: its lit top
-    face, the shaded front face, the hexagonal end toward the light, sunk a little into
-    the ash it fell on."""
-    w, h = 54, 20
+    """A column lying where it fell, 52 x 18 (a log, lying): the prism on its side, its axis
+    running west to east, broken at its joints into drums that settled a little apart and a
+    little askew. Its upper facet lit, the front facet mid, the lower facet in shade; its
+    west end a hexagon facing the light; the east end a fresh break, darker and stepped.
+    Lichen on the lit facet, a crack, ash drifted against its foot, a tuft in the gap."""
+    w, h = 52, 18
     cv = Canvas(w, h, pad=PAD)
-    x0, x1, yt = 8, 50, 5
-    for x in range(x0, x1):
-        drum = (x - x0) // 9
-        dy = int(noise2(drum, 0, 263) * 2)  # each drum settled a little differently
-        for y in range(yt + dy, yt + dy + 12):
-            k = (y - yt - dy) / 12
-            c = BASALT[3] if k < 0.4 else BASALT[2] if k < 0.75 else BASALT[1]
-            if k < 0.1:
-                c = BASALT[4]
-            if (x - x0) % 9 == 0:
-                c = BASALT[0]  # the joint between two drums
-            elif (x - x0) % 9 == 1 and k < 0.75:
-                c = BASALT[4] if k < 0.4 else BASALT[3]
-            cv.set(x, y, c)
-    for (x, y) in oval(x0, yt + 6, 4, 6.5):  # the end, a hexagon seen edge-on, toward the light
-        cv.set(x, y, BASALT[4] if y < yt + 4 else BASALT[3] if y < yt + 9 else BASALT[2])
-    for x in range(x0 - 3, x1 + 1):  # ash heaped against its foot
-        cv.set(x, yt + 13 + (x % 3 == 0), ASH[2])
-        cv.set(x, yt + 14, ASH[1])
-    return cv
+    x = 8
+    drums = []
+    while x < w - 6:
+        L = 7 + int(_h(x, 0, 60) * 6)
+        drums.append((x, min(L, w - 3 - x), int(_h(x, 1, 60) * 2)))
+        x += L + 1
+    facets = (('basalt_warm', 4, 3), ('basalt', 3, 4), ('basalt_cool', 1, 3))   # upper, front, lower: (ramp, tone, rows)
+    for i, (x0, L, dy) in enumerate(drums):
+        y = 4 + dy
+        for xx in range(x0, x0 + L):
+            yy = y
+            for f, (fam, k, rows) in enumerate(facets):
+                sib_f = ('basalt_warm', 'basalt', 'basalt_cool')[int(_h(i, f, 61) * 3)] if f == 1 else fam
+                for _ in range(rows):
+                    kk = k
+                    if f == 0 and yy == y:
+                        kk = 5 if xx - x0 < 3 else 4                      # the arris catching the sky
+                    n = smooth_noise(xx * 0.8, yy * 1.0, 2.0, 62 + i)
+                    if f == 1 and n > 0.72:
+                        kk += 1
+                    elif f == 1 and n < 0.22:
+                        kk -= 1
+                    if xx == x0 + L - 1:
+                        kk = max(0, kk - 2)                                # the joint face, in its recess
+                    cv.set(xx, yy, T(sib_f, kk))
+                    yy += 1
+        for (ax, ay) in ((2, 0), (3, 0), (2, 1)) if i % 2 == 0 else ():  # lichen on the lit facet
+            cv.set(x0 + ax + 2, y + 1 + ay, T('brass_cool', 3 if ay else 4))
+        if i == 1:                                                        # a crack across the front
+            for t in range(3):
+                cv.set(x0 + 3 + t // 2, y + 4 + t, T('basalt_cool', 0))
+    x0, _, dy = drums[0]
+    for (ex, ey0, ey1) in ((x0 - 3, 6, 9), (x0 - 2, 5, 10), (x0 - 1, 4 + dy, 11 + dy)):   # the west end, a hexagon to the light
+        for yy in range(ey0 + dy, ey1 + dy):
+            k = 5 if yy < 6 + dy else 4 if yy < 9 + dy else 3
+            cv.set(ex, yy, T('basalt_warm', k))
+    cv.set(x0 - 2, 7 + dy, T('basalt_warm', 3)); cv.set(x0 - 2, 8 + dy, T('basalt_warm', 3))   # the joint ring on the end
+    xe, Le, dye = drums[-1]
+    for yy in range(4 + dye, 14 + dye):                                   # the east end, a fresh break
+        for t in range(1 + (yy * 3) % 3):
+            rh.clear(cv, xe + Le - 1 - t, yy)
+        cv.set(xe + Le - 2 - (yy * 3) % 3, yy, T('basalt_cool', 1 if yy > 8 + dye else 2))
+    for xx in range(x0 - 4, xe + Le + 2):                                # ash drifted against its foot, in lobes
+        dh = int(smooth_noise(xx, 0, 3.5, 63) * 3.2)
+        for t in range(dh):
+            yy = 14 - t
+            if cv.get(xx, yy)[3] or t == 0:
+                cv.set(xx, yy, T('ash', 4) if t == dh - 1 else T('ash_cool', 3))
+    _tuft(cv, drums[1][0] - 1, 13, 64)                                    # dry grass in the gap
+    return rh.finish(cv)
 
 
 def forge() -> Canvas:
@@ -436,77 +685,177 @@ def basalt_bridge(length: int = 64) -> Canvas:
     return cv
 
 
+def _hex_column(cv: Canvas, cx: int, top: int, foot: int, r: int, seed: int, chipped: bool = False):
+    """A basalt column cut from the flow, on the house ramps: a hexagonal prism seen from
+    the south and above. Its lit hexagonal top (tone 4, a tone 5 glint at its upper left),
+    the west face to the light (3), the south face (2 to 3), the east face in shade (1),
+    hard edges between faces, and the flow's cooling joints across it every few pixels."""
+    x0, x1 = cx - r, cx + r
+    cap = max(2, r // 2)
+    for y in range(top + cap, foot):                       # the faces
+        for x in range(x0, x1 + 1):
+            u = (x - x0) / max(1, x1 - x0)
+            k = 4 if u < 0.3 else 2 if u < 0.72 else 1
+            if (y - top + seed) % 7 == 0 and 0 < x - x0 < 2 * r:
+                k = max(0, k - 1)                           # a cooling joint across the column
+            cv.set(x, y, T(('basalt', 'basalt_warm', 'basalt_cool')[seed % 3], k))
+        cv.set(x0 + round(0.3 * 2 * r), y, T('basalt', 5))  # the lit arris between west and south faces
+    for y in range(top, top + cap + 1):                    # the hexagonal top
+        d = abs(y - (top + cap / 2)) / (cap / 2 + 0.5)
+        inset = round(d * r * 0.4)
+        for x in range(x0 + inset, x1 - inset + 1):
+            cv.set(x, y, T('basalt', 5 if x < cx + 1 else 4))
+    cv.set(x0 + 1, top + cap // 2, T('basalt', 5)); cv.set(x0 + 2, top + cap // 2, T('basalt', 5))
+    if chipped:                                            # a corner broken off the top, the break in shade
+        for (x, y) in ((x1, top), (x1, top + 1), (x1 - 1, top), (x1, top + 2)):
+            cv.set(x, y, (0, 0, 0, 0))
+        cv.set(x1 - 1, top + 1, T('basalt', 1)); cv.set(x1, top + 3, T('basalt', 1))
+
+
 def ember_shrine() -> Canvas:
-    """The ember shrine, 30 x 50: the keeper's warning to rest before you burn out, built
-    of what the caldera gives. Three columns of the caldera's own basalt, cut from the
-    flow (their joints and hexagonal tops as in the formations): a tall one in the
-    middle carrying an iron brazier on three legs, its embers low and banked, and two
-    shorter ones either side holding offerings (a clay cup, a folded paper weighed with a
-    pebble). A straw rope with paper tags is tied between the short columns across the
-    tall one's front, sagging; a flame mark is cut in the tall column's face and the heat
-    has sooted the stone under the bowl. Ash lies swept round the foot, and an iron poker
-    leans on the east column. Lit by the sky on the upper left and by its own embers;
-    the brazier declares its glow to the night tint as before."""
+    """The ember shrine, 30 x 50 (asset ledger 20 Oct: redrawn on the house ramps, its foot
+    3 whole cells): the keeper's warning to rest before you burn out, built of what the
+    caldera gives. Three basalt columns cut from the flow: a tall one in the middle carrying
+    an iron brazier on three legs, its embers banked under ash with a low flame (the glow
+    has no outline and lights the night tint as before), and two shorter ones either side
+    holding offerings (a clay cup, a folded paper weighed with a pebble). A straw rope with
+    paper tags sags between the short columns across the tall one's front; a flame mark is
+    cut in the tall column's face and the heat has sooted the stone under the bowl. Swept
+    ash round the foot, and an iron poker leaning on the east column."""
     w, h = 30, 50
     cv = Canvas(w, h, pad=PAD)
-    for (x, y) in oval(15, 46, 14, 3.2):  # the swept ash bed the columns stand in
-        n = noise2(x, y, 4361)
-        cv.set(x, y, ASH[1] if y > 46 else ASH[2] if n < 0.6 else ASH[3])
-    _column(cv, 5.5, 33, 46, 4.6, 4362, False)              # the west column, shorter
-    _column(cv, 24.5, 31, 46, 4.6, 4363, False, broken=True)  # the east one, chipped
-    _column(cv, 15, 18, 47, 6.4, 4364, False)                # the tall middle column
-    for (x, y) in ((14, 28), (15, 27), (15, 28), (16, 28), (14, 30), (15, 29), (16, 30),
-                   (15, 30), (15, 31), (14, 31), (16, 31), (15, 32)):
-        cv.set(x, y, LAVA[1])                                # the flame mark cut in its face
-    cv.set(15, 27, LAVA[2]); cv.set(15, 29, LAVA[3])        # a glint of embers caught in the cut
-    for x in range(13, 18):
-        cv.set(x, 33, BASALT[4] if x < 15 else BASALT[3])   # the cut's lit lower lip
-    # the brazier: a shallow iron bowl on three short legs on the column's top
-    for (lx, ly0) in ((10, 15), (15, 17), (20, 15)):
-        for y in range(ly0, ly0 + 3):
-            cv.set(lx, y, IRON[3] if lx < 15 else IRON[1])
-    for (x, y) in oval(15, 13, 7, 2.6):
-        cv.set(x, y, IRON[4] if y < 12 else IRON[3] if x < 13 else IRON[2] if x < 19 else IRON[1])
-    for x in range(9, 22):  # the bowl's belly below its rim, in shade
-        for y in range(14, 16):
-            if abs(x - 15) < 7 - (y - 14):
-                cv.set(x, y, IRON[2] if x < 13 else IRON[1] if x < 19 else IRON[0])
-    for (x, y) in oval(15, 12, 5, 1.6):  # the banked embers inside, glowing through grey ash
-        n = noise2(x, y, 4365)
-        cv.set(x, y, ASH[3] if n > 0.72 else LAVA[5] if n < 0.18 else LAVA[4] if n < 0.42 else LAVA[3])
-    for (x, y, c) in ((14, 9, LAVA[3]), (15, 8, LAVA[4]), (15, 9, LAVA[5]), (16, 9, LAVA[4]),
-                      (15, 7, LAVA[3]), (13, 10, LAVA[3]), (17, 10, LAVA[3]), (16, 6, LAVA[2])):
-        cv.set(x, y, c)                                      # a low flame over them
-    for (x, y) in ((11, 3), (19, 1), (13, 0)):
-        cv.set(x, y, LAVA[4])                                # sparks rising
-    for (x, y) in ((8, 13), (22, 13)):
-        cv.set(x, y, IRON[4] if x < 15 else IRON[2])        # the rim's ring handles
-        cv.set(x, y + 1, IRON[1])
-    # offerings on the short columns: a clay cup with a lit rim, a folded paper and pebble
-    for (x, y, c) in ((4, 31, '#B0643A'), (5, 31, '#C8784A'), (6, 31, '#8A4A2A'), (4, 32, '#8A4A2A'),
-                      (5, 32, '#8A4A2A'), (6, 32, '#5E3220'), (5, 30, '#E8A070')):
-        cv.set(x, y, c)
-    for (x, y, c) in ((23, 29, '#F2EADC'), (24, 29, '#E2D8C6'), (25, 29, '#C8BCA8'), (24, 28, ASH[3]),
-                      (25, 28, ASH[2]), (26, 29, '#B0A48E')):
-        cv.set(x, y, c)
-    # the straw rope, sagging from the west column's top to the east one's across the front
-    for x in range(8, 23):
+    for (x, y) in rh.ellipse(15, 46.5, 11.0, 2.8):        # the swept ash bed the columns stand in
+        cv.set(x, y, T('ash', 2 if y > 46 else 3 if smooth_noise(x, y, 3, 4361) < 0.6 else 4))
+    _hex_column(cv, 6, 32, 47, 2, 1)                       # the west column, shorter
+    _hex_column(cv, 24, 30, 47, 2, 2, chipped=True)        # the east one, chipped
+    _hex_column(cv, 15, 17, 48, 5, 0)                      # the tall middle column
+    for x in range(11, 20):                                # soot under the bowl on the column's front
+        for y in range(21, 25):
+            if smooth_noise(x, y, 2, 4366) < 0.62 - (y - 21) * 0.12:
+                cv.set(x, y, T('soot', 1))
+    for (x, y) in ((15, 27), (14, 28), (15, 28), (16, 28), (14, 29), (15, 29), (16, 29), (15, 30), (15, 31)):
+        cv.set(x, y, T('basalt', 0))                        # the flame mark cut in its face
+    cv.set(15, 28, T('lava', 2)); cv.set(15, 29, T('lava', 2))   # embers' light caught in the cut
+    cv.hline(14, 32, 3, T('basalt', 4))                    # the cut's lit lower lip
+    for (lx, ly0) in ((11, 14), (15, 15), (19, 14)):       # the brazier: a shallow iron bowl on three legs
+        for y in range(ly0, 18):
+            cv.set(lx, y, T('iron', 3 if lx < 15 else 1))
+    for (x, y) in rh.ellipse(15, 13, 7, 2.6):
+        cv.set(x, y, T('iron', 4 if y < 12 else 3 if x < 13 else 2 if x < 18 else 1))
+    for (x, y) in rh.ellipse(15, 12, 5, 1.6):             # the banked embers under grey ash
+        n = smooth_noise(x, y, 1.5, 4365)
+        cv.set(x, y, T('ash', 4) if n > 0.7 else T('lava', 4 if n < 0.35 else 3))
+    for (x, y, k) in ((14, 9, 3), (15, 8, 3), (15, 9, 4), (16, 9, 3), (15, 7, 2), (14, 10, 3), (16, 10, 3), (15, 10, 5)):
+        cv.set(x, y, T('lava', k))                         # a low flame
+    for (x, y) in ((8, 13), (22, 13)):                     # the rim's ring handles
+        cv.set(x, y, T('iron', 4 if x < 15 else 2)); cv.set(x, y + 1, T('iron', 1))
+    for (x, y) in rect(5, 30, 3, 2):                       # a clay cup on the west column, its rim lit
+        cv.set(x, y, T('clay', 3 if x < 6 else 2))
+    cv.hline(5, 29, 3, T('clay', 4))
+    for (x, y) in rect(21, 27, 4, 2):                      # a folded paper weighed with a pebble on the east one
+        cv.set(x, y, T('plaster', 5 if y == 27 else 4))
+    cv.set(22, 26, T('ash', 4)); cv.set(23, 26, T('ash', 3))
+    for x in range(8, 23):                                 # the straw rope sagging across the front
         t = (x - 8) / 14
-        y = int(round(35 + 4.0 * 4 * t * (1 - t)))
-        cv.set(x, y, '#D8BC7A' if x % 3 else '#A8884A')     # its twist
-        cv.set(x, y + 1, '#8A6A34')
-        if x in (11, 15, 19):  # paper tags hanging from it, folded in zigzags
-            for d, c in enumerate(('#F2EEE4', '#D8D2C4', '#F2EEE4', '#C8C0B0')):
-                cv.set(x + (d % 2), y + 2 + d, c)
-    # the poker leaning on the east column, its tip in the ash
-    for k in range(13):
-        cv.set(28 - k // 6, 34 + k, IRON[4] if k < 3 else IRON[3])
-    cv.set(28, 33, IRON[4])
-    for x in range(10, 21):  # soot under the bowl, where the heat has blackened the column's front
-        for y in range(20, 24):
-            if noise2(x, y, 4366) < 0.55 - (y - 20) * 0.12:
-                cv.set(x, y, BASALT[0])
-    return cv
+        y = int(round(35 + 16 * t * (1 - t)))
+        cv.set(x, y, T('sand', 4 if x % 3 else 3)); cv.set(x, y + 1, T('sand', 2))
+        if x in (11, 15, 19):                              # paper tags folded in zigzags
+            for d in range(4):
+                cv.set(x + (d % 2), y + 2 + d, T('plaster', 5 if d % 2 == 0 else 3))
+    for (px, py) in ((10, 44), (12, 45), (18, 45), (20, 44)):   # pebbles left at the foot, each a visitor's
+        cv.set(px, py, T('stone', 4)); cv.set(px + 1, py, T('stone', 2)); cv.set(px, py - 1, T('stone', 3))
+    for ty in (36, 39, 42):                                # tally marks scratched in the tall column by the keepers
+        cv.hline(12, ty, 2, T('basalt', 4)); cv.hline(17, ty, 2, T('basalt', 0))
+    for k in range(11):                                    # the poker leaning on the east column, its tip in the ash
+        cv.set(28 - k // 4, 33 + k, T('iron', 4 if k < 3 else 2))
+    return rh.finish(cv, keep=[(15, 10)])
+
+
+def lava_tube_mouth() -> Canvas:
+    """A lava tube mouth (the brief names two, on the Ash Coast and the Canyon Road),
+    64 x 44, on the house ramps: where the roof of an old lava tube fell in, a low hump of
+    ropy basalt (pahoehoe, its skin wrinkled in curved ropes lit on their upper side) opens
+    on a dark arched mouth; the tube's lining shows as a glazed rim inside the arch; blocks
+    of the fallen roof lie at the threshold, ash drifts in the lee, and fireweed takes hold
+    in a crack. A place to peer into and turn back from: it gives nothing and costs nothing.
+    Footing: 7 cells."""
+    w, h = 64, 44
+    cv = Canvas(w, h, pad=PAD)
+    mask = set()
+    for y in range(4, h - 2):
+        for x in range(2, w - 2):
+            dx, dy = (x + 0.5 - w / 2) / (w / 2 - 5), (y + 0.5 - (h - 4)) / (h - 9)
+            wob = 0.08 * (smooth_noise(x, y, 4, 801) - 0.5)
+            if dx * dx + dy * dy * 1.05 <= 1 + wob and y < h - 3:
+                mask.add((x, y))
+    for (x, y) in mask:                             # the ropy skin: curved ropes, each lit on its upper side
+        u = (x - 2) / (w - 4)
+        rope = (y + 3.0 * math.sin(x / 5.0) + 0.04 * (x - w / 2) ** 2 / 3) % 4
+        k = (5 if u < 0.45 and rope < 0.6 else 4) if rope < 1 else 3 if rope < 2.6 else 2
+        if u > 0.72:
+            k -= 1
+        if u < 0.25 and k < 4:
+            k += 1
+        cv.set(x, y, T(('basalt', 'basalt_warm', 'basalt_cool')[int(noise2(x // 6, y // 4, 802) * 3)], max(1, k)))
+    for (x, y) in mask:                             # ash settled on the upper slopes, pale lichen on the old crust
+        col_top = min(yy for (xx, yy) in mask if xx == x)
+        if y - col_top < 3 and smooth_noise(x, 0, 4, 804) > 0.4:
+            cv.set(x, y, T(('ash', 'ash_warm', 'ash_cool')[(x // 5) % 3], 4 if y == col_top else 3))
+        elif smooth_noise(x, y, 2.5, 805) > 0.78:
+            cv.set(x, y, T('plaster_cool', 2))
+    mx, my, mw, mh = w // 2 - 11, 18, 22, 22        # the mouth, an arch of fallen roof
+    mouth = {(x, y) for y in range(my, my + mh) for x in range(mx, mx + mw)
+             if y >= my + mw / 2 or (x + 0.5 - (mx + mw / 2)) ** 2 + (y + 0.5 - (my + mw / 2)) ** 2 <= (mw / 2) ** 2}
+    for (x, y) in mouth:                            # the dark inside, a little light on the floor near the lip
+        cv.set(x, y, T('earth_cool', 0 if y < my + mh - 5 else 1))
+    for (x, y) in mouth:                            # the glazed lining round the arch, lit on the far (east) side
+        for dx, dy in ((-1, 0), (1, 0), (0, -1)):
+            q = (x + dx, y + dy)
+            if q not in mouth and q in mask:
+                cv.set(q[0], q[1], T('slate', 4 if dx == 1 else 1 if dy == -1 else 2))   # the tube's glassy lining
+    for (x, y) in ((mx + 2, my + 8), (mx + 3, my + 8), (mx + 2, my + 9), (mx + mw - 4, my + 12), (mx + mw - 3, my + 12)):
+        cv.set(x, y, T('brass', 3))                 # a sulphur crust where warm air still breathes out
+    for i, (bx, by, bw) in enumerate(((mx - 6, h - 6, 6), (mx + 4, h - 5, 5), (mx + mw - 3, h - 6, 7), (mx + 12, h - 4, 4))):
+        part(cv, bx, by, bw, 3, ('basalt', 'basalt_cool', 'basalt_warm', 'basalt')[i], 3)   # fallen roof blocks
+    for x in range(6, w - 6):                       # ash drifted in the lee along the foot
+        if smooth_noise(x, 0, 5, 803) > 0.45 and (x, h - 4) in mask:
+            cv.set(x, h - 4, T('ash', 4)); cv.set(x, h - 3, T('ash', 3))
+    for yy in range(12, 18):                        # fireweed in a crack above the mouth
+        cv.set(46, yy, T('cactus', 3))
+    for yy in range(9, 12):
+        cv.set(46, yy, T('berry_cool', 4)); cv.set(47, yy, T('berry_cool', 3))
+    return rh.finish(cv)
+
+
+def obsidian_scree() -> Canvas:
+    """Obsidian scree (the brief names two, on the Ash Coast and the Canyon Road), 48 x 24,
+    on the house ramps: a fan of black volcanic glass broken into sharp chips where a flow's
+    glassy skin shattered, the big pieces at the foot and the small ones up the fan as scree
+    lies; each chip faceted, its top face catching the sky in a cold sheen and one bright
+    edge, its south face near black; grey ash between the chips."""
+    w, h = 48, 24
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in rh.ellipse(24, 16, 23, 7):        # the ash the scree lies in
+        cv.set(x, y, T('ash', 4 if smooth_noise(x, y, 4, 811) < 0.6 else 5) if x < 34 else T('ash', 3 if smooth_noise(x, y, 4, 811) < 0.6 else 4))
+    chips = []
+    for i in range(11):
+        u = noise2(i, 0, 812)
+        cx = 16 + int(noise2(i, 1, 812) * 26)
+        cy = 10 + int(u * 11)
+        size = 2 + int(u * 4)                       # bigger chips lower on the fan
+        chips.append((cy, cx, size, i))
+    for (cy, cx, size, i) in sorted(chips):         # far chips first
+        for dy in range(-size, size // 2 + 1):
+            half = size - abs(dy) // 1 if dy < 0 else size - dy
+            for dx in range(-half, half + 1):
+                x, y = cx + dx, cy + dy
+                top = dy < 0 and dx < half - 1
+                east = cx > 30
+                k = ((3 if dx < 0 else 2) - (1 if east else 0)) if top else (1 if dx < half - 1 else 0)
+                cv.set(x, y, T(('dusk_cool', 'slate_cool', 'dusk')[i % 3] if top else 'basalt', max(0, k)))
+        cv.set(cx - size + 1, cy - 1, T('slate', 5))  # the glinting edge
+        cv.set(cx - size + 2, cy - 2, T('slate', 4))
+    return rh.finish(cv)
 
 
 CHAR = ['#1A1412', '#2A201C', '#3E302A', '#58443A', '#76604E']  # charred cedar
@@ -795,7 +1144,7 @@ def props() -> dict[str, Canvas]:
         'forge': forge(),
         'obsidian': obsidian_rock(True), 'obsidian_small': obsidian_rock(False), 'cooling_vent': cooling_vent(),
         'basalt_bridge': basalt_bridge(), 'ember_shrine': ember_shrine(),
-        'bathhouse': bathhouse(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
+        'bathhouse': bathhouse(), 'lava_tube_mouth': lava_tube_mouth(), 'obsidian_scree': obsidian_scree(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
         'stone_lantern': stone_lantern(), 'scree': scree(True, 0), 'scree_small': scree(False, 3),
         'scree_b': scree(True, 5), 'charred_snag': charred_snag(),
         'ore_tub': _ore_tub(),  # the mine line's tub, the same as Dust Gulch's

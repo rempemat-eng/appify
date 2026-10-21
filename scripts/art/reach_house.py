@@ -97,6 +97,28 @@ def peg(cv: Canvas, x: int, y: int, fam: str = 'timber'):
     cv.set(x, y + 1, T(fam, 2)); cv.set(x + 1, y + 1, T(fam, 2))
 
 
+def kit_sprite(sp, w: int, h: int, foot) -> Canvas:
+    """A standing thing drawn by a kit (`dry_kit.Sprite`: ramp, tone and mask arrays) set on
+    a prop canvas with its foot at `foot`, on the same house ramps, so a prop and the kit's
+    piece are one drawing. The caller finishes it (outline, clean-up)."""
+    import dry_kit as dk
+    cv = Canvas(w, h, pad=4)
+    ox, oy = foot[0] - sp.fx, foot[1] - sp.fy
+    for y in range(sp.h):
+        for x in range(sp.w):
+            if sp.m[y, x]:
+                r, g, b = (int(v) for v in dk.COL[sp.f[y, x], min(int(sp.t[y, x]), dk.EDGE_T)])
+                cv.set(ox + x, oy + y, (r, g, b, 255))
+    return cv
+
+
+def clear(cv: Canvas, x: int, y: int):
+    """Make one pixel transparent again (Canvas.set blends, so it cannot erase)."""
+    p = cv.pad
+    if -p <= x < cv.w + p and -p <= y < cv.h + p:
+        cv._px[x + p, y + p] = (0, 0, 0, 0)
+
+
 def solid(cv: Canvas) -> set:
     return {(x, y) for y in range(cv.h) for x in range(cv.w) if cv.get(x, y)[3] == 255}
 
