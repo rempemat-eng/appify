@@ -334,7 +334,45 @@ def patch_counts(key: np.ndarray) -> dict:
             'dressing': dressing.reshape(shp), 'isolated': iso.reshape(shp), 'cluster': cluster.reshape(shp)}
 
 
+def patch_clean(rgb: np.ndarray) -> dict:
+    """detail_bar.clean_counts per 16 x 16 patch of an image at our scale (whole patches only,
+    from the top-left): edges, lone, top2 and colours, for the kinds judged on cleanliness."""
+    h, w = rgb.shape[:2]
+    ph, pw = h // PATCH, w // PATCH
+    a = rgb[:ph * PATCH, :pw * PATCH, :3].astype(np.float64)
+    h, w = a.shape[:2]
+    pad = np.pad(a, ((1, 1), (1, 1), (0, 0)), mode='edge')
+
+    def far(b):
+        return np.sqrt(((a - b) ** 2).sum(-1)) > detail_bar.CLEAN_DIST
+    up, dn, lf, rt = far(pad[:-2, 1:-1]), far(pad[2:, 1:-1]), far(pad[1:-1, :-2]), far(pad[1:-1, 2:])
+    lone = up & dn & lf & rt
+    n = ph * pw
+
+    def blocks(m):
+        return m.reshape(ph, PATCH, pw, PATCH).transpose(0, 2, 1, 3).reshape(n, PATCH, PATCH)
+    rtb, dnb = blocks(rt), blocks(dn)
+    edges = (rtb[:, :, :-1].sum((1, 2)) + dnb[:, :-1, :].sum((1, 2))) / (2 * PATCH * (PATCH - 1))
+    q = (a // detail_bar.CLEAN_STEP).astype(np.int64)
+    key = blocks(q[..., 0] * 4096 + q[..., 1] * 64 + q[..., 2]).reshape(n, -1)
+    s = np.sort(key, axis=1)
+    start = np.ones_like(s, dtype=bool)
+    start[:, 1:] = s[:, 1:] != s[:, :-1]
+    rid = np.cumsum(start, axis=1)
+    rowi = np.broadcast_to(np.arange(n)[:, None], s.shape)
+    cnt = np.bincount((rowi * (PATCH * PATCH + 1) + rid).ravel(), minlength=n * (PATCH * PATCH + 1))
+    cnt = np.sort(cnt.reshape(n, PATCH * PATCH + 1), axis=1)[:, ::-1]
+    shp = (ph, pw)
+    return {'edges': edges.reshape(shp), 'lone': blocks(lone).reshape(n, -1).mean(1).reshape(shp),
+            'top2': (cnt[:, :2].sum(1) / (PATCH * PATCH)).reshape(shp),
+            'colours': (cnt > 0).sum(1).reshape(shp).astype(float)}
+
+
 def judge_cell(ours: dict, ref: dict) -> tuple[bool, str]:
+    if 'clean' in ours and 'clean' in ref:
+        # a kind judged on cleanliness (detail_bar.CLEAN_KINDS): detail_bar's own ground test
+        ok, lines = detail_bar.judge(ours, ref)
+        return ok, '; '.join(ln for ln in lines if ln.split()[-1] in ('LOW', 'BUSY', 'NOISY'))
     bad = []
     for m, share in (('tones', TONES_RULING), ('shapes', detail_bar.TOLERANCE), ('dressing', detail_bar.TOLERANCE)):
         if ours[m] < share * ref[m]:
@@ -850,9 +888,15 @@ class Audit:
                 keys = pipe_keys(self.comp[y:y + h, x:x + w], adult, q)
                 pc = patch_counts(keys)
                 per = {m: v.reshape(h // CELL, CELL // PATCH, w // CELL, CELL // PATCH).mean((1, 3)) for m, v in pc.items()}
+                cl = None
+                if any(k in detail_bar.CLEAN_KINDS and 'clean' in bars[k] for k in ks):
+                    pk = patch_clean(self.comp[y:y + h, x:x + w])
+                    cl = {m: v.reshape(h // CELL, CELL // PATCH, w // CELL, CELL // PATCH).mean((1, 3)) for m, v in pk.items()}
                 for cy, cx in zip(*np.nonzero(want)):
                     ours = {m: float(per[m][cy, cx]) for m in per}
                     k = sub[cy, cx]
+                    if cl is not None and k in detail_bar.CLEAN_KINDS and 'clean' in bars[k]:
+                        ours['clean'] = {m: float(cl[m][cy, cx]) for m in cl}
                     ok, why = judge_cell(ours, bars[k])
                     gy, gx = cy + y // CELL, cx + x // CELL
                     self.metrics.setdefault('detail', {})[(gy, gx)] = (k, ours)
@@ -1901,6 +1945,12 @@ def selftest(root: str) -> list:
     for m in ('tones', 'shapes', 'dressing', 'isolated', 'cluster'):
         if abs(float(np.mean(pc[m])) - want[m]) > 0.01:
             fails.append(f'patch_counts {m} {float(np.mean(pc[m])):.3f} against detail_bar {want[m]}')
+    gb = g[box[1]:box[1] + 96, box[0]:box[0] + 96]
+    cw = detail_bar.clean_counts(Image.fromarray(np.ascontiguousarray(gb)))
+    pk = patch_clean(gb)
+    for m in ('edges', 'lone', 'top2', 'colours'):
+        if abs(float(np.mean(pk[m])) - cw[m]) > 0.01:
+            fails.append(f'patch_clean {m} {float(np.mean(pk[m])):.3f} against detail_bar {cw[m]}')
     summary = markdown_summary({
         'world': {'cells': 2, 'compliant_pct': 50, 'amber': 0, 'red': 1},
         'regions': {
