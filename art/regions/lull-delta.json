@@ -1,32 +1,30 @@
 {
-  "_about": "The Lull belt, Lullford and the delta as a plan (Claude I, lane I), v2: Claude F's region-plan schema (#174). The water, the coast and the tiers come from the block-out (docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)); the routes are lane G's grid routes (lib/world-routes.ts on claude-g/routes (#175) ef8824f); every outline is in the grid shape on 16 px cells (Matt, 21 Oct 11:44). The plain's low tiers are merged into banks that agree with G's route tiers (local 0 = world 2). Things moved to fit keep the brief's point as moved_from. Painted by scripts/art/regions/lull_delta.py.",
+  "_about": "The Lull belt, Lullford and the delta as a plan (Claude I, lane I), v2: Claude F's region-plan schema (#174). The water, the coast and the tiers come from the block-out (docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)); the routes are lane G's grid routes (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); every outline is in the grid shape on 16 px cells (Matt, 21 Oct 11:44). The plain's low tiers are merged into banks that agree with G's route tiers (local 0 = world 2). Things moved to fit keep the brief's point as moved_from. Painted by scripts/art/regions/lull_delta.py.",
   "id": "lull-delta",
   "owner": "claude-i",
   "biome": "river",
   "biomes": ["river", "coast"],
+  "biome_variants": {
+    "_about": "Claude C's biome variants (#196); the delta's own biome is docs/vision/biomes/delta.md",
+    "coast": "harbour at Lullford's quay; the dunes west of the delta are the delta biome's mudflat front"
+  },
   "box": [8304, 3296, 1152, 2592],
   "base_tier": {
     "value": 2,
     "provisional": false,
-    "from": "the block-out tiers and lane G (#175)"
+    "from": "the block-out tiers and lane G (#175, #189)"
   },
   "sources": {
     "blockout": "docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)",
-    "routes": "lib/world-routes.ts on claude-g/routes (#175) ef8824f"
+    "routes": "lib/world-routes.ts on claude-g/blockout (#189) 395bf4d"
   },
   "tiers": [
     {
       "id": "delta",
       "tier": 0,
-      "why": "the delta and the coast strip (world 2): marsh, reed beds and mudflats between the arms; the Coast Path",
+      "why": "the delta (world 2): marsh, reed beds and mudflats between the arms",
       "outline": [
-        [8304, 4288],
-        [8656, 4288],
-        [8656, 4304],
-        [8672, 4304],
-        [8672, 4496],
-        [8688, 4496],
-        [8688, 4512],
+        [8672, 4512],
         [8736, 4512],
         [8736, 4528],
         [8768, 4528],
@@ -72,13 +70,7 @@
         [9280, 4944],
         [9280, 4976],
         [9296, 4976],
-        [9296, 5360],
-        [9280, 5360],
-        [9280, 5376],
-        [9296, 5376],
-        [9296, 5600],
-        [9280, 5600],
-        [9280, 5584],
+        [9296, 5584],
         [9216, 5584],
         [9216, 5568],
         [9200, 5568],
@@ -137,23 +129,35 @@
         [8304, 5376],
         [8320, 5376],
         [8320, 5344],
-        [8336, 5344],
-        [8336, 5328],
-        [8352, 5328],
-        [8352, 5344],
         [8416, 5344],
         [8416, 5264],
         [8400, 5264],
         [8400, 5248],
         [8368, 5248],
         [8368, 5232],
-        [8304, 5232]
+        [8304, 5232],
+        [8304, 4688],
+        [8320, 4688],
+        [8320, 4656],
+        [8384, 4656],
+        [8384, 4608],
+        [8416, 4608],
+        [8416, 4592],
+        [8496, 4592],
+        [8496, 4576],
+        [8512, 4576],
+        [8512, 4560],
+        [8560, 4560],
+        [8560, 4544],
+        [8624, 4544],
+        [8624, 4528],
+        [8672, 4528]
       ]
     },
     {
       "id": "floodplain",
       "tier": 1,
-      "why": "the Lull's floodplain (world 3): water meadows, carr, Lullford on its terrace at the bridge",
+      "why": "the Lull's floodplain (world 3): water meadows, carr, Lullford at the bridge, the coast's shelf with the Coast Path",
       "outline": [
         [8512, 3296],
         [9072, 3296],
@@ -198,12 +202,10 @@
         [9376, 3296],
         [9456, 3296],
         [9456, 4560],
-        [9376, 4560],
-        [9376, 4576],
-        [9296, 4576],
-        [9296, 4592],
-        [9312, 4592],
-        [9312, 4624],
+        [9440, 4560],
+        [9440, 4608],
+        [9392, 4608],
+        [9392, 4624],
         [9328, 4624],
         [9328, 4720],
         [9344, 4720],
@@ -264,17 +266,27 @@
         [8768, 4528],
         [8736, 4528],
         [8736, 4512],
-        [8688, 4512],
-        [8688, 4496],
-        [8672, 4496],
-        [8672, 4304],
-        [8656, 4304],
-        [8656, 4288],
-        [8304, 4288],
-        [8304, 4192],
-        [8384, 4192],
-        [8384, 4224],
-        [8448, 4224],
+        [8672, 4512],
+        [8672, 4528],
+        [8624, 4528],
+        [8624, 4544],
+        [8560, 4544],
+        [8560, 4560],
+        [8512, 4560],
+        [8512, 4576],
+        [8496, 4576],
+        [8496, 4592],
+        [8416, 4592],
+        [8416, 4608],
+        [8384, 4608],
+        [8384, 4656],
+        [8304, 4656],
+        [8304, 4176],
+        [8384, 4176],
+        [8384, 4160],
+        [8432, 4160],
+        [8432, 4144],
+        [8448, 4144],
         [8448, 3824],
         [8464, 3824],
         [8464, 3792],
@@ -292,10 +304,12 @@
         [8464, 3792],
         [8464, 3824],
         [8448, 3824],
-        [8448, 4224],
-        [8384, 4224],
-        [8384, 4192],
-        [8304, 4192],
+        [8448, 4144],
+        [8432, 4144],
+        [8432, 4160],
+        [8384, 4160],
+        [8384, 4176],
+        [8304, 4176],
         [8304, 3424],
         [8464, 3424]
       ]
@@ -352,8 +366,7 @@
       "tier": 2,
       "why": "the plain's river terrace and the canal embankment (world 4)",
       "outline": [
-        [9376, 4560],
-        [9456, 4560],
+        [9456, 4608],
         [9456, 5376],
         [9392, 5376],
         [9392, 5360],
@@ -365,11 +378,8 @@
         [9344, 4720],
         [9328, 4720],
         [9328, 4624],
-        [9312, 4624],
-        [9312, 4592],
-        [9296, 4592],
-        [9296, 4576],
-        [9376, 4576]
+        [9392, 4624],
+        [9392, 4608]
       ]
     },
     {
@@ -386,9 +396,18 @@
         [9424, 5584],
         [9408, 5584],
         [9408, 5600],
-        [9392, 5600],
-        [9392, 5616],
-        [9376, 5616]
+        [9376, 5600]
+      ]
+    },
+    {
+      "id": "terrace_5",
+      "tier": 2,
+      "why": "the plain's river terrace and the canal embankment (world 4)",
+      "outline": [
+        [9296, 4576],
+        [9312, 4576],
+        [9312, 4592],
+        [9296, 4592]
       ]
     },
     {
@@ -867,7 +886,7 @@
       "id": "towpath",
       "kind": "path",
       "width": 32,
-      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/routes (#175) ef8824f); Claude I paints it",
+      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
         [8480, 3304],
         [8480, 4080],
@@ -888,8 +907,7 @@
         [8568, 4160, 40],
         [8600, 4160, 40],
         [8616, 4160, 40],
-        [8616, 4224, 48],
-        [8648, 4224, 48]
+        [8616, 4224, 40]
       ],
       "tiers_world": [
         5, 5, 5, 5, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
@@ -901,7 +919,7 @@
       "id": "lull_road",
       "kind": "road",
       "width": 40,
-      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/routes (#175) ef8824f); Claude I paints it",
+      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
         [8328, 4144],
         [8400, 4144],
@@ -938,7 +956,7 @@
         [9280, 4360, 48]
       ],
       "tiers_world": [
-        4, 4, 4, 4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
+        4, 4, 4, 4, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
         3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3
       ],
       "crossings": [
@@ -956,7 +974,7 @@
       "id": "coast_path",
       "kind": "path",
       "width": 40,
-      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/routes (#175) ef8824f); Claude I paints it",
+      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
         [8320, 4624],
         [8360, 4624],
@@ -973,18 +991,16 @@
         [8424, 4560, 32],
         [8472, 4528, 32],
         [8544, 4464, 32],
-        [8600, 4328, 48],
-        [8632, 4328, 48],
-        [8640, 4328, 48]
+        [8640, 4328, 32]
       ],
-      "tiers_world": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      "tiers_world": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
       "crossings": []
     },
     {
       "id": "delta_road",
       "kind": "path",
       "width": 40,
-      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/routes (#175) ef8824f); Claude I paints it",
+      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
         [9152, 4320],
         [9176, 4320],
@@ -992,26 +1008,20 @@
         [9248, 4400],
         [9248, 4472],
         [9328, 4472],
-        [9328, 4552],
-        [9392, 4552],
-        [9392, 4648],
-        [9456, 4648],
-        [9456, 4728]
+        [9328, 4592],
+        [9408, 4592],
+        [9408, 4672],
+        [9440, 4672]
       ],
       "widths": [
-        [9152, 4320, 48],
-        [9176, 4320, 48],
+        [9152, 4320, 32],
         [9248, 4432, 32],
         [9280, 4472, 32],
-        [9360, 4552, 32],
-        [9424, 4648, 32],
-        [9456, 4648, 48],
-        [9456, 4680, 48],
-        [9456, 4712, 48]
+        [9328, 4536, 32],
+        [9408, 4672, 48],
+        [9440, 4672, 48]
       ],
-      "tiers_world": [
-        3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4
-      ],
+      "tiers_world": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4],
       "crossings": []
     }
   ],
@@ -1172,8 +1182,8 @@
       "on": "towpath",
       "at": [8480, 3428],
       "width": 40,
-      "kind": "round-end",
-      "why": "lane G's round-end",
+      "kind": "stair",
+      "why": "lane G's stair",
       "from_tier": 3,
       "to_tier": 2
     },
@@ -1182,28 +1192,28 @@
       "on": "towpath",
       "at": [8480, 3812],
       "width": 40,
-      "kind": "round-end",
-      "why": "lane G's round-end",
+      "kind": "stair",
+      "why": "lane G's stair",
       "from_tier": 2,
       "to_tier": 1
     },
     {
       "id": "lull_road_4_3",
       "on": "lull_road",
-      "at": [8464, 4192],
+      "at": [8404, 4192],
       "width": 40,
-      "kind": "round-end",
-      "why": "lane G's round-end",
+      "kind": "stair",
+      "why": "lane G's stair",
       "from_tier": 2,
       "to_tier": 1
     },
     {
       "id": "delta_road_3_4",
       "on": "delta_road",
-      "at": [9392, 4576],
+      "at": [9408, 4632],
       "width": 40,
-      "kind": "round-end",
-      "why": "lane G's round-end",
+      "kind": "stair",
+      "why": "lane G's stair",
       "from_tier": 1,
       "to_tier": 2
     },
@@ -1218,13 +1228,13 @@
       "why": "where the lane changes terrace: a flight of steps through the face"
     },
     {
-      "id": "coast_steps_lane_0_1_40",
-      "on": "coast_steps_lane",
-      "at": [8640, 4304],
-      "from_tier": 0,
-      "to_tier": 1,
+      "id": "boardwalk_1_0_116",
+      "on": "boardwalk",
+      "at": [8504, 4596],
+      "from_tier": 1,
+      "to_tier": 0,
       "width": 40,
-      "kind": "stone",
+      "kind": "timber",
       "why": "where the lane changes terrace: a flight of steps through the face"
     }
   ],
@@ -1356,7 +1366,7 @@
     {
       "thing": "wreck in the reeds",
       "kind": "wreck",
-      "at": [9352, 4600],
+      "at": [9352, 4620],
       "route": "Delta Road",
       "where": "beside the path",
       "why": "a barge sunk in the reeds below the embankment",
@@ -1439,7 +1449,7 @@
     {
       "t": "S",
       "what": "mended fence",
-      "at": [8388, 4620],
+      "at": [8384, 4636],
       "route": "Coast Path",
       "moved_from": [8370, 4621]
     },
@@ -1518,8 +1528,9 @@
     {
       "t": "S",
       "what": "cold fire ring",
-      "at": [9342, 4578],
-      "route": "Delta Road"
+      "at": [9356, 4564],
+      "route": "Delta Road",
+      "moved_from": [9342, 4578]
     },
     {
       "t": "S",
@@ -1530,13 +1541,14 @@
     {
       "t": "I",
       "what": "bench",
-      "at": [9391, 4674],
-      "route": "Delta Road"
+      "at": [9380, 4672],
+      "route": "Delta Road",
+      "moved_from": [9391, 4674]
     },
     {
       "t": "A",
       "what": "hares",
-      "at": [8328, 4192],
+      "at": [8324, 4176],
       "route": "Lull Road",
       "moved_from": [8327, 4215]
     },
@@ -1550,9 +1562,8 @@
     {
       "t": "S",
       "what": "lost hat",
-      "at": [8436, 4224],
-      "route": "Lull Road",
-      "moved_from": [8439, 4229]
+      "at": [8439, 4229],
+      "route": "Lull Road"
     },
     {
       "t": "S",
@@ -1755,7 +1766,7 @@
     {
       "t": "S",
       "what": "cairn",
-      "at": [8608, 4288],
+      "at": [8620, 4292],
       "route": "Lullford",
       "moved_from": [8632, 4288]
     },

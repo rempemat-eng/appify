@@ -1,24 +1,28 @@
 {
-  "_about": "Gullwick as a plan (Claude I, lane I), v2: Claude F's schema (#174). The coast from the block-out (docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)); lane G's Coast Path (lib/world-routes.ts on claude-g/routes (#175) ef8824f); outlines in the grid shape (Matt 11:44).",
+  "_about": "Gullwick as a plan (Claude I, lane I), v2: Claude F's schema (#174). The coast from the block-out (docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)); lane G's Coast Path (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); outlines in the grid shape (Matt 11:44).",
   "id": "gullwick",
   "owner": "claude-i",
   "biome": "coast",
   "biomes": ["coast", "river"],
+  "biome_variants": {
+    "_about": "Claude C's biome variants (#196, scripts/art/biomes/coast.json)",
+    "coast": "harbour"
+  },
   "box": [7648, 4848, 640, 608],
   "base_tier": {
-    "value": 1,
+    "value": 2,
     "provisional": false,
-    "from": "lane G (#175): the Coast Path at world 2"
+    "from": "lane G (#189): the Coast Path at world 3"
   },
   "sources": {
     "blockout": "docs/vision/research/blockout/blockout-v52.json (#187, claude-a/blockout-data)",
-    "routes": "lib/world-routes.ts on claude-g/routes (#175) ef8824f"
+    "routes": "lib/world-routes.ts on claude-g/blockout (#189) 395bf4d"
   },
   "tiers": [
     {
       "id": "beach",
       "tier": 0,
-      "why": "the shingle beach where the boats are hauled up (world 1)",
+      "why": "the shingle beach where the boats are hauled up (world 2)",
       "outline": [
         [7856, 5152],
         [8048, 5152],
@@ -61,7 +65,7 @@
     {
       "id": "village",
       "tier": 1,
-      "why": "the coast's shelf (world 2): the Coast Path and the village at the top of the cove",
+      "why": "the coast's shelf (world 3): the Coast Path and the village at the top of the cove",
       "outline": [
         [7648, 4848],
         [8288, 4848],
@@ -143,7 +147,7 @@
       "id": "coast_path",
       "kind": "path",
       "width": 32,
-      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/routes (#175) ef8824f); Claude I paints it",
+      "owner_note": "lane G's line, width and tier (lib/world-routes.ts on claude-g/blockout (#189) 395bf4d); Claude I paints it",
       "points": [
         [7664, 5032],
         [8016, 5032],
@@ -166,7 +170,7 @@
         [8160, 4896, 40],
         [8168, 4896, 40]
       ],
-      "tiers_world": [2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+      "tiers_world": [3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3],
       "crossings": []
     }
   ],
