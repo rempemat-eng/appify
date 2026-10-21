@@ -55,7 +55,11 @@ flowchart LR
   subgraph Home["The village"]
     B[Build and improve buildings] --> U[Upgrade, salvage, craft at forge and workshop]
     U --> D[Decorate, meet residents, new quests]
+    G[Plant and harvest: meals, tonics, crafting] --> U
+    S[Defend: sieges at the shard lantern] --> B
   end
+  L --> G
+  X --> S
   X --> B
   L --> U
   D --> Q
@@ -66,7 +70,7 @@ flowchart LR
 | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Moment (2 to 40 s)        | Read a telegraph, dodge through it, strike back, switch to the familiar for a root or a wall, finish the pack. A cleared camp drops loot in a short burst that you walk over to collect; one tap compares and equips.                                                                                                                         |
 | Session (5 to 20 min)     | Leave the village with one goal from the notice board or the story, walk or ride there, clear a camp or one dungeon floor, bank the loot at a waystone, ride home, spend it at the forge or on a building, place a new decoration, pick up the next quest. Every session ends with something built or upgraded.                               |
-| Week (a region, 3 to 6 h) | A region's story chain (5 to 8 quests), its camps and one dungeon, its boss, its weapon family, its arena rival. The region's resident story ends, its folk joins, a villager moves home and a new building or building tier opens. The way to the next region opens.                                                                         |
+| Week (a region, 3 to 6 h) | A region's story chain (5 to 8 quests), its camps and one dungeon, its boss, its weapon family, its arena rival. The region's resident story ends, its folk joins, a villager moves home with a building of their region's style, and the great shard brought home draws a siege on the village. The way to the next region opens.            |
 | Whole game (25 to 35 h)   | Eleven regions in four acts along the train lines, from the valley to the moon. The kit grows from a bow and a blade to a light arsenal; the hut grows from one house to a village of about twelve buildings; the fourteen stones of the circle light one by one. After the story: the arena circuit, high-rank bounties and the deep shards. |
 
 Session safety (from AGENTS.md, kept): the game can stop at any moment. Leaving mid-fight pauses; closing the app mid-dungeon resumes at the last checkpoint with every picked-up item kept. An interrupted walk never triggers a stale arrival or navigation.
@@ -211,6 +215,7 @@ About twelve, each one line with one number: power +%, fire rate +%, reload +%, 
 
 - **The folk:** melee, ranged, two charms. **The familiar:** one focus. **The pair:** one outfit (looks only). Five slots that affect a fight; you can see them all on one screen.
 - **The satchel** holds 16 items. A new drop shows a green or red arrow per headline number against what you wear; one tap equips, one tap marks for salvage. **Auto-salvage** below a chosen rarity is a setting.
+- **Seeds and materials** never enter the satchel: seeds go to the seed tin, materials to the wallet.
 - **The stash** at home holds 60 items, plus a **trophy rack** that keeps one of every Starforged forever (it never takes stash space).
 - Weapons show two headline numbers (**Power** and **Speed**) and their affixes. A derived damage per second is shown in the detail view only.
 
@@ -235,56 +240,214 @@ About twelve, each one line with one number: power +%, fire rate +%, reload +%, 
 
 ## 7. The village
 
-### 7.1 Where and what
+Matt, 21 Oct 21:31: "also think about how your village could change throughout (gardening, maybe a tower defense situation?, other changes to the villages) and how it ties in to the story".
 
-The hut in the valley stays your home, and the meadow round it, between the woodland and Crossroads Town, grows into **your village** (appendix A, C7). Crossroads Town stays the valley's market town next door, with its station, well and people, so the world plan's valley does not change; the village is built on the hut's meadow and the riverside fields beside it. Claude E and Claude B mark the plots in the valley's plan data.
+The village is the game's second half. It changes at every story beat, it feeds every fight (buildings, crops, defences) and it is where the story comes home: what you free out there moves in, and what threatens the moon comes to your door.
 
-The village starts as the hut, the garden and Moss's stall. The night of the starfall emptied the meadow of its neighbours and shuttered two of Crossroads' shops (the smithy and the herbalist's); part of the story is bringing people home. Families displaced from Crossroads are the first to move into your plots, and repairing the two shops is an act 1 quest line, so the town next door shows what the fall did and what you mended (both graders' graft from option B).
+### 7.1 Where
 
-### 7.2 Buildings
+The hut in the valley stays your home, and the meadow round it, between the woodland and Crossroads Town, grows into **your village** (appendix A, C7). Crossroads Town stays the valley's market town next door, with its station, well and people, so the world plan's valley does not change. The village grows on the hut's meadow and the riverside fields beside it, in five districts that open one after another (7.2). Claude E and Claude B size and place the plots, the build pads for defences, the siege lanes and the districts in the valley's plan data.
 
-| Building           | Opens                           | What it gives (tiers 1 to 3)                                                                     |
-| ------------------ | ------------------------------- | ------------------------------------------------------------------------------------------------ |
-| The hut            | start                           | Your bed (save, change folk), the stash, the keepsake chest; tiers add rooms to decorate         |
-| Moss's stall       | start                           | Buys and sells materials and junk; tiers widen the stock (never timed, never random)             |
-| The forge          | prologue                        | Upgrade weapons to gear level, salvage; tiers raise the upgrade cap with the act                 |
-| The notice board   | prologue                        | Side quests and bounties from your villagers and every region you have reached                   |
-| The waystone       | prologue                        | Fast travel to any waystone you have touched; refills tonics                                     |
-| The apothecary     | act 1 (the gardener's story)    | Tonics: four, then five flasks; stronger tonics; one cleanse tonic                               |
-| The training yard  | act 1 (the hut warden moves in) | Perk respec, a practice dummy that shows damage, combo trials; the village's own arena ring      |
-| The workshop       | act 2 (from Cogsworth)          | Reforge an affix, weapon mods, the familiar's focus gems                                         |
-| The kitchen        | act 2 (from the Lull)           | Meals: one buff for your next outing (until you next return home); recipes from region materials |
-| The station halt   | act 2                           | A village halt on the valley line, so the train stops at your door                               |
-| The menagerie      | act 2 (from the Isles)          | Befriended visitors live here and can be chosen as the familiar                                  |
-| The trophy hall    | act 3                           | Boss trophies on show, the trophy rack of Starforged weapons, the arena ranks                    |
-| The lookout        | act 3                           | Shows camps and shards on the world map for regions you have finished                            |
-| Cottages (up to 8) | as villagers arrive             | A home for each villager who moves in; each can be styled                                        |
+At its centre stands **the shard lantern**: a stone lantern on the green where the great shards rest once you bring them home, until the woodland circle is ready to take them (section 8). The lantern is what the raiders want.
 
-Each building is built and upgraded with currency, scrap and region materials, from the workbench in the hut ("build here" on a marked plot). Building is instant once paid for: no timers. The building's art is drawn once per tier at 2x by the kit (rules-system.md).
+### 7.2 How the village changes, act by act
 
-### 7.3 Who moves in
+| Stage                                                 | Story beat                                                                    | The village                                                                                                                                                                                                                               | New this stage                                                                                                                   |
+| ----------------------------------------------------- | ----------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------- |
+| 0. The scorched meadow                                | Prologue: the starfall night; the Thornback freed                             | The hut, Moss's stall, a cold forge, a shard crater still smoking in the meadow, four weedy beds and the old orchard pits. Two Crossroads shops are shuttered                                                                             | The forge lit, the notice board, the waystone, four crop plots, the shard lantern; **the first night** (siege tutorial)          |
+| 1. The hamlet (**the Green**)                         | Act 1: the Frostline, the Brackens, Cairn wakes                               | Families displaced from Crossroads move into the first cottages; a palisade of hurdles goes up; the crater becomes a pond; the two Crossroads shops reopen                                                                                | Apothecary, training yard, bell tower, eight plots, three cottages; **Planting Day**; **the wolf moon** siege                    |
+| 2. The market village (**Millside** and **Halt Row**) | Act 2: Cogsworth, the Lull, the Isles; the Company appears                    | A brass clock on a new halt; a water mill on the stream; a greenhouse; Company posters on the Crossroads noticeboard, then torn down; the palisade becomes a stone wall with gates                                                        | Workshop, station halt, kitchen and mill, menagerie, greenhouse; **the Brass Fair**; **the diggers** siege                       |
+| 3. The town (**Kiln Lane** and **Lantern Row**)       | Act 3: Sunstone, the fire country, Neon Harbour; the Company's crime revealed | A water tower and irrigation channels from Sunstone, a glassworks and the great forge's chimney from the fire country, arc lamps along a new street from Neon; the freed dragon visits the bell tower; refugees from Company towns arrive | Trophy hall, lookout, great forge (forge tier 3), irrigation, sixteen plots; **Harvest Lanterns**; **the night of lights** siege |
+| 4. The beacon                                         | Act 4: Halcyon and Lumen                                                      | The circle and the lantern are joined by a lit path; every villager and folk gathers; the moon's crack in the night sky shrinks with each shard home, then closes                                                                         | **The shardstorm** (the final siege), then **Full Moon Night**                                                                   |
+| After the story                                       | The moon mended                                                               | The village at peace; seasons keep turning; the bell offers ranked sieges (echo nights); new decorations from the Circuit and the deep shards                                                                                             | Ranked sieges, festivals each year, the remaining plots and cottages                                                             |
 
-- **One villager per region** moves in when that region's story ends, and runs or improves a building: the gardener's daughter opens the apothecary, the hut warden's bothy keeper the training yard, the tinkerer's journeyman the workshop, the bargee's cook the kitchen, the naturalist's assistant the menagerie, and so on. The residents themselves stay in their regions (the world must keep its people).
-- **The folk** who join (the apprentices of cast.md) live in the village between outings, chat, give their own side quests and can be swapped at the hut's bed.
-- **Befriended visitors** (GLIMMOTH, CAIRNLET, TICKWREN and the rest) move into the menagerie and become selectable familiars with their own family's spell, as the companion rules in AGENTS.md already allow.
-- Villagers walk routines (the resident routes already built), react to what you have built and give quests from the notice board.
+The village is never behind the story: a stage's buildings are offered the moment its beat lands, so a player who only follows the main quests still sees each stage.
 
-### 7.4 Decorating
+### 7.3 Buildings
 
-Keepsakes (world-atlas.md, "Decorating the hut") stay: every place still leaves one, and you place them freely inside and out. Added: decorations from boss trophies, the kitchen's garden plots, fences, paths, lamps and planters bought at Moss's stall, and the hut's exterior choices (Claude B's B1). **Decorations add no stats** (AGENTS.md: decorative interactions add no rewards, costs or chores). The village's power comes only from its buildings, so decorating stays pure play.
+| Building             | Stage  | What it gives (tiers 1 to 3)                                                                             |
+| -------------------- | ------ | -------------------------------------------------------------------------------------------------------- |
+| The hut              | 0      | Your bed (save, change folk), the stash, the keepsake chest; tiers add rooms to decorate                 |
+| Moss's stall         | 0      | Buys and sells materials, seeds and junk; tiers widen the stock (never timed, never random)              |
+| The forge            | 0      | Upgrade weapons to gear level, salvage; tiers raise the upgrade cap (tier 3 is the great forge, stage 3) |
+| The notice board     | 0      | Side quests and bounties from villagers and every region you have reached                                |
+| The waystone         | 0      | Fast travel to any waystone you have touched; refills tonics                                             |
+| Crop plots           | 0      | 4, then 8, 12 and 16 plots (7.5)                                                                         |
+| The shard lantern    | 0      | Holds the great shards; the heart of every siege (7.6)                                                   |
+| The apothecary       | 1      | Tonics: four, then five flasks; stronger tonics; a cleanse tonic; brewed from crops                      |
+| The training yard    | 1      | Perk respec, a damage dummy, combo trials; the village's own arena ring                                  |
+| The bell tower       | 1      | Rings in a siege when you choose (7.6); shows the next siege's lanes; after the story, ranked sieges     |
+| The workshop         | 2      | Reforge, mods, the familiar's focus gems; the steam turret (7.6)                                         |
+| The kitchen and mill | 2      | Meals from crops: one buff for your next outing; the mill grinds grain into flour for better meals       |
+| The station halt     | 2      | The train stops at your door (7.8)                                                                       |
+| The menagerie        | 2      | Befriended visitors live here and can be chosen as the familiar                                          |
+| The greenhouse       | 2      | Six plots for exotic seeds; grows in winter                                                              |
+| The water tower      | 3      | Irrigation: every plot grows one stage faster                                                            |
+| The glassworks       | 3      | Lens towers and lanterns; greenhouse tier 2                                                              |
+| The trophy hall      | 3      | Boss trophies, the trophy rack of Starforged weapons, arena ranks and siege ranks                        |
+| The lookout          | 3      | Shows camps, shards and the next siege's lanes on the world map                                          |
+| Cottages (up to 10)  | 1 to 4 | A home for each household that moves in; each can be styled                                              |
 
-### 7.5 How the village links back to combat
+Each is built and upgraded with Glint, scrap and region materials from the workbench in the hut ("build here" on a marked plot). Building is instant once paid: no timers. Each building is drawn once per tier at 2x by the kit (rules-system.md).
 
-| Village thing          | Combat effect                                       |
-| ---------------------- | --------------------------------------------------- |
-| Forge tier             | the highest gear level you can upgrade to           |
-| Workshop tier          | reforge, mods, focus gems                           |
-| Apothecary tier        | tonic count and strength                            |
-| Training yard          | perk respec, combo trials that teach advanced moves |
-| Kitchen                | one outing buff                                     |
-| Waystones and the halt | how fast you get back out                           |
-| Lookout                | camp and shard markers                              |
-| Villagers              | quests, and through quests XP and loot              |
+### 7.4 Who moves in
+
+Each region you free sends someone home with you, and they bring their place with them:
+
+| From                | Who moves in                                    | What they bring (a building with one feature of their home)                          |
+| ------------------- | ----------------------------------------------- | ------------------------------------------------------------------------------------ |
+| The valley          | a smith from Crossroads; displaced families     | the forge; the first cottages                                                        |
+| The Frostline       | the bothy keeper                                | the training yard, with a bothy's stone hut and a kettle always on                   |
+| The Brackens        | the drover's niece and three sheep              | a fold and a loom (wool for the stall and outfits); the sheep graze the green        |
+| The valley's circle | the gardener's daughter                         | the apothecary, with a herb garden                                                   |
+| Cogsworth           | the tinkerer's journeyman                       | the workshop, with a brass clock and a steam whistle                                 |
+| The Lull            | the bargee's cook                               | the kitchen and the water mill on the stream                                         |
+| The Tidebloom Isles | the naturalist's assistant; befriended visitors | the menagerie and the greenhouse, with a turtle pond                                 |
+| The Sunstone basin  | the caravan trader's son                        | the water tower and irrigation (the oasis's know-how), a striped awning on the stall |
+| The fire country    | the castle's steward; Ember forge hands         | the trophy hall; the great forge's chimney and the glassworks' kiln                  |
+| Neon Harbour        | Dave's runner; families who left Company towers | the lookout as a radio mast; arc lamps along Lantern Row                             |
+| Halcyon and Lumen   | Bunk's station crew (after the story)           | a telescope on the lookout; moon lilies in the greenhouse                            |
+
+- **The residents stay in their regions** (the world keeps its people); their households, apprentices and helpers are who move.
+- **The folk** who join live in the village between outings, give their own quests and can be posted as champions in a siege (7.6).
+- **Befriended visitors** (GLIMMOTH, CAIRNLET, TICKWREN and the rest) live in the menagerie and can be chosen as the familiar (AGENTS.md's companion rules).
+- **A world-rules amendment** (Claude A, with this PR's follow-up in `world-rules.md`): world-atlas.md keeps each region's props in its region. A mover's building is the one exception: it is drawn in the valley's materials and palette, with **one** feature of its home region (the brass clock, the striped awning, the arc lamp), so the village tells the journey without becoming a theme park.
+
+### 7.5 Gardening and crops
+
+The old meadow (garden-growth.md: six beds and three orchard pits) becomes the first plots and the orchard, now grown by play.
+
+- **Growth by outings** (appendix A, C13): each time you come home from a trip (any quest, camp or dungeon), every planted plot grows one stage; three stages to harvest (two with the water tower). Nothing ever wilts, rots or is lost if left. Real time never grows or spoils anything.
+- **Plots show their stage** (sown, sprout, leaf, bud, ripe; the beds' growth sprites from `garden_meadow.py`, redrawn at 2x). Watering a plot on a visit is optional and grows it one extra stage once per visit; skipping it costs nothing.
+- **Seeds are loot.** Regional foes and chests drop that region's seeds (a common drop, straight into the seed tin, never the satchel); bosses drop a rare seed; Moss's stall sells the basic ones.
+- **Harvest** is one tap at the plot sign ("harvest all"), and replanting the same seed is one more.
+- **Crops feed three things:** the **kitchen** (meals: one buff until you next come home, such as +15 % health, +10 % ranged damage, faster dodge recharge or resistance to burn, chill or shock), the **apothecary** (stronger tonics, the cleanse tonic), and **crafting** (fibre and dye for outfits and charms at the workshop; flour at the mill for better meals).
+- **Crops, one or two per region:** sweetroot and meadow beans (valley), frostberries (Frostline), heather for honey (Brackens), river cress (the Lull), salt melons (the Isles), sunmelons and prickly pears (Sunstone), ember peppers (the fire country), glowcaps in a dark shed (Neon Harbour), moon lilies (Lumen, after the story). The orchard's three trees (apple, pear, plum) give fruit for festival dishes.
+- **Seasons** (7.9): outdoor plots grow in spring, summer and autumn; in winter only frostberries and the greenhouse grow.
+- **Crops grown are scored at Harvest Lanterns** (7.9), for a decoration, never for power.
+
+### 7.6 Village defence: sieges
+
+Tower defence before the fight, action during it (appendix A, C11: Matt's tower-defence idea was drafted in full and against two simpler designs, graded twice, and this prepared form won both rounds; the final choice is Matt's, section 15, item 8). The great shards in the lantern draw the shardstruck and, later, the Company. They come at the village along at most three lanes; your buildings' defences stand on fixed pads, you choose which stands where, and then you fight alongside them.
+
+**How a siege plays.**
+
+1. **Prepare (optional, untimed).** At the bell tower, one portrait screen shows the village from above, the lanes the bell predicts, and the pads. Tap a pad to cycle through the defence kinds you have; post a spare folk as a champion on a pad (one per pad). Every pad starts filled with its building's own kind, and afterwards the screen remembers your last layout, so **Ring the bell** starts a siege with zero taps for anyone who does not want to plan.
+2. **Waves.** Three to six, each announced by a horn and a lane marker. Once the bell rings there is no building or upgrading: the waves are pure real-time fighting. The game pauses at any time, and a siege left mid-way resumes at the start of its current wave.
+3. **Fight alongside.** You play as everywhere else: the folk and the familiar, the switch, the Pebbling's walls as extra cover. Some foes (shielded, flying, burrowing) need you rather than the pieces, so a siege never plays itself.
+4. **The goal:** keep the raiders off the shard lantern until the last wave. The lantern has its own health bar.
+
+**Defence pieces.**
+
+- **Fixed pads:** 2 in the first night, 6 at stage 1, 8 at stage 2, 12 at stage 3, at the village's junctions and gates in the valley's plan data. A pad is a level patch of flagstones that looks like part of the village when empty. Pieces never sit on decorations, and the lanes stay walkable.
+- **Each building unlocks one defence kind** in its region's style. There are no schematics and no second loot track: the village's growth is the defence's growth. A piece's level is its building's tier, so there is nothing to gear.
+
+| Building (region)                      | Defence kind     | What it does                            |
+| -------------------------------------- | ---------------- | --------------------------------------- |
+| The forge (valley)                     | hurdle barricade | blocks a lane until broken              |
+| The hut (valley)                       | archer post      | steady single shots                     |
+| The apothecary (valley)                | spore pot        | a cloud that makes foes drowsy          |
+| The training yard (Frostline)          | crossbow nest    | heavy, slow, piercing bolts             |
+| The fold and loom (Brackens)           | bola trap        | slows the first foes over it            |
+| The workshop (Cogsworth)               | steam turret     | fast shots; pressure builds, then vents |
+| The kitchen and mill (the Lull)        | net launcher     | pins one foe                            |
+| The menagerie (the Isles)              | spring trap      | bounces foes back down the lane         |
+| The water tower (Sunstone)             | water cannon     | pushes foes and puts out fire           |
+| The great forge (fire country)         | flame mortar     | lobbed area burn                        |
+| The glassworks (fire country)          | lens tower       | a focused beam that ramps up            |
+| The lookout (Neon Harbour)             | arc pylon        | shock that chains between foes          |
+| The telescope (Lumen, after the story) | gravity well     | pulls foes together                     |
+
+- **Villagers** are posted once, as a lasting choice, never a menu each time: the bothy keeper in a crossbow nest reloads it faster, the journeyman's steam turrets vent later, and so on.
+- **Champions.** Folk you own but are not playing can stand on a pad as champions, one per pad: they fight from it and use their special every 12 s. This gives the fourteen folk a use beyond being switched to.
+- **Rewards:** Glint, materials for the buildings that defend, and seeds; the first win of each story siege moves the story on.
+
+**When sieges happen** (appendix A, C12).
+
+- **Five story sieges,** hand-staged, each ending an act, each short enough for one session (about 5 minutes) and starting when you choose at the story's prompt: the first night (prologue), the wolf moon (act 1), the diggers (act 2), the night of lights (act 3) and the shardstorm (the finale).
+- **Watch nights:** each great shard you bring home draws one optional siege, generated from the story sieges' waves and shown on the bell tower. You ring it when you like, or never; ignoring it costs nothing and nothing in the village is ever attacked without your say. It only pays: Glint, materials, seeds.
+- **After the story:** ranked sieges at the bell (Bronze to Star, as the arenas), replaying each story siege at higher levels.
+- **Never** on a real-time clock, never while you are away, never as a daily task.
+
+**Losing** (appendix A, C14). If the lantern falls, the siege ends. **Nothing you built is destroyed.** Pieces and buildings that were hit show scaffolding and scorch marks, and the villagers repair them by your next return home, for free, with a short skippable scene and a line from whoever did the work. You keep everything you picked up during the siege and can ring the bell again at once. After two losses in a row the bell offers an easier retry (sturdier pieces), with the same rewards. A story siege lost is simply tried again; the story waits.
+
+**How each act escalates.**
+
+| Siege                       | Raiders                                                                           | New idea                                                                           | New pieces                                        | Last wave                                                                   |
+| --------------------------- | --------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------------------------------------------- | --------------------------------------------------------------------------- |
+| The first night (prologue)  | thornlings and briar swarmers from the woodland                                   | one lane, three waves: choose two pads, fight alongside                            | barricade, archer post                            | a thorn knot that only you can break                                        |
+| The wolf moon (act 1)       | shard wolves down from the Brackens, crows over the col                           | three lanes; fliers that skip barricades                                           | crossbow nest, bola trap, spore pot               | Old Fang's mate, who goes for the lantern, not you                          |
+| The diggers (act 2)         | the Company's clockwork diggers, automata, river smugglers                        | burrowers that surface mid-lane; a lane by water                                   | steam turret, net launcher, spring trap           | a foreman in a walker that targets your pieces                              |
+| The night of lights (act 3) | Company troopers with lasers, an airship dropping squads, shardstruck salamanders | an air lane; troopers that shoot pieces from range; fire                           | water cannon, flame mortar, lens tower, arc pylon | the airship itself; the freed dragon comes to help in the final wave        |
+| The shardstorm (finale)     | everything the Hollow's storm wakes, from every region                            | shards fall on the village and turn whatever they hit; hold while the circle fires | every piece; every villager and folk posted       | hold the lantern until the beacon fires, then board the train to the rocket |
+
+### 7.7 Other visible changes: districts
+
+| District    | Opens   | What is there                                                                                              |
+| ----------- | ------- | ---------------------------------------------------------------------------------------------------------- |
+| The Green   | stage 1 | the hut, the stall, the forge, the lantern, the bell tower, the first cottages, the pond in the old crater |
+| Millside    | stage 2 | the kitchen and water mill on the stream, the menagerie and its turtle pond, the greenhouse                |
+| Halt Row    | stage 2 | the station halt, the workshop, the drover's fold and loom                                                 |
+| Kiln Lane   | stage 3 | the great forge, the glassworks, the water tower and its channels, the trophy hall                         |
+| Lantern Row | stage 3 | arc lamps, the lookout's mast, the cottages of families from Neon Harbour                                  |
+
+Each district is a plan-data area the map lanes draw once, with empty plots that fill as you build. The village is never a grid of identical lots (world-rules.md: places make sense): plots sit along lanes and the stream, as a real village grows.
+
+### 7.8 The station grows
+
+| Stage  | The station                                                                                                                                      |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0 to 1 | None: you walk to Valley Halt in Crossroads                                                                                                      |
+| 2      | **The village halt:** a timber platform on the valley line with a brass clock and a whistle from Cogsworth; the train stops at your door         |
+| 3      | **The junction:** a second platform for the desert line, a water crane from Sunstone, a departure board from Neon Harbour, a signal box          |
+| 4      | **The beacon platform:** the line's last special train runs from here to the Launch Cape for the rocket; afterwards the platform keeps its flags |
+
+### 7.9 Seasons and festivals
+
+- **Seasons follow the story,** not the calendar: spring in the prologue and act 1, summer in act 2, autumn in act 3, winter in act 4, spring again at the ending. After the story they turn every ten returns home. Seasons change the village's look (blossom, long grass, leaves, snow on the roofs), the crops that grow outdoors and the festival. They change no reward, no enemy and no number (living-world-plan.md's atmosphere rule, kept).
+- **Festivals,** one per season, each an evening on the green when its story beat lands. Each has a meal, a small game and a decoration to keep; none is timed or missable (in the post-game each comes back every year):
+
+| Festival         | When                           | What happens                                                                                                  |
+| ---------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------- |
+| Planting Day     | spring, after Cairn wakes      | the village plants the green together; a seed swap; a ribbon on the first tree                                |
+| The Brass Fair   | summer, after Cogsworth        | the tinkerer's journeyman brings a carousel; a shooting gallery for the new rifle; an arena exhibition        |
+| Harvest Lanterns | autumn, after the fire country | the crop show (your best harvest is judged, for a decoration); lanterns floated on the millpond               |
+| Full Moon Night  | the ending                     | every villager and folk on the green under the mended moon; the fourteen stones lit; the credits roll over it |
+
+### 7.10 The village reacts to the story
+
+| Beat                                  | The village                                                                                   |
+| ------------------------------------- | --------------------------------------------------------------------------------------------- |
+| The starfall                          | the crater smokes; villagers whisper at night; the crack is visible in the night sky          |
+| Each great shard brought home         | the lantern glows one step brighter; the crack in the sky shrinks a little                    |
+| A Company buyer in Crossroads (act 1) | a poster offering Glint for shards appears on the Crossroads board                            |
+| The Company's crime revealed (act 3)  | the posters are torn down; villagers talk of nothing else; families from Company towns arrive |
+| A region freed                        | its banner goes up on the green; its mover arrives on the next train with their luggage       |
+| The dragon freed                      | the dragon visits the bell tower roof at dusk, as scenery (it grants nothing)                 |
+| A folk joins                          | a stone in the woodland circle lights; the folk's house lamp comes on in the village          |
+| Before the finale                     | the lit path from the lantern to the circle; everyone gathers                                 |
+| The ending                            | the moon whole; Full Moon Night; the crater pond full of moon lilies                          |
+
+Villagers' lines (the resident routines already built, `lib/resident-routes.ts`) react to the current beat and to what you built.
+
+### 7.11 Decorating
+
+Keepsakes (world-atlas.md, "Decorating the hut") stay: every place still leaves one, and you place them freely inside and out. Added: boss trophies, festival keepsakes, fences, paths, lamps and planters from the stall, the hut's exterior choices (Claude B's B1) and each cottage's style. **Decorations add no stats** (AGENTS.md: decorative interactions add no rewards, costs or chores) and never sit on a build pad or a siege lane (the placement check refuses them), so decorating stays pure play and never weakens a defence.
+
+### 7.12 How the village links back to combat
+
+| Village thing          | Combat effect                                          |
+| ---------------------- | ------------------------------------------------------ |
+| Forge tier             | the highest gear level for weapons and defence pieces  |
+| Workshop               | reforge, mods, focus gems                              |
+| Apothecary             | tonic count and strength                               |
+| Kitchen and crops      | one outing buff                                        |
+| Training yard          | perk respec; combo trials that teach advanced moves    |
+| Waystones and the halt | how fast you get back out                              |
+| Lookout                | camp, shard and siege markers                          |
+| Every building         | one defence kind for sieges, levelled by its tier      |
+| Sieges                 | materials, seeds and Glint; champions give folk a role |
+| Villagers              | quests, and through quests XP and loot                 |
 
 ## 8. Quests and story
 
@@ -309,7 +472,7 @@ Why you travel by train: the great shards fell far apart, one per region, each g
 | 2        | Cogsworth and the coal hills: automata run wild on shard power; the tinkerer finds the Company buying shards            | the Foreman Engine in the foundry                           | Pendle         | the journeyman (workshop)               | (the first guns)                                       |
 | 2        | The Lull: smugglers have the bargee's barge; the swing bridge waits for a gear from Cogsworth                           | the Lull Pike, in the oxbow                                 | Puddle         | the bargee's cook (kitchen)             | W7, Lullford's swing bridge (with the maglev in act 3) |
 | 2        | The Tidebloom Isles (by ferry): the volcano's shard wakes the basalt; the naturalist is cut off at the headwaters       | the Basalt Crab at Black-sand Cove                          | Tuff           | the naturalist's assistant (menagerie)  | W4, the Shell Bar and the ferry                        |
-| 3        | The Sunstone basin (the desert line): the Company's drill has stopped the oasis spring; Dust Gulch is dry               | the Dune Borer, a Company drill gone wild                   | Mirra          | the caravan trader's son (stall stock)  | W5, the Rift                                           |
+| 3        | The Sunstone basin (the desert line): the Company's drill has stopped the oasis spring; Dust Gulch is dry               | the Dune Borer, a Company drill gone wild                   | Mirra          | the caravan trader's son (water tower)  | W5, the Rift                                           |
 | 3        | The fire country: the Company presses the Ember forge for weapons; the dragon of Hearthold is shardstruck               | the dragon, freed (it stays as Hearthold's keeper)          | Ashe           | the castle's steward (trophy hall)      | W6, the chasm bridge                                   |
 | 3        | Neon Harbour (the maglev): the Company's city; a courier and a fixer lead you up through the Heights                    | the director, in the Company's tower                        | Nix            | Dave's runner (lookout)                 | W7's maglev in; W8, the rocket, out                    |
 | 4        | Halcyon Station: the Company's drilling platform                                                                        | the Drill's mind                                            | Bunk           | (none: the station is far)              | W9, the lander                                         |
@@ -364,6 +527,8 @@ Every region's ring (world-atlas.md: the harbour jetty, the castle courtyard, Co
 | Salvage (scrap, a little Glint, region materials)             | Tonic upgrades, meals                                       |
 | Selling junk and spare materials at Moss's stall              | Decorations and outfits at the stall                        |
 | Arena first clears, bounties                                  | Buying a material you are short of (at a fixed, high price) |
+| Sieges (Glint, materials for the buildings that defend)       | Seeds at the stall                                          |
+| Crops (sold, or cooked and brewed instead of bought)          | Festival dishes and decorations                             |
 
 No source runs on real time; none expires; nothing is lost on defeat (section 15 item 5): you wake at the last waystone, and anything that dropped on the floor before you fell is still there when you come back. Fast travel is free. Travel by train is free (the journeys are scenery, world-atlas.md).
 
@@ -401,20 +566,20 @@ Portrait first (section 15, item 6), with the floating stick and the buttons in 
 
 ### 12.1 The whole game
 
-| Content                        | Count                                                               |
-| ------------------------------ | ------------------------------------------------------------------- |
-| Regions                        | 11 (unchanged), in 4 acts                                           |
-| Main quests                    | about 70                                                            |
-| Side quests, bounties, village | about 120                                                           |
-| Dungeons                       | 11 (one per region; 3 to 6 rooms and a keeper)                      |
-| Enemy types                    | about 55 (5 per region, 6 roles shared in code) plus elites         |
-| Bosses                         | 11 region bosses, about 6 dungeon keepers, about 10 named elites    |
-| Weapons                        | about 90 base weapons in 10 families, plus 11 Starforged            |
-| Playable folk                  | 14 (cast.md), each with a special and a perk pool                   |
-| Familiars                      | 3 Grasslings plus befriended visitors                               |
-| Village buildings              | 13 kinds plus cottages, 3 tiers each                                |
-| Arenas                         | 10 rings, 10 rivals, 30 trials                                      |
-| Length                         | 25 to 35 hours for the story; the Circuit and the deep shards after |
+| Content                        | Count                                                                                                                                   |
+| ------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
+| Regions                        | 11 (unchanged), in 4 acts                                                                                                               |
+| Main quests                    | about 70                                                                                                                                |
+| Side quests, bounties, village | about 120                                                                                                                               |
+| Dungeons                       | 11 (one per region; 3 to 6 rooms and a keeper)                                                                                          |
+| Enemy types                    | about 55 (5 per region, 6 roles shared in code) plus elites                                                                             |
+| Bosses                         | 11 region bosses, about 6 dungeon keepers, about 10 named elites                                                                        |
+| Weapons                        | about 90 base weapons in 10 families, plus 11 Starforged                                                                                |
+| Playable folk                  | 14 (cast.md), each with a special and a perk pool                                                                                       |
+| Familiars                      | 3 Grasslings plus befriended visitors                                                                                                   |
+| Village                        | 20 building kinds plus cottages, 3 tiers each; 5 districts; 5 story sieges and 11 watch nights; 10 defence kinds; 12 crops; 4 festivals |
+| Arenas                         | 10 rings, 10 rivals, 30 trials                                                                                                          |
+| Length                         | 25 to 35 hours for the story; the Circuit and the deep shards after                                                                     |
 
 ### 12.2 The vertical slice first
 
@@ -424,8 +589,8 @@ Portrait first (section 15, item 6), with the floating stick and the buttons in 
 - **One dungeon:** the Undercroft under the stone circle, three rooms and the Thornback's chamber, on the cliff core's tiers.
 - **Loot:** about eight weapons of the valley family at Common to Rare, two charms, the satchel and compare.
 - **Levels:** 1 to 4, four perk picks from Bramble's pool.
-- **The village start:** the hut, Moss's stall, the forge (tier 1: upgrade and salvage), the notice board, the waystone; one plot built in front of the player; three quests (two main, one villager).
-- **The test:** a new player on a phone frees the first camp without help, beats the Thornback within three tries on Normal, upgrades a weapon at the forge and builds one thing, in 45 to 70 minutes.
+- **The village start:** the hut, Moss's stall, the forge (tier 1: upgrade and salvage), the notice board, the waystone; one plot built in front of the player; three quests (two main, one villager). Two plots planted with valley seeds, grown by the slice's outings. **The first night** (one lane, three waves, two pads) closes the prologue; it may move to M2 if the slice runs long.
+- **The test:** a new player on a phone frees the first camp without help, beats the Thornback within three tries on Normal, upgrades a weapon at the forge, builds one thing, harvests a crop and holds the first night, in 45 to 70 minutes.
 
 ### 12.3 After the slice
 
@@ -444,21 +609,21 @@ Nothing is deleted. Docs get a one-line banner; code is retired in the PRs that 
 
 ### 13.1 Systems
 
-| System                                                                                                                            | Where                                                                           | Becomes                                                     |
-| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| Rewards for time away from the phone, real or simulated (offline minutes, protected hours, multipliers, the daily well-kept gift) | `lib/offline-rules.ts`, `player.offline_seconds`, `lib/game.ts`                 | removed; Glint comes from play                              |
-| Real screen-time and app-usage access, rest recognition                                                                           | roadmap.md "Later", #195's `lib/rest-recognition.ts` and `lib/rest-flag*.ts`    | removed                                                     |
-| Naps: the NAP tab, the nap screen and sheet, the bed's nap, waking, nap poses as a mechanic                                       | `components/game-menus.tsx`, interface.md, the hotbar, sound.md (`nap`, `wake`) | the bed saves and changes folk; the sounds retire           |
-| Break ideas and the rhythm editor                                                                                                 | interface.md, `docs/break-experience.md`                                        | removed                                                     |
-| Missions as timed outings away                                                                                                    | `lib/game.ts`, `components/mission-departure.tsx`                               | quests in the world                                         |
-| Dream Dust (once GRASS)                                                                                                           | README.md, everywhere a player sees it                                          | Glint (section 10)                                          |
-| Pokémon-style turn-based card fights, the card engine, zen, the rested special, timed presses                                     | fights.md, `lib/battle.ts`, `lib/cards.ts`, `components/game-battle.tsx`        | real-time combat (section 4)                                |
-| Raids into a garden                                                                                                               | `lib/battle.ts`, living-world-plan.md                                           | removed; story sieges only, in the village, never punishing |
-| World health and decay from phone use                                                                                             | living-world-plan.md L3                                                         | removed                                                     |
-| The garden growing from time away                                                                                                 | garden-growth.md, `lib/garden-growth.ts`                                        | the village's plots and buildings grow by what you build    |
-| The ways opened by time away and Dream Dust                                                                                       | #95                                                                             | opened by story and fights (8.1)                            |
-| The theme "a journey from rest to screens and back to sleep"                                                                      | world-atlas.md, cast.md section 1                                               | the starfall (8.1)                                          |
-| The five rest pillars                                                                                                             | cast.md section 1                                                               | section 2 here                                              |
+| System                                                                                                                            | Where                                                                           | Becomes                                                                  |
+| --------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Rewards for time away from the phone, real or simulated (offline minutes, protected hours, multipliers, the daily well-kept gift) | `lib/offline-rules.ts`, `player.offline_seconds`, `lib/game.ts`                 | removed; Glint comes from play                                           |
+| Real screen-time and app-usage access, rest recognition                                                                           | roadmap.md "Later", #195's `lib/rest-recognition.ts` and `lib/rest-flag*.ts`    | removed                                                                  |
+| Naps: the NAP tab, the nap screen and sheet, the bed's nap, waking, nap poses as a mechanic                                       | `components/game-menus.tsx`, interface.md, the hotbar, sound.md (`nap`, `wake`) | the bed saves and changes folk; the sounds retire                        |
+| Break ideas and the rhythm editor                                                                                                 | interface.md, `docs/break-experience.md`                                        | removed                                                                  |
+| Missions as timed outings away                                                                                                    | `lib/game.ts`, `components/mission-departure.tsx`                               | quests in the world                                                      |
+| Dream Dust (once GRASS)                                                                                                           | README.md, everywhere a player sees it                                          | Glint (section 10)                                                       |
+| Pokémon-style turn-based card fights, the card engine, zen, the rested special, timed presses                                     | fights.md, `lib/battle.ts`, `lib/cards.ts`, `components/game-battle.tsx`        | real-time combat (section 4)                                             |
+| Raids into a garden                                                                                                               | `lib/battle.ts`, living-world-plan.md                                           | replaced by village sieges (7.6): started only by you, nothing ever lost |
+| World health and decay from phone use                                                                                             | living-world-plan.md L3                                                         | removed                                                                  |
+| The garden growing from time away                                                                                                 | garden-growth.md, `lib/garden-growth.ts`                                        | crop plots that grow by outings, never by time (7.5)                     |
+| The ways opened by time away and Dream Dust                                                                                       | #95                                                                             | opened by story and fights (8.1)                                         |
+| The theme "a journey from rest to screens and back to sleep"                                                                      | world-atlas.md, cast.md section 1                                               | the starfall (8.1)                                                       |
+| The five rest pillars                                                                                                             | cast.md section 1                                                               | section 2 here                                                           |
 
 ### 13.2 Docs marked superseded (this PR)
 
@@ -481,16 +646,16 @@ Owned by other lanes and left to them (section 14): `docs/vision/characters/anim
 
 Streams hand each other data, as before (coherence-plan.md, "Five streams"). The new streams' names stay; their work changes.
 
-| Lane                                           | Next                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
-| ---------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Claude A**                                   | This doc; integration and merging; the starfall's look in the world (shard craters, shardstruck ground) as a kit piece; the village's plots with E and B; the style bible.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Claude J** (characters and combat animation) | Replace the nap, react and card-cast states in `art/characters/animation-spec.json` with the combat set, in four facings with west drawn: idle, walk, run, combo 1 to 3, charged heavy, draw and fire (bow, gun, heavy gun), reload, dodge roll (about 12 frames), hit, knockdown, get up, special, victory, tonic. The familiar: follow, cast, special, tag. Enemies: one rig per role (grunt, lunger, shooter, tank, swarmer, caster) with telegraph poses. Bramble and the Mossling first, for the slice. Share aim and fire poses per weapon class (bow, rifle, heavy, pistol) across folk of one rig, so fourteen folk do not need fourteen gun sets (grader 2's cost note). Effects: hits, muzzle flashes, telegraphs, the shard pop, as `art/fx/*.json`. #202's folk designs stand; their nap rows are dropped. |
-| **Claude K** (story and quests)                | Rewrite the main arc (section 8) as `art/story/arc.json` and the eleven resident stories in #197 with quests and fights instead of rest; quest data (giver, steps, rewards, the "!" place); the prologue's script first; dialogue for the slice; the list of renames in 8.4; the Company and its people. Pacing by quests and XP, not Dream Dust.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| **Claude L** (combat, loot, levelling)         | A playable combat prototype in the valley woodland 2x zone on #221, behind a dev flag: the pure `lib/combat/` step (fixed 60 Hz, seeded), the two-character switch, the dodge, aim assist, four woodland enemies and the Thornback, hit-stop, reduced motion; the loot model (rarity, affixes, the satchel) and the perk pools as data; a deterministic sim for time-to-kill and boss fairness, reusing #195's harness.                                                                                                                                                                                                                                                                                                                                                                                                |
-| **Claude M** (touch, HUD)                      | The floating stick and the four buttons with cooldown rings, the combat HUD (health, tonics, level, Glint), the compare popup and the satchel, the tabbed menu, the left-handed and landscape layouts, haptics; the frame-time test of Skia against Reanimated on a mid-range Android; the play-test script for the slice. #210's short-screen budget work carries over to the combat HUD.                                                                                                                                                                                                                                                                                                                                                                                                                             |
-| **Lanes B to I** (maps)                        | Keep building regions on the kit. Add to every region's plan data: enemy camps and patrol routes (by role), the dungeon's entrance and rooms, the boss arena (a flat, open space of about 20 x 14 cells with a clear boundary), low and high cover where ranged fights happen, waystones, and the shard's crater. Claude E and B: the village plots on the hut's meadow. Claude G: the ways as fight sites (each way is guarded). Benchmark rule: a camp or event every 576 to 1152 px of route, as the landmark rule.                                                                                                                                                                                                                                                                                                 |
-| **Lane R**                                     | Play-tests the combat prototype and the slice at phone size; reports fairness (unseen hits, off-screen damage, stuck spots) as well as the world.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
-| **Codex**                                      | Data tables and schemas for weapons, affixes, enemies, quests and buildings; the damage and XP formulas (appendix B) with tests; loot tables with the bad-luck counter and published rates; the save migration (section 14.1); checks: every enemy attack has a telegraph of at least 0.5 s, every weapon's numbers fall in its family's band, no loot table contains a paid or timed source.                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| Lane                                           | Next                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Claude A**                                   | This doc; integration and merging; the starfall's look in the world (shard craters, shardstruck ground) as a kit piece; the village's plots with E and B; the style bible.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| **Claude J** (characters and combat animation) | Replace the nap, react and card-cast states in `art/characters/animation-spec.json` with the combat set, in four facings with west drawn: idle, walk, run, combo 1 to 3, charged heavy, draw and fire (bow, gun, heavy gun), reload, dodge roll (about 12 frames), hit, knockdown, get up, special, victory, tonic. The familiar: follow, cast, special, tag. Enemies: one rig per role (grunt, lunger, shooter, tank, swarmer, caster) with telegraph poses. Bramble and the Mossling first, for the slice. Share aim and fire poses per weapon class (bow, rifle, heavy, pistol) across folk of one rig, so fourteen folk do not need fourteen gun sets (grader 2's cost note). Effects: hits, muzzle flashes, telegraphs, the shard pop, as `art/fx/*.json`. #202's folk designs stand; their nap rows are dropped. Defence pieces: idle, fire and hit frames for the 13 kinds; the scaffolding and repair overlays. |
+| **Claude K** (story and quests)                | Rewrite the main arc (section 8) as `art/story/arc.json` and the eleven resident stories in #197 with quests and fights instead of rest; quest data (giver, steps, rewards, the "!" place); the prologue's script first; dialogue for the slice; the list of renames in 8.4; the Company and its people. Pacing by quests and XP, not Dream Dust. The village's story (section 7): the movers and their arrival scenes, the five story sieges' staging, the four festivals, the beats in 7.10 and the villagers' lines for each stage.                                                                                                                                                                                                                                                                                                                                                                                  |
+| **Claude L** (combat, loot, levelling)         | A playable combat prototype in the valley woodland 2x zone on #221, behind a dev flag: the pure `lib/combat/` step (fixed 60 Hz, seeded), the two-character switch, the dodge, aim assist, four woodland enemies and the Thornback, hit-stop, reduced motion; the loot model (rarity, affixes, the satchel) and the perk pools as data; a deterministic sim for time-to-kill and boss fairness, reusing #195's harness. After the slice's combat: sieges (the prepare screen's rules, waves, lanes, pieces, champions, the lantern) and crops (growth by outings, meals and tonics) as pure modules, with the first night as the first test.                                                                                                                                                                                                                                                                            |
+| **Claude M** (touch, HUD)                      | The floating stick and the four buttons with cooldown rings, the combat HUD (health, tonics, level, Glint), the compare popup and the satchel, the tabbed menu, the left-handed and landscape layouts, haptics; the frame-time test of Skia against Reanimated on a mid-range Android; the play-test script for the slice. #210's short-screen budget work carries over to the combat HUD. The siege prepare screen (one portrait screen, tap to cycle a pad, Ring the bell), the plot signs and harvest, the build menu.                                                                                                                                                                                                                                                                                                                                                                                               |
+| **Lanes B to I** (maps)                        | Keep building regions on the kit. Add to every region's plan data: enemy camps and patrol routes (by role), the dungeon's entrance and rooms, the boss arena (a flat, open space of about 20 x 14 cells with a clear boundary), low and high cover where ranged fights happen, waystones, and the shard's crater. Claude E and B: the village on the hut's meadow and the riverside fields: its five districts, building plots, crop plots, the twelve defence pads, at most three siege lanes and the shard lantern on the green, and the village halt (7.8). Claude G: the ways as fight sites (each way is guarded). Benchmark rule: a camp or event every 576 to 1152 px of route, as the landmark rule.                                                                                                                                                                                                            |
+| **Lane R**                                     | Play-tests the combat prototype and the slice at phone size; reports fairness (unseen hits, off-screen damage, stuck spots) as well as the world.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| **Codex**                                      | Data tables and schemas for weapons, affixes, enemies, quests and buildings; the damage and XP formulas (appendix B) with tests; loot tables with the bad-luck counter and published rates; the save migration (section 14.1); checks: every enemy attack has a telegraph of at least 0.5 s, every weapon's numbers fall in its family's band, no loot table contains a paid or timed source. Siege wave tables and the defence kinds' numbers; crop, meal and tonic data; the per-plot growth counter in the save; a check that no siege or crop rule reads the real clock.                                                                                                                                                                                                                                                                                                                                            |
 
 ### 14.1 Save migration (Codex)
 
@@ -509,35 +674,39 @@ Also affected, all drafts: #146 (home base growing with rest: its home steps bec
 
 ## 15. For Matt
 
-Each is one line to answer. The bold option is the recommendation. Items 1 to 5 were also graded (appendix A): both graders chose the bold option. Items 6 to 8 are Claude A's recommendation alone.
+Each is one line to answer. The bold option is the recommendation. Items 1 to 5 and 8 were also graded (appendix A): both graders chose the bold option. Items 6 and 7 are Claude A's recommendation alone.
 
-1. The threat: **A, the starfall (the moon cracked; shards turn creatures wild; a Neon company drilled it; the end is on the moon)**; B, a creeping rust blight from the world's edges; C, a company stripping the land, with no magic.
+1. The threat: **A, the starfall (the moon cracked; shards turn creatures wild; a Neon company drilled it; the end is on the moon; shardstruck creatures are freed, not killed)**; B, a creeping rust blight from the world's edges; C, a company stripping the land, with no magic.
 2. Who holds the guns: **A, the folk carries a melee and a ranged weapon; the familiar is the caster (roots, walls, gusts)**; B, the folk is melee and the familiar is the gunner; C, no switch: the familiar is an AI helper with one button.
 3. Where the village is: **A, the hut's meadow grows into your own village beside Crossroads Town**; B, Crossroads Town itself, half emptied, which you restore; C, an abandoned hamlet elsewhere in the valley.
 4. The currency's name: **Glint**, Moonsilver or Crowns (or your own).
 5. Defeat: **A, keep everything and wake at the last waystone**; B, drop what you carried since the last waystone and walk back for it (one chance); C, lose a tenth of carried currency.
 6. Phone orientation: **portrait first, landscape supported (and used on desktop)**; or landscape only for fights; or landscape everywhere.
 7. The fourteen folk: **keep all fourteen playable, three at the slice and one per region after (about 250 combat frames each)**; or six playable, the other eight as villagers and arena rivals.
-8. Enemies are freed, not killed (shards pop out, creatures run off, troopers flee): **yes, keeps the warmth**; or plain defeats.
+8. Village defence: **D, prepared defence (choose which of your buildings' defences stands on each pad before the siege, untimed and pre-filled; then pure real-time fighting alongside them; sieges only when you ring the bell; nothing you built is ever lost)**; A, full tower defence (place and upgrade between waves with in-siege supplies and schematics); B, wave fights with an automatic garrison (nothing to choose); C, no village combat.
 
 ## 16. Appendix A: the graded choices and the alternatives
 
-Method. The ten smaller choices were drafted as two or three options each and given, with the pillars and the context, to two independent grader sessions (separate headless Claude runs that did not see each other's work or this page). Grader 1 judged player experience on a phone, as a designer of mobile action games; grader 2 judged production cost, coherence with the world and cast, and Matt's own words. Each scored every option from 1 to 10 against each of the five pillars (totals out of 50). Both picked the same option on all ten choices; the winners carry the grafts noted, and the choices that change the game's shape also go to Matt in section 15.
+Method. The smaller choices (ten, then four more for the village after Matt's 21:31 note) were drafted as two or three options each and given, with the pillars and the context, to two independent grader sessions (separate headless Claude runs that did not see each other's work or this page). Grader 1 judged player experience on a phone, as a designer of mobile action games; grader 2 judged production cost, coherence with the world and cast, and Matt's own words. Each scored every option from 1 to 10 against each of the five pillars (totals out of 50). Both picked the same option on every choice; the winners carry the grafts noted, and the choices that change the game's shape also go to Matt in section 15.
 
-| Choice                  | Options (grader 1 total / grader 2 total)                                                                                            | Picked | Grafts taken from the others                                                                                   |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ------ | -------------------------------------------------------------------------------------------------------------- |
-| C1 Who holds the guns   | A the folk is the arsenal, familiar the caster (39 / 39); B the familiar is the gunner (34 / 34); C no switch, AI familiar (36 / 30) | A      | the bench gives a small aura, so a switch is always a gain (4.1)                                               |
-| C2 Touch buttons        | A three, special on a hold of Switch (33 / 36); B four with cooldown rings (35 / 38); C gestures (23 / 25)                           | B      | start with three and reveal Special when learnt; a layout editor (11)                                          |
-| C3 Aiming               | A soft lock in a 35 degree cone (35 / 38); B drag to aim (31 / 32); C stop to shoot (32 / 30)                                        | A      | drag from Attack overrides the lock; auto-fire when still as an optional assist (4.2)                          |
-| C4 Perks                | A a tree per folk (35 / 32); B pick one of three each level (38 / 36); C one shared board (23 / 25)                                  | B      | branch tags and a pinned branch weight the draws (6)                                                           |
-| C5 Materials            | A currency only (31 / 31); B currency, scrap and one material per region (38 / 37); C four shared tiers (27 / 28)                    | B      | the HUD shows Glint only; materials auto-collect; one-tap salvage (10.1)                                       |
-| C6 Currency name        | A Glint (37 / 38); B Crowns (34 / 31); C Moonsilver (29 / 31)                                                                        | A      | Moonsilver becomes the endgame material, never a second currency (10.1)                                        |
-| C7 Where the village is | A the hut's meadow grows into a village (35 / 39); B restore Crossroads Town (34 / 36); C an old hamlet (30 / 27)                    | A      | displaced Crossroads families move into your plots; two shuttered Crossroads shops to repair (7.1)             |
-| C8 The threat           | A the starfall (39 / 41); B the Rust (30 / 29); C the Company alone (29 / 28)                                                        | A      | foreshadow the Company from act 1 (8.1)                                                                        |
-| C9 Defeat               | A keep everything (37 / 40); B drop and walk back (24 / 26); C lose a tenth (29 / 29)                                                | A      | what lay on the floor when you fell is still there (10.2)                                                      |
-| C10 Healing             | A tonic flasks (36 / 41); B drops only (25 / 25); C the familiar heals (34 / 31)                                                     | A      | drink by tapping the flask, not a fifth button (4.2); a late familiar perk refills half a flask per boss phase |
+| Choice                           | Options (grader 1 total / grader 2 total)                                                                                                                                                               | Picked | Grafts taken from the others                                                                                                                                                                                  |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C1 Who holds the guns            | A the folk is the arsenal, familiar the caster (39 / 39); B the familiar is the gunner (34 / 34); C no switch, AI familiar (36 / 30)                                                                    | A      | the bench gives a small aura, so a switch is always a gain (4.1)                                                                                                                                              |
+| C2 Touch buttons                 | A three, special on a hold of Switch (33 / 36); B four with cooldown rings (35 / 38); C gestures (23 / 25)                                                                                              | B      | start with three and reveal Special when learnt; a layout editor (11)                                                                                                                                         |
+| C3 Aiming                        | A soft lock in a 35 degree cone (35 / 38); B drag to aim (31 / 32); C stop to shoot (32 / 30)                                                                                                           | A      | drag from Attack overrides the lock; auto-fire when still as an optional assist (4.2)                                                                                                                         |
+| C4 Perks                         | A a tree per folk (35 / 32); B pick one of three each level (38 / 36); C one shared board (23 / 25)                                                                                                     | B      | branch tags and a pinned branch weight the draws (6)                                                                                                                                                          |
+| C5 Materials                     | A currency only (31 / 31); B currency, scrap and one material per region (38 / 37); C four shared tiers (27 / 28)                                                                                       | B      | the HUD shows Glint only; materials auto-collect; one-tap salvage (10.1)                                                                                                                                      |
+| C6 Currency name                 | A Glint (37 / 38); B Crowns (34 / 31); C Moonsilver (29 / 31)                                                                                                                                           | A      | Moonsilver becomes the endgame material, never a second currency (10.1)                                                                                                                                       |
+| C7 Where the village is          | A the hut's meadow grows into a village (35 / 39); B restore Crossroads Town (34 / 36); C an old hamlet (30 / 27)                                                                                       | A      | displaced Crossroads families move into your plots; two shuttered Crossroads shops to repair (7.2)                                                                                                            |
+| C8 The threat                    | A the starfall (39 / 41); B the Rust (30 / 29); C the Company alone (29 / 28)                                                                                                                           | A      | foreshadow the Company from act 1 (8.1)                                                                                                                                                                       |
+| C9 Defeat                        | A keep everything (37 / 40); B drop and walk back (24 / 26); C lose a tenth (29 / 29)                                                                                                                   | A      | what lay on the floor when you fell is still there (10.2)                                                                                                                                                     |
+| C10 Healing                      | A tonic flasks (36 / 41); B drops only (25 / 25); C the familiar heals (34 / 31)                                                                                                                        | A      | drink by tapping the flask, not a fifth button (4.2); a late familiar perk refills half a flask per boss phase                                                                                                |
+| C11 Village defence (two rounds) | round 1: A full tower defence (33 / 34); B wave fights, no placing (36 / 37); C no village combat (31 / 30). Round 2: A (23 / 19); B with an automatic garrison (37 / 38); D prepared defence (38 / 39) | D      | every pad pre-filled with its building's own kind and the last layout remembered, so the prepare screen is optional (both); at most three lanes; one champion per pad; villager posts a one-time choice (7.6) |
+| C12 How often                    | A story sieges only (37 / 37); B story sieges plus optional watch nights you start (41 / 40); C recurring raids (22 / 17)                                                                               | B      | the five story sieges stay hand-staged and short (about 5 minutes); watch nights are generated from them (7.6)                                                                                                |
+| C13 How crops grow               | A by outings (39 / 41); B real time (26 / 24); C no growing (28 / 29)                                                                                                                                   | A      | visible stages; optional watering for one extra stage per visit; one or two crops per region (7.5)                                                                                                            |
+| C14 Losing a siege               | A nothing destroyed, free repair (41 / 43); B stops working until paid (27 / 25); C raiders take goods (19 / 22)                                                                                        | A      | scaffolding, a skippable repair scene and a villager's line; an easier retry after two losses (7.6)                                                                                                           |
 
-Grader notes worth keeping: a hold on Switch is unreliable under pressure (both); gestures misfire (both); a tree of 18 nodes for each of 14 folk is about 250 nodes to design and too much menu for a phone (grader 2); stop-to-shoot turns every fight into the same pattern and clashes with a dodge-led game (both); a corpse run is harsh when a phone call interrupts it (both). Grader 2's cost note: fourteen folk each need a melee and an aim set, reduced by sharing aim poses per weapon class (Claude J, section 14).
+Grader notes worth keeping: a hold on Switch is unreliable under pressure (both); gestures misfire (both); a tree of 18 nodes for each of 14 folk is about 250 nodes to design and too much menu for a phone (grader 2); stop-to-shoot turns every fight into the same pattern and clashes with a dodge-led game (both); a corpse run is harsh when a phone call interrupts it (both). Grader 2's cost note: fourteen folk each need a melee and an aim set, reduced by sharing aim poses per weapon class (Claude J, section 14). On the village: full tower defence was judged a second game on a 402 px portrait screen (placing, upgrading and dodging at once) and its schematics a second loot track, so round two moved all the tower-defence decisions before the bell and tied the pieces to buildings; plain wave fights stayed a close second (37 / 38) as the cheaper fallback; real-time crops would bring back the screen-time habit the pivot removed (both).
 
 ## 17. Appendix B: first numbers for Codex
 
