@@ -14,8 +14,11 @@ south face). For each route it fixes:
   - the width at each vertex (24 to 64 px: wider at bends, junction squares and
     thresholds);
   - the tier at each vertex, and every place the route changes tier: a stair (cut through
-    the face, 34 px or more open, about 36 px of route per tier), a ramp (along the face
-    at 1 in 3, 96 px per tier) or a switchback (a short Z, 64 px per tier);
+    the face, top tread flush with the upper floor, bottom tread on the path; about 36 px
+    of route per tier), a round-end (the path goes round the end of a face where it dies
+    out into the slope, 64 px) or a switchback (the path doubling back round the ends of
+    two staggered faces, 64 px). There are no ramps: Eastward has none (eastward-edges.md
+    6.3; Matt, 21 Oct 09:23: edges and the soft grid follow Eastward only);
   - the crossings: fords, bridges, ferries, causeways, the bar and the stile, with the
     way (W1 to W9) that stands on each;
   - the thresholds (the fifteen places where one region becomes another);
@@ -33,9 +36,9 @@ swing of 450 to 750 px, never a regular S, plan 5.6), straightens it over bridge
 fords, and snaps it to the grid.
 
 Tiers. The block-out's height field stepped the plain and the hills into many low tiers
-(the High Fells 35 changes in 1960 px, more than ramps or stairs can fit), and the plan
+(the High Fells 35 changes in 1960 px, more than stairs and paths round faces can fit), and the plan
 asks for fewer, deliberate banks (section 5.4). TIERS below gives each route a profile
-that fits: every change has room for its stair, ramp or switchback, routes beside water
+that fits: every change has room for its stair, round-end or switchback, routes beside water
 only fall downstream, and the ends meet the tiers given in STOPS. The region lanes match
 their ground to the tier at each meeting cell; a lane that needs another tier there says
 so on the crew board and this file changes.
@@ -66,23 +69,25 @@ TIER_PX = 32
 WALK_PX_S = 40            # walking speed on the block-out (plan 6.1)
 STEP = 8                  # resampling step along a line, px
 VERTEX_EVERY = 32         # at most this much route between exported vertices
-RUN = {'stair': 36, 'ramp': 96, 'switchback': 64}   # route px each tier change takes
+RUN = {'stair': 36, 'round-end': 64, 'switchback': 64}   # route px each tier change takes
 WIDTH_MIN, WIDTH_MAX = 24, 64
 MEET_MARGIN = 0           # a footprint's box edge is the owners' line
 
-# The footprints (regions/README.md), by owner. Lanes F, H and I took parts of E's and
-# C's regions on 21 Oct (crew board: to-all-1005, to-c-handover). Where boxes overlap, the
-# first owner listed holds the cell. Land in no box is lane G's: the land between.
+# The footprints (regions/README.md), by owner, or the chunk box a lane has declared in
+# its place. Lanes F, H and I took parts of E's and C's regions on 21 Oct (crew board:
+# to-all-1005, to-c-handover). Where boxes overlap, the first listed holds the cell. Land
+# in no box is lane G's: the land between.
 FOOTPRINTS = [
+    # Claude I's chunk 'lull-delta' (i-to-g-0945, draft #177) takes the belt, Lullford and
+    # the plain west of the belt down to the coast
+    ('claude-i', 'the Lull belt and Lullford', (8304, 3296, 9456, 5888)),
     ('claude-e', 'the home valley', (5600, 2300, 7000, 5100)),
     ('claude-e', 'the Headland', (6800, 5100, 7250, 5800)),
     ('claude-f', 'the Frostline', (5700, 1300, 6800, 2300)),
     ('claude-f', 'the Brackens', (4800, 1300, 5600, 4000)),
     ('claude-h', 'Cogsworth and the coal hills', (7000, 1700, 9300, 3300)),
-    ('claude-i', 'the Lull belt', (8700, 3300, 9450, 5900)),
-    ('claude-i', 'Neon Harbour', (9450, 3900, 11264, 5900)),
-    ('claude-i', 'Lullford', (8300, 3950, 8700, 4650)),
-    ('claude-i', 'Gullwick', (7650, 4850, 8300, 5450)),
+    ('claude-i', 'Neon Harbour', (9456, 3900, 11264, 5900)),
+    ('claude-i', 'Gullwick', (7650, 4850, 8304, 5450)),
     ('claude-d', 'the Sunstone basin', (0, 0, 4800, 4300)),
     ('claude-d', 'the fire country', (0, 4000, 5600, 5850)),
     ('claude-c', 'the Tidebloom Isles', (3700, 5800, 9800, 6912)),
@@ -103,6 +108,10 @@ STOPS = {
     'frostline': ('the Frostline', (6220, 1800)),
     'fernhollow': ('Fernhollow', (7150, 3080)),
     'cogsworth': ('Cogsworth', (7980, 2450)),
+    # Claude H's town gates (h-to-g-1120, draft #176: the town box x 7624-8328, y 1968-2928)
+    'cogsworth-north': ("Cogsworth's north gate", (7824, 1968)),
+    'cogsworth-west': ("Cogsworth's west gate, over the Millrace bridge", (7624, 2736)),
+    'cogsworth-east': ("Cogsworth's east gate, on the riverside quay", (8328, 2840)),
     'lullford': ('Lullford', (8700, 4300)),
     'gullwick': ('Gullwick', (7950, 5130)),
     'lull-east-bank': ('Lullford Bridge, east bank', (9150, 4320)),
@@ -127,6 +136,7 @@ HOME = 'valley-halt'   # the hut's valley: everything joined to it at the start
 # ground), with no way between them: the gate check treats each group as one place.
 SAME_PLACE = [
     ('valley-halt', 'valley-east', 'valley-fern', 'valley-col', 'driftwood', 'headland-neck'),
+    ('cogsworth', 'cogsworth-north', 'cogsworth-west', 'cogsworth-east'),
     ('neon-market', 'neon-docks', 'neon-heights', 'neon-quay', 'gull-strand', 'skyport'),
 ]
 
@@ -141,15 +151,23 @@ LINKS = [
 
 # The centre lines, fitted to the briefs' markers (see the module note), in world px.
 ANCHORS = {
-    'col-path': [(6280, 2960), (6256, 2720), (6272, 2560), (6272, 2360), (6224, 2320), (6240, 2128), (6224, 1992), (6208, 1944), (6208, 1888)],
-    'high-fells': [(6304, 1760), (6504, 1648), (6648, 1632), (6696, 1648), (6752, 1640), (6808, 1656), (6960, 1624), (7104, 1648), (7120, 1616), (7192, 1648), (7248, 1712), (7376, 1768), (7456, 1856), (7568, 1920), (7760, 2152), (7848, 2336), (7896, 2352), (7920, 2392)],
-    'foothill-road': [(6760, 3400), (6944, 3216), (7216, 3128), (7336, 3024), (7392, 3008), (7504, 2928), (7728, 2632), (7776, 2616), (7792, 2568), (7848, 2504), (7904, 2480)],
-    'towpath': [(8040, 2560), (8128, 2624), (8184, 2688), (8216, 2728), (8224, 2824), (8264, 2904), (8472, 3008), (8504, 3064), (8496, 3136), (8472, 3184), (8480, 3512), (8448, 3616), (8464, 3760), (8480, 3800), (8472, 3944), (8512, 4088), (8568, 4168), (8648, 4224)],
+    'col-path': [(6280, 2960), (6256, 2720), (6272, 2560), (6272, 2360),
+                 # lane F's line through the Frostline (art/regions/frostline.json, draft #174)
+                 (6288, 2304), (6264, 2288), (6208, 2288), (6200, 2264), (6204, 2232), (6248, 2220), (6304, 2224), (6312, 2200), (6304, 2168), (6248, 2152), (6192, 2152), (6184, 2128), (6192, 2104), (6232, 2088), (6240, 2064), (6232, 2032), (6216, 2000), (6176, 1968), (6168, 1944), (6184, 1912), (6216, 1888)],
+    'high-fells': [
+                   # lane F's line from the tarn's east shore to the Frostline's box edge
+                   (6216, 1888), (6248, 1864), (6280, 1824), (6296, 1784), (6312, 1752), (6320, 1728), (6328, 1704), (6376, 1688), (6416, 1664), (6464, 1648), (6496, 1624), (6528, 1612), (6568, 1632), (6608, 1640), (6656, 1624), (6704, 1640), (6752, 1624), (6800, 1616),
+                   (6960, 1624), (7104, 1648), (7120, 1616), (7192, 1648), (7248, 1712), (7376, 1768), (7456, 1856), (7568, 1920), (7696, 1944), (7824, 1968)],
+    'foothill-road': [(6760, 3400), (6944, 3216), (7216, 3128), (7336, 3024), (7392, 3008), (7504, 2928), (7584, 2800), (7624, 2736), (7712, 2736)],
+    'towpath': [(8328, 2840), (8416, 2872), (8472, 2944), (8504, 3064), (8496, 3136), (8472, 3184), (8480, 3512), (8448, 3616), (8464, 3760), (8480, 3800), (8472, 3944), (8512, 4088), (8568, 4168), (8648, 4224)],
     'lull-road': [(6760, 3760), (6896, 3800), (6976, 3856), (7080, 3848), (7168, 3896), (7448, 3896), (7488, 3920), (7768, 3928), (7928, 4008), (7976, 4008), (8112, 4048), (8328, 4168), (8376, 4168), (8456, 4208), (8496, 4208), (8536, 4240), (8624, 4280), (8872, 4272), (8912, 4304), (9096, 4336), (9232, 4336), (9264, 4360), (9352, 4376), (9400, 4400), (9552, 4360), (9656, 4368), (9704, 4384), (9840, 4360), (9872, 4392), (9984, 4360)],
     'coast-path': [(6656, 4928), (6704, 4984), (6808, 5056), (6920, 5080), (7136, 5072), (7296, 5016), (7576, 5056), (7760, 5048), (7856, 5080), (7912, 5072), (8088, 4944), (8232, 4784), (8240, 4736), (8312, 4624), (8392, 4560), (8472, 4536), (8544, 4464), (8640, 4328)],
     'headland-lane': [(6896, 5112), (6976, 5240), (7032, 5520), (7064, 5568), (7056, 5616)],
     'shell-bar': [(7056, 5640), (6984, 5776), (6848, 5936), (6792, 6024), (6736, 6048), (6704, 6080)],
-    'drovers-road': [(5800, 4064), (5728, 4000), (5456, 3936), (5424, 3896), (5272, 3800), (4968, 3576), (4824, 3560), (4656, 3496), (4400, 3504), (4320, 3448), (4272, 3432), (4192, 3392), (4144, 3328), (4104, 3320), (3944, 3104), (3896, 3088), (3832, 3032), (3792, 3024), (3688, 2928), (3520, 2872), (3392, 2808), (3288, 2712), (3240, 2704), (3176, 2656), (3128, 2640), (3032, 2536), (2904, 2472), (2864, 2472)],
+    'drovers-road': [(5800, 4064), (5728, 4000), (5656, 3960),
+                     # lane F's line through the Brackens and the gap (art/regions/brackens.json)
+                     (5600, 3944), (5544, 3936), (5496, 3912), (5440, 3904), (5384, 3896), (5328, 3880), (5280, 3848), (5240, 3808), (5200, 3776), (5152, 3760), (5096, 3744), (5048, 3720), (5008, 3688), (4984, 3640), (4968, 3592), (4928, 3560), (4872, 3544), (4800, 3536),
+                     (4656, 3496), (4400, 3504), (4320, 3448), (4272, 3432), (4192, 3392), (4144, 3328), (4104, 3320), (3944, 3104), (3896, 3088), (3832, 3032), (3792, 3024), (3688, 2928), (3520, 2872), (3392, 2808), (3288, 2712), (3240, 2704), (3176, 2656), (3128, 2640), (3032, 2536), (2904, 2472), (2864, 2472)],
     'lode-track': [(2832, 2328), (2864, 2248), (2856, 2136), (2896, 2112), (2912, 2000), (2944, 1968), (3040, 1696)],
     'canyon-road': [(2800, 2560), (2800, 2608), (2784, 2648), (2800, 2824), (2760, 2936), (2728, 2968), (2688, 3088), (2696, 3136), (2616, 3256), (2576, 3296), (2544, 3368), (2560, 3448), (2552, 3488), (2424, 3664), (2400, 3744), (2288, 3864), (2264, 3928), (2208, 3976), (2152, 4000), (2048, 4232), (1952, 4368), (1952, 4472), (1992, 4648), (2056, 4816), (2296, 5024), (2440, 5080)],
     'forge-stair': [(2472, 5040), (2464, 4896)],
@@ -163,13 +181,23 @@ ANCHORS = {
     'cape-road': [(10600, 4952), (10656, 5024), (10784, 5120), (10816, 5200), (10848, 5240), (10864, 5296), (10952, 5432), (10976, 5520)],
 }
 
+# Stretches a region lane has drawn path first in its own plan (inside its footprint): the
+# line is taken exactly as drawn there (no smoothing, no bends laid on, no switchback Z,
+# since the lane drew its own), as anchor indices (first, last), with the lane, its file
+# and the width it drew (None keeps ours).
+FIXED = {
+    'col-path': [(4, 24, 'claude-f', 'art/regions/frostline.json', 24)],
+    'high-fells': [(0, 17, 'claude-f', 'art/regions/frostline.json', 24)],
+    'drovers-road': [(3, 20, 'claude-f', 'art/regions/brackens.json', 32)],
+}
+
 # id: name, kind, from, to, base width, (brief walk s, brief tier changes), bends.
 # bends: (long swing amplitude, short bend amplitude) in px; 0 for built straight things.
 ROUTES = [
     ('col-path', 'Col Path', 'path', 'valley-col', 'frostline', 24, (28, 7), (14, 6)),
-    ('high-fells', 'High Fells', 'path', 'frostline', 'cogsworth', 24, (49, 35), (18, 7)),
-    ('foothill-road', 'Foothill Road', 'road', 'valley-fern', 'cogsworth', 40, (38, 17), (22, 7)),
-    ('towpath', 'Towpath', 'path', 'cogsworth', 'lullford', 32, (48, 9), (14, 6)),
+    ('high-fells', 'High Fells', 'path', 'frostline', 'cogsworth-north', 24, (49, 35), (18, 7)),
+    ('foothill-road', 'Foothill Road', 'road', 'valley-fern', 'cogsworth-west', 40, (38, 17), (22, 7)),
+    ('towpath', 'Towpath', 'path', 'cogsworth-east', 'lullford', 32, (48, 9), (14, 6)),
     ('lull-road', 'Lull Road', 'road', 'valley-east', 'neon-market', 40, (87, 13), (24, 8)),
     ('coast-path', 'Coast Path', 'path', 'driftwood', 'lullford', 32, (56, 1), (18, 7)),
     ('headland-lane', 'Headland Lane', 'path', 'headland-neck', 'headland-tip', 32, (14, 0), (10, 6)),
@@ -189,32 +217,37 @@ ROUTES = [
 ]
 
 # Each route's tier profile: (tier at its start, [legs]); a leg is (from fraction, to
-# fraction, kind or kinds, tiers after each change), its changes spread evenly in it.
+# fraction, kind or kinds, tiers after each change), its changes spread evenly in it, or
+# ((x, y), kind, tier after) for a change a lane has placed (a stair in its plan).
 TIERS = {
-    'col-path': (7, [(0.10, 0.96, 'switchback', [8, 9, 10, 11, 12, 13, 14])]),
-    'high-fells': (14, [(0.14, 0.42, 'ramp', [15, 16]), (0.42, 0.50, 'stair', [17, 18]),
-                        (0.52, 0.82, 'stair', [17, 16, 15, 14, 13, 12, 11]),
-                        (0.83, 0.98, 'stair', [10, 9, 8, 7])]),
-    'foothill-road': (5, [(0.08, 0.52, 'ramp', [6, 7, 8, 9]), (0.70, 0.98, 'ramp', [8, 7])]),
-    'towpath': (7, [(0.04, 0.20, 'stair', [6, 5]), (0.30, 0.80, 'ramp', [4, 3])]),
-    'lull-road': (4, [(0.04, 0.20, 'ramp', [5, 6]), (0.30, 0.58, 'ramp', [5, 4, 3])]),
-    'coast-path': (3, [(0.20, 0.30, 'ramp', [2])]),
+    'col-path': (5, [(0.10, 0.45, 'switchback', [6, 7]),
+                     # lane F's four stairs up the step (frostline.json col_1 to col_lip)
+                     ((6204, 2252), 'stair', 8), ((6308, 2188), 'stair', 9),
+                     ((6188, 2116), 'stair', 10), ((6236, 2048), 'stair', 11)]),
+    'high-fells': (11, [((6316, 1740), 'stair', 12),   # lane F's fells_1
+                        (0.40, 0.50, 'round-end', [13, 14]), (0.50, 0.55, 'stair', [15]),
+                        (0.56, 0.82, 'stair', [14, 13, 12, 11, 10, 9]),
+                        (0.83, 0.90, 'stair', [8])]),
+    'foothill-road': (5, [(0.08, 0.52, 'round-end', [6, 7, 8, 9]), (0.70, 0.98, 'round-end', [8, 7])]),
+    'towpath': (7, [(0.04, 0.20, 'stair', [6, 5]), (0.30, 0.80, 'round-end', [4, 3])]),
+    'lull-road': (4, [(0.04, 0.20, 'round-end', [5, 6]), (0.30, 0.58, 'round-end', [5, 4, 3])]),
+    'coast-path': (3, [(0.20, 0.30, 'round-end', [2])]),
     'headland-lane': (3, []),
     'shell-bar': (0, []),
-    'drovers-road': (4, [(0.02, 0.16, 'ramp', [5, 6]), (0.24, 0.34, 'ramp', [5]),
-                         (0.58, 0.96, 'ramp', [6, 7, 8])]),
+    # level through the Brackens' gap (lane F's plan keeps the road on its base tier)
+    'drovers-road': (4, [(0.32, 0.40, 'round-end', [5]), (0.58, 0.96, 'round-end', [6, 7, 8])]),
     'lode-track': (8, [(0.15, 0.92, 'switchback', [9, 10])]),
-    'canyon-road': (8, [(0.03, 0.12, 'stair', [7, 6, 5]), (0.20, 0.30, 'ramp', [6]),
-                        (0.40, 0.84, 'ramp', [7, 8, 9, 10, 11]), (0.92, 0.99, 'stair', [12])]),
+    'canyon-road': (8, [(0.03, 0.12, 'stair', [7, 6, 5]), (0.20, 0.30, 'round-end', [6]),
+                        (0.40, 0.84, 'round-end', [7, 8, 9, 10, 11]), (0.92, 0.99, 'stair', [12])]),
     'forge-stair': (12, [(0.05, 0.95, 'stair', [13, 14, 15])]),
     'ember-way': (11, [(0.03, 0.97, 'stair', [10, 9, 8, 7, 6, 5, 4, 3, 2])]),
-    'ash-coast': (4, [(0.02, 0.12, 'ramp', [3]), (0.38, 0.46, 'ramp', [2]), (0.54, 0.62, 'ramp', [3])]),
-    'delta-road': (3, [(0.25, 0.95, 'ramp', [4, 5, 6])]),
+    'ash-coast': (4, [(0.02, 0.12, 'round-end', [3]), (0.38, 0.46, 'round-end', [2]), (0.54, 0.62, 'round-end', [3])]),
+    'delta-road': (3, [(0.25, 0.95, 'round-end', [4, 5, 6])]),
     'harbour-bridge': (6, [(0.80, 1.00, 'stair', [5, 4, 3])]),
     'old-bridges': (3, []),
-    'quay-street': (3, [(0.55, 0.95, 'ramp', [2, 1])]),
+    'quay-street': (3, [(0.55, 0.95, 'round-end', [2, 1])]),
     'beacon-causeway': (1, []),
-    'cape-road': (3, [(0.40, 0.70, 'ramp', [4])]),
+    'cape-road': (3, [(0.40, 0.70, 'round-end', [4])]),
 }
 
 # Crossings on the routes: route, kind, name, at (brief), span (px of route), way.
@@ -224,9 +257,9 @@ CROSSINGS = [
     ('headland-lane', 'stile', 'the Headland stile', (6990, 5300), 32, 'W1'),
     ('col-path', 'step', 'the Frostline lip', (6230, 2040), 48, 'W2'),
     ('high-fells', 'step', 'the east col', (6560, 1640), 48, 'W2'),
-    ('foothill-road', 'bridge', 'the Millrace bridge', (7650, 2740), 64, 'W3'),
+    ('foothill-road', 'bridge', 'the Millrace bridge', (7664, 2736), 80, 'W3'),
     ('towpath', 'bridge', 'the Cog foot bridge', (8530, 3060), 64, 'W3'),
-    ('high-fells', 'step', 'the rockfall above the Cog', (7800, 2240), 48, 'W3'),
+    ('high-fells', 'step', 'the rockfall on the coal-hill bench', (7700, 1944), 48, 'W3'),
     ('shell-bar', 'bar', 'the Shell Bar', (6900, 5900), 160, 'W4'),
     ('drovers-road', 'bridge', "Drover's bridge", (4330, 3440), 128, 'W5'),
     ('ash-coast', 'ferry', 'the Rift ferry', (4180, 5240), 96, 'W5'),
@@ -476,11 +509,30 @@ def bends(rid, s, total, amp_long, amp_short, quiet):
 
 def build_route(spec, bumps=()):
     rid, name, kind, frm, to, base_w, (b_walk, b_tiers), (amp_l, amp_s) = spec
-    raw = resample(ANCHORS[rid])
-    pts = smooth(raw, 96) if len(ANCHORS[rid]) > 2 else raw
+    anchors = ANCHORS[rid]
+    raw = resample(anchors)
+    rs = arclen(raw)
+    a_s = arclen([tuple(map(float, a)) for a in anchors])
+    fixed = [(a_s[i0], a_s[i1], w) for (i0, i1, _lane, _src, w) in FIXED.get(rid, ())]
+
+    def in_fixed(si, pad=0.0):
+        return any(lo - pad <= si <= hi + pad for lo, hi, _ in fixed)
+    pts = smooth(raw, 96) if len(anchors) > 2 else raw
+    # a lane's drawn stretch keeps its own line; ease back to the smoothed line over 64 px
+    eased = []
+    for i, si in enumerate(rs):
+        if in_fixed(si):
+            eased.append(raw[i])
+            continue
+        d = min([abs(si - lo) for lo, hi, _ in fixed] + [abs(si - hi) for lo, hi, _ in fixed] + [1e9])
+        t = min(1.0, d / 64.0)
+        eased.append((raw[i][0] + (pts[i][0] - raw[i][0]) * t, raw[i][1] + (pts[i][1] - raw[i][1]) * t))
+    pts = eased
     s = arclen(pts)
     total = s[-1]
     base_total = total
+    fixed = [(s[min(range(len(rs)), key=lambda k: abs(rs[k] - lo))], s[min(range(len(rs)), key=lambda k: abs(rs[k] - hi))], w)
+             for lo, hi, w in fixed]
 
     crossings = []
     for (r, ck, cname, at, span, way) in CROSSINGS:
@@ -503,6 +555,9 @@ def build_route(spec, bumps=()):
     # crossing's span (bridges, fords and causeways are straight), easing in over 64 px
     def quiet_at(si):
         q = min(1.0, si / 64.0, (total - si) / 64.0)
+        for lo, hi, _ in fixed:
+            d = max(lo - si, si - hi)
+            q = min(q, max(0.0, d / 64.0))
         for c in crossings:
             half = c['span'] / 2
             d = abs(si - c['s']) - half
@@ -513,16 +568,35 @@ def build_route(spec, bumps=()):
     tier0, legs = TIERS[rid]
     changes = []
     tier = tier0
-    for (f0, f1, kinds, tiers) in legs:
+    for leg in legs:
+        if len(leg) == 3:   # a change a lane placed: at its point
+            (at, k, t_after) = leg
+            sc, d = project(pts, s, at)
+            if d > 48:
+                raise SystemExit(f'{name}: the {k} at {at} is {d:.0f} px from the line')
+            changes.append({'s': sc, 'kind': k, 'from': tier, 'to': t_after, 'run': RUN[k], 'placed': True})
+            tier = t_after
+            continue
+        (f0, f1, kinds, tiers) = leg
         n = len(tiers)
         for i, t_after in enumerate(tiers):
             k = kinds if isinstance(kinds, str) else kinds[i]
             sc = total * (f0 + (f1 - f0) * (i + 0.5) / n)
             changes.append({'s': sc, 'kind': k, 'from': tier, 'to': t_after, 'run': RUN[k]})
             tier = t_after
+    changes.sort(key=lambda c: c['s'])
+    tier = tier0
+    for c in changes:   # spread legs may interleave with placed changes: chain the tiers
+        if c['from'] != tier and not c.get('placed'):
+            raise SystemExit(f'{name}: tier profile out of order at s {c["s"]:.0f}')
+        tier = c['to']
     # keep the changes off crossings and thresholds, and give each its room
     for c in changes:
+        if c.get('placed'):
+            continue
         for x in crossings:
+            if x['kind'] == 'step':
+                continue
             lo, hi = x['s'] - x['span'] / 2 - c['run'] / 2, x['s'] + x['span'] / 2 + c['run'] / 2
             if lo < c['s'] < hi:
                 c['s'] = hi if c['s'] > x['s'] else lo
@@ -537,7 +611,7 @@ def build_route(spec, bumps=()):
                 off[i] += sign * 14 * math.cos(u * math.pi / 2) ** 2 * quiet[i]
     # a switchback is a short Z across the line
     for c in changes:
-        if c['kind'] != 'switchback':
+        if c['kind'] != 'switchback' or in_fixed(c['s'] / (1.0), 64):
             continue
         for i, si in enumerate(s):
             u = (si - (c['s'] - c['run'] / 2)) / c['run']
@@ -597,7 +671,9 @@ def build_route(spec, bumps=()):
                 t = c['to']
         return t
 
-    # widths: base, +8 at bends, junction squares at the ends, +16 at thresholds
+    # widths: base, +8 at bends, junction squares at the ends, +16 at thresholds; a lane's
+    # drawn stretch keeps its width (+8 at a threshold)
+    scale_f = total / base_total
     widths = []
     for i, v in enumerate(verts):
         w = base_w
@@ -616,6 +692,9 @@ def build_route(spec, bumps=()):
                 w = max(w, base_w + 16)
         if kind == 'bar':
             w = 40 + 8 * int(3 * _hash(rid, 'bar', i // 3))
+        for lo, hi, fw in fixed:
+            if fw and lo <= si / scale_f <= hi:
+                w = fw + (8 if any(abs(si - st) < 48 for (t, st) in thresholds) else 0)
         w = max(WIDTH_MIN, min(WIDTH_MAX, int(round(w / GRID)) * GRID))
         widths.append(w)
 
@@ -803,6 +882,8 @@ def check(routes):
             if lo < -0.5 or prev_end > r['length'] + 0.5:
                 problems.append(f"{r['name']}: a {c['kind']} at s {c['s']} runs off the route")
             for x in r['crossings']:
+                if x['kind'] == 'step':
+                    continue   # a step (the lip, a col, a rockfall) may be the stair itself
                 if abs(c['s'] - x['s']) < (x['span'] + c['run']) / 2 - 1:
                     problems.append(f"{r['name']}: a {c['kind']} on {x['name']}")
         if r['kind'] in ('road', 'path', 'bar') and r['length'] > 300:
@@ -888,7 +969,7 @@ def export_ts(routes, steps, path):
         ' */',
         '',
         "export type RouteKind = 'road' | 'path' | 'bar' | 'bridge' | 'causeway';",
-        "export type TierChangeKind = 'stair' | 'ramp' | 'switchback';",
+        "export type TierChangeKind = 'stair' | 'round-end' | 'switchback';",
         "export type CrossingKind = 'ford' | 'bridge' | 'ferry' | 'causeway' | 'bar' | 'stile' | 'step';",
         'export type LaneId = string;',
         '/** A vertex: x, y (world px, on the 8 px grid), width (px), tier. */',

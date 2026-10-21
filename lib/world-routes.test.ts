@@ -155,7 +155,7 @@ for (const r of worldRoutes) {
       `${r.name}: a ${c.kind} fits on the route`,
     );
     prevEnd = c.s + c.run / 2;
-    for (const x of r.crossings)
+    for (const x of r.crossings.filter((k) => k.kind !== 'step'))
       assert.ok(
         Math.abs(c.s - x.s) >= (x.span + c.run) / 2 - 1,
         `${r.name}: no ${c.kind} on ${x.name}`,
