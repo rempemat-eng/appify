@@ -512,7 +512,13 @@
    "isolated": 0.274,
    "cluster": 2.02,
    "patches": 4,
-   "jpeg_quality": 93
+   "jpeg_quality": 93,
+   "clean": {
+    "edges": 0.134,
+    "lone": 0.001,
+    "top2": 0.607,
+    "colours": 9.75
+   }
   },
   "eastward-37-lawn-open": {
    "game": "Eastward: Octopia (official site)",
@@ -531,7 +537,13 @@
    "isolated": 0.279,
    "cluster": 1.95,
    "patches": 2,
-   "jpeg_quality": 93
+   "jpeg_quality": 93,
+   "clean": {
+    "edges": 0.093,
+    "lone": 0.0,
+    "top2": 0.912,
+    "colours": 4.0
+   }
   },
   "eastward-37-lawn-flowers": {
    "game": "Eastward: Octopia (official site)",
@@ -550,7 +562,13 @@
    "isolated": 0.239,
    "cluster": 2.77,
    "patches": 4,
-   "jpeg_quality": 93
+   "jpeg_quality": 93,
+   "clean": {
+    "edges": 0.142,
+    "lone": 0.012,
+    "top2": 0.681,
+    "colours": 11.25
+   }
   },
   "eastward-12-yard-tufts": {
    "game": "Eastward - Octopia",
@@ -569,7 +587,13 @@
    "isolated": 0.211,
    "cluster": 3.26,
    "patches": 2,
-   "jpeg_quality": 90
+   "jpeg_quality": 90,
+   "clean": {
+    "edges": 0.236,
+    "lone": 0.041,
+    "top2": 0.619,
+    "colours": 15.0
+   }
   },
   "eastward-08-verge-patches": {
    "game": "Eastward",
@@ -588,7 +612,13 @@
    "isolated": 0.117,
    "cluster": 5.38,
    "patches": 2,
-   "jpeg_quality": 90
+   "jpeg_quality": 90,
+   "clean": {
+    "edges": 0.135,
+    "lone": 0.014,
+    "top2": 0.59,
+    "colours": 12.0
+   }
   },
   "eastward-13-canal": {
    "game": "Eastward - Octopia",
