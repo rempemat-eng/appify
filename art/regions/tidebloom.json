@@ -1,0 +1,2260 @@
+{
+ "_about": "The Tidebloom Isles and the Shell Bar as a plan (Claude C, lane C, 21 Oct), in Claude F's schema (docs/vision/region-plans.md), written by scripts/art/regions/tidebloom_plan.py. From the brief docs/vision/regions/tidebloom-isles.md (PR #96, v5.3) and the block-out (#187). World px on the 11264 x 6912 canvas; tier outlines in SCREEN space. Open: the brief's decided island of 704 x 1152 cannot stand in this box (1112 tall); this plan keeps the block-out's ring round the lagoon, where the Shell Bar route, the ferry and the coast already meet it, and lays the decided island's places on it by walk time from the pier. Claude A to confirm in the geography chunk (P1).",
+ "id": "tidebloom",
+ "owner": "claude-c",
+ "biome": "tropical",
+ "biomes": [
+  "coast"
+ ],
+ "box": [
+  3696,
+  5792,
+  6112,
+  1120
+ ],
+ "base_tier": {
+  "value": 0,
+  "provisional": true,
+  "from": "lane G's Shell Bar at tier 0 (lib/world-routes.ts); sea level, so the isle's beaches are 0"
+ },
+ "coast": {
+  "main_isle": [
+   [
+    6000,
+    6288
+   ],
+   [
+    6016,
+    6288
+   ],
+   [
+    6016,
+    6240
+   ],
+   [
+    6032,
+    6240
+   ],
+   [
+    6032,
+    6224
+   ],
+   [
+    6048,
+    6224
+   ],
+   [
+    6048,
+    6208
+   ],
+   [
+    6064,
+    6208
+   ],
+   [
+    6064,
+    6192
+   ],
+   [
+    6144,
+    6192
+   ],
+   [
+    6144,
+    6208
+   ],
+   [
+    6160,
+    6208
+   ],
+   [
+    6160,
+    6224
+   ],
+   [
+    6224,
+    6224
+   ],
+   [
+    6224,
+    6208
+   ],
+   [
+    6240,
+    6208
+   ],
+   [
+    6240,
+    6176
+   ],
+   [
+    6224,
+    6176
+   ],
+   [
+    6224,
+    6128
+   ],
+   [
+    6240,
+    6128
+   ],
+   [
+    6240,
+    6112
+   ],
+   [
+    6320,
+    6112
+   ],
+   [
+    6320,
+    6096
+   ],
+   [
+    6416,
+    6096
+   ],
+   [
+    6416,
+    6112
+   ],
+   [
+    6464,
+    6112
+   ],
+   [
+    6464,
+    6096
+   ],
+   [
+    6480,
+    6096
+   ],
+   [
+    6480,
+    6080
+   ],
+   [
+    6496,
+    6080
+   ],
+   [
+    6496,
+    6064
+   ],
+   [
+    6528,
+    6064
+   ],
+   [
+    6528,
+    6048
+   ],
+   [
+    6592,
+    6048
+   ],
+   [
+    6592,
+    6032
+   ],
+   [
+    6688,
+    6032
+   ],
+   [
+    6688,
+    6016
+   ],
+   [
+    6736,
+    6016
+   ],
+   [
+    6736,
+    6032
+   ],
+   [
+    6784,
+    6032
+   ],
+   [
+    6784,
+    6048
+   ],
+   [
+    6832,
+    6048
+   ],
+   [
+    6832,
+    6032
+   ],
+   [
+    6864,
+    6032
+   ],
+   [
+    6864,
+    6048
+   ],
+   [
+    6880,
+    6048
+   ],
+   [
+    6880,
+    6080
+   ],
+   [
+    6928,
+    6080
+   ],
+   [
+    6928,
+    6096
+   ],
+   [
+    7104,
+    6096
+   ],
+   [
+    7104,
+    6112
+   ],
+   [
+    7136,
+    6112
+   ],
+   [
+    7136,
+    6128
+   ],
+   [
+    7184,
+    6128
+   ],
+   [
+    7184,
+    6144
+   ],
+   [
+    7200,
+    6144
+   ],
+   [
+    7200,
+    6160
+   ],
+   [
+    7216,
+    6160
+   ],
+   [
+    7216,
+    6176
+   ],
+   [
+    7248,
+    6176
+   ],
+   [
+    7248,
+    6224
+   ],
+   [
+    7264,
+    6224
+   ],
+   [
+    7264,
+    6320
+   ],
+   [
+    7280,
+    6320
+   ],
+   [
+    7280,
+    6368
+   ],
+   [
+    7296,
+    6368
+   ],
+   [
+    7296,
+    6400
+   ],
+   [
+    7328,
+    6400
+   ],
+   [
+    7328,
+    6416
+   ],
+   [
+    7360,
+    6416
+   ],
+   [
+    7360,
+    6464
+   ],
+   [
+    7344,
+    6464
+   ],
+   [
+    7344,
+    6480
+   ],
+   [
+    7328,
+    6480
+   ],
+   [
+    7328,
+    6496
+   ],
+   [
+    7312,
+    6496
+   ],
+   [
+    7312,
+    6512
+   ],
+   [
+    7296,
+    6512
+   ],
+   [
+    7296,
+    6528
+   ],
+   [
+    7280,
+    6528
+   ],
+   [
+    7280,
+    6544
+   ],
+   [
+    7248,
+    6544
+   ],
+   [
+    7248,
+    6560
+   ],
+   [
+    7232,
+    6560
+   ],
+   [
+    7232,
+    6576
+   ],
+   [
+    7216,
+    6576
+   ],
+   [
+    7216,
+    6592
+   ],
+   [
+    7200,
+    6592
+   ],
+   [
+    7200,
+    6608
+   ],
+   [
+    7088,
+    6608
+   ],
+   [
+    7088,
+    6624
+   ],
+   [
+    7056,
+    6624
+   ],
+   [
+    7056,
+    6640
+   ],
+   [
+    6960,
+    6640
+   ],
+   [
+    6960,
+    6672
+   ],
+   [
+    6944,
+    6672
+   ],
+   [
+    6944,
+    6688
+   ],
+   [
+    6928,
+    6688
+   ],
+   [
+    6928,
+    6720
+   ],
+   [
+    6912,
+    6720
+   ],
+   [
+    6912,
+    6736
+   ],
+   [
+    6880,
+    6736
+   ],
+   [
+    6880,
+    6688
+   ],
+   [
+    6864,
+    6688
+   ],
+   [
+    6864,
+    6608
+   ],
+   [
+    6848,
+    6608
+   ],
+   [
+    6848,
+    6592
+   ],
+   [
+    6832,
+    6592
+   ],
+   [
+    6832,
+    6528
+   ],
+   [
+    6880,
+    6528
+   ],
+   [
+    6880,
+    6512
+   ],
+   [
+    6912,
+    6512
+   ],
+   [
+    6912,
+    6496
+   ],
+   [
+    6928,
+    6496
+   ],
+   [
+    6928,
+    6432
+   ],
+   [
+    6912,
+    6432
+   ],
+   [
+    6912,
+    6416
+   ],
+   [
+    6896,
+    6416
+   ],
+   [
+    6896,
+    6384
+   ],
+   [
+    6880,
+    6384
+   ],
+   [
+    6880,
+    6368
+   ],
+   [
+    6864,
+    6368
+   ],
+   [
+    6864,
+    6352
+   ],
+   [
+    6848,
+    6352
+   ],
+   [
+    6848,
+    6336
+   ],
+   [
+    6800,
+    6336
+   ],
+   [
+    6800,
+    6304
+   ],
+   [
+    6720,
+    6304
+   ],
+   [
+    6720,
+    6320
+   ],
+   [
+    6624,
+    6320
+   ],
+   [
+    6624,
+    6336
+   ],
+   [
+    6576,
+    6336
+   ],
+   [
+    6576,
+    6352
+   ],
+   [
+    6560,
+    6352
+   ],
+   [
+    6560,
+    6368
+   ],
+   [
+    6544,
+    6368
+   ],
+   [
+    6544,
+    6384
+   ],
+   [
+    6528,
+    6384
+   ],
+   [
+    6528,
+    6400
+   ],
+   [
+    6512,
+    6400
+   ],
+   [
+    6512,
+    6416
+   ],
+   [
+    6496,
+    6416
+   ],
+   [
+    6496,
+    6448
+   ],
+   [
+    6480,
+    6448
+   ],
+   [
+    6480,
+    6480
+   ],
+   [
+    6448,
+    6480
+   ],
+   [
+    6448,
+    6496
+   ],
+   [
+    6464,
+    6496
+   ],
+   [
+    6464,
+    6528
+   ],
+   [
+    6496,
+    6528
+   ],
+   [
+    6496,
+    6544
+   ],
+   [
+    6512,
+    6544
+   ],
+   [
+    6512,
+    6560
+   ],
+   [
+    6544,
+    6560
+   ],
+   [
+    6544,
+    6576
+   ],
+   [
+    6608,
+    6576
+   ],
+   [
+    6608,
+    6592
+   ],
+   [
+    6656,
+    6592
+   ],
+   [
+    6656,
+    6560
+   ],
+   [
+    6704,
+    6560
+   ],
+   [
+    6704,
+    6576
+   ],
+   [
+    6720,
+    6576
+   ],
+   [
+    6720,
+    6592
+   ],
+   [
+    6736,
+    6592
+   ],
+   [
+    6736,
+    6624
+   ],
+   [
+    6752,
+    6624
+   ],
+   [
+    6752,
+    6688
+   ],
+   [
+    6768,
+    6688
+   ],
+   [
+    6768,
+    6816
+   ],
+   [
+    6720,
+    6816
+   ],
+   [
+    6720,
+    6832
+   ],
+   [
+    6688,
+    6832
+   ],
+   [
+    6688,
+    6848
+   ],
+   [
+    6656,
+    6848
+   ],
+   [
+    6656,
+    6864
+   ],
+   [
+    6624,
+    6864
+   ],
+   [
+    6624,
+    6848
+   ],
+   [
+    6592,
+    6848
+   ],
+   [
+    6592,
+    6832
+   ],
+   [
+    6576,
+    6832
+   ],
+   [
+    6576,
+    6816
+   ],
+   [
+    6560,
+    6816
+   ],
+   [
+    6560,
+    6800
+   ],
+   [
+    6544,
+    6800
+   ],
+   [
+    6544,
+    6784
+   ],
+   [
+    6512,
+    6784
+   ],
+   [
+    6512,
+    6768
+   ],
+   [
+    6480,
+    6768
+   ],
+   [
+    6480,
+    6752
+   ],
+   [
+    6448,
+    6752
+   ],
+   [
+    6448,
+    6768
+   ],
+   [
+    6416,
+    6768
+   ],
+   [
+    6416,
+    6752
+   ],
+   [
+    6400,
+    6752
+   ],
+   [
+    6400,
+    6720
+   ],
+   [
+    6384,
+    6720
+   ],
+   [
+    6384,
+    6704
+   ],
+   [
+    6368,
+    6704
+   ],
+   [
+    6368,
+    6672
+   ],
+   [
+    6352,
+    6672
+   ],
+   [
+    6352,
+    6656
+   ],
+   [
+    6336,
+    6656
+   ],
+   [
+    6336,
+    6624
+   ],
+   [
+    6304,
+    6624
+   ],
+   [
+    6304,
+    6592
+   ],
+   [
+    6288,
+    6592
+   ],
+   [
+    6288,
+    6576
+   ],
+   [
+    6272,
+    6576
+   ],
+   [
+    6272,
+    6560
+   ],
+   [
+    6208,
+    6560
+   ],
+   [
+    6208,
+    6544
+   ],
+   [
+    6176,
+    6544
+   ],
+   [
+    6176,
+    6528
+   ],
+   [
+    6160,
+    6528
+   ],
+   [
+    6160,
+    6512
+   ],
+   [
+    6144,
+    6512
+   ],
+   [
+    6144,
+    6496
+   ],
+   [
+    6128,
+    6496
+   ],
+   [
+    6128,
+    6480
+   ],
+   [
+    6112,
+    6480
+   ],
+   [
+    6112,
+    6464
+   ],
+   [
+    6096,
+    6464
+   ],
+   [
+    6096,
+    6448
+   ],
+   [
+    6080,
+    6448
+   ],
+   [
+    6080,
+    6416
+   ],
+   [
+    6064,
+    6416
+   ],
+   [
+    6064,
+    6400
+   ],
+   [
+    6048,
+    6400
+   ],
+   [
+    6048,
+    6384
+   ],
+   [
+    6032,
+    6384
+   ],
+   [
+    6032,
+    6352
+   ],
+   [
+    6016,
+    6352
+   ],
+   [
+    6016,
+    6320
+   ],
+   [
+    6000,
+    6320
+   ]
+  ],
+  "why": "the block-out's ring, on 16 px steps; the lagoon is the notch through the breach",
+  "lagoon": "the drowned crater inside the ring's notch, breached to the south (x 6740-6830): sheltered water for the ferry"
+ },
+ "tiers": [
+  {
+   "id": "rainforest",
+   "tier": 1,
+   "why": "the crater ring's north and east bodies: rainforest on the old ash",
+   "outline": [
+    [
+     6624,
+     6136
+    ],
+    [
+     6736,
+     6136
+    ],
+    [
+     6736,
+     6144
+    ],
+    [
+     6760,
+     6144
+    ],
+    [
+     6760,
+     6136
+    ],
+    [
+     6912,
+     6136
+    ],
+    [
+     6912,
+     6144
+    ],
+    [
+     6936,
+     6144
+    ],
+    [
+     6936,
+     6136
+    ],
+    [
+     7088,
+     6136
+    ],
+    [
+     7088,
+     6144
+    ],
+    [
+     7112,
+     6144
+    ],
+    [
+     7112,
+     6136
+    ],
+    [
+     7136,
+     6136
+    ],
+    [
+     7136,
+     6200
+    ],
+    [
+     7224,
+     6200
+    ],
+    [
+     7224,
+     6440
+    ],
+    [
+     6976,
+     6440
+    ],
+    [
+     6976,
+     6384
+    ],
+    [
+     6984,
+     6384
+    ],
+    [
+     6984,
+     6360
+    ],
+    [
+     6976,
+     6360
+    ],
+    [
+     6976,
+     6248
+    ],
+    [
+     6624,
+     6248
+    ]
+   ]
+  },
+  {
+   "id": "headwaters",
+   "tier": 2,
+   "why": "the east body rises to the headwaters under the crater rim",
+   "outline": [
+    [
+     7008,
+     6176
+    ],
+    [
+     7032,
+     6176
+    ],
+    [
+     7032,
+     6184
+    ],
+    [
+     7056,
+     6184
+    ],
+    [
+     7056,
+     6176
+    ],
+    [
+     7192,
+     6176
+    ],
+    [
+     7192,
+     6360
+    ],
+    [
+     7008,
+     6360
+    ],
+    [
+     7008,
+     6224
+    ],
+    [
+     7016,
+     6224
+    ],
+    [
+     7016,
+     6200
+    ],
+    [
+     7008,
+     6200
+    ]
+   ]
+  },
+  {
+   "id": "crater_rim",
+   "tier": 3,
+   "why": "the old crater's rim, the isle's top, its pool held in the cup",
+   "outline": [
+    [
+     7056,
+     6184
+    ],
+    [
+     7168,
+     6184
+    ],
+    [
+     7168,
+     6248
+    ],
+    [
+     7056,
+     6248
+    ]
+   ]
+  }
+ ],
+ "faces": {
+  "_about": "Coast biome faces (to-all-reuse-rule): the isle's own basalt and ash banks under turf and rainforest, 32 px a tier, south faces only; sea cliffs where a tier meets the sea, on the cliff core when it lands (to-all-kit-freeze).",
+  "between_tiers": {
+   "height": 32,
+   "material": "ash and basalt under rainforest"
+  },
+  "sea_cliffs": {
+   "height": "32 to 96",
+   "material": "basalt",
+   "kit": "cliff_core"
+  }
+ },
+ "water": [
+  {
+   "id": "crater_pool",
+   "kind": "pool",
+   "closed": true,
+   "tier": 3,
+   "points": [
+    [
+     7120,
+     6192
+    ],
+    [
+     7152,
+     6192
+    ],
+    [
+     7152,
+     6200
+    ],
+    [
+     7160,
+     6200
+    ],
+    [
+     7160,
+     6224
+    ],
+    [
+     7152,
+     6224
+    ],
+    [
+     7152,
+     6232
+    ],
+    [
+     7120,
+     6232
+    ],
+    [
+     7120,
+     6224
+    ],
+    [
+     7112,
+     6224
+    ],
+    [
+     7112,
+     6200
+    ],
+    [
+     7120,
+     6200
+    ]
+   ],
+   "why": "rain held in the old crater's cup on the rim"
+  },
+  {
+   "id": "crater_stream",
+   "kind": "stream",
+   "width": 16,
+   "points": [
+    [
+     7144,
+     6216
+    ],
+    [
+     7144,
+     6280
+    ],
+    [
+     7192,
+     6280
+    ],
+    [
+     7192,
+     6392
+    ],
+    [
+     7192,
+     6472
+    ],
+    [
+     7200,
+     6472
+    ],
+    [
+     7200,
+     6600
+    ]
+   ],
+   "falls": [
+    [
+     7144,
+     6248,
+     32
+    ],
+    [
+     7192,
+     6360,
+     32
+    ],
+    [
+     7192,
+     6440,
+     32
+    ]
+   ],
+   "why": "the pool spills south over the rim (the upper fall), across the headwaters and down the east body's faces into Black-sand Cove and the sea"
+  },
+  {
+   "id": "rainforest_stream",
+   "kind": "stream",
+   "width": 16,
+   "points": [
+    [
+     6784,
+     6152
+    ],
+    [
+     6784,
+     6248
+    ],
+    [
+     6784,
+     6312
+    ]
+   ],
+   "falls": [
+    [
+     6784,
+     6248,
+     32
+    ]
+   ],
+   "why": "a spring under the rainforest's canopy: the lower fall drops it into the lagoon a few steps from the landing"
+  }
+ ],
+ "crossings": [
+  {
+   "kind": "footbridge",
+   "at": [
+    6784,
+    6290
+   ],
+   "over": "rainforest_stream",
+   "on": "isle_loop",
+   "span": 24
+  },
+  {
+   "kind": "stepping_stones",
+   "at": [
+    6784,
+    6176
+   ],
+   "over": "rainforest_stream",
+   "on": "isle_loop",
+   "span": 24
+  }
+ ],
+ "structures": [
+  {
+   "kind": "pier",
+   "from": [
+    6496,
+    6304
+   ],
+   "to": [
+    6496,
+    6416
+   ],
+   "width": 32,
+   "why": "the ferry from Driftwood (W4) comes in through the breach and ties up in the lagoon's calm"
+  },
+  {
+   "kind": "boathouse",
+   "at": [
+    6640,
+    6328
+   ],
+   "why": "at the lagoon's edge, its boat doors over the water, a slipway (#134)"
+  }
+ ],
+ "routes": [
+  {
+   "id": "shell_bar",
+   "kind": "bar",
+   "width": 48,
+   "owner_note": "lane G's route (lib/world-routes.ts, shell-bar), painted here to G's line; widths 40 to 56 along it",
+   "points": [
+    [
+     7000,
+     5792
+    ],
+    [
+     6968,
+     5792
+    ],
+    [
+     6936,
+     5792
+    ],
+    [
+     6904,
+     5792
+    ],
+    [
+     6896,
+     5792
+    ],
+    [
+     6896,
+     5824
+    ],
+    [
+     6896,
+     5856
+    ],
+    [
+     6896,
+     5888
+    ],
+    [
+     6896,
+     5920
+    ],
+    [
+     6896,
+     5952
+    ],
+    [
+     6896,
+     5960
+    ],
+    [
+     6864,
+     5960
+    ],
+    [
+     6832,
+     5960
+    ],
+    [
+     6808,
+     5960
+    ],
+    [
+     6808,
+     5992
+    ],
+    [
+     6808,
+     6024
+    ],
+    [
+     6808,
+     6032
+    ],
+    [
+     6776,
+     6032
+    ],
+    [
+     6744,
+     6032
+    ],
+    [
+     6720,
+     6032
+    ],
+    [
+     6720,
+     6064
+    ],
+    [
+     6720,
+     6080
+    ],
+    [
+     6704,
+     6080
+    ]
+   ],
+   "widths": [
+    [
+     6896,
+     5888,
+     56
+    ],
+    [
+     6808,
+     6000,
+     56
+    ],
+    [
+     6720,
+     6064,
+     40
+    ]
+   ]
+  }
+ ],
+ "trods": [
+  {
+   "id": "landing_way",
+   "why": "from the Shell Bar's landfall round the rainforest's west end down to Lagoon Landing",
+   "width": 32,
+   "points": [
+    [
+     6704,
+     6080
+    ],
+    [
+     6600,
+     6080
+    ],
+    [
+     6600,
+     6176
+    ],
+    [
+     6576,
+     6176
+    ],
+    [
+     6576,
+     6272
+    ]
+   ]
+  },
+  {
+   "id": "isle_loop",
+   "why": "the isle's loop (plan 8.4, check 18): along the lagoon's north and east shores to Black-sand Cove, up the east body to the headwaters, back across the rainforest past the giant tree and down to the lagoon",
+   "width": 24,
+   "points": [
+    [
+     6576,
+     6272
+    ],
+    [
+     6576,
+     6296
+    ],
+    [
+     6688,
+     6296
+    ],
+    [
+     6688,
+     6288
+    ],
+    [
+     6800,
+     6288
+    ],
+    [
+     6800,
+     6296
+    ],
+    [
+     6952,
+     6296
+    ],
+    [
+     6952,
+     6400
+    ],
+    [
+     6944,
+     6400
+    ],
+    [
+     6944,
+     6488
+    ],
+    [
+     7024,
+     6488
+    ],
+    [
+     7024,
+     6344
+    ],
+    [
+     7104,
+     6344
+    ],
+    [
+     7168,
+     6344
+    ],
+    [
+     7168,
+     6424
+    ],
+    [
+     7080,
+     6424
+    ],
+    [
+     6992,
+     6424
+    ],
+    [
+     6992,
+     6312
+    ],
+    [
+     6992,
+     6200
+    ],
+    [
+     6880,
+     6200
+    ],
+    [
+     6880,
+     6176
+    ],
+    [
+     6736,
+     6176
+    ],
+    [
+     6736,
+     6288
+    ]
+   ]
+  },
+  {
+   "id": "west_arm",
+   "why": "down the west arm, under the palms, to the turtle beach on its outer shore",
+   "width": 24,
+   "dead_end": "view",
+   "points": [
+    [
+     6576,
+     6272
+    ],
+    [
+     6448,
+     6272
+    ],
+    [
+     6448,
+     6440
+    ],
+    [
+     6400,
+     6440
+    ],
+    [
+     6400,
+     6600
+    ],
+    [
+     6368,
+     6600
+    ],
+    [
+     6368,
+     6640
+    ]
+   ]
+  },
+  {
+   "id": "crater_spur",
+   "why": "up the crater's rim to the pool: a view over the isle and the lagoon (a pocket)",
+   "width": 24,
+   "dead_end": "view",
+   "points": [
+    [
+     7104,
+     6344
+    ],
+    [
+     7104,
+     6280
+    ],
+    [
+     7096,
+     6280
+    ],
+    [
+     7096,
+     6216
+    ]
+   ]
+  },
+  {
+   "id": "tree_pocket",
+   "why": "a few steps off the loop to a bench under the giant tree (a pocket)",
+   "width": 24,
+   "dead_end": "bench",
+   "points": [
+    [
+     6840,
+     6176
+    ],
+    [
+     6840,
+     6152
+    ],
+    [
+     6904,
+     6152
+    ]
+   ]
+  },
+  {
+   "id": "sea_cave",
+   "why": "along the cove's black sand to the sea cave in the basalt arm (a pocket's story detail)",
+   "width": 24,
+   "dead_end": "story",
+   "points": [
+    [
+     6944,
+     6488
+    ],
+    [
+     6944,
+     6568
+    ],
+    [
+     6888,
+     6568
+    ],
+    [
+     6888,
+     6664
+    ]
+   ]
+  }
+ ],
+ "stairs": [
+  {
+   "id": "cove_stair",
+   "on": "isle_loop",
+   "at": [
+    7024,
+    6456
+   ],
+   "from_tier": 0,
+   "to_tier": 1,
+   "width": 40,
+   "kind": "basalt"
+  },
+  {
+   "id": "headwaters_stair",
+   "on": "isle_loop",
+   "at": [
+    7024,
+    6376
+   ],
+   "from_tier": 1,
+   "to_tier": 2,
+   "width": 40,
+   "kind": "basalt"
+  },
+  {
+   "id": "rim_stair",
+   "on": "crater_spur",
+   "at": [
+    7104,
+    6264
+   ],
+   "from_tier": 2,
+   "to_tier": 3,
+   "width": 40,
+   "kind": "basalt"
+  },
+  {
+   "id": "fern_stair",
+   "on": "isle_loop",
+   "at": [
+    7168,
+    6376
+   ],
+   "from_tier": 2,
+   "to_tier": 1,
+   "width": 40,
+   "kind": "timber"
+  },
+  {
+   "id": "lagoon_stair",
+   "on": "isle_loop",
+   "at": [
+    6736,
+    6264
+   ],
+   "from_tier": 1,
+   "to_tier": 0,
+   "width": 40,
+   "kind": "timber"
+  }
+ ],
+ "places": [
+  {
+   "id": "lagoon_landing",
+   "kind": "hamlet",
+   "at": [
+    6560,
+    6256
+   ],
+   "why": "the isle's one hamlet round the pier, sheltered by the crater ring"
+  },
+  {
+   "id": "lagoon_pier",
+   "kind": "stop",
+   "at": [
+    6496,
+    6304
+   ],
+   "walk_s": 0,
+   "moved_from": [
+    6480,
+    6150
+   ]
+  },
+  {
+   "id": "boathouse",
+   "kind": "landmark",
+   "at": [
+    6640,
+    6328
+   ],
+   "walk_s": 5
+  },
+  {
+   "id": "lower_fall",
+   "kind": "waterfall",
+   "at": [
+    6784,
+    6256
+   ],
+   "walk_s": 10
+  },
+  {
+   "id": "turtle_beach",
+   "kind": "beach",
+   "at": [
+    6368,
+    6648
+   ],
+   "walk_s": 16,
+   "why": "the west arm's outer shore: turtles come ashore to lay"
+  },
+  {
+   "id": "sea_cave",
+   "kind": "cave",
+   "at": [
+    6880,
+    6680
+   ],
+   "walk_s": 18,
+   "why": "the sea has hollowed the basalt arm"
+  },
+  {
+   "id": "giant_tree",
+   "kind": "tree",
+   "at": [
+    6904,
+    6152
+   ],
+   "walk_s": 20,
+   "why": "the rainforest's oldest tree, on the crater's fertile ash"
+  },
+  {
+   "id": "rain_shelter",
+   "kind": "shelter",
+   "at": [
+    7064,
+    6328
+   ],
+   "walk_s": 27
+  },
+  {
+   "id": "upper_fall",
+   "kind": "waterfall",
+   "at": [
+    7144,
+    6256
+   ],
+   "walk_s": 27
+  },
+  {
+   "id": "crater_pool",
+   "kind": "pool",
+   "at": [
+    7136,
+    6212
+   ],
+   "walk_s": 28
+  },
+  {
+   "id": "black_sand_cove",
+   "kind": "cove",
+   "at": [
+    7040,
+    6520
+   ],
+   "why": "basalt from the crater weathered to black sand, the basalt arm and the sea stack"
+  },
+  {
+   "id": "sea_stack",
+   "kind": "landmark",
+   "at": [
+    7232,
+    6640
+   ],
+   "why": "a basalt column the sea cut off the arm"
+  },
+  {
+   "id": "shell_bar_islet",
+   "kind": "islet",
+   "at": [
+    6880,
+    5904
+   ],
+   "why": "the Shell Bar runs over it: tide pools, terns nesting"
+  }
+ ],
+ "named": [],
+ "pockets": [
+  {
+   "holds": "a view from the crater pool's rim over the isle and the lagoon",
+   "at": [
+    7096,
+    6216
+   ],
+   "trod": "crater_spur"
+  },
+  {
+   "holds": "a bench under the giant tree",
+   "at": [
+    6904,
+    6152
+   ],
+   "trod": "tree_pocket"
+  },
+  {
+   "holds": "a story detail in the sea cave: a smuggler's old lamp and a carved tally",
+   "at": [
+    6888,
+    6664
+   ],
+   "trod": "sea_cave"
+  }
+ ],
+ "egg_spots": [
+  {
+   "what": "the wreck on the Shell Bar",
+   "at": [
+    6930,
+    5870
+   ],
+   "keep_clear_r": 32
+  }
+ ],
+ "markers": [
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    6552,
+    6096
+   ],
+   "moved_from": [
+    6472,
+    6096
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6576,
+    6104
+   ],
+   "moved_from": [
+    6584,
+    6104
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6536,
+    6152
+   ],
+   "moved_from": [
+    6488,
+    6120
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    6552,
+    6120
+   ],
+   "moved_from": [
+    6544,
+    6120
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6648,
+    6128
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6532,
+    6168
+   ],
+   "moved_from": [
+    6512,
+    6144
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6552,
+    6160
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6456,
+    6224
+   ],
+   "moved_from": [
+    6456,
+    6176
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6440,
+    6228
+   ],
+   "moved_from": [
+    6440,
+    6208
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6688,
+    6200
+   ],
+   "moved_from": [
+    6680,
+    6208
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6696,
+    6216
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6552,
+    6232
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6552,
+    6252
+   ],
+   "moved_from": [
+    6568,
+    6264
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6672,
+    6248
+   ],
+   "moved_from": [
+    6672,
+    6264
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6468,
+    6292
+   ],
+   "moved_from": [
+    6464,
+    6280
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6484,
+    6292
+   ],
+   "moved_from": [
+    6480,
+    6280
+   ]
+  },
+  {
+   "t": "A",
+   "what": "terns",
+   "at": [
+    6951,
+    5828
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6856,
+    5848
+   ],
+   "moved_from": [
+    6906,
+    5855
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6864,
+    5892
+   ],
+   "moved_from": [
+    6871,
+    5894
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6826,
+    5927
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6840,
+    6020
+   ],
+   "moved_from": [
+    6827,
+    6023
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    6788,
+    6064
+   ],
+   "moved_from": [
+    6790,
+    6056
+   ]
+  },
+  {
+   "t": "A",
+   "what": "terns",
+   "at": [
+    6688,
+    6032
+   ],
+   "moved_from": [
+    6696,
+    6033
+   ]
+  }
+ ],
+ "obstacles": [],
+ "set_pieces": [],
+ "edges": [
+  {
+   "side": "all round",
+   "layers": "none: the sea is the edge, surf on every shore; rocks and driftwood on the beaches; past the box, the open sea is lane G's (g-to-all-edges 4)",
+   "beyond": "the seven other isles on the horizon, drawn and never walked: about (5250, 6250), (4050, 6120), (7850, 6450), (8700, 6650), (4650, 6650), (9600, 6500)"
+  }
+ ],
+ "thresholds": [
+  {
+   "id": "shell_bar",
+   "at": [
+    6888,
+    5888
+   ],
+   "route": "shell_bar",
+   "sides": {
+    "headland": "claude-e",
+    "isles": "claude-c"
+   },
+   "band": "sand, meadow, field -> meadow, sand, field2",
+   "landmark": {
+    "what": "the wreck",
+    "at": [
+     6930,
+     5870
+    ]
+   },
+   "residents": [
+    "cocklers walking out at low tide",
+    "seals hauled out on the bar",
+    "terns nesting on the islet"
+   ],
+   "radiates_from": "the sea"
+  }
+ ],
+ "residents": [
+  {
+   "who": "ferryman",
+   "at": [
+    6520,
+    6296
+   ],
+   "note": "at the pier"
+  },
+  {
+   "who": "boatwoman",
+   "at": [
+    6664,
+    6312
+   ],
+   "note": "at the boathouse"
+  },
+  {
+   "who": "naturalist",
+   "at": [
+    6856,
+    6152
+   ],
+   "note": "under the giant tree"
+  },
+  {
+   "who": "beachcomber",
+   "at": [
+    6336,
+    6704
+   ],
+   "note": "on the turtle beach"
+  },
+  {
+   "who": "cocklers",
+   "at": [
+    6864,
+    5944
+   ],
+   "note": "on the Shell Bar at low tide"
+  }
+ ],
+ "ground": {
+  "_about": "Ground kinds by place, for the painter (the isles' own palette: lagoon teal, white and black sand, rainforest greens; house-style accents lagoon and basalt).",
+  "shell_bar": "wet rippled sand, shell banks, tide pools on the islet, terns' scrapes",
+  "landing": "pale coral sand and short turf round the pier, boats drawn up, nets drying",
+  "west_arm": "white sand under coconut palms and pandanus, sea grape, the turtle beach's open sand",
+  "rainforest": "dark loam under the canopy, ferns, roots, monstera, banana and tree ferns, moss on stones",
+  "headwaters": "tree ferns and moss on basalt, the stream in rock pools",
+  "crater_rim": "basalt and ash with moss and low shrubs, the pool in its cup",
+  "black_sand_cove": "black basalt sand, the basalt arm's columns, rock pools, the sea stack"
+ }
+}
