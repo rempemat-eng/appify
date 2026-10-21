@@ -1,0 +1,879 @@
+{
+  "version": 1,
+  "status": "Proposal by Claude J, 21 Oct. Data only: nothing reads it at run time until the wiring steps in docs/vision/characters/animation.md land. No game rule depends on it.",
+  "units": {
+    "world": "Positions, heights and cells are in world px (1x art px). An adult is 25 world px; a cell is 8 world px.",
+    "art": "Art px = world px x density. The rig authors at density 2 (an adult about 50 art px, 16 px cells).",
+    "rig": "Offsets (dy, dx) are in rig px, the art px at density 2. At density d they become round(value x d / 2); at density 1 a 1 rig px nudge becomes 0 or 1.",
+    "ms": "Frame times are real milliseconds at normal speed."
+  },
+  "densities": [1, 1.5, 2],
+  "authorDensity": 2,
+  "facings": ["S", "N", "E", "W"],
+  "facingRules": {
+    "drawnNotMirrored": "W is drawn, never mirrored: the light comes from the upper left in every facing (house-style 3). A mirrored E would put the lit side on the right.",
+    "fallback": "When a state is not drawn in the requested facing, it is shown in the first facing it has (react and nap turn the character to face S, towards the player)."
+  },
+  "phases": {
+    "anticipate": "the wind-up: a crouch, a lean or a breath in, against the coming move",
+    "act": "the move itself",
+    "settle": "overshoot and recovery back to a held pose",
+    "hold": "a looping or held pose"
+  },
+  "rules": [
+    "Every state a character starts on its own (walk, react, nap, attack, cast, guard, victory) has an anticipate frame and ends in a settle frame or a hold. States that happen to it (hit, faint) begin with act.",
+    "Animation never delays, gates or changes a game callback. The game's timeline leads: when an event arrives, the new state starts at once and the old one is cut.",
+    "Effects are finite: each has a frame count and plays once, or loops only while its state is on screen and active. Nothing loops while the screen is inactive.",
+    "Every state has a reduced-motion variant: no loops, no translation, no flashes; a held still or a cut.",
+    "A frame that is not drawn in a facing is a validation error, never a silent mirror."
+  ],
+  "walk": {
+    "speedWorldPerSec": 40,
+    "strideWorld": 24,
+    "note": "One walk cycle (two steps, six frames) covers 24 world px, so at the companion's 40 px/s a frame lasts 100 ms. Faster or slower walks scale the frame time (frameMs = 1000 x strideWorld / (speed x frames)) so the feet never slide."
+  },
+  "cells": {
+    "folk": {
+      "w": 32,
+      "h": 36,
+      "anchor": [16, 33],
+      "note": "a 24 to 26 px folk plus a raised arm, bow or bell (fights.md 6)"
+    },
+    "folkSmall": {
+      "w": 28,
+      "h": 30,
+      "anchor": [14, 27],
+      "note": "Puffcap, Puddle and Mote (15 to 18 px), with room for a hop"
+    },
+    "folkLarge": {
+      "w": 40,
+      "h": 40,
+      "anchor": [20, 37],
+      "note": "Cairn (29 px) and Tuff (30 px wide)"
+    },
+    "familiar": {
+      "w": 16,
+      "h": 16,
+      "anchor": [8, 14],
+      "note": "the Grassling at about 12 world px (24 art px at 2x), and befriended visitors"
+    },
+    "resident": {
+      "w": 20,
+      "h": 30,
+      "anchor": [10, 27],
+      "note": "adults 24 to 26 px; children fit too"
+    }
+  },
+  "sheet": {
+    "format": "One PNG per character, set and density, a grid of cells `columns` wide, frames in the order the manifest lists them. Nearest-neighbour only. Bundled with import (native-readiness): art/characters/<id>/<set>@<density>x.png plus a generated lib/character-sheets.ts index.",
+    "columns": 8,
+    "maxSidePx": 2048,
+    "manifestPerFrame": [
+      "pose",
+      "facing",
+      "cell index",
+      "anchor (foot)",
+      "head anchor (hat)",
+      "eyes anchor (blink, sleep)",
+      "hand anchor (effects spawn)",
+      "perch anchor (familiar on the shoulder, fight set only)"
+    ],
+    "shadow": "Not baked in. The renderer derives each frame's cast shadow from its silhouette (thrown down and to the right, house-style 6) and steps the ground two tones down under it, as the ground's own shadows do, plus the contact line. Open question for Claude A: a 1-bit shadow mask per frame in the sheet, or computed once at load."
+  },
+  "memoryBudgetBytes": {
+    "worldScreen": 4194304,
+    "fightScreen": 3145728,
+    "note": "Decoded RGBA at density 2. A world screen holds the player's folk (world set), the familiar (world set) and up to six residents; a fight holds two fight sets, two perched familiars and the effects."
+  },
+  "poses": {
+    "idle_a": "standing, breath out, weight on both feet; personality in the stance",
+    "idle_b": "breath in: chest and head up 1 rig px, arms out a hair",
+    "blink": "idle_a with the eyes shut (an overlay painted over the eyes anchor)",
+    "fidget_a": "anticipate the character's own beat (each folk's sheet names it)",
+    "fidget_b": "the beat, first half",
+    "fidget_c": "the beat, second half",
+    "fidget_d": "settling back towards idle_a",
+    "walk_1": "contact, left foot forward",
+    "walk_2": "down: weight sinks onto the left foot, body 1 rig px lower",
+    "walk_3": "passing: right foot passes, body at its highest, head a frame behind",
+    "walk_4": "contact, right foot forward",
+    "walk_5": "down onto the right foot",
+    "walk_6": "passing, left foot",
+    "react_a": "anticipate: crouch, eyes squeezed, 2 rig px lower",
+    "react_b": "act: spring up, arms out",
+    "react_c": "act: the happy apex, the character's own gesture",
+    "react_d": "settle: land, a small squash",
+    "nap_down_a": "anticipate: a yawn and a stretch",
+    "nap_down_b": "act: sitting down",
+    "nap_down_c": "settle: lying curled, eyes shut",
+    "nap_a": "asleep, breath out",
+    "nap_b": "asleep, breath in (1 rig px rise at the shoulder)",
+    "nap_up_a": "anticipate: stirring, an ear or a hand moves",
+    "nap_up_b": "act: sitting up",
+    "nap_up_c": "settle: a standing stretch",
+    "ready_a": "fight stance, breath out",
+    "ready_b": "fight stance, breath in",
+    "windup": "anticipate the strike: weight back, weapon drawn",
+    "strike_a": "the strike, travelling",
+    "strike_b": "the strike at full reach: the impact frame the timed press keys on",
+    "cast_a": "anticipate the cast: gathering, the trade's tool raised",
+    "cast_b": "the cast released: the effect spawns from the hand anchor",
+    "guard": "braced behind arm, shield, wing or shell",
+    "hit": "knocked back: head and shoulders thrown away from the foe, eyes shut",
+    "sit": "sits down for a breather (the kind faint: no one falls over)",
+    "cheer_a": "a small hop, one arm up",
+    "cheer_b": "both arms up, at the top",
+    "talk_a": "a resident speaking: head tilted, hand raised",
+    "talk_b": "the other beat of speech",
+    "perch_a": "the familiar on the folk's shoulder, breath out",
+    "perch_b": "perched, breath in",
+    "cling": "clinging tight when the folk is hit, eyes shut",
+    "perch_cheer": "perched, cheering",
+    "perch_cast_a": "anticipate the rested special",
+    "perch_cast_b": "the special released",
+    "hop_1": "familiar hop, crouch",
+    "hop_2": "familiar hop, rising",
+    "hop_3": "familiar hop, airborne",
+    "hop_4": "familiar hop, landing",
+    "curl_a": "familiar curled against the folk, asleep",
+    "curl_b": "curled, breath in"
+  },
+  "kinds": {
+    "folk": {
+      "sets": {
+        "world": {
+          "idle": {
+            "facings": ["S", "N", "E", "W"],
+            "loop": true,
+            "frames": [
+              { "pose": "idle_a", "ms": 900, "phase": "hold" },
+              { "pose": "idle_b", "ms": 700, "phase": "hold" }
+            ],
+            "reduced": { "hold": 0 }
+          },
+          "blink": {
+            "facings": ["S", "E", "W"],
+            "overlay": "idle",
+            "everyMs": [3000, 5000],
+            "frames": [{ "pose": "blink", "ms": 140, "phase": "act" }],
+            "next": "idle",
+            "reduced": { "skip": true }
+          },
+          "fidget": {
+            "facings": ["S"],
+            "everyMs": [10000, 15000],
+            "frames": [
+              { "pose": "fidget_a", "ms": 220, "phase": "anticipate" },
+              { "pose": "fidget_b", "ms": 260, "phase": "act" },
+              { "pose": "fidget_c", "ms": 300, "phase": "act" },
+              { "pose": "fidget_d", "ms": 220, "phase": "settle" }
+            ],
+            "next": "idle",
+            "reduced": { "skip": true }
+          },
+          "walk_start": {
+            "facings": ["S", "N", "E", "W"],
+            "frames": [{ "pose": "walk_1", "ms": 80, "phase": "anticipate", "dy": 1 }],
+            "next": "walk",
+            "reduced": { "skip": true }
+          },
+          "walk": {
+            "facings": ["S", "N", "E", "W"],
+            "loop": true,
+            "speedSynced": true,
+            "frames": [
+              { "pose": "walk_1", "ms": 100, "phase": "act" },
+              { "pose": "walk_2", "ms": 100, "phase": "act", "effect": "step_dust" },
+              { "pose": "walk_3", "ms": 100, "phase": "act" },
+              { "pose": "walk_4", "ms": 100, "phase": "act" },
+              { "pose": "walk_5", "ms": 100, "phase": "act", "effect": "step_dust" },
+              { "pose": "walk_6", "ms": 100, "phase": "act" }
+            ],
+            "reduced": { "hold": 0, "pose": "idle_a" }
+          },
+          "walk_stop": {
+            "facings": ["S", "N", "E", "W"],
+            "frames": [
+              { "pose": "walk_4", "ms": 70, "phase": "settle", "dy": 1, "effect": "stop_dust" },
+              { "pose": "idle_a", "ms": 90, "phase": "settle" }
+            ],
+            "next": "idle",
+            "reduced": { "skip": true }
+          },
+          "react": {
+            "facings": ["S"],
+            "frames": [
+              { "pose": "react_a", "ms": 110, "phase": "anticipate" },
+              { "pose": "react_b", "ms": 90, "phase": "act", "dy": -4 },
+              { "pose": "react_c", "ms": 160, "phase": "act", "dy": -6, "effect": "heart" },
+              { "pose": "react_d", "ms": 180, "phase": "settle" }
+            ],
+            "next": "idle",
+            "reduced": { "hold": 2, "ms": 400, "effect": "heart" }
+          },
+          "nap_down": {
+            "facings": ["S"],
+            "frames": [
+              { "pose": "nap_down_a", "ms": 180, "phase": "anticipate" },
+              { "pose": "nap_down_b", "ms": 140, "phase": "act" },
+              { "pose": "nap_down_c", "ms": 160, "phase": "settle" }
+            ],
+            "next": "nap",
+            "maxTotalMs": 500,
+            "maxTotalReason": "garden-world's act('nap') calls onNap 500 ms after the tap; the sit-down must be done by then",
+            "reduced": { "skip": true }
+          },
+          "nap": {
+            "facings": ["S"],
+            "loop": true,
+            "frames": [
+              { "pose": "nap_a", "ms": 1400, "phase": "hold", "effect": "nap_z" },
+              { "pose": "nap_b", "ms": 1400, "phase": "hold" }
+            ],
+            "reduced": { "hold": 0, "effect": "nap_z" }
+          },
+          "nap_up": {
+            "facings": ["S"],
+            "frames": [
+              { "pose": "nap_up_a", "ms": 260, "phase": "anticipate" },
+              { "pose": "nap_up_b", "ms": 140, "phase": "act" },
+              { "pose": "nap_up_c", "ms": 300, "phase": "settle" }
+            ],
+            "next": "idle",
+            "reduced": { "skip": true }
+          }
+        },
+        "fight": {
+          "ready": {
+            "facings": ["E", "W"],
+            "loop": true,
+            "frames": [
+              { "pose": "ready_a", "ms": 520, "phase": "hold" },
+              { "pose": "ready_b", "ms": 480, "phase": "hold" }
+            ],
+            "reduced": { "hold": 0 }
+          },
+          "attack": {
+            "facings": ["E", "W"],
+            "frames": [
+              { "pose": "windup", "ms": 100, "phase": "anticipate" },
+              { "pose": "strike_a", "ms": 60, "phase": "act", "dx": 4 },
+              { "pose": "strike_b", "ms": 200, "phase": "act", "dx": 8, "impact": true },
+              { "pose": "ready_a", "ms": 160, "phase": "settle", "dx": 2 }
+            ],
+            "next": "ready",
+            "impactAtMs": 160,
+            "impactReason": "game-battle.tsx resolves one impact every 200 ms after setAttack; the impact frame must be on screen before the hit lands",
+            "reduced": {
+              "stills": [
+                { "frame": 0, "ms": 160 },
+                { "frame": 2, "ms": 300 }
+              ]
+            }
+          },
+          "cast": {
+            "facings": ["E", "W"],
+            "frames": [
+              { "pose": "cast_a", "ms": 140, "phase": "anticipate" },
+              {
+                "pose": "cast_b",
+                "ms": 260,
+                "phase": "act",
+                "impact": true,
+                "effect": "signature"
+              },
+              { "pose": "ready_a", "ms": 160, "phase": "settle" }
+            ],
+            "next": "ready",
+            "impactAtMs": 140,
+            "reduced": {
+              "stills": [
+                { "frame": 0, "ms": 140 },
+                { "frame": 1, "ms": 300 }
+              ]
+            }
+          },
+          "guard": {
+            "facings": ["E", "W"],
+            "frames": [
+              { "pose": "ready_a", "ms": 80, "phase": "anticipate", "dy": 1 },
+              { "pose": "guard", "ms": 360, "phase": "act", "effect": "braced" },
+              { "pose": "ready_a", "ms": 120, "phase": "settle" }
+            ],
+            "next": "ready",
+            "reduced": { "stills": [{ "frame": 1, "ms": 300 }] }
+          },
+          "hit": {
+            "facings": ["E", "W"],
+            "frames": [
+              { "pose": "hit", "ms": 220, "phase": "act", "dx": -4, "effect": "hit_spark" },
+              { "pose": "ready_a", "ms": 140, "phase": "settle", "dx": -1 }
+            ],
+            "next": "ready",
+            "reduced": { "stills": [{ "frame": 0, "ms": 300 }] }
+          },
+          "faint": {
+            "facings": ["E", "W"],
+            "frames": [
+              { "pose": "hit", "ms": 180, "phase": "act", "dx": -2 },
+              { "pose": "sit", "ms": 0, "phase": "hold", "dy": 0 }
+            ],
+            "reduced": { "hold": 1 }
+          },
+          "victory": {
+            "facings": ["E", "W"],
+            "repeats": 2,
+            "frames": [
+              { "pose": "ready_a", "ms": 120, "phase": "anticipate", "dy": 1 },
+              { "pose": "cheer_a", "ms": 160, "phase": "act", "dy": -3 },
+              { "pose": "cheer_b", "ms": 220, "phase": "act", "dy": -5 },
+              { "pose": "cheer_a", "ms": 160, "phase": "settle", "dy": -1 }
+            ],
+            "next": "ready",
+            "reduced": { "hold": 2, "ms": 600 }
+          }
+        }
+      },
+      "framesPlanned": 75,
+      "effectsPlanned": 14,
+      "budgetNote": "cast.md 5 planned about 110 body frames a folk; fights happen on the battle screen (fights.md, decided 21 Oct), so the world set needs no fight poses and the fight set needs only E and W: 51 world + 24 fight = 75. Effects: four signature cards at 3 to 4 frames each (fights.md 6)."
+    },
+    "familiar": {
+      "sets": {
+        "world": {
+          "idle": {
+            "facings": ["S", "N", "E", "W"],
+            "loop": true,
+            "frames": [
+              { "pose": "idle_a", "ms": 1000, "phase": "hold" },
+              { "pose": "idle_b", "ms": 800, "phase": "hold" }
+            ],
+            "reduced": { "hold": 0 }
+          },
+          "walk_start": {
+            "facings": ["S", "N", "E", "W"],
+            "frames": [{ "pose": "hop_1", "ms": 70, "phase": "anticipate" }],
+            "next": "walk",
+            "reduced": { "skip": true }
+          },
+          "walk": {
+            "facings": ["S", "N", "E", "W"],
+            "loop": true,
+            "speedSynced": true,
+            "frames": [
+              { "pose": "hop_1", "ms": 100, "phase": "anticipate" },
+              { "pose": "hop_2", "ms": 100, "phase": "act", "dy": -2 },
+              { "pose": "hop_3", "ms": 100, "phase": "act", "dy": -4 },
+              { "pose": "hop_4", "ms": 100, "phase": "settle" }
+            ],
+            "reduced": { "hold": 0, "pose": "idle_a" }
+          },
+          "walk_stop": {
+            "facings": ["S", "N", "E", "W"],
+            "frames": [{ "pose": "hop_4", "ms": 90, "phase": "settle" }],
+            "next": "idle",
+            "reduced": { "skip": true }
+          },
+          "react": {
+            "facings": ["S"],
+            "frames": [
+              { "pose": "react_a", "ms": 110, "phase": "anticipate" },
+              { "pose": "react_b", "ms": 200, "phase": "act", "dy": -4, "effect": "heart" },
+              { "pose": "react_c", "ms": 160, "phase": "settle" }
+            ],
+            "next": "idle",
+            "reduced": { "hold": 1, "ms": 400, "effect": "heart" }
+          },
+          "nap": {
+            "facings": ["S"],
+            "loop": true,
+            "frames": [
+              { "pose": "curl_a", "ms": 1600, "phase": "hold" },
+              { "pose": "curl_b", "ms": 1600, "phase": "hold" }
+            ],
+            "reduced": { "hold": 0 }
+          }
+        },
+        "fight": {
+          "perch": {
+            "facings": ["E", "W"],
+            "loop": true,
+            "frames": [
+              { "pose": "perch_a", "ms": 600, "phase": "hold" },
+              { "pose": "perch_b", "ms": 600, "phase": "hold" }
+            ],
+            "reduced": { "hold": 0 }
+          },
+          "cling": {
+            "facings": ["E", "W"],
+            "frames": [{ "pose": "cling", "ms": 360, "phase": "act" }],
+            "next": "perch",
+            "reduced": { "stills": [{ "frame": 0, "ms": 300 }] }
+          },
+          "cheer": {
+            "facings": ["E", "W"],
+            "frames": [
+              { "pose": "perch_a", "ms": 100, "phase": "anticipate", "dy": 1 },
+              { "pose": "perch_cheer", "ms": 400, "phase": "act", "dy": -2 },
+              { "pose": "perch_a", "ms": 120, "phase": "settle" }
+            ],
+            "next": "perch",
+            "reduced": { "stills": [{ "frame": 1, "ms": 400 }] }
+          },
+          "special": {
+            "facings": ["E", "W"],
+            "frames": [
+              { "pose": "perch_cast_a", "ms": 200, "phase": "anticipate" },
+              {
+                "pose": "perch_cast_b",
+                "ms": 400,
+                "phase": "act",
+                "impact": true,
+                "effect": "special"
+              },
+              { "pose": "perch_a", "ms": 160, "phase": "settle" }
+            ],
+            "next": "perch",
+            "reduced": { "stills": [{ "frame": 1, "ms": 400 }] }
+          }
+        }
+      },
+      "framesPlanned": 41,
+      "follow": {
+        "behindWorld": 14,
+        "lagMs": 250,
+        "note": "A step behind (Eastward's John and Sam): it starts walking 250 ms after the folk and stops 14 world px behind, on the side away from the camera's view line."
+      },
+      "growthStages": "The three growth stages are rig variants of the same poses (more leaves, a longer tail), never extra animation states. Only the current stage's sheet is loaded."
+    },
+    "visitor": {
+      "inherit": [{ "kind": "familiar" }],
+      "note": "A befriended visitor walking with you is drawn to the familiar's spec, so it can follow, nap and perch."
+    },
+    "resident": {
+      "sets": {
+        "world": {
+          "idle": {
+            "facings": ["S", "N", "E", "W"],
+            "loop": true,
+            "frames": [
+              { "pose": "idle_a", "ms": 1000, "phase": "hold" },
+              { "pose": "idle_b", "ms": 800, "phase": "hold" }
+            ],
+            "reduced": { "hold": 0 }
+          },
+          "walk": {
+            "facings": ["S", "N", "E", "W"],
+            "loop": true,
+            "speedSynced": true,
+            "frames": [
+              { "pose": "walk_1", "ms": 150, "phase": "act" },
+              { "pose": "walk_3", "ms": 150, "phase": "act" },
+              { "pose": "walk_4", "ms": 150, "phase": "act" },
+              { "pose": "walk_6", "ms": 150, "phase": "act" }
+            ],
+            "reduced": { "hold": 0, "pose": "idle_a" }
+          },
+          "talk": {
+            "facings": ["S"],
+            "repeats": 2,
+            "frames": [
+              { "pose": "talk_a", "ms": 300, "phase": "act" },
+              { "pose": "talk_b", "ms": 300, "phase": "act" }
+            ],
+            "next": "idle",
+            "reduced": { "hold": 0, "ms": 600 }
+          }
+        }
+      },
+      "framesPlanned": 26,
+      "note": "Four walk frames a facing (today's residents.py draws two). Frame times are given at 40 px/s and stretch with the resident's own pace (speedSynced)."
+    },
+    "rival": {
+      "inherit": [{ "kind": "resident" }, { "kind": "folk", "set": "fight", "facings": ["W"] }],
+      "framesPlanned": 38,
+      "note": "A rival is a resident with the folk fight set facing west only (fights.md: a quarter of a folk)."
+    }
+  },
+  "effects": {
+    "step_dust": {
+      "frames": 2,
+      "ms": [70, 90],
+      "layer": "ground",
+      "spawn": "foot",
+      "loop": false,
+      "reduced": "omit",
+      "when": "only on dry ground (path, sand, dirt); never on grass, snow or floors"
+    },
+    "stop_dust": {
+      "frames": 3,
+      "ms": [60, 80, 100],
+      "layer": "ground",
+      "spawn": "foot",
+      "loop": false,
+      "reduced": "omit"
+    },
+    "heart": {
+      "frames": 4,
+      "ms": [90, 120, 160, 200],
+      "layer": "over",
+      "spawn": "head",
+      "loop": false,
+      "reduced": "static"
+    },
+    "nap_z": {
+      "frames": 3,
+      "ms": [600, 600, 600],
+      "layer": "over",
+      "spawn": "head",
+      "loop": "whileState",
+      "reduced": "static",
+      "note": "Loops only while the nap state is on screen and the screen is active."
+    },
+    "hit_spark": {
+      "frames": 4,
+      "ms": [40, 50, 60, 70],
+      "layer": "over",
+      "spawn": "hand",
+      "loop": false,
+      "reduced": "omit"
+    },
+    "hit_flash": {
+      "frames": 1,
+      "ms": [34],
+      "layer": "palette",
+      "loop": false,
+      "reduced": "omit",
+      "note": "The character's own ramp stepped to tone 5 for one frame (on the palette), never a white overlay."
+    },
+    "braced": {
+      "frames": 3,
+      "ms": [60, 80, 120],
+      "layer": "over",
+      "spawn": "hand",
+      "loop": false,
+      "reduced": "static"
+    },
+    "ground_puff": {
+      "frames": 4,
+      "ms": [50, 60, 80, 100],
+      "layer": "ground",
+      "spawn": "foot",
+      "loop": false,
+      "reduced": "omit",
+      "note": "Tinted from the arena ground's ramp."
+    },
+    "timing_ring": {
+      "frames": 3,
+      "ms": [53, 53, 54],
+      "layer": "over",
+      "spawn": "target",
+      "loop": false,
+      "reduced": "static"
+    },
+    "signature": {
+      "frames": 4,
+      "ms": [80, 80, 100, 140],
+      "layer": "over",
+      "spawn": "hand",
+      "loop": false,
+      "reduced": "static",
+      "note": "Placeholder for the folk's own four card effects (3 to 4 frames each)."
+    },
+    "special": {
+      "frames": 6,
+      "ms": [80, 80, 100, 100, 120, 160],
+      "layer": "over",
+      "spawn": "perch",
+      "loop": false,
+      "reduced": "static",
+      "note": "One per family: SLEEP IT OFF, SECOND WIND, IN THE ZONE."
+    }
+  },
+  "machine": {
+    "events": {
+      "WALK_START": "a walk leg begins (garden-world walkTo, atlas-walk walkTo); carries the leg's facing",
+      "FACE": "a new leg turns the walker (runOnJS(setFacing)); carries the facing",
+      "ARRIVE": "the walk reached its target (arrived / arrive)",
+      "WALK_CANCEL": "the walk was interrupted (stopJourney, a new tap, leaving the screen)",
+      "REACT": "a tap, a pat or a garden response (patGuardian, respond)",
+      "IDLE_BEAT": "the component's own idle tick fired (today's yawn or look timer)",
+      "NAP_START": "the nap action began (act('nap'))",
+      "NAP_END": "the nap ended (wake)",
+      "FIGHT_ENTER": "the battle screen opened",
+      "CARD_ATTACK": "a damaging card resolves (setAttack)",
+      "CARD_CAST": "a signature or special card resolves",
+      "CARD_GUARD": "a guard card or DEEP BREATH resolves",
+      "TAKE_HIT": "an impact lands on this fighter (setHit)",
+      "KNOCKED_OUT": "hp reached 0 or the fight was lost",
+      "WIN": "the fight ended in this fighter's favour",
+      "FIGHT_EXIT": "the battle screen closed",
+      "SCREEN_INACTIVE": "the screen lost focus, the app went to the background or the component unmounted",
+      "SCREEN_ACTIVE": "the screen is active again"
+    },
+    "groups": {
+      "world": [
+        "idle",
+        "blink",
+        "fidget",
+        "walk_start",
+        "walk",
+        "walk_stop",
+        "react",
+        "nap_down",
+        "nap",
+        "nap_up",
+        "talk"
+      ],
+      "moving": ["walk_start", "walk"],
+      "napping": ["nap_down", "nap"],
+      "fight": [
+        "ready",
+        "attack",
+        "cast",
+        "guard",
+        "hit",
+        "faint",
+        "victory",
+        "perch",
+        "cling",
+        "cheer",
+        "special"
+      ]
+    },
+    "initial": "idle",
+    "transitions": [
+      {
+        "from": "napping",
+        "on": "WALK_START",
+        "to": "walk",
+        "note": "the game started a walk from a nap: no wake-up, so the feet never slide"
+      },
+      { "from": "napping", "on": "NAP_END", "to": "nap_up" },
+      {
+        "from": "napping",
+        "on": ["REACT", "IDLE_BEAT", "ARRIVE", "NAP_START", "FACE"],
+        "to": null,
+        "note": "ignored while asleep"
+      },
+      {
+        "from": "moving",
+        "on": "WALK_START",
+        "to": "same",
+        "note": "a new leg or a new target mid-walk keeps walking"
+      },
+      { "from": "world", "on": "WALK_START", "to": "walk_start" },
+      {
+        "from": "moving",
+        "on": "FACE",
+        "to": "same",
+        "note": "keeps the frame clock, changes the facing"
+      },
+      { "from": "moving", "on": "ARRIVE", "to": "walk_stop" },
+      { "from": "moving", "on": "WALK_CANCEL", "to": "walk_stop" },
+      {
+        "from": "moving",
+        "on": ["NAP_START", "REACT", "IDLE_BEAT"],
+        "to": null,
+        "note": "a stale nap or reaction never fires mid-walk (AGENTS.md: interrupted walks must not trigger stale navigation or naps)"
+      },
+      {
+        "from": "world",
+        "on": "ARRIVE",
+        "to": null,
+        "note": "an arrival with no walk under way is stale"
+      },
+      { "from": "world", "on": "FACE", "to": "same" },
+      { "from": "world", "on": "NAP_START", "to": "nap_down" },
+      { "from": "world", "on": "REACT", "to": "react" },
+      { "from": "world", "on": "IDLE_BEAT", "to": "fidget", "onlyFrom": ["idle"] },
+      { "from": "*", "on": "FIGHT_ENTER", "to": "ready" },
+      { "from": "fight", "on": "CARD_ATTACK", "to": "attack", "notFrom": ["faint"] },
+      { "from": "fight", "on": "CARD_CAST", "to": "cast", "notFrom": ["faint"] },
+      { "from": "fight", "on": "CARD_GUARD", "to": "guard", "notFrom": ["faint"] },
+      { "from": "fight", "on": "TAKE_HIT", "to": "hit", "notFrom": ["faint"] },
+      { "from": "fight", "on": "KNOCKED_OUT", "to": "faint", "notFrom": ["faint"] },
+      { "from": "fight", "on": "WIN", "to": "victory", "notFrom": ["faint"] },
+      { "from": "fight", "on": "FIGHT_EXIT", "to": "idle" },
+      { "from": "*", "on": "SCREEN_INACTIVE", "to": "paused" },
+      { "from": "*", "on": "SCREEN_ACTIVE", "to": "resumed" }
+    ],
+    "familiarMap": {
+      "note": "The familiar receives the folk's events and maps them to its own states; walk events arrive lagMs later.",
+      "ready": "perch",
+      "attack": "perch",
+      "cast": "perch",
+      "guard": "perch",
+      "hit": "cling",
+      "faint": "cling",
+      "victory": "cheer",
+      "walk_start": "walk_start",
+      "walk": "walk",
+      "walk_stop": "walk_stop",
+      "nap_down": "nap",
+      "nap": "nap",
+      "nap_up": "idle",
+      "react": "react",
+      "fidget": "idle",
+      "blink": "idle"
+    }
+  },
+  "cast": {
+    "folk": [
+      {
+        "id": "bramble",
+        "name": "Bramble",
+        "night": 1,
+        "heightWorld": 24,
+        "cell": "folk",
+        "home": "the valley",
+        "firstSix": true
+      },
+      {
+        "id": "puffcap",
+        "name": "Puffcap",
+        "night": 2,
+        "heightWorld": 17,
+        "cell": "folkSmall",
+        "home": "the valley",
+        "firstSix": true
+      },
+      {
+        "id": "velvet",
+        "name": "Velvet",
+        "night": 3,
+        "heightWorld": 23,
+        "cell": "folk",
+        "home": "the valley",
+        "firstSix": true
+      },
+      {
+        "id": "tally",
+        "name": "Tally",
+        "night": 4,
+        "heightWorld": 20,
+        "cell": "folk",
+        "home": "the Brackens",
+        "firstSix": true
+      },
+      {
+        "id": "tam",
+        "name": "Tam",
+        "night": 5,
+        "heightWorld": 19,
+        "cell": "folk",
+        "home": "the Frostline",
+        "firstSix": true
+      },
+      {
+        "id": "puddle",
+        "name": "Puddle",
+        "night": 6,
+        "heightWorld": 18,
+        "cell": "folkSmall",
+        "home": "the Lull",
+        "firstSix": true
+      },
+      {
+        "id": "cairn",
+        "name": "Cairn",
+        "night": 7,
+        "heightWorld": 29,
+        "cell": "folkLarge",
+        "home": "the woodland circle"
+      },
+      {
+        "id": "pendle",
+        "name": "Pendle",
+        "night": 8,
+        "heightWorld": 26,
+        "cell": "folk",
+        "home": "Cogsworth"
+      },
+      {
+        "id": "mirra",
+        "name": "Mirra",
+        "night": 9,
+        "heightWorld": 22,
+        "cell": "folk",
+        "home": "Sunstone"
+      },
+      {
+        "id": "ashe",
+        "name": "Ashe",
+        "night": 10,
+        "heightWorld": 26,
+        "cell": "folk",
+        "home": "the fire country"
+      },
+      {
+        "id": "tuff",
+        "name": "Tuff",
+        "night": 11,
+        "heightWorld": 22,
+        "widthWorld": 30,
+        "cell": "folkLarge",
+        "home": "the Tidebloom Isles"
+      },
+      {
+        "id": "nix",
+        "name": "Nix",
+        "night": 12,
+        "heightWorld": 25,
+        "cell": "folk",
+        "home": "Neon Harbour"
+      },
+      {
+        "id": "bunk",
+        "name": "Bunk",
+        "night": 13,
+        "heightWorld": 22,
+        "cell": "folk",
+        "home": "Halcyon Station"
+      },
+      {
+        "id": "mote",
+        "name": "Mote",
+        "night": 14,
+        "heightWorld": 15,
+        "cell": "folkSmall",
+        "home": "Lumen",
+        "floats": true
+      }
+    ],
+    "familiars": [
+      {
+        "id": "mossling",
+        "species": "BLOB",
+        "family": "REST",
+        "heightWorld": 12,
+        "cell": "familiar"
+      },
+      {
+        "id": "roamling",
+        "species": "RAT",
+        "family": "ROAM",
+        "heightWorld": 12,
+        "cell": "familiar"
+      },
+      {
+        "id": "pebbling",
+        "species": "CUBE",
+        "family": "FOCUS",
+        "heightWorld": 12,
+        "cell": "familiar"
+      }
+    ],
+    "visitors": [
+      "dozebud",
+      "mosspuff",
+      "lullapine",
+      "trailhop",
+      "burrbound",
+      "skyfern",
+      "inkling",
+      "pagemoth",
+      "lanternroot"
+    ]
+  }
+}
