@@ -11,7 +11,7 @@ function hashFiles(root, files) {
     const full = path.join(root, file),
       stat = fs.lstatSync(full);
     if (!stat.isFile()) throw new Error(`Not a regular tracked file: ${file}`);
-    hash.update(JSON.stringify([file, stat.mode & 0o777]));
+    hash.update(JSON.stringify([file, stat.mode & 0o777, stat.size]));
     hash.update(fs.readFileSync(full));
   }
   return hash.digest('hex');

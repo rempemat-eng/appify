@@ -59,6 +59,13 @@ async function main() {
       reference.outputDigest,
       'parallel output bytes/modes equal ordered cold output',
     );
+    assert.ok(
+      !fs.existsSync(path.join(root, '.cache/art-repro')),
+      'forced cold never publishes a certificate',
+    );
+    const seed = await checkArtParallel({ ...options, jobs: 2 });
+    assert.ok(seed.ok);
+    assert.equal(seed.cacheHit, false);
     const warm = await checkArtParallel({ ...options, jobs: 2 });
     assert.ok(warm.ok);
     assert.ok(warm.cacheHit);

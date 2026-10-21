@@ -17,7 +17,7 @@ ART_REPRO_JOBS=1 npm run check:art-repro -- --cold
 VERIFY_JOBS=1 npm run verify
 ```
 
-`--serial` is the original ordered regeneration guard in one disposable copy. `--cold` runs the isolated groups without trusting a prior certificate. `ART_REPRO_JOBS` and `VERIFY_JOBS` accept 1–32; neither changes the check list or production app. Cache files are local and are not committed or restored by CI.
+`--serial` is the original ordered regeneration guard in one disposable copy. `--cold` runs the isolated groups without reading or publishing a certificate, so it avoids scanning installed tools. A normal cache miss performs that scan before and after regeneration to seed a reusable certificate. `ART_REPRO_JOBS` and `VERIFY_JOBS` accept 1–32; neither changes the check list or production app. Cache files are local and are not committed or restored by CI. With `CI=true`, the CLI always takes the forced cold path, avoiding certificate overhead on fresh CI checkouts.
 
 ## Evidence at the implementation checkpoint
 

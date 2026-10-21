@@ -61,7 +61,7 @@
     "check:economy-sim": "node --import tsx scripts/economy-model.test.ts && npm run sim:economy -- --check",
     "verify:serial": "npm run check && npm run export:web && npm run export:ios",
     "check:parallel": "node scripts/run-verification.cjs --check-only",
-    "check:check-speed": "node scripts/check-runner.test.cjs && node scripts/art-repro-parallel.test.cjs"
+    "check:check-speed": "node scripts/check-runner.test.cjs && node scripts/art-repro-parallel.test.cjs && node scripts/art-repro-cache.test.cjs"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",

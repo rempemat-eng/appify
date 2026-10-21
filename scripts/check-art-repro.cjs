@@ -4,7 +4,7 @@ const os = require('node:os');
 const path = require('node:path');
 const { spawnSync, fork } = require('node:child_process');
 const { mapLimit, concurrency } = require('./check-runner.cjs');
-const { hashFiles, fingerprint } = require('./art-repro-cache.cjs');
+const { hashFiles, trackedFiles, fingerprint } = require('./art-repro-cache.cjs');
 
 const generators = [
   'garden',
@@ -60,15 +60,7 @@ function checkArtReproducibility({
   const gitEnv = { ...process.env };
   // Inherited Git context must not redirect the temporary add/diff operations
   // into a caller's index or object database.
-  for (const key of [
-    'GIT_DIR',
-    'GIT_WORK_TREE',
-    'GIT_INDEX_FILE',
-    'GIT_OBJECT_DIRECTORY',
-    'GIT_ALTERNATE_OBJECT_DIRECTORIES',
-    'GIT_COMMON_DIR',
-  ])
-    delete gitEnv[key];
+  for (const key of Object.keys(gitEnv)) if (key.startsWith('GIT_')) delete gitEnv[key];
   const env = {
     ...gitEnv,
     PYTHONDONTWRITEBYTECODE: '1',
@@ -224,9 +216,14 @@ async function checkArtParallel({
 }) {
   if (serial) return checkArtReproducibility({ root, log }); // Original full, ordered reference.
   jobs = concurrency(jobs);
-  const before = fingerprint({ root, tools });
+  // A forced cold run trusts/publishes no certificate and needs no tool-cache scan.
+  const coldFingerprint = () => {
+    const files = trackedFiles(root);
+    return { source: hashFiles(root, files) };
+  };
+  const before = cold ? coldFingerprint() : fingerprint({ root, tools });
   const cacheDir = path.join(root, '.cache', 'art-repro');
-  const cacheFile = path.join(cacheDir, `${before.key}.json`);
+  const cacheFile = cold ? null : path.join(cacheDir, `${before.key}.json`);
   let hit = false;
   if (!cold) {
     try {
@@ -247,8 +244,8 @@ async function checkArtParallel({
       result.status === 'fulfilled' ? result.value.failures : [String(result.reason)],
     )
     .concat(final.failures);
-  const after = fingerprint({ root, tools });
-  if (before.key !== after.key)
+  const after = cold ? coldFingerprint() : fingerprint({ root, tools });
+  if (before.source !== after.source || before.key !== after.key)
     failures.push('Source or installed tools changed during check; rerun');
   const changed = [
     ...new Set(results.flatMap((r) => r.value?.changed || []).concat(final.changed)),
@@ -257,7 +254,7 @@ async function checkArtParallel({
     ...new Set(results.flatMap((r) => r.value?.untracked || []).concat(final.untracked)),
   ].sort((a, b) => a.localeCompare(b));
   const ok = failures.length === 0;
-  if (ok) {
+  if (ok && !cold) {
     fs.mkdirSync(cacheDir, { recursive: true });
     const temp = `${cacheFile}.${process.pid}.tmp`;
     fs.writeFileSync(
@@ -265,8 +262,8 @@ async function checkArtParallel({
       JSON.stringify({ schema: 1, key: before.key, outputDigest: final.outputDigest }),
     );
     fs.renameSync(temp, cacheFile);
-  } else {
-    fs.rmSync(cacheFile, { force: true });
+  } else if (!ok) {
+    if (cacheFile) fs.rmSync(cacheFile, { force: true });
     for (const failure of failures) log(`FAIL: ${failure}`);
   }
   log(`${ok ? 'PASS' : 'FAIL'}: art reproducibility (${hit ? 'warm' : 'cold'}, ${jobs} jobs)`);
@@ -298,7 +295,7 @@ if (require.main === module) {
     } else
       checkArtParallel({
         root: path.resolve(__dirname, '..'),
-        cold: args.includes('--cold'),
+        cold: args.includes('--cold') || process.env.CI === 'true',
         serial: args.includes('--serial'),
       })
         .then((result) => {
