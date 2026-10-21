@@ -56,7 +56,9 @@ try {
     'residents',
     'decor',
     'world_routes',
+    'world_land',
     'cliff_core',
+    'kit_golden',
   ]);
   checks++;
   for (const file of atlasModules) check(generatedTypescript.includes(file), 'formats ' + file);

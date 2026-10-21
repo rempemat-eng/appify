@@ -1,0 +1,52 @@
+# Sunstone Reach and the fire country: the plans as data
+
+**Owner: Claude D** (lane D). The brief is `sunstone-basin-fire-country.md` (world plan v5.3, PR #96). Crew board note a-to-d-plans (21 Oct): while Matt judges the 2x pilot, lane D lays its regions out as data, in world px, so nothing here moves when the art's density changes (to-all-density).
+
+```
+python3 scripts/art/regions/sunstone_plan.py              # writes art/regions/sunstone.json and fire-country.json
+python3 scripts/art/regions/sunstone_plan.py --check      # rebuilds both and exits non-zero if the files differ
+python3 scripts/art/regions/sunstone_plan.py --draw OUT   # also draws them with region_plan.py (#174) when present
+```
+
+A run takes about three minutes. Nothing in the game reads the plans yet.
+
+## The two plans
+
+| Plan                | Box (world px)              | Holds                                                                                                                                                                       |
+| ------------------- | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `sunstone.json`     | x 0 to 4800, y 0 to 4320    | the steppe west of the Brackens gap, the Rift and Drover's bridge, the scrub and mesas, Palm Spring, Dust Gulch, the Lode, the Amber canyon, the salt lake, the Cinder Rise |
+| `fire-country.json` | x 0 to 5600, y 4000 to 5856 | Mount Ember, the ash fields, the chasm bridge, the Ember forge, Hearthold, Cinder Springs, Cinderwick, the dead forest, the Rift ferry, the Ash Coast's green shelf         |
+
+The boxes are the brief's, rounded to whole 32 px audit cells. Where they overlap (y 4000 to 4320) a thing belongs to the basin above y 4160 and to the fire country below.
+
+Both are in Claude F's schema (`docs/vision/region-plans.md`, `scripts/art/region_plan.py`) and pass its grid-rule check from #194 with no faults (the 240 px straight-run rule of #174, which #194 drops, still reports the routes' long runs until #194 lands). Beyond F's fields they carry what lane D's regions need:
+
+- **Tiers** are lane G's absolute world tiers (`base_tier` 0): 0 the sea and 1 the beach, 2 at the coast to 14 at the forge, 13 and 14 for the massif's crags and lane G's beyond in the basin, 15 and up for the caldera's lip and the upper cone (never walked). Outlines are in screen space on the 8 px grid, in straight runs along x and y that turn at cell boundaries (to-all-grid-2x); the painter rounds the corners (eastward-edges 1.5). A tier is a 32 px south face; west and east ends are side bands.
+- **Routes**: inside lane D's boxes the plan draws them (g-to-all-region-rule, 21 Oct 14:20); lane G meets them at the box edges at (4800, 3536), tier 4, and (5600, 4336), tier 3. The script reads G's lines from `lib/world-routes.ts` (`sunstone_routes.json` is its snapshot) and keeps them, except the Canyon Road after the chasm bridge and the Ember Way, which it redraws (`ROUTE_PLAN`), and sets every tier change itself. Lane G's side paths and pockets are trods (three pocket paths redrawn to fit, `POCKET_PATHS`); lane D adds the settlements' streets and lanes.
+- **Stairs**: every tier change sits on a north-south leg and rises northward (a stair cuts a south face: eastward-edges 6.1); the higher tier's rim lies 16 px north of the stair's point, and the ground either side keeps that rim. The land rises north to the massif and the volcano's seaward flank rises north to the crater, so the routes climb northward. The volcano's north flank rises southward, away from the camera, where no stair can climb, so the Canyon Road stays on the canyon floor's tier (7) from the canyon head's one stair to Hearthold's gate: it cuts through the Cinder Rise, runs along the cone's west foot, crosses the chasm bridge and comes down the rock's west side to the gate square. Hearthold climbs north from there in one-tier terraces 88 px deep (8 to 11), and the forge stair takes the caldera lip's wall to the forge (14). The Ember Way steps down south from the gate past Cinder Springs to Cinderwick (2). Lane G's side paths keep their route's tier with one stair where they rejoin on another; pocket paths and lane D's streets follow the ground, east-west legs level. No ramps (eastward-edges 6.3).
+- **Water and lava**: the Rift, the Amber, the Willow Run (sinking into its fan and rising at Palm Spring's pool), the Rift's tributaries, the salt lake, the orchard channels, the hot pools and the sea's shore; the crater, the old flow (from the summit's south-west breach, in the chasm the chasm bridge crosses), the young flow (from the south-east flank vent, with its fissure, spatter cone and lobes, crossed by the crust causeway), the parasitic cones and the Cinder Rise. Every line is on the soft grid.
+- **Places and areas**: the seven places with their rects; the screen areas on 32 px cells, keeping today's zone ids where a zone is kept or replaced (`gulch`, `oasis`, `scorch`, `caldera`, `hearthold`, `springs`), so saves, stands and missions carry over; the dune sea's edge and the salt pan are `walkable: false` (drawn, not walked).
+- **Stops, rails and the ring**: the Dust Gulch platform (`west`) and the forge cart bay (`lava`, stand `tunnel`); the desert line (in over the Rift's viaduct, one level crossing with the Drover's Road, to the platform) and the mine cart (the Lode past the salt lake to a tunnel under the caldera rim, after W6); today's caldera sparring ring moves to the forge yard. Each rail lists its crossings.
+- **Rest spots**: the viewpoints, wells, camps and shrines on the routes, the bench and view pockets, and a bench in each settlement.
+- **Named things, pockets, markers, egg spots**: all of the brief's, read from the brief by the script. Each one is moved to the nearest spot beside or a short way off its own route, on a tier top (never a face), clear of every path, stair, water, lava and rail, 12 to 16 px from the next thing, and 32 px clear of an egg spot; `moved_from` keeps the brief's point. Nothing is left unplaced.
+- **Set pieces** from the cliff core (#165) in each biome's own set (to-all-reuse-rule): stairs, ledges on the mesas, scree under the canyon walls and the massif's foot (`canyon`), boulders on the coast (`coast`), Hearthold's and the forge's stairs (`city`), and the ash biome's cinder cones, spatter cone, fumaroles and steam cave (marked `proposed`: the cliff core has no ash set yet).
+- **Clusters**: the places where atmosphere comes from grouped props (Claude B's cluster library, a-to-b-clusters), each with a recipe, its members by prop key, its light, a seed and why it is there (notes for now; each becomes `prop_clusters.py --place` output when Claude B's recipes land, #203): a steppe camp, the sheepfold, the wind pump stop, the oasis nook and orchard edge, the frontier street corner, the platform yard, the mine yard, canyon shade, the salt shore, the ash field, the fumarole field, the forge yard, the castle street, the springs bath, the black-sand shore, the dead-forest glade, the ferry landing, the coast meadow.
+- **Edges, thresholds, meets, residents, ground** as the brief's sections 3 and 6 give them; `overrides` and `open` (below).
+
+## How the ground is made
+
+The script lays a designed field on 8 px cells and traces it: the plateau rising north to the massif in bands of whole rows and falling east to the Rift in bands of whole columns (contours along x and y, never diagonal), the salt lake's pan in nested rectangles, the coastal shelf stepping down to the sea, Mount Ember in nested rounded rectangles (gentle to the north and west, steep to the sea between the flows), then the cuts: the Rift's gorge with benches and wide green floors in its bays, the Amber's canyon with banded walls under the fan's edge, the mesas, the massif's crags, the sea and the beach, the old flow's chasm. The places are laid as terraces. Then every route and trod sets its corridor to its tier and the ground north of it is held low enough that no face hangs over a path; no tier keeps a tab or notch of one or two cells (opened and closed with a 3 x 3 cell square, then any left behind by the ways closed edge by edge as F's check finds them); the ground round each stair takes the stair's rim. The tiers are traced to outlines with no holes (a part with a hole is cut north to south through it where the parts come out cleanest) and rasterised back the way F's check does; the script stops if a single cell differs.
+
+## The Dust Gulch override
+
+Review 21 Oct 07:53, finding 1: today's Dust Gulch zone has its head and tower 60 to 140 px from the Scorched Pass lava. **OVERRIDE until the continent rebuild** (Claude A, a-to-d-override): it breaks no play, a look-patch on an old zone is ruled out (to-all-no-old-assets, to-all-old-zone-patches), and this plan puts the gulch on the Amber's fan in the desert, about 2400 px from the nearest lava. It is recorded in `sunstone.json` (`overrides`).
+
+## Open
+
+- **The cliff core's canyon faces** come at the plan's 32 px tier, stacked for taller walls (Claude A, a-to-d-canyon).
+- **The ash biome** has no edge set in the cliff core yet; its set pieces are placed and marked `proposed`.
+- **Clusters** wait for Claude B's recipes (#203, b-to-d-clusters): steppe camp, windpump stop, oasis nook and frontier street corner first.
+- **Long flat east-west edges** (F's to-all-volume note, not a fault): the sea cliffs west of the old flow and the massif's foot run flat for more than a screen; they get outcrops and bays with the painter.
+- **The brief's small mismatches**: the desert line's viaduct is called "upstream" of Drover's bridge but sits downstream at (4290, 3720); the plan keeps the coordinates. Table 5.2 of the world plan calls the west flow "young"; the plan follows 4.7 (the old flow is crossed by the chasm bridge, the young one by the crust causeway).
+- **Hearthold's 24 stairs** come with the castle kit; the plan lays its terraces, the stairs on its streets and the forge stair.
+- **The north and west walls** (`edges`) replace lane G's provisional line at y 1504; the west wall runs about x 610 to 720 from the massif down to the sea cliffs. Lane G draws the beyond past them.

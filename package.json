@@ -15,7 +15,7 @@
     "lint": "oxlint --type-aware --type-check",
     "lint:css": "node scripts/lint-css.mjs && npm run check:usefulness",
     "check:usefulness": "node --import tsx lib/usefulness.test.ts",
-    "check:core": "npm run check:usefulness && node --import tsx lib/turn-resolution.test.ts && node --import tsx lib/daily-rhythm.test.ts && node --import tsx lib/bilt.test.ts && node --import tsx lib/garden-path.test.ts && node --import tsx lib/garden-growth.test.ts && node --import tsx lib/hut-look.test.ts && node --import tsx lib/decor-places.test.ts && node --import tsx lib/art-sprites.test.ts && node --import tsx lib/garden-projection.test.ts && node --import tsx lib/world-maps.test.ts && node --import tsx lib/world-framing.test.ts && node --import tsx lib/companion-profiles.test.ts && node --import tsx lib/companion-memories.test.ts && node --import tsx lib/garden-life.test.ts && node --import tsx lib/overlay-priority.test.ts && node --import tsx lib/ui-tokens.test.ts && node --import tsx lib/ui.test.ts && node --import tsx lib/pixel-scale.test.ts && node --import tsx lib/art-density.test.ts && node --import tsx lib/animal-life.test.ts",
+    "check:core": "npm run check:usefulness && node --import tsx lib/turn-resolution.test.ts && node --import tsx lib/daily-rhythm.test.ts && node --import tsx lib/bilt.test.ts && node --import tsx lib/garden-path.test.ts && node --import tsx lib/garden-growth.test.ts && node --import tsx lib/hut-look.test.ts && node --import tsx lib/decor-places.test.ts && node --import tsx lib/art-sprites.test.ts && node --import tsx lib/garden-projection.test.ts && node --import tsx lib/world-maps.test.ts && node --import tsx lib/world-framing.test.ts && node --import tsx lib/companion-profiles.test.ts && node --import tsx lib/companion-memories.test.ts && node --import tsx lib/garden-life.test.ts && node --import tsx lib/overlay-priority.test.ts && node --import tsx lib/ui-tokens.test.ts && node --import tsx lib/ui.test.ts && node --import tsx lib/pixel-scale.test.ts && node --import tsx lib/art-density.test.ts && node --import tsx lib/animal-life.test.ts && node --import tsx lib/character-animation.test.ts",
     "check:game": "node --import tsx lib/game.integration.test.ts",
     "check:saves": "node --import tsx lib/save-data.test.ts",
     "check:places": "node --import tsx lib/mission-places.test.ts",
@@ -34,6 +34,8 @@
     "check:images-test": "node scripts/check-images.test.cjs",
     "check:art-density": "node scripts/check-art-density.cjs",
     "check:art-repro": "node scripts/check-art-repro.cjs",
+    "check:clusters": "python3 scripts/art/prop_clusters.py --check",
+    "check:density": "python3 scripts/art/density.py --check",
     "check:art-repro-test": "node scripts/check-art-repro.test.cjs",
     "check:assets": "node scripts/check-assets.cjs",
     "check:assets-test": "node scripts/check-assets.cjs --self-test",
@@ -44,7 +46,7 @@
     "format:check": "oxfmt --check .",
     "art": "python3 scripts/art/garden.py && python3 scripts/art/pets.py && python3 scripts/art/battle.py && python3 scripts/art/worlds.py && python3 scripts/art/vignettes.py && oxfmt --write lib/garden-map.ts lib/garden-growth-assets.ts lib/garden-hut-assets.ts lib/pet-sprites.ts lib/world-maps.ts lib/world-assets.ts lib/scene-assets.ts",
     "check:garden": "node scripts/check-garden.cjs",
-    "check": "tsc --noEmit && npm run lint && npm run check:core && npm run check:economy-sim && npm run check:art && npm run check:game && npm run check:saves && npm run check:places && npm run check:region-walk && npm run check:world-canvas && npm run check:world-view && npm run check:world-walk && npm run check:world-routes && npm run check:rocket && npm run check:home-hub && npm run check:world && npm run check:garden && npm run check:app-active && npm run check:garden-view && npm run check:pet-pose && npm run check:home-lifecycle && npm run check:selectors && npm run check:ref-rule && npm run check:pixel-controls && npm run check:sound && npm run check:mission-departure && npm run check:journal && npm run check:sprites && npm run check:images-test && npm run check:art-repro-test && npm run check:assets-test && npm run check:world-audit && npm run check:region-plans && npm run check:native",
+    "check": "tsc --noEmit && npm run lint && npm run check:core && npm run check:economy-sim && npm run check:art && npm run check:game && npm run check:saves && npm run check:places && npm run check:region-walk && npm run check:world-canvas && npm run check:world-view && npm run check:world-walk && npm run check:world-routes && npm run check:world-land && npm run check:rocket && npm run check:home-hub && npm run check:world && npm run check:garden && npm run check:app-active && npm run check:garden-view && npm run check:pet-pose && npm run check:home-lifecycle && npm run check:selectors && npm run check:ref-rule && npm run check:pixel-controls && npm run check:sound && npm run check:mission-departure && npm run check:journal && npm run check:sprites && npm run check:images-test && npm run check:art-repro-test && npm run check:assets-test && npm run check:clusters && npm run check:density && npm run check:world-audit && npm run check:region-plans && npm run check:kit && npm run check:native",
     "verify": "npm run check && npm run export:web && npm run export:ios",
     "check:app-active": "node scripts/check-app-active.cjs",
     "check:native": "node scripts/check-native-safe.cjs",
@@ -62,7 +64,9 @@
     "sound": "python3 scripts/audio/sounds.py && oxfmt --write lib/sound-assets.ts",
     "art:sheet": "python3 scripts/art/contact_sheet.py",
     "sim:economy": "node --import tsx scripts/sim-economy.ts",
-    "check:economy-sim": "node --import tsx scripts/economy-model.test.ts && npm run sim:economy -- --check"
+    "check:economy-sim": "node --import tsx scripts/economy-model.test.ts && npm run sim:economy -- --check",
+    "check:world-land": "node --import tsx lib/world-land.test.ts",
+    "check:kit": "python3 -m scripts.art.native.check"
   },
   "dependencies": {
     "@biltme/backend": "^0.7.0",
