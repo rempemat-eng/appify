@@ -433,12 +433,12 @@ def finalize(cv: Canvas, ink=INK, keep_size: bool = False, name: str = 'sprite')
         if x0 < 1 or y0 < 1 or x1 > cv.w - 2 or y1 > cv.h - 1:
             raise ValueError(f'{name}: art leaves no room for its outline in a fixed {cv.w}x{cv.h} box '
                              f'(art spans x {x0}..{x1}, y {y0}..{y1})')
-        out = Canvas(cv.w, cv.h)
+        out = Canvas(cv.w, cv.h, density=cv.density)
         for (x, y) in solid:
             out.px[x, y] = cv.get(x, y)
         close_outline(out, ink)
         return out
-    out = Canvas(x1 - x0 + 3, y1 - y0 + 3)
+    out = Canvas(x1 - x0 + 3, y1 - y0 + 3, density=cv.density)
     for (x, y) in solid:
         out.px[x - x0 + 1, y - y0 + 1] = cv.get(x, y)
     close_outline(out, ink)
@@ -448,7 +448,7 @@ def finalize(cv: Canvas, ink=INK, keep_size: bool = False, name: str = 'sprite')
     ty0 = min(y for _, y in opaque)
     tx1 = max(x for x, _ in opaque)
     ty1 = max(y for _, y in opaque)
-    final = Canvas(tx1 - tx0 + 1, ty1 - ty0 + 1)
+    final = Canvas(tx1 - tx0 + 1, ty1 - ty0 + 1, density=cv.density)
     for (x, y) in opaque:
         final.px[x - tx0, y - ty0] = out.px[x, y]
     final.ox = x0 - 1 + tx0

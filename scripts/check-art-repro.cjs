@@ -14,8 +14,13 @@ const generators = [
   'mission_map',
   'zones',
   'journey',
+  'rocket',
   'residents',
   'decor',
+  'world_routes',
+  'world_land',
+  // the cliff core's demos and random-outline proofs (docs/vision/cliff-core/)
+  'cliff_core',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -30,10 +35,19 @@ const generatedTypescript = [
   'lib/zone-maps.ts',
   'lib/zone-assets.ts',
   'lib/journey-assets.ts',
+  'lib/rocket-sizes.ts',
+  'lib/rocket-assets.ts',
   'lib/resident-sprites.ts',
   'lib/resident-assets.ts',
   'lib/decor-assets.ts',
   'lib/decor-sizes.ts',
+  // the world canvas (scripts/art/world_canvas.py), written at the end of zones.py's run
+  'lib/world-canvas.ts',
+  'lib/world-canvas-assets.ts',
+  // the routes between the regions (scripts/art/world_routes.py, lane G)
+  'lib/world-routes.ts',
+  // the land between, the edges and the beyond (scripts/art/world_land.py, lane G)
+  'lib/world-land.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
@@ -72,8 +86,9 @@ function checkArtReproducibility({ root, run = spawnSync, log = console.log }) {
       env,
       encoding: 'utf8',
       maxBuffer: 8 * 1024 * 1024,
-      // zones.py paints the scenery past the world too (scripts/art/scenery.py) and takes about
-      // 6 min on a 2-core machine, longer when another build runs alongside: allow 15 min
+      // zones.py paints the scenery past the world (scripts/art/scenery.py, Cogsworth's since
+      // 20 Oct) and then cuts the world canvas into world tiles (scripts/art/world_canvas.py):
+      // about 6 min on a 2-core machine, longer when another build runs alongside: allow 15 min
       timeout: 900_000,
     });
     if (result.stdout) log(result.stdout.trimEnd());

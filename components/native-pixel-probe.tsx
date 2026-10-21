@@ -14,6 +14,9 @@ import { useAppActive } from '@/lib/app-active';
 import { useReducedMotion } from '@/lib/motion';
 import { pixelScale } from '@/lib/pixel-scale';
 import {
+  TILE_SIZE,
+  PROBE_COLS,
+  PROBE_ROWS,
   clampCamera,
   summarizeCadence,
   tileLayout,
@@ -26,18 +29,43 @@ import {
 // for profiler comparisons: switching alone does not clear the decoded caches.
 const NativePixelTiles = lazy(() => import('./native-pixel-tiles'));
 const tiles: readonly ProbeTile[] = [
-  { id: '0,2', x: 0, y: 0, source: require('@/assets/native-pixels/t_0_2.png') },
-  { id: '1,2', x: 256, y: 0, source: require('@/assets/native-pixels/t_1_2.png') },
-  { id: '2,2', x: 512, y: 0, source: require('@/assets/native-pixels/t_2_2.png') },
-  { id: '0,3', x: 0, y: 256, source: require('@/assets/native-pixels/t_0_3.png') },
-  { id: '1,3', x: 256, y: 256, source: require('@/assets/native-pixels/t_1_3.png') },
-  { id: '2,3', x: 512, y: 256, source: require('@/assets/native-pixels/t_2_3.png') },
-  { id: '0,4', x: 0, y: 512, source: require('@/assets/native-pixels/t_0_4.png') },
-  { id: '1,4', x: 256, y: 512, source: require('@/assets/native-pixels/t_1_4.png') },
-  { id: '2,4', x: 512, y: 512, source: require('@/assets/native-pixels/t_2_4.png') },
-  { id: '0,5', x: 0, y: 768, source: require('@/assets/native-pixels/t_0_5.png') },
-  { id: '1,5', x: 256, y: 768, source: require('@/assets/native-pixels/t_1_5.png') },
-  { id: '2,5', x: 512, y: 768, source: require('@/assets/native-pixels/t_2_5.png') },
+  { id: '0,2', x: 0, y: 0, source: require('@/assets/world/continent/t_0_2.png') },
+  { id: '1,2', x: TILE_SIZE, y: 0, source: require('@/assets/world/continent/t_1_2.png') },
+  { id: '2,2', x: 2 * TILE_SIZE, y: 0, source: require('@/assets/world/continent/t_2_2.png') },
+  { id: '0,3', x: 0, y: TILE_SIZE, source: require('@/assets/world/continent/t_0_3.png') },
+  { id: '1,3', x: TILE_SIZE, y: TILE_SIZE, source: require('@/assets/world/continent/t_1_3.png') },
+  {
+    id: '2,3',
+    x: 2 * TILE_SIZE,
+    y: TILE_SIZE,
+    source: require('@/assets/world/continent/t_2_3.png'),
+  },
+  { id: '0,4', x: 0, y: 2 * TILE_SIZE, source: require('@/assets/world/continent/t_0_4.png') },
+  {
+    id: '1,4',
+    x: TILE_SIZE,
+    y: 2 * TILE_SIZE,
+    source: require('@/assets/world/continent/t_1_4.png'),
+  },
+  {
+    id: '2,4',
+    x: 2 * TILE_SIZE,
+    y: 2 * TILE_SIZE,
+    source: require('@/assets/world/continent/t_2_4.png'),
+  },
+  { id: '0,5', x: 0, y: 3 * TILE_SIZE, source: require('@/assets/world/continent/t_0_5.png') },
+  {
+    id: '1,5',
+    x: TILE_SIZE,
+    y: 3 * TILE_SIZE,
+    source: require('@/assets/world/continent/t_1_5.png'),
+  },
+  {
+    id: '2,5',
+    x: 2 * TILE_SIZE,
+    y: 3 * TILE_SIZE,
+    source: require('@/assets/world/continent/t_2_5.png'),
+  },
 ];
 type Renderer = 'RN Image' | 'Skia linear' | 'Skia nearest';
 const modes: readonly Renderer[] = ['RN Image', 'Skia linear', 'Skia nearest'];
@@ -97,7 +125,13 @@ export default function NativePixelProbe() {
       // Three round trips through horizontal and vertical tile boundaries, finite.
       const phase = (1 - Math.cos((elapsed / 10_000) * Math.PI * 2)) / 2;
       setCamera(
-        clampCamera({ x: phase * 768, y: phase * 1024 }, view.width, view.height, pixel, dpr),
+        clampCamera(
+          { x: phase * PROBE_COLS * TILE_SIZE, y: phase * PROBE_ROWS * TILE_SIZE },
+          view.width,
+          view.height,
+          pixel,
+          dpr,
+        ),
       );
       if (elapsed >= 30_000) {
         setCadence(summarizeCadence(samples, 1000 / 60));

@@ -125,7 +125,7 @@ export function NapSheet() {
         }}
       />
       <BodyText style={{ fontSize: 12, textAlign: 'center', color: c.shade }}>
-        Demo time: 1 real second = 1 simulated MIN. +1 GRASS per MIN.
+        Demo time: 1 real second = 1 simulated MIN. +1 Dream Dust per MIN.
       </BodyText>
     </GameSheet>
   );

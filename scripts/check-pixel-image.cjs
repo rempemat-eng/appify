@@ -79,7 +79,8 @@ for (const nearest of [undefined, true, false]) {
 decoded = null;
 assert.equal(native.PixelImage(imageProps).props.image, null, 'loading has no stale image');
 
-const geometry = load('lib/native-pixels.ts', {});
+const canvas = load('lib/world-canvas.ts', {});
+const geometry = load('lib/native-pixels.ts', { './world-canvas': canvas });
 function expand(node) {
   if (Array.isArray(node)) return node.flatMap(expand);
   if (!node || typeof node !== 'object') return [];
@@ -97,8 +98,8 @@ for (const [adapter, surface, image] of [
   const tiles = Array.from({ length: 12 }, (_, i) => ({
     id: String(i),
     source: i,
-    x: (i % 3) * 256,
-    y: Math.floor(i / 3) * 256,
+    x: (i % 3) * canvas.WORLD_TILE.size,
+    y: Math.floor(i / 3) * canvas.WORLD_TILE.size,
   }));
   const nodes = expand(
     renderer({

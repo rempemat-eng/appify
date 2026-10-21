@@ -1,6 +1,8 @@
 /** Geometry for the default-off C34 device probe. All input positions are art pixels. */
-export const TILE_SIZE = 256;
-export const TILE_SCALE = 2;
+import { WORLD_TILE } from './world-canvas';
+
+export const TILE_SIZE = WORLD_TILE.size;
+export const TILE_SCALE = WORLD_TILE.scale;
 export const PROBE_COLS = 3;
 export const PROBE_ROWS = 4;
 const MOUNT_MARGIN = 24;

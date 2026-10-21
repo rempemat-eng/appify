@@ -102,12 +102,12 @@ assert.deepEqual(
   },
 );
 
-// These are fixed device-probe specimens from PR #123, not newly authored game art.
+// Read the same generated continent specimens as the probe; no separate copied art.
 for (let col = 0; col < PROBE_COLS; col++) {
   for (let row = 2; row < 2 + PROBE_ROWS; row++) {
     const name = `t_${col}_${row}.png`;
     const image = PNG.sync.read(
-      readFileSync(new URL(`../assets/native-pixels/${name}`, import.meta.url)),
+      readFileSync(new URL(`../assets/world/continent/${name}`, import.meta.url)),
     );
     assert.equal(image.width, TILE_SIZE * TILE_SCALE, `${name}: 2x width`);
     assert.equal(image.height, TILE_SIZE * TILE_SCALE, `${name}: 2x height`);

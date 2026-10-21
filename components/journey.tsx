@@ -6,6 +6,7 @@ import Animated, {
   runOnJS,
   useAnimatedStyle,
   useSharedValue,
+  withDelay,
   withTiming,
   type SharedValue,
 } from 'react-native-reanimated';
@@ -17,6 +18,8 @@ import { PixelButton } from '@/components/game-ui';
 import { PixelFrame } from '@/components/pixel-frame';
 import { GuardianPet } from '@/components/guardian-pet';
 import { useGame } from '@/lib/game';
+import { flightOf } from '@/lib/rocket-flight';
+import { RocketScene } from '@/components/rocket-journey';
 
 const TRIP_MS = 3200;
 const STILL_MS = 700; // reduced motion: a still frame, then on
@@ -56,15 +59,17 @@ function Strip({
   );
 }
 
-export type JourneyVehicle = 'train' | 'maglev' | 'carts' | 'capsule' | 'shuttle' | 'ferry';
+export type JourneyVehicle = 'train' | 'maglev' | 'carts' | 'rocket' | 'shuttle' | 'ferry';
 
 /**
  * The trip between regions (world-atlas.md, "Seamless travel": between regions the
  * journey is the transition). The view from beside the line: sky, far land and near
- * land scroll past at their own speeds while the train (or the elevator capsule)
- * holds the middle. It plays once, can be skipped, stops if the screen goes
- * inactive (and then simply arrives), and is a still frame with reduced motion.
- * Arriving is the only thing it does.
+ * land scroll past at their own speeds while the train holds the middle. Up to Halcyon
+ * and down again the rocket flies, and to the moon and back the lander
+ * (components/rocket-journey.tsx). It plays once, can be skipped, stops if the screen goes
+ * inactive (and then simply arrives), and is a still frame with reduced motion (the rocket
+ * and the lander: a short cross-fade from the first still to the last). Arriving is the
+ * only thing it does, and never after the journey has left the screen.
  */
 export function Journey({
   to,
@@ -99,6 +104,21 @@ export function Journey({
   const active = useAppActive();
   const t = useSharedValue(0);
   const done = useRef(false);
+  // (cleared when the journey leaves the screen: a finish still on its way then does nothing)
+  const alive = useRef(true);
+  useEffect(() => {
+    alive.current = true;
+    return () => {
+      alive.current = false;
+    };
+  }, []);
+  const ride: JourneyVehicle =
+    vehicle ?? (to === 'space' ? 'rocket' : to === 'moon' ? 'shuttle' : 'train');
+  const flight = flightOf(ride, to);
+  // the rocket and the lander keep their own beats, so their clock runs evenly
+  const easing = flight ? Easing.linear : Easing.inOut(Easing.quad);
+  // reduced motion: the first still, then the last faded in over it
+  const fade = useSharedValue(0);
   const skip = () => {
     if (done.current) return;
     done.current = true;
@@ -106,26 +126,31 @@ export function Journey({
   };
   useEffect(() => {
     const finish = () => {
-      if (done.current) return;
+      if (done.current || !alive.current) return;
       done.current = true;
       onArrive();
     };
     if (!active) {
       cancelAnimation(t);
+      cancelAnimation(fade);
       finish();
       return undefined;
     }
     if (reduced) {
+      if (flight) fade.set(withDelay(STILL_MS * 0.35, withTiming(1, { duration: STILL_MS * 0.3 })));
       const s = setTimeout(finish, STILL_MS);
-      return () => clearTimeout(s);
+      return () => {
+        clearTimeout(s);
+        cancelAnimation(fade);
+      };
     }
     t.set(
-      withTiming(1, { duration: ms, easing: Easing.inOut(Easing.quad) }, (finished) => {
+      withTiming(1, { duration: ms, easing }, (finished) => {
         if (finished) runOnJS(finish)();
       }),
     );
     return () => cancelAnimation(t);
-  }, [active, reduced, t, onArrive, ms]);
+  }, [active, reduced, t, fade, onArrive, ms, easing, flight]);
 
   const layers = journeyLayers[to];
   const lw = JOURNEY.width * u; // one loop of a layer
@@ -138,10 +163,6 @@ export function Journey({
   const bob = useAnimatedStyle(() => ({
     transform: [{ translateY: Math.round(Math.sin(t.value * 80) * 0.6 * u * scale) }],
   }));
-  const ride: JourneyVehicle =
-    vehicle ?? (to === 'space' ? 'capsule' : to === 'moon' ? 'shuttle' : 'train');
-  const flying = ride === 'capsule' || ride === 'shuttle';
-  const flyer = ride === 'shuttle' ? journeyVehicles.shuttle : journeyVehicles.capsule;
   const rider =
     ride === 'maglev'
       ? journeyVehicles.maglev
@@ -157,6 +178,68 @@ export function Journey({
   const railY = top + JOURNEY.rail * k;
   // the ferry sits in the swell, its waterline a little below the sea's surface line
   const riderTop = railY - (rider.h + (ride === 'maglev' ? 3 : ride === 'ferry' ? -6 : -2)) * k;
+  const chrome = (
+    <>
+      <View
+        style={{
+          position: 'absolute',
+          top: insetTop + 16,
+          left: 0,
+          right: 0,
+          alignItems: 'center',
+        }}
+      >
+        <PixelFrame tone="paper" style={{ paddingVertical: 4 * u, paddingHorizontal: 8 * u }}>
+          <BodyText
+            style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14 }}
+          >{`TO ${label}`}</BodyText>
+        </PixelFrame>
+      </View>
+      <View style={{ position: 'absolute', bottom: insetBottom + 16, right: 16, width: 110 }}>
+        <PixelButton small light label="SKIP" onPress={skip} />
+      </View>
+    </>
+  );
+  if (flight)
+    return (
+      <View
+        style={{
+          position: 'absolute',
+          left: 0,
+          top: 0,
+          width,
+          height,
+          overflow: 'hidden',
+          backgroundColor: '#05040A',
+          zIndex: 10,
+        }}
+      >
+        {reduced ? (
+          <StillPair
+            flight={flight}
+            width={width}
+            height={height}
+            u={u}
+            ms={ms}
+            fade={fade}
+            insetTop={insetTop}
+            insetBottom={insetBottom}
+          />
+        ) : (
+          <RocketScene
+            flight={flight}
+            t={t}
+            width={width}
+            height={height}
+            u={u}
+            ms={ms}
+            insetTop={insetTop}
+            insetBottom={insetBottom}
+          />
+        )}
+        {chrome}
+      </View>
+    );
   return (
     <View
       // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
@@ -211,19 +294,7 @@ export function Journey({
         copies={copies}
       />
       <Animated.View style={[{ position: 'absolute', left: 0, top: 0, width, height }, bob]}>
-        {flying ? (
-          <Image
-            source={flyer.source}
-            resizeMode="stretch"
-            style={{
-              position: 'absolute',
-              left: width / 2 - (flyer.w * k) / 2,
-              top: top + viewH * 0.3,
-              width: flyer.w * k,
-              height: flyer.h * k,
-            }}
-          />
-        ) : ride === 'train' ? (
+        {ride === 'train' ? (
           <>
             <Image
               source={engine.source}
@@ -306,24 +377,62 @@ export function Journey({
           </>
         )}
       </Animated.View>
-      <View
-        style={{
-          position: 'absolute',
-          top: insetTop + 16,
-          left: 0,
-          right: 0,
-          alignItems: 'center',
-        }}
-      >
-        <PixelFrame tone="paper" style={{ paddingVertical: 4 * u, paddingHorizontal: 8 * u }}>
-          <BodyText
-            style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14 }}
-          >{`TO ${label}`}</BodyText>
-        </PixelFrame>
-      </View>
-      <View style={{ position: 'absolute', bottom: insetBottom + 16, right: 16, width: 110 }}>
-        <PixelButton small light label="SKIP" onPress={skip} />
-      </View>
+      {chrome}
     </View>
+  );
+}
+
+/** Reduced motion for the rocket and the lander: the first still (on the pad, or docked),
+ *  and the last faded in over it. Nothing else moves. */
+function StillPair({
+  flight,
+  width,
+  height,
+  u,
+  ms,
+  fade,
+  insetTop,
+  insetBottom,
+}: {
+  flight: NonNullable<ReturnType<typeof flightOf>>;
+  width: number;
+  height: number;
+  u: number;
+  ms: number;
+  fade: SharedValue<number>;
+  insetTop: number;
+  insetBottom: number;
+}) {
+  const first = useSharedValue(0);
+  const last = useSharedValue(1);
+  const fadeIn = useAnimatedStyle(() => ({ opacity: fade.value }));
+  return (
+    <>
+      <RocketScene
+        flight={flight}
+        t={first}
+        width={width}
+        height={height}
+        u={u}
+        ms={ms}
+        insetTop={insetTop}
+        insetBottom={insetBottom}
+      />
+      <Animated.View
+        style={[{ position: 'absolute', left: 0, top: 0, width, height }, fadeIn]}
+        pointerEvents="none"
+      >
+        <RocketScene
+          flight={flight}
+          t={last}
+          width={width}
+          height={height}
+          u={u}
+          ms={ms}
+          insetTop={insetTop}
+          insetBottom={insetBottom}
+        />
+      </Animated.View>
+    </>
   );
 }

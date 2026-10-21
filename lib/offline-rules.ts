@@ -5,7 +5,7 @@ export const budgetVoice =
 export type GardenDay = {
   offline: number;
   cards: number;
-  grass: number;
+  grass: number; // Dream Dust earned that day (saved name kept from GRASS)
   blocked: number;
   raids: number;
   sparringWins: number;

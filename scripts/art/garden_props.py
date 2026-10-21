@@ -78,7 +78,7 @@ def keep_foot(cv: Canvas, w: int, h: int, dx: int | None = None) -> Canvas:
     sx = (w - cv.w) // 2 if dx is None else dx
     sy = h - cv.h
     pad = max(cv.pad, cv.pad - sy + 2, cv.pad + abs(sx) + 2)
-    out = Canvas(w, h, pad=pad)
+    out = Canvas(w, h, pad=pad, density=getattr(cv, 'density', 1))
     p = cv.pad
     src = cv.img.load()
     for y in range(cv.h + 2 * p):
