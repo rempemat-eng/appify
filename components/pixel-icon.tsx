@@ -28,6 +28,10 @@ function runsOf(name: IconName): Run[] {
   return runs;
 }
 
+/** An icon's grid: 16 rows at 1x, 32 at 2x. It is shown at the same size either way (16
+ *  world px, ui-tokens `iconSize`), so a 2x icon draws two texels to a world pixel. */
+const gridOf = (name: IconName) => iconRows[name].length;
+
 /**
  * An icon from the generated set (scripts/art/icons.py, coherence plan step 4): 16x16
  * pixel art with the garden's lighting and tinted outlines. Decorative: the control
@@ -62,7 +66,7 @@ export function PixelIcon({
           })}
       style={[{ width: size, height: size, opacity: muted ? 0.45 : 1 }, style]}
     >
-      <Svg width={size} height={size} viewBox="0 0 16 16">
+      <Svg width={size} height={size} viewBox={`0 0 ${gridOf(name)} ${gridOf(name)}`}>
         {runsOf(name).map((run) => (
           <Rect
             key={`${run.x},${run.y}`}

@@ -47,7 +47,9 @@ class WorldCanvas:
         assert density in DENSITIES, f'density {density} is not one of {DENSITIES}'
         self.d = density
         self.w, self.h, self.pad = w, h, pad
-        self.tex = Canvas(self.t(w), self.t(h), pad=self.t(pad))
+        # the texel canvas carries its density (pixel.Canvas, lib/art-density.ts), so finalize and
+        # save keep the world size
+        self.tex = Canvas(self.t(w), self.t(h), pad=self.t(pad), density=density)
 
     # --- coordinates ----------------------------------------------------------------
     def t(self, v: float) -> int:
