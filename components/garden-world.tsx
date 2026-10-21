@@ -685,8 +685,6 @@ export function GardenWorld({
   const lifetimeMinutes = player.offline_seconds;
   // Characters are drawn on the same grid as the world: 32 art pixels.
   const petPx = 32 * scale;
-  // the companion's tap target is at least 44 px, centred on its drawing
-  const petGrow = Math.max(0, Math.ceil((44 - petPx) / 2));
   const companionPx = 32 * scale;
   const home = napping ? BED : START;
   const px = useSharedValue(home.x);
@@ -1257,6 +1255,22 @@ export function GardenWorld({
         { scale: s.f },
       ],
       // Rest between the hut and bedding layers, under the garden's night light.
+      zIndex: Math.round(py.value) + (napping ? 1 : 0),
+    };
+  });
+
+  // The companion's tap target: at least 44 px (AGENTS.md), centred on the drawn sprite,
+  // which is petPx scaled by depth about its feet (transformOrigin 50% 93.75%). It does
+  // not scale with depth itself, so a companion at the back of the garden keeps a full
+  // target (lane R review 21 Oct 16:29: 43 px at 402@3, 32 px at 375@2).
+  const petHitStyle = useAnimatedStyle(() => {
+    const s = project(proj, px.value, py.value);
+    const box = Math.max(44, petPx * s.f);
+    const cy = s.sy - petPx * s.f * (30 / 32 - 0.5);
+    return {
+      width: box,
+      height: box,
+      transform: [{ translateX: Math.round(s.sx - box / 2) }, { translateY: Math.round(cy - box / 2) }],
       zIndex: Math.round(py.value) + (napping ? 1 : 0),
     };
   });
@@ -2041,8 +2055,10 @@ export function GardenWorld({
               })}
             {companions.map((v, i) => {
               const spot = project(proj, companionSpots[i].x, companionSpots[i].y);
-              // at least a 44 px target, centred on the drawing (smaller on a wide view)
-              const grow = Math.max(0, Math.ceil((44 - companionPx) / 2));
+              // the drawn visitor can be under 44 px (32 art px at a small scale): its target
+              // grows to 44, centred on the drawing (lane R review 21 Oct 16:29, AGENTS.md)
+              const hit = Math.max(44, companionPx);
+              const grow = (hit - companionPx) / 2;
               return (
                 <Pressable
                   key={`visitor-${v.id}`}
@@ -2062,33 +2078,22 @@ export function GardenWorld({
                   }}
                   style={{
                     position: 'absolute',
-                    left: Math.round(spot.sx - companionPx / 2) - grow,
-                    top: Math.round(spot.sy - companionPx * (30 / 32)) - grow,
-                    width: companionPx + 2 * grow,
-                    height: companionPx + 2 * grow,
+                    left: Math.round(spot.sx - companionPx / 2 - grow),
+                    top: Math.round(spot.sy - companionPx * (30 / 32) - grow),
+                    width: Math.ceil(hit),
+                    height: Math.ceil(hit),
                     zIndex: companionSpots[i].y,
                   }}
                 />
               );
             })}
-            <Animated.View
-              style={[
-                { position: 'absolute', left: 0, top: 0, width: petPx, height: petPx },
-                petStyle,
-              ]}
-            >
+            <Animated.View style={[{ position: 'absolute', left: 0, top: 0 }, petHitStyle]}>
               <Pressable
                 accessibilityRole="button"
                 accessibilityLabel={`Greet ${guardian.pet_name}`}
                 disabled={!active}
                 onPress={patGuardian}
-                style={{
-                  position: 'absolute',
-                  left: -petGrow,
-                  top: -petGrow,
-                  width: petPx + 2 * petGrow,
-                  height: petPx + 2 * petGrow,
-                }}
+                style={{ width: '100%', height: '100%' }}
               />
             </Animated.View>
           </>
