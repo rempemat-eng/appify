@@ -409,6 +409,7 @@ export function simulate(
               const outcome = incomingRaidOutcome(result.balance, attackerWon, input);
               result.incomingAttempts++;
               if (!attackerWon) result.defendedRaids++;
+              if (attackerWon) mood = Math.max(0, mood - input.incomingRaids.moodLoss);
               credit(day, 'incomingDefense', outcome.gain);
               result.balance -= outcome.loss;
               result.lostToRaids += outcome.loss;

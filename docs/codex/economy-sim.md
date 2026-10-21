@@ -122,7 +122,7 @@ Card grants are not unique cards or final deck size: one common grant per 15 cre
 
 Assume exposure at each visit's start and 1 attempted button press(es), spaced by the 60 s recovery and only while the visit is still active. No extra visit or screen time is added and none occur during rests/missions. Care/exposure and press frequency are external assumptions, not a full status emulator. The initial press settles before shopping; any later press sees the remaining wallet.
 
-Today's local button rules are a 50% attacker-win chance: lose min(wallet, max(10, floor(wallet × 0.3))); otherwise defend and gain 20 Dust. Gains and losses are separate. This is an isolated sensitivity using current button rules even for proposals; it does not implement L2's proposed removal of raid losses. Neither raids nor defense gains are included in the G10 daytime taper.
+Today's local button rules are a 50% attacker-win chance: lose min(wallet, max(10, floor(wallet × 0.3))); otherwise defend and gain 20 Dust. A loss also removes 20 mood, which can affect subsequent feeding. Gains and losses are separate. This is an isolated sensitivity using current button rules even for proposals; it does not implement L2's proposed removal of raid losses. Neither raids nor defense gains are included in the G10 daytime taper.
 
 | Scenario / player | Landed attempts | Defended | Defense gains | Raid losses |
 | ----------------- | --------------: | -------: | ------------: | ----------: |

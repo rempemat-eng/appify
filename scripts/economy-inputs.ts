@@ -54,6 +54,7 @@ export const economyInputs = {
     defendedReward: 20,
     minimumLoss: 10,
     lossShare: 0.3,
+    moodLoss: 20,
   },
   initial: { dust: 20, level: 1, mood: 80 },
   rules: {

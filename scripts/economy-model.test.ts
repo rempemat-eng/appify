@@ -493,6 +493,29 @@ assert.equal(
   0,
   'default-off produces no attempts/gains/losses',
 );
+const moodRaidInput = fixtureInput();
+moodRaidInput.initial.dust = 100;
+moodRaidInput.initial.mood = 100;
+moodRaidInput.hats = [];
+moodRaidInput.incomingRaids.enabled = true;
+moodRaidInput.incomingRaids.attackerWinProbability = 1;
+const raidCare = simulate(
+  fixturePlayer({ visitDays: [0], activeSeconds: 1, feedsPerVisit: 1 }),
+  today,
+  moodRaidInput,
+);
+assert.equal(raidCare.feeds, 1, 'a lost raid reduces mood before feeding is attempted');
+assert.equal(raidCare.balance, 65, '100 less 30 lost and 5 feeding');
+moodRaidInput.incomingRaids.attackerWinProbability = 0;
+assert.equal(
+  simulate(
+    fixturePlayer({ visitDays: [0], activeSeconds: 1, feedsPerVisit: 1 }),
+    today,
+    moodRaidInput,
+  ).feeds,
+  0,
+  'successful defense keeps full mood and avoids unnecessary feeding',
+);
 const hatsWithRaids = structuredClone(mountainInput);
 hatsWithRaids.incomingRaids.enabled = true;
 hatsWithRaids.hats = mountainInput.hats.map((hat) => ({ ...hat, cost: 1e9 }));
