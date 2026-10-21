@@ -14,18 +14,18 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 
 | Route         | Crossing                            | Cell       | World px     | Tier | Width | Heading |
 | ------------- | ----------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Ash Coast     | the home valley to the fire country | (700, 552) | (5600, 4416) | 3    | 32    | 180     |
+| Ash Coast     | the home valley to the fire country | (700, 542) | (5600, 4336) | 3    | 40    | 180     |
 | Drover's Road | the Brackens to the Sunstone basin  | (600, 442) | (4800, 3536) | 4    | 40    | 180     |
 
 ## Lane E (the home valley)
 
 | Route         | Crossing                                        | Cell       | World px     | Tier | Width | Heading |
 | ------------- | ----------------------------------------------- | ---------- | ------------ | ---- | ----- | ------- |
-| Ash Coast     | the home valley to the fire country             | (700, 552) | (5600, 4416) | 3    | 32    | 180     |
+| Ash Coast     | the home valley to the fire country             | (700, 542) | (5600, 4336) | 3    | 40    | 180     |
 | Coast Path    | the home valley to the land between             | (875, 634) | (7000, 5072) | 3    | 32    | 0       |
 | Col Path      | the home valley to the Frostline                | (785, 287) | (6280, 2296) | 7    | 24    | -135    |
 | Drover's Road | the home valley to the Brackens                 | (700, 493) | (5600, 3944) | 4    | 32    | 180     |
-| Foothill Road | the home valley to Cogsworth and the coal hills | (875, 399) | (7000, 3192) | 7    | 48    | 0       |
+| Foothill Road | the home valley to Cogsworth and the coal hills | (875, 405) | (7000, 3240) | 6    | 48    | 0       |
 | Lull Road     | the home valley to the land between             | (875, 477) | (7000, 3816) | 4    | 40    | 0       |
 | Shell Bar     | the Headland to the Tidebloom Isles             | (862, 725) | (6896, 5800) | 0    | 56    | 90      |
 
@@ -42,7 +42,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 
 | Route         | Crossing                                                   | Cell        | World px     | Tier | Width | Heading |
 | ------------- | ---------------------------------------------------------- | ----------- | ------------ | ---- | ----- | ------- |
-| Foothill Road | the home valley to Cogsworth and the coal hills            | (875, 399)  | (7000, 3192) | 7    | 48    | 0       |
+| Foothill Road | the home valley to Cogsworth and the coal hills            | (875, 405)  | (7000, 3240) | 6    | 48    | 0       |
 | High Fells    | the land between to Cogsworth and the coal hills           | (904, 212)  | (7232, 1696) | 13   | 32    | 90      |
 | Towpath       | Cogsworth and the coal hills to the Lull belt and Lullford | (1060, 412) | (8480, 3296) | 5    | 32    | 90      |
 
@@ -53,7 +53,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Coast Path | the land between to Gullwick                               | (956, 629)  | (7648, 5032) | 2    | 32    | 0       |
 | Coast Path | Gullwick to the land between                               | (1021, 606) | (8168, 4848) | 2    | 40    | -90     |
 | Coast Path | the land between to the Lull belt and Lullford             | (1038, 578) | (8304, 4624) | 2    | 40    | 0       |
-| Lull Road  | the land between to the Lull belt and Lullford             | (1038, 518) | (8304, 4144) | 4    | 40    | 0       |
+| Lull Road  | the land between to the Lull belt and Lullford             | (1038, 514) | (8304, 4112) | 4    | 48    | 0       |
 | Towpath    | Cogsworth and the coal hills to the Lull belt and Lullford | (1060, 412) | (8480, 3296) | 5    | 32    | 90      |
 
 ## The routes
@@ -70,7 +70,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Shell Bar       | bar      | the Headland tip                             | Lagoon Landing                                  | 792         | 19.8     | 15             | 0            | 0                  | W4     |
 | Drover's Road   | road     | the valley halt                              | Dust Gulch                                      | 4341        | 108.5    | 90             | 4            | 22                 | W5     |
 | Lode Track      | path     | Dust Gulch                                   | the Lode                                        | 840         | 21.0     | 18             | 2            | 2                  | -      |
-| Canyon Road     | path     | Dust Gulch                                   | Hearthold                                       | 3824        | 95.6     | 75             | 10           | 28                 | W6     |
+| Canyon Road     | path     | Dust Gulch                                   | Hearthold                                       | 3776        | 94.4     | 75             | 10           | 28                 | W6     |
 | Forge Stair     | path     | Hearthold                                    | the Ember forge                                 | 152         | 3.8      | 4              | 3            | 3                  | -      |
 | Ember Way       | path     | Hearthold                                    | Cinderwick                                      | 1160        | 29.0     | 18             | 9            | 9                  | -      |
 | Ash Coast       | path     | the valley halt                              | Cinderwick                                      | 4512        | 112.8    | 91             | 3            | 7                  | W5, W6 |
@@ -91,17 +91,17 @@ How far each route lies from the block-out's polyline (`docs/vision/research/blo
 | High Fells      | 41   | 153     | 2043             | 2176 | 24              |
 | Foothill Road   | 21   | 68      | 1542             | 1616 | 40              |
 | Towpath         | 27   | 131     | 2046             | 1800 | 24              |
-| Lull Road       | 21   | 60      | 3486             | 3824 | 40              |
+| Lull Road       | 20   | 60      | 3486             | 3824 | 40              |
 | Coast Path      | 19   | 50      | 2456             | 2872 | 24              |
 | Headland Lane   | 20   | 42      | 544              | 664  | 24              |
 | Shell Bar       | 22   | 82      | 582              | 792  | 40              |
-| Drover's Road   | 26   | 81      | 3616             | 4341 | 40              |
+| Drover's Road   | 28   | 81      | 3616             | 4341 | 40              |
 | Lode Track      | 21   | 54      | 947              | 840  | 24              |
-| Canyon Road     | 26   | 79      | 3160             | 3824 | 24              |
+| Canyon Road     | 27   | 104     | 3160             | 3776 | 24              |
 | Forge Stair     | 5    | 8       | 140              | 152  | 24              |
 | Ember Way       | 23   | 63      | 977              | 1160 | 24              |
 | Ash Coast       | 19   | 56      | 3641             | 4512 | 24              |
-| Delta Road      | 17   | 47      | 948              | 1312 | 24              |
+| Delta Road      | 18   | 60      | 948              | 1312 | 24              |
 | Harbour Bridge  | 5    | 7       | 670              | 648  | 40              |
 | Old Bridges     | 21   | 41      | 372              | 384  | 40              |
 | Quay Street     | 15   | 37      | 963              | 1032 | 40              |
@@ -150,7 +150,7 @@ Every place a route crosses a river or delta arm of the block-out, and what carr
 | the chasm bridge      | Canyon Road   | (2176, 4920) | claude-d / claude-d | a bridge over the young flow's chasm                                |
 | the Rift ferry        | Ash Coast     | (4176, 5240) | claude-d / claude-d | the ferry landings and the ferryman's rope                          |
 | the crust causeway    | Ash Coast     | (3304, 5560) | claude-d / claude-d | a causeway of laid slabs over the crusted flow                      |
-| the canal embankment  | Delta Road    | (9456, 4680) | claude-i / claude-i | the raised towpath along the Lull Cut, with a lock                  |
+| the canal embankment  | Delta Road    | (9448, 4672) | claude-i / claude-i | the raised towpath along the Lull Cut, with a lock                  |
 
 ## The gate check
 

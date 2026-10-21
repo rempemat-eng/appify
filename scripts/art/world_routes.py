@@ -15,10 +15,10 @@ south face). For each route it fixes:
     thresholds);
   - the tier at each vertex, and every place the route changes tier: a stair (cut through
     the face, top tread flush with the upper floor, bottom tread on the path; about 36 px
-    of route per tier), a round-end (the path goes round the end of a face where it dies
-    out into the slope, 64 px) or a switchback (the path doubling back round the ends of
-    two staggered faces, 64 px). There are no ramps: Eastward has none (eastward-edges.md
-    6.3; Matt, 21 Oct 09:23: edges and the soft grid follow Eastward only);
+    of route per tier), or a switchback (the path doubling back round the ends of two
+    staggered faces, 64 px). There are no ramps: Eastward has none (eastward-edges.md 6.3;
+    Matt, 21 Oct 09:23: edges and the soft grid follow Eastward only), and every change
+    of tier is a stair, as the region plans' check holds (scripts/art/region_plan.py);
   - the crossings: fords, bridges, ferries, causeways, the bar and the stile, with the
     way (W1 to W9) that stands on each;
   - the thresholds (the fifteen places where one region becomes another);
@@ -43,7 +43,7 @@ ford, causeway and ferry through the brief's point.
 Tiers. The block-out's height field stepped the plain and the hills into many low tiers
 (the High Fells 35 changes in 1960 px, more than stairs and paths round faces can fit), and the plan
 asks for fewer, deliberate banks (section 5.4). TIERS below gives each route a profile
-that fits: every change has room for its stair, round-end or switchback, routes beside water
+that fits: every change has room for its stair or switchback, routes beside water
 only fall downstream, and the ends meet the tiers given in STOPS. The region lanes match
 their ground to the tier at each meeting cell; a lane that needs another tier there says
 so on the crew board and this file changes.
@@ -74,7 +74,7 @@ TIER_PX = 32
 WALK_PX_S = 40            # walking speed on the block-out (plan 6.1)
 STEP = 8                  # resampling step along a line, px
 VERTEX_EVERY = 32         # at most this much route between exported vertices
-RUN = {'stair': 36, 'round-end': 64, 'switchback': 64}   # route px each tier change takes
+RUN = {'stair': 36, 'switchback': 64}   # route px each tier change takes
 WIDTH_MIN, WIDTH_MAX = 24, 64
 MEET_MARGIN = 0           # a footprint's box edge is the owners' line
 
@@ -230,29 +230,29 @@ TIERS = {
                      ((6204, 2252), 'stair', 8), ((6308, 2188), 'stair', 9),
                      ((6188, 2116), 'stair', 10), ((6236, 2048), 'stair', 11)]),
     'high-fells': (11, [((6316, 1740), 'stair', 12),   # lane F's fells_1
-                        (0.40, 0.50, 'round-end', [13, 14]), (0.50, 0.55, 'stair', [15]),
+                        (0.40, 0.50, 'stair', [13, 14]), (0.50, 0.55, 'stair', [15]),
                         (0.56, 0.82, 'stair', [14, 13, 12, 11, 10, 9]),
                         (0.83, 0.90, 'stair', [8])]),
-    'foothill-road': (5, [(0.08, 0.52, 'round-end', [6, 7, 8, 9]), (0.70, 0.98, 'round-end', [8, 7])]),
-    'towpath': (7, [(0.04, 0.20, 'stair', [6, 5]), (0.30, 0.80, 'round-end', [4, 3])]),
-    'lull-road': (4, [(0.04, 0.20, 'round-end', [5, 6]), (0.30, 0.58, 'round-end', [5, 4, 3])]),
-    'coast-path': (3, [(0.20, 0.30, 'round-end', [2])]),
+    'foothill-road': (5, [(0.08, 0.52, 'stair', [6, 7, 8, 9]), (0.66, 0.90, 'stair', [8, 7])]),
+    'towpath': (7, [(0.04, 0.20, 'stair', [6, 5]), (0.30, 0.80, 'stair', [4, 3])]),
+    'lull-road': (4, [(0.04, 0.20, 'stair', [5, 6]), (0.30, 0.58, 'stair', [5, 4, 3])]),
+    'coast-path': (3, [(0.20, 0.30, 'stair', [2])]),
     'headland-lane': (3, []),
     'shell-bar': (0, []),
     # level through the Brackens' gap (lane F's plan keeps the road on its base tier)
-    'drovers-road': (4, [(0.32, 0.40, 'round-end', [5]), (0.58, 0.96, 'round-end', [6, 7, 8])]),
+    'drovers-road': (4, [(0.32, 0.40, 'stair', [5]), (0.58, 0.96, 'stair', [6, 7, 8])]),
     'lode-track': (8, [(0.15, 0.92, 'switchback', [9, 10])]),
-    'canyon-road': (8, [(0.03, 0.12, 'stair', [7, 6, 5]), (0.20, 0.30, 'round-end', [6]),
-                        (0.40, 0.84, 'round-end', [7, 8, 9, 10, 11]), (0.92, 0.99, 'stair', [12])]),
+    'canyon-road': (8, [(0.03, 0.12, 'stair', [7, 6, 5]), (0.20, 0.30, 'stair', [6]),
+                        (0.40, 0.84, 'stair', [7, 8, 9, 10, 11]), (0.92, 0.99, 'stair', [12])]),
     'forge-stair': (12, [(0.05, 0.95, 'stair', [13, 14, 15])]),
     'ember-way': (11, [(0.03, 0.97, 'stair', [10, 9, 8, 7, 6, 5, 4, 3, 2])]),
-    'ash-coast': (4, [(0.02, 0.12, 'round-end', [3]), (0.38, 0.46, 'round-end', [2]), (0.54, 0.62, 'round-end', [3])]),
-    'delta-road': (3, [(0.25, 0.95, 'round-end', [4, 5, 6])]),
+    'ash-coast': (4, [(0.02, 0.12, 'stair', [3]), (0.38, 0.46, 'stair', [2]), (0.54, 0.62, 'stair', [3])]),
+    'delta-road': (3, [(0.25, 0.95, 'stair', [4, 5, 6])]),
     'harbour-bridge': (6, [(0.80, 1.00, 'stair', [5, 4, 3])]),
     'old-bridges': (3, []),
-    'quay-street': (3, [(0.55, 0.95, 'round-end', [2, 1])]),
+    'quay-street': (3, [(0.55, 0.95, 'stair', [2, 1])]),
     'beacon-causeway': (1, []),
-    'cape-road': (3, [(0.40, 0.70, 'round-end', [4])]),
+    'cape-road': (3, [(0.40, 0.70, 'stair', [4])]),
 }
 
 # Crossings on the routes: route, kind, name, at (brief), span (px of route), way.
@@ -1058,7 +1058,7 @@ def export_ts(routes, steps, path):
         ' */',
         '',
         "export type RouteKind = 'road' | 'path' | 'bar' | 'bridge' | 'causeway';",
-        "export type TierChangeKind = 'stair' | 'round-end' | 'switchback';",
+        "export type TierChangeKind = 'stair' | 'switchback';",
         "export type CrossingKind = 'ford' | 'bridge' | 'ferry' | 'causeway' | 'bar' | 'stile' | 'step';",
         'export type LaneId = string;',
         '/** A vertex: x, y (world px, on the 8 px grid), width (px), tier. */',
