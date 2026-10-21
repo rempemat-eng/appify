@@ -1,0 +1,182 @@
+{
+  "about": "The woodland biome: palette families per material, the plant set and the numbers the native library draws it with (scripts/art/native). A second biome is a copy of this file with its own families, plants and numbers, plus any piece it lacks. Every family is a house ramp (art/house-palette.json).",
+  "density": 2,
+  "cliff_core_biome": "woodland",
+  "ground": {
+    "floor": "moss",
+    "floor_tone": 3,
+    "damp": {
+      "family": "moss_cool",
+      "tone": 2,
+      "share": 0.12
+    },
+    "litter": {
+      "families": ["earth_warm", "timber_warm", "brass_cool"],
+      "tone": 3,
+      "rate": 0.01,
+      "near_trees": 22
+    },
+    "sun": {
+      "family": "moss_warm",
+      "tone": 4,
+      "fade_texels": 4
+    },
+    "canopy_shade": {
+      "steps": 1,
+      "fade_texels": 6
+    },
+    "lone_max": 0.02
+  },
+  "flora": {
+    "oak": {
+      "body": "leaf",
+      "warm": "leaf_warm",
+      "cool": "leaf_cool"
+    },
+    "beech": {
+      "body": "leaf_warm",
+      "warm": "grass_warm",
+      "cool": "leaf"
+    },
+    "birch": {
+      "body": "grass",
+      "warm": "grass_warm",
+      "cool": "leaf_warm"
+    },
+    "sapling": {
+      "body": "grass",
+      "warm": "leaf_warm",
+      "cool": "grass_cool"
+    },
+    "pine": {
+      "body": "leaf_cool",
+      "warm": "leaf",
+      "cool": "leaf_cool",
+      "rim": "leaf_warm"
+    },
+    "bush": {
+      "body": "leaf",
+      "warm": "moss_warm",
+      "cool": "leaf_cool"
+    },
+    "holly": {
+      "body": "leaf_cool",
+      "warm": "leaf",
+      "cool": "leaf_cool",
+      "fruit": "berry"
+    },
+    "bramble": {
+      "body": "leaf",
+      "warm": "leaf_warm",
+      "cool": "moss_cool",
+      "fruit": "dusk"
+    },
+    "fern": {
+      "body": "leaf_warm",
+      "warm": "moss_warm",
+      "cool": "leaf"
+    },
+    "tuft": "moss",
+    "toadstool": "berry",
+    "trunk_oak": "timber_cool",
+    "trunk_beech": "stone_cool",
+    "trunk_birch": "plaster_cool",
+    "trunk_pine": "timber",
+    "flowers": {
+      "white": "plaster",
+      "yellow": "brass",
+      "violet": "dusk",
+      "red": "berry",
+      "blue": "sky"
+    }
+  },
+  "materials": {
+    "stone": "stone",
+    "seat_stone": "stone_warm",
+    "wood": "timber",
+    "wood_cut": "plaster_warm",
+    "iron": "iron",
+    "glass_day": "slate",
+    "glass_lit": "lamp",
+    "earth": "earth",
+    "path": "path"
+  },
+  "shadow": {
+    "kx": 0.6,
+    "ky": 0.12,
+    "core_steps": 2,
+    "rim_steps": 1,
+    "rim_world": 2,
+    "night_steps": 1,
+    "contact_tone": 1
+  },
+  "rhythm": {
+    "tree_spacing_world": 18,
+    "clump_size": [3, 7],
+    "dressing_cluster": [2, 4],
+    "edge_dressing_every_world": 32
+  },
+  "animation": {
+    "water": {
+      "frames": 8,
+      "ms": 150,
+      "grid_cols": 2,
+      "drift_texels_per_frame": 4
+    },
+    "fall": {
+      "frames": 8,
+      "ms": 150
+    },
+    "lantern": {
+      "frames": 4,
+      "ms": [400, 300, 500, 300]
+    }
+  },
+  "style": {
+    "_about": "How things are drawn (not what): the numbers the painters read, so a style verdict is a change here, not in code.",
+    "crown": {
+      "leaf_units": 2.4,
+      "clump_factor": 1.7,
+      "bump_units": 7.0,
+      "row_step": 1.45,
+      "col_step": 2.05,
+      "lit_cap_above": 0.35,
+      "deep_skip": -0.8,
+      "deep_thin": -0.4,
+      "shade_clump_below": -0.4,
+      "mass_k": 0.85,
+      "rim_family": "grass",
+      "sibling_swap": 0.4
+    },
+    "pine": {
+      "tiers": 7,
+      "needle_rate": 0.45,
+      "tip_droop_units": 2.6
+    },
+    "tuft": {
+      "blades": [4, 7],
+      "height_units": [9, 14],
+      "spread_units": 5.0,
+      "lean_units": 8.0
+    },
+    "dressing": {
+      "every_world": 26,
+      "skip": 0.25,
+      "flowers": 0.18,
+      "pebbles": 0.14,
+      "tufts": [2, 4],
+      "rim_every_world": 22,
+      "foot_every_world": 18,
+      "wood_edge": 0.6
+    },
+    "rock": {
+      "east_turn_world": 6,
+      "west_catch_world": 2,
+      "ao_world": 3
+    },
+    "litter": {
+      "rate": 0.01,
+      "radius_world": 22
+    }
+  }
+}

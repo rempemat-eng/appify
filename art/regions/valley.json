@@ -1,0 +1,6736 @@
+{
+ "_about": "The home valley as a plan (Claude E, lane E, 21 Oct): what the shared kit's painter and the checks read. Written by scripts/art/regions/valley_plan.py; do not edit by hand. From the brief docs/vision/regions/home-valley-frostline-brackens.md (world plan v5.3, 8.2). World px on the 11264 x 6912 canvas; tiers are Claude G's world tiers (base_tier 0: the sea), traced from rectangles of 8 px cells so every outline is on the grid; each outline is its tier's top and everything higher; tops in screen space, each south face hanging 32 px a tier under its rim. The woodland is Claude A's golden screen (outline, exits and stands only); the Frostline and the Brackens are Claude F's, Fernhollow Claude H's, the land between and the sea beyond the box Claude G's.",
+ "id": "valley",
+ "owner": "claude-e",
+ "biome": "meadow",
+ "biomes": [
+  "meadow",
+  "coast"
+ ],
+ "biome_variants": {
+  "meadow": [
+   "meadow",
+   "farmland",
+   "riverside",
+   "town_edge"
+  ],
+  "coast": [
+   "cliff_coast"
+  ]
+ },
+ "biome_brief": "scripts/art/biomes/valley.json (variants of the kit meadow)",
+ "box": [
+  5600,
+  2304,
+  1664,
+  3520
+ ],
+ "mine": {
+  "_about": "the box is one rectangle; lane E's land is the brief's two parts inside it",
+  "valley": [
+   5600,
+   2304,
+   1408,
+   2752
+  ],
+  "headland": [
+   6800,
+   5120,
+   432,
+   704
+  ],
+  "not_mine": {
+   "land_between_and_fernhollow": [
+    7008,
+    2304,
+    256,
+    2816
+   ]
+  }
+ },
+ "base_tier": {
+  "value": 0,
+  "provisional": false,
+  "from": "Claude G's world tiers (lib/world-routes.ts, #189; route-meets.md): the floor at 4, the Col hut at 7, the Headland at 3, the bar at 0"
+ },
+ "faces": {
+  "_about": "Valley edges are the meadow's own (to-all-reuse-rule; the kit meadow's edges and valley.json's edge_sets): turf banks with earth and root faces between tiers, the garden's and Crossroads' built terrace walls, the coast's rock faces at the quay and the Headland",
+  "between_tiers": {
+   "height": 32,
+   "material": "turf bank over earth, rounded rock cobbles at the foot"
+  },
+  "escarpment": {
+   "height": 64,
+   "material": "the Frostline's rock, Claude F's edge set at the meeting",
+   "kit": "cliff_core"
+  },
+  "built": {
+   "height": 32,
+   "material": "drystone retaining walls (the garden terrace, the quay)",
+   "corners": "square"
+  }
+ },
+ "coast": [
+  [
+   5600,
+   2304
+  ],
+  [
+   7264,
+   2304
+  ],
+  [
+   7264,
+   5120
+  ],
+  [
+   7232,
+   5120
+  ],
+  [
+   7232,
+   5768
+  ],
+  [
+   7104,
+   5768
+  ],
+  [
+   7104,
+   5824
+  ],
+  [
+   6880,
+   5824
+  ],
+  [
+   6880,
+   5768
+  ],
+  [
+   6976,
+   5768
+  ],
+  [
+   6976,
+   5696
+  ],
+  [
+   6848,
+   5696
+  ],
+  [
+   6848,
+   5584
+  ],
+  [
+   6800,
+   5584
+  ],
+  [
+   6800,
+   5040
+  ],
+  [
+   6680,
+   5040
+  ],
+  [
+   6680,
+   5056
+  ],
+  [
+   6176,
+   5056
+  ],
+  [
+   6176,
+   5040
+  ],
+  [
+   6048,
+   5040
+  ],
+  [
+   6048,
+   5064
+  ],
+  [
+   5840,
+   5064
+  ],
+  [
+   5840,
+   5048
+  ],
+  [
+   5600,
+   5048
+  ]
+ ],
+ "tiers": [
+  {
+   "id": "shore",
+   "tier": 1,
+   "why": "the shingle under the halt farm and the rock platform at the Headland foot",
+   "outline": [
+    [
+     5600,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ],
+    [
+     7008,
+     5056
+    ],
+    [
+     7232,
+     5056
+    ],
+    [
+     7232,
+     5768
+    ],
+    [
+     6976,
+     5768
+    ],
+    [
+     6976,
+     5696
+    ],
+    [
+     6848,
+     5696
+    ],
+    [
+     6848,
+     5584
+    ],
+    [
+     6800,
+     5584
+    ],
+    [
+     6800,
+     5040
+    ],
+    [
+     6680,
+     5040
+    ],
+    [
+     6680,
+     5056
+    ],
+    [
+     6176,
+     5056
+    ],
+    [
+     6176,
+     5040
+    ],
+    [
+     6048,
+     5040
+    ],
+    [
+     6048,
+     5064
+    ],
+    [
+     5840,
+     5064
+    ],
+    [
+     5840,
+     5048
+    ],
+    [
+     5600,
+     5048
+    ]
+   ]
+  },
+  {
+   "id": "quay",
+   "tier": 2,
+   "why": "Driftwood's quay, a 32 px quay face under the hamlet",
+   "outline": [
+    [
+     5600,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ],
+    [
+     7008,
+     5056
+    ],
+    [
+     7232,
+     5056
+    ],
+    [
+     7232,
+     5664
+    ],
+    [
+     6976,
+     5664
+    ],
+    [
+     6976,
+     5584
+    ],
+    [
+     6800,
+     5584
+    ],
+    [
+     6800,
+     5040
+    ],
+    [
+     6680,
+     5040
+    ],
+    [
+     6680,
+     5056
+    ],
+    [
+     6176,
+     5056
+    ],
+    [
+     6176,
+     4920
+    ],
+    [
+     6048,
+     4920
+    ],
+    [
+     6048,
+     4912
+    ],
+    [
+     5840,
+     4912
+    ],
+    [
+     5840,
+     4936
+    ],
+    [
+     5600,
+     4936
+    ]
+   ]
+  },
+  {
+   "id": "lowland",
+   "tier": 3,
+   "why": "the coastal lowland: the halt farm's lower fields, the dew pond meadow, Driftwood and the Headland",
+   "outline": [
+    [
+     5600,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ],
+    [
+     7008,
+     5056
+    ],
+    [
+     7232,
+     5056
+    ],
+    [
+     7232,
+     5664
+    ],
+    [
+     6976,
+     5664
+    ],
+    [
+     6976,
+     5584
+    ],
+    [
+     6800,
+     5584
+    ],
+    [
+     6800,
+     5040
+    ],
+    [
+     6680,
+     5040
+    ],
+    [
+     6680,
+     5056
+    ],
+    [
+     6560,
+     5056
+    ],
+    [
+     6560,
+     4952
+    ],
+    [
+     6400,
+     4952
+    ],
+    [
+     6400,
+     4936
+    ],
+    [
+     6176,
+     4936
+    ],
+    [
+     6176,
+     4920
+    ],
+    [
+     6048,
+     4920
+    ],
+    [
+     6048,
+     4912
+    ],
+    [
+     5840,
+     4912
+    ],
+    [
+     5840,
+     4936
+    ],
+    [
+     5600,
+     4936
+    ]
+   ]
+  },
+  {
+   "id": "floor",
+   "tier": 4,
+   "why": "the valley floor (v2's T1): Crossroads, the green, the park, the halt farm; or the Headland's raised point",
+   "outline": [
+    [
+     5600,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ],
+    [
+     7008,
+     4336
+    ],
+    [
+     6800,
+     4336
+    ],
+    [
+     6800,
+     4384
+    ],
+    [
+     6480,
+     4384
+    ],
+    [
+     6480,
+     4368
+    ],
+    [
+     6240,
+     4368
+    ],
+    [
+     6240,
+     4352
+    ],
+    [
+     6000,
+     4352
+    ],
+    [
+     6000,
+     4320
+    ],
+    [
+     5760,
+     4320
+    ],
+    [
+     5760,
+     4288
+    ],
+    [
+     5600,
+     4288
+    ]
+   ]
+  },
+  {
+   "id": "headland_point",
+   "tier": 4,
+   "why": "the Headland's raised point: the lookout tower and the lighthouse on a 32 px rock face",
+   "outline": [
+    [
+     7096,
+     5440
+    ],
+    [
+     7224,
+     5440
+    ],
+    [
+     7224,
+     5576
+    ],
+    [
+     7096,
+     5576
+    ]
+   ]
+  },
+  {
+   "id": "terrace",
+   "tier": 5,
+   "why": "the T2 terrace: the woodland (Claude A), the garden and the riverside",
+   "outline": [
+    [
+     5640,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ],
+    [
+     7008,
+     3376
+    ],
+    [
+     6720,
+     3376
+    ],
+    [
+     6720,
+     3392
+    ],
+    [
+     6456,
+     3392
+    ],
+    [
+     6456,
+     3376
+    ],
+    [
+     6136,
+     3376
+    ],
+    [
+     6136,
+     3344
+    ],
+    [
+     5856,
+     3344
+    ],
+    [
+     5856,
+     3328
+    ],
+    [
+     5640,
+     3328
+    ]
+   ]
+  },
+  {
+   "id": "hay_slope",
+   "tier": 6,
+   "why": "the hay slope above the garden and the Fern hills' shoulder",
+   "outline": [
+    [
+     5680,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ],
+    [
+     7008,
+     3264
+    ],
+    [
+     6864,
+     3264
+    ],
+    [
+     6864,
+     2712
+    ],
+    [
+     6680,
+     2712
+    ],
+    [
+     6680,
+     2736
+    ],
+    [
+     6480,
+     2736
+    ],
+    [
+     6480,
+     2768
+    ],
+    [
+     6240,
+     2768
+    ],
+    [
+     6240,
+     2752
+    ],
+    [
+     6136,
+     2752
+    ],
+    [
+     6136,
+     2416
+    ],
+    [
+     6000,
+     2416
+    ],
+    [
+     6000,
+     2400
+    ],
+    [
+     5680,
+     2400
+    ]
+   ]
+  },
+  {
+   "id": "escarpment",
+   "tier": 7,
+   "why": "the Frostline's foot (Claude F's tier 0), the Col hut's shelf and the Fern hills' crest",
+   "outline": [
+    [
+     5680,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ],
+    [
+     7008,
+     3208
+    ],
+    [
+     6944,
+     3208
+    ],
+    [
+     6944,
+     2560
+    ],
+    [
+     6864,
+     2560
+    ],
+    [
+     6864,
+     2384
+    ],
+    [
+     6672,
+     2384
+    ],
+    [
+     6672,
+     2400
+    ],
+    [
+     6480,
+     2400
+    ],
+    [
+     6480,
+     2432
+    ],
+    [
+     6248,
+     2432
+    ],
+    [
+     6248,
+     2416
+    ],
+    [
+     6000,
+     2416
+    ],
+    [
+     6000,
+     2400
+    ],
+    [
+     5680,
+     2400
+    ]
+   ]
+  }
+ ],
+ "routes": [
+  {
+   "id": "col_path",
+   "name": "Col Path",
+   "kind": "path",
+   "width": 24,
+   "points": [
+    [
+     6336,
+     2808
+    ],
+    [
+     6336,
+     2624
+    ],
+    [
+     6304,
+     2624
+    ],
+    [
+     6304,
+     2440
+    ],
+    [
+     6288,
+     2440
+    ],
+    [
+     6288,
+     2304
+    ]
+   ],
+   "meets": {
+    "lane": "claude-f",
+    "at": [
+     6288,
+     2304
+    ],
+    "tier": 7,
+    "width": 24,
+    "note": "frostline.json col_path starts here; G's cell (6280, 2296)"
+   }
+  },
+  {
+   "id": "foothill_road",
+   "name": "Foothill Road",
+   "kind": "road",
+   "width": 40,
+   "points": [
+    [
+     6776,
+     3528
+    ],
+    [
+     6776,
+     3320
+    ],
+    [
+     6880,
+     3320
+    ],
+    [
+     6880,
+     3240
+    ],
+    [
+     6960,
+     3240
+    ],
+    [
+     6960,
+     3192
+    ],
+    [
+     7000,
+     3192
+    ]
+   ],
+   "widths": [
+    [
+     7000,
+     3192,
+     48
+    ]
+   ],
+   "meets": {
+    "lane": "claude-h",
+    "at": [
+     7000,
+     3192
+    ],
+    "tier": 7,
+    "width": 48
+   }
+  },
+  {
+   "id": "lull_road",
+   "name": "Lull Road",
+   "kind": "road",
+   "width": 40,
+   "points": [
+    [
+     6712,
+     3760
+    ],
+    [
+     6880,
+     3760
+    ],
+    [
+     6880,
+     3816
+    ],
+    [
+     7000,
+     3816
+    ]
+   ],
+   "meets": {
+    "lane": "claude-g",
+    "at": [
+     7000,
+     3816
+    ],
+    "tier": 4,
+    "width": 40
+   }
+  },
+  {
+   "id": "drovers_road",
+   "name": "Drover's Road",
+   "kind": "road",
+   "width": 40,
+   "points": [
+    [
+     5800,
+     4064
+    ],
+    [
+     5752,
+     4064
+    ],
+    [
+     5752,
+     3992
+    ],
+    [
+     5632,
+     3992
+    ],
+    [
+     5632,
+     3944
+    ],
+    [
+     5600,
+     3944
+    ]
+   ],
+   "widths": [
+    [
+     5600,
+     3944,
+     32
+    ]
+   ],
+   "meets": {
+    "lane": "claude-f",
+    "at": [
+     5600,
+     3944
+    ],
+    "tier": 4,
+    "width": 32,
+    "note": "brackens.json drovers_road starts here"
+   }
+  },
+  {
+   "id": "ash_coast",
+   "name": "Ash Coast",
+   "kind": "path",
+   "width": 32,
+   "points": [
+    [
+     5800,
+     4152
+    ],
+    [
+     5728,
+     4152
+    ],
+    [
+     5728,
+     4232
+    ],
+    [
+     5664,
+     4232
+    ],
+    [
+     5664,
+     4336
+    ],
+    [
+     5600,
+     4336
+    ]
+   ],
+   "widths": [
+    [
+     5600,
+     4336,
+     40
+    ]
+   ],
+   "meets": {
+    "lane": "claude-g",
+    "at": [
+     5600,
+     4336
+    ],
+    "tier": 3,
+    "width": 40,
+    "note": "G's stair (5624, 4336) is on an east-west leg; here it is on the north-south leg at (5664, 4304)"
+   }
+  },
+  {
+   "id": "coast_path",
+   "name": "Coast Path",
+   "kind": "path",
+   "width": 32,
+   "points": [
+    [
+     6568,
+     4904
+    ],
+    [
+     6736,
+     4904
+    ],
+    [
+     6736,
+     5016
+    ],
+    [
+     6880,
+     5016
+    ],
+    [
+     6880,
+     5072
+    ],
+    [
+     7000,
+     5072
+    ]
+   ],
+   "meets": {
+    "lane": "claude-g",
+    "at": [
+     7000,
+     5072
+    ],
+    "tier": 3,
+    "width": 32
+   }
+  },
+  {
+   "id": "headland_lane",
+   "name": "Headland Lane",
+   "kind": "path",
+   "width": 32,
+   "points": [
+    [
+     6896,
+     5072
+    ],
+    [
+     6896,
+     5176
+    ],
+    [
+     6960,
+     5176
+    ],
+    [
+     6960,
+     5280
+    ],
+    [
+     6992,
+     5280
+    ],
+    [
+     6992,
+     5496
+    ],
+    [
+     7040,
+     5496
+    ],
+    [
+     7040,
+     5600
+    ],
+    [
+     7048,
+     5600
+    ],
+    [
+     7048,
+     5744
+    ],
+    [
+     7056,
+     5744
+    ]
+   ],
+   "widths": [
+    [
+     6992,
+     5304,
+     40
+    ]
+   ]
+  },
+  {
+   "id": "shell_bar",
+   "name": "Shell Bar",
+   "kind": "bar",
+   "width": 48,
+   "points": [
+    [
+     7056,
+     5744
+    ],
+    [
+     7056,
+     5808
+    ],
+    [
+     6896,
+     5808
+    ],
+    [
+     6896,
+     5824
+    ]
+   ],
+   "widths": [
+    [
+     6896,
+     5824,
+     56
+    ]
+   ],
+   "meets": {
+    "lane": "claude-c",
+    "at": [
+     6896,
+     5824
+    ],
+    "tier": 0,
+    "width": 56,
+    "note": "G's crossing (6896, 5800) heading south; the bar runs on to Lagoon Landing (W4)"
+   }
+  }
+ ],
+ "trods": [
+  {
+   "id": "garden_walk",
+   "width": 24,
+   "owner": "the garden (home hub, unchanged)",
+   "points": [
+    [
+     6336,
+     2808
+    ],
+    [
+     6336,
+     2976
+    ],
+    [
+     6296,
+     2976
+    ],
+    [
+     6296,
+     3184
+    ],
+    [
+     6304,
+     3184
+    ],
+    [
+     6304,
+     3392
+    ],
+    [
+     6296,
+     3392
+    ],
+    [
+     6296,
+     3440
+    ]
+   ],
+   "why": "from the trail gate (TRAIL_X) past the hut to the gate, down the gate stair on the square's axis"
+  },
+  {
+   "id": "garden_west",
+   "width": 24,
+   "owner": "the garden / claude-a",
+   "points": [
+    [
+     6296,
+     3104
+    ],
+    [
+     6152,
+     3104
+    ],
+    [
+     6152,
+     3120
+    ],
+    [
+     5952,
+     3120
+    ]
+   ],
+   "why": "the garden's west gate into the woodland (gates.west)"
+  },
+  {
+   "id": "garden_east",
+   "width": 24,
+   "owner": "the garden",
+   "points": [
+    [
+     6304,
+     3088
+    ],
+    [
+     6472,
+     3088
+    ],
+    [
+     6472,
+     3072
+    ],
+    [
+     6648,
+     3072
+    ],
+    [
+     6648,
+     3216
+    ],
+    [
+     6776,
+     3216
+    ],
+    [
+     6776,
+     3320
+    ]
+   ],
+   "why": "the garden's east gate past the millpond, the orchard and the miller's cottage to the Foothill Road (gates.east)"
+  },
+  {
+   "id": "woodland_stair",
+   "width": 32,
+   "owner": "claude-a (the woodland: the golden screen)",
+   "points": [
+    [
+     5952,
+     3120
+    ],
+    [
+     5952,
+     3288
+    ],
+    [
+     5936,
+     3288
+    ],
+    [
+     5936,
+     3496
+    ],
+    [
+     5992,
+     3496
+    ],
+    [
+     5992,
+     3544
+    ]
+   ],
+   "why": "the forester's timber stair down to the floor and the west road"
+  },
+  {
+   "id": "spring_walk",
+   "width": 24,
+   "owner": "claude-a (the woodland: the golden screen)",
+   "dead_end": "view",
+   "points": [
+    [
+     5952,
+     3120
+    ],
+    [
+     5952,
+     2880
+    ],
+    [
+     5968,
+     2880
+    ],
+    [
+     5968,
+     2664
+    ],
+    [
+     5952,
+     2664
+    ],
+    [
+     5952,
+     2568
+    ]
+   ],
+   "why": "up the woodland to the spring pool under the fall (a rest spot)"
+  },
+  {
+   "id": "west_road",
+   "width": 32,
+   "points": [
+    [
+     6296,
+     3528
+    ],
+    [
+     6136,
+     3528
+    ],
+    [
+     6136,
+     3544
+    ],
+    [
+     5992,
+     3544
+    ],
+    [
+     5992,
+     3712
+    ],
+    [
+     5872,
+     3712
+    ],
+    [
+     5872,
+     3920
+    ],
+    [
+     5832,
+     3920
+    ],
+    [
+     5832,
+     4064
+    ],
+    [
+     5800,
+     4064
+    ]
+   ],
+   "why": "Crossroads to the halt (brief 8.2: roads west to the halt)"
+  },
+  {
+   "id": "east_road",
+   "width": 32,
+   "points": [
+    [
+     6296,
+     3528
+    ],
+    [
+     6464,
+     3528
+    ],
+    [
+     6464,
+     3520
+    ],
+    [
+     6656,
+     3520
+    ],
+    [
+     6656,
+     3544
+    ],
+    [
+     6776,
+     3544
+    ],
+    [
+     6776,
+     3528
+    ]
+   ],
+   "why": "over the river by the town street's bridge to the park and the Foothill Road"
+  },
+  {
+   "id": "harbour_road",
+   "width": 32,
+   "points": [
+    [
+     6296,
+     3528
+    ],
+    [
+     6296,
+     3760
+    ],
+    [
+     6280,
+     3760
+    ],
+    [
+     6280,
+     4000
+    ],
+    [
+     6264,
+     4000
+    ],
+    [
+     6264,
+     4232
+    ],
+    [
+     6256,
+     4232
+    ],
+    [
+     6256,
+     4448
+    ],
+    [
+     6272,
+     4448
+    ],
+    [
+     6272,
+     4672
+    ],
+    [
+     6304,
+     4672
+    ],
+    [
+     6304,
+     4776
+    ],
+    [
+     6312,
+     4776
+    ],
+    [
+     6312,
+     4920
+    ]
+   ],
+   "why": "the harbour road south between the cottage plots, bending at the square and at the drop, to Driftwood"
+  },
+  {
+   "id": "quay",
+   "width": 32,
+   "points": [
+    [
+     6312,
+     4920
+    ],
+    [
+     6312,
+     5000
+    ],
+    [
+     6440,
+     5000
+    ],
+    [
+     6440,
+     5016
+    ],
+    [
+     6544,
+     5016
+    ]
+   ],
+   "why": "down the quay stair to the quay: the fish market, the harbour master, the chandlery, the slip"
+  },
+  {
+   "id": "jetty",
+   "kind": "jetty",
+   "width": 24,
+   "points": [
+    [
+     6520,
+     5016
+    ],
+    [
+     6520,
+     5104
+    ]
+   ],
+   "why": "the ferry pier (W4) and the stop at its end (travelPoints.pier)"
+  },
+  {
+   "id": "river_lane",
+   "width": 24,
+   "points": [
+    [
+     6312,
+     4776
+    ],
+    [
+     6488,
+     4776
+    ],
+    [
+     6488,
+     4904
+    ],
+    [
+     6568,
+     4904
+    ]
+   ],
+   "why": "Driftwood's river lane to the Coast Path's start at the footbridge"
+  },
+  {
+   "id": "park_walk",
+   "width": 32,
+   "points": [
+    [
+     6696,
+     3544
+    ],
+    [
+     6696,
+     3640
+    ],
+    [
+     6712,
+     3640
+    ],
+    [
+     6712,
+     3760
+    ]
+   ],
+   "why": "through the park past the bandstand to the Lull Road"
+  },
+  {
+   "id": "park_lane_south",
+   "width": 24,
+   "points": [
+    [
+     6712,
+     3760
+    ],
+    [
+     6712,
+     3992
+    ],
+    [
+     6728,
+     3992
+    ],
+    [
+     6728,
+     4200
+    ],
+    [
+     6736,
+     4200
+    ],
+    [
+     6736,
+     4432
+    ],
+    [
+     6744,
+     4432
+    ],
+    [
+     6744,
+     4664
+    ],
+    [
+     6736,
+     4664
+    ],
+    [
+     6736,
+     4904
+    ]
+   ],
+   "why": "the lane south from the park along the east bank to the estuary footbridge and the Coast Path"
+  },
+  {
+   "id": "dew_pond_loop",
+   "width": 24,
+   "points": [
+    [
+     6736,
+     4232
+    ],
+    [
+     6624,
+     4232
+    ],
+    [
+     6624,
+     4336
+    ],
+    [
+     6736,
+     4336
+    ]
+   ],
+   "why": "round the dew pond (brief 7): the path closer on its west side, joining the lane at a Y each end"
+  },
+  {
+   "id": "mill_stair",
+   "width": 24,
+   "points": [
+    [
+     6648,
+     3216
+    ],
+    [
+     6648,
+     3352
+    ],
+    [
+     6664,
+     3352
+    ],
+    [
+     6664,
+     3544
+    ]
+   ],
+   "why": "past the mill on the terrace step, down its stair to the floor"
+  },
+  {
+   "id": "green_lane",
+   "width": 24,
+   "points": [
+    [
+     6176,
+     3528
+    ],
+    [
+     6176,
+     3640
+    ],
+    [
+     6064,
+     3640
+    ],
+    [
+     6064,
+     3760
+    ],
+    [
+     6176,
+     3760
+    ],
+    [
+     6176,
+     3776
+    ],
+    [
+     6280,
+     3776
+    ]
+   ],
+   "why": "the green south-west of the square with the ring and the shelter, back to the harbour road at a Y"
+  },
+  {
+   "id": "halt_yard",
+   "width": 32,
+   "points": [
+    [
+     5800,
+     4064
+    ],
+    [
+     5800,
+     4152
+    ]
+   ],
+   "why": "the halt's yard between the platform and the farm gate, where the Drover's Road and the Ash Coast leave"
+  },
+  {
+   "id": "farm_track",
+   "width": 24,
+   "dead_end": "view",
+   "points": [
+    [
+     5800,
+     4152
+    ],
+    [
+     5872,
+     4152
+    ],
+    [
+     5872,
+     4352
+    ],
+    [
+     5888,
+     4352
+    ],
+    [
+     5888,
+     4576
+    ],
+    [
+     5904,
+     4576
+    ],
+    [
+     5904,
+     4800
+    ],
+    [
+     5920,
+     4800
+    ],
+    [
+     5920,
+     4888
+    ]
+   ],
+   "why": "the farm track down the fields to the shingle shore, ending in a view of the sea"
+  },
+  {
+   "id": "windmill_lane",
+   "width": 24,
+   "points": [
+    [
+     5888,
+     4512
+    ],
+    [
+     6064,
+     4512
+    ],
+    [
+     6064,
+     4560
+    ],
+    [
+     6272,
+     4560
+    ]
+   ],
+   "why": "from the farm track past the windmill's door, over the drain and the outfall, to the harbour road"
+  },
+  {
+   "id": "shrine_trod",
+   "width": 24,
+   "points": [
+    [
+     5888,
+     4440
+    ],
+    [
+     5832,
+     4440
+    ],
+    [
+     5832,
+     4400
+    ]
+   ],
+   "why": "a few steps off the farm track to the wayside shrine"
+  },
+  {
+   "id": "view_pocket",
+   "width": 24,
+   "dead_end": "view",
+   "points": [
+    [
+     6304,
+     2520
+    ],
+    [
+     6416,
+     2520
+    ]
+   ],
+   "why": "a secret pocket off the Col Path: a view over the land"
+  },
+  {
+   "id": "bench_pocket",
+   "width": 24,
+   "dead_end": "bench",
+   "points": [
+    [
+     6336,
+     2680
+    ],
+    [
+     6488,
+     2680
+    ]
+   ],
+   "why": "a secret pocket off the Col Path: a bench under a tree"
+  },
+  {
+   "id": "hay_trod",
+   "width": 24,
+   "dead_end": "bench",
+   "points": [
+    [
+     6304,
+     2600
+    ],
+    [
+     6168,
+     2600
+    ]
+   ],
+   "why": "a mown strip across the hay meadow to a bench at its west end, over the woodland's crowns"
+  },
+  {
+   "id": "hermit_pocket",
+   "width": 24,
+   "dead_end": "resident",
+   "points": [
+    [
+     6992,
+     5440
+    ],
+    [
+     6912,
+     5440
+    ],
+    [
+     6912,
+     5576
+    ],
+    [
+     6880,
+     5576
+    ]
+   ],
+   "why": "a secret pocket off the Shell Bar approach: a hermit at a fire under the Headland"
+  },
+  {
+   "id": "rocks_loop",
+   "width": 24,
+   "points": [
+    [
+     7040,
+     5512
+    ],
+    [
+     7088,
+     5512
+    ],
+    [
+     7088,
+     5632
+    ],
+    [
+     7048,
+     5632
+    ]
+   ],
+   "why": "round the Headland's rocks (brief 7): the path closer on its east side, back on the lane at a Y"
+  },
+  {
+   "id": "tower_trod",
+   "width": 24,
+   "dead_end": "view",
+   "points": [
+    [
+     7088,
+     5632
+    ],
+    [
+     7160,
+     5632
+    ],
+    [
+     7160,
+     5528
+    ]
+   ],
+   "why": "up the point's stair to the lookout tower and the lighthouse (a view to the isles)"
+  },
+  {
+   "id": "fold_trod",
+   "width": 24,
+   "points": [
+    [
+     6960,
+     5240
+    ],
+    [
+     6896,
+     5240
+    ],
+    [
+     6896,
+     5352
+    ],
+    [
+     6992,
+     5352
+    ]
+   ],
+   "why": "inside the wall from the lane to the sheep fold and back through the stile's yard"
+  }
+ ],
+ "stairs": [
+  {
+   "id": "col_stair_low",
+   "on": "col_path",
+   "at": [
+    6336,
+    2784
+   ],
+   "from_tier": 5,
+   "to_tier": 6,
+   "width": 40,
+   "kind": "stone"
+  },
+  {
+   "id": "col_stair_hut",
+   "on": "col_path",
+   "at": [
+    6304,
+    2448
+   ],
+   "from_tier": 6,
+   "to_tier": 7,
+   "width": 40,
+   "kind": "stone"
+  },
+  {
+   "id": "gate_stair",
+   "on": "garden_walk",
+   "at": [
+    6296,
+    3408
+   ],
+   "from_tier": 5,
+   "to_tier": 4,
+   "width": 48,
+   "kind": "stone",
+   "why": "the garden's gate stair on the square's axis"
+  },
+  {
+   "id": "timber_stair",
+   "on": "woodland_stair",
+   "at": [
+    5936,
+    3360
+   ],
+   "from_tier": 5,
+   "to_tier": 4,
+   "width": 40,
+   "kind": "timber",
+   "owner": "claude-a"
+  },
+  {
+   "id": "mill_steps",
+   "on": "mill_stair",
+   "at": [
+    6664,
+    3408
+   ],
+   "from_tier": 5,
+   "to_tier": 4,
+   "width": 40,
+   "kind": "stone"
+  },
+  {
+   "id": "fern_stair_1",
+   "on": "foothill_road",
+   "at": [
+    6776,
+    3392
+   ],
+   "from_tier": 4,
+   "to_tier": 5,
+   "width": 48,
+   "kind": "stone"
+  },
+  {
+   "id": "fern_stair_2",
+   "on": "foothill_road",
+   "at": [
+    6880,
+    3280
+   ],
+   "from_tier": 5,
+   "to_tier": 6,
+   "width": 48,
+   "kind": "stone"
+  },
+  {
+   "id": "fern_stair_3",
+   "on": "foothill_road",
+   "at": [
+    6960,
+    3224
+   ],
+   "from_tier": 6,
+   "to_tier": 7,
+   "width": 48,
+   "kind": "stone"
+  },
+  {
+   "id": "ash_stair",
+   "on": "ash_coast",
+   "at": [
+    5664,
+    4304
+   ],
+   "from_tier": 4,
+   "to_tier": 3,
+   "width": 40,
+   "kind": "stone"
+  },
+  {
+   "id": "farm_stair",
+   "on": "farm_track",
+   "at": [
+    5872,
+    4336
+   ],
+   "from_tier": 4,
+   "to_tier": 3,
+   "width": 40,
+   "kind": "timber"
+  },
+  {
+   "id": "harbour_stair",
+   "on": "harbour_road",
+   "at": [
+    6256,
+    4384
+   ],
+   "from_tier": 4,
+   "to_tier": 3,
+   "width": 40,
+   "kind": "stone"
+  },
+  {
+   "id": "quay_stair",
+   "on": "quay",
+   "at": [
+    6312,
+    4952
+   ],
+   "from_tier": 3,
+   "to_tier": 2,
+   "width": 40,
+   "kind": "stone",
+   "why": "the quay stair (the brief's quay ramp: no ramps, eastward-edges 6.3)"
+  },
+  {
+   "id": "park_stair",
+   "on": "park_lane_south",
+   "at": [
+    6736,
+    4400
+   ],
+   "from_tier": 4,
+   "to_tier": 3,
+   "width": 40,
+   "kind": "stone"
+  },
+  {
+   "id": "cove_stair",
+   "on": "headland_lane",
+   "at": [
+    7048,
+    5696
+   ],
+   "from_tier": 3,
+   "to_tier": 1,
+   "width": 40,
+   "kind": "stone",
+   "why": "the Headland's cove stair down its 64 px rock face to the platform"
+  },
+  {
+   "id": "bar_step",
+   "on": "shell_bar",
+   "at": [
+    7056,
+    5784
+   ],
+   "from_tier": 1,
+   "to_tier": 0,
+   "width": 48,
+   "kind": "stone",
+   "why": "off the rock platform onto the bar"
+  },
+  {
+   "id": "point_stair",
+   "on": "tower_trod",
+   "at": [
+    7160,
+    5592
+   ],
+   "from_tier": 3,
+   "to_tier": 4,
+   "width": 40,
+   "kind": "stone"
+  }
+ ],
+ "water": [
+  {
+   "id": "sleepwater_fall",
+   "kind": "stream",
+   "width": 24,
+   "points": [
+    [
+     5944,
+     2304
+    ],
+    [
+     5944,
+     2480
+    ]
+   ],
+   "falls": [
+    {
+     "at": [
+      5944,
+      2408
+     ],
+     "drop_tiers": 2,
+     "what": "the escarpment fall into the spring pool"
+    }
+   ],
+   "source": "frostline.json sleepwater: Snowmelt Lake through Fir Hollow and over the escarpment (Claude F)",
+   "outlet": "spring_pool",
+   "owner": "claude-a (the woodland: the golden screen)"
+  },
+  {
+   "id": "spring_pool",
+   "kind": "pool",
+   "closed": true,
+   "points": [
+    [
+     5904,
+     2480
+    ],
+    [
+     5992,
+     2480
+    ],
+    [
+     5992,
+     2544
+    ],
+    [
+     5904,
+     2544
+    ]
+   ],
+   "source": "sleepwater_fall",
+   "outlet": "brook",
+   "owner": "claude-a (the woodland: the golden screen)"
+  },
+  {
+   "id": "brook",
+   "kind": "stream",
+   "width": 24,
+   "points": [
+    [
+     5992,
+     2512
+    ],
+    [
+     6040,
+     2512
+    ],
+    [
+     6040,
+     3328
+    ],
+    [
+     6488,
+     3328
+    ]
+   ],
+   "source": "spring_pool",
+   "outlet": "millpond",
+   "note": "south through the woodland (Claude A's), then east along the garden's south edge (the garden's own stream, its geometry unchanged) to the millpond"
+  },
+  {
+   "id": "millpond",
+   "kind": "pond",
+   "closed": true,
+   "points": [
+    [
+     6488,
+     3232
+    ],
+    [
+     6624,
+     3232
+    ],
+    [
+     6624,
+     3336
+    ],
+    [
+     6488,
+     3336
+    ]
+   ],
+   "source": "brook",
+   "outlet": "mill_race"
+  },
+  {
+   "id": "mill_race",
+   "kind": "race",
+   "width": 16,
+   "points": [
+    [
+     6600,
+     3336
+    ],
+    [
+     6600,
+     3416
+    ]
+   ],
+   "falls": [
+    {
+     "at": [
+      6600,
+      3400
+     ],
+     "drop_tiers": 1,
+     "what": "the mill's wheel at the terrace step (the weir as a fall between levels)"
+    }
+   ],
+   "source": "millpond",
+   "outlet": "sleepwater"
+  },
+  {
+   "id": "sleepwater",
+   "kind": "river",
+   "width": 32,
+   "points": [
+    [
+     6600,
+     3416
+    ],
+    [
+     6600,
+     3640
+    ],
+    [
+     6568,
+     3640
+    ],
+    [
+     6568,
+     3920
+    ],
+    [
+     6600,
+     3920
+    ],
+    [
+     6600,
+     4200
+    ],
+    [
+     6624,
+     4200
+    ],
+    [
+     6624,
+     4600
+    ],
+    [
+     6600,
+     4600
+    ],
+    [
+     6600,
+     5056
+    ]
+   ],
+   "widths": [
+    [
+     6600,
+     4600,
+     40
+    ],
+    [
+     6600,
+     5000,
+     48
+    ]
+   ],
+   "falls": [
+    {
+     "at": [
+      6624,
+      4400
+     ],
+     "drop_tiers": 1,
+     "what": "a low fall where the floor steps down to the coastal lowland"
+    }
+   ],
+   "bridges": [
+    {
+     "at": [
+      6600,
+      3520
+     ],
+     "span": 64,
+     "what": "the town street's bridge to the park"
+    },
+    {
+     "at": [
+      6600,
+      4904
+     ],
+     "span": 64,
+     "what": "the cliff path's footbridge at the estuary"
+    }
+   ],
+   "source": "mill_race",
+   "outlet": "the sea: the estuary into Driftwood cove"
+  },
+  {
+   "id": "field_drain",
+   "kind": "ditch",
+   "width": 16,
+   "points": [
+    [
+     5680,
+     4600
+    ],
+    [
+     5960,
+     4600
+    ],
+    [
+     5960,
+     4472
+    ]
+   ],
+   "bridges": [
+    {
+     "at": [
+      5904,
+      4600
+     ],
+     "span": 32,
+     "what": "the farm track's plank bridge"
+    },
+    {
+     "at": [
+      5960,
+      4512
+     ],
+     "span": 32,
+     "what": "the windmill lane's plank bridge"
+    }
+   ],
+   "source": "the halt farm's lower fields (field drains)",
+   "outlet": "the windmill's scoop wheel (Claude B #129: a drainage mill that pumps the fields)"
+  },
+  {
+   "id": "mill_outfall",
+   "kind": "ditch",
+   "width": 16,
+   "points": [
+    [
+     6000,
+     4472
+    ],
+    [
+     6040,
+     4472
+    ],
+    [
+     6040,
+     5048
+    ]
+   ],
+   "bridges": [
+    {
+     "at": [
+      6040,
+      4512
+     ],
+     "span": 32,
+     "what": "the windmill lane's plank bridge"
+    }
+   ],
+   "source": "the windmill's scoop wheel, lifting the drains into the embanked outfall at its east foot",
+   "outlet": "the sea over the shingle"
+  },
+  {
+   "id": "dew_pond",
+   "kind": "pond",
+   "closed": true,
+   "declared_closed": true,
+   "points": [
+    [
+     6656,
+     4272
+    ],
+    [
+     6704,
+     4272
+    ],
+    [
+     6704,
+     4312
+    ],
+    [
+     6656,
+     4312
+    ]
+   ],
+   "note": "rain-fed, lined with clay: no stream in or out (brief 7)"
+  }
+ ],
+ "zones": [
+  {
+   "id": "garden",
+   "rect": [
+    6136,
+    2800,
+    320,
+    576
+   ],
+   "canvas": [
+    320,
+    1728,
+    320,
+    576
+   ],
+   "tier": 5,
+   "becomes": "kept: the home hub, its size, geometry and harness unchanged (8.2)"
+  },
+  {
+   "id": "woodland",
+   "rect": [
+    5640,
+    2432,
+    496,
+    912
+   ],
+   "canvas": [
+    0,
+    1728,
+    320,
+    576
+   ],
+   "tier": 5,
+   "owner": "claude-a",
+   "becomes": "kept, redrawn by Claude A as the golden screen: the spring pool under the fall, the stone circle in a glade, the forester's yard"
+  },
+  {
+   "id": "riverside",
+   "rect": [
+    6456,
+    2768,
+    408,
+    624
+   ],
+   "canvas": [
+    640,
+    1728,
+    320,
+    576
+   ],
+   "tier": 5,
+   "becomes": "kept, redrawn: the millpond, the mill on the step, the miller's cottage, the orchard and the beehives along a hedge"
+  },
+  {
+   "id": "town",
+   "rect": [
+    5976,
+    3376,
+    640,
+    560
+   ],
+   "canvas": [
+    320,
+    2304,
+    320,
+    576
+   ],
+   "tier": 4,
+   "becomes": "replaced: Crossroads, a village at true scale with its square on the garden's axis"
+  },
+  {
+   "id": "park",
+   "rect": [
+    6624,
+    3424,
+    384,
+    448
+   ],
+   "canvas": [
+    640,
+    2304,
+    320,
+    576
+   ],
+   "tier": 4,
+   "becomes": "kept, redrawn: the bandstand on its paving, the pump house at the river, the lane south to the estuary footbridge"
+  },
+  {
+   "id": "halt",
+   "rect": [
+    5600,
+    3936,
+    448,
+    1120
+   ],
+   "canvas": [
+    0,
+    2304,
+    320,
+    576
+   ],
+   "tier": 4,
+   "becomes": "replaced: the halt farm, the station house, the 240 px platform, the engine shed (W3), the farmyard, the windmill and the fields to the shingle"
+  },
+  {
+   "id": "harbour",
+   "rect": [
+    6176,
+    4672,
+    544,
+    432
+   ],
+   "canvas": [
+    320,
+    2880,
+    320,
+    576
+   ],
+   "tier": 3,
+   "becomes": "replaced: Driftwood, its own hamlet above a 32 px quay, with the ferry pier (W4) and the breakwater"
+  },
+  {
+   "id": "headland",
+   "rect": [
+    6800,
+    5104,
+    432,
+    608
+   ],
+   "canvas": [
+    640,
+    2880,
+    320,
+    576
+   ],
+   "tier": 3,
+   "becomes": "kept, walled: the drystone wall with the stile (W1) its only gap, the sheep fold, the lookout tower and the lighthouse on the raised point, the cove stair"
+  },
+  {
+   "id": "hay_slope",
+   "rect": [
+    6136,
+    2304,
+    728,
+    496
+   ],
+   "canvas": null,
+   "tier": 6,
+   "new": true,
+   "becomes": "new ground: the Col Path's foot from the garden's trail gate to the Col hut, the hay meadow, the beehives and the well"
+  }
+ ],
+ "stands": [
+  {
+   "id": "garden",
+   "kind": "mission",
+   "zone": "garden",
+   "at": [
+    6296,
+    2996
+   ],
+   "game": "missionPlaces.garden [160, 196]"
+  },
+  {
+   "id": "hut",
+   "kind": "door",
+   "zone": "garden",
+   "at": [
+    6204,
+    2932
+   ],
+   "game": "hutDoors.hut (HUT_DOOR 68, 132)"
+  },
+  {
+   "id": "gate",
+   "kind": "gate",
+   "zone": "town",
+   "at": [
+    6296,
+    3448
+   ],
+   "game": "gardenGates.gate: stand('town', 'garden')"
+  },
+  {
+   "id": "trail",
+   "kind": "gate",
+   "zone": "hay_slope",
+   "at": [
+    6336,
+    2808
+   ],
+   "game": "gardenGates.trail: was stand('ridge', 'garden'); the Col Path's foot"
+  },
+  {
+   "id": "west",
+   "kind": "gate",
+   "zone": "woodland",
+   "at": [
+    6120,
+    3104
+   ],
+   "game": "gardenGates.west: stand('woodland', 'garden')",
+   "owner": "claude-a"
+  },
+  {
+   "id": "east",
+   "kind": "gate",
+   "zone": "riverside",
+   "at": [
+    6472,
+    3088
+   ],
+   "game": "gardenGates.east: stand('riverside', 'garden-north')"
+  },
+  {
+   "id": "book",
+   "kind": "mission",
+   "zone": "town",
+   "at": [
+    6224,
+    3464
+   ],
+   "game": "missionPlaces.book: stand('town', 'library')"
+  },
+  {
+   "id": "shop",
+   "kind": "mission",
+   "zone": "town",
+   "at": [
+    6360,
+    3576
+   ],
+   "game": "missionPlaces.shop: stand('town', 'stall')"
+  },
+  {
+   "id": "arena",
+   "kind": "ring",
+   "zone": "town",
+   "at": [
+    6112,
+    3696
+   ],
+   "game": "missionPlaces.arena: stand('town', 'ring'); the green's ring, rival Doomscroll Dave"
+  },
+  {
+   "id": "park",
+   "kind": "mission",
+   "zone": "park",
+   "at": [
+    6744,
+    3616
+   ],
+   "game": "missionPlaces.park: stand('park', 'bandstand')"
+  },
+  {
+   "id": "valley",
+   "kind": "stop",
+   "zone": "halt",
+   "at": [
+    5760,
+    4072
+   ],
+   "game": "travelPoints.valley: stand('halt', 'platform')"
+  },
+  {
+   "id": "pier",
+   "kind": "stop",
+   "zone": "harbour",
+   "at": [
+    6536,
+    5096
+   ],
+   "game": "travelPoints.pier: stand('harbour', 'jetty')",
+   "in_water": true
+  }
+ ],
+ "buildings": [
+  {
+   "id": "hut",
+   "foot": [
+    6168,
+    2928
+   ],
+   "w": 64,
+   "zone": "garden"
+  },
+  {
+   "id": "library",
+   "foot": [
+    6184,
+    3440
+   ],
+   "w": 80,
+   "zone": "town",
+   "note": "on the square's north side, against the garden's terrace wall"
+  },
+  {
+   "id": "terrace_cottages",
+   "foot": [
+    6320,
+    3440
+   ],
+   "w": 96,
+   "zone": "town",
+   "note": "a terrace of touching cottages on the north side, three fronts from the house kits"
+  },
+  {
+   "id": "bakery",
+   "foot": [
+    6112,
+    3600
+   ],
+   "w": 56,
+   "zone": "town",
+   "note": "west of the square, its door to the square"
+  },
+  {
+   "id": "cottage_plot_nw",
+   "foot": [
+    6184,
+    3736
+   ],
+   "w": 56,
+   "zone": "town"
+  },
+  {
+   "id": "cottage_plot_ne",
+   "foot": [
+    6336,
+    3712
+   ],
+   "w": 64,
+   "zone": "town"
+  },
+  {
+   "id": "cottage_plot_sw",
+   "foot": [
+    6184,
+    3904
+   ],
+   "w": 48,
+   "zone": "town"
+  },
+  {
+   "id": "cottage_plot_se",
+   "foot": [
+    6328,
+    3896
+   ],
+   "w": 56,
+   "zone": "town"
+  },
+  {
+   "id": "green_shelter",
+   "foot": [
+    6008,
+    3624
+   ],
+   "w": 40,
+   "zone": "town",
+   "note": "the shelter by the green (the gardener's story)"
+  },
+  {
+   "id": "mill",
+   "foot": [
+    6544,
+    3392
+   ],
+   "w": 48,
+   "zone": "riverside",
+   "note": "on the terrace step, its wheel on the race"
+  },
+  {
+   "id": "millers_cottage",
+   "foot": [
+    6688,
+    3176
+   ],
+   "w": 56,
+   "zone": "riverside"
+  },
+  {
+   "id": "bandstand",
+   "foot": [
+    6736,
+    3600
+   ],
+   "w": 48,
+   "zone": "park"
+  },
+  {
+   "id": "pump_house",
+   "foot": [
+    6632,
+    3712
+   ],
+   "w": 40,
+   "zone": "park",
+   "note": "at the river"
+  },
+  {
+   "id": "station_house",
+   "foot": [
+    5672,
+    4024
+   ],
+   "w": 72,
+   "zone": "halt"
+  },
+  {
+   "id": "engine_shed",
+   "foot": [
+    5600,
+    3968
+   ],
+   "w": 64,
+   "zone": "halt",
+   "note": "W3: the valley train east"
+  },
+  {
+   "id": "farmhouse",
+   "foot": [
+    5752,
+    4280
+   ],
+   "w": 64,
+   "zone": "halt"
+  },
+  {
+   "id": "barn",
+   "foot": [
+    5632,
+    4280
+   ],
+   "w": 72,
+   "zone": "halt"
+  },
+  {
+   "id": "windmill",
+   "foot": [
+    5960,
+    4464
+   ],
+   "w": 40,
+   "zone": "halt",
+   "note": "Claude B's drainage mill (64 x 104): scoop wheel and outfall at its east foot"
+  },
+  {
+   "id": "fisher_cottage",
+   "foot": [
+    6216,
+    4760
+   ],
+   "w": 56,
+   "zone": "harbour",
+   "form": "fisher (by the quay)"
+  },
+  {
+   "id": "river_lane_cottage",
+   "foot": [
+    6400,
+    4760
+   ],
+   "w": 56,
+   "zone": "harbour",
+   "form": "lane cottage, gable to the lane"
+  },
+  {
+   "id": "walled_cottage",
+   "foot": [
+    6224,
+    4896
+   ],
+   "w": 48,
+   "zone": "harbour",
+   "form": "behind a garden wall"
+  },
+  {
+   "id": "net_loft",
+   "foot": [
+    6352,
+    4880
+   ],
+   "w": 64,
+   "zone": "harbour",
+   "form": "a net loft over a store, steps up the side"
+  },
+  {
+   "id": "harbour_cottage",
+   "foot": [
+    6336,
+    4648
+   ],
+   "w": 56,
+   "zone": "harbour",
+   "form": "the top cottage, where the road drops"
+  },
+  {
+   "id": "fish_market",
+   "foot": [
+    6352,
+    5048
+   ],
+   "w": 64,
+   "zone": "harbour",
+   "note": "on the quay"
+  },
+  {
+   "id": "harbour_master",
+   "foot": [
+    6192,
+    5048
+   ],
+   "w": 48,
+   "zone": "harbour"
+  },
+  {
+   "id": "chandlery",
+   "foot": [
+    6448,
+    5048
+   ],
+   "w": 48,
+   "zone": "harbour"
+  },
+  {
+   "id": "col_hut",
+   "foot": [
+    6224,
+    2384
+   ],
+   "w": 48,
+   "zone": "hay_slope",
+   "note": "Claude G's threshold object; lane E draws its south side"
+  },
+  {
+   "id": "lookout_tower",
+   "foot": [
+    7112,
+    5512
+   ],
+   "w": 32,
+   "zone": "headland"
+  },
+  {
+   "id": "lighthouse",
+   "foot": [
+    7184,
+    5560
+   ],
+   "w": 32,
+   "zone": "headland"
+  },
+  {
+   "id": "hay_barn",
+   "foot": [
+    7024,
+    5200
+   ],
+   "w": 56,
+   "zone": "headland",
+   "note": "the named hay barn by the Coast Path"
+  }
+ ],
+ "places": [
+  {
+   "id": "square",
+   "kind": "square",
+   "rect": [
+    6176,
+    3448,
+    240,
+    176
+   ],
+   "at": [
+    6296,
+    3536
+   ],
+   "why": "Crossroads' square: the well at its centre, on the garden's axis"
+  },
+  {
+   "id": "well",
+   "kind": "well",
+   "at": [
+    6264,
+    3560
+   ],
+   "why": "the square well"
+  },
+  {
+   "id": "green",
+   "kind": "green",
+   "rect": [
+    6024,
+    3648,
+    144,
+    104
+   ],
+   "at": [
+    6112,
+    3696
+   ],
+   "why": "the green with the ring"
+  },
+  {
+   "id": "platform",
+   "kind": "platform",
+   "rect": [
+    5600,
+    4040,
+    240,
+    16
+   ],
+   "at": [
+    5760,
+    4048
+   ],
+   "why": "the halt's 240 px platform; the line runs west off the box into the hills and east to Cogsworth (W3)"
+  },
+  {
+   "id": "farmyard",
+   "kind": "yard",
+   "rect": [
+    5664,
+    4168,
+    168,
+    112
+   ],
+   "at": [
+    5752,
+    4224
+   ]
+  },
+  {
+   "id": "fields",
+   "kind": "fields",
+   "rects": [
+    [
+     5608,
+     4392,
+     256,
+     192
+    ],
+    [
+     5608,
+     4616,
+     280,
+     176
+    ],
+    [
+     5928,
+     4624,
+     96,
+     288
+    ],
+    [
+     5608,
+     4816,
+     296,
+     112
+    ]
+   ],
+   "why": "four field blocks on the coastal lowland, hedged, drained to the windmill"
+  },
+  {
+   "id": "orchard",
+   "kind": "orchard",
+   "rect": [
+    6680,
+    2968,
+    168,
+    120
+   ],
+   "at": [
+    6760,
+    3024
+   ]
+  },
+  {
+   "id": "quay_front",
+   "kind": "quay",
+   "rect": [
+    6176,
+    4968,
+    384,
+    88
+   ],
+   "at": [
+    6368,
+    5016
+   ]
+  },
+  {
+   "id": "breakwater",
+   "kind": "breakwater",
+   "line": [
+    [
+     6560,
+     5056
+    ],
+    [
+     6560,
+     5144
+    ],
+    [
+     6680,
+     5144
+    ],
+    [
+     6680,
+     5200
+    ]
+   ],
+   "why": "the breakwater along the grid from the estuary bank, sheltering the cove, with a harbour light at its end (drawn, not walked: a later shortcut)"
+  },
+  {
+   "id": "slip",
+   "kind": "slip",
+   "at": [
+    6560,
+    5048
+   ],
+   "why": "the slip with the ferry (W4)"
+  },
+  {
+   "id": "sheep_fold",
+   "kind": "fold",
+   "rect": [
+    6904,
+    5376,
+    72,
+    48
+   ],
+   "at": [
+    6936,
+    5400
+   ]
+  },
+  {
+   "id": "headland_wall",
+   "kind": "wall",
+   "line": [
+    [
+     6800,
+     5304
+    ],
+    [
+     6976,
+     5304
+    ],
+    [
+     7008,
+     5304
+    ],
+    [
+     7232,
+     5304
+    ]
+   ],
+   "gap": [
+    6992,
+    5304
+   ],
+   "why": "the drystone wall from the estuary bank to the east cliff; the stile (W1) its only gap"
+  }
+ ],
+ "rails": [
+  {
+   "id": "desert_line",
+   "way": "W5",
+   "points": [
+    [
+     5600,
+     4048
+    ],
+    [
+     5840,
+     4048
+    ]
+   ],
+   "note": "west off the box over the Rift (lane G beyond)"
+  },
+  {
+   "id": "valley_train",
+   "way": "W3",
+   "points": [
+    [
+     5840,
+     4048
+    ],
+    [
+     6168,
+     4048
+    ],
+    [
+     6168,
+     4120
+    ],
+    [
+     6640,
+     4120
+    ],
+    [
+     6640,
+     3904
+    ],
+    [
+     7008,
+     3904
+    ]
+   ],
+   "note": "east to Cogsworth; level crossings on the harbour road and the park lane, a girder bridge over the Sleepwater; lane G's line beyond the box"
+  }
+ ],
+ "named": [
+  {
+   "thing": "wayside shrine",
+   "kind": "shrine",
+   "at": [
+    5868,
+    4372
+   ],
+   "route": "Ash Coast",
+   "where": "a short way off the path",
+   "moved_from": [
+    5884,
+    4357
+   ]
+  },
+  {
+   "thing": "old oak",
+   "kind": "landmark",
+   "at": [
+    6865,
+    4820
+   ],
+   "route": "Coast Path",
+   "where": "a short way off the path"
+  },
+  {
+   "thing": "hay barn",
+   "kind": "landmark",
+   "at": [
+    7000,
+    5160
+   ],
+   "route": "Coast Path",
+   "where": "beside the path",
+   "moved_from": [
+    7020,
+    5151
+   ]
+  },
+  {
+   "thing": "a fallen climbers' camp",
+   "kind": "ruin",
+   "at": [
+    6308,
+    2304
+   ],
+   "route": "Col Path",
+   "where": "beside the path",
+   "moved_from": [
+    6295,
+    2306
+   ]
+  },
+  {
+   "thing": "beehives",
+   "kind": "prop",
+   "at": [
+    6252,
+    2432
+   ],
+   "route": "Col Path",
+   "where": "beside the path",
+   "moved_from": [
+    6262,
+    2451
+   ]
+  },
+  {
+   "thing": "a hare form in the long grass",
+   "kind": "wild",
+   "at": [
+    6336,
+    2540
+   ],
+   "route": "Col Path",
+   "where": "beside the path",
+   "moved_from": [
+    6320,
+    2528
+   ]
+  },
+  {
+   "thing": "well",
+   "kind": "well",
+   "at": [
+    6357,
+    2549
+   ],
+   "route": "Col Path",
+   "where": "beside the path"
+  },
+  {
+   "thing": "haymakers' shelter",
+   "kind": "camp",
+   "at": [
+    6340,
+    2589
+   ],
+   "route": "Col Path",
+   "where": "beside the path"
+  },
+  {
+   "thing": "a tumbled field barn",
+   "kind": "ruin",
+   "at": [
+    6300,
+    2644
+   ],
+   "route": "Col Path",
+   "where": "beside the path",
+   "moved_from": [
+    6302,
+    2641
+   ]
+  },
+  {
+   "thing": "wayside shrine",
+   "kind": "shrine",
+   "at": [
+    6140,
+    2752
+   ],
+   "route": "Col Path",
+   "where": "a short way off the path",
+   "moved_from": [
+    6031,
+    2887
+   ]
+  },
+  {
+   "thing": "stile and bench",
+   "kind": "landmark",
+   "at": [
+    5624,
+    4228
+   ],
+   "route": "Drover's Road",
+   "where": "a short way off the path",
+   "moved_from": [
+    5642,
+    4227
+   ]
+  },
+  {
+   "thing": "picnic viewpoint",
+   "kind": "view",
+   "at": [
+    6671,
+    3134
+   ],
+   "route": "Foothill Road",
+   "where": "a short way off the path"
+  },
+  {
+   "thing": "tide pools",
+   "kind": "wild",
+   "at": [
+    7144,
+    5132
+   ],
+   "route": "Headland Lane",
+   "where": "a short way off the path",
+   "moved_from": [
+    7206,
+    5115
+   ]
+  },
+  {
+   "thing": "a wreck on the rocks",
+   "kind": "ruin",
+   "at": [
+    6920,
+    5144
+   ],
+   "route": "Headland Lane",
+   "where": "beside the path",
+   "moved_from": [
+    6910,
+    5144
+   ]
+  },
+  {
+   "thing": "a cliff-top view to the isles",
+   "kind": "view",
+   "at": [
+    6930,
+    5205
+   ],
+   "route": "Headland Lane",
+   "where": "beside the path"
+  },
+  {
+   "thing": "a beachcomber's camp",
+   "kind": "camp",
+   "at": [
+    6876,
+    5256
+   ],
+   "route": "Headland Lane",
+   "where": "beside the path",
+   "moved_from": [
+    6892,
+    5257
+   ]
+  },
+  {
+   "thing": "seal rocks",
+   "kind": "wild",
+   "at": [
+    6965,
+    5522
+   ],
+   "route": "Headland Lane",
+   "where": "beside the path"
+  },
+  {
+   "thing": "scarecrow",
+   "kind": "landmark",
+   "at": [
+    6904,
+    3652
+   ],
+   "route": "Lull Road",
+   "where": "a short way off the path"
+  }
+ ],
+ "pockets": [
+  {
+   "holds": "a view over the land",
+   "at": [
+    6416,
+    2520
+   ],
+   "trod": "view_pocket",
+   "moved_from": [
+    6416,
+    2465
+   ]
+  },
+  {
+   "holds": "a bench under a tree",
+   "at": [
+    6488,
+    2680
+   ],
+   "trod": "bench_pocket",
+   "moved_from": [
+    6488,
+    2679
+   ]
+  },
+  {
+   "holds": "a hermit at a fire",
+   "at": [
+    6880,
+    5576
+   ],
+   "trod": "hermit_pocket",
+   "moved_from": [
+    6876,
+    5636
+   ]
+  }
+ ],
+ "markers": [
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    5776,
+    4192
+   ],
+   "route": "Ash Coast",
+   "moved_from": [
+    5775,
+    4203
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    5690,
+    4148
+   ],
+   "route": "Ash Coast"
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    5712,
+    4256
+   ],
+   "route": "Ash Coast",
+   "moved_from": [
+    5700,
+    4236
+   ]
+  },
+  {
+   "t": "A",
+   "what": "butterflies",
+   "at": [
+    5620,
+    4256
+   ],
+   "route": "Ash Coast",
+   "moved_from": [
+    5603,
+    4255
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    5676,
+    4356
+   ],
+   "route": "Ash Coast",
+   "moved_from": [
+    5661,
+    4339
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    5612,
+    4380
+   ],
+   "route": "Ash Coast",
+   "moved_from": [
+    5611,
+    4449
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6712,
+    4940
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    6715,
+    4937
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6696,
+    5032
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    6677,
+    5036
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6764,
+    4992
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    6766,
+    5017
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6856,
+    5040
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    6863,
+    5042
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6924,
+    5118
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6974,
+    5036
+   ],
+   "route": "Coast Path"
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    7000,
+    5116
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7023,
+    5121
+   ]
+  },
+  {
+   "t": "A",
+   "what": "hares",
+   "at": [
+    7024,
+    5252
+   ],
+   "route": "Coast Path",
+   "moved_from": [
+    7153,
+    5120
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6292,
+    2768
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6236,
+    2914
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6308,
+    2768
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6323,
+    2869
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6292,
+    2768
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6240,
+    2818
+   ]
+  },
+  {
+   "t": "A",
+   "what": "butterflies",
+   "at": [
+    6296,
+    2737
+   ],
+   "route": "Col Path"
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6204,
+    2644
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6203,
+    2701
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6278,
+    2636
+   ],
+   "route": "Col Path"
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6230,
+    2559
+   ],
+   "route": "Col Path"
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6327,
+    2551
+   ],
+   "route": "Col Path"
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    6216,
+    2556
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6227,
+    2529
+   ]
+  },
+  {
+   "t": "A",
+   "what": "butterflies",
+   "at": [
+    6284,
+    2504
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6287,
+    2501
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6268,
+    2400
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6286,
+    2400
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6332,
+    2348
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6334,
+    2352
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    6256,
+    2428
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6264,
+    2421
+   ]
+  },
+  {
+   "t": "A",
+   "what": "butterflies",
+   "at": [
+    6244,
+    2392
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6221,
+    2338
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6244,
+    2392
+   ],
+   "route": "Col Path",
+   "moved_from": [
+    6183,
+    2309
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6392,
+    4736
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6424,
+    4736
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6376,
+    4756
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6376,
+    4784
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6344,
+    4800
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6368,
+    4800
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6288,
+    4840
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6312,
+    4840
+   ]
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    6468,
+    4840
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6472,
+    4840
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6508,
+    4840
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6496,
+    4840
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6576,
+    4864
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6600,
+    4864
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6336,
+    4872
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6328,
+    4872
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6544,
+    4872
+   ],
+   "route": "Driftwood"
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    6356,
+    4896
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6360,
+    4896
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6536,
+    4884
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6544,
+    4896
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6268,
+    4912
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6208,
+    4912
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6268,
+    4912
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6232,
+    4912
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6448,
+    4920
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6408,
+    4944
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6628,
+    4948
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6624,
+    4976
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6336,
+    4976
+   ],
+   "route": "Driftwood",
+   "moved_from": [
+    6328,
+    4992
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    5724,
+    4060
+   ],
+   "route": "Drover's Road",
+   "moved_from": [
+    5740,
+    4060
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    5752,
+    3959
+   ],
+   "route": "Drover's Road"
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    5664,
+    4020
+   ],
+   "route": "Drover's Road",
+   "moved_from": [
+    5670,
+    4009
+   ]
+  },
+  {
+   "t": "A",
+   "what": "butterflies",
+   "at": [
+    5604,
+    3976
+   ],
+   "route": "Drover's Road",
+   "moved_from": [
+    5622,
+    3929
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6748,
+    3344
+   ],
+   "route": "Foothill Road",
+   "moved_from": [
+    6755,
+    3345
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6856,
+    3364
+   ],
+   "route": "Foothill Road",
+   "moved_from": [
+    6860,
+    3367
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6844,
+    3271
+   ],
+   "route": "Foothill Road"
+  },
+  {
+   "t": "A",
+   "what": "butterflies",
+   "at": [
+    6924,
+    3300
+   ],
+   "route": "Foothill Road",
+   "moved_from": [
+    6942,
+    3272
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6921,
+    3174
+   ],
+   "route": "Foothill Road"
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6956,
+    5132
+   ],
+   "route": "Headland Lane",
+   "moved_from": [
+    6957,
+    5125
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6918,
+    5216
+   ],
+   "route": "Headland Lane"
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    7004,
+    5220
+   ],
+   "route": "Headland Lane",
+   "moved_from": [
+    7013,
+    5221
+   ]
+  },
+  {
+   "t": "A",
+   "what": "terns",
+   "at": [
+    6948,
+    5316
+   ],
+   "route": "Headland Lane"
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6968,
+    5372
+   ],
+   "route": "Headland Lane",
+   "moved_from": [
+    6981,
+    5357
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6968,
+    5412
+   ],
+   "route": "Headland Lane",
+   "moved_from": [
+    6989,
+    5412
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    7072,
+    5468
+   ],
+   "route": "Headland Lane",
+   "moved_from": [
+    7073,
+    5465
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6997,
+    5530
+   ],
+   "route": "Headland Lane"
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    7107,
+    5564
+   ],
+   "route": "Headland Lane"
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6292,
+    2768
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6256,
+    2944
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    6292,
+    2768
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6048,
+    2976
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6460,
+    3032
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6312,
+    2992
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6460,
+    3032
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6336,
+    3000
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6136,
+    3064
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6128,
+    3072
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    6460,
+    3120
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6256,
+    3120
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6460,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6312,
+    3136
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6460,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6344,
+    3136
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6460,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6400,
+    3152
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6464,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6464,
+    3168
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    5960,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5840,
+    3176
+   ]
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    5980,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6088,
+    3184
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6460,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6304,
+    3208
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6720,
+    3196
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6720,
+    3216
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    5980,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6064,
+    3224
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    5980,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6136,
+    3248
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6460,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6368,
+    3256
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6460,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6384,
+    3264
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6272,
+    3436
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6184,
+    3272
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6460,
+    3132
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6336,
+    3272
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6616,
+    3224
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6616,
+    3272
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    5960,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5960,
+    3296
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    5892,
+    3464
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5776,
+    3304
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    5960,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5864,
+    3304
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    6620,
+    3344
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6544,
+    3304
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    5980,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6088,
+    3312
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    5980,
+    3380
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5992,
+    3320
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    6272,
+    3436
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6176,
+    3320
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6256,
+    3448
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6144,
+    3328
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    6808,
+    3348
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6808,
+    3336
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6276,
+    3436
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6304,
+    3368
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6816,
+    3368
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6620,
+    3376
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6616,
+    3376
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6528,
+    3476
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6528,
+    3400
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    5912,
+    3464
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5912,
+    3416
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    5892,
+    3464
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5840,
+    3432
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6184,
+    3484
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6184,
+    3432
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6144,
+    3484
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6144,
+    3448
+   ]
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6512,
+    3476
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6512,
+    3448
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6448,
+    3480
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6424,
+    3456
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    5892,
+    3464
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5776,
+    3464
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6272,
+    3464
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    5892,
+    3480
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5792,
+    3480
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6032,
+    3480
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6576,
+    3480
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "S",
+   "what": "cart with a broken wheel",
+   "at": [
+    5892,
+    3488
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5856,
+    3488
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6200,
+    3488
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    6216,
+    3488
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    5892,
+    3496
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5880,
+    3504
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6536,
+    3544
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6536,
+    3536
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6576,
+    3564
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6584,
+    3568
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6504,
+    3564
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6504,
+    3584
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    5872,
+    3668
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5824,
+    3608
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6120,
+    3616
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6568,
+    3564
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6568,
+    3616
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6724,
+    3620
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6712,
+    3632
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6136,
+    3660
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6136,
+    3656
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cold fire ring",
+   "at": [
+    6272,
+    3656
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6296,
+    3656
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6652,
+    3624
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6592,
+    3656
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6084,
+    3688
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6080,
+    3688
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6016,
+    3692
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6008,
+    3696
+   ]
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    5828,
+    3712
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5800,
+    3704
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6016,
+    3708
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6008,
+    3704
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6248,
+    3732
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6224,
+    3712
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6668,
+    3760
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6600,
+    3760
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    5896,
+    3776
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6240,
+    3756
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6240,
+    3776
+   ]
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6332,
+    3784
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6336,
+    3784
+   ]
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6304,
+    3808
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6288,
+    3808
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    5912,
+    3816
+   ],
+   "route": "Home valley"
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6668,
+    3816
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6648,
+    3816
+   ]
+  },
+  {
+   "t": "I",
+   "what": "gate",
+   "at": [
+    5916,
+    3864
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    5976,
+    3864
+   ]
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    6256,
+    3888
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6264,
+    3888
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6064,
+    3804
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6024,
+    3896
+   ]
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6668,
+    3896
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6648,
+    3896
+   ]
+  },
+  {
+   "t": "S",
+   "what": "mended fence",
+   "at": [
+    6668,
+    3904
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6576,
+    3904
+   ]
+  },
+  {
+   "t": "I",
+   "what": "resident",
+   "at": [
+    6176,
+    3820
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6080,
+    3920
+   ]
+  },
+  {
+   "t": "S",
+   "what": "lost hat",
+   "at": [
+    6324,
+    3952
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6392,
+    3952
+   ]
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6220,
+    4024
+   ],
+   "route": "Home valley",
+   "moved_from": [
+    6184,
+    4024
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6817,
+    3731
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6840,
+    3828
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    6833,
+    3830
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    6909,
+    3768
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "A",
+   "what": "butterflies",
+   "at": [
+    6959,
+    3850
+   ],
+   "route": "Lull Road"
+  },
+  {
+   "t": "I",
+   "what": "door",
+   "at": [
+    6988,
+    3860
+   ],
+   "route": "Lull Road",
+   "moved_from": [
+    6990,
+    3895
+   ]
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    7080,
+    5664
+   ],
+   "route": "Shell Bar",
+   "moved_from": [
+    7080,
+    5693
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    7004,
+    5732
+   ],
+   "route": "Shell Bar",
+   "moved_from": [
+    6979,
+    5713
+   ]
+  },
+  {
+   "t": "S",
+   "what": "tracks",
+   "at": [
+    7008,
+    5768
+   ],
+   "route": "Shell Bar",
+   "moved_from": [
+    7008,
+    5783
+   ]
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6184,
+    2628
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    6016,
+    4540
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6092,
+    4536
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6064,
+    4580
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    6120,
+    4588
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6192,
+    4588
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "water trough",
+   "at": [
+    6296,
+    4096
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6296,
+    4224
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6288,
+    4336
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    6296,
+    4448
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6304,
+    4568
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "noticeboard",
+   "at": [
+    6756,
+    4128
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    6764,
+    4304
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    6772,
+    4480
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    6680,
+    4260
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    6704,
+    4364
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "bench",
+   "at": [
+    5876,
+    4632
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    5876,
+    4672
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "marker stone",
+   "at": [
+    5876,
+    4712
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "old boot",
+   "at": [
+    5876,
+    4744
+   ],
+   "dress": true
+  },
+  {
+   "t": "S",
+   "what": "cairn",
+   "at": [
+    5876,
+    4784
+   ],
+   "dress": true
+  },
+  {
+   "t": "I",
+   "what": "signpost",
+   "at": [
+    7088,
+    5484
+   ],
+   "dress": true
+  }
+ ],
+ "egg_spots": [],
+ "obstacles": [
+  {
+   "kind": "a dew pond",
+   "at": [
+    6680,
+    4292
+   ],
+   "moved_from": [
+    6680,
+    4350
+   ],
+   "passed_by": "dew_pond_loop",
+   "why": "brief 7: a loop round it, the path closer on one side, joining the lane at a Y"
+  },
+  {
+   "kind": "the Headland's rocks",
+   "at": [
+    7056,
+    5572
+   ],
+   "moved_from": [
+    7050,
+    5560
+   ],
+   "passed_by": "rocks_loop",
+   "why": "brief 7: an irregular outline, the path closer on one side, back on the lane at a Y"
+  }
+ ],
+ "set_pieces": [
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6336,
+    2784
+   ],
+   "seed": 500
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6304,
+    2448
+   ],
+   "seed": 501
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6296,
+    3408
+   ],
+   "seed": 502
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6664,
+    3408
+   ],
+   "seed": 503
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6776,
+    3392
+   ],
+   "seed": 504
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6880,
+    3280
+   ],
+   "seed": 505
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6960,
+    3224
+   ],
+   "seed": 506
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    5664,
+    4304
+   ],
+   "seed": 507
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    5872,
+    4336
+   ],
+   "seed": 508
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6256,
+    4384
+   ],
+   "seed": 509
+  },
+  {
+   "piece": "stair",
+   "biome": "meadow",
+   "at": [
+    6736,
+    4400
+   ],
+   "seed": 510
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    6312,
+    4952
+   ],
+   "seed": 511
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    7048,
+    5696
+   ],
+   "seed": 512
+  },
+  {
+   "piece": "stair",
+   "biome": "coast",
+   "at": [
+    7160,
+    5592
+   ],
+   "seed": 513
+  },
+  {
+   "piece": "ledge",
+   "biome": "meadow",
+   "at": [
+    6400,
+    2768
+   ],
+   "seed": 514
+  },
+  {
+   "piece": "ledge",
+   "biome": "meadow",
+   "at": [
+    6560,
+    2736
+   ],
+   "seed": 515
+  },
+  {
+   "piece": "ledge",
+   "biome": "meadow",
+   "at": [
+    6360,
+    3376
+   ],
+   "seed": 516
+  },
+  {
+   "piece": "ledge",
+   "biome": "meadow",
+   "at": [
+    6824,
+    3392
+   ],
+   "seed": 517
+  },
+  {
+   "piece": "ledge",
+   "biome": "meadow",
+   "at": [
+    6120,
+    4352
+   ],
+   "seed": 518
+  },
+  {
+   "piece": "ivy",
+   "biome": "meadow",
+   "at": [
+    6240,
+    3376
+   ],
+   "seed": 519
+  },
+  {
+   "piece": "ivy",
+   "biome": "meadow",
+   "at": [
+    6440,
+    3376
+   ],
+   "seed": 520
+  },
+  {
+   "piece": "pond",
+   "biome": "meadow",
+   "at": [
+    6552,
+    3280
+   ],
+   "seed": 521
+  },
+  {
+   "piece": "pond",
+   "biome": "meadow",
+   "at": [
+    6680,
+    4296
+   ],
+   "seed": 522
+  },
+  {
+   "piece": "boulders",
+   "biome": "coast",
+   "at": [
+    7064,
+    5560
+   ],
+   "seed": 523
+  },
+  {
+   "piece": "boulders",
+   "biome": "coast",
+   "at": [
+    6960,
+    5528
+   ],
+   "seed": 524
+  },
+  {
+   "piece": "boulders",
+   "biome": "meadow",
+   "at": [
+    6872,
+    2440
+   ],
+   "seed": 525
+  },
+  {
+   "piece": "scree",
+   "biome": "meadow",
+   "at": [
+    6904,
+    2480
+   ],
+   "seed": 526
+  }
+ ],
+ "cluster_places": [
+  {
+   "recipe": "meadow_nook",
+   "at": [
+    6392,
+    2560
+   ],
+   "why": "hay slope: a rest under a tree beside the Col Path"
+  },
+  {
+   "recipe": "field_edge",
+   "at": [
+    5928,
+    4616
+   ],
+   "why": "the farm track through the field hedges, a stile at the drain"
+  },
+  {
+   "recipe": "farmyard",
+   "at": [
+    5720,
+    4192
+   ],
+   "why": "the farmyard's work corner by the barn"
+  },
+  {
+   "recipe": "platform_yard",
+   "at": [
+    5824,
+    4072
+   ],
+   "why": "the halt's platform end"
+  },
+  {
+   "recipe": "town_square_corner",
+   "at": [
+    6200,
+    3608
+   ],
+   "why": "the square's south-west corner"
+  },
+  {
+   "recipe": "town_square_corner",
+   "at": [
+    6400,
+    3472
+   ],
+   "why": "the square's north-east corner by the terrace"
+  },
+  {
+   "recipe": "orchard_edge",
+   "at": [
+    6720,
+    3104
+   ],
+   "why": "the orchard on the race's side"
+  },
+  {
+   "recipe": "meadow_nook",
+   "at": [
+    6744,
+    3688
+   ],
+   "why": "the park: a bench under a tree by the bandstand"
+  },
+  {
+   "recipe": "meadow_nook",
+   "at": [
+    6688,
+    4248
+   ],
+   "why": "the dew pond: a bench facing the water"
+  },
+  {
+   "recipe": "shore",
+   "at": [
+    6440,
+    4976
+   ],
+   "why": "Driftwood's quay end by the slip"
+  },
+  {
+   "recipe": "coast_meadow",
+   "at": [
+    6936,
+    5168
+   ],
+   "why": "the Headland neck: a lone tree, sheep, flowers"
+  },
+  {
+   "recipe": "sheepfold_corner",
+   "at": [
+    6936,
+    5376
+   ],
+   "why": "the Headland's fold"
+  },
+  {
+   "recipe": "coast_meadow",
+   "at": [
+    6872,
+    4800
+   ],
+   "why": "the old oak on the coastal lowland"
+  }
+ ],
+ "residents": [
+  {
+   "who": "the gardener",
+   "at": [
+    6264,
+    3008
+   ],
+   "zone": "garden",
+   "story": "valley (Claude K, #197): \"the weeds will keep\"; apprentice Cairn"
+  },
+  {
+   "who": "Doomscroll Dave",
+   "at": [
+    6136,
+    3720
+   ],
+   "zone": "town",
+   "note": "the ring's rival and tutor, on the green"
+  },
+  {
+   "who": "the librarian",
+   "at": [
+    6240,
+    3484
+   ],
+   "zone": "town",
+   "moved_from": [
+    6240,
+    3472
+   ]
+  },
+  {
+   "who": "the baker",
+   "at": [
+    6152,
+    3608
+   ],
+   "zone": "town",
+   "moved_from": [
+    6152,
+    3568
+   ]
+  },
+  {
+   "who": "the stall keeper",
+   "at": [
+    6384,
+    3572
+   ],
+   "zone": "town",
+   "moved_from": [
+    6384,
+    3584
+   ]
+  },
+  {
+   "who": "the miller",
+   "at": [
+    6680,
+    3248
+   ],
+   "zone": "riverside"
+  },
+  {
+   "who": "the beekeeper",
+   "at": [
+    6776,
+    3172
+   ],
+   "zone": "riverside",
+   "note": "the beehives along the hedge",
+   "moved_from": [
+    6840,
+    3104
+   ]
+  },
+  {
+   "who": "the angler",
+   "at": [
+    6628,
+    3192
+   ],
+   "zone": "riverside",
+   "note": "on the millpond bench",
+   "moved_from": [
+    6648,
+    3192
+   ]
+  },
+  {
+   "who": "the picnicker",
+   "at": [
+    6756,
+    3672
+   ],
+   "zone": "park",
+   "moved_from": [
+    6760,
+    3672
+   ]
+  },
+  {
+   "who": "the station master",
+   "at": [
+    5728,
+    4080
+   ],
+   "zone": "halt"
+  },
+  {
+   "who": "the farmer",
+   "at": [
+    5764,
+    4192
+   ],
+   "zone": "halt",
+   "moved_from": [
+    5768,
+    4208
+   ]
+  },
+  {
+   "who": "the fisher",
+   "at": [
+    6268,
+    4972
+   ],
+   "zone": "harbour",
+   "note": "on the quay by the fisher's cottage",
+   "moved_from": [
+    6264,
+    4968
+   ]
+  },
+  {
+   "who": "the harbour master",
+   "at": [
+    6268,
+    5000
+   ],
+   "zone": "harbour",
+   "moved_from": [
+    6216,
+    5024
+   ]
+  },
+  {
+   "who": "the lighthouse keeper",
+   "at": [
+    7136,
+    5552
+   ],
+   "zone": "headland",
+   "note": "crosses the stile (threshold)"
+  },
+  {
+   "who": "the shepherd",
+   "at": [
+    6936,
+    5420
+   ],
+   "zone": "headland",
+   "note": "sheep cross the stile to the fold",
+   "moved_from": [
+    6936,
+    5440
+   ]
+  },
+  {
+   "who": "the hermit",
+   "at": [
+    6864,
+    5564
+   ],
+   "zone": "headland",
+   "note": "the Shell Bar pocket's resident",
+   "moved_from": [
+    6880,
+    5576
+   ]
+  },
+  {
+   "who": "the hiker",
+   "at": [
+    6320,
+    2400
+   ],
+   "zone": "hay_slope",
+   "note": "walkers with staffs up the Col Path"
+  },
+  {
+   "who": "the hut warden",
+   "at": [
+    6256,
+    2408
+   ],
+   "zone": "hay_slope",
+   "note": "comes down for bread (Col hut threshold); Claude F's story",
+   "moved_from": [
+    6264,
+    2416
+   ]
+  },
+  {
+   "who": "the haymaker",
+   "at": [
+    6372,
+    2600
+   ],
+   "zone": "hay_slope",
+   "moved_from": [
+    6376,
+    2600
+   ]
+  }
+ ],
+ "rest_spots": [
+  {
+   "id": "hut_bed",
+   "at": [
+    6204,
+    2944
+   ],
+   "zone": "garden",
+   "what": "the hut's bed (night)",
+   "story": "valley ch 1"
+  },
+  {
+   "id": "spring_pool",
+   "at": [
+    5952,
+    2576
+   ],
+   "zone": "woodland",
+   "what": "the spring pool in the woodland",
+   "owner": "claude-a"
+  },
+  {
+   "id": "millpond_bench",
+   "at": [
+    6640,
+    3200
+   ],
+   "zone": "riverside",
+   "what": "the millpond bench",
+   "story": "valley ch 2"
+  },
+  {
+   "id": "bandstand",
+   "at": [
+    6760,
+    3616
+   ],
+   "zone": "park",
+   "what": "the bandstand in the park (Park Patrol)",
+   "story": "valley ch 3"
+  },
+  {
+   "id": "library",
+   "at": [
+    6224,
+    3464
+   ],
+   "zone": "town",
+   "what": "the library (Book Club)"
+  },
+  {
+   "id": "harbour_wall",
+   "at": [
+    6264,
+    5040
+   ],
+   "zone": "harbour",
+   "what": "Driftwood's harbour wall"
+  },
+  {
+   "id": "lookout_tower",
+   "at": [
+    7144,
+    5536
+   ],
+   "zone": "headland",
+   "what": "the Headland's lookout tower"
+  },
+  {
+   "id": "col_hut_bench",
+   "at": [
+    6264,
+    2400
+   ],
+   "zone": "hay_slope",
+   "what": "the Col hut bench",
+   "story": "the Frostline's ch 2 (Claude F's story, on lane E's land)"
+  }
+ ],
+ "rings": [
+  {
+   "id": "arena",
+   "at": [
+    6112,
+    3696
+   ],
+   "zone": "town",
+   "rival": "Doomscroll Dave",
+   "backdrop": "valley",
+   "why": "the green in Crossroads (missionPlaces.arena), unchanged as the tutor's ring"
+  }
+ ],
+ "story": {
+  "region": "valley",
+  "owner": "claude-k (#197)",
+  "reserved": [
+   {
+    "what": "a kettle on a hook in the shelter by the green (ch 2)",
+    "at": [
+     6024,
+     3632
+    ]
+   },
+   {
+    "what": "the gardener seated on the bandstand step, hat slipped (ch 3, pose)",
+    "at": [
+     6752,
+     3608
+    ]
+   },
+   {
+    "what": "the trowel on a hook and a lit lantern in the shelter (ch 3)",
+    "at": [
+     6032,
+     3632
+    ]
+   },
+   {
+    "what": "Cairn's empty place in the circle: a ring of pale grass",
+    "at": [
+     6096,
+     3712
+    ]
+   }
+  ]
+ },
+ "thresholds": [
+  {
+   "id": "col_hut",
+   "at": [
+    6290,
+    2350
+   ],
+   "route": "col_path",
+   "object": "the Col hut (Claude G draws the object)",
+   "sides": {
+    "valley": "claude-e",
+    "frostline": "claude-f"
+   },
+   "band": "meadow, broadleaf, garden -> alpine, meadow, broadleaf",
+   "landmark": {
+    "what": "the headwall",
+    "at": [
+     6230,
+     1950
+    ]
+   },
+   "residents": [
+    "sheep and their shepherd graze up as far as the hut",
+    "walkers with staffs",
+    "choughs and an ibex on the scree above",
+    "the hut warden comes down for bread"
+   ],
+   "radiates_from": "the glacier"
+  },
+  {
+   "id": "headland_stile",
+   "at": [
+    6992,
+    5304
+   ],
+   "route": "headland_lane",
+   "way": "W1",
+   "object": "the stile in the drystone wall (Claude G)",
+   "sides": {
+    "valley": "claude-e",
+    "headland": "claude-e"
+   },
+   "band": "meadow, sand, field -> sand, meadow",
+   "landmark": {
+    "what": "the lighthouse",
+    "at": [
+     7200,
+     5520
+    ]
+   },
+   "residents": [
+    "sheep cross the stile to the fold",
+    "the lighthouse keeper",
+    "a hare from the cliff turf",
+    "sea pinks spill over the wall"
+   ],
+   "radiates_from": "the sea"
+  },
+  {
+   "id": "shell_bar",
+   "at": [
+    6888,
+    5888
+   ],
+   "route": "shell_bar",
+   "way": "W4",
+   "outside_box": true,
+   "object": "the Shell Bar (Claude G)",
+   "sides": {
+    "headland": "claude-e",
+    "isles": "claude-c"
+   },
+   "band": "sand, meadow, field -> meadow, sand, field2",
+   "landmark": {
+    "what": "the wreck",
+    "at": [
+     6930,
+     5870
+    ]
+   },
+   "residents": [
+    "cocklers walk out at low tide",
+    "seals haul out on the bar",
+    "terns nest on the islet"
+   ],
+   "radiates_from": "the sea"
+  },
+  {
+   "id": "fern_hills",
+   "at": [
+    7000,
+    3192
+   ],
+   "route": "foothill_road",
+   "object": "Fernhollow's lane end (Claude H's side)",
+   "sides": {
+    "valley": "claude-e",
+    "fernhollow": "claude-h"
+   },
+   "band": "meadow, orchard, broadleaf -> broadleaf, conifer, meadow",
+   "residents": [
+    "woodcutters with a cart of logs",
+    "a jay in the oaks"
+   ],
+   "radiates_from": "the old forest"
+  },
+  {
+   "id": "lull_road_east",
+   "at": [
+    7000,
+    3816
+   ],
+   "route": "lull_road",
+   "sides": {
+    "valley": "claude-e",
+    "land_between": "claude-g"
+   },
+   "band": "meadow, field -> field, watermeadow"
+  },
+  {
+   "id": "coast_path_east",
+   "at": [
+    7000,
+    5072
+   ],
+   "route": "coast_path",
+   "sides": {
+    "valley": "claude-e",
+    "land_between": "claude-g"
+   },
+   "band": "meadow, sand -> sea turf, sand"
+  },
+  {
+   "id": "brackens_foot",
+   "at": [
+    5600,
+    3944
+   ],
+   "route": "drovers_road",
+   "sides": {
+    "valley": "claude-e",
+    "brackens": "claude-f"
+   },
+   "note": "the Brackens gap itself (5200, 3760) is Claude F's (brackens.json); the valley's side of its band runs from the halt to x 5600",
+   "band": "meadow, field, field2 -> steppe, meadow, broadleaf"
+  },
+  {
+   "id": "ash_coast_west",
+   "at": [
+    5600,
+    4336
+   ],
+   "route": "ash_coast",
+   "sides": {
+    "valley": "claude-e",
+    "fire_country": "claude-d"
+   },
+   "band": "meadow, field -> sand, steppe, ash"
+  }
+ ],
+ "edges": [
+  {
+   "side": "north",
+   "along": [
+    [
+     5680,
+     2304
+    ],
+    [
+     7008,
+     2304
+    ]
+   ],
+   "layers": "Claude F's Frostline meets the valley at its tier 0 (world 7): the escarpment over the woodland, the Col hut's shelf, the hay slope's top; scree and boulders thicken at the escarpment's foot"
+  },
+  {
+   "side": "north-east",
+   "along": [
+    [
+     6864,
+     2304
+    ],
+    [
+     7008,
+     3192
+    ]
+   ],
+   "layers": "the Fern hills' crest: bramble and fallen trees thickening into thicket and old trees (64 to 180 px deep); the old forest's dark canopy beyond (Claude G past x 7008)"
+  },
+  {
+   "side": "west",
+   "along": [
+    [
+     5600,
+     2304
+    ],
+    [
+     5600,
+     4336
+    ]
+   ],
+   "layers": "the Brackens' foot: Claude F's brackens.json meets at its tier 0 (world 4); heather and gorse clumps come down onto the halt's pastures"
+  },
+  {
+   "side": "south",
+   "along": [
+    [
+     5600,
+     5048
+    ],
+    [
+     7232,
+     5712
+    ]
+   ],
+   "layers": "the sea is the edge: shingle and surf under the halt farm, the quay wall and the cove at Driftwood, rock faces and foam round the Headland; the isles and the rocket cape beyond (Claude G past the box)"
+  }
+ ],
+ "ground": {
+  "_about": "Ground kinds by place for the painter; the kit's meadow biome (scripts/art/biomes/meadow.json, #215) with the valley's variants in scripts/art/biomes/valley.json (meadow, farmland, riverside, town_edge), and coast.json (variant cliff_coast).",
+  "hay_slope": "meadow: hay meadow uncut, clover and buttercup in drifts, the Col Path worn to earth; scree at the escarpment foot",
+  "garden": "the garden kit (unchanged)",
+  "woodland": "Claude A's golden screen",
+  "riverside": "riverside: grazed bank, reeds and marginals at the millpond, crack willow and alder, the orchard in rows",
+  "town": "town_edge: setts on the square, beaten earth lanes with grass in the middle, kitchen gardens behind the cottages",
+  "park": "town_edge: mown grass, gravel walks, flower beds; riverside on the bank",
+  "halt": "farmland: ploughed and crop fields with margins, hedgerows with gates, a farm track, a cinder yard at the halt",
+  "harbour": "coast cliff_coast with the harbour's quay ground: granite setts, nets, fish boxes",
+  "headland": "coast cliff_coast: sea turf with thrift, the drystone wall, rock platform below"
+ },
+ "areas": [
+  {
+   "id": "valley-00",
+   "rect": [
+    5600,
+    2304,
+    320,
+    576
+   ],
+   "walkable": false
+  },
+  {
+   "id": "valley-01",
+   "rect": [
+    5920,
+    2304,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-02",
+   "rect": [
+    6240,
+    2304,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-03",
+   "rect": [
+    6560,
+    2304,
+    448,
+    576
+   ],
+   "walkable": false
+  },
+  {
+   "id": "valley-04",
+   "rect": [
+    7008,
+    2304,
+    256,
+    576
+   ],
+   "walkable": false,
+   "not_mine": "the land between (Claude G) and Fernhollow (Claude H)"
+  },
+  {
+   "id": "valley-10",
+   "rect": [
+    5600,
+    2880,
+    320,
+    576
+   ],
+   "walkable": false
+  },
+  {
+   "id": "valley-11",
+   "rect": [
+    5920,
+    2880,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-12",
+   "rect": [
+    6240,
+    2880,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-13",
+   "rect": [
+    6560,
+    2880,
+    448,
+    576
+   ]
+  },
+  {
+   "id": "valley-14",
+   "rect": [
+    7008,
+    2880,
+    256,
+    576
+   ],
+   "walkable": false,
+   "not_mine": "the land between (Claude G) and Fernhollow (Claude H)"
+  },
+  {
+   "id": "valley-20",
+   "rect": [
+    5600,
+    3456,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-21",
+   "rect": [
+    5920,
+    3456,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-22",
+   "rect": [
+    6240,
+    3456,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-23",
+   "rect": [
+    6560,
+    3456,
+    448,
+    576
+   ]
+  },
+  {
+   "id": "valley-24",
+   "rect": [
+    7008,
+    3456,
+    256,
+    576
+   ],
+   "walkable": false,
+   "not_mine": "the land between (Claude G) and Fernhollow (Claude H)"
+  },
+  {
+   "id": "valley-30",
+   "rect": [
+    5600,
+    4032,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-31",
+   "rect": [
+    5920,
+    4032,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-32",
+   "rect": [
+    6240,
+    4032,
+    320,
+    576
+   ]
+  },
+  {
+   "id": "valley-33",
+   "rect": [
+    6560,
+    4032,
+    448,
+    576
+   ]
+  },
+  {
+   "id": "valley-34",
+   "rect": [
+    7008,
+    4032,
+    256,
+    576
+   ],
+   "walkable": false,
+   "not_mine": "the land between (Claude G) and Fernhollow (Claude H)"
+  },
+  {
+   "id": "valley-40",
+   "rect": [
+    5600,
+    4608,
+    320,
+    512
+   ]
+  },
+  {
+   "id": "valley-41",
+   "rect": [
+    5920,
+    4608,
+    320,
+    512
+   ],
+   "walkable": false
+  },
+  {
+   "id": "valley-42",
+   "rect": [
+    6240,
+    4608,
+    320,
+    512
+   ]
+  },
+  {
+   "id": "valley-43",
+   "rect": [
+    6560,
+    4608,
+    448,
+    512
+   ]
+  },
+  {
+   "id": "valley-44",
+   "rect": [
+    7008,
+    4608,
+    256,
+    512
+   ],
+   "walkable": false,
+   "not_mine": "the land between (Claude G) and Fernhollow (Claude H)"
+  },
+  {
+   "id": "valley-50",
+   "rect": [
+    5600,
+    5120,
+    320,
+    704
+   ],
+   "walkable": false
+  },
+  {
+   "id": "valley-51",
+   "rect": [
+    5920,
+    5120,
+    320,
+    704
+   ],
+   "walkable": false
+  },
+  {
+   "id": "valley-52",
+   "rect": [
+    6240,
+    5120,
+    320,
+    704
+   ],
+   "walkable": false
+  },
+  {
+   "id": "valley-53",
+   "rect": [
+    6560,
+    5120,
+    448,
+    704
+   ]
+  },
+  {
+   "id": "valley-54",
+   "rect": [
+    7008,
+    5120,
+    256,
+    704
+   ]
+  }
+ ]
+}
