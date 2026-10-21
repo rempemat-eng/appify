@@ -59,7 +59,7 @@ It builds on, and does not repeat:
 - `world-rules.md`, `world-ports.md`, `world-atlas.md`.
 - `../research/2d-world-design.md` and `research/*.md`.
 
-**The images** are not in the repository. Claude A has them in its scratchpad (`worldplan5/`), drawn by a script (`geo5.py`) from a height field, a wetness field, the rivers and the paths, at 1 px per 8 px cell:
+**The block-out's data is in the repository** (`research/blockout/`): `geo5.py` and `geo52.py`, `stats-v52.json`, `gates-v52.json`, `blockout-v52.json` (route and river polylines, the tier grid, tier changes, region boxes and origins) and the 1x overview. **The other images** are not in the repository. Claude A has them in its scratchpad (`worldplan5/`), drawn by a script (`geo5.py`) from a height field, a wetness field, the rivers and the paths, at 1 px per 8 px cell:
 
 | File                                                                                                                                                                                                                     | What it shows                                                                                                                                                         |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
