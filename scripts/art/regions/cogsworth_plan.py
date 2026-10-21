@@ -20,7 +20,7 @@ world_audit.py `tier_checks`). Faces are carved south of every higher top at the
 tiers differ by (12, 16, 32 or 40 px). `check()` holds the plan to the rules a plan can
 show (on the grid, inside its box, faces on south edges only and of a legal height, every
 tier change a stair or ramp at least 34 px wide, every stand and door reached from the
-platform, the brief's walk times within 30 % (its block-out town was smaller and coarser), no edge segment over 96 px without a
+platform, nothing more than 30 % farther from the platform than the brief's walk times (nearer is no fault: the decided town is denser than the block-out's), no edge segment over 96 px without a
 jog, the benchmark's density per settlement screen, the brief's counts) and exits non-zero
 on a fault. Nothing in the game reads this yet; the painter (next step) does.
 
@@ -267,7 +267,7 @@ GROUND = [
     # the south bank: the towpath, the Foothill lane in from the Millrace bridge, the riverside
     ('towpath', 'towpath', 2, jog(rect(96, 600, 704, 624), seed=6), True),
     ('foothill-lane', 'setts', 2, jog(rect(80, 752, 336, 784), seed=7), True),
-    ('riverside', 'towpath', 2, [(96, 840), (704, 840), (704, 904), (672, 912), (584, 904), (496, 912), (408, 904),
+    ('riverside', 'quay', 2, [*jog([(96, 840), (704, 840)], seed=11, closed=False), (704, 840), (704, 904), (672, 912), (584, 904), (496, 912), (408, 904),
                                   (320, 912), (232, 904), (152, 912), (104, 872)], True),
     ('foundry-yard', 'yard', 2, jog(rect(112, 632, 304, 752), seed=8), True),
     ('allotments', 'allotment', 2, jog(rect(112, 792, 328, 840), seed=9), True),
@@ -275,29 +275,28 @@ GROUND = [
     ('pump-yard', 'yard', 2, rect(392, 800, 480, 840), True),
 ]
 
-# Buildings: (id, env, kind, footprint rect (x0, y0, x1, y1) in box px, front side, doors as
-# (x, y) on the front's foot). Fronts from house_kits.py (#121) in Cogsworth's brick and iron.
+# Buildings: (id, env, kind, picture rect (x0, top, x1, foot) in box px, front side, doors as
+# (x, y) at the foot). The camera looks north, so every front faces south and stands on its
+# foot line; the rect is the picture's screen box (roof and wall above the foot), so what
+# stands north of a building is behind it. Fronts from house_kits.py (#121) in Cogsworth's
+# brick and iron; the station, mills, foundry, works and terminus are wider fronts built
+# from the same kit's pieces (cogsworth_town.py).
 BUILDINGS = [
-    ('station', 'cogsworth', 'station', (272, 136, 432, 200), 's', [(352, 200)]),
-    ('engine-shed', 'cogsworth', 'shed', (112, 104, 176, 152), 'e', [(176, 128)]),
-    ('signal-box', 'cogsworth', 'hut', (528, 40, 560, 72), 's', []),
-    ('mill-1', 'cogsworth', 'mill', (120, 152, 184, 240), 'e', [(184, 200)]),
-    ('mill-2', 'cogsworth', 'mill', (120, 256, 184, 336), 'e', [(184, 296)]),
-    ('mill-3', 'cogsworth', 'mill', (120, 352, 184, 440), 'e', [(184, 400)]),
-    ('workshop-row-1', 'cogsworth', 'workshops', (232, 376, 336, 488), 'n', [(256, 376), (296, 376)]),
-    ('workshop-row-2', 'cogsworth', 'workshops', (384, 376, 472, 488), 'n', [(408, 376), (448, 376)]),
-    ('warehouse', 'cogsworth', 'warehouse', (472, 376, 560, 488), 'n', [(520, 376)]),
-    ('retort-house', 'cogsworth', 'works', (576, 400, 688, 472), 'n', [(608, 400)]),
-    ('gasholder', 'cogsworth', 'gasholder', (592, 248, 688, 344), None, []),
-    ('mast-hut', 'cogsworth', 'hut', (488, 160, 528, 192), 's', [(508, 192)]),
-    ('foundry', 'cogsworth', 'foundry', (128, 640, 256, 720), 's', [(176, 720), (224, 720)]),
-    ('lock-hut', 'cogsworth', 'hut', (176, 624, 216, 648), 'n', [(196, 624)]),
-    ('terminus', 'cogsworth', 'terminus', (480, 640, 688, 752), 's', [(544, 752), (624, 752)]),
-    ('pump-house', 'cogsworth', 'pump', (400, 776, 472, 840), 'w', []),
+    ('station', 'cogsworth', 'station', (440, 100, 560, 200), 's', [(472, 200), (528, 200)]),
+    ('engine-shed', 'cogsworth', 'shed', (96, 68, 168, 136), 's', [(132, 136)]),
+    ('mill-1', 'cogsworth', 'mill', (120, 152, 184, 264), 's', [(152, 264)]),
+    ('mill-2', 'cogsworth', 'mill', (120, 288, 184, 400), 's', [(152, 400)]),
+    ('workshop-row-1', 'cogsworth', 'workshops', (232, 388, 336, 488), 's', [(256, 488), (308, 488)]),
+    ('workshop-row-2', 'cogsworth', 'workshops', (384, 376, 472, 488), 's', [(452, 488)]),
+    ('warehouse', 'cogsworth', 'warehouse', (472, 388, 560, 488), 's', [(516, 488)]),
+    ('gasholder', 'cogsworth', 'gasholder', (584, 232, 696, 344), None, []),
+    ('retort-house', 'cogsworth', 'works', (576, 392, 688, 472), 's', [(612, 472)]),
+    ('foundry', 'cogsworth', 'foundry', (112, 640, 256, 752), 's', [(160, 752), (216, 752)]),
     ('row-south', 'cogsworth', 'workshops', (384, 640, 464, 752), 's', [(424, 752)]),
-    ('allotment-shed', 'cogsworth', 'hut', (296, 800, 328, 832), 'w', []),
+    ('terminus', 'cogsworth', 'terminus', (480, 652, 688, 752), 's', [(544, 752), (624, 752)]),
+    ('pump-house', 'cogsworth', 'pump', (400, 760, 472, 840), 's', [(436, 840)]),
+    ('allotment-shed', 'cogsworth', 'hut', (288, 772, 320, 840), None, []),
 ]
-# The pump house's door faces the yard on its west side; its stand is in front of it.
 
 # Landmarks and set pieces that are props (B's lane draws them; the brief and #172 name them).
 LANDMARKS = [
@@ -316,13 +315,19 @@ LANDMARKS = [
     ('maglev-viaduct', 'maglev_pier', (688, 664, 704, 696), 'the maglev leaves the terminus east on piers, over the riverside'),
 ]
 
+# Railings and walls that stop a walker on one tier (rects): the platform's edge over the
+# station square, with the way down beside the station.
+RAILINGS = [
+    ('platform-railing', (232, 136, 424, 140)),
+]
+
 # Stairs and ramps between tiers: (id, kind, rect across the face band (x0, y0, x1, y1),
 # lower tier, upper tier). Stairs at least 34 px open (we use 40), top flush with the
-# upper floor, bottom on the path; ramps run along the face at 1 in 3.
+# upper floor, bottom on the path. No ramps: changes of level are stairs (eastward-edges.md 6.3).
 STAIRS = [
     ('fells-stair', 'stair', (184, 40, 224, 72), 2, 3),     # the High Fells down to the crossing
     ('hill-stair', 'stair', (504, 288, 544, 320), 2, 3),    # the square up Gasworks Hill
-    ('hill-ramp', 'ramp', (576, 488, 680, 520), 2, 3),      # carts up from the wharf (1 in 3)
+    ('hill-steps', 'stair', (624, 488, 664, 520), 2, 3),    # up from the wharf (no ramps: eastward-edges.md 6.3)
     ('wharf-steps', 'stair', (216, 536, 256, 568), 1, 2),   # water steps down to the canal (to the boats; not walked)
 ]
 
@@ -346,23 +351,23 @@ TOWN_GATES = [
 # Stands (today's ids kept; lib/world-places.ts, lib/world-ways.ts, resident routes).
 STANDS = {
     # today's junction zone
-    'junction:platform': (352, 120), 'junction:tower': (352, 288), 'junction:ring': (288, 328),
+    'junction:platform': (352, 120), 'junction:tower': (352, 300), 'junction:ring': (288, 328),
     'junction:workshop': (208, 320), 'junction:canal': (360, 512),
     # today's canal zone
     'canal:junction': (360, 392), 'canal:bridge': (360, 572), 'canal:boat': (264, 528),
-    'canal:lock': (184, 528), 'canal:foundry': (200, 736), 'canal:terminus': (584, 776),
+    'canal:lock': (184, 528), 'canal:foundry': (200, 768), 'canal:terminus': (584, 776),
     'canal:allotments': (216, 816),
     # the plan's new ground (world-ways plannedZones: hill, terminus)
-    'hill:gasholder': (600, 368), 'hill:mast': (620, 168), 'terminus:pump-house': (384, 816),
+    'hill:gasholder': (600, 368), 'hill:mast': (620, 168), 'terminus:pump-house': (436, 848),
 }
 
 # Areas (the names, the map, saves, the ways): today's zone ids plus the planned hill and
-# terminus (lib/world-ways.ts plannedZones).
+# terminus (lib/world-ways.ts plannedZones), on the world audit's 32 px cells.
 AREAS = [
-    {'id': 'junction', 'kind': 'zone', 'rect': (0, 0, 472, 496)},
-    {'id': 'hill', 'kind': 'zone', 'rect': (472, 0, 232, 496)},
-    {'id': 'canal', 'kind': 'zone', 'rect': (0, 496, 392, 464)},
-    {'id': 'terminus', 'kind': 'zone', 'rect': (392, 496, 312, 464)},
+    {'id': 'junction', 'kind': 'zone', 'rect': (0, 0, 480, 512)},
+    {'id': 'hill', 'kind': 'zone', 'rect': (480, 0, 224, 512)},
+    {'id': 'canal', 'kind': 'zone', 'rect': (0, 512, 384, 448)},
+    {'id': 'terminus', 'kind': 'zone', 'rect': (384, 512, 320, 448)},
 ]
 
 # The town's interactable (I) and story (S) slots (benchmark 1: 6 to 10 of each a settlement
@@ -434,6 +439,8 @@ def rasterize():
         kind[m] = _kid('building')
         walk[m] = False
         bmask |= m
+    for rid, r in RAILINGS:
+        walk[_rect_mask(r, TOWN_W, TOWN_H)] = False
     # bridges: walkable decks
     for bid, r, t in BRIDGES:
         m = _rect_mask(r, TOWN_W, TOWN_H)
@@ -612,9 +619,9 @@ def check(R=None, verbose=True) -> list:
             elif L > 96 and (x0 == x1 or y0 == y1) and not on_box:
                 notes.append(f'ground {gid} ({k}): a {L} px straight edge, broken by kerbs, fronts and dressing in the art (check on the drawn ground)')
     for b in BUILDINGS:
-        for v in b[3]:
-            if v % GRID:
-                faults.append(f'building {b[0]}: footprint {b[3]} off the grid')
+        x0, top, x1, foot = b[3]
+        if x0 % GRID or x1 % GRID or foot % GRID:
+            faults.append(f'building {b[0]}: its foot line {x0, x1, foot} is off the grid (the picture\'s top may be anywhere)')
     for nm, kind_, at, route, where, sprite in NAMED:
         if not inside(at):
             faults.append(f'named thing {nm} at {at} is outside the footprint')
@@ -698,8 +705,8 @@ def check(R=None, verbose=True) -> list:
         d = _near(D, STANDS[st], 0)
         got = d / SPEED
         times.append((what, s, got))
-        if not np.isfinite(got) or abs(got - s) > 0.3 * s:
-            faults.append(f'{what}: {got:.1f} s from the platform (brief {s} s, within 30 %)')
+        if not np.isfinite(got) or got > 1.3 * s:
+            faults.append(f'{what}: {got:.1f} s from the platform (brief {s} s; no more than 30 % farther)')
 
     # the benchmark's density on the town (check 1) and the brief's counts
     screens = TOWN_W * TOWN_H / (320 * 576)
@@ -712,6 +719,9 @@ def check(R=None, verbose=True) -> list:
     for k, x, p in TOWN_SLOTS:
         if not (0 <= p[0] < TOWN_W and 0 <= p[1] < TOWN_H):
             faults.append(f'slot {x} at {p} is outside the town box')
+    for a in AREAS:
+        if any(v % 32 for v in a['rect']):
+            faults.append(f"area {a['id']} {a['rect']} is off the audit's 32 px cells")
     if len(NAMED) != 14:
         faults.append(f'{len(NAMED)} named things (the brief: 14)')
     if len(POCKETS) != 5:
@@ -736,7 +746,7 @@ def check(R=None, verbose=True) -> list:
 COLOURS = {
     'cog': (52, 92, 132), 'race': (70, 118, 150), 'canal': (64, 104, 128), 'lock': (40, 78, 112),
     'cinder': (118, 104, 92), 'heath': (78, 104, 62), 'yard': (128, 112, 98), 'setts': (156, 146, 132),
-    'flags': (176, 168, 152), 'rails': (92, 80, 72), 'platform': (186, 172, 146), 'towpath': (150, 120, 92),
+    'flags': (176, 168, 152), 'rails': (92, 80, 72), 'platform': (186, 172, 146), 'towpath': (150, 120, 92), 'quay': (140, 136, 128),
     'allotment': (110, 132, 70), 'building': (150, 74, 58), 'bridge': (170, 110, 80),
 }
 
