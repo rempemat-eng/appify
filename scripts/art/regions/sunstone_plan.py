@@ -278,7 +278,7 @@ AMBER_FALLS = [[2672, 2744], [2704, 2800]]
 # Amber in the canyon.
 WILLOW_UPPER = [[3720, 1440], [3696, 1696], [3608, 1936], [3568, 2120]]       # sinks at the end
 WILLOW_LOWER = [[3456, 2696], [3392, 2776], [3320, 2880], [3176, 2968], [3040, 3040], [2904, 3160]]
-PALM_POOL = rounded_rect(3424, 2640, 88, 56, 8)
+PALM_POOL = [[3424, 2640], [3512, 2640], [3512, 2696], [3424, 2696]]
 SALT_LAKE = [[2672, 3696], [2800, 3672], [3024, 3664], [3216, 3696], [3296, 3768], [3280, 3880], [3160, 3952],
              [2944, 3968], [2752, 3944], [2656, 3864], [2640, 3768]]
 
@@ -343,7 +343,7 @@ PLACES = {
                     'why': 'the Willow Run sinks into the gravel and comes up again here: the first water'},
     'hearthold': {'name': 'Hearthold', 'kind': 'hilltown', 'rect': [2280, 4920, 400, 400], 'tier': None,
                   'why': "a rock between two lava flows below the crater: the volcano's only defensible ground"},
-    'ember-forge': {'name': 'the Ember forge', 'kind': 'forge', 'rect': [2352, 4776, 232, 136], 'tier': 15,
+    'ember-forge': {'name': 'the Ember forge', 'kind': 'forge', 'rect': [2352, 4776, 232, 136], 'tier': 14,
                     'why': "the crater's heat at the caldera lip; ore comes down from the Lode by cart"},
     'cinder-springs': {'name': 'Cinder Springs', 'kind': 'springs', 'rect': [2120, 5304, 216, 216], 'tier': None,
                        'why': "hot springs where the sea seeps into the volcano's warm flank"},
@@ -410,6 +410,8 @@ def plateau():
     cy = np.interp(XS, [p[0] for p in COAST], [p[1] for p in COAST])
     shelf = 2 + np.floor(np.clip(cy - 224 - YS, 0, None) / 192)
     T = np.where((YS > 3904) & (XS > 3104), np.minimum(T, shelf), T)
+    # west of the young flow the land falls to the sea too (the volcano's seaward foot)
+    T = np.where(YS > 4704, np.minimum(T, shelf), T)
     return T
 
 
@@ -469,11 +471,12 @@ def build_field(R):
     T = np.where((dr >= half + 80) & (dr < half + 176), np.minimum(T, floor + 2), T)
     # the Amber's canyon: the floor at the Canyon Road's tiers, banded walls up to the fan
     dc = np.minimum(dist_field(CANYON_FLOOR), dist_field(AMBER_G[9:]))
-    T = np.where(dc < 128, np.minimum(T, np.where(YS < 3264, 5, 6)), T)
-    T = np.where((dc >= 128) & (dc < 208), np.minimum(T, np.where(YS < 3264, 6, 7)), T)
-    # the canyon head: the fan's edge drops three tiers south of y 2712 (the stairs at x 2800)
-    head = (YS >= 2712) & (YS < 2896) & (XS > 2560) & (XS < 2960)
-    T = np.where(head, np.minimum(T, 7 - ((YS - 2712) // 88).astype(int)), T)
+    T = np.where(dc < 128, 7, T)
+    T = np.where((dc >= 128) & (dc < 208), 8, T)
+    T = np.where((dc >= 208) & (dc < 304) & (XS < 2900), np.maximum(T, 9), T)
+    # the canyon head: the fan's edge drops a tier south of y 2680 (the stair at x 2800)
+    head = (YS >= 2680) & (YS < 2896) & (XS > 2560) & (XS < 2960)
+    T = np.where(head, np.minimum(T, 7), T)
     # the salt lake: a white pan at tier 4
     T[poly_mask(ortho(SALT_LAKE + SALT_LAKE[:1], 48))] = 4
     # mesas
@@ -505,23 +508,34 @@ def terraces(T):
     put(PLACES['the-lode']['rect'], 10)
     put(PLACES['dust-gulch']['rect'], 8)
     put([2488, 2160, 544, 104], 8)                       # the orchards and the platform's yard
-    put(PLACES['ember-forge']['rect'], 15)
+    put(PLACES['ember-forge']['rect'], 14)
+    # the caldera's lip behind the forge rises a tier each 32 px, so only one face (32 px)
+    # hangs over the forge yard
+    lip = (XS >= 2352) & (XS < 2584) & (YS < 4776) & (YS >= 4400)
+    T[lip] = np.minimum(T[lip], 14 + (4776 - YS[lip] + 31).astype(int) // 32)
     # Palm Spring: the oasis on the pool's terrace (7); its orchards step down east to the road (6)
     put([3320, 2624, 320, 256], 7)
-    # Hearthold: stepped streets from the forge stair's foot (12) down to the south-west gate
-    # (9), the keep above the town on its own crag (13)
-    put([2280, 4920, 400, 192], 12)
-    put([2520, 4920, 160, 104], 13)
-    put([2280, 5112, 400, 72], 11)
-    put([2280, 5184, 120, 64], 10)
-    put([2400, 5184, 280, 136], 11)
-    put([2280, 5248, 120, 72], 9)
-    # Cinder Springs: three pool terraces on the warm flank
-    put([2120, 5304, 216, 96], 8)
-    put([2120, 5400, 136, 120], 7)
-    # Cinderwick: the hamlet on two steps over its black-sand cove
-    put([2592, 5536, 160, 168], 2)
-    put([2752, 5536, 176, 168], 3)
+    # Hearthold: the town climbs north from its gate square (7) in one-tier steps 88 px deep
+    # (a 32 px face and a 56 px street top): the gate ward (8), the lower town (9), the middle
+    # town (10), the upper town (11) at the forge stair's foot, the keep on its crag (12)
+    put([2200, 5320, 200, 56], 7)
+    put([2272, 4912, 408, 40], 13)
+    put([2272, 4952, 408, 40], 12)
+    put([2272, 4992, 408, 64], 11)
+    put([2272, 5056, 408, 88], 10)
+    put([2272, 5144, 408, 88], 9)
+    put([2272, 5232, 408, 88], 8)
+    # Cinder Springs: the pools on one terrace (5) beside the Ember Way, under the gate square
+    put([2120, 5376, 192, 144], 5)
+    # Cinderwick: the hamlet on one shelf over its black-sand cove
+    put([2592, 5536, 336, 168], 2)
+    # the hermit's ledge east of the Ember Way (5); the fishing pool's ledge west of the
+    # Canyon Road below the Cinder Rise (7)
+    put([2400, 5320, 128, 64], 6)
+    put([2400, 5384, 128, 112], 5)
+    put([2104, 3664, 312, 104], 7)
+    # the Canyon Road's tail down the rock's west side, outside the wall (7)
+    put([2176, 4920, 96, 432], 7)
     return T
 
 
@@ -539,6 +553,32 @@ def soft_grid(T):
     return T
 
 
+def detab(T, protect=None, edge_strips=False):
+    """No tab or notch of one or two cells (a-to-f-grid, F's check #194): for each tier, the
+    ground at that tier or higher is opened and closed with a 3 x 3 cell square, so a finger or
+    a slot two cells wide or less goes; cells in `protect` (the ways) keep what they had."""
+    from scipy import ndimage
+    st = np.ones((3, 3), bool)
+    lo, hi = int(T.min()), int(T.max())
+    out = np.full_like(T, lo)
+    prev = None
+    for t in range(lo + 1, hi + 1):
+        m = np.pad(T >= t, 3, mode='edge')
+        if edge_strips:
+            # a strip one or two cells deep along the edge goes too (the box's edge cut it)
+            o = ndimage.binary_opening(np.pad(T >= t, 3, constant_values=False), st)
+            m2 = ndimage.binary_closing(np.pad(o[3:-3, 3:-3], 3, mode='edge'), st)[3:-3, 3:-3]
+        else:
+            m2 = ndimage.binary_closing(ndimage.binary_opening(m, st), st)[3:-3, 3:-3]
+        if protect is not None:
+            m2 = np.where(protect, T >= t, m2)
+        if prev is not None:
+            m2 &= prev
+        out[m2] = t
+        prev = m2
+    return out
+
+
 def route_tier_at(route, x, y):
     """The tier of a route at a point: its nearest vertex's."""
     best = None
@@ -547,6 +587,28 @@ def route_tier_at(route, x, y):
         if best is None or d < best[0]:
             best = (d, p[3])
     return best[1]
+
+
+def rim_y(at):
+    """The rim a stair at `at` climbs to: the higher tier's south edge, 16 px north of the
+    stair's point (its face is centred on it), on the 8 px grid."""
+    return (at[1] - 16) // C * C
+
+
+def align_stairs(T, routes):
+    """Round each route stair, the ground either side takes the stair's rim: within 80 px
+    across and 48 px along, cells of the stair's two tiers lie north (the higher) or south
+    (the lower) of the rim, so the rim runs straight through the stair instead of jogging."""
+    T = T.copy()
+    for r in routes:
+        for ch in r['changes']:
+            if not mine(ch['at']):
+                continue
+            ry = rim_y(ch['at'])
+            hi, lo = max(ch['from'], ch['to']), min(ch['from'], ch['to'])
+            win = (np.abs(XS - ch['at'][0]) <= 80) & (np.abs(YS - ry) <= 48) & ((T == hi) | (T == lo))
+            T = np.where(win, np.where(YS < ry, hi, lo), T)
+    return T
 
 
 def tier_along(w):
@@ -569,7 +631,7 @@ def tier_along(w):
         d, i, q, (dx, dy) = nearest_on(ch['at'], pts)
         at = list(ch['at'])
         if abs(dy) > abs(dx) and ((dy < 0) == (ch['to'] > ch['from'])):
-            at[1] -= 16
+            at[1] = rim_y(ch['at'])
         bounds.append((s_of(at), ch['to']))
     bounds.sort()
     first = pts[0][2]
@@ -581,11 +643,13 @@ def corridors(T, ways, changes):
     no face hangs over it (a face is 32 px a tier, F's Ground); near a tier change the stair
     takes the face."""
     T = T.copy()
-    own = np.full((NY, NX), -1)
+    own = np.full((NY, NX), -1)            # the ways' own cells (their width): kept and held clear
+    claimed = np.zeros((NY, NX), bool)     # cells a way has set, its shoulders included
     for w in ways:
         pts = w['points']
         half = w['width'] / 2 + 8
-        idx = np.argwhere(dist_field(pts) <= half)
+        dd = dist_field(pts)
+        idx = np.argwhere(dd <= half)
         if w.get('changes') is not None:
             s_of, bounds, first = tier_along(w)
         tiers = [p[2] for p in pts]
@@ -593,6 +657,22 @@ def corridors(T, ways, changes):
         vy = np.array([p[1] for p in pts], float)
         for r, c in idx:
             x, y = c * C + C / 2, r * C + C / 2
+            core = dd[r, c] <= w['width'] / 2
+            if w.get('terrain'):
+                # a way on the ground's own tiers; on its east-west legs it keeps the tier where
+                # the leg starts (a cut or a low causeway), so it changes tier only on
+                # north-south legs, where a stair can cut a south face
+                if w.get('ew_level'):
+                    d_, i_, q_, (dx_, dy_) = nearest_on((x, y), pts)
+                    if abs(dx_) > abs(dy_):
+                        T[r, c] = w['leg_tiers'][i_]
+                        claimed[r, c] = True
+                        if core:
+                            own[r, c] = T[r, c]
+                        continue
+                if core:
+                    own[r, c] = max(own[r, c], T[r, c])
+                continue
             if w.get('changes') is not None:
                 sc = s_of((x, y))
                 t = first
@@ -601,9 +681,11 @@ def corridors(T, ways, changes):
                         t = tt
             else:
                 t = tiers[int(np.argmin((vx - x) ** 2 + (vy - y) ** 2))]
-            if own[r, c] < 0 or w.get('route'):
+            if not claimed[r, c] or w.get('route'):
                 T[r, c] = t
-                own[r, c] = t
+                claimed[r, c] = True
+                if core:
+                    own[r, c] = t
     near_change = np.zeros((NY, NX), bool)
     for ch in changes:
         near_change |= np.hypot(XS - ch[0], YS - ch[1]) < 12
@@ -676,8 +758,24 @@ def holeless(comp):
             parts.append(m)
             continue
         if inner:
+            # cut north to south through the hole, where the two parts come out with the
+            # fewest tabs (a cut beside a thin bit would leave a one-cell finger)
             cols = np.nonzero((holes == inner[0]).any(0))[0]
-            cut = int(cols[len(cols) // 2])
+            cands = sorted(set(int(c) for c in cols) | {int(cols[0]), int(cols[-1]) + 1})
+
+            def cost(cut):
+                n_tabs = 0
+                for side in (m[:, :cut], m[:, cut:]):
+                    lab_, k_ = ndimage.label(side)
+                    for q in range(1, k_ + 1):
+                        comp = lab_ == q
+                        h_, nh_ = ndimage.label(~comp)
+                        if any(not (np.any(h_[0] == z) or np.any(h_[-1] == z) or np.any(h_[:, 0] == z)
+                                    or np.any(h_[:, -1] == z)) for z in range(1, nh_ + 1)):
+                            continue
+                        n_tabs += len(tab_edges(trace(comp)))
+                return n_tabs
+            cut = min(cands[::max(1, len(cands) // 8)], key=cost)
         else:
             cut = int(np.argwhere(pinch)[0][1]) + 1
         left, right = m.copy(), m.copy()
@@ -689,12 +787,86 @@ def holeless(comp):
     return parts
 
 
+def tab_edges(o):
+    """The tabs and notches of an outline along x or y, as F's check finds them (#194,
+    region_plan.tabs): an edge of 16 px or less whose two ends turn the same way."""
+    n = len(o)
+    if n <= 4:
+        return []
+    area2 = sum(o[i][0] * o[(i + 1) % n][1] - o[(i + 1) % n][0] * o[i][1] for i in range(n))
+
+    def turn(a, b, c):
+        return (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0])
+    out = []
+    for i in range(n):
+        a, b, c, d = o[i - 1], o[i], o[(i + 1) % n], o[(i + 2) % n]
+        ln = abs(c[0] - b[0]) + abs(c[1] - b[1])
+        t1, t2 = turn(a, b, c), turn(b, c, d)
+        if 0 < ln <= 16 and t1 and t2 and (t1 > 0) == (t2 > 0):
+            out.append((b, c, (t1 > 0) == (area2 > 0)))
+    return out
+
+
+def untab(sub, x0, y0, rounds=16):
+    """Close what tabs and notches are left after `detab` (where the ways' cells kept them):
+    the one or two cells behind each short edge take the tier across it, a round at a time."""
+    from scipy import ndimage
+    sub = sub.copy()
+    for _ in range(rounds):
+        changed = False
+        for t in range(int(sub.min()) + 1, int(sub.max()) + 1):
+            lab, n = ndimage.label(sub >= t)
+            for j in range(1, n + 1):
+                for part in holeless(lab == j):
+                    ring = trace(part)
+                    for b, c, is_tab in tab_edges(ring):
+                        # the cells along the short edge, on the inside (a tab: cut it back) or
+                        # the outside (a notch: fill it)
+                        (bx, by), (cx, cy) = b, c
+                        if by == cy:            # a horizontal edge: the cells above or below it
+                            cols = range(min(bx, cx) // C, max(bx, cx) // C)
+                            rows = [by // C, by // C - 1]
+                            cells = [(r, k) for r in rows for k in cols]
+                        else:
+                            rows_ = range(min(by, cy) // C, max(by, cy) // C)
+                            cols_ = [bx // C, bx // C - 1]
+                            cells = [(r, k) for r in rows_ for k in cols_]
+                        for r, k in cells:
+                            if not (0 <= r < sub.shape[0] and 0 <= k < sub.shape[1]):
+                                continue
+                            inside = part[r, k]
+                            if is_tab and inside:
+                                sub[r, k] = t - 1
+                                changed = True
+                            elif not is_tab and not inside and sub[r, k] < t:
+                                sub[r, k] = t
+                                changed = True
+        if not changed:
+            break
+    return sub
+
+
+def box_field(T, box):
+    """The field inside a box; the box's edge cuts masses, so no sliver of one or two cells
+    is left along it."""
+    x0, y0, w, h = box
+    key = (tuple(box), T.tobytes().__hash__())
+    if key in BOXF:
+        return BOXF[key]
+    sub = T[y0 // C:(y0 + h) // C, x0 // C:(x0 + w) // C]
+    if CORE[0] is not None:
+        sub = detab(sub, CORE[0][y0 // C:(y0 + h) // C, x0 // C:(x0 + w) // C], edge_strips=True)
+        sub = untab(sub, x0, y0)
+    BOXF[key] = sub
+    return sub
+
+
 def tier_outlines(T, box, why):
     """Every tier of the box as outlines: for each tier t above the box's lowest, the
     outlines of the ground at t or higher (F's Ground lays them in order, taking the max)."""
     from scipy import ndimage
     x0, y0, w, h = box
-    sub = T[y0 // C:(y0 + h) // C, x0 // C:(x0 + w) // C]
+    sub = box_field(T, box)
     lo = int(sub.min())
     out = [{'id': f't{lo}', 'tier': lo, 'why': why.get(lo, 'the lowest ground in the box'),
             'outline': [[x0, y0], [x0 + w, y0], [x0 + w, y0 + h], [x0, y0 + h]]}]
@@ -817,15 +989,14 @@ STREETS = [
     ['gulch_orchard_lane', 24, [[2512, 2416], [2512, 2200], [2632, 2200]], 'up the orchards along the Amber'],
     ['palm_orchard_lane', 32, [[3480, 2864], [3480, 2760], [3600, 2760]],
      "from the road past the pool to the water-seller's awning"],
-    ['lode_yard', 32, [[2936, 1688], [3024, 1688], [3168, 1688]], 'the mine yard along the face'],
-    ['hearthold_gate_street', 40, [[2440, 5080], [2472, 5080], [2472, 5120]],
-     "from the west gate to the forge stair's foot and down to the Ember Way"],
-    ['hearthold_keep_street', 32, [[2472, 5064], [2600, 5064], [2600, 4992]], 'up to the keep above the town'],
-    ['hearthold_market_row', 32, [[2472, 5144], [2640, 5144], [2640, 5256]], 'the market row and the east wall walk'],
-    ['forge_yard', 32, [[2392, 4872], [2464, 4872], [2560, 4872]], 'the forge yard on the caldera lip'],
-    ['springs_upper', 32, [[2256, 5360], [2144, 5360]], 'along the upper pools'],
-    ['springs_lower', 32, [[2256, 5456], [2152, 5456]], 'along the lower pools'],
-    ['cinderwick_lane', 32, [[2704, 5616], [2760, 5616], [2760, 5664], [2904, 5664]],
+    ['lode_yard', 32, [[2936, 1696], [3040, 1696], [3168, 1696]], 'the mine yard along the face'],
+    ['hearthold_high_street', 40, [[2328, 5352], [2328, 5296], [2472, 5296], [2472, 5040]],
+     "from the gate square up the town's steps to the forge stair's foot"],
+    ['hearthold_keep_street', 32, [[2472, 5112], [2616, 5112], [2616, 5024]], 'up to the keep in the upper town'],
+    ['hearthold_market_row', 32, [[2472, 5200], [2640, 5200], [2640, 5288]], 'the market row and the east wall walk'],
+    ['forge_yard', 32, [[2392, 4896], [2464, 4896], [2560, 4896]], 'the forge yard on the caldera lip'],
+    ['springs_walk', 32, [[2328, 5464], [2152, 5464]], 'along the pools'],
+    ['cinderwick_lane', 32, [[2704, 5616], [2784, 5616], [2784, 5664], [2904, 5664]],
      "the hamlet's lane above the black sand, from the Ember Way to the Ash Coast's end"],
 ]
 
@@ -835,29 +1006,131 @@ def mine(p):
     return (p[0] <= 4800 and p[1] <= 4320) or (p[0] <= 5600 and 4000 <= p[1] <= 5856)
 
 
+# Inside lane D's boxes the region plan draws the routes (g-to-all-region-rule, 21 Oct 14:20):
+# their lines, stairs and widths; lane G meets them at the box edges. Lane D keeps G's lines
+# where they work and sets every tier change on a north-south leg rising northward (a stair
+# cuts a south face: eastward-edges 6.1, F's check #194). The land rises north to the massif
+# and the volcano's seaward flank rises north to the crater, so the routes climb northward;
+# the Canyon Road no longer climbs the volcano's north flank (which rises southward, away from
+# the camera): it stays on the canyon floor's tier through the ash fields, cuts through the
+# Cinder Rise, runs along the cone's west foot, crosses the chasm bridge and comes down the
+# rock's west side to Hearthold's gate, and the town climbs north from its gate in steps.
+ROUTE_PLAN = {
+    'drovers-road': {
+        'start': 4,
+        'changes': [((4416, 3488), 4, 5, 'stair'), ((3936, 3120), 5, 6, 'stair'), ((3536, 2888), 6, 7, 'stair'),
+                    ((3216, 2692), 7, 8, 'stair')],
+    },
+    'lode-track': {
+        'start': 8,
+        'changes': [((2880, 2104), 8, 9, 'switchback'), ((2976, 1864), 9, 10, 'switchback')],
+    },
+    'canyon-road': {
+        'start': 8,
+        'changes': [((2800, 2696), 8, 7, 'stair')],
+        # after the chasm bridge: down the rock's west side to the gate square
+        'tail_from': (2216, 4920),
+        'tail': [[2216, 4920, 48], [2216, 5352, 40], [2328, 5352, 40]],
+    },
+    'forge-stair': {
+        'start': 11,
+        'changes': [((2472, 5008), 11, 12, 'stair'), ((2472, 4968), 12, 13, 'stair'), ((2472, 4928), 13, 14, 'stair')],
+    },
+    'ember-way': {
+        # from Hearthold's gate square down past Cinder Springs to Cinderwick
+        'start': 7,
+        'points': [[2328, 5352, 40], [2328, 5456, 40], [2392, 5456, 40], [2392, 5560, 40], [2520, 5560, 40],
+                   [2520, 5640, 40], [2704, 5640, 48]],
+        'changes': [((2328, 5384), 7, 6, 'stair'), ((2328, 5432), 6, 5, 'stair'), ((2392, 5488), 5, 4, 'stair'),
+                    ((2392, 5536), 4, 3, 'stair'), ((2520, 5600), 3, 2, 'stair')],
+    },
+    'ash-coast': {
+        'start': 3,
+        'changes': [((4704, 5040), 3, 2, 'stair')],
+    },
+}
+
+
+# Lane D's lines for three of lane G's pockets whose routes it redrew (the plan wins inside the
+# box): each on one tier or stepping down north-south legs only.
+POCKET_PATHS = {
+    (2500, 5402): [[2392, 5472], [2496, 5472], [2496, 5440]],
+    (2212, 5762): [[2456, 5560], [2456, 5680], [2248, 5680], [2248, 5760], [2208, 5760]],
+    (2126, 3694): [[2392, 3744], [2200, 3744], [2200, 3696], [2128, 3696]],
+}
+
+
+def straighten(pts):
+    """A polyline without points in the middle of a straight run."""
+    out = [list(pts[0])]
+    for i in range(1, len(pts) - 1):
+        a, b, c = out[-1], pts[i], pts[i + 1]
+        if b == a or (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]) != 0:
+            if b != a:
+                out.append(list(b))
+    out.append(list(pts[-1]))
+    return out
+
+
+def connect(pts, lines, avoid=()):
+    """A trod of lane G's that no longer meets a route (its route was redrawn here) gets a
+    short leg along x then y from the nearest point of a route to its first point, away from
+    the route's stairs."""
+    first = pts[0]
+    best = min((nearest_on(first, ln) for ln in lines),
+               key=lambda b: b[0] + (200 if any(math.hypot(b[2][0] - a[0], b[2][1] - a[1]) < 48 for a in avoid) else 0))
+    if best[0] <= 8:
+        return pts
+    qx, qy = snap(best[2][0]), snap(best[2][1])
+    return [[qx, qy], [first[0], qy]] + pts if first[0] != qx and first[1] != qy else [[qx, qy]] + pts
+
+
 def ways_for(R):
-    """Every route (G's) and trod (G's side paths and pockets, then lane D's streets)."""
+    """Every route (lane G's, with lane D's lines and stairs inside its boxes) and trod (G's
+    side paths and pockets, then lane D's streets)."""
     routes, trods = [], []
     for r in R['routes']:
-        routes.append({'id': r['id'], 'name': r['name'], 'route': True,
-                       'points': [[p[0], p[1], p[3], p[2]] for p in r['points'] if mine(p)],
-                       'changes': r['changes'], 'crossings': r['crossings']})
+        plan = ROUTE_PLAN[r['id']]
+        if 'points' in plan:
+            pts = [[x, y, 0, w] for x, y, w in plan['points']]
+        else:
+            pts = [[p[0], p[1], 0, p[2]] for p in r['points'] if mine(p)]
+            if 'tail_from' in plan:
+                k = next(i for i, p in enumerate(pts) if tuple(p[:2]) == plan['tail_from'])
+                pts = pts[:k] + [[x, y, 0, w] for x, y, w in plan['tail']]
+        changes = [{'at': list(at), 'from': a, 'to': b, 'kind': kind} for at, a, b, kind in plan['changes']]
+        way = {'points': [[p[0], p[1], plan['start']] for p in pts], 'changes': changes}
+        s_of, bounds, first = tier_along(way)
+        for p in pts:
+            t = first
+            sp = s_of(p[:2])
+            for sb, tt in bounds:
+                if sp >= sb:
+                    t = tt
+            p[2] = t
+        crossings = [c for c in r['crossings'] if mine(c['at'])]
+        routes.append({'id': r['id'], 'name': r['name'], 'route': True, 'points': pts, 'changes': changes,
+                       'crossings': crossings})
+    lines = [[p[:2] for p in r['points']] for r in routes]
+    avoid = [c['at'] for r in routes for c in r['changes']]
+    for r in R['routes']:
         for sp in r['sidePaths']:
             if not mine(sp['at']):
                 continue
-            sp = dict(sp, points=[[min(x, 4800) if y < 4000 else x, y] for x, y in sp['points']])
+            pts = straighten(connect([[min(x, 4800) if y < 4000 else x, y] for x, y in sp['points']], lines, avoid))
             trods.append({'id': f"{r['id']}_round_{sp['obstacle']}", 'width': sp['width'],
-                          'points': [list(p) for p in sp['points']], 'obstacle': sp['obstacle'],
+                          'points': pts, 'obstacle': sp['obstacle'],
                           'obstacle_at': sp['at'], 'route_id': r['id'],
                           'why': f"round the far side of the {sp['obstacle']} (brief 7; lane G's side path)"})
         for pk in r['pockets']:
             if not mine(pk['clearing']):
                 continue
             # a pocket path that strays into lane F's box (the view down a gorge goes to x 4808)
-            # is held on lane D's side of x 4800
-            pk = dict(pk, points=[[min(x, 4800) if y < 4000 else x, y] for x, y in pk['points']])
+            # is held on lane D's side of x 4800, 16 px in
+            pts = POCKET_PATHS.get(tuple(pk['clearing'])) or \
+                straighten(connect([[min(x, 4784) if y < 4000 else x, y] for x, y in pk['points']], lines, avoid))
             trods.append({'id': f"{r['id']}_pocket_{pk['clearing'][0]}_{pk['clearing'][1]}", 'width': pk['width'],
-                          'points': [list(p) for p in pk['points']], 'holds': pk['holds'],
+                          'points': pts, 'holds': pk['holds'],
                           'clearing': pk['clearing'], 'dead_end': DEAD_END[pk['holds']], 'route_id': r['id'],
                           'why': f"a secret pocket: {pk['holds']} (lane G's pocket path)"})
     for sid, w, pts, why in STREETS:
@@ -945,6 +1218,8 @@ class Ground:
 
 
 STAIRS_AT = []      # (x, y, width): filled while the plans are built
+CORE = [None]       # the ways' own cells (their width), set by build()
+BOXF = {}           # box_field's results in this run
 
 
 # --- the plans -----------------------------------------------------------------------------
@@ -952,12 +1227,12 @@ STAIRS_AT = []      # (x, y, width): filled while the plans are built
 TIER_WHY = {
     0: 'the sea', 1: 'the beach: black sand, surf', 2: "the coast's lowest shelf, the Rift's mouth and floor",
     3: 'the coastal shelf (green, windward), the Rift floor in its gorge', 4: 'the salt lake, the steppe by the Brackens',
-    5: "the Amber canyon's floor, the steppe west of the Rift", 6: 'the scrub, the canyon foot',
-    7: 'Palm Spring, the scrub below the fan', 8: "Dust Gulch's fan and the desert plateau",
-    9: 'the foothills, the Lode Track', 10: "the Lode's bench; the flanks", 11: "the volcano's west flank, Hearthold's lower town",
-    12: "Hearthold's upper town", 13: "the keep's crag; the massif's crags (the wall, never walked)",
-    14: "lane G's beyond (the massif's peaks), never walked",
-    15: 'the forge on the caldera lip',
+    5: "the steppe west of the Rift; the lower pools at Cinder Springs", 6: 'the scrub, the canyon foot',
+    7: "Palm Spring; the canyon floor, the ash fields, the volcano's west foot, Hearthold's gate", 8: "Dust Gulch's fan, the desert plateau, Hearthold's gate ward",
+    9: "the foothills, the Lode Track, the canyon's rims; Hearthold's lower town", 10: "the Lode's bench; Hearthold's middle town", 11: "Hearthold's upper town",
+    12: "the keep's crag", 13: "the massif's crags (the wall, never walked)",
+    14: "the forge on the caldera lip; in the basin, lane G's beyond (the massif's peaks), never walked",
+    15: 'the upper cone, never walked',
 }
 
 
@@ -968,18 +1243,66 @@ def build(R, brief):
     # 1. the designed field, the places, the soft grid
     T = terraces(build_field(R))
     T = soft_grid(T)
-    T = terraces(T)
+    T = detab(terraces(T))
     # 2. routes, then trods, set to their tiers with the ground north of them held low
     T, own = corridors(T, [dict(width=max(p[3] for p in r['points']), points=[p[:3] for p in r['points']], route=True,
                                 changes=r['changes']) for r in routes], changes)
     trod_ways = []
+
+    def route_tier(pt):
+        best = min(routes, key=lambda r: nearest_on(pt, [p[:2] for p in r['points']])[0])
+        s_of, bounds, first = tier_along(dict(points=[p[:3] for p in best['points']], changes=best['changes']))
+        t, sp = first, s_of(pt)
+        for sb, tt in bounds:
+            if sp >= sb:
+                t = tt
+        d = nearest_on(pt, [p[:2] for p in best['points']])[0]
+        return t, d
     for t in trods:
-        pts = [[p[0], p[1], int(T[min(NY - 1, int(p[1] // C)), min(NX - 1, int(p[0] // C))])] for p in t['points']]
-        trod_ways.append(dict(width=t['width'], points=pts))
-    # a trod keeps the ground it lies on (its corridor takes the tier at each vertex) unless a
-    # route already owns the cell
+        if t.get('route_id') and t.get('holds'):
+            # lane G's pockets are dead ends up or down the land: they follow it, with a stair
+            # wherever a north-south leg crosses a rim
+            pts = t['points']
+            legs = [int(T[min(NY - 1, int(a[1] // C)), min(NX - 1, int(a[0] // C))]) for a in pts[:-1]]
+            if pts[0][1] == pts[1][1]:
+                legs[0] = route_tier(pts[0])[0]
+            t['changes'] = None
+            trod_ways.append(dict(width=t['width'], points=[[p[0], p[1], 0] for p in pts], terrain=True,
+                                  ew_level=True, leg_tiers=legs))
+            continue
+        if t.get('route_id'):
+            # lane G's side paths: level at their route's tier where they leave it; one that
+            # rejoins on another tier gets one stair on a north-south leg that climbs north
+            ts, _ = route_tier(t['points'][0])
+            te, de = route_tier(t['points'][-1])
+            te = te if de <= 8 else ts
+            changes = []
+            if te != ts:
+                for a, b in zip(t['points'], t['points'][1:]):
+                    north = b[1] < a[1]
+                    if a[0] == b[0] and abs(b[1] - a[1]) >= 48 and north == (te > ts):
+                        changes = [{'at': [a[0], snap((a[1] + b[1]) / 2, 4)], 'from': ts, 'to': te, 'kind': 'stair'}]
+                        break
+            t['changes'], t['tier'] = changes, ts
+            trod_ways.append(dict(width=t['width'], points=[[p[0], p[1], ts] for p in t['points']], changes=changes))
+        else:
+            # lane D's streets keep the ground they are laid on: the terraces give their stairs
+            trod_ways.append(dict(width=t['width'], points=[[p[0], p[1], 0] for p in t['points']], terrain=True))
+    route_ways = [dict(width=max(p[3] for p in r['points']), points=[p[:3] for p in r['points']], route=True,
+                       changes=r['changes']) for r in routes]
     T2, own2 = corridors(T, trod_ways, changes)
     T = np.where(own >= 0, T, T2)
+    # no tabs or notches, then the ways set again (twice settles it)
+    core = np.zeros((NY, NX), bool)
+    for w in route_ways + trod_ways:
+        core |= dist_field([p[:2] for p in w['points']]) <= w['width'] / 2
+    for _ in range(2):
+        T = detab(T, core)
+        T, own = corridors(T, route_ways, changes)
+        T2, own2 = corridors(T, trod_ways, changes)
+        T = np.where(own >= 0, T, T2)
+    T = detab(align_stairs(T, routes), core)
+    CORE[0] = core
     return T, routes, trods
 
 
@@ -1037,6 +1360,10 @@ CLUSTERS = [
     ['ferry landing', (4220, 5200), ['landing stage', 'rope post', 'bench', 'ferryman\'s hut'], 'lamp on the post', 'the Rift ferry'],
     ['coast meadow', (5000, 4700), ['lone tree', 'sheep', 'stile', 'flowers'], None, "the Ash Coast's green shelf"],
 ]
+
+
+# drawn but never walked: the dune sea's fade and wall, the salt pan seen from the road
+NOT_WALKED = {'dunes', 'salt-lake'}
 
 
 def biome_at(x, y):
@@ -1127,7 +1454,7 @@ def make_plans(T, routes, trods, R, brief):
     all_ways = [dict(id=r['id'], width=max(p[3] for p in r['points']), points=[p[:2] for p in r['points']])
                 for r in routes] + [dict(id=t['id'], width=t['width'], points=t['points']) for t in trods]
     G = Ground(T, blocked, all_ways, face4)
-    # the stairs: G's tier changes (kind as G gives it), then lane D's on its own trods
+    # the stairs: the routes' tier changes (lane D's inside its boxes), then those on the trods
     stairs, asks = [], []
     for r in routes:
         pts = [p[:2] for p in r['points']]
@@ -1136,20 +1463,21 @@ def make_plans(T, routes, trods, R, brief):
                 continue
             w = max(p[3] for p in r['points'] if math.hypot(p[0] - ch['at'][0], p[1] - ch['at'][1]) < 80)
             st = {'id': f"{r['id']}_{ch['kind']}_{k + 1}", 'on': r['id'], 'at': list(ch['at']),
-                  'from_tier': ch['from'], 'to_tier': ch['to'], 'width': max(40, w), 'kind': ch['kind'],
-                  'from_lane_g': True}
+                  'from_tier': ch['from'], 'to_tier': ch['to'], 'width': max(40, w), 'kind': ch['kind']}
             leg = leg_of(pts, ch['at'])
             d, i, q, (dx, dy) = nearest_on(ch['at'], pts)
             up_south = leg == 'ns' and ((dy > 0) == (ch['to'] > ch['from']))
-            if ch['kind'] == 'stair' and leg == 'ew':
-                asks.append(f"{r['name']} {ch['from']}>{ch['to']} at {tuple(ch['at'])}: a stair on an east-west leg "
-                            '(a stair cuts a south face); a north-south leg or a round-end?')
-            if up_south and ch['kind'] in ('stair', 'round-end'):
-                asks.append(f"{r['name']} {ch['from']}>{ch['to']} at {tuple(ch['at'])}: climbs southward, so the "
-                            'rim it crosses is a north edge (no face to cut); a round-end on an east-west leg?')
+            if leg == 'ew' or up_south:
+                asks.append(f"{r['name']} {ch['from']}>{ch['to']} at {tuple(ch['at'])}: not on a north-south leg "
+                            'rising northward')
             stairs.append(st)
     for t in trods:
-        stairs += auto_stairs(tier4, face4, t)
+        if t.get('route_id') and t.get('changes') is not None:
+            for k, ch in enumerate(t.get('changes', [])):
+                stairs.append({'id': f"{t['id']}_stair_{k + 1}", 'on': t['id'], 'at': ch['at'], 'from_tier': ch['from'],
+                               'to_tier': ch['to'], 'width': max(40, t['width'] + 8), 'kind': 'stair'})
+        else:
+            stairs += auto_stairs(tier4, face4, t)
     STAIRS_AT.extend((s['at'][0], s['at'][1], s['width']) for s in stairs)
     eggs = [{'what': e['what'], 'at': e['at'], 'keep_clear_r': 32} for e in brief['eggs']]
     for e in eggs:
@@ -1311,7 +1639,7 @@ def emit(T, routes, trods, R, P):
         stairs = [s for s in P['stairs'] if in_box(s['at'], box) and s['on'] in path_ids]
         tiers = P['outlines'][pid]
         back = raster(tiers, box)
-        sub = T[y0 // C:(y0 + h) // C, x0 // C:(x0 + w) // C]
+        sub = box_field(T, box)
         bad = int((back != sub).sum())
         if bad:
             raise SystemExit(f'{pid}: the traced tiers differ from the field in {bad} cells')
@@ -1333,6 +1661,9 @@ def emit(T, routes, trods, R, P):
                  'why': 'the Willow Run comes up out of its gravel'},
                 {'id': 'salt_lake', 'kind': 'salt pan', 'closed': True, 'points': ortho(SALT_LAKE + SALT_LAKE[:1], 48),
                  'why': 'where the Amber ends at the arc\'s foot: a white pan, wet only after a storm'},
+                {'id': 'fishing_pool', 'kind': 'pool', 'closed': True,
+                 'points': [[2104, 3720], [2168, 3720], [2168, 3752], [2104, 3752]],
+                 'why': "a spring-fed pool on a ledge below the Cinder Rise: the pocket's resident fishes it"},
                 {'id': 'palm_channels', 'kind': 'channel', 'width': 8,
                  'points': [[3512, 2696], [3600, 2696], [3600, 2840]], 'why': 'orchard channels, a step across'},
                 {'id': 'gulch_channels', 'kind': 'channel', 'width': 8,
@@ -1341,11 +1672,11 @@ def emit(T, routes, trods, R, P):
             water[3]['why'] = 'sinks into its gravel fan here'
         else:
             water += [
-                {'id': 'hot_pools', 'kind': 'pools', 'closed': True, 'points': rounded_rect(2160, 5328, 64, 32, 8),
-                 'why': 'the upper pool'},
-                {'id': 'hot_pools_lower', 'kind': 'pools', 'closed': True, 'points': rounded_rect(2168, 5424, 56, 24, 8),
-                 'why': 'the lower pool'},
-                {'id': 'sea', 'kind': 'sea', 'points': COAST,
+                {'id': 'hot_pools', 'kind': 'pools', 'closed': True, 'points': [[2160, 5488], [2208, 5488], [2208, 5512], [2160, 5512]],
+                 'why': 'the west pool'},
+                {'id': 'hot_pools_lower', 'kind': 'pools', 'closed': True, 'points': [[2232, 5496], [2272, 5496], [2272, 5512], [2232, 5512]],
+                 'why': 'the east pool'},
+                {'id': 'sea', 'kind': 'sea', 'points': ortho(COAST, 64),
                  'why': 'the shore line; lane G draws the open sea past it (g-to-all-edges 4)'},
             ]
         lava = []
@@ -1372,8 +1703,9 @@ def emit(T, routes, trods, R, P):
                 x, y, ww, hh = pl['rect']
                 places.append({'id': k, 'kind': pl['kind'], 'name': pl['name'], 'at': [x + ww // 2, y + hh // 2],
                                'rect': pl['rect'], 'why': pl['why']})
-        areas = [{'id': a, 'name': n, 'kind': k, 'zone': z, 'rect': r} for a, n, k, z, r in AREAS
-                 if own([r[0] + r[2] // 2, r[1] + r[3] // 2])]
+        areas = [dict({'id': a, 'name': n, 'kind': k, 'zone': z, 'rect': r},
+                      **({'walkable': False} if a in NOT_WALKED else {}))
+                 for a, n, k, z, r in AREAS if own([r[0] + r[2] // 2, r[1] + r[3] // 2])]
         named = [n for n in P['named'] if own(n.get('moved_from', n['at'])) and in_box(n['at'], box)]
         pockets = [pk for pk in P['pockets'] if pk['trod'] in trod_ids]
         markers = [m for m in P['markers'] if own(m.get('moved_from', m['at'])) and in_box(m['at'], box)
@@ -1403,10 +1735,12 @@ def emit(T, routes, trods, R, P):
         else:
             for k, (x, y, rad) in enumerate(PARASITIC_CONES):
                 set_pieces.append({'piece': 'cinder_cone', 'biome': 'ash', 'at': [snap(x), snap(y)], 'seed': 400 + k,
+                                   'proposed': True,
                                    'pending': 'the ash biome is not built in the cliff core yet'})
             for k, (x, y, pc) in enumerate(((2832, 4992, 'spatter_cone'), (2207, 4185, 'fumarole'), (2457, 5500, 'fumarole'),
                                              (2836, 5685, 'fumarole'), (2800, 4296, 'steam_cave'))):
                 set_pieces.append({'piece': pc, 'biome': 'ash', 'at': [snap(x), snap(y)], 'seed': 420 + k,
+                                   'proposed': True,
                                    'pending': 'the ash biome is not built in the cliff core yet'})
             for k, (x, y) in enumerate(((5168, 4816), (4256, 5048), (3888, 5384))):
                 set_pieces.append({'piece': 'boulders', 'biome': 'coast', 'at': [x, y], 'seed': 440 + k,
@@ -1524,19 +1858,13 @@ def emit(T, routes, trods, R, P):
             'ruins': ruins, 'set_pieces': set_pieces, 'clusters': clusters, 'edges': edges, 'thresholds': thresholds,
             'meets': meets, 'residents': residents, 'ground': GROUND,
             'overrides': OVERRIDES if pid == 'sunstone' else [],
-            'open': {'asks_of_lane_g': [a for a in P['asks'] if any(in_box(_pt(a), box) for _ in (0,))],
-                     'notes': OPEN_NOTES},
+            'open': {'notes': OPEN_NOTES},
         }
         unplaced = [x for x in P['named'] + P['markers'] if x.get('unplaced') and own(x['at'])]
         if unplaced:
             plan['open']['unplaced'] = unplaced
         plans[pid] = plan
     return plans
-
-
-def _pt(ask):
-    m = re.search(r'\((\d+), (\d+)\)', ask)
-    return [int(m.group(1)), int(m.group(2))]
 
 
 PLACE_OF = {'Cinder Springs', 'Cinderwick', 'Dust Gulch', 'Ember forge', 'Hearthold', 'Palm Spring', 'the Lode'}
@@ -1553,15 +1881,20 @@ OVERRIDES = [{
 }]
 
 OPEN_NOTES = [
-    "The routes' long straight runs (up to 416 px on the Drover's Road) follow Matt's grid ruling (21 Oct 11:44, "
-    "to-all-grid-2x); region_plan.py's check 16 (240 px) predates it.",
+    "Inside lane D's boxes the plan draws the routes (g-to-all-region-rule, 21 Oct 14:20): lane G's lines are "
+    'kept except the Canyon Road after the chasm bridge and the Ember Way, and every tier change sits on a '
+    "north-south leg rising northward. The Canyon Road keeps the canyon floor's tier (7) from the canyon to "
+    "Hearthold's gate: the volcano's north flank rises southward, away from the camera, so no stair can climb it.",
+    "The cliff core's canyon faces come at the plan's 32 px tier, stacked for taller walls (a-to-d-canyon).",
     "The brief puts the desert line's viaduct 'upstream' of Drover's bridge but at (4290, 3720), downstream; the "
     'plan keeps the coordinates.',
     'The fire country: v5.3 4.7 is followed (the chasm bridge crosses the old flow from the summit\'s south-west '
     "breach; the crust causeway the young flow from the south-east vent); table 5.2's 'young west flow' is read as that.",
-    "Hearthold's stepped streets are laid as six terraces (9 to 13) with the routes' stairs and lane D's streets; "
-    'the brief\'s 24 stairs come with the castle kit.',
-    'Set pieces of the ash biome wait for its edge set in the cliff core (not built yet).',
+    "Hearthold climbs north from its gate in four terraces two tiers apart (6, 8, 10, 12) and the keep's crag (13); "
+    "the brief's 24 stairs come with the castle kit.",
+    'Set pieces of the ash biome wait for its edge set in the cliff core (marked proposed).',
+    "Cluster places are lane D's notes until Claude B's recipes land (#203): then each is replaced by "
+    'prop_clusters.py --place output (b-to-d-clusters).',
 ]
 
 
@@ -1596,7 +1929,9 @@ def main(argv):
         import subprocess
         subprocess.run([fmt, '--write'] + written, cwd=ROOT, check=True, stdout=subprocess.DEVNULL)
     for a in P['asks']:
-        print('ask of lane G:', a)
+        print('FAULT stair:', a)
+    if P['asks']:
+        return 1
     if '--draw' in argv:
         out = argv[argv.index('--draw') + 1]
         os.makedirs(out, exist_ok=True)
