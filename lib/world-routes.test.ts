@@ -138,10 +138,18 @@ for (const r of worldRoutes) {
   assert.ok(dist(line[line.length - 1], routeStops[r.to].at) <= 300, `${r.name}: ends at ${r.to}`);
   assert.ok(r.blockout.tierChanges >= 0, `${r.name}: the brief's tier count is kept`);
 
-  // --- tiers: one step at a time, each at a declared change with room for its kind ---
+  // --- tiers: one step at a time, each at a declared change; lane G's own changes have
+  // room for their kind and stay off the crossings (a lane's plan spaces its own stairs,
+  // check:region-plans) ---
   let prevEnd = -Infinity;
   for (const c of r.changes) {
     assert.equal(Math.abs(c.to - c.from), 1, `${r.name}: a change is one tier`);
+    assert.ok(
+      c.by === ROUTES_BETWEEN ||
+        r.drawnBy.some((d) => d.lane === c.by && c.s >= d.from - 8 && c.s <= d.to + 8),
+      `${r.name}: ${c.by}'s stair at (${c.at[0]}, ${c.at[1]}) is on its own stretch`,
+    );
+    if (c.by !== ROUTES_BETWEEN) continue;
     assert.equal(
       c.run,
       TIER_CHANGE_RUN[c.kind],
