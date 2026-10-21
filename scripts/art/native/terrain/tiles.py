@@ -139,7 +139,14 @@ def _top(mat, nb, wx, wy, cut=True):
             if j > 0 and not nb[i][j - 1]:
                 carve[y0:y0 + T, x0:x0 + P(5)] = 1
             if j < 2 and not nb[i][j + 1]:
-                carve[y0:y0 + T, x0 + T - P(5):x0 + T] = 2
+                if D > 1:
+                    # r8: the east band's inner edge walks 1 to 3 px (the floor's east edge was ruled)
+                    for yy_ in range(T):
+                        yw_ = (wy + (i - 1) * T + yy_) / D
+                        wv_ = P(5) + int(round(1.0 * np.sin(yw_ / 3.3) + 0.8 * np.sin(yw_ / 1.6 + 0.8)))
+                        carve[y0 + yy_, x0 + T - wv_:x0 + T] = 2
+                else:
+                    carve[y0:y0 + T, x0 + T - P(5):x0 + T] = 2
             if i > 0 and not nb[i - 1][j]:
                 carve[y0:y0 + P(2), x0:x0 + T] = 3
     grass &= carve == 0
@@ -488,6 +495,20 @@ if FIXT:
         return prof
     # r4: the ledge floor's rim wobbles too (it was ruled), at 1x as well
     PROF = {'g': _lip(64, 21), 'gdeep': _lip(64, 22), 's': _lip(64, 23), 'p': _lip(64, 24, at1=True)}
+    if D > 1:
+        # r8: the turf lip's depth walks in one-px steps (0 to 2 px, runs of 2 to 6 world px), so
+        # its dark row never runs straight
+        def _walk(seed):
+            rw = np.random.default_rng(seed)
+            pr = np.zeros(P(64), int)
+            x_, v_ = 0, 1
+            while x_ < P(64):
+                w_ = P(float(rw.uniform(2, 6)))
+                pr[x_:x_ + w_] = P(1) + v_
+                v_ = int(np.clip(v_ + rw.choice([-1, 1]), 0, 2))
+                x_ += w_
+            return pr
+        PROF['g'], PROF['gdeep'] = _walk(31), _walk(32)
     PRIM = _lip(64, 25, at1=True) - P(1)        # 0 or 1 px, in runs of 3 to 10 world px
     if D > 1:
         # r7: the rim's lit row wanders (a walk of one px steps, 0 to 3 px at 2x, runs of 2 to 6
@@ -651,6 +672,13 @@ def _face(wx, wy, k, d, lt, rt, fringe, deep, snowy, wet):
             dl = min([abs(x - j) for j in range(T) if fringe[j] is None] + [99])
             dep = min(dep, dl + 1)
             fam = {'g': 'grass', 's': 'snow', 'p': 'crag'}[f]
+            lit_y, lit_on = 0, True
+            if FIXT and D > 1 and f == 'g':
+                # r8: the lip's lit crest in broken runs, now and then a px lower (it ran straight)
+                sgq = int(((wx + x) / D + 7 * np.sin((wx + x) / D / 9.0)) // 4)
+                hq_ = (sgq * 2654435761 >> 6) % 7
+                lit_on = hq_ != 0
+                lit_y = 1 if (hq_ in (2, 5) and dep > 3) else 0
             po = int(PRIM[(wx + x) % P(64)]) if (FIXT and f == 'p') else 0
             if f == 'p':
                 dep = max(dep, po + 2)
@@ -665,8 +693,8 @@ def _face(wx, wy, k, d, lt, rt, fringe, deep, snowy, wet):
                     t = 2 if f == 'g' else 1
                 elif y == dep - 2 and dep > 3:
                     t = 2 if f == 'g' else 2
-                elif y == 0:
-                    t = 4
+                elif y == lit_y:
+                    t = 4 if lit_on else 3
                 else:
                     t = 3
                 ff = fam if (int((x + wx) / D) // 3 + int(y / D)) % 4 else fam + '_cool'
@@ -720,7 +748,7 @@ def _face(wx, wy, k, d, lt, rt, fringe, deep, snowy, wet):
                 out[col[-1], x] = C('crag', 0)
     if wet is not None:   # the rock beside a trickle is dark and wet
         x0, x1 = wet
-        m = (xx >= x0 - P(2)) & (xx <= x1 + P(2)) & ~crev
+        m = (xx >= x0 - P(0.5)) & (xx <= x1 + P(0.5)) & ~crev     # r8: a narrow wet strip (a wide one read as light from the east)
         out[m] = step(out[m], -1)
     out[~alpha] = np.where(side[~alpha] < 0, side[~alpha], -1)
     o = alpha

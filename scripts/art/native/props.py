@@ -413,8 +413,9 @@ def _poly_mask(pts, X, Y):
 
 
 def boulder4(d, w=21, h=13, seed=31, fam='stone'):
-    """r7: the 1x grey stone (21 x 13 world px) as two or three chunks of pixel-art stone (Matt:
-    rocks read vector-like). Each chunk has a flat lit top (tone 4, mottled), a bright rim along
+    """r7/r8: the 1x grey stone (21 x 13 world px) as two or three chunks of pixel-art stone (Matt:
+    rocks read vector-like). r8: rounded chunk outlines, a top plane tilted 5 to 20 degrees, a
+    two-tone step from top to side, one crack per stone and no mark crossing it. Each chunk has a flat lit top (tone 4, mottled), a bright rim along
     its upper-left edge, a hard step down to its sides (the front a tone 2 lit on the left, the
     right side darker), a base band in tone 1, and one crack with a lit lip. The chunks stand in
     a crevice of tone 0; the outline is dark on the right and bottom only; moss sits on the tops;
@@ -435,7 +436,7 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
         cx = ax + cxf * W_ + rng.uniform(-0.04, 0.04) * W_
         base = ay - byf * H_
         cw, ch = wf * W_ * rng.uniform(0.94, 1.06), hf * H_ * rng.uniform(0.94, 1.06)
-        n = 7
+        n = 9
         pts = []
         for q in range(n):
             a_ = math.pi + q * math.pi / (n - 1) + rng.uniform(-0.12, 0.12)   # the upper half, left to right
@@ -445,8 +446,10 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
         pts = [(pts[0][0], base - ch * 0.45 + ch * 0.12)] + pts + [(pts[-1][0], base - ch * 0.45 + ch * 0.12)]
         pts += [(cx + cw * 0.46, base - 0.3 * d), (cx + cw * 0.2, base), (cx - cw * 0.25, base), (cx - cw * 0.47, base - 0.4 * d)]
         m = _poly_mask(pts, xx + 0.5, yy + 0.5)
+        m = ndi.gaussian_filter(m.astype(float), 0.9 * d) > 0.5          # r8: round the corners
         chunks.append(dict(m=m, cx=cx, cw=cw, ch=ch, base=base, top=base - ch * 1.24))
     t = np.zeros((Hp, Wp), int)
+    crack = np.zeros((Hp, Wp), bool)
     fm = np.zeros((Hp, Wp), int)          # 0 stone, 1 stone_cool, 2 moss
     own = np.full((Hp, Wp), -1)
     for ci, c in enumerate(chunks):
@@ -461,7 +464,9 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
         hh = ys.max() - y0 + 1
         # the flat top: above a line that steps (hard, a px at a time) across the chunk
         steps = np.cumsum(rng.choice([-1, 0, 0, 0, 1], Wp)) * 0.5
-        topline = y0 + hh * rng.uniform(0.40, 0.48) + steps - steps[int(min(Wp - 1, max(0, c['cx'])))]
+        slope = np.tan(np.radians(rng.uniform(5, 20))) * rng.choice([-1, 1])   # r8: a tilted top plane
+        topline = y0 + hh * rng.uniform(0.40, 0.48) + steps - steps[int(min(Wp - 1, max(0, c['cx'])))] \
+            + slope * (np.arange(Wp) - c['cx'])
         top = m & (yy < topline[None, :])
         side = m & ~top
         tt = np.where(top, 4, 2)
@@ -491,17 +496,22 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
         upl = m & (~P_[:-2, 1:-1] | ~P_[1:-1, :-2])
         tt[upl & top] = 5
         tt[upl & side & (rel < 0)] = 3
-        # the step from top to side: the first side row a tone darker
+        # r8: the step from top to side in two tones: the top's last row and the side's first row
+        # a tone 3 band (4 -> 3 -> 2), not a hard edge
         stp = side & np.roll(top, 1, 0)
-        tt[stp] = np.maximum(1, tt[stp] - 1)
-        # one crack: from the top's front edge down the side, with a lit lip on its left
+        stp2 = side & np.roll(stp, 1, 0) & (rel > -0.55)
+        tt[stp & (tt == 2)] = 3
+        tt[stp2 & (tt == 2) & (rng.random(tt.shape) < 0.5)] = 3
+        # one crack per stone (on its first chunk): from the top's front edge down the side, with
+        # a lit lip on its left
         cand = np.nonzero(stp & (np.abs(rel) < 0.5))
-        if len(cand[0]):
+        if ci == 0 and len(cand[0]):
             q = int(rng.integers(0, len(cand[0])))
             y, x = cand[0][q] - int(1 * d), cand[1][q]
             for _ in range(int(rng.uniform(3, 5.5) * d)):
                 if 0 <= y < Hp and 0 <= x < Wp and m[y, x]:
                     tt[y, x] = 0
+                    crack[y, x] = True
                     if x - 1 >= 0 and m[y, x - 1] and tt[y, x - 1] > 0:
                         tt[y, x - 1] = min(5, tt[y, x - 1] + 1)
                 y += 1
@@ -522,6 +532,8 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
                 tt[low] = 2
                 hi = mb & ~np.roll(mb, 1, 0)
                 tt[hi] = 4
+        near = ndi.binary_dilation(crack, iterations=2) & ~crack & m & top
+        tt[near & (tt == 3)] = 4                    # r8: no worn dash crosses the crack (it read as a '+')
         tt[~m] = 0
         t[m] = tt[m]
         fm[m & (fm != 2)] = np.where(rel[m & (fm != 2)] > 0.15, 1, 0)
@@ -531,7 +543,7 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
         ring = ndi.binary_dilation(front) & ~front & allm & (own < ci)
         t[ring] = 0
     # small pits on the sides
-    sy_, sx_ = np.nonzero(allm & (t >= 2) & (t <= 3))
+    sy_, sx_ = np.nonzero(allm & (t >= 2) & (t <= 3) & ~ndi.binary_dilation(crack, iterations=3))
     for _ in range(int(len(sy_) / (20 * d * d))):
         q = int(rng.integers(0, len(sy_)))
         y, x = sy_[q], sx_[q]
@@ -547,7 +559,7 @@ def boulder4(d, w=21, h=13, seed=31, fam='stone'):
         if rb_[y, x] and fm[y, x] != 2:
             out[y, x, :3] = pk.rgb(fam + '_cool', 0)
         else:
-            out[y, x, :3] = pk.rgb(names[fm[y, x]], int(t[y, x]))
+            out[y, x, :3] = pk.rgb(fam if (t[y, x] >= 5 and fm[y, x] == 1) else names[fm[y, x]], int(t[y, x]))   # r8: no stone_cool 5
         out[y, x, 3] = 255
     # pebbles spilling at the foot
     for (pxf, pr) in ((0.52, 1.5), (-0.5, 1.1), (0.66, 0.9))[:int(rng.integers(2, 4))]:

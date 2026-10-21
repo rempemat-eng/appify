@@ -145,6 +145,8 @@
   ],
   "snow_cells": [],
   "snow_cells_summit": [],
+  "tidy_edges": [[170.0, 120.0, 188.0, 178.0]],
+  "tidy_edges_about": "r8: boxes (canvas world px) where the ledge floor's straight east edge against the face walks 1 to 3 px and thick dark wedges take the rock beside them (the ledge's south-east corner)",
   "deep_lips": [
    {
     "tier": 4,

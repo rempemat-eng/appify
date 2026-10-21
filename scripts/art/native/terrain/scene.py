@@ -736,13 +736,13 @@ def bank_run(cv, x0, y0, x1, y1, n, nx, ny, seed):
     H, W = cv.shape
     rng = np.random.default_rng(seed)
     for k in range(n):
-        f = k / max(1, n - 1)
-        big = k % 3 != 1
-        jit = rng.uniform(-1.1, 1.1)                      # in and out across the shore
+        f = (k + rng.uniform(-0.3, 0.3)) / max(1, n - 1)   # r8: uneven spacing
+        big = k % 3 == 0                                   # r8: one large, two small
+        jit = (1.6 if k % 2 else -0.9) + rng.uniform(-0.5, 0.5)   # r8: staggered in and out (2 to 4 px)
         cx = x0 + (x1 - x0) * f + jit * nx + rng.uniform(-0.4, 0.4) * ny
         cy = y0 + (y1 - y0) * f + jit * ny + rng.uniform(-0.6, 0.6)
         rx, ry = (rng.uniform(2.6, 3.8), rng.uniform(2.0, 2.8)) if big else (rng.uniform(1.6, 2.2), rng.uniform(1.3, 1.8))
-        dec = DC.lump_px(max(3, P(2 * rx)), max(3, P(2 * ry)), seed + k, fams=('stone', 'stone_cool', 'stone_warm'),
+        dec = DC.lump_px(max(3, P(2 * rx)), max(3, P(2 * ry)), seed + k, fams=('stone', 'stone_warm', 'stone'),
                          outline=('stone_cool', 0))
         X0, Y0 = P(cx - rx, 0), P(cy - ry, 0)
         wl = rng.uniform(0.05, 0.3)                        # the water level on the stone (share of ry)
@@ -791,6 +791,7 @@ def soften_pool(cv):
     w2 = (isw & ~lost) | gain
     # the damp band round open banks, in clumps
     ring = ndi.binary_dilation(w2, iterations=max(1, P(1.2))) & ~w2 & isopen
+    ring &= (np.mgrid[0:sub.shape[0], 0:sub.shape[1]][0] + y0) < P(_W['pool_bottom'] + 3, 0)   # r8: the pool's own banks, not the brook's
     yy, xx = np.mgrid[0:sub.shape[0], 0:sub.shape[1]]
     # r7: the damp band in runs (3 world px clumps, two in five left as grass), not a ruled line
     cl = ((((xx // max(1, P(3.0))) * 73856093) ^ ((yy // max(1, P(3.0))) * 19349663)) & 0xff)
@@ -956,12 +957,52 @@ def soften_lip(cv, box):
     cv[y0:y1, x0:x1] = out
 
 
+def tidy_edge(cv, box):
+    """r8: inside a box (canvas world px), the floor's straight vertical edge against a face walks
+    1 to 3 px (the floor reaches into the face or the face into the floor, row by row in runs),
+    and thick dark wedges (crag tone 0, more than a crevice) take the rock beside them."""
+    x0, y0, x1, y1 = (P(v, 0) for v in box)
+    sub = cv[y0:y1, x0:x1]
+    h_, w_ = sub.shape
+    pf = [FI[n] for n in ('path', 'path_warm', 'path_cool')]
+    rf = [FI[n] for n in ('crag', 'crag_warm', 'crag_cool')]
+    out = sub.copy()
+    rng = np.random.default_rng(int(box[0] * 31 + box[1]))
+    v_, left = 0, 0
+    for y in range(h_):
+        if left <= 0:
+            v_ = int(np.clip(v_ + rng.choice([-1, 1]), -P(1), P(1.5)))
+            left = P(float(rng.uniform(2, 6)))
+        left -= 1
+        row = sub[y] // 8
+        for x in range(1, w_):
+            if row[x - 1] in pf and row[x] in rf:          # the floor's east edge in this row
+                if v_ > 0:
+                    out[y, x:min(w_, x + v_)] = sub[y, max(0, x - 1 - v_):x - 1][:min(w_, x + v_) - x] if x - 1 - v_ >= 0 else sub[y, x - 1]
+                    if x + v_ < w_:
+                        out[y, x + v_] = C('crag', 0)
+                elif v_ < 0:
+                    out[y, max(0, x + v_):x] = C('crag', 0)
+                break
+    dark = np.isin(out // 8, rf) & (out % 8 == 0)
+    thick = ndi.binary_opening(dark, structure=np.ones((3, 3)))
+    if thick.any():
+        rock = np.isin(out // 8, rf) & (out % 8 > 0)
+        if rock.any():
+            _, (iy, ix) = ndi.distance_transform_edt(~rock, return_indices=True)
+            fill = out[iy, ix]
+            out[thick] = np.where(fill[thick] % 8 > 1, fill[thick] - 1, fill[thick])
+    cv[y0:y1, x0:x1] = out
+
+
 def place_decals(cv):
     """Hand-placed story pieces, then hashed dressing."""
     Hc, Wc = cv.shape
     if FIX and DEN > 1:
         for box in _W.get('soften_lips', []):
             soften_lip(cv, box)
+        for box in _T.get('tidy_edges', []):
+            tidy_edge(cv, box)
     if FIX:
         for pts in WORN:
             worn2(cv, pts)
@@ -1324,13 +1365,19 @@ def brook2(cv):
         # r7: the bank line in runs (2 to 6 world px), the grass between runs hanging over the edge
         sq = np.floor(sa / BROOK_BANK_RUN + 0.8 * np.sin(sa / 5.3) + np.sign(u)).astype(int)
         hb = ((sq * 2654435761) ^ (np.sign(u).astype(int) + 3) * 40503) & 0xff
-        over = hb % 5 < 2                                     # grass overhangs the edge here
+        # r8: the earth line shows on at most a quarter of the bank and never on the inside of a
+        # bend; between its runs the grass hangs over the edge or the bank is a damp green patch
+        earth_run = (hb % 4 == 0) & ~inside
+        over = ~earth_run & (hb % 4 != 3)
+        dampg = ~earth_run & (hb % 4 == 3)
         Xw, Yw = (XX / DEN).astype(int), (YY / DEN).astype(int)
         cl = (((Xw // 2) * 73856093) ^ ((Yw // 2) * 19349663)) & 0xff
         damp = np.where(side_lit, np.where(cl % 3 == 0, C('earth_warm', 3), C('earth_warm', 2)),
                         np.where(cl % 3 == 0, C('earth', 2), C('earth_cool', 2)))
-        bnk = bank & ~over
+        bnk = bank & earth_run
         out[bnk] = damp[bnk]
+        dg = bank & dampg
+        out[dg] = np.where(side_lit[dg], C('grass_cool', 2), C('leaf', 2))
         out[bank & over] = np.where(side_lit[bank & over], C('grass', 3), C('grass', 2))
         lipg = lip & ~over
         out[lipg] = np.where(side_lit[lipg], cur[lipg], step(cur[lipg], -1))
