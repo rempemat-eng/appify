@@ -71,7 +71,7 @@ Inside your footprint you paint the route's surface to the line, width and tier 
 | Drover's Road   | road     | the valley halt                              | Dust Gulch                                      | 4528        | 113.2    | 90             | 4            | 22                 | W5     |
 | Lode Track      | path     | Dust Gulch                                   | the Lode                                        | 840         | 21.0     | 18             | 2            | 2                  | -      |
 | Canyon Road     | path     | Dust Gulch                                   | Hearthold                                       | 3984        | 99.6     | 75             | 1            | 28                 | W6     |
-| Forge Stair     | path     | Hearthold                                    | the Ember forge                                 | 152         | 3.8      | 4              | 3            | 3                  | -      |
+| Forge Stair     | path     | Hearthold                                    | the Ember forge                                 | 216         | 5.4      | 4              | 3            | 3                  | -      |
 | Ember Way       | path     | Hearthold                                    | Cinderwick                                      | 664         | 16.6     | 18             | 5            | 9                  | -      |
 | Ash Coast       | path     | the valley halt                              | Cinderwick                                      | 4512        | 112.8    | 91             | 2            | 7                  | W5, W6 |
 | Delta Road      | path     | Lullford Bridge, east bank                   | Neon Harbour, the Heights                       | 1312        | 32.8     | 56             | 3            | 11                 | -      |
@@ -98,7 +98,7 @@ How far each route lies from the block-out's polyline (`docs/vision/research/blo
 | Drover's Road   | 28   | 106     | 3616             | 4528 | 40              |
 | Lode Track      | 20   | 54      | 947              | 840  | 24              |
 | Canyon Road     | 45   | 318     | 3160             | 3984 | 24              |
-| Forge Stair     | 4    | 8       | 140              | 152  | 24              |
+| Forge Stair     | 10   | 37      | 140              | 216  | 24              |
 | Ember Way       | 52   | 112     | 977              | 664  | 24              |
 | Ash Coast       | 19   | 56      | 3641             | 4512 | 24              |
 | Delta Road      | 18   | 60      | 948              | 1312 | 24              |
