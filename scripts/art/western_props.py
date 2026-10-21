@@ -737,60 +737,76 @@ def wagon() -> Canvas:
 def wagon_wreck() -> Canvas:
     """The brief's wagon wreck (two on the Canyon and Drover's Roads), 72 x 44, on the house
     ramps: the same covered wagon long abandoned. Its front wheel is gone, so the bed has
-    dropped onto its axle and tilts down to the west; the canvas has rotted off the hoops,
-    leaving bare bows with a few tatters, one bow snapped; the side boards are sprung and
-    two have fallen; the lost wheel lies flat in the sand in front, half buried; sand has
-    drifted up against the bed's lee side. Footing: the sunk front, the rear wheel and the
-    flat wheel."""
+    dropped onto its axle and tilts down to the west; the canvas has rotted off, so you see
+    into the bed over its near side (the far side's inner boards in shade, the floor with
+    sand blown in) under the bare bows, one snapped, a rag on one; two near-side boards have
+    fallen out; the lost wheel lies flat in the sand in front, its spokes showing; sand has
+    drifted against the rear wheel. Footing: the sunk front, the rear wheel, the flat wheel."""
     w, h = 72, 44
     cv = Canvas(w, h, pad=PAD)
     x0, x1 = 10, 62
-    def bed_top(x):                                # the bed tilts: the front (west) end has dropped
-        return round(24 + 6 * (x1 - x) / (x1 - x0))
-    for x in range(x0, x1):                        # the bed's side boards, sprung and gapped
-        t = bed_top(x)
-        for y in range(t, t + 9):
-            r = (y - t) % 3
-            gap = (x // 9) % 4 == 2 and y >= t + 6   # two boards fallen out of this bay
-            if gap:
-                cv.set(x, y, T('earth_cool', 0))
+    def rim(x):                                    # the near side's top rail: the front (west) end has dropped
+        return round(25 + 6 * (x1 - x) / (x1 - x0))
+    for x in range(x0 + 1, x1 - 1):                # inside the bed: the far side's inner face, then the floor
+        r = rim(x)
+        for y in range(r - 7, r):
+            if y < r - 4:
+                cv.set(x, y, T('timber_cool', 2 if y > r - 7 else 1))   # the far side's boards, in shade
+            else:
+                sand = smooth_noise(x, y, 7, 721) > 0.5
+                cv.set(x, y, T('sand', 3) if sand else T('bleached', 2 if (x // 9) % 2 else 3))
+        cv.set(x, r - 8, T('bleached', 4))         # the far side's top rail, lit
+    for x in range(x0, x1):                        # the near side boards, sprung, two fallen out
+        r = rim(x)
+        cv.set(x, r, T('bleached', 5 if x < 30 else 4))
+        for y in range(r + 1, r + 9):
+            k = (y - r - 1) % 3
+            if (x // 9) % 4 == 2 and y >= r + 6:
+                cv.set(x, y, T('earth_cool', 0))   # the gap where two boards fell out
                 continue
-            fam = ('bleached', 'bleached_cool', 'bleached_warm')[((y - t) // 3 + x // 13) % 3]
-            cv.set(x, y, T(fam, 4 if r == 0 else 3 if x < 40 else 2) if r < 2 else T(fam, 1))
-        cv.set(x, t - 1, T('bleached', 4 if x < 36 else 3))
-        cv.set(x, t + 9, T('earth_cool', 0))
-    for bx in (14, 24, 34, 44, 54):                 # the bare bows, one snapped, rags hanging on two
-        t = bed_top(bx)
-        snapped = bx == 34
-        top = t - (8 if snapped else 18)
-        for k in range(0, 20):
-            a = math.pi * k / 19
-            px = round(bx + 5 * math.cos(math.pi - a))
-            py = round(t - 1 - (t - 1 - top) * math.sin(a))
-            if snapped and k > 9:
-                break
-            cv.set(px, py, T('timber', 4 if k < 10 else 2))
-        if bx in (24, 44):
-            for y in range(top + 2, top + 9):        # a strip of rotten canvas still tied on
-                cv.set(bx + 4, y, T('plaster_cool', 3 if y < top + 6 else 2)); cv.set(bx + 5, y + 1, T('plaster_cool', 2))
-    rh.wheel(cv, 52.5, 36.5, 7.6, 6.8, spokes=10, seed=3)   # the rear wheel still on
-    for (x, y) in rh.ellipse(12, 34, 2.0, 2.0):      # the bare front axle end, dug into the sand
+            fam = ('bleached', 'bleached_cool', 'bleached_warm')[((y - r) // 3 + x // 13) % 3]
+            cv.set(x, y, T(fam, (4 if k == 0 else 3) if x < 52 else (3 if k == 0 else 2)) if k < 2 else T(fam, 1))
+        cv.set(x, r + 9, T('earth_cool', 0))
+    for sx in (x0, 28, 52, x1 - 1):                # the standards that held the boards
+        r = rim(sx)
+        for y in range(r - 7, r + 9):
+            cv.set(sx, y, T('timber', 3 if y < r else 2))
+    rh.wheel(cv, 52.5, 37.0, 7.6, 6.8, spokes=8, seed=3)    # the rear wheel still on
+    for (x, y) in rh.ellipse(12, 34.5, 2.0, 2.0):    # the bare front axle end, dug into the sand
         cv.set(x, y, T('iron', 2 if x < 12 else 1))
-    for (x, y) in rh.ellipse(24, 40, 11, 3.2):       # the lost wheel lying flat, half buried
-        d = ((x + 0.5 - 24) / 11) ** 2 + ((y + 0.5 - 40) / 3.2) ** 2
-        cv.set(x, y, T('iron', 3) if d > 0.72 else T('timber', 3 if (x // 3) % 2 else 2))
-    for (x, y) in rh.ellipse(24, 40, 1.8, 0.8):
-        cv.set(x, y, T('iron', 4))
-    for x in range(30, 70):                         # sand drifted up against the lee side and over the flat wheel's far rim
-        depth = max(0, 5 - abs(x - 46) // 5)
+    for (x, y) in rh.ellipse(24, 40.5, 10, 3.0):     # the lost wheel lying flat in front, spokes radiating
+        d = ((x + 0.5 - 24) / 10) ** 2 + ((y + 0.5 - 40.5) / 3.0) ** 2
+        ang = math.atan2((y + 0.5 - 40.5) * 3.3, x + 0.5 - 24)
+        spoke = abs(((ang / (2 * math.pi / 10)) % 1) - 0.5) > 0.36
+        if d > 0.62:
+            cv.set(x, y, T('iron', 4 if y < 40 else 2))
+        elif spoke or d < 0.08:
+            cv.set(x, y, T('timber', 4 if y < 40 else 3))
+        else:
+            cv.set(x, y, T('sand', 2))               # sand between the spokes
+    for x in range(42, 64):                         # sand drifted against the rear wheel's lee
+        depth = max(1, 4 - abs(x - 52) // 3)
         for y in range(h - 1 - depth, h):
             cv.set(x, y, T('sand', 4 if y == h - 1 - depth else 3))
-    for x in range(14, 22):
-        cv.set(x, h - 2, T('sand', 4)); cv.set(x, h - 1, T('sand', 3))
-    for (px, py) in ((62, 41), (66, 40)):           # fallen boards in the sand
-        for i in range(6):
-            cv.set(px + i - 3, py + (i // 3), T('bleached', 4 if i < 3 else 3))
-    return rh.finish(cv)
+    rh.finish(cv)
+    for bx in (16, 26, 36, 46, 56):                  # the bare bows over it all, drawn after the outline: dark
+        r = rim(bx) - 8                              # enough to be their own edge, so air shows between them
+        snapped = bx == 36
+        top = r - (7 if snapped else 15)
+        prev = None
+        for k in range(0, 40):
+            a = math.pi * k / 39
+            if snapped and k > 19:
+                break
+            px = round(bx + 4 * math.cos(math.pi - a))
+            py = round(r - (r - top) * math.sin(a))
+            if (px, py) != prev:
+                cv.set(px, py, T('timber', 2 if k < 20 else 1))
+            prev = (px, py)
+        if bx == 26:
+            for y in range(top + 2, top + 8):        # a strip of rotten canvas still tied on
+                cv.set(bx + 4, y, T('plaster_cool', 1)); cv.set(bx + 5, y, T('plaster_cool', 1))
+    return cv
 
 
 def cliff_shrine() -> Canvas:
@@ -807,8 +823,8 @@ def cliff_shrine() -> Canvas:
             # a knuckle of rock, taller and steeper on the west where the cliff it broke from stood
             top = 3 + round(10 * ((x - 2) / (w - 4)) ** 1.6) + round(3 * smooth_noise(x, 0, 4, 701))
             edge = min(x - 2, w - 3 - x)
-            if y >= top + max(0, 4 - edge) * 2 and (edge > 0 or y > h - 12):
-                mask.add((x, y))
+            if y >= top + max(0, 4 - edge) * 2 and (edge > 0 or y > h - 12) and not (y >= h - 6 and not 4 <= x <= 27):
+                mask.add((x, y))                     # (the foot spans 3 cells: it sits on 24 px of ground)
     ytop = min(y for _, y in mask)
     for (x, y) in mask:                             # the beds of the rock, lit lips and undercuts
         r = (y - ytop + 2 * smooth_noise(x, 0, 5, 702)) % 5
@@ -819,6 +835,19 @@ def cliff_shrine() -> Canvas:
         if u > 0.78:
             k -= 1 if u < 0.9 else 2
         cv.set(x, y, T(fam, max(1, k)))
+    ss_grain(cv, mask, 0.12, 706, shapes=rh.H_GRAIN, lit=lambda x, y: 1 - x / w, swap=0.6)   # cross-bedding in the grain of the stone
+    for vx in range(5, w - 5, 4):                   # desert varnish run down from the crown in dark streaks
+        tops = [yy for (xx, yy) in mask if xx == vx]
+        if tops and noise2(vx, 0, 704) < 0.5:
+            for yy in range(min(tops) + 1, min(tops) + 3 + int(noise2(vx, 1, 705) * 5)):
+                if (vx, yy) in mask:
+                    cv.set(vx, yy, T('earth_cool', 2))
+    for (x, y) in ((24, 26), (25, 27), (25, 28), (26, 29), (26, 30)):   # a crack down the east flank
+        if (x, y) in mask:
+            cv.set(x, y, T('adobe', 1))
+    for (x, y) in ((5, 28), (6, 28), (5, 29), (23, 33), (24, 33)):   # orange lichen in the damp, shaded joints
+        if (x, y) in mask:
+            cv.set(x, y, T('clay', 3))
     nx0, nw, ny0, nh = 10, 12, 13, 15                # the niche, pointed at the top
     niche = set()
     for y in range(ny0, ny0 + nh):
@@ -826,8 +855,11 @@ def cliff_shrine() -> Canvas:
             if y - ny0 < 5 and abs(x + 0.5 - (nx0 + nw / 2)) > (y - ny0 + 1) * 1.2:
                 continue
             niche.add((x, y))
-    for (x, y) in niche:                            # its back in shade, darker deeper in
-        cv.set(x, y, T('adobe_cool', 1 if y < ny0 + 6 or x > nx0 + nw - 4 else 2))
+    for (x, y) in niche:                            # its back in shade, darker deeper in, the chisel marks showing
+        k = 1 if y < ny0 + 6 or x > nx0 + nw - 4 else 2
+        if (x + y) % 5 == 0 and k == 2 and y > ny0 + 6:
+            k = 1
+        cv.set(x, y, T('adobe_cool', k))
     for (x, y) in niche:                            # the cut edge: lit on the far (east) jamb, dark under the arch
         if (x + 1, y) not in niche:
             cv.set(x + 1, y, T('adobe', 4))
@@ -849,7 +881,15 @@ def cliff_shrine() -> Canvas:
     cv.set(cx, ny0 - 3, T('timber', 3)); cv.set(cx + 1, ny0 - 3, T('timber', 1))   # a peg, a cloth strip tied round it
     for i in range(6):
         cv.set(cx + 1 + i // 2, ny0 - 2 + i, T('berry', 3 if i % 2 else 2))
-    for x in range(3, w - 3):                       # sand at its foot
+    for (x, y) in ((6, 16), (7, 15), (8, 16), (7, 17)):   # a sun carved west of the niche, a crescent east of it
+        cv.set(x, y, T('adobe', 1))
+    for (x, y) in ((25, 15), (25, 16), (24, 17), (26, 14)):
+        cv.set(x, y, T('adobe', 1))
+    for y in range(ny0 - 2, ny0 + 2):               # soot over the burning candle, up the arch
+        rh.step(cv, nx0 + nw - 2, y, -1, 1)
+    for (x, y, k) in ((4, h - 5, 3), (5, h - 6, 4), (4, h - 6, 4), (6, h - 5, 3)):   # a tuft of dry grass in the crack at the foot
+        cv.set(x, y, T('grass_warm', k))
+    for x in range(4, 28):                          # sand at its foot
         top = h - 3 - (1 if smooth_noise(x, 0, 4, 703) > 0.55 else 0)
         for y in range(top, h):
             if (x, y) in mask or y >= h - 2:
@@ -873,22 +913,24 @@ def bone_yard() -> Canvas:
         put(x, y, 4 if x < 11 else 3)
     for (x, y) in ((9, 11), (10, 11), (13, 11), (14, 11), (10, 17), (12, 17)):
         cv.set(x, y, T('earth_cool', 0))             # eye holes and nostrils
-    for i in range(6):                              # the horns, curving out and up
-        put(6 - i, 10 - (i * i) // 8, 5 if i < 3 else 4)
-        put(16 + i, 10 - (i * i) // 8, 3 if i < 3 else 2)
-    for x in range(22, 44):                         # the spine lying along the ground
-        put(x, 16, 4 if x < 33 else 3)
-    for i in range(6):                              # the ribs arching up from it, each a curved bone
-        rx = 24 + i * 3
-        for d in range(7):
-            yy = 16 - d
-            xx = rx + (1 if d > 4 else 0)
-            put(xx, yy, 5 if d >= 5 else 4 if i < 3 else 3)
-    for x in range(2, 14):                          # a long bone in front, knobbed at both ends
-        put(x, 20, 4 if x < 8 else 3)
-    put(2, 19, 5); put(13, 19, 4)
-    for (x, y) in ((19, 19), (20, 19), (44, 19), (45, 19), (39, 20), (40, 20)):   # small bones
-        put(x, y, 4)
+    for i in range(6):                              # the horns, curving out and up, two pixels deep
+        put(6 - i, 10 - (i * i) // 8, 5 if i < 3 else 4); put(6 - i, 11 - (i * i) // 8, 3)
+        put(16 + i, 10 - (i * i) // 8, 4 if i < 3 else 3); put(16 + i, 11 - (i * i) // 8, 3)
+    for x in range(22, 45):                         # the spine lying along the ground, two pixels deep
+        put(x, 16, 4 if x < 33 else 3); put(x, 17, 3)
+    for i in range(4):                              # the ribs arching up and over from it, curved bones with air between
+        rx = 23 + i * 6
+        for d in range(9):
+            yy = 15 - d
+            xx = rx + round(2.4 * (d / 8) ** 2)
+            put(xx, yy, 5 if d >= 6 else 4 if i < 2 else 3)
+            put(xx + 1, yy, 3)
+    for x in range(2, 15):                          # a long bone in front, knobbed at both ends
+        put(x, 19, 4 if x < 8 else 3); put(x, 20, 3)
+    for (x, y) in ((2, 18), (3, 18), (13, 18), (14, 18)):
+        put(x, y, 5)
+    for (x, y) in ((19, 19), (39, 20)):              # small bones
+        put(x, y, 4); put(x + 1, y, 4); put(x, y + 1, 3); put(x + 1, y + 1, 3)
     return rh.finish(cv)
 
 
