@@ -1,0 +1,109 @@
+{
+  "id": "mirra",
+  "views": {
+    "S-idle": {
+      "iou": 0.856,
+      "families_1x": [
+        "adobe",
+        "bleached",
+        "sand",
+        "timber",
+        "water"
+      ],
+      "families_2x": [
+        "adobe",
+        "bleached",
+        "sand",
+        "timber",
+        "water"
+      ],
+      "measure": {
+        "px": 210,
+        "colours": 20,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9194,
+        "flat_ink": 0.0161,
+        "double": 0.0806,
+        "west_east": 11.8436,
+        "top_bottom": 3.2474,
+        "isolated": 0.0203,
+        "checker": 0.0
+      }
+    },
+    "E-idle": {
+      "iou": 0.852,
+      "families_1x": [
+        "adobe",
+        "bleached",
+        "sand",
+        "timber",
+        "water"
+      ],
+      "families_2x": [
+        "adobe",
+        "bleached",
+        "sand",
+        "timber",
+        "water"
+      ],
+      "measure": {
+        "px": 192,
+        "colours": 21,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9808,
+        "flat_ink": 0.0,
+        "double": 0.0192,
+        "west_east": 17.4711,
+        "top_bottom": 7.5119,
+        "isolated": 0.0143,
+        "checker": 0.0
+      }
+    },
+    "W-idle": {
+      "iou": 0.838,
+      "families_1x": [
+        "adobe",
+        "bleached",
+        "sand",
+        "timber",
+        "water"
+      ],
+      "families_2x": [
+        "adobe",
+        "bleached",
+        "sand",
+        "timber",
+        "water"
+      ],
+      "measure": {
+        "px": 196,
+        "colours": 21,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0196,
+        "west_east": 1.7761,
+        "top_bottom": 4.4581,
+        "isolated": 0.0138,
+        "checker": 0.0
+      }
+    }
+  },
+  "simplified": [
+    "Cone hat: the radial plaits and rolled rim become a lit-left / shaded-right split over a dark underside row; the timber knot stays at the tip.",
+    "Wrap: the four fold bands become two (one dark band each side of a lit front) and the scalloped hem a two-tone hem row; the crossover is dropped.",
+    "Flask strap: the 1 px timber belly strap is dropped; the flask hangs at the bleached sash with its timber cork.",
+    "Twig: the Y twig is a 3 x 3 px Y in timber 2 with no outline (the dark timber is its own edge); in E it is in the far hand (hidden) and in W a 3 px stick in the near hand.",
+    "Tail: the banded tail is plain sand at 1x, curled round the heel as in the 2x."
+  ],
+  "notes": [
+    "Same families as the 2x: sand, adobe, bleached, water, timber.",
+    "Light from the upper left in every facing; W is drawn, not mirrored: the snout, flask and twig sit on the lit front."
+  ]
+}

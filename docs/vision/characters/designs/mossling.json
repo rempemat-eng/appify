@@ -425,97 +425,100 @@
     }
   ],
   "final": {
-    "chosen": "A",
-    "name": "Tuft-back mochi with the curled leaf (final)",
+    "chosen": "Matt's 1x master",
+    "name": "The capped mochi: Matt's 1x master at 2x (final)",
+    "reconciled": "reconciled to Matt's 1x master (moss_sheet.png)",
     "grafts": [
-      "B: the single curled leaf is the head-top growth (one leaf, stiff, curled; the nap blanket and the SLEEP IT OFF guard)",
-      "B: the biggest eyes, standardised to the family eye: 3 x 3 ink with a 2 px glint",
-      "C (graders): the REST temperament: half-lidded idle eyes, a heavy settle after each hop"
+      "From the family rig: 3 x 3 ink eyes with a 2 px glint (half-lidded in idle: REST)",
+      "From the family rig: the head-top growth anchor (the two-leaf sprout, on the cap's crown)",
+      "From the family rig: the foot line (two nubs) and the 4-frame hop",
+      "From the graders: a heavy settle after each hop, so it reads REST, not bouncy ROAM"
     ],
     "parts": [
-      "feet (two nubs): leaf_warm, near; leaf, far; layer 1 (far) / 2 (near); anchor foot; S both, E/W far one behind; splay on crouch and land, tuck in the air (family foot line: the nubs sit on row 27)",
-      "body ball + cheek step: leaf_warm, layer 3, anchor hip; the cheek bump leads in E/W; breath squashes 1 px",
-      "pale belly: plaster (tones 3-5), layer 4, anchor hip; S centre, E/W forward but 4 px off the front edge",
-      "moss clumps: leaf_cool, layer 5, anchor hip (back) and head (crown, brow); crown + back in E/W, crown + shoulders in S; fixed per facing (no per-frame repaint), ride the squash",
-      "face block: eyes (ink 3 x 3 with a 2 px plaster glint: lid / open / wide / closed / happy / tight), blush (berry_warm), mouth; layer 6, anchor head; S/E/W",
-      "head-top growth: the curled leaf on the crown joint (growthAnchor), grass_warm, layer 7, anchor head; leans back from the facing; flat (crouch, land, cling), up (rise, react, cheer), blanket (nap), shield (special)",
-      "special effect: glowflora motes, 2 px, inside the silhouette, layer 8; finite, none under reduced motion"
+      "feet (two nubs): leaf, layer 1 (far) / 2 (near), anchor foot; E/W far nub darker; splay on crouch and land, tuck in the air (the family foot line: nubs fill rows 26-27, outline on 28)",
+      "mochi body + cheek step: leaf, layer 3, anchor hip; the cheek leads in E/W; breath squashes 1 px",
+      "pale front: leaf tones 4-5 on the lit lower front, layer 4, anchor hip (the master keeps the belly green: its pale part is the lit front, not a plaster patch)",
+      "moss clusters: leaf 1-2 on the lower back, layer 4, anchor hip; fixed per facing",
+      "face: 3 x 3 ink eyes (lid / open / wide / closed / happy / tight) with a 2 px plaster glint, berry blush behind and below the eye in profile, an optional mouth; layer 5, anchor head",
+      "cap shadow: leaf 0-1 under the rim and the deep notch down the east side, layer 6, anchor head",
+      "mushroom cap: clay dome (lit upper left, dark lower right) with plaster spots, on a plaster rim; layer 7, anchor head; one rigid part that presses (crouch, land, cling), lifts (react), tips back (cheer) and tips forward over the eyes (nap, special)",
+      "head-top growth: the two-leaf sprout on the cap's crown joint (growthAnchor), leaf, layer 8, anchor head (rides the cap); droops in the nap",
+      "special effect: glowflora motes, 2 px, inside the silhouette, layer 9; finite, none under reduced motion"
     ],
     "palette": [
-      "leaf_warm",
-      "leaf_cool",
-      "grass_warm",
+      "leaf",
+      "clay",
       "plaster",
-      "berry_warm"
+      "berry"
     ],
-    "pose": "Drowsy and loyal: it sits heavy on its nubs with half-closed eyes, hops only when it has to and settles slowly, like a sleepy child following a step behind.",
+    "pose": "Drowsy and loyal: it sits heavy under its cap with half-closed eyes, hops only when it has to and settles slowly, like a sleepy child following a step behind.",
     "growthAnchor": {
       "S idle": [
         16,
-        12
+        5
       ],
       "E idle": [
-        15,
-        12
+        16,
+        5
       ],
       "W idle": [
         16,
-        12
+        5
       ],
       "hop 1": [
         16,
-        14
+        10
       ],
       "hop 2": [
         16,
-        10
+        5
       ],
       "hop 3": [
         16,
-        10
+        5
       ],
       "hop 4": [
         16,
-        14
+        10
       ],
       "S react": [
         16,
-        11
+        5
       ],
       "S nap": [
-        14,
+        16,
         15
       ],
       "E perch": [
-        9,
-        11
+        12,
+        9
       ],
       "E cling": [
-        9,
+        12,
         12
       ],
       "E cheer": [
-        9,
-        10
+        12,
+        8
       ],
       "E special": [
-        9,
+        12,
         11
       ],
       "W perch": [
-        14,
-        11
+        12,
+        9
       ],
       "W cling": [
-        14,
+        12,
         12
       ],
       "W cheer": [
-        14,
-        10
+        12,
+        7
       ],
       "W special": [
-        14,
+        12,
         11
       ]
     },
@@ -524,100 +527,91 @@
         3,
         3
       ],
-      "glint": "2 px, the west column, top two rows (plaster 5)",
+      "glint": "2 px, the west column (plaster 5)",
       "topLeft": {
         "S idle": [
           [
             11,
-            19
+            15
           ],
           [
-            18,
-            19
+            20,
+            15
           ]
         ],
         "E idle": [
           [
-            18,
-            19
+            16,
+            15
           ]
         ],
         "W idle": [
           [
-            11,
-            19
+            15,
+            15
           ]
         ],
         "hop 1": [
           [
             11,
-            20
+            19
           ],
           [
-            18,
-            20
+            20,
+            19
           ]
         ],
         "hop 2": [
           [
             11,
-            17
+            15
           ],
           [
-            18,
-            17
+            20,
+            15
           ]
         ],
         "hop 3": [
           [
             11,
-            17
+            15
           ],
           [
-            18,
-            17
+            20,
+            15
           ]
         ],
         "hop 4": [
           [
             11,
-            20
+            19
           ],
           [
-            18,
-            20
+            20,
+            19
           ]
         ],
         "S react": [
           [
             11,
-            19
+            15
           ],
           [
-            18,
-            19
+            20,
+            15
           ]
         ],
-        "S nap": [
-          [
-            11,
-            22
-          ],
-          [
-            17,
-            22
-          ]
-        ],
+        "S nap": null,
         "E perch": [
           [
             13,
-            15
+            16
           ]
         ],
         "E cling": [
           [
             13,
-            16
+            19
           ]
         ],
         "E cheer": [
@@ -626,36 +620,26 @@
             15
           ]
         ],
-        "E special": [
-          [
-            13,
-            15
-          ]
-        ],
+        "E special": null,
         "W perch": [
           [
-            8,
-            15
+            10,
+            16
           ]
         ],
         "W cling": [
           [
-            8,
-            16
+            10,
+            19
           ]
         ],
         "W cheer": [
           [
-            8,
+            10,
             15
           ]
         ],
-        "W special": [
-          [
-            8,
-            15
-          ]
-        ]
+        "W special": null
       }
     },
     "footLine": {
@@ -667,7 +651,7 @@
         12,
         21
       ],
-      "note": "nubs fill the row above the anchor; the outline lands on the anchor row"
+      "note": "nubs fill the rows above the anchor; the outline lands on the anchor row"
     },
     "perchAnchor": {
       "E perch": [
@@ -705,268 +689,268 @@
     },
     "measure": {
       "S idle": {
-        "px": 365,
-        "colours": 19,
+        "px": 499,
+        "colours": 20,
         "on_house": 1.0,
         "on_today": 0.0,
         "families": 5,
         "outline_dark": 1.0,
         "flat_ink": 0.0,
-        "double": 0.0746,
-        "west_east": 8.0691,
-        "top_bottom": -1.6801,
-        "isolated": 0.0101,
+        "double": 0.0253,
+        "west_east": 19.2661,
+        "top_bottom": 8.7349,
+        "isolated": 0.0095,
         "checker": 0.0,
-        "height_px": 24
+        "height_px": 28
       },
       "E idle": {
-        "px": 358,
-        "colours": 19,
+        "px": 502,
+        "colours": 20,
         "on_house": 1.0,
         "on_today": 0.0,
         "families": 5,
         "outline_dark": 1.0,
         "flat_ink": 0.0,
-        "double": 0.0769,
-        "west_east": 5.8971,
-        "top_bottom": 3.464,
-        "isolated": 0.0068,
+        "double": 0.0375,
+        "west_east": 18.3258,
+        "top_bottom": 11.2075,
+        "isolated": 0.0118,
         "checker": 0.0,
-        "height_px": 24
+        "height_px": 28
       },
       "W idle": {
-        "px": 358,
-        "colours": 19,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0615,
-        "west_east": 14.4097,
-        "top_bottom": 8.5685,
-        "isolated": 0.0102,
-        "checker": 0.0,
-        "height_px": 24
-      },
-      "hop 1": {
-        "px": 334,
-        "colours": 19,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0667,
-        "west_east": 6.9901,
-        "top_bottom": -5.6235,
-        "isolated": 0.0109,
-        "checker": 0.0,
-        "height_px": 19
-      },
-      "hop 2": {
-        "px": 351,
-        "colours": 19,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0484,
-        "west_east": 7.9933,
-        "top_bottom": -6.0376,
-        "isolated": 0.0104,
-        "checker": 0.0,
-        "height_px": 24
-      },
-      "hop 3": {
-        "px": 340,
-        "colours": 20,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0492,
-        "west_east": 9.8109,
-        "top_bottom": -3.7681,
-        "isolated": 0.0108,
-        "checker": 0.0,
-        "height_px": 23
-      },
-      "hop 4": {
-        "px": 331,
-        "colours": 18,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0667,
-        "west_east": 6.998,
-        "top_bottom": -5.8153,
-        "isolated": 0.0295,
-        "checker": 0.0,
-        "height_px": 19
-      },
-      "S react": {
-        "px": 374,
-        "colours": 20,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0506,
-        "west_east": 10.0245,
-        "top_bottom": -1.2055,
-        "isolated": 0.0034,
-        "checker": 0.0,
-        "height_px": 26
-      },
-      "S nap": {
-        "px": 286,
-        "colours": 19,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0185,
-        "west_east": 10.8256,
-        "top_bottom": 6.6744,
-        "isolated": 0.0388,
-        "checker": 0.0,
-        "height_px": 15
-      },
-      "E perch": {
-        "px": 191,
-        "colours": 18,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0444,
-        "west_east": 3.0439,
-        "top_bottom": 10.4508,
-        "isolated": 0.0,
-        "checker": 0.0,
-        "height_px": 16
-      },
-      "E cling": {
-        "px": 185,
-        "colours": 18,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0667,
-        "west_east": 6.7245,
-        "top_bottom": 10.2732,
-        "isolated": 0.0214,
-        "checker": 0.0,
-        "height_px": 14
-      },
-      "E cheer": {
-        "px": 201,
-        "colours": 20,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.087,
-        "west_east": 5.1561,
-        "top_bottom": 9.2884,
-        "isolated": 0.0323,
-        "checker": 0.0,
-        "height_px": 17
-      },
-      "E special": {
-        "px": 173,
-        "colours": 14,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 4,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0488,
-        "west_east": 4.6157,
-        "top_bottom": 8.3161,
-        "isolated": 0.0,
-        "checker": 0.0,
-        "height_px": 14
-      },
-      "W perch": {
-        "px": 191,
-        "colours": 19,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0222,
-        "west_east": 21.1481,
-        "top_bottom": 16.2963,
-        "isolated": 0.0137,
-        "checker": 0.0,
-        "height_px": 16
-      },
-      "W cling": {
-        "px": 185,
-        "colours": 19,
-        "on_house": 1.0,
-        "on_today": 0.0,
-        "families": 5,
-        "outline_dark": 1.0,
-        "flat_ink": 0.0,
-        "double": 0.0667,
-        "west_east": 15.5846,
-        "top_bottom": 14.122,
-        "isolated": 0.0214,
-        "checker": 0.0,
-        "height_px": 14
-      },
-      "W cheer": {
-        "px": 201,
+        "px": 502,
         "colours": 21,
         "on_house": 1.0,
         "on_today": 0.0,
         "families": 5,
         "outline_dark": 1.0,
         "flat_ink": 0.0,
-        "double": 0.1087,
-        "west_east": 16.354,
-        "top_bottom": 16.7321,
-        "isolated": 0.0387,
+        "double": 0.0375,
+        "west_east": 17.3746,
+        "top_bottom": 11.92,
+        "isolated": 0.0118,
+        "checker": 0.0,
+        "height_px": 28
+      },
+      "hop 1": {
+        "px": 418,
+        "colours": 19,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0267,
+        "west_east": 18.1756,
+        "top_bottom": 5.856,
+        "isolated": 0.0117,
+        "checker": 0.0,
+        "height_px": 23
+      },
+      "hop 2": {
+        "px": 456,
+        "colours": 20,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.027,
+        "west_east": 19.1611,
+        "top_bottom": 10.2213,
+        "isolated": 0.0105,
+        "checker": 0.0,
+        "height_px": 26
+      },
+      "hop 3": {
+        "px": 460,
+        "colours": 21,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.027,
+        "west_east": 18.1257,
+        "top_bottom": 10.5091,
+        "isolated": 0.0104,
+        "checker": 0.0,
+        "height_px": 26
+      },
+      "hop 4": {
+        "px": 420,
+        "colours": 20,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0267,
+        "west_east": 18.2275,
+        "top_bottom": 6.5384,
+        "isolated": 0.029,
+        "checker": 0.0,
+        "height_px": 23
+      },
+      "S react": {
+        "px": 495,
+        "colours": 21,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0253,
+        "west_east": 20.3805,
+        "top_bottom": 9.8192,
+        "isolated": 0.0096,
+        "checker": 0.0,
+        "height_px": 28
+      },
+      "S nap": {
+        "px": 277,
+        "colours": 17,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 4,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0351,
+        "west_east": 14.6492,
+        "top_bottom": 7.8355,
+        "isolated": 0.0,
+        "checker": 0.0,
+        "height_px": 15
+      },
+      "E perch": {
+        "px": 200,
+        "colours": 18,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0417,
+        "west_east": 18.6934,
+        "top_bottom": 4.6133,
+        "isolated": 0.0066,
+        "checker": 0.0,
+        "height_px": 16
+      },
+      "E cling": {
+        "px": 156,
+        "colours": 15,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 4,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0714,
+        "double": 0.0476,
+        "west_east": 15.8244,
+        "top_bottom": 6.4718,
+        "isolated": 0.0175,
+        "checker": 0.0,
+        "height_px": 13
+      },
+      "E cheer": {
+        "px": 210,
+        "colours": 19,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0426,
+        "west_east": 14.845,
+        "top_bottom": 3.4271,
+        "isolated": 0.0307,
         "checker": 0.0,
         "height_px": 17
       },
-      "W special": {
-        "px": 172,
+      "E special": {
+        "px": 168,
         "colours": 16,
         "on_house": 1.0,
         "on_today": 0.0,
         "families": 4,
-        "outline_dark": 0.9756,
+        "outline_dark": 1.0,
         "flat_ink": 0.0,
-        "double": 0.0244,
-        "west_east": 20.9134,
-        "top_bottom": 4.9643,
-        "isolated": 0.0229,
+        "double": 0.0698,
+        "west_east": 19.4301,
+        "top_bottom": 0.4284,
+        "isolated": 0.008,
+        "checker": 0.0,
+        "height_px": 14
+      },
+      "W perch": {
+        "px": 200,
+        "colours": 19,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0417,
+        "west_east": 18.0292,
+        "top_bottom": 4.7488,
+        "isolated": 0.0066,
+        "checker": 0.0,
+        "height_px": 16
+      },
+      "W cling": {
+        "px": 156,
+        "colours": 15,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 4,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0714,
+        "double": 0.0476,
+        "west_east": 17.0755,
+        "top_bottom": 9.5151,
+        "isolated": 0.0175,
+        "checker": 0.0,
+        "height_px": 13
+      },
+      "W cheer": {
+        "px": 213,
+        "colours": 19,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 5,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0588,
+        "west_east": 15.8184,
+        "top_bottom": 9.9289,
+        "isolated": 0.0185,
+        "checker": 0.0,
+        "height_px": 18
+      },
+      "W special": {
+        "px": 168,
+        "colours": 17,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 4,
+        "outline_dark": 1.0,
+        "flat_ink": 0.0,
+        "double": 0.0698,
+        "west_east": 19.4301,
+        "top_bottom": 1.9297,
+        "isolated": 0.008,
         "checker": 0.0,
         "height_px": 14
       }
     },
     "notes": [
-      "Walk is the spec's 4-frame hop (crouch, rise, air, land); the land squash holds a second frame and the lid comes back down, so it reads REST, not bouncy ROAM.",
-      "Growth stages (rig variants of the same poses): 1 the curled leaf; 2 a second, smaller leaf at the joint; 3 a bud opening at the curl. The joint never moves.",
-      "Perch: a 16 px redraw, the leaf curled back and down to clear small folk; it turns to the foe (E and W). perchAnchor is the foot line centre (12, 22).",
-      "Moss: round leaf_cool mounds on a warm leaf_warm skin, never on grey stone (Cairn) and never in rows (Tam's knit). The leaf is fresh grass_warm, stiff and curled, not a floppy cap (Mote).",
-      "Open for Matt: cling and special sit at 14 px (squashed / leaf lowered as a guard); react is 26 px with the leaf raised. The idle and the perch are on target (24 and 16).",
-      "Compared with Eastward-04 (Sam scaled to 24 px): her 2-3 px hair clumps for the moss, 3-4 tones a material, a dark per-material outline and a glinting eye block."
+      "Reconciled to Matt's 1x master (moss_sheet.png): the same cap, colours and proportions; more detail at 2x. The earlier final (A with B's curled leaf) stays as option A in mossling-options.png.",
+      "Size: the master is 15 px at 1x with its sprout (cap and body 12), so the 2x idle is 28 px: the body and cap are the familiar's 24 px; the sprout sits above them, as on the master.",
+      "Walk: the spec's 4-frame hop (crouch, rise, air, land); the land squash holds a second frame and the lid comes back down, so it reads REST, not ROAM.",
+      "Growth stages (rig variants of the same poses): 1 the two-leaf sprout; 2 a third leaf and a bud; 3 the bud opens on the cap. The joint never moves.",
+      "Perch: a 16 px redraw turned to the foe; perchAnchor is the foot line centre (12, 22).",
+      "Compared with Matt's moss_sheet.png at 8x (same cap tones clay 1-4, plaster rim, leaf body) and with Eastward-04 (Sam at 24 px) for tones a material and the eye block."
     ]
   }
 }

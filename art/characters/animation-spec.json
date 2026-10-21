@@ -1477,7 +1477,9 @@
         "heightWorld": 22,
         "widthWorld": 30,
         "cell": "folkLarge",
-        "home": "the Tidebloom Isles"
+        "home": "the Tidebloom Isles",
+        "followBehindWorld": 22,
+        "followNote": "Tuff is 30 world px wide, so the familiar trails 22 px behind him instead of 14 (Claude A approved, 21 Oct 16:05)."
       },
       {
         "id": "nix",

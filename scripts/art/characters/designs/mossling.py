@@ -733,27 +733,23 @@ OPTIONS = [
 ]
 
 
-# --- final: A, the tuft-back mochi, with B's curled leaf and big eyes --------------------
+# --- final: reconciled to Matt's 1x master (moss_sheet.png) ------------------------------
+# Matt (21 Oct 18:17): the 1x design is the master and every density draws the same design.
+# The Mossling's 1x master is his moss_sheet.png: a green mochi under a red-brown mushroom
+# cap (clay, lit at the upper left, cream spots), a pale cream rim under the cap, a small
+# dark two-leaf sprout on the cap, a dark eye and a blush. This 2x final draws that design
+# with more detail; the earlier final (A with B's curled leaf) stays as option A in the
+# options sheet. Geometry is the 1x master's x 2 (scripts/art/characters/masters/mossling.py).
 OUT_FINAL = os.path.join(ROOT, 'docs/vision/characters/designs/mossling-final.png')
-F_BODY, F_MOSS, F_BELLY, F_LEAF, F_BLUSH, F_GLOW = 'leaf_warm', 'leaf_cool', 'plaster', 'grass_warm', 'berry_warm', \
-    'glowflora'
+F_BODY, F_CAP, F_RIM, F_BLUSH, F_GLOW = 'leaf', 'clay', 'plaster', 'berry', 'glowflora'
 
-# the curled leaf, (dx, dy, tone) from the joint on the crown, leaning west (back in S and E)
-LEAF_W = ((-6, -6, 3), (-5, -6, 4), (-4, -6, 4),
-          (-7, -5, 3), (-6, -5, 1), (-5, -5, 3), (-4, -5, 4), (-3, -5, 4), (-2, -5, 4),
-          (-7, -4, 2), (-6, -4, 2), (-5, -4, 4), (-4, -4, 4), (-3, -4, 4), (-2, -4, 4), (-1, -4, 3),
-          (-6, -3, 2), (-5, -3, 3), (-4, -3, 3), (-3, -3, 3), (-2, -3, 3), (-1, -3, 3), (0, -3, 2),
-          (-4, -2, 2), (-3, -2, 2), (-2, -2, 3), (-1, -2, 3), (0, -2, 2),
-          (-1, -1, 2), (0, -1, 3))
-LEAF_W_FLAT = ((-6, -3, 3), (-5, -3, 4), (-4, -3, 4), (-3, -3, 4),
-               (-7, -2, 3), (-6, -2, 1), (-5, -2, 3), (-4, -2, 4), (-3, -2, 4), (-2, -2, 4), (-1, -2, 3),
-               (-6, -1, 2), (-5, -1, 2), (-4, -1, 3), (-3, -1, 3), (-2, -1, 3), (-1, -1, 3), (0, -1, 2))
-# the perch leaf: the same curl, curled back and down so the sprite stays 16 px
-LEAF_P = ((-4, -3, 3), (-3, -3, 4), (-2, -3, 4),
-          (-5, -2, 3), (-4, -2, 1), (-3, -2, 3), (-2, -2, 4), (-1, -2, 4),
-          (-5, -1, 2), (-4, -1, 2), (-3, -1, 3), (-2, -1, 3), (-1, -1, 3), (0, -1, 3))
-LEAF_P_FLAT = ((-5, -2, 3), (-4, -2, 4), (-3, -2, 4), (-2, -2, 4),
-               (-6, -1, 3), (-5, -1, 1), (-4, -1, 3), (-3, -1, 3), (-2, -1, 3), (-1, -1, 3), (0, -1, 2))
+SPROUT_2X = ((0, 0, 'leaf', 2), (0, -1, 'leaf', 3),
+             (-1, -2, 'leaf', 3), (-2, -2, 'leaf', 4), (-2, -3, 'leaf', 4), (-3, -3, 'leaf', 3),
+             (1, -2, 'leaf', 3), (2, -2, 'leaf', 2), (2, -3, 'leaf', 3), (3, -3, 'leaf', 2))
+SPROUT_P = ((0, 0, 'leaf', 2), (-1, -1, 'leaf', 4), (-2, -2, 'leaf', 3), (-1, -2, 'leaf', 4),
+            (1, -1, 'leaf', 3), (1, -2, 'leaf', 3), (2, -2, 'leaf', 2))
+SPROUT_NAP = ((0, 0, 'leaf', 2), (-1, 0, 'leaf', 3), (-2, 1, 'leaf', 3), (-3, 1, 'leaf', 2),
+                (1, 0, 'leaf', 3), (2, 1, 'leaf', 2))
 
 
 class FCtx(Ctx):
@@ -768,35 +764,18 @@ class FCtx(Ctx):
         self.marks = {}
 
 
-def f_leaf(c, joint, lean, data):
-    """The curled leaf on the head-top growth anchor. `lean` -1 leans it west, +1 east;
-    tones run by row (lit along the top), so the light stays upper left either way."""
-    jx, jy = joint
-    for (dx, dy, t) in data:
-        c.fig.put(jx + dx * (-lean), jy + dy, F_LEAF, t)
-    c.fig.put(jx, jy, F_LEAF, 2)
-
-
-def f_eye(c, x, y, mode, skin=F_BODY):
-    """The family eye: a 3 x 3 ink block with a 2 px glint down its lit (west) column.
-    lid: the top row is a heavy lid in the skin's tone 1 (REST, drowsy); closed: a u;
-    happy: a ^; tight_l / tight_r: > and < (clinging on)."""
-    fig = c.fig
+def f_eye(c, x, y, mode):
+    """The family eye: 3 x 3 ink with a 2 px glint down its lit (west) column. lid: a heavy
+    lid row in the skin's tone 1 (REST); closed: a u; happy: a ^; tight_l/_r: > and <."""
     pts = []
     if mode in ('open', 'lid', 'wide'):
-        for yy in range(y, y + 3):
-            for xx in range(x, x + 3):
-                pts.append((xx, yy, 'ink', 0))
+        pts = [(xx, yy, 'ink', 0) for yy in range(y, y + 3) for xx in range(x, x + 3)]
+        g0 = y + (1 if mode == 'lid' else 0)
+        pts = [p for p in pts if not (p[0] == x and p[1] in (g0, g0 + 1))]
+        pts += [(x, g0, F_RIM, 5), (x, g0 + 1, F_RIM, 5)]
         if mode == 'lid':
-            pts = [p for p in pts if p[1] != y]
-            pts += [(x, y, skin, 1), (x + 1, y, skin, 1), (x + 2, y, skin, 1)]
-            pts += [(x, y + 1, F_BELLY, 5), (x, y + 2, F_BELLY, 5)]
-            pts.remove((x, y + 1, 'ink', 0))
-            pts.remove((x, y + 2, 'ink', 0))
-        else:
-            pts += [(x, y, F_BELLY, 5), (x, y + 1, F_BELLY, 5)]
-            pts.remove((x, y, 'ink', 0))
-            pts.remove((x, y + 1, 'ink', 0))
+            pts = [p for p in pts if p[1] != y] + [(x + i, y, F_BODY, 1) for i in range(3)]
+            pts = [p for p in pts if p[1] < y + 3]
     elif mode == 'closed':
         pts = [(x, y + 1, 'ink', 0), (x + 1, y + 2, 'ink', 0), (x + 2, y + 1, 'ink', 0)]
     elif mode == 'happy':
@@ -806,143 +785,181 @@ def f_eye(c, x, y, mode, skin=F_BODY):
     elif mode == 'tight_r':
         pts = [(x + 2, y, 'ink', 0), (x + 1, y + 1, 'ink', 0), (x, y + 1, 'ink', 0), (x + 2, y + 2, 'ink', 0)]
     for (xx, yy, fam, t) in pts:
-        fig.put(xx, yy, fam, t)
+        c.fig.put(xx, yy, fam, t)
         c.keep.add((xx, yy))
     c.marks.setdefault('eyes', []).append([x, y])
 
 
-def f_mouth(c, x, y, mode):
-    if mode == 'smile':
-        pts = [(x, y, F_BODY, 1), (x + 1, y, F_BODY, 1)]
-    elif mode == 'o':
-        pts = [(x, y, 'ink', 0), (x + 1, y, 'ink', 0), (x, y + 1, F_BLUSH, 2), (x + 1, y + 1, F_BLUSH, 2)]
-    elif mode == 'open':
-        pts = [(x, y, 'ink', 0), (x + 1, y, 'ink', 0), (x, y + 1, F_BLUSH, 3), (x + 1, y + 1, F_BLUSH, 3)]
-    else:   # 'dot': one sleepy corner
-        pts = [(x, y, F_BODY, 1)]
+def f_marks(c, pts):
+    """Face marks (blush, mouth), only where the body already is: never past the silhouette."""
     for (xx, yy, fam, t) in pts:
+        if (xx, yy) not in c.fig.px or c.fig.px[(xx, yy)][0] != F_BODY:
+            continue
         c.fig.put(xx, yy, fam, t)
         c.keep.add((xx, yy))
 
 
-def f_blush(c, x, y):
-    for xx in (x, x + 1):
-        c.fig.put(xx, y, F_BLUSH, 4)
-        c.keep.add((xx, y))
+def body_mask(c, cx, cy, rx, ry, p=2.5):
+    """The mochi: a soft superellipse, squarer than a ball, wide under the cap."""
+    out = set()
+    for y in range(int(cy - ry) - 1, int(cy + ry) + 2):
+        for x in range(int(cx - rx) - 1, int(cx + rx) + 2):
+            u, v = abs(x + 0.5 - cx) / rx, abs(y + 0.5 - cy) / ry
+            if u ** p + v ** p <= 1.0 and c.fig.inside(x, y):
+                out.add((x, y))
+    return out
 
 
-def mochi(c, sq=(1.0, 1.0), lift=0.0, eyes='lid', mouth='smile', leaf='back', feet='stand', look=0):
-    """The Mossling, one pose. World: about 24 px with the leaf; perch: a 16 px redraw.
-    sq squashes (x, y); lift raises it off the foot line; leaf is back, up, flat, shield,
-    or none; feet are stand, tuck or splay."""
-    d, P = c.d, c.perch
-    rx0, ry0 = (7.2, 5.0) if P else (9.6, 7.2)
-    rx, ry = rx0 * sq[0], ry0 * sq[1]
-    by = -(ry + (0.8 if P else 1.0)) - lift
-    cx, cy = c.X(0), c.Y(by)
-    # feet: two nubs on the foot line (the family's shared foot line); far one darker in E/W
-    fr = (1.9, 1.2) if P else (2.6, 1.6)
-    if feet == 'tuck':
-        fy = by + ry * 0.82
-        fpos = [(-3.2, fy), (3.2, fy)] if d == 0 else [(-2.4 * d, fy), (2.8 * d, fy + 0.2)]
-    else:
-        spread = 1.25 if feet == 'splay' else 1.0
-        fy = -fr[1] + 0.4 - (0.2 if P else 0)
-        k = 3.3 if P else 4.6
-        fpos = [(-k * spread, fy), (k * spread, fy)] if d == 0 else [(-0.7 * k * d, fy - 0.1), (0.75 * k * d, fy)]
-    for i, (fxo, fyo) in enumerate(fpos):
-        m = c.ell(fxo, fyo, *fr)
-        far = d != 0 and i == 0
-        ball(c, m, 'leaf' if far else F_BODY, c.X(fxo), c.Y(fyo), fr[0], fr[1], glint=False)
-    # body, with the cheek / face step in profile (a lit bump that carries the face forward)
-    body = c.ell(0, by, rx, ry)
-    if d:
-        body |= c.ell(rx * 0.8 * d, by + ry * 0.22, 2.2 if P else 2.8, 1.9 if P else 2.5)
-    ball(c, body, F_BODY, cx, cy, rx, ry, cuts=(0.87, 0.48, 0.12))
-    # pale belly: a tone lighter than the options; kept off the east edge in profile
-    if d == 0:
-        belly = c.ell(0, by + ry * 0.48, rx * 0.58, ry * 0.56) & body
-    else:
-        belly = c.ell((0.6 if P else 1.4) * d, by + ry * 0.55, rx * 0.40, ry * 0.44) & body
-    ball(c, belly, F_BELLY, cx, cy, rx, ry, glint=False, lo=3, cuts=(0.85, 0.3, -1))
-    # moss: rounded clumps, a crown and a row down the back; a brow clump over the eye in profile
-    sx, sy = rx / 10.0, ry / 8.8
-    if d == 0:
-        cl = [(-5.6, -7.0, 3.0, 2.2), (5.8, -6.6, 2.6, 2.0), (-8.6, -2.4, 2.0, 2.4), (8.6, -2.2, 1.8, 2.2)]
-    else:
-        cl = [(-5.0, -7.2, 3.0, 2.3), (-8.6, -2.6, 2.4, 2.6), (-7.4, 3.0, 2.0, 2.0), (4.2, -6.0, 2.6, 1.8)]
-        cl = [(xx * d, yy, a_, b_) for xx, yy, a_, b_ in cl]
-    if P:
-        cl = [cl[0], cl[1]] if d == 0 else [cl[0], cl[1]]
-        cl = [(xx, yy, max(a_ * 0.75, 2.0), max(b_ * 0.75, 1.7)) for xx, yy, a_, b_ in cl]
-    for (xx, yy, a_, b_) in cl:
-        clump(c, xx * sx, by + yy * sy, a_, b_, F_MOSS, F_BODY, (cx, cy, rx, ry))
-    # face
-    if d == 0:
-        ey = int(round(cy)) - 1
-        lx, rxx = int(cx) - 5, int(cx) + 2
-        if eyes in ('tight',):
-            f_eye(c, lx, ey, 'tight_l')
-            f_eye(c, rxx, ey, 'tight_r')
-        else:
-            f_eye(c, lx, ey, eyes)
-            f_eye(c, rxx, ey, eyes)
-        f_blush(c, lx - 1, ey + 3)
-        f_blush(c, rxx + 2, ey + 3)
-        f_mouth(c, int(cx) - 1, ey + 3, mouth)
-    else:
-        ey = int(round(cy)) - 1
-        ex = int(cx) + (1 if P else 2) if d > 0 else int(cx) - (4 if P else 5)
-        f_eye(c, ex, ey, {'tight': 'tight_r' if d > 0 else 'tight_l'}.get(eyes, eyes))
-        f_blush(c, ex if d > 0 else ex + 1, ey + 3)
-        mx = int(round(cx + rx * 0.8 * d)) + (0 if d > 0 else -1)
-        f_mouth(c, mx if mouth in ('smile', 'dot') else mx - (1 if d > 0 else 0), ey + 3,
-                mouth if mouth != 'smile' else 'dot')
-    # the head-top growth anchor: the stem joint on the crown
-    colx = int(round(cx - 0.5 - (2.4 if P else 0.8) * d))
-    top = min(y for (x, y) in body if x == colx)
-    joint = (colx, top - 1)
-    c.marks['growth'] = list(joint)
-    lean = 1 if d < 0 else -1
-    if leaf == 'shield':
-        # SLEEP IT OFF: the leaf swung forward and down over the front, a guard
-        m = leaf_shape(c, cx + rx * 0.3 * d, cy + ry * 0.05, 3.6 if P else 4.6, 2.0 if P else 2.5, 1.25 * d)
-        return body, m
-    if leaf != 'none':
-        if P:
-            data = LEAF_P_FLAT if leaf == 'flat' else LEAF_P
-        else:
-            data = LEAF_W_FLAT if leaf == 'flat' else LEAF_W
-            if leaf == 'up':
-                c.fig.put(joint[0], joint[1], F_LEAF, 2)
-                joint = (joint[0], joint[1] - 1)
-        f_leaf(c, joint, lean, data)
-    return body, None
-
-
-def leaf_shape(c, cx, cy, rx, ry, rot):
-    """A leaf as a rotated ellipse with a midrib (the shield and the blanket)."""
+def cap(c, cx, base, rx, h, rim=2, rot=0.0):
+    """The mushroom cap: a low dome (clay) lit at the upper left with two cream spots, on a
+    pale rim (plaster) with a lit left end and a shaded right end; rot tips it."""
     fig = c.fig
-    m = set()
     ca, sa = math.cos(rot), math.sin(rot)
-    for y in range(int(cy - rx) - 2, int(cy + rx) + 3):
-        for x in range(int(cx - rx) - 2, int(cx + rx) + 3):
-            px, py = x + 0.5 - cx, y + 0.5 - cy
-            u = (px * ca + py * sa) / rx
-            v = (-px * sa + py * ca) / ry
-            if u * u + v * v <= 1.0 and fig.inside(x, y):
-                m.add((x, y))
-    for (x, y) in m:
-        u = (x + 0.5 - cx) / rx
-        v = (y + 0.5 - cy) / ry
-        t = tone_of(light_of(u * 0.8, v * 0.8), (0.8, 0.45, 0.05))
-        fig.put(x, y, F_LEAF, max(2, t))
-    # midrib along the long axis, tone 2, and its dark lower edge
-    for i in range(-int(rx) + 1, int(rx)):
-        p = (int(round(cx + i * ca)), int(round(cy + i * sa)))
-        if p in m:
-            fig.put(p[0], p[1], F_LEAF, 2)
-    return m
+    dome, band = set(), set()
+    for y in range(int(base - h - rx * abs(sa)) - 3, int(base + rim + rx * abs(sa)) + 3):
+        for x in range(int(cx - rx) - 3, int(cx + rx) + 4):
+            px, py = x + 0.5 - cx, y + 0.5 - base
+            u = px * ca + py * sa
+            v = -px * sa + py * ca
+            if v < 0 and (u / rx) ** 2 + (v / h) ** 2 <= 1.0:
+                dome.add((x, y, u, v))
+            elif 0 <= v < rim and abs(u) <= rx - 0.4 - 0.5 * v:
+                band.add((x, y, u, v))
+    for (x, y, u, v) in dome:
+        t = tone_of(light_of(u / rx * 1.05, (v / h) * 0.9 + 0.15), (0.83, 0.5, 0.12))
+        if u / rx > 0.78 and v > -h * 0.45:
+            t = min(t, 1)
+        fig.put(x, y, F_CAP, t)
+    # cream spots (plaster), upper left: a big one and a small one
+    for (sx, sy, srx, sry) in ((-0.18, -0.62, 0.17, 0.2), (-0.55, -0.3, 0.15, 0.18), (0.32, -0.42, 0.09, 0.14)):
+        for (x, y, u, v) in dome:
+            if ((u / rx - sx) / srx) ** 2 + ((v / h - sy) / sry) ** 2 <= 1.0:
+                lit = (u / rx - sx) < 0 and (v / h - sy) < 0
+                fig.put(x, y, F_RIM, 5 if lit else 4 if sx < 0.2 else 3)
+    for (x, y, u, v) in band:
+        r = u / rx
+        if v < 1:
+            t = 4 if r < -0.55 else 3 if r < 0.35 else 2
+        else:
+            t = 3 if r < -0.55 else 2 if r < 0.55 else 1
+        fig.put(x, y, F_RIM, t)
+    return {(x, y) for x, y, _, _ in dome}, {(x, y) for x, y, _, _ in band}
+
+
+def under_shadow(c, band, body, d):
+    """The shadow the cap throws on the mochi: one row of leaf 1 under the rim, deepening
+    to leaf 0 under the far (east) end, where the master has its ink notch."""
+    fig = c.fig
+    xs = sorted({x for x, _ in band})
+    for (x, y) in band:
+        q = (x, y + 1)
+        if q in body and q not in band:
+            fig.put(q[0], q[1], F_BODY, 0 if x >= xs[-1] - 2 else 1 if x > xs[0] + 1 else 2)
+    # the deep notch down the east side under the cap (the master's ink column)
+    by0 = max(y for _, y in band) + 1
+    for (x, y) in body:
+        if x in (xs[-1] - 2, xs[-1] - 3) and by0 <= y < by0 + (5 if not c.perch else 3) and (x + 1, y) in body:
+            fig.put(x, y, F_BODY, 0)
+
+
+def mochi2(c, sq=(1.0, 1.0), lift=0.0, eyes='lid', mouth='none', cap_mode='on', feet='stand', sprout='up'):
+    """One pose of the master's design at 2x. World: rim at rows 12-13, the body 14-25, feet
+    26-27 (the foot line), cap dome 6-11, sprout 2-5. Perch (16 px): the same, smaller."""
+    fig, d, P = c.fig, c.d, c.perch
+    cx = c.fx + (1.0 if not P else 1.0)
+    rx0, ry0 = (11.0, 7.0) if not P else (7.0, 4.0)
+    rx, ry = rx0 * sq[0], ry0 * sq[1]
+    foot_h = 2 if not P else 1
+    cy = c.fy - foot_h - ry - lift
+    # feet: two nubs on the foot line; the far one darker in E/W, tucked in the air
+    if not P:
+        if feet == 'tuck':
+            fpos = [(-3.6, cy + ry - 0.6), (3.6, cy + ry - 0.6)]
+        else:
+            k = 1.25 if feet == 'splay' else 1.0
+            fpos = [(-5.5 * k, c.fy - 1.6), (4.5 * k, c.fy - 1.6)] if d == 0 else \
+                [(-5.0 * d, c.fy - 1.6), (3.0 * d, c.fy - 1.5)]
+        for i, (fxo, fyo) in enumerate(fpos):
+            m = fig.ellipse(cx + fxo, fyo, 2.3, 1.6)
+            far = d != 0 and i == 0
+            ball(c, m, F_BODY, cx + fxo, fyo, 2.3, 1.6, glint=False, cuts=(0.9, 0.6, 0.3) if far else (0.8, 0.45, 0.1))
+    body = body_mask(c, cx, cy, rx, ry)
+    if d and not P:
+        body |= fig.ellipse(cx + rx * 0.82 * d, cy + ry * 0.25, 2.4, 2.6)
+    ball(c, body, F_BODY, cx, cy, rx, ry * 1.1, cuts=(0.85, 0.42, 0.06))
+    # the pale front: leaf 4 to 5 on the lit lower front, as the master's lit belly
+    if d == 0:
+        belly = fig.ellipse(cx - 1.0, cy + ry * 0.35, rx * 0.5, ry * 0.5) & body
+    else:
+        belly = fig.ellipse(cx + 0.5 * d - 1.0, cy + ry * 0.35, rx * 0.42, ry * 0.5) & body
+    for (x, y) in belly:
+        u, v = (x + 0.5 - cx) / rx, (y + 0.5 - cy) / ry
+        fig.put(x, y, F_BODY, 5 if u < -0.4 and v < 0.25 else 4)
+    # moss: a few darker leaf clusters on the lower back (texture the master has as dark bands)
+    if not P:
+        for (mx, my) in (((-7.5 if d >= 0 else 5.5), 2.6), ((-3.0 if d >= 0 else 1.5), 4.6)):
+            for (ox, oy, t) in ((0, 0, 2), (1, 0, 2), (2, 0, 1), (1, 1, 1)):
+                p = (int(cx + mx) + ox, int(cy + my) + oy)
+                if p in body and fig.px[p][1] >= 2:
+                    fig.put(p[0], p[1], F_BODY, t)
+    # cap
+    top_body = min(y for _, y in body)
+    base = float(top_body)
+    crx, ch = (11.3, 6.2) if not P else (7.4, 3.4)
+    rot = 0.0
+    if cap_mode == 'tipped':            # pulled down and forward over the eyes (nap, special)
+        base += 3.0 if not P else 2.0
+        rot = 0.12 * (d or 1) * (-1 if d < 0 else 1) if d else 0.1
+    elif cap_mode == 'pressed':         # cling: squashed down on the head
+        base += 1.0
+        ch *= 0.85
+    elif cap_mode == 'back':            # cheer: tipped back off the brow
+        rot = -0.18 * (d or 1)
+    elif cap_mode == 'lift':            # react: jumps up a pixel
+        base -= 1.0
+    dome, band = cap(c, cx, base, crx, ch, rim=2, rot=rot)
+    under_shadow(c, band, body, d)
+    # face, under the rim
+    ey = int(base) + 3
+    if cap_mode == 'tipped':
+        eyes = 'hidden'
+    if eyes != 'hidden':
+        if d == 0:
+            lx, rxx = int(cx) - 6, int(cx) + 3
+            f_eye(c, lx, ey, 'tight_l' if eyes == 'tight' else eyes)
+            f_eye(c, rxx, ey, 'tight_r' if eyes == 'tight' else eyes)
+        else:
+            ex = int(cx) - 1 if d > 0 else int(cx) - 2
+            if P:
+                ex = int(cx) + (0 if d > 0 else -3)
+            f_eye(c, ex, ey, ('tight_r' if d > 0 else 'tight_l') if eyes == 'tight' else eyes)
+    # blush: behind and below the eye in profile (as the master), outside both eyes in S
+    by_ = ey + 3
+    if d == 0:
+        f_marks(c, [(int(cx) - 8, by_, F_BLUSH, 4), (int(cx) - 7, by_, F_BLUSH, 4),
+                    (int(cx) + 6, by_, F_BLUSH, 4), (int(cx) + 7, by_, F_BLUSH, 4)])
+    else:
+        bx = int(cx) - (6 if not P else 4) if d > 0 else int(cx) + (4 if not P else 2)
+        f_marks(c, [(bx, by_, F_BLUSH, 4), (bx + 1, by_, F_BLUSH, 4)] +
+                ([(bx + 2, by_, F_BLUSH, 3)] if not P and d > 0 else [(bx - 1, by_, F_BLUSH, 3)] if not P else []))
+    if mouth != 'none':
+        mx = int(cx) - 1 if d == 0 else int(cx) + (3 if d > 0 else -4)
+        my = by_ - (0 if not P else 0)
+        if mouth == 'o':
+            f_marks(c, [(mx, my, 'ink', 0), (mx + 1, my, 'ink', 0), (mx, my + 1, F_BLUSH, 2), (mx + 1, my + 1, F_BLUSH, 2)])
+        elif mouth == 'open':
+            f_marks(c, [(mx, my, 'ink', 0), (mx + 1, my, 'ink', 0), (mx, my + 1, F_BLUSH, 3), (mx + 1, my + 1, F_BLUSH, 3)])
+        else:
+            f_marks(c, [(mx, my, F_BODY, 1), (mx + 1, my, F_BODY, 1)])
+    # sprout: the head-top growth anchor on the cap's crown
+    jx = int(cx) - 1 if not P else int(cx) - 1
+    col = [y for x, y in dome if x == jx] or [int(base - ch)]
+    joint = (jx, min(col) - 1)
+    c.marks['growth'] = list(joint)
+    data = SPROUT_NAP if sprout == 'droop' else (SPROUT_P if P else SPROUT_2X)
+    for (dx, dy, fam, t) in data:
+        fig.put(joint[0] + dx, joint[1] + dy, fam, t)
+    return body, dome
 
 
 def f_sparkles(c, pts):
@@ -959,59 +976,58 @@ def final_world(kind):
     d = {'S': 0, 'E': 1, 'W': -1}.get(kind, 0)
     c = FCtx(False, d)
     if kind in ('S', 'E', 'W'):
-        mochi(c, eyes='lid')
-    elif kind == 'hop1':       # crouch: squash, splayed nubs, the leaf pressed flat
-        mochi(c, sq=(1.1, 0.84), eyes='lid', leaf='flat', feet='splay')
-    elif kind == 'hop2':       # rise: stretch, nubs trailing
-        mochi(c, sq=(0.94, 1.06), lift=1.0, eyes='open', feet='tuck')
-    elif kind == 'hop3':       # airborne: round, tucked, the leaf lifting
-        mochi(c, sq=(0.98, 1.0), lift=2.0, eyes='open', mouth='o', feet='tuck')
-    elif kind == 'hop4':       # land: a heavy squash held a frame, eyes sinking back to the lid
-        mochi(c, sq=(1.12, 0.82), eyes='closed', leaf='flat', feet='splay', mouth='dot')
-    elif kind == 'react':      # roused: eyes wide, the leaf up, a little stretch
-        mochi(c, sq=(0.96, 1.04), eyes='wide', mouth='o', leaf='up')
+        mochi2(c, eyes='lid')
+    elif kind == 'hop1':       # crouch: squash, splayed nubs, the cap pressed down
+        mochi2(c, sq=(1.06, 0.8), eyes='lid', feet='splay', cap_mode='pressed')
+    elif kind == 'hop2':       # rise: a stretch, nubs trailing
+        mochi2(c, sq=(0.95, 1.0), lift=0.5, eyes='open', feet='tuck')
+    elif kind == 'hop3':       # airborne: round and tucked
+        mochi2(c, sq=(0.98, 0.9), lift=1.2, eyes='open', mouth='o', feet='tuck')
+    elif kind == 'hop4':       # land: a heavy squash held a frame, the lid sinking back
+        mochi2(c, sq=(1.08, 0.78), eyes='closed', feet='splay', cap_mode='pressed', mouth='dot')
+    elif kind == 'react':      # roused: eyes wide, the cap jumps a pixel
+        mochi2(c, sq=(0.97, 0.96), eyes='wide', mouth='o', cap_mode='lift')
     return finish(c), c.marks
 
 
 def final_nap():
+    """Curled low and wide; the cap tips forward like a hat over the eyes, the sprout droops."""
     c = FCtx(False, 0)
     fig = c.fig
-    cx, cy, rx, ry = c.X(0.5), c.Y(-6.2), 11.0, 5.8
-    body = fig.ellipse(cx, cy, rx, ry)
-    ball(c, body, F_BODY, cx, cy, rx, ry, cuts=(0.87, 0.48, 0.12))
-    belly = fig.ellipse(cx - 0.5, cy + 2.4, 6.2, 3.2) & body
-    ball(c, belly, F_BELLY, cx, cy, rx, ry, glint=False, lo=3, cuts=(0.85, 0.3, -1))
-    for (xx, yy, a_, b_) in ((-9.6, -7.4, 2.2, 2.2), (8.6, -6.6, 2.0, 2.0)):
-        clump(c, xx, yy, a_, b_, F_MOSS, F_BODY, (cx, cy, rx, ry))
-    # the curled leaf laid over the back as a blanket, its curl at the west end
-    m = leaf_shape(c, cx + 0.5, cy - 4.4, 8.2, 2.5, 0.08)
-    lx = min(x for x, _ in m)
-    ly = min(y for x, y in m if x == lx)
-    for (dx, dy, t) in ((0, -1, 3), (1, -1, 4), (-1, 0, 3), (0, 0, 1), (-1, 1, 2), (0, 1, 2)):
-        fig.put(lx + dx, ly + dy, F_LEAF, t)
-    c.marks['growth'] = [int(cx) - 2, int(cy - 6)]
-    ey = int(round(cy)) + 0
-    f_eye(c, int(cx) - 5, ey, 'closed')
-    f_eye(c, int(cx) + 1, ey, 'closed')
-    f_blush(c, int(cx) - 7, ey + 2)
-    f_blush(c, int(cx) + 4, ey + 2)
-    f_mouth(c, int(cx) - 1, ey + 3, 'dot')
+    cx, cy, rx, ry = c.fx + 1.0, c.fy - 5.0, 12.0, 4.6
+    body = body_mask(c, cx, cy, rx, ry, p=2.2)
+    ball(c, body, F_BODY, cx, cy, rx, ry * 1.1, cuts=(0.85, 0.42, 0.06))
+    belly = fig.ellipse(cx - 1.0, cy + ry * 0.4, rx * 0.5, ry * 0.45) & body
+    for (x, y) in belly:
+        fig.put(x, y, F_BODY, 4)
+    top = min(y for _, y in body)
+    dome, band = cap(c, cx - 0.5, top + 4.0, 11.6, 5.6, rim=2, rot=0.07)
+    under_shadow(c, band, body, 0)
+    yb = max(y for _, y in band) + 2
+    f_marks(c, [(int(cx) - 7, yb, F_BLUSH, 4), (int(cx) - 6, yb, F_BLUSH, 4),
+                (int(cx) + 5, yb, F_BLUSH, 4), (int(cx) + 6, yb, F_BLUSH, 4),
+                (int(cx) - 1, yb + 1, F_BODY, 1), (int(cx), yb + 1, F_BODY, 1)])
+    jx = int(cx) - 1
+    joint = (jx, min(y for x, y in dome if x == jx) - 1)
+    c.marks['growth'] = list(joint)
+    for (dx, dy, fam, t) in SPROUT_NAP:
+        fig.put(joint[0] + dx, joint[1] + dy, fam, t)
     return finish(c), c.marks
 
 
 def final_perch(kind, d):
     c = FCtx(True, d)
-    if kind == 'perch':        # sitting on the shoulder, turned to the foe, drowsy but watching
-        mochi(c, eyes='lid')
-    elif kind == 'cling':      # the folk is hit: flattened, holding on, eyes screwed shut
-        mochi(c, sq=(1.12, 0.8), eyes='tight', leaf='flat', feet='splay', mouth='dot')
-    elif kind == 'cheer':      # a win: a stretch up, happy eyes, the leaf raised
-        mochi(c, sq=(0.96, 1.04), eyes='happy', mouth='open', leaf='back')
-    elif kind == 'special':    # SLEEP IT OFF: eyes shut, the leaf swung over as a guard, healing motes
-        body, shield = mochi(c, eyes='closed', mouth='dot', leaf='shield')
+    if kind == 'perch':        # on the shoulder, turned to the foe, drowsy but watching
+        mochi2(c, eyes='lid')
+    elif kind == 'cling':      # the folk is hit: flattened, cap pressed down, eyes screwed shut
+        mochi2(c, sq=(1.1, 0.8), eyes='tight', cap_mode='pressed')
+    elif kind == 'cheer':      # a win: a stretch, happy eyes, the cap tipped back
+        mochi2(c, sq=(0.96, 1.08), eyes='happy', mouth='open', cap_mode='back')
+    elif kind == 'special':    # SLEEP IT OFF: the cap pulled down over the eyes as a guard, healing motes
+        body, dome = mochi2(c, cap_mode='tipped')
         xs = sorted({x for x, _ in body})
-        cyy = sum(y for _, y in body) / len(body)
-        f_sparkles(c, [(xs[2], int(cyy) - 3), (xs[len(xs) // 2], int(cyy) + 3)])
+        ys = sorted({y for _, y in body})
+        f_sparkles(c, [(xs[2], ys[-2]), (xs[-4], ys[-3])])
     return finish(c), c.marks
 
 
@@ -1025,41 +1041,44 @@ FINAL_VIEWS = (
           for f, d in (('E', 1), ('W', -1)) for k in ('perch', 'cling', 'cheer', 'special'))
 
 FINAL = dict(
-    label='A final', name='Tuft-back mochi with the curled leaf (final)', chosen='A',
-    grafts=['B: the single curled leaf is the head-top growth (one leaf, stiff, curled; the nap blanket and '
-            'the SLEEP IT OFF guard)',
-            'B: the biggest eyes, standardised to the family eye: 3 x 3 ink with a 2 px glint',
-            'C (graders): the REST temperament: half-lidded idle eyes, a heavy settle after each hop'],
-    palette=['leaf_warm', 'leaf_cool', 'grass_warm', 'plaster', 'berry_warm'],   # + glowflora on the special
-    pose='Drowsy and loyal: it sits heavy on its nubs with half-closed eyes, hops only when it has to and '
+    label='Master final', name='The capped mochi: Matt\'s 1x master at 2x (final)', chosen='Matt\'s 1x master',
+    reconciled='reconciled to Matt\'s 1x master (moss_sheet.png)',
+    grafts=['From the family rig: 3 x 3 ink eyes with a 2 px glint (half-lidded in idle: REST)',
+            'From the family rig: the head-top growth anchor (the two-leaf sprout, on the cap\'s crown)',
+            'From the family rig: the foot line (two nubs) and the 4-frame hop',
+            'From the graders: a heavy settle after each hop, so it reads REST, not bouncy ROAM'],
+    palette=['leaf', 'clay', 'plaster', 'berry'],   # + glowflora on the special only
+    pose='Drowsy and loyal: it sits heavy under its cap with half-closed eyes, hops only when it has to and '
          'settles slowly, like a sleepy child following a step behind.',
     parts=[
-        'feet (two nubs): leaf_warm, near; leaf, far; layer 1 (far) / 2 (near); anchor foot; S both, E/W far '
-        'one behind; splay on crouch and land, tuck in the air (family foot line: the nubs sit on row 27)',
-        'body ball + cheek step: leaf_warm, layer 3, anchor hip; the cheek bump leads in E/W; breath squashes 1 px',
-        'pale belly: plaster (tones 3-5), layer 4, anchor hip; S centre, E/W forward but 4 px off the front edge',
-        'moss clumps: leaf_cool, layer 5, anchor hip (back) and head (crown, brow); crown + back in E/W, crown + '
-        'shoulders in S; fixed per facing (no per-frame repaint), ride the squash',
-        'face block: eyes (ink 3 x 3 with a 2 px plaster glint: lid / open / wide / closed / happy / tight), '
-        'blush (berry_warm), mouth; layer 6, anchor head; S/E/W',
-        'head-top growth: the curled leaf on the crown joint (growthAnchor), grass_warm, layer 7, anchor head; '
-        'leans back from the facing; flat (crouch, land, cling), up (rise, react, cheer), blanket (nap), '
-        'shield (special)',
-        'special effect: glowflora motes, 2 px, inside the silhouette, layer 8; finite, none under reduced motion',
+        'feet (two nubs): leaf, layer 1 (far) / 2 (near), anchor foot; E/W far nub darker; splay on crouch '
+        'and land, tuck in the air (the family foot line: nubs fill rows 26-27, outline on 28)',
+        'mochi body + cheek step: leaf, layer 3, anchor hip; the cheek leads in E/W; breath squashes 1 px',
+        'pale front: leaf tones 4-5 on the lit lower front, layer 4, anchor hip (the master keeps the belly '
+        'green: its pale part is the lit front, not a plaster patch)',
+        'moss clusters: leaf 1-2 on the lower back, layer 4, anchor hip; fixed per facing',
+        'face: 3 x 3 ink eyes (lid / open / wide / closed / happy / tight) with a 2 px plaster glint, berry '
+        'blush behind and below the eye in profile, an optional mouth; layer 5, anchor head',
+        'cap shadow: leaf 0-1 under the rim and the deep notch down the east side, layer 6, anchor head',
+        'mushroom cap: clay dome (lit upper left, dark lower right) with plaster spots, on a plaster rim; '
+        'layer 7, anchor head; one rigid part that presses (crouch, land, cling), lifts (react), tips back '
+        '(cheer) and tips forward over the eyes (nap, special)',
+        'head-top growth: the two-leaf sprout on the cap\'s crown joint (growthAnchor), leaf, layer 8, anchor '
+        'head (rides the cap); droops in the nap',
+        'special effect: glowflora motes, 2 px, inside the silhouette, layer 9; finite, none under reduced motion',
     ],
     notes=[
-        'Walk is the spec\'s 4-frame hop (crouch, rise, air, land); the land squash holds a second frame and the '
-        'lid comes back down, so it reads REST, not bouncy ROAM.',
-        'Growth stages (rig variants of the same poses): 1 the curled leaf; 2 a second, smaller leaf at the '
-        'joint; 3 a bud opening at the curl. The joint never moves.',
-        'Perch: a 16 px redraw, the leaf curled back and down to clear small folk; it turns to the foe (E and W). '
-        'perchAnchor is the foot line centre (12, 22).',
-        'Moss: round leaf_cool mounds on a warm leaf_warm skin, never on grey stone (Cairn) and never in rows '
-        '(Tam\'s knit). The leaf is fresh grass_warm, stiff and curled, not a floppy cap (Mote).',
-        'Open for Matt: cling and special sit at 14 px (squashed / leaf lowered as a guard); react is 26 px with '
-        'the leaf raised. The idle and the perch are on target (24 and 16).',
-        'Compared with Eastward-04 (Sam scaled to 24 px): her 2-3 px hair clumps for the moss, 3-4 tones a '
-        'material, a dark per-material outline and a glinting eye block.',
+        'Reconciled to Matt\'s 1x master (moss_sheet.png): the same cap, colours and proportions; '
+        'more detail at 2x. The earlier final (A with B\'s curled leaf) stays as option A in mossling-options.png.',
+        'Size: the master is 15 px at 1x with its sprout (cap and body 12), so the 2x idle is 28 px: the '
+        'body and cap are the familiar\'s 24 px; the sprout sits above them, as on the master.',
+        'Walk: the spec\'s 4-frame hop (crouch, rise, air, land); the land squash holds a second frame and '
+        'the lid comes back down, so it reads REST, not ROAM.',
+        'Growth stages (rig variants of the same poses): 1 the two-leaf sprout; 2 a third leaf and a bud; '
+        '3 the bud opens on the cap. The joint never moves.',
+        'Perch: a 16 px redraw turned to the foe; perchAnchor is the foot line centre (12, 22).',
+        'Compared with Matt\'s moss_sheet.png at 8x (same cap tones clay 1-4, plaster rim, leaf body) and '
+        'with Eastward-04 (Sam at 24 px) for tones a material and the eye block.',
     ],
 )
 
@@ -1067,37 +1086,40 @@ FINAL = dict(
 def build_final():
     os.makedirs(SCRATCH, exist_ok=True)
     views, nums, marks, ok = [], {}, {}, True
-    for cap, fn in FINAL_VIEWS:
+    for cap_, fn in FINAL_VIEWS:
         fig, mk = fn()
         im = fig.image()
-        views.append((cap, im))
-        im.save(os.path.join(SCRATCH, 'final-' + cap.replace(' ', '-') + '.png'))
+        views.append((cap_, im))
+        im.save(os.path.join(SCRATCH, 'final-' + cap_.replace(' ', '-') + '.png'))
         m = sk.measure(im)
         g = dict(on_house=m['on_house'] >= 1.0, west_east=m['west_east'] > 0, lone=m['isolated'] <= 0.04,
                  colours=m['colours'] <= 64, outline_dark=m.get('outline_dark', 0) >= 0.95)
         ok &= all(g.values())
-        print(f"final {cap:10s} h {height(im):2d}  on house {100*m['on_house']:5.1f}%  W-E {m['west_east']:+5.1f}  "
+        print(f"final {cap_:10s} h {height(im):2d}  on house {100*m['on_house']:5.1f}%  W-E {m['west_east']:+5.1f}  "
               f"lone {100*m['isolated']:4.1f}%  colours {m['colours']:2d}  "
               f"outline dark {100*m.get('outline_dark', 0):5.1f}%"
               f"  {'ok' if all(g.values()) else 'MISS ' + ','.join(k for k, b in g.items() if not b)}")
-        nums[cap] = {k: (round(v2, 4) if isinstance(v2, float) else v2) for k, v2 in m.items()}
-        nums[cap]['height_px'] = height(im)
-        marks[cap] = mk
+        nums[cap_] = {k: (round(v2, 4) if isinstance(v2, float) else v2) for k, v2 in m.items()}
+        nums[cap_]['height_px'] = height(im)
+        marks[cap_] = mk
+    # the master's views under the names the 1x master compares against
+    for cap_, name in (('S idle', 'S-idle'), ('E idle', 'E-idle'), ('W idle', 'W-idle'),
+                       ('E perch', 'E-perch'), ('W perch', 'W-perch')):
+        dict(views)[cap_].save(os.path.join(SCRATCH, f'final-{name}.png'))
     entry = dict(label=FINAL['label'], name=FINAL['name'], views=views, parts=FINAL['parts'],
                  palette=FINAL['palette'], pose=FINAL['pose'], notes=FINAL['notes'])
-    sk.design_sheet('Mossling final: A, the tuft-back mochi, with B\'s curled leaf and eyes', [entry], OUT_FINAL,
-                    note='About 24 art px, cell 32 x 32, foot (16, 28). Idles, the 4-frame hop, react, nap; perch '
+    sk.design_sheet('Mossling final: Matt\'s 1x master (the capped mochi) drawn at 2x', [entry], OUT_FINAL,
+                    note='Reconciled to Matt\'s 1x master (moss_sheet.png). Cell 32 x 32, foot (16, 28); perch '
                          'states at 16 px in 24 x 24, foot (12, 22).')
     growth = {k: v.get('growth') for k, v in marks.items()}
     eyes = {k: v.get('eyes') for k, v in marks.items()}
     perch_anchor = {k: [PFX, PFY] for k in marks if k[2:] in ('perch', 'cling', 'cheer', 'special')}
-    return dict(chosen=FINAL['chosen'], name=FINAL['name'], grafts=FINAL['grafts'], parts=FINAL['parts'],
-                palette=FINAL['palette'], pose=FINAL['pose'],
+    return dict(chosen=FINAL['chosen'], name=FINAL['name'], reconciled=FINAL['reconciled'],
+                grafts=FINAL['grafts'], parts=FINAL['parts'], palette=FINAL['palette'], pose=FINAL['pose'],
                 growthAnchor=growth,
-                eyeBlocks=dict(size=[3, 3], glint='2 px, the west column, top two rows (plaster 5)',
-                               topLeft=eyes),
+                eyeBlocks=dict(size=[3, 3], glint='2 px, the west column (plaster 5)', topLeft=eyes),
                 footLine=dict(world=[FX, FY - 1], perch=[PFX, PFY - 1],
-                              note='nubs fill the row above the anchor; the outline lands on the anchor row'),
+                              note='nubs fill the rows above the anchor; the outline lands on the anchor row'),
                 perchAnchor=perch_anchor, measure=nums, notes=FINAL['notes'], _ok=ok)
 
 

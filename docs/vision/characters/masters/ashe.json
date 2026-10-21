@@ -1,0 +1,109 @@
+{
+  "id": "ashe",
+  "views": {
+    "S-idle": {
+      "iou": 0.936,
+      "families_1x": [
+        "ash",
+        "ashlar",
+        "brass",
+        "clay",
+        "slate"
+      ],
+      "families_2x": [
+        "ash",
+        "ashlar",
+        "brass",
+        "clay",
+        "slate"
+      ],
+      "measure": {
+        "px": 336,
+        "colours": 28,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 6,
+        "outline_dark": 0.9146,
+        "flat_ink": 0.0,
+        "double": 0.0854,
+        "west_east": 6.0824,
+        "top_bottom": 4.2425,
+        "isolated": 0.0039,
+        "checker": 0.0
+      }
+    },
+    "E-idle": {
+      "iou": 0.914,
+      "families_1x": [
+        "ash",
+        "ashlar",
+        "brass",
+        "clay",
+        "slate"
+      ],
+      "families_2x": [
+        "ash",
+        "ashlar",
+        "brass",
+        "clay",
+        "slate"
+      ],
+      "measure": {
+        "px": 277,
+        "colours": 25,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9,
+        "flat_ink": 0.0,
+        "double": 0.05,
+        "west_east": 3.0059,
+        "top_bottom": 0.8307,
+        "isolated": 0.0102,
+        "checker": 0.0
+      }
+    },
+    "W-idle": {
+      "iou": 0.915,
+      "families_1x": [
+        "ash",
+        "ashlar",
+        "brass",
+        "clay",
+        "slate"
+      ],
+      "families_2x": [
+        "ash",
+        "ashlar",
+        "brass",
+        "clay",
+        "slate"
+      ],
+      "measure": {
+        "px": 279,
+        "colours": 26,
+        "on_house": 1.0,
+        "on_today": 0.0,
+        "families": 7,
+        "outline_dark": 0.9231,
+        "flat_ink": 0.0,
+        "double": 0.0513,
+        "west_east": 12.1199,
+        "top_bottom": 2.2795,
+        "isolated": 0.0,
+        "checker": 0.0
+      }
+    }
+  },
+  "simplified": [
+    "Eyes: the amber glint is dropped; each eye is a 1 x 2 ink stroke so it reads at 1x.",
+    "Breastplate: the ridge and brass rivets are dropped; the one dent stays as a 2 px dark mark (S); the pauldron lame is its dark bottom row.",
+    "Gambeson: the quilted channels become a lit row over a hem row; the brass belt buckle and the ash claws are dropped.",
+    "The ash strap over the bare shoulder (E) is a 2 px stroke; the bell clapper is folded into the bell body (top, body, rim).",
+    "Tail: the ember tip is one lava glow texel in E/W (hidden behind the leg in S, as in the 2x)."
+  ],
+  "notes": [
+    "Same families as the 2x: clay, slate (with the cool sibling for bracers and boots), ashlar (with the cool sibling for the breeches), ash, brass; lava is the glow.",
+    "Light from the upper left in every facing; W is drawn, not mirrored: the snout and bell sit on the lit front, the pauldron and tail on the shaded back."
+  ]
+}

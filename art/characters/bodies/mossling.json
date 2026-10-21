@@ -4,10 +4,10 @@
   "template": "familiar",
   "heightWorld": 12,
   "cell": "familiar",
-  "design": "A, tuft-back mochi",
-  "families": ["leaf_warm", "leaf_cool", "grass_warm", "plaster", "berry_warm", "leaf"],
+  "design": "A reconciled to Matt's 1x master (moss_sheet.png): green mochi under a red-brown mushroom cap",
+  "families": ["leaf", "clay", "plaster", "berry"],
   "glows": ["glowflora"],
-  "signature": "a green mochi ball with moss tufts and the curled leaf on its crown",
+  "signature": "the red-brown mushroom cap with cream spots and the two-leaf sprout on top",
   "parts": [
     {
       "name": "far foot",
@@ -20,12 +20,12 @@
         "N": 1
       },
       "facings": ["S", "E", "W", "N"],
-      "motion": "splay on crouch and land, tuck in the air",
+      "motion": "splays on crouch and land, tucks in the air",
       "painter": false
     },
     {
       "name": "near foot",
-      "families": ["leaf_warm"],
+      "families": ["leaf"],
       "joint": "foot",
       "layer": {
         "S": 2,
@@ -34,12 +34,12 @@
         "N": 2
       },
       "facings": ["S", "E", "W", "N"],
-      "motion": "splay on crouch and land, tuck in the air",
+      "motion": "splays on crouch and land, tucks in the air",
       "painter": false
     },
     {
-      "name": "body ball and cheek step",
-      "families": ["leaf_warm"],
+      "name": "mochi body",
+      "families": ["leaf"],
       "joint": "hip",
       "layer": {
         "S": 3,
@@ -48,12 +48,12 @@
         "N": 3
       },
       "facings": ["S", "E", "W", "N"],
-      "motion": "cheek bump leads in E/W; breath squashes 1 px",
+      "motion": "breath squashes 1 px; the cheek leads in E/W",
       "painter": false
     },
     {
-      "name": "pale belly",
-      "families": ["plaster"],
+      "name": "lit front",
+      "families": ["leaf"],
       "joint": "hip",
       "layer": {
         "S": 4,
@@ -62,63 +62,91 @@
         "N": 0
       },
       "facings": ["S", "E", "W"],
-      "motion": "S centre, E/W forward 4 px off the front edge",
+      "motion": "rides the body",
       "painter": false
     },
     {
-      "name": "moss clumps",
-      "families": ["leaf_cool"],
+      "name": "moss clusters",
+      "families": ["leaf"],
       "joint": "hip",
       "layer": {
-        "S": 5,
-        "E": 5,
-        "W": 5,
-        "N": 4
+        "S": 4,
+        "E": 4,
+        "W": 4,
+        "N": 5
       },
       "facings": ["S", "E", "W", "N"],
       "motion": "fixed per facing, ride the squash",
       "painter": false
     },
     {
-      "name": "face block",
-      "families": ["plaster", "berry_warm"],
+      "name": "face",
+      "families": ["berry", "plaster"],
+      "joint": "head",
+      "layer": {
+        "S": 5,
+        "E": 5,
+        "W": 5,
+        "N": 0
+      },
+      "facings": ["S", "E", "W"],
+      "motion": "3x3 eyes: lid, open, wide, closed, happy, tight; blush",
+      "painter": true
+    },
+    {
+      "name": "cap shadow",
+      "families": ["leaf"],
       "joint": "head",
       "layer": {
         "S": 6,
         "E": 6,
         "W": 6,
-        "N": 5
+        "N": 6
       },
-      "facings": ["S", "E", "W"],
-      "motion": "eyes lid, open, wide, closed, happy, tight; blush; mouth",
-      "painter": true
+      "facings": ["S", "E", "W", "N"],
+      "motion": "under the rim, follows the cap",
+      "painter": false
     },
     {
-      "name": "head-top growth",
-      "families": ["grass_warm"],
+      "name": "mushroom cap",
+      "families": ["clay", "plaster"],
       "joint": "head",
       "layer": {
         "S": 7,
         "E": 7,
         "W": 7,
-        "N": 6
+        "N": 7
       },
       "facings": ["S", "E", "W", "N"],
-      "motion": "curled leaf; flat in crouch, land, cling; up in rise, react, cheer; blanket in nap; shield in special",
+      "motion": "rigid: presses on crouch, land and cling; lifts on react; tips back on cheer; tips forward over the eyes on nap and special",
       "painter": false
     },
     {
-      "name": "special effect",
-      "families": [],
-      "joint": "hip",
+      "name": "sprout",
+      "families": ["leaf"],
+      "joint": "head",
       "layer": {
         "S": 8,
         "E": 8,
         "W": 8,
-        "N": 7
+        "N": 8
       },
-      "facings": ["S", "E", "W"],
-      "motion": "glowflora motes inside the silhouette; finite, none under reduced motion",
+      "facings": ["S", "E", "W", "N"],
+      "motion": "rides the cap; droops in the nap",
+      "painter": false
+    },
+    {
+      "name": "special motes",
+      "families": ["glowflora"],
+      "joint": "float",
+      "layer": {
+        "S": 9,
+        "E": 9,
+        "W": 9,
+        "N": 9
+      },
+      "facings": ["E", "W"],
+      "motion": "finite, none under reduced motion",
       "painter": false
     }
   ],
@@ -133,28 +161,10 @@
       "W cheer": [12, 22],
       "W special": [12, 22]
     },
-    "growth": {
-      "S idle": [16, 12],
-      "E idle": [15, 12],
-      "W idle": [16, 12],
-      "hop 1": [16, 14],
-      "hop 2": [16, 10],
-      "hop 3": [16, 10],
-      "hop 4": [16, 14],
-      "S react": [16, 11],
-      "S nap": [14, 15],
-      "E perch": [9, 11],
-      "E cling": [9, 12],
-      "E cheer": [9, 10],
-      "E special": [9, 11],
-      "W perch": [14, 11],
-      "W cling": [14, 12],
-      "W cheer": [14, 10],
-      "W special": [14, 11]
-    }
+    "growth": [16, 5]
   },
   "notes": [
-    "Open: cling and special sit at 14 px; react is 26 px with the leaf raised.",
-    "Growth stages: 1 curled leaf, 2 a second smaller leaf, 3 a bud at the curl; the joint never moves."
+    "Reconciled to Matt's 1x master on 21 Oct (1x is the master; one design per object across densities).",
+    "Idle is 28 px with the sprout; cap and body are 24."
   ]
 }

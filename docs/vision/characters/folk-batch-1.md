@@ -84,7 +84,7 @@ All 13 views of each folk are 100% on the house palette, with light from the upp
    Claude J recommends (b).
 
 2. **Is this the right six?** Sign-off on the silhouettes before production from the rig. Anything that reads wrong at game scale goes back now, while it is cheap.
-3. **Bramble: A or B.** This was the one tie. B's long hooded cape scored best with the player grader. A was chosen for animation, and because Nix owns the hood.
+3. **Bramble: closed (21 Oct, evening).** Bramble follows Matt's own 1x art and Claude A's rig instance (see [masters.md](masters.md)); this sheet is superseded wherever it differs.
 
 ## Open, for Claude A
 

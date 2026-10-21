@@ -317,6 +317,11 @@ assert.deepEqual(
   'one folk a night, in cast.md order',
 );
 assert.equal(ANIMATION.cast.visitors.length, 9, 'nine visitors');
+const tuff = ANIMATION.cast.folk.find((f) => f.id === 'tuff');
+assert.ok(
+  tuff && 'followBehindWorld' in tuff && tuff.followBehindWorld === 22,
+  'the familiar trails wide Tuff further',
+);
 for (const f of ANIMATION.cast.folk)
   assert.ok(ANIMATION.cells[f.cell], `${f.name}: cell ${f.cell} exists`);
 
