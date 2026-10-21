@@ -42,7 +42,7 @@ NapAttack is a web app now and is meant to become a phone app later (Matt, 19 Oc
 
 - Run `npm run verify` on the final source and check the matching GitHub Actions result before marking the PR ready. It checks TypeScript, lint, core rules, the game store, companion profiles, garden regressions, native readiness, the web export and the iOS bundle. Keep lint clean. Claude removed the earlier inherited warnings.
 - The garden harness substitutes React, timers, platform and animation boundaries. It verifies emitted plans and source geometry, not real React scheduling, native lifecycle or visual quality.
-- Play-test the current PR preview in a disposable local profile. Keep the same preview origin when testing saved progress. Check normal and reduced motion, day/night, interrupted walks, overlapping props and HUD actions.
+- Lane branches (`claude-*/`, `codex/`, `review/`, `spinoff/`) make no Vercel previews (free-tier limit of 100 deployments a day; see `vercel.json`). Play-test a local web export (`npm run export:web`, then serve `dist`) in a disposable local profile, and use the production deployment from `main` for saved-progress checks, keeping the same origin. Check normal and reduced motion, day/night, interrupted walks, overlapping props and HUD actions.
 - Do not claim phone, native, multiplayer or device-usage testing from a desktop browser or a source harness. Record any missing coverage plainly.
 
 ## Companion identity
@@ -53,4 +53,4 @@ NapAttack is a web app now and is meant to become a phone app later (Matt, 19 Oc
 
 ## Handoff
 
-Provide the PR link, exact tested head, preview URL, validation results and remaining limitations. Check whether the previous PR has already merged before updating it; open a new PR for subsequent work. Keep durable regression checks and artwork instructions in the repository.
+Provide the PR link, exact tested head, how it was play-tested (local export or production), validation results and remaining limitations. Check whether the previous PR has already merged before updating it; open a new PR for subsequent work. Keep durable regression checks and artwork instructions in the repository.
