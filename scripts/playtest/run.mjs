@@ -77,7 +77,7 @@ const lines = [
   'Sizes in CSS px. The HUD and hotbar must be the same size at density 1 and 2, and no',
   'control a player taps may be under 44 px.',
   '',
-  '| Screen | Hotbar tab (min width x height) | Nap button | Menu button | Controls under 44 px | Icons 2x / 1x | Overflow |',
+  '| Screen | Hotbar tab (min width x height) | Nap button | Menu button | Controls under 44 px | SVGs 32x32 / 16x16 | Overflow |',
   '| --- | --- | --- | --- | --- | --- | --- |',
 ];
 const sizeIssues = [];

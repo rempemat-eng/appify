@@ -35,7 +35,7 @@ If the Playwright browser is missing, point it at an installed Chromium with `PL
 `artifacts/playtest/REPORT.md` (not committed) has:
 
 - pass or fail for each flow on each screen and density (a browser error fails a flow);
-- the interface's measured size: hotbar tabs, the nap and menu buttons, controls under 44 px (named), whether 2x icons drew, and horizontal overflow. The HUD and hotbar must be the same size at density 1 and 2 (`interfaceGrid`, docs/vision/interface.md); the report lists any difference;
+- the interface's measured size: hotbar tabs, the nap and menu buttons, controls under 44 px (named), how many 32x32 and 16x16 SVGs drew (icons, plus a few 32-grid sprites such as the portrait), and horizontal overflow. The HUD and hotbar must be the same size at density 1 and 2 (`interfaceGrid`, docs/vision/interface.md); the report lists any difference;
 - links to every screenshot (`artifacts/playtest/images/<screen>/<flow>-<step>.png`).
 
 Look at the screenshots, not just the table: the harness proves the flows run and the interface keeps its size, not that a screen looks right.
