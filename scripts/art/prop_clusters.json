@@ -7,6 +7,27 @@
   32
  ],
  "dressing": {
+  "ash": [
+   "fireweed_small",
+   "ash_tuft"
+  ],
+  "canal": [
+   "joint_weeds",
+   "buddleia"
+  ],
+  "canyon": [
+   "creosote",
+   "bunchgrass"
+  ],
+  "coast": [
+   "marram",
+   "thrift",
+   "sea_campion"
+  ],
+  "desert": [
+   "sage",
+   "bunchgrass"
+  ],
   "farm": [
    "tuft",
    "nettles",
@@ -16,6 +37,10 @@
    "tuft",
    "cow_parsley",
    "poppies"
+  ],
+  "isles": [
+   "sea_grape",
+   "marram"
   ],
   "meadow": [
    "tuft",
@@ -27,6 +52,14 @@
    "bilberry",
    "tuft"
   ],
+  "oasis": [
+   "reeds",
+   "bunchgrass"
+  ],
+  "rainforest": [
+   "fern_small",
+   "moss_cushion"
+  ],
   "shore": [
    "marram",
    "sea_pinks"
@@ -36,7 +69,7 @@
    "dry_tuft"
   ],
   "town": [
-   "weeds_crack",
+   "joint_weeds",
    "moss_joint"
   ],
   "woodland": [
@@ -48,6 +81,1291 @@
  "glows_per_area": 4,
  "hit_min": 34,
  "recipes": {
+  "ash_field": {
+   "biomes": [
+    "ash",
+    "canyon"
+   ],
+   "dressing": "ash",
+   "from_path": 160,
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "nature; warm stone",
+     "kind": "boulder",
+     "place": "ground",
+     "props": [
+      "lizard_rock",
+      "lizard_rock_b"
+     ],
+     "role": "lizard",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      0,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      5,
+      2
+     ],
+     "job": "nature",
+     "kind": "ground_patch",
+     "place": "ground",
+     "props": [
+      "ash_drift"
+     ],
+     "role": "drift",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "nature; the first thing to grow back",
+     "kind": "tall_plant",
+     "place": "ground",
+     "props": [
+      "fireweed",
+      "fireweed_small"
+     ],
+     "role": "fireweed",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      7,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      2
+     ],
+     "job": "nature",
+     "kind": "boulder",
+     "place": "ground",
+     "props": [
+      "basalt_stumps",
+      "basalt_stumps_b"
+     ],
+     "role": "stumps",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "nature",
+   "size": [
+    11,
+    4
+   ],
+   "why": "the Cinder Rise: drifts of ash, fireweed coming back, basalt stumps where columns broke, a lizard rock in the sun"
+  },
+  "black_sand_shore": {
+   "biomes": [
+    "ash",
+    "coast",
+    "beach"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      3,
+      5,
+      5,
+      1
+     ],
+     "why": "the log's front, toward the sea"
+    }
+   ],
+   "dressing": "coast",
+   "from_path": 160,
+   "members": [
+    {
+     "at": [
+      0,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      7,
+      2
+     ],
+     "job": "drawn up keel-up for mending",
+     "kind": "rowing_boat",
+     "place": "ground",
+     "props": [
+      "upturned_boat",
+      "boat_blue"
+     ],
+     "reason": [
+      "by:water:96"
+     ],
+     "role": "boat",
+     "shadow": "cast",
+     "tap": false,
+     "turn": {
+      "fixed": true
+     }
+    },
+    {
+     "at": [
+      8,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      5,
+      1
+     ],
+     "job": "nets on poles to dry",
+     "kind": "net_rack",
+     "place": "ground",
+     "props": [
+      "net_rack"
+     ],
+     "reason": [
+      "by:water:128"
+     ],
+     "role": "nets",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "nets",
+     "at": [
+      8,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "charcoal for the smoke-house",
+     "kind": "sack",
+     "place": "ground",
+     "props": [
+      "charcoal_sack",
+      "sack"
+     ],
+     "role": "sacks",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "sacks",
+     "at": [
+      9,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "more",
+     "kind": "sack",
+     "place": "ground",
+     "props": [
+      "charcoal_sack",
+      "sack"
+     ],
+     "role": "sacks_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      3,
+      4
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      5,
+      1
+     ],
+     "job": "a seat facing the sea",
+     "kind": "log",
+     "place": "ground",
+     "props": [
+      "driftwood"
+     ],
+     "reason": [
+      "by:water:48"
+     ],
+     "role": "log",
+     "shadow": "cast",
+     "stand": [
+      [
+       4,
+       5
+      ],
+      [
+       5,
+       5
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      1,
+      3
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the fisher's knife",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "gutting_knife"
+     ],
+     "role": "knife",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    }
+   ],
+   "owner": "the fisher of the black-sand cove",
+   "size": [
+    14,
+    6
+   ],
+   "why": "a fisher's bit of black sand: a boat drawn up keel-up, nets on poles with sacks of charcoal stacked against them (the cove burns its driftwood), a driftwood seat facing the sea, a gutting knife left on the boat (the personal object)"
+  },
+  "canal_side": {
+   "biomes": [
+    "town",
+    "city",
+    "coal-hills",
+    "canal",
+    "valley"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      5,
+      2,
+      4,
+      2
+     ],
+     "why": "the bench's front"
+    }
+   ],
+   "dressing": "canal",
+   "members": [
+    {
+     "at": [
+      1,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a boat ties up to it",
+     "kind": "bollard",
+     "place": "ground",
+     "props": [
+      "bollard",
+      "city_quay_bollard"
+     ],
+     "reason": [
+      "by:water:16"
+     ],
+     "role": "bollard_w",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a ring in the coping for a short stop",
+     "kind": "bollard",
+     "place": "ground",
+     "props": [
+      "mooring_ring"
+     ],
+     "reason": [
+      "by:water:16"
+     ],
+     "role": "ring",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "bollard_w",
+     "at": [
+      3,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "rope coiled down off a boat",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "rope_coil"
+     ],
+     "role": "rope",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      10,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a boat ties up to it",
+     "kind": "bollard",
+     "place": "ground",
+     "props": [
+      "bollard",
+      "city_quay_bollard"
+     ],
+     "reason": [
+      "by:water:16"
+     ],
+     "role": "bollard_e",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "the lock-keeper sits and waits for boats",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "iron_bench",
+      "bench"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       6,
+       2
+      ],
+      [
+       7,
+       2
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the lock-keeper's tea",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "tin_mug"
+     ],
+     "role": "mug",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    }
+   ],
+   "owner": "the lock-keeper and the boat people",
+   "size": [
+    12,
+    4
+   ],
+   "why": "the coping of a canal or lock beside the towpath: bollards at the edge to tie up to, a mooring ring let into the coping, a coil of rope left by a boat, the lock-keeper's bench facing the towpath, his tin mug on it (the personal object)"
+  },
+  "canyon_shade": {
+   "biomes": [
+    "canyon",
+    "desert"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      4,
+      2,
+      4,
+      2
+     ],
+     "why": "the bench's front"
+    }
+   ],
+   "dressing": "canyon",
+   "lights": [
+    {
+     "at": [
+      6,
+      1
+     ],
+     "kind": "shade_pool",
+     "live": false,
+     "r": 32
+    }
+   ],
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      2
+     ],
+     "job": "nature; fallen from the arch",
+     "kind": "boulder",
+     "place": "ground",
+     "props": [
+      "boulders_big",
+      "boulder"
+     ],
+     "role": "boulders",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      4,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a seat in the shade",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench",
+      "bench_stone"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       5,
+       2
+      ],
+      [
+       6,
+       2
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      8,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a traveller's canteen",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "canteen"
+     ],
+     "role": "canteen",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "nature",
+     "kind": "rock",
+     "place": "ground",
+     "props": [
+      "lizard_rock",
+      "boulders_small"
+     ],
+     "role": "rocks",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      11,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "nature",
+     "kind": "bush",
+     "place": "ground",
+     "props": [
+      "creosote",
+      "bush"
+     ],
+     "role": "creosote",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "travellers on the canyon floor",
+   "size": [
+    13,
+    4
+   ],
+   "why": "shade at the foot of the rock arch: boulders fallen from it, a bench in their lee facing the way, creosote at the bases, a canteen left on the bench (the personal object)"
+  },
+  "castle_street": {
+   "biomes": [
+    "castle",
+    "town",
+    "ash"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      0,
+      2,
+      6,
+      2
+     ],
+     "why": "the stall's customer band (size-guide 1: 6 x 2)"
+    }
+   ],
+   "dressing": "town",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      6,
+      2
+     ],
+     "job": "sells to the street",
+     "kind": "stall",
+     "place": "ground",
+     "props": [
+      "market_stall",
+      "stall"
+     ],
+     "reason": [
+      "near:path:32"
+     ],
+     "role": "stall",
+     "shadow": "cast",
+     "stand": [
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "fixed": true
+     }
+    },
+    {
+     "against": "stall",
+     "at": [
+      6,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "stock",
+     "kind": "barrel",
+     "place": "ground",
+     "props": [
+      "barrel",
+      "keg"
+     ],
+     "role": "barrel",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      7,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the trader's colours",
+     "kind": "pole",
+     "place": "ground",
+     "props": [
+      "banner_pole"
+     ],
+     "role": "banner",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      7,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "dropped by a buyer",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "glove"
+     ],
+     "role": "glove",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      8,
+      2
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a seat on the row",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "stone_bench",
+      "bench"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       9,
+       3
+      ],
+      [
+       10,
+       3
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      12,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "lights the row",
+     "kind": "lamp",
+     "light": {
+      "colour": "lamp",
+      "glow": 40,
+      "live": true
+     },
+     "place": "ground",
+     "props": [
+      "lantern_post",
+      "lamp"
+     ],
+     "reason": [
+      "lights:path"
+     ],
+     "role": "lantern",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "the market row's traders",
+   "size": [
+    13,
+    4
+   ],
+   "why": "a stretch of the market row: a stall with its customer band clear, barrels against it, a banner on its pole, a bench facing the street, a lantern, a glove someone dropped (the story)"
+  },
+  "coast_meadow": {
+   "biomes": [
+    "ash",
+    "coast",
+    "meadow",
+    "valley"
+   ],
+   "clear": [
+    {
+     "rect": [
+      4,
+      1,
+      4,
+      2
+     ],
+     "why": "the stile's approach, north"
+    },
+    {
+     "rect": [
+      4,
+      5,
+      4,
+      2
+     ],
+     "why": "the stile's approach, south"
+    }
+   ],
+   "crossing": {
+    "max_width": 24,
+    "rect": [
+     4,
+     0,
+     4,
+     7
+    ],
+    "why": "a footpath (a trod, 24 px) runs over the stile, north to south"
+   },
+   "dressing": "meadow",
+   "members": [
+    {
+     "at": [
+      2,
+      1
+     ],
+     "blocks": true,
+     "crown": 3.5,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature; the one tree the wind left",
+     "kind": "broadleaf",
+     "place": "ground",
+     "props": [
+      "oak",
+      "tree"
+     ],
+     "role": "tree",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "nature",
+     "kind": "flowers",
+     "place": "ground",
+     "props": [
+      "flowers_white",
+      "thrift"
+     ],
+     "role": "flowers",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "grazing",
+     "kind": "sheep",
+     "place": "ground",
+     "props": [
+      "sheep",
+      "sheep_lying"
+     ],
+     "role": "sheep",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      0,
+      4
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "the shelf's field wall",
+     "kind": "low_wall",
+     "place": "ground",
+     "props": [
+      "drystone_wall_short"
+     ],
+     "role": "wall_w",
+     "shadow": "cast",
+     "tap": false,
+     "turn": {
+      "e": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_ns"
+       ]
+      },
+      "n": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_short"
+       ]
+      },
+      "w": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_ns"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      4,
+      3
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      4,
+      2
+     ],
+     "job": "lets walkers over the wall",
+     "kind": "gate",
+     "place": "ground",
+     "props": [
+      "stile_step",
+      "squeeze_stile"
+     ],
+     "role": "stile",
+     "shadow": "cast",
+     "tap": false,
+     "turn": {
+      "e": {
+       "kind": "gate",
+       "props": [
+        "stile_step_side"
+       ]
+      },
+      "n": {
+       "kind": "gate",
+       "props": [
+        "stile_step"
+       ]
+      },
+      "w": {
+       "kind": "gate",
+       "props": [
+        "stile_step_side"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      8,
+      4
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "the shelf's field wall",
+     "kind": "low_wall",
+     "place": "ground",
+     "props": [
+      "drystone_wall_short"
+     ],
+     "role": "wall_e",
+     "shadow": "cast",
+     "tap": false,
+     "turn": {
+      "e": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_ns"
+       ]
+      },
+      "n": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_short"
+       ]
+      },
+      "w": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_ns"
+       ]
+      }
+     }
+    }
+   ],
+   "owner": "the shepherd whose wall it is",
+   "size": [
+    12,
+    7
+   ],
+   "why": "a green shelf above the coast: a lone tree, sheep grazing, flowers, and a stile in a short drystone wall where a footpath goes through"
+  },
+  "dead_forest_glade": {
+   "biomes": [
+    "ash"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      2,
+      1,
+      5,
+      2
+     ],
+     "why": "the glade's open middle"
+    }
+   ],
+   "dressing": "ash",
+   "from_path": 160,
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature; burnt by the flow",
+     "kind": "snag",
+     "place": "ground",
+     "props": [
+      "charred_snag",
+      "snag"
+     ],
+     "role": "snag_a",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature",
+     "kind": "snag",
+     "place": "ground",
+     "props": [
+      "charred_snag",
+      "snag"
+     ],
+     "role": "snag_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature",
+     "kind": "snag",
+     "place": "ground",
+     "props": [
+      "charred_snag",
+      "snag"
+     ],
+     "role": "snag_c",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      2,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      5,
+      2
+     ],
+     "job": "nature",
+     "kind": "ground_patch",
+     "place": "ground",
+     "props": [
+      "black_sand"
+     ],
+     "role": "sand",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      1,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature",
+     "kind": "tall_plant",
+     "place": "ground",
+     "props": [
+      "fireweed"
+     ],
+     "role": "fireweed_a",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      7,
+      3
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "nature",
+     "kind": "tall_plant",
+     "place": "ground",
+     "props": [
+      "fireweed_small",
+      "fireweed"
+     ],
+     "role": "fireweed_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      3,
+      4
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "browsing the new growth",
+     "kind": "sheep",
+     "place": "ground",
+     "props": [
+      "goat"
+     ],
+     "role": "goats",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "nature, and the goats that browse it",
+   "size": [
+    11,
+    5
+   ],
+   "why": "where the young flow ran through a wood: charred snags standing, fireweed in the black sand, goats browsing the new growth; its open middle kept clear"
+  },
   "farmyard": {
    "biomes": [
     "farm",
@@ -89,6 +1407,7 @@
       4,
       2
      ],
+     "job": "carries sacks from the field",
      "kind": "handcart",
      "place": "ground",
      "props": [
@@ -114,6 +1433,7 @@
       1,
       1
      ],
+     "job": "grain off the cart",
      "kind": "sack",
      "place": "ground",
      "props": [
@@ -135,6 +1455,7 @@
       2,
       1
      ],
+     "job": "produce for market",
      "kind": "crate_stack",
      "place": "ground",
      "props": [
@@ -157,6 +1478,7 @@
       1,
       1
      ],
+     "job": "water or cider",
      "kind": "barrel",
      "place": "ground",
      "props": [
@@ -178,6 +1500,7 @@
       2,
       2
      ],
+     "job": "fodder for the winter",
      "kind": "bale",
      "place": "ground",
      "props": [
@@ -199,6 +1522,7 @@
       4,
       1
      ],
+     "job": "water for the beasts",
      "kind": "trough",
      "place": "ground",
      "props": [
@@ -231,6 +1555,7 @@
       1,
       1
      ],
+     "job": "the farmer's boots, left to dry",
      "kind": "furniture_low",
      "place": "ground",
      "props": [
@@ -242,11 +1567,166 @@
      "tap": false
     }
    ],
+   "owner": "the farmer",
    "size": [
     13,
     6
    ],
    "why": "the work corner of a yard: a handcart with sacks and crates stacked against it and a barrel at its tail, a stone trough with its front clear for the beasts, a bale, the farmer's boots left by the trough (the personal object)"
+  },
+  "ferry_landing": {
+   "biomes": [
+    "ash",
+    "canyon",
+    "coast",
+    "river"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      5,
+      3,
+      4,
+      2
+     ],
+     "why": "the bench's front"
+    }
+   ],
+   "dressing": "coast",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      4,
+      3
+     ],
+     "job": "where the ferry comes in",
+     "kind": "landing_stage",
+     "place": "floating",
+     "props": [
+      "landing_stage"
+     ],
+     "reason": [
+      "by:water:8"
+     ],
+     "role": "stage",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      4,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the ferry's rope, and its lamp",
+     "kind": "post",
+     "light": {
+      "colour": "lamp",
+      "glow": 32,
+      "live": true
+     },
+     "place": "ground",
+     "props": [
+      "rope_post",
+      "bollard"
+     ],
+     "reason": [
+      "by:water:24"
+     ],
+     "role": "post",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the ferryman's horn",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "ferry_horn"
+     ],
+     "role": "horn",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      2
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "waiting for the ferry",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench",
+      "bench_oak"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       6,
+       3
+      ],
+      [
+       7,
+       3
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    }
+   ],
+   "owner": "the ferryman",
+   "size": [
+    10,
+    5
+   ],
+   "why": "where the Rift ferry ties up: a landing stage over the water, a rope post with a lamp on it, a waiting bench facing the way, the ferryman's horn hung on the post (the personal object); the ferryman's hut is the plan's own building"
   },
   "field_edge": {
    "biomes": [
@@ -299,6 +1779,7 @@
       5,
       2
      ],
+     "job": "keeps the stock in",
      "kind": "hedge",
      "place": "ground",
      "props": [
@@ -339,6 +1820,7 @@
       4,
       2
      ],
+     "job": "lets walkers over without opening a gate",
      "kind": "gate",
      "place": "ground",
      "props": [
@@ -380,6 +1862,7 @@
       5,
       2
      ],
+     "job": "keeps the stock in",
      "kind": "hedge",
      "place": "ground",
      "props": [
@@ -421,6 +1904,7 @@
       1,
       1
      ],
+     "job": "nature; left standing in the hedge",
      "kind": "broadleaf",
      "optional": true,
      "place": "ground",
@@ -433,11 +1917,1007 @@
      "tap": false
     }
    ],
+   "owner": "the farmer whose field it bounds",
    "size": [
     14,
     6
    ],
    "why": "a field boundary where a footpath goes through: a hedge either side of a step stile in a gap of 4 cells (a 24 px trod centred on a grid line keeps its band clear of both hedge ends), a hedgerow oak, cow parsley and tufts along the hedge foot on both sides"
+  },
+  "forge_yard": {
+   "against": "the forge building to the north, its door over the anvil",
+   "biomes": [
+    "ash",
+    "castle",
+    "town",
+    "coal-hills"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      3,
+      2,
+      4,
+      2
+     ],
+     "why": "in front of the anvil"
+    }
+   ],
+   "dressing": "ash",
+   "lights": [
+    {
+     "at": [
+      5,
+      0
+     ],
+     "kind": "forge_glow",
+     "live": true,
+     "r": 48
+    }
+   ],
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      3,
+      2
+     ],
+     "job": "fuel for the hearth",
+     "kind": "pile",
+     "place": "ground",
+     "props": [
+      "coal_heap"
+     ],
+     "reason": [
+      "by:dwelling:64"
+     ],
+     "role": "coal",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      4,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "where the smith works",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "anvil"
+     ],
+     "role": "anvil",
+     "shadow": "cast",
+     "stand": [
+      [
+       4,
+       2
+      ],
+      [
+       5,
+       2
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "cools the iron",
+     "kind": "trough",
+     "place": "ground",
+     "props": [
+      "quench_trough",
+      "trough"
+     ],
+     "role": "quench",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      10,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the smith's apron",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "smith_apron"
+     ],
+     "role": "apron",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      0,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      3,
+      2
+     ],
+     "job": "ore in, parked off the way",
+     "kind": "handcart",
+     "place": "ground",
+     "props": [
+      "ore_cart",
+      "handcart"
+     ],
+     "role": "cart",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "for whoever waits",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench",
+      "stone_bench"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       10,
+       4
+      ],
+      [
+       11,
+       4
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    }
+   ],
+   "owner": "the smith",
+   "size": [
+    13,
+    5
+   ],
+   "why": "the yard of a forge (prop-logic 3: hearth, anvil and quench within 2 cells): the coal heap on the far side, the anvil in front of the forge door, the quench trough beside it, the ore cart parked off the way, a bench for whoever waits, the smith's apron on the trough (the personal object); the forge's glow"
+  },
+  "frontier_street_corner": {
+   "biomes": [
+    "frontier",
+    "desert",
+    "canyon",
+    "town"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      5,
+      3,
+      5,
+      1
+     ],
+     "why": "the rail's street side"
+    }
+   ],
+   "dressing": "desert",
+   "members": [
+    {
+     "at": [
+      0,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "lights the corner",
+     "kind": "lamp",
+     "light": {
+      "colour": "lamp",
+      "glow": 40,
+      "live": true
+     },
+     "place": "ground",
+     "props": [
+      "lantern_post",
+      "lamp"
+     ],
+     "reason": [
+      "lights:path"
+     ],
+     "role": "lantern",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      1,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "stock for the store",
+     "kind": "barrel",
+     "place": "ground",
+     "props": [
+      "barrel"
+     ],
+     "reason": [
+      "by:dwelling:48"
+     ],
+     "role": "barrel_a",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "barrel_a",
+     "at": [
+      2,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "stock",
+     "kind": "barrel",
+     "place": "ground",
+     "props": [
+      "barrel"
+     ],
+     "role": "barrel_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "barrel_a",
+     "at": [
+      1,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a delivery not yet carried in",
+     "kind": "crate",
+     "place": "ground",
+     "props": [
+      "crate",
+      "dynamite_crate"
+     ],
+     "role": "crate",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      5,
+      1
+     ],
+     "job": "horses tied while their riders shop",
+     "kind": "rail",
+     "place": "ground",
+     "props": [
+      "hitching_rail"
+     ],
+     "reason": [
+      "near:path:24"
+     ],
+     "role": "rail",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      10,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a rider's spurs",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "spurs"
+     ],
+     "role": "spurs",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    }
+   ],
+   "owner": "the store on the corner",
+   "size": [
+    11,
+    4
+   ],
+   "why": "a corner of the street in front of a false front: a lantern on a post at the corner, barrels and a crate stacked against the boardwalk, a hitching rail at the street's edge parallel to it, a pair of spurs hung on the rail (the personal object)"
+  },
+  "fumarole_field": {
+   "biomes": [
+    "ash"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      8,
+      3,
+      3,
+      1
+     ],
+     "why": "the path side of the bags"
+    }
+   ],
+   "dressing": "ash",
+   "lights": [
+    {
+     "at": [
+      4,
+      1
+     ],
+     "kind": "steam_glow",
+     "live": false,
+     "r": 24
+    }
+   ],
+   "members": [
+    {
+     "at": [
+      1,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      2
+     ],
+     "job": "nature; the steam the crust grows from",
+     "kind": "vent",
+     "place": "ground",
+     "props": [
+      "fumarole"
+     ],
+     "role": "vent_a",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      0,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      4,
+      2
+     ],
+     "job": "nature",
+     "kind": "ground_patch",
+     "place": "ground",
+     "props": [
+      "sulphur_crust"
+     ],
+     "role": "crust",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      2
+     ],
+     "job": "nature",
+     "kind": "vent",
+     "place": "ground",
+     "props": [
+      "fumarole"
+     ],
+     "role": "vent_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      1,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      6,
+      2
+     ],
+     "job": "nature",
+     "kind": "vent",
+     "place": "overhead",
+     "props": [
+      "fumarole_steam"
+     ],
+     "role": "steam",
+     "shadow": "none",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "sulphur gathered",
+     "kind": "sack",
+     "place": "ground",
+     "props": [
+      "sample_bag",
+      "sack"
+     ],
+     "reason": [
+      "near:path:48"
+     ],
+     "role": "bags",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "bags",
+     "at": [
+      10,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "more",
+     "kind": "sack",
+     "place": "ground",
+     "props": [
+      "sample_bag",
+      "sack"
+     ],
+     "role": "bags_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the gatherer's scoop",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "scoop"
+     ],
+     "role": "scoop",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    }
+   ],
+   "owner": "the sulphur-gatherer",
+   "size": [
+    11,
+    4
+   ],
+   "why": "the gatherer's patch among the vents: two fumaroles with their steam, yellow crust round them, sample bags stacked by the path, the gatherer's scoop on the bags (the personal object)"
+  },
+  "headwaters_shelter": {
+   "biomes": [
+    "coast",
+    "isles",
+    "rainforest",
+    "moor",
+    "valley"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      1,
+      2,
+      4,
+      2
+     ],
+     "why": "the bench's front, under the roof"
+    }
+   ],
+   "dressing": "rainforest",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      6,
+      4
+     ],
+     "job": "keeps the rain off",
+     "kind": "pavilion",
+     "place": "overhead",
+     "props": [
+      "rain_shelter"
+     ],
+     "role": "roof",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "holds the roof",
+     "kind": "pole",
+     "place": "ground",
+     "props": [
+      "shelter_post"
+     ],
+     "role": "post_nw",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "holds the roof",
+     "kind": "pole",
+     "place": "ground",
+     "props": [
+      "shelter_post"
+     ],
+     "role": "post_ne",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      0,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "holds the roof",
+     "kind": "pole",
+     "place": "ground",
+     "props": [
+      "shelter_post"
+     ],
+     "role": "post_sw",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "holds the roof",
+     "kind": "pole",
+     "place": "ground",
+     "props": [
+      "shelter_post"
+     ],
+     "role": "post_se",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      1,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a back to lean on",
+     "kind": "fence",
+     "place": "ground",
+     "props": [
+      "shelter_rail"
+     ],
+     "role": "rail",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "rail",
+     "at": [
+      1,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a dry seat",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench_oak",
+      "bench"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       2,
+       2
+      ],
+      [
+       3,
+       2
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "against": "post_se",
+     "at": [
+      6,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "fills from the roof",
+     "kind": "barrel",
+     "place": "ground",
+     "props": [
+      "water_butt",
+      "barrel"
+     ],
+     "role": "water_butt",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "whoever is caught by the rain",
+   "size": [
+    7,
+    4
+   ],
+   "why": "a rain shelter: a thatched roof on four posts, a rail along the back, a bench under the roof facing the way, a water butt under the eave against a post (it fills from the roof)"
+  },
+  "lagoon_hamlet": {
+   "biomes": [
+    "coast",
+    "isles",
+    "beach"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      1,
+      2,
+      6,
+      2
+     ],
+     "why": "the hammock's front"
+    }
+   ],
+   "dressing": "isles",
+   "members": [
+    {
+     "at": [
+      0,
+      1
+     ],
+     "blocks": true,
+     "crown": 3,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature; holds one end of the hammock",
+     "kind": "palm",
+     "place": "ground",
+     "props": [
+      "palm",
+      "coconut_palm"
+     ],
+     "role": "palm_w",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      1,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      6,
+      1
+     ],
+     "job": "a rest between shifts",
+     "kind": "hammock",
+     "place": "ground",
+     "props": [
+      "hammock"
+     ],
+     "role": "hammock",
+     "shadow": "cast",
+     "stand": [
+      [
+       3,
+       2
+      ],
+      [
+       4,
+       2
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "fixed": true
+     }
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "blocks": true,
+     "crown": 3,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature; holds the other end",
+     "kind": "palm",
+     "place": "ground",
+     "props": [
+      "palm",
+      "coconut_palm"
+     ],
+     "role": "palm_e",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      8,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a packer's hat",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "sun_hat"
+     ],
+     "role": "hat",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "fruit packed for the ferry",
+     "kind": "crate_stack",
+     "place": "ground",
+     "props": [
+      "fruit_crates",
+      "crate"
+     ],
+     "reason": [
+      "by:dwelling:96"
+     ],
+     "role": "crates",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "crates",
+     "at": [
+      11,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "an empty waiting to be filled",
+     "kind": "crate",
+     "place": "ground",
+     "props": [
+      "fruit_crates",
+      "crate"
+     ],
+     "role": "crate_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "crate_b",
+     "at": [
+      12,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "rain off the shed roof",
+     "kind": "barrel",
+     "place": "ground",
+     "props": [
+      "water_butt",
+      "barrel"
+     ],
+     "reason": [
+      "by:dwelling:96"
+     ],
+     "role": "water_butt",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "the fruit packers of Lagoon Landing",
+   "size": [
+    13,
+    4
+   ],
+   "why": "the yard by the packing shed's door: a hammock slung between two palms, crates of fruit stacked against each other, a water butt at the end of the stack under the eave, a sun hat left on the ground by the far palm (the personal object)"
   },
   "meadow_nook": {
    "biomes": [
@@ -477,6 +2957,7 @@
       1,
       1
      ],
+     "job": "nature; shades the bench",
      "kind": "broadleaf",
      "place": "ground",
      "props": [
@@ -499,6 +2980,7 @@
       2,
       1
      ],
+     "job": "nature",
      "kind": "bush",
      "place": "ground",
      "props": [
@@ -520,12 +3002,16 @@
       4,
       1
      ],
+     "job": "a rest in the shade",
      "kind": "bench",
      "place": "ground",
      "props": [
       "bench_oak",
       "bench",
       "forest_bench"
+     ],
+     "reason": [
+      "faces:path|view"
      ],
      "role": "bench",
      "shadow": "cast",
@@ -566,6 +3052,7 @@
       1,
       1
      ],
+     "job": "lights the bench and the way at night",
      "kind": "lamp",
      "light": {
       "colour": "lamp",
@@ -576,6 +3063,9 @@
      "props": [
       "lamp",
       "lantern"
+     ],
+     "reason": [
+      "lights:path"
      ],
      "role": "lamp",
      "shadow": "cast",
@@ -592,6 +3082,7 @@
       2,
       1
      ],
+     "job": "nature",
      "kind": "flowers",
      "place": "ground",
      "props": [
@@ -603,11 +3094,202 @@
      "tap": false
     }
    ],
+   "owner": "the park keeper, for walkers on the way",
    "size": [
     10,
     7
    ],
    "why": "a rest under a tree beside the way: the bench in the tree's shade faces the path, a lamp at its east end lights it at night, flowers at the trunk and the bench legs"
+  },
+  "mine_yard": {
+   "against": "a face to the north, with the mine mouth in it",
+   "biomes": [
+    "canyon",
+    "highland",
+    "coal-hills"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      0,
+      3,
+      9,
+      1
+     ],
+     "why": "the yard in front of the tubs"
+    }
+   ],
+   "dressing": "desert",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "timber for the tunnel",
+     "kind": "woodpile",
+     "place": "ground",
+     "props": [
+      "pit_props",
+      "woodpile"
+     ],
+     "role": "props",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      4,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the prospector's pick",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "pick"
+     ],
+     "role": "pick",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      0,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      8,
+      1
+     ],
+     "job": "carries the tubs out of the mouth",
+     "kind": "track",
+     "place": "ground",
+     "props": [
+      "rail_stub"
+     ],
+     "role": "rails",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      2,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "ore out of the mine",
+     "kind": "tub",
+     "place": "ground",
+     "props": [
+      "ore_tub",
+      "coal_cart"
+     ],
+     "role": "tub_a",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "an empty going back",
+     "kind": "tub",
+     "place": "ground",
+     "props": [
+      "ore_tub",
+      "coal_cart"
+     ],
+     "role": "tub_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      8,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "lights the mouth",
+     "kind": "lamp",
+     "light": {
+      "colour": "lamp",
+      "glow": 40,
+      "live": true
+     },
+     "place": "ground",
+     "props": [
+      "lamp",
+      "lantern_post"
+     ],
+     "reason": [
+      "lights:path"
+     ],
+     "role": "lamp",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      2
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "waste rock tipped off the stub",
+     "kind": "pile",
+     "place": "ground",
+     "props": [
+      "spoil_heap",
+      "rubble"
+     ],
+     "role": "spoil",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "the prospector",
+   "size": [
+    11,
+    4
+   ],
+   "why": "the yard at a mine mouth: a rail stub with two ore tubs on it, pit props stacked for the tunnel, a lamp at the mouth, spoil at the stub's end, a pick leaning on the props (the personal object)"
   },
   "moor_wayside": {
    "biomes": [
@@ -639,6 +3321,7 @@
       3,
       2
      ],
+     "job": "nature; the wind's lee",
      "kind": "bush",
      "place": "ground",
      "props": [
@@ -661,12 +3344,16 @@
       2,
       2
      ],
+     "job": "marks the way",
      "kind": "cairn",
      "place": "ground",
      "props": [
       "cairn_trail",
       "cairn_tall",
       "cairn"
+     ],
+     "reason": [
+      "near:path:64"
      ],
      "role": "cairn",
      "shadow": "cast",
@@ -683,11 +3370,15 @@
       4,
       1
      ],
+     "job": "a rest out of the wind",
      "kind": "bench",
      "place": "ground",
      "props": [
       "bench_stone",
       "bench_oak"
+     ],
+     "reason": [
+      "faces:path|view"
      ],
      "role": "bench",
      "shadow": "cast",
@@ -728,6 +3419,7 @@
       2,
       1
      ],
+     "job": "an old marker",
      "kind": "standing_stone",
      "place": "ground",
      "props": [
@@ -749,6 +3441,7 @@
       1,
       1
      ],
+     "job": "heather left on the stone",
      "kind": "flowers",
      "place": "ground",
      "props": [
@@ -760,11 +3453,1115 @@
      "tap": false
     }
    ],
+   "owner": "walkers on the moor",
    "size": [
     11,
     5
    ],
    "why": "a wayside rest on open moor: a stone bench in the lee of a cairn and a standing stone, gorse behind, a sprig of heather left on the stone (the personal object)"
+  },
+  "oasis_nook": {
+   "biomes": [
+    "desert",
+    "oasis",
+    "steppe",
+    "canyon"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      1,
+      4,
+      4,
+      2
+     ],
+     "why": "the bench's front"
+    },
+    {
+     "rect": [
+      8,
+      3,
+      6,
+      2
+     ],
+     "why": "the awning's customer band (size-guide 1: 6 x 2)"
+    }
+   ],
+   "dressing": "oasis",
+   "lights": [
+    {
+     "at": [
+      3.5,
+      2.5
+     ],
+     "kind": "shade_pool",
+     "live": false,
+     "r": 28
+    }
+   ],
+   "members": [
+    {
+     "at": [
+      0,
+      1
+     ],
+     "blocks": true,
+     "crown": 3.5,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature; grows where the water is",
+     "kind": "palm",
+     "place": "ground",
+     "props": [
+      "date_palm",
+      "palm"
+     ],
+     "reason": [
+      "by:water:96"
+     ],
+     "role": "palm_w",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      1,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a seat in the shade",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench",
+      "bench_oak"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       2,
+       4
+      ],
+      [
+       3,
+       4
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      6,
+      0
+     ],
+     "blocks": true,
+     "crown": 3.5,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature; grows where the water is",
+     "kind": "palm",
+     "place": "ground",
+     "props": [
+      "date_palm",
+      "palm"
+     ],
+     "reason": [
+      "by:water:128"
+     ],
+     "role": "palm_e",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the seller's own waterskin",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "waterskin"
+     ],
+     "role": "skin",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      8,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      6,
+      2
+     ],
+     "job": "water sold by the cup",
+     "kind": "stall",
+     "place": "ground",
+     "props": [
+      "water_awning",
+      "stall"
+     ],
+     "role": "awning",
+     "shadow": "cast",
+     "stand": [
+      [
+       10,
+       3
+      ],
+      [
+       11,
+       3
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "fixed": true
+     }
+    },
+    {
+     "against": "awning",
+     "at": [
+      14,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "full jars",
+     "kind": "jar",
+     "place": "ground",
+     "props": [
+      "jars",
+      "jar"
+     ],
+     "role": "jars",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "awning",
+     "at": [
+      14,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "empties",
+     "kind": "jar",
+     "place": "ground",
+     "props": [
+      "jars",
+      "jar"
+     ],
+     "role": "jars_b",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "the water-seller",
+   "size": [
+    15,
+    6
+   ],
+   "why": "shade by the spring's pool: two date palms, a bench in their shade facing the path, the water-seller's awning with jars stacked against it, a waterskin hung on the near palm (the personal object)"
+  },
+  "orchard_edge": {
+   "biomes": [
+    "canyon",
+    "oasis",
+    "valley",
+    "farm",
+    "desert"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      0,
+      3,
+      10,
+      2
+     ],
+     "why": "the picking walk under the trees"
+    }
+   ],
+   "dressing": "oasis",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      12,
+      1
+     ],
+     "job": "water to the trees",
+     "kind": "channel",
+     "place": "wet",
+     "props": [
+      "irrigation_channel"
+     ],
+     "role": "channel",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      1,
+      1
+     ],
+     "blocks": true,
+     "crown": 2.5,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "fruit",
+     "kind": "young_tree",
+     "place": "ground",
+     "props": [
+      "fruit_tree",
+      "tree_small"
+     ],
+     "reason": [
+      "by:water:16"
+     ],
+     "role": "tree_a",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "against": "tree_a",
+     "at": [
+      2,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "for picking",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "orchard_ladder"
+     ],
+     "role": "ladder",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "ladder",
+     "at": [
+      3,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "picked fruit",
+     "kind": "jar",
+     "place": "ground",
+     "props": [
+      "fruit_basket"
+     ],
+     "role": "basket_a",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      1
+     ],
+     "blocks": true,
+     "crown": 2.5,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "fruit",
+     "kind": "young_tree",
+     "place": "ground",
+     "props": [
+      "fruit_tree",
+      "tree_small"
+     ],
+     "reason": [
+      "by:water:16"
+     ],
+     "role": "tree_b",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "against": "tree_b",
+     "at": [
+      6,
+      2
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "an empty",
+     "kind": "jar",
+     "place": "ground",
+     "props": [
+      "fruit_basket"
+     ],
+     "role": "basket_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": true,
+     "crown": 2.5,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "fruit",
+     "kind": "young_tree",
+     "place": "ground",
+     "props": [
+      "fruit_tree",
+      "tree_small"
+     ],
+     "reason": [
+      "by:water:16"
+     ],
+     "role": "tree_c",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      10,
+      3
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the picker's hat",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "picker_hat"
+     ],
+     "role": "hat",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    }
+   ],
+   "owner": "the orchard keeper",
+   "size": [
+    12,
+    5
+   ],
+   "why": "the edge of an orchard on its channel: fruit trees in a row (people plant them in rows, world-rules 6.7), a ladder against the first, baskets at the trunks, the picker's hat on the bank (the personal object)"
+  },
+  "platform_yard": {
+   "biomes": [
+    "canyon",
+    "frontier",
+    "town",
+    "coal-hills"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      0,
+      3,
+      10,
+      1
+     ],
+     "why": "the platform's edge"
+    }
+   ],
+   "dressing": "desert",
+   "members": [
+    {
+     "at": [
+      0,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "water for the engine",
+     "kind": "crane",
+     "place": "ground",
+     "props": [
+      "water_crane"
+     ],
+     "role": "crane",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      2,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "where the line ends",
+     "kind": "buffer_stop",
+     "place": "ground",
+     "props": [
+      "buffer_stop"
+     ],
+     "role": "buffer",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      5,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      2,
+      1
+     ],
+     "job": "goods for the next train",
+     "kind": "crate_stack",
+     "place": "ground",
+     "props": [
+      "crate",
+      "cargo_crates"
+     ],
+     "reason": [
+      "by:dwelling:128"
+     ],
+     "role": "crates",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "against": "crates",
+     "at": [
+      7,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "goods",
+     "kind": "crate",
+     "place": "ground",
+     "props": [
+      "crate"
+     ],
+     "role": "crate_b",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      6,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the porter's cap",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "porter_cap"
+     ],
+     "role": "cap",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "tells the driver to stop",
+     "kind": "pole",
+     "light": {
+      "colour": "signal",
+      "glow": 24,
+      "live": true
+     },
+     "place": "ground",
+     "props": [
+      "semaphore",
+      "signal_post"
+     ],
+     "role": "signal",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "the stationmaster",
+   "size": [
+    10,
+    4
+   ],
+   "why": "the end of the line: a water crane for the engine, the buffer stop, crates waiting for the goods train, the signal with its lamp, a porter's cap on the crates (the personal object); the platform's edge kept clear"
+  },
+  "rainforest_clearing": {
+   "biomes": [
+    "coast",
+    "isles",
+    "rainforest",
+    "woodland"
+   ],
+   "clear": [
+    {
+     "rect": [
+      3,
+      3,
+      3,
+      2
+     ],
+     "why": "the table's front"
+    },
+    {
+     "front": true,
+     "rect": [
+      7,
+      4,
+      4,
+      2
+     ],
+     "why": "the log's front"
+    }
+   ],
+   "dressing": "rainforest",
+   "members": [
+    {
+     "at": [
+      0,
+      1
+     ],
+     "blocks": true,
+     "crown": 2.5,
+     "dress": true,
+     "foot": [
+      2,
+      2
+     ],
+     "job": "nature",
+     "kind": "small_palm",
+     "place": "ground",
+     "props": [
+      "tree_fern"
+     ],
+     "role": "fern_w",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      2,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the naturalist's net",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "butterfly_net"
+     ],
+     "role": "net",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      3,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      3,
+      2
+     ],
+     "job": "specimens laid out to draw",
+     "kind": "furniture_table",
+     "place": "ground",
+     "props": [
+      "specimen_table"
+     ],
+     "role": "table",
+     "shadow": "cast",
+     "stand": [
+      [
+       4,
+       3
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      9,
+      0
+     ],
+     "blocks": true,
+     "crown": 2.5,
+     "dress": true,
+     "foot": [
+      2,
+      2
+     ],
+     "job": "nature",
+     "kind": "small_palm",
+     "place": "ground",
+     "props": [
+      "tree_fern"
+     ],
+     "role": "fern_e",
+     "shadow": "pool",
+     "tap": false
+    },
+    {
+     "at": [
+      7,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a seat for watching the canopy",
+     "kind": "log",
+     "place": "ground",
+     "props": [
+      "mossy_log"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "log",
+     "shadow": "cast",
+     "stand": [
+      [
+       8,
+       4
+      ],
+      [
+       9,
+       4
+      ]
+     ],
+     "tap": true
+    }
+   ],
+   "owner": "the naturalist",
+   "size": [
+    11,
+    6
+   ],
+   "why": "a clearing under the giant tree: tree ferns either side, the naturalist's specimen table with its front clear, a mossy log to sit on, a butterfly net leaning by the table (the personal object)"
+  },
+  "salt_shore": {
+   "biomes": [
+    "canyon",
+    "desert",
+    "salt"
+   ],
+   "dressing": "canyon",
+   "from_path": 160,
+   "members": [
+    {
+     "at": [
+      0,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      6,
+      2
+     ],
+     "job": "salt left by the water",
+     "kind": "ground_patch",
+     "place": "ground",
+     "props": [
+      "salt_crust"
+     ],
+     "reason": [
+      "by:water:64"
+     ],
+     "role": "crust",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      2,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a caravan's tracks",
+     "kind": "ground_patch",
+     "place": "ground",
+     "props": [
+      "cart_tracks"
+     ],
+     "role": "tracks",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      7,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "nature; a tree the salt killed",
+     "kind": "snag",
+     "place": "ground",
+     "props": [
+      "bleached_snag",
+      "snag"
+     ],
+     "role": "snag",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      2,
+      2
+     ],
+     "job": "marks the crossing",
+     "kind": "cairn",
+     "place": "ground",
+     "props": [
+      "cairn_trail",
+      "cairn"
+     ],
+     "reason": [
+      "near:path:64"
+     ],
+     "role": "cairn",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "nature, and the caravans that cross it",
+   "size": [
+    11,
+    4
+   ],
+   "why": "the salt lake's shore: a crust of salt drying at the water, a bleached snag, a cairn that marks the crossing, old cart tracks in the crust (the story)"
+  },
+  "sheepfold_corner": {
+   "biomes": [
+    "canyon",
+    "meadow",
+    "steppe",
+    "moor",
+    "valley"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      2,
+      3,
+      4,
+      2
+     ],
+     "why": "the trough's front"
+    }
+   ],
+   "dressing": "steppe",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      8,
+      1
+     ],
+     "job": "the fold's wall",
+     "kind": "low_wall",
+     "place": "ground",
+     "props": [
+      "drystone_wall_short",
+      "drystone_wall"
+     ],
+     "role": "wall",
+     "shadow": "cast",
+     "tap": false,
+     "turn": {
+      "e": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_ns"
+       ]
+      },
+      "n": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_short"
+       ]
+      },
+      "w": {
+       "kind": "low_wall",
+       "props": [
+        "drystone_wall_ns"
+       ]
+      }
+     }
+    },
+    {
+     "against": "wall",
+     "at": [
+      8,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "mends a gap in the wall",
+     "kind": "fence",
+     "place": "ground",
+     "props": [
+      "wattle_hurdle",
+      "wattle_hurdle_low"
+     ],
+     "role": "hurdle",
+     "shadow": "cast",
+     "tap": false,
+     "turn": {
+      "e": {
+       "kind": "fence",
+       "props": [
+        "hurdle_side"
+       ]
+      },
+      "n": {
+       "kind": "fence",
+       "props": [
+        "wattle_hurdle"
+       ]
+      },
+      "w": {
+       "kind": "fence",
+       "props": [
+        "hurdle_side"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      11,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the drover's crook",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "crook"
+     ],
+     "role": "crook",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      2,
+      2
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "water for the flock",
+     "kind": "trough",
+     "place": "ground",
+     "props": [
+      "trough_stone",
+      "trough"
+     ],
+     "role": "trough",
+     "shadow": "cast",
+     "stand": [
+      [
+       3,
+       3
+      ],
+      [
+       4,
+       3
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      7,
+      2
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "the flock at the water",
+     "kind": "sheep",
+     "place": "ground",
+     "props": [
+      "sheep",
+      "sheep_left"
+     ],
+     "role": "sheep",
+     "shadow": "cast",
+     "tap": false
+    }
+   ],
+   "owner": "the drovers whose flock folds here",
+   "size": [
+    12,
+    5
+   ],
+   "why": "the corner of a drystone fold: the wall with a hurdle mending its gap, a stone trough with its front clear, sheep at the water, a crook leaning on the hurdle (the personal object)"
   },
   "shore": {
    "biomes": [
@@ -785,6 +4582,7 @@
     }
    ],
    "dressing": "shore",
+   "from_path": 160,
    "members": [
     {
      "at": [
@@ -797,12 +4595,16 @@
       7,
       2
      ],
+     "job": "drawn up keel-up for mending",
      "kind": "rowing_boat",
      "place": "ground",
      "props": [
       "upturned_boat",
       "boat_blue",
       "boat_red"
+     ],
+     "reason": [
+      "by:water:96"
      ],
      "role": "boat",
      "shadow": "cast",
@@ -822,10 +4624,14 @@
       5,
       1
      ],
+     "job": "nets hung to dry",
      "kind": "net_rack",
      "place": "ground",
      "props": [
       "net_rack"
+     ],
+     "reason": [
+      "by:water:128"
      ],
      "role": "net_rack",
      "shadow": "cast",
@@ -843,6 +4649,7 @@
       2,
       1
      ],
+     "job": "lobster pots, stacked",
      "kind": "crate_stack",
      "place": "ground",
      "props": [
@@ -864,6 +4671,7 @@
       1,
       1
      ],
+     "job": "a spare float",
      "kind": "buoy",
      "place": "ground",
      "props": [
@@ -884,11 +4692,15 @@
       5,
       1
      ],
+     "job": "a seat facing the sea",
      "kind": "log",
      "place": "ground",
      "props": [
       "driftwood",
       "mossy_log"
+     ],
+     "reason": [
+      "by:water:48"
      ],
      "role": "log",
      "shadow": "cast",
@@ -915,6 +4727,7 @@
       1,
       1
      ],
+     "job": "the fisher's oilskin hat",
      "kind": "furniture_low",
      "place": "ground",
      "props": [
@@ -926,17 +4739,199 @@
      "tap": false
     }
    ],
+   "owner": "the fisher",
    "size": [
     14,
     6
    ],
    "why": "a fisher's bit of beach above the tideline: a boat drawn up keel-up, a net rack with pots and a buoy stacked against it, a driftwood log to sit on facing the sea, an oilskin hat left on the boat (the personal object), marram at the bases"
   },
+  "springs_bath": {
+   "biomes": [
+    "ash",
+    "springs"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      0,
+      3,
+      5,
+      2
+     ],
+     "why": "the step down into the pool"
+    },
+    {
+     "rect": [
+      6,
+      3,
+      4,
+      2
+     ],
+     "why": "the bench's front"
+    }
+   ],
+   "dressing": "ash",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      5,
+      3
+     ],
+     "job": "a hot soak",
+     "kind": "bath_pool",
+     "place": "wet",
+     "props": [
+      "spring_pool"
+     ],
+     "role": "pool",
+     "shadow": "cast",
+     "stand": [
+      [
+       2,
+       3
+      ],
+      [
+       3,
+       3
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      5,
+      3
+     ],
+     "job": "nature",
+     "kind": "vent",
+     "place": "overhead",
+     "props": [
+      "pool_steam"
+     ],
+     "role": "steam",
+     "shadow": "none",
+     "tap": false
+    },
+    {
+     "at": [
+      6,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      3,
+      1
+     ],
+     "job": "towels drying",
+     "kind": "fence",
+     "place": "ground",
+     "props": [
+      "towel_rail"
+     ],
+     "role": "rail",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      6,
+      2
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a seat after the bath",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench",
+      "stone_bench"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       7,
+       3
+      ],
+      [
+       8,
+       3
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    },
+    {
+     "at": [
+      5,
+      3
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a bather's sandals",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "sandals"
+     ],
+     "role": "sandals",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    }
+   ],
+   "owner": "the bath-keeper",
+   "size": [
+    10,
+    5
+   ],
+   "why": "a hot pool in its stone rim with steam over it, a step down at its front, towels drying on a rail, a bench for after, sandals left at the step (the personal object)"
+  },
   "steppe_camp": {
    "biomes": [
     "steppe",
     "desert",
-    "moor"
+    "moor",
+    "canyon"
    ],
    "clear": [
     {
@@ -983,6 +4978,7 @@
       8,
       4
      ],
+     "job": "where the herders sleep",
      "kind": "tent",
      "place": "ground",
      "props": [
@@ -1007,6 +5003,7 @@
       1,
       1
      ],
+     "job": "their stores",
      "kind": "sack",
      "place": "ground",
      "props": [
@@ -1027,6 +5024,7 @@
       3,
       2
      ],
+     "job": "warmth and cooking",
      "kind": "campfire",
      "light": {
       "colour": "fire",
@@ -1067,6 +5065,7 @@
       1,
       1
      ],
+     "job": "tea on the fire",
      "kind": "furniture_low",
      "place": "ground",
      "props": [
@@ -1088,6 +5087,7 @@
       6,
       2
      ],
+     "job": "their pack animal, resting",
      "kind": "camel",
      "place": "ground",
      "props": [
@@ -1099,6 +5099,7 @@
      "tap": false
     }
    ],
+   "owner": "the herders",
    "size": [
     18,
     8
@@ -1146,6 +5147,7 @@
       1,
       1
      ],
+     "job": "lights the corner",
      "kind": "lamp",
      "light": {
       "colour": "lamp",
@@ -1157,6 +5159,9 @@
       "lamp",
       "gas_lamp",
       "city_lamp"
+     ],
+     "reason": [
+      "lights:path"
      ],
      "role": "lamp",
      "shadow": "cast",
@@ -1173,12 +5178,16 @@
       4,
       1
      ],
+     "job": "a seat on the square",
      "kind": "bench",
      "place": "ground",
      "props": [
       "bench",
       "bench_oak",
       "iron_bench"
+     ],
+     "reason": [
+      "faces:path|view"
      ],
      "role": "bench",
      "shadow": "cast",
@@ -1219,11 +5228,15 @@
       2,
       1
      ],
+     "job": "the shopkeeper's flowers",
      "kind": "planter",
      "place": "ground",
      "props": [
       "potted_plant",
       "planter"
+     ],
+     "reason": [
+      "by:dwelling:48"
      ],
      "role": "planter",
      "shadow": "cast",
@@ -1240,6 +5253,7 @@
       1,
       1
      ],
+     "job": "milk for the shop's cat",
      "kind": "furniture_low",
      "place": "ground",
      "props": [
@@ -1261,12 +5275,16 @@
       1,
       1
      ],
+     "job": "the town's notices",
      "kind": "sign",
      "place": "ground",
      "props": [
       "noticeboard_glazed",
       "noticeboard_roofed",
       "notice_board"
+     ],
+     "reason": [
+      "near:path:48"
      ],
      "role": "noticeboard",
      "shadow": "cast",
@@ -1279,11 +5297,292 @@
      "tap": true
     }
    ],
+   "owner": "the shop on the corner and the town",
    "size": [
     11,
     5
    ],
    "why": "a corner of a square against a wall: a lamp at the corner, a bench along the wall facing out, a planter at its end, a noticeboard with its front clear, a cat's saucer by the planter (the personal object); weeds only in the paving's joints"
+  },
+  "turtle_beach": {
+   "biomes": [
+    "coast",
+    "isles",
+    "beach"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      5,
+      2,
+      3,
+      2
+     ],
+     "why": "the tally post's front"
+    },
+    {
+     "rect": [
+      0,
+      3,
+      5,
+      2
+     ],
+     "why": "the sand round the nest"
+    }
+   ],
+   "dressing": "coast",
+   "from_path": 160,
+   "members": [
+    {
+     "at": [
+      1,
+      1
+     ],
+     "blocks": true,
+     "dress": false,
+     "foot": [
+      3,
+      2
+     ],
+     "job": "the nest, ringed with shells so it is not trodden on",
+     "kind": "rock",
+     "place": "ground",
+     "props": [
+      "shell_ring"
+     ],
+     "reason": [
+      "by:water:128"
+     ],
+     "role": "nest",
+     "shadow": "cast",
+     "tap": false
+    },
+    {
+     "at": [
+      6,
+      1
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the warden counts the nests on it",
+     "kind": "sign",
+     "place": "ground",
+     "props": [
+      "tally_post"
+     ],
+     "reason": [
+      "by:water:160"
+     ],
+     "role": "post",
+     "shadow": "cast",
+     "stand": [
+      [
+       6,
+       2
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      7,
+      1
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "the warden's slate",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "tally_slate"
+     ],
+     "role": "slate",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    }
+   ],
+   "owner": "the turtle warden",
+   "size": [
+    9,
+    5
+   ],
+   "why": "a nest kept clear above the tideline: a ring of shells round it that nobody steps in, the warden's tally post with this season's count, a slate tied to it (the personal object); no boat, nothing on the sand between the nest and the sea"
+  },
+  "windpump_stop": {
+   "biomes": [
+    "steppe",
+    "desert",
+    "canyon",
+    "frontier"
+   ],
+   "clear": [
+    {
+     "front": true,
+     "rect": [
+      4,
+      4,
+      4,
+      2
+     ],
+     "why": "the trough's front"
+    },
+    {
+     "rect": [
+      9,
+      4,
+      4,
+      2
+     ],
+     "why": "the bench's front"
+    }
+   ],
+   "dressing": "desert",
+   "members": [
+    {
+     "at": [
+      0,
+      0
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      4
+     ],
+     "job": "lifts water for the trough",
+     "kind": "windpump",
+     "place": "ground",
+     "props": [
+      "windpump"
+     ],
+     "role": "pump",
+     "shadow": "cast",
+     "tap": false,
+     "turn": {
+      "fixed": true
+     }
+    },
+    {
+     "against": "pump",
+     "at": [
+      4,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "water for the beasts",
+     "kind": "trough",
+     "place": "ground",
+     "props": [
+      "trough",
+      "trough_stone"
+     ],
+     "role": "trough",
+     "shadow": "cast",
+     "stand": [
+      [
+       5,
+       4
+      ],
+      [
+       6,
+       4
+      ]
+     ],
+     "tap": true
+    },
+    {
+     "at": [
+      8,
+      3
+     ],
+     "blocks": false,
+     "dress": false,
+     "foot": [
+      1,
+      1
+     ],
+     "job": "a drover's cup",
+     "kind": "furniture_low",
+     "place": "ground",
+     "props": [
+      "tin_cup"
+     ],
+     "role": "cup",
+     "shadow": "cast",
+     "story": true,
+     "tap": false
+    },
+    {
+     "at": [
+      9,
+      3
+     ],
+     "blocks": true,
+     "dress": true,
+     "foot": [
+      4,
+      1
+     ],
+     "job": "a rest in the pump's shade",
+     "kind": "bench",
+     "place": "ground",
+     "props": [
+      "bench",
+      "bench_oak"
+     ],
+     "reason": [
+      "faces:path|view"
+     ],
+     "role": "bench",
+     "shadow": "cast",
+     "stand": [
+      [
+       10,
+       4
+      ],
+      [
+       11,
+       4
+      ]
+     ],
+     "tap": true,
+     "turn": {
+      "e": {
+       "kind": "bench_side",
+       "props": [
+        "bench_east"
+       ]
+      },
+      "w": {
+       "kind": "bench_side",
+       "props": [
+        "bench_west"
+       ]
+      }
+     }
+    }
+   ],
+   "owner": "the drovers on the road",
+   "size": [
+    13,
+    6
+   ],
+   "why": "a stop on the road: a wind pump filling a stone trough for the beasts, a bench in the pump's shade, a tin cup left on the trough's rim (the personal object)"
   },
   "woodland_glade": {
    "biomes": [
@@ -1337,6 +5636,7 @@
       1,
       1
      ],
+     "job": "nature",
      "kind": "broadleaf",
      "place": "ground",
      "props": [
@@ -1359,6 +5659,7 @@
       1,
       1
      ],
+     "job": "nature",
      "kind": "birch",
      "place": "ground",
      "props": [
@@ -1380,6 +5681,7 @@
       1,
       1
      ],
+     "job": "nature",
      "kind": "broadleaf",
      "place": "ground",
      "props": [
@@ -1402,6 +5704,7 @@
       1,
       1
      ],
+     "job": "nature",
      "kind": "young_tree",
      "place": "ground",
      "props": [
@@ -1423,10 +5726,14 @@
       5,
       1
      ],
+     "job": "a fallen trunk to sit on",
      "kind": "log",
      "place": "ground",
      "props": [
       "mossy_log"
+     ],
+     "reason": [
+      "faces:path|view"
      ],
      "role": "log",
      "shadow": "cast",
@@ -1457,6 +5764,7 @@
       1,
       1
      ],
+     "job": "what a woodcutter left",
      "kind": "stump",
      "place": "ground",
      "props": [
@@ -1477,6 +5785,7 @@
       2,
       1
      ],
+     "job": "nature",
      "kind": "fern",
      "place": "ground",
      "props": [
@@ -1498,6 +5807,7 @@
       1,
       1
      ],
+     "job": "nature; the ring a story tells of",
      "kind": "flowers",
      "place": "ground",
      "props": [
@@ -1510,6 +5820,7 @@
      "tap": false
     }
    ],
+   "owner": "nature, and walkers who rest there",
    "size": [
     12,
     10

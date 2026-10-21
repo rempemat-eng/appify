@@ -1,0 +1,28 @@
+# What to port from the coast and city kits
+
+Claude C, 21 Oct, for Claude A's kit cut (rules-system.md 2: "good techniques are ported into the kit as biome data or an edge-set module (Claude A with the lane), and the rest retires"). The two kits are frozen drafts: the coast kit is `scripts/art/coast_kit.py` on #162 (`claude-c/coast-kit` @d4756c6), and the city kit is `scripts/art/city_kit.py` on #169 (`claude-c/city-kit` @08c5ead, stacked on #162). Both are 1x and paint in house ramps and tones. The data they would have drawn from is in `scripts/art/biomes/coast.json` and `city.json`.
+
+Ranked by how much each gives the kit. Each entry names the function, what it does well and where it would go.
+
+## Port
+
+1. **The sea as depth bands** (`coast_kit.sea`, `ripples`). The sea is one calm plane in bands that follow the shore: pale lagoon over sand, then teal over the shelf, then deep blue. Each band's edge wanders by a cell. Ripples are sparse 3 to 6 px strokes, lit a tone up with a tone down under them. This is the clean water to-all-clean asks for. → the kit's water module: the coast biome's `water.sea`, and tarns and the harbour with other bands.
+2. **Surf by shore kind** (`surf`, `breakers`). A beach gets a pale broken swash with damp sand a tone down behind it. Rock gets a dark wet ring, a broken white line and a second line of lace a few px out. → two water-edge sets, `shore_beach` and `shore_rock` (coast.json).
+3. **A face standing in water** (`sea_foot`, with `masonry`, `ladder`, `ring`). Any face whose foot is in water gets its lowest rows a tone down, weed in the two rows at the water, and barnacles in pairs up to the tide line, then a pale salt line. It works for any rock or wall, not only the sea wall. → the kit as a foot rule for every edge set when the lower ground is water; the dressed sea wall becomes the `sea_wall` edge set.
+4. **Weathering by height** (`city_kit.brick_wall` on `weathered.py`, which is on main). Soot sits high, repointing and stock repairs in the middle, salt bloom and weep holes low down, with pilasters at intervals. The weathering follows height on the wall rather than noise. → the `brick_retaining` edge set, and the same rule (dirt by height) for the city's ashlar courses.
+5. **Bands and middle terrain** (`beach`, `grade`). The beach is laid in bands from dry sand through the wrack line and damp sand to the swash. `grade` throws shingle out over sand, thinning and getting smaller with distance, and blows sand into the shingle's last few px. → the model for transitions.json's shared middle terrains (rules-system 4): one blend function with reach, size falloff and a back-fill, used by every biome pair.
+6. **Fronts with roofs running back** (`house_front`, `roof_behind`, `_from_canvas`). A row of fronts reads as volume because the roofs run back from them (to-all-volume 2). `_from_canvas` maps a picture drawn in house colours back to ramp and tone, so existing house-kit art can enter a palette-code kit without repainting. → the kit's import path for house_kits (#121), and the city's `house_front` and `roof_behind` pieces.
+7. **Rim railing** (`railing`). It stops walkers and casts its shadow a tone down on the coping below, so a rim reads as a barrier without a wall. → a rim-dressing module that any built edge set can switch on.
+8. **Pools in rock** (`platform`, `rock_pools`). Each hollow has a shaded north rim (the platform's own little face) and a lit south lip, with clear water a tone over its floor. → the kit's pool piece in any rock biome (highland tarns, the isles' crater pool).
+9. **Motion as one tone along the ramp** (`flow_frames`). A moving pixel steps one tone along its own ramp, two where the flow is strongest, and never takes a new colour. It stays on the palette, and night keeps working as a lookup. → the shared animator rule for water and foliage sway.
+10. **Paving as long courses** (`flags`, `kerb`, `setts`, `asphalt`). Joints are a tone down, not ink. A cracked or sunk slab appears now and then, never on every slab. The kerb is a 2 px flat edge with no outline. Roads have repairs with a crisp edge and wheel tracks a tone lighter. → the city biome's ground recipes; the kerb is a flat-edge set.
+11. **The contract checks** (`coast_kit.check`, `city_kit.check`). A 4-neighbour walk proves that one tier reaches another only by its stairs, no face is walkable, and water and pools are never walked. → already in spirit in region_plan and prop_clusters. Keep the "only by its stairs" test in the kit's render check, on the real walk mask.
+12. **Horizon isles** (`far_isle`, `south_edge`). These are silhouettes with a ridge, a lit west, a small cool cliff and a hazier tone for the farther ones. → lane G's sea edge (g-to-all-edges 2), drawn but never walked.
+
+## Leave behind
+
+- **Sea-cliff columns** (`cliff_faces`, `column_rows`, `lips`, `bands`). They read as masonry. The cliff core's coast edge set replaces them.
+- **Ramps** (`ramp_along`, `stepped_tread`, and the corner's ramp in the city kit). They are forbidden by eastward-edges 6.3 and replaced by stairs and round-ends.
+- **45° corner cuts** (`lattice`). They break the rounded-corner rule (eastward-edges 1.6). The idea worth keeping from `_open2` and `_close2` is "no part of a level narrower than two cells", which is a plan-level rule for the cliff core's mask cleanup.
+- **The Glint's falls** (`cascade`). They read as noise. Use the cliff core's neutral fall.
+- **The noise helpers** (`hash01`, `vnoise`, `stamp`, `despeckle`, `blob`). The cliff core has its own. The only thing to compare is `despeckle`'s exceptions: it keeps tone-5 glints, edges and glows.

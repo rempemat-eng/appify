@@ -21,6 +21,8 @@ const generators = [
   'world_land',
   // the cliff core's demos and random-outline proofs (docs/vision/cliff-core/)
   'cliff_core',
+  // the shared 2x kit's golden scenes (art/golden/, scripts/art/native/)
+  'kit_golden',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
