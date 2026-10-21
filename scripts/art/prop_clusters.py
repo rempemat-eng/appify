@@ -52,7 +52,7 @@ Run:
     python3 scripts/art/prop_clusters.py --build      (writes scripts/art/prop_clusters.json)
     python3 scripts/art/prop_clusters.py --check      (recipes, the JSON up to date, the
                                                        placer's self-test, plans' clusters)
-    python3 scripts/art/prop_clusters.py --place PLAN RECIPE (--area ID | --near X,Y) [--seed N]
+    python3 scripts/art/prop_clusters.py --place PLAN RECIPE (--area ID | --near X,Y [--radius R]) [--seed N]
                                                       (PLAN: an id in art/regions/ or a .json path)
                                                       (prints a placement for the plan)
     python3 scripts/art/prop_clusters.py --draw [OUT_DIR] (a diagram of each recipe: feet,
@@ -109,6 +109,8 @@ DRESSING = {
     # Claude D's plants (art/regions/sunstone.json, #193)
     'desert': ['sage', 'bunchgrass'],
     'oasis': ['reeds', 'bunchgrass'],
+    'canyon': ['creosote', 'bunchgrass'],
+    'ash': ['fireweed_small', 'ash_tuft'],
 }
 
 
@@ -272,7 +274,7 @@ RECIPES = {
         'against': 'a wall or a face along the north side',
     },
     'steppe_camp': {
-        'biomes': ['steppe', 'desert', 'moor'],
+        'biomes': ['steppe', 'desert', 'moor', 'canyon'],
         'dressing': 'steppe',
         'why': 'a herders\' camp: a tent with its door to the fire, a fire ring with a kettle on it '
                '(the personal object), sacks against the tent, a camel kneeling on the lee side, '
@@ -492,6 +494,338 @@ RECIPES = {
         ],
         'clear': [{'why': 'the rail\'s street side', 'rect': [5, 3, 5, 1], 'front': True}],
     },
+    # --- lane D's plans (d-to-b-clusters, #193): the other fifteen -----------------------
+    'sheepfold_corner': {
+        'biomes': ['canyon', 'meadow', 'steppe', 'moor', 'valley'],
+        'dressing': 'steppe',
+        'owner': 'the drovers whose flock folds here',
+        'why': 'the corner of a drystone fold: the wall with a hurdle mending its gap, a stone trough with '
+               'its front clear, sheep at the water, a crook leaning on the hurdle (the personal object)',
+        'size': [12, 5],
+        'members': [
+            m('wall', 'low_wall', ['drystone_wall_short', 'drystone_wall'], (0, 0), (8, 1),
+              turn={'e': {'props': ['drystone_wall_ns'], 'kind': 'low_wall'},
+                    'w': {'props': ['drystone_wall_ns'], 'kind': 'low_wall'},
+                    'n': {'props': ['drystone_wall_short'], 'kind': 'low_wall'}},
+              job='the fold\'s wall'),
+            m('hurdle', 'fence', ['wattle_hurdle', 'wattle_hurdle_low'], (8, 0), (3, 1), against='wall',
+              turn={'e': {'props': ['hurdle_side'], 'kind': 'fence'}, 'w': {'props': ['hurdle_side'], 'kind': 'fence'},
+                    'n': {'props': ['wattle_hurdle'], 'kind': 'fence'}},
+              job='mends a gap in the wall'),
+            m('crook', 'furniture_low', ['crook'], (11, 0), (1, 1), blocks=False, dress=False, story=True,
+              job='the drover\'s crook'),
+            m('trough', 'trough', ['trough_stone', 'trough'], (2, 2), (4, 1), tap=True, stand=[(3, 3), (4, 3)],
+              job='water for the flock'),
+            m('sheep', 'sheep', ['sheep', 'sheep_left'], (7, 2), (3, 1), blocks=False, dress=False,
+              job='the flock at the water'),
+        ],
+        'clear': [{'why': 'the trough\'s front', 'rect': [2, 3, 4, 2], 'front': True}],
+    },
+    'orchard_edge': {
+        'biomes': ['canyon', 'oasis', 'valley', 'farm', 'desert'],
+        'dressing': 'oasis',
+        'owner': 'the orchard keeper',
+        'why': 'the edge of an orchard on its channel: fruit trees in a row (people plant them in rows, '
+               'world-rules 6.7), a ladder against the first, baskets at the trunks, the picker\'s hat on '
+               'the bank (the personal object)',
+        'size': [12, 5],
+        'members': [
+            m('channel', 'channel', ['irrigation_channel'], (0, 0), (12, 1), blocks=False, place='wet',
+              dress=False, job='water to the trees'),
+            m('tree_a', 'young_tree', ['fruit_tree', 'tree_small'], (1, 1), (1, 1), crown=2.5, shadow='pool',
+              job='fruit', reason=['by:water:16']),
+            m('ladder', 'furniture_low', ['orchard_ladder'], (2, 1), (1, 1), against='tree_a', dress=False,
+              job='for picking'),
+            m('basket_a', 'jar', ['fruit_basket'], (3, 2), (1, 1), against='ladder', dress=False, job='picked fruit'),
+            m('tree_b', 'young_tree', ['fruit_tree', 'tree_small'], (5, 1), (1, 1), crown=2.5, shadow='pool',
+              job='fruit', reason=['by:water:16']),
+            m('basket_b', 'jar', ['fruit_basket'], (6, 2), (1, 1), against='tree_b', dress=False, job='an empty'),
+            m('tree_c', 'young_tree', ['fruit_tree', 'tree_small'], (9, 1), (1, 1), crown=2.5, shadow='pool',
+              job='fruit', reason=['by:water:16']),
+            m('hat', 'furniture_low', ['picker_hat'], (10, 3), (1, 1), blocks=False, dress=False, story=True,
+              job='the picker\'s hat'),
+        ],
+        'clear': [{'why': 'the picking walk under the trees', 'rect': [0, 3, 10, 2], 'front': True}],
+    },
+    'platform_yard': {
+        'biomes': ['canyon', 'frontier', 'town', 'coal-hills'],
+        'dressing': 'desert',
+        'owner': 'the stationmaster',
+        'why': 'the end of the line: a water crane for the engine, the buffer stop, crates waiting for the '
+               'goods train, the signal with its lamp, a porter\'s cap on the crates (the personal object); '
+               'the platform\'s edge kept clear',
+        'size': [10, 4],
+        'members': [
+            m('crane', 'crane', ['water_crane'], (0, 1), (1, 1), job='water for the engine'),
+            m('buffer', 'buffer_stop', ['buffer_stop'], (2, 0), (2, 1), job='where the line ends'),
+            m('crates', 'crate_stack', ['crate', 'cargo_crates'], (5, 1), (2, 1), dress=False,
+              job='goods for the next train', reason=['by:dwelling:128']),
+            m('crate_b', 'crate', ['crate'], (7, 1), (1, 1), against='crates', dress=False, job='goods'),
+            m('cap', 'furniture_low', ['porter_cap'], (6, 2), (1, 1), blocks=False, dress=False, story=True,
+              job='the porter\'s cap'),
+            m('signal', 'pole', ['semaphore', 'signal_post'], (9, 0), (1, 1),
+              light={'glow': 24, 'live': True, 'colour': 'signal'}, job='tells the driver to stop'),
+        ],
+        'clear': [{'why': 'the platform\'s edge', 'rect': [0, 3, 10, 1], 'front': True}],
+    },
+    'mine_yard': {
+        'biomes': ['canyon', 'highland', 'coal-hills'],
+        'dressing': 'desert',
+        'owner': 'the prospector',
+        'why': 'the yard at a mine mouth: a rail stub with two ore tubs on it, pit props stacked for the '
+               'tunnel, a lamp at the mouth, spoil at the stub\'s end, a pick leaning on the props (the '
+               'personal object)',
+        'size': [11, 4],
+        'against': 'a face to the north, with the mine mouth in it',
+        'members': [
+            m('props', 'woodpile', ['pit_props', 'woodpile'], (0, 0), (4, 1), job='timber for the tunnel'),
+            m('pick', 'furniture_low', ['pick'], (4, 0), (1, 1), blocks=False, dress=False, story=True,
+              job='the prospector\'s pick'),
+            m('rails', 'track', ['rail_stub'], (0, 2), (8, 1), blocks=False, dress=False,
+              job='carries the tubs out of the mouth'),
+            m('tub_a', 'tub', ['ore_tub', 'coal_cart'], (2, 2), (2, 1), dress=False, job='ore out of the mine'),
+            m('tub_b', 'tub', ['ore_tub', 'coal_cart'], (5, 2), (2, 1), dress=False, job='an empty going back'),
+            m('lamp', 'lamp', ['lamp', 'lantern_post'], (8, 0), (1, 1),
+              light={'glow': 40, 'live': True, 'colour': 'lamp'}, job='lights the mouth', reason=['lights:path']),
+            m('spoil', 'pile', ['spoil_heap', 'rubble'], (9, 2), (2, 1), job='waste rock tipped off the stub'),
+        ],
+        'clear': [{'why': 'the yard in front of the tubs', 'rect': [0, 3, 9, 1], 'front': True}],
+    },
+    'canyon_shade': {
+        'biomes': ['canyon', 'desert'],
+        'dressing': 'canyon',
+        'owner': 'travellers on the canyon floor',
+        'why': 'shade at the foot of the rock arch: boulders fallen from it, a bench in their lee facing the '
+               'way, creosote at the bases, a canteen left on the bench (the personal object)',
+        'size': [13, 4],
+        'members': [
+            m('boulders', 'boulder', ['boulders_big', 'boulder'], (0, 0), (4, 2), job='nature; fallen from the arch'),
+            m('bench', 'bench', ['bench', 'bench_stone'], (4, 1), (4, 1), tap=True, stand=[(5, 2), (6, 2)],
+              turn=BENCH_TURN, job='a seat in the shade', reason=['faces:path|view']),
+            m('canteen', 'furniture_low', ['canteen'], (8, 1), (1, 1), blocks=False, dress=False, story=True,
+              job='a traveller\'s canteen'),
+            m('rocks', 'rock', ['lizard_rock', 'boulders_small'], (9, 1), (2, 1), job='nature'),
+            m('creosote', 'bush', ['creosote', 'bush'], (11, 0), (2, 1), job='nature'),
+        ],
+        'clear': [{'why': 'the bench\'s front', 'rect': [4, 2, 4, 2], 'front': True}],
+        'lights': [{'kind': 'shade_pool', 'at': [6, 1], 'r': 32, 'live': False}],
+    },
+    'salt_shore': {
+        'biomes': ['canyon', 'desert', 'salt'],
+        'dressing': 'canyon',
+        'from_path': 160,
+        'owner': 'nature, and the caravans that cross it',
+        'why': 'the salt lake\'s shore: a crust of salt drying at the water, a bleached snag, a cairn that marks '
+               'the crossing, old cart tracks in the crust (the story)',
+        'size': [11, 4],
+        'members': [
+            m('crust', 'ground_patch', ['salt_crust'], (0, 2), (6, 2), blocks=False, dress=False,
+              job='salt left by the water', reason=['by:water:64']),
+            m('tracks', 'ground_patch', ['cart_tracks'], (2, 1), (4, 1), blocks=False, dress=False, story=True,
+              job='a caravan\'s tracks'),
+            m('snag', 'snag', ['bleached_snag', 'snag'], (7, 0), (1, 1), job='nature; a tree the salt killed'),
+            m('cairn', 'cairn', ['cairn_trail', 'cairn'], (9, 1), (2, 2), job='marks the crossing',
+              reason=['near:path:64']),
+        ],
+    },
+    'ash_field': {
+        'biomes': ['ash', 'canyon'],
+        'dressing': 'ash',
+        'from_path': 160,
+        'owner': 'nature',
+        'why': 'the Cinder Rise: drifts of ash, fireweed coming back, basalt stumps where columns broke, a '
+               'lizard rock in the sun',
+        'size': [11, 4],
+        'members': [
+            m('lizard', 'boulder', ['lizard_rock', 'lizard_rock_b'], (0, 0), (2, 1), job='nature; warm stone'),
+            m('drift', 'ground_patch', ['ash_drift'], (0, 2), (5, 2), blocks=False, dress=False, job='nature'),
+            m('fireweed', 'tall_plant', ['fireweed', 'fireweed_small'], (5, 2), (2, 1), blocks=False, dress=False,
+              job='nature; the first thing to grow back'),
+            m('stumps', 'boulder', ['basalt_stumps', 'basalt_stumps_b'], (7, 0), (4, 2), job='nature'),
+        ],
+    },
+    'fumarole_field': {
+        'biomes': ['ash'],
+        'dressing': 'ash',
+        'owner': 'the sulphur-gatherer',
+        'why': 'the gatherer\'s patch among the vents: two fumaroles with their steam, yellow crust round '
+               'them, sample bags stacked by the path, the gatherer\'s scoop on the bags (the personal object)',
+        'size': [11, 4],
+        'members': [
+            m('vent_a', 'vent', ['fumarole'], (1, 0), (2, 2), job='nature; the steam the crust grows from'),
+            m('crust', 'ground_patch', ['sulphur_crust'], (0, 2), (4, 2), blocks=False, dress=False, job='nature'),
+            m('vent_b', 'vent', ['fumarole'], (5, 1), (2, 2), job='nature'),
+            m('steam', 'vent', ['fumarole_steam'], (1, 0), (6, 2), blocks=False, place='overhead', dress=False,
+              shadow='none', job='nature'),
+            m('bags', 'sack', ['sample_bag', 'sack'], (9, 1), (1, 1), dress=False, job='sulphur gathered',
+              reason=['near:path:48']),
+            m('bags_b', 'sack', ['sample_bag', 'sack'], (10, 1), (1, 1), against='bags', dress=False, job='more'),
+            m('scoop', 'furniture_low', ['scoop'], (9, 2), (1, 1), blocks=False, dress=False, story=True,
+              job='the gatherer\'s scoop'),
+        ],
+        'clear': [{'why': 'the path side of the bags', 'rect': [8, 3, 3, 1], 'front': True}],
+        'lights': [{'kind': 'steam_glow', 'at': [4, 1], 'r': 24, 'live': False}],
+    },
+    'forge_yard': {
+        'biomes': ['ash', 'castle', 'town', 'coal-hills'],
+        'dressing': 'ash',
+        'owner': 'the smith',
+        'why': 'the yard of a forge (prop-logic 3: hearth, anvil and quench within 2 cells): the coal heap on the '
+               'far side, the anvil in front of the forge door, the quench trough beside it, the ore cart '
+               'parked off the way, a bench for whoever waits, the smith\'s apron on the trough (the personal '
+               'object); the forge\'s glow',
+        'size': [13, 5],
+        'against': 'the forge building to the north, its door over the anvil',
+        'members': [
+            m('coal', 'pile', ['coal_heap'], (0, 0), (3, 2), job='fuel for the hearth', reason=['by:dwelling:64']),
+            m('anvil', 'furniture_low', ['anvil'], (4, 1), (2, 1), tap=True, stand=[(4, 2), (5, 2)],
+              job='where the smith works', dress=False),
+            m('quench', 'trough', ['quench_trough', 'trough'], (7, 1), (3, 1), job='cools the iron', dress=False),
+            m('apron', 'furniture_low', ['smith_apron'], (10, 1), (1, 1), blocks=False, dress=False, story=True,
+              job='the smith\'s apron'),
+            m('cart', 'handcart', ['ore_cart', 'handcart'], (0, 3), (3, 2), job='ore in, parked off the way'),
+            m('bench', 'bench', ['bench', 'stone_bench'], (9, 3), (4, 1), tap=True, stand=[(10, 4), (11, 4)],
+              turn=BENCH_TURN, job='for whoever waits', reason=['faces:path|view']),
+        ],
+        'clear': [{'why': 'in front of the anvil', 'rect': [3, 2, 4, 2], 'front': True}],
+        'lights': [{'kind': 'forge_glow', 'at': [5, 0], 'r': 48, 'live': True}],
+    },
+    'castle_street': {
+        'biomes': ['castle', 'town', 'ash'],
+        'dressing': 'town',
+        'owner': 'the market row\'s traders',
+        'why': 'a stretch of the market row: a stall with its customer band clear, barrels against it, a '
+               'banner on its pole, a bench facing the street, a lantern, a glove someone dropped (the story)',
+        'size': [13, 4],
+        'members': [
+            m('stall', 'stall', ['market_stall', 'stall'], (0, 0), (6, 2), tap=True, stand=[(2, 2), (3, 2)],
+              fixed=True, dress=False, job='sells to the street', reason=['near:path:32']),
+            m('barrel', 'barrel', ['barrel', 'keg'], (6, 1), (1, 1), against='stall', dress=False, job='stock'),
+            m('banner', 'pole', ['banner_pole'], (7, 0), (1, 1), job='the trader\'s colours'),
+            m('glove', 'furniture_low', ['glove'], (7, 2), (1, 1), blocks=False, dress=False, story=True,
+              job='dropped by a buyer'),
+            m('bench', 'bench', ['stone_bench', 'bench'], (8, 2), (4, 1), tap=True, stand=[(9, 3), (10, 3)],
+              turn=BENCH_TURN, job='a seat on the row', reason=['faces:path|view']),
+            m('lantern', 'lamp', ['lantern_post', 'lamp'], (12, 1), (1, 1),
+              light={'glow': 40, 'live': True, 'colour': 'lamp'}, job='lights the row', reason=['lights:path']),
+        ],
+        'clear': [{'why': 'the stall\'s customer band (size-guide 1: 6 x 2)', 'rect': [0, 2, 6, 2], 'front': True}],
+    },
+    'springs_bath': {
+        'biomes': ['ash', 'springs'],
+        'dressing': 'ash',
+        'owner': 'the bath-keeper',
+        'why': 'a hot pool in its stone rim with steam over it, a step down at its front, towels drying on a '
+               'rail, a bench for after, sandals left at the step (the personal object)',
+        'size': [10, 5],
+        'members': [
+            m('pool', 'bath_pool', ['spring_pool'], (0, 0), (5, 3), tap=True, stand=[(2, 3), (3, 3)], dress=False,
+              place='wet', job='a hot soak'),
+            m('steam', 'vent', ['pool_steam'], (0, 0), (5, 3), blocks=False, place='overhead', dress=False,
+              shadow='none', job='nature'),
+            m('rail', 'fence', ['towel_rail'], (6, 0), (3, 1), job='towels drying'),
+            m('bench', 'bench', ['bench', 'stone_bench'], (6, 2), (4, 1), tap=True, stand=[(7, 3), (8, 3)],
+              turn=BENCH_TURN, job='a seat after the bath', reason=['faces:path|view']),
+            m('sandals', 'furniture_low', ['sandals'], (5, 3), (1, 1), blocks=False, dress=False, story=True,
+              job='a bather\'s sandals'),
+        ],
+        'clear': [{'why': 'the step down into the pool', 'rect': [0, 3, 5, 2], 'front': True},
+                  {'why': 'the bench\'s front', 'rect': [6, 3, 4, 2]}],
+    },
+    'black_sand_shore': {
+        'biomes': ['ash', 'coast', 'beach'],
+        'dressing': 'coast',
+        'from_path': 160,
+        'owner': 'the fisher of the black-sand cove',
+        'why': 'a fisher\'s bit of black sand: a boat drawn up keel-up, nets on poles with sacks of charcoal '
+               'stacked against them (the cove burns its driftwood), a driftwood seat facing the sea, a gutting '
+               'knife left on the boat (the personal object)',
+        'size': [14, 6],
+        'members': [
+            m('boat', 'rowing_boat', ['upturned_boat', 'boat_blue'], (0, 1), (7, 2), fixed=True,
+              job='drawn up keel-up for mending', reason=['by:water:96']),
+            m('nets', 'net_rack', ['net_rack'], (8, 1), (5, 1), job='nets on poles to dry', reason=['by:water:128']),
+            m('sacks', 'sack', ['charcoal_sack', 'sack'], (8, 2), (1, 1), against='nets', dress=False,
+              job='charcoal for the smoke-house'),
+            m('sacks_b', 'sack', ['charcoal_sack', 'sack'], (9, 2), (1, 1), against='sacks', dress=False, job='more'),
+            m('log', 'log', ['driftwood'], (3, 4), (5, 1), tap=True, stand=[(4, 5), (5, 5)],
+              job='a seat facing the sea', reason=['by:water:48']),
+            m('knife', 'furniture_low', ['gutting_knife'], (1, 3), (1, 1), blocks=False, dress=False, story=True,
+              job='the fisher\'s knife'),
+        ],
+        'clear': [{'why': 'the log\'s front, toward the sea', 'rect': [3, 5, 5, 1], 'front': True}],
+    },
+    'dead_forest_glade': {
+        'biomes': ['ash'],
+        'dressing': 'ash',
+        'from_path': 160,
+        'owner': 'nature, and the goats that browse it',
+        'why': 'where the young flow ran through a wood: charred snags standing, fireweed in the black sand, '
+               'goats browsing the new growth; its open middle kept clear',
+        'size': [11, 5],
+        'members': [
+            m('snag_a', 'snag', ['charred_snag', 'snag'], (0, 0), (1, 1), job='nature; burnt by the flow'),
+            m('snag_b', 'snag', ['charred_snag', 'snag'], (5, 0), (1, 1), job='nature'),
+            m('snag_c', 'snag', ['charred_snag', 'snag'], (9, 1), (1, 1), job='nature'),
+            m('sand', 'ground_patch', ['black_sand'], (2, 1), (5, 2), blocks=False, dress=False, job='nature'),
+            m('fireweed_a', 'tall_plant', ['fireweed'], (1, 2), (1, 1), blocks=False, dress=False, job='nature'),
+            m('fireweed_b', 'tall_plant', ['fireweed_small', 'fireweed'], (7, 3), (2, 1), blocks=False, dress=False,
+              job='nature'),
+            m('goats', 'sheep', ['goat'], (3, 4), (3, 1), blocks=False, dress=False, job='browsing the new growth'),
+        ],
+        'clear': [{'why': 'the glade\'s open middle', 'rect': [2, 1, 5, 2], 'front': True}],
+    },
+    'ferry_landing': {
+        'biomes': ['ash', 'canyon', 'coast', 'river'],
+        'dressing': 'coast',
+        'owner': 'the ferryman',
+        'why': 'where the Rift ferry ties up: a landing stage over the water, a rope post with a lamp on it, a '
+               'waiting bench facing the way, the ferryman\'s horn hung on the post (the personal object); the '
+               'ferryman\'s hut is the plan\'s own building',
+        'size': [10, 5],
+        'members': [
+            m('stage', 'landing_stage', ['landing_stage'], (0, 0), (4, 3), blocks=False, place='floating', dress=False,
+              job='where the ferry comes in', reason=['by:water:8']),
+            m('post', 'post', ['rope_post', 'bollard'], (4, 0), (1, 1),
+              light={'glow': 32, 'live': True, 'colour': 'lamp'}, job='the ferry\'s rope, and its lamp',
+              reason=['by:water:24']),
+            m('horn', 'furniture_low', ['ferry_horn'], (5, 0), (1, 1), blocks=False, dress=False, story=True,
+              job='the ferryman\'s horn'),
+            m('bench', 'bench', ['bench', 'bench_oak'], (5, 2), (4, 1), tap=True, stand=[(6, 3), (7, 3)],
+              turn=BENCH_TURN, job='waiting for the ferry', reason=['faces:path|view']),
+        ],
+        'clear': [{'why': 'the bench\'s front', 'rect': [5, 3, 4, 2], 'front': True}],
+    },
+    'coast_meadow': {
+        'biomes': ['ash', 'coast', 'meadow', 'valley'],
+        'dressing': 'meadow',
+        'owner': 'the shepherd whose wall it is',
+        'why': 'a green shelf above the coast: a lone tree, sheep grazing, flowers, and a stile in a short '
+               'drystone wall where a footpath goes through',
+        'size': [12, 7],
+        'members': [
+            m('tree', 'broadleaf', ['oak', 'tree'], (2, 1), (1, 1), crown=3.5, shadow='pool',
+              job='nature; the one tree the wind left'),
+            m('flowers', 'flowers', ['flowers_white', 'thrift'], (5, 1), (2, 1), blocks=False, dress=False, job='nature'),
+            m('sheep', 'sheep', ['sheep', 'sheep_lying'], (9, 1), (3, 1), blocks=False, dress=False, job='grazing'),
+            m('wall_w', 'low_wall', ['drystone_wall_short'], (0, 4), (4, 1), job='the shelf\'s field wall',
+              turn={'e': {'props': ['drystone_wall_ns'], 'kind': 'low_wall'},
+                    'w': {'props': ['drystone_wall_ns'], 'kind': 'low_wall'},
+                    'n': {'props': ['drystone_wall_short'], 'kind': 'low_wall'}}),
+            m('stile', 'gate', ['stile_step', 'squeeze_stile'], (4, 3), (4, 2), blocks=False, dress=False,
+              job='lets walkers over the wall',
+              turn={'e': {'props': ['stile_step_side'], 'kind': 'gate'}, 'w': {'props': ['stile_step_side'], 'kind': 'gate'},
+                    'n': {'props': ['stile_step'], 'kind': 'gate'}}),
+            m('wall_e', 'low_wall', ['drystone_wall_short'], (8, 4), (4, 1), job='the shelf\'s field wall',
+              turn={'e': {'props': ['drystone_wall_ns'], 'kind': 'low_wall'},
+                    'w': {'props': ['drystone_wall_ns'], 'kind': 'low_wall'},
+                    'n': {'props': ['drystone_wall_short'], 'kind': 'low_wall'}}),
+        ],
+        'clear': [{'why': 'the stile\'s approach, north', 'rect': [4, 1, 4, 2]},
+                  {'why': 'the stile\'s approach, south', 'rect': [4, 5, 4, 2]}],
+        'crossing': {'rect': [4, 0, 4, 7], 'max_width': 24,
+                     'why': 'a footpath (a trod, 24 px) runs over the stile, north to south'},
+    },
 }
 
 
@@ -640,7 +974,15 @@ def check_recipes() -> list:
 
 
 # kinds a recipe uses that the size guide does not have yet (asked of Claude A on the board)
-NEW_KINDS = {'hedge': 'a clipped or laid hedge, n x 2 cells, 16 to 24 tall'}
+NEW_KINDS = {
+    'hedge': 'a clipped or laid hedge, n x 2 cells, 16 to 24 tall',
+    'channel': 'an irrigation channel flush with the ground, n x 1 cells (wet)',
+    'buffer_stop': 'a rail buffer stop, 2 x 1 cells, 10 to 16 tall',
+    'track': 'rails laid in the ground, n x 1 cells, flat',
+    'ground_patch': 'a flat patch drawn on the ground (crust, drift, tracks), sized by its rect',
+    'bath_pool': 'a stone-rimmed bathing pool, 5 x 3 cells, its rim 4 to 8 tall',
+    'landing_stage': 'a timber landing stage over the water\'s edge, 4 x 3 cells, deck 4 to 8 above the water',
+}
 
 
 # --- cell geometry ---------------------------------------------------------------------
@@ -812,19 +1154,51 @@ def dist_to_line(p, pts) -> float:
     return best
 
 
+_SEGS: dict = {}
+
+
+def _segs(lines):
+    """The segments of some polylines as numpy arrays, cached by the polylines' identity
+    (a plan's path point lists live as long as the plan)."""
+    key = tuple(id(pts) for pts in lines)
+    hit = _SEGS.get(key)
+    if hit is None:
+        a = [(*pa, *pb) for pts in lines for pa, pb in zip(pts, pts[1:])]
+        arr = np.array(a, dtype=float).reshape(-1, 4)
+        hit = (list(lines), arr)
+        _SEGS[key] = hit
+    return hit[1]
+
+
 def nearest_on_lines(p, lines):
-    best = (1e9, None)
-    for pts in lines:
-        for a, b in zip(pts, pts[1:]):
-            ax, ay, bx, by = *a, *b
-            dx, dy = bx - ax, by - ay
-            L2 = dx * dx + dy * dy or 1.0
-            t = max(0.0, min(1.0, ((p[0] - ax) * dx + (p[1] - ay) * dy) / L2))
-            q = (ax + t * dx, ay + t * dy)
-            d = math.hypot(p[0] - q[0], p[1] - q[1])
-            if d < best[0]:
-                best = (d, q)
-    return best
+    """(distance, nearest point) from p to some polylines; (1e9, None) with none."""
+    if not lines:
+        return (1e9, None)
+    if sum(len(pts) for pts in lines) < 48:  # few segments: plain Python is quicker than numpy
+        best = (1e9, None)
+        for pts in lines:
+            for a, b in zip(pts, pts[1:]):
+                ax, ay, bx, by = *a, *b
+                dx, dy = bx - ax, by - ay
+                L2 = dx * dx + dy * dy or 1.0
+                t = max(0.0, min(1.0, ((p[0] - ax) * dx + (p[1] - ay) * dy) / L2))
+                q = (ax + t * dx, ay + t * dy)
+                d = math.hypot(p[0] - q[0], p[1] - q[1])
+                if d < best[0]:
+                    best = (d, q)
+        return best
+    seg = _segs(lines)
+    if not len(seg):
+        return (1e9, None)
+    ax, ay, bx, by = seg[:, 0], seg[:, 1], seg[:, 2], seg[:, 3]
+    dx, dy = bx - ax, by - ay
+    L2 = dx * dx + dy * dy
+    L2[L2 == 0] = 1.0
+    t = np.clip(((p[0] - ax) * dx + (p[1] - ay) * dy) / L2, 0, 1)
+    qx, qy = ax + t * dx, ay + t * dy
+    d = np.hypot(p[0] - qx, p[1] - qy)
+    i = int(np.argmin(d))
+    return (float(d[i]), (float(qx[i]), float(qy[i])))
 
 
 class Ground:
@@ -967,7 +1341,8 @@ def _line_dist(cx, cy, pts):
 #   by:water:N       water within N px of its foot (a boat, a net rack, a bollard, a palm)
 #   by:dwelling:N    a building or a lived-in place within N px (stores, a planter, a butt)
 DWELLING_KINDS = {'hamlet', 'village', 'town', 'frontier', 'farm', 'house', 'cottage', 'inn', 'shed', 'hut',
-                  'npc', 'station', 'shop', 'store', 'workshop', 'mill', 'boathouse', 'camp', 'cabin', 'bothy'}
+                  'npc', 'station', 'shop', 'store', 'workshop', 'mill', 'boathouse', 'camp', 'cabin', 'bothy',
+                  'forge', 'smithy', 'market', 'castle', 'keep', 'mine', 'springs', 'platform', 'stop', 'halt'}
 VIEW_KINDS = {'view', 'lookout', 'viewpoint'}
 REASONS = ('faces', 'lights', 'near', 'by')
 
@@ -1565,6 +1940,7 @@ def main(argv) -> int:
         with open(plan_id if plan_id.endswith('.json') else os.path.join(PLANS, f'{plan_id}.json')) as fh:
             plan = json.load(fh)
         seed = int(argv[argv.index('--seed') + 1]) if '--seed' in argv else 0
+        radius = int(argv[argv.index('--radius') + 1]) if '--radius' in argv else 64
         area = argv[argv.index('--area') + 1] if '--area' in argv else None
         near = [float(v) for v in argv[argv.index('--near') + 1].split(',')] if '--near' in argv else None
         others = [expand(e['recipe'], e['at'], e.get('orient', 's'), e.get('mirror', False), e.get('seed', 0))
@@ -1573,7 +1949,7 @@ def main(argv) -> int:
         if plan.get('biome') not in RECIPES[recipe]['biomes']:
             print(f'note: {recipe} belongs in {RECIPES[recipe]["biomes"]}, this plan is {plan.get("biome")}; '
                   'add "any_biome": true to the entry if you mean it')
-        pl, faults = place(plan, recipe, area=area, near=near, seed=seed, others=others, skip=skip)
+        pl, faults = place(plan, recipe, area=area, near=near, seed=seed, others=others, skip=skip, radius=radius)
         if pl is None:
             print('no place:', *faults, sep='\n  ')
             return 1
