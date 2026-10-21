@@ -87,6 +87,7 @@ BASES = {
     'panel':     ('accent:station', '#7A8296'),     # inner deck and bulkhead metal
     'regolith':  ('accent:moon', '#8E877E'),        # grey to brown-grey (Matt, 20 Oct)
     'void':      ('accent:station,moon', '#2A2C44'),  # space seen through glass, the sky past the moon
+    'crag':      ('accent:highland', '#8A5546'),    # warm dark highland rock (cliff_core.py, from the cliff bake-off)
     # glows: light sources, a deep colour up to a near-white core
     'lamp':      ('glow', '#F0B050'),
     'neon_pink': ('glow', '#F04A9E'),
