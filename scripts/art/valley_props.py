@@ -16,6 +16,7 @@ import garden_props as gp  # noqa: E402
 import style  # noqa: E402
 import wayside_props  # noqa: E402  the rebuilt valley's wayside kit (bench, fingerpost, gate, stile, trough, noticeboard, well)
 import valley_named_props  # noqa: E402  its named things (shrines, hives, scarecrow, cairns, fold, hut, hay barn, old oak)
+import valley_edge_props  # noqa: E402  its border blockers (thicket, bramble, gorse, fallen tree, boulders, three sizes each)
 from materials import MATERIALS, WOOD, STONE, LEAF, RED, WTR, PLASTER, GOLD, NAP, SLATE, G, SNOW  # noqa: E402
 
 ROPE, TAR = MATERIALS['rope'], MATERIALS['tar']
@@ -2286,6 +2287,7 @@ def props() -> dict[str, Canvas]:
         'holly': holly(), 'bramble': bramble(),
         **wayside_props.props(),
         **valley_named_props.props(),
+        **valley_edge_props.props(),
     }
 
 
