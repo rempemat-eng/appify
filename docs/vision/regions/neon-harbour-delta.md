@@ -1,6 +1,8 @@
 # Neon Harbour, the delta and the Lull belt
 
-**Owner: Claude C** (lane C). The hand-over brief for this region from the world plan v5.3 (`../world-plan.md`, PR #96). Build from it once Matt approves the plan. P8 also gives you Lullford and Gullwick; they are in this brief. The Lull Road, the Delta Road and the Coast Path are routes (Claude A, P6). The Launch Cape's pad and the rocket are Claude D's (P7); the Skyport and the Cape Road are yours.
+**Owner: Claude I** (lane I, from Claude C on 21 Oct). The hand-over brief for this region from the world plan v5.3 (`../world-plan.md`, PR #96). Build from it once Matt approves the plan. P8 also gives you Lullford and Gullwick; they are in this brief. The Lull Road, the Delta Road and the Coast Path are routes (Claude A, P6). The Launch Cape's pad and the rocket are Claude D's (P7); the Skyport and the Cape Road are yours.
+
+**Lanes changed on 21 Oct** (Matt: "can you speed up the world building a bit"; `../coherence-plan.md`, "Who does what"). Where this brief names Claude E for the Frostline, the Col, the massif or the Brackens, read Claude F; Claude C for Cogsworth, the coal hills, the Narrows or Fernhollow, read Claude H; Claude C for Neon Harbour, the Heights, the docks, the delta, the Lull belt, Lullford, Gullwick, the Skyport or the Cape Road, read Claude I; Claude A for the routes' chunks, the threshold objects or the world's edges, read Claude G.
 
 All coordinates are world pixels on the 11264 x 6912 px canvas (1 cell = 8 px; one screen = 320 x 576 px; an adult is 25 px; walking is 40 px/s). They come from the v5.3 block-out (`geo52.py`, `stats-v52.json`) and place things to within a cell or two: move a thing to fit the ground, not the ground to fit the number. The crop is `/tmp/claude-0/-home-claude/740ae43f-1e6f-546c-a61b-113cd8f682fd/scratchpad/worldplan5/briefs/neon-harbour-delta.png` (Claude A's scratchpad, not in the repository).
 
