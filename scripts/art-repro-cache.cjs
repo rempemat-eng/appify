@@ -29,8 +29,20 @@ function toolFingerprint(root) {
   const hash = crypto.createHash('sha256'),
     seen = new Set(),
     chunk = Buffer.alloc(1024 * 1024);
-  function walk(full) {
+  function walk(full, excluded = new Set()) {
+    const entry = fs.lstatSync(full);
+    if (entry.isSymbolicLink()) {
+      hash.update(JSON.stringify(['symlink', full, fs.readlinkSync(full)]));
+      try {
+        fs.statSync(full);
+      } catch (error) {
+        if (!['ENOENT', 'ENOTDIR', 'ELOOP'].includes(error.code)) throw error;
+        hash.update(JSON.stringify(['unresolved-link', error.code]));
+        return;
+      }
+    }
     const real = fs.realpathSync(full);
+    if (excluded.has(real)) return;
     hash.update(JSON.stringify([full, real]));
     if (seen.has(real)) return;
     seen.add(real);
@@ -38,7 +50,7 @@ function toolFingerprint(root) {
     hash.update(String(stat.mode & 0o777));
     if (stat.isDirectory()) {
       for (const name of fs.readdirSync(real).sort((a, b) => a.localeCompare(b))) {
-        walk(path.join(real, name));
+        walk(path.join(real, name), excluded);
       }
     } else if (stat.isFile()) {
       const fd = fs.openSync(real, 'r');
@@ -55,12 +67,26 @@ function toolFingerprint(root) {
     [
       '-B',
       '-c',
-      'import json,sys,sysconfig,pathlib; p=[sys.executable]+[str(pathlib.Path(q).resolve()) for q in sys.path if q and pathlib.Path(q).exists()]; lib=pathlib.Path(sysconfig.get_config_var("LIBDIR"))/str(sysconfig.get_config_var("LDLIBRARY")); print(json.dumps(p+([str(lib)] if lib.exists() else [])))',
+      [
+        'import importlib,json,pathlib,site,sys,sysconfig',
+        'packages=[importlib.import_module(name) for name in ("PIL","numpy","scipy")]',
+        'stdlib=pathlib.Path(sysconfig.get_path("stdlib")).resolve()',
+        'excluded=[str(pathlib.Path(p).resolve()) for p in site.getsitepackages()+[site.getusersitepackages(),sysconfig.get_path("purelib"),sysconfig.get_path("platlib")]]',
+        'lib=pathlib.Path(sysconfig.get_config_var("LIBDIR"))/str(sysconfig.get_config_var("LDLIBRARY"))',
+        'inputs=[sys.executable,str(stdlib)]+([str(lib)] if lib.exists() else [])',
+        'package_inputs=[{"name":p.__name__,"version":p.__version__,"path":str(pathlib.Path(p.__file__).resolve().parent)} for p in packages]',
+        'print(json.dumps({"version":sys.version,"inputs":inputs,"excluded":excluded,"packages":package_inputs}))',
+      ].join('\n'),
     ],
     { encoding: 'utf8', timeout: 30_000 },
   );
   if (python.status !== 0 || python.error)
     throw new Error(`Cannot fingerprint Python: ${python.stderr}`);
+  const pythonTools = JSON.parse(python.stdout);
+  // Site-package roots are not runtime inputs. Only the three imported package trees
+  // below are scanned, including their actual native extensions and package data.
+  // Runtime traversal excludes these roots even when they live beneath stdlib.
+  const excluded = new Set(pythonTools.excluded.map((p) => path.resolve(p)));
   for (const name of ['npm', 'npx', 'git']) {
     const executable = (process.env.PATH || '')
       .split(path.delimiter)
@@ -79,7 +105,15 @@ function toolFingerprint(root) {
   }
   walk(process.execPath);
   walk(path.join(root, 'node_modules'));
-  for (const full of JSON.parse(python.stdout)) walk(full);
+  hash.update(JSON.stringify(pythonTools));
+  for (const full of pythonTools.inputs) walk(full, excluded);
+  for (const pkg of pythonTools.packages) {
+    walk(pkg.path);
+    // Wheel-provided shared libraries sit beside, rather than inside, these packages.
+    const name = pkg.name === 'PIL' ? 'pillow' : pkg.name;
+    const libraries = path.join(path.dirname(pkg.path), `${name}.libs`);
+    if (fs.existsSync(libraries)) walk(libraries);
+  }
   hash.update(JSON.stringify([process.version, process.platform, process.arch]));
   return hash.digest('hex');
 }

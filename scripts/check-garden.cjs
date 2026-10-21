@@ -336,6 +336,13 @@ for (const name of [
   deps[`@/lib/${name}`] = domainModule.exports;
 }
 deps['@/lib/layout'] = { gameLayout: { maxWidth: 640 }, hudClearance: (top) => top + 60 };
+// the art density (lib/art-density.ts): the native default, as the app reads it
+const densityModule = { exports: {} };
+evaluate('lib/art-density.ts', densityModule);
+deps['./art-density'] = densityModule.exports;
+const densitySettingModule = { exports: {} };
+evaluate('lib/art-density-setting.ts', densitySettingModule);
+deps['@/lib/art-density-setting'] = densitySettingModule.exports;
 const scaleModule = { exports: {} };
 evaluate('lib/pixel-scale.ts', scaleModule);
 deps['@/lib/pixel-scale'] = scaleModule.exports;
@@ -484,6 +491,12 @@ const check = (condition, label) => {
   assert.ok(condition, label);
   count++;
 };
+// A node's pointer events, from the prop or (since C25 moved it there for react-native-web 0.21)
+// from its style, flattened the way React Native flattens style arrays.
+const flatStyle = (style) =>
+  Array.isArray(style) ? Object.assign({}, ...style.map(flatStyle)) : style || {};
+const pointerEventsOf = (element) =>
+  element.props.pointerEvents ?? flatStyle(element.props.style).pointerEvents;
 // Arrays from vm contexts have different prototypes; compare their plain data.
 const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
@@ -751,7 +764,7 @@ for (const viewMode of ['flat', 'tilt']) {
         if (split)
           check(
             box.zIndex > map.GARDEN.fenceY - 4 &&
-              elements.find((element) => element.key === `${object.id}-art`).props.pointerEvents ===
+              pointerEventsOf(elements.find((element) => element.key === `${object.id}-art`)) ===
                 'none',
             `${platform}/${width}/${object.id}: hit area is above guardian while art stays passive`,
           );
@@ -1145,7 +1158,7 @@ for (const kind of ['read', 'water', 'pond', 'pat', 'lantern']) {
   resetChild();
   let child = renderReaction(reaction);
   check(
-    child.props.pointerEvents === 'none' &&
+    pointerEventsOf(child) === 'none' &&
       !allElements(child).some((element) => element.type === 'Pressable'),
     `${kind}: effect cannot intercept interaction`,
   );
@@ -1490,7 +1503,7 @@ for (const viewMode of ['flat', 'tilt']) {
         location.y + 16,
       );
       check(
-        ornament.props.pointerEvents === 'none' &&
+        pointerEventsOf(ornament) === 'none' &&
           ornament.props['aria-hidden'] === true &&
           ornament.props.accessibilityElementsHidden === true &&
           !allElements(ornament).some((node) => node.type === 'Pressable'),
@@ -1673,7 +1686,7 @@ for (const [identity, motifColor] of [
     signatureTree = renderReaction(identityReaction, true, projection);
     check(
       intervals.size === 0 &&
-        signatureTree.props.pointerEvents === 'none' &&
+        pointerEventsOf(signatureTree) === 'none' &&
         !allElements(signatureTree).some((node) => node.type === 'Pressable') &&
         allElements(signatureTree).some((node) => node.props.style?.backgroundColor === motifColor),
       `${signature.family}/${viewMode}: reduced motif remains visible and passive without a clock`,

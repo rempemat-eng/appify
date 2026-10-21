@@ -596,8 +596,8 @@ ANCHORS = {
         {'id': 'hut-pool', 'kind': 'night', 'x': 30, 'y': 112, 'w': 76, 'h': 18},
         {'id': 'hut-window-l', 'kind': 'night', 'x': 36, 'y': 82, 'w': 14, 'h': 16},
         {'id': 'hut-window-r', 'kind': 'night', 'x': 86, 'y': 82, 'w': 14, 'h': 16},
-        {'id': 'stall-glow', 'kind': 'night', 'x': 224, 'y': 56, 'w': 76, 'h': 22},
-        {'id': 'stall-pool', 'kind': 'night', 'x': 218, 'y': 98, 'w': 88, 'h': 16},
+        {'id': 'stall-glow', 'kind': 'night', 'x': 224, 'y': 80, 'w': 76, 'h': 22},  # under the awning, on the counter it lights (lane R, 21 Oct 16:29), not on the awning's top
+        {'id': 'stall-pool', 'kind': 'night', 'x': 218, 'y': 103, 'w': 88, 'h': 16},  # on the ground in front of the counter (the stall's foot is y 102), not on its awning (lane R, 21 Oct 16:29)
     ],
 }
 

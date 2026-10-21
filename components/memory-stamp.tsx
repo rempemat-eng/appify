@@ -111,10 +111,10 @@ export function MemoryStamp({
 }) {
   return (
     <View
+      style={{ pointerEvents: 'none' }}
       aria-hidden
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants"
-      pointerEvents="none"
     >
       <Svg width={size} height={size} viewBox="0 0 16 16">
         {keepsakeArt[intention].map((pixel) => (

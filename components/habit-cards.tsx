@@ -195,7 +195,7 @@ function CardShine({ gold, inset }: { gold: boolean; inset: number }) {
     transform: [{ translateX: x.value }, { rotate: '20deg' }],
   }));
   return (
-    <View pointerEvents="none" style={{ position: 'absolute', inset, overflow: 'hidden' }}>
+    <View style={{ position: 'absolute', inset, overflow: 'hidden', pointerEvents: 'none' }}>
       <Animated.View style={[{ width: 36, height: '140%', top: -20 }, motion]}>
         <LinearGradient
           colors={[c.transparent, gold ? c.amber : c.highlight, c.transparent]}

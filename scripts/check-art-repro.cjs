@@ -20,6 +20,11 @@ const generators = [
   'residents',
   'decor',
   'world_routes',
+  'world_land',
+  // the cliff core's demos and random-outline proofs (docs/vision/cliff-core/)
+  'cliff_core',
+  // the shared 2x kit's golden scenes (art/golden/, scripts/art/native/)
+  'kit_golden',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
@@ -45,6 +50,8 @@ const generatedTypescript = [
   'lib/world-canvas-assets.ts',
   // the routes between the regions (scripts/art/world_routes.py, lane G)
   'lib/world-routes.ts',
+  // the land between, the edges and the beyond (scripts/art/world_land.py, lane G)
+  'lib/world-land.ts',
 ];
 const splitPaths = (value) => value.split('\0').filter(Boolean);
 
@@ -212,6 +219,7 @@ async function checkArtParallel({
   log = console.log,
   worker = groupWorker,
   tools,
+  fingerprintInputs = fingerprint,
 }) {
   if (serial) return checkArtReproducibility({ root, log }); // Original full, ordered reference.
   jobs = concurrency(jobs);
@@ -220,7 +228,16 @@ async function checkArtParallel({
     const files = trackedFiles(root);
     return { source: hashFiles(root, files) };
   };
-  const before = cold ? coldFingerprint() : fingerprint({ root, tools });
+  let before;
+  try {
+    before = cold ? coldFingerprint() : fingerprintInputs({ root, tools });
+  } catch (error) {
+    // Unreadable tools must never certify a cache hit. Full regeneration still
+    // validates every output and propagates generator/formatter/sprite failures.
+    log(`[art-repro] cache unavailable: ${error.message}; using full cold regeneration`);
+    cold = true;
+    before = coldFingerprint();
+  }
   const cacheDir = path.join(root, '.cache', 'art-repro');
   const cacheFile = cold ? null : path.join(cacheDir, `${before.key}.json`);
   let hit = false;
@@ -243,7 +260,7 @@ async function checkArtParallel({
       result.status === 'fulfilled' ? result.value.failures : [String(result.reason)],
     )
     .concat(final.failures);
-  const after = cold ? coldFingerprint() : fingerprint({ root, tools });
+  const after = cold ? coldFingerprint() : fingerprintInputs({ root, tools });
   if (before.source !== after.source || before.key !== after.key)
     failures.push('Source or installed tools changed during check; rerun');
   const changed = [

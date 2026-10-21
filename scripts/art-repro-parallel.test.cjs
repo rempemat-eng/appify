@@ -65,6 +65,15 @@ async function main() {
       reference.outputDigest,
       'parallel output bytes/modes equal ordered cold output',
     );
+    const unavailable = await checkArtParallel({
+      ...options,
+      fingerprintInputs() {
+        throw new Error('EACCES: fake unreadable tool directory');
+      },
+    });
+    assert.ok(unavailable.ok, 'unreadable tools fall back to actual full regeneration');
+    assert.equal(unavailable.cacheHit, false);
+    assert.equal(unavailable.outputDigest, reference.outputDigest);
     assert.ok(
       !fs.existsSync(path.join(root, '.cache/art-repro')),
       'forced cold never publishes a certificate',

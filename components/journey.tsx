@@ -15,7 +15,7 @@ import { useAppActive } from '@/lib/app-active';
 import { JOURNEY, journeyLayers, journeyVehicles } from '@/lib/journey-assets';
 import { BodyText } from '@/components/pixel-feedback';
 import { PixelButton } from '@/components/game-ui';
-import { PixelFrame } from '@/components/pixel-frame';
+import { PixelFrame, usePixelUnit } from '@/components/pixel-frame';
 import { GuardianPet } from '@/components/guardian-pet';
 import { useGame } from '@/lib/game';
 import { flightOf } from '@/lib/rocket-flight';
@@ -101,6 +101,8 @@ export function Journey({
   vehicle?: JourneyVehicle;
 }) {
   const reduced = useReducedMotion();
+  // `u` is the world's unit for the journey's art; the label's frame takes the interface's
+  const ui = usePixelUnit();
   const active = useAppActive();
   const t = useSharedValue(0);
   const done = useRef(false);
@@ -189,7 +191,7 @@ export function Journey({
           alignItems: 'center',
         }}
       >
-        <PixelFrame tone="paper" style={{ paddingVertical: 4 * u, paddingHorizontal: 8 * u }}>
+        <PixelFrame tone="paper" style={{ paddingVertical: 4 * ui, paddingHorizontal: 8 * ui }}>
           <BodyText
             style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 14 }}
           >{`TO ${label}`}</BodyText>
@@ -419,8 +421,11 @@ function StillPair({
         insetBottom={insetBottom}
       />
       <Animated.View
-        style={[{ position: 'absolute', left: 0, top: 0, width, height }, fadeIn]}
-        pointerEvents="none"
+        style={[
+          { position: 'absolute', left: 0, top: 0, width, height },
+          fadeIn,
+          { pointerEvents: 'none' },
+        ]}
       >
         <RocketScene
           flight={flight}

@@ -175,6 +175,10 @@
     "glowflora": {
       "kind": "glow",
       "body": "#36D0B0"
+    },
+    "crag": {
+      "kind": "accent:highland",
+      "body": "#8A5546"
     }
   },
   "ramps": {
@@ -278,7 +282,10 @@
     "neon_pink": ["#50052E", "#8D0A56", "#C81C7D", "#F04A9E", "#FDA6C1", "#FFF4F6"],
     "neon_cyan": ["#014751", "#0F7180", "#159BB0", "#2CC0D8", "#96DEE7", "#E3FDFE"],
     "lava": ["#532000", "#8B3B01", "#C3570A", "#F27222", "#FCB68A", "#FFF5ED"],
-    "glowflora": ["#015243", "#077F69", "#21AA8F", "#36D0B0", "#9FE6CC", "#E6FEF2"]
+    "glowflora": ["#015243", "#077F69", "#21AA8F", "#36D0B0", "#9FE6CC", "#E6FEF2"],
+    "crag": ["#300516", "#501F26", "#6E3936", "#8A5546", "#A46F54", "#B78967"],
+    "crag_warm": ["#32040F", "#54201E", "#753E2F", "#945C41", "#AE7650", "#BF9166"],
+    "crag_cool": ["#30051A", "#4C1C29", "#683337", "#814C45", "#9B6553", "#AE7F63"]
   },
   "edges": {
     "grass": "#242924",
@@ -312,7 +319,8 @@
     "hull": "#393341",
     "panel": "#231E2E",
     "regolith": "#1A1518",
-    "void": "#1E1729"
+    "void": "#1E1729",
+    "crag": "#28141D"
   },
   "kinds": {
     "grass": "core",
@@ -415,7 +423,10 @@
     "neon_pink": "glow",
     "neon_cyan": "glow",
     "lava": "glow",
-    "glowflora": "glow"
+    "glowflora": "glow",
+    "crag": "accent:highland",
+    "crag_warm": "sibling:crag",
+    "crag_cool": "sibling:crag"
   },
   "from_materials": {
     "grass": {
