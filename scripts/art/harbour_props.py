@@ -325,40 +325,6 @@ def lighthouse() -> Canvas:
     return cv
 
 
-def fishing_boat(length: int = 64, hull=WTR) -> Canvas:
-    """A small fishing boat at its mooring, 64 x 30, seen from above: a planked hull
-    lit along its port side, a little wheelhouse, a stub mast, coiled rope and a float."""
-    w, h = length, 30
-    cv = Canvas(w, h, pad=PAD)
-    body = set()
-    for x in range(2, w - 2):
-        t = (x - 2) / (w - 4)
-        half = (8 + 2.5 * min(1.0, t * 8)) if t < 0.58 else 10.5 * (1 - ((t - 0.58) / 0.42) ** 1.7)  # blunt stern, pointed bow
-        for y in range(int(15 - half), int(15 + half) + 1):
-            body.add((x, y))
-    for (x, y) in body:
-        edge = (x, y - 1) not in body or (x, y + 1) not in body or (x - 1, y) not in body or (x + 1, y) not in body
-        if edge:
-            cv.set(x, y, hull[3] if y < 15 else hull[1])
-        else:
-            cv.set(x, y, WOOD[3] if (y % 3) else WOOD[2])
-    for (x, y) in body:
-        inner = all((x + dx, y + dy) in body for dx in (-2, 2) for dy in (-2, 2))
-        if not inner and not ((x, y - 1) not in body or (x, y + 1) not in body):
-            cv.set(x, y, hull[2])
-    for (x, y) in rect_set(int(w * 0.55), 9, 12, 12):  # the wheelhouse roof
-        cv.set(x, y, PLASTER[5] if y < 12 else PLASTER[3])
-    cv.rect(int(w * 0.55) + 2, 18, 8, 2, '#3E5468')
-    for (x, y) in disc(int(w * 0.3), 15, 2):
-        cv.set(x, y, WOOD[1])
-    for k in range(10):  # a coil of rope
-        a = k * 0.7
-        cv.set(int(w * 0.2 + math.cos(a) * 3), int(15 + math.sin(a) * 3), ROPE[2])
-    for (x, y) in disc(int(w * 0.4), 7, 1.8):
-        cv.set(x, y, RED[3] if x < w * 0.4 else RED[2])
-    return cv
-
-
 CORK = ['#6A4A2A', '#9A7046', '#C49A62', '#E0BE86']
 
 
@@ -1122,109 +1088,18 @@ def driftwood() -> Canvas:
     return gp.keep_foot(cv, 34, 12)
 
 
-def sailboat() -> Canvas:
-    """A sailing dinghy out past the breakwater at the size guide's sailboat (the prop
-    audit and size check: it was 46 tall, under 56 to 96), drawn 52 x 76 and re-seated
-    so its waterline stays where the zone placed it: a clinker hull seen from a little
-    above and abeam, its white topsides lit on the west and turning into shade under the
-    gunwale, a blue sheer strake, the planks' lands as lines along it, the varnished
-    thwart and the tiller at the transom; a mast stepped through the thwart with its
-    forestay and shroud, a mainsail bellied by the wind with its seams and two battens,
-    the boom along its foot and the sheet to the stern, a small jib forward; the water
-    dark along the hull, the bow wave lit and the wake behind it."""
-    w, h = 52, 76
-    cv = Canvas(w, h, pad=PAD)
-    HULL = MATERIALS['hull']
-    wl = h - 9  # the waterline
-    bow, stern = w - 5, 6
-    for x in range(stern, bow + 1):  # the hull: the far gunwale and the inside, then the near side
-        t = (x - stern) / (bow - stern)
-        sheer = wl - 8 + int(round((t - 0.55) ** 2 * 8))
-        far = sheer - 4 + int(round(t ** 3 * 4))  # the far gunwale, closing to the stem
-        keel = wl + (2 if t < 0.85 else 1)
-        for y in range(far, sheer):  # the inside of the hull: varnished planking, the floor in shade
-            d = y - far
-            cv.set(x, y, WOOD[3] if d == 0 else WOOD[2] if d < 2 else WOOD[1])
-        if t < 0.92:
-            cv.set(x, far, WOOD[4] if t < 0.6 else WOOD[3])  # the far gunwale's lit rail
-        for y in range(sheer, keel + 1):
-            if t > 0.9 and y > sheer + (t - 0.9) * 50:
-                continue  # the bow's rake
-            d = y - sheer
-            c = PLASTER[5] if d < 3 else PLASTER[4] if d < 5 else PLASTER[3] if y < wl else HULL[2]
-            if d in (1, 2):
-                c = HULL[4] if t < 0.6 else HULL[3]  # the blue sheer strake
-            if d == 5 and y < wl:
-                c = PLASTER[2]  # a plank's land
-            if t > 0.7 and y < wl and d > 2:
-                c = PLASTER[3] if d != 5 else PLASTER[2]  # the bow quarter turning from the light
-            if y >= wl:
-                c = HULL[2] if t < 0.6 else HULL[1]  # the antifouling below the waterline
-            cv.set(x, y, c)
-        if x < bow - 2:
-            cv.set(x, sheer, WOOD[3] if t < 0.7 else WOOD[2])  # the near gunwale's varnished rail
-    for y in range(wl - 8, wl + 2):  # the transom
-        cv.set(stern - 1, y, PLASTER[3] if y < wl else HULL[1])
-    cv.hline(stern + 6, wl - 10, 8, WOOD[4]); cv.hline(stern + 6, wl - 9, 8, WOOD[2])  # the thwart
-    for i in range(6):  # the tiller over the transom
-        cv.set(stern + i, wl - 11 - i // 3, WOOD[3])
-    mx = stern + 20
-    top = 3
-    for y in range(top, wl - 9):  # the mast
-        cv.set(mx, y, WOOD[3]); cv.set(mx + 1, y, WOOD[1])
-    cv.hline(mx - 1, top - 1, 3, SLATE[2])
-    n = wl - 9 - top
-    for i in range(n):  # the forestay from the masthead to the stemhead
-        fy = top + 1 + i
-        fx = mx + 2 + int(i * (bow - 3 - mx - 2) / n)
-        cv.set(fx, fy, SLATE[3])
-    boom_y = wl - 17
-    for y in range(top + 2, boom_y):  # the mainsail, bellied to the east, aft of the mast
-        f = (y - top - 2) / (boom_y - top - 2)
-        span = int(2 + f * 20 + math.sin(f * math.pi) * 4)
-        for x in range(mx - span, mx):
-            u = (mx - x) / max(1, span)
-            k = 4 if 0.22 <= u < 0.62 else 3 if u < 0.86 else 2  # the belly lit, the leech falling into shade
-            if u >= 0.5 and (x - mx + (boom_y - y) // 2) % 8 in (0, 1):
-                k = max(1, k - 1)  # a fold running up from the clew where the cloth sags
-            if (y - top) % 9 == 0:
-                k = 2 if (x // 2) % 2 else 3  # a seam, its stitching
-            if y in (top + 20, top + 38) and u < 0.5:
-                k = 1  # a batten pocket
-            if y == boom_y - 7:
-                k = 2  # the reef band
-            cv.set(x, y, SAILCLOTH[k])
-        cv.set(mx - span - 1, y, SAILCLOTH[1])  # the leech, in shade
-        cv.set(mx - 1, y, ROPE[2] if y % 4 else ROPE[1])  # the bolt rope along the luff
-    for x in range(mx - 21, mx - 1, 4):  # reef points tied under the reef band
-        cv.vline(x, boom_y - 6, 3, ROPE[2])
-    cv.hline(mx - 23, boom_y - 1, 23, ROPE[1])  # the bolt rope along the foot
-    cv.hline(mx - 24, boom_y, 25, WOOD[2]); cv.hline(mx - 24, boom_y + 1, 25, WOOD[1])  # the boom
-    for i in range(6):
-        cv.set(mx - 22 + i // 2, boom_y + 2 + i, ROPE[2])  # the mainsheet to the stern
-    for y in range(top + 14, wl - 12):  # the jib forward of the mast
-        f = (y - top - 14) / (wl - 12 - top - 14)
-        span = int(f * 10)
-        for x in range(mx + 2, mx + 2 + span):
-            cv.set(x, y, SAILCLOTH[3] if x < mx + 2 + span - 2 else SAILCLOTH[2])
-    for x in range(stern - 1, bow + 2):  # the dark water hugging the hull, the bow wave, the wake
-        cv.set(x, wl + 3, (30, 46, 72, 150))
-    cv.hline(bow - 4, wl + 1, 4, '#E6EEF6'); cv.hline(bow - 2, wl + 2, 3, '#C6DDEE')
-    for (x0, y0, n) in ((stern - 8, wl + 2, 6), (stern - 14, wl + 4, 5), (stern - 4, wl + 5, 4)):
-        cv.hline(x0, y0, n, (230, 238, 246, 170))
-    return gp.keep_foot(cv, 40, 52, dx=-6)
-
-
 def props() -> dict[str, Canvas]:
+    import boat_props  # the rowing boats and the dinghy, redrawn to the house standard (wave 2)
     return {
+        **boat_props.props(),
         'cottage': cottage(80, 0), 'cottage_b': cottage(72, 1, door=RED, shutters=LEAF, net=''),
         'cottage_c': cottage(80, 2, door=LEAF, porch=True, net='left'),
         'cottage_d': cottage(76, 3, door=GOLD, shutters=WTR, shed=20, net=''), 'lighthouse': lighthouse(),
-        'boat_blue': fishing_boat(64, WTR), 'boat_red': fishing_boat(56, RED), 'net_rack': net_rack(),
+        'net_rack': net_rack(),
         'lobster_pots': lobster_pots(), 'fish_stall': fish_stall(), 'bollard': bollard(), 'anchor': anchor(),
         'upturned_boat': upturned_boat(), 'washing_line': washing_line(), 'washing_line_wall': washing_line(wall=True), 'buoy': buoy(),
         'harbour_ferry': harbour_ferry(), 'pier_ladder': pier_ladder(),
-        'deck_chair': deck_chair(RED), 'deck_chair_b': deck_chair(WTR), 'driftwood': driftwood(), 'sailboat': sailboat(),
+        'deck_chair': deck_chair(RED), 'deck_chair_b': deck_chair(WTR), 'driftwood': driftwood(),
     }
 
 
