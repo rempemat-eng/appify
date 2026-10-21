@@ -56,8 +56,6 @@ def load_plan(path: str = PLAN_PATH) -> dict:
         P = json.load(f)
     W = {w['id']: w for w in P['water']}
     W['delta_arms'] = {'arms': [dict(w, id=w['id'][4:]) for w in P['water'] if w['kind'] == 'distributary']}
-    sea = W['sea']
-    W['sea'] = dict(sea, front=sea['points'][:-2])
     places = {p['id']: p for p in P['places']}
     town, br = places['lullford'], places['lullford_bridge']
     y = br['at'][1]
@@ -395,12 +393,18 @@ def paint(plan: dict | None = None, crop: tuple | None = None, seed: int = 7, lo
     W = plan['water']
     every = np.ones((R.h, R.w), bool)
 
-    # 1. the sea and the delta's front
-    fx = [q[0] - R.ox for q in W['sea']['front']]
-    fy = [q[1] - R.oy for q in W['sea']['front']]
-    front = np.interp(p.x, fx, fy) + 10 * (fbm(p.x, 0 * p.x, 60, seed) - 0.5)
-    sea = p.y > front
-    flats = ~sea & (p.y > front - W['sea']['mudflats'] - 24 * fbm(p.x, p.y, 50, seed + 1))
+    # 1. the sea (the plan's closed sea water, the block-out's coast) and the delta's front
+    from PIL import ImageDraw
+    sea_img = Image.new('L', (R.w, R.h), 0)
+    for w in plan['plan']['water']:
+        if w.get('kind') == 'sea':
+            ImageDraw.Draw(sea_img).polygon([(x - R.ox, y - R.oy) for x, y in w['points']], fill=1)
+            for i in w.get('islands', []):
+                ImageDraw.Draw(sea_img).polygon([(x - R.ox, y - R.oy) for x, y in i['outline']], fill=0)
+    sea = np.asarray(sea_img).astype(bool)
+    near_sea = dilate(sea, 72) & ~sea
+    front = np.where(sea.any(0), sea.argmax(0), R.h)[None, :] + 0 * p.y   # the first sea row in each column
+    flats = near_sea & (p.y > front - 72 - 24 * fbm(p.x, p.y, 50, seed + 1))
     # 2. the channels
     chs, plans, bars, hbs = [], [], [], []
     lull = channel_plan(R, R.pts(W['lull']['points']), W['lull']['width'], seed + 10, bar=True)
