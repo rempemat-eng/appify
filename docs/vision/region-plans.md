@@ -1,0 +1,32 @@
+# Region plans: a region laid out as data before it is painted
+
+Claude F, 21 Oct (lane F: the Frostline, the massif and the Brackens). Matt, 21 Oct 10:03: speed up world building while staying accurate to the rules. A region's layout is written once, as data, in `art/regions/<id>.json`, and everything else reads it: the chunk painter, Claude G's routes (where they enter and leave), the set-piece placement library (Codex C36) and the checks. A mistake in the layout is caught before any art is drawn.
+
+## What a plan holds
+
+All points are world px on the v5.3 canvas (11264 x 6912), on the 8 px grid for structure.
+
+| Field                                                   | What it is                                                                                                                                                                                        |
+| ------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `box`                                                   | the region's footprint from its brief, snapped to the 8 px grid                                                                                                                                   |
+| `base_tier`                                             | which world tier the plan's tier 0 is; provisional until the geography chunk (world plan P1) fixes heights                                                                                        |
+| `tiers`                                                 | outlines in screen space: a tier's top where the camera sees it, its south face hanging 32 px a tier under its south rim (64 where two tiers drop at once), side bands where it ends west or east |
+| `routes`, `trods`                                       | polylines with a width (24 to 64); routes are Claude G's chunks and are drawn here path first, trods are the region's own side paths, pockets and loops                                           |
+| `stairs`                                                | where a path changes tier: on the path, at least 34 px wide (eastward-edges 6: no ramps)                                                                                                          |
+| `water`                                                 | tarns as polygons, streams as polylines with their falls                                                                                                                                          |
+| `named`, `pockets`, `markers`, `egg_spots`, `obstacles` | the brief's section 5 and 7, moved to fit the ground where needed (`moved_from` keeps the brief's point)                                                                                          |
+| `set_pieces`                                            | the cliff core's pieces as `{piece, biome, at, seed}`, the shape of C36's placement file; a biome uses only its own pieces (to-all-reuse-rule)                                                    |
+| `edges`, `thresholds`, `residents`, `ground`            | the layered borders, the thresholds' sides and bands, who lives or crosses where, and the ground kinds by place                                                                                   |
+
+## The check
+
+`npm run check:region-plans` (`scripts/art/region_plan.py --check`, part of `npm run check`) holds every plan to the brief's rules that can be checked before art exists: structure on the grid and inside the box; path widths; no straight run over 240 px and a bend at least every 300 px along a route (benchmark 16); dead ends of 80 px or more ending in a view, a resident, a bench or a story detail (20); every change of tier on a stair (19, 21) and no path along a face; named things, pockets and markers on walkable ground and beside their path; egg spots kept clear; obstacles 800 px apart; the markers' density per screen of route (1). `python3 scripts/art/region_plan.py OUT_DIR` draws each plan (a world px is a quarter pixel) to check it by eye.
+
+It does not judge art: the painted chunk is held to the world audit (`npm run check:world-audit`) and walked in the browser at 360 px.
+
+## The plans
+
+- `brackens.json`: the low heather ridge west of the valley, its two spurs, the Drover's Road through the gap between two gritstone bluffs, the drove well, the sheepfolds and the shepherd's hut, two pockets, the stone ring's egg spot, the loop with the valley by the east trod, and the flank trod north to a view over the Heather spur.
+- `frostline.json`: the cirque above the valley: the Col Path's four switchback legs up the step to W2 at the lip, Snowmelt Lake, the Sleepwater over the lip into Fir Hollow and over its escarpment, the rock rib and the gully trail, the cabin meadow, the High Fells' bench to the Snow Saddle's bothy, the crevasse viewpoint, the spur stair to the High Lookout, and the cliff core's set pieces.
+
+Open: absolute tiers wait for the geography chunk; the Col Path and the High Fells, and the Drover's Road through the Brackens, are Claude G's routes, so their lines here are proposals for G to take or move; the set pieces' names are renamed to the cliff core's library when it lands.
