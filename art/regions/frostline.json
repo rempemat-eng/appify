@@ -1,9 +1,9 @@
 {
-  "_about": "The Frostline as a plan (Claude F, lane F, 21 Oct): the cirque above the home valley, its step and the massif's front above it, from the brief docs/vision/regions/home-valley-frostline-brackens.md (PR #96, v5.3). World px; polylines in order; polygons closed; tier outlines in SCREEN space (a tier's top where the camera sees it, its south face hanging 32 px a tier below its south rim: 64 px where two tiers drop at once, the lip and the escarpment). 'tier' is local (0 = the ground at the box's south edge, the Col hut's level); 'base_tier' is provisional until the geography chunk (world plan P1). Rock, faces, falls and snow are the cliff core's (PR #165): 'set_pieces' places its library's pieces as {piece, biome, at, seed} (the shape of Codex's C36 placement file); the piece names are provisional until the library lands and are renamed to it then. Eastward has no ramps (eastward-edges 6.3), so the brief's ramps on the Col Path are stairs on switchbacks. Checked by scripts/art/region_plan.py.",
+  "_about": "The Frostline as a plan (Claude F, lane F, 21 Oct): the cirque above the home valley, its step and the massif's front above it, from the brief docs/vision/regions/home-valley-frostline-brackens.md (PR #96, v5.3). World px; polylines in order; polygons closed; tier outlines in SCREEN space (a tier's top where the camera sees it, its south face hanging 32 px a tier below its south rim: 64 px where two tiers drop at once, the lip and the escarpment). 'tier' is local (0 = the ground at the box's south edge, the Col hut's level); 'base_tier' is provisional until the geography chunk (world plan P1). Rock, faces, falls and snow are the cliff core's (PR #165): 'set_pieces' places its library's pieces as {piece, biome, at, seed} (the shape of Codex's C36 placement file); the pieces are the library's on claude-a/cliff-core (e94813b): stair, ledge, path, spring, pond, snow_corner, boulders, scree, ivy; two marked proposed are not in it yet. Eastward has no ramps (eastward-edges 6.3), so the brief's ramps on the Col Path are stairs on switchbacks. Checked by scripts/art/region_plan.py.",
   "id": "frostline",
   "owner": "claude-f",
   "biome": "highland",
-  "biomes": ["highland", "snow"],
+  "biomes": ["highland"],
   "box": [5680, 1280, 1120, 1024],
   "base_tier": {
     "value": 7,
@@ -658,6 +658,113 @@
       "what": "cart with a broken wheel",
       "at": [6796, 1596],
       "moved_from": [6755, 1605]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [6028, 1740],
+      "dress": true,
+      "moved_from": [6024, 1752]
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [6020, 1712],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [6016, 1672],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [6004, 1652],
+      "dress": true,
+      "moved_from": [6012, 1640]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [6008, 1600],
+      "dress": true,
+      "moved_from": [6004, 1600]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6364, 1672],
+      "dress": true,
+      "moved_from": [6364, 1676]
+    },
+    {
+      "t": "I",
+      "what": "water trough",
+      "at": [6056, 2160],
+      "dress": true,
+      "moved_from": [6052, 2168]
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [5992, 2180],
+      "dress": true,
+      "moved_from": [6004, 2164]
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [5952, 2156],
+      "dress": true,
+      "moved_from": [5956, 2168]
+    },
+    {
+      "t": "S",
+      "what": "standing stone",
+      "at": [6060, 1864],
+      "dress": true
+    },
+    {
+      "t": "S",
+      "what": "offering stone",
+      "at": [6040, 1824],
+      "dress": true
+    },
+    {
+      "t": "I",
+      "what": "signpost",
+      "at": [6436, 2168],
+      "dress": true,
+      "moved_from": [6444, 2184]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6468, 2204],
+      "dress": true,
+      "moved_from": [6468, 2184]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6500, 2164],
+      "dress": true,
+      "moved_from": [6500, 2172]
+    },
+    {
+      "t": "S",
+      "what": "cairn",
+      "at": [6520, 2156],
+      "dress": true,
+      "moved_from": [6524, 2160]
+    },
+    {
+      "t": "I",
+      "what": "door",
+      "at": [6576, 2144],
+      "why": "the cabin on the meadow (the old Ridge's cabin): its door ends the cabin trod"
     }
   ],
   "obstacles": [
@@ -670,158 +777,160 @@
   ],
   "set_pieces": [
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6200, 2248],
       "seed": 1,
       "stair": "col_1"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6304, 2184],
       "seed": 2,
       "stair": "col_2"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6184, 2112],
       "seed": 3,
       "stair": "col_3"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6232, 2048],
       "seed": 4,
       "stair": "col_lip"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [6312, 1736],
       "seed": 5,
       "stair": "fells_1"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [5992, 1760],
       "seed": 6,
       "stair": "spur_1"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [5992, 1696],
       "seed": 7,
       "stair": "spur_2"
     },
     {
-      "piece": "ledge_stair",
+      "piece": "stair",
       "biome": "highland",
       "at": [5976, 1608],
       "seed": 8,
       "stair": "spur_3"
     },
     {
-      "piece": "fall_pool",
+      "piece": "spring",
       "biome": "highland",
-      "at": [6048, 2008],
+      "at": [6096, 1848],
       "seed": 11,
-      "drop": 64,
-      "why": "the Sleepwater leaves the cirque over the lip"
+      "why": "the Sleepwater leaves the tarn: the cliff core draws a fall at every rim it crosses (the lip into Fir Hollow, Fir Hollow's escarpment) and a plunge pool under each"
     },
     {
-      "piece": "fall_pool",
-      "biome": "highland",
-      "at": [5944, 2240],
-      "seed": 12,
-      "drop": 64,
-      "why": "over Fir Hollow's escarpment into the woodland's spring pool"
-    },
-    {
-      "piece": "outcrop",
+      "piece": "ledge",
       "biome": "highland",
       "at": [6104, 2072],
       "seed": 13,
       "why": "the rock rib"
     },
     {
-      "piece": "outcrop",
+      "piece": "boulders",
       "biome": "highland",
       "at": [6128, 1936],
       "seed": 14,
-      "why": "ibex rocks"
+      "why": "ibex rocks",
+      "size": "l"
     },
     {
-      "piece": "outcrop",
+      "piece": "scree",
       "biome": "highland",
       "at": [6400, 2024],
       "seed": 15,
       "why": "the headwall seen from the Col hut"
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6200, 2280],
       "seed": 16
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6304, 2216],
       "seed": 17
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6184, 2144],
       "seed": 18
     },
     {
-      "piece": "path_bend",
+      "piece": "path",
       "biome": "highland",
       "at": [6232, 2080],
       "seed": 19
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6200, 1576],
       "seed": 21
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6600, 1552],
       "seed": 22
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [5936, 1608],
       "seed": 23
     },
     {
       "piece": "snow_corner",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6040, 1456],
       "seed": 24
     },
     {
       "piece": "glacier_snout",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6248, 1608],
       "seed": 25,
-      "why": "the glacier above the tarn, meltwater into it"
+      "why": "the glacier above the tarn, meltwater into it(not in the cliff core library yet: proposed for the highland biome with snow)",
+      "proposed": true
     },
     {
       "piece": "crevasse_field",
-      "biome": "snow",
+      "biome": "highland",
       "at": [6320, 1504],
-      "seed": 26
+      "seed": 26,
+      "proposed": true,
+      "why": "(not in the cliff core library yet: proposed for the highland biome with snow)"
+    },
+    {
+      "piece": "pond",
+      "biome": "highland",
+      "at": [6160, 1792],
+      "seed": 27,
+      "why": "Snowmelt Lake, the tarn in the cirque floor"
     }
   ],
   "edges": [
@@ -887,5 +996,31 @@
     "high_bench": "scree and alpine turf, cairns",
     "glacier": "snow and blue ice, crevasses",
     "tops": "crags and snow"
-  }
+  },
+  "areas": [
+    {
+      "id": "frostline-00",
+      "rect": [5680, 1280, 384, 512]
+    },
+    {
+      "id": "frostline-01",
+      "rect": [6064, 1280, 384, 512]
+    },
+    {
+      "id": "frostline-02",
+      "rect": [6448, 1280, 352, 512]
+    },
+    {
+      "id": "frostline-10",
+      "rect": [5680, 1792, 384, 512]
+    },
+    {
+      "id": "frostline-11",
+      "rect": [6064, 1792, 384, 512]
+    },
+    {
+      "id": "frostline-12",
+      "rect": [6448, 1792, 352, 512]
+    }
+  ]
 }

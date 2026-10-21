@@ -23,13 +23,18 @@ docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.
   'beside the path' within 48 px of a path, 'a short way off' within 160; a pocket at the end
   of its trod; egg spots clear of every marker and named thing;
 - things stand beside their path, not on it or on a stair;
-- check 1: the markers give each screen of route 2 interactables and 3 story props;
+- check 1: the markers give each screen of route, and each screen area, 2 interactables and 3
+  story props;
+- set pieces from the cliff core's library, or marked proposed;
 - obstacles at least 800 px apart (brief 7); set pieces of this biome only, on the 8 px grid.
 
 Run:
     python3 scripts/art/region_plan.py --check            (every plan; exits non-zero on a fault)
     python3 scripts/art/region_plan.py --fix [ids..]      (moves things that break a placement rule
                                                           to the nearest point that keeps them)
+    python3 scripts/art/region_plan.py --dress [ids..]    (adds dressing slots so every screen area
+                                                          has 2 interactables and 3 story props, then
+                                                          fixes)
     python3 scripts/art/region_plan.py [OUT_DIR] [ids..]  (draws each plan, 1 px a world px / 4,
                                                           to OUT_DIR, default napattack-region-plans
                                                           in the system's temp folder)
@@ -60,6 +65,12 @@ BEND_DEG = 12
 DEAD_MIN = 80
 OBSTACLE_GAP = 800
 DEAD_ENDS = {'view', 'resident', 'bench', 'story'}
+# the cliff core's set pieces (claude-a/cliff-core, PR #165: Plan's pieces); a plan may name one
+# not in it only as 'proposed'
+LIBRARY = {'stair', 'ledge', 'path', 'spring', 'pond', 'snow_corner', 'boulders', 'scree', 'ivy'}
+# what counts on a screen (world_audit's density, benchmark check 1): interactables, and story
+# props (the markers' S slots); named things that are places to use count as interactables
+NAMED_INTERACT = {'well', 'npc', 'landmark', 'camp', 'view', 'shrine'}
 
 
 def load(pid: str) -> dict:
@@ -290,6 +301,13 @@ def check(plan: dict) -> list:
         if have < math.floor(per * screens):
             out.append(f'{pid}: {have} {"interactables" if t == "I" else "story props"} for {screens:.1f} screens '
                        f'of route (at least {per} a screen)')
+    # per screen (an area of the plan): 2 interactables and 3 story props (check 1)
+    for a in plan.get('areas', []):
+        if a.get('walkable') is False:
+            continue
+        i_, s_ = area_counts(plan, a['rect'])
+        if i_ < 2 or s_ < 3:
+            out.append(f'{pid}: area {a["id"]} has {i_} interactables and {s_} story props (2 and 3 a screen)')
     obs = plan.get('obstacles', [])
     for i, a in enumerate(obs):
         if a.get('passed_by') and a['passed_by'] not in paths:
@@ -300,10 +318,55 @@ def check(plan: dict) -> list:
     for sp in plan.get('set_pieces', []):
         if sp['biome'] != plan['biome'] and sp['biome'] not in plan.get('biomes', []):
             out.append(f'{pid}: set piece {sp["piece"]} of biome {sp["biome"]} (this plan: {plan["biome"]})')
+        if sp['piece'] not in LIBRARY and not sp.get('proposed'):
+            out.append(f'{pid}: set piece {sp["piece"]} is not in the cliff core library (mark it proposed)')
         if sp['at'][0] % GRID or sp['at'][1] % GRID:
             out.append(f'{pid}: set piece {sp["piece"]} at {tuple(sp["at"])} off the grid')
         inside(sp['at'], f'set piece {sp["piece"]}')
     return out
+
+
+def area_counts(plan: dict, rect) -> tuple:
+    x, y, w, h = rect
+
+    def inside(p):
+        return x <= p[0] < x + w and y <= p[1] < y + h
+    i_ = sum(1 for m in plan.get('markers', []) if m['t'] == 'I' and not m.get('outside_box') and inside(m['at']))
+    i_ += sum(1 for n in plan.get('named', []) if n['kind'] in NAMED_INTERACT and inside(n['at']))
+    s_ = sum(1 for m in plan.get('markers', []) if m['t'] == 'S' and not m.get('outside_box') and inside(m['at']))
+    return i_, s_
+
+
+DRESS_I = ('bench', 'signpost', 'water trough')
+DRESS_S = ('cairn', 'standing stone', 'cairn', 'offering stone')
+
+
+def dress(plan: dict) -> list:
+    """Add dressing markers (`dress: true`) so each walkable area has 2 interactables and 3 story
+    props, spread along the paths inside it and set off to their side; `fix` then settles them.
+    Returns what was added."""
+    paths = plan.get('routes', []) + plan.get('trods', [])
+    added = []
+    k = len(plan.get('markers', []))
+    for a in plan.get('areas', []):
+        if a.get('walkable') is False:
+            continue
+        x, y, w, h = a['rect']
+        i_, s_ = area_counts(plan, a['rect'])
+        pts = [(px, py, q) for q in paths for px, py, _ in sample(q['points'], 8)
+               if x + 16 <= px < x + w - 16 and y + 16 <= py < y + h - 16]
+        need = [('I', DRESS_I)] * max(0, 2 - i_) + [('S', DRESS_S)] * max(0, 3 - s_)
+        if not pts or not need:
+            continue
+        for j, (t, kinds) in enumerate(need):
+            px, py, q = pts[int((j + 0.5) * len(pts) / len(need))]
+            side = 1 if (j + k) % 2 else -1
+            at = [int(px + side * (q['width'] / 2 + 16)) // 4 * 4, int(py) // 4 * 4]
+            m = {'t': t, 'what': kinds[(k + j) % len(kinds)], 'at': at, 'dress': True}
+            plan['markers'].append(m)
+            added.append((a['id'], m['what'], tuple(at)))
+            k += 1
+    return added
 
 
 def fix(plan: dict) -> list:
@@ -409,9 +472,12 @@ def draw(plan: dict, scale: int = 4) -> Image.Image:
 
 
 def main(argv) -> int:
-    if '--fix' in argv:
+    if '--fix' in argv or '--dress' in argv:
         for pid in [a for a in argv if a in plan_ids()] or plan_ids():
             p = load(pid)
+            if '--dress' in argv:
+                for area, what, at in dress(p):
+                    print(f'{pid}: dressed {area} with a {what} at {at}')
             for what, a, b in fix(p):
                 print(f'{pid}: moved {what} from {a} to {b}')
             with open(os.path.join(PLANS, f'{pid}.json'), 'w') as fh:
