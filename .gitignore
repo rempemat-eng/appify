@@ -56,4 +56,3 @@ _project_metadata.jsonl
 # Generated Python caches are not source artwork.
 __pycache__/
 *.py[cod]
-.cache/world-audit-previews/

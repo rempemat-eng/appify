@@ -1982,7 +1982,7 @@ def main(argv=None) -> int:
         print(f'  images: {os.path.join(args.out, "world-audit.png")}, {os.path.join(args.out, "regions")}/, '
               f'{os.path.join(args.out, "worst")}/')
     if os.environ.get('GITHUB_STEP_SUMMARY'):
-        previews = 'restored from the exact input cache' if args.no_images else 'generated for these inputs'
+        previews = 'not rendered' if args.no_images else 'generated for these inputs'
         with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as f:
             f.write(markdown_summary(rep, source, previews) + '\n')
     if args.gate:
@@ -1996,7 +1996,10 @@ def main(argv=None) -> int:
                     print(f"  {p['severity']:5s} {p['check']:13s} {p['place']}: {p['cells']} cells at region px "
                           f"{p['box_region_px']}: {'; '.join(p['why'][:1])}")
             return 1
-        print('world audit gate: every rebuilt region is 100 % green')
+        if rep['gate']['rebuilt']:
+            print('world audit gate: every rebuilt region is 100 % green')
+        else:
+            print('world audit gate: no region is rebuilt yet; report only')
     return 0
 
 
