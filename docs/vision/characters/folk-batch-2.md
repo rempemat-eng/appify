@@ -64,4 +64,4 @@ The familiar's size on the shoulder is batch 1's first decision, and it applies 
   - Nix: are the bumps antennae or ears?
   - Ashe: should her cast ring the bell instead of breathing an ember?
   - Pendle: should the cap come off in the cheer?
-- **cast.md needs a fix:** in its "to all" summary note, the Cogsworth apprentice is still "Tock". The cast table says Pendle.
+- **Board note `to-all-cast` needs a fix:** it still names the Cogsworth apprentice "Tock". cast.md says Pendle.
