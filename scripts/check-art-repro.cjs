@@ -18,6 +18,8 @@ const generators = [
   'residents',
   'decor',
   'world_routes',
+  // the cliff core's demos and random-outline proofs (docs/vision/cliff-core/)
+  'cliff_core',
 ];
 const generatedTypescript = [
   'lib/garden-map.ts',
