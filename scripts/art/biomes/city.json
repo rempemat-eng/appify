@@ -6,7 +6,6 @@
   "kit": null,
   "used_by": {
     "neon": "claude-i (variants old_town, new_town)",
-    "cogsworth": "claude-h (variant steam_town)",
     "sunstone": "claude-d (variant adobe_town, with canyon)",
     "fire-country": "claude-d (variant adobe_town: Hearthold's streets)"
   },
@@ -119,7 +118,7 @@
       "body": 3,
       "lit": 5,
       "shade": 2,
-      "note": "steam town fittings and verdigris domes (variant steam_town)"
+      "note": "brass fittings and verdigris copper domes (the old town's market hall and clock)"
     },
     "lamplight": {
       "families": ["lamp"],
@@ -209,12 +208,6 @@
       "id": "potted_palm",
       "where": "harbour and new town fronts",
       "families": ["leaf_warm", "clay"]
-    },
-    {
-      "id": "buddleia",
-      "where": "steam town walls and rail cuttings",
-      "clump": [6, 12],
-      "families": ["leaf_cool", "dusk"]
     }
   ],
   "tiers": {
@@ -229,7 +222,7 @@
     },
     "brick_retaining": {
       "status": "proposed",
-      "where": "old town and steam town walls where brick, not ashlar",
+      "where": "old town walls where brick, not ashlar (the mill town's brick is its own edge set in mill_town.json)",
       "shapes": "40 px weathered brick with pilasters every 64 to 96 px, coping, weep holes, soot and salt by height",
       "port_from": "city_kit.brick_wall (#169) on weathered.py"
     },
@@ -262,7 +255,6 @@
     "proposed": {
       "shop_front": "a door with a step, a sandwich board, a crate of goods, a bike against the wall",
       "tram_stop": "a shelter, a timetable board, a bench, a lamp",
-      "steam_yard": "barrels, a coal heap, a valve wheel on a pipe, a handcart (variant steam_town)",
       "night_stall": "an awning, a lit lantern, a counter of bowls, two stools (variant new_town)"
     }
   },
@@ -281,12 +273,7 @@
     ]
   },
   "ambience": {
-    "day": [
-      "footsteps on setts",
-      "a tram bell (old town)",
-      "gulls at the quay",
-      "a distant hammer (steam town)"
-    ],
+    "day": ["footsteps on setts", "a tram bell (old town)", "gulls at the quay"],
     "night": [
       "lit windows, about one in three, never all",
       "lamp pools on paving",
@@ -317,17 +304,13 @@
       "middle": "cinder-dark setts and grit",
       "where": "Hearthold (claude-d)"
     },
-    "highland": {
-      "middle": "scree and a stone wall",
-      "where": "the coal hills over Cogsworth (claude-h)"
-    },
-    "forest": {
-      "middle": "leaf litter on setts under a fringe of trees",
-      "where": "Cogsworth's gorge woods (claude-h)"
+    "mill_town": {
+      "edge": "none in the block-out: Cogsworth's box has no city meeting (h-to-c-1445); if the Lull towns ever touch, the seam is a gravel lane between the two pavings",
+      "where": "(none yet)"
     }
   },
   "variants": {
-    "_about": "One biome, several towns: the same edge sets and paving, each with its own mix of fronts, roofs and lights.",
+    "_about": "One biome, several towns: the same edge sets and paving, each with its own mix of fronts, roofs and lights. Cogsworth's mill town is its own biome, mill_town.json (Claude H, #201), not a variant here: a brick edge set inside city would be the city's shapes in another colour, which check_biomes refuses.",
     "old_town": {
       "owner": "claude-i",
       "ground": ["street_setts", "pavement", "square"],
@@ -339,12 +322,6 @@
       "ground": ["road", "pavement"],
       "edges": ["city", "kerb", "railing_rim"],
       "fronts": "concrete and panel, flat roofs with rooftop things, neon signs a few per screen"
-    },
-    "steam_town": {
-      "owner": "claude-h",
-      "ground": ["street_setts", "yard"],
-      "edges": ["brick_retaining", "railing_rim", "channel"],
-      "fronts": "brick and iron, copper domes, pipes and valve wheels; soot heavier"
     },
     "adobe_town": {
       "owner": "claude-d",
