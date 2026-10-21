@@ -12,8 +12,8 @@ clusters, outline, cast shadows, `blend`), so the two kits meet without a seam, 
 house style (docs/vision/house-style.md): every pixel a tone of a house ramp or a family's edge
 tone, shade and light moving along the ramps, texture in clusters of two or more pixels,
 light from the upper left, cast shadows stepping the ground two tones down, walkable ground
-calm (body tone 3), dither only as the 2 x 2 checker of an atmospheric fade (the haze beyond
-the old forest's wall). Sizes follow docs/vision/size-guide.md (#124): a broadleaf 90 (78 to
+calm (body tone 3) with flowers in drifts rather than flecks (`drifts()`, `calm()`), and
+dither only as the 2 x 2 checker in a tier shadow's last 3 px, as the terrace toolkit does. Sizes follow docs/vision/size-guide.md (#124): a broadleaf 90 (78 to
 125) with a crown 56 to 80, a pine or spruce 64 to 125 with a crown 28 to 48, a birch 64 to
 104, a veteran tree 88 to 160, a holly or young tree 40 to 80, a sapling 20 to 40, a bush 12
 to 28, a fern 8 to 16, a stump 8 to 16 tall and 12 to 22 wide, a fallen log 30 to 64 long,
@@ -43,8 +43,9 @@ The pieces (each takes a seed; all deterministic, numpy only):
 - edges and bands: `edge()` (a forest edge frays into the meadow over a band: tall herbs,
   bramble and scrub, outlying trees and saplings, then the canopy, its boundary warped so it
   never runs straight), `old_forest()` (the world's edge in three layers: the walkable fade
-  thickening with thicket and fallen trees, the wall of old trees, and the forest beyond in
-  haze), `strip()` (meadow to woodland to old forest).
+  thickening with thicket and fallen trees, the wall of old trees, and the forest beyond as
+  `distance()`: layers of distant crowns cooling and lightening as they recede), `strip()`
+  (meadow to woodland to old forest).
 - slopes on the soft grid: `Tiers` (a tier map: 32 px south faces only, west and east ends as
   5 px side bands), `bank()` (a woodland bank: packed clods, roots hanging from the lip, moss,
   ferns in the face, a litter lip, a damp foot), `side_bands()`, `tier_shadows()` and
@@ -230,10 +231,10 @@ def foliage(sp: Sprite, shape, lv, seed, ramp='leaf', clump=2.6, rim=True, tips=
 # kind: (leaf ramp, crown w, crown h, trunk seen below the crown, trunk w, bark ramp, lobe
 #        size, lobes, clump, habit)
 BROADLEAF = {
-    'oak': ('leaf', 72, 58, 20, 7, 'timber', 0.34, 9, 2.6, 'broad'),
-    'beech': ('leaf_warm', 66, 62, 22, 6, 'stone_warm', 0.32, 10, 2.4, 'layers'),
-    'ash': ('grass_cool', 60, 58, 24, 5, 'stone_cool', 0.28, 8, 2.1, 'airy'),
-    'hornbeam': ('leaf', 56, 56, 18, 5, 'stone', 0.3, 8, 2.3, 'round'),
+    'oak': ('leaf', 72, 58, 15, 7, 'timber', 0.34, 9, 2.6, 'broad'),
+    'beech': ('leaf_warm', 66, 62, 17, 6, 'stone_warm', 0.34, 10, 2.4, 'broad'),
+    'ash': ('grass_cool', 60, 58, 19, 5, 'stone_cool', 0.28, 8, 2.1, 'airy'),
+    'hornbeam': ('leaf', 56, 56, 14, 5, 'stone', 0.3, 8, 2.3, 'round'),
     'holly': ('leaf_cool', 34, 40, 8, 3, 'stone', 0.36, 6, 2.0, 'cone'),
 }
 
@@ -242,7 +243,7 @@ def broadleaf(kind='oak', seed=0, scale=1.0):
     """A broadleaf tree (size guide: 90, 78 to 125; crown 56 to 80): a crown of lobes, each
     in the house foliage recipe, lit again as one tree; a trunk lit on the west with bark in
     the family's grain, roots flaring at its foot; ivy or moss on the old ones. Kinds: oak
-    (broad, gnarled), beech (smooth grey bole, sprays in layers), ash (light, airy, gaps),
+    (broad, gnarled), beech (smooth warm grey bole, a dense rounded crown), ash (light, airy, gaps),
     hornbeam (round, fluted grey), holly (a small dark evergreen of the understorey, berries).
     Returns (sprite, shadow mask, meta)."""
     ramp, cw, ch, th, tw, bark, lr, nl, clump, habit = BROADLEAF[kind]
@@ -265,34 +266,43 @@ def broadleaf(kind='oak', seed=0, scale=1.0):
     for i in range(nl):
         a = i * 2.39996 + seed * 0.7
         fr = math.sqrt((i + 0.5) / nl) * 0.66
-        if habit == 'layers':
-            ly = cy + ry * (-0.55 + 1.1 * ((i % 3) / 2.0)) * 0.8
-            lx = cx + rx * (math.cos(a) * 0.62)
-            lobes.append((lx, ly, rx * lr * 1.35, ry * lr * 0.8))
-            continue
         lx = cx + rx * fr * math.cos(a)
         ly = cy + ry * fr * math.sin(a) * (0.9 if habit != 'cone' else 1.0)
         if habit == 'cone':
             lx = cx + (lx - cx) * (0.4 + 0.6 * (ly - (cy - ry)) / (2 * ry))
-        s = 0.85 + 0.3 * hash01(i, 5, seed)
-        lobes.append((lx, ly, rx * lr * s * (1.1 if habit == 'broad' else 1.0), ry * lr * s * 1.05))
+        # big masses inside, small clumps at the rim: lobes vary 2 to 3x within a crown
+        big = 1.45 - 1.05 * fr / 0.66
+        s = big * (0.8 + 0.4 * hash01(i, 5, seed))
+        r0 = min(rx, ry) * lr * s * (1.15 if habit == 'broad' else 1.0)
+        lobes.append((lx, ly, r0 * 1.06, r0))
+    for j in range(max(3, nl // 3)):                          # small clumps breaking the rim
+        a = j * 2.1 + seed * 1.3
+        lx, ly = cx + rx * 0.64 * math.cos(a), cy + ry * 0.62 * math.sin(a)
+        if ly > cy + ry * 0.5:
+            continue
+        r0 = min(rx, ry) * lr * (0.42 + 0.2 * hash01(j, 6, seed))
+        lobes.append((lx, ly, r0, r0 * 0.95))
     lobes.append((cx, cy - ry * 0.1, rx * 0.55, ry * 0.5))       # the core, so no lobe floats
     shape_all = np.zeros(sp.m.shape, bool)
     _u, _v = (sp.x + 0.5 - cx) / rx, (sp.y + 0.5 - cy) / ry
     tree_lv = light(_u * 0.9, _v * 0.9)
     for k, (lx, ly, lrx, lry) in enumerate(sorted(lobes, key=lambda q: q[1])):
-        m, u, v = ellipse(sp.m.shape, lx, ly, lrx, lry, seed + k, 0.14, 6)
+        m, u, v = ellipse(sp.m.shape, lx, ly, lrx, lry, seed + k, 0.2, 7)
         lv = 1.05 * light(u, v) + 0.4 * tree_lv - 0.02
-        # the lobe in front shades the leaves just above and behind it
-        occ = shape_all & ~m & (shift(m, 0, -1, False) | shift(m, 0, -2, False) | shift(m, 1, -1, False))
-        sp.step(occ, -1, lo=0)
+        # the lobe in front shades the leaves just behind it by one tone (no dark line)
+        occ = shape_all & ~m & shift(m, 0, -1, False)
+        sp.step(occ, -1, lo=1)
         if habit == 'airy':
             m &= ~((hash01(sp.x // 3, sp.y // 3, seed + k) < 0.06) & (light(u, v) < 0))
         foliage(sp, m, lv, seed * 31 + k, ramp, clump, rim=True, tips=k >= len(lobes) - 3 or ly < cy)
         shape_all |= m
-    # deep gaps between the lobes: tone 0 pockets, and a limb glimpsed through one
-    gap = shape_all & (sp.t <= 1) & (hash01(sp.x // 3, sp.y // 2, seed + 21) < 0.18)
-    sp.t[gap & (sp.f >= 0)] = 0
+    # the deep shade pockets between the lobes drop cool, towards blue-violet
+    pocket = shape_all & (sp.t <= 1) & (tree_lv < 0.1)
+    sp.f[pocket] = IDX['leaf_cool']
+    deep = pocket & (hash01(sp.x // 3, sp.y // 2, seed + 21) < 0.3)
+    sp.f[deep], sp.t[deep] = IDX['slate_cool'], 1
+    sp.t[pocket & ~deep & (hash01(sp.x // 2, sp.y // 2, seed + 23) < 0.35)] = 0
+    # a limb glimpsed through a gap, and the odd gap open to the sky
     if habit in ('broad', 'airy', 'round'):
         for i in range(2):
             gx = int(cx + (hash01(i, 0, seed + 22) - 0.5) * rx)
@@ -309,46 +319,83 @@ def broadleaf(kind='oak', seed=0, scale=1.0):
     return sp, sh, {'kind': kind, 'crown': (cx, cy, rx, ry), 'trunk': (fx - tw // 2, tw)}
 
 
-def _bole(sp: Sprite, x, y0, y1, w, bark, seed, flare=2, kind=''):
-    """A trunk from y0 to its foot y1: lit west column, dark east column, bark in the
-    family's grain (furrowed timber, smooth grey with a lit stripe), roots flaring at the
-    foot and running out a little over the ground, moss low on the north and west."""
+def _bole(sp: Sprite, x, y0, y1, w, bark, seed, flare=2, kind='', fork=True):
+    """A trunk from y0 down to its foot y1, `w` wide at breast height: tapering upward and
+    wandering a little, lit on the west and dark on the east, its bark in irregular patches
+    (furrows of uneven length on timber; smooth grey with lenticels and patches of the cool
+    sibling), forking into one or two limbs that run up into the crown, the foot flaring
+    into two to four roots that run down and out into the litter, moss on the north and
+    west low down, ivy up an old oak."""
+    H = max(1, y1 - y0)
+    mid = x + w / 2
+    cols = {}
     for y in range(y0, y1 + 1):
-        fl = flare if y >= y1 - 1 else (1 if y >= y1 - 3 and flare else 0)
-        for dx in range(-fl, w + fl):
-            k = 4 if dx <= 0 else 1 if dx >= w - 1 else 3 if dx <= w // 3 else 2
-            sput(sp, x + dx, y, bark, k)
+        f = (y - y0) / H                                       # 0 at the top, 1 at the foot
+        ww = max(2.0, w - 2.5 + 3.0 * f)
+        ww += flare * max(0.0, (y - (y1 - 5)) / 5.0) ** 2 * 2  # the flare, in the last rows
+        cxw = mid + 0.7 * math.sin(y / 7.0 + seed)
+        l, r = int(round(cxw - ww / 2)), int(round(cxw + ww / 2))
+        cols[y] = (l, r)
+        for px in range(l, r):
+            u = (px - l + 0.5) / max(1, r - l)
+            k = 4 if u < 0.2 else 3 if u < 0.45 else 2 if u < 0.78 else 1
+            sput(sp, px, y, bark, k)
     fam = hp.family(bark)
-    inner = sp.m & (sp.x > x) & (sp.x < x + w - 1) & (sp.y >= y0) & (sp.y <= y1)
-    if fam == 'timber':                       # furrowed: dark vertical runs, lit ridges
-        fur = inner & (hash01(sp.x, sp.y // 4, seed + 1) < 0.35)
+    inner = np.zeros(sp.m.shape, bool)
+    for y, (l, r) in cols.items():
+        if r - l > 2:
+            inner[y, l + 1:r - 1] = True
+    inner &= sp.m
+    run = 3 + (hash01(sp.x, 0, seed + 8) * 5).astype(int)      # furrows of uneven length
+    off = (hash01(sp.x, 1, seed + 9) * 7).astype(int)
+    if fam == 'timber':
+        fur = inner & (hash01(sp.x, (sp.y + off) // run, seed + 1) < 0.32)
         sp.step(fur, -1, lo=1)
-        rid = inner & ~fur & (hash01(sp.x, sp.y // 3, seed + 2) < 0.2)
+        rid = inner & ~fur & (hash01(sp.x // 2, (sp.y + off) // 3, seed + 2) < 0.22)
         sp.f[rid] = IDX[f'{fam}_warm']
-    else:                                     # smooth grey: a lit stripe, rings of lenticels
-        sp.step(inner & (sp.x == x + 1), 1, hi=4)
-        ring = inner & (hash01(0, sp.y // 2, seed + 3) < 0.12) & (sp.y % 2 == 0) & (sp.x > x + 1)
-        sp.step(ring, -1, lo=1)
-        sp.f[inner & (hash01(sp.x // 2, sp.y // 3, seed + 4) < 0.25)] = IDX[f'{fam}_cool']
-    # moss low on the bole's west and north, and ivy up an old oak
-    moss = sp.m & (sp.x <= x + 1) & (sp.y > y1 - 8) & (sp.y < y1 - 1) & (hash01(sp.x, sp.y // 2, seed + 5) < 0.6)
+    else:
+        patch = inner & (hash01((sp.x + sp.y // 5) // 2, sp.y // 4, seed + 4) < 0.3)
+        sp.f[patch] = IDX[f'{fam}_cool']
+        lent = inner & (hash01(sp.x // 2, sp.y, seed + 3) < 0.07)
+        sp.step(lent & ~shift(lent, 1, 0, False), -1, lo=1)
+        lit = inner & (hash01(sp.x, (sp.y + off) // run, seed + 5) < 0.18) & (sp.t >= 3)
+        sp.step(lit, 1, hi=4)
+    # limbs: the bole forks under the crown; the leaves cover where they go
+    if fork and H > 14:
+        l, r = cols[y0]
+        for side in (-1, 1):
+            if side > 0 and hash01(seed, 4, 3) < 0.3:
+                continue
+            sx0 = l if side < 0 else r - 1
+            ln = 6 + int(hash01(side + 2, 5, seed) * 6)
+            for i in range(ln):
+                px, py = sx0 + side * (i * 2 // 3), y0 - i
+                sput(sp, px, py, bark, 3 if side < 0 else 2)
+                sput(sp, px + side, py, bark, 2 if side < 0 else 1)
+    # moss on the north and west low down, in patches; ivy up an old oak
+    l1, r1 = cols[y1]
+    moss = sp.m & inner.copy()
+    moss = sp.m & (sp.y > y1 - 10) & (sp.y < y1 - 1) & (sp.t >= 3) & \
+        (hash01(sp.x // 2, sp.y // 2, seed + 5) < 0.55)
     sp.f[moss] = IDX['leaf']
-    sp.t[moss] = np.where(sp.x[moss] <= x, 3, 2)
+    sp.t[moss] = np.where(sp.t[moss] >= 4, 3, 2)
     if kind == 'oak' and hash01(seed, 9, 5) < 0.6:
         ivy = sp.m & (sp.y >= y0) & (sp.y < y1 - 2) & (hash01(sp.x // 2, sp.y // 2, seed + 6) < 0.3) & \
-            (sp.x >= x) & (sp.x <= x + w - 2) & ((sp.y - y0) > 3 * np.abs(sp.x - x - w / 2))
+            ((sp.y - y0) > 3 * np.abs(sp.x - mid))
         sp.put(ivy, 'leaf_cool', np.where(hash01(sp.x, sp.y, seed + 7) < 0.4, 3, 2))
-    # roots: two to four out over the ground, lit on top, a pixel each side of the flare
+    # roots: running down and out from the flare into the litter, lit along their tops
     n = 2 + int(hash01(seed, 0, 6) * 3)
     for i in range(n):
         side = -1 if i % 2 == 0 else 1
         ln = 4 + int(hash01(i, 1, seed) * 5)
-        sx = x - flare if side < 0 else x + w + flare - 1
-        for s in range(ln):
-            px = sx + side * s
-            py = y1 - 1 + (1 if s > ln * 0.5 else 0)
-            sput(sp, px, py, bark, 3 if s < ln - 1 else 2)
-            if s < ln - 2:
+        sx = l1 if side < 0 else r1 - 1
+        sy = y1 - 2 - int(hash01(i, 2, seed) * 2)
+        for s_ in range(ln):
+            px, py = sx + side * (s_ + 1), sy + (s_ + 1) // 2
+            if py > y1 + 1:
+                break
+            sput(sp, px, py, bark, 3 if s_ < ln - 1 else 2)
+            if s_ < ln - 2:
                 sput(sp, px, py + 1, bark, 1)
 
 
@@ -364,55 +411,70 @@ def conifer(kind='spruce', seed=0, scale=1.0):
     """A conifer (size guide: pine and fir 64 to 125, crown 28 to 48). Spruce and fir: a cone
     of drooping tiers, each tier lit along its top and its west, in its own shade where the
     tier above hangs over it, its branch tips lit; needles as short strokes hanging down and
-    out. Scots pine: a tall bole, fox-red above, grey and furrowed below, carrying three to
-    five flat clumps of needles on its branches. Returns (sprite, shadow mask, meta)."""
+    out; uneven tiers, a lean, each side its own reach, the trunk showing in a gap. Scots
+    pine: a long bare bole, fox-red above, grey and furrowed below, under a flattish umbrella
+    of two or three pads set off to one side. Returns (sprite, shadow mask, meta)."""
     ramp, Ht, Wd, ts, nt, habit = CONIFER[kind]
     j = 0.86 + 0.28 * hash01(seed, 1, 91)
     Ht, Wd = int(Ht * scale * j), int(Wd * scale * (0.9 + 0.2 * hash01(seed, 2, 91)))
     W, H = Wd + 10, Ht + 6
     fx, fy = W // 2, H - 4
     sp = Sprite(W, H, fx, fy)
+    lean = (hash01(seed, 3, 91) - 0.5) * 0.14                   # px of lean per px of height
     if habit == 'clumps':
+        # Scots pine: a long bare bole, fox-red above, grey and furrowed below; a flattish
+        # umbrella of two or three irregular pads at the top, set off to one side
         top = fy - Ht
         tw = max(3, int(4 * scale))
-        _bole(sp, fx - tw // 2, top + 10, fy, tw, 'stone_cool', seed, flare=1)
-        fox = sp.m & (sp.y < fy - ts + 4)
+        _bole(sp, fx - tw // 2, top + 8, fy, tw, 'stone_cool', seed, flare=1, fork=False)
+        fox = sp.m & (sp.y < fy - int(Ht * 0.45))
         sp.f[fox] = IDX['clay_warm']
         sp.t[fox] = np.clip(sp.t[fox] + 1, 2, 4)
-        clumps = []
-        for i in range(nt + (1 if hash01(seed, 4, 91) < 0.5 else 0)):
-            cy = top + 8 + i * (Ht - ts - 6) / (nt + 0.5)
-            side = (-1) ** (i + seed)
-            cx = fx + side * (Wd * 0.18 * hash01(i, 0, seed) + (2 if i else 0))
-            rx = Wd * (0.36 if i == 0 else 0.30 + 0.12 * hash01(i, 1, seed))
-            clumps.append((cx, cy, rx, 6 + 3 * hash01(i, 2, seed)))
-        for i, (cx, cy, rx, ry) in enumerate(clumps):           # branches to each clump
-            for (px, py) in line_px(fx, cy + ry * 0.9 + 3, cx, cy + ry * 0.4):
-                sput(sp, px, py, 'clay_warm', 2)
+        side = 1 if hash01(seed, 4, 91) < 0.5 else -1
+        pads = [(fx + side * Wd * 0.12, top + 9, Wd * 0.46, 6.5),
+                (fx - side * Wd * 0.2, top + 16 + 3 * hash01(seed, 5, 91), Wd * 0.28, 5.0)]
+        if hash01(seed, 6, 91) < 0.7:
+            pads.append((fx + side * Wd * 0.3, top + 21 + 3 * hash01(seed, 7, 91), Wd * 0.2, 4.0))
+        for i, (cx, cy, rx, ry) in enumerate(pads):              # branches to each pad
+            for (px, py) in line_px(fx, cy + ry + 5, cx, cy + ry * 0.3):
+                sput(sp, px, py, 'clay_warm', 3)
                 sput(sp, px, py + 1, 'timber_cool', 1)
-        for i, (cx, cy, rx, ry) in enumerate(sorted(clumps, key=lambda q: q[1])):
-            m, u, v = ellipse(sp.m.shape, cx, cy, rx, ry, seed + i, 0.2, 9)
-            foliage(sp, m, light(u, v * 1.2) - 0.05, seed * 13 + i, ramp, 2.0, rim=True, needles=True)
+        for i, (cx, cy, rx, ry) in enumerate(sorted(pads, key=lambda q: q[1])):
+            m, u, v = ellipse(sp.m.shape, cx, cy, rx, ry, seed + i, 0.24, 9)
+            m &= ~((v > 0.35) & (hash01(sp.x // 3, 0, seed + i) < 0.4))   # a ragged underside
+            foliage(sp, m, light(u, v * 1.3) - 0.05, seed * 13 + i, ramp, 2.0, rim=True, needles=True)
         unspeck(sp, sp.m, 2)
         sh = rk.tree_shadow(sp, fx + 3, Wd * 0.4, max(4, Wd * 0.12))
         return sp, sh, {'kind': kind, 'crown': (fx, fy - Ht / 2, Wd / 2, Ht / 2), 'trunk': (fx - tw // 2, tw)}
-    # spruce and fir: tiers from the bottom up, each upper tier hanging over the next
+    # spruce and fir: uneven tiers from the bottom up, each upper tier hanging over the next,
+    # the whole tree leaning a little, each side its own reach, tips drooping past the tier
+    # below, the trunk showing through a gap or two
     tw = max(3, int(4 * scale))
-    _bole(sp, fx - tw // 2, fy - ts - 6, fy, tw, 'timber_cool', seed, flare=1)
     top = fy - Ht
     body = Ht - ts
+    _bole(sp, fx - tw // 2, top + 6, fy, tw, 'timber_cool', seed, flare=1, fork=False)
+    wts = [0.75 + 0.55 * hash01(i, 8, seed) for i in range(nt)]
+    edges = np.cumsum([0] + wts) / sum(wts)
+    gaps = {int(1 + hash01(seed, 9, 91) * (nt - 3)), int(2 + hash01(seed, 10, 91) * (nt - 3))}
     hang = np.zeros(sp.m.shape, bool)
     for i in range(nt - 1, -1, -1):
-        f0 = i / nt
-        f1 = (i + 1) / nt
+        f0, f1 = edges[i], edges[i + 1]
         y_top = top + int(body * f0 ** 1.05) - (2 if i else 0)
         y_bot = top + int(body * f1 ** 1.05) + 3
-        half = max(3, (Wd / 2) * (0.18 + 0.82 * f1) * (0.84 + 0.3 * hash01(i, 0, seed)))
-        uu = (sp.x + 0.5 - fx) / half
-        droop = 4.5 * np.abs(uu) ** 1.6
-        saw = ((sp.x + i * 2 + seed) % 4 < 2) * 1.5
+        cxt = fx + lean * (fy - (y_top + y_bot) / 2)
+        base = max(3, (Wd / 2) * (0.18 + 0.82 * f1))
+        hl = base * (0.78 + 0.36 * hash01(i, 0, seed))
+        hr = base * (0.78 + 0.36 * hash01(i, 11, seed))
+        half = np.where(sp.x + 0.5 < cxt, hl, hr)
+        uu = (sp.x + 0.5 - cxt) / half
+        dl, dr = 3 + 5 * hash01(i, 12, seed), 3 + 5 * hash01(i, 13, seed)
+        droop = np.where(uu < 0, dl, dr) * np.abs(uu) ** 1.6
+        saw = ((sp.x + i * 2 + seed) % (3 + i % 3) < 2) * 1.5
         upper = y_top + np.abs(uu) ** 0.8 * (y_bot - y_top) * 0.6
         tier = (np.abs(uu) <= 1) & (sp.y + 0.5 >= upper) & (sp.y + 0.5 <= y_bot + droop - saw)
+        if i in gaps:                                             # the trunk seen in a gap
+            gs = 1 if hash01(i, 14, seed) < 0.5 else -1
+            tier &= ~((sp.y > y_bot - 4) & (np.abs(sp.x + 0.5 - (cxt + gs * 2)) < 2.5))
         if not tier.any():
             continue
         vv = (sp.y + 0.5 - (y_top + y_bot) / 2) / max(2, (y_bot - y_top) / 2)
@@ -429,16 +491,15 @@ def conifer(kind='spruce', seed=0, scale=1.0):
         fringe = tier & ~shift(tier, 0, -2, False)                  # the skirt's dark hem
         sp.step(fringe, -1, lo=0)
         sp.step(fringe & (uu > 0.1), -1, lo=0)
-        # this tier hangs over the ones below it: they go into its shade under its skirt
         under = hang & ~tier & (shift(tier, 0, 1, False) | shift(tier, 0, 2, False))
         sp.step(under, -2, lo=0)
         sp.step(hang & ~tier & shift(tier, 0, 3, False) & ~under, -1, lo=0)
         hang |= tier
-    # the leader: a lit spike at the very top
-    for y in range(top - 3, top + 3):
-        sput(sp, fx, y, ramp, 4 if y < top else 3)
+    lx = int(round(fx + lean * Ht))
+    for y in range(top - 3, top + 3):                             # the leader
+        sput(sp, lx, y, ramp, 4 if y < top else 3)
         if y >= top:
-            sput(sp, fx + 1, y, ramp, 2)
+            sput(sp, lx + 1, y, ramp, 2)
     unspeck(sp, sp.m, 2)
     sh = rk.tree_shadow(sp, fx + 3, Wd * 0.42, max(4, Wd * 0.13))
     return sp, sh, {'kind': kind, 'crown': (fx, fy - Ht / 2, Wd / 2, Ht / 2), 'trunk': (fx - tw // 2, tw)}
@@ -775,6 +836,61 @@ LEAVES = (((0, 0), (1, 0), (1, -1)), ((0, 0), (0, -1), (1, -1)), ((0, 0), (1, 0)
           ((0, 0), (1, 0), (2, 0), (1, -1)), ((0, 0), (1, 0), (0, 1), (1, 1)))
 
 
+FLOWER_FAMS = ('plaster', 'brass', 'berry', 'dusk', 'clay', 'sky')
+TRI = (((0, 0), (1, 0), (0, -1)), ((0, 0), (1, 0), (1, -1)), ((0, 0), (1, 0)), ((0, 0), (0, -1)))
+
+
+def drifts(p: Plot, m, seed, kinds, every=1400, n=(5, 15), r=(4, 8)):
+    """Flowers gathered in drifts (Claude A's review: never confetti): about one drift per
+    `every` px of the mask, each of n flowers (clusters of two or three pixels) within a
+    radius r of its centre, all of one kind; kinds: (ramp, tone) each."""
+    m = np.asarray(m, bool)
+    for i, (x, y) in enumerate(rk._scatter(m, every, seed, 3)):
+        ramp, tone = kinds[int(hash01(x, y, seed + 1) * len(kinds))]
+        cnt = n[0] + int(hash01(x, y, seed + 2) * (n[1] - n[0] + 1))
+        rad = r[0] + hash01(x, y, seed + 3) * (r[1] - r[0])
+        for j in range(cnt):
+            a = hash01(j, i, seed + 4) * 6.283
+            d = math.sqrt(hash01(j, i, seed + 5)) * rad
+            fx, fy = int(round(x + math.cos(a) * d)), int(round(y + math.sin(a) * d * 0.7))
+            shp = TRI[int(hash01(j, i, seed + 6) * len(TRI))]
+            for dx, dy in shp:
+                px, py = fx + dx, fy + dy
+                if 0 <= px < p.w and 0 <= py < p.h and m[py, px] and not p.solid[py, px]:
+                    p.f[py, px], p.t[py, px] = IDX[ramp], tone if dy == 0 else max(1, tone - 1)
+
+
+def calm(p: Plot, m, share=0.6, seed=0):
+    """Cut lone flower flecks on open ground by about `share` (Claude A's review: the meadow
+    read as confetti): small flower clusters outside the denser drifts go back to the ground
+    around them."""
+    m = np.asarray(m, bool) & ~p.solid
+    fl = m & np.isin(FAMILY[p.f], [IDX[k] for k in FLOWER_FAMS])
+    dense = rk.dilate(fl, 3)
+    near = np.zeros(m.shape, np.int16)
+    for dx in range(-4, 5, 2):
+        for dy in range(-4, 5, 2):
+            near += shift(fl, dx, dy, False)
+    lone = fl & (near < 6) & (hash01(p.x // 2, p.y // 2, seed + 70) < share)
+    for _ in range(3):
+        for dx, dy in ((1, 0), (-1, 0), (0, 1), (0, -1), (2, 0), (-2, 0)):
+            src_f, src_t = shift(p.f, dx, dy, -1), shift(p.t, dx, dy, 0)
+            ok = lone & (src_f >= 0) & ~np.isin(FAMILY[np.clip(src_f, 0, None)], [IDX[k] for k in FLOWER_FAMS])
+            p.f[ok], p.t[ok] = src_f[ok], src_t[ok]
+            lone &= ~ok
+    del dense
+    despeckle(p, m)
+
+
+def meadow(p: Plot, m, seed=0, kind='hay'):
+    """The river kit's hay meadow or pasture, calmed for the forest's margins: lone flower
+    flecks cut by about 60 % and flowers gathered into drifts of 5 to 15."""
+    m = np.asarray(m, bool)
+    (rk.hay_meadow if kind == 'hay' else lambda q, mm, sd: rk.pasture(q, mm, sd, tussocks=False))(p, m, seed)
+    calm(p, m, 0.6, seed)
+    drifts(p, m, seed + 5, (('brass', 5), ('plaster', 5), ('berry', 4), ('dusk', 4)), every=1600, n=(5, 12))
+
+
 def litter(p: Plot, m, seed=0, shade=0, bluebells=True):
     """The broadleaf floor: earth under last year's leaves (small clusters in brown, rust and
     gold), moss in soft patches, twigs, sun flecks where the canopy opens, bluebells and wood
@@ -787,8 +903,8 @@ def litter(p: Plot, m, seed=0, shade=0, bluebells=True):
     stamp(p, bare, 0.026, seed + 3, LEAVES, ramp='timber_warm', tone=3, same_family=False)
     stamp(p, bare, 0.022, seed + 4, LEAVES, ramp='earth_warm', tone=4, same_family=False)
     stamp(p, bare, 0.018, seed + 5, LEAVES, ramp='earth_cool', tone=2, same_family=False)
-    stamp(p, bare, 0.012, seed + 6, LEAVES, ramp='brass_cool', tone=3, same_family=False)
-    stamp(p, bare, 0.008, seed + 16, LEAVES, ramp='clay_cool', tone=3, same_family=False)
+    stamp(p, bare & (fbm(p.x, p.y, 15, seed + 18) > 0.55), 0.02, seed + 6, LEAVES, ramp='brass_cool', tone=3,
+          same_family=False)                              # fallen leaves gathered, not sprinkled
     # moss creeps out of its patches in clusters, so no patch has a clean edge
     fringe = dilate(moss, 2) & ~moss & m
     stamp(p, fringe, 0.18, seed + 17, SMALL, ramp='leaf', tone=3, same_family=False)
@@ -798,13 +914,8 @@ def litter(p: Plot, m, seed=0, shade=0, bluebells=True):
     for dx, dy in ((0, 0), (1, 0), (2, 1), (3, 1)):
         t = shift(tw, dx, dy, False) & m
         p.f[t], p.t[t] = IDX['timber_cool'], 2
-    if bluebells:
-        bells = m & (fbm(p.x, p.y, 22, seed + 10) > 0.7)
-        tri = (((0, 0), (1, 0), (0, -1)), ((0, 0), (1, 0), (1, -1)), ((0, 0), (0, -1), (0, -2)))
-        stamp(p, bells, 0.06, seed + 11, tri, ramp='dusk_warm', tone=4, same_family=False)
-        stamp(p, bells, 0.03, seed + 12, tri, ramp='leaf', tone=3, same_family=False)
-        anem = m & (fbm(p.x, p.y, 19, seed + 13) > 0.7) & ~bells
-        stamp(p, anem, 0.04, seed + 14, tri[:2], ramp='plaster', tone=4, same_family=False)
+    if bluebells:                       # bluebells and wood anemones in drifts, not flecks
+        drifts(p, m, seed + 11, (('dusk_warm', 4), ('dusk_warm', 4), ('plaster', 4)), every=1800, n=(6, 14))
     if shade:
         p.step(m, -shade, lo=1)
     sun = m & (fbm(p.x, p.y, 8, seed + 15) > 0.72)
@@ -849,8 +960,8 @@ def glade(p: Plot, m, seed=0):
     rk.base(p, m, 'grass', seed, scale=6, warm=0.35, cool=0.75)
     rk.texture(p, m, seed + 1, swaps=0.13, ups=0.02, downs=0.015)
     stamp(p, m, 0.03, seed + 2, BLADES, dt=1)
-    rk.flowers(p, m, seed + 3, GLADE_FLOWERS, 0.010)
     despeckle(p, m)
+    drifts(p, m, seed + 3, [(r, t) for r, t, _s in GLADE_FLOWERS], every=900, n=(6, 15))
 
 
 def _dist(mask, cap=24):
@@ -1052,6 +1163,11 @@ def woodland(p: Plot, m, seed=0, mix=WOODLAND, every=900, clear=None, front_band
     closed = m & ~front if clear is None else m & ~front & ~clear
     underside(p, closed, seed + 5)
     p.walk &= ~closed
+    # the crowns' shadow on the open floor along the front: dappled pools, not one dark band
+    below = (front | (shift(m, 0, 12, False) & ~m)) & ~closed & ~p.solid & ~p.wet
+    pools = below & (fbm(p.x, p.y, 7, seed + 11) > 0.46)
+    p.step(pools, -1, lo=1)
+    p.step(pools & (fbm(p.x, p.y, 7, seed + 11) > 0.62) & front, -1, lo=1)
     trees = plan(m, mix, every, seed, density=density, clear=clear)
     no_runs(trees, mix)
     # deeper in the wood the crowns stand in each other's shade: a tone down, and cooler
@@ -1112,7 +1228,7 @@ def edge(p: Plot, m, t, seed=60, mix=WOODLAND, floor=None, clear=None, low_clear
         (floor or litter)(q, mm, seed + 2)
     wood = rk.blend(p, m, np.clip((v - 0.42) / 0.26, 0, 1), pa, pb, seed + 3, warp=0.25, outliers=0.12)
     herbs = m & (v > 0.3) & (v < 0.6) & ~wood & (fbm(p.x, p.y, 14, seed + 4) > 0.42)
-    rk.hay_meadow(p, herbs, seed + 5)
+    meadow(p, herbs, seed + 5)
     things = woodland(p, canopy, seed + 6, mix, clear=clear)
     band = m & (v > 0.36) & (v <= 0.68) & ~canopy
     d = np.clip(1 - np.abs(v - 0.55) * 4, 0, 1)
@@ -1353,34 +1469,53 @@ def log_steps(p: Plot, L: Tiers, x0, width=STAIR, seed=72):
 
 
 # --- the old forest: the world's edge in three layers ---------------------------------------
-HAZE_NEAR = {0: 1, 1: 2, 2: 2, 3: 3, 4: 4, 5: 4, EDGE_T: 1}
-HAZE_FAR = {0: 3, 1: 3, 2: 3, 3: 4, 4: 4, 5: 5, EDGE_T: 3}
+# the layers of the forest beyond, near to far: (ramp, body tone, crown radius)
+DISTANCE = (('leaf_cool', 2, 11), ('leaf_cool', 3, 9), ('slate_cool', 3, 7), ('slate', 4, 5))
 
 
-def haze(p: Plot, t, at=(0.74, 0.88)):
-    """The forest beyond the wall in haze: past `at[0]` every pixel goes to its cool sibling
-    with its tones drawn together, past `at[1]` to the slate of distance; the steps between
-    the layers are the 2 x 2 checker (house style: dither only for an atmospheric fade)."""
-    chk = ((p.x // 2) + (p.y // 2)) % 2 == 0
-    near = (t >= at[0] + np.where(chk, 0.0, 0.02))
-    far = (t >= at[1] + np.where(chk, 0.0, 0.025))
-    lut_n = np.array([HAZE_NEAR.get(i, 3) for i in range(7)], np.int8)
-    lut_f = np.array([HAZE_FAR.get(i, 3) for i in range(7)], np.int8)
-    sel = near & ~far
-    p.f[sel] = rk.COOL[p.f[sel]]
-    p.t[sel] = lut_n[np.clip(p.t[sel], 0, 6)]
-    fam = np.where(np.isin(FAMILY[p.f], [IDX['leaf'], IDX['grass']]), IDX['slate_cool'], IDX['slate'])
-    p.t[far] = lut_f[np.clip(p.t[far], 0, 6)]
-    p.f[far] = fam[far]
-    p.walk &= ~near
+def distance(p: Plot, m, t, t0, seed=0):
+    """The forest beyond the wall, seen in haze: rows of distant crowns in four layers, each
+    a silhouette of round tops lit on their upper left with a shaded underside, the layers
+    stepping up in value and cooling from leaf to slate as they recede, the nearest at the
+    wall. Nothing here is walked."""
+    m = np.asarray(m, bool) & (t >= t0)
+    if not m.any():
+        return
+    span = max(1e-3, 1 - t0)
+    n = len(DISTANCE)
+    ramp, tone, _r = DISTANCE[-1]
+    p.put(m, ramp, tone)                                        # the farthest haze first
+    for k in range(n - 1, -1, -1):                              # far to near, near on top
+        ramp, tone, r = DISTANCE[k]
+        lo = t0 + span * k / n
+        zone = m & (t >= lo)
+        pts = rk._scatter(zone, int((r * 1.5) ** 2), seed + 10 * k, 0)
+        cover = np.zeros(m.shape, bool)
+        lv = np.full(m.shape, -9.0)
+        for i, (x, y) in enumerate(sorted(pts, key=lambda q: q[1])):
+            rr = r * (0.75 + 0.5 * hash01(x, y, seed + k))
+            x0, x1 = max(0, int(x - rr - 2)), min(p.w, int(x + rr + 3))
+            y0, y1 = max(0, int(y - rr - 2)), min(p.h, int(y + rr * 2 + 3))
+            gx, gy = p.x[y0:y1, x0:x1] + 0.5 - x, p.y[y0:y1, x0:x1] + 0.5 - y
+            u, v = gx / rr, gy / rr
+            blobm = (u * u + np.minimum(v, 0) ** 2 <= 1) & (v < 1.8)   # a round top on a body
+            blobm &= m[y0:y1, x0:x1]
+            cover[y0:y1, x0:x1] |= blobm
+            lv[y0:y1, x0:x1] = np.where(blobm, -0.7 * u - 0.9 * v, lv[y0:y1, x0:x1])
+        p.f[cover] = IDX[ramp]
+        p.t[cover] = np.where(lv > 0.55, tone + 1, np.where(lv < -0.5, tone - 1, tone))[cover]
+        rimm = cover & ~shift(cover, 0, 1, False) & (lv > 0)
+        p.t[rimm] = min(5, tone + 1)
+    despeckle(p, m)
+    p.walk &= ~m
 
 
 def old_forest(p: Plot, m, t, seed=80, fade=0.25, wall=0.5):
     """The old forest as the world's edge, `t` 0 (the walked side) to 1 (beyond): the fade,
     walkable, with bramble, fallen trees, stumps, ferns and saplings thickening outward; the
     wall of old trees (giants, spruce, oak, beech, holly) that nobody walks through; and the
-    forest beyond in haze. Returns the things to draw in front of the haze (the forest beyond
-    is drawn and hazed here)."""
+    forest beyond in haze, drawn here as layers of distant crowns. Returns the things to draw
+    in front of it."""
     m = np.asarray(m, bool)
     # the layers' boundaries wander at two scales: never a ruled line
     t = np.clip(t + 0.34 * (fbm(p.x, p.y, 40, seed + 30) - 0.5) + 0.1 * (fbm(p.x, p.y, 11, seed + 31) - 0.5), 0, 1)
@@ -1390,15 +1525,14 @@ def old_forest(p: Plot, m, t, seed=80, fade=0.25, wall=0.5):
     b_m = m & (t >= wall)
     litter(p, m & (t < wall + 0.05), seed, shade=0)
     p.step(m & (t > fade * 0.5) & (t < wall + 0.05), -1, lo=1)
-    beyond = woodland(p, b_m, seed + 1, (('spruce', 3), ('oak', 2), ('veteran', 1), ('fir', 2)), every=700)
-    draw(p, beyond)
-    haze(p, t, (wall + 0.02, wall + 0.34))
+    distance(p, b_m, t, wall, seed + 1)
     things = woodland(p, w_m, seed + 2, OLD, every=640, front_band=10)
     for q in things:
         q.dim = 1 if hash01(q.x, q.y, seed + 5) < 0.6 and q.kind != 'veteran' else 0
     dens = np.clip(t / fade, 0, 1)
+    clump = (fbm(p.x, p.y, 26, seed + 6) > 0.5).astype(float)     # thicket in clumps, not rows
     things += plan(f_m, (('bramble', 4), ('log', 2), ('stump', 1), ('young:holly', 1), ('young:spruce', 1)),
-                   1300, seed + 3, density=0.25 + 0.75 * dens)
+                   900, seed + 3, density=(0.15 + 0.85 * dens) * (0.25 + 0.75 * clump))
     things += plan(f_m, (('fern', 3), ('bracken', 3), ('hart', 1), ('brown', 1), ('agaric', 1)), 260, seed + 4,
                    density=0.3 + 0.7 * dens)
     p.layer_t = t                         # the wandering layers, for checks
@@ -1407,15 +1541,18 @@ def old_forest(p: Plot, m, t, seed=80, fade=0.25, wall=0.5):
 
 def strip(w=320, h=576, seed=90):
     """The transition from the meadow to the woodland to the old forest, south to north on
-    one phone screen: hay meadow, the edge fraying out of it with scrub and outlying trees,
-    the woodland with its trunks along the front, then the old forest's fade, its wall of old
-    trees and the forest beyond in haze at the top."""
+    one phone screen: hay meadow; the edge fraying out of it with scrub and outlying trees;
+    a belt of woodland, its trunks along one front line; the old forest's walkable fade in
+    the light between; its wall of old trees, trunks along their own line; and the forest
+    beyond as layers of distant crowns."""
     p = Plot(w, h)
     every = np.ones((h, w), bool)
-    rk.hay_meadow(p, every, seed)
-    t1 = np.clip((480 - p.y - 16 * np.sin(p.x / 37.0)) / 160.0, 0, 1)
-    t2 = np.clip((290 - p.y - 12 * np.sin(p.x / 29.0 + 1)) / 290.0, 0, 1)
-    things, canopy, wood = edge(p, every & (t2 <= 0), t1, seed + 1)
+    meadow(p, every, seed)
+    t1 = np.clip((470 - p.y - 10 * np.sin(p.x / 37.0)) / 120.0, 0, 1)
+    belt = every & (p.y > 330 + 8 * np.sin(p.x / 43.0))         # the woodland's feet stop here
+    t2 = np.clip((300 - p.y - 10 * np.sin(p.x / 29.0 + 1)) / 300.0, 0, 1)
+    things, canopy, wood = edge(p, belt & (t2 <= 0), t1, seed + 1)
+    litter(p, every & ~belt & (t2 <= 0) & ~wood, seed + 3)
     things += old_forest(p, every & (t2 > 0), t2, seed + 2)
     t2 = p.layer_t
     draw(p, things)
@@ -1468,7 +1605,7 @@ def sample(seed=1):
     upper = L.T >= 1
     # ground: the meadow in the south, the wood's floor, the glade, the upper wood's floor
     meadow_y = 452 + 22 * np.sin(p.x / 71.0) + 10 * np.sin(p.x / 23.0)
-    rk.hay_meadow(p, every, seed + 2)
+    meadow(p, every, seed + 2)
     t_edge = np.clip((meadow_y + 46 - p.y) / 150.0, 0, 1)
     gx, gy, grx, gry = GLADE
     gm, _u, _v = ellipse(p.f.shape, gx, gy, grx, gry, seed, 0.16, 5)
@@ -1539,8 +1676,8 @@ def best_box(m, size=36, need=0.97):
 def _tile(w, h, ground='pasture', seed=0):
     p = Plot(w, h)
     m = np.ones((h, w), bool)
-    {'pasture': lambda: rk.pasture(p, m, seed, tussocks=False), 'litter': lambda: litter(p, m, seed),
-     'hay': lambda: rk.hay_meadow(p, m, seed), 'needles': lambda: needles(p, m, seed)}[ground]()
+    {'pasture': lambda: meadow(p, m, seed, 'pasture'), 'litter': lambda: litter(p, m, seed),
+     'hay': lambda: meadow(p, m, seed), 'needles': lambda: needles(p, m, seed)}[ground]()
     return p
 
 
@@ -1569,7 +1706,7 @@ def pieces():
         p = _tile(240, 210, ground, 5)
         m = (p.y > 60 + 8 * np.sin(p.x / 23.0)) & (p.y < 190 + 6 * np.sin(p.x / 17.0))
         draw(p, woodland(p, m, 11, mix, every=860))
-        box = best_box(_leafy(p) & (p.y < 150), 48, 0.97) or best_box(_leafy(p), 36, 0.97)
+        box = best_box(_leafy(p) & (p.y < 150), 48, 0.97) or best_box(_leafy(p), 36, 0.97) or best_box(_leafy(p), 34, 0.9)
         out.append(('masses', name, p, box, 'tree'))
     # undergrowth
     p = _tile(232, 84, 'litter', 6)
@@ -1870,7 +2007,7 @@ def main(argv):
     img = p.image()
     L = parts['tiers']
     print('sample boxes:')
-    for name, box, kind in (('canopy, lower wood', best_box(_leafy(p) & (p.y > 300) & (p.y < 430), 48), 'tree'),
+    for name, box, kind in (('canopy, lower wood', best_box(_leafy(p) & (p.y > 300) & (p.y < 430), 40, 0.93), 'tree'),
                             ('canopy, upper wood', best_box(_leafy(p) & (L.T >= 1) & (p.y < 120) & ~parts['old'], 36), 'tree'),
                             ('glade', best_box(parts['glade'] & ~p.solid & ~parts['path'], 40, 0.99), 'ground'),
                             ('woodland path', best_box(parts['path'] & ~p.solid & (p.y > 300), 34, 0.5), 'ground'),
