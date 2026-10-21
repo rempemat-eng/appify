@@ -14,7 +14,8 @@ docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.
 - inside the box: every outline, route, place, named thing, pocket and marker, unless it is
   marked outside_box (a marker the brief lists just past the line);
 - paths: widths 24 to 64 (check 17); no straight run longer than 240 px and a bend at least
-  every 300 px along routes (check 16); dead ends of 80 px or more end in a view, a resident, a
+  every 300 px along routes (check 16), except bridges and causeways (straight by construction,
+  and on their own deck tier, so the tier rule does not read them either); dead ends of 80 px or more end in a view, a resident, a
   bench or a story detail (check 20);
 - tiers: a path that crosses from one tier to another does so on a stair at least 34 px wide
   within 24 px of the crossing (checks 19, 21; eastward 6.3: no ramps), and never walks along a
@@ -65,6 +66,7 @@ BEND_DEG = 12
 DEAD_MIN = 80
 OBSTACLE_GAP = 800
 DEAD_ENDS = {'view', 'resident', 'bench', 'story'}
+SPANS = {'bridge', 'causeway'}
 # the cliff core's set pieces (claude-a/cliff-core, PR #165: Plan's pieces); a plan may name one
 # not in it only as 'proposed'
 LIBRARY = {'stair', 'ledge', 'path', 'spring', 'pond', 'snow_corner', 'boulders', 'scree', 'ivy'}
@@ -207,6 +209,8 @@ def check(plan: dict) -> list:
                 out.append(f'{pid}: {pth["id"]} width {wd} (24 to 64, whole cells)')
         for p in pts:
             inside(p, f'{pth["id"]} point')
+        if pth.get('kind') in SPANS:      # a bridge or causeway runs straight by construction,
+            continue                      # on its own deck tier (Claude I, i-to-f-1150)
         runs = straight_runs(pts)
         if max(runs) > STRAIGHT_MAX:
             out.append(f'{pid}: {pth["id"]} runs straight for {max(runs):.0f} px (at most {STRAIGHT_MAX})')
