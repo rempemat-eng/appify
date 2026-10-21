@@ -25,15 +25,20 @@ south face). For each route it fixes:
   - the side paths round obstacles and the dead-end paths to secret pockets;
   - the meeting cells: where each route passes from one owner's land into another's.
 
+The grid shape (Matt, 21 Oct 11:44, crew board to-all-grid-2x): like Eastward's, a route
+runs straight along x or y and turns only at cell boundaries, its corners rounded when
+painted; the plan's earlier irregular bends (5.6) and the benchmark's "no straight run over
+240 px" are withdrawn. A run is at least MIN_RUN long, and nothing turns on a bridge, ford,
+causeway or stair. Where a lane has drawn the line itself (FIXED), it stays as drawn.
+
 Where the lines come from. The block-out (Claude A's geo52.py and stats-v52.json) is not
 in the repository. The briefs place every route's markers (ten a screen, either side of
 the path), its thresholds and its ends; ANCHORS below is the centre line fitted through
 them (an elastic line through the markers' medians, outliers dropped, simplified to
 within 10 px). Walk lengths match the briefs' times at 40 px/s within 10 % for 16 of the
 20 routes (`blockout` keeps the brief's numbers beside ours). The build then smooths each
-line, lays the plan's irregular bends on it (a short bend of 160 to 240 px riding a long
-swing of 450 to 750 px, never a regular S, plan 5.6), straightens it over bridges and
-fords, and snaps it to the grid.
+line and lays it on the grid in straight runs (above), pinned straight across every bridge,
+ford, causeway and ferry through the brief's point.
 
 Tiers. The block-out's height field stepped the plain and the hills into many low tiers
 (the High Fells 35 changes in 1960 px, more than stairs and paths round faces can fit), and the plan
@@ -182,7 +187,7 @@ ANCHORS = {
 }
 
 # Stretches a region lane has drawn path first in its own plan (inside its footprint): the
-# line is taken exactly as drawn there (no smoothing, no bends laid on, no switchback Z,
+# line is taken exactly as drawn there (no smoothing, not laid on the grid's runs, no turn,
 # since the lane drew its own), as anchor indices (first, last), with the lane, its file
 # and the width it drew (None keeps ours).
 FIXED = {
@@ -191,29 +196,28 @@ FIXED = {
     'drovers-road': [(3, 20, 'claude-f', 'art/regions/brackens.json', 32)],
 }
 
-# id: name, kind, from, to, base width, (brief walk s, brief tier changes), bends.
-# bends: (long swing amplitude, short bend amplitude) in px; 0 for built straight things.
+# id: name, kind, from, to, base width, (brief walk s, brief tier changes).
 ROUTES = [
-    ('col-path', 'Col Path', 'path', 'valley-col', 'frostline', 24, (28, 7), (14, 6)),
-    ('high-fells', 'High Fells', 'path', 'frostline', 'cogsworth-north', 24, (49, 35), (18, 7)),
-    ('foothill-road', 'Foothill Road', 'road', 'valley-fern', 'cogsworth-west', 40, (38, 17), (22, 7)),
-    ('towpath', 'Towpath', 'path', 'cogsworth-east', 'lullford', 32, (48, 9), (14, 6)),
-    ('lull-road', 'Lull Road', 'road', 'valley-east', 'neon-market', 40, (87, 13), (24, 8)),
-    ('coast-path', 'Coast Path', 'path', 'driftwood', 'lullford', 32, (56, 1), (18, 7)),
-    ('headland-lane', 'Headland Lane', 'path', 'headland-neck', 'headland-tip', 32, (14, 0), (10, 6)),
-    ('shell-bar', 'Shell Bar', 'bar', 'headland-tip', 'lagoon-landing', 48, (15, 0), (20, 8)),
-    ('drovers-road', "Drover's Road", 'road', 'valley-halt', 'dust-gulch', 40, (90, 22), (24, 8)),
-    ('lode-track', 'Lode Track', 'path', 'dust-gulch', 'the-lode', 24, (18, 2), (12, 6)),
-    ('canyon-road', 'Canyon Road', 'path', 'dust-gulch', 'hearthold', 32, (75, 28), (18, 7)),
-    ('forge-stair', 'Forge Stair', 'path', 'hearthold', 'ember-forge', 32, (4, 3), (0, 0)),
-    ('ember-way', 'Ember Way', 'path', 'hearthold', 'cinderwick', 32, (18, 9), (12, 6)),
-    ('ash-coast', 'Ash Coast', 'path', 'valley-halt', 'cinderwick', 32, (91, 7), (22, 8)),
-    ('delta-road', 'Delta Road', 'path', 'lull-east-bank', 'neon-heights', 32, (56, 11), (12, 6)),
-    ('harbour-bridge', 'Harbour Bridge', 'bridge', 'neon-heights', 'neon-quay', 40, (None, 3), (0, 0)),
-    ('old-bridges', 'Old Bridges', 'road', 'neon-market', 'neon-docks', 40, (9, 0), (0, 0)),
-    ('quay-street', 'Quay Street', 'road', 'neon-docks', 'gull-strand', 40, (24, 6), (14, 6)),
-    ('beacon-causeway', 'Beacon Causeway', 'causeway', 'gull-strand', 'beacon-isle', 32, (None, 0), (0, 0)),
-    ('cape-road', 'Cape Road', 'road', 'skyport', 'launch-cape', 40, (18, 3), (12, 6)),
+    ('col-path', 'Col Path', 'path', 'valley-col', 'frostline', 24, (28, 7)),
+    ('high-fells', 'High Fells', 'path', 'frostline', 'cogsworth-north', 24, (49, 35)),
+    ('foothill-road', 'Foothill Road', 'road', 'valley-fern', 'cogsworth-west', 40, (38, 17)),
+    ('towpath', 'Towpath', 'path', 'cogsworth-east', 'lullford', 32, (48, 9)),
+    ('lull-road', 'Lull Road', 'road', 'valley-east', 'neon-market', 40, (87, 13)),
+    ('coast-path', 'Coast Path', 'path', 'driftwood', 'lullford', 32, (56, 1)),
+    ('headland-lane', 'Headland Lane', 'path', 'headland-neck', 'headland-tip', 32, (14, 0)),
+    ('shell-bar', 'Shell Bar', 'bar', 'headland-tip', 'lagoon-landing', 48, (15, 0)),
+    ('drovers-road', "Drover's Road", 'road', 'valley-halt', 'dust-gulch', 40, (90, 22)),
+    ('lode-track', 'Lode Track', 'path', 'dust-gulch', 'the-lode', 24, (18, 2)),
+    ('canyon-road', 'Canyon Road', 'path', 'dust-gulch', 'hearthold', 32, (75, 28)),
+    ('forge-stair', 'Forge Stair', 'path', 'hearthold', 'ember-forge', 32, (4, 3)),
+    ('ember-way', 'Ember Way', 'path', 'hearthold', 'cinderwick', 32, (18, 9)),
+    ('ash-coast', 'Ash Coast', 'path', 'valley-halt', 'cinderwick', 32, (91, 7)),
+    ('delta-road', 'Delta Road', 'path', 'lull-east-bank', 'neon-heights', 32, (56, 11)),
+    ('harbour-bridge', 'Harbour Bridge', 'bridge', 'neon-heights', 'neon-quay', 40, (None, 3)),
+    ('old-bridges', 'Old Bridges', 'road', 'neon-market', 'neon-docks', 40, (9, 0)),
+    ('quay-street', 'Quay Street', 'road', 'neon-docks', 'gull-strand', 40, (24, 6)),
+    ('beacon-causeway', 'Beacon Causeway', 'causeway', 'gull-strand', 'beacon-isle', 32, (None, 0)),
+    ('cape-road', 'Cape Road', 'road', 'skyport', 'launch-cape', 40, (18, 3)),
 ]
 
 # Each route's tier profile: (tier at its start, [legs]); a leg is (from fraction, to
@@ -372,7 +376,7 @@ POCKETS = [
 # ---------------------------------------------------------------------------- geometry
 
 def _hash(*parts) -> float:
-    """A stable number in [0, 1) from the parts (so the bends never change by accident)."""
+    """A stable number in [0, 1) from the parts (so the drawing never changes by accident)."""
     h = hashlib.sha256('|'.join(str(p) for p in parts).encode()).digest()
     return int.from_bytes(h[:6], 'big') / float(1 << 48)
 
@@ -419,18 +423,6 @@ def smooth(pts, radius_px):
             sy += pts[i + j][1] * ww
             sw += ww
         out.append((sx / sw, sy / sw))
-    return out
-
-
-def normals(pts):
-    out = []
-    n = len(pts)
-    for i in range(n):
-        a = pts[max(0, i - 2)]
-        b = pts[min(n - 1, i + 2)]
-        dx, dy = b[0] - a[0], b[1] - a[1]
-        d = math.hypot(dx, dy) or 1.0
-        out.append((-dy / d, dx / d))
     return out
 
 
@@ -484,31 +476,107 @@ def owner(x, y):
 
 # ---------------------------------------------------------------------------- the build
 
-def bends(rid, s, total, amp_long, amp_short, quiet):
-    """Lateral offsets for the plan's irregular bends: a short bend every 160 to 240 px
-    riding a long swing of 450 to 750 px, each wavelength and size varying along the
-    route (so no stretch reads as a regular S). `quiet` gives, per sample, how much of
-    the bend is allowed (0 on bridges and at the ends)."""
-    out = []
-    ph_l = _hash(rid, 'long') * 2 * math.pi
-    ph_s = _hash(rid, 'short') * 2 * math.pi
-    prev = 0.0
-    for i, si in enumerate(s):
-        ds = si - prev
-        prev = si
-        k = int(si // 300)
-        lam_l = 450 + 300 * _hash(rid, 'lam-long', k)
-        lam_s = 160 + 80 * _hash(rid, 'lam-short', int(si // 120))
-        ph_l += 2 * math.pi * ds / lam_l
-        ph_s += 2 * math.pi * ds / lam_s
-        a_l = amp_long * (0.6 + 0.4 * _hash(rid, 'amp-long', k))
-        a_s = amp_short * (0.7 + 0.3 * _hash(rid, 'amp-short', int(si // 200)))
-        out.append(quiet[i] * (a_l * math.sin(ph_l) + a_s * math.sin(ph_s)))
-    return out
+MIN_RUN = 80       # px: the shortest straight run of a route between two turns
+TURN_TOL = 40      # px: how far the line may stray from the fitted course before it turns
 
 
-def build_route(spec, bumps=()):
-    rid, name, kind, frm, to, base_w, (b_walk, b_tiers), (amp_l, amp_s) = spec
+def grid_line(pts, fixed, no_turn, start, end, pins=()):
+    """The route as runs along x or y on the 8 px grid, following `pts` (samples every
+    8 px): a run turns when the course has strayed TURN_TOL px off it, never before it is
+    MIN_RUN long (unless it can go no further) and never where `no_turn` holds; samples
+    flagged `fixed` are taken as the lane drew them. `pins` are (sample index, first point,
+    last point, axis): a crossing the line must run straight across, from its first point to
+    its last along that axis, arriving by an L. Returns vertices at most VERTEX_EVERY apart,
+    on the grid."""
+    pin_at = {p[0]: p for p in pins}
+    pinned_until = -1
+    out = [(snap(start[0]), snap(start[1]))]
+    gx, gy = out[0]
+    axis = None
+    run = 0
+
+    def push(x, y):
+        if (x, y) != out[-1]:
+            out.append((x, y))
+
+    for i, (cx, cy) in enumerate(pts[1:], 1):
+        if i in pin_at:
+            _, (ax_, ay_), (bx_, by_), pax, until = pin_at[i]
+            if pax == 'x':      # arrive along x: first fix y, then run x
+                push(gx, ay_)
+            else:
+                push(ax_, gy)
+            push(ax_, ay_)
+            push(bx_, by_)
+            gx, gy = bx_, by_
+            axis, run, pinned_until = pax, MIN_RUN, until
+            continue
+        if i <= pinned_until:
+            continue
+        if fixed[i]:
+            nx, ny = snap(cx), snap(cy)
+            if not fixed[i - 1] and nx != gx and ny != gy:
+                push(nx, gy)   # into a lane's drawn stretch by an L, not a diagonal
+            gx, gy = nx, ny
+            push(gx, gy)
+            axis, run = None, 0
+            continue
+        if axis is None:
+            axis = 'x' if abs(cx - gx) >= abs(cy - gy) else 'y'
+        for _ in range(64):
+            d = (cx - gx) if axis == 'x' else (cy - gy)
+            perp = (cy - gy) if axis == 'x' else (cx - gx)
+            stuck = abs(d) < GRID
+            if abs(perp) > TURN_TOL and (run >= MIN_RUN or stuck) and not no_turn[i]:
+                if out[-1] != (gx, gy):
+                    push(gx, gy)
+                axis = 'y' if axis == 'x' else 'x'
+                run = 0
+                continue
+            if stuck:
+                break
+            step = GRID if d > 0 else -GRID
+            if axis == 'x':
+                gx += step
+            else:
+                gy += step
+            run += GRID
+            push(gx, gy)
+    ex, ey = snap(end[0]), snap(end[1])
+    # close on the end: the remaining offset as at most two runs
+    if axis == 'y':
+        while gy != ey:
+            gy += GRID if ey > gy else -GRID
+            push(gx, gy)
+    while gx != ex:
+        gx += GRID if ex > gx else -GRID
+        push(gx, gy)
+    while gy != ey:
+        gy += GRID if ey > gy else -GRID
+        push(gx, gy)
+    # fill every axis run in grid steps, then keep the corners and a vertex every
+    # VERTEX_EVERY along each run
+    dense = [out[0]]
+    for (x0, y0), (x1, y1) in zip(out, out[1:]):
+        if x0 == x1 or y0 == y1:
+            n = max(abs(x1 - x0), abs(y1 - y0)) // GRID
+            for k in range(1, n + 1):
+                dense.append((x0 + (x1 - x0) * k // n, y0 + (y1 - y0) * k // n))
+        else:
+            dense.append((x1, y1))
+    out = dense
+    keep = [out[0]]
+    for j in range(1, len(out) - 1):
+        a, b, c = keep[-1], out[j], out[j + 1]
+        straight = (a[0] == b[0] == c[0]) or (a[1] == b[1] == c[1])
+        if not straight or math.dist(a, c) > VERTEX_EVERY:
+            keep.append(b)
+    keep.append(out[-1])
+    return keep
+
+
+def build_route(spec):
+    rid, name, kind, frm, to, base_w, (b_walk, b_tiers) = spec
     anchors = ANCHORS[rid]
     raw = resample(anchors)
     rs = arclen(raw)
@@ -551,19 +619,6 @@ def build_route(spec, bumps=()):
             raise SystemExit(f'{name}: threshold {t[1]} at {t[3]} is {d:.0f} px from the line')
         thresholds.append((t, st))
 
-    # how much bend each sample may take: none within 64 px of the ends, none on a
-    # crossing's span (bridges, fords and causeways are straight), easing in over 64 px
-    def quiet_at(si):
-        q = min(1.0, si / 64.0, (total - si) / 64.0)
-        for lo, hi, _ in fixed:
-            d = max(lo - si, si - hi)
-            q = min(q, max(0.0, d / 64.0))
-        for c in crossings:
-            half = c['span'] / 2
-            d = abs(si - c['s']) - half
-            q = min(q, max(0.0, d / 64.0))
-        return max(0.0, q)
-    quiet = [quiet_at(si) for si in s]
 
     tier0, legs = TIERS[rid]
     changes = []
@@ -602,65 +657,57 @@ def build_route(spec, bumps=()):
                 c['s'] = hi if c['s'] > x['s'] else lo
         c['s'] = min(max(c['s'], c['run'] / 2), total - c['run'] / 2)
 
-    off = bends(rid, s, total, amp_l, amp_s, quiet)
-    # a bend added where the swings happened to cancel into a straight run (check 16)
-    for (sb, sign) in bumps:
-        for i, si in enumerate(s):
-            u = (si - sb) / 180.0
-            if -1 < u < 1:
-                off[i] += sign * 14 * math.cos(u * math.pi / 2) ** 2 * quiet[i]
-    # a switchback is a short Z across the line
-    for c in changes:
-        if c['kind'] != 'switchback' or in_fixed(c['s'] / (1.0), 64):
-            continue
-        for i, si in enumerate(s):
-            u = (si - (c['s'] - c['run'] / 2)) / c['run']
-            if 0 <= u <= 1:
-                off[i] += 20 * math.sin(2 * math.pi * u) * (1 if int(c['to']) % 2 else -1)
-    nrm = normals(pts)
-    line = [(p[0] + nrm[i][0] * off[i], p[1] + nrm[i][1] * off[i]) for i, p in enumerate(pts)]
-    # pin the ends exactly where the brief has them
-    line[0] = tuple(map(float, ANCHORS[rid][0]))
-    line[-1] = tuple(map(float, ANCHORS[rid][-1]))
-    ls = arclen(line)
-    scale = ls[-1] / total
-    for c in changes:
-        c['s'] *= scale
+    # The line on the grid (Matt, 21 Oct 11:44, to-all-grid-2x: "remember the grid shape
+    # like in eastward"): straight runs along x or y, turning only at cell boundaries, each
+    # run at least MIN_RUN long, rounded at its corners when painted; a lane's drawn stretch
+    # is kept as drawn, and nothing turns on a bridge, ford, causeway or stair.
+    pre, pre_s = pts, s
+    marks_c = [at_s(pre, pre_s, c['s']) for c in changes]
+    marks_x = [at_s(pre, pre_s, c['s']) for c in crossings]
+    marks_t = [at_s(pre, pre_s, st) for (t, st) in thresholds]
+    no_turn = []
+    for si in pre_s:
+        hold = any(abs(si - c['s']) <= c['span'] / 2 + 16 for c in crossings)
+        hold = hold or any(c['kind'] == 'stair' and abs(si - c['s']) <= c['run'] / 2 + 8 for c in changes)
+        no_turn.append(hold)
+    fixed_flags = [in_fixed(si) for si in pre_s]
+    # each crossing is pinned: the line runs straight across it through the brief's point,
+    # along the axis the course takes there
+    pins = []
     for c in crossings:
-        c['s'] *= scale
-    thresholds = [(t, st * scale) for t, st in thresholds]
-    total = ls[-1]
-
-    # vertices: every sample whose snapped point is new, thinned to the grid's own steps
-    verts = []
-    vs = []
-    for i, p in enumerate(line):
-        q = (snap(p[0]), snap(p[1]))
-        if verts and q == verts[-1]:
-            continue
-        verts.append(q)
-        vs.append(ls[i])
-    # thin: drop a vertex when its neighbours' straight line passes within 2 px of it and
-    # keeps the next vertex within VERTEX_EVERY
-    keep = [0]
-    for i in range(1, len(verts) - 1):
-        a = verts[keep[-1]]
-        b = verts[i + 1]
-        p = verts[i]
-        dx, dy = b[0] - a[0], b[1] - a[1]
-        L = math.hypot(dx, dy) or 1.0
-        dev = abs(dx * (p[1] - a[1]) - dy * (p[0] - a[0])) / L
-        if dev > 2.0 or math.dist(a, b) > VERTEX_EVERY:
-            keep.append(i)
-    keep.append(len(verts) - 1)
-    verts = [verts[i] for i in keep]
+        lo, hi = c['s'] - c['span'] / 2, c['s'] + c['span'] / 2
+        at_start, at_end = lo <= 8, hi >= pre_s[-1] - 8
+        if (at_start and at_end) or in_fixed(c['s'], 16):
+            continue   # a crossing that is the whole route needs no pin
+        lo, hi = max(lo, pre_s[1]), min(hi, pre_s[-1])
+        a, b = at_s(pre, pre_s, lo), at_s(pre, pre_s, hi)
+        ax = 'x' if abs(b[0] - a[0]) >= abs(b[1] - a[1]) else 'y'
+        cx, cy = c['brief']
+        if at_end:   # the crossing ends the route: it lines up with the route's end
+            cx, cy = ANCHORS[rid][-1]
+            b = ANCHORS[rid][-1]
+        if ax == 'x':
+            p0, p1 = (snap(a[0]), snap(cy)), (snap(b[0]), snap(cy))
+        else:
+            p0, p1 = (snap(cx), snap(a[1])), (snap(cx), snap(b[1]))
+        i0 = min(range(len(pre_s)), key=lambda k: abs(pre_s[k] - lo))
+        i1 = min(range(len(pre_s)), key=lambda k: abs(pre_s[k] - hi))
+        pins.append((max(1, i0), p0, p1, ax, i1))
+    verts = grid_line(pre, fixed_flags, no_turn, ANCHORS[rid][0], ANCHORS[rid][-1], pins)
     vs = arclen(verts)
-    scale = vs[-1] / total
-    for c in changes:
-        c['s'] *= scale
-    for c in crossings:
-        c['s'] *= scale
-    thresholds = [(t, st * scale) for t, st in thresholds]
+    for c, m in zip(changes, marks_c):
+        c['s'] = project(verts, vs, m)[0]
+    for c, m in zip(crossings, marks_x):
+        c['s'] = project(verts, vs, m)[0]
+    thresholds = [(t, project(verts, vs, m)[0]) for (t, st), m in zip(thresholds, marks_t)]
+    drawn = []
+    for (i0, i1, lane, src, w) in FIXED.get(rid, ()):
+        a0 = (snap(ANCHORS[rid][i0][0]), snap(ANCHORS[rid][i0][1]))
+        a1 = (snap(ANCHORS[rid][i1][0]), snap(ANCHORS[rid][i1][1]))
+        drawn.append({'from': round(project(verts, vs, a0)[0]), 'to': round(project(verts, vs, a1)[0]),
+                      'lane': lane, 'source': src})
+    fixed = [(d['from'], d['to'], w) for d, (_, _, _, _, w) in zip(drawn, FIXED.get(rid, ()))]
+    base_total = vs[-1]
     total = vs[-1]
 
     # tiers per vertex
@@ -693,7 +740,7 @@ def build_route(spec, bumps=()):
         if kind == 'bar':
             w = 40 + 8 * int(3 * _hash(rid, 'bar', i // 3))
         for lo, hi, fw in fixed:
-            if fw and lo <= si / scale_f <= hi:
+            if fw and lo <= si <= hi:
                 w = fw + (8 if any(abs(si - st) < 48 for (t, st) in thresholds) else 0)
         w = max(WIDTH_MIN, min(WIDTH_MAX, int(round(w / GRID)) * GRID))
         widths.append(w)
@@ -755,7 +802,8 @@ def build_route(spec, bumps=()):
         'points': points, 'changes': out_changes, 'crossings': out_cross,
         'thresholds': out_thr, 'meets': meets,
     }
-    out['_scale'] = total / base_total
+    out['_scale'] = 1.0
+    out['drawnBy'] = drawn
     out['sidePaths'] = side_paths(rid, verts, vs)
     out['pockets'] = pocket_paths(rid, verts, vs)
     return out
@@ -786,14 +834,9 @@ def side_paths(rid, verts, vs):
         b = at_s(verts, vs, s0 + 0.72 * (s1 - s0))
         mid1 = (a[0] + ux * reach * 0.85, a[1] + uy * reach * 0.85)
         mid2 = (b[0] + ux * reach, b[1] + uy * reach)
-        path = resample([p0, mid1, mid2, p1], 8)
-        path = smooth(path, 64)
-        pts = []
-        for p in path:
-            q = [snap(p[0]), snap(p[1])]
-            if not pts or q != pts[-1]:
-                pts.append(q)
-        pts = pts[::max(1, len(pts) // 12)] + ([pts[-1]] if pts[-1] != pts[::max(1, len(pts) // 12)][-1] else [])
+        path = smooth(resample([p0, mid1, mid2, p1], 8), 64)
+        n = len(path)
+        pts = [list(v) for v in grid_line(path, [False] * n, [False] * n, p0, p1)]
         out.append({'obstacle': what, 'at': list(at), 'leaves': [snap(p0[0]), snap(p0[1])],
                     'rejoins': [snap(p1[0]), snap(p1[1])], 'points': pts, 'width': 24})
     return out
@@ -814,45 +857,14 @@ def pocket_paths(rid, verts, vs):
         bend = (0.12 + 0.1 * _hash(rid, holds, at)) * L * (1 if _hash(rid, holds) > 0.5 else -1)
         mid = (mx - dy / L * bend, my + dx / L * bend)
         path = resample([p0, mid, at], 8)
-        pts = []
-        for p in path[:: max(1, len(path) // 8)] + [path[-1]]:
-            q = [snap(p[0]), snap(p[1])]
-            if not pts or q != pts[-1]:
-                pts.append(q)
+        n = len(path)
+        pts = [list(v) for v in grid_line(path, [False] * n, [False] * n, p0, at)]
         out.append({'holds': holds, 'clearing': list(at), 'leaves': pts[0], 'points': pts,
                     'length': round(arclen(pts)[-1]), 'width': 24, 'clearingRadius': 40})
     return out
 
 
 # ---------------------------------------------------------------------------- the checks
-
-def straight_runs(points, built=(), where=False):
-    """The longest stretch whose heading stays within 6 degrees of where it started,
-    measured on headings over 32 px (so the grid's own steps don't count as bends).
-    `built` lists (s from, s to) stretches that are built straight (a bridge, a ford, a
-    causeway, with 64 px either side to ease in); a run ends where one begins."""
-    pts = [(p[0], p[1]) for p in points]
-    rs = resample(pts, 8)
-    hs = []
-    for i in range(len(rs) - 4):
-        si = i * 8.0 + 16
-        hs.append(None if any(lo <= si <= hi for lo, hi in built) else heading(rs[i], rs[i + 4]))
-    best = 0.0
-    mid = 0.0
-    i = 0
-    while i < len(hs):
-        if hs[i] is None:
-            i += 1
-            continue
-        j = i
-        while j + 1 < len(hs) and hs[j + 1] is not None and abs(turn(hs[i], hs[j + 1])) <= 6:
-            j += 1
-        if (j - i + 4) * 8.0 > best:
-            best = (j - i + 4) * 8.0
-            mid = (i + j + 4) / 2 * 8.0
-        i = j + 1
-    return (best, mid) if where else best
-
 
 def check(routes):
     problems = []
@@ -886,11 +898,18 @@ def check(routes):
                     continue   # a step (the lip, a col, a rockfall) may be the stair itself
                 if abs(c['s'] - x['s']) < (x['span'] + c['run']) / 2 - 1:
                     problems.append(f"{r['name']}: a {c['kind']} on {x['name']}")
-        if r['kind'] in ('road', 'path', 'bar') and r['length'] > 300:
-            built = [(x['s'] - x['span'] / 2 - 64, x['s'] + x['span'] / 2 + 64) for x in r['crossings']]
-            run = straight_runs(pts, built)
-            if run > 240:
-                problems.append(f"{r['name']}: a straight run of {run:.0f} px (check 16: at most 240)")
+        # the grid shape: every run along x or y, except where a lane drew the line itself
+        vs = arclen([(p[0], p[1]) for p in pts])
+        for i in range(1, len(pts)):
+            a, b = pts[i - 1], pts[i]
+            if a[0] != b[0] and a[1] != b[1]:
+                mid = (vs[i - 1] + vs[i]) / 2
+                if not any(d['from'] - 8 <= mid <= d['to'] + 8 for d in r['drawnBy']):
+                    problems.append(f"{r['name']}: ({a[0]}, {a[1]}) to ({b[0]}, {b[1]}) is not along x or y")
+        for sp in r['sidePaths'] + r['pockets']:
+            for a, b in zip(sp['points'], sp['points'][1:]):
+                if a[0] != b[0] and a[1] != b[1]:
+                    problems.append(f"{r['name']}: a side path or pocket path runs off the grid at {a}")
     return problems
 
 
@@ -908,7 +927,7 @@ def gate_check(routes):
             if sid in (r['from'], r['to']):
                 continue
             so, d = project(verts, vs, at)
-            if d <= 96:
+            if d <= 128:   # a stop beside the route (its settlement reaches the road)
                 on.append((so, sid))
         route_stops[r['id']] = sorted(on)
     steps = []
@@ -983,6 +1002,8 @@ def export_ts(routes, steps, path):
         '  length: number; walkS: number; blockout: { walkS: number | null; tierChanges: number };',
         '  points: readonly RoutePoint[]; changes: readonly TierChange[]; crossings: readonly Crossing[];',
         '  sidePaths: readonly SidePath[]; pockets: readonly PocketPath[];',
+        '  /** stretches a region lane drew itself (taken as drawn, not on the grid rule), by s */',
+        '  drawnBy: readonly { from: number; to: number; lane: string; source: string }[];',
         '}',
         'export interface Threshold {',
         '  id: string; name: string; route: string; at: readonly [number, number]; s: number; brief: readonly [number, number];',
@@ -1115,17 +1136,7 @@ def preview(routes, path, scale=8):
 def build():
     routes = []
     for spec in ROUTES:
-        bumps = []
         r = build_route(spec)
-        # where the long swing and the short bend cancel into a run straighter than check
-        # 16 allows, add a bend there (at most four, deterministic) and build again
-        while r['kind'] in ('road', 'path', 'bar') and len(bumps) < 4:
-            built = [(x['s'] - x['span'] / 2 - 64, x['s'] + x['span'] / 2 + 64) for x in r['crossings']]
-            run, at = straight_runs(r['points'], built, where=True)
-            if run <= 240:
-                break
-            bumps.append((at / r['_scale'], 1 if len(bumps) % 2 == 0 else -1))
-            r = build_route(spec, bumps)
         del r['_scale']
         routes.append(r)
     problems = check(routes)
