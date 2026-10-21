@@ -339,8 +339,8 @@ def tram_tipple() -> Canvas:
     # the stringers and the deck with its rails
     part(cv, 0, top, 60, 4, 'timber', 4)
     cv.hline(0, top - 1, 60, T('iron', 4)); cv.hline(0, top - 2, 60, T('iron', 2))
-    for x in range(0, 60, 5):
-        cv.set(x, top + 1, T('timber', 1))  # the sleeper ends
+    for x in range(0, 60, 6):
+        cv.hline(x, top + 1, 2, T('timber', 1))  # the sleeper ends
     # a full tub coming along the rails
     part(cv, 8, top - 9, 11, 7, 'iron', 3)
     for x in range(9, 18):
@@ -406,6 +406,10 @@ def lookout() -> Canvas:
         beam(cv, (px, plat - 12), (px, plat - 3), 2, 'timber', 3)
     beam(cv, (4, plat - 12), (40, plat - 12), 2, 'timber', 4)
     beam(cv, (4, plat - 8), (40, plat - 8), 1, 'timber', 3)
+    part(cv, 8, plat - 7, 8, 3, 'timber', 4)  # a bench along the platform's west rail
+    beam(cv, (30, plat - 4), (28, plat - 11), 1, 'iron', 3)  # the spotting telescope on its stand
+    beam(cv, (30, plat - 4), (32, plat - 11), 1, 'iron', 2)
+    part(cv, 27, plat - 14, 9, 3, 'brass', 4)
     # the pyramid roof of shingles over the platform, its finial and flag
     for y in range(4, plat - 13):
         half = 3 + (y - 4) * 19 // (plat - 17)
@@ -414,7 +418,10 @@ def lookout() -> Canvas:
             k = (4 if x < 22 else 2) if (y - 4) % 3 else (3 if x < 22 else 1)
             if (x + course * 2) % 5 == 0 and (y - 4) % 3:
                 k -= 1
-            cv.set(x, y, T(sib('timber', noise2(x // 5, course, 541), 0.3), k))
+            fam = sib('timber', noise2((x + course * 3) // 5, course, 541), 0.33)
+            if noise2((x + course * 3) // 5, course, 543) > 0.85:
+                fam = 'bleached'  # a replaced shingle, still pale
+            cv.set(x, y, T(fam, k))
     for (mx, my) in ((28, 12), (29, 12), (30, 13), (33, 15), (34, 15), (14, 15), (15, 15)):  # moss in the roof's lee
         cv.set(mx, my, T('leaf', 3 if mx > 20 else 4))
     for x in range(5, 39):  # the roof's eaves board, lit, its shadow on the rail
@@ -484,15 +491,15 @@ def burners_hut() -> Canvas:
             elif (y - 6) % 4 == 0 and (x + course * 3) % 6 == 0:
                 k = max(1, k - 1)  # the joint between two turfs
             n = noise2((x + course * 3) // 5, course, 561)
-            fam = 'earth_warm' if n < 0.45 else 'grass_warm' if n < 0.75 else 'earth' if n < 0.9 else 'timber_warm'
+            fam = 'earth_warm' if n < 0.5 else 'grass_warm' if n < 0.8 else 'timber_warm'
             cv.set(x, y, T(fam, k))
     for x in range(1, 35):  # a footing ring of field stones holding the turf down
-        part(cv, x, foot - 3, 4, 3, sib('stone', noise2(x, 2, 563), 0.3), 4 if x < 12 else 3 if x < 26 else 2, glint=False) if x % 4 == 1 else None
+        part(cv, x, foot - 3, 4, 3, 'stone', 4 if x < 12 else 3 if x < 26 else 2, glint=False) if x % 4 == 1 else None
     for k in range(10):  # bracken fronds tucked in over the turf, rust-brown and green
         fx = 8 + int(noise2(k, 0, 562) * 20)
         fy = 12 + int(noise2(0, k, 562) * 18)
         if tone_at(cv, fx, fy) and tone_at(cv, fx + 2, fy):
-            fam = 'clay' if k % 2 else 'leaf_warm' if 'leaf_warm' else 'leaf'
+            fam = 'clay'
             cv.hline(fx, fy, 3, T(fam, 4)); cv.set(fx + 1, fy + 1, T(fam, 2))
     for py in range(10, foot - 2, 9):  # the poles' edges showing at the lit side
         half = 2 + (py - 6) * 15 // (foot - 6)
@@ -503,7 +510,15 @@ def burners_hut() -> Canvas:
         half = 4 if y > foot - 14 else 3
         for x in range(18 - half, 18 + half):
             cv.set(x, y, T('soot', 1) if x > 16 else T('sand_cool', 3 if y % 3 else 2))
-    part(cv, 28, foot - 7, 5, 4, 'timber', 3)  # a stool
+    for bx in (24, 29):  # bundles of bracken drying against the east side, tied at the waist
+        for y in range(foot - 14, foot - 2):
+            half = 2 if y < foot - 11 or y > foot - 6 else 1
+            for x in range(bx - half, bx + half + 1):
+                cv.set(x, y, T('sand_cool', 4 if x < bx else 3 if x == bx else 2))
+        cv.hline(bx - 1, foot - 9, 3, T('timber', 1))
+    part(cv, 31, foot - 6, 6, 4, 'timber', 3)  # a chopping block, its axe in it
+    beam(cv, (33, foot - 6), (36, foot - 12), 1, 'bleached', 4)
+    part(cv, 32, foot - 8, 3, 2, 'iron', 4, glint=False)
     beam(cv, (5, foot - 16), (2, foot - 3), 1, 'timber', 3)  # the kettle's tripod over a cold hearth
     beam(cv, (5, foot - 16), (8, foot - 3), 1, 'timber', 2)
     cv.vline(5, foot - 15, 6, T('iron', 2))
