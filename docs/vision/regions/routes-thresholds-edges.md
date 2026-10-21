@@ -4,7 +4,7 @@
 
 **Lanes changed on 21 Oct** (Matt: "can you speed up the world building a bit"; `../coherence-plan.md`, "Who does what"). Where this brief names Claude E for the Frostline, the Col, the massif or the Brackens, read Claude F; Claude C for Cogsworth, the coal hills, the Narrows or Fernhollow, read Claude H; Claude C for Neon Harbour, the Heights, the docks, the delta, the Lull belt, Lullford, Gullwick, the Skyport or the Cape Road, read Claude I; Claude A for the routes' chunks, the threshold objects or the world's edges, read Claude G.
 
-**The routes as data (lane G, 21 Oct).** Every route below is now a line on the canvas in `scripts/art/world_routes.py`, exported to `lib/world-routes.ts` and checked by `npm run check:world-routes`: its centre line on the 8 px grid, its width and tier at each vertex, each stair, round-end and switchback, its crossings and ways, the thresholds, the side paths and pockets, and the cells where it meets each lane's land. The meeting cells, per lane, are in `route-meets.md`. Inside a footprint the region lane paints the route's surface to that line, width and tier with its own kits; between footprints the route and its land are lane G's, and every threshold object is lane G's. The tier profiles are fewer, deliberate banks rather than the block-out's counts (section 6 below; `route-meets.md` gives both). There are no ramps: Eastward has none (`../eastward-edges.md` 6.3), so a route changes tier by a stair cut through the face, by going round the end of a face where it dies out into the slope (a round-end), or by doubling back round the ends of two staggered faces (a switchback). Section 6's ramps read as round-ends.
+**The routes as data (lane G, 21 Oct).** Every route below is now a line on the canvas in `scripts/art/world_routes.py`, exported to `lib/world-routes.ts` and checked by `npm run check:world-routes`: its centre line on the 8 px grid, its width and tier at each vertex, each stair and switchback, its crossings and ways, the thresholds, the side paths and pockets, and the cells where it meets each lane's land. The meeting cells, per lane, are in `route-meets.md`. Inside a footprint the region lane paints the route's surface to that line, width and tier with its own kits; between footprints the route and its land are lane G's, and every threshold object is lane G's. The tier profiles are fewer, deliberate banks rather than the block-out's counts (section 6 below; `route-meets.md` gives both). There are no ramps: Eastward has none (`../eastward-edges.md` 6.3). A route changes tier by a stair cut through the face, or by a switchback that doubles back round the ends of two staggered faces; section 6's ramps read as stairs.
 
 ## 1. The routes
 
@@ -83,6 +83,15 @@ Three layers on every edge, drawn as land (plan 5.5): the fade (walkable, clumps
 | South | the sea, with surf; cliffs at the headlands                              | the Tidebloom Isles; far islands on the horizon                                  |
 
 Interior edges (where the walked corridors meet land drawn but not walked) follow the same three layers. The fade is kept 200 px or more from rivers, lava and walls so it never opens a way round them.
+
+**The edges and the land between as data (lane G, 21 Oct).** `scripts/art/world_land.py` (exported to `lib/world-land.ts`, checked by `npm run check:world-land`) classifies every 8 px cell of the canvas outside the footprints: lane G's walkable land (the Lull plain with its coast to Gullwick, and the High Fells' corridor over the massif's shoulder), its fade, its wall, the thin-out and the beyond, each with its ground (meadow, coast, heights, massif, old forest, fens, sea). Who draws what:
+
+- Inside a footprint (or a lane's declared chunk box), the region lane draws its walkable land, its fade and its wall with its biome's own blockers (its brief's section 6).
+- Lane G draws everything outside the footprints: the land between, its fade and wall where it meets the beyond, and all of the beyond. From a lane's wall (its box edge) that is the thin-out of 160 to 400 px, then the border proper to the canvas edge, hazier.
+- Where a footprint reaches the canvas edge (Sunstone's north and west), the lane draws to its wall and lane G the beyond past it. Until the lane draws that wall, the provisional line in `EDGES` stands; the canvas edge is never the wall.
+- On the coasts the sea is the edge: the shore's owner draws its beach or cliff and surf, lane G the open sea past it.
+
+The check holds the layers: no walkable cell of lane G's touches the thin-out or the beyond, and the wall is 64 px or more deep everywhere between them.
 
 ## 5. Things on the land between the regions
 

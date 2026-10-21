@@ -1,0 +1,20 @@
+{
+ "_about": "The frozen golden scene: our own render of the perfected scene, never a reference game picture. `inputs` is the hash of everything the render reads (build.inputs); npm run check:kit rebuilds the scene when the inputs change and fails if a pixel differs.",
+ "scene": "pilot",
+ "biome": "meadow",
+ "kit": "meadow@1",
+ "renders": {
+  "2x": {
+   "file": "scene_2x.png",
+   "size": [
+    600,
+    1312
+   ],
+   "inputs": "a689da9c92ba2f37c63a7c2633c980f748b1d74dfdefc6dafbeb72fae3f5fd9b",
+   "lawn": {
+    "edge_share": 0.2261,
+    "lone_px": 0.0056
+   }
+  }
+ }
+}
