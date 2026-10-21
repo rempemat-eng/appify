@@ -140,7 +140,7 @@ def unrle(row: str, alphabet: str) -> str:
 
 
 def unrle_tiers(s: str, n: int) -> str | None:
-    """Tier rows (digits for tiers, 'f' a face, 's' a stair or ramp). Their run-length code puts
+    """Tier rows (digits for tiers, 'f' a face, 'b' a side band, 's' a stair or ramp). Their run-length code puts
     a count before each run, so a run of tier digits is ambiguous ('121'); decode greedily and
     give up (None) unless the result has exactly n cells."""
     out, i = [], 0
@@ -352,8 +352,12 @@ def judge_cell(ours: dict, ref: dict) -> tuple[bool, str]:
 class Place:
     """A part of a region's canvas: a zone (or an area), the garden, or a scenery cell."""
 
-    def __init__(self, id: str, kind: str, region: str, module: str, rect: tuple, grid: tuple | None = None):
+    def __init__(self, id: str, kind: str, region: str, module: str, rect: tuple, grid: tuple | None = None,
+                 painted: bool = False):
         self.id, self.kind, self.region, self.module = id, kind, region, module
+        # an area of a chunk painted whole (a lane's painter, not today's zones): its edges with
+        # the chunk's other areas are lines drawn for counting, not joins, so they cannot seam
+        self.painted = painted
         self.lane = LANE_OF_MODULE.get(module, '?')
         self.rect = rect            # (x, y, w, h) in canvas px
         self.grid = grid            # (col, row) on the region's zone grid, when it has one
@@ -618,7 +622,7 @@ def load_world(root: str, only: set | None = None) -> list:
             x, y, aw, ah = a['rect']
             mod = 'garden' if a['kind'] == 'garden' else modules.get(a['id'], 'zones')
             R.add_place(Place(a['id'], 'garden' if a['kind'] == 'garden' else 'area', ch['id'], mod,
-                              (x - ox, y - oy, aw, ah)))
+                              (x - ox, y - oy, aw, ah), painted=a['kind'] != 'garden' and a['id'] not in modules))
         for p in R.props:
             fx, fy = p['x'] + p['w'] // 2, p['y'] + p['h'] - 2
             for i, pl in enumerate(R.places):
@@ -934,6 +938,8 @@ class Audit:
     def tier_checks(self, tiered: np.ndarray, scale: int):
         R = self.R
         t = R.tiers
+        # 'f' a face, 'b' a side band (the 3 to 8 px band where a tier ends west or east): a band
+        # separates two tiers sideways like a face, but only 'f' has a face's height and side
         digit = (t >= ord('0')) & (t <= ord('9'))
         face = t == ord('f')
         stair = t == ord('s')
@@ -1054,7 +1060,17 @@ class Audit:
         for pl in R.places:
             x, y, w, h = pl.rect
             for k in (('v', x), ('v', x + w), ('h', y), ('h', y + h)):
-                lines[k] = 'place'
+                lines.setdefault(k, []).append(pl)
+        # a line between areas of one painted chunk is no join (the ground is one picture): skip
+        # it when every place along it is painted and it lies inside the painted areas' box
+        pp = [pl.rect for pl in R.places if pl.painted]
+        if pp:
+            px0, py0 = min(r[0] for r in pp), min(r[1] for r in pp)
+            px1, py1 = max(r[0] + r[2] for r in pp), max(r[1] + r[3] for r in pp)
+            for (o, B) in list(lines):
+                inner = (px0 < B < px1) if o == 'v' else (py0 < B < py1)
+                if inner and all(pl.painted for pl in lines[(o, B)]):
+                    del lines[(o, B)]
         # (A 256 px world tile inside a chunk is a copy of one composite, so its edge cannot seam:
         # world_canvas checks the tiles against the chunk pixel for pixel. The joins that can seam
         # are the zones' and areas' edges, the scenery cells' and a chunk's box against the ring
@@ -1081,6 +1097,8 @@ class Audit:
         T, wk = R.terrain, R.walk
         for i, a in enumerate(R.places):
             for b in R.places[i + 1:]:
+                if a.painted and b.painted:
+                    continue
                 ax, ay, aw, ah = a.rect
                 bx, by, bw, bh = b.rect
                 if ax + aw == bx and ay < by + bh and by < ay + ah:
@@ -1835,6 +1853,38 @@ def selftest(root: str) -> list:
     expect('side-band', 100 * WALK // CELL, (80 + 9) * WALK // CELL, True, 'a tier ends east with no side band')
     expect('tier-step', 100 * WALK // CELL, (80 + 9) * WALK // CELL, True, 'walkable tiers meet with no stair')
     expect('palette', 15, 2, False, 'palette findings are amber, never red')
+    # a painted chunk (two areas of one picture): its own area line is no seam, and a side band
+    # ('b') that meets a 32 px face at a jog in the tier's side passes every tier check
+    R2 = Region('selftest-painted', 'continent', 2 * ZW, ZH, (0, 0))
+    R2.add_place(Place('p1', 'area', 'selftest-painted', 'painted', (0, 0, ZW, ZH), painted=True))
+    R2.add_place(Place('p2', 'area', 'selftest-painted', 'painted', (ZW, 0, ZW, ZH), painted=True))
+    R2.ground[:, :ZW] = (126, 159, 80, 255)
+    R2.ground[:, ZW:] = (84, 120, 60, 255)
+    R2.terrain[:] = GROUND
+    R2.walk[:] = True
+    tv2 = np.full(R2.terrain.shape, ord('0'), np.uint8)
+    tv2[0:40, 0:40] = ord('1')
+    tv2[0:40, 40:42] = ord('b')                      # the band down the tier's east side
+    tv2[40:48, 0:20] = ord('1')
+    tv2[40:48, 20:42] = ord('f')                     # a 32 px face under the jog's rim
+    tv2[48:100, 0:20] = ord('1')
+    tv2[48:100, 20:22] = ord('b')                    # the band carries on below the face
+    R2.tiers = tv2
+    R2.walk[(tv2 == ord('f')) | (tv2 == ord('b'))] = False
+    A2 = Audit(R2, ctx).run()
+
+    def expect2(check, cy, cx, want, why):
+        got = A2.status[check][cy, cx]
+        if (got == RED) != want:
+            fails.append(f'{check} at cell ({cx}, {cy}) of the painted chunk: '
+                         f'{"expected a finding" if want else "expected none"} ({why})')
+    expect2('seam', 5, 9, False, 'the line between two areas of one painted chunk')
+    expect2('face-height', 40 * WALK // CELL, 30 * WALK // CELL, False, 'a 32 px face beside a side band')
+    expect2('face-height', 60 * WALK // CELL, 20 * WALK // CELL, False, 'a side band below a face is no face')
+    expect2('north-face', 48 * WALK // CELL, 20 * WALK // CELL, False, 'a band starting under a face')
+    expect2('side-band', 20 * WALK // CELL, 40 * WALK // CELL, False, 'tiers apart with a band between')
+    expect2('side-band', 70 * WALK // CELL, 20 * WALK // CELL, False, 'tiers apart with a band between, lower')
+    expect2('tier-step', 20 * WALK // CELL, 40 * WALK // CELL, False, 'a band blocks the walk sideways')
     # the vectorised bar against detail_bar itself, on a real ground
     g = np.asarray(Image.open(os.path.join(root, 'assets', 'zones', 'town', 'ground.png')).convert('RGB'))
     g = g[::max(1, g.shape[1] // ZW), ::max(1, g.shape[1] // ZW)][:ZH, :ZW]
