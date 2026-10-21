@@ -149,7 +149,6 @@ import img_continent_f_0_5 from '@/assets/world/continent/f_0_5.png';
 import img_continent_f_0_6 from '@/assets/world/continent/f_0_6.png';
 import img_continent_f_0_7 from '@/assets/world/continent/f_0_7.png';
 import img_continent_f_0_11 from '@/assets/world/continent/f_0_11.png';
-import img_continent_f_1_2 from '@/assets/world/continent/f_1_2.png';
 import img_continent_f_1_3 from '@/assets/world/continent/f_1_3.png';
 import img_continent_f_1_4 from '@/assets/world/continent/f_1_4.png';
 import img_continent_f_1_5 from '@/assets/world/continent/f_1_5.png';
@@ -374,7 +373,6 @@ export const worldFlowArt: Record<WorldPlane, Readonly<Record<string, ImageSourc
     '0,6': img_continent_f_0_6,
     '0,7': img_continent_f_0_7,
     '0,11': img_continent_f_0_11,
-    '1,2': img_continent_f_1_2,
     '1,3': img_continent_f_1_3,
     '1,4': img_continent_f_1_4,
     '1,5': img_continent_f_1_5,
