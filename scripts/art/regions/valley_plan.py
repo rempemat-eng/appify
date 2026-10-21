@@ -514,8 +514,9 @@ SET_PIECES = [
     ('boulders', 'coast', (7064, 5560)), ('boulders', 'coast', (6960, 5528)), ('boulders', 'meadow', (6872, 2440)),
     ('scree', 'meadow', (6904, 2480)),
 ]
-# cluster places for Claude B's prop_clusters (#188, #203): a recipe and a point; B's placer
-# (--place) turns each into a placement with its orientation and seed
+# cluster places for Claude B's prop_clusters (#188, #203): a recipe and a point, under
+# `cluster_places`; B's placer (--place) turns each into a `clusters` placement with its
+# orientation and seed. Recipes the library lacks yet (platform_yard, orchard_edge on #203) wait there
 CLUSTERS = [
     ('meadow_nook', (6392, 2560), 'hay slope: a rest under a tree beside the Col Path'),
     ('field_edge', (5928, 4616), 'the farm track through the field hedges, a stile at the drain'),
@@ -739,7 +740,10 @@ def base_plan() -> dict:
         'egg_spots': [],
         'obstacles': OBSTACLES,
         'set_pieces': [{'piece': p, 'biome': b, 'at': list(at), 'seed': 500 + i} for i, (p, b, at) in enumerate(SET_PIECES)],
-        'clusters': [{'recipe': r, 'at': list(at), 'why': why} for r, at, why in CLUSTERS],
+        # cluster places, not placements: Claude B's placer (prop_clusters.py --place) turns each into a
+        # `clusters` placement with its orientation and seed; #188's check holds every `clusters` entry
+        # as a placement, so the places wait under their own key
+        'cluster_places': [{'recipe': r, 'at': list(at), 'why': why} for r, at, why in CLUSTERS],
         'residents': RESIDENTS,
         'rest_spots': REST_SPOTS,
         'rings': [{'id': 'arena', 'at': [6112, 3696], 'zone': 'town', 'rival': 'Doomscroll Dave', 'backdrop': 'valley',
