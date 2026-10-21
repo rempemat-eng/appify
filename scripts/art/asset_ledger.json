@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "57a8a8a",
+ "main": "c028f86",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -10680,35 +10680,31 @@
    "module": "castle_props",
    "generator": "scripts/art/castle_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: doors about 22); foot line 38 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW as stone-wall",
-   "fails": [
-    "logic",
-    "grid",
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 121,
-    "w": 49,
+    "w": 47,
     "style": {
-     "colours": 106,
-     "on_house": 0.916,
-     "on_today": 0.012,
+     "colours": 91,
+     "on_house": 0.998,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.014,
-     "west_east": 5.827,
-     "isolated": 0.023,
+     "double": 0.039,
+     "west_east": 5.864,
+     "isolated": 0.003,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 38,
-     "cells": 4.75,
+     "foot_px": 40,
+     "cells": 5.0,
      "kind_foot": "6 x 6",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "tower",
@@ -10723,56 +10719,56 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "b658fec",
-     "date": "2026-10-20T07:32",
-     "subject": "D13 batch 1: Sunstone's wood fronts and Hearthold's stone to Eastward's level of detail"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "doors about 22",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: doors about 22)",
+    "logic": "fixed by eye: fixed: a studded oak door 14 x 32 in a dressed ashlar arch on its step (was about 22); the bell hung in an open middle bay between two louvred ones, its headstock and clapper shown (claude-d, 21 Oct)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "stone-wall",
      "box": [
       6,
-      24,
+      62,
       42,
-      60
+      98
      ],
      "patches": 4,
      "tones_at": 0.85,
      "tones": [
-      11.0,
+      23.75,
       18.56
      ],
      "shapes": [
-      33.75,
+      48.5,
       28.23
      ],
      "dressing": [
-      24.75,
+      41.25,
       22.36
      ],
      "isolated": [
-      0.029,
+      0.092,
       0.17
      ],
      "cluster": [
-      7.35,
+      3.45,
       3.63
-     ],
-     "low": [
-      "tones"
      ]
     }
    },
    "placed": {
     "hearthold": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: a studded oak door 14 x 32 in a dressed ashlar arch on its step (was about 22); the bell hung in an open middle bay between two louvred ones, its headstock and clapper shown (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/bench": {
    "files": [
@@ -24210,32 +24206,29 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "style: speckle, dither",
-   "fails": [
-    "speckle",
-    "dither"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 13,
-    "w": 20,
+    "h": 14,
+    "w": 19,
     "style": {
-     "colours": 14,
-     "on_house": 0.947,
-     "on_today": 0.579,
+     "colours": 28,
+     "on_house": 0.963,
+     "on_today": 0.0,
      "palette": "house",
-     "outline_dark": 0.978,
+     "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.022,
-     "west_east": 5.266,
-     "isolated": 0.229,
-     "checker": 0.014
+     "double": 0.065,
+     "west_east": 1.902,
+     "isolated": 0.021,
+     "checker": 0.0
     },
     "grid": {
-     "foot_px": 16,
-     "cells": 2.0,
+     "foot_px": 17,
+     "cells": 2.12,
      "kind_foot": "3 x 2",
      "ok": true
     },
@@ -24252,9 +24245,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "d4fa939",
-     "date": "2026-10-18T00:11",
-     "subject": "Draw the Desert Oasis west of Dust Gulch as its own place"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -24265,13 +24258,16 @@
     "bar": {
      "status": "by eye",
      "why": "no reference kind for this subject (house-style 7: by eye)",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "eye": "ok: a ring of eight stones lit on their upper left (the far ones smaller), ash, two charred sticks, embers, a teapot on the west stones; compared at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "oasis": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: a ring of eight stones lit on their upper left (the far ones smaller), ash, two charred sticks, embers, a teapot on the west stones; compared at 3x and 1x beside Eastward's barn-front yard at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/fireplace": {
    "files": [
@@ -33275,26 +33271,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "bar tones LOW, shapes LOW, dressing LOW as wood-front",
-   "fails": [
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 37,
+    "h": 38,
     "w": 30,
     "style": {
-     "colours": 10,
-     "on_house": 0.978,
-     "on_today": 0.63,
+     "colours": 43,
+     "on_house": 0.998,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.037,
-     "west_east": 0.342,
-     "isolated": 0.003,
+     "double": 0.0,
+     "west_east": 1.451,
+     "isolated": 0.006,
      "checker": 0.0
     },
     "grid": {
@@ -33316,9 +33310,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -33327,47 +33321,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "wood-front",
      "box": [
       3,
       1,
-      26,
-      24
+      27,
+      25
      ],
      "patches": 1,
      "tones_at": 0.85,
      "tones": [
-      9.0,
+      32.0,
       24.0
      ],
      "shapes": [
-      21.0,
+      46.0,
       36.34
      ],
      "dressing": [
-      15.0,
+      42.0,
       30.54
      ],
      "isolated": [
-      0.016,
+      0.086,
       0.17
      ],
      "cluster": [
-      9.48,
+      3.32,
       3.4
-     ],
-     "low": [
-      "tones",
-      "shapes",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/postern": {
    "files": [
@@ -34589,28 +34578,24 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "re-check: changed since the audit (ADJUST: storeys right; doors 25); style: speckle, colours",
-   "fails": [
-    "logic",
-    "speckle",
-    "colours"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
     "h": 108,
     "w": 106,
     "style": {
-     "colours": 188,
-     "on_house": 0.911,
-     "on_today": 0.212,
+     "colours": 76,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.029,
-     "west_east": 1.451,
-     "isolated": 0.136,
+     "double": 0.01,
+     "west_east": 0.223,
+     "isolated": 0.001,
      "checker": 0.0
     },
     "grid": {
@@ -34632,33 +34617,33 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "e153a06",
-     "date": "2026-10-20T11:23",
-     "subject": "After Claude A's note on #120 (to-d-120-back): moon in grey brown-grey, galley off timber, banners clear, colour budget,"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "ADJUST",
      "why": "storeys right; doors 25",
      "fix": "doors 32"
     },
-    "logic": "re-check: changed since the audit (ADJUST: storeys right; doors 25)",
+    "logic": "fixed by eye: fixed: the doorway 22 x 32 under a lintel, the swinging half doors hung at chest height in it, the lamp-lit room behind; storeys as before under the false front; porch posts unbroken (claude-d, 21 Oct)",
     "bar": {
      "status": "pass",
      "kind": "wood-front",
      "box": [
-      6,
+      5,
       12,
-      100,
+      99,
       106
      ],
      "patches": 25,
      "tones_at": 0.85,
      "tones": [
-      22.24,
+      20.68,
       24.0
      ],
      "shapes": [
-      40.0,
+      39.52,
       36.34
      ],
      "dressing": [
@@ -34666,11 +34651,11 @@
       30.54
      ],
      "isolated": [
-      0.126,
+      0.061,
       0.17
      ],
      "cluster": [
-      3.58,
+      4.41,
       3.4
      ]
     }
@@ -34678,7 +34663,10 @@
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "logic": "fixed: the doorway 22 x 32 under a lintel, the swinging half doors hung at chest height in it, the lamp-lit room behind; storeys as before under the false front; porch posts unbroken (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/sandstone_arch": {
    "files": [
@@ -41059,34 +41047,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 37 px: not whole 8 px cells (kind foot 6 x 6); bar tones LOW, dressing LOW as machinery",
-   "fails": [
-    "grid",
-    "bar"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 94,
-    "w": 45,
+    "h": 98,
+    "w": 46,
     "style": {
-     "colours": 15,
-     "on_house": 0.994,
-     "on_today": 0.785,
+     "colours": 58,
+     "on_house": 1.0,
+     "on_today": 0.0,
      "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.067,
-     "west_east": 7.313,
-     "isolated": 0.009,
+     "double": 0.008,
+     "west_east": 5.449,
+     "isolated": 0.003,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 37,
-     "cells": 4.62,
+     "foot_px": 40,
+     "cells": 5.0,
      "kind_foot": "6 x 6",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "water_tower",
@@ -41101,9 +41086,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -41112,46 +41097,42 @@
     },
     "logic": "ok (KEEP in the audit)",
     "bar": {
-     "status": "fail",
+     "status": "pass",
      "kind": "machinery",
      "box": [
       3,
-      4,
-      41,
-      42
+      13,
+      42,
+      52
      ],
      "patches": 4,
      "tones_at": 0.85,
      "tones": [
-      8.5,
+      23.5,
       25.16
      ],
      "shapes": [
-      32.0,
+      45.5,
       32.13
      ],
      "dressing": [
-      23.0,
+      37.75,
       27.14
      ],
      "isolated": [
-      0.033,
+      0.091,
       0.16
      ],
      "cluster": [
-      6.3,
+      3.48,
       3.62
-     ],
-     "low": [
-      "tones",
-      "dressing"
      ]
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "prop/watering_can": {
    "files": [
@@ -41658,35 +41639,31 @@
    "module": "western_props",
    "generator": "scripts/art/western_props.py",
    "owner": "D",
-   "grade": "REWORK",
-   "fix": "redraw",
-   "why": "foot line 28 px: not whole 8 px cells (kind foot 4 x 4); style: speckle, palette",
-   "fails": [
-    "grid",
-    "speckle",
-    "palette"
-   ],
+   "grade": "KEEP",
+   "fix": "none",
+   "why": "passes every check",
+   "fails": [],
    "measured": {
     "scale": 4,
-    "h": 85,
-    "w": 35,
+    "h": 88,
+    "w": 37,
     "style": {
-     "colours": 13,
-     "on_house": 0.673,
-     "on_today": 0.323,
-     "palette": "off",
+     "colours": 23,
+     "on_house": 0.993,
+     "on_today": 0.0,
+     "palette": "house",
      "outline_dark": 1.0,
      "flat_ink": 0.0,
-     "double": 0.05,
-     "west_east": 5.237,
-     "isolated": 0.079,
+     "double": 0.029,
+     "west_east": 16.365,
+     "isolated": 0.046,
      "checker": 0.0
     },
     "grid": {
-     "foot_px": 28,
-     "cells": 3.5,
+     "foot_px": 34,
+     "cells": 4.25,
      "kind_foot": "4 x 4",
-     "ok": false
+     "ok": true
     },
     "size": {
      "kind": "windpump",
@@ -41701,9 +41678,9 @@
      "status": "ok"
     },
     "last_change": {
-     "sha": "418e8b8",
-     "date": "2026-10-17T22:06",
-     "subject": "W1 prototype: walk the valley with no cuts between zones (/atlas)"
+     "sha": "dc1d5ae",
+     "date": "2026-10-21T01:04",
+     "subject": "Sunstone redraws batch 2: bell tower, saloon, water tower, notice board, windpump and camp fire on the house ramps"
     },
     "audit": {
      "grade": "KEEP",
@@ -41714,15 +41691,18 @@
     "bar": {
      "status": "n/a",
      "kind": "machinery",
-     "square": 9,
-     "why": "no solid 18 px square (largest 9): too small for a 16 px patch",
-     "eye": "KEEP by eye in the prop audit, unchanged since"
+     "square": 6,
+     "why": "no solid 18 px square (largest 6): too small for a 16 px patch",
+     "eye": "ok: open structure (house-style 7 ruling): every member meets another at a riveted joint, the legs on concrete pads, the wheel's sails held by a rim, the vane downwind; no outline round the lattice so the air shows through; compared at 3x and 1x beside Eastward's barn-front yard (eastward-17-barn-front) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
     }
    },
    "placed": {
     "gulch": 1
    },
-   "checked": "2026-10-20"
+   "eye": {
+    "bar": "ok: open structure (house-style 7 ruling): every member meets another at a riveted joint, the legs on concrete pads, the wheel's sails held by a rim, the vane downwind; no outline round the lattice so the air shows through; compared at 3x and 1x beside Eastward's barn-front yard (eastward-17-barn-front) at an adult of 25 px, day and night tint (claude-d, 21 Oct)"
+   },
+   "checked": "2026-10-21"
   },
   "prop/windsock": {
    "files": [

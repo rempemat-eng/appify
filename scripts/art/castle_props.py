@@ -16,6 +16,11 @@ from pixel import Canvas, disc, noise2, oval  # noqa: E402
 import detail  # noqa: E402
 import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
+import reach_house as rh  # noqa: E402
+from reach_house import T, part, rect, step, frame  # noqa: E402
+import style_sheet as ss  # noqa: E402
+from style_sheet import boards, roof_rows  # noqa: E402
+import house_kits as hk  # noqa: E402
 from materials import MATERIALS, WOOD, NAP, GOLD, SLATE, LEAF, RED  # noqa: E402
 
 ASHLAR, IRON = MATERIALS['ashlar'], MATERIALS['iron']
@@ -514,54 +519,85 @@ def gatehouse() -> Canvas:
 
 
 def bell_tower() -> Canvas:
-    """The bedtime bell tower, 44 x 120: a square stone shaft, a timber belfry jettied
-    out on beam ends with louvred openings and the bronze bell inside, a pyramidal
-    slate roof with a moon weathervane, and a little oak door at its foot."""
-    w, h = 44, 120
+    """Hearthold's bedtime bell tower, 44 x 120 (asset ledger 20 Oct: redrawn on the house
+    ramps with the Hearthold kit's ashlar wall and arched door; prop audit ADJUST "doors
+    about 22" now 32; its foot 6 whole cells). A square shaft of coursed ashlar on a
+    plinth, an arrow slit under a lintel, a studded oak door 14 x 32 in a dressed arch on
+    its step; a timber belfry jettied out on beam ends, louvred both sides, the bronze bell
+    hung from its headstock in the shade behind; a pyramidal roof of slates, its west
+    face to the light, a moon weathervane on an iron rod."""
+    w, h = 44, 120                                     # the old sprite's box, so its foot stays where it stood
     cv = Canvas(w, h, pad=PAD)
-    roof = {(x, y) for y in range(6, 30) for x in range(int(22 - 2 - (y - 6) * 0.95), int(22 + 2 + (y - 6) * 0.95) + 1)}
-    slates(cv, roof, 71, lambda x, y: 1.0 if x < 21 else -0.8, row=3, tile=(3, 5))
-    cv.vline(22, 0, 7, IRON[2])
-    for (mx, my) in disc(22, 1, 2.4):
-        cv.set(mx, my, GOLD[4])
-    for (mx, my) in disc(23, 0, 1.8):
-        cv.set(mx, my, (0, 0, 0, 0))
-    cv.hline(0, 30, w, SLATE_R[0]); cv.hline(0, 31, w, OAK[0])  # the eave
-    # the belfry: oak frame, boards, louvres, the bell
-    for y in range(32, 58):
-        for x in range(1, w - 1):
-            k = (x - 1) / (w - 3)
-            c = OAK[4] if k < 0.3 else OAK[3] if k < 0.65 else OAK[2]
-            if (x - 1) % 4 == 0:
-                c = OAK[1]
-            cv.set(x, y, c)
-    for px in (1, w // 2 - 1, w - 4):
-        gp.post(cv, px, 32, 58, w=3, ramp=OAK)
-    cv.hline(1, 32, w - 2, OAK[5]); cv.hline(1, 57, w - 2, OAK[0])
-    for (ox_, ow) in ((6, 12), (25, 12)):  # the louvred openings, and the bell behind
-        cv.rect(ox_, 36, ow, 18, '#221A1C')
-        for y in range(37, 53, 3):
-            cv.hline(ox_, y, ow, OAK[2]); cv.hline(ox_, y + 1, ow, OAK[0])
-    for (x, y) in oval(22, 46, 6, 7):
-        if y > 40:
-            cv.set(x, y, '#D8A848' if x < 20 else '#A87428' if x < 25 else '#6E4718')
-    for x in range(2, w - 2, 5):  # beam ends under the jetty
-        cv.set(x, 58, OAK[4]); cv.set(x + 1, 58, OAK[2]); cv.set(x, 59, OAK[1])
-    shaft = rect_set(4, 59, w - 8, h - 61)
-    masonry(cv, shaft, 73, lambda x, y: 0.8 - (x - 4) / (w - 8) * 1.4, course=(4, 5), block=(5, 9), soot=5)
-    for x in range(4, w - 4):
-        _shade(cv, x, 59); _shade(cv, x, 60)
-    cv.rect(20, 72, 3, 9, '#1C1820'); cv.hline(19, 81, 5, STONE_R[4])
-    door = rect_set(15, h - 21, 14, 18) | {(x, y) for y in range(h - 25, h - 21) for x in range(15, 29) if abs(x - 21.5) < (y - (h - 26)) * 2.2}
-    for (x, y) in door:
-        cv.set(x, y, OAK[3] if x < 19 else OAK[2] if (x - 15) % 4 else OAK[1])
-    for (x, y) in door:
-        for (ax, ay) in ((-1, 0), (1, 0), (0, -1)):
-            q = (x + ax, y + ay)
-            if q not in door and q[1] < h - 3:
-                cv.set(*q, STONE_R[5] if q[0] < 22 else STONE_R[3])
-    cv.hline(20, h - 12, 3, IRON[3])
-    return cv
+    roof_top, eave = 7, 32
+    roof = set()
+    for y in range(roof_top, eave + 1):              # the pyramid: a hip to each corner
+        half = 2 + (y - roof_top) * (w / 2 - 1) / (eave - roof_top)
+        for x in range(round(w / 2 - half), round(w / 2 + half)):
+            roof.add((x, y))
+    roof_rows(cv, 0, roof_top, w, eave - roof_top + 1, 'slate', 3, row=4, tile=(4, 6), seed=301, clip=roof, moss=True)
+    for (x, y) in roof:
+        if x >= w // 2:
+            step(cv, x, y, -1)                         # the east face turns from the light
+    for y in range(roof_top, eave + 1):                # the hips' cappings
+        half = 2 + (y - roof_top) * (w / 2 - 1) / (eave - roof_top)
+        cv.set(round(w / 2 - half), y, T('slate', 4))
+    for y in range(0, roof_top + 1):                   # the iron rod and the moon vane
+        cv.set(w // 2, y, T('iron', 3)); cv.set(w // 2 + 1, y, T('iron', 1))
+    for (x, y) in rh.ellipse(w / 2 + 0.5, 2.5, 2.6, 2.6):
+        if (x - w / 2 - 1.5) ** 2 + (y - 1.5) ** 2 > 3.2:
+            cv.set(x, y, T('brass', 5 if x < w // 2 else 4))
+    for x in range(0, w):                              # the eave board
+        cv.set(x, eave + 1, T('timber', 3 if x < w // 2 else 2)); cv.set(x, eave + 2, T('timber', 1))
+    bel0, bel1 = eave + 3, 59                          # the belfry: an oak frame, boarded, louvred
+    boards(cv, 1, bel0, w - 2, bel1 - bel0, lambda bi, si: (('timber', 'timber_warm', 'timber_cool')[(bi + si) % 3], 3),
+           board=4, seed=302, nails=True)
+    rh.overhang(cv, 1, w - 1, bel0, 2)
+    for (ox, ow) in ((5, 10), (w - 15, 10)):           # louvred openings either side
+        for (x, y) in rect(ox, bel0 + 4, ow, 18):
+            cv.set(x, y, T('earth_cool', 0))
+        for y in range(bel0 + 5, bel0 + 21, 3):
+            for x in range(ox, ox + ow):
+                cv.set(x, y, T('timber', 4 if x < ox + ow // 2 else 3)); cv.set(x, y + 1, T('timber', 2))
+        frame(cv, ox - 1, bel0 + 3, ow + 2, 20, 'timber', 3, t=1)
+    bx0, bw = w // 2 - 6, 12                           # the open middle bay, the bell hung in it
+    for (x, y) in rect(bx0, bel0 + 4, bw, 18):
+        cv.set(x, y, T('earth_cool', 0 if y > bel0 + 6 else 1))
+    frame(cv, bx0 - 1, bel0 + 3, bw + 2, 20, 'timber', 3, t=1)
+    for x in range(bx0, bx0 + bw):                     # the headstock across the bay
+        cv.set(x, bel0 + 5, T('timber', 3)); cv.set(x, bel0 + 6, T('timber', 1))
+    cx = w / 2
+    for y in range(bel0 + 8, bel0 + 22):               # the bell: a rounded crown, a waist, a flared lip
+        t = (y - (bel0 + 8)) / 13
+        half = 2.4 + 1.6 * t + (1.6 if t > 0.85 else 0.6 if t > 0.7 else 0)
+        for x in range(round(cx - half), round(cx + half)):
+            u = (x + 0.5 - (cx - half)) / (2 * half)
+            k = 5 if u < 0.22 else 4 if u < 0.45 else 3 if u < 0.75 else 2
+            if y == bel0 + 8 and (u < 0.15 or u > 0.85):
+                continue
+            if t > 0.85:
+                k = max(2, k - 1) if y == bel0 + 21 else min(5, k + 1)   # the lip's lit upper edge, its dark rim
+            cv.set(x, y, T('brass', k))
+    cv.set(w // 2 - 1, bel0 + 22, T('iron', 2)); cv.set(w // 2, bel0 + 22, T('iron', 1))
+    for px in (1, w - 4):                              # the frame's corner posts
+        rh.cylinder(cv, px, bel0, 3, bel1 - bel0, 'timber', 3)
+    for x in range(2, w - 2, 5):                       # beam ends under the jetty
+        cv.set(x, bel1, T('timber', 4)); cv.set(x + 1, bel1, T('timber', 2))
+        cv.set(x, bel1 + 1, T('timber', 2)); cv.set(x + 1, bel1 + 1, T('timber', 1))
+    sx0, sw = 4, w - 8                                 # the shaft: coursed ashlar, a plinth at its foot
+    hk.wall(cv, sx0, bel1 + 2, sw, h - bel1 - 6, 'ashlar', seed=303)
+    for x in range(sx0, sx0 + sw):
+        step(cv, x, bel1 + 2, -2); step(cv, x, bel1 + 3, -1)   # the jetty's shadow on the stone
+    for x in range(sx0 + sw - 3, sx0 + sw):            # the shaft's east side turns away
+        for y in range(bel1 + 2, h - 4):
+            step(cv, x, y, -1)
+    ss.courses(cv, sx0 - 1, h - 4, sw + 2, 4, lambda ci, si: (('stone', 'stone_warm', 'stone_cool')[si % 3], 3),
+               course=4, lengths=(6, 10), seam=T('stone_cool', 1), seed=304)
+    for (x, y) in rect(w // 2 - 1, 70, 2, 9):          # an arrow slit under its lintel
+        cv.set(x, y, T('earth_cool', 0))
+    part(cv, w // 2 - 4, 68, 8, 2, 'ashlar', 4)
+    part(cv, w // 2 - 3, 79, 6, 2, 'ashlar', 3)
+    hk.doorway(cv, w // 2 - 7, h - 4, 14, 32, 'timber', 'studded', 'ashlar', seed=305, arch=True, step_fam='stone')
+    return rh.finish(cv)
 
 
 def herb_bed() -> Canvas:
