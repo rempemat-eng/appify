@@ -522,6 +522,93 @@ def ember_shrine() -> Canvas:
     return rh.finish(cv, keep=[(15, 10)])
 
 
+def lava_tube_mouth() -> Canvas:
+    """A lava tube mouth (the brief names two, on the Ash Coast and the Canyon Road),
+    64 x 44, on the house ramps: where the roof of an old lava tube fell in, a low hump of
+    ropy basalt (pahoehoe, its skin wrinkled in curved ropes lit on their upper side) opens
+    on a dark arched mouth; the tube's lining shows as a glazed rim inside the arch; blocks
+    of the fallen roof lie at the threshold, ash drifts in the lee, and fireweed takes hold
+    in a crack. A place to peer into and turn back from: it gives nothing and costs nothing.
+    Footing: 7 cells."""
+    w, h = 64, 44
+    cv = Canvas(w, h, pad=PAD)
+    mask = set()
+    for y in range(4, h - 2):
+        for x in range(2, w - 2):
+            dx, dy = (x + 0.5 - w / 2) / (w / 2 - 5), (y + 0.5 - (h - 4)) / (h - 9)
+            wob = 0.08 * (smooth_noise(x, y, 4, 801) - 0.5)
+            if dx * dx + dy * dy * 1.05 <= 1 + wob and y < h - 3:
+                mask.add((x, y))
+    for (x, y) in mask:                             # the ropy skin: curved ropes, each lit on its upper side
+        u = (x - 2) / (w - 4)
+        rope = (y + 3.0 * math.sin(x / 5.0) + 0.04 * (x - w / 2) ** 2 / 3) % 4
+        k = (5 if u < 0.45 and rope < 0.6 else 4) if rope < 1 else 3 if rope < 2.6 else 2
+        if u > 0.72:
+            k -= 1
+        if u < 0.25 and k < 4:
+            k += 1
+        cv.set(x, y, T(('basalt', 'basalt_warm', 'basalt_cool')[int(noise2(x // 6, y // 4, 802) * 3)], max(1, k)))
+    for (x, y) in mask:                             # ash settled on the upper slopes, pale lichen on the old crust
+        col_top = min(yy for (xx, yy) in mask if xx == x)
+        if y - col_top < 3 and smooth_noise(x, 0, 4, 804) > 0.4:
+            cv.set(x, y, T(('ash', 'ash_warm', 'ash_cool')[(x // 5) % 3], 4 if y == col_top else 3))
+        elif smooth_noise(x, y, 2.5, 805) > 0.78:
+            cv.set(x, y, T('plaster_cool', 2))
+    mx, my, mw, mh = w // 2 - 11, 18, 22, 22        # the mouth, an arch of fallen roof
+    mouth = {(x, y) for y in range(my, my + mh) for x in range(mx, mx + mw)
+             if y >= my + mw / 2 or (x + 0.5 - (mx + mw / 2)) ** 2 + (y + 0.5 - (my + mw / 2)) ** 2 <= (mw / 2) ** 2}
+    for (x, y) in mouth:                            # the dark inside, a little light on the floor near the lip
+        cv.set(x, y, T('earth_cool', 0 if y < my + mh - 5 else 1))
+    for (x, y) in mouth:                            # the glazed lining round the arch, lit on the far (east) side
+        for dx, dy in ((-1, 0), (1, 0), (0, -1)):
+            q = (x + dx, y + dy)
+            if q not in mouth and q in mask:
+                cv.set(q[0], q[1], T('slate', 4 if dx == 1 else 1 if dy == -1 else 2))   # the tube's glassy lining
+    for (x, y) in ((mx + 2, my + 8), (mx + 3, my + 8), (mx + 2, my + 9), (mx + mw - 4, my + 12), (mx + mw - 3, my + 12)):
+        cv.set(x, y, T('brass', 3))                 # a sulphur crust where warm air still breathes out
+    for i, (bx, by, bw) in enumerate(((mx - 6, h - 6, 6), (mx + 4, h - 5, 5), (mx + mw - 3, h - 6, 7), (mx + 12, h - 4, 4))):
+        part(cv, bx, by, bw, 3, ('basalt', 'basalt_cool', 'basalt_warm', 'basalt')[i], 3)   # fallen roof blocks
+    for x in range(6, w - 6):                       # ash drifted in the lee along the foot
+        if smooth_noise(x, 0, 5, 803) > 0.45 and (x, h - 4) in mask:
+            cv.set(x, h - 4, T('ash', 4)); cv.set(x, h - 3, T('ash', 3))
+    for yy in range(12, 18):                        # fireweed in a crack above the mouth
+        cv.set(46, yy, T('cactus', 3))
+    for yy in range(9, 12):
+        cv.set(46, yy, T('berry_cool', 4)); cv.set(47, yy, T('berry_cool', 3))
+    return rh.finish(cv)
+
+
+def obsidian_scree() -> Canvas:
+    """Obsidian scree (the brief names two, on the Ash Coast and the Canyon Road), 48 x 24,
+    on the house ramps: a fan of black volcanic glass broken into sharp chips where a flow's
+    glassy skin shattered, the big pieces at the foot and the small ones up the fan as scree
+    lies; each chip faceted, its top face catching the sky in a cold sheen and one bright
+    edge, its south face near black; grey ash between the chips."""
+    w, h = 48, 24
+    cv = Canvas(w, h, pad=PAD)
+    for (x, y) in rh.ellipse(24, 16, 23, 7):        # the ash the scree lies in
+        cv.set(x, y, T('ash', 4 if smooth_noise(x, y, 4, 811) < 0.6 else 5) if x < 34 else T('ash', 3 if smooth_noise(x, y, 4, 811) < 0.6 else 4))
+    chips = []
+    for i in range(11):
+        u = noise2(i, 0, 812)
+        cx = 16 + int(noise2(i, 1, 812) * 26)
+        cy = 10 + int(u * 11)
+        size = 2 + int(u * 4)                       # bigger chips lower on the fan
+        chips.append((cy, cx, size, i))
+    for (cy, cx, size, i) in sorted(chips):         # far chips first
+        for dy in range(-size, size // 2 + 1):
+            half = size - abs(dy) // 1 if dy < 0 else size - dy
+            for dx in range(-half, half + 1):
+                x, y = cx + dx, cy + dy
+                top = dy < 0 and dx < half - 1
+                east = cx > 30
+                k = ((3 if dx < 0 else 2) - (1 if east else 0)) if top else (1 if dx < half - 1 else 0)
+                cv.set(x, y, T(('dusk_cool', 'slate_cool', 'dusk')[i % 3] if top else 'basalt', max(0, k)))
+        cv.set(cx - size + 1, cy - 1, T('slate', 5))  # the glinting edge
+        cv.set(cx - size + 2, cy - 2, T('slate', 4))
+    return rh.finish(cv)
+
+
 CHAR = ['#1A1412', '#2A201C', '#3E302A', '#58443A', '#76604E']  # charred cedar
 LANTERN = ['#7A3A12', '#C2621E', '#F2A048', '#FFE0A0']
 
@@ -808,7 +895,7 @@ def props() -> dict[str, Canvas]:
         'forge': forge(),
         'obsidian': obsidian_rock(True), 'obsidian_small': obsidian_rock(False), 'cooling_vent': cooling_vent(),
         'basalt_bridge': basalt_bridge(), 'ember_shrine': ember_shrine(),
-        'bathhouse': bathhouse(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
+        'bathhouse': bathhouse(), 'lava_tube_mouth': lava_tube_mouth(), 'obsidian_scree': obsidian_scree(), 'fireweed': fireweed(True), 'fireweed_small': fireweed(False),
         'stone_lantern': stone_lantern(), 'scree': scree(True, 0), 'scree_small': scree(False, 3),
         'scree_b': scree(True, 5), 'charred_snag': charred_snag(),
         'ore_tub': _ore_tub(),  # the mine line's tub, the same as Dust Gulch's

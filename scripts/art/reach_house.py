@@ -112,6 +112,13 @@ def kit_sprite(sp, w: int, h: int, foot) -> Canvas:
     return cv
 
 
+def clear(cv: Canvas, x: int, y: int):
+    """Make one pixel transparent again (Canvas.set blends, so it cannot erase)."""
+    p = cv.pad
+    if -p <= x < cv.w + p and -p <= y < cv.h + p:
+        cv._px[x + p, y + p] = (0, 0, 0, 0)
+
+
 def solid(cv: Canvas) -> set:
     return {(x, y) for y in range(cv.h) for x in range(cv.w) if cv.get(x, y)[3] == 255}
 

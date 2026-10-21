@@ -12,7 +12,7 @@ import os
 import sys
 
 sys.path.insert(0, os.path.dirname(__file__))
-from pixel import Canvas, disc, noise2, oval  # noqa: E402
+from pixel import Canvas, disc, noise2, oval, smooth_noise  # noqa: E402
 import detail  # noqa: E402
 import reach_detail as rd  # noqa: E402
 import garden_props as gp  # noqa: E402
@@ -600,6 +600,53 @@ def bell_tower() -> Canvas:
     return rh.finish(cv)
 
 
+def ruined_watchtower() -> Canvas:
+    """A ruined watchtower (the brief names two, on the Ash Coast and the Canyon Road),
+    48 x 72, on the house ramps: the stump of a square tower of coursed ashlar, its upper
+    storeys long fallen, so its top breaks off in uneven steps of whole stones; an arched
+    doorway 14 x 32 open on the dark inside, a slit above it, the corner stones better kept
+    than the wall between; the fallen courses lie as a heap of rubble against its east foot,
+    soot from an old fire up one side, fireweed in the joints at its foot. Footing: 5 cells."""
+    w, h = 48, 72
+    cv = Canvas(w, h, pad=PAD)
+    x0, x1 = 5, 41
+    hk.wall(cv, x0, 8, x1 - x0, h - 12, 'ashlar', seed=311)
+    for x in range(x0, x1):                         # the broken top: whole stones gone, in steps
+        u = (x - x0) / (x1 - x0)
+        top = 8 + 6 * round((24 * u ** 1.2 + 4 * noise2((x - x0) // 7, 0, 315)) / 6)   # whole courses lost, stone by stone
+        for y in range(8, top):
+            rh.clear(cv, x, y)
+        cv.set(x, top, T('ashlar', 4 if u < 0.6 else 3))   # the broken course's top, lit
+    for x in range(x1 - 3, x1):                     # the east side turns from the light
+        for y in range(8, h - 4):
+            if cv.get(x, y)[3]:
+                step(cv, x, y, -1)
+    for y in range(26, h - 6):                      # soot from an old fire up the east side
+        for x in range(x1 - 8, x1 - 2):
+            if cv.get(x, y)[3] and smooth_noise(x, y, 3, 312) < 0.45 - (h - 6 - y) * 0.004:
+                step(cv, x, y, -2, 1)
+    for (x, y) in rect(w // 2 - 5, 40, 2, 8):       # a slit above the door, its sill
+        cv.set(x, y, T('earth_cool', 0))
+    part(cv, w // 2 - 7, 48, 6, 2, 'ashlar', 3)
+    hk.doorway(cv, 14, h - 4, 14, 32, 'earth_cool', 'plank', 'ashlar', seed=313, arch=True, step_fam='stone', knob=None)
+    for (x, y) in rect(14, h - 36, 14, 32):         # the door is long gone: the dark inside
+        hit = rh.tone_at(cv, x, y)
+        if cv.get(x, y)[3] and not (hit and hit[0].startswith('ashlar')):
+            cv.set(x, y, T('earth_cool', 0 if y < h - 10 else 1))
+    for i in range(14):                             # the heap of fallen stones against the east foot
+        cx = 36 + int(noise2(i, 0, 314) * 6)
+        cy = h - 3 - int(noise2(i, 1, 314) * 9)
+        sw, sh = 4 + int(noise2(i, 2, 314) * 3), 3
+        part(cv, cx - sw // 2, cy - sh, sw, sh, ('ashlar', 'stone', 'ashlar_cool')[i % 3], 3)
+    for (fx, fy) in ((8, h - 5), (30, h - 5)):      # fireweed in the joints at its foot
+        for yy in range(fy - 6, fy):
+            cv.set(fx, yy, T('cactus', 3))
+        for yy in range(fy - 9, fy - 6):
+            cv.set(fx, yy, T('berry_cool', 4)); cv.set(fx + 1, yy, T('berry_cool', 3))
+    part(cv, x0 - 1, h - 4, x1 - x0 + 2, 4, 'stone', 3)   # the plinth course
+    return rh.finish(cv)
+
+
 def herb_bed() -> Canvas:
     """A raised stone bed of castle herbs, 48 x 22: lavender, sage and chamomile in rows."""
     w, h = 48, 22
@@ -885,7 +932,7 @@ def props() -> dict[str, Canvas]:
     return _budget({
         'keep': keep(), 'round_tower': round_tower(), 'wall_run': wall_run(), 'gatehouse': gatehouse(),
         'postern': postern(),
-        'bell_tower': bell_tower(), 'herb_bed': herb_bed(), 'training_dummy': training_dummy(),
+        'bell_tower': bell_tower(), 'ruined_watchtower': ruined_watchtower(), 'herb_bed': herb_bed(), 'training_dummy': training_dummy(),
         'castle_well': castle_well(), 'archery_butt': archery_butt(), 'weapon_rack': weapon_rack(),
         'stone_bench': stone_bench(), 'banner_pole': banner_pole(),
         'banner_pole_f1': banner_pole(1), 'banner_pole_f2': banner_pole(2),

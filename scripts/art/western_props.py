@@ -931,7 +931,11 @@ def bone_yard() -> Canvas:
         put(x, y, 5)
     for (x, y) in ((19, 19), (39, 20)):              # small bones
         put(x, y, 4); put(x + 1, y, 4); put(x, y + 1, 3); put(x + 1, y + 1, 3)
-    return rh.finish(cv)
+    rh.despeckle(cv, rh.solid(cv))                  # bleached bone is pale: its outline takes no lit break, or the break
+    rh.ss.outline(cv, lit_break=False)              # (a mid tone) would get a second ring outside it at finalize
+    rh.gaps(cv)
+    rh.tidy(cv)
+    return cv
 
 
 def windpump() -> Canvas:
