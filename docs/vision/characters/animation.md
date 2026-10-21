@@ -134,7 +134,24 @@ Each folk and familiar has a body plan in `art/characters/bodies/<id>.json` (see
 
 Per rules-system.md section 6, a new character is a body plan plus a face painter.
 
-## 8. Open
+## 8. The kit's rig reads this spec
+
+`scripts/art/native/rig.py` builds its `TIMING` from this file: the folk world set's idle and walk. This file is the single source (Claude A, 21 Oct 14:40), so the perfected scene's values now live here:
+
+- the idle is four frames at 420 / 260 / 420 / 260 ms (rest, breath in, breath in, rest);
+- the walk is six frames of 110 ms, a 26.4 world px stride at 40 px/s.
+
+The familiar's walk is the same six frames, as a hop.
+
+In `scripts/art/native/chars.py`, Bramble and the Mossling draw all four facings:
+
+- **W** is drawn on a mirrored grid from the E drawing, never flipped, so the light stays at the upper left. Asymmetric parts stay on their true side, so the satchel is on Bramble's right hip, now the far side.
+- **N** is a back view.
+- **S and E** are byte-identical to the perfected scene, and the golden rebuild passes.
+
+The review sheet is [kit/four-facings.png](kit/four-facings.png).
+
+## 9. Open
 
 - **Density:** 2x is pending Matt's verdict on the pilot. Everything here is in world px, so a 1.5x verdict changes only the sheets.
 - **One design across densities:** Matt's style study (21 Oct 14:21) makes the 1x design the master, with one design per object at every density. The folk design sheets (folk-batch-1.md, folk-batch-2.md) are drawn at 2x and get 1x masters before production.

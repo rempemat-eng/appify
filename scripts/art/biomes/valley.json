@@ -1,0 +1,810 @@
+{
+  "_about": "The home valley's biome brief as data (Claude E, lane E, 21 Oct): the valley's four grounds (meadow, farmland, riverside, town_edge) as variants of the kit's meadow biome. The kit's own meadow (scripts/art/biomes/meadow.json, meadow@1, Claude A's #215) is the reference and wins wherever they differ: this file names what the valley needs beyond it, so the kit owner can port it once into scripts/art/native (to-all-kit-215). Every family is a house ramp (art/house-palette.json); tone numbers are steps on a ramp (0 darkest, 5 lightest). Shares are of walkable ground unless named otherwise. Data only: nothing here paints.",
+  "id": "valley",
+  "extends": "meadow (scripts/art/biomes/meadow.json, kit meadow@1 on #215)",
+  "status": "brief",
+  "owner": "claude-e",
+  "kit": null,
+  "used_by": {
+    "valley": "claude-e (variants meadow, farmland, riverside, town_edge)",
+    "woodland": "claude-a (the golden screen's open ground, if it wants the meadow's turf)",
+    "brackens": "claude-f (the valley side of the heath blend, moor.json's transition)",
+    "fernhollow": "claude-h (the Fern hills' clearings, if any)",
+    "the land between": "claude-g (the Lull plain's pastures, variant farmland)"
+  },
+  "references": "Compare at the same character height with Eastward's grass and village screens (edges and the soft grid: Eastward only, Matt 21 Oct 09:23); the density and cleanliness of the golden screen (to-all-density, to-all-volume). No screenshots of other games in the repository.",
+  "families": [
+    "grass",
+    "grass_warm",
+    "grass_cool",
+    "leaf",
+    "leaf_warm",
+    "leaf_cool",
+    "earth",
+    "earth_warm",
+    "earth_cool",
+    "clay",
+    "clay_warm",
+    "path",
+    "path_warm",
+    "path_cool",
+    "stone",
+    "stone_warm",
+    "stone_cool",
+    "slate",
+    "slate_cool",
+    "timber",
+    "timber_warm",
+    "timber_cool",
+    "plaster",
+    "plaster_warm",
+    "brass",
+    "brass_warm",
+    "berry",
+    "berry_warm",
+    "dusk_warm",
+    "bleached_warm",
+    "sand_warm",
+    "water",
+    "water_cool",
+    "sky_cool"
+  ],
+  "palette_intent": {
+    "_about": "The valley is the warmest green on the map and the calmest ground: one body tone per field with broad soft blotches of a sibling, flowers in clumps of a colour, never speckle (rules-system 'calm', to-all-volume 4). Warmer and yellower than the coast's sea turf, greener and wetter than the moor, lighter than the woodland floor.",
+    "hay": {
+      "families": [
+        "grass_warm",
+        "grass"
+      ],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "uncut hay on the slope above the garden: warm green going golden in drifts, seed heads a tone up in clumps on the lit side"
+    },
+    "pasture": {
+      "families": [
+        "grass",
+        "grass_cool"
+      ],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "grazed turf at the halt and the Headland's neck: cooler and shorter, darker blotches where it is wet"
+    },
+    "lawn": {
+      "families": [
+        "grass",
+        "grass_warm"
+      ],
+      "body": 4,
+      "lit": 5,
+      "shade": 3,
+      "note": "the park and the green: one even tone, mown stripes only as two broad bands a tone apart"
+    },
+    "crop": {
+      "families": [
+        "grass_warm",
+        "brass_warm",
+        "sand_warm"
+      ],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "wheat and barley in rows along x (the grid), the margin a strip of turf with poppies (berry_warm) and cornflowers in clumps"
+    },
+    "plough": {
+      "families": [
+        "earth",
+        "earth_warm"
+      ],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "furrows along x every 4 texels, lit tops, no lone pixels"
+    },
+    "bank": {
+      "families": [
+        "earth",
+        "earth_cool",
+        "clay"
+      ],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "the meadow edge set's earth faces between tiers, roots and rounded cobbles at the foot"
+    },
+    "lane": {
+      "families": [
+        "path",
+        "path_warm"
+      ],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "beaten earth lanes with a grass crown down the middle, wheel ruts a tone down"
+    },
+    "setts": {
+      "families": [
+        "stone",
+        "stone_warm"
+      ],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "Crossroads' square and the quay's approach: setts in courses along x, worn paler where feet go"
+    },
+    "drystone": {
+      "families": [
+        "stone",
+        "stone_cool"
+      ],
+      "body": 2,
+      "lit": 4,
+      "shade": 1,
+      "note": "field walls, the garden's terrace wall, the Headland's wall: rounded stones in courses with a coping of uprights"
+    },
+    "thatch_and_slate": {
+      "families": [
+        "brass_warm",
+        "slate",
+        "slate_cool"
+      ],
+      "body": 3,
+      "lit": 4,
+      "shade": 1,
+      "note": "valley roofs: thatch on the farm and the mill, slate in Crossroads and Driftwood (house kits)"
+    },
+    "timber_works": {
+      "families": [
+        "timber",
+        "timber_warm"
+      ],
+      "body": 2,
+      "lit": 4,
+      "shade": 1,
+      "note": "gates, stiles, the mill wheel, fences and benches: warm timber, silvered (timber_cool) only at the coast"
+    },
+    "render": {
+      "families": [
+        "plaster",
+        "plaster_warm"
+      ],
+      "body": 4,
+      "lit": 5,
+      "shade": 3,
+      "note": "cottage walls: limewash, warm in the village, a tone down on the north sides"
+    },
+    "stream": {
+      "families": [
+        "water",
+        "water_cool",
+        "sky_cool"
+      ],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "the brook and the river: clear brown-green over gravel near the banks, sky_cool glints sparse and clumped where light catches"
+    },
+    "pond": {
+      "families": [
+        "water_cool",
+        "water"
+      ],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "the millpond and the dew pond: still, darkest under the bank, reflections of the bank trees a tone down"
+    }
+  },
+  "ground": {
+    "_about": "Ground recipes by kind: a body family, one or two siblings in broad soft blotches (2 to 3 tones apart at most), and dressing in clumps placed by rule (every 16 to 32 world px at bases, Claude B's prop_clusters dressing). Despeckle after every pass; no lone pixels.",
+    "hay_meadow": {
+      "body": "grass_warm",
+      "blotches": [
+        [
+          "grass",
+          0.3
+        ],
+        [
+          "brass_warm",
+          0.1
+        ]
+      ],
+      "dressing": [
+        "buttercup and clover in drifts of a colour",
+        "seed heads in clumps on the lit side",
+        "a mown strip along each path, a tone lighter",
+        "molehills in twos on the slope's foot"
+      ]
+    },
+    "pasture": {
+      "body": "grass",
+      "blotches": [
+        [
+          "grass_cool",
+          0.3
+        ],
+        [
+          "grass_warm",
+          0.15
+        ]
+      ],
+      "dressing": [
+        "tussocks in clumps of three",
+        "daisies in small rings",
+        "rush in the wet corners",
+        "sheep tracks a tone down along the contours, on the grid"
+      ]
+    },
+    "lawn": {
+      "body": "grass",
+      "blotches": [
+        [
+          "grass_warm",
+          0.2
+        ]
+      ],
+      "dressing": [
+        "flower beds edged in stone, one colour a bed",
+        "a gravel walk's edge of tufts",
+        "fallen petals under the trees only"
+      ]
+    },
+    "crop_field": {
+      "body": "grass_warm",
+      "blotches": [
+        [
+          "brass_warm",
+          0.35
+        ],
+        [
+          "sand_warm",
+          0.1
+        ]
+      ],
+      "dressing": [
+        "rows along x",
+        "a margin of turf with poppies and cornflowers in clumps",
+        "a gate gap in the hedge on the track"
+      ]
+    },
+    "ploughed_field": {
+      "body": "earth",
+      "blotches": [
+        [
+          "earth_warm",
+          0.3
+        ]
+      ],
+      "dressing": [
+        "furrows along x",
+        "a few stones turned up, in pairs",
+        "gulls following the plough (ambient)"
+      ]
+    },
+    "orchard": {
+      "body": "grass",
+      "blotches": [
+        [
+          "grass_warm",
+          0.25
+        ]
+      ],
+      "dressing": [
+        "fruit trees in rows on the grid (people plant them in rows)",
+        "windfalls under each tree in a clump",
+        "a ladder against one trunk",
+        "long grass between the rows, mown under the trees"
+      ]
+    },
+    "farmyard": {
+      "body": "path_warm",
+      "blotches": [
+        [
+          "earth",
+          0.25
+        ],
+        [
+          "stone",
+          0.1
+        ]
+      ],
+      "dressing": [
+        "straw in drifts by the barn door",
+        "a muck heap with a fork",
+        "puddles on the grid's low cells",
+        "hens (ambient)"
+      ]
+    },
+    "lane": {
+      "body": "path",
+      "blotches": [
+        [
+          "path_warm",
+          0.3
+        ]
+      ],
+      "dressing": [
+        "a grass crown down the middle",
+        "ruts a tone down",
+        "verge tufts and cow parsley in clumps",
+        "a puddle at a dip"
+      ]
+    },
+    "square": {
+      "body": "stone_warm",
+      "material": "setts in courses along x, a ring of larger setts round the well, worn paler on the walking lines",
+      "dressing": [
+        "a bench along a wall",
+        "tubs of flowers at doors",
+        "a lamp at a corner",
+        "pigeons (ambient)"
+      ]
+    },
+    "riverbank": {
+      "body": "grass_cool",
+      "blotches": [
+        [
+          "grass",
+          0.3
+        ],
+        [
+          "earth_cool",
+          0.1
+        ]
+      ],
+      "dressing": [
+        "reeds and marginals in clumps at the water",
+        "gravel bars on the inside of bends",
+        "cut banks with roots on the outside",
+        "crack willow and alder in twos"
+      ]
+    },
+    "kitchen_garden": {
+      "body": "earth",
+      "blotches": [
+        [
+          "earth_warm",
+          0.3
+        ]
+      ],
+      "dressing": [
+        "beds in rows along x",
+        "bean poles in a row",
+        "a water butt by the door",
+        "a scarecrow in the biggest plot"
+      ]
+    },
+    "shingle_edge": {
+      "body": "stone",
+      "blotches": [
+        [
+          "stone_warm",
+          0.3
+        ],
+        [
+          "bleached_warm",
+          0.15
+        ]
+      ],
+      "dressing": [
+        "where the halt farm's fields meet the sea: turf breaking into shingle over a band of 64 to 120 px (coast.json, variant cliff_coast)"
+      ]
+    }
+  },
+  "plants": [
+    {
+      "id": "oak",
+      "kind": "tree",
+      "where": "singly in the hay meadow and the park, in hedgerows every 4 to 6 cells",
+      "families": [
+        "leaf",
+        "leaf_warm",
+        "timber"
+      ],
+      "note": "broad crown in lit lumps, top-left bright, a dark core; the old oak on the coastal lowland the largest"
+    },
+    {
+      "id": "ash_tree",
+      "kind": "tree",
+      "where": "hedgerows and the Fern hills' foot",
+      "families": [
+        "leaf_cool",
+        "leaf"
+      ],
+      "note": "lighter, airier crown than oak; never in a row with another ash"
+    },
+    {
+      "id": "crack_willow",
+      "kind": "tree",
+      "where": "the riverbank and the millpond",
+      "families": [
+        "leaf_cool",
+        "grass_cool",
+        "timber"
+      ],
+      "note": "leaning over the water, pollards in a row along the race"
+    },
+    {
+      "id": "alder",
+      "kind": "tree",
+      "where": "the riverbank in twos",
+      "families": [
+        "leaf_cool",
+        "earth_cool"
+      ]
+    },
+    {
+      "id": "apple",
+      "kind": "tree",
+      "where": "the orchard in rows, cottage gardens singly",
+      "families": [
+        "leaf",
+        "berry_warm"
+      ],
+      "note": "fruit in clumps on the lit side, blossom in spring"
+    },
+    {
+      "id": "hawthorn_hedge",
+      "kind": "hedge, blocks walking",
+      "where": "field boundaries along x and y, gaps only at gates and stiles",
+      "families": [
+        "leaf",
+        "leaf_cool",
+        "bleached_warm"
+      ],
+      "note": "three or more shrubs mixed in any run (benchmark 9): hawthorn, hazel, holly, a standard oak"
+    },
+    {
+      "id": "cow_parsley",
+      "kind": "verge",
+      "where": "lane verges and the hedge foot in drifts",
+      "families": [
+        "bleached_warm",
+        "grass"
+      ]
+    },
+    {
+      "id": "buttercup",
+      "kind": "meadow flower",
+      "where": "hay meadow drifts",
+      "families": [
+        "brass",
+        "brass_warm"
+      ]
+    },
+    {
+      "id": "clover",
+      "kind": "meadow flower",
+      "where": "pasture and hay in small rings",
+      "families": [
+        "berry",
+        "grass"
+      ]
+    },
+    {
+      "id": "poppy",
+      "kind": "field margin",
+      "where": "crop margins in clumps",
+      "families": [
+        "berry_warm"
+      ]
+    },
+    {
+      "id": "reed",
+      "kind": "marginal",
+      "where": "the millpond's west end, the river's slack water",
+      "families": [
+        "grass_warm",
+        "grass_cool"
+      ]
+    },
+    {
+      "id": "flag_iris",
+      "kind": "marginal",
+      "where": "among the reeds in clumps",
+      "families": [
+        "brass",
+        "leaf_cool"
+      ]
+    },
+    {
+      "id": "foxglove",
+      "kind": "shade flower",
+      "where": "the hedge foot on north sides and the escarpment's foot",
+      "families": [
+        "dusk_warm",
+        "leaf"
+      ]
+    },
+    {
+      "id": "nettle_and_dock",
+      "kind": "rough",
+      "where": "by the barn, the muck heap and the back of the cottages",
+      "families": [
+        "leaf_cool",
+        "earth_warm"
+      ]
+    },
+    {
+      "id": "climbing_rose",
+      "kind": "wall plant",
+      "where": "cottage fronts in Crossroads and Driftwood, one per few houses",
+      "families": [
+        "berry",
+        "leaf"
+      ]
+    }
+  ],
+  "tiers": {
+    "height": 32,
+    "notes": "tiers 3 to 7 in the valley (Claude G's world tiers): masses step in and out by whole cells, at least 16 px, every screen width or so (to-all-volume 1); outlines on the cell grid with rounded corners (eastward-edges 1.6), square only on built edges (the garden's terrace wall, the quay); the escarpment over the woodland is the only 64 px face."
+  },
+  "edge_sets": {
+    "meadow": {
+      "status": "in cliff core (the meadow biome's set, shared)",
+      "where": "turf banks between the valley's tiers",
+      "shapes": "an earth face with roots and rounded cobbles in it, a sod lip overhanging by a texel or two with grass falling over the edge, cobbles and a grass fringe at the foot (to-all-volume 3)"
+    },
+    "terrace_wall": {
+      "status": "proposed (built edge)",
+      "where": "the garden's south wall over the square, the mill's step, retaining walls behind Crossroads' north side",
+      "shapes": "drystone courses of rounded stones, a coping of uprights, ivy in clumps from the top; square corners"
+    },
+    "hedge_bank": {
+      "status": "proposed (no height change)",
+      "where": "field boundaries on one tier",
+      "shapes": "a low earth bank a cell high under the hedge, the hedge's shadow down-right on the field"
+    },
+    "stream_bank": {
+      "status": "proposed (water edge)",
+      "where": "the brook, the race and the river",
+      "shapes": "a cut bank (earth, roots, a dark undercut) on the outside of a turn and a gravel bar on the inside, reeds in clumps, never an even ribbon"
+    },
+    "pond_margin": {
+      "status": "proposed (water edge)",
+      "where": "the millpond and the dew pond",
+      "shapes": "a dark wet ring a texel wide, marginals in clumps, a stone or timber edge where people use it (the millpond bench, the sluice)"
+    }
+  },
+  "variants": {
+    "_about": "Not separate biomes: the same families and edge sets with their own ground mix and plants.",
+    "meadow": {
+      "ground": [
+        "hay_meadow",
+        "pasture",
+        "lane"
+      ],
+      "edges": [
+        "meadow",
+        "hedge_bank"
+      ],
+      "plants": [
+        "oak",
+        "ash_tree",
+        "buttercup",
+        "clover",
+        "cow_parsley",
+        "foxglove"
+      ],
+      "where": "the hay slope above the garden, the Headland's neck inside the wall, the open grass between places"
+    },
+    "farmland": {
+      "ground": [
+        "crop_field",
+        "ploughed_field",
+        "pasture",
+        "farmyard",
+        "lane",
+        "shingle_edge"
+      ],
+      "edges": [
+        "meadow",
+        "hedge_bank",
+        "stream_bank"
+      ],
+      "plants": [
+        "hawthorn_hedge",
+        "oak",
+        "poppy",
+        "cow_parsley",
+        "nettle_and_dock"
+      ],
+      "where": "the halt farm: the farmyard, four field blocks drained to the windmill, the fields down to the shingle"
+    },
+    "riverside": {
+      "ground": [
+        "riverbank",
+        "pasture",
+        "orchard",
+        "lane"
+      ],
+      "edges": [
+        "meadow",
+        "stream_bank",
+        "pond_margin",
+        "terrace_wall"
+      ],
+      "plants": [
+        "crack_willow",
+        "alder",
+        "apple",
+        "reed",
+        "flag_iris",
+        "buttercup"
+      ],
+      "where": "the millpond and the mill, the orchard, the miller's cottage, the Sleepwater from the mill to the estuary, the park's bank"
+    },
+    "town_edge": {
+      "ground": [
+        "square",
+        "lane",
+        "lawn",
+        "kitchen_garden"
+      ],
+      "edges": [
+        "meadow",
+        "terrace_wall",
+        "hedge_bank"
+      ],
+      "plants": [
+        "climbing_rose",
+        "apple",
+        "oak",
+        "nettle_and_dock",
+        "cow_parsley"
+      ],
+      "where": "Crossroads (the square, the green, the cottage plots), the park, the top of Driftwood above the quay"
+    }
+  },
+  "water": {
+    "kinds": [
+      "fall",
+      "pool",
+      "brook",
+      "race",
+      "river",
+      "ditch",
+      "pond"
+    ],
+    "stream": "the brook and the river run on the grid (along x or y, turning at cell corners), a constant width through each run, widening at the estuary; detail_bar's 'stream' kind",
+    "falls": "the Sleepwater's escarpment fall (Claude A's woodland), the mill's wheel at the terrace step, a low fall where the floor steps down to the lowland: the cliff core's neutral fall, white for a cell, then calm",
+    "still": "the millpond and the dew pond: still water (water_flow's still mask), reflections only",
+    "motion": "flow frames move a pixel one tone along its own ramp (never a new colour); finite and off when the screen is inactive or motion is reduced"
+  },
+  "clusters": {
+    "have": [
+      "meadow_nook",
+      "field_edge",
+      "farmyard",
+      "orchard_edge",
+      "town_square_corner",
+      "platform_yard",
+      "coast_meadow",
+      "sheepfold_corner",
+      "shore (Claude B, #188, #203)"
+    ],
+    "proposed": {
+      "millpond_bench": "a bench at the pond's lit edge facing the water, a willow behind it, a rod rest (the angler's rest spot)",
+      "green_shelter": "the shelter by the green: a bench under a roof on posts, a hook on the post (the gardener's story reserves a kettle, a trowel and a lantern there), a noticeboard",
+      "cottage_front": "a cottage door with a bench beside it, a tub of flowers, a water butt at the corner, washing on a line behind",
+      "well_square": "the square well with its bucket, a bench facing it, pigeons, a lamp at the nearest corner"
+    }
+  },
+  "pieces": {
+    "library": [
+      "stair",
+      "ledge",
+      "path",
+      "spring",
+      "pond",
+      "boulders",
+      "scree",
+      "ivy"
+    ],
+    "proposed": [
+      "terrace_wall",
+      "mill_weir",
+      "footbridge",
+      "hedge_gap",
+      "stile"
+    ]
+  },
+  "ambience": {
+    "day": [
+      "skylarks over the hay slope",
+      "the mill wheel's turn and splash",
+      "sheep bells at the halt",
+      "a cart on the setts",
+      "the train's whistle from the halt, now and then"
+    ],
+    "night": [
+      "owls in the woodland edge",
+      "the river only",
+      "lit windows in Crossroads as the warm points",
+      "the mill silent"
+    ],
+    "animals": [
+      "sheep",
+      "hens",
+      "a cat on a wall",
+      "hares on the hay slope",
+      "a heron at the millpond",
+      "ducks on the river",
+      "butterflies in drifts in summer"
+    ],
+    "light": "upper-left sun; cast shadows two tones down on grass, one on water; the valley is the brightest, warmest screen at noon"
+  },
+  "transitions": {
+    "_about": "This biome's side of each meeting, for Claude G's scripts/art/biomes/transitions.json: a shared middle terrain both sides blend into over a band of 64 to 160 px, or a built seam.",
+    "forest": {
+      "middle": "wood_edge: meadow under scattered oaks and hazel, bracken and foxglove thickening into the woodland's floor",
+      "where": "the woodland's east and south edges (claude-a), the Fern hills (claude-h)"
+    },
+    "highland": {
+      "middle": "the hay meadow thinning into short turf with scree and boulders at the escarpment's foot",
+      "where": "the Frostline's foot at y 2304 (claude-f)"
+    },
+    "moor": {
+      "middle": "heath: heather drifts break into tufts, then turf with tormentil (river_kit.heath's idea)",
+      "where": "the Brackens' foot west of the halt (claude-f)"
+    },
+    "coast": {
+      "middle": "sea turf: meadow cooling and shortening over 160 px, clover giving way to thrift; at the halt, fields into shingle",
+      "where": "Driftwood, the Headland, the halt farm's shore (claude-e, coast.json cliff_coast)"
+    },
+    "steppe": {
+      "middle": "pasture yellowing into the steppe's turf (dry_kit's steppe band)",
+      "where": "the Drover's Road and the Ash Coast leaving west (claude-d, claude-g)"
+    },
+    "city": {
+      "edge": "the village's setts end at a lane of beaten earth; no city faces in the valley",
+      "where": "none in the valley"
+    },
+    "river": {
+      "middle": "the riverside variant is the river's own bank in the valley",
+      "where": "the Sleepwater (claude-e); the Lull's plain (claude-g, claude-i) takes farmland and riverside"
+    }
+  },
+  "port_from": "river_kit.py (#133, on main): river, ford, stepping_stones, riffles, race, reeds and marginals, bank trees, meadow, pasture, fields with margins, hedgerows with gates, blend, heath, wood_edge; forest_kit.py (#155, frozen): tree crowns and undergrowth, the wooded bank. Their techniques are graded and ported by Claude A's side (to-all-kit-freeze); this brief does not extend them.",
+  "sources": [
+    "docs/vision/regions/home-valley-frostline-brackens.md",
+    "docs/vision/world-plan.md 8.2",
+    "docs/vision/rules-system.md",
+    "docs/vision/eastward-edges.md",
+    "art/regions/valley.json"
+  ],
+  "needs_from_kit": {
+    "_about": "Techniques the valley needs that the meadow golden scene does not show yet (to-all-kit-215: sent to claude-a as e-to-a-kit-techniques); each goes into scripts/art/native once, for everyone.",
+    "water": [
+      "a river and a brook on the grid with natural banks (cut bank and gravel bar by side of the turn; river_kit.river)",
+      "still ponds with a dark wet ring and marginals (the millpond, the dew pond)",
+      "falls at a tier step: the escarpment fall, the mill race at the wheel, a low fall",
+      "flow frames, finite and off when inactive"
+    ],
+    "fields": [
+      "crop rows along x with margins of flowers",
+      "ploughed furrows",
+      "hawthorn hedges of mixed shrubs with gate gaps",
+      "a farmyard ground (straw, muck heap, puddles)"
+    ],
+    "built": [
+      "setts in courses (the square, the quay approach)",
+      "drystone walls and built terrace walls with square corners (the garden wall, the quay face, the Headland wall with its stile)",
+      "stone and timber stairs through south faces",
+      "timber footbridges and plank bridges over the brook, the river and the ditches",
+      "a girder bridge and rails (the valley train)"
+    ],
+    "orchard_and_gardens": [
+      "fruit trees in rows",
+      "kitchen-garden beds in rows",
+      "flower beds in the park"
+    ],
+    "coast": [
+      "coast.json's cliff_coast and harbour pieces (Claude C): shingle, quay, rock platform, sea faces, surf"
+    ],
+    "buildings": [
+      "house kits fronts for cottages in four or more forms; the mill with its wheel; the drainage windmill (Claude B); the station house, engine shed and platform; the bandstand; the lighthouse and lookout tower"
+    ]
+  }
+}

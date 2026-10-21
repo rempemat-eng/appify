@@ -1,0 +1,436 @@
+{
+  "_about": "The coast biome's brief as data (Claude C, lane C, 21 Oct): what the shared kit needs to paint a coast, written before the kit exists (rules-system.md 2 and 4, to-all-kit-freeze). Palette intent names house ramps (art/house-palette.json) and tones 0 (darkest) to 5 (lightest), never RGB. Edge sets name the cliff core's EDGE_SETS or are marked proposed. Plants and dressing follow to-all-clean (calm fields, clumped, no speckle) and to-all-volume (masses with depth, form shading, vegetation on rims and feet). Status 'brief': Claude A turns it into the kit's biome file at the kit cut and pins a kit version; until then numbers here are intent, not measured.",
+  "id": "coast",
+  "status": "brief",
+  "owner": "claude-c",
+  "kit": null,
+  "used_by": {
+    "tidebloom": "claude-c (variant isles)",
+    "gullwick": "claude-i (variant harbour)",
+    "neon": "claude-i (variant harbour, with city)",
+    "lull-delta": "claude-i (its sea edge)",
+    "fire-country": "claude-d (variant ash_coast)",
+    "headland and Driftwood": "claude-e (variant cliff_coast)"
+  },
+  "references": "Compare at the same character height with Eastward's coast and harbour screens (edges and the soft grid: Eastward only, Matt 21 Oct 09:23) and Sea of Stars' water (calm planes, depth bands, ripple strokes). Never commit their screenshots.",
+  "families": [
+    "sand",
+    "sand_warm",
+    "sand_cool",
+    "bleached",
+    "bleached_warm",
+    "bleached_cool",
+    "basalt",
+    "basalt_warm",
+    "basalt_cool",
+    "lagoon",
+    "lagoon_warm",
+    "lagoon_cool",
+    "water",
+    "water_cool",
+    "grass",
+    "grass_warm",
+    "grass_cool",
+    "leaf",
+    "leaf_cool",
+    "stone",
+    "stone_cool",
+    "timber",
+    "timber_cool",
+    "iron",
+    "plaster",
+    "berry",
+    "brass",
+    "snow",
+    "leaf_warm",
+    "snow_cool",
+    "timber_warm",
+    "earth",
+    "earth_cool"
+  ],
+  "palette_intent": {
+    "sand": {
+      "families": ["sand", "sand_warm", "sand_cool"],
+      "body": 4,
+      "lit": 5,
+      "shade": 3,
+      "note": "dry upper beach in one calm tone with broad blotches of the warm sibling; damp sand below the wrack line a tone down; footprints and ripple crests are the only marks"
+    },
+    "black_sand": {
+      "families": ["basalt", "basalt_cool"],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "the isles and the ash coast: weathered basalt, warmer than the rock it came from, a cool sibling where wet; glints are white shell, never pure tone 5 of basalt"
+    },
+    "shingle": {
+      "families": ["stone", "stone_cool", "bleached", "sand"],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "pebbles in packed rounded clumps, sorted small at the water to big at the storm ridge; never single-pixel stones"
+    },
+    "sea_turf": {
+      "families": ["grass", "grass_cool", "grass_warm"],
+      "body": 3,
+      "lit": 4,
+      "shade": 2,
+      "note": "short salt-pruned turf, cooler and paler than the valley's meadow; drifts of thrift (berry 4) and sea campion (snow 4) in clumps"
+    },
+    "sea_cliff_rock": {
+      "families": ["sand", "sand_cool", "bleached", "basalt"],
+      "body": 3,
+      "lit": 4,
+      "shade": 1,
+      "note": "the cliff core's coast bands: pale bedded sandstone slabs on a dark basalt foot (EDGE_SETS.coast)"
+    },
+    "basalt_rock": {
+      "families": ["basalt", "basalt_warm", "basalt_cool"],
+      "body": 2,
+      "lit": 4,
+      "shade": 0,
+      "note": "the isles' faces and the cove's arm: columns and rounded boulders, upper-left planes lit two tones over the body, orange lichen (brass 3) above the tide only"
+    },
+    "shallow_water": {
+      "families": ["lagoon", "lagoon_warm"],
+      "body": 4,
+      "lit": 5,
+      "shade": 3,
+      "note": "over sand the floor shows through a tone down; the lagoon's calm plane"
+    },
+    "shelf_water": {
+      "families": ["lagoon", "lagoon_cool"],
+      "body": 2,
+      "lit": 3,
+      "shade": 1,
+      "note": "teal over the shelf, its band's edge wandering along the shore"
+    },
+    "deep_water": {
+      "families": ["water", "water_cool"],
+      "body": 1,
+      "lit": 2,
+      "shade": 0,
+      "note": "deep blue beyond the shelf; at night the sea is the darkest field on screen"
+    },
+    "foam": {
+      "families": ["snow", "bleached_cool"],
+      "body": 5,
+      "lit": 5,
+      "shade": 4,
+      "note": "surf and lace only; foam is the one place tone 5 runs in lines"
+    },
+    "timber_works": {
+      "families": ["timber", "timber_cool"],
+      "body": 2,
+      "lit": 4,
+      "shade": 1,
+      "note": "piers, boats and posts silvered by salt: the cool sibling above the tide, the warm body where tarred"
+    },
+    "iron_works": {
+      "families": ["iron", "brass"],
+      "body": 2,
+      "lit": 4,
+      "shade": 1,
+      "note": "rings, bollards and ladders; a rust run (brass 2) down the stone under them"
+    }
+  },
+  "ground": {
+    "_about": "Ground recipes by kind: a body family, one or two siblings in broad soft blotches (2 to 3 tones apart at most, rules-system 'calm'), and dressing in clumps placed by rule. Shares are of the kind's area.",
+    "beach": {
+      "body": "sand",
+      "blotches": [
+        ["sand_warm", 0.25],
+        ["sand_cool", 0.15]
+      ],
+      "bands": [
+        "dry sand",
+        "wrack line (weed, sticks, shells along the shore)",
+        "damp sand a tone down",
+        "swash"
+      ],
+      "dressing": [
+        "shell pairs",
+        "driftwood sticks",
+        "marram clumps at the back",
+        "footprints along paths"
+      ]
+    },
+    "black_sand": {
+      "body": "basalt",
+      "blotches": [
+        ["basalt_warm", 0.3],
+        ["basalt_cool", 0.2]
+      ],
+      "bands": ["dry black sand", "a pale salt line", "wet sand a tone down", "swash"],
+      "dressing": ["white shells", "basalt cobbles in clumps", "kelp at the wrack line"]
+    },
+    "shingle": {
+      "body": "stone",
+      "blotches": [
+        ["bleached", 0.2],
+        ["stone_cool", 0.3]
+      ],
+      "bands": ["small at the water", "storm ridge of big cobbles", "smaller behind"],
+      "dressing": ["sea kale clumps", "driftwood"]
+    },
+    "dune": {
+      "body": "sand_warm",
+      "blotches": [["sand", 0.4]],
+      "dressing": [
+        "marram thick on hummocks thinning into bare sand",
+        "wind ripples in short broken crests across the wind"
+      ]
+    },
+    "sea_turf": {
+      "body": "grass_cool",
+      "blotches": [
+        ["grass", 0.35],
+        ["grass_warm", 0.15]
+      ],
+      "dressing": [
+        "thrift cushions",
+        "sea campion drifts",
+        "outcrops of the cliff's rock with tufts in the cracks",
+        "gorse on cliff tops (variant cliff_coast)"
+      ]
+    },
+    "rock_platform": {
+      "body": "the cliff's rock",
+      "dressing": [
+        "bedding steps along the coast",
+        "rock pools",
+        "green algae low down",
+        "barnacles in pairs"
+      ]
+    },
+    "quay": {
+      "body": "stone",
+      "material": "granite setts in courses, worn paler where feet go",
+      "dressing": ["bollards", "coils", "fish boxes", "nets", "mooring rings on the wall"]
+    },
+    "rainforest_floor": {
+      "body": "earth_cool",
+      "blotches": [
+        ["earth", 0.3],
+        ["leaf_cool", 0.15]
+      ],
+      "dressing": [
+        "leaf litter in clumps",
+        "ferns and monstera along path edges",
+        "roots across paths at a few points",
+        "moss on stones"
+      ],
+      "note": "variant isles: the forest floor on the raised ash, under a canopy that casts broad two-tone shade"
+    }
+  },
+  "plants": [
+    {
+      "id": "marram",
+      "where": "dunes and the back of beaches",
+      "clump": [3, 7],
+      "families": ["grass_warm", "sand_warm"],
+      "note": "blades fan from a dark heart, lit west; the sand scooped a tone down in its lee"
+    },
+    {
+      "id": "thrift",
+      "where": "sea turf and cliff lips",
+      "clump": [2, 4],
+      "families": ["grass_cool", "berry"],
+      "note": "a low needle cushion, flowers in pairs on top"
+    },
+    {
+      "id": "sea_campion",
+      "where": "sea turf, hanging over lips",
+      "clump": [2, 5],
+      "families": ["grass_cool", "snow"]
+    },
+    {
+      "id": "gorse",
+      "where": "cliff tops (cliff_coast)",
+      "clump": [8, 18],
+      "families": ["leaf_cool", "brass"],
+      "note": "dark spiny dome lit upper west, yellow flowers in pairs on the lit side, a dark skirt"
+    },
+    {
+      "id": "sea_kale",
+      "where": "shingle ridges",
+      "clump": [4, 8],
+      "families": ["leaf_cool", "snow_cool"]
+    },
+    {
+      "id": "wrack",
+      "where": "the wrack line, rock feet, pier piles",
+      "clump": [3, 6],
+      "families": ["leaf", "basalt"]
+    },
+    {
+      "id": "coconut_palm",
+      "where": "isles: beaches' backs, the landing",
+      "size": "tall: crown 40 to 56 world px",
+      "families": ["leaf", "leaf_warm", "timber"],
+      "note": "variant isles; groups of 2 or 3 leaning seaward"
+    },
+    {
+      "id": "pandanus",
+      "where": "isles: the west arm's sand",
+      "families": ["leaf_cool", "timber_warm"]
+    },
+    {
+      "id": "sea_grape",
+      "where": "isles: low shrub at the sand's edge",
+      "clump": [6, 12],
+      "families": ["leaf", "berry"]
+    },
+    {
+      "id": "tree_fern",
+      "where": "isles: rainforest and the headwaters",
+      "families": ["leaf", "leaf_cool"],
+      "note": "crowns over the faces' rims (to-all-volume 3)"
+    },
+    {
+      "id": "monstera_banana",
+      "where": "isles: the rainforest floor along paths",
+      "families": ["leaf", "leaf_warm"]
+    }
+  ],
+  "tiers": {
+    "height": 32,
+    "sea_cliffs": [32, 96],
+    "note": "south faces only; tiers' masses step in and out by whole cells (to-all-volume 1); outlines on the cell grid with rounded corners (eastward-edges 1.6)"
+  },
+  "edge_sets": {
+    "coast": {
+      "status": "in cliff core",
+      "where": "sea cliffs and coastal tier faces on land",
+      "shapes": "pale bedded sandstone slabs on a dark basalt foot under a thin turf lip; stony foot with wrack; rock stair"
+    },
+    "coast_isle": {
+      "status": "proposed",
+      "where": "the isles' tier faces between rainforest and shore",
+      "shapes": "ash banks over basalt columns: rounded basalt heads in the face, roots and ferns hanging from a soft forest-floor lip, a foot of black grit and fern; stairs of basalt blocks or timber under the forest",
+      "differs_from_coast": "darker, columnar, vegetated lip (the rainforest overhangs), no sandstone bands"
+    },
+    "sea_wall": {
+      "status": "proposed (built edge)",
+      "where": "quays and harbour walls (variant harbour)",
+      "shapes": "dressed blocks 6 high in broken bond, a coping of long stones lit along its top, wet a tone down and weeded below the tide, rings, a ladder in a recess",
+      "port_from": "coast_kit.masonry, ladder, ring (#162)"
+    },
+    "shore_beach": {
+      "status": "proposed (water edge)",
+      "shapes": "swash: a pale broken foam line, damp sand a tone down behind it, no outline (a flat edge, not a height change)"
+    },
+    "shore_rock": {
+      "status": "proposed (water edge)",
+      "shapes": "a dark wet ring outside the rock, a broken white line and a second line of lace a few px out"
+    }
+  },
+  "water": {
+    "sea": "one calm plane in depth bands lying along the shore: shallow lagoon over sand, teal over the shelf, deep blue beyond; band edges wander by a cell, not by pixels",
+    "ripples": "short strokes 3 to 6 px across the swell, lit a tone up with a tone down under; sparse, clumped where light catches, none in the deep band",
+    "surf": "per shore kind, as the edge sets above; breakers only on the reef's seaward side",
+    "rock_pools": "organic hollows in the platform: a shaded north rim, a lit south lip, clear water a tone over the floor, weed fronds",
+    "falls_into_sea": "the cliff core's neutral fall; its plunge into the sea churns white for a cell then calms",
+    "motion": "flow frames move a pixel one tone along its own ramp (never a new colour); finite and off when the screen is inactive or motion is reduced"
+  },
+  "clusters": {
+    "have": ["shore (Claude B, #188)"],
+    "proposed": {
+      "lagoon_hamlet": "a hamlet yard: a packing shed's door, fruit crates, a hammock between two palms, a water butt",
+      "turtle_beach": "the turtle beach kept clear: a ring of shells round a nest, a warden's tally post",
+      "quay_corner": "a quay's working corner: bollard, coil, fish boxes, a net heap, a ring in the wall (variant harbour)",
+      "cliff_lookout": "a bench on the cliff top in the lee of gorse, a coastguard post, a lifebuoy (variant cliff_coast)"
+    }
+  },
+  "pieces": {
+    "library": ["stair", "ledge", "boulders", "path", "scree"],
+    "proposed": [
+      "sea_stack",
+      "sea_cave",
+      "basalt_columns",
+      "slipway",
+      "pier",
+      "rock_pools",
+      "reef",
+      "far_isle",
+      "crater_lip",
+      "giant_tree"
+    ]
+  },
+  "ambience": {
+    "day": [
+      "surf in a slow two-beat",
+      "gulls and terns",
+      "wind in marram",
+      "rigging ticking (harbour)"
+    ],
+    "night": [
+      "surf only, softer",
+      "a lit window or quay lamp as the warm point",
+      "the sea darkest on screen",
+      "phosphorescence: a few tone-5 lagoon glints in the swash, finite (isles only)"
+    ],
+    "light": "upper-left sun; cast shadows two tones down on sand, one on water"
+  },
+  "transitions": {
+    "_about": "This biome's side of each meeting in the block-out, for Claude G's scripts/art/biomes/transitions.json: a shared middle terrain both sides blend into, or a transition edge set.",
+    "meadow": {
+      "middle": "sea turf thinning into meadow over 160 px, marram and thrift giving way to clover",
+      "where": "the Headland, Driftwood (claude-e)"
+    },
+    "highland": {
+      "middle": "shingle and scree: the cliff's rock falling to the beach",
+      "where": "the massif's south foot if it reaches the sea (claude-f, claude-g)"
+    },
+    "moor": {
+      "middle": "sea turf into heather over a cell band of short grass",
+      "where": "the Brackens' coast if any (claude-f)"
+    },
+    "city": {
+      "edge": "sea_wall: the quay is the seam; setts on top, the sea below",
+      "where": "Neon Harbour, Gullwick (claude-i)"
+    },
+    "river": {
+      "middle": "mud and saltmarsh: samphire and cordgrass clumps on grey mud, channels on the grid",
+      "where": "the Lull's delta (claude-i)"
+    },
+    "ash": {
+      "middle": "black sand: the ash coast's beaches are the coast's black sand variant",
+      "where": "the fire country's coast (claude-d)"
+    },
+    "rainforest": {
+      "middle": "the isles' sand into forest floor under a fringe of palms and sea grape, 64 to 120 px",
+      "where": "Tidebloom Isles (claude-c), inside the coast biome as variant isles"
+    }
+  },
+  "variants": {
+    "_about": "Not separate biomes: the same families and edge sets with their own ground mix and plants. A variant that needs its own edge shapes names a proposed edge set above.",
+    "isles": {
+      "owner": "claude-c",
+      "ground": ["beach (paler, coral white: bleached body)", "black_sand", "rainforest_floor"],
+      "edges": ["coast_isle", "shore_beach", "shore_rock"],
+      "plants": ["coconut_palm", "pandanus", "sea_grape", "tree_fern", "monstera_banana"],
+      "accent": "lagoon and basalt (house-palette accent:isles)"
+    },
+    "cliff_coast": {
+      "owner": "claude-e",
+      "ground": ["sea_turf", "beach", "shingle", "rock_platform"],
+      "edges": ["coast", "shore_rock"],
+      "plants": ["thrift", "sea_campion", "gorse", "marram"]
+    },
+    "harbour": {
+      "owner": "claude-i",
+      "ground": ["quay", "shingle", "beach"],
+      "edges": ["sea_wall", "coast", "shore_rock"],
+      "plants": ["wrack", "sea_kale"]
+    },
+    "ash_coast": {
+      "owner": "claude-d",
+      "ground": ["black_sand", "rock_platform"],
+      "edges": ["coast_isle", "shore_rock"],
+      "plants": ["wrack"],
+      "note": "young lava where it meets the sea is the ash biome's"
+    }
+  },
+  "port_from": "coast_kit.py (#162, frozen): see docs/vision/research/kit-ports-c.md"
+}
