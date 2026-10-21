@@ -323,11 +323,11 @@ RAILINGS = [
 
 # Stairs and ramps between tiers: (id, kind, rect across the face band (x0, y0, x1, y1),
 # lower tier, upper tier). Stairs at least 34 px open (we use 40), top flush with the
-# upper floor, bottom on the path; ramps run along the face at 1 in 3.
+# upper floor, bottom on the path. No ramps: changes of level are stairs (eastward-edges.md 6.3).
 STAIRS = [
     ('fells-stair', 'stair', (184, 40, 224, 72), 2, 3),     # the High Fells down to the crossing
     ('hill-stair', 'stair', (504, 288, 544, 320), 2, 3),    # the square up Gasworks Hill
-    ('hill-ramp', 'ramp', (576, 488, 680, 520), 2, 3),      # carts up from the wharf (1 in 3)
+    ('hill-steps', 'stair', (624, 488, 664, 520), 2, 3),    # up from the wharf (no ramps: eastward-edges.md 6.3)
     ('wharf-steps', 'stair', (216, 536, 256, 568), 1, 2),   # water steps down to the canal (to the boats; not walked)
 ]
 
