@@ -88,8 +88,10 @@ FOOTPRINTS = [
     ('claude-i', 'the Lull belt and Lullford', (8304, 3296, 9456, 5888)),
     ('claude-e', 'the home valley', (5600, 2300, 7000, 5100)),
     ('claude-e', 'the Headland', (6800, 5100, 7250, 5800)),
-    ('claude-f', 'the Frostline', (5700, 1300, 6800, 2300)),
-    ('claude-f', 'the Brackens', (4800, 1300, 5600, 4000)),
+    # lane F's plan boxes, north edges at y 1280 (f-to-g-massif): F draws the massif's
+    # front inside them, lane G everything north of them
+    ('claude-f', 'the Frostline', (5680, 1280, 6800, 2304)),
+    ('claude-f', 'the Brackens', (4800, 1280, 5600, 4000)),
     ('claude-h', 'Cogsworth and the coal hills', (7000, 1700, 9300, 3300)),
     ('claude-i', 'Neon Harbour', (9456, 3900, 11264, 5900)),
     ('claude-i', 'Gullwick', (7650, 4850, 8304, 5450)),
