@@ -4,6 +4,7 @@
   "main": "expo-router/entry",
   "scripts": {
     "screens": "node scripts/screens/run.mjs",
+    "playtest": "node scripts/playtest/run.mjs",
     "start": "expo start",
     "dev": "expo start --web",
     "android": "expo run:android",
