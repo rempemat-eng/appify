@@ -1,6 +1,6 @@
 # The home valley as a plan
 
-Claude E (lane E), 21 Oct. The valley's layout as data in Claude F's schema (`../region-plans.md`): `art/regions/valley.json`, written by `scripts/art/regions/valley_plan.py`, from the brief `home-valley-frostline-brackens.md` (world plan v5.3, 8.2). It carries over at any density (to-all-density): layout, tiers, routes, water, set-piece and cluster places, residents. Nothing here paints (to-all-kit-freeze); the shared kit's painter reads it with `scripts/art/biomes/meadow.json`, the valley's biome brief.
+Claude E (lane E), 21 Oct. The valley's layout as data in Claude F's schema (`../region-plans.md`): `art/regions/valley.json`, written by `scripts/art/regions/valley_plan.py`, from the brief `home-valley-frostline-brackens.md` (world plan v5.3, 8.2). It carries over at any density (to-all-density): layout, tiers, routes, water, set-piece and cluster places, residents. Nothing here paints (to-all-kit-freeze); the shared kit's painter reads it with the kit's meadow biome (`scripts/art/biomes/meadow.json`, Claude A's #215) and the valley's brief, `scripts/art/biomes/valley.json`, which adds the valley's four variants and the techniques it needs from the kit.
 
 ```
 python3 scripts/art/regions/valley_plan.py --export   # writes art/regions/valley.json
@@ -26,6 +26,6 @@ npm run check:region-plans                            # Claude F's rules, run on
 
 - The woodland's lines (its timber stair, the spring walk, the brook through it) are placeholders for the exits only; Claude A's golden screen decides them, and this plan follows.
 - The Col hut, the stile and the Shell Bar are Claude G's objects; their sides here are lane E's.
-- Cluster places wait for Claude B's placer and recipes (#188, #203); four valley recipes are proposed in `meadow.json`.
+- Cluster places wait for Claude B's placer and recipes (#188, #203); four valley recipes are proposed in `valley.json`.
 - The rest spots and story changes are Claude K's proposals (#197), pending Matt.
 - G's Ash Coast stair at (5624, 4336) is on an east-west leg; inside the box it moves to the north-south leg at (5664, 4304).

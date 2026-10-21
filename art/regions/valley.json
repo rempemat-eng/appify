@@ -18,6 +18,7 @@
    "cliff_coast"
   ]
  },
+ "biome_brief": "scripts/art/biomes/valley.json (variants of the kit meadow)",
  "box": [
   5600,
   2304,
@@ -53,7 +54,7 @@
   "from": "Claude G's world tiers (lib/world-routes.ts, #189; route-meets.md): the floor at 4, the Col hut at 7, the Headland at 3, the bar at 0"
  },
  "faces": {
-  "_about": "Valley edges are the meadow's own (to-all-reuse-rule; meadow.json edge_sets): turf banks with earth and root faces between tiers, the garden's and Crossroads' built terrace walls, the coast's rock faces at the quay and the Headland",
+  "_about": "Valley edges are the meadow's own (to-all-reuse-rule; the kit meadow's edges and valley.json's edge_sets): turf banks with earth and root faces between tiers, the garden's and Crossroads' built terrace walls, the coast's rock faces at the quay and the Headland",
   "between_tiers": {
    "height": 32,
    "material": "turf bank over earth, rounded rock cobbles at the foot"
@@ -6432,7 +6433,7 @@
   }
  ],
  "ground": {
-  "_about": "Ground kinds by place for the painter; the recipes are scripts/art/biomes/meadow.json (variants meadow, farmland, riverside, town_edge) and coast.json (variant cliff_coast).",
+  "_about": "Ground kinds by place for the painter; the kit's meadow biome (scripts/art/biomes/meadow.json, #215) with the valley's variants in scripts/art/biomes/valley.json (meadow, farmland, riverside, town_edge), and coast.json (variant cliff_coast).",
   "hay_slope": "meadow: hay meadow uncut, clover and buttercup in drifts, the Col Path worn to earth; scree at the escarpment foot",
   "garden": "the garden kit (unchanged)",
   "woodland": "Claude A's golden screen",
