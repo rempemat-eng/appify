@@ -1,6 +1,6 @@
 {
  "_about": "The asset ledger (docs/vision/asset-ledger.md). Every picture under assets/ with its grade: KEEP may go into a kit or region build, REWORK must be redone first, RETIRE has no place in the new world. Written by scripts/art/asset_ledger.py --build; `eye` verdicts are written by hand and survive a rebuild. Checked by scripts/check-assets.cjs (npm run check:assets).",
- "main": "6a264fb",
+ "main": "bdaf9b2",
  "grades": {
   "KEEP": "fits the newest standard on every check",
   "REWORK": "the subject stays; redo the art first",
@@ -6066,13 +6066,13 @@
     "h": 240,
     "w": 320,
     "measured_file": "assets/journeys/west-near.png",
-    "px": 32390,
-    "colours": 50,
-    "on_today": 0.954,
+    "px": 32433,
+    "colours": 71,
+    "on_today": 0.933,
     "isolated": 0.069,
     "checker": 0.0038
    },
-   "checked": "2026-10-20"
+   "checked": "2026-10-21"
   },
   "journey/west-sky": {
    "files": [
