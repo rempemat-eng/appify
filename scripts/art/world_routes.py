@@ -163,7 +163,7 @@ ANCHORS = {
                    # lane F's line from the tarn's east shore to the Frostline's box edge
                    (6216, 1888), (6248, 1864), (6280, 1824), (6296, 1784), (6312, 1752), (6320, 1728), (6328, 1704), (6376, 1688), (6416, 1664), (6464, 1648), (6496, 1624), (6528, 1612), (6568, 1632), (6608, 1640), (6656, 1624), (6704, 1640), (6752, 1624), (6800, 1616),
                    (6960, 1624), (7104, 1648), (7120, 1616), (7192, 1648), (7248, 1712), (7376, 1768), (7456, 1856), (7568, 1920), (7696, 1944), (7824, 1968)],
-    'foothill-road': [(6760, 3400), (6944, 3216), (7216, 3128), (7336, 3024), (7392, 3008), (7504, 2928), (7584, 2800), (7624, 2736), (7712, 2736)],
+    'foothill-road': [(6760, 3400), (6944, 3216), (7216, 3128), (7336, 3024), (7392, 3008), (7504, 2928), (7584, 2800), (7624, 2736)],
     'towpath': [(8328, 2840), (8416, 2872), (8472, 2944), (8504, 3064), (8496, 3136), (8472, 3184), (8480, 3512), (8448, 3616), (8464, 3760), (8480, 3800), (8472, 3944), (8512, 4088), (8568, 4168), (8648, 4224)],
     'lull-road': [(6760, 3760), (6896, 3800), (6976, 3856), (7080, 3848), (7168, 3896), (7448, 3896), (7488, 3920), (7768, 3928), (7928, 4008), (7976, 4008), (8112, 4048), (8328, 4168), (8376, 4168), (8456, 4208), (8496, 4208), (8536, 4240), (8624, 4280), (8872, 4272), (8912, 4304), (9096, 4336), (9232, 4336), (9264, 4360), (9352, 4376), (9400, 4400), (9552, 4360), (9656, 4368), (9704, 4384), (9840, 4360), (9872, 4392), (9984, 4360)],
     'coast-path': [(6656, 4928), (6704, 4984), (6808, 5056), (6920, 5080), (7136, 5072), (7296, 5016), (7576, 5056), (7760, 5048), (7856, 5080), (7912, 5072), (8088, 4944), (8232, 4784), (8240, 4736), (8312, 4624), (8392, 4560), (8472, 4536), (8544, 4464), (8640, 4328)],
@@ -230,13 +230,13 @@ TIERS = {
                      ((6204, 2252), 'stair', 8), ((6308, 2188), 'stair', 9),
                      ((6188, 2116), 'stair', 10), ((6236, 2048), 'stair', 11)]),
     'high-fells': (11, [((6316, 1740), 'stair', 12),   # lane F's fells_1
-                        (0.40, 0.50, 'stair', [13, 14]), (0.50, 0.55, 'stair', [15]),
-                        (0.56, 0.82, 'stair', [14, 13, 12, 11, 10, 9]),
-                        (0.83, 0.90, 'stair', [8])]),
+                        # level along the shoulder (lane G's corridor), down to the north gate
+                        # in Claude H's land
+                        (0.62, 0.90, 'stair', [11, 10, 9, 8])]),
     'foothill-road': (5, [(0.08, 0.52, 'stair', [6, 7, 8, 9]), (0.66, 0.90, 'stair', [8, 7])]),
     'towpath': (7, [(0.04, 0.20, 'stair', [6, 5]), (0.30, 0.80, 'stair', [4, 3])]),
-    'lull-road': (4, [(0.04, 0.20, 'stair', [5, 6]), (0.30, 0.58, 'stair', [5, 4, 3])]),
-    'coast-path': (3, [(0.20, 0.30, 'stair', [2])]),
+    'lull-road': (4, [(0.60, 0.66, 'stair', [3])]),   # level across the plain; down to Lullford in I's land
+    'coast-path': (3, []),   # level along the coast to Lullford
     'headland-lane': (3, []),
     'shell-bar': (0, []),
     # level through the Brackens' gap (lane F's plan keeps the road on its base tier)
@@ -262,7 +262,9 @@ CROSSINGS = [
     ('headland-lane', 'stile', 'the Headland stile', (6990, 5300), 32, 'W1'),
     ('col-path', 'step', 'the Frostline lip', (6230, 2040), 48, 'W2'),
     ('high-fells', 'step', 'the east col', (6560, 1640), 48, 'W2'),
-    ('foothill-road', 'bridge', 'the Millrace bridge', (7664, 2736), 80, 'W3'),
+    # the route stops at Cogsworth's west gate (inside a region's box its plan wins); the
+    # Millrace bridge's deck beyond is Claude H's, its parapets and the landslip (W3) lane G's
+    ('foothill-road', 'step', 'the Millrace landslip at the west gate', (7600, 2736), 32, 'W3'),
     ('towpath', 'bridge', 'the Cog foot bridge', (8530, 3060), 64, 'W3'),
     # the High Fells cross the Cog just north of Cogsworth's north gate, where Claude H's plan
     # brings the Cog in (x 7624-7704); W3 is a rockfall on the footbridge
@@ -330,6 +332,12 @@ THRESHOLDS = [
      'cocklers walk out at low tide; seals haul out on the bar; terns nest on the islet', 'the sea'),
 ]
 
+# Who draws each side of a threshold's band where it is not simply the land's owner either
+# side (the brief's own split, as the region plan keeps it).
+SIDES = {
+    'millrace-cutting': ('claude-g', 'claude-h'),   # brief: lane A (now G) / lane C (now H); H's plan
+}
+
 # Obstacles beside the routes, each with a side path round its far side (plan 5.6).
 OBSTACLES = [
     ('high-fells', 'thicket', (6729, 1527)),
@@ -358,7 +366,7 @@ POCKETS = [
     ('foothill-road', 'a resident fishing', (7708, 3083)),
     ('foothill-road', 'a story detail: a buried bell', (7212, 2780)),
     ('foothill-road', 'a story detail: an old grave', (7093, 3405)),
-    ('towpath', 'a view down a gorge', (8012, 2908)),
+    ('towpath', 'a view down the Cog from the riverside quay', (8016, 2856)),   # on H's quay, tier 7 (h-to-g-1240)
     ('coast-path', 'a view over the land', (8283, 5072)),
     ('coast-path', 'a bench under a tree', (7556, 4823)),
     ('lull-road', 'a story detail: initials cut in a stone', (7712, 4158)),
@@ -721,8 +729,9 @@ def build_route(spec):
                 t = c['to']
         return t
 
-    # widths: base, +8 at bends, junction squares at the ends, +16 at thresholds; a lane's
-    # drawn stretch keeps its width (+8 at a threshold)
+    # widths: base, +8 at bends, +16 at thresholds (a settlement's square at a route's end is
+    # its lane's); a lane's drawn stretch keeps its width (+8 at a threshold), and so does
+    # the route where it meets that stretch
     scale_f = total / base_total
     widths = []
     for i, v in enumerate(verts):
@@ -735,15 +744,13 @@ def build_route(spec):
             if abs(turn(h0, h1)) > 25:
                 w += 8
         si = vs[i]
-        if kind in ('road', 'path') and (si < 48 or total - si < 48):
-            w = max(w, base_w + 16)
         for (t, st) in thresholds:
             if abs(si - st) < 48:
                 w = max(w, base_w + 16)
         if kind == 'bar':
             w = 40 + 8 * int(3 * _hash(rid, 'bar', i // 3))
         for lo, hi, fw in fixed:
-            if fw and lo <= si <= hi:
+            if fw and lo - 32 <= si <= hi + 32:   # and where it meets the lane's line
                 w = fw + (8 if any(abs(si - st) < 48 for (t, st) in thresholds) else 0)
         w = max(WIDTH_MIN, min(WIDTH_MAX, int(round(w / GRID)) * GRID))
         widths.append(w)
@@ -753,8 +760,16 @@ def build_route(spec):
     out_changes = []
     for c in changes:
         p = at_s(verts, vs, c['s'])
+        # the leg it sits on, and whose land it is in: in a lane's land the lane's plan places
+        # its stairs (these are the route's tiers for it to match); in lane G's land the stair
+        # is G's and must cut a south face, so it sits on a north-south leg, rising northward
+        a, b = at_s(verts, vs, max(0.0, c['s'] - 4)), at_s(verts, vs, min(vs[-1], c['s'] + 4))
+        leg = 'n-s' if abs(b[0] - a[0]) < 1 else ('e-w' if abs(b[1] - a[1]) < 1 else 'drawn')
+        north = b[1] < a[1]
         out_changes.append({'at': [snap(p[0]), snap(p[1])], 's': round(c['s']), 'kind': c['kind'],
-                            'from': c['from'], 'to': c['to'], 'run': c['run']})
+                            'from': c['from'], 'to': c['to'], 'run': c['run'],
+                            'land': owner(*p)[0], 'leg': leg,
+                            'rises': 'north' if (c['to'] > c['from']) == north else 'south'})
     out_cross = []
     for c in crossings:
         p = at_s(verts, vs, c['s'])
@@ -768,7 +783,8 @@ def build_route(spec):
         out_thr.append({
             'id': t[0], 'name': t[1], 'route': rid, 'at': [snap(p[0]), snap(p[1])], 's': round(st),
             'brief': list(t[3]), 'object': t[4], 'band': t[5], 'landmark': t[6], 'landmarkAt': list(t[7]),
-            'residents': t[8], 'radiatesFrom': t[9], 'sides': [before[0], after[0]],
+            'residents': t[8], 'radiatesFrom': t[9],
+            'sides': list(SIDES.get(t[0], (before[0], after[0]))),
             'objectBy': BETWEEN, 'bandFade': 160,
         })
 
@@ -901,6 +917,10 @@ def check(routes):
                     continue   # a step (the lip, a col, a rockfall) may be the stair itself
                 if abs(c['s'] - x['s']) < (x['span'] + c['run']) / 2 - 1:
                     problems.append(f"{r['name']}: a {c['kind']} on {x['name']}")
+        # a stair in lane G's land cuts a south face: on a north-south leg, rising northward
+        for c in r['changes']:
+            if c['land'] == BETWEEN and (c['leg'] != 'n-s' or c['rises'] != 'north'):
+                problems.append(f"{r['name']}: the {c['kind']} at {tuple(c['at'])} in lane G's land is on a {c['leg']} leg rising {c['rises']}")
         # the grid shape: every run along x or y, except where a lane drew the line itself
         vs = arclen([(p[0], p[1]) for p in pts])
         for i in range(1, len(pts)):
@@ -1063,7 +1083,7 @@ def export_ts(routes, steps, path):
         'export type LaneId = string;',
         '/** A vertex: x, y (world px, on the 8 px grid), width (px), tier. */',
         'export type RoutePoint = readonly [number, number, number, number];',
-        'export interface TierChange { at: readonly [number, number]; s: number; kind: TierChangeKind; from: number; to: number; run: number }',
+        "export interface TierChange { at: readonly [number, number]; s: number; kind: TierChangeKind; from: number; to: number; run: number; land: LaneId; leg: 'n-s' | 'e-w' | 'drawn'; rises: 'north' | 'south' }",
         'export interface Crossing { kind: CrossingKind; name: string; way: string | null; at: readonly [number, number]; s: number; span: number }',
         'export interface SidePath { obstacle: string; at: readonly [number, number]; leaves: readonly [number, number]; rejoins: readonly [number, number]; points: readonly (readonly [number, number])[]; width: number }',
         'export interface PocketPath { holds: string; clearing: readonly [number, number]; leaves: readonly [number, number]; points: readonly (readonly [number, number])[]; length: number; width: number; clearingRadius: number }',

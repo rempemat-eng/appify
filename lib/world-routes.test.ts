@@ -192,6 +192,15 @@ for (const r of worldRoutes) {
       `${r.name}: crosses ${w.water} at (${w.at[0]}, ${w.at[1]}) on a crossing`,
     );
 
+  // --- a stair in lane G's land cuts a south face: on a north-south leg, rising northward
+  // (eastward-edges 6.1; in a lane's land the lane's plan places its own stairs) ---
+  for (const c of r.changes)
+    if (c.land === ROUTES_BETWEEN)
+      assert.ok(
+        c.leg === 'n-s' && c.rises === 'north',
+        `${r.name}: the stair at (${c.at[0]}, ${c.at[1]}) cuts a south face`,
+      );
+
   // --- crossings lie on the line ---
   for (const x of r.crossings) {
     assert.ok(nearest(line, x.at) <= ROUTE_GRID, `${r.name}: ${x.name} on the line`);
