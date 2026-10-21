@@ -690,6 +690,30 @@ RECIPES = {
         'clear': [{'why': 'in front of the anvil', 'rect': [3, 2, 4, 2], 'front': True}],
         'lights': [{'kind': 'forge_glow', 'at': [5, 0], 'r': 48, 'live': True}],
     },
+    'forge_yard_lip': {
+        'biomes': ['ash', 'castle', 'town', 'coal-hills', 'canyon'],
+        'dressing': 'ash',
+        'owner': 'the smith',
+        'why': 'a forge yard on a narrow shelf (asked by lane D, d-to-b-clusters-3: the Ember forge\'s terrace is '
+               'shallow under its lip): one row against the lip, the coal heap at the far end, the anvil in front '
+               'of the forge door, the quench trough beside it, the smith\'s apron on its end (the personal '
+               'object), a bench for whoever waits; the forge\'s glow',
+        'size': [15, 3],
+        'against': 'the forge building or the lip\'s face to the north',
+        'members': [
+            m('coal', 'pile', ['coal_heap'], (0, 0), (3, 1), job='fuel for the hearth', reason=['by:dwelling:64']),
+            m('anvil', 'furniture_low', ['anvil'], (4, 0), (2, 1), tap=True, stand=[(4, 1), (5, 1)],
+              job='where the smith works', dress=False),
+            m('quench', 'trough', ['quench_trough', 'trough'], (7, 0), (3, 1), job='cools the iron', dress=False),
+            m('apron', 'furniture_low', ['smith_apron'], (10, 0), (1, 1), blocks=False, dress=False, story=True,
+              job='the smith\'s apron'),
+            m('bench', 'bench', ['bench', 'stone_bench'], (11, 0), (4, 1), tap=True, stand=[(12, 1), (13, 1)],
+              turn=BENCH_TURN, job='for whoever waits', reason=['faces:path|view']),
+        ],
+        'clear': [{'why': 'in front of the anvil', 'rect': [3, 1, 4, 2], 'front': True},
+                  {'why': 'the bench\'s front', 'rect': [11, 1, 4, 2]}],
+        'lights': [{'kind': 'forge_glow', 'at': [5, 0], 'r': 48, 'live': True}],
+    },
     'castle_street': {
         'biomes': ['castle', 'town', 'ash'],
         'dressing': 'town',
@@ -699,7 +723,9 @@ RECIPES = {
         'size': [13, 4],
         'members': [
             m('stall', 'stall', ['market_stall', 'stall'], (0, 0), (6, 2), tap=True, stand=[(2, 2), (3, 2)],
-              fixed=True, dress=False, job='sells to the street', reason=['near:path:32']),
+              turn={'e': {'props': ['market_stall_side'], 'kind': 'stall'},
+                    'w': {'props': ['market_stall_side'], 'kind': 'stall'}},
+              dress=False, job='sells to the street', reason=['near:path:32']),
             m('barrel', 'barrel', ['barrel', 'keg'], (6, 1), (1, 1), against='stall', dress=False, job='stock'),
             m('banner', 'pole', ['banner_pole'], (7, 0), (1, 1), job='the trader\'s colours'),
             m('glove', 'furniture_low', ['glove'], (7, 2), (1, 1), blocks=False, dress=False, story=True,
@@ -1468,6 +1494,20 @@ def touch_css() -> float:
     return HIT * PHONE_CSS / ART_ACROSS
 
 
+def prune_dressing(G: 'Ground', pl: dict) -> dict:
+    """Drop the dressing clumps that land on a way, a stair or water in this plan: dressing is
+    optional by nature, so a clump the plan's paths cover is left out rather than failing the
+    cluster (the painter reads the placement's dressing after this)."""
+    keep = []
+    for dd in pl['dressing']:
+        rc = G.cell(*dd['at'])
+        if G.inside(*rc) and (G.band[rc] or G.stair[rc] or G.wet[rc]):
+            continue
+        keep.append(dd)
+    pl['dressing'] = keep
+    return pl
+
+
 def check_placement(plan: dict, pl: dict, others=(), area=None, G: Ground | None = None, skip=(),
                     base=None, fast: bool = False) -> list:
     """Every rule a placed cluster must keep in its plan (see the module's docstring)."""
@@ -1708,7 +1748,7 @@ def place(plan: dict, recipe: str, area=None, near=None, seed: int = 0, others=(
     base = reach(G, blocked_by(G, list(others), plan_points(plan, skip)))
     best = None
     for orient, mirror, x, y in cands[:2000]:
-        pl = expand(recipe, [x, y], orient, mirror, seed, grades=grades)
+        pl = prune_dressing(G, expand(recipe, [x, y], orient, mirror, seed, grades=grades))
         faults = check_placement(plan, pl, others, area=area, G=G, skip=skip, base=base, fast=True)
         if not faults:
             return pl, None
@@ -1756,7 +1796,8 @@ def check_plans() -> list:
             if plan.get('biome') not in RECIPES[e['recipe']]['biomes'] and not e.get('any_biome'):
                 out.append(f'{plan["id"]}: {e["recipe"]} belongs in {RECIPES[e["recipe"]]["biomes"]}, '
                            f'not {plan.get("biome")} (set any_biome on the entry to place it anyway)')
-            pl = expand(e['recipe'], e['at'], e.get('orient', 's'), e.get('mirror', False), e.get('seed', 0), grades=grades)
+            pl = prune_dressing(G, expand(e['recipe'], e['at'], e.get('orient', 's'), e.get('mirror', False),
+                                          e.get('seed', 0), grades=grades))
             skip = {tuple(e['replaces'])} if e.get('replaces') else set()
             out += check_placement(plan, pl, placed, G=G, skip=skip)
             placed.append(pl)
