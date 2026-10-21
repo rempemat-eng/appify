@@ -11,6 +11,8 @@ shape Codex's C36 placement library takes). Coordinates are world px (world plan
 What `check()` holds a plan to (the brief's rules that can be checked before any art exists;
 docs/vision/regions/*.md section 8, research/world-benchmark.md, eastward-edges.md):
 - structure on the 8 px grid: every outline vertex, stair and route width (eastward 1.1, 1.2);
+  tier outlines run along x or y only, turning at cell corners (Matt, 21 Oct 11:44: the grid
+  shape, to-all-grid-2x);
 - inside the box: every outline, route, place, named thing, pocket and marker, unless it is
   marked outside_box (a marker the brief lists just past the line);
 - paths: widths 24 to 64 (check 17); no straight run longer than 240 px and a bend at least
@@ -188,6 +190,12 @@ def check(plan: dict) -> list:
         if (ax - x0) % 32 or (ay - y0) % 32 or aw % 32 or ah % 32:
             out.append(f'{pid}: area {a["id"]} {a["rect"]} is not whole 32 px audit cells of the box')
     for t in plan.get('tiers', []):
+        o = t['outline']
+        for a, b in zip(o, o[1:] + o[:1]):
+            if a[0] != b[0] and a[1] != b[1]:
+                out.append(f'{pid}: tier {t["id"]} edge {tuple(a)} to {tuple(b)} is not along x or y '
+                           f'(the grid shape, to-all-grid-2x)')
+                break
         for p in t['outline']:
             if p[0] % GRID or p[1] % GRID:
                 out.append(f'{pid}: tier {t["id"]} vertex {tuple(p)} off the {GRID} px grid')
@@ -373,6 +381,26 @@ def dress(plan: dict) -> list:
     return added
 
 
+def grid_shape(outline, seed=0) -> list:
+    """An outline turned into runs along x or y (each slanted edge becomes a step: along x then
+    y, or y then x, whichever keeps the corner outside the shape more often), without repeats
+    or points in the middle of a run."""
+    out = []
+    n = len(outline)
+    for i in range(n):
+        a, b = outline[i], outline[(i + 1) % n]
+        out.append(list(a))
+        if a[0] != b[0] and a[1] != b[1]:
+            out.append([b[0], a[1]] if (i + seed) % 2 == 0 else [a[0], b[1]])
+    keep = []
+    for i, q in enumerate(out):
+        a, c = out[i - 1], out[(i + 1) % len(out)]
+        if q == a or (a[0] == q[0] == c[0]) or (a[1] == q[1] == c[1]):
+            continue
+        keep.append(q)
+    return keep
+
+
 def fix(plan: dict) -> list:
     """Move each marker, named thing and pocket that breaks a placement rule to the nearest
     point that keeps them all (walkable ground, beside its path but off it, off stairs, 16 px
@@ -476,9 +504,12 @@ def draw(plan: dict, scale: int = 4) -> Image.Image:
 
 
 def main(argv) -> int:
-    if '--fix' in argv or '--dress' in argv:
+    if '--fix' in argv or '--dress' in argv or '--grid' in argv:
         for pid in [a for a in argv if a in plan_ids()] or plan_ids():
             p = load(pid)
+            if '--grid' in argv:
+                for t in p.get('tiers', []):
+                    t['outline'] = grid_shape(t['outline'])
             if '--dress' in argv:
                 for area, what, at in dress(p):
                     print(f'{pid}: dressed {area} with a {what} at {at}')
