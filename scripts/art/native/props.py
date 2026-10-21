@@ -398,79 +398,183 @@ def mushroom_ring4(d, w=41, h=20, seed=85, n=10):
     return _out(sp)
 
 
+def _poly_mask(pts, X, Y):
+    """Pixels whose centres (X, Y) lie inside the polygon pts (even-odd rule)."""
+    inside = np.zeros(X.shape, bool)
+    n = len(pts)
+    for i in range(n):
+        x1, y1 = pts[i]
+        x2, y2 = pts[(i + 1) % n]
+        if y1 == y2:
+            continue
+        cross = ((y1 > Y) != (y2 > Y)) & (X < (x2 - x1) * (Y - y1) / (y2 - y1) + x1)
+        inside ^= cross
+    return inside
+
+
 def boulder4(d, w=21, h=13, seed=31, fam='stone'):
-    """r6: the 1x grey stone (21 x 13 world px) as pixel-art stone (the same manner as the cliff's
-    stones): an irregular silhouette sitting flat on the ground, a 4-tone ramp lit from the upper
-    left with a soft clustered terminator, a lit crescent inside the upper-left rim, pits, chips
-    and lichen in small clumps, a dark edge on the lower right only, a companion pebble."""
+    """r7/r8: the 1x grey stone (21 x 13 world px) as two or three chunks of pixel-art stone (Matt:
+    rocks read vector-like). r8: rounded chunk outlines, a top plane tilted 5 to 20 degrees, a
+    two-tone step from top to side, one crack per stone and no mark crossing it. Each chunk has a flat lit top (tone 4, mottled), a bright rim along
+    its upper-left edge, a hard step down to its sides (the front a tone 2 lit on the left, the
+    right side darker), a base band in tone 1, and one crack with a lit lip. The chunks stand in
+    a crevice of tone 0; the outline is dark on the right and bottom only; moss sits on the tops;
+    a few pebbles spill at the foot."""
     s_ = d / 2
     Wp, Hp = int(math.ceil((w * 2 + 16) * s_)), int(math.ceil((h * 2 + 10) * s_))
     ax, ay = Wp / 2 - 2 * s_, Hp - max(1, int(round(3 * s_)))
     rng = np.random.default_rng(seed)
     yy, xx = np.mgrid[0:Hp, 0:Wp].astype(float)
-    rx, ry = w * d / 2, h * d / 2 * 1.05
-    cx, cy = ax, ay - ry
-    u, v = (xx + 0.5 - cx) / rx, (yy + 0.5 - cy) / ry
-    th = np.arctan2(v, u)
-    ph = rng.random() * 6.28
-    wob = 1.0 + 0.08 * np.sin(3 * th + ph) + 0.05 * np.sin(5 * th + 2 * ph)
-    wob = np.where(v > 0.5, np.minimum(wob, 1.0), wob)
-    dd = (np.abs(u) ** 2.2 + np.abs(v) ** 2.2) ** (1 / 2.2) / wob
-    m = dd <= 1.0
-    U, V = u / wob, v / wob
-    L = np.array(STONE4['light']); L = L / np.linalg.norm(L)
-    lam = U * L[0] + V * L[1] + np.sqrt(np.clip(1 - U ** 2 - V ** 2, 0.02, 1)) * L[2]
-    blob = ndi.gaussian_filter(rng.random((Hp, Wp)), 1.1 * d)
-    blob = (blob - blob[m].mean()) / (blob[m].std() + 1e-6)
-    lamn = lam + 0.075 * blob
-    t = np.full((Hp, Wp), 3)
-    t[lamn > STONE4['cap']] = 4
-    t[lamn < STONE4['body']] = 2
-    t[lamn < STONE4['shade']] = 1
-    er = ndi.binary_erosion(m, iterations=max(1, int(round(1.5 * d))))
-    crest = m & ~er & (lam > 0.45) & (U + V < -0.25)
-    t[crest] = np.minimum(5, t[crest] + 1)
-    t[(lamn > 0.97) & m] = 5
-    famm = np.where(xx < cx + rx * 0.2, fam, fam + '_cool').astype(object)
-    ys, xs = np.nonzero(m)
-    area = len(ys) / (d * d)
-    for _ in range(int(area / 30)):
-        k = int(rng.integers(0, len(ys))); y, x = ys[k], xs[k]
-        if t[y, x] < 2:
+    W_, H_ = w * d, h * d * 1.05
+    k = 3 if rng.random() < 0.6 else 2
+    # (centre x as a share of the width, base y above the foot, width, height) per chunk, back first
+    spec = [(-0.16, 0.10, 0.66, 0.96), (0.24, 0.0, 0.54, 0.70)]
+    if k == 3:
+        spec.append((-0.33, -0.02, 0.32, 0.42))
+    chunks = []
+    for (cxf, byf, wf, hf) in spec:
+        cx = ax + cxf * W_ + rng.uniform(-0.04, 0.04) * W_
+        base = ay - byf * H_
+        cw, ch = wf * W_ * rng.uniform(0.94, 1.06), hf * H_ * rng.uniform(0.94, 1.06)
+        n = 9
+        pts = []
+        for q in range(n):
+            a_ = math.pi + q * math.pi / (n - 1) + rng.uniform(-0.12, 0.12)   # the upper half, left to right
+            r_ = rng.uniform(0.86, 1.08)
+            r_ = r_ if q not in (2, 3, 4) else min(r_, 0.97)      # a flatter crown: the top is a shelf
+            pts.append((cx + math.cos(a_) * cw / 2 * r_, base - ch * 0.45 + math.sin(a_) * ch * 0.55 * r_))
+        pts = [(pts[0][0], base - ch * 0.45 + ch * 0.12)] + pts + [(pts[-1][0], base - ch * 0.45 + ch * 0.12)]
+        pts += [(cx + cw * 0.46, base - 0.3 * d), (cx + cw * 0.2, base), (cx - cw * 0.25, base), (cx - cw * 0.47, base - 0.4 * d)]
+        m = _poly_mask(pts, xx + 0.5, yy + 0.5)
+        m = ndi.gaussian_filter(m.astype(float), 0.9 * d) > 0.5          # r8: round the corners
+        chunks.append(dict(m=m, cx=cx, cw=cw, ch=ch, base=base, top=base - ch * 1.24))
+    t = np.zeros((Hp, Wp), int)
+    crack = np.zeros((Hp, Wp), bool)
+    fm = np.zeros((Hp, Wp), int)          # 0 stone, 1 stone_cool, 2 moss
+    own = np.full((Hp, Wp), -1)
+    for ci, c in enumerate(chunks):
+        own[c['m']] = ci
+    allm = own >= 0
+    for ci, c in enumerate(chunks):
+        m = own == ci
+        if not m.any():
             continue
-        for (dy, dx, dt) in ((0, 0, -1), (0, 1, -1), (1, 1, 1)):
-            Y, X = y + dy, x + dx
-            if 0 <= Y < Hp and 0 <= X < Wp and m[Y, X]:
-                t[Y, X] = int(np.clip(t[Y, X] + dt, 1, 5))
-    lich = np.zeros((Hp, Wp), bool)
-    for _ in range(int(area / 60)):
-        k = int(rng.integers(0, len(ys))); y, x = ys[k], xs[k]
-        if lam[y, x] < 0.72:
-            continue
-        for (dy, dx) in ((0, 0), (0, 1), (1, 0), (1, 1))[:int(rng.integers(2, 5))]:
-            if 0 <= y + dy < Hp and 0 <= x + dx < Wp and m[y + dy, x + dx]:
-                lich[y + dy, x + dx] = True
+        ys, xs = np.nonzero(m)
+        y0 = ys.min()
+        hh = ys.max() - y0 + 1
+        # the flat top: above a line that steps (hard, a px at a time) across the chunk
+        steps = np.cumsum(rng.choice([-1, 0, 0, 0, 1], Wp)) * 0.5
+        slope = np.tan(np.radians(rng.uniform(5, 20))) * rng.choice([-1, 1])   # r8: a tilted top plane
+        topline = y0 + hh * rng.uniform(0.40, 0.48) + steps - steps[int(min(Wp - 1, max(0, c['cx'])))] \
+            + slope * (np.arange(Wp) - c['cx'])
+        top = m & (yy < topline[None, :])
+        side = m & ~top
+        tt = np.where(top, 4, 2)
+        # the front lit on the left, the right side darker
+        rel = (xx - c['cx']) / (c['cw'] / 2)
+        tt[side & (rel < -0.55)] = 3
+        tt[side & (rel > 0.45)] = 1
+        # the base band
+        tt[side & (yy > c['base'] - 1.6 * d)] = np.minimum(tt[side & (yy > c['base'] - 1.6 * d)], 1)
+        # mottling: soft blobs a tone up or down, so no tone covers the whole face
+        for _ in range(int(m.sum() / (9 * d * d)) + 1):
+            q = int(rng.integers(0, len(ys)))
+            rb = rng.uniform(0.9, 1.8) * d
+            bb = m & ((yy - ys[q]) ** 2 + (xx - xs[q]) ** 2 <= rb * rb)
+            if top[ys[q], xs[q]]:
+                if rng.random() < 0.5:
+                    continue
+                ln = int(rng.integers(2, 4))
+                bb = top & (yy == ys[q]) & (xx >= xs[q]) & (xx < xs[q] + ln)     # a short worn dash
+                tt[bb] = 3
+                continue
+            dt = 1 if rel[ys[q], xs[q]] < -0.3 else -1
+            bb &= side
+            tt[bb] = np.clip(tt[bb] + dt, 1, 4)
+        # the bright upper-left rim of the top
+        P_ = np.pad(m, 1)
+        upl = m & (~P_[:-2, 1:-1] | ~P_[1:-1, :-2])
+        tt[upl & top] = 5
+        tt[upl & side & (rel < 0)] = 3
+        # r8: the step from top to side in two tones: the top's last row and the side's first row
+        # a tone 3 band (4 -> 3 -> 2), not a hard edge
+        stp = side & np.roll(top, 1, 0)
+        stp2 = side & np.roll(stp, 1, 0) & (rel > -0.55)
+        tt[stp & (tt == 2)] = 3
+        tt[stp2 & (tt == 2) & (rng.random(tt.shape) < 0.5)] = 3
+        # one crack per stone (on its first chunk): from the top's front edge down the side, with
+        # a lit lip on its left
+        cand = np.nonzero(stp & (np.abs(rel) < 0.5))
+        if ci == 0 and len(cand[0]):
+            q = int(rng.integers(0, len(cand[0])))
+            y, x = cand[0][q] - int(1 * d), cand[1][q]
+            for _ in range(int(rng.uniform(3, 5.5) * d)):
+                if 0 <= y < Hp and 0 <= x < Wp and m[y, x]:
+                    tt[y, x] = 0
+                    crack[y, x] = True
+                    if x - 1 >= 0 and m[y, x - 1] and tt[y, x - 1] > 0:
+                        tt[y, x - 1] = min(5, tt[y, x - 1] + 1)
+                y += 1
+                if rng.random() < 0.35:
+                    x += 1 if rng.random() < 0.6 else -1
+        # moss on the top's back half
+        if top.any():
+            ty_, tx_ = np.nonzero(top)
+            for _ in range(int(rng.integers(3, 6))):
+                q = int(rng.integers(0, len(ty_)))
+                if ty_[q] > y0 + hh * 0.22 or abs(rel[ty_[q], tx_[q]]) > 0.6:
+                    continue
+                rb = rng.uniform(1.2, 2.0) * d
+                mb = m & ((yy - ty_[q] + 0.5 * d) ** 2 / 0.45 + (xx - tx_[q]) ** 2 <= rb * rb) & (yy < topline[None, :] - 0.5 * d)
+                fm[mb] = 2
+                tt[mb] = 3
+                low = mb & ~np.roll(mb, -1, 0)
+                tt[low] = 2
+                hi = mb & ~np.roll(mb, 1, 0)
+                tt[hi] = 4
+        near = ndi.binary_dilation(crack, iterations=2) & ~crack & m & top
+        tt[near & (tt == 3)] = 4                    # r8: no worn dash crosses the crack (it read as a '+')
+        tt[~m] = 0
+        t[m] = tt[m]
+        fm[m & (fm != 2)] = np.where(rel[m & (fm != 2)] > 0.15, 1, 0)
+    # the crevice: the back chunk darkens along the front chunk's edge
+    for ci in range(len(chunks)):
+        front = own == ci
+        ring = ndi.binary_dilation(front) & ~front & allm & (own < ci)
+        if front.any():
+            ring &= yy < np.nonzero(front)[0].mean()       # r9: an arc over the front chunk, never a ring round it
+        t[ring] = 0
+    # small pits on the sides
+    sy_, sx_ = np.nonzero(allm & (t >= 2) & (t <= 3) & ~ndi.binary_dilation(crack, iterations=3))
+    for _ in range(int(len(sy_) / (20 * d * d))):
+        q = int(rng.integers(0, len(sy_)))
+        y, x = sy_[q], sx_[q]
+        t[y, x] = max(1, t[y, x] - 2)
+        if x + 1 < Wp and allm[y, x + 1]:
+            t[y, x + 1] = max(1, t[y, x + 1] - 1)
+    # the outline: dark on the right and the bottom only
+    P_ = np.pad(allm, 1)
+    rb_ = allm & (~P_[2:, 1:-1] | ~P_[1:-1, 2:])
     out = np.zeros((Hp, Wp, 4), np.uint8)
-    for y, x in zip(ys, xs):
-        f = 'earth_warm' if lich[y, x] else famm[y, x]
-        out[y, x, :3] = pk.rgb(f, int(t[y, x]))
+    names = [fam, fam + '_cool', 'grass_cool']
+    for y, x in zip(*np.nonzero(allm)):
+        if rb_[y, x] and fm[y, x] != 2:
+            out[y, x, :3] = pk.rgb(fam + '_cool', 0)
+        else:
+            out[y, x, :3] = pk.rgb(fam if (t[y, x] >= 5 and fm[y, x] == 1) else names[fm[y, x]], int(t[y, x]))   # r8: no stone_cool 5
         out[y, x, 3] = 255
-    p_ = np.pad(m, 1)
-    border = m & ~(p_[:-2, 1:-1] & p_[2:, 1:-1] & p_[1:-1, :-2] & p_[1:-1, 2:])
-    lit = border & ((u + v) < -0.3)
-    for y, x in zip(*np.nonzero(border & ~lit)):
-        out[y, x, :3] = pk.rgb(fam + '_cool', 0)
-    for y, x in zip(*np.nonzero(lit)):
-        out[y, x, :3] = pk.rgb(fam, 2)
-    # a companion pebble to the lower right
-    px_, py_ = cx + rx * 0.95, ay - 1.2 * d
-    pm = ((xx + 0.5 - px_) / (1.6 * d)) ** 2 + ((yy + 0.5 - py_) / (1.1 * d)) ** 2 <= 1
-    pm &= ~m
-    for y, x in zip(*np.nonzero(pm)):
-        out[y, x, :3] = pk.rgb(fam, 3 if (yy[y, x] < py_ and xx[y, x] < px_) else 1)
-        out[y, x, 3] = 255
+    # pebbles spilling at the foot
+    for (pxf, pr) in ((0.52, 1.5), (-0.5, 1.1), (0.66, 0.9))[:int(rng.integers(2, 4))]:
+        px_, py_ = ax + pxf * W_ + rng.uniform(-1, 1) * d, ay - 0.6 * d
+        pm = ((xx + 0.5 - px_) / (pr * 1.25 * d)) ** 2 + ((yy + 0.5 - py_) / (pr * 0.85 * d)) ** 2 <= 1
+        pm &= ~allm
+        for y, x in zip(*np.nonzero(pm)):
+            up = yy[y, x] < py_
+            out[y, x, :3] = pk.rgb(fam, 4 if (up and xx[y, x] < px_) else (3 if up else 1))
+            out[y, x, 3] = 255
     img = Image.fromarray(out)
     return img, (ax, ay), out[..., 3] > 0
+
 
 def fern4(d, seed=51, size=1.0):
     """The 1x fern: a broad, squat crown of pointed leaves (three rising in a V, the others

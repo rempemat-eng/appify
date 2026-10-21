@@ -350,7 +350,6 @@ function FlowLayer({
   const [x, y, w] = rect;
   return (
     <View
-      pointerEvents="none"
       style={{
         position: 'absolute',
         left: snap(x * u),
@@ -358,6 +357,7 @@ function FlowLayer({
         width: snap(w * u),
         height: bh,
         overflow: 'hidden',
+        pointerEvents: 'none',
       }}
     >
       <Animated.Image
@@ -394,7 +394,6 @@ function FlowBox({
   }));
   return (
     <View
-      pointerEvents="none"
       style={{
         position: 'absolute',
         left: snap(x * u),
@@ -402,6 +401,7 @@ function FlowBox({
         width: snap(w * u),
         height: bh,
         overflow: 'hidden',
+        pointerEvents: 'none',
       }}
     >
       <Animated.Image
@@ -468,7 +468,6 @@ function Flyer({
   return (
     <>
       <Animated.View
-        pointerEvents="none"
         style={[
           {
             position: 'absolute',
@@ -481,10 +480,10 @@ function Flyer({
             zIndex: 2,
           },
           shadow,
+          { pointerEvents: 'none' },
         ]}
       />
       <Animated.View
-        pointerEvents="none"
         style={[
           {
             position: 'absolute',
@@ -495,6 +494,7 @@ function Flyer({
             zIndex: 100000,
           },
           body,
+          { pointerEvents: 'none' },
         ]}
       >
         {frames.map(([key, , , w, h], i) => (
@@ -589,10 +589,10 @@ function Ghost({
   }));
   return (
     <Animated.View
-      pointerEvents="none"
       style={[
         { position: 'absolute', left: 0, top: 0, width: size, height: size, zIndex: 149999 },
         style,
+        { pointerEvents: 'none' },
       ]}
     >
       {children}
@@ -1615,7 +1615,7 @@ export function AtlasWalk({
     <View
       style={{ width, height, overflow: 'hidden', backgroundColor: BACKDROP[region] ?? '#2F4630' }}
     >
-      <View pointerEvents="none" style={{ position: 'absolute', left: 0, top: 0, width, height }}>
+      <View style={{ position: 'absolute', left: 0, top: 0, width, height, pointerEvents: 'none' }}>
         <Animated.View
           // @ts-expect-error dataSet is a react-native-web prop (crisp pixel scaling via CSS)
           dataSet={{ pixel: 'true' }}
@@ -1759,7 +1759,6 @@ export function AtlasWalk({
                 'fade' in c ? (
                   <LinearGradient
                     key={`tint-${c.key}`}
-                    pointerEvents="none"
                     colors={[tint, clearOf(tint)]}
                     start={{ x: 0, y: 0.5 }}
                     end={{ x: 0.7, y: 0.5 }}
@@ -1770,6 +1769,7 @@ export function AtlasWalk({
                       width: snap(TILE.width * u),
                       height: snap(TILE.height * u),
                       zIndex: 150000,
+                      pointerEvents: 'none',
                     }}
                   />
                 ) : (
@@ -1794,7 +1794,6 @@ export function AtlasWalk({
             panes.map((p) => (
               <View
                 key={p.key}
-                pointerEvents="none"
                 style={{
                   position: 'absolute',
                   left: snap(p.x * u),
@@ -1803,6 +1802,7 @@ export function AtlasWalk({
                   height: snap(p.h * u),
                   backgroundColor: p.clear ? 'rgba(255,200,104,0.92)' : 'rgba(255,214,130,1)',
                   zIndex: p.clear ? 150001 : p.z,
+                  pointerEvents: 'none',
                 }}
               />
             ))}
@@ -1815,8 +1815,7 @@ export function AtlasWalk({
               return (
                 <View
                   key={`light-${d.key}`}
-                  pointerEvents="none"
-                  style={{ position: 'absolute', zIndex: 150001 }}
+                  style={{ position: 'absolute', zIndex: 150001, pointerEvents: 'none' }}
                 >
                   <View
                     style={{
@@ -1855,15 +1854,14 @@ export function AtlasWalk({
               );
             })}
           <Animated.View
-            pointerEvents="none"
             style={[
               { position: 'absolute', left: 0, top: 0, width: petPx, height: petPx },
               petStyle,
+              { pointerEvents: 'none' },
             ]}
           >
             {companion?.emote && (
               <View
-                pointerEvents="none"
                 style={{
                   position: 'absolute',
                   top: -petPx * 0.35,
@@ -1875,6 +1873,7 @@ export function AtlasWalk({
                   backgroundColor: cozy.paper,
                   alignItems: 'center',
                   zIndex: 1,
+                  pointerEvents: 'none',
                 }}
               >
                 <BodyText style={{ fontSize: 13, lineHeight: 18 }}>{companion.emote}</BodyText>
@@ -1885,7 +1884,7 @@ export function AtlasWalk({
           {preview && (
             // a keepsake about to be set down: its footprint lit green (it may stand
             // there) or red (not), the thing itself faint above it
-            <View pointerEvents="none" style={{ position: 'absolute', zIndex: 149998 }}>
+            <View style={{ position: 'absolute', zIndex: 149998, pointerEvents: 'none' }}>
               <View
                 style={{
                   position: 'absolute',
@@ -1933,10 +1932,10 @@ export function AtlasWalk({
       )}
       {markers && markers.length > 0 && (
         <Animated.View
-          pointerEvents="box-none"
           style={[
             { position: 'absolute', left: 0, top: 0, width: regionW, height: regionH },
             cameraStyle,
+            { pointerEvents: 'box-none' },
           ]}
         >
           {markers.map((m) => (
@@ -1986,10 +1985,10 @@ export function AtlasWalk({
       )}
       {hits && (
         <Animated.View
-          pointerEvents="box-none"
           style={[
             { position: 'absolute', left: 0, top: 0, width: regionW, height: regionH },
             cameraStyle,
+            { pointerEvents: 'box-none' },
           ]}
         >
           {hits}
@@ -1997,8 +1996,14 @@ export function AtlasWalk({
       )}
       {showName && named && (
         <View
-          pointerEvents="none"
-          style={{ position: 'absolute', top: nameTop, left: 0, right: 0, alignItems: 'center' }}
+          style={{
+            position: 'absolute',
+            top: nameTop,
+            left: 0,
+            right: 0,
+            alignItems: 'center',
+            pointerEvents: 'none',
+          }}
         >
           <PixelFrame tone="paper" style={{ paddingVertical: 2 * u, paddingHorizontal: 6 * u }}>
             <BodyText style={{ fontFamily: 'PixelifySans_700Bold', fontSize: 12 }}>

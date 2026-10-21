@@ -1,20 +1,28 @@
 import { View, type StyleProp, type ViewStyle } from 'react-native';
 import Svg, { Rect } from 'react-native-svg';
-import { iconPalette, iconRows, type IconName } from '@/lib/icon-art';
+import { iconPalette, iconRows, iconRows2x, type IconName } from '@/lib/icon-art';
+import { useInterfaceGrid } from '@/components/pixel-frame';
 
 export type { IconName };
 
 type Run = { x: number; y: number; w: number; fill: string };
 
 const KEYS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-const cache = new Map<IconName, Run[]>();
+const cache = new Map<string, Run[]>();
 
-/** Each row's same-colour pixels merged into runs, computed once per icon. */
-function runsOf(name: IconName): Run[] {
-  const known = cache.get(name);
+/** The rows drawn: the 32x32 version where the interface draws 2x art and one exists
+ *  (scripts/art/icons_2x.py), else the 16x16 one. Both show at the same size. */
+const rowsOf = (name: IconName, fine: boolean): readonly string[] =>
+  (fine && iconRows2x[name]) || iconRows[name];
+
+/** Each row's same-colour pixels merged into runs, computed once per icon and grid. */
+function runsOf(name: IconName, fine: boolean): Run[] {
+  const rows = rowsOf(name, fine);
+  const cacheKey = `${name}:${rows.length}`;
+  const known = cache.get(cacheKey);
   if (known) return known;
   const runs: Run[] = [];
-  iconRows[name].forEach((row, y) => {
+  rows.forEach((row, y) => {
     let x = 0;
     while (x < row.length) {
       const key = row[x];
@@ -24,13 +32,9 @@ function runsOf(name: IconName): Run[] {
       x = end;
     }
   });
-  cache.set(name, runs);
+  cache.set(cacheKey, runs);
   return runs;
 }
-
-/** An icon's grid: 16 rows at 1x, 32 at 2x. It is shown at the same size either way (16
- *  world px, ui-tokens `iconSize`), so a 2x icon draws two texels to a world pixel. */
-const gridOf = (name: IconName) => iconRows[name].length;
 
 /**
  * An icon from the generated set (scripts/art/icons.py, coherence plan step 4): 16x16
@@ -52,11 +56,14 @@ export function PixelIcon({
   label?: string;
   style?: StyleProp<ViewStyle>;
 }) {
+  // 2x rows where an interface pixel splits into whole device px at the game's density
+  // (lib/pixel-scale.ts `interfaceGrid`); a 2x icon draws two texels an interface pixel
+  const fine = useInterfaceGrid().density === 2;
+  const grid = rowsOf(name, fine).length;
   // The View keeps the icon in normal stacking order: on web a bare SVG paints
   // beneath absolutely positioned siblings such as pixel frames.
   return (
     <View
-      pointerEvents="none"
       {...(label
         ? { accessible: true, accessibilityRole: 'image' as const, accessibilityLabel: label }
         : {
@@ -64,10 +71,14 @@ export function PixelIcon({
             accessibilityElementsHidden: true,
             importantForAccessibility: 'no-hide-descendants' as const,
           })}
-      style={[{ width: size, height: size, opacity: muted ? 0.45 : 1 }, style]}
+      style={[
+        { width: size, height: size, opacity: muted ? 0.45 : 1 },
+        style,
+        { pointerEvents: 'none' },
+      ]}
     >
-      <Svg width={size} height={size} viewBox={`0 0 ${gridOf(name)} ${gridOf(name)}`}>
-        {runsOf(name).map((run) => (
+      <Svg width={size} height={size} viewBox={`0 0 ${grid} ${grid}`}>
+        {runsOf(name, fine).map((run) => (
           <Rect
             key={`${run.x},${run.y}`}
             x={run.x}

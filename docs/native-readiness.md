@@ -13,6 +13,8 @@ NapAttack runs as a web app today. Matt wants it to become an iPhone and Android
   - **Native-only nit:** the status bar's clock and battery are drawn white on the cream background, so they're hard to see. The status bar style wants to be dark there.
 - **CI.** "Native readiness" runs `expo-doctor` and `expo prebuild` whenever the native config or the packages change.
 
+**The build checklist** (what a development build needs, what to check on its first run, the 2x budgets and the plan for #152) is [native-build.md](native-build.md).
+
 ## The rules
 
 1. **Browser objects only on the web.**
